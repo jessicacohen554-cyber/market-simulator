@@ -7,9 +7,9 @@
 read-only measured-data Phase B0; NO LP, no year solved or scored, no run
 registered, no matrix cell or row edit, keeper untouched at
 `2026-08-15-ercot204-rule26-delete`.** Precommit (pushed before the probe ran):
-`docs/PRECOMMIT-ercot206-e3-reopen-b0-2026-08-15.md`. Probe:
+`docs/records/ercot/PRECOMMIT-ercot206-e3-reopen-b0-2026-08-15.md`. Probe:
 `scripts/probes/ercot206_e3_settled_reproduction.py` →
-`results/calibration/ercot206_e3_settled_reproduction.json`.
+`results/phase0/ercot/ercot206_e3_settled_reproduction.json`.
 
 ---
 
@@ -89,7 +89,7 @@ REFUTES BOTH PARTICULARS:
 
 ERCOT holds **no `complete` and no `final` marker** (rule 22; R-A card scope
 line; re-affirmed at ercot-205). Determination **NOT-YET by signed ruling R-A**
-(`docs/DECISION-CARD-ercot193-determination-ceiling-2026-08-13.md`, RESOLUTIONS
+(`docs/records/ercot/DECISION-CARD-ercot193-determination-ceiling-2026-08-13.md`, RESOLUTIONS
 2026-08-13) — not re-litigated here. Precisely what fails, on the current
 keeper's committed scorecard (`frontend/data/backcast/status/ERCOT.js`,
 re-scored at the ercot-205 promotion):
@@ -183,7 +183,7 @@ measured side settlement-closed by the ercot-198 guard. Exactly **one** hour
 trips the guard across all three years — 2025 h4334 (archive RTORPA $414.12/h vs
 settled hub RTSPP $54.96, λ $41.61) — reproducing ercot-198's record precisely
 (2023 and 2024: zero flagged hours). Full-magnitude table
-(`results/calibration/ercot206_e3_settled_reproduction.json`):
+(`results/phase0/ercot/ercot206_e3_settled_reproduction.json`):
 
 | year | series | h>$1 | h>$10 | h>$100 | max $ | mean $ | top-50 mean $ | verdict |
 |---|---|---|---|---|---|---|---|---|

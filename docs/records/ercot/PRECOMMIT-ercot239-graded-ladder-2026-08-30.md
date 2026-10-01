@@ -59,7 +59,7 @@ Verified code facts the candidate rests on (cited, not measured):
   contract generalization is FILED for the owner, not made here.)
 * The SWCAP clip (armed) owns any rung whose implied offer crosses VOLL.
 
-## 1. Stage A — zero-solve census (probe `scripts/probes/ercot239_gradedladder_phase0.py` → `results/calibration/ercot239_gradedladder_phase0.json`)
+## 1. Stage A — zero-solve census (probe `scripts/probes/ercot239_gradedladder_phase0.py` → `results/phase0/ercot/ercot239_gradedladder_phase0.json`)
 
 1. **A-1 implied-offer-domain table:** for each gas class × tranche band
    (committed, econ endpoints/slices, each peak rung), the implied $/MWh

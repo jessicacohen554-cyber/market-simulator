@@ -52,7 +52,7 @@ be. If C7 moves at all it is a side effect, reported and not banked.
 ## 2. Phase 0 — measured before this prereg was written, no LP spent
 
 Probe `scripts/probes/_miso117_flag_fidelity.py`; transcript
-`results/calibration/PROBE-miso117-flag-fidelity-2026-08-03.txt`. The probe
+`results/phase0/miso/PROBE-miso117-flag-fidelity-2026-08-03.txt`. The probe
 builds **both** its arms from the keeper's own `run_config.json`
 `scenario_config` block — miso-116 §7's methodological finding, which withdrew
 two miso-115 results that came from a probe reading the model with a different

@@ -13,7 +13,7 @@ measured record and were written after.
 ## 1. The authorization (leg (d), cited verbatim)
 
 Owner ruling **Q25**, capx r#26 sitting amendment 1, 2026-09-01, recorded in
-`docs/handoffs/capx-director-ledger-2026-08.md` §3:
+`docs/records/forecast/capx-director-ledger-2026-08.md` §3:
 
 > **Q25** — The golden re-solve, fully ripe at last: Q16's ceiling premise discharged
 > (FC-5 CAVEAT via D25; FC-6 CAVEAT via D26's repaired P1, which PASSES), the standing
@@ -376,7 +376,7 @@ sizing attribution, the availability-gate attribution, the identity of 2026–20
 under both postures, and the corridor consequence. No verdict, gate, cell or
 corridor row moves on this correction. Basis: D36 §1 (consequence 1), §4 census
 row "D-3 cost-normalized rank", §6 —
-`docs/handoffs/FINDING-capx-d36-storage-valuestack-2026-09-02.md`.
+`docs/records/forecast/FINDING-capx-d36-storage-valuestack-2026-09-02.md`.
 
 ### 6.2 Head-of-horizon: golden-1 does NOT reproduce, and the divergence is
 ### decomposed, not absorbed

@@ -64,7 +64,7 @@ rolling window's own composition (Uri exits a 36-month window in early
 ## 2. THE INSTRUMENT (pinned; all committed data, no solve)
 
 - Measured response: the ercot-221 committed daily evening surface
-  (`results/calibration/ercot221_daily_surface_2023.json`, the ERCOT-154/161
+  (`results/phase0/ercot/ercot221_daily_surface_2023.json`, the ERCOT-154/161
   discipline) → monthly implied-P p50s for 2023; the ercot-210 committed
   p98-tightness p50s ($2,714 / $1,281 / $990) as the 2023/2024/2025
   year-level anchors.

@@ -302,7 +302,7 @@ CLI-only config fields (`ercot_zonal_gas_basis=True`,
 (year-pins dropped) and the fleet.py bin-drift CHP relabelling (#1451's
 partial contributor — mostly label movement, ~4.3 + 2.2 TWh/yr CC_CHP/CT_CHP
 class-total shifts at near-unchanged plant dispatch). Evidence + numbers:
-`docs/FINDING-ercot-priceshape-2026-07.md` §6.3 addendum; A/B pair
+`docs/records/ercot/FINDING-ercot-priceshape-2026-07.md` §6.3 addendum; A/B pair
 ercot34/ercot35 on the dashboard. The keeper's scored values are
 reproducible on HEAD once the four flags are restored via
 `replay_keeper.py --set`; the durable fix (persist them in `meta.json`)

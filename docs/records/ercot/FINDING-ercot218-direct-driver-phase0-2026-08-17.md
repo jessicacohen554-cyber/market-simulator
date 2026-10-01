@@ -7,10 +7,10 @@ determination NOT-YET, fail set {C3a-2023 −40.1 %, C3b-2023 NRMSE 0.736}, C3c
 the ledgered CAVEAT ×3 (68/181, 22/53, 1/31). **Phase-0 read-only as
 dispatched: no LP, no solve, no year scored, no run registered, no bundle
 modified, no `ScenarioConfig` field, no matrix cell verdict minted.**
-Pre-registered in `docs/PRECOMMIT-ercot218-direct-driver-phase0-2026-08-17.md`,
+Pre-registered in `docs/records/ercot/PRECOMMIT-ercot218-direct-driver-phase0-2026-08-17.md`,
 pushed and blob-verified BEFORE the instrument read any delivery-2023 row.
 Committed probe: `scripts/probes/ercot218_direct_driver_phase0.py` →
-`results/calibration/ercot218_direct_driver_phase0.json`. RETENTION HOLD
+`results/phase0/ercot/ercot218_direct_driver_phase0.json`. RETENTION HOLD
 honoured: `2026-08-16-ercot213-ctl-headbase` and
 `2026-08-15-ercot204-rule26-delete` NOT pruned. This lane is **off-queue by
 the owner dispatch itself** (the ERCOT §5.1 queue holds no live

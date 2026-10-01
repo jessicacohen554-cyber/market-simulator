@@ -1,5 +1,5 @@
 {
- "prereg": "results/calibration/PREREG-pjm146-rggi-allowance-2026-08-02.md",
+ "prereg": "docs/records/pjm/PREREG-pjm146-rggi-allowance-2026-08-02.md",
  "arms": {
   "control": "/home/user/market-simulator/results/calibration/pjm146_control_A",
   "arm": "/home/user/market-simulator/results/calibration/pjm146_rggi_B",

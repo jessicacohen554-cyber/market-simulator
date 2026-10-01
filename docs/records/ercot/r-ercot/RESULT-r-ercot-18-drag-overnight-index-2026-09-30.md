@@ -1,6 +1,6 @@
 # RESULT — R-ERCOT-18: prior-year overnight-commitment allocation of the ST_GAS drag
 
-PRECOMMIT: `docs/handoffs/r-ercot/PRECOMMIT-r-ercot-18-drag-overnight-index-2026-09-30.md` (pinned SHA `0bd29417487453cfa33392dab17fd2dce8fc10c2`). The arm run `2026-09-30-r-18-drag-index` (`results/calibration/r_ercot18_span`, 2019–2025) is compared against keeper `2026-09-29-r-17-south-texas`.
+PRECOMMIT: `docs/records/ercot/r-ercot/PRECOMMIT-r-ercot-18-drag-overnight-index-2026-09-30.md` (pinned SHA `0bd29417487453cfa33392dab17fd2dce8fc10c2`). The arm run `2026-09-30-r-18-drag-index` (`results/calibration/r_ercot18_span`, 2019–2025) is compared against keeper `2026-09-29-r-17-south-texas`.
 
 ## Headline
 

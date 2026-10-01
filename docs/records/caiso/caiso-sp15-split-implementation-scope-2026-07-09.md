@@ -1,6 +1,6 @@
 # CAISO SP15 local-area split — implementation scope (2026-07-09)
 
-Companion to `docs/handoffs/caiso-transmission-ttc-diagnosis-2026-07-09.md`. That diagnosis found
+Companion to `docs/records/caiso/caiso-transmission-ttc-diagnosis-2026-07-09.md`. That diagnosis found
 the dominant CAISO failure is **SP15 copperplate under-pricing** (annual mean LMP under by $48–78,
 growing 2023→2025) — the LA-basin/SDG&E local congestion that sets real SP15 prices cannot form in
 a single copperplate SP15 zone. This doc scopes the fix: **split SP15 into its local capacity

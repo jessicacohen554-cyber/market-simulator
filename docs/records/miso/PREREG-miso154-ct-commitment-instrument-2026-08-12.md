@@ -80,7 +80,7 @@ not read off the answer.
 **IN.** A reusable probe helper `scripts/probes/_miso154_ct_commitment.py`
 exposing the reconstruction as importable functions (not a one-off script
 body), plus its record
-`results/calibration/_miso154_ct_commitment.json`.
+`results/phase0/miso/_miso154_ct_commitment.json`.
 
 **OUT — and each is a standing DO-NOT-REDO or an owner decision:**
 

@@ -6,7 +6,7 @@ arithmetic over the designated keeper's COMMITTED sidecars plus one sanctioned
 
 THE OBJECT
 ----------
-``docs/RESULT-caiso287-startup-decommit-split-2026-09-19.md`` §2 split the CAISO
+``docs/records/caiso/RESULT-caiso287-startup-decommit-split-2026-09-19.md`` §2 split the CAISO
 RA bridge's two screens — (A) the ``startup_aware`` run screen's GAP-MERGING side
 effect and (B) the surplus DECOMMIT screen — and returned
 **(A) GAP-MERGING DOMINANT** unanimously on 2022–2025. It measured that on the
@@ -40,7 +40,7 @@ carry floors) and must reproduce caiso-287's published artifact, G-R2 included,
 or the run is reported FAILED and nothing is quoted from it.
 
 Pre-registration:
-``docs/PRECOMMIT-caiso292-screen-split-on-the-live-keeper-2026-09-20.md``.
+``docs/records/caiso/PRECOMMIT-caiso292-screen-split-on-the-live-keeper-2026-09-20.md``.
 """
 
 from __future__ import annotations
@@ -70,7 +70,7 @@ KEEPER_YEARS = (2022, 2023, 2024, 2025)
 #: (rule 33(d)), the pin .gitignore records.
 GV_BUNDLE = "results/calibration/caiso287_instr_2022"
 GV_SHA = "bb3034214d1d3da70d0db8d8435540f82387222d"
-GV_ARTIFACT = "results/calibration/_caiso287_screen_split_2022.json"
+GV_ARTIFACT = "results/phase0/caiso/_caiso287_screen_split_2022.json"
 #: G-V1, THE GATE: this file's ``measure`` must equal caiso-287's own
 #: ``main`` run at the SAME HEAD, on the same bundle. A pure harness-
 #: equivalence test — it makes no assumption that HEAD still reproduces
@@ -130,7 +130,7 @@ G_DRIFT = {
 }
 
 #: G-D: caiso-291's published startup_aware drop rate on THIS keeper, in %.
-#: results/calibration/_caiso291_bridge_census.json (FINDING-caiso291 §3).
+#: results/phase0/caiso/_caiso291_bridge_census.json (FINDING-caiso291 §3).
 GD_DROP_RATE_PCT = {2022: 64.9, 2023: 76.3, 2024: 89.0, 2025: 93.0}
 GD_TOL_PP = 0.1
 
@@ -475,7 +475,7 @@ def main(out_path: Path, years: tuple[int, ...]) -> int:
     verdicts = {y: r["VERDICT"] for y, r in rows.items()}
     out = {
         "lane": "caiso-292",
-        "precommit": "docs/PRECOMMIT-caiso292-screen-split-on-the-live-keeper-2026-09-20.md",
+        "precommit": "docs/records/caiso/PRECOMMIT-caiso292-screen-split-on-the-live-keeper-2026-09-20.md",
         "keeper_id": KEEPER_ID,
         "keeper_bundle": KEEPER,
         "G_V": gv,
@@ -496,7 +496,7 @@ if __name__ == "__main__":
     ap.add_argument("--years", type=int, nargs="*", default=list(KEEPER_YEARS))
     ap.add_argument(
         "--out", type=Path,
-        default=REPO / "results/calibration/_caiso292_screen_split.json",
+        default=REPO / "results/phase0/caiso/_caiso292_screen_split.json",
     )
     a = ap.parse_args()
     raise SystemExit(main(a.out, tuple(a.years)))

@@ -44,7 +44,7 @@ and the share headline follows it. The committed pre-correction record
 frozen record, with a dated CORRECTION key carrying the corrected values —
 $484.87 -> $193.30 in the 2025 scarce set, share 118.8 % -> 47.3 % (2023
 120.9 % -> 48.4 %, 2024 19.2 % -> 10.5 %). See
-docs/FINDING-xiso-cascade-scan-2026-09-01.md.
+docs/records/governance/FINDING-xiso-cascade-scan-2026-09-01.md.
 
 Run:  .venv/bin/python scripts/probes/_miso167_summer_scarcity_instrument.py
 """
@@ -379,7 +379,7 @@ def main() -> int:
             "foreseen": stage5_foreseen(df),
         }
 
-    dest = ROOT / "results" / "calibration" / "_miso167_summer_scarcity_instrument.json"
+    dest = ROOT / "results" / "phase0" / "miso" / "_miso167_summer_scarcity_instrument.json"
     dest.write_text(json.dumps(out, indent=1, default=float))
     print(f"wrote {dest.relative_to(ROOT)}\n")
 

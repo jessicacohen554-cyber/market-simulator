@@ -2,7 +2,7 @@
 
 **Lane:** capx D4-M · **Model:** Opus · **Branch:** `claude/capx-d4m-ercot-t1h`
 **Charter:** the D4-M prompt (r#21 batch) · **Graded object:**
-`docs/handoffs/FINDING-capx-d4i3-ercot-slack-2026-08-31.md` §4 (P-1..P-8, F-1..F-4, FROZEN)
+`docs/records/forecast/FINDING-capx-d4i3-ercot-slack-2026-08-31.md` §4 (P-1..P-8, F-1..F-4, FROZEN)
 **Date:** 2026-08-31 · **ONE solve** (ERCOT T1-H, years sequential in one invocation, rule 12).
 
 **SCOPE BOUNDARY.** Card Y-C respected: the net-revenue half of the I3 object is HELD and is

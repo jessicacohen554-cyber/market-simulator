@@ -2,7 +2,7 @@
 
 - **Session:** NYISO-NEXT-14, the orchestrator. No LP, no shard.
 - **Keeper read:** `2026-09-29-nyisonext13-recon-detach-span` + stamped 2021 (committed hourly sidecars).
-- **Probe:** `scripts/probes/nyisonext14_upstate_phase0.py` → `results/calibration/_nyisonext14_phase0.json`.
+- **Probe:** `scripts/probes/nyisonext14_upstate_phase0.py` → `results/phase0/nyiso/_nyisonext14_phase0.json`.
 - **Question:** queue item 1 says the pooled static import ladder lowers the price level. Is that the C3a driver?
 
 ## 1. Where the C3a miss sits

@@ -450,7 +450,7 @@ def additions_basis_record(
             "basis are NOT comparable to any additions verdict committed before "
             "2026-08-04, which were scored on the COD basis — the metric means "
             "something different. Retirements-side comparability is unaffected. "
-            "See docs/handoffs/ffr-3s-cod-shifted-scoring-2026-08-04.md."
+            "See docs/records/forecast/ffr-3s-cod-shifted-scoring-2026-08-04.md."
             if basis == ADDITIONS_BASIS_DECISION
             else (
                 "COD basis, reported for comparison against the decision-basis "
@@ -535,7 +535,7 @@ def model_plant_gen(unit_id: str) -> tuple[str, str] | None:
 # Gate membership — the REACHABLE set (owner decision D-24)
 # --------------------------------------------------------------------------- #
 # D-24, SIGNED 2026-08-06 (sitting Addendum X.6). Evidence: FFR-7C
-# ``docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md`` §5 +
+# ``docs/records/forecast/ffr-7c-exit-decode-corrected-target-2026-08-06.md`` §5 +
 # Addendum X.1. ERCOT's >=300 MW recall gate was measuring something no
 # admissible screen can pass: of its two members, one (Decker Creek 2, 405 MW)
 # is capacity the run's fleet never carried, and the other (Sandy Creek 1,
@@ -569,10 +569,10 @@ def model_plant_gen(unit_id: str) -> tuple[str, str] | None:
 # is not taken.
 EXIT_DECODE_EVIDENCE = {
     "ERCOT": {
-        "path": "docs/handoffs/ffr-7c/exit-decode-2026-08-06.json",
+        "path": "docs/records/forecast/ffr-7c/exit-decode-2026-08-06.json",
         "citation": (
             "FFR-7C §2.2 (per-unit margin table) / §2.4 (fleet-basis facts) — "
-            "docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+            "docs/records/forecast/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
         ),
     },
     # NEISO-RC-R R3(i) (2026-08-31): fleet-basis facts measured per EIA-860
@@ -583,10 +583,10 @@ EXIT_DECODE_EVIDENCE = {
     # Phase-0 finding's committed S-4b ledger extraction record NO economic
     # exclusion (every noted unit fails its bar — fail-closed, channel open).
     "NEISO": {
-        "path": "docs/handoffs/neiso-rc-r/exit-decode-2026-08-31.json",
+        "path": "docs/records/neiso/neiso-rc-r/exit-decode-2026-08-31.json",
         "citation": (
             "NEISO-RC-R R3(i) per-vintage fleet-basis measurement — "
-            "docs/handoffs/neiso-rc-r/exit-decode-2026-08-31.json (method "
+            "docs/records/neiso/neiso-rc-r/exit-decode-2026-08-31.json (method "
             "header), executing FINDING-capx-neiso-rc-phase0-2026-08-30.md §6"
         ),
     },
@@ -1395,7 +1395,7 @@ def actual_co2_basis(iso: str) -> str:
     The capacity-track actual is a CAMPD footprint sum, NOT the eGRID
     ISO-basis actual the FC-4 dispatch-skill co2 metric in the same score
     file scores against; the two were conflated once
-    (``docs/handoffs/FINDING-capx-d5-crossover-co2-2026-08-30.md`` §2.3), so
+    (``docs/records/forecast/FINDING-capx-d5-crossover-co2-2026-08-30.md`` §2.3), so
     the basis is now stated in the artifact itself. The ERCOT/PJM STATE sums
     overcount their ISO footprint (whole-TX ≈ +11 % vs ERCOT eGRID; the
     PJM state sum ≈ +54 % vs PJM eGRID) — never decompose across the two

@@ -2,7 +2,7 @@
 
 **Lane:** capx D48 Phase 1 (Fable; rule-14 sign adjudication). Phase 0 (PR #4707,
 `d850eac1`) landed the two DEFAULT-OFF `ScenarioConfig` gates, the DR intake, the
-matrix rows and `docs/handoffs/PREDECL-capx-d48-2026-09-04.md`. This finding grades
+matrix rows and `docs/records/forecast/PREDECL-capx-d48-2026-09-04.md`. This finding grades
 that pre-declaration at full magnitude (§7) after ONE solve: the A/B arm
 `pjm-2021-2025-realized-t1h-d48-devintage` (both fields ON) against D45-R's bare
 `pjm-t1h` (`pjm-2021-2025-realized-t1h-d45r`, key `c6091bd5b62bbc3f`, both fields
@@ -69,7 +69,7 @@ check" in the harness beyond the pre-solve forward-driver guard, which passed.
 
 ## 2. The zero-solve decomposition, refreshed on D45-R's ledgers (post-D44 fleet)
 
-Instrument: `docs/handoffs/d48/devintage-positions-2026-09-04.py`, re-run on
+Instrument: `docs/records/forecast/d48/devintage-positions-2026-09-04.py`, re-run on
 `pjm-2021-2025-realized-t1h-d45r` (outputs `devintage-positions-d45r-2026-09-04.json` /
 `-stdout-…txt` beside the Phase-0 run on the D45 L1 ledgers). Same construction as
 PREDECL §2: entering fleet (`fleet_by_fuel_before`) at class EFORd; VRE / hydro /
@@ -113,7 +113,7 @@ Three readings, all stated before the solve's numbers are read against them:
 
 ## 3. What the solve measured — the A/B on the live stack
 
-Instrument: `docs/handoffs/d48/ab-compare-2026-09-04.py` (+ `.json`, `-stdout-…txt`),
+Instrument: `docs/records/forecast/d48/ab-compare-2026-09-04.py` (+ `.json`, `-stdout-…txt`),
 read entirely off the two committed bundles.
 
 ### 3.1 The ledger rows (both arms, the D45 observability keys)
@@ -159,7 +159,7 @@ in the pipeline differs — dated exits, derates, the 2025 backstop, every addit
 
 ### 3.3 Why — the admission cap is the second mechanism, diagnosed (PREDECL §5)
 
-Instrument: `docs/handoffs/d48/admission-cap-budget-2026-09-04.py` (+ `.json`,
+Instrument: `docs/records/forecast/d48/admission-cap-budget-2026-09-04.py` (+ `.json`,
 `-stdout-…txt`).
 
 **(a) The screen economics are byte-identical.** Every one of the 1,211 candidate rows in

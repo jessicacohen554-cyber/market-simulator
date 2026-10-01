@@ -2,7 +2,7 @@
 
 **Date:** 2026-08-11 · **Lane:** F6-DIAG (diagnosis only) · **Head:** `origin/main` @ `3ae7465`
 · **Branch:** `claude/f6-lmp-backend-parity-1rc197`
-**Pre-registration:** `docs/PREREG-f6-lmp-backend-parity-2026-08-11.md` (committed before any
+**Pre-registration:** `docs/records/misc/PREREG-f6-lmp-backend-parity-2026-08-11.md` (committed before any
 measurement). **Instrument:** `scripts/probes/f6diag_lmp_backend_parity.py`.
 **Nothing was solved, scored or registered.** No production behaviour changed. Rules 12 and 22
 do not bind. No mechanism added, so no rule-28 matrix row is due.
@@ -298,4 +298,4 @@ was not forced closed, absorbed into a widened tolerance, or carved out of the t
 still requires the NYISO data dictionary; it is the first carried-forward item of the fix lane.
 
 Full record — authority, the per-partition before/after table, the acceptance ledger and the
-un-actioned §D-narrow: `docs/handoffs/d32-f6fix-2026-08-13.md`.
+un-actioned §D-narrow: `docs/records/forecast/d32-f6fix-2026-08-13.md`.

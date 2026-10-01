@@ -24,7 +24,7 @@ Emission shape is the ``--json`` shape (``data`` omitted when ``None``) so the
 file is a drop-in for ``forecast_verdict.py --paired-invariants``.
 
 Not standing tooling: the measurement record for
-``docs/handoffs/FINDING-capx-d92-2026-09-10.md``.
+``docs/records/forecast/FINDING-capx-d92-2026-09-10.md``.
 """
 
 from __future__ import annotations

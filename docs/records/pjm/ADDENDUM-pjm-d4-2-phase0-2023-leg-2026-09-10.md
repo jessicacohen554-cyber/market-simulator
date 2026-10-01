@@ -2,7 +2,7 @@
 
 **Session** `pjm-d4-2` · **Date** 2026-09-10 · Written **while the six per-year shards were still
 solving**, so it records the pre-solve position rather than reporting one.
-Parent: `docs/PRECOMMIT-pjm-d4-2-stgas-membership-2026-09-10.md` (§3, §4 carried 2025 only).
+Parent: `docs/records/pjm/PRECOMMIT-pjm-d4-2-stgas-membership-2026-09-10.md` (§3, §4 carried 2025 only).
 
 ---
 

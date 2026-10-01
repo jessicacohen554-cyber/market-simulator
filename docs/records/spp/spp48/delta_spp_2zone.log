@@ -60,4 +60,4 @@ C-5 model weight cap_z vs builder capacity C_z: ratio {'SPP-North': np.float64(1
       h8519  SPP-North:    9216 ->    9245  SPP-South:    8256 ->    8227
       h8520  SPP-North:   10154 ->   10087  SPP-South:    9314 ->    9381
 
-wrote docs/handoffs/spp48/delta_spp_2zone.csv
+wrote docs/records/spp/spp48/delta_spp_2zone.csv

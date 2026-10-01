@@ -3,7 +3,7 @@ evolution ledgers and lay the model's adequacy position, the capacity leg its sc
 and its retirement / entry events beside the published record the sibling instrument
 (published-positions-2026-09-03.py/.json) holds.
 
-    uv run python docs/handoffs/d45/positions-from-ledgers-2026-09-03.py <run_dir> [<run_dir> ...]
+    uv run python docs/records/forecast/d45/positions-from-ledgers-2026-09-03.py <run_dir> [<run_dir> ...]
 
 Per year the ledger carries (capx D45 runner observability, additive): the ENTERING-fleet
 CR-1 position ``capacity_reserve_position`` (None when the ISO's clearing gate is off) and

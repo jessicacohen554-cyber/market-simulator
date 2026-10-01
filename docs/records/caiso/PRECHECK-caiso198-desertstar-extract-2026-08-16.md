@@ -182,9 +182,9 @@ NOT-YET is the honest fallback).
 * Probes `scripts/probes/_caiso198_ctrl_tolerance.py` (G-CTRL),
   `_caiso198_ab_gates.py` (G-DELTA legs b/c + G-ENGAGE),
   `_caiso198_gcov_remeasure.py` (§4 obligation); committed records
-  `results/calibration/_caiso198_ctrl_tolerance.json`, `_caiso198_ab_gates.json`,
+  `results/phase0/caiso/_caiso198_ctrl_tolerance.json`, `_caiso198_ab_gates.json`,
   `_caiso198_gcov_remeasure.json`.
-* `results/calibration/FINDING-caiso198-desertstar-extract-2026-08-16.md` — gate
+* `docs/records/caiso/FINDING-caiso198-desertstar-extract-2026-08-16.md` — gate
   tally, the §0 clause quoted, the single-mechanism statement verbatim, the §5
   flip adjudication if it fires, the owner decision package, matrix duty (b)
   (`campd_outage_windows` CAISO evidence citation append — the recorded extract

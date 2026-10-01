@@ -4,10 +4,10 @@
 — every number below is read from the FORWARD keeper's committed sidecars
 (`results/calibration/ercot234_eastex_identity`), the committed actuals, the
 EIA-930 wide extract and the measured ORDC/reserves series. Precommit
-`docs/PRECOMMIT-ercot244-online-cap-phase0-2026-08-30.md` pushed +
+`docs/records/ercot/PRECOMMIT-ercot244-online-cap-phase0-2026-08-30.md` pushed +
 blob-verified (52ab16e5, sha256 ee49f6ff) BEFORE any measurement; probe
 `scripts/probes/ercot244_online_cap_phase0.py` →
-`results/calibration/ercot244_online_cap_phase0.json` (committed). **The
+`results/phase0/ercot/ercot244_online_cap_phase0.json` (committed). **The
 Phase-1 A/B license is NOT spent** — no lever, no solve, no ScenarioConfig
 change, no matrix verdict move; the two-config keeper untouched. One
 implementation repair, construction unchanged (the precommit's amendment

@@ -1,7 +1,7 @@
 # RESULT — R-PJM: PJM 2019–2025 re-solved on corrected backcast inputs (2026-09-24)
 
 **Run:** `2026-09-24-pjm-r-pjm-corrected` · bundle `results/calibration/rpjm_inputs_span` (2019–2025, one
-bundle) · PRECOMMIT `docs/PRECOMMIT-r-pjm-corrected-inputs-2019-2025-2026-09-24.md`, pinned
+bundle) · PRECOMMIT `docs/records/pjm/PRECOMMIT-r-pjm-corrected-inputs-2019-2025-2026-09-24.md`, pinned
 `8e2993a9a81f005ddfaf3615c549824683766532` · charter: audit §5.3.7.
 **Incumbent (control, rule 29(b) form 4):** `2026-09-23-pjm-h19-dbs-span` (2023–25) + folded
 `2026-09-23-pjm-h19-dbs-touchpoint` (2020–22). **Both re-scored on the SAME rebuilt benchmark** (the

@@ -2,7 +2,7 @@
   "probe": "nyiso220_fleet_period_evidence",
   "zero_lp": true,
   "owner_instruction": "I don't think the other 145 should keep the month that's the problem I think that's way too generous for how flexible hydro is. this deserves a charter to get right",
-  "charter": "docs/CHARTER-nyiso220-fleet-wide-hydro-budget-period-2026-09-08.md",
+  "charter": "docs/records/nyiso/CHARTER-nyiso220-fleet-wide-hydro-budget-period-2026-09-08.md",
   "source_arm": "results/calibration/nyiso220_arm_2025 (gitignored, rule 29(c)/31)",
   "residual_footprint_decomposition": {
     "total_hydro_twh": 24.0589,

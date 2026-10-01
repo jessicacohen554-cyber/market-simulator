@@ -87,7 +87,7 @@ this SHA. Offer curve byte-identical (no authorized-price-tuning change). DOF: z
 
 A passing gate does not promote and a failing one does not kill; both are reported at full magnitude.
 
-- **G1 recipe:** `docs/handoffs/neiso118/shard_check.py` PASS on every leg (config delta `{}`, offer curve, std
+- **G1 recipe:** `docs/records/neiso/neiso118/shard_check.py` PASS on every leg (config delta `{}`, offer curve, std
   extract, CT artifact sha256 `f57df14e…`); log line `coal per-yard budget (NEISO <Y>)` present (3/3/2/2/1/1/2 yards).
 - **G2 mechanism:** Canal 3 (1599 CT_PEAKER) 2019 P1 ≤ 0.30 TWh. **2023, 2024, 2025: every class TWh equal to the
   keeper's within 0.01 TWh** (identical LP inputs).
@@ -102,7 +102,7 @@ A passing gate does not promote and a failing one does not kill; both are report
 Seven shards `neiso118_<Y>`, 2019–2025 (the keeper's whole year set, rule 34(c)), pinned to this doc's commit SHA
 (§8). Branch `claude/neiso118-<Y>`. Each curates `coal_stocks`, `coal_receipts`, `hydro_plant_modes --iso NEISO` before
 solving. Full bundle incl. `dispatch/<Y>_P1.parquet` pushed via `.gitignore` negation + plain `git add`. Parent
-composes (`docs/handoffs/neiso118/compose_span.py`), attests, registers `--no-prune`, scores; it never solves
+composes (`docs/records/neiso/neiso118/compose_span.py`), attests, registers `--no-prune`, scores; it never solves
 (rule 32(a)). Per-year dirs gitignored in the parent's tree.
 
 ## 8. Launch record

@@ -34,7 +34,7 @@ not written and no pre-registration is filed.
 > C3c the lone ledgered caveat); the only movement anywhere is the 2024 C3c
 > denominator, 12 h → 13 h. Neither verdict-flip edge §5 of the nyiso-137 finding
 > flagged fired. Evidence:
-> `results/calibration/FINDING-nyiso139-rtd-clock-repair-landed-2026-08-16.md`.
+> `docs/records/nyiso/FINDING-nyiso139-rtd-clock-repair-landed-2026-08-16.md`.
 >
 > nyiso-138 spent no solve, wrote no mechanism, and made no edit to `src/`.
 > nyiso-139 spent no solve either: the repair is data intake plus a one-line

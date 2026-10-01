@@ -24,15 +24,15 @@ partition. **THIS SESSION RUNS NO LP SOLVE** (see §5, stop S1).
 ## §0 — DISCLOSURE: everything read before this document
 
 **Documents (in full or in the cited section):**
-`docs/FINDING-nyiso189-steam-collapse-identity-2026-09-05.md` (§§1–6);
-`results/calibration/PREREG-nyiso189-steam-collapse-identity-ab.md` §0;
-`docs/FINDING-nyiso187-ct-steam-merit-position-2026-09-04.md` §§1–2.2;
-`docs/FINDING-nyiso97-load-pocket-identification-2026-07-29.md` §§4–5 (the
+`docs/records/nyiso/FINDING-nyiso189-steam-collapse-identity-2026-09-05.md` (§§1–6);
+`docs/records/nyiso/PREREG-nyiso189-steam-collapse-identity-ab.md` §0;
+`docs/records/nyiso/FINDING-nyiso187-ct-steam-merit-position-2026-09-04.md` §§1–2.2;
+`docs/records/nyiso/FINDING-nyiso97-load-pocket-identification-2026-07-29.md` §§4–5 (the
 cell-G re-open conditions, verbatim below);
 `docs/mechanism-testing-matrix.md` §5.5 (the nyiso-189 header + the four
 preserved queues); the NYISO shard cells `egrid_steam_collapse_heat_rates`
 (K), `scuc_load_pocket_commitment` (G), `cc_capacity_reconcile` (K);
-`docs/DECISION-CARD-nyiso148-2025-level-remainder-2026-08-21.md` (heading
+`docs/records/nyiso/DECISION-CARD-nyiso148-2025-level-remainder-2026-08-21.md` (heading
 scan only — **Q1 is confirmed still PENDING**, so §5 stop S5 applies);
 CLAUDE.md rules 1, 5, 12–16, 19, 21–25, 27, 28.
 

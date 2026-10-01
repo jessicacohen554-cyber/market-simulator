@@ -24,7 +24,7 @@ in the dashboard payload; replayed the keeper in place as the control
 found ONE live admissible lever while enumerating the record and A/B-solved it
 (§3.3); and measured, on the current keeper, the C8 exposure nyiso-181
 escalated. Solves: one in-place control replay + one arm. Records:
-`docs/FINDING-nyiso192-frontier-adjudication-2026-09-05.md` and the
+`docs/records/nyiso/FINDING-nyiso192-frontier-adjudication-2026-09-05.md` and the
 `_nyiso192_*.json` machine records under `results/calibration/`.
 
 ## 1. The owner's definition, applied — and why enumeration, not assertion
@@ -213,13 +213,13 @@ grain-dependent, and that is stated here rather than discovered later.
 **Addendum, nyiso-193 (2026-09-05, later the same day).** The owner ruled Q39 at r#37
 (card C-10, option A) before this assessment was served, and D56-R2 executed it: `frontier`
 is DECLARED on `2026-09-05-nyiso-189-steam-identity` at `origin/main`
-(`docs/handoffs/FINDING-capx-d56r2-nyiso-frontier-2026-09-05.md`). §4's recommendation
+(`docs/records/forecast/FINDING-capx-d56r2-nyiso-frontier-2026-09-05.md`). §4's recommendation
 stands as the lane's record; its two named conditions — the D-2 / C8 grain (§3.2) and the
 Astoria-panel arm (§3.3, card question nyiso192-Q1, unruled) — are now conditions on the
 declared frontier's durability. The successor records: the intake spec for the NYC steam
-delivered-gas basis (`docs/INTAKE-SPEC-nyiso193-nyc-steam-delivered-gas-2026-09-05.md`) and
+delivered-gas basis (`docs/records/nyiso/INTAKE-SPEC-nyiso193-nyc-steam-delivered-gas-2026-09-05.md`) and
 the scorer-lane card on re-basing D-2 / C8 to unit grain
-(`docs/DECISION-CARD-nyiso193-d2-unit-grain-2026-09-05.md`).
+(`docs/records/nyiso/DECISION-CARD-nyiso193-d2-unit-grain-2026-09-05.md`).
 
 ## 5. What a ratified declaration would and would not claim
 

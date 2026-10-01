@@ -4,7 +4,7 @@
 **Phase** mechanism + full-span arm ·
 **Keeper under test** `2026-07-30-ercot140-coal-peak-offer`
 (bundle `results/calibration/ercot140_coal_peak_arm`) ·
-**Chartered by** `docs/PRECOMMIT-ercot139-cc-committed-offer-2026-07-30.md` §4.1
+**Chartered by** `docs/records/ercot/PRECOMMIT-ercot139-cc-committed-offer-2026-07-30.md` §4.1
 (the named successor: "the successor is then the **commitment STATE** (the
 bridge's floor coverage outside gap hours), **NOT** another price lever") ·
 **Arm** `ercot_gas_bridge_online_hours` (new gate, default off, requires the

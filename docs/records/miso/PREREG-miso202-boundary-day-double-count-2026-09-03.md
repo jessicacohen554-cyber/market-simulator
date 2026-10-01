@@ -1,7 +1,7 @@
 # PREREG miso-202 — the ADJACENT-WINDOW BOUNDARY-DAY DOUBLE-COUNT (2026-09-03)
 
 **Registered BEFORE the mechanism exists.** Phase 0
-(`results/calibration/_miso202_boundary_day_phase0.json`, probe
+(`results/phase0/miso/_miso202_boundary_day_phase0.json`, probe
 `scripts/probes/_miso202_boundary_day_phase0.py`) was committed first, before this
 document and before a line of mechanism code.
 

@@ -1,11 +1,11 @@
 # CHARTER — pjm-132, executing the authorized within-season re-conditioning
 
-**Lane:** `docs/handoffs/pjm-frontier-path-2026-07.md` §3c — the last named
+**Lane:** `docs/records/pjm/pjm-frontier-path-2026-07.md` §3c — the last named
 admissible mechanism.
-**Authority:** `docs/handoffs/pjm-midcurve-reconditioning-memo-2026-07.md`,
+**Authority:** `docs/records/pjm/pjm-midcurve-reconditioning-memo-2026-07.md`,
 **AUTHORIZED WITH AN AMENDMENT** by the owner 2026-07-27 (decision banner in
 the memo). Predecessor: pjm-131
-(`results/calibration/FINDING-pjm131-gate1-no-admissible-arm-2026-07.md`).
+(`docs/records/pjm/FINDING-pjm131-gate1-no-admissible-arm-2026-07.md`).
 
 This charter is committed **before** the re-derive is run and before any solve.
 It **inherits memo §4's gates verbatim** — it does not restate them loosely and

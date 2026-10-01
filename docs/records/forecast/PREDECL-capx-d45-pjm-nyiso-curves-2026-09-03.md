@@ -1,7 +1,7 @@
 # PRE-DECLARATION — capx D45: the PJM + NYISO first diagnostics-on T1-H solves at the live stack posture, plus the two pre-stated probe legs the curve-ON adjudication needs
 
 **Lane:** capx D45 — the once-only cross-ISO clearing-half + curve-ON charter
-(`docs/handoffs/capx-director-prompt-pack-2026-08.md` §D45, issued r#31). Branch
+(`docs/records/forecast/capx-director-prompt-pack-2026-08.md` §D45, issued r#31). Branch
 `claude/capx-d45-pjm-nyiso-curves-f3dn56`, FRESH off `origin/main` `c73f78f5`.
 **Pushed BEFORE any solve started.** Predictions are graded at full magnitude in the
 finding, misses included, and nothing below may be re-narrated after a result is read.
@@ -53,7 +53,7 @@ re-solve rather than a cache hit.
 
 ### 1.1 The published record the positions are graded against (computed BEFORE the solve)
 
-Instrument: `docs/handoffs/d45/published-positions-2026-09-03.py` (+ `.json`), zero model
+Instrument: `docs/records/forecast/d45/published-positions-2026-09-03.py` (+ `.json`), zero model
 quantities. Every number is a committed CSV row or a transcription from a fetched primary
 document whose sha256 the finding records.
 

@@ -1,6 +1,6 @@
 {
  "lane": "caiso-285",
- "precommit": "docs/PRECOMMIT-caiso285-instrumented-probe-2026-09-17.md",
+ "precommit": "docs/records/caiso/PRECOMMIT-caiso285-instrumented-probe-2026-09-17.md",
  "precommit_sha": "b48448cbacc3eabebf57a051039797847ff9cf14",
  "probe_bundle": "results/calibration/caiso285_instr_2024",
  "keeper_bundle": "results/calibration/caiso275_B_gascoupling_span",

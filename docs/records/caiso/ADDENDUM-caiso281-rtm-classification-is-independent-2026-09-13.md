@@ -1,6 +1,6 @@
 # ADDENDUM caiso-281 — G-OVERLAP is UNRUNNABLE as written; RTM is classified INDEPENDENTLY
 
-**Charter:** `docs/PRECOMMIT-caiso281-rtm-offer-surface-intake-2026-09-13.md`
+**Charter:** `docs/records/caiso/PRECOMMIT-caiso281-rtm-offer-surface-intake-2026-09-13.md`
 **Date:** 2026-09-13 · **Written and pushed BEFORE any RTM byte exists** — wave 1 was launched
 minutes earlier and its shards have returned nothing. **This amendment is therefore structural,
 not result-driven, and that is the only reason it is permitted to touch a pre-registered gate.**

@@ -3,7 +3,7 @@
 **Lane:** capx D51 — the rule-23 `[R-FROZEN-DERIVE]` re-derivation D49 §2.6 routed (director
 dispatch; capx ledger §0ae). Branch `claude/capx-d51-miso-ratio-rc83dw` (harness-assigned;
 the dispatch named `claude/capx-d51-miso-accounting-ratio`), fresh off `origin/main`
-`a35c9f9`. **Pre-declaration:** `docs/handoffs/PREDECL-capx-d51-2026-09-04.md`, pushed at
+`a35c9f9`. **Pre-declaration:** `docs/records/forecast/PREDECL-capx-d51-2026-09-04.md`, pushed at
 `483bb95` BEFORE the derive script existed and before any solve; graded at full magnitude in
 §5, misses included. **Date:** 2026-09-04.
 

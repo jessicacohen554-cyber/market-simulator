@@ -103,7 +103,7 @@ built. Filed as a follow-on measurement lane, NOT in this ask.
 
 ## 4. The owner ask (drafted this session)
 
-`docs/handoffs/caiso-106-evening-intertie-exhaustion-ask-2026-07-20.md` —
+`docs/records/caiso/caiso-106-evening-intertie-exhaustion-ask-2026-07-20.md` —
 a MEASURED, net-load-conditioned EVENING import-exhaustion ceiling on the
 CAISO import node (the class of the MISO/PJM/NEISO measured deliverability
 envelopes and the caiso-87/93/94 measured depths), with pre-registered

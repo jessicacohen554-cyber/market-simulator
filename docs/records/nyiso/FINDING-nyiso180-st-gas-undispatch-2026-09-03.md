@@ -6,10 +6,10 @@
 grade 5, fails 3 {C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c}.
 **NO LEVER OPENED — pre-declared in every branch** (PREREG §4). No parameter
 touched, no band swept, no arm built.
-**Gates:** `results/calibration/PREREG-nyiso180-st-gas-undispatch.md`, committed
+**Gates:** `docs/records/nyiso/PREREG-nyiso180-st-gas-undispatch.md`, committed
 with the probe at `fbf93e50` **before either ran**, including its §0 disclosure
 of the eight structural reads held at writing time.
-**Machine artifacts:** `results/calibration/_nyiso180_st_gas_undispatch.json`
+**Machine artifacts:** `results/phase0/nyiso/_nyiso180_st_gas_undispatch.json`
 (gates) and `_nyiso180_ramp_report.json` (post-hoc report); probes
 `scripts/probes/nyiso180_st_gas_undispatch.py` and `nyiso180_ramp_report.py`.
 

@@ -1,7 +1,7 @@
 # RESULT — NWPP-NEXT-6: WECC Path 76 link and the SB-population CT heat-rate re-derive, 2019–2025 → KEEPER #13
 
 **Run:** `2026-09-26-nwppnext6-path76-ctrederive` (arm AB), bundle `results/calibration/nwppnext6ab_span`.
-**PRECOMMIT:** `docs/handoffs/PRECOMMIT-nwppnext6-path76-and-ct-rederive-2019-2025-2026-09-26.md`.
+**PRECOMMIT:** `docs/records/nwpp/PRECOMMIT-nwppnext6-path76-and-ct-rederive-2019-2025-2026-09-26.md`.
 **Control:** keeper #12 `2026-09-26-nwppnext5-standby`, using its committed bundle (G-DRIFT form 4, PRECOMMIT §3).
 **Solved by:** 14 year-isolated shards (rule 36): arm A at `e29efd5f`, arm AB at `0a84941d`. The parent ran no LP.
 All 14 legs passed hard stops 1–7. Four arm-A shards restarted mid-run and finished later.

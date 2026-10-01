@@ -5,7 +5,7 @@
 before any footprint measurement) and
 `PRECOMMIT-caiso240-ADDENDUM-arm-2026-09-03.md` (`30389e1a`, pushed before the
 solve). Instrument: `scripts/probes/_caiso240_default_hr_mult_census.py` →
-`results/calibration/_caiso240_default_hr_mult_census.json`. **The census itself
+`results/phase0/caiso/_caiso240_default_hr_mult_census.json`. **The census itself
 is ZERO SOLVES**; the one arm it authorises is scored separately.
 
 CAISO holds **no `complete` and no `final` marker**; the holdout spend freeze is

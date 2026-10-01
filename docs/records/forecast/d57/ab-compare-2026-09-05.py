@@ -9,7 +9,7 @@ price on the published pair (a statement about the operand, never a value applie
 decision composition (decided / entry_capped nameplate by fuel); and the FC-3 score rows of every
 leg side by side. Zero free parameters.
 
-Run from the repo root: ``uv run python docs/handoffs/d57/ab-compare-2026-09-05.py [out.json]``
+Run from the repo root: ``uv run python docs/records/forecast/d57/ab-compare-2026-09-05.py [out.json]``
 """
 
 import glob
@@ -18,7 +18,7 @@ import sys
 
 PUB = {
     r["delivery_year"]: r
-    for r in json.load(open("docs/handoffs/d45/published-positions-2026-09-03.json"))[
+    for r in json.load(open("docs/records/forecast/d45/published-positions-2026-09-03.json"))[
         "pjm"
     ]
 }

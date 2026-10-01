@@ -29,8 +29,8 @@ STATE ON MAIN
 - Determination: NOT-YET on {dispatch_corr}, ONE record. C4 coal 2023 is r 0.695 / NRMSE 0.283 against the 0.70 floor.
   Price is UNSCORED (rubric v3.8).
 - NEXT-11 was zero LP. Read first:
-  - docs/handoffs/FINDING-nwppnext11-coal-c1-c4-decomposition-2026-09-29.md (all of it; §5 has the owner rulings)
-  - docs/handoffs/PRECOMMIT-nwppnext10-exit-ym-routing-2019-2025-2026-09-29.md (§3 G-DRIFT, §4 recipe, §5 hard stops)
+  - docs/records/nwpp/FINDING-nwppnext11-coal-c1-c4-decomposition-2026-09-29.md (all of it; §5 has the owner rulings)
+  - docs/records/nwpp/PRECOMMIT-nwppnext10-exit-ym-routing-2019-2025-2026-09-29.md (§3 G-DRIFT, §4 recipe, §5 hard stops)
   - docs/calibration-log/nwpp.md (latest entry), docs/codebase-site/data/mechanism-matrix/NWPP.js,
     docs/mechanism-testing-matrix.md §5.9
 

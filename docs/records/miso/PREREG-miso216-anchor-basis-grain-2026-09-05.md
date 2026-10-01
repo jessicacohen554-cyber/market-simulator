@@ -99,7 +99,7 @@ packet is the deliverable and the lane hands off to the alternative queue head.
 ## 4. What will be measured (M-0, A-1 … A-4)
 
 Probe `scripts/probes/_miso216_anchor_basis_grain_phase0.py` → record
-`results/calibration/_miso216_anchor_basis_grain.json`. Reuses the miso-215 readers
+`results/phase0/miso/_miso216_anchor_basis_grain.json`. Reuses the miso-215 readers
 (`build_year`, `keeper_config`, the static screen, the margin-sizing block, the two-build
 dual-fuel separation).
 

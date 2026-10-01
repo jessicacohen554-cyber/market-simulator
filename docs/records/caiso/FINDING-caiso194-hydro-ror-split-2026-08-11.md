@@ -191,11 +191,11 @@ The two probes added are read-only diagnostics.
 
 ## 6. Artifacts
 
-* `results/calibration/PRECHECK-caiso194-hydro-ror-split-2026-08-11.md` — anchors,
+* `docs/records/caiso/PRECHECK-caiso194-hydro-ror-split-2026-08-11.md` — anchors,
   committed pre-measurement (`2df253f`)
-* `results/calibration/_caiso194_ror_partition.json` — per-plant classification, method
+* `results/phase0/caiso/_caiso194_ror_partition.json` — per-plant classification, method
   counts, coverage arithmetic, determinism hashes, gate verdicts
-* `results/calibration/_caiso194_engagement.json` — the §3 engagement evidence
+* `results/phase0/caiso/_caiso194_engagement.json` — the §3 engagement evidence
 * `scripts/probes/_caiso194_precheck_labeled_share.py` — the G-SHARE anchor (rule 1 only)
 * `scripts/probes/_caiso194_partition_record.py` — G-COVER / G-SHARE arithmetic
 * `scripts/probes/_caiso194_engagement.py` — object-level engagement probe (no LP)

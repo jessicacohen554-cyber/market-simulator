@@ -3,7 +3,7 @@
 **Session:** nyiso-230 · **ISO:** NYISO · **Date:** 2026-09-13
 **Pre-registration:** `results/calibration/PRECOMMIT-nyiso230-zonal-anchor-vintage.md`, pushed
 before any LP. Gate scorer `scripts/probes/nyiso230_screen_gates.py`, **committed before the arm's
-numbers existed**. Gate JSON: `results/calibration/_nyiso230_screen_gates_2022.json`.
+numbers existed**. Gate JSON: `results/phase0/nyiso/_nyiso230_screen_gates_2022.json`.
 **Keeper `2026-09-12-nyiso229-hourgrain-span` UNCHANGED. Nothing promoted, nothing registered.**
 **Rule 32 `[R-SHARD]`: the parent ran ZERO LP.** Two shard containers; the second produced the arm.
 

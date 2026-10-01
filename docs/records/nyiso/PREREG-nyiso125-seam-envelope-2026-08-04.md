@@ -55,7 +55,7 @@ three training years at `data/raw/NYISO/interface-flows/`.
 ## §2 — Phase 0: what is identified, and what is refused
 
 Probe: `scripts/probes/_nyiso125_seam_envelope.py` (no LP).
-Record: `results/calibration/_nyiso125_seam_envelope.json`.
+Record: `results/phase0/nyiso/_nyiso125_seam_envelope.json`.
 
 ### 2.1 One row is excluded as an accounting duplicate
 

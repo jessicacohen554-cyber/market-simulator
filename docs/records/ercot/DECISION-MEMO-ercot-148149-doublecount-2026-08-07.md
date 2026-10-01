@@ -3,7 +3,7 @@
 **For the owner. Requested via the ercot-175 session's decision card ("Need a
 briefing first"). Nothing here is decided; the event-cap ceiling lane stays
 FROZEN until you rule. Sources: `FINDING-ercot172/173/174-*.md`,
-`results/calibration/ercot174_attribution_check.json`, PRECOMMIT-ercot172 §5.**
+`results/phase0/ercot/ercot174_attribution_check.json`, PRECOMMIT-ercot172 §5.**
 
 ## 1. The collision in one paragraph
 

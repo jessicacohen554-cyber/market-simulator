@@ -123,7 +123,7 @@ def main() -> int:
             print("  -", f)
     else:
         print("PHASE 0 PASSED — all four checks to 0.000 MW.")
-    Path("docs/handoffs/d67/phase0_reproduction.json").write_text(
+    Path("docs/records/forecast/d67/phase0_reproduction.json").write_text(
         json.dumps({"passed": not fails, "failures": fails, **out}, indent=2) + "\n")
     return 1 if fails else 0
 

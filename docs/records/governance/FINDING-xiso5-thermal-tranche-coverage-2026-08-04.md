@@ -6,8 +6,8 @@ changed in any ISO, no cell verdict minted.**
 
 **Probe:** `scripts/probes/_xiso5_thermal_tranche_coverage.py` (committed bytes
 only; no CAMPD read, no deriver execution — seconds).
-**Record:** `results/calibration/_xiso5_thermal_tranche_coverage.json`.
-**Transcript:** `results/calibration/PROBE-xiso5-thermal-tranche-coverage-2026-08-04.txt`.
+**Record:** `results/phase0/governance/_xiso5_thermal_tranche_coverage.json`.
+**Transcript:** `results/phase0/governance/PROBE-xiso5-thermal-tranche-coverage-2026-08-04.txt`.
 
 > **Session label.** The charter prompt is titled "XISO-1". That label is
 > already SPENT — `FINDING-xiso1-diurnal-price-amplitude-is-systemic-2026-08-01.md`
@@ -403,7 +403,7 @@ the MISO lane behind this one.
 
 ```
 python scripts/probes/_xiso5_thermal_tranche_coverage.py \
-    --json results/calibration/_xiso5_thermal_tranche_coverage.json
+    --json results/phase0/governance/_xiso5_thermal_tranche_coverage.json
 ```
 
 Committed bytes only, seconds, no CAMPD read. **DO-NOT-REDO:** re-run the probe

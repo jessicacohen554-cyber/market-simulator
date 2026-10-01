@@ -5,13 +5,13 @@
 owner ruling** (see §10, added after the ruling), superseding
 `2026-08-30-nyiso-159-loss-surface`. Determination NOT-YET, grade 5, fails 3
 {C1-2023-ST_GAS, C3a-2025 −11.2 %, C3c}.
-**Gates:** `results/calibration/PREREG-nyiso177-degradation-root-cause.md`,
+**Gates:** `docs/records/nyiso/PREREG-nyiso177-degradation-root-cause.md`,
 committed at `966da189` **before any measurement**, amended at `499430f4`
 **before any solve** and with no score of any kind consulted.
 **Runs registered:** `2026-09-02-nyiso-177-destack-unguarded` (probe) and
 `2026-09-02-nyiso-177-vintage-matched` (**the promoted keeper**), both NOT-YET.
-**Machine artifacts:** `results/calibration/_nyiso177_root_cause_phase0.json`,
-`results/calibration/_nyiso177_availability_basis_gates.json`; probes
+**Machine artifacts:** `results/phase0/nyiso/_nyiso177_root_cause_phase0.json`,
+`results/phase0/nyiso/_nyiso177_availability_basis_gates.json`; probes
 `scripts/probes/nyiso177_degradation_root_cause.py`,
 `scripts/probes/nyiso177_availability_basis_gates.py`.
 

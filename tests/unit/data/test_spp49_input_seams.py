@@ -8,7 +8,7 @@ Seam 2: the simple-cycle heat-rate floor (``eia860._apply_simple_cycle_hr_floor`
 Every fixture is synthetic (a tmp reference CSV, an in-memory F923 frame, a
 three-row fleet); nothing here reads the committed data except the
 declared-default / coercion tests, which read ``ScenarioConfig`` alone.
-PRECOMMIT: docs/handoffs/PRECOMMIT-spp-49-2026-09-08.md.
+PRECOMMIT: docs/records/spp/PRECOMMIT-spp-49-2026-09-08.md.
 """
 
 from __future__ import annotations

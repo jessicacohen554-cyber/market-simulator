@@ -348,7 +348,7 @@ not, and §3.1 supplies the one that does.
 
 `PRECOMMIT-caiso253-hod2223-window-charter-2026-09-06.md` (pushed first);
 `scripts/probes/_caiso253_hod2223_gates.py` +
-`results/calibration/_caiso253_hod2223_gates.json`;
+`results/phase0/caiso/_caiso253_hod2223_gates.json`;
 `scripts/probes/_caiso253_hod2223_diagnostics.py` +
 `_caiso253_hod2223_diagnostics.json`; this finding; the
 `docs/calibration-log/caiso.md` entry; the rule-28 CAISO matrix-shard

@@ -4,7 +4,7 @@
 `origin/main` **`0f7a4842`**. Pre-registered in `PRECOMMIT-capx-d76-p3-2026-09-06.md`,
 **pushed before the first LP** (`5259d519`). Phase 0/1 record:
 `FINDING-capx-d76-2026-09-06.md`; phase 2: `FINDING-capx-d76-p2-2026-09-06.md`.
-Instruments (extended, not forked): `docs/handoffs/d76/p2_predeclare.py` (`--isos`),
+Instruments (extended, not forked): `docs/records/forecast/d76/p2_predeclare.py` (`--isos`),
 `p2_gate.py` (`--predeclare`), `p2_consumer_probe.py`, `p2_accreditation_probe.py`;
 outputs `p3_predeclare.json`, `p3_predeclare_addendum.json`, `p3_gate_{neiso,nyiso,pjm}.json`.
 
@@ -442,7 +442,7 @@ stays **`O`** in all three: the mechanism is measured but not adjudicated — ar
 owner card.
 
 **All six bundles are DELETED from `results/hindcast/` before this PR merges** (rule
-29(c)). This FINDING, the PRECOMMIT and `docs/handoffs/d76/p3_gate_{neiso,nyiso,pjm}.json` +
+29(c)). This FINDING, the PRECOMMIT and `docs/records/forecast/d76/p3_gate_{neiso,nyiso,pjm}.json` +
 `p3_predeclare.json` / `p3_predeclare_addendum.json` carry **every number the lane will ever cite**; git history is the
 record for the bytes. Nothing is registered on any dashboard — a screen bundle is never
 registered, and `KEEP_REQUIRED_UNMAPPED_BUNDLES` is not the route for one.
@@ -451,19 +451,19 @@ registered, and `KEEP_REQUIRED_UNMAPPED_BUNDLES` is not the route for one.
 
 ```bash
 .venv/bin/python scripts/regenerate_clean.py            # fresh checkout only (§2.1)
-.venv/bin/python docs/handoffs/d76/p2_predeclare.py --isos NEISO NYISO \
-    --out docs/handoffs/d76/p3_predeclare.json          # the pre-solve declaration, zero LP
+.venv/bin/python docs/records/forecast/d76/p2_predeclare.py --isos NEISO NYISO \
+    --out docs/records/forecast/d76/p3_predeclare.json          # the pre-solve declaration, zero LP
 # four legs, sequential, one at a time, NO commit between the legs of an A/B:
 #   scripts/run_capacity_hindcast.py --iso <ISO> --start-year 2021 --end-year 2023 \
 #     --vintage 2020 --entry-screen-diagnostics [--no-]capacity-screen-peak-measured-hindcast \
 #     --out-dir results/hindcast/d76p3-<iso>-<control|arm>
-.venv/bin/python docs/handoffs/d76/p2_gate.py --iso <ISO> \
+.venv/bin/python docs/records/forecast/d76/p2_gate.py --iso <ISO> \
     --control results/hindcast/d76p3-<iso>-control --arm results/hindcast/d76p3-<iso>-arm \
-    --predeclare docs/handoffs/d76/p3_predeclare.json --out docs/handoffs/d76/p3_gate_<iso>.json
+    --predeclare docs/records/forecast/d76/p3_predeclare.json --out docs/records/forecast/d76/p3_gate_<iso>.json
 .venv/bin/python scripts/score_capacity_hindcast.py --bundle <each of the four>   # STOP 5
 .venv/bin/python -m pytest tests/unit/pipeline/test_capacity_screen_peak_measured_hindcast.py  # STOP 6
-.venv/bin/python docs/handoffs/d76/p2_consumer_probe.py --predeclare docs/handoffs/d76/p3_predeclare.json
-.venv/bin/python docs/handoffs/d76/p2_accreditation_probe.py --predeclare docs/handoffs/d76/p3_predeclare.json \
+.venv/bin/python docs/records/forecast/d76/p2_consumer_probe.py --predeclare docs/records/forecast/d76/p3_predeclare.json
+.venv/bin/python docs/records/forecast/d76/p2_accreditation_probe.py --predeclare docs/records/forecast/d76/p3_predeclare.json \
     --bundle NEISO=results/hindcast/d76p3-neiso-control NYISO=results/hindcast/d76p3-nyiso-control
 ```
 

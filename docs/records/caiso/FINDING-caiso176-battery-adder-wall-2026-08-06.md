@@ -11,7 +11,7 @@ UNTOUCHED.
 
 Pre-registration: `PRECHECK-caiso176-frontier-dof-2026-08-06.md` §2.
 Instrument: `scripts/probes/_caiso176_bidstack_reservation.py`.
-Record: `results/calibration/_caiso176_bidstack_reservation.json`.
+Record: `results/phase0/caiso/_caiso176_bidstack_reservation.json`.
 
 ---
 

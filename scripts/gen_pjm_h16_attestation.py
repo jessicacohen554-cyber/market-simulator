@@ -65,7 +65,7 @@ ATTESTED_BY = (
     "now MEASURED ON PJM rather than inferred from NEISO, and a successor PJM lane "
     "may use form 4 across this window with a measurement behind it. "
     "Gates G1-G5 and the reported/gating asymmetry were fixed ex ante in "
-    "docs/handoffs/PRECOMMIT-pjm-h16-2026-09-22.md, committed and pushed at "
+    "docs/records/pjm/PRECOMMIT-pjm-h16-2026-09-22.md, committed and pushed at "
     "c25d7e50 BEFORE any arm result existed, and NEITHER was amended after a number "
     "landed."
 )

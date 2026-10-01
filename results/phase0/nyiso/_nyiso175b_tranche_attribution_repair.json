@@ -1,7 +1,7 @@
 {
  "session": "nyiso-175b",
  "keeper": "2026-08-30-nyiso-159-loss-surface",
- "prereg": "results/calibration/PREREG-nyiso175b-tranche-attribution-repair.md",
+ "prereg": "docs/records/nyiso/PREREG-nyiso175b-tranche-attribution-repair.md",
  "years": [
   2023,
   2024,

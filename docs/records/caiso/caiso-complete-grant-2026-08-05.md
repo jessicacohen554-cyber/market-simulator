@@ -13,7 +13,7 @@ restated the criterion at P.6 — `complete` means (a) the 2022 touchpoint is al
 → **caiso-172** (its one gating item, the PGE-TAC TAC-zone weight, closed **MEASURED**)
 → **caiso-174** (PR #3578 — FFR-4D epoch re-solved, keeper moved onto the measured fleet,
 `complete` re-recommended **YES** post-epoch)
-→ **Addendum S.4/S.5** of `docs/handoffs/ffr-owner-sitting-2026-08-02.md`, signed **2026-08-05**:
+→ **Addendum S.4/S.5** of `docs/records/forecast/ffr-owner-sitting-2026-08-02.md`, signed **2026-08-05**:
 `CAISO complete | GRANT`. That addendum **is** the session-logged owner authorization rule 22
 requires.
 

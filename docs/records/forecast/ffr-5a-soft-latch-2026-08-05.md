@@ -232,7 +232,7 @@ quantified: the drift IS the whole reversal.
 
 ## 5. Intent vs code — the latch behaved as designed; the design presumes one bar
 
-Design record: `docs/handoffs/ff-retirement-rule-redesign-2026-07.md`. §3.6 component 3: a
+Design record: `docs/records/forecast/ff-retirement-rule-redesign-2026-07.md`. §3.6 component 3: a
 pipelined unit "leaves the pipeline ONLY if its margin clears the same bar (net_revenue ≥
 going_forward_cost) at a later screen. No band, no new parameter. … economic recovery and
 policy rescue are the two real reversal channels"; "a price recovery cancels a pending exit

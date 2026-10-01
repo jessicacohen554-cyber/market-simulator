@@ -13,7 +13,7 @@ index 9e603cd..2043165 100644
 +    # wecc-west-supply frame — instead of the static import tranches. It
 +    # SUPERSEDES the tranche fleet, the per-hub topology split, and the CAISO
 +    # import injectors (firm/clean/spot) — one mechanism per phenomenon (rule 18;
-+    # docs/handoffs/caiso-endogenous-wecc-node-design-2026-07-21.md). The base
++    # docs/records/caiso/caiso-endogenous-wecc-node-design-2026-07-21.md). The base
 +    # _caiso_config already carries the single WECC_import zone, its two corridor
 +    # ties, and the 7,500 MW simultaneous cap, so no apply_interchange_topology
 +    # runs (no split); the tie flow carries the West's endogenous net export.
@@ -329,7 +329,7 @@ index 7647d93..38ffcc6 100644
 +    caiso_endogenous_wecc_node: bool = False  # Make the WECC_import node a REAL
 +    # co-optimized WECC-West neighbor ZONE instead of a set of static import
 +    # tranches (caiso-110; Option A of
-+    # docs/handoffs/caiso-endogenous-wecc-node-design-2026-07-21.md). The two
++    # docs/records/caiso/caiso-endogenous-wecc-node-design-2026-07-21.md). The two
 +    # prior belly-import fixes were killed by derive-first measurement — the
 +    # belly clean-import DEPTH is not year-stable on any CA PRICE observable
 +    # (caiso-107) NOR any WEST-WIDE surplus QUANTITY (caiso-109 P1-A): the belly

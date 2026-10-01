@@ -5,7 +5,7 @@ three-year corpus with the fidelity hard-guard. The pjm-126 result is settled
 for the full training window.** The measured mid-curve surface's tightest-bin
 inversion is a property of the within-year conditioning, not of PJM's offers,
 in every year the surface covers. Lane 2 stays open; the re-derive decision
-memo (`docs/handoffs/pjm-midcurve-reconditioning-memo-2026-07.md`,
+memo (`docs/records/pjm/pjm-midcurve-reconditioning-memo-2026-07.md`,
 pre-registered before these results) goes to the owner.
 
 pjm-126 measured 2025 only and its §5 scope limit owed this check: "the
@@ -88,7 +88,7 @@ ranking, gaps evaluated on the year-pooled histograms, `--skip-fidelity` NOT
 passed — the guard ran at full strength and passed (worst arm-A deviation
 **9.2e-13** at CT_FAST/2024/bin0/s0.99, tol 0.05; segmentation 1,064 CT_FAST /
 883 CC_LIKE / 216 LONG_RUN units).
-`results/calibration/pjm127_conditioning_precheck_3yr.json`:
+`results/phase0/pjm/pjm127_conditioning_precheck_3yr.json`:
 
 | segment | A_frozen | B_season | flag | C_fixedpop |
 |---|---|---|---|---|
@@ -146,7 +146,7 @@ for y in 2023 2024 2025; do
       --json-out results/calibration/pjm126_conditioning_precheck_$y.json
 done
 python scripts/probes/pjm126_midcurve_conditioning_precheck.py --years 2023 2024 2025 \
-    --json-out results/calibration/pjm127_conditioning_precheck_3yr.json
+    --json-out results/phase0/pjm/pjm127_conditioning_precheck_3yr.json
 ```
 
 The §2 composition table needs no offer corpus — EIA-930 net load plus the
@@ -154,7 +154,7 @@ month→season map.
 
 ## Pointers
 
-* The 2025 finding this confirms: `docs/FINDING-pjm126-midcurve-conditioning-artifact-2026-07.md`.
-* The decision this feeds: `docs/handoffs/pjm-midcurve-reconditioning-memo-2026-07.md`.
-* Charter and ledger: `docs/handoffs/pjm-frontier-path-2026-07.md` §3.
+* The 2025 finding this confirms: `docs/records/pjm/FINDING-pjm126-midcurve-conditioning-artifact-2026-07.md`.
+* The decision this feeds: `docs/records/pjm/pjm-midcurve-reconditioning-memo-2026-07.md`.
+* Charter and ledger: `docs/records/pjm/pjm-frontier-path-2026-07.md` §3.
 * The untested half: pjm-128 (DA awards / commitment status), handoff §3.

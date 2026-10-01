@@ -14,7 +14,7 @@ The shared-input fingerprints (``meta['shared_inputs']``) are printed beside eac
 too: the EIA-923 / CAMPD / outage digests should be UNMOVED (neither seam rewrites those
 source parquets — they act downstream, in the fuel-price resolver and the fleet frame).
 
-usage: uv run python docs/handoffs/spp50/recipe_identity.py <new-bundle> [<keeper-bundle>]
+usage: uv run python docs/records/spp/spp50/recipe_identity.py <new-bundle> [<keeper-bundle>]
 """
 
 from __future__ import annotations

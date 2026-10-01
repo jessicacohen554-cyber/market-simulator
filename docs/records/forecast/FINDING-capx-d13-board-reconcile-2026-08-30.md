@@ -1,7 +1,7 @@
 # FINDING — capx D13: BOARD RECONCILE — Q7 executed, PJM restated, stale prose repaired — 2026-08-30
 
 **Lane:** capx **D13 BOARD RECONCILE** (capacity-expansion / Forecast Finalization track),
-chartered in the r#13 batch (`docs/handoffs/capx-director-ledger-2026-08.md` §0j.4;
+chartered in the r#13 batch (`docs/records/forecast/capx-director-ledger-2026-08.md` §0j.4;
 issuance record ledger §4).
 **Scope:** **RECORDS ONLY** — no LP solved, no year scored, no run registered, no verdict
 minted or edited, no keeper or marker touched, no out-of-training backcast year touched in any
@@ -10,7 +10,7 @@ and is cited in place.
 **Branch:** `claude/capx-d13-board-reconcile-fs66gh`, off `origin/main` `8412c3f623e7`.
 **Surfaces edited:** exactly two —
 `frontend/data/forecast/program-status.json` and
-`docs/DECISION-CARD-capx-director-open-rulings-2026-08-25.md`.
+`docs/records/forecast/DECISION-CARD-capx-director-open-rulings-2026-08-25.md`.
 
 ---
 
@@ -49,7 +49,7 @@ and is cited in place.
 ## 1. The rulings executed, verbatim with provenance
 
 Delivered 2026-08-30 at the capacity-expansion director's **refresh-#13 sitting**, recorded at
-`docs/handoffs/capx-director-ledger-2026-08.md` §0j.3 and §3.
+`docs/records/forecast/capx-director-ledger-2026-08.md` §0j.3 and §3.
 
 **Q7 —**
 
@@ -75,7 +75,7 @@ The authority Q7 rests on, quoted so the reading can be checked rather than take
   known, because its purpose is to price the compute honestly — not to re-test model quality,
   which is leg (b)'s job. Were FC-4 already required to be in-band by leg (b), leg (c) would be
   redundant; the NYISO leg-(b) cell has carried exactly that argument since capx-D7.
-* **Card A-A as signed** (`docs/DECISION-CARD-capx-director-open-rulings-2026-08-25.md` §1.3,
+* **Card A-A as signed** (`docs/records/forecast/DECISION-CARD-capx-director-open-rulings-2026-08-25.md` §1.3,
   §5.1): *"the director charters a **NYISO T1-X crossover run** so leg (c) closes on a measured
   FC-4 **rather than on an unscored cell**."* The contrast the signature draws is
   **measured vs. unrun**, not passing vs. failing.
@@ -150,7 +150,7 @@ this edit and passes on it after.
 
 ### 2.5 The S-5 PJM restatement
 
-Source: `docs/handoffs/FINDING-capx-s5-pjm-horizon-edge-2026-08-30.md` §0/§3, under the
+Source: `docs/records/forecast/FINDING-capx-s5-pjm-horizon-edge-2026-08-30.md` §0/§3, under the
 owner-signed **card C-A**. Applied to **`gate.b_t1f_verdict.detail`** and
 **`blocking_rows[0]`**:
 
@@ -346,8 +346,8 @@ three **MATCH** on line count, byte count and SHA-256:
 | file | lines | bytes | sha256 (first 16) |
 |---|---:|---:|---|
 | `frontend/data/forecast/program-status.json` | 706 | 106,266 | `e86f65d6b3130f7d` |
-| `docs/DECISION-CARD-capx-director-open-rulings-2026-08-25.md` | 434 | 26,672 | `d029347dc0460f37` |
-| `docs/FINDING-capx-d13-board-reconcile-2026-08-30.md` | 343 | 21,496 | `e2dcb118c5fd7032` |
+| `docs/records/forecast/DECISION-CARD-capx-director-open-rulings-2026-08-25.md` | 434 | 26,672 | `d029347dc0460f37` |
+| `docs/records/forecast/FINDING-capx-d13-board-reconcile-2026-08-30.md` | 343 | 21,496 | `e2dcb118c5fd7032` |
 
 (The finding's own row is the pre-append blob; this table is added in the follow-up commit that
 carries it.) All three files were edited **on disk** and pushed as the exact local bytes — no

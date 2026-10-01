@@ -101,7 +101,7 @@ transplants the residual by CALENDAR HOUR: `duals[z,t] + (S_next[t] − S_curr[t
 scarcity residual pinned to hour t follows that hour even when the entering year's net
 load has moved away from it, and the additive re-level can subtract a pro-forma tail from
 realized duals — the ERCOT two-scarcity-objects defect
-(`docs/FINDING-entry-signal-forward-expectation-2026-08-25.md` §4). A quantile map
+(`docs/records/misc/FINDING-entry-signal-forward-expectation-2026-08-25.md` §4). A quantile map
 conditions on the forward net-load POSITION and has no additive term, so that defect
 cannot arise; it is also weather-year-alignment-free. The two are alternative
 replacements of one object, so `__post_init__` refuses them together (rule 19), and
@@ -334,7 +334,7 @@ Stage 2: 5 of 5. Stage 1: 10 of 14 (§2.2), the misses one measured cause (§2.3
 * **Committed artifacts:** the two slim bundles (score / meta / run_config / the two npz dumps,
   now carrying `econ_prices_usd_mwh`, `headroom_rank_next`, `signal_zonal_usd_mwh` and the
   `fwd_curr_*` internals on the arm), the two hindcast reports, and three probe artifacts —
-  `results/calibration/entry_signal_d43_dispersion_replay_caiso.json` (screen grain, D39 basis),
+  `results/phase0/forecast/entry_signal_d43_dispersion_replay_caiso.json` (screen grain, D39 basis),
   `entry_signal_d43_inrun_closure_caiso_control.json`, `entry_signal_d43_inrun_closure_caiso_dispersion.json`
   (exact in-run).
 
@@ -428,7 +428,7 @@ uv run pytest tests/unit/model/test_entry_dispersion_expectation_signal.py -q   
 uv run python scripts/probes/entry_signal_d43_dispersion_replay.py --mode basis \
   --bundle results/hindcast/caiso-2021-2025-realized-dumps \
   --duals-bundle results/calibration/caiso231_b1_ungrounded \
-  --out results/calibration/entry_signal_d43_dispersion_replay_caiso.json
+  --out results/phase0/forecast/entry_signal_d43_dispersion_replay_caiso.json
 # the two legs (data/clean regenerated first: PYTHONPATH=. uv run python scripts/regenerate_clean.py)
 uv run python scripts/run_capacity_hindcast.py --iso CAISO --start-year 2021 --end-year 2025 \
   --entry-screen-diagnostics --out-dir results/hindcast/caiso-2021-2025-realized-t1h-d43-control

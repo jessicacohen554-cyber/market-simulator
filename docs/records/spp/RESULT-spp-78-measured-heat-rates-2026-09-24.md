@@ -7,7 +7,7 @@ one newly fails, and one moves further out of band as predicted.
 Record chain: PRECOMMIT `PRECOMMIT-spp-78-measured-heat-rates-2026-09-24.md` (`fe318fd8`) → ADDENDUM
 `ADDENDUM-spp-78-rung-years-are-on-bin-centres-2026-09-24.md` → shards pinned at
 `1e6c50da798f918a9f013b151c74998e444061d0`. Both docs were pushed before any solve. Phase-0 numbers are in
-`results/calibration/_spp78_phase0.json`.
+`results/phase0/spp/_spp78_phase0.json`.
 
 ## 1. What was armed
 

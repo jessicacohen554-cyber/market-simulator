@@ -1,6 +1,6 @@
 {
   "probe": "miso-242 D-EDGE \u2014 the two edges of the Q-Q identity, split",
-  "addendum": "results/calibration/ADDENDUM-miso242-the-edge-decomposition-2026-09-07.md",
+  "addendum": "docs/records/miso/ADDENDUM-miso242-the-edge-decomposition-2026-09-07.md",
   "status": "REPORTED, GATED NOWHERE \u2014 no bar, no decision rule, no verdict",
   "zero_lp": true,
   "years": {

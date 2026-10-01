@@ -262,7 +262,7 @@ exhausted" reading and independently corroborates caiso-275 Arm A from a fifth d
 > delivered. So §5b's headline claim — "the model is emphatically not import-constrained" —
 > survives **in its consequence** (import quantity is not the route to the 2022 residual) while
 > being wrong **in its mechanism** (the seam does bind; it simply binds generously). Full
-> measurement: `docs/RESULT-caiso280-the-envelope-binds-above-the-actuals-2026-09-13.md`.
+> measurement: `docs/records/caiso/RESULT-caiso280-the-envelope-binds-above-the-actuals-2026-09-13.md`.
 
 ### 5c — what IS marginal, and the λ-in-a-gap share
 
@@ -406,7 +406,7 @@ any keeper, determination, gate or registered number.
    > NEGATIVE** and four ISOs are indistinguishable from zero. The object is **CAISO-specific**.
    > This paragraph's "not a 2022 defect" claim SURVIVES — CAISO's positivity holds on 2023–2025
    > without its 2022 rung — but "program-level" does not.
-   > `docs/FINDING-caiso277-the-bias-is-caiso-specific-2026-09-12.md` §0/§4.
+   > `docs/records/caiso/FINDING-caiso277-the-bias-is-caiso-specific-2026-09-12.md` §0/§4.
 4. **A correction against my own earlier reading, recorded because it nearly became a false
    finding.** An intermediate measurement appeared to show pumped storage pumping 1.6 GW at
    hod 18. That was a **mislabelled print header in my own probe**, not a model defect: the
@@ -481,7 +481,7 @@ any keeper, determination, gate or registered number.
    > CAISO**, and the successor is a CAISO ablation census over CAISO's own armed distinctives —
    > not a program-level charter. Everything else in this section, and the whole refusal in §0–§7,
    > is unaffected: none of the four kills depended on the cross-ISO premise.
-   > `docs/FINDING-caiso277-the-bias-is-caiso-specific-2026-09-12.md` §4b/§4c/§6.
+   > `docs/records/caiso/FINDING-caiso277-the-bias-is-caiso-specific-2026-09-12.md` §4b/§4c/§6.
 3. **Two small data-intake items**, both offered and neither armed, both **wrong-signed for C3a**
    so neither can be read as a lever: a **2022 row** for the storage shape envelope (§9.5), and
    a **2022 DMM must-offer quantity** if the quantity gate is ever wanted on that year (§9.6).

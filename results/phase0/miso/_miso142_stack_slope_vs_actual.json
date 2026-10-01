@@ -1,5 +1,5 @@
 {
- "prereg": "results/calibration/PREREG-miso142-summer-supply-stack-2026-08-08.md",
+ "prereg": "docs/records/miso/PREREG-miso142-summer-supply-stack-2026-08-08.md",
  "gate": "G-B / G-C2 -- model supply curve vs measured supply curve",
  "keeper": "2026-08-05-miso-132b-cc-committed",
  "note": "x-axes sit on different instruments (EIA-930 hourly BA vs model grid-delivered); slopes in $/MWh per GW are offset-invariant and a self-centred x is reported. No intercept is quoted.",

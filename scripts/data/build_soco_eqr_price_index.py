@@ -14,7 +14,7 @@ that decides whether the result may be committed as
 ``actual_lmp_hourly_SOCO.parquet``.
 
 EVERY filter, allocation rule and threshold below was fixed in
-``docs/handoffs/PRECOMMIT-soco-13-2026-09-13.md`` (pushed at ``ee32cf75``)
+``docs/records/soco/PRECOMMIT-soco-13-2026-09-13.md`` (pushed at ``ee32cf75``)
 BEFORE any price or quantity value was read. Nothing here reads a model
 residual — no SOCO model run exists (CLAUDE.md rule 1 ``[R-STRUCT]``). The gate
 can refuse the series; it can never promote a run.
@@ -103,7 +103,7 @@ LAND_PATH: Path = paths.CALIBRATION_DIR / "actual_lmp_hourly_SOCO.parquet"
 DEMAND_PATH: Path = paths.EIA_HOURLY_DIR / "SOCO hourly.parquet"
 GAS_DIR: Path = paths.RAW_DATA_DIR / "gas-prices"
 SEEM_PLANNING_DIR: Path = paths.RAW_DATA_DIR / "soco-planning"
-PRECOMMIT = "docs/handoffs/PRECOMMIT-soco-13-2026-09-13.md"
+PRECOMMIT = "docs/records/soco/PRECOMMIT-soco-13-2026-09-13.md"
 
 YEARS: tuple[int, ...] = (2023, 2024, 2025)
 QUARTERS: tuple[str, ...] = tuple(f"{y}_Q{q}" for y in YEARS for q in (1, 2, 3, 4))

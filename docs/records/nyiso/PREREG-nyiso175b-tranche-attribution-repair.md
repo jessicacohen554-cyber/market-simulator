@@ -1,7 +1,7 @@
 # PRE-REGISTRATION — nyiso-175b: the fleet-wide tranche-attribution repair
 
 **Session:** nyiso-175 (second charter; the first is discharged and merged —
-`docs/FINDING-nyiso175-ct-deficit-two-objects-2026-09-02.md`).
+`docs/records/nyiso/FINDING-nyiso175-ct-deficit-two-objects-2026-09-02.md`).
 **Keeper:** `2026-08-30-nyiso-159-loss-surface`, determination **NOT-YET** on
 {C3a-2025 −11.5 %, C3c}.
 **Written and committed BEFORE the probe or any solve was run.** Six consecutive

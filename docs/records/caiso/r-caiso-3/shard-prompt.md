@@ -9,7 +9,7 @@ FIRST ACTION (exactly this, before anything else):
   git fetch origin {SHA} || git fetch --unshallow origin main; git checkout --detach {SHA}
 Then HARD STOP 1: `git rev-parse HEAD` must print {SHA}. Never rebase, never `git pull`, never "sync", never force-push.
 
-PRECOMMIT: docs/handoffs/r-caiso-3/PRECOMMIT-r-caiso-3-2026-09-25.md (read §2 and §4 only).
+PRECOMMIT: docs/records/caiso/r-caiso-3/PRECOMMIT-r-caiso-3-2026-09-25.md (read §2 and §4 only).
 
 HARD STOPS — check each; if any fails, STOP, do not push, report which one:
 2. Before solving: `sha256sum data/raw/campd-unit-outages-shortgas-CAISO.csv data/raw/_processed-legacy/campd_cc_heat_rates_CAISO.csv data/raw/gas-prices/eia_delivered_gas_electric_power_by_state_monthly_2018-2026.csv` must print

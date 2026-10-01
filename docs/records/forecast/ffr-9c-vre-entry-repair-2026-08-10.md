@@ -12,9 +12,9 @@ against the same control. **NO promotion into any shipped default this
 session** — every repair is armed BY INVOCATION in measurement arms;
 promotion is a later manager/owner act on this lane's evidence. **NO tuning
 toward 55.4 GW or any actual.** Evidence base, cited never re-derived:
-`docs/handoffs/ffr-9b-vre-entry-diagnosis-2026-08-09.md` §3 (the binding
+`docs/records/forecast/ffr-9b-vre-entry-diagnosis-2026-08-09.md` §3 (the binding
 table) and §4 (the menu, with rule-13 pre-assessments);
-`docs/handoffs/ffr-9a-storage-vintage-seed-2026-08-09.md` §1.3/§2–§3 (the
+`docs/records/forecast/ffr-9a-storage-vintage-seed-2026-08-09.md` §1.3/§2–§3 (the
 control recipe and its registered reads).
 
 ---
@@ -77,7 +77,7 @@ explained away.
 **Reproduction gate (control, BY CONTENT).** The control must reproduce the
 FFR-9A registered treated-arm reads with zero field diffs: the three probe
 records re-run verbatim on the control bundle and deep-compared against the
-committed `docs/handoffs/ffr-9a/{storage-trajectory,rebase-reads,e1-dispersion}-treated.json`
+committed `docs/records/forecast/ffr-9a/{storage-trajectory,rebase-reads,e1-dispersion}-treated.json`
 (every key except `cache_dir`/`bundle` path strings). Additionally the
 control's `score.json` `additions` / `additions_cod_basis` /
 `additions_basis` blocks must equal the registered
@@ -100,7 +100,7 @@ All reads come from the arms' own ledgers/dumps/score.json and four probes
 re-run VERBATIM per arm (`ffr8b_rebase_reads.py`, `ffr8b_e1_dispersion.py`,
 `ffr9a_storage_trajectory.py`, `ffr9b_entry_screen_replay.py` — the last
 with the arm's matching stage flags, so the replay runs under the gates the
-solve carried). Records land under `docs/handoffs/ffr-9c/` as
+solve carried). Records land under `docs/records/forecast/ffr-9c/` as
 `<probe>-{control,pipeline,full}.json`. Every delta is reported at FULL
 MAGNITUDE; expectations are to test, never targets.
 
@@ -231,12 +231,12 @@ stage A `entry_pipeline_aware_signal=True` only; stage B additionally
   diffs** on all six comparisons — the `score.json`
   additions/additions_cod_basis/additions_basis blocks vs the committed
   ffr9b-regen blocks, and the three probe records re-run on this bundle vs
-  the committed `docs/handoffs/ffr-9a/*-treated.json`. The control's
+  the committed `docs/records/forecast/ffr-9a/*-treated.json`. The control's
   replay identity holds at every (step, tech) under both reserve-leg
   bounds and reproduces the FFR-9B §3 decided-row table cell-for-cell.
 * Registered: `ercot-2021-2025-t1ff-armr-ffr9c-{control,pipeline,full}`
   (hindcast namespace, `meta.kind="full_forward"`). Probe records:
-  `docs/handoffs/ffr-9c/{rebase-reads,e1-dispersion,storage-trajectory,entry-screen-replay}-{control,pipeline,full}.json`.
+  `docs/records/forecast/ffr-9c/{rebase-reads,e1-dispersion,storage-trajectory,entry-screen-replay}-{control,pipeline,full}.json`.
 * Mid-session external events, recorded: (i) this branch's first two
   commits (the R-b gate + the prereg) were merged to main as PR #3833 by
   an actor outside this session mid-run, deleting the remote branch
@@ -576,5 +576,5 @@ promotes, on this evidence.
   invocations ran sequentially (15 GB / 4 core container).
 * **Artifacts committed:** per-arm slim bundle files (score.json + 4
   screen dumps + meta/run_config/config.yaml), 12 probe records under
-  `docs/handoffs/ffr-9c/`, 3 scorer reports under `docs/hindcast-reports/`,
+  `docs/records/forecast/ffr-9c/`, 3 scorer reports under `docs/hindcast-reports/`,
   3 hindcast sidecars, this handoff, and the matrix cell updates.

@@ -5,11 +5,11 @@ pack, which through this environment's egress proxy is slow — historically it
 frequently **stalled** outright ("*Cloning the git_repository source took
 longer than the allowed time and was stopped*", the "cloning loop"), because
 the pack was 7.44 GiB, ≈97% of it immutable `data/raw/` source data (see
-`docs/handoffs/repo-clone-bloat-audit-2026-07.md`).
+`docs/records/governance/repo-clone-bloat-audit-2026-07.md`).
 
 **Re-measured 2026-08-16**, after the BLOAT-B tip prunes AND the 2026-08-16
 history rewrite (`cleanup-large-blobs.yml` run 31955205445, owner decision —
-`docs/FINDING-history-rewrite-2026-08-16.md`):
+`docs/records/governance/FINDING-history-rewrite-2026-08-16.md`):
 
 | | 2026-08-13 (pre) | 2026-08-16 (post) |
 |---|---:|---:|
@@ -25,7 +25,7 @@ recipe below takes seconds and ~300 MB, so the partial clone stays the
 standard. (Do NOT measure pack size with `git clone --mirror` against GitHub:
 `refs/pull/*` still pins the pre-rewrite objects and transfers ~20 GiB.)
 The former standing NO-GO on rewriting for size
-(`docs/FINDING-rewrite-prep-2026-08-11.md` §8) was superseded by the owner's
+(`docs/records/governance/FINDING-rewrite-prep-2026-08-11.md` §8) was superseded by the owner's
 2026-08-16 decision — see the history-rewrite section below.
 
 **The fix is the clone *method*.** The commit/tree graph is tiny; only the file
@@ -64,7 +64,7 @@ suggests.** `--depth 1` still transfers the entire tip tree, which *is* the 7.37
 GiB. Shallow clones help repos bloated by many commits; this one is bloated by a
 single enormous tip. Use `--filter=blob:none`. (`--depth 1` may be *added* for
 speed, but it reproduces the shallow-clone limitation that cited SHAs no longer
-resolve — see `docs/FINDING-rewrite-prep-2026-08-11.md` §1.)
+resolve — see `docs/records/governance/FINDING-rewrite-prep-2026-08-11.md` §1.)
 
 ## Then hydrate only the data this session needs
 
@@ -182,7 +182,7 @@ already-fetched blobs are not re-fetched.
 
 **PJM replay lanes: `--profile pjm` is NOT sufficient on its own** (audit
 2026-08 gap row B2; measured by DEBUG-B,
-`docs/FINDING-debug-b-pjm-input-clock-2026-08-15.md` §8). A fresh-clone PJM
+`docs/records/pjm/FINDING-debug-b-pjm-input-clock-2026-08-15.md` §8). A fresh-clone PJM
 keeper re-solve needs two inputs no profile can fetch, both gitignored:
 (1) the derived `data/clean/` tree — `pjm_measured_interface_limits` raises
 rather than no-ops, so budget the `scripts/regenerate_clean.py` rebuild
@@ -203,7 +203,7 @@ a material multi-hour scheduling fact, not a footnote.
 Addendum AQ NO-GO): 7,254 superseded blobs / 7,373.4 MiB stripped, integrity
 verify passed (strict `main` manifest byte-identical; all cited load-bearing
 commits survived), force-push landed. Full record, citation-map translator and
-recovery-contract fallout: `docs/FINDING-history-rewrite-2026-08-16.md`.
+recovery-contract fallout: `docs/records/governance/FINDING-history-rewrite-2026-08-16.md`.
 
 Consequences for clones and citations:
 

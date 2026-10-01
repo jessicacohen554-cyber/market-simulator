@@ -147,7 +147,7 @@ own golden-posture bare recipes (`reference_config(…, golden_posture=True)` �
 `apply_iso_scenario_defaults`; the resolved keys are the D60 §3 bare keys —
 NEISO `18515067bf4d2fbe`, NYISO `19a9690bb12c8459`, PJM `09996eca71ee80fd`, MISO
 `b1a73a087064ffd8`, ERCOT `0c3e9cd5b5993bdf`, CAISO `29f8eb372810195f`) and writes
-`results/calibration/capxd64_fourth_seam_census.json`. The PJM census key is the post-D57 bare
+`results/phase0/forecast/capxd64_fourth_seam_census.json`. The PJM census key is the post-D57 bare
 key rather than the D50 arm's `167e65187f32056b`; the D57 gates do not enter the screen's inputs
 (fleet, gas, carbon, capex path), so the ceiling arithmetic is the same and the D50 rows are
 re-found by `unit_id`.
@@ -433,7 +433,7 @@ signature, §2.4) — it is pre-registered above and reported at full magnitude.
 - **Zero solves; no field; no constant; no matrix cell; no forecast surface** (rules 5, 13, 14,
   21, 25, 28 all satisfied by inaction). The census probe lives in the session scratchpad — the
   same disposition D41 gave its reconstruction script and the repo gave D50's probe at
-  `677b605a`; its output JSON is committed at `results/calibration/capxd64_fourth_seam_census.json`
+  `677b605a`; its output JSON is committed at `results/phase0/forecast/capxd64_fourth_seam_census.json`
   (six ISOs × 2028–30, every eligible tranche, all four constructions) so every table above is
   re-readable without a rebuild.
 - **Rule 22:** nothing touches a holdout year — forecast-mode arithmetic only.

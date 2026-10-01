@@ -24,7 +24,7 @@ move belly gas**; the object is bridge **COVERAGE** — which units become candi
 
 Reproduced here at zero LP from the keeper's own committed sidecars, to the milli-MW:
 `committed` = 670.471, every `econc0*` and `peak*` = 0.000. The belly hour set is frozen in
-`results/calibration/_caiso285_belly_2024.json` (876 hours, `sha256[:16] = c5948fb0d43620a1`,
+`results/phase0/caiso/_caiso285_belly_2024.json` (876 hours, `sha256[:16] = c5948fb0d43620a1`,
 construction recorded in the file).
 
 ## 2. What the keeper actually arms — including one gate caiso-284 did not name

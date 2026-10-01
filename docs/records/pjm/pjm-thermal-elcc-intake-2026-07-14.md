@@ -2,7 +2,7 @@
 
 **Session.** N-4 of the forecast-driver capacity-revenue audit lane. Executes
 **R3** of the accreditation-basis adjudication memo
-(`docs/handoffs/accreditation-basis-memo-2026-07-12.md` §4.3): intake the PJM
+(`docs/records/misc/accreditation-basis-memo-2026-07-12.md` §4.3): intake the PJM
 **thermal** ELCC class ratings that the on-disk P-0B `capacity-market-elcc`
 datatype was missing (it held only intermittent/storage/DR rows — 135 rows,
 thermal absent). Data intake only — **no LP solves, no model wiring, no

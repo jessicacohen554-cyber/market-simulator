@@ -2,8 +2,8 @@
 
 **Session:** NEISO-RC-R (capacity-expansion / FFP track, director r#21). Branch
 `claude/neiso-rc-repair-fymtkz`. **Charter:**
-`docs/handoffs/capx-director-prompt-pack-2026-08.md` §NEISO-RC-R, executing
-`docs/handoffs/FINDING-capx-neiso-rc-phase0-2026-08-30.md` §6/§9.
+`docs/records/forecast/capx-director-prompt-pack-2026-08.md` §NEISO-RC-R, executing
+`docs/records/forecast/FINDING-capx-neiso-rc-phase0-2026-08-30.md` §6/§9.
 
 **Committed BEFORE any solve.** The Phase A repairs (R1 registry intake, R2
 curve re-derivation, R3 scorer trio, R4 diagnostic + tracked set) are landed

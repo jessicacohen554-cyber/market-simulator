@@ -23,9 +23,9 @@ sensitivities ψ₂ that the network yields were NOT computed, and nothing here 
 
 | precondition | check | result |
 |---|---|---|
-| SPP-57b landed (PR #5527) | `git log origin/main --grep=SPP-57b` → `b33ae44d`, `04179a59`; `docs/handoffs/spp57b/` + `tstar_ok_s_57b.csv` in tree | **yes** |
+| SPP-57b landed (PR #5527) | `git log origin/main --grep=SPP-57b` → `b33ae44d`, `04179a59`; `docs/records/spp/spp57b/` + `tstar_ok_s_57b.csv` in tree | **yes** |
 | SPP-53 / SPP-57 instruments and tables in tree | `spp53/tstar_table.csv`, `psi_all.csv`; `spp57/psi_n_ok.csv`, `psi_ok_s.csv` (LOYO ψ columns), `tstar_n_ok.csv`, `tstar_ok_s.csv`, `limits_2026_oklahoma_by_constraint.csv` | **yes** |
-| the 2023–25 RTBM roll-ups (for per-year binding hours) | `data/raw/spp-binding-constraints/RTBM-BC-*.csv.zip` (14 zips) | **yes**; parsed once with SPP-53's `parse_2325.py` unchanged → `docs/handoffs/spp58/binding_hours_by_year.csv` |
+| the 2023–25 RTBM roll-ups (for per-year binding hours) | `data/raw/spp-binding-constraints/RTBM-BC-*.csv.zip` (14 zips) | **yes**; parsed once with SPP-53's `parse_2325.py` unchanged → `docs/records/spp/spp58/binding_hours_by_year.csv` |
 | a public line dataset for construction (c) | HIFLD *Electric Power Transmission Lines*, ArcGIS feature service `services1.arcgis.com/Hp6G80Pky0om7QvQ/…/Electric_Power_Transmission_Lines/FeatureServer/0` (anonymous HTTPS; layer edit date 2023-09-05, i.e. an **in-window 2023 vintage**) | **reachable**; 17,873 features intersect the box (§2.1) |
 | no solve | none launched; `results/` untouched | — |
 
@@ -82,7 +82,7 @@ L_f they are later divided into.
   the MISO / AECI / Entergy / TVA parallel paths), pulled paginated, byte-identical pages to the scratchpad
   (`spp58/pull_hifld_lines.py`): **17,873 features**, 9 pages, sha256 of the concatenated pages
   `f70786b9d46c789b7445713568f069429a44aeabce3a1b413b26325d7cdbf2ef`, pulled 2026-09-07T16:42Z. The
-  reduced node/branch tables are landed under `docs/handoffs/spp58/` (this lane's file ownership; a proper
+  reduced node/branch tables are landed under `docs/records/spp/spp58/` (this lane's file ownership; a proper
   `data/raw/hifld-transmission-lines/` intake is routed, not done here).
 - **Plants:** EIA-860 operable generators at HEAD (`eia860_generator_operable.parquet`, `Status == OP`,
   nameplate summed per plant) joined to `eia860_plant.parquet` for coordinates, `Balancing Authority Code`
@@ -172,7 +172,7 @@ reported for P-NS as a sensitivity, never chosen.
   is not a corridor element at any admissible transfer. There is no t-statistic in a topology PTDF; the
   floor is the whole screen.
 
-### 2.6 The element join (fixed before any PTDF; `docs/handoffs/spp58/element_map.csv`)
+### 2.6 The element join (fixed before any PTDF; `docs/records/spp/spp58/element_map.csv`)
 
 Rule, in order: (1) both terminal names present in HIFLD `SUB_1`/`SUB_2` at the element's voltage →
 class **A**; (2) one terminal named or a contingency-corroborated geography (the registry's contingent
@@ -301,9 +301,9 @@ not a gate.
 
 | file | change |
 |---|---|
-| `docs/handoffs/spp58/` | `pull_hifld_lines.py`, `build_network.py`, `query_lines.py`, `element_map.csv`, `binding_hours_by_year.csv` (this push); then `ptdf.py`, `aggregate_ttc_58.py`, `nodes.csv` / `branches.csv` / `plants.csv` (reduced network), `psi2_by_constituent.csv`, `tstar_58.csv`, the logs |
-| `docs/handoffs/PRECOMMIT-spp-58-2026-09-07.md` (this file), `FINDING-spp-58-2026-09-07.md` | the record |
-| `docs/multi-iso/spp-addition-plan-2026-09.md` §5 SPP-58 row → LANDED; `docs/handoffs/spp-desk-ledger-2026-09.md` row; `docs/calibration-log/spp.md` spp-9 | the record |
+| `docs/records/spp/spp58/` | `pull_hifld_lines.py`, `build_network.py`, `query_lines.py`, `element_map.csv`, `binding_hours_by_year.csv` (this push); then `ptdf.py`, `aggregate_ttc_58.py`, `nodes.csv` / `branches.csv` / `plants.csv` (reduced network), `psi2_by_constituent.csv`, `tstar_58.csv`, the logs |
+| `docs/records/spp/PRECOMMIT-spp-58-2026-09-07.md` (this file), `FINDING-spp-58-2026-09-07.md` | the record |
+| `docs/multi-iso/spp-addition-plan-2026-09.md` §5 SPP-58 row → LANDED; `docs/records/spp/spp-desk-ledger-2026-09.md` row; `docs/calibration-log/spp.md` spp-9 | the record |
 | `docs/codebase-site/data/mechanism-matrix/SPP.js` `measured_interface_limits` | evidence text appended; **cell stays O** |
 | `src/market_sim/config/iso_configs.py` `_ns_corridor_ttc` | **ONLY under the band rule of §4 — and the rule as declared never edits it** (inside the band it stands; outside it stops). No edit is expected from this lane |
 

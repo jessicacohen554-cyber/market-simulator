@@ -7,7 +7,7 @@
 the shared bench part, both bundles' `hourly/` sidecars, the committed `-perunitmerit-` outage
 extract, the raw CAMPD unit-level series, EIA-860/923, the NYISO Gold Book editions) plus two
 `fleet_only` rebuilds of the keeper's own `meta.json` (no LP).
-**Machine records:** `results/calibration/_nyiso197_linden_phase0.json`,
+**Machine records:** `results/phase0/nyiso/_nyiso197_linden_phase0.json`,
 `_nyiso197_linden_rebuild_2023.json`, `_nyiso197_linden_rebuild_2024.json`; probes
 `scripts/probes/nyiso197_linden_phase0.py`, `scripts/probes/nyiso197_linden_rebuild.py`.
 
@@ -228,7 +228,7 @@ byte-faithful to the keeper's solve. It does not have to be, for two reasons:
 The void object is quoted in three committed places and would send the next session after a
 phantom. Each is **annotated, not rewritten** — the original text stands and carries a pointer:
 
-1. `docs/FINDING-nyiso196-cc-outage-share-basis-2026-09-05.md` — §4.2 regression (i) and §6
+1. `docs/records/nyiso/FINDING-nyiso196-cc-outage-share-basis-2026-09-05.md` — §4.2 regression (i) and §6
    item 1 carry a correction note. **Nothing else in that document changes**: the repair, its
    screen, the determination and every other row of §4.2 are unaffected, and the promotion
    stands on its own merits (the Linden row was a reported plant-grain regression, never a gate).

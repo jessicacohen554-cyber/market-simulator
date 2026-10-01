@@ -7,7 +7,7 @@
 # explorer group the run with its campaign and read case / reference_case out
 # of --extra-meta, exactly as SCN-WS0's scn-ws0-smoke pair is grouped.
 #
-# Usage: bash docs/handoffs/scn-ws4c/register_arm.sh <ISO> <CASE> [<ROOT>] [<TAG>]
+# Usage: bash docs/records/forecast/scn-ws4c/register_arm.sh <ISO> <CASE> [<ROOT>] [<TAG>]
 set -euo pipefail
 ISO="$1"; CASE="$2"; ROOT="${3:-results/scn-ws4-probe}"; TAG="${4:-t0}"
 LOW="$(echo "$ISO" | tr 'A-Z' 'a-z')"

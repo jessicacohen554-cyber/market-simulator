@@ -2,7 +2,7 @@
 
 ```
 LANE     : miso-272 (charter candidate 1)
-PREREG   : docs/PRECOMMIT-miso272-cc-block-summer-rating-2026-09-25.md (v1 pin 8e85889b; v2 addendum §9, pin 5efb86f3)
+PREREG   : docs/records/miso/PRECOMMIT-miso272-cc-block-summer-rating-2026-09-25.md (v1 pin 8e85889b; v2 addendum §9, pin 5efb86f3)
 KEEPER   : 2026-09-25-miso-271-wefor-stack (miso271_span, 2019-2025) — unchanged
 DELTA    : cc_block_summer_rating=true (new ScenarioConfig field, default off). DOF +0; multipliers unchanged
 CONTROL  : keeper bundle (G-DRIFT: all upstream hunks INERT, rule 29(b) form 4); no control solves

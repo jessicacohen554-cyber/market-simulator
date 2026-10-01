@@ -16,11 +16,11 @@ a PREREG sketch for the top candidate, and the owner decision points.
 
 Instruments (all read-only, committed):
 `scripts/probes/_miso178_c3a2025_anatomy.py` →
-`results/calibration/_miso178_c3a2025_anatomy.json` (footing / zonal / buckets /
+`results/phase0/miso/_miso178_c3a2025_anatomy.json` (footing / zonal / buckets /
 seasonal / foreseen / ceilings, plus the FULL miso-167 instrument re-run at this bundle
 and the miso-171 scarce-set continuity assertion);
 `scripts/probes/_miso178_c3a_decomposition.py` →
-`results/calibration/_miso178_c3a_decomposition.json` (the pre-registered miso-156
+`results/phase0/miso/_miso178_c3a_decomposition.json` (the pre-registered miso-156
 three-channel Δ decomposition, miso-161 wrapper pattern, third application). Every
 number below reproduces from committed artifacts by running those two scripts.
 
@@ -118,7 +118,7 @@ its committed product split (~29% supplemental, structurally ungateable) stays c
 > Both corrections STRENGTHEN this section's conclusion — even less of the gap is
 > reserve-priced, and even less of the reserve price is gateable structure — so
 > the reach map and closure stand a fortiori. This record's `m167_repoint` block
-> carries a dated CORRECTION key; `docs/FINDING-xiso-cascade-scan-2026-09-01.md`.
+> carries a dated CORRECTION key; `docs/records/governance/FINDING-xiso-cascade-scan-2026-09-01.md`.
 
 **The two-term split** G = Σw(Pm−DA) + Σw(DA−RT) — deterministic-reachable vs the
 RT-only wedge no deterministic LP can see (MISO's own DA market is the existence proof
@@ -353,8 +353,8 @@ uv run --no-project --with pyarrow,pandas,numpy,pydantic,scipy,openpyxl,pyyaml \
   --python 3.12 python scripts/probes/_miso178_c3a_decomposition.py
 ```
 
-Records: `results/calibration/_miso178_c3a2025_anatomy.json`,
-`results/calibration/_miso178_c3a_decomposition.json`. Holdout: 2023–2025 only
+Records: `results/phase0/miso/_miso178_c3a2025_anatomy.json`,
+`results/phase0/miso/_miso178_c3a_decomposition.json`. Holdout: 2023–2025 only
 (rule 22; MISO holds neither marker; freeze active). The committed
 `metrics.json` in the bundle predates the promotion attestation (its C6 line reads
 UNATTESTED); the scored posture cited here is RESULT-miso177's — NOT-YET on C3a-2025

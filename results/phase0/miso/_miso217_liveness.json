@@ -1,6 +1,6 @@
 {
   "charter": "miso-217 S-2 liveness + the PREREG \u00a76 F-4 footprint; zero-solve.",
-  "prereg": "results/calibration/PREREG-miso217-intermediate-phys-arm-2026-09-05.md @ 76c2574c",
+  "prereg": "docs/records/miso/PREREG-miso217-intermediate-phys-arm-2026-09-05.md @ 76c2574c",
   "field": "miso_intermediate_gas_offer_margin",
   "anchor_usd_mmbtu": 3.0492,
   "keeper_bundle": "results/calibration/miso213_layering_B",

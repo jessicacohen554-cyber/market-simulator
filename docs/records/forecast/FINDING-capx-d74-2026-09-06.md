@@ -8,7 +8,7 @@
 §3.5. **Design:** `DESIGN-capx-d74-pjm-steam-oil-convention-2026-09-06.md` (pushed `cafb14d1`
 before any code). **Pre-registration:**
 `PRECOMMIT-capx-d74-pjm-steam-oil-convention-2026-09-06.md` (same commit; Addendum A in the build
-commit `64477801`, before the first solve). **Instruments:** `docs/handoffs/d74/phase0-2026-09-06.{py,json}`
+commit `64477801`, before the first solve). **Instruments:** `docs/records/forecast/d74/phase0-2026-09-06.{py,json}`
 (zero LP), `screen-gate-2026-09-06.py` → `screen-2026-09-06.json`, `full-window-2026-09-06.json`.
 **Nothing arms in this lane.**
 
@@ -130,10 +130,10 @@ Screen year named in the PRECOMMIT §4 as the year the class's uncleared MW is l
 arm ledgers (12,524.7 MW vs 1,115.8 / 0 / 0). Three legs, PJM solo, sequential, each under the HEAD
 guard: **arm** (published bar + this gate, key `cfa43af80d3b4923`), **control-P** (published bar,
 `efc626966c2b5892`), **control-B** (bare, `fdba733e592eb425`) — every key as pre-computed in
-Addendum A. Every number: `docs/handoffs/d74/screen-2026-09-06.json`,
+Addendum A. Every number: `docs/records/forecast/d74/screen-2026-09-06.json`,
 `screen-reclear-2026-09-06.json`. *(One procedural disclosure: the original runner's guard tripped
 after control-P because a docs-only commit — the re-clear instrument, `be313ecd → 18213f28`,
-`docs/handoffs/d74/screen-reclear-2026-09-06.py` alone, no solve-path file — moved HEAD while it
+`docs/records/forecast/d74/screen-reclear-2026-09-06.py` alone, no solve-path file — moved HEAD while it
 solved; control-B was relaunched under a fresh guard. No solve-path byte changed between the
 three legs.)*
 
@@ -210,12 +210,12 @@ MISO gas-basis code, results/cache prose and capx D65b's declared re-identificat
 INERT here, but it moves EVERY key — the pre-computed `b88464cb…` / `aef81c8…` / `b98060…` family
 became `81ad0918…` / `15a723ba…` / `280e7de3…`, attributed to that flip, not this lane. All three
 full-window legs solve at the new HEAD, so the A/B is internally consistent.)* Every number:
-`docs/handoffs/d74/full-window-2026-09-06.json`. **Registered SUFFIXED** on the forecast namespace as
+`docs/records/forecast/d74/full-window-2026-09-06.json`. **Registered SUFFIXED** on the forecast namespace as
 `pjm-t1h-d74-nodefaultcap` (`VERDICT_MAP`; sidecar
 `frontend/data/hindcast/pjm-2021-2025-realized-t1h-d74-nodefaultcap.json`; report
 `docs/hindcast-reports/pjm-2021-2025-realized-t1h-d74-nodefaultcap-2026-09-06.md`; the bundle's slim
 set carved out of `.gitignore` as D57/D62's are); verdict **HOLD** (FC-3 recall band FAIL;
-`docs/handoffs/d74/forecast-verdict-arm-2026-09-06.json`). The bare `pjm-t1h` stays D57 arm A.
+`docs/records/forecast/d74/forecast-verdict-arm-2026-09-06.json`). The bare `pjm-t1h` stays D57 arm A.
 
 ### 5.1 The clearing, per delivery year (arm vs control-P, same HEAD)
 

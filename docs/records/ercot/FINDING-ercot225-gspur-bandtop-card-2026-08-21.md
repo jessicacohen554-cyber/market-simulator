@@ -7,11 +7,11 @@ Keeper resolved fresh at dispatch AND end:
 R-A re-pointed queue's LAST standing item (item 8 was spent NEGATIVE at
 ercot-224 and is not re-screened). **Phase-0 ordering honoured:** the revised
 spec and the complete re-reading protocol were precommitted, pushed and
-blob-verified (`docs/PRECOMMIT-ercot225-gspur-bandtop-gate-revision-2026-08-21.md`,
+blob-verified (`docs/records/ercot/PRECOMMIT-ercot225-gspur-bandtop-gate-revision-2026-08-21.md`,
 blob `9b55eac9`, commit `ff26017`) BEFORE any re-reading was computed.
 Probe: `scripts/probes/ercot225_gspur_bandtop_reread.py` →
-`results/calibration/ercot225_gspur_bandtop_reread.json` (committed).
-Card: `results/calibration/DECISION-ercot225-gspur-bandtop-gate-2026-08-21.md`.
+`results/phase0/ercot/ercot225_gspur_bandtop_reread.json` (committed).
+Card: `docs/records/ercot/DECISION-ercot225-gspur-bandtop-gate-2026-08-21.md`.
 **The gate files are NOT edited; nothing changes without owner sign-off.**
 
 ## 0. VERDICT — the three dispatched questions, answered

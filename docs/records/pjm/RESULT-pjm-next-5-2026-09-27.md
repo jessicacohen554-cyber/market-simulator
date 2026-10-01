@@ -4,9 +4,9 @@
 year at `2111658c`, composed at zero LP).
 - **Prior keeper:** `2026-09-26-pjm-next-4-midcurve2019`, pruned (rule 35).
 - **Control:** the prior keeper's committed bundle, plus G-DRIFT (rule 29(b)).
-- **Phase 0:** `docs/FINDING-pjm-next-5-phase0-cards-1-2-3b-2026-09-27.md`.
-- **Pre-registrations:** `docs/PRECOMMIT-pjm-next-5-card1-shape-2026-09-27.md` and
-  `docs/PRECOMMIT-pjm-next-5-card3a-f2-rederive-2026-09-27.md`.
+- **Phase 0:** `docs/records/pjm/FINDING-pjm-next-5-phase0-cards-1-2-3b-2026-09-27.md`.
+- **Pre-registrations:** `docs/records/pjm/PRECOMMIT-pjm-next-5-card1-shape-2026-09-27.md` and
+  `docs/records/pjm/PRECOMMIT-pjm-next-5-card3a-f2-rederive-2026-09-27.md`.
 
 ## 1. Headline
 

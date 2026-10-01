@@ -16,7 +16,7 @@ the plant's EIA-860 nameplate — and asks three questions, zero LP:
    class min-down, and share of measured runs shorter than the bridge's class min-run.
 3. LEVEL: annual model vs measured energy and on-hours.
 
-Read-only over committed artifacts; writes ``results/calibration/_nyisonext21_d4_conduct_phase0.json``.
+Read-only over committed artifacts; writes ``results/phase0/nyiso/_nyisonext21_d4_conduct_phase0.json``.
 """
 
 from __future__ import annotations
@@ -34,7 +34,7 @@ from market_sim.model.commitment import find_runs
 ROOT = Path(__file__).resolve().parents[2]
 RUNS = ROOT / "frontend/data/backcast/runs"
 BENCH = ROOT / "frontend/data/backcast/bench/NYISO"
-OUT = ROOT / "results/calibration/_nyisonext21_d4_conduct_phase0.json"
+OUT = ROOT / "results/phase0/nyiso/_nyisonext21_d4_conduct_phase0.json"
 KEEPER_SPAN = "2026-09-30-nyisonext18-retiree-carry-span"
 KEEPER_2021 = "2026-09-30-nyisonext18-retiree-carry-2021"
 BUNDLES = {

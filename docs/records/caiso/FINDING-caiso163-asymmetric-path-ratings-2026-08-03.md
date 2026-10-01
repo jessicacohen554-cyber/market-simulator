@@ -253,7 +253,7 @@ rather than against zero.
 | control bundle | `results/calibration/caiso163_control_A` |
 | keeper run id | `2026-08-03-caiso163-asym-path-ratings` |
 | control run id | `2026-08-03-caiso163-control-asymoff` |
-| prereg | `results/calibration/PRECHECK-caiso163-asymmetric-path-ratings-2026-08-03.md` |
+| prereg | `docs/records/caiso/PRECHECK-caiso163-asymmetric-path-ratings-2026-08-03.md` |
 | wiring probe | `scripts/probes/caiso163_wiring_probe.py` |
 | gate reader | `scripts/probes/caiso163_ab_gates.py` |
 | attestation generator | `scripts/gen_caiso163_attestation.py` |

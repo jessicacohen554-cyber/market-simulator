@@ -3,7 +3,7 @@
 **Lane:** `claude/house-2-baseline-wave-s6xhd6`, 2026-08-09, Opus (rule 27
 `[R-PUSH]` model assignment honored — the lane touches `src/market_sim/`).
 **Charter:** manager dispatch AF.7. Authority:
-`docs/handoffs/house-1-lint-ci-2026-08-08.md` §4 (THE baseline table) and §3.5
+`docs/records/misc/house-1-lint-ci-2026-08-08.md` §4 (THE baseline table) and §3.5
 (the branch-protection ladder); sitting record T.2 (the `assign_zone_by_coords`
 finding). Base: `origin/main` @ `b5b88de`.
 
@@ -167,7 +167,7 @@ Treatments, which differ because the two tests assert different things:
   `forecast-parity-guard` job's exit code. There is no way to soften it without
   reimplementing the checker. → `@pytest.mark.xfail(strict=True, reason=…)`
   citing FR-22 and
-  `docs/handoffs/ffr-1e-forecast-parity-check-2026-07-31.md`. **`strict=True` is
+  `docs/records/forecast/ffr-1e-forecast-parity-check-2026-07-31.md`. **`strict=True` is
   deliberate**: when a forecast lane clears the two fields the test XPASSes and
   fails, forcing the marker's removal instead of letting it rot into a
   permanent excuse.
@@ -188,7 +188,7 @@ where the signal belongs and how a forecast lane will find it.
 
 ## 3 §4 baseline table, post-wave
 
-Restated in place in `docs/handoffs/house-1-lint-ci-2026-08-08.md` §4 as a
+Restated in place in `docs/records/misc/house-1-lint-ci-2026-08-08.md` §4 as a
 dated addendum (the original 9-row table is preserved above it, unedited — it
 is the historical measurement). The post-wave standing reference:
 
@@ -355,7 +355,7 @@ Not implemented, per the charter's gate. What the owning lane needs:
   `_miso_zone` resolves all six zones **exactly**, with no geographic
   approximation at all — the accurate-data route rule 14 `[R-ACCURATE]` prefers,
   and cheaper than PJM's nearest-plant machinery. FFR-5E §7 records the same MISO incompleteness from
-  the procurement side (`docs/handoffs/ffr-5e-hindcast-arm-prereg-2026-08-09.md`
+  the procurement side (`docs/records/forecast/ffr-5e-hindcast-arm-prereg-2026-08-09.md`
   §147, "all 51 rows collapse to" one zone).
 - `tests/unit/data/test_zone_assignment.py:268–271` currently **pins the
   degraded behaviour** (`assign_zone_by_coords(46.0, -94.0, "MISO") ==

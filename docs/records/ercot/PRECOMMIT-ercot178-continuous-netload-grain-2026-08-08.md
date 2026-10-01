@@ -2,7 +2,7 @@
 
 **Session ercot-178, 2026-08-08. Pushed BEFORE any derive, any measurement of the
 arm, and any solve.** Charter: the ercot-178 handoff (matrix §5.1 item 21), on
-the ercot-177 diagnosis (`docs/DIAGNOSIS-ercot177-c3a2023-anatomy-2026-08-07.md`
+the ercot-177 diagnosis (`docs/records/ercot/DIAGNOSIS-ercot177-c3a2023-anatomy-2026-08-07.md`
 §4): the armed measured offer surfaces' conditioning-bin grain dilutes the top
 of the distribution — the p97–p100 bin pools 263 hours whose actual prices span
 $198–$5,046 (25×) under ONE measured ladder, while the tail population (>$200)

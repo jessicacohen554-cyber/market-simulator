@@ -29,7 +29,7 @@ pay the print on the volumes it burned.
 Usage::
 
     uv run python scripts/probes/_miso277_storm_print_conventions.py \
-        --out results/calibration/_miso277_storm_print_conventions.json
+        --out results/phase0/miso/_miso277_storm_print_conventions.json
 """
 
 from __future__ import annotations

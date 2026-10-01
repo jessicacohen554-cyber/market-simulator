@@ -3,7 +3,7 @@
 **Date** 2026-07-27 · **ISO** ERCOT · **Lane** ercot125-coal-owner-split ·
 **Keeper under audit** `2026-07-26-ercot115-coal-marginal-hr` (bundle
 `results/calibration/ercot115_coal_floor_only`) — **unchanged by this session** ·
-**Chartered by** `docs/DIAGNOSIS-ercot124-coal-offer-uppertail-2026-07-27.md` §5.3
+**Chartered by** `docs/records/ercot/DIAGNOSIS-ercot124-coal-offer-uppertail-2026-07-27.md` §5.3
 (which CLOSED the coal offer-curve lane and named this as the one surviving
 measured coal mechanism, explicitly carrying the live rule-13 question forward) ·
 **Method** Phase 1 only — the rule-13 `[R-MEASURED]` forward-test gate, plus a

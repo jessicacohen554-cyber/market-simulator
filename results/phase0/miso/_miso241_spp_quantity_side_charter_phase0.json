@@ -1,7 +1,7 @@
 {
   "probe": "miso-241 phase 0 \u2014 the SPP quantity-side charter: does a DOF-free form exist?",
-  "prereg": "results/calibration/PREREG-miso241-the-spp-quantity-side-charter-2026-09-07.md (pushed 6fbc5e83)",
-  "addendum": "results/calibration/ADDENDUM-miso241-the-q2-instrument-gate-2026-09-07.md",
+  "prereg": "docs/records/miso/PREREG-miso241-the-spp-quantity-side-charter-2026-09-07.md (pushed 6fbc5e83)",
+  "addendum": "docs/records/miso/ADDENDUM-miso241-the-q2-instrument-gate-2026-09-07.md",
   "keeper": "2026-09-07-miso-233-spp-hourly",
   "zero_lp": true,
   "gated_seam": "SPP",

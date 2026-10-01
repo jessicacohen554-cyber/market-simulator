@@ -6,11 +6,11 @@ is read from the committed keeper sidecar
 (`results/calibration/ercot236_k33_clip/hourly/system_2023.parquet`) and the
 committed actuals (`data/raw/_validation-source/actual_lmp_hourly_ERCOT.parquet`),
 constructions byte-identical to the ercot-236 point scorer.** Precommit
-`docs/PRECOMMIT-ercot237-bandswap-phase0-2026-08-26.md` pushed + blob-verified
+`docs/records/ercot/PRECOMMIT-ercot237-bandswap-phase0-2026-08-26.md` pushed + blob-verified
 before any measurement; **Amendment 1** (recorded and pushed mid-round, before
 any characterization) corrects the V-0 actual-side expectation — see §1.
 Probe: `scripts/probes/ercot237_bandswap_phase0.py` →
-`results/calibration/ercot237_bandswap_phase0.json` (committed).
+`results/phase0/ercot/ercot237_bandswap_phase0.json` (committed).
 Keeper `2026-08-25-236-swcap-clip-k33` (CALIBRATED, zero caveats) is
 UNTOUCHED; no lever is proposed or armed this round (any lever is a new
 precommitted, owner-visible round per the handoff); no matrix cell changes

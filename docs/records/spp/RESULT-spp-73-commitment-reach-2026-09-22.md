@@ -1,7 +1,7 @@
 # RESULT — SPP-73, xiso lever (b): COMMITMENT REACH IS NOT THE CAUSE
 
 **Zero LP. No shard, no solve, no bundle, no `ScenarioConfig` field.** Pre-registration:
-`docs/handoffs/PRECOMMIT-spp-73-commitment-reach-2026-09-22.md`, pushed at `91df082f` before any
+`docs/records/spp/PRECOMMIT-spp-73-commitment-reach-2026-09-22.md`, pushed at `91df082f` before any
 number below was read. Base `f8188a1e`. Probes: `scripts/probes/_spp73_commitment_reach.py`
 (M1/M1b/M1c/M2), `_spp73_commitment_params_census.py` + `_spp73_startup_ceiling.py` (M4).
 Outputs: `results/calibration/_spp73_*.json`.

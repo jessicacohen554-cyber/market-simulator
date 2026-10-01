@@ -3,7 +3,7 @@
   "probe": "scripts/probes/ercot163_dam_config_collapse.py",
   "session": "ercot-163 Phase 0 addendum (no LP, no solve)",
   "source": "60-Day DAM Gen Resource disclosure, delivery-2023",
-  "reproduces": "results/calibration/ercot151_offline_phase0.json",
+  "reproduces": "results/phase0/ercot/ercot151_offline_phase0.json",
   "train_rule": "resource name with a trailing _<config> segment removed",
   "year": 2023
  },

@@ -4,7 +4,7 @@
 2023-discrete-config order (verbatim in the ercot-235 log entry: solve 2023
 for its own ECRS-era conditions; rule 16 waived; Q-B/R-A superseded by the
 owner) · **Charter:**
-`docs/PRECOMMIT-ercot235-2023-discrete-offer-sweep-2026-08-25.md` (grid,
+`docs/records/ercot/PRECOMMIT-ercot235-2023-discrete-offer-sweep-2026-08-25.md` (grid,
 kills and selection fixed before each round's solves; amendments 1–3 record
 each round's result before the next round's grid) · **Registered winner:**
 `2026-08-25-235-2023-discrete-k24`

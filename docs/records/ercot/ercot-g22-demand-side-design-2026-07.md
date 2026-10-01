@@ -12,9 +12,9 @@ identified on measured MW quantities only.
 HEAD); control bundle `2026-07-07-ercot43-extremeenv-off` (the keeper recipe
 replayed at HEAD, registered). ERCOT is NOT-YET on exactly C3b (price shape)
 and C3c (tail).
-**Reads first:** `docs/handoffs/ercot-online-capacity-envelope-2026-07.md`
+**Reads first:** `docs/records/ercot/ercot-online-capacity-envelope-2026-07.md`
 §7.3–7.4 (the failure signature this round starts from),
-`docs/FINDING-ercot-priceshape-2026-07.md` §2–3 (the tail's settlement
+`docs/records/ercot/FINDING-ercot-priceshape-2026-07.md` §2–3 (the tail's settlement
 decomposition), `docs/g20-scarcity-price-formation-diagnosis-2026-07.md` (the
 cross-ISO wedge).
 

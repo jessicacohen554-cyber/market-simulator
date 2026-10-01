@@ -4,7 +4,7 @@
 ercot-168 FINDING §4 named-successor list. **PHASE 0 — NO LP, no solve, keeper UNCHANGED
 (`2026-08-05-run168b-year-curves`), no `ScenarioConfig` field written, no cell verdict flipped
 (all three mechanisms stay `K`).** Decision rule pre-registered and committed BEFORE any derive
-ran: `docs/PRECOMMIT-ercot169-margin-fuel-invariance-2026-08-05.md` (commit
+ran: `docs/records/ercot/PRECOMMIT-ercot169-margin-fuel-invariance-2026-08-05.md` (commit
 `ercot-169 PRECOMMIT…`, pushed and blob-verified before the corpus was read). **No band,
 threshold or instrument was moved after measurement, and no amendment was needed.**
 
@@ -129,8 +129,8 @@ them and carry limb B's verification into that keeper's ledger.
 
 ## 7. Artifacts and bookkeeping
 
-* `docs/PRECOMMIT-ercot169-margin-fuel-invariance-2026-08-05.md` — pre-registered before measuring.
-* `results/calibration/ercot169_margin_fuel_invariance.json` — the full record (harness fidelity,
+* `docs/records/ercot/PRECOMMIT-ercot169-margin-fuel-invariance-2026-08-05.md` — pre-registered before measuring.
+* `results/phase0/ercot/ercot169_margin_fuel_invariance.json` — the full record (harness fidelity,
   T1/T2/CPT windows, monthly paths, fuel basis + footing, per-limb verdicts, licensing diagnostic).
 * `scripts/lib/sced_corpus_instruments.py` — the shared delivery-year instrument harness, the
   limb registry and the pre-registered verdict arithmetic.

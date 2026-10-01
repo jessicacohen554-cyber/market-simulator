@@ -37,7 +37,7 @@ see it (FINDING-miso190 §3–§4).
 
 Phase-0 (this session, zero-solve, committed sources only; probe
 `scripts/probes/_miso191_binning_phase0.py` → committed record
-`results/calibration/_miso191_binning_phase0.json`) computed, before this
+`results/phase0/miso/_miso191_binning_phase0.json`) computed, before this
 document:
 
 * **Ask A validation:** `calibration_verdict.py --run-id
@@ -307,7 +307,7 @@ identification MEASURED (EIA-860 actual retirement record + vintage status
 ## 5. Instrument
 
 `scripts/probes/_miso191_ab_gates.py` →
-`results/calibration/_miso191_ab_gates.json` — the miso-190 scorer
+`results/phase0/miso/_miso191_ab_gates.json` — the miso-190 scorer
 re-keyed (KEEPER `miso188_rvs_B` / CONTROL `miso191_bax_A` / ARM
 `miso191_bax_B`; the §4 witnesses at capacity/dispatch grain), committed
 **after this PREREG and before it is run** (the miso-184 order). The

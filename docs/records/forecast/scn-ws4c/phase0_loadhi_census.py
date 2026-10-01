@@ -1,7 +1,7 @@
 """SCN-WS4c rule-29 phase 0 (zero LP): the LOAD-HI / LOAD-HI-ORGANIC load census.
 
 Reproduces the SCN-WS4b pre-declared arithmetic
-(docs/handoffs/load-hi-adequacy-reading-2026-09-06.md §2) directly from the
+(docs/records/misc/load-hi-adequacy-reading-2026-09-06.md §2) directly from the
 resolvers at HEAD, so every arm this lane spends an LP on is already known to
 have a non-degenerate footprint. Kills the redundant arms BEFORE any solve:
 an ISO whose LOAD-HI and LOAD-HI-ORGANIC DC curves coincide in the T1 window
@@ -70,7 +70,7 @@ def main() -> None:
             row["LOAD-HI"]["dc_block_mw"] == row["LOAD-HI-ORGANIC"]["dc_block_mw"]
         )
         out[iso] = row
-    dest = "docs/handoffs/scn-ws4c/phase0_loadhi_census.json"
+    dest = "docs/records/forecast/scn-ws4c/phase0_loadhi_census.json"
     with open(dest, "w") as fh:
         json.dump(out, fh, indent=1)
     print(f"wrote {dest}")

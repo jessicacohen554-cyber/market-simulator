@@ -1,6 +1,6 @@
 # RESULT — C8-SUBCLASS: C8 scores each coal subclass as its own class (rubric v3.9, 2026-09-25)
 
-**Owner ruling (2026-09-25):** "Yes" to the open question in `docs/handoffs/RESULT-coal-sub-2026-09-25.md` §6 (PR #6619): *"Keep family-level C8, or move C8 to per-subclass?"* C8 (rule 20 `[R-FORCED-BUDGET]`) now scores `COAL_BIT` / `COAL_PRB` / `COAL_LIGNITE` / `COAL_WC` each as its own class. This completes COAL-SUB: *"we need to completely eliminate the class Coal From the model altogether all coal should be sorted into its subclass"*.
+**Owner ruling (2026-09-25):** "Yes" to the open question in `docs/records/misc/RESULT-coal-sub-2026-09-25.md` §6 (PR #6619): *"Keep family-level C8, or move C8 to per-subclass?"* C8 (rule 20 `[R-FORCED-BUDGET]`) now scores `COAL_BIT` / `COAL_PRB` / `COAL_LIGNITE` / `COAL_WC` each as its own class. This completes COAL-SUB: *"we need to completely eliminate the class Coal From the model altogether all coal should be sorted into its subclass"*.
 
 **Scope:** scorer, diagnostics, docs and tests. **No LP was solved.** Every number below comes from zero-LP work: the committed run payloads, `run_year(fleet_only=True)` floor rebuilds, and re-scoring committed artifacts.
 

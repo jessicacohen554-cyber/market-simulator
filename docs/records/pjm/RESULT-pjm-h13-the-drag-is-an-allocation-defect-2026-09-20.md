@@ -3,7 +3,7 @@
 **Session:** pjm-h13 · **Branch:** `claude/pjm-h13-mustrun-exclusions-0yud3j` · **ZERO LP IN THE PARENT**
 (rule 32 `[R-SHARD]` (a)) — six shards, **one year each** (rule 36 `[R-YEAR-ISOLATION]` (a)), all at
 pinned SHA `ed3f5efdbcdd20a6317eb05add357f1909a736d6`.
-**CHARTER:** `docs/handoffs/PRECOMMIT-pjm-h13-2026-09-20.md` + `ADDENDUM-…-presolve` +
+**CHARTER:** `docs/records/pjm/PRECOMMIT-pjm-h13-2026-09-20.md` + `ADDENDUM-…-presolve` +
 `ADDENDUM2-…-g2-disambiguation`, all three pushed **before any arm result existed**.
 **KEEPER UNCHANGED PENDING THE OWNER'S RULING:** `2026-09-19-pjm-h11-c1seam-span` still stands.
 Nothing promoted, nothing pruned.

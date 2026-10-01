@@ -16,7 +16,7 @@
 > Q1: the benchmark root cause is chartered ahead of any NYISO re-calibration,
 > so if the owner charters the 2025 offer-level object it should queue **behind**
 > that investigation. Full record:
-> `results/calibration/FINDING-nyiso148-bench-regeneration-instability-2026-08-21.md`.
+> `docs/records/nyiso/FINDING-nyiso148-bench-regeneration-instability-2026-08-21.md`.
 
 ---
 
@@ -124,11 +124,11 @@ is only about whether it also appears on the keeper's own line.
 
 ## 7. EVIDENCE
 
-* `results/calibration/RESULT-nyiso148-chp-layup-duty-2026-08-21.md` §3 (energy
+* `docs/records/nyiso/RESULT-nyiso148-chp-layup-duty-2026-08-21.md` §3 (energy
   conservation), §4 (why the duty band is the wrong shape)
-* `results/calibration/_nyiso148_ab_gates.json` (the full gate record)
-* `results/calibration/_nyiso148_chp_conduct_phase0.json` (the mechanism-blind
+* `results/phase0/nyiso/_nyiso148_ab_gates.json` (the full gate record)
+* `results/phase0/nyiso/_nyiso148_chp_conduct_phase0.json` (the mechanism-blind
   conduct measurement)
-* `results/calibration/RESULT-nyiso147-chp-btm-ab-2026-08-20.md`,
+* `docs/records/nyiso/RESULT-nyiso147-chp-btm-ab-2026-08-20.md`,
   `FINDING-nyiso147-upstate-price-root-cause-2026-08-20.md`
-* `results/calibration/ASSESSMENT-nyiso148-frontier-2026-08-21.md` §2.3, §5
+* `docs/records/nyiso/ASSESSMENT-nyiso148-frontier-2026-08-21.md` §2.3, §5

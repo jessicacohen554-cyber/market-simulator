@@ -8,12 +8,12 @@ constant, derive script or artifact changed. No run produced, so none registered
 (rule 15 registers runs).**
 
 **Prereg**, committed and pushed before any measurement below:
-`results/calibration/PREREG-nyiso123-downstate-boundary-2026-08-04.md`.
+`docs/records/nyiso/PREREG-nyiso123-downstate-boundary-2026-08-04.md`.
 **Probes:** `scripts/probes/_nyiso123_month_band_allyears.py`,
 `_nyiso123_zonal_identity_allyears.py`.
-**Records:** `results/calibration/_nyiso123_month_band_allyears.json`,
+**Records:** `results/phase0/nyiso/_nyiso123_month_band_allyears.json`,
 `_nyiso123_zonal_identity_allyears.json`.
-**Charter produced:** `docs/handoffs/nyiso-downstate-topology-split-charter-2026-08.md`.
+**Charter produced:** `docs/records/nyiso/nyiso-downstate-topology-split-charter-2026-08.md`.
 
 **Verified at this session's HEAD, committed artifacts only, no solve:**
 `scripts/calibration_verdict.py --run-id 2026-08-04-nyiso-120-c119-scope` returns
@@ -44,7 +44,7 @@ because closing the basis would expose an upstate over-pricing error that turns
 2023 from PASS into a clear FAIL. Put to the owner with these numbers, the ruling
 was **charter both, paired**: the split is chartered re-scoped to C3c + the winter
 level miss, with a pre-registered gate that it promotes **only jointly** with the
-upstate object. The charter is `docs/handoffs/nyiso-downstate-topology-split-charter-2026-08.md`.
+upstate object. The charter is `docs/records/nyiso/nyiso-downstate-topology-split-charter-2026-08.md`.
 
 ---
 

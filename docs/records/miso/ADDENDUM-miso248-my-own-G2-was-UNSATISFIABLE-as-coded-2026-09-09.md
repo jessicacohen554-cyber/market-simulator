@@ -2,7 +2,7 @@
 
 **Governs:** `G-2` only. Nothing else in the session moves; no other bar is touched; the arm solve
 running while this is written is untouched by it. First-run record preserved verbatim at
-`results/calibration/_miso248_g2_first_run_UNSATISFIABLE.json`.
+`results/phase0/miso/_miso248_g2_first_run_UNSATISFIABLE.json`.
 
 ---
 

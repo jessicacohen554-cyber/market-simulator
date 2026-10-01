@@ -3,7 +3,7 @@
 **Pushed BEFORE any LP is spent (rule 29 `[R-SCREEN]`).** Every gate, gate value, screen-year
 choice, control basis and drift audit below is fixed at this commit and is not renegotiated after
 a number comes back. Phase 0 that produced the arm:
-`docs/FINDING-miso255-cc-cf-tracks-the-object-is-the-seam-2026-09-12.md`.
+`docs/records/miso/FINDING-miso255-cc-cf-tracks-the-object-is-the-seam-2026-09-12.md`.
 
 ---
 
@@ -152,7 +152,7 @@ scripts/run_calibration_full.py scripts/lib data/raw/_validation-source data/raw
 
 **Empirical anchor, stronger than the hunk audit and already paid for:** miso-254 shard A replayed
 the committed MISO keeper on **2023** at SHA `0101b4ce` (≈ HEAD) and reproduced the committed P1
-price sidecar **exactly — 0 of 490,560 cells differ** (`docs/SHARD-misooom-A-2023.md`). The MISO
+price sidecar **exactly — 0 of 490,560 cells differ** (`docs/records/miso/SHARD-misooom-A-2023.md`). The MISO
 backcast solve path has measured zero drift at HEAD.
 
 **This session's own hunks** (the new field, estimator, injector and runner call) are gated

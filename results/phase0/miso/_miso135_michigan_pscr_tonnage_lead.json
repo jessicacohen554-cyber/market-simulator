@@ -2,9 +2,9 @@
  "session": "miso-135",
  "keeper": "2026-08-05-miso-132b-cc-committed",
  "bundle": "results/calibration/miso132_ccmin_B",
- "prereg": "results/calibration/PREREG-miso135-michigan-pscr-tonnage-lead-2026-08-06.md",
+ "prereg": "docs/records/miso/PREREG-miso135-michigan-pscr-tonnage-lead-2026-08-06.md",
  "prereg_pushed_at": "d4d182a5",
- "ask": "docs/handoffs/miso-coal-contract-tonnage-data-ask-2026-07.md",
+ "ask": "docs/records/miso/miso-coal-contract-tonnage-data-ask-2026-07.md",
  "note": "source adjudication for the ask \u00a73(b) Michigan PSCR lead. NO LP, NO solve, NO intake, NO mechanism built. Rule 22: 2023-2025 only.",
  "G0_access": {
   "verdict": "PASS",

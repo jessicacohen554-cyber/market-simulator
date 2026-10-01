@@ -2,7 +2,7 @@
 
 **Authority.** Owner ruling **R-B**, 2026-08-31 director sitting: *"Joint
 charter"* — on the Leg-B measurement
-(`docs/FINDING-t1h-capacity-entry-phase0-2026-08-30.md` §4.1: the dual-based
+(`docs/records/misc/FINDING-t1h-capacity-entry-phase0-2026-08-30.md` §4.1: the dual-based
 signal object closes **8.87 %** of the 12.313 GW ERCOT wind entry miss, the
 D11-R volume rule alone **4.91 %**, naively summing to ~13.8 % and read as
 complementary) **promote nothing yet**; A/B the two mechanisms **together**
@@ -15,13 +15,13 @@ nothing in it is derived from a residual (rules 13 `[R-MEASURED]` /
 23 `[R-FROZEN-DERIVE]`).
 
 Program: `docs/forecast-development-plan-2026-07.md` (T1-H). Parent charter:
-`docs/PRECOMMIT-t1h-capacity-entry-2026-08-30.md` (Leg B was chartered there
+`docs/records/misc/PRECOMMIT-t1h-capacity-entry-2026-08-30.md` (Leg B was chartered there
 as a **measurement** rung; R-B converts its measured record into this A/B).
-Cited records: `docs/FINDING-t1h-capacity-entry-phase0-2026-08-30.md` (the
-Leg-B measurement), `docs/FINDING-entry-signal-disarm-2026-08.md` (the C-1
+Cited records: `docs/records/misc/FINDING-t1h-capacity-entry-phase0-2026-08-30.md` (the
+Leg-B measurement), `docs/records/misc/FINDING-entry-signal-disarm-2026-08.md` (the C-1
 verdict — `entry_lookahead_reprice` ERCOT cell **`K`** / **`fc O`**),
-`docs/handoffs/FINDING-capx-d11r-entry-volume-rule-2026-08-30.md` (the volume
-rule and its A/B), `docs/FINDING-t1h-capentry-phase1-ab-2026-08-30.md` (the
+`docs/records/forecast/FINDING-capx-d11r-entry-volume-rule-2026-08-30.md` (the volume
+rule and its A/B), `docs/records/misc/FINDING-t1h-capentry-phase1-ab-2026-08-30.md` (the
 Leg-A A/B whose driver and posture discipline this lane reuses).
 
 ---
@@ -294,9 +294,9 @@ reported as a miss, not quietly dropped.
 | both bundles | `results/hindcast/ercot-2021-2025-realized-t1h-c1joint-{control,arm}` |
 | per-arm scores | `score_capacity_hindcast.py --bundle <each>` → each bundle's `score.json` |
 | **posture-gated compare driver** | `scripts/probes/joint_wind_entry_compare.py` (new; modelled on `storage_entry_repair_compare.py`) |
-| A/B record | `results/calibration/joint_wind_entry_ab_ercot.json` |
+| A/B record | `results/phase0/ercot/joint_wind_entry_ab_ercot.json` |
 | registration | `scripts/register_forecast_run.py` **only**, ids `ercot-2021-2025-realized-t1h-c1joint-{control,arm}` |
-| finding | `docs/FINDING-c1-joint-wind-ab-2026-08-31.md` |
+| finding | `docs/records/misc/FINDING-c1-joint-wind-ab-2026-08-31.md` |
 | matrix | `docs/codebase-site/data/mechanism-matrix/ERCOT.js` — **ERCOT shard only** |
 
 **The driver HARD-FAILS unless the arms differ in exactly the two chartered

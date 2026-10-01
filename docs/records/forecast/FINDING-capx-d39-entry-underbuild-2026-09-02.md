@@ -2,7 +2,7 @@
 
 **Lane:** capx D39, Phase-0 (characterize cross-ISO; NO repair). Branch
 `claude/capx-d39-entry-underbuild`. **Date:** 2026-09-02. **HEAD at launch:** `0a3d22c7`
-(origin/main). **Charter:** director ledger `docs/handoffs/capx-director-ledger-2026-08.md`
+(origin/main). **Charter:** director ledger `docs/records/forecast/capx-director-ledger-2026-08.md`
 §0y (r#28 "Named-queued: D39") — T16-A outcome B (the NEISO REC dual pinned at the $50 ACP
 in all 50 arm-years) and D36 (the storage arbitrage leg short by $50–150/kW-yr in every
 year) converge on one object: the entry stack under-builds against both the RPS

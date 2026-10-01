@@ -196,7 +196,7 @@ Status page. A reader must never see this rung without seeing it.**
 
 ---
 
-## 6. SHARD TABLE (rule 32 `[R-SHARD]`, protocol `docs/handoffs/shard-launcher-protocol-2026-09-09.md`)
+## 6. SHARD TABLE (rule 32 `[R-SHARD]`, protocol `docs/records/misc/shard-launcher-protocol-2026-09-09.md`)
 
 | shard | branch | scope | registerable? |
 |---|---|---|---|

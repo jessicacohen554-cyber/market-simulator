@@ -1,5 +1,5 @@
 {
- "prereg": "results/calibration/PREREG-pjm150-ct-heat-rate-regate-2026-08-03.md",
+ "prereg": "docs/records/pjm/PREREG-pjm150-ct-heat-rate-regate-2026-08-03.md",
  "iso": "PJM",
  "keeper": "results/calibration/pjm147_chp_B",
  "arm": "results/calibration/pjm150_ctmeter_regate_A",

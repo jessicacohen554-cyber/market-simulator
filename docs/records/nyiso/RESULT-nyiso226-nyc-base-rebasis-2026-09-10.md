@@ -2,10 +2,10 @@
 
 **Session:** nyiso-226 (parent / orchestrator) · **ISO:** NYISO · **Date:** 2026-09-10
 **Keeper:** `2026-09-09-nyiso-221-fuelvintage-span`, **UNCHANGED by this session.**
-**Charter:** `docs/PRECOMMIT-nyiso226-nyc-base-rebasis-2026-09-10.md` (pushed before the solve,
+**Charter:** `docs/records/nyiso/PRECOMMIT-nyiso226-nyc-base-rebasis-2026-09-10.md` (pushed before the solve,
 SHA `a61c1131ea7fb63147c3067fd284dc3fb898ae03`).
-**Gate repair:** `docs/ADDENDUM-nyiso226-my-own-gate-S3a-failed-and-the-repair-is-the-strictest-satisfiable-form-2026-09-10.md` — **read it first.**
-**Predecessor:** `docs/FINDING-nyiso225-topology-split-closed-2026-09-10.md` §8.
+**Gate repair:** `docs/records/nyiso/ADDENDUM-nyiso226-my-own-gate-S3a-failed-and-the-repair-is-the-strictest-satisfiable-form-2026-09-10.md` — **read it first.**
+**Predecessor:** `docs/records/nyiso/FINDING-nyiso225-topology-split-closed-2026-09-10.md` §8.
 
 **LP spent: ONE shard, ONE year, 5 min 00 s.** The parent ran no LP (rule 32 `[R-SHARD]`).
 No control solve was spent (rule 29(b) form 4 + G-DRIFT). Nothing is registered on the
@@ -180,7 +180,7 @@ admissibility question nyiso-203 refused to answer alone and the owner has not y
 (`results/calibration/nyiso226_screen_2023/`, gitignored per rule 29(c)/31) and WILL NOT SURVIVE
 container reclamation.** It was not deleted. If it is gone when (a) is answered, the 2023 leg
 costs ~5 minutes to reproduce. Every number this session will ever cite is in this document and
-in `docs/SHARDREPORT-nyiso226-screen-2023.md` on branch `claude/nyiso226-screen-2023` — the
+in `docs/records/nyiso/SHARDREPORT-nyiso226-screen-2023.md` on branch `claude/nyiso226-screen-2023` — the
 record is the doc, never the parquet.
 
 ---

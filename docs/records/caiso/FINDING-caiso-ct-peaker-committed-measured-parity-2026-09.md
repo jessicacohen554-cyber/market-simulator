@@ -7,7 +7,7 @@ CAISO keeper `2026-09-03-caiso-241-b1-ctpeaker` (#4663) with no
 forecast-orchestrator consumer and, until this row, no registry declaration.
 **Route:** owner ruling **R-X** (2026-09-02) — the disposition that files the
 fork as KNOWN and TRACKED and decides nothing about how it closes. Same route
-and same class as `docs/FINDING-fr22-gap-leg2-2026-09.md` (the ERCOT
+and same class as `docs/records/misc/FINDING-fr22-gap-leg2-2026-09.md` (the ERCOT
 `ercot_storage_adaptive_expectation` pair and `nyiso_seam_par_attribution`).
 **Discharges:** the caiso-241 promoting lane's undischarged FR-22 duty, under
 the standing audit-lane exception (#4488 / board v23 job 0 precedent).
@@ -135,4 +135,4 @@ builder the forecast path calls."*
   tests/scoring/test_gate_a_provenance.py -q` — green.
 
 Run-level evidence and the lane's other two jobs:
-`docs/FINDING-y4-caiso241-duties-2026-09.md`.
+`docs/records/governance/FINDING-y4-caiso241-duties-2026-09.md`.

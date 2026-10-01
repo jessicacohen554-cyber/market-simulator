@@ -22,7 +22,7 @@ PJM registered years at this pin: h22 span 2023–25, h22 touchpoint 2020–22, 
 ## 2. Recipe
 
 The incumbent h22 `meta.json` is replayed unchanged (`scripts/replay_keeper.py`), with the same six explicit
-`--set` flags as R-PJM (`docs/PRECOMMIT-r-pjm-corrected-inputs-2019-2025-2026-09-24.md` §2):
+`--set` flags as R-PJM (`docs/records/pjm/PRECOMMIT-r-pjm-corrected-inputs-2019-2025-2026-09-24.md` §2):
 `eia860_vintage_tracks_solve_year`, `measured_{ct,coal,st,cc,chp}_heat_rates` = true.
 `pjm_rggi_allowance_pricing = true` is carried from the incumbent's meta. **Offer curves are unchanged**
 (`authorized_price_tuning.used = false`). The outage files are identical to R-PJM's (the committed std and

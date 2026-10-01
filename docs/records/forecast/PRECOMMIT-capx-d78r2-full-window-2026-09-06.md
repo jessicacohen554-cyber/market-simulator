@@ -35,7 +35,7 @@ rather than asserted later:
 | claim | how it is established |
 |---|---|
 | the deleted branch was unreachable | D81 routed all three declarations to `exit_exempt_unit_ids`; the parameter had no producer at any call site, and `evolve_fleet` passed a literal `frozenset()` |
-| no cache key moves | `docs/handoffs/d78r2/keys_probe.py` run in this tree and on `origin/main` gives **byte-identical** JSON (`keys_probe.json` vs `keys_probe_origin_main.json`) |
+| no cache key moves | `docs/records/forecast/d78r2/keys_probe.py` run in this tree and on `origin/main` gives **byte-identical** JSON (`keys_probe.json` vs `keys_probe_origin_main.json`) |
 | the bare `pjm-t1h` key is unmoved | control key resolves to `a9c66d8ea25acb9d` = the key the registered D67-ARM sidecar `frontend/data/hindcast/pjm-2021-2025-realized-t1h-d67arm.json` carries in `meta.cache_key` |
 | the armed key is unmoved | arm key resolves to `bb6a60239d69508b` = D78-R's arm key (its §1 table) |
 | every backcast key is unmoved | one backcast key per ISO in the same probe, identical on both trees |
@@ -124,7 +124,7 @@ before the solve, is the point — a gate dropped after a result is a gate evade
 
 ### W1 / W2 / W3 — as D78-R, unchanged, on D78-R's own readers
 
-Imported from `docs/handoffs/d78r/window_compare.py`, never re-implemented, so the
+Imported from `docs/records/forecast/d78r/window_compare.py`, never re-implemented, so the
 two lanes cannot drift on what a failing pool or a decided row is.
 
 - **W1 (candidate identity).** In an *exact* year (identical fleets) the arm's
@@ -236,7 +236,7 @@ only place this diff refuses rather than reports, and it is where a second seam
 would show. The FINDING carries the *whole* diff — every differing block with its
 values — not just the gate verdicts.
 
-Instrument: `docs/handoffs/d78r2/window_compare2.py`, **committed before the first
+Instrument: `docs/records/forecast/d78r2/window_compare2.py`, **committed before the first
 LP**.
 
 ## 5. The two legs
@@ -248,7 +248,7 @@ LP**.
 
 Both: `run_capacity_hindcast.py --iso PJM --start-year 2021 --end-year 2025
 --vintage 2020 --fuel-variant realized --entry-screen-diagnostics`, through the
-committed `docs/handoffs/d78r2/run_full.sh`, which **guards HEAD around each leg**
+committed `docs/records/forecast/d78r2/run_full.sh`, which **guards HEAD around each leg**
 and exits 90 if it moves. PJM solo, legs sequential, years sequential (rule 12).
 Declared keys, to be checked against the realized `run_config.json`: control
 `a9c66d8ea25acb9d`, arm `bb6a60239d69508b` (§1).
@@ -313,7 +313,7 @@ fails. `retire.total_gw`, `false_retire`, recall and precision-as-a-number are
   **AFTER D65-B-R's batch registers**, slim files only.
 - The **control** bundle is **DELETED BEFORE MERGE** (rule 29(c)); every number this
   lane will ever cite lives in this PRECOMMIT with its addenda, the FINDING, and
-  `docs/handoffs/d78r2/{keys_probe,control_band,window_compare2}.json`.
+  `docs/records/forecast/d78r2/{keys_probe,control_band,window_compare2}.json`.
 - **Rule 28(b):** PJM's `retirement_sector_gate` cell in
   `docs/codebase-site/data/mechanism-matrix/PJM.js` only — its letter set by the
   grade, its evidence citing this lane. No other shard; no new row (no new field).

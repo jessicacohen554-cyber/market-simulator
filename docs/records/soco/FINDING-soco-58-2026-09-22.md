@@ -6,7 +6,7 @@
 (`results/calibration/soco57_measured_cc_hr`), rule 29 `[R-SCREEN]` (b) **form 4**, no control solve.
 **Arm** `coal_warm_committed = True` — ONE existing default-off `ScenarioConfig` field
 (`scenarios.py:12202`). **Zero new fields, zero new artifacts, zero free parameters.**
-**PRECOMMIT** `docs/handoffs/PRECOMMIT-soco-58-2026-09-21.md`, pushed at
+**PRECOMMIT** `docs/records/soco/PRECOMMIT-soco-58-2026-09-21.md`, pushed at
 `f10ed9b93f4366fa279918d46fca3c8f9cc38029` **before any LP was solved**.
 
 ---
@@ -567,8 +567,8 @@ CONSECUTIVE LANE; the standing recommendation across SOCO-55/56/57/58 is to
 DECLINE it so the next promoting session may prune it. THE CONTROL'S PER-PLANT
 LAYER WAS RECOVERED AT ZERO LP FOR THE FOURTH CONSECUTIVE LANE, all twelve
 committed hourly sidecars byte-identical. Records:
-docs/handoffs/PRECOMMIT-soco-58-2026-09-21.md,
-docs/handoffs/FINDING-soco-58-2026-09-22.md, scripts/gen_soco58_attestation.py,
+docs/records/soco/PRECOMMIT-soco-58-2026-09-21.md,
+docs/records/soco/FINDING-soco-58-2026-09-22.md, scripts/gen_soco58_attestation.py,
 scripts/probes/soco58_compose_span.py, scripts/probes/_soco58_phase0.py,
 scripts/probes/_soco58_checkd.py.
 ```

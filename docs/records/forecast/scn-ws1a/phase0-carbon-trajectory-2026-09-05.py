@@ -33,7 +33,7 @@ for iso in ISOS:
                            floor=round(max(path, program), 2), additive=round(path + program, 2))
         out[iso][bundle] = dict(resolved_fields=dict(carbon_price_path=cfg.carbon_price_path,
                                 state_carbon_pricing=cfg.state_carbon_pricing), rows=rows)
-json.dump(out, open("docs/handoffs/scn-ws1a/phase0-carbon-trajectory-2026-09-05.json", "w"), indent=1)
+json.dump(out, open("docs/records/forecast/scn-ws1a/phase0-carbon-trajectory-2026-09-05.json", "w"), indent=1)
 # markdown
 show = [2026, 2027, 2028, 2030, 2035, 2040, 2045, 2050]
 print("| ISO | bundle | path | state | " + " | ".join(str(y) for y in show) + " |")

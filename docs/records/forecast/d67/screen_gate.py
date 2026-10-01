@@ -122,7 +122,7 @@ def main() -> int:
                                 if not fails else "FAIL -- the arm is KILLED:"))
     for f in fails:
         print("  -", f)
-    Path("docs/handoffs/d67/screen_gate.json").write_text(json.dumps(
+    Path("docs/records/forecast/d67/screen_gate.json").write_text(json.dumps(
         {"passed": not fails, "failures": fails,
          "rows": [{"gate": g, "verdict": v, "what": d, "detail": t} for g, v, d, t in rows],
          "position_delta_pt": dpos}, indent=2) + "\n")

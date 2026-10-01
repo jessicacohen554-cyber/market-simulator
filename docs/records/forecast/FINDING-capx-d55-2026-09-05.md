@@ -95,7 +95,7 @@ committed status for the prediction; it withholds the prediction only past
 read as the pre-declaration intended (the replay is exact against the run's own record except
 where the record does not carry the attribute) it validates.** Stated at full magnitude.
 
-### 2.2 P4 — D31: the fixed-key release (committed `docs/handoffs/d55/replay-d31.json`)
+### 2.2 P4 — D31: the fixed-key release (committed `docs/records/forecast/d55/replay-d31.json`)
 
 The shortfall the floor covered is bounded by the committed decision at
 [75,525, 76,599] ratio-scaled firm MW (the last-retained Gibson tranche is 1,365.6 MW wide, so
@@ -243,9 +243,9 @@ keeper / shard / marker / verdict-key change; A/B registered SUFFIXED.
 
 ```
 uv run python scripts/regenerate_clean.py
-uv run python scripts/probes/_capxd55_retention_replay.py results/hindcast/miso-2021-2025-realized-t1h-d31 --year 2022 --json docs/handoffs/d55/replay-d31.json
-uv run python scripts/probes/_capxd55_retention_replay.py results/hindcast/miso-2021-2025-realized-t1h-d51-ratio --year 2022 --json docs/handoffs/d55/replay-d51-ratio.json
-uv run python scripts/probes/_capxd55_retention_replay.py results/hindcast/miso-2021-2025-realized-t1h-d46 --json docs/handoffs/d55/replay-d46.json
+uv run python scripts/probes/_capxd55_retention_replay.py results/hindcast/miso-2021-2025-realized-t1h-d31 --year 2022 --json docs/records/forecast/d55/replay-d31.json
+uv run python scripts/probes/_capxd55_retention_replay.py results/hindcast/miso-2021-2025-realized-t1h-d51-ratio --year 2022 --json docs/records/forecast/d55/replay-d51-ratio.json
+uv run python scripts/probes/_capxd55_retention_replay.py results/hindcast/miso-2021-2025-realized-t1h-d46 --json docs/records/forecast/d55/replay-d46.json
 uv run python scripts/score_capacity_hindcast.py --bundle results/hindcast/miso-2021-2025-realized-t1h-d31 --rescore
 uv run python scripts/score_capacity_hindcast.py --bundle results/hindcast/miso-2021-2025-realized-t1h-d46 --rescore
 uv run python scripts/run_capacity_hindcast.py --iso MISO --start-year 2021 --end-year 2025 --vintage 2020 --fuel-variant realized --entry-screen-diagnostics --out-dir results/hindcast/miso-2021-2025-realized-t1h-d55-keyfix

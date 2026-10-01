@@ -93,7 +93,7 @@ directions in 2023:
    D45 read it; 2024 and 2025 are unchanged.
 
 Consequences for what this lane predicts (all zero-solve; instrument
-`docs/handoffs/d52/predecl-positions-2026-09-04.py` computes the published-row
+`docs/records/forecast/d52/predecl-positions-2026-09-04.py` computes the published-row
 arithmetic; the seam values above are backed out by hand and are themselves a
 prediction, P6):
 

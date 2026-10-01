@@ -165,7 +165,7 @@ index ca7b95f..cc5d9ea 100644
 +    model's chronological fixed-standard-time 8760 clock, so hour ``k`` pairs
 +    hour ``k`` with no DST correction — verified by cross-correlating model
 +    against actual demand (lag 0 must dominate; see
-+    docs/DIAGNOSIS-ercot-lmp-clock-artifact-and-summer-residuals-2026-07.md and
++    docs/records/ercot/DIAGNOSIS-ercot-lmp-clock-artifact-and-summer-residuals-2026-07.md and
 +    tests/test_nonfossil_hourly.py::test_clock_alignment_lag_zero_dominates).
 +
 +    Returns ``{panel: {...}}`` over :data:`NONFOSSIL_930_SERIES` (the non-fossil

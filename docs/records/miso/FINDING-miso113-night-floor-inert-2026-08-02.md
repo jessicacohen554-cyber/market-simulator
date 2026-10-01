@@ -3,7 +3,7 @@
 Session miso-113 phase 2, 2026-08-02, branch
 `claude/miso-113-coal-prb-floor-wtd8kl`, off `origin/main` at `1d3ec21`.
 Continues the merged miso-113 lane (`62a469e` … `5949eb2`), whose
-pre-registration is `results/calibration/PREREG-miso113-prb-night-floor-2026-08-01.md`
+pre-registration is `docs/records/miso/PREREG-miso113-prb-night-floor-2026-08-01.md`
 and whose registered control is `2026-08-01-miso-113a-control`.
 
 ## 0. Verdict
@@ -126,7 +126,7 @@ reasons:
    which is why 15–17 TWh of floor volume produces a 0.02 % class-hour L1 and
    a 0.000 TWh energy delta.
 
-The ex-ante reach probe (`results/calibration/miso113_floor_inertness.txt`)
+The ex-ante reach probe (`results/phase0/miso/miso113_floor_inertness.txt`)
 records the sizing consequence of that same gate: 18 of 26 regulated plants
 carry a non-zero floor above their `_mustrun` band (69.2 % of regulated-PRB
 nameplate, 4,274 MW), but **911 MW of it, on 12 of those 18 plants, sits

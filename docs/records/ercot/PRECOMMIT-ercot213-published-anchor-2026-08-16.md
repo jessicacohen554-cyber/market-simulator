@@ -8,7 +8,7 @@ PUSHED BEFORE ANY SOLVE.** Keeper resolved fresh from
 change in-session** — the outcome is a promotion RECOMMENDATION at most (X-3).
 
 This is the successor NAMED by
-`docs/FINDING-ercot212-reserve-basis-phase0-2026-08-16.md` §5, entered on its
+`docs/records/ercot/FINDING-ercot212-reserve-basis-phase0-2026-08-16.md` §5, entered on its
 terms: the net-credits identification is VALIDATED, the arm was REJECTED on a
 diagnosed structural mis-anchoring, and the 28a cell note forbids re-running
 the bare netting without the anchoring fix. Nothing here re-tests the bare

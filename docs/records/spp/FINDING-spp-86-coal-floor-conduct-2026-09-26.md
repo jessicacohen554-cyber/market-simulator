@@ -5,8 +5,8 @@ Keeper: `2026-09-26-spp-85-netload-mask`, bundle `results/calibration/spp85_arm_
 `basis_sha` `0ff620d11d91797313f5f565b5e94ff3b123330b`. Session base: `origin/main` `9149be2c`.
 
 Probes (zero LP, `fleet_only` rebuilds of the keeper):
-- `scripts/probes/_spp86_coal_floor_conduct.py` → `results/calibration/_spp86_coal_floor_conduct.json`
-- `scripts/probes/_spp86_coal_basis_delta.py` → `results/calibration/_spp86_coal_basis_delta.json`
+- `scripts/probes/_spp86_coal_floor_conduct.py` → `results/phase0/spp/_spp86_coal_floor_conduct.json`
+- `scripts/probes/_spp86_coal_basis_delta.py` → `results/phase0/spp/_spp86_coal_basis_delta.json`
 
 ## 0. Headline
 

@@ -84,7 +84,7 @@ adder (rules 13/21/24).
 ## §3 — Decision 2 restated: sign-off on the G-20b within-window tight-hour memo (item 5)
 
 The memo is written and committed at
-`results/calibration/MEMO-pjm153-g20b-within-window-tight-hour-2026-08-04.md`.
+`docs/records/pjm/MEMO-pjm153-g20b-within-window-tight-hour-2026-08-04.md`.
 It asks one question and answers none of it:
 
 > the merit-order guard vetoes an outage window when **≥ 90 %** of its hours are

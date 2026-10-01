@@ -14,7 +14,7 @@ governed by `ADDENDUM-miso236-sizing-and-the-spp-limb-2026-09-07.md`, pushed at 
 fixed in one of those two documents; none was written after seeing a number.
 
 Probe: `scripts/probes/_miso236_neighbour_state_residual_phase0.py` →
-`results/calibration/_miso236_neighbour_state_residual_phase0.json`.
+`results/phase0/miso/_miso236_neighbour_state_residual_phase0.json`.
 
 **Basis (PREREG §0b).** The price `P` is the **Indiana-hub RT** series (the lane's scored basis);
 every OLS regressor is the **Indiana-hub DA** series (the basis the seam ladders were Q-Q derived

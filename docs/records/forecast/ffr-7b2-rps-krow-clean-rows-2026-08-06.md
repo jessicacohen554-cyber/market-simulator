@@ -2,8 +2,8 @@
 
 **Lane:** implementation (owner decision D-22(a), sitting Addendum V.6; continuation chartered
 at Addendum X.2/X.3). **Spec:** FFR-7B §6 design-to-implementation notes
-(`docs/handoffs/ffr-7b-rps-clean-tier-repair-2026-08-06.md`) implementing FFR-6B
-(`docs/handoffs/ffr-6b-rps-grain-clean-tiers-2026-08-05.md` §§3, 6) — implemented, not
+(`docs/records/forecast/ffr-7b-rps-clean-tier-repair-2026-08-06.md`) implementing FFR-6B
+(`docs/records/forecast/ffr-6b-rps-grain-clean-tiers-2026-08-05.md` §§3, 6) — implemented, not
 redesigned. **Head at lane start:** `origin/main` `dd4e919c` (the prompt's `97e37b0f` had moved;
 keepers re-verified from the shards at this head — ERCOT `2026-08-05-run168b-year-curves`,
 PJM `2026-08-04-pjm-152-collapse`, CAISO `2026-08-06-caiso-175-tac-intake`, NYISO

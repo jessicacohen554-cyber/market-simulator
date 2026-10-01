@@ -2,7 +2,7 @@
 
 **Session.** FFR-3D of the Forecast Finalization Program
 (`docs/forecast-development-plan-2026-07.md`). Executes the three owner decisions signed
-2026-08-03 in `docs/handoffs/ffr-owner-sitting-2026-08-02.md` **Addendum D.1**, and repairs the
+2026-08-03 in `docs/records/forecast/ffr-owner-sitting-2026-08-02.md` **Addendum D.1**, and repairs the
 measurement instruments FFR-3A left as blockers. **NO LP SOLVES.** Ran fully parallel with
 FFR-3C, which owns the solve slots; `retirement_rule` and both entry dampers were left untouched
 so FFR-3C's attribution runs on stable defaults.
@@ -66,7 +66,7 @@ Addendum **D.3** priced this at signature: *"Those verdicts become legacy eviden
 superseded posture — they are not silently reinterpreted and not deleted. Any FC-3 citation
 resting on them says so."*
 
-**Marked, not applied.** `docs/handoffs/ff-t1-gate-2026-07.md` §4.1 — the table that carries the
+**Marked, not applied.** `docs/records/forecast/ff-t1-gate-2026-07.md` §4.1 — the table that carries the
 FC-3 citations — now opens with a marker naming commit `36ef1a1`, stating that every bundle in it
 (including the corrected `nyiso-2021-2025-fixed` row) was solved with both mechanisms OFF. The
 verdicts stand exactly as scored. **Nothing was re-scored, re-interpreted or deleted**, and no

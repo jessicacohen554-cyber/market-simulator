@@ -102,7 +102,7 @@ not a session's call, and directly contrary to the directive that removed them.
 
 **What this changes for a future reader:** the anchor's evidence now lives
 **only** in (a) the committed slim artifacts `results/ffr4f/{caiso-control,caiso-treated}/`,
-(b) `docs/handoffs/ffr-4f-caiso-anchor-merits-2026-08-09.md`, and (c) the
+(b) `docs/records/forecast/ffr-4f-caiso-anchor-merits-2026-08-09.md`, and (c) the
 mechanism-matrix note. The `.gitignore` entry for `/results/ffr4f/*/*/*/*.parquet`
 anticipated exactly this, committing the slim artifacts *"so the paired table is
 auditable without a re-solve"* — that provision is now load-bearing rather than
@@ -196,7 +196,7 @@ lists; new evidence means one thing only — a keeper whose own scored path
 spikes). **Added by this session:**
 
 1. **Do not re-run the FFR-4F A/B.** The committed slim artifacts +
-   `docs/handoffs/ffr-4f-caiso-anchor-merits-2026-08-09.md` **are** the
+   `docs/records/forecast/ffr-4f-caiso-anchor-merits-2026-08-09.md` **are** the
    full-magnitude record, and the mechanism is verified unchanged at HEAD (§1).
 2. **Do not read the anchor's `O` cell as untested.** It means *adjudicated,
    merged, arming owner-pending*. The cell note says so explicitly.

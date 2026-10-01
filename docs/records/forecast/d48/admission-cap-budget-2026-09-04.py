@@ -16,7 +16,7 @@ fraction, ranked by ``_floor_retention_merit`` ($/firm-MW ascending). Both
 sides of the budget are on the devintaged basis under the arm, so the budget
 in MW moves even though the POSITION (their ratio) does not.
 
-    uv run python docs/handoffs/d48/admission-cap-budget-2026-09-04.py
+    uv run python docs/records/forecast/d48/admission-cap-budget-2026-09-04.py
 
 Reads the two committed bundles' ledgers and the D48 arm resolvers; writes
 ``<this file>.json`` beside itself.

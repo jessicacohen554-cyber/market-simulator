@@ -2,7 +2,7 @@
 
 **Lane** SCN-WS5A-RESOLVE · **Model** Opus (`claude-opus-5`) · **Date** 2026-09-06 ·
 **THE PIN** `bdfb3095e9fa0cd2bec3f4e843f320b42588c72b` ·
-**PRECOMMIT** `docs/handoffs/PRECOMMIT-scn-ws5a-resolve-2026-09-06.md` (pushed before the first
+**PRECOMMIT** `docs/records/forecast/PRECOMMIT-scn-ws5a-resolve-2026-09-06.md` (pushed before the first
 solve; every gate, prediction and G-DRIFT classification below was written there first) ·
 **Campaign** `scn-campaign-load-2026-09-06`, re-solved into
 `results/scn-campaign-load-2026-09-06-r2/`.

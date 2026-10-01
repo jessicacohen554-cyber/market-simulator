@@ -32,7 +32,7 @@ the retrofit-log decomposition is not persisted, D41 §7 item 5).
 
 **Computed zero-solve, and disclosed as an INPUT to §2 rather than a prediction:** the
 scaled-bar test of §1.2 applied to every converting row D49 reconstructed (its committed
-`results/calibration/capxd49_ccs_reconstruction.json` carries each row's `hr`, `er`,
+`results/phase0/forecast/capxd49_ccs_reconstruction.json` carries each row's `hr`, `er`,
 `eford`, `vom`), on the learned-capex path the ARM will actually see (no own retrofit GW
 fed back — computed with the repo's own `CumulativeDeployment` + `_adjust_retrofit_capex`)
 and on each ISO's resolved gas path. The NEISO rows were NOT reconstructed by D49 and the
@@ -347,14 +347,14 @@ census probe `scripts/probes/_capxd50_scaled_ceiling_census.py` + its JSON; thre
 slim bundles under `results/ff-t1f-d50/<iso>/` with `.gitignore` carve-outs on the D46
 template; the `VERDICT_MAP` rows and `ff-verdicts.json` entries; the ERCOT/NEISO/PJM
 shard cell stamps; spec §5.6 and CLAUDE.md step-2 amendments;
-`docs/handoffs/FINDING-capx-d50-2026-09-04.md` with this pre-declaration graded.
+`docs/records/forecast/FINDING-capx-d50-2026-09-04.md` with this pre-declaration graded.
 
 ---
 
 ## Addendum A (2026-09-04, written AFTER the clean tree rebuilt and the §2.5 census ran — zero solve — and BEFORE the NEISO and PJM arms were launched; the ERCOT arm was already running on §2.1, which this addendum does not touch)
 
 The §2.5 instrument (`scripts/probes/_capxd50_scaled_ceiling_census.py`, output
-`results/calibration/capxd50_scaled_ceiling_census.json`) ran on the rebuilt base
+`results/phase0/forecast/capxd50_scaled_ceiling_census.json`) ran on the rebuilt base
 fleets through the same resolved golden-posture configs the arms solve. Everything
 above stands and is graded as written; this addendum adds what the census makes
 visible and states two refinements BEFORE the solves that could test them.

@@ -1,9 +1,9 @@
 # SPP Addition Desk — handoff prompt (2026-09-06, charter, r#0)
 
 The paste-whole prompt that opens an SPP-DESK session. Structure mirrors
-`docs/handoffs/scenario-desk-handoff-2026-09-06.md` and the capx director's standing doctrine
-(`docs/handoffs/capx-director-handoff-2026-08-30.md`). **The ledger
-(`docs/handoffs/spp-desk-ledger-2026-09.md`) wins where this and the ledger diverge.**
+`docs/records/misc/scenario-desk-handoff-2026-09-06.md` and the capx director's standing doctrine
+(`docs/records/forecast/capx-director-handoff-2026-08-30.md`). **The ledger
+(`docs/records/spp/spp-desk-ledger-2026-09.md`) wins where this and the ledger diverge.**
 
 ```
 You are the SPP ADDITION DESK (lane id SPP-DESK) for the market-simulator repo — the workstream
@@ -22,14 +22,14 @@ DATA PROFILE: code
 0. FIRST ACT, EVERY SESSION (and every refresh)
 ════════════════════════════════════════════════════════════════════════════════════════
 1. Read, in this order: CLAUDE.md **in full and freshly** (rules 1, 13, 21, 22, 29 and 30 were
-   amended 2026-09-05/06 and will be amended again); docs/handoffs/spp-desk-ledger-2026-09.md
+   amended 2026-09-05/06 and will be amended again); docs/records/spp/spp-desk-ledger-2026-09.md
    (YOUR ledger — §0 top entry is the live state, §1 scoreboard, §2 rulings, §3 routed, §4
    collision register, §5 issuance record, §6 errors against interest); the plan (§1 definition of
    done, §2 verified state, §3 the eight cards, §4 wave graph, §5 lane table, §6 manifest, §7 gates,
    §8 the prompt pack — every charter is committed there); docs/multi-iso/05-backcast-playbook.md;
-   docs/multi-iso/spp-data-audit.md once SPP-10 lands; docs/handoffs/capx-director-ledger-2026-08.md
+   docs/multi-iso/spp-data-audit.md once SPP-10 lands; docs/records/forecast/capx-director-ledger-2026-08.md
    — ONLY its top §0 entry and §1 scoreboard (which dicts its lanes hold);
-   docs/handoffs/scenario-desk-ledger-2026-09.md — ONLY §0 top entry and §4 collision register;
+   docs/records/misc/scenario-desk-ledger-2026-09.md — ONLY §0 top entry and §4 collision register;
    docs/calibration-log/miso.md newest entry (the live MISO lane) and docs/calibration-log/spp.md
    once it exists; docs/mechanism-testing-matrix.md §5.7 + docs/codebase-site/data/
    mechanism-matrix/SPP.js once SPP-21 lands; frontend/data/backcast/keepers/index.json + SPP.json.

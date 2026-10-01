@@ -513,11 +513,11 @@ NP6-86 archive plus two in-repo adjudications that already covered it, and this
 section exists because §9's frontier block outlived them.
 
 **The two prior adjudications.** (a)
-`docs/handoffs/ercot-vre-curtailment-topology-scope-2026-07.md` §WP-A
+`docs/records/ercot/ercot-vre-curtailment-topology-scope-2026-07.md` §WP-A
 (2026-07-07) scoped exactly this split — the five coordinated touch-points,
 `iso_configs` through the gas basis — measured its expected yield as **~zero**,
 and recommended **defer**. (b)
-`results/calibration/FINDING-ercot115-wtx-topology-premise-2026-07-26.md`
+`docs/records/ercot/FINDING-ercot115-wtx-topology-premise-2026-07-26.md`
 (commit `b5449c0`) re-tested WP-A's 2024-only evidence across all three
 training years and it held. §9 predates neither conclusion in substance but
 predates (b) in the record, and its frontier block was never amended.

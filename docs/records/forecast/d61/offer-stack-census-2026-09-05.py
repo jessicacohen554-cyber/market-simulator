@@ -29,4 +29,4 @@ for y in (2022,2023,2024,2025):
             i=np.argsort(x); cw=np.cumsum(w[i]); return float(x[i][np.searchsorted(cw,q)])
         print(f"{fuel:8s} {len(o):4d} {a.sum():8.0f} {zero.sum():6d} {a[zero].sum():8.0f} {off0.sum():6d} {a[off0].sum():8.0f} {wp(eas,.1):8.1f} {wp(eas,.5):7.1f} {wp(eas,.9):7.1f} {float((eas*w).sum()):7.1f} {above.sum():5d} {a[above].sum():8.0f} {np.median(gap[above]) if above.any() else 0:11.1f}")
         out[y][fuel]=dict(n=int(len(o)),firm=float(a.sum()),n_zero=int(zero.sum()),firm_zero=float(a[zero].sum()),n_off0=int(off0.sum()),firm_off0=float(a[off0].sum()),eas_p50=wp(eas,.5),eas_wmean=float((eas*w).sum()),n_above=int(above.sum()),firm_above=float(a[above].sum()),gap_med=float(np.median(gap[above])) if above.any() else 0.0, afrac=afrac, bar=bar, zero_offer=bar*1000/(afrac*365))
-json.dump(out,open("docs/handoffs/d61/offer-stack-census-2026-09-05.json","w"),indent=1)
+json.dump(out,open("docs/records/forecast/d61/offer-stack-census-2026-09-05.json","w"),indent=1)

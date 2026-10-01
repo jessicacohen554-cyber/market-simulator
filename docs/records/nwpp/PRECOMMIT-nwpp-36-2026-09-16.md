@@ -18,7 +18,7 @@ from it before this push).
 | precondition | state |
 |---|---|
 | NWPP-20 landed (nine regions) | `SUPPORTED_ISOS` at base carries nine keys; nine matrix shards on disk: ERCOT CAISO PJM MISO NYISO NEISO SPP SOCO NWPP |
-| NWPP-32 landed | `data/raw/nwpp-hydro/{nwpp_hydro_budget.parquet, nwpp_hydro_chain.csv, nwpp_hydro_chain_published.csv, nwpp_hydro_reconciliation.csv, nwpp_hydro_within_month_930.csv}` present; `docs/handoffs/FINDING-nwpp-32-2026-09-14.md` on main |
+| NWPP-32 landed | `data/raw/nwpp-hydro/{nwpp_hydro_budget.parquet, nwpp_hydro_chain.csv, nwpp_hydro_chain_published.csv, nwpp_hydro_reconciliation.csv, nwpp_hydro_within_month_930.csv}` present; `docs/records/nwpp/FINDING-nwpp-32-2026-09-14.md` on main |
 | designated keepers at base (`frontend/data/backcast/keepers/<ISO>.json`) | ERCOT `2026-09-09-ercot265-receipts-fallback` · CAISO `2026-09-12-caiso-275-gascoupling` · PJM `2026-09-11-pjm-d4-4-gasoutage` · MISO `2026-09-12-miso-255-sil-measured` · NYISO `2026-09-14-nyiso-235-gas-repair` · NEISO `2026-09-09-neiso-108-fuelvintage` · SPP `2026-09-13-spp-38-vintage-cache` · SOCO none · NWPP none |
 | CROHMS reachable | `public.crohms.org/dd/common/web_service/webexec/getjson` answers (200); hourly `Flow-Out / Flow-Spill / Flow-Gen / Elev-Forebay` (`CBT-REV`) and `Power.Total` (`CBT-RAW`) exist for every federal and mid-C project in the chain; ranges of ≤ 3 months per call |
 | NID reachable | `nid.sec.usace.army.mil/api/nation/csv` (200, 67.3 MB, "Data Last Updated 2026-9-11") |
@@ -322,7 +322,7 @@ shard pushing its bundle (rule 34) and is offered in the FINDING, not spent here
 * `docs/codebase-site/data/mechanism-matrix.js` (base row `hydro_cascade_coupling`) + ONE cell line
   in each of the nine shards (NWPP carries the verdict; eight foreign shards `·`).
 * `tests/unit/model/test_hydro_cascade.py`, `tests/unit/data/test_hydro_cascade_loader.py`.
-* This PRECOMMIT and `docs/handoffs/FINDING-nwpp-36-2026-09-16.md`.
+* This PRECOMMIT and `docs/records/nwpp/FINDING-nwpp-36-2026-09-16.md`.
 
 **Not touched:** NWPP-32's artifacts; `HYDRO_BUDGET_PERIOD_HOURS_BY_PLANT`; `constants.py`;
 `solve_surface_declared.py`; `scripts/calibration_verdict.py`; `frontend/data/**`; the plan, the

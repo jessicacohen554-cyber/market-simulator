@@ -36,7 +36,7 @@ repair (§4, ADV-4).
 ## 2. PHASE 0 — the class-scalar refutation (measured BEFORE the lever was built)
 
 Probe `scripts/probes/_nyiso146_perplant_minrun_phase0.py`, record
-`results/calibration/_nyiso146_perplant_minrun_phase0.json`. No solve.
+`results/phase0/nyiso/_nyiso146_perplant_minrun_phase0.json`. No solve.
 
 **(a) The class is not one run-length population.** The keeper's minimum-run
 extension fills every row of a class from one scalar
@@ -66,7 +66,7 @@ keeper ships overstates by that same reasoning. p25 rather than p10 because
 runs are computed WITHIN a year, so every run spanning a year boundary splits
 into two spurious short ones and p10 absorbs that truncation artifact — the
 identical reasoning, pre-registered verbatim, that chose the CT leg's p25
-(`nyiso_gas_bridge_ct_min_run_hours`, docs/handoffs/nyiso90-preregistration.md
+(`nyiso_gas_bridge_ct_min_run_hours`, docs/records/nyiso/nyiso90-preregistration.md
 §2). **No second percentile will be tried; a residual is never grounds to
 revisit it (rules 5 / 21 / 23).**
 
@@ -119,7 +119,7 @@ measured horizon (the artifact never covers `gas_ct` rows).
 ## 4. FALSIFIABLE EXPECTATIONS, computed BEFORE the arm solves
 
 Probe `scripts/probes/_nyiso146_k2_prediction.py`, record
-`results/calibration/_nyiso146_k2_prediction.json`. The bridge floor is a
+`results/phase0/nyiso/_nyiso146_k2_prediction.json`. The bridge floor is a
 DETERMINISTIC function of the base-cost P0 pattern and the config, and P0 is
 config-invariant across the arms (the bridge injects at the P0→P1 seam), so
 the ARM's floor is computed EXACTLY from a control-side capture — the solves

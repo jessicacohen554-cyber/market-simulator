@@ -31,7 +31,7 @@ is arithmetic from a declared target and a measured slope.
 
 > **DECLARED: a single scalar `0.93391` on the SAME 12 markup bands** of neiso-104 PREREG §2.1 —
 > `committed` / `econ_low` / `econ_high` of CC_REGULAR, CC_CHP, CT_PEAKER, ST_GAS. Bands in
-> `results/calibration/_neiso105_arm_offer_curve.json`, committed with this file. Unchanged and
+> `results/phase0/neiso/_neiso105_arm_offer_curve.json`, committed with this file. Unchanged and
 > still excluded: all four `peak` bands (three equal their `phys_peak`; CT_PEAKER's 4.0 is the
 > ISO-NE offer cap), every `phys_*`, `econ_low_share`, `pct_peaking`, and the declared-neutral
 > CT_CHP group. **This number does not move again.**

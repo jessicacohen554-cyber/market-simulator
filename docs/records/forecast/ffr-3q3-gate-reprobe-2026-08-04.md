@@ -1,9 +1,9 @@
 # FFR-3Q-3 — The FH-1 §3.3 gate re-probe, solved
 
 **Session.** FFR Wave 3, the gate re-probe lane. Finishes **FFR-3Q Task 1**, which was
-pre-registered in `docs/handoffs/ffr-3q-window-recut-2026-08-04.md` §2.1 and then never solved —
+pre-registered in `docs/records/forecast/ffr-3q-window-recut-2026-08-04.md` §2.1 and then never solved —
 its first attempt hit the rule-22 bridge-seam breach recorded in that document's §2.2, which
-**FFR-3U** (`docs/handoffs/ffr-3u-bridge-seam-2026-08-04.md`) has since fixed. Owner authorized
+**FFR-3U** (`docs/records/forecast/ffr-3u-bridge-seam-2026-08-04.md`) has since fixed. Owner authorized
 the dispatch 2026-08-04 (sitting **Addendum O**). Branch `claude/fh1-gate-reprobe-on6ylu`, off
 `origin/main` **`68e7bfcd`** (the packet's stated HEAD `5eac75b0` was two commits stale at
 session start; the two intervening commits are a MISO pre-registration doc and touch no `src/`

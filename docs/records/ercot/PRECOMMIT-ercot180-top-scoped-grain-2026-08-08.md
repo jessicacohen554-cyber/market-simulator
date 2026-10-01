@@ -124,7 +124,7 @@ or any residual.**
   permutation, MAX_EDGES = 2) are identification-instrument constants fixed
   here, never swept, never revisited after the corpus is read.
 * Probe: `scripts/probes/ercot180_topcurve_edge_id.py`; committed record:
-  `results/calibration/ercot180_edge_identification.json` (KS profiles,
+  `results/phase0/ercot/ercot180_edge_identification.json` (KS profiles,
   chosen edges, per-sub-bin hour/interval/MW counts for 2023, and 2024/2025
   coverage counts as disclosure).
 
@@ -302,7 +302,7 @@ control residual, so it must not precede or inform the arm's identification):
   for diagnosis and charter-sizing ONLY, and its output is barred from
   parameter identification in this session (rule 13's diagnostic-probe
   clause).
-* **Deliverable:** `results/calibration/ercot180_marginal_position.json` + a
+* **Deliverable:** `results/phase0/ercot/ercot180_marginal_position.json` + a
   "what remains" section in FINDING-ercot180 that either charters the
   ercot-181 quantity-position lane (with its own precommit, not written here)
   or refutes it (P-7).

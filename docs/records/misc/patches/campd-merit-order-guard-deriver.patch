@@ -35,7 +35,7 @@ index b93b1d7..c74b65e 100644
 +        "companion campd-unit-outages-layup[-{ISO}].csv, which no loader reads "
 +        "by default. Fixes the detector booking 23-46%% of every ISO's CC "
 +        "capacity-year as outage against a real EFOR+planned norm of ~10-15%% "
-+        "(docs/handoffs/campd-economic-layup-fix-charter-2026-07.md). The "
++        "(docs/records/misc/campd-economic-layup-fix-charter-2026-07.md). The "
 +        "standard extract is byte-identical when this flag is absent.",
 +    )
 +    ap.add_argument(

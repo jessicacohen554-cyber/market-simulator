@@ -23,7 +23,7 @@ reason is recorded in §5. **NO LP IS SOLVED.**
 Read: CLAUDE.md; `docs/mechanism-testing-matrix.md` §5.4 stamps miso-132(b) /
 miso-132(a) / miso-131 / miso-130 / miso-129; `FINDING-miso130-c7-night-regime-2026-08-05.md`;
 `FINDING-miso127-overnight-gas-composition-2026-08-04.md` §1/§7;
-`docs/handoffs/miso-coal-contract-tonnage-data-ask-2026-07.md` §8/§9;
+`docs/records/miso/miso-coal-contract-tonnage-data-ask-2026-07.md` §8/§9;
 `scripts/probes/_miso127_overnight_gas_composition.py`;
 `scripts/probes/_miso130_c7_night_regime.py`; `scripts/lib/bench_multiclass.py`;
 `scripts/lib/backcast_artifacts.py`; `scripts/render_calibration_html.py::_btm_share`;
@@ -221,7 +221,7 @@ slice alone is 7.5–8.3 TWh/yr.
 ## §5 Why charter option (a) is not taken
 
 Option (a)'s Form 580 count was attempted and found **not producible from a standard
-session** one day before this one (`docs/handoffs/miso-coal-contract-tonnage-data-ask-2026-07.md`
+session** one day before this one (`docs/records/miso/miso-coal-contract-tonnage-data-ask-2026-07.md`
 §9, xiso-4, 2026-08-04): eLibrary exposes no machine surface, FERC's open-data catalog
 does not carry Form 580, and the browser fallback is environment-blocked. This session
 re-probed the one cheap discriminator — `elibrary.ferc.gov/eLibrary/docketsheet?docket=IN79-6`

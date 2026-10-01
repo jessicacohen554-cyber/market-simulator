@@ -9,7 +9,7 @@ LOYO before any default moves). Branch `claude/capx-d40-neiso-devintage-4spxmd`.
 demand-curve / icr-ara rows) or computed by evaluating HEAD's own committed
 machinery — the new resolver, the new position transform, and the R2 vintage
 curves — on those artifacts (instrument + rows committed under
-`docs/handoffs/d40/`). No keeper / shard / marker / board / verdict / `neiso-t3`
+`docs/records/forecast/d40/`). No keeper / shard / marker / board / verdict / `neiso-t3`
 write; the backcast namespace is untouched (§6). No new workflow.
 
 ## 0. Verdict (one paragraph)
@@ -91,7 +91,7 @@ any residual; the published series is the identification, full stop.
 
 ## 2. Consequence at the screen grain (committed crossover ledgers, zero solves)
 
-Instrument: `docs/handoffs/d40/devintage-screen-grain-2026-09-02.py` (rows in
+Instrument: `docs/records/forecast/d40/devintage-screen-grain-2026-09-02.py` (rows in
 the sibling JSON; stdout committed). OFF = HEAD (the composite, net convention,
 what D28/D33 reported); ON = the armed lever exactly as `capacity_reserve_position`
 would return it (R-A denominator + R-B transform); real = cleared ÷ Net ICR, the

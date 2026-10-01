@@ -1,6 +1,6 @@
 {
   "lane": "caiso-292",
-  "precommit": "docs/PRECOMMIT-caiso292-screen-split-on-the-live-keeper-2026-09-20.md",
+  "precommit": "docs/records/caiso/PRECOMMIT-caiso292-screen-split-on-the-live-keeper-2026-09-20.md",
   "keeper_id": "2026-09-20-caiso-290-leftedge",
   "keeper_bundle": "results/calibration/xiso8_leftedge_span",
   "G_V": {

@@ -7,7 +7,7 @@ row, no solve, no cell verdict changed.** PREREG
 `PREREG-miso216-anchor-basis-grain-2026-09-05.md` pushed **BLIND** at `9fcd69cd`, before any
 adjudicating statistic of this session. Probe
 `scripts/probes/_miso216_anchor_basis_grain_phase0.py` → record
-`results/calibration/_miso216_anchor_basis_grain.json`. Rule 22 `[R-HOLDOUT]`: 2023–2025
+`results/phase0/miso/_miso216_anchor_basis_grain.json`. Rule 22 `[R-HOLDOUT]`: 2023–2025
 only (the probe hard-asserts it).
 
 ---

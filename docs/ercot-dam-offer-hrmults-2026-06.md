@@ -236,7 +236,7 @@ python scripts/probes/_dam_offer_compare.py ercot_dam_offers_3yr ercot_baseline_
 ## 8. 2026-07-05 addendum — the measured peak-band quantile ladder (`--peak-ladder`)
 
 **Trigger:** the C3b/C3c price-shape attribution
-(`docs/FINDING-ercot-priceshape-2026-07.md`). Decomposing the actual 2023
+(`docs/records/ercot/FINDING-ercot-priceshape-2026-07.md`). Decomposing the actual 2023
 >$200 tail hour-by-hour against ERCOT's published price formation showed the
 real tail is **energy-offer-carried** (SCED lambda > $200 in 175/181 hours;
 RTORPA small, reserves above the ORDC knee), while the model's peak band —

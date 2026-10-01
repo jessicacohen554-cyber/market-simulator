@@ -7,7 +7,7 @@ keeper's committed `hourly/class_hourly_<y>.parquet`).
 
 ## Verdict
 
-1. **The handoff's premise is FALSIFIED at zero LP.** `docs/RESULT-hydro-1-2026-09-22.md` §2
+1. **The handoff's premise is FALSIFIED at zero LP.** `docs/records/misc/RESULT-hydro-1-2026-09-22.md` §2
    attributed arm B's 2022 G2 miss (−0.1229 %, 31.4 GWh) to the RoR flat level being clipped to
    nameplate. It named `hydro_budget_nameplate_aware=true` as the one-shard fix. The clip is real,
    but it is **1 plant-month and ~0.0 GWh in 2022**. The nameplate-aware water-fill
@@ -26,7 +26,7 @@ keeper's committed `hourly/class_hourly_<y>.parquet`).
    | 2024 | 7.3 GWh | none material | 0.0 pass |
    | 2025 | 3.7 GWh | none material | pass |
 
-3. **The cause is already on the record: nyiso-237.** `docs/RESULT-nyiso237-hydro-negative-price-phase0-2026-09-16.md`
+3. **The cause is already on the record: nyiso-237.** `docs/records/nyiso/RESULT-nyiso237-hydro-negative-price-phase0-2026-09-16.md`
    localized the 2022–23 hydro G2 kills to hours the model **fabricates**. There, Upstate_West is
    priced ≤ $0 for 498 h in 2022 against 21–127 h real, because the Central-East link sits at its
    monthly cap in every hour and curtailed wind sets a −$26 PTC price. Forcing the RoR class flat puts

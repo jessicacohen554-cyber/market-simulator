@@ -1,7 +1,7 @@
 # ADDENDUM — nyiso-223: the shard's C1 delta is a CLASS-TAXONOMY ARTIFACT
 
 **Session:** nyiso-223 (parent) · **ISO:** NYISO · **Date:** 2026-09-10 · **ZERO LP.**
-Corrects one number in `docs/RESULT-nyiso223-shard-2022.md`, written by shard `nyiso223-y2022`.
+Corrects one number in `docs/records/nyiso/RESULT-nyiso223-shard-2022.md`, written by shard `nyiso223-y2022`.
 
 ## 1. The claim being corrected
 

@@ -1,7 +1,7 @@
 # AMENDMENT — caiso-166 gate S3 re-charter (OWNER DECISION)
 
 **Date** 2026-08-04 · **Session** caiso-167 (continuation of caiso-166) ·
-**Amends** `results/calibration/PRECHECK-caiso166-measured-loss-zones-2026-08-04.md` §6
+**Amends** `docs/records/caiso/PRECHECK-caiso166-measured-loss-zones-2026-08-04.md` §6
 · **Decided by** the OWNER, on the standing clause *"if structural integrity
 improves but gates regress that may still be a keeper"*, reaffirmed 2026-08-04
 after caiso-166 recommended against promotion.

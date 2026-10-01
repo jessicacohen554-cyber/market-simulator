@@ -4,7 +4,7 @@
 `PREREG-miso248-the-spp-hourly-ladder-rederive-on-the-repaired-clock-2026-09-09.md` §7 is moved**;
 the one bar that WAS repaired is `G-2`'s, and that repair was published in ADDENDUM 2 **before** the
 repaired number existed, with the first-run failure preserved verbatim. Machine records
-`results/calibration/_miso248_screen_gates.json` and `_miso248_g4_collateral.json`.
+`results/phase0/miso/_miso248_screen_gates.json` and `_miso248_g4_collateral.json`.
 
 ---
 

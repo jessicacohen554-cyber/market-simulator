@@ -1,6 +1,6 @@
 # ERCOT VRE under-curtailment — step 2: dumping + storage timing (2026-07-07)
 
-**Scope.** Step 2 of `docs/handoffs/ercot-vre-undercurtailment-2026-07.md` §5.2.
+**Scope.** Step 2 of `docs/records/ercot/ercot-vre-undercurtailment-2026-07.md` §5.2.
 Step 1 (ercot39) ruled out measured NP6-86 GTC limits. This step checks the two
 next real mechanisms in order: (1) negative-price **dumping** and (2) **storage
 absorption timing**. Both are **cleared as the lever** — the diagnosis localises
@@ -122,7 +122,7 @@ re-probe):
    corridor) so the chronically-binding nodal paths are represented. Largest,
    most faithful, but a substantial structural change to `iso_configs`/`constants`.
 2. **Derived, forward-admissible curtailment-share driver** (handoff §5.2 last
-   bullet; WS-A precedent, `docs/handoffs/ercot-as-coopt-plan-2026-07.md` §4): a
+   bullet; WS-A precedent, `docs/records/ercot/ercot-as-coopt-plan-2026-07.md` §4): a
    curtailment share as a function of net-load percentile / hour-of-day / season,
    fit to the **measured GTC-binding frequency / RTOLCAP-style supply shares** —
    never the price or volume residual — with a DOF-ledger identification source

@@ -3,7 +3,7 @@
 **Session `claude/y14-ercot-golden-forward-5rjxrn`, 2026-09-05 (Model Audit &
 Release-Finalization Program, dispatch Y-14).** Pin: `2886235c` (= `origin/main`
 at session start; the director's pin `5cc1e7ce` is its ancestor and the three
-intervening commits touch only `docs/handoffs/wallclock-desk-log-2026-09.md`).
+intervening commits touch only `docs/records/misc/wallclock-desk-log-2026-09.md`).
 The dispatch named the branch `claude/y14-ercot-golden-forward-r4vx8n`; the
 session's assigned branch is `claude/y14-ercot-golden-forward-5rjxrn` and the
 work is pushed there.

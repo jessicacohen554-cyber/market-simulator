@@ -1,7 +1,7 @@
 # FINDING — capx-D8-V: FC-7 ledger completion — the two routed flips published, PJM and MISO ledgered
 
 **Lane:** capx-D8-V (director r#22 dispatch; charter:
-`docs/handoffs/capx-director-prompt-pack-2026-08.md` §D8-V — executes capx-D8-RE's
+`docs/records/forecast/capx-director-prompt-pack-2026-08.md` §D8-V — executes capx-D8-RE's
 routed set) · **Branch:** `claude/capx-d8v-fc7-ledger-gf4h5g` · **Date:** 2026-08-31
 · **Base:** `origin/main` @ `836e48e1` · **Zero solves.**
 
@@ -59,7 +59,7 @@ input alone. The stop-the-line clause was never triggered.
 ## §2 NEISO — the routed flip, re-verified and PUBLISHED (Task 1)
 
 Affected lane **capx-S4b-neiso-ara**; its own record is the Addendum appended to
-`docs/handoffs/FINDING-capx-s4b-neiso-ara-2026-08-30.md` (the cross-lane rule's
+`docs/records/forecast/FINDING-capx-s4b-neiso-ara-2026-08-30.md` (the cross-lane rule's
 requirement). The documented command, on committed artifacts only:
 
 ```
@@ -89,7 +89,7 @@ split** D8-RE flagged: both arms again read identical FC-7 rows.
 ## §3 NYISO — the routed flip, re-verified and PUBLISHED (Task 2)
 
 Affected lane **capx-D2-extcap-intake**; its record is the Addendum appended to
-`docs/handoffs/FINDING-capx-d2-nyiso-extcap-2026-08-25.md`. Identical shape on
+`docs/records/forecast/FINDING-capx-d2-nyiso-extcap-2026-08-25.md`. Identical shape on
 `results/ff-t1f-extcap/nyiso/` (ledger: 1 entry, 0 UNIDENTIFIED —
 `forecast_xyear_warmstart=False`, owner decision D-10):
 

@@ -4,8 +4,8 @@
 LANE    : miso-293 (owner rulings "Generic network anyway" + "Continue chain", CHARTER-miso292 §9)
 KEEPER  : 2026-09-28-miso-280-splitremap (results/calibration/miso280_span, 2019-2025), unchanged
 LP      : none
-PROBES  : scripts/probes/_miso293_flowgate_ceiling.py      -> results/calibration/_miso293_flowgate_ceiling.json
-          scripts/probes/_miso293_zone_resolved_basis.py   -> results/calibration/_miso293_zone_resolved_basis.json
+PROBES  : scripts/probes/_miso293_flowgate_ceiling.py      -> results/phase0/miso/_miso293_flowgate_ceiling.json
+          scripts/probes/_miso293_zone_resolved_basis.py   -> results/phase0/miso/_miso293_zone_resolved_basis.json
 CELLS   : internal_congestion_split stays O pending the owner's go/kill ruling (evidence appended)
 ```
 

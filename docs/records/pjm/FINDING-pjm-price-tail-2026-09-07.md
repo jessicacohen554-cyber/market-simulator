@@ -96,7 +96,7 @@ this purpose, `pipeline/offer_curve_base/base_offer_curve_by_group(iso)`, has **
 `src/` or `scripts/`**.
 
 Measured at zero LP on `build_base_fleet` for PJM 2021 under the registered T1-H recipe, one
-field changed (`docs/handoffs/pjmtail/phase0_offer_array_delta.py`):
+field changed (`docs/records/pjm/pjmtail/phase0_offer_array_delta.py`):
 
 | | control `{}` | arm `base_offer_curve_by_group("PJM")` |
 |---|---|---|

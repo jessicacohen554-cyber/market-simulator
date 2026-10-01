@@ -32,7 +32,7 @@ out-of-training CAMPD read). None is prejudged here.
 
 ## 1. The object, exactly as handed forward
 
-nyiso-211 (`docs/FINDING-nyiso211-cricket-valley-lineage-attribution-2026-09-07.md` §5, §7) leaves
+nyiso-211 (`docs/records/nyiso/FINDING-nyiso211-cricket-valley-lineage-attribution-2026-09-07.md` §5, §7) leaves
 the Cricket Valley deficit as **two objects**:
 
 * **(A) an OUTAGE-WINDOW CONSTRUCTION defect** — in **Jul/Aug/Sep 2024** and **Jun/Jul/Aug 2025**
@@ -184,7 +184,7 @@ beyond it** — so P3 is a live outcome, not a straw man, and I do not claim imp
 
 ## 7. Machine record and reproduction
 
-`results/calibration/_nyiso212_overceiling_decomposition.json` (plant × month × term, all 36
+`results/phase0/nyiso/_nyiso212_overceiling_decomposition.json` (plant × month × term, all 36
 months, the seven scored months flagged, every I-check with its measured value) written by
 `scripts/probes/nyiso212_overceiling_decomposition.py`, which reuses nyiso-211's rebuild cache
 pattern (`.cache/nyiso212/`). Reproduce:

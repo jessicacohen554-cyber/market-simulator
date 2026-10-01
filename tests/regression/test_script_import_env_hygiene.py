@@ -1,6 +1,6 @@
 """Loose ``scripts/`` modules must not pin ``os.environ`` at IMPORT time.
 
-The incident this pins (``docs/FINDING-fast-tier-repair-2026-09.md`` §4b):
+The incident this pins (``docs/records/misc/FINDING-fast-tier-repair-2026-09.md`` §4b):
 ``scripts/capture_keeper_goldens.py`` applied its ``DETERMINISM_ENV`` —
 ``MARKET_SIM_HIGHS_THREADS=1`` above all — at module scope. That is right for
 its own CLI process, where the pin must precede any solve. Executed inside

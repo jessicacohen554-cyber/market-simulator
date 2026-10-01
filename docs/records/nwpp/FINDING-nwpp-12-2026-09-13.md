@@ -354,7 +354,7 @@ reach. The per-path ATC numbers are in Figure 42 — an image.
 | `data/raw/coal-prices/SOURCES_nwpp_coal.md` | NEW | per-plant coal price, basin split, the Colstrip/Centralia gap, exits |
 | `data/raw/gas-prices/README.md` | edited | **one added table row** pointing at `SOURCES_nwpp_gas.md` |
 | `data/raw/coal-prices/README.md` | edited | **one added table row** pointing at `SOURCES_nwpp_coal.md` |
-| `docs/handoffs/FINDING-nwpp-12-2026-09-13.md` | NEW | this file |
+| `docs/records/nwpp/FINDING-nwpp-12-2026-09-13.md` | NEW | this file |
 
 **No shared record touched** (§8.0 rule 1): not the plan, not the ledger, not
 `docs/calibration-log/nwpp.md`, not `CHANGELOG.md`, not
@@ -522,7 +522,7 @@ did not write that file, per §8.0 collision rule 1.)*
 Lane **NWPP-12** (Opus, `DATA PROFILE: shared`, branch `claude/nwpp-12-docs-plan-ftlv5u`,
 base `4d9c3251`) landed the `data/raw/nwpp-planning/` corpus (21 PDFs fetched, 14
 tracked, 7 converted to transcriptions; 22 MB) plus four registry-data files.
-FINDING: `docs/handoffs/FINDING-nwpp-12-2026-09-13.md`. Nothing was blocked by a
+FINDING: `docs/records/nwpp/FINDING-nwpp-12-2026-09-13.md`. Nothing was blocked by a
 host; every "partial" is an image-rendered table in a public document already in
 the corpus.
 

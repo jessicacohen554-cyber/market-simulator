@@ -2,7 +2,7 @@
 
 ```
 LANE      : miso-292 (owner ruling "Repair basis (Recommended)", miso-291 §7)
-PRECOMMIT : docs/PRECOMMIT-miso292-c3a-lw-basis-2026-09-30.md
+PRECOMMIT : docs/records/miso/PRECOMMIT-miso292-c3a-lw-basis-2026-09-30.md
 KEEPER    : 2026-09-28-miso-280-splitremap (results/calibration/miso280_span), unchanged
 LP        : none
 ```
@@ -60,4 +60,4 @@ already failing on 2021). Train tier 2023–2025 untouched: CALIBRATED.
 
 Full span NOT-YET on: C1 ST_GAS 2019, C3a 2022 (−18.5 %), C3b 2021 (0.252), **C3b 2022 (0.224, new)**.
 No frontier. The 2022 pair is the object of the flowgate charter
-(`docs/CHARTER-miso292-flowgate-program-2026-09-30.md`).
+(`docs/records/miso/CHARTER-miso292-flowgate-program-2026-09-30.md`).

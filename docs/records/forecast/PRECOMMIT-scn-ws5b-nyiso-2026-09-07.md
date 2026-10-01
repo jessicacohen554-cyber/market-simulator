@@ -46,7 +46,7 @@ result**, and every prediction in §7 is scored as written in the FINDING.
 | **(a)** | keeper + `complete` marker | **PASS** | `frontend/data/backcast/calibration-complete.json` → `complete.NYISO`: `declared` **2026-09-06**, `keeper` **`2026-09-07-nyiso-213-summer-seam`**, determination **CALIBRATED** (rubric v3.6, grade 7 of 8, fails 0, single ledgered C3c). `withdrawn` block is **EMPTY**. |
 | **(b)** | a **T1-F PROMOTE** | **PASS** | `frontend/data/forecast/ff-verdicts.json` → **bare `nyiso-t1f`**: `determination` **`PROMOTE`**, `reasons` `[]`, **`caveats` `[]`**; FC-1 **PASS**, FC-2 PASS, FC-7 PASS, FC-8 PASS; FC-3/FC-4 `n/a`, FC-5/FC-6 SKIPPED. Provenance `run_id` `nyiso-2026-2030-d60-arm`, `scored_at_sha` `7ed062ba9a68`, session `capx-D60-R3`. |
 | **(c)** | T1-X crossover gap MEASURED and REPORTED | **PASS** | `ff-verdicts.json` → `nyiso-t1x` present; `program-status.json` → `isos.NYISO.gate.c_crossover_gap` **`pass`**, `c_readiness` **`green`**. FC-4 **FAIL** at full magnitude (price 2023 +29.9 % / 2025 −24.0 %; gas_twh 21.0 / 19.8 %; co2 10.1 / 10.3 % CAVEAT) — **the leg closes on MEASUREMENT, not on a pass**, per the owner-signed card-A reading. |
-| **(d)** | per-campaign owner authorization | **GRANTED — S18** | `docs/handoffs/scenario-desk-ledger-2026-09.md` r#21, card D-5 → **S18 (2026-09-07): "Narrow: 6 legs × NEISO+NYISO."** Second leg-(d) grant in program history; **per-campaign by its own terms**. |
+| **(d)** | per-campaign owner authorization | **GRANTED — S18** | `docs/records/misc/scenario-desk-ledger-2026-09.md` r#21, card D-5 → **S18 (2026-09-07): "Narrow: 6 legs × NEISO+NYISO."** Second leg-(d) grant in program history; **per-campaign by its own terms**. |
 
 **Read against the charter's own warning.** I read the **bare, un-suffixed** `nyiso-t1f` key. The
 four suffixed NYISO T1-F keys present in the file — `nyiso-t1f-pre-d60`, `nyiso-t1f-ff2d`,
@@ -469,7 +469,7 @@ is therefore a real test of the model, not of the cache.
 
 **Files this lane writes:** `results/scn-campaign-stageb-2026-09-07/NYISO/**` · the NYISO Stage-B
 sidecars and their `frontend/data/hindcast/invariant-failures.json` rows · this PRECOMMIT ·
-`docs/handoffs/FINDING-scn-ws5b-nyiso-2026-09-07.md` ·
+`docs/records/forecast/FINDING-scn-ws5b-nyiso-2026-09-07.md` ·
 `docs/codebase-site/data/mechanism-matrix/NYISO.js` (**LAST commit, after rebase, appended cell
 lines only** — rule 28(b)).
 

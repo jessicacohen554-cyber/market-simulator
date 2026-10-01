@@ -13,7 +13,7 @@ this session tested no mechanism-in-kind (PREREG §0/§4; rule 26(b) engages via
 the §5.4 queue stamp + calibration-log entry).
 
 Instrument: `scripts/probes/_miso183_south_basis_decomposition.py` →
-`results/calibration/_miso183_south_basis_decomposition.json`. New substrate:
+`results/phase0/miso/_miso183_south_basis_decomposition.json`. New substrate:
 `data/raw/miso-regional-balance/` (README there;
 `scripts/data/fetch_miso_regional_balance.py`).
 

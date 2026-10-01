@@ -1,7 +1,7 @@
 # FINDING — pjm-125: constraining commitment halves PJM's reserve supply and still cannot make it bind (2026-07-26)
 
 **Verdict: framing 1 lands PARTIAL — NO SOLVE SPENT.** The second and last
-candidate named in `docs/FINDING-pjm120-c3a-extreme-tail-depth-2026-07.md` §7
+candidate named in `docs/records/pjm/FINDING-pjm120-c3a-extreme-tail-depth-2026-07.md` §7
 ("whether perfect-foresight all-online commitment should be constrained before
 the reserve bound is read") **does** bite, and bites hardest exactly where PJM's
 residual lives — and still leaves the reserve balance **5.0–5.6× oversupplied**
@@ -28,7 +28,7 @@ The per-gen co-opt imposes **two** constraint families per pool-hour:
 | ramp | `R[r] ≤ Σ ramp10 × availability` | **framing 2** (pjm-124, closed) |
 | joint capacity | `Σ P + R ≤ Σ cap` — counts every member, committed or not | **framing 1** (this finding) |
 
-`docs/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md` §B.4 states framing 1's
+`docs/records/pjm/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md` §B.4 states framing 1's
 premise: "pjm-81/82 proved the perfect-foresight LP holds ~2.7–3.1× the real
 online reserve at near-zero cost". A 2.7–3.1× surplus is a far better prospect
 than framing 2's measured ~10×, so the two were measured separately rather than
@@ -198,9 +198,9 @@ done
 
 ## Pointers
 
-* Charter and ledger: `docs/handoffs/pjm-frontier-path-2026-07.md` §2–§4.
-* The framing this closes: `docs/FINDING-pjm120-c3a-extreme-tail-depth-2026-07.md`
+* Charter and ledger: `docs/records/pjm/pjm-frontier-path-2026-07.md` §2–§4.
+* The framing this closes: `docs/records/pjm/FINDING-pjm120-c3a-extreme-tail-depth-2026-07.md`
   §7, framing 1.
-* Its sibling: `docs/FINDING-pjm124-ramp10-scoping-precheck-2026-07.md` (framing 2).
+* Its sibling: `docs/records/pjm/FINDING-pjm124-ramp10-scoping-precheck-2026-07.md` (framing 2).
 * The attribution this qualifies: pjm-82, and
-  `docs/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md` §B.3–B.4.
+  `docs/records/pjm/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md` §B.3–B.4.

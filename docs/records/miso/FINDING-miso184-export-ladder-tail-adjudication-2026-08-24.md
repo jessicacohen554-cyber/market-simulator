@@ -16,7 +16,7 @@ identification, per the PREREG's §0 declaration — unlike miso-182/183's
 no-cell sessions), with its new mechanism row added per rule 26.
 
 Instrument: `scripts/probes/_miso184_ladder_tail_methodology.py` →
-`results/calibration/_miso184_ladder_tail_methodology.json`. No new data
+`results/phase0/miso/_miso184_ladder_tail_methodology.json`. No new data
 intaken; every input was already in-repo.
 
 ## 0. The verdict

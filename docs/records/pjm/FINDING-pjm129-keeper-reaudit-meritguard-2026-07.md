@@ -1,8 +1,8 @@
 # FINDING — pjm-129: the PJM keeper does NOT hold on the guard-corrected CAMPD envelope — **RE-TUNE REQUIRED**, three gates; and the RAM block that stopped two prior attempts was never a bigger box
 
-**Lane:** the last PJM cell of `docs/handoffs/campd-economic-layup-fix-charter-2026-07.md`
+**Lane:** the last PJM cell of `docs/records/misc/campd-economic-layup-fix-charter-2026-07.md`
 §5/§8. Charter, pre-registered and committed **before any solve result was read**:
-`docs/handoffs/pjm-129-keeper-reaudit-charter-2026-07.md`.
+`docs/records/pjm/pjm-129-keeper-reaudit-charter-2026-07.md`.
 
 **Registered arm:** `2026-07-26-pjm-129-meritguard-a1` (PJM 2023/2024/2025, ONE
 bundle, rule 16; rule 15 — registered whatever the verdict). **Nothing was

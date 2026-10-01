@@ -1,7 +1,7 @@
 # RC-1C — MISO seasonal RBDC + NYISO multi-vintage curves + curve eligibility — 2026-07-16
 
 **Charter.** F-5 / prereq 4 of the flip-gate lane
-(`docs/handoffs/forecast-retirement-calibration-plan-2026-07.md` §2.1 item 2, §2.3
+(`docs/records/forecast/forecast-retirement-calibration-plan-2026-07.md` §2.1 item 2, §2.3
 F-5): the capacity **instrument** validated on per-delivery-year published
 parameters for MISO (seasonal grain, prereq 4a) and NYISO (multi-vintage wiring,
 prereq 4b), plus the curve-eligibility governance gate. **Scope: annual
@@ -71,7 +71,7 @@ were verified present on `origin/main` before starting.
   2025/26 locked.
 - PJM/NEISO Pass 1/Pass 2 model side is left on the registry reference
   (`year=None`), so their numbers are byte-stable. Refreshed report section:
-  `docs/handoffs/capacity-price-validation-2026-07-16.md`; committed JSON:
+  `docs/records/misc/capacity-price-validation-2026-07-16.md`; committed JSON:
   `results/capacity-price-validation/validation.json`.
 
 ## 4. Tests
@@ -112,7 +112,7 @@ fails identically on `origin/main` (RC-1B/RC-0A noted it).
 seasonal dispatch + MISO vintages), `scripts/validate_capacity_prices.py`,
 `model-methodology-spec.md` §5.9, `tests/test_capacity_demand_curve.py`,
 `tests/test_validate_capacity_prices.py`,
-`docs/handoffs/capacity-price-validation-2026-07-16.md`,
+`docs/records/misc/capacity-price-validation-2026-07-16.md`,
 `results/capacity-price-validation/validation.json`.
 
 *Produced 2026-07-16 (RC-1C). No LP solved. No holdout year touched (rule 22).

@@ -12,7 +12,7 @@ B-1/B-2/B-5 (and B-3) post-merge golden-tier dispatch duty to this lane; plan
 lane (§4). Gate G3's evidence blocker is cleared by that green.
 **Branch:** `claude/golden-tier-fix-2e138a`, rebased onto main `00abb60`
 after the owner's history rewrite. Upstream record:
-`docs/handoffs/perf-recheck-2026-08.md` §1 (PERF-A measured root cause +
+`docs/records/governance/perf-recheck-2026-08.md` §1 (PERF-A measured root cause +
 prototype); `docs/bloat-removal-report-2026-08.md` §4 (in-repo diagnosis).
 
 ---

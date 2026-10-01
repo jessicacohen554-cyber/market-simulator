@@ -1,6 +1,6 @@
 {
   "probe": "ercot200_regime_partition",
-  "authority": "L-SCAR V0-FAIL adjudication item (ii), on main at fb6d08d (docs/DECISION-CARD-lscar-screen-revenue-2026-08-13.md)",
+  "authority": "L-SCAR V0-FAIL adjudication item (ii), on main at fb6d08d (docs/records/misc/DECISION-CARD-lscar-screen-revenue-2026-08-13.md)",
   "input": "data/raw/som-competitive-conduct/som_competitive_conduct.csv",
   "v0_bar": {
     "pct": 0.25,

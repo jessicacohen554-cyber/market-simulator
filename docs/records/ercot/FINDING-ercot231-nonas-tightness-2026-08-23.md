@@ -7,7 +7,7 @@ unmerged; the continuation session (branch
 `claude/2023-ercot-config-assessment-ouhsua`, this file) recovered those
 commits, independently replicated the control identity, solved the combined
 probe, and wrote this record.
-**Charter:** `docs/PRECOMMIT-ercot231-nonas-tightness-2026-08-23.md`
+**Charter:** `docs/records/ercot/PRECOMMIT-ercot231-nonas-tightness-2026-08-23.md`
 (blob `526401e`, pushed + blob-verified before any measurement).
 **Keeper at pin (untouched):** `2026-08-20-ercot223-arm-eventrelease`
 (NOT-YET; C3a-2023 −39.7 %, C3b-2023 0.729, C3c 74 h of RT 181; 2024/2025

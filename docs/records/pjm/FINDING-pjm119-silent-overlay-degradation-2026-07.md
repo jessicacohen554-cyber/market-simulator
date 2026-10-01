@@ -43,7 +43,7 @@ Two independent regressions, not one:
 
 `ScenarioConfig.pjm_east_interface_cut` is the measured joint EMAAC import cut
 (PJM's published "Average Eastern" reactive-interface limit). Its pre-committed
-gate was adjudicated in `docs/DIAGNOSIS-pjm-c3c-summer-tail-2026-07.md` §10.6–10.7
+gate was adjudicated in `docs/records/pjm/DIAGNOSIS-pjm-c3c-summer-tail-2026-07.md` §10.6–10.7
 and it is what moved C3c from 18 h to **40 h** — the mechanism that made PJM
 CALIBRATED.
 
@@ -266,6 +266,6 @@ guarding at the loader made editing them unnecessary (rule 27).
 
 * Regression origin: `docs/calibration-log/pjm.md` 2026-07-24 (pjm-117 entry,
   "fails in BOTH arms — a pre-existing scorer/commit drift").
-* The mechanism this restores: `docs/DIAGNOSIS-pjm-c3c-summer-tail-2026-07.md`
+* The mechanism this restores: `docs/records/pjm/DIAGNOSIS-pjm-c3c-summer-tail-2026-07.md`
   §10.5–10.7.
 * Superseded framing: the PJM C3a/C3c summer-scarcity handoff (2026-07-24).

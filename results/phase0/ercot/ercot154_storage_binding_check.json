@@ -4,7 +4,7 @@
   "keeper": "2026-08-02-ercot150b-zonal-anchor",
   "inputs": [
    "results/calibration/ercot150_zonalanchor_B/hourly/{system,storage}_<year>.parquet (committed keeper sidecars)",
-   "results/calibration/ercot154_storage_offer_surface.json"
+   "results/phase0/ercot/ercot154_storage_offer_surface.json"
   ],
   "rung": "p30 (index 1) \u2014 the only rung the Phase-1a year-pair test identifies",
   "keeper_battery_dispatch_adder": 10.0,

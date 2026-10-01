@@ -2,7 +2,7 @@
 
 **Keeper** `2026-09-28-pjm-next-7-virtual` (bundle `results/calibration/pjmnext7_vs_span`). **Zero LP.**
 **Probe** `scripts/probes/_pjmnext8_cc2023_phase0.py` (a `fleet_only` rebuild of the keeper recipe per year,
-joined to the registered payload and bench); output `results/calibration/_pjmnext8_cc2023_phase0.json`.
+joined to the registered payload and bench); output `results/phase0/pjm/_pjmnext8_cc2023_phase0.json`.
 Actual zonal prices: `data/clean/lmp/PJM/RTM` hub series.
 
 ## 1. Where the surplus sits (model − EIA-923, CC_REGULAR bench plants, TWh)
@@ -49,7 +49,7 @@ CC_REGULAR 2023 is a **zonal price-formation defect** (EMAAC too expensive, Domi
 
 ## 5. Addendum: why model EMAAC is ~$7 too expensive (owner card "Diagnose east price", zero LP)
 
-Probe `scripts/probes/_pjmnext8_emaac_price_phase0.py` → `results/calibration/_pjmnext8_emaac_price_phase0.json`.
+Probe `scripts/probes/_pjmnext8_emaac_price_phase0.py` → `results/phase0/pjm/_pjmnext8_emaac_price_phase0.json`.
 Hour alignment checked: model EMAAC demand vs metered load, lag 0, r = 0.997.
 
 **The actual NJ discount is all congestion.** 2023 RT means, $/MWh:

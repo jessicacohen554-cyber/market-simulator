@@ -1,10 +1,10 @@
 # FINDING — capx D85-R: the four record repairs, landed
 
-**Session:** capx D85-R, executing `docs/handoffs/FINDING-capx-d85-key-provenance-2026-09-07.md`
+**Session:** capx D85-R, executing `docs/records/forecast/FINDING-capx-d85-key-provenance-2026-09-07.md`
 §5's recommended repairs **(ii)** and **(v-a)/(v-b)/(v-c)** (owner ruling **Q59**'s follow-on;
 capx ledger **§0bc.3(c)**). **Model:** Opus. **DATA PROFILE:** code. **Branch:**
 `claude/capx-d85r-record-repairs-wyrs3y`, fresh off `origin/main` at `12e71b89` (2026-09-07).
-Pre-registration, written before any edit: `docs/handoffs/PRECOMMIT-capx-d85r-record-repairs-2026-09-07.md`.
+Pre-registration, written before any edit: `docs/records/forecast/PRECOMMIT-capx-d85r-record-repairs-2026-09-07.md`.
 
 **Record hygiene only. No solve, no key rewritten, no registration, no gate moved.**
 
@@ -68,10 +68,10 @@ The record's own `what_this_is_not` block states, in the artifact, that it is no
 rewrite a key, not a licence to re-register a field, not a place to park a new mismatch, and not
 about the solve-surface re-key.
 
-**The instrument is now standing tooling.** D85's one-off `docs/handoffs/d85/
+**The instrument is now standing tooling.** D85's one-off `docs/records/forecast/d85/
 key_provenance_census.py` was promoted to `scripts/lib/key_provenance.py` (library) plus
 `scripts/check_key_provenance.py` (CLI gate). D85's own measurement record
-`docs/handoffs/d85/key-provenance-census.json` stays as untouched evidence, and D85's §7
+`docs/records/forecast/d85/key-provenance-census.json` stays as untouched evidence, and D85's §7
 reproduction block is annotated rather than rewritten.
 
 ### The five gates, and which direction each catches

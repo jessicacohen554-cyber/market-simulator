@@ -10,13 +10,13 @@ no derive-script edit, no `src/market_sim/` change, no scorer change, no marker 
 would: the only outcomes on the table were a measurement and possibly a card, **neither is an
 arm**, so no screen year was pre-registered because there was nothing for a screen to gate.
 
-**PREREG:** `results/calibration/PREREG-nyiso209-gas-bridge-params-reproduce.md` — committed and
+**PREREG:** `docs/records/nyiso/PREREG-nyiso209-gas-bridge-params-reproduce.md` — committed and
 pushed **before any number was read** (`b9ad2ec5`). No POST-HOC addendum was needed: every check
 reported here is one the PREREG declared.
 **Instrument:** the **shipped** `scripts/data/derive_campd_gas_commitment_params.py`, run as a
 subprocess with its own defaults and `--out` into the scratchpad;
 `scripts/probes/_nyiso209_gas_bridge_params_reproduce.py` →
-`results/calibration/_nyiso209_gas_bridge_params_reproduce.json`.
+`results/phase0/nyiso/_nyiso209_gas_bridge_params_reproduce.json`.
 
 **THERE ARE NO RUBRIC FAILURES TO FIX.** NYISO reads **fails 0**. C3c is the ledgered,
 non-downgrading caveat (rubric v3.3 / v3.6) and was **not an objective**. **No metrics file, price

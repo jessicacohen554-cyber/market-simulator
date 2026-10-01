@@ -112,7 +112,7 @@ Deleting these five would therefore convert four committed reproduction
 sections into dead references — including the command that reproduces **the
 designated NYISO keeper** — for a saving of 100 KB. Against the program's
 standing warning that pre-2026-08-16 sha citations are already dead
-(`docs/FINDING-history-rewrite-2026-08-16.md`), spending live citations to
+(`docs/records/governance/FINDING-history-rewrite-2026-08-16.md`), spending live citations to
 reclaim 100 KB is a bad trade. Removal condition recorded in the allowlist:
 removable when the citing doc is retired, or its reproduction section is
 re-pointed at the registered arm bundle.
@@ -206,9 +206,9 @@ and would have caught this cycle before it reached the board twice.
 * `scripts/check_registry_payload_parity.py` — eight entries added to
   `KEEP_REQUIRED_UNMAPPED_BUNDLES`, each with citation and removal condition.
   No logic change.
-* `results/calibration/FINDING-ws6-parity-nyiso-recipe-dirs-2026-08-20.md` —
+* `docs/records/nyiso/FINDING-ws6-parity-nyiso-recipe-dirs-2026-08-20.md` —
   this record.
-* `docs/handoffs/audit-program-director-board-2026-08.md`,
+* `docs/records/governance/audit-program-director-board-2026-08.md`,
   `docs/model-audit-release-plan-2026-08.md` — WS6 rows updated from
   "gate RED / RE-OPENED" to green, pointing here.
 

@@ -1,7 +1,7 @@
 {
   "probe": "ercot192_coal_limbs_bound_phase0",
   "charter": "DECISION-CARD-ercot188 card B / signature B1 (2026-08-11)",
-  "precommit": "docs/PRECOMMIT-ercot192-coal-limbs-2023-reapplication-2026-08-12.md",
+  "precommit": "docs/records/ercot/PRECOMMIT-ercot192-coal-limbs-2023-reapplication-2026-08-12.md",
   "armed": {
     "coal_mustrun": 15.8807,
     "coal_peak": 35.1989

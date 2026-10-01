@@ -13,7 +13,7 @@ when off the solve is byte-identical to today's keeper.
 | `src/market_sim/data/fleet/arrays.py` — DAM-first application | **APPLIED** (9 wiring refs, blob-verified) |
 | `tests/test_dam_outage_wiring.py` — regression tests | **APPLIED** (5 tests; skip per-ISO when its data is absent, skip all until gate fields exist) |
 | `data/raw/pjm-outages/.gitignore` — un-ignore by-year CSVs | applied |
-| `docs/handoffs/patches/dam-outage-wiring-4iso-scenarios.patch` | committed (the scenarios.py change, for reference) |
+| `docs/records/misc/patches/dam-outage-wiring-4iso-scenarios.patch` | committed (the scenarios.py change, for reference) |
 | `frontend/data/backcast/calibration-complete.json` — rule-22 PJM intake log | applied |
 | PJM by-year CSVs | **regenerate locally** — see below |
 
@@ -22,7 +22,7 @@ when off the solve is byte-identical to today's keeper.
 `scenarios.py` is 8242 lines ≈ 237k tokens of content — beyond any single-response
 emission limit, so `mcp__github__push_files` (which needs the whole file in one
 call) could not carry it, and `git push`/api.github.com are unavailable in this
-session. The 129-line additive patch (`docs/handoffs/patches/dam-outage-wiring-
+session. The 129-line additive patch (`docs/records/misc/patches/dam-outage-wiring-
 4iso-scenarios.patch`, base blob `5bb724f` matching main's) was therefore applied
 **server-side** by a one-shot `workflow_dispatch` GitHub Action that did
 `git apply` + commit + push (sparse checkout of just the two files it touches —

@@ -7,12 +7,12 @@ number sized by the residual, which rules 21 `[R-DOF]` / 24 `[R-REGISTRY]`
 forbid (the neiso-71 kill). The handoff licensed exactly this outcome — "if the
 only identification available is gap-shaped, REFUSE and say so".
 
-Pre-registration: `results/calibration/PREREG-pjm148-chp-host-steam-holdout-2026-08-03.md`,
+Pre-registration: `docs/records/pjm/PREREG-pjm148-chp-host-steam-holdout-2026-08-03.md`,
 committed at `6f14dbc` **before any measurement that decides a verdict**. (The
 push of that commit failed transiently four times and landed later in-session;
 the content was fixed before the first probe ran and was never edited after.)
-Machine record: `results/calibration/_pjm148_screen.json`; Q1 detail
-`results/calibration/_pjm148_floor_binding.json`.
+Machine record: `results/phase0/pjm/_pjm148_screen.json`; Q1 detail
+`results/phase0/pjm/_pjm148_floor_binding.json`.
 
 Keeper `2026-08-03-pjm-147b-chp-heat` is **untouched**. Rule 25 `[R-ISO-SCOPE]`:
 this lane was reached independently of nyiso-105, from PJM's own data.
@@ -222,7 +222,7 @@ PYTHONPATH=. .venv/bin/python scripts/probes/pjm131_chp_btm_precheck.py \
     --bundle results/calibration/pjm147_chp_B --year 2023        # and 2024, 2025
 PYTHONPATH=. .venv/bin/python scripts/probes/_pjm148_floor_binding.py \
     --bundle results/calibration/pjm147_chp_B --years 2023 2024 2025 \
-    --json-out results/calibration/_pjm148_floor_binding.json
+    --json-out results/phase0/pjm/_pjm148_floor_binding.json
 # the path-dependence, §4 — same bundle, zero CC_CHP rows on the payload path:
 PYTHONPATH=. .venv/bin/python scripts/legitimacy_diagnostics.py \
     --bundle results/calibration/pjm144_control_A --iso PJM --years 2023 \

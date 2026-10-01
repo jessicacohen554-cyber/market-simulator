@@ -50,7 +50,7 @@ armed** — is honoured throughout.
 >
 > ---
 >
-> ### ✅ RESOLVED — the re-measurement was done: `docs/handoffs/ffr-3a3-battery-close-2026-08-04.md`
+> ### ✅ RESOLVED — the re-measurement was done: `docs/records/forecast/ffr-3a3-battery-close-2026-08-04.md`
 >
 > **FFR-3A-3 re-solved the exposed halves at the post-FFR-3F HEAD** (six of seven legs;
 > MISO T1-X was not measured). Read that document alongside this one. Outcome:

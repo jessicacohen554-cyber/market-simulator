@@ -182,7 +182,7 @@ this lane did not write it into that file.)*
 ## nwpp-35 — 2026-09-14 — region-count prose, NWPP site wiring, log header (zero-LP)
 
 Lane NWPP-35, Opus claude-opus-5, branch claude/nwpp-35-site-docs-a7f2, base d54cd9c5.
-FINDING `docs/handoffs/FINDING-nwpp-35-2026-09-14.md`. No solve, no src/ edit, no
+FINDING `docs/records/nwpp/FINDING-nwpp-35-2026-09-14.md`. No solve, no src/ edit, no
 matrix cell, no shared record.
 
 THE COUNT IS NINE, NOT EIGHT. Re-counted at this lane's own base sha per plan §0 /

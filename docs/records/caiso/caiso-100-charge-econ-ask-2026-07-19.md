@@ -7,7 +7,7 @@ same-machine `caiso100_repro_A` vs `caiso100_cycling_B` (the ONLY delta
 `battery_dispatch_adder = 14.25`), 2023-2025 one bundle each, registered
 whatever the result, promotion only on no-status-regression. Original filing
 context below is preserved verbatim. Full evidence:
-`results/calibration/FINDING-caiso100-charge-economics-2026-07-19.md`.
+`docs/records/caiso/FINDING-caiso100-charge-economics-2026-07-19.md`.
 
 ## 1. What would change (one registered scalar, one B-leg)
 

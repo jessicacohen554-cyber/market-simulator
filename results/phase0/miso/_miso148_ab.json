@@ -1,6 +1,6 @@
 {
  "session": "miso-148",
- "prereg": "results/calibration/PREREG-miso148-cc-availability-summer-basis-2026-08-09.md",
+ "prereg": "docs/records/miso/PREREG-miso148-cc-availability-summer-basis-2026-08-09.md",
  "control_run_id": "2026-08-09-miso-148-control",
  "arm_run_id": "2026-08-09-miso-148-basis-aware",
  "comparator_note": "EVERY delta is arm-vs-CONTROL at ONE HEAD. K0 failed as written (HEAD drift since the keeper's own solve), so the committed keeper is not a valid comparator and no arm-vs-keeper delta is quoted.",

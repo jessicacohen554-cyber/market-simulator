@@ -106,7 +106,7 @@ ladder already opts itself out of the global flag.
 
 **MEASURED, before the solve, with no LP and no dual.**
 `scripts/probes/_nyiso119_seny_increment_construction_probe.py` →
-`results/calibration/nyiso119_seny_increment_construction_probe.json` builds the
+`results/phase0/nyiso/nyiso119_seny_increment_construction_probe.json` builds the
 NYISO `ReserveDesign` **twice at one HEAD** on the keeper's reserve flags and
 diffs every family's `requirement`, `ordc_penalties` and `ordc_step_widths`.
 This is deliberate: `dual` and `held_mw` are **solved co-optimization outputs**,

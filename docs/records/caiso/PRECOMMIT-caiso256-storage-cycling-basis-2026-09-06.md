@@ -100,7 +100,7 @@ p95 of the measured ratio, never its maximum.
 Instrument: `scripts/probes/_caiso256_storage_cycling_basis.py`, committed
 artifacts only, loader clock, non-leap 8760 (caiso-168 §8 #6 / caiso-169 §9 #7:
 the loader frame is 8760 rows in every year — verified by row count in the
-probe). Artifact `results/calibration/_caiso256_storage_cycling_basis.json`.
+probe). Artifact `results/phase0/caiso/_caiso256_storage_cycling_basis.json`.
 
 | # | gate / prediction | registered threshold |
 |---|---|---|

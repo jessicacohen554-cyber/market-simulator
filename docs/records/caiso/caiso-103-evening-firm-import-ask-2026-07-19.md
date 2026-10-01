@@ -12,7 +12,7 @@ withheld" attribution was an artifact of the p99 interior-dispatch proxy on
 pinned month-varying dispatch. The §3.2 pre-measurement WAS executed
 (negative-hub conduct → bid constant $0, `_caiso104_firm_negative_hub.py`)
 and stands for any successor mechanism. See
-`results/calibration/FINDING-caiso104-m1-meve1-execution-2026-07-20.md` §1–§2.
+`docs/records/caiso/FINDING-caiso104-m1-meve1-execution-2026-07-20.md` §1–§2.
 The original ask text is preserved below unchanged for the record.
 
 ---

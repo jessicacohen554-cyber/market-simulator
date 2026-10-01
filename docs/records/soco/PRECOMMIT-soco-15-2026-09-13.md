@@ -2,7 +2,7 @@
 
 **Lane:** SOCO-15 `[FABLE]` · **Date:** 2026-09-13 · **Branch:** `claude/soco-15-cod-ramp-b0080o` · **Base:** `origin/main` **33a7c9615f0dbc9aa19e58a976de29df462059d6** (the charter's pin; `main` advanced to `0c39824c` during the session — SOCO-22 rubric v3.8 and caiso-281 intake, neither touching this lane's files — and the base is deliberately left at the pin).
 **Ruling:** owner card S12 (desk r#3, 2026-09-13): *"Charter a cross-ISO repair lane BEFORE SOCO-20."* SOCO-20 is blocked until this lane lands.
-**Evidence base:** `docs/handoffs/FINDING-soco-10-2026-09-13.md` §2; `docs/multi-iso/soco-data-audit.md` §4.4; `docs/multi-iso/soco-addition-plan-2026-09.md` §3 card S12.
+**Evidence base:** `docs/records/soco/FINDING-soco-10-2026-09-13.md` §2; `docs/multi-iso/soco-data-audit.md` §4.4; `docs/multi-iso/soco-addition-plan-2026-09.md` §3 card S12.
 **Registered before any solve** (rule 29 `[R-SCREEN]`). The arm SHA is pinned in §7's addendum after this document is pushed; every shard prompt names that SHA and nothing else.
 
 ---

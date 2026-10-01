@@ -110,7 +110,7 @@ minimum-run CONSTRAINT from above (the derive's own docstring; the nyiso-90 CT l
 Declared: `gas_cc` **15 h**, `gas_st` **5 h** — the capacity-weighted p25 of the plant-basis run distribution.
 (NYISO's keeper carries the per-unit p50s, 21 / 13 h; SPP does NOT inherit them — rule 25.)
 
-### 2.3 The rule-18 eligibility census on keeper-2's recipe (`docs/handoffs/spp44/census_eligibility.py`)
+### 2.3 The rule-18 eligibility census on keeper-2's recipe (`docs/records/spp/spp44/census_eligibility.py`)
 
 `run_year(fleet_only=True)` per year; every gas LP row resolved through `_ra_bridge_unit_params` exactly as the
 detector will resolve it. Identical in all three years:
@@ -142,7 +142,7 @@ CAMPD series, which take the class scalar: 1270, 1317, 1330, 2963, 3602, 3604, 7
 - The plant-basis facility is CAMPD's `facilityId`, which is the EIA plant code; a campus split across two plant
   codes measures as two plants.
 
-### 2.5 The FOOTPRINT by year → the SCREEN YEAR (`docs/handoffs/spp44/footprint.py`)
+### 2.5 The FOOTPRINT by year → the SCREEN YEAR (`docs/records/spp/spp44/footprint.py`)
 
 Construction (declared here, ran once): for the 45 eligible plants with a CAMPD series, the plant's hourly
 ONLINE state is its summed gross load ≥ max(`_ONLINE_MW`, 0.05 × HSL_plant) — the derive's own threshold. The
@@ -229,7 +229,7 @@ uv run python scripts/run_calibration_full.py --iso SPP --year 2023 --spp-gas-co
 Keeper-2's recipe (FINDING-spp-42 §3 command) plus the one flag; sequential; no other per-plant solve runs in this
 container (rule 12; the desk's r#8 note on concurrent SPP solves applies across containers, not within this one).
 Both bundles are TEMPORARY and deleted before the PR (rule 29(c)); every number cited from them lives in the
-FINDING. Grader: `docs/handoffs/spp44/grade_screen.py`, written before the solve, reading only the two bundles'
+FINDING. Grader: `docs/records/spp/spp44/grade_screen.py`, written before the solve, reading only the two bundles'
 sidecars (`hourly/class_hourly_2023`, `hourly/system_2023`, `floors/2023_P1.npz`), the CAMPD online matrix
 `spp44/campd_online_2023.parquet`, and the committed bench part `bench/SPP/2023.json.gz`.
 

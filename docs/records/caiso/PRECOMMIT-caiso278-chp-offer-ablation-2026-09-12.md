@@ -25,7 +25,7 @@
 > **WHAT IS VOIDED: §2 (the arm), §4 (the gates), §7 (the shard report) — the plan, and only the
 > plan. WHAT STANDS: §1's five pre-solve kills and §3's footprint table**, which the closure uses
 > and which rule 28(a) now protects as six kills rather than five. Do not re-stage this arm.
-> Full record: `docs/FINDING-caiso278-the-ablation-was-already-solved-2026-09-12.md`.
+> Full record: `docs/records/caiso/FINDING-caiso278-the-ablation-was-already-solved-2026-09-12.md`.
 
 **Session caiso-278, 2026-09-12. CAISO only (rule 25 `[R-ISO-SCOPE]`). Written BEFORE any
 solve; the shard prompt would pin this doc's own commit SHA (rule 32 `[R-SHARD]` (c) 1).**

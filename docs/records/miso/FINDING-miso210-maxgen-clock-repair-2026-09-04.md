@@ -136,7 +136,7 @@ PREREG, plus the one un-pre-registered fix §0.1 forced:
   `-unitroute-` file is **byte-identical** to the phase-0 scratchpad
   prediction (sha `de7e4f77…`), which is what S-1 checks.
 * The registry, its README, schema and curation parser: **unchanged**.
-  `docs/handoffs/miso-f5-scarcity-depth-design-2026-07.md` §1 annotated;
+  `docs/records/miso/miso-f5-scarcity-depth-design-2026-07.md` §1 annotated;
   `_miso208_find_the_supply.py` annotated (its `window_masks` would
   double-shift on a re-run).
 

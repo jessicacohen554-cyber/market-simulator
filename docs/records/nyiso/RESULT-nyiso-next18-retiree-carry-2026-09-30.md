@@ -1,8 +1,8 @@
 # RESULT — NYISO-NEXT-18: the mid-vintage retiree carry (Indian Point 3) — 2026-09-30
 
 - **Session:** NYISO-NEXT-18 (orchestrator; no LP in this container).
-- **Phase 0:** `docs/FINDING-nyiso-next18-upstate-price-phase0-2026-09-30.md`.
-- **Pre-registration:** `docs/PRECOMMIT-nyiso-next18-retiree-carry-2026-09-30.md`, merged in PR #6940 before any shard. Pin `6e0bd8b59bb1fcd17a21813aa92106a148ff57ab`.
+- **Phase 0:** `docs/records/nyiso/FINDING-nyiso-next18-upstate-price-phase0-2026-09-30.md`.
+- **Pre-registration:** `docs/records/nyiso/PRECOMMIT-nyiso-next18-retiree-carry-2026-09-30.md`, merged in PR #6940 before any shard. Pin `6e0bd8b59bb1fcd17a21813aa92106a148ff57ab`.
 - **Arm:** the NEXT-16 keeper recipe plus `mid_vintage_exit_carry`, `fleet_zone_vintage_coords` and `retiree_vintage_status_scope`, all true. Zero free parameters.
 - **Registered (rule 15):**
   - `2026-09-30-nyisonext18-retiree-carry-span` (2022–2025): **CALIBRATED**, with C3c the lone ledgered caveat.
@@ -15,7 +15,7 @@
 
 ## 1. Gates (arm vs the NEXT-16 keeper's committed bundles, form 4)
 
-Record: `results/calibration/_nyisonext18_gates.json`.
+Record: `results/phase0/nyiso/_nyisonext18_gates.json`.
 
 | | 2021 | 2022 | 2023 | 2024 | 2025 |
 |---|---|---|---|---|---|

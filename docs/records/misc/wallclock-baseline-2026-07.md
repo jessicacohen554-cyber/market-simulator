@@ -1,6 +1,6 @@
 # Wallclock Efficiency Refactor — Baseline (2026-07-12)
 
-Companion to `docs/handoffs/wallclock-efficiency-plan-2026-07.md` (P-0, Wave 1). This is the
+Companion to `docs/records/misc/wallclock-efficiency-plan-2026-07.md` (P-0, Wave 1). This is the
 pre-refactor per-phase timing anchor every later prompt (P-1…P-4) reports before/after against.
 Captured with the phase-timing instrumentation merged in PR #2137
 (`claude/wallclock-p0-instrumentation-2kts91`): one summary log line per year emitted by both
@@ -578,7 +578,7 @@ negative.
 
 ## PERF-B — applied wins, measured (2026-08-17)
 
-Execution record for `docs/handoffs/perf-recheck-2026-08.md`'s five changes (its own §4
+Execution record for `docs/records/governance/perf-recheck-2026-08.md`'s five changes (its own §4
 completion note carries the full session narrative). Conditions: determinism pin
 (`MARKET_SIM_HIGHS_THREADS=1`, `WARMSTART=1`, `WARMSTART_XYEAR=0`), 4 vCPU / 15 GB
 container, `uv.lock` env (pandas 3.0.3 / pyarrow 24.0.0), keeper-recipe replays via
@@ -621,7 +621,7 @@ cap; the 4368 h keeper-recipe pair method used here is the in-container fallback
 
 WS3 resumed by owner ruling R-V (2026-09-01). Session `perf-b-apply`, branch
 `claude/perf-b-apply-nabnpi`. Full narrative, attribution and gate record:
-`docs/handoffs/perf-recheck-2026-08.md` §5. Conditions as §PERF-B above
+`docs/records/governance/perf-recheck-2026-08.md` §5. Conditions as §PERF-B above
 (determinism pin, 4 vCPU / 15 GB with the 14.33 GB shell cgroup re-measured this
 session, `uv.lock` env).
 
@@ -663,11 +663,11 @@ sequencing is the director's call, not this lane's.
 ## WALLCLOCK A-1 — the COD map's per-plant reduction vectorized, measured (2026-09-06, retro)
 
 **This is a RETRO-MEASUREMENT of an already-merged commit.** Wallclock desk item **A-1**
-(`docs/handoffs/wallclock-opportunities-2026-09.md` §2 A-1) landed as commit `be598ead`
+(`docs/records/misc/wallclock-opportunities-2026-09.md` §2 A-1) landed as commit `be598ead`
 through PR #4875 (merge `fc05c5c3`) carrying `src/market_sim/data/cod_ramp.py` and
 `tests/unit/data/test_cod_ramp.py` **only**. The charter's dated row here and the CHANGELOG
 entry never landed, the PR body is empty and the worker session is archived, so **no
-measurement was ever on record** (desk log `docs/handoffs/wallclock-desk-log-2026-09.md`
+measurement was ever on record** (desk log `docs/records/misc/wallclock-desk-log-2026-09.md`
 §2.5). Every number below was re-measured from scratch in session `wc-a1-evidence-docs`
 (branch `claude/wc-a1-evidence-docs-ss527f`); nothing is carried forward from the original
 session's transcript, and this section is docs + two golden manifests only — no code changed.
@@ -784,7 +784,7 @@ and nothing dashboard-registered.
 
 ## WALLCLOCK A-2 — eGRID xlsx off the solve path, measured (2026-09-05, re-measured 2026-09-06)
 
-Executes item **A-2** of `docs/handoffs/wallclock-opportunities-2026-09.md` §2, on
+Executes item **A-2** of `docs/records/misc/wallclock-opportunities-2026-09.md` §2, on
 route **(b)** (the content-addressed mirror), not route (a) (arming the `data/clean`
 seam). Session `wc-a2-egrid-mirror`, branch `claude/wc-a2-egrid-mirror`. Conditions as
 §PERF-B above: determinism pin (`MARKET_SIM_HIGHS_THREADS=1`, `WARMSTART=1`,
@@ -868,8 +868,8 @@ file scope, so it is left alone and handed forward.
 
 ## WALLCLOCK A-3 — class-band sidecar vectorized, sidecar block put on the clock (2026-09-05)
 
-Wallclock desk item A-3 (`docs/handoffs/wallclock-opportunities-2026-09.md` §2 A-3;
-desk log `docs/handoffs/wallclock-desk-log-2026-09.md`). Branch
+Wallclock desk item A-3 (`docs/records/misc/wallclock-opportunities-2026-09.md` §2 A-3;
+desk log `docs/records/misc/wallclock-desk-log-2026-09.md`). Branch
 `claude/wc-a3-band-sidecar-clock-hfflwe` off `2886235c`. Conditions as §PERF-B above
 (determinism pin, 4 vCPU / 15 GB, `uv.lock` env pandas 3.0.3 / pyarrow 24.0.0), NEISO
 keeper `2026-08-17-neiso-99-joint-p1` replayed full 8760 × 2023–2025 through
@@ -913,8 +913,8 @@ threshold that read 20.2 s while the two replays were running and passes alone (
 
 ## WALLCLOCK A-4 — the year-1 premium re-profiled after A-1/A-2; one site memoized, residual stated (2026-09-06)
 
-Wallclock desk item **A-4** (`docs/handoffs/wallclock-opportunities-2026-09.md` §2 A-4;
-desk log `docs/handoffs/wallclock-desk-log-2026-09.md` row A-4). Session
+Wallclock desk item **A-4** (`docs/records/misc/wallclock-opportunities-2026-09.md` §2 A-4;
+desk log `docs/records/misc/wallclock-desk-log-2026-09.md` row A-4). Session
 `wc-a4-year1-memo`, branch `claude/wc-a4-year1-memo-bwtyyn`. Conditions as §PERF-B above:
 determinism pin (`MARKET_SIM_HIGHS_THREADS=1`, `MARKET_SIM_WARMSTART=1`,
 `MARKET_SIM_WARMSTART_XYEAR=0`), 4 vCPU / 15 GB container, `uv.lock` env, keeper-recipe
@@ -1137,9 +1137,9 @@ hit the per-plant derivation WARNING is not re-emitted, so the resolver logs the
 
 ## WALLCLOCK B — the cold-rebuilt P1 seeded from the same year's P0 basis (2026-09-06) — WARM-START CLASS
 
-Wallclock desk item **B** (`docs/handoffs/wallclock-opportunities-2026-09.md` §3 / §6.3; desk
-log `docs/handoffs/wallclock-desk-log-2026-09.md` row B; owner memo
-`docs/handoffs/p1-basis-seed-decision-memo-2026-09.md`, **signed (A) FLIP 2026-09-06** by chat
+Wallclock desk item **B** (`docs/records/misc/wallclock-opportunities-2026-09.md` §3 / §6.3; desk
+log `docs/records/misc/wallclock-desk-log-2026-09.md` row B; owner memo
+`docs/records/misc/p1-basis-seed-decision-memo-2026-09.md`, **signed (A) FLIP 2026-09-06** by chat
 instruction to the implementation session). Session `p1-basis-seed-impl`, branch
 `claude/p1-basis-seed-impl-oby2ka`. **NOT byte-identical — WARM-START CLASS**: the seed changes
 the simplex starting point of the cold-rebuilt P1 on the three bridge ISOs and nothing else;
@@ -1335,7 +1335,7 @@ committed. Every number this section cites is in this section.
 ## WALLCLOCK A-6 — `malloc_trim` at the cold-P1 seam: MEASURED-NEGATIVE, item closed (2026-09-06)
 
 Wallclock desk item **A-6**, branch `claude/wc-a6-malloc-trim-p1-seam-wghw2k`. The
-hypothesis, from `docs/FINDING-perfb-s3-adaptive-pass-2026-09.md` §6: the ERCOT year
+hypothesis, from `docs/records/governance/FINDING-perfb-s3-adaptive-pass-2026-09.md` §6: the ERCOT year
 peak (12.1–13.4 GB) is the P1-rebuild moment, so calling `malloc_trim(0)` immediately
 after `model = None` on the cold-P1 route in `pipeline/solve.py::run_energy_solve` —
 before the second `DispatchModel` is built — should hand the freed P0 heap back to the
@@ -1416,8 +1416,8 @@ removed. Manifests committed under `results/regression-goldens/wc-a6-{before,aft
 
 ## WALLCLOCK 3a — re-baseline anchor on main `d1aa877f` (2026-09-06)
 
-Wave-3 item **3a** of the wall-clock desk (`docs/handoffs/wallclock-desk-log-2026-09.md` §1
-row 3a), executing `docs/handoffs/wallclock-opportunities-2026-09.md` §5 now that every
+Wave-3 item **3a** of the wall-clock desk (`docs/records/misc/wallclock-desk-log-2026-09.md` §1
+row 3a), executing `docs/records/misc/wallclock-opportunities-2026-09.md` §5 now that every
 wave-1/2 item is merged or closed. **DOCS ONLY** — no code, no `ScenarioConfig` default, no
 keeper shard / marker / matrix shard / registry / workflow edit; nothing promoted, nothing
 dashboard-registered; every bundle captured for this section was deleted before the PR

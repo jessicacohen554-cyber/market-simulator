@@ -293,7 +293,7 @@ comparison (DOF ledger unchanged from Stage 2).
 - ICAP/UCAP fix: `PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO`
   (`config/constants.py`), `resolve_adequacy_requirement_mw`
   (`model/capacity.py`).
-- Grid JSON: `docs/handoffs/fom-scarcity-grid-2026-07-06-stage5-energy-only-floor.json`
+- Grid JSON: `docs/records/misc/fom-scarcity-grid-2026-07-06-stage5-energy-only-floor.json`
 - Harness variants: `run_fom_scarcity_grid.py --energy-only-floor`,
   `run_capacity_hindcast.py --energy-only-floor` (the latter NOT run this
   stage — see §4).

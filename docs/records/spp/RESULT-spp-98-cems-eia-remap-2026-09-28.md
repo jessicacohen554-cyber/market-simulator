@@ -1,7 +1,7 @@
 # RESULT — SPP-98: CEMS→EIA split-plant remap for SPP (Stall ← Arsenal Hill). The benchmark is corrected and dispatch is byte-identical.
 
 **Lane** SPP-98 (owner decision card "Crosswalk repair (Rec.)") · control = keeper `2026-09-28-spp-94-curtail-rows`
-(`spp94_arm_span`, rule 29(b) form 4) · PRECOMMIT `docs/handoffs/PRECOMMIT-spp-98-cems-eia-remap-2026-09-28.md`, merged
+(`spp94_arm_span`, rule 29(b) form 4) · PRECOMMIT `docs/records/spp/PRECOMMIT-spp-98-cems-eia-remap-2026-09-28.md`, merged
 at `ed8cec3fd0811ebf835cfec42184493683c2625a` before any shard launched · registered run
 **`2026-09-28-spp-98-cems-remap`**, bundle `results/calibration/spp98_remap_span` (2019–2025).
 

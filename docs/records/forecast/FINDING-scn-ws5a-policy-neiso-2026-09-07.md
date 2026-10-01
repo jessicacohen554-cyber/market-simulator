@@ -765,9 +765,9 @@ card records, and Stage B should not inherit a name that asserts the opposite of
 
 | file | what |
 |---|---|
-| `docs/handoffs/PRECOMMIT-scn-ws5a-policy-neiso-2026-09-06.md` | phase 0 at THE PIN, pushed before the first solve |
-| `docs/handoffs/PRECOMMIT-scn-ws5a-policy-neiso-2026-09-06-ADDENDUM-1.md` | the $50 RPS escape, pushed after 2 legs and before the other 7 |
-| `docs/handoffs/PRECOMMIT-scn-ws5a-policy-neiso-2026-09-06-ADDENDUM-2.md` | ruling S15's bracket: step 1's duals, the G-B1 arithmetic, the key, and the §2.6.1 correction — pushed **before** the `CES-P60` solve |
+| `docs/records/forecast/PRECOMMIT-scn-ws5a-policy-neiso-2026-09-06.md` | phase 0 at THE PIN, pushed before the first solve |
+| `docs/records/forecast/PRECOMMIT-scn-ws5a-policy-neiso-2026-09-06-ADDENDUM-1.md` | the $50 RPS escape, pushed after 2 legs and before the other 7 |
+| `docs/records/forecast/PRECOMMIT-scn-ws5a-policy-neiso-2026-09-06-ADDENDUM-2.md` | ruling S15's bracket: step 1's duals, the G-B1 arithmetic, the key, and the §2.6.1 correction — pushed **before** the `CES-P60` solve |
 | this document | — |
 | `results/scn-campaign-policy-2026-09-06/NEISO/<CASE>/{full_horizon_summary,run_config}.json` | 10 legs, slim by construction (`redirect_cache=False`) |
 | `frontend/data/hindcast/neiso-2026-2030-scn-campaign-policy-2026-09-06-<slug>.json` | 10 registry sidecars, forecast namespace only |

@@ -1282,7 +1282,7 @@
     "metric": "C5b storage discharge throughput TWh",
     "magnitude": "+1515.4% (model 2025 BAT+PS discharge 3.95 TWh vs EIA-930 battery-only actual 0.245 TWh; 2023/2024 un-benchmarked - EIA-930 reports no PS breakout)",
     "classification": "ACCEPTED MEASURED-INPUT LIMITATION (benchmark basis mismatch - not a model miss)",
-    "reason": "Carried unchanged from miso-48 through miso-54: EIA-930 MISO reports NO pumped-storage series; the battery-only actual excludes the 2,417 MW EIA-860 PS fleet (Ludington + Taum Sauk) the model correctly dispatches. Full adjudication: results/calibration/FINDING-miso-c5b-storage-benchmark-2026-07.md."
+    "reason": "Carried unchanged from miso-48 through miso-54: EIA-930 MISO reports NO pumped-storage series; the battery-only actual excludes the 2,417 MW EIA-860 PS fleet (Ludington + Taum Sauk) the model correctly dispatches. Full adjudication: docs/records/miso/FINDING-miso-c5b-storage-benchmark-2026-07.md."
    },
    {
     "criterion": "storage_shape",
@@ -1290,7 +1290,7 @@
     "metric": "C5c monthly storage dispatch shape (pearson r)",
     "magnitude": "r=0.461 (2025 monthly BAT+PS pearson vs EIA-930 battery-only; the actual excludes the ~2,417 MW PS fleet the model dispatches - benchmark-basis mismatch, not a model miss)",
     "classification": "ACCEPTED MEASURED-INPUT LIMITATION (benchmark basis mismatch - not a model miss)",
-    "reason": "The 2025 EIA-930 battery-only monthly vector's 'shape' is the fleet's COD ramp (r=0.934 against cumulative in-service battery MW) while the model side pools BAT + the ~2,417 MW pumped-storage fleet that EIA-930 MISO does not report. Normalized per in-service MW the actual's residual shape is degenerate by the scorer's own CV floor (CV 0.175 < STORAGE_SHAPE_MIN_CV 0.25), so no dispatch-shape skill is measurable on this basis. Full adjudication: results/calibration/FINDING-miso-c5c-storage-shape-basis-2026-07.md (scorer-side BAT-vs-BAT + per-MW fix flagged to the rubric-infrastructure lane)."
+    "reason": "The 2025 EIA-930 battery-only monthly vector's 'shape' is the fleet's COD ramp (r=0.934 against cumulative in-service battery MW) while the model side pools BAT + the ~2,417 MW pumped-storage fleet that EIA-930 MISO does not report. Normalized per in-service MW the actual's residual shape is degenerate by the scorer's own CV floor (CV 0.175 < STORAGE_SHAPE_MIN_CV 0.25), so no dispatch-shape skill is measurable on this basis. Full adjudication: docs/records/miso/FINDING-miso-c5c-storage-shape-basis-2026-07.md (scorer-side BAT-vs-BAT + per-MW fix flagged to the rubric-infrastructure lane)."
    },
    {
     "criterion": "price_tail",

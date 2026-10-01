@@ -9,8 +9,8 @@ are **docs-only**, verified zero diff on `src/`, `scripts/` and `configs/`, so �
 audit and §3's phase 0 carry unchanged) ·
 **Campaign** `scn-campaign-load-2026-09-06` (kind `scenario`, `reference_case: REF`) ·
 **Charter** readiness plan §3 WS-5 Stage A / §3.5 / §4 / §6 **ruling S5** ·
-**Scored against** `docs/handoffs/load-hi-adequacy-reading-2026-09-06.md` (SCN-WS4b) and,
-where a T0 verdict exists, `docs/handoffs/FINDING-scn-ws4c-2026-09-06.md` §3.
+**Scored against** `docs/records/misc/load-hi-adequacy-reading-2026-09-06.md` (SCN-WS4b) and,
+where a T0 verdict exists, `docs/records/forecast/FINDING-scn-ws4c-2026-09-06.md` §3.
 
 **Pushed before the first solve** (rule 29). Every number in §3 is zero-LP: a constant at this
 commit, a committed trajectory, or arithmetic on the two. Nothing below is revised after a

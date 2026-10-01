@@ -6,7 +6,7 @@ the MISO-Illinois $8.22/MMBtu scarce delivered-gas observation, phase-0
 zero-solve, PREREG+solve only if the measured record exceeds the model's
 input), ask C (partial-plant mid-window exit charter — owner-grant only, not
 granted, not built). Probe: `scripts/probes/_miso189_illinois_gas_phase0.py`;
-record: `results/calibration/_miso189_illinois_gas_phase0.json`. **NO LP was
+record: `results/phase0/miso/_miso189_illinois_gas_phase0.json`. **NO LP was
 built or solved; the keeper is unchanged: `2026-08-30-miso-188-rvsscope`.**
 
 ## 1. Ask A — zero-solve validation

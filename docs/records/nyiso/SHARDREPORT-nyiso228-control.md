@@ -2,7 +2,7 @@
 
 **Session:** nyiso-228 · **Shard:** C (CONTROL) · **ISO:** NYISO · **Date:** 2026-09-12
 **Branch:** `claude/nyiso228-control-span` · **Bundle:** `results/calibration/nyiso228_control_span`
-**Charter:** `docs/PRECOMMIT-nyiso228-amplitude-2026-09-12.md` §3 arm C, §6 shard table.
+**Charter:** `docs/records/nyiso/PRECOMMIT-nyiso228-amplitude-2026-09-12.md` §3 arm C, §6 shard table.
 
 ## STATUS: **1** — solved (exit 0, all four years), committed and pushed.
 
@@ -19,7 +19,7 @@ comparisons may stand on arm C.
 | # | stop | required | observed | verdict |
 |---|---|---|---|---|
 | 1 | `git rev-parse HEAD` at session start | `55cd0a6c8c3e9d63c0184c6f66f0e9f65a490dbe` | `55cd0a6c8c3e9d63c0184c6f66f0e9f65a490dbe` | **PASS** |
-| 2 | PRECOMMIT + `nyiso228_peak_x150.json` exist | both | `docs/PRECOMMIT-nyiso228-amplitude-2026-09-12.md` 21,997 B · `results/calibration/nyiso228_peak_x150.json` 339 B | **PASS** |
+| 2 | PRECOMMIT + `nyiso228_peak_x150.json` exist | both | `docs/records/nyiso/PRECOMMIT-nyiso228-amplitude-2026-09-12.md` 21,997 B · `results/phase0/nyiso/nyiso228_peak_x150.json` 339 B | **PASS** |
 | 3 | config signature in the **written** `run_config.json` | see table | see table | **PASS** |
 
 No rebase, no `git pull`, no sync at any point.
@@ -42,7 +42,7 @@ band** — that is arm A's variable, and its absence here is what makes this the
 `meta.json` records `git_sha: d4f97391`, **not** the pinned sha, and that is correct rather than a
 drift: `d4f97391` is this shard's own heartbeat commit, whose parent is exactly
 `55cd0a6c8c3e9d63c0184c6f66f0e9f65a490dbe` and whose entire content is **one new docs file**
-(`docs/SHARDREPORT-nyiso228-control.md`, +61 lines, nothing else). `git merge-base --is-ancestor`
+(`docs/records/nyiso/SHARDREPORT-nyiso228-control.md`, +61 lines, nothing else). `git merge-base --is-ancestor`
 confirms the pinned sha is an ancestor of HEAD. **The solve path is byte-identical to the pinned
 sha.**
 
@@ -189,7 +189,7 @@ and every comparison in this session is re-based on arm C rather than on the kee
 
 **First, a definition correction that matters — and I state the actual numbers either way.**
 1.591 / 1.410 are **not** model ST_GAS dispatch. The source
-(`docs/RESULT-nyiso227-c3b-measured-2026-09-11.md` §1) records the row as
+(`docs/records/nyiso/RESULT-nyiso227-c3b-measured-2026-09-11.md` §1) records the row as
 **`C1 ST_GAS |miss|`** — an *absolute error* `|model − actual|`. Read as dispatch, no slice of this
 bundle is close, and the honest figures are:
 

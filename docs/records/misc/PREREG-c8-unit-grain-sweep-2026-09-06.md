@@ -70,6 +70,6 @@ prediction, is unaffected either way.
 ## 4. What this file does NOT claim
 
 It does not recommend A or B — that is the owner's ruling on
-`docs/DECISION-CARD-nyiso193-d2-unit-grain-2026-09-05.md`. It does not re-score any
+`docs/records/nyiso/DECISION-CARD-nyiso193-d2-unit-grain-2026-09-05.md`. It does not re-score any
 criterion. It does not touch a keeper, a marker, or a matrix cell. The replay bundles
 live in the gitignored `scratch/` tree and are never registered (rule 29(c)).

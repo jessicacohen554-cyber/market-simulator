@@ -3,7 +3,7 @@
 > **RELABELLED 2026-09-29 (owner instruction, same session): OPEN, not a model-class limit.** This session found no admissible lever; it did NOT show the LP is structurally unable to reproduce the loading. The over-run is year-dependent (2023/24 fit) and tracks the coal/gas ratio, which points to a fixable merit-order or offer input. Next test queued for PJM-NEXT-11: PJM's own offered EcoMax for the LONG_RUN segment by year (§5).
 
 **Keeper** `2026-09-28-pjm-next8-exitfix` (bundle `results/calibration/pjmnext8_xf_span`), unchanged. **Zero LP.**
-Probe `scripts/probes/_pjmnext10_coal_phase0.py` writes `results/calibration/_pjmnext10_coal_phase0.json`.
+Probe `scripts/probes/_pjmnext10_coal_phase0.py` writes `results/phase0/pjm/_pjmnext10_coal_phase0.json`.
 Inputs: the keeper's run payload, the bench, its committed `hourly/system_<y>.parquet`, CAMPD unit-level
 hourly, the keeper's outage extracts, EIA-923 coal receipts, PJM DA hub LMPs, and PJM DA binding constraints.
 **Owner cards:** *"Record as limit"* (card 1) and *"Record, no successor"* (cards 2–3), both **superseded the same day** by *"Relabel as open and queue the test. Have the next session fetch the data."*

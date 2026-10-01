@@ -1,7 +1,7 @@
 # FINDING — ercot-178: the CONTINUOUS net-load-percentile conditioning grain (`ercot_offer_surface_continuous`), matrix §5.1 item 21
 
 **Session ercot-178, 2026-08-08.** Charter: the ercot-178 handoff on the
-ercot-177 diagnosis (`docs/DIAGNOSIS-ercot177-c3a2023-anatomy-2026-08-07.md`
+ercot-177 diagnosis (`docs/records/ercot/DIAGNOSIS-ercot177-c3a2023-anatomy-2026-08-07.md`
 §4) — the armed measured offer surfaces' stepped conditioning bins dilute the
 top of the distribution (the p97–p100 bin pools 263 hours whose actual prices
 span 25×; the tail population is the top 2.07 % of the year, ABOVE the p97
@@ -9,7 +9,7 @@ edge). Object: **C3a-2023** (−32.4 % on keeper
 `2026-08-07-run176-control-offline-increment`, NOT-YET, fail set {C3a, C3b});
 owner standing instruction: under 10 % **without disturbing 2024/2025**.
 
-Pre-registration: `docs/PRECOMMIT-ercot178-continuous-netload-grain-2026-08-08.md`
+Pre-registration: `docs/records/ercot/PRECOMMIT-ercot178-continuous-netload-grain-2026-08-08.md`
 (pushed BEFORE any derive or measurement; + its pre-solve Amendment 1). Form
 (a) CONTINUOUS elected: no edge to fit, nodes = the corpus's own hours,
 identical statistics, zero fitted scalars.

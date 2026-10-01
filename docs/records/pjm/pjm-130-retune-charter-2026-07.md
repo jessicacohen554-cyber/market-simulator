@@ -1,7 +1,7 @@
 # CHARTER — pjm-130, the PJM re-tune opened by pjm-129's NOT-YET
 
-**Lane:** `docs/handoffs/pjm-frontier-path-2026-07.md`; trigger
-`results/calibration/FINDING-pjm129-keeper-reaudit-meritguard-2026-07.md` §7.
+**Lane:** `docs/records/pjm/pjm-frontier-path-2026-07.md`; trigger
+`docs/records/pjm/FINDING-pjm129-keeper-reaudit-meritguard-2026-07.md` §7.
 **Predecessor:** pjm-129 (PR #2972, `cc6b87c`) — the keeper does not hold on the
 guard-corrected CAMPD envelope: `CALIBRATED` 10/10 → **`NOT-YET` 7/10** on three
 gates, under a measured −1.3 pp structural price reduction that the extract owns
@@ -58,7 +58,7 @@ would have been ledgered as unclosable-by-structure and nothing built.
 **Gate 2 is blocked on an owner decision.** Its only *level*-bearing admissible
 route is the measured re-ownership of the $40–150 region (pjm-122), and the
 measured surface that carries it is inadmissible until
-`docs/handoffs/pjm-midcurve-reconditioning-memo-2026-07.md` is decided (rule 23
+`docs/records/pjm/pjm-midcurve-reconditioning-memo-2026-07.md` is decided (rule 23
 `[R-FROZEN-DERIVE]`). **Checked this session: still undecided** — the memo's last
 commit is `f1070d4` and no decision has landed. Not nudged, not re-derived, not
 worked around.
@@ -90,7 +90,7 @@ the run authored is not admissible, so the artifact is a **prerequisite for gate
 Probe `scripts/probes/pjm130_chp_bench_attribution.py` localized it and the
 defect is fixed (`03e105f`): `--btm-backfill-year` repaired the subtrahction's
 **subtrahend only**. Detail and measurements:
-`results/calibration/FINDING-pjm130-gate1-and-bench-symmetry-2026-07.md`.
+`docs/records/pjm/FINDING-pjm130-gate1-and-bench-symmetry-2026-07.md`.
 
 ## 5. Kill criteria pre-registered for the NEXT session's solve
 

@@ -67,7 +67,7 @@ D-2 enumeration of every mechanism that floors CAISO CT_PEAKER at the keeper
 The CT_PEAKER evening window is already correct (h15-22 in the drag / h15-21 in
 the retired CSV limbs) — it is NOT overnight, avoiding the rule-12 trap the ST_GAS
 window walks into. The drag-vs-reliability_floor choice for CT is **already
-settled** by the D-8 closure A/B (`docs/handoffs/caiso-ct-drag-d8-closure-2026-07.md`
+settled** by the D-8 closure A/B (`docs/records/caiso/caiso-ct-drag-d8-closure-2026-07.md`
 §6): the ramp+LCR arm failed criterion (i), so `ct_netload_drag` STAYS as the most
 structurally faithful available CT mechanism (rule 1), G-15 open. This change does
 **not** reopen that; it only refreshes the ST_GAS rows and leaves the CT rows

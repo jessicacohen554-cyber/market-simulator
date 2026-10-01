@@ -218,7 +218,7 @@ after the numbers land.
   promotion**. The promotion question is asked **explicitly** in the final report.
 - **Rule 30(c)** — a held-out year never downgrades NYISO. The ladder is **2022 alone**;
   2020 and 2021 are data-blocked with both authorizations UNSPENT
-  (`docs/FINDING-nyiso-2020-touchpoint-data-blocked-2026-09-09.md`).
+  (`docs/records/nyiso/FINDING-nyiso-2020-touchpoint-data-blocked-2026-09-09.md`).
 - **If it promotes** — rule R-T / Q34 requires re-keying **both**
   `frontend/data/forecast/program-status.json` `gate.a_keeper_marker` **and** the NYISO
   keeper assertion in `tests/scoring/test_ff_readiness_battery.py`, **in the same PR**.

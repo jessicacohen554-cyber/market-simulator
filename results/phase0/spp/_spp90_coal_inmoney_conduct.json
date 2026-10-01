@@ -1,6 +1,6 @@
 {
  "lane": "SPP-90",
- "finding": "docs/handoffs/FINDING-spp-90-coal-inmoney-conduct-2026-09-27.md",
+ "finding": "docs/records/spp/FINDING-spp-90-coal-inmoney-conduct-2026-09-27.md",
  "bundle": "results/calibration/spp86_arm_span",
  "per_year": {
   "2019": {

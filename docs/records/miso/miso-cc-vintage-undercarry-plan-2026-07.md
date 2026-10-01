@@ -351,7 +351,7 @@ Structural change ⇒ **leave-one-year-out within 2023–2025 before promotion**
   OASIS max-gen-event access (`oasis.oati.com` / `cdn.misoenergy.org` allowlist,
   or the owner drops emergency-declaration decks into
   `data/raw/miso-maxgen-events/`) — owner action item, see
-  `docs/handoffs/miso-phase-b-m1-maxgen-findings-2026-07.md`. Untouched here.
+  `docs/records/miso/miso-phase-b-m1-maxgen-findings-2026-07.md`. Untouched here.
 - **Restoring the removed phantom capacity** (the double-filed CA rows): that
   was the bug the bisect fixed (rule 11). The fix is real units, never the
   phantom.

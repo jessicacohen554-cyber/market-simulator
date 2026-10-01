@@ -1,7 +1,7 @@
 # LOAD-HI adequacy reading — the pre-declared per-ISO adjudication (SCN-WS4b)
 
 **Lane** SCN-WS4b (relaunch r2) · **Model** Fable (`claude-fable-5-1`) · **Date** 2026-09-06 ·
-**Charter** `docs/handoffs/forecast-scenario-readiness-plan-2026-09.md` §3 WS-4 items 1 and 3 /
+**Charter** `docs/records/forecast/forecast-scenario-readiness-plan-2026-09.md` §3 WS-4 items 1 and 3 /
 §7 "WS-4" · **Pin** `origin/main` `af6269cf` (desk pin `21deb4a7` + two merges, neither on
 the SCN track) · **Solves** none — this lane has no LP by charter. Every number below is
 either a constant at this commit, a committed REF trajectory, or arithmetic on the two.

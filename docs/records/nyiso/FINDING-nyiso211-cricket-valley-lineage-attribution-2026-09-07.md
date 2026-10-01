@@ -12,7 +12,7 @@ instrument. No screen, no arm, no bundle, no registration — so 29(c) has nothi
 rule 15 `[R-DASHBOARD]` has nothing to register.
 
 **Pre-registration:**
-`results/calibration/PREREG-nyiso211-cricket-valley-lineage-attribution.md`, committed and pushed
+`docs/records/nyiso/PREREG-nyiso211-cricket-valley-lineage-attribution.md`, committed and pushed
 at `8db2e40d` **before any payload was read at plant grain**, and not edited since.
 **Machine records:** `_nyiso211_cricket_lineage_attribution.json`, `_nyiso211_overderate_test.json`,
 `_nyiso211_clip_phase0.json`, `_nyiso211_clip_rebuild.json` (all under `results/calibration/`).

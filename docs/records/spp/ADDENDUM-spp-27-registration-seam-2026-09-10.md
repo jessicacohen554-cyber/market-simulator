@@ -1,6 +1,6 @@
 # ADDENDUM to PRECOMMIT-spp-27 — the registration seam, declared BEFORE the span solve
 
-**Lane** SPP-27 · **Charter** `docs/handoffs/PRECOMMIT-spp-27-commitment-grain-2026-09-10.md` ·
+**Lane** SPP-27 · **Charter** `docs/records/spp/PRECOMMIT-spp-27-commitment-grain-2026-09-10.md` ·
 **Written and pushed before any span LP.**
 
 ## The collision, stated plainly

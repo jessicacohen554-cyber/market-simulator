@@ -1,8 +1,8 @@
 # RESULT — NYISO-NEXT-14: the Total-East cutset envelope re-tested on five years — 2026-09-30
 
 - **Session:** NYISO-NEXT-14, the orchestrator. This container ran no LP (rule 32 (a)).
-- **Phase 0:** `docs/FINDING-nyiso-next14-upstate-evacuation-phase0-2026-09-29.md`.
-- **PRECOMMIT:** `docs/PRECOMMIT-nyiso-next14-total-east-cutset-2026-09-30.md`. Its gates (§5) and promotion rule (§6) were fixed before any solve.
+- **Phase 0:** `docs/records/nyiso/FINDING-nyiso-next14-upstate-evacuation-phase0-2026-09-29.md`.
+- **PRECOMMIT:** `docs/records/nyiso/PRECOMMIT-nyiso-next14-total-east-cutset-2026-09-30.md`. Its gates (§5) and promotion rule (§6) were fixed before any solve.
 - **Owner ruling (decision card, this session):** "Re-test all 5 years". This re-opened cell R `nyiso_total_east_cutset_ttc` (nyiso-224, ruled "reject as constructed" 2026-09-10).
 - **Code:** none. The flag and its table already existed.
 - **Arm pin:** `ac7d36d66bb864211201176f11c9fdd16b64ab10`.
@@ -19,7 +19,7 @@
 
 ## 2. Gates and reported numbers (arm vs the NEXT-13 keeper's committed bundles, form 4)
 
-Records: `results/calibration/_nyisonext14_gates.json`, `_nyisonext14_compare_span.txt`, `_nyisonext14_compare_2021.txt`.
+Records: `results/phase0/nyiso/_nyisonext14_gates.json`, `_nyisonext14_compare_span.txt`, `_nyisonext14_compare_2021.txt`.
 
 | | 2021 | 2022 | 2023 | 2024 | 2025 |
 |---|---|---|---|---|---|

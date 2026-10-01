@@ -3,7 +3,7 @@
 The channel is a GATED (``vre_procurement_additions_enabled``, default OFF)
 wind/solar limb of capacity-evolution step 4, implementing owner decision
 D-18(a) to the design in
-``docs/handoffs/ffr-5b-procurement-channel-design-2026-08-05.md`` §§2-3.
+``docs/records/forecast/ffr-5b-procurement-channel-design-2026-08-05.md`` §§2-3.
 
 Separate additive file (not ``test_capacity.py`` / ``test_eia860.py``) per the
 FF-2A precedent and rule 27 — core files are not bulk-rewritten to carry new
@@ -115,7 +115,7 @@ class TestProcurementGate(unittest.TestCase):
         # Nothing about THIS file's mechanism moved — the pin advances because the
         # global default did. Rationale and provenance live on the pin in
         # tests/regression/test_persisted_identity.py; pre-declared BEFORE the solve
-        # in docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md §3. Re-pinned here by
+        # in docs/records/forecast/PRECOMMIT-capx-d65b-2026-09-06.md §3. Re-pinned here by
         # capx D65-B-R, completing the partial re-key fb93b76e left behind.
         self.assertEqual(ScenarioConfig().cache_key(), "547053bdfccd4264")
 

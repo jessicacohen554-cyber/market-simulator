@@ -4,7 +4,7 @@ Keeper (precondition verified): `2026-09-26-neiso-118-canal-ct`, bundle `results
 Train tier 2023–2025 CALIBRATED (C3c ledgered); full span NOT-YET on ONE line: C3a price_mean 2019 $35.86 vs RT
 $32.59 (+10.03 %, band ±10 %).
 
-## 1. Phase 0 (zero LP) — `docs/handoffs/neiso119/phase0_*`
+## 1. Phase 0 (zero LP) — `docs/records/neiso/neiso119/phase0_*`
 
 **(d) The 2019 price residual is not a 2019 defect.** `phase0_price_2019.py` (keeper hourly `system_<Y>.parquet` vs
 committed hourly RT, load-weighted on model demand). In EVERY year the model lifts the cheap hours and under-prices the
@@ -105,7 +105,7 @@ by the frozen formula; the 0.5 share is D-4's).
 
 ## 7. Gates — declared before any solve (rule 1: structural; a pass does not promote, a fail does not kill)
 
-- **G1 recipe:** `docs/handoffs/neiso119/shard_check.py` ALL PASS on every leg (delta = the two flags + the pinned
+- **G1 recipe:** `docs/records/neiso/neiso119/shard_check.py` ALL PASS on every leg (delta = the two flags + the pinned
   anchor, conduct and CT artifact sha256, std extract, classifier); log lines `coal per-yard budget (NEISO <Y>)` and
   `winter fuel-security conduct roster` present.
 - **G2 mechanism:** D-2 `winter_fuelsec_mustrun` forced energy = 0 in 2019, 2021–2024 and ≤ 0.05 TWh (plant 2367 only)
@@ -123,4 +123,4 @@ Seven shards `neiso119_<Y>`, 2019–2025 (the keeper's whole year set), pinned t
 `git fetch origin <sha> && git checkout --detach <sha>` step 0 (neiso-118 lesson). Branch `claude/neiso119-<Y>`. Each
 curates `coal_stocks`, `coal_receipts`, `hydro_plant_modes --iso NEISO` before solving. Full bundle incl.
 `dispatch/<Y>_P1.parquet` pushed via `.gitignore` negation + plain `git add`. Parent composes
-(`docs/handoffs/neiso119/compose_span.py`), attests, registers `--no-prune`, scores; it never solves (rule 32(a)).
+(`docs/records/neiso/neiso119/compose_span.py`), attests, registers `--no-prune`, scores; it never solves (rule 32(a)).

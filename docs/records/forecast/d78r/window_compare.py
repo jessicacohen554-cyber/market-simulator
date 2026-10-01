@@ -6,10 +6,10 @@ the control bundle is deleted before merge; this JSON and the FINDING are the
 record).
 
     # after control-P, BEFORE the arm — the §3.3 addendum band:
-    uv run python docs/handoffs/d78r/window_compare.py --ctl <ctl-dir> --band-only
+    uv run python docs/records/forecast/d78r/window_compare.py --ctl <ctl-dir> --band-only
 
     # after both legs — the full grade:
-    uv run python docs/handoffs/d78r/window_compare.py --ctl <ctl-dir> --arm <arm-dir>
+    uv run python docs/records/forecast/d78r/window_compare.py --ctl <ctl-dir> --arm <arm-dir>
 
 The sector map is the EIA-860 2020-vintage plant table (the gate's own key,
 ``plant_code``), joined exactly as D78's ``screen_compare.py`` did — which this

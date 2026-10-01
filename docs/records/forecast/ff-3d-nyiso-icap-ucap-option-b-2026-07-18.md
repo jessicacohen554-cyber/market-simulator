@@ -2,7 +2,7 @@
 
 FF-3D of the forecast program (`docs/forecast-development-plan-2026-07.md` §6).
 Owner selected **R5a Option B** (NYCA-wide static proxy —
-`docs/handoffs/nyiso-neiso-capacity-pairing-adjudication-2026-07-15.md` §3) and
+`docs/records/nyiso/nyiso-neiso-capacity-pairing-adjudication-2026-07-15.md` §3) and
 authorized this session to download the source. Owner also approved flipping
 capacity-market clearing ON for every real-capacity-market ISO (all but ERCOT);
 this session leaves NYISO **flip-READY** but the production flip itself remains

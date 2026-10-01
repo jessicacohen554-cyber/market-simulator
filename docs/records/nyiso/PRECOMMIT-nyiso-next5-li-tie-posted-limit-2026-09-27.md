@@ -5,7 +5,7 @@ decides whether to spend the LP.**
 
 - Keeper: `2026-09-26-nyisonext3-tranche-basis-span` (bundle `results/calibration/nyisonext3_span`,
   `git_sha` 67fd3d1b), plus the stamped 2021 run (`nyisonext3_2021`).
-- Probe: `scripts/probes/nyisonext5_li_tie_gap.py`. Record: `results/calibration/_nyisonext5_li_tie_gap.json`.
+- Probe: `scripts/probes/nyisonext5_li_tie_gap.py`. Record: `results/phase0/nyiso/_nyisonext5_li_tie_gap.json`.
 - Every number below comes from that record.
 
 ## 0. The intake was already done

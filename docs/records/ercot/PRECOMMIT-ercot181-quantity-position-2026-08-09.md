@@ -2,7 +2,7 @@
 
 **Session ercot-181, 2026-08-09. Pushed BEFORE any corpus measurement, any
 derive, any build, and any solve.** Charter:
-`results/calibration/FINDING-ercot180-topscoped-exhausted-2026-08-08.md` §4/§5
+`docs/records/ercot/FINDING-ercot180-topscoped-exhausted-2026-08-08.md` §4/§5
 (matrix §5.1 item 22's `==>` clause) — reality's marginal price forms at a
 POSITION far up a cliff-shaped submitted curve (q_act p50 0.9976 of the
 marginal resource's own curve; actual RT inside the position band
@@ -123,7 +123,7 @@ lambda (SCED optimality; step granularity brackets it). Per 5-minute interval:
   consumes λ̂, q_act, BP, or any I-1/I-2/I-3 output. Mechanism inputs are
   submitted conduct only.
 * Probe: `scripts/probes/ercot181_interior_lambda.py`; committed record:
-  `results/calibration/ercot181_interior_lambda.json`.
+  `results/phase0/ercot/ercot181_interior_lambda.json`.
 
 ## 2. The mechanism-form election — one candidate, three ex-ante refusals
 
@@ -271,7 +271,7 @@ corpus read, no new artifact, no ScenarioConfig field:
    applied at this step — a live structural completion is solved however
    small its expected movement (rule 1).
 * Probe: `scripts/probes/ercot181_positiontail_reach.py`; committed record:
-  `results/calibration/ercot181_positiontail_reach.json` (per-year changed
+  `results/phase0/ercot/ercot181_positiontail_reach.json` (per-year changed
   row-hour counts, the bid-vs-price margins, the M-1 verdict, and the top-bin
   hour overlap with the object).
 * **Ordering:** M-0 runs BEFORE §1's corpus probe (it reads no corpus and no
@@ -282,7 +282,7 @@ corpus read, no new artifact, no ScenarioConfig field:
 ## 6. Seam proofs (Route B only — run and committed BEFORE any solve)
 
 Probe `scripts/probes/ercot181_positiontail_seamproof.py`; record
-`results/calibration/ercot181_positiontail_seamproof.json`. Any assertion
+`results/phase0/ercot/ercot181_positiontail_seamproof.json`. Any assertion
 failing STOPS the session.
 
 * **SP-α1 (the core):** gate ON with the real positiontail artifacts: every

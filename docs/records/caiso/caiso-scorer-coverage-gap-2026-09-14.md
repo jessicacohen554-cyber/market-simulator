@@ -79,8 +79,8 @@ This is a **coverage gap, not a bug** — C4 does exactly what it says. Nothing 
 
 CAISO keeper `2026-09-12-caiso-275-gascoupling` — CALIBRATED 2023-2025, single ledgered C3c.
 caiso-281 spent ZERO LP, promoted nothing, moved no cell. Its results:
-`docs/RESULT-caiso281-two-objects-not-one-and-the-bias-is-a-basis-artifact-2026-09-13.md`
+`docs/records/caiso/RESULT-caiso281-two-objects-not-one-and-the-bias-is-a-basis-artifact-2026-09-13.md`
 (the 2022 price miss and the 2025 gas miss are different objects; the marginal-HR bias does not
 survive the DA basis) and the RTM public-bid intake
-(`docs/PRECOMMIT-caiso281-rtm-offer-surface-intake-2026-09-13.md`), 11 quarters of 2023-2025
+(`docs/records/caiso/PRECOMMIT-caiso281-rtm-offer-surface-intake-2026-09-13.md`), 11 quarters of 2023-2025
 committed under `results/rtm-intake/caiso281/`, with a 2020-2022 backfill in flight.

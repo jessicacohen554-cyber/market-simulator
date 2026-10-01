@@ -6,7 +6,7 @@ CONTROL's own numbers — **no arm result exists, so nothing here is a gate re-c
 light of the result it would decide.** That is the whole reason this is being written now
 rather than in the RESULT.
 
-Amends `docs/handoffs/PRECOMMIT-spp-58-wind-curtailment-ceiling-2026-09-10.md`.
+Amends `docs/records/spp/PRECOMMIT-spp-58-wind-curtailment-ceiling-2026-09-10.md`.
 
 ---
 

@@ -3,7 +3,7 @@
 **Date:** 2026-07-31 · **Session:** FFR-PA (Wave P, parallel-anytime intake) of
 `docs/forecast-readiness-prompt-pack-2026-07.md` · **Closes:** audit finding
 **FR-18** (`docs/forecast-readiness-audit-2026-07.md` §3.4) on its
-time-sensitive half · **Bar applied:** `docs/handoffs/confirmed-retirement-plan-2026-07.md`
+time-sensitive half · **Bar applied:** `docs/records/misc/confirmed-retirement-plan-2026-07.md`
 (a row needs an enforceable public instrument — RTO deactivation acceptance,
 consent decree, statute, regulatory order, RMR end).
 
@@ -307,7 +307,7 @@ A stale registry does not fail loudly: it silently keeps compelling or
 releasing capacity on a lapsed instrument, and the `accessed` stamp is the only
 evidence.
 
-Proposed line for `docs/handoffs/confirmed-retirement-plan-2026-07.md` §7:
+Proposed line for `docs/records/misc/confirmed-retirement-plan-2026-07.md` §7:
 
 ```
 * **Quarterly re-query cadence (proposed 2026-07-31, FFR-PA; owner decision
@@ -353,8 +353,8 @@ Two smaller follow-ups this pass surfaced, offered without acting on them:
 | `data/raw/confirmed-retirements/neiso.csv` | Merrimack 1–2 re-stamped; header block incl. the ISO-NE de-list → deactivation-notification structural watch. |
 | `data/raw/confirmed-retirements/nyiso.csv` | Header block only — zero rows, re-researched (Danskammer adjudication). |
 | `data/raw/confirmed-retirements/README.md` | Vintage → 2026-07-31; new per-ISO status section; MANUAL DOWNLOADS NEEDED table; fixed two stale statements (curation script path, and `confirmed_exits_enabled` described as default-OFF when it has defaulted ON since 2026-07-05). |
-| `docs/handoffs/confirmed-retirement-plan-2026-07.md` | §7: the proposed cadence line added, marked PROPOSED / owner decision pending. |
-| `docs/handoffs/ffr-pa-confirmed-retirements-refresh-2026-07-31.md` | This document. |
+| `docs/records/misc/confirmed-retirement-plan-2026-07.md` | §7: the proposed cadence line added, marked PROPOSED / owner decision pending. |
+| `docs/records/forecast/ffr-pa-confirmed-retirements-refresh-2026-07-31.md` | This document. |
 
 `data/clean/confirmed-retirements/` was regenerated locally to run the checks;
 it is derived and gitignored, so it is not part of the commit.

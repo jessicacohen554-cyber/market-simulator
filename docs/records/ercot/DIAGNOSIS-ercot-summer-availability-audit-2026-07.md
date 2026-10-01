@@ -14,7 +14,7 @@
 > workings: the 2026-07-15 ERCOT-66 calibration-log entry.
 
 **Task (owner ask, follow-on to
-`docs/DIAGNOSIS-ercot-lmp-clock-artifact-and-summer-residuals-2026-07.md` §3
+`docs/records/ercot/DIAGNOSIS-ercot-lmp-clock-artifact-and-summer-residuals-2026-07.md` §3
 items 2–3).** Execute the storage-energy audit chartered in §2a-1 and the
 demand-response charter (§2a-2) for the keeper
 `2026-07-12-ercot63-gas-bridge`'s tight-week evening over-amplitude (Aug 18–20
@@ -56,7 +56,7 @@ Measured EIA-930 battery discharge vs the model's constraint envelope
   day boundaries, not cycles within a day). Marginal, not infeasible.
 - The 25 % 2025 throughput under-cycling (4.11 vs 5.46 TWh) stays the
   ERCOT-60 incentive-bound finding
-  (`docs/DIAGNOSIS-ercot-storage-cycling-lane-2026-07.md` §7) — nothing here
+  (`docs/records/ercot/DIAGNOSIS-ercot-storage-cycling-lane-2026-07.md` §7) — nothing here
   reopens the AS-release window (rule 19).
 
 ### 1b. Outage overlay — EXONERATED by disclosure ground truth
@@ -171,4 +171,4 @@ relief — so a backcast DR mechanism is NOT the fix for these windows and must
 not be built as one (it would stack a second mechanism on the storage-basis
 defect, rule 19). The surviving DR scope is the **forecast-mode elasticity
 gap** plus the **extreme-tail emergency products** — chartered separately in
-`docs/handoffs/ercot-demand-response-charter-2026-07.md`.
+`docs/records/ercot/ercot-demand-response-charter-2026-07.md`.

@@ -2,7 +2,7 @@
 """Re-base the ``neiso-t3`` FC-5 disposition table onto the capx D96 ``base`` leg.
 
 capx D96 measurement record (not standing tooling). The MECHANICAL half reuses
-capx D92's validated instruments unchanged: ``docs/handoffs/d92/
+capx D92's validated instruments unchanged: ``docs/records/forecast/d92/
 corridor_model_values.py`` (54/54 against the table's own declared bundle)
 through ``rebase_disposition.classify``. Divergences are taken from the
 4-dp-rounded model value, which is the table's own convention (54/54 at HEAD;
@@ -19,7 +19,7 @@ refuses to write (PRECOMMIT-capx-d96-2026-09-25.md §4.3 / §5).
 
 Usage::
 
-    python3 docs/handoffs/d96/rebase_fc5_d96.py <bundle dir> <out json>
+    python3 docs/records/forecast/d96/rebase_fc5_d96.py <bundle dir> <out json>
 """
 
 from __future__ import annotations
@@ -150,7 +150,7 @@ def main(argv: list[str]) -> int:
                 "(ccs_retrofit_vom_adder=8.0, ccs_retrofit_fixed_cost_co2_scaling=false, --golden-posture), "
                 f"re-solved at {run_config['git']['sha']} on post-F1 data (eGRID-2024 heat rates), so the "
                 "primary bundle, the FC-6 paired arms, this table and the FC-6 driver battery (capx D94) "
-                "sit on one data vintage. Evidence: docs/handoffs/FINDING-capx-d96-2026-09-25.md."
+                "sit on one data vintage. Evidence: docs/records/forecast/FINDING-capx-d96-2026-09-25.md."
             ),
         }
     )
@@ -166,13 +166,13 @@ def main(argv: list[str]) -> int:
         "so the whole neiso-t3 verdict sits on one data vintage. The prior table (capx D92, keyed to "
         "results/ff-t3-neiso-golden/d92/base, cache_key dd8203a8bf1546b9, pre-F1) is preserved byte-equal "
         "at dispositions/neiso-t3-pre-d96.json. Every model_value / divergence_pct is recomputed "
-        "MECHANICALLY by capx D92's validated instruments (docs/handoffs/d92/corridor_model_values.py, "
+        "MECHANICALLY by capx D92's validated instruments (docs/records/forecast/d92/corridor_model_values.py, "
         "54/54 at HEAD); anchors are UNTOUCHED (rule 13 [R-MEASURED]). No row changed class. Explanations "
         "are touched only where they quote a figure of the bundle: co2@2030, co2@2035, co2@2040, "
         "generation:gas@2030, capacity:gas_cc@2040, generation:total@2040 -- each quoted current figure "
         "refreshed, D92's historical transitions left as history, one D96 sentence appended. Prior "
         "authorship: capx D92 (2026-09-10, owner ruling Q65), preserved in the -pre-d96 file. Script: "
-        "docs/handoffs/d96/rebase_fc5_d96.py. Evidence: docs/handoffs/FINDING-capx-d96-2026-09-25.md."
+        "docs/records/forecast/d96/rebase_fc5_d96.py. Evidence: docs/records/forecast/FINDING-capx-d96-2026-09-25.md."
     )
     out.write_text(json.dumps(table, indent=1) + "\n")
     print(f"wrote {out}: {table['counts']}")

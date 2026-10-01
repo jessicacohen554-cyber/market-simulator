@@ -2,7 +2,7 @@
 
 ## ARM B (COAL + GAS) IS KILLED on two pre-registered gates. ARM A (COAL) clears four of five and fails the fifth on a gate this lane wrote badly — and says so rather than rewriting it.
 
-**Lane** SPP-32 · **PRECOMMIT** `docs/handoffs/PRECOMMIT-spp-32-shortwindow-availability-2026-09-12.md`
+**Lane** SPP-32 · **PRECOMMIT** `docs/records/spp/PRECOMMIT-spp-32-shortwindow-availability-2026-09-12.md`
 (every gate, bound and screen year sealed there **before** either solve) · **Base / pinned shard
 revision** `dce9398314b146d9110baad6b3e3adcc999b0c5f` (merged to `main` as PR #6024) ·
 **Control** `2026-09-10-spp-27-commitment-grain`, bundle `results/calibration/spp27_span`, COMMITTED,
@@ -11,7 +11,7 @@ differenced and **never re-solved** (rule 29(b) form 4; the G-DRIFT audit is PRE
 containers** · **Keeper UNCHANGED. Nothing registered. No marker touched.**
 
 Shard records, pushed by the shards themselves and the only artifact that left their containers:
-`docs/handoffs/SHARDREPORT-spp32-A-2025.md`, `docs/handoffs/SHARDREPORT-spp32-B-2025.md`.
+`docs/records/spp/SHARDREPORT-spp32-A-2025.md`, `docs/records/spp/SHARDREPORT-spp32-B-2025.md`.
 
 ---
 

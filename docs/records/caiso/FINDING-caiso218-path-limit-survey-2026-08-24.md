@@ -110,7 +110,7 @@ not a number but the §C conclusion that no number exists).
 ## §C — The bounding what-if (deliverable 2, adapted to the null): exceedance curves and the identifiability kill
 
 Instrument: `scripts/probes/_caiso218_limit_whatif.py` + committed
-`results/calibration/_caiso218_limit_whatif.json`. NO LP — the committed
+`results/phase0/caiso/_caiso218_limit_whatif.json`. NO LP — the committed
 caiso-217 crosswalk-ACTIVE recon (the licensed caiso-105/131 fleet-only
 input assembly, caiso-217 cache namespace) rebuilt and **verified to
 reproduce the committed caiso-217 stats EXACTLY before any curve is
@@ -221,7 +221,7 @@ consistent with this FINDING; no default is assumed.
 Committed by this session (branch `claude/caiso-path-operating-limit-hbe4h0`):
 
 * This FINDING; `scripts/probes/_caiso218_limit_whatif.py`;
-  `results/calibration/_caiso218_limit_whatif.json` (controls exact).
+  `results/phase0/caiso/_caiso218_limit_whatif.json` (controls exact).
 * The caiso-217 FINDING §D–§F gap addendum (§A here).
 * `docs/calibration-log/caiso.md` caiso-218 entry (also closing the
   caiso-217 numbering; next number caiso-219); matrix §5.2 caiso-218 block;

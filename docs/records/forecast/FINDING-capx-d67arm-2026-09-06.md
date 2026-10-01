@@ -5,7 +5,7 @@ PJM"*). **Branch:** `claude/capx-d67-arm-pjm-requirement-4cebpf`, fresh off `ori
 rebased once to `9911ff21` **between** the code PR and the solve, never during. **Date:** 2026-09-06.
 **Model:** Opus. **DATA PROFILE:** `pjm`.
 Companion: `PRECOMMIT-capx-d67arm-2026-09-06.md`, **pushed at `658a9fad` before any code change and
-before any solve**. Instrument: `docs/handoffs/d67arm/grade_resolve.{py,json}`.
+before any solve**. Instrument: `docs/records/forecast/d67arm/grade_resolve.{py,json}`.
 Charter evidence: `FINDING-capx-d67-2026-09-06.md` §4 / §6.1 / §7.1; arming precedent
 `FINDING-capx-d57-2026-09-05.md` §8.1.
 
@@ -317,7 +317,7 @@ commit. Remote tip `26474700`, identical to local HEAD at the time.
 | `CLAUDE.md` | 797 | 797 | **match** |
 | `tests/unit/model/test_capacity.py` | 8,209 | 8,209 | **match** |
 | `docs/codebase-site/data/mechanism-matrix/PJM.js` | 359 | 359 | **match** |
-| `docs/handoffs/PRECOMMIT-capx-d67arm-2026-09-06.md` | 266 | 266 | **match** |
+| `docs/records/forecast/PRECOMMIT-capx-d67arm-2026-09-06.md` | 266 | 266 | **match** |
 | `tests/unit/config/test_d67arm_pjm_requirement.py` | 190 | 190 | **match** |
 
 No file ≥300 lines was rewritten from regenerated response content; every edit was a local `Edit` and

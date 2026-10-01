@@ -88,4 +88,4 @@ NEISO: 6 import pseudo-generators, 4 carbon-bearing
    HQ_import_NYISO_CT_peak                zone=HQ_import       cap=   870.0 vom=   73.04 EF=0.428
    HQ_import_import_scarcity              zone=HQ_import       cap=    95.0 vom=  286.12 EF=0.428
 
-wrote /home/user/market-simulator/docs/handoffs/scn-ws1b/phase0-census-2026-09-06.json
+wrote /home/user/market-simulator/docs/records/forecast/scn-ws1b/phase0-census-2026-09-06.json

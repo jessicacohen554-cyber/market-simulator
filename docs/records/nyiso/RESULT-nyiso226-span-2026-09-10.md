@@ -7,7 +7,7 @@
 `ADDENDUM-nyiso226-my-own-gate-S3a-failed-…-2026-09-10.md` →
 `RESULT-nyiso226-nyc-base-rebasis-2026-09-10.md` (the 2023 screen) →
 `ADDENDUM-nyiso226-span-authorized-2026-09-10.md` (owner ruling) → **this document.**
-**Shard record:** `docs/SHARDREPORT-nyiso226-span.md` on branch `claude/nyiso226-span`
+**Shard record:** `docs/records/nyiso/SHARDREPORT-nyiso226-span.md` on branch `claude/nyiso226-span`
 (**auto-merged to `main` as PR #5958 — see `ADDENDUM-nyiso226-not-promoted-and-main-reverted-2026-09-10.md` §1; the "never merged" intent below was NOT achieved**).
 
 **LP spent: ONE shard, 18 m 20 s, three years, exit 0.** The parent ran no LP. No control solve
@@ -147,7 +147,7 @@ none is declared here.
 **The span bundle `results/calibration/nyiso226_span/` exists ONLY on the shard's container**
 (gitignored per rule 29(c)/31, deliberately not deleted). **It will not survive reclamation.**
 Every number this session will ever cite is in this document and in
-`docs/SHARDREPORT-nyiso226-span.md`; the record is the doc, never the parquet. Reproducing the
+`docs/records/nyiso/SHARDREPORT-nyiso226-span.md`; the record is the doc, never the parquet. Reproducing the
 span costs ~18 minutes of LP.
 
 **PROMOTION IS THE OWNER'S CALL AND IT IS OPEN.** The nyiso-222 precedent is directly on point: a

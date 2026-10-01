@@ -2,8 +2,8 @@
 
 **Lane** SPP-64 SPAN · **Branch** `claude/spp64-span` · **Pin**
 `c7b42eca7a689aac80fded16fc306745cb460c4e` (verified at session start; no `fetch`/`pull`/`rebase`
-before the final push) · **Charter** `docs/handoffs/PRECOMMIT-spp-64-stgas-selfcommit-2026-09-10.md`
-· **Screen** `docs/handoffs/RESULT-spp64-screen-2023.md` (six of six §6 STOP gates PASS) ·
+before the final push) · **Charter** `docs/records/spp/PRECOMMIT-spp-64-stgas-selfcommit-2026-09-10.md`
+· **Screen** `docs/records/spp/handoffs/RESULT-spp64-screen-2023.md` (six of six §6 STOP gates PASS) ·
 **Registered run** `2026-09-10-spp-64-stgas-selfcommit` · **Control**
 `2026-09-10-spp-62-vintage-census` / `results/calibration/spp62_span`, **differenced, never
 re-solved** (rule 29(b) form 4).

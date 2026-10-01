@@ -10,7 +10,7 @@ reading sideband packet`; `git push` 413s; the raw Git Data API write path is
 403-blocked. So this session could **not** sync to real main and could not push
 large-file edits. Everything below was built against the stale base.
 
-**Do NOT `git apply docs/handoffs/pjm-m3-gas-bridge.patch` directly** — it was
+**Do NOT `git apply docs/records/pjm/pjm-m3-gas-bridge.patch` directly** — it was
 generated against `066fb98` and will not apply on real main (the
 orchestrator-unification refactor, PR #2753, rewrote the P0→P1 seam files it
 touches). Use it as a **reference implementation**, not an applyable patch.
@@ -80,7 +80,7 @@ corpora (pjm-da-virtuals, energy-offers, …) must be regenerated first.
 
 ## Recommendation
 Do M-3 (and the ready-to-apply DAM edits in
-`docs/handoffs/pjm-dam-availability-wiring-2026-07.md`) from a **fresh session
+`docs/records/pjm/pjm-dam-availability-wiring-2026-07.md`) from a **fresh session
 with a working clone of real main** — this session cannot sync or push. The
 evidence (`0.564`, overnight 0.968) and the mechanism recipe above make M-3 a
 ~1-hour implement-and-test once on real main.

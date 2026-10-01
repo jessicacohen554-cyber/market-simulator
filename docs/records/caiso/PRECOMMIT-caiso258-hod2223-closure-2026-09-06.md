@@ -302,7 +302,7 @@ move one.
 ## §9 — DELIVERABLES
 
 This PRECOMMIT (pushed first); `scripts/probes/_caiso258_hod2223_closure.py`
-→ `results/calibration/_caiso258_hod2223_closure.json`;
+→ `results/phase0/caiso/_caiso258_hod2223_closure.json`;
 `FINDING-caiso258-hod2223-closure-2026-09-06.md`; the
 `docs/calibration-log/caiso.md` entry; the rule-28 CAISO matrix-shard
 **evidence append** (no verdict move — no mechanism is tested) and the

@@ -9,7 +9,7 @@
 
 `S-3(b)` required *"the screen bundle's `run_config.json` `scenario_config` is **identical to the
 keeper's on every field**."* **It FAILED on four fields**
-(`results/calibration/_miso245_screen_gates.json`, `STOPPED_BY: ["S3_identity_and_clean_ab"]`):
+(`results/phase0/miso/_miso245_screen_gates.json`, `STOPPED_BY: ["S3_identity_and_clean_ab"]`):
 
 | field | keeper | arm |
 |---|---:|---:|

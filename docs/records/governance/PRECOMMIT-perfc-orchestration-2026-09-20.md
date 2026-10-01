@@ -8,7 +8,7 @@ figure out places to reduce time it takes to run."*
 ## 0. Where a year goes today (measured, not estimated)
 
 Per-year phase seconds at HEAD, every keeper replayed under the determinism pin
-(`docs/handoffs/wallclock-baseline-2026-07.md` §WALLCLOCK 3a; ERCOT 2023 columns from
+(`docs/records/misc/wallclock-baseline-2026-07.md` §WALLCLOCK 3a; ERCOT 2023 columns from
 `FINDING-perfb-s3-adaptive-pass-2026-09.md` §5):
 
 | ISO / year | data_prep | HiGHS P0 | seam+marshal | HiGHS P1 | results_write | total | HiGHS share |

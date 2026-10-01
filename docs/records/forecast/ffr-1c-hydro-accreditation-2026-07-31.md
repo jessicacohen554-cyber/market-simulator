@@ -4,7 +4,7 @@
 executing audit row **P1-e** and closing finding **FR-3**
 (`docs/forecast-readiness-audit-2026-07.md` §3.1) / gap-register **R5c**
 (`docs/gap-register-2026-07.md`). Implements the spec FF-2B routed here
-(`docs/handoffs/ff-2b-adequacy-basis-2026-07.md` §4).
+(`docs/records/forecast/ff-2b-adequacy-basis-2026-07.md` §4).
 
 **Every credit is an ISO-published accreditation factor with a primary-source
 citation. Nothing here is tuned to clear I7, and the residual gaps are written

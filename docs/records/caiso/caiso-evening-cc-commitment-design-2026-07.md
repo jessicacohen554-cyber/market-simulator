@@ -1,7 +1,7 @@
 # CAISO Evening CC Commitment Posture — Mechanism Design (2026-07-11)
 
 > **DEAD — DO NOT BUILD (2026-07-11, caiso-77 session,
-> `results/calibration/FINDING-caiso77-c1-cluster-firm-selfschedule-2026-07-11.md`
+> `docs/records/caiso/FINDING-caiso77-c1-cluster-firm-selfschedule-2026-07-11.md`
 > §1).** The motivating measurement was an artifact:
 > `scripts/archive/caiso_belly_commitment_probe.py`'s actual side counted the whole
 > CAMPD **CA state** extract (16.6–18.5 TWh/yr of non-CAISO CC — LADWP
@@ -15,7 +15,7 @@
 
 **Design only — no build, no solve.** The mechanism-design deliverable for the
 evening gas-CC commitment gap measured by
-`docs/handoffs/caiso-belly-commitment-probe-2026-07.md` (model CC under-runs
+`docs/records/caiso/caiso-belly-commitment-probe-2026-07.md` (model CC under-runs
 the CAMPD evening ramp h18-21 by **+1.9 / +1.2 / +0.3 GW** in 2023/24/25 on the
 caiso-65 keeper; the belly is within ~1 GW). Written against rule 17 (window +
 driver + forward story before any floor exists) and rule 19 (enumerate and
@@ -130,7 +130,7 @@ D-2 attribution split by contributor, so C8's budget sees a single mechanism.
 - **Bay-Area local topology for the missing 2024/25 C3c tail**: NorCal local
   pockets (Greater Bay LCR ≈ 7.3 GW) don't exist in the split topology; the
   measured LCT boundary data and the scoping pattern are in
-  `docs/handoffs/caiso-sp15-split-implementation-scope-2026-07-09.md`. That
+  `docs/records/caiso/caiso-sp15-split-implementation-scope-2026-07-09.md`. That
   is a topology change (separate session), not a commitment mechanism, and
   it owns the 2024/25 local-tail miss (0/0 h > $200 modeled vs 35/8 actual).
 - CT-side evening posture: revisit only after the re-measured displacement

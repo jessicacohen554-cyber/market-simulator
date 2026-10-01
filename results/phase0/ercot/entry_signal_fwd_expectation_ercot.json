@@ -1,7 +1,7 @@
 {
  "probe": "entry_signal_fwd_expectation_compare",
- "precommit": "docs/PRECOMMIT-entry-signal-forward-expectation-2026-08-25.md",
- "charter": "docs/FINDING-entry-signal-disarm-2026-08.md \u00a76",
+ "precommit": "docs/records/misc/PRECOMMIT-entry-signal-forward-expectation-2026-08-25.md",
+ "charter": "docs/records/misc/FINDING-entry-signal-disarm-2026-08.md \u00a76",
  "iso": "ERCOT",
  "arms": {
   "treatment": {
@@ -172,7 +172,7 @@
     "n_retirements": 0
    }
   },
-  "committed_brackets_from": "results/calibration/entry_signal_disarm_ledger_ercot.json",
+  "committed_brackets_from": "results/phase0/ercot/entry_signal_disarm_ledger_ercot.json",
   "committed_control": {
    "2021": {
     "bridge": false,

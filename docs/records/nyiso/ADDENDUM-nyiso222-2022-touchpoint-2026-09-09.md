@@ -2,7 +2,7 @@
 
 **Session:** nyiso-222 · **ISO:** NYISO · **Date:** 2026-09-09
 **Pushed BEFORE the 2022 solve.** Extends
-`docs/PRECOMMIT-nyiso222-offer-curve-plus5-2026-09-09.md`.
+`docs/records/nyiso/PRECOMMIT-nyiso222-offer-curve-plus5-2026-09-09.md`.
 
 ## 1. The instruction and the authorization
 
@@ -104,7 +104,7 @@ One year, one invocation, the arm's exact frozen config:
 ```
 uv run python scripts/replay_keeper.py results/calibration/nyiso_fuelvintage_A \
   --years 2022 --holdout-authorized \
-  --offer-curve-json results/calibration/nyiso222_offer_curve_plus5.json \
+  --offer-curve-json results/phase0/nyiso/nyiso222_offer_curve_plus5.json \
   --out-dir results/calibration/nyiso222_offer_plus5_tp2022
 ```
 

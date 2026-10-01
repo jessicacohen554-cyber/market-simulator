@@ -34,7 +34,7 @@ Constraint Name       Monitored Facility        group  hours       psi         t
   forward: n=12 hours=9254 weighted median T* = 3,355 -> 3,400 MW | p25 3,355 p75 6,437 ratio 1.92 | unweighted median 5,664 min 174 max 22,240
      LOYO drop 2023: n=12 weighted median T* = 3,681
      LOYO drop 2024: n=12 weighted median T* = 11,121
-/home/user/market-simulator/docs/handoffs/spp57b/aggregate_ttc_57b.py:66: RuntimeWarning: divide by zero encountered in divide
+/home/user/market-simulator/docs/records/spp/spp57b/aggregate_ttc_57b.py:66: RuntimeWarning: divide by zero encountered in divide
   J = I.assign(T_star=I.L_f.values / ps)
      LOYO drop 2025: n=11 weighted median T* = 1,510
   reverse: n=7 hours=3767 weighted median T* = 4,206 -> 4,200 MW | p25 3,025 p75 21,937 ratio 7.25 | unweighted median 4,280 min 3,025 max 23,343

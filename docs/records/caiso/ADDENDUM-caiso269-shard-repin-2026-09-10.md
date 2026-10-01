@@ -1,6 +1,6 @@
 # ADDENDUM to PRECOMMIT-caiso269 — three defects found by the shards, the re-pin, and what it cost
 
-**Session caiso-269, 2026-09-10.** Amends `docs/PRECOMMIT-caiso269-lateevening-clean-2026-09-10.md` §6.
+**Session caiso-269, 2026-09-10.** Amends `docs/records/caiso/PRECOMMIT-caiso269-lateevening-clean-2026-09-10.md` §6.
 Written and pushed **before the rev2 shards' first LP**, so nothing here can be shaped by a result.
 
 ## §A1 — The pin moved: `a1513509` → `70fdc53b` → **`3f0d8b84`**

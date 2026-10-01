@@ -26,7 +26,7 @@ STATE (2026-09-30):
   - Total interchange is NOT re-stamped: R-CAISO-16 measured it on the true clock.
 - Owner card 2026-09-30: next link = "Pre-2022 clock scan".
 
-THE LEAD (docs/handoffs/r-caiso-16/PRECOMMIT-r-caiso-16-2026-09-30.md §7; phase0-ti-vs-tac.csv):
+THE LEAD (docs/records/caiso/r-caiso-16/PRECOMMIT-r-caiso-16-2026-09-30.md §7; phase0-ti-vs-tac.csv):
 - Probe `scripts/probes/_rcaiso16_ti_vs_tac.py` regresses d(OASIS TAC) on d(NG shifted j) + d(−TI shifted k).
 - For 2019–2021 (outside every registered window) it prefers either (NG −1 h, TI 0) or (NG 0, TI +1) over (0,0).
   - 2021: R² 0.826 / 0.803 vs 0.736.
@@ -64,7 +64,7 @@ TASK (do nothing else):
    - Record the finding.
    - Put the next-link choice to the owner as a decision card.
 4. If anything was built: solve 7 shards, one per year 2019–2025 (rule 36).
-   - Use docs/handoffs/r-caiso-16/shard-prompt.md as the template; `{SRC}` = rcaiso16_A_tp_2019_2021 (2019–21) /
+   - Use docs/records/caiso/r-caiso-16/shard-prompt.md as the template; `{SRC}` = rcaiso16_A_tp_2019_2021 (2019–21) /
      rcaiso16_A_span (2022–25).
    - Pin the full SHA after your build PR merges.
    - The parent never solves (rule 32(a)).

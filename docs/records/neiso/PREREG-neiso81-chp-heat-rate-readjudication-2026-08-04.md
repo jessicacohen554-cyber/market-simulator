@@ -8,7 +8,7 @@ promote a keeper)
 **CALIBRATED-WITH-CAVEATS**, 0 FAILs, 1 ledgered caveat (C3c), C1 all 12/12 ·
 free 8/8.
 **Phase-0 probe:** `scripts/probes/_neiso81_chp_phase0.py` · record
-`results/calibration/_neiso81_chp_phase0.json`
+`results/phase0/neiso/_neiso81_chp_phase0.json`
 
 **THIS DOCUMENT IS PUSHED BEFORE EITHER ARM SOLVES.** Every property, threshold,
 falsifier, verdict branch and the promotion standard itself is fixed here in

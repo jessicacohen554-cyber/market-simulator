@@ -12,7 +12,7 @@ UNCHANGED; nothing armed, no `ScenarioConfig` field added, no run registered**
 (the miso-142/153/155/156/157/161/163/164/167 no-LP precedent; rule 15
 `[R-DASHBOARD]` not engaged). Instrument:
 `scripts/probes/_miso171_reserve_product_decomposition.py` (5 stages,
-read-only), record `results/calibration/_miso171_reserve_product_decomposition.json`.
+read-only), record `results/phase0/miso/_miso171_reserve_product_decomposition.json`.
 Every number below reproduces from committed artifacts by running that script.
 
 **The verdict, against the charter's three outcomes: MIXED — and the mixed
@@ -208,7 +208,7 @@ shift tested.)
 > cleared MW of distinct products genuinely add; only the price aggregation was
 > wrong. `scripts/probes/_xiso1_miso_asm_cascade_check.py`; stage-4 instrument
 > corrected (`cascade_price_stats`), record carries a dated CORRECTION key;
-> `docs/FINDING-xiso-cascade-scan-2026-09-01.md`.
+> `docs/records/governance/FINDING-xiso-cascade-scan-2026-09-01.md`.
 
 Three consequences:
 
@@ -302,4 +302,4 @@ that a rule-1-faithful model may arm can close the remaining −12.1 %.
 `data/raw/_validation-source/actual_lmp_hourly_MISO.parquet`, the keeper's
 `miso170_layup_B2/hourly/{system,reserve_family}_<y>.parquet`, and
 `miso169_gated_A/hourly/unit_hourly_<y>.parquet`; writes
-`results/calibration/_miso171_reserve_product_decomposition.json`.
+`results/phase0/miso/_miso171_reserve_product_decomposition.json`.

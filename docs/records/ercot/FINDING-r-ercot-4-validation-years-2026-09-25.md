@@ -95,7 +95,7 @@
 - The deriver states the assumption this falsifies: *"Coal is all-or-nothing per unit, and a derate cap only binds when the model wants to run above the observed ceiling, so it is safe to detect even on cyclic coal"* (`derive_partial_outages.py`). The cap binds precisely on the days the plant ran above it.
 - ercot-185 repaired the same class of fault one grain up: a multi-week median imposed as an hourly ceiling (W A Parish h2827). This is its day-level residue.
 
-**Footprint, every year.** Probe `scripts/probes/_r_ercot4_shaped_derate_footprint.py`; output `docs/handoffs/r-ercot/r_ercot4_shaped_footprint.json`. It counts plateau days whose shaped derate sits more than 0.05 below `min(1, dmax[d]/ref)`:
+**Footprint, every year.** Probe `scripts/probes/_r_ercot4_shaped_derate_footprint.py`; output `docs/records/ercot/r-ercot/r_ercot4_shaped_footprint.json`. It counts plateau days whose shaped derate sits more than 0.05 below `min(1, dmax[d]/ref)`:
 
 | year | coal plateau-days | coal days capped below own peak | Σ daily MW gap (coal) | CC days capped | worst coal day |
 |---|---|---|---|---|---|
@@ -145,6 +145,6 @@ What this footprint does and does not explain:
 
 ## Records
 
-- Probe: `scripts/probes/_r_ercot4_shaped_derate_footprint.py`; output `docs/handoffs/r-ercot/r_ercot4_shaped_footprint.json`.
+- Probe: `scripts/probes/_r_ercot4_shaped_derate_footprint.py`; output `docs/records/ercot/r-ercot/r_ercot4_shaped_footprint.json`.
 - The Step 1 and October availability rebuilds were scratch `fleet_only` builds over `scripts/probes/_r_ercot3_coal_census.build`. Their numbers are in the tables above.
 - Rule 28: no mechanism was solved. The `ercot_partial_outage_shaped_derate` cell stays **K**, with this finding appended to its evidence as an open construction defect.

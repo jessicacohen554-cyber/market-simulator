@@ -243,7 +243,7 @@ phenomenon MISO's own data does not exhibit at scoreable scale.
 
 **Artifacts this session will produce:** this pre-registration,
 `scripts/probes/_miso121_dual_fuel_screen.py`, its JSON + text output, and
-`results/calibration/FINDING-miso121-dual-fuel-switching-2026-08-03.md`.
+`docs/records/miso/FINDING-miso121-dual-fuel-switching-2026-08-03.md`.
 
 ---
 

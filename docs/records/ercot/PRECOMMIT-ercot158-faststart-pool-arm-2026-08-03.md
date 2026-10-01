@@ -8,8 +8,8 @@ prompt is the owner's authorization for the ERCOT-89 §7 step-2 design round
 `results/calibration/ercot150_zonalanchor_B`, determination NOT-YET, fail set
 {C3a 2023-only, C3b 2023-only, C3c, C7 2023-lignite cv-leg}, C1 16/16 all-class
 / 12/12 free-class, C6 ATTESTED+PASS, n_entries 9 / n_residual 6). Chartered
-design: `docs/DIAGNOSIS-ercot151-offline-increment-phase0-2026-08-02.md` §3–§4;
-Phase-0 committed record `results/calibration/ercot151_offline_phase0.json`;
+design: `docs/records/ercot/DIAGNOSIS-ercot151-offline-increment-phase0-2026-08-02.md` §3–§4;
+Phase-0 committed record `results/phase0/ercot/ercot151_offline_phase0.json`;
 data landing `docs/calibration-log/ercot.md` "2026-08-03 — ERCOT-157".
 
 ## 0. Scope fence (DO-NOT-REDO, rule 28(a))

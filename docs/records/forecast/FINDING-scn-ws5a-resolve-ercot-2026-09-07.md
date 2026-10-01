@@ -3,7 +3,7 @@
 **Lane** SCN-WS5A-RESOLVE-ERCOT (sub-lane of SCN-WS5A-RESOLVE, executing ruling **S8** for the three
 legs it excluded) · **Model** Opus (`claude-opus-5`) · **Date** 2026-09-07 · **Branch**
 `claude/scn-ws5a-resolve-ercot-0jqkt4` · **PRECOMMIT**
-`docs/handoffs/PRECOMMIT-scn-ws5a-resolve-ercot-2026-09-07.md` (pushed before the first solve,
+`docs/records/forecast/PRECOMMIT-scn-ws5a-resolve-ercot-2026-09-07.md` (pushed before the first solve,
 merged as `f03dcce4`) · **THE PIN** `bdfb3095e9fa0cd2bec3f4e843f320b42588c72b` · **Campaign**
 `scn-campaign-load-2026-09-06`, kind `scenario`, `reference_case: REF`, run ids unchanged ·
 **Trigger** `FINDING-scn-ws5a-policy-ercot-2026-09-06.md` §0 item 2 and §7 item 1.
@@ -263,13 +263,13 @@ Peak RSS **4.00 GB on a 15 GB box** — comfortable, unlike MISO's 9.98 GB.
 ## 4. Routed to SCN-DESK — not executed, outside this lane's regions
 
 1. **The eleven committed ERCOT policy legs must be re-differenced against THIS REF** — the policy
-   FINDING's owed **ADDENDUM B**. **LANDED 2026-09-07:** `docs/handoffs/ADDENDUM-B-scn-ws5a-policy-ercot-2026-09-07.md`. Its §2 tables at 2028–2030 are differenced against a REF that
+   FINDING's owed **ADDENDUM B**. **LANDED 2026-09-07:** `docs/records/forecast/ADDENDUM-B-scn-ws5a-policy-ercot-2026-09-07.md`. Its §2 tables at 2028–2030 are differenced against a REF that
    converts nothing; every one of them changes. §0 item 3 above already says which way the
    headline reading moves (2028 is policy, 2029–30 is the pin), but the numbers are the parent
    lane's or a follow-up's to restate. **Until it lands, no ERCOT policy-vs-REF delta at 2028–2030
    should be quoted from either document.**
 2. **The `unit_id`-keyed G1 in five sibling lanes** (§1.5). Zero-LP re-check; false-PASS risk.
-   **ANSWERED 2026-09-07 — `docs/handoffs/FINDING-scn-resolve-g1-recheck-2026-09-07.md`.** The five caches are
+   **ANSWERED 2026-09-07 — `docs/records/forecast/FINDING-scn-resolve-g1-recheck-2026-09-07.md`.** The five caches are
    absent from any container, but the re-check did not need them: `aggregate_fleet` returns
    `passthrough + representatives` and nothing downstream reorders, so the converted twin is **always** at the lower
    index — **the defect is one-directional and can produce a false FAIL only**. A masked cohort member fails BOTH legs
@@ -337,8 +337,8 @@ that joins two artifacts on an identifier must first establish that the identifi
 
 **Added / changed by this lane, all inside its declared regions:**
 
-- `docs/handoffs/PRECOMMIT-scn-ws5a-resolve-ercot-2026-09-07.md` (new, pushed pre-solve, `f03dcce4`)
-- `docs/handoffs/FINDING-scn-ws5a-resolve-ercot-2026-09-07.md` (this file)
+- `docs/records/forecast/PRECOMMIT-scn-ws5a-resolve-ercot-2026-09-07.md` (new, pushed pre-solve, `f03dcce4`)
+- `docs/records/forecast/FINDING-scn-ws5a-resolve-ercot-2026-09-07.md` (this file)
 - `results/scn-campaign-load-2026-09-06-r2/ERCOT/{REF,LOAD-HI,LOAD-HI-ORGANIC}/` — the three legs'
   slim artifacts (`full_horizon_summary.json` + `run_config.json`)
 - `results/scn-campaign-load-2026-09-06/ERCOT/{bundle,report}/` — rebuilt in place on the three
@@ -348,8 +348,8 @@ that joins two artifacts on an identifier must first establish that the identifi
   trajectory, `registered_utc` and `provenance` move
 - `results/scn-campaign-load-2026-09-06/ERCOT/{REF,LOAD-HI,LOAD-HI-ORGANIC}/` — **DELETED**
   (rule 26 `[R-DELETE]`): slim artifacts at cache keys that no longer exist. Git history is the record.
-- `docs/handoffs/scenario-desk-ledger-2026-09.md` §1 (the RESOLVE row) and
-  `docs/handoffs/FINDING-scn-ws5a-load-synthesis-2026-09-06.md` (the pin statement + A.1's ERCOT
+- `docs/records/misc/scenario-desk-ledger-2026-09.md` §1 (the RESOLVE row) and
+  `docs/records/forecast/FINDING-scn-ws5a-load-synthesis-2026-09-06.md` (the pin statement + A.1's ERCOT
   row) — the two updates this lane was chartered to make, and no other lane's region.
 
 **`frontend/data/hindcast/invariant-failures.json` needed NO edit** — every leg's post-fix set is

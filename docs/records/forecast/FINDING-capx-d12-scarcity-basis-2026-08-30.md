@@ -3,8 +3,8 @@
 _2026-08-30 · capacity-expansion (Forecast Finalization) track, lane D12
 SCARCITY-CONSISTENT DELTA BASIS · chartered at director refresh #13 under the
 r#8 owner-ratified sequencing (strictly after D11-R —
-`docs/handoffs/FINDING-capx-d11r-entry-volume-rule-2026-08-30.md`), named as
-the successor rung by `docs/FINDING-entry-signal-forward-expectation-2026-08-25.md`
+`docs/records/forecast/FINDING-capx-d11r-entry-volume-rule-2026-08-30.md`), named as
+the successor rung by `docs/records/misc/FINDING-entry-signal-forward-expectation-2026-08-25.md`
 §4. **This report is the INPUT to the owner's held Q8 arming decision**
 (r#13 sitting: `entry_margin_exhaustion` arming HELD until this lane
 adjudicates the scarcity basis). Branch `claude/capx-d12-scarcity-basis-xq50qu`.
@@ -91,7 +91,7 @@ there is an internally consistent backward pair (rule 19).
 
 Recorded in-session **before** the corresponding numbers were extracted —
 committed verbatim, with its timing notes, as
-`docs/handoffs/PREDECL-capx-d12-scarcity-basis-2026-08-30.md` (S-4
+`docs/records/forecast/PREDECL-capx-d12-scarcity-basis-2026-08-30.md` (S-4
 discipline). Scored:
 
 | # | pre-declaration | outcome |
@@ -331,8 +331,8 @@ uv run python -m pytest tests/unit/model/test_entry_forward_reserve_leg.py -q
 uv run python scripts/check_mechanism_matrix.py
 
 # the arms the arithmetic reads (already committed; listed for provenance)
-#   results/calibration/entry_signal_l1_dual_replay_ercot.json   (margins, both bounds)
-#   results/calibration/entry_signal_l1b_allocator_ercot.json    (the C-walk the B-walk reproduces)
-#   results/calibration/entry_volume_rule_ab_ercot.json          (the live A/B under basis A)
-#   docs/handoffs/ffr-9b/entry-screen-replay.json                (replay-machinery validation)
+#   results/phase0/ercot/entry_signal_l1_dual_replay_ercot.json   (margins, both bounds)
+#   results/phase0/ercot/entry_signal_l1b_allocator_ercot.json    (the C-walk the B-walk reproduces)
+#   results/phase0/ercot/entry_volume_rule_ab_ercot.json          (the live A/B under basis A)
+#   docs/records/forecast/ffr-9b/entry-screen-replay.json                (replay-machinery validation)
 ```

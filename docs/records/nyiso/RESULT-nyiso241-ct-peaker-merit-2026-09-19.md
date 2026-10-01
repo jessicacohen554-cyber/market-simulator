@@ -1,7 +1,7 @@
 # RESULT — nyiso-241: the CT_PEAKER merit collapse, two grounded arms solved
 
 **Session** nyiso-241 (orchestrator; rule 32 `[R-SHARD]` (a) — **zero LP in this container**).
-**Date** 2026-09-19. **Pre-registration** `docs/PRECOMMIT-nyiso241-ct-peaker-merit-2026-09-19.md`,
+**Date** 2026-09-19. **Pre-registration** `docs/records/nyiso/PRECOMMIT-nyiso241-ct-peaker-merit-2026-09-19.md`,
 pushed at `5356fb712f8ff3ad2b785421d34ed9b4cae71f4c` **before either LP**.
 
 **KEEPER, AS OF THIS SESSION** `2026-09-19-nyiso241-ct-committed-measured` (bundle

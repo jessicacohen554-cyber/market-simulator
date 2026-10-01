@@ -57,7 +57,7 @@ only** — no hour-set-conditioned statistic has been computed:
 
 * Probe: `scripts/probes/_miso176_m2m_seam_binding.py` (read-only; no LP;
   nothing feeds a solve — rule 13).
-* Record: `results/calibration/_miso176_m2m_seam_binding.json`.
+* Record: `results/phase0/miso/_miso176_m2m_seam_binding.json`.
 * Inputs: the `miso-m2m-flowgates` clean partitions; keeper
   `miso175_hourkey` hourly sidecars (`system_<y>`, `class_hourly_<y>`);
   `miso169_gated_A/hourly/unit_hourly_<y>` for the per-seam model split

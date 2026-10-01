@@ -2,12 +2,12 @@
 
 Session miso-122, 2026-08-03, branch `claude/miso-c7-coal-mechanism-6d828k`, off
 `origin/main` at `9aca82b`. Pre-registration
-`results/calibration/PREREG-miso122-hybrid-cogen-scope-gate-2026-08-03.md`,
+`docs/records/miso/PREREG-miso122-hybrid-cogen-scope-gate-2026-08-03.md`,
 written and committed **before** the probe was written. Probe
 `scripts/probes/_miso122_hybrid_cogen_scope.py`; transcript
-`results/calibration/PROBE-miso122-hybrid-cogen-scope-2026-08-03.txt`; A/B
+`results/phase0/miso/PROBE-miso122-hybrid-cogen-scope-2026-08-03.txt`; A/B
 scorer `scripts/probes/_miso122_scope_gate_ab.py`; A/B record
-`results/calibration/_miso122_scope_gate_ab.json`.
+`results/phase0/miso/_miso122_scope_gate_ab.json`.
 
 **Lever, and why this one.** The MISO queue head as written
 (`docs/mechanism-testing-matrix.md` §5.4, closing line): *"the 55088 Dearborn
@@ -282,7 +282,7 @@ re-key duty does not apply. **No other ISO's shard or status part was touched.**
 4. **The MISO queue head is now open.** With the Dearborn item executed, §5.4
    has no named un-adjudicated item left: the C7 `COAL_PRB` family is closed
    (`R`/`R`/`I`), items 1–2 are data-blocked (the bounded next step is the Form
-   580 count in `docs/handoffs/miso-coal-contract-tonnage-data-ask-2026-07.md`
+   580 count in `docs/records/miso/miso-coal-contract-tonnage-data-ask-2026-07.md`
    §8, a sourcing pass and not a solve), item 3 is `R` ex ante, items 4/5/6 are
    `K`/`I`/`I`. The two *named but unchartered* successors that remain are
    miso-114 §0c's hour-of-day-resolved seam **band availability** at the

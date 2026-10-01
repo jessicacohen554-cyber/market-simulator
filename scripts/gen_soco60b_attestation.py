@@ -20,7 +20,7 @@ claim checked BY EXECUTION in :func:`verify_scope`, raising otherwise:
 * **B2, gas fold** — ``EIA930_GAS_FOLD_REFUTED``: SOCO's 930 gas is at or below
   its 923 gas classes in every scored year, so no fold is subtracted.
 
-Pre-registration: ``docs/handoffs/PRECOMMIT-soco-60b-2026-09-23.md`` (§4 and
+Pre-registration: ``docs/records/soco/PRECOMMIT-soco-60b-2026-09-23.md`` (§4 and
 addendum B). Usage::
 
     python3 scripts/gen_soco60b_attestation.py --bundle results/calibration/soco60_hydro_merged
@@ -328,7 +328,7 @@ def main() -> None:
         ),
     }
     att["disclosures"] = {
-        "precommit": "docs/handoffs/PRECOMMIT-soco-60b-2026-09-23.md",
+        "precommit": "docs/records/soco/PRECOMMIT-soco-60b-2026-09-23.md",
         "benchmark_repair_moves_every_soco_run": (
             "B1/B2 change SOCO's shared bench parts, so every SOCO run's C1 reads "
             "move with this registration, not only this run's."

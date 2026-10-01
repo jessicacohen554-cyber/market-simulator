@@ -15,7 +15,7 @@ This does NOT land the clock repair -- that is SPP-51c R-1, a scoring-basis chan
 pre-registration.  It reads ``data/raw`` and writes nothing.  The alignment is gated first by
 reproducing SPP-51c's own ``rt_lw`` on both clocks.
 
-usage:  uv run python docs/handoffs/spp51b/clock_recheck.py
+usage:  uv run python docs/records/spp/spp51b/clock_recheck.py
 """
 
 from __future__ import annotations

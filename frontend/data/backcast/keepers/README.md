@@ -43,7 +43,7 @@ promotion commit.
 
 Recorded by the audit-program records lane v20 at pin `07472e7c`. Both are
 owner rulings from the 2026-09-01 third director sitting; the audit board
-(`docs/handoffs/audit-program-director-board-2026-08.md`, items J-2 and J-4)
+(`docs/records/governance/audit-program-director-board-2026-08.md`, items J-2 and J-4)
 and the program ledger (`docs/model-audit-release-plan-2026-08.md` §8) carry
 the full record. **Nothing above this heading is changed by this block.**
 
@@ -108,7 +108,7 @@ worse). A prose-enforced freeze did not stop the owner's own act, which is
 evidence it was not achieving its purpose. **If you are promoting in one of
 these three lanes, the R-AI stage-0 re-capture obligation is what now applies —
 not this freeze.** Recorded by the audit records lane v31 at pin `fb51bd82`;
-full account in `docs/handoffs/audit-program-director-board-2026-08.md` (v31
+full account in `docs/records/governance/audit-program-director-board-2026-08.md` (v31
 block, R-AR) and `docs/model-audit-release-plan-2026-08.md` §8.
 
 Readers: use `scripts/lib/keeper_store.py` (`load_merged()` returns the old

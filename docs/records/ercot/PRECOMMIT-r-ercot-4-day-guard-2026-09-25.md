@@ -123,7 +123,7 @@ Predictions:
 
 ## 7. Execution
 
-**Shards:** seven, one per year 2019–2025 (rules 34(c) / 36). Prompts are in `docs/handoffs/r-ercot/SHARD-PROMPTS-r-ercot-4.md`, pinned to the SHA of the commit carrying this file.
+**Shards:** seven, one per year 2019–2025 (rules 34(c) / 36). Prompts are in `docs/records/ercot/r-ercot/SHARD-PROMPTS-r-ercot-4.md`, pinned to the SHA of the commit carrying this file.
 
 **Each shard:**
 - runs `replay_keeper.py results/calibration/r_ercot2_chpoff_span --years <Y> --set ercot_partial_outage_day_guard=true`;

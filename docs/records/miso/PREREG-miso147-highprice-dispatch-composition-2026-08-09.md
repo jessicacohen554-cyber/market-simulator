@@ -169,7 +169,7 @@ every fossil-subset table states that imports are outside its universe.
 * **G-F1 (TRAP 7).** Reproduce miso-142/143's six committed window deficits on the single
   C3a weight — **−4.750 / −8.333 / −10.676 / −10.671 / −30.999 / −30.435** (W1 = Jun+Jul
   h8–20 and JJA h12–17, × 2023/2024/2025) — to ≤ **$0.01**, reusing the miso-146 G-F1
-  implementation, cross-checked against `results/calibration/_miso143_footing.json`.
+  implementation, cross-checked against `results/phase0/miso/_miso143_footing.json`.
 * **G-F2 (the 88, footing-only).** The 2025 count of actual RT > $200 hours equals **88**,
   matching the C3c ledger's own committed footing (the `price_tail/2025` entry in the
   keeper attestation's `exceptions`). Used ONLY as an instrument cross-check; every S3

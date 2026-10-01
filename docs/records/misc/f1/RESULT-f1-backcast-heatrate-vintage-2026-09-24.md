@@ -1,6 +1,6 @@
 # RESULT — F1: backcast heat-rate + EIA-860 vintage foundation (2026-09-24)
 
-Executes `docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md` §5.1
+Executes `docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md` §5.1
 (deliverables 1–7). **Zero LP.** No keeper, registry, bundle or dashboard file touched.
 Census tables and residual plant lists: [`census_summary.md`](census_summary.md) (generated
 by `summarize.py` from the four `census_*.json` beside it, which `census.py` produces).

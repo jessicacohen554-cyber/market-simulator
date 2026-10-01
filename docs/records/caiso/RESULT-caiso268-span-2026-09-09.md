@@ -3,8 +3,8 @@
 **Session caiso-268, shard SPAN, branch `claude/caiso268-span`, 2026-09-09.**
 Run **`2026-09-09-caiso-268-fossil92-span`**, bundle `results/calibration/caiso268_fossil92_span`,
 **2023 + 2024 + 2025 in ONE invocation, years sequential** (rules 16 `[R-ALLYEARS]`, 12 `[R-PARALLEL]`).
-Charter: `docs/PRECOMMIT-caiso268-fossil-offer-8pct-2026-09-09.md`.
-G-DRIFT audit: `docs/ADDENDUM-caiso268-span-gdrift-2026-09-09.md`, pushed before the first LP.
+Charter: `docs/records/caiso/PRECOMMIT-caiso268-fossil-offer-8pct-2026-09-09.md`.
+G-DRIFT audit: `docs/records/caiso/ADDENDUM-caiso268-span-gdrift-2026-09-09.md`, pushed before the first LP.
 **KEEPER UNCHANGED at `2026-09-09-caiso-fuelvintage-860-gas`.** No keeper shard was edited, no
 `calibration-complete.json` entry re-keyed, no status part rebuilt.
 
@@ -235,7 +235,7 @@ what §6.1 requires and what a hand-composed bundle cannot give.
 * **Rule 29(b) G-DRIFT / G-CTRL form 4.** Earned by a code audit, not asserted — two files, 102
   lines of comment-only change plus one NYISO-scoped declaration line, corroborated by the capx-D79
   fingerprint matching byte-for-byte. **No control solve was spent.** Full audit in
-  `docs/ADDENDUM-caiso268-span-gdrift-2026-09-09.md`, pushed before this shard's first LP.
+  `docs/records/caiso/ADDENDUM-caiso268-span-gdrift-2026-09-09.md`, pushed before this shard's first LP.
 * **Rule 22 `[R-HOLDOUT]`.** 2023 / 2024 / 2025 only — all training tier. No `--holdout-authorized`,
   no marker question. **2019, 2020, 2021, 2022 and H1-2026 were not solved, scored or registered.**
 * **Rule 15 `[R-DASHBOARD]`.** Registered as `2026-09-09-caiso-268-fossil92-span` in the session
@@ -283,7 +283,7 @@ what §6.1 requires and what a hand-composed bundle cannot give.
      fuelvintage keeper), so the spend was **authorized** — this is a shard-plan disclosure gap,
      not a governance breach.
    * **Y2025 LANDED, and it agrees with this bundle EXACTLY.** `claude/caiso268-y2025` is on the
-     remote (PR #5789) carrying `docs/RESULT-caiso268-y2025-2026-09-09.md`. Its single-year 2025
+     remote (PR #5789) carrying `docs/records/caiso/RESULT-caiso268-y2025-2026-09-09.md`. Its single-year 2025
      solve reports **C4 gas 0.298 → 0.308**, **C3a 37.26 → 35.54 (+3.2 %)**, **Δλ −1.7201**,
      **C3b 0.111 → 0.082** — against this bundle's **0.298 → 0.308**, **37.26 → 35.54 (+3.2 %)**,
      **−1.720**, **0.111 → 0.082**. **Zero divergence.** The cross-check the charter asked for is
@@ -299,7 +299,7 @@ what §6.1 requires and what a hand-composed bundle cannot give.
      (rule 31 `[R-RETAIN]`: a gitignored bundle does not survive its session). 2022 is validation
      tier and rule 22 makes it **iterable by design**, so nothing is permanently lost; it can simply
      be re-run. The protocol written to stop exactly this is
-     `docs/handoffs/shard-launcher-protocol-2026-09-09.md` §4 — **a branch on the remote is the only
+     `docs/records/misc/shard-launcher-protocol-2026-09-09.md` §4 — **a branch on the remote is the only
      acceptable proof of life**, and an archived session with no branch is a failure, not a
      completion.
 5. **The container needed six things installed or rebuilt before the first LP** and none is a model

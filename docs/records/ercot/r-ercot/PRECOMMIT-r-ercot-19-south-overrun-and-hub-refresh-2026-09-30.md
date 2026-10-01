@@ -1,6 +1,6 @@
 # PRECOMMIT — R-ERCOT-19: South merchant over-run (EIA-923 basis) and the 2024/2025 zonal-gas Finals refresh
 
-Date 2026-09-30. Keeper `2026-09-30-r-18-drag-index` (bundle `results/calibration/r_ercot18_span`, 2019–2025, ISO NOT-YET). DATA PROFILE: ercot. Written before any solve. Numbers: `docs/handoffs/r-ercot/r_ercot19_phase0.json`.
+Date 2026-09-30. Keeper `2026-09-30-r-18-drag-index` (bundle `results/calibration/r_ercot18_span`, 2019–2025, ISO NOT-YET). DATA PROFILE: ercot. Written before any solve. Numbers: `docs/records/ercot/r-ercot/r_ercot19_phase0.json`.
 
 ## 1. Phase 0 — the South over-run on the EIA-923 basis (zero LP)
 
@@ -123,7 +123,7 @@ The keeper's committed legs are the control (form 4). No control solve.
 - Two shards, one per year (rule 36): 2024 and 2025.
 - Each runs `replay_keeper.py results/calibration/r_ercot18_span --years <Y> --out-dir results/calibration/r_ercot19_arm_<Y>` at the pinned SHA, which carries the refreshed table.
 - No `--set`: the recipe is the keeper's, unchanged. Only the input file differs.
-- Prompts: `docs/handoffs/r-ercot/SHARD-PROMPTS-r-ercot-19.md`.
+- Prompts: `docs/records/ercot/r-ercot/SHARD-PROMPTS-r-ercot-19.md`.
 - 2019–2023 are byte-identical and taken from the keeper's own legs (recomposed).
 
 ## 6. Predictions (before solving)
@@ -173,7 +173,7 @@ The two sub-gates:
 
 ### A.2 Zero-LP delta through the real path
 
-Record: `scripts/probes/_r_ercot19_commit_eligibility_delta.py` → `docs/handoffs/r-ercot/r_ercot19_commit_eligibility_delta.json`.
+Record: `scripts/probes/_r_ercot19_commit_eligibility_delta.py` → `docs/records/ercot/r-ercot/r_ercot19_commit_eligibility_delta.json`.
 
 - **2019:** `mc` and `min_gen` byte-identical (fail-closed). The keeper's 2019 leg is reused; no solve.
 - **2020–2025:** pmax, availability, every non-CC-committed `mc` row and every non-drag `min_gen` row are byte-identical (asserted).

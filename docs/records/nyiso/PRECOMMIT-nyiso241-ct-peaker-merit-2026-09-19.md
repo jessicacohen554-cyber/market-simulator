@@ -38,7 +38,7 @@ CT_PEAKER energy, model against the keeper's own committed benchmark (TWh):
 | actual | 2.829 | 2.114 | 1.911 | 2.812 |
 
 Model CT peak capacity is intact at ~2,000–2,370 MW in every year, so the cause is **merit
-order, not availability** (`docs/FINDING-nyiso240-c1-margin-bench-attribution-2026-09-19.md` §7).
+order, not availability** (`docs/records/nyiso/FINDING-nyiso240-c1-margin-bench-attribution-2026-09-19.md` §7).
 The displaced energy is exactly the two C1 rows still inside half a band: 2023 `ST_GAS`
 **+2.70 pp** and 2024 `CC_REGULAR` **+2.44 pp** against a ±3.0 pp band.
 

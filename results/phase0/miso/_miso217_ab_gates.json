@@ -1,6 +1,6 @@
 {
   "charter": "miso-217 A/B \u2014 the phys_* coverage-gap arm; scorer COMMITTED BEFORE THE SOLVE.",
-  "prereg": "results/calibration/PREREG-miso217-intermediate-phys-arm-2026-09-05.md @ 76c2574c",
+  "prereg": "docs/records/miso/PREREG-miso217-intermediate-phys-arm-2026-09-05.md @ 76c2574c",
   "control": "results/calibration/miso213_layering_B",
   "arm": "results/calibration/miso217_intermphys_B",
   "field": "miso_intermediate_gas_offer_margin",
@@ -27,7 +27,7 @@
     "passed": true
   },
   "S2": {
-    "source": "results/calibration/_miso217_liveness.json",
+    "source": "results/phase0/miso/_miso217_liveness.json",
     "n_newly_marked_up_tranches": 534,
     "P1_expected": 534,
     "by_cohort": {

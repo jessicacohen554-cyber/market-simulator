@@ -41,7 +41,7 @@ residual.
 
 ## 2. PJM's ledger — what is already closed
 
-Reserve/scarcity lanes (`docs/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md` §B.3):
+Reserve/scarcity lanes (`docs/records/pjm/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md` §B.3):
 
 | lane | result | disposition |
 |---|---|---|
@@ -51,8 +51,8 @@ Reserve/scarcity lanes (`docs/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md` §B.3)
 | SYNC product / size split | duals in the correct regime but $0–10 vs the $75–200 need | **owner-CLOSED 2026-07-11** |
 | Commitment posture (Phase 1) | G-P1 FAIL all years, model online headroom 2.66–3.14× the measured target; tail unchanged | REJECTED — root cause is **LP-vs-MIP**, a representation boundary under the no-MIP mandate |
 | DA demand depth + measured offer levels (G-22) | moved 2025 C3c 0 → 17 h, fixed C1/C3a/C3b/C7 | **in the keeper** |
-| **`ramp10` scoped to committed-and-online (Lane 1 framing 2)** | **no-LP pre-check, all 3 years: rigorous lower bound stays 9.7–10.5× the requirement; reduction only 13.6–15.9 %, and smallest (8–10 %) in the TIGHTEST net-load quartile** | **CLOSED pjm-124 — INERT, no solve spent** (`docs/FINDING-pjm124-ramp10-scoping-precheck-2026-07.md`) |
-| **constrained commitment before the reserve bound (Lane 1 framing 1)** | **no-LP pre-check, all 3 years: DOES bite — 51–53 % reduction, and hardest (40–43 pp) in the TIGHTEST quartile — but the commitment-invariant floor stays 5.0–5.6× the requirement** | **CLOSED pjm-125 — PARTIAL (effective but insufficient), no solve spent** (`docs/FINDING-pjm125-commitment-constraint-precheck-2026-07.md`) |
+| **`ramp10` scoped to committed-and-online (Lane 1 framing 2)** | **no-LP pre-check, all 3 years: rigorous lower bound stays 9.7–10.5× the requirement; reduction only 13.6–15.9 %, and smallest (8–10 %) in the TIGHTEST net-load quartile** | **CLOSED pjm-124 — INERT, no solve spent** (`docs/records/pjm/FINDING-pjm124-ramp10-scoping-precheck-2026-07.md`) |
+| **constrained commitment before the reserve bound (Lane 1 framing 1)** | **no-LP pre-check, all 3 years: DOES bite — 51–53 % reduction, and hardest (40–43 pp) in the TIGHTEST quartile — but the commitment-invariant floor stays 5.0–5.6× the requirement** | **CLOSED pjm-125 — PARTIAL (effective but insufficient), no solve spent** (`docs/records/pjm/FINDING-pjm125-commitment-constraint-precheck-2026-07.md`) |
 
 Offer/energy-stack lanes:
 
@@ -67,22 +67,22 @@ Offer/energy-stack lanes:
   now **live in the keeper** (leg B is the pjm-121 promotion itself).
 * **`gas_offer_margin_anchor`** — refuted, pjm-120 §1.
 * **The entire measured-offer-surface family as a dispersion lever** — refuted
-  pjm-123 (`docs/FINDING-pjm123-composite-precheck-2026-07.md`), **but that
+  pjm-123 (`docs/records/pjm/FINDING-pjm123-composite-precheck-2026-07.md`), **but that
   generalization is NARROWED by pjm-126 (2026-07-26) and the family is a live
   lever again.** pjm-123's legs 1/2/3 A/B results stand. What does not stand is
   the basis for generalizing them: the "every segment cheapest in the tightest
   bin" inversion is a **conditioning artifact**, reversing sign under
   within-season net-load ranking (CT_FAST +10.00 → −0.85, CC_LIKE +0.35 →
-  −0.20). See `docs/FINDING-pjm126-midcurve-conditioning-artifact-2026-07.md`
+  −0.20). See `docs/records/pjm/FINDING-pjm126-midcurve-conditioning-artifact-2026-07.md`
   and the Lane 2 update in §3. **CONFIRMED multi-year by pjm-127 (2026-07-26):
   ARTIFACT in 2023 (3/3 segments flip), 2024 (2/3), 2025 (reproduced
   identically), and pooled 3-yr with the fidelity hard-guard (3/3 flip,
-  9.2e-13)** — `docs/FINDING-pjm127-conditioning-multiyear-2026-07.md`. The
+  9.2e-13)** — `docs/records/pjm/FINDING-pjm127-conditioning-multiyear-2026-07.md`. The
   hypothesis's other half — the tight-bin offer population being
   disproportionately already-committed — is **CLOSED terminal by pjm-128
   (2026-07-26): no public unit-level DA award/commitment feed exists**, and
   the masked offer corpus cannot be joined to any external one
-  (`docs/FINDING-pjm128-da-award-feed-scope-2026-07.md`).
+  (`docs/records/pjm/FINDING-pjm128-da-award-feed-scope-2026-07.md`).
 
 **Read that list against the bar.** PJM's remaining residual is already
 characterized the way NEISO's and NYISO's are: the >$200 tail is owned by the
@@ -128,7 +128,7 @@ measured online reserve. That is a structural boundary, not a tuning gap.
 > ---
 >
 > **UPDATE 2026-07-26 (pjm-124): framing 2 is CLOSED, no solve spent.**
-> `docs/FINDING-pjm124-ramp10-scoping-precheck-2026-07.md`. Three results the
+> `docs/records/pjm/FINDING-pjm124-ramp10-scoping-precheck-2026-07.md`. Three results the
 > rest of this section should be read against:
 >
 > 1. **45 % of the deliverable ramp is tariff-protected.** The keeper's balance
@@ -160,7 +160,7 @@ measured online reserve. That is a structural boundary, not a tuning gap.
 > 2024 the dual is *identically zero all year* (2025's 22 nonzero hours, max
 > $210.99, is the tightest of the three, not a representative one).
 
-`docs/FINDING-pjm120-c3a-extreme-tail-depth-2026-07.md` §7 names two candidate
+`docs/records/pjm/FINDING-pjm120-c3a-extreme-tail-depth-2026-07.md` §7 names two candidate
 framings and explicitly marks them **"none validated here"**:
 
 1. **Constrain perfect-foresight all-online commitment before the reserve bound
@@ -209,7 +209,7 @@ just as much as a positive one.** Do not chase the number.
 
 > **UPDATE 2026-07-26 (pjm-126): ANSWERED — the inversion is an ARTIFACT.
 > Lane 2 STAYS OPEN; a frontier declaration would be premature.**
-> `docs/FINDING-pjm126-midcurve-conditioning-artifact-2026-07.md` (2025,
+> `docs/records/pjm/FINDING-pjm126-midcurve-conditioning-artifact-2026-07.md` (2025,
 > fidelity-exact: arm A reproduces the committed surface to 8.5e-13).
 >
 > Under within-**season** net-load ranking the inversion **reverses sign** in the
@@ -248,14 +248,14 @@ just as much as a positive one.** Do not chase the number.
 >
 > **UPDATE 2026-07-26 (pjm-127): the multi-year confirmation is DONE and the
 > owner memo is WRITTEN — the lane now waits on the owner.**
-> `docs/FINDING-pjm127-conditioning-multiyear-2026-07.md`: ARTIFACT in 2023
+> `docs/records/pjm/FINDING-pjm127-conditioning-multiyear-2026-07.md`: ARTIFACT in 2023
 > (**3/3 segments flip**), 2024 (2/3 — CC_LIKE flips, CT_FAST narrows 77%),
 > 2025 (pjm-126's run reproduced **identically** on the re-fetched corpus),
 > and the pooled 3-year hard-guard run (**3/3 flip**, worst fidelity
 > deviation 9.2e-13). The mechanism is starker in the confirmation years:
 > the annual top-3% bin holds 3 winter hours in 2023 and **1** in 2024.
 > The admissibility memo
-> (`docs/handoffs/pjm-midcurve-reconditioning-memo-2026-07.md`) was
+> (`docs/records/pjm/pjm-midcurve-reconditioning-memo-2026-07.md`) was
 > pre-registered in git before the 2023/2024 numbers were seen; it argues
 > the definitional case from market structure only, settles scope for BOTH
 > surfaces (one definitional vintage, coherent solve-time seam change,
@@ -267,9 +267,9 @@ just as much as a positive one.** Do not chase the number.
 >
 > **UPDATE 2026-07-26 (pjm-128): the commitment-status half is CLOSED —
 > TERMINAL, blocked on data that does not exist publicly.**
-> `docs/FINDING-pjm128-da-award-feed-scope-2026-07.md`; census
+> `docs/records/pjm/FINDING-pjm128-da-award-feed-scope-2026-07.md`; census
 > `scripts/probes/pjm128_da_award_feed_scope.py` +
-> `results/calibration/pjm128_da_award_feed_scope.json` (no LP, no solve, no
+> `results/phase0/pjm/pjm128_da_award_feed_scope.json` (no LP, no solve, no
 > intake). PJM's public DataMiner2 catalog was enumerated from the API itself
 > — **119 feeds**, 26 tripping a commitment/award keyword net — against an
 > admissibility test committed before the census: **unit identity (A1) ×
@@ -332,12 +332,12 @@ and this lane closes — **either outcome is ledger progress.**
 
 1. ~~**pjm-124 — Lane 1, framing 2**~~ — **DONE 2026-07-26, CLOSED on the no-LP
    pre-check, no solve spent.** See the Lane 1 update above and
-   `docs/FINDING-pjm124-ramp10-scoping-precheck-2026-07.md`. The §5 housekeeping
+   `docs/records/pjm/FINDING-pjm124-ramp10-scoping-precheck-2026-07.md`. The §5 housekeeping
    item is also done: `scripts/lib/bundle_fleet.py` is the shared widened
    reconstruction helper.
 2. ~~**pjm-125 — Lane 1, framing 1**~~ — **DONE 2026-07-26, PARTIAL on the no-LP
    pre-check, no solve spent.** See the Lane 1 completion block above and
-   `docs/FINDING-pjm125-commitment-constraint-precheck-2026-07.md`. Run after
+   `docs/records/pjm/FINDING-pjm125-commitment-constraint-precheck-2026-07.md`. Run after
    124 as prescribed; separability held trivially, since **neither framing was
    ever armed in a solve** (rule 19's concern is arming both and reading one
    number, which did not occur).
@@ -348,7 +348,7 @@ and this lane closes — **either outcome is ledger progress.**
    a. ~~**pjm-127 — multi-year confirmation**~~ — **DONE 2026-07-26, ARTIFACT
       confirmed in all three years and pooled (no solve spent).** See the Lane
       2 update above and
-      `docs/FINDING-pjm127-conditioning-multiyear-2026-07.md`.
+      `docs/records/pjm/FINDING-pjm127-conditioning-multiyear-2026-07.md`.
    b. ~~**pjm-128 — the commitment-status half**~~ — **DONE 2026-07-26,
       CLOSED as blocked on non-public data (no solve, no intake).** PJM
       publishes no unit-level DA award/commitment feed: the whole 119-feed
@@ -358,9 +358,9 @@ and this lane closes — **either outcome is ledger progress.**
       0.0000) so no external award source could be joined to it either. The
       half is **untested, not refuted**, and no aggregate proxy was taken.
       See the Lane 2 update above and
-      `docs/FINDING-pjm128-da-award-feed-scope-2026-07.md`.
+      `docs/records/pjm/FINDING-pjm128-da-award-feed-scope-2026-07.md`.
    c. **The re-derive decision itself — owner-gated, and the memo now exists:**
-      `docs/handoffs/pjm-midcurve-reconditioning-memo-2026-07.md` (pjm-127b,
+      `docs/records/pjm/pjm-midcurve-reconditioning-memo-2026-07.md` (pjm-127b,
       pre-registered before the confirmation numbers landed). It settles the
       definitional case, scope for BOTH surfaces, the fixed season
       definition, the staged pre-registered A/B, and the refutation
@@ -383,8 +383,8 @@ and this lane closes — **either outcome is ledger progress.**
    localized and fixed (`03e105f`); `--btm-backfill-year` had repaired the
    subtrahend only. 2023/2024 byte no-ops, 2025 CT_CHP → **+1.4653**, no C1
    verdict change.
-   `results/calibration/FINDING-pjm130-gate1-and-bench-symmetry-2026-07.md`,
-   `docs/handoffs/pjm-130-retune-charter-2026-07.md`.
+   `docs/records/pjm/FINDING-pjm130-gate1-and-bench-symmetry-2026-07.md`,
+   `docs/records/pjm/pjm-130-retune-charter-2026-07.md`.
 3e. **pjm-131 (2026-07-27) — gate 1 has NO admissible arm; no solve spent.**
    Memo re-checked and **still undecided** (`f1070d4`), so priority 1 stayed
    blocked and gate 1 was attempted. Both halves close on pre-registered rules:
@@ -420,8 +420,8 @@ and this lane closes — **either outcome is ledger progress.**
      `8e5053e` — `cache_key()` returns the pinned `edbc1b103207170a`, the pin is
      unedited, it is not data-dependent, and there are no live env knobs.
      `--reuse-solved` unaffected.
-   `results/calibration/FINDING-pjm131-gate1-no-admissible-arm-2026-07.md`,
-   `docs/handoffs/pjm-131-gate1-arm-charter-2026-07.md`.
+   `docs/records/pjm/FINDING-pjm131-gate1-no-admissible-arm-2026-07.md`,
+   `docs/records/pjm/pjm-131-gate1-arm-charter-2026-07.md`.
 
 3f. **pjm-132 (2026-07-27) — the memo was AUTHORIZED, executed, and REFUTED.
    Lane 2 ends.** The owner authorized the within-season re-conditioning with a
@@ -446,8 +446,8 @@ and this lane closes — **either outcome is ledger progress.**
    from `run_config.json`, but `btm_backfill_year` lives in `meta.json` on every
    bundle, so the one-sided repair persisted. Fixed; PJM 2025
    `classFull.CT_CHP` **−0.3726 → +1.3724**.
-   `results/calibration/FINDING-pjm132-withinseason-refuted-2026-07.md`,
-   `docs/handoffs/pjm-132-midcurve-reconditioning-charter-2026-07.md`.
+   `docs/records/pjm/FINDING-pjm132-withinseason-refuted-2026-07.md`,
+   `docs/records/pjm/pjm-132-midcurve-reconditioning-charter-2026-07.md`.
 
 4. **Frontier is NOT ready — and as of 2026-07-27 the blocking half has CHANGED.**
    The **mechanism-ledger half is now essentially complete**: Lane 1 closed
@@ -532,8 +532,8 @@ The reserve-dual readout that Lane 1 turns on is likewise no-solve:
 
 ## Pointers
 
-* `docs/FINDING-pjm123-composite-precheck-2026-07.md` — the offer-surface family closure
-* `docs/FINDING-pjm120-c3a-extreme-tail-depth-2026-07.md` §6–§7 — the reserve-dual evidence and the two unvalidated framings
-* `docs/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md` §B.3–B.4 — the lever ledger and the LP-vs-MIP boundary
-* `docs/FINDING-pjm121-ccbelt-c3a-close-2026-07.md` §4 — the honest-scope caveat carried with the keeper
+* `docs/records/pjm/FINDING-pjm123-composite-precheck-2026-07.md` — the offer-surface family closure
+* `docs/records/pjm/FINDING-pjm120-c3a-extreme-tail-depth-2026-07.md` §6–§7 — the reserve-dual evidence and the two unvalidated framings
+* `docs/records/pjm/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md` §B.3–B.4 — the lever ledger and the LP-vs-MIP boundary
+* `docs/records/pjm/FINDING-pjm121-ccbelt-c3a-close-2026-07.md` §4 — the honest-scope caveat carried with the keeper
 * `docs/codebase-site/calibration-rubric.html` §frontier — the bar, and how NEISO/NYISO met it

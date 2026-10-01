@@ -18,7 +18,7 @@ tier touched; the freeze is untouched.
 `9767c870`, *"nyiso-166: repair the committed RT-reserve calibration reference"*
 — by a data lane that credits **this session's own earlier §3** as the audit
 that found the two defects and deferred the fix
-(`docs/FINDING-nyiso166-as-reference-repair-2026-08-31.md`, and the
+(`docs/records/nyiso/FINDING-nyiso166-as-reference-repair-2026-08-31.md`, and the
 2026-08-31 nyiso-165 entry in `docs/calibration-log/nyiso.md`).
 
 So nothing was re-repaired. What this session delivers instead:
@@ -192,7 +192,7 @@ Magnitude, and it concentrates in the tail exactly as at NYISO:
 | 2025 | DA | 1.30× | 47 | **1.96×** |
 
 The summed values are in the committed record
-`results/calibration/_miso171_reserve_product_decomposition.json` — e.g.
+`results/phase0/miso/_miso171_reserve_product_decomposition.json` — e.g.
 `da_foreseen/rt_mcp/total = $181.40` where the cleared price is
 `reg = $76.88` (**2.36×**), and `scarce47/rt_mcp/total = $97.62` against
 $46.44 (**2.10×**).
@@ -245,7 +245,7 @@ downstream use, a question this scan did not open.
 
 `scripts/probes/c3c_q2_nyiso_nyca_shortage.py` is untouched in substance: its
 arithmetic is not fixed, its `SUPERSEDED` JSON key stands, and its frozen record
-`results/calibration/_c3c_q2_nyiso_nyca_shortage.json` was not re-run. A finding
+`results/phase0/nyiso/_c3c_q2_nyiso_nyca_shortage.json` was not re-run. A finding
 that documents a false positive ships with the construction that produced it.
 Only a cross-reference to this verification and the cross-ISO scan was added to
 its header.

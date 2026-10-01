@@ -1,6 +1,6 @@
 {
  "probe": "miso-245 S-3(b') \u2014 the repaired clean-A/B gate (STRUCTURAL, STOP-only)",
- "addendum": "results/calibration/ADDENDUM-miso245-my-own-gate-S3b-failed-and-the-repair-is-the-strictest-satisfiable-form-2026-09-08.md \u00a72",
+ "addendum": "docs/records/miso/ADDENDUM-miso245-my-own-gate-S3b-failed-and-the-repair-is-the-strictest-satisfiable-form-2026-09-08.md \u00a72",
  "keeper": "/home/user/market-simulator/results/calibration/miso243_sppair_K",
  "arm": "/tmp/claude-0/-home-user-market-simulator/db5feb19-a82e-56da-a252-94c2e4e968ed/scratchpad/miso245_screen2024",
  "henry_hub_actual": {

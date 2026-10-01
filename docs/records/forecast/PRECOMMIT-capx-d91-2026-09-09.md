@@ -4,7 +4,7 @@
 **Model:** Opus (rule 27 `[R-PUSH]`) · **Data profile:** `code` · **ZERO LP.**
 **Authority:** OWNER RULING **Q64** (2026-09-09, capx ledger §0bh.3(a)) — *"Re-emit D91 to diagnose
 fully, then repair."*
-**Predecessor:** `docs/handoffs/PRECOMMIT-capx-d90-rescore-2026-09-09.md` §3.1 (the attribution).
+**Predecessor:** `docs/records/forecast/PRECOMMIT-capx-d90-rescore-2026-09-09.md` §3.1 (the attribution).
 
 > **This document is written BEFORE any file is edited.** Everything in §§1–4 is measurement; §5 is
 > the repair it authorizes and §6 the cost that repair carries. HEAD is `fc927c2f`.
@@ -49,7 +49,7 @@ number below is on the WIDER population, and D90's is quoted beside it wherever 
 | `bau-d60` | `ae317e63263c8eef` → `f04fd06348e1623d` | not separately re-derived (D90's own target) |
 | `bau-d65br` | `4a5f9695eeae815a` → `0fc42cb56c24d544` | **`4a5f9695eeae815a` → `0fc42cb56c24d544`** ✓ |
 
-The one record that reproduces at HEAD as committed is `docs/handoffs/scn-ws5b-neiso/REF/run_config.json`
+The one record that reproduces at HEAD as committed is `docs/records/forecast/scn-ws5b-neiso/REF/run_config.json`
 (`1b452c457ca786a6`) — the only committed payload that CARRIES the field. It is §6's orphan.
 
 The named field and commit stand: **`pjm_seam_neighbour_hourly_ladder`**, added by **`f2a834de`**
@@ -222,7 +222,7 @@ recorded key was computed WITH the field present at its default. Enumerated, not
 
 ```
 committed run_config.json payloads carrying "pjm_seam_neighbour_hourly_ladder": 1 of 232
-  docs/handoffs/scn-ws5b-neiso/REF/run_config.json  value=False  key=1b452c457ca786a6
+  docs/records/forecast/scn-ws5b-neiso/REF/run_config.json  value=False  key=1b452c457ca786a6
   iso=NEISO  solved 2026-09-09T01:57:16Z  (~33 h after f2a834de)
 committed bundle directories named by a 16-hex key                          : 74
   ... of which named by a field-present key                                 : 0

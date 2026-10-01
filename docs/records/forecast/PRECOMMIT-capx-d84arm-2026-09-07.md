@@ -49,7 +49,7 @@ override moves PJM forecast keys and nothing else.
 ## 3. EX-ANTE KEY CENSUS — the expectation, recorded before the edit
 
 Instrument: `scripts/probes/capxd84arm_iso_override_no_op_check.py --simulate-arm`
-→ `docs/handoffs/d84arm/no-op-expectation.json`. It is the D78-ARM probe verbatim with the field
+→ `docs/records/forecast/d84arm/no-op-expectation.json`. It is the D78-ARM probe verbatim with the field
 name changed, so the semantics (backcast coercion, the OVERRIDE-FIX explicit-caller rule) are the
 shipped path's own rather than a restatement.
 

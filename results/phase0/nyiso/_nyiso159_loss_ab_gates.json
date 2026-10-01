@@ -1,7 +1,7 @@
 {
  "probe": "nyiso-159 zonal loss surface A/B",
  "prereg": [
-  "results/calibration/PREREG-nyiso159-zonal-loss-surface-2026-08-30.md"
+  "docs/records/nyiso/PREREG-nyiso159-zonal-loss-surface-2026-08-30.md"
  ],
  "arms": {
   "A_control": "nyiso159_lossctl_A",

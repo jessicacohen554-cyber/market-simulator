@@ -259,7 +259,7 @@ published FPR), so this leg's I7/I12 readings are unaffected by it.
 ## Addendum (2026-08-31) — the routed FC-7 flip RE-VERIFIED AND PUBLISHED (this lane's record, executed by capx-D8-V)
 
 **Executed by:** lane capx-D8-V (director r#22, charter
-`docs/handoffs/capx-director-prompt-pack-2026-08.md` §D8-V), recording here
+`docs/records/forecast/capx-director-prompt-pack-2026-08.md` §D8-V), recording here
 because the 2026-08-30 cross-lane re-grade ruling requires the AFFECTED lane's
 own record — this lane, capx-D2-extcap-intake, owns the bare `nyiso-t1f` key
 whose committed determination moves. **Zero solves; committed artifacts only.**
@@ -309,4 +309,4 @@ row now records the per-ISO ledger state instead. Gate cells were NOT touched
 (outside the executing lane's write scope): `gate.b_t1f_verdict.detail` still
 opens "PROMOTE-WITH-CAVEATS" from its 2026-08-30 scoring and is flagged to the
 D19 board reconcile. Full record:
-`docs/handoffs/FINDING-capx-d8v-fc7-ledger-2026-08-31.md`.
+`docs/records/forecast/FINDING-capx-d8v-fc7-ledger-2026-08-31.md`.

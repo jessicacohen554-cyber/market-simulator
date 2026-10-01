@@ -165,6 +165,6 @@ is not engaged.
 7. Rule 22 `[R-HOLDOUT]`: **2023/2024/2025 only**, MISO holds no marker. No
    solve, no holdout spend, no registration.
 
-**Artifacts.** `results/calibration/_miso152_fillorder.json`; probe
+**Artifacts.** `results/phase0/miso/_miso152_fillorder.json`; probe
 `scripts/probes/_miso152_fillorder.py`; G-3 tests
 `tests/test_miso152_fillorder.py` (4 passing).

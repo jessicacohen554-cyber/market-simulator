@@ -6,12 +6,12 @@ and the committed published FCA record, and evaluates HEAD's OWN resolver
 (``resolve_adequacy_requirement_mw``), position transform
 (``curve_convention_position``) and vintage curves with the
 ``neiso_net_icr_requirement`` gate OFF and ON — pure config evaluation, no LP.
-The D33 instrument (docs/handoffs/d33/position-decomposition-2026-09-02.py) is
+The D33 instrument (docs/records/forecast/d33/position-decomposition-2026-09-02.py) is
 the arithmetic this reproduces for the OFF arm; every published number cites
 data/raw/capacity-market/demand-curve/neiso/neiso.csv +
 data/raw/capacity-market/icr-ara/neiso/ara_requirement_values.csv.
 
-Run from the repo root: ``uv run python docs/handoffs/d40/devintage-screen-grain-2026-09-02.py``.
+Run from the repo root: ``uv run python docs/records/forecast/d40/devintage-screen-grain-2026-09-02.py``.
 """
 
 import json
@@ -36,7 +36,7 @@ from market_sim.model.capacity_evolution.retirements import (  # noqa: E402
 )
 
 BASE = "results/hindcast/neiso-2023-2027-crossover-rcrepair/NEISO/07e416f3f8072e7c"
-OUT = "docs/handoffs/d40/devintage-screen-grain-rows-2026-09-02.json"
+OUT = "docs/records/forecast/d40/devintage-screen-grain-rows-2026-09-02.json"
 
 # Published record (committed rows; $ = $/kW-mo). Real position = cleared/Net
 # ICR, the FCA's own (raw, DR-in) convention.

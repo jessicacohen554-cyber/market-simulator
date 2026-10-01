@@ -1,7 +1,7 @@
 # PRECOMMIT caiso-280 — does the CAISO import envelope understate deliverable import on 2022-12-23..31?
 
 **Lane:** CAISO calibration. **Date:** 2026-09-13. **Predecessor:** caiso-279
-(`docs/RESULT-caiso279-the-binding-object-is-the-import-envelope-2026-09-12.md`).
+(`docs/records/caiso/RESULT-caiso279-the-binding-object-is-the-import-envelope-2026-09-12.md`).
 **LP budget: ZERO.** This session is one zero-LP measurement. Nothing is solved. Rule 32
 `[R-SHARD]` (a) — the parent never solves — is not even reached, because no solve is chartered.
 

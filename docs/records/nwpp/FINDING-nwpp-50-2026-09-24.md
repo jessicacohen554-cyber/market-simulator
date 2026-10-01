@@ -4,7 +4,7 @@
 `src/` change, no gate touched. No mechanism was tested, so no matrix cell moves (rule 28(b); the
 NWPP-48 precedent).
 **Control:** keeper `2026-09-24-nwpp-49-ror-split` (`results/calibration/nwpp49_ror_span`).
-**Probe:** `scripts/probes/_nwpp50_sideinflow_phase0.py` → `results/calibration/_nwpp50_sideinflow_phase0.json`.
+**Probe:** `scripts/probes/_nwpp50_sideinflow_phase0.py` → `results/phase0/nwpp/_nwpp50_sideinflow_phase0.json`.
 **Intake:** `data/raw/nwpp-hydro/usgs/` (7 USGS daily-discharge gauges, 2023–25, README + SHA256).
 
 ## 0. In one line

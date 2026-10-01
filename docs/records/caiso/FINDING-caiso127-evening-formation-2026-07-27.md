@@ -252,7 +252,7 @@ alone changes the spread by construction ~0.
 ## §6 — the owner ask (TASK 2), filed not built
 
 Full design memo:
-`docs/handoffs/caiso-127-storage-arbitrage-ask-2026-07-27.md`.
+`docs/records/caiso/caiso-127-storage-arbitrage-ask-2026-07-27.md`.
 
 **Surviving candidate: the DA/RT allocation on the DISCHARGE side** — the
 two-sided rule-19 `[R-ONE-MECH]` reconciliation of M1

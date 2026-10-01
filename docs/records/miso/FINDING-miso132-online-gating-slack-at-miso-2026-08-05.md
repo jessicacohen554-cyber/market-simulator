@@ -7,11 +7,11 @@ KEEPER UNCHANGED** at `2026-08-04-miso-127-onlinepmin` (NOT-YET, sole FAIL C7
 `COAL_PRB` 2025 `cv_ratio` 0.347 vs the 0.50 gate, ledgered caveats 2/3 {C3a, C3c}).
 
 **Pre-registration**
-`results/calibration/PREREG-miso132-synchronized-reserve-online-gating-2026-08-05.md`,
+`docs/records/miso/PREREG-miso132-synchronized-reserve-online-gating-2026-08-05.md`,
 pushed at **`9a0033bb`** BEFORE the probe ran, with the two-sided prior declared (S-2
 named in advance as the live kill risk) and §0 disclosing every previously-measured
 number. **Probe** `scripts/probes/_miso132_online_gating_sizing.py`; **record**
-`results/calibration/_miso132_online_gating_sizing.json`. Rule 22 `[R-HOLDOUT]`: MISO
+`results/phase0/miso/_miso132_online_gating_sizing.json`. Rule 22 `[R-HOLDOUT]`: MISO
 holds no marker — 2023–2025 only; the probe hard-errors on any other year, and the
 2022/2026 files present in `data/raw/MISO-AS/` were **not read**.
 

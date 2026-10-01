@@ -2,7 +2,7 @@
 
 **Lane** SPP-93 · **ZERO LP** · keeper `2026-09-26-spp-86-coal-extract` (bundle `spp86_arm_span`, basis_sha `d72e5f10`) ·
 **PRECOMMIT** `PRECOMMIT-spp-93-west-east-2026-09-27.md`, on `main` at `599f45a6` (PR #6804) **before any model output
-existed** · records `docs/handoffs/spp93/` · keeper unchanged, nothing solved or registered, no promotion question (rule 31).
+existed** · records `docs/records/spp/spp93/` · keeper unchanged, nothing solved or registered, no promotion question (rule 31).
 
 ## 0. Bottom line: the STOP-leg table
 

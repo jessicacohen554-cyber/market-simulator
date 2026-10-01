@@ -1,6 +1,6 @@
 {
   "session": "nyiso-179",
-  "prereg": "results/calibration/PREREG-nyiso179-st-gas-offer-position.md",
+  "prereg": "docs/records/nyiso/PREREG-nyiso179-st-gas-offer-position.md",
   "keeper": "2026-09-02-nyiso-177-vintage-matched",
   "bundle": "results/calibration/nyiso177_vintage_B1p",
   "solves": 0,

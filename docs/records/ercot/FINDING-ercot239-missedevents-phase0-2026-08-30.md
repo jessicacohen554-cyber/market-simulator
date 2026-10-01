@@ -6,13 +6,13 @@ read from committed artifacts (the `ercot236_k33_clip` keeper sidecars, the
 committed actuals parquet, the EIA-930 wide extract, the CAMPD outage
 records, and the committed measured ORDC/reserves series) — constructions
 byte-identical to the ercot-237 probe where shared.** Precommit
-`docs/PRECOMMIT-ercot239-missedevents-phase0-2026-08-30.md` pushed +
+`docs/records/ercot/PRECOMMIT-ercot239-missedevents-phase0-2026-08-30.md` pushed +
 blob-verified before any measurement; Amendment 1 (the ercot-237 JSON
 carries no `lt_200|ge_1000` hour list — V-0 re-based to the 13-h list +
 count) and Amendment 2 (the measured reserves series added as a report-only
 panel) both recorded and pushed before the measurements they cover.
 Probe: `scripts/probes/ercot239_missedevents_phase0.py` →
-`results/calibration/ercot239_missedevents_phase0.json` (committed).
+`results/phase0/ercot/ercot239_missedevents_phase0.json` (committed).
 The two-config keeper structure (forward `2026-08-25-234-eastex-identity`,
 2023 carve-out `2026-08-25-236-swcap-clip-k33`) is UNTOUCHED; no lever is
 proposed or armed this round (kill K-3); no matrix cell changes (nothing

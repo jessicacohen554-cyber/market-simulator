@@ -1,7 +1,7 @@
 # FINDING — PERF-C S6: a content-addressed cache of the cold P0 solve
 
 **STATUS: RESULT.** Lane shard S6 of the PERF-C program
-(`docs/handoffs/PRECOMMIT-perfc-orchestration-2026-09-20.md`). Pinned HEAD
+(`docs/records/governance/PRECOMMIT-perfc-orchestration-2026-09-20.md`). Pinned HEAD
 `5cb658922895862852eb58edb4afb8774f5ef7ce` (the composed PERF-C lane, carrying
 the S1 seed un-nesting and the S2 slim P0 extraction); branch
 `claude/perfc-s6-p0-cache`. DATA PROFILE `neiso`.
@@ -362,7 +362,7 @@ the moment any other model test ran first, with `model status 'Not Set'`: HiGHS
 initializes a process-global scheduler on the first `run()` and refuses every
 later LP whose `threads` option differs from it. That is exactly the latent,
 ordering-dependent CI red recorded in
-`docs/FINDING-fast-tier-repair-2026-09.md` §4b/§7.6 and guarded at source by
+`docs/records/misc/FINDING-fast-tier-repair-2026-09.md` §4b/§7.6 and guarded at source by
 `capture_keeper_goldens.pin_determinism_env`. **Never set that variable inside a
 pytest process that will later solve.** The fixture now patches the
 `determinism_pin_ok` *predicate* instead, and the predicate itself is tested in

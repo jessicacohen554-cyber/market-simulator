@@ -15,7 +15,7 @@ which rule 22 leaves unrestricted — no out-of-training year was solved,
 scored, or read against model output).
 
 **NUMBERING NOTE (charter-directed):**
-`results/calibration/PRECOMMIT-caiso227-ofo-arm-2026-08-31.md` is caiso-226's
+`docs/records/caiso/PRECOMMIT-caiso227-ofo-arm-2026-08-31.md` is caiso-226's
 FILED, UNEXECUTED pre-registration of the future OFO arm; its "227" label is
 historical. THIS session is caiso-227 (this document); the OFO arm executes
 later under its own number and that PRECOMMIT travels with it unchanged.
@@ -23,7 +23,7 @@ later under its own number and that PRECOMMIT travels with it unchanged.
 Instruments (committed, no LP, no solve):
 
 * `scripts/probes/_caiso227_da2025_rootcause.py` →
-  `results/calibration/_caiso227_da2025_rootcause.json` — §A–§H below, from
+  `results/phase0/caiso/_caiso227_da2025_rootcause.json` — §A–§H below, from
   the keeper's committed `hourly/` sidecars, the committed actual-LMP
   reference (rt+da), the rubric weights, the EIA-930 CISO extract, the CAMPD
   hourly unit files, the bench parts, and the licensed caiso-105/131
@@ -232,7 +232,7 @@ DECLINED).
 ## §J — Record changes
 
 * This FINDING; `scripts/probes/_caiso227_da2025_rootcause.py`;
-  `results/calibration/_caiso227_da2025_rootcause.json`; the §I intake
+  `results/phase0/caiso/_caiso227_da2025_rootcause.json`; the §I intake
   artifact set.
 * `docs/calibration-log/caiso.md`: caiso-227 entry (with the numbering note).
 * **Matrix: NOT touched** — no mechanism was tested, no cell verdict moves,

@@ -3,7 +3,7 @@
 **Governs:** `PREREG-miso246-the-backcast-lever-queue-census-2026-09-08.md` §1 `G-PARSE` and §4(a)
 `M-a2`'s *reading*. **`G-MODE`, `G-ISO`, `G-BASIS`, `G-BUS`, `G-RECON`, §3a's bar, `M-a3`, `M-b1`,
 `M-b2` and `M-c1` are UNTOUCHED — no bar, no operand and no disposition of theirs moves.**
-Machine record of the failing run: `results/calibration/_miso246_lever_queue_census_phase0.json`.
+Machine record of the failing run: `results/phase0/miso/_miso246_lever_queue_census_phase0.json`.
 
 ---
 

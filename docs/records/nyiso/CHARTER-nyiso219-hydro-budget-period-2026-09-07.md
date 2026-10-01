@@ -44,7 +44,7 @@ gated on a price residual (rule 1 `[R-STRUCT]`).
 ## 2. Four independent lines converge on one object — and the successor was already named
 
 **This charter's object is not new. It was stated, in writing, fourteen months of sessions ago, and
-no session took it up.** `docs/FINDING-nyiso-overnight-marginal-is-hydro-water-value-2026-07-25.md`
+no session took it up.** `docs/records/nyiso/FINDING-nyiso-overnight-marginal-is-hydro-water-value-2026-07-25.md`
 §6, verbatim:
 
 > "A p95 hourly ceiling *bounds* the hoarding but leaves the monthly optimization intact: the LP
@@ -294,7 +294,7 @@ deliverable the owner instructed, and it authorizes nothing on its own.
 
 All three §9 questions were answered the same day. **Recorded here as the authoritative record**;
 the measurement that executes them is
-`docs/FINDING-nyiso219-pondage-duration-2026-09-07.md`.
+`docs/records/nyiso/FINDING-nyiso219-pondage-duration-2026-09-07.md`.
 
 | | ruling | status |
 |---|---|---|

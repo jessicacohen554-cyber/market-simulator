@@ -125,6 +125,6 @@ The predictions above are wrong if any of the following is measured:
 
 ## 5. Deliverable
 
-`docs/FINDING-f6-lmp-backend-parity-2026-08-11.md` — the five reads at full magnitude, the
+`docs/records/misc/FINDING-f6-lmp-backend-parity-2026-08-11.md` — the five reads at full magnitude, the
 named R2 verdict, and a card-ready recommendation with the real cost of each option. The
 fix is **not** implemented in this lane.

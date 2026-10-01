@@ -2,7 +2,7 @@
 
 _Generated 2026-07-17/18 · Forecast Finalization Program lane FF-1B (plan §6;
 BLK-6's structural half) · implements the RC-2A Part D design charter
-(`docs/handoffs/ercot-retirement-composition-2026-07-16.md`) on the consolidated
+(`docs/records/ercot/ercot-retirement-composition-2026-07-16.md`) on the consolidated
 outage seam (post PR #2415/#2416) · forecast/hindcast-side, NON-KEEPER probes ·
 no backcast keeper / dispatch-layer / offer-curve change · the G-20/G-22 AS co-opt
 is consumed as-is (hard boundary) · quarantine: solve years {2021, 2023, 2024,

@@ -1,6 +1,6 @@
 {
   "probe": "nyiso-119 pre-registered gate scoring",
-  "prereg": "results/calibration/PREREG-nyiso119-seny-increment-2026-08-03.md \u00a77",
+  "prereg": "docs/records/nyiso/PREREG-nyiso119-seny-increment-2026-08-03.md \u00a77",
   "control": "results/calibration/nyiso119_control",
   "treatment": "results/calibration/nyiso119_seny_increment",
   "published_increment_rcpf": 40.0,

@@ -83,4 +83,4 @@ here because the ruling is recorded as the identification source.
 ## Operational notes
 - All 7 shards finished inside budget. The 2025 shard (50-min budget) finished in about 32 min.
 - The per-year prompts were read by the shards from the immutable SHA `220e2696`
-  (`docs/handoffs/r-caiso-20/shards/`).
+  (`docs/records/caiso/r-caiso-20/shards/`).

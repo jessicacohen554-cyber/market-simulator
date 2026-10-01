@@ -5,7 +5,7 @@ SPENT — the repair is scorer-side (`scripts/legitimacy_diagnostics.py`), the
 re-score is regeneration + verdict runs over committed bundles, and every
 bundle is byte-identical after the measurement (the harness swaps
 `legitimacy_diagnostics.json` in place and restores it).** Record:
-`results/calibration/_miso171_d4_attribution_rescore.json`, harness
+`results/phase0/miso/_miso171_d4_attribution_rescore.json`, harness
 `scripts/probes/_miso171_d4_attribution_rescore.py`, 5 regression tests in
 `tests/scoring/test_legitimacy_diagnostics.py` (97 pass).
 

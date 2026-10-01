@@ -31,7 +31,7 @@ re-keys the ISOs whose rows moved instead of silently re-serving the pre-change 
 | `check_mechanism_matrix.py --base origin/main` | **rc 0** (no `ScenarioConfig` field added) |
 | `ruff check .` / `ruff format --check .` | **PASS** (1,376 files) |
 
-Record: `docs/handoffs/capxd79-solve-surface-no-op-record.json`
+Record: `docs/records/forecast/capxd79-solve-surface-no-op-record.json`
 (`scripts/probes/capxd79_solve_surface_no_op_check.py`).
 
 **Why zero was predictable rather than lucky.** `cache_key()` differs from its pre-D79 form by two

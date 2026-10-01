@@ -1,7 +1,7 @@
 {
  "probe": "ercot230_probe_fixedpoint",
  "factor": "SECOND ADAPTATION PASS / fixed-point iteration on the armed adaptive-expectation storage floor (ercot_adaptive_fixed_point) — the FINDING-ercot221 §4 first named successor",
- "charter": "docs/PRECOMMIT-ercot230-adaptive-fixed-point-2026-08-23.md §0 (in-session owner selection lifting the W-1 fence onto the conduct object: '2nd adaptation pass') + §1 (form, parameter-free discrete stopping rule) + §4 (gates, 226 §5.5 adoption bars)",
+ "charter": "docs/records/ercot/PRECOMMIT-ercot230-adaptive-fixed-point-2026-08-23.md §0 (in-session owner selection lifting the W-1 fence onto the conduct object: '2nd adaptation pass') + §1 (form, parameter-free discrete stopping rule) + §4 (gates, 226 §5.5 adoption bars)",
  "session": "ercot-230",
  "branch_sha": "b20d0a4658a7642f975c74e3cd184b4c378012dc",
  "env": {
@@ -133,7 +133,7 @@
   }
  },
  "family_diagnostics": {
-  "withheld_shortfall_hour_sets": "identical control and arm, every family (full lists: results/calibration/ercot230_gates.json)",
+  "withheld_shortfall_hour_sets": "identical control and arm, every family (full lists: results/phase0/ercot/ercot230_gates.json)",
   "dual_movement": "none — arm is numerically identical"
  },
  "summer": {

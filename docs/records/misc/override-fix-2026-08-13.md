@@ -13,7 +13,7 @@ mechanism test; `scripts/check_mechanism_matrix.py` run anyway, exit 0, anchor
 warnings unchanged at 236 = the pre-existing count on `main`).
 
 **Source of record for the defect and its resolution:**
-`docs/handoffs/FINDING-ffr-9c-iso-override-precedence-2026-08-12.md` — its
+`docs/records/forecast/FINDING-ffr-9c-iso-override-precedence-2026-08-12.md` — its
 landed text plus the **RESOLUTION ADDENDUM** this lane appended. That addendum is
 the authoritative narrative; this file is the execution record.
 

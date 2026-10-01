@@ -1,7 +1,7 @@
 # PRECOMMIT — lane NWPP-41: the C1 coal-taxonomy seam is CLOSED zero-LP; C4's root cause is measured and ROUTED
 
 **Lane** NWPP-41 (Fable) · **DATA PROFILE** `nwpp` · **Base** `origin/main` @ `73281357` (after PR #6257)
-· **Predecessor** `docs/handoffs/FINDING-nwpp-40-2026-09-16.md`, whose §7.1 (C1) and §7.2 (C4) are this
+· **Predecessor** `docs/records/nwpp/FINDING-nwpp-40-2026-09-16.md`, whose §7.1 (C1) and §7.2 (C4) are this
 lane's object · **Run under study** `2026-09-16-nwpp-1-cascade`, bundle `results/calibration/nwpp40_span_A`
 · **LP SPENT BY THIS SESSION: ZERO.** Every number below is a `fleet_only` rebuild, a committed-sidecar
 read, or a benchmark re-derive. The parent never solved (rule 32 `[R-SHARD]` (a)).
@@ -62,7 +62,7 @@ Both sides of the scorer call the SAME resolver, but with different arguments:
 and SPP all have one. With the model's `fuel_code` empty, the third arm of `_coal_supply_class` is
 dead, so the asymmetry is total: the bench splits, the model cannot.
 
-This is the SPP-62 defect one layer deeper (`docs/handoffs/FINDING-spp-62-2026-09-10.md`: a *census*
+This is the SPP-62 defect one layer deeper (`docs/records/spp/FINDING-spp-62-2026-09-10.md`: a *census*
 gap left 4.36 TWh in a bare `COAL` class "in no C1 row at all"). NWPP's whole coal fleet is in that
 state.
 
@@ -900,7 +900,7 @@ unreliable (correct at 08:06Z, wrong at 06:35Z).
 
 # ADDENDUM 10 (2026-09-19) — CLOSED. The bundle landed, both predictions held, NWPP has its first keeper
 
-Full record: **`docs/handoffs/FINDING-nwpp-41-2026-09-19.md`**. Log entry:
+Full record: **`docs/records/nwpp/FINDING-nwpp-41-2026-09-19.md`**. Log entry:
 `docs/calibration-log/nwpp.md` "## nwpp-41 — 2026-09-19". This addendum records only what this
 PRECOMMIT itself got wrong, so the doc is not left asserting superseded numbers.
 

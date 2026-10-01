@@ -7,7 +7,7 @@ and every fleet row's available capacity-hours (``pmax x availability``) and
 ``min_gen`` energy are differenced. Offers (``mc_base``) are checked unchanged.
 
 Run: ``python3 scripts/probes/pjm_next5_card3a_f2_census.py 2019 ... 2025``
-Writes ``results/calibration/_pjm_next5_card3a_f2_census.json``.
+Writes ``results/phase0/pjm/_pjm_next5_card3a_f2_census.json``.
 """
 
 from __future__ import annotations
@@ -73,7 +73,7 @@ def main() -> None:
         }
         out["years"][str(y)] = yr
         print(y, json.dumps(yr), flush=True)
-    dest = REPO / "results/calibration/_pjm_next5_card3a_f2_census.json"
+    dest = REPO / "results/phase0/pjm/_pjm_next5_card3a_f2_census.json"
     dest.write_text(json.dumps(out, indent=1))
     print("wrote", dest)
 

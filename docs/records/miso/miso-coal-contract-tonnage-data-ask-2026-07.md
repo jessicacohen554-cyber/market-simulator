@@ -5,10 +5,10 @@ clears §4 — **both** the §4.1 A–F specification **and** the §4.2 pin-stre
 battery.
 
 **Authority:** the miso-103 no-build determination
-(`results/calibration/FINDING-miso103-coal-mintake-tonnage-2026-07-29.md` §4),
+(`docs/records/miso/FINDING-miso103-coal-mintake-tonnage-2026-07-29.md` §4),
 which names this as "a data-intake project, not a modelling session … the
 second MISO data ask" beside the outage-grain ask
-(`docs/handoffs/miso-outage-grain-data-ask-2026-07.md`, whose format this
+(`docs/records/miso/miso-outage-grain-data-ask-2026-07.md`, whose format this
 mirrors). miso-104 executed the sourcing pass that opens it.
 
 **This is a DATA ask, not a build charter.** It specifies what would have to
@@ -249,7 +249,7 @@ specifics live in confidential attachments. Indiana alone is 8 plants and
 > the decisive, undischarged next step.**
 > Do **not** re-open the PSCR **reconciliation** cases either: they report against
 > the plan **ex post**, i.e. the miso-103 answer key.
-> `results/calibration/FINDING-miso135-michigan-pscr-contract-grain-2026-08-06.md`.
+> `docs/records/miso/FINDING-miso135-michigan-pscr-contract-grain-2026-08-06.md`.
 > *(Original text follows.)*
 
 **Not yet checked, and the highest-value remaining state: Michigan.** The PSCR
@@ -503,4 +503,4 @@ From committed artifacts only (`scripts/probes/miso104_contract_source_coverage.
 no network, no LP): **39 plants across 26 owners**, **93.99 / 80.67 / 89.52 Mt**
 in 2023 / 2024 / 2025. Unchanged from miso-104.
 
-`docs/handoffs/xiso-4-queue-ratchet-2026-08-04.md` §3(a).
+`docs/records/governance/xiso-4-queue-ratchet-2026-08-04.md` §3(a).

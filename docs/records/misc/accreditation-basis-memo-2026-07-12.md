@@ -1,11 +1,11 @@
 # Accreditation-basis adjudication memo — ICAP / UCAP / FPR (#1532) — 2026-07-12
 
-**Session.** P-2B of `docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md`
+**Session.** P-2B of `docs/records/forecast/forecast-driver-capacity-revenue-audit-plan-2026-07.md`
 (§3.4.2). Memo only — **no code changed**. Adjudicates the open #1532 flag
 (gap register, 2026-07-06 post-#1503–#1532 addendum) using the P-2A validation
-numbers (`docs/handoffs/capacity-price-validation-2026-07-12.md`), the stage-5
+numbers (`docs/records/misc/capacity-price-validation-2026-07-12.md`), the stage-5
 §6 ICAP/UCAP pairing audit
-(`docs/handoffs/fom-scarcity-joint-protocol-2026-07-06-stage5-energy-only-floor.md`),
+(`docs/records/misc/fom-scarcity-joint-protocol-2026-07-06-stage5-energy-only-floor.md`),
 and the live code (`model/capacity.py` accreditation/requirement paths,
 `config/constants.py` `PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO` /
 `MARKET_DESIGN`, P-0B raw data under `data/raw/capacity-market/`).

@@ -4,7 +4,7 @@
 **Keeper at session start** `2026-08-09-miso-148-basis-aware` (`miso148_basis_B`) ·
 **Model** `claude-fable-5`.
 
-**PREREG** `results/calibration/PREREG-miso159-commission-year-cod-fallback-2026-08-15.md`,
+**PREREG** `docs/records/miso/PREREG-miso159-commission-year-cod-fallback-2026-08-15.md`,
 pushed at **`fdb099f`**, blob **`77b76622`**, **verified byte-identical against the
 FETCHED remote ref** before the construction was built and before any
 adjudicating statistic was computed (rule 27 `[R-PUSH]`).
@@ -179,6 +179,6 @@ miso-127 to clear its own PREREG condition without owner escalation.
 
 **Artifacts.** Probe `scripts/probes/_miso159_cod_vintage_instrument.py`
 (`ruff` clean, zero 3-arg `getattr`); record
-`results/calibration/_miso159_cod_vintage_instrument.json`; unit tests
+`results/phase0/miso/_miso159_cod_vintage_instrument.json`; unit tests
 `TestCommissionYearCodFallback`; PREREG `fdb099f` blob `77b76622`; bundles
 `results/calibration/miso159_cod_A` / `miso159_cod_B`.

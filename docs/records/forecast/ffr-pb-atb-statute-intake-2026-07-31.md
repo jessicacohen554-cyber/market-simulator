@@ -176,7 +176,7 @@ Unrelated rows M3–M15 in `ff-inputs-currency-audit-2026-07.md` §7.3 are untou
 | `data/raw/policy/ira-credit-parameters/{README.md,ira-credit-parameters.csv}` | primary citations; MANUAL DOWNLOAD closed |
 | `data/dictionary/data-dictionary.md`, `scripts/render_data_dictionary.py` | regenerated / blurb |
 | `docs/forecast-readiness-audit-2026-07.md` | FR-20 row + Phase-5 line corrected |
-| `docs/handoffs/ff-inputs-currency-audit-2026-07.md`, `docs/handoffs/ff-1e-policy-currency-2026-07.md` | M1/M2 closed with the corrected premises |
+| `docs/records/forecast/ff-inputs-currency-audit-2026-07.md`, `docs/records/forecast/ff-1e-policy-currency-2026-07.md` | M1/M2 closed with the corrected premises |
 
 ## Verification run in-session
 

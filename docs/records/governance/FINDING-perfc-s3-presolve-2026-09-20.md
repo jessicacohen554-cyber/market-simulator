@@ -3,7 +3,7 @@
 **STATUS: FINDING — measurement only, no code changed.** Shard `claude/perfc-s3-presolve`,
 pinned `source_revision` = `2a87343f8d7302ce84e66f45430a8d3b9e807d80` (`git rev-parse HEAD`
 confirmed at start; unchanged throughout — no rebase, no pull). Parent: PERF-C orchestration,
-`docs/handoffs/PRECOMMIT-perfc-orchestration-2026-09-20.md` §1 lever L3. This shard edits no
+`docs/records/governance/PRECOMMIT-perfc-orchestration-2026-09-20.md` §1 lever L3. This shard edits no
 file under `src/` or `scripts/` (rule 27 `[R-PUSH]`); the only committed file is this doc.
 
 **Question.** `src/market_sim/model/lp/model.py:648` sets `h.setOptionValue("presolve", "off")`
@@ -28,7 +28,7 @@ data already present).
 
 Not a repo file: lives outside src/ and scripts/ per rule 27 (Sonnet may not edit
 infrastructure). Run from the repo root with the `.venv` interpreter. Pasted
-verbatim into docs/handoffs/FINDING-perfc-s3-presolve-2026-09-20.md as the record
+verbatim into docs/records/governance/FINDING-perfc-s3-presolve-2026-09-20.md as the record
 of exactly what ran.
 
 Monkeypatches highspy.Highs.setOptionValue so a call that sets "presolve" to

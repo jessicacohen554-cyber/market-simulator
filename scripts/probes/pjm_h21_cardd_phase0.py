@@ -33,7 +33,7 @@ STATED LIMITS:
    the class total is reported, not assumed.
 
 Run: ``python scripts/probes/pjm_h21_cardd_phase0.py <scratch legs dir>``
-Writes ``results/calibration/_pjm_h21_cardd_phase0.json``.
+Writes ``results/phase0/pjm/_pjm_h21_cardd_phase0.json``.
 """
 
 from __future__ import annotations
@@ -314,7 +314,7 @@ def main(legs: Path) -> None:
                     for k, v in yr[tag].items()
                 },
             )
-    out = REPO / "results/calibration/_pjm_h21_cardd_phase0.json"
+    out = REPO / "results/phase0/pjm/_pjm_h21_cardd_phase0.json"
     out.write_text(json.dumps(res, indent=1, default=float))
     print("wrote", out)
 

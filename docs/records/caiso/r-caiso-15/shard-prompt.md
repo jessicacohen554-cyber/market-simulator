@@ -9,8 +9,8 @@ FIRST ACTION (exactly this, before anything else):
   git fetch origin {SHA} || git fetch origin main; git checkout --detach {SHA}
 Then HARD STOP 1: `git rev-parse HEAD` must print {SHA}. Never rebase, never `git pull`, never "sync", never force-push.
 
-PRECOMMIT: docs/handoffs/r-caiso-13/PRECOMMIT-r-caiso-13-2026-09-28.md (read §2 and §4 only) and its addendum
-  docs/handoffs/r-caiso-15/ADDENDUM-r-caiso-15-hsl-2026-09-29.md.
+PRECOMMIT: docs/records/caiso/r-caiso-13/PRECOMMIT-r-caiso-13-2026-09-28.md (read §2 and §4 only) and its addendum
+  docs/records/caiso/r-caiso-15/ADDENDUM-r-caiso-15-hsl-2026-09-29.md.
 
 SETUP (in this order):
   pip install -r requirements.txt && pip install -e .     (only if imports fail; if PyYAML refuses to uninstall add --ignore-installed PyYAML; if zoneinfo cannot find US/Pacific, `pip install tzdata`)

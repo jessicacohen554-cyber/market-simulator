@@ -75,7 +75,7 @@ re-solved again by this lane or by any shard.
 Resolved through the identical chain the parent used (`matrix_configs` → `resolve_policy_bundle`
 → `set_caiso_fsno_partition(False)` → `apply_iso_scenario_defaults` → `cache_key()`), at THE
 PIN's own code. Instrument + committed output:
-`docs/handoffs/scn-ws5a-policy-nyiso/keys-at-pin-2026-09-07.{py,txt}`.
+`docs/records/forecast/scn-ws5a-policy-nyiso/keys-at-pin-2026-09-07.{py,txt}`.
 
 | case | key at THE PIN | status | shard |
 |---|---|---|---|
@@ -132,7 +132,7 @@ identified parameter, and it is declared here, ex ante, and never swept.
 ## 3. S15 STEP 1 — the mask, measured per year (zero LP)
 
 Instrument + committed output:
-`docs/handoffs/scn-ws5a-policy-nyiso/s15-entry-fold-2026-09-07.{py,txt}`.
+`docs/records/forecast/scn-ws5a-policy-nyiso/s15-entry-fold-2026-09-07.{py,txt}`.
 
 ### 3.1 The fold, quoted from THE PIN
 

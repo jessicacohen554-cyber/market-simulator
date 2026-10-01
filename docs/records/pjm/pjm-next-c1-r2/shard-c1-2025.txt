@@ -6,7 +6,7 @@ This is a relaunch: the first launch's G1 had two wording defects (unsatisfiable
 "A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE."
 
 PINNED COMMIT: 7f0953845350089732892f83248726d4b04fb84f
-Record: docs/PRECOMMIT-pjm-next-c1-year-correct-membership-2026-09-25.md (§3, §7); the G1 correction lives in docs/PRECOMMIT-pjm-next-c1-ADDENDUM-g1-2026-09-25.md on a later commit (not in your checkout — the list below is authoritative).
+Record: docs/records/pjm/PRECOMMIT-pjm-next-c1-year-correct-membership-2026-09-25.md (§3, §7); the G1 correction lives in docs/records/pjm/PRECOMMIT-pjm-next-c1-ADDENDUM-g1-2026-09-25.md on a later commit (not in your checkout — the list below is authoritative).
 
 STEPS
 1. HARD STOP: `git rev-parse HEAD` must equal 7f0953845350089732892f83248726d4b04fb84f. If not, `git fetch origin 7f0953845350089732892f83248726d4b04fb84f && git checkout --detach 7f0953845350089732892f83248726d4b04fb84f` once; if it still differs, STOP and report. Never rebase, never `git pull`, never "sync" to any branch.

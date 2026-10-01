@@ -9,10 +9,10 @@ MISO keeper unchanged at `2026-08-04-miso-126-steampart-b` (**NOT-YET**, C7
 `COAL_PRB` shape the sole FAIL). Rule 22 `[R-HOLDOUT]`: 2023–2025 only — MISO
 holds no `complete` marker and the holdout spend freeze is active.
 
-**Pre-registration** `results/calibration/PREREG-miso127-overnight-gas-composition-2026-08-04.md`,
+**Pre-registration** `docs/records/miso/PREREG-miso127-overnight-gas-composition-2026-08-04.md`,
 committed and pushed at `49cf0877` **before** any adjudicating statistic.
 **Probe** `scripts/probes/_miso127_overnight_gas_composition.py`; **record**
-`results/calibration/_miso127_overnight_gas_composition.json`.
+`results/phase0/miso/_miso127_overnight_gas_composition.json`.
 
 ---
 
@@ -257,4 +257,4 @@ python scripts/probes/_miso127_overnight_gas_composition.py
 ```
 
 No LP, no bundle, no network; reads only committed artifacts. Writes
-`results/calibration/_miso127_overnight_gas_composition.json`.
+`results/phase0/miso/_miso127_overnight_gas_composition.json`.

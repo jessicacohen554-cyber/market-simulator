@@ -394,7 +394,7 @@ local before the next commit.
 
 ## B. Sources
 
-- `docs/handoffs/FINDING-scn-mxr-2026-09-06.md` §1.1–§1.4 (the diagnosis, REPRO A/B/C, R1–R4).
+- `docs/records/forecast/FINDING-scn-mxr-2026-09-06.md` §1.1–§1.4 (the diagnosis, REPRO A/B/C, R1–R4).
 - `scripts/check_mechanism_matrix.py` and `scripts/mechanism_matrix_gap_sweep.py` at `fca3b656`
   (pre-change behaviour, measured by running the `origin/main` blob against a modified tree).
 - `.github/workflows/ci.yml`, `mechanism-matrix-guard` job and the workflow's `on:` path filters.

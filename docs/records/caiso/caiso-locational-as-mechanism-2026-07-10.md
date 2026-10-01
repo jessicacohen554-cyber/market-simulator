@@ -1,6 +1,6 @@
 # CAISO locational AS requirement mechanism — handoff (2026-07-10)
 
-Successor to the caiso-70 arc (`results/calibration/FINDING-caiso70-bridge-decrowding-negative-2026-07-10.md`
+Successor to the caiso-70 arc (`docs/records/caiso/FINDING-caiso70-bridge-decrowding-negative-2026-07-10.md`
 — read it first). That FINDING closed probe #1 (RA-bridge de-crowding: negative; the ablation's
 CT lift is an evening commitment/seam effect) and scoped probe #2: the award→energy channel
 exists as machinery (`caiso_commitment_posture`, ported and tested this session) but is

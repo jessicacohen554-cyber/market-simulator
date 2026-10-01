@@ -1,6 +1,6 @@
 # RESULT — SPP-102: the SPP commitment posture, solved
 
-**Lane** SPP-102 · PRECOMMIT `docs/handoffs/PRECOMMIT-spp-102-commitment-posture-2026-09-29.md` (pin `62ac90e2`,
+**Lane** SPP-102 · PRECOMMIT `docs/records/spp/PRECOMMIT-spp-102-commitment-posture-2026-09-29.md` (pin `62ac90e2`,
 Addendum A) · control = keeper `2026-09-28-spp-100-chp-scope` (rule 29(b) form 4) · registered run
 **`2026-09-29-spp-102-commitment-posture`**, bundle `results/calibration/spp102_arm_span` (2019–2025).
 

@@ -9,7 +9,7 @@ FIRST ACTION (exactly this, before anything else):
   git fetch origin {SHA} || git fetch origin claude/r-caiso-8; git checkout --detach {SHA}
 Then HARD STOP 1: `git rev-parse HEAD` must print {SHA}. Never rebase, never `git pull`, never "sync", never force-push.
 
-PRECOMMIT: docs/handoffs/r-caiso-8/PRECOMMIT-r-caiso-8-2026-09-27.md (read §1 and §2 only).
+PRECOMMIT: docs/records/caiso/r-caiso-8/PRECOMMIT-r-caiso-8-2026-09-27.md (read §1 and §2 only).
 
 SETUP (in this order):
   pip install -r requirements.txt && pip install -e .     (only if imports fail; if PyYAML refuses to uninstall add --ignore-installed PyYAML)

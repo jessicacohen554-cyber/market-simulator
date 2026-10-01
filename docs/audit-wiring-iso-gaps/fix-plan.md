@@ -4,7 +4,7 @@
 **Companion:** `gap-inventory.md` (gap definitions), `prompt-pack/` (execution prompts)
 
 **Status 2026-07 — 15/16 items LANDED.** Verified against current `runner.py` /
-`run_calibration.py` by `docs/handoffs/orchestrator-unification-plan-2026-07.md` §2.1;
+`run_calibration.py` by `docs/records/misc/orchestrator-unification-plan-2026-07.md` §2.1;
 see that table for per-item proof. **Do not re-fix any landed item below.** The one
 remaining open item, **A5 (ERCOT single-product reserve supply cap)**, is absorbed into
 the unification plan's **Stage 2** (`reserve_config._ercot_design`) — do **not** execute

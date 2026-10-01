@@ -2,7 +2,7 @@
 
 **Scope.** Builds the sanctioned WP-B fix for the ERCOT West/Panhandle wind (and
 solar) under-curtailment that displaces gas and drove C2 to FAIL
-(`docs/handoffs/ercot-vre-curtailment-topology-scope-2026-07.md`). Steps 1–2
+(`docs/records/ercot/ercot-vre-curtailment-topology-scope-2026-07.md`). Steps 1–2
 ruled out measured GTC limits, negative-price dumping, storage timing, and
 must-run; the lever is the sub-zonal Permian/CREZ **nodal** congestion the 8-zone
 reduction collapses into one wide West→North pipe. WP-A (zone split) is deferred
@@ -71,7 +71,7 @@ cell(t) = (net_load_percentile_decile(t), hour_of_day(t), season(t))
 - **LEVEL** `depth` — one per-tech coefficient (`ScenarioConfig.ercot_wtx_curtail_
   depth_wind`/`_solar`) converting congestion incidence into curtailed fraction,
   centred on the measured curtailment MW quantity exactly like the RTOLCAP-forward
-  `deliv` coefficient (`docs/handoffs/ercot-as-coopt-plan-2026-07.md`). A stable
+  `deliv` coefficient (`docs/records/ercot/ercot-as-coopt-plan-2026-07.md`). A stable
   structural constant of the West Texas network: **0.0998 (wind)**, LOYO
   0.0998/0.0996/0.0984; **0.1633 (solar)**, looser. `depth = 0` is the
   zero-forcing ablation.
@@ -206,7 +206,7 @@ calibrated curtailment representations for sub-zonal congestion; this one is
 more disciplined — measured shape + one LOYO-stable scalar).
 
 ## References
-- `docs/handoffs/ercot-vre-undercurtailment-2026-07.md`, `…-step2-2026-07.md`,
+- `docs/records/ercot/ercot-vre-undercurtailment-2026-07.md`, `…-step2-2026-07.md`,
   `…-curtailment-topology-scope-2026-07.md` — the diagnosis chain.
 - `scripts/data/curate_ercot_wtx_congestion.py`, `scripts/data/derive_ercot_wtx_curtailment_share.py`,
   `src/market_sim/data/curtailment_share.py`.

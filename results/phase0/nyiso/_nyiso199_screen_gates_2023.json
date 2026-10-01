@@ -3,7 +3,7 @@
   "year": 2023,
   "keeper": "2026-09-06-nyiso-196-extract-basis",
   "screen_bundle": "results/calibration/nyiso199_screen_2023",
-  "prereg": "results/calibration/PREREG-nyiso199-ct-peaker-measured-bands-screen.md",
+  "prereg": "docs/records/nyiso/PREREG-nyiso199-ct-peaker-measured-bands-screen.md",
   "class_energy_twh": {
     "CC_CHP": {
       "keeper": 15.751,

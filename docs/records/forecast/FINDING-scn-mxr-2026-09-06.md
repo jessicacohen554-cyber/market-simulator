@@ -303,7 +303,7 @@ FINDING + the ledger row-5 correction. No conditional matrix commit.
   #4902 (open, head `ccdbc4a7`); PR #4903 (merged).
 - Commits: `089eb401`, `717de664`, `d57cf785`, `c5f9358a`, `ccdbc4a7`, `0fc2cc58`,
   `13f711bc`, `4b28c93f`, `ea273339`, `db8b6015`, `21deb4a7`, `b1964e71`, `e7412237`.
-- `docs/handoffs/FINDING-scn-ws4a-2026-09-05.md` §1, §2, §6; `scenario-desk-ledger-2026-09.md`
+- `docs/records/forecast/FINDING-scn-ws4a-2026-09-05.md` §1, §2, §6; `scenario-desk-ledger-2026-09.md`
   §0 r#3, §3, §4; `forecast-scenario-readiness-plan-2026-09.md` §5.1;
   `src/market_sim/data/datacenter.py` (`datacenter_zone_shares`, `_load_share_zone_shares`,
   `validate_datacenter_config`); `src/market_sim/config/constants.py` `DATACENTER_ZONE_SHARE`

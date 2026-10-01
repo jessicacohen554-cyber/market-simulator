@@ -12,11 +12,11 @@ Rule 22 `[R-HOLDOUT]`: only 2023–2025-dated report files were fetched (the
 full list is in §5); no out-of-training quantity was read.
 
 **Pre-registration**
-`results/calibration/PREREG-miso136-ct-offer-conduct-survey-2026-08-06.md`,
+`docs/records/miso/PREREG-miso136-ct-offer-conduct-survey-2026-08-06.md`,
 committed and pushed at **`ebca8364`** *before any MISO / IMM / FERC source
 was opened*, with the model-memory prior disclosed as a prior. **Probe**
 `scripts/probes/_miso136_ct_offer_conduct_survey.py`; **record**
-`results/calibration/_miso136_ct_offer_conduct_survey.json`.
+`results/phase0/miso/_miso136_ct_offer_conduct_survey.json`.
 
 **Lane:** charter option **(a)** — the miso-134 named successor's data
 prerequisite: *does an identification for within-day MISO CT offer conduct

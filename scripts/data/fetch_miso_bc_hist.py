@@ -11,7 +11,7 @@ into gzip source mirrors under ``data/raw/transfer-constraint-binding/MISO/``
 (``YYYY_<market>_bc_HIST.csv.gz`` — verbatim bytes, gzipped at rest). The
 mirrors are the reproducible local copy behind the miso-76 congestion
 *validation* layer (charter
-``docs/handoffs/miso-nc-price-separation-design-2026-07.md`` §2a/§7 A2(ii);
+``docs/records/miso/miso-nc-price-separation-design-2026-07.md`` §2a/§7 A2(ii);
 first consumer: ``scripts/probes/_miso76_bc_boundary_rank.py``).
 
 RULE 13 (CLAUDE.md): binding shadow prices are the ANSWER class — when/how

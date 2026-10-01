@@ -2,7 +2,7 @@
 
 **Lane** SPP-51c · **Model** Opus 5 (`claude-opus-5`) · **Date** 2026-09-09 ·
 **Branch** `claude/spp-51c-curtailment-allocation-izd5x2` · **Base** `b849a51b` (`origin/main` at
-launch) · **Data profile** `spp` · **Charter** SPP-51b `docs/handoffs/FINDING-spp-51b-2026-09-09.md`
+launch) · **Data profile** `spp` · **Charter** SPP-51b `docs/records/spp/FINDING-spp-51b-2026-09-09.md`
 §5 **R-1** · **Predecessors** SPP-51b (the diagnosis), `FINDING-spp-price-family-2026-09-07.md`
 (why a band is not the answer).
 

@@ -4,8 +4,8 @@
 at `81dcf974`, composed at zero LP).
 - **Prior keeper:** `2026-09-27-pjm-next-5-shape`, pruned (rule 35).
 - **Control:** the prior keeper's committed bundle + G-DRIFT, all hunks INERT (rule 29(b)).
-- **Pre-registration:** `docs/PRECOMMIT-pjm-next-6-card1-f2-split-2026-09-27.md`.
-- **Card 2 record:** `docs/FINDING-pjm-next-6-card2-energy-balance-2026-09-28.md`.
+- **Pre-registration:** `docs/records/pjm/PRECOMMIT-pjm-next-6-card1-f2-split-2026-09-27.md`.
+- **Card 2 record:** `docs/records/pjm/FINDING-pjm-next-6-card2-energy-balance-2026-09-28.md`.
 
 ## 1. Headline
 

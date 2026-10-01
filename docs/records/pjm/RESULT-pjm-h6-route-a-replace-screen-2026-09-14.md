@@ -3,8 +3,8 @@
 **Session** `pjm-h6` · **ISO** PJM · **Date** 2026-09-14 · **Base** `origin/main` @ `46c5702d`
 **Screen** PJM 2023, A/B in ONE shard at one pinned sha. Parent ran no LP (rule 32 `[R-SHARD]` (a)).
 **PJM keeper `2026-09-11-pjm-d4-4-gasoutage`: CALIBRATED, 8/8, zero caveats — UNTOUCHED.**
-Charter `docs/PRECOMMIT-pjm-h5-coal-committed-charter-2026-09-13.md`; build + gates
-`docs/PRECOMMIT-pjm-h6-route-a-replace-build-2026-09-14.md`.
+Charter `docs/records/pjm/PRECOMMIT-pjm-h5-coal-committed-charter-2026-09-13.md`; build + gates
+`docs/records/pjm/PRECOMMIT-pjm-h6-route-a-replace-build-2026-09-14.md`.
 
 ---
 

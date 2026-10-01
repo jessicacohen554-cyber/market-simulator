@@ -1,6 +1,6 @@
 {
  "charter": "miso-214 phase 0 \u2014 the Midwest CT_PEAKER fleet at its own delivered cost; zero-solve.",
- "prereg": "results/calibration/PREREG-miso214-ct-peaker-conduct-2026-09-05.md @ 067a305a",
+ "prereg": "docs/records/miso/PREREG-miso214-ct-peaker-conduct-2026-09-05.md @ 067a305a",
  "keeper": "2026-09-05-miso-213-layering",
  "keeper_bundle": "results/calibration/miso213_layering_B",
  "control_bundle": "results/calibration/miso210_clock_B",

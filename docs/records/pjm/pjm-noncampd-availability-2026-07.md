@@ -4,7 +4,7 @@
 and the gate is pre-committed — rule 1). Grade: Opus/Fable (writes core
 infrastructure). Grounding keeper: `2026-07-16-pjm-113-short-only` (PJM keeper,
 owner-promoted; the measured short unit-outage overlay). Prior:
-`docs/DIAGNOSIS-pjm-c3c-summer-tail-2026-07.md` §7-8.1.
+`docs/records/pjm/DIAGNOSIS-pjm-c3c-summer-tail-2026-07.md` §7-8.1.
 
 ## Why this exists
 

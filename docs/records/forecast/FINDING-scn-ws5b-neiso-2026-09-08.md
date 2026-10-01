@@ -267,7 +267,7 @@ artifact audit OK"; 182 sidecars / 2,548 records / 223 FAILs declared at the CAR
 **Artifact route.** The S20 `.gitignore` narrowing was **re-checked against `origin/main`
 immediately before every registration commit and had not landed**, so each leg's two slim files
 (`full_horizon_summary.json`, `run_config.json`) are mirrored to
-`docs/handoffs/scn-ws5b-neiso/<CASE>/`, as ADDENDUM 1 §5 declared and as the NYISO lane did. **No
+`docs/records/forecast/scn-ws5b-neiso/<CASE>/`, as ADDENDUM 1 §5 declared and as the NYISO lane did. **No
 `git add -f`, no `.gitignore` edit.** They should be re-homed to
 `results/scn-campaign-stageb-2026-09-07/NEISO/<CASE>/` once SCN-WS5B-NYISO's one-line change lands.
 

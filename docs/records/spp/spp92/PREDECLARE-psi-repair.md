@@ -1,6 +1,6 @@
 # SPP-92 — pre-declaration for the ψ-repair re-run (written BEFORE the re-run's number was computed)
 
-Construction: SPP-53's frozen spec (docs/handoffs/spp53/{parse_2325,psi_regression,aggregate_ttc}.py) verbatim, with
+Construction: SPP-53's frozen spec (docs/records/spp/spp53/{parse_2325,psi_regression,aggregate_ttc}.py) verbatim, with
 exactly two corrections, both named by prior records and neither a free choice:
 1. dependent variable = the actual **bubble-average** S−N spread (EIA-930 sub-BA load-weighted mean of LOAD settlement
    locations over the keeper's own load partition) instead of the SPPSOUTH_HUB − SPPNORTH_HUB spread

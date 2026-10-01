@@ -119,9 +119,9 @@ authorization"; (3) whether lane 2 re-runs on the repaired instrument scoped
 * This PRECHECK, committed before any solve.
 * Bundles `results/calibration/caiso196_e0_control`, `caiso196_e1_elsegundo`
   (run ids minted by the replay driver's own dating rule for overridden runs).
-* `results/calibration/_caiso196_gcov_remeasure.json` — the no-LP G-COV re-measure
+* `results/phase0/caiso/_caiso196_gcov_remeasure.json` — the no-LP G-COV re-measure
   on the repaired instrument (both population readings).
-* `results/calibration/FINDING-caiso196-elsegundo-remap-2026-08-15.md` — gate tally,
+* `docs/records/caiso/FINDING-caiso196-elsegundo-remap-2026-08-15.md` — gate tally,
   the §0 clause quoted, the single-mechanism statement verbatim, the owner decision
   package, matrix duty (b) (`campd_outage_windows` CAISO evidence citation append —
   the recorded extract sha changes with the re-derive).

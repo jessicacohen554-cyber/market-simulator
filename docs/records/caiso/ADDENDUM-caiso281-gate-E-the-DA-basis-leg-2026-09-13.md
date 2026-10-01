@@ -1,7 +1,7 @@
 # ADDENDUM caiso-281 — Gate E: does the CAISO-specific marginal-HR bias survive on the DA basis?
 
-**Charter:** `docs/PRECOMMIT-caiso281-is-the-marginal-hr-bias-a-measured-input-defect-2026-09-13.md`
-**Prior addendum:** `docs/ADDENDUM-caiso281-the-diurnal-coincidence-leg-2026-09-13.md` (Gate D).
+**Charter:** `docs/records/caiso/PRECOMMIT-caiso281-is-the-marginal-hr-bias-a-measured-input-defect-2026-09-13.md`
+**Prior addendum:** `docs/records/caiso/ADDENDUM-caiso281-the-diurnal-coincidence-leg-2026-09-13.md` (Gate D).
 **Date:** 2026-09-13 · **LP budget: still ZERO** · keeper unchanged · nothing promoted.
 
 ## Why this leg, and why it is not "acting on the owner item"

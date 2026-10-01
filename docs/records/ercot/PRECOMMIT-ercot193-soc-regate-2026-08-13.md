@@ -23,7 +23,7 @@ Queue adjudication (handoff starting points, in order):
 - **(b) REFUSED — `diurnal_price_amplitude`.** The row is a CROSS-ISO AUDIT ROW
   ("defect not mechanism"); ERCOT's named ISO-local lever for the xiso-1 evening
   amplitude was item 10 — the SOC reservation, already armed in the keeper. C3b is
-  a MONTHLY NRMSE, and card R (`docs/DECISION-CARD-ercot193-determination-ceiling-2026-08-13.md`)
+  a MONTHLY NRMSE, and card R (`docs/records/ercot/DECISION-CARD-ercot193-determination-ceiling-2026-08-13.md`)
   measures the best case of any non-Aug/Sep-2023 lever at NRMSE ≈ 0.592 vs the
   0.20 bar. No new identification exists to test; the cell stays `U`.
 - **(c) REFUSED for this round — the outage-season/fuel-shape monthly object.**

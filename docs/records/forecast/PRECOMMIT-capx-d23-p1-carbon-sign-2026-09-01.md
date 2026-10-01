@@ -6,7 +6,7 @@ plus the harness session suffix). **Date:** 2026-09-01. **HEAD at launch:** `6c7
 (origin/main). **Phase 0:** zero solves beyond the committed arms; precommit-first;
 build nothing, tune nothing, arm nothing.
 
-**The object** (D21, `docs/handoffs/FINDING-capx-d21-fc6-battery-2026-08-31.md` §5.2):
+**The object** (D21, `docs/records/forecast/FINDING-capx-d21-fc6-battery-2026-08-31.md` §5.2):
 under `carbon_price=25.0` on the NEISO t3 golden posture, cumulative 2026–2050 CO2
 RISES 210.52 → 320.84 Mt (+52.4 %). Two legs, kept apart throughout:
 
@@ -223,7 +223,7 @@ therefore contra-spec unless a second input to the screen moved. Candidates:
 
 ## 7. Exit contract
 
-`docs/handoffs/FINDING-capx-d23-p1-carbon-sign-2026-09-01.md`: each leg attributed
+`docs/records/forecast/FINDING-capx-d23-p1-carbon-sign-2026-09-01.md`: each leg attributed
 against its own frozen kill above; repairs ROUTED (priced, rules 13/21 admissibility)
 and NOT built; an explicit statement of which leg is a defect and which — if either —
 is the model being right in a way we did not expect; leg magnitudes at full size;

@@ -3,11 +3,11 @@
 **Session:** nyiso-176 (NYISO backcast-calibration track), 2026-09-02.
 **Keeper:** `2026-08-30-nyiso-159-loss-surface`, determination **NOT-YET** on
 {C3a-2025 −11.5 %, C3c}. **Untouched by this session.**
-**Pre-registration:** `results/calibration/PREREG-nyiso176-input-artifact-reproducibility.md`,
+**Pre-registration:** `docs/records/nyiso/PREREG-nyiso176-input-artifact-reproducibility.md`,
 committed with the probe at `60653b59` **before either was run** — the ninth
 consecutive NYISO session to honour this.
 **Probe:** `scripts/probes/nyiso176_input_artifact_reproducibility.py` →
-`results/calibration/_nyiso176_input_artifact_reproducibility.json`.
+`results/phase0/nyiso/_nyiso176_input_artifact_reproducibility.json`.
 **No C3c lever was opened. No parameter, band, floor or offer value changed.**
 Every year read is 2023 / 2024 / 2025 for any solve-relevant statistic; the
 outage extract's own multi-year span is an *object of study* and a **data-prep**
@@ -73,8 +73,8 @@ informative in a way a pass would not have been:
   `NY_2019` … `NY_2026` and no `NY_2018`, because **BLOAT-S2 (2026-08-17)
   untracked the `campd-unit-level` 2018 vintage** and the 2026-08-16 history
   rewrite stripped it, so **recovery is re-fetch only, never a pin**
-  (`docs/FINDING-bloat-s2-evidence-passes-2026-08-17.md`;
-  `docs/FINDING-history-rewrite-2026-08-16.md`). This is a **documented data
+  (`docs/records/governance/FINDING-bloat-s2-evidence-passes-2026-08-17.md`;
+  `docs/records/governance/FINDING-history-rewrite-2026-08-16.md`). This is a **documented data
   decision**, not drift.
 * Netting 2018 out, **3,674 of the 3,802 non-2018 committed windows (96.6 %)
   reproduce exactly** under the repaired routing.

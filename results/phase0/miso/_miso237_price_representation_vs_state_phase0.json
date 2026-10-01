@@ -1,6 +1,6 @@
 {
   "probe": "miso-237 phase 0 \u2014 price representation vs quantity channel on MISO's seams",
-  "prereg": "results/calibration/PREREG-miso237-price-representation-or-quantity-channel-2026-09-07.md (pushed 887c7cad)",
+  "prereg": "docs/records/miso/PREREG-miso237-price-representation-or-quantity-channel-2026-09-07.md (pushed 887c7cad)",
   "keeper": "2026-09-07-miso-233-spp-hourly",
   "zero_lp": true,
   "price_basis": "Indiana hub RT builds the ok mask only (miso-236's hour set); every regressor is Indiana hub DA",

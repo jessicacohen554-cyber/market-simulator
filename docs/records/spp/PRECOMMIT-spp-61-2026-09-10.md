@@ -1,6 +1,6 @@
 # PRECOMMIT — SPP-61: the Harrington 6193 fuel-vintage repair
 
-**Lane** SPP-61 · **Issued against** `docs/handoffs/CHARTER-spp-61-2026-09-10.md` ·
+**Lane** SPP-61 · **Issued against** `docs/records/spp/CHARTER-spp-61-2026-09-10.md` ·
 **Base** `283afe5d62ab0a0fd8acffccd59963fcbc3d8961` · **DATA PROFILE `spp`** ·
 **Control** SPP keeper 5 `2026-09-09-spp-52a-fossil-offer`, bundle
 `results/calibration/spp52a_fossil93` (committed with `hourly/` sidecars; rule 29(b) **form 4**).

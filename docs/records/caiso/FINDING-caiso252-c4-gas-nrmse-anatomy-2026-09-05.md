@@ -10,7 +10,7 @@ computed; its §4 G-DRIFT audit (`90b2ef51 → 95739d60`, 26 files, every hunk
 INERT) was recorded there and stands — no arm was solved, so it was not spent.
 Rule 22 `[R-HOLDOUT]`: 2023–2025 only; no `complete`/`final` marker; freeze
 ACTIVE. Instrument: `scripts/probes/_caiso252_c4_gas_nrmse_anatomy.py` →
-`results/calibration/_caiso252_c4_gas_nrmse_anatomy.json`.
+`results/phase0/caiso/_caiso252_c4_gas_nrmse_anatomy.json`.
 
 ---
 
@@ -337,7 +337,7 @@ months a prior repair touched (P-7). The predictions bound.
 
 `PRECOMMIT-caiso252-c4-gas-nrmse-anatomy-2026-09-05.md` (pushed first);
 `scripts/probes/_caiso252_c4_gas_nrmse_anatomy.py` +
-`results/calibration/_caiso252_c4_gas_nrmse_anatomy.json`; the rule-14
+`results/phase0/caiso/_caiso252_c4_gas_nrmse_anatomy.json`; the rule-14
 adjudication note in `src/market_sim/model/interchange/spec.py` and
 `src/market_sim/config/capacity_market.py` (comments only); this finding; the
 `docs/calibration-log/caiso.md` entry; evidence appends (no verdict move) on

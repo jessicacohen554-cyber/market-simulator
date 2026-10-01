@@ -1,5 +1,5 @@
 {
-  "prereg": "results/calibration/PREREG-miso144-inmerit-idle-attribution-2026-08-08.md",
+  "prereg": "docs/records/miso/PREREG-miso144-inmerit-idle-attribution-2026-08-08.md",
   "prereg_commit": "017f6bee",
   "gate": "G-A0..G-A3 -- attribution of the miso-143 in-merit idle block",
   "keeper": "2026-08-05-miso-132b-cc-committed",

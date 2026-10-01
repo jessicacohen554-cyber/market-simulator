@@ -2,7 +2,7 @@
 """ERCOT-124 — the measured coal offer-curve UPPER TAIL, from the 60-Day SCED disclosure.
 
 Phase 1 of the lane chartered by
-``docs/DIAGNOSIS-ercot123-coal-sced-reach-2026-07-27.md`` §5/§7.2. That session
+``docs/records/ercot/DIAGNOSIS-ercot123-coal-sced-reach-2026-07-27.md`` §5/§7.2. That session
 CLOSED the coal offer-*reach* question (coal offers 99.4-100.0 % of its
 RT-dispatchable headroom into SCED, a *higher* reach than the CC control) and
 named exactly one surviving defect: above \\$25 the measured RT coal supply curve

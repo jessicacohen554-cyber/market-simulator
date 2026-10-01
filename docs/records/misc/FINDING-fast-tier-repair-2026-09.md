@@ -8,7 +8,7 @@ finding alone (docs-only, from the same branch restarted on `main`)
 G2 leg 2's only route. R-W is not yet recorded on the director board at this
 lane's pin (`dfc44d95`; `grep "R-W"` finds only the unrelated J-12 heading), so
 this finding is its first written record.
-**Evidence base:** `docs/FINDING-ci-red-repair-2026-09.md` (R-U: 56 → 33 local,
+**Evidence base:** `docs/records/misc/FINDING-ci-red-repair-2026-09.md` (R-U: 56 → 33 local,
 zero regressions, recipe and environment), director board v21's top block (the
 leg-2 correction), `docs/testing.md`, and CI's own fast-tier logs at two pins
 (runs 2298 and 2319).

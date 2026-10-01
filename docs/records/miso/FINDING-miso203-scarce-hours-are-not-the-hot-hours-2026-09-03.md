@@ -10,7 +10,7 @@
 `ScenarioConfig` FIELD ADDED. NO PARAMETER SET. NOTHING WRITTEN UNDER
 `data/raw/`.**
 
-**PREREG** `results/calibration/PREREG-miso203-summer-peak-anchor-2026-09-03.md`,
+**PREREG** `docs/records/miso/PREREG-miso203-summer-peak-anchor-2026-09-03.md`,
 pushed at **`011b2420`** BEFORE any adjudicating statistic, with three gates,
 their decision rules fixed in advance, five scored predictions and five traps
 with pre-committed counter-measurements.
@@ -453,7 +453,7 @@ its reach***.
 
 **Probes** `scripts/probes/_miso203_summer_peak_anchor_phase0.py`,
 `scripts/probes/_miso203_scarce_hour_identity.py` ·
-**Records** `results/calibration/_miso203_summer_peak_anchor_phase0.json`,
-`results/calibration/_miso203_scarce_hour_identity.json` ·
-**PREREG** `results/calibration/PREREG-miso203-summer-peak-anchor-2026-09-03.md`
+**Records** `results/phase0/miso/_miso203_summer_peak_anchor_phase0.json`,
+`results/phase0/miso/_miso203_scarce_hour_identity.json` ·
+**PREREG** `docs/records/miso/PREREG-miso203-summer-peak-anchor-2026-09-03.md`
 @ `011b2420`.

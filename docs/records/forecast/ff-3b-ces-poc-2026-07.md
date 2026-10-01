@@ -3,7 +3,7 @@
 **Session:** FF-3B (Opus). **HEAD:** branch `claude/ces-w3r-readiness-poc-x4s903` on
 `origin/main` `415df68`; POC solved on the session-start tree `57ed9fc` (the mid-session
 capacity-cost/reserve intake does not touch the CES path — see the readiness doc). Companion
-to `docs/handoffs/ces-w3r-readiness-2026-07.md` (the W3-R GO/NO-GO — **NO-GO**).
+to `docs/records/forecast/ces-w3r-readiness-2026-07.md` (the W3-R GO/NO-GO — **NO-GO**).
 
 ## Verdict: **CES campaign machinery is POC-proven** (configs + seams + reporting execute
 ## end-to-end); **3 findings surfaced**, all fixed-at-POC-scale or routed — exactly the class

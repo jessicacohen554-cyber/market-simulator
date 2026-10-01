@@ -28,7 +28,7 @@ re-aggregate into efficiency bins (aggregate_fleet, n_bins=heat_rate_bin_count)
 ### Step 0 — Confirmed exits (`apply_confirmed_exits`)
 
 The exogenous forecast retirement channel, GATED on `confirmed_exits_enabled`
-(default **on**, flipped 2026-07-05 — `docs/handoffs/confirmed-retirement-plan-2026-07.md`
+(default **on**, flipped 2026-07-05 — `docs/records/misc/confirmed-retirement-plan-2026-07.md`
 §7) and forecast-mode only. Reads the `confirmed-retirements` registry
 (binding public instruments — consent decree, statute, RTO deactivation
 acceptance, regulatory order, RMR end — via

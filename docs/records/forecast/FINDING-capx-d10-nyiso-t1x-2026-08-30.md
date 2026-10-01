@@ -2,8 +2,8 @@
 
 **Session.** capx-D10 (capacity-expansion / Forecast Finalization track), chartered by the
 owner's card-A signature (A-A, 2026-08-25 —
-`docs/DECISION-CARD-capx-director-open-rulings-2026-08-25.md` §5) and the director's ledger
-lane D10 (`docs/handoffs/capx-director-ledger-2026-08.md` §1). Branch
+`docs/records/forecast/DECISION-CARD-capx-director-open-rulings-2026-08-25.md` §5) and the director's ledger
+lane D10 (`docs/records/forecast/capx-director-ledger-2026-08.md` §1). Branch
 `claude/capx-d10-nyiso-t1x`, solved at **`3ebbd466fc4f`** (origin/main fetched in-session,
 clean tree — recorded in the bundle's own `run_config.json` git block). 2026-08-30.
 

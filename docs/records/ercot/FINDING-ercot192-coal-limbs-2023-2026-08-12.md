@@ -1,11 +1,11 @@
 # FINDING — ercot-192: the two COAL limbs' 2023 application, re-adjudicated (signature B1)
 
 **Session** ercot-192 · **ISO** ERCOT · **Years** 2023–2025 · **Date** 2026-08-12
-**Charter** `docs/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md` card B,
+**Charter** `docs/records/ercot/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md` card B,
 owner signature **B1** (2026-08-11): *"re-adjudicate under a fresh precommit
 before any arm."* Sequenced after A1, which landed 2026-08-12 (PR #3887, keeper
 `2026-08-12-run191-dam-deriver-regate`).
-**Precommit** `docs/PRECOMMIT-ercot192-coal-limbs-2023-reapplication-2026-08-12.md`
+**Precommit** `docs/records/ercot/PRECOMMIT-ercot192-coal-limbs-2023-reapplication-2026-08-12.md`
 — pushed before any level was measured and before any solve.
 
 ---
@@ -51,7 +51,7 @@ is consulted anywhere in the derivation.
 ## 2. PHASE 0a — the instrument-structure read that shaped the charter
 
 `scripts/probes/ercot192_coal_peak_structure_phase0a.py` →
-`results/calibration/ercot192_coal_peak_structure.json`. Coverage and headroom
+`results/phase0/ercot/ercot192_coal_peak_structure.json`. Coverage and headroom
 composition only — **no price of any kind was read**, so the precommit's decision
 rule stayed genuinely pre-registered. Matched window (h11–22 CST):
 
@@ -192,7 +192,7 @@ Levels ($/MWh), each limb on its own instrument, fuel response removed:
   change, no re-verdict.** ercot-171 stands.
 
 Artifacts: `scripts/probes/ercot192_coal_limbs_bound_phase0.py` →
-`results/calibration/ercot192_coal_limbs_bound.json`.
+`results/phase0/ercot/ercot192_coal_limbs_bound.json`.
 
 ---
 

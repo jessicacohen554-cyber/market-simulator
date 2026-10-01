@@ -11,7 +11,7 @@ for every ISO; it and :mod:`scripts.data.derive_partial_outages` both import the
 detection primitives from here.
 
 All parameters carry the ERCOT-79 availability-envelope audit tightening
-(``results/calibration/FINDING-ercot79-phantom-outage-2026-07.md``): daily-cycling
+(``docs/records/ercot/FINDING-ercot79-phantom-outage-2026-07.md``): daily-cycling
 combined-cycle / cogen classes are detected EVENT-based (a single running hour
 breaks a window), and a detected down span is kept as a real outage only where
 the unit was actually DOWN through the system's high-net-load hours (the
@@ -146,7 +146,7 @@ _ISO_TO_BA: dict[str, str] = {
     # effect. SWPP is the EIA-930 BA the model reads for SPP everywhere else
     # (eia930/frames._ISO_TO_HOURLY_BA). The committed campd-*-SPP.csv files predate this key;
     # the '-netloadmask-' companions are their re-derivation at the SAME recorded invocations.
-    # docs/handoffs/FINDING-spp-85-coal-outage-basis-2026-09-26.md.
+    # docs/records/spp/FINDING-spp-85-coal-outage-basis-2026-09-26.md.
     "SPP": "SWPP",
 }
 
@@ -453,7 +453,7 @@ def detect_shaped(cf: np.ndarray) -> list[tuple[int, int, np.ndarray]]:
     own CEMS record shows it ran (W A Parish h2827: ceiling 0.36 vs measured
     0.78).
 
-    Construction (``docs/PRECOMMIT-ercot185-fault3-partial-layer-construction-2026-08-09.md``
+    Construction (``docs/records/ercot/PRECOMMIT-ercot185-fault3-partial-layer-construction-2026-08-09.md``
     §2a, amendment A-1), per plateau ``[i, j)``::
 
         f0        = round(min(1, median(dmax[i:j]) / ref), 3)   # the incumbent factor
@@ -542,7 +542,7 @@ def detect_shaped_dayguard(
     detector's, so zero new scalars enter (rules 21/23). It is a net LIFT on the
     capped days, so the ercot-185 SP-6 median-preservation does not hold for
     this variant; the deriver asserts ``guarded >= floor`` instead.
-    docs/handoffs/FINDING-r-ercot-4-validation-years-2026-09-25.md.
+    docs/records/ercot/FINDING-r-ercot-4-validation-years-2026-09-25.md.
     """
     st = _plateau_state(cf)
     if st is None:

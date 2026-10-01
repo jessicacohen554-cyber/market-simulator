@@ -7,7 +7,7 @@ or solved) · **Data profile** `spp` · **Control** keeper-2 `2026-09-07-spp-2-c
 `results/calibration/spp42_crosswalk_B` (rule 29(b) form 4; G-DRIFT PRECOMMIT §0.1, all hunks INERT for 2025) ·
 **LP spent:** ONE year (2025), the rule-29(a) screen. The screen bundle `results/calibration/_spp57b_screen` was
 **deleted before the PR** (rule 29(c)); every number this lane will ever cite from it is here and in
-`docs/handoffs/spp57b/grade_screen_2025.log` / `flows_at_ratings_2025.log`.
+`docs/records/spp/spp57b/grade_screen_2025.log` / `flows_at_ratings_2025.log`.
 
 ---
 
@@ -62,7 +62,7 @@ profile at three zones: `per_plant=True, co_opt=False, peak_gb=4.9`.
 ## 2. Design (B′) as executed — the two ratings under ONE flowgate group each
 
 Construction, sets, exclusion rule and direction convention exactly as PRECOMMIT §3 declared; instrument
-`docs/handoffs/spp57b/aggregate_ttc_57b.py` (+ `.log`, `tstar_n_ok_57b.csv`, `tstar_ok_s_57b.csv`), which reads
+`docs/records/spp/spp57b/aggregate_ttc_57b.py` (+ `.log`, `tstar_n_ok_57b.csv`, `tstar_ok_s_57b.csv`), which reads
 SPP-57's committed per-constituent tables and LOYO ψ columns and re-fits nothing (rule 23).
 
 ### 2.1 N↔OK — `n_s_corridor` alone = SPP-53's number, unchanged
@@ -204,8 +204,8 @@ the SPP-41 unit-slip screen on the 2023 delivered wind profile, i.e. G-DRIFT hun
 
 ## 6. What is landed, what is reverted, and the proofs
 
-**Landed (the record):** `docs/handoffs/PRECOMMIT-spp-57b-2026-09-07.md`, this FINDING,
-`docs/handoffs/spp57b/` (`aggregate_ttc_57b.py` + log + the two `tstar_*_57b.csv`; `census.py` + `census.csv` +
+**Landed (the record):** `docs/records/spp/PRECOMMIT-spp-57b-2026-09-07.md`, this FINDING,
+`docs/records/spp/spp57b/` (`aggregate_ttc_57b.py` + log + the two `tstar_*_57b.csv`; `census.py` + `census.csv` +
 log; `grade_screen.py` + `grade_screen_2025.log`; `flows_at_ratings.py` + `flows_at_ratings_2025.log`;
 `screen_2025_solve.log`), `docs/calibration-log/spp.md` spp-5, the plan §5 / ledger rows, the SPP matrix shard
 (`measured_interface_limits` evidence appended; cell stays O).

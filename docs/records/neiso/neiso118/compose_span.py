@@ -1,7 +1,7 @@
 """Compose neiso-118's seven single-year legs into one 2019-2025 bundle (zero LP).
 
-Copy of ``docs/handoffs/neiso117/compose_span.py`` pointed at
-``docs/handoffs/neiso118/shard_check.py`` (keeper ``neiso117_span`` replayed on
+Copy of ``docs/records/neiso/neiso117/compose_span.py`` pointed at
+``docs/records/neiso/neiso118/shard_check.py`` (keeper ``neiso117_span`` replayed on
 the re-derived NEISO CT heat-rate artifact). Inherited header follows.
 
 Rule 36 ``[R-YEAR-ISOLATION]`` solved each year in its own shard; composition is
@@ -11,13 +11,13 @@ year-stamped files copy, ``run_config_<y>.json`` per leg, ``meta.json`` years /
 gas prices / ``composed_from`` re-spanned, the year-dependent shared benchmark
 frames rebuilt over the span, ``legitimacy_diagnostics.json`` regenerated over
 the composite) — imported, not re-derived. Only the recipe check differs: every
-leg must pass ``docs/handoffs/neiso118/shard_check.py`` (keeper +
+leg must pass ``docs/records/neiso/neiso118/shard_check.py`` (keeper +
 exactly the PRECOMMIT delta, std extract sha256, classifier hash) and all legs
 must share one solve-surface fingerprint.
 
 Usage::
 
-    uv run python docs/handoffs/neiso118/compose_span.py \\
+    uv run python docs/records/neiso/neiso118/compose_span.py \\
         --leg 2019=neiso118_2019 ... --leg 2025=neiso118_2025 --out results/calibration/neiso118_span
 """
 

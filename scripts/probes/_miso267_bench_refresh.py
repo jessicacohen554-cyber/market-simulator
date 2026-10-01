@@ -2,7 +2,7 @@
 """miso-267 STEP 1: regenerate MISO's bench parts ONCE, behind a corrected gate.
 
 The builder the parts are regenerated with is the repaired one
-(``docs/FINDING-miso267-the-oil-reattribution-was-one-sided-2026-09-23.md``):
+(``docs/records/miso/FINDING-miso267-the-oil-reattribution-was-one-sided-2026-09-23.md``):
 nyiso-240's two boundary repairs, with the dual-fuel oil re-attribution made
 two-sided, supply-classed and run FIRST. Everything that moves is attributed,
 field by field, by ``scripts/probes/_miso267_bench_move_decomposition.py``.

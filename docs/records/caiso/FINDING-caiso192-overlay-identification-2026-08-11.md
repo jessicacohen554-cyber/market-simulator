@@ -316,7 +316,7 @@ appended. Cell letter stays **K** (the mechanism is armed in the keeper — that
 
 **FILES PUSHED + PR:** `PRECHECK-caiso192-overlay-identification-2026-08-11.md` (pushed first,
 commit `55f703b`) · `scripts/probes/_caiso192_overlay_identification.py` ·
-`results/calibration/_caiso192_overlay_identification.json` · this FINDING ·
+`results/phase0/caiso/_caiso192_overlay_identification.json` · this FINDING ·
 `docs/codebase-site/data/mechanism-matrix/CAISO.js` · `docs/calibration-log/caiso.md`.
 PR: *caiso-192: overlay mechanical-vs-economic identification*.
 

@@ -2,7 +2,7 @@
 
 **Task.** Decompose the solar-entry zero — ERCOT **0 vs 25.1 GW**, PJM **0 vs 13.1 GW**,
 MISO **6 vs 18.6 GW** — into the five pre-registered candidate terms
-(`docs/handoffs/forecast-retirement-calibration-plan-2026-07.md` §1.4 a–e), measure each
+(`docs/records/forecast/forecast-retirement-calibration-plan-2026-07.md` §1.4 a–e), measure each
 term's $/MW-yr (or GW) contribution per ISO-year, name the dominant term, and route it.
 **Findings only — no model default changed, no parameter tuned, no threshold widened**
 (rules 1/11/14). The one code change is a diagnostic, off by default, with no decision

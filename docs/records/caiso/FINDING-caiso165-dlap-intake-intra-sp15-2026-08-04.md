@@ -278,9 +278,9 @@ at a steady ~13 s/window.
 
 | | |
 |---|---|
-| prereg | `results/calibration/PRECHECK-caiso165-dlap-intake-intra-sp15-2026-08-04.md` |
+| prereg | `docs/records/caiso/PRECHECK-caiso165-dlap-intake-intra-sp15-2026-08-04.md` |
 | probe | `scripts/probes/caiso165_intra_sp15_decomp.py` |
-| probe output | `results/calibration/_caiso165_intra_sp15.json` |
+| probe output | `results/phase0/caiso/_caiso165_intra_sp15.json` |
 | intake — fetch | `scripts/data/fetch_caiso_oasis.py` (`DLAPS`, `--nodes`, `--start-date`, `REQUEST_WALL_CLOCK_S`) |
 | intake — bulk-zip fold | `scripts/data/fold_caiso_oasis_grp_zips.py` (`NODES`, `--refold`) |
 | data | `data/raw/lmp-data/CAISO/CAISO_dam_hourly_{2023,2024,2025}.csv` |

@@ -8,7 +8,7 @@ honest-unfit list, and hands the owner the gate-open decision. **Findings only**
 — no model code, threshold, offer curve, or default was changed (rules 1/11/14).
 The gate-open decision is the owner's (§2.1b(d)).
 
-Requires FF-2D scored (`docs/handoffs/ff-t1-gate-2026-07.md` +
+Requires FF-2D scored (`docs/records/forecast/ff-t1-gate-2026-07.md` +
 `ff-t1-gate-verdicts.json`, all six ISOs `HOLD`). Branched off `origin/main`
 HEAD `f49cf768`.
 

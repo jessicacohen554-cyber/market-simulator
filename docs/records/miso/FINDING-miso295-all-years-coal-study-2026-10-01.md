@@ -5,8 +5,8 @@ LANE    : miso-295 (owner ruling 2026-10-01, miso-294 card: "Do a coal study on 
 KEEPER  : 2026-09-28-miso-280-splitremap (results/calibration/miso280_span, 2019-2025), unchanged
 LP      : none
 PROBE   : scripts/probes/_miso295_coal_study.py  (blocks A-E; ~70 s)
-OUTPUT  : results/calibration/_miso295_coal_study.json
-REUSED  : results/calibration/_miso288_coal_scarcity.json (dark units, unit ceiling ratio, 2019-2024)
+OUTPUT  : results/phase0/miso/_miso295_coal_study.json
+REUSED  : results/phase0/miso/_miso288_coal_scarcity.json (dark units, unit ceiling ratio, 2019-2024)
 SOURCES : Potomac Economics, MISO State of the Market Reports 2020-2024 (report bodies) and the 2019 appendix;
           IMM Quarterly Reports Summer 2025 and Fall 2025. Fetched from potomaceconomics.com; cited, not
           committed, and not a model input. Page numbers are PDF pages.

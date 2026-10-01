@@ -219,7 +219,7 @@ precedent governs a Phase-0 kill); rule 22: 2023 only, no marker, freeze
 respected; rule 25: ERCOT surfaces and data only. Deliverables pushed as
 produced: this precommit, the probe
 (`scripts/probes/ercot241_offcore_conduct_phase0.py`), its JSON
-(`results/calibration/ercot241_offcore_conduct_phase0.json`), the FINDING,
+(`results/phase0/ercot/ercot241_offcore_conduct_phase0.json`), the FINDING,
 the calibration-log entry (shorthand ercot-241). Push transport: `git push`
 on a freshly-fetched base; HTTP/1.1 fallback on 408/500 with backoff;
 blob-verify every pushed file ≥ 300 lines. capx-* files off-limits.

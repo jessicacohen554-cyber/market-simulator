@@ -4,7 +4,7 @@
 Lane branch `claude/spp-demand-measurement-7qf5w9`. **Zero LP** — a measurement over committed
 sidecars and raw inputs; no shard is launched (rule 32(a) is met trivially).
 
-Charter: `docs/RESULT-xiso-stack-climb-attribution-2026-09-22.md` §10, lever (c).
+Charter: `docs/records/governance/RESULT-xiso-stack-climb-attribution-2026-09-22.md` §10, lever (c).
 
 ---
 

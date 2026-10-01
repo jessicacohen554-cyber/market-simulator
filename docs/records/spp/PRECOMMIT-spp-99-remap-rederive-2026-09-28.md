@@ -143,6 +143,6 @@ report is the record.
   campd_split_remap_companions=true --out-dir results/calibration/spp99_arm_<Y>`.
 - **Check and push.** Then `scripts/probes/_spp99_shard_check.py`, and push of the FULL bundle (including
   `dispatch/<Y>_P1.parquet`) to `claude/spp99-<Y>` through a `.gitignore` negation and a plain `git add`.
-- **Template.** `docs/handoffs/spp99/shard_prompt_template.txt`.
+- **Template.** `docs/records/spp/spp99/shard_prompt_template.txt`.
 - **Compose.** `_rspp_compose.py --side arm --require unit_outage_netload_mask_repair=true --require
   unit_outage_coal_extract_basis_share=true --require campd_split_remap_companions=true`.

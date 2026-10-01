@@ -1,6 +1,6 @@
 {
   "session": "caiso-179",
-  "prereg": "results/calibration/PRECHECK-caiso179-degradation-split-2026-08-07.md",
+  "prereg": "docs/records/caiso/PRECHECK-caiso179-degradation-split-2026-08-07.md",
   "committed_under_test": {
     "STORAGE_DEGRADATION_REPLACEMENT_FRACTION": 0.25,
     "capex_per_kwh": 452.6,

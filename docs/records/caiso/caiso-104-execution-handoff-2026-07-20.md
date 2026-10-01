@@ -22,7 +22,7 @@ committed + per-MRID windows parquet; crosswalk/loader stages remain. (4)
 **#2546**: recommendation recorded (defer as-is; delete + re-gate follow-up).
 Keeper: `2026-07-19-caiso-102-hourfix` (NOT-YET, fail {C3c, C4, C5a(2024
 CAVEAT)}) — UNCHANGED. Full record:
-`results/calibration/FINDING-caiso104-m1-meve1-execution-2026-07-20.md`;
+`docs/records/caiso/FINDING-caiso104-m1-meve1-execution-2026-07-20.md`;
 log: `docs/calibration-log/caiso.md` 2026-07-20 entry.
 
 ## Open lanes for CAISO-105 (priority order)

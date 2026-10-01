@@ -7,8 +7,8 @@ the recovered nyiso-228 control bundle `results/calibration/nyiso228_control_spa
 **derive** re-run, which is not a solve. Rule 32 `[R-SHARD]` (a): the parent ran no LP.
 **Keeper `2026-09-09-nyiso-221-fuelvintage-span` UNCHANGED. Nothing armed, nothing promoted.**
 
-Predecessors: `docs/RESULT-nyiso228-2026-09-12.md`,
-`docs/ADDENDUM-nyiso228-the-2022-tail-is-MISTIMED-not-absent-2026-09-12.md` §4c, which named
+Predecessors: `docs/records/nyiso/RESULT-nyiso228-2026-09-12.md`,
+`docs/records/nyiso/ADDENDUM-nyiso228-the-2022-tail-is-MISTIMED-not-absent-2026-09-12.md` §4c, which named
 availability-window **placement** as the successor and required this phase 0 before any solve.
 
 ---

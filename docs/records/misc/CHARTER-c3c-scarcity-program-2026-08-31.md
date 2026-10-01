@@ -18,7 +18,7 @@ keeper.
 
 C3c on every ISO's designated keeper, from committed artifacts
 (`scripts/calibration_verdict.py --json`; raw scan
-`results/calibration/_nyiso163b_c3c_reserve_timing.json` for the NYISO leg):
+`results/phase0/nyiso/_nyiso163b_c3c_reserve_timing.json` for the NYISO leg):
 
 | ISO | C3c | threshold | 2023 | 2024 | 2025 | determination |
 |---|---|---|---|---|---|---|
@@ -200,8 +200,8 @@ only in the sense that they consume sessions; neither needs a rubric change.
 Q3 needs an explicit owner architecture decision and is **not recommended** as a
 calibration lane.
 
-*Evidence:* `results/calibration/_nyiso163b_c3c_reserve_timing.json` (§3, this
-session) · `results/calibration/FINDING-caiso144-coopt-dormancy-c3c-frontier-2026-07-30.md`
+*Evidence:* `results/phase0/nyiso/_nyiso163b_c3c_reserve_timing.json` (§3, this
+session) · `docs/records/caiso/FINDING-caiso144-coopt-dormancy-c3c-frontier-2026-07-30.md`
 §C/§D/§E · the ERCOT C3c ledger entry on `2026-08-25-234-eastex-identity`
 (exhaustion record; ercot-214/215 phantom-channel removal) ·
 `src/market_sim/model/reserves/spec.py` (NYISO_RCPF_PRODUCTS,

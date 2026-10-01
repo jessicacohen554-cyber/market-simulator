@@ -78,7 +78,7 @@ battery fleet" — where the same construction does bind.
   3. Non-anticipativity (no perfect foresight) — structural, hardest.
 - The pre-registered CT/battery-shape directions were **not confirmed**; the
   evening CT gap attribution stays with the caiso-72/73 ledger's commitment
-  channel (see `docs/handoffs/caiso-evening-cc-commitment-design-2026-07.md`,
+  channel (see `docs/records/caiso/caiso-evening-cc-commitment-design-2026-07.md`,
   whose §0 re-measure gate now applies to the caiso-75 line).
 
 ## Ablation twin

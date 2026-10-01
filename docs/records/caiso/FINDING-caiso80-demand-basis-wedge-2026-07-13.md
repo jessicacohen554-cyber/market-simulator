@@ -1,7 +1,7 @@
 # FINDING — caiso-80 demand-basis adjudication: the CISO EIA-930 **Demand** cell carries the same fabricated block as the NG cell (Demand = NetGen + TI arithmetic), plus a grid-basis accounting wedge — the model's demand input makes its fleet serve **+10.4 / +11.6 / +18.5 TWh/yr (2023/24/25)** that the real grid fleet demonstrably did not serve; this, not the offer curves, is the C3a/C1 body root cause (2026-07-13)
 
 **Lane B step 2 of the caiso-80 plan**
-(`docs/handoffs/caiso-79-next-run-plan-2026-07-12.md` §4.2 — the caiso-72
+(`docs/records/caiso/caiso-79-next-run-plan-2026-07-12.md` §4.2 — the caiso-72
 STEP-0 candidate-4 demand-basis conflict, now adjudicated with full-year
 data). Companion and demand-side completion of the owner-signed bench rework
 (`FINDING-caiso-c2c4-bench-basis-930ng-2026-07-12.md` §5/§6): that rework

@@ -223,7 +223,7 @@ has no slope in the relevant band, is flat in *all* three years.
 ## 6. The mechanism, identified from measured conduct
 
 **The model's Oak Grove offer curve does not reach the overnight price.**
-From `results/calibration/ercot135_coal_merit_order.json` (`A_model_offer`;
+From `results/phase0/ercot/ercot135_coal_merit_order.json` (`A_model_offer`;
 ercot135-vintage, so pre-ercot137/140 in *level* — cited for **structure**, and
 Phase 2 must re-measure it on the current keeper):
 

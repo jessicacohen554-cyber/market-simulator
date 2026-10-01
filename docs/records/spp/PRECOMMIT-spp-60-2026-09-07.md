@@ -80,7 +80,7 @@ conditions?*
 
 1. `data/raw/_validation-source/capacity_actuals_spp.csv` — S1 above (a derived scoring target from committed EIA-860 releases; the builder is unchanged).
 2. `data/raw/confirmed-retirements/spp.csv` — Tolk 1 / 2 (step 0 row above), + README table row for SPP (binding instrument classes: state commission orders — NMPRC / OCC / KCC / MPSC / NPSC / PUCT — consent decrees, statutes; SPP runs no deactivation process) and the candidate-evaluation record. Re-curated into `data/clean/confirmed-retirements/SPP` in-session; **applies nothing in the 2020-vintage T1-H by the information gate** (verified in the bundle's `evolution_*.json` after the solve — the FINDING reports the confirmed channel's row count per year, expected 0).
-3. `docs/handoffs/PRECOMMIT-spp-60-2026-09-07.md` (this file) — the manual manifest rows: F3 (765 kV overlay `link` delta, reconciled), 5′ (RPS blend), F1 (2026 ITP vintage when the report lands).
+3. `docs/records/spp/PRECOMMIT-spp-60-2026-09-07.md` (this file) — the manual manifest rows: F3 (765 kV overlay `link` delta, reconciled), 5′ (RPS blend), F1 (2026 ITP vintage when the report lands).
 
 ### 1.5 Readiness battery (parts a + b, zero-LP, `--iso SPP`) — reported, GOLDEN_ISOS untouched
 

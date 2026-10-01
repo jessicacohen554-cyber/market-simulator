@@ -5,9 +5,9 @@
 Charter: pack §D76 + `FINDING-capx-d67-2026-09-06.md` §2.2 (the mechanism) and §8(a) (the route).
 **PHASE 0 IS ZERO LP AND IS THE WHOLE LANE.** Nothing is armed, no config changed, no solve run;
 every number below is read from committed artifacts or computed from demand arrays and the shipped
-resolvers. Instruments: `docs/handoffs/d76/peak_census.{py,json}` and
-`docs/handoffs/d76/i7_i12_reading.{py,json}`, both zero-LP, plus the D67 probe
-`docs/handoffs/d67/gdrift_peak_probe.py`, **extended in place** (charter: "extend, do not fork") with
+resolvers. Instruments: `docs/records/forecast/d76/peak_census.{py,json}` and
+`docs/records/forecast/d76/i7_i12_reading.{py,json}`, both zero-LP, plus the D67 probe
+`docs/records/forecast/d67/gdrift_peak_probe.py`, **extended in place** (charter: "extend, do not fork") with
 the seam helpers this census imports — its own committed `gdrift_peak_probe.json` re-derives
 **byte-identically** after the refactor, verified by diff.
 DATA PROFILE: `code` was declared; `data/raw` was already hydrated in this container, and the census
@@ -104,7 +104,7 @@ requirement/position block on `prior_results is not None`, so 2021 (t1h) / 2023 
 
 ## 2. The census — six ISOs, both recipe shapes, at HEAD (zero LP)
 
-`docs/handoffs/d76/peak_census.py`. "seam" is `runner.py`'s screen peak; "measured" is the same
+`docs/records/forecast/d76/peak_census.py`. "seam" is `runner.py`'s screen peak; "measured" is the same
 `load_demand(iso, year, …)` call the LP's hindcast branch makes; "req Δ" is
 `resolve_adequacy_requirement_mw` at HEAD on the seam peak minus the same resolver on the measured
 peak — the operand error the screens actually consumed. "binds" is (e) above.
@@ -255,7 +255,7 @@ four ISOs where it is cheaper is the director's call, and is not made here.
 `neiso-t1h` / `nyiso-t1h` / `pjm-t1h` included. The board's I7/I12 rows belong to the **T1-F** runs
 (2026-2050), whose solve years are all at or beyond the weather year: there `_scale_demand` runs
 FORWARD, the growth path is the methodology, and this defect cannot reach them. So the residual is
-**reconstructed** in `docs/handoffs/d76/i7_i12_reading.py` from each ISO's frontier T1-H bundle's own
+**reconstructed** in `docs/records/forecast/d76/i7_i12_reading.py` from each ISO's frontier T1-H bundle's own
 committed ledgers, using `check_forecast_invariants`'s own `Thresholds`, `FIRM_CLEAN_FUELS` and
 `_thermal_mw` **imported rather than restated**, so the reading cannot drift from the gate it
 reconstructs. `accredited_firm = peak_demand_mw × (1 + reserve_margin)` against
@@ -393,7 +393,7 @@ attribute the demand-table refresh to the gate.
 ### 4.4 Collisions — audited, and CLEAR
 
 - **The wallclock P1 basis seed (#5091).** Classified: **no collision.** The merge `c316b2fa` touches
-  `CHANGELOG.md`, `docs/cross-year-warmstart.md`, `docs/handoffs/wallclock-baseline-2026-07.md` and
+  `CHANGELOG.md`, `docs/cross-year-warmstart.md`, `docs/records/misc/wallclock-baseline-2026-07.md` and
   two `results/regression-goldens/wc-b-*/manifest.json` — no source at all; the code change
   (`bf37a0dc`, "Seed the cold-rebuilt P1 from the same year's P0 basis") is on
   `src/market_sim/pipeline/solve.py`, not `runner.py`.
@@ -403,7 +403,7 @@ attribute the demand-table refresh to the gate.
 - **The D67 lane owns `gross_adequacy_requirement_mw`** — the requirement resolver. This lane owns
   the **peak** and does not touch it, exactly as chartered. The two compose cleanly: D67 removes the
   peak from PJM's requirement, this gate corrects the peak everywhere it is still read (§2.3).
-- **`docs/handoffs/d67/gdrift_peak_probe.py` was edited** to factor out the seam helpers. This is a
+- **`docs/records/forecast/d67/gdrift_peak_probe.py` was edited** to factor out the seam helpers. This is a
   read-only diagnostic instrument, not a solve-path file; the edit is behaviour-preserving and its
   committed JSON re-derives byte-identically (verified by diff before and after).
 
@@ -421,9 +421,9 @@ PR** — CI enforces that half. Nothing is stamped in phase 0, because nothing w
 ## 5. Reproduction
 
 ```bash
-.venv/bin/python docs/handoffs/d67/gdrift_peak_probe.py    # §1(d), byte-identical JSON
-.venv/bin/python docs/handoffs/d76/peak_census.py          # §2, ~6 min, zero LP
-.venv/bin/python docs/handoffs/d76/i7_i12_reading.py       # §3.2, seconds, committed artifacts only
+.venv/bin/python docs/records/forecast/d67/gdrift_peak_probe.py    # §1(d), byte-identical JSON
+.venv/bin/python docs/records/forecast/d76/peak_census.py          # §2, ~6 min, zero LP
+.venv/bin/python docs/records/forecast/d76/i7_i12_reading.py       # §3.2, seconds, committed artifacts only
 ```
 
 ---
@@ -432,7 +432,7 @@ PR** — CI enforces that half. Nothing is stamped in phase 0, because nothing w
 
 Phase 1 released by the owner 2026-09-06. Pre-registered in
 `PRECOMMIT-capx-d76-measured-screen-peak-2026-09-06.md`, **pushed before any solve** (`8ad280ed`,
-corrected `83970d7a`/`c6ec71a9`). Instruments: `docs/handoffs/d76/screen_gate.{py,json}`.
+corrected `83970d7a`/`c6ec71a9`). Instruments: `docs/records/forecast/d76/screen_gate.{py,json}`.
 
 ## 5. What was built
 
@@ -552,5 +552,5 @@ and may never promote one. This is not a promotion request and not a keeper cand
 backcast designation; this is a forecast-lane mechanism).
 
 **(d) Bundles deleted before merge (rule 29(c)).** Both screen bundles are removed from
-`results/hindcast/` in this PR; this FINDING and `docs/handoffs/d76/screen_gate.json` carry every
+`results/hindcast/` in this PR; this FINDING and `docs/records/forecast/d76/screen_gate.json` carry every
 number the lane will ever cite, and git history is the record for the bytes.

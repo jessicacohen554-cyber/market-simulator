@@ -274,7 +274,7 @@ unit reaches it), so D62's `first_published` limb remains the D62-only posture's
 
 ---
 
-## 4. PHASE 0 (3) — the arm's own arithmetic before any solve (`docs/handoffs/d74/phase0-2026-09-06.{py,json}`)
+## 4. PHASE 0 (3) — the arm's own arithmetic before any solve (`docs/records/forecast/d74/phase0-2026-09-06.{py,json}`)
 
 **S0 — the committed D62 arm reproduced through the code path** (its ledger stacks re-cleared by
 `clear_capacity_supply_stack` on `capacity_supply_curve(cfg, "PJM", year)`): 2022/23 46.7823 /

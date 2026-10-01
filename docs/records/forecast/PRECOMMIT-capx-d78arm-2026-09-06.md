@@ -21,8 +21,8 @@ pattern exactly) and the D57/Q44 → D67-ARM → Q55 arming precedent. **Charter
   probe therefore differences the field resolved **without** the PJM override against the field
   resolved **with** it, both off the shipped `apply_iso_scenario_defaults` path, so it isolates THIS
   arm. (The first cut, copied verbatim, reported nine MISO moves that were D53's arm showing through
-  the instrument — disclosed rather than smoothed: the record is `docs/handoffs/d78arm/`.)
-- `docs/handoffs/d78arm/keys_probe.py` — the recipe-leg key table (bare, every explicit control leg,
+  the instrument — disclosed rather than smoothed: the record is `docs/records/forecast/d78arm/`.)
+- `docs/records/forecast/d78arm/keys_probe.py` — the recipe-leg key table (bare, every explicit control leg,
   the five other ISOs, the PJM plain backcast), `--simulate-arm` ex ante and flag-omitted ex post.
 
 ---
@@ -34,7 +34,7 @@ pattern exactly) and the D57/Q44 → D67-ARM → Q55 arming precedent. **Charter
 landed that lane's PRECOMMIT and addenda); at `8875af59` no open PR carries it. This lane cites it by
 branch and sha, does not carry that lane's commit into its own PR, and **does not depend on it for
 any number**: every figure this PRECOMMIT quotes from D78-R2 is in the merged
-`FINDING-capx-d78r2-2026-09-06.md` and `docs/handoffs/d78r2/window_compare2.json`. The D78-R3 cell
+`FINDING-capx-d78r2-2026-09-06.md` and `docs/records/forecast/d78r2/window_compare2.json`. The D78-R3 cell
 text in `mechanism-matrix/PJM.js` is likewise on that branch only; this lane edits the cell as it
 stands on `main` and states the collision (§7).
 
@@ -93,7 +93,7 @@ any `ScenarioConfig` field or default; any other ISO's shard; any backcast file;
 
 Harness path, the same one the override pin uses: `build_config(iso, 2021, 2025, "realized",
 vintage=2020, entry_screen_diagnostics=True)` → `apply_iso_scenario_defaults` → `cache_key()`.
-Records: `docs/handoffs/d78arm/keys_pre_arm.json` (flag omitted, override absent) and
+Records: `docs/records/forecast/d78arm/keys_pre_arm.json` (flag omitted, override absent) and
 `keys_expectation.json` (`--simulate-arm`). The post-edit run must reproduce the right-hand column.
 
 | recipe | key at `8875af59` (pre-arm) | **after the arm** | |
@@ -149,7 +149,7 @@ because the Q55 posture was never registered.)
 ### 2.3 The committed-config sweep (P-1's expectation, ex ante)
 
 `capxd78arm_iso_override_no_op_check.py --simulate-arm` at `8875af59`, over all **157** committed
-`run_config.json` payloads (`docs/handoffs/d78arm/no-op-expectation.json`):
+`run_config.json` payloads (`docs/records/forecast/d78arm/no-op-expectation.json`):
 
 | bucket | configs | moved by THIS arm |
 |---|---:|---:|

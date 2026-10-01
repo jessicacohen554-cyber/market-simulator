@@ -834,7 +834,7 @@ facts rather than restating the ones it was handed, and four of those measuremen
 program's shape (see **Corrections** below).
 
 **Committed at charter:** `docs/multi-iso/nwpp-addition-plan-2026-09.md`,
-`docs/handoffs/nwpp-desk-handoff-2026-09-13.md`, this ledger, plus one row in
+`docs/records/nwpp/nwpp-desk-handoff-2026-09-13.md`, this ledger, plus one row in
 `docs/multi-iso/README.md` and one `CHANGELOG.md` entry. Nothing else. No code, no data, no registry
 touched.
 

@@ -2,7 +2,7 @@
 
 **Session:** audit-gate-repairs (2026-09-01). **Lane:** CI infrastructure for the
 model audit release program. **Board:**
-`docs/handoffs/audit-program-director-board-2026-08.md` RESTART CHECKLIST items
+`docs/records/governance/audit-program-director-board-2026-08.md` RESTART CHECKLIST items
 10 and 12, plus finding F-5 (v17). All three owner-ruled 2026-09-01.
 
 **Pin:** taken at `origin/main` `6f6e9d11f9ae88ea4005686efe75f3a39e84ea7b` (merge
@@ -52,7 +52,7 @@ recurring structural reasons, not one:
   and NO solve output of any kind … `run_replay_bundle` reads only `meta.json`,
   so a one-file dir is a COMPLETE and valid replay input by construction."*
   17 entries. This is the class
-  `results/calibration/FINDING-ws6-parity-nyiso-recipe-dirs-2026-08-20.md` §5.1
+  `docs/records/nyiso/FINDING-ws6-parity-nyiso-recipe-dirs-2026-08-20.md` §5.1
   recommended (B-8) and which still did not exist.
 * **Class P — pre-registered campaign point.** *"Each dir keeps exactly one
   committed file — `ercot235_point_score.json`, the record FINDING-ercot235
@@ -401,4 +401,4 @@ are armed in the ERCOT keeper with no forecast-orchestrator consumer and no
 registry declaration (ERCOT/capx lane — a real gap, not a test bug). Neither is
 this lane's and neither was touched.
 
-**Finding path:** `docs/FINDING-audit-gate-repairs-2026-09.md`.
+**Finding path:** `docs/records/governance/FINDING-audit-gate-repairs-2026-09.md`.

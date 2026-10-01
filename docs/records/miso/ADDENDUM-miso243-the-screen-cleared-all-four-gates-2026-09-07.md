@@ -2,7 +2,7 @@
 
 **Governs:** `ADDENDUM-miso243-my-own-p2-leg-failed-and-the-screen-year-is-2024-2026-09-07.md` §3,
 whose four bars were fixed **before the repair was applied to the tree and before the solve ran**.
-**No bar moves.** Machine record: `results/calibration/_miso243_screen_gates.json`; evaluator
+**No bar moves.** Machine record: `results/phase0/miso/_miso243_screen_gates.json`; evaluator
 `scripts/probes/_miso243_screen_gates.py`, whose bars are **literals quoted from that addendum**.
 
 Screen: **2024**, one year, one arm (`results/calibration/miso243_screen2024`, a **throwaway

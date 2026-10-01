@@ -1,7 +1,7 @@
 """capx D52 A/B instrument (ZERO solves): the arm's committed ledgers beside the
 control's, on the published NYCA basis.
 
-    uv run python docs/handoffs/d52/ab-compare-2026-09-04.py <control run_dir> <arm run_dir> [<probe run_dir>]
+    uv run python docs/records/forecast/d52/ab-compare-2026-09-04.py <control run_dir> <arm run_dir> [<probe run_dir>]
 
 Per scored year: the ledger requirement (LP-peak basis) and the NEW seam fields
 (``screen_peak_demand_mw`` / ``screen_adequacy_requirement_mw`` /

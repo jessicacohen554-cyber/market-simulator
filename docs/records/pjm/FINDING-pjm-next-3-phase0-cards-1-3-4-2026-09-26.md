@@ -4,7 +4,7 @@ Keeper `2026-09-25-pjm-next-2-joint` (bundle `results/calibration/pjmnext2_joint
 payload/bench/hourly sidecars and fleet-only rebuilds of the keeper recipe (`replay_keeper.run_year_kwargs`,
 `pjm_da_virtual_bids` off: a demand-side overlay, inert for fleet, fuel and offers). None of the three cards reaches a
 solve: no admissible lever is ready. Card 2 (Montour/Brunner Island routing) is the session's solve —
-`docs/PRECOMMIT-pjm-next-3-card2-unit-fuel-routing-2026-09-26.md`.
+`docs/records/pjm/PRECOMMIT-pjm-next-3-card2-unit-fuel-routing-2026-09-26.md`.
 
 ## Card 1 — CC_REGULAR 2024 −10.07 TWh: the east cost stack against a compressed W→E price gradient
 

@@ -2,7 +2,7 @@
 """Identify the ERCOT screen residual scarcity-rent function ``R_f(tau)``.
 
 The identification half of lane L-SCAR (option L-1), chartered and signed at
-``docs/DECISION-CARD-lscar-screen-revenue-2026-08-13.md`` (S1/S2/S3, owner,
+``docs/records/misc/DECISION-CARD-lscar-screen-revenue-2026-08-13.md`` (S1/S2/S3, owner,
 2026-08-13).  The mechanism it feeds is a default-off, ERCOT-only,
 forecast/hindcast-only revenue-stack term in the capacity-evolution
 retirement/entry screen:

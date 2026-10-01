@@ -4,12 +4,12 @@
 `claude/capx-d61-pjm-eas-operand`. **Zero solves.** Every model number is read from committed
 artifacts — the D57 arm-A ledgers (`results/hindcast/pjm-2021-2025-realized-t1h-d57-clearing/
 PJM/f0e050e820c1159a/evolution_<year>.json`, their `capacity_clearing.offer_stack` and
-`pipeline_events`), the D57 instrument JSON (`docs/handoffs/d57/ab-compare-2026-09-05.json`),
+`pipeline_events`), the D57 instrument JSON (`docs/records/forecast/d57/ab-compare-2026-09-05.json`),
 the PJM backcast keeper's committed sidecars (`results/calibration/pjm_debugb_inputclock_A/hourly/
 {reserve_family,system,class_hourly}_<year>.parquet`) and the recipes' `run_config.json`.
 Every market number is a published observable (rule 13): the Monitoring Analytics SOM sections
-fetched and hashed in `docs/handoffs/d61/som-sources-2026-09-05.md`, and the in-repo DataMiner2
-reserve-market feeds (`data/raw/PJM-AS/`). Instruments and outputs: `docs/handoffs/d61/
+fetched and hashed in `docs/records/forecast/d61/som-sources-2026-09-05.md`, and the in-repo DataMiner2
+reserve-market feeds (`data/raw/PJM-AS/`). Instruments and outputs: `docs/records/forecast/d61/
 offer-stack-census-2026-09-05.{py,json}`, `reclear-2026-09-05.{py,json}` (the committed stacks
 re-cleared through the code's own `clear_capacity_supply_stack` + `capacity_supply_curve`;
 reproduction of the committed clearing exact), `as-pools-2026-09-05.{py,json}`. **Nothing
@@ -384,7 +384,7 @@ E&AS" — this finding's answer is that no admissible stream of the measured siz
   `capacity_market_supply_clearing` PJM stays `fc: K` on the D57 ruling; `energy_reserve_coopt`
   PJM stays backcast K with no forecast stamp (the §2a card names the gap).
 - **New mechanism (28c):** none added; D62 adds its row and six cells in its own build PR.
-- **Records:** this finding; `docs/handoffs/d61/` (three instruments, their JSON outputs, the SOM
+- **Records:** this finding; `docs/records/forecast/d61/` (three instruments, their JSON outputs, the SOM
   source/sha record). No bundle, no registry, no board row, no keeper, no marker, no shard.
 - **Collision:** docs only; D58 / D60 / T3-NYISO are solve lanes on other surfaces; D62 will
   touch `retirements.py` beside D57's settlement hunk and D53's (if landed) — noted for its

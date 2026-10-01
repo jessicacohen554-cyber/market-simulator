@@ -4,7 +4,7 @@
 2026-08-06). The D-2' pattern — a small arming lane that adds one
 `ISOConfig.default_scenario_overrides` entry and its evidence trail, on the precedent set by
 `entry_vre_capacity_revenue` (D-2', Addendum O).
-**Measured basis:** FFR-7B-2 §3.1 (`docs/handoffs/ffr-7b2-rps-krow-clean-rows-2026-08-06.md`),
+**Measured basis:** FFR-7B-2 §3.1 (`docs/records/forecast/ffr-7b2-rps-krow-clean-rows-2026-08-06.md`),
 registered pair `miso-2026-2030-ffr7b2-rpsk-{ctrl,armed}`.
 **Head at lane start:** `origin/main` `c710d17e`. **Branch:** `claude/arm-miso-rps-regions-6rckbk`.
 **No solve was run** — see §5.
@@ -238,7 +238,7 @@ applied) and any non-MISO ISO. Flagged here rather than left to be discovered.
 | `src/market_sim/runner.py` | `_rps_region_grain_active` extracted (behaviour-preserving); call site + stale comment updated |
 | `tests/unit/config/test_miso_rps_region_arming.py` | **new** — the 13-assertion backcast-untouched proof |
 | `docs/codebase-site/data/mechanism-matrix.js` | MISO forecast cell `O → K` + def/note/ev |
-| `docs/handoffs/arm-miso-rps-regions-2026-08-07.md` | this document |
+| `docs/records/miso/arm-miso-rps-regions-2026-08-07.md` | this document |
 
 ## 8. Open items handed forward
 

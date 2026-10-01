@@ -14,7 +14,7 @@ where its energy balance makes it a 13-14 TWh/yr net IMPORTER, and disagrees
 with the served schedule about the DIRECTION of flow in 70 % of hours.
 
 The measured adjudication, its natural experiment and the CAISO-facing
-magnitude are ``docs/handoffs/FINDING-nwpp-34-2026-09-14.md``. Rules 13
+magnitude are ``docs/records/nwpp/FINDING-nwpp-34-2026-09-14.md``. Rules 13
 [R-MEASURED] / 14 [R-ACCURATE]: the divergence is reported at full magnitude
 and corrected away nowhere. Reads the committed extracts NWPP-11 landed;
 skipped when they are not hydrated.

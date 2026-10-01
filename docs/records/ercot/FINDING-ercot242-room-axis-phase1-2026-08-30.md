@@ -2,7 +2,7 @@
 
 **Session ercot-242, branch `claude/ercot-242-sced-phase1-sb3zj7`.** Executes
 Phase-1 of the SCED room-conduct lane under
-`docs/PRECOMMIT-ercot242-room-axis-phase1-2026-08-30.md` (pushed +
+`docs/records/ercot/PRECOMMIT-ercot242-room-axis-phase1-2026-08-30.md` (pushed +
 blob-verified 4a26a261 BEFORE any derive or solve; **no amendments** — every
 declared construction ran as written; the only deviations were two
 environment-dependency installs, `openpyxl` and `tzdata`, both hit before any
@@ -14,7 +14,7 @@ the committed keeper bundle, V-0k validated zero-solve
 (`ercot226_official_score.py --validate-keeper`: −7.3 % / 0.102 / 180
 reproduced exactly — no drift; the contingency replay was never needed).
 Registered `2026-08-30-run242-room-axis` (REJECTED PROBE) per rule 15; A/B
-record `results/calibration/ercot242_room_ab.json`; the two-config keeper is
+record `results/phase0/ercot/ercot242_room_ab.json`; the two-config keeper is
 UNTOUCHED.
 
 ## 0. Verdict in five lines

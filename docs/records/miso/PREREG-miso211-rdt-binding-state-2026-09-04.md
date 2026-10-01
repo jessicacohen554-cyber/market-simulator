@@ -179,6 +179,6 @@ the ten-gate scorer). Rule 28(b): `rdt_tcdc` evidence appended, the new row
 25: MISO's shard only. Rule 22: 2023–2025. Rule 13: `rf_al`/`sr_gfm`/PBC are
 diagnostic reads, never LP inputs. Rule 27: blob-verify after push.
 Instrument: `scripts/probes/_miso211_rdt_binding_state.py` → record
-`results/calibration/_miso211_rdt_binding_state.json`.
+`results/phase0/miso/_miso211_rdt_binding_state.json`.
 
 Next shorthand after this session: **miso-212**.

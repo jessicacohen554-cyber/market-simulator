@@ -1,7 +1,7 @@
 # PRECOMMIT — miso-278: thermal-tranche family re-derived with each CAMPD unit routed on its own fuel
 
 ```
-LANE    : miso-278 (owner charter 2026-09-26, docs/handoffs/CHARTER-miso-stgas-unit-fuel-attribution-2026-09-26.md;
+LANE    : miso-278 (owner charter 2026-09-26, docs/records/miso/CHARTER-miso-stgas-unit-fuel-attribution-2026-09-26.md;
           rule 28(a) off-queue lever, owner-chartered)
 KEEPER  : 2026-09-26-miso-277-d1-as (results/calibration/miso277_span, 2019-2025), legs solved at bd0329ed
 ARM     : keeper recipe + campd_unit_fuel_split = true (new field, default False)

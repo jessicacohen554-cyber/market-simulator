@@ -1,7 +1,7 @@
 {
   "session": "nyiso-120",
   "lever": "hybrid-cogen dark-fuel scope gate (miso-122) applied to NYISO's chp_power_only_heat_rates artifact \u2014 ORIS 2493 East River",
-  "prereg": "results/calibration/PREREG-nyiso120-eastriver-scope-gate-2026-08-04.md",
+  "prereg": "docs/records/nyiso/PREREG-nyiso120-eastriver-scope-gate-2026-08-04.md",
   "keeper": "2026-08-03-nyiso-118-seny-span",
   "arms": {
     "A": "nyiso120_control_A2",

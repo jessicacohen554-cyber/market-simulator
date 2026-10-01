@@ -8,7 +8,7 @@ never self-adopted.
 **Keeper (untouched):** `2026-08-24-231-tie-zone-measured`
 (`results/calibration/ercot231_tiegtc_full`).
 **Probe:** `scripts/probes/ercot233_nelob_timing_phase0.py` →
-`results/calibration/ercot233_nelob_timing_phase0.json`.
+`results/phase0/ercot/ercot233_nelob_timing_phase0.json`.
 
 ## 0. The question, and what it is not
 

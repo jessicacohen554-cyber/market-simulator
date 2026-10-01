@@ -5,8 +5,8 @@ protocol; the ERCOT-148 template). Basis keeper
 `2026-07-31-ercot148-dam-event-cap` (bundle `ercot148_dam_event_cap_arm`,
 determination NOT-YET, fail set {C3a, C3b(2023-only), C3c, C7(2023-lignite
 cv-leg)}, C6 ATTESTED+PASS, n_residual 6). Diagnosis:
-`docs/DIAGNOSIS-ercot149-gas-cop-window-2026-08-01.md`; committed record
-`results/calibration/ercot149_gas_outage_phase0.json`; probe
+`docs/records/ercot/DIAGNOSIS-ercot149-gas-cop-window-2026-08-01.md`; committed record
+`results/phase0/ercot/ercot149_gas_outage_phase0.json`; probe
 `scripts/probes/ercot149_gas_outage_phase0.py` (+ the reused
 `scripts/probes/ercot148_availability_capture.py` for the seam proof).
 

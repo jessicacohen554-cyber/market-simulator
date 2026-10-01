@@ -110,7 +110,7 @@ already armed:
   MISO's RT Data Broker RDT endpoint is deprecated without archive and Data
   Exchange is key-gated (adjudicated 2026-07-11, re-verified 2026-07-12,
   `data/raw/transfer-constraint-binding/MISO/README.md`; re-confirmed
-  `docs/handoffs/miso-77-m4-afc-feasibility-2026-07.md` §2c);
+  `docs/records/miso/miso-77-m4-afc-feasibility-2026-07.md` §2c);
 * `bc_HIST` / `pbc` carry **no MW limit and no flow**;
 * PJM's `*_transfer_limits_and_flows.csv` is **PJM-internal** (AP-South,
   Bedington–Black Oak, AEP/DOM, Cleveland, 50045005) — it is the basis of

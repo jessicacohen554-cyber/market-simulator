@@ -22,7 +22,7 @@ swept against any gate.
 Usage:
     python3 scripts/probes/nyiso241_offer_decomposition.py \
         --legs results/calibration/nyiso_mer_2026-09-19_{2022,2023,2024,2025} \
-        --out results/calibration/_nyiso241_offer_decomposition.json
+        --out results/phase0/nyiso/_nyiso241_offer_decomposition.json
 """
 
 from __future__ import annotations

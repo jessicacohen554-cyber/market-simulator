@@ -1,7 +1,7 @@
 # CHARTER — CAMPD economic-layup discrimination (merit-order guard)
 
 **Opened** 2026-07-25 by owner instruction, out of `neiso-63`
-(`results/calibration/FINDING-neiso63-campd-economic-layup-2026-07.md`).
+(`docs/records/neiso/FINDING-neiso63-campd-economic-layup-2026-07.md`).
 **Status:** **CLOSED WITH CAUSE (owner ruling 2026-08-26, §10)** — guard
 ADOPTED-AS-IMPROVEMENT (owner verdict 2026-07-26, §8); freeze LIFTED for the
 VALIDATION tier only, locked test stays frozen. The detector question remains
@@ -340,7 +340,7 @@ calibrated against a non-reproducible partial envelope (rule-11 class), and
 on any honest full derivation C3a-2025 fails by ~+1.1 pp. Sequencing of the
 CAISO re-tune against the §8 residual-over-count investigation (the
 extract's absolute level, freeze lift condition) is an owner call. Full
-record: `results/calibration/FINDING-caiso123-c3a-drift-attribution-2026-07-26.md`.
+record: `docs/records/caiso/FINDING-caiso123-c3a-drift-attribution-2026-07-26.md`.
 
 **MISO re-audit cell RESOLVED (2026-07-26, miso-93): RE-TUNE REQUIRED.** Arm
 `2026-07-26-miso-93-meritguard-a1` (2023/2024/2025, one bundle) takes the
@@ -360,8 +360,8 @@ still grounded). A rule-11 discovered-bug signal — the keeper's offer curves
 were compensating for the inflated envelope, as at NEISO but milder (−1.4 pp vs
 −7…−9 %). **No tuning applied; MISO's ledger is 3/3 saturated, so the re-tune
 must close by structure.** Keeper designation unchanged (owner call). Evidence:
-`results/calibration/FINDING-miso93-keeper-reaudit-meritguard-2026-07.md`;
-charter `docs/handoffs/miso-93-keeper-reaudit-charter-2026-07.md`. Remaining
+`docs/records/miso/FINDING-miso93-keeper-reaudit-meritguard-2026-07.md`;
+charter `docs/records/miso/miso-93-keeper-reaudit-charter-2026-07.md`. Remaining
 open re-audit cells: **ERCOT, NYISO** (PJM targets `pjm121_ccbelt` per §3e).
 
 **PJM re-audit cell RESOLVED (2026-07-26, pjm-129): RE-TUNE REQUIRED.** Arm
@@ -386,8 +386,8 @@ consequence the pjm-129 charter itself failed to pre-register, and it deepens th
 already-open G-20b/G-22 reserve-tightness root cause rather than creating a new
 one. A rule-11 discovered-bug signal, −1.3 pp against MISO's −1.4 pp. **No tuning
 applied; keeper designation unchanged (owner call).** Evidence:
-`results/calibration/FINDING-pjm129-keeper-reaudit-meritguard-2026-07.md`;
-charter `docs/handoffs/pjm-129-keeper-reaudit-charter-2026-07.md`.
+`docs/records/pjm/FINDING-pjm129-keeper-reaudit-meritguard-2026-07.md`;
+charter `docs/records/pjm/pjm-129-keeper-reaudit-charter-2026-07.md`.
 
 **And the RAM block on this cell is closed, not deferred.** Both prior attempts
 (§3e, then its re-attempt) concluded the PJM replay "needs a ≥24 GB environment"
@@ -413,7 +413,7 @@ call. **The freeze stays ACTIVE; nothing here lifts it.**
 ## 9. Residual-over-count investigation — CLOSED on evidence; the freeze-lift decision is now the owner's
 
 The single item §8 deferred the freeze to. Three ordered steps were set by
-`results/calibration/FINDING-neiso66-overcount-rootcause-2026-07-26.md` §6; all
+`docs/records/neiso/FINDING-neiso66-overcount-rootcause-2026-07-26.md` §6; all
 of the *measurement* is now done, and no LP solve was run for any of it.
 
 | step | status | evidence |
@@ -466,7 +466,7 @@ non-operation. An LP-side closure would be a NEW *decline* mechanism (the
 existing bridges are min-gen floors that force capacity ON) with no
 identifiable driver on any instrument this program admits — which rules
 1/12/19 forbid building. Record:
-`results/calibration/FINDING-neiso68-lp-seam-screen-2026-07-26.md` (its §6
+`docs/records/neiso/FINDING-neiso68-lp-seam-screen-2026-07-26.md` (its §6
 states the falsification bar any future LP-side proposal must meet). This
 closes the last open lane of the residual-over-count investigation; the §7
 "Closed with cause" leg fits, and the freeze-lift decision — unchanged — is
@@ -502,7 +502,7 @@ cut does not, and on NEISO and CAISO the candidate's veto set is a strict
 **subset** of the incumbent's in every year. **No guard change is proposed, so
 no blast radius is reopened and no rule-22 leave-one-year-out obligation
 arises**; the guard stands exactly as §8 adopted it. Record:
-`results/calibration/FINDING-campd-daygrain-crossiso-2026-07-26.md` (its §5
+`docs/records/governance/FINDING-campd-daygrain-crossiso-2026-07-26.md` (its §5
 states what would falsify the null: a block-integral construction whose veto
 set is *materially disjoint* from the window-grain cut's, which then clears D1
 on the disjoint part).
@@ -535,7 +535,7 @@ measured shut; it is not a finding that the input is unimpeachable.
 plainly:** the post-guard `CC_REGULAR` capacity-weighted outage share is
 **14.2–36.7 %**, with **17 of 18 ISO-years above the ~10–15 % EFOR+planned
 norm ceiling** (audit row O4 re-measurement, 2026-08-18,
-`results/calibration/_audit_followup_o4_cc_envelope.json`). **Every keeper's
+`results/phase0/governance/_audit_followup_o4_cc_envelope.json`). **Every keeper's
 availability envelope inherits that seam.** It is carried explicitly — in the
 freeze file's 2026-08-26 `history` entry, in audit row O4's resolution, and
 here — as a documented definitional scope difference, so any future reader
@@ -564,7 +564,7 @@ year spent):**
   `scripts/audit_keepers.py` H1), 55/55 invocations as required — including
   the one that matters: **2019 and H1-2026 refused for every one of the six
   ISOs, with and without `--holdout-authorized`**. Record:
-  `docs/FINDING-holdout-governance-2026-08-26.md`.
+  `docs/records/governance/FINDING-holdout-governance-2026-08-26.md`.
 - `calibration-complete.json`'s `final` block is untouched and still empty; no
   ISO's marker changed.
 

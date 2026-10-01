@@ -9,9 +9,9 @@ live reliability-floor limbs across **five other ISOs** (rule 25 `[R-ISO-SCOPE]`
 as `DECISION-CARD-nyiso193`'s `legitimacy_diagnostics.py`. **This card carries the measurement and
 asks for the ruling.**
 
-**Evidence:** `docs/FINDING-nyiso206-ch-fill-level-basis-2026-09-06.md`;
-machine record `results/calibration/_nyiso206_ch_fill_level_basis.json`;
-pre-registration `results/calibration/PREREG-nyiso206-ch-fill-level-basis.md` (+ addenda §A/§B).
+**Evidence:** `docs/records/nyiso/FINDING-nyiso206-ch-fill-level-basis-2026-09-06.md`;
+machine record `results/phase0/nyiso/_nyiso206_ch_fill_level_basis.json`;
+pre-registration `docs/records/nyiso/PREREG-nyiso206-ch-fill-level-basis.md` (+ addenda §A/§B).
 **Keeper, unchanged:** `2026-09-06-nyiso-202-startup-aware`.
 
 > **Read this first.** The measurement below establishes a real defect **and refutes the only

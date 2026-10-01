@@ -18,7 +18,7 @@ from market_sim.data.eia923 import plant_month_price_grid  # noqa: E402
 from market_sim.data.fuel.plant_prices import _load_monthly_cache  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[3]
-OUT = REPO / "docs/handoffs/spp49"
+OUT = REPO / "docs/records/spp/spp49"
 ref = reference()
 costs = _load_monthly_cache(None)
 plant_state = costs.groupby("plant_id")["state"].first()

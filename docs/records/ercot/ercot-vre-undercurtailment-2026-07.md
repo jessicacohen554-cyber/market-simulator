@@ -199,7 +199,7 @@ already improved). Register it on the dashboard as a probe either way (rule
      the point where transmission, not storage headroom, should be the
      binding constraint).
    - A derived, forward-admissible curtailment-share driver in the style of
-     the AS co-opt plan's WS-A (`docs/handoffs/ercot-as-coopt-plan-2026-07.md`
+     the AS co-opt plan's WS-A (`docs/records/ercot/ercot-as-coopt-plan-2026-07.md`
      §4 WS-A): a function of net-load percentile / hour-of-day / season,
      fit to the *measured GTC binding frequency and RTOLCAP-style supply
      shares*, never to the price or volume residual. Reach for this only if
@@ -244,5 +244,5 @@ already improved). Register it on the dashboard as a probe either way (rule
 - `src/market_sim/config/constants.py:ERCOT_GTC_LINK_MAP`,
   `src/market_sim/config/iso_configs.py` (`_ercot_config` `TransferLink`
   list) — the static `ttc_mw` values the measured series would replace.
-- `docs/handoffs/ercot-as-coopt-plan-2026-07.md` §4 WS-A — the precedent
+- `docs/records/ercot/ercot-as-coopt-plan-2026-07.md` §4 WS-A — the precedent
   pattern for a derived, forward-admissible driver, if needed as a fallback.

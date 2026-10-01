@@ -32,7 +32,7 @@ before any regenerated ledger was read. Honest sequencing note: the FFR-9A
 arms' SURVIVING bundle files — `score.json` and the four
 `screen_signal_diag_*.npz` per arm (this container retained
 `results/hindcast/`, contrary to the charter's died-with-the-container
-assumption) — plus the committed `docs/handoffs/ffr-9a/*.json` probe records
+assumption) — plus the committed `docs/records/forecast/ffr-9a/*.json` probe records
 were read before this prereg; they are the registered evidence base the
 charter directs this lane to. What is pre-registered here is (i) the derived
 per-tech-per-year HYPOTHESIS table those aggregates pin, (ii) the
@@ -257,12 +257,12 @@ any namespace, per charter.
   additions_basis, retirements, co2, …; `generated_utc` excluded) is empty.
 * **R1: PASSED EXACTLY.** The regenerated evolution ledgers' decision-grain
   rows reproduce the §1.2 hypothesis table CELL-FOR-CELL to 0.1 MW
-  (committed extract: `docs/handoffs/ffr-9b/evolution-ledger-extract.json`;
+  (committed extract: `docs/records/forecast/ffr-9b/evolution-ledger-extract.json`;
   the ledgers themselves sit under the gitignored hindcast scratch family,
   `.gitignore:550`).
 * **R2/R3: the replay identity holds everywhere.** The probe
   (`scripts/probes/ffr9b_entry_screen_replay.py`, record
-  `docs/handoffs/ffr-9b/entry-screen-replay.json`) re-invoked both entry
+  `docs/records/forecast/ffr-9b/entry-screen-replay.json`) re-invoked both entry
   screens per step with the bundle's own inputs: replayed build MW ==
   ledger decided MW for every (step, tech) INCLUDING storage, under BOTH
   reserve-leg bounds, and the margin ORDER is identical under both bounds at
@@ -493,6 +493,6 @@ added is the offline replay probe (`scripts/probes/ffr9b_entry_screen_replay.py`
   pushed from regenerated content; pushes verified by branch state.
 * **Artifacts committed with this handoff:** the regen bundle's slim files
   (score.json + 4 screen dumps + meta/run_config/config.yaml), the ledger
-  extract + replay record under `docs/handoffs/ffr-9b/`, the scorer's
+  extract + replay record under `docs/records/forecast/ffr-9b/`, the scorer's
   report (`docs/hindcast-reports/ercot-2021-2025-t1ff-armr-ffr9b-regen-2026-08-09.md`),
   and the probe script.

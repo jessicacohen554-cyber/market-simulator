@@ -8,7 +8,7 @@
 > at VOLL**; at the 2023 missed tail hours that holdout is **SLACK (reserve dual
 > ≈ $0)**, so holding more AS out cannot reprice it, and forcing it to bind
 > (headroom cap) over-fires (ercot41/43). See
-> `docs/DIAGNOSIS-ercot-102-as-holdout-refutation-2026-07.md`.
+> `docs/records/ercot/DIAGNOSIS-ercot-102-as-holdout-refutation-2026-07.md`.
 
 **Session 2026-07-24. Keeper: `2026-07-23-ercot100-netrev-margin-keeper`
 (NOT-YET, C6 unattested). Successor to ERCOT-100 (net-revenue-margin offer form
@@ -148,7 +148,7 @@ PASS) — pending OWNER sign-off (governance is not self-attested).
 
 Five entries collapsing to three ledgered criteria (within the ledger budget of
 3). Full text in `results/calibration/ercot_netrev_margin/calibration_attestation.json`
-once signed; the draft lives in `docs/handoffs/ercot-101-governance-attestation-draft-2026-07.md`.
+once signed; the draft lives in `docs/records/ercot/ercot-101-governance-attestation-draft-2026-07.md`.
 
 * **C3a / price_mean / 2023** — 97% of the mean gap is the >$300 tail (§1); RT
   re-offer conduct beyond the DAM disclosure; no 2023 SCED source; rule 13 forbids

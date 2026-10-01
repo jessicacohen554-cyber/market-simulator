@@ -71,7 +71,7 @@ DO (priority):
    overshoot; C5a improves/holds; C7/C8 PASS. Register whatever the result
    (rule 15); promote only on no-status-regression.
 3. WP-3 CT_CHP steam-floor rule-23 derive if ruled (ask PENDING from CAISO-98,
-   docs/handoffs/caiso-wp3-ctchp-steam-floor-ask-2026-07-18.md).
+   docs/records/caiso/caiso-wp3-ctchp-steam-floor-ask-2026-07-18.md).
 
 GUARDRAILS: all 3 years one bundle (rule 16); NO twin (rule 21); SEQUENTIAL
 solves (~30 min/leg, 15 GB box OOMs on 2 concurrent); solves IN-SESSION only

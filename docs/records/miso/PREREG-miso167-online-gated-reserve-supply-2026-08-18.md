@@ -17,7 +17,7 @@ reserve requirement may be backed by the headroom of capacity that is **not sync
 own published ASM MCP of $484.87. *[Corrected 2026-09-01, xiso-cascade: $484.87 sums a nested
 cumulative cascade; the published price a reserve MW earns is the cascade top, $193.30. Evidence
 context only — every §3/§6 gate below is MW- or criterion-based and none derives from this figure,
-so the pre-registration stands as written. `docs/FINDING-xiso-cascade-scan-2026-09-01.md`.]*
+so the pre-registration stands as written. `docs/records/governance/FINDING-xiso-cascade-scan-2026-09-01.md`.]*
 
 **Falsifiable claim:** the model's reserve constraint is dormant in MISO's tight hours *because*
 reserve supply is unrestricted, not because MISO's system was comfortable. Restricting supply to

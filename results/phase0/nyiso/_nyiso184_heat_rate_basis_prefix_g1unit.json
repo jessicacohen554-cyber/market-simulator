@@ -1,6 +1,6 @@
 {
   "session": "nyiso-184",
-  "prereg": "results/calibration/PREREG-nyiso184-stgas-heat-rate-basis.md",
+  "prereg": "docs/records/nyiso/PREREG-nyiso184-stgas-heat-rate-basis.md",
   "bundle": "results/calibration/nyiso177_vintage_B1p",
   "artifact": "data/raw/_processed-legacy/egrid_family_heat_rates_NYISO.csv",
   "applied_vintage": 2023,

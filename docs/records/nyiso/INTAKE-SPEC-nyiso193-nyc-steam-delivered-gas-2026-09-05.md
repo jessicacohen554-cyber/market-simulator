@@ -6,8 +6,8 @@
 
 ## 1. The object, measured (nyiso-192)
 
-`docs/FINDING-nyiso192-frontier-adjudication-2026-09-05.md` §3 /
-`results/calibration/_nyiso192_stgas_zonal_decomp.json`: the model's NYC `ST_GAS` over-run
+`docs/records/nyiso/FINDING-nyiso192-frontier-adjudication-2026-09-05.md` §3 /
+`results/phase0/nyiso/_nyiso192_stgas_zonal_decomp.json`: the model's NYC `ST_GAS` over-run
 (+4.26 / +2.24 / +0.41 TWh in 2023 / 2024 / 2025 on the keeper; +4.60 / +1.31 / −0.07 on the
 Astoria-panel arm) is carried by the **zonal delivered-gas basis**, not by price formation
 (the model's NYC price is at or below actual) and no longer by the heat rate (Ravenswood's

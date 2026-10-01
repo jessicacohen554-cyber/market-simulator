@@ -11,7 +11,7 @@ owner as a decision card.
 - Source: the legs' `unit_hourly` / `system` read from their shard commits (RESULT-r-caiso-18 §Retrievability,
   provenance only).
 - Measured basis: EIA-930 DSW corridor net import (`derive_caiso_import_tranches.corridor_net_import`).
-- Probe: `docs/handoffs/r-caiso-19/p0_dsw_decomposition.py`. TWh.
+- Probe: `docs/records/caiso/r-caiso-19/p0_dsw_decomposition.py`. TWh.
 
 | Year | Model | EIA-930 | Gap | Firm PV block | Gas (CCGT + CT + scarcity) | Clean rungs | Gap h0–5 | h6–17 | h18–23 |
 |---|--:|--:|--:|--:|--:|--:|--:|--:|--:|

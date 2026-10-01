@@ -1,6 +1,6 @@
 # FINDING — PERF-C S1: the same-year P1 basis seed is now independently gateable, with an optimality guard (2026-09-20)
 
-**Shard:** PERF-C S1 (lever L1 of `docs/handoffs/PRECOMMIT-perfc-orchestration-2026-09-20.md`).
+**Shard:** PERF-C S1 (lever L1 of `docs/records/governance/PRECOMMIT-perfc-orchestration-2026-09-20.md`).
 **Pinned HEAD:** `2a87343f8d7302ce84e66f45430a8d3b9e807d80`. **Branch:** `claude/perfc-s1-p1-seed`.
 **No timing work was performed.** The owner stated there is already enough wall-clock data; this
 shard ran no solve to measure speed. The only solves it ran are the NEISO byte-gate captures in §4,
@@ -292,7 +292,7 @@ pinned HEAD with this shard's changes stashed (`git stash -u`) and fail identica
 
 - `legitimacy(--keepers)` — the `data/clean/capacity-deliverability` partition is absent on a
   fresh container. This is the documented control-red leg: desk-log
-  `docs/handoffs/wallclock-desk-log-2026-09.md` §2.14 (b), *"`regression_gate` check [4]'s
+  `docs/records/misc/wallclock-desk-log-2026-09.md` §2.14 (b), *"`regression_gate` check [4]'s
   `legitimacy` leg is red by control on a fresh container and goes green once
   `data/clean/capacity-deliverability` is regenerated"*.
 - `audit_keepers` — one **E13** failure in the **SOCO** lane: `2026-09-20-soco53g-prb-own-iso`
@@ -348,7 +348,7 @@ default assertions of §5.
 Rule 36 flipped the two together for a mechanical reason that no longer holds. The question is now
 separable, and these are the facts on each side — **no new numbers were produced by this shard**.
 
-**For ON** — desk-log item B (`docs/handoffs/wallclock-desk-log-2026-09.md` §2.14, PR #5091, seed
+**For ON** — desk-log item B (`docs/records/misc/wallclock-desk-log-2026-09.md` §2.14, PR #5091, seed
 OFF → ON, P1 wall / simplex iterations):
 
 | ISO-year | `solve_p1` | iterations |

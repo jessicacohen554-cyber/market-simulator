@@ -1,6 +1,6 @@
 {
  "what": "cap-weighted quantile function of the implied-gas-HR offer distribution per (segment, delivery year, net-load bin, within-unit share); the frozen derive's ladder is the p=0.5 column. MULTIPLIERS ONLY (PJM DataMiner2 redistribution restriction).",
- "precommit": "docs/PRECOMMIT-pjm-h9-coal-only-comparator-2026-09-16.md",
+ "precommit": "docs/records/pjm/PRECOMMIT-pjm-h9-coal-only-comparator-2026-09-16.md",
  "g_repro": {
   "pass": false,
   "cells_checked": 432,

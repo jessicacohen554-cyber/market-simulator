@@ -3,7 +3,7 @@
 - **Session:** NYISO-NEXT-8, the orchestrator. No LP runs in this container (rule 32 (a)).
 - **Written before any solve.**
 - **Keeper (control, form 4):** `2026-09-27-nyisonext6-li-cap-span`, bundle `results/calibration/nyisonext6_span`, 2022–2025. The 2021 held-out run `2026-09-27-nyisonext6-li-cap-2021` is stamped to it (bundle `results/calibration/nyisonext6_2021`). Keeper `git_sha` `671fa815`.
-- **Probe:** `scripts/probes/nyisonext8_hq_dedupe_phase0.py` → `results/calibration/_nyisonext8_phase0.json` (zero LP).
+- **Probe:** `scripts/probes/nyisonext8_hq_dedupe_phase0.py` → `results/phase0/nyiso/_nyisonext8_phase0.json` (zero LP).
 
 ## 0. The defect
 

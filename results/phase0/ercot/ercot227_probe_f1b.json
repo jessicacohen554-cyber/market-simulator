@@ -1,7 +1,7 @@
 {
  "probe": "ercot227_probe_f1b",
  "factor": "F1b ercot_as_held_requirement_nspin \u2014 NSPIN-family held-depth, requirement_NSPIN(t) = max(plan(t), held(t)) over the full year (the NSPIN family is NOT rigid: it releases down the standard ramp, matching the real design in which online Non-Spin energy is SCED-dispatchable at its offer)",
- "charter": "docs/PRECOMMIT-ercot226-held-sequestration-2026-08-22.md \u00a72 (F1b row), \u00a75.11 Amendment 3; waiver W-3 (ercot-226)",
+ "charter": "docs/records/ercot/PRECOMMIT-ercot226-held-sequestration-2026-08-22.md \u00a72 (F1b row), \u00a75.11 Amendment 3; waiver W-3 (ercot-226)",
  "session": "hub (ercot-227) \u2014 HUB FALLBACK: the ercot-229 spoke was dispatched for this arm and did not deliver (no branch, no commit, no JSON at 2026-08-22 15:4x UTC), so the hub ran it, per the precommit \u00a76 clause that spokes are an accelerator and never a dependency.",
  "branch_sha": "cb7aadf8408a727ad7a06268232e250a54ae83a1",
  "env": {

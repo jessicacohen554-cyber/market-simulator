@@ -350,7 +350,7 @@
 > | check | result |
 > |---|---|
 > | the board file still **parses** | 🟢 **yes** — the entry is inserted as a blockquote block above v40, the file's heading structure is unchanged, and no prior entry is renumbered |
-> | the **three CI record paths** keep it **enrolled** (`Y-26`) | 🟢 **yes** — `.github/workflows/ci.yml` still lists `docs/handoffs/audit-program-director-board-2026-08.md`, `docs/model-audit-release-plan-2026-08.md` and `docs/FINDING-*.md`. **This lane's PR touches only the first**, so it **is** enrolled and CI runs on it — i.e. **this PR is not in `Y-26`'s gap** |
+> | the **three CI record paths** keep it **enrolled** (`Y-26`) | 🟢 **yes** — `.github/workflows/ci.yml` still lists `docs/records/governance/audit-program-director-board-2026-08.md`, `docs/model-audit-release-plan-2026-08.md` and `docs/FINDING-*.md`. **This lane's PR touches only the first**, so it **is** enrolled and CI runs on it — i.e. **this PR is not in `Y-26`'s gap** |
 >
 > ⚠️ **AND IT WILL BE `cancelled`, NOT GREEN.** Per §1, a `pull_request` run at this
 > pin merges the head with the current `main`, so **this records PR's own
@@ -731,7 +731,7 @@
 > `frontend/data/hindcast/**` · `frontend/data/forecast/**` · `tests/golden/**` ·
 > `docs/codebase-site/data/mechanism-matrix.js` ·
 > `docs/codebase-site/data/mechanism-matrix/**` · `CLAUDE.md` ·
-> `.github/workflows/ci.yml` · `docs/handoffs/audit-program-director-board-2026-08.md` ·
+> `.github/workflows/ci.yml` · `docs/records/governance/audit-program-director-board-2026-08.md` ·
 > `docs/model-audit-release-plan-2026-08.md` · `docs/FINDING-*.md`
 >
 > The file's own comment states the trap the charter names, verbatim: *"a workflow
@@ -753,7 +753,7 @@
 > | `.github/workflows/*.yml` other than `ci.yml` | the Pages deploy, the file-integrity guard | — |
 >
 > 🟢 **This lane's own PR is NOT in the gap**: it changes only
-> `docs/handoffs/audit-program-director-board-2026-08.md`, which **is** enrolled, so
+> `docs/records/governance/audit-program-director-board-2026-08.md`, which **is** enrolled, so
 > CI runs on it. **Y-26 is recorded as chartered and is left entirely to its lane.**
 >
 > ---
@@ -1042,7 +1042,7 @@
 > `src/market_sim/results/`, …). The two v38 flagged as *assertions in the present
 > tense* are **both still false at this pin**: `src/market_sim/config/scenarios.py`
 > still reads **"THE LIVE PIN IS ``e5ecd4105ada3e58``"** (verified by reading the file
-> here), and `docs/handoffs/scenario-desk-ledger-2026-09.md` still carries **4** hits.
+> here), and `docs/records/misc/scenario-desk-ledger-2026-09.md` still carries **4** hits.
 >
 > 🔴 **The capx route did not launch, for a second consecutive sitting — confirmed on
 > two independent instruments, not inferred from one.** The API branch list at this
@@ -1209,7 +1209,7 @@
 > | **capx** | `src/market_sim/config/scenarios.py` asserts in the present tense *"THE LIVE PIN IS ``e5ecd4105ada3e58``"* — **still false at this pin** | 🔴 open |
 > | **CAISO desk** | 🆕 **one-file `ruff format`** — `scripts/gen_caiso257_attestation.py`, from `48bcd0ec` / #5162 | 🔴 open at the pin — 🟢 **DISCHARGED in the coda** |
 > | **MISO desk** | six-file `ruff format` | 🟢 **DISCHARGED** by `110e9d99` / #5156 at 16:02:18Z |
-> | **Scenario desk** | `docs/handoffs/scenario-desk-ledger-2026-09.md` instructs a lane to assert the forecast default is `e5ecd4105ada3e58` — false by construction | 🔴 open (**4** hits) |
+> | **Scenario desk** | `docs/records/misc/scenario-desk-ledger-2026-09.md` instructs a lane to assert the forecast default is `e5ecd4105ada3e58` — false by construction | 🔴 open (**4** hits) |
 >
 > ### 🟠 THE TWO STANDING ITEMS NOBODY OWNS — both re-measured, both unmoved
 >
@@ -1521,7 +1521,7 @@
 >   pin. (The other `src/` hits, in `results/cache.py`, are **dated ledger lines**
 >   describing historical moves and are correct as records.) 3 files under `src/` and
 >   30 under `docs/` carry the literal in total.
-> - **`docs/handoffs/scenario-desk-ledger-2026-09.md`** instructs a future lane to
+> - **`docs/records/misc/scenario-desk-ledger-2026-09.md`** instructs a future lane to
 >   *"assert the six keeper backcast cache keys and the forecast default
 >   `e5ecd4105ada3e58` are byte-identical (a case override never touches a key; say so
 >   with the measurement)"* — an instruction that is now **false by construction**: any
@@ -1767,7 +1767,7 @@
 > | **capx** | **D74 collection fix** — `tests/unit/model/test_d74_no_default_cap_convention.py`, **2 ERRORs**, `PublishedBarUnavailable: no published avoidable-cost-rate partition for PJM: run scripts/data/curate_capacity_market_avoidable_cost_rate.py` | 🔴 open |
 > | **capx** | 🆕 `src/market_sim/config/scenarios.py:139` asserts in the present tense *"THE LIVE PIN IS ``e5ecd4105ada3e58``"* — false at this pin | 🔴 open |
 > | **MISO desk** | **six-file `ruff format`** — the **third** drift in nine hours, two of the six being files #5123 had already fixed | 🔴 open |
-> | **Scenario desk** | 🆕 `docs/handoffs/scenario-desk-ledger-2026-09.md` instructs a lane to assert the forecast default is `e5ecd4105ada3e58` — now false by construction | 🔴 open |
+> | **Scenario desk** | 🆕 `docs/records/misc/scenario-desk-ledger-2026-09.md` instructs a lane to assert the forecast default is `e5ecd4105ada3e58` — now false by construction | 🔴 open |
 >
 > ### 🟠 TWO STANDING ITEMS OTHER LANES FLAGGED AND NOBODY OWNS
 >
@@ -3666,8 +3666,8 @@
 > | **NEISO** | 2020 | **NOT-YET** | lone FAIL C3a **+13.7 %** |
 >
 > Sources: `docs/calibration-log/ercot.md` *"ercot-249 / ercot-250"* +
-> `docs/FINDING-ercot249-250-2022-touchpoint-2026-09-05.md` (#4868);
-> `results/calibration/ASSESSMENT-neiso-pjm-validation-touchpoints-2026-09-05.md`
+> `docs/records/ercot/FINDING-ercot249-250-2022-touchpoint-2026-09-05.md` (#4868);
+> `docs/records/neiso/ASSESSMENT-neiso-pjm-validation-touchpoints-2026-09-05.md`
 > §2–§3 (#4852, #4884).
 >
 > 🔵 **THE FACT, STATED WITHOUT A VERDICT** (it is the holdout section's, not this
@@ -4083,7 +4083,7 @@
 > **Other desks' acts — recorded as THEIR records, with citations, NOT adjudicated here:**
 >
 > - **NEISO validation ladder on `neiso-99`** (#4839 `1af14539`, #4852 `5b5af5ab`;
->   `results/calibration/ASSESSMENT-neiso-pjm-validation-touchpoints-2026-09-05.md`,
+>   `docs/records/neiso/ASSESSMENT-neiso-pjm-validation-touchpoints-2026-09-05.md`,
 >   **verified present**). **2022 CALIBRATED · 2021 CALIBRATED · 2020 NOT-YET on a
 >   lone C3a +13.7 %** ($27.81 model vs $23.39 actual RT). **PJM 2020 not
 >   data-ready, three blockers.** **NEISO holds `complete`, so the validation spend
@@ -4092,7 +4092,7 @@
 >   **control bundle `neiso_headctrl_k99` left unregistered — now Y-13's prune under
 >   R-AV.**
 > - **2022 holdout data completeness** (#4850 `3215158c`;
->   `docs/handoffs/holdout-2022-completeness-ercot-nyiso-2026-09-05.md` §1a,
+>   `docs/records/governance/holdout-2022-completeness-ercot-nyiso-2026-09-05.md` §1a,
 >   **verified present**). A **NYISO 2022 validation solve launched under the D56-R
 >   `complete` marker; the withdrawal landed on main mid-solve; the lane
 >   un-registered at merge**, recorded the numbers **once** as diagnostic, and wrote
@@ -4322,7 +4322,7 @@
 > ### **R-AP** — card J, the flip. Owner: *"Give me a prompt in code block"*
 >
 > **EXECUTED AS Y-9, AND IT RETURNED ROUTE 2 — the flip was NOT applied.**
-> `docs/handoffs/FINDING-y9-branch-protection-2026-09-05.md`, merged **#4822**,
+> `docs/records/governance/FINDING-y9-branch-protection-2026-09-05.md`, merged **#4822**,
 > 21:39:22Z. Read first-hand here:
 >
 > - **Route 1 is closed by ENVIRONMENT CLASS, not by token scope.** The `GET .../branches/main/protection`
@@ -4392,7 +4392,7 @@
 >
 > ⚠️ **A records defect found by this lane's own label sweep, reported not fixed:
 > the executed amendment does not carry its own ruling label.** `R-AQ` returns
-> **exactly one file** across `docs/` — **`docs/handoffs/capx-director-ledger-2026-08.md`**,
+> **exactly one file** across `docs/` — **`docs/records/forecast/capx-director-ledger-2026-08.md`**,
 > the *capx desk's* ledger. Neither `rule-history.md` §9 nor `CLAUDE.md` mentions
 > `R-AQ`. The label lives only where the ruling was *cited*, not where it was
 > *executed*. Harmless today; it means a future `grep R-AQ` will not find the
@@ -4451,7 +4451,7 @@
 >
 > **ADOPTED. The builder fingerprint will hash the AST, not the bytes.** Y-12 was
 > issued alongside this lane to implement it. Basis, from
-> `docs/handoffs/FINDING-y10-bench-stamp-instrument-2026-09-05.md` §3, read here:
+> `docs/records/governance/FINDING-y10-bench-stamp-instrument-2026-09-05.md` §3, read here:
 >
 > `bench_stamp.BUILDER_SOURCES` hashes the **raw bytes** of four whole files, so any
 > byte moves the fingerprint and marks **all 20** committed parts STALE. **Three
@@ -4820,8 +4820,8 @@
 >
 > | label | files at premise | where |
 > |---|--:|---|
-> | **R-AP** | **1** | `docs/handoffs/FINDING-y9-branch-protection-2026-09-05.md` — Y-9 citing its own card |
-> | **R-AQ** | **1** | `docs/handoffs/capx-director-ledger-2026-08.md` — ⚠️ **the capx desk, NOT the executed amendment** (see R-AQ above) |
+> | **R-AP** | **1** | `docs/records/governance/FINDING-y9-branch-protection-2026-09-05.md` — Y-9 citing its own card |
+> | **R-AQ** | **1** | `docs/records/forecast/capx-director-ledger-2026-08.md` — ⚠️ **the capx desk, NOT the executed amendment** (see R-AQ above) |
 > | **R-AR** | **0** | this lane mints it |
 > | **R-AS** | **0** | this lane mints it — Y-10's finding says *"Proposal A"* and never the label |
 > | **R-AT** | **0** | this lane mints it |
@@ -4870,7 +4870,7 @@
 > keeper shard, every `status/<ISO>.js`, `calibration-complete.json`,
 > `holdout-freeze.json`, `program-status.json`, every matrix shard, every workflow,
 > every bundle / sidecar / registry file, every golden manifest,
-> `docs/handoffs/ffr-owner-sitting-2026-08-02.md`. **No solve, no score, no
+> `docs/records/forecast/ffr-owner-sitting-2026-08-02.md`. **No solve, no score, no
 > registration, no workflow dispatch.** ⚠️ **Expect on this PR:** overall `failure`
 > on the two chronic non-set jobs, **`Ruff lint + format` red** on
 > `gen_caiso252_attestation.py` and `gen_miso220_attestation.py`, and **`Fast test
@@ -4902,7 +4902,7 @@
 >
 > | form | deletions reported |
 > |---|---|
-> | `git diff --name-status -M 9e8de3dc fe197d6e` (**the guard**) | 🔴 **3** — `scripts/probes/nyiso195_screen_gates.py` (**547 lines**, the one that fired), `docs/FINDING-nyiso195-…md`, `results/calibration/_nyiso195_screen_gates.json` — **all three added by #4842, none touched by this branch** |
+> | `git diff --name-status -M 9e8de3dc fe197d6e` (**the guard**) | 🔴 **3** — `scripts/probes/nyiso195_screen_gates.py` (**547 lines**, the one that fired), `docs/FINDING-nyiso195-…md`, `results/phase0/nyiso/_nyiso195_screen_gates.json` — **all three added by #4842, none touched by this branch** |
 > | `git diff --name-status -M 9e8de3dc...fe197d6e` (**merge-base**) | 🟢 **0** — exactly the three `M` rows of this lane's diff |
 >
 > **The one-line repair** is the three-dot form, or `BASE_SHA=$(git merge-base
@@ -5098,7 +5098,7 @@
 >
 > | leg | verdict | evidence, this lane's own calls |
 > |---|---|---|
-> | **1 · PERF-B byte-green / golden-tier proof** | 🟢 **SATISFIED on R-AJ's stated condition** | `golden-data-tier.yml` run **#11**, id **`33983249186`**, `workflow_dispatch`, ref `main`, head **`a0014864`**, **`status: completed`, `conclusion: success`**, 18:10:58Z → **18:23:13Z**. Plus the s3 byte gate **PASS** — `regression_gate.py --mode byte` (`atol=rtol=0`), `perfb-s3-before` (merge-base `b1964e7`, separate worktree) vs `perfb-s3-after` (`ca4795f`): ERCOT 9 files / 34 numeric cols, ERCOT__carveout-2023 5 / 22, NEISO 9 / 32, **all PASS**, gross reshuffle **0.000 %** of total gen (`docs/FINDING-perfb-s3-adaptive-pass-2026-09.md` §4) |
+> | **1 · PERF-B byte-green / golden-tier proof** | 🟢 **SATISFIED on R-AJ's stated condition** | `golden-data-tier.yml` run **#11**, id **`33983249186`**, `workflow_dispatch`, ref `main`, head **`a0014864`**, **`status: completed`, `conclusion: success`**, 18:10:58Z → **18:23:13Z**. Plus the s3 byte gate **PASS** — `regression_gate.py --mode byte` (`atol=rtol=0`), `perfb-s3-before` (merge-base `b1964e7`, separate worktree) vs `perfb-s3-after` (`ca4795f`): ERCOT 9 files / 34 numeric cols, ERCOT__carveout-2023 5 / 22, NEISO 9 / 32, **all PASS**, gross reshuffle **0.000 %** of total gen (`docs/records/governance/FINDING-perfb-s3-adaptive-pass-2026-09.md` §4) |
 > | **2 · one completed fast-tier-green `ci.yml` run** | 🟢 **SATISFIED TWICE** | Run **2456** (`33979949551`, head `dd555499`) and run **2463** (`33984897199`, head `77a6dafa`), each **six-of-six `success`**, exactly the two chronic non-set jobs red. Read **per job**, never off the run-level `conclusion`, which is `failure` on both |
 > | **3 · a keeper freeze** | 🟠 **AS v29 RECORDS IT — and it is STILL IN FORCE**, because R-AN lifts it *at the declaration* and there is no declaration | NEISO and PJM keeper-unmoved (`4b7a515e` changed only their `site_retention_note`); **ERCOT's `keeper` field moved 19:02:03Z** to `2026-09-05-ercot248-two-config-keeper`, zero-solve, owner-directed. **Unadjudicated, exactly as v29 left it** |
 > | **4 · branch-protection flip** | 🔴 **NOT LIVE — readings 4 and 5 above** | The one leg that blocks, and the only one |
@@ -5238,7 +5238,7 @@
 > **DECLARED** block with a dated amendment beneath the Gates section's G2 line,
 > (b) a dated **"LIFTED at G2 per R-AN"** amendment on queue item 14, (c) a dated
 > lift paragraph in **`frontend/data/backcast/keepers/README.md`**, (d)
-> **Addendum AW** in `docs/handoffs/ffr-owner-sitting-2026-08-02.md` notifying the
+> **Addendum AW** in `docs/records/forecast/ffr-owner-sitting-2026-08-02.md` notifying the
 > FFR desk that Q.2's trigger had fired, and (e) a plan §2 amendment plus a §8
 > ledger entry recording all of it. **All five were reverted before any push**
 > (`git checkout origin/main --` over all four files; `git status --porcelain`
@@ -5277,7 +5277,7 @@
 > canonical records** — v29 wrote those labels into this board and this plan, and
 > this lane **appends to the same two files and adds no third document**.
 > `R-AJ`'s **3** is the one exception and it is **not a records lane's**: the
-> third file is **`docs/handoffs/capx-director-ledger-2026-08.md`** — the capx
+> third file is **`docs/records/forecast/capx-director-ledger-2026-08.md`** — the capx
 > desk read v28b's block and carried R-AH…R-AK into its own r#38 at `f533d6f6`,
 > **19:46:16Z**, adopting R-AK there. **v28b's "R-AJ → 2 files" was true at its
 > close and is superseded by propagation** — the record working as designed.
@@ -5308,7 +5308,7 @@
 > was written, after the withdrawn drafts. **Closing diff confined to TWO
 > files** — this board and the plan — **insertions only, zero deletions**.
 > **Verified untouched:** every keeper shard, `frontend/data/backcast/keepers/README.md`,
-> `docs/handoffs/ffr-owner-sitting-2026-08-02.md`, every `status/<ISO>.js`,
+> `docs/records/forecast/ffr-owner-sitting-2026-08-02.md`, every `status/<ISO>.js`,
 > `calibration-complete.json`, `holdout-freeze.json`, `program-status.json`, every
 > matrix shard, every workflow, every bundle / sidecar / registry file, every
 > golden manifest. **No solve, no score, no registration, no workflow dispatch.**
@@ -6300,7 +6300,7 @@
 > v27 recorded PERF-B s3 as **NOT LAUNCHED** with a Z-3 expiry. **Z-3's fifth
 > inversion**: it launched, ran and finished. **C-2 / C-1a / C-1b merged in
 > #4745, #4752, #4753, #4755.** The finding
-> `docs/FINDING-perfb-s3-adaptive-pass-2026-09.md` is **FILLED — 278 lines**,
+> `docs/records/governance/FINDING-perfb-s3-adaptive-pass-2026-09.md` is **FILLED — 278 lines**,
 > not a stub. Headline as the dispatch records it, confirmed from the document:
 > **full byte gate PASS at `atol=rtol=0`** on ERCOT forward 2023-25,
 > `ERCOT__carveout-2023` and NEISO against merge-base controls; **ERCOT forward
@@ -6861,7 +6861,7 @@
 > and the three paths enrolled are exactly this lane's shape:
 >
 > ```
-> - "docs/handoffs/audit-program-director-board-2026-08.md"
+> - "docs/records/governance/audit-program-director-board-2026-08.md"
 > - "docs/model-audit-release-plan-2026-08.md"
 > - "docs/FINDING-*.md"
 > ```
@@ -7328,7 +7328,7 @@
 > five merged PRs**, so it is a standing state, not a single observation.
 > `pyproject.toml` line 67 ff. carries the `extend-exclude` entry with its R-AC
 > citation. **board X-1 → RETIRED BY EXECUTION**, as dispatched. Cite
-> `docs/FINDING-lint-hygiene-2026-09.md`.
+> `docs/records/misc/FINDING-lint-hygiene-2026-09.md`.
 >
 > ### 🟢 board Z-1 — THE PROMOTION-DUTY CLASS, RECORDED AS DISPATCHED (AND WIDENED BY ONE)
 >
@@ -7648,7 +7648,7 @@
 > **And this lane's independent measurement agrees with the lane's own scoping,
 > which is worth recording because it is a non-obvious sequencing fact:**
 > `ruff check` is **5 errors, all `E731`×3 / `E402`×2 / `E401`×1 in
-> `docs/handoffs/d37/` and `d45/` probe scripts** — unchanged from v23 — so
+> `docs/records/forecast/d37/` and `d45/` probe scripts** — unchanged from v23 — so
 > **R-AC clears lint entirely**. But `ruff format --check` is **11 files at this
 > pin (v23 measured 10)**, of which only 4 are under `docs/handoffs/`. **Clearing
 > lint UNMASKS the format step, which is currently `skipped` behind it, leaving
@@ -7827,7 +7827,7 @@
 > one concluded `failure`** (runs 2322–2350), against **13 merges in-window**. v22's measurement is
 > **confirmed unchanged**. R-X's lint rider landed, but **blocker (a) has re-reddened
 > from a new direction**: `ruff check` is red on **5 errors, all in capx probe scripts
-> under `docs/handoffs/d37/` and `d45/`**, and **10 files** would fail the format step
+> under `docs/records/forecast/d37/` and `d45/`**, and **10 files** would fail the format step
 > behind it. The flip is best taken when that job is green, which is now a
 > *per-run-probe-script hygiene* question, not a source-tree one.
 >
@@ -7943,7 +7943,7 @@
 > RE-CONFIRMED on newer evidence** (run 2298, 2026-09-02, replacing run 2278).
 >
 > **R-U'S OWN FINDING NEVER CLAIMED OTHERWISE, AND SAYS SO IN TERMS.**
-> `docs/FINDING-ci-red-repair-2026-09.md` §6 reads: ***"7 of 7 required checks
+> `docs/records/misc/FINDING-ci-red-repair-2026-09.md` §6 reads: ***"7 of 7 required checks
 > green. The run is not 'fully green' and this finding does not claim it is"***,
 > and its table marks `Fast test tier` **🔴 failure · ❌ deferred (memo §3)**.
 > **The error is the dispatch's compression of "7 of 7 *required* checks green"
@@ -8619,7 +8619,7 @@ already answered them — and both verdicts SURVIVED.** Read from the landed
 artifacts, not from a listing:
 
 - **Q1 = REAL, replicated by a DIFFERENT CONSTRUCTION** (pjm-165,
-  `docs/FINDING-c3c-q1-pjm-phantom-audit-2026-08-31.md`). pjm-164 overlapped the
+  `docs/records/pjm/FINDING-c3c-q1-pjm-phantom-audit-2026-08-31.md`). pjm-164 overlapped the
   model's C3c **tail hours** against the actual RT LMP tail; this lane overlapped
   the model's **positive-reserve-dual hours** against PJM's **published
   reserve-market record**. Four legs pjm-164 did not carry: the requirement is an
@@ -8630,7 +8630,7 @@ artifacts, not from a listing:
   **2.7–7×**. **No disagreement on the verdict.** F-2 stands, strengthened.
 - **Q2 = CONFIRMED, and the replication is the more interesting one because it
   first got the OPPOSITE answer and RETRACTED it** (nyiso-165,
-  `docs/FINDING-c3c-q2-nyiso-nyca-shortage-2026-08-31.md`). Running blind, it
+  `docs/records/nyiso/FINDING-c3c-q2-nyiso-nyca-shortage-2026-08-31.md`). Running blind, it
   measured *"reality WAS NYCA-short"*, found nyiso-164's record afterwards,
   re-derived from the raw CSVs and **reproduced nyiso-164's numbers exactly** —
   NYCA-tier tail-hour mean **$306.74 / $254.62 / $393.31**, ceiling test **0 of
@@ -8780,7 +8780,7 @@ leg 4** (M-7).
 
 ### M-3 · 🟢 R-W **DISCHARGED IN FULL** — AND THE BOARD'S CI-COUNT LINEAGE IS CORRECTED HERE
 
-`docs/FINDING-fast-tier-repair-2026-09.md`, PR #4611, merged `6d52fdc5`.
+`docs/records/misc/FINDING-fast-tier-repair-2026-09.md`, PR #4611, merged `6d52fdc5`.
 **11 of 12 CI-true main-content failures repaired by root cause; zero
 regressions across 10 changed files; 7,704 → 7,717 passing.** The 12th — the
 ERCOT FR-22 fork — was **routed with its remedies enumerated, not patched on
@@ -8815,7 +8815,7 @@ with the runner to the digit.
 
 ### M-4 · 🟢 R-X **DISCHARGED** — GAP FILED, PARITY RED CLEARED, AND LEG 2 HANDED TO JOB 0
 
-`docs/FINDING-fr22-gap-leg2-2026-09.md`, PR #4635 (`2ad85f2c`). **Dispatched AND
+`docs/records/misc/FINDING-fr22-gap-leg2-2026-09.md`, PR #4635 (`2ad85f2c`). **Dispatched AND
 launched inside this lane's session** — the label returned zero artifacts at
 `c73f78f5` and a merged PR at `49bfbc49`.
 
@@ -8845,7 +8845,7 @@ converged on the same three-row object from opposite directions.**
 
 ### M-5 · 🟢 R-Y **DISCHARGED** — THE GOLDEN TIER IS GREEN, AND THE CRON IS GONE
 
-`docs/FINDING-golden-tier-repair-2026-09.md`, PR #4644 (`49bfbc49`). Also
+`docs/records/misc/FINDING-golden-tier-repair-2026-09.md`, PR #4644 (`49bfbc49`). Also
 **launched and merged inside this session**.
 
 The 3-for-3 schedule reds were **three different defects, each merged between
@@ -8917,7 +8917,7 @@ R-X landed the lint rider (`b2ce045a`, `ruff format` on R-W §7.2's three files)
 **and the job is red anyway** — from a source the board has not tracked before:
 
 - **`ruff check`: 5 errors, ALL in per-run capx probe scripts** —
-  `docs/handoffs/d37/grade-2026-09-02.py`, `d37/predecl-screen-grain-2026-09-02.py`,
+  `docs/records/forecast/d37/grade-2026-09-02.py`, `d37/predecl-screen-grain-2026-09-02.py`,
   `d45/positions-from-ledgers-2026-09-03.py` (×2), `d45/published-positions-2026-09-03.py`
   (`E731` ×3, `E402`, `E401`).
 - **`ruff format --check`: 10 files** would reformat — the format step is *skipped
@@ -9214,7 +9214,7 @@ independently of the gate:
 
 **Capture-A (#4601, commit `980508344`) verifies completely against its
 dispatch**: MISO captured against the run the dispatch named, manifest MISO entry
-only, finding doc `docs/FINDING-stage0-capture-miso-2026-09.md` present, **oracle
+only, finding doc `docs/records/miso/FINDING-stage0-capture-miso-2026-09.md` present, **oracle
 result read from the finding — PASS, 271 flags identical, 0 drift**; no keeper
 shard, marker, matrix shard, registry, freeze or `program-status.json` edit.
 
@@ -9256,7 +9256,7 @@ read CURRENT, so the `_normalize_campd` byte gate covers **both grains**
 ⚠️ **THE DISPATCH'S CHARTER QUESTION HAS A DIFFERENT ANSWER THAN IT PRESUMES.**
 It asked which of the four charter items *remain unadjudicated*, naming three
 candidates (ci.yml checkout residue, basis LUT, warm-start flip signature).
-Derived from `docs/handoffs/perf-recheck-2026-08.md` **§5.1**, whose own heading
+Derived from `docs/records/governance/perf-recheck-2026-08.md` **§5.1**, whose own heading
 reads ***"The charter's four items, re-verified at HEAD — all four are
 CLOSED"***: **ZERO remain unadjudicated.** Two were re-verified here against
 source rather than against the doc:
@@ -9699,7 +9699,7 @@ an owner action; only leg 3 is closed, and only within its declared scope.
 
 **On declaration — not before — the PM session notifies the FFR desk**, whose
 **Q.2 supersession battery** is pinned to commission at G2
-(`docs/handoffs/ffr-owner-sitting-2026-08-02.md` AS.6; plan §2). **It still does
+(`docs/records/forecast/ffr-owner-sitting-2026-08-02.md` AS.6; plan §2). **It still does
 not fire**, and K-11 is why. Recorded here because the duty has now survived
 several board versions without being actioned, and a leg-2 miscount (K-1) would
 have fired it early.
@@ -10085,7 +10085,7 @@ matrix guard. **A dispatch repeating a figure does not re-establish it.**
 
 ### J-13 · 🟢 RECORDS INTEGRITY — WHAT THIS LANE TOUCHED, AND WHAT IT VERIFIED IT DID NOT
 
-**Files edited, and no others:** `docs/handoffs/audit-program-director-board-2026-08.md`,
+**Files edited, and no others:** `docs/records/governance/audit-program-director-board-2026-08.md`,
 `docs/model-audit-release-plan-2026-08.md` (§8), and
 `frontend/data/backcast/keepers/README.md` (**additive only** — one dated block
 recording R-T's routing duty and R-V's freeze; **the shard-shape docs, the
@@ -10862,7 +10862,7 @@ lane at the pin, not read from the finding:
   `reg + spin` into `regspin`). The cascade is monotone in **100.0000 %** of rows
   in every year and both markets — the identical signature to NYISO's.
 - Re-derived from the committed record
-  `results/calibration/_miso171_reserve_product_decomposition.json`: **12 summed
+  `results/phase0/miso/_miso171_reserve_product_decomposition.json`: **12 summed
   cells, `total/reg` from 1.22× to 2.49×**, concentrating in the tail. The
   finding's two quoted cells reproduce **exactly** (`da_foreseen/rt_mcp`
   $181.40 vs $76.88 = **2.36×**; `scarce47/rt_mcp` $97.62 vs $46.44 = **2.10×**).
@@ -11036,7 +11036,7 @@ supersession v16 recorded was one-sitting and is spent).
 
 ### F-1 · 🟢 R-D EXECUTED — THE C-1 WIND QUESTION IS RESTED AT THIS GRAIN, WITH A MAP, AND NOTHING IS ARMED OR REJECTED
 
-Owner ruling R-D, on `docs/FINDING-c1-joint-wind-ab-2026-08-31.md` (R-B's
+Owner ruling R-D, on `docs/records/misc/FINDING-c1-joint-wind-ab-2026-08-31.md` (R-B's
 chartered A/B; both kill-gates PASS; **`NON_COMPLEMENTARY`**). Executed per the
 **caiso-222 §1(c) option-3 pattern** — the residual is designated **ATTRIBUTED
 AND CLOSED at this representation grain** with a decision map attached rather
@@ -11066,7 +11066,7 @@ exhaustive:** a NEW MEASURED DRIVER (rule 13 `[R-MEASURED]`), or an
 OWNER-CHARTERED REPRESENTATION-GRAIN CHANGE (the caiso-223 class — a program, not
 a lever). Neither is reachable by re-running a lever at hub grain.
 
-**Records:** `docs/DECISION-MAP-ercot-wind-entry-2026-08-31.md` (new) ·
+**Records:** `docs/records/ercot/DECISION-MAP-ercot-wind-entry-2026-08-31.md` (new) ·
 `docs/calibration-log/ercot.md` · `docs/calibration-log/governance.md` · R-D
 ruling stamps appended to the **evidence strings only** of the two joint-wind
 ERCOT cells. **⚠️ ONE DISPATCH CORRECTION:** the dispatch said "cells stay O".
@@ -11086,7 +11086,7 @@ dispatched separately. **The dispatch-vs-launch check on it does not read
 "launched" — it reads DONE:**
 
 - **Q1 = REAL** — pjm-164, **#4456**,
-  `docs/FINDING-pjm164-c3c-phantom-audit-2026-09-01.md`, zero solve. PJM's
+  `docs/records/pjm/FINDING-pjm164-c3c-phantom-audit-2026-09-01.md`, zero solve. PJM's
   reserve-dual channel is **not** the ercot-214 phantom: 2025 model-tail overlap
   with reality's tail **14 of 32** hours (0.44 of the model tail, 0.24 of the
   actual), **13** of them with a positive reserve dual, against published
@@ -11094,7 +11094,7 @@ dispatched separately. **The dispatch-vs-launch check on it does not read
   involvement, so that mis-timing is not the reserve channel's. Three honest
   caveats, **none determination-level**.
 - **Q2 = CONFIRM** — nyiso-164, **#4459**,
-  `docs/FINDING-nyiso164-c3c-product-level-2026-09-01.md`, zero solve. The
+  `docs/records/nyiso/FINDING-nyiso164-c3c-product-level-2026-09-01.md`, zero solve. The
   pre-registered kill gate fires on **both** clauses (NYCA-tier reserve price
   never exceeds the concurrent LMP in **65/65** tail hours; model carries
   **5.08/3.92/2.99 GW** of reserve-carrying headroom against a 2,620 MW NYCA
@@ -11140,7 +11140,7 @@ access-blocked caveat class.
 
 ### F-4 · 🟢 R-G EXECUTED — nyiso-160/leg2 CLOSED BY ARCHIVE, AND THE PROMOTE-OR-ARCHIVE ITEM RETIRES FOR GOOD
 
-On `docs/FINDING-nyiso-leg2-reverify-2026-08-31.md` (nyiso-162, #4431, R-C's
+On `docs/records/nyiso/FINDING-nyiso-leg2-reverify-2026-08-31.md` (nyiso-162, #4431, R-C's
 zero-solve re-verification), the owner ruled **archive**. The re-verification
 dissolved its own question: **there is NO candidate** — leg2 produced a stop with
 cause at access, not an object (no prereg, no mechanism, no A/B pair, no control)
@@ -11315,13 +11315,13 @@ solve, and assume it needs the swapfile.**
 v15's owner-queue item 6 — *"the T1-H capacity-entry defect (two defects, not
 one) still has no charter and no home"*, carried since v13 item 11 across
 **three boards** — is **retired**. The charter
-`docs/PRECOMMIT-t1h-capacity-entry-2026-08-30.md` was written and then run to
+`docs/records/misc/PRECOMMIT-t1h-capacity-entry-2026-08-30.md` was written and then run to
 completion in the same window:
 
-- **Phase 0** (#4369, `docs/FINDING-t1h-capacity-entry-phase0-2026-08-30.md`) —
+- **Phase 0** (#4369, `docs/records/misc/FINDING-t1h-capacity-entry-phase0-2026-08-30.md`) —
   zero-solve characterization from committed T1-H artifacts.
 - **Phase 1 Leg A** (#4419 + #4426,
-  `docs/FINDING-t1h-capentry-phase1-ab-2026-08-30.md`) — the storage-entry
+  `docs/records/misc/FINDING-t1h-capentry-phase1-ab-2026-08-30.md`) — the storage-entry
   **D-2 + D-3 joint repair A/B'd on one HEAD**. Both charter kill-gates PASS:
   **K1 had nothing to fire on** (every addition-metric band identical between
   arms to the digit) and **K2 (inert) does not fire** (the storage-mix rows
@@ -11459,8 +11459,8 @@ was built **and exercised** on a real year:
   the mechanism, not of its wiring — carried as the ERCOT keeper's **named
   permanent limitation** (ercot-188/E2, unexpired). **Keeper untouched.**
 
-Records: `docs/FINDING-o7-attribution-harness-2026-08-30.md`;
-`results/calibration/o7_attribution_harness_2023.json`; harness
+Records: `docs/records/misc/FINDING-o7-attribution-harness-2026-08-30.md`;
+`results/phase0/misc/o7_attribution_harness_2023.json`; harness
 `scripts/probes/o7_attribution_harness.py` (+17 toy tests).
 
 ### F-7 · 🟠 NYISO PROMOTED (157 → 159) — THE ONE KEEPER MOTION, AND IT IMPROVED THE SCORECARD
@@ -12154,7 +12154,7 @@ R-P's flip and the reason the flip still cannot use R-P's list unamended.**
      stated condition.** `golden-data-tier.yml` run **#11** (`33983249186`),
      `workflow_dispatch` on `main` head `a0014864`, **`conclusion: success`**,
      18:10:58Z → **18:23:13Z**; s3 byte gate **PASS** on all three golden bundles
-     at `atol=rtol=0` (`docs/FINDING-perfb-s3-adaptive-pass-2026-09.md` §4).
+     at `atol=rtol=0` (`docs/records/governance/FINDING-perfb-s3-adaptive-pass-2026-09.md` §4).
      ⚠️ **Stage-0 currency is X-2's subject, not this leg's, and it is now
      2 of 7** — both ERCOT entries went stale at 19:02:03Z.
   2. **One completed fast-tier-green `ci.yml` run** — 🟢 **SATISFIED TWICE**, read
@@ -12488,7 +12488,7 @@ re-score**: no scorer ran, no determination moved, and
 > **X-1. 🔴 TOP OF THE QUEUE — THE FLIP'S BLOCKER (a) HAS RE-REDDENED, AND IT IS
 > NOW A THREE-FILE CLEANUP.** `Ruff lint + format` is red on `main` again, but
 > **not from the source tree**: 5 `ruff check` errors, **all in per-run capx probe
-> scripts** under `docs/handoffs/d37/` and `docs/handoffs/d45/` (`E731` ×3,
+> scripts** under `docs/records/forecast/d37/` and `docs/records/forecast/d45/` (`E731` ×3,
 > `E402`, `E401`), with **10 files** failing the format step behind it (M-7).
 > R-X's rider fixed R-W §7.2's three files and the job stayed red for a reason
 > nobody had tracked. **Two decisions belong to the owner/director, neither of
@@ -12980,7 +12980,7 @@ below):
 
   | job | changed target file at close |
   |---|---|
-  | 1 · board v20 **FULL** refresh | `docs/handoffs/audit-program-director-board-2026-08.md` — headline block, snapshot, keeper table, markers, rollup, stage-0, both Gates tables, G2 legs, Watch, forecast board, queue, roster, checklist ✅ |
+  | 1 · board v20 **FULL** refresh | `docs/records/governance/audit-program-director-board-2026-08.md` — headline block, snapshot, keeper table, markers, rollup, stage-0, both Gates tables, G2 legs, Watch, forecast board, queue, roster, checklist ✅ |
   | 2 · record R-S…R-V in board + plan §8 + the README note | same file (J-1…J-4) + `docs/model-audit-release-plan-2026-08.md` §8 + `frontend/data/backcast/keepers/README.md` ✅ |
   | 3 · dispatch-vs-launch on all six | board, roster + J-11 ✅ |
   | 4 · workstream rollup re-estimate | board, Workstream rollup — **WS3 label changed, number deliberately HELD** ✅ (J-9) |

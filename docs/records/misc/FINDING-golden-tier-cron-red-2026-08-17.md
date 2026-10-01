@@ -4,7 +4,7 @@
 **Event:** `golden-data-tier.yml` run **31999181985** (schedule, 2026-08-17
 05:48 UTC, head `6cc332e`, main) — the workflow's FIRST scheduled firing —
 failed at step 5 "Provision data/clean". Pre-chartered as a watch item:
-`docs/handoffs/debug-sweep-2026-08.md` §A.7/§B.3 ("a red there is a NEW
+`docs/records/misc/debug-sweep-2026-08.md` §A.7/§B.3 ("a red there is a NEW
 finding, not the known OOM — triage per the DEBUG-A protocol and route").
 
 ## 0. Verdict, one paragraph
@@ -90,7 +90,7 @@ Checked per the triage duties, not assumed:
   (13 D), `storage-as-awards` (12 D), `iso-specific-transmission` (2 D) —
   **zero paths under `data/raw/lmp-data/`**. `lmp-data` non-golden FAILED
   its §4.8 evidence pass and stayed tracked whole
-  (`docs/FINDING-bloat-s2-evidence-passes-2026-08-17.md` §5) — the charter
+  (`docs/records/governance/FINDING-bloat-s2-evidence-passes-2026-08-17.md` §5) — the charter
   worked as designed for the very corpus the crash lives in.
 - **Workflow sparse/provision list vs untracked paths:** every `data/raw`
   path the sparse checkout references was verified still tracked at head

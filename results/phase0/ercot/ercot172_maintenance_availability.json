@@ -4,7 +4,7 @@
  "lp_solved": false,
  "year": 2024,
  "bundle": "results/calibration/ercot168_yearcurves_B",
- "precommit": "docs/PRECOMMIT-ercot172-maintenance-season-availability-2026-08-06.md",
+ "precommit": "docs/records/ercot/PRECOMMIT-ercot172-maintenance-season-availability-2026-08-06.md",
  "object": {
   "2827": {
    "ts_cst": "2024-04-28 19:00",

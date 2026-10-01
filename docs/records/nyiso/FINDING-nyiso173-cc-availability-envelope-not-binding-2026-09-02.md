@@ -116,7 +116,7 @@ coverage reads **8,760 h/year**, not the degraded 1,464; **(c)**
 
 ## 2. The pre-registered gates and their outcomes
 
-Registered in `results/calibration/PREREG-nyiso173-cc-availability-anatomy.md`
+Registered in `docs/records/nyiso/PREREG-nyiso173-cc-availability-anatomy.md`
 and committed **with the probe, before either was run** (`278ddf37`).
 
 | gate | PASS condition | outcome |
@@ -251,7 +251,7 @@ Plants carrying the violation-hour shortfall (2025, GWh): 55405 **1,196**,
 S1–S3 are **not** pre-registered gates. They were measured *because* P1a failed,
 and are reported in addition to the registered gates, never in place of them
 (the nyiso-171 A5b / nyiso-172 S7–S10 discipline).
-`results/calibration/_nyiso173b_overlay_delivery.json`.
+`results/phase0/nyiso/_nyiso173b_overlay_delivery.json`.
 
 **S1 — the overlay's routing delivers.** **2,880 of 2,928** CC rows land on a
 model fleet bin; **48 (1.64 %)** are dropped, all of them plant **2682**
@@ -447,12 +447,12 @@ around rather than solved away.
 
 ## 7. Evidence
 
-* `results/calibration/PREREG-nyiso173-cc-availability-anatomy.md` — the gates,
+* `docs/records/nyiso/PREREG-nyiso173-cc-availability-anatomy.md` — the gates,
   committed with the probe before either ran (`278ddf37`)
 * `scripts/probes/nyiso173_cc_availability_anatomy.py` +
-  `results/calibration/_nyiso173_cc_availability_anatomy.json` — P1–P4
+  `results/phase0/nyiso/_nyiso173_cc_availability_anatomy.json` — P1–P4
 * `scripts/probes/nyiso173b_overlay_delivery.py` +
-  `results/calibration/_nyiso173b_overlay_delivery.json` — S1–S3, the
+  `results/phase0/nyiso/_nyiso173b_overlay_delivery.json` — S1–S3, the
   overlay-delivery and envelope-utilisation addendum
 * keeper `results/calibration/nyiso159_lossarm_B/` —
   `run_config.json`, `legitimacy_diagnostics.json` (D-2),
@@ -468,7 +468,7 @@ around rather than solved away.
   `campd-partial-outages-NYISO.csv` (**0 rows**),
   `campd-unit-outages-layup-NYISO.csv` (1,012 CC rows),
   `data/raw/maxgen-events/` (`miso` only)
-* predecessors: `docs/FINDING-nyiso172-st-gas-response-deficit-2026-09-01.md`
+* predecessors: `docs/records/nyiso/FINDING-nyiso172-st-gas-response-deficit-2026-09-01.md`
   §3.4 §5 §6, `-nyiso171-chp-floor-portfolio-artifact-` §2.3–§2.5,
   `-nyiso170-merit-order-displacement-` §§2.1/3/4,
   `-nyiso168-supply-curve-slope-anatomy-` §4 §8–§9

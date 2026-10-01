@@ -343,7 +343,7 @@ one is core infra and one is another ISO's lane, so neither is a scenario-desk f
 | `frontend/data/hindcast/invariant-failures.json` | +22 keys under `declared_failures`; −16 stale `registration_ratchet_baseline` lines (the same pairs); +`scnfix1_note`. No existing declaration edited or deleted; no threshold, `curated_subsets` entry or narrative note altered. |
 | `scripts/collate_scenario_campaign.py` | system-scope delta on the common ISO set; new `order_isos`, `_coverage_note`, `_system_delta_rows`, `_iso_delta_rows`; `build_delta_table` rewritten around them; `COVERAGE_FULL`; markdown snapshot gains the two columns. |
 | `tests/scoring/test_collate_scenario_campaign_common_set.py` | **new**, 17 tests (§2.4). |
-| `docs/handoffs/FINDING-scn-fix1-2026-09-06.md` | this document. |
+| `docs/records/forecast/FINDING-scn-fix1-2026-09-06.md` | this document. |
 
 Two commits, in that order, each pushed and — for the two files ≥300 lines — verified by
 fetch-back against the remote blob (rule 27 `[R-PUSH]`): `scripts/collate_scenario_campaign.py`

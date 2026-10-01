@@ -3,7 +3,7 @@
 **Session:** xiso-3 (cross-ISO calibration, Arm A). **Date:** 2026-08-02.
 **LP spent: ZERO.** No solve, no scoring of new output, no registration, no bundle.
 **Probe:** `scripts/probes/_xiso3_forced_share_d4_census.py`
-**Transcript:** `results/calibration/PROBE-xiso3-forced-share-d4-census-2026-08-02.txt`
+**Transcript:** `results/phase0/governance/PROBE-xiso3-forced-share-d4-census-2026-08-02.txt`
 
 This is the first time rule 20 `[R-FORCED-BUDGET]`'s full conditional-pass logic has
 been censused **across all six keepers at once** on the committed
@@ -255,7 +255,7 @@ per-ISO headers already record these open gates.
 ## 8. Changes made this session
 
 * `scripts/probes/_xiso3_forced_share_d4_census.py` — the census probe (new).
-* `results/calibration/PROBE-xiso3-forced-share-d4-census-2026-08-02.txt` — the
+* `results/phase0/governance/PROBE-xiso3-forced-share-d4-census-2026-08-02.txt` — the
   frozen transcript (new).
 * This FINDING doc (new).
 * Mechanism matrix: new audit row `forced_share_d4_census` (cells per §0) +

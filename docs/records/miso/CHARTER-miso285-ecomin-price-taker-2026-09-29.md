@@ -1,7 +1,7 @@
 # CHARTER — MISO committed-CC EcoMin as price-taker while online (owner ruling, miso-285, 2026-09-29)
 
 **Ruling:** *"Charter EcoMin price-taker build"* on the miso-285 card. Evidence:
-`docs/FINDING-miso285-night-overshoot-phase0-2026-09-29.md`.
+`docs/records/miso/FINDING-miso285-night-overshoot-phase0-2026-09-29.md`.
 
 ## 1. The object and the market structure
 
@@ -52,7 +52,7 @@ Spend no shards.
 
 - PRECOMMIT with G-DRIFT against the keeper leg pin `8f765fef0ed79c89687b6bf686cb65f611a9fea4` (rule 29(b)).
 - Pin a full SHA. Run one shard per year 2019–2025 (rules 34(c), 36), using the miso-280 template
-  (`docs/PRECOMMIT-miso280-split-remap-2026-09-28.md` §7/§8).
+  (`docs/records/miso/PRECOMMIT-miso280-split-remap-2026-09-28.md` §7/§8).
 - **Pre-registered gates** (stated before solving; none selects a value):
   1. Night (h0–5) median model − ILLINOIS.HUB RT falls in ≥ 5 of 7 years.
   2. No C1 status flips PASS → FAIL (COAL_* and CC_REGULAR especially). Night coal falling below CAMPD is the

@@ -109,7 +109,7 @@ derivation or gate statistic.** No data byte written; the extract is read-only.
 
 * `results/calibration/PRECHECK-caiso193-wefor-residual-<date>.md` — the §1 clean
   re-pre-registration, committed before any solve.
-* Record: `results/calibration/_caiso193_wefor_coverage.json` — the G-COV
+* Record: `results/phase0/caiso/_caiso193_wefor_coverage.json` — the G-COV
   measurement and the G-DOF arithmetic.
 * Run bundles `caiso193_l2_control`, `caiso193_l2_wefor` (a lane-3 session sharing
   the control re-uses it, disclosed).

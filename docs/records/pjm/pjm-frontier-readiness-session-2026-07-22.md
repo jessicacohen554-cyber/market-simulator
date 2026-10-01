@@ -22,7 +22,7 @@ it entirely.
 
 ## 1. Item 1 — DAM-availability overlay (the two verbatim edits)
 
-Applied exactly as `docs/handoffs/pjm-dam-availability-wiring-2026-07.md`
+Applied exactly as `docs/records/pjm/pjm-dam-availability-wiring-2026-07.md`
 prescribes:
 
 * `src/market_sim/config/scenarios.py` — added `pjm_dam_availability: bool =

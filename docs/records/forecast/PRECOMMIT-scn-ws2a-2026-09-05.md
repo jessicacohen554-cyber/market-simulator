@@ -1,6 +1,6 @@
 # PRECOMMIT — SCN-WS2a: the endogenous federal CES target row, NEISO 2026 T0 (REF vs target row)
 
-**Lane:** SCN-WS2a (`docs/handoffs/forecast-scenario-readiness-plan-2026-09.md` §3 WS-2 items 1–2,
+**Lane:** SCN-WS2a (`docs/records/forecast/forecast-scenario-readiness-plan-2026-09.md` §3 WS-2 items 1–2,
 §7 "WS-2a"). **Branch:** `claude/scn-ws2a-federal-ces-qm512t` (harness-assigned; the desk stem was
 `claude/scn-ws2a-t9xb`). **Base:** `origin/main` `5cc1e7ce` (desk pin `d01ab8b0` is an ancestor).
 **Rule 29 `[R-SCREEN]`:** written and pushed BEFORE the only solves of this lane. Zero LP spent before

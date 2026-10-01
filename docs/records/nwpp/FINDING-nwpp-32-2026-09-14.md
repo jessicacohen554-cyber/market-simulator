@@ -3,7 +3,7 @@
 **Lane:** NWPP-32 (desk r#5 charter, 2026-09-14) · **Model:** Fable (`claude-fable-5-1`) ·
 **Base:** `d54cd9c571359b85cb1a8e1cd5cab68c080a6b0c` (= `origin/main` at session start) ·
 **Branch:** `claude/happy-newton-rdab8x` (harness-designated; the charter's stem could not be used —
-PRECOMMIT header) · **PRECOMMIT:** `docs/handoffs/PRECOMMIT-nwpp-32-2026-09-14.md` ·
+PRECOMMIT header) · **PRECOMMIT:** `docs/records/nwpp/PRECOMMIT-nwpp-32-2026-09-14.md` ·
 **DATA PROFILE:** `nwpp` · **Zero LP** (rule 32; no promotion question fires, rule 31).
 
 ## 0. REPORT FIRST
@@ -415,4 +415,4 @@ Zero LP; nothing is on ephemeral disk that a promotion would need.
 > only; `eia930_monthly` REFUSED** — the pool `NG: WAT` is a different population (−2.52 %, WAUW/PACW/
 > Priest Rapids BA assignment) and carries the G20 defective hours (+1,166 GWh = 14.1 % of Oct 2025).
 > Routed: eia930 NG:WAT defect repair; 930/923 population reconciliation; Swift 2 id. No solve.
-> FINDING: `docs/handoffs/FINDING-nwpp-32-2026-09-14.md`.
+> FINDING: `docs/records/nwpp/FINDING-nwpp-32-2026-09-14.md`.

@@ -554,7 +554,7 @@ session draws no conclusion from it.
 
 ## B.5 What I have corrected, and where
 
-`docs/handoffs/HANDOFF-miso261-2026-09-16.md` is written around the corrected object and
+`docs/records/miso/HANDOFF-miso261-2026-09-16.md` is written around the corrected object and
 opens with this correction so the successor cannot inherit the wrong one. The keeper's
 `calibration_attestation.json` names the corrected root cause. §3 above is left standing
 with this addendum attached rather than edited, so the record shows what I claimed and

@@ -1,6 +1,6 @@
 {
  "probe": "ercot245_commitment_state_phase0",
- "precommit": "docs/PRECOMMIT-ercot245-commitment-state-phase0-2026-08-30.md",
+ "precommit": "docs/records/ercot/PRECOMMIT-ercot245-commitment-state-phase0-2026-08-30.md",
  "bundle": "results/calibration/ercot234_eastex_identity",
  "scored_years": [
   2024,

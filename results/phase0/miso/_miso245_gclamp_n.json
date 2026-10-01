@@ -1,6 +1,6 @@
 {
  "probe": "miso-245 G-CLAMP-N \u2014 the reaching value must be the UNCLAMPED quantile",
- "addendum": "results/calibration/ADDENDUM-miso245-the-test-passed-with-low-power-and-one-more-leg-can-still-kill-it-2026-09-08.md \u00a70c",
+ "addendum": "docs/records/miso/ADDENDUM-miso245-the-test-passed-with-low-power-and-one-more-leg-can-still-kill-it-2026-09-08.md \u00a70c",
  "keeper": "2026-09-07-miso-243-spp-pairing",
  "zero_lp": true,
  "read_only": true,

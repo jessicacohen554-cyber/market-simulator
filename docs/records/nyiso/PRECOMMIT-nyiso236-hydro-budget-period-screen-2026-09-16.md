@@ -6,7 +6,7 @@
 `results/calibration/nyiso235_gasrepair_span`.
 **Committed and pushed BEFORE the shard is launched and before any screen number exists.**
 
-This document **adopts `results/calibration/PRECOMMIT-nyiso220-screen.md` in full** — that screen was
+This document **adopts `docs/records/nyiso/PRECOMMIT-nyiso220-screen.md` in full** — that screen was
 written, committed and pushed on 2026-09-08 and **never run**; the cell
 `hydro_budget_period_by_instrument` is still `U`. Nothing here loosens a threshold nyiso-220 wrote.
 What this addendum does is exactly three things: **re-base its reference values onto the current
@@ -107,7 +107,7 @@ Gate reference values, keeper 2025, from committed sidecars:
 
 nyiso-220 deliberately made its gates self-contained because 45 solve-path files had changed since its
 keeper's sha and it had no audit. **This session has one**
-(`docs/FINDING-nyiso236-the-anchor-grain-and-the-gas-slope-2026-09-16.md` §1): `moved_rows("NYISO")`
+(`docs/records/nyiso/FINDING-nyiso236-the-anchor-grain-and-the-gas-slope-2026-09-16.md` §1): `moved_rows("NYISO")`
 is `{}`, the surface fingerprint `bd2b4657f9b5df7e` reproduces, and all 35 changed files classify
 INERT. **The keeper's committed bundle is therefore a valid control (rule 29(b) form 4) and no control
 solve is spent.** The gates stay self-contained anyway — a stronger test, not a weaker one — and the

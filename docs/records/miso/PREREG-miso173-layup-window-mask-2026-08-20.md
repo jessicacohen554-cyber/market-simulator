@@ -42,7 +42,7 @@ that adjudication: the LP is never allowed to decline the plant, because the
 must-run floor forces it on inside those very windows.**
 
 Scale, measured pre-solve (stage-1 census of
-`results/calibration/_miso173_layup_mask_instrument.json`): **six of the seven
+`results/phase0/miso/_miso173_layup_mask_instrument.json`): **six of the seven
 live floored ST_GAS plants carry lay-up windows in at least one solve year**
 (1402: 236.9 / 334.6 / 298.0 unit-days across 2023/2024/2025; 1122 Ames:
 353.0 / 361.3 / 372.2; 3459 Sabine: 201.1 / 123.6 / 250.2; also 990, 3457,
@@ -158,7 +158,7 @@ demand ranking, the raw extracts through the model's own loaders, the
 committed p25 measured-MW levels and pooled windows, the keeper's
 `legitimacy_diagnostics.json` D-4 rows, and the committed CAMPD bench meter.
 Instrument: `scripts/probes/_miso173_layup_mask_instrument.py` → JSON
-`results/calibration/_miso173_layup_mask_instrument.json`, both committed with
+`results/phase0/miso/_miso173_layup_mask_instrument.json`, both committed with
 this prereg.
 
 **Floor VOLUME (the exact basis — the miso-172 §4 lesson applied: the kill

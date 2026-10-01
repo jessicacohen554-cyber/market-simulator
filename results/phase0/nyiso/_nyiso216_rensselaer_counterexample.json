@@ -1,7 +1,7 @@
 {
  "session": "nyiso-216",
  "keeper": "2026-09-07-nyiso-213-summer-seam",
- "prereg": "results/calibration/PREREG-nyiso216-rensselaer-counterexample.md",
+ "prereg": "docs/records/nyiso/PREREG-nyiso216-rensselaer-counterexample.md",
  "zero_lp": true,
  "control": "rule 29(b) form 4 -- the keeper's committed bundle",
  "P1": {

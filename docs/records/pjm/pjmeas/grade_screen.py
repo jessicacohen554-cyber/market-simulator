@@ -9,7 +9,7 @@ promote it. None of them reads a retirement band: ``retire.total_gw``,
 ``unit_recall_gt300``, ``false_retire``, coal and gas_st exits are REPORTED at
 full magnitude and gate in NEITHER direction.
 
-    python3 docs/handoffs/pjmeas/grade_screen.py <arm-bundle-dir>
+    python3 docs/records/pjm/pjmeas/grade_screen.py <arm-bundle-dir>
 """
 
 from __future__ import annotations

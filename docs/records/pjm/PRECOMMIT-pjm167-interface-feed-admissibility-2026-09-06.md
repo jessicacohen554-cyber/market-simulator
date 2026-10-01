@@ -2,7 +2,7 @@
 
 **Session:** pjm-167 · **Date:** 2026-09-06 · **HEAD at writing:** `beb74f0f5`
 **Branch:** `claude/pjm-price-cc-regular-review-al60pj`
-**Evidence:** `results/calibration/FINDING-pjm167-input-clock-2021-2022-2026-09-06.md` §2
+**Evidence:** `docs/records/pjm/FINDING-pjm167-input-clock-2021-2022-2026-09-06.md` §2
 **Keeper (control):** `2026-08-15-pjm-162-inputclock` / `pjm_debugb_inputclock_A`
 
 Written **before any LP is solved**, per rule 29 `[R-SCREEN]`. Every threshold and gate below is

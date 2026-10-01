@@ -13,7 +13,7 @@ What it enforces
   solves run at once. Rule 12 caps simultaneous per-plant multi-zone LPs at
   ~2 on a typical box; the default matches.
 * **No two heavy ISOs together.** Each ISO carries a memory class derived from
-  ``docs/handoffs/wallclock-baseline-2026-07.md`` (measured peak RSS). The two
+  ``docs/records/misc/wallclock-baseline-2026-07.md`` (measured peak RSS). The two
   memory-heavy families — **per-plant** fleets and **reserve co-optimization**
   LPs — cannot share a 16 GB host: MISO alone peaks ≈10.8-11.5 GB and a PJM
   per-plant year ≈13 GB, so co-scheduling either with ERCOT's ≈6 GB per-plant
@@ -76,7 +76,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
-# --- Per-ISO memory classes (docs/handoffs/wallclock-baseline-2026-07.md) ----
+# --- Per-ISO memory classes (docs/records/misc/wallclock-baseline-2026-07.md) ----
 # ``heavy`` marks the per-plant-fleet and/or reserve-co-optimization ISOs whose
 # LPs are multi-GB and cannot share a 16 GB host with another heavy ISO. The
 # ``peak_gb`` estimates are the measured peak RSS from the baseline doc where it

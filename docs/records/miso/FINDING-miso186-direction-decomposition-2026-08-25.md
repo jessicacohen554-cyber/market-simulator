@@ -18,10 +18,10 @@ MISO's shard (its new mechanism row + a cell line in every shard landed in
 the same push as the field, duty 26(c)).
 
 Instruments: `scripts/probes/_miso186_direction_decomposition.py` →
-`results/calibration/_miso186_direction_decomposition.json` (the
+`results/phase0/miso/_miso186_direction_decomposition.json` (the
 decomposition + the §4(v) candidate static reach);
 `scripts/probes/_miso186_ab_gates.py` →
-`results/calibration/_miso186_ab_gates.json` (S-0…S-5 + the charter kill);
+`results/phase0/miso/_miso186_ab_gates.json` (S-0…S-5 + the charter kill);
 `scripts/gen_miso186_attestation.py` (the keeper attestation, ledger 34
 entries / `n_residual` 2 unchanged).
 

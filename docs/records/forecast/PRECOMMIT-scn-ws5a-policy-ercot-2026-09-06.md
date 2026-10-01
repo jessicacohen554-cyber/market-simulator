@@ -517,7 +517,7 @@ sessions, each its own container, each ≤ 1 ERCOT solve at a time, years sequen
 leg** (rule 12's within-invocation half is untouched), grouped as
 G1 = {CARB-LO, CARB-MID, CARB-HI}, G2 = {CES-P10, CES-P20, CES-P30},
 G3 = {CES-T80, CARB-MID+LOAD-HI, VOL-HI}, G4 = {CES-P20+VOL-HI, ALL-CLEAN}. Every sub-lane
-executes the committed protocol `docs/handoffs/SUBLANE-scn-ws5a-policy-ercot-solve-protocol-2026-09-06.md`
+executes the committed protocol `docs/records/forecast/SUBLANE-scn-ws5a-policy-ercot-solve-protocol-2026-09-06.md`
 at THE PIN with the HEAD GUARD, registers and declares exactly as §8 specifies, and touches no
 file outside this lane's regions. **This session solves nothing itself**; it assembles the
 FINDING from the committed artifacts once the legs are on `main`. The cross-session count

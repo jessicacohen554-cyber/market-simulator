@@ -9,7 +9,7 @@
 unit-level, EIA-930 actuals, the model's own fleet loader. **Nothing solved, nothing armed,
 nothing registered, no verdict moved.** Keeper `2026-09-09-miso-250-ep-gas` re-verified
 **CALIBRATED** (grade 7, one ledgered C3c caveat) after the work.
-Premise: `docs/FINDING-pjm-h1-cc-cf-does-not-track-2026-09-12.md`.
+Premise: `docs/records/pjm/FINDING-pjm-h1-cc-cf-does-not-track-2026-09-12.md`.
 
 ---
 

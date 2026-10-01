@@ -1,7 +1,7 @@
 # RESULT — R-PJM-2: the RGGI keeper on corrected inputs, 2019–2025 — PROMOTED (2026-09-25)
 
 **New PJM keeper:** `2026-09-25-pjm-r-pjm-2` · bundle `results/calibration/rpjm2_span` (2019–2025, one bundle) ·
-PRECOMMIT `docs/PRECOMMIT-r-pjm-2-rggi-keeper-corrected-inputs-2026-09-25.md`, pinned
+PRECOMMIT `docs/records/pjm/PRECOMMIT-r-pjm-2-rggi-keeper-corrected-inputs-2026-09-25.md`, pinned
 `651fac089742fb4fb9163d032915ab48f2296ade` · **owner ruling, verbatim: "Yes promote"** (2026-09-25).
 **Superseded, and pruned per rule 35:** `2026-09-24-pjm-h22-rggi-span` and its touchpoint
 `2026-09-24-pjm-h22-rggi-touchpoint`, plus `2026-09-24-pjm-r-pjm-corrected` (R-PJM's h19-based run).

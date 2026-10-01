@@ -1,9 +1,9 @@
 # MISO F5 scarcity-depth lane — declared-window ELMP emergency-tier pricing (frozen design)
 
 **Date:** 2026-07-16. **Session:** `claude/busy-bell-k7jkhf` (Fable, rule 27).
-**Parent contract:** `docs/handoffs/miso-price-formation-design-2026-07.md`
+**Parent contract:** `docs/records/miso/miso-price-formation-design-2026-07.md`
 (§5/F5 — triggered 2026-07-16 by the miso-69 probe verdict) +
-`docs/handoffs/miso-maxgen-registry-findings-2026-07.md` §5 (the measured
+`docs/records/miso/miso-maxgen-registry-findings-2026-07.md` §5 (the measured
 basis). **Run number:** miso-70. This document is the Phase-A freeze: the
 mechanism, every parameter with its citation, the composition plan, the
 pre-registered expected-delta bands, and the refutation criteria are all
@@ -145,7 +145,7 @@ both consumers. `maxgen_events.MODEL_TZ_BY_ISO["MISO"]` and the deriver's
 `MODEL_TZ` are now `Etc/GMT+6`, with the deriver's DA-hub certificate record
 shifted by the same hour; the rows below keep their declared EST endpoints
 and land on model hours one earlier, e.g. 13:00→20:00 EST = 12:00→19:00
-CST. Record: `results/calibration/FINDING-miso210-maxgen-clock-repair-2026-09-04.md`.)*
+CST. Record: `docs/records/miso/FINDING-miso210-maxgen-clock-repair-2026-09-04.md`.)*
 
 Active rows for the 2023-2025 window (from `data/raw/maxgen-events/miso/miso.csv`):
 

@@ -3,14 +3,14 @@
 **Lane** SCN-WS4c · **Model** Opus (`claude-opus-5`) · **Date** 2026-09-06 ·
 **Branch** `claude/scn-ws4c-load-hi-probes-o85iyi` · **Data profile** `all` ·
 **Charter** `docs/forecast-development-plan-2026-07.md` §7 "WS-4" item 4 /
-`docs/handoffs/forecast-scenario-readiness-plan-2026-09.md` §3 WS-4 item 4, §3.5, §4 ·
+`docs/records/forecast/forecast-scenario-readiness-plan-2026-09.md` §3 WS-4 item 4, §3.5, §4 ·
 **Pin** `origin/main` `5fdd4374` (desk pin `3dcf1b22` + the merges since; none on the SCN track) ·
 **Rule** 29 `[R-SCREEN]` — this document is pushed BEFORE the first solve and is not revised after it.
 
 **What this lane is.** SCN-WS4b wrote down, before any `LOAD-HI` number existed, how each of
 the six ISOs' high case is to be read — mechanism, invariant widening, what the CO2 delta may
 and may not say, the exact delta-table line, and the expected import direction
-(`docs/handoffs/load-hi-adequacy-reading-2026-09-06.md`; the scoring table is
+(`docs/records/misc/load-hi-adequacy-reading-2026-09-06.md`; the scoring table is
 `FINDING-scn-ws4b-2026-09-06.md` §2). **This lane is the test of that document.** I score each
 pre-declared reading HIT / MISS / SPLIT with the number that decides it. I do not revise WS-4b's
 document, and a miss is not a reason to re-read the case: the pre-declaration is fixed and I am
@@ -46,10 +46,10 @@ through the runner's own `--set` seam; REF overrides nothing (plan §3.0).
 
 ## 2. Rule 29 phase 0 — the zero-LP census, run BEFORE any arm was scheduled
 
-`docs/handoffs/scn-ws4c/phase0_loadhi_census.py` resolves each case through
+`docs/records/forecast/scn-ws4c/phase0_loadhi_census.py` resolves each case through
 `apply_iso_scenario_defaults` + the runner's own `apply_set_overrides`, so the census cannot
 drift from what `--set` applies at solve time. Output:
-`docs/handoffs/scn-ws4c/phase0_loadhi_census.json`.
+`docs/records/forecast/scn-ws4c/phase0_loadhi_census.json`.
 
 | ISO | DC block MW 2026 → 2030, LOAD-HI | LOAD-HI-ORGANIC | growth HI / REF | ORGANIC degenerate? |
 |---|---|---|---|---|

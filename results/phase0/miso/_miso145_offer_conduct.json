@@ -1,5 +1,5 @@
 {
- "prereg": "results/calibration/PREREG-miso145-summer-offer-conduct-2026-08-09.md",
+ "prereg": "docs/records/miso/PREREG-miso145-summer-offer-conduct-2026-08-09.md",
  "keeper": "2026-08-05-miso-132b-cc-committed",
  "posture": "NO SOLVE -- run_year(fleet_only=True) stack vs the measured MISO offer corpus",
  "grain": "FLEET (miso-138 REFUTED the offer-side class bridge; no class statistic computed)",

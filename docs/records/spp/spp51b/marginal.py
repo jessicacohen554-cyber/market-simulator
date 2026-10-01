@@ -14,8 +14,8 @@ tolerance of that price, weighted by AVAILABLE MW -- the merit-order lane's marg
 class instrument -- then decomposes those rows' ``mc = heat_rate x fuel + vom``.
 
 usage:
-    uv run python docs/handoffs/spp51b/marginal.py --build
-    uv run python docs/handoffs/spp51b/marginal.py --report
+    uv run python docs/records/spp/spp51b/marginal.py --build
+    uv run python docs/records/spp/spp51b/marginal.py --report
 """
 
 from __future__ import annotations

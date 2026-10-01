@@ -2,7 +2,7 @@
  "probe": "ercot227_probe_f1",
  "factor": "F1 ercot_as_held_requirement \u2014 telemetered RT AS-responsibility deepening of the rigid families, requirement_p(t) = max(plan_p(t), held_p(t))",
  "sub_factor_folded": "F1c (DAM-CLEARED-vs-plan): measured zero, no separate solve required \u2014 see f1c_cleared_vs_plan below",
- "charter": "docs/PRECOMMIT-ercot226-held-sequestration-2026-08-22.md \u00a72 (F1 row), \u00a75.9 (probe JSON schema), \u00a75.11 Amendment 3 (the owner extension converting Phase-0 kills from probe-TERMINATING to probe-INFORMING priors: every factor gets a SOLVED verdict)",
+ "charter": "docs/records/ercot/PRECOMMIT-ercot226-held-sequestration-2026-08-22.md \u00a72 (F1 row), \u00a75.9 (probe JSON schema), \u00a75.11 Amendment 3 (the owner extension converting Phase-0 kills from probe-TERMINATING to probe-INFORMING priors: every factor gets a SOLVED verdict)",
  "waiver": "W-3 (ercot-226) \u2014 the 2023 operator-conservatism object re-opened in year/window-scoped measured-input form; admissible category (i) 2023 AS procurement/award quantities + (iv) measured AS power reservation. NP3-965 telemetry enters as a measured QUANTITY, never as Door-A conduct identification (\u00d73 refused, DO-NOT-REDO intact).",
  "session": "hub (ercot-227)",
  "branch_sha": "29d958445569ceaf7103d93081c12cfc4a5245ad",
@@ -132,7 +132,7 @@
    "delta_sum_max_year_mw": 10.4,
    "delta_sum_p50_at_miss_hours": 0.0,
    "confirmed_by_solve": true,
-   "source": "results/calibration/ercot226_helddepth_phase0.json"
+   "source": "results/phase0/ercot/ercot226_helddepth_phase0.json"
   }
  },
  "f1c_cleared_vs_plan": {

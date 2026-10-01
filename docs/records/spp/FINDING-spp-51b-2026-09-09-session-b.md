@@ -4,7 +4,7 @@
 > The desk issued the **SPP-51b charter to two sessions**, which ran it independently and
 > concurrently without knowledge of each other. The other session (Opus 5, branch
 > `claude/spp-c3a-c3b-price-1i4bgi`, PR #5679) **landed first** and its record is the canonical
-> `docs/handoffs/FINDING-spp-51b-2026-09-09.md`. This document is the second session's, renamed to
+> `docs/records/spp/FINDING-spp-51b-2026-09-09.md`. This document is the second session's, renamed to
 > `-session-b` (the precedent is `FINDING-spp-14-2026-09-06-session-b.md`); it does not overwrite
 > or contest the primary record.
 >
@@ -336,5 +336,5 @@ reported at full magnitude and NOT GATED ON; no gate in this lane was read again
 SOLVED, no bundle, nothing registered, keepers/SPP.json untouched, keeper-3 not pruned, no
 ScenarioConfig field or constant added; rule 31 has no object. Phase 0 ran before the PRECOMMIT was
 written and PRECOMMIT §0 discloses it -- nothing here is a selection.
-FINDING: docs/handoffs/FINDING-spp-51b-2026-09-09.md
+FINDING: docs/records/spp/FINDING-spp-51b-2026-09-09.md
 ```

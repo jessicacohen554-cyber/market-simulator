@@ -5,7 +5,7 @@
 **Keeper:** `2026-07-28-nyiso-92-hydro-envelope`
 (`results/calibration/nyiso92_hydro_envfloor`), verified against
 `frontend/data/backcast/keepers/NYISO.json` before any work was done.
-**Pre-registration:** `docs/handoffs/nyiso96-preregistration.md` (written before
+**Pre-registration:** `docs/records/nyiso/nyiso96-preregistration.md` (written before
 the A/B was launched).
 
 ---

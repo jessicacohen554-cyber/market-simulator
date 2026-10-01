@@ -1,7 +1,7 @@
 {
  "probe": "miso-244 L' \u2014 the pre-registered liveness gate, both external buses",
- "prereg": "results/calibration/PREREG-miso244-diagnose-the-incumbent-ladder-cent-2026-09-08.md \u00a73",
- "addendum": "results/calibration/ADDENDUM-miso244-the-verdict-is-not-a-tie-and-my-liveness-gate-named-the-wrong-bus-2026-09-08.md \u00a70c",
+ "prereg": "docs/records/miso/PREREG-miso244-diagnose-the-incumbent-ladder-cent-2026-09-08.md \u00a73",
+ "addendum": "docs/records/miso/ADDENDUM-miso244-the-verdict-is-not-a-tie-and-my-liveness-gate-named-the-wrong-bus-2026-09-08.md \u00a70c",
  "keeper": "2026-09-07-miso-243-spp-pairing",
  "zero_lp": true,
  "read_only": true,

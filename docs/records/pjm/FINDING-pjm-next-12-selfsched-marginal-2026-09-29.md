@@ -4,7 +4,7 @@
 
 **Intake (card 1 + 2).** PJM IMM (Monitoring Analytics) *State of the Market*, Section 3, 2019–2025, transcribed into the existing datatype `som-competitive-conduct` (`iso == PJM`, 105 rows). Source URLs, sha256 and each vintage's printed definition are in `data/raw/som-competitive-conduct/README.md`. PDFs are not committed (© Monitoring Analytics; numbers + page citations only, as for SPP).
 
-**Probe:** `scripts/probes/_pjmnext12_selfsched_marginal.py` → `results/calibration/_pjmnext12_selfsched_marginal.json`.
+**Probe:** `scripts/probes/_pjmnext12_selfsched_marginal.py` → `results/phase0/pjm/_pjmnext12_selfsched_marginal.json`.
 
 ## 1. The table
 

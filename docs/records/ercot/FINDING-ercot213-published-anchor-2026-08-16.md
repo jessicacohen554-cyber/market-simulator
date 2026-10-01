@@ -2,13 +2,13 @@
 
 **Session ercot-213, 2026-08-16, branch `claude/ercot-reserve-anchoring-fix-p6c55p`.**
 Precommit (pushed before any solve):
-`docs/PRECOMMIT-ercot213-published-anchor-2026-08-16.md`. Keeper at session
+`docs/records/ercot/PRECOMMIT-ercot213-published-anchor-2026-08-16.md`. Keeper at session
 start AND end: **`2026-08-15-ercot204-rule26-delete`** — unchanged and
 protected throughout; the keeper cannot change in-session (X-3), so the
 outcome below is a promotion RECOMMENDATION only.
 Runs registered: **`2026-08-16-ercot213-ctl-headbase`** /
 **`2026-08-16-ercot213-arm-pubanchor`** (both with payloads, rule 15).
-Probes: `results/calibration/ercot213_ab.json`,
+Probes: `results/phase0/ercot/ercot213_ab.json`,
 `ercot213_anchor_gates.json`, `ercot213_coal148.json`,
 `ercot213_headdrift.json`, and the environment-sensitivity pair
 `ercot213_*_lockenv.json`.

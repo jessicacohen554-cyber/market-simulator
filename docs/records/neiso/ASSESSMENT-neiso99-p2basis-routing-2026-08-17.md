@@ -4,7 +4,7 @@
 (off `origin/main` @ `6cc332e`) · **New keeper:** `2026-08-17-neiso-99-joint-p1`
 (supersedes `2026-08-17-neiso-97-dstrepair`, **superseded-not-retracted**)
 
-**Pre-registered:** `results/calibration/PREREG-neiso99-p2basis-routing-2026-08-17.md`, committed
+**Pre-registered:** `docs/records/neiso/PREREG-neiso99-p2basis-routing-2026-08-17.md`, committed
 and pushed **before either arm solved**.
 
 **Rule 22 `[R-HOLDOUT]` posture:** the holdout spend freeze is **ACTIVE** and was **never

@@ -5,7 +5,7 @@
   "bundle": "results/calibration/ercot158_poolarm_B",
   "keeper": "2026-08-03-ercot158-pool-arm",
   "year": 2023,
-  "hour_set_source": "results/calibration/_ercot161_wall_phase0.json",
+  "hour_set_source": "results/phase0/ercot/_ercot161_wall_phase0.json",
   "n_sced_shards": 315,
   "cap_ref": "per-TRAIN p98 telemetered HSL over delivery-2023 (configuration aliases collapsed on the trailing _<config> segment)",
   "states": [

@@ -5,7 +5,7 @@
 none should be until WS3's next charter is written — this is the measurement
 that charter should open from."* It opens from the measurement.
 
-Evidence: `docs/FINDING-perfb-s2-markup-attribution-2026-09.md`.
+Evidence: `docs/records/governance/FINDING-perfb-s2-markup-attribution-2026-09.md`.
 
 **Standing constraints this charter inherits and does not relax.** Keepers
 ERCOT / NEISO / PJM are **FROZEN** (R-V): no lane chartered here changes a
@@ -237,7 +237,7 @@ Two things a future lane *would* need a memo for, neither chartered here:
 
 Board **L-7** re-derived PERF-B session 1's four charter items as **all CLOSED**,
 leaving one repair owed. All three named items were re-verified against source
-this session (`docs/FINDING-perfb-s2-markup-attribution-2026-09.md` §8):
+this session (`docs/records/governance/FINDING-perfb-s2-markup-attribution-2026-09.md` §8):
 
 | item | state | note for the next lane |
 |---|---|---|
@@ -255,7 +255,7 @@ lanes, and as the shape of any answer to the director's open question of whether
 a matrix anchor should be a line number at all.
 
 **Two further drifted citations, found and deliberately NOT edited.**
-`docs/handoffs/perf-a-warmstart-decision-memo-2026-08.md` cites
+`docs/records/governance/perf-a-warmstart-decision-memo-2026-08.md` cites
 `scenarios.py:11646` (twice) and `:11644` for the same field and its guard. It is
 an **owner-signed** memo, so this lane reports rather than amends. Correct
 anchors: the field at `:14528`, the guard comment immediately above it.

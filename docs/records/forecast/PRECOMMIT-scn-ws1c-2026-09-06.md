@@ -1,6 +1,6 @@
 # PRECOMMIT — SCN-WS1c: the D-1 FLOOR repair (owner ruling S2)
 
-**Lane:** SCN-WS1c (desk ledger `docs/handoffs/scenario-desk-ledger-2026-09.md` §0 r#5 am.1,
+**Lane:** SCN-WS1c (desk ledger `docs/records/misc/scenario-desk-ledger-2026-09.md` §0 r#5 am.1,
 §2 ruling S2, §5), plan §7 "WS-1a" **item 1** — the item SCN-WS1a's card gate correctly
 withheld. Model Fable. Branch `claude/scn-ws1c-carbon-floor-tmlmjl` (the harness assigned this
 stem in place of the ledger's nominal `claude/scn-ws1c-carbon-floor-v2rk`; the file paths are
@@ -74,7 +74,7 @@ gains the new guard's tests.
 ## 2. What the repaired semantics predict — zero LP, from committed evidence
 
 **This lane's Phase 0 is already on `main`.** SCN-WS1a's committed
-`docs/handoffs/scn-ws1a/phase0-carbon-trajectory-2026-09-05.json` evaluates the LIVE resolver
+`docs/records/forecast/scn-ws1a/phase0-carbon-trajectory-2026-09-05.json` evaluates the LIVE resolver
 per ISO × bundle × year and carries, beside its `head` (HEAD) column, a **`floor` column
 computed as `max(path, program)`** — the ruled formula exactly. That column IS the prediction,
 pre-registered on `main` before this branch existed and before the ruling was made. It is not
@@ -189,7 +189,7 @@ branch stops and the FINDING reports the failure — it does not proceed to a so
 
 | # | gate | pass condition | if it fails |
 |---|---|---|---|
-| **G1 direction + magnitude** | the live resolver after the change equals the committed `floor` column | all 450 (ISO × bundle × year) cells equal `docs/handoffs/scn-ws1a/phase0-carbon-trajectory-2026-09-05.json`'s `floor`, to the cent | STOP — the implemented formula is not the ruled formula |
+| **G1 direction + magnitude** | the live resolver after the change equals the committed `floor` column | all 450 (ISO × bundle × year) cells equal `docs/records/forecast/scn-ws1a/phase0-carbon-trajectory-2026-09-05.json`'s `floor`, to the cent | STOP — the implemented formula is not the ruled formula |
 | **G2 footprint** | the change touches program ISOs under a non-`"zero"` path and nothing else | exactly the 3 × 25 cells CAISO/NYISO/NEISO × `tight` differ from the committed `head` column; the other 375 are bit-equal | STOP — the footprint is wider than the ruling |
 | **G3 byte identity** | no zero-path bundle's key or resolved trajectory moves | `cache_key()` identical before/after for the default config and for one config per ISO × bundle; 0 of 90 committed run_configs on the changed branch | **stop-the-line**, not a footnote |
 
@@ -225,7 +225,7 @@ the ruling, not the output.
 ## 6. Deliverables
 
 PRECOMMIT (this doc, pushed first) · the repair as one commit with its tests · the cache-epoch
-entry · `docs/handoffs/FINDING-scn-ws1c-2026-09-06.md` · plan §5.1 + ledger §3 Carbon row 1 ·
+entry · `docs/records/forecast/FINDING-scn-ws1c-2026-09-06.md` · plan §5.1 + ledger §3 Carbon row 1 ·
 the `carbon_price_path` + `policy_bundle` **cells** re-stamped in all six matrix shards as the
 LAST commit, after `git fetch origin main` + rebase (the base rows exist — SCN-WS1a minted
 them; they are not re-minted).

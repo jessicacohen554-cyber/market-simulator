@@ -15,7 +15,7 @@ S = sys.argv[1]
 REPO = "/home/user/market-simulator"
 psi_nok = pd.read_csv(f"{S}/bc/psi_n_ok.csv")
 psi_oks = pd.read_csv(f"{S}/bc/psi_ok_s.csv")
-lim53 = pd.read_csv(f"{REPO}/docs/handoffs/spp53/tstar_table.csv")
+lim53 = pd.read_csv(f"{REPO}/docs/records/spp/spp53/tstar_table.csv")
 lim = pd.read_csv(f"{S}/bc/limits_2026_oklahoma_by_constraint.csv")
 fg = pd.read_csv(f"{REPO}/data/raw/spp-binding-constraints/Flowgates.csv", dtype=str)
 tfg = pd.read_csv(

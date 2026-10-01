@@ -138,7 +138,7 @@ peaks backed out of the L3 ledger positions were within 1 MW.
 
 ### 3.1 Requirement and position, before / after
 
-Instrument `docs/handoffs/d52/ab-compare-2026-09-04.py` (stdout + rows
+Instrument `docs/records/forecast/d52/ab-compare-2026-09-04.py` (stdout + rows
 committed beside it); control rows use the arm's seam peak (identical by
 construction) with HEAD's composite.
 

@@ -103,7 +103,7 @@ locality Gross-CONE cost differential.
 
 ## 3. The A/B on the record
 
-Instrument `docs/handoffs/d59/ab-compare-2026-09-05.py` (stdout + rows committed beside it);
+Instrument `docs/records/forecast/d59/ab-compare-2026-09-05.py` (stdout + rows committed beside it);
 every number below is read off the committed ledgers and `score.json` of the three bundles.
 
 ### 3.1 The locality positions and prices (the arm's `locality_capacity` ledger block)

@@ -19,7 +19,7 @@
 > cannot bind and no RCPF tail forms — commitment removes only *offline* pmax,
 > not the dominant committed-but-backed-off headroom. **Both path A and path B
 > are confirmed insufficient with the grounded inputs.** The full write-up is in
-> `docs/handoffs/nyiso-downstate-reserve-incidence-2026-06.md` ("Path B —
+> `docs/records/nyiso/nyiso-downstate-reserve-incidence-2026-06.md` ("Path B —
 > IMPLEMENTED & TESTED: REJECTED"); the >$300 downstate tail is an accepted,
 > ledgered open frontier on the nyiso-27 keeper. The next grounded lever (if
 > revisited) is a *measured, condition-varying* downstate requirement from the

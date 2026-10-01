@@ -39,7 +39,7 @@ from scripts.data.derive_miso_seam_ladders import (  # noqa: E402
     qq_import,
 )
 
-OUT = REPO / "results/calibration/_miso225_seam_neighbour.json"
+OUT = REPO / "results/phase0/miso/_miso225_seam_neighbour.json"
 YEARS = (2023, 2024, 2025)
 
 

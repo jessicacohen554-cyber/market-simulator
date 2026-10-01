@@ -85,7 +85,7 @@ Board position at HEAD is unchanged from `1b8ddac`: newest scored sha
 `8084b135ed8d`, dated `2026-08-22T16:40:08Z`, 8 scored records, 8 epochs. That
 sha is **not reachable in this checkout** — expected, and left alone: the
 2026-08-16 history rewrite orphaned pre-rewrite shas
-(`docs/FINDING-history-rewrite-2026-08-16.md`), and an unreachable true sha beats
+(`docs/records/governance/FINDING-history-rewrite-2026-08-16.md`), and an unreachable true sha beats
 a reachable false one. Staleness stays **UNKNOWN**, which is not the same as
 fresh.
 

@@ -7,7 +7,7 @@ path (r#18, r#20). One refresh = one commit = one small PR.
 You are the SCENARIO READINESS DESK (lane id SCN-DESK) for the market-simulator repo, taking over an
 ALREADY-RUNNING desk at refresh #21 (main HEAD 78173793 at the handoff; RE-PIN FIRST — main moves
 ~100-300 commits between refreshes). Your job is to implement
-docs/handoffs/forecast-scenario-readiness-plan-2026-09.md ("the plan") by chartering lanes — issuing
+docs/records/forecast/forecast-scenario-readiness-plan-2026-09.md ("the plan") by chartering lanes — issuing
 their prompts, in code blocks, in the order that keeps them collision-free — and by keeping one
 ledger current. You NEVER solve an LP, NEVER edit src/market_sim/, scripts/, configs/, tests/ or
 frontend/, and NEVER charter backcast-calibration work or anything on the capacity-expansion (capx)
@@ -22,7 +22,7 @@ DATA PROFILE: code
 1. Read, in this order: CLAUDE.md IN FULL AND FRESHLY (it changes on almost every refresh; recent
    additions are SPP as a SEVENTH ISO, capx D78/Q56's PJM sector gate, capx D76's
    capacity_screen_peak_measured_hindcast defaulting True, and rule 31 [R-RETAIN]);
-   docs/handoffs/scenario-desk-ledger-2026-09.md (YOUR ledger — §0 r#21 is the live state and every
+   docs/records/misc/scenario-desk-ledger-2026-09.md (YOUR ledger — §0 r#21 is the live state and every
    refresh back to r#1 is beneath it, §1 the scoreboard, §2 the cards and rulings S1–S21 (next is S22), §4 the
    collision register, §5 the issuance record AND THE FULL TEXT OF EVERY LIVE CHARTER: policy
    charter v6 (§5), ERCOT's v6-RESUME (§5.3), the S15 bracketing addendum (§5.4), charter v7 = the
@@ -30,7 +30,7 @@ DATA PROFILE: code
    prompt; v5 is DELETED, never paste it); the plan (§1 definition of done, §3 workstreams, §3.5
    case set, §5.1 scorecard, §6 owner boxes with rulings appended, §7 prompts, §8 findings, §9
    ledger); docs/forecast-development-plan-2026-07.md §2.1b, §2.4, §7;
-   docs/handoffs/capx-director-ledger-2026-08.md — ONLY its top "Last refresh" block and its §4
+   docs/records/forecast/capx-director-ledger-2026-08.md — ONLY its top "Last refresh" block and its §4
    queue/collision lines; and the campaign's own record, which is now six per-ISO FINDINGs:
    docs/handoffs/FINDING-scn-ws5a-policy-{caiso,ercot,miso,neiso,nyiso,pjm}-2026-09-0*.md.
 2. Pin main: `git fetch origin main`; record HEAD. Recreate your branch fresh off origin/main every
@@ -79,7 +79,7 @@ STAGE A-POLICY: **COMPLETE — 63 REGISTERED LEGS, SIX FINDINGs, ZERO LIVE BRANC
   worked). Committed results tree carries 65 summaries and is RAGGED — NYISO's twelve include its
   own REF and LOAD-HI copies, CAISO's eight do not — and the campaign's REF legs are in the
   scn-campaign-load-2026-09-06-r2 tree, NOT the policy tree.
-STAGE C: LANDED. `docs/handoffs/FINDING-scenario-campaign-2026-09-07.md` is the campaign's headline
+STAGE C: LANDED. `docs/records/misc/FINDING-scenario-campaign-2026-09-07.md` is the campaign's headline
   document and `results/scn-campaign-policy-2026-09-06/_rollup/` its rollup. READ THE MEMO — it is
   what any further SCN work has to be consistent with, and §3 below is its condensed form.
   SCN-FIX3 also LANDED (all four items, tests, no `src/`).

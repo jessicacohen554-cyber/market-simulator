@@ -3,7 +3,7 @@
 **Lane:** SOCO-14 · **Date:** 2026-09-13 · **Branch:** `claude/soco-14-ba-membership-038erj`
 (cut at pinned `33a7c961`) · **Profile:** `shared` · **Charter:**
 `docs/multi-iso/soco-addition-plan-2026-09.md` §3 card S3, §5 row SOCO-14, §7 gate **G22** ·
-**Premise:** `docs/handoffs/FINDING-soco-11-2026-09-13.md` §3.
+**Premise:** `docs/records/soco/FINDING-soco-11-2026-09-13.md` §3.
 
 This lane FINDS AND CITES. It derived no share, wrote no parquet, ran no solve, and decided
 nothing (rules 23 `[R-FROZEN-DERIVE]`, 13 `[R-MEASURED]`).
@@ -232,7 +232,7 @@ the SOCO-12 discipline requires, and is not worked around.
 | `data/raw/soco-planning/transcriptions/FERC_Form_714_instructions.txt` | new, tracked — `.doc` payload untracked |
 | `data/raw/soco-planning/README.md` | **APPENDED** — SOCO-14 rows in the tracked/untracked table + a section |
 | `data/raw/soco-planning/SHA256SUMS.txt` | **APPENDED** — SOCO-14 block |
-| `docs/handoffs/FINDING-soco-14-2026-09-13.md` | this file |
+| `docs/records/soco/FINDING-soco-14-2026-09-13.md` | this file |
 
 No `src/`, `scripts/`, `tests/`, `frontend/`, plan, ledger or `docs/calibration-log/soco.md` edit.
 SOCO-11's committed parquet and its existing `SOURCES.md` text untouched. No matrix cell moved

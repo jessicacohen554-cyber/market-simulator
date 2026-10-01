@@ -2,7 +2,7 @@
 
 **Lane** SOCO-22 · **Model** Fable (`claude-fable-5-1`) · **Date** 2026-09-13 ·
 **Branch** `claude/soco-22-rubric-determination-cnoxsz` · **Base** `33a7c961` (origin/main, pinned) ·
-**PRECOMMIT** `docs/handoffs/PRECOMMIT-soco-22-2026-09-13.md`, pushed at `8799e585` before the scorer was
+**PRECOMMIT** `docs/records/soco/PRECOMMIT-soco-22-2026-09-13.md`, pushed at `8799e585` before the scorer was
 edited · **Rulings** SOCO card S2 (desk r#2) and S11 (desk r#3), 2026-09-13; NWPP card N2 (both limbs) ·
 **Data profile** `code` · **No LP ran.** Scorer-side only; no shard, nothing to archive, no bundle written.
 

@@ -7,10 +7,10 @@ bit-identical — and one arm). **Keeper unchanged:**
 (re-verified artifact-only this session). **Markers unchanged:** `complete.NYISO`
 held (D56-R), `final` empty, freeze active; **frontier stays WITHDRAWN** — this card
 edits no `frontier` field. **Evidence:**
-`results/calibration/ASSESSMENT-nyiso192-frontier-2026-09-05.md` (the successor to
+`docs/records/nyiso/ASSESSMENT-nyiso192-frontier-2026-09-05.md` (the successor to
 ASSESSMENT-nyiso154 and the citable basis for Q39),
-`docs/FINDING-nyiso192-frontier-adjudication-2026-09-05.md`,
-`results/calibration/PREREG-nyiso192-frontier-adjudication.md` (pushed before every
+`docs/records/nyiso/FINDING-nyiso192-frontier-adjudication-2026-09-05.md`,
+`docs/records/nyiso/PREREG-nyiso192-frontier-adjudication.md` (pushed before every
 solve), the `_nyiso192_*.json` records.
 
 ---
@@ -77,7 +77,7 @@ C1-2024 + C3c-not-lone; the repaired extract bundle-local; keeper unchanged):
 > **STATUS AT nyiso-193 (2026-09-05, later the same day) — read before §4.** (1) **Q39 WAS
 > RULED before this card reached you**: capx ledger §0ah.3 / §3, r#37, on card C-10 — option
 > A, *"RE-DECLARE FRONTIER ON nyiso-189 (both instruments)"* — and executed by records lane
-> D56-R2 (`docs/handoffs/FINDING-capx-d56r2-nyiso-frontier-2026-09-05.md`): `frontier` is
+> D56-R2 (`docs/records/forecast/FINDING-capx-d56r2-nyiso-frontier-2026-09-05.md`): `frontier` is
 > DECLARED on `2026-09-05-nyiso-189-steam-identity` at `origin/main`, `frontier_basis` names
 > it, and r#38's card C-14 (Q45) authorised the NYISO §2.1b campaign on that footing. §3's
 > "not recommended now" therefore stands as the lane's recommendation of record, overtaken by

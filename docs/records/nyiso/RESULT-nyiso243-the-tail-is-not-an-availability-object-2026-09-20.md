@@ -3,8 +3,8 @@
 **Session** nyiso-243 (ORCHESTRATOR — rule 32 `[R-SHARD]` (a); **zero LP in this container, no shard launched**).
 **Date** 2026-09-20. **Base** `origin/main` at `48151074`.
 **Keeper** `2026-09-19-nyiso241-ct-committed-measured`, bundle `results/calibration/nyiso241_ctcommitted_span`, years {2022, 2023, 2024, 2025} — **UNCHANGED. Nothing armed, screened, solved, promoted or registered. No `ScenarioConfig` field moves.**
-**PRECOMMIT** `docs/PRECOMMIT-nyiso243-outage-intake-kill-test-2026-09-20.md`, committed at `51620eef` **before any price-conditioned number below was computed**.
-**Charter** `docs/RESULT-nyiso242-cc-winter-refused-and-the-intake-charter-2026-09-20.md` §2.5.
+**PRECOMMIT** `docs/records/nyiso/PRECOMMIT-nyiso243-outage-intake-kill-test-2026-09-20.md`, committed at `51620eef` **before any price-conditioned number below was computed**.
+**Charter** `docs/records/nyiso/RESULT-nyiso242-cc-winter-refused-and-the-intake-charter-2026-09-20.md` §2.5.
 
 > ## HEADLINE
 > 1. **THE INTAKE EXISTS.** NYISO MIS **P-27** masked generator bid data is now in the

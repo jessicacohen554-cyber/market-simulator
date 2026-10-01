@@ -4,7 +4,7 @@
 **Status:** BUILT, default-off; full-span A/B solved and registered — **RESULT:
 REJECTED PROBE** (§8). Keeper stays ercot34; mechanism stays default-off.
 **Reads first:** the 2026-07-06 ercot34 calibration-log entry (the G-22 fold),
-`docs/FINDING-ercot-priceshape-2026-07.md` §6 filed structural conclusion #1
+`docs/records/ercot/FINDING-ercot-priceshape-2026-07.md` §6 filed structural conclusion #1
 (the sanctioned replacement this note builds) and §5/§6 (why the ercot33 wall was
 REJECTED — the failure modes this design must not repeat).
 
@@ -70,7 +70,7 @@ and is out of scope here (touching it is what moved measured volumes in ercot33)
 
 ## 3. Why this is NOT the rejected ercot33 offer wall
 
-The ercot33 "tuned offer wall" (`docs/FINDING-ercot-priceshape-2026-07.md` §6,
+The ercot33 "tuned offer wall" (`docs/records/ercot/FINDING-ercot-priceshape-2026-07.md` §6,
 REJECTED under rules 13/26) was a **static** peak-band quantile ladder posted in
 *every* hour, over *all* gas classes. It failed for two reasons this design fixes
 by construction:
@@ -87,7 +87,7 @@ by construction:
   economic+peak tranches** (leaving CC/ST/coal offer curves untouched), and §6's
   volume-neutrality gate is a hard promotion condition.
 
-`docs/FINDING-ercot-priceshape-2026-07.md` §6 explicitly pre-registers this as
+`docs/records/ercot/FINDING-ercot-priceshape-2026-07.md` §6 explicitly pre-registers this as
 filed structural conclusion #1 — *"bin delivery-days by their net-load percentile;
 the model selects the curve by its own day-state — forward-derivable,
 condition-responsive, rule-13-admissible. This is the right form of the wall."*

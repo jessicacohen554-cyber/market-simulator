@@ -21,7 +21,7 @@ the work, per the standing instruction to state a real problem with the task and
 | The West→North pipe "almost never binds" | **FALSE** — WESTEX binds 7.1–10.7 % and PNHNDL 8.2–12.1 % of SCED intervals |
 | The corridor limit is the binding defect | **TRUE, and already represented** at its measured limit-at-bind |
 
-**This was already adjudicated in-repo.** `docs/handoffs/ercot-vre-curtailment-topology-scope-2026-07.md`
+**This was already adjudicated in-repo.** `docs/records/ercot/ercot-vre-curtailment-topology-scope-2026-07.md`
 (2026-07-07) scoped exactly this work as **WP-A**, measured its expected yield as **~zero**, and
 recommended **defer**. This session re-tested that conclusion on all three years (the doc's evidence
 was 2024 only) and it holds — see §3, which also finds new Far West GTCs the doc could not have seen.

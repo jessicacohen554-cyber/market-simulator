@@ -47,7 +47,7 @@ Everything in §2 was read from **committed artifacts only**: the D57 arm A hind
 and its `score.json`), the EIA-860 `vintage_2020` plant + generator tables, and the committed
 scoring target `data/raw/_validation-source/capacity_actuals_pjm.csv`. No LP, no screen, no
 evolution was run; the fleet loader was not called. Instrument:
-`docs/handoffs/d58/census_probe.py` → `census_probe.json` (committed with this text).
+`docs/records/forecast/d58/census_probe.py` → `census_probe.json` (committed with this text).
 
 The join reconstructs the gate's own key, `Generator.plant_code`, from both fleet grains PJM
 carries: CAMPD-binned tranches (`..._p<code>_<tranche>`) and the legacy per-unit rows PJM's oil
@@ -302,7 +302,7 @@ is **DELETED from `results/calibration/` and `results/hindcast/` before the PR m
 
 `run_capacity_hindcast.build_config(iso="PJM", start_year=2021, end_year=…, variant="realized",
 vintage=2020, entry_screen_diagnostics=True)` → `iso_configs.apply_iso_scenario_defaults(·,
-"PJM")` → `cache_key()`. Instrument `docs/handoffs/d58/keys_probe.py` → `keys_probe.json`.
+"PJM")` → `cache_key()`. Instrument `docs/records/forecast/d58/keys_probe.py` → `keys_probe.json`.
 
 | config | key | check |
 |---|---|---|
@@ -446,6 +446,6 @@ every push, never drop another lane's hunk.
 ## 10. Reproduction of §2 and §5 (committed instruments)
 
 ```
-uv run python docs/handoffs/d58/census_probe.py   # -> census_probe.json
-uv run python docs/handoffs/d58/keys_probe.py     # -> keys_probe.json
+uv run python docs/records/forecast/d58/census_probe.py   # -> census_probe.json
+uv run python docs/records/forecast/d58/keys_probe.py     # -> keys_probe.json
 ```

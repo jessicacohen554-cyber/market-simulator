@@ -27,7 +27,7 @@ overclaims its own ignorance is worth less than one that doesn't:
   back at me. So I know the shape of the likely answer, and I say so here rather than performing
   a blindness I do not have.
 - **What I have NOT read, and will not read until this document is pushed:** any value inside
-  `docs/handoffs/d78r2/window_compare2.json` or `control_band.json`; any offer stack in any
+  `docs/records/forecast/d78r2/window_compare2.json` or `control_band.json`; any offer stack in any
   committed ledger. I established both files' schemas by reading the code that *wrote* them
   (`window_compare2.py`), never their contents.
 - **What actually makes this binding, then**, is not ignorance but provenance and fixity:
@@ -164,8 +164,8 @@ anticipated:
 |---|---|---|
 | `results/hindcast/pjm-2021-2025-realized-t1h-d78r2-control-P` (the CONTROL) | **ABSENT** — deleted before merge, rule 29(c), as D78-R2 §10 states | — |
 | `results/hindcast/pjm-2021-2025-realized-t1h-d78r2-sectorgate` (the ARM) | **ABSENT — NEVER REGISTERED.** `git ls-files` returns nothing; `git log --diff-filter=A` on the path returns nothing; merge `80c88b76` (PR #5227) landed **10 files, docs and JSON only**. D78-R2 §11 deferred the registration to "after D65-B-R's batch registers" and it never landed. Only the scoring by-product `docs/hindcast-reports/…-d78r2-sectorgate-2026-09-06.md` is committed, and it carries score tables, not stacks. | — |
-| `docs/handoffs/d78r2/control_band.json` | committed | **NO.** Written by `window_compare2.py --band-only` as `{"control": summarise(…), "w4_prime_band": …}` — per-year **sector aggregates** (decided rows/MW, sector-1 rows/MW) only. The handoff's assertion (director r#51 §0av.5(ii)) is **CONFIRMED**. |
-| `docs/handoffs/d78r2/window_compare2.json` | committed | **NO stack, but MORE than sector aggregates.** `gates.W5prime.per_year[<y>]` carries `shared_rows`, `only_control_rows`, `only_arm_rows`, `offer_diff_rows`, `cleared_diff_rows`, `zero_eas_shared_rows`, `zero_eas_offer_diff_rows/units[:20]` and — decisively — **`offer_diff_by_fuel`, the per-fuel count of MOVED shared rows**. `gates.LEDGER…capacity_clearing` carries `stack_shared` / `stack_offer_movers` as totals. **No offer VALUES, no per-class shared counts, no distinct-offer counts.** |
+| `docs/records/forecast/d78r2/control_band.json` | committed | **NO.** Written by `window_compare2.py --band-only` as `{"control": summarise(…), "w4_prime_band": …}` — per-year **sector aggregates** (decided rows/MW, sector-1 rows/MW) only. The handoff's assertion (director r#51 §0av.5(ii)) is **CONFIRMED**. |
+| `docs/records/forecast/d78r2/window_compare2.json` | committed | **NO stack, but MORE than sector aggregates.** `gates.W5prime.per_year[<y>]` carries `shared_rows`, `only_control_rows`, `only_arm_rows`, `offer_diff_rows`, `cleared_diff_rows`, `zero_eas_shared_rows`, `zero_eas_offer_diff_rows/units[:20]` and — decisively — **`offer_diff_by_fuel`, the per-fuel count of MOVED shared rows**. `gates.LEDGER…capacity_clearing` carries `stack_shared` / `stack_offer_movers` as totals. **No offer VALUES, no per-class shared counts, no distinct-offer counts.** |
 | `results/hindcast/pjm-2021-2025-realized-t1h-d78-sectorgate` (D78-**R**'s arm, key `bb6a60239d69508b`) | committed, all five `evolution_*.json` (CORRECTION 1) | carries stacks — but it is a **sector-gate ARM**, at a **different code state** (guarded `99245361`, 19 files / +2,975 −54 behind on `retirements.py` / `capacity_market.py` / `adequacy.py`). **FORBIDDEN as a derivation base** (handoff 0(e): deriving on the arm's stack is forbidden; it is the object being graded). Not read. |
 | other committed PJM bundles (`-realized`, `-d45r`, `-d57-clearing`, `-d62-pubbar`, `-d74-nodefaultcap`) | committed, with stacks | **NONE is the control recipe.** No committed bundle anywhere carries key **`a9c66d8ea25acb9d`** (checked: 0 matches in `git ls-files results/hindcast/`, 0 directories on disk). A different key is a different config is a different stack. |
 
@@ -177,7 +177,7 @@ solve-path hunk, and no zero-LP route reconstructs an LP-produced offer stack �
 **control-P re-solve is EARNED** as the derivation base:
 
 ```
-bash docs/handoffs/d78r2/run_full.sh control-P      # bare pjm-t1h, key a9c66d8ea25acb9d
+bash docs/records/forecast/d78r2/run_full.sh control-P      # bare pjm-t1h, key a9c66d8ea25acb9d
 ```
 
 ~21 min (D78-R2 §1: 19:20:30 → 19:41:33), PJM solo, years sequential (rule 12), HEAD guard on.
@@ -216,7 +216,7 @@ solving to make a grade possible.
 
 The derivation needs a read-only per-DY per-class distinct-offer census, which no committed
 script emits. **`scripts/probes/d78r3_stack_census.py`** — read-only, reuses
-`docs/handoffs/d78/screen_compare.py::stack_rows`, opens ledgers, writes JSON, touches no config
+`docs/records/forecast/d78/screen_compare.py::stack_rows`, opens ledgers, writes JSON, touches no config
 and no solve path. Declared now; kept under `scripts/probes/` per the handoff.
 
 ## 6. STOPs — every one fixed now
@@ -250,10 +250,10 @@ control bundle is **deleted before merge** (29(c)); STOP-only gates throughout.
 ## 8. Deliverables
 
 1. this PRECOMMIT (pushed first, alone);
-2. `docs/handoffs/d78r3/zero_eas_set.json` — per DY: `n_distinct_exact` and `n_distinct_1e6` per
+2. `docs/records/forecast/d78r3/zero_eas_set.json` — per DY: `n_distinct_exact` and `n_distinct_1e6` per
    class, the derived set, the declared set, the subset check, and the artifact each was read
    from (plus the control's key / HEAD / wall, D78-R2 §1's form, if re-solved);
-3. `docs/handoffs/d78r3/w5_regrade.json` — per DY per class: shared rows, moved rows,
+3. `docs/records/forecast/d78r3/w5_regrade.json` — per DY per class: shared rows, moved rows,
    `max_abs_delta` (`null`, with reason), and the per-DY and window verdicts;
 4. `FINDING-capx-d78r3-2026-09-06.md` — the per-DY table (declared vs derived vs measured), the
    W5″ verdict per DY, D78-R2 §8's limb table re-stated with (a) updated, and §4's recommendation

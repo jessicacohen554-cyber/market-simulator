@@ -227,6 +227,6 @@ OWNER QUESTIONS: (1) any new evidence to reopen tranche_startup_amortization
 not open G5 for incremental-HR bands alone) (2) decline
 2026-09-20-soco53g-prb-own-iso (E13)? Leftover refs for the owner:
 claude/soco61-arm-*, claude/soco60-arm-*, claude/soco60-armB-*.
-Records: docs/handoffs/FINDING-soco-63-2026-09-24.md,
+Records: docs/records/soco/FINDING-soco-63-2026-09-24.md,
 scripts/probes/_soco63_phase0.py.
 ```

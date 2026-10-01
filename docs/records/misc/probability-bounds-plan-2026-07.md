@@ -9,7 +9,7 @@
 
 **What this is.** The design for giving the emissions forecast a defensible probability
 band. Produced by the F-1 planning session of `docs/fable-prompt-pack-2026-07.md`;
-companion prompts in `docs/handoffs/probability-bounds-prompts-2026-07.md`. **Status:**
+companion prompts in `docs/records/misc/probability-bounds-prompts-2026-07.md`. **Status:**
 PB-0 through PB-4 machinery has since landed (`matrix.py` scenario matrix, `uncertainty.py`
 multivariate sampler, `structural_prior.py` structural-error convolution, plus `ensemble.py`'s
 existing weather-year draws) — the full PB-5 production ERCOT band run remains **deferred**
@@ -449,4 +449,4 @@ parameter against a residual.
 ---
 
 *Produced 2026-07-04 (Fable F-1 session). Design only — no solves were run, no parameters
-changed. Implementation prompts: `docs/handoffs/probability-bounds-prompts-2026-07.md`.*
+changed. Implementation prompts: `docs/records/misc/probability-bounds-prompts-2026-07.md`.*

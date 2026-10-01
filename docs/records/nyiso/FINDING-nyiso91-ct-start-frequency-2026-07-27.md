@@ -1,8 +1,8 @@
 # NYISO CT_PEAKER: the missing starts are not energy-economic — not hourly, and not as blocks
 
 **Session:** nyiso-91 (CT start frequency) · **Date:** 2026-07-27
-**Premise:** `docs/FINDING-nyiso90-ct-block-commitment-2026-07-27.md` §5,
-`docs/FINDING-nyiso88-peaker-heat-rate-2026-07-27.md` §3
+**Premise:** `docs/records/nyiso/FINDING-nyiso90-ct-block-commitment-2026-07-27.md` §5,
+`docs/records/nyiso/FINDING-nyiso88-peaker-heat-rate-2026-07-27.md` §3
 **Mode:** characterization on a same-HEAD zero-delta control. **No arm was built**
 — see §5 for why, and §6 for what that leaves.
 **Keeper: `2026-07-27-nyiso-89-ctmeas-hrloaded`, UNCHANGED.**

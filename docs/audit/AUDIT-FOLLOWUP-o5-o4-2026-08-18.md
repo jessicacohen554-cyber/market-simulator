@@ -116,7 +116,7 @@ EFOR+planned norm of ~10–15 %). Since that finding, the merit-order guard was
 **adopted** (charter §8, 2026-07-26) and every ISO's extract re-derived guard-on,
 so the premise had to be re-measured rather than carried forward. Probe
 `scripts/probes/audit_followup_o4_cc_envelope.py` →
-`results/calibration/_audit_followup_o4_cc_envelope.json` (committed artifacts
+`results/phase0/governance/_audit_followup_o4_cc_envelope.json` (committed artifacts
 only, no LP), `CC_REGULAR` capacity-weighted share of the capacity-year, windows
 clipped per calendar year, denominator the union of kept + reclassified units:
 
@@ -196,9 +196,9 @@ an owner act and no session takes it by inference (§6, and the freeze file's ow
 
 > **Evidence first.** `frontend/data/backcast/holdout-freeze.json` (`active:
 > true`, declared 2026-07-25, re-armed 2026-08-06);
-> `docs/handoffs/campd-economic-layup-fix-charter-2026-07.md` §8 (adoption) and
+> `docs/records/misc/campd-economic-layup-fix-charter-2026-07.md` §8 (adoption) and
 > §9 (four-lane close-on-evidence + recommendation);
-> `results/calibration/_audit_followup_o4_cc_envelope.json` (this session's
+> `results/phase0/governance/_audit_followup_o4_cc_envelope.json` (this session's
 > re-measurement); `frontend/data/backcast/calibration-complete.json`.
 
 **The question.** The freeze's stated lift condition is met on both of its
@@ -309,7 +309,7 @@ entry point was `knob_jacobian.py` (§1.2), which no row had.
 | B1 | annotated | **STALE** — the cited gate exists at `run_calibration.py:5888` via delegation. No code change. |
 
 Artifacts added: `scripts/probes/audit_followup_o4_cc_envelope.py`,
-`results/calibration/_audit_followup_o4_cc_envelope.json`,
+`results/phase0/governance/_audit_followup_o4_cc_envelope.json`,
 `tests/regression/test_recipe_replay_gates.py`. Changed:
 `scripts/knob_jacobian.py` (two fail-closed guards + CLI flags + docstring).
 

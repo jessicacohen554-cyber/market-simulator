@@ -47,7 +47,7 @@ All non-delta hunks INERT → form 4 holds.
 | D1 as built (miso-276) | 102.3 | 5.5 | 111.5 |
 | **D1 as ruled (this arm)** | **56.4** | 5.4 | **7.7** |
 
-`results/calibration/_miso277_storm_print_conventions.json`.
+`results/phase0/miso/_miso277_storm_print_conventions.json`.
 
 ## 5. Predictions (directions only)
 

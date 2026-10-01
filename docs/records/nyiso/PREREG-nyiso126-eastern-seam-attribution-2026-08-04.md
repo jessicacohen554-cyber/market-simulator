@@ -8,7 +8,7 @@ authorise or refuse on a fixed construction rather than on a moving one.
 **Blocking condition (owner):** the nyiso-125 successor charter conditions this
 lane on *"explicit owner-authorised intake"*. §4 needs a series that is not yet in
 `data/raw/`. **This does not proceed without that authorisation.** Identification
-evidence: `results/calibration/FINDING-nyiso126-seam-identification-and-c3a-decomposition-2026-08-04.md` §1.
+evidence: `docs/records/nyiso/FINDING-nyiso126-seam-identification-and-c3a-decomposition-2026-08-04.md` §1.
 
 ---
 

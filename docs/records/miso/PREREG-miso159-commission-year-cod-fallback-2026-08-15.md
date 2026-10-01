@@ -18,7 +18,7 @@ The MISO lever queue is **EMPTY of named, un-adjudicated candidates**
 it executes **the construction miso-157 §11 item 1 prepared for the owner** —
 the `_commission_year` vintage defect — whose rule-25 `[R-ISO-SCOPE]`
 prerequisite (the cross-ISO exposure census) was discharged by miso-158
-(`results/calibration/_miso158_vintage_census.json`, PR #3966, merged
+(`results/phase0/miso/_miso158_vintage_census.json`, PR #3966, merged
 2026-08-15). The owner's standing instruction to this session is to pick the
 workstream up from the current keeper and drive toward a calibrated backcast;
 the prepared, censused repair is the sanctioned next step.
@@ -224,7 +224,7 @@ capability delta must be **negative** and within P-1's band.
 ---
 
 *Artifacts this session will produce:* `scripts/probes/_miso159_cod_vintage_instrument.py`,
-`results/calibration/_miso159_cod_vintage_instrument.json`, bundles
+`results/phase0/miso/_miso159_cod_vintage_instrument.json`, bundles
 `results/calibration/miso159_cod_A` / `miso159_cod_B`, runs
 `2026-08-15-miso-159-control` / `2026-08-15-miso-159-cod-vintage`, a FINDING,
 matrix row + cells, and the calibration-log entry.

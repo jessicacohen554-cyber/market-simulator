@@ -9,7 +9,7 @@ interceptor) plus public measured sources already in `data/raw` (NYISO Gold
 Book NYCA generator tables, eGRID 2023, EIA-923). Probes:
 `scripts/probes/_nyiso147_upstate_price_phase0.py`,
 `_nyiso147_upstate_offer_anatomy.py`, `_nyiso147_chp_grid_capacity.py`;
-records `results/calibration/_nyiso147_upstate_price_phase0.json`,
+records `results/phase0/nyiso/_nyiso147_upstate_price_phase0.json`,
 `_nyiso147_upstate_offer_anatomy.json`, `_nyiso147_chp_grid_capacity.json`.
 
 ## §1 Where the +9 % lives — the decomposition the charter asked for

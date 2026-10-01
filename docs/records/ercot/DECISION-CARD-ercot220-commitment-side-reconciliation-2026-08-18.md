@@ -7,8 +7,8 @@
 > `ScenarioConfig` field exists for it, no LP has run, no matrix cell is
 > minted. Keeper at drafting: `2026-08-17-ercot215-arm-decontam` (NOT-YET,
 > fail set {C3a-2023 −40.1 %, C3b-2023 0.736}, C3c ledgered CAVEAT ×3).
-> Evidence base: `docs/FINDING-ercot220-stage1-capability-object-phase0-2026-08-18.md`
-> + `results/calibration/ercot220_stage1_basis_phase0.json`.
+> Evidence base: `docs/records/ercot/FINDING-ercot220-stage1-capability-object-phase0-2026-08-18.md`
+> + `results/phase0/ercot/ercot220_stage1_basis_phase0.json`.
 
 ## 0. WHAT THIS CARD IS, AND WHY IT EXISTS UNSIGNED
 

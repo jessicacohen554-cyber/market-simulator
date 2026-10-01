@@ -1,6 +1,6 @@
 """SPP-99 splice CONTROL (zero LP): the HEAD derivers, SPP remap rows stripped, reproduce each incumbent.
 
-Record: ``docs/handoffs/PRECOMMIT-spp-99-remap-rederive-2026-09-28.md``. The miso-280 discipline
+Record: ``docs/records/spp/PRECOMMIT-spp-99-remap-rederive-2026-09-28.md``. The miso-280 discipline
 (``scripts/data/build_campd_split_remap_companions.py``): a ``-splitremap-`` companion is the
 incumbent with the remap plants' lines swapped for the SAME deriver's lines, so it carries the
 remap delta and nothing else only if that deriver, run with the remap entries REMOVED, reproduces

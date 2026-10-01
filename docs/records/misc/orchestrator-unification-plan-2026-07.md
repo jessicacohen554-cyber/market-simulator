@@ -1389,7 +1389,7 @@ Copy-paste the block below as the opening prompt for the Stage-1 session.
 You are working on the market-simulator repo at /home/user/market-simulator.
 Read CLAUDE.md (project rules — especially #1 structure-first, #24 no off-registry
 tuning channels, #26 deleted-means-deleted) and
-docs/handoffs/orchestrator-unification-plan-2026-07.md (this plan) in full before
+docs/records/misc/orchestrator-unification-plan-2026-07.md (this plan) in full before
 touching code. You are executing STAGE 1 ONLY. Do not start Stage 2+.
 
 BRANCH: develop on claude/orchestrator-unification-plan-slw9it (create from latest

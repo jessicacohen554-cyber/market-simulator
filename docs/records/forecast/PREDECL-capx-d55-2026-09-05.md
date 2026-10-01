@@ -1,7 +1,7 @@
 # PRE-DECLARATION — capx D55: the floor-retention key repaired to the class constant (D32 §3.2 / §7 R2), its A/B, and the plant-grain release-precision scorer row (D32 §7 R4)
 
 **Lane:** capx D55 — a small correctness lane. D32
-(`docs/handoffs/FINDING-capx-d32-floor-retention-2026-09-02.md` §3.2, §7 R2/R4) found
+(`docs/records/forecast/FINDING-capx-d32-floor-retention-2026-09-02.md` §3.2, §7 R2/R4) found
 that `_floor_retention_merit` key 1 is computed per unit as
 `(FOM × pmax × 1000) / (pmax × (1 − EFORd))` instead of the class constant
 `FOM × 1000 / (1 − EFORd)`, so IEEE-754 rounding puts same-fuel units on different floats
@@ -85,7 +85,7 @@ decision under the defective key (validation), and it then PREDICTS the released
 under the fixed key.
 
 Predictions, at full magnitude, graded in the FINDING from the replay's committed
-JSON (`docs/handoffs/d55/replay-<bundle>.json`):
+JSON (`docs/records/forecast/d55/replay-<bundle>.json`):
 
 - **P3 — validation.** Under the DEFECTIVE key the replay reproduces the committed
   2022 decision on BOTH bundles: every `entry_capped` unit sorts before every

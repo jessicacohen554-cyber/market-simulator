@@ -8,7 +8,7 @@ unchanged. The recipe check is this lane's: every leg must equal the PJM-NEXT-7
 keeper's own year (``pjmnext7_vs_span/run_config_<y>.json``) EXACTLY apart from
 the arm flag ``unit_outage_exit_cohort_repair`` — and every leg must
 be solved at the pinned PRECOMMIT commit
-(docs/PRECOMMIT-pjm-next-8-exitfix-2026-09-28.md), with the
+(docs/records/pjm/PRECOMMIT-pjm-next-8-exitfix-2026-09-28.md), with the
 COAL-SUB bare-``COAL`` offer-curve fold still tolerated.
 Anything else differing aborts, so a control leg or a wrong-recipe leg can
 never compose in.

@@ -112,14 +112,14 @@ structures. Bucket means, Apr–Oct, ex-top-5 event days:
 
 > **Status 2026-07-14 (same day, follow-on audit executed):** the causal
 > checks below were run —
-> `docs/DIAGNOSIS-ercot-summer-availability-audit-2026-07.md`. Outcome: the
+> `docs/records/ercot/DIAGNOSIS-ercot-summer-availability-audit-2026-07.md`. Outcome: the
 > storage power/energy ENVELOPE is feasible and the outage overlay is
 > ground-truth FAITHFUL (disclosure-verified; model thermal is ~+2 GW rich vs
 > telemetry) — the defect is the **storage capability basis** (EIA-860 fleet
 > power ~2 GW below ERCOT's registered PWRSTR capability in both summers, plus
 > the AS-award subtraction at the scarcity margin). The audit doc's §2
 > dispositions supersede this section's candidate ranking; the DR charter is
-> `docs/handoffs/ercot-demand-response-charter-2026-07.md`.
+> `docs/records/ercot/ercot-demand-response-charter-2026-07.md`.
 
 Hour-level, aligned (model = energy-only dual; VOLL = $5,000):
 
@@ -177,7 +177,7 @@ The aligned pivot still shows May 2024 broadly under (monthly −$9.9; May 7
 worst: model flat $41–47 through h15–18 while the actual built $257–997 into
 the event, then model $1,371/$1,908 vs $2,451/$3,049 at the peak). This is the
 already-forensically-closed thread
-(`docs/DIAGNOSIS-ercot-may2024-outage-forensics-2026-07.md`): outage inputs
+(`docs/records/ercot/DIAGNOSIS-ercot-may2024-outage-forensics-2026-07.md`): outage inputs
 verified faithful to ±0.3 GW at the event hours, May-8 depth improved by the
 nuclear-window fix (ercot56), and the remaining depth/breadth (plus the
 late-May DA-shoulder days: May 12/20/26/28/29 aligned daily means −$15…−27) is

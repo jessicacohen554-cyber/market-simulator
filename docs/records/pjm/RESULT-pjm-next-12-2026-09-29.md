@@ -1,6 +1,6 @@
 # RESULT — PJM-NEXT-12 (2026-09-29): coal self-scheduling falsified as the COAL_BIT lever; coal was the price-setter behind C3a 2019/2020 (zero LP)
 
-**Keeper unchanged:** `2026-09-28-pjm-next8-exitfix`. **Zero LP, zero shards, nothing registered or promoted.** Detail: `docs/FINDING-pjm-next-12-selfsched-marginal-2026-09-29.md`.
+**Keeper unchanged:** `2026-09-28-pjm-next8-exitfix`. **Zero LP, zero shards, nothing registered or promoted.** Detail: `docs/records/pjm/FINDING-pjm-next-12-selfsched-marginal-2026-09-29.md`.
 
 | card | result |
 |---|---|

@@ -141,7 +141,7 @@ rises (and 53.3 % in 2022) — the same compression, on a different statistic.
 
 ## 4. THE OWNER'S EXPERIMENT HAS ALREADY BEEN RUN — full span, registered, zero LP to read
 
-`results/calibration/nyiso222_offer_curve_plus5.json` is a **uniform ×1.05 on all four bands of
+`results/phase0/nyiso/nyiso222_offer_curve_plus5.json` is a **uniform ×1.05 on all four bands of
 `CC_REGULAR` / `CC_CHP` / `CT_PEAKER` / `CT_CHP` / `ST_GAS`** — exactly the lift under discussion.
 Control: `2026-09-09-nyiso-221-fuelvintage-span` (its immediate predecessor recipe).
 

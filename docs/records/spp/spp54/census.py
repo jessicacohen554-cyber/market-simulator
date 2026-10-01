@@ -7,7 +7,7 @@ Also the residual-blind bounds B_plaus / B_hard per zone (PRECOMMIT-spp-54 §2.3
 zone capability minus its minimum hourly load) and the hourly zonal-share identity.
 Zero LP.
 
-usage: uv run python docs/handoffs/spp54/census.py
+usage: uv run python docs/records/spp/spp54/census.py
 """
 
 import json
@@ -121,4 +121,4 @@ for year in (2023, 2024, 2025):
         " wind potential total",
         round(float((wcf * wcap).sum() / 1e6), 2) if wcap.ndim == 2 else "",
     )
-pd.DataFrame(out).to_csv(REPO / "docs/handoffs/spp54/census.csv", index=False)
+pd.DataFrame(out).to_csv(REPO / "docs/records/spp/spp54/census.csv", index=False)

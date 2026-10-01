@@ -4,7 +4,7 @@
   "session": "ercot-170 Phase 0 (no LP, no solve, keeper unchanged)",
   "keeper": "2026-08-05-run168b-year-curves",
   "bundle": "ercot168_yearcurves_B",
-  "precommit": "docs/PRECOMMIT-ercot170-cc-headroom-crosswalk-2026-08-05.md",
+  "precommit": "docs/records/ercot/PRECOMMIT-ercot170-cc-headroom-crosswalk-2026-08-05.md",
   "year": 2023,
   "hour_set": "committed top-100 2023 gap hours (_ercot161_wall_phase0.json)",
   "n_intervals": 400,

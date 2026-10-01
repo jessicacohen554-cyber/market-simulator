@@ -20,9 +20,9 @@ EXPLICIT list of anything that moved outside them -- which is what the leg actua
 tests.
 
 usage:
-    uv run python docs/handoffs/spp50/array_census.py --tag pre
-    uv run python docs/handoffs/spp50/array_census.py --tag post
-    uv run python docs/handoffs/spp50/array_census.py --diff pre post
+    uv run python docs/records/spp/spp50/array_census.py --tag pre
+    uv run python docs/records/spp/spp50/array_census.py --tag post
+    uv run python docs/records/spp/spp50/array_census.py --diff pre post
 """
 
 from __future__ import annotations

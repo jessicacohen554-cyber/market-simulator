@@ -10,7 +10,7 @@ miso-145 §8 handed forward.
 precedent). MISO keeper unchanged at **`2026-08-05-miso-132b-cc-committed`**,
 fail set unchanged at **{C3a}**.
 
-**Pre-registration** `results/calibration/PREREG-miso146-intermittent-screen-2026-08-09.md`,
+**Pre-registration** `docs/records/miso/PREREG-miso146-intermittent-screen-2026-08-09.md`,
 pushed at **`fc162d54`** *before any adjudicating statistic*, with a two-sided
 prior, five numerically falsifiable predictions whose **gating status and
 interpretation were fixed before measurement**, five pre-committed branches,
@@ -278,7 +278,7 @@ still not aligned. miso-145's standing rule STANDS.**
 ### 5.1 A correction to miso-145's published table, found by reproduce-before-extend
 
 miso-145's FINDING §6.1 prints the **2024 DA** LEVEL term as **−4.996**. Its own
-committed artifact `results/calibration/_miso145_offer_conduct.json` records
+committed artifact `results/phase0/miso/_miso145_offer_conduct.json` records
 **−2.401**, and this session reproduces **−2.401** — with the five other cells
 of that table, and all six segment counts, matching to the last digit. **The
 artifact is authoritative and the prose table has a transcription error.** It
@@ -386,7 +386,7 @@ on declaration dynamics — a registry, a resource-type posting, or an hourly
 wind/solar forecast artifact joinable to the masked codes. Absent that, **the
 answer is (a): fix the universe on the model side.**
 
-**Artifacts.** `results/calibration/_miso146_intermittent_screen.json`; probe
+**Artifacts.** `results/phase0/miso/_miso146_intermittent_screen.json`; probe
 `scripts/probes/_miso146_intermittent_screen.py`; the one additive change to a
 prior session's harness, `_miso145_offer_conduct.load_real_segments(...,
 with_meta=True)`, whose default path is byte-unchanged.

@@ -9,7 +9,7 @@ off `origin/main` at `c452919`. §5.4 queue **item 6** (owner-opened 2026-08-08)
 precedent). MISO keeper unchanged at **`2026-08-05-miso-132b-cc-committed`**.
 
 **Pre-registration**
-`results/calibration/PREREG-miso145-summer-offer-conduct-2026-08-09.md`, pushed
+`docs/records/miso/PREREG-miso145-summer-offer-conduct-2026-08-09.md`, pushed
 at **`083222bf`** *before any adjudicating statistic*, with a two-sided prior,
 six numerically falsifiable predictions, pre-committed branches, kill-gate bars
 and all seven look-alike traps with their counter-measurements.
@@ -466,9 +466,9 @@ identified, because the declaration screen removes 0.5 of 107 GW (§5). MISO's
 screen exists, no level statistic from this corpus should be quoted — by this
 lane or any other.
 
-**Artifacts.** `results/calibration/_miso145_coverage.json`,
-`results/calibration/_miso145_offer_conduct.json`,
-`results/calibration/_miso145_cheap_mass.json`; probes
+**Artifacts.** `results/phase0/miso/_miso145_coverage.json`,
+`results/phase0/miso/_miso145_offer_conduct.json`,
+`results/phase0/miso/_miso145_cheap_mass.json`; probes
 `scripts/probes/_miso145_coverage.py`, `scripts/probes/_miso145_offer_conduct.py`;
 intake `scripts/data/fetch_miso_energy_offers.py`,
 `scripts/data/curate_miso_energy_offers.py`,

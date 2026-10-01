@@ -35,7 +35,7 @@ file). The floor applies only where that rate is unusable.
 - Basis: rule 14. Clark 2322 is priced at 3.007 against its measured 9.0–9.6 (FINDING §5).
 - DOF: +0 (aliases of cited constants and a measured filing).
 
-## 2. Prediction (zero LP: `docs/handoffs/nwppnext14/vintage_census.json`, `ccfloor_census.json`, `both_census.json`)
+## 2. Prediction (zero LP: `docs/records/nwpp/nwppnext14/vintage_census.json`, `ccfloor_census.json`, `both_census.json`)
 
 **Key 2.** Only Clark 2322's three CC_REGULAR tranches (462 MW) move. Their heat rate goes
 3.703 / 3.394 / 3.007 ×5 → 9.376 / 9.272 / 9.004 / 9.299 / 9.476 / 9.038 / 9.592 (2019–2025; corrected after the pin — the per-year values in the shard prompts were always these). Class availability

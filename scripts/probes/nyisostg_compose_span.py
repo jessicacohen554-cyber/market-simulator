@@ -4,7 +4,7 @@ Reuses :mod:`scripts.probes.rnyiso_compose_span` (its S0-S2 checks and the
 NYISO ``nyiso238_compose_span`` composition) and re-points them at this lane:
 
 * S0 -- every leg solved at the PRECOMMIT pin
-  (``docs/PRECOMMIT-nyiso-stgas-2023-ldc-leg-2026-09-25.md``);
+  (``docs/records/nyiso/PRECOMMIT-nyiso-stgas-2023-ldc-leg-2026-09-25.md``);
 * S1 -- the keeper's posture PLUS ``nyiso_ldc_generator_delivered_gas`` and
   ``nyiso_dynamic_reserve_requirements`` true; the offer-curve block equals the
   keeper's after the bare-``COAL`` fold (nothing is re-tuned, rule 1(c));
@@ -32,7 +32,7 @@ if str(_REPO) not in sys.path:
 
 from scripts.probes import rnyiso_compose_span as base  # noqa: E402
 
-#: docs/PRECOMMIT-nyiso-stgas-2023-ldc-leg-2026-09-25.md commit SHA.
+#: docs/records/nyiso/PRECOMMIT-nyiso-stgas-2023-ldc-leg-2026-09-25.md commit SHA.
 PIN = "54ac9e1a509c0cad01aadcb9d7583535fd27d883"
 EXPECTED = base.EXPECTED + (
     ("nyiso_ldc_generator_delivered_gas", True),

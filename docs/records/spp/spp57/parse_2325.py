@@ -1,6 +1,6 @@
 """SPP-57 (copied VERBATIM from spp53/parse_2325.py, unchanged): 2023-2025 RTBM binding rows -> hourly per-constraint mean |SP| on the LMP builder's
 local non-leap 8760 clock, plus constraint metadata and SPP-14's group (rules copied VERBATIM
-from docs/handoffs/spp14/groups.py -- unchanged)."""
+from docs/records/spp/spp14/groups.py -- unchanged)."""
 import re, sys, zipfile, glob
 import pandas as pd, numpy as np
 S = sys.argv[1]

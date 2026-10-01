@@ -7,7 +7,7 @@ off `origin/main` `aa61791e`. **The FH-4 lift is UNCONDITIONAL** (Addendum
 AI.1: the AG.2 condition was discharged by the ERCOT leg's step-0 gate PASS at
 0.0 %), so this leg carries **no step-0 gate** — the I6 invariant remains as a
 **stop-the-line RIDER** on both arms (§1.1). Protocol of record:
-`docs/handoffs/fh-4-ercot-leg-2026-08-09.md`, executed for NYISO at **SHIPPED
+`docs/records/forecast/fh-4-ercot-leg-2026-08-09.md`, executed for NYISO at **SHIPPED
 DEFAULTS** per the dispatch: **no keeper contact, no arming, no tuning.**
 
 **Baseline epoch.** Solved at HEAD `aa61791e` (cold container; `uv sync` +

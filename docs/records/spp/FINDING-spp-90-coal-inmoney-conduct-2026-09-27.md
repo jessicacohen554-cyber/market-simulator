@@ -2,7 +2,7 @@
 
 **Lane** SPP-90 · **ZERO LP** · keeper `2026-09-26-spp-86-coal-extract` (bundle `spp86_arm_span`, basis_sha `d72e5f10`)
 · probe `scripts/probes/_spp90_coal_inmoney_conduct.py` (reads the SPP-89 `_spp89_stack_dump.py` stacks, fleet_only rebuild)
-· record `results/calibration/_spp90_coal_inmoney_conduct.json`. Nothing solved or registered. Keeper unchanged. No promotion
+· record `results/phase0/spp/_spp90_coal_inmoney_conduct.json`. Nothing solved or registered. Keeper unchanged. No promotion
 question (rule 31).
 
 ## 1. Method

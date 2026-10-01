@@ -1,7 +1,7 @@
 # FINDING — ERCOT-114 Task B: the joint arm is INCONCLUSIVE on the shape, and it proves the defect is TOPOLOGY, not depth
 
 **Date** 2026-07-26 · **ISO** ERCOT · **Years** 2023–2025 (one invocation, years sequential) ·
-**Pre-commit** `results/calibration/PRECOMMIT-ercot114-wind-shape-depth-joint-2026-07-26.md`
+**Pre-commit** `docs/records/ercot/PRECOMMIT-ercot114-wind-shape-depth-joint-2026-07-26.md`
 (written and pushed **before** the solve was launched) ·
 **Run id** `2026-07-26-ercot114-joint-per-zone` ·
 **Scorers** `scripts/probes/ercot113_score_wind_arms.py` (PINNED),

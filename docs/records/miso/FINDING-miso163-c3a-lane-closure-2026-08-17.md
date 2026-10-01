@@ -140,7 +140,7 @@ the recommendation stated as Shape 2 on the evidence.
 provenance, at `docs/governance/rule-history.md` §7.
 
 The precedent is **ERCOT C3a-2023 (Q-B)**
-(`docs/DECISION-CARD-ercot189-c3a2023-after-the-offer-family-2026-08-11.md`):
+(`docs/records/ercot/DECISION-CARD-ercot189-c3a2023-after-the-offer-family-2026-08-11.md`):
 
 > **(Q-B) STOP — ERCOT stands at NOT-YET on C3a-2023 as a model-class limit, and
 > the program stops spending on it.** … this is a **budget decision, not a

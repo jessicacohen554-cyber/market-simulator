@@ -119,7 +119,7 @@ def main() -> None:
             f"  fuel-invariance of the ST_GAS econ delta: {res['econ_fuel_invariant_note']}"
         )
 
-    dest = Path("results/calibration/_nyiso232_st_gas_phase0.json")
+    dest = Path("results/phase0/nyiso/_nyiso232_st_gas_phase0.json")
     dest.write_text(json.dumps(out, indent=1))
     print(f"\nwrote {dest}")
 

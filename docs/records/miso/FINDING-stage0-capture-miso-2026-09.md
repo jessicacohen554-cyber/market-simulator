@@ -2,8 +2,8 @@
 
 **Session `claude/stage0-capture-miso-ekq5f9`, 2026-09-02.** One keeper re-solve at
 HEAD with determinism pinned. Follows the proven recipe
-`docs/FINDING-stage0-capture-neiso-ercot-2026-09.md` and the second precedent
-`docs/FINDING-stage0-capture-caiso-nyiso-2026-09.md`. **No keeper shard, marker,
+`docs/records/neiso/FINDING-stage0-capture-neiso-ercot-2026-09.md` and the second precedent
+`docs/records/caiso/FINDING-stage0-capture-caiso-nyiso-2026-09.md`. **No keeper shard, marker,
 matrix shard, registry, freeze file or `program-status.json` edit; no
 determination changed; no workflow created; no dashboard registration**
 (standing reading, recipe finding §3). The two prior R-Q dispatches for MISO
@@ -258,7 +258,7 @@ ARCHITECTURE"*. No out-of-training year was solved, scored or registered.
   lowSpeedTime 20) and **blob-verified** against the remote: local
   `git hash-object` and the fetched remote blob both `4e2ff5a1…`, 752 lines
   (rule 27 `[R-PUSH]`).
-* `docs/FINDING-stage0-capture-miso-2026-09.md` — this file.
+* `docs/records/miso/FINDING-stage0-capture-miso-2026-09.md` — this file.
 * Golden bundle under `results/regression-goldens/perfb-stage0/MISO/` —
   gitignored by design, retained on disk in this container.
 

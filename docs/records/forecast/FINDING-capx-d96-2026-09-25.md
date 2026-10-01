@@ -209,7 +209,7 @@ as history, and one D96 sentence was appended to each:
 | `generation:total@2040` | −15.3 → −15.3 % | imports 30.515 TWh; CC fleet 20.6 % short |
 
 **Direction, reported rather than argued:** all three co2 rows moved **further** below the AEO2025 anchor.
-F1 deepens the CCS wave, which deepens the corridor gap. Script: `docs/handoffs/d96/rebase_fc5_d96.py`.
+F1 deepens the CCS wave, which deepens the corridor gap. Script: `docs/records/forecast/d96/rebase_fc5_d96.py`.
 
 ### 4.3 FC-7 — did not move, and D90-R Addendum B was not triggered
 

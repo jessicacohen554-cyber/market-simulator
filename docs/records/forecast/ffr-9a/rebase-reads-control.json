@@ -510,13 +510,13 @@
    "decision": "D-24, signed 2026-08-06 (sitting Addendum X.6)",
    "evidence": {
     "confirmed_registry": "data/raw/confirmed-retirements/ercot.csv",
-    "exit_decode": "docs/handoffs/ffr-7c/exit-decode-2026-08-06.json",
-    "exit_decode_citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md",
+    "exit_decode": "docs/records/forecast/ffr-7c/exit-decode-2026-08-06.json",
+    "exit_decode_citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/records/forecast/ffr-7c-exit-decode-corrected-target-2026-08-06.md",
     "target": "data/raw/_validation-source/capacity_actuals_ercot.csv"
    },
    "excluded": [
     {
-     "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md",
+     "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/records/forecast/ffr-7c-exit-decode-corrected-target-2026-08-06.md",
      "driver": "not margin-driven (exit decode); no confirmed-registry instrument exists",
      "exit_year": 2025,
      "fuel": "coal",
@@ -528,7 +528,7 @@
      "why": "no admissible channel \u2014 economic screen must not retire it (primary-year margin 73.41 vs bar 58.5 $/kW-yr in 2024 (unit_net), bar-invariant), and no confirmed-registry instrument exists"
     },
     {
-     "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md",
+     "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/records/forecast/ffr-7c-exit-decode-corrected-target-2026-08-06.md",
      "driver": "not margin-driven (exit decode); no confirmed-registry instrument exists",
      "exit_year": 2022,
      "fuel": "gas_st",
@@ -540,7 +540,7 @@
      "why": "ABSENT (3548 carries only CT8, CT_PEAKER 206.0 MW) \u2014 no screen can retire capacity the run's fleet never carried"
     },
     {
-     "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md",
+     "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/records/forecast/ffr-7c-exit-decode-corrected-target-2026-08-06.md",
      "driver": "confirmed instrument ercot-nso-braunig-2 (rto_deactivation, instrument_date 2024-03-13)",
      "exit_year": 2025,
      "fuel": "gas_st",
@@ -552,7 +552,7 @@
      "why": "no admissible channel \u2014 economic screen must not retire it (primary-year margin 63.35 vs bar 35.0 $/kW-yr in 2024 (unit_net), bar-invariant), and its only instrument (ercot-nso-braunig-2, 2024-03-13) post-dates the vintage cutoff 2020-12-31"
     },
     {
-     "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md",
+     "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/records/forecast/ffr-7c-exit-decode-corrected-target-2026-08-06.md",
      "driver": "confirmed instrument ercot-nso-braunig-1 (rto_deactivation, instrument_date 2024-03-13)",
      "exit_year": 2025,
      "fuel": "gas_st",
@@ -564,7 +564,7 @@
      "why": "no admissible channel \u2014 economic screen must not retire it (primary-year margin 69.74 vs bar 35.0 $/kW-yr in 2024 (unit_net), bar-invariant), and its only instrument (ercot-nso-braunig-1, 2024-03-13) post-dates the vintage cutoff 2020-12-31"
     },
     {
-     "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md",
+     "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/records/forecast/ffr-7c-exit-decode-corrected-target-2026-08-06.md",
      "driver": "not margin-driven (exit decode); no confirmed-registry instrument exists",
      "exit_year": 2023,
      "fuel": "gas_cc",

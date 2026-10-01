@@ -1,6 +1,6 @@
 # ADDENDUM A1 (nyiso-249) — G-3: the form's WINDOW must reach the C3c deficit, and that is pre-registered here
 
-**Added to `docs/PRECOMMIT-nyiso249-upper-tail-offer-dispersion-2026-09-20.md` (pushed `f8046c19`)
+**Added to `docs/records/nyiso/PRECOMMIT-nyiso249-upper-tail-offer-dispersion-2026-09-20.md` (pushed `f8046c19`)
 BEFORE the gate is run.** Zero LP. Nothing below has been measured yet.
 
 ## Why this gate was missing, and why it is added now

@@ -1,7 +1,7 @@
 # FFR-3C — Attributing the D-1/D-2 capacity-adequacy collapse: the MISO control arm and the G-31 screen-grain term
 
 **Session.** FFR Wave 3, the attribution lane (owner blocker 0 from FFR-3A;
-`docs/handoffs/ffr-owner-sitting-2026-08-02.md` Addendum D.1/D.2 — *"HOLD PROMOTION, FIND
+`docs/records/forecast/ffr-owner-sitting-2026-08-02.md` Addendum D.1/D.2 — *"HOLD PROMOTION, FIND
 ROOT CAUSE"*). Branch `claude/ffr-3c-collapse-attribution-pebd3t`, off `origin/main`
 **`5057614`** (the packet's stated HEAD `195ff18` was already four merges stale at session
 start).

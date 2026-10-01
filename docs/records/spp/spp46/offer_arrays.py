@@ -14,7 +14,7 @@ For each year, rebuild the keeper-3 (spp43_screened_B) fleet with
   fuel_prices as float32 (n_gen x 8760) for the re-clearing predictor.
 
 No solve. Nothing here depends on any residual.
-Usage: uv run python docs/handoffs/spp46/offer_arrays.py [scratch_dir]
+Usage: uv run python docs/records/spp/spp46/offer_arrays.py [scratch_dir]
 """
 import json, sys
 from pathlib import Path
@@ -28,7 +28,7 @@ from market_sim.data.eia923 import plant_month_price_grid  # noqa: E402
 from market_sim.data.fuel.plant_prices import _load_monthly_cache  # noqa: E402
 
 BUNDLE = REPO / "results/calibration/spp43_screened_B"
-OUT = REPO / "docs/handoffs/spp46"
+OUT = REPO / "docs/records/spp/spp46"
 SCRATCH = Path(sys.argv[1]) if len(sys.argv) > 1 else OUT / "_scratch"
 SCRATCH.mkdir(parents=True, exist_ok=True)
 

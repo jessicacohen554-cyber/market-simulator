@@ -1,6 +1,6 @@
 # DESIGN — capx D54: the PJM clearing half — clear the fleet's net-ACR sell-offer stack against the published VRR curve, and let the UNCLEARED set be the retirement screen's capacity leg (D45 §2.3 item 3; the last structural piece of the D6 / D28 chain)
 
-**Lane:** capx D54 — director r#35, docs-only (`docs/handoffs/capx-director-ledger-2026-08.md`
+**Lane:** capx D54 — director r#35, docs-only (`docs/records/forecast/capx-director-ledger-2026-08.md`
 §0af.2: "design + pre-declaration only; code and solve GATED on D48 landing"). Branch
 `claude/capx-d54-pjm-clearing-design`, fresh off `origin/main` (`d9f034f`). **No code, no
 solve, no `ScenarioConfig` field, no matrix row** (rule 28 is the build lane's duty and is
@@ -8,7 +8,7 @@ listed in §7). D48 HAS landed (`FINDING-capx-d48-2026-09-04.md`, PR #4707 + Pha
 result does NOT change this design — it strengthens the case for it (§0, §4.6) — and it
 adds one arm to the A/B plan (§7.6). The companion pre-declaration is
 `PREDECL-capx-d54-pjm-clearing-half-2026-09-05.md`; its zero-solve instrument and
-outputs are committed under `docs/handoffs/d54/`.
+outputs are committed under `docs/records/forecast/d54/`.
 
 **DATA PROFILE: code.** Everything below is read from committed artifacts (the D45-R and
 D48 T1-H bundles' `evolution_<year>.json` ledgers, the D48 position instrument, the D45
@@ -42,7 +42,7 @@ the screen's failing set IS the auction's uncleared set (§3.5 proves it), the c
 evaluation is recovered exactly whenever every offer is $0 or the market is short (§3.6
 I1), and there is **no free parameter**: every number is either a published market-design
 parameter already in the registry or an operand the screen already computes. The zero-solve
-instrument (§8, `docs/handoffs/d54/`) run on the committed ledgers puts the design's cleared
+instrument (§8, `docs/records/forecast/d54/`) run on the committed ledgers puts the design's cleared
 position within **0.7 / 1.0 / 2.6 points** of the published cleared position in 2022/23,
 2023/24, 2024/25 — and its clearing price at **1.7× / 2.4× / 5.5×** the published price,
 because the model's offer stack is too expensive: the gas-CT, gas-steam and oil fleets carry
@@ -247,7 +247,7 @@ no iteration, no LP (rule 10 `[R-ONE-PASS]` untouched).
   cleared quantity; raising `R` never lowers the price.
 - **I5 — known answer.** On the committed D45-R and D48 ledgers the build's clearing
   function reproduces the pre-declaration instrument's price and cleared quantity per year
-  to ±$1/MW-day and ±0.1 pt (PREDECL §2 tables, `docs/handoffs/d54/*.json`) — before any
+  to ±$1/MW-day and ±0.1 pt (PREDECL §2 tables, `docs/records/forecast/d54/*.json`) — before any
   solve (the D48 Phase-0 discipline).
 - **I6 — other ISOs byte-identical**; PJM unarmed byte-identical; the bare `pjm-t1h` key
   unmoved.
@@ -511,7 +511,7 @@ in a plain backcast exactly as the curve gate is (keepers byte-identical).
 | `src/market_sim/runner.py` (≈ lines 1955–2040, the once-per-year position block) | when the supply gate resolves ON, thread the `CapacityClearing` result (or its price) into `evolve_fleet` in place of the bare `curve_reserve_position`; write the `capacity_clearing` ledger block beside the D52 `screen_*` observability fields | `capacity_reserve_position` stays computed (the census position is still the ledger's `capacity_reserve_position` row — additive, nothing renamed) |
 | `src/market_sim/model/capacity_evolution/evolve.py::evolve_fleet` | accept/forward the clearing object; pass its price to `apply_economic_new_entry` / storage entry as `reserve_position` does today (price-taker, §4.4) | — |
 | `src/market_sim/config/capacity_market.py::MarketDesign.capacity_price_per_firm_mw_yr` | NO change to the curve branch; add a one-line short-circuit: when the caller supplies a `clearing_price_per_firm_mw_yr` (the entry/storage price-taker path) return it. Alternatively thread the price through `reserve_position`'s existing slot as a pre-priced object — the build picks whichever keeps the seam single (rule 19) and documents it | — |
-| `tests/unit/model/test_capacity.py` | `TestPjmCapacitySupplyClearing`: I1–I6 of §3.6, the 1-gen/1-zone trivial cases first (testing pattern), the known-answer test on the committed ledgers (I5) | `docs/handoffs/d54/clearing-predecl-2026-09-05.json` |
+| `tests/unit/model/test_capacity.py` | `TestPjmCapacitySupplyClearing`: I1–I6 of §3.6, the 1-gen/1-zone trivial cases first (testing pattern), the known-answer test on the committed ledgers (I5) | `docs/records/forecast/d54/clearing-predecl-2026-09-05.json` |
 | `model-methodology-spec.md` §5.2 / §5.9 | the clearing half paragraph (offer form, stack, price, uncleared = failing) | doc-sync after the build |
 | `docs/codebase-site/data/mechanism-matrix.js` + every `mechanism-matrix/<ISO>.js` | base row `capacity_market_supply_clearing` (cat capacity, mode F) + a cell in all six shards (`.` for ERCOT/CAISO, `U` NYISO/NEISO/MISO with the §4.9 note, `O` PJM `fc`), the rule-28(c) duty; `scripts/check_mechanism_matrix.py --base origin/main` green | — |
 | `scripts/run_capacity_hindcast.py` | `--capacity-market-supply-clearing` (sets the PJM row ON; the D48 flags' pattern) | — |
@@ -583,11 +583,11 @@ PREDECL §2 (I5) before any leg launches. Pre-declared expectations per leg: PRE
 
 Committed rows read: `data/raw/capacity-market/{auction-price,auction-supply,demand-curve,
 avoidable-cost-rate}/pjm/pjm.csv`; the D45-R (`c6091bd5b62bbc3f`) and D48
-(`bbe13b3f7b659d36`) bundle ledgers; `docs/handoffs/d48/devintage-positions-d45r-2026-09-04.json`;
-`docs/handoffs/d45/published-positions-2026-09-03.json`.
+(`bbe13b3f7b659d36`) bundle ledgers; `docs/records/forecast/d48/devintage-positions-d45r-2026-09-04.json`;
+`docs/records/forecast/d45/published-positions-2026-09-03.json`.
 
 - **Scope.** Docs only: this design, its pre-declaration, and the zero-solve instrument +
-  outputs under `docs/handoffs/d54/`. No `src/`, no `ScenarioConfig` field, no matrix row or
+  outputs under `docs/records/forecast/d54/`. No `src/`, no `ScenarioConfig` field, no matrix row or
   cell (the build lane's rule-28 duty, listed in §7.2), no solve, no registration, no keeper /
   shard / marker, backcast namespace untouched.
 - **Rules 13 / 14.** Every published quantity above is either a market-design parameter the

@@ -247,7 +247,7 @@ solve. P-1/P-2/P-3 are instrument predictions, P-4–P-10 are the object.
 ## §4 — WHAT THIS SESSION DELIVERS, AND WHAT IT DOES NOT
 
 **Delivers:** this PRECOMMIT; `scripts/probes/_caiso247_residual_regime_anatomy.py`
-+ `results/calibration/_caiso247_residual_regime_anatomy.json`; a finding
++ `results/phase0/caiso/_caiso247_residual_regime_anatomy.json`; a finding
 scoring all ten predictions against interest; the calibration-log entry; and
 the **evidence-only** append to the CAISO matrix shard naming what the
 measurement says about `import_hub_pricing` / `measured_offer_surface`

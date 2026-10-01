@@ -1,7 +1,7 @@
 # ADDENDUM to PRECOMMIT-pjm-h13 — the touchpoint years' pre-solve reallocation, recorded BEFORE any shard landed (2026-09-20)
 
 **NO GATE MOVES.** G1–G5 and the reported/gating asymmetry of
-`docs/handoffs/PRECOMMIT-pjm-h13-2026-09-20.md` §4 stand exactly as pushed at
+`docs/records/pjm/PRECOMMIT-pjm-h13-2026-09-20.md` §4 stand exactly as pushed at
 `ed3f5efdbcdd20a6317eb05add357f1909a736d6`, which is the SHA all six shards are pinned to. This
 addendum only extends §2.1's table from three years to six. It is committed **while the shards are
 still solving and before any arm result exists**, so it cannot have been written to fit an outcome.

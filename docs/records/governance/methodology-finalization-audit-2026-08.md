@@ -6,7 +6,7 @@
 **Head audited:** `origin/main` @ `ce779f9` (2026-08-16). Every P1 finding and
 every count below was re-verified at this head; main moved five times during the
 session and no cited surface changed across those moves.
-**Subject:** [`model-methodology-spec.md`](../../model-methodology-spec.md) — 1,251 lines, read end to end.
+**Subject:** [`model-methodology-spec.md`](../../../model-methodology-spec.md) — 1,251 lines, read end to end.
 **Executor:** DOCS-B, after gate **G2**. The spec is **frozen to DOCS-A** this
 session — nothing below has been applied.
 
@@ -29,7 +29,7 @@ a delegation boundary that is stated once and honoured.
 - **Code is the source of truth.** The spec wins only on genuine *methodological*
   ambiguity — never on a default, a flag name, a file path, or a number.
 - **Do not re-absorb the delegated documents.** The calibration/validation
-  regime stays in [`../calibration-and-validation-methodology.md`](../calibration-and-validation-methodology.md)
+  regime stays in [`../calibration-and-validation-methodology.md`](../../calibration-and-validation-methodology.md)
   and the two rubrics. See [§6](#6-what-stays-delegated--do-not-re-absorb).
 - **Cite rules by stable `[R-*]` ID**, never by ordinal.
 - Every claim re-verified below carries the command or file:line that verified
@@ -126,7 +126,7 @@ per-fuel loss-year counts are not the operative mechanism at all.
 the screen without `year` and reading legacy loss counters. DEBUG-A fixed it by
 pinning `retirement_rule="legacy"` in the probe config. That the *tests* needed
 this pin and the *spec* never mentioned the field is the shape of the gap.
-<!-- docs/handoffs/debug-sweep-2026-08.md, Seed-7 detail table row 1 -->
+<!-- docs/records/misc/debug-sweep-2026-08.md, Seed-7 detail table row 1 -->
 
 ### 1.3 §6.2 — performance targets the model has never met, by ~1.5 orders of magnitude
 
@@ -138,14 +138,14 @@ this pin and the *spec* never mentioned the field is the shape of the gap.
 | Single scenario × 1 ISO × 25 years | < 5 min | ≈ **1.3–2.4 hours** at those rates |
 | Memory per LP solve | < 2 GB | **~12.7–14.5 GB** on a per-plant ISO |
 | 20 scenarios × 2 ISOs on 8 cores | < 30 min | not achievable under `[R-PARALLEL]`'s ≤2-worker cap |
-<!-- docs/handoffs/wallclock-baseline-2026-07.md:22-23 (ERCOT 2023 271.7 s / 2024 183.1 s), :26 (solve share 74–83 %), :35,:37 (MISO 339.2 / 292.6 s); memory: docs/PRECOMMIT-ercot192-…-2026-08-12.md:260 (12.71 GB RSS), docs/multi-iso/pjm-reserve-ordc.md Phase-2 EMPIRICAL (13.9–14.5 GB) -->
+<!-- docs/records/misc/wallclock-baseline-2026-07.md:22-23 (ERCOT 2023 271.7 s / 2024 183.1 s), :26 (solve share 74–83 %), :35,:37 (MISO 339.2 / 292.6 s); memory: docs/PRECOMMIT-ercot192-…-2026-08-12.md:260 (12.71 GB RSS), docs/multi-iso/pjm-reserve-ordc.md Phase-2 EMPIRICAL (13.9–14.5 GB) -->
 
 The "< 2 GB per LP solve" line is the most dangerous: `[R-PARALLEL]`'s ≤2-worker
 cap exists *precisely because* a solve uses several GB. A reader sizing a machine
 from §6.2 will under-provision by ~7×.
 
 **DOCS-B action.** **Delete the §6.2 target table.** Replace it with a pointer to
-`docs/handoffs/wallclock-baseline-2026-07.md` (per-phase measured ground truth)
+`docs/records/misc/wallclock-baseline-2026-07.md` (per-phase measured ground truth)
 and a one-paragraph statement of the durable structural facts: the cold P0 solve
 is 74–83 % of a year; the obvious solver levers (IPM+crossover, thread scaling,
 HiGHS parallel/PAMI, presolve-on) are benched and **rejected on record**; warm-start
@@ -217,7 +217,7 @@ Gaps, not errors. Each is a mechanism a reader would need and would not find.
 | 2.3 | **The `_p1` cached pass file.** §4.4's cache layout shows only `year_YYYY.parquet`; the code also writes `year_YYYY_p1.parquet` when a commitment pass runs. | §4.4 | `results/cache.py:594` `get_cache_path(..., pass_label)` |
 | 2.4 | **`MARKET_SIM_DATA_ROOT`.** The whole `data/`+`results/` root is relocatable by env var. Unmentioned. | §4.4 | `src/market_sim/config/paths.py:45` |
 | 2.5 | **`retirement_rule` / the pipeline retirement rule.** See [§1.2](#12-52-describes-a-non-default-code-path--retirement_rule-is-absent-entirely). | §5.2 | `scenarios.py:2208` |
-| 2.6 | **The real `cache_key` construction.** §4.1's snippet shows `sha256(json.dumps(asdict(self)))[:16]`. The shipped key has drop-at-default semantics over optional fields plus a registration ledger, guarded in CI by `scripts/check_cache_key_registration.py`. The tuple/list coercion repair landed in the 2026-08 debug sweep precisely because a byte-faithful YAML reload hashed to a *different key than its writer*. Cache-key byte-stability is a **frozen surface** (any key move is a declared epoch, per the FFR-9C precedent); the spec should say so. | §4.1, §4.4 | `check_cache_key_registration.py` output at `ce779f9`: *"713 ScenarioConfig fields, 166 registered in `_CACHE_KEY_OPTIONAL_FIELDS`, all resolve; 166 declared defaults all match HEAD"*; default key `603c2498bf71d21d` verified; `docs/handoffs/debug-sweep-2026-08.md` Seed-7 row 2 |
+| 2.6 | **The real `cache_key` construction.** §4.1's snippet shows `sha256(json.dumps(asdict(self)))[:16]`. The shipped key has drop-at-default semantics over optional fields plus a registration ledger, guarded in CI by `scripts/check_cache_key_registration.py`. The tuple/list coercion repair landed in the 2026-08 debug sweep precisely because a byte-faithful YAML reload hashed to a *different key than its writer*. Cache-key byte-stability is a **frozen surface** (any key move is a declared epoch, per the FFR-9C precedent); the spec should say so. | §4.1, §4.4 | `check_cache_key_registration.py` output at `ce779f9`: *"713 ScenarioConfig fields, 166 registered in `_CACHE_KEY_OPTIONAL_FIELDS`, all resolve; 166 declared defaults all match HEAD"*; default key `603c2498bf71d21d` verified; `docs/records/misc/debug-sweep-2026-08.md` Seed-7 row 2 |
 | 2.7 | **Warm-start.** Intra-year, cross-year (`MARKET_SIM_WARMSTART_XYEAR`, default **ON** on the calibration path, ~2.3× on warm years, basis-neutral) and the persisted year-1 basis are shipped and load-bearing. §6 mentions none of them. | §6 | `scripts/run_calibration.py:5730-5766`; `docs/cross-year-warmstart.md` |
 | 2.8 | **Byte-identity as a methodological contract.** `capture_keeper_goldens.py` before / `regression_gate.py --mode byte` (atol=rtol=0) after, with "a golden FAIL is a finding, never grounds to regenerate" — this governs what may change about the model. It is reproducibility methodology, not tooling trivia. One paragraph, with the delegation pointer. | §7 successor (see [§3](#3-p2--phase-0-build-agent-content-to-retire)) | `docs/testing.md` "The two golden systems"; `docs/refactor-consolidation-plan-2026-07.md` §8 |
 
@@ -351,7 +351,7 @@ alias pattern onto `model/interchange`.
   `eia860`, `legacy_bins`, `assembly`). Repoint to the owning module. L585 already
   correctly cites `fleet/eia860.py::_rows_to_generators`.
 - **L1129 `adjudication-2026-07-15.md`** — resolve the bare filename to its real
-  path (`docs/handoffs/nyiso-neiso-capacity-pairing-adjudication-2026-07-15.md`)
+  path (`docs/records/nyiso/nyiso-neiso-capacity-pairing-adjudication-2026-07-15.md`)
   or drop it.
 - **L349 `claude.md`** — lowercase, twice on one line. The file is `CLAUDE.md`.
 - **Bare filenames that do resolve** (`constants.py`, `iso_configs.py`,
@@ -481,12 +481,12 @@ pass is to pull the scoring regime back in. Resist it.
 
 | Stays in | Owns |
 |---|---|
-| [`calibration-and-validation-methodology.md`](../calibration-and-validation-methodology.md) | The authoritative narrative: how a backcast run is scored, gated, and declared a keeper. Holdout tiers (train / validation / locked-test), DOF ledgers, ablation twins, the calibration-frontier designation. |
-| [`calibration-determination-rubric.md`](../calibration-determination-rubric.md) | The criterion-by-criterion rubric spec (C1–C8) and §0b's benchmark-basis specification. |
-| [`forecast-determination-rubric.md`](../forecast-determination-rubric.md) | The forecast (FR) rubric. |
+| [`calibration-and-validation-methodology.md`](../../calibration-and-validation-methodology.md) | The authoritative narrative: how a backcast run is scored, gated, and declared a keeper. Holdout tiers (train / validation / locked-test), DOF ledgers, ablation twins, the calibration-frontier designation. |
+| [`calibration-determination-rubric.md`](../../calibration-determination-rubric.md) | The criterion-by-criterion rubric spec (C1–C8) and §0b's benchmark-basis specification. |
+| [`forecast-determination-rubric.md`](../../forecast-determination-rubric.md) | The forecast (FR) rubric. |
 | `CLAUDE.md` | The governance rules themselves. The spec cites `[R-*]` IDs; it does not restate rule text. |
 | `docs/codebase/` | What the code does, module by module. The spec states methodology; codebase pages state implementation. |
-| `docs/handoffs/wallclock-baseline-2026-07.md` | Measured per-phase wallclock. See [§1.3](#13-62--performance-targets-the-model-has-never-met-by-15-orders-of-magnitude). |
+| `docs/records/misc/wallclock-baseline-2026-07.md` | Measured per-phase wallclock. See [§1.3](#13-62--performance-targets-the-model-has-never-met-by-15-orders-of-magnitude). |
 | `docs/user-manual.md` | How to *run* it — install, CLI, configs, outputs, troubleshooting. |
 
 **The one boundary this audit proposes moving** is §1.8-second (benchmark basis,
@@ -602,7 +602,7 @@ the two documents:
 Recorded so DOCS-B does not treat their absence as an oversight:
 
 - **`docs/codebase/07-runner-and-cli.md` staleness** — enumerated in
-  [`../user-manual.md` §10](../user-manual.md#10-known-doc-divergences-found-while-writing-this-manual)
+  [`../user-manual.md` §10](../../user-manual.md#10-known-doc-divergences-found-while-writing-this-manual)
   (wrong subcommand count, six stale line numbers, two unrunnable examples, a
   stray `</content>` tag). Another lane's surface.
 - **`docs/testing.md`'s "~355 files"** — actual **447** `test_*.py` (454 `.py`

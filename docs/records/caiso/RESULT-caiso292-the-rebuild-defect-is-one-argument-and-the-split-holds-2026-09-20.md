@@ -157,7 +157,7 @@ So the verdict is not inheritable.
 `scripts/probes/caiso292_screen_split_keeper.py` **imports** caiso-287's own `run_detector`,
 `belly_mean_mw`, sidecar readers, posture map and cuts — the arithmetic is reproduced, not
 re-implemented — and supplies the keeper's bundle. Artifact:
-`results/calibration/_caiso292_screen_split.json`.
+`results/phase0/caiso/_caiso292_screen_split.json`.
 
 | year | M_both | M_none | **R_SA** (startup_aware) | **R_DC** (decommit) | bar @70 % | verdict |
 |---|--:|--:|--:|--:|--:|---|
@@ -232,7 +232,7 @@ monotonically 2022 → 2025, but they land much closer to caiso-287 §5's **42�
 ## 3. Provenance, and what is on disk
 
 * Probe: `scripts/probes/caiso292_screen_split_keeper.py`; artifact
-  `results/calibration/_caiso292_screen_split.json` (carries the G-DRIFT audit verbatim, written
+  `results/phase0/caiso/_caiso292_screen_split.json` (carries the G-DRIFT audit verbatim, written
   before the keeper years were measured).
 * Two bundles were recovered **read-only from git history** for validation and are left on local
   disk (rule 31 `[R-RETAIN]`): `caiso285_instr_2024` (`203124e3…`, already present from caiso-291)

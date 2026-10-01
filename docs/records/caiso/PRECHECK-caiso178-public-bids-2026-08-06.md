@@ -165,7 +165,7 @@ is **the measurement and the threshold it must clear**. Both are fixed here:
   years **and** the growth ordering 2023 < 2024 < 2025 is reproduced.
 * **H1b — PRICE-BUCKET AGREEMENT (out-of-construction).** The classified set's DAM
   discharge **priced-volume shares**, bucketed into caiso-176's 11 published buckets, against
-  the committed **IFM|LESR** shares in `results/calibration/_caiso176_bidstack_reservation.json`.
+  the committed **IFM|LESR** shares in `results/phase0/caiso/_caiso176_bidstack_reservation.json`.
   **PASS** iff **mean absolute deviation across the 11 buckets ≤ 5.0 pp in each year** AND
   the lowest bucket carrying ≥ 1 % of priced volume is the **same** bucket as the published
   panel's in **≥ 2 of 3** years.

@@ -1,6 +1,6 @@
 # PRECOMMIT — PJM-NEXT-16: arm A (OVEC fleet boundary) and arm B (+ PJM CC commitment bridge)
 
-**Written before any solve.** Zero-LP evidence: `docs/FINDING-pjm-next-16-cc-loading-and-the-ovec-boundary-2026-09-30.md`.
+**Written before any solve.** Zero-LP evidence: `docs/records/pjm/FINDING-pjm-next-16-cc-loading-and-the-ovec-boundary-2026-09-30.md`.
 
 **Owner rulings (2026-09-30, decision cards):**
 - OVEC fix: *"Build + solve"*.

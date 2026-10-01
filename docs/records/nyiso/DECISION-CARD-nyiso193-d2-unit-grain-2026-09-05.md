@@ -68,8 +68,8 @@ superseded twice.** Session nyiso-203 re-took the measurement on the live keeper
 (`--replay-bundle`; 0 of 157,680 zonal prices differ across 2023–2025 and class energy is
 identical to 0.000000 MWh over 14 classes, so these are the keeper's numbers). The replay bundle
 was **deleted before merge**; the record is
-`results/calibration/_nyiso203_c8_unit_grain.json` and
-`docs/FINDING-nyiso203b-unit-grain-and-duct-lever-2026-09-06.md`.
+`results/phase0/nyiso/_nyiso203_c8_unit_grain.json` and
+`docs/records/nyiso/FINDING-nyiso203b-unit-grain-and-duct-lever-2026-09-06.md`.
 
 | `ST_GAS` unit-grain forced share | 2023 | 2024 | 2025 | cap |
 |---|---:|---:|---:|---:|
@@ -97,7 +97,7 @@ and **Roseton 8006 (12/12, 14.6 % online)** qualify **a fortiori** against Port 
 Astoria 8906 (0/12, 166 MW median, 70.4 % online) and Saranac 54574 (9/12) do **not**, confirming
 nyiso-201 §5. Excluding 2480 + 8006 would leave **zero `ST_GAS` D-4 failures in 2024 and 2025**
 and only 2023's 8906 row (0.2271 TWh) — whose limb basis nyiso-203 separately measured **sound as
-built** (`docs/FINDING-nyiso203-nyc-persistent-base-basis-2026-09-06.md`), so it is not reachable
+built** (`docs/records/nyiso/FINDING-nyiso203-nyc-persistent-base-basis-2026-09-06.md`), so it is not reachable
 by a basis change.
 
 **This addendum arms nothing and recommends no option.** The exclusion entry is a NEW arm owing
@@ -110,7 +110,7 @@ DONE** (this addendum); the other five ISOs remain unmeasured and this lane may 
 
 §3 option (A) says *"other ISOs' exposure is unmeasured"*. That understates the record — a
 second ISO was already measured by nyiso-192 and its result is committed at
-`results/calibration/_nyiso192_c8_unit_grain_NEISO-head-replay.json`:
+`results/phase0/nyiso/_nyiso192_c8_unit_grain_NEISO-head-replay.json`:
 
 | ISO | keeper | `ST_GAS` unit grain 2023 / 2024 / 2025 | over the 0.30 cap |
 |---|---|---|---|

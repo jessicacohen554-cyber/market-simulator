@@ -1,7 +1,7 @@
 # RESULT — NYISO-NEXT-6: Long Island seam posted-limit sub-clip; promoted — 2026-09-27
 
 **Session:** NYISO-NEXT-6 (orchestrator; no LP in this container, rule 32 (a)).
-**PRECOMMIT:** `docs/PRECOMMIT-nyiso-next5-li-tie-posted-limit-2026-09-27.md` §6–§7, plus its §9
+**PRECOMMIT:** `docs/records/nyiso/PRECOMMIT-nyiso-next5-li-tie-posted-limit-2026-09-27.md` §6–§7, plus its §9
 addendum (G-DRIFT and zero-LP G-1), written before any solve.
 **Arm pin:** `671fa815d40aa57a8a18232994fe6176d1daea35`.
 **New keeper:** `2026-09-27-nyisonext6-li-cap-span` (bundle `results/calibration/nyisonext6_span`, 2022–2025).
@@ -24,7 +24,7 @@ addendum (G-DRIFT and zero-LP G-1), written before any solve.
 
 ## 2. Gates (arm vs the keeper's committed bundle, form 4)
 
-Record: `results/calibration/_nyisonext6_gates.json`, `results/calibration/_nyisonext6_compare_span.txt`.
+Record: `results/phase0/nyiso/_nyisonext6_gates.json`, `results/phase0/nyiso/_nyisonext6_compare_span.txt`.
 
 | | 2021 | 2022 | 2023 | 2024 | 2025 |
 |---|---|---|---|---|---|

@@ -2,7 +2,7 @@
 
 Per (locale, service, year): the annual settlement POOL Σ(cleared MW × MCP × interval h) and the price a MW assigned in EVERY interval
 would earn (Σ MCP × interval h, $/MW-yr). Interval lengths from the timestamps (2022 mixes hourly pre-May and 5-min post-May rows).
-Run: python3 docs/handoffs/d61/as-pools-2026-09-05.py > docs/handoffs/d61/as-pools-2026-09-05.json
+Run: python3 docs/records/forecast/d61/as-pools-2026-09-05.py > docs/records/forecast/d61/as-pools-2026-09-05.json
 """
 import json, sys
 import pandas as pd

@@ -163,7 +163,7 @@ def main() -> int:
         print(f"  {y}: {len(rets)} retirement row(s)")
 
     out["verdicts"] = verdicts
-    Path("docs/handoffs/d67arm/grade_resolve.json").write_text(
+    Path("docs/records/forecast/d67arm/grade_resolve.json").write_text(
         json.dumps(out, indent=2, default=str) + "\n"
     )
     print("\nVERDICTS: " + ", ".join(f"{k}={v}" for k, v in verdicts.items()))

@@ -127,6 +127,6 @@ of the comparison).
   closed as *diagnostic success, unmasking failure*; the successor path is
   the floor-fidelity change of §3.
 
-*Grid JSON: `docs/handoffs/fom-scarcity-grid-2026-07-06.json` (6 ERCOT
+*Grid JSON: `docs/records/misc/fom-scarcity-grid-2026-07-06.json` (6 ERCOT
 cells, 2026-2031, mid growth, backstop ON, corrected CDR accreditation
 basis, 1,610 s solve). Produced 2026-07-06, lane L-7c, Stage 4.*

@@ -1,10 +1,10 @@
 # DIAGNOSIS — PJM C3c summer tail: the phantom scarcity-hour supply is measured unit-availability events the outage overlay structurally cannot see (2026-07-15)
 
-**Charter:** `docs/handoffs/pjm-cc-capacity-reconcile-2026-07.md` Part B (B.1–B.5) —
+**Charter:** `docs/records/pjm/pjm-cc-capacity-reconcile-2026-07.md` Part B (B.1–B.5) —
 the SUMMER half of the pjm-111 keeper's single open miss, C3c `price_tail`
 (2025: model 17 h vs DA-actual 51 h > $200). No-LP, design + measurement only;
 no solve, no config flip (rule 1). The winter half is a separate lane
-(`docs/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md` Part C); the reserve/ORDC
+(`docs/records/pjm/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md` Part C); the reserve/ORDC
 opportunity-cost SUPPLY lane is owner-closed and is not re-opened here.
 
 **Verdict in one line:** the summer tail miss is a **measured availability
@@ -608,13 +608,13 @@ boundary reconciliation.
 * Keeper: `2026-07-16-pjm-113-short-only` (leg-A-only, promoted 2026-07-16;
   NOT-YET on C3c only — was `2026-07-15-pjm-111-cc-reconcile` when §1–8
   were written).
-* Charter: `docs/handoffs/pjm-cc-capacity-reconcile-2026-07.md` Part B.
+* Charter: `docs/records/pjm/pjm-cc-capacity-reconcile-2026-07.md` Part B.
 * Probes: `scripts/probes/_pjm_c3c_summer_tail_decomp.py` (this session),
   `scripts/probes/_pjm_d1p_diurnal_cycling.py` (D-1p instrument),
   `scripts/probes/_pjm_nuclear_phantom_decomp.py` (§8.2 null result),
   `scripts/probes/_pjm_c3c_congestion_surface_decomp.py` (§10 east-cut
   measurement + pre-declared adjudication, pjm-cong-1).
-* Winter half: `docs/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md` Part C.
+* Winter half: `docs/records/pjm/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md` Part C.
 * MISO precedent for leg A: calibration-log 2026-07-14 (miso-65) and the
   `unit_outage_short_windows` docstrings in `src/market_sim/data/outages.py` /
   `src/market_sim/data/fleet.py`.

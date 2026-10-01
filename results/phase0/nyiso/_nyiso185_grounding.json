@@ -1,6 +1,6 @@
 {
   "session": "nyiso-185",
-  "prereg": "results/calibration/PREREG-nyiso185-stgas-family-hr-ab.md",
+  "prereg": "docs/records/nyiso/PREREG-nyiso185-stgas-family-hr-ab.md",
   "G0": {
     "base_st_off": 9.5,
     "base_cc_off": 8.8005,

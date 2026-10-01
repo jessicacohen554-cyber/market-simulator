@@ -8,7 +8,7 @@
 ## 2026-07-24 — caiso-118 BELLY PRICE-FORMATION derive: both suspects REFUTED; the belly over-price + over-import are ONE defect (the model UNDER-COMMITS belly gas). NO SOLVE, nothing registered. Keeper `2026-07-19-caiso-102-hourfix` UNCHANGED (NOT-YET, fail {C3c, C4, C5a})
 
 **Derive-first (rule #1), measurement-only, register nothing** (the caiso-115/116/117
-precedent). Full finding: `results/calibration/FINDING-caiso118-belly-price-undercommit-2026-07-24.md`.
+precedent). Full finding: `docs/records/caiso/FINDING-caiso118-belly-price-undercommit-2026-07-24.md`.
 Reproduction: `scripts/probes/_caiso118_belly_price_derive.py` (no LP; keeper-proxy
 `caiso104_m1_B` hourlies + raw EIA-930 CISO + `load_renewable_profiles` +
 `measured_import_hub_prices` + `measured_corridor_flow_envelope`).

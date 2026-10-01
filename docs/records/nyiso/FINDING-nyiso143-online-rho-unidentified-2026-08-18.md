@@ -8,8 +8,8 @@ the committed source.
 
 Probes: `scripts/probes/_nyiso143_nyc_spin_liveness.py`,
 `scripts/probes/_nyiso143_online_rho.py`. Records:
-`results/calibration/_nyiso143_nyc_spin_liveness.json`,
-`results/calibration/_nyiso143_online_rho.json`.
+`results/phase0/nyiso/_nyiso143_nyc_spin_liveness.json`,
+`results/phase0/nyiso/_nyiso143_online_rho.json`.
 
 ---
 

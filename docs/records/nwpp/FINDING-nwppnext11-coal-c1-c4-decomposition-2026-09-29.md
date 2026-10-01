@@ -111,4 +111,4 @@ which scales **every** fossil class by ONE factor so gas + coal matches EIA-930 
   per-unit merit-guard extract, then tests lay-up (lever 3) and coal availability (lever 2). Neither is expected to
   clear C4 2023.
 - **Benchmark reconcile → "Route to scorer lane".** A separate cross-ISO lane designs a CEMS-anchored coal target.
-  NWPP changes nothing now. Handoff: `docs/handoffs/HANDOFF-scorer-coal-reconcile-2026-09-29.md`.
+  NWPP changes nothing now. Handoff: `docs/records/misc/HANDOFF-scorer-coal-reconcile-2026-09-29.md`.

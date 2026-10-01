@@ -2,9 +2,9 @@
 
 **Session caiso-270, 2026-09-10. CAISO only (rule 25 `[R-ISO-SCOPE]`).**
 Keeper **UNCHANGED**: `2026-09-10-caiso-269-lateevening-clean`, **CALIBRATED**, single ledgered C3c.
-Charter records: `docs/FINDING-caiso270-scarcity-ordc-phase0-2026-09-10.md`,
-`docs/PRECOMMIT-caiso270-keeper-restore-2026-09-10.md`,
-`docs/ADDENDUM-caiso270-clean-partition-repin-2026-09-10.md`.
+Charter records: `docs/records/caiso/FINDING-caiso270-scarcity-ordc-phase0-2026-09-10.md`,
+`docs/records/caiso/PRECOMMIT-caiso270-keeper-restore-2026-09-10.md`,
+`docs/records/caiso/ADDENDUM-caiso270-clean-partition-repin-2026-09-10.md`.
 
 ---
 

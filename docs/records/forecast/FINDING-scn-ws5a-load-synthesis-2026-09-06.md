@@ -235,7 +235,7 @@ they are **not** CCS-clean there: REF converts 0 → 5,763.8 MW by 2030 and its 
 mechanism — the two D65-B fields that move at the pin are inputs to the retrofit screen, so an
 empty pre-fix ledger proves nothing about the post-fix one. **The campaign stands at ONE pin: all
 16 legs are at `bdfb3095`.** See ADDENDUM 2026-09-07 below and
-`docs/handoffs/FINDING-scn-ws5a-resolve-ercot-2026-09-07.md`.)* The other 13 legs are re-solved at
+`docs/records/forecast/FINDING-scn-ws5a-resolve-ercot-2026-09-07.md`.)* The other 13 legs are re-solved at
 **THE PIN
 `bdfb3095e9fa0cd2bec3f4e843f320b42588c72b`** (a descendant of capx D77 `fc583339` and capx D65-B
 `b1f77621`), into `results/scn-campaign-load-2026-09-06-r2/`, and **re-registered under their

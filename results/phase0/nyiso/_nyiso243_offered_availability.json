@@ -1,5 +1,5 @@
 {
-  "precommit": "docs/PRECOMMIT-nyiso243-outage-intake-kill-test-2026-09-20.md",
+  "precommit": "docs/records/nyiso/PRECOMMIT-nyiso243-outage-intake-kill-test-2026-09-20.md",
   "source": "NYISO MIS P-27 masked generator bid data (Upper Oper Limit)",
   "gate_mw": 1000.0,
   "object_mw": 4716.0,

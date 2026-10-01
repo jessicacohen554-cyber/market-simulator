@@ -62,7 +62,7 @@
  "cache_dir": "results/hindcast/caiso-2021-2025-realized/CAISO/408f9199a82f5814",
  "decision_years": {},
  "existing_storage_mw": 0.0,
- "finding": "docs/FINDING-entry-screen-t1h-2026-08.md",
+ "finding": "docs/records/misc/FINDING-entry-screen-t1h-2026-08.md",
  "iso": "CAISO",
  "probe": "entry_screen_t1h_phase0",
  "real_discount_rate": 0.056751,

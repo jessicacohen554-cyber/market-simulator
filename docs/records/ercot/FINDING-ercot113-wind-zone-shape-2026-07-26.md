@@ -2,7 +2,7 @@
 
 **Date** 2026-07-26 · **ISO** ERCOT · **Years** 2023–2025 (one invocation, years sequential) ·
 **Gate** `ScenarioConfig.ercot_wind_zone_shape` (new, default **off** — unchanged by this run) ·
-**Pre-commit** `results/calibration/PRECOMMIT-ercot113-wind-zone-shape-2026-07-26.md`
+**Pre-commit** `docs/records/ercot/PRECOMMIT-ercot113-wind-zone-shape-2026-07-26.md`
 (written and pushed **before** the solve was launched) ·
 **Scorer** `scripts/probes/ercot113_score_wind_arms.py` ·
 **Run id** `2026-07-26-ercot113-per-zone-wind`

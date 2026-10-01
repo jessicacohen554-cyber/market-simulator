@@ -101,7 +101,7 @@ _HOLDOUT_ROOT_CAUSE = (
 )
 
 # Root-cause GitHub issues opened during the 2026-07 scalar-remediation B-GOV-1
-# ledger sweep (docs/handoffs/scalar-remediation-prompts-2026-07.md) — every
+# ledger sweep (docs/records/misc/scalar-remediation-prompts-2026-07.md) — every
 # residual entry these constants are attached to MUST keep citing an open
 # issue (audit_keepers E8).
 _ISSUE_C4_MERCHANT_CHP = (
@@ -342,7 +342,7 @@ def config_entries(sc: dict, iso: str) -> list[dict]:
     # over-counting the residual by one entry and four scalars. The gate below counts a
     # toggle only when its supply's parameter set actually RESOLVES. This can only
     # REMOVE over-counted rows, never add one.
-    # Record: results/calibration/FINDING-caiso236-dof-residual-ledger-audit-2026-09-02.md
+    # Record: docs/records/caiso/FINDING-caiso236-dof-residual-ledger-audit-2026-09-02.md
     sigmoids = [
         k
         for k in (
@@ -367,7 +367,7 @@ def config_entries(sc: dict, iso: str) -> list[dict]:
     # `tiers` (not `sigmoids`) also gates the row's emission: the follower set can
     # resolve for an ISO whose BASELOAD prb pair does not, in which case the tier
     # is live and is the row's only engaged parameter set.
-    # Record: results/calibration/FINDING-xiso7-prb-follower-dof-undercount-2026-09-02.md
+    # Record: docs/records/governance/FINDING-xiso7-prb-follower-dof-undercount-2026-09-02.md
     tiers = sigmoids + (
         ["coal_prb_passthrough_tiered (prb_follower tier)"]
         if _prb_follower_engaged(sc, iso)
@@ -381,7 +381,7 @@ def config_entries(sc: dict, iso: str) -> list[dict]:
             # four parameters is grounded in measured coal-commodity data (merit
             # crossover from region delivered cost; cost-tracking ceil; gas-trough
             # floor; cross-region dispersion slope), not fitted to a MISO residual
-            # (docs/handoffs/coal-sigmoid-rederive-2026-07.md). So for MISO this
+            # (docs/records/misc/coal-sigmoid-rederive-2026-07.md). So for MISO this
             # is a measured-physical parameter, no longer a residual DOF — the
             # frozen derive script + provenance CSV + freeze test are its
             # identification. Other ISOs' entries remain hand-tuned residuals
@@ -547,7 +547,7 @@ def config_entries(sc: dict, iso: str) -> list[dict]:
                 "P_hat(d) over admissible days 2023-06-10..12-31 on the "
                 "pre-registered grid (PRECOMMIT-ercot221-adaptive-"
                 "expectation-2026-08-18.md Amendment 1 family v2; artifact "
-                "results/calibration/ercot221_adaptive_phase0.json). The "
+                "results/phase0/ercot/ercot221_adaptive_phase0.json). The "
                 "armed path consumes only the model's own pass-1 price path "
                 "(Amendment 4) — the measured surface is identification "
                 "evidence only. Phase-0 v1+v2 FAILED their gates; Phase-1 "
@@ -580,7 +580,7 @@ def config_entries(sc: dict, iso: str) -> list[dict]:
                 "$1,000 park cap on P_hat(d) over 585 admissible days "
                 "2023-2025 on the pre-registered grid (PRECHECK-caiso204-"
                 "adaptive-phase0-2026-08-19.md §2-3; artifact "
-                "results/calibration/caiso204_adaptive_phase0.json, G-ID "
+                "results/phase0/caiso/caiso204_adaptive_phase0.json, G-ID "
                 "daily corr 0.704, G-DECAY 2023-only fit transfers 79%). "
                 "The armed path consumes only the model's own pass-1 price "
                 "path — the measured surface is identification evidence "
@@ -610,7 +610,7 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
     # sole consumer, the legacy (non-CAMPD) offer_curves.split_coal_tranches
     # path, were DELETED — dead in build_dispatch_fleet's else limb for every
     # registered bundle of all six ISOs (use_campd_bins=True everywhere;
-    # proof: results/calibration/ercot188_g3_unreachability_proof.json;
+    # proof: results/phase0/ercot/ercot188_g3_unreachability_proof.json;
     # miso-128 §4 proved inertness dynamically). The former entry here was
     # already scoped to `not use_campd_bins` configs, i.e. it never fired on
     # a registered run. No replacement entry: the issue-#1336 re-grounding
@@ -629,7 +629,7 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 root_cause="no independent merchant-CHP host-load source found "
                 "yet — replace when one exists (constants.py comment); survey "
                 "of candidate sources + recommended EIA-923 Schedule-8 intake "
-                "path: docs/handoffs/merchant-chp-host-load-memo-2026-07.md; "
+                "path: docs/records/misc/merchant-chp-host-load-memo-2026-07.md; "
                 "open: " + _ISSUE_C4_MERCHANT_CHP,
             )
         )
@@ -752,7 +752,7 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
         # says such a knob is removed, not zeroed, so the mechanism and its cap
         # were deleted rather than re-documented. Its own root_cause named this
         # exit: "R5-delete the caiso_bidir_intertie mechanism (rule 26)".
-        # Record: results/calibration/FINDING-caiso236-dof-residual-ledger-audit-2026-09-02.md
+        # Record: docs/records/caiso/FINDING-caiso236-dof-residual-ledger-audit-2026-09-02.md
         if sc.get("ct_netload_drag"):
             out.append(
                 _entry(
@@ -1363,7 +1363,7 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "crosswalk — every model zone is real, NONE interpolated. "
                 "Frozen derive scripts/data/derive_pjm_loss_surface.py; "
                 "offline acceptance 12/12 pair-years in [0.5x,1.5x] (ratios "
-                "0.95-1.07) before any solve. Charter: results/calibration/"
+                "0.95-1.07) before any solve. Charter: docs/records/pjm/"
                 "FINDING-pjm136-zonal-dual-structure-2026-07-28.md.",
                 root_cause="re-derive trigger is a source-data change only "
                 "(rule 23), never a residual; representation bounds: one-way "
@@ -1399,7 +1399,7 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "event-coincident short forced outages invisible (MISO "
                 "Jul 28-29 2025: ~2.8 GW coal offline at the peak block "
                 "beyond the overlay; "
-                "docs/DIAGNOSIS-miso-july2025-lmp-2026-07.md); CT/CC event "
+                "docs/records/miso/DIAGNOSIS-miso-july2025-lmp-2026-07.md); CT/CC event "
                 "unavailability stays unmodeled pending a max-gen-event "
                 "registry intake (no identification without it)",
             )
@@ -1429,7 +1429,7 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "non-filing CT capacity ~$16-20/MWh below its measured "
                 "class cost, feeding the 2024 CT_PEAKER economic over-run "
                 "at PRB's expense and July-2025's too-cheap North margin "
-                "(docs/DIAGNOSIS-miso-july2025-lmp-2026-07.md §6, lane 1(b))",
+                "(docs/records/miso/DIAGNOSIS-miso-july2025-lmp-2026-07.md §6, lane 1(b))",
             )
         )
     if sc.get("coal_warm_committed"):
@@ -1495,7 +1495,7 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "Regulatory Status RE set and Schedule-4 ownership x utility "
                 "Entity Type (eia860_plant.parquet) + EIA-923 Schedule-5 "
                 "take-or-pay shares (coal_takeorpay_MISO.csv) + CAMPD committed "
-                "tranches (docs/handoffs/miso-coal-conduct-design-2026-07.md)",
+                "tranches (docs/records/miso/miso-coal-conduct-design-2026-07.md)",
                 root_cause="replaces the rank-scoped coal_bit_committed_takeorpay "
                 "(rule 19 reconcile — RE-BIT covered identically, NR-BIT "
                 "merchants revert to the economic offers the SOM measures); "
@@ -1592,7 +1592,7 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "~568.7 MW vintage_2024, with CAMPD showing the OA CTs running "
                 "88-91% of 2023 hours). Real units at availability bounds — "
                 "never a CAMPD-MWh pin or a MW offset (rules 1/11/13). Design: "
-                "docs/handoffs/miso-cc-vintage-undercarry-plan-2026-07.md",
+                "docs/records/miso/miso-cc-vintage-undercarry-plan-2026-07.md",
                 root_cause="regenerates for any forward vintage (a unit OP in "
                 "its latest vintage is physically available until a real exit "
                 "removes it — rule 12 forward story); the LP dispatches the "

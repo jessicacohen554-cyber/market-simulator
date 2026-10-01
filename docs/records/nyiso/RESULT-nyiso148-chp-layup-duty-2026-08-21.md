@@ -193,7 +193,7 @@ before reading a single price.**
    (`PREREG-nyiso146b §ARM C`) is untouched and its bars are not re-litigated.
 3. **The recovered share of the −12.2 % is quantified and the owner decision
    card written** for the remainder:
-   `docs/DECISION-CARD-nyiso148-2025-level-remainder-2026-08-21.md`.
+   `docs/records/nyiso/DECISION-CARD-nyiso148-2025-level-remainder-2026-08-21.md`.
 
 ## 8. GOVERNANCE
 

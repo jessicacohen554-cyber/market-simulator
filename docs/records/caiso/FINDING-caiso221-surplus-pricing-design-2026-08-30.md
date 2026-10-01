@@ -78,7 +78,7 @@ Instruments (committed, no LP, no solve):
   same construction re-used. The only reconstruction is the licensed
   caiso-105/131 `run_year(fleet_only=True)` input assembly rebuilt from the
   caiso-220 keeper bundle's own `meta.json`.
-* `results/calibration/_caiso221_surplus_design.json` — every number below,
+* `results/phase0/caiso/_caiso221_surplus_design.json` — every number below,
   committed (deterministic: sorted keys, rounded floats, no timestamps).
 * Controls (§A): demand row-match **0.0 MW** in all zones × years; recon
   potential = HSL parquet at 1.000–1.003; add-back = workbook total at
@@ -238,7 +238,7 @@ FINDING; NOT-YET stands.
 ## §F — Record changes (rule 28b — CAISO shard only)
 
 * This FINDING; `scripts/probes/_caiso221_surplus_design.py`;
-  `results/calibration/_caiso221_surplus_design.json`.
+  `results/phase0/caiso/_caiso221_surplus_design.json`.
 * Matrix §5.2: caiso-221 block added above caiso-220's; CAISO shard `gates`
   stamp prepended; `updated` bumped. **NO cell verdict moves from this
   session's own testing** (nothing was armed or solved). Two chartered

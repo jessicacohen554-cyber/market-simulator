@@ -2,10 +2,10 @@
 
 Session miso-123, 2026-08-04, branch `claude/miso-seam-band-availability-tb6atf`,
 off `origin/main` at `05d291d7`. **NO LP SOLVED.** Pre-registration
-`results/calibration/PREREG-miso123-seam-hod-band-availability-2026-08-04.md`,
+`docs/records/miso/PREREG-miso123-seam-hod-band-availability-2026-08-04.md`,
 written and committed **before** the probe was written. Probe
 `scripts/probes/_miso123_seam_hod_availability.py`; transcript
-`results/calibration/PROBE-miso123-seam-hod-availability-2026-08-04.txt`.
+`results/phase0/miso/PROBE-miso123-seam-hod-availability-2026-08-04.txt`.
 
 **Keeper UNCHANGED** — `2026-08-04-miso-122b-scope-gate`
 (`results/calibration/miso122_scopegate_B`), determination `NOT-YET`, sole FAIL

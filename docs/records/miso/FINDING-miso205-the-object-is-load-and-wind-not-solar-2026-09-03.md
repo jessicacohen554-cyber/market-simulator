@@ -10,7 +10,7 @@
 `ScenarioConfig` FIELD ADDED. NO PARAMETER SET. NOTHING WRITTEN UNDER
 `data/raw/`. NO SCORING ARTIFACT CHANGED. NO CELL VERDICT MOVED.**
 
-**PREREG** `results/calibration/PREREG-miso205-ge-repaired-clock-2026-09-03.md`,
+**PREREG** `docs/records/miso/PREREG-miso205-ge-repaired-clock-2026-09-03.md`,
 pushed at **`fc8006d9`** BEFORE any adjudicating statistic, with two reproduction
 pre-conditions, four charter gates, a location re-check, a seam re-measurement,
 **seven claim-by-claim decision rules fixed in advance**, ten predictions **each
@@ -18,7 +18,7 @@ carrying a direction as well as a magnitude**, and eight traps with pre-committe
 counter-measurements.
 
 **Instrument** `scripts/probes/_miso205_ge_repaired_clock.py`; record
-`results/calibration/_miso205_ge_repaired_clock.json`.
+`results/phase0/miso/_miso205_ge_repaired_clock.json`.
 
 ---
 

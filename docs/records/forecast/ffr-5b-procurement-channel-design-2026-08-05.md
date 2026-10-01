@@ -69,7 +69,7 @@ and one already-intaken data path (§2.5, rule 24 `[R-REGISTRY]`).
 
 The rubric is rule 13's test, verbatim: *could this same quantity be produced for a forward year
 from forward drivers, and would it respond to changed conditions?* The confirmed-retirement plan
-(`docs/handoffs/confirmed-retirement-plan-2026-07.md` §2.3) is the worked precedent for applying
+(`docs/records/misc/confirmed-retirement-plan-2026-07.md` §2.3) is the worked precedent for applying
 it, and it supplies two sharpening sub-tests this lane adopts:
 
 * **the instrument test** — is there a public, dated artifact a third party can re-query, so the
@@ -612,7 +612,7 @@ Stated explicitly, because the design above is additive only where it says so.
 ```
 ### CARD D-18 — Implement the near-term VRE procurement channel?
 
-**Measured (FFR-5B, docs/handoffs/ffr-5b-procurement-channel-design-2026-08-05.md).** D-16's gap
+**Measured (FFR-5B, docs/records/forecast/ffr-5b-procurement-channel-design-2026-08-05.md).** D-16's gap
 splits in two, and only one half has an admissible mechanism. (i) THE NEAR-TERM HALF IS A REAL
 MISSING MECHANISM: step 4's known-additions channel skips wind and solar (`_map_fuel_type`
 returns None) on the premise that "the zonal pools handle renewable growth" — a premise FFR-3V

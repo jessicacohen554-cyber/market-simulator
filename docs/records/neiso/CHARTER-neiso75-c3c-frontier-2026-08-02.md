@@ -7,7 +7,7 @@ change, no bundle, no dashboard registration** (the neiso-71/73/74 disposition).
 `results/calibration/neiso72_hy_window_B`), untouched.
 **Probe:** `scripts/probes/_neiso75_c3c_decomposition.py` (read-only; imports the
 xiso-1 loaders so the construction is identical).
-**Record:** `results/calibration/PROBE-neiso75-c3c-decomposition-2026-08-02.txt`.
+**Record:** `results/phase0/neiso/PROBE-neiso75-c3c-decomposition-2026-08-02.txt`.
 
 Charter tasks, per the queue brief: (a) decompose the C3c miss into the
 systemic-amplitude share vs any NEISO-local scarcity/winter share, no-LP;

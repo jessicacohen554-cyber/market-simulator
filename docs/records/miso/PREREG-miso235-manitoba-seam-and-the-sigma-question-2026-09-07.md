@@ -172,7 +172,7 @@ and it is conditional on Q1 clearing (I-1)+(I-2).
 ## 6. Deliverables
 
 * `scripts/probes/_miso235_seam_variance_decomposition_phase0.py` +
-  `results/calibration/_miso235_seam_variance_decomposition_phase0.json`.
+  `results/phase0/miso/_miso235_seam_variance_decomposition_phase0.json`.
 * `results/calibration/FINDING-miso235-*.md` carrying every number this session will ever cite.
 * Evidence appended to the MISO shard (rule 25: MISO's shard only; rule 28(b) evidence form).
 * `docs/calibration-log/miso.md` entry.

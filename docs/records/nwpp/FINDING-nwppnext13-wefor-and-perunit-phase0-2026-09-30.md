@@ -3,7 +3,7 @@
 All numbers are fleet-only rebuilds (`run_year(fleet_only=True)`) of keeper #17
 (`results/calibration/nwppnext12mr_span`) on its own recipe. No LP.
 Probes: `scripts/probes/_nwppnext13_screened_wefor_phase0.py`, `scripts/probes/_nwppnext13_perunit_census.py`.
-Raw output: `docs/handoffs/nwppnext13/{screened_wefor_phase0,perunit_census}.json`.
+Raw output: `docs/records/nwpp/nwppnext13/{screened_wefor_phase0,perunit_census}.json`.
 
 ## 1. Lever 1 — the statistical coal WEFOR double count
 

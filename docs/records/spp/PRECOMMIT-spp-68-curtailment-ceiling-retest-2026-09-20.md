@@ -18,7 +18,7 @@ The brief says the ceiling's *"control was KEEPER 5 … it has never had a fair 
 **That understates the record and the correction is made here rather than discovered later.**
 `spp_curtailment_ceiling` has had a **solved, pre-registered, five-gate screen**: lane
 **SPP-63**, 2026-09-10, one year (2025), shard pinned `92b59c73`, recorded in
-`docs/handoffs/RESULT-spp-63-screen-2026-09-10.md` and in SPP's matrix cell. Its control was
+`docs/records/spp/RESULT-spp-63-screen-2026-09-10.md` and in SPP's matrix cell. Its control was
 the then-keeper `2026-09-10-spp-62-vintage-census` (keeper 7-era), not keeper 5.
 
 **What SPP-63 measured, and it is the reason this lane pre-registers a kill condition rather

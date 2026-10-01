@@ -1,7 +1,7 @@
 # PRECOMMIT — capx D95: D94's two key-provenance UNKNOWNs
 
 Lane: capx D95 (relaunch) · Opus · DATA PROFILE code · ZERO LP · branch `claude/capx-d95-d94-key-unknowns`
-Charter: `docs/handoffs/capx-director-prompt-pack-2026-08.md` "D95"; ledger §0bk.
+Charter: `docs/records/forecast/capx-director-prompt-pack-2026-08.md` "D95"; ledger §0bk.
 Written and pushed BEFORE any edit under `scripts/`, `src/` or `docs/governance/`.
 
 ## 0. STATE AT MY HEAD — the UNKNOWN set is the charter's two

@@ -1,7 +1,7 @@
 # Stage 7 — `getattr(config, …)` → explicit-field extraction (DESIGN ONLY)
 
 Engineering companion to §11 of
-`docs/handoffs/orchestrator-unification-plan-2026-07.md`. **Design only — no
+`docs/records/misc/orchestrator-unification-plan-2026-07.md`. **Design only — no
 behavior change, no solve is run to produce this note.** Stage 7 does not start
 until Stage 6 completes (memory-host-blocked on G-40; see the
 `STAGE6_GATE_RESULT` marker).

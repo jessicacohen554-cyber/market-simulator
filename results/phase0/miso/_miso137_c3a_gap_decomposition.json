@@ -3,7 +3,7 @@
   "lane": "(a) gap decomposition",
   "bundle": "results/calibration/miso132_ccmin_B",
   "keeper": "2026-08-05-miso-132b-cc-committed",
-  "prereg": "results/calibration/PREREG-miso137-c3a-gap-decomposition-2026-08-06.md",
+  "prereg": "docs/records/miso/PREREG-miso137-c3a-gap-decomposition-2026-08-06.md",
   "years": {
     "2023": {
       "zones": [

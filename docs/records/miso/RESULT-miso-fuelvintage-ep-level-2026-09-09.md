@@ -1,7 +1,7 @@
 # RESULT — MISO: the measured monthly gas LEVEL, PROMOTED; and an unmeasured HEAD drift found in the process
 
 **Session:** `miso-fuelvintage-1` · **Date:** 2026-09-09 · **ISO: MISO only.**
-**PRECOMMIT:** `docs/PRECOMMIT-miso-fuelvintage-ep-level-2026-09-09.md` (written before any LP).
+**PRECOMMIT:** `docs/records/miso/PRECOMMIT-miso-fuelvintage-ep-level-2026-09-09.md` (written before any LP).
 **Base:** `origin/main` @ `9dc1c694`. **Control:** `results/calibration/miso248_fullspan_K`
 (`2026-09-09-miso-248-spp-ladder`) — **not** the `miso247_fullspan_K` the handoff names (§1).
 

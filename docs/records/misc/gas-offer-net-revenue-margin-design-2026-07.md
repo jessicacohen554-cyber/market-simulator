@@ -170,7 +170,7 @@ cross-check, never a tuning channel.
 
 * **NEISO — ADOPTED, keeper on** (`neiso-61`, 2026-07-23). Anchor 4.0763.
 * **CAISO — ADOPTED as the go-forward offer form** (owner directive, rule #1,
-  2026-07-23; `docs/handoffs/caiso-netrev-adoption-log-entry.md`). Anchor 4.7964.
+  2026-07-23; `docs/records/caiso/caiso-netrev-adoption-log-entry.md`). Anchor 4.7964.
   caiso-112's in-sample replay tripped refutation criterion 1 (C3b duration fit
   degrades 0.390→0.411 / 0.429→0.445 in the two high-gas years) — but per that
   same criterion's rule-1 clause the structure is the correct one and the level

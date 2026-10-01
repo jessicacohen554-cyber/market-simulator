@@ -1,6 +1,6 @@
 {
  "probe": "miso-246 phase 0 \u2014 the MISO backcast lever-queue census",
- "prereg": "results/calibration/PREREG-miso246-the-backcast-lever-queue-census-2026-09-08.md",
+ "prereg": "docs/records/miso/PREREG-miso246-the-backcast-lever-queue-census-2026-09-08.md",
  "keeper": "2026-09-08-miso-245-ladderfix",
  "zero_lp": true,
  "read_only": true,

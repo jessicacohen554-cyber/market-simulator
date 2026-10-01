@@ -21,7 +21,7 @@
 # multi-zone ISO (PJM / MISO / CAISO) run STRICTLY SEQUENTIALLY, because each is
 # ~8.6 GB on a 15 GB box. Years are ALWAYS sequential within an invocation.
 #
-# Usage:  bash docs/handoffs/scn-ws1b/launch_t0.sh <ISO> <par|seq>
+# Usage:  bash docs/records/forecast/scn-ws1b/launch_t0.sh <ISO> <par|seq>
 set -uo pipefail
 ISO="$1"; MODE="${2:-seq}"
 LOW="$(echo "$ISO" | tr 'A-Z' 'a-z')"

@@ -3,7 +3,7 @@
 **Date** 2026-07-26 · **ISO** ERCOT · **Years** 2023–2025 (one invocation, years sequential) ·
 **Gate** `ScenarioConfig.coal_econ_marginal_hr_bound` — **ERCOT backcast default-ON** (owner
 sign-off 2026-07-26); global `ScenarioConfig` default stays `False` ·
-**Pre-commit** `results/calibration/PRECOMMIT-ercot115-coal-floor-promotion-2026-07-26.md`
+**Pre-commit** `docs/records/ercot/PRECOMMIT-ercot115-coal-floor-promotion-2026-07-26.md`
 (written and pushed **before** the solve was launched) ·
 **Run id** `2026-07-26-ercot115-coal-marginal-hr` ·
 **Scorers** `scripts/probes/ercot112_score_coal_arms.py` (PINNED) + the rubric `metrics.json`

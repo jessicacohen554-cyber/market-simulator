@@ -2,7 +2,7 @@
 
 _2026-08-30 · capacity-expansion (Forecast Finalization) track, lane D12-C
 ARMING CONFIRMATION PAIR · chartered by the owner's Q10 ruling (r#15 sitting,
-2026-08-30, `docs/handoffs/capx-director-ledger-2026-08.md` §0l.2/§3):
+2026-08-30, `docs/records/forecast/capx-director-ledger-2026-08.md` §0l.2/§3):
 **"CONFIRM-PAIR, THEN ARM. Lane D12-C chartered: ONE arm-vs-control A/B on the
 ERCOT T1-H leg at the registered posture with the TWO fields
 (`entry_margin_exhaustion` + `entry_forward_reserve_leg`) as the single
@@ -41,7 +41,7 @@ years sequential within each:
 - Probe: `scripts/probes/entry_volume_rule_compare.py` extended with
   `--expect-delta entry_margin_exhaustion,entry_forward_reserve_leg` (the
   two-field delta gate; hard-fails on anything else). Artifact:
-  `results/calibration/entry_confirm_pair_d12c_ercot.json`.
+  `results/phase0/forecast/entry_confirm_pair_d12c_ercot.json`.
 
 ### 1.1 Gates (stop-the-line, before any verdict is read)
 
@@ -184,7 +184,7 @@ violations.
   exactly {`entry_margin_exhaustion`, `entry_forward_reserve_leg`}, each
   False→True; the armed cache key is **`f061b2646bfaac8b`** — the ex-ante
   §1.1 prediction, bit-equal. Artifact:
-  `results/calibration/entry_confirm_pair_d12c_ercot.json`.
+  `results/phase0/forecast/entry_confirm_pair_d12c_ercot.json`.
 
 ## 3. The armed record (measured)
 
@@ -335,5 +335,5 @@ uv run python scripts/probes/entry_volume_rule_compare.py \
     --arm results/hindcast/ercot-2021-2025-realized-t1h-d12c-armed \
     --control results/hindcast/ercot-2021-2025-realized-t1h-d12c-control \
     --expect-delta entry_margin_exhaustion,entry_forward_reserve_leg \
-    --out results/calibration/entry_confirm_pair_d12c_ercot.json
+    --out results/phase0/forecast/entry_confirm_pair_d12c_ercot.json
 ```

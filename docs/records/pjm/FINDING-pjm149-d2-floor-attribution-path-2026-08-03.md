@@ -4,10 +4,10 @@
 no determination moved at any of the six ISOs.**
 
 Pre-registration:
-`results/calibration/PREREG-pjm149-d2-floor-attribution-path-2026-08-03.md`,
+`docs/records/pjm/PREREG-pjm149-d2-floor-attribution-path-2026-08-03.md`,
 committed **and pushed** at `76d0fcf` before any measurement that decides the
 contract. Census probe `scripts/probes/_pjm149_d2_path_census.py`; machine
-record `results/calibration/_pjm149_census.json`.
+record `results/phase0/pjm/_pjm149_census.json`.
 
 Keepers at entry, all **UNTOUCHED**: ERCOT `2026-08-02-ercot150b-zonal-anchor`,
 PJM `2026-08-03-pjm-147b-chp-heat`, CAISO `2026-08-03-caiso156-meter-screen-b`,
@@ -279,7 +279,7 @@ PYTHONPATH=. .venv/bin/python scripts/regenerate_clean.py \
 PYTHONPATH=. .venv/bin/python scripts/data/fetch_pjm_da_virtuals.py \
     --feeds hrl_da_incs_decs --years 2023 2024 2025      # PJM floors rebuild only
 PYTHONPATH=. .venv/bin/python scripts/probes/_pjm149_d2_path_census.py \
-    --json-out results/calibration/_pjm149_census.json
+    --json-out results/phase0/pjm/_pjm149_census.json
 # the §4 anchor — payload-path recompute vs the parquet-born committed artifact:
 PYTHONPATH=. .venv/bin/python scripts/legitimacy_diagnostics.py \
     --bundle results/calibration/pjm144_control_A --iso PJM --years 2023 2024 2025 \

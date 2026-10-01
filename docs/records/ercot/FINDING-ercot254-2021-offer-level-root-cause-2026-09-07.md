@@ -8,7 +8,7 @@
 > files. **No solve was run, no parameter was tuned, and nothing here was
 > identified on a held-out year** — the object is a *construction* defect in how a
 > measured series is aggregated, which is answerable from the input file alone
-> (rule 22 step 3). Answers the census `docs/ADDENDUM-ercot253-c1-c3a-root-cause-2026-09-07.md`
+> (rule 22 step 3). Answers the census `docs/records/ercot/ADDENDUM-ercot253-c1-c3a-root-cause-2026-09-07.md`
 > §4 ordered; the answer is its **candidate 1**, and the search ends there.
 
 ## 1. The object
@@ -135,7 +135,7 @@ and nothing else: CC and ST_GAS sit in the contaminated zones, CT_PEAKER's capac
 is disproportionately in the two zones the contamination misses.
 
 > **CORRECTION, added 2026-09-07 after the 2021 re-test
-> (`docs/RESULT-ercot254-monthly-ep-basis-2026-09-07.md` §4).** The **price half of
+> (`docs/records/ercot/RESULT-ercot254-monthly-ep-basis-2026-09-07.md` §4).** The **price half of
 > §3 is confirmed by solve** — repairing the level moves the eleven non-Uri months
 > from +160.8 % to +79.1 %, every month improving. **The merit-order half is NOT.**
 > Removing the level term moves CC_REGULAR by only **+0.87 TWh** of the 16 TWh miss,
@@ -237,4 +237,4 @@ dashboard entry moves, and ERCOT's determination is untouched (train-tier
 CALIBRATED; rule 30(c)). The 2021 rung stays NOT-YET and stays a rule-22
 model-selection observation, never a skill number. The repair, its screen and its
 gates are pre-registered separately in
-`docs/PRECOMMIT-ercot254-monthly-ep-basis-2026-09-07.md` before any solve.
+`docs/records/ercot/PRECOMMIT-ercot254-monthly-ep-basis-2026-09-07.md` before any solve.

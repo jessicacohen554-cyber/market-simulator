@@ -141,7 +141,7 @@ What the caiso-217 session landed on `main` (its complete committed record):
 2. PR #4226 / commit `5b70419` — this FINDING draft (§A–§C final, §D–§F
    placeholders) + `scripts/probes/_caiso217_zonal_decomp.py` (the
    split-witness wrapper, never run against a committed bundle) +
-   `results/calibration/_caiso217_realized_membership.json` (§B).
+   `results/phase0/caiso/_caiso217_realized_membership.json` (§B).
 3. PR #4230 / commit `6132867` — "solve-in-progress checkpoint": the 2023
    hourly sidecars only (`caiso217_crosswalk/hourly/{class_hourly,storage}_
    2023.parquet`). **The last caiso-217 commit that ever landed
@@ -186,6 +186,6 @@ Standing consequences (adjudicated by caiso-218):
   a packet gate table) are carried by the handoff itself and by
   FINDING-caiso216 §F.3/§I, and caiso-218 honours them from those sources.
 
-Record trail: `results/calibration/FINDING-caiso218-path-limit-survey-2026-08-24.md`
+Record trail: `docs/records/caiso/FINDING-caiso218-path-limit-survey-2026-08-24.md`
 §A (the gap verification), `docs/calibration-log/caiso.md` caiso-218 entry,
 matrix §5.2 caiso-218 block.

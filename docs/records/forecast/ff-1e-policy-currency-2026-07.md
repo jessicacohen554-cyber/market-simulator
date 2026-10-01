@@ -60,7 +60,7 @@ U.S.C. §45Y(d)(2)-(3) and §48E(e)(2)-(3) confirm the 2033/2034/2035/2036 steps
 **unchanged**, with OBBBA §70512(a)(2) having fixed the "applicable year" flatly
 at 2032 (striking the prior emissions-determination test). The two secondary
 alerts were correct; every phase-down row now carries a primary citation. See
-`docs/handoffs/ffr-pb-atb-statute-intake-2026-07-31.md`.
+`docs/records/forecast/ffr-pb-atb-statute-intake-2026-07-31.md`.
 
 ## 2. State RPS / ACP (§4.3) — refreshed to cited published schedules
 

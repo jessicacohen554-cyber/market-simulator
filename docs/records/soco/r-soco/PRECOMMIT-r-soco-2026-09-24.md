@@ -1,6 +1,6 @@
 # PRECOMMIT — R-SOCO: re-solve SOCO on the corrected backcast inputs (F1 + F2)
 
-Charter: `docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md` §5.3.8. Base: `main` @
+Charter: `docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md` §5.3.8. Base: `main` @
 `9210075392a128d14a5efb168ab1f9955a9b6946` (F1 #6572 and F2 #6569 both merged — precondition MET).
 Written before any shard is launched. Phase 0 is zero LP; the parent solves nothing (rule 32(a)).
 

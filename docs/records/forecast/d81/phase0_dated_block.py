@@ -23,8 +23,8 @@ patching :func:`market_sim.runner.build_base_fleet` and aborting before the
 first solve, so nothing here is a re-derivation of the recipe.
 
 Usage:
-    uv run python docs/handoffs/d81/phase0_dated_block.py \
-        --out docs/handoffs/d81/phase0_dated_block.json
+    uv run python docs/records/forecast/d81/phase0_dated_block.py \
+        --out docs/records/forecast/d81/phase0_dated_block.json
 """
 
 from __future__ import annotations

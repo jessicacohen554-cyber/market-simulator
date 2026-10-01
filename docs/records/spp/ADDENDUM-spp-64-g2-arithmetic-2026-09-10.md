@@ -1,7 +1,7 @@
 # ADDENDUM to PRECOMMIT-spp-64 — I MIS-COMPUTED THE G-2 PRE-SOLVE DELTA. The bar is NOT being re-cut.
 
 **Lane** SPP-64 · **Written** before any arm number existed — see §3, which records the evidence for
-that claim · **Charter** `docs/handoffs/PRECOMMIT-spp-64-stgas-selfcommit-2026-09-10.md` §5–§6.
+that claim · **Charter** `docs/records/spp/PRECOMMIT-spp-64-stgas-selfcommit-2026-09-10.md` §5–§6.
 
 ## 1. THE ERROR
 
@@ -59,7 +59,7 @@ and §1's rebuild confirms the window construction the PRECOMMIT described
 
 At the moment this was written the screen shard's branch `claude/spp64-screen-2023b` carried exactly
 one commit — `ffa15c8934d221b2f375831ea1db056b38f66ec4`, *"SPP-64 screen shard: heartbeat addendum
-(pin + blank §6 gate table) before any LP"* — and no `docs/RESULT-spp64-screen-2023.md` existed on
+(pin + blank §6 gate table) before any LP"* — and no `docs/records/spp/RESULT-spp64-screen-2023.md` existed on
 any ref. The parent has run no LP at all (rule 32 `[R-SHARD]`). **The commit order in git history is
 the check**: this addendum lands before the shard's result commit, and if it does not, disregard it.
 

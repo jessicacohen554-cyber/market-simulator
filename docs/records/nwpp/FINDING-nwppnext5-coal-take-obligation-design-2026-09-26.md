@@ -13,7 +13,7 @@ is not a **shape** lever:
 
 **Artifacts** (nothing solved, nothing committed):
 - Probe: `scripts/probes/_nwppnext5_coal_contract_census.py`.
-- Output: `results/calibration/_nwppnext5_coal_contract_census.json`.
+- Output: `results/phase0/nwpp/_nwppnext5_coal_contract_census.json`.
 - Inputs:
   - `data/raw/coal-receipts` (EIA-923 Page 5) and `data/raw/coal-stocks` (Page 2).
   - Keeper #11 `nwppnext4_span/hourly/{class,class_band,system}_<y>.parquet`.

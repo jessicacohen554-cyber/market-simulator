@@ -1,11 +1,11 @@
 # DIAGNOSIS — CAISO LMP residual after the Jan-2023 OASIS backfill (2026-07-14)
 
 Companion to the caiso-80 keeper entry (2026-07-13 calibration log) and
-`results/calibration/FINDING-caiso80-demand-basis-wedge-2026-07-13.md`. This
+`docs/records/caiso/FINDING-caiso80-demand-basis-wedge-2026-07-13.md`. This
 session folded the hand-downloaded OASIS GRP zips (Jan 1–25 2023 DAM, 19
 trade dates) into the CAISO actuals, rescored the keeper, and decomposed the
 remaining price residual. Handoff for the candidate-bundle campaign:
-`docs/handoffs/caiso-price-residual-campaign-2026-07.md`.
+`docs/records/caiso/caiso-price-residual-campaign-2026-07.md`.
 
 ## 1. What the backfill changed (scorer-side only; no re-solve)
 
@@ -113,7 +113,7 @@ where the real marginal unit is NOT an in-state gas unit.
 - `caiso_solar_cap_at_delivered`: rule-13 diagnostic ONLY (pins to outcome).
 
 ## 5. Campaign candidates
-See the handoff (`docs/handoffs/caiso-price-residual-campaign-2026-07.md`)
+See the handoff (`docs/records/caiso/caiso-price-residual-campaign-2026-07.md`)
 for the ranked single-delta matrix, run mechanics (`replay_keeper.py --set`),
 and governance rails. Headline order: (T1) measure the keeper's trough
 formation vs the ≤$0 benchmark (no LP — needs one in-place keeper replay to

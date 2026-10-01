@@ -1,7 +1,7 @@
 {
  "probe": "entry_signal_d43_dispersion_replay",
- "finding": "docs/handoffs/FINDING-capx-d43-caiso-dispersion-2026-09-02.md",
- "object": "docs/handoffs/FINDING-capx-d39-entry-underbuild-2026-09-02.md \u00a70/\u00a73.1/\u00a77.2",
+ "finding": "docs/records/forecast/FINDING-capx-d43-caiso-dispersion-2026-09-02.md",
+ "object": "docs/records/forecast/FINDING-capx-d39-entry-underbuild-2026-09-02.md \u00a70/\u00a73.1/\u00a77.2",
  "iso": "CAISO",
  "mode": "basis",
  "bundle": "results/hindcast/caiso-2021-2025-realized-dumps",

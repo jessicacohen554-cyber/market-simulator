@@ -4,7 +4,7 @@
 **Keeper** `2026-08-09-miso-148-basis-aware` (`miso148_basis_B`), **UNCHANGED** ·
 **Model** `claude-opus-5`.
 
-**PREREG** `results/calibration/PREREG-miso156-c3a-three-channel-decomposition-2026-08-13.md`,
+**PREREG** `docs/records/miso/PREREG-miso156-c3a-three-channel-decomposition-2026-08-13.md`,
 pushed at **`162a51d`**, blob **`7f124d18`**, **verified byte-identical against the
 FETCHED remote ref** before any adjudicating statistic was computed (rule 27
 `[R-PUSH]`).
@@ -366,6 +366,6 @@ it cannot be re-derived to fit one.**
 
 **Artifacts.** Probes `scripts/probes/_miso156_c3a_decomposition.py` and
 `scripts/probes/_miso156_ramp_precheck.py` (both `ruff` clean). Records
-`results/calibration/_miso156_c3a_decomposition.json`,
-`results/calibration/_miso156_ramp_precheck.json`. PREREG `162a51d`, blob
+`results/phase0/miso/_miso156_c3a_decomposition.json`,
+`results/phase0/miso/_miso156_ramp_precheck.json`. PREREG `162a51d`, blob
 `7f124d18`. Keeper `2026-08-09-miso-148-basis-aware`, **unchanged**.

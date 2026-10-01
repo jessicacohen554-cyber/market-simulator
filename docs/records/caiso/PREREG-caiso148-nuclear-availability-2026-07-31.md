@@ -4,7 +4,7 @@
 when this document was frozen. Gates below are final — a gate this document does
 not contain cannot be quoted as a pass. Format mirrors
 `PREREG-caiso147-chp-heat-rates-2026-07-31.md` and
-`docs/PREREG-nyiso98-nuclear-availability-2026-07-29.md`, not copied.
+`docs/records/nyiso/PREREG-nyiso98-nuclear-availability-2026-07-29.md`, not copied.
 
 Lever: mechanism-matrix §5.2 CAISO queue **item 8**, `nuclear_unit_availability`,
 cells `KUUUKU` (`K` in ERCOT on its own flag/file, `K` in NYISO at nyiso-98;

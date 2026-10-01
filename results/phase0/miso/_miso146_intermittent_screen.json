@@ -1,5 +1,5 @@
 {
- "prereg": "results/calibration/PREREG-miso146-intermittent-screen-2026-08-09.md",
+ "prereg": "docs/records/miso/PREREG-miso146-intermittent-screen-2026-08-09.md",
  "keeper": "2026-08-05-miso-132b-cc-committed",
  "posture": "NO LP, NO SOLVE, NO ARM, NO ScenarioConfig FIELD, NO PARAMETER. A classification of an INPUT corpus (PREREG \u00a72c).",
  "rule": {

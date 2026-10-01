@@ -1,7 +1,7 @@
 # ADDENDUM — neiso-109: the OWNER directed the full span; the screen no longer gates it
 
 **Session** neiso-109 · **Date** 2026-09-16 · **Written BEFORE the span shard reported.**
-Amends `docs/PRECOMMIT-neiso109-gas-repair-screen-2026-09-16.md` §6 (THE PLAN).
+Amends `docs/records/neiso/PRECOMMIT-neiso109-gas-repair-screen-2026-09-16.md` §6 (THE PLAN).
 
 ## 1. THE INSTRUCTION
 

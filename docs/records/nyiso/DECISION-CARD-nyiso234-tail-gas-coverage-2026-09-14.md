@@ -2,7 +2,7 @@
 
 **Session** nyiso-234 · **Date** 2026-09-14 · **ZERO LP.** Keeper **UNCHANGED**
 (`2026-09-13-nyiso-232-st-gas`). Nothing armed. Evidence:
-`docs/FINDING-nyiso234-tail-gas-is-unobserved-2026-09-14.md`.
+`docs/records/nyiso/FINDING-nyiso234-tail-gas-is-unobserved-2026-09-14.md`.
 
 Two questions. **Q1 is a ruling to confirm or overturn. Q2 is a spend.**
 
@@ -31,7 +31,7 @@ day**. Measured: committed Jan 6 2023 = 3.17 where EIA published 3.50, and the s
 through Jan 9/10/11, with Jan 5 absent. That is a misalignment in the delivered gas price the
 entire NYISO gas fleet is priced from, and it is **not confined to the tail**.
 
-Record: `docs/FINDING-nyiso234b-the-gas-series-was-published-2026-09-14.md`.
+Record: `docs/records/nyiso/FINDING-nyiso234b-the-gas-series-was-published-2026-09-14.md`.
 
 ---
 

@@ -7,12 +7,12 @@ grade 5, fails 3 {C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c}.
 **ZERO SOLVES.** No parameter touched, no band swept, no arm built, no run
 registered — **by the pre-registration's own stop conditions S1, S2 and S3, all
 three of which fired.**
-**Gates:** `results/calibration/PREREG-nyiso179-st-gas-offer-position.md`,
+**Gates:** `docs/records/nyiso/PREREG-nyiso179-st-gas-offer-position.md`,
 committed with the probe at `15f2d3e8` **before either ran**, including its §7
 amendment (four construction defects found by CODE READING before commit) and
 its §8 amendment (three more found by the probe's own OUTPUT, committed at
 `5264cff2` before the corrected run).
-**Machine artifacts:** `results/calibration/_nyiso179_st_gas_offer_position.json`
+**Machine artifacts:** `results/phase0/nyiso/_nyiso179_st_gas_offer_position.json`
 (gates) and `_nyiso179_g1_robustness.json` (post-gate robustness); probes
 `scripts/probes/nyiso179_st_gas_offer_position.py` and
 `nyiso179_g1_robustness.py`.

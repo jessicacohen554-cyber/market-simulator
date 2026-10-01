@@ -45,7 +45,7 @@ open item. Promote it once (1) is understood and (2)'s tail is unblocked.
 | per-year+reuse probe | full script `scripts/probes/_miso67_stgas_vlr_level.py` | eb3b1bf |
 
 Apply the source patches to `origin/main`:
-`git apply docs/handoffs/miso-phase-b-patches/0{2,3,4,6}-*.patch` (01 is the
+`git apply docs/records/miso/miso-phase-b-patches/0{2,3,4,6}-*.patch` (01 is the
 site display fix; 05 is the calibration-log entry — see the local combined
 patch `00-COMBINED-*.patch` for all of them in one).
 (NOTE: the pushed probe script's docstring shows a doubled backslash where a
@@ -95,7 +95,7 @@ composed probe are deferred, not force-built. **To unblock:** allowlist
 `oasis.oati.com` / `cdn.misoenergy.org` or drop the primary MISO
 emergency-declaration decks into `data/raw/miso-maxgen-events/`, then
 re-adjudicate the Jan-2024 window. Full detail:
-`docs/handoffs/miso-phase-b-m1-maxgen-findings-2026-07.md`.
+`docs/records/miso/miso-phase-b-m1-maxgen-findings-2026-07.md`.
 
 ## 5. Verification done this session
 

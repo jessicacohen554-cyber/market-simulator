@@ -3,7 +3,7 @@
  "bundle": "results/ff-t3-neiso-golden/d90-rescore",
  "run_id": "neiso-2026-2050-t3-golden3-d90-rescore",
  "attested_by": "capx D90-RESCORE, 2026-09-09 \u2014 THE PRODUCING SESSION (rubric \u00a75's default author): this lane solved the bundle it attests. The assertions are read from committed bytes, not judged at authoring time, and an assertion that reads FALSE is recorded FALSE and FC-7 fails on it at full magnitude rather than the attestation being re-scoped to fit (PRECOMMIT-capx-d90-rescore-2026-09-09.md Addendum B, pushed before this bundle existed).",
- "predeclaration": "docs/handoffs/PRECOMMIT-capx-d90-rescore-2026-09-09.md (\u00a74-\u00a75 + Addenda A/B, all pushed before the solve)",
+ "predeclaration": "docs/records/forecast/PRECOMMIT-capx-d90-rescore-2026-09-09.md (\u00a74-\u00a75 + Addenda A/B, all pushed before the solve)",
  "assertions": {
   "dof_ledger_complete": {
    "value": false,

@@ -14,7 +14,7 @@ offer-stack / fuel-basis root cause"*). **Keeper under test:**
 **Frozen HEAD:** `1aad56a` + this session's two commits (`df5c9e9` probe,
 `e606439` mechanism). **Pre-solve evidence:**
 `scripts/probes/_nyiso109_trough_offer_stack.py` →
-`results/calibration/_nyiso109_trough_offer_stack.json`.
+`results/phase0/nyiso/_nyiso109_trough_offer_stack.json`.
 
 ---
 

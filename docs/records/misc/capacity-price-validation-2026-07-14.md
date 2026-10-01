@@ -1,8 +1,8 @@
 # Capacity demand-curve re-validation after the P-2B basis migration — 2026-07-14
 
 **Session.** N-5 / P-2B implementation (R1–R6) of the accreditation-basis memo
-(`docs/handoffs/accreditation-basis-memo-2026-07-12.md` §4.2). This re-runs the
-P-2A validation (`docs/handoffs/capacity-price-validation-2026-07-12.md`) against
+(`docs/records/misc/accreditation-basis-memo-2026-07-12.md` §4.2). This re-runs the
+P-2A validation (`docs/records/misc/capacity-price-validation-2026-07-12.md`) against
 the migrated code — Option A per-ISO published-basis consistency for PJM: the
 UCAP-$ curve anchor (R1), the published-FPR requirement (R2), the ELCC-class
 supply ledger (R3), and the basis-consistent payment seam (R4). **No LP was

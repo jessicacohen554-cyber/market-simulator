@@ -68,8 +68,8 @@ prior-two-year rate (121.1 Mt), and the real fleet closed 2022 holding 25.7 Mt, 
 opened with. The pooled budget is not too loose in total; it is wrong in where the coal is.
 
 Instrument: `scripts/probes/_miso268_plant_grain_phase0.py` →
-`results/calibration/_miso268_plant_grain_phase0.json`. Arm and predictions:
-`docs/PRECOMMIT-miso268-coal-yard-grain-2026-09-24.md`.
+`results/phase0/miso/_miso268_plant_grain_phase0.json`. Arm and predictions:
+`docs/records/miso/PRECOMMIT-miso268-coal-yard-grain-2026-09-24.md`.
 
 ## 4. Coal trough surplus
 

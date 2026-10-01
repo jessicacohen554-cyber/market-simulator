@@ -8,7 +8,7 @@ re-based record); **the condition is the step-0 gate below passing.** A step-0
 FAIL stops the lane and returns to the manager. No lift-adjacent claims beyond
 the gate verdict; no arming beyond what the dispatch names; no keeper contact.
 
-**Baseline epoch.** `docs/handoffs/ffr-9a-storage-vintage-seed-2026-08-09.md`
+**Baseline epoch.** `docs/records/forecast/ffr-9a-storage-vintage-seed-2026-08-09.md`
 is THE current ERCOT hindcast baseline (its epoch statement supersedes FFR-8B
 §2 as baseline; cache epoch 2026-08-09). Its UNGATED storage vintage-seed fix
 and the FFR-3V renewable vintage-seed fix both ride automatically at this

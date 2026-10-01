@@ -1,7 +1,7 @@
 # DIAGNOSIS — PJM-2025 phase drift de-confounded + the real coal/zonal structure (2026-07-15)
 
 **Charter:** the post-clock-fix PJM Fable design session
-(`docs/handoffs/pjm-cc-capacity-reconcile-2026-07.md` Part B, amended by the
+(`docs/records/pjm/pjm-cc-capacity-reconcile-2026-07.md` Part B, amended by the
 2026-07-15 ALL-ISO scoring-clock-fix log entry): de-confound the PJM-2025
 uniform +1 h phase drift FIRST (lane c — "smells like a 2025-vintage EIA-930
 extract phase issue"), then re-measure the July-2025 coal over-run and the CC
@@ -302,9 +302,9 @@ into the Dominion/EMAAC zones, C3c may move — measured, not targeted.
 
 * Keeper: `2026-07-14-pjm-110-bench-hygiene` (unchanged; keepers.json
   untouched — owner-only).
-* Grounding: `docs/DIAGNOSIS-pjm-july-cc-overrun-2026-07.md` §4/§7;
-  `docs/handoffs/pjm-cc-capacity-reconcile-2026-07.md` Part B; calibration-log
+* Grounding: `docs/records/pjm/DIAGNOSIS-pjm-july-cc-overrun-2026-07.md` §4/§7;
+  `docs/records/pjm/pjm-cc-capacity-reconcile-2026-07.md` Part B; calibration-log
   2026-07-15 (ALL-ISO scoring-clock fix);
-  `docs/DIAGNOSIS-ercot-lmp-clock-artifact-and-summer-residuals-2026-07.md`.
+  `docs/records/ercot/DIAGNOSIS-ercot-lmp-clock-artifact-and-summer-residuals-2026-07.md`.
 * CAISO precedent for a measured input-clock correction:
   `caiso_demand_clock_realign` (caiso-75).

@@ -4,7 +4,7 @@
   "year": 2025,
   "keeper": "2026-09-06-nyiso-196-extract-basis",
   "screen_bundle": "results/calibration/nyiso202_screen_a1_2025",
-  "prereg": "results/calibration/PREREG-nyiso202-bridge-startup-aware-2025-screen.md",
+  "prereg": "docs/records/nyiso/PREREG-nyiso202-bridge-startup-aware-2025-screen.md",
   "class_energy_twh": {
     "CC_CHP": {
       "keeper": 20.344,

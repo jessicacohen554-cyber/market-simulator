@@ -148,7 +148,7 @@ operating as designed, not an under-fire to be repaired, and this session will n
 1. **This PRECHECK committed and pushed** — before the filtered extract is built. ✅ (this commit)
 2. Build the filtered extract + measure the identification
    (`scripts/probes/_caiso192_overlay_identification.py` →
-   `results/calibration/_caiso192_overlay_identification.json`).
+   `results/phase0/caiso/_caiso192_overlay_identification.json`).
 3. Evaluate G-RATE / G-STAB / G-SEP / G-LOYO and the §4 conservative defaults. **Any gate
    fails ⇒ no adoption, no solve.**
 4. **Only on a full pass**, solve CONTROL then ARM.

@@ -3,7 +3,7 @@
 **Governs:** the **reporting** of `G-1` only. **`G-1`'s bar — same sign, within [1/3, 3]× the
 magnitude, for every class where `|prediction| ≥ 0.5` TWh — is UNTOUCHED**, as are `G-2`, `G-3`,
 `G-4`, `D-1`…`D-5`, `P-1`, `P-2` and §4's screen-year rule. Machine record
-`results/calibration/_miso247_p3prime_reclear.json`. **The screen and control solves are RUNNING as
+`results/phase0/miso/_miso247_p3prime_reclear.json`. **The screen and control solves are RUNNING as
 this is written; no realised number exists.**
 
 ---

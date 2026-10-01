@@ -1,6 +1,6 @@
 # RESULT — pjm-h19: `demand_balance_screen` on PJM, all six years (2026-09-23)
 
-Companion to `docs/PRECOMMIT-pjm-h19-demand-balance-screen-2026-09-23.md` (pushed before any solve;
+Companion to `docs/records/pjm/PRECOMMIT-pjm-h19-demand-balance-screen-2026-09-23.md` (pushed before any solve;
 shards pinned to `2d57aa2089d687d9251f229474f84601a3111059`). **Every number this lane cites is here.**
 
 Arm = PJM keeper `2026-09-22-pjm-hydro2-ror-span` recipe **+ `demand_balance_screen=true`**, nothing else.

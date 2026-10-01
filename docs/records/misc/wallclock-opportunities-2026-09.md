@@ -194,7 +194,7 @@ second model seeded from the P0 basis (driver monkeypatch; no repo code changed)
 
 *(Table supplied by B-0, 2026-09-05, main @ `2886235c` — the assessment session's bench never
 landed; record and driver conditions in §6.3, decision memo
-`docs/handoffs/p1-basis-seed-decision-memo-2026-09.md`.)*
+`docs/records/misc/p1-basis-seed-decision-memo-2026-09.md`.)*
 
 | arm | `solve_p0` s | P0 iters | `solve_p1` s | P1 iters | basis export + apply s | year `total` s | maxrss GB |
 |---|---:|---:|---:|---:|---:|---:|---:|
@@ -351,4 +351,4 @@ on every moved row (max |Δlmp| 0.0), each with its offsetting partner at the sa
 SOLAR_South ↔ SOLAR_North curtailment placement @ 0, Panhandle wind h2056 ↔ h2057 @ −26;
 Σ|hourly Δ| 3.4 GWh = 0.0007 % of generation. Verdict: neutral under the
 `diff_warmstart_bundles.py` standard; the owner decision is
-`docs/handoffs/p1-basis-seed-decision-memo-2026-09.md`.
+`docs/records/misc/p1-basis-seed-decision-memo-2026-09.md`.

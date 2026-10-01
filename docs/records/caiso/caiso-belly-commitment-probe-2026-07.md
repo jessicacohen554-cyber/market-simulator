@@ -3,7 +3,7 @@
 **Scoped diagnostic (no re-solve, no keeper change).** Grounds the G-15
 residual-(a) belly-commitment question — the seam-tz forensics' reattribution of
 the C3a body overprice to belly gas commitment
-(`results/calibration/FINDING-caiso-seam-tz-correction-2026-07-07.md` §4.3/§6) —
+(`docs/records/caiso/FINDING-caiso-seam-tz-correction-2026-07-07.md` §4.3/§6) —
 in model-vs-actual numbers, so the next mechanism is designed against measured
 leverage, not a narrative. Reproduce: `python scripts/archive/caiso_belly_commitment_probe.py`.
 

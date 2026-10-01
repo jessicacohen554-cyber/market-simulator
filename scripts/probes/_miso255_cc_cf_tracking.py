@@ -1,7 +1,7 @@
 """miso-255 phase 0: does MISO's CC_REGULAR fleet capacity factor track the meter?
 
 Ports the ``pjm-h1`` zero-LP instrument
-(``docs/FINDING-pjm-h1-cc-cf-does-not-track-2026-09-12.md``) onto MISO's own
+(``docs/records/pjm/FINDING-pjm-h1-cc-cf-does-not-track-2026-09-12.md``) onto MISO's own
 committed artifacts. Rule 28(d) ``[R-MECH-MATRIX]``: a PJM verdict fills no
 MISO cell, so every number here is re-measured on MISO data.
 

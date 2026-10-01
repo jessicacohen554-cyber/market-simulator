@@ -120,8 +120,8 @@ candidate.
 
 ### 5.1 Results (both shards pinned to `0101b4ce`, same environment class, same recipe)
 
-Reports: `docs/SHARD-misooom-A-2023.md` (branch `claude/misooom-A-2023`, commit `3bd2d1be`) and
-`docs/SHARD-misooom-B-2023.md` (branch `claude/misooom-B-2023`, commit `c904f667`).
+Reports: `docs/records/miso/SHARD-misooom-A-2023.md` (branch `claude/misooom-A-2023`, commit `3bd2d1be`) and
+`docs/records/miso/SHARD-misooom-B-2023.md` (branch `claude/misooom-B-2023`, commit `c904f667`).
 
 | | shard A — preflight ON | shard B — preflight OFF |
 |---|---|---|

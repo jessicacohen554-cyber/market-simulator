@@ -1,7 +1,7 @@
 # PRECOMMIT — PJM-NEXT-5 card 1: CC econ rungs at PJM's measured offer SHAPE on each plant's own cost (2026-09-27)
 
 Keeper `2026-09-26-pjm-next-4-midcurve2019` (bundle `results/calibration/pjmnext4_c1_span`). Owner ruling 2026-09-27:
-**build + solve**. Written and pushed **before any solve**. Phase 0: `docs/FINDING-pjm-next-5-phase0-cards-1-2-3b-2026-09-27.md`
+**build + solve**. Written and pushed **before any solve**. Phase 0: `docs/records/pjm/FINDING-pjm-next-5-phase0-cards-1-2-3b-2026-09-27.md`
 card 1.
 
 ## 1. The arm (one field, zero DOF)
@@ -25,7 +25,7 @@ Tests: `tests/iso/pjm/test_pjm_offer_midcurve_shape_form.py`.
 
 ## 2. Zero-LP census (fleet-only rebuild, keeper recipe; the model's own builder)
 
-`scripts/probes/pjm_next5_card1_shape_census.py` → `results/calibration/_pjm_next5_card1_shape_census.json`. All
+`scripts/probes/pjm_next5_card1_shape_census.py` → `results/phase0/pjm/_pjm_next5_card1_shape_census.json`. All
 values are cap-weighted, ex startup amortization, in $/MWh.
 
 | year | CC econ keeper | CC econ shape | COAL_BIT econ | order (shape) |

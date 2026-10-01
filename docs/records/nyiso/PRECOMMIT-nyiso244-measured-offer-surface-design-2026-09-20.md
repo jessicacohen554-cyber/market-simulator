@@ -5,7 +5,7 @@
 **Keeper** `2026-09-19-nyiso241-ct-committed-measured`, bundle
 `results/calibration/nyiso241_ctcommitted_span`, years {2022, 2023, 2024, 2025}. **UNCHANGED
 at the time of writing.**
-**Predecessor** `docs/RESULT-nyiso243-the-tail-is-not-an-availability-object-2026-09-20.md` §6,
+**Predecessor** `docs/records/nyiso/RESULT-nyiso243-the-tail-is-not-an-availability-object-2026-09-20.md` §6,
 which re-opened `measured_offer_surface` NYISO `G` → `U` and named the two blockers this
 document gates.
 

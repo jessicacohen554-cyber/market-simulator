@@ -9,7 +9,7 @@ Two files touched, both text.
 | File | Change | Diff |
 |---|---|---|
 | `results/ff-corridor/dispositions/neiso-t3.json` | the `explanation` string of the three `capacity:storage` rows (2030 / 2035 / 2040), re-authored per D36 §7 | 3 lines changed (3+/3−) |
-| `docs/handoffs/FINDING-capx-t3-golden2-2026-09-01.md` | one dated annotation appended at §6.1 | 21 lines added, 0 removed |
+| `docs/records/forecast/FINDING-capx-t3-golden2-2026-09-01.md` | one dated annotation appended at §6.1 | 21 lines added, 0 removed |
 
 Nothing else. No scorer, no FC row definition, no board, no keeper/shard/marker,
 no `ScenarioConfig`, no matrix shard, no new workflow.
@@ -140,9 +140,9 @@ MATCH** — remote blob sha and line count equal to local, checked against
 
 | File | Blob sha | Lines |
 |---|---|---|
-| `docs/handoffs/FINDING-capx-t3-golden2-2026-09-01.md` | `cc8dbbe4a94e1109723dbf1501b750b9f7ffa8d5` | 605 |
+| `docs/records/forecast/FINDING-capx-t3-golden2-2026-09-01.md` | `cc8dbbe4a94e1109723dbf1501b750b9f7ffa8d5` | 605 |
 | `results/ff-corridor/dispositions/neiso-t3.json` | `462ec2a807ca002735cd3f130d941098f8ca59f8` | 795 |
-| `docs/handoffs/FINDING-capx-d38-d36-records-2026-09-02.md` | (this file) | 149 |
+| `docs/records/forecast/FINDING-capx-d38-d36-records-2026-09-02.md` | (this file) | 149 |
 
 The disposition file is data, not source, and was likewise written whole from a
 verified round-trip rather than retyped.

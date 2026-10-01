@@ -1,6 +1,6 @@
 # RESULT — R-ERCOT-16: Oklaunion measured coal heat rate, PROMOTED (data hygiene); ISO still NOT-YET
 
-PRECOMMIT: `docs/handoffs/PRECOMMIT-r-ercot-15-phase0-oklaunion-hr-2026-09-29.md` (pinned SHA `3c398753b12f139f7c082720556ac64b0618de2e`).
+PRECOMMIT: `docs/records/ercot/PRECOMMIT-r-ercot-15-phase0-oklaunion-hr-2026-09-29.md` (pinned SHA `3c398753b12f139f7c082720556ac64b0618de2e`).
 New keeper `2026-09-28-r-16-oklaunion-hr` (`results/calibration/r_ercot16_span`, 2019–2025) supersedes `2026-09-28-r-14-oklaunion-swcap`.
 Promoted under the owner's standing instruction carried in the handoff, verbatim: **"Is it an improvement? Then promote"**.
 

@@ -1,7 +1,7 @@
 {
  "probe": "entry_signal_disarm_ledger_compare",
- "finding": "docs/FINDING-entry-signal-disarm-2026-08.md",
- "charter": "docs/FINDING-entry-signal-l1-2026-08.md \u00a74 item 2 / \u00a75",
+ "finding": "docs/records/misc/FINDING-entry-signal-disarm-2026-08.md",
+ "charter": "docs/records/misc/FINDING-entry-signal-l1-2026-08.md \u00a74 item 2 / \u00a75",
  "iso": "ERCOT",
  "arms": {
   "disarm": {

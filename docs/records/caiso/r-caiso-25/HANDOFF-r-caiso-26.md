@@ -17,7 +17,7 @@ STATE (2026-10-01):
   C3c 2024. The fold `-touchpoints` (2019–21) is NOT-YET, so the ISO determination is NOT-YET under v3.13.
 - R-CAISO-21..-24 (zero LP): evening = DART basis + C3c tail; no lever for C3c 2024; midday N–S spread
   ledgered (data-availability limited); h18 body residual ledgered as a shape residual.
-- R-CAISO-25 (zero LP; docs/handoffs/r-caiso-25/, probe scripts/probes/_rcaiso25_prc_fuel.py): NO public
+- R-CAISO-25 (zero LP; docs/records/caiso/r-caiso-25/, probe scripts/probes/_rcaiso25_prc_fuel.py): NO public
   same-day CA gas series exists for 2022–25 (NGI, ICE next-day and CAISO OASIS PRC_FUEL are all next-day;
   same-day is licensed ICE only). CAISO DMM Jan-2024: CA gas moderate; the event drivers were NW shortage,
   a forced NOB outage all weekend, Oregon transmission outages and Malin congestion. PRC_FUEL for SCE/SDG&E

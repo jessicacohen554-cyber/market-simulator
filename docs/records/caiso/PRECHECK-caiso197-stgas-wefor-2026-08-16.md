@@ -34,7 +34,7 @@ reads EIA-860, the GADS corpus CSVs, and the CAMPD extract facility-id column
 gas_st_wefor_base_override = 0.1591        (CAISO only; one value, no sweep)
 ```
 
-Committed record: `results/calibration/_caiso197_stgas_census.json`
+Committed record: `results/phase0/caiso/_caiso197_stgas_census.json`
 (probe `scripts/probes/_caiso197_stgas_census.py` — NO LP, no price series).
 Any post-PRECHECK change to this value voids the session (G-FROZEN).
 `wefor_multiplier` stays at its control value in this arm; the lane-2 fields
@@ -189,7 +189,7 @@ availability can be made CAISO's own. Recorded in the census JSON.
 * This PRECHECK (committed before the lane-3 solve) +
   `_caiso197_stgas_census.json` + the census probe.
 * Bundle `caiso197_l3_stgas` (control shared: `caiso197_l2_control`).
-* `results/calibration/FINDING-caiso197-stgas-wefor-2026-08-16.md` — gate
+* `docs/records/caiso/FINDING-caiso197-stgas-wefor-2026-08-16.md` — gate
   tally, §0 quoted verbatim, single-mechanism statement verbatim, matrix duty
   (b) on the `wefor_statistical_stack` CAISO cell (the row that registers
   `gas_st_wefor_base_override`), calibration-log entry in-session.

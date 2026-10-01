@@ -1,6 +1,6 @@
 # Capacity demand-curve validation vs auction history — 2026-07-12 (P-2A / CR-2)
 
-**Session.** P-2A of `docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md`
+**Session.** P-2A of `docs/records/forecast/forecast-driver-capacity-revenue-audit-plan-2026-07.md`
 (§3.3 CR-2 / §2 T3.1). Validates the CR-1 sloped capacity demand curves
 (`config.constants.MARKET_DESIGN`, landed default-off in P-1B) against published
 auction outcomes for the five capacity-market ISOs.

@@ -24,7 +24,7 @@ inadmissible for outage measurement (output-derived, the standing data ask's
 windows). The standing data ask's §2a is amended by the same decision to accept
 **fleet-level grain** for this one deliverable — replacing a fleet-uniform
 scalar invents no unit/class attribution, so the miso-85/87 closures are
-untouched. Record: `docs/handoffs/miso-outage-grain-data-ask-2026-07.md` §9.
+untouched. Record: `docs/records/miso/miso-outage-grain-data-ask-2026-07.md` §9.
 
 **The object.** `SUMMER_WEFOR_SHARE = 0.30`
 (`config/fuel_trajectories.py:924`) applies 30 % of each unit's WEFOR in
@@ -36,7 +36,7 @@ heat and load). It sits in the MISO keeper's DOF ledger under identification
 `residual` — an open root cause (rule 21 `[R-DOF]`). Its declaration names its
 sole exit: *"It may be REPLACED ONLY by a measured seasonal forced-outage
 shape clearing the acceptance test in
-`docs/handoffs/miso-outage-grain-data-ask-2026-07.md`"* — which the owner
+`docs/records/miso/miso-outage-grain-data-ask-2026-07.md`"* — which the owner
 decision above now unblocks at the parameter's own grain.
 
 **Why this lever, stated before the solve.** miso-156 established that MISO's
@@ -140,7 +140,7 @@ The MISO keeper's DOF ledger entry for `SUMMER_WEFOR_SHARE` re-identifies from
   (bundle `miso160_wefor_B`, the keeper config + the armed override — THE
   SINGLE DELTA).
 - Probe: `scripts/probes/_miso160_wefor_shape_instrument.py`; record:
-  `results/calibration/_miso160_wefor_shape_instrument.json`.
+  `results/phase0/miso/_miso160_wefor_shape_instrument.json`.
 - Unit tests: `tests/test_miso160_summer_wefor_override.py`.
 
 ---

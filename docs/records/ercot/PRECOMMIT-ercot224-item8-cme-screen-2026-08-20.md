@@ -138,11 +138,11 @@ hold; recorded regardless for the record if cheaply determinable):
 
 1. This precommit, pushed + blob-verified before any evaluation.
 2. Probe record: `scripts/probes/ercot224_cme_basis_screen.py` →
-   `results/calibration/ercot224_cme_basis_screen.json` — the evidence
+   `results/phase0/ercot/ercot224_cme_basis_screen.json` — the evidence
    table (URL, retrieval date, transport, quoted finding per A/B leg) plus
    best-effort `curl` transport re-checks; honest about which legs came via
    the session's WebFetch route vs reproducible transport.
-3. `docs/FINDING-ercot224-item8-cme-screen-2026-08-20.md` — the full
+3. `docs/records/ercot/FINDING-ercot224-item8-cme-screen-2026-08-20.md` — the full
    screen record and the rule-13 memo (whatever the verdict).
 4. `docs/calibration-log/ercot.md` entry (ercot-224; next shorthand
    ercot-225, ercot-199 unclaimed).

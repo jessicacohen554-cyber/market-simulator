@@ -88,7 +88,7 @@ not an argument against the repair; it goes on the record first.
 
 First-order bound, caiso-230 §H form re-run on the **caiso-239 keeper**
 (`scripts/probes/_caiso240_cell_bound.py` →
-`results/calibration/_caiso240_cell_bound.json`, zero solves):
+`results/phase0/caiso/_caiso240_cell_bound.json`, zero solves):
 
 | | 2023 | 2024 | 2025 |
 |---|--:|--:|--:|

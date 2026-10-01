@@ -101,7 +101,7 @@ magnitude. The legs below measure exactly these two exposures.
 ## 3. The instrument (frozen construction)
 
 One read-only probe, `scripts/probes/_miso183_south_basis_decomposition.py` →
-`results/calibration/_miso183_south_basis_decomposition.json`. **Frozen and
+`results/phase0/miso/_miso183_south_basis_decomposition.json`. **Frozen and
 carried unchanged from the committed miso-174/178/182 machinery:** the −1 h
 DIBA hour key (never re-searched), the fixed non-leap 8760 CST clock, hour sets
 `annual` / `summer` (Jun 1–Sep 30) / `scarce` (summer ∩ MISO RT > $200; n =

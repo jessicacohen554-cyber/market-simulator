@@ -26,7 +26,7 @@ index c12e396a..f1ffb0b5 100644
 +      avail(class, day, he) = sum_sites live_HSL(day, he) / sum_sites rating
 +
 +  keeping the hourly ambient-derate shape the day mean discards. The ERCOT-95
-+  diagnosis (docs/handoffs/ercot95-scarcity-tail-diagnosis-2026-07.md Finding
++  diagnosis (docs/records/ercot/ercot95-scarcity-tail-diagnosis-2026-07.md Finding
 +  6) measured the day-flat overlay handing the model a +216 MW mean (+433 p90,
 +  +578 max) CC+CT phantom on the 181 actual 2023 RT tail hours — real HSL dips
 +  below the day mean exactly in the hod 13-19 window where the missing tail
@@ -281,7 +281,7 @@ index b88857de..943382b6 100644
 +    # (scripts/data/derive_ercot_thermal_dam_availability.py --hourly-out,
 +    # data/raw/ercot-thermal-dam-availability-hourly.csv). Owns the hourly
 +    # ambient-derate shape the day mean discards: the ERCOT-95 diagnosis
-+    # (docs/handoffs/ercot95-scarcity-tail-diagnosis-2026-07.md Finding 6)
++    # (docs/records/ercot/ercot95-scarcity-tail-diagnosis-2026-07.md Finding 6)
 +    # measured the flat block handing the model +216 MW mean (+433 p90, +578
 +    # max) phantom CC+CT capacity on the 181 actual 2023 RT tail hours — real
 +    # HSL dips below its day mean exactly in the hod 13-19 afternoon window
@@ -388,7 +388,7 @@ index 517b933d..637bf554 100644
 +# of the class-day series above, from the SAME 60-Day DAM disclosure rows
 +# (scripts/data/derive_ercot_thermal_dam_availability.py --hourly-out). Keeps
 +# the hourly ambient-derate shape the day mean discards: the ERCOT-95 diagnosis
-+# (docs/handoffs/ercot95-scarcity-tail-diagnosis-2026-07.md Finding 6) measured
++# (docs/records/ercot/ercot95-scarcity-tail-diagnosis-2026-07.md Finding 6) measured
 +# the day-flat overlay handing the model a +216 MW mean (+433 p90) CC+CT
 +# phantom on the 181 actual 2023 RT tail hours (hod 13-19), and an equal
 +# under-credit overnight. Gated by

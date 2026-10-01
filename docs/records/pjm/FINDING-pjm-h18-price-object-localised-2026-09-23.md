@@ -7,8 +7,8 @@ promoted `hydro_ror_split` on top of it the same day, so every number here is on
 keeper.** Lane renamed h17 → h18: `pjm-h17` is taken by
 `FINDING-pjm-h17-the-top-of-the-stack-is-not-the-defect-2026-09-21.md`.
 **Cost:** ZERO LP, zero shards. Committed hourlies + six `fleet_only` rebuilds (~3 min each).
-**Probes:** `scripts/probes/pjm_h18_price_split_phase0.py` → `results/calibration/_pjm_h18_price_split.json`;
-`scripts/probes/pjm_h18_marginal_family_phase0.py` → `results/calibration/_pjm_h18_marginal_family.json`.
+**Probes:** `scripts/probes/pjm_h18_price_split_phase0.py` → `results/phase0/pjm/_pjm_h18_price_split.json`;
+`scripts/probes/pjm_h18_marginal_family_phase0.py` → `results/phase0/pjm/_pjm_h18_marginal_family.json`.
 **Rules:** 32 `[R-SHARD]` (a), 1 `[R-STRUCT]`, 14 `[R-ACCURATE]`, 28 `[R-MECH-MATRIX]`.
 
 ---

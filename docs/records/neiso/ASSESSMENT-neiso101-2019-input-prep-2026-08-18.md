@@ -29,7 +29,7 @@ what "prepared" can mean for the bench part.
 
 The charter said to re-measure rather than trust the list, and that was the right instruction:
 **the card's list was two-thirds stale.** Probe `scripts/probes/neiso101_2019_input_prep.py`,
-record `results/calibration/_neiso101_2019_input_prep.json`. It reuses neiso-90's eighteen
+record `results/phase0/neiso/_neiso101_2019_input_prep.json`. It reuses neiso-90's eighteen
 per-input probes by rebinding that module's year globals rather than copying them, so the two
 audits cannot drift apart.
 
@@ -328,7 +328,7 @@ The neiso-99 liquid-fuel-CT routing guard would drop mis-routed rows at **PJM** 
 
 * This assessment.
 * `scripts/probes/neiso101_2019_input_prep.py` — the full-span input-preparedness audit.
-* `results/calibration/_neiso101_2019_input_prep.json` — its record.
+* `results/phase0/neiso/_neiso101_2019_input_prep.json` — its record.
 
 **Next shorthand: `neiso-102`.** No NEISO tuning lever is open. The lane's remaining items are
 unchanged: the **data wait** (2025 EIA-923 final vintage) and the **owner decisions** neiso-100

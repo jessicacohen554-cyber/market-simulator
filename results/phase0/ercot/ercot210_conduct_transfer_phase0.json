@@ -2,7 +2,7 @@
  "_provenance": {
   "probe": "scripts/probes/ercot210_conduct_transfer_phase0.py",
   "session": "ercot-210 CONDUCT-PHASE-0 (Door A Phase-0; no LP, no solve)",
-  "precommit": "docs/PRECOMMIT-ercot210-conduct-transfer-phase0-2026-08-16.md",
+  "precommit": "docs/records/ercot/PRECOMMIT-ercot210-conduct-transfer-phase0-2026-08-16.md",
   "charter": "X-1 (owner), ASSESSMENT-ercot209 \u00a73 Door A",
   "keeper_at_run": "2026-08-15-ercot204-rule26-delete",
   "reserve_columns_read": [

@@ -8,7 +8,7 @@
 `audit_keepers --iso MISO` 0 failures / 0 warnings.
 
 **Prereg (pushed BEFORE any adjudicating statistic, any derive and any solve):**
-`results/calibration/PREREG-miso126-cc-steam-part-capacity-2026-08-04.md`,
+`docs/records/miso/PREREG-miso126-cc-steam-part-capacity-2026-08-04.md`,
 commit `6d936130`.
 **Runs registered (rule 15):** `2026-08-04-miso-126-steampart-control` (arm A,
 same-HEAD zero-delta control) and `2026-08-04-miso-126-steampart-b` (arm B, the

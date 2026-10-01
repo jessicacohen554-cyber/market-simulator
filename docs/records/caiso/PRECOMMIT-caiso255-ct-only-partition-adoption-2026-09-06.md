@@ -245,7 +245,7 @@ bridges the memo names.
 
 **Prices are LP duals, and a different starting basis can select a different
 vertex among degenerate optima.** The owner memo
-(`docs/handoffs/p1-basis-seed-decision-memo-2026-09.md` §3.3) measures the seed
+(`docs/records/misc/p1-basis-seed-decision-memo-2026-09.md` §3.3) measures the seed
 as warm-start-class neutral and its evidence is strong — ERCOT 2025 forward:
 objective identical to 8e-16 relative, total generation Δ **0 MWh**, max |Δ
 zonal price| **1.1e-12 $/MWh**, **0 / 61,320** dual-degenerate hours, every
@@ -417,7 +417,7 @@ the keeper's own recipe** (`caiso252_b1_notrim/meta.json` +
 
 **Every LP input is BIT-IDENTICAL** (sha256 over the raw array bytes, 18 fields
 per year plus demand). Evidence:
-`results/calibration/_caiso255_gdrift_input_identity.json`.
+`results/phase0/caiso/_caiso255_gdrift_input_identity.json`.
 
 That one measurement discharges the whole input side of the span at once —
 `constants.py`, `scenarios.py`, `offer_curves.py`, `campd_bins.py`,

@@ -25,7 +25,7 @@ f5926636   SPP-57's three-zone design commit (on origin/main history; its solve-
 
 | precondition | check | result |
 |---|---|---|
-| SPP-57 landed (PR #5496): instruments under `docs/handoffs/spp57/`, both sidecars, `data/raw/eia-861/` | in tree at the pin (`tstar_n_ok.csv`, `tstar_ok_s.csv`, `psi_ok_s.csv`, `limits_2026_oklahoma_by_constraint.csv`, `spread_identification.csv`, `rtbm_bc_oklahoma_limits_2026.parquet`, `actual_lmp_hourly_area_SPP.parquet`) | **yes** |
+| SPP-57 landed (PR #5496): instruments under `docs/records/spp/spp57/`, both sidecars, `data/raw/eia-861/` | in tree at the pin (`tstar_n_ok.csv`, `tstar_ok_s.csv`, `psi_ok_s.csv`, `limits_2026_oklahoma_by_constraint.csv`, `spread_identification.csv`, `rtbm_bc_oklahoma_limits_2026.parquet`, `actual_lmp_hourly_area_SPP.parquet`) | **yes** |
 | SPP-42 landed — keeper-2 is the control | `frontend/data/backcast/keepers/SPP.json` → `2026-09-07-spp-2-crosswalk-hydro`; bundle `spp42_crosswalk_B` + `hourly/` (system / class_hourly / class_band_hourly / storage × 2023–2025) | **yes** |
 | SPP-43 (keeper-3, the screened-input re-solve) | `git ls-remote --heads origin` → no `claude/spp-43*` head; `git log origin/main --grep=SPP-43` → only the r#8 ledger commit | **NOT LANDED** at the pin — the screen differences against keeper-2 (the SPP-41 seam is INERT in 2025, §0.1 hunk 6); the full span, if reached, differences against keeper-3 if it has landed by then, else keeper-2 with the 2023 wind hunk declared LIVE and the 2023 column caveated |
 | the 17 solve-path files of `f5926636` unmoved on main since its parent | `git diff --stat 91b5d6fb origin/main -- <the 17 files + the three SPP renewable-capacity CSVs>` → empty | **yes** — `git checkout f5926636 -- <files>` lands exact bytes (rule 27), then the two link ratings are edited in place |
@@ -93,7 +93,7 @@ of this lane is derived**.
 Zero-LP proofs owed before the screen, as SPP-57 §2.3 listed them: `validate_topology()`;
 `solve_surface_register.py --diff origin/main HEAD` → 0 moved for the six keepers (rule 25);
 `tests/regression/test_persisted_identity.py` green; the SPP test files green; an on-recipe
-`run_year(fleet_only=True)` three-zone census (`docs/handoffs/spp57b/census.csv`) for 2023–2025 — expected
+`run_year(fleet_only=True)` three-zone census (`docs/records/spp/spp57b/census.csv`) for 2023–2025 — expected
 identical to SPP-57's `census.csv` because the zones, shares and recipe are unchanged and a link rating does
 not enter a `fleet_only` build; a difference is reported.
 
@@ -155,7 +155,7 @@ not the expectation."* Three things follow, stated before the derivation runs:
    on the annual mean in every year (§2, design C). Gate leg (i) therefore tests the OK↔S link against OK→S,
    and the FINDING says so beside SPP-57's S→OK column.
 
-### 3.3 The derivation (run once, after this push; instrument `docs/handoffs/spp57b/aggregate_ttc_57b.py`)
+### 3.3 The derivation (run once, after this push; instrument `docs/records/spp/spp57b/aggregate_ttc_57b.py`)
 
 Reads `spp57/tstar_n_ok.csv` and `spp57/tstar_ok_s.csv` (which already carry hours, ψ, t, L_f and T* per
 constituent) and `spp57/psi_ok_s.csv` (LOYO ψ columns); filters each link to its §3.1 set; prints, per link
@@ -196,7 +196,7 @@ uv run python scripts/run_calibration_full.py --iso SPP --year 2025 \
 
 keeper-2's recipe unchanged except the topology (every band 1.0; served interchange; no floors / bridges /
 adders; `authorized_price_tuning` NONE). The bundle is TEMPORARY: deleted before the PR (rule 29(c)); every
-number cited from it lives in the FINDING and `docs/handoffs/spp57b/grade_screen_2025.log`.
+number cited from it lives in the FINDING and `docs/records/spp/spp57b/grade_screen_2025.log`.
 
 **STOP gate — structural, kill-only, ex-ante thresholds (E-6). It never reads C3a / C3b.** Graded by
 `spp57b/grade_screen.py` (SPP-57's instrument with the OK↔S named direction set from §3.2 item 3 and the
@@ -250,12 +250,12 @@ MEASURED value, both TTCs are measured constructions, **zero tuned scalars**; th
 | file | change |
 |---|---|
 | the 17 solve-path files + 3 CSVs of `f5926636` | cherry-picked exact bytes; then `_spp_config` link ratings + comments, `test_iso_config.py` link assertions, `iso-topologies.json` `ttc_mw` |
-| `docs/handoffs/spp57b/` | `aggregate_ttc_57b.py` (+ log, `tstar_*_57b.csv`), `census.py` / `census.csv`, `grade_screen.py` / `grade_screen_2025.log` |
-| `docs/handoffs/FINDING-spp-57b-2026-09-07.md` | construction (B′) as executed, the OK↔S T* table, the STOP-gate table beside SPP-57's, LOYO if the span ran, DOF, the P15 recommendation |
+| `docs/records/spp/spp57b/` | `aggregate_ttc_57b.py` (+ log, `tstar_*_57b.csv`), `census.py` / `census.csv`, `grade_screen.py` / `grade_screen_2025.log` |
+| `docs/records/spp/FINDING-spp-57b-2026-09-07.md` | construction (B′) as executed, the OK↔S T* table, the STOP-gate table beside SPP-57's, LOYO if the span ran, DOF, the P15 recommendation |
 | `docs/calibration-log/spp.md` spp-5; plan §5 row; ledger row; matrix shard `SPP.js` `measured_interface_limits` (rule 28(b)) | the record |
 
 Not touched: any other ISO's config, maps, rows or shard; `ScenarioConfig` (no field, G8); offer bands;
-`keepers/SPP.json`; `calibration-complete.json`; `docs/handoffs/spp57/` (SPP-57's record — read only);
+`keepers/SPP.json`; `calibration-complete.json`; `docs/records/spp/spp57/` (SPP-57's record — read only);
 `frontend/data/forecast/`.
 
 ## 7. What is not a rejection condition

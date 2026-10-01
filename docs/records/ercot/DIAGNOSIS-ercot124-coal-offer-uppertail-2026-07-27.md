@@ -3,7 +3,7 @@
 **Date** 2026-07-27 · **ISO** ERCOT · **Lane** ercot124-coal-offer-uppertail ·
 **Keeper under audit** `2026-07-26-ercot115-coal-marginal-hr` (bundle
 `results/calibration/ercot115_coal_floor_only`) — **unchanged by this session** ·
-**Chartered by** `docs/DIAGNOSIS-ercot123-coal-sced-reach-2026-07-27.md` §5/§7.2
+**Chartered by** `docs/records/ercot/DIAGNOSIS-ercot123-coal-sced-reach-2026-07-27.md` §5/§7.2
 (which CLOSED the coal offer-REACH question and named the upper tail as the one
 surviving residual the RT instrument exposes) ·
 **Method** Phase 1 only — raw-direct derivation from the 60-Day SCED disclosure

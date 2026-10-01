@@ -33,9 +33,9 @@ session landed. Nothing else about the lane changes.
 The **chartered ercot-187 successor**, still open: ercot-187 was diverted to the
 leap-day derive defect and the golden-hash attribution (both hygiene, no solve),
 so the A/B this charter calls for has never been run. The charter is
-`results/calibration/FINDING-ercot186-rule18-grain-2026-08-10.md` §5, which
+`docs/records/ercot/FINDING-ercot186-rule18-grain-2026-08-10.md` §5, which
 descends from owner sitting 2026-08-09, decision card **D3 option (ii)**
-(`docs/DECISION-CARD-ercot182-c3a2023-reachability-2026-08-09.md` §4(b2) + §10).
+(`docs/records/ercot/DECISION-CARD-ercot182-c3a2023-reachability-2026-08-09.md` §4(b2) + §10).
 
 **Admissibility under card R-A (signed 2026-08-13).** R-A holds ERCOT at NOT-YET
 and re-charters it **off the 2023 price criteria** — no C3a-2023 spend (Q-B
@@ -51,7 +51,7 @@ rule-18 defect independent of whether fixing it improves any metric."*
 C3b-2023 movement in this session is a **side-effect, reported at full
 magnitude, never an objective and never a promotion basis.** Its ceiling is
 already measured on this keeper
-(`results/calibration/ercot193_c3b_decomposition.json`):
+(`results/phase0/ercot/ercot193_c3b_decomposition.json`):
 
 | 2023 C3b counterfactual | NRMSE |
 |---|---|
@@ -169,7 +169,7 @@ by any future re-banding of this tier.
 ## 3. SEAM PROOFS — re-run at THIS HEAD, on the run192 keeper fleet, before any solve
 
 `scripts/probes/ercot186_grain_seamproof.py`, all three years, no LP built,
-written to `results/calibration/ercot202_grain_seamproof.json`.
+written to `results/phase0/ercot/ercot202_grain_seamproof.json`.
 
 **They are re-measured rather than inherited**: ercot-186 measured on the
 `ercot185_shapedarm_B` fleet, and the fleet basis has moved twice since (run191's

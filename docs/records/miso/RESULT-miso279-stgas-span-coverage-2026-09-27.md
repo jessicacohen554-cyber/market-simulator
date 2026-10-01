@@ -2,8 +2,8 @@
 
 ```
 LANE     : miso-279 (owner pick 2026-09-27, lever card "A: add missing gas-steam rows (Recommended)")
-PREREG   : docs/PRECOMMIT-miso279-stgas-span-coverage-2026-09-27.md (pin 47d3f872)
-PHASE 0  : docs/FINDING-miso279-stgas-span-coverage-2026-09-27.md
+PREREG   : docs/records/miso/PRECOMMIT-miso279-stgas-span-coverage-2026-09-27.md (pin 47d3f872)
+PHASE 0  : docs/records/miso/FINDING-miso279-stgas-span-coverage-2026-09-27.md
 OUTGOING : 2026-09-27-miso-278-fuelsplit (miso278_span) — pruned (rule 35)
 KEEPER   : 2026-09-27-miso-279-stcov (results/calibration/miso279_span, 2019-2025)
 DELTA    : campd_st_gas_span_coverage = true (sub-gate of the keeper's campd_unit_fuel_split). DOF +0

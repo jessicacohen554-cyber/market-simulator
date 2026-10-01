@@ -2,7 +2,7 @@
 
 **Zero LP. Pushed before any shard is launched or any solve number exists.** Amends
 `PRECOMMIT-spp-78-measured-heat-rates-2026-09-24.md` (pushed at `fe318fd8`). Phase-0 numbers:
-`results/calibration/_spp78_phase0.json`; instruments `scripts/probes/_spp78_arm_fleet_check.py`,
+`results/phase0/spp/_spp78_phase0.json`; instruments `scripts/probes/_spp78_arm_fleet_check.py`,
 `scripts/probes/_spp76_crossover_hr.py` (unmodified).
 
 ## 1. What phase 0 found

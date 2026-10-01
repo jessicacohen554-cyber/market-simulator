@@ -2,7 +2,7 @@
 
 Chartered 2026-09-25 by SPP-79 on the owner's "Yes" to: *"the real driver of the dearer upper
 tercile from 2022 on is still unmeasured … Want a data-intake lane chartered for that?"*
-Parent finding: `docs/handoffs/FINDING-spp-79-c3a-is-a-cancellation-2026-09-25.md`.
+Parent finding: `docs/records/spp/FINDING-spp-79-c3a-is-a-cancellation-2026-09-25.md`.
 
 ## 1. The object, as measured by SPP-79
 

@@ -1,10 +1,10 @@
 # FINDING — miso-286: the chartered EcoMin online floor is built (default off) and KILLED by its own pre-registered pre-check. No shards spent.
 
 ```
-LANE    : miso-286 (owner charter docs/handoffs/CHARTER-miso285-ecomin-price-taker-2026-09-29.md)
+LANE    : miso-286 (owner charter docs/records/miso/CHARTER-miso285-ecomin-price-taker-2026-09-29.md)
 KEEPER  : 2026-09-28-miso-280-splitremap (results/calibration/miso280_span, 2019-2025), unchanged
 LP      : none. Fleet-only rebuilds (P0 offer stack) + keeper committed P1 hourly sidecars
-PROBE   : scripts/probes/_miso285_night_stack.py --cf4  ->  results/calibration/_miso285_night_stack.json (key "cf4")
+PROBE   : scripts/probes/_miso285_night_stack.py --cf4  ->  results/phase0/miso/_miso285_night_stack.json (key "cf4")
 CODE    : ScenarioConfig.miso_gas_ecomin_online_floor (default off), MECH_MISO_GAS_ECOMIN_ONLINE (26),
           constants.MISO_GAS_ECOMIN_MIN_LOAD_FRAC = 0.323767, pipeline.commitment.build_miso_gas_ecomin_p1_prep,
           CLI --miso-gas-ecomin-online-floor, D4_WINDOWS entry, tests/iso/miso/test_miso_gas_ecomin_online_floor.py

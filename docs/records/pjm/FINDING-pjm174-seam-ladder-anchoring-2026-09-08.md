@@ -1,7 +1,7 @@
 # FINDING — pjm-174: the seam ladder's band PRICES are right; its ANCHORING is the defect
 
 **Session** pjm-174 · **ISO** PJM · **Date** 2026-09-08
-**Card** `docs/handoffs/PRECOMMIT-pjm174-seam-neighbour-hourly-ladder-2026-09-08.md`, committed
+**Card** `docs/records/pjm/PRECOMMIT-pjm174-seam-neighbour-hourly-ladder-2026-09-08.md`, committed
 `f2a834de` **BEFORE any solve** and not rewritten.
 **Keeper** `2026-08-15-pjm-162-inputclock` — **unchanged.** Nothing promoted, nothing registered.
 **PJM headline determination** — **CALIBRATED**, untouched (rule 30(c)).

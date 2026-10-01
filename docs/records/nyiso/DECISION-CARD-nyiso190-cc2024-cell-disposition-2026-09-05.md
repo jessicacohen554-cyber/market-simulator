@@ -3,9 +3,9 @@
 **For:** the owner. **From:** session nyiso-190, `backcast-calibration` lane,
 2026-09-05. **Solves run: ZERO.** **Keeper unchanged**
 (`2026-09-05-nyiso-189-steam-identity`, CALIBRATED, grade 7, fails 0).
-**Evidence:** `docs/FINDING-nyiso190-cc2024-displacement-provenance-2026-09-05.md`;
+**Evidence:** `docs/records/nyiso/FINDING-nyiso190-cc2024-displacement-provenance-2026-09-05.md`;
 bars pre-registered and pushed before the first number
-(`results/calibration/PREREG-nyiso190-cc2024-displacement-provenance.md`);
+(`docs/records/nyiso/PREREG-nyiso190-cc2024-displacement-provenance.md`);
 machine records `_nyiso190_displacement_provenance.json`,
 `_nyiso190_plant_grain_posthoc.json`.
 

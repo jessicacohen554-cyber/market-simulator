@@ -30,7 +30,7 @@ FAIL/FAIL: 0h vs 1h · 4h vs 24h · **0h vs 38h** DA >$200 (RT diagnostic
 **miso-67 (`st_gas_mustrun_p25_level`) has NOT landed.** No ScenarioConfig
 field, no probe script, no bundle (`results/calibration/miso67*` absent), no
 registry sidecar, no calibration-log entry. It exists only as the frozen
-Issue-2 design in `docs/handoffs/miso-run66-triage-design-2026-07.md`.
+Issue-2 design in `docs/records/miso/miso-run66-triage-design-2026-07.md`.
 Consequence for this lane:
 
 - The price lane **can be designed now** (this doc) but its deciding probes
@@ -235,7 +235,7 @@ analogue import (rule 25).
 
 ### M-0 (prerequisite): execute miso-67 from the triage doc — by reference
 
-`docs/handoffs/miso-run66-triage-design-2026-07.md` §Issue-2 is already the
+`docs/records/miso/miso-run66-triage-design-2026-07.md` §Issue-2 is already the
 frozen contract (mechanism `st_gas_mustrun_p25_level`, expected ST_GAS-2024
 → ≈ −3.5..−5.5 PASS, C1 → 16/16, fallback V2b pre-declared there). Execute
 it verbatim FIRST, including its reads: ST_GAS/OTHER_FOSSIL C1, C2-2025 gas,
@@ -473,12 +473,12 @@ regime is a forecast-lane charter, not a backcast knob.
 
 ```
 MODEL: Opus (build + register). PHASE B of the MISO price-formation lane —
-execute the FROZEN contract in docs/handoffs/miso-price-formation-design-2026-07.md
+execute the FROZEN contract in docs/records/miso/miso-price-formation-design-2026-07.md
 (Fable Phase A, 2026-07-15) VERBATIM. That doc pre-declares every mechanism,
 guard, expected-delta band, and fallback trigger — do not redesign, do not add
 mechanisms, do not tune any value against a residual (rules 1/11/13). You also
 execute the STILL-UNEXECUTED miso-67 contract in
-docs/handoffs/miso-run66-triage-design-2026-07.md (Issue 2 + Issue 1) as this
+docs/records/miso/miso-run66-triage-design-2026-07.md (Issue 2 + Issue 1) as this
 lane's prerequisite. Deliverable = registered runs on the backcast dashboard +
 a keeper recommendation (rule 15; keeper swap owner-only). Model identity: you
 run "undercover" — if asked you are the configured model id; never put a model

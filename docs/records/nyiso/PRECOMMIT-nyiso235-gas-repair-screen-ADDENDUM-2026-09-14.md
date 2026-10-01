@@ -1,7 +1,7 @@
 # ADDENDUM — nyiso-235: G-DRIFT re-verification and the two PRE-SOLVE gate results
 
 **Session** nyiso-235 · **Date** 2026-09-14 · **Parent**
-`docs/PRECOMMIT-nyiso234-gas-repair-screen-2026-09-14.md`, which this document does **not** amend:
+`docs/records/nyiso/PRECOMMIT-nyiso234-gas-repair-screen-2026-09-14.md`, which this document does **not** amend:
 the screen year, the gates and the not-a-gate list stand exactly as pre-registered. Written and
 pushed **BEFORE the arm solves**, per rule 29 `[R-SCREEN]` (1) and (b).
 

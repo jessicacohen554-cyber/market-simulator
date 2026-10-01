@@ -99,7 +99,7 @@ rather than resolves silently.
 this head there are **seven**:
 
 ```
-[G1_UNKNOWN] docs/handoffs/scn-ws5b-neiso/{ALL-CLEAN,CAP-STATE-TIGHT,CARB-HI,CES-P60,CES-T80}/run_config.json
+[G1_UNKNOWN] docs/records/forecast/scn-ws5b-neiso/{ALL-CLEAN,CAP-STATE-TIGHT,CARB-HI,CES-P60,CES-T80}/run_config.json
 [G1_UNKNOWN] results/ff-t3-neiso-golden/d90-rescore/run_config.json
 [G6_UNREGISTERED_SCHEMA_DRIFT] caiso_dsw_lateevening_clean   (the CAISO lane's; named-and-left, §9)
 ```
@@ -293,7 +293,7 @@ D77 named **3 rows**. The disposition table has **54** (18 quantities × 2030/20
 54 re-bases 51 rows for a reason that is **run drift, not D77**.
 
 **Zero-LP phase 0 built and VALIDATED the missing instrument.**
-`docs/handoffs/d92/corridor_model_values.py` implements each row's own `model_basis` string literally
+`docs/records/forecast/d92/corridor_model_values.py` implements each row's own `model_basis` string literally
 and **reproduces 54/54 committed `model_value` cells** from the bundle the table declares
 (`bau`, `706e7ba8e6582d42`). A row it cannot reproduce would never be re-based; none exists.
 
@@ -350,7 +350,7 @@ statement that the bundles live only on this container's disk.
 ## 8. BOUNDARIES
 
 * **No file under `src/market_sim/` is edited.** Verified at close by `git diff --stat`.
-* No `scripts/` file is edited. `docs/handoffs/d92/corridor_model_values.py` is a **measurement
+* No `scripts/` file is edited. `docs/records/forecast/d92/corridor_model_values.py` is a **measurement
   record**, not standing tooling, and its docstring says so.
 * Rule 28 `[R-MECH-MATRIX]`: **does not fire.** No mechanism is proposed, tested or added; no
   `ScenarioConfig` field changes. This is a solve-score-register lane.

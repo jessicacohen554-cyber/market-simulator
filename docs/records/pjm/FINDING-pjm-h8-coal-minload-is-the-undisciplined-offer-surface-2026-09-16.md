@@ -9,7 +9,7 @@ reads of two artifacts already committed to this repo — the rule 29 `[R-SCREEN
 **PJM keeper `2026-09-11-pjm-d4-4-gasoutage`: CALIBRATED, 8/8, zero caveats — UNTOUCHED, and
 re-verified at HEAD this session (§4).**
 
-Probe `scripts/probes/_pjm_h8_offer_ladder.py` · output `results/calibration/_pjm_h8_offer_ladder.json`.
+Probe `scripts/probes/_pjm_h8_offer_ladder.py` · output `results/phase0/pjm/_pjm_h8_offer_ladder.json`.
 
 ---
 
@@ -72,7 +72,7 @@ relevant one**, essentially fully economic, and PJM's own offers size its correc
 
 This **sharpens** the conclusion rather than weakening it: h6 had the right band and the right
 direction and applied **2.32×** too much. It also makes a falsifiable prediction, which the
-screen chartered in `docs/PRECOMMIT-pjm-h8-minload-measured-offer-2026-09-16.md` tests as its
+screen chartered in `docs/records/pjm/PRECOMMIT-pjm-h8-minload-measured-offer-2026-09-16.md` tests as its
 gate **G-5**: the `mustrun` band carries 77 % of the arm's coal footprint but should produce
 **less than 25 %** of its coal energy change. Stated here because a reader of §1-§2 alone
 would otherwise carry the wrong object forward.
@@ -175,7 +175,7 @@ of what PJM's coal fleet actually offers there** — not forced energy.
 
 The handoff routed a third open item: *"PJM's designated keeper REGENERATED AT HEAD fails D-4
 more than the arm did (38 vs 35) and re-scores CALIBRATED → NOT-YET / C8 FAIL."* That was
-measured by `pjm-fuelvintage-1` (2026-09-09, `docs/RESULT-pjm-fuelvintage-2026-09-09.md` §8c)
+measured by `pjm-fuelvintage-1` (2026-09-09, `docs/records/pjm/RESULT-pjm-fuelvintage-2026-09-09.md` §8c)
 against the **then-incumbent** keeper `2026-08-15-pjm-162-inputclock`.
 
 **It does not apply to the designated keeper, which was promoted two days later.** Measured this

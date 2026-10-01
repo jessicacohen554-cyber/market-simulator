@@ -8,8 +8,8 @@ Run ``--simulate-arm`` BEFORE ``iso_configs.py`` is edited (the ex-ante
 expectation recorded in ``PRECOMMIT-capx-d78arm-2026-09-06.md`` §2) and again
 with the flag omitted AFTER the edit (the measurement); the two must agree.
 
-    uv run python docs/handoffs/d78arm/keys_probe.py --simulate-arm --out docs/handoffs/d78arm/keys_expectation.json
-    uv run python docs/handoffs/d78arm/keys_probe.py --out docs/handoffs/d78arm/keys_measured.json
+    uv run python docs/records/forecast/d78arm/keys_probe.py --simulate-arm --out docs/records/forecast/d78arm/keys_expectation.json
+    uv run python docs/records/forecast/d78arm/keys_probe.py --out docs/records/forecast/d78arm/keys_measured.json
 """
 
 from __future__ import annotations

@@ -12,7 +12,7 @@ market-heat-rate ceiling it can support at the hindcast's flat delivered gas
 (3.91 Henry Hub + 0.67 PJM basis = 4.58 $/MMBtu).
 
 Read-only: no solve, no config written to disk, no registration. See
-``docs/handoffs/PRECOMMIT-pjm-price-tail-2026-09-07.md`` §5 for the
+``docs/records/pjm/PRECOMMIT-pjm-price-tail-2026-09-07.md`` §5 for the
 pre-registered STOP gate this feeds.
 """
 
@@ -102,8 +102,8 @@ def main() -> int:
     for k in ("control", "arm"):
         v = out[k]["ceiling"]
         print(f"  {k:<8} ceiling {v:7.3f}  -> {'CLEARS' if v > thresh else 'BELOW THRESHOLD'}")
-    json.dump(out, open("docs/handoffs/pjmtail/phase0-offer-array-delta.json", "w"), indent=1)
-    print("\nwrote docs/handoffs/pjmtail/phase0-offer-array-delta.json")
+    json.dump(out, open("docs/records/pjm/pjmtail/phase0-offer-array-delta.json", "w"), indent=1)
+    print("\nwrote docs/records/pjm/pjmtail/phase0-offer-array-delta.json")
     return 0
 
 

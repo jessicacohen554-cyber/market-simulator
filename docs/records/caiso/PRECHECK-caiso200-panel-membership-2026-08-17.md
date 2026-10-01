@@ -239,13 +239,13 @@ only remaining C3a axes.
 * Bundles `results/calibration/caiso200_h0_control`, `caiso200_h1_memberpanel`.
 * Probes `scripts/probes/_caiso200_ctrl_tolerance.py` (G-CTRL),
   `_caiso200_member_panel_gates.py` (G-MEMBER + G-DELTA legs a–d + G-ENGAGE);
-  committed records `results/calibration/_caiso200_ctrl_tolerance.json`,
+  committed records `results/phase0/caiso/_caiso200_ctrl_tolerance.json`,
   `_caiso200_member_panel_gates.json`, `_caiso200_gcov_landed.json`.
-* `results/calibration/FINDING-caiso200-panel-membership-2026-08-17.md` —
+* `docs/records/caiso/FINDING-caiso200-panel-membership-2026-08-17.md` —
   gate tally, §0 quoted, the single-mechanism statement verbatim, the §0a
   record correction on measurement, the watches, the §6 branch taken, and the
   promotion (or escalation) record.
-* `results/calibration/ASSESSMENT-caiso200-frontier-2026-08-17.md` — the
+* `docs/records/caiso/ASSESSMENT-caiso200-frontier-2026-08-17.md` — the
   neiso-87-pattern frontier/complete-readiness assessment + owner sitting
   package.
 * Matrix duty (b): `campd_outage_windows` CAISO cell updated in

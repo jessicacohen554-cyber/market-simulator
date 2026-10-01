@@ -1,5 +1,5 @@
 {
- "precommit": "docs/PRECOMMIT-ercot176-offline-increment-2026-08-07.md",
+ "precommit": "docs/records/ercot/PRECOMMIT-ercot176-offline-increment-2026-08-07.md",
  "bundle": "results/calibration/ercot168_yearcurves_B",
  "SP6_ct_subtree_sha256": "7f02b6f5183bca7a828e0d79656a0587a9716b82cd0deda296e9ca62595e32fe",
  "SP6_ct_subtree_sha256_before": "7f02b6f5183bca7a828e0d79656a0587a9716b82cd0deda296e9ca62595e32fe",

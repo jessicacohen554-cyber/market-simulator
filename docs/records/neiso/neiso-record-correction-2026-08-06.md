@@ -5,7 +5,7 @@
 grant of anything.**
 **Authorization:** owner decision **D-23, SIGNED at the 2026-08-06 sitting Addendum X.6** (the
 session-logged authorization for this correction).
-**Finding:** `results/calibration/ASSESSMENT-neiso87-declaration-2026-08-06.md` §1, independently
+**Finding:** `docs/records/neiso/ASSESSMENT-neiso87-declaration-2026-08-06.md` §1, independently
 corroborated by `docs/third-party-peer-review-2026-07.md` §6.3 item 1.
 
 ---
@@ -73,14 +73,14 @@ and report.
 | 13 | `docs/codebase-site/data/mechanism-matrix.js` | header comment | **the LIVE rendered matrix data** (rule 28) — the SPENT claim corrected in place |
 | 14 | `docs/mechanism-testing-matrix.md` | §5.6 NEISO | *"`final` NOT PROPOSABLE — locked test is SPENT and never re-grantable"* → **"NOT PROPOSED — NEVER BEEN GRANTED"**; posture unchanged, reason corrected |
 | 15 | `docs/calibration-best-so-far-neiso.md` | §"Locked-test scored on" + §5 | both bullets rewritten; old text quoted; §5 now records the full artifact search |
-| 16 | `docs/FINDING-nyiso104-c3c-frontier-and-tiered-holdout-2026-07-31.md` | tier table + para | NEISO row moved into the same category as NYISO ("never scored, not granted") + a blockquoted correction |
+| 16 | `docs/records/nyiso/FINDING-nyiso104-c3c-frontier-and-tiered-holdout-2026-07-31.md` | tier table + para | NEISO row moved into the same category as NYISO ("never scored, not granted") + a blockquoted correction |
 | 17 | `docs/forecast-readiness-prompt-pack-2026-07.md` | 4 loci (L75, L382, L3226, L3943) | three SPENT assertions corrected; the fourth (neiso-87's own "the claim is FALSE → card D-23") updated to record **EXECUTED** |
 | 18 | `docs/iso-2022-holdout-data-availability-audit-2026-07.md` | §intro + §3.6 header | corrected |
-| 19 | `docs/handoffs/ffr-owner-sitting-2026-08-02.md` | L29 + L1214 | both corrected by bracketed note; the signed decisions themselves untouched |
-| 20 | `docs/handoffs/ffr-3b-staleness-bookkeeping-2026-08-02.md` | L75 | the `locked_test_scored_on` "SPENT one-shot" description corrected; that lane's action was right but the exemption was **moot** |
-| 21 | `docs/handoffs/xiso-4-queue-ratchet-2026-08-04.md` | L38 | corrected to past tense + correction |
-| 22 | `docs/handoffs/oil-plantgroup-outage-routing-charter-2026-08.md` | L190 | corrected |
-| 23 | `docs/handoffs/ffr-3q-window-recut-2026-08-04.md` | L464 | corrected |
+| 19 | `docs/records/forecast/ffr-owner-sitting-2026-08-02.md` | L29 + L1214 | both corrected by bracketed note; the signed decisions themselves untouched |
+| 20 | `docs/records/forecast/ffr-3b-staleness-bookkeeping-2026-08-02.md` | L75 | the `locked_test_scored_on` "SPENT one-shot" description corrected; that lane's action was right but the exemption was **moot** |
+| 21 | `docs/records/governance/xiso-4-queue-ratchet-2026-08-04.md` | L38 | corrected to past tense + correction |
+| 22 | `docs/records/misc/oil-plantgroup-outage-routing-charter-2026-08.md` | L190 | corrected |
+| 23 | `docs/records/forecast/ffr-3q-window-recut-2026-08-04.md` | L464 | corrected |
 
 **Calibration logs — correct-by-addendum, historical entries NOT rewritten:**
 
@@ -104,7 +104,7 @@ in `docs/calibration-log/neiso.md`, "plus four handoff/audit docs".
 2. `frontend/data/backcast/status/NEISO.js` — generated from it, and **stale-failing `audit_keepers` S1** until rebuilt
 3. `docs/codebase-site/data/mechanism-matrix.js` — the **live rendered** matrix, distinct from the `.md`
 4. `docs/calibration-log/nyiso.md` and 5. `docs/calibration-log/pjm.md` — cross-ISO second-hand
-6. `docs/handoffs/ffr-3b-staleness-bookkeeping-2026-08-02.md` and 7. `docs/handoffs/ffr-owner-sitting-2026-08-02.md` L29 (a **second** locus in that file beyond L1214)
+6. `docs/records/forecast/ffr-3b-staleness-bookkeeping-2026-08-02.md` and 7. `docs/records/forecast/ffr-owner-sitting-2026-08-02.md` L29 (a **second** locus in that file beyond L1214)
 
 Plus **3 additional loci inside `calibration-complete.json` itself** (`phantom_reaudit_2026_07_19`,
 `determination`, `keeper_rekey_policy`) that repeated the claim in the very file being corrected.
@@ -216,7 +216,7 @@ is Opus.
 `CLAUDE.md` (478), `docs/mechanism-testing-matrix.md` (7,421), `docs/calibration-log/neiso.md`
 (1,759 → +~90), `docs/calibration-log/nyiso.md` (5,519), `docs/calibration-log/pjm.md` (3,875),
 `docs/forecast-readiness-prompt-pack-2026-07.md` (4,083),
-`docs/codebase-site/data/mechanism-matrix.js`, `docs/handoffs/ffr-owner-sitting-2026-08-02.md`.
+`docs/codebase-site/data/mechanism-matrix.js`, `docs/records/forecast/ffr-owner-sitting-2026-08-02.md`.
 
 All edited **in place** with the Edit tool (never regenerated from response content) and pushed
 via `git push` as exact on-disk bytes, on a branch freshly rebased on `origin/main` so the pack
@@ -237,8 +237,8 @@ local on-disk bytes (line count + SHA-256):
 | `docs/calibration-log/pjm.md` | 3,938 | `7ad32a12be` | MATCH |
 | `docs/forecast-readiness-prompt-pack-2026-07.md` | 4,096 | `0befeedcaf` | MATCH |
 | `docs/codebase-site/data/mechanism-matrix.js` | 2,328 | `caae5239d5` | MATCH |
-| `docs/handoffs/ffr-owner-sitting-2026-08-02.md` | 2,926 | `d06a672ac6` | MATCH |
-| `docs/handoffs/ffr-3q-window-recut-2026-08-04.md` | 505 | `b9c5573eb0` | MATCH |
+| `docs/records/forecast/ffr-owner-sitting-2026-08-02.md` | 2,926 | `d06a672ac6` | MATCH |
+| `docs/records/forecast/ffr-3q-window-recut-2026-08-04.md` | 505 | `b9c5573eb0` | MATCH |
 | `docs/iso-2022-holdout-data-availability-audit-2026-07.md` | 526 | `24090598c9` | MATCH |
 
 **No truncation, no drift.** Every change is additive (CLAUDE.md 478 → 493 lines), so

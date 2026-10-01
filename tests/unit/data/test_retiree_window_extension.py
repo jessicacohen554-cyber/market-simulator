@@ -1,7 +1,7 @@
 """Guards for the within-window retiree artifact when its window widens.
 
 ``RETIREMENT_WINDOW_START`` moved 2023 -> 2019 (session xiso-fuelvintage-1,
-executing ``docs/handoffs/fleet-vintage-retiree-window-charter-2026-08.md``)
+executing ``docs/records/misc/fleet-vintage-retiree-window-charter-2026-08.md``)
 so that units which retired inside 2019-2022 are present in the 2019-2022
 backcast fleets instead of silently absent. The widening must be strictly
 ADDITIVE: EIA prunes older retirements from each release, so the release

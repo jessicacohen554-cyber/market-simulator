@@ -6,7 +6,7 @@
 work landed — naming only)*
 **Authority:** OWNER RULING **Q63** (2026-09-08, capx ledger §0bg.3(a)).
 **Predecessor / parallel lane:** capx **D90**, which pushed its full pre-registration
-(`docs/handoffs/PRECOMMIT-capx-d90-rescore-2026-09-09.md`, + ADDENDA A, B) and stopped without
+(`docs/records/forecast/PRECOMMIT-capx-d90-rescore-2026-09-09.md`, + ADDENDA A, B) and stopped without
 solving. This lane **completed** D90; it did not redo it. ADDENDA **C, D, E** were pushed by this
 lane *before* the solve and are part of that document.
 

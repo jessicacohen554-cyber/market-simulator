@@ -106,7 +106,7 @@ The 2023 SOM's own words (Executive Summary, §II):
 > as $5,000 per MWh."
 
 Quantities (measured ASPLANNP433, committed;
-`results/calibration/ercot217_regime_phase0.json`): ECRS 2,041–2,127 MW
+`results/phase0/ercot/ercot217_regime_phase0.json`): ECRS 2,041–2,127 MW
 Jun–Sep 2023, RRS 2,566–2,676 MW, RegUp ~380–410 MW — **≈ 5.1 GW of
 10-minute-class capability carved out of SCED's dispatchable range in
 August**, with *"no offsetting reduction in responsive reserve
@@ -318,7 +318,7 @@ Sept 6, Appendix A8 high-price duration); re-fetched from
 and sha256-verified against the committed manifest. Committed measured
 series: hub RT/DA hourly (`data/raw/_validation-source/actual_lmp_hourly_ERCOT.parquet`),
 NP6-905 reserves/λ/adders (`data/raw/ercot/ercot_2023_ordc_reserves_hourly.parquet`),
-ASPLANNP433 monthly plan (`results/calibration/ercot217_regime_phase0.json`),
+ASPLANNP433 monthly plan (`results/phase0/ercot/ercot217_regime_phase0.json`),
 60-day disclosure censuses (ercot-161/210/218 artifacts). **Independent
 corroboration:** Modo Energy research on ERCOT battery revenues and offers
 (<https://modoenergy.com/research/ercot-battery-energy-storage-system-august-2023-revenues-ancillary-services-ecrs-arbitrage>,

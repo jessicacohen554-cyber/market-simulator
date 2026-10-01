@@ -21,8 +21,8 @@ Zero LP: every number is arithmetic over committed inputs plus the repaired
 shapes. Nothing here writes to the solve path.
 
 usage:
-  python docs/handoffs/spp48/wind_delta.py --iso SPP  --after <dir> [--years ...]
-  python docs/handoffs/spp48/wind_delta.py --iso MISO --after <dir>
+  python docs/records/spp/spp48/wind_delta.py --iso SPP  --after <dir> [--years ...]
+  python docs/records/spp/spp48/wind_delta.py --iso MISO --after <dir>
 """
 
 from __future__ import annotations

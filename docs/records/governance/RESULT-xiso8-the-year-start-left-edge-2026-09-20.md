@@ -1,7 +1,7 @@
 # RESULT xiso-8 — the year-start left-edge object
 
 **Lane:** xiso-8 (cross-ISO: CAISO + MISO) · **Date:** 2026-09-20
-**PRECOMMIT:** `docs/PRECOMMIT-xiso8-year-start-left-edge-2026-09-20.md` (bands in §5, registered before any solve)
+**PRECOMMIT:** `docs/records/governance/PRECOMMIT-xiso8-year-start-left-edge-2026-09-20.md` (bands in §5, registered before any solve)
 **Registered run:** `2026-09-20-caiso-290-leftedge` — bundle `results/calibration/xiso8_leftedge_span`
 **DETERMINATION: CALIBRATED** on 2022–2025, single ledgered C3c caveat.
 **PROMOTION: NOT TAKEN — the owner's call, and it is open. See §7.**

@@ -16,8 +16,8 @@ improves but gates regress that may still be a keeper.."* — permissive ("may")
 ## §0 — Phase 0 (zero LP). §0.1 is inherited and NOT re-derived; §0.4–§0.7 are stated here before the solve.
 
 **0.1 Inherited, not re-measured** (rule 29's DO-NOT-REDO discipline). Established in
-`docs/FINDING-nyiso200-bridge-run-screen-2026-09-06.md`,
-`docs/FINDING-nyiso201-threeway-2025-screen-2026-09-06.md` and their machine records
+`docs/records/nyiso/FINDING-nyiso200-bridge-run-screen-2026-09-06.md`,
+`docs/records/nyiso/FINDING-nyiso201-threeway-2025-screen-2026-09-06.md` and their machine records
 (`_nyiso200_bridge_phase0.json`, `_nyiso200_screen_gates_{a1,a3}_2023.json`,
 `_nyiso201_screen_gates_a3_2025.json`):
 
@@ -281,7 +281,7 @@ written in the FINDING before the disposition is chosen, and the owner's formula
 # ADDENDUM A — SCREEN RESULTS (recorded after the screen; nothing above was edited)
 
 **VERDICT: CLEAR — every pre-registered gate passes. ONE screen LP spent. The span is therefore
-solved under §6.** Machine record: `results/calibration/_nyiso202_screen_gates_a1_2025.json`.
+solved under §6.** Machine record: `results/phase0/nyiso/_nyiso202_screen_gates_a1_2025.json`.
 
 | gate | reading | verdict |
 |---|---|---|

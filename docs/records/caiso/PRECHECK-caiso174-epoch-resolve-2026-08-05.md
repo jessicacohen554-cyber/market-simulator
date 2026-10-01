@@ -137,7 +137,7 @@ first time), and Arm A's profile is flat `(16,)`. One further correction inside 
 first draft checked the latter and would have reported a false failure. Checking the wrong
 object is the caiso-162 failure mode in a new place, so the gate now reads the profile.
 
-Record: `results/calibration/_caiso174_fleet_gate.json`; instrument
+Record: `results/phase0/caiso/_caiso174_fleet_gate.json`; instrument
 `scripts/probes/_caiso174_fleet_gate.py`.
 
 ---

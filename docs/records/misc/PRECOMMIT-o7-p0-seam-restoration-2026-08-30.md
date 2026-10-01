@@ -8,7 +8,7 @@ zero solves run, zero solves predicted about are authorized here)
 This document fixes, BEFORE any measurement, the answer to the charter's
 decisive question: **would moving `ercot_econ_curve_top_refine` off P0 change
 the CALIBRATED ERCOT keeper's numbers?** The full trace and adjudication live in
-`docs/FINDING-o7-p0-seam-restoration-2026-08-26.md` (pushed after this
+`docs/records/misc/FINDING-o7-p0-seam-restoration-2026-08-26.md` (pushed after this
 precommit). Per the charter, if the answer is yes, restoration is a mechanism
 change to a CALIBRATED keeper and ESCALATES to the owner rather than
 proceeding.

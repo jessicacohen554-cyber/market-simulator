@@ -9,9 +9,9 @@
 the instrument ran. Instruments:
 `scripts/probes/_caiso258_hod2223_closure.py --import-stack --session
 caiso-261` (re-pointed at the caiso-260 bundle; per-month floors added) →
-`results/calibration/_caiso261_closure_on_caiso260.json`, and
+`results/phase0/caiso/_caiso261_closure_on_caiso260.json`, and
 `scripts/probes/_caiso261_import_intake_adjudication.py` →
-`results/calibration/_caiso261_import_intake_adjudication.json`. Rule 22
+`results/phase0/caiso/_caiso261_import_intake_adjudication.json`. Rule 22
 `[R-HOLDOUT]`: 2023–2025 only; no `complete` / `final` marker; freeze
 ACTIVE. **No solve, no screen, no `ScenarioConfig` field, no derive run, no
 bench regeneration, no corpus re-fetch, no run registered (none produced —

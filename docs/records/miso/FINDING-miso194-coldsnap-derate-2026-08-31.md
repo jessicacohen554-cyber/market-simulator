@@ -12,7 +12,7 @@ component of C3a-2025 named in FINDING-miso178 §1.
 
 Instrument (read-only, idempotent, committed):
 `scripts/probes/_miso194_coldsnap_derate_phase0.py` →
-`results/calibration/_miso194_coldsnap_derate_phase0.json`. Every number below
+`results/phase0/miso/_miso194_coldsnap_derate_phase0.json`. Every number below
 reproduces by running that script.
 
 ---
@@ -239,7 +239,7 @@ outage envelope**, the pjm-161 shape, fed by MISO's own published Forced+Derated
 record — which is already built (`data/miso_outages.py`,
 `data/raw/miso-generation-outages/`, 2023-01-01 onward), already rule-13
 argued, already gated behind `miso_native_outage_source` (default off), and has
-a paste-ready wiring doc (`docs/handoffs/miso-native-outage-wiring-2026-07.md`).
+a paste-ready wiring doc (`docs/records/miso/miso-native-outage-wiring-2026-07.md`).
 
 Its case must come from the **net-load** channel (W6), not the temperature one:
 the summer hours own 60% of C3a-2025, and W4 has already measured that the

@@ -8,8 +8,8 @@ control, rule 29(b) form 4): `2026-09-05-nyiso-192-astoria-panel`, bundle
 `results/calibration/nyiso192_astoria_panel`, solved at `d5bba63b`.
 
 Phase 0 (zero LP): `scripts/probes/nyiso194_cc_peak_phase0.py` →
-`results/calibration/_nyiso194_cc_peak_phase0.json`; the revealed-price companion
-`results/calibration/_nyiso194_duct_revealed_price.json` (inline computation,
+`results/phase0/nyiso/_nyiso194_cc_peak_phase0.json`; the revealed-price companion
+`results/phase0/nyiso/_nyiso194_duct_revealed_price.json` (inline computation,
 same CAMPD/MIS inputs).
 
 ## 1. What phase 0 measured (the owner's two claims, at full magnitude)

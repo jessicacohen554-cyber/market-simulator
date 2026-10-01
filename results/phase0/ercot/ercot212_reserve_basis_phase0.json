@@ -1,7 +1,7 @@
 {
   "session": "ercot-212",
   "phase": "0 (RESERVE-BASIS-1) \u2014 READ ONLY, no LP, no year solved or scored",
-  "precommit": "docs/PRECOMMIT-ercot212-reserve-basis-phase0-2026-08-16.md",
+  "precommit": "docs/records/ercot/PRECOMMIT-ercot212-reserve-basis-phase0-2026-08-16.md",
   "keeper": "2026-08-15-ercot204-rule26-delete",
   "keeper_bundle": "results/calibration/ercot204_rule26_delete",
   "keeper_git_sha": "d701b46",

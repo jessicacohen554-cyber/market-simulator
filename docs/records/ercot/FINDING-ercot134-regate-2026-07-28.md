@@ -1,12 +1,12 @@
 # FINDING — ERCOT-134 Phase 2: the ERCOT-116 A/B on the current keeper. The measured coal availability is measured-correct (impossible plant-hours −83/−86/−91 %) and rejected again on level (+6.5/+9.6/+11.4 TWh, G1 1/21) — the merit bias is BIGGER than predicted. The fresh BASE is promoted keeper.
 
 **Date** 2026-07-28 · **ISO** ERCOT · **Lane** ercot134 / ercot116-regate ·
-**Pre-commit** `docs/PRECOMMIT-ercot134-coal-avail-regate-2026-07-28.md`,
+**Pre-commit** `docs/records/ercot/PRECOMMIT-ercot134-coal-avail-regate-2026-07-28.md`,
 pushed (with the Phase-1 diagnosis and the probe) **before any solve** ·
 **Runs** `2026-07-28-ercot116-regate-base` (**PROMOTED KEEPER**, owner
 sign-off this session) and `2026-07-28-ercot116-regate-arm` (**REGISTERED
 REJECTED PROBE**) · **Synthesis**
-`docs/DIAGNOSIS-ercot134-coal-availability-pin-2026-07-28.md`.
+`docs/records/ercot/DIAGNOSIS-ercot134-coal-availability-pin-2026-07-28.md`.
 
 ## 1. Verdict against the pre-registered gates
 

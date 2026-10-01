@@ -4,7 +4,7 @@
 as a REJECTED probe (`2026-07-27-caiso-126-ror-split`, rule 15); promotion was
 never on the table (owner-gated, and two pre-registered kills fired).**
 
-Gates: `results/calibration/PREREG-caiso126-ror-split-2026-07-27.md`
+Gates: `docs/records/caiso/PREREG-caiso126-ror-split-2026-07-27.md`
 (committed at `08d8113`, before arm B solved). Scorer:
 `scripts/probes/_caiso126_ror_ab.py` (committed). Arms:
 `caiso126_control_A` (NOT registered, FINDING-caiso92b protocol) /

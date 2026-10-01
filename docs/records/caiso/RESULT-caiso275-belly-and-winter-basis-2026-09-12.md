@@ -3,7 +3,7 @@
 **Session caiso-275, 2026-09-12. CAISO only (rule 25 `[R-ISO-SCOPE]`).** Parent spent ZERO LP
 (rule 32 `[R-SHARD]` (a)); eight per-year shards were launched off the pinned PRECOMMIT SHA
 `b8ddf8bc6ae539fb3a6c55824b4c5ead24521abe`. Charter, phase-0 gates and the pre-registered STOP
-gates: `docs/PRECOMMIT-caiso275-belly-and-winter-basis-2026-09-12.md`. Control (G-CTRL form 4,
+gates: `docs/records/caiso/PRECOMMIT-caiso275-belly-and-winter-basis-2026-09-12.md`. Control (G-CTRL form 4,
 no control solve spent): `2026-09-10-caiso-271-egrid-family`.
 
 ---
@@ -168,7 +168,7 @@ curves, so it is rule-13 `[R-MEASURED]` admissible as a forecast input, not a ba
    > each corridor at its own measured hub, which is the successor that comment names. The
    > "own charter, own G-IDENT, own screen" this disclosure called for is therefore
    > **withdrawn as unnecessary**, not merely undone.
-   > `docs/PRECOMMIT-caiso278-chp-offer-ablation-2026-09-12.md` §1;
+   > `docs/records/caiso/PRECOMMIT-caiso278-chp-offer-ablation-2026-09-12.md` §1;
    > `scripts/probes/_caiso278_hubprice_phase0.py` P-1.
 6. **2020/2021 remain blocked**, not skipped — no committed 2020 CAISO LMP at all, 2021 only from
    08-12, and a bench part requires a solved bundle (caiso-274). "All years" here means 2022–2025.

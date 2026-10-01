@@ -8,7 +8,7 @@ sole FAIL **C7 `COAL_PRB` — now 2025 only**, ledgered caveats 2/3 {C3a, C3c}.
 `audit_keepers --iso MISO` **0 failures / 0 warnings**.
 
 **Prereg (pushed BEFORE any arm solved and before any adjudicating statistic):**
-`results/calibration/PREREG-miso127-takeorpay-period-budget-2026-08-04.md`
+`docs/records/miso/PREREG-miso127-takeorpay-period-budget-2026-08-04.md`
 (merged to `main` as `318d9d0d` / `49cf0877`-adjacent).
 **Runs registered (rule 15):** `2026-08-04-miso-127-onlinepmin-control` (arm A,
 same-HEAD zero-delta control) and `2026-08-04-miso-127-onlinepmin` (arm B, the
@@ -311,7 +311,7 @@ change (rule 23). It is recorded here as the named open DOF item.
    do not re-sweep `coal_mustrun_online_pmin` (rules 1 / 24).
 2. **The take-or-pay budget family is closed by proof** (§1.2). Do not re-charter
    any budget / minimum-take / two-tranche form until a source clears
-   `docs/handoffs/miso-coal-contract-tonnage-data-ask-2026-07.md` §4. The bounded
+   `docs/records/miso/miso-coal-contract-tonnage-data-ask-2026-07.md` §4. The bounded
    next step there remains a **sourcing** pass (ask §8: count 1:1 contract-plant
    Form 580 coal contracts covering 2023 for the 26 target owners), not a solve.
 3. **The headroom numbers in §1.3 belong in that ask.** They convert it from "we

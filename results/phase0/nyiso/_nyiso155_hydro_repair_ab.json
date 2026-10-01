@@ -1,6 +1,6 @@
 {
  "probe": "nyiso-155 hydro truncation repair RE-ARM A/B",
- "prereg": "results/calibration/PREREG-nyiso155-hydro-truncation-repair-2026-08-25.md",
+ "prereg": "docs/records/nyiso/PREREG-nyiso155-hydro-truncation-repair-2026-08-25.md",
  "arms": {
   "A_control": "nyiso155_hydro_control",
   "B_repair": "nyiso155_hydro_repair",

@@ -16,7 +16,7 @@ files; none of those files is touched here.
 ## 1. The four signed decisions — all executed
 
 Signature for all four: **owner sitting HELD 2026-08-02, all eleven decisions
-signed**, `docs/handoffs/ffr-owner-sitting-2026-08-02.md` Addendum C.1. Each
+signed**, `docs/records/forecast/ffr-owner-sitting-2026-08-02.md` Addendum C.1. Each
 landed as its own commit citing the signature.
 
 ### D-5(a) — ADOPT the §2.1b(2)(a) paragraph — `aaf6297`
@@ -79,7 +79,7 @@ no such score — NEISO's locked test has **never been granted or run**, and the
 field named is a **TRAIN-tier 2023–2025 config**, not a 2019 run. The field is now
 `locked_test_scored_on_WITHDRAWN`. This lane's own action is unaffected: not re-keying
 it was correct, but the exemption was **moot** rather than exercised. Citation chain:
-`results/calibration/ASSESSMENT-neiso87-declaration-2026-08-06.md` §1 →
+`docs/records/neiso/ASSESSMENT-neiso87-declaration-2026-08-06.md` §1 →
 `docs/third-party-peer-review-2026-07.md` §6.3 item 1 → D-23 / sitting Addendum X.6.]*
 
 **M1 caught real drift on its first live run.** NYISO's designated keeper had

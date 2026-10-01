@@ -2,7 +2,7 @@
 evaluation quantity beside the published NYCA ICAP/IRM/UCAP record, and the published
 locality (LCR) record the model does not represent at default.
 
-    uv run python docs/handoffs/d45/nyiso-reconciliation-2026-09-04.py <L2 run_dir> <L3 run_dir>
+    uv run python docs/records/forecast/d45/nyiso-reconciliation-2026-09-04.py <L2 run_dir> <L3 run_dir>
 
 Published side: the sibling instrument's JSON (published-positions-2026-09-03.json, NYISO
 block: NYSRC Table D.2 peak / adopted IRM / derate / ICAP+UCAP requirement, Potomac SOM

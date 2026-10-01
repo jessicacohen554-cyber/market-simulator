@@ -80,7 +80,7 @@ after the pin); the pin records them and §2 lists them.
 ## 1.1 The constant families this lane consumes (desk standing change #1)
 
 All read at **THE PIN** `bdfb3095`, verbatim, by the phase-0 instrument
-(`docs/handoffs/scn-ws5a-policy-nyiso/phase0-nyiso-2026-09-06.py`, whose JSON output is
+(`docs/records/forecast/scn-ws5a-policy-nyiso/phase0-nyiso-2026-09-06.py`, whose JSON output is
 committed beside it):
 
 | family | module | value at the pin |
@@ -600,7 +600,7 @@ Nothing is solved before that.
   bundle and sidecar. `program-status.json`, `ff-verdicts.json` and the whole **backcast**
   namespace: untouched (§7.5 — this lane registers into the forecast namespace only).
 - **Written by this lane:** `docs/handoffs/PRECOMMIT-…`/`FINDING-scn-ws5a-policy-nyiso-*.md`,
-  `docs/handoffs/scn-ws5a-policy-nyiso/` (the phase-0 instrument + its JSON),
+  `docs/records/forecast/scn-ws5a-policy-nyiso/` (the phase-0 instrument + its JSON),
   `results/scn-campaign-policy-2026-09-06/NYISO/**` (slim only),
   `frontend/data/hindcast/nyiso-…-scn-campaign-policy-…json` + the forecast namespace files the
   registration writes, `frontend/data/hindcast/invariant-failures.json` (append only),

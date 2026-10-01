@@ -4,8 +4,8 @@
 owner chose at the 2026-08-30 director sitting, over both accept-as-limitation
 and keeper-moving restoration) · **Branch:**
 `claude/o7-ercot-attribution-harness-aa7yeu` · **Base:** `origin/main` @
-`67f1557` · **Charter:** `docs/FINDING-o7-p0-seam-restoration-2026-08-26.md` §5
-+ `docs/PRECOMMIT-o7-p0-seam-restoration-2026-08-30.md`.
+`67f1557` · **Charter:** `docs/records/misc/FINDING-o7-p0-seam-restoration-2026-08-26.md` §5
++ `docs/records/misc/PRECOMMIT-o7-p0-seam-restoration-2026-08-30.md`.
 
 This document fixes, BEFORE the harness solves anything, (a) the exact
 de-laddering construction — including the composition details finding §5 limit
@@ -23,7 +23,7 @@ numbers, bounds, or artifacts.** The keeper bundles
 dashboard, the keeper shard and the mechanism cell verdicts are read, never
 written, by the harness. The forfeiture re-verification and the 73/132-row /
 12,474 MW P0-delta measurement are already on record (finding §1, §4 — citing
-`results/calibration/ercot188_p0_delta.json`); this lane cites them and does
+`results/phase0/ercot/ercot188_p0_delta.json`); this lane cites them and does
 not re-derive them.
 
 ---

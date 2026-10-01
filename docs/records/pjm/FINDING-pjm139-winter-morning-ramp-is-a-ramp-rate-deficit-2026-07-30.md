@@ -240,7 +240,7 @@ and it is armed in no keeper in any ISO. Its charter, expected direction,
 no-feedback ceiling, pre-registered kills and the two known risks (the ERCOT
 "envelopes are loose" precedent; the LP memory cost of the extra rows on a
 15 GB box) are written up in
-`results/calibration/PREREG-pjm140-ramp-envelopes-2026-07-30.md`, committed
+`docs/records/pjm/PREREG-pjm140-ramp-envelopes-2026-07-30.md`, committed
 before any arm solves. **It is not armed here and no arm was solved.**
 
 ## §6 — DO-NOT-REDO (binding on successors)
@@ -287,7 +287,7 @@ before any arm solves. **It is not armed here and no arm was solved.**
 Rule 28 duty (b) plus the "code is the source of truth" clause. No solve is
 affected by any of these — they are all prose:
 
-- `docs/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md` §B.3 — the `gas_daily_shape`
+- `docs/records/pjm/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md` §B.3 — the `gas_daily_shape`
   and `CC_LIKE` rows restated from "proposed leg A/B" to LIVE, with the keeper's
   own `run_config` values cited.
 - Same doc §B.4 item 1 — struck and replaced with the three-way closure (armed

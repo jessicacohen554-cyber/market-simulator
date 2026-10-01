@@ -6,7 +6,7 @@ sole FAIL C7 `COAL_PRB` 2025 cv_ratio 0.347 vs 0.5). **Pushed BEFORE the probe
 is run and before any adjudicating statistic exists.** Probe (written with this
 prereg, run only after both are pushed):
 `scripts/probes/_miso131_granularity_infinite_bound.py`; record
-`results/calibration/_miso131_granularity_infinite_bound.json`.
+`results/phase0/miso/_miso131_granularity_infinite_bound.json`.
 
 **Session-number note.** The inbound owner handoff carried the label
 "miso-130". That number is SPENT: the merged PR #3573 session (finding

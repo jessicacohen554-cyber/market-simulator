@@ -7,7 +7,7 @@ through the energy-budget path but contributed 0 MW to
 from the persistent ``fleet`` and hydro never enters it — a ledger-structure
 exclusion FF-2B measured at CAISO 3,601 MW / NYISO 3,343 MW / NEISO 30 MW of
 dispatched-but-unaccredited nameplate
-(docs/handoffs/ff-2b-adequacy-basis-2026-07.md §4).
+(docs/records/forecast/ff-2b-adequacy-basis-2026-07.md §4).
 
 These tests are hermetic: the hydro budget loader is patched with fixtures, so
 they assert the LEDGER's composition and the published credits, never the

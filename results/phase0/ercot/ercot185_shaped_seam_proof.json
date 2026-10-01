@@ -1,6 +1,6 @@
 {
  "object": "ercot-185 fault-3 partial-layer construction repair",
- "precommit": "docs/PRECOMMIT-ercot185-fault3-partial-layer-construction-2026-08-09.md",
+ "precommit": "docs/records/ercot/PRECOMMIT-ercot185-fault3-partial-layer-construction-2026-08-09.md",
  "flat_extract": "data/raw/campd-partial-outages.csv",
  "shaped_extract": "data/raw/campd-partial-outages-shaped.csv",
  "years": {

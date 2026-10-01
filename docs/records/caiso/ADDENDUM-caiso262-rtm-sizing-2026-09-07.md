@@ -28,7 +28,7 @@ download).**
 
 ## §2 — The charter's "7 groups/day" is FALSE; corrected by measurement
 
-`docs/handoffs/caiso-2022-price-archive-intake-charter-2026-09.md` §6 and the
+`docs/records/caiso/caiso-2022-price-archive-intake-charter-2026-09.md` §6 and the
 2026-09-06 CORRECTION paragraph of `data/raw/lmp-data/CAISO/README.md` both
 state that `RTM_LMP_GRP` at `version=3` was "7 groups/day" in the tracked
 January-2023 zips, leaving open the hope that v3 would cost 7 requests per day

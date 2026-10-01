@@ -32,7 +32,7 @@ direction.** The two quantities are not the same measurement:
 
 | | span | source |
 |---|---|---|
-| the `c_cost` fields | **25 solve-years** (2026–2050, full horizon) | FF-3E projection table, `docs/handoffs/ff-poc-closeout-2026-07.md` §6 |
+| the `c_cost` fields | **25 solve-years** (2026–2050, full horizon) | FF-3E projection table, `docs/records/forecast/ff-poc-closeout-2026-07.md` §6 |
 | D46's measured t1f legs | **5 solve-years** (2026–2030) | `results/ff-t1f-d46/<iso>/full_horizon_summary.json`, `solved_years [2026…2030]` |
 
 D46 §2's headline — *"wildly conservative, by factors of 7–10×"* — therefore compares a

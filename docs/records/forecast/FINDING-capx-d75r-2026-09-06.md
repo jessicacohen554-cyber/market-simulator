@@ -5,7 +5,7 @@
 2026-09-06. Branch `claude/capx-d75r-pjm-vre-elcc-kxto0z`. **DATA PROFILE: pjm.** MODEL: Opus.
 Ex-ante record: `PRECOMMIT-capx-d75r-pjm-vre-elcc-vintage-2026-09-06.md` (pushed before the first
 solve; Addendum A records the rebase and re-declares the keys). Instruments:
-`docs/handoffs/d75r/{vre-elcc-vintage-phase0,screen-gates,full-gates}.json`.
+`docs/records/forecast/d75r/{vre-elcc-vintage-phase0,screen-gates,full-gates}.json`.
 
 **GATED DEFAULT-OFF. NOTHING ARMED. NOT A KEEPER, and none is proposed** — arming is an owner card
 on the measurement below (§8).
@@ -237,7 +237,7 @@ here with that reading rather than as a failure. The 2025 clearing price also fa
 
 1. **The full control's HEAD guard tripped (exit 90).** I committed the screen gate table *while
    that solve was running*, so `git rev-parse HEAD` moved under it. Audited immediately: the entire
-   diff between the two shas is **one file, `docs/handoffs/d75r/screen-gates.json`** — zero
+   diff between the two shas is **one file, `docs/records/forecast/d75r/screen-gates.json`** — zero
    solve-path files (`src/market_sim`, `scripts/run_*`, `scripts/lib`, `data/raw` all empty). The
    bundle is therefore valid and is used. The guard did its job; I made the sha move. No commit was
    made during any subsequent solve.

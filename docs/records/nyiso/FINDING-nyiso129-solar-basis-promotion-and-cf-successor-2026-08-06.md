@@ -162,7 +162,7 @@ the tightening direction, and neither is a free parameter.
 * `scripts/audit_keepers.py --iso NYISO` → **PASS 0 failures, 0 warnings**
   (E4 definition rewritten from the auto-placeholder; M1b marker determination
   re-keyed and re-verified per rule 22 D-5(b)).
-* Evidence record: `results/calibration/_nyiso129_cf_identification.json`,
+* Evidence record: `results/phase0/nyiso/_nyiso129_cf_identification.json`,
   probe `scripts/probes/_nyiso129_cf_identification.py` (all four measurements
   reproducible, no solve).
 * `scripts/probes/_nyiso128_solve_ab.py` re-pointed from the superseded

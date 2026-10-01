@@ -1,6 +1,6 @@
 {
  "session": "ercot-242 Phase-1",
- "precommit": "docs/PRECOMMIT-ercot242-room-axis-phase1-2026-08-30.md",
+ "precommit": "docs/records/ercot/PRECOMMIT-ercot242-room-axis-phase1-2026-08-30.md",
  "control": "committed ercot236_k33_clip bundle (V-0k validated)",
  "control_official": [
   {

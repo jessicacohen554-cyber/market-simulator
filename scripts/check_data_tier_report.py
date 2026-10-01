@@ -2,7 +2,7 @@
 
 Reads the junit XML report the ``golden-data-tier.yml`` workflow produces and
 enforces the two halves of card F's execution contract (owner signature F1,
-2026-08-11, ``docs/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md``:
+2026-08-11, ``docs/records/ercot/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md``:
 "the job must actually provision the data the tier needs or
 skip-with-loud-failure if it cannot"):
 

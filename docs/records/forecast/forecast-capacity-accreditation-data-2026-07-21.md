@@ -5,7 +5,7 @@ capacity-market ISOs (PJM, MISO, NYISO, NEISO, CAISO) — the three parameters
 that feed the forecast capacity-revenue / adequacy chain: **per-year net-CONE**,
 **ICAP→UCAP requirement conversion**, and the **declining VRE ELCC axis**.
 Parent flags BLK-3 / BLK-4 / BLK-7 / BLK-9 (gap register §3.9/§3.10), P-2B
-accreditation-basis memo (`docs/handoffs/accreditation-basis-memo-2026-07-12.md`).
+accreditation-basis memo (`docs/records/misc/accreditation-basis-memo-2026-07-12.md`).
 
 **Scope guard.** Published-parameter intake/wiring only — **no LP solve** (rule
 22 no-LP), `capacity_market_clearing` **not** flipped, constants on the

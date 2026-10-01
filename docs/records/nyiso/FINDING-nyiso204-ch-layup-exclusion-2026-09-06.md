@@ -10,9 +10,9 @@ it reached a solve. No screen year was pre-registered, because there is no solve
 for; the statements the charter asked the PREREG to carry are made in §0.1 below instead.
 
 Instruments, both committed and re-runnable:
-`scripts/probes/_nyiso204_ch_layup_phase0.py` → `results/calibration/_nyiso204_ch_layup_phase0.json`
+`scripts/probes/_nyiso204_ch_layup_phase0.py` → `results/phase0/nyiso/_nyiso204_ch_layup_phase0.json`
 (the redistribution) and `scripts/probes/_nyiso204_ch_hotday_driver.py` →
-`results/calibration/_nyiso204_ch_hotday_driver.json` (the rule-17 driver test).
+`results/phase0/nyiso/_nyiso204_ch_hotday_driver.json` (the rule-17 driver test).
 
 ---
 

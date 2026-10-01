@@ -272,7 +272,7 @@ absent from the stale base, not a real deletion; rebasing cleared it.)
 > **ADDENDUM 2026-08-09 (HOUSE-2) — THIS TABLE IS SUPERSEDED. The current
 > baseline is rows 1 and 2 only.**
 >
-> HOUSE-2 (`docs/handoffs/house-2-baseline-wave-2026-08-09.md`) cleared the
+> HOUSE-2 (`docs/records/misc/house-2-baseline-wave-2026-08-09.md`) cleared the
 > table. Measured on `origin/main` @ `b5b88de` + that branch, the fast tier
 > went **7 failed → 2 failed** (6,534 → 6,541 passed). Per-row:
 >

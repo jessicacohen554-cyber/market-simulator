@@ -829,7 +829,7 @@
     }
   ],
   "D_model_side": {
-    "source": "results/calibration/ercot135_coal_merit_order.json",
+    "source": "results/phase0/ercot/ercot135_coal_merit_order.json",
     "keys_present": [
       "AB_cheap_share",
       "A_model_offer",

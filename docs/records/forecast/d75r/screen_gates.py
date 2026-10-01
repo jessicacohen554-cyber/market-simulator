@@ -8,7 +8,7 @@ The gate is a STOP gate only: it may kill the arm, it may never promote one, and
 no leg is read against the target residual (PRECOMMIT §6).
 
 Usage:
-    python docs/handoffs/d75r/screen_gates.py <control_dir> <arm_dir> [--label L]
+    python docs/records/forecast/d75r/screen_gates.py <control_dir> <arm_dir> [--label L]
 where each dir is the per-key bundle, e.g.
     results/hindcast/d75r-screen-ctl/PJM/afda79ba04cbfdbf
 """
@@ -23,7 +23,7 @@ REPO = Path(__file__).resolve().parents[3]
 
 # Phase 0's arithmetic, which the identity leg checks the SOLVE against. Credits
 # are the shipped registry's; accredited MW are pool x credit on the committed
-# arm-A pools (docs/handoffs/d75r/vre-elcc-vintage-phase0-2026-09-06.json).
+# arm-A pools (docs/records/forecast/d75r/vre-elcc-vintage-phase0-2026-09-06.json).
 PHASE0 = {
     2022: {"dy": "2022/2023", "credit": None, "delta_mw": 0.0},
     2023: {

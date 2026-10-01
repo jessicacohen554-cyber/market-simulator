@@ -32,7 +32,7 @@ before any solve was launched.** §2+ are filled in order, as produced.
 
 The lane was blocked on FH-5. Verified on disk at `2738d5de`:
 
-- `docs/handoffs/fh-5-phase-b-2026-08-11.md` is present on `main` (39,300 bytes).
+- `docs/records/forecast/fh-5-phase-b-2026-08-11.md` is present on `main` (39,300 bytes).
 - Its **§4 THE HORIZON-DEGRADATION READ is populated**: "all six ISOs, 11 of 12
   arms", the registered-id table with runtime keys, the §4.1 horizon-vs-year
   effect table (13 ISO×metric cells), the §4.2 per-ISO Arm R rows, §4.5 invariant
@@ -305,9 +305,9 @@ What that commit carries, all re-verified at its own head (`9c52ea8`, where the
 3. **The §1.5 correction** (above) and the same correction in the
    `iso_configs.py` comment block, which had inherited the false claim.
 4. **The C6 attestation**:
-   `results/calibration/ATTESTATION-ffr9c-stageb-promotion-2026-08-13.json`
+   `results/phase0/forecast/ATTESTATION-ffr9c-stageb-promotion-2026-08-13.json`
    (`"schema": "calibration-attestation/v1"`, per §4 / E10).
-5. **The lane handoff**: `docs/handoffs/ffr-9c-promote-stageb-completion-2026-08-13.md`.
+5. **The lane handoff**: `docs/records/forecast/ffr-9c-promote-stageb-completion-2026-08-13.md`.
 
 The accepted cost stands exactly as §2 states it; nothing in the continuation
 re-measured or softened it. The keeper at completion is

@@ -5,7 +5,7 @@ commit. **Outgoing keeper:** `2026-07-31-nyiso108-hydro-input-repair` (NOT-YET,
 1 FAIL). **NEW KEEPER:** `2026-08-01-nyiso109-zonal-margin-anchor`
 (bundle `results/calibration/nyiso109_zonalanchor_B`),
 **CALIBRATED-WITH-CAVEATS**, 8 target-grade / 1 ledgered / **0 FAILs**.
-**Pre-registration:** `results/calibration/PREREG-nyiso109-zonal-margin-anchor-2026-08-01.md`,
+**Pre-registration:** `docs/records/nyiso/PREREG-nyiso109-zonal-margin-anchor-2026-08-01.md`,
 committed **and pushed** (PR branch `claude/nyiso-109-fossil-pricing-io7nhu`)
 before either arm was scored.
 **Solves: 2** — one same-HEAD zero-delta control, one single-delta arm, three
@@ -49,7 +49,7 @@ caveat.
 
 Every measurement in this section is on committed artifacts with **no LP**
 (`scripts/probes/_nyiso109_trough_offer_stack.py` →
-`results/calibration/_nyiso109_trough_offer_stack.json`): the keeper's own
+`results/phase0/nyiso/_nyiso109_trough_offer_stack.json`): the keeper's own
 `hourly/` sidecars, the committed clean `lmp/NYISO/RTM` hourly actual (partial
 coverage, disclosed), the committed bench payload, and the measured NYISO MIS
 P-32 interface flows.

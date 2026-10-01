@@ -9,7 +9,7 @@ ISO-complete — `runner.py` (the forecast orchestrator) drives all six ISOs thr
 each. What Phase 4 (and, implicitly, Phases 1-2) left undone is migrating the
 **second consumer**, `run_calibration.py` (the backcast orchestrator), onto these
 same modules — that is a different axis, owned by
-`docs/handoffs/orchestrator-unification-plan-2026-07.md`. Per that plan's §2.3, the
+`docs/records/misc/orchestrator-unification-plan-2026-07.md`. Per that plan's §2.3, the
 composition boundary is: **this plan is the producer** (make each module
 ISO-complete) and **the unification plan is the second consumer** (point backcast
 at it) — sequence any shared-module work module-universal-first,

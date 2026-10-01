@@ -363,7 +363,7 @@ PR, no armed check-in, nothing in flight.**
 (`trig_018sP2aGF8ygSLL2CbCt917u`, the #6172 watch; `trig_01Uf5jTosMAbVLDUeGHPBv7f`, the W3 dispatch watch).
 Nothing will wake this session. **A successor does not inherit a watch — if one is wanted, it is armed fresh.**
 
-**The successor handoff is `docs/handoffs/soco-desk-handoff-2026-09-16.md`**, and the r#0 charter
+**The successor handoff is `docs/records/soco/soco-desk-handoff-2026-09-16.md`**, and the r#0 charter
 (`…-2026-09-12.md`) is annotated SUPERSEDED in place rather than deleted — it is the baseline every error in
 §6 is measured against, including the two it caused itself (E-3's gate G13, E-4's uncensused FERC-714 "spine").
 
@@ -836,7 +836,7 @@ Company Services, Inc. - Trans), NERC region SERC — **not an RTO/ISO**. The pr
 addition of a **balancing authority** as the eighth registered region.
 
 **Committed at charter:** `docs/multi-iso/soco-addition-plan-2026-09.md`,
-`docs/handoffs/soco-desk-handoff-2026-09-12.md`, this ledger. Nothing else. No code, no data, no
+`docs/records/soco/soco-desk-handoff-2026-09-12.md`, this ledger. Nothing else. No code, no data, no
 registry touched.
 
 **Measured in the charter session** (plan §2 carries all of it with its provenance; do not
@@ -1076,7 +1076,7 @@ be "issued only after the desk verifies nobody else is mid-edit on the matrix ba
 no way to verify that: the matrix base and shards are written several times a day by every ISO's
 lanes, and the SPP desk lifted the identical hold at its own r#2 with the finding *"writers on the
 matrix files are continuous, so the charter's rebase-immediately-before-commit line is the
-protocol."* That lift is in `docs/handoffs/spp-desk-ledger-2026-09.md` §4, which handoff §0.1
+protocol."* That lift is in `docs/records/spp/spp-desk-ledger-2026-09.md` §4, which handoff §0.1
 instructs this desk to read — so the error is not that the precedent was unavailable, it is that
 the desk wrote a precondition without asking whether anything could ever discharge it. **A hold
 whose release condition can never be observed is not caution, it is an indefinite block.** Adopted

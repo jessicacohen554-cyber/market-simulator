@@ -1,7 +1,7 @@
 # PREREG pjm-147 — measured power-only CHP heat rates at PJM (`measured_chp_heat_rates` cell)
 
 **Committed BEFORE any arm solves** (the pjm-144/146 protocol). Charter:
-`docs/handoffs/pjm-matrix-column-triage-2026-08.md` §2.2 (the triage's rank-2
+`docs/records/pjm/pjm-matrix-column-triage-2026-08.md` §2.2 (the triage's rank-2
 live candidate; rank 1 `state_carbon_pricing` was spent at pjm-146 and left
 `O`, PENDING OWNER). Keeper under test: `2026-07-31-pjm-143b-hy-level`
 (CALIBRATED 9/9, C1 16/16 free 12/12, zero FAILs). One lever, zero fitted
@@ -226,7 +226,7 @@ the residual moved the wrong way).
   `_pjm146_rggi_ab.py` — all criteria from the two bundles' `metrics.json`
   plus the K-gates above from the built fleet and the hourly sidecars;
   attestation from the committed A/B JSON
-  (`results/calibration/_pjm147_chp_ab.json`).
+  (`results/phase0/pjm/_pjm147_chp_ab.json`).
 - **Verdict mapping.** K0/K1 ⇒ `I`. K2/K3/K4 breach ⇒ no verdict,
   fix-or-stop. K5 breach ⇒ `O` (built, live, gates intact, but it overshoots
   the class it reprices — the neiso-70 outcome). Live + gates intact + no

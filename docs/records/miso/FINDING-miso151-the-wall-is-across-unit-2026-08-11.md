@@ -230,7 +230,7 @@ C8 SKIPPED on replay bundles, rule-22 leave-one-year-out not run).
 9. The corpus (1.65 GB raw + 1.25 GB clean) was deleted after the derive; the
    artifact is committed and the manifest makes the refetch reproducible.
 
-**Artifacts.** `results/calibration/_miso151_surface.json`;
+**Artifacts.** `results/phase0/miso/_miso151_surface.json`;
 `data/raw/_validation-source/miso_offer_surface_positioned.json`; probe
 `scripts/probes/_miso151_surface.py`; derive
 `scripts/data/derive_miso_offer_surface.py`; tests

@@ -205,5 +205,5 @@ spend freeze is ACTIVE and untouched.
 
 Reproduced from: `data/renewables.py` at HEAD (`_eia_hourly_cf_profile`,
 `_eia930_cf`, `derive_cf_profile`, `_eia860_monthly_capacity`,
-`load_market_solar_monthly`), `results/calibration/_nyiso130_solar_gwh_reconciliation.json`,
+`load_market_solar_monthly`), `results/phase0/nyiso/_nyiso130_solar_gwh_reconciliation.json`,
 `PREREG-nyiso130-solar-cf-level-2026-08-06.md`.

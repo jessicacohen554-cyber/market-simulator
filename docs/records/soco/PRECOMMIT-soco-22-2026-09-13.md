@@ -4,7 +4,7 @@
 **Branch** `claude/soco-22-rubric-determination-cnoxsz` · **Base** `33a7c961` (origin/main, pinned) ·
 **Data profile** `code` · **Rulings** card S2 (2026-09-13, desk r#2) and card S11 (2026-09-13, desk r#3);
 coordinated with NWPP card N2 (ruled 2026-09-13, both limbs) and NWPP-13's NO
-(`docs/handoffs/FINDING-nwpp-13-2026-09-13.md`).
+(`docs/records/nwpp/FINDING-nwpp-13-2026-09-13.md`).
 
 Written and pushed BEFORE the scorer is edited. Every design choice below is fixed here so the
 implementation cannot be shaped to a result; the FINDING reports against this text.

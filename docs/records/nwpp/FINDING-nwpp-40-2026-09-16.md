@@ -3,7 +3,7 @@
 **Lane:** NWPP-40 (`docs/multi-iso/nwpp-addition-plan-2026-09.md` §8 W4 charter; owner ruling
 N10-R: no screen) · **Model:** Fable (`claude-fable-5-1`) · **Branch:** `claude/kind-keller-p4a1k0`
 (harness-designated) · **DATA PROFILE:** `nwpp` · **PRECOMMIT:**
-`docs/handoffs/PRECOMMIT-nwpp-40-2026-09-16.md` (+ Addenda 1 and 2, same file) · **Run:**
+`docs/records/nwpp/PRECOMMIT-nwpp-40-2026-09-16.md` (+ Addenda 1 and 2, same file) · **Run:**
 `2026-09-16-nwpp-1-cascade` · **Bundle:** `results/calibration/nwpp40_span_A` · **LP:** ONE shard,
 ONE `--year 2023 2024 2025` invocation, years sequential inside it (rules 12 / 16 / 32(b)); the
 parent never ran an LP (rule 32(a)).
@@ -65,7 +65,7 @@ parent never ran an LP (rule 32(a)).
 | 09:16 | **shard A STOPPED at budget**: 2023 solved in 7,004.0 s = 116.7 min (P0 1,728.6 s / P1 5,217.1 s); 2024 ~32 min into P0; pushed nothing under `results/` (rule 32(b) STOP rule). Report `docs/handoffs/SHARDREPORT-nwpp-40-span-2026-09-16.md` at `4e218d0f` on `claude/nwpp-40-span-a`; its 2023 diagnostic record at `20807883399c9069f13ebf59be6e473e55ad3579` on `claude/nwpp-40-span-a-diag2023` |
 | 09:20 | Addendum 1: budget re-set to 480 min on the measured rate, recipe unchanged; 23 NWPP-SNV VOLL hours in 2023 P1 recorded ex ante |
 | 09:26:44 | shard B attempt 1 launched at pin **`9580bdd040a10ba5998ccf303129b2cca26bd4f4`** |
-| ~09:27–10:30 | attempt 1 **killed by a container restart** while the shard session was idle (`uptime` 1 min on re-entry; no Traceback, no OOM). Log kept: `results/calibration/nwpp40_span_A.launch.attempt1-killed-by-container-restart.log` |
+| ~09:27–10:30 | attempt 1 **killed by a container restart** while the shard session was idle (`uptime` 1 min on re-entry; no Traceback, no OOM). Log kept: `results/phase0/nwpp/nwpp40_span_A.launch.attempt1-killed-by-container-restart.log` |
 | 10:31:30 | attempt 2 relaunched with the byte-identical command line — **THE run**; parent kept the container alive with half-hourly pokes |
 | 15:12 | Addendum 2: budget extended to 600 min (2023 4,942.9 s; 2024 10,412.0 s) |
 | 19:42:28 | bundle written: **551 min** wall from relaunch (2025 P1 alone 15,831.7 s) |

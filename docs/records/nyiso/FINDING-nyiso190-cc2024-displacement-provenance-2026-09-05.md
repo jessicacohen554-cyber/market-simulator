@@ -9,10 +9,10 @@ re-scored or re-registered; the dashboard is untouched** (no run was produced,
 so rule 15 has nothing to register). **No marker requested** — D56 has NOT
 landed (NYISO is still in `calibration-complete.json`'s `withdrawn` block at
 `c9f1d26e`), so no rule-22 D-5(b) re-key applies.
-**Pre-registration:** `results/calibration/PREREG-nyiso190-cc2024-displacement-provenance.md`,
+**Pre-registration:** `docs/records/nyiso/PREREG-nyiso190-cc2024-displacement-provenance.md`,
 pushed to `origin` BEFORE the first number of the object was read; every bar
 and every branch of §4 is executed verbatim below.
-**Machine records:** `results/calibration/_nyiso190_displacement_provenance.json`
+**Machine records:** `results/phase0/nyiso/_nyiso190_displacement_provenance.json`
 (the bars), `_nyiso190_plant_grain_posthoc.json` (labelled post-hoc), probes
 `scripts/probes/nyiso190_displacement_provenance.py` /
 `nyiso190_plant_grain_posthoc.py`.

@@ -11,10 +11,10 @@ further measurement of **that limb** would help. What was missing was whether th
 asked to rule on **one coefficient or on a construction**. **It is a construction**, and the
 evidence is below.
 
-**Evidence:** `docs/FINDING-nyiso207-floor-coeff-basis-census-2026-09-06.md`;
-machine records `results/calibration/_nyiso207_floor_coeff_basis_census.json` and
+**Evidence:** `docs/records/nyiso/FINDING-nyiso207-floor-coeff-basis-census-2026-09-06.md`;
+machine records `results/phase0/nyiso/_nyiso207_floor_coeff_basis_census.json` and
 `_nyiso207_ct_denominator_check.json`;
-pre-registration `results/calibration/PREREG-nyiso207-floor-coeff-basis-census.md` (+ addendum §A).
+pre-registration `docs/records/nyiso/PREREG-nyiso207-floor-coeff-basis-census.md` (+ addendum §A).
 **Keeper, unchanged:** `2026-09-06-nyiso-202-startup-aware` (CALIBRATED, fails 0).
 
 > **Read this first.** The session's own **pre-registered class verdict FAILED** (§3). The positive

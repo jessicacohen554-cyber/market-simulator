@@ -7,7 +7,7 @@ session opened, and every measurement below is against what is actually at HEAD)
 **ZERO LP.** The parent never solved (rule 32 `[R-SHARD]` (a)) and no shard was launched.
 **All seven keepers UNCHANGED at CALIBRATED**, re-scored before and after.
 **No keeper promoted, demoted or re-keyed.** Pre-registration:
-`docs/PRECOMMIT-gov-hydro-seam-1-2026-09-12.md` + `docs/ADDENDUM-gov-hydro-seam-1-vintage-fallthrough-2026-09-12.md`.
+`docs/records/governance/PRECOMMIT-gov-hydro-seam-1-2026-09-12.md` + `docs/records/governance/ADDENDUM-gov-hydro-seam-1-vintage-fallthrough-2026-09-12.md`.
 
 ---
 

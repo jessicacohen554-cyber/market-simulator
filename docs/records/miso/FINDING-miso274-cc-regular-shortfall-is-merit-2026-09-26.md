@@ -4,8 +4,8 @@
 LANE    : miso-274 (MISO lever queue §5.4; routed by RESULT-miso273 §3)
 KEEPER  : 2026-09-25-miso-273-screened-coal (results/calibration/miso273_span) — unchanged
 LP      : none. Zero-LP phase 0 only (rule 29 clause 0 practice)
-PROBES  : scripts/probes/_miso274_cc_phase0.py        -> results/calibration/_miso274_cc_phase0.json
-          scripts/probes/_miso274_cc_basis_census.py  -> results/calibration/_miso274_cc_basis_census.json
+PROBES  : scripts/probes/_miso274_cc_phase0.py        -> results/phase0/miso/_miso274_cc_phase0.json
+          scripts/probes/_miso274_cc_basis_census.py  -> results/phase0/miso/_miso274_cc_basis_census.json
 PRUNE   : rule-35 carry-over from miso-273 done first (PR #6696): miso-272 run pruned, audit_keepers --iso MISO PASS 0/0
 ```
 

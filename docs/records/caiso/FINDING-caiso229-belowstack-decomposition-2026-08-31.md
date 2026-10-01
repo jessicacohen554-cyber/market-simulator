@@ -22,7 +22,7 @@ it.**
 
 **Instrument (committed, no LP, no solve, re-runs from cache in minutes):**
 `scripts/probes/_caiso229_belowstack_decomposition.py` →
-`results/calibration/_caiso229_belowstack_decomposition.json`. Inputs: the
+`results/phase0/caiso/_caiso229_belowstack_decomposition.json`. Inputs: the
 keeper's `hourly/` sidecars, the committed actual-LMP reference, the committed
 measured offer-surface artifact `caiso_offer_curve_measured.json`, the
 CA-composite citygate series, `IMPORT_TRANCHES`/`CAISO_SCARCITY_*` constants,
@@ -268,7 +268,7 @@ path; the 2 firm prices are inert while the self-schedule is armed.**
 ## §8 — the charter's flag-vs-prose item, RECONCILED WITH A NUMBER (§G)
 
 The handoff flagged a discrepancy to *"check the flag, not the prose"*:
-`docs/CHARTER-c3c-scarcity-program-2026-08-31.md` §4 says CAISO *"keeps no
+`docs/records/misc/CHARTER-c3c-scarcity-program-2026-08-31.md` §4 says CAISO *"keeps no
 scarcity overlay by measured refusal (caiso-144 §D)"*, while the keeper's
 `run_config.json` carries `caiso_scarcity_pricing=True`.
 

@@ -1,7 +1,7 @@
 # FINDING — PERF-C S2: P0 extraction slimming, and the one trim that is NOT byte-neutral
 
 **STATUS: RESULT.** Lane shard S2 of the PERF-C program
-(`docs/handoffs/PRECOMMIT-perfc-orchestration-2026-09-20.md` lever **L2**).
+(`docs/records/governance/PRECOMMIT-perfc-orchestration-2026-09-20.md` lever **L2**).
 Pinned HEAD `2a87343f8d7302ce84e66f45430a8d3b9e807d80`; branch
 `claude/perfc-s2-p0-slim`. DATA PROFILE `neiso`.
 

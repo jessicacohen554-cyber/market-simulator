@@ -1,6 +1,6 @@
 """F1 zero-LP heat-rate-source census (audit §3a / §3b, re-run after the fix).
 
-Reproduces ``docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md``
+Reproduces ``docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md``
 §6 for every ISO x backcast year 2019-2025, and adds the per-plant residual list
 the F1 acceptance needs. No LP is built or solved: every number is a fleet load.
 
@@ -33,7 +33,7 @@ Sources per ISO-year:
 
 Usage::
 
-    uv run python docs/handoffs/f1/census.py --out docs/handoffs/f1/census_post.json
+    uv run python docs/records/misc/f1/census.py --out docs/records/misc/f1/census_post.json
 """
 
 from __future__ import annotations

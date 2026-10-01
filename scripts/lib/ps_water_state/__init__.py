@@ -25,7 +25,7 @@ operations record produced outside the electricity market), never a fit
 target. Span limitation stated honestly: the Helms record ends 2022-09-30 and
 does not cover the 2023–2025 training years; what it grounds is measured
 multi-year hourly conduct. Adjudication:
-``results/calibration/FINDING-caiso227-c3a-rootcause-ps-intake-2026-08-31.md``.
+``docs/records/caiso/FINDING-caiso227-c3a-rootcause-ps-intake-2026-08-31.md``.
 """
 
 from __future__ import annotations

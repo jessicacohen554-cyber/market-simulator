@@ -4,7 +4,7 @@
 **Owner instruction:** *"Just do the successor"* (on RESULT caiso-282 §6). **Pushed before any
 shard is launched and before any pooled number exists.**
 
-**Charter, unchanged:** `docs/PRECOMMIT-caiso281-rtm-offer-surface-intake-2026-09-13.md` §4 —
+**Charter, unchanged:** `docs/records/caiso/PRECOMMIT-caiso281-rtm-offer-surface-intake-2026-09-13.md` §4 —
 G-REPRO ±0.02 / ±0.01, G-OVERLAP ≥ 60 %, the 0.05 verdict thresholds. The caiso-281 addendum
 withdrew G-OVERLAP only because the DAM classification was not computable; it is computable now,
 so **the original §2 carry-over design is used and G-OVERLAP is RESTORED verbatim.** G-POP

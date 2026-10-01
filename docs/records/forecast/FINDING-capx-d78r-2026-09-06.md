@@ -4,7 +4,7 @@
 Pre-registration `PRECOMMIT-capx-d78r-full-window-2026-09-06.md`, **pushed at `fa8a857d` before any
 LP**, with **ADDENDUM 1** (the band on the first control), **ADDENDUM 2** (the LIVE-hunk re-audit
 and the W0 restatement) and **ADDENDUM 3** (the band on the rebased control) each pushed **before
-the solve they govern**. Instrument `docs/handoffs/d78r/window_compare.py`, committed at
+the solve they govern**. Instrument `docs/records/forecast/d78r/window_compare.py`, committed at
 `41b46142` **before the first LP**.
 **Branch:** `claude/capx-d78r-full-window-s35hos`, off `origin/main` `acbb5350`, **rebased mid-lane
 onto `c3988c73`** (§1).
@@ -58,7 +58,7 @@ magnitude and is **explicitly not a criterion in either direction** (rule 14).
 
 All: `run_capacity_hindcast.py --iso PJM --start-year 2021 --end-year 2025 --vintage 2020
 --fuel-variant realized --entry-screen-diagnostics`, through the committed
-`docs/handoffs/d78/run_full.sh`. Solve years **{2021, 2023, 2024, 2025}**, **2022 bridged** and
+`docs/records/forecast/d78/run_full.sh`. Solve years **{2021, 2023, 2024, 2025}**, **2022 bridged** and
 never scored; the holdout freeze asserted ACTIVE on every leg; no out-of-training year solved,
 scored or registered (rule 22). PJM solo, sequential, years sequential (rule 12). **HEAD guard held
 on every leg.** `data/clean` was absent at session start and was rebuilt in full
@@ -291,7 +291,7 @@ bundle deleted before merge.
 **deleted before merge**; the arm keeps only its slim registered files
 (`meta.json`, `run_config.json`, `forecast_verdict.json`) exactly as every registered PJM T1-H run
 does. Every number this lane will ever cite is in this document, the PRECOMMIT with its three
-addenda, and `docs/handoffs/d78r/{window_compare,control_band}.json`.
+addenda, and `docs/records/forecast/d78r/{window_compare,control_band}.json`.
 
 **Board lock.** D65-B-R landed on main (`26504ab6`) during this lane. This lane nonetheless commits
 **only** the registry sidecar and its `VERDICT_MAP` entry and **holds the `ff-verdicts.json` /
@@ -310,10 +310,10 @@ this lane's to write.
 ## 9. Reproduction
 
 ```
-uv run python docs/handoffs/d78/keys_probe.py
-bash docs/handoffs/d78/run_full.sh control-P
-bash docs/handoffs/d78/run_full.sh arm --retirement-sector-gate
+uv run python docs/records/forecast/d78/keys_probe.py
+bash docs/records/forecast/d78/run_full.sh control-P
+bash docs/records/forecast/d78/run_full.sh arm --retirement-sector-gate
 uv run python scripts/score_capacity_hindcast.py --bundle <dir>
 uv run python scripts/score_capacity_hindcast.py --bundle <dir> --flip-gate-extras
-uv run python docs/handoffs/d78r/window_compare.py --ctl <ctl> --arm <arm>
+uv run python docs/records/forecast/d78r/window_compare.py --ctl <ctl> --arm <arm>
 ```

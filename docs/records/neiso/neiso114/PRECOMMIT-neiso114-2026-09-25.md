@@ -93,7 +93,7 @@ Every leg: `scripts/replay_keeper.py results/calibration/rneiso_span --years <Y>
 |---|---|---|---|
 | **C** control | none (keeper recipe at HEAD) | — | 2019, 2020 |
 | **A** structure | `coal_mustrun_requires_measured_row=true` | **zero** (withdraws an unmeasured default) | 2019–2025 |
-| **B** structure + ST_GAS bands | A + `--offer-curve-json docs/handoffs/neiso114/arm_b_offer_curve.json` | ST_GAS band magnitudes re-identified (existing ledgered channel, no new parameter) | 2019–2025 |
+| **B** structure + ST_GAS bands | A + `--offer-curve-json docs/records/neiso/neiso114/arm_b_offer_curve.json` | ST_GAS band magnitudes re-identified (existing ledgered channel, no new parameter) | 2019–2025 |
 
 **Arm B's ST_GAS bands (work item 2) — the existing construction, re-run on the corrected class.**
 `phase0_st_gas_marginal_hr.py` applies `derive_campd_marginal_hr.derive_unit_bands` **unchanged** to
@@ -123,7 +123,7 @@ by construction).
 
 A passing gate does not promote and a failing one does not kill; both are reported at full magnitude.
 
-- **G1 recipe:** `docs/handoffs/neiso114/shard_check.py --arm {A,B,C}` passes on every leg.
+- **G1 recipe:** `docs/records/neiso/neiso114/shard_check.py --arm {A,B,C}` passes on every leg.
 - **G2 mechanism fires:** arm A/B legs 2019–2022, 2025 carry no coal `mustrun` band energy for
   568/2367; arm A 2023/2024 class TWh equal the keeper's within solver noise (inert prediction).
 - **G3 no silent breakage:** C1, C2, C3a, C3b, C4, C8 re-scored per year against the keeper on one

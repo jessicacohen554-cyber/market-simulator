@@ -1,11 +1,11 @@
 # PRECOMMIT — R-SPP: SPP 2019–2025 re-solved on corrected backcast inputs
 
-Charter: `docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md` §5.3.9. Owner instruction
+Charter: `docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md` §5.3.9. Owner instruction
 2026-09-24: every backcast year 2019–2025 runs on the year-correct EIA-860 vintage, plant-specific heat rates
 (never the asset-class table) and granular CAMPD outage data.
 
 **Precondition met.** F1 (#6572) and F2 (#6569) are merged; this lane is cut from `9210075392a128d14a5efb168ab1f9955a9b6946`.
-**Phase 0 is zero LP.** Numbers: `results/calibration/_rspp_phase0.json`. Instrument:
+**Phase 0 is zero LP.** Numbers: `results/phase0/spp/_rspp_phase0.json`. Instrument:
 `scripts/probes/_rspp_phase0_census.py`, a `run_year(..., fleet_only=True)` rebuild from each incumbent
 bundle's own `meta.json`, one interpreter per (year, variant). This doc is pushed before any shard launches.
 

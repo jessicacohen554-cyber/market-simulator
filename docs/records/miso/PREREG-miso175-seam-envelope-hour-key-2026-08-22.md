@@ -93,7 +93,7 @@ python3 scripts/replay_keeper.py results/calibration/miso173_layupmask \
 ```
 
 Scorer: `scripts/probes/_miso175_hour_key_ab.py` →
-`results/calibration/_miso175_hour_key_ab.json`. Registration ids:
+`results/phase0/miso/_miso175_hour_key_ab.json`. Registration ids:
 `2026-08-22-miso-175-control` / `2026-08-22-miso-175-hourkey` (both
 registered, rule 15).
 

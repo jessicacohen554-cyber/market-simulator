@@ -15,7 +15,7 @@
 Raised by session **nyiso-145**, 2026-08-19, on the standing escalation opened by
 nyiso-144. **No solve was spent**; every number below is measured on committed
 artifacts (`scripts/probes/_nyiso145_rho_clip_card.py`, record
-`results/calibration/_nyiso145_rho_clip_card.json`). Nothing is re-banded here
+`results/phase0/nyiso/_nyiso145_rho_clip_card.json`). Nothing is re-banded here
 and neither gated flag is armed — both stay `U` pending this ruling.
 
 ---
@@ -171,8 +171,8 @@ not a NYISO-lane call** (rules 25 / 28d).
 
 ## 6. PROVENANCE
 
-* Escalation opened: `results/calibration/FINDING-nyiso144-downstate-scarcity-and-rho-2026-08-18.md` §2.3.
-* Independent second hit, same day, different ISO: `results/calibration/RESULT-miso169-online-gated-execution-2026-08-19.md` §2.
+* Escalation opened: `docs/records/nyiso/FINDING-nyiso144-downstate-scarcity-and-rho-2026-08-18.md` §2.3.
+* Independent second hit, same day, different ISO: `docs/records/miso/RESULT-miso169-online-gated-execution-2026-08-19.md` §2.
 * Code: `src/market_sim/data/online_reserve_rho.py` (`RHO_CLIP`, and the honest-status comment nyiso-144 left in place); `src/market_sim/model/reserves/spec.py::_identified_online_rho`.
 * Measurement: `scripts/data/derive_campd_online_reserve_rho.py` → `data/raw/_processed-legacy/campd_online_reserve_rho_{NYISO,MISO}.csv`.
-* This card's own record: `scripts/probes/_nyiso145_rho_clip_card.py`, `results/calibration/_nyiso145_rho_clip_card.json`.
+* This card's own record: `scripts/probes/_nyiso145_rho_clip_card.py`, `results/phase0/nyiso/_nyiso145_rho_clip_card.json`.

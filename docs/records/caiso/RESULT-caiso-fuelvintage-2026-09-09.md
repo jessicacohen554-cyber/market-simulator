@@ -2,8 +2,8 @@
 
 **Session:** `caiso-fuelvintage-1` · **2026-09-09** · branch `claude/caiso-fuelvintage-1`
 · **SCOPE: CAISO ONLY** (rule 25 `[R-ISO-SCOPE]`).
-**Pre-registration:** `docs/PRECOMMIT-caiso-fuelvintage-2026-09-09.md`, pushed before the first LP.
-**Predecessor's zero-LP pass, merged and carried forward:** `docs/FINDING-caiso-fuelvintage-1-2026-09-09.md`.
+**Pre-registration:** `docs/records/caiso/PRECOMMIT-caiso-fuelvintage-2026-09-09.md`, pushed before the first LP.
+**Predecessor's zero-LP pass, merged and carried forward:** `docs/records/caiso/FINDING-caiso-fuelvintage-1-2026-09-09.md`.
 **Owner ruling carried (handoff §A7):** *"these should be promoted as keepers on both 860 and gas
 shape counts regardless of inertness."*
 
@@ -116,7 +116,7 @@ surviving sibling**: after plant 356's Dec-2023 retirement the COD ramp zeroes t
 the same +480 MW of `pmax` never becomes effective capacity.
 
 **Independent corroboration of a cross-ISO defect.** The PJM lane found the same defect class in
-`docs/FINDING-pjm-retiree-window-redistribution-2026-09-09.md` (W H Sammis, 720 MW of coal,
+`docs/records/pjm/FINDING-pjm-retiree-window-redistribution-2026-09-09.md` (W H Sammis, 720 MW of coal,
 **+0.0615 %** of PJM's 2023 effective capacity). CAISO's leak is **+0.848 %** — **~14× PJM's in
 relative terms** — and on **gas-ST rather than coal**, so this is a second mechanism class, not a
 repeat of the same one. That finding's cross-ISO table lists CAISO at 480.0 MW; **confirmed here

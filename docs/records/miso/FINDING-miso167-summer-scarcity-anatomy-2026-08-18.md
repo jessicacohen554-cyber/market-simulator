@@ -12,7 +12,7 @@ condition (C) of the miso-166 gate, and which sets this session's scope. This fi
 diagnostic that re-open requires. It does not promote, arm, or tune anything.
 
 Instrument: `scripts/probes/_miso167_summer_scarcity_instrument.py` (5 stages, read-only),
-record `results/calibration/_miso167_summer_scarcity_instrument.json`. Every number below is
+record `results/phase0/miso/_miso167_summer_scarcity_instrument.json`. Every number below is
 reproducible from committed artifacts by running that one script.
 
 ---
@@ -98,7 +98,7 @@ effectively dormant in exactly the hours MISO's reserve market cleared at hundre
 > WHOLE gap" (this section's title included) does not. Measured and independently
 > reproduced: `scripts/probes/_xiso1_miso_asm_cascade_check.py`; instrument
 > corrected (`asm_top`), record carries a dated CORRECTION key;
-> `docs/FINDING-xiso-cascade-scan-2026-09-01.md`.
+> `docs/records/governance/FINDING-xiso-cascade-scan-2026-09-01.md`.
 
 ## 4. Why the model's reserve constraint never binds — the structural defect
 

@@ -1,6 +1,6 @@
 {
   "probe": "ercot192_ab_gates",
-  "precommit": "docs/PRECOMMIT-ercot192-coal-limbs-2023-reapplication-2026-08-12.md",
+  "precommit": "docs/records/ercot/PRECOMMIT-ercot192-coal-limbs-2023-reapplication-2026-08-12.md",
   "base": "results/calibration/ercot192_ctl_A",
   "arm": "results/calibration/ercot192_arm_B",
   "G_BIT": {

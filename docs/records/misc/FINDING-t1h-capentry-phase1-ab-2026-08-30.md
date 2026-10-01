@@ -1,14 +1,14 @@
 # FINDING — T1-H capacity-entry Phase-1 Leg A: the storage-entry D-2 + D-3 joint repair A/B'd — both kill-gates PASS, the arm reproduces the pre-registered li-ion signature exactly, arming open
 
 _2026-08-30 · T1-H capacity-entry repair lane, **Phase-1 Leg A** (storage) ·
-charter `docs/PRECOMMIT-t1h-capacity-entry-2026-08-30.md` §Phase-1 (owner
+charter `docs/records/misc/PRECOMMIT-t1h-capacity-entry-2026-08-30.md` §Phase-1 (owner
 ruling 2026-08-30, director sitting, decision card 2) · Phase-0 record
-`docs/FINDING-t1h-capacity-entry-phase0-2026-08-30.md` (its pre-registrations
+`docs/records/misc/FINDING-t1h-capacity-entry-phase0-2026-08-30.md` (its pre-registrations
 stand and are scored against below) · implementation merged at PR #4386
 (`storage_entry_availability_gate` + `storage_entry_cost_normalized_rank`,
 both `ScenarioConfig`-registered, GATED default-OFF) · driver
 `scripts/probes/storage_entry_repair_compare.py`, artifact
-`results/calibration/storage_entry_repair_ab_ercot.json`._
+`results/phase0/ercot/storage_entry_repair_ab_ercot.json`._
 
 **Both arms solved by THIS session on one HEAD** (`bd97c6e`, the #4399 merge;
 `origin/main` advanced to `edd8990` during the session with **zero solve-path
@@ -327,7 +327,7 @@ python3 scripts/score_capacity_hindcast.py --bundle results/hindcast/ercot-2021-
 python3 scripts/probes/storage_entry_repair_compare.py \
     --arm results/hindcast/ercot-2021-2025-realized-t1h-capentry-repair \
     --control results/hindcast/ercot-2021-2025-realized-t1h-capentry-control \
-    --out results/calibration/storage_entry_repair_ab_ercot.json
+    --out results/phase0/ercot/storage_entry_repair_ab_ercot.json
 
 # registration (forecast namespace only)
 python3 scripts/register_forecast_run.py --bundle results/hindcast/ercot-2021-2025-realized-t1h-capentry-control
@@ -339,7 +339,7 @@ python3 -m pytest tests/unit/model/test_storage_entry_gates.py -q   # 21 passed
 
 The evolution ledgers the driver reads are gitignored bundle internals — the
 probe must run in the session that solved the bundles (it did); the committed
-artifact `results/calibration/storage_entry_repair_ab_ercot.json` carries
+artifact `results/phase0/ercot/storage_entry_repair_ab_ercot.json` carries
 both arms' per-step rows, the posture record, the drift record, the band
 table and the gate verdicts in full.
 
@@ -413,7 +413,7 @@ recorded the armed-`entry_margin_exhaustion` interaction as *not covered by
 this A/B* — the A/B ran at the shipped **unarmed** walk by design. Between the
 A/B and this arming, **D12-A armed `entry_margin_exhaustion` (with
 `entry_forward_reserve_leg`) as the ERCOT forecast default** under ruling Q15
-(2026-08-30, `docs/handoffs/FINDING-capx-d12a-arming-2026-08-30.md`). So as of
+(2026-08-30, `docs/records/forecast/FINDING-capx-d12a-arming-2026-08-30.md`). So as of
 this commit **a bare ERCOT T1-H run carries the exhaustion walk AND these two
 gates together** — a combination that **has never been solved**. It composes by
 construction (rule 19: the walk consumes the very same

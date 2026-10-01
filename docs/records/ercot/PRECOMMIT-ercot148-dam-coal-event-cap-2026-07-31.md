@@ -4,8 +4,8 @@
 protocol). Basis keeper `2026-07-31-ercot145-gas-daily-shape` (bundle
 `ercot145_gas_daily_arm`, determination NOT-YET, fail set {C3a, C3b, C3c, C7},
 C6 ATTESTED+PASS, n_residual 6). Diagnosis:
-`docs/DIAGNOSIS-ercot148-coal-outage-windows-2026-07-31.md`; committed record
-`results/calibration/ercot148_coal_outage_phase0.json`; probes
+`docs/records/ercot/DIAGNOSIS-ercot148-coal-outage-windows-2026-07-31.md`; committed record
+`results/phase0/ercot/ercot148_coal_outage_phase0.json`; probes
 `scripts/probes/ercot148_coal_outage_phase0.py`,
 `scripts/probes/ercot148_availability_capture.py`.
 

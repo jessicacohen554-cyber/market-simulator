@@ -3,8 +3,8 @@
 **Lane:** CAISO calibration · **Date:** 2026-09-20 · **Keeper UNCHANGED**
 `2026-09-19-caiso-287-mer-keeper` (bundle `caiso287_mer_span`; 2022 folded as
 `2026-09-19-caiso-287-mer-2022`, bundle `caiso287_instr_2022`). **LP spent so far: ZERO.**
-Predecessors: `docs/RESULT-caiso287-startup-decommit-split-2026-09-19.md` (which handed this
-object up), `docs/FINDING-nyiso234b-the-gas-series-was-published-2026-09-14.md` (which found and
+Predecessors: `docs/records/caiso/RESULT-caiso287-startup-decommit-split-2026-09-19.md` (which handed this
+object up), `docs/records/nyiso/FINDING-nyiso234b-the-gas-series-was-published-2026-09-14.md` (which found and
 repaired the SAME scraper defect in the sibling NYISO fetcher).
 
 This document fixes **the measurement, the gates, the pre-registered band and every named
@@ -48,7 +48,7 @@ sidecar, caiso-287's append). So the December price *is* the CAISO gas price.
 
 Every figure in this section, in §3 and in §4 is produced by
 `scripts/probes/caiso288_phase0.py` into the committed
-`results/calibration/_caiso288_phase0.json`, from committed artifacts and the production
+`results/phase0/caiso/_caiso288_phase0.json`, from committed artifacts and the production
 delivered-gas loader. Nothing here is hand-computed.
 
 ## 1. THE DEFECT — established, not hypothesised
@@ -342,7 +342,7 @@ Its premise is that those days are unobserved: *"an extrapolation across a black
 trade priced them."* **They were priced, and EIA published the prices** — on the catch-up page's
 extra live tables (§1). So the interior is recoverable, and the estimator is now **scorable
 against the truth**, which it was not before. `scripts/probes/caiso288_blackout_estimator_scoreboard.py`
-→ `results/calibration/_caiso288_blackout_scoreboard.json`, over all **14** recoverable
+→ `results/phase0/caiso/_caiso288_blackout_scoreboard.json`, over all **14** recoverable
 blackouts / **85** days:
 
 | construction | MAE $/MMBtu | bias | implied CC marginal-cost bias |

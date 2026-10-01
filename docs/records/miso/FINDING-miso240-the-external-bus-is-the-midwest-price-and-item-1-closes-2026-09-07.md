@@ -15,7 +15,7 @@ rule applied below was fixed in one of those three documents; none was written a
 number. The probe itself was **pushed before it was run** (`9316432b`).
 
 Probe: `scripts/probes/_miso240_external_bus_price_charter_phase0.py` →
-`results/calibration/_miso240_external_bus_price_charter_phase0.json`
+`results/phase0/miso/_miso240_external_bus_price_charter_phase0.json`
 (+ `_miso240_external_bus_price_charter_phase0_PREREPAIR.json`, §0a).
 
 **Evidence class, stated up front.** §2, §5 and §6 read the keeper's **OWN committed P1 zonal

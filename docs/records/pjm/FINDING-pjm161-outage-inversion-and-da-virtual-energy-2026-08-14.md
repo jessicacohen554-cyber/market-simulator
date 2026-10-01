@@ -2,7 +2,7 @@
 
 **Session:** pjm-161 · **Date:** 2026-08-14 · **Branch:**
 `claude/pjm-2022-validation-rootcause-5xr041`
-**Pre-registration:** `results/calibration/PREREG-pjm161-measured-outage-event-cap-2026-08-14.md`
+**Pre-registration:** `docs/records/pjm/PREREG-pjm161-measured-outage-event-cap-2026-08-14.md`
 (committed and pushed at `0e27e43`, **before either arm solved**)
 
 **Holdout posture (rule 22 [R-HOLDOUT]).** The freeze is ACTIVE and untouched;

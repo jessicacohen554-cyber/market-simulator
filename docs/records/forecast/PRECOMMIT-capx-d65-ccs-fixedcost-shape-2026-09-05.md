@@ -99,7 +99,7 @@ control and NO control solve is spent.**
 
 Re-run the D64 census arithmetic **through the CODE path** (the new seam's own
 `capex_scale` / scaled `ΔFOM` / scaled `vom_adder`), on the committed post-Q42 rebuilt base
-fleets, and reproduce `results/calibration/capxd64_fourth_seam_census.json`'s seam-4 column
+fleets, and reproduce `results/phase0/forecast/capxd64_fourth_seam_census.json`'s seam-4 column
 **to the MW**:
 
 | target | census reference |

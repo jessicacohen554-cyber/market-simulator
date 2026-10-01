@@ -9,7 +9,7 @@ matrix all **UNTOUCHED**.
 **NOT-YET** on exactly `{C3a-2025 −11.5 %, C3c}` (C3c is **not** lone, so the
 rule-22 standing rule stays silent and both failures stand);
 `audit_keepers.py --iso NYISO` → **PASS 0 failures / 0 warnings**.
-`docs/DECISION-CARD-nyiso161-winter-face-waiver-2026-08-30.md` is **FILED AND
+`docs/records/nyiso/DECISION-CARD-nyiso161-winter-face-waiver-2026-08-30.md` is **FILED AND
 UNDECIDED** (no ruling commit after `d8b0ea8`), so this session proceeds under
 its §6: *"pursuing the MyNYISO stakeholder route needs no ruling and is not
 gated on this card."*
@@ -29,8 +29,8 @@ and the nyiso-97 verdict no longer rests on a 2008 vintage.
 |---|---|---|
 | 1 | The access request package, route re-verified | §2 below (ready-to-send block) |
 | 2 | The fail-closed on-receipt gate | `scripts/probes/_nyiso163_aorr_gate.py` |
-| 2b | Negative-control validation + acceptance suite | `results/calibration/_nyiso163_gate_acceptance_negcontrol.json` |
-| — | *(unplanned)* first real gate application | `results/calibration/_nyiso163_gate_current_public.json` |
+| 2b | Negative-control validation + acceptance suite | `results/phase0/nyiso/_nyiso163_gate_acceptance_negcontrol.json` |
+| — | *(unplanned)* first real gate application | `results/phase0/nyiso/_nyiso163_gate_current_public.json` |
 | 3 | The standing re-open watch | §6 below |
 
 Fixtures: `scripts/probes/_nyiso163_aorr_control_2008.json` (negative control),
@@ -187,7 +187,7 @@ distinctly so a transcription error is never misread as an adjudication).
 ## 4. VALIDATION — three legs, all required, all passing
 
 `python3 scripts/probes/_nyiso163_aorr_gate.py --self-test` → **exit 0**.
-Artifact: `results/calibration/_nyiso163_gate_acceptance_negcontrol.json`.
+Artifact: `results/phase0/nyiso/_nyiso163_gate_acceptance_negcontrol.json`.
 
 **Leg 1 — NEGATIVE CONTROL: the 2008 vintage → FAIL, as required.** The public
 2008-stamped Appendix B was adjudicated NON-IDENTIFYING ON CONTENT at nyiso-97
@@ -244,7 +244,7 @@ Rules* manual, which is a different document from the one nyiso-97 looked for.
 
 **The rows were fetched, transcribed and run through the gate**
 (`scripts/probes/_nyiso163_aorr_current_public_2026.json` →
-`results/calibration/_nyiso163_gate_current_public.json`). Source: **NYSRC
+`results/phase0/nyiso/_nyiso163_gate_current_public.json`). Source: **NYSRC
 Reliability Rules & Compliance Manual V48 (final, 7-17-2026), Section G "Local
 Area Operation"** — G.1 *New York City System Operations* and G.2 *Loss of Gas
 Supply – New York City*.
@@ -384,11 +384,11 @@ a second time — and that is a legitimate outcome to be recorded unrewritten.**
 
 ---
 
-*Evidence:* `docs/FINDING-nyiso97-load-pocket-identification-2026-07-29.md`
-§1/§3/§4/§5 · `docs/INTAKE-SPEC-nyiso156-winter-locational-2026-08-30.md` §2 ·
-`docs/DECISION-CARD-nyiso161-winter-face-waiver-2026-08-30.md` §2/§6 ·
-`docs/FINDING-nyiso-leg2-reverify-2026-08-31.md` ·
-`results/calibration/FINDING-nyiso160-leg2-stop-and-tpaudit-2026-08-30.md` ·
+*Evidence:* `docs/records/nyiso/FINDING-nyiso97-load-pocket-identification-2026-07-29.md`
+§1/§3/§4/§5 · `docs/records/nyiso/INTAKE-SPEC-nyiso156-winter-locational-2026-08-30.md` §2 ·
+`docs/records/nyiso/DECISION-CARD-nyiso161-winter-face-waiver-2026-08-30.md` §2/§6 ·
+`docs/records/nyiso/FINDING-nyiso-leg2-reverify-2026-08-31.md` ·
+`docs/records/nyiso/FINDING-nyiso160-leg2-stop-and-tpaudit-2026-08-30.md` ·
 NYISO Manual 12 (issued July 2026) Attachment B · NYSRC RRC Manual V48
 (2026-07-17) §1.2.8, §G.1, §G.2, §8 Version History · NYISO Accounting and
 Billing Training Reference v1.0 (2024-11-18) §10.4, §19.1 · CLAUDE.md rules 13

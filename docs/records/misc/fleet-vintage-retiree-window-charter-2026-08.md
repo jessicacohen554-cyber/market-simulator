@@ -1,8 +1,8 @@
 # CHARTER — the backcast fleet-vintage retiree window (`RETIREMENT_WINDOW_START`)
 
-**Opened:** 2026-08-15, session neiso-94 · **Scope:** ALL SIX ISOs · **Status:** TASK 2 EXECUTED 2026-09-09 (session xiso-fuelvintage-1, commit `7934e92c`); tasks 1, 3, 4 OPEN, routed per ISO by `docs/handoffs/xiso-fuelvintage-per-iso-lp-prompts-2026-09-09.md`
-**Evidence:** `results/calibration/ASSESSMENT-neiso94-final-readiness-2026-08-15.md` §2 ·
-`results/calibration/_neiso94_pilgrim_vintage_audit.json` ·
+**Opened:** 2026-08-15, session neiso-94 · **Scope:** ALL SIX ISOs · **Status:** TASK 2 EXECUTED 2026-09-09 (session xiso-fuelvintage-1, commit `7934e92c`); tasks 1, 3, 4 OPEN, routed per ISO by `docs/records/governance/xiso-fuelvintage-per-iso-lp-prompts-2026-09-09.md`
+**Evidence:** `docs/records/neiso/ASSESSMENT-neiso94-final-readiness-2026-08-15.md` §2 ·
+`results/phase0/neiso/_neiso94_pilgrim_vintage_audit.json` ·
 `scripts/probes/neiso94_pilgrim_vintage_audit.py`
 **Not a NEISO lane item.** It was *surfaced* by NEISO (Pilgrim, 2019) but the defect, the fix and
 the risk are ISO-agnostic, which is why it is chartered rather than patched (rule 25

@@ -1,6 +1,6 @@
 """nyiso-236 PHASE 0 (ZERO-LP): OBJECT B -- the model's price-vs-gas SLOPE and INTERCEPT.
 
-Record: ``docs/FINDING-nyiso236-the-anchor-grain-and-the-gas-slope-2026-09-16.md``
+Record: ``docs/records/nyiso/FINDING-nyiso236-the-anchor-grain-and-the-gas-slope-2026-09-16.md``
 (§3 the correct tail-stripped measurement; §3.3 the slope/intercept decomposition).
 
 nyiso-235 recorded Object B as blocked because

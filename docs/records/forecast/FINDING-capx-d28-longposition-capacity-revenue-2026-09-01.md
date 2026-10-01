@@ -1,12 +1,12 @@
 # FINDING — capx D28: "the capacity curve pays $0 exactly where the model sits" is characterized across all four capacity-market ISOs — the curves are (with one MISO-specific exception) published-faithful; what is wrong is WHERE THE MODEL SITS and WHAT A CLEARING PRICE IS, and the census splits 2 confirmed / 1 hindcast-confirmed / 1 latent
 
-**Lane:** capx D28 (Phase-0), charter `docs/handoffs/capx-director-prompt-pack-2026-08.md`
+**Lane:** capx D28 (Phase-0), charter `docs/records/forecast/capx-director-prompt-pack-2026-08.md`
 §D28 (r#25 reconstruction; a running session's own prompt governs — this session ran the
 identical text). **Docs only, ZERO solves**: every number below is read from a committed
 artifact or computed by the repo's own committed instrument
 (`scripts/validate_capacity_prices.py`) on committed ledgers and committed published-data
 rows — the D17 K2 evidence class. The instrument's output is committed as
-`docs/handoffs/d28/pass2-instrument-run-2026-09-01.json` (invocations + bundle provenance
+`docs/records/forecast/d28/pass2-instrument-run-2026-09-01.json` (invocations + bundle provenance
 inside). No mechanism, no `ScenarioConfig` field, no matrix cell, no keeper/board/verdict/
 marker write. Collision check at write: D27 (the MISO T1-H HEAD re-measure) has NOT landed
 as of `3c1f9642` — the committed FFR-2B record remains the current MISO-residual context and

@@ -223,9 +223,9 @@ declined to launch would have been 6 shard containers × 6 years.
 | artifact | what | LP |
 |---|---|---|
 | `scripts/probes/_pjm_h17_top_of_stack.py` | grounds (A) / (B) / (C) — §2, §3, §4 | zero |
-| `results/calibration/_pjm_h17_top_of_stack.json` | its output | — |
+| `results/phase0/pjm/_pjm_h17_top_of_stack.json` | its output | — |
 | `scripts/probes/_pjm_h17_ct_shelf.py` | the CT_FAST shelf census — §5 | zero |
-| `results/calibration/_pjm_h17_ct_shelf.json` | its output | — |
+| `results/phase0/pjm/_pjm_h17_ct_shelf.json` | its output | — |
 
 Both probes rebuild the keeper's own fleet with `fleet_only=True` (≈15 s per year) and read the
 measured surface through the mechanisms' own `_pjm_midcurve_context` /

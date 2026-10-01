@@ -40,7 +40,7 @@ PRECOMMIT itself specified.
 
 ## Consequence for the run and for the grader
 
-`docs/handoffs/pjmeas/run_screen.sh`'s post-solve guard compares against the full-span key
+`docs/records/pjm/pjmeas/run_screen.sh`'s post-solve guard compares against the full-span key
 and will therefore **exit 91** even though the arm is correct. That exit is a bookkeeping
 guard tripping on a window-dependent hash, **not** a substantive failure, and the bundle is
 already written when it fires. `grade_screen.py`'s `DECLARED_ARM_KEY` is corrected to the
@@ -71,8 +71,8 @@ solve` and exit 90.
 code the solve runs on must not change underneath it. The committing diff was, in full:
 
 ```
- M docs/handoffs/pjmeas/grade_screen.py
-?? docs/handoffs/ADDENDUM-pjm-eas-key-window-2026-09-07.md
+ M docs/records/pjm/pjmeas/grade_screen.py
+?? docs/records/pjm/ADDENDUM-pjm-eas-key-window-2026-09-07.md
 ```
 
 `git status --short -- src/market_sim scripts` returned **zero** lines at the moment of the

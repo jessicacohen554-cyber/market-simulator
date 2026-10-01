@@ -2,7 +2,7 @@
 
 **Lane** NWPP-22 · **Model** Fable (`claude-fable-5-1`) · **Date** 2026-09-13 ·
 **Branch** `claude/nwpp-22-verdict-basis-wkmyv5` · **Base** `33a7c961` · **PRECOMMIT**
-`docs/handoffs/PRECOMMIT-nwpp-22-2026-09-13.md` (pushed at `49349b8f` before the scorer was edited) ·
+`docs/records/nwpp/PRECOMMIT-nwpp-22-2026-09-13.md` (pushed at `49349b8f` before the scorer was edited) ·
 **Scorer commit** `8094669a` · **Data profile** `code` · **Ruling** card N2 limb (b); issued under N11.
 
 ## 0-bis. REBASE RESOLUTION (2026-09-13, after `origin/main` moved to `a0bcb04f`) — READ THIS FIRST
@@ -241,7 +241,7 @@ re-armable), 27 (Edit tool only; exact bytes pushed; fetch-back verified immedia
 `8908830a27e9bf2551bc2f8daa2eadddab85656e` = local, 4,008 lines, sha256
 `ca97ec68…3d64a8` identical), §8.0 (no shared record touched). **Files touched:**
 `scripts/calibration_verdict.py`, `tests/scoring/test_verdict_price_unscored.py` (new),
-`docs/handoffs/PRECOMMIT-nwpp-22-2026-09-13.md`, this FINDING. Nothing under `src/`, `frontend/data/**`,
+`docs/records/nwpp/PRECOMMIT-nwpp-22-2026-09-13.md`, this FINDING. Nothing under `src/`, `frontend/data/**`,
 `data/raw/`, any registry, ISO config, keeper shard, bundle, `TAIL_THRESHOLD`, the matrix, the plan,
 the ledger, or `docs/calibration-log/nwpp.md`. No LP ran; no shard was launched.
 

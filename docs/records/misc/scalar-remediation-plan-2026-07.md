@@ -3,7 +3,7 @@
 **Date:** 2026-07-04 · **Inputs:** `docs/model-legitimacy-audit-2026-07.md` §3 (C-1…C-18), §5.1
 (census), §7 (D-3, D-10…D-14), `docs/legitimacy-scrub-prompts-2026-07.md` S3,
 `docs/out-of-sample-results-2026-07.md` §2 (D-8), CLAUDE.md rules 19–26.
-**Companion prompt pack:** `docs/handoffs/scalar-remediation-prompts-2026-07.md`.
+**Companion prompt pack:** `docs/records/misc/scalar-remediation-prompts-2026-07.md`.
 **This session changed no model value.** This document assigns *dispositions*; every execution
 session is in the prompt pack.
 
@@ -26,7 +26,7 @@ comment referencing the old read remains in `scenarios.py`). W3–W5 are still o
 per-item table below and CLAUDE.md rules 19–26 for the standing rules that remain live).
 
 Verified against the tree at 2026-07-04 (`main` @ 7b0d150). **W0 closed 2026-07-05** — see
-`docs/handoffs/scalar-remediation-w0-closure-2026-07-05.md` for the current C-2/C-11 record
+`docs/records/misc/scalar-remediation-w0-closure-2026-07-05.md` for the current C-2/C-11 record
 (this table predates that closure and is not re-litigated here):
 
 | Item | Status |
@@ -292,7 +292,7 @@ rule #1; `calibration-keeper-auditor` after any `keepers.json` edit).
 
 ## 6. Execution
 
-The prompt pack (`docs/handoffs/scalar-remediation-prompts-2026-07.md`) batches the above by
+The prompt pack (`docs/records/misc/scalar-remediation-prompts-2026-07.md`) batches the above by
 ISO/mechanism with model assignments and parallelism notes. Batches: B-GOV-1 (W0), B-DIAG-1/2
 (W1), B-NYI-1, B-LIMB-1, B-XISO-2ch (W2), B-CAI-1, B-ERC-1/2, B-PJM-1, B-XISO-1/2 (W3–W4),
 B-GOV-2 (W5).

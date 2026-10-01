@@ -7,7 +7,7 @@ untouched. ERCOT only (rule 25). Every year touched is inside {2023, 2024, 2025}
 (rule 22 — ERCOT holds no `complete` and no `final` marker).
 
 **Authorization:** owner sitting 2026-08-09, cards **D1(c) + D5**, SIGNED
-(`docs/DECISION-CARD-ercot182-c3a2023-reachability-2026-08-09.md` §5 + §10). D1
+(`docs/records/ercot/DECISION-CARD-ercot182-c3a2023-reachability-2026-08-09.md` §5 + §10). D1
 REFUSED the C3a ledger carve-out and authorized the model-class lane to fix the
 2023 object on the merits — *"I want to actually fix the 2023 pricing"* — and D5
 scopes its first step to a costing memo with no build authorization. (c1)
@@ -296,7 +296,7 @@ discovered late:
 ## 4. THE MEASUREMENT
 
 `scripts/probes/ercot184_cliff_resolution_costing.py` →
-`results/calibration/ercot184_cliff_resolution.json`. No LP, no field, no
+`results/phase0/ercot/ercot184_cliff_resolution.json`. No LP, no field, no
 derive, no registered run.
 
 **Method — invariant-quantity repricing (IQR).** Re-slicing preserves each

@@ -2,7 +2,7 @@
 
 - **Session:** NYISO-NEXT-14 (orchestrator; this container runs no LP, rule 32 (a)).
 - **Owner ruling (this session, decision card):** "Re-test all 5 years". This re-opens cell **R** `nyiso_total_east_cutset_ttc` (nyiso-224 / nyiso-225, ruled "reject as constructed" 2026-09-10) on new evidence (rule 28).
-- **Phase 0:** `docs/FINDING-nyiso-next14-upstate-evacuation-phase0-2026-09-29.md`, probe `scripts/probes/nyisonext14_upstate_phase0.py` → `results/calibration/_nyisonext14_phase0.json`.
+- **Phase 0:** `docs/records/nyiso/FINDING-nyiso-next14-upstate-evacuation-phase0-2026-09-29.md`, probe `scripts/probes/nyisonext14_upstate_phase0.py` → `results/phase0/nyiso/_nyisonext14_phase0.json`.
 - **Control (form 4):** keeper `2026-09-29-nyisonext13-recon-detach-span` (bundle `results/calibration/nyisonext13_span`, 2022–2025) + stamped `2026-09-29-nyisonext13-recon-detach-2021` (bundle `results/calibration/nyisonext13_2021`).
 - **Arm:** the keeper recipe + `nyiso_total_east_cutset_ttc: true`. No code change. Nothing else moves.
 - **Queue:** off-queue by the letter; it is the root cause of queue item 1 (FINDING §2).

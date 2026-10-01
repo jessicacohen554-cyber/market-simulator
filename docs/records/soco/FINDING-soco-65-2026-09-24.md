@@ -151,6 +151,6 @@ amend G to "market PRICING use refused; cost-based start in the objective
 admissible" (no change; arm-B reopen then separately authorizable)?
 Recommendation (ii). (2) decline 2026-09-20-soco53g-prb-own-iso (E13)?
 Leftover refs: claude/soco61-arm-*, claude/soco60-arm-*, claude/soco60-armB-*.
-Records: docs/handoffs/FINDING-soco-65-2026-09-24.md,
+Records: docs/records/soco/FINDING-soco-65-2026-09-24.md,
 scripts/probes/_soco65_census.py.
 ```

@@ -3,7 +3,7 @@
  "screen_bundle": "results/calibration/nyiso195_screen_2024",
  "control": "keeper committed artifacts (rule 29(b) form 4; no control solve)",
  "control_sources": [
-  "results/calibration/_nyiso194_screen_gates_S.json",
+  "results/phase0/nyiso/_nyiso194_screen_gates_S.json",
   "results/calibration/nyiso192_astoria_panel/hourly/system_2024.parquet",
   "frontend/data/backcast/runs/2026-09-05-nyiso-192-astoria-panel.js + bench/NYISO/2024.json.gz",
   "run_year(fleet_only=True) rebuilds of both bundles"

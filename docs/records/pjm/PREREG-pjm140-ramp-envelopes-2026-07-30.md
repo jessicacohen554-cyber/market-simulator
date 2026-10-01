@@ -1,7 +1,7 @@
 # PRE-REGISTRATION — pjm-140: `ramp_envelopes` on PJM (`ramp_limits = False → True`)
 
 **Written and committed at pjm-139, BEFORE any arm solves.** Chartered by
-`results/calibration/FINDING-pjm139-winter-morning-ramp-is-a-ramp-rate-deficit-2026-07-30.md`
+`docs/records/pjm/FINDING-pjm139-winter-morning-ramp-is-a-ramp-rate-deficit-2026-07-30.md`
 §5. Nothing in this document may be revised after an arm has solved; if an
 expectation is refuted, the refutation is recorded as such (the pjm-137
 precedent, where the pre-registration was refuted on its own expected direction

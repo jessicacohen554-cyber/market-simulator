@@ -7,7 +7,7 @@ C3c the lone ledgered caveat.
 Rule 29's phase 0 returned a negative and therefore no arm reached a solve, so no solve was
 pre-registered — there was nothing to pre-register.
 **Rule 22:** 2023–2025 only. No held-out year was touched in any way.
-**Machine record:** `results/calibration/_nyiso203_nyc_base_phase0.json`.
+**Machine record:** `results/phase0/nyiso/_nyiso203_nyc_base_phase0.json`.
 **Reproduce:** `uv run python scripts/probes/_nyiso203_nyc_persistent_base_basis.py`.
 
 **THERE ARE NO RUBRIC FAILURES TO FIX.** NYISO reads **fails 0**. C3c is the ledgered,
@@ -226,7 +226,7 @@ Consequences for a successor lane:
 ## 9. G-DRIFT (rule 29(b)) — re-validated empirically at this HEAD
 
 Re-ran `scripts/probes/nyiso198_rebuild_checks.py --year 2024`: the committed record
-`results/calibration/_nyiso198_rebuild_checks_2024.json` regenerates **byte-identically**
+`results/phase0/nyiso/_nyiso198_rebuild_checks_2024.json` regenerates **byte-identically**
 (`git diff` clean after the re-run). The solve-path fleet build has not drifted since the
 keeper's sha, so the keeper's committed bundle remains the valid control and its
 `legitimacy_diagnostics.json` D-4 rows — the source of the 0.2271 TWh quoted throughout — are

@@ -1,6 +1,6 @@
 """Emit the SPP-102 calibration attestation for the composed 2019-2025 bundle ``spp102_arm_span``.
 
-SPP-102 (``docs/handoffs/PRECOMMIT-spp-102-commitment-posture-2026-09-29.md``) replays SPP's keeper
+SPP-102 (``docs/records/spp/PRECOMMIT-spp-102-commitment-posture-2026-09-29.md``) replays SPP's keeper
 ``2026-09-28-spp-100-chp-scope`` one year per shard (rule 36) with one field armed:
 ``spp_commitment_posture`` (the per-plant relaxed commitment state with min-up / min-down). Adapted
 from ``gen_spp100_attestation.py``: the keeper's attestation is inherited, the offer curve is
@@ -24,8 +24,8 @@ sys.path.insert(0, str(REPO / "src"))
 from market_sim.config.scenarios import _CACHE_KEY_RETIRED_FIELDS  # noqa: E402
 
 CAL = REPO / "results" / "calibration"
-PRECOMMIT = "docs/handoffs/PRECOMMIT-spp-102-commitment-posture-2026-09-29.md"
-RESULT = "docs/handoffs/RESULT-spp-102-commitment-posture-2026-09-29.md"
+PRECOMMIT = "docs/records/spp/PRECOMMIT-spp-102-commitment-posture-2026-09-29.md"
+RESULT = "docs/records/spp/RESULT-spp-102-commitment-posture-2026-09-29.md"
 PINNED = "62ac90e26c5360cb96ce422be82ba50279b79cc8"
 COMPOSITE = "spp102_arm_span"
 KEEPER = "spp100_arm_span"

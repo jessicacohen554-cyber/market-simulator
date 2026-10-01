@@ -5,7 +5,7 @@ produced it is part of its provenance — ``highspy`` above all, since a differe
 HiGHS is a different LP solver. Before this check, **nothing in ``audit_keepers``
 read the ``environment`` block at all**, which is how the nyiso-231 off-pin
 keeper reached the dashboard unremarked
-(``docs/FINDING-nyiso231-the-keeper-is-off-pin-2026-09-13.md``). E1 checks the
+(``docs/records/nyiso/FINDING-nyiso231-the-keeper-is-off-pin-2026-09-13.md``). E1 checks the
 keeper's three stores exist; E11 diffs the *recipe*; neither can see the
 environment the recipe was solved in.
 

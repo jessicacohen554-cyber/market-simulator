@@ -2,7 +2,7 @@
 
 **Session** pjm-172 · **ISO** PJM · **Date** 2026-09-07
 **Status: WRITTEN BEFORE ANY BUILD OR SOLVE** (rule 29 `[R-SCREEN]`). Nothing is implemented yet.
-**Predecessor** `results/calibration/ADDENDUM-pjm171-seam-fuel-basis-freeze-2026-09-07.md`
+**Predecessor** `docs/records/pjm/ADDENDUM-pjm171-seam-fuel-basis-freeze-2026-09-07.md`
 **Owner decision (2026-09-07):** repair shape = **seam-local measured gas path**, *not* an edit to
 the shared `HENRY_HUB_TRAJECTORIES` table.
 **Keeper** `2026-08-15-pjm-162-inputclock` — unchanged by this card in every training year (§3).

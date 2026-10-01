@@ -6,7 +6,7 @@ Wall-clock item A-4: a handful of ``data_prep`` sites are pure functions of
 bytes already on disk, cost seconds of CPU, and are memoized only by
 ``functools.lru_cache`` — so every process pays them again in whichever year
 first touches them, which is exactly the year-1 ``data_prep`` premium
-(``docs/handoffs/wallclock-baseline-2026-07.md`` §WALLCLOCK A-4).
+(``docs/records/misc/wallclock-baseline-2026-07.md`` §WALLCLOCK A-4).
 
 The pattern, unchanged from A-2 and restated so this module reads on its own:
 

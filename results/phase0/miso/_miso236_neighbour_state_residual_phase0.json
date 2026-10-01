@@ -1,6 +1,6 @@
 {
   "probe": "miso-236 phase 0 \u2014 neighbour state vs the idiosyncratic seam residual",
-  "prereg": "results/calibration/PREREG-miso236-neighbour-state-and-the-idiosyncratic-residual-2026-09-07.md (pushed 92de849b)",
+  "prereg": "docs/records/miso/PREREG-miso236-neighbour-state-and-the-idiosyncratic-residual-2026-09-07.md (pushed 92de849b)",
   "keeper": "2026-09-07-miso-233-spp-hourly",
   "zero_lp": true,
   "price_basis": "P = Indiana hub RT (scored basis); every OLS regressor = Indiana hub DA",

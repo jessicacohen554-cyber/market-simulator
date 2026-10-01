@@ -399,7 +399,7 @@ def main(argv: list[str] | None = None) -> int:
             prep = migrate_payload(iso, run_id, old_groups, args.dry_run)
             reports.append(prep)
             print(f"{iso} payload {run_id}: re-keyed {prep['rekeyed']} entries")
-    out = REPO / "results/calibration/bench_multiclass_migration_report.json"
+    out = REPO / "results/phase0/misc/bench_multiclass_migration_report.json"
     if not args.dry_run:
         out.write_text(json.dumps(reports, indent=1))
         print(f"wrote {out}")

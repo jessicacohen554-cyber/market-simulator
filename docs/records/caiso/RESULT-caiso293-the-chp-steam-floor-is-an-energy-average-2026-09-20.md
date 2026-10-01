@@ -7,7 +7,7 @@ bundle written. The new gate ships **default off and byte-identical off**, prove
 two-version array diff.
 
 PRECOMMIT (pushed before any code change or measurement of the arm):
-`docs/PRECOMMIT-caiso293-chp-steam-duty-window-2026-09-20.md`.
+`docs/records/caiso/PRECOMMIT-caiso293-chp-steam-duty-window-2026-09-20.md`.
 
 ---
 

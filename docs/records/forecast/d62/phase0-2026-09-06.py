@@ -1,7 +1,7 @@
 """capx D62 PHASE 0 (zero LP, a STOP gate).
 
 Reproduce S0 (the committed arm-A clearing) and S6 (every class bar at PJM's
-published default gross ACR) of ``docs/handoffs/d61/reclear-2026-09-05.py``
+published default gross ACR) of ``docs/records/forecast/d61/reclear-2026-09-05.py``
 **through the code path** -- the new
 ``retirements.resolve_going_forward_bar_per_kw_yr`` feeding the code's own
 ``clear_capacity_supply_stack`` / ``capacity_supply_curve`` -- against the
@@ -20,7 +20,7 @@ reproduction rather than loosening it:
   impossible by construction.
 
 Run from the repo root:
-    PYTHONPATH=.:src python docs/handoffs/d62/phase0-2026-09-06.py [out.json]
+    PYTHONPATH=.:src python docs/records/forecast/d62/phase0-2026-09-06.py [out.json]
 """
 
 from __future__ import annotations

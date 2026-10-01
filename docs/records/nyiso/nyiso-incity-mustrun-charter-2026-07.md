@@ -2,7 +2,7 @@
 
 **Date:** 2026-07-26 · **Produced by:** nyiso-75 keeper-promotion session ·
 **Chartered by:** owner ("promote and charter", 2026-07-26) ·
-**Diagnosis it implements:** `results/calibration/FINDING-nyiso-stgas-underrun-diagnosis-2026-07-23.md` ·
+**Diagnosis it implements:** `docs/records/nyiso/FINDING-nyiso-stgas-underrun-diagnosis-2026-07-23.md` ·
 **Status:** CHARTER ONLY — no mechanism code, no config flag, no intake performed in this
 session. Nothing here is authorized to run until the data question in §3 is answered.
 **§3 EXECUTED AND CONCLUDED (2026-07-26, nyiso-83) — THE MECHANISM IS BUILT AND
@@ -39,7 +39,7 @@ representation limit of the full-SRMC LP, because the real driver is the
 non-public Con Edison load-pocket procedure the MMU itself cannot see (41–42 %
 of NYC reliability commitments "unverified"). Both mechanisms remain in the
 codebase, default-off, as the recorded evidence.
-Full evidence: `docs/FINDING-nyiso-c3c-scarcity-formation-2026-07-26.md`
+Full evidence: `docs/records/nyiso/FINDING-nyiso-c3c-scarcity-formation-2026-07-26.md`
 §§4/4a/4b; log: `docs/calibration-log/nyiso.md` 2026-07-26 nyiso-83.
 
 **§3 ADJUDICATED (2026-07-26, nyiso-83 session) — THE GATE IS OPEN.** The owner
@@ -59,10 +59,10 @@ MyNYISO ("Log into MyNYISO to view the Application of Reliability Rules") and
 Manual 12's Table B.5 is now only a pointer to that walled page, so the
 units-in-service genre is unobtainable; the LI limb rests on the published
 reserve ladder instead. Details:
-`docs/handoffs/nyiso-incity-instrument-survey-2026-07.md` §2a.
+`docs/records/nyiso/nyiso-incity-instrument-survey-2026-07.md` §2a.
 
 **§3 UPDATE (2026-07-26, nyiso-82 session):** the Step-1 search is DONE — see
-`docs/handoffs/nyiso-incity-instrument-survey-2026-07.md`. Zone J: documented-NO supported
+`docs/records/nyiso/nyiso-incity-instrument-survey-2026-07.md`. Zone J: documented-NO supported
 (operative Con Ed procedure parameters are non-public, invisible even to the MMU) UNLESS
 the owner adjudicates that the closed "reserve" C3a lever — closed as a *pricing* lever —
 may be reopened as a *commitment obligation* driver on the published J/K locational

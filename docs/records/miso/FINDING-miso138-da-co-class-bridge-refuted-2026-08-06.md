@@ -11,7 +11,7 @@ Charter lane **(b)** — the §5.4 standing chartered item
 ledgered caveats 2 of 3, `{C3a, C3c}` — re-verified from the committed
 `metrics.json` this session).
 
-**PREREG** `results/calibration/PREREG-miso138-da-co-class-bridge-2026-08-06.md`,
+**PREREG** `docs/records/miso/PREREG-miso138-da-co-class-bridge-2026-08-06.md`,
 pushed at **`848d387a`** BEFORE any adjudicating statistic, with a two-sided
 prior, the most likely failure mode named in advance, and the look-alike trap
 named with a pre-committed permutation null that outranks the aggregate
@@ -330,6 +330,6 @@ an identification's ceiling where the answer is known***.
 **Probes** `scripts/probes/_miso138_fetch_da_co.py`,
 `scripts/probes/_miso138_da_co_class_bridge.py`,
 `scripts/probes/_miso138_bridge_diagnostics.py` ·
-**Records** `results/calibration/_miso138_da_co_class_bridge.json`,
-`results/calibration/_miso138_bridge_diagnostics.json` ·
-**PREREG** `results/calibration/PREREG-miso138-da-co-class-bridge-2026-08-06.md`.
+**Records** `results/phase0/miso/_miso138_da_co_class_bridge.json`,
+`results/phase0/miso/_miso138_bridge_diagnostics.json` ·
+**PREREG** `docs/records/miso/PREREG-miso138-da-co-class-bridge-2026-08-06.md`.

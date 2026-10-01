@@ -4,7 +4,7 @@
 `FINDING-ercot162` §2 named successor: "the AS/energy split of storage capability at scarcity", a
 QUANTITY object). **Owner execution directive** (2026-08-05): run all 3 years, but 2023's distinct
 scarcity-pricing design warrants a separate 2023 test before the full sequential span. Gates were
-pre-registered in `docs/PRECOMMIT-ercot167-storage-as-soc-reserve-2026-08-05.md` BEFORE any solve;
+pre-registered in `docs/records/ercot/PRECOMMIT-ercot167-storage-as-soc-reserve-2026-08-05.md` BEFORE any solve;
 two feasibility amendments were recorded there mid-probe (below), neither touching a gate.
 
 **Mechanism** (`ercot_storage_as_soc_reserve`, default off, zero fitted scalars): floor each ERCOT

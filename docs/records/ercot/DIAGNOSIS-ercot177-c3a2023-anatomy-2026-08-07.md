@@ -5,7 +5,7 @@ entirely from artifacts of record — the keeper bundle's `hourly/` sidecars
 (rule 15's purpose), the committed actual-LMP series, and **ERCOT's own published
 ORDC/reserve series** (`data/raw/ercot/ercot_2023_ordc_reserves_hourly.parquet`).
 
-Reproduce: `python scripts/probes/ercot177_c3a2023_anatomy.py --json results/calibration/ercot177_c3a2023_anatomy.json`
+Reproduce: `python scripts/probes/ercot177_c3a2023_anatomy.py --json results/phase0/ercot/ercot177_c3a2023_anatomy.json`
 
 Keeper: `2026-08-07-run176-control-offline-increment`, C3a-2023 **−32.4 %**.
 

@@ -249,7 +249,7 @@ Phase 0 adjudicates `I`.
 ## §7 — Probe
 
 `scripts/probes/_miso119_zonal_anchor_screen.py` (no LP; transcript
-`results/calibration/PROBE-miso119-zonal-anchor-screen-2026-08-03.txt`):
+`results/phase0/miso/PROBE-miso119-zonal-anchor-screen-2026-08-03.txt`):
 runs §4's gates, the §2 derivation via the standing derive's own functions,
 the §3 statistics, and prints the verdict under the §3 rule. Re-runnable at
 zero LP cost.

@@ -4,13 +4,13 @@
 > Session ercot-243, branch `claude/ercot-243-release-exit-r7owkv`.
 > Charter: the ercot-243 handoff (LANE 2, the release-guard EXIT condition).
 > Keeper state at dispatch (UNTOUCHED by Phase-0): two-config partition per
-> `docs/FINDING-ercot-two-config-keeper-2026-08-26.md` — forward
+> `docs/records/ercot/FINDING-ercot-two-config-keeper-2026-08-26.md` — forward
 > `2026-08-25-234-eastex-identity` (2024/2025), carve-out
 > `2026-08-25-236-swcap-clip-k33` (2023).
 
 ## 0. Object and scope
 
-`docs/FINDING-ercot239-h3068-phase0-2026-08-30.md` fully attributed
+`docs/records/ercot/FINDING-ercot239-h3068-phase0-2026-08-30.md` fully attributed
 h3068-2024 as the EXIT EDGE of a one-hour-late model event on time-aligned
 inputs: the ercot-223 event-release guard released the realized-spike hours
 h3065–h3067 (pass-1 settle ≥ $1,000) but h3068 snapped back to its floor
@@ -42,7 +42,7 @@ OUT of scope.
 
 Before any census row is read, the probe re-derives from the same
 committed artifacts and asserts, byte-for-byte against the committed
-`results/calibration/ercot239_h3068_phase0.json` record:
+`results/phase0/ercot/ercot239_h3068_phase0.json` record:
 
 - model load-weighted h3068-2024 = **798.20 ± 0.05**,
 - actual RT h3068-2024 = **110.41 ± 0.05**,
@@ -201,7 +201,7 @@ ESCALATE, never self-adopt.
   `ercot_storage_adaptive_expectation` cell (the ercot-239 §4-style
   permission), and as calibration-log entry ercot-243.
 - Probe: `scripts/probes/ercot243_release_exit_phase0.py` →
-  `results/calibration/ercot243_release_exit_phase0.json`, both committed.
+  `results/phase0/ercot/ercot243_release_exit_phase0.json`, both committed.
 - Push order: this precommit (blob-verified) → probe + JSON → finding +
   log + matrix note → (only if licensed) the Phase-1 precommit and its
   deliverables. Small commits off the fresh-main base; `git push`;

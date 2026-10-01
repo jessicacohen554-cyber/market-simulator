@@ -7,7 +7,7 @@ committed artifact; this probe measures so the owner's ruling on that artifact
 can be made on numbers rather than blind.
 
 ARM B, declared ex ante in
-``docs/PRECOMMIT-caiso294-chp-steam-level-2026-09-20.md`` §3 BEFORE the
+``docs/records/caiso/PRECOMMIT-caiso294-chp-steam-level-2026-09-20.md`` §3 BEFORE the
 statistic was computed: the level is ``p2`` of the ONLINE sample — the existing
 ``_CHP_PMIN_PCTILE`` applied to ``on_cat`` instead of ``all_cat``. No percentile
 is swept.
@@ -155,7 +155,7 @@ def main() -> None:
     report: dict = {
         "arm": "B — chp_pmin_on_cf (p2 of the ONLINE sample), duty window unchanged",
         "level_source": str(armb_csv),
-        "precommit": "docs/PRECOMMIT-caiso294-chp-steam-level-2026-09-20.md",
+        "precommit": "docs/records/caiso/PRECOMMIT-caiso294-chp-steam-level-2026-09-20.md",
     }
     g5 = gate_5(armb_csv)
     report["G5"] = g5

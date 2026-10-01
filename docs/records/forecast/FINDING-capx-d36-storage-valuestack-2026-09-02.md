@@ -1,6 +1,6 @@
 # FINDING — capx D36: why the NEISO storage value stack clears nothing for 24 years — the arbitrage leg is the short term in every year, by $50–150/kW-yr; the RA leg is second-order and is the D28/D33 position object, not a second storage mechanism
 
-**Lane:** capx D36 (Phase-0, decompose-only), charter `docs/handoffs/capx-director-prompt-pack-2026-08.md`
+**Lane:** capx D36 (Phase-0, decompose-only), charter `docs/records/forecast/capx-director-prompt-pack-2026-08.md`
 §D36 (r#27; GOLDEN-2 routed item 1, the D25 §6.3 route). **Docs only, ZERO solves.** Every
 number below is read from the committed golden-2 bundle (`results/ff-t3-neiso-golden/bau/`,
 cache key `706e7ba8e6582d42`, run_config git `f0a13bf5` on basis `5083e29e`, read at HEAD
@@ -10,7 +10,7 @@ cache key `706e7ba8e6582d42`, run_config git `f0a13bf5` on basis `5083e29e`, rea
 NEISO keeper's committed hourly sidecars, and on the raw ISO-NE SMD hourly LMP files. No
 mechanism, no `ScenarioConfig` field, no matrix cell, no keeper/board/verdict/marker/FC-row
 write. The reconstruction script and its two CSV outputs are reproduced in §9; the four charts
-are committed under `docs/handoffs/d36/`.
+are committed under `docs/records/forecast/d36/`.
 
 **Collision check at write:** D33 (NEISO position lane) has NOT landed — no
 `FINDING-capx-d33-*` exists on `origin/main`; its charter is cited for the position half.
@@ -380,7 +380,7 @@ known-additions row (step 4), never through the economic screen.
 **Delivered:** the year-by-year short-term table (§2), the binding-gate census (§4), the
 one-mechanism-or-two answer (§5: same seam, second-order for storage — two mechanisms), the
 mechanism-terms answer to "why 2050 / why iron-air" (§6), three identified rule-13 repair
-routes and the disposition (§7), four charts (`docs/handoffs/d36/`), the reproducible
+routes and the disposition (§7), four charts (`docs/records/forecast/d36/`), the reproducible
 reconstruction (§9). NO repair lands here.
 
 **Routed to the director:**
@@ -434,7 +434,7 @@ $78.7/kW-yr < 2049's $83.4 (consistent with the ledger's single 2050 clearing).
 ZERO solves; no LP, no bench, no re-score, no registration; rule 15 does not fire. No
 out-of-training year touched: the hourly sidecars read are the keeper's 2023–2025 training
 years, the SMD files are raw published data, the golden is 2026+ forecast. Docs only: this
-finding + four PNGs under `docs/handoffs/d36/`; no `src/`, no matrix shard, no
+finding + four PNGs under `docs/records/forecast/d36/`; no `src/`, no matrix shard, no
 board/verdict/keeper/marker/FC-row file, no `neiso-t3` write. Rule 25 held: every number is
 NEISO's own. Rule 14 sign discipline written where it bites (§2 item b, §5, §7 R-2/R-3c).
 AEO's 1.76 GW appears only as corridor context (§7). Rule 27: no ≥300-line source file

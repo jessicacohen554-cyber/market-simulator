@@ -5,9 +5,9 @@
 basis `e95436d5024fc14096eed558d6dd15a65128e524`, registered 2022–2025, determination NOT-YET on C1 + C3c).
 **Precondition: MET.** PR #6587 (I-NYISO, `NYISO_reserve_requirements_{2019,2020,2021}.csv`) merged
 2026-09-25T01:46Z. This lane is cut from `7c77894386f8d5b391250e3b03ffd4c0f8757d91` (main).
-**Parent docs:** `docs/PRECOMMIT-r-nyiso-backcast-inputs-2026-09-24.md` (recipe §1, checks §6, data
-blocks §5) and `docs/RESULT-r-nyiso-backcast-inputs-2026-09-24.md` (§8 promotion).
-**Phase-0 evidence (zero LP, committed):** `results/calibration/_rnyiso2021_phase0_census.json`
+**Parent docs:** `docs/records/nyiso/PRECOMMIT-r-nyiso-backcast-inputs-2026-09-24.md` (recipe §1, checks §6, data
+blocks §5) and `docs/records/nyiso/RESULT-r-nyiso-backcast-inputs-2026-09-24.md` (§8 promotion).
+**Phase-0 evidence (zero LP, committed):** `results/phase0/nyiso/_rnyiso2021_phase0_census.json`
 (`scripts/probes/_rnyiso_phase0_census.py --years 2021`).
 
 ---

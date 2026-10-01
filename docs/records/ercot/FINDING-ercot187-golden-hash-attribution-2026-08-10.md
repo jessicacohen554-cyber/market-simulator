@@ -17,7 +17,7 @@ change** — but **not** the one the session was opened on.
 * **The cause is `6a8f285c` — "neiso-65: adopt guard-corrected CAMPD extracts,
   all six ISOs + layup companions" (2026-07-26 00:36 UTC)**, the merge of the
   merit-order guard the owner **ADOPTED** in
-  `docs/handoffs/campd-economic-layup-fix-charter-2026-07.md` §8 (verdict dated
+  `docs/records/misc/campd-economic-layup-fix-charter-2026-07.md` §8 (verdict dated
   the same day). It reaches the fixture through exactly one file,
   `data/raw/campd-unit-outages.csv`.
 * **The attribution is byte-exact, not inferred.** HEAD code with that one file
@@ -100,7 +100,7 @@ scaled by the same availability envelope.
   `uv sync` (pandas 3.0.3 / pyarrow 24.0.0), and `uv.lock` is byte-identical at
   `635b95ee`, `776bbf6b` and HEAD.
 * **The `data/clean` "data-lane" hypothesis** —
-  `docs/handoffs/ffr-3d-instrument-repair-2026-08-03.md` §6 listed this test as
+  `docs/records/forecast/ffr-3d-instrument-repair-2026-08-03.md` §6 listed this test as
   **"DATA (probable, UNCONFIRMED)"** and said not to close it without a
   provisioned clean store. **It is now closed, and it was wrong for this test:**
   the fixture makes **zero** clean-store probes at the default environment
@@ -124,7 +124,7 @@ in the commit." Both conditions are met, on the record:
   regeneration commit.
 
 The golden was simply never re-captured when that envelope moved — the "stale
-golden" `docs/handoffs/ffr-1b-solve-year-availability-2026-08-01.md` §8 named ("stale golden — audit FR-26's family")
+golden" `docs/records/forecast/ffr-1b-solve-year-availability-2026-08-01.md` §8 named ("stale golden — audit FR-26's family")
 and no lane owned. **No keeper is affected**: the ERCOT keeper was solved
 2026-08-09/10, two weeks *after* the guard landed, so the regenerated golden
 moves the fixture **onto** the keeper's actual input basis rather than off it.

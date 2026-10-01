@@ -133,7 +133,7 @@ regardless of the fingerprint — with the stamp narrowing as a side benefit.
   fingerprint anything other than a gate failure.
 - **Not** touching the SOFT engine-drift tier.
 - **Not** the distinct "absent vs mismatched" split the 2026-08-30 adjudication offered as
-  its cheaper alternative (`docs/FINDING-bench-fingerprint-adjudication-2026-08.md` §4). That
+  its cheaper alternative (`docs/records/misc/FINDING-bench-fingerprint-adjudication-2026-08.md` §4). That
   addressed *unlabelled* parts; every part now carries a stamp, so that branch is spent.
 - **Not** any change to a keeper, marker, shard, registry sidecar or bench payload.
 

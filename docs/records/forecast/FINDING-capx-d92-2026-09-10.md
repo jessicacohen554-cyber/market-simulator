@@ -241,7 +241,7 @@ every row (rule 13 `[R-MEASURED]`). The prior table is preserved byte-equal at
 `neiso-t3-prera-2026-08-31.json`.
 
 **The instrument, and why 54 rows moved when D77 named 3.** No committed tool recomputes a disposition
-cell. `docs/handoffs/d92/corridor_model_values.py` implements each row's own `model_basis` literally and
+cell. `docs/records/forecast/d92/corridor_model_values.py` implements each row's own `model_basis` literally and
 **reproduces 54/54 of the prior table's cells from the bundle the prior table declares**, so the re-base
 is mechanical and checkable. Editing only the 3 named rows would leave a table whose cells are keyed to
 two different bundles. **The 51 other rows move as a consequence of closing the 3 named ones — stated as
@@ -364,7 +364,7 @@ Opened or carried forward by this lane:
 ## 10. BOUNDARIES HONOURED
 
 * **No file under `src/market_sim/` was edited**, and none under `scripts/`. The three helpers under
-  `docs/handoffs/d92/` are measurement records and say so in their docstrings.
+  `docs/records/forecast/d92/` are measurement records and say so in their docstrings.
 * Rule 28 `[R-MECH-MATRIX]` **does not fire**: no mechanism proposed, tested or added; no `ScenarioConfig`
   field changed.
 * No backcast artifact, keeper, marker, shard or freeze touched. **`program-status.json` untouched** — no

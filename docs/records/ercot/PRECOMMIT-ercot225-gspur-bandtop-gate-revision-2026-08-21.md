@@ -109,7 +109,7 @@ committed `hourly/system_<year>.parquet` for 2023/2024/2025):
   hour list with (model, actual) pairs — listed in full when ≤ 24 hours,
   else first 24 + exact count.
 * Output: `scripts/probes/ercot225_gspur_bandtop_reread.py` →
-  `results/calibration/ercot225_gspur_bandtop_reread.json`. Read-only; no
+  `results/phase0/ercot/ercot225_gspur_bandtop_reread.json`. Read-only; no
   bundle byte is written.
 
 ## 4. Verdict re-derivation and the flip rule (fixed BEFORE reading)
@@ -188,11 +188,11 @@ and the gate is NOT changed.
 
 1. THIS precommit — pushed + blob-verified first.
 2. `scripts/probes/ercot225_gspur_bandtop_reread.py` +
-   `results/calibration/ercot225_gspur_bandtop_reread.json`.
-3. `results/calibration/DECISION-ercot225-gspur-bandtop-gate-2026-08-21.md`
+   `results/phase0/ercot/ercot225_gspur_bandtop_reread.json`.
+3. `docs/records/ercot/DECISION-ercot225-gspur-bandtop-gate-2026-08-21.md`
    — the owner decision card (options §2, measured effects, flip table §4,
    recommendation).
-4. `docs/FINDING-ercot225-gspur-bandtop-card-2026-08-21.md`.
+4. `docs/records/ercot/FINDING-ercot225-gspur-bandtop-card-2026-08-21.md`.
 5. Log entry `docs/calibration-log/ercot.md` (ercot-225; next shorthand
    ercot-226, ercot-199 unclaimed).
 6. Matrix §5.1 re-stamp (queue item → card drafted, awaiting owner

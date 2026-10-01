@@ -1,7 +1,7 @@
 # RESULT — nyiso-231: the question nyiso-230 left open is **answered**, the mirror is repaired, and the 2022 screen is re-run from scratch
 
 **Session** nyiso-231 · **ISO** NYISO · **Date** 2026-09-13 · **DATA PROFILE: nyiso**
-**Pre-registration** `results/calibration/PRECOMMIT-nyiso231-mirror-repair-rescreen.md` (+ Addendum A,
+**Pre-registration** `docs/records/nyiso/PRECOMMIT-nyiso231-mirror-repair-rescreen.md` (+ Addendum A,
 the span's prediction), pushed before the arm was launched. Gate scorer
 `scripts/probes/nyiso231_screen_gates.py`, committed with the PRECOMMIT and before the arm's numbers
 existed. **Keeper `2026-09-12-nyiso229-hourgrain-span` UNCHANGED unless §6 says otherwise.**
@@ -233,7 +233,7 @@ committed control solved OFF-PIN (1.15.1), same recipe, same year, same code SHA
 * load-weighted LMP **67.657293** on both legs.
 
 Full write-up and the correction it forced on my own earlier claim:
-`docs/FINDING-nyiso231-the-keeper-is-off-pin-2026-09-13.md`.
+`docs/records/nyiso/FINDING-nyiso231-the-keeper-is-off-pin-2026-09-13.md`.
 
 ### 6.4 The judgement call, stated so it can be disagreed with
 

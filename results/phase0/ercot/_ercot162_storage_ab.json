@@ -3,7 +3,7 @@
   "scorer": "scripts/probes/_ercot162_storage_ab.py",
   "base": "results/calibration/ercot162_control_A",
   "probe": "results/calibration/ercot162_stormarm_B",
-  "gap_set": "results/calibration/_ercot161_wall_phase0.json (top-100)",
+  "gap_set": "results/phase0/ercot/_ercot161_wall_phase0.json (top-100)",
   "target_lambda_mean": 1470.16,
   "keeper_model_mean_ref": 441.27
  },

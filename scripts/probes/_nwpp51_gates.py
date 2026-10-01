@@ -4,7 +4,7 @@
 WRITTEN AND COMMITTED BEFORE ANY LEG EXISTS, and before the owner has ruled
 on whether any leg will be solved (the ``_nwpp49_gates.py`` discipline). Every
 number below is transcribed from ``scripts/probes/_nwpp51_predict.py``'s
-output as recorded in ``docs/handoffs/PRECOMMIT-nwpp-51-2026-09-24.md`` §3
+output as recorded in ``docs/records/nwpp/PRECOMMIT-nwpp-51-2026-09-24.md`` §3
 and nothing else.
 
 THIS IS A RULE-14 ACCURACY FIX, NOT A C4 LEVER. Nothing here selects the arm

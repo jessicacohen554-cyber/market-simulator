@@ -10,7 +10,7 @@ vintage refresh is *drop in the new workbooks and re-run*:
 * ``total-load-adjustments-breakdown.xlsx`` — **Table B-9b**, *"Total
   Adjustments to Summer Peak Load (MW) for Each PJM Zone and RTO (2026-2046)"*.
   This is the table the D-4 gap list records as never read
-  (``docs/handoffs/FINDING-scn-ws4a-2026-09-05.md`` §4, G-D4-3). Per the
+  (``docs/records/forecast/FINDING-scn-ws4a-2026-09-05.md`` §4, G-D4-3). Per the
   report's own "Load Adjustments" section every adjusted zone is adjusted for
   *growth in data center load*, with DOM additionally carrying a
   voltage-optimization program, PS additionally port electrification, and EKPC a

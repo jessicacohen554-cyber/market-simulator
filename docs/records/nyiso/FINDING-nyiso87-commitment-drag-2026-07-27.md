@@ -2,9 +2,9 @@
 
 **Date:** 2026-07-27 · **Session:** nyiso-87 · **Branch:**
 `claude/nyiso-gas-commitment-bridge-6n8p2h` · **PR:** #3012 ·
-**Premise:** `docs/FINDING-nyiso-calibration-reconciliation-2026-07-27.md`
+**Premise:** `docs/records/nyiso/FINDING-nyiso-calibration-reconciliation-2026-07-27.md`
 (nyiso-86 §2 wedge, §3 interchange, §4 floors/CHP) and
-`docs/FINDING-nyiso-c3c-scarcity-formation-2026-07-26.md` §7 ·
+`docs/records/nyiso/FINDING-nyiso-c3c-scarcity-formation-2026-07-26.md` §7 ·
 **Keeper at session start:** `2026-07-26-nyiso-81-floor-rederive`
 (determination NOT-YET; no calibration-complete marker, so 2023-2025 only).
 

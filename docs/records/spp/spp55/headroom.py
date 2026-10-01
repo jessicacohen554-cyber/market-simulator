@@ -11,7 +11,7 @@ run short — and the demand curve can only fire — in an hour where this headr
 below the requirement, so the count of such hours is the pre-solve answer to the STOP
 gate's window-agreement leg.
 
-Usage: uv run python docs/handoffs/spp55/headroom.py
+Usage: uv run python docs/records/spp/spp55/headroom.py
 """
 
 import json
@@ -30,7 +30,7 @@ from scripts.run_calibration import run_year  # noqa: E402
 from market_sim.model.reserves.spec import _reserve_eligible, _spp_design  # noqa: E402
 
 BUNDLE = REPO / "results/calibration/spp43_screened_B"
-OUT = REPO / "docs/handoffs/spp55"
+OUT = REPO / "docs/records/spp/spp55"
 # The class_hourly classes whose members are RESERVE_FUEL_TYPES (gas_cc / gas_ct /
 # gas_st / coal / nuclear / oil) — the same set _reserve_eligible admits.
 ELIGIBLE_CLASSES = (

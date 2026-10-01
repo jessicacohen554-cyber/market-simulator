@@ -1,6 +1,6 @@
 {
  "probe": "miso-239 phase 0 \u2014 LINEAR / CURVE / STEP attribution of the PJM merit ladder's own-net-load response: which property of g does it?",
- "prereg": "results/calibration/PREREG-miso239-which-property-of-g-2026-09-07.md (pushed c0e971ee)",
+ "prereg": "docs/records/miso/PREREG-miso239-which-property-of-g-2026-09-07.md (pushed c0e971ee)",
  "predecessor_record_disclosure": "miso-238's FINDING and its phase-0 JSON never reached main, and the committed miso-238 probe carried the un-repaired (marginal-covariance) estimator its own ADDENDUM \u00a72 replaced. This session applied that declared repair and regenerated _miso238_pjm_seam_channel_attribution_phase0.json; G-P4 below reproduces miso-238's published column from scratch against the values the handoff quotes, restated in PREREG \u00a71 BEFORE being recomputed.",
  "keeper": "2026-09-07-miso-233-spp-hourly",
  "zero_lp": true,

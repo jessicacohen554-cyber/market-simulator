@@ -28,11 +28,11 @@ STATE (2026-09-29):
   Do NOTHING else.
 
 READ FIRST:
-- docs/handoffs/r-caiso-14/RESULT-r-caiso-14-2026-09-29.md
-- docs/handoffs/r-caiso-14/ADDENDUM-r-caiso-14-gdrift-2026-09-29.md
-- docs/handoffs/r-caiso-13/PRECOMMIT-r-caiso-13-2026-09-28.md: §3 holds the predictions and decision rule, reused
+- docs/records/caiso/r-caiso-14/RESULT-r-caiso-14-2026-09-29.md
+- docs/records/caiso/r-caiso-14/ADDENDUM-r-caiso-14-gdrift-2026-09-29.md
+- docs/records/caiso/r-caiso-13/PRECOMMIT-r-caiso-13-2026-09-28.md: §3 holds the predictions and decision rule, reused
   unchanged.
-- docs/handoffs/r-caiso-13/shard-prompt.md: the template for your shard prompt.
+- docs/records/caiso/r-caiso-13/shard-prompt.md: the template for your shard prompt.
 
 BUILD (zero parameters; rules 14, 19, 23):
 - Under the SAME flag `caiso_eia930_clock_repair` (one mechanism, rule 19), extend the repair to the HSL reader. When the

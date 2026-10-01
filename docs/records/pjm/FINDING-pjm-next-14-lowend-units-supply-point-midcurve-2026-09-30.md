@@ -3,8 +3,8 @@
 **Keeper** `2026-09-28-pjm-next8-exitfix` (bundle `results/calibration/pjmnext8_xf_span`), unchanged. Nothing registered or promoted.
 
 **Solves:** one byte-faithful keeper replay of 2020 in one shard, used only to read the LP's own marginal units.
-- **Reproduces the keeper exactly.** Every class's P1 TWh differs by 0.000 (`results/calibration/_pjmnext14_replay_2020_repro.json`).
-- **Pre-registration:** `docs/PRECOMMIT-pjm-next-14-lowend-replay-2026-09-30.md`, P1–P4, all held.
+- **Reproduces the keeper exactly.** Every class's P1 TWh differs by 0.000 (`results/phase0/pjm/_pjmnext14_replay_2020_repro.json`).
+- **Pre-registration:** `docs/records/pjm/PRECOMMIT-pjm-next-14-lowend-replay-2026-09-30.md`, P1–P4, all held.
 - **Owner ruling on the result:** *"Record, hand off"*.
 
 ## Card 1 — the keeper's low-end price-setters (2020, LP primal + reduced costs)

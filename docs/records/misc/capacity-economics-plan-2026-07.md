@@ -16,7 +16,7 @@ Implementation prompt in §9.
 > ### Stage-1 status note (2026-07-05, W2-P3)
 >
 > The joint FOM+scarcity protocol (§5) ran the full 2×3 ERCOT + 2-cell PJM probe matrix
-> (`scripts/archive/run_fom_scarcity_grid.py`; report `docs/handoffs/fom-scarcity-joint-protocol-2026-07-05.md`
+> (`scripts/archive/run_fom_scarcity_grid.py`; report `docs/records/misc/fom-scarcity-joint-protocol-2026-07-05.md`
 > + `fom-scarcity-grid-2026-07-05.json`). **Decision: the ATB FOM defaults were NOT flipped.**
 > The grid showed the going-forward FOM level is currently **inert** in the ERCOT forecast — the
 > nameplate reliability floor retains 100 % of thermal (floor ≈100 GW > ~72 GW fleet) and the
@@ -96,7 +96,7 @@ Implementation prompt in §9.
 > rows seeded; see `confirmed-retirement-plan-2026-07.md` §4.3.2) and the ERCOT realized
 > capacity-hindcast re-run registered as the before/after diagnostic on the
 > forecast-validation dashboard. Full report:
-> `docs/handoffs/fom-scarcity-joint-protocol-2026-07-05-stage2.md`.
+> `docs/records/misc/fom-scarcity-joint-protocol-2026-07-05-stage2.md`.
 
 > ### Stage-3 status note (2026-07-06, W2-P3 Stage 3)
 >
@@ -116,14 +116,14 @@ Implementation prompt in §9.
 > **(3) Backstop-off FOM grid** — path (b) closed as a negative result; FOM stays
 > inert with the backstop off (masking shifts to accredited-floor retention),
 > ATB flip stays frozen. Addendum:
-> `docs/handoffs/fom-scarcity-joint-protocol-2026-07-06-stage3-addendum.md`.
+> `docs/records/misc/fom-scarcity-joint-protocol-2026-07-06-stage3-addendum.md`.
 > (1) and (3) landed via PR #1444; this note + the §2.4 recommendation are the
 > foresight follow-up.
 
 **Inputs:** `docs/fable-repo-audit-2026-07.md` §C (CX-1…CX-6), CLAUDE.md rules 1, 5, 10, 13,
 14, 19, 21, 22, 24, `docs/fable-prompt-pack-2026-07.md` W0-P5/W2-P3,
 `docs/forecast-methodology-gaps-2026-06.md` (scarcity/AS revenue understatement),
-`docs/model-audit-2026-06.md` (exogenous AS overlay), `docs/handoffs/sensitivity-tornado-ercot-2026-07-04.md`.
+`docs/model-audit-2026-06.md` (exogenous AS overlay), `docs/records/ercot/sensitivity-tornado-ercot-2026-07-04.md`.
 **Everything here is LP-only**: pre-solve signal construction, screen arithmetic, and config
 plumbing. No MIP, no within-year iteration (one-pass rule 10 preserved throughout).
 
@@ -351,7 +351,7 @@ remains a default-off probe until it is resolved and the mid-growth benefit can 
 shown not to come at the stress case's expense.
 
 **Adjudication (2026-07-06, L-7c):** owner decision memo written —
-`docs/handoffs/foresight-adjudication-memo-2026-07-06.md` — with the
+`docs/records/misc/foresight-adjudication-memo-2026-07-06.md` — with the
 mechanism-level account of the high-growth inversion (the lookahead's
 static-stack scarcity tail prices a strictly tighter year ~40% below the
 realized responsive-headroom overlay, so in a scarcity-saturated regime it
@@ -681,7 +681,7 @@ Trivial-first (CLAUDE.md testing pattern): every mechanism test starts 1-gen/1-z
 ```
 [OPUS] W2-P3 — Implement capacity-economics recalibration (FOM, foresight, floor, DC load)
 
-Read CLAUDE.md, then docs/handoffs/capacity-economics-plan-2026-07.md (THE PLAN — follow it;
+Read CLAUDE.md, then docs/records/misc/capacity-economics-plan-2026-07.md (THE PLAN — follow it;
 where this prompt and the plan disagree, the plan wins), then docs/fable-repo-audit-2026-07.md
 §C. Work on a fresh branch off latest origin/main.
 

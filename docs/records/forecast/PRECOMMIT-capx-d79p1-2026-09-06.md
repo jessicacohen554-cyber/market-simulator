@@ -3,7 +3,7 @@
 **Lane:** capx D79 phase 1 · **Branch:** `claude/capx-d79-p1-solve-surface-61m1oo` (fresh off
 `origin/main` `e6a0402f`) · **Date:** 2026-09-06 · **DATA PROFILE:** code · **LP: ZERO.**
 **Charter:** owner ruling **Q54** (capx ledger §3, r#50 amendment 1 — *"ADOPT, frozen-hash now"*),
-executing `docs/handoffs/DESIGN-capx-d79-2026-09-06.md` §6 (the build spec) and §7 rows 1–5.
+executing `docs/records/forecast/DESIGN-capx-d79-2026-09-06.md` §6 (the build spec) and §7 rows 1–5.
 
 ---
 
@@ -52,7 +52,7 @@ with the implementation rather than before it, and says so here rather than impl
 | any config with an ISO outside the six | — | unmoved (`moved_rows(None)`, `moved_rows("SPP")`, `moved_rows("ercot")` all `{}`) |
 
 **MEASURED (`scripts/probes/capxd79_solve_surface_no_op_check.py`, record committed at
-`docs/handoffs/capxd79-solve-surface-no-op-record.json`):** 296 surface names, 296 declared, 0
+`docs/records/forecast/capxd79-solve-surface-no-op-record.json`):** 296 surface names, 296 declared, 0
 undeclared, 0 solve epochs; `moved_rows` empty at all six ISOs; **148 configs checked (130 forecast,
 18 backcast), 0 moved**; both bare keys reproduce exactly. **The merge gate PASSES.**
 

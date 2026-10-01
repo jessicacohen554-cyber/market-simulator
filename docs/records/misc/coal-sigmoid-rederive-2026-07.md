@@ -11,7 +11,7 @@ The coal-vs-gas passthrough sigmoid (`COAL_SIGMOID_DEFAULTS` in
 re-derives ONLY when its SOURCE DATA updates, never because a residual moved
 (CLAUDE.md rule 23). The trigger here is the **#1803 intake**, which added the
 coal-commodity price series a real re-derivation needs and which were
-previously absent (`docs/handoffs/coal-price-data-intake-2026-07.md`):
+previously absent (`docs/records/misc/coal-price-data-intake-2026-07.md`):
 
 - **EIA Annual Coal Report** region × rank f.o.b.-mine price, 2001–2024 annual
   (`data/raw/coal-prices/eia_coal_price_by_rank.part*.csv`).

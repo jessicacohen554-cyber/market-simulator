@@ -171,7 +171,7 @@ nothing to stop the economic screen killing a healthy unit *early*. So:
 
 ### 2.6 R5c precedent (cited)
 
-R5c (`gap-register` §3.10; `docs/handoffs/ff-2b-adequacy-basis-2026-07.md`) found
+R5c (`gap-register` §3.10; `docs/records/forecast/ff-2b-adequacy-basis-2026-07.md`) found
 conventional hydro **excluded** from the accredited-supply ledger and fixed it by
 passing the model's own hydro capability into `accredited_firm_capacity_mw` **at
 each ISO's published RA accreditation basis** (CPUC QC / NYISO CAF / ISO-NE QC),
@@ -271,7 +271,7 @@ ScenarioConfig field, no constants.py value, zero LP solves; solve output
 byte-identical** (nothing in the solve path consumes the registry yet). Full
 methodology + per-ISO tables: `docs/nuclear-fleet-forward-methodology-2026-07.md`;
 session record + design memo + owner-decision boxes:
-`docs/handoffs/ff-g5-nuclear-registry-2026-07.md`.
+`docs/records/forecast/ff-g5-nuclear-registry-2026-07.md`.
 
 - New raw datatype `data/raw/nuclear-license-status/` — one row per operating (or
   restart-pathway) power reactor unit in the six modeled ISOs (59 units), NRC
@@ -299,13 +299,13 @@ The FF plan **§1.2-11 frontier row** and gap-register **§3.11 FF-G5 row** — 
 the task says "both landed 2026-07-19 via the FF-G1 core-wiring patch" — are
 **ABSENT on `origin/main`** at this session's base (gap-register ends at §3.10;
 `docs/forecast-development-plan-2026-07.md` has no FF-G5 / §1.2-11 entry; the
-FF-G1 patch is present only as `docs/handoffs/patches/ff-g1-core-wiring.patch`, not
+FF-G1 patch is present only as `docs/records/misc/patches/ff-g1-core-wiring.patch`, not
 applied to the live docs). Per the task's explicit instruction ("if absent on
 main, note in your handoff — do not create them"), I did **not** create §3.11 or
 the frontier row. When the FF-G1 patch lands, the FF-G5 row status should be
 updated to reflect this registry + design memo (data + design DONE; mechanism
 chartered to a follow-up). I did not edit
-`docs/handoffs/ff-wave-manager-ledger-2026-07.md` (manager-owned).
+`docs/records/forecast/ff-wave-manager-ledger-2026-07.md` (manager-owned).
 
 ## 5. Verification
 

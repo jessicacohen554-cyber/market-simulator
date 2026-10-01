@@ -41,7 +41,7 @@ residual over-count survived it — measured then on **NEISO**. This section
 measures it on **NYISO**, on the **current, post-guard** extract.
 
 Instrument: `scripts/probes/_nyiso127_cc_outage_envelope.py`, record
-`results/calibration/_nyiso127_cc_outage_envelope.json`. Inputs are
+`results/phase0/nyiso/_nyiso127_cc_outage_envelope.json`. Inputs are
 `data/raw/campd-unit-outages-NYISO.csv` (the mechanical extract every keeper is
 calibrated against), its `-layup-` companion (the windows the guard vetoed), and
 `bin_assignments_NYISO.csv` for coverage. **No LP, no model output except the
@@ -251,7 +251,7 @@ any of four Gold Book editions, and it **ceased studying the interface in 2013**
 independently, the split targets the wrong boundary (measured annual eastward
 basis F|G **−$2.65 / −$0.36 / −$1.48**, i.e. Zone G prices *below* Zone F, while
 E|F carries **+$10.17 / +$5.09 / +$11.69**). Citation:
-`docs/handoffs/nyiso-124-charter-g0-g1-2026-08-04.md`; probe
+`docs/records/nyiso/nyiso-124-charter-g0-g1-2026-08-04.md`; probe
 `scripts/probes/_nyiso124_charter_g0_g1.py`. Already flagged-not-edited at
 `docs/codebase-site/data/mechanism-matrix.js` §5.5 and `docs/calibration-log/nyiso.md` §(6).
 
@@ -262,7 +262,7 @@ load-pocket scarcity"*. nyiso-125 moved the tail **3/0/14 → 18/2/21 h** with a
 no floor, no reserve mechanism — taking the gate from failing all three years to
 failing 2024 alone. "Cannot" is too strong; "has not been formed by any admissible
 *scarcity* mechanism tried" is what the record supports. Citation:
-`results/calibration/FINDING-nyiso125-seam-envelope-2026-08-04.md` §5.5.
+`docs/records/nyiso/FINDING-nyiso125-seam-envelope-2026-08-04.md` §5.5.
 
 **(c) NEW at nyiso-126, and it is the one that changes what is being carried.**
 C3a-2025 and C3c are **one object measured twice** (§3). The ledger currently
@@ -270,7 +270,7 @@ carries C3c as a *supporting* caveat while C3a is the *load-bearing* FAIL, with 
 text connecting them. Whatever the owner decides in §3, the ledger text should say
 that the two gates read the same defect — because as written it understates the
 scope of what the single ledgered slot is covering. Citation:
-`results/calibration/FINDING-nyiso126-seam-identification-and-c3a-decomposition-2026-08-04.md` §2.3(3).
+`docs/records/nyiso/FINDING-nyiso126-seam-identification-and-c3a-decomposition-2026-08-04.md` §2.3(3).
 
 **(d) A fourth item for the same package, from §1.4:** the DOF ledger's
 `GAS_AVAILABILITY_FACTOR[NYISO]` entry cites a symbol that does not exist at

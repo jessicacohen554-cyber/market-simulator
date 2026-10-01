@@ -1,9 +1,9 @@
 # FF-3F — CES campaign infrastructure hardening (T1 scale, L-CES)
 
 **Session:** FF-3F (Opus). **HEAD:** branch `claude/ces-campaign-infra-hardening-khyee5` off
-`origin/main` `e2ada84`. **Companion to** `docs/handoffs/ff-3b-ces-poc-2026-07.md` (the FF-3B
+`origin/main` `e2ada84`. **Companion to** `docs/records/forecast/ff-3b-ces-poc-2026-07.md` (the FF-3B
 POC that first proved the pipeline and found gap F-3) and
-`docs/handoffs/ces-w3r-readiness-2026-07.md` (the W3-R NO-GO).
+`docs/records/forecast/ces-w3r-readiness-2026-07.md` (the W3-R NO-GO).
 
 ## Verdict: the CES campaign MACHINERY is hardened and re-proven at T1
 

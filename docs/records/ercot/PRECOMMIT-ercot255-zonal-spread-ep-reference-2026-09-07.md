@@ -32,7 +32,7 @@ the work, not after:
    NOT derivable from an in-repo/API source."*
 4. **Daily Henry Hub cannot substitute, and the matrix says so twice.** ERCOT
    already runs `gas_daily_shape` **as a keeper mechanism** (cell `K`,
-   `docs/PRECOMMIT-ercot145-gas-daily-shape-2026-07-31.md`) — a mean-preserving
+   `docs/records/ercot/PRECOMMIT-ercot145-gas-daily-shape-2026-07-31.md`) — a mean-preserving
    daily HH staircase on the commodity. It cannot carry Uri because the February
    2021 basis is **additive and flat at +$54.4/MMBtu** while HH's own daily
    staircase peaks at ~4.5x a $5.35 month mean. And the two adjacent cells are

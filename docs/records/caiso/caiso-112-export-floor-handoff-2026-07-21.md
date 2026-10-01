@@ -28,7 +28,7 @@ A-leg (flag off) 2024 net = 42.03 TWh / 0 export hrs, identical to the keeper.
 **Fastest path — `git apply` the committed patches** (generated from the on-disk
 fix vs `origin/main`, this branch):
 ```
-git apply docs/handoffs/caiso112-commitment.patch docs/handoffs/caiso112-scenarios.patch
+git apply docs/records/caiso/caiso112-commitment.patch docs/records/caiso/caiso112-scenarios.patch
 ```
 The verbatim diffs are also inlined below (hand-apply via the Edit tool if the
 patches don't apply cleanly against a drifted base — both edits are small and

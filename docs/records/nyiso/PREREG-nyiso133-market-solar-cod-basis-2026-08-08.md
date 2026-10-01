@@ -22,7 +22,7 @@ Lever-queue item 2 was opened by nyiso-132 and reads, verbatim:
 
 **That attribution is REFUTED by measurement, ex ante, with no solve spent**
 (probe `scripts/probes/_nyiso133_commissioning_ramp.py`, record
-`results/calibration/_nyiso133_commissioning_ramp.json`).
+`results/phase0/nyiso/_nyiso133_commissioning_ramp.json`).
 
 Measurement (A), the **national** utility-scale PV commissioning ramp: 730
 single-vintage EIA-860 `OP` PV plants ≥ 5 MW, 36.4 GW, COD years 2019–2022,

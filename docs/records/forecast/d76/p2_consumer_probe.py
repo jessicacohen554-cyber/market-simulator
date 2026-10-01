@@ -12,7 +12,7 @@ from market_sim.model.capacity_evolution.retirements import (
 from scripts.run_capacity_hindcast import build_config
 
 ap = argparse.ArgumentParser(description=__doc__)
-ap.add_argument("--predeclare", default="docs/handoffs/d76/p2_predeclare.json")
+ap.add_argument("--predeclare", default="docs/records/forecast/d76/p2_predeclare.json")
 args = ap.parse_args()
 
 PRE = json.load(open(args.predeclare))

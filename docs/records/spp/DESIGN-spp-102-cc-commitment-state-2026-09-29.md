@@ -4,12 +4,12 @@
 nothing solve-affecting is built before the owner rules on this document.
 **Control.** Keeper `2026-09-28-spp-100-chp-scope` (bundle `spp100_arm_span`, 2019–2025). **LP spent: 0.**
 **Object.** In 2021/22, actual CC ran 7.3 / 4.8 TWh in hours where actual RT LMP ≤ $15. The keeper ran
-2.2 / 0.6 TWh there, and coal took the energy (`results/calibration/_spp89_coal_cc_swap.json`). The failing
+2.2 / 0.6 TWh there, and coal took the energy (`results/phase0/spp/_spp89_coal_cc_swap.json`). The failing
 validation rows it feeds are C1 CC_REGULAR −9.65 / −10.84 TWh and C1 COAL_PRB +13.20 / +13.17 TWh
 (2021 / 2022), and C4 gas 0.307 / 0.356. The C1 band is 8 TWh (`FUELMIX_VOL_CAP_TWH`), so CC needs
 **+1.7 TWh (2021) and +2.9 TWh (2022)** to pass, and coal needs −5.2 TWh.
 
-**Probes** (all zero LP; outputs in `docs/handoffs/spp102/`):
+**Probes** (all zero LP; outputs in `docs/records/spp/spp102/`):
 - `scripts/probes/_spp102_cc_commitment_drivers.py` → `cc_commitment_drivers.json` (driver census)
 - `scripts/probes/_spp102_trough_physics.py` → `trough_physics.json` (gap vs min-down, DA)
 - `scripts/probes/_spp102_stack_dump.py` + `_spp102_commit_dp.py` → `commit_dp.json` (physics bound)

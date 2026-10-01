@@ -3,7 +3,7 @@
   "session": "caiso-238",
   "keeper": "2026-09-01-caiso-231-b1-ungrounded",
   "bundle": "results/calibration/caiso231_b1_ungrounded",
-  "precommit": "results/calibration/PRECOMMIT-caiso238-grounding-charter-2026-09-02.md",
+  "precommit": "docs/records/caiso/PRECOMMIT-caiso238-grounding-charter-2026-09-02.md",
   "note": "Committed artifacts only \u2014 no LP, no solver, no replay. C3a is never this probe's object (rule 1 [R-STRUCT])."
  },
  "gates": {

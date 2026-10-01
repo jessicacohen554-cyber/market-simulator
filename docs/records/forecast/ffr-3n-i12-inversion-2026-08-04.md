@@ -10,7 +10,7 @@ changed, no band widened, no damper unarmed, no parameter tuned, nothing promote
 block is NOT lifted and owner decisions G.5 and D-9 are not pre-empted.
 
 Pre-registration, committed and pushed **before either arm solved**:
-`docs/PRECOMMIT-ffr3n-i12-inversion-2026-08-04.md` (commit `d962543e`).
+`docs/records/forecast/PRECOMMIT-ffr3n-i12-inversion-2026-08-04.md` (commit `d962543e`).
 
 ---
 

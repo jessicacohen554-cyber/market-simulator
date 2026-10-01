@@ -1,7 +1,7 @@
 # FINDING capx-D14 — NEISO's first T1-X crossover: FC-4 measured, and NEISO is the first ISO holding §2.1b legs (a)+(b)+(c)
 
 **Session.** capx-D14 (capacity-expansion / Forecast Finalization track), chartered at director
-refresh #13 (`docs/handoffs/capx-director-ledger-2026-08.md` §0j.4, lane D14) under the owner's
+refresh #13 (`docs/records/forecast/capx-director-ledger-2026-08.md` §0j.4, lane D14) under the owner's
 Q7 ruling (leg (c) closes on a MEASURED FC-4 — the card A-A reading made uniform, 2026-08-30).
 Branch `claude/capx-d14-neiso-t1x-r2yt44`, solved at **`8412c3f6`** (origin/main fetched
 in-session, clean tree — recorded in the bundle's own `run_config.json` git block); rebased onto

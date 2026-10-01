@@ -1,7 +1,7 @@
 # FINDING — Y-30: mechanical CI reds (2026-09-24)
 
 Lane **Y-30**, Model Audit & Release-Finalization Program. Charter: director board
-v42 §4 rows 3–4 and §5 (`docs/handoffs/audit-program-director-board-2026-08.md`).
+v42 §4 rows 3–4 and §5 (`docs/records/governance/audit-program-director-board-2026-08.md`).
 Director pin `40f4ed7a`; worked on a fresh branch off `main` @ `fd04cfda`.
 Source failure list: CI run 36017508801, job 107693710480 (86 failed / 2 errors).
 

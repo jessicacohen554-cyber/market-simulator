@@ -6,7 +6,7 @@
 fails 0, C3c the lone ledgered caveat.
 **Solves at the time of writing: ZERO.** Everything in §0–§5 is measured from committed
 artifacts plus three `fleet_only` rebuilds (no LP).
-**Machine records:** `results/calibration/_nyiso198_cricket_partload_phase0.json`,
+**Machine records:** `results/phase0/nyiso/_nyiso198_cricket_partload_phase0.json`,
 `_nyiso198_duct_peaking_basis_phase0.json`; probes
 `scripts/probes/nyiso198_cricket_partload_phase0.py`,
 `scripts/probes/nyiso198_duct_peaking_basis_phase0.py`.
@@ -286,7 +286,7 @@ span's measured result and, if §3's boundary reading requires it, on an owner r
 # ADDENDUM A — the F-1 / F-2 gates FAILED on the pre-solve rebuild, and what failed was §4's census, not the mechanism
 
 **Written and pushed BEFORE the screen solve; no LP has been run.** Record:
-`results/calibration/_nyiso198_rebuild_checks_2024.json`,
+`results/phase0/nyiso/_nyiso198_rebuild_checks_2024.json`,
 `scripts/probes/nyiso198_rebuild_checks.py`.
 
 ## A.1 What the gates returned

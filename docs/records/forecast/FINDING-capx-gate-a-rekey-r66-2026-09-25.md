@@ -22,16 +22,16 @@ Audit lane **Y-31** (`20aefec0`, "R-BC follow-on") then re-keyed those five rows
 promotions** landed without touching `program-status.json`. Each is a promoter miss. Five of them left four rows red at `c64e69eb`:
 
 - **CAISO**: R-CAISO-2, `8e9d7f80`. Owner: *"Is this a recommended keeper candidate? If so plz promote"*. Instrument:
-  `docs/handoffs/r-caiso-2/RESULT-r-caiso-2-2026-09-25.md` (+ PRECOMMIT); marker field `complete.CAISO.rekeyed_2026_09_25_rcaiso2`.
+  `docs/records/caiso/r-caiso-2/RESULT-r-caiso-2-2026-09-25.md` (+ PRECOMMIT); marker field `complete.CAISO.rekeyed_2026_09_25_rcaiso2`.
 - **ERCOT**: R-ERCOT-4, `1b3607ee`. The r-ercot2-chp-off recipe plus `ercot_partial_outage_day_guard=true`. Owner:
   *"Is this a recommended keeper candidate? If so plz promote. If structural integrity improves but gates regress that may still be a keeper.."*
-  Instrument: `docs/handoffs/RESULT-r-ercot-4-day-guard-2026-09-25.md`; marker field `complete.ERCOT.keeper_supersession`.
+  Instrument: `docs/records/ercot/RESULT-r-ercot-4-day-guard-2026-09-25.md`; marker field `complete.ERCOT.keeper_supersession`.
 - **MISO**, two promotions, both under the same standing ruling:
-  - miso-271, `b7afb06e`, WEFOR retired on {CC_REGULAR, ST_CHP, ST_GAS}: `docs/RESULT-miso271-cc-regular-shortfall-wefor-stack-2026-09-25.md`.
-  - miso-272, `413fb768`, `cc_block_summer_rating=true`: `docs/RESULT-miso272-cc-block-summer-rating-2026-09-25.md`.
+  - miso-271, `b7afb06e`, WEFOR retired on {CC_REGULAR, ST_CHP, ST_GAS}: `docs/records/miso/RESULT-miso271-cc-regular-shortfall-wefor-stack-2026-09-25.md`.
+  - miso-272, `413fb768`, `cc_block_summer_rating=true`: `docs/records/miso/RESULT-miso272-cc-block-summer-rating-2026-09-25.md`.
   - Shard fields: `promotion_note_miso271`, `promotion_note_miso272`.
 - **NEISO**: neiso-114, `2c2d324d` / merge `1788d66e`, `coal_mustrun_requires_measured_row=true`. Instrument:
-  `docs/handoffs/neiso114/RESULT-neiso114-2026-09-25.md`; shard field `neiso114_promotion_note`.
+  `docs/records/neiso/neiso114/RESULT-neiso114-2026-09-25.md`; shard field `neiso114_promotion_note`.
 
 The sixth promotion was PJM-NEXT (`bba37cf2`). It re-keyed its own row at source (`fb35e260`), so PJM was green, as
 were NYISO and SPP. Those three rows are **byte-unchanged**, per the stop gate. NWPP and SOCO show as notes only

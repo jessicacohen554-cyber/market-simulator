@@ -1,6 +1,6 @@
 {
  "probe": "ercot180_topcurve_edge_id",
- "precommit": "docs/PRECOMMIT-ercot180-top-scoped-grain-2026-08-08.md \u00a72",
+ "precommit": "docs/records/ercot/PRECOMMIT-ercot180-top-scoped-grain-2026-08-08.md \u00a72",
  "constants": {
   "TOP_FLOOR": 0.97,
   "LAST_K": 3,

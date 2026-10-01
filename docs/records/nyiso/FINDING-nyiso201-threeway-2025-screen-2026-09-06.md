@@ -5,9 +5,9 @@
 fails 0, C3c the lone ledgered caveat. **UNCHANGED.**
 **Control:** the keeper's committed bundle (rule 29(b) form 4; G-DRIFT §2.3, re-validated
 empirically at this HEAD).
-**Pre-registration:** `results/calibration/PREREG-nyiso201-threeway-2025-screen.md`, pushed with
+**Pre-registration:** `docs/records/nyiso/PREREG-nyiso201-threeway-2025-screen.md`, pushed with
 **zero solves** before the arm was run.
-**Machine record:** `results/calibration/_nyiso201_screen_gates_a3_2025.json` — every number this
+**Machine record:** `results/phase0/nyiso/_nyiso201_screen_gates_a3_2025.json` — every number this
 document cites. **ONE LP spent** (a one-year rule-29 screen, ~4 min); the bundle is deleted before
 merge (29(c)) and git history is the record.
 

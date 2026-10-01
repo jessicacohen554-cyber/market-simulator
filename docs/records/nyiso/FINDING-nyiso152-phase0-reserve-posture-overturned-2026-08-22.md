@@ -6,7 +6,7 @@ binds in Allegany's mid-load hours, (b) establish whether the hydro
 deliverability envelope or a nyca/east 10-min family drives the demand, and
 (c) settle whether the hydro RAMP10 seams as recorded are even the right
 repair. Probe: `scripts/probes/_nyiso152_phase0.py` → record
-`results/calibration/_nyiso152_phase0.json`, measured entirely on the
+`results/phase0/nyiso/_nyiso152_phase0.json`, measured entirely on the
 COMMITTED `nyiso151_armHC` (≡ registered `2026-08-22-nyiso-150-reserve-rearm`
 bit-exactly) and `nyiso151_control` (≡ keeper
 `2026-08-22-nyiso-151-identity-hr` bit-exactly) bundles — no solve, no holdout

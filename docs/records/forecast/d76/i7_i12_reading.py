@@ -36,7 +36,7 @@ cannot show the delta its OWN screens saw. Those ISOs are reported
 ``UNOBSERVABLE`` rather than graded against the HEAD delta, which is a
 different recipe's number.
 
-Output: ``docs/handoffs/d76/i7_i12_reading.json`` + a printed table.
+Output: ``docs/records/forecast/d76/i7_i12_reading.json`` + a printed table.
 """
 
 import json
@@ -210,7 +210,7 @@ def measured_peaks() -> dict[str, dict[int, float]]:
     Returns:
         ``{iso: {year: measured peak MW}}`` for the ``t1h`` recipe.
     """
-    census = json.loads(Path("docs/handoffs/d76/peak_census.json").read_text())
+    census = json.loads(Path("docs/records/forecast/d76/peak_census.json").read_text())
     return {
         b["iso"]: {
             int(y): r["measured_peak_mw"]
@@ -274,7 +274,7 @@ def main() -> int:
                   f"{str(row['i12']):>8} {row['reading']:>16}")
         out[iso] = {"bundle": bundle, "years": rows}
         print()
-    Path("docs/handoffs/d76/i7_i12_reading.json").write_text(
+    Path("docs/records/forecast/d76/i7_i12_reading.json").write_text(
         json.dumps(out, indent=2) + "\n"
     )
     return 0

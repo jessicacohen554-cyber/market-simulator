@@ -2,10 +2,10 @@
 
 **Lane:** SCN-WS1b-r2 (relaunch/re-scope of SCN-WS1b) · **Model:** `claude-opus-5`
 **Branch:** `claude/scn-ws1b2-carbon-sixiso-r4hm-t5hdbz` · **Date:** 2026-09-06
-**Charter:** plan `docs/handoffs/forecast-scenario-readiness-plan-2026-09.md` §7 "WS-1b" leg 1
-(= §3 WS-1 items 4–6); desk ledger `docs/handoffs/scenario-desk-ledger-2026-09.md` §0 r#6 am.1.
-**PRECOMMIT:** `docs/handoffs/PRECOMMIT-scn-ws1b-2026-09-06.md` (unedited) +
-`docs/handoffs/PRECOMMIT-scn-ws1b-2026-09-06-ADDENDUM.md` (§(a)–(f), all pushed **before** the
+**Charter:** plan `docs/records/forecast/forecast-scenario-readiness-plan-2026-09.md` §7 "WS-1b" leg 1
+(= §3 WS-1 items 4–6); desk ledger `docs/records/misc/scenario-desk-ledger-2026-09.md` §0 r#6 am.1.
+**PRECOMMIT:** `docs/records/forecast/PRECOMMIT-scn-ws1b-2026-09-06.md` (unedited) +
+`docs/records/forecast/PRECOMMIT-scn-ws1b-2026-09-06-ADDENDUM.md` (§(a)–(f), all pushed **before** the
 first solve). **DATA PROFILE:** `all`.
 
 ---
@@ -79,7 +79,7 @@ twelve chartered arms would have been six pairs of *byte-identical configs*, and
 would have measured solver determinism rather than carbon.
 
 Measured through the solves' own builder (`reference_config(iso, 2026, 2030, cmc=False)`),
-instrument `docs/handoffs/scn-ws1b/phase0-recensus-path-2026-09-06.py`:
+instrument `docs/records/forecast/scn-ws1b/phase0-recensus-path-2026-09-06.py`:
 
 | ISO | REF 2026 | ARM 2026 | **Δ 2026** | Δ 2027 | Δ 2028 | Δ 2030 | cause of the 2026 null |
 |---|---|---|---|---|---|---|---|
@@ -472,8 +472,8 @@ emission-rate seam can make that CO2 answer **sign-wrong**: **+9.99 Mt as scored
 capture applied**, on NEISO 2030 (`FINDING-scn-ws2b-2026-09-06.md` §8). Ruling **S5** holds every
 case carrying that exposure, and this ladder carries it in three of its five years.
 
-**What is committed and unrun:** `docs/handoffs/scn-ws1b/launch_ladder.sh` and
-`docs/handoffs/scn-ws1b/carbon-ladder-cases.yaml` (rungs `CARB-LO` / `CARB-MID` / `CARB-HI`).
+**What is committed and unrun:** `docs/records/forecast/scn-ws1b/launch_ladder.sh` and
+`docs/records/forecast/scn-ws1b/carbon-ladder-cases.yaml` (rungs `CARB-LO` / `CARB-MID` / `CARB-HI`).
 
 **What releases it:** the capx lane's repair of the CCS emission-rate seam in
 `src/market_sim/model/capacity_evolution/ccs.py` — **explicitly not this lane's file** (the routed

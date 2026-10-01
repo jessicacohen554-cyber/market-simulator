@@ -4,7 +4,7 @@
 promotion addendum's NAMED SUCCESSOR under the owner's standing
 2023-DISCRETE-CONFIG charter (rule-16 waiver INVOKED; Q-B/R-A superseded by
 the owner for 2023-targeted rounds — cited from the ercot-235 log entry).
-· **Charter:** `docs/PRECOMMIT-ercot236-h4097-shed-repair-2026-08-25.md`,
+· **Charter:** `docs/records/ercot/PRECOMMIT-ercot236-h4097-shed-repair-2026-08-25.md`,
 pushed + blob-verified BEFORE any solve; Amendment 1 records the D-0/D-1
 verdict before the V-legs ran. · **Prior keeper:**
 `2026-08-25-235-2023-discrete-k24` (`results/calibration/ercot235_r10`).

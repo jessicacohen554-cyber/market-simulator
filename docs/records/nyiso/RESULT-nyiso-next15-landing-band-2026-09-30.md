@@ -1,8 +1,8 @@
 # RESULT — NYISO-NEXT-15: per-landing-link monthly import band on five years — 2026-09-30
 
 - **Session:** NYISO-NEXT-15, the orchestrator. This container ran no LP (rule 32 (a)).
-- **Phase 0:** `docs/FINDING-nyiso-next15-landing-allocation-phase0-2026-09-30.md`.
-- **PRECOMMIT:** `docs/PRECOMMIT-nyiso-next15-landing-band-2026-09-30.md`. Its gates (§4) and promotion rule (§5) were fixed before any solve.
+- **Phase 0:** `docs/records/nyiso/FINDING-nyiso-next15-landing-allocation-phase0-2026-09-30.md`.
+- **PRECOMMIT:** `docs/records/nyiso/PRECOMMIT-nyiso-next15-landing-band-2026-09-30.md`. Its gates (§4) and promotion rule (§5) were fixed before any solve.
 - **Owner decision cards (this session):** "Build + test 5 yrs"; "P-32 per link"; "Promote per rule".
 - **Code:** PR #6900 (`nyiso_import_landing_band`, default off, zero free parameters).
 - **Arm pin:** `4c98e6dd460af9a600d48039176e0378cd577bf6`.
@@ -18,7 +18,7 @@
 
 ## 2. Gates and reported numbers (arm vs the NEXT-14 keeper's committed bundles, form 4)
 
-Records: `results/calibration/_nyisonext15_gates.json`, `_nyisonext15_compare_span.txt`, `_nyisonext15_compare_2021.txt`.
+Records: `results/phase0/nyiso/_nyisonext15_gates.json`, `_nyisonext15_compare_span.txt`, `_nyisonext15_compare_2021.txt`.
 
 | | 2021 | 2022 | 2023 | 2024 | 2025 |
 |---|---|---|---|---|---|

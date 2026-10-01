@@ -5,10 +5,10 @@
 C3c (`price_tail`) the sole ledgered caveat.
 
 **Prereg (committed BEFORE any statistic, any derive and any solve):**
-`results/calibration/PREREG-nyiso120-eastriver-scope-gate-2026-08-04.md`.
+`docs/records/nyiso/PREREG-nyiso120-eastriver-scope-gate-2026-08-04.md`.
 **Probes:** `scripts/probes/_nyiso120_eastriver_boundary.py` (no LP),
 `scripts/probes/_nyiso120_scope_gate_ab.py`.
-**Records:** `results/calibration/_nyiso120_eastriver_boundary.json`,
+**Records:** `results/phase0/nyiso/_nyiso120_eastriver_boundary.json`,
 `_nyiso120_scope_gate_ab.json`, `_nyiso120_artifact_A.csv`.
 
 **Session provenance.** The brief opened on **NEISO**, whose queue is

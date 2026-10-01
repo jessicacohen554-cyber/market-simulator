@@ -24,7 +24,7 @@ fail set **{C3a-2023, C3b-2023}**.
 
 **Signed authorization** — owner sitting 2026-08-09, decision card **D3**,
 option **(ii)**, *"authorized, sequenced after D2"*
-(`docs/DECISION-CARD-ercot182-c3a2023-reachability-2026-08-09.md` §4(b2) + §10).
+(`docs/records/ercot/DECISION-CARD-ercot182-c3a2023-reachability-2026-08-09.md` §4(b2) + §10).
 **D2 has landed** — `2026-08-09-ercot185-shaped-partial` is the keeper — so the
 sequencing precondition is met.
 
@@ -197,7 +197,7 @@ phenomenon. The control/arm delta is therefore exactly one boolean.
 
 ## 3. SEAM PROOFS — fixed here, run before any solve
 
-Written to `results/calibration/ercot186_grain_seamproof.json`, all three years,
+Written to `results/phase0/ercot/ercot186_grain_seamproof.json`, all three years,
 on the real keeper fleet.
 
 * **SP-1 (equivalence to the ercot-176 read).** For every plant prefix in the

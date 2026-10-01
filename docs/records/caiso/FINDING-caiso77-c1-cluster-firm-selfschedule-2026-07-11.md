@@ -33,7 +33,7 @@ on the caiso-76 keeper payload — model / actual / actual−model, GW online:
 
 Same-fleet, the model gas-CC is **over-committed in the belly AND the
 evening**, every year. There is no evening CC deficit to floor:
-`docs/handoffs/caiso-evening-cc-commitment-design-2026-07.md` §0's gate
+`docs/records/caiso/caiso-evening-cc-commitment-design-2026-07.md` §0's gate
 measurement was an artifact and the mechanism is **permanently not built** (a
 floor that adds evening CC energy would push the wrong direction in every
 year). The doc carries a matching tombstone note.

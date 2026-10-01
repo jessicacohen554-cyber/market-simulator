@@ -8,7 +8,7 @@ phase 0*; **Q3** *undecided — measure the shaping horizon, not the `Mode` labe
 or registered; no `ScenarioConfig` field; no `src/market_sim/` change; no marker moved; no cell
 letter changed; no held-out year spent.
 **Instruments:** `scripts/probes/nyiso219_pondage_duration.py` →
-`results/calibration/_nyiso219_pondage_duration.json`; new raw source `data/raw/nid/`
+`results/phase0/nyiso/_nyiso219_pondage_duration.json`; new raw source `data/raw/nid/`
 (USACE National Inventory of Dams, vintage 2026-08-28, provenance + checksum in its README).
 
 ---

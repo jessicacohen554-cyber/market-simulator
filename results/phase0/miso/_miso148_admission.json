@@ -1,6 +1,6 @@
 {
  "session": "miso-148",
- "prereg": "results/calibration/PREREG-miso148-cc-availability-summer-basis-2026-08-09.md",
+ "prereg": "docs/records/miso/PREREG-miso148-cc-availability-summer-basis-2026-08-09.md",
  "gate": "G-L1a/b/c-precheck \u2014 basis-aware admission on the real fleet, no LP",
  "years": {
   "2023": {

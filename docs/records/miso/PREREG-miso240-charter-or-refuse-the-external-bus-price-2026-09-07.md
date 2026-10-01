@@ -344,7 +344,7 @@ The FINDING will carry all four legs of the charter the handoff specifies, and *
 ## 6. Deliverables
 
 * `scripts/probes/_miso240_external_bus_price_charter_phase0.py` →
-  `results/calibration/_miso240_external_bus_price_charter_phase0.json`.
+  `results/phase0/miso/_miso240_external_bus_price_charter_phase0.json`.
 * `results/calibration/FINDING-miso240-*.md` carrying **every number this session will ever
   cite**, and the four-leg charter (a)–(d) with its DOF-free verdict.
 * Evidence appended to MISO's matrix shard + the `§5.4` queue stamp (rule 25, rule 28(b)

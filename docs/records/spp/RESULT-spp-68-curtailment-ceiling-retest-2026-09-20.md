@@ -5,7 +5,7 @@
 `2026-09-20-spp-67-yearown-rate`. The promotion question is put to the owner in §9 and was
 OPEN when this was written.**
 
-PRECOMMIT: `docs/handoffs/PRECOMMIT-spp-68-curtailment-ceiling-retest-2026-09-20.md`, pushed at
+PRECOMMIT: `docs/records/spp/PRECOMMIT-spp-68-curtailment-ceiling-retest-2026-09-20.md`, pushed at
 `05b2231da6e2e70bf9a122cece864a7673e2b2f7` **before any shard was launched**.
 Probes: `scripts/probes/_spp68_ceiling_phase0.py` (zero LP), `_spp68_arm_vs_control.py`,
 `_spp68_compose_span.py`. Attestations: `scripts/gen_spp68_attestation.py`.
@@ -307,7 +307,7 @@ LP. The seven gitignored leg bundles die with this container, and nothing depend
   is removing, or it double-counts in exactly the way 2019 shows.
 * R-ba, R-be and C3c are untouched.
 * The separate `[R-HOLDOUT]` footprint sweep is
-  `docs/handoffs/FINDING-spp-68-deleted-rule-footprint-sweep-2026-09-20.md` — five live instances,
+  `docs/records/spp/FINDING-spp-68-deleted-rule-footprint-sweep-2026-09-20.md` — five live instances,
   the largest a hard `SystemExit` gate in `run_capacity_hindcast.py`. Filed as cards; nothing
   edited outside SPP.
 

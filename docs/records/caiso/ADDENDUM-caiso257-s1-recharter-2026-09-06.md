@@ -172,7 +172,7 @@ with the artifact pair in its reverted (`fa23c1f7`) state — which is what
 `main` carries at `2485e611` — so the measurement isolates the code:
 
 > `--keeper-sha fa23c1f7` → artifact
-> `results/calibration/_caiso257_gdrift_at_solve.json`
+> `results/phase0/caiso/_caiso257_gdrift_at_solve.json`
 > **RESULT RECORDED IN §6.1 BEFORE THE SOLVE IS LAUNCHED.**
 
 The incremental scope `c274f1a0 → 2485e611` is **10 files, +616 / −44**, and
@@ -194,7 +194,7 @@ because a reading can miss a hunk and a bit-comparison cannot.
 
 ### §6.1 — THE MEASUREMENT, RECORDED BEFORE THE ARTIFACT PAIR IS RE-APPLIED
 
-> `PYTHONPATH=.:src uv run python scripts/probes/_caiso255_gdrift_identity.py --keeper-sha fa23c1f7 --out results/calibration/_caiso257_gdrift_at_solve.json`
+> `PYTHONPATH=.:src uv run python scripts/probes/_caiso255_gdrift_identity.py --keeper-sha fa23c1f7 --out results/phase0/caiso/_caiso257_gdrift_at_solve.json`
 >
 > **VERDICT: ALL LP INPUTS BIT-IDENTICAL**, all three years.
 

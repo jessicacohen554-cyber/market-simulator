@@ -50,7 +50,7 @@ OUT_DIR = CAMPD_UNIT_LEVEL_DIR
 BULK_BASE = "https://api.epa.gov/easey/bulk-files"
 
 # Holdout years (CLAUDE.md rule 22, amended 2026-07-06 per
-# docs/handoffs/holdout-policy-memo-2026-07.md Option 2): SOLVE and SCORE stay
+# docs/records/governance/holdout-policy-memo-2026-07.md Option 2): SOLVE and SCORE stay
 # fully quarantined until an ISO is declared calibration-complete, but DATA
 # INTAKE for these years is allowed for any ISO, any time, under explicit,
 # session-logged owner authorization — no calibration-complete marker
@@ -62,7 +62,7 @@ QUARANTINED_YEARS: frozenset[int] = frozenset({2022, 2026})
 def _enforce_quarantine(year: int, holdout_intake: str | None) -> None:
     """Refuse an un-authorized quarantined-year fetch (CLAUDE.md rule 22).
 
-    Amended 2026-07-06 (Option 2, docs/handoffs/holdout-policy-memo-2026-07.md):
+    Amended 2026-07-06 (Option 2, docs/records/governance/holdout-policy-memo-2026-07.md):
     data intake for a holdout year (2022, H1-2026) is permitted for any ISO,
     at any time, under explicit owner authorization — ``--holdout-intake
     <ISO>`` naming the target ISO is that authorization record. No
@@ -80,7 +80,7 @@ def _enforce_quarantine(year: int, holdout_intake: str | None) -> None:
             "holds 2022 and H1-2026 solve/score under quarantine until the "
             "target ISO is calibration-complete, but data intake is allowed "
             "any time under explicit owner authorization (rule 22 amendment, "
-            "docs/handoffs/holdout-policy-memo-2026-07.md Option 2). Pass "
+            "docs/records/governance/holdout-policy-memo-2026-07.md Option 2). Pass "
             "--holdout-intake <ISO> to record that authorization for this run."
         )
 

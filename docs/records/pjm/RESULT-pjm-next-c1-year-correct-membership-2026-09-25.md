@@ -5,7 +5,7 @@
 promote. If structural integrity improves but gates regress that may still be a keeper.."*. The ruling is applied on
 structure (rule 1). The recommendation is yes: three rule-14 repairs and zero criterion flips.
 
-Charter: `docs/PRECOMMIT-pjm-next-c1-year-correct-membership-2026-09-25.md` + `docs/PRECOMMIT-pjm-next-c1-ADDENDUM-g1-2026-09-25.md`.
+Charter: `docs/records/pjm/PRECOMMIT-pjm-next-c1-year-correct-membership-2026-09-25.md` + `docs/records/pjm/PRECOMMIT-pjm-next-c1-ADDENDUM-g1-2026-09-25.md`.
 
 ## 1. What changed (recipe = R-PJM-2 keeper + three flags, zero free parameters)
 
@@ -80,7 +80,7 @@ Shard commits (provenance only; the branches are transport):
 | control 2022 | `fb29bae51387` |
 
 The first launch lost 9 of 11 legs to two G1 wording defects in the parent's prompt and to OOM kills: a full clean regen
-starved the swapfile. The blocker records are in `docs/handoffs/pjm-next-c1-r1-blockers/`. All shards are archived.
+starved the swapfile. The blocker records are in `docs/records/pjm/pjm-next-c1-r1-blockers/`. All shards are archived.
 
 Leftover shard branches the owner must clear (sessions cannot delete refs, rule 33(f)):
 `claude/pjmnext-{c1,ctl}-*` and `claude/pjmnext-{c1,ctl}-*-r2`.
@@ -89,6 +89,6 @@ Leftover shard branches the owner must clear (sessions cannot delete refs, rule 
 
 - **Card 2 (F2 outage-extract drift)** needs the owner's OK to overwrite the committed `data/raw` outage extracts.
 - **Card 3 (unit partial derate)** is deprioritized on magnitude: ≤ 0.27 TWh/yr
-  (`docs/FINDING-pjm-next-c3-partial-derate-bound-2026-09-25.md`).
+  (`docs/records/pjm/FINDING-pjm-next-c3-partial-derate-bound-2026-09-25.md`).
 - **The rubric failures:** C1 CC_REGULAR 2024 (−14.7) on the training span. Coal over-dispatch in 2019–2022 is now larger
   row-level because of COAL-SUB (the coal-vs-gas offer ordering, card 4). C3a 2020, and C3b 2022.

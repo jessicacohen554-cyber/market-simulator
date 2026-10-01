@@ -1,8 +1,8 @@
 # PRECOMMIT — the forward-expectation entry signal, its A/B and its predictions
 
 _2026-08-25 · ENTRY-SIGNAL LANE (charter: the rung named by
-`docs/FINDING-entry-signal-disarm-2026-08.md` §6; root object
-`docs/FINDING-entry-screen-t1h-2026-08.md` §6 D-8, §7 L-1/L-1b). **Committed
+`docs/records/misc/FINDING-entry-signal-disarm-2026-08.md` §6; root object
+`docs/records/misc/FINDING-entry-screen-t1h-2026-08.md` §6 D-8, §7 L-1/L-1b). **Committed
 BEFORE any solve of the treatment arm exists** — the predictions below are
 pre-registered against bundles that have not been produced. The mechanism
 itself (`entry_forward_expectation_signal`, GATED default-OFF) landed one
@@ -59,7 +59,7 @@ are fixed here so they cannot drift post-hoc:
   comparison is treatment vs the same-tree control; the committed brackets
   (`…-t1h-control`, key `28cef3500ec1fd9e`; `…-t1h-disarm`, key
   `2eab21467a4214c7`; ledger evidence
-  `results/calibration/entry_signal_disarm_ledger_ercot.json`) are the
+  `results/phase0/ercot/entry_signal_disarm_ledger_ercot.json`) are the
   registered anchors, and any drift of the same-tree control from the
   committed control is **reported at full magnitude, never chased** (the
   disarm finding §5.2 pattern). If the same-tree control reproduces the
@@ -70,7 +70,7 @@ are fixed here so they cannot drift post-hoc:
   concurrently** (rule 12).
 - **Scoring:** `scripts/score_capacity_hindcast.py --bundle <each>`; then the
   ledger-compare probe (the disarm pattern) emits
-  `results/calibration/entry_signal_fwd_expectation_ercot.json`.
+  `results/phase0/ercot/entry_signal_fwd_expectation_ercot.json`.
 
 ## 3. Pre-registered predictions
 

@@ -52,7 +52,7 @@ _PRICE_UNITS = {"usd_per_short_ton", "usd_per_tonne"}
 # which had it backwards"), and it was actively harmful: it is why
 # STATE_CARBON_PRICE_BY_ISO carried no 2022 key, which made a NYISO 2022 solve
 # charge $0/tCO2 RGGI silently -- the D-1 defect of
-# results/calibration/ASSESSMENT-nyiso134-2022-readiness-2026-08-14.md.
+# docs/records/nyiso/ASSESSMENT-nyiso134-2022-readiness-2026-08-14.md.
 #
 # The spend gates are unchanged and live where they belong: the CLI year gate in
 # run_calibration_full, legitimacy_diagnostics.run_d6_quarantine, audit_keepers,

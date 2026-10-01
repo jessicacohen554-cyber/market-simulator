@@ -682,7 +682,7 @@ actual's monthly "shape" is the fleet's COD ramp (r=0.934 vs cumulative
 in-service MW, EIA-860 198→804 MW in-year); per in-service MW the residual
 shape is degenerate by the scorer's own CV floor (0.175 < 0.25) and
 uncorrelated with the model (r≈0.02). Full write-up:
-`results/calibration/FINDING-miso-c5c-storage-shape-basis-2026-07.md`;
+`docs/records/miso/FINDING-miso-c5c-storage-shape-basis-2026-07.md`;
 (storage_shape, 2025) enters the miso-61 exceptions ledger alongside the
 carried C5b entry (2 of 3 budgeted). Scorer-side BAT-vs-BAT + per-MW fix
 flagged to the rubric-infrastructure lane.

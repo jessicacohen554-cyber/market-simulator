@@ -54,7 +54,7 @@ parameter).
 
 ## 2. Phase-0 census (zero-solve, rule frozen at `92847a8`)
 
-Record: `results/calibration/_miso193_duct_peaking_phase0.json`. All
+Record: `results/phase0/miso/_miso193_duct_peaking_phase0.json`. All
 quantities derive from the exact bases the mechanism reads at solve time:
 `fleet.cc_duct_peaking_pct()` (the EIA-860 Generator_Y Operable CC map) and
 the load-bearing `load_fleet_from_csv → fleet_to_bins → bins_to_fleet` build
@@ -119,7 +119,7 @@ cap A/B.
 - Directional prereg (frozen in phase 0, before any census quantity):
   C3a DOWN, confidence 0.8.
 
-RESULTS (gates record `results/calibration/_miso193_ab_gates.json`; runs
+RESULTS (gates record `results/phase0/miso/_miso193_ab_gates.json`; runs
 `2026-08-31-miso-193-control` / `2026-08-31-miso-193-duct-cap`, both
 registered):
 

@@ -57,7 +57,7 @@ this repair the two structures answer different questions and no longer collide.
 ## §3 — what was measured, ex ante, with no LP
 
 `scripts/probes/pjm151_seam_envelope_attribution.py` →
-`results/calibration/_pjm151_seam_envelope_attribution.json`. p90, ties **netted
+`results/phase0/pjm/_pjm151_seam_envelope_attribution.json`. p90, ties **netted
 within the hour before the directional clip** (exactly what `pjm_zonal_interchange`
 does with `np.add.at` over signed flows). Legacy cap ÷ direct cap, and the fraction
 of (month × hod) cells in which the legacy cap sits below the seam's TTC and can

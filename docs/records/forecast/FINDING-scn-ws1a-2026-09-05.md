@@ -1,6 +1,6 @@
 # FINDING — SCN-WS1a: federal carbon-price semantics (G-C1, gated on owner card D-1) + the two seam defects (G-C2, G-C3) + the pre-declared CAP-STATE-TIGHT case
 
-**Lane:** SCN-WS1a (desk ledger r#1, `docs/handoffs/scenario-desk-ledger-2026-09.md` §1/§5),
+**Lane:** SCN-WS1a (desk ledger r#1, `docs/records/misc/scenario-desk-ledger-2026-09.md` §1/§5),
 plan §3 WS-1 items 1–3 + §7 "WS-1a". Model Fable. Branch `claude/scn-ws1a-carbon-d1-eupbi5`
 (the harness assigned this stem in place of the ledger's nominal `claude/scn-ws1a-p4qd`; the
 file paths are what matter). Branched off `origin/main` at `5cc1e7ce` (= desk pin `d01ab8b0`
@@ -24,7 +24,7 @@ the FLOOR ruling would authorize.
 
 ### 0.1 The resolved carbon trajectory per ISO per horizon year per `policy_bundle`, at HEAD
 
-Instrument: `docs/handoffs/scn-ws1a/phase0-carbon-trajectory-2026-09-05.py` (its full
+Instrument: `docs/records/forecast/scn-ws1a/phase0-carbon-trajectory-2026-09-05.py` (its full
 25-year output is the `.json` beside it; the `.txt` is the console table). It evaluates the
 LIVE resolver — `resolve_policy_bundle` → `apply_iso_scenario_defaults` →
 `policy.carbon.resolve_carbon_price(config, year)` — so every number below is exactly what
@@ -82,7 +82,7 @@ RGGI ISOs — NYISO 2031–2047 (max +$9.05), NEISO 2033–2042 (max +$3.32) —
 (max gap −$5.06). So a floor makes the `tight` bundle's carbon leg bite ONLY on ERCOT / PJM /
 MISO, and a "federal carbon price" scenario on a program ISO written as an RFF path becomes an
 increase only with the `high` path and only in those windows. §6 carries this as the central
-evidence for the owner. (Instrument: `docs/handoffs/scn-ws1a/gc2-import-offers-2026-09-05.py`,
+evidence for the owner. (Instrument: `docs/records/forecast/scn-ws1a/gc2-import-offers-2026-09-05.py`,
 second block.)
 
 ### 0.2 Anchor re-verification at the branch point (`5cc1e7ce`)
@@ -98,7 +98,7 @@ second block.)
 
 ### 0.3 G-C2 zero-LP census — what the seam resolves to, and what the offer path prices
 
-Instrument: `docs/handoffs/scn-ws1a/gc2-seam-census-2026-09-05.py` (output `.txt` beside it).
+Instrument: `docs/records/forecast/scn-ws1a/gc2-seam-census-2026-09-05.py` (output `.txt` beside it).
 CAISO, `mode="forecast"`, 2026, ISO defaults applied, base vs `carbon_price_delta=25`:
 
 | arm | `resolve_carbon_price(config, 2026)` | expected border adder 0.428 × price | `spec.corridors[*].carbon_adder` (spec.py:1931, per-hub posture) | runner-path border (`runner.py:1321`, `wecc_border_carbon_adder(resolve_carbon_price(...))`) |
@@ -238,7 +238,7 @@ layering). Tests `TestBorderSeamResolvesCarbon` (same test file): the corridor a
 by exactly `0.428 × 25` under `carbon_price_delta=25`, and equals the border the runner prices
 the import fleet with.
 
-**Pre/post identity of everything the LP consumes** (`docs/handoffs/scn-ws1a/` census re-run
+**Pre/post identity of everything the LP consumes** (`docs/records/forecast/scn-ws1a/` census re-run
 against the pre-fix snapshot, four postures: base / delta=25 × single-node / per-hub):
 
 | posture | import `Generator` list pre == post | `Corridor.carbon_adder` pre → post |
@@ -259,7 +259,7 @@ test_interchange_config.py`, `tests/unit/data/test_capacity_deliverability_wirin
 Solved on this branch's code (post-fix tree) after a full `data/clean` regeneration (55
 datatypes, green): `run_driver_battery.py --iso CAISO --start-year 2026 --end-year 2026
 --paired-arm {base,carbon_plus25}` — the FC-6 construction, `golden_posture=True`, `cmc=False`.
-Records: `docs/handoffs/scn-ws1a/t0/` (both `full_horizon_summary.json` + `run_config.json`,
+Records: `docs/records/forecast/scn-ws1a/t0/` (both `full_horizon_summary.json` + `run_config.json`,
 the scoring instrument and its JSON, the launch script, the pair log).
 
 | arm | cache key | wall | peak RSS | resolved carbon 2026 | CO2 Mt | load-weighted price $/MWh | max hourly $/MWh |
@@ -523,8 +523,8 @@ guessing:
 
 ## 7. Records
 
-- Instruments and outputs: `docs/handoffs/scn-ws1a/` (Phase-0 trajectory `.py/.json/.txt`,
-  G-C2 seam census, import-offer table); `docs/handoffs/scn-ws1a/t0/` (the CAISO T0 pair:
+- Instruments and outputs: `docs/records/forecast/scn-ws1a/` (Phase-0 trajectory `.py/.json/.txt`,
+  G-C2 seam census, import-offer table); `docs/records/forecast/scn-ws1a/t0/` (the CAISO T0 pair:
   summaries, run configs, scoring instrument + JSON, launch script, pair log).
 - Code: `src/market_sim/policy/cap_and_trade.py` (+`carbon_mc_column`), `src/market_sim/
   runner.py` (the `assemble_mc` call site + one import), `src/market_sim/model/interchange/

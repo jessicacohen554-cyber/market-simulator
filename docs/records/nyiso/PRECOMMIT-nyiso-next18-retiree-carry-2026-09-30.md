@@ -1,7 +1,7 @@
 # PRECOMMIT — NYISO-NEXT-18: the mid-vintage retiree carry (Indian Point 3) — 2026-09-30
 
 - **Session:** NYISO-NEXT-18, the orchestrator. This container runs no LP (rule 32 (a)).
-- **Phase 0:** `docs/FINDING-nyiso-next18-upstate-price-phase0-2026-09-30.md`.
+- **Phase 0:** `docs/records/nyiso/FINDING-nyiso-next18-upstate-price-phase0-2026-09-30.md`.
 - **Queue:** item 1 (2021 C3a +11.1 %, the owner's block on `complete`).
   - Phase 0 answers the queued question: the link, not the upstate stack (FINDING §1). No new transport lever is proposed there.
   - This arm is the defect phase 0 found on the way: Indian Point 3 missing from Jan–Apr 2021 (FINDING §2). It is **not** a CENTRAL EAST lever.

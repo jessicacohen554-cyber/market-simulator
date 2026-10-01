@@ -15,12 +15,12 @@ MONTHLY limb (annual / 12 per month over the pooled footprint), because
 
 Read-only. Inputs: the keeper bundle's ``dispatch/<Y>_P1.parquet`` (recomposed
 from the neiso-115 legs, gitignored), the G-DRIFT dumps ``<dump>/<tag>_<Y>.npz``
-written by ``docs/handoffs/neiso114/gdrift_fleet_probe.py``, and the raw
+written by ``docs/records/neiso/neiso114/gdrift_fleet_probe.py``, and the raw
 ``data/raw/coal-{stocks,receipts}`` CSVs.
 
 Usage::
 
-    uv run python docs/handoffs/neiso116/phase0_coal_budget_census.py \\
+    uv run python docs/records/neiso/neiso116/phase0_coal_budget_census.py \\
         --bundle results/calibration/neiso114b_span --dump <dir> --tag basis
 """
 

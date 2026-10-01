@@ -5,7 +5,7 @@ from the curated NYISO MIS component record plus committed keeper/bench
 artifacts. Freeze ACTIVE; no year outside {2023, 2024, 2025} solved or scored
 (the 2022 numbers cited from nyiso-158 are that finding's, re-quoted, not
 re-measured). Zero fitted scalars. Machine-readable record:
-`results/calibration/_nyiso159_loss_phase0.json` (probe
+`results/phase0/nyiso/_nyiso159_loss_phase0.json` (probe
 `scripts/probes/_nyiso159_loss_phase0.py`).
 
 **Keeper under diagnosis:** `2026-08-30-nyiso-157-par-attribution` (NOT-YET on

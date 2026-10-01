@@ -56,11 +56,11 @@ the pre-registration doing its job — but only after 21 minutes of LP.
 
 ### 2.1 The consequence: the leg's recipe changes, and the change is disclosed here
 
-PRECOMMIT §5.1 quoted `bash docs/handoffs/d78r2/run_full.sh control-P`. **That command no longer
+PRECOMMIT §5.1 quoted `bash docs/records/forecast/d78r2/run_full.sh control-P`. **That command no longer
 reaches the graded control**, so the leg runs as
 
 ```
-bash docs/handoffs/d78r3/run_ctl.sh          # adds --no-pjm-vre-accreditation-vintage
+bash docs/records/forecast/d78r3/run_ctl.sh          # adds --no-pjm-vre-accreditation-vintage
 ```
 
 out-dir `results/hindcast/pjm-2021-2025-realized-t1h-d78r3-control-P`, HEAD-guarded, deleted

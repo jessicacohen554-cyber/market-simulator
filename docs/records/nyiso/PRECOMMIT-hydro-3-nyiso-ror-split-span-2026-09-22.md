@@ -2,7 +2,7 @@
 
 **Session** hydro-3 (ORCHESTRATOR, rule 32 `[R-SHARD]` (a); zero LP in this container).
 **Owner ruling (verbatim reply "1")** to option 1 of
-`docs/FINDING-hydro-3-nyiso-2022-g2-is-seam-spill-2026-09-22.md`: *promote `hydro_ror_split` now
+`docs/records/nyiso/FINDING-hydro-3-nyiso-2022-g2-is-seam-spill-2026-09-22.md`: *promote `hydro_ror_split` now
 under the "structure improves even if a gate regresses" standard, with the 2022 G2 miss reported at
 full magnitude and attributed to the Central-East seam (nyiso-237).*
 

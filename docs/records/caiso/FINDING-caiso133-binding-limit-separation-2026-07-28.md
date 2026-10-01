@@ -233,7 +233,7 @@ ask memo §2 envelope, above all **E1 (2025 spillover ≤ +$0.00)** — 2025 has
 
 ## §7 — Part 1's first dividend: ask A2's D1 is now computable, and it passes
 
-`docs/handoffs/caiso-131-c3c-c3a-ask-2026-07-27.md` §4 records A2's D1 as
+`docs/records/caiso/caiso-131-c3c-c3a-ask-2026-07-27.md` §4 records A2's D1 as
 **BLOCKED** on exactly the data the unit sidecar now carries. It is now a read:
 
 | year | TOTAL thermal headroom (min / p10) | **PLANT-LEVEL ONLINE thermal (min / p10)** | offline quick-start (min) |

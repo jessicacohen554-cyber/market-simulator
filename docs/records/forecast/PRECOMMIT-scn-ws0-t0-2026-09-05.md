@@ -2,7 +2,7 @@
 
 Rule 29 `[R-SCREEN]` precommit, written and pushed **before** the lane's only
 solve. Lane: SCN-WS0 (`claude/scn-ws0-k7m2-8743yi`), charter
-`docs/handoffs/forecast-scenario-readiness-plan-2026-09.md` §3 WS-0 / §7 "WS-0".
+`docs/records/forecast/forecast-scenario-readiness-plan-2026-09.md` §3 WS-0 / §7 "WS-0".
 
 ## 1. What is being solved, and what it is for
 
@@ -101,4 +101,4 @@ establish HEAD drift against a keeper, which is not what this is.
 ## 5. Cost
 
 Two NEISO invocations, one solve-year each, run concurrently. Wall and peak RSS
-are recorded in `docs/handoffs/FINDING-scn-ws0-2026-09-05.md` when they land.
+are recorded in `docs/records/forecast/FINDING-scn-ws0-2026-09-05.md` when they land.

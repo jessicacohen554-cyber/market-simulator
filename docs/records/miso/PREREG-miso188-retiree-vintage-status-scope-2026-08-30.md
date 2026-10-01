@@ -248,7 +248,7 @@ status), `n_scalars` 0, `n_residual` unchanged at 2.
 ## 5. Instrument
 
 `scripts/probes/_miso188_ab_gates.py` →
-`results/calibration/_miso188_ab_gates.json` — the miso-187 scorer
+`results/phase0/miso/_miso188_ab_gates.json` — the miso-187 scorer
 re-keyed (KEEPER `miso187_nuc_B` / CONTROL `miso188_rvs_A` / ARM
 `miso188_rvs_B`; the S-1 witnesses and S-2 threshold above), committed
 **after this PREREG and before it is run** (the miso-184 order). If

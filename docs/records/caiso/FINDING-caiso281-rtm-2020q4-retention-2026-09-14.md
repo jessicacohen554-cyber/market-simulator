@@ -1,7 +1,7 @@
 # FINDING — caiso-281 backfill shard, 2020 Q4: OASIS PUB_BID archive does NOT reach this quarter
 
 **Lane:** caiso-281 RTM offer-surface intake, BACKFILL wave (charter:
-`docs/PRECOMMIT-caiso281-rtm-offer-surface-intake-2026-09-13.md`).
+`docs/records/caiso/PRECOMMIT-caiso281-rtm-offer-surface-intake-2026-09-13.md`).
 **Shard:** 2020 Q4 (2020-10-01 .. 2020-12-31), fetch+aggregate.
 **Date:** 2026-09-14. **Pin:** `7fe0a10c77983946b1e06a90ca2eea3c30794d0c`.
 

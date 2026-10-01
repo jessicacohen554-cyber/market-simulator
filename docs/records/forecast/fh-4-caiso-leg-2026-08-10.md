@@ -6,7 +6,7 @@ The FH-4 lift is **UNCONDITIONAL** (Addendum AI.1: the ERCOT step-0 gate PASSED
 at 0.0 % vs the 26.8 % reference, discharging the AG.2 condition; the five
 sibling legs are released per §0ag). This leg therefore has **no step-0 gate**;
 the **I6 rider** applies to both arms (§1.7). Protocol of record:
-`docs/handoffs/fh-4-ercot-leg-2026-08-09.md`, executed for CAISO at **SHIPPED
+`docs/records/forecast/fh-4-ercot-leg-2026-08-09.md`, executed for CAISO at **SHIPPED
 DEFAULTS** — no keeper contact, no arming, no tuning.
 
 ---

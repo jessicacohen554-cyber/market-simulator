@@ -83,7 +83,7 @@ Cap-weighted gas fuel price $/MMBtu, off → on:
 - **Other storm months:** Jan-2022 Plains 35.86 → 5.12 and Illinois 15.02 → 7.95 (the old level smear);
   Dec-2022 (Elliott) every northern zone rises 6.7–8.8 → 9.8–13.0.
 
-Full per-year, per-zone table: `results/calibration/_miso276_winter_gas_footprint.json`
+Full per-year, per-zone table: `results/phase0/miso/_miso276_winter_gas_footprint.json`
 (`scripts/probes/_miso276_winter_gas_footprint.py`).
 
 ## 5. Predictions (directions only, fixed before any shard)

@@ -12,7 +12,7 @@
 ## 0. What Phase-0 established (the diagnosis this repair is grounded on)
 
 Full record: `scripts/probes/ercot223_shed_phase0.py` →
-`results/calibration/ercot223_shed_phase0.json` (committed before this
+`results/phase0/ercot/ercot223_shed_phase0.json` (committed before this
 precommit; read-only, committed artifacts only, no LP). Summary of the
 measured causal chain, every identity closing to numerical precision:
 

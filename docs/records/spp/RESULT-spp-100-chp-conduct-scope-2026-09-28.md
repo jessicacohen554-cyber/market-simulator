@@ -1,7 +1,7 @@
 # RESULT — SPP-100: the CHP steam-level swap, scoped to hosts whose meter supports an all-hours floor
 
 **Lane** SPP-100 · control = keeper `2026-09-28-spp-99-remap-rederive` (`spp99_remap_span`, rule 29(b) form 4) ·
-PRECOMMIT `docs/handoffs/PRECOMMIT-spp-100-chp-conduct-scope-2026-09-28.md` (merged `2e1f387d`; Addendum A
+PRECOMMIT `docs/records/spp/PRECOMMIT-spp-100-chp-conduct-scope-2026-09-28.md` (merged `2e1f387d`; Addendum A
 shard-check repair merged `11b72265`, the round-2 pin) · registered run **`2026-09-28-spp-100-chp-scope`**, bundle
 `results/calibration/spp100_arm_span` (2019–2025).
 

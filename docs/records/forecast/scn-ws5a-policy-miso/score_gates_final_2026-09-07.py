@@ -21,7 +21,7 @@ the §6 cost table, entirely from COMMITTED artifacts:
 so its headline row is reconstructed from its own summary + duals. Every field this
 scorer needs for it is present there.
 
-Run:  PYTHONPATH=. python3 docs/handoffs/scn-ws5a-policy-miso/score_gates_final_2026-09-07.py
+Run:  PYTHONPATH=. python3 docs/records/forecast/scn-ws5a-policy-miso/score_gates_final_2026-09-07.py
 """
 
 from __future__ import annotations

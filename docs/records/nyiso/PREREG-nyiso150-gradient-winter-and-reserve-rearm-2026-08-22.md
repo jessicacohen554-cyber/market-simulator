@@ -9,7 +9,7 @@ freeze ACTIVE and untouched — every year solved, scored or read is 2023–2025
 **Authorization.** The owner's in-session directive (2026-08-22, verbatim): *"Is
 NYISO at frontier? If not, please continue working thru and finalizing to reach
 frontier."* Read together with
-`docs/DECISION-CARD-nyiso148-2025-level-remainder-2026-08-21.md` Q1 option A
+`docs/records/nyiso/DECISION-CARD-nyiso148-2025-level-remainder-2026-08-21.md` Q1 option A
 (*charter the 2025 offer-level object, with the gradient and the tail as
 co-criteria* — the card's own recommendation, and "the last thing standing
 between NYISO and a frontier declaration"), this session takes the directive as
@@ -57,7 +57,7 @@ pre-registered gates below clear and the re-verified determination is not worse
 
 Evaluating the shipped construction at both flag settings
 (`scripts/probes/_nyiso150_gradient_phase0.py`,
-`results/calibration/_nyiso150_gradient_phase0.json`):
+`results/phase0/nyiso/_nyiso150_gradient_phase0.json`):
 
 1. **NYC's gas is IDENTICAL flag-on and flag-off in every month of every year.**
    The committed `transco_z6_iroquois_monthly.csv` Iroquois column is

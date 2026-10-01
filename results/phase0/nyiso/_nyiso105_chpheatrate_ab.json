@@ -1,6 +1,6 @@
 {
  "probe": "nyiso-105 measured_chp_heat_rates A/B",
- "prereg": "results/calibration/PREREG-nyiso105-chp-heat-rates-2026-07-31.md",
+ "prereg": "docs/records/nyiso/PREREG-nyiso105-chp-heat-rates-2026-07-31.md",
  "arms": {
   "A_control": "nyiso105_control_A",
   "B": "nyiso105_chpheatrate_B",

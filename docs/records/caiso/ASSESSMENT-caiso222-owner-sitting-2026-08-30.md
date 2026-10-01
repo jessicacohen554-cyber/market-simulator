@@ -13,13 +13,13 @@ matrix cell verdict, no derive.
 
 Instruments (committed; no LP, no network):
 `scripts/probes/_caiso222_c3a_disposition.py` →
-`results/calibration/_caiso222_c3a_disposition.json` — the six-keeper
+`results/phase0/caiso/_caiso222_c3a_disposition.json` — the six-keeper
 (seven-config) scorer re-measurement plus the disposition-variant arithmetic,
 computed mechanically from each run's scored table per the aggregation
 semantics `scripts/calibration_verdict.py` documents (no scorer constant
 modified). The prior sitting's instrument and standard:
-`docs/handoffs/caiso-186-owner-sitting-2026-08-09.md` §b; the ruling it
-produced: `results/calibration/caiso191-owner-rulings-2026-08-11.md` ruling 5.
+`docs/records/caiso/caiso-186-owner-sitting-2026-08-09.md` §b; the ruling it
+produced: `docs/records/caiso/caiso191-owner-rulings-2026-08-11.md` ruling 5.
 
 ---
 
@@ -396,7 +396,7 @@ dangles** (the script found none — no `--force-uncite` needed; the matrix
 `ev` citation is advisory by design and now annotated in the shard).
 **Nothing is retracted and no result is lost**: the pair's determinations and
 every measured number stand in `FINDING-caiso205-adaptive-ab-2026-08-19.md`,
-`PRECOMMIT-caiso205…`, `results/calibration/caiso205_gates.json` (all
+`PRECOMMIT-caiso205…`, `results/phase0/caiso/caiso205_gates.json` (all
 retained), the matrix cell, the log, and git history. `audit_keepers --iso
 CAISO` PASS 0/0 after the prune. **Scope note**: `caiso-200` is retained
 deliberately — it is the immediate-prior keeper and the caiso-220 keeper's
@@ -407,7 +407,7 @@ adjudicated here.
 ## §7 — Record changes and filed items (rule 28b — CAISO shard only)
 
 * This ASSESSMENT; `scripts/probes/_caiso222_c3a_disposition.py`;
-  `results/calibration/_caiso222_c3a_disposition.json`.
+  `results/phase0/caiso/_caiso222_c3a_disposition.json`.
 * The caiso-205 pair prune (§6): 2 registry sidecars + 2 run payloads + 2
   bundle dirs deleted.
 * Matrix §5.2: caiso-222 block added above caiso-221's; CAISO shard `gates`

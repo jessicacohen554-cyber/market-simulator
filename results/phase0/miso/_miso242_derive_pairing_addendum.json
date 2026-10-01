@@ -1,6 +1,6 @@
 {
   "probe": "miso-242 V-1..V-5 \u2014 does the SPP ladder's derive pair across years?",
-  "addendum": "results/calibration/ADDENDUM-miso242-the-derive-pairs-across-years-2026-09-07.md",
+  "addendum": "docs/records/miso/ADDENDUM-miso242-the-derive-pairs-across-years-2026-09-07.md",
   "zero_lp": true,
   "repairs_nothing": true,
   "atol": 0.005,

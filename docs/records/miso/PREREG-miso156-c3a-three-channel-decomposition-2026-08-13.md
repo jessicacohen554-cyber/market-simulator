@@ -65,7 +65,7 @@ C3a**:
 * `scripts/probes/_miso134_ct_night_order_screen.py::build_year` (returns
   `fuel_prices` **(n_gen, T)** and `mc_base`), `_miso155_p0_exact_instrument.py`
   (`read_solve_floor`, `reconstruct_p1_floorsfirst`), and
-  `results/calibration/_miso155_p0_exact_instrument.json` `FLOOR_source` block.
+  `results/phase0/miso/_miso155_p0_exact_instrument.json` `FLOOR_source` block.
 * `scripts/run_calibration.py:3307-3372` — the production reliability-floor
   application, and `market_sim.model.transmission.inject_reliability_floor`.
 * The keeper's `run_config.json` armed-field census, and the **definitions**

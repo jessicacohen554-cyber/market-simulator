@@ -4,7 +4,7 @@
 nothing re-scored; C8's committed plant-grain verdict stands on every ISO. Replay bundles
 live in the gitignored `scratch/` tree and are never registered (rule 29(c)).
 
-Companion to `docs/PREREG-c8-unit-grain-sweep-2026-09-06.md`, whose predictions P1–P8 /
+Companion to `docs/records/misc/PREREG-c8-unit-grain-sweep-2026-09-06.md`, whose predictions P1–P8 /
 W1–W2 remain **UNGRADED** for the four ISOs below.
 
 ## 1. Where the sweep got to

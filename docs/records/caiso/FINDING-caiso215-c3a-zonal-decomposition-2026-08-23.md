@@ -55,7 +55,7 @@ Instruments (committed, no LP, no solve):
   of its stdout). Imports the committed caiso-202 probe for the CA-wide
   machinery (`sidecars`/`ca_lambda`/`rubric_weights`/`month_of_hour`), so the
   control is provably the same construction re-sliced.
-* `results/calibration/_caiso215_c3a_zonal_decomp.json` — every table below,
+* `results/phase0/caiso/_caiso215_c3a_zonal_decomp.json` — every table below,
   committed (deterministic; sorted keys, no timestamps).
 * Controls: (i) the unmodified `_caiso202_c3a_decomp.py` re-run reproduces
   FINDING-caiso202 §A/§B exactly (2023 55.60/54.17 +2.6 %, basis +7.55; 2024

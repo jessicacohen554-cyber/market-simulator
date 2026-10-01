@@ -54,7 +54,7 @@ TASK (do nothing else):
 2. If a measured-input or structural root cause is found (rules 1, 13, 14; no fitted adder, no haircut):
    - build it under a flag, with zero or measured parameters;
    - tests: off path byte-identical;
-   - then 7 shards, one per year 2019–2025 (rule 36). Use docs/handoffs/r-caiso-17/shard-prompt.md as the template:
+   - then 7 shards, one per year 2019–2025 (rule 36). Use docs/records/caiso/r-caiso-17/shard-prompt.md as the template:
      `{SRC}` = rcaiso17_A_tp_2019_2021 (2019–21) / rcaiso17_A_span (2022–25), with new hard-stop counts.
      Pin the full SHA after your build PR merges. The parent never solves (rule 32(a)).
 3. If the residual is a benchmark-basis artifact, or has no admissible lever:

@@ -6,9 +6,9 @@ pre-registered gates PASS — and LEFT PENDING, not armed.** Keeper UNCHANGED
 Promotion is an owner decision (PREREG §4 verdict mapping: `U → K` only on owner
 promotion, `U → O` if left pending).
 
-Charter: `docs/handoffs/pjm-matrix-column-triage-2026-08.md` §2.1 (the triage's rank-1
-live candidate). Pre-registration: `results/calibration/PREREG-pjm146-rggi-allowance-2026-08-02.md`,
-committed before either arm solved. Machine record: `results/calibration/_pjm146_rggi_ab.json`.
+Charter: `docs/records/pjm/pjm-matrix-column-triage-2026-08.md` §2.1 (the triage's rank-1
+live candidate). Pre-registration: `docs/records/pjm/PREREG-pjm146-rggi-allowance-2026-08-02.md`,
+committed before either arm solved. Machine record: `results/phase0/pjm/_pjm146_rggi_ab.json`.
 
 ## 1. The arms
 

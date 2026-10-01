@@ -445,12 +445,12 @@ the §5.1 header and in the FINDING; it does not expire when a later gate passes
    any arm.
 
 **Evidence appendix — every figure above is read off these committed artifacts,
-with no re-derivation:** `docs/PRECOMMIT-ercot149-dam-gas-event-cap-2026-08-01.md`
-§5 (the ten-ruling register); `docs/DIAGNOSIS-ercot149-gas-cop-window-2026-08-01.md`
-§6.1–6.3; `docs/DIAGNOSIS-ercot151-offline-increment-phase0-2026-08-02.md`;
-`results/calibration/FINDING-ercot163-cc-commitment-state-refuted-2026-08-04.md`
+with no re-derivation:** `docs/records/ercot/PRECOMMIT-ercot149-dam-gas-event-cap-2026-08-01.md`
+§5 (the ten-ruling register); `docs/records/ercot/DIAGNOSIS-ercot149-gas-cop-window-2026-08-01.md`
+§6.1–6.3; `docs/records/ercot/DIAGNOSIS-ercot151-offline-increment-phase0-2026-08-02.md`;
+`docs/records/ercot/FINDING-ercot163-cc-commitment-state-refuted-2026-08-04.md`
 §3–§4; `docs/mechanism-testing-matrix.md` §5.1 (items 13, 21–26 and the open-ruling
 header); `docs/calibration-log/ercot.md` (ercot-165, ercot-183, ercot-187 entries);
-`results/calibration/FINDING-ercot188-cliff-offer-curve-2026-08-11.md` §5–§7;
-`results/calibration/ercot188_p0_delta.json`;
+`docs/records/ercot/FINDING-ercot188-cliff-offer-curve-2026-08-11.md` §5–§7;
+`results/phase0/ercot/ercot188_p0_delta.json`;
 `frontend/data/backcast/keepers/ERCOT.json`.

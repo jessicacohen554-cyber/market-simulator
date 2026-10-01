@@ -2,7 +2,7 @@
 
 Lane: SPP-106. Owner card **"Build EX anyway"** (2026-10-01), over the DESIGN's recommendation to
 record a model-class limit.
-Design and phase 0: `docs/handoffs/DESIGN-spp-106-offer-side-unavailability-2026-10-01.md` (§4–§5).
+Design and phase 0: `docs/records/spp/DESIGN-spp-106-offer-side-unavailability-2026-10-01.md` (§4–§5).
 Keeper / control: `2026-09-28-spp-100-chp-scope`, bundle `results/calibration/spp100_arm_span` (git `11b72265`).
 **Written before any solve. Nothing below is chosen from a solved number.**
 
@@ -102,7 +102,7 @@ sidecars copied, recipe edited, a placeholder `dispatch/2021_P1.parquet`):
 | EX recipe, leg identical to the keeper | FAIL | **FAIL** (ARMED) |
 | keeper recipe (field not armed), price +0.5 | FAIL | **FAIL** (RECIPE) |
 
-Prompt: `docs/handoffs/spp106/shard_prompt_template.txt`.
+Prompt: `docs/records/spp/spp106/shard_prompt_template.txt`.
 
 ## Addendum A (2026-10-01, before any solve): G-DRIFT over the `main` merged into this PR
 

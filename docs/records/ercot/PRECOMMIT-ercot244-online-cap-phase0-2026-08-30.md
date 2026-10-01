@@ -29,7 +29,7 @@ new evidence, each post-dating the R:
    fired **in 2023, on the ercot158-era keeper** (C3a-2023 basis −24.5 %).
    The R adjudicates that arm on that year on that model.
 2. **The object moved.** Under the two-config keeper (owner ruling 2026-08-26,
-   `docs/FINDING-ercot-two-config-keeper-2026-08-26.md`) the 2023 year — the
+   `docs/records/ercot/FINDING-ercot-two-config-keeper-2026-08-26.md`) the 2023 year — the
    ercot-159 arm's entire live surface — is covered by the CALIBRATED
    zero-caveat carve-out (`2026-08-25-236-swcap-clip-k33`) and is NOT this
    lane's object. The object is the FORWARD keeper's lone blemish: the
@@ -258,7 +258,7 @@ reused verbatim on this bundle):**
 ## 5. The census (every quantity below is committed to the probe JSON; nothing else is measured)
 
 Probe `scripts/probes/ercot244_online_cap_phase0.py` →
-`results/calibration/ercot244_online_cap_phase0.json`. Per year (2024, 2025
+`results/phase0/ercot/ercot244_online_cap_phase0.json`. Per year (2024, 2025
 scored; 2023 report-only):
 
 * **V-0 anchors (measured first; any failure = STOP-AND-INVESTIGATE, no

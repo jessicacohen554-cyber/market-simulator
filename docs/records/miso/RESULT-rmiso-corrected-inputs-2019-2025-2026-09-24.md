@@ -2,7 +2,7 @@
 
 ```
 LANE    : R-MISO (AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24 §5.3.3)
-PREREG  : docs/PRECOMMIT-rmiso-corrected-inputs-2019-2025-2026-09-24.md (A pinned 6a8d1794; B §9 pinned bef12b51)
+PREREG  : docs/records/miso/PRECOMMIT-rmiso-corrected-inputs-2019-2025-2026-09-24.md (A pinned 6a8d1794; B §9 pinned bef12b51)
 KEEPER  : 2026-09-24-miso-268-coal-yard (2020-2025) — unchanged
 RUN A   : 2026-09-24-rmiso-corrected-inputs   (results/calibration/rmiso_span)   keeper + F1 defaults + short-gas + unit-partial
 RUN B   : 2026-09-24-rmiso-arm-b-mid          (results/calibration/rmiso_b_span) A + mid_vintage_exit_carry

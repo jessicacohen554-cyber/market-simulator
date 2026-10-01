@@ -2,7 +2,7 @@
 
 **Opened by** neiso-109, 2026-09-16, on the owner's ruling *"3"* (promote the gas repair **and**
 open the oil root cause immediately).
-**Evidence that opens it:** `docs/RESULT-neiso109-gas-repair-2026-09-16.md` §6.
+**Evidence that opens it:** `docs/records/neiso/RESULT-neiso109-gas-repair-2026-09-16.md` §6.
 **Status:** charter only. **No mechanism is proposed here, nothing is armed, no lever is picked.**
 
 ---

@@ -1,6 +1,6 @@
 # PROMPT PACK — SPP, the road to `complete` / `frontier` (issued 2026-09-12, lane SPP-31/32)
 
-One pasteable prompt per remaining card of `docs/handoffs/PLAN-spp-31-complete-frontier-2026-09-12.md`,
+One pasteable prompt per remaining card of `docs/records/spp/PLAN-spp-31-complete-frontier-2026-09-12.md`,
 updated for what lane SPP-32 settled. **One lever = one lane = one PR** (rule 28(b)).
 
 ## Standing facts every prompt below assumes (re-derived 2026-09-12, cite rather than re-quote prose)
@@ -308,7 +308,7 @@ Deliverable: a DESIGN doc, a PRECOMMIT, then `docs/RESULT-spp-35-*.md` + a
 ```
 You are lane SPP-36 (SPP: take SPP-32 arm A — `unit_outage_short_windows` — to the full 2023-2025
 span). DATA PROFILE: spp. **DO NOT START unless the owner has ruled YES on the promotion question in
-`docs/RESULT-spp-32-shortwindow-screen-2026-09-12.md` §7. Quote the ruling verbatim in your PRECOMMIT.**
+`docs/records/spp/RESULT-spp-32-shortwindow-screen-2026-09-12.md` §7. Quote the ruling verbatim in your PRECOMMIT.**
 Base: latest origin/main. Record `git rev-parse HEAD`. Branch: claude/spp-36-shortwindow-span-<suffix>.
 
 ## WHAT YOU ARE DOING AND WHY IT IS NOT A RE-SCREEN
@@ -372,7 +372,7 @@ Base: latest origin/main. Record `git rev-parse HEAD`. Branch: claude/spp-37-com
 ZERO LP.
 
 ## READ FIRST
-`docs/handoffs/PLAN-spp-31-complete-frontier-2026-09-12.md` — the decision memo, especially §2 (the
+`docs/records/spp/PLAN-spp-31-complete-frontier-2026-09-12.md` — the decision memo, especially §2 (the
 peer table), §3c (what the entry must carry) and §5 (what the marker actually does at HEAD).
 
 ## WHAT TO WRITE — one entry in `frontend/data/backcast/calibration-complete.json` -> `complete.SPP`
@@ -439,7 +439,7 @@ ZERO LP. **DOCS AND COMMENTS ONLY — you may not change one line of executable 
 `[R-HOLDOUT]` and every enforcing gate were removed 2026-09-09 and the CODE AGREES WITH CLAUDE.md.
 What is stale is a set of docstrings and comments that still name gates which no longer exist — and
 they mislead: lane SPP-31's own handoff was built on them and reached the wrong conclusion about
-what SPP may spend. `docs/handoffs/PLAN-spp-31-complete-frontier-2026-09-12.md` §5 carries the
+what SPP may spend. `docs/records/spp/PLAN-spp-31-complete-frontier-2026-09-12.md` §5 carries the
 file:line table. Re-verify every row yourself before touching anything:
 - no `def enforce_holdout_year_gate` anywhere; the name survives only in docstrings at
   `scripts/run_calibration.py:15`, `scripts/knob_jacobian.py:10,230`,

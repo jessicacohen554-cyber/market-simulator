@@ -517,12 +517,12 @@ unedited by the outcome.
 ## V0-FAIL ADJUDICATION — SIGNED BY THE OWNER, 2026-08-14
 
 The L-1 lane stopped at its pre-registered V0 identification gate
-(`docs/FINDING-ercot195-lscar-v0-nonidentifiable-2026-08-13.md`: 4/14 folds
+(`docs/records/ercot/FINDING-ercot195-lscar-v0-nonidentifiable-2026-08-13.md`: 4/14 folds
 vs 14/14 required; model-free non-identifiability bound; the rent series is
 a REGIME series, not a tightness series). The adjudication was signed on
 2026-08-14 in the ERCOT-SCAR workstream manager session (owner selections
 made interactively in-session; primary sitting record:
-`docs/handoffs/ercot-scar-workstream-pack-2026-08.md` §0 cycle-9 board +
+`docs/records/ercot/ercot-scar-workstream-pack-2026-08.md` §0 cycle-9 board +
 addendum A9). The card body above, including the 2026-08-13 RESOLUTIONS,
 is preserved AS PUT, unedited by the outcome. The owner adjudicated:
 

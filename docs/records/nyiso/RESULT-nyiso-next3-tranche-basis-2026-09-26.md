@@ -1,7 +1,7 @@
 # RESULT — NYISO-NEXT-3: the committed tranche share on the solve's own availability basis; promoted — 2026-09-26
 
 **Session:** NYISO-NEXT-3 (orchestrator; no LP in this container, rule 32 (a)).
-**PRECOMMIT:** `docs/PRECOMMIT-nyiso-next3-tranche-basis-2026-09-26.md`, pinned
+**PRECOMMIT:** `docs/records/nyiso/PRECOMMIT-nyiso-next3-tranche-basis-2026-09-26.md`, pinned
 `67fd3d1b677faa56f356ca9349e045700140b352` before any solve.
 **New keeper:** `2026-09-26-nyisonext3-tranche-basis-span` (bundle `results/calibration/nyisonext3_span`,
 2022–2025).

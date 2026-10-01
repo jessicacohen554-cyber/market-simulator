@@ -14,7 +14,7 @@ a hard ``availability = 0`` per plant; its detection primitives are now
 consolidated in ``scripts/lib/outage_detect.py``) was removed
 2026-07-17: summing a plant's units hid single-unit outages and folded
 daily-cycling combined cycles into phantom summer outages
-(``results/calibration/FINDING-ercot79-phantom-outage-2026-07.md``). Each unit
+(``docs/records/ercot/FINDING-ercot79-phantom-outage-2026-07.md``). Each unit
 outage of at least :data:`UNIT_OUTAGE_MIN_DAYS` days derates its plant bin by the
 unit's capacity share over the window; a genuinely single-unit plant (the unit's
 capacity equals its plant-bin capacity) is fully zeroed. Combustion turbines
@@ -147,7 +147,7 @@ ST_GAS_PEAKER_PLANTS: frozenset[int] = frozenset(
         # the registry's existing members satisfy, derived from THEIR measured
         # duty rather than from PJM's residual (rules 1 [R-STRUCT] / 13
         # [R-MEASURED] / 25 [R-ISO-SCOPE]) and declared in
-        # docs/PRECOMMIT-pjm-d4-2-stgas-membership-2026-09-10.md before any
+        # docs/records/pjm/PRECOMMIT-pjm-d4-2-stgas-membership-2026-09-10.md before any
         # solve. Qualifying test: CAMPD meter-online share of the plant's
         # ST_GAS slice (>1% of nameplate), pooled over EVERY bench year whose
         # own e_ann/c_ann <= 1.1 (the benchmark's own trust test, applied at
@@ -196,7 +196,7 @@ ST_GAS_PEAKER_PLANTS: frozenset[int] = frozenset(
         # Hatfields Ferry 67.6%. 3138 and 3131 carry D-4 per-unit conduct
         # convictions on the committed keeper at ~50% duty, so this change is
         # the LARGEST part of that defect and provably not all of it
-        # (docs/RESULT-pjm-d4-1-stgas-merit-order-2026-09-09.md section 9).
+        # (docs/records/pjm/RESULT-pjm-d4-1-stgas-merit-order-2026-09-09.md section 9).
     }
 )
 
@@ -802,7 +802,7 @@ _UNIT_OUTAGE_EVENT_COLUMNS: tuple[str, ...] = (
 # guarantees the neighbouring hour was RUNNING. caiso-181 confirmed that seam at
 # 100 % of unit-grain CEMS contradictions, with every contradicted hour within
 # 22 h (< 24) of a window boundary in all three years
-# (results/calibration/FINDING-caiso181-envelope-depth-2026-08-07.md section 2).
+# (docs/records/caiso/FINDING-caiso181-envelope-depth-2026-08-07.md section 2).
 #
 # An extract that carries these two columns states the DETECTED hour-of-day of
 # its first and last outage hour, and :func:`unit_outage_event_window` uses them.
@@ -1326,7 +1326,7 @@ def _iso_plant_capacity(
     vintage-blind key served year 1's denominator against years 2+'s LP fleet —
     the exact numerator/denominator basis split the cached function's own
     docstring says must never happen (rule 14 ``[R-ACCURATE]``; measured in
-    ``docs/handoffs/FINDING-spp-37-order-sensitivity-2026-09-12.md``, repaired
+    ``docs/records/spp/FINDING-spp-37-order-sensitivity-2026-09-12.md``, repaired
     by SPP-38).
     """
 
@@ -3598,7 +3598,7 @@ def ercot_thermal_dam_availability_series(
 # of the class-day series above, from the SAME 60-Day DAM disclosure rows
 # (scripts/data/derive_ercot_thermal_dam_availability.py --hourly-out). Keeps
 # the hourly ambient-derate shape the day mean discards: the ERCOT-95 diagnosis
-# (docs/handoffs/ercot95-scarcity-tail-diagnosis-2026-07.md Finding 6) measured
+# (docs/records/ercot/ercot95-scarcity-tail-diagnosis-2026-07.md Finding 6) measured
 # the day-flat overlay handing the model a +216 MW mean (+433 p90) CC+CT
 # phantom on the 181 actual 2023 RT tail hours (hod 13-19), and an equal
 # under-credit overnight. Gated by
@@ -4092,7 +4092,7 @@ def nysdec_peaker_restrictions(
 # reserve and the post-solve ORDC overlay prints $0 even through a Uri-scale
 # event (the G-31 finding). This section is the measured-admissible correlated
 # derate that closes that gap (design charter
-# docs/handoffs/ercot-retirement-composition-2026-07-16.md Part D): per plant
+# docs/records/ercot/ercot-retirement-composition-2026-07-16.md Part D): per plant
 # class, excess(T) = clip(slope * (t0 - TMIN_sys), 0, cap) on the system daily
 # MIN temperature, with the era's climatological winter event share ADDED BACK
 # first so the mechanism relocates the cold-event share embedded in the flat

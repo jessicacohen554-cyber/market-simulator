@@ -5,7 +5,7 @@ Each shard's launch message names its YEAR and the PINNED SHA. Wherever a prompt
 ## LEG arm-2024
 
 ```text
-SHARD R-ERCOT-19 ARM 2024 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT-19 (docs/handoffs/r-ercot/PRECOMMIT-r-ercot-19-south-overrun-and-hub-refresh-2026-09-30.md). CLAUDE.md is binding.
+SHARD R-ERCOT-19 ARM 2024 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT-19 (docs/records/ercot/r-ercot/PRECOMMIT-r-ercot-19-south-overrun-and-hub-refresh-2026-09-30.md). CLAUDE.md is binding.
 DATA PROFILE: ercot
 MODEL: Opus/Fable. BUDGET: ~25 min of LP. If you reach 45 min with no bundle, STOP and report.
 
@@ -59,7 +59,7 @@ FINAL MESSAGE — REPORT IN NUMBERS: the SHA you solved at; the pushed commit's 
 ## LEG arm-2025
 
 ```text
-SHARD R-ERCOT-19 ARM 2025 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT-19 (docs/handoffs/r-ercot/PRECOMMIT-r-ercot-19-south-overrun-and-hub-refresh-2026-09-30.md). CLAUDE.md is binding.
+SHARD R-ERCOT-19 ARM 2025 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT-19 (docs/records/ercot/r-ercot/PRECOMMIT-r-ercot-19-south-overrun-and-hub-refresh-2026-09-30.md). CLAUDE.md is binding.
 DATA PROFILE: ercot
 MODEL: Opus/Fable. BUDGET: ~25 min of LP. If you reach 45 min with no bundle, STOP and report.
 

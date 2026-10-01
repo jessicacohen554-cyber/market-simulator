@@ -1,6 +1,6 @@
 # RESULT — R-ERCOT-10: W A Parish partial-outage derate fuel-scoped — PROMOTED, ISO reads NOT-YET
 
-**Session:** R-ERCOT-10, 2026-09-27/28. **PRECOMMIT:** `docs/handoffs/PRECOMMIT-r-ercot-10-parish-fuel-scope-2026-09-27.md`, merged in PR #6808, pinned SHA `a33eeb3a6444d646965a9090ee840c8fdb8a8c1e`.
+**Session:** R-ERCOT-10, 2026-09-27/28. **PRECOMMIT:** `docs/records/ercot/PRECOMMIT-r-ercot-10-parish-fuel-scope-2026-09-27.md`, merged in PR #6808, pinned SHA `a33eeb3a6444d646965a9090ee840c8fdb8a8c1e`.
 
 **Keeper:** `2026-09-27-r-10-parish-fuelscope` (bundle `results/calibration/r_ercot10_parish_span`, 2019–2025). It supersedes `2026-09-27-r-8-fusco`. Owner instruction, verbatim: *"Is it an improvement? Then promote"*.
 

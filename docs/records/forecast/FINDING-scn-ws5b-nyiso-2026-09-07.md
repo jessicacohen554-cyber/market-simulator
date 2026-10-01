@@ -2,7 +2,7 @@
 
 **Lane:** SCN-WS5B-NYISO, coordinator under ruling S16, authorised by **ruling S18**
 ("Narrow: 6 legs × NEISO+NYISO").
-**Parent:** `docs/handoffs/PRECOMMIT-scn-ws5b-nyiso-2026-09-07.md` + ADDENDUM 1–4.
+**Parent:** `docs/records/forecast/PRECOMMIT-scn-ws5b-nyiso-2026-09-07.md` + ADDENDUM 1–4.
 **THE PIN:** `bdfb3095e9fa0cd2bec3f4e843f320b42588c72b`. **Shard checkout pin:** `4e4ad90d`
 (ADDENDUM 3 — not a re-pin of THE PIN; the audited PRECOMMIT HEAD).
 
@@ -412,7 +412,7 @@ lane's position, so the desk can act on it rather than infer it:
 **Nothing was deleted.** Every leg's full bundle is on local disk under
 `results/scn-campaign-stageb-2026-09-07/NYISO/<CASE>/`, which is **gitignored** (`.gitignore:1441`)
 — rule 31's prescribed discharge of rule 29(c), `.gitignore` and not `rm`. The committed record is
-the five sidecars plus the two-file mirrors under `docs/handoffs/scn-ws5b-nyiso/<CASE>/`.
+the five sidecars plus the two-file mirrors under `docs/records/forecast/scn-ws5b-nyiso/<CASE>/`.
 
 **THE DECISION IS OWED BEFORE THIS SESSION ENDS, and it will not keep.** These shard containers
 are ephemeral. The bundles' `hourly/` sidecars, per-unit dispatch and duals **do not survive
@@ -470,6 +470,6 @@ instrument for it.**
 
 ---
 
-*Parent: `docs/handoffs/PRECOMMIT-scn-ws5b-nyiso-2026-09-07.md` + ADDENDUM 1–4. THE PIN
+*Parent: `docs/records/forecast/PRECOMMIT-scn-ws5b-nyiso-2026-09-07.md` + ADDENDUM 1–4. THE PIN
 `bdfb3095e9fa0cd2bec3f4e843f320b42588c72b`; shard checkout pin `4e4ad90d` (ADDENDUM 3). Five legs
 solved, five registered, five identity gates exact, `check_forecast_invariants` EXIT 0.*

@@ -45,11 +45,11 @@ STATE ON MAIN
   - unit_outage_dispatched_bin_live_denominator (sub-gate of unit_outage_dispatched_bin_denominator; coal-only
     wefor_residual scoping behind the same flag). It does not reach Bridger.
 - Read first:
-  - docs/handoffs/RESULT-nwppnext15-vintage-denominator-2019-2025-2026-09-30.md (head-to-head vs #19)
-  - docs/handoffs/HANDOFF-nwppnext15-2026-09-30.md (the parallel lane's handoff: its PROCEDURE, hard stops and
+  - docs/records/nwpp/RESULT-nwppnext15-vintage-denominator-2019-2025-2026-09-30.md (head-to-head vs #19)
+  - docs/records/nwpp/HANDOFF-nwppnext15-2026-09-30.md (the parallel lane's handoff: its PROCEDURE, hard stops and
     PARENT GOTCHAS are the template — use them)
-  - docs/handoffs/PHASE0-nwppnext15-captive-mine-2026-09-30.md
-  - docs/handoffs/FINDING-nwppnext14-bridger-and-clark-phase0-2026-09-30.md
+  - docs/records/nwpp/PHASE0-nwppnext15-captive-mine-2026-09-30.md
+  - docs/records/nwpp/FINDING-nwppnext14-bridger-and-clark-phase0-2026-09-30.md
   - docs/calibration-log/nwpp.md (both NEXT-14 entries + NEXT-15), mechanism-matrix/NWPP.js, matrix doc §5.9
 
 TASK 1 — THE COMBINED RUN (owner, 2026-10-01: "should they be combined … handoff to the next session to do the combined
@@ -68,7 +68,7 @@ run as new keeper")
     C-vs-#19 diff also carries the library drift. State that in the RESULT, and measure the drift if it is cheap (e.g.
     one control year of #19 on pin).
 - Write a fresh PRECOMMIT on keeper #19's recipe, with the template and PARENT GOTCHAS from HANDOFF-nwppnext15.
-  - Do NOT reuse docs/handoffs/nwppnext14/shards/* (they arm the deleted cc_subfloor field).
+  - Do NOT reuse docs/records/nwpp/nwppnext14/shards/* (they arm the deleted cc_subfloor field).
   - Use NEW out-dirs and branch names (e.g. nwppnext16c_<Y>, claude/nwppnext16-<Y>), and check with
     `git ls-remote` that they are free. NEXT-15 lost a launch to a name collision.
 - Retrievability (rule 34(d)), compose (2023 leg first), diagnostics, attestation (wrap

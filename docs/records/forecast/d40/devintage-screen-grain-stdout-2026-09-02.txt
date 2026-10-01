@@ -50,4 +50,4 @@ capacity_revenue_enter 2024 | False      |  31.3320 →  69.5435 | PASS  (held-o
 capacity_revenue_enter 2025 | False      |   3.2098 → 117.7080 | PASS  (held-out DEGRADES)
 
 folds: 12  failing: 1
-rows dumped to docs/handoffs/d40/devintage-screen-grain-rows-2026-09-02.json
+rows dumped to docs/records/forecast/d40/devintage-screen-grain-rows-2026-09-02.json

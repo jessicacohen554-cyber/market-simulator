@@ -1,7 +1,7 @@
 # FINDING — nwpp-42: NWPP's coal heat rate was an estimate, and it was wrong at every plant
 
 **Lane:** NWPP-42 · **Date:** 2026-09-20 · **Branch:** `claude/nwpp-42-coal-shape-scop49`
-**Pre-registration:** `docs/handoffs/PRECOMMIT-nwpp-42-2026-09-19.md`
+**Pre-registration:** `docs/records/nwpp/PRECOMMIT-nwpp-42-2026-09-19.md`
 **Outcome:** **PROMOTED** — `2026-09-20-nwpp42-measured-coal-heat` is NWPP's keeper.
 **Determination:** `NOT-YET` (rubric v3.8, PRICE UNSCORED), unchanged, on `{dispatch_corr}` alone.
 

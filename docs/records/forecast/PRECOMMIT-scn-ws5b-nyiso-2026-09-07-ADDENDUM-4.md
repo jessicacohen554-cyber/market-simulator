@@ -128,4 +128,4 @@ has never been used, on 465 scalars.
 ---
 
 *Written before `CAP-STATE-TIGHT`, `CES-T80` or `ALL-CLEAN` returned. Parent:
-`docs/handoffs/PRECOMMIT-scn-ws5b-nyiso-2026-09-07.md`, ADDENDUM 1–3.*
+`docs/records/forecast/PRECOMMIT-scn-ws5b-nyiso-2026-09-07.md`, ADDENDUM 1–3.*

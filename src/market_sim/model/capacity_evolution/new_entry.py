@@ -1008,7 +1008,7 @@ def apply_economic_new_entry(
             (``runner._EntryRepriceWalk``, GATED ``entry_margin_exhaustion``).
             When supplied, the bang-bang allocation — each clearing tech
             builds ``min(per-tech room, ISO budget)`` — is REPLACED by the
-            L-1b closure (``docs/FINDING-entry-signal-l1-2026-08.md`` §2):
+            L-1b closure (``docs/records/misc/FINDING-entry-signal-l1-2026-08.md`` §2):
             capacity is added in ``ENTRY_EXHAUSTION_TRANCHE_MW`` tranches to
             the best-margin candidate, the screen's own signal (and hourly
             reserve legs) are re-priced through the walk after every tranche,
@@ -1699,7 +1699,7 @@ def apply_economic_new_entry(
     # a stock (MW, no time denominator) subtracted from an annual flow: it caps
     # the long-run decision rate at C/L and, on the ladder, kills the ratchet
     # whenever K ≤ L — K−L+1 = 1 at the shipped (2, 2) in 24/24 ISO×tech cells
-    # (FFR-4A §3.3/§5, docs/handoffs/ffr-4a-entry-ladder-2026-08-04.md). Rule 19
+    # (FFR-4A §3.3/§5, docs/records/forecast/ffr-4a-entry-ladder-2026-08-04.md). Rule 19
     # [R-ONE-MECH]: one mechanism per phenomenon — the guard moves, it is
     # neither deleted nor duplicated. ``_pending_by_tech`` itself stays
     # populated (it is the queue state, not the guard).

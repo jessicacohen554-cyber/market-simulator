@@ -29,7 +29,7 @@ sha256/bytes/rows in the raw README. Consequence: the raw could not be
 materialized by hydration on ANY tree (it was absent from git, not merely
 from a profile), so even a full clone regenerated only 50/51 datatypes —
 the operational caveat carried by
-`docs/FINDING-entry-signal-forward-expectation-2026-08-25.md`,
+`docs/records/misc/FINDING-entry-signal-forward-expectation-2026-08-25.md`,
 `FINDING-capx-d2-nyiso-extcap-2026-08-25.md` and
 `FINDING-capx-d14-neiso-t1x-2026-08-30.md` (all three now annotated).
 Two things the bc_HIST precedent did not carry over here: the m2m corpus is
@@ -60,7 +60,7 @@ curated form ships tracked).
    `regenerate_clean.DATATYPES` without extending the test's frozen
    snapshot, so `TestRegenerateEntrypoint::test_datatype_list_matches_schemas`
    had been failing on `main` since `02e3f0f` (the drift class
-   `docs/handoffs/fast-tier-triage-2026-07-26.md` documents). One list entry
+   `docs/records/misc/fast-tier-triage-2026-07-26.md` documents). One list entry
    added; pre-existing failure, not introduced by this lane.
 5. **Standing 50/51 notes annotated** in the three FINDING docs above.
 

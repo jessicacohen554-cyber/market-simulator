@@ -13,7 +13,7 @@ and are **not renegotiated after measurement**. Keeper at session start:
 
 **Signed authorization** — owner sitting 2026-08-09, decision card D2, option C.
 Ruling recorded verbatim
-(`docs/DECISION-CARD-ercot182-c3a2023-reachability-2026-08-09.md` §4 + §10):
+(`docs/records/ercot/DECISION-CARD-ercot182-c3a2023-reachability-2026-08-09.md` §4 + §10):
 
 > *"The ceiling lane stays frozen for composition-rule work; a fault-3
 > partial-layer construction re-charter is authorized as its successor, with

@@ -1,7 +1,7 @@
 # FINDING — Lint hygiene lane (R-Z + R-AC), 2026-09-04
 
 **Lane:** `claude/lint-hygiene-r-z-ac-zooe9c` → PR #4666. Executes X-1 of the
-audit program board (`docs/handoffs/audit-program-director-board-2026-08.md`
+audit program board (`docs/records/governance/audit-program-director-board-2026-08.md`
 v23) under owner rulings R-Z + R-AC (2026-09-03); program
 `docs/model-audit-release-plan-2026-08.md`. Base: main at `8d5a3e16`.
 DATA PROFILE: code. No solve; no test, marker, keeper shard,
@@ -14,7 +14,7 @@ captured directly to a file (`cmd > f 2>&1; echo $?`), never through a pipe.
 
 | command | at `8d5a3e16` (main) | after R-AC | after R-Z |
 |---|---|---|---|
-| `ruff check .` | exit 1 — 5 errors: E731 ×3, E402, E401, ALL under `docs/handoffs/d37/` and `d45/` | exit 0 | exit 0 |
+| `ruff check .` | exit 1 — 5 errors: E731 ×3, E402, E401, ALL under `docs/records/forecast/d37/` and `d45/` | exit 0 | exit 0 |
 | `ruff format --check .` | exit 1 — 11 files | exit 1 — 7 files | exit 0 (1356 files already formatted) |
 
 The handoff expected ten format files (four probe scripts + six source/test

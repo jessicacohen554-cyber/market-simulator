@@ -26,7 +26,7 @@ STATE (2026-09-28):
   | C3c h > $200 (RT 27) | — | — | 90 |
 
 READ FIRST:
-- docs/handoffs/r-caiso-9/RESULT-r-caiso-9-2026-09-28.md (Object 2 section)
+- docs/records/caiso/r-caiso-9/RESULT-r-caiso-9-2026-09-28.md (Object 2 section)
 - results/calibration/_rcaiso9/object2_census.json (probe: scripts/probes/_rcaiso9_object2_census.py)
 - docs/mechanism-testing-matrix.md §5.2 and docs/codebase-site/data/mechanism-matrix/CAISO.js
 
@@ -62,7 +62,7 @@ DO NOT re-test (R/G/I cells or censused):
 
 SOLVE RECIPE, if anything is armed:
 - keeper recipe + the flag, one shard per year, 2019–2025 (rules 34(c), 35(c), 36);
-- template docs/handoffs/r-caiso-9/shard-prompt.md (swap the --set line and the hard-stop 3 fields);
+- template docs/records/caiso/r-caiso-9/shard-prompt.md (swap the --set line and the hard-stop 3 fields);
 - G-DRIFT via a copy of scripts/probes/_rcaiso9_gdrift_identity.py pinned to 980f2ed6;
 - parent seam:
   - rcaiso_compose_span.py --require … (caiso_import_cap_floor_static and caiso_intertie_partial_year_measured,

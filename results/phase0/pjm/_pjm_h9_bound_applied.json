@@ -1,6 +1,6 @@
 {
  "what": "worst-case coal-only offer level for PJM coal's min-load rows under a one-sided gas-steam admixture of capacity weight w, and the share of pjm-h8's own correction it could account for",
- "precommit": "docs/PRECOMMIT-pjm-h9-coal-only-comparator-2026-09-16.md",
+ "precommit": "docs/records/pjm/PRECOMMIT-pjm-h9-coal-only-comparator-2026-09-16.md",
  "w_hat": 0.1893,
  "PROVISIONAL": true,
  "provisional_note": "G-REPRO FAILED on the quantile artifact: these numbers are NOT certified against the frozen surface. Run with --blend-reference frozen as well and compare the verdicts.",

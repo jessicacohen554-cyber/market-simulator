@@ -20,7 +20,7 @@ Exit 0 when every check passes, 1 otherwise; a failing shard does not push.
 
 Usage::
 
-    python docs/handoffs/r-neiso/shard_check.py --leg results/calibration/rneiso_<Y> --year <Y>
+    python docs/records/neiso/r-neiso/shard_check.py --leg results/calibration/rneiso_<Y> --year <Y>
 """
 
 from __future__ import annotations

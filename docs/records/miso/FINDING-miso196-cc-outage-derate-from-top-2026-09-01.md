@@ -14,7 +14,7 @@ and a pre-committed escalation posture** — never as the level fix.
 Artifacts: probe `scripts/probes/_miso196_outage_derate_from_top_phase0.py`
 (**rule frozen in the docstring and pushed at `fef3dcb6` BEFORE any adjudicating
 quantity**), census record
-`results/calibration/_miso196_outage_derate_from_top_phase0.json`, pre-registration
+`results/phase0/miso/_miso196_outage_derate_from_top_phase0.json`, pre-registration
 `PREREG-miso196-cc-outage-derate-from-top-2026-09-01.md` (**pushed at `64f184f1`,
 blob-verified, BEFORE the arm existed**).
 

@@ -3,7 +3,7 @@
 Phase 0 for the rule 29 ``[R-SCREEN]`` screen of the neiso-109 input repair to
 ``data/raw/gas-prices/algonquin_citygate_daily.csv`` (cross-hub contamination,
 stale-republish misdating, and four unmatched EIA phrase variants — see
-``docs/FINDING-neiso109-the-agt-series-is-contaminated-2026-09-16.md``).
+``docs/records/neiso/FINDING-neiso109-the-agt-series-is-contaminated-2026-09-16.md``).
 
 Rule 29 (1) requires the screen year to be **named in the PRECOMMIT before the
 screen runs**, and chosen where the mechanism's **own measured footprint is

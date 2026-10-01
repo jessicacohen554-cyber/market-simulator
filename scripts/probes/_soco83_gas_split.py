@@ -10,7 +10,7 @@ Rule 32 ``[R-SHARD]`` (a): never solves. Instruments, all on the incumbent keepe
             offer (``mc_base``), and — in the plant's CEMS-synchronised hours — the share of
             hours Southern's FERC-714 Sch. 6 system lambda sits BELOW that offer (the
             FINDING-soco-82 §3 test, applied to gas). Also the model P1 price vs lambda.
-            Writes ``docs/handoffs/r-soco/soco83_gas_offers.csv``.
+            Writes ``docs/records/soco/r-soco/soco83_gas_offers.csv``.
 
 Usage::
 
@@ -42,7 +42,7 @@ import _soco73_phase0 as s73  # noqa: E402
 KEEPER = "2026-09-27-soco82-perunitdark-regen"
 SPAN = _ROOT / "results/calibration/soco82_span"
 BENCH = _ROOT / "frontend/data/backcast/bench/SOCO/{y}.json.gz"
-OUT = _ROOT / "docs/handoffs/r-soco/soco83_gas_offers.csv"
+OUT = _ROOT / "docs/records/soco/r-soco/soco83_gas_offers.csv"
 #: The per-plant monthly ST_GAS cost the lambda-conditioned out-of-merit derive reads
 #: (scripts/data/derive_thermal_tranche_oom_level_mw.py --condition lambda).
 COST_OUT = _ROOT / "data/raw/_processed-legacy/thermal_tranches_oom_cost_SOCO.csv"

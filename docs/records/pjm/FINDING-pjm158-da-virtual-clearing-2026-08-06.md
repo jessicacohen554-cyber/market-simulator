@@ -3,7 +3,7 @@
 **Session:** pjm-158 (the pjm-157 re-point, Object A)
 **Date:** 2026-08-06
 **Branch:** `claude/pjm-da-virtual-clearing-gt6wgm`
-**Pre-registration:** `results/calibration/PREREG-pjm158-da-virtual-clearing-2026-08-05.md`
+**Pre-registration:** `docs/records/pjm/PREREG-pjm158-da-virtual-clearing-2026-08-05.md`
 (committed and pushed at `6a3dab7a`, **before either arm solved** — the pjm-143
 precedent)
 **Holdout freeze (rule 22):** respected absolutely. 2022 was **not** solved,

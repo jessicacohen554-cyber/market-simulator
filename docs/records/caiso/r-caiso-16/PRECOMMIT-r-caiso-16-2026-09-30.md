@@ -1,6 +1,6 @@
 # PRECOMMIT R-CAISO-16 — interchange lag under `caiso_eia930_clock_repair` (2026-09-30)
 
-Owner card 2026-09-30: next link = "Interchange lag". Handoff: `docs/handoffs/r-caiso-15/HANDOFF-r-caiso-16.md`.
+Owner card 2026-09-30: next link = "Interchange lag". Handoff: `docs/records/caiso/r-caiso-15/HANDOFF-r-caiso-16.md`.
 Written after phase 0 (zero LP) and before any shard is launched.
 
 ## 1. Phase 0 result — neither (a) nor (b) as posed
@@ -115,7 +115,7 @@ construction, since the generation window opens 2023-11-01.
 
 ## 5. Solve plan (rule 36, the parent never solves)
 
-- Seven shards, one per year 2019–2025, from `docs/handoffs/r-caiso-16/shard-prompt.md`.
+- Seven shards, one per year 2019–2025, from `docs/records/caiso/r-caiso-16/shard-prompt.md`.
 - Pinned to the full SHA of this lane's build merge.
 - `{SRC}` = `rcaiso15_A_tp_2019_2021` (2019–21) / `rcaiso15_A_span` (2022–25).
 - Out-dirs `rcaiso16_A_{Y}`, branches `claude/r-caiso-16-A-{Y}`.

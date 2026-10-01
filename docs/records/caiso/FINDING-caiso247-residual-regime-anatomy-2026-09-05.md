@@ -334,7 +334,7 @@ session, not one it closes. It does not adjudicate the DOM_GAS/STORAGE split
 
 `PRECOMMIT-caiso247-residual-regime-anatomy-2026-09-05.md` (`004c0d39`, pushed
 first); `scripts/probes/_caiso247_residual_regime_anatomy.py` +
-`results/calibration/_caiso247_residual_regime_anatomy.json`; this finding; the
+`results/phase0/caiso/_caiso247_residual_regime_anatomy.json`; this finding; the
 calibration-log entry; the evidence-only appends to the CAISO matrix shard
 (`import_hub_pricing`, `measured_offer_surface`) — **no cell verdict moves; no
 mechanism was tested.** No run registered (zero solves). Keeper unchanged.

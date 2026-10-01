@@ -6,11 +6,11 @@
 # --no-retirement-sector-gate (that reaches the Q55 posture) — the row is the
 # JOINT Q55+Q56 posture, which is what the recipe carries at HEAD.
 #
-# This is the SAME invocation docs/handoffs/d78arm/run_arm.sh names, at the same
+# This is the SAME invocation docs/records/forecast/d78arm/run_arm.sh names, at the same
 # key against the same control: there is exactly one bare pjm-t1h recipe at HEAD
 # (ADDENDUM B §2). Solving it once discharges both lanes' registration.
 #
-#   bash docs/handoffs/d75rarm/run_steps34.sh
+#   bash docs/records/forecast/d75rarm/run_steps34.sh
 #
 # PJM solo, years 2021-2025 SEQUENTIAL in ONE invocation (rule 12 [R-PARALLEL]).
 # Out-dir is the D67-ARM retention class (results/capacity-hindcast/, the

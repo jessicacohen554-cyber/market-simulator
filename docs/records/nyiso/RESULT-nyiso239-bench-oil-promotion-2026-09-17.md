@@ -3,8 +3,8 @@
 **Session** nyiso-239 (ORCHESTRATOR — rule 32 `[R-SHARD]` (a); **the parent ran ZERO LP**).
 **Date** 2026-09-17. **Base** `origin/main` at `73281357`.
 **Owner ruling** (2026-09-17, verbatim): *"Is this a recommended keeper candidate? If so plz promote. If structural integrity improves but gates regress that may still be a keeper.."*
-**Pre-registration** `docs/PRECOMMIT-nyiso239-bench-oil-rerender-2026-09-17.md`, pushed at `3edb8ad8ce4737b2f860d84e58bae26e4cb6aa1c` **before the first LP**.
-**Phase-0 evidence** `docs/FINDING-nyiso239-c1-2022-bench-oil-attribution-2026-09-16.md`; probe `scripts/probes/nyiso239_c1_bench_oil_phase0.py`.
+**Pre-registration** `docs/records/nyiso/PRECOMMIT-nyiso239-bench-oil-rerender-2026-09-17.md`, pushed at `3edb8ad8ce4737b2f860d84e58bae26e4cb6aa1c` **before the first LP**.
+**Phase-0 evidence** `docs/records/nyiso/FINDING-nyiso239-c1-2022-bench-oil-attribution-2026-09-16.md`; probe `scripts/probes/nyiso239_c1_bench_oil_phase0.py`.
 
 > ## HEADLINE
 > 1. **NYISO's registered four-year span goes `NOT-YET` → `CALIBRATED`** — grade 6 → 7, fails 2 → 0,

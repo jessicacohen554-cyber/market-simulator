@@ -4,9 +4,9 @@
 LANE    : miso-276 (MISO lever queue §5.4; routed by RESULT-miso275 §3)
 KEEPER  : 2026-09-26-miso-275-cc-exempt (results/calibration/miso275_span) — unchanged
 LP      : none in this document (zero-LP phase 0; rule 29 clause-0 practice)
-PROBES  : scripts/probes/_miso276_c3a2022_phase0.py  -> results/calibration/_miso276_c3a2022_phase0.json
-          scripts/probes/_miso276_stack_phase0.py    -> results/calibration/_miso276_stack_phase0.json
-          scripts/probes/_miso276_ofy_footprint.py   -> results/calibration/_miso276_ofy_footprint.json
+PROBES  : scripts/probes/_miso276_c3a2022_phase0.py  -> results/phase0/miso/_miso276_c3a2022_phase0.json
+          scripts/probes/_miso276_stack_phase0.py    -> results/phase0/miso/_miso276_stack_phase0.json
+          scripts/probes/_miso276_ofy_footprint.py   -> results/phase0/miso/_miso276_ofy_footprint.json
 DATA    : DATA PROFILE: miso
 ```
 
@@ -158,6 +158,6 @@ value of that crosswalk.
 
 1. **D1 MidCon source: "Chicago proxy (Recommended)".** MISO-South takes Henry Hub daily; West and Plains take
    Chicago daily as the declared rule-14 proxy. Built as `miso_winter_gas_daily_delivered` and armed in a 7-shard
-   span: `docs/PRECOMMIT-miso276-winter-gas-daily-delivered-2026-09-26.md`.
+   span: `docs/records/miso/PRECOMMIT-miso276-winter-gas-daily-delivered-2026-09-26.md`.
 2. **C1 ST_GAS route: "Wait for crosswalk (Recommended)".** The mixed-facility population gap waits on the
    CAMPD-unit → EIA crosswalk, now with two consumers. No VLR lane is chartered.

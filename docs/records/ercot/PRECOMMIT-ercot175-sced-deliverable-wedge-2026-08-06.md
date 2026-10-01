@@ -11,7 +11,7 @@ wedge measurement. Every threshold, coverage bar, verdict branch, gate
 assignment and prediction below is fixed here and may not be moved after
 measurement, in either direction (the ercot-162…174 discipline). The kill
 gates are **inherited verbatim from
-`docs/PRECOMMIT-ercot172-maintenance-season-availability-2026-08-06.md` §5 and
+`docs/records/ercot/PRECOMMIT-ercot172-maintenance-season-availability-2026-08-06.md` §5 and
 are not renegotiable**; this document assigns them, it does not restate or
 amend them. **G-COAL148 stays live even though this lane is not the ceiling
 lane** (handoff directive).
@@ -31,7 +31,7 @@ lane** (handoff directive).
   is imported and its own `len == 123` / `len == 61` asserts stand, so the two
   Phase 0s are comparable by construction.
 * **Committed reference figures (read from the committed
-  `results/calibration/ercot173_depth_phase0.json` + `FINDING-ercot173` §1,
+  `results/phase0/ercot/ercot173_depth_phase0.json` + `FINDING-ercot173` §1,
   never re-measured here)**: V_r (market sub-$200 offered, online+startable)
   mean **56.5 GW** over H123; V_m (model sub-$200 capability) mean
   **55.2 GW**; **M(h)** (the model's undispatched sub-$200 capability — the

@@ -207,7 +207,7 @@ year NYISO **can** score. It cannot score 2021 or 2020:
   to force 2021 would be a different config wearing the keeper's name.
 - **2020 — DATA-BLOCKED** on a second input: `eia_generation_profiles.parquet` starts 2021.
 
-(`docs/FINDING-nyiso-2020-touchpoint-data-blocked-2026-09-09.md` §7.) **The solvable span
+(`docs/records/nyiso/FINDING-nyiso-2020-touchpoint-data-blocked-2026-09-09.md` §7.) **The solvable span
 is 2022–2025 and this bundle is all four years.** That is a change in itself: the keeper's
 2022 currently lives as a *separately registered folded touchpoint*, not as a year of the
 bundle.

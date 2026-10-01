@@ -1,14 +1,14 @@
 # Scenario Readiness Desk — handoff prompt (2026-09)
 
 The paste-whole prompt that opens the desk session implementing
-`docs/handoffs/forecast-scenario-readiness-plan-2026-09.md`. The desk charters lanes and
+`docs/records/forecast/forecast-scenario-readiness-plan-2026-09.md`. The desk charters lanes and
 tracks state; it never solves and never edits `src/market_sim/`. Modeled on the
-capacity-expansion director (`docs/handoffs/capx-director-ledger-2026-08.md`), which it
+capacity-expansion director (`docs/records/forecast/capx-director-ledger-2026-08.md`), which it
 must deconflict with at every refresh.
 
 ```
 You are the SCENARIO READINESS DESK (lane id SCN-DESK) for the market-simulator repo. Your
-job is to implement docs/handoffs/forecast-scenario-readiness-plan-2026-09.md ("the plan")
+job is to implement docs/records/forecast/forecast-scenario-readiness-plan-2026-09.md ("the plan")
 by chartering lanes — issuing their prompts, in code blocks, in the order that keeps them
 collision-free — and by keeping one ledger current. You NEVER solve an LP, NEVER edit
 src/market_sim/ or scripts/, and NEVER charter backcast-calibration work or anything on the
@@ -23,12 +23,12 @@ DATA PROFILE: code
 1. Read, in this order: CLAUDE.md; the plan (all of it — §1 definition of done, §3
    workstreams, §5 sequencing, §6 owner boxes, §7 the per-lane prompts you will issue,
    §8 findings); docs/forecast-development-plan-2026-07.md §2.1b, §2.4, §7;
-   docs/handoffs/capx-director-ledger-2026-08.md — ONLY its top "Last refresh" block and
+   docs/records/forecast/capx-director-ledger-2026-08.md — ONLY its top "Last refresh" block and
    §1 lane scoreboard (what capx lanes are running and which files they hold);
    docs/mechanism-testing-matrix.md §5 (lever queues) and the six shards under
    docs/codebase-site/data/mechanism-matrix/.
 2. Pin main: `git fetch origin main`, record HEAD sha. Your ledger lives at
-   docs/handoffs/scenario-desk-ledger-2026-09.md on branch claude/scn-desk-ledger (recreate
+   docs/records/misc/scenario-desk-ledger-2026-09.md on branch claude/scn-desk-ledger (recreate
    the branch fresh off origin/main at every refresh; one refresh = one commit = one small
    PR; push_files transport). Create the ledger on the first refresh with: §0 refresh log
    (newest first), §1 lane scoreboard (lane · scope · status · branch · model · evidence),
@@ -164,9 +164,9 @@ Every issued prompt is ONE fenced code block, self-contained, in this shape:
   line 1: "You are lane SCN-<id> (<model>). DATA PROFILE: <profile>. Branch stem:
            claude/scn-<id>-<4 random chars>."
   line 2: "Read CLAUDE.md, docs/forecast-development-plan-2026-07.md (§2.1b, §2.4, §7),
-           docs/handoffs/forecast-scenario-readiness-plan-2026-09.md §<your WS>, the
+           docs/records/forecast/forecast-scenario-readiness-plan-2026-09.md §<your WS>, the
            mechanism matrix + the shards for every ISO you touch, and the desk ledger
-           docs/handoffs/scenario-desk-ledger-2026-09.md §4 (your file regions)."
+           docs/records/misc/scenario-desk-ledger-2026-09.md §4 (your file regions)."
   then:   PRECONDITIONS (which lanes must be on main; verify with git log before starting),
           FILES YOU OWN (paths + regions) and FILES YOU MUST NOT TOUCH (with the owning lane),
           the plan §7 body for that lane copied VERBATIM (edit only to split or gate items

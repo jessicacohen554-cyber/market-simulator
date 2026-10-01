@@ -2,10 +2,10 @@
 
 **Session ercot-186, 2026-08-10, HEAD `fe9fa97f`. ERCOT only (rule 25).**
 Authorization: owner sitting 2026-08-09, decision card **D3 option (ii)**
-(`docs/DECISION-CARD-ercot182-c3a2023-reachability-2026-08-09.md` §4(b2) + §10),
+(`docs/records/ercot/DECISION-CARD-ercot182-c3a2023-reachability-2026-08-09.md` §4(b2) + §10),
 sequenced after D2 — which landed as the current keeper.
 
-Pre-registration: `docs/PRECOMMIT-ercot186-rule18-grain-2026-08-10.md`, pushed
+Pre-registration: `docs/records/ercot/PRECOMMIT-ercot186-rule18-grain-2026-08-10.md`, pushed
 at `2e8f879e` **BEFORE** any measurement or solve.
 
 Keeper at session start and at session end, **unchanged**:
@@ -38,7 +38,7 @@ gate is byte-unchanged with the flag off.
 
 ## 2. What was measured
 
-`results/calibration/ercot186_grain_seamproof.json`, probe
+`results/phase0/ercot/ercot186_grain_seamproof.json`, probe
 `scripts/probes/ercot186_grain_seamproof.py`, run on the **real keeper fleet**
 for 2023/2024/2025 with no LP built (rule 22: no year outside {2023, 2024, 2025}
 was touched).

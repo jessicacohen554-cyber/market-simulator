@@ -88,7 +88,7 @@ never waved through as "structural" without its own G-COUPLE-class gate.
 ## §1 — THE ESTIMATOR, NAMED, WITH ITS FALSIFIERS
 
 `scripts/probes/_caiso252_c4_gas_nrmse_anatomy.py` →
-`results/calibration/_caiso252_c4_gas_nrmse_anatomy.json`. Stdlib + numpy +
+`results/phase0/caiso/_caiso252_c4_gas_nrmse_anatomy.json`. Stdlib + numpy +
 pandas over `calibration_verdict.load_artifacts`.
 
 ### §1.1 — G-REPRO (the gate on the instrument)

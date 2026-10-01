@@ -1,7 +1,7 @@
 # RESULT — SPP-43: the 2019–2022 CAMPD unit-outage intake
 
 **Lane** SPP-43 · **Date** 2026-09-16 · **Base** `41e87a8f` (intake) / `39174d6d` (decomposition)
-**PRECOMMIT** `docs/handoffs/PRECOMMIT-spp-43-unit-outage-intake-2026-09-16.md`
+**PRECOMMIT** `docs/records/spp/PRECOMMIT-spp-43-unit-outage-intake-2026-09-16.md`
 **Registered run** `2026-09-16-spp-43-outage-intake`, bundle `results/calibration/spp43_holdout_span`,
 stamped to SPP keeper 12 · **Control** `2026-09-13-spp-40-holdout-span` (`results/calibration/spp40_holdout`), committed
 

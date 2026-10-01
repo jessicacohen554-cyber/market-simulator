@@ -7,7 +7,7 @@ Pre-registration: `PRECOMMIT-caiso255b-hod2223-storage-repoint-2026-09-06.md`
 (`78d76cf2`), pushed **before any cell of the object was computed**. Rule 22
 `[R-HOLDOUT]`: 2023–2025 only; no `complete`/`final` marker; freeze ACTIVE.
 Probe: `scripts/probes/_caiso255b_hod2223_storage.py`; artifact
-`results/calibration/_caiso255b_hod2223_storage.json`.
+`results/phase0/caiso/_caiso255b_hod2223_storage.json`.
 
 ---
 

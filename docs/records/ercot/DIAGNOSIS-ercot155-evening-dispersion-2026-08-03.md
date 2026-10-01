@@ -5,7 +5,7 @@ gates C3a 2023-only −32.6 %, C3b 2023-only 0.616, C3c, C7 2023-lignite cv-leg)
 Phase 1 only — NO LP built, NO year solved, NO mechanism armed, NO flag added,
 keeper UNCHANGED.** Probe
 `scripts/probes/ercot155_dispersion_census.py`; committed record
-`results/calibration/ercot155_dispersion_census.json`. Every input is already
+`results/phase0/ercot/ercot155_dispersion_census.json`. Every input is already
 committed: the ercot150b keeper's `meta.json` + hourly sidecars, the four
 60-Day SCED extracts, `data/raw/ercot/ercot_<year>_ordc_reserves_hourly.parquet`.
 

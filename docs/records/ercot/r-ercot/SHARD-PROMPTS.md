@@ -4,7 +4,7 @@ Each shard's launch message names its LEG and the PINNED SHA (the commit that ca
 ## LEG arm-2019
 
 ```text
-SHARD R-ERCOT ARM 2019 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT (docs/handoffs/PRECOMMIT-r-ercot-2019-2025-inputs-2026-09-24.md). CLAUDE.md is binding.
+SHARD R-ERCOT ARM 2019 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT (docs/records/ercot/PRECOMMIT-r-ercot-2019-2025-inputs-2026-09-24.md). CLAUDE.md is binding.
 DATA PROFILE: ercot
 MODEL: Opus/Fable. BUDGET: ~25 min of LP. If you reach 40 min with no bundle, STOP and report.
 
@@ -22,7 +22,7 @@ HARD STOP 2 — INPUT sha256 (`sha256sum`) must read exactly:
 Any mismatch: STOP, push nothing, report.
 
 THE SOLVE — run exactly this from the repo root, unmodified, in the foreground (one year only):
-PYTHONPATH=.:src:scripts uv run python scripts/replay_keeper.py results/calibration/ercot_mer20260919_five_year --years 2019 --out-dir results/calibration/r_ercot_arm_2019 --note "R-ERCOT ARM 2019: incumbent recipe + corrected backcast inputs (vintage EIA-860, year-matched plant HR, short-gas/coal CAMPD windows) — PRECOMMIT-r-ercot-2019-2025-inputs-2026-09-24" --set eia860_vintage_tracks_solve_year=true --set measured_ct_heat_rates=true --set measured_coal_heat_rates=true --set measured_st_heat_rates=true --set measured_cc_heat_rates=true --set measured_chp_heat_rates=true --set unit_outage_short_windows=true --set unit_outage_short_windows_gas=true --set ercot_offer_swcap_clip=true --set "offer_curve_by_group=$(cat docs/handoffs/r-ercot/carveout_a_offer_curve_by_group.json)" 2>&1 | tee /tmp/r_ercot_arm_2019.log
+PYTHONPATH=.:src:scripts uv run python scripts/replay_keeper.py results/calibration/ercot_mer20260919_five_year --years 2019 --out-dir results/calibration/r_ercot_arm_2019 --note "R-ERCOT ARM 2019: incumbent recipe + corrected backcast inputs (vintage EIA-860, year-matched plant HR, short-gas/coal CAMPD windows) — PRECOMMIT-r-ercot-2019-2025-inputs-2026-09-24" --set eia860_vintage_tracks_solve_year=true --set measured_ct_heat_rates=true --set measured_coal_heat_rates=true --set measured_st_heat_rates=true --set measured_cc_heat_rates=true --set measured_chp_heat_rates=true --set unit_outage_short_windows=true --set unit_outage_short_windows_gas=true --set ercot_offer_swcap_clip=true --set "offer_curve_by_group=$(cat docs/records/ercot/r-ercot/carveout_a_offer_curve_by_group.json)" 2>&1 | tee /tmp/r_ercot_arm_2019.log
 
 Never pass --no-container-preflight. Do not set MARKET_SIM_WARMSTART_XYEAR or MARKET_SIM_P1_BASIS_SEED (replay_keeper pins them off; rule 36).
 
@@ -50,7 +50,7 @@ FINAL MESSAGE — REPORT IN NUMBERS: the SHA you solved at; the pushed commit's 
 ## LEG arm-2020
 
 ```text
-SHARD R-ERCOT ARM 2020 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT (docs/handoffs/PRECOMMIT-r-ercot-2019-2025-inputs-2026-09-24.md). CLAUDE.md is binding.
+SHARD R-ERCOT ARM 2020 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT (docs/records/ercot/PRECOMMIT-r-ercot-2019-2025-inputs-2026-09-24.md). CLAUDE.md is binding.
 DATA PROFILE: ercot
 MODEL: Opus/Fable. BUDGET: ~25 min of LP. If you reach 40 min with no bundle, STOP and report.
 
@@ -68,7 +68,7 @@ HARD STOP 2 — INPUT sha256 (`sha256sum`) must read exactly:
 Any mismatch: STOP, push nothing, report.
 
 THE SOLVE — run exactly this from the repo root, unmodified, in the foreground (one year only):
-PYTHONPATH=.:src:scripts uv run python scripts/replay_keeper.py results/calibration/ercot_mer20260919_five_year --years 2020 --out-dir results/calibration/r_ercot_arm_2020 --note "R-ERCOT ARM 2020: incumbent recipe + corrected backcast inputs (vintage EIA-860, year-matched plant HR, short-gas/coal CAMPD windows) — PRECOMMIT-r-ercot-2019-2025-inputs-2026-09-24" --set eia860_vintage_tracks_solve_year=true --set measured_ct_heat_rates=true --set measured_coal_heat_rates=true --set measured_st_heat_rates=true --set measured_cc_heat_rates=true --set measured_chp_heat_rates=true --set unit_outage_short_windows=true --set unit_outage_short_windows_gas=true --set ercot_offer_swcap_clip=true --set "offer_curve_by_group=$(cat docs/handoffs/r-ercot/carveout_a_offer_curve_by_group.json)" 2>&1 | tee /tmp/r_ercot_arm_2020.log
+PYTHONPATH=.:src:scripts uv run python scripts/replay_keeper.py results/calibration/ercot_mer20260919_five_year --years 2020 --out-dir results/calibration/r_ercot_arm_2020 --note "R-ERCOT ARM 2020: incumbent recipe + corrected backcast inputs (vintage EIA-860, year-matched plant HR, short-gas/coal CAMPD windows) — PRECOMMIT-r-ercot-2019-2025-inputs-2026-09-24" --set eia860_vintage_tracks_solve_year=true --set measured_ct_heat_rates=true --set measured_coal_heat_rates=true --set measured_st_heat_rates=true --set measured_cc_heat_rates=true --set measured_chp_heat_rates=true --set unit_outage_short_windows=true --set unit_outage_short_windows_gas=true --set ercot_offer_swcap_clip=true --set "offer_curve_by_group=$(cat docs/records/ercot/r-ercot/carveout_a_offer_curve_by_group.json)" 2>&1 | tee /tmp/r_ercot_arm_2020.log
 
 Never pass --no-container-preflight. Do not set MARKET_SIM_WARMSTART_XYEAR or MARKET_SIM_P1_BASIS_SEED (replay_keeper pins them off; rule 36).
 
@@ -96,7 +96,7 @@ FINAL MESSAGE — REPORT IN NUMBERS: the SHA you solved at; the pushed commit's 
 ## LEG arm-2021
 
 ```text
-SHARD R-ERCOT ARM 2021 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT (docs/handoffs/PRECOMMIT-r-ercot-2019-2025-inputs-2026-09-24.md). CLAUDE.md is binding.
+SHARD R-ERCOT ARM 2021 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT (docs/records/ercot/PRECOMMIT-r-ercot-2019-2025-inputs-2026-09-24.md). CLAUDE.md is binding.
 DATA PROFILE: ercot
 MODEL: Opus/Fable. BUDGET: ~25 min of LP. If you reach 40 min with no bundle, STOP and report.
 
@@ -142,7 +142,7 @@ FINAL MESSAGE — REPORT IN NUMBERS: the SHA you solved at; the pushed commit's 
 ## LEG arm-2022
 
 ```text
-SHARD R-ERCOT ARM 2022 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT (docs/handoffs/PRECOMMIT-r-ercot-2019-2025-inputs-2026-09-24.md). CLAUDE.md is binding.
+SHARD R-ERCOT ARM 2022 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT (docs/records/ercot/PRECOMMIT-r-ercot-2019-2025-inputs-2026-09-24.md). CLAUDE.md is binding.
 DATA PROFILE: ercot
 MODEL: Opus/Fable. BUDGET: ~25 min of LP. If you reach 40 min with no bundle, STOP and report.
 
@@ -188,7 +188,7 @@ FINAL MESSAGE — REPORT IN NUMBERS: the SHA you solved at; the pushed commit's 
 ## LEG arm-2023
 
 ```text
-SHARD R-ERCOT ARM 2023 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT (docs/handoffs/PRECOMMIT-r-ercot-2019-2025-inputs-2026-09-24.md). CLAUDE.md is binding.
+SHARD R-ERCOT ARM 2023 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT (docs/records/ercot/PRECOMMIT-r-ercot-2019-2025-inputs-2026-09-24.md). CLAUDE.md is binding.
 DATA PROFILE: ercot
 MODEL: Opus/Fable. BUDGET: ~25 min of LP. If you reach 40 min with no bundle, STOP and report.
 
@@ -234,7 +234,7 @@ FINAL MESSAGE — REPORT IN NUMBERS: the SHA you solved at; the pushed commit's 
 ## LEG arm-2024
 
 ```text
-SHARD R-ERCOT ARM 2024 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT (docs/handoffs/PRECOMMIT-r-ercot-2019-2025-inputs-2026-09-24.md). CLAUDE.md is binding.
+SHARD R-ERCOT ARM 2024 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT (docs/records/ercot/PRECOMMIT-r-ercot-2019-2025-inputs-2026-09-24.md). CLAUDE.md is binding.
 DATA PROFILE: ercot
 MODEL: Opus/Fable. BUDGET: ~25 min of LP. If you reach 40 min with no bundle, STOP and report.
 
@@ -280,7 +280,7 @@ FINAL MESSAGE — REPORT IN NUMBERS: the SHA you solved at; the pushed commit's 
 ## LEG arm-2025
 
 ```text
-SHARD R-ERCOT ARM 2025 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT (docs/handoffs/PRECOMMIT-r-ercot-2019-2025-inputs-2026-09-24.md). CLAUDE.md is binding.
+SHARD R-ERCOT ARM 2025 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT (docs/records/ercot/PRECOMMIT-r-ercot-2019-2025-inputs-2026-09-24.md). CLAUDE.md is binding.
 DATA PROFILE: ercot
 MODEL: Opus/Fable. BUDGET: ~25 min of LP. If you reach 40 min with no bundle, STOP and report.
 
@@ -326,7 +326,7 @@ FINAL MESSAGE — REPORT IN NUMBERS: the SHA you solved at; the pushed commit's 
 ## LEG ctl-2021
 
 ```text
-SHARD R-ERCOT CTL 2021 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT (docs/handoffs/PRECOMMIT-r-ercot-2019-2025-inputs-2026-09-24.md). CLAUDE.md is binding.
+SHARD R-ERCOT CTL 2021 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT (docs/records/ercot/PRECOMMIT-r-ercot-2019-2025-inputs-2026-09-24.md). CLAUDE.md is binding.
 DATA PROFILE: ercot
 MODEL: Opus/Fable. BUDGET: ~25 min of LP. If you reach 40 min with no bundle, STOP and report.
 
@@ -372,7 +372,7 @@ FINAL MESSAGE — REPORT IN NUMBERS: the SHA you solved at; the pushed commit's 
 ## LEG ctl-2022
 
 ```text
-SHARD R-ERCOT CTL 2022 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT (docs/handoffs/PRECOMMIT-r-ercot-2019-2025-inputs-2026-09-24.md). CLAUDE.md is binding.
+SHARD R-ERCOT CTL 2022 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT (docs/records/ercot/PRECOMMIT-r-ercot-2019-2025-inputs-2026-09-24.md). CLAUDE.md is binding.
 DATA PROFILE: ercot
 MODEL: Opus/Fable. BUDGET: ~25 min of LP. If you reach 40 min with no bundle, STOP and report.
 
@@ -418,7 +418,7 @@ FINAL MESSAGE — REPORT IN NUMBERS: the SHA you solved at; the pushed commit's 
 ## LEG ctl-2023
 
 ```text
-SHARD R-ERCOT CTL 2023 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT (docs/handoffs/PRECOMMIT-r-ercot-2019-2025-inputs-2026-09-24.md). CLAUDE.md is binding.
+SHARD R-ERCOT CTL 2023 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT (docs/records/ercot/PRECOMMIT-r-ercot-2019-2025-inputs-2026-09-24.md). CLAUDE.md is binding.
 DATA PROFILE: ercot
 MODEL: Opus/Fable. BUDGET: ~25 min of LP. If you reach 40 min with no bundle, STOP and report.
 
@@ -464,7 +464,7 @@ FINAL MESSAGE — REPORT IN NUMBERS: the SHA you solved at; the pushed commit's 
 ## LEG ctl-2024
 
 ```text
-SHARD R-ERCOT CTL 2024 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT (docs/handoffs/PRECOMMIT-r-ercot-2019-2025-inputs-2026-09-24.md). CLAUDE.md is binding.
+SHARD R-ERCOT CTL 2024 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT (docs/records/ercot/PRECOMMIT-r-ercot-2019-2025-inputs-2026-09-24.md). CLAUDE.md is binding.
 DATA PROFILE: ercot
 MODEL: Opus/Fable. BUDGET: ~25 min of LP. If you reach 40 min with no bundle, STOP and report.
 
@@ -510,7 +510,7 @@ FINAL MESSAGE — REPORT IN NUMBERS: the SHA you solved at; the pushed commit's 
 ## LEG ctl-2025
 
 ```text
-SHARD R-ERCOT CTL 2025 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT (docs/handoffs/PRECOMMIT-r-ercot-2019-2025-inputs-2026-09-24.md). CLAUDE.md is binding.
+SHARD R-ERCOT CTL 2025 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT (docs/records/ercot/PRECOMMIT-r-ercot-2019-2025-inputs-2026-09-24.md). CLAUDE.md is binding.
 DATA PROFILE: ercot
 MODEL: Opus/Fable. BUDGET: ~25 min of LP. If you reach 40 min with no bundle, STOP and report.
 

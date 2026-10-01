@@ -3,7 +3,7 @@
 **Date** 2026-07-28 · **ISO** ERCOT · **Lane** ercot135-coal-merit-order ·
 **Status** **PRE-REGISTERED, NOT EXECUTED — BLOCKED ON AN OWNER RULING (§0).**
 Written and pushed **before any solve**, per the ERCOT-134 §10 charter. ·
-**Phase 1** `docs/DIAGNOSIS-ercot135-coal-merit-order-2026-07-28.md` ·
+**Phase 1** `docs/records/ercot/DIAGNOSIS-ercot135-coal-merit-order-2026-07-28.md` ·
 **Keeper** `2026-07-28-ercot116-regate-base` — **not touched by this document.**
 
 ---

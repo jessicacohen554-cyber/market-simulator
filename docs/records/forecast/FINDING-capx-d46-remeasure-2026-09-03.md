@@ -4,7 +4,7 @@
 the owner scoped at r#32 (ruling **Q32: STAGED** — the cheap set now, the t1f tail
 later). Branch `claude/capx-d46-remeasure-batch-oe1h77`, FRESH off `origin/main`
 `32e07427`. The pre-declaration
-`docs/handoffs/PREDECL-capx-d46-remeasure-2026-09-03.md` was committed and pushed
+`docs/records/forecast/PREDECL-capx-d46-remeasure-2026-09-03.md` was committed and pushed
 (`71d3f1a6`) **before the first solve started** and is graded at full magnitude in
 §7, misses included.
 

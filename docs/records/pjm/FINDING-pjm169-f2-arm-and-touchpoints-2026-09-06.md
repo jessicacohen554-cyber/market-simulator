@@ -3,7 +3,7 @@
 **Session:** pjm-169 · **Date:** 2026-09-06
 **Branch:** `claude/pjm-calibration-f2-f4-n6wzrr`
 **Keeper:** `2026-08-15-pjm-162-inputclock` (`pjm_debugb_inputclock_A`) — **UNCHANGED, not promoted**
-**Predecessor:** `results/calibration/FINDING-pjm168-f1-f2-screens-2026-09-06.md`
+**Predecessor:** `docs/records/pjm/FINDING-pjm168-f1-f2-screens-2026-09-06.md`
 **Owner decision:** arm F2 for PJM (2026-09-06, this session, `AskUserQuestion` — "Yes — arm F2 for PJM")
 
 ---
@@ -213,7 +213,7 @@ supersession recorded in the `complete` marker, and git history is its record.
 
 ## 4. F4 — built, unspent, and two corrections to its framing
 
-The PRECOMMIT is `docs/handoffs/PRECOMMIT-pjm169-f4-anchor-vintage-2026-09-06.md`, written before
+The PRECOMMIT is `docs/records/pjm/PRECOMMIT-pjm169-f4-anchor-vintage-2026-09-06.md`, written before
 any build. The mechanism is `ScenarioConfig.gas_offer_margin_anchor_vintage` (default off,
 byte-identical off): it resolves `gas_offer_margin_anchor` on the **solve year's** own mean
 `_gas_series` instead of the frozen 2023–2025 window mean — the same measurement, a different year,
@@ -288,7 +288,7 @@ PRECOMMIT gate S1 is exactly this identity.
 
 The screen ran on 2022 (year chosen on footprint, declared before any solve), single declared
 delta on the F2-armed keeper recipe, control = §3.2's own 2022 at the same HEAD. Full table,
-prediction and reasoning: `docs/handoffs/PRECOMMIT-pjm169-f4-anchor-vintage-2026-09-06.md` §9.
+prediction and reasoning: `docs/records/pjm/PRECOMMIT-pjm169-f4-anchor-vintage-2026-09-06.md` §9.
 
 | gate | measured | verdict |
 |---|---|---|

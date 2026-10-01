@@ -1,7 +1,7 @@
 # Capacity-market clearing — per-ISO flip memo (RC-2B, 2026-07-16)
 
 **Charter.** F-8 of the flip-gate lane
-(`docs/handoffs/forecast-retirement-calibration-plan-2026-07.md` §2.3): grade the
+(`docs/records/forecast/forecast-retirement-calibration-plan-2026-07.md` §2.3): grade the
 §2.1 flip gate per ISO (PJM / MISO / NYISO / NEISO / CAISO), state the honest
 failure modes of flipping now vs waiting, inventory the residuals with their
 owners, and put the decision to the owner. **Memo only — no LP solved, no code or

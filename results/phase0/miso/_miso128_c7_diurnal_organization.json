@@ -1,6 +1,6 @@
 {
   "probe": "miso-128 C7 2025 diurnal organization",
-  "prereg": "results/calibration/PREREG-miso128-c7-2025-diurnal-organization-2026-08-04.md",
+  "prereg": "docs/records/miso/PREREG-miso128-c7-2025-diurnal-organization-2026-08-04.md",
   "keeper_run": "2026-08-04-miso-127-onlinepmin",
   "bundle": "results/calibration/miso127_onlinepmin_B",
   "years": [

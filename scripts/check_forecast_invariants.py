@@ -897,7 +897,7 @@ def carbon_pair_premise_from_configs(
     ``carbon_price=25`` override REPLACED the base's escalating projected RGGI
     trajectory ($26.05→$132.16/t), so the "carbon" arm was a price CUT in
     every year and P1 measured the premise of its own pair
-    (``docs/handoffs/FINDING-capx-d23-p1-carbon-sign-2026-09-01.md``).
+    (``docs/records/forecast/FINDING-capx-d23-p1-carbon-sign-2026-09-01.md``).
 
     This is the ONE premise mechanism (rule 19): the cache-directory route
     (:func:`carbon_pair_premise`) and the committed-``run_config.json`` route

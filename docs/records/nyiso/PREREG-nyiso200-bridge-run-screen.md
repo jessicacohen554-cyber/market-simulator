@@ -13,7 +13,7 @@ applied.
 
 ## §0 — Phase 0 (zero LP): what the nyiso-199 stop actually was, and what the object actually is
 
-Record: `results/calibration/_nyiso200_bridge_phase0.json` (`scripts/probes/nyiso200_bridge_phase0.py`).
+Record: `results/phase0/nyiso/_nyiso200_bridge_phase0.json` (`scripts/probes/nyiso200_bridge_phase0.py`).
 
 **0.1 The nyiso-199 §8.3 STOP fired on rows the span scorer skips by construction.** The two new
 D-4 unit-conduct convictions (7314 for 3,210 h, 50978 for 352 h, measured median 0.0 MW) are on
@@ -248,6 +248,6 @@ disposition is chosen, in the FINDING, and the owner's formula decides.
   row; 8906 reliability row median 13.6 MW, pass); bridge floors at 7314 542 h / 10.0 GWh and
   50978 153 h / 5.1 GWh, every one anchored on a run that repaid its start. **A3-2025 not spent.**
 * Both bundles deleted before merge (rule 29(c)); every number lives in
-  `_nyiso200_screen_gates_{a1,a3}_2023.json` and `docs/FINDING-nyiso200-bridge-run-screen-2026-09-06.md`.
+  `_nyiso200_screen_gates_{a1,a3}_2023.json` and `docs/records/nyiso/FINDING-nyiso200-bridge-run-screen-2026-09-06.md`.
 * Keeper UNCHANGED. Nothing registered, nothing promoted, no span spent. The two gate
   constructions that fired are handed forward as the next PREREG's corrections (FINDING §7).

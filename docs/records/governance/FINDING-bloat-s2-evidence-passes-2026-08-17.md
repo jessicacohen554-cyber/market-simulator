@@ -1,7 +1,7 @@
 # FINDING — BLOAT-S2: the §4.8 evidence passes and the Stage-2 (a)-only untrack
 
 **Session BLOAT-S2, 2026-08-17.** Executes the signed O2 grant
-(`docs/DECISION-CARD-bloat3-stage2-charter-2026-08-16.md`, VERDICT block,
+(`docs/records/governance/DECISION-CARD-bloat3-stage2-charter-2026-08-16.md`, VERDICT block,
 owner-signed 2026-08-16): per-corpus §4.8 evidence passes first, then untrack
 ONLY corpora whose pass measures a **stable archive** — recovery story (a)
 per-corpus re-fetch, evidence-passed, and nothing else. No external archive,
@@ -330,7 +330,7 @@ independent of this session: the sidecars
 `registry/2026-08-16-miso-160-{control,wefor-shape}.json` are committed with
 **no `runs/<id>.js` payloads and no bundle dirs** — the exact
 sidecar-without-payload stranding of
-`docs/handoffs/dashboard-payload-push-gap-2026-07.md`. Diagnosis: PR #4035
+`docs/records/misc/dashboard-payload-push-gap-2026-07.md`. Diagnosis: PR #4035
 merged an early point of `claude/miso-backcast-calibration-nk4zhj`; the
 session kept pushing to the branch after the merge, and the branch tip
 (`c7dbccd`) holds everything main is missing — both payloads (~1.5 MB each),

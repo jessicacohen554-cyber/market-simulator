@@ -7,12 +7,12 @@ committed T1-H ledgers' ``pipeline_events`` rows on the D48 class-EFORd basis / 
 built by ``capacity_supply_curve`` on a hindcast PJM ScenarioConfig (the registry vintage curves
 through the SAME MarketDesign.capacity_price_per_firm_mw_yr seam the solve prices), and compares
 the price / cleared position per delivery year against the committed
-``docs/handoffs/d54/clearing-predecl[-headbasis]-2026-09-05.json`` outputs.
+``docs/records/forecast/d54/clearing-predecl[-headbasis]-2026-09-05.json`` outputs.
 
 STOP 1 (DESIGN-capx-d54 §7.7 item 1): |Δprice| > $1/MW-day or |Δposition| > 0.1 pt in any year.
 Design invariant I5. The published BRA record is printed beside as a VALIDATION OBSERVABLE only.
 
-Run from the repo root: ``uv run python docs/handoffs/d57/phase0-reproduction-2026-09-05.py [out.json]``
+Run from the repo root: ``uv run python docs/records/forecast/d57/phase0-reproduction-2026-09-05.py [out.json]``
 """
 
 import glob
@@ -28,12 +28,12 @@ from market_sim.model.capacity_evolution.adequacy import (
     clear_capacity_supply_stack,
 )
 
-D48 = json.load(open("docs/handoffs/d48/devintage-positions-d45r-2026-09-04.json"))[
+D48 = json.load(open("docs/records/forecast/d48/devintage-positions-d45r-2026-09-04.json"))[
     "years"
 ]
 PUB = {
     r["delivery_year"]: r
-    for r in json.load(open("docs/handoffs/d45/published-positions-2026-09-03.json"))[
+    for r in json.load(open("docs/records/forecast/d45/published-positions-2026-09-03.json"))[
         "pjm"
     ]
 }
@@ -47,8 +47,8 @@ BUNDLES = (
     ),
 )
 BASES = {
-    "d48": ("BOTH", "docs/handoffs/d54/clearing-predecl-2026-09-05.json"),
-    "head": ("OFF", "docs/handoffs/d54/clearing-predecl-headbasis-2026-09-05.json"),
+    "d48": ("BOTH", "docs/records/forecast/d54/clearing-predecl-2026-09-05.json"),
+    "head": ("OFF", "docs/records/forecast/d54/clearing-predecl-headbasis-2026-09-05.json"),
 }
 TOL_PRICE, TOL_POS_PTS = 1.0, 0.1
 # The curve-gate-ON hindcast config: capacity_market_clearing_by_iso ships PJM True, so

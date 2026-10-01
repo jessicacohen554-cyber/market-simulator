@@ -6,7 +6,7 @@
 artifact reads and code audits — the rule 29 `[R-SCREEN]` clause-0 path.
 **PJM keeper `2026-09-11-pjm-d4-4-gasoutage`: CALIBRATED, 8/8, zero caveats — UNTOUCHED.**
 
-Chartered by `docs/PRECOMMIT-pjm-h5-coal-committed-charter-2026-09-13.md` §4 (the ex-ante
+Chartered by `docs/records/pjm/PRECOMMIT-pjm-h5-coal-committed-charter-2026-09-13.md` §4 (the ex-ante
 rule-19 REPLACE decision) and §10a (**OWNER RULING 2026-09-14**: *"If structural integrity
 improves but gates regress that may still be a keeper"*), whose revised recommendation is
 **build and solve Route A (REPLACE, applied to ALL classes)**. Everything the charter refuses

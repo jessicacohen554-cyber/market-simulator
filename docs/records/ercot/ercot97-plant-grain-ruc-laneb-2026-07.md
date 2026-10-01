@@ -52,10 +52,10 @@ crosswalk + plant×hour DAM availability, (B) MEASURED RUC-CONDUCT commitment st
 2023 tail 51/181 h, C3a -27.8%, C7/C8 PASS) — NOT on stale main.
 
 READ FIRST (in order): CLAUDE.md in full (rule 26: this lane writes core infra →
-Opus/Fable ONLY). docs/handoffs/ercot97-plant-grain-ruc-laneb-2026-07.md (this
-charter's grounding facts). docs/handoffs/ercot96-thermal-dam-grain-2026-07.md +
+Opus/Fable ONLY). docs/records/ercot/ercot97-plant-grain-ruc-laneb-2026-07.md (this
+charter's grounding facts). docs/records/ercot/ercot96-thermal-dam-grain-2026-07.md +
 docs/calibration-log/ercot.md §ERCOT-96 (what the hourly grain already banked and
-how). docs/handoffs/ercot95-scarcity-tail-diagnosis-2026-07.md (Findings 4-6).
+how). docs/records/ercot/ercot95-scarcity-tail-diagnosis-2026-07.md (Findings 4-6).
 Use .venv/bin/python (bare python has no numpy).
 
 WHERE WE ARE
@@ -157,7 +157,7 @@ HARD GUARDRAILS (CLAUDE.md)
 ENV GOTCHAS (from ERCOT-96, all verified)
 - Base the tree on main ≥ a4a17c9 (or the ERCOT-96 branch
   claude/ercot-thermal-dam-grain-all6f0): it carries the hourly-grain code as
-  docs/handoffs/ercot96-lane-a-core.patch — git apply + hash-verify + regenerate
+  docs/records/ercot/ercot96-lane-a-core.patch — git apply + hash-verify + regenerate
   the hourly CSV (derive script, sha256 in the manifest) if the assembled files
   haven't landed on main yet. VERIFY before any solve:
   cd scripts && ../.venv/bin/python -c "import inspect,run_calibration_full as r;

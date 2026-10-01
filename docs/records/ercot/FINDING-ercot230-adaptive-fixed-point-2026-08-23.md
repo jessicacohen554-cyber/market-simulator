@@ -3,9 +3,9 @@
 **Session ercot-230, 2026-08-23, branch `claude/ercot-2023-summer-scarcity-1nx4cl`.
 Keeper at open AND at close: `2026-08-20-ercot223-arm-eventrelease` (NOT-YET,
 {C3a-2023 −39.7 %, C3b-2023 0.729}, C3c ledgered ×3 — untouched). Precommit
-`docs/PRECOMMIT-ercot230-adaptive-fixed-point-2026-08-23.md` (304 lines, blob
+`docs/records/ercot/PRECOMMIT-ercot230-adaptive-fixed-point-2026-08-23.md` (304 lines, blob
 `3a73cb0d`) pushed + blob-verified BEFORE any build edit and BEFORE any solve.
-Committed record: `results/calibration/ercot230_probe_fixedpoint.json` +
+Committed record: `results/phase0/ercot/ercot230_probe_fixedpoint.json` +
 `ercot230_gates.json` + this FINDING; probe bundles local and unregistered
 (W-2, carried forward by the ercot-230 dispatch).**
 

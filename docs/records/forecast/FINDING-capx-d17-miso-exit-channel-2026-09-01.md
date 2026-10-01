@@ -1,6 +1,6 @@
 # FINDING — capx D17: MISO's missing non-coal exit channel is ATTRIBUTED — the screen bar fails ~83 % of the thermal fleet, the adequacy requirement rations the exits, and the pre-S-123 requirement basis starved the non-coal channel; the S-123 repair already reaches a HEAD T1-H solve and the re-measure is the routed next step
 
-**Lane:** capx D17 (r#22 relaunch), charter `docs/handoffs/capx-director-prompt-pack-2026-08.md`
+**Lane:** capx D17 (r#22 relaunch), charter `docs/records/forecast/capx-director-prompt-pack-2026-08.md`
 §D17. **Precommit:** `PRECOMMIT-capx-d17-miso-exit-channel-2026-09-01.md`, pushed before any
 measurement; the candidate threads, evidence plan (E1–E8), adjudication rule and kills below
 are executed as frozen there. **Phase 0 only: ZERO solves** — every number is read from a

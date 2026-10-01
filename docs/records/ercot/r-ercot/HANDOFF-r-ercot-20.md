@@ -14,8 +14,8 @@ HOUSEKEEPING FIRST
 PRECONDITION: frontend/data/backcast/keepers/ERCOT.json on main names keeper 2026-09-30-r-19-eia-923 (bundle results/calibration/r_ercot19a_span, 2019–2025), ISO NOT-YET. If not, STOP and report.
 
 READ FIRST
-- docs/handoffs/r-ercot/RESULT-r-ercot-19-south-overrun-and-hub-refresh-2026-09-30.md
-- docs/handoffs/r-ercot/PRECOMMIT-r-ercot-19-south-overrun-and-hub-refresh-2026-09-30.md (all of it — §1 is the merit-compression measurement; addenda A/B are the two rejected commit-profile arms)
+- docs/records/ercot/r-ercot/RESULT-r-ercot-19-south-overrun-and-hub-refresh-2026-09-30.md
+- docs/records/ercot/r-ercot/PRECOMMIT-r-ercot-19-south-overrun-and-hub-refresh-2026-09-30.md (all of it — §1 is the merit-compression measurement; addenda A/B are the two rejected commit-profile arms)
 - the ERCOT matrix shard docs/codebase-site/data/mechanism-matrix/ERCOT.js and docs/mechanism-testing-matrix.md §5.1 (rule 28(a))
 
 STANDING STATE (r-19 keeper, P1)
@@ -56,7 +56,7 @@ LESSONS FROM R-ERCOT-17/18/19
 - 2024 C3a and 2022 C1 CC_REGULAR sit on edges; a CC-dispatch lever tends to trade one for the other. Predict both before solving.
 - Keep the branch rebase-free (merge origin/main in). A mechanism-matrix.js merge conflict is almost always scenarios.py line anchors: take main's side hunk-by-hunk except hunks that differ in non-digit text, then check_mechanism_matrix.py --fix-anchors and --base origin/main.
 - The D-4 conduct rider is binary; a small residual floor binding off-hours still convicts.
-- Shard prompts: docs/handoffs/r-ercot/SHARD-PROMPTS-r-ercot-19C.md (keeper bundle → r_ercot19a_span). Partition signatures (swcap / ep_referenced / CC_REGULAR.peak / CT_PEAKER.peak): 2019–2022 true/true/151.008/433.95; 2023 true/FALSE/151.008/433.95; 2024–2025 false/true/4.576/13.15; plus netload_drag_prior_year_commitment_index=true everywhere; carry the input sha256 list (ercot_zonal_gas_hub.csv a6946073…ec26).
+- Shard prompts: docs/records/ercot/r-ercot/SHARD-PROMPTS-r-ercot-19C.md (keeper bundle → r_ercot19a_span). Partition signatures (swcap / ep_referenced / CC_REGULAR.peak / CT_PEAKER.peak): 2019–2022 true/true/151.008/433.95; 2023 true/FALSE/151.008/433.95; 2024–2025 false/true/4.576/13.15; plus netload_drag_prior_year_commitment_index=true everywhere; carry the input sha256 list (ercot_zonal_gas_hub.csv a6946073…ec26).
 - If only 2024/2025 inputs move, re-solve only those years and recompose 2019–2023 from the keeper legs (R-ERCOT-19 arm A pattern) — the composer is scripts/probes/_r_ercot_compose_span.py.
 - A fresh container needs `uv sync --frozen` before any python. Watch disk: seven full legs + a span is ~1.2 GB; delete owner-ruled legs.
 

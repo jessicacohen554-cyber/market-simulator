@@ -599,8 +599,8 @@ session's rebase brought in, which is why they exceed the pre-rebase figures):
 
 | file | lines (local) | transport | verified |
 |---|---:|---|---|
-| `docs/handoffs/FINDING-capx-d65br-2026-09-06.md` | 876 | `git push` (small pack) | line count + sha256 equal |
-| `docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md` | 964 | `git push` (small pack) | line count + sha256 equal |
+| `docs/records/forecast/FINDING-capx-d65br-2026-09-06.md` | 876 | `git push` (small pack) | line count + sha256 equal |
+| `docs/records/forecast/PRECOMMIT-capx-d65b-2026-09-06.md` | 964 | `git push` (small pack) | line count + sha256 equal |
 | `docs/codebase-site/data/mechanism-matrix.js` | 2,667 | `git push` (small pack) | line count + sha256 equal |
 | `docs/codebase-site/data/mechanism-matrix/CAISO.js` | 655 | `git push` (small pack) | line count + sha256 equal |
 | `docs/codebase-site/data/mechanism-matrix/ERCOT.js` | 500 | `git push` (small pack) | line count + sha256 equal |
@@ -783,7 +783,7 @@ performed only the first.**
 
 **(a) The registrar never writes the file.** `scripts/register_forecast_run.py` reaches
 `ff-verdicts.json` at exactly one place — `_load_verdicts()` (:648–653), which *reads* the committed
-snapshot and falls back to `docs/handoffs/ff-t1-gate-verdicts.json`. Every other reference in the
+snapshot and falls back to `docs/records/forecast/ff-t1-gate-verdicts.json`. Every other reference in the
 module is a docstring. The file's **sole writer** in the tree is
 `scripts/rescore_forecast_verdicts.py --apply` (:69, :299), whose scope is stated in its own header:
 verdicts whose `VERDICT_MAP`-mapped run has a **tracked score artifact under `results/hindcast/`** —

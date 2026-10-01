@@ -276,7 +276,7 @@ CONFIG_FULL_SURFACE_MIN_KEYS = 20
 # An FC-7 input (``run_config.json`` / ``dof_ledger.json``) carrying this as its
 # top-level ``provenance`` value was RECONSTRUCTED after the fact from committed
 # evidence — it is NOT the artifact the solve itself wrote. Director ruling r#22
-# §0s.5 (docs/handoffs/capx-director-ledger-2026-08.md): such an artifact may
+# §0s.5 (docs/records/forecast/capx-director-ledger-2026-08.md): such an artifact may
 # reach CAVEAT and NEVER PASS, because adopting it as an original would assert
 # exactly the provenance FC-7 exists to measure. The only route to a clean FC-7
 # on a reconstructed leg is a genuine re-run.

@@ -5,9 +5,9 @@ re-grounded on the state at HEAD `3f7388e` (2026-08-26, refresh #7). Everything 
 verifiable from committed artifacts; the successor re-reads them rather than trusting this doc.
 
 Canonical companions, all on `main`:
-`docs/handoffs/capx-director-ledger-2026-08.md` (the ledger),
-`docs/handoffs/capx-director-prompt-pack-2026-08.md` (the six lane prompts),
-`docs/DECISION-CARD-capx-director-open-rulings-2026-08-25.md` (cards A/B/C, all SIGNED).
+`docs/records/forecast/capx-director-ledger-2026-08.md` (the ledger),
+`docs/records/forecast/capx-director-prompt-pack-2026-08.md` (the six lane prompts),
+`docs/records/forecast/DECISION-CARD-capx-director-open-rulings-2026-08-25.md` (cards A/B/C, all SIGNED).
 
 ```
 You are the CAPACITY-EXPANSION WORKSTREAM DIRECTOR for the market-simulator repo.
@@ -30,7 +30,7 @@ never charter backcast work, but you track it because it feeds your gates and yo
 against it. Backcast sessions move fast: three keeper promotions landed in one cycle recently.
 
 READ ON EVERY REFRESH, IN THIS ORDER:
-1. docs/handoffs/capx-director-ledger-2026-08.md — YOUR ledger. §0d is the most recent refresh.
+1. docs/records/forecast/capx-director-ledger-2026-08.md — YOUR ledger. §0d is the most recent refresh.
 2. frontend/data/forecast/program-status.json — the §2.1b gate board.
 3. frontend/data/forecast/ff-verdicts.json — THE LIVE VERDICTS. Read the BARE `<iso>-t1f` /
    `-t1x` / `-t1h` keys. Suffixed keys (`-ff2d`, `-ffr3a2`) are DELIBERATELY PRESERVED baselines.
@@ -52,7 +52,7 @@ STATE AT HANDOFF (2026-08-26, HEAD 3f7388e) — VERIFY, DON'T TRUST:
   Its FC-1 cleared on a sourced 2,749.9 MW UCAP external-capacity entry (2026 Gold Book Table V-1
   x the published NYCA ICAP->UCAP factor), which overshoots the 35.7 MW gap ~77x — the pre-declared
   honesty test. Caveat carried honestly: epoch demand drift alone would have passed 2026 by +333 MW.
-- OPEN LANES, all prompts written in docs/handoffs/capx-director-prompt-pack-2026-08.md:
+- OPEN LANES, all prompts written in docs/records/forecast/capx-director-prompt-pack-2026-08.md:
   D10 (NYISO T1-X, closes leg (c) on measurement — chartered by signed card A),
   D11 (entry-signal pro-forma — SEE THE RE-SCOPE BELOW),
   S-123 (MISO adequacy package: requirement re-vintage + external-capacity intake + ledger

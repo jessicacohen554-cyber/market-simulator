@@ -12,7 +12,7 @@ recorded so it cannot be written to fit the result.
 
 ## 0. The mechanical answer first — PJM's own key is unmoved, and ERCOT's is not
 
-`docs/handoffs/d78arm/keys_probe.py` re-run at `9518fe0b` reproduces the committed
+`docs/records/forecast/d78arm/keys_probe.py` re-run at `9518fe0b` reproduces the committed
 `keys_measured.json` **except two rows**:
 
 | leg | committed (`8875af59` + arm) | at `9518fe0b` | |

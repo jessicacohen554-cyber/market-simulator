@@ -4,8 +4,8 @@
 **Filed by:** neiso-83 §5(c) (`FINDING-neiso83-stonybrook-ca1-2026-08-05.md`), disposition
 note (v) of `frontend/data/backcast/keepers/NEISO.json`
 **Phase-0 census:** `scripts/probes/_neiso84_oil_plantgroup_census.py` →
-`results/calibration/_neiso84_oil_plantgroup_census.json`; narrative
-`results/calibration/FINDING-neiso84-frontier-recheck-2026-08-05.md` §4
+`results/phase0/neiso/_neiso84_oil_plantgroup_census.json`; narrative
+`docs/records/neiso/FINDING-neiso84-frontier-recheck-2026-08-05.md` §4
 **Scope:** ISO-agnostic fleet taxonomy + outage overlay. **NOT a NEISO lever** — rule 25
 `[R-ISO-SCOPE]` forbids fixing it inside one ISO's lane.
 **Model assignment:** Opus or Fable (writes `src/market_sim/`) — rule 27 `[R-PUSH]`.

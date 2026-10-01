@@ -4,7 +4,7 @@
 under rule 31. PRECOMMIT `PRECOMMIT-spp-77-cc-self-commitment-and-f923-outlier-2026-09-24.md` was
 pushed at `cf8647e0a3075edac5f79c32b81a1e21fc62d4ca` before any new number was read.
 Base `f68160020fa0799eff408e1bd4b80f0cd7f5a017`.
-Probe `scripts/probes/_spp77_fuel_outlier.py`; its numbers are in `results/calibration/_spp77_fuel_outlier.json`.
+Probe `scripts/probes/_spp77_fuel_outlier.py`; its numbers are in `results/phase0/spp/_spp77_fuel_outlier.json`.
 
 **Verdict: neither A nor B names an admissible input. Nothing was built, no shard was launched, and
 the SPP determination is untouched.**

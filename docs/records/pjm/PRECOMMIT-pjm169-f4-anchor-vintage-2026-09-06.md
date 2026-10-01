@@ -3,7 +3,7 @@
 **Session:** pjm-169 · **Date:** 2026-09-06
 **Branch:** `claude/pjm-calibration-f2-f4-n6wzrr`
 **Keeper (control):** `2026-08-15-pjm-162-inputclock` / `pjm_debugb_inputclock_A`
-**Predecessor evidence:** `results/calibration/FINDING-pjm168-f1-f2-screens-2026-09-06.md` §1
+**Predecessor evidence:** `docs/records/pjm/FINDING-pjm168-f1-f2-screens-2026-09-06.md` §1
 (F1 killed by G3: given the CORRECT 2021 registry the model still runs coal to 95.0 % of its
 ceiling and overshoots the metered coal peak by +3,619 MW — so the binding object is **offer
 ordering**, not the registry).
@@ -159,7 +159,7 @@ pjm-167 §6). The coal-sigmoid `ceil` extrapolation of §3.1 is **recorded, not 
 
 ## 7. Phase-0 census and the pre-solve algebraic prediction
 
-Run before the screen, per §3. Artifact: `results/calibration/_pjm169_f4_census.json`; probe
+Run before the screen, per §3. Artifact: `results/phase0/pjm/_pjm169_f4_census.json`; probe
 `scripts/probes/_pjm169_f4_window_footprint.py`. Measured on the keeper's own resolved config, on
 `_gas_series` — the **hourly** delivered series the offer path actually prices against.
 

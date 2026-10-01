@@ -8,7 +8,7 @@
      ledger lacks the ``sector_gated`` block"
 
 This is the identity the mechanism ASSERTS about itself, graded arm-only — no
-control leg and zero LP. It reuses ``docs/handoffs/d78/screen_compare.py``'s
+control leg and zero LP. It reuses ``docs/records/forecast/d78/screen_compare.py``'s
 ``sectors`` / ``sector_of`` readers rather than re-implementing "what sector-1
 means", so this lane and D78 / D78-R / D78-R2 cannot drift on the definition.
 
@@ -18,7 +18,7 @@ the screen for an unknown sector (D32 C5/R3), so an unknown row reaching a
 decision ledger is the designed behaviour, not a breach. Counted and reported
 separately so the number is visible either way.
 
-    python docs/handoffs/d78arm/s4_identity_check.py --arm <out-dir> [--out <json>]
+    python docs/records/forecast/d78arm/s4_identity_check.py --arm <out-dir> [--out <json>]
 """
 
 from __future__ import annotations

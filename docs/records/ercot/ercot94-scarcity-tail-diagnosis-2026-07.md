@@ -95,14 +95,14 @@ then full-span 2023-2025 in one bundle.
   `ercot_shoulder_online_span_steam_condbinned.json`. The keeper consumes the CC/CT
   wall, so **the ercot91 keeper should be re-solved on these refreshed walls** as
   part of the ERCOT-95 lane (it stays NOT-YET on C3c regardless).
-- ERCOT-93 core wiring (`docs/handoffs/ercot93-core-mechanism.patch`) applies
+- ERCOT-93 core wiring (`docs/records/ercot/ercot93-core-mechanism.patch`) applies
   cleanly on main; the 11 steam-RT tests pass with it applied. Left as a patch
   (fleet.py/scenarios.py exceed push_files' size limit); not needed for this
   diagnosis.
   - *(Correction 2026-07-26: "applies cleanly on main" is OBSOLETE — the patch
     was never applied and has since rotted (fleet.py → the `data/fleet/`
     package, wave 3H). Owner decision, fast-tier escalation follow-through
-    (`docs/handoffs/fast-tier-triage-2026-07-26.md` §4-D3): the machinery is
+    (`docs/records/misc/fast-tier-triage-2026-07-26.md` §4-D3): the machinery is
     DROPPED and the 11 steam-RT tests are C-deleted. There is no
     "recorded machinery on main" for ERCOT-95 to build on — start from the
     patch text + the ERCOT-93 log entry.)*

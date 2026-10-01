@@ -3,7 +3,7 @@
 **Session** pjm-177 · **ISO** PJM · **Date** 2026-09-09 · **Branch** `claude/focused-pasteur-jzys8p`
 **Keeper UNCHANGED** `2026-08-15-pjm-162-inputclock`. PJM headline stays **CALIBRATED** (rule 30(c)).
 **Nothing promoted, nothing registered, no holdout year solved in this container.**
-**PRECOMMIT** `docs/handoffs/PRECOMMIT-pjm177-st-gas-commitment-persistence-2026-09-09.md` — committed
+**PRECOMMIT** `docs/records/pjm/PRECOMMIT-pjm177-st-gas-commitment-persistence-2026-09-09.md` — committed
 (`0d4b434b`) **before** either leg was solved; every gate bar, the screen year and the control posture
 below were fixed there and are quoted from it unchanged.
 
@@ -201,7 +201,7 @@ C3a vs actual: control **+6.22 %**, arm **+6.24 %** (band ±10 %).
   this A/B is on the keeper's own basis and is unaffected. Whether the *repaired* series would move
   PJM's keeper is a live **rule 14 `[R-ACCURATE]`** question, opened here and answered by nobody.
   PJM **2021 is unsolvable** on the fallback: its peak reads **2,147,480,000 MW**, an int32 sentinel.
-  (Found by the parallel shard during prep; `docs/handoffs/PREP-pjm177b-phase1-2026-09-09.md`.)
+  (Found by the parallel shard during prep; `docs/records/pjm/PREP-pjm177b-phase1-2026-09-09.md`.)
 - **The S4 masks carry a stated resolution bound**: a plant counts as model-online at ≥1 % of
   nameplate, matching the payload codec's own quantization. The model's trough ST_GAS is 64.8 MW in
   the control, so its trough absence is real and not a codec artifact.

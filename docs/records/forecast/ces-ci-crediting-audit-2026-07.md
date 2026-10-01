@@ -2,7 +2,7 @@
 
 **Status:** COMPLETE — read-only data audit, no model code touched, no LP solved.
 **Session:** Wave 1-C of the national CES EAC-premium plan
-(`docs/handoffs/national-ces-eac-premium-plan-2026-07.md` **v2**, commit `1e10c85` on
+(`docs/records/forecast/national-ces-eac-premium-plan-2026-07.md` **v2**, commit `1e10c85` on
 `claude/national-ces-eac-premium-xoadma`; v1 `d6b7455` is what main carries at this
 writing). Scope per plan §8 W1-C: audit the crediting inputs for the two v2 crediting
 modes (§1 of the plan), reconcile the capture-rate knobs (§11 item 4), finalize the

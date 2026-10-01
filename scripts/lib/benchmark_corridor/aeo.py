@@ -74,7 +74,7 @@ AEO_EMM_TO_ISO: dict[str, tuple[str, str]] = {
 }
 
 # AEO scenario id -> canonical `scenario` token. Reference case only for the
-# corridor anchor (matching docs/handoffs/cross-model-corridor-2026-07-13.md);
+# corridor anchor (matching docs/records/misc/cross-model-corridor-2026-07-13.md);
 # side cases are an available extension (add ids here + re-fetch with --scenario).
 AEO_SCENARIOS: dict[str, str] = {"ref2025": "reference"}
 

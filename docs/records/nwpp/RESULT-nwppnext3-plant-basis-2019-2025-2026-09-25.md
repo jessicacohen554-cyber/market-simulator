@@ -1,7 +1,7 @@
 # RESULT — NWPP-NEXT-3: the plant-basis demand anchor (framing 2), 2019–2025 → KEEPER #10
 
 **Run:** `2026-09-25-nwppnext3-plant-basis`, bundle `results/calibration/nwppnext3_span`.
-**PRECOMMIT:** `docs/handoffs/PRECOMMIT-nwppnext3-plant-basis-2019-2025-2026-09-25.md`.
+**PRECOMMIT:** `docs/records/nwpp/PRECOMMIT-nwppnext3-plant-basis-2019-2025-2026-09-25.md`.
 **Control:** keeper #9 `2026-09-25-nwppnext2h-cascade-2019`, committed bundle (G-DRIFT form 4, PRECOMMIT §4).
 **Solved by:** seven year-isolated shards at pin `dad798cd` (rule 36). The parent session ran no LP.
 **Status: PROMOTED** to NWPP keeper #10 on the owner's standing ruling: structure improves and no criterion

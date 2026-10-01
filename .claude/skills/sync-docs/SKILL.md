@@ -109,7 +109,7 @@ items parked for later. Do not commit/push unless the user asks.
 | `model/interchange/` package, `config/iso_configs.py` (topology/TTC). `model/transmission.py` is a **frozen facade** onto it | `model-methodology-spec.md` Scope & §1.3; `CLAUDE.md` (What This Is); `docs/multi-iso/00…`, `04…` |
 | `model/storage.py` | `model-methodology-spec.md` §1.3, §1.5.5, §5.5; `CLAUDE.md` |
 | `data/fleet/` package (models, arrays, campd_bins, offer_surfaces, floors, withholding, eia860, legacy_bins, assembly) + `data/raw/reference/custom-bin-assignments.csv` (CAMPD bins, tranches, offer curves) | `docs/binning-methodology.md`; `model-methodology-spec.md` (Fleet representation); `CLAUDE.md` |
-| `data/outages.py` (backcast overlay) + `data/fleet/arrays.py` seasonal POF/WEFOR (forecast) | `model-methodology-spec.md` §1.7 and §1.9 (the overlay is a stated backcast-only device); `results/calibration/SUMMARY-outage-overlay.md` |
+| `data/outages.py` (backcast overlay) + `data/fleet/arrays.py` seasonal POF/WEFOR (forecast) | `model-methodology-spec.md` §1.7 and §1.9 (the overlay is a stated backcast-only device); `docs/records/misc/SUMMARY-outage-overlay.md` |
 | `data/fuel/` package (trajectories, hubs, `basis/<iso>.py`, coal, dual_fuel, plant_prices, resolve), `data/eia923.py`, `data/hydrogen.py` | `model-methodology-spec.md` §1.5.1; `docs/parameter-citations.md`; `docs/binning-methodology.md` (fuel pricing) |
 | `results/emissions.py`, `policy/carbon.py`, `policy/rps.py`, `policy/ira.py`, `policy/eac.py` | `model-methodology-spec.md` §1.4, §1.5, §5.3 |
 | `config/scenarios.py` (`ScenarioConfig`), `config/constants.py`, `config/sweeps.py` | `model-methodology-spec.md` §4 (tiers, `cache_key`, sweep/cases expansion, caching); `docs/parameter-citations.md`; `docs/thermal-cycling-adders.md`. **A cache-key-registered field or a declared default flip syncs to §4.1** |
@@ -126,7 +126,7 @@ items parked for later. Do not commit/push unless the user asks.
 | the dashboard artifact chain (`scripts/render_backcast.py`, `build_manifest.py`, `build_status.py`, `dashboard_add_run.py`, `lib/rubric_consts.py`) | `docs/backcast-artifact-contract.md` — the field tables, byte codecs and FROZEN list. A wire-format or bundle-key change syncs HERE first |
 | any `src/market_sim/` subsystem — "what does the code do here?" | `docs/codebase/` (code-derived engineering pages + `codebase/README.md`) |
 | repo-wide conventions (naming, layout, workflow) | `CONVENTIONS.md`; `CLAUDE.md`; docs IA index `docs/README.md` |
-| `pipeline/members.py` worker caps, warm-start (`MARKET_SIM_WARMSTART_XYEAR`), `scripts/capture_keeper_goldens.py` + `scripts/regression_gate.py` | `model-methodology-spec.md` §6 (§6.1 parallelism, §6.2 performance, §6.4 warm-start, §6.5 the byte-identity contract); `docs/handoffs/wallclock-baseline-2026-07.md` — **measured wallclock lives there, never pinned into the spec**; `docs/cross-year-warmstart.md`; `docs/testing.md` |
+| `pipeline/members.py` worker caps, warm-start (`MARKET_SIM_WARMSTART_XYEAR`), `scripts/capture_keeper_goldens.py` + `scripts/regression_gate.py` | `model-methodology-spec.md` §6 (§6.1 parallelism, §6.2 performance, §6.4 warm-start, §6.5 the byte-identity contract); `docs/records/misc/wallclock-baseline-2026-07.md` — **measured wallclock lives there, never pinned into the spec**; `docs/cross-year-warmstart.md`; `docs/testing.md` |
 | anything | `CHANGELOG.md` (always append), `README.md` (only if the elevator pitch changed) |
 
 Keep this map current: when a new doc or major module is added, add the row

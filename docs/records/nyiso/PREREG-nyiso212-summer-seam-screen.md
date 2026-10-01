@@ -6,7 +6,7 @@
 ledgered caveat. **Committed and pushed BEFORE the screen solve is launched.**
 
 **THERE ARE NO IN-SAMPLE RUBRIC FAILURES TO FIX.** The arm screened here is a rule-19
-`[R-ONE-MECH]` construction repair measured by `docs/FINDING-nyiso212-cricket-valley-summer-seam-2026-09-07.md`;
+`[R-ONE-MECH]` construction repair measured by `docs/records/nyiso/FINDING-nyiso212-cricket-valley-summer-seam-2026-09-07.md`;
 it is not selected because a residual moved, and this screen is **never gated on any target
 residual** (rule 29 `[R-SCREEN]`: a screen may KILL an arm, never promote one).
 

@@ -42,7 +42,7 @@ keep discovering more of them.**
 
 ## §1 — B1: CLOSED for 2019 (and the blocker was mis-stated)
 
-`results/calibration/FINDING-pjm160-f3-demand-profile-closure-2026-08-06.md`.
+`docs/records/pjm/FINDING-pjm160-f3-demand-profile-closure-2026-08-06.md`.
 
 The F3 gap was never the demand **driver**. `load_demand('PJM', 2019)` returns a
 full `(8, 8760)` array today, and so does every other ISO for 2019 and 2020 —

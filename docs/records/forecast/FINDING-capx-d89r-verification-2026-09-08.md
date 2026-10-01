@@ -202,8 +202,8 @@ Neither changes its conclusion, which I independently confirm. Both are the clas
 | File | Change |
 |---|---|
 | `tests/unit/model/test_d62_published_going_forward_bar.py` | 1 line, comment only: "tracked at 2.5 KB" → "tracked in the repo". Drops a literal that was already wrong and would rot again. No code, no assertion, no decorator. |
-| `docs/handoffs/capx-director-ledger-2026-08.md` | Annotation on the D89 dispatch-status rows recording PR #5642 and this finding, so the lane is not re-emitted a third time. Factual only; no verdict, no charter, no queue reordered. |
-| `docs/handoffs/FINDING-capx-d89r-verification-2026-09-08.md` | This document. |
+| `docs/records/forecast/capx-director-ledger-2026-08.md` | Annotation on the D89 dispatch-status rows recording PR #5642 and this finding, so the lane is not re-emitted a third time. Factual only; no verdict, no charter, no queue reordered. |
+| `docs/records/forecast/FINDING-capx-d89r-verification-2026-09-08.md` | This document. |
 
 **Why a new file rather than the charter's `FINDING-capx-d89-2026-09-08.md`:** that path exists and holds the first
 lane's record. Overwriting it would destroy the artifact this lane audits. The `-d89r-` name marks the re-emission and

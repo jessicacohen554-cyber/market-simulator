@@ -2,7 +2,7 @@
 
 **Zero LP. Pushed before any decomposition number below was read.** Base: `origin/main` @
 `fbe00eb1a2626a44fd8096da6d1abce1f6374a90`. DATA PROFILE: spp. Predecessor:
-`docs/handoffs/RESULT-spp-73-commitment-reach-2026-09-22.md` (commitment reach NOT the cause; not
+`docs/records/spp/RESULT-spp-73-commitment-reach-2026-09-22.md` (commitment reach NOT the cause; not
 re-opened). Demand (SPP-72), reserve (SPP-55), offer-curve band family (xiso) not re-opened.
 
 ## 0. State read before this file was written (NOT pre-registered as findings)

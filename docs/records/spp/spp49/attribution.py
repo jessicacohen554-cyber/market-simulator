@@ -1,6 +1,6 @@
 """SPP-49 §4: reproduce SPP-46's plant-level attribution on the pre- and post-repair arrays.
 
-SPP-46 (`docs/handoffs/spp46/attribution.py`, PRECOMMIT §3 (E)) attributed keeper-3's 2024 gas
+SPP-46 (`docs/records/spp/spp46/attribution.py`, PRECOMMIT §3 (E)) attributed keeper-3's 2024 gas
 split plant by plant: model in-merit energy at keeper-3's OWN P1 zonal prices (strict + half the
 marginal band) minus CAMPD measured gross generation, grouped by an INPUT flag read off the row.
 This instrument re-runs that construction on the arrays `census.py` saved — `pre` (the committed
@@ -15,7 +15,7 @@ the post-repair arrays move the FLAGGED groups by roughly those amounts while th
 stay put. Zero LP: the keeper's dispatch and prices are the committed sidecars; only the row
 marginal costs change between pre and post.
 
-Usage: uv run python docs/handoffs/spp49/attribution.py [--tags pre post]
+Usage: uv run python docs/records/spp/spp49/attribution.py [--tags pre post]
 """
 from __future__ import annotations
 
@@ -28,13 +28,13 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO / "src"))
-sys.path.insert(0, str(REPO / "docs/handoffs/spp49"))
+sys.path.insert(0, str(REPO / "docs/records/spp/spp49"))
 from census import SCRATCH, reference, ref_month  # noqa: E402
 from market_sim.data.eia923 import plant_month_price_grid  # noqa: E402
 from market_sim.data.fuel.plant_prices import _load_monthly_cache  # noqa: E402
 
-OUT = REPO / "docs/handoffs/spp49"
-SPP46 = REPO / "docs/handoffs/spp46"
+OUT = REPO / "docs/records/spp/spp49"
+SPP46 = REPO / "docs/records/spp/spp46"
 BUNDLE = REPO / "results/calibration/spp43_screened_B"
 YEARS = (2023, 2024, 2025)
 TOL = 0.25

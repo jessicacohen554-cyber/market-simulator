@@ -89,7 +89,7 @@ economics effect on the *offer*, not a missing supply resource.
 The only other non-refuted contributor is the residual **efficient-CC
 availability** itself (the outage overlay removes Ravenswood ~1,030 MW / Athens
 ~759 MW etc. through the shoulder). Those windows are CEMS-verified and the
-outage source is **settled** (`docs/handoffs/nyiso-outage-source-determination-2026-07.md`,
+outage source is **settled** (`docs/records/nyiso/nyiso-outage-source-determination-2026-07.md`,
 rule 11) — not to be re-litigated.
 
 ## 5. Recommendation

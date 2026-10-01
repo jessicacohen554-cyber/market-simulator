@@ -6,7 +6,7 @@
 
 **Pushed BEFORE either arm solves.** Every number in §1–§4 is measured with NO LP,
 from committed artifacts, by `scripts/probes/_neiso83_stonybrook_ca1_phase0.py`
-(record `results/calibration/_neiso83_stonybrook_ca1_phase0.json`). §5–§8 are the
+(record `results/phase0/neiso/_neiso83_stonybrook_ca1_phase0.json`). §5–§8 are the
 properties, the stop triggers and the verdict ladder, fixed here.
 
 ---

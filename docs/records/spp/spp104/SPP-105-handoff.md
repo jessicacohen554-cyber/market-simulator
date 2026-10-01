@@ -5,7 +5,7 @@ MODEL: Opus or Fable (rule 27). CLAUDE.md is binding; rules 1, 13, 14, 17, 19, 2
 
 STATE (verify against origin/main)
 - Keeper: 2026-09-28-spp-100-chp-scope, bundle results/calibration/spp100_arm_span (2019–2025). Train 2023–25 CALIBRATED (lone ledgered C3c); validation 2019–22 NOT-YET.
-- SPP-104 (docs/handoffs/DESIGN-spp-104-ct-outage-2026-09-29.md, RESULT-spp-104-ct-lole-efor-2026-09-30.md; results/calibration/_spp104_ct_availability_phase0.json):
+- SPP-104 (docs/records/spp/DESIGN-spp-104-ct-outage-2026-09-29.md, RESULT-spp-104-ct-lole-efor-2026-09-30.md; results/phase0/spp/_spp104_ct_availability_phase0.json):
   * "CT_PEAKER carries no outage" was an artifact of SPP-84's max-available metric. CTs carry the statistical GADS stack (WEFOR 0.07 x wefor_multiplier 0.7, POF 0.03, derate 0.05, summer 12.5 %).
   * Keeper gas outage-type minus SPP published (capacity-of-generation-on-outage, Natural Gas MW): -1.04/-0.31/+0.80/+1.97/-0.46/-1.29/+0.60 GW (2019–25). 2025 is measurable from the portal daily CSVs (/2025/<MM>/Capacity-Gen-Outage-<YYYYMMDD>.csv).
   * spp_ct_lole_efor (SPP 2023 LOLE EFOR for CTs) was solved and rejected (cell R). It raised train-tier prices toward RT (C3a 2024 -8.6 -> +1.4 %) but over-stated CT outage vs SPP's own data in every year and raised unserved energy.

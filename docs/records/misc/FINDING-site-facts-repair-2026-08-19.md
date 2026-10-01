@@ -9,7 +9,7 @@ false after G3. Not SITE-A (plan §7.6) — no restructure, no signed-dispositio
 `src/market_sim/`, `scripts/`, or committed data under `frontend/data/backcast/`. Where a defect
 needed a judgement about *presentation* rather than *fact*, it was left and is listed in §4.
 
-> **Continued by `docs/FINDING-site-facts-repair-2-2026-08-22.md`** (session
+> **Continued by `docs/records/misc/FINDING-site-facts-repair-2-2026-08-22.md`** (session
 > `claude/site-facts-2-repair-43gm3p`), which repairs three further owner-reported defects: the
 > remaining P2-as-a-live-third-pass presentation on `solving-pricing.html` and its animation JS
 > (**§4 items 5 and 6 below were pulled back out of SITE-A by the owner** and are now done), the

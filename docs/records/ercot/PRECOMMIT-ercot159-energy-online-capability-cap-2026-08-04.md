@@ -5,7 +5,7 @@ chartering and executing §5.1 queue item 9, matrix row
 `energy_online_capability_cap` (ERCOT `U`). This document is pushed before any
 LP is solved; the A/B scorer is pushed before results exist (the ERCOT-158
 pattern). Phase-0 census (no LP): `scripts/probes/ercot159_capability_phase0.py`
-→ `results/calibration/_ercot159_capability_phase0.json`.
+→ `results/phase0/ercot/_ercot159_capability_phase0.json`.
 
 ## 0. Scope fence (DO-NOT-REDO, rule 28(a))
 

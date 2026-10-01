@@ -13,9 +13,9 @@ was mine**. The full span was not spent, nothing is registered (rule 15), and th
 deleted before this PR merges (rule 29(c)); the ADDENDUM is the record.
 
 **Pre-registration:**
-`results/calibration/PREREG-nyiso212-cricket-valley-outage-window-construction.md`, committed and
+`docs/records/nyiso/PREREG-nyiso212-cricket-valley-outage-window-construction.md`, committed and
 pushed at `b9bfacf4` **before any plant-grain number was read**, and not edited since.
-**Machine records:** `results/calibration/_nyiso212_overceiling_decomposition.json` (pre-registered
+**Machine records:** `results/phase0/nyiso/_nyiso212_overceiling_decomposition.json` (pre-registered
 instrument) and `_nyiso212_summer_seam_census.json` (post-hoc characterisation, labelled as such).
 **Reproduce:** `uv run python scripts/probes/nyiso212_overceiling_decomposition.py` then
 `uv run python scripts/probes/nyiso212_summer_seam_census.py` (the second reads the first's
@@ -369,9 +369,9 @@ that no offer curve can reach.)*
 
 # ADDENDUM (same session) — the rule-29 screen: **KILLED on the literal declared reading**, on two gates I mis-wrote; the mechanism itself did exactly what its arithmetic predicted
 
-**Pre-registration:** `results/calibration/PREREG-nyiso212-summer-seam-screen.md`, committed and
+**Pre-registration:** `docs/records/nyiso/PREREG-nyiso212-summer-seam-screen.md`, committed and
 pushed at `f76c3011` **before the solve was launched** and not edited since. **Machine record:**
-`results/calibration/_nyiso212_screen_gates_2025.json` (every number below).
+`results/phase0/nyiso/_nyiso212_screen_gates_2025.json` (every number below).
 **Scorer:** `scripts/probes/nyiso212_screen_gates.py`. **ONE LP spent** (2025, one year, the
 pre-registered screen year). The screen bundle `results/calibration/_nyiso212_screen_2025` is a
 throwaway diagnostic probe: never registered, never a keeper, **deleted before this PR merges**

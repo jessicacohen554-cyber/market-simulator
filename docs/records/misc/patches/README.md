@@ -1,11 +1,11 @@
-# docs/handoffs/patches — mechanical patch transport for oversized source files
+# docs/records/misc/patches — mechanical patch transport for oversized source files
 
 Some source files (`constants.py` ~350 KB, `CHANGELOG.md` ~300 KB) exceed what
 the `mcp__github__push_files` API can carry in one call (the model cannot emit
 the full file content inline reliably), and `git push` is forbidden on this
 remote (HTTP 413). The repo's established workaround is to ship the change as a
 patch a human — or any large-file-capable mechanism — applies after merging the
-branch (precedent: FF-2B, `docs/handoffs/ff-2b-APPLY-SPEC.md`).
+branch (precedent: FF-2B, `docs/records/forecast/ff-2b-APPLY-SPEC.md`).
 
 ## capacity-cost-constants-changelog.patch (2026-07-19)
 
@@ -26,7 +26,7 @@ passes all 19 cost tests (`tests/test_cost_benchmark_envelope.py` +
 
 **Apply (after this branch is on `main`, from the repo root):**
 ```
-git apply docs/handoffs/patches/capacity-cost-constants-changelog.patch
+git apply docs/records/misc/patches/capacity-cost-constants-changelog.patch
 ```
 If `main` has moved and a hunk is stale, `git apply --3way` resolves it
 (the change is disjoint from other regions). After applying, the cost tests go
@@ -36,7 +36,7 @@ values.
 ## neiso-operable-capacity-wiring.patch (2026-07-19)
 
 NEISO operable-capacity availability overlay — the model-consumption wiring for
-the ISO-NE Morning Report intake (`docs/handoffs/neiso-operable-capacity-intake-2026-07.md`).
+the ISO-NE Morning Report intake (`docs/records/neiso/neiso-operable-capacity-intake-2026-07.md`).
 Two disjoint, additive edits the API cannot carry inline (`scenarios.py` ~534 KB,
 `fleet.py` ~505 KB):
 
@@ -62,7 +62,7 @@ before it applies — no committed test asserts the gate (the committed
 
 **Apply (after this branch is on `main`, from the repo root):**
 ```
-git apply docs/handoffs/patches/neiso-operable-capacity-wiring.patch
+git apply docs/records/misc/patches/neiso-operable-capacity-wiring.patch
 ```
 `git apply --3way` if a hunk is stale.
 
@@ -101,6 +101,6 @@ no committed test asserts the flag. Exercised end-to-end by the neiso-62 A/B
 
 **Apply (after this branch is on `main`, from the repo root):**
 ```
-git apply docs/handoffs/patches/neiso-operable-capacity-cli-flag.patch
+git apply docs/records/misc/patches/neiso-operable-capacity-cli-flag.patch
 ```
 `git apply --3way` if a hunk is stale.

@@ -12,7 +12,7 @@ LP SPENT: **ZERO.** 44 fleet_only rebuilds + committed sidecars. No shard
           no cell verdict changed.
 ```
 
-**Pre-registration:** `docs/PRECOMMIT-xiso-stack-climb-attribution-2026-09-22.md`,
+**Pre-registration:** `docs/records/governance/PRECOMMIT-xiso-stack-climb-attribution-2026-09-22.md`,
 pushed before the probe was run. Every definition and the 10 % / 6-of-9 threshold
 were fixed there and **are not moved here**.
 

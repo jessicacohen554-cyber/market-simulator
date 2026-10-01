@@ -1,6 +1,6 @@
 {
  "probe": "ercot180_marginal_position",
- "precommit": "docs/PRECOMMIT-ercot180-top-scoped-grain-2026-08-08.md \u00a78",
+ "precommit": "docs/records/ercot/PRECOMMIT-ercot180-top-scoped-grain-2026-08-08.md \u00a78",
  "license": "DIAGNOSTIC ONLY (reads residuals for hour selection); output barred from parameter identification (rule 13 diagnostic clause)",
  "bundle": "results/calibration/ercot176_control_A",
  "year": 2023,

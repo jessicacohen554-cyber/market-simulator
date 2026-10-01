@@ -8,7 +8,7 @@ shortest-path brief for finishing it.
 
 ## 1. WHAT LANDED (do not redo)
 
-* **The identification.** `results/calibration/FINDING-nyiso141-astoria-stack-duplication-2026-08-17.md`.
+* **The identification.** `docs/records/nyiso/FINDING-nyiso141-astoria-stack-duplication-2026-08-17.md`.
   Astoria (ORIS 8906) files units 30 and 50 as reheat/superheat pairs that repeat
   the generator's full `grossLoad` on both rows while splitting heat and masses.
   Three independent channels, none a residual. **Closed — do not re-litigate.**

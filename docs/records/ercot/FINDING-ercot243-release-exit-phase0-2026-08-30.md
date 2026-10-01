@@ -5,11 +5,11 @@ ZERO-SOLVE — every number read from the FORWARD keeper's committed
 2024/2025 sidecars (`results/calibration/ercot234_eastex_identity`), the
 committed actuals, the EIA-930 wide extract and the measured
 ORDC/reserves series.** Precommit
-`docs/PRECOMMIT-ercot243-release-exit-phase0-2026-08-30.md` pushed +
+`docs/records/ercot/PRECOMMIT-ercot243-release-exit-phase0-2026-08-30.md` pushed +
 blob-verified (045cd014) BEFORE any measurement; V-0 exact (model 798.20 /
 actual 110.41 / floor 523.12, the p_hat × VOLL identity closing to $0.01).
 Probe `scripts/probes/ercot243_release_exit_phase0.py` →
-`results/calibration/ercot243_release_exit_phase0.json` (committed). No
+`results/phase0/ercot/ercot243_release_exit_phase0.json` (committed). No
 lever, no solve, no gate change, no matrix verdict moved; the two-config
 keeper untouched. One implementation repair, construction unchanged: the
 lag-correlation alignment assert runs on finite rows (the EIA-930 2025

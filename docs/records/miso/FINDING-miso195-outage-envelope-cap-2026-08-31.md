@@ -17,7 +17,7 @@ are separately R (miso-85/86) and were not re-tested.
 
 Instrument (read-only, idempotent, committed):
 `scripts/probes/_miso195_outage_envelope_phase0.py` →
-`results/calibration/_miso195_outage_envelope_phase0.json`. Every gated number
+`results/phase0/miso/_miso195_outage_envelope_phase0.json`. Every gated number
 below reproduces by running that script. **The full adjudication rule — bases,
 population, the cause-type basis settle, witnesses W1–W6 with their lines, the
 directional prereg (C3a-2025 UP, confidence 0.40, ≥ +0.30 pp materiality) — was
@@ -162,7 +162,7 @@ the substitution R (miso-85/86), the attribution split refused-at-charter
 composition of `miso_native_outage_source` at the public record's aggregate
 grain is adjudicated.** Repairing the envelope inversion from this record now
 requires a class-resolved source — the standing data ask
-(`docs/handoffs/miso-outage-grain-data-ask-2026-07.md`; candidates 1–3 closed,
+(`docs/records/miso/miso-outage-grain-data-ask-2026-07.md`; candidates 1–3 closed,
 candidate 4 "MISO data request" unchanged) — not a new composition rule over
 the old one.
 
@@ -206,7 +206,7 @@ Census queue after this session, unchanged otherwise:
 python3 scripts/probes/_miso195_outage_envelope_phase0.py
 ```
 
-Record: `results/calibration/_miso195_outage_envelope_phase0.json` (frozen rule
+Record: `results/phase0/miso/_miso195_outage_envelope_phase0.json` (frozen rule
 pushed at `09f70160` before any adjudicating quantity; the two post-gate
 attribution diagnostics are §4's tables, disclosed as post-gate — they verify
 the frozen W6 relation's attribution and the W4/W6 overlap, and change no

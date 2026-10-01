@@ -74,7 +74,7 @@ defect, and it is two ISOs' — not six.
 
 ## 2. CARD A — the retiree window (DONE, committed `7934e92c`)
 
-This is the open **`docs/handoffs/fleet-vintage-retiree-window-charter-2026-08.md`**
+This is the open **`docs/records/misc/fleet-vintage-retiree-window-charter-2026-08.md`**
 (task 2), not a new lever. `RETIREMENT_WINDOW_START: 2023 → 2019`, on the program's
 supported span (rule 22 as amended 2026-08-06) — **never on a residual** (rule 23).
 

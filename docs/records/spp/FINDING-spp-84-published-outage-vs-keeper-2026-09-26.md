@@ -4,7 +4,7 @@ Lane: SPP-84 (SPP rubric-failure tuning). Parent: SPP-83
 (`FINDING-spp-83-keeper-clears-on-offline-capacity-2026-09-26.md`). Keeper: `2026-09-24-r-spp-corrected-inputs`,
 bundle `results/calibration/rspp_span`, `basis_sha` `ec13e5c2ad35c4f817cc496ff2363affb3fed2f9`.
 Session base: `origin/main` `722b40f9`.
-Probe: `scripts/probes/_spp84_published_outage_rebasis.py`. Numbers: `results/calibration/_spp84_published_outage_phase0.json`.
+Probe: `scripts/probes/_spp84_published_outage_rebasis.py`. Numbers: `results/phase0/spp/_spp84_published_outage_phase0.json`.
 **No LP. No shard. No bundle. No PRECOMMIT. No `src/` edit. No `ScenarioConfig` field. No multiplier touched. Nothing landed under `data/`.**
 
 ## 0. Headline

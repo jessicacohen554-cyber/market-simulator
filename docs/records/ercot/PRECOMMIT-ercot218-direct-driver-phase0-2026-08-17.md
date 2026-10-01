@@ -116,7 +116,7 @@ absence, counted in coverage).
 
 Everything below names the ercot-211 instrument
 (`scripts/probes/ercot210_conduct_transfer_phase0.py`, pre-registered in
-`docs/PRECOMMIT-ercot210-conduct-transfer-phase0-2026-08-16.md`). The new
+`docs/records/ercot/PRECOMMIT-ercot210-conduct-transfer-phase0-2026-08-16.md`). The new
 probe (`scripts/probes/ercot218_direct_driver_phase0.py`) is that instrument
 with the driver set swapped and nothing else: same unit of observation, same
 population discipline (above-LSL SCED2 segments capped at HASL, ERCOT-154/161,

@@ -1,7 +1,7 @@
 # RESULT — NYISO-NEXT: the NYC persistent-base floor stops forcing laid-up steam; promoted — 2026-09-26
 
 **Session:** NYISO-NEXT (orchestrator; no LP in this container, rule 32 (a)).
-**PRECOMMIT:** `docs/PRECOMMIT-nyiso-next-floor-layup-2026-09-25.md`, pinned
+**PRECOMMIT:** `docs/records/nyiso/PRECOMMIT-nyiso-next-floor-layup-2026-09-25.md`, pinned
 `5a977fecc5770ae77aade7a585791675b85ea544` before any solve.
 **New keeper:** `2026-09-26-nyisonext-floor-layup-span` (bundle `results/calibration/nyisonext_span`,
 2022–2025).

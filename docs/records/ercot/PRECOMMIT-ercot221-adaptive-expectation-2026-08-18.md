@@ -162,7 +162,7 @@ item 11 / mid-band / regime lanes stay closed.
 ## AMENDMENT 1 (pushed BEFORE any v2 fit; the v1 verdict stands recorded)
 
 **Family v1 as pre-registered was fitted once and FAILED its gates — recorded
-unrewritten** (`results/calibration/ercot221_adaptive_phase0.json`, v1
+unrewritten** (`results/phase0/ercot/ercot221_adaptive_phase0.json`, v1
 section): G-ID daily corr 0.44 vs 0.6 (1/7 months in band); G-DECAY
 over-predicts the fall tail; G-SAFE read 0.67 on 2024; G-COV's fidelity leg
 mis-specified. G-BOOT PASSED ($1,319 Aug–Sep mean floor from the keeper's own

@@ -1,7 +1,7 @@
 # PRECOMMIT ADDENDUM — pjm-d4-4 stage-2 screen: the gates, registered before the solve
 
 **Session:** pjm-d4-4 · **Date:** 2026-09-10 · Extends
-`docs/PRECOMMIT-pjm-d4-4-forced-outage-composition-2026-09-10.md`.
+`docs/records/pjm/PRECOMMIT-pjm-d4-4-forced-outage-composition-2026-09-10.md`.
 **LP spent at the time of writing: ZERO.** This file registers the stage-2 screen's gates before
 the shard is launched, and RETIRES one of the handoff's own gates on arithmetic rather than on a
 solve.
@@ -11,7 +11,7 @@ solve.
 ## §1 — the kill gate cleared, so the arm was built
 
 Measured, merit-guarded, 2022 (full numbers and the six-year table:
-`docs/RESULT-pjm-d4-4-forced-outage-composition-2026-09-10.md`):
+`docs/records/pjm/RESULT-pjm-d4-4-forced-outage-composition-2026-09-10.md`):
 
 | bar | registered | measured | verdict |
 |---|---|---|---|
@@ -86,8 +86,8 @@ the 26 above $500), and this arm takes 4,570 MW of gas availability out of exact
 > cannot decide at all. Retiring the gate before the solve was the right procedure and the wrong
 > call. Two hours of $11-12/MW rent is still not a price tail — the arm forms **0** hours above $200
 > on every system basis and C3c is unmoved — so the retirement did not change the card's outcome,
-> which S-3 decided. Full numbers: `docs/SHARD-REPORT-pjm-d4-4-screen-2022.md` item 6;
-> reading: `docs/RESULT-pjm-d4-4-forced-outage-composition-2026-09-10.md` §5a.
+> which S-3 decided. Full numbers: `docs/records/pjm/SHARD-REPORT-pjm-d4-4-screen-2022.md` item 6;
+> reading: `docs/records/pjm/RESULT-pjm-d4-4-forced-outage-composition-2026-09-10.md` §5a.
 
 ## §4 — THE SCREEN GATES, registered now
 

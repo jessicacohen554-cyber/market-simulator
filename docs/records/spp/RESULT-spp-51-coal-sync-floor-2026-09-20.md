@@ -1,6 +1,6 @@
 # RESULT — SPP-51 / `R-bc`: the literal object was killed at phase 0; the real one is a thermal floor that repairs PRICE and does not close C1
 
-**Lane** SPP-51 · **PRECOMMIT** `docs/handoffs/PRECOMMIT-spp-51-curtailment-lp-constraint-2026-09-20.md`
+**Lane** SPP-51 · **PRECOMMIT** `docs/records/spp/PRECOMMIT-spp-51-curtailment-lp-constraint-2026-09-20.md`
 + `PRECOMMIT-spp-51-ADDENDUM-window-2026-09-20.md`, **both pushed before any solve**
 (`f80de3e1`, `0a7f5c06`) · **Base** `608cb21f`.
 

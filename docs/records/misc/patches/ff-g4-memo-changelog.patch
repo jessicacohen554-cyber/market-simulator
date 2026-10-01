@@ -7,7 +7,7 @@ index 2c7edc6..bb6972f 100644
  
 +## 2026-07-20 — FF-G4 load-shape evolution design memo (WAVE FI, lane L-INP; memo-only)
 +
-+Design memo `docs/handoffs/ff-g4-load-shape-design-memo-2026-07.md` — **no
++Design memo `docs/records/forecast/ff-g4-load-shape-design-memo-2026-07.md` — **no
 +code, no solve, no default moved** (FF-0C memo pattern; implementing session
 +chartered from its §8 owner-decision boxes). Diagnoses the frozen
 +weather-year-shape × single-era-scalar demand construction (peak-CAGR ≡
@@ -36,10 +36,10 @@ index 2c7edc6..bb6972f 100644
 +  integrity invariant, FC-6 monotonicity row.
 +- **Registration note**: FF plan §1.2-11 / gap-register §3.11 FF-G4 rows are
 +  not on main (they live in the unapplied
-+  `docs/handoffs/patches/ff-g1-core-wiring.patch`); their post-patch status
++  `docs/records/misc/patches/ff-g1-core-wiring.patch`); their post-patch status
 +  is recorded in the memo instead of editing the missing sections.
 +- This CHANGELOG entry ships as
-+  `docs/handoffs/patches/ff-g4-memo-changelog.patch` (CHANGELOG.md is 4.5 k
++  `docs/records/misc/patches/ff-g4-memo-changelog.patch` (CHANGELOG.md is 4.5 k
 +  lines — not safely API-transportable whole; the 2026-07-19 costs-session
 +  precedent).
 +

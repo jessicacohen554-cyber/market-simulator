@@ -6,7 +6,7 @@
 # vintage — that flag reproduced D78-R2's graded control for D78-R3 and has no
 # object here). PJM solo, years sequential (rule 12), HEAD-guarded.
 #
-#   bash docs/handoffs/d78arm/run_arm.sh
+#   bash docs/records/forecast/d78arm/run_arm.sh
 #
 # The out-dir is the D67-ARM retention class (results/capacity-hindcast/, the
 # REGISTERED shipped posture): heavy LP output gitignored, the slim ledgers

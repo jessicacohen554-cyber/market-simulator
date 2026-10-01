@@ -135,7 +135,7 @@ the promoted ladder's own boundary.
 ## 3. Phase 0 (rule 29 clause 0) — **zero LP**, two independent readouts
 
 `scripts/probes/_miso231_hourly_seam_phase0.py` →
-`results/calibration/_miso231_hourly_seam_phase0.json`.
+`results/phase0/miso/_miso231_hourly_seam_phase0.json`.
 
 ### Readout A — OFFLINE, driven by the MEASURED record. **Contains no model output at all.**
 

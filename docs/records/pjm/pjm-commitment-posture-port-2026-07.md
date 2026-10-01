@@ -195,5 +195,5 @@ listed candidates). Appended to issue #1483. No mechanism built, no offer band t
 **The posture does NOT move the CT_PEAKER denominator materially** (2024: 20.69→20.59 TWh, −0.10;
 the breach-year forced share stays **12.0 %**, D-2 numerator 2.49→2.47 TWh). So the C8 §6a
 conclusion is unchanged by this probe. A one-line null-result note is appended to
-`docs/handoffs/pjm-c8-drag-memo-2026-07.md` §6a. **The C8 drag decision is the owner's — this lane
+`docs/records/pjm/pjm-c8-drag-memo-2026-07.md` §6a. **The C8 drag decision is the owner's — this lane
 does not adjudicate it** (rule 14; keeper swaps are owner decisions).

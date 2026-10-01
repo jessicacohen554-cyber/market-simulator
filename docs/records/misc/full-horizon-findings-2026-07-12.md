@@ -1,6 +1,6 @@
 # Full-horizon forecast findings — 2026–2050, all six ISOs (P-3A)
 
-**Session.** P-3A of `docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md`
+**Session.** P-3A of `docs/records/forecast/forecast-driver-capacity-revenue-audit-plan-2026-07.md`
 §2 (testing-audit **G1**: the full 2026–2050 horizon had never been solved
 end-to-end). First time the reference forecast is driven across the complete
 horizon per ISO with the I1–I14 forecast invariants scored.
@@ -25,7 +25,7 @@ latent import bug in the collator was fixed (see §8).
 start_year=2026, end_year=2050)`, every other field default →
 `use_campd_bins=True` (per-plant CAMPD bins where an artifact exists, the ISO
 default), **`capacity_market_clearing=False`** (the P-2A recommendation,
-`docs/handoffs/capacity-price-validation-2026-07-12.md` §7 — the CR-1 sloped
+`docs/records/misc/capacity-price-validation-2026-07-12.md` §7 — the CR-1 sloped
 curve is validated as an instrument but not yet wired to a trustworthy accredited
 position; **NOT an A/B this pass**). Runs used `MALLOC_ARENA_MAX=2
 MARKET_SIM_HIGHS_THREADS=1 OMP_NUM_THREADS=1`, ≤2 ISO invocations concurrent,

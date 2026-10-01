@@ -47,7 +47,7 @@ Rule 29 step 0: zero LP, and it decides the lane.
 
 | step | question | instrument |
 |---|---|---|
-| **0.1** | In the rich hours, WHO sets the price and what is that unit's marginal cost made of? | `docs/handoffs/spp51b/prices.py` (each run's hourly ISO price recovered from its own committed payload), `marginal.py` (LP input arrays rebuilt at HEAD; near-price rows by available MW), `stack.py` (the model's own merit order at its own thermal residual) |
+| **0.1** | In the rich hours, WHO sets the price and what is that unit's marginal cost made of? | `docs/records/spp/spp51b/prices.py` (each run's hourly ISO price recovered from its own committed payload), `marginal.py` (LP input arrays rebuilt at HEAD; near-price rows by available MW), `stack.py` (the model's own merit order at its own thermal residual) |
 | **0.2** | Is the level error a FUEL-BASIS error — a rule-14 input repair with zero DOF? | `fuelleg.py` (marginal fuel against SPP's own published state delivered reference; the one-lever arithmetic), `wedge.py` (the SPP-49 R-5 Permian cohort's own reach) |
 | **0.3** | Which channel: (A) fuel-basis repair, (B) a missing structural object, (C) the rule-1 carve-out band? | the numbers 0.1/0.2 produce, with the decision rules in §3 |
 
@@ -120,11 +120,11 @@ the selection rule 1 forbids. C3a/C3b are reported at full magnitude as RESULTS.
 **No bundle is written and no LP is spent**, so rule 31 has nothing to retain and no `.gitignore`
 entry is owed — the SPP-46 / SPP-55 / merit-order posture. Every number the lane cites is in this
 document and in `FINDING-spp-51b-2026-09-09.md`; the instruments are committed under
-`docs/handoffs/spp51b/`.
+`docs/records/spp/spp51b/`.
 
 ## 5. Scope
 
-FILES TOUCHED: this PRECOMMIT, the FINDING, `docs/handoffs/spp51b/`, and the
+FILES TOUCHED: this PRECOMMIT, the FINDING, `docs/records/spp/spp51b/`, and the
 `offer_curve_by_group` cell line in `docs/codebase-site/data/mechanism-matrix/SPP.js`.
 NOT TOUCHED: the plan, the ledger, `docs/calibration-log/spp.md`, `CHANGELOG.md`,
 `keepers/SPP.json` and the promotion file set, the shard's keeper/gates stamp,

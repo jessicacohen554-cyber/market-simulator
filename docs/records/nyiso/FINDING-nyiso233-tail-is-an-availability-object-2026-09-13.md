@@ -14,7 +14,7 @@ be right, before anyone spends a solve on one.
 ## 1. THE QUESTION, AND WHY IT HAD TO BE ASKED FIRST
 
 nyiso-232 established that NYISO's C3a residual is **two separable objects**
-(`docs/FINDING-nyiso232-c3a-is-two-objects-2026-09-13.md`): strip each year's top actual-price hours
+(`docs/records/nyiso/FINDING-nyiso232-c3a-is-two-objects-2026-09-13.md`): strip each year's top actual-price hours
 and the model is **over**-priced by +4.1 to +14.2 % in all four years. The headline C3a is therefore
 a **difference of two large errors of opposite sign**, and any mechanism that lifts ordinary-hour
 prices to close C3a makes the tail worse. A tail mechanism must raise the **tail** without raising

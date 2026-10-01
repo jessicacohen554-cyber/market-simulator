@@ -3,9 +3,9 @@
 **Session:** `nyiso-fuelvintage-1` · **ISO:** NYISO only (rule 25 `[R-ISO-SCOPE]`) · **Date:** 2026-09-09
 **Branch:** `claude/nyiso-fuelvintage-1`, off `origin/main` `87ad084b`
 **Keeper / control:** `2026-09-07-nyiso-213-summer-seam`, bundle `results/calibration/nyiso213_summer_seam`
-**Charter:** `docs/handoffs/fleet-vintage-retiree-window-charter-2026-08.md` tasks 3 + 4
-**Prompt:** `docs/handoffs/xiso-fuelvintage-per-iso-lp-prompts-2026-09-09.md` PROMPT 3 + ADDENDUM A1–A4
-**Phase-0 basis:** `docs/FINDING-xiso-fuelvintage-monthly-gas-level-2026-09-09.md` §3 §4 §5
+**Charter:** `docs/records/misc/fleet-vintage-retiree-window-charter-2026-08.md` tasks 3 + 4
+**Prompt:** `docs/records/governance/xiso-fuelvintage-per-iso-lp-prompts-2026-09-09.md` PROMPT 3 + ADDENDUM A1–A4
+**Phase-0 basis:** `docs/records/governance/FINDING-xiso-fuelvintage-monthly-gas-level-2026-09-09.md` §3 §4 §5
 
 Every number below is written **before** any LP is spent. Nothing here is restated after a result.
 

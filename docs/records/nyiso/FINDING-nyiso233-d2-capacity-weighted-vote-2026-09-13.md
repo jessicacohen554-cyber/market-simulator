@@ -8,7 +8,7 @@ build a fleet and stop.
 NYISO lane from deciding alone. Landed on an explicit owner ruling given in this session: *measure
 every ISO, then land the capacity-weighted vote* — and, on the disposition of a verdict change
 elsewhere, *the current number is the artifact*. Pre-registration, construction and stop conditions:
-`results/calibration/PRECOMMIT-nyiso233-d2-capacity-weighted-vote.md`, written **before** any number
+`docs/records/nyiso/PRECOMMIT-nyiso233-d2-capacity-weighted-vote.md`, written **before** any number
 here was read.
 
 ---
@@ -20,7 +20,7 @@ common non-empty unit group counted in LP ROWS**. Row count is a property of the
 band structure**, not of the plant, so a mechanism that collapses or expands a class's tranche ladder
 could move a whole site's dispatch between class denominators and flip C8 — protective tier, zero
 caveat budget — with no physical change at all. Defect, fragility census and the identification to
-the row: `docs/FINDING-d2-plant-class-is-a-tranche-count-vote-2026-09-13.md` (nyiso-232).
+the row: `docs/records/misc/FINDING-d2-plant-class-is-a-tranche-count-vote-2026-09-13.md` (nyiso-232).
 
 The vote is now weighted by **capacity (`pmax`)**. Bands partition a class's capacity however many of
 them there are, so the vote is **band-invariant by construction**; and `pmax` depends on no dispatch

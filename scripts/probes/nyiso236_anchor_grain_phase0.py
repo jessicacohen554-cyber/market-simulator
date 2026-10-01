@@ -1,6 +1,6 @@
 """nyiso-236 PHASE 0 (ZERO-LP): the delivered-gas offer anchor's INDEX GRAIN.
 
-Record: ``docs/FINDING-nyiso236-the-anchor-grain-and-the-gas-slope-2026-09-16.md``
+Record: ``docs/records/nyiso/FINDING-nyiso236-the-anchor-grain-and-the-gas-slope-2026-09-16.md``
 (§2.1 the within-year vs between-year index error; §4 the month-grain
 separation from Object B).
 

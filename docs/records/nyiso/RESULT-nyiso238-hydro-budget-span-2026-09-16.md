@@ -2,7 +2,7 @@
 
 **Session** nyiso-238 (ORCHESTRATOR — rule 32 `[R-SHARD]` (a); **the parent ran ZERO LP**).
 **Date** 2026-09-16. **Keeper** `2026-09-14-nyiso-235-gas-repair` — **UNCHANGED by this session.**
-**Pre-registration** `docs/PRECOMMIT-nyiso238-hydro-budget-span-2026-09-16.md` + addendum 1, pushed at
+**Pre-registration** `docs/records/nyiso/PRECOMMIT-nyiso238-hydro-budget-span-2026-09-16.md` + addendum 1, pushed at
 `69c6d4a7e1b7c8e458373bc5ce9db51a5a7a6a39` **before the first LP**. **Nothing registered on the
 dashboard** — the promotion question is the owner's (§6).
 

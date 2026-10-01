@@ -27,7 +27,7 @@ simply a cron that has not reached its first Monday.
 | 5 | scripts/ bare sibling-import census ("105 sites / 91 files", 2026-07-27) | **RE-SCOPED with justification**: re-measured at **74 sites / 50 live files** (61 same-directory + 13 cross-directory) — the delta is real conversion progress by intervening lanes. Converting the residue needs, per file: the README's both-paths attribute verification **plus** a direct-run `sys.path` bootstrap check (canonical imports need repo root on the path where bare ones needed only the script's own dir) — too wide to land safely as a sweep side-effect. Made the census re-runnable (`ci_refactor_guards.py --sibling-census`, advisory) and updated the README record. | commit `40a1bb0`; census output in the README section | chartered open work (non-DEBUG-B: solve-neutral conversion lane, per-file protocol in scripts/README.md) |
 | 6 | `check_cache_key_declared_defaults` red seen once on cancelled run 31661696810 | **ADJUDICATED — checkout artifact**: on a clean full clone the guard passes ("715 fields, 168 registered, all resolve; 168 declared defaults all match HEAD"), including after this branch's ScenarioConfig change; the one observed red was on a partial-checkout cancelled run. The same job is green on the first completed CI run (31765772123). | local run 2026-08-14; CI run 31765772123 job `Cache-key registration guard` = success | none |
 | 7 | Ambient fast-tier reds on clean-clone main | **ENUMERATED + ALL SIX FIXED** (see per-red table below). Full fast lane on main @ 5bf5f13: **6 failed / 6,830 passed / 31 skipped / 2 xfailed** (616 s, `-n 2`), exactly matching ci.yml's header count. | first run + final verification run on this branch | none |
-| 8 | `patches/pjm-m1-code.patch` (D-5) | **DEFECT CONFIRMED — CHARTERED to DEBUG-B; patch ARCHIVED** (D-5 closed). See §D-5 below. | probes re-run 2026-08-14 (§D-5); commit `a168b73` | `docs/handoffs/debug-b-pjm-input-clock-charter-2026-08.md` |
+| 8 | `patches/pjm-m1-code.patch` (D-5) | **DEFECT CONFIRMED — CHARTERED to DEBUG-B; patch ARCHIVED** (D-5 closed). See §D-5 below. | probes re-run 2026-08-14 (§D-5); commit `a168b73` | `docs/records/pjm/debug-b-pjm-input-clock-charter-2026-08.md` |
 
 ### Seed 7 detail — the six ambient reds, each root-caused
 
@@ -123,7 +123,7 @@ patch README's own instruments on the committed `PJM hourly.parquet`:
 **Recommendation executed under the pre-authorization:** the fix is
 solve-affecting (renewable CF shapes, interchange envelopes, zonal shares),
 so it is **chartered as DEBUG-B** — full-span PJM re-solve + same-session
-registration — in `docs/handoffs/debug-b-pjm-input-clock-charter-2026-08.md`,
+registration — in `docs/records/pjm/debug-b-pjm-input-clock-charter-2026-08.md`,
 with the transform **updated to the currently measured state** (fueltype
 +1 h for 2023 *and* 2024; region untouched). The patch itself is
 **archived-with-note** (`patches/archive/ARCHIVED-2026-08-14-pjm-m1.md`):
@@ -194,7 +194,7 @@ gap rows B1/B2/O2 routed to this lane by
 
 The two committed records describe two different points in time, and both
 were correct when written. The DEBUG-B finding's like-for-like table
-(`docs/FINDING-debug-b-pjm-input-clock-2026-08-15.md` §9) quotes the
+(`docs/records/pjm/FINDING-debug-b-pjm-input-clock-2026-08-15.md` §9) quotes the
 incumbent's **registration-time** grade — its column header says "rubric
 2.9" — scored 2026-08-04 when `results/calibration/pjm152_collapse_A`
 shipped **without** `calibration_attestation.json`: C6 UNATTESTED,
@@ -440,7 +440,7 @@ re-verified identical criterion for criterion, promoted;
 `audit_keepers --iso NEISO` PASS 0/0; rule-28 re-stamps green; neiso-93
 pruned per the lane's keeper+touchpoint directive. **Data repair applied
 2018–2023 consistently; no out-of-training year solved/scored/registered;
-freeze ACTIVE.** Record: `docs/FINDING-debug-b-neiso-smd-clock-2026-08-17.md`;
+freeze ACTIVE.** Record: `docs/records/neiso/FINDING-debug-b-neiso-smd-clock-2026-08-17.md`;
 audit row O8 annotated RESOLVED.
 
 ### C.2 — Ambient defects fixed or filed in passing
@@ -494,7 +494,7 @@ triage per the DEBUG-A protocol and route.
   (semantically identical hour; executes C.1's already-signed repair, no new
   decision), test dtype corrected to int64 + upcast guard, verified on all
   eight workbooks, the exact step-5 command, and a full local job replay.
-  Record: `docs/FINDING-golden-tier-cron-red-2026-08-17.md`; ledgers
+  Record: `docs/records/misc/FINDING-golden-tier-cron-red-2026-08-17.md`; ledgers
   annotated (release plan §8, bloat plan §9 BLOAT-3). Proof: recommend one
   post-merge `workflow_dispatch` (spends an authorized dispatch) over a week
   of red.

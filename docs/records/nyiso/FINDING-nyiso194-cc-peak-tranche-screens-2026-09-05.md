@@ -5,7 +5,7 @@ up for the duct burner peaking tranche because it's merit order is wrong it runs
 often at lower CF and is running hot over 80% CF in all years."*
 **Keeper / control:** `2026-09-05-nyiso-192-astoria-panel` (rule 29(b) form 4; G-DRIFT
 all INERT, PREREG §2). **Pre-registration:**
-`results/calibration/PREREG-nyiso194-cc-peak-tranche-screen.md`, pushed at `aa3038d1`
+`docs/records/nyiso/PREREG-nyiso194-cc-peak-tranche-screen.md`, pushed at `aa3038d1`
 before either screen was launched. **Keeper unchanged. No full span solved. Nothing
 registered** (rule 29: a screen bundle is a throwaway probe; both stay local).
 

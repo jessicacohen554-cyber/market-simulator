@@ -3,7 +3,7 @@
 **Lane:** capx D88 · **Branch:** `claude/capx-d88-fleet-id-uniqueness-x31hi6` (fresh off `origin/main`
 `d1b8d1bf`) · **Date:** 2026-09-08 · **Model:** Opus (rule 27 `[R-PUSH]`) · **Data profile:** `neiso` + `code`
 **Authority:** OWNER RULING **Q62** (2026-09-08, capx ledger §0bf.3(a)) — *"Fix first, flag the verdict now."*
-**Source of scope:** `docs/handoffs/DESIGN-capx-d87-d88-s19-read-2026-09-08.md` §2.6.
+**Source of scope:** `docs/records/forecast/DESIGN-capx-d87-d88-s19-read-2026-09-08.md` §2.6.
 
 **This document is written BEFORE the screen arm is solved.** The G-DRIFT audit (§3) and the STOP
 gates (§4) are pre-registered here so neither can be written to fit a result (rule 29 `[R-SCREEN]`).

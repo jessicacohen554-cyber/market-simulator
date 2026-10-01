@@ -125,7 +125,7 @@ per-path commit counts bound the history bloat tightly.
 **(ii) REMOVABLE-NOW — never needed in git.**
 - `scripts/_rule27_push_staging/` — 81 files, 0.365 MiB. **Removed this session**
   (81 `delete_file` commits) + gitignored (`scripts/.gitignore`).
-- `*.patch` files — 18 files, 0.208 MiB (e.g. `docs/handoffs/pjm-m3-gas-bridge.patch`).
+- `*.patch` files — 18 files, 0.208 MiB (e.g. `docs/records/pjm/pjm-m3-gas-bridge.patch`).
   **Left in place** — these are session hand-off artifacts, not clone-loop
   drivers, and one (`pjm-m3-gas-bridge.patch`) is a still-relevant unapplied
   change the owner may want re-based. Owner call, not removed here.
@@ -269,5 +269,5 @@ fast-clone doc + clutter removal — regardless):
       `completeness.js`) and flip root `.gitignore` §6 — small (<1 MiB now, but
       it's the main history-churn file), and it changes the documented preview
       policy. Default: leave as-is.
-- [ ] **Re-base or drop `docs/handoffs/pjm-m3-gas-bridge.patch`** (stranded
+- [ ] **Re-base or drop `docs/records/pjm/pjm-m3-gas-bridge.patch`** (stranded
       unapplied 39 KiB patch) — separate lane, not a clone-loop driver.

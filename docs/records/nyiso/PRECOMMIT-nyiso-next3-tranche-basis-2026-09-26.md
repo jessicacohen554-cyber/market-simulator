@@ -35,7 +35,7 @@
 ## 1. Phase 0 (zero LP)
 
 Probe: `scripts/probes/nyisonext3_tranche_basis_phase0.py` →
-`results/calibration/_nyisonext3_tranche_basis_phase0.json`. Fleet-only rebuilds through
+`results/phase0/nyiso/_nyisonext3_tranche_basis_phase0.json`. Fleet-only rebuilds through
 `replay_keeper.run_year_kwargs`:
 - CONTROL = committed artifacts;
 - `arm` = re-derived artifacts;

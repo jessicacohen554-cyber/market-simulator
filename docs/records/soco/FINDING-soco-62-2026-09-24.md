@@ -210,6 +210,6 @@ OWNER QUESTIONS: (1) may SOCO carry MEASURED incremental-HR phys_* bands while
 price bands stay 1.0 (the only admissible route to the split)? (2) decline
 2026-09-20-soco53g-prb-own-iso (E13)? Leftover refs for the owner:
 claude/soco61-arm-*, claude/soco60-arm-*, claude/soco60-armB-*.
-Records: docs/handoffs/FINDING-soco-62-2026-09-24.md,
+Records: docs/records/soco/FINDING-soco-62-2026-09-24.md,
 scripts/probes/_soco62_phase0.py.
 ```

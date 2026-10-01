@@ -2,7 +2,7 @@
 
 ```
 LANE      : miso-294 (owner rulings on DESIGN-miso293 §8: "Basis: Adopt for MISO now"; "Next lane: C3b 2021")
-PRECOMMIT : docs/PRECOMMIT-miso294-zone-resolved-basis-2026-10-01.md (46d299f1, pushed before any change)
+PRECOMMIT : docs/records/miso/PRECOMMIT-miso294-zone-resolved-basis-2026-10-01.md (46d299f1, pushed before any change)
 KEEPER    : 2026-09-28-miso-280-splitremap (results/calibration/miso280_span), unchanged
 LP        : none
 ```

@@ -1,7 +1,7 @@
 # RESULT — ERCOT keeper re-solved for the marginal emission rate. MER DELIVERED; **G-DRIFT FORM 4 IS REFUTED FOR ERCOT AT HEAD**.
 
 **Session:** ercot-mer (parent/orchestrator), 2026-09-19. Branch `claude/ercot-keeper-configs-60kit8`.
-**PRECOMMIT:** `docs/handoffs/PRECOMMIT-ercot-mer-keeper-resolve-2026-09-19.md` (`f5575e05`, Amendment 1 `fa87a45a`).
+**PRECOMMIT:** `docs/records/ercot/PRECOMMIT-ercot-mer-keeper-resolve-2026-09-19.md` (`f5575e05`, Amendment 1 `fa87a45a`).
 **Pinned SHA:** `5926ca52e9acf140cdab1221464bc13be4938f32` (contains the MER commit `2ec09663` and the replay fix).
 **Keeper under test:** `2026-09-09-ercot265-receipts-fallback`, bundle `results/calibration/ercot265_receipts_five_year`, years 2021-2025.
 **Not a keeper candidate; nothing registered.** No dashboard id minted, keeper bundle untouched (append, "WHEN IT LANDS").
@@ -132,7 +132,7 @@ Rule 32(d): the per-year dirs are kept OUT of `main` by `.gitignore`, never by `
   compile"), recorded in PRECOMMIT Amendment 1. The failure mode that ban exists for — unrecoverable legs —
   was closed by rule 34(a) full-bundle pushes, and the five legs were in fact all recovered.
 * **A first attempt (v1) burned zero LP.** All five v1 shards stopped correctly at a driver blocker,
-  filed findings, pushed nothing. `docs/handoffs/FINDING-ercot-mer-replay-blocked-2026-09-19.md`.
+  filed findings, pushed nothing. `docs/records/ercot/FINDING-ercot-mer-replay-blocked-2026-09-19.md`.
 * **Rule 27 `[R-PUSH]`:** `scripts/replay_keeper.py` (1,048 lines) was edited locally by Opus in the
   parent and the pushed blob verified byte-identical (sha256 match) before anything else proceeded.
 * **Rule 31 `[R-RETAIN]`: nothing deleted**, and the promotion question is put below rather than pre-empted.

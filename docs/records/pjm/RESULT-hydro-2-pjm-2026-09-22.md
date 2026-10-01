@@ -1,6 +1,6 @@
 # RESULT — hydro-2: PJM `hydro_ror_split`, full year set (2026-09-22)
 
-Companion to `docs/PRECOMMIT-hydro-2-pjm-2026-09-22.md` (pushed before any solve; shards pinned to
+Companion to `docs/records/pjm/PRECOMMIT-hydro-2-pjm-2026-09-22.md` (pushed before any solve; shards pinned to
 `152c546a31c2b32191aae643230aa1d32ba5856c`). **Every number this lane cites is here.**
 
 Arm = PJM keeper `2026-09-22-pjm-h16-coalgrain` recipe **+ `hydro_ror_split=true`**, nothing else.

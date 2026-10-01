@@ -1,7 +1,7 @@
 # PRE-REGISTRATION — nyiso-100: retire the mis-attributed simultaneous-import scalar
 
 **Date:** 2026-07-30 · **ISO:** NYISO · **Committed and pushed BEFORE any solve.**
-**Charter:** `docs/FINDING-nyiso100-simultaneous-import-misattribution-2026-07-30.md`
+**Charter:** `docs/records/nyiso/FINDING-nyiso100-simultaneous-import-misattribution-2026-07-30.md`
 **Matrix row:** `nyiso_import_sil_retire` · **Rule:** 14 `[R-ACCURATE]`, 19 `[R-ONE-MECH]`, 22 `[R-DOF]`
 
 ---

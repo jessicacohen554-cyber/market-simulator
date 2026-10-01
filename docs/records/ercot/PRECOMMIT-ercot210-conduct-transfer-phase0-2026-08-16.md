@@ -28,7 +28,7 @@ before any 2023 row is read.
 
 Executed under **X-1**, signed by the owner by dispatch of CONDUCT-PHASE-0
 (2026-08-16) and made durable at the foot of
-`docs/ASSESSMENT-ercot209-2023-scarcity-calibration-path-2026-08-15.md`
+`docs/records/ercot/ASSESSMENT-ercot209-2023-scarcity-calibration-path-2026-08-15.md`
 (§ RESOLUTIONS — CARD X). The signature, verbatim:
 
 > "X-1 SIGNED (owner): Phase-0 of the card-R R-C conduct-layer program is chartered as a READ-ONLY
@@ -44,11 +44,11 @@ unsigned; Door D is the pre-registered fallback if this test stops.
 
 ## 2. STANDING RULINGS — CITED, NOT RE-LITIGATED
 
-- **Q-B FINAL** (`docs/DECISION-CARD-ercot189-c3a2023-after-the-offer-family-2026-08-11.md`;
+- **Q-B FINAL** (`docs/records/ercot/DECISION-CARD-ercot189-c3a2023-after-the-offer-family-2026-08-11.md`;
   licence re-test FAILED at ercot-191, L1 0.3857 vs 0.90): no competitive-offer-class
   C3a-2023 spend of any kind. **SCOPED, not reopened**, by X-1: this session
   computes **no C3a value**, runs no lever, and touches no offer-curve constant.
-- **R-A** (`docs/DECISION-CARD-ercot193-determination-ceiling-2026-08-13.md`):
+- **R-A** (`docs/records/ercot/DECISION-CARD-ercot193-determination-ceiling-2026-08-13.md`):
   NOT-YET stands; no C3b-2023-targeted determination rounds. This session
   computes **no C3b value** and no NRMSE of anything.
 - **No C3a / C3b / C3c number is produced by this session, in any year.** The

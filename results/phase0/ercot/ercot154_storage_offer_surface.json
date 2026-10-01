@@ -1,7 +1,7 @@
 {
  "_provenance": {
   "session": "ERCOT-154 Phase 1 (measurement only; no LP built, no year solved)",
-  "charter": "ercot-153 chartered arm -- the measured storage evening discharge-offer surface; evidence base results/calibration/ercot153_amplitude.json",
+  "charter": "ercot-153 chartered arm -- the measured storage evening discharge-offer surface; evidence base results/phase0/ercot/ercot153_amplitude.json",
   "source": "ERCOT 60-Day SCED Disclosure Gen Resource Data, scoped sample days (ERCOT-74/75/86 intake), PWRSTR rows, delivery years 2024-2025",
   "method": "per-interval above-LSL discharge segments (max(LSL,0) -> min(step MW, HASL)) of the SCED2 offer curve of ONLINE (ON/ONREG/ONFFRRRS/FRRSUP) PWRSTR resources; MW-weighted quantile ladders of segment price in TWO bases (absolute $/MWh and the wall's gas-day multiple), within (net-load-percentile bin x hour block)",
   "driver": "system net-load percentile within year (EIA-930 demand - wind - solar), forward-native -- the wall/pool driver",

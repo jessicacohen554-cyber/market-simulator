@@ -55,8 +55,8 @@ def apply_ercot_ct_offer_surface(
     """Raise ERCOT CT/peaker econ+peak offers to the measured self-withholding level.
 
     The G-22 condition-responsive offer surface (filed structural conclusion #1
-    of ``docs/FINDING-ercot-priceshape-2026-07.md`` §6; design note
-    ``docs/handoffs/ercot-g22-offer-surface-2026-07.md``). In the missed tail
+    of ``docs/records/ercot/FINDING-ercot-priceshape-2026-07.md`` §6; design note
+    ``docs/records/ercot/ercot-g22-offer-surface-2026-07.md``). In the missed tail
     hours the P1 LP offers every online CT/peaker economic+peak tranche at its
     flat marginal cost ``heat_rate x gas + VOM`` (~$50-150/MWh) — the "phantom
     sub-$200 spare" that caps the energy dual below the scarcity level the real
@@ -740,7 +740,7 @@ def build_ercot_offer_surface_conditional_markup(
         of spare in one step, overshot (calibration-log 2026-07-06);
       * the STATIC ``peak_ladder`` wall posted the measured ladder in ALL 8760 hours
         → perturbed P0 run lengths and swapped ~8 TWh CT<->ST through the startup-
-        amortization coupling (docs/FINDING-ercot-priceshape-2026-07.md §6).
+        amortization coupling (docs/records/ercot/FINDING-ercot-priceshape-2026-07.md §6).
 
     This mechanism fixes both: it is applied to the P1 clearing objective ONLY (P0 is
     byte-identical → no CT<->ST coupling), the loose bins never lower an offer (ratio
@@ -822,7 +822,7 @@ def build_pjm_offer_surface_conditional_markup(
     CC_REGULAR + CT_PEAKER peak-band rungs in the P1 clearing objective only
     — the two classes whose idle supply is offered above the model price but
     below the actual DA price at the missed summer peaks
-    (docs/handoffs/pjm-summer-peak-price-formation-g22-2026-07.md §1-2).
+    (docs/records/pjm/pjm-summer-peak-price-formation-g22-2026-07.md §1-2).
     Same mechanics, clamps and rule-13/20/21 discipline as the ERCOT/NEISO
     surfaces (the shared :func:`_conditional_surface_markup` core); PJM-only,
     its own frozen surface JSON, no cross-ISO fallback (rule 25).
@@ -2292,7 +2292,7 @@ def build_ercot_offer_surface_cleared_share_markup(
     # ladder is measured on the ONLINE fleet, and stretching it over
     # capability that is telemetered OFF at the same conditions is the
     # measured 8-10x phantom-headroom wedge (charter §8.1,
-    # docs/handoffs/ercot-shoulder-online-envelope-2026-07.md). Rows above
+    # docs/records/ercot/ercot-shoulder-online-envelope-2026-07.md). Rows above
     # the span clamp at the ladder top HERE; the fast-start subset of them is
     # REPLACED by the pool leg's start-inclusive ladder at the caller
     # (REPLACE-BY-MASK — hence the required ercot_faststart_pool_offer arm),
@@ -2940,7 +2940,7 @@ def build_ercot_faststart_pool_markup(
     """Build the ERCOT-88 offline fast-start pool ``(markup, own_mask)``.
 
     The §6.2 mechanism of
-    ``docs/handoffs/ercot-residual-midband-formation-lane-2026-07.md`` (§9,
+    ``docs/records/ercot/ercot-residual-midband-formation-lane-2026-07.md`` (§9,
     ``ScenarioConfig.ercot_faststart_pool_offer``). The ERCOT-87 measurement
     adjudicated that the actual $150-500 moderate-tightness band prices on the
     OFFLINE startable CT pool (telemetered OFFQS/OFFNS — ~5x the online
@@ -3428,7 +3428,7 @@ def build_ercot_offline_commit_target(
 
     ``ScenarioConfig.ercot_offline_commit_offer`` — the owner-authorized
     ERCOT-151 §3 design round
-    (``docs/PRECOMMIT-ercot176-offline-increment-2026-08-07.md``).
+    (``docs/records/ercot/PRECOMMIT-ercot176-offline-increment-2026-08-07.md``).
 
     The defect: the model's availability basis is only-OUT-is-out (correct —
     startability is physical, rule 13), so every non-outaged unit is offered
@@ -3936,7 +3936,7 @@ def build_ercot_offer_surface_lowcurve_floorscoped_markdown(
 
     The enumerated price-side lever from the ERCOT-63 adjudication
     (``ScenarioConfig.ercot_offer_surface_lowcurve_floorscoped``;
-    docs/DIAGNOSIS-ercot-trough-price-formation-2026-07.md §7): the measured
+    docs/records/ercot/DIAGNOSIS-ercot-trough-price-formation-2026-07.md §7): the measured
     committed-CC LSL (Min-Gen-Cost) bid — the SAME frozen ERCOT-62 quantile
     artifact the v2 markdown reads (``binned_committed_p50`` per net-load bin,
     ``offer_curve_dam_lowcurve_condbinned.json``) — applied to each gas plant's

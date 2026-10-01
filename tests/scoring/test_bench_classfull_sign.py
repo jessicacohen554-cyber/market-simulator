@@ -8,7 +8,7 @@ pumped storage (``PS/WAT`` -0.65 to -0.70 TWh a year), and NEISO's 2020
 -19,082 MWh). Both are measured and both are right. What must never happen is
 the builder MANUFACTURING a negative — MISO ``oil`` 2022 read raw EIA-923
 +0.3836 TWh and came out -0.0731 because the dual-fuel re-attribution moved only
-positive rows (``docs/FINDING-miso267-the-oil-reattribution-was-one-sided-2026-09-23.md``).
+positive rows (``docs/records/miso/FINDING-miso267-the-oil-reattribution-was-one-sided-2026-09-23.md``).
 
 So every negative ``classFull`` entry in a committed part must be ONE of:
 

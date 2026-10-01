@@ -124,7 +124,7 @@ clause).** PJM publishes ONE whole-fleet aggregate, so any non-fossil outage MW
 inside it is charged to the fossil-thermal denominator. It is **not** corrected
 by a scale factor — a factor tuned to close it would be a fitted parameter
 (rules 13 / 21 / 24). Its size is measured ex ante in
-`results/calibration/_pjm161_removeonly_exante.json` and reported with the
+`results/phase0/pjm/_pjm161_removeonly_exante.json` and reported with the
 result whatever it is.
 
 ---

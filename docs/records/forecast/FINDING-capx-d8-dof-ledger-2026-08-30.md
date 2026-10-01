@@ -1,6 +1,6 @@
 # FINDING — capx-D8: the forecast DOF-ledger instrument + the seven-leg run_config provenance debt
 
-**Lane:** capx-D8 (director r#19, `docs/handoffs/capx-director-ledger-2026-08.md` §0p.2)
+**Lane:** capx-D8 (director r#19, `docs/records/forecast/capx-director-ledger-2026-08.md` §0p.2)
 · **Branch:** `claude/capx-d8-dof-ledger-lrih7b` · **Date:** 2026-08-30 · **Zero solves.**
 
 ## §0 Headline
@@ -247,7 +247,7 @@ duties not triggered). Model: Fable (rule 27); pushes blob-verified.
 ## §8 COMPLETION NOTE — capx-D8-RE: the deferred re-emission, executed
 
 **Lane:** capx-D8-RE (director r#21 mid-sitting release; charter:
-`docs/handoffs/capx-director-prompt-pack-2026-08.md` §D8-RE)
+`docs/records/forecast/capx-director-prompt-pack-2026-08.md` §D8-RE)
 · **Branch:** `claude/capx-d8-re-emission-szo4wt` · **Date:** 2026-08-31 · **HEAD:**
 `4bdb2d603c68` · **Zero solves.**
 

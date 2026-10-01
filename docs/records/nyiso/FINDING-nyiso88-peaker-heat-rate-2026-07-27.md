@@ -2,8 +2,8 @@
 
 **Session:** nyiso-88 (peaker commitment charter) · **Date:** 2026-07-27 ·
 **Mode:** no-LP, scoring-side characterisation (rule 14 [R-ACCURATE])
-**Premise:** `docs/FINDING-nyiso87-commitment-drag-2026-07-27.md` §4.3/§4b/§6,
-`docs/FINDING-nyiso-c3c-scarcity-formation-2026-07-26.md` §7, and the keeper
+**Premise:** `docs/records/nyiso/FINDING-nyiso87-commitment-drag-2026-07-27.md` §4.3/§4b/§6,
+`docs/records/nyiso/FINDING-nyiso-c3c-scarcity-formation-2026-07-26.md` §7, and the keeper
 `2026-07-27-nyiso-87-cmeas-measured` open item (1).
 
 ---

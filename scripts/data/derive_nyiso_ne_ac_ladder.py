@@ -1,7 +1,7 @@
 """Derive the NYISO NE AC tie node ladder and the pooled ladder without it.
 
 NYISO-NEXT-11 (owner ruling Q-a, 2026-09-28;
-``docs/PRECOMMIT-nyiso-next11-ne-ac-node-2026-09-28.md``). The NY-New England
+``docs/records/nyiso/PRECOMMIT-nyiso-next11-ne-ac-node-2026-09-28.md``). The NY-New England
 AC tie (P-32 ``SCH - NE - NY``, New Scotland / Pleasant Valley, landing zone
 F-G = ``Capital_Hudson``) leaves the pooled ``NYISO_external`` star node for its
 own TWO-WAY node, priced at the neighbour's own measured price. Two tables are

@@ -1,6 +1,6 @@
 {
  "lane": "caiso-286",
- "precommit": "docs/PRECOMMIT-caiso286-cc-start-cost-2026-09-19.md",
+ "precommit": "docs/records/caiso/PRECOMMIT-caiso286-cc-start-cost-2026-09-19.md",
  "precommit_sha": "7562f345d25eb96c7785f82b201c230f00f7402f",
  "probe_bundle": "results/calibration/caiso285_instr_2024",
  "probe_bundle_recovered_from_sha": "203124e310f7be4f806ad968d6cf5755f96bbc00",

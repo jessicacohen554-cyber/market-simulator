@@ -1,10 +1,10 @@
 {
  "probe": "nyiso-157 eastern-seam PAR attribution RE-TEST A/B",
  "prereg": [
-  "results/calibration/PREREG-nyiso126-eastern-seam-attribution-2026-08-04.md",
-  "results/calibration/PREREG-nyiso127-addendum-eastern-seam-availability-source-2026-08-05.md",
-  "results/calibration/PREREG-nyiso127-addendum2-full-seam-attribution-2026-08-05.md",
-  "results/calibration/EXECNOTE-nyiso157-leg1-execution-2026-08-30.md"
+  "docs/records/nyiso/PREREG-nyiso126-eastern-seam-attribution-2026-08-04.md",
+  "docs/records/nyiso/PREREG-nyiso127-addendum-eastern-seam-availability-source-2026-08-05.md",
+  "docs/records/nyiso/PREREG-nyiso127-addendum2-full-seam-attribution-2026-08-05.md",
+  "docs/records/nyiso/EXECNOTE-nyiso157-leg1-execution-2026-08-30.md"
  ],
  "arms": {
   "A_control": "nyiso157_parctl_A",

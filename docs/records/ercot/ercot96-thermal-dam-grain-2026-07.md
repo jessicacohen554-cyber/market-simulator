@@ -55,10 +55,10 @@ move whole through a model response (`fleet.py` 522 KB, `scenarios.py` 540 KB,
 constants.py-truncation incident class), so the WHOLE code change travels as
 ONE atomic git patch:
 
-- **`docs/handoffs/ercot96-lane-a-core.patch`** — all 7 modified files
+- **`docs/records/ercot/ercot96-lane-a-core.patch`** — all 7 modified files
   (derive script, run_calibration.py, run_calibration_full.py, scenarios.py,
   fleet.py, outages.py, tests/test_outages.py), 573 lines. Apply from repo
-  root with `git apply docs/handoffs/ercot96-lane-a-core.patch` against main
+  root with `git apply docs/records/ercot/ercot96-lane-a-core.patch` against main
   `4ff3118b`.
 - **`data/raw/ercot-thermal-dam-availability-hourly.csv`** (594 KB, derived
   data) is NOT shipped: regenerate byte-exactly with
@@ -105,7 +105,7 @@ from −32.5% / 0.631), C3c NOT-YET driver (2024/2025 unledgered). LOYO clean
 C3c ledgering NOT taken — a separate owner action). Lane B moved to ERCOT-97
 by owner direction (2026-07-22, this session), joined by the plant-grain
 crosswalk and the measured RUC-conduct lanes — see
-`docs/handoffs/ercot97-plant-grain-ruc-laneb-2026-07.md`.
+`docs/records/ercot/ercot97-plant-grain-ruc-laneb-2026-07.md`.
 
 Full log entry: `docs/calibration-log/ercot.md` § 2026-07-22 — ERCOT-96.
 

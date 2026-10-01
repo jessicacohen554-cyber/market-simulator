@@ -3,7 +3,7 @@
 - **Session:** NYISO-NEXT-18 (orchestrator; zero LP in this container, rule 32 (a)).
 - **Queue item:** 1 — 2021 C3a +11.1 % (the owner's block on `complete`).
 - **Probes (zero LP):**
-  - `scripts/probes/nyisonext18_phase0.py` → `results/calibration/_nyisonext18_phase0.json`
+  - `scripts/probes/nyisonext18_phase0.py` → `results/phase0/nyiso/_nyisonext18_phase0.json`
   - `scripts/probes/nyisonext18_fleet_census.py` → `results/calibration/_nyisonext18_census_<year>.json`
 - **Inputs:** only committed artifacts — the NEXT-16 keeper's P1 hourlies and registered run payloads, the NYISO bench (CAMPD hourly), the measured DA zonal proxy, NYISO's RT fuel mix, and the curated CENTRAL EAST flows.
 
@@ -101,4 +101,4 @@
 
 - **Does:** it restores a measured plant in its measured zone for its measured operating months (rule 14). It removes a plant EIA itself marks out of service. No parameter is fitted.
 - **Does not:** it does not address the CENTRAL EAST object in §1. The Capital − Upstate spread in CE-binding hours is not expected to move, because IP3 is downstate.
-- **Direction expected:** 2021 Jan–Apr system prices fall. The size is an LP question and is **not** a gate. The pre-registration is `docs/PRECOMMIT-nyiso-next18-retiree-carry-2026-09-30.md`.
+- **Direction expected:** 2021 Jan–Apr system prices fall. The size is an LP question and is **not** a gate. The pre-registration is `docs/records/nyiso/PRECOMMIT-nyiso-next18-retiree-carry-2026-09-30.md`.

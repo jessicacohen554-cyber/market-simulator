@@ -1,14 +1,14 @@
 # PRECOMMIT R-NWPP: re-solve NWPP 2019–2025 on corrected backcast inputs (2026-09-24)
 
-**Charter:** `docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md` §5.3.5. Owner instruction
+**Charter:** `docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md` §5.3.5. Owner instruction
 (2026-09-24): every backcast year 2019–2025 runs on the year-correct EIA-860 vintage, plant-specific heat rates,
 and granular CAMPD outage data. **Precondition met:** F1 (#6572) and F2 (#6569) are merged; the lane is cut from
 `9210075392a128d14a5efb168ab1f9955a9b6946`.
 **Parent:** zero LP (rule 32(a)). **Control:** keeper `2026-09-24-nwpp-49-ror-split`
 (`results/calibration/nwpp49_ror_span`, basis `c2d5991c`), rule 29(b) form 4 for 2023–2025. 2019/2021/2022 have
 no control, because NWPP has never solved them.
-**Probes (committed):** `scripts/probes/_rnwpp_census.py` → `results/calibration/_rnwpp_census.json`; the mid-vintage
-carry census → `results/calibration/_rnwpp_midvintage_census.json`.
+**Probes (committed):** `scripts/probes/_rnwpp_census.py` → `results/phase0/nwpp/_rnwpp_census.json`; the mid-vintage
+carry census → `results/phase0/nwpp/_rnwpp_midvintage_census.json`.
 
 ## 0. In one line
 

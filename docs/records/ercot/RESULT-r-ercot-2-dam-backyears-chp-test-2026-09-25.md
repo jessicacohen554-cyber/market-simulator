@@ -1,6 +1,6 @@
 # RESULT — R-ERCOT-2: the CHP heat rate caused the 2023 regression; the missing DAM data caused most of 2019/2020
 
-**PRECOMMIT:** `docs/handoffs/PRECOMMIT-r-ercot-2-dam-backyears-chp-test-2026-09-25.md`.
+**PRECOMMIT:** `docs/records/ercot/PRECOMMIT-r-ercot-2-dam-backyears-chp-test-2026-09-25.md`.
 **Pinned SHA:** `8beff24de53472d4dfe3c1aec6910eb592c00622`, with one year per shard (rule 36).
 **Keeper:** `2026-09-24-r-inputs-2019-2025`. It is unchanged, because nothing was promoted.
 

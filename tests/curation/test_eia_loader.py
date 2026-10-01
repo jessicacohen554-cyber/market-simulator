@@ -42,7 +42,7 @@ _MISO_TEST_YEAR = 2024
 # 2023-01 had landed — and caiso-175 completed it: 2023/2024/2025 now each
 # carry the full year across all SIX CAISO-internal TAC areas (MWD-TAC had
 # been hard-coded out of postprocess_oasis_downloads.CAISO_TACS). See
-# results/calibration/FINDING-caiso175-tac-load-intake-2026-08-06.md.
+# docs/records/caiso/FINDING-caiso175-tac-load-intake-2026-08-06.md.
 _CAISO_TAC_YEAR = 2023
 
 # NYISO primary backcast year: 2023 is the cleanest year in the NYIS hourly

@@ -3,10 +3,10 @@
 **Date:** 2026-08-30 · **Lane:** O7 attribution harness (the finding-§5 partial,
 owner Door-2 ruling at the 2026-08-30 director sitting) · **Branch:**
 `claude/o7-attribution-harness-fjuvgd` · **Charter:**
-`docs/FINDING-o7-p0-seam-restoration-2026-08-26.md` §5 · **Precommit:**
-`docs/PRECOMMIT-o7-attribution-harness-2026-08-30.md` (pushed before any solve;
+`docs/records/misc/FINDING-o7-p0-seam-restoration-2026-08-26.md` §5 · **Precommit:**
+`docs/records/misc/PRECOMMIT-o7-attribution-harness-2026-08-30.md` (pushed before any solve;
 its HP-1..HP-3 predictions are scored below, none renegotiated) · **Artifact:**
-`results/calibration/o7_attribution_harness_2023.json` (committed with this
+`results/phase0/misc/o7_attribution_harness_2023.json` (committed with this
 finding). **Keeper artifacts read, never written** — the `ercot236_k33_clip`
 bundle, the dashboard, the keeper shard and the registered numbers are all
 untouched, per the ruling's boundary.
@@ -234,12 +234,12 @@ seam capture + row-level comparison):
 
 ## 7. Evidence chain
 
-`results/calibration/o7_attribution_harness_2023.json` (HP-1 per-call hash
+`results/phase0/misc/o7_attribution_harness_2023.json` (HP-1 per-call hash
 table, the full decomposition, the Δmc diagnostics incl. the 10 disclosed FP
 pairs, per-leg captures) · `scripts/probes/o7_attribution_harness.py` + 17
 toy tests (`tests/test_o7_attribution_harness.py`) ·
-`docs/PRECOMMIT-o7-attribution-harness-2026-08-30.md` ·
-`docs/FINDING-o7-p0-seam-restoration-2026-08-26.md` §2/§5/§6 ·
+`docs/records/misc/PRECOMMIT-o7-attribution-harness-2026-08-30.md` ·
+`docs/records/misc/FINDING-o7-p0-seam-restoration-2026-08-26.md` §2/§5/§6 ·
 `results/calibration/ercot236_k33_clip/{meta.json,run_config.json}` (read
 only) · FINDING-ercot188 §6.2 and `ercot188_p0_delta.json` (cited, not
 re-derived).

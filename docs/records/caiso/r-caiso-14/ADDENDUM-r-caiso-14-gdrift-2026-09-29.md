@@ -3,7 +3,7 @@
 Extends PRECOMMIT-r-caiso-13 §2. Written before any shard was launched.
 
 **Pinned SHA:** `332c804834aa08a10d24f48adcb168296139e1f5` (origin/main HEAD). It contains
-`frames.set_caiso_eia930_clock_repair` (frames.py:522) and `docs/handoffs/r-caiso-13/shard-prompt.md`.
+`frames.set_caiso_eia930_clock_repair` (frames.py:522) and `docs/records/caiso/r-caiso-13/shard-prompt.md`.
 
 ## G-DRIFT 14c1d70e → 332c8048 (solve paths)
 

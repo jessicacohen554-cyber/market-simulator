@@ -64,7 +64,7 @@ replaced by `_vstack_csr_free` for this same OOM.
 > `P=$(grep -E '^[0-9]+:memory:' /proc/self/cgroup | cut -d: -f3)` then
 > `cat /sys/fs/cgroup/memory$P/memory.limit_in_bytes` (v1) or `/sys/fs/cgroup$P/memory.max`
 > (v2). Everything else in this section stands, including the spent-lever list.
-> See `docs/RESULT-miso253-mustrun-chp-btm-2026-09-10.md` §3.1.
+> See `docs/records/miso/RESULT-miso253-mustrun-chp-btm-2026-09-10.md` §3.1.
 
 Both claims in §1a were tested and one of them is wrong. Measured across shards R3-A and R4:
 

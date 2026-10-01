@@ -27,7 +27,7 @@ STATE (2026-09-30):
   - the zero-LP benchmark rebuild.
 - Owner card 2026-09-30: next link = "Interchange lag".
 
-THE GAP (docs/handoffs/r-caiso-15/ADDENDUM-r-caiso-15-hsl-2026-09-29.md §4, census row #2):
+THE GAP (docs/records/caiso/r-caiso-15/ADDENDUM-r-caiso-15-hsl-2026-09-29.md §4, census row #2):
 - `data/raw/eia-930-interchange/CISO interchange hourly.parquet` (the per-DIBA feed) does NOT pass the frame repair seam.
 - Its clock comes from fixed lags: `_CAISO_INTERCHANGE_LAG_STD_H=1` / `_DST_H=2` (`data/eia930/envelopes.py:886-910`).
   - Those lags were fitted against the UNREPAIRED extract's `Total interchange` over 2023–25
@@ -59,7 +59,7 @@ TASK (do nothing else):
    - Record the finding and set the census row to closed.
    - Put the next-link choice to the owner as a card.
 4. If anything was built: solve 7 shards, one per year 2019–2025 (rule 36).
-   - Use docs/handoffs/r-caiso-15/shard-prompt.md as the template.
+   - Use docs/records/caiso/r-caiso-15/shard-prompt.md as the template.
    - Update the arm-liveness hard stop with the feed counts.
    - Pin the full SHA after your build PR merges.
    - The parent never solves (rule 32(a)).

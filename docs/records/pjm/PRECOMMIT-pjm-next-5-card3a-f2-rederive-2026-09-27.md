@@ -53,7 +53,7 @@ same family.
 
 ## 3. Zero-LP census (fleet-only rebuild, keeper recipe ± the flag)
 
-`scripts/probes/pjm_next5_card3a_f2_census.py` → `results/calibration/_pjm_next5_card3a_f2_census.json`. Offers
+`scripts/probes/pjm_next5_card3a_f2_census.py` → `results/phase0/pjm/_pjm_next5_card3a_f2_census.json`. Offers
 (`mc_base`) are **byte-identical** in every year.
 
 Δ available capacity-hours, TWh (arm − keeper):

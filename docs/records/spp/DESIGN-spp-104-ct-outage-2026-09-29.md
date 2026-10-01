@@ -3,7 +3,7 @@
 Lane: SPP-104 (availability lane), chartered by the owner card "Record + CT outage lane" (SPP-103).
 Keeper: `2026-09-28-spp-100-chp-scope`, bundle `results/calibration/spp100_arm_span` (2019–2025).
 Base: `origin/main` `6b1e7593`. Probe: `scripts/probes/_spp104_ct_availability_phase0.py`.
-Numbers: `results/calibration/_spp104_ct_availability_phase0.json`.
+Numbers: `results/phase0/spp/_spp104_ct_availability_phase0.json`.
 **No LP. No shard. No bundle. No `src/` edit. No `ScenarioConfig` field. No multiplier touched.**
 
 ## 0. Headline

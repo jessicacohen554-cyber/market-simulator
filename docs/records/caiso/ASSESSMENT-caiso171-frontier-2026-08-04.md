@@ -9,7 +9,7 @@ design. Nothing in `calibration-complete.json` is touched — the marker is an o
 (rule 22). No out-of-training year was solved, scored or read.
 
 Instrument: `scripts/probes/caiso171_frontier_assessment.py` (committed artifacts only,
-re-runs in seconds); record `results/calibration/_caiso171_frontier_assessment.json`.
+re-runs in seconds); record `results/phase0/caiso/_caiso171_frontier_assessment.json`.
 
 ---
 
@@ -407,6 +407,6 @@ never spend both:
 
 - This assessment.
 - `scripts/probes/caiso171_frontier_assessment.py` — the instrument (no LP, no network).
-- `results/calibration/_caiso171_frontier_assessment.json` — its record.
+- `results/phase0/caiso/_caiso171_frontier_assessment.json` — its record.
 - `docs/mechanism-testing-matrix.md` §5.2 header — assessment + verdict recorded (rule 28 duty b).
 - `docs/calibration-log/caiso.md` — appended.

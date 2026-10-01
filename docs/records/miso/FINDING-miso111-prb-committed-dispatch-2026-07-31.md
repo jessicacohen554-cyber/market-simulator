@@ -3,7 +3,7 @@
 Session miso-111, 2026-07-31, branch `claude/miso-111-coal-amplitude-p1l29u`.
 Pre-registration (kill rules committed BEFORE the Phase-2 measurement, design
 refinement committed BEFORE any solve):
-`results/calibration/PREREG-miso111-prb-committed-flex-2026-07-31.md`.
+`docs/records/miso/PREREG-miso111-prb-committed-flex-2026-07-31.md`.
 
 ## 0. Dependency check + status-report note
 
@@ -57,7 +57,7 @@ reopened).
 ## 2. Phase 2: the CAMPD conduct measurement (kill rules did not fire)
 
 Probe `scripts/probes/_miso111_prb_conduct.py` →
-`results/calibration/miso111_prb_conduct.csv` (30 plants, 90 plant-years,
+`results/phase0/miso/miso111_prb_conduct.csv` (30 plants, 90 plant-years,
 plant basis, WP-3 loading-when-on construction; protocol PREREG §4):
 
 | leg | year | online-hours off-peak CV | amplitude (of HSL) | trough→peak |

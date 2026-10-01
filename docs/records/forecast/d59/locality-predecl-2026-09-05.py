@@ -7,7 +7,7 @@ machinery only (the hindcast's own fleet loaders to rebuild the per-unit enterin
 curve rows, the committed LCR requirement rows), so the pre-declaration is fixed before
 the mechanism exists.
 
-    uv run python docs/handoffs/d59/locality-predecl-2026-09-05.py
+    uv run python docs/records/forecast/d59/locality-predecl-2026-09-05.py
 
 Per scored year (2023–2025) and representable locality (NYC = Zone J, Long Island =
 Zone K — DESIGN §1): the model's in-locality ICAP census (entering fleet ``pmax_mw`` by

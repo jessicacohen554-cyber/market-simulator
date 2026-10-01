@@ -3,7 +3,7 @@
 **Governs:** `PREREG-miso244-diagnose-the-incumbent-ladder-cent-2026-09-08.md` §2.3 (the verdict's
 sub-classification), §2.4 (the cause prediction) and **§3 (the liveness gate `L`)**.
 **Pushed BEFORE `L` is computed. NO BAR IS MOVED. The one repair made is STRICTER than what it
-replaces.** Machine record: `results/calibration/_miso244_incumbent_ladder_cent_phase0.json`;
+replaces.** Machine record: `results/phase0/miso/_miso244_incumbent_ladder_cent_phase0.json`;
 evaluator `scripts/probes/_miso244_incumbent_ladder_cent_phase0.py`, whose bars are literals quoted
 from the PREREG.
 

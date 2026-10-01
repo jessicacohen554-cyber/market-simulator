@@ -13,7 +13,7 @@ item on the MISO board and the only route around the 2026-10-30 Form 580
 calendar to the only remaining admissible route to C7-2025. Source under test:
 the Michigan PSCR process, MCL 460.6j, as filed at the MPSC by **DTE Electric**
 and **Consumers Energy** — named at
-`docs/handoffs/miso-coal-contract-tonnage-data-ask-2026-07.md` **§3(b)** as
+`docs/records/miso/miso-coal-contract-tonnage-data-ask-2026-07.md` **§3(b)** as
 *"Not yet checked, and the highest-value remaining state"*, with the open
 question stated there verbatim:
 

@@ -2,10 +2,10 @@
 
 RC-1D of the accreditation-basis lane (gap register §3.10 — `docs/gap-register-
 2026-07.md`). Adjudicates the two audits the P-2B memo opened
-(`docs/handoffs/accreditation-basis-memo-2026-07-12.md` §4.3 R5) using this
+(`docs/records/misc/accreditation-basis-memo-2026-07-12.md` §4.3 R5) using this
 session's own research
 (`data/raw/capacity-market/accreditation-filings/{nyiso,neiso}/README.md`,
-landed by RC-0A — `docs/handoffs/retirement-lane-intake-2026-07-15.md` §7).
+landed by RC-0A — `docs/records/misc/retirement-lane-intake-2026-07-15.md` §7).
 Scope: accreditation registry/requirement layer only. **No dispatch-layer or
 backcast-keeper changes; no LP solve.**
 

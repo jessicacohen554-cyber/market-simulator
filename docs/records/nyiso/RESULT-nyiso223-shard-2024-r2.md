@@ -4,7 +4,7 @@ Session **nyiso-223** · shard relaunch · pinned SHA `ce4779ecd62db3c732e0d0cd7
 
 > **Provenance / why this file exists.** This is the SECOND, independent 2024 solve of the
 > hub-gap-fill arm (shard relaunch `nyiso223-y2024-r2`). The first 2024 shard's report is
-> `docs/RESULT-nyiso223-shard-2024.md`. Both are kept because the two runs are an independent
+> `docs/records/nyiso/RESULT-nyiso223-shard-2024.md`. Both are kept because the two runs are an independent
 > replication of each other: the class-energy findings agree EXACTLY — total P1 generation
 > −0.0020 TWh on 152.18 TWh, ST_GAS +0.0334, CC_REGULAR −0.0281, CC_CHP −0.0191 TWh, 5,880
 > fuel hours moved. The annual price legs differ by a constant ~1.5 $/MWh because the two

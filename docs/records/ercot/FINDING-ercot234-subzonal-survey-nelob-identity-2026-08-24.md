@@ -5,8 +5,8 @@
 · **Authorization:** the card-Y RESOLUTIONS (Y-C — lane open; an open lane
 "works its named-unmeasured objects or waits for new evidence") + the ercot-234
 handoff's priority A: the sub-zonal admissible-data survey named by
-`docs/FINDING-ercot233-nelob-timing-phase0-2026-08-24.md` §3.
-· **Companion card:** `docs/DECISION-CARD-ercot234-nelob-identity-repair-2026-08-24.md`
+`docs/records/ercot/FINDING-ercot233-nelob-timing-phase0-2026-08-24.md` §3.
+· **Companion card:** `docs/records/ercot/DECISION-CARD-ercot234-nelob-identity-repair-2026-08-24.md`
 (card Z, AWAITING OWNER SIGNATURE — nothing is repaired in this session).
 
 **NO SOLVE, NO LP, NO MECHANISM BUILT OR TESTED, NO `ScenarioConfig` FIELD, NO
@@ -150,7 +150,7 @@ prices the Northeast zone $24–126 apart.
 A knowingly mis-attributed measured input may not simply rest (rule 14), and
 its repair changes keeper inputs in all three years — so the decision is the
 owner's: **card Z**
-(`docs/DECISION-CARD-ercot234-nelob-identity-repair-2026-08-24.md`), which
+(`docs/records/ercot/DECISION-CARD-ercot234-nelob-identity-repair-2026-08-24.md`), which
 proposes the crosswalk repair charter (NE_LOB out as an intra-South pocket;
 EASTEX in at Northeast→North; static rating re-derived; full rule-16 3-year
 re-solve under precommitted gates). Nothing is executed without a signature.

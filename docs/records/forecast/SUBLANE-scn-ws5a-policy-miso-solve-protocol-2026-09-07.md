@@ -1,7 +1,7 @@
 # SUBLANE — SCN-WS5A-POLICY-MISO solve protocol (ruling S16)
 
 **Parent** SCN-WS5A-POLICY-MISO · **PRECOMMIT**
-`docs/handoffs/PRECOMMIT-scn-ws5a-policy-miso-2026-09-07.md` (the case set, keys, kills and
+`docs/records/forecast/PRECOMMIT-scn-ws5a-policy-miso-2026-09-07.md` (the case set, keys, kills and
 gates; a shard makes no decisions) · **THE PIN**
 `bdfb3095e9fa0cd2bec3f4e843f320b42588c72b` · **Campaign** `scn-campaign-policy-2026-09-06`,
 kind `scenario`, `reference_case: REF` · **Model** Opus `claude-opus-5` · **Data profile**

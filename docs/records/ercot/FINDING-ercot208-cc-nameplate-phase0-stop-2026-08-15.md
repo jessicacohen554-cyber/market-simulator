@@ -13,7 +13,7 @@ condition (c) and the session stopped there.
 
 Everything below is reproducible from committed artifacts by
 `scripts/probes/ercot208_cc_nameplate_phase0.py` (output:
-`results/calibration/ercot208_cc_nameplate_phase0.json`). Rule 13
+`results/phase0/ercot/ercot208_cc_nameplate_phase0.json`). Rule 13
 `[R-MEASURED]`: every measured series is read for audit/attribution only — none
 enters a model input. Rule 22 `[R-HOLDOUT]`: only {2023, 2024, 2025} artifacts
 were read; nothing solved or scored in any year; no marker granted or spent.
@@ -391,6 +391,6 @@ session; only its own not-yet-merged artifacts.
 
 **Artifacts produced:** this finding;
 `scripts/probes/ercot208_cc_nameplate_phase0.py`;
-`results/calibration/ercot208_cc_nameplate_phase0.json`; the
+`results/phase0/ercot/ercot208_cc_nameplate_phase0.json`; the
 `docs/calibration-log/ercot.md` entry; the ERCOT-shard evidence
 extension. Nothing else.

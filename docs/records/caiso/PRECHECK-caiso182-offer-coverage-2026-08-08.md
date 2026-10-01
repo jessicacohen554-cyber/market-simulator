@@ -110,7 +110,7 @@ Fixed as the charter directs — **pure engineering, zero model semantics, its o
 (`dd482f0a`). `clean_io.write_clean_iter` streams chunks into a `ParquetWriter`, bounding
 peak memory at one row group. **Proven byte-equivalent before use**, 40 days / 3,552,863
 rows (`scripts/probes/_caiso182_curate_stream_be.py`,
-`results/calibration/_caiso182_curate_stream_be.json`):
+`results/phase0/caiso/_caiso182_curate_stream_be.json`):
 
 | leg | check | result |
 |---|---|---|

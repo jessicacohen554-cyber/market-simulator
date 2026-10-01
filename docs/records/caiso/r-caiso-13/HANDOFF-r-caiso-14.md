@@ -26,17 +26,17 @@ STATE (2026-09-28):
 - Owner card "Build + solve now" (clock fix). Owner card "Solve + promote only" (next-link scope): do NOTHING else.
 
 READ FIRST:
-- docs/handoffs/r-caiso-13/RESULT-r-caiso-13-2026-09-28.md
-- docs/handoffs/r-caiso-13/PRECOMMIT-r-caiso-13-2026-09-28.md: §3 holds the pre-registered predictions and the decision
+- docs/records/caiso/r-caiso-13/RESULT-r-caiso-13-2026-09-28.md
+- docs/records/caiso/r-caiso-13/PRECOMMIT-r-caiso-13-2026-09-28.md: §3 holds the pre-registered predictions and the decision
   rule. Do not change them.
-- docs/handoffs/r-caiso-13/shard-prompt.md
+- docs/records/caiso/r-caiso-13/shard-prompt.md
 
 SOLVE (the parent never solves, rule 32(a)):
 - Pin {SHA} to the full 40-char origin/main HEAD. Before pinning, verify it contains:
   - src/market_sim/data/eia930/frames.py::set_caiso_eia930_clock_repair;
-  - docs/handoffs/r-caiso-13/shard-prompt.md.
+  - docs/records/caiso/r-caiso-13/shard-prompt.md.
 - Launch 7 shards, one per year 2019–2025 (rule 36), each with this short prompt:
-  "Read docs/handoffs/r-caiso-13/shard-prompt.md at the pinned commit and follow it EXACTLY with {Y}/{SHA}/{SRC}/{SDCAP}".
+  "Read docs/records/caiso/r-caiso-13/shard-prompt.md at the pinned commit and follow it EXACTLY with {Y}/{SHA}/{SRC}/{SDCAP}".
 - Substitution values:
   - {SRC} = rcaiso11_A_tp_2019_2021 for 2019–21, and rcaiso11_A_span for 2022–25;
   - {SDCAP} = 1436.0 for 2019–23, 2074.0 for 2024, and 2071.0 for 2025.

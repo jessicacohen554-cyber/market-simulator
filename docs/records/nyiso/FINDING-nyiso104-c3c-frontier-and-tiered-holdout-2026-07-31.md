@@ -101,7 +101,7 @@ Current state:
 > No NEISO 2019 or H1-2026 year has ever been solved, scored or registered; the id cited as
 > the frozen config is a TRAIN-tier 2023–2025 run. NEISO belongs in the same category as
 > NYISO — never scored, not granted. Citation chain:
-> `results/calibration/ASSESSMENT-neiso87-declaration-2026-08-06.md` §1 →
+> `docs/records/neiso/ASSESSMENT-neiso87-declaration-2026-08-06.md` §1 →
 > `docs/third-party-peer-review-2026-07.md` §6.3 item 1 → D-23 / sitting Addendum X.6.
 > **This corrects the record only; it grants nothing.** NEISO stays absent from `final`.
 

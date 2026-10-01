@@ -1,9 +1,9 @@
 # NYISO CT_PEAKER: block commitment is eliminated — the runs are the right length, there are too few of them
 
 **Session:** nyiso-90 (CT day-ahead block commitment) · **Date:** 2026-07-27
-**Premise:** `docs/FINDING-nyiso89-ct-heat-rate-2026-07-27.md` §5
+**Premise:** `docs/records/nyiso/FINDING-nyiso89-ct-heat-rate-2026-07-27.md` §5
 **Mode:** characterization + one registered arm against a same-HEAD zero-delta control
-**Pre-registration:** `docs/handoffs/nyiso90-preregistration.md` (written before the
+**Pre-registration:** `docs/records/nyiso/nyiso90-preregistration.md` (written before the
 parameter was derived or any arm was solved)
 
 ---

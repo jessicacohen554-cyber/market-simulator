@@ -3,7 +3,7 @@
 **Lane** SPP-36 · **Keeper / control** `2026-09-10-spp-27-commitment-grain`, bundle
 `results/calibration/spp27_span` (COMMITTED; differenced, **never re-solved** — rule 29(b) form 4) ·
 **Parent LP: ZERO** (rule 32 `[R-SHARD]` (a)) · **Predecessors**
-`docs/RESULT-spp-32-shortwindow-screen-2026-09-12.md`, `docs/handoffs/PRECOMMIT-spp-32-shortwindow-availability-2026-09-12.md`.
+`docs/records/spp/RESULT-spp-32-shortwindow-screen-2026-09-12.md`, `docs/records/spp/PRECOMMIT-spp-32-shortwindow-availability-2026-09-12.md`.
 
 ## 0. THE RULING THIS LANE EXECUTES
 

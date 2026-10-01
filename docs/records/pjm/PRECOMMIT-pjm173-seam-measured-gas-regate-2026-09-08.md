@@ -2,8 +2,8 @@
 
 **Session** pjm-173 · **ISO** PJM · **Date** 2026-09-08
 **Status: WRITTEN BEFORE ANY SOLVE** (rule 29 `[R-SCREEN]`). No LP has been spent by this session.
-**Predecessor card** `docs/handoffs/PRECOMMIT-pjm172-seam-measured-gas-2026-09-07.md`
-**Predecessor result** `results/calibration/FINDING-pjm172-seam-measured-gas-2026-09-07.md`
+**Predecessor card** `docs/records/pjm/PRECOMMIT-pjm172-seam-measured-gas-2026-09-07.md`
+**Predecessor result** `docs/records/pjm/FINDING-pjm172-seam-measured-gas-2026-09-07.md`
 **Route** FINDING §6 option **(a)** — *"a successor PRECOMMIT restates S1 and S3 with the
 gas-elasticity in them, then screens as this card intended."*
 **Keeper** `2026-08-15-pjm-162-inputclock` — unchanged by this card in every training year.

@@ -3,7 +3,7 @@
 **Date:** 2026-08-03 · **ISO:** NYISO · **Years:** 2023, 2024, 2025 · **Keeper at
 session start:** `2026-08-03-nyiso-117-nyc-rcpf` · **Keeper at session end:**
 `2026-08-03-nyiso-118-seny-span`
-**Pre-registration:** `results/calibration/PREREG-nyiso118-seny-span-2026-08-03.md`
+**Pre-registration:** `docs/records/nyiso/PREREG-nyiso118-seny-span-2026-08-03.md`
 (committed and pushed **before** either solve).
 
 ---

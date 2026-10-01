@@ -4,7 +4,7 @@
 Branch `claude/d76-arm-b-capacity-hindcast-ne6yr1`, rebased onto `origin/main` `40b54ce7`
 (pre-registration was written and pushed off `1a3901bc`, before the first key was computed).
 Pre-registered in `PRECOMMIT-capx-d76-arm-b-2026-09-07.md`. Instrument:
-`scripts/probes/capxd76arm_default_flip_key_census.py` + `docs/handoffs/d76armb/*.json`.
+`scripts/probes/capxd76arm_default_flip_key_census.py` + `docs/records/forecast/d76armb/*.json`.
 **ZERO LP. No solve, no registration, no dashboard byte, no determination moved.**
 
 ---
@@ -269,7 +269,7 @@ rcrepair}`; `run-config-debt/neiso-…-realized-ffr3a3`.
 **SPP (0)** — SPP has no committed hindcast bundle and owes nothing, though its bare recipe key moves
 like every other.
 
-Full detail: `docs/handoffs/d76armb/key-census-variant-b-postflip.json`, `moved_detail`.
+Full detail: `docs/records/forecast/d76armb/key-census-variant-b-postflip.json`, `moved_detail`.
 
 ---
 
@@ -334,9 +334,9 @@ SPP's. SPP's cell says so in place.
 ```bash
 uv sync
 .venv/bin/python scripts/probes/capxd76arm_default_flip_key_census.py \
-    --variant b --expect-live-default true --out docs/handoffs/d76armb/key-census-variant-b-postflip.json
+    --variant b --expect-live-default true --out docs/records/forecast/d76armb/key-census-variant-b-postflip.json
 .venv/bin/python scripts/probes/capxd76arm_default_flip_key_census.py \
-    --variant a --out docs/handoffs/d76armb/key-census-variant-a-postflip.json
+    --variant a --out docs/records/forecast/d76armb/key-census-variant-a-postflip.json
 .venv/bin/python scripts/check_cache_key_registration.py --base origin/main
 .venv/bin/python scripts/check_mechanism_matrix.py
 .venv/bin/python -m pytest tests/unit/pipeline/test_capacity_screen_peak_measured_hindcast.py \

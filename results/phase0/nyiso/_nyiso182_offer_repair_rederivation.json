@@ -1,6 +1,6 @@
 {
   "session": "nyiso-182",
-  "prereg": "results/calibration/PREREG-nyiso182-offer-repair-rederivation.md",
+  "prereg": "docs/records/nyiso/PREREG-nyiso182-offer-repair-rederivation.md",
   "keeper": "2026-09-02-nyiso-177-vintage-matched",
   "control_replay_bundle": "results/calibration/nyiso182_control",
   "non_control_solves": 0,
@@ -543,7 +543,7 @@
       "T2_offer_position": 0.246,
       "T1_price_level": 0.624,
       "T3_own_signal": 0.13,
-      "source": "docs/FINDING-nyiso179-st-gas-offer-position-2026-09-03.md \u00a77"
+      "source": "docs/records/nyiso/FINDING-nyiso179-st-gas-offer-position-2026-09-03.md \u00a77"
     },
     "G_S1_dominance": {
       "bar": 0.6,

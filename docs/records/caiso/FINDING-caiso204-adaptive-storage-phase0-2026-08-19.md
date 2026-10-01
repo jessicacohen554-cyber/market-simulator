@@ -6,14 +6,14 @@ runs — the caiso-178/202/203 disposition).** Phase-1 entry over this recorded
 FAIL requires EXPLICIT owner instruction (the ercot-188/213/215/221 pattern);
 the lane returns to its resting state (caiso-201 Q1) per the charter.
 
-Pre-registration: `results/calibration/PRECHECK-caiso204-adaptive-phase0-2026-08-19.md`
+Pre-registration: `docs/records/caiso/PRECHECK-caiso204-adaptive-phase0-2026-08-19.md`
 (pushed b6da910, before any bid value was read; all six gates and both
 committed-bytes expectations declared ex ante).
 Instruments: `scripts/probes/caiso204_fetch_subset.py` (the pre-registered
 585-date balanced subset re-fetch — the caiso-203b zero-cost-re-fetch reading,
 stated up front in the PRECHECK; 585/585 dates landed, zero rate-limit
 failures, zero archive holes) and `scripts/probes/caiso204_adaptive_phase0.py`.
-Record: `results/calibration/caiso204_adaptive_phase0.json` (unrewritten).
+Record: `results/phase0/caiso/caiso204_adaptive_phase0.json` (unrewritten).
 
 ---
 
@@ -104,7 +104,7 @@ knowingly if desired (the ercot-221 pattern), but not assumed.
 
 ## §E — Record changes
 
-- `results/calibration/caiso204_adaptive_phase0.json` committed unrewritten.
+- `results/phase0/caiso/caiso204_adaptive_phase0.json` committed unrewritten.
 - Matrix (rule 28b, CAISO shard only): `ercot_storage_adaptive_expectation`
   CAISO cell **. → I** with this evidence; §5.2 caiso-204 block added. NO new
   matrix row (no `ScenarioConfig` field was built — rule 28c not triggered).

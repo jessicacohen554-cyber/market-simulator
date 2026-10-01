@@ -6,7 +6,7 @@ Run id **`2026-09-09-caiso-267-fossil92-2022`**, bundle `results/calibration/cai
 This shard solved, scored and registered **2022 only**. The parent session solved
 2023–2025 concurrently in a separate container (rule 12 `[R-PARALLEL]`); both
 invocations read the SAME committed override file,
-`results/calibration/_caiso267_fossil92_offer_curve.json`, byte-for-byte.
+`results/phase0/caiso/_caiso267_fossil92_offer_curve.json`, byte-for-byte.
 
 ## §1 — Governance preconditions, verified before the solve
 

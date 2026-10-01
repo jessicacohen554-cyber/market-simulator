@@ -6,7 +6,7 @@
 **Pushed BEFORE any LP** (rule 29 `[R-SCREEN]`). Nothing is armed by this commit; the
 only code it adds is a read-only phase-0 instrument.
 
-Instrument: `docs/handoffs/pjmeas/phase0-eas-operand-2026-09-07.py` (+ `.json`). It reads
+Instrument: `docs/records/pjm/pjmeas/phase0-eas-operand-2026-09-07.py` (+ `.json`). It reads
 committed artifacts only — no solve, no config change.
 
 ---

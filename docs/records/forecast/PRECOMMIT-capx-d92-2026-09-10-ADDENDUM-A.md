@@ -69,7 +69,7 @@ itself, not in a footnote.**
 
 ## A.4 The FC-5 mechanical re-base, DRY-RUN against `d90-rescore` (the post-D77 proxy for L0)
 
-`docs/handoffs/d92/rebase_disposition.py`, over the validated 54/54 extractor. **6 of 54 rows change
+`docs/records/forecast/d92/rebase_disposition.py`, over the validated 54/54 extractor. **6 of 54 rows change
 class or sign and need an authored explanation; 48 carry.** Fixed here so the authoring cannot be
 mistaken for a result:
 

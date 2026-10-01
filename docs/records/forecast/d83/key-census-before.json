@@ -1,7 +1,7 @@
 {
  "instrument_mismatch": [
-  "docs/handoffs/scn-ws1a/t0/base-run_config.json",
-  "docs/handoffs/scn-ws1a/t0/carbon_plus25-run_config.json",
+  "docs/records/forecast/scn-ws1a/t0/base-run_config.json",
+  "docs/records/forecast/scn-ws1a/t0/carbon_plus25-run_config.json",
   "results/capacity-hindcast/pjm-2021-2025-realized-t1h-d67arm/run_config.json",
   "results/ff-t1f-d45r/miso/run_config.json",
   "results/ff-t1f-d45r/nyiso/run_config.json",
@@ -110,8 +110,8 @@
  ],
  "instrument_reproduced": 123,
  "keys": {
-  "docs/handoffs/scn-ws1a/t0/base-run_config.json": "a382feb9c4b4ae24",
-  "docs/handoffs/scn-ws1a/t0/carbon_plus25-run_config.json": "54c563c7337c21f4",
+  "docs/records/forecast/scn-ws1a/t0/base-run_config.json": "a382feb9c4b4ae24",
+  "docs/records/forecast/scn-ws1a/t0/carbon_plus25-run_config.json": "54c563c7337c21f4",
   "results/calibration/_nyiso114_baseattrib_2024/run_config.json": "92baa721acfbc99e",
   "results/calibration/caiso260_demand_vintage/run_config.json": "014b4cc10d4ab6da",
   "results/calibration/caiso262_2022_touchpoint/run_config.json": "0cbb148eddc61c8d",

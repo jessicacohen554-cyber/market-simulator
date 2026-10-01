@@ -14,7 +14,7 @@ Writes ``phase0_2019_attribution.json`` next to itself.
 
 Usage::
 
-    uv run python docs/handoffs/neiso118/phase0_2019_attribution.py [--year 2019]
+    uv run python docs/records/neiso/neiso118/phase0_2019_attribution.py [--year 2019]
 """
 
 from __future__ import annotations

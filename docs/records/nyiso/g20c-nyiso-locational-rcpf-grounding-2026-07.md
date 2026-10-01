@@ -85,7 +85,7 @@ reality's downstate requirement **rises with conditions** (thunderstorm alerts,
 contingencies). That is the **#1344 condition-varying-requirement channel**
 (`nyiso_dynamic_reserve_requirements` + `data.nyiso_reserve_requirements`), built
 and data-blocked on the **Ask-B** measured series
-(`docs/handoffs/nyiso-data-asks-2026-07.md`), which needs owner authorization and
+(`docs/records/nyiso/nyiso-data-asks-2026-07.md`), which needs owner authorization and
 touches no holdout. Until Ask-B lands, the deep tail is a ledgered limitation;
 forcing it any other way (inflating the requirement, subtracting headroom) is
 forbidden (rule 11). With the SOM values now grounded and the SENY placeholder

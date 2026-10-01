@@ -34,7 +34,7 @@ Probes: `scripts/probes/_nyiso234_tail_season_reach.py`,
    eleven days.
 
 **Nothing here is a mechanism proposal.** (3) is a rule 14 `[R-ACCURATE]` input-coverage gap whose
-repair is a **data intake**, and the intake is an owner decision — `docs/DECISION-CARD-nyiso234-tail-gas-coverage-2026-09-14.md`.
+repair is a **data intake**, and the intake is an owner decision — `docs/records/nyiso/DECISION-CARD-nyiso234-tail-gas-coverage-2026-09-14.md`.
 
 ---
 
@@ -42,7 +42,7 @@ repair is a **data intake**, and the intake is an owner decision — `docs/DECIS
 
 ### 1.1 What nyiso-111 §2 actually refused, and on what basis
 
-`results/calibration/FINDING-nyiso111-ramp-envelopes-2026-08-02.md` §2 refused
+`docs/records/nyiso/FINDING-nyiso111-ramp-envelopes-2026-08-02.md` §2 refused
 `temp_dependent_derate` for NYISO **ex ante, with no solve**, taking the miso-101 route (derive the
 slope from the target ISO's own fleet, because rule 25 `[R-ISO-SCOPE]` forbids importing the
 literature values and pjm-95 refuted them on PJM's CAMPD). `derive_campd_temp_derate_params.py
@@ -127,7 +127,7 @@ forced outages, gas deliverability … and energy limits."* That pointer is **co
 of object and does not survive as a lever recommendation**, and the reason is a number nobody had
 put beside it.
 
-**nyiso-227** (2026-09-11, `docs/FINDING-nyiso227-shortgas-outage-inert-2026-09-11.md`) derived
+**nyiso-227** (2026-09-11, `docs/records/nyiso/FINDING-nyiso227-shortgas-outage-inert-2026-09-11.md`) derived
 NYISO's own sub-5-day gas outage family and measured it **near-inert**, three days before nyiso-233
 was written:
 

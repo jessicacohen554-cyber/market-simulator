@@ -25,4 +25,4 @@ run commits a date-stamped findings file here.
 - `scripts/check_forecast_invariants.py` — the P1–P3 checker these come from.
 - `scripts/run_driver_battery.py` — the Tier-1 ladders that generalize P1–P3
   (their reports land in `docs/handoffs/driver-battery-<date>.{md,json}`).
-- `docs/handoffs/forecast-validation-program-2026-07.md` §2 — the invariant suite.
+- `docs/records/forecast/forecast-validation-program-2026-07.md` §2 — the invariant suite.

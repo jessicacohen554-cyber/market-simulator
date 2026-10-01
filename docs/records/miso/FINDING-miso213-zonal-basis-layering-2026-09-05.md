@@ -5,7 +5,7 @@ solved at `cf55ab5`), superseding `2026-09-04-miso-210-clock`. PREREG
 `PREREG-miso213-zonal-basis-layering-2026-09-05.md` pushed BLIND at `a1a4a48`; scorer
 `scripts/probes/_miso213_ab_gates.py` committed with the arm code before the solve. Phase 0:
 `scripts/probes/_miso213_basis_layering_phase0.py` + `_miso213_arm_liveness.py` →
-`results/calibration/_miso213_basis_layering.json`. A/B: `_miso213_ab_gates.json`. Attestation:
+`results/phase0/miso/_miso213_basis_layering.json`. A/B: `_miso213_ab_gates.json`. Attestation:
 `scripts/gen_miso213_attestation.py`. Rule 22: 2023–2025 only. Rule 12: three years sequential
 in one invocation (thread cap 4, 8 GB swap, the miso-169 recipe; 1 h 05 min wall).
 

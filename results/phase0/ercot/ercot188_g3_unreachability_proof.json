@@ -1,6 +1,6 @@
 {
  "probe": "ercot188_g3_split_coal_tranches_unreachability",
- "authority": "docs/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md SsG.3",
+ "authority": "docs/records/ercot/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md SsG.3",
  "date": "2026-08-12",
  "campd_binning_isos": [
   "CAISO",

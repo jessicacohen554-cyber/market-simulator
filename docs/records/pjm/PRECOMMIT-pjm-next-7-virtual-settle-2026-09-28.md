@@ -1,6 +1,6 @@
 # PRECOMMIT — PJM-NEXT-7: DA virtual position settled financially (design A′), 2026-09-28
 
-- **Owner approval.** The owner approved design A′ on 2026-09-28 (decision card): *"A′ P0-DA / P1-RT"*. Design: `docs/DESIGN-pjm-next-7-virtual-settlement-2026-09-28.md`.
+- **Owner approval.** The owner approved design A′ on 2026-09-28 (decision card): *"A′ P0-DA / P1-RT"*. Design: `docs/records/pjm/DESIGN-pjm-next-7-virtual-settlement-2026-09-28.md`.
 - **Keeper and control.** Keeper `2026-09-28-pjm-next-6-f2` (`results/calibration/pjmnext6_sp_span`). The control is the keeper's committed bundle plus G-DRIFT (§3), so no control solve is run (rule 29(b)).
 
 ## 1. Arm (single delta)

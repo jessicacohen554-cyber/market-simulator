@@ -1,5 +1,5 @@
 {
-  "prereg": "results/calibration/PREREG-miso144-inmerit-idle-attribution-2026-08-08.md",
+  "prereg": "docs/records/miso/PREREG-miso144-inmerit-idle-attribution-2026-08-08.md",
   "status": "SUPPLEMENTARY / POST-HOC -- not among the pre-registered predictions; two-sided completion of the construction-error account (the miso-143 footing bar 4.00 median|err| is carried for reference, not re-adjudicated)",
   "miso143_footing_reference": {
     "construction": "ALL-CLASS stack vs THERMAL_COLS need",

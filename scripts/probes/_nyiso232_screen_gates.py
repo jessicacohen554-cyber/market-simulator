@@ -1,7 +1,7 @@
 """nyiso-232 SCREEN GATES — written and committed BEFORE the arm's numbers exist.
 
 Scores the five STOP gates pre-registered in
-``results/calibration/PRECOMMIT-nyiso232-st-gas-deleak.md`` §6 for the 2022 screen
+``docs/records/nyiso/PRECOMMIT-nyiso232-st-gas-deleak.md`` §6 for the 2022 screen
 of ``nyiso_st_gas_econ_bands_deleaked``, against the designated keeper's committed
 2022 leg as the control (rule 29 ``[R-SCREEN]`` (b) form 4; the G-DRIFT audit in
 PRECOMMIT §4 found every changed hunk INERT for NYISO).
@@ -150,7 +150,7 @@ def main() -> None:
     res["_SCREEN"] = "STOP" if stops else "CLEARS (pending G-NONTARGET)"
 
     print(json.dumps(res, indent=1, default=float))
-    Path("results/calibration/_nyiso232_screen_gates.json").write_text(
+    Path("results/phase0/nyiso/_nyiso232_screen_gates.json").write_text(
         json.dumps(res, indent=1, default=float)
     )
     print(f"\nSCREEN: {res['_SCREEN']}" + (f"  stopped by {stops}" if stops else ""))

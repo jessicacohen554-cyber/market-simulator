@@ -1,6 +1,6 @@
 {
  "probe": "miso-248 screen gates",
- "prereg": "results/calibration/PREREG-miso248-the-spp-hourly-ladder-rederive-on-the-repaired-clock-2026-09-09.md",
+ "prereg": "docs/records/miso/PREREG-miso248-the-spp-hourly-ladder-rederive-on-the-repaired-clock-2026-09-09.md",
  "screen_year": 2023,
  "provenance": {
   "git_head": "86f6f3c285029f9e854764f70edb404376c8df79",

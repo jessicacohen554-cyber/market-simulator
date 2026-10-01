@@ -28,7 +28,7 @@ This session's handoff quotes miso-238's published numbers as settled. Read at
 | `PREREG-miso238-pjm-seam-channel-attribution-2026-09-07.md` | **YES** (`0deffdb9`) |
 | `ADDENDUM-miso238-gate-repair-and-the-partial-coefficient-2026-09-07.md` | **YES** (`6937a251`) |
 | `scripts/probes/_miso238_pjm_seam_channel_attribution_phase0.py` | **YES** (`6937a251`) — but see §0b |
-| `results/calibration/_miso238_pjm_seam_channel_attribution_phase0.json` | **NO** |
+| `results/phase0/miso/_miso238_pjm_seam_channel_attribution_phase0.json` | **NO** |
 | `results/calibration/FINDING-miso238-*.md` | **NO** |
 | MISO matrix-shard evidence append / `§5.4` stamp / `docs/calibration-log/miso.md` entry | **NO** |
 
@@ -319,9 +319,9 @@ level-set knot table `(x̄_n, g_n)`, `b̄_k`, `G_k`, `δ_k`, `β`, `σ(g_step)`,
 
 * miso-238 ADDENDUM §2's declared repair applied to
   `scripts/probes/_miso238_pjm_seam_channel_attribution_phase0.py`, and
-  `results/calibration/_miso238_pjm_seam_channel_attribution_phase0.json` regenerated (§0b).
+  `results/phase0/miso/_miso238_pjm_seam_channel_attribution_phase0.json` regenerated (§0b).
 * `scripts/probes/_miso239_merit_ladder_property_attribution_phase0.py` →
-  `results/calibration/_miso239_merit_ladder_property_attribution_phase0.json`.
+  `results/phase0/miso/_miso239_merit_ladder_property_attribution_phase0.json`.
 * `results/calibration/FINDING-miso239-*.md` carrying **every number this session will ever
   cite**.
 * Evidence appended to MISO's matrix shard + the `§5.4` queue stamp (rule 25, rule 28(b)

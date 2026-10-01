@@ -18,12 +18,12 @@ root-cause lane, not a reason to revert — rule 14). Ledger:
 **Keeper / BASE** `2026-07-28-ercot116-regate-base` (bundle
 `results/calibration/ercot116_regate_base`) — **the COMMITTED bundle is the
 BASE; it is NOT re-solved** (owner ruling R3). ·
-**Supersedes** `docs/PRECOMMIT-ercot136-coal-minload-reprice-2026-07-29.md`
+**Supersedes** `docs/records/ercot/PRECOMMIT-ercot136-coal-minload-reprice-2026-07-29.md`
 (its single-scalar arm is replaced by the margin form per owner ruling R1;
 its gate skeleton and falsifier are reused here). ·
-**Phase-1 evidence** `docs/DIAGNOSIS-ercot136-coal-headroom-conduct-2026-07-29.md`
-(§§3, 5, 6), `docs/DIAGNOSIS-ercot135-coal-merit-order-2026-07-28.md` (§§1, 4,
-7.2), `docs/DIAGNOSIS-ercot134-coal-availability-pin-2026-07-28.md` (§§8–10).
+**Phase-1 evidence** `docs/records/ercot/DIAGNOSIS-ercot136-coal-headroom-conduct-2026-07-29.md`
+(§§3, 5, 6), `docs/records/ercot/DIAGNOSIS-ercot135-coal-merit-order-2026-07-28.md` (§§1, 4,
+7.2), `docs/records/ercot/DIAGNOSIS-ercot134-coal-availability-pin-2026-07-28.md` (§§8–10).
 
 ---
 
@@ -63,12 +63,12 @@ its gate skeleton and falsifier are reused here). ·
    * `level` = **15.8807 $/MWh** — measured RT curve bottom, 60-Day SCED
      `Submitted TPO-Price1` cap-wtd p50, 98.8–100 % coverage, res-hours-pooled
      over the four 2024–25 subsets (16.86 / 16.37 / 15.00 / 15.00;
-     `results/calibration/ercot136_coal_headroom_conduct.json`
+     `results/phase0/ercot/ercot136_coal_headroom_conduct.json`
      `B1_curve_bottom` — THE identification. `Min Gen Cost` p25 $18.00 at
      28–31 % coverage is corroboration only, per ercot122 §1).
    * `anchor` = **1.7387 $/MMBtu** — training-window capacity-weighted mean
      of the model's own delivered coal price at the LP seam (1.8169 / 1.7556 /
-     1.6436 by year; `results/calibration/ercot135_coal_merit_order.json`
+     1.6436 by year; `results/phase0/ercot/ercot135_coal_merit_order.json`
      `A_model_offer`).
    RETIRED, not zeroed (rule 26): the fitted
    `coal_tranche_1_fuel_passthrough = 0.00` is no longer the operative ERCOT

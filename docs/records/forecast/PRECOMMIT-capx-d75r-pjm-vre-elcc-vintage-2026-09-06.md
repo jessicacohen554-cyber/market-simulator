@@ -10,7 +10,7 @@ Branch `claude/capx-d75r-pjm-vre-elcc-kxto0z`, fresh off `origin/main` **0336ccd
 **PUSHED BEFORE THE FIRST SOLVE.** Every number below is measured from committed artifacts, from
 the code at this branch's HEAD, or from a primary PJM publication whose sha256 is recorded. No LP
 has been run in this lane at the time of writing. Instrument:
-`docs/handoffs/d75r/vre-elcc-vintage-phase0-2026-09-06.{py,json}`.
+`docs/records/forecast/d75r/vre-elcc-vintage-phase0-2026-09-06.{py,json}`.
 
 ---
 
@@ -94,7 +94,7 @@ why the intake had to precede the build, not follow it.
 
 ## 3. PHASE 0 (STEP 3) — zero LP, and it **PASSES** the ruled gate
 
-Instrument: `docs/handoffs/d75r/vre-elcc-vintage-phase0-2026-09-06.{py,json}`. It calls the
+Instrument: `docs/records/forecast/d75r/vre-elcc-vintage-phase0-2026-09-06.{py,json}`. It calls the
 **shipped code path** (`renewable_credits_applied` → `resolve_renewable_capacity_credit`) under a
 control config and an armed one differing in exactly one field, on the D57 arm-A committed pools —
 so what is gated is the mechanism as it will actually run, not a paper restatement of it.
@@ -153,7 +153,7 @@ Resolution: `run_capacity_hindcast.build_config("PJM", …, vintage=2020, entry_
 
 The two arm keys occur nowhere under `results/`, `frontend/`, `docs/`, `scripts/` or `src/` (grep at
 this HEAD) — no collision with any committed bundle. The two control keys are the values the D78-R
-lane independently resolved at HEAD (`docs/handoffs/d78/keys_probe.json`), which is a cross-lane
+lane independently resolved at HEAD (`docs/records/forecast/d78/keys_probe.json`), which is a cross-lane
 confirmation that the harness path is being driven the same way. **No committed bundle at either
 control key is reused**: this lane solves its own controls (§4).
 

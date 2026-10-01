@@ -7,7 +7,7 @@ upper tercile's implied market heat rate against Henry Hub. Reads only the
 committed keeper hourlies (``results/calibration/rspp_span/hourly``) and
 the committed actual LMP; solves nothing.
 
-Record: docs/handoffs/FINDING-spp-79-c3a-is-a-cancellation-2026-09-25.md.
+Record: docs/records/spp/FINDING-spp-79-c3a-is-a-cancellation-2026-09-25.md.
 Note the demand weight here is the model's zonal demand, not the scorer's
 bench ``rt_lw`` basis, so the annual error differs from the registered C3a
 by a few points; the bucket split is the finding, not the level.

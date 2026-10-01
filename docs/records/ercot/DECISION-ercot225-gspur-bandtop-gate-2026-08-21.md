@@ -4,9 +4,9 @@
 `claude/ercot-225-gspur-gate-z1q0f6`. Status: AWAITING OWNER SIGN-OFF — the
 gate is NOT changed by this card.** Protocol precommitted and blob-verified
 before any number was computed
-(`docs/PRECOMMIT-ercot225-gspur-bandtop-gate-revision-2026-08-21.md`, blob
+(`docs/records/ercot/PRECOMMIT-ercot225-gspur-bandtop-gate-revision-2026-08-21.md`, blob
 `9b55eac9`); all numbers from committed artifacts only
-(`results/calibration/ercot225_gspur_bandtop_reread.json`; no LP, no solve,
+(`results/phase0/ercot/ercot225_gspur_bandtop_reread.json`; no LP, no solve,
 no re-bundle). Keeper `2026-08-20-ercot223-arm-eventrelease` untouched.
 
 ## 1. The question

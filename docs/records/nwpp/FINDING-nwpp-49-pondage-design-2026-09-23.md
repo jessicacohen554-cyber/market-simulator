@@ -3,7 +3,7 @@
 **Lane:** NWPP-49 · **Date:** 2026-09-23 · **Owner ruling:** D1 APPROVED (D2, D3 deferred) ·
 **Zero LP. Nothing solved, nothing registered.** No `src/` change.
 **Control:** keeper `2026-09-22-nwpp-47-grid-wind` (`results/calibration/nwpp47_gridwind_span`).
-**Probe:** `scripts/probes/_nwpp49_pondage_phase0.py` → `results/calibration/_nwpp49_pondage_phase0.json`
+**Probe:** `scripts/probes/_nwpp49_pondage_phase0.py` → `results/phase0/nwpp/_nwpp49_pondage_phase0.json`
 (committed probe record, the `_caiso16x_*.json` precedent).
 **Evaluator (committed before any leg exists):** `scripts/probes/_nwpp49_gates.py`.
 

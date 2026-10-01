@@ -1,6 +1,6 @@
 {
  "lane": "SPP-104",
- "design": "docs/handoffs/DESIGN-spp-104-ct-outage-2026-09-29.md",
+ "design": "docs/records/spp/DESIGN-spp-104-ct-outage-2026-09-29.md",
  "bundle": "results/calibration/spp100_arm_span",
  "probe": "scripts/probes/_spp104_ct_availability_phase0.py",
  "spp_published_gas_outage_gw": {

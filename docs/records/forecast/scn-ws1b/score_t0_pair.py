@@ -26,7 +26,7 @@ The gate is STOP-only: it may kill an arm, it may never promote one, and no row
 reads a residual, a benchmark or an actual (rule 29 ``[R-SCREEN]``).
 
 Run:
-  PYTHONPATH=src python docs/handoffs/scn-ws1b/score_t0_pair.py \
+  PYTHONPATH=src python docs/records/forecast/scn-ws1b/score_t0_pair.py \
       --iso NEISO --ref-dir results/scn-ws1-probe/neiso/REF \
       --arm-dir results/scn-ws1-probe/neiso/CARB [--year 2027]
 """

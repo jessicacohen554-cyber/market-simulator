@@ -4,9 +4,9 @@
 `claude/nyiso-backcast-calibration-1m6c2q`, on `main` at `c5369f27`. **Date:** 2026-09-07.
 **Keeper:** `2026-09-07-nyiso-213-summer-seam` — CALIBRATED, grade 7/8, fails 0, C3c the lone
 ledgered caveat. **Keeper unchanged; nothing promoted, nothing armed, nothing registered.**
-**Pre-registration:** `results/calibration/PREREG-nyiso214-duct-gap-double-reading.md`, committed
+**Pre-registration:** `docs/records/nyiso/PREREG-nyiso214-duct-gap-double-reading.md`, committed
 and pushed at `bc3ec7ec`-lineage **before P1–P4 were measured** and not edited since.
-**Machine record:** `results/calibration/_nyiso214_duct_gap_census.json` (every number below).
+**Machine record:** `results/phase0/nyiso/_nyiso214_duct_gap_census.json` (every number below).
 **Instrument:** `scripts/probes/nyiso214_duct_gap_census.py`. **ZERO LP: no solve was spent.**
 
 **THERE ARE NO IN-SAMPLE RUBRIC FAILURES.** NYISO's keeper reads CALIBRATED with **zero failing

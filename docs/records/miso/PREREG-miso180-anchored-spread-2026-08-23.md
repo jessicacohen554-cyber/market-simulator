@@ -227,7 +227,7 @@ Armed, at offer-construction time, for **MISO only** (rule 25):
 
 Probe `scripts/probes/_miso180_anchored_spread_precheck.py` (one edited
 descendant of `_miso179_dispersion_precheck.py`) →
-`results/calibration/_miso180_anchored_spread_precheck.json`. Model side:
+`results/phase0/miso/_miso180_anchored_spread_precheck.json`. Model side:
 the `_miso156.model_year` path via the `_miso178` wrapper (bundle
 `miso177_rho_B`), with its validity gates required to PASS before anything
 else is read.

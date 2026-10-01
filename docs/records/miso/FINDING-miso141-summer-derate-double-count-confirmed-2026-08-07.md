@@ -9,7 +9,7 @@ capacity haircut vs the net-summer `pmax` basis, rule 14 `[R-ACCURATE]`.
 `data/raw/`.** MISO keeper unchanged at **`2026-08-05-miso-132b-cc-committed`**
 (bundle `results/calibration/miso132_ccmin_B`).
 
-**PREREG** `results/calibration/PREREG-miso141-summer-derate-basis-2026-08-07.md`,
+**PREREG** `docs/records/miso/PREREG-miso141-summer-derate-basis-2026-08-07.md`,
 pushed at **`15de62ea`** BEFORE any adjudicating statistic, with a two-sided
 prior carrying **seven falsifiable numeric predictions**, five look-alike traps
 each with a pre-committed counter-measurement, and the decisive test (G-3b)
@@ -454,7 +454,7 @@ delta; name its base or it is not a number***.
 
 **Probes** `scripts/probes/_miso141_summer_derate_basis.py`,
 `scripts/probes/_miso141_cc_rows_and_cushion.py` ·
-**Records** `results/calibration/_miso141_summer_derate_basis.json`,
-`results/calibration/_miso141_cc_rows_and_cushion.json` ·
-**PREREG** `results/calibration/PREREG-miso141-summer-derate-basis-2026-08-07.md`
+**Records** `results/phase0/miso/_miso141_summer_derate_basis.json`,
+`results/phase0/miso/_miso141_cc_rows_and_cushion.json` ·
+**PREREG** `docs/records/miso/PREREG-miso141-summer-derate-basis-2026-08-07.md`
 @ `15de62ea`.

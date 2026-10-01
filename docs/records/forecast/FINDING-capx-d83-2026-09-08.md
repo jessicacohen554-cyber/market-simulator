@@ -100,7 +100,7 @@ diff               ->  IDENTICAL   ==>  ZERO KEY MOVES
 ```
 
 **One thing to state rather than leave for a later reader to trip over:** my HEAD census is *not*
-byte-identical to the committed `docs/handoffs/d83/key-census-after.json`. **18 keys differ, and
+byte-identical to the committed `docs/records/forecast/d83/key-census-after.json`. **18 keys differ, and
 none of them is D83's.** All 18 are `results/calibration/*` payloads, and the cause is a lane that
 landed *after* D83:
 

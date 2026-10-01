@@ -4,9 +4,9 @@
 `2026-09-13-nyiso-232-st-gas` (bundle `results/calibration/nyiso232_deleak_span`), **UNCHANGED**.
 Written and pushed **BEFORE the screen solves**, per rule 29 `[R-SCREEN]` (1).
 
-Evidence this rests on: `docs/FINDING-nyiso234-tail-gas-is-unobserved-2026-09-14.md` (the object),
-`docs/FINDING-nyiso234b-the-gas-series-was-published-2026-09-14.md` (the cause and the repair),
-`docs/DECISION-CARD-nyiso234-tail-gas-coverage-2026-09-14.md` (the owner ruling of 2026-09-14,
+Evidence this rests on: `docs/records/nyiso/FINDING-nyiso234-tail-gas-is-unobserved-2026-09-14.md` (the object),
+`docs/records/nyiso/FINDING-nyiso234b-the-gas-series-was-published-2026-09-14.md` (the cause and the repair),
+`docs/records/nyiso/DECISION-CARD-nyiso234-tail-gas-coverage-2026-09-14.md` (the owner ruling of 2026-09-14,
 *"Yes to 1 and 2"*, funding the intake).
 
 ---

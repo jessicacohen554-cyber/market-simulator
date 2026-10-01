@@ -33,7 +33,7 @@ Inputs, byte-identical constructions to the ercot-236 point scorer
   residual band `< 200`.
 
 Measurements (the probe, `scripts/probes/ercot237_bandswap_phase0.py`,
-writes `results/calibration/ercot237_bandswap_phase0.json`):
+writes `results/phase0/ercot/ercot237_bandswap_phase0.json`):
 
 1. **V-0 identity gate (hard assert, run first):** the recomputed 2023
    band counts must reproduce the keeper's registered values EXACTLY —

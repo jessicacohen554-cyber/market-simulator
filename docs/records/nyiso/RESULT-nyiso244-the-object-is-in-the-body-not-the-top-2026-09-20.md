@@ -3,13 +3,13 @@
 **Session** nyiso-244 (ORCHESTRATOR — rule 32 `[R-SHARD]` (a); **zero LP in this container, no
 shard launched**).
 **Date** 2026-09-20. **Base** `origin/main` at `95825f63`.
-**PRECOMMIT** `docs/PRECOMMIT-nyiso244-measured-offer-surface-design-2026-09-20.md`, committed
+**PRECOMMIT** `docs/records/nyiso/PRECOMMIT-nyiso244-measured-offer-surface-design-2026-09-20.md`, committed
 at **`2e5097a5`** before any number below was computed.
 **Keeper** `2026-09-19-nyiso241-ct-committed-measured`, bundle
 `results/calibration/nyiso241_ctcommitted_span`, years {2022, 2023, 2024, 2025} —
 **UNCHANGED. Nothing armed, screened, solved, promoted or registered. No `ScenarioConfig`
 field moves. NYISO still reads `CALIBRATED` on its ISO tier.**
-**Predecessor** `docs/RESULT-nyiso243-the-tail-is-not-an-availability-object-2026-09-20.md` §6.
+**Predecessor** `docs/records/nyiso/RESULT-nyiso243-the-tail-is-not-an-availability-object-2026-09-20.md` §6.
 
 > ## HEADLINE
 > 1. **THE GATE REFUSES IT, ON REACH.** The shared conditional-offer-surface kernel prices
@@ -78,7 +78,7 @@ member would have been `nyiso_offer_surface_conditional` over a
 `derive_nyiso_offer_surface.py` built from P-27.
 
 Probe: `scripts/probes/nyiso244_offer_surface_design.py` →
-`results/calibration/_nyiso244_offer_surface_design.json`.
+`results/phase0/nyiso/_nyiso244_offer_surface_design.json`.
 
 ---
 
@@ -321,7 +321,7 @@ capacity on econ rungs), derived from the opposite side of the comparison and wi
 the assumptions that made the cohort fail.
 
 Probe: `scripts/probes/nyiso244_system_offer_curve.py` →
-`results/calibration/_nyiso244_system_offer_curve.json`.
+`results/phase0/nyiso/_nyiso244_system_offer_curve.json`.
 
 ---
 
@@ -402,7 +402,7 @@ session's files touch.
 
 | artefact | what it is |
 |---|---|
-| `docs/PRECOMMIT-nyiso244-measured-offer-surface-design-2026-09-20.md` | the five gates, fixed at `2e5097a5` |
+| `docs/records/nyiso/PRECOMMIT-nyiso244-measured-offer-surface-design-2026-09-20.md` | the five gates, fixed at `2e5097a5` |
 | `scripts/probes/nyiso244_offer_surface_design.py` → `_nyiso244_offer_surface_design.json` | G1 / G2 / G3 / G4 |
 | `scripts/probes/nyiso244_system_offer_curve.py` → `_nyiso244_system_offer_curve.json` | §6, descriptive, cohort-free |
 

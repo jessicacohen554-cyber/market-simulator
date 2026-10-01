@@ -206,7 +206,7 @@ Probe: `scripts/probes/_caiso181_cems_confrontation.py`. **No LP.** Instruments 
 re-implemented**: `derive_campd_unit_outages.build_capacity_index` / `unit_capacity_mw` (the
 detector's own CF basis), `campd.CAMPD_UNIT_PLANT_REMAP`, and — for L2 — the shipped loader
 `outages.unit_outage_derate_factors(year, iso="CAISO")` itself.
-Record: `results/calibration/_caiso181_cems_confrontation.json`.
+Record: `results/phase0/caiso/_caiso181_cems_confrontation.json`.
 
 ### 3a. L1 — UNIT-GRAIN INTERNAL CONSISTENCY (the primary measurement)
 
@@ -475,7 +475,7 @@ Not re-opened, not re-tested, not re-derived here:
 `PRECHECK-caiso181-envelope-depth-2026-08-07.md` (this file, pushed and blob-verified first) ·
 `FINDING-caiso181-envelope-depth-2026-08-07.md` ·
 `scripts/probes/_caiso181_cems_confrontation.py` ·
-`results/calibration/_caiso181_cems_confrontation.json` ·
+`results/phase0/caiso/_caiso181_cems_confrontation.json` ·
 CAISO matrix cell + §5.2 header stamped in **this** session (rule 28 duty b) ·
 `docs/calibration-log/caiso.md` entry ·
 plus — **only if branch II fires** — registered bundle(s) with `legitimacy_diagnostics.json`

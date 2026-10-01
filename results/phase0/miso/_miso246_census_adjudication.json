@@ -1,6 +1,6 @@
 {
  "probe": "miso-246 census adjudication ledger",
- "prereg": "results/calibration/PREREG-miso246-the-backcast-lever-queue-census-2026-09-08.md",
+ "prereg": "docs/records/miso/PREREG-miso246-the-backcast-lever-queue-census-2026-09-08.md",
  "zero_lp": true,
  "conservative_default": "where the committed record is AMBIGUOUS or SILENT for MISO the route is classified LIVE \u2014 the direction that makes the queue NON-EMPTY",
  "E1_covered_exactly": true,

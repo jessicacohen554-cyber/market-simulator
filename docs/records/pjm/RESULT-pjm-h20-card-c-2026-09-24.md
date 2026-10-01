@@ -1,6 +1,6 @@
 # RESULT — pjm-h20: Card C, the CC/CT pair, all six PJM years (2026-09-24)
 
-Companion to `docs/PRECOMMIT-pjm-h20-card-c-cc-level-ct-max-2026-09-24.md` (pushed before any solve;
+Companion to `docs/records/pjm/PRECOMMIT-pjm-h20-card-c-cc-level-ct-max-2026-09-24.md` (pushed before any solve;
 shards pinned to `9f8e95dfebb9c7c6d722f5c4a1ee5845ffe75c3e`). **Every number this lane cites is here.**
 
 Arm = PJM keeper `2026-09-23-pjm-h19-dbs-span` recipe **+ `pjm_offer_midcurve_level_segments=["CC_LIKE"]`

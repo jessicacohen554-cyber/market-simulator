@@ -4,7 +4,7 @@
 - **Bundle:** `results/calibration/pjmnext8_xf_span`, 2019–2025; one shard per year at `e9fc1a5e`, composed at zero LP.
 - **Prior keeper:** `2026-09-28-pjm-next-7-virtual`, pruned (rule 35). Year set before and after: 2019–2025.
 - **Control:** the prior keeper's committed bundle plus G-DRIFT, every hunk INERT (rule 29(b)); PRECOMMIT §4.
-- **Records:** pre-registration `docs/PRECOMMIT-pjm-next-8-exitfix-2026-09-28.md`; card-1 phase 0 `docs/FINDING-pjm-next-8-cc2023-phase0-2026-09-28.md`.
+- **Records:** pre-registration `docs/records/pjm/PRECOMMIT-pjm-next-8-exitfix-2026-09-28.md`; card-1 phase 0 `docs/records/pjm/FINDING-pjm-next-8-cc2023-phase0-2026-09-28.md`.
 - **Owner cards:** card 1 *"Diagnose east price"*; card 2 *"Build + solve"*; promotion *"Promote on structure"*.
 
 ## 1. What changed (one flag, zero DOF)

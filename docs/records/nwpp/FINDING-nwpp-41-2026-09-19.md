@@ -275,7 +275,7 @@ only means anything if it keeps applying.
 - **Full 36-file bundle**, including `dispatch/{2023,2024,2025}_P1.parquet`, is recoverable at
   `git checkout 1fb4b6b5c680ca5ae0ef9375eb11b7cbbb08d64d -- results/calibration/nwpp41_span_A`
   (rules 34(a) / 33(d) — full sha, never a branch name).
-- **Solve log excerpt** rescued to `docs/handoffs/NWPP41-attempt2-solve-log-excerpt.txt` from
+- **Solve log excerpt** rescued to `docs/records/nwpp/NWPP41-attempt2-solve-log-excerpt.txt` from
   `57dd26098604a627aa956d117e4bb02e425613f3` before the shard was archived (rule 33(f)(1)).
 - **A promotion from this state costs zero re-solves.**
 

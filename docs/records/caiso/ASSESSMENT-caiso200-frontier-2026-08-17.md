@@ -12,7 +12,7 @@ run are in-sample (2023/2024/2025), for the pre-registered caiso-200 A/B.
 > **neither Q2 object is funded**; Q3 is **ratified** (awareness only). The lane goes quiet —
 > no further CAISO calibration session without new funded data. Nothing in this assessment is
 > superseded or re-argued by the ruling; the ruling record is
-> `results/calibration/caiso201-owner-ruling-2026-08-17.md`, and §5 below carries the
+> `docs/records/caiso/caiso201-owner-ruling-2026-08-17.md`, and §5 below carries the
 > per-question outcomes.
 
 ---
@@ -147,7 +147,7 @@ correction is owner-visible.
 The resting state is **not a closure of the question**: both Q2 objects remain available for
 future funding, and the lane re-opens on this same keeper recipe if either is funded. Nothing
 is retracted; no marker is granted; the spend freeze stays ACTIVE. Full record, including
-what is explicitly *not* ruled: `results/calibration/caiso201-owner-ruling-2026-08-17.md`.
+what is explicitly *not* ruled: `docs/records/caiso/caiso201-owner-ruling-2026-08-17.md`.
 
 ## 6. `final` readiness (not asked, answered for completeness)
 

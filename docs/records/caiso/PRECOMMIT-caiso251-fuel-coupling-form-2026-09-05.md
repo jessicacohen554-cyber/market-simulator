@@ -226,7 +226,7 @@ alongside and are not scored.
 
 This PRECOMMIT (pushed first);
 `scripts/probes/_caiso251_fuel_coupling_form.py` +
-`results/calibration/_caiso251_fuel_coupling_form.json`; if the stop rule does
+`results/phase0/caiso/_caiso251_fuel_coupling_form.json`; if the stop rule does
 not fire, the control and arm bundles with their `hourly/` sidecars, the
 legitimacy diagnostics, the attestation, the DOF ledger, the verdict, and the
 dashboard registration of the arm run **in this session** (rule 15);

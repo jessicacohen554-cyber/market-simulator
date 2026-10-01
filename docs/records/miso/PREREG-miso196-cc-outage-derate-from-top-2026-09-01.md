@@ -6,7 +6,7 @@
 adjudicating solve quantity may precede its pre-registration).
 
 Phase-0 rule frozen and pushed at `fef3dcb6` before any adjudicating quantity;
-census record `results/calibration/_miso196_outage_derate_from_top_phase0.json`;
+census record `results/phase0/miso/_miso196_outage_derate_from_top_phase0.json`;
 probe `scripts/probes/_miso196_outage_derate_from_top_phase0.py`.
 
 ---

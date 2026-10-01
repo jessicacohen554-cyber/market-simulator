@@ -17,8 +17,8 @@ Probe (re-runnable, read-only): `scripts/probes/_spp37_vintage_cache_census.py`.
 
 ## 1. WHAT SPP-36 OBSERVED, AND WHY THE PROPOSED SOLVE WOULD HAVE MISSED IT
 
-`docs/RESULT-spp-36-shortwindow-span-2026-09-12.md` §4 and
-`docs/handoffs/SHARDREPORT-spp36-span.md` §5 recorded that a 3-year span invocation
+`docs/records/spp/RESULT-spp-36-shortwindow-span-2026-09-12.md` §4 and
+`docs/records/spp/SHARDREPORT-spp36-span.md` §5 recorded that a 3-year span invocation
 does not reproduce three single-year invocations of the same recipe: **2023 matched
 to 4 dp, 2024 and 2025 did not.** Warm-start, fleet evolution, config partition,
 the derate input and the offer curve were all correctly ruled out there.

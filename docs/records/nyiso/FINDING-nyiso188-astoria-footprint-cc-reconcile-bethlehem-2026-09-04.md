@@ -10,12 +10,12 @@ bit-identical to the keeper), three arms (`nyiso188_ramp`, `nyiso188_ramp_emis`,
 grade 5, fail set {C1-2024 `CC_REGULAR` +3.80 TWh / +3.1 pp, C3a-2025 −10.3 %
 (owner-court, not touched), C3c}.
 **Pre-registration:**
-`results/calibration/PREREG-nyiso188-astoria-footprint-cc-reconcile-bethlehem.md`,
+`docs/records/nyiso/PREREG-nyiso188-astoria-footprint-cc-reconcile-bethlehem.md`,
 pushed at `40536e07` before any arm was solved; every bar below is read
 verbatim. **Machine records:** `results/calibration/_nyiso188_ramp_footprint/`
 (probe `scripts/probes/nyiso188_ramp_footprint.py`), the three bundles'
 computed `calibration_attestation.json` (`scripts/gen_nyiso188_attestation.py`),
-`results/calibration/_nyiso188_entry_shas.json`, the chain
+`results/phase0/nyiso/_nyiso188_entry_shas.json`, the chain
 `scripts/probes/_nyiso188_chain.sh`.
 
 ---

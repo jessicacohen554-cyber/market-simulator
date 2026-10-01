@@ -107,14 +107,14 @@ in this ISO.
 **The closure is load-bearing in two live ERCOT handoffs**, both under
 do-not-relitigate headings:
 
-* `docs/handoffs/ercot-offer-surface-conditional-2026-07.md:109` — "Physical
+* `docs/records/ercot/ercot-offer-surface-conditional-2026-07.md:109` — "Physical
   scarcity (temp-derate) is CLOSED (owner 2026-07-09)", under **"Settled context
   (do not relitigate)"**.
-* `docs/handoffs/ercot-ordc-capdual-adder-2026-07.md:126` — "Temp-derate
+* `docs/records/ercot/ercot-ordc-capdual-adder-2026-07.md:126` — "Temp-derate
   CLOSED.", under **"6. Settled context (do not relitigate)"**.
 
-Also carried at `docs/handoffs/ercot-retirement-composition-2026-07-16.md:93`,
-`docs/handoffs/miso-89-session-findings-2026-07.md:63`,
+Also carried at `docs/records/ercot/ercot-retirement-composition-2026-07-16.md:93`,
+`docs/records/miso/miso-89-session-findings-2026-07.md:63`,
 `src/market_sim/config/scenarios.py:8915`, and inside the
 `cc_nameplate_summer_derate` matrix row's own `def`. Only the **cell** was
 never updated.

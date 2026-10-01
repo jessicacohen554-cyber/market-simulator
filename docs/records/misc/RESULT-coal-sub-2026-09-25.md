@@ -114,11 +114,11 @@
 - **The only movers are the former generic-bucket plants** (§3). They now read their own subclass's offer curve, supply passthrough and delivered-fuel mapping.
 - **PJM 2019–2021 — reliability-floor spillover.** The `min_gen` rows of a few rank-resolved plants that share a reliability-floor limb with a generic-bucket plant also move: 876 and 879 in all three years; 3118, 3943 and 3944 in 2019 only. The limb distributes a zone-coal floor cheapest-first by `heat_rate`, and the generic plants' tranche heat rates changed with their curve.
 - **Counterfactual proof.** The BEFORE code was rebuilt with the generic-bucket plants' post-change ranks handed to it through its own `register_partial_exit_coal_supply` registry (`--register-supply`). **All 22 ISO-years with a generic-bucket plant are then byte-identical to AFTER, on every array**, PJM 2019–2021 included. So resolving those plants is the only thing that changes any number.
-- Raw record: `docs/handoffs/coal-sub/byte-identity-proof.json`.
+- Raw record: `docs/records/misc/coal-sub/byte-identity-proof.json`.
 
 ## 3. Census and the generic-bucket plants
 
-Coal MW by resolved subclass, and MW in the former generic bucket, for 9 ISOs × 2019–2025: `docs/handoffs/coal-sub/census-2019-2025.md` (plant lists in the `.json`).
+Coal MW by resolved subclass, and MW in the former generic bucket, for 9 ISOs × 2019–2025: `docs/records/misc/coal-sub/census-2019-2025.md` (plant lists in the `.json`).
 
 The generic bucket is empty in 2025 in every ISO except CAISO (Argus Cogen, 15 MW, a CHP-routed industrial cogen). What each generic-bucket plant resolved to, from its own vintage EIA-860 coal code:
 

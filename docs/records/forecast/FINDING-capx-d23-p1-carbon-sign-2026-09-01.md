@@ -3,7 +3,7 @@
 **Session:** D23 (capacity-expansion / Forecast Finalization track), branch
 `claude/capx-d23-p1-carbon-sign-0x5whn`. **Date:** 2026-09-01. **HEAD at launch:**
 `6c7f82da`. **Precommit** (pushed before any measurement):
-`docs/handoffs/PRECOMMIT-capx-d23-p1-carbon-sign-2026-09-01.md`. **Phase 0 held:** zero
+`docs/records/forecast/PRECOMMIT-capx-d23-p1-carbon-sign-2026-09-01.md`. **Phase 0 held:** zero
 solves; every number below is from the committed D21 arms, the base evolution ledger, and
 code/constants reading at HEAD.
 
@@ -211,7 +211,7 @@ economic core it set out to test passes the very experiment that was actually ru
 
 ## Cross-reference added 2026-09-06 by capx D72 — this finding's attribution RE-EXAMINED and UPHELD
 
-*Appended by session D72 (`docs/handoffs/FINDING-capx-d72-2026-09-06.md`). Nothing above is
+*Appended by session D72 (`docs/records/forecast/FINDING-capx-d72-2026-09-06.md`). Nothing above is
 edited: no conclusion, verdict, number, or section of this finding is altered — same
 discipline this finding's §8 R3 applied to D21's file.*
 
@@ -253,7 +253,7 @@ recommendation: D72 §6.1 and §8(3).
 
 ## Cross-reference added 2026-09-06 by capx D73 — §8 R1 is BUILT (capx-D26) and now askable of committed configs; the archived `carbon25` P1 FAIL is NOT reclassified
 
-*Appended by session D73 (`docs/handoffs/FINDING-capx-d73-2026-09-06.md`). Nothing above is
+*Appended by session D73 (`docs/records/forecast/FINDING-capx-d73-2026-09-06.md`). Nothing above is
 edited — the same discipline §8 R3 applied to D21's file and D72 applied here.*
 
 - **R1 exists.** `scripts/check_forecast_invariants.py::carbon_pair_premise` (capx-D26,

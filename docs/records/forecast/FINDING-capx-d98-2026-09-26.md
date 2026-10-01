@@ -1,7 +1,7 @@
 # FINDING — capx D98: the recorded-surface construction (Q71) — `check_key_provenance` EXIT 1 → 0
 
 Lane capx D98 · Opus · ZERO LP · DATA PROFILE code · branch `claude/capx-d98-surface-construction`
-off `origin/main` `f1ea324a`. PRECOMMIT `docs/handoffs/PRECOMMIT-capx-d98-2026-09-26.md`, pushed
+off `origin/main` `f1ea324a`. PRECOMMIT `docs/records/forecast/PRECOMMIT-capx-d98-2026-09-26.md`, pushed
 first (`b99eec98`). Authority: owner ruling Q71, "Add the construction." (capx ledger §0bl).
 
 ## 0. THE CENSUS, BEFORE AND AFTER

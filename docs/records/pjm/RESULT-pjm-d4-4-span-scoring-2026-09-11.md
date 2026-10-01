@@ -44,7 +44,7 @@
 
 **Session:** pjm-d4-4 · **Date:** 2026-09-11 · Owner ruling in force: *"If structural integrity
 improves but gates regress that may still be a keeper."* Continues
-`docs/RESULT-pjm-d4-4-forced-outage-composition-2026-09-10.md`.
+`docs/records/pjm/RESULT-pjm-d4-4-forced-outage-composition-2026-09-10.md`.
 
 ## §1 — THE HEADLINE
 

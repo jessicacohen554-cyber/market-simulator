@@ -1,6 +1,6 @@
 {
  "probe": "miso-248 phase 0 \u2014 SPP hourly seam ladder re-derive on the repaired clock",
- "prereg": "results/calibration/PREREG-miso248-the-spp-hourly-ladder-rederive-on-the-repaired-clock-2026-09-09.md",
+ "prereg": "docs/records/miso/PREREG-miso248-the-spp-hourly-ladder-rederive-on-the-repaired-clock-2026-09-09.md",
  "zero_lp": true,
  "keeper": "2026-09-09-miso-247-p19-posture",
  "cited_data_change": "86e45462 (2026-09-09) \u2014 SPP actual-LMP clock repair",

@@ -113,7 +113,7 @@ so the year in which the mechanism's own measured footprint is largest is the ye
 with the largest mean `s` — the fraction of the ceiling's leverage the year
 realizes. Because `passthrough = floor + (ceil − floor)·s` is **affine** in `s`,
 mean `s` is recoverable exactly from pjm-169 §7.2's committed census
-(`results/calibration/_pjm169_f4_census.json`) with no new build:
+(`results/phase0/pjm/_pjm169_f4_census.json`) with no new build:
 `s̄ = (passthrough_mean − 0.65) / (1.32 − 0.65)`.
 
 | year | passthrough mean (pjm-169 §7.2) | **realized ceiling leverage `s̄`** | × in-window max | hours on ceiling (§7.2) |
@@ -178,7 +178,7 @@ PJM subbituminous: {floor 0.77, ceil 1.0, gas_mid 3.715, gas_slope 2.5}  (not th
 
 Inputs: EIA Annual Coal Report region f.o.b.-mine price + BLS coal-mining PPI
 (the **#1803 intake**, `data/raw/coal-prices/`,
-`docs/handoffs/coal-price-data-intake-2026-07.md`), EIA MER A5 heat content,
+`docs/records/misc/coal-price-data-intake-2026-07.md`), EIA MER A5 heat content,
 `COAL_DELIVERY_COMMODITY_SHARE`, `COAL_SIGMOID_BACKCAST_GAS_MIN_MMBTU`, EIA Table-8
 representative heat rates, and the model's own fleet capacities. **No ISO
 price/volume residual anywhere in the path** — the script's own honesty gate.
@@ -381,7 +381,7 @@ LIVE hunk, so no control solve is earned.
 ## 7. Phase 0 — the zero-LP census, declared before it runs
 
 Probe: `scripts/probes/_pjm170_ceil_footprint.py` (new). Artifact:
-`results/calibration/_pjm170_ceil_census.json`. It builds the control recipe's
+`results/phase0/pjm/_pjm170_ceil_census.json`. It builds the control recipe's
 resolved config through `run_calibration.run_year(..., fleet_only=True)` — the same
 entry the solve uses — for each of 2021–2025, and reports:
 
@@ -544,7 +544,7 @@ headline stays CALIBRATED on the 2023–2025 train tier.
 ## ADDENDUM B — PHASE 0 RESULT. Every zero-LP gate PASSES. Recorded before the solve.
 
 Probe `scripts/probes/_pjm170_ceil_footprint.py`; artifact
-`results/calibration/_pjm170_ceil_census.json`. Environment verified at bit-parity
+`results/phase0/pjm/_pjm170_ceil_census.json`. Environment verified at bit-parity
 with the control before running (highspy 1.14.0 / numpy 2.4.6 / scipy 1.17.1 /
 pandas 3.0.3 / pyarrow 24.0.0 / pydantic 2.13.4 / CPython 3.11.15 — all seven match
 the control's recorded `environment` block exactly).

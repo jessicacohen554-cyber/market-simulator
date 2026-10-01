@@ -2,7 +2,7 @@
 
 **Lane:** caiso-281 BACKFILL, fetch+aggregate shard, quarter **2021 Q1 (2021-01-01 .. 2021-03-31)**.
 **Date:** 2026-09-14. **Pin:** `7fe0a10c77983946b1e06a90ca2eea3c30794d0c`.
-**Charter:** `docs/PRECOMMIT-caiso281-rtm-offer-surface-intake-2026-09-13.md`.
+**Charter:** `docs/records/caiso/PRECOMMIT-caiso281-rtm-offer-surface-intake-2026-09-13.md`.
 
 ## Verdict
 

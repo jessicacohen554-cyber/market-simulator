@@ -1,7 +1,7 @@
 # FINDING — NWPP-39: the zero-baseline guard on the EIA-930 `NG:` unit-slip screen
 
 **Lane** NWPP-39 · **Base sha** `a9950612` · **Date** 2026-09-16 · **Model** Fable
-**PRECOMMIT** `docs/handoffs/PRECOMMIT-nwpp-39-2026-09-16.md` (committed as `166b8b24` before the
+**PRECOMMIT** `docs/records/nwpp/PRECOMMIT-nwpp-39-2026-09-16.md` (committed as `166b8b24` before the
 screen was edited and before the nine-region measurement was taken) · **No LP run**
 **Branch** the harness-designated `claude/tender-edison-9nu5h8` (as NWPP-37b's was), not the charter's
 stem — stated so the record is not searched for a branch that does not exist.

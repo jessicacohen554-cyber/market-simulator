@@ -5,7 +5,7 @@ Zero LP. Reads each leg's committed slim summary plus its cached year results
 escape volume is measured against), and prints/serializes the gate table the
 FINDING §3 reports.
 
-Run:  PYTHONPATH=. uv run python docs/handoffs/scn-ws5a-policy-nyiso/score_gates_2026-09-06.py
+Run:  PYTHONPATH=. uv run python docs/records/forecast/scn-ws5a-policy-nyiso/score_gates_2026-09-06.py
 """
 
 from __future__ import annotations

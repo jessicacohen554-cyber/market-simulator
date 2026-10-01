@@ -1,7 +1,7 @@
 # CHARTER — ERCOT price-responsive demand & emergency products (2026-07-14)
 
 **Status: chartered, not built.** Scoped by the 2026-07-14 summer-availability
-audit (`docs/DIAGNOSIS-ercot-summer-availability-audit-2026-07.md` §3), which
+audit (`docs/records/ercot/DIAGNOSIS-ercot-summer-availability-audit-2026-07.md` §3), which
 REMOVED the original motivation ("phantom 2025 evening plateaus") from this
 charter's scope — those are the storage capability basis, its own lane. What
 survives here is real market structure the model lacks, with the honest

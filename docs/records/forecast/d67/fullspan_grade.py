@@ -82,7 +82,7 @@ def main() -> int:
         print(f"  {y}: fleet {d if d else 'identical'};  retirements "
               f"{'identical' if rc == ra else f'{len(rc)} -> {len(ra)} rows'}")
 
-    Path("docs/handoffs/d67/fullspan_grade.json").write_text(
+    Path("docs/records/forecast/d67/fullspan_grade.json").write_text(
         json.dumps({"position": rows, "g6_price_delta": dprice,
                     "grades": dict(grades)}, indent=2) + "\n")
     print("\nGRADES: " + ", ".join(f"{y}/{y+1- 2000}: {g}" for y, g in grades))

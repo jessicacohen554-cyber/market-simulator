@@ -8,7 +8,7 @@
   "read_from": "results/hindcast/pjm-2021-2025-realized-t1h-d78r3-control-P",
   "leg": {
     "bundle": "results/hindcast/pjm-2021-2025-realized-t1h-d78r3-control-P",
-    "recipe": "run_capacity_hindcast.py --iso PJM --start-year 2021 --end-year 2025 --vintage 2020 --fuel-variant realized --entry-screen-diagnostics --no-pjm-vre-accreditation-vintage  (docs/handoffs/d78r3/run_ctl.sh)",
+    "recipe": "run_capacity_hindcast.py --iso PJM --start-year 2021 --end-year 2025 --vintage 2020 --fuel-variant realized --entry-screen-diagnostics --no-pjm-vre-accreditation-vintage  (docs/records/forecast/d78r3/run_ctl.sh)",
     "why_the_no_flag": "owner ruling Q55 / capx D75-R-ARM arms pjm_vre_accreditation_vintage for PJM through iso_configs._pjm_config, so the BARE recipe now keys b518f5fe7d02f961 and is NOT the control D78-R2 graded. The flag reaches the pre-arm posture and its key. ADDENDUM-2-rebase-reaudit.md \u00a72.",
     "key_declared": "a9c66d8ea25acb9d",
     "key_realized": "a9c66d8ea25acb9d",
@@ -19,7 +19,7 @@
     "S1_G_CTL_ID": {
       "key_matches_graded_control": true,
       "control_band_reproduces": true,
-      "form": "docs/handoffs/d78r2/window_compare2.py --band-only on this leg reproduces D78-R2's committed control_band.json BYTE-FOR-BYTE (sha256 509320eb4d3de316 both sides) \u2014 every per-year decided_mw / sector1 / capped_mw / cap_binds / g_y_mw row and every aggregate (11,514.910 / 2,120.754 / 1,003.400 / point value 9,394.156). The committed instrument was restored after the comparison and is unmodified.",
+      "form": "docs/records/forecast/d78r2/window_compare2.py --band-only on this leg reproduces D78-R2's committed control_band.json BYTE-FOR-BYTE (sha256 509320eb4d3de316 both sides) \u2014 every per-year decided_mw / sector1 / capped_mw / cap_binds / g_y_mw row and every aggregate (11,514.910 / 2,120.754 / 1,003.400 / point value 9,394.156). The committed instrument was restored after the comparison and is unmodified.",
       "verdict": "CLEARS on both limbs"
     },
     "retention": "DELETED BEFORE MERGE (rule 29(c)); every number it yields is carried in this file and in FINDING-capx-d78r3-2026-09-06.md."

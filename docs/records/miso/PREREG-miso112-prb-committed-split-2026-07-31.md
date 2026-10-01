@@ -5,8 +5,8 @@ Committed BEFORE the slice-size measurement is run (rule 23
 derivation, and this pre-registration is what keeps it blind to the
 residual). Session miso-112, 2026-07-31, branch
 `claude/miso-112-coal-prb-split-yn0al4`. Successor to miso-111
-(`results/calibration/PREREG-miso111-prb-committed-flex-2026-07-31.md`,
-`results/calibration/FINDING-miso111-prb-committed-dispatch-2026-07-31.md`);
+(`docs/records/miso/PREREG-miso111-prb-committed-flex-2026-07-31.md`,
+`docs/records/miso/FINDING-miso111-prb-committed-dispatch-2026-07-31.md`);
 mechanism-matrix §5.4 queue item 0, the live head.
 
 ## 1. Target
@@ -115,7 +115,7 @@ gross load, `online` = load ≥ max(10 MW, 2% × HSL)).
    (plant_code, leg, hsl_mw, night_p50, day_p50, n_night, n_day), written
    by `scripts/data/derive_prb_committed_split.py` (rule 23: re-derives
    only on CAMPD source updates). Session record with per-year values:
-   `results/calibration/miso112_prb_conduct.csv`.
+   `results/phase0/miso/miso112_prb_conduct.csv`.
 
 ## 5. Kill rules (the split is DEAD and the session ends NO-LP if either fires)
 
@@ -244,6 +244,6 @@ rule fired; no design refinement — the §3 rule stands verbatim.**
   4050, 8023, 56068). The heterogeneity is the mechanism: miso-111
   applied one answer to all 26 and both uniform answers are refuted.
 - Consistency diagnostic (`day_p50`, sizes nothing): recorded per plant
-  in `results/calibration/miso112_prb_conduct.csv`; band tops generally
+  in `results/phase0/miso/miso112_prb_conduct.csv`; band tops generally
   sit at-or-above day_p50 (the econ tranches above the band carry the
   measured day peak), no anomaly requiring narrowing.

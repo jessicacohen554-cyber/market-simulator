@@ -235,7 +235,7 @@ hydrated.
   docstring and its `SUPERSEDED` JSON key described the defects in the present
   tense. Now dated to this repair, with the explicit note that the probe re-run
   at HEAD no longer reproduces its own committed record
-  (`results/calibration/_c3c_q2_nyiso_nyca_shortage.json`, deliberately **not**
+  (`results/phase0/nyiso/_c3c_q2_nyiso_nyca_shortage.json`, deliberately **not**
   re-run — it is the frozen artifact of the false positive) and stays superseded
   regardless, because its verdict was wrong on the merits.
 

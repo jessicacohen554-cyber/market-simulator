@@ -122,7 +122,7 @@ alone cannot decide a row; (ii) the date column therefore reports *when* rather 
 side*, and every row is inside the window anyway.
 
 **Coverage.** 110 tracked `run_config.json` (`git ls-files '*run_config.json'`): 107 under
-`results/` plus `docs/handoffs/scn-ws1a/t0/{base,carbon_plus25}-run_config.json` and
+`results/` plus `docs/records/forecast/scn-ws1a/t0/{base,carbon_plus25}-run_config.json` and
 `tests/golden/ercot_2026_2040.run_config.json`. 90 forecast + 17 backcast under `results/`;
 the 3 outside `results/` are listed in §3.1. Nothing on disk is untracked
 (`comm -13` → empty). SCN-WS1c's own epoch entry censused **90** files at its branch point;
@@ -254,8 +254,8 @@ commit — in which case the date column falls back to `git.basis_sha`, then to 
 
 | file | ISO | mode | `carbon_price_path` | note | verdict |
 |---|---|---|---|---|---|
-| `docs/handoffs/scn-ws1a/t0/base-run_config.json` | CAISO | forecast | `zero` | SCN-WS1a's own t0 arm | **OUT** |
-| `docs/handoffs/scn-ws1a/t0/carbon_plus25-run_config.json` | CAISO | forecast | `zero` | `carbon_price_delta=25.0` | **OUT** |
+| `docs/records/forecast/scn-ws1a/t0/base-run_config.json` | CAISO | forecast | `zero` | SCN-WS1a's own t0 arm | **OUT** |
+| `docs/records/forecast/scn-ws1a/t0/carbon_plus25-run_config.json` | CAISO | forecast | `zero` | `carbon_price_delta=25.0` | **OUT** |
 | `tests/golden/ercot_2026_2040.run_config.json` | ERCOT | forecast | `zero` | no `solved_years` recorded | **OUT** |
 
 ### 3.2 Census result
@@ -385,7 +385,7 @@ exists; what does not exist is a **scorer-side** reclassification.
 
 Per the charter and the D23 §8 R3 precedent (which declined to edit D21's file), D23's
 finding is **not rewritten**. A single dated cross-reference block is appended to
-`docs/handoffs/FINDING-capx-d23-p1-carbon-sign-2026-09-01.md` recording that D72 re-examined
+`docs/records/forecast/FINDING-capx-d23-p1-carbon-sign-2026-09-01.md` recording that D72 re-examined
 its attribution against the G-C1 repair and returned verdict (a). No conclusion, verdict,
 number, or section of D23 is altered.
 

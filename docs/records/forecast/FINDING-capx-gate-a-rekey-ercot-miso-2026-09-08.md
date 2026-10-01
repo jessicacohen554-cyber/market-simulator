@@ -43,14 +43,14 @@ board row. This is why the ERCOT verdict is unmoved despite a two-promotion gap.
 
 ## 3. Promotion instruments, named as documents
 
-**ERCOT** — `docs/RESULT-ercot256-drag-layup-window-mask-2026-09-08.md`
+**ERCOT** — `docs/records/ercot/RESULT-ercot256-drag-layup-window-mask-2026-09-08.md`
 (the ercot-256 RESULT, added at `fe63e461`). Executed by `baa5fe16`
 ("ercot-256 PROMOTION: netload_drag_layup_window_mask armed in all five years; train tier
 re-verifies CALIBRATED"), merged in **PR #5605** (`ffc25ece`). An intervening promotion —
 ercot-255, `614f3691`, the five-year keeper — also skipped the re-key, so this discharges
 **two** ERCOT promoter misses.
 
-**MISO** — `results/calibration/ASSESSMENT-miso243-spp-pairing-repair-fullspan-2026-09-07.md`
+**MISO** — `docs/records/miso/ASSESSMENT-miso243-spp-pairing-repair-fullspan-2026-09-07.md`
 (added in the promotion commit itself). Executed by `e998cc9c`
 ("miso-243: PROMOTE keeper -> 2026-09-07-miso-243-spp-pairing (CALIBRATED)"), merged in
 **PR #5604** (`6a0d55cf`).

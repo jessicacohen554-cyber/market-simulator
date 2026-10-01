@@ -5,7 +5,7 @@
 **Status:** lever BUILT, tested, default-off, ERCOT-gated, legacy byte-identical,
 pure-LP. The forward analogue of the **last AS-path lever with no forward
 analogue** — the measured ERCOT on-line responsive reserve-supply cap. WS-A of
-`docs/handoffs/ercot-as-coopt-plan-2026-07.md`.
+`docs/records/ercot/ercot-as-coopt-plan-2026-07.md`.
 **Reads first:** the WS-A section (§4) of `ercot-as-coopt-plan-2026-07.md`
 (failure-mode ledger F1–F7), `docs/ercot-reserve-supply-cap-ordc-adder-2026-06.md`
 (run161, the measured RTOLCAP track), and the G4 mode-aware pattern

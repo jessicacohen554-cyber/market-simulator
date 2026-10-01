@@ -1,8 +1,8 @@
 # RESULT — miso-278: unit-fuel split of the thermal-tranche family. Zero status flips; ST_GAS closer every year; PROMOTED.
 
 ```
-LANE     : miso-278 (owner charter 2026-09-26, docs/handoffs/CHARTER-miso-stgas-unit-fuel-attribution-2026-09-26.md)
-PREREG   : docs/PRECOMMIT-miso278-unit-fuel-split-2026-09-27.md (pin 257d3c6f)
+LANE     : miso-278 (owner charter 2026-09-26, docs/records/miso/CHARTER-miso-stgas-unit-fuel-attribution-2026-09-26.md)
+PREREG   : docs/records/miso/PRECOMMIT-miso278-unit-fuel-split-2026-09-27.md (pin 257d3c6f)
 OUTGOING : 2026-09-26-miso-277-d1-as (miso277_span) — pruned (rule 35)
 KEEPER   : 2026-09-27-miso-278-fuelsplit (results/calibration/miso278_span, 2019-2025)
 DELTA    : campd_unit_fuel_split = true. DOF +0

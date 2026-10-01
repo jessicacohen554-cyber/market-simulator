@@ -2,7 +2,7 @@
 
 **Session:** caiso-81, 2026-07-13.
 **Adjudication script (committed, reproducible):** `scripts/derive_caiso_local_commitment.py`.
-**Design under test:** `docs/handoffs/caiso-local-commitment-driver-design-2026-07.md`
+**Design under test:** `docs/records/caiso/caiso-local-commitment-driver-design-2026-07.md`
 (owner-APPROVED as designed, caiso-80 session) — a per-pocket HE15-23 min-gen
 floor on the named LCR-area CT_PEAKER units, sized by a measured response
 curve `share_committed(ramp decile, season)` estimated from CAMPD 2023-2025,
@@ -113,6 +113,6 @@ displacing local commitments rather than a system-wide CT story.
 - `scripts/derive_caiso_local_commitment.py` — panel construction + LOYO
   adjudication, prints the §2 tables and the REFUTED verdict; re-runnable
   from committed data only.
-- Design doc `docs/handoffs/caiso-local-commitment-driver-design-2026-07.md`
+- Design doc `docs/records/caiso/caiso-local-commitment-driver-design-2026-07.md`
   carries a status addendum pointing here.
 - Calibration-log entry: caiso-81 (same date).

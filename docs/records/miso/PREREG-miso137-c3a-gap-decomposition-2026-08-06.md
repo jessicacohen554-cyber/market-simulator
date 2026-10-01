@@ -246,7 +246,7 @@ least as likely as either clean outcome.**
 
 Probe `scripts/probes/_miso137_c3a_gap_decomposition.py` (stdlib + pandas/numpy,
 reads committed artifacts only), machine record
-`results/calibration/_miso137_c3a_gap_decomposition.json`, FINDING
+`results/phase0/miso/_miso137_c3a_gap_decomposition.json`, FINDING
 `results/calibration/FINDING-miso137-<outcome-slug>-2026-08-06.md`,
 §5.4 queue stamp, `docs/calibration-log/miso.md` entry. **Rule 15: no LP is
 solved in this lane, so there is no run to register** (the miso-131…136

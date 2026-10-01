@@ -3,7 +3,7 @@
 **Date:** 2026-09-02 · **Lane:** `claude/ci-red-repair-hn56lh` · **PR:** #4564
 **Executes:** owner ruling **R-P** (2026-09-01 third sitting), blockers 1 and 2 as
 recorded at director board **v19b H-1**
-**Evidence base:** `docs/handoffs/audit-program-director-board-2026-08.md` v19b top
+**Evidence base:** `docs/records/governance/audit-program-director-board-2026-08.md` v19b top
 block + H-1, measured there against **run 2278** (the most recent *completed*
 `ci.yml` run at pin `f45766e4`)
 **Scope discipline:** no solve · no matrix edit · no keeper shard, marker, freeze
@@ -250,7 +250,7 @@ untouched.
 This PR's parent was merged at **03:28:43Z**. Re-checked against `main` at
 **03:45Z**, ~16 minutes and six merges later, `ruff format --check` was **red
 again** on exactly one newly landed file:
-`docs/handoffs/d33/position-decomposition-2026-09-02.py` (#4569, capx D33). It
+`docs/records/forecast/d33/position-decomposition-2026-09-02.py` (#4569, capx D33). It
 is repaired here — a **one-line** reformat, the trivial case.
 
 Recorded because the *shape* is the finding, not the file. With no required
@@ -262,7 +262,7 @@ lanes in §4. Repairing a red without the flip buys minutes; the flip is what
 makes the repair hold.
 
 **And again, twice more, while this follow-up was being written.** Re-checked at
-~03:55Z: red on `docs/handoffs/d33/…` (#4569). Re-checked at ~04:20Z, after that
+~03:55Z: red on `docs/records/forecast/d33/…` (#4569). Re-checked at ~04:20Z, after that
 repair merged: red again on **`src/market_sim/data/outages.py` and
 `tests/unit/data/test_unit_outage_mixed_gas_routing.py`** (#4575, miso-200) —
 this time **core `src/` code**, not a record-class file, so no exclusion would

@@ -3,7 +3,7 @@
 **Session:** pjm-149 (cross-ISO scoring infrastructure). **Date:** 2026-08-03.
 **Branch:** `claude/d2-floor-attribution-path-06l2it`.
 **Lane:** the side finding filed by pjm-148 —
-`results/calibration/FINDING-pjm148-chp-host-steam-refused-2026-08-03.md` §4,
+`docs/records/pjm/FINDING-pjm148-chp-host-steam-refused-2026-08-03.md` §4,
 successor item §6.3 ("the D-2 payload path-dependence deserves its own cross-ISO
 charter"). Its §5 DO-NOT-REDO binds this session.
 
@@ -267,7 +267,7 @@ silently, and never inside this session's scorer commit.
 ## 6. Deliverables (fixed regardless of outcome)
 
 1. Census probe `scripts/probes/_pjm149_d2_path_census.py` + its committed JSON.
-2. `results/calibration/FINDING-pjm149-d2-floor-attribution-path-2026-08-03.md`
+2. `docs/records/pjm/FINDING-pjm149-d2-floor-attribution-path-2026-08-03.md`
    with its own DO-NOT-REDO and a per-ISO statement of whether any committed
    keeper's D-2 numbers move.
 3. The scorer fix + tests (A4/A5), only if the census is non-vacuous.

@@ -2,8 +2,8 @@
 
 **Lane:** CAISO calibration · **Date:** 2026-09-19 · **Keeper UNCHANGED**
 `2026-09-12-caiso-275-gascoupling` · **LP spent so far: ZERO.** Predecessors:
-`docs/RESULT-caiso286-cc-start-cost-2026-09-19.md` (which re-opened the object) and
-`docs/RESULT-caiso285-bridge-candidacy-2026-09-17.md` (which built the partition).
+`docs/records/caiso/RESULT-caiso286-cc-start-cost-2026-09-19.md` (which re-opened the object) and
+`docs/records/caiso/RESULT-caiso285-bridge-candidacy-2026-09-17.md` (which built the partition).
 
 This document exists to fix **the metric, the four verdict words and the cut before the
 instrumented replay is solved**. §4 states the measurement. §5 states the gates. §6 names every

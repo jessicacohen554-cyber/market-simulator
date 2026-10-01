@@ -2,7 +2,7 @@
 
 ```
 LANE     : miso-271 (off-queue, owner charter)
-PREREG   : docs/PRECOMMIT-miso271-cc-regular-shortfall-wefor-stack-2026-09-25.md (pinned 40d995ba)
+PREREG   : docs/records/miso/PRECOMMIT-miso271-cc-regular-shortfall-wefor-stack-2026-09-25.md (pinned 40d995ba)
 KEEPER   : 2026-09-24-rmiso-arm-b-mid (rmiso_b_span, 2019-2025) — unchanged, see §6
 RUN      : 2026-09-25-miso-271-wefor-stack (results/calibration/miso271_span, 2019-2025), registered
 DELTA    : wefor_residual=0.0, wefor_residual_groups=[CC_REGULAR, ST_CHP, ST_GAS]; multipliers unchanged; DOF +0

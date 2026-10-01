@@ -8,7 +8,7 @@ pushed **before** any Phase-0 measurement, derive or capture runs. Every
 threshold, coverage bar, verdict branch, gate assignment and prediction below
 is fixed here and may not be moved after measurement, in either direction
 (the ercot-162/165/167/168/169/170/171/172 discipline). The kill gates are
-**inherited verbatim from `docs/PRECOMMIT-ercot172-maintenance-season-availability-2026-08-06.md`
+**inherited verbatim from `docs/records/ercot/PRECOMMIT-ercot172-maintenance-season-availability-2026-08-06.md`
 §5 and are not renegotiable** (owner directive); this document assigns them,
 it does not restate or amend them.
 
@@ -17,7 +17,7 @@ it does not restate or amend them.
 All from the keeper `2026-08-05-run168b-year-curves` (bundle
 `results/calibration/ercot168_yearcurves_B`, committed `hourly/` sidecars),
 `data/raw/_validation-source/actual_lmp_hourly_ERCOT.parquet`, and the
-committed `results/calibration/ercot172_addendum_2023_topofstack.json`.
+committed `results/phase0/ercot/ercot172_addendum_2023_topofstack.json`.
 Reproduced exactly in-session before writing this document (object
 identification, not attribution): actual 2023 RT >$200 = **181 h**, model
 caught = **58**, **missed = 123**, model max over the missed set = **$196.5**

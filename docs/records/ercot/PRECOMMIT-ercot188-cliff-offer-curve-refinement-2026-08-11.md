@@ -5,7 +5,7 @@ ERCOT ONLY (rule 25).** Pushed **BEFORE any measurement, any derive, any build,
 any solve**. Nothing below is renegotiated after a number is seen.
 
 **Authorization: OWNER DECISION — option (B) BUILD ANYWAY of
-`docs/MEMO-ercot184-cliff-resolution-costing-2026-08-09.md` §8, taken as a
+`docs/records/ercot/MEMO-ercot184-cliff-resolution-costing-2026-08-09.md` §8, taken as a
 STRUCTURAL-FIDELITY purchase under rule 1 `[R-STRUCT]`.**
 
 > **The memo's own recommendation was (A) CLOSE THE LANE, and that
@@ -212,7 +212,7 @@ anywhere in it, and ALL SIX KEEPERS SHARE `n = 6`** (memo §6). An ungated chang
 
 ### 2.6 SEAM PROOF — required, and its assertions fixed now
 
-Written to `results/calibration/ercot188_topfine_seamproof.json`, run **before**
+Written to `results/phase0/ercot/ercot188_topfine_seamproof.json`, run **before**
 any solve:
 
 * **SP-1 (gate-off inertness, ERCOT).** With the field at default, ERCOT's

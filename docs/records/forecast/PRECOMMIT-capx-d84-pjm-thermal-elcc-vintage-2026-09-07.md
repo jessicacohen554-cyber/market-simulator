@@ -144,7 +144,7 @@ and keeps UCAP. Re-mapping a class would be a second mechanism on the same pheno
 
 ## 4. (c) THE PREDICTION — per fuel class, per delivery year, in accredited MW
 
-Instrument: `docs/handoffs/d84/thermal-elcc-vintage-phase0-2026-09-07.py` → `.json` (**zero LP**;
+Instrument: `docs/records/forecast/d84/thermal-elcc-vintage-phase0-2026-09-07.py` → `.json` (**zero LP**;
 it calls the SHIPPED code path — `thermal_accreditation_fraction` /
 `resolve_thermal_accreditation_basis` / `thermal_accreditation_vintage_armed` — under a control
 config and an armed one that differ in exactly one field).
@@ -308,7 +308,7 @@ on the biggest residual.
 | control | bare `pjm-t1h` at HEAD (D48 ×2 + Q55 + Q56 + Q58 + clearing armed by `_pjm_config`; thermal vintage OFF) | **`f736025631d0d27e`** |
 | **arm** | + `--pjm-thermal-accreditation-vintage` | **`b9fa47dedb6c3319`** |
 
-Scripts, committed before the solve: `docs/handoffs/d84/run_ctl.sh`, `docs/handoffs/d84/run_arm.sh`.
+Scripts, committed before the solve: `docs/records/forecast/d84/run_ctl.sh`, `docs/records/forecast/d84/run_arm.sh`.
 
 ### 7.1 The pre-registered gate legs — STRUCTURAL and STOP-ONLY
 

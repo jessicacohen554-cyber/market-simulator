@@ -40,7 +40,7 @@ cycle, and A is now on the program's critical path.
 3,168.5 MW ICAP × the published NYCA ICAP→UCAP factor 0.8679 = **2,749.9 MW UCAP**), and the
 re-scored leg `nyiso-2026-2030-extcap-capxd2` reads **14/14 invariants PASS, FC-2 PASS,
 determination HOLD → PROMOTE-WITH-CAVEATS**
-(`docs/handoffs/FINDING-capx-d2-nyiso-extcap-2026-08-25.md` §0, §4).
+(`docs/records/forecast/FINDING-capx-d2-nyiso-extcap-2026-08-25.md` §0, §4).
 
 That finding's §7 states the position directly: *"gate (a) already held (marker + keeper
 `2026-08-22-nyiso-152-duty-complete`, CALIBRATED); gate (b)'s FC-1/FC-2 now PASS on the bare
@@ -159,7 +159,7 @@ construction the probe itself declines to endorse.
 
 ### 3.1 The finding
 
-From `docs/handoffs/FINDING-capx-d2b-i7-ledger-2026-08-25.md` §5.2, reproduced from constants and
+From `docs/records/forecast/FINDING-capx-d2b-i7-ledger-2026-08-25.md` §5.2, reproduced from constants and
 the verdict's own numbers (no solve):
 
 `FORECAST_POOL_REQUIREMENT_BY_ISO["PJM"]` ends at delivery year **2028/29**;
@@ -276,7 +276,7 @@ Unchanged by all three, per §4: no backcast keeper, marker, `status/*.js`,
 authorized** and no ISO's gate opened; no `R`/`I`/`G` cell is licensed for re-test. No solve, no
 scoring and no registration was performed to produce this signature record.
 
-The director's ledger (`docs/handoffs/capx-director-ledger-2026-08.md` §3) is updated in the same
+The director's ledger (`docs/records/forecast/capx-director-ledger-2026-08.md` §3) is updated in the same
 session, and the card body above is preserved **as put** — the ercot-233 card Y pattern.
 
 ---
@@ -288,7 +288,7 @@ session, and the card body above is preserved **as put** — the ercot-233 card 
 > card B, which chartered the lane (D11 → D11-R) whose report Q8 rules on. Keeping the
 > signature record in **one document** is the point: an owner reading card A should not have to
 > discover elsewhere that its leg-(c) reading was later made literal. Appended verbatim from the
-> director's ledger (`docs/handoffs/capx-director-ledger-2026-08.md` §0j.3 and §3) by lane
+> director's ledger (`docs/records/forecast/capx-director-ledger-2026-08.md` §0j.3 and §3) by lane
 > **D13** on 2026-08-30. **§§0–5 above are untouched, preserved as put.** These three were ruled
 > at an in-session decision card at the r#13 sitting, not on this card's body; this addendum is
 > their record, not a re-presentation.
@@ -351,7 +351,7 @@ cell is **annotated, not rewritten**: its claim was false when written and is tr
 execution. **No gate opens** — ERCOT and MISO still fail (a) and (b), PJM still fails (b), and
 leg (d) is `none` everywhere. Nothing is re-scored: no `fc` entry, determination or verdict moves.
 
-**Execution lane: D13 BOARD RECONCILE** (records only; `docs/FINDING-capx-d13-board-reconcile-2026-08-30.md`).
+**Execution lane: D13 BOARD RECONCILE** (records only; `docs/records/forecast/FINDING-capx-d13-board-reconcile-2026-08-30.md`).
 
 ---
 
@@ -361,7 +361,7 @@ leg (d) is `none` everywhere. Nothing is re-scored: no `fc` entry, determination
 chartered the developer-pro-forma successor; the successor was re-scoped at r#8 into **D11-R**,
 which productionized the measured **margin-exhaustion entry volume rule** behind a new
 default-OFF `ScenarioConfig.entry_margin_exhaustion` and A/B'd it on ERCOT's T1-H leg
-(`docs/handoffs/FINDING-capx-d11r-entry-volume-rule-2026-08-30.md`). Arm it as the ERCOT
+(`docs/records/forecast/FINDING-capx-d11r-entry-volume-rule-2026-08-30.md`). Arm it as the ERCOT
 forecast default, or hold?
 
 **The record it was ruled on** (all measured, all committed): zero DOF confirmed — the live walk

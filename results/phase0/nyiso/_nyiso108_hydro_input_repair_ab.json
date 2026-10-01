@@ -1,6 +1,6 @@
 {
  "probe": "nyiso-108 hydro input repair A/B (backfill 2024 + EIA-930 pin)",
- "prereg": "results/calibration/PREREG-nyiso108-hydro-input-repair-2026-07-31.md",
+ "prereg": "docs/records/nyiso/PREREG-nyiso108-hydro-input-repair-2026-07-31.md",
  "arms": {
   "A_control": "nyiso108_control_A",
   "B": "nyiso108_hydrorepair_B",

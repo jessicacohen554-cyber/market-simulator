@@ -124,7 +124,7 @@ blocked forever once those checks are required — and remedied it by enrolling
 three doc paths in `ci.yml`'s `pull_request.paths`:
 
 ```
-- "docs/handoffs/audit-program-director-board-2026-08.md"
+- "docs/records/governance/audit-program-director-board-2026-08.md"
 - "docs/model-audit-release-plan-2026-08.md"
 - "docs/FINDING-*.md"
 ```

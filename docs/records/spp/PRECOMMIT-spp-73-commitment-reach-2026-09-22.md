@@ -2,8 +2,8 @@
 
 **Zero LP. Pushed before any DA-in-tail, CAMPD-state or fleet-parameter number was read.**
 Base: `origin/main` @ `f8188a1e939abef257a95a19e33f18ab7e812956`. DATA PROFILE: spp.
-Charter: `docs/RESULT-xiso-stack-climb-attribution-2026-09-22.md` §10 (commitment reach ranked
-first). Predecessor: `docs/handoffs/RESULT-spp-72-demand-tightness-2026-09-22.md` (demand
+Charter: `docs/records/governance/RESULT-xiso-stack-climb-attribution-2026-09-22.md` §10 (commitment reach ranked
+first). Predecessor: `docs/records/spp/RESULT-spp-72-demand-tightness-2026-09-22.md` (demand
 EXONERATED in substance; not re-opened here).
 
 Already read before this file was written, and therefore NOT pre-registered as a finding:

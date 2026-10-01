@@ -6,7 +6,7 @@ the signed evidence, so the escalation clause never fired.
 
 **Branch:** `claude/arm-miso-clean-tier-default-jqwfpc` off a freshly fetched
 `origin/main` (`e346cfb`).
-**Pre-registration:** `docs/handoffs/PREREG-arm3-arm-miso-clean-tier-2026-08-11.md`,
+**Pre-registration:** `docs/records/miso/PREREG-arm3-arm-miso-clean-tier-2026-08-11.md`,
 pushed (`0b7ff76`) **before** the arming edit and **before** any solve.
 **Arming commit:** `90bbacf`.
 

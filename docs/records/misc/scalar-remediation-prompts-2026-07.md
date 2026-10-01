@@ -1,6 +1,6 @@
 # Scalar remediation — prompt pack (2026-07)
 
-Companion to `docs/handoffs/scalar-remediation-plan-2026-07.md`. Each batch is one session prompt.
+Companion to `docs/records/misc/scalar-remediation-plan-2026-07.md`. Each batch is one session prompt.
 Batches map to the plan's waves (§5). **Standing rules pasted into every session are at the
 bottom — every prompt inherits them.**
 
@@ -22,7 +22,7 @@ years sequential within an invocation).
 ### B-GOV-1 — closure verification + ledger sweep  ·  model: `sonnet`
 
 ```
-Read docs/handoffs/scalar-remediation-plan-2026-07.md §0, §2.2 (C-2/C-4/C-5/C-8/C-11), §5 W0.
+Read docs/records/misc/scalar-remediation-plan-2026-07.md §0, §2.2 (C-2/C-4/C-5/C-8/C-11), §5 W0.
 This session VERIFIES and DOCUMENTS closed items and completes the DOF ledger — it changes no
 dispatch-affecting value.
 
@@ -49,7 +49,7 @@ dispatch-affecting value.
 ### B-DIAG-1 — D-3 ablation twin + D-10 free-class rescore  ·  model: `opus`
 
 ```
-Read docs/handoffs/scalar-remediation-plan-2026-07.md §4.1, §4.2 and audit §7 D-3/D-10. Build two
+Read docs/records/misc/scalar-remediation-plan-2026-07.md §4.1, §4.2 and audit §7 D-3/D-10. Build two
 diagnostics; wire both into the promotion path. No keeper values change.
 
 D-3 zero-forcing ablation twin:
@@ -77,7 +77,7 @@ twins get solved when their keepers are next re-registered (W2+). Tests + code; 
 ### B-DIAG-2 — D-11 knob Jacobian + D-13 bench-repro + D-14 negative control  ·  model: `sonnet`
 
 ```
-Read docs/handoffs/scalar-remediation-plan-2026-07.md §4.3/§4.4/§4.5. Build three diagnostics.
+Read docs/records/misc/scalar-remediation-plan-2026-07.md §4.3/§4.4/§4.5. Build three diagnostics.
 
 D-11 scripts/knob_jacobian.py: for a keeper, read free_parameters from the DOF ledger, perturb
 each ±10%, reuse derive_offer_curve_jacobian.py's solve+score machinery, emit
@@ -105,7 +105,7 @@ task) — land the harness + one smoke run. git push ok.
 ### B-NYI-1 — NYISO de-leak (C-13) + LI floor re-ground (C-17)  ·  model: `opus`
 
 ```
-Read docs/handoffs/scalar-remediation-plan-2026-07.md §2.2 (C-13, C-17), §2.3. NYISO keeper is
+Read docs/records/misc/scalar-remediation-plan-2026-07.md §2.2 (C-13, C-17), §2.3. NYISO keeper is
 2026-07-03-nyiso-41-hub-prices (results/calibration/nyiso41_hubprices). Two changes, one branch.
 
 1. C-13 de-leak (rule 25): the config carries offer_curve_by_group/CT_PEAKER/peak = 13.15 and
@@ -126,7 +126,7 @@ C3a/price regressions — record them in the commit and the root-cause log, do N
 ### B-LIMB-1 — R1 sign-flip temperature-CF limbs  ·  model: `opus`
 
 ```
-Read docs/out-of-sample-results-2026-07.md §2B and docs/handoffs/scalar-remediation-plan-2026-07.md
+Read docs/out-of-sample-results-2026-07.md §2B and docs/records/misc/scalar-remediation-plan-2026-07.md
 §2.3. Three limbs are UNIDENTIFIED (Spearman ρ sign-flip out-of-training) and must ship DISABLED
 (decision rule R1 — an unidentified floor is scaffolding fitted to noise, rule 17):
  - PJM ComEd / CC_REGULAR (ρ +0.35 → −0.19)
@@ -143,7 +143,7 @@ logged. Two different keepers (pjm-76, caiso-51): separate branches if solving c
 ### B-XISO-2ch — off-registry channel deletion (C-7)  ·  model: `sonnet`
 
 ```
-Read docs/handoffs/scalar-remediation-plan-2026-07.md §2.2 (C-7). transmission.py:2334-2335 reads
+Read docs/records/misc/scalar-remediation-plan-2026-07.md §2.2 (C-7). transmission.py:2334-2335 reads
 os.environ INTERCHANGE_SHAPE_IMPORT_PCT / INTERCHANGE_SHAPE_EXPORT_PCT — an off-registry tuning
 channel (rule 24). Delete the env-var reads; promote the two percentiles to ScenarioConfig fields
 (so they appear in run_config.json) with the current 30/10 as defaults. Separately: re-ground the
@@ -161,7 +161,7 @@ the CAISO probe + ablation twin. Source-only push ok for the channel deletion.
 ### B-CAI-1 — CAISO scalars: PGE-TAC (C-16), export cap (C-14), sigmoid n/a, C-5 fallback cite  ·  model: `sonnet`→`opus`
 
 ```
-Read docs/handoffs/scalar-remediation-plan-2026-07.md §2.2 (C-14, C-16, C-5). CAISO keeper is
+Read docs/records/misc/scalar-remediation-plan-2026-07.md §2.2 (C-14, C-16, C-5). CAISO keeper is
 caiso-51-firm-base. Per item, INTAKE THE SOURCE FIRST (that commit is the rule-23 trigger), then
 re-derive:
  1. C-16 PGE-TAC 0.86/0.14 (iso_configs.py): re-derive the NP15/ZP26 split from published
@@ -181,7 +181,7 @@ Regressions logged not chased.
 ### B-ERC-1 — ERCOT scalars: sigmoid anchors (C-1), coal price (C-9), CC peaking (C-12), wefor root-cause (C-15)  ·  model: `opus`
 
 ```
-Read docs/handoffs/scalar-remediation-plan-2026-07.md §2.2 (C-1, C-9, C-12, C-15) and §2.1. ERCOT
+Read docs/records/misc/scalar-remediation-plan-2026-07.md §2.2 (C-1, C-9, C-12, C-15) and §2.1. ERCOT
 keeper is ercot-32. Sanctioned offer-curve scope (rule #1) — do NOT scrub the sigmoids/bands; the
 work is documentation, status checks, and one root-cause replacement:
  1. C-1: anchor COAL_SIGMOID_DEFAULTS asymptotes to citable coal economics (take-or-pay/minemouth
@@ -205,7 +205,7 @@ Deltas logged. ercot-32 branch.
 ### B-ERC-2 — ERCOT AS: endogenize revenue (C-3) + document requirement coefs (C-10)  ·  model: `opus`
 
 ```
-Read docs/handoffs/scalar-remediation-plan-2026-07.md §2.2 (C-3, C-10). Two ERCOT AS items:
+Read docs/records/misc/scalar-remediation-plan-2026-07.md §2.2 (C-3, C-10). Two ERCOT AS items:
  1. C-10 (document, don't change): the AS-requirement regression coefficients (reserve_config.py)
     fit the PUBLISHED requirement MW (rule-14 admissible). Commit the derive script/notebook with
     its inputs (ERCOT methodology + ASPLANNP433/requirement series), add parameter-citations.md
@@ -223,7 +223,7 @@ Read docs/handoffs/scalar-remediation-plan-2026-07.md §2.2 (C-3, C-10). Two ERC
 ### B-PJM-1 — PJM scalars: sigmoid anchors (C-1), wefor (C-15), seam ladders (C-6)  ·  model: `opus`
 
 ```
-Read docs/handoffs/scalar-remediation-plan-2026-07.md §2.2 (C-1, C-6, C-15). PJM keeper is
+Read docs/records/misc/scalar-remediation-plan-2026-07.md §2.2 (C-1, C-6, C-15). PJM keeper is
 pjm-76-outage-fix. Same shape as B-ERC-1 for the PJM sigmoids (C-1: document + ledger, no refit)
 and wefor (C-15: neutralize 0.015 residual, root-cause the shoulder residual to maintenance
 seasonality). Plus C-6 for PJM: re-derive the IMPORT/EXPORT seam ladders from measured neighbor-hub
@@ -235,7 +235,7 @@ B-LIMB-1 if both touch pjm-76 concurrently (serialize the config edits). Deltas 
 ### B-XISO-1 — gas availability factors (C-18), all ISOs  ·  model: `sonnet`
 
 ```
-Read docs/handoffs/scalar-remediation-plan-2026-07.md §2.2 (C-18). GAS_AVAILABILITY_FACTOR
+Read docs/records/misc/scalar-remediation-plan-2026-07.md §2.2 (C-18). GAS_AVAILABILITY_FACTOR
 (constants.py:421) carries 0.85–0.89 with a "was 0.83"/"TODO: verify" nudge trail under a NERC GADS
 label. Verify each against the published NERC GADS / State-of-Reliability EFORd tables for the
 fleet; set to the published value EVEN IF the backcast worsens (rule 14 — a worse fit is a
@@ -248,7 +248,7 @@ otherwise document the value change with the D-8-style note. Deltas logged.
 ### B-XISO-2 — seam ladders for remaining ISOs (C-6): NYISO, NEISO, MISO  ·  model: `opus`
 
 ```
-Read docs/handoffs/scalar-remediation-plan-2026-07.md §2.2 (C-6). Migrate the fitted
+Read docs/records/misc/scalar-remediation-plan-2026-07.md §2.2 (C-6). Migrate the fitted
 IMPORT_TRANCHES/EXPORT_TRANCHES + atc_base_fraction + ATC_SOLAR_K (interchange_config.py) for
 NYISO/NEISO/MISO to measured neighbor-hub-price + ATC paths (CAISO caiso-51 is the template; PJM is
 B-PJM-1). NYISO's PER-YEAR scarcity rungs (68.4/79.7/135.2) are outcome-tracking — neutralize the
@@ -265,7 +265,7 @@ per-plant multi-zone). NYISO here pairs with B-NYI-1's C3a root-cause. Deltas lo
 ### B-GOV-2 — ledger completion, keeper re-gate, docs  ·  model: `sonnet`
 
 ```
-Read docs/handoffs/scalar-remediation-plan-2026-07.md §5 W5. Final governance pass:
+Read docs/records/misc/scalar-remediation-plan-2026-07.md §5 W5. Final governance pass:
  1. build_dof_ledger.py: 100% coverage across all (possibly re-promoted) keepers; every R6-keep
     scalar has an open root-cause issue reference (audit_keepers E8 green).
  2. Re-gate all six keepers with D-10 free-class + D-11 published in each bundle; record the new
@@ -284,7 +284,7 @@ Read docs/handoffs/scalar-remediation-plan-2026-07.md §5 W5. Final governance p
 
 - **Repo:** `jessicacohen554-cyber/market-simulator`. ENV:
   `uv venv && source .venv/bin/activate && uv pip install -e ".[dev]"`.
-- **Read first:** `docs/handoffs/scalar-remediation-plan-2026-07.md` (the decision rule §1 governs
+- **Read first:** `docs/records/misc/scalar-remediation-plan-2026-07.md` (the decision rule §1 governs
   every disposition), `docs/model-legitimacy-audit-2026-07.md`, `CLAUDE.md` (rules 1, 11, 13,
   15/16, 19–26).
 - **Prime directive:** structural fidelity over backcast fit (rule #1). If a scrub/re-derivation

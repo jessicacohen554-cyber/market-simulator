@@ -1,7 +1,7 @@
 # FINDING nyiso-139 — the NYISO RTD interval-convention repair is LANDED. The archive is re-staged, the parquet re-derived on FULL coverage, and the keeper's determination is UNCHANGED.
 
 **Session nyiso-139, 2026-08-16.** Owner decisions this session, via
-`AskUserQuestion` on `docs/DECISION-CARD-nyiso137-zone-k-charter-2026-08-16.md`:
+`AskUserQuestion` on `docs/records/nyiso/DECISION-CARD-nyiso137-zone-k-charter-2026-08-16.md`:
 **D1 GRANT** (joint Zone-K charter, write + prereg + solve), **D2 ADOPT AS
 REQUESTED** (C3c reporting condition), **D3 = option (b)** — *"re-stage the
 NYISO RT archive, repair first, then charter"*. This finding is the **repair**,
@@ -9,7 +9,7 @@ i.e. the first half of D3(b). No LP was solved, no year scored against model
 output, and no run registered.
 
 The repair discharges, in full, the three actions the standing NYISO-RTD-CLOCK
-disclosure requested (`docs/handoffs/d32-f6fix-2026-08-13.md` §A.6 items 1-3).
+disclosure requested (`docs/records/forecast/d32-f6fix-2026-08-13.md` §A.6 items 1-3).
 
 ---
 

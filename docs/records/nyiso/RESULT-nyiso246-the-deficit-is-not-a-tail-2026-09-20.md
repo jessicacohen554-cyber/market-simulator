@@ -3,14 +3,14 @@
 **Session** nyiso-246 (ORCHESTRATOR — rule 32 `[R-SHARD]` (a); **zero LP in this container, and
 zero LP anywhere: no shard was launched**).
 **Date** 2026-09-20. **Base** `origin/main` at `83543f3c`.
-**PRECOMMIT** `docs/PRECOMMIT-nyiso246-conditional-level-dispersion-2026-09-20.md`, committed and
+**PRECOMMIT** `docs/records/nyiso/PRECOMMIT-nyiso246-conditional-level-dispersion-2026-09-20.md`, committed and
 pushed at **`947de8cd`** before any gated number was computed.
 **Keeper** `2026-09-19-nyiso241-ct-committed-measured`, bundle
 `results/calibration/nyiso241_ctcommitted_span`, years {2022, 2023, 2024, 2025} — **UNCHANGED.
 Nothing armed, promoted or registered. No `ScenarioConfig` field was ever written, so rule 26
 `[R-DELETE]` has nothing to revert: the gates fired before any code was added.** NYISO still reads
 **CALIBRATED** on its ISO tier (2023–2025), C3c the lone ledgered caveat.
-**Predecessor** `docs/RESULT-nyiso245-the-object-is-level-dispersion-not-shape-2026-09-20.md` §5.
+**Predecessor** `docs/records/nyiso/RESULT-nyiso245-the-object-is-level-dispersion-not-shape-2026-09-20.md` §5.
 
 > ## HEADLINE
 > 1. **THE FORM IS REFUSED ON TWO INDEPENDENT PRE-REGISTERED STOPS, BOTH AT ZERO LP.**
@@ -276,9 +276,9 @@ here rather than acted on.**
 
 | path | what |
 |---|---|
-| `docs/PRECOMMIT-nyiso246-conditional-level-dispersion-2026-09-20.md` | the pre-registration, at `947de8cd` |
+| `docs/records/nyiso/PRECOMMIT-nyiso246-conditional-level-dispersion-2026-09-20.md` | the pre-registration, at `947de8cd` |
 | `scripts/data/derive_nyiso_offer_level_dispersion.py` | the derive (self-test: T-1 recovery, T-2 level invariance, T-3 price taker) |
 | `data/raw/_validation-source/nyiso_offer_level_dispersion.json` | the measured vector, sha256 `1ad26b2f21e3654c5cb1f25f66c0715ebeff601299624b4dd85de05d95e2f1db` |
-| `scripts/probes/nyiso246_dispersion_phase0.py` → `results/calibration/_nyiso246_dispersion_phase0.json` | G0 anatomy, `Q_mod`, D1 |
-| `scripts/probes/nyiso246_margin_sign_phase0.py` → `results/calibration/_nyiso246_margin_sign_phase0.json` | the armed margin's conditional contribution |
+| `scripts/probes/nyiso246_dispersion_phase0.py` → `results/phase0/nyiso/_nyiso246_dispersion_phase0.json` | G0 anatomy, `Q_mod`, D1 |
+| `scripts/probes/nyiso246_margin_sign_phase0.py` → `results/phase0/nyiso/_nyiso246_margin_sign_phase0.json` | the armed margin's conditional contribution |
 | `scripts/probes/_nyiso245_fleet_cache.py` | repaired: now writes the `gas_<year>.npy` pass the committed derive names |

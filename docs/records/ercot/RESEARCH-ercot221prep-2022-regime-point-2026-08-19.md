@@ -7,7 +7,7 @@
 > charter, not the charter). No LP, no solve, no year scored, no run
 > registered, no matrix cell touched, no mechanism built or armed.
 > Probe: `scripts/probes/ercot221prep_2022_regime_phase0.py` →
-> `results/calibration/ercot221prep_2022_regime.json` (committed).
+> `results/phase0/ercot/ercot221prep_2022_regime.json` (committed).
 
 **Keeper at measurement:** `2026-08-17-ercot215-arm-decontam` (unchanged).
 **Rule-22 posture:** data-not-score. Out-of-training years enter as *measured

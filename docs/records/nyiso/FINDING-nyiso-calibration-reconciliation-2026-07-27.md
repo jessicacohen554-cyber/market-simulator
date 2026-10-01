@@ -8,7 +8,7 @@ actuals (EIA-930 NYIS frame, EIA-923 bench, NYISO pal zonal load,
 `actual_lmp_hourly_NYISO.parquet`, measured neighbor DA LMPs), and one
 `run_year(fleet_only=True)` fleet rebuild (no solve) for the CHP heat-rate
 audit — all scoring-side, rule 14. · **Premise:** nyiso-85's C3c attribution
-(`docs/FINDING-nyiso-c3c-scarcity-formation-2026-07-26.md` §7), merged to main.
+(`docs/records/nyiso/FINDING-nyiso-c3c-scarcity-formation-2026-07-26.md` §7), merged to main.
 
 **The question this answers:** NYISO's LMP criteria all PASS while most of the
 fleet fit is bad and mostly UNGATED. Which of the bad parts are (i) gated and

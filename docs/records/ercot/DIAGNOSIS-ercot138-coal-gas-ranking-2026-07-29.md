@@ -7,8 +7,8 @@ holdout year read) ·
 **Keeper under test** `2026-07-29-ercot137-coal-margin-measured`
 (bundle `results/calibration/ercot137_margin_arm`) ·
 **Probe** `scripts/probes/ercot138_coal_gas_ranking.py` ·
-**Artifact** `results/calibration/ercot138_coal_gas_ranking.json` ·
-**Routed here by** `docs/PRECOMMIT-ercot137-coal-margin-offer-2026-07-29.md` §3
+**Artifact** `results/phase0/ercot/ercot138_coal_gas_ranking.json` ·
+**Routed here by** `docs/records/ercot/PRECOMMIT-ercot137-coal-margin-offer-2026-07-29.md` §3
 (the pre-registered falsifier FIRED) and `FINDING-ercot117` §5.1.
 
 ---

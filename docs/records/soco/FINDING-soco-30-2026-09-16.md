@@ -481,7 +481,7 @@ it, and there is no residual to tune against anyway.
 | `data/raw/_processed-legacy/thermal_tranches_SOCO.csv` (+ `.meta.json`) | **NEW** | 2/4 `68407667` |
 | `scripts/tag_mixed_plants.py` | run against scratch copies, **commits nothing** (§7) | 3/4 — no-op |
 | `scripts/data/build_offer_curve_overrides.py` | `--list` read, **writes nothing** (§7) | 4/4 — no-op |
-| `docs/handoffs/FINDING-soco-30-2026-09-16.md` | this file | 3/4+4/4 `857a32c4` |
+| `docs/records/soco/FINDING-soco-30-2026-09-16.md` | this file | 3/4+4/4 `857a32c4` |
 
 Ten new SOCO-suffixed data files in total (five extracts + four deriver-emitted `.meta.json`
 sidecars + the tranche CSV and its sidecar), plus this doc. Nothing else in the tree moves.
@@ -496,7 +496,7 @@ Plan §5 row **SOCO-30 → LANDED**. Gate **G4** is the precondition SOCO-40 che
 ## soco-30 — 2026-09-16 — unit outage windows + thermal tranches (W3 frozen derives, zero-LP)
 
 Lane SOCO-30, Opus claude-opus-5, branch claude/soco-30-outages-tranches-r4t8, base edd40943.
-Source `docs/handoffs/FINDING-soco-30-2026-09-16.md`. Zero solves, zero src/ edits, zero
+Source `docs/records/soco/FINDING-soco-30-2026-09-16.md`. Zero solves, zero src/ edits, zero
 derive-script edits, zero matrix cells moved (rule 28 — this lane arms nothing). Rule 23
 trivially satisfied: SOCO has never been solved, so there is no residual to derive against.
 

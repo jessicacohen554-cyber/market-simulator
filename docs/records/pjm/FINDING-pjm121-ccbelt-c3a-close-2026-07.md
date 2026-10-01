@@ -70,7 +70,7 @@ On the current base the C1 blocker is simply gone: **16/16 gated rows, free
 phantom.
 
 It also completes a chartered retirement. Per
-`docs/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md` §A.1 the CC_LIKE econ rows
+`docs/records/pjm/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md` §A.1 the CC_LIKE econ rows
 were *"the one remaining unmeasured mid-merit top"* and arming them was
 explicitly designated a pure flag change. With this run all three mid-merit
 segments are measured-owned — **CT_FAST** since pjm-103 (NREL/SR-5500-55433
@@ -147,7 +147,7 @@ coal-sets-everything margin.
 
 ## 5. Refuted this session — the LEVEL-form measured ladder
 
-`docs/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md` §A.1 charters a *level-form*
+`docs/records/pjm/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md` §A.1 charters a *level-form*
 step beyond the floor: *"A floor can only raise bids, so floor-form ownership
 alone never retires a band that sits above the measured level — that is what
 the level-form step (#3, the measured ladder replacing the synthetic smoothing

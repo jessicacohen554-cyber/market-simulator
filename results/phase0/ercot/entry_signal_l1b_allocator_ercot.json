@@ -1,6 +1,6 @@
 {
  "probe": "entry_signal_l1b_allocator_counterfactual",
- "finding": "docs/FINDING-entry-screen-t1h-2026-08.md \u00a77 L-1b",
+ "finding": "docs/records/misc/FINDING-entry-screen-t1h-2026-08.md \u00a77 L-1b",
  "iso": "ERCOT",
  "bundle": "results/hindcast/ercot-2021-2025-realized-t1h-refresh",
  "cache_key": "28cef3500ec1fd9e",

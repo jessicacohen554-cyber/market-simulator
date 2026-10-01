@@ -1,6 +1,6 @@
 {
   "gate": "G-REPRO (PRIMARY)",
-  "precommit": "docs/PRECOMMIT-ercot204-rtorpa-gate-and-rule26-successor-2026-08-15.md Part B, prediction P-1",
+  "precommit": "docs/records/ercot/PRECOMMIT-ercot204-rtorpa-gate-and-rule26-successor-2026-08-15.md Part B, prediction P-1",
   "keeper_bundle": "results/calibration/ercot202_plantphysics_B",
   "resolve_bundle": "results/calibration/ercot204_rule26_delete",
   "sidecars_compared": 12,

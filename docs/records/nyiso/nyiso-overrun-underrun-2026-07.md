@@ -48,7 +48,7 @@ instead of the static published MW. No-op where measured==static (NYCA, East,
 NYC). Byte-identical when off. `tests/test_reserve_config.py` 94/94 pass.
 
 The exact diff is committed alongside this doc as
-`docs/handoffs/nyiso-ordc-measured-step-span.patch` (`git apply` it; the local
+`docs/records/nyiso/nyiso-ordc-measured-step-span.patch` (`git apply` it; the local
 session tree already carries it). A cleaner keeper implementation would make the
 widths **hourly** `(n_steps, T) = requirement[t]/n_ramp` (dispatch
 `build_variable_bounds` currently validates `(n_steps,)` only) — the static

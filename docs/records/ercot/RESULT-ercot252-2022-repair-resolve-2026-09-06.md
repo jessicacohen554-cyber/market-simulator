@@ -1,6 +1,6 @@
 # RESULT — the ERCOT 2022 touchpoint re-solve under the two owner rulings: **CALIBRATED on 2022, 8/8 PASS**, with C3a and C3c inside their bands by 0.7 pt and 4 h (ercot-252)
 
-> Scored against `docs/PRECOMMIT-ercot252-2022-repair-resolve-2026-09-06.md`, committed before
+> Scored against `docs/records/ercot/PRECOMMIT-ercot252-2022-repair-resolve-2026-09-06.md`, committed before
 > the solve. Run `2026-09-06-run252-2022-touchpoint-repair` (bundle
 > `results/calibration/ercot252_2022_touchpoint_repair`), registered, stamped to keeper
 > `2026-09-05-ercot248-two-config-keeper`, replacing `2026-09-05-run250-2022-touchpoint-carveout`
@@ -126,6 +126,6 @@ is exactly the kind of number rule 22 says must never be quoted as skill.
   `measured_interface_limits`, `vre_reference_rate_curtailment_grossup` and
   `ercot_multiproduct_as`; **no cell verdict changed** — a holdout-year result never adjudicates
   a cell.
-* Locked test untouched. Companion records: `docs/FINDING-ercot252-2022-cc-routes-phase0-2026-09-06.md`
-  (the phase-0 that preceded the rulings), `docs/FINDING-ercot251-nohsl-curtailment-gate-2026-09-06.md`,
-  `docs/RESULT-ercot251-nohsl-ceiling-screen-2026-09-06.md`, `docs/calibration-log/ercot.md` (ercot-252).
+* Locked test untouched. Companion records: `docs/records/ercot/FINDING-ercot252-2022-cc-routes-phase0-2026-09-06.md`
+  (the phase-0 that preceded the rulings), `docs/records/ercot/FINDING-ercot251-nohsl-curtailment-gate-2026-09-06.md`,
+  `docs/records/ercot/RESULT-ercot251-nohsl-ceiling-screen-2026-09-06.md`, `docs/calibration-log/ercot.md` (ercot-252).

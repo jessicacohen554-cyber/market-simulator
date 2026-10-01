@@ -1,5 +1,5 @@
 {
- "prereg": "results/calibration/PREREG-miso142-summer-supply-stack-2026-08-08.md",
+ "prereg": "docs/records/miso/PREREG-miso142-summer-supply-stack-2026-08-08.md",
  "gate": "G-B (signature vs cause; the stack slope)",
  "keeper": "2026-08-05-miso-132b-cc-committed",
  "basis": "model-only: keeper P1 price + P1 class dispatch + model fleet capability. No EIA-930/EIA-923 instrument offset enters this gate.",

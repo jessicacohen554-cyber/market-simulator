@@ -3,7 +3,7 @@
  "year": 2025,
  "keeper": "2026-09-07-nyiso-213-summer-seam",
  "bundle_control": "results/calibration/nyiso213_summer_seam",
- "prereg": "results/calibration/PREREG-nyiso214-duct-gap-double-reading.md",
+ "prereg": "docs/records/nyiso/PREREG-nyiso214-duct-gap-double-reading.md",
  "P1": {
   "declared": "n_plants >= 6 AND peak_mw_at_those >= 400",
   "n_plants": 11,

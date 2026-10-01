@@ -1,6 +1,6 @@
 # Capacity-market data intake — 2026-07-11 (P-0B)
 
-Intake session for `docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md`
+Intake session for `docs/records/forecast/forecast-driver-capacity-revenue-audit-plan-2026-07.md`
 §3-4 (N1-N6): capacity-market demand-curve parameters, auction/spot clearing-
 price history, and ELCC/accreditation curves for the five capacity-market ISOs
 (PJM, NYISO, ISO-NE, MISO, CAISO). ERCOT excluded (energy-only).

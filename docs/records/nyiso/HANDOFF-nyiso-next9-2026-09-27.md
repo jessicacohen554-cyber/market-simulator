@@ -15,8 +15,8 @@ FIRST (standing owner directions — do these every session and pass them to eve
 5. If the lane is CALIBRATED and the rubric clears for all years, check the complete / frontier declaration criteria, settle the keeper config and clear the tasks that block the declaration; if at complete / frontier, say so in the final message so the owner can approve.
 
 READ FIRST. CLAUDE.md is binding, especially rules 1, 13, 14, 17, 19, 20, 21, 23, 24, 25, 28, 31, 32, 33, 34, 35 and 36.
-- docs/RESULT-nyiso-next8-hq-dedupe-2026-09-27.md and docs/PRECOMMIT-nyiso-next8-hq-dedupe-2026-09-27.md sec. 3 (the floor numbers)
-- docs/FINDING-nyiso-next7-star-node-2026-09-27.md (eastern over-delivery; why per-neighbour routing is refused)
+- docs/records/nyiso/RESULT-nyiso-next8-hq-dedupe-2026-09-27.md and docs/records/nyiso/PRECOMMIT-nyiso-next8-hq-dedupe-2026-09-27.md sec. 3 (the floor numbers)
+- docs/records/nyiso/FINDING-nyiso-next7-star-node-2026-09-27.md (eastern over-delivery; why per-neighbour routing is refused)
 - src/market_sim/model/interchange/nyiso.py inject_nyiso_firm_imports; src/market_sim/model/interchange/spec.py NYISO_FIRM_IMPORT_FLOOR_FRAC and the NYISO ladders
 - scripts/data/derive_nyiso_import_tranches.py (FIRM_BASE_MW = 900, "kept at its established value")
 - NYISO matrix shard docs/codebase-site/data/mechanism-matrix/NYISO.js: nyiso_firm_imports (K; NEXT-8 routed question in its ev), import_hub_pricing (K), seam_neighbour_anchored_ladder (G — do not re-test without the neighbour-price intake). Lever queue: docs/mechanism-testing-matrix.md sec. 5.5 ("Queue after NEXT-8").
@@ -36,7 +36,7 @@ TASK
 4. Solves: one shard per registered year 2021-2025 (rules 34/36), pinned to a FULL 40-char SHA. SHARD PROMPT LESSONS FROM NEXT-8 — include all of these:
    - After hydrate, the shard MUST run `uv run python scripts/regenerate_clean.py` (data/clean is gitignored and absent from a fresh clone; the solve fails without it). The time budget starts after it.
    - Solve with `uv run python scripts/replay_keeper.py results/calibration/<keeper bundle> --years <y> --out-dir results/calibration/<lane>_<y>` (2021 from the 2021 bundle) plus the arm's --set if a field is used.
-   - Push the full bundle via a `.gitignore` negation + plain `git add` (never -f / -A / .); hard stops, forbidden list and numeric report as in the NEXT-8 template (docs/PRECOMMIT-nyiso-next8-hq-dedupe-2026-09-27.md sec. 6 and the shard prompts recorded in the NEXT-8 RESULT).
+   - Push the full bundle via a `.gitignore` negation + plain `git add` (never -f / -A / .); hard stops, forbidden list and numeric report as in the NEXT-8 template (docs/records/nyiso/PRECOMMIT-nyiso-next8-hq-dedupe-2026-09-27.md sec. 6 and the shard prompts recorded in the NEXT-8 RESULT).
    - Parent side: compose with scripts/probes/nyisonext8_compose_span.py (adapt), then `run_calibration_full.py --rebuild-benchmark <span>` (the composite inherits single-year benchmark frames; the span frames match the keeper's), `legitimacy_diagnostics.py --bundle <span> --iso NYISO --json-out`, `run_calibration_full.py --restore-shared-inputs <2021 bundle>`, then `dashboard_add_run.py --no-prune`.
    - Promotion: `stamp_touchpoint_holdout.py ... --holdout-year 2021` (the default is 2022 — wrong for NYISO's 2021 run), and `prune_iso_runs.py --iso NYISO --force-uncite --keep <new 2021 run id>` (without --keep it prunes the new stamped run too).
 5. Archive every shard once its bytes are verified (rule 33). Open a PR and merge. If CI is red only on known base-red, comment once, then merge.

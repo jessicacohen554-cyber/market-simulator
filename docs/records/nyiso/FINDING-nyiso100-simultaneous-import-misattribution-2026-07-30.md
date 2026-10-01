@@ -168,7 +168,7 @@ This is the honest statement of the risk, and it cuts **both** ways:
   here: this arm is not forcing peak imports.
 
 Both directions are pre-registered in
-`docs/PREREG-nyiso100-simultaneous-import-retire-2026-07-30.md`. Per rule 1
+`docs/records/nyiso/PREREG-nyiso100-simultaneous-import-retire-2026-07-30.md`. Per rule 1
 `[R-STRUCT]`, the arm is **not** judged on whether either residual moves.
 
 ---

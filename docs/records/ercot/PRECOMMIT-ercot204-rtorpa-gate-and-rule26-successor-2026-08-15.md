@@ -62,7 +62,7 @@ the last signed ERCOT lever died on an unverified premise. That verification was
 performed first, and **it falsified this charter's premise too**, for a different
 reason than T-1's. Probe:
 `scripts/probes/ercot204_rtorpa_admissibility.py` →
-`results/calibration/ercot204_rtorpa_admissibility.json`. No LP, no year solved
+`results/phase0/ercot/ercot204_rtorpa_admissibility.json`. No LP, no year solved
 or scored.
 
 ## 1.2 The three gates, decided direction-blind and before any residual

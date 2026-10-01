@@ -8,7 +8,7 @@ recorded) · **Base** `origin/main` `e0cc4d14`; the state this session verified 
 `32516df6` (desk r#20), an ancestor of it · **Data profile** `caiso` · **Campaign**
 `scn-campaign-policy-2026-09-06`, kind `scenario`, `reference_case: REF` ·
 **THE PIN** `bdfb3095e9fa0cd2bec3f4e843f320b42588c72b` ·
-**PRECOMMIT** `docs/handoffs/PRECOMMIT-scn-ws5a-policy-caiso-2026-09-07.md` (pushed before the
+**PRECOMMIT** `docs/records/forecast/PRECOMMIT-scn-ws5a-policy-caiso-2026-09-07.md` (pushed before the
 first solve; every §2 key, §3 volume, §4 price and §6 prediction below is quoted from it
 unrevised) · **Solves spent by THIS session: ZERO.** All eight legs were solved and registered
 by the four shard sessions before this one opened; §1 verifies the registered set against the
@@ -624,11 +624,11 @@ for the reason §8.1 gave. The one-directional test was the right test.
 
 **Written by this session:**
 
-- `docs/handoffs/FINDING-scn-ws5a-policy-caiso-2026-09-07.md` — this file.
-- `docs/handoffs/forecast-scenario-readiness-plan-2026-09.md` — §5.1 rows **3** and **7**, CAISO
+- `docs/records/forecast/FINDING-scn-ws5a-policy-caiso-2026-09-07.md` — this file.
+- `docs/records/forecast/forecast-scenario-readiness-plan-2026-09.md` — §5.1 rows **3** and **7**, CAISO
   material appended to the CES-premium, CES-target and Voluntary columns. `CAP-STATE-TIGHT` is
   **excluded** from these rows per S17.
-- `docs/handoffs/scenario-desk-ledger-2026-09.md` — §3, the same two rows mirrored.
+- `docs/records/misc/scenario-desk-ledger-2026-09.md` — §3, the same two rows mirrored.
 - `docs/codebase-site/data/mechanism-matrix/CAISO.js` — **LAST commit after rebase**, one
   appended evidence line each on `federal_ces` (the CES premium row), `federal_ces_target`,
   `carbon_price_path` and `voluntary_clean_demand`, CAISO's shard only (rule 28(b)). Verdict

@@ -26,7 +26,7 @@ STATE (2026-09-30):
   - all of 2019–20 (OASIS GroupZip serves nothing before 2021-04-27);
   - Jan–Apr 2021.
   - The AZ/OR N3045 gas it uses is rebuilt from EIA-923 receipts where EIA withholds it.
-  - Record: docs/handoffs/r-caiso-18/.
+  - Record: docs/records/caiso/r-caiso-18/.
 - Owner card 2026-09-30: next link = "Fold DSW residual".
 
 THE TARGET (bundle rcaiso18_A_tp_2019_2021, calibration_verdict.py):
@@ -62,7 +62,7 @@ TASK (do nothing else):
    sweep):
    - build it under a flag, with zero or measured parameters;
    - tests: off path byte-identical;
-   - then 7 shards, one per year 2019–2025 (rule 36). Use docs/handoffs/r-caiso-18/shard-prompt.md as the template:
+   - then 7 shards, one per year 2019–2025 (rule 36). Use docs/records/caiso/r-caiso-18/shard-prompt.md as the template:
      `{SRC}` = rcaiso18_A_tp_2019_2021 (2019–21) / rcaiso18_A_span (2022–25), with new hard-stop counts.
    - **2025 needs a 50-min budget.** The solve takes about 44 min.
    - Pin the full SHA after your build PR merges. The parent never solves (rule 32(a)).

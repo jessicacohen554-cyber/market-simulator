@@ -226,6 +226,6 @@ Items 4 and 5 are data prep and need no grant. Items 1–3 are owner decisions.
 ---
 
 *Precedent for a NOT-YET-on-the-merits recommendation:
-`results/calibration/ASSESSMENT-neiso87-declaration-2026-08-06.md`.
+`docs/records/neiso/ASSESSMENT-neiso87-declaration-2026-08-06.md`.
 Immediate predecessor for PJM: `ASSESSMENT-pjm162-final-readiness-2026-08-15.md` (pre-v3.3);
 this assessment re-confirms its NOT YET under v3.3 and adds §3.2, §3.3 and the §4 2020 finding.*

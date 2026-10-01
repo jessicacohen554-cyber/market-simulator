@@ -11,7 +11,7 @@ failing criteria**. Nothing in this session is selected because a residual moved
 reads a target residual (rule 1 `[R-STRUCT]`, rule 23 `[R-FROZEN-DERIVE]`, rule 29 `[R-SCREEN]`: a
 screen may KILL an arm, never promote one). The arm re-screened here is the rule-19 `[R-ONE-MECH]`
 construction repair measured by
-`docs/FINDING-nyiso212-cricket-valley-summer-seam-2026-09-07.md`.
+`docs/records/nyiso/FINDING-nyiso212-cricket-valley-summer-seam-2026-09-07.md`.
 
 **Owner's standing formula, carried verbatim:** *"Is this a recommended keeper candidate? If so plz
 promote. If structural integrity improves but gates regress that may still be a keeper.."* It

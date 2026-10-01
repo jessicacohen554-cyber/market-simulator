@@ -16,12 +16,12 @@ the current keeper with its determination re-verified without a solve by the
 D56-R records lane, and `audit_keepers.py --iso NYISO` PASSes — **the rule-22
 D-5(b) duty was already discharged, so this session re-keyed nothing and
 requested no marker.** Training years only (2023–2025).
-**Pre-registration:** `results/calibration/PREREG-nyiso191-ccchp-capacity-scope.md`,
+**Pre-registration:** `docs/records/nyiso/PREREG-nyiso191-ccchp-capacity-scope.md`,
 pushed to `origin` BEFORE the derive was edited and before any solve; every bar
 and branch is executed verbatim below.
 **Machine records:** the arm's computed `calibration_attestation.json`
 (`scripts/gen_nyiso191_attestation.py`, six checks, refuses on any failure),
-`results/calibration/_nyiso191_ccchp_scope_phase0.json`,
+`results/phase0/nyiso/_nyiso191_ccchp_scope_phase0.json`,
 `_nyiso191_stgas_placement.json`, probes
 `scripts/probes/nyiso191_ccchp_scope_phase0.py` / `nyiso191_stgas_placement.py`,
 and the two tables preserved bundle-local

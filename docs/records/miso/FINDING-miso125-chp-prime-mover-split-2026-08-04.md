@@ -7,10 +7,10 @@
 shipped.**
 
 **Prereg (committed BEFORE any statistic, any derive and any solve):**
-`results/calibration/PREREG-miso125-chp-prime-mover-split-2026-08-04.md`,
+`docs/records/miso/PREREG-miso125-chp-prime-mover-split-2026-08-04.md`,
 commit `77f18a37`.
 **Probe (no LP):** `scripts/probes/_miso125_chp_prime_mover_split.py`.
-**Records:** `results/calibration/_miso125_prime_mover_split.json`,
+**Records:** `results/phase0/miso/_miso125_prime_mover_split.json`,
 `PROBE-miso125-chp-prime-mover-split-2026-08-04.txt`.
 
 **Rule 15 `[R-DASHBOARD]`, discharged explicitly: this session produced NO

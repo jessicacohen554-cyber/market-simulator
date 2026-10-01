@@ -80,7 +80,7 @@ Code:
 ## 3. Phase 0 (zero LP): `scripts/probes/_nwppnext9_measured_receipts_phase0.py`
 
 The probe rebuilds keeper #15's fleet on its own recipe plus the arm, and calls the builders exactly as `run_year`
-does. Output: `results/calibration/_nwppnext9_measured_receipts_phase0.json`. The ratable pile still asserts month 12 =
+does. Output: `results/phase0/nwpp/_nwppnext9_measured_receipts_phase0.json`. The ratable pile still asserts month 12 =
 the annual rows in every year.
 
 Each row sums over yards how far keeper #15's cumulative monthly coal sits **above the measured ceiling** or **below the

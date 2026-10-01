@@ -72,6 +72,6 @@ The keeper's committed bundle is the control (rule 29(b)).
 
 - Recipe: keeper recipe + `--set caiso_eia930_clock_repair=true`.
 - One shard per year, 2019–2025 (rule 36), at the pinned SHA of this PRECOMMIT's commit.
-- Shard prompt: `docs/handoffs/r-caiso-13/shard-prompt.md`.
+- Shard prompt: `docs/records/caiso/r-caiso-13/shard-prompt.md`.
 - `{SRC}`: `rcaiso11_A_tp_2019_2021` (2019–21), `rcaiso11_A_span` (2022–25).
 - `{SDCAP}`: 1436.0 (2019–23), 2074.0 (2024), 2071.0 (2025).

@@ -1,7 +1,7 @@
 # MEMO — the G-20b within-window tight-hour treatment question (owner decision requested)
 
 > pjm-153, 2026-08-04. Written to discharge
-> `results/calibration/FINDING-guard-falseneg-audit-2026-07-27.md` **§7.2**, which
+> `docs/records/governance/FINDING-guard-falseneg-audit-2026-07-27.md` **§7.2**, which
 > named this memo as the *only* route by which PJM keeper root cause (6b)'s live
 > remnant — and matrix §5.3 queue **item 5** — can be unblocked: *"a within-window
 > tight-hour treatment memo, owner sign-off, its own charter, LOYO within
@@ -209,9 +209,9 @@ non-price evidence is genuinely divided.
   §3 are the audit's own published table, quoted, not re-derived, and no other
   ISO's cell is written.
 
-**Sources.** `results/calibration/FINDING-guard-falseneg-audit-2026-07-27.md`
-§§1–4, §7.2; `results/calibration/FINDING-pjm138-system-energy-is-reserve-opportunity-cost-2026-07-29.md`
-§4.2 and §6; `docs/handoffs/campd-economic-layup-fix-charter-2026-07.md` §3a;
+**Sources.** `docs/records/governance/FINDING-guard-falseneg-audit-2026-07-27.md`
+§§1–4, §7.2; `docs/records/pjm/FINDING-pjm138-system-energy-is-reserve-opportunity-cost-2026-07-29.md`
+§4.2 and §6; `docs/records/misc/campd-economic-layup-fix-charter-2026-07.md` §3a;
 `scripts/lib/outage_detect.py:396–452`, `:634–644`;
 `scripts/data/derive_campd_unit_outages.py:870–890`, `:1395–1449`;
 `frontend/data/backcast/keepers/PJM.json` root cause (6b).

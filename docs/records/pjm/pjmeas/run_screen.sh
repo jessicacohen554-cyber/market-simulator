@@ -7,7 +7,7 @@
 # 2021 solve. Screen year named in PRECOMMIT-pjm-eas-operand-2026-09-07.md §5
 # BEFORE this ran, on the mechanism's footprint and never on a residual.
 #
-# Same invocation as docs/handoffs/d75rarm/run_steps34.sh (the control) with the
+# Same invocation as docs/records/forecast/d75rarm/run_steps34.sh (the control) with the
 # year span truncated and the declared arm added. THE SCREEN BUNDLE IS A
 # THROWAWAY DIAGNOSTIC PROBE: never registered, never a keeper, never quoted as
 # a keeper number, and DELETED BEFORE MERGE (rule 29(c)) — every number the lane

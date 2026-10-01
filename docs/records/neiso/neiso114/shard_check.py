@@ -11,7 +11,7 @@ every year 2019-2025. Checks:
    recipe at HEAD, 2019/2020 only — the G-DRIFT LIVE years). Any field added to
    ``ScenarioConfig`` after the keeper solved must sit at its dataclass default.
 2. **offer curve** — arms A and C: ``offer_curve_overrides`` byte-identical to the
-   keeper's. Arm B: equal to ``docs/handoffs/neiso114/arm_b_offer_curve.json``
+   keeper's. Arm B: equal to ``docs/records/neiso/neiso114/arm_b_offer_curve.json``
    (the ST_GAS re-derivation, PRECOMMIT §3), every other class byte-identical.
 3. **inputs** — the std outage extract path + sha256 the keeper recorded.
 4. **classifier** — the ``hydro-plant-modes`` partition content hash equals the
@@ -21,7 +21,7 @@ Exit 0 when every check passes, 1 otherwise; a failing shard does not push.
 
 Usage::
 
-    python docs/handoffs/neiso114/shard_check.py --arm A --leg results/calibration/neiso114a_<Y> --year <Y>
+    python docs/records/neiso/neiso114/shard_check.py --arm A --leg results/calibration/neiso114a_<Y> --year <Y>
 """
 
 from __future__ import annotations
@@ -41,7 +41,7 @@ for p in (str(ROOT), str(ROOT / "src")):
 KEEPER = ROOT / "results/calibration/rneiso_span"
 DELTA = {"coal_mustrun_requires_measured_row": (False, True)}
 NEW_ARMED: dict = {}
-ARM_B_CURVE = ROOT / "docs/handoffs/neiso114/arm_b_offer_curve.json"
+ARM_B_CURVE = ROOT / "docs/records/neiso/neiso114/arm_b_offer_curve.json"
 STD_EXTRACT = "data/raw/campd-unit-outages-NEISO.csv"
 STD_SHA256 = "aaa3bb379eb7655276401d6d7726cfd783007d81a6eeb7234a879a69c9f85881"
 CLASSIFIER_SHA = "02c3f7710de08661"

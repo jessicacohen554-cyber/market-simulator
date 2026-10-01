@@ -50,7 +50,7 @@ canonical union covering AEO's granularity and the ISO-document/model granularit
 | 7 | `CAISO_IEPR_2025` | DATA NEEDED (M14) | CEC IEPR 2025 + CPUC PSP/TPP (XLSX/PDF) |
 | 8 | `MISO_FUTURES` | DATA NEEDED (M15) | MISO Futures / OMS survey (PDF) |
 
-Gaps filed as intake rows in `docs/handoffs/ff-inputs-currency-audit-2026-07.md`
+Gaps filed as intake rows in `docs/records/forecast/ff-inputs-currency-audit-2026-07.md`
 §6 (concrete inventory) + §7.3 (M9–M15). The intake is **self-enforcing**: each
 registered-but-absent source is reported `missing`, the FC-5 scorer surfaces the
 list, and FC-5 SKIPs-with-context (holding any T2 promotion) until it lands

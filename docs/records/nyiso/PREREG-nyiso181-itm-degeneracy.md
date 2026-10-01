@@ -25,9 +25,9 @@ their own outcomes.
 
 | # | what was read | result |
 |---|---|---|
-| E1 | `docs/FINDING-nyiso180-st-gas-undispatch-2026-09-03.md` §§7–12 | The premise correction, the seven-of-eleven sign/scope table, the four closed candidates, the two surviving carriers. |
-| E2 | `results/calibration/PREREG-nyiso180-st-gas-undispatch.md` §§0–2 | The disclosure discipline and the one-sided-in-advance construction of G2. |
-| E3 | `results/calibration/PREREG-nyiso180-per-generator-dispatch.md`, in full | The **parallel** lane's pre-registered predictions P-a / P-b / P-c / P-d, its §2.4 identity-closure STOP, and its §3 attribution limit. |
+| E1 | `docs/records/nyiso/FINDING-nyiso180-st-gas-undispatch-2026-09-03.md` §§7–12 | The premise correction, the seven-of-eleven sign/scope table, the four closed candidates, the two surviving carriers. |
+| E2 | `docs/records/nyiso/PREREG-nyiso180-st-gas-undispatch.md` §§0–2 | The disclosure discipline and the one-sided-in-advance construction of G2. |
+| E3 | `docs/records/nyiso/PREREG-nyiso180-per-generator-dispatch.md`, in full | The **parallel** lane's pre-registered predictions P-a / P-b / P-c / P-d, its §2.4 identity-closure STOP, and its §3 attribution limit. |
 | E4 | `scripts/probes/nyiso180_unit_dispatch_adjudication.py`, in full (340 lines) | A complete, pre-registered adjudication instrument reading `hourly/unit_hourly_<year>.parquet`'s `mc` / `red_cost`. |
 | E5 | `.gitignore:541,543` | `results/calibration/*/hourly/unit_hourly_*.parquet` is **gitignored**. |
 | E6 | `ls results/calibration/nyiso177_vintage_B1p/hourly/` | `class_band_hourly`, `class_hourly`, `reserve_family`, `storage`, `system` — **no `unit_hourly`, any year**. |

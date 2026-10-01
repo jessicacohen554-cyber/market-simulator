@@ -37,7 +37,7 @@ both years (fetched 2026-09-27, checksums in `data/raw/spp-planning/SHA256SUMS.t
 
 ## 2. G-DRIFT `d72e5f10` → HEAD (rule 29(b) form 4)
 
-`d72e5f10` → `325674da`: ALL INERT (`docs/handoffs/spp93/gdrift_d72e5f10_to_325674da.md`). Audited here:
+`d72e5f10` → `325674da`: ALL INERT (`docs/records/spp/spp93/gdrift_d72e5f10_to_325674da.md`). Audited here:
 `325674da` → `ceeb47a4`, three commits touching the backcast path:
 
 | commit | hunks | verdict for SPP |
@@ -49,7 +49,7 @@ both years (fetched 2026-09-27, checksums in `data/raw/spp-planning/SHA256SUMS.t
 **All INERT.** This lane adds a docstring edit to `renewables.py` (INERT) and the two data rows (the arm).
 **Post-solve proof, E2 below:** the five years whose inputs do not change must reproduce the keeper byte for byte.
 
-## 3. Zero-LP census (inputs only; `scripts/probes/_spp94_curtail_rows_census.py` → `docs/handoffs/spp94/census.json`)
+## 3. Zero-LP census (inputs only; `scripts/probes/_spp94_curtail_rows_census.py` → `docs/records/spp/spp94/census.json`)
 
 The keeper's wind upper bound, rebuilt through the production seam (`_oversupply_uncurtailed_cf`, year-own on):
 

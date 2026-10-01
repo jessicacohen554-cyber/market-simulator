@@ -1,6 +1,6 @@
 # FINDING — neiso-71: CHP host-steam floor BLOCKED; nuclear per-reactor availability A/B
 
-**Pre-registration:** `results/calibration/PREREG-neiso71-nuclear-availability-2026-07-31.md`,
+**Pre-registration:** `docs/records/neiso/PREREG-neiso71-nuclear-availability-2026-07-31.md`,
 committed at `464817e` and pushed **before either arm solved**. Every gate,
 threshold and prediction below was fixed in advance.
 

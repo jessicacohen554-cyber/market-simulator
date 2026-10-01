@@ -4,7 +4,7 @@
 Branch `claude/capx-d78-sector-gate-offer-seam-d1tfcd`, fresh off `origin/main` **`ba894c9c`**.
 Companion: `DESIGN-capx-d78-sector-gate-offer-seam-2026-09-06.md` (the market rule with its
 Manual 18 citations, the one seam, every consumer, the other exemption channels). Instrument:
-`docs/handoffs/d78/keys_probe.{py,json}` (zero LP). DATA PROFILE `pjm`. Model Fable.
+`docs/records/forecast/d78/keys_probe.{py,json}` (zero LP). DATA PROFILE `pjm`. Model Fable.
 **Date:** 2026-09-06. **Pushed before the first line of mechanism code and before any solve.**
 
 **NOTHING ARMS.** No new field, no default flip, no `_pjm_config` override (the D67-ARM lane owns
@@ -263,5 +263,5 @@ charter names; bundles deleted before merge.
 ## 10. Reproduction of §2 / §4 (committed instruments)
 
 ```
-uv run python docs/handoffs/d78/keys_probe.py      # -> keys_probe.json (zero LP)
+uv run python docs/records/forecast/d78/keys_probe.py      # -> keys_probe.json (zero LP)
 ```

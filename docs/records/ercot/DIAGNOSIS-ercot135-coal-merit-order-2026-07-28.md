@@ -9,7 +9,7 @@ is read on an already-accepted convention. Default
 `ScenarioConfig().cache_key()` verified `603c2498bf71d21d` at session start
 (after the §7 repair) and end. ·
 **Reproduction** `scripts/probes/ercot135_coal_merit_order.py` (committed with
-this document); artifact `results/calibration/ercot135_coal_merit_order.json`.
+this document); artifact `results/phase0/ercot/ercot135_coal_merit_order.json`.
 
 This is the successor lane `DIAGNOSIS-ercot134` §10 chartered: **the coal-vs-gas
 merit-order lane on the un-pinned fleet.** ERCOT-134 established the target —
@@ -226,7 +226,7 @@ be re-tuned around the estimate). With no ruling, no solve was run and no arm
 was built; Phase 1 is complete and stops here by design.
 
 The pre-registered Phase 2 A/B — written **before** any solve, per the charter —
-is `docs/PRECOMMIT-ercot135-coal-offer-width-2026-07-28.md`. §7 item 2 above is
+is `docs/records/ercot/PRECOMMIT-ercot135-coal-offer-width-2026-07-28.md`. §7 item 2 above is
 new input to the adoption decision.
 
 ## 9. Scope, closed items honoured

@@ -105,7 +105,7 @@
  },
  "records": [
   {
-   "path": "docs/handoffs/scn-ws1a/t0/base-run_config.json",
+   "path": "docs/records/forecast/scn-ws1a/t0/base-run_config.json",
    "iso": "CAISO",
    "lane": "forecast",
    "recorded": "706eec14f63096e8",
@@ -118,7 +118,7 @@
    "moves": false
   },
   {
-   "path": "docs/handoffs/scn-ws1a/t0/carbon_plus25-run_config.json",
+   "path": "docs/records/forecast/scn-ws1a/t0/carbon_plus25-run_config.json",
    "iso": "CAISO",
    "lane": "forecast",
    "recorded": "f129fd3720e3e874",

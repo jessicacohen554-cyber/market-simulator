@@ -6,7 +6,7 @@ ercot-206 B0 precedent for pre-registering even a read-only phase).** Keeper at
 fetch: **`2026-08-15-ercot204-rule26-delete`** (resolved fresh from
 `frontend/data/backcast/keepers/ERCOT.json`). X-3 signed by dispatch of
 RESERVE-BASIS-1; the signature text is appended to
-`docs/ASSESSMENT-ercot209-2023-scarcity-calibration-path-2026-08-15.md`
+`docs/records/ercot/ASSESSMENT-ercot209-2023-scarcity-calibration-path-2026-08-15.md`
 "RESOLUTIONS — CARD X" in this session.
 
 Phase-0 is READ-ONLY: no LP, no solve, no year scored, no run registered, no

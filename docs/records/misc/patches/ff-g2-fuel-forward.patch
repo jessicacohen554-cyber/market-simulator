@@ -74,7 +74,7 @@ index 0fdf758..db3f700 100644
 -# hand-typed "approximate interpolations from published AEO2025 charts and
 -# text" this TODO used to flag. Re-derive with
 -# scripts/data/derive_fuel_trajectories.py::derive_gas_trajectory and paste; see
--# docs/handoffs/aeo-verification-2026-07-11.md for the before/after diff.
+-# docs/records/misc/aeo-verification-2026-07-11.md for the before/after diff.
 -# AEO2026 was released April 8, 2026 and may carry updated trajectories —
 -# re-run scripts/data/fetch_eia_aeo.py --aeo-year 2026 when that vintage is wanted.
 +# VINTAGE: RE-DERIVED 2026-07-20 (FF-G2, CLAUDE.md rule 23) from AEO2026 Table

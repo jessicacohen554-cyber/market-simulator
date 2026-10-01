@@ -275,7 +275,7 @@ to give anything. It moves no pre-registered verdict.
 ## 6. Deliverables
 
 * `scripts/probes/_miso237_price_representation_vs_state_phase0.py` →
-  `results/calibration/_miso237_price_representation_vs_state_phase0.json`.
+  `results/phase0/miso/_miso237_price_representation_vs_state_phase0.json`.
 * `results/calibration/FINDING-miso237-*.md` carrying **every number this session will ever cite**.
 * Evidence appended to MISO's matrix shard + the §5.4 queue stamp (rule 25, rule 28(b) evidence form).
 * `docs/calibration-log/miso.md` entry.

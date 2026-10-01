@@ -15,7 +15,7 @@ exit-90 path. **PRECOMMIT §6 STOP 1 fired.**
 |---|---|
 | did `main` move during the leg? | **NO.** `git rev-list --count HEAD..origin/main` = **0** |
 | what moved, then? | **my own branch**: one commit, `8f81bf9c`, made *while the arm was solving* |
-| what was in it? | `docs/hindcast-reports/…-control-P-….md` and `docs/handoffs/d78r2/CORRECTION-1-….md` — **docs only** |
+| what was in it? | `docs/hindcast-reports/…-control-P-….md` and `docs/records/forecast/d78r2/CORRECTION-1-….md` — **docs only** |
 | did the solve code change? | **NO.** `git diff --stat 65e12b21 HEAD -- src/market_sim scripts/` is **EMPTY** across the whole window spanning BOTH legs |
 
 So the property the guard exists to certify — *the two legs share one solve-code

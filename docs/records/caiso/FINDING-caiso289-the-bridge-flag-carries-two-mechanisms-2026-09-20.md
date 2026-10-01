@@ -7,7 +7,7 @@ every question below is arithmetic over committed artifacts).
 re-registered by this session. **No solve-affecting line was changed.**
 
 Harness: `scripts/probes/caiso288_blackout_census.py` (extended in place, as the handoff
-directed, rather than writing a third probe) → `results/calibration/_caiso289_postrepair_audit.json`.
+directed, rather than writing a third probe) → `results/phase0/caiso/_caiso289_postrepair_audit.json`.
 
 ---
 

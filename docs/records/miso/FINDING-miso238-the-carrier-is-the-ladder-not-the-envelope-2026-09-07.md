@@ -15,7 +15,7 @@ numbers were computed**; §0 below states that against interest, first. Every de
 applied here was fixed in one of those two documents; none was written after seeing a number.
 
 Probe: `scripts/probes/_miso238_pjm_seam_channel_attribution_phase0.py` →
-`results/calibration/_miso238_pjm_seam_channel_attribution_phase0.json`.
+`results/phase0/miso/_miso238_pjm_seam_channel_attribution_phase0.json`.
 
 **Basis (PREREG §0b).** The Indiana-hub **RT** series builds the finite-hour `ok` mask
 (byte-identically to miso-236/237, so the hour set is the predecessors') **and** is the alignment

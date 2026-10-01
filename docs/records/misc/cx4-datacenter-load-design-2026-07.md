@@ -9,9 +9,9 @@
 > spec; the "zero DC symbols" verification note reflects the 2026-07-06 tree, not HEAD.
 
 **Status:** design only. No `src/` changes in this deliverable. This memo expands
-`docs/handoffs/capacity-economics-plan-2026-07.md` §4 (CX-4) into an implementation-ready
+`docs/records/misc/capacity-economics-plan-2026-07.md` §4 (CX-4) into an implementation-ready
 specification and reconciles it with the probability-bounds program's data-center axis
-(`docs/handoffs/probability-bounds-plan-2026-07.md` §1.1/§2.1). Implementation belongs to the
+(`docs/records/misc/probability-bounds-plan-2026-07.md` §1.1/§2.1). Implementation belongs to the
 capacity-economics lane (which owns `capacity.py`) and the demand pipeline in `runner.py`;
 it starts only after this memo is accepted.
 

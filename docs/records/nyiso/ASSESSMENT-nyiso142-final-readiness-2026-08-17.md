@@ -157,7 +157,7 @@ closes on its own with time, unlike §2.2.
 `scripts/probes/_nyiso142_final_prereq_audit.py` walks every input the keeper's
 armed recipe resolves, for both locked-test years, with **2023 as a control** —
 the column that proves the probe itself works rather than merely reporting
-absence. Raw output: `results/calibration/_nyiso142_prereq_audit.json`.
+absence. Raw output: `results/phase0/nyiso/_nyiso142_prereq_audit.json`.
 
 **Control 2023: 0 blocked or degraded of 18. 2019: 9. H1-2026: 10.**
 

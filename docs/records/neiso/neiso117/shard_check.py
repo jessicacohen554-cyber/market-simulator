@@ -1,6 +1,6 @@
 """neiso-117 shard self-check (zero LP): is this leg the NEISO keeper plus exactly the yard-row arm?
 
-Adapted from ``docs/handoffs/neiso114/shard_check.py``. Run by each neiso-117
+Adapted from ``docs/records/neiso/neiso114/shard_check.py``. Run by each neiso-117
 shard AFTER its solve and BEFORE it pushes (rule 32(c)(4)). The keeper is
 ``results/calibration/neiso114b_span`` (``2026-09-25-neiso114-arm-b-stgas``),
 which carries a ``run_config_<Y>.json`` for every year 2019-2025. Checks:
@@ -18,7 +18,7 @@ Exit 0 when every check passes, 1 otherwise; a failing shard does not push.
 
 Usage::
 
-    python docs/handoffs/neiso117/shard_check.py --leg results/calibration/neiso117_<Y> --year <Y>
+    python docs/records/neiso/neiso117/shard_check.py --leg results/calibration/neiso117_<Y> --year <Y>
 """
 
 from __future__ import annotations

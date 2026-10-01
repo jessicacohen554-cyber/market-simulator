@@ -286,6 +286,6 @@ consumed positions reproduce the market's own within 2 pts.
 
 `scripts/probes/_capxd49_ercot_ccs_reconstruction.py`,
 `scripts/probes/_capxd49_miso_exit_margin.py`, their JSON outputs under
-`results/calibration/`, `docs/handoffs/FINDING-capx-d49-2026-09-04.md`, and
+`results/calibration/`, `docs/records/forecast/FINDING-capx-d49-2026-09-04.md`, and
 evidence-citation appends to the ERCOT `ccs_retrofit_screen` cell and the
 MISO retirement cells in the matrix shards (no verdict letter moves).

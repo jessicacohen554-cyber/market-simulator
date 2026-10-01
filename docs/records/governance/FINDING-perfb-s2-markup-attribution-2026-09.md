@@ -73,7 +73,7 @@ flip.**
   half the year** — buys a bit-identical answer.
 
 Both are ranked, with their byte-identity arguments and their guards, in
-`docs/handoffs/perfb-session2-markup-charter-2026-09.md`.
+`docs/records/governance/perfb-session2-markup-charter-2026-09.md`.
 
 ---
 
@@ -292,7 +292,7 @@ P1 route: COLD REBUILD on a floored fleet — ...
 ```
 
 Twelve solves across three years — exactly the count
-`docs/FINDING-stage0-capture-neiso-ercot-2026-09.md` recorded as *"12 solves
+`docs/records/neiso/FINDING-stage0-capture-neiso-ercot-2026-09.md` recorded as *"12 solves
 (4 × 3 yr), all cold"* against NEISO's *"6 (P0 cold + P1 warm × 3 yr)"*, now
 explained. `_build` / `solve_p0_s` / `solve_p1_s` are read from pass 2 only, so
 pass 1's build and both of its HiGHS runs are the residual.
@@ -524,7 +524,7 @@ respectively.
 
 ## 6. X-4 — the import-time environment pins (taken)
 
-`docs/FINDING-fast-tier-repair-2026-09.md` §7.6 routed this as *"a small charter
+`docs/records/misc/FINDING-fast-tier-repair-2026-09.md` §7.6 routed this as *"a small charter
 question, not a repair this lane needed"*. Taken here.
 
 **What it was.** `scripts/capture_keeper_goldens.py` applied `DETERMINISM_ENV`
@@ -629,7 +629,7 @@ interest here rather than asserted: this branch's entire diff vs `8a18e9e1` is
 eleven files, **none** of them the artifact or the test —
 
 ```
-docs/handoffs/perf-recheck-2026-08.md      src/market_sim/pipeline/__init__.py
+docs/records/governance/perf-recheck-2026-08.md      src/market_sim/pipeline/__init__.py
 scripts/capture_keeper_goldens.py          src/market_sim/pipeline/solve.py
 scripts/replay_keeper.py                   src/market_sim/pipeline/timing.py
 scripts/run_calibration.py                 src/market_sim/runner.py
@@ -663,7 +663,7 @@ sha and date — is the cheap general remedy and is recommended for the next doc
 lane rather than another round of digit-chasing.
 
 **Two more drifted citations found and NOT edited.**
-`docs/handoffs/perf-a-warmstart-decision-memo-2026-08.md` cites
+`docs/records/governance/perf-a-warmstart-decision-memo-2026-08.md` cites
 `scenarios.py:11646` (twice) and `:11644` for the same field and its guard
 comment; both are stale by the same drift. That memo is an **owner-signed**
 artifact, so this lane reports rather than amends it. The correct current
@@ -701,7 +701,7 @@ listed in §7.2.
 
 * **No speed-up was delivered.** This lane measured and did not optimize, as
   chartered. The candidates and their ranking are in
-  `docs/handoffs/perfb-session2-markup-charter-2026-09.md`.
+  `docs/records/governance/perfb-session2-markup-charter-2026-09.md`.
 * **The `markup` numbers are this host's**, single-threaded HiGHS on a 15 GB
   box, and the audit board has separately measured cross-run walls varying up to
   ±35 % here. The **composition** is the result; the absolute seconds are not a

@@ -62,7 +62,7 @@ Measured cost of the corpus, for whoever picks the G-26 lane up later:
 channel (`replay_keeper.py --offer-curve-json`, which resolves at
 `pipeline/backcast_config.py:2523` — *after* every per-ISO and measured-surface
 merge, so the cut is not silently overwritten). The resolved absolute values are
-committed verbatim at `results/calibration/_caiso267_fossil92_offer_curve.json`
+committed verbatim at `results/phase0/caiso/_caiso267_fossil92_offer_curve.json`
 and reproduced in §D.
 
 The carve-out is **narrow and conditioned**; every condition binds:
@@ -143,7 +143,7 @@ The §D table as first written named **13** classes / 52 bands. The
 router does not read them at all** (it reads exactly `CC_CHP`, `CC_REGULAR`,
 `COAL`, `COAL_BIT`, `COAL_LIGNITE`, `COAL_PRB`, `COAL_WC`, `CT_CHP`,
 `CT_PEAKER`, `ST_CHP`, `ST_GAS`). The declaration is therefore corrected to
-**10 classes / 40 bands**, and `results/calibration/_caiso267_fossil92_offer_curve.json`
+**10 classes / 40 bands**, and `results/phase0/caiso/_caiso267_fossil92_offer_curve.json`
 regenerated to match. **This is a no-op in substance**: all three dropped
 classes carry **zero** CAISO energy in all three years (`cc_intermediate_split`
 and `ct_intermediate_split` are both `false`), which §D already recorded before

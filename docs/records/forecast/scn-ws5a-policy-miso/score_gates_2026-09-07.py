@@ -16,7 +16,7 @@ state family -> FEDERAL_CES -> VOLUNTARY, each appended last):
 ``[MN, MI]`` always, ``+ [FEDERAL_CES]`` when a CES target row is armed,
 ``+ [VOLUNTARY]`` when the voluntary row is armed.
 
-Run:  PYTHONPATH=. python3 docs/handoffs/scn-ws5a-policy-miso/score_gates_2026-09-07.py
+Run:  PYTHONPATH=. python3 docs/records/forecast/scn-ws5a-policy-miso/score_gates_2026-09-07.py
 """
 
 from __future__ import annotations

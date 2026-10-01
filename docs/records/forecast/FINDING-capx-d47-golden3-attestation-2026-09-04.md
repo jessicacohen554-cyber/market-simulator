@@ -41,7 +41,7 @@ pre-declared attestation to the director instead. This lane executes that.
 
 | evidence | value |
 |---|---|
-| pre-declaration committed **and pushed** | `71dd390e`, `docs/handoffs/PREDECL-capx-d47-golden3-attestation-2026-09-04.md` |
+| pre-declaration committed **and pushed** | `71dd390e`, `docs/records/forecast/PREDECL-capx-d47-golden3-attestation-2026-09-04.md` |
 | `forecast_attestation.json` authored | **after** that push |
 | the re-scored record's own `provenance.scored_at_sha` | **`71dd390ed56f`** |
 
@@ -286,7 +286,7 @@ five-item D47 dispatch's items 1–4 landed in PR #4691 (`bd4ba21d`) and are **v
 place at HEAD, not re-done**: `neiso-t3` reads FC-7 `PASS` / `HOLD` / session `capx-D47`,
 prior preserved at `neiso-t3-pre-d47` reading FC-7 `FAIL` / session `capx-D46`. Item 5 —
 the `c_cost` fields — was not covered by that PR and is closed here. Pre-declared before
-any field was edited: `docs/handoffs/PREDECL-capx-d47b-ccost-2026-09-04.md`, commit
+any field was edited: `docs/records/forecast/PREDECL-capx-d47b-ccost-2026-09-04.md`, commit
 `fb80a6e3`. **Zero solves.**
 
 ## 8. The `c_cost` correction — and why the dispatch's own numbers could not be used
@@ -300,7 +300,7 @@ wrong number on the board, in the dangerous direction.**
 
 | | span | source |
 |---|---|---|
-| the `c_cost` fields | **25 solve-years** (2026–2050, full horizon) | FF-3E projection table, `docs/handoffs/ff-poc-closeout-2026-07.md` §6 |
+| the `c_cost` fields | **25 solve-years** (2026–2050, full horizon) | FF-3E projection table, `docs/records/forecast/ff-poc-closeout-2026-07.md` §6 |
 | D46's measured t1f legs | **5 solve-years** (2026–2030) | `results/ff-t1f-d46/<iso>/full_horizon_summary.json`, `solved_years [2026…2030]` |
 
 D46 §2's headline — *"All three t1f estimates the board carries are wildly conservative —

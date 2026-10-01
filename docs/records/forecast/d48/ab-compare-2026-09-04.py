@@ -1,7 +1,7 @@
 """capx D48 Phase-1 instrument: the A/B comparison of the devintage arm against
 its control, read entirely off the two committed bundles (zero solves).
 
-    uv run python docs/handoffs/d48/ab-compare-2026-09-04.py <control_run_dir> <arm_run_dir>
+    uv run python docs/records/forecast/d48/ab-compare-2026-09-04.py <control_run_dir> <arm_run_dir>
 
 Reads, per bundle: ``meta.json`` (key, wall), ``run_config.json`` (the two
 gate fields), the per-year ``evolution_<year>.json`` ledgers (the D45

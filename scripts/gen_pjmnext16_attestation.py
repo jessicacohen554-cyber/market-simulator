@@ -25,7 +25,7 @@ PINNED_BY_ARM = {
     "A": "6d4c77491e469e06f3a9c0e3d4f2b7c37b15fba3",
     "B": "42e87bcde2621cdd171b94b8076dac6108fa2771",
 }
-PRECOMMIT = "docs/PRECOMMIT-pjm-next-16-2026-09-30.md"
+PRECOMMIT = "docs/records/pjm/PRECOMMIT-pjm-next-16-2026-09-30.md"
 OVEC = (
     "ISO_BA_JOINS['PJM'] = {'OVEC': (2019, 1)} (Clifty Creek 983, Kyger Creek 2876; "
     "EIA-860 vintages 2018-2020 code them OVEC although they sit inside PJM's BA); "

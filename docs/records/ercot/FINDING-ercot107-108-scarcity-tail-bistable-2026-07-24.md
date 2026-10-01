@@ -107,7 +107,7 @@ family*** — see §6 for the lane that remains open.
 
 Per rule 1/11 no residual-motivated variant is attempted, and per rule 13 no measured
 *outcome* is fed back. Closure is the honest governance route: the C6 attestation in
-`docs/handoffs/ercot-101-governance-attestation-draft-2026-07.md` →
+`docs/records/ercot/ercot-101-governance-attestation-draft-2026-07.md` →
 CALIBRATED-WITH-CAVEATS, **owner sign-off required**.
 
 Note that the rule-26 concern flagged in the charter (turning `ercot_ordc_total_reserve`
@@ -208,7 +208,7 @@ must not degrade), then full-span + LOYO (rule 24) before any promotion.
 
 Probe `scripts/probes/ercot109_scarcity_mix.py` (no LP; keeper hourlies + committed
 zonal actuals + EIA-930 `ERCO hourly`). Visual companion:
-`results/calibration/ercot109-scarcity-mix-julsep-2023.html`
+`results/phase0/ercot/ercot109-scarcity-mix-julsep-2023.html`
 (published artifact: <https://claude.ai/code/artifact/5b067fa6-eed9-4f4c-9712-fd2d4b931d3e>).
 
 **122 true scarcity hours** in Jul–Sep 2023 (actual load-weighted zonal ≥ $300 — hours

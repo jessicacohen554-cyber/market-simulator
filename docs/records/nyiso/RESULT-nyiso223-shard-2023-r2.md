@@ -2,7 +2,7 @@
 
 **Arm:** `nyiso_hub_gap_month_level=true` replayed over keeper `nyiso_fuelvintage_A`.
 **Bundle:** `results/calibration/nyiso223_gapfill_2023/` (gitignored, local disk only — rule 31 `[R-RETAIN]`: **not deleted**).
-**Supersedes:** `docs/RESULT-nyiso223-shard-2023.md` on branch `claude/nyiso223-y2023`, which is the
+**Supersedes:** `docs/records/nyiso/RESULT-nyiso223-shard-2023.md` on branch `claude/nyiso223-y2023`, which is the
 first 2023 shard's **STOPPED** report (blocked on an unbuilt `data/clean` tree, no solve artifact).
 This relaunch carries the solve. Both docs are kept — that one records the blocker, this one the result.
 

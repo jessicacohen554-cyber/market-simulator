@@ -1,5 +1,5 @@
 {
-  "precommit": "docs/PRECOMMIT-nyiso244-measured-offer-surface-design-2026-09-20.md",
+  "precommit": "docs/records/nyiso/PRECOMMIT-nyiso244-measured-offer-surface-design-2026-09-20.md",
   "precommit_sha": "2e5097a5",
   "bundle": "results/calibration/nyiso241_ctcommitted_span",
   "G1_rule19": {

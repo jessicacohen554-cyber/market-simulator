@@ -3,10 +3,10 @@
 Keeper `2026-09-26-pjm-next-4-midcurve2019` (bundle `results/calibration/pjmnext4_c1_span`). **Zero LP.** Fleet-only
 rebuilds of the keeper recipe through `replay_keeper.run_year_kwargs` (`pjm_da_virtual_bids` off: demand-side, inert
 for fleet, fuel and offers). None of the three cards reaches a solve. Card 3(a), the F2 re-derive, is the session's
-solve: `docs/PRECOMMIT-pjm-next-5-card3a-f2-rederive-2026-09-27.md`.
+solve: `docs/records/pjm/PRECOMMIT-pjm-next-5-card3a-f2-rederive-2026-09-27.md`.
 
 Probes: `scripts/probes/pjm_next5_card1_cc_phase0.py`, `pjm_next5_card1_rows.py`,
-`pjm_next5_card3b_retiree_cap_phase0.py`. Artifacts: `results/calibration/_pjm_next5_card1_cc_phase0.json`,
+`pjm_next5_card3b_retiree_cap_phase0.py`. Artifacts: `results/phase0/pjm/_pjm_next5_card1_cc_phase0.json`,
 `_pjm_next5_card1_rows_{2019,2024}.parquet`, `_pjm_next5_card3b_*.json`.
 
 ## Card 1 — the model's CC econ bid against PJM's own CC offers

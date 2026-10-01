@@ -1,6 +1,6 @@
 # PRECOMMIT — hydro-2: PJM `hydro_ror_split`, full year set (2026-09-22)
 
-Continues `docs/RESULT-hydro-1-2026-09-22.md` (§A). Written and pushed **before** any solve;
+Continues `docs/records/misc/RESULT-hydro-1-2026-09-22.md` (§A). Written and pushed **before** any solve;
 the shards are pinned to this commit's SHA.
 
 ## 1. What this lane does

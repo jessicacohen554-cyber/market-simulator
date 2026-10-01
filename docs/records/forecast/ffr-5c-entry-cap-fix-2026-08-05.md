@@ -263,7 +263,7 @@ session will read rather than in a document it might not.
   engineering judgment** (FFR-4A E-4). The armed arm makes them **bind
   harder** — under the netting the effective ceiling was `C/L`, and armed it is
   `C` — so the standing rule-11 follow-up
-  (`docs/handoffs/queue-cap-citation-2026-07.md`) is more load-bearing after
+  (`docs/records/misc/queue-cap-citation-2026-07.md`) is more load-bearing after
   this change than before it. Flagging, not widening scope.
 * **Pre-existing red not caused by this lane, left for its owner:**
   `scripts/check_cache_key_registration.py` passes, but `ruff` reports **F601**

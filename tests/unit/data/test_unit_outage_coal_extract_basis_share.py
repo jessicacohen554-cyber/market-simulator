@@ -6,7 +6,7 @@ bins only) to the COAL bins. The defect it repairs was measured on the SPP keepe
 Holcomb 108 is a SINGLE-unit coal plant whose extract row carries 348.7 MW
 against a 358.9 MW fleet bin, so every full stop left 2.6-2.9 % of the plant
 available and the ``coal_mustrun`` floor survived on that residual
-(``docs/handoffs/FINDING-spp-86-coal-floor-conduct-2026-09-26.md``).
+(``docs/records/spp/FINDING-spp-86-coal-floor-conduct-2026-09-26.md``).
 
 Every property is asserted on a SYNTHETIC extract/fleet:
 

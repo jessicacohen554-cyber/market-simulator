@@ -221,7 +221,7 @@ every registered year, and it is reported rather than silently absorbed.
   `2026-09-09-neiso-108-fuelvintage` is untouched. The repaired input is screened under rule 29
   `[R-SCREEN]` on ONE year chosen by FOOTPRINT
   (`scripts/probes/_neiso109_gas_repair_footprint.py`), never by residual —
-  `docs/PRECOMMIT-neiso109-gas-repair-screen-2026-09-16.md`.
+  `docs/records/neiso/PRECOMMIT-neiso109-gas-repair-screen-2026-09-16.md`.
 * **It moves no mechanism cell** (rule 28 `[R-MECH-MATRIX]` (b)): no `ScenarioConfig` field was
   added or changed, so there is no cell to update.
 * **Rule 25 `[R-ISO-SCOPE]`:** every changed byte is in NEISO's own AGT file. The shared

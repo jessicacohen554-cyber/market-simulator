@@ -3,7 +3,7 @@
 **Session** nyiso-242 (ORCHESTRATOR — rule 32 `[R-SHARD]` (a); **zero LP in this container, no shard launched**).
 **Date** 2026-09-20. **Owner instruction** (this session, verbatim): *"1 and 3"* — charter the identification intake, and measure `cc_winter_capability_basis`.
 **Keeper** `2026-09-19-nyiso241-ct-committed-measured`, **UNCHANGED. Nothing armed, nothing registered, no `ScenarioConfig` field moves.**
-**Predecessor** `docs/FINDING-nyiso242-the-2022-tail-is-not-reachable-from-price-formation-2026-09-20.md`.
+**Predecessor** `docs/records/nyiso/FINDING-nyiso242-the-2022-tail-is-not-reachable-from-price-formation-2026-09-20.md`.
 
 > ## HEADLINE
 > 1. **ITEM 3 — `cc_winter_capability_basis` `U` → `G`, refused ex ante on TWO independent legs,

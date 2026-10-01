@@ -11,7 +11,7 @@ confirmed-retirement cross-reference.
 
 **Nothing in the solve path consumes this yet.** FF-G5 shipped the registry as a
 grounded DATA input plus a design memo for the forward channel
-(``docs/handoffs/ff-g5-nuclear-registry-2026-07.md``); wiring a mechanism that
+(``docs/records/forecast/ff-g5-nuclear-registry-2026-07.md``); wiring a mechanism that
 consumes these objects (folding no-SLR-pathway license expiries into the
 confirmed-exit channel, restarts into the planned-additions channel, uprates as a
 capacity uprate) is a separately-chartered implementing session. This stub exists

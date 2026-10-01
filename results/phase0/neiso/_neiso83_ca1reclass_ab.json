@@ -393,7 +393,7 @@
   "reported_not_a_gate": true,
   "root_cause_named_not_fixed": "campd-unit-outages-NEISO.csv carries plant 6081's DIESEL peakers (CAMPD units 004/005 = EIA-860 generators 1 and 2) with plant_group=CC_REGULAR, because `oil` carries no plant_group and the overlay cannot represent an oil unit's outage. In 2024 and 2025 those two units are the ONLY source of 6081 outage rows while the CC block's own units 001/002/003 have none \u2014 so a fully-available CC block is derated to 29.5 % / 19.4 %. Pre-existing, ISO-agnostic, needs a fleet-taxonomy change with six-ISO blast radius. NAMED as an open root-cause issue (rule 21), NOT fixed here (rules 19, 25)."
  },
- "prereg": "results/calibration/PREREG-neiso83-stonybrook-ca1-2026-08-05.md",
+ "prereg": "docs/records/neiso/PREREG-neiso83-stonybrook-ca1-2026-08-05.md",
  "reported_context": {
   "c1_per_class_vs_bench": {
    "2023": {

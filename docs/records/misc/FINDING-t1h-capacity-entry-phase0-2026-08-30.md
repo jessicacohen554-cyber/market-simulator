@@ -1,10 +1,10 @@
 # FINDING — T1-H capacity-entry Phase-0: the STORAGE leg (D-2 + D-3) censused and replayed, the WIND leg (D-8/B-3) measured
 
 _2026-08-30 · T1-H capacity-entry repair lane, **Phase-0** · charter
-`docs/PRECOMMIT-t1h-capacity-entry-2026-08-30.md` (owner ruling 2026-08-30,
+`docs/records/misc/PRECOMMIT-t1h-capacity-entry-2026-08-30.md` (owner ruling 2026-08-30,
 director sitting, decision card 2) · parent defect register
-`docs/FINDING-entry-screen-t1h-2026-08.md` (D-1 … D-9) · dedup subject
-`docs/handoffs/FINDING-capx-d11r-entry-volume-rule-2026-08-30.md`._
+`docs/records/misc/FINDING-entry-screen-t1h-2026-08.md` (D-1 … D-9) · dedup subject
+`docs/records/forecast/FINDING-capx-d11r-entry-volume-rule-2026-08-30.md`._
 
 **ZERO SOLVE.** No LP solve, no hindcast re-run, no mechanism / default /
 constant / `ScenarioConfig` change, no matrix cell moved, no keeper, marker,
@@ -215,7 +215,7 @@ fixed** — it is evidence for the D-2 gate's *shape*, not a separate lever.
 ## 3. Step 2 — D-3 replay: the ranking object, and the counterfactual mix
 
 Inputs: the committed entering-2023 margins from
-`results/calibration/entry_screen_t1h_phase0_ercot.json` (which the parent
+`results/phase0/ercot/entry_screen_t1h_phase0_ercot.json` (which the parent
 finding §2 established reproduce the registered ledger exactly, and which the
 L-1 probe re-verified tech-by-tech, `validation.storage_vs_phase0.all_match =
 true`). Capital costs: `config/capacity_market.py::STORAGE_TECHS[*]["capex_per_kw"]`,
@@ -299,7 +299,7 @@ is the class carrying **5,142.0 MW of the measured 2023–2025 ERCOT vintage at
 ≤1.5 h and 6,564.3 MW at 1.5–2.5 h**, i.e. the short-duration end.
 
 **One correction to the parent finding, recorded so it is not propagated.**
-`docs/FINDING-entry-screen-t1h-2026-08.md` §2 item 3 and §7 L-3 state that a
+`docs/records/misc/FINDING-entry-screen-t1h-2026-08.md` §2 item 3 and §7 L-3 state that a
 li-ion-restricted pool yields "`li_ion_8hr` 3,000 + `li_ion_4hr` 2,000". That
 is **correct only for the `{4hr, 8hr}` pool** — reproduced here exactly. On the
 full `{4hr, 8hr, 12hr}` li-ion pool the absolute metric yields **`li_ion_12hr`
@@ -365,7 +365,7 @@ and 2 held exactly). This finding inherits that bound and does not re-litigate i
 
 Wind capture ratio (capture price ÷ the construction's system mean) under three
 constructions, per decision step, from
-`results/calibration/entry_signal_l1_dual_replay_ercot.json`:
+`results/phase0/ercot/entry_signal_l1_dual_replay_ercot.json`:
 
 | step | shipped (zone-flat) | dual, system row | dual, **build-zone row** | **level leg** | **zonal leg** | zonal share of the repair |
 |---|--:|--:|--:|--:|--:|--:|

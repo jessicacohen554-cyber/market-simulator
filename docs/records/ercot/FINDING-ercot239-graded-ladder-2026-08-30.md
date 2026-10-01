@@ -1,14 +1,14 @@
 # FINDING — ercot-239 round 2 (2026-08-30): the August steepness object is ADJUDICATED BY A/B — the measured graded peak_ladder is structurally clean (ALL five kills PASS; the lidless spur COLLAPSES 74 → 11) and CANNOT carry the 2023 fit (officials collapse to the pre-k33 state: C3a −40.0 %, C3b 0.736, C3c 70/181): the crushed [500,1000) transition and the spur cost are the SAME lever's two faces, and the carve-out's August level REQUIRES the full peak band at the wall — 5× more capacity than the measured DAM dispersion posts there. REGISTERED + ESCALATED under outcome rule 3; keeper untouched
 
 **Session ercot-239, branch `claude/ercot-239-residual-queue-lbkvbf`.**
-Precommit `docs/PRECOMMIT-ercot239-graded-ladder-2026-08-30.md` pushed +
+Precommit `docs/records/ercot/PRECOMMIT-ercot239-graded-ladder-2026-08-30.md` pushed +
 blob-verified (6bdba198) before any measurement; Amendment 1 (G-A(iv)
 proxy re-based to the measured invariant) recorded and pushed before any
 Stage-B solve. Stage-A census:
 `scripts/probes/ercot239_gradedladder_phase0.py` →
-`results/calibration/ercot239_gradedladder_phase0.json`. Stage-B A/B:
+`results/phase0/ercot/ercot239_gradedladder_phase0.json`. Stage-B A/B:
 `scripts/probes/ercot239_gradedladder_ab.py` →
-`results/calibration/ercot239_gradedladder_ab.json`; armed run REGISTERED
+`results/phase0/ercot/ercot239_gradedladder_ab.json`; armed run REGISTERED
 `2026-08-30-239-graded-ladder` (NOT-YET; sidecar marked REJECTED PROBE —
 escalated). Environment: the keeper's recorded solve env reproduced
 exactly (highspy 1.15.1 / pandas 3.0.5 / pyarrow 25.0.1 — the ercot-212

@@ -115,7 +115,7 @@ coverage (pjm-120 §3).
 
 ## Reproduction
 
-Environment + bundle: `docs/FINDING-pjm121-ccbelt-c3a-close-2026-07.md`
+Environment + bundle: `docs/records/pjm/FINDING-pjm121-ccbelt-c3a-close-2026-07.md`
 (landing recipe; the bundle re-solve reproduces the scored run to the cent —
 2025 model_lw 41.53 / actual 46.07 / gap −4.54). This finding's measurements:
 `pjm121_marginal_decomp.py <bundle> --year 2025` (§1) and the §2/§3 ceiling

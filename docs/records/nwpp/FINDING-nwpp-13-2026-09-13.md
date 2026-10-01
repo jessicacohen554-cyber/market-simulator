@@ -2,7 +2,7 @@
 
 **Lane** NWPP-13 · **Model** Fable (`claude-fable-5-1`) · **Date** 2026-09-13 ·
 **Branch** `claude/nwpp-13-weim-price-index-3pp1a8` · **Base** `4d9c3251` · **Data profile** `shared` ·
-**PRECOMMIT** `docs/handoffs/PRECOMMIT-nwpp-13-2026-09-13.md` (pushed at `715fff9d` before any value was
+**PRECOMMIT** `docs/records/nwpp/PRECOMMIT-nwpp-13-2026-09-13.md` (pushed at `715fff9d` before any value was
 read) · **Ruling** card N2, both limbs · **Raw store** `data/raw/nwpp-weim/` (README, SOURCES, SHA256SUMS,
 `gate.json`, `d2_tie_reconciliation.json`) · **Builder** `scripts/data/build_nwpp_weim_price_index.py`.
 
@@ -215,7 +215,7 @@ Rules 1 / 13 / 14 / 23 / 25 / 27 / §8.0 as the PRECOMMIT §9 states them, each 
 every input a regenerable market quantity; the accurate series kept as what it is; the builder re-runs only
 on source change; nothing CAISO-priced entered (the `CASP` and `TH_*` nodes were never read into an
 artifact); every pushed file ≥ 300 lines fetch-back verified by hash and line count; no shared record
-edited. **Files touched:** `docs/handoffs/PRECOMMIT-nwpp-13-2026-09-13.md`, this FINDING,
+edited. **Files touched:** `docs/records/nwpp/PRECOMMIT-nwpp-13-2026-09-13.md`, this FINDING,
 `scripts/data/build_nwpp_weim_price_index.py`, `data/raw/nwpp-weim/**` (with its own `.gitignore` for
 `_pulls/`). Nothing under `src/`, `tests/`, any other `_validation-source` file, the plan, the ledger,
 `nwpp.md`, or any `soco*` file.

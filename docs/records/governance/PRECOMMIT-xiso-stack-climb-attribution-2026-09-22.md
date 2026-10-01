@@ -28,7 +28,7 @@ as the reason an offer-curve lever was **refused at zero LP**:
   thermal (26 / 20 / 15 %, 2023/24/25) while clearing $39.2 / $54.9 / $112.6 against $123.1 /
   $169.8 / $317.6. CC_REGULAR is 93.6–95.6 % loaded and coal 82.5–98.5 %, but CT_PEAKER runs at
   36.5 / 52.4 / 65.8 %. CC_REGULAR's `peak` band dispatches **0.000 MW in all 26 280 hours**.
-- **SPP** (`docs/handoffs/RESULT-spp-70-thermal-stack-extent-2026-09-21.md` §0/§4) — "12–20 % of
+- **SPP** (`docs/records/spp/RESULT-spp-70-thermal-stack-extent-2026-09-21.md` §0/§4) — "12–20 % of
   thermal capacity sits ABOVE the clearing price even in the top-10 load hours. The LP never
   reaches the top of the stack it already has." 2020: price tops at $36.21 against a most-expensive
   available row offering $68.36, 5.51 GW idle above the clearing price.

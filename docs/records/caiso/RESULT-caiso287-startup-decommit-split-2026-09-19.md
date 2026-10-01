@@ -2,7 +2,7 @@
 
 **Lane:** CAISO calibration · **Date:** 2026-09-19 · **Keeper UNCHANGED at the time of
 writing** `2026-09-12-caiso-275-gascoupling` (the owner-ruled MER promotion is §7).
-Pre-registration: `docs/PRECOMMIT-caiso287-startup-decommit-split-2026-09-19.md`, pushed at
+Pre-registration: `docs/records/caiso/PRECOMMIT-caiso287-startup-decommit-split-2026-09-19.md`, pushed at
 `92b8e4dbf6017a8571026c3f58fb20914e590875` **before** any shard was launched. Every metric, gate,
 cut and verdict word below was fixed there.
 

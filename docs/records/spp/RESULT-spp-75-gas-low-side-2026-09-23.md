@@ -1,10 +1,10 @@
 # RESULT — SPP-75: the gas half of the low side (who runs gas when SPP RT < 0, and why)
 
 **Zero LP. No shard, no solve, no bundle, no `ScenarioConfig` field, keeper untouched.**
-Pre-registration: `docs/handoffs/PRECOMMIT-spp-75-gas-low-side-2026-09-23.md`, pushed at `ecfbda5a`
+Pre-registration: `docs/records/spp/PRECOMMIT-spp-75-gas-low-side-2026-09-23.md`, pushed at `ecfbda5a`
 before any attribution number was read. Base `efb7ec3d`. Probes: `scripts/probes/_spp75_gas_low_side.py`
 (part A), `_spp75_fleet_membership.py` (part B, `fleet_only` rebuild, one interpreter per year),
-`_spp75_chp_floor_delta.py` (part C). Outputs: `results/calibration/_spp75_gas_low_side.json`,
+`_spp75_chp_floor_delta.py` (part C). Outputs: `results/phase0/spp/_spp75_gas_low_side.json`,
 `_spp75_chp_floor_delta.json`.
 
 ---

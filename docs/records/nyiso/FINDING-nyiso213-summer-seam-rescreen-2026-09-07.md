@@ -4,9 +4,9 @@
 `claude/nyiso-backcast-calibration-b6er34`, on `main` at `5930e533`. **Date:** 2026-09-07.
 **Keeper:** `2026-09-06-nyiso-202-startup-aware` — CALIBRATED, grade 7/8, fails 0, C3c the lone
 ledgered caveat.
-**Pre-registration:** `results/calibration/PREREG-nyiso213-summer-seam-rescreen.md`, committed and
+**Pre-registration:** `docs/records/nyiso/PREREG-nyiso213-summer-seam-rescreen.md`, committed and
 pushed at `1ff08f04`-lineage **before the screen solve was launched** and not edited since.
-**Machine record:** `results/calibration/_nyiso213_screen_gates_2025.json` (every number below).
+**Machine record:** `results/phase0/nyiso/_nyiso213_screen_gates_2025.json` (every number below).
 **Scorer:** `scripts/probes/nyiso213_screen_gates.py`.
 
 **THERE ARE NO IN-SAMPLE RUBRIC FAILURES TO FIX.** NYISO's keeper reads CALIBRATED with **zero

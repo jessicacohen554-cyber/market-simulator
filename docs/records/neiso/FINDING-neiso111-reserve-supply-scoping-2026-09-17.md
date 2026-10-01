@@ -5,8 +5,8 @@
 (`results/calibration/neiso110_dualfuel_span`, years 2020-2025, CALIBRATED with a single
 ledgered C3c caveat) — verified from `frontend/data/backcast/registry/` and
 `frontend/data/backcast/keepers/NEISO.json` at HEAD `73281357`.
-**Predecessors:** `docs/FINDING-neiso110-winter-oil-driver-2026-09-16.md`,
-`docs/RESULT-neiso110-coldsnap-dualfuel-screen-2026-09-16.md`.
+**Predecessors:** `docs/records/neiso/FINDING-neiso110-winter-oil-driver-2026-09-16.md`,
+`docs/records/neiso/RESULT-neiso110-coldsnap-dualfuel-screen-2026-09-16.md`.
 
 ---
 

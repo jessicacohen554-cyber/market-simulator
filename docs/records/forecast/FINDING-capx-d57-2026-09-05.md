@@ -3,8 +3,8 @@
 **Lane:** capx D57 (director r#36), the BUILD lane for `DESIGN-capx-d54-pjm-clearing-half-2026-09-05.md`.
 Branch `claude/capx-d57-pjm-clearing-build-gsdypm`; pre-declared in
 `PREDECL-capx-d57-2026-09-05.md` (pushed before any solve; the D54 pre-declaration stands beneath
-it). Instruments and outputs: `docs/handoffs/d57/phase0-reproduction-2026-09-05.{py,json,txt}`
-(Phase 0) and `docs/handoffs/d57/ab-compare-2026-09-05.{py,json}` + `-stdout-2026-09-05.txt`
+it). Instruments and outputs: `docs/records/forecast/d57/phase0-reproduction-2026-09-05.{py,json,txt}`
+(Phase 0) and `docs/records/forecast/d57/ab-compare-2026-09-05.{py,json}` + `-stdout-2026-09-05.txt`
 (the A/B, zero solves after the two arms). **Nothing arms.** Records: §7.
 
 **DATA PROFILE: pjm** (full clone; `data/clean` regenerated in full — 55 datatypes, the one OOM
@@ -54,7 +54,7 @@ recommendation §8: the rule-1 case for the JOINT flip is made and the cost is s
 
 ## 2. Phase 0 — the instrument reproduced in code (I5; STOP 1 clear)
 
-`docs/handoffs/d57/phase0-reproduction-2026-09-05.{py,json,txt}`: the code's
+`docs/records/forecast/d57/phase0-reproduction-2026-09-05.{py,json,txt}`: the code's
 `clear_capacity_supply_stack` + `capacity_supply_curve` (the registry vintage curves through the
 SAME `MarketDesign.capacity_price_per_firm_mw_yr` seam the solve prices) on the D54 instrument's
 stack off the committed `pjm-t1h` and `pjm-t1h-d48-devintage` ledgers, both bases, four delivery

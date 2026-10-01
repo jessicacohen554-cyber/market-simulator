@@ -452,7 +452,7 @@ dated deadline two waves out.
 | `src/market_sim/results/cache.py` | the cache-epoch ledger + the two-surface policy statement (§2) |
 | `.github/workflows/ci.yml` | `forecast-parity-guard` job (§4) |
 | `docs/forecast-readiness-prompt-pack-2026-07.md` | new §0c close report (beside the parallel manager session's §0b, which it discharges rather than replaces), the header pointer, the W1/WFH wave-map gate cells, and §W1-X marked discharged item by item |
-| `docs/handoffs/ffr-w1x-wave1-close-2026-08-02.md` | this doc |
+| `docs/records/forecast/ffr-w1x-wave1-close-2026-08-02.md` | this doc |
 
 ## 8. What this session did NOT do
 

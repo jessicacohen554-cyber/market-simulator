@@ -10,7 +10,7 @@ no run was produced, so there is nothing to register. Rule 22 `[R-HOLDOUT]`:
 files present in `data/raw/lmp-data/MISO/` were **not read**.
 
 **Probe** `scripts/probes/_miso130_c7_night_regime.py`;
-**record** `results/calibration/_miso130_c7_night_regime.json`.
+**record** `results/phase0/miso/_miso130_c7_night_regime.json`.
 **No pre-registration was committed before these numbers were read, so every
 measurement below is DESCRIPTIVE — nothing here adjudicates a lever, flips a
 matrix cell, or licenses a mechanism.** A future lever screen on any object
@@ -53,7 +53,7 @@ h18 2025: model 53.6 vs actual 133.6 (−$80.0).
   offline record jumps ~+12.3 GW at peak hours while the model's derate moves
   +1.8 GW, and no source resolves MISO outages at unit/fuel grain
   (miso-89/90's owner-ledgered gap; the data ask
-  `docs/handoffs/miso-outage-grain-data-ask-2026-07.md` remains open).
+  `docs/records/miso/miso-outage-grain-data-ask-2026-07.md` remains open).
 * **The miss is two-sided**: every July the model is +$7.0–8.7 HIGH overnight
   and low at the peaks — the diurnal price wave is compressed 3–5× (2025:
   20.2 vs 109.3 $/MWh). The overnight-high half is the C7 connection (§3);
@@ -238,4 +238,4 @@ uv run python scripts/probes/_miso130_c7_night_regime.py
 
 No LP, no network; reads the keeper bundle, the bench, the payload, the F923
 monthly-cost parquet, and the 2023–2025 MISO hub LMP files; writes
-`results/calibration/_miso130_c7_night_regime.json`.
+`results/phase0/miso/_miso130_c7_night_regime.json`.

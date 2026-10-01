@@ -4,7 +4,7 @@
 original artifact.** Each carries a top-level `reconstruction` block stating
 its status, method, evidence chain, verification, and what remains
 unverified. Produced by lane capx-D8 (2026-08-30);  full method and per-leg
-evidence: `docs/handoffs/FINDING-capx-d8-dof-ledger-2026-08-30.md` §4.
+evidence: `docs/records/forecast/FINDING-capx-d8-dof-ledger-2026-08-30.md` §4.
 
 ## Why this directory exists
 

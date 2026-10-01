@@ -23,10 +23,10 @@ Also reported, per year: the CAMPD idle-gap population of the eligible plants
 (gaps between plant runs that are < the plant's class min-down, and <= 24 h),
 which is the population the bridge's two gap legs act on in the real record.
 
-Writes docs/handoffs/spp44/campd_online_<year>.parquet (plant x hour bool) for
+Writes docs/records/spp/spp44/campd_online_<year>.parquet (plant x hour bool) for
 the post-solve gate-(i) window grading, and footprint.csv.
 
-Usage: uv run python docs/handoffs/spp44/footprint.py
+Usage: uv run python docs/records/spp/spp44/footprint.py
 """
 
 import sys
@@ -46,7 +46,7 @@ from derive_campd_gas_commitment_params import (  # noqa: E402
 from market_sim.data.campd import _ONLINE_MW, states_for_iso  # noqa: E402
 from market_sim.model.commitment import find_runs  # noqa: E402
 
-OUT = REPO / "docs/handoffs/spp44"
+OUT = REPO / "docs/records/spp/spp44"
 PROC = REPO / "data/raw/_processed-legacy"
 BUNDLE = REPO / "results/calibration/spp42_crosswalk_B"
 YEARS = (2023, 2024, 2025)

@@ -3,9 +3,9 @@
 **Session:** capx S-5 PJM REQUIREMENT HORIZON-EDGE (capacity-expansion / Forecast Finalization track)
 **Date:** 2026-08-30 · **Branch:** `claude/capx-s5-pjm-horizon-edge-pksr0z` (off `main` @ `65a39e378555`)
 **Charter:** owner signature **card C-A, 2026-08-25**
-(`docs/DECISION-CARD-capx-director-open-rulings-2026-08-25.md` §3.3/§5.1; director ledger
+(`docs/records/forecast/DECISION-CARD-capx-director-open-rulings-2026-08-25.md` §3.3/§5.1; director ledger
 `capx-director-ledger-2026-08.md`, lane S-5). The convention was DECIDED there; this session
-implements it. Evidence base: `docs/handoffs/FINDING-capx-d2b-i7-ledger-2026-08-25.md` §5.
+implements it. Evidence base: `docs/records/forecast/FINDING-capx-d2b-i7-ledger-2026-08-25.md` §5.
 **No LP was solved, no year was scored against actuals, nothing was registered on either
 dashboard namespace.** This is the chartered scorer/governance round: it restates an FC-1
 verdict reading, and this FINDING — not a board edit — is the director's D7-class input.

@@ -10,7 +10,7 @@ record; this is the live one. A successor reads THIS, then the ledger, then the 
 1. **`CLAUDE.md` in full and freshly.** It moves. Rules 31–35 all landed *after* this program was
    chartered, and reconciling the plan with a rule that lands mid-program is a **refresh edit the desk
    owns**, not a lane's. Two of this desk's six logged errors came from not doing that promptly.
-2. **`docs/handoffs/soco-desk-ledger-2026-09.md`** — the desk's own record. **It wins over the plan on
+2. **`docs/records/soco/soco-desk-ledger-2026-09.md`** — the desk's own record. **It wins over the plan on
    live state.** §0 is newest-first sittings; §1 scoreboard; §2 verbatim owner rulings; §3 routed items
    (R-a…R-o); §4 collisions (C-1…C-7); §5 issuance record; §6 **errors against interest** — read §6 in
    full before your first act, it is where the desk's own mistakes are written down so you don't repeat
@@ -138,7 +138,7 @@ Two root-causes the desk found and routed, so a successor doesn't redo them:
 
 ## 6. Where the bodies are buried
 
-`docs/handoffs/soco-desk-ledger-2026-09.md` §6, in full. The short version, because each cost something:
+`docs/records/soco/soco-desk-ledger-2026-09.md` §6, in full. The short version, because each cost something:
 
 - **E-1** an unsatisfiable hold ("verify nobody is mid-edit") — every hold must name the observation that
   releases it.

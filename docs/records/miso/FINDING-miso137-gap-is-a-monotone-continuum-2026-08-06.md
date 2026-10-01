@@ -5,7 +5,7 @@ FIRST*. **NO LP, no arm, no field, no parameter, no run, no cell verdict
 minted. Keeper unchanged** at `2026-08-05-miso-132b-cc-committed` (bundle
 `results/calibration/miso132_ccmin_B`).
 
-**PREREG** `results/calibration/PREREG-miso137-c3a-gap-decomposition-2026-08-06.md`,
+**PREREG** `docs/records/miso/PREREG-miso137-c3a-gap-decomposition-2026-08-06.md`,
 pushed at **`b0e3425d`** BEFORE any adjudicating statistic, with a two-sided
 prior, an explicit MIXED branch, and the look-alike trap named in advance.
 
@@ -293,5 +293,5 @@ wrong source* → miso-136 *an absence claim is a measurement, not a premise* �
 ---
 
 **Probe** `scripts/probes/_miso137_c3a_gap_decomposition.py` ·
-**Record** `results/calibration/_miso137_c3a_gap_decomposition.json` ·
-**PREREG** `results/calibration/PREREG-miso137-c3a-gap-decomposition-2026-08-06.md`.
+**Record** `results/phase0/miso/_miso137_c3a_gap_decomposition.json` ·
+**PREREG** `docs/records/miso/PREREG-miso137-c3a-gap-decomposition-2026-08-06.md`.

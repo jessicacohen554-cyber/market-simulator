@@ -2,9 +2,9 @@
 
 **Session:** capx D-7 NYISO GATE RE-SCORE (capacity-expansion / Forecast Finalization track)
 **Date:** 2026-08-26 · **Branch:** `claude/capx-d7-nyiso-gate` · **Base:** `main` @ `bcb25217b228`
-**Charter:** `docs/handoffs/capx-director-prompt-pack-2026-08.md` §"D7-NYISO — gate re-score +
+**Charter:** `docs/records/forecast/capx-director-prompt-pack-2026-08.md` §"D7-NYISO — gate re-score +
 leg-(c) harmonisation", plus the refresh-#6 update in
-`docs/handoffs/capx-director-ledger-2026-08.md` §0c.
+`docs/records/forecast/capx-director-ledger-2026-08.md` §0c.
 **Scope:** RECORDS ONLY. No LP, no solve, no scoring, no registration.
 
 ---
@@ -144,7 +144,7 @@ reading. No leg had to be forced, and none read otherwise.**
 ## 3. The signed card-A harmonisation
 
 **Authority:** owner signature **A-A**, 2026-08-25 in-session
-(`docs/DECISION-CARD-capx-director-open-rulings-2026-08-25.md` §5, consequences at §5.1).
+(`docs/records/forecast/DECISION-CARD-capx-director-open-rulings-2026-08-25.md` §5, consequences at §5.1).
 **Basis:** an unrun leg is not a measured one — the reading already adjudicated for NEISO at
 neiso-88 (2026-08-06), now applied without exception.
 
@@ -182,7 +182,7 @@ structural diff against `HEAD`. The file round-trips byte-identically through
 `json.dumps(indent=1)`, so the committed diff contains **only** these fields.
 
 ### 4.1 NYISO — the landed re-score
-*Citation for all rows: `docs/handoffs/FINDING-capx-d2-nyiso-extcap-2026-08-25.md` §0/§4/§7; live
+*Citation for all rows: `docs/records/forecast/FINDING-capx-d2-nyiso-extcap-2026-08-25.md` §0/§4/§7; live
 bare key `nyiso-t1f`.*
 
 | field | before | after |

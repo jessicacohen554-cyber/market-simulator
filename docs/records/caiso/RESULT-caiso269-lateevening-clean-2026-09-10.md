@@ -2,8 +2,8 @@
 
 **Session caiso-269, 2026-09-10.** Arm `ScenarioConfig.caiso_dsw_lateevening_clean`, default off, CAISO-only,
 ONE flag on the committed keeper recipe via `--replay-bundle`. Charter:
-`docs/PRECOMMIT-caiso269-lateevening-clean-2026-09-10.md`; shard/re-pin record:
-`docs/ADDENDUM-caiso269-shard-repin-2026-09-10.md`. Solved as four per-year shards (rule 32 `[R-SHARD]`),
+`docs/records/caiso/PRECOMMIT-caiso269-lateevening-clean-2026-09-10.md`; shard/re-pin record:
+`docs/records/caiso/ADDENDUM-caiso269-shard-repin-2026-09-10.md`. Solved as four per-year shards (rule 32 `[R-SHARD]`),
 all pinned to `8a4912486cd2a7b6ce9a91cbfaeef03c861f4732`.
 **KEEPER UNCHANGED at `2026-09-09-caiso-fuelvintage-860-gas`. NOT PROMOTED — the owner's call.**
 

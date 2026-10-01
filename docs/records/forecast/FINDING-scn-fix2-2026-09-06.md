@@ -1,7 +1,7 @@
 # FINDING — SCN-FIX2: the carbon ladder is switched to the committed RFF path form (S3), and the voluntary levels are relabelled COMMITTED (S9 / S10)
 
 **Lane:** SCN-FIX2 — SCN-FIX1's items 3 and 4, re-chartered whole after FIX1 landed on the r#10
-text (desk ledger `docs/handoffs/scenario-desk-ledger-2026-09.md` §0 r#12, §4, §5 issuance).
+text (desk ledger `docs/records/misc/scenario-desk-ledger-2026-09.md` §0 r#12, §4, §5 issuance).
 **Model:** Opus `claude-opus-5`. **DATA PROFILE:** `code` (not hydrated — this lane reads no
 `data/raw`). **Branch:** `claude/scn-fix2-carbon-form-relabel-lurf5k` (the harness assigned this
 stem in place of the ledger's nominal `…-v8kq`; the mismatch every SCN lane has recorded).
@@ -291,7 +291,7 @@ compared line-count + SHA-256 against local: **five of five MATCH**, including t
 | `tests/scoring/test_scenario_campaign_configs.py` | `725a0d85` | the carbon-form pin renamed and flipped to the committed form (both directions), ALL-CLEAN's carbon assertion followed |
 | `src/market_sim/config/constants.py` | `428549ac` | the `VOLUNTARY_*` region, **words only** (§2) |
 | `src/market_sim/config/scenarios.py` | `428549ac` | the three `voluntary_*` field docstrings, **words only** (§2) |
-| `docs/handoffs/FINDING-scn-fix2-2026-09-06.md` | this commit | this document |
+| `docs/records/forecast/FINDING-scn-fix2-2026-09-06.md` | this commit | this document |
 
 **Not touched, per the charter:** every other line of `scenarios.py` / `constants.py`;
 `frontend/data/hindcast/**`; `results/**`; `scripts/**`; the mechanism-matrix shards; the plan's

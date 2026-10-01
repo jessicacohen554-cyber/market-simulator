@@ -1,6 +1,6 @@
 {
   "probe": "nyiso-118 pre-registered gate scoring",
-  "prereg": "results/calibration/PREREG-nyiso118-seny-span-2026-08-03.md \u00a76",
+  "prereg": "docs/records/nyiso/PREREG-nyiso118-seny-span-2026-08-03.md \u00a76",
   "control": "results/calibration/nyiso118_control",
   "treatment": "results/calibration/nyiso118_seny_span",
   "instrument_note": "requirement legs + LP row identity from reserve_family parquet; WIDTH legs from the committed construction probe + ordc_steps.log (the parquet carries no width vectors); dual/held/shortfall REPORTED, never gated",

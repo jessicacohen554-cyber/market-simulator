@@ -198,7 +198,7 @@ the 25 common years** — gas-fired base vs up, TWh: 2026 42.47→36.11 (the sam
 era, the largest response), 2030 36.17→35.80, 2035 31.90→31.36, 2040 31.96→30.61,
 2045 33.31→31.82, 2050 36.53→35.36; the narrowest gap is 2032 (34.25→34.03, when both
 worlds sit at ≈0.1 TWh of unabated CC and the split is nearly identical). Figure:
-`docs/handoffs/figures/capx-d35-p2-gas-fired.svg` (the per-year totals and the 2050 class
+`docs/records/misc/figures/capx-d35-p2-gas-fired.svg` (the per-year totals and the 2050 class
 split, both worlds).
 
 `coal↑` auto-skipped (no base coal at 2050); `price↑` PASS; `objective↑` not scored at
@@ -335,9 +335,9 @@ pinned against the committed golden-2 summaries; scorer side
 | `results/ff-t3-neiso-golden/bau/forecast_verdict.json` | re-scored (five FC-6 leaves + provenance) |
 | `frontend/data/forecast/ff-verdicts.json` | `neiso-t3` re-scored, `session_note` extended; prior preserved byte-equal at `neiso-t3-pre-p2scope`; 56 → 57 keys, one moved + one added (asserted) |
 | `frontend/data/forecast/program-status.json` | top-level `d35_fc6_p2_scope` stamp + NEISO `golden` note appended; every other block byte-identical (asserted) |
-| `docs/handoffs/forecast-validation-program-2026-07.md` | the P2 row of the paired-invariant table amended (dated) |
+| `docs/records/forecast/forecast-validation-program-2026-07.md` | the P2 row of the paired-invariant table amended (dated) |
 | `CHANGELOG.md` | entry |
-| `docs/handoffs/figures/capx-d35-p2-gas-fired.svg` | the per-year gas-fired totals and the 2050 class split, both worlds |
+| `docs/records/misc/figures/capx-d35-p2-gas-fired.svg` | the per-year gas-fired totals and the 2050 class split, both worlds |
 | this finding | — |
 
 **Not touched:** any `ScenarioConfig` field or default (rule 28 duty (c) does not fire; no

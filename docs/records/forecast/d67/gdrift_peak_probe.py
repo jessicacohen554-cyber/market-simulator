@@ -11,7 +11,7 @@ measurement rather than by argument (rule 29 [R-SCREEN] clause (b), G-DRIFT).
 **capx D76 extension (2026-09-06).** The seam reproduction this probe performs
 is the same object the D76 six-ISO peak census needs, so it is factored out
 here into :func:`seam_context`, :func:`seam_peak_mw` and
-:func:`measured_peak_mw` and IMPORTED by ``docs/handoffs/d76/peak_census.py``
+:func:`measured_peak_mw` and IMPORTED by ``docs/records/forecast/d76/peak_census.py``
 rather than copied (D76 charter: "extend, do not fork"). ``main()`` is
 unchanged in behaviour -- it now calls the helpers, and its committed
 ``gdrift_peak_probe.json`` re-derives byte-identically.
@@ -182,7 +182,7 @@ def main() -> int:
     print()
     verdict = "INERT (0.000 MW)" if worst < 5e-4 else f"LIVE (max |delta| {worst:.3f} MW)"
     print(f"VERDICT: demand path @HEAD vs D57 arm A -> {verdict}")
-    Path("docs/handoffs/d67/gdrift_peak_probe.json").write_text(
+    Path("docs/records/forecast/d67/gdrift_peak_probe.json").write_text(
         json.dumps({"iso": ISO, "years": out, "max_abs_delta_mw": worst,
                     "verdict": verdict}, indent=2) + "\n")
     return 0

@@ -12,15 +12,15 @@ unchanged at **`2026-08-05-miso-132b-cc-committed`** (bundle
 year was solved, scored or read, and no out-of-training quantity was extracted
 from any document.
 
-**Pre-registration** `results/calibration/PREREG-miso135-michigan-pscr-tonnage-lead-2026-08-06.md`,
+**Pre-registration** `docs/records/miso/PREREG-miso135-michigan-pscr-tonnage-lead-2026-08-06.md`,
 committed and pushed at **`d4d182a5`** *before any adjudicating statistic and
 before any MPSC document was opened.* **Probe**
 `scripts/probes/_miso135_michigan_pscr_tonnage_lead.py`; **record**
-`results/calibration/_miso135_michigan_pscr_tonnage_lead.json`.
+`results/phase0/miso/_miso135_michigan_pscr_tonnage_lead.json`.
 
 **Lane:** charter option **(a)** — the **Michigan PSCR state lead**, the sole
 unspent item on the MISO board, named at
-`docs/handoffs/miso-coal-contract-tonnage-data-ask-2026-07.md` §3(b) as *"not yet
+`docs/records/miso/miso-coal-contract-tonnage-data-ask-2026-07.md` §3(b) as *"not yet
 checked, and the highest-value remaining state."*
 
 ---

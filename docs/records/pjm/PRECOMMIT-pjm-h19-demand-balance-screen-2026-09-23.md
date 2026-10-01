@@ -1,6 +1,6 @@
 # PRECOMMIT — pjm-h19: EIA-930 balance-identity demand repair (`demand_balance_screen`), all six PJM years (2026-09-23)
 
-Card A of `docs/FINDING-pjm-h18-price-object-localised-2026-09-23.md` §5. Written and pushed
+Card A of `docs/records/pjm/FINDING-pjm-h18-price-object-localised-2026-09-23.md` §5. Written and pushed
 **before any solve**; the six shards are pinned to this commit's SHA.
 
 **Keeper (control):** `2026-09-22-pjm-hydro2-ror-span` (2023–25, CALIBRATED) + folded
@@ -63,7 +63,7 @@ reversals are 35–65 GW.
 
 ## 3. Phase 0 census — ZERO LP, every ISO-year 2018–2025 on the ACTUAL loader output
 
-`scripts/probes/pjm_h19_balance_screen_phase0.py` → `results/calibration/_pjm_h19_balance_screen_phase0.json`.
+`scripts/probes/pjm_h19_balance_screen_phase0.py` → `results/phase0/pjm/_pjm_h19_balance_screen_phase0.json`.
 Runs the screen after the existing dropout and spike screens, exactly where `load_demand` applies it.
 
 | ISO | flagged hours (v3) | justification |

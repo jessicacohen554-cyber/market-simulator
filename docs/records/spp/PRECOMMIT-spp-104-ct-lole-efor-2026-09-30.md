@@ -4,7 +4,7 @@ Lane: SPP-104. Owner cards:
 - "Build LOLE-EFOR CT swap" (2026-09-30), over the DESIGN's recommendation to record a limit;
 - "Solve all 7 years" (2026-09-30), after the zero-LP census.
 
-Design and census: `docs/handoffs/DESIGN-spp-104-ct-outage-2026-09-29.md` (§6 is the built form).
+Design and census: `docs/records/spp/DESIGN-spp-104-ct-outage-2026-09-29.md` (§6 is the built form).
 Keeper / control: `2026-09-28-spp-100-chp-scope`, bundle `results/calibration/spp100_arm_span` (git `11b72265`).
 **Written before any solve. Nothing below is chosen from a solved number.**
 
@@ -97,7 +97,7 @@ SPP's registered years are 2019–2025, all on keeper `2026-09-28-spp-100-chp-sc
 - the recipe plus a stray field (`hydro_pondage_bound`) → **FAIL** (RECIPE);
 - the exact recipe with a leg identical to the keeper → **FAIL** (ARMED).
 
-Prompt: `docs/handoffs/spp104/shard_prompt_template.txt`.
+Prompt: `docs/records/spp/spp104/shard_prompt_template.txt`.
 
 ## Addendum A (2026-09-30, before any solve) — G-DRIFT over the `main` merged into this PR
 

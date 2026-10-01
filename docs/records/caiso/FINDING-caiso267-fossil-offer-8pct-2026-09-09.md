@@ -45,7 +45,7 @@ Every `offer_curve_by_group` band multiplier of every fossil class × **0.92** �
 only. Applied through `replay_keeper.py --offer-curve-json`, which resolves at
 `pipeline/backcast_config.py:2523`, **after** every per-ISO and measured-surface
 merge, so the cut is not silently overwritten. Values committed verbatim at
-`results/calibration/_caiso267_fossil92_offer_curve.json`.
+`results/phase0/caiso/_caiso267_fossil92_offer_curve.json`.
 
 **Untouched:** every `phys_*` key, `econ_low_share`, `pct_peaking`. `peak_ladder`
 is **not** separately parameterised — the CAISO conditional split rebuilds it

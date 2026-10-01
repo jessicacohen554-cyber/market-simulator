@@ -215,5 +215,5 @@ own pre-registered gate.
   of an existing keeper is not one.
 * Binding priors not re-litigated (rule 28 `[R-MECH-MATRIX]` (a)): the 2022 miss is the
   18-hour Elliott scarcity tail with no admissible price lever
-  (`docs/FINDING-pjm-h3b-2022-miss-is-the-elliott-tail-2026-09-13.md`), and the Dominion
+  (`docs/records/pjm/FINDING-pjm-h3b-2022-miss-is-the-elliott-tail-2026-09-13.md`), and the Dominion
   CT zonal-congestion route is closed by measurement at pjm-137.

@@ -1,7 +1,7 @@
 # FFR-7B — The RPS/clean-tier repair: Arm 1 LANDED COMPLETE AND MEASURED; Arms 2–3 handed off
 
 **Lane:** implementation (owner decision D-22(a), sitting Addendum V.5/V.6, signed 2026-08-06).
-**Spec:** `docs/handoffs/ffr-6b-rps-grain-clean-tiers-2026-08-05.md` (FFR-6B) — implemented, not
+**Spec:** `docs/records/forecast/ffr-6b-rps-grain-clean-tiers-2026-08-05.md` (FFR-6B) — implemented, not
 redesigned. **Head at lane start:** `origin/main` `a9e1d084` (the prompt's `e2ea0b59` had moved:
 miso-135/caiso-176 merged; keepers re-verified from the shards — CAISO already
 `2026-08-06-caiso-175-tac-intake`). Main moved TWICE more mid-lane (`1af56e4a`, then `156b6e7d`
@@ -20,7 +20,7 @@ solve here is in-sample 2023–2025).
 * **Backcast contact: NONE — proven by code path, then MEASURED as ordered.** Same-head
   paired controls on each affected ISO's keeper recipe, 2023–2025: **BYTE-IDENTICAL in all
   three ISOs** (NYISO 25/25, CAISO 22/22, NEISO 28/28 parquet outputs sha256-equal;
-  `results/calibration/_ffr7b_arm1_ab_compare.json`). No keeper metric moved → **no
+  `results/phase0/forecast/_ffr7b_arm1_ab_compare.json`). No keeper metric moved → **no
   promotion hold**. Registered as `nyiso-129 / caiso-177 / neiso-84 ffr7b-arm1-zerodelta`.
 * **Three pre-existing main breakages found and fixed in passing** (§4): nyiso-128's
   UNREGISTERED cache-key field (the FFR-5E §6.2 hazard class this lane was told to guard —
@@ -118,7 +118,7 @@ alone. Comparator: `scripts/probes/ffr7b_arm1_paired_control_compare.py` (sha256
 | CAISO | caiso-175-tac-intake | 22 | **22/22** | CALIBRATED-WITH-CAVEATS (C3a, C3c) | **verbatim** |
 | NEISO | neiso-83-ca1-reclass | 28 | **28/28** | CALIBRATED-WITH-CAVEATS (C3c) | **verbatim** |
 
-Full hash tables: `results/calibration/_ffr7b_arm1_ab_compare.json`. **No keeper metric
+Full hash tables: `results/phase0/forecast/_ffr7b_arm1_ab_compare.json`. **No keeper metric
 moved; no promotion hold.** Registered (rule 15) as
 `2026-08-06-nyiso-129-ffr7b-arm1` / `2026-08-06-caiso-177-ffr7b-arm1` /
 `2026-08-06-neiso-84-ffr7b-arm1`, attestations carried from the byte-identical keepers.

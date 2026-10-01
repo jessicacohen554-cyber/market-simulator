@@ -2,7 +2,7 @@
 
 **Lane** SPP-29 · **Base** `762cc766b2b9734fc34bd68bb1a02418a4d11efd` · **Keeper UNCHANGED**
 `2026-09-10-spp-27-commitment-grain`, bundle `results/calibration/spp27_span` (read, never
-written) · **Predecessor** `docs/handoffs/FINDING-spp-64-2026-09-10.md`, whose §9 chartered card
+written) · **Predecessor** `docs/records/spp/FINDING-spp-64-2026-09-10.md`, whose §9 chartered card
 **R-bd** · **LP SPENT: ZERO.** Rule 29 `[R-SCREEN]` clause 0 — the chartered arm has a computable
 pre-solve gate and it fails it, twice, on independent evidence. No shard was launched, no screen
 solved, nothing registered, no verdict minted, no keeper touched.

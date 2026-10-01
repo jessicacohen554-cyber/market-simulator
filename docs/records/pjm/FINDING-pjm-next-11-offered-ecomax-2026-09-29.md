@@ -6,11 +6,11 @@
 
 | probe | output | card |
 |---|---|---|
-| `scripts/probes/_pjmnext11_offered_ecomax.py` | `results/calibration/_pjmnext11_offered_ecomax.json` | 1 |
-| `scripts/probes/_pjmnext11_ecomax_bound.py` | `results/calibration/_pjmnext11_ecomax_bound.json` | 1 |
-| `scripts/probes/_pjmnext11_c3_compression.py` | `results/calibration/_pjmnext11_c3_compression.json` | 3 |
-| `scripts/probes/_pjmnext11_margin_audit.py` | `results/calibration/_pjmnext11_margin_audit.json` | audit (a) |
-| `scripts/probes/_pjmnext11_bulk_price.py` | `results/calibration/_pjmnext11_bulk_price.json` | audit (b) |
+| `scripts/probes/_pjmnext11_offered_ecomax.py` | `results/phase0/pjm/_pjmnext11_offered_ecomax.json` | 1 |
+| `scripts/probes/_pjmnext11_ecomax_bound.py` | `results/phase0/pjm/_pjmnext11_ecomax_bound.json` | 1 |
+| `scripts/probes/_pjmnext11_c3_compression.py` | `results/phase0/pjm/_pjmnext11_c3_compression.json` | 3 |
+| `scripts/probes/_pjmnext11_margin_audit.py` | `results/phase0/pjm/_pjmnext11_margin_audit.json` | audit (a) |
+| `scripts/probes/_pjmnext11_bulk_price.py` | `results/phase0/pjm/_pjmnext11_bulk_price.json` | audit (b) |
 
 The LONG_RUN segment is the committed mid-curve surface's own segmentation, **imported** from `derive_pjm_offer_midcurve.py` (`_unit_physics` + `_segments`, own-year medians). Nothing was re-derived and the committed surface is untouched (rule 23).
 

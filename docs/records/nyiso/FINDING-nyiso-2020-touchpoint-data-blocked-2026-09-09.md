@@ -7,7 +7,7 @@
 
 ## 1. The claim being corrected
 
-`docs/handoffs/xiso-fuelvintage-per-iso-lp-prompts-2026-09-09.md` (PROMPT 3, ADDITION 4) states:
+`docs/records/governance/xiso-fuelvintage-per-iso-lp-prompts-2026-09-09.md` (PROMPT 3, ADDITION 4) states:
 *"NYISO holds `complete`: 2020, 2021, 2022 OPEN with `--holdout-authorized`."*
 
 **Governance-wise that is exactly right** and is re-verified here:
@@ -130,7 +130,7 @@ The 2021 touchpoint was launched on the frozen keeper recipe
 ```
 FileNotFoundError: nyiso_dynamic_reserve_requirements=True but the measured requirement
 series is absent: data/raw/NYISO-AS/requirements/NYISO_reserve_requirements_2021.csv.
-This is the Ask-B external data intake (docs/handoffs/nyiso-data-asks-2026-07.md); the
+This is the Ask-B external data intake (docs/records/nyiso/nyiso-data-asks-2026-07.md); the
 flag must not solve on the static requirements it claims to replace.
 ```
 
@@ -167,6 +167,6 @@ assembly, before any matrix was built.
 NYISO reserve-requirement intake backward to 2021 (and 2020, and 2019 if the source carries it),
 under the same rule-22 clause that makes intake unrestricted — *"collected once and applied
 CONSISTENTLY ACROSS ALL YEARS"*. `data/raw/NYISO-AS/requirements/README.md` and
-`docs/handoffs/nyiso-data-asks-2026-07.md` own the source and its conventions. Until that lands,
+`docs/records/nyiso/nyiso-data-asks-2026-07.md` own the source and its conventions. Until that lands,
 **a NYISO 2021 rung cannot exist on the keeper's recipe**, and quoting one built on a disarmed
 flag would be quoting a different model.

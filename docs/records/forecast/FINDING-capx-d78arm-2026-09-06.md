@@ -121,7 +121,7 @@ and deleting the bundle should not delete the finding.
 ### 2.1 G-DRIFT increment, written before the solve
 
 The PRECOMMIT declared its keys at `8875af59`; this lane solves 49 merges later. The increment audit —
-`docs/handoffs/d78arm/gdrift-increment-8875af59-to-9518fe0b.md`, **committed at `04222503` before
+`docs/records/forecast/d78arm/gdrift-increment-8875af59-to-9518fe0b.md`, **committed at `04222503` before
 `run_arm.sh` was invoked** — classifies all 40 changed files and reads **ALL HUNKS INERT**: in
 substance one new ISO (SPP, lanes SPP-14/-20), one ERCOT price-formation vintaging (ercot-253), and
 two default-off `ScenarioConfig` fields dropped from the hash at their declared `False`. G-DRIFT
@@ -143,9 +143,9 @@ unmoved key evidences an unmoved *declared* surface, not that no code path chang
 
 ### 3.1 S4 — FIRED on exactly one row, and the row is the seed year
 
-The instrument is `docs/handoffs/d78arm/s4_identity_check.py`, **written and committed
+The instrument is `docs/records/forecast/d78arm/s4_identity_check.py`, **written and committed
 (`def45e01`) while the arm was still solving, before its bundle existed**, so it could not be shaped
-to its own result — and it was **not edited afterwards**. It reuses `docs/handoffs/d78/screen_compare.py`'s
+to its own result — and it was **not edited afterwards**. It reuses `docs/records/forecast/d78/screen_compare.py`'s
 `sectors` / `sector_of` readers rather than re-implementing "what sector-1 means".
 
 **Known-answer first** (`s4_control_known_answer.json`): run against the committed D67-ARM control —

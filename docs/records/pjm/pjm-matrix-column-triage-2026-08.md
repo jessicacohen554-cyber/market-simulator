@@ -13,7 +13,7 @@ never silently kept or reverted (the pjm-144 posture).
 pjm-144's HEAD and titled itself pjm-145 with 22 open cells. Between drafting
 and execution, shorthand **pjm-145 was spent**: the 2026-08-02 session that
 refused `dam_availability_rebasis` ex ante (PJM `U → G`, no solve;
-`results/calibration/FINDING-pjm145-dam-availability-2026-08-02.md`; log entry
+`docs/records/pjm/FINDING-pjm145-dam-availability-2026-08-02.md`; log entry
 ends "Next shorthand: pjm-146"). This session is therefore **pjm-146**, the
 open-cell count at its HEAD is **21** (20 `U` + 1 `O`), and the previously
 drafted 2022-validation session renumbers to **pjm-147**.
@@ -355,7 +355,7 @@ PREREG pushed before any arm solves; same-HEAD zero-delta control via
 `replay_keeper`; years 2023 2024 2025 in one invocation per arm, sequential;
 `legitimacy_diagnostics` on both arms; scorer from `metrics.json` only;
 attestation from the committed A/B JSON. See
-`results/calibration/PREREG-pjm146-rggi-allowance-2026-08-02.md`.
+`docs/records/pjm/PREREG-pjm146-rggi-allowance-2026-08-02.md`.
 
 ## 4. Test baseline (re-measured at HEAD `cb1c416`)
 

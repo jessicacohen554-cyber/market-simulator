@@ -3,7 +3,7 @@
 **Owner decision D-28, sitting Addendum AC.4 (2026-08-07): memo BEFORE any composition is adopted.**
 **DESIGN-ONLY.** No code, no `ScenarioConfig` field, no solve, no mechanism-matrix cell was touched by
 this session. The open question is FFR-6B §6.4 row 3
-(`docs/handoffs/ffr-6b-rps-grain-clean-tiers-2026-08-05.md`); the consumer would be **Arm 3**
+(`docs/records/forecast/ffr-6b-rps-grain-clean-tiers-2026-08-05.md`); the consumer would be **Arm 3**
 (`miso_clean_tier_rows`, landed default-OFF by FFR-7B-2, arming blocked on this question).
 
 ---
@@ -401,4 +401,4 @@ and [Cornell LII](https://www.law.cornell.edu/uscode/text/26/45U). Subsections (
 **In-repo** — `src/market_sim/policy/ira.py`, `policy/clean_tiers.py`, `policy/federal_ces.py`,
 `model/capacity_evolution/retirements.py`, `config/scenarios.py`, `config/capacity_market.py`,
 `config/constants.py`, `frontend/data/backcast/bench/MISO/{2023,2024,2025}.json.gz`,
-`docs/handoffs/ffr-6b-rps-grain-clean-tiers-2026-08-05.md` §6.4.
+`docs/records/forecast/ffr-6b-rps-grain-clean-tiers-2026-08-05.md` §6.4.

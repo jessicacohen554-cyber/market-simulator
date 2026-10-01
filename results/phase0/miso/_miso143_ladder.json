@@ -1,5 +1,5 @@
 {
-  "prereg": "results/calibration/PREREG-miso143-coal-gas-merit-order-2026-08-08.md",
+  "prereg": "docs/records/miso/PREREG-miso143-coal-gas-merit-order-2026-08-08.md",
   "gate": "G-A1 (merit-order gain) + G-A2 (true ladder slope), under BRANCH-INSTRUMENT-FAIL",
   "keeper": "2026-08-05-miso-132b-cc-committed",
   "posture": "NO SOLVE -- run_year(fleet_only=True) offer stack, anchored on the keeper's OWN committed P1 price",

@@ -1,6 +1,6 @@
 # ADDENDUM to PRECOMMIT-caiso270 — the attempt-1 shard fleet, the defect that stopped it, and the re-pin
 
-**Session caiso-270, 2026-09-10.** Amends `docs/PRECOMMIT-caiso270-keeper-restore-2026-09-10.md` §5.
+**Session caiso-270, 2026-09-10.** Amends `docs/records/caiso/PRECOMMIT-caiso270-keeper-restore-2026-09-10.md` §5.
 **Written and pushed BEFORE the rev2 shards' first LP**, so nothing here can be shaped by a result.
 
 ## §A1 — The pin moves: `d75812c4…` → the SHA of this commit

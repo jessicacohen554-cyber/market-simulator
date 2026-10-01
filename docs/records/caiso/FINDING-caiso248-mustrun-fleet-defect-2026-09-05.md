@@ -254,7 +254,7 @@ needs its own pre-registration.
 ## §9 — DELIVERABLES
 
 This finding; the corrected
-`results/calibration/_caiso247_residual_regime_anatomy.json`; the repaired
+`results/phase0/caiso/_caiso247_residual_regime_anatomy.json`; the repaired
 `scripts/probes/_caiso247_residual_regime_anatomy.py`;
 `DERIVED_RUN_YEAR_INPUTS` + `derived_run_year_inputs` in
 `scripts/replay_keeper.py`; a CORRECTION banner on

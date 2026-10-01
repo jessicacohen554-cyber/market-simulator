@@ -1,6 +1,6 @@
 {
  "session": "caiso-183",
- "precheck": "results/calibration/PRECHECK-caiso183-hedge-grain-2026-08-08.md",
+ "precheck": "docs/records/caiso/PRECHECK-caiso183-hedge-grain-2026-08-08.md",
  "reused_instrument": "scripts/probes/_caiso180_arm_identity.py",
  "withdrawn_gate": "caiso-180 PRECHECK \u00a73a leg 2 (the availability ORDERING inferred from window COUNT) stays WITHDRAWN AS MALFORMED and is NOT reinstated.",
  "arms_present": [

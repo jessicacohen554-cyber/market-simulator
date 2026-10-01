@@ -1,7 +1,7 @@
 # FINDING — ercot-193: the standing ercot-167 SOC-reserve re-gate, discharged — RG-PASS on every gate; both originally-fired kills CLEAR; the keeper reproduces BYTE-IDENTICALLY at HEAD
 
 Session ercot-193, 2026-08-13. Precommit
-`docs/PRECOMMIT-ercot193-soc-regate-2026-08-13.md`, pushed at `5ad4975` BEFORE any
+`docs/records/ercot/PRECOMMIT-ercot193-soc-regate-2026-08-13.md`, pushed at `5ad4975` BEFORE any
 solve. Runs `2026-08-13-ercot193-ctl-nosoc` (A, keeper recipe minus
 `ercot_storage_as_soc_reserve`) and `2026-08-13-ercot193-arm-soc` (B, the run192
 keeper recipe replayed byte-faithfully), both registered (rule 15), full span

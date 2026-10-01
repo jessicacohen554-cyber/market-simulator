@@ -4,7 +4,7 @@
 **Keeper** `2026-08-09-miso-148-basis-aware` (`miso148_basis_B`), **UNCHANGED** ·
 **Model** `claude-opus-5`.
 
-**PREREG** `results/calibration/PREREG-miso157-ct-summer-wefor-share-2026-08-14.md`,
+**PREREG** `docs/records/miso/PREREG-miso157-ct-summer-wefor-share-2026-08-14.md`,
 pushed at **`09b7c87`**, blob **`84091bdf`**, **verified byte-identical against
 the FETCHED remote ref** before any adjudicating statistic was computed
 (rule 27 `[R-PUSH]`).
@@ -335,5 +335,5 @@ item 2. Its item 1 — the P0 commitment sidecar — is untouched.)*
 
 **Artifacts.** Probe `scripts/probes/_miso157_ct_summer_wefor.py` (`ruff` clean,
 zero 3-arg `getattr`). Record
-`results/calibration/_miso157_ct_summer_wefor.json`. PREREG `09b7c87`, blob
+`results/phase0/miso/_miso157_ct_summer_wefor.json`. PREREG `09b7c87`, blob
 `84091bdf`. Keeper `2026-08-09-miso-148-basis-aware`, **unchanged**.

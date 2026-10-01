@@ -5,7 +5,7 @@
 **Keeper under test** `2026-07-30-ercot140-coal-peak-offer`
 (bundle `results/calibration/ercot140_coal_peak_arm`) ·
 **Chartered by** ERCOT-143's per-plant measurement
-(`docs/DIAGNOSIS-ercot143-lignite-offer-slope-2026-07-30.md` §2), owner-issued
+(`docs/records/ercot/DIAGNOSIS-ercot143-lignite-offer-slope-2026-07-30.md` §2), owner-issued
 as the ERCOT-144 DOF lane serving C6 (matrix §5.1 queue item 2 — NOT a gate
 chase) · **Phase 1** `scripts/probes/ercot144_coal_perplant_offer.py`
 (artifact `results/calibration/_ercot144_scratch/phase1_full.json`) ·

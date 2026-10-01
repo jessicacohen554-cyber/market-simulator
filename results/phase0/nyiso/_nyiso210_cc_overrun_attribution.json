@@ -1,6 +1,6 @@
 {
  "session": "nyiso-210",
- "prereg": "results/calibration/PREREG-nyiso210-cc-regular-2022-overrun-attribution.md",
+ "prereg": "docs/records/nyiso/PREREG-nyiso210-cc-regular-2022-overrun-attribution.md",
  "iso": "NYISO",
  "klass": "CC_REGULAR",
  "keeper": "2026-09-06-nyiso-202-startup-aware",

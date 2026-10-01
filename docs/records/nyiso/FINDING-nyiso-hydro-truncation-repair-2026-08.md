@@ -3,12 +3,12 @@
 **Session:** nyiso-155, 2026-08-25. **Charter:** `docs/mechanism-testing-matrix.md`
 §5.5 item 12 tail (the nyiso-107 block; owner decision 2026-07-31 "report +
 charter, do not arm from this session" — this is the chartered session).
-**Prereg:** `results/calibration/PREREG-nyiso155-hydro-truncation-repair-2026-08-25.md`,
+**Prereg:** `docs/records/nyiso/PREREG-nyiso155-hydro-truncation-repair-2026-08-25.md`,
 pushed and blob-verified BEFORE any measurement (commit `19f379d`).
 **Keeper under test:** `2026-08-22-nyiso-152-duty-complete`
 (bundle `results/calibration/nyiso152_armSE`), CALIBRATED, frontier-ratified
 2026-08-23. **Solve HEAD:** `ac194ba`. **Gates record:**
-`results/calibration/_nyiso155_hydro_repair_ab.json`
+`results/phase0/nyiso/_nyiso155_hydro_repair_ab.json`
 (probe `scripts/probes/_nyiso155_hydro_repair_ab.py`).
 
 **THE HONESTY CONSTRAINT, first because it governs every number below:** under
@@ -285,9 +285,9 @@ closed the exposed root cause on measured grounds within a day.
 
 ---
 
-Evidence in-repo: `results/calibration/_nyiso155_hydro_repair_ab.json`,
+Evidence in-repo: `results/phase0/nyiso/_nyiso155_hydro_repair_ab.json`,
 `scripts/probes/_nyiso155_hydro_repair_ab.py`,
-`results/calibration/PREREG-nyiso155-hydro-truncation-repair-2026-08-25.md`,
+`docs/records/nyiso/PREREG-nyiso155-hydro-truncation-repair-2026-08-25.md`,
 registered bundles `nyiso155_hydro_control` / `nyiso155_hydro_repair`.
 
 ---

@@ -2,7 +2,7 @@
 
 **Session:** `claude/miso-68-cottonwood-keeper-c24hnj` (the miso-68 promotion
 session). **Supersedes** the F4 engagement in
-`docs/handoffs/miso-phase-b-m1-maxgen-findings-2026-07.md` **for the windows
+`docs/records/miso/miso-phase-b-m1-maxgen-findings-2026-07.md` **for the windows
 below** — the OASIS/`cdn.misoenergy.org` access items remain open (re-verified
 blocked this session: OASIS CONNECT 502 policy denial, misoenergy.org 403),
 but they are no longer the binding constraint: **the 2025 MISO SOM was

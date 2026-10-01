@@ -4,7 +4,7 @@
 **Keeper under test** `2026-09-09-neiso-108-fuelvintage` (bundle `results/calibration/neiso108_fuelvintage`,
 years 2023–2025) **+ its folded touchpoint run** `2026-09-09-neiso-108-fuelvintage-touchpoints`
 (bundle `neiso108_fuelvintage_tp`, years 2020–2022). **Neither is changed by this session.**
-**Evidence for the repair:** `docs/FINDING-neiso109-the-agt-series-is-contaminated-2026-09-16.md`.
+**Evidence for the repair:** `docs/records/neiso/FINDING-neiso109-the-agt-series-is-contaminated-2026-09-16.md`.
 
 **REGISTRY YEAR UNION, enumerated BEFORE anything is pruned (rule 35 `[R-PROMOTE]` (b)):**
 `{2020, 2021, 2022}` ∪ `{2023, 2024, 2025}` = **SIX YEARS, 2020–2025**. Read from
@@ -220,7 +220,7 @@ carries a paired control too, and the drift is a finding in its own right.
 | 2 | ~~**only if the screen clears**~~ **SUPERSEDED — the owner directed "Run all years" (2026-09-16), so the span was launched in parallel with the screen**: one shard, **`--years 2020 2021 2022 2023 2024 2025`**, ONE bundle (rules 16 / 32(b) / 34(c)) | 6 years, arm |
 | 3 | parent composes, scores, registers, and **asks the owner the promotion question** | none |
 
-> **AMENDED 2026-09-16 by owner instruction — see `docs/ADDENDUM-neiso109-run-all-years-2026-09-16.md`.**
+> **AMENDED 2026-09-16 by owner instruction — see `docs/records/neiso/ADDENDUM-neiso109-run-all-years-2026-09-16.md`.**
 > The screen's *gating* role is waived; **G-1 … G-5 still bind on the span as STOP gates**, the
 > pre-registered expectations in §3 are unedited, and nothing here promotes anything. The screen
 > shard was NOT cancelled: its control leg is the only control this lane has and the only instrument

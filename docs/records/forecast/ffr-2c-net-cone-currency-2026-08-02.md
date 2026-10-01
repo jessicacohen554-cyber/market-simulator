@@ -209,7 +209,7 @@ D1/D2 matter *more* for NEISO than for PJM/NYISO — the opposite of the intuiti
 
 ## 5. The FF-G3 owner box, populated (D-3)
 
-Written into `docs/handoffs/ff-g3-net-cone-forward-2026-07.md` §5. **No default
+Written into `docs/records/forecast/ff-g3-net-cone-forward-2026-07.md` §5. **No default
 flipped; the shipped mode is still `hold_last` and every real rate is still 0.0.**
 
 **The headline: D3 has largely been executed, and it dominates D1/D2.**

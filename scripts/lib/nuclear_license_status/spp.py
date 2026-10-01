@@ -19,7 +19,7 @@ rather than granted, and Wolf Creek's 2045 expiry likewise with only an
 announced intent behind it — so a forecast that assumes 2,097 MW of firm nuclear
 through 2050 assumes outcomes the instrument record does not yet support.
 Nothing in the solve path consumes this registry yet, for any ISO (the
-forward-channel design is ``docs/handoffs/ff-g5-nuclear-registry-2026-07.md``).
+forward-channel design is ``docs/records/forecast/ff-g5-nuclear-registry-2026-07.md``).
 
 Registered 2026-09-06 by lane SPP-20.
 """

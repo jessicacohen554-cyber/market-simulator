@@ -22,7 +22,7 @@ pre-registered kill fired, so the delta is REJECTED **as armed**; promotion was
 not pre-granted and came later in-session as a separate owner act on the
 structural-integrity criterion (banner above).
 
-Gates: `results/calibration/PREREG-caiso130-hydro-budget-nameplate-aware-2026-07-27.md`,
+Gates: `docs/records/caiso/PREREG-caiso130-hydro-budget-nameplate-aware-2026-07-27.md`,
 committed at `26259a2` **before arm B solved** (scorer read-key fix `ab44dcc`,
 also pre-solve, changed no threshold). Scorer:
 `scripts/probes/_caiso130_nameplate_ab.py`. Derives:

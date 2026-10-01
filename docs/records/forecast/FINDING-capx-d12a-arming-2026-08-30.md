@@ -2,7 +2,7 @@
 
 _2026-08-30 · capacity-expansion (Forecast Finalization) track, lane D12-A
 ARMING EXECUTION · ZERO SOLVES · chartered by owner ruling **Q15** (r#18
-sitting, 2026-08-30, `docs/handoffs/capx-director-ledger-2026-08.md` §3 /
+sitting, 2026-08-30, `docs/records/forecast/capx-director-ledger-2026-08.md` §3 /
 §0o.7). Branch `claude/capx-d12a-arming-0ibtzh`, fresh off `origin/main` @
 `d1407e4`. Predecessors: `FINDING-capx-d12c-confirm-pair-2026-08-30.md` (the
 measured pair whose §1.4 execution list this lane runs, under Q15 instead of

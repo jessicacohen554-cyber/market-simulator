@@ -10,7 +10,7 @@ the budget ``build_coal_plant_budget`` produced on the armed path
 
 Usage::
 
-    uv run python docs/handoffs/neiso117/g2_yard_burn.py [--years 2019 ...] --out docs/handoffs/neiso117/g2_yard_burn.json
+    uv run python docs/records/neiso/neiso117/g2_yard_burn.py [--years 2019 ...] --out docs/records/neiso/neiso117/g2_yard_burn.json
 """
 
 from __future__ import annotations
@@ -24,7 +24,7 @@ import pandas as pd
 REPO = Path(__file__).resolve().parents[3]
 CAL = REPO / "results/calibration"
 HERE = Path(__file__).resolve().parent
-CENSUS = REPO / "docs/handoffs/neiso116/phase0_coal_budget_census.json"
+CENSUS = REPO / "docs/records/neiso/neiso116/phase0_coal_budget_census.json"
 BIND_TOL = 0.005  # PRECOMMIT §6 G2: binding = burn within 0.5 % of budget
 INERT_TOL_TWH = 0.01  # PRECOMMIT §6 G2: slack-year class TWh equality
 

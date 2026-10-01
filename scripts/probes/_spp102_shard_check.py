@@ -1,7 +1,7 @@
 """SPP-102 shard self-check: the SPP keeper replayed with the SPP commitment posture.
 
 Run by each SPP-102 shard AFTER its solve and BEFORE it pushes (rule 32(c)(4) hard stops). Zero
-LP. Pre-registered in ``docs/handoffs/PRECOMMIT-spp-102-commitment-posture-2026-09-29.md``.
+LP. Pre-registered in ``docs/records/spp/PRECOMMIT-spp-102-commitment-posture-2026-09-29.md``.
 Adapted from ``_spp100_shard_check.py``; the control is the committed keeper ``spp100_arm_span``
 (rule 29(b) form 4).
 

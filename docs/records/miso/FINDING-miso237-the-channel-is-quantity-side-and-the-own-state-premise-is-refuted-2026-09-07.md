@@ -16,7 +16,7 @@ Every decision rule applied here was fixed in one of those two documents; none w
 seeing a number.
 
 Probe: `scripts/probes/_miso237_price_representation_vs_state_phase0.py` →
-`results/calibration/_miso237_price_representation_vs_state_phase0.json`.
+`results/phase0/miso/_miso237_price_representation_vs_state_phase0.json`.
 
 **Basis (PREREG §0b).** The Indiana-hub **RT** series builds the finite-hour `ok` mask
 (byte-identically to miso-236, so the hour set is the predecessor's) and is the price `P` in the

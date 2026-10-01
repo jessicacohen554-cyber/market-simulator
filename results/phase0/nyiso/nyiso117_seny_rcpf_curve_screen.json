@@ -1,6 +1,6 @@
 {
   "probe": "nyiso-117 SENY locational RCPF curve screen (EX ANTE, no solve)",
-  "prereg": "results/calibration/PREREG-nyiso117-nyc-stepcurve-compose-2026-08-03.md \u00a76",
+  "prereg": "docs/records/nyiso/PREREG-nyiso117-nyc-stepcurve-compose-2026-08-03.md \u00a76",
   "mechanism_screened": "nyiso_ordc_measured_step_span (matrix cell U, never armed)",
   "measured_source": "data/raw/NYISO-AS/NYISO_as_da_<year>.csv (NYISO posted DA AS prices, per zone); SENY-only = DUNWOD minus CAPITL (East, not SENY)",
   "span_source": "data/raw/NYISO-AS/requirements/NYISO_reserve_requirements_<year>.csv (the measured as-enforced #1344 hourly requirement)",

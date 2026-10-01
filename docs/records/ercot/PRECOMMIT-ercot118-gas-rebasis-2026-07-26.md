@@ -53,7 +53,7 @@ session**, and is therefore **absent from the artifact — it keeps the keeper's
    columns).
 3. The free MIS path retains only ~2.3 years of publications — **all 2023 deliveries are
    permanently unreachable**, and the credentialed data.ercot.com archive was owner-declined
-   (`docs/handoffs/ercot-as-coopt-plan-2026-07.md` §WS-E).
+   (`docs/records/ercot/ercot-as-coopt-plan-2026-07.md` §WS-E).
 
 Consequence, stated before solving: the CC committed (LSL-block) tranche keeps pricing
 ~+$2.6–4.0 above its measured level in 2023/24 in the hours it prices (its markup leg is inert

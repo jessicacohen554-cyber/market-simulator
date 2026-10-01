@@ -27,9 +27,9 @@
 2026-08-14, branch `claude/ercot-scar-regime-card`, assembled at origin/main
 `5bf5f13`, REBASED onto origin/main `315a2452` (see §0.1 — two sibling lanes
 stopped in between and the card body was corrected to match).** Authority: the **L-SCAR V0-FAIL adjudication, SIGNED by the owner
-2026-08-14, item (ii)** (`docs/DECISION-CARD-lscar-screen-revenue-2026-08-13.md`,
+2026-08-14, item (ii)** (`docs/records/misc/DECISION-CARD-lscar-screen-revenue-2026-08-13.md`,
 V0-FAIL ADJUDICATION block, on main at `fb6d08d` via PR #3931; dispatch: pack
-`docs/handoffs/ercot-scar-workstream-pack-2026-08.md` §2.10, re-dispatched
+`docs/records/ercot/ercot-scar-workstream-pack-2026-08.md` §2.10, re-dispatched
 cycle 10): *"assembly of a REGIME-CONDITIONING decision card IS AUTHORIZED —
 doc-only: it argues the admissibility of conditioning the rent on market DESIGN
 (ORDC vintage / ECRS / SWCAP / RTC+B) for a FUTURE owner sitting; it builds
@@ -41,7 +41,7 @@ nothing; zero measured forward-regime anchors exist until the 2026 SOM
 solve, no year solved or scored (rule 22), no model input touched (rule 13), no
 keeper/registry/bench contact, no run registered. One new measurement artifact:
 the read-only probe `scripts/probes/ercot200_regime_partition.py` (output
-`results/calibration/ercot200_regime_partition.json`), which reads exactly one
+`results/phase0/ercot/ercot200_regime_partition.json`), which reads exactly one
 committed input — the ercot-195 anchor intake — and **reads no tightness
 variable anywhere** (V0 is the DO-NOT-REDO adjudication for the tightness
 instrument; nothing here re-fits, re-scores, or re-argues it).
@@ -76,13 +76,13 @@ This card was assembled at main `5bf5f13`, when two sibling lanes were in
 flight. **Both have since stopped on main, and both stops are load-bearing
 for how the owner should read this board:**
 
-* **L-2 IS DEAD** (`docs/FINDING-ercot201-l2-e1-dispersion-phase0-stop-2026-08-14.md`,
+* **L-2 IS DEAD** (`docs/records/ercot/FINDING-ercot201-l2-e1-dispersion-phase0-stop-2026-08-14.md`,
   log ercot-201): the chartered E1 dispersion surface is **superseded** on
   main by FFR-8B/FFR-9A, and its identification route is **barred by an
   adjudicated prior stop** (FFR-8B §4 / AG.1). Phase 0 stopped; nothing was
   built, nothing solved. The adjudication's item (i) charter is therefore
   discharged-by-impossibility, not by delivery.
-* **T-1 IS NON-VIABLE ON PREMISE** (`docs/FINDING-ercot202-t1-nonviable-2026-08-14.md`,
+* **T-1 IS NON-VIABLE ON PREMISE** (`docs/records/ercot/FINDING-ercot202-t1-nonviable-2026-08-14.md`,
   log ercot-202): `gas_hh_monthly_shape` was **already armed** on the run192
   keeper, so the signed A/B had no control arm to express; it was cancelled
   before any solve, with no lever substituted.
@@ -104,7 +104,7 @@ One signable card. §§1–4 are the evidence; §5 is the option board.
 
 ## 1. THE OBJECT
 
-The ercot-195 finding (`docs/FINDING-ercot195-lscar-v0-nonidentifiable-2026-08-13.md`)
+The ercot-195 finding (`docs/records/ercot/FINDING-ercot195-lscar-v0-nonidentifiable-2026-08-13.md`)
 proved the SOM merchant-rent series 2019–2025 is a **regime series, not a
 tightness series**: no function of any candidate measured-tightness variable
 can pass the pre-registered V0 gate (best form 4/14 folds vs 14/14 required; a
@@ -182,7 +182,7 @@ forward-transfer clause for the RTC+B regime.** Nothing weaker deserves the V0
 name: cross-regime pooling smuggles in either a tightness term (refused,
 DO-NOT-REDO) or an uncited prior.
 
-### 3.2 What the committed anchors do to that gate (probe output, `results/calibration/ercot200_regime_partition.json`)
+### 3.2 What the committed anchors do to that gate (probe output, `results/phase0/ercot/ercot200_regime_partition.json`)
 
 | cut | regime | n | ex-ante gate verdict |
 |---|---|---|---|
@@ -420,10 +420,10 @@ clarification, and touches no model artifact), no model input touched (rule
 only), no keeper/registry/bench contact (keeper stays
 `2026-08-12-run192-arm-coal-peak`), no new workflow. Standing rulings cited
 and honored: **Q-B FINAL** (no ERCOT C3a-2023 spend of any kind —
-`docs/DECISION-CARD-ercot189-c3a2023-after-the-offer-family-2026-08-11.md`;
+`docs/records/ercot/DECISION-CARD-ercot189-c3a2023-after-the-offer-family-2026-08-11.md`;
 2023 appears on this card only in anchor tables and citations, never as a
 target); **R-A** (NOT-YET stands; no C3b-2023-targeted determination rounds —
-`docs/DECISION-CARD-ercot193-determination-ceiling-2026-08-13.md`); the
+`docs/records/ercot/DECISION-CARD-ercot193-determination-ceiling-2026-08-13.md`); the
 **L-SCAR charter §4 must-nots bind every option drafted above** (every option
 leaves dispatch prices, LP objectives, scored series, backcast artifacts, the
 ORDC/reserve/co-opt reconciliation, the refused FFR-6A rows 3/4, holdout
@@ -440,5 +440,5 @@ rebased branch as well as the original.
 
 **Artifacts this session commits:** this card, the probe
 (`scripts/probes/ercot200_regime_partition.py`), its JSON
-(`results/calibration/ercot200_regime_partition.json`), and one
+(`results/phase0/ercot/ercot200_regime_partition.json`), and one
 `docs/calibration-log/ercot.md` entry. Nothing else.

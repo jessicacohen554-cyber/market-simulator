@@ -2,11 +2,11 @@
 
 _2026-08-31 · C-1 joint wind charter lane, executing owner ruling **R-B**
 (2026-08-31 director sitting) · charter
-`docs/PRECOMMIT-c1-joint-wind-2026-08-31.md` (+ its pre-solve **Amendment 1**),
+`docs/records/misc/PRECOMMIT-c1-joint-wind-2026-08-31.md` (+ its pre-solve **Amendment 1**),
 merged as PR #4430 before any solve · Leg-B measurement
-`docs/FINDING-t1h-capacity-entry-phase0-2026-08-30.md` §4.1 · driver
+`docs/records/misc/FINDING-t1h-capacity-entry-phase0-2026-08-30.md` §4.1 · driver
 `scripts/probes/joint_wind_entry_compare.py`, artifact
-`results/calibration/joint_wind_entry_ab_ercot.json`._
+`results/phase0/ercot/joint_wind_entry_ab_ercot.json`._
 
 **Both arms solved by THIS session on one tree** (`bdb698c`, rebased onto
 `origin/main` @ `e52b90a`). Registered on the FORECAST namespace only
@@ -142,7 +142,7 @@ addition metrics and reads **false** — solar differs (14.437 vs the disarm's
 ### 3.4 What the walk actually did — the joint arm against BOTH singles, per step
 
 The decisive table. Joint-arm ledger rows against the committed disarm ledger
-(`results/calibration/entry_signal_disarm_ledger_ercot.json`) and this
+(`results/phase0/ercot/entry_signal_disarm_ledger_ercot.json`) and this
 session's control:
 
 | step | control (registered) | signal alone (committed disarm) | **JOINT (this A/B)** |
@@ -348,7 +348,7 @@ python3 scripts/score_capacity_hindcast.py --bundle results/hindcast/ercot-2021-
 python3 scripts/probes/joint_wind_entry_compare.py \
     --arm results/hindcast/ercot-2021-2025-realized-t1h-c1joint-arm \
     --control results/hindcast/ercot-2021-2025-realized-t1h-c1joint-control \
-    --out results/calibration/joint_wind_entry_ab_ercot.json
+    --out results/phase0/ercot/joint_wind_entry_ab_ercot.json
 
 # registration (forecast namespace only)
 python3 scripts/register_forecast_run.py --bundle results/hindcast/ercot-2021-2025-realized-t1h-c1joint-control
@@ -361,7 +361,7 @@ python3 -m pytest tests/unit/pipeline/test_runner.py::TestJointSignalVolumePostu
 
 The evolution ledgers the driver reads are gitignored bundle internals — the
 probe must run in the session that solved the bundles (it did); the committed
-artifact `results/calibration/joint_wind_entry_ab_ercot.json` carries both
+artifact `results/phase0/ercot/joint_wind_entry_ab_ercot.json` carries both
 arms' per-step rows, the posture record, the drift record, the storage mix,
 the RM paths, the full-magnitude band table, the K1/K2 verdicts and the
 complementarity read in full.

@@ -42,7 +42,7 @@ sharpens the prior findings' refutation of the handoff's named levers
 The 2026-07-23 findings' recommendation was a below-SRMC overnight
 commitment-bid mechanism, "a cross-ISO price-formation methodology change… not a
 NYISO knob." The ERCOT trough campaign
-(`docs/DIAGNOSIS-ercot-trough-price-formation-2026-07.md`) built exactly this:
+(`docs/records/ercot/DIAGNOSIS-ercot-trough-price-formation-2026-07.md`) built exactly this:
 
 * **The price-side form** (`ercot_offer_surface_lowcurve`, the measured LSL /
   below-SRMC bid) moves the trough LEVEL toward reality but is **REFUTED** — it

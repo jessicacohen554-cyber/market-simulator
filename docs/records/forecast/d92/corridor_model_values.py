@@ -11,7 +11,7 @@ VALIDATED by reproducing the committed table from the bundle it declares — a
 row this module cannot reproduce is never re-based by D92.
 
 Not standing tooling: it is the measurement record for
-``docs/handoffs/FINDING-capx-d92-2026-09-10.md``.
+``docs/records/forecast/FINDING-capx-d92-2026-09-10.md``.
 """
 
 from __future__ import annotations

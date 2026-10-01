@@ -1,6 +1,6 @@
 {
  "lane": "SPP-84",
- "finding": "docs/handoffs/FINDING-spp-84-published-outage-vs-keeper-2026-09-26.md",
+ "finding": "docs/records/spp/FINDING-spp-84-published-outage-vs-keeper-2026-09-26.md",
  "bundle": "/home/user/market-simulator/results/calibration/rspp_span",
  "per_year": {
   "2019": {

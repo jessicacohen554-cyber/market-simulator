@@ -496,7 +496,7 @@ of which rule 1 forbids as grounds for rejection. Phase 2 was therefore run.
 
 **Arm** `results/calibration/ercot128_unit_grain` ·
 run id `2026-07-28-ercot128-unit-grain-coal` · pre-commit
-`docs/PRECOMMIT-ercot128-coal-min-config-2026-07-28.md`, pushed before the first
+`docs/records/ercot/PRECOMMIT-ercot128-coal-min-config-2026-07-28.md`, pushed before the first
 solve · single delta `ercot_coal_min_config_floor=true` · three years, one
 invocation, years sequential.
 

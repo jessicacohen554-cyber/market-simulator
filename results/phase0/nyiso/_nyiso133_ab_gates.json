@@ -1,6 +1,6 @@
 {
  "probe": "nyiso-133 A/B kill gates",
- "prereg": "results/calibration/PREREG-nyiso133-market-solar-cod-basis-2026-08-08.md",
+ "prereg": "docs/records/nyiso/PREREG-nyiso133-market-solar-cod-basis-2026-08-08.md",
  "control_bundle": "results/calibration/nyiso133_cod_control",
  "arm_bundle": "results/calibration/nyiso133_cod_arm",
  "armed_field": "nyiso_solar_registry_cod_dates",

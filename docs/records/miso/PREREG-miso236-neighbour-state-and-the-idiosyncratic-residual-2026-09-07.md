@@ -223,7 +223,7 @@ labelled as one everywhere, exactly as miso-235 §7.2 requires.
 ## 5. Deliverables
 
 * `scripts/probes/_miso236_neighbour_state_residual_phase0.py` →
-  `results/calibration/_miso236_neighbour_state_residual_phase0.json`.
+  `results/phase0/miso/_miso236_neighbour_state_residual_phase0.json`.
 * `results/calibration/FINDING-miso236-*.md` carrying **every number this session will ever
   cite**.
 * Evidence appended to MISO's matrix shard + the §5.4 queue stamp (rule 25, rule 28(b) evidence

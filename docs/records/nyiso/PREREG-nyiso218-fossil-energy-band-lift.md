@@ -7,7 +7,7 @@
 **Instruments:** `scripts/probes/nyiso218_offer_lift_phase0.py` (zero-LP phase 0, ALREADY RUN —
 see §0), `scripts/probes/nyiso218_screen_gates.py` (the screen scorer, written before the screen
 solves).
-**Machine record of phase 0:** `results/calibration/_nyiso218_offer_lift_phase0.json`.
+**Machine record of phase 0:** `results/phase0/nyiso/_nyiso218_offer_lift_phase0.json`.
 
 **THIS COMMIT IS PUSHED BEFORE THE SCREEN SOLVE RUNS.** Every prediction in §5 and every gate in
 §6 is written here first and is not edited afterwards. A gate that misses is reported as a RESULT,

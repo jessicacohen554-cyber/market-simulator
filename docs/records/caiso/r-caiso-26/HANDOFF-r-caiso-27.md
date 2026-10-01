@@ -18,7 +18,7 @@ STATE (2026-10-01):
   C3c 2024. The fold `-touchpoints` (2019–21) is NOT-YET, so the ISO determination is NOT-YET under v3.13.
 - R-CAISO-21..-25 (zero LP): evening = DART basis + C3c tail; no lever for C3c 2024; midday N–S spread
   ledgered; h18 body residual ledgered; no public same-day CA gas series.
-- R-CAISO-26 (zero LP; docs/handoffs/r-caiso-26/, probe scripts/probes/_rcaiso26_nw_intertie.py): the
+- R-CAISO-26 (zero LP; docs/records/caiso/r-caiso-26/, probe scripts/probes/_rcaiso26_nw_intertie.py): the
   NW-stress import premise is falsified. Over MLK 2024, 82 % of the net-import collapse was gross EXPORT to
   the NW (+1,847 MW; BPAT −1,170, BANC −554); gross import fell 404 MW. CAISO OASIS `TRNS_USAGE` (hourly
   intertie OTC net of outage derates; mid-2023+; INTERTIES ONLY) shows NW import OTC at full seasonal TTC

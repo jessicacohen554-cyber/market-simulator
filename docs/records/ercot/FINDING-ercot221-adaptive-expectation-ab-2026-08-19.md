@@ -192,7 +192,7 @@ chartered). The 2024-03-24+ span remains re-fetchable (unchanged since the
 - Rule 27: every ≥300-line pushed file blob-verified; payload commits over
   `git push`.
 - Keeper at session start and end: `2026-08-17-ercot215-arm-decontam`.
-- Artifacts: this finding; `results/calibration/ercot221_gates.json` (+ the
+- Artifacts: this finding; `results/phase0/ercot/ercot221_gates.json` (+ the
   builder session's `ercot221_adaptive_phase0.json`,
   `ercot221_daily_surface_2023.json`); the A/B pair
   `2026-08-19-ercot221-{ctl-headbase,arm-adaptive}` with attestations and

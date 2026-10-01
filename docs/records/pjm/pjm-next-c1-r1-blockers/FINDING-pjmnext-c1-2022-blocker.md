@@ -1,7 +1,7 @@
 # FINDING — PJM-NEXT card 1, arm shard 2022: BLOCKED, no bundle (2026-09-25)
 
 Shard of orchestrator PJM-NEXT. Pinned commit `7f0953845350089732892f83248726d4b04fb84f`
-(verified `git rev-parse HEAD` before any work). Record: `docs/PRECOMMIT-pjm-next-c1-year-correct-membership-2026-09-25.md`.
+(verified `git rev-parse HEAD` before any work). Record: `docs/records/pjm/PRECOMMIT-pjm-next-c1-year-correct-membership-2026-09-25.md`.
 
 **Outcome: no bundle pushed.** There are two independent blockers: G1(e) failed, and the solve was OOM-killed
 after P0, before any artifact was written. `results/calibration/pjmnext_c1_2022/dispatch/` is empty.

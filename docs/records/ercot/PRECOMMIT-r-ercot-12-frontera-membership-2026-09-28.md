@@ -78,7 +78,7 @@ The keeper's 12 entries are carried verbatim, and this arm adds none. The stamp 
 
 ## 7. Execution
 
-- **Shards:** seven, one per year 2019–2025 (rules 34(c)/36). Prompts are in `docs/handoffs/r-ercot/SHARD-PROMPTS-r-ercot-12.md`, pinned to the SHA of the commit carrying this file.
+- **Shards:** seven, one per year 2019–2025 (rules 34(c)/36). Prompts are in `docs/records/ercot/r-ercot/SHARD-PROMPTS-r-ercot-12.md`, pinned to the SHA of the commit carrying this file.
 - **Each shard** runs `replay_keeper.py results/calibration/r_ercot11_parish_split_span --years <Y>` with no overrides. The arm is the registry.
 - **The parent** then:
   1. composes the legs;

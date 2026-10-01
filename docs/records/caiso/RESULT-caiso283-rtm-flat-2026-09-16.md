@@ -4,8 +4,8 @@
 (`2026-09-12-caiso-275-gascoupling`, CALIBRATED 2023–2025, lone ledgered C3c). Nothing promoted,
 nothing registered, no mechanism cell moved, no threshold moved, no artifact re-derived.
 
-**Charter:** `docs/PRECOMMIT-caiso281-rtm-offer-surface-intake-2026-09-13.md` §4.
-**Method fixed before any number:** `docs/PRECOMMIT-caiso283-rtm-exact-rederive-2026-09-16.md`
+**Charter:** `docs/records/caiso/PRECOMMIT-caiso281-rtm-offer-surface-intake-2026-09-13.md` §4.
+**Method fixed before any number:** `docs/records/caiso/PRECOMMIT-caiso283-rtm-exact-rederive-2026-09-16.md`
 (pushed at `f7534746`, the SHA every shard was pinned to). **Instrument:** eight fetch shards
 running `scripts/data/reduce_caiso_bid_year.py` (data: `results/rtm-intake/caiso283/<year>_<MKT>/`),
 pooled by `scripts/probes/_caiso283_pool.py` (outputs `_caiso283_pool_*.json` beside the data).

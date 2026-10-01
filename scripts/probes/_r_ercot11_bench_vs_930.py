@@ -57,7 +57,7 @@ X
 Run: ``uv run python scripts/probes/_r_ercot11_bench_vs_930.py [--frames-dir DIR]
 [--out FILE.json]``. ``--frames-dir`` caches/reuses the rebuilt frames
 (``ercot_eia923.parquet`` / ``ercot_campd.parquet``); ``--out`` writes the JSON (default:
-stdout only). Finding: ``docs/handoffs/FINDING-r-ercot-11-benchmark-vs-930-2026-09-28.md``.
+stdout only). Finding: ``docs/records/ercot/FINDING-r-ercot-11-benchmark-vs-930-2026-09-28.md``.
 """
 
 from __future__ import annotations

@@ -3,7 +3,7 @@
 **Session:** xiso-2 (cross-ISO calibration, Arm A). **Date:** 2026-08-02.
 **LP spent: ZERO.** No solve, no scoring, no registration, no bundle.
 **Probe:** `scripts/probes/_xiso2_outage_artifact_provenance_census.py`
-**Transcript:** `results/calibration/PROBE-xiso2-outage-artifact-provenance-census-2026-08-02.txt`
+**Transcript:** `results/phase0/governance/PROBE-xiso2-outage-artifact-provenance-census-2026-08-02.txt`
 
 This closes §5.7's **oldest open cross-cutting audit**, flagged in
 `docs/calibration-log/governance.md` on 2026-07-26 and still unaudited after xiso-1
@@ -64,7 +64,7 @@ did **not** help, that is said plainly (§4).
 ## 2. The guard timeline
 
 The neiso-64 merit-order guard was adopted 2026-07-26 (charter
-`docs/handoffs/campd-economic-layup-fix-charter-2026-07.md` §8; governance.md
+`docs/records/misc/campd-economic-layup-fix-charter-2026-07.md` §8; governance.md
 2026-07-26 "ADOPTED-AS-IMPROVEMENT; holdout freeze HELD"). Every ISO's committed
 `campd-unit-outages[-<ISO>].csv` was re-derived guard-on in:
 

@@ -109,7 +109,7 @@ C3a/C3b shape — not a C1 flip.
 3. **Fork on the answer:**
    - **Cap can bind → build the split** (caiso-79a): `NP15 → GREATER_BAY +
      NP15_rest` with a one-way import-limited internal link, replaying the
-     SP15-split playbook verbatim (`docs/handoffs/caiso-sp15-split-implementation-scope-2026-07-09.md`
+     SP15-split playbook verbatim (`docs/records/caiso/caiso-sp15-split-implementation-scope-2026-07-09.md`
      FOUNDATION DECISIONS: config zones/shares summing exactly, corridor
      re-homes — COI/Path-66 terminates on NP15 today and must be re-pointed
      deliberately — TAC weights, zone_assignment county branches, crosswalk,

@@ -1,5 +1,5 @@
 {
-  "prereg": "results/calibration/PREREG-miso121-dual-fuel-switching-2026-08-03.md",
+  "prereg": "docs/records/miso/PREREG-miso121-dual-fuel-switching-2026-08-03.md",
   "keeper": "results/calibration/miso117_ctheatrate_B",
   "arm_A": "results/calibration/miso121_control_A",
   "arm_B": "results/calibration/miso121_dualfuel_B",

@@ -4,8 +4,8 @@
 (`2026-09-12-caiso-275-gascoupling`). **Pushed before any pooled number exists.**
 
 **Charter (thresholds NOT moved here):**
-`docs/PRECOMMIT-caiso281-rtm-offer-surface-intake-2026-09-13.md` §4 and
-`docs/ADDENDUM-caiso281-rtm-classification-is-independent-2026-09-13.md` §3.
+`docs/records/caiso/PRECOMMIT-caiso281-rtm-offer-surface-intake-2026-09-13.md` §4 and
+`docs/records/caiso/ADDENDUM-caiso281-rtm-classification-is-independent-2026-09-13.md` §3.
 This document fixes only the *computational choices* the charter left to the parent, so that
 none of them can be chosen after a number is seen.
 

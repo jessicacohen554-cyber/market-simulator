@@ -1,7 +1,7 @@
 # FINDING — SOCO-53 (2026-09-17): the `CT_PEAKER` / `ST_GAS` lever is not a price lever
 
 **Lane** SOCO-53 · **Model** Opus 5 · **Data profile** `soco` ·
-**PRECOMMIT** `docs/handoffs/PRECOMMIT-soco-53-2026-09-17.md`, pushed and pinned at
+**PRECOMMIT** `docs/records/soco/PRECOMMIT-soco-53-2026-09-17.md`, pushed and pinned at
 `0f6bd1215b13dcc5a0fc4be5b5ab17dcb74330b1` **before** the arm was solved.
 **Arm** run `2026-09-17-soco53-measured-ct-hr`, bundle `results/calibration/soco53_measured_ct_hr`.
 **Control (rule 29 `[R-SCREEN]` (b) form 4 — no control solve spent)**
@@ -437,4 +437,4 @@ The comparison itself is clean and that is verified, not assumed: all eight `sha
 
 Two things larger than the lever came out of it. `measured_ct_heat_rates` was unreachable: registered, cache-key-registered, carried True by five ISOs' keepers, and with no CLI flag in the orchestrator every keeper is solved with — now wired along the identical eight-site path the eGRID flags take, byte-identical unset. And the plant-blend defect reaches far beyond CT: 11,777 MW, 26.0 % of SOCO's thermal fleet, sits at nine multi-technology plants, and at eight of them every unit carries one blended heat rate — Barry prices coal, gas CC and gas steam all at 8.994965, and Daniel prices 1,004 MW of coal at 8.399, which no coal unit can attain. The completing mechanism is `egrid_family_heat_rates`, already reachable; its derive was run as evidence and its output deliberately not committed.
 
-The promotion is open and is the owner's. The incumbent keeper is unchanged, nothing was pruned, SOCO's registered year union was enumerated before any prune and is 2023–2025, and both bundles are retrievable by immutable SHA so a promotion costs zero re-solves. The lane recommends holding and completing the plant-blend repair in one follow-on lane rather than promoting a half-repair now. Record: `docs/handoffs/FINDING-soco-53-2026-09-17.md`.
+The promotion is open and is the owner's. The incumbent keeper is unchanged, nothing was pruned, SOCO's registered year union was enumerated before any prune and is 2023–2025, and both bundles are retrievable by immutable SHA so a promotion costs zero re-solves. The lane recommends holding and completing the plant-blend repair in one follow-on lane rather than promoting a half-repair now. Record: `docs/records/soco/FINDING-soco-53-2026-09-17.md`.

@@ -460,16 +460,16 @@ profile:
 ```
 python3 scripts/probes/entry_screen_t1h_phase0.py \
     --bundle results/hindcast/ercot-2021-2025-realized-t1h-refresh --iso ERCOT \
-    --out results/calibration/entry_screen_t1h_phase0_ercot.json
+    --out results/phase0/ercot/entry_screen_t1h_phase0_ercot.json
 
 python3 scripts/probes/entry_screen_t1h_phase0.py \
     --bundle results/hindcast/caiso-2021-2025-realized --iso CAISO \
-    --out results/calibration/entry_screen_t1h_phase0_caiso.json
+    --out results/phase0/caiso/entry_screen_t1h_phase0_caiso.json
 
 python3 scripts/probes/entry_screen_t1h_phase0.py \
     --bundle results/hindcast/caiso-2021-2025-realized --iso CAISO \
     --capacity-anchor-per-kw-yr 138.36 \
-    --out results/calibration/entry_screen_t1h_phase0_caiso_mpb.json
+    --out results/phase0/caiso/entry_screen_t1h_phase0_caiso_mpb.json
 ```
 
 The three artifacts are committed alongside this document. The ERCOT run's

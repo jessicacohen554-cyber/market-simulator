@@ -51,7 +51,7 @@ def solve(Bdf, p):
 def flows(Bdf, th):
     return (th[Bdf.a.values] - th[Bdf.b.values]) / Bdf.x_pu.values   # per MW of transfer, oriented a -> b
 # ---------------- element map -> branch index ----------------
-EM = pd.read_csv(f"{REPO}/docs/handoffs/spp58/element_map.csv")
+EM = pd.read_csv(f"{REPO}/docs/records/spp/spp58/element_map.csv")
 def cluster_at(lat, lon):
     d = np.hypot((N.lat - lat) * 111, (N.lon - lon) * 88); i = int(d.idxmin()); return int(N.cluster[i]), float(d.min())
 def find_branch(spec):

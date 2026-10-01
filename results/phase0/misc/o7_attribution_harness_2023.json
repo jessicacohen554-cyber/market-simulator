@@ -1,7 +1,7 @@
 {
  "probe": "o7_attribution_harness",
- "charter": "docs/FINDING-o7-p0-seam-restoration-2026-08-26.md \u00a75 (owner ruling 2026-08-30, Door 2)",
- "precommit": "docs/PRECOMMIT-o7-attribution-harness-2026-08-30.md",
+ "charter": "docs/records/misc/FINDING-o7-p0-seam-restoration-2026-08-26.md \u00a75 (owner ruling 2026-08-30, Door 2)",
+ "precommit": "docs/records/misc/PRECOMMIT-o7-attribution-harness-2026-08-30.md",
  "what_this_is": "A decomposition INSTRUMENT: leg L replays the keeper recipe with the refined ladder de-priced from the P1 objective only, so keeper-vs-L measures the ladder's pricing channel at the keeper's own (hash-proven bit-identical) P0 commitment state. Leg L is never registrable (rule 13); nothing here touches the keeper's artifacts.",
  "year": 2023,
  "bundle": "/home/user/market-simulator/results/calibration/ercot236_k33_clip",

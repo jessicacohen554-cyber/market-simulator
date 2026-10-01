@@ -1,7 +1,7 @@
 # RESULT — SPP-74, THE BODY: where the rung's ordinary-hour / whole-month price error lives
 
 **Zero LP. No shard, no solve, no bundle, no `ScenarioConfig` field, no cell verdict moved.**
-Pre-registration: `docs/handoffs/PRECOMMIT-spp-74-price-body-2026-09-23.md`, pushed at `84833817`
+Pre-registration: `docs/records/spp/PRECOMMIT-spp-74-price-body-2026-09-23.md`, pushed at `84833817`
 before any decomposition number was read. Base `fbe00eb1`. Probes: `scripts/probes/_spp74_body_decomposition.py`
 (part A + `low_side_dispatch`), `_spp74_marginal_fuel.py` (part B, one interpreter per year),
 `_spp74_mo_jan2022.py`. Outputs: `results/calibration/_spp74_*.json`.

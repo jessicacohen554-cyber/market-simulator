@@ -4,8 +4,8 @@
 change. No mechanism was tested, so no matrix cell moves (rule 28(b); the NWPP-48 / NWPP-50 precedent).
 **Control:** keeper `2026-09-24-nwpp-49-ror-split` (`results/calibration/nwpp49_ror_span`, basis
 `c2d5991ceece88d9ced57bfa84c0a88b98bc423d`), rule 29(b) form 4.
-**Probes:** `scripts/probes/_nwpp51_vintage_census.py` → `results/calibration/_nwpp51_vintage_census.json`;
-`scripts/probes/_nwpp51_predict.py` → `results/calibration/_nwpp51_predict.json`.
+**Probes:** `scripts/probes/_nwpp51_vintage_census.py` → `results/phase0/nwpp/_nwpp51_vintage_census.json`;
+`scripts/probes/_nwpp51_predict.py` → `results/phase0/nwpp/_nwpp51_predict.json`.
 **Evaluator (committed before any leg):** `scripts/probes/_nwpp51_gates.py`.
 
 **Framing.** D2 is a rule-14 accuracy fix, not a C4 lever. Nothing below selects it by a gate.
@@ -198,7 +198,7 @@ and this doc.
 * Confirmed directly: SPP fleet-only rebuilds with and without the file give identical digests
   (2023 `ee3a845e…`, 2024 `9ad746e3…`). **Inert for every committed keeper.**
 
-**NWPP census re-run with the intake** (`results/calibration/_nwpp51_vintage_census_repaired.json`):
+**NWPP census re-run with the intake** (`results/phase0/nwpp/_nwpp51_vintage_census_repaired.json`):
 
 * Colstrip no longer moves.
 * **Zero offer-price (mc) changes in any year.** The fuel switch and the §1 nameplate edits are the

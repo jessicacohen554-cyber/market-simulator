@@ -1,7 +1,7 @@
 # FINDING — Y-19: the forecast-invariant artifact audit, closed by ident — 29 of 33 undeclared FAILs are disclosed consequences with a finding behind them, and the remaining 4 are ONE undiagnosed defect with four symptoms: at T1-H every verdict key reads `FC-1: SKIPPED "no committed invariant record"` while the sidecar carries a full committed I1–I14 block, so no lane has ever graded the reliability floor it breaches
 
 **Lane:** Y-19, Model Audit & Release-Finalization Program — "Forecast-invariant artifact audit"
-(chronic red on `main`; board `docs/handoffs/audit-program-director-board-2026-08.md`).
+(chronic red on `main`; board `docs/records/governance/audit-program-director-board-2026-08.md`).
 **Branch:** `claude/y19-forecast-invariant-declarations-hp5l2a`, off `origin/main` `5fdd4374`.
 **Date:** 2026-09-06. **Model:** `claude-opus-5`. **Data profile:** `code` (no solve, no LP).
 
@@ -194,7 +194,7 @@ in every generation of the run. The desk question in §4.4 is the one that ends 
 
 | item | to | what is owed |
 |---|---|---|
-| the four rows in §4.2, with their one-field attribution | **capx director desk** (`docs/handoffs/capx-director-ledger-2026-08.md`) — D45 / D45-R / D48 / D57 registered them | Adjudicate each: is the reliability-floor breach a real consequence of the clearing / requirement-basis posture (in which case declare it with its finding), or a defect in the requirement construction those lanes introduced? The PJM `-fixed` and NYISO curve-OFF siblings both PASS, so the question is answerable from committed artifacts — **no solve is needed**. |
+| the four rows in §4.2, with their one-field attribution | **capx director desk** (`docs/records/forecast/capx-director-ledger-2026-08.md`) — D45 / D45-R / D48 / D57 registered them | Adjudicate each: is the reliability-floor breach a real consequence of the clearing / requirement-basis posture (in which case declare it with its finding), or a defect in the requirement construction those lanes introduced? The PJM `-fixed` and NYISO curve-OFF siblings both PASS, so the question is answerable from committed artifacts — **no solve is needed**. |
 | the systemic cause in §4.1 — T1-H FC-1 blindness | **forecast-orchestrator desk** | Either score FC-1 at T1-H off the committed block (the evidence is already there — D27's board note says so explicitly), or make the SKIPPED detail string tell the truth. Today a T1-H registration can commit a FAIL that only this audit will ever see. Note the comparability constraint D27 §"Board note" records: FC-1 is `optional` at T1-H by design, so this is a scoring-convention decision, not a bug fix. |
 
 **Not routed and not this lane's to touch:** the root causes behind the *declared* rows — FR-6

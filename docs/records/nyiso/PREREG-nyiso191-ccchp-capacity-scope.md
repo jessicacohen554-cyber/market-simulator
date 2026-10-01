@@ -87,10 +87,10 @@ where energy does not.
 
 ## §0c — Everything else read
 
-`docs/FINDING-nyiso190-cc2024-displacement-provenance-2026-09-05.md` (§§2–6);
-`docs/DECISION-CARD-nyiso190-cc2024-cell-disposition-2026-09-05.md` §4;
-`results/calibration/PREREG-nyiso190-cc2024-displacement-provenance.md` §5;
-`docs/FINDING-nyiso188-astoria-footprint-cc-reconcile-bethlehem-2026-09-04.md` §3;
+`docs/records/nyiso/FINDING-nyiso190-cc2024-displacement-provenance-2026-09-05.md` (§§2–6);
+`docs/records/nyiso/DECISION-CARD-nyiso190-cc2024-cell-disposition-2026-09-05.md` §4;
+`docs/records/nyiso/PREREG-nyiso190-cc2024-displacement-provenance.md` §5;
+`docs/records/nyiso/FINDING-nyiso188-astoria-footprint-cc-reconcile-bethlehem-2026-09-04.md` §3;
 `docs/mechanism-testing-matrix.md` §5.5; NYISO shard cells
 `cc_capacity_reconcile` (K), `scuc_load_pocket_commitment` (G),
 `egrid_steam_collapse_heat_rates` (K); CLAUDE.md rules 1, 5, 12–16, 19, 21–25,

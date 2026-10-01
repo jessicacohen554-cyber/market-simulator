@@ -11,7 +11,7 @@ Chartered by the **OWNER RULING 2026-09-16**, which (a) re-opened the pjm-142 fr
 the min-load offer basis and (b) declined to promote the pjm-h7 joint arm. The frontier's
 own closure note names the re-opening condition — *"a NEW defect or a NEW measured
 identification with its own charter"* — and
-`docs/FINDING-pjm-h8-coal-minload-is-the-undisciplined-offer-surface-2026-09-16.md` is that
+`docs/records/pjm/FINDING-pjm-h8-coal-minload-is-the-undisciplined-offer-surface-2026-09-16.md` is that
 identification. This document is written **before any solve** and carries every number the
 lane will cite.
 

@@ -44,7 +44,7 @@ a non-CAISO ISO is a hard error (rule 25); a CAISO `CT_PEAKER` band with no
 ## §A2 — G-STRUCT, PRE-SOLVE: **PASS**
 
 `scripts/probes/_caiso241_gstruct_presolve.py` →
-`results/calibration/_caiso241_gstruct_presolve.json`. The keeper's own
+`results/phase0/caiso/_caiso241_gstruct_presolve.json`. The keeper's own
 `meta.json` rebuilt flag-off and flag-on at HEAD, all three years, every fleet
 row diffed. **No LP.**
 
@@ -152,7 +152,7 @@ cell stays `U`. **MISO's value is not imported and CAISO's is not exported.**
 ## §A5 — THE TWO-SIDED ENVELOPE (§H′), EVALUATED
 
 `scripts/probes/_caiso241_cell_bound.py` →
-`results/calibration/_caiso241_cell_bound.json`. Per precommit §3, the
+`results/phase0/caiso/_caiso241_cell_bound.json`. Per precommit §3, the
 caiso-230 §H form is **not** used as a ceiling — caiso-240 falsified that
 description, and this arm sits squarely in the regime where §H under-predicts
 (it lowers a band on a class that is 66–90 % absent, so its dominant channel is

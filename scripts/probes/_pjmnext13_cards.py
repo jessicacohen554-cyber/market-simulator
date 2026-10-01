@@ -24,7 +24,7 @@ coal-marginal hours: a band aggregates many plants, so a partial aggregate can a
 be one plant full and another idle. Reported with the IMM's RT marginal-unit and LMP
 fuel-component shares.
 
-Writes ``results/calibration/_pjmnext13_cards.json``.
+Writes ``results/phase0/pjm/_pjmnext13_cards.json``.
 """
 
 from __future__ import annotations
@@ -41,7 +41,7 @@ sys.path.insert(0, str(REPO / "scripts/probes"))
 import _pjmnext10_coal_phase0 as P10  # noqa: E402
 import _pjmnext11_margin_audit as P11  # noqa: E402
 
-OUT = REPO / "results/calibration/_pjmnext13_cards.json"
+OUT = REPO / "results/phase0/pjm/_pjmnext13_cards.json"
 BUNDLE = P10.BUNDLE
 ZONES = (
     "PJM_ComEd",

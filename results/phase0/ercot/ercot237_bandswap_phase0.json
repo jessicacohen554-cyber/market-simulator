@@ -1,7 +1,7 @@
 {
  "session": "ercot-237",
  "keeper": "2026-08-25-236-swcap-clip-k33",
- "precommit": "docs/PRECOMMIT-ercot237-bandswap-phase0-2026-08-26.md",
+ "precommit": "docs/records/ercot/PRECOMMIT-ercot237-bandswap-phase0-2026-08-26.md",
  "v0_identity": {
   "model": {
    "200_500": 103,

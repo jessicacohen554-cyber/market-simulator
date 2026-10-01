@@ -90,7 +90,7 @@ free parameters creates no caveat.
 ## 4. Deltas, at full size
 
 Verdict grain: nothing moves. Hourly grain: not byte-identical (source:
-`docs/handoffs/taxonomy-gas-st-2026-08-07.md` §4.1).
+`docs/records/misc/taxonomy-gas-st-2026-08-07.md` §4.1).
 
 | year | class energy deltas (TWh, arm − control) | demand-wt ΔLMP | max zonal \|ΔLMP\| |
 |---|---|--:|--:|
@@ -158,7 +158,7 @@ old keeper); the §5.5 prose header was re-stamped in the same session and the g
 | `docs/codebase-site/data/mechanism-matrix.js` | keeper stamp + header paragraph + `gates.NYISO` clause |
 | `docs/mechanism-testing-matrix.md` | §5.5 prose header re-stamp |
 | `docs/calibration-log/nyiso.md` | dated nyiso-131 entry citing D-27 |
-| `docs/handoffs/nyiso-taxgs-promotion-2026-08-07.md` | this note |
+| `docs/records/nyiso/nyiso-taxgs-promotion-2026-08-07.md` | this note |
 
 **Session numbering:** `nyiso-131` is consumed by this promotion (the run id already carries it).
 Next number: **nyiso-132**.

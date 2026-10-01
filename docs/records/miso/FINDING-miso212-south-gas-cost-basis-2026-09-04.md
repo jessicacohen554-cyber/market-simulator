@@ -5,7 +5,7 @@ FIELD, NO MECHANISM ARMED, NO RUN REGISTERED. PREREG
 `PREREG-miso212-south-gas-cost-basis-2026-09-04.md` pushed BLIND at `db893e8e`.
 Instruments: `scripts/probes/_miso212_south_gas_cost_basis.py` (first pass) and
 `_miso212_followup.py` (one disclosed post-hoc correction, §6) →
-`results/calibration/_miso212_south_gas_cost_basis.json`. Rule 22: 2023–2025 only.
+`results/phase0/miso/_miso212_south_gas_cost_basis.json`. Rule 22: 2023–2025 only.
 
 ---
 

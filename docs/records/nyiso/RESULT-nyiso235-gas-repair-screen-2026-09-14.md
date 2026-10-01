@@ -2,8 +2,8 @@
 
 **Session** nyiso-235 · **Date** 2026-09-14 · **Keeper under test** `2026-09-13-nyiso-232-st-gas`
 (bundle `results/calibration/nyiso232_deleak_span`), **UNCHANGED by this session**.
-**Pre-registration:** `docs/PRECOMMIT-nyiso234-gas-repair-screen-2026-09-14.md` +
-`docs/PRECOMMIT-nyiso235-gas-repair-screen-ADDENDUM-2026-09-14.md`, both pushed before any solve.
+**Pre-registration:** `docs/records/nyiso/PRECOMMIT-nyiso234-gas-repair-screen-2026-09-14.md` +
+`docs/records/nyiso/PRECOMMIT-nyiso235-gas-repair-screen-ADDENDUM-2026-09-14.md`, both pushed before any solve.
 
 > ## THE SCREEN CLEARS. G-1 · G-2 · G-3 · G-4 · G-5 all PASS.
 > Rule 29 `[R-SCREEN]` (2): the full span is authorized and was spent as ONE shard, ONE

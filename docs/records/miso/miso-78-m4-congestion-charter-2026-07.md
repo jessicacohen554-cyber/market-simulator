@@ -2,9 +2,9 @@
 
 **Status: DRAFT — PENDING OWNER SIGN-OFF. Verdict: NO-BUILD (data-blocked-at-representation).**
 **Date:** 2026-07-19. **Lane:** the M4 congestion charter mandated by the frozen
-miso-76 charter (`docs/handoffs/miso-nc-price-separation-design-2026-07.md` §3
+miso-76 charter (`docs/records/miso/miso-nc-price-separation-design-2026-07.md` §3
 M4 — "gets its OWN charter") after the miso-77 feasibility investigation
-returned GO (qualified) (`docs/handoffs/miso-77-m4-afc-feasibility-2026-07.md`).
+returned GO (qualified) (`docs/records/miso/miso-77-m4-afc-feasibility-2026-07.md`).
 **Discipline:** charter-first — this document is committed BEFORE any intake,
 derive, or LP code; the adjudications in §2 and the reopening conditions in §6
 are pre-registered and may not be revised after sign-off except by a successor

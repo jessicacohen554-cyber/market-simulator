@@ -20,7 +20,7 @@ Two measurements, because the first is precision-limited and the second is exact
    (``Σ cap × cf``) from the fleet-only array census. This is exact and is the
    mechanism the identity actually rests on: 0.0 % re-curtailment IS the identity.
 
-usage: uv run python docs/handoffs/spp50/wind_identity.py <bundle>[:<tag>] ...
+usage: uv run python docs/records/spp/spp50/wind_identity.py <bundle>[:<tag>] ...
        (tag = the array-census tag whose potential pairs with that bundle;
         default `post` for the first bundle, `pre` for any later one)
 """
@@ -42,7 +42,7 @@ DELIVERED_TWH = {2023: 103.049, 2024: 109.317, 2025: 110.457}
 #: 1 / (1 - 0.096501), the SPP-32 measured reference curtailment gross-up.
 FACTOR = 1.106808
 YEARS = (2023, 2024, 2025)
-#: The fleet-only array census this lane wrote (docs/handoffs/spp50/array_census.py).
+#: The fleet-only array census this lane wrote (docs/records/spp/spp50/array_census.py).
 CENSUS = Path(
     "/tmp/claude-0/-home-user-market-simulator/"
     "5bccefaf-1c50-588c-8c84-94ab3b579daf/scratchpad/spp50"

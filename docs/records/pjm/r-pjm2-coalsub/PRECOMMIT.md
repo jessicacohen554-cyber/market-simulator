@@ -11,7 +11,7 @@ The handoff named `2026-09-24-pjm-h22-rggi-span` as the incumbent and `2026-09-2
 run to prune. **Both were already superseded and pruned before this session started**: lane R-PJM-2 solved the
 h22 RGGI recipe on the corrected (F1/F2) inputs for 2019–2025, the owner ruled *"Yes promote"*, and it was
 promoted as **`2026-09-25-pjm-r-pjm-2`** (bundle `results/calibration/rpjm2_span`) with h22 span, h22
-touchpoint and r-pjm-corrected pruned under rule 35 (`docs/RESULT-r-pjm-2-rggi-keeper-corrected-inputs-2026-09-25.md`).
+touchpoint and r-pjm-corrected pruned under rule 35 (`docs/records/pjm/RESULT-r-pjm-2-rggi-keeper-corrected-inputs-2026-09-25.md`).
 
 What R-PJM-2 did **not** have is COAL-SUB: its shards pinned `651fac08…`, and `git merge-base --is-ancestor`
 confirms neither #6611 (`5f8d153c`) nor #6616 (`ab0d0059`) is in that pin. So the instruction resolves to:
@@ -52,7 +52,7 @@ any year, and the four subclass bands are byte-equal to the recipe's.
 | COAL_PRB | 3,845.0 | 3,845.0 | 3,845.0 | 2,646.0 | 2,650.0 | 2,650.0 | 3,160.0 |
 | COAL_WC | 1,264.0 | 1,206.5 | 1,202.0 | 1,201.6 | 1,201.3 | 1,201.3 | 1,376.2 |
 | **bare `COAL` rows** | **0** | **0** | **0** | **0** | **0** | **0** | **0** |
-| former generic bucket (pre-COAL-SUB `UNRESOLVED`, `docs/handoffs/coal-sub/census-2019-2025.json`) | 5,372.8 | 3,887.7 | 4,616.0 | 1,311.0 | 0 | 0 | 0 |
+| former generic bucket (pre-COAL-SUB `UNRESOLVED`, `docs/records/misc/coal-sub/census-2019-2025.json`) | 5,372.8 | 3,887.7 | 4,616.0 | 1,311.0 | 0 | 0 | 0 |
 | … now → BIT / PRB / WC | 4,651.3 / 689.0 / 32.5 | 3,198.7 / 689.0 / 0 | 3,927.0 / 689.0 / 0 | 1,311.0 / 0 / 0 | — | — | — |
 
 Plants in the former bucket (2019): Morgantown Energy Facility, Herbert A Wagner, Chalk Point, Dickerson,
@@ -64,7 +64,7 @@ The former bucket read the `COAL` band (committed 0.648 / econ_low 0.684 / econ_
 now reads its subclass's (BIT 0.548 / 0.6556 / 1.2664 / 1.044; PRB 0.684 / 0.5544 / 0.80 / 1.0656;
 WC 0.512 / 0.548 / 0.6344 / 0.764) — the multipliers themselves are the keeper's, unchanged.
 
-### 3b. EIA-860 vintage and class-table heat rates (`docs/handoffs/f1/census.py --iso PJM --posture
+### 3b. EIA-860 vintage and class-table heat rates (`docs/records/misc/f1/census.py --iso PJM --posture
 backcast-default`, re-run here — byte-equal to R-PJM PRECOMMIT §3a)
 
 | | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 |

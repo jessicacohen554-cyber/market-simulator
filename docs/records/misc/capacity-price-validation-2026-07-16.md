@@ -1,7 +1,7 @@
 # Capacity demand-curve validation — refreshed sections (RC-1C) — 2026-07-16
 
 **Session.** RC-1C of the flip-gate lane
-(`docs/handoffs/forecast-retirement-calibration-plan-2026-07.md` §2.3 F-5, prereq
+(`docs/records/forecast/forecast-retirement-calibration-plan-2026-07.md` §2.3 F-5, prereq
 4a/4b): MISO seasonal RBDC grain + NYISO multi-vintage curve wiring, with a
 per-ISO curve-eligibility gate. This document **refreshes §3.3 (NYISO) and §3.4
 (MISO)** of the prior validation reports

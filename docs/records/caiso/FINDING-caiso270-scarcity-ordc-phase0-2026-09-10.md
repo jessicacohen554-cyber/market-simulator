@@ -3,7 +3,7 @@
 **Session caiso-270, 2026-09-10. Branch `claude/caiso-scarcity-ordc-overlay-8ehxye`. CAISO only (rule 25 `[R-ISO-SCOPE]`).**
 Keeper at HEAD: **`2026-09-10-caiso-269-lateevening-clean`**, DETERMINATION **CALIBRATED**, single ledgered C3c. **UNCHANGED.**
 **ZERO LP. NO SHARD WAS LAUNCHED. NOTHING WAS ARMED, SOLVED, REGISTERED OR PROMOTED.**
-Predecessor charter: `docs/PRECOMMIT-caiso269-lateevening-clean-2026-09-10.md`, `docs/RESULT-caiso269-lateevening-clean-2026-09-10.md`.
+Predecessor charter: `docs/records/caiso/PRECOMMIT-caiso269-lateevening-clean-2026-09-10.md`, `docs/records/caiso/RESULT-caiso269-lateevening-clean-2026-09-10.md`.
 
 ---
 

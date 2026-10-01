@@ -1,6 +1,6 @@
 {
  "charter": "miso-209 phase 0 \u2014 the coal-side availability object through unit_partial_outage_windows; zero-solve; nothing armed.",
- "prereg": "results/calibration/PREREG-miso209-partial-derate-phase0-2026-09-04.md @ b7ed8e21",
+ "prereg": "docs/records/miso/PREREG-miso209-partial-derate-phase0-2026-09-04.md @ b7ed8e21",
  "keeper": "2026-09-03-miso-202-unitclip",
  "extract": "/tmp/claude-0/-home-user-market-simulator/1e13d39e-fb21-5f4b-a9d9-a6652aa36e5a/scratchpad/campd-partial-outages-MISO-noinmerit-DIAGNOSTIC.csv",
  "production_extract_rows": 0,

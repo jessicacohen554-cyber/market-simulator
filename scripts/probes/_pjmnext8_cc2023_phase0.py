@@ -10,7 +10,7 @@ mc_base, and availability, so the 2023 surplus can be attributed to a measured
 input (fuel, heat rate, outage) or to dispatch.
 
 Run: ``uv run python scripts/probes/_pjmnext8_cc2023_phase0.py 2023 2024``
-Writes ``results/calibration/_pjmnext8_cc2023_phase0.json``.
+Writes ``results/phase0/pjm/_pjmnext8_cc2023_phase0.json``.
 """
 
 from __future__ import annotations
@@ -120,7 +120,7 @@ def main() -> None:
                 f"  {rw['key']:18s} {rw['name']:22s} {rw['zone'][4:]:10s} d {rw['model_twh'] - rw['e923_twh']:+5.2f} "
                 f"fuel {rw['fuel']:5.2f} hr {rw['hr']:6.0f} mc {rw['mc']:6.2f} av {rw['avail']:.2f}"
             )
-    dest = REPO / "results/calibration/_pjmnext8_cc2023_phase0.json"
+    dest = REPO / "results/phase0/pjm/_pjmnext8_cc2023_phase0.json"
     dest.write_text(json.dumps(out, indent=1))
     print("wrote", dest)
 

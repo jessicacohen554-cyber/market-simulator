@@ -112,7 +112,7 @@ invariant): the gas-capacity-weighted mean of the zone anchors is **3.3483,
 exact per-year, so the residual is year-to-year weight drift only, which
 rounds away at 4 decimals — full record, including per-zone gas capacities
 and the 986/994/993 marked-up-tranche census with 0 band-scoped anchors, in
-`results/calibration/_pjm144_zonal_anchor_derivation.json`) — the aggregate
+`results/phase0/pjm/_pjm144_zonal_anchor_derivation.json`) — the aggregate
 identification point is preserved and only the cross-section moves, exactly
 as the applier's construction requires.
 

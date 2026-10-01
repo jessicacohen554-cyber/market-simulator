@@ -7,7 +7,7 @@ session's mechanism-registration commits, merged mid-session).
 (bundle `results/calibration/ercot150_zonalanchor_B`), **NOT-YET with every
 criterion status identical to the outgoing keeper** — promoted as the more
 structurally faithful run (rule 1), not on any residual.
-**Pre-registration:** `results/calibration/PREREG-ercot150-zonal-margin-anchor-2026-08-02.md`,
+**Pre-registration:** `docs/records/ercot/PREREG-ercot150-zonal-margin-anchor-2026-08-02.md`,
 committed and pushed **before either arm solved**, including the derived
 anchor table, the measured applier-convention analysis, the zonal K3
 construction, and the kill set.
@@ -15,7 +15,7 @@ construction, and the kill set.
 (`2026-08-01-ercot150a-control-zerodelta`, bundle
 `results/calibration/ercot150_control_A`), one single-delta arm, three years
 each, sequential (15 GB box + 12 GB swap asserted at session start).
-**Scorer artifact:** `results/calibration/_ercot150_zonal_anchor_ab.json`;
+**Scorer artifact:** `results/phase0/ercot/_ercot150_zonal_anchor_ab.json`;
 derivation record `_ercot150_zonal_anchor_derivation.json`; full verdicts
 `_ercot150_verdict_{A,B}.json`.
 **Owner instruction (in-session, before results):** *"Is this a recommended

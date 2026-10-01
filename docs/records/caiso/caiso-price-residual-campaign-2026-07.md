@@ -1,7 +1,7 @@
 # HANDOFF — CAISO price-residual candidate campaign (post Jan-2023 backfill)
 
 Written 2026-07-14 by the OASIS-backfill session. Evidence base:
-`docs/DIAGNOSIS-caiso-lmp-jan2023-backfill-2026-07.md`. Keeper under test:
+`docs/records/caiso/DIAGNOSIS-caiso-lmp-jan2023-backfill-2026-07.md`. Keeper under test:
 `2026-07-13-caiso-80-supply-demand` (bundle
 `results/calibration/caiso80_supply_consistent_demand`). Verdict NOT-YET on
 C3a (+18.5/+28.3/+32.2% vs RT lw), C3b (NRMSE 0.296/0.401/0.354), C3c, C4.

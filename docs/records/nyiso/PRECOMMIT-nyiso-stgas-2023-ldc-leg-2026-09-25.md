@@ -36,7 +36,7 @@ after phase 0.
 
 ## 1. Phase 0 (zero LP), committed evidence
 
-Probes: `scripts/probes/nyiso_stgas2023_phase0.py` → `results/calibration/_nyiso_stgas2023_phase0.json`;
+Probes: `scripts/probes/nyiso_stgas2023_phase0.py` → `results/phase0/nyiso/_nyiso_stgas2023_phase0.json`;
 `scripts/probes/nyiso_stgas2023_offers.py` → `_nyiso_stgas2023_offers.json` (keeper posture) and
 `_nyiso_stgas2023_offers_arm.json` (`--arm`); `scripts/probes/nyiso_stgas2023_ldc_footprint.py` →
 `_nyiso_stgas2023_ldc_footprint.json`. Sources: the keeper payloads (per-plant hourly model CF),
@@ -185,7 +185,7 @@ for every gas row that meets all three conditions:
 
 ## 3. G-DRIFT (rule 29 (b))
 
-- `e95436d5 → 7c778943`: audited INERT in `docs/PRECOMMIT-r-nyiso-2021-2026-09-25.md` §3.
+- `e95436d5 → 7c778943`: audited INERT in `docs/records/nyiso/PRECOMMIT-r-nyiso-2021-2026-09-25.md` §3.
 - `7c778943 → 5c6e7ab8`: audited this session, over the solve path (`src/market_sim`,
   `run_calibration{,_full}.py`, `replay_keeper.py`, `scripts/lib`, `_validation-source`,
   `reference`, `NYISO-AS`, `_processed-legacy`) plus the fleet loader's `eia-860`. **No LIVE hunk:**

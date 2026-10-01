@@ -121,7 +121,7 @@ what was already known.
    accounts for it.
 
 It **writes nothing** and solves nothing. Raw output is committed as
-`results/calibration/_xiso7_prb_follower_dof.json`.
+`results/phase0/governance/_xiso7_prb_follower_dof.json`.
 
 ---
 

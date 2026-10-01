@@ -1,5 +1,5 @@
 {
- "precommit": "docs/PRECOMMIT-ercot178-continuous-netload-grain-2026-08-08.md",
+ "precommit": "docs/records/ercot/PRECOMMIT-ercot178-continuous-netload-grain-2026-08-08.md",
  "bundle": "results/calibration/ercot176_control_A",
  "SP6_stepped_artifacts": {
   "offer_curve_dam_hrmults_condbinned.json": {

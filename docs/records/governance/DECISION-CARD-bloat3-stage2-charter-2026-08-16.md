@@ -63,7 +63,7 @@ All three pins (`971eaa3`, `315a245`, `726f389d`) are dead, their rewritten
 twins verified payload-free, and several converted payloads are now
 **unrecoverable from this repository** (the 60 CAISO OASIS GRP dailies; the
 pre-slim SCED raw columns; the pre-slim manifests). Full record:
-`docs/FINDING-history-rewrite-2026-08-16.md` §5.
+`docs/records/governance/FINDING-history-rewrite-2026-08-16.md` §5.
 
 Two consequences bind this card:
 

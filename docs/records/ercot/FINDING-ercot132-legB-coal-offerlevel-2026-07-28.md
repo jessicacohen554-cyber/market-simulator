@@ -6,7 +6,7 @@
 KEEPER CANDIDATE** ·
 **Keeper** `2026-07-28-ercot129-conditional-coal-min` — **UNCHANGED**;
 `frontend/data/backcast/keepers/ERCOT.json` not touched ·
-**Pre-commit** `docs/PRECOMMIT-ercot132-legB-coal-offerlevel-2026-07-28.md`,
+**Pre-commit** `docs/records/ercot/PRECOMMIT-ercot132-legB-coal-offerlevel-2026-07-28.md`,
 written and pushed (PR #3076, commit `2ce790b`) **before the solve started** ·
 **Authority** owner overrule of `DIAGNOSIS-ercot122` §5.1's recommend-and-STOP,
 on the ERCOT-118 / ERCOT-119 controlled-refutation precedent.

@@ -4,8 +4,8 @@
 **Keeper untouched**: nothing armed, nothing disarmed, no committed artifact byte moved, no run
 registered, no bundle written.
 PRECOMMIT (pushed before the ARM B statistic was computed):
-`docs/PRECOMMIT-caiso294-chp-steam-level-2026-09-20.md`.
-Predecessor: `docs/RESULT-caiso293-the-chp-steam-floor-is-an-energy-average-2026-09-20.md`.
+`docs/records/caiso/PRECOMMIT-caiso294-chp-steam-level-2026-09-20.md`.
+Predecessor: `docs/records/caiso/RESULT-caiso293-the-chp-steam-floor-is-an-energy-average-2026-09-20.md`.
 
 ---
 

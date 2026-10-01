@@ -5,9 +5,9 @@
 **Outcome:** item 1 **DISCHARGED**. Keeper unchanged, determination unchanged,
 nothing registered, no cell verdict minted.
 
-* **PREREG** `results/calibration/PREREG-miso140-bench-lw-refresh-2026-08-07.md` (pushed `483091b3`, before any adjudicating statistic)
-* **FINDING** `results/calibration/FINDING-miso140-bench-lw-refresh-verified-2026-08-07.md`
-* **Probe / record** `scripts/probes/_miso140_bench_lw_verify.py` · `results/calibration/_miso140_bench_lw_verify.json`
+* **PREREG** `docs/records/miso/PREREG-miso140-bench-lw-refresh-2026-08-07.md` (pushed `483091b3`, before any adjudicating statistic)
+* **FINDING** `docs/records/miso/FINDING-miso140-bench-lw-refresh-verified-2026-08-07.md`
+* **Probe / record** `scripts/probes/_miso140_bench_lw_verify.py` · `results/phase0/miso/_miso140_bench_lw_verify.json`
 
 ---
 

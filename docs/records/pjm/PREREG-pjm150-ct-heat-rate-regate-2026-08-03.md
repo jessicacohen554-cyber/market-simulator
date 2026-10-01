@@ -39,7 +39,7 @@ Provenance chain, verified in this session from the repo's own bytes:
 
 The keeper therefore **consumed the corrected artifact at solve time**. Its own
 committed side-artifact says so in as many words —
-`results/calibration/_pjm147_k2_drift.json`: *"this comparison is the PJM leg
+`results/phase0/pjm/_pjm147_k2_drift.json`: *"this comparison is the PJM leg
 caiso-158 deferred as its follow-up item 2"* — as does the mechanism-matrix doc
 §5.3: *"The control arm is caiso-158's follow-up item 2, now discharged."*
 

@@ -2,9 +2,9 @@
 
 **Session:** FFR-3T (2026-08-04) · **Lane:** small · **HEAD at dispatch:** `15f9d296` ·
 **rebased onto:** `8b920ed6` · **implementation commit:** `730b4155`
-**Decision:** owner D-10, signed 2026-08-04, `docs/handoffs/ffr-owner-sitting-2026-08-02.md`
+**Decision:** owner D-10, signed 2026-08-04, `docs/records/forecast/ffr-owner-sitting-2026-08-02.md`
 Addendum K.3, on FFR-3M's measured adjudication
-(`docs/handoffs/ffr-3m-kill-resume-verdict-2026-08-04.md`)
+(`docs/records/forecast/ffr-3m-kill-resume-verdict-2026-08-04.md`)
 **Measurement driver:** `scripts/probes/_ffr3t_cache_key_census.py` (committed with this doc)
 
 ---
@@ -224,7 +224,7 @@ enter the key).
 C; what is new here is only that the posture is now what the shipped runners produce rather
 than an ablation argument passed by a probe. The result was reproduced twice in this session,
 in two independent work directories — the second run is the one that wrote
-`docs/handoffs/ffr-3t/kill_resume_drill.json`, committed as the machine-readable record. That
+`docs/records/forecast/ffr-3t/kill_resume_drill.json`, committed as the machine-readable record. That
 run took **10m39s wall** end to end (control 3 years + kill 2 years + resume 1 year, NEISO,
 `MARKET_SIM_HIGHS_THREADS=1`), which is the drill-scale cost of the whole instrument and is
 the scale at which the lost warm start is negligible — see §6 for where it is not.
@@ -241,7 +241,7 @@ tie-break introduced, no ordering frozen, and nothing is tuned to recover the sp
 
 The horizon-scale number already exists as a controlled A/B and is the right instrument, so
 it is quoted rather than re-run: the **D-9 arming experiment** (Exp 5,
-`docs/handoffs/wallclock-baseline-2026-07.md`), ERCOT full horizon **2026–2050**, 8760 h,
+`docs/records/misc/wallclock-baseline-2026-07.md`), ERCOT full horizon **2026–2050**, 8760 h,
 `threads=1`, warm vs cold:
 
 * total wall **25.1 min warm → 51.1 min cold**, i.e. **+26.0 min per ISO-arm**;

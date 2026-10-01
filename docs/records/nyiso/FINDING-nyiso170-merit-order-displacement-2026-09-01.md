@@ -259,11 +259,11 @@ should be planned around rather than solved away.
 
 ## 7. Evidence
 
-* `scripts/probes/nyiso170_merit_order_coincidence.py` + `results/calibration/_nyiso170_merit_order_coincidence.json` — gates G1a/G1b/G2/G3; committed at `ac4c1520` **before** it was run.
+* `scripts/probes/nyiso170_merit_order_coincidence.py` + `results/phase0/nyiso/_nyiso170_merit_order_coincidence.json` — gates G1a/G1b/G2/G3; committed at `ac4c1520` **before** it was run.
 * `scripts/probes/nyiso170b_displacement_controls.py` + `_nyiso170b_displacement_controls.json` — H1 anchor validity, H2 the load-confound attack, H3, H4; committed at `245a44ae` before running.
 * `scripts/probes/nyiso170c_anchor_repair.py` + `_nyiso170c_anchor_repair.json` — J1–J5, the repair onto the four admissible classes; committed at `a175a5b6` before running.
 * `scripts/probes/nyiso170d_price_linkage_controls.py` + `_nyiso170d_price_linkage_controls.json` — K1–K3 third-factor controls.
-* `docs/FINDING-nyiso169-congestion-gradient-anatomy-2026-09-01.md` §7–§8; `docs/FINDING-nyiso168-supply-curve-slope-anatomy-2026-09-01.md` §4, §8–§9; `docs/FINDING-nyiso167-c3a-price-response-gain-2026-09-01.md` §2, §5 — the closed lines, none re-opened.
+* `docs/records/nyiso/FINDING-nyiso169-congestion-gradient-anatomy-2026-09-01.md` §7–§8; `docs/records/nyiso/FINDING-nyiso168-supply-curve-slope-anatomy-2026-09-01.md` §4, §8–§9; `docs/records/nyiso/FINDING-nyiso167-c3a-price-response-gain-2026-09-01.md` §2, §5 — the closed lines, none re-opened.
 * `docs/calibration-log/nyiso.md` — the nyiso-169 / nyiso-169b entries this session continues.
 * `src/market_sim/pipeline/backcast_config.py::_NYISO_OFFER_CURVE` + `data/raw/reference/nyiso_campd_marginal_hr_summary.csv` — the offer-band ladder of §0, read but **not modified**.
 * `docs/codebase-site/data/mechanism-matrix/NYISO.js` — `offer_curve_by_group` (`K`, evidence added; **no verdict moves**), re-read before anything was proposed; `node --check` and `scripts/check_mechanism_matrix.py` both pass.

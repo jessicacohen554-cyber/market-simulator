@@ -1,6 +1,6 @@
 # ADDENDUM — ercot-255 G-1c was WRONG as written, and G-3 needed splitting. Corrected BEFORE the screen solve.
 
-> Amends `docs/PRECOMMIT-ercot255-zonal-spread-ep-reference-2026-09-07.md` §4.
+> Amends `docs/records/ercot/PRECOMMIT-ercot255-zonal-spread-ep-reference-2026-09-07.md` §4.
 > **Pushed before any LP was run.** The correction was found by running the
 > pre-solve gates the PRECOMMIT itself registered — which is what they are for.
 > Nothing else in the PRECOMMIT changes: the mechanism, the screen year (2025),

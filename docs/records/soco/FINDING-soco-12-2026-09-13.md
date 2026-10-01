@@ -463,7 +463,7 @@ data/raw/load-forecast/soco/SOURCES.md
 data/raw/gas-prices/eia_delivered_gas_{AL,GA,MS}_monthly_2023-2025.csv
 data/raw/gas-prices/eia_N3045{AL,GA,MS}3m_2026-09-13.xls
 data/raw/gas-prices/SOURCES_soco_gas.md
-docs/handoffs/FINDING-soco-12-2026-09-13.md           (this file)
+docs/records/soco/FINDING-soco-12-2026-09-13.md           (this file)
 ```
 
 ---
@@ -535,4 +535,4 @@ footprint's basis is **Southern Natural Gas** (50 % Southern Company Gas) plus
 **Transco** into northwest Georgia via the Dalton Pipeline; **no free public daily
 index exists at either**, measured against both EIA daily/weekly tables.
 
-FINDING: `docs/handoffs/FINDING-soco-12-2026-09-13.md`. Zero solves.
+FINDING: `docs/records/soco/FINDING-soco-12-2026-09-13.md`. Zero solves.

@@ -10,14 +10,14 @@ no `src/market_sim/` change.
 expected to: the only outcomes on the table were a clean negative and a card, and **neither is an
 arm.**
 
-**PREREG:** `results/calibration/PREREG-nyiso206-ch-fill-level-basis.md` — committed and pushed
+**PREREG:** `docs/records/nyiso/PREREG-nyiso206-ch-fill-level-basis.md` — committed and pushed
 **before any number was read** (`2a68cc24`), with **addendum §A** (the min-stable-capped
 counterfactual, declared with its closed-form prediction) committed alongside the probe
 (`032ef4e8`) **before the probe was ever executed**, and **addendum §B declared POST-HOC and
 labelled as such** (§4.2 below).
 **Instrument:** `scripts/probes/_nyiso206_ch_fill_level_basis.py` →
-`results/calibration/_nyiso206_ch_fill_level_basis.json`.
-**Companion:** `docs/DECISION-CARD-nyiso206-ch-fill-level-basis-2026-09-06.md`.
+`results/phase0/nyiso/_nyiso206_ch_fill_level_basis.json`.
+**Companion:** `docs/records/nyiso/DECISION-CARD-nyiso206-ch-fill-level-basis-2026-09-06.md`.
 
 ---
 
@@ -304,7 +304,7 @@ first repair aimed at the fill's per-row cap.**
 **7.26–7.98×** the min-stable level the coefficient asserts, with 98.5–100 % of forced energy above
 it and rows pinned at exactly full availability. **`floor_pct`'s two factors are not separately
 identified in delivery — only their product is.** This is documented, sized, and handed to the
-owner in `docs/DECISION-CARD-nyiso206-ch-fill-level-basis-2026-09-06.md`.
+owner in `docs/records/nyiso/DECISION-CARD-nyiso206-ch-fill-level-basis-2026-09-06.md`.
 
 **Open.** Rule 20 `[R-FORCED-BUDGET]` leg (a), and the unit-grain C8 exposure it rests on
 (`ST_GAS` 0.351 / 0.343 / 0.268 against the 0.30 cap, 2 of 3 years) — unchanged by this session,

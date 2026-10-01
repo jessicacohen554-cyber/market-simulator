@@ -3,13 +3,13 @@
 **Lane:** CAISO calibration · **Date:** 2026-09-13 · **LP spent: ZERO** · **Keeper unchanged**
 (`2026-09-12-caiso-275-gascoupling`) · **Nothing promoted, no mechanism cell moved, no ISO
 determination touched.**
-**Charter:** `docs/PRECOMMIT-caiso281-is-the-marginal-hr-bias-a-measured-input-defect-2026-09-13.md`
+**Charter:** `docs/records/caiso/PRECOMMIT-caiso281-is-the-marginal-hr-bias-a-measured-input-defect-2026-09-13.md`
 · addenda `ADDENDUM-caiso281-the-diurnal-coincidence-leg-2026-09-13.md` (Gate D) and
 `ADDENDUM-caiso281-gate-E-the-DA-basis-leg-2026-09-13.md` (Gate E) — **each pushed before its own
 number existed.**
-**Predecessor:** `docs/RESULT-caiso280-the-envelope-binds-above-the-actuals-2026-09-13.md`.
+**Predecessor:** `docs/records/caiso/RESULT-caiso280-the-envelope-binds-above-the-actuals-2026-09-13.md`.
 
-![two objects](assets/caiso281-two-objects.png)
+![two objects](../../assets/caiso281-two-objects.png)
 
 ---
 

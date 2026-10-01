@@ -2,9 +2,9 @@
 verify-floor snapshots against SCN-WS1a's COMMITTED phase-0 prediction."""
 import json
 
-BEFORE = json.load(open("docs/handoffs/scn-ws1c/verify-floor-before.json"))
-AFTER = json.load(open("docs/handoffs/scn-ws1c/verify-floor-after.json"))
-PRED = json.load(open("docs/handoffs/scn-ws1a/phase0-carbon-trajectory-2026-09-05.json"))
+BEFORE = json.load(open("docs/records/forecast/scn-ws1c/verify-floor-before.json"))
+AFTER = json.load(open("docs/records/forecast/scn-ws1c/verify-floor-after.json"))
+PRED = json.load(open("docs/records/forecast/scn-ws1a/phase0-carbon-trajectory-2026-09-05.json"))
 ISOS = ["ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO"]
 BUNDLES = ["current", "tight", "rollback"]
 YEARS = [str(y) for y in range(2026, 2051)]

@@ -13,7 +13,7 @@ STATUS  : pre-registration. No number in §4 exists yet.
 
 Sources: EIA-923 Sch. 2 stocks + Sch. 5 receipts (plants in the MISO BA), CAMPD hourly gross
 load (coal-primary units at those plants), ILLINOIS.HUB DA LMP, IMM 2022 State of the Market
-report (Potomac Economics, §IV.H and §VI.B). Output `results/calibration/_miso288_coal_scarcity.json`.
+report (Potomac Economics, §IV.H and §VI.B). Output `results/phase0/miso/_miso288_coal_scarcity.json`.
 
 1. **Offer adders, on part of the fleet.** IMM: coal conservation "raised the costs of a large share
    of the coal fleet"; by 2022 "most coal-fired resources experiencing fuel and reagent supply

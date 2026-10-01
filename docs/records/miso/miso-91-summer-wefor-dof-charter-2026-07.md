@@ -119,7 +119,7 @@ miss. It belongs to the data ask, not to a sweep.
    root cause. The entry prose states plainly that it is uncited-a-priori, not fitted,
    so no future reader mistakes the label for "we tuned this".
 4. **Name it as a target of the data ask** in
-   `docs/handoffs/miso-outage-grain-data-ask-2026-07.md`.
+   `docs/records/miso/miso-outage-grain-data-ask-2026-07.md`.
 5. **Record the physics tension** (below) in the citation and the code comment.
 
 ### The physics tension, recorded

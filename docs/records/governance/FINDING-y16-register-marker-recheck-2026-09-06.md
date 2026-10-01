@@ -30,7 +30,7 @@ Nothing read it at the moment a run's years were written into
 `frontend/data/backcast/registry/<id>.json`. An LP is hours long, so a run can outlive the
 authorization it launched under.
 
-**The case is Z-6** (`docs/handoffs/holdout-2022-completeness-ercot-nyiso-2026-09-05.md` §1a,
+**The case is Z-6** (`docs/records/governance/holdout-2022-completeness-ercot-nyiso-2026-09-05.md` §1a,
 read and verified): the nyiso-189 recipe was replayed on 2022 with `--holdout-authorized`, legally,
 under NYISO's D56-R `complete` marker. **While the LP ran**, `main` withdrew that marker
 (nyiso-193 — keeper moved to `2026-09-05-nyiso-192-astoria-panel`, NOT-YET under the Q5 uniform

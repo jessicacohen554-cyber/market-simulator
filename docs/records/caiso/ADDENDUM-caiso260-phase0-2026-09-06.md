@@ -1,10 +1,10 @@
 # ADDENDUM to PRECOMMIT-caiso260 — phase 0 measured, screen year fixed, C4-2025 direction recorded. **Pushed before the screen is launched.**
 
 **Session caiso-260, 2026-09-06.** Keeper `2026-09-06-caiso-257-b1-ctonly`
-UNCHANGED. Artifacts: `results/calibration/_caiso260_demand_vintage_phase0.json`
+UNCHANGED. Artifacts: `results/phase0/caiso/_caiso260_demand_vintage_phase0.json`
 (probe `scripts/probes/_caiso260_demand_vintage_phase0.py`, the artifact
 RESTORED to committed bytes on exit) and
-`results/calibration/_caiso260_gdrift_at_solve.json`
+`results/phase0/caiso/_caiso260_gdrift_at_solve.json`
 (`_caiso255_gdrift_identity.py --keeper-sha c78f6d94`, re-pointed at the
 caiso-257 bundle since the caiso-252 one is pruned).
 

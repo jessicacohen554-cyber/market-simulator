@@ -231,7 +231,7 @@ own-zone restriction.
 
 `PRECOMMIT-caiso249-ownzone-loss-adjusted-attribution-2026-09-05.md`
 (`3f1b97a8`, pushed first); `scripts/probes/_caiso249_ownzone_attribution.py` +
-`results/calibration/_caiso249_ownzone_attribution.json`; this finding; the
+`results/phase0/caiso/_caiso249_ownzone_attribution.json`; this finding; the
 calibration-log entry; an evidence-only append to the CAISO matrix shard.
 **No cell verdict moves; no mechanism was tested; no run registered; keeper
 unchanged.**

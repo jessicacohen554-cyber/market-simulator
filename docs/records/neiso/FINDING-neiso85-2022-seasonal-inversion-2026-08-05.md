@@ -336,9 +336,9 @@ V1–V4.
 | `scripts/probes/_neiso85_seasonal_inversion_phase0.py` | Phase-0 sweep: resolved gas, model LMP, reserve families, class dispatch |
 | `scripts/probes/_neiso85_gas_chain_decomp.py` | Stage-by-stage decomposition of the delivered-gas chain |
 | `scripts/probes/_neiso85_attribution.py` | Residual attribution, the dual-fuel tell, blast radius |
-| `results/calibration/_neiso85_phase0.json` | Phase-0 measurements |
-| `results/calibration/_neiso85_gas_chain.json` | Per-stage monthly series + coverage |
-| `results/calibration/_neiso85_attribution.json` | Attribution table, oil-by-month, blast radius |
+| `results/phase0/neiso/_neiso85_phase0.json` | Phase-0 measurements |
+| `results/phase0/neiso/_neiso85_gas_chain.json` | Per-stage monthly series + coverage |
+| `results/phase0/neiso/_neiso85_attribution.json` | Attribution table, oil-by-month, blast radius |
 
 All three probes are read-only and build no LP. Re-run with any Python having pandas/pyarrow and the
 package installed.

@@ -217,7 +217,7 @@ frozen affected mask, `weighted_quantiles`, the committed dispersion vector
 + `MISO_OFFER_SPREAD_ANCHOR_RANK` = 0.875; and from the `_miso174`
 measured-side machinery: `diba_wide` at the solved −1 h key,
 `e930_balance`, the non-leap 8760 fold) →
-`results/calibration/_miso181_seam_response_precheck.json`.
+`results/phase0/miso/_miso181_seam_response_precheck.json`.
 
 **Validity gates (all hard-ABORT if failed):** V1 reproduces C3a
 +1.2813 / −4.0643 / −11.7421 % to ±0.5 pp per year as each year loads; V4

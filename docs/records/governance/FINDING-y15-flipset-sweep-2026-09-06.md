@@ -247,7 +247,7 @@ Read job by job from the API, not from the rollup:
 
 **THIS HEAD READS 6 OF 6.** `4faf2dea` is the head R-AU names. The flip itself is a
 repo-settings act only the owner can make; the click path is
-`docs/handoffs/FINDING-y9-branch-protection-2026-09-05.md` §4.
+`docs/records/governance/FINDING-y9-branch-protection-2026-09-05.md` §4.
 
 ### 6.0 THE 6-OF-6 HEAD WAS MERGED BEFORE ITS OWN SIXTH CHECK FINISHED
 

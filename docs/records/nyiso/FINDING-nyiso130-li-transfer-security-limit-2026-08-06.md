@@ -3,7 +3,7 @@
 **Session nyiso-130, 2026-08-06.** Priority 1 of the handoff; lever-queue item 1
 (`docs/mechanism-testing-matrix.md` §5.5), named by nyiso-129 §3a. Pre-registered
 in full **before any solve** at
-`results/calibration/PREREG-nyiso130-li-transfer-security-limit-2026-08-06.md`.
+`docs/records/nyiso/PREREG-nyiso130-li-transfer-security-limit-2026-08-06.md`.
 
 **Rule 22:** 2023–2025 only. No out-of-training year was solved, scored, read or
 registered; the holdout spend freeze was checked and not touched.
@@ -131,7 +131,7 @@ enter service.
 
 **The whole of NYISO's modelled scarcity tail, in every year, is Long Island in
 the window this bound is applied, with the bound saturated.** Evidence:
-`results/calibration/_nyiso130_li_tsl_identification.json`, probe
+`results/phase0/nyiso/_nyiso130_li_tsl_identification.json`, probe
 `scripts/probes/_nyiso130_li_tsl_identification.py`.
 
 ## 4. The adverse case, stated BEFORE the solve

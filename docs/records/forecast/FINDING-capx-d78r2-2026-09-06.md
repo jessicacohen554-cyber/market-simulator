@@ -6,7 +6,7 @@ Pre-registration `PRECOMMIT-capx-d78r2-full-window-2026-09-06.md`, pushed at **`
 before any LP**, with **ADDENDUM A** (the rebase + G-DRIFT re-audit), **ADDENDUM 1** (the W4′
 band and the control's pre-arm bars) and **ADDENDUM 2** (the arm's HEAD-guard trip) each pushed
 **before the leg or the grade it governs**, plus **CORRECTION 1**. Instruments
-`docs/handoffs/d78r2/{keys_probe,window_compare2}.py`, committed before the first LP.
+`docs/records/forecast/d78r2/{keys_probe,window_compare2}.py`, committed before the first LP.
 
 **NOTHING ARMS. `retirement_sector_gate` stays default-off and un-overridden for PJM.** No
 `ScenarioConfig` field added or changed, no default flip, no `_pjm_config` override, no parameter
@@ -60,7 +60,7 @@ magnitude and is **explicitly not a criterion in either direction** (rule 14).
 
 All: `run_capacity_hindcast.py --iso PJM --start-year 2021 --end-year 2025 --vintage 2020
 --fuel-variant realized --entry-screen-diagnostics`, through the committed
-`docs/handoffs/d78r2/run_full.sh`. Solve years **{2021, 2023, 2024, 2025}**, **2022 bridged**;
+`docs/records/forecast/d78r2/run_full.sh`. Solve years **{2021, 2023, 2024, 2025}**, **2022 bridged**;
 PJM solo, legs sequential, years sequential (rule 12). `data/clean` was absent at session start
 and was rebuilt in full first: **56/56 datatypes, 0 failures**.
 
@@ -354,7 +354,7 @@ by re-solving; W5′, by holding); the control bundle deleted before merge.
 **Retention (rule 29(c)).** `results/hindcast/pjm-2021-2025-realized-t1h-d78r2-control-P` is
 **deleted before merge**; the arm keeps only its slim registered files. Every number this lane
 will ever cite is in this document, the PRECOMMIT with its addenda and correction, and
-`docs/handoffs/d78r2/{keys_probe,keys_probe_origin_main,control_band,window_compare2}.json`.
+`docs/records/forecast/d78r2/{keys_probe,keys_probe_origin_main,control_band,window_compare2}.json`.
 
 ## 11. Matrix (rule 28) and registration
 
@@ -370,11 +370,11 @@ will ever cite is in this document, the PRECOMMIT with its addenda and correctio
 ## 12. Reproduction
 
 ```
-uv run python docs/handoffs/d78r2/keys_probe.py
-bash docs/handoffs/d78r2/run_full.sh control-P
-uv run python docs/handoffs/d78r2/window_compare2.py --ctl <ctl> --band-only   # the W4' band
-bash docs/handoffs/d78r2/run_full.sh arm --retirement-sector-gate
+uv run python docs/records/forecast/d78r2/keys_probe.py
+bash docs/records/forecast/d78r2/run_full.sh control-P
+uv run python docs/records/forecast/d78r2/window_compare2.py --ctl <ctl> --band-only   # the W4' band
+bash docs/records/forecast/d78r2/run_full.sh arm --retirement-sector-gate
 uv run python scripts/score_capacity_hindcast.py --bundle <dir>
 uv run python scripts/score_capacity_hindcast.py --bundle <dir> --flip-gate-extras
-uv run python docs/handoffs/d78r2/window_compare2.py --ctl <ctl> --arm <arm>
+uv run python docs/records/forecast/d78r2/window_compare2.py --ctl <ctl> --arm <arm>
 ```

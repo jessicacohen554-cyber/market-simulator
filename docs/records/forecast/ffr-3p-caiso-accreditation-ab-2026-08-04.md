@@ -7,7 +7,7 @@ onto `origin/main` **`af82322e`**.
 
 **This is an ADDENDUM, not a second findings document.** A parallel session was
 dispatched on the same FFR-3P charter and its handoff
-(`docs/handoffs/ffr-3p-caiso-accreditation-2026-08-04.md`, commit `ba518c64`) is
+(`docs/records/forecast/ffr-3p-caiso-accreditation-2026-08-04.md`, commit `ba518c64`) is
 on `main`. **That document is the FFR-3P findings document and it is not
 superseded, contradicted or duplicated here.** This addendum adds the one thing
 it explicitly did not do — *"to MEASURE the arm (owner box; **not run here**)"* —

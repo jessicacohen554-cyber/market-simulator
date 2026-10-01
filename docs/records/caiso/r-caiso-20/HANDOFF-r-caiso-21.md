@@ -18,7 +18,7 @@ STATE (2026-09-30):
 - Keeper `2026-09-30-caiso-r20-overnight` (bundle rcaiso20_A_span, 2022–25) is CALIBRATED, with a single ledgered C3c 2024.
 - Fold `-touchpoints` (2019–21, bundle rcaiso20_A_tp_2019_2021) is NOT-YET on fuelmix, dispatch_corr and price_mean
   2021. Under rubric v3.13 (rule 30(c) as amended 2026-09-30) the ISO determination is NOT-YET because of the fold.
-- R-CAISO-20 (docs/handoffs/r-caiso-20/RESULT-r-caiso-20-2026-09-30.md):
+- R-CAISO-20 (docs/records/caiso/r-caiso-20/RESULT-r-caiso-20-2026-09-30.md):
   - armed the overnight clean rung in the unprinted years (an owner ruling);
   - ledgered the remaining fold DSW residual as DATA-AVAILABILITY LIMITED: −9.3 / −15.2 / −10.2 TWh, daytime and
     evening, with no admissible trigger before 2021-04-27. **Do not re-open that ledger without a new pre-2021 hourly
@@ -61,7 +61,7 @@ TASK (owner card 2026-09-30, link 3 "Evening under-price"; link 4 "C3c 2024 pric
      Edit JSON by targeted text replacement, never a full re-dump.
 
 OWNER RULINGS IN FORCE (do not re-ask):
-- All rulings in docs/handoffs/r-caiso-18/HANDOFF-r-caiso-19.md and docs/handoffs/r-caiso-19/HANDOFF-r-caiso-20.md.
+- All rulings in docs/records/caiso/r-caiso-18/HANDOFF-r-caiso-19.md and docs/records/caiso/r-caiso-19/HANDOFF-r-caiso-20.md.
 - 2026-09-30: arm the overnight rung pre-2021 (done, promoted); ledger the fold gap (done); the next links are the
   evening under-price (this session), then C3c 2024.
 

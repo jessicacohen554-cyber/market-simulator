@@ -2,7 +2,7 @@
 by direction, from the screen bundle's flows.parquet — a REPORT on the construction question, never a
 re-cut (a rating read off these flows would be a fitted value; rule 1). Also the flow percentiles.
 
-usage: uv run python docs/handoffs/spp57b/flows_at_ratings.py <bundle_dir> <year>
+usage: uv run python docs/records/spp/spp57b/flows_at_ratings.py <bundle_dir> <year>
 """
 
 import sys

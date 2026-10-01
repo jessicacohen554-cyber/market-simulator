@@ -5,7 +5,7 @@ MODEL: Opus or Fable
 You are a SHARD. You solve ONE year, push its full bundle to your own branch, report numbers, and stop.
 "A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE."
 
-PRECOMMIT: docs/handoffs/r-caiso-2/PRECOMMIT-r-caiso-2-2026-09-25.md (read §2 and §4 only).
+PRECOMMIT: docs/records/caiso/r-caiso-2/PRECOMMIT-r-caiso-2-2026-09-25.md (read §2 and §4 only).
 
 HARD STOPS — check each; if any fails, STOP, do not push, report which one:
 1. `git rev-parse HEAD` must equal {SHA}. Never rebase, never `git pull`, never "sync", never force-push.

@@ -217,9 +217,9 @@ placement, the reconstruction rule, the no-plan zero-fill).
 ## 6. Provenance
 
 Session ercot-252, 2026-09-06, branch `claude/ercot-cc-regular-gap-h1y3am`. Companion
-records: `docs/FINDING-ercot249-250-2022-touchpoint-2026-09-05.md` (+ Addendum 1),
-`docs/FINDING-ercot251-nohsl-curtailment-gate-2026-09-06.md`,
-`docs/RESULT-ercot251-nohsl-ceiling-screen-2026-09-06.md`,
-`docs/handoffs/holdout-2022-completeness-ercot-nyiso-2026-09-05.md` §2,
+records: `docs/records/ercot/FINDING-ercot249-250-2022-touchpoint-2026-09-05.md` (+ Addendum 1),
+`docs/records/ercot/FINDING-ercot251-nohsl-curtailment-gate-2026-09-06.md`,
+`docs/records/ercot/RESULT-ercot251-nohsl-ceiling-screen-2026-09-06.md`,
+`docs/records/governance/holdout-2022-completeness-ercot-nyiso-2026-09-05.md` §2,
 `data/raw/ercot-AS/README.md` (back-year series section), `docs/calibration-log/ercot.md`
 (ercot-252).

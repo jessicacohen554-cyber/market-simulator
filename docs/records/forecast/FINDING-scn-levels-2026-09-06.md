@@ -91,9 +91,9 @@ things a 1-year T0 cannot show (a binding non-escape year; the deployment respon
 | `configs/scenario_campaign_matrix.yaml` | VOL-* block | "ONLY if owner card D-3 rules the axis admissible … if D-3 rules NO these cases are struck" | spent clause deleted; **D-3 RULED YES (S1)**, D-3b deferred; blocked on the missing field alone |
 | `src/market_sim/config/scenarios.py` | `federal_ces_target_by_year` docstring | "ILLUSTRATIVE, NOT A CAMPAIGN LEVEL … No value here is a committed level" | S3 citation; `<current>` = 0.55; where a committed level actually lives (the YAML, rule 24) |
 | `src/market_sim/config/scenarios.py` | `federal_ces_acp_usd_per_mwh` docstring | "Illustrative $50 in the SCN-WS2a probe (D-2 open)" | "The COMMITTED campaign level is $50 — owner box D-2 → S3 … the same $50" |
-| `docs/handoffs/forecast-scenario-readiness-plan-2026-09.md` | §3.5 header | "Levels are illustrative until D-2." | deleted (now false); replaced by the committed-per-S3 header |
-| `docs/handoffs/forecast-scenario-readiness-plan-2026-09.md` | §5.1 rows 1 and 3 | "illustrative level, D-2 open" | "yes, at a COMMITTED level"; probe quotable as a campaign result |
-| `docs/handoffs/scenario-desk-ledger-2026-09.md` | §2 D-2 row, §3 rows 1 and 3 | same as above | executed-by record + the three uncommitted levels; scorecard mirrors the plan |
+| `docs/records/forecast/forecast-scenario-readiness-plan-2026-09.md` | §3.5 header | "Levels are illustrative until D-2." | deleted (now false); replaced by the committed-per-S3 header |
+| `docs/records/forecast/forecast-scenario-readiness-plan-2026-09.md` | §5.1 rows 1 and 3 | "illustrative level, D-2 open" | "yes, at a COMMITTED level"; probe quotable as a campaign result |
+| `docs/records/misc/scenario-desk-ledger-2026-09.md` | §2 D-2 row, §3 rows 1 and 3 | same as above | executed-by record + the three uncommitted levels; scorecard mirrors the plan |
 
 Also relabelled, not "illustrative" but stale in the same way: the plan §5.1 and ledger §3 **Carbon**
 cells read "repair gated on D-1" — D-1 is ruled (S2), so they now name **SCN-WS1c** as the lane

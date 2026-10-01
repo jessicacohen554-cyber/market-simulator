@@ -5,7 +5,7 @@
 - **How it was solved:** one shard per year, all at `f2850356`, composed at zero LP.
 - **Prior keeper:** `2026-09-28-pjm-next-6-f2`, pruned (rule 35).
 - **Control:** the prior keeper's committed bundle plus G-DRIFT, with every hunk INERT (rule 29(b)).
-- **Records:** design `docs/DESIGN-pjm-next-7-virtual-settlement-2026-09-28.md`; pre-registration `docs/PRECOMMIT-pjm-next-7-virtual-settle-2026-09-28.md`.
+- **Records:** design `docs/records/pjm/DESIGN-pjm-next-7-virtual-settlement-2026-09-28.md`; pre-registration `docs/records/pjm/PRECOMMIT-pjm-next-7-virtual-settle-2026-09-28.md`.
 - **Owner rulings:**
   - *"Design card: settle financially"*;
   - design card: *"A′ P0-DA / P1-RT"*;
@@ -57,7 +57,7 @@
 - The regression is reported at full magnitude and is not hidden.
 - What remains pre-2023 is now a virtual-free physical question.
 
-## 4. Card 3 (coal, zero LP): `docs/FINDING-pjm-next-7-coal-phase0-2026-09-28.md`
+## 4. Card 3 (coal, zero LP): `docs/records/pjm/FINDING-pjm-next-7-coal-phase0-2026-09-28.md`
 
 **2019.** About 8.3 TWh of phantom COAL_BIT output comes from how the CAMPD unit-outage layer handles the exit cohort. Three measured defects:
 - **(a)** Chalk Point coal units carry the GT nameplates (16 / 35 MW), because the post-retirement EIA-860 snapshot has no ST rows.

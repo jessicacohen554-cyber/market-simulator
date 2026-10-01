@@ -1,7 +1,7 @@
 # ADDENDUM to PRECOMMIT-ercot261 — Card B needs the PARTIAL-plant channel, and here is its footprint, declared before the solve
 
 > Written **before any LP is spent**, as an addendum to
-> `docs/PRECOMMIT-ercot261-gas-level-retirements-2026-09-09.md` §3.
+> `docs/records/ercot/PRECOMMIT-ercot261-gas-level-retirements-2026-09-09.md` §3.
 
 ## 1. What the whole-plant channel actually recovers for ERCOT: 9.8 MW
 

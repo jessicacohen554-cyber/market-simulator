@@ -8,7 +8,7 @@
 parent ran no LP (rule 32 `[R-SHARD]` (a)). Nothing armed, nothing registered, no
 `ScenarioConfig` field added, no matrix cell verdict moved.
 **PJM keeper `2026-09-11-pjm-d4-4-gasoutage`: CALIBRATED, 8/8, zero caveats — UNCHANGED.**
-Step 1-2 of this session: `docs/RESULT-pjm-h4-bench-move-landed-2026-09-13.md`.
+Step 1-2 of this session: `docs/records/pjm/RESULT-pjm-h4-bench-move-landed-2026-09-13.md`.
 
 ---
 

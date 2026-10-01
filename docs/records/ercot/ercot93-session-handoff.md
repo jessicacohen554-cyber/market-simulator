@@ -2,11 +2,11 @@
 
 > **STATUS 2026-07-26 — THE RECONSTRUCTION BELOW IS DEAD. DO NOT RUN IT.**
 > The core wiring was never applied on main, and
-> `docs/handoffs/ercot93-core-mechanism.patch` has since ROTTED: its
+> `docs/records/ercot/ercot93-core-mechanism.patch` has since ROTTED: its
 > `src/market_sim/data/fleet.py` target became the `data/fleet/` package
 > (wave 3H) and the `scenarios.py` hunk context drifted, so §"To reconstruct"
 > step 1 (`git apply`) fails. Owner decision (fast-tier escalation
-> follow-through, `docs/handoffs/fast-tier-triage-2026-07-26.md` §4-D3):
+> follow-through, `docs/records/misc/fast-tier-triage-2026-07-26.md` §4-D3):
 > **the machinery is DROPPED, not ported** — it guards a rejected, default-off
 > probe. `tests/test_ercot_offer_surface_cleared_share_steam_rt.py` was
 > C-deleted with it. This document stays as the probe's canonical record (the
@@ -28,7 +28,7 @@ machinery on main for the follow-up (season-conditioned wall) round.
 used for the small files below, but the two core files exceed its practical size:
 `fleet.py` (526 KB / 11,125 lines) and `scenarios.py` (540 KB / 7,981 lines).
 Their +197-line mechanism wiring is therefore delivered as the git-apply-able
-patch `docs/handoffs/ercot93-core-mechanism.patch` in this same commit.
+patch `docs/records/ercot/ercot93-core-mechanism.patch` in this same commit.
 
 ## Already pushed to this branch (verified byte-for-byte via the API)
 
@@ -42,7 +42,7 @@ patch `docs/handoffs/ercot93-core-mechanism.patch` in this same commit.
 
 1. Apply the core-file wiring:
    ```
-   git apply docs/handoffs/ercot93-core-mechanism.patch
+   git apply docs/records/ercot/ercot93-core-mechanism.patch
    ```
    This adds 3 default-off `ScenarioConfig` fields (in `_CACHE_KEY_OPTIONAL_FIELDS`
    + `TIER_TAGS`; `cache_key(ScenarioConfig())` stays byte-stable) and the

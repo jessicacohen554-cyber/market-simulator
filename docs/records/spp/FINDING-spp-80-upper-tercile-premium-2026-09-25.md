@@ -1,7 +1,7 @@
 # FINDING — SPP-80: what owns SPP's 2022+ upper-tercile price premium (data intake, zero LP, 2026-09-25)
 
-Charter: `docs/handoffs/CHARTER-spp-80-upper-tercile-premium-intake-2026-09-25.md`.
-Parent: `docs/handoffs/FINDING-spp-79-c3a-is-a-cancellation-2026-09-25.md`.
+Charter: `docs/records/spp/CHARTER-spp-80-upper-tercile-premium-intake-2026-09-25.md`.
+Parent: `docs/records/spp/FINDING-spp-79-c3a-is-a-cancellation-2026-09-25.md`.
 Probe: `scripts/probes/_spp80_upper_tercile_premium.py`. Commits, from pin `e2eddfed`: the data,
 the probe and this document. **No LP, no shard, no bundle, no `src/` edit, no `ScenarioConfig`
 field, no multiplier touched.**

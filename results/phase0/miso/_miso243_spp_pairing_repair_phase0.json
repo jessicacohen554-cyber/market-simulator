@@ -1,6 +1,6 @@
 {
  "probe": "miso-243 phase 0 \u2014 repair the per-year SPP hourly ladder's cross-year pairing (CONSTRUCTION defect, rule 14 / rule 23)",
- "prereg": "results/calibration/PREREG-miso243-repair-the-spp-ladders-cross-year-pairing-2026-09-07.md",
+ "prereg": "docs/records/miso/PREREG-miso243-repair-the-spp-ladders-cross-year-pairing-2026-09-07.md",
  "keeper": "2026-09-07-miso-233-spp-hourly",
  "zero_lp": true,
  "read_only": true,

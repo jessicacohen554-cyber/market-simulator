@@ -1,6 +1,6 @@
 # FINDING — capx-D20: reconstructed `run_config` provenance — the label, the cap, the seven keys
 
-**Lane:** capx-D20 (director r#22 ruling §0s.5, `docs/handoffs/capx-director-ledger-2026-08.md`
+**Lane:** capx-D20 (director r#22 ruling §0s.5, `docs/records/forecast/capx-director-ledger-2026-08.md`
 — the ruling this lane *executes*, not re-decides)
 · **Branch:** `claude/capx-d20-reconstruction-provenance-7amx23`
 · **Base:** `origin/main` @ `663605c5` · **Date:** 2026-09-01 · **Zero solves.**

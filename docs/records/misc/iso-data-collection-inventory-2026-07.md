@@ -7,7 +7,7 @@ Read-only audit — no fetch, derive, solve, or intake was run to produce this.
 
 **Policy framing (read before acting on any row below).** CLAUDE.md rule 22
 designates exactly **2022 and H1-2026** as quarantined holdouts. Under the
-2026-07-06 Option-2 decision (`docs/handoffs/holdout-policy-memo-2026-07.md`
+2026-07-06 Option-2 decision (`docs/records/governance/holdout-policy-memo-2026-07.md`
 §e), **data intake** for those two windows is owner-authorized/no-LP-allowed
 at any time, but **solving or scoring** them is blocked per-ISO until that
 ISO carries a `declared` entry in

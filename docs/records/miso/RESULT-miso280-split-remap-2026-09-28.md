@@ -2,8 +2,8 @@
 
 ```
 LANE     : miso-280 (owner ruling 2026-09-28, lever card "C: Build it (Recommended)")
-PREREG   : docs/PRECOMMIT-miso280-split-remap-2026-09-28.md (pin 8f765fef)
-PHASE 0  : docs/FINDING-miso280-phase0-riverside-vlr-southgas-2026-09-28.md
+PREREG   : docs/records/miso/PRECOMMIT-miso280-split-remap-2026-09-28.md (pin 8f765fef)
+PHASE 0  : docs/records/miso/FINDING-miso280-phase0-riverside-vlr-southgas-2026-09-28.md
 OUTGOING : 2026-09-27-miso-279-stcov (miso279_span) — pruned (rule 35)
 KEEPER   : 2026-09-28-miso-280-splitremap (results/calibration/miso280_span, 2019-2025)
 DELTA    : campd_split_remap_companions = true (seven '-splitremap-' companions). DOF +0

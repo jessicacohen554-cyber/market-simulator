@@ -9,7 +9,7 @@ off `origin/main` at `b4581c49`. Keeper at entry **`2026-08-04-miso-127-onlinepm
 **Pushed BEFORE any adjudicating statistic of this lane.** The primary lane
 (synchronized-reserve online-gating, `PREREG-miso132-synchronized-reserve-online-gating-2026-08-05.md`,
 pushed `9a0033bb`) was **KILLED on its own pre-registered S-2 bar with zero solves**
-(record `results/calibration/_miso132_online_gating_sizing.json`; the finding is
+(record `results/phase0/miso/_miso132_online_gating_sizing.json`; the finding is
 written in the same session). This document opens the **successor-2** lane —
 miso-130 stamp (c) / miso-131 §3(b) — the only remaining named, un-adjudicated,
 non-data-blocked item on §5.4.
@@ -86,7 +86,7 @@ forbidden path. One measurand, one mechanism, both cohorts (rule 19 `[R-ONE-MECH
 ## §2 PRE-CHECK — descriptive, ONE inertness bar
 
 Probe `scripts/probes/_miso132b_cc_committed_precheck.py`, record
-`results/calibration/_miso132b_cc_committed_precheck.json`. No LP; the fleet is
+`results/phase0/miso/_miso132b_cc_committed_precheck.json`. No LP; the fleet is
 assembled at HEAD under the keeper's committed config and each cohort's committed
 tranches are priced at their July basis, then compared with the keeper's own solved
 July night prices.

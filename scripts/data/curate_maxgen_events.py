@@ -1,7 +1,7 @@
 """Curate the ``maxgen-events`` clean datatype.
 
 Declared capacity-emergency event windows (the M-1 registry of the MISO
-price-formation lane, ``docs/handoffs/miso-price-formation-design-2026-07.md``
+price-formation lane, ``docs/records/miso/miso-price-formation-design-2026-07.md``
 §3/M-1) — one row per (ISO, declaration, region), transcribed from primary
 IMM/SOM documents into ``data/raw/maxgen-events/<iso>/<iso>.csv`` and written
 through the frozen :func:`scripts.lib.clean_io.write_clean` seam against

@@ -60,7 +60,7 @@ Three things this settles:
 
 1. **The reproduction is faithful.** The UNIT full-op column reproduces
    caiso-119's own derive — 0.565 / 0.570 / 0.570
-   (`results/calibration/caiso119_minload_derive.json`) — to within 0.002. The
+   (`results/phase0/caiso/caiso119_minload_derive.json`) — to within 0.002. The
    conventions are matched, so the **only** difference between 0.570 and 0.29 is
    the **basis**.
 2. **The ratio is ~0.52, and that is physics, not noise.** A 2×1 or 3×1

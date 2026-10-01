@@ -316,7 +316,7 @@ which the v2.9 owner amendment removed from the scored rubric.
 ## §9 — the ask (filed, NOT built)
 
 Full design memo with derive-first gates D0–D4 and kill-before-solve criteria:
-`docs/handoffs/caiso-131-c3c-c3a-ask-2026-07-27.md`.
+`docs/records/caiso/caiso-131-c3c-c3a-ask-2026-07-27.md`.
 
 Three items, in the ranking above. Nothing here is armed and no promotion is
 requested; promotion remains a separate owner act (rule 1 `[R-STRUCT]`).

@@ -1,7 +1,7 @@
 {
   "instrument": "d78r3_stack_census.py --regrade",
   "graded_on": {
-    "primary": "docs/handoffs/d78r2/window_compare2.json -> gates.W5prime.per_year[y].offer_diff_by_fuel",
+    "primary": "docs/records/forecast/d78r2/window_compare2.json -> gates.W5prime.per_year[y].offer_diff_by_fuel",
     "documentary": "FINDING-capx-d78r2-2026-09-06.md \u00a75.1 (rule 29(c))",
     "arm_re_solved": false,
     "control_re_solved_for_this_grade": false

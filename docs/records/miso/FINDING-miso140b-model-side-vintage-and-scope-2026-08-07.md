@@ -4,7 +4,7 @@
 > ran concurrently** on the same §5.4 queue item 1 and landed on `main` first
 > (PR #3696; PREREG `483091b3`, FINDING `46139909`). **That session discharges the
 > item**, and its record —
-> `results/calibration/FINDING-miso140-bench-lw-refresh-verified-2026-08-07.md` —
+> `docs/records/miso/FINDING-miso140-bench-lw-refresh-verified-2026-08-07.md` —
 > is canonical. This document is the concurrent session's, kept because (a) it
 > **replicates the comparator verification and every C3a figure independently, in
 > every cell**, under a separately pre-registered protocol, which is the strongest
@@ -26,7 +26,7 @@ from committed artifacts, state whether the keeper's determination changes.
 `data/raw/`.** MISO keeper unchanged at **`2026-08-05-miso-132b-cc-committed`**
 (bundle `results/calibration/miso132_ccmin_B`).
 
-**PREREG** `results/calibration/PREREG-miso140-bench-refresh-verification-2026-08-07.md`,
+**PREREG** `docs/records/miso/PREREG-miso140-bench-refresh-verification-2026-08-07.md`,
 pushed at **`78e2cec4`** BEFORE any adjudicating statistic, with four gating
 gates, six falsifiable numeric predictions, and four look-alike traps named with
 pre-committed counter-measurements.
@@ -351,6 +351,6 @@ before debating its parameter* → miso-140 *a repair is not a verification* →
 ---
 
 **Probe** `scripts/probes/_miso140_bench_refresh_gates.py` ·
-**Records** `results/calibration/_miso140_bench_refresh_gates.json`,
-`results/calibration/_miso140_c3a_reverification.json` ·
-**PREREG** `results/calibration/PREREG-miso140-bench-refresh-verification-2026-08-07.md` @ `78e2cec4`.
+**Records** `results/phase0/miso/_miso140_bench_refresh_gates.json`,
+`results/phase0/miso/_miso140_c3a_reverification.json` ·
+**PREREG** `docs/records/miso/PREREG-miso140-bench-refresh-verification-2026-08-07.md` @ `78e2cec4`.

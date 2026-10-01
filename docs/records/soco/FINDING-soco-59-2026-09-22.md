@@ -6,7 +6,7 @@ rule 29 (b) **form 4**, no control solve.
 **Arm** `hydro_backfill_year=2024` + `hydro_eia930_monthly=True`, with
 `EIA930_PS_SPLIT_COMPLETE_FROM["SOCO"] = 2025` registered (`constants.py`). Zero new fields, zero free
 parameters.
-**PRECOMMIT** `docs/handoffs/PRECOMMIT-soco-59-2026-09-22.md`, pushed at
+**PRECOMMIT** `docs/records/soco/PRECOMMIT-soco-59-2026-09-22.md`, pushed at
 `3c5a8967b7f060852c9e541d50f0bb1fa65ef011` before any LP; Addendum A (wrong) and Addendum B (post-hoc
 correction) appended to it.
 **Run** `2026-09-22-soco59-hydro-split` — owner ruled *promote* 2026-09-23, but a concurrent SOCO hydro-4 promotion landed first; it stays a **registered candidate** (§10).
@@ -256,8 +256,8 @@ concurrent hydro-4 promotion (keeper 2026-09-22-soco-h4-hydro-ror) landed first;
 candidate and the next step is a combined h4-ror + hydro-repair span.
 E13 for 2026-09-20-soco53g-prb-own-iso re-raised for the TWELFTH lane
 (recommendation: decline). Control per-plant layer recovered at zero LP for the
-fifth consecutive lane. Records: docs/handoffs/PRECOMMIT-soco-59-2026-09-22.md,
-docs/handoffs/FINDING-soco-59-2026-09-22.md, scripts/gen_soco59_attestation.py,
+fifth consecutive lane. Records: docs/records/soco/PRECOMMIT-soco-59-2026-09-22.md,
+docs/records/soco/FINDING-soco-59-2026-09-22.md, scripts/gen_soco59_attestation.py,
 scripts/probes/soco59_compose_span.py, scripts/probes/_soco59_phase0.py,
 scripts/probes/_soco59_rule19.py.
 ```

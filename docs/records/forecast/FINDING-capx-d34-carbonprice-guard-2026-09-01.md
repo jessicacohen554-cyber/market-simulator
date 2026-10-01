@@ -3,7 +3,7 @@
 **Session:** D34 (capacity-expansion / Forecast Finalization track), branch
 `claude/capx-d34-carbonprice-guard-lfpeld`. **Date:** 2026-09-01. **HEAD at launch:**
 `5083e29e` (origin/main). **Charter:** execute owner ruling Q26 (r#26 amendment 1,
-`docs/handoffs/capx-director-ledger-2026-08.md` §3 Q26) — keep the documented replace
+`docs/records/forecast/capx-director-ledger-2026-08.md` §3 Q26) — keep the documented replace
 semantics of `ScenarioConfig.carbon_price` and add a loud validation warning when a
 forecast scenario's `carbon_price` sits below the resolved base carbon trajectory in any
 horizon year. **Zero solves.**
@@ -46,7 +46,7 @@ allowance price, **$26.05/t in 2026 escalating at the published 7 %/yr CCR rate 
 $132.16/t by 2050** (the EM-6 seam fix). D21's `carbon25` arm therefore did not raise
 the carbon price — it **CUT** it, in every single horizon year, −$1.05 in 2026 widening
 to −$107.16 in 2050, and P1 measured the premise of its own pair
-(`docs/handoffs/FINDING-capx-d23-p1-carbon-sign-2026-09-01.md` §2). D26 repaired the
+(`docs/records/forecast/FINDING-capx-d23-p1-carbon-sign-2026-09-01.md` §2). D26 repaired the
 *instrument* with the additive `carbon_price_delta`; Q26 repairs the *ergonomics* so the
 next author cannot fall into it silently.
 
@@ -200,4 +200,4 @@ posture.
 | `src/market_sim/config/scenarios.py` | `__post_init__`: the forecast-only below-base check, emitting the guard's message as a `RuntimeWarning` |
 | `tests/unit/policy/test_carbon_price_below_base_guard.py` | new — the five charter tests plus the renderer and no-program-ISO cases (19 tests) |
 | `tests/unit/config/test_config.py` | one assertion scoped to the `from_yaml` warning (§5) |
-| `docs/handoffs/FINDING-capx-d34-carbonprice-guard-2026-09-01.md` | this finding |
+| `docs/records/forecast/FINDING-capx-d34-carbonprice-guard-2026-09-01.md` | this finding |

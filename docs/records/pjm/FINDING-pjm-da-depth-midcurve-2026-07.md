@@ -8,7 +8,7 @@ pjm-99 top-of-curve surface + the new mid-curve floor). Baseline:
 ## 1. The adjudication (cheap diagnostics first, rule 1)
 
 Two no-LP diagnostics settled the A′-vs-B design question the pjm-99 no-op
-left open (`docs/FINDING-pjm-offer-surface-noop-2026-07.md` §Re-scoped
+left open (`docs/records/pjm/FINDING-pjm-offer-surface-noop-2026-07.md` §Re-scoped
 levers):
 
 1. **Measured DA demand structure** (PJM DataMiner2 `hrl_dmd_bids` +

@@ -18,7 +18,7 @@ baseline is taken from the GitHub API instead and labelled as such.
 `.github/workflows/ci.yml` `pull_request.paths` enrolled three documentation paths:
 
 ```
-- "docs/handoffs/audit-program-director-board-2026-08.md"
+- "docs/records/governance/audit-program-director-board-2026-08.md"
 - "docs/model-audit-release-plan-2026-08.md"
 - "docs/FINDING-*.md"
 ```
@@ -42,7 +42,7 @@ workflow **skipped by path filtering** leaves its checks *Pending*, while a **jo
 skipped by a conditional reports *Success*. Once the six R-AE checks are required, a
 PR touching only unenrolled paths shows them pending forever and can never merge.
 
-**Genealogy:** raised by `docs/handoffs/FINDING-y9-branch-protection-2026-09-05.md`
+**Genealogy:** raised by `docs/records/governance/FINDING-y9-branch-protection-2026-09-05.md`
 §5, which flagged it and explicitly did not fix it ("widening the filter is an owner
 decision"). That file is itself in the unenrolled path.
 
@@ -170,7 +170,7 @@ renamed or reordered; the required-set composition is untouched.
 Both survivors are `data/raw/**`-only PRs (#5243, #5133) — see §4.
 
 `docs/**` was **not** enrolled wholesale, per the standing instruction and `ci.yml`'s
-own comment. The pre-existing `docs/handoffs/audit-program-director-board-2026-08.md`
+own comment. The pre-existing `docs/records/governance/audit-program-director-board-2026-08.md`
 entry is now redundant under `docs/handoffs/**`; it was left in place to keep the diff
 purely additive.
 

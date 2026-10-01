@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """miso-287 pre-check (ZERO LP): pooled coal stock-carry vs the flat 1/12 monthly rows.
 
-Pre-registered in ``docs/PRECOMMIT-miso287-coal-carry-precheck-2026-09-29.md``
+Pre-registered in ``docs/records/miso/PRECOMMIT-miso287-coal-carry-precheck-2026-09-29.md``
 (committed before this probe was written; thresholds there, not here).
 
 A binding coal energy row acts in the LP as a uniform adder ``lam`` ($/MMBtu,
@@ -20,7 +20,7 @@ hours. Per year, on the fleet-only rebuild of the keeper recipe:
 Gate V: FLAT must reproduce the keeper's P1 2022 night median within +/-$1.5.
 The per-yard annual rows are not emulated (CARRY is an upper bound on relief).
 
-Output: ``results/calibration/_miso287_carry_precheck.json``. Rule 13: nothing
+Output: ``results/phase0/miso/_miso287_carry_precheck.json``. Rule 13: nothing
 here feeds a solve.
 """
 
@@ -82,7 +82,7 @@ def main() -> int:
     from market_sim.model.commitment import compute_monthly_markup
 
     dec.KEEPER = KEEPER
-    path = REPO / "results/calibration/_miso287_carry_precheck.json"
+    path = REPO / "results/phase0/miso/_miso287_carry_precheck.json"
     out = json.loads(path.read_text()) if path.exists() else {}
     for y in args.years:
         hh = _henry_hub_actual(_load_reference(), y)

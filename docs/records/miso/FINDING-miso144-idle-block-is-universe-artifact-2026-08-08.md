@@ -8,7 +8,7 @@ resolved the charter's object to an instrument correction, so G-B mechanism
 naming never fired and G-C was never reached). Keeper **UNCHANGED** at
 `2026-08-05-miso-132b-cc-committed` (bundle `results/calibration/miso132_ccmin_B`).
 
-**PREREG** `results/calibration/PREREG-miso144-inmerit-idle-attribution-2026-08-08.md`,
+**PREREG** `docs/records/miso/PREREG-miso144-inmerit-idle-attribution-2026-08-08.md`,
 pushed at **`017f6bee`** (blob **`5599ba80`**, verified against the remote)
 **BEFORE any adjudicating statistic**, with 13 falsifiable predictions, four
 pre-committed branches with priors, two construction-error stops, seven

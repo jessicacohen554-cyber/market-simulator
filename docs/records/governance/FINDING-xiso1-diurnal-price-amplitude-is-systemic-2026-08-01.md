@@ -4,7 +4,7 @@
 **Arm A** of the xiso-1 brief. **NO LP SOLVED. No keeper changed, no bundle
 produced, no dashboard registration** (same disposition as neiso-71/73/74).
 **Probe:** `scripts/probes/_xiso1_diurnal_amplitude_audit.py` (read-only).
-**Transcript:** `results/calibration/PROBE-xiso1-diurnal-amplitude-audit-2026-08-01.txt`.
+**Transcript:** `results/phase0/governance/PROBE-xiso1-diurnal-amplitude-audit-2026-08-01.txt`.
 
 ---
 

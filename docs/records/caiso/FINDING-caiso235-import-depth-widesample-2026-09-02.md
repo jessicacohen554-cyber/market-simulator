@@ -17,7 +17,7 @@ Instruments (committed):
 
 * `scripts/data/derive_caiso_import_depth_widesample.py` — the re-run, both gates,
   the §4-FORK-CHECK and the §5 ungated diagnostics.
-* `results/calibration/_caiso235_import_depth_widesample.json`.
+* `results/phase0/caiso/_caiso235_import_depth_widesample.json`.
 * `scripts/data/derive_caiso_import_tranches.py` — `corridor_net_import` gains an
   optional `years` argument defaulting to its existing `YEARS`. **That is the only
   edit to any pre-existing file in this session**, and all fifteen existing callers

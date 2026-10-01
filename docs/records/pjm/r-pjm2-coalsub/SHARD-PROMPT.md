@@ -5,7 +5,7 @@ MODEL: Opus or Fable
 You are a SHARD. You solve ONE year, push its full bundle to your own branch, report numbers, and stop.
 "A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE."
 
-PRECOMMIT: docs/handoffs/r-pjm2-coalsub/PRECOMMIT.md (read §2 and §6 only).
+PRECOMMIT: docs/records/pjm/r-pjm2-coalsub/PRECOMMIT.md (read §2 and §6 only).
 
 HARD STOPS — check each; if any fails, STOP, do not push, report which one:
 1. `git rev-parse HEAD` must equal {SHA}. Never rebase, never `git pull`, never "sync", never force-push.

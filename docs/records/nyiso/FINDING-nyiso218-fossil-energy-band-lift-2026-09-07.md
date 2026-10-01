@@ -4,7 +4,7 @@
 `claude/nyiso-backcast-calibration-hr6c08`, on `main` at `bfbb0b6a`. **Date:** 2026-09-07.
 **Keeper:** `2026-09-07-nyiso-213-summer-seam` — **UNCHANGED. Nothing promoted, nothing registered,
 no marker moved, `final` not granted, 2020/2021 unspent.**
-**Pre-registration:** `results/calibration/PREREG-nyiso218-fossil-energy-band-lift.md`, pushed at
+**Pre-registration:** `docs/records/nyiso/PREREG-nyiso218-fossil-energy-band-lift.md`, pushed at
 `5e182e8a` **before any solve**, plus two addenda each pushed **before the spend it governs**
 (`ADDENDUM-nyiso218-intermediate-drop`, `ADDENDUM-nyiso218-s1-gate-defect`). None was edited after.
 
@@ -180,7 +180,7 @@ them costs ≈ 35 min (span) + 12 min (2022) of LP** — stated before any re-so
 
 ## 8. The successor object
 
-`docs/FINDING-nyiso218-hydro-within-month-daily-allocation-2026-09-07.md` — NYISO's hydro shape
+`docs/records/nyiso/FINDING-nyiso218-hydro-within-month-daily-allocation-2026-09-07.md` — NYISO's hydro shape
 residual is **not** a diurnal-shape defect. It is a **within-month, day-to-day allocation** defect
 (within-month day-energy r **0.207–0.392** against hour-of-day r 0.975–0.989 and month-energy r
 0.898–1.000), the model **over-swings** the river day to day by **1.86–2.25×**, and two of my own

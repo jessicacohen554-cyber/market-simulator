@@ -94,4 +94,4 @@ for year in (2023, 2024, 2025):
         " wind potential total",
         round(float((wcf * wcap).sum() / 1e6), 2) if wcap.ndim == 2 else "",
     )
-pd.DataFrame(out).to_csv(REPO / "docs/handoffs/spp57/census.csv", index=False)
+pd.DataFrame(out).to_csv(REPO / "docs/records/spp/spp57/census.csv", index=False)

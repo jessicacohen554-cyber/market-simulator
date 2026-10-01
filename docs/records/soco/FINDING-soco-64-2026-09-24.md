@@ -306,6 +306,6 @@ cost-based start cost scoped by measured CEMS run length (arm B, NREL $20/MW,
 no new scalar)? recommendation yes, on the cost re-characterization only; if
 no, rule on arm Z for consistency. (2) decline 2026-09-20-soco53g-prb-own-iso
 (E13)? Leftover refs for the owner: claude/soco61-arm-*, claude/soco60-arm-*,
-claude/soco60-armB-*. Records: docs/handoffs/FINDING-soco-64-2026-09-24.md,
+claude/soco60-armB-*. Records: docs/records/soco/FINDING-soco-64-2026-09-24.md,
 scripts/probes/_soco64_phase0.py.
 ```

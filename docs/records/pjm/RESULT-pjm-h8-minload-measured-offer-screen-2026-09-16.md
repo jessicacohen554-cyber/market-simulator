@@ -5,8 +5,8 @@
 **Screen** PJM 2023, ONE arm shard at one pinned sha (`bc7bbe45`). Parent ran no LP (rule 32
 `[R-SHARD]` (a)). **No control solve was spent** — G-CTRL form 4, the keeper's own committed
 bundle. **PJM keeper `2026-09-11-pjm-d4-4-gasoutage`: CALIBRATED, 8/8, zero caveats — UNTOUCHED.**
-Spec and pre-registration: `docs/PRECOMMIT-pjm-h8-minload-measured-offer-2026-09-16.md`.
-Charter: `docs/FINDING-pjm-h8-coal-minload-is-the-undisciplined-offer-surface-2026-09-16.md`.
+Spec and pre-registration: `docs/records/pjm/PRECOMMIT-pjm-h8-minload-measured-offer-2026-09-16.md`.
+Charter: `docs/records/pjm/FINDING-pjm-h8-coal-minload-is-the-undisciplined-offer-surface-2026-09-16.md`.
 
 ---
 
@@ -180,8 +180,8 @@ re-solves for 2023** and five further years (~90-105 min) for the rest of PJM's 
 (2020-2025, rule 35 `[R-PROMOTE]` (c)).
 
 **RULE 33 `[R-SHARD-ARCHIVE]` (f)(4) — A PRIOR RECOVERY COMMAND IS NOW DEAD, recorded rather
-than left to fail silently.** `docs/RESULT-pjm-h6-route-a-replace-screen-2026-09-14.md` §7 and
-`docs/RESULT-pjm-h7-gasmid-joint-screen-2026-09-14.md` §7 both pin recovery to shas on branches
+than left to fail silently.** `docs/records/pjm/RESULT-pjm-h6-route-a-replace-screen-2026-09-14.md` §7 and
+`docs/records/pjm/RESULT-pjm-h7-gasmid-joint-screen-2026-09-14.md` §7 both pin recovery to shas on branches
 that **no longer resolve** (`dadda814…` unreachable: *"could not get object info"*;
 `claude/pjm-h6-screen-2023` gone from `origin`). Those bundles are **not recoverable by
 checkout** — reproducing either now costs a re-solve. This lane did not delete them; the

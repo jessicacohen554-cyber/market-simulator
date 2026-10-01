@@ -94,7 +94,7 @@ Two consequences for the record:
 
 `data/raw/lmp-data/MISO/` census: **2022, 2023, 2024, 2025, 2026 only.** No 2020/2021 partition
 exists, and miso-254's exhaustive route audit
-(`docs/FINDING-miso254-lmp-2020-2021-route-audit-2026-09-12.md`, 12 routes) closed every public
+(`docs/records/miso/FINDING-miso254-lmp-2020-2021-route-audit-2026-09-12.md`, 12 routes) closed every public
 route the day before. `MISO_PRICING_API_KEY` — the single unblocker it names — is **not set in
 this environment**. Re-confirmed, not inherited. **No proxy was synthesised.**
 

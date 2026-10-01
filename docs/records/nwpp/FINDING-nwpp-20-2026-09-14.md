@@ -3,7 +3,7 @@
 **Lane:** NWPP-20 (desk r#4 charter, 2026-09-14) · **Model:** Fable · **Base:**
 `d083b0b14b5c5bfb3aed8877859d309f7ddca4d1` (= `origin/main` at issuance) ·
 **Branch:** `claude/nwpp-20-register-hlgraw` · **PRECOMMIT:**
-`docs/handoffs/PRECOMMIT-nwpp-20-2026-09-14.md` · **DATA PROFILE:** `nwpp`
+`docs/records/nwpp/PRECOMMIT-nwpp-20-2026-09-14.md` · **DATA PROFILE:** `nwpp`
 (1.3 GB measured; the `code` profile is not enough because the fleet parquet
 extension and the pool-frame tests read `data/raw/eia-860` and the 17 member
 extracts).
@@ -221,7 +221,7 @@ region's superseded keeper / record and by a direct key re-derivation (‡):
 - † `test_fleet::TestLoadRetiredWithinWindow::test_neiso_includes_mystic_cc` ('oil' ≠ 'gas_cc')
 - † `test_persisted_identity::test_solve_surface_fingerprint_is_pinned[NYISO]` (`bd2b4657f9b5df7e ≠ 1eefed492204fab7`, 210 vs 209 rows)
 - † `test_fleet_arrays_golden::test_generators_to_fleet_arrays_ercot_2023_golden` (`availability` drift vs the pre-split golden — fails on the base worktree too)
-- ‡ `test_key_provenance_exceptions` ×3 — 10 NEISO forecast records (`docs/handoffs/scn-ws5b-neiso/*`, `results/ff-t3-neiso-golden/*`) do not reproduce their stored key. Re-derived on **both** trees: live keys byte-identical branch vs base for every record (e.g. `REF` → `09b7e61d88f83579` on both, stored `1b452c457ca786a6`), so the non-reproduction predates this lane.
+- ‡ `test_key_provenance_exceptions` ×3 — 10 NEISO forecast records (`docs/records/forecast/scn-ws5b-neiso/*`, `results/ff-t3-neiso-golden/*`) do not reproduce their stored key. Re-derived on **both** trees: live keys byte-identical branch vs base for every record (e.g. `REF` → `09b7e61d88f83579` on both, stored `1b452c457ca786a6`), so the non-reproduction predates this lane.
 - `test_forecast_parity::test_all_seven_keepers_resolve` / `test_check_exits_zero_on_the_current_keepers` — NYISO `gas_offer_margin_zonal_anchor_vintage` + `nyiso_st_gas_econ_bands_deleaked` armed-but-undeclared (the exact condition `.github/workflows/ci.yml` lines 26–27 already records as known) and four ERCOT GAP rows; NWPP has no keeper and is not in the sweep.
 - `test_gate_a_provenance::test_live_board_passes` — NYISO and SPP `gate.a_keeper_marker` cite superseded keepers (nyiso-221, spp-36); SPP marker `complete` mismatch.
 - `test_ff_readiness_battery::test_marker_state_reflects_committed_markers` — CAISO keeper id `2026-09-12-caiso-275-gascoupling` vs the pinned `2026-09-06-caiso-260-b1-demand`.
@@ -275,4 +275,4 @@ desk appends this:
 > byte-identical. Five whole-BA zones NW/OR/INLAND/EAST/SNV, WECC-catalogue TTC
 > tiers, served measured interchange, no capacity market, no import node, no
 > price benchmark, offer bands 1.0, VOLL interim $2,000. No solve. FINDING:
-> `docs/handoffs/FINDING-nwpp-20-2026-09-14.md`.
+> `docs/records/nwpp/FINDING-nwpp-20-2026-09-14.md`.

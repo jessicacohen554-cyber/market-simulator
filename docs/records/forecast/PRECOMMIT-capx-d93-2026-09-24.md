@@ -1,7 +1,7 @@
 # PRECOMMIT — capx D93: the key-provenance `lag` CLASS RULE (owner ruling Q66, "Class rule.")
 
 Lane: capx D93 · Opus · DATA PROFILE code · ZERO LP · branch `claude/capx-d93-key-lag-class`
-Charter: `docs/handoffs/capx-director-prompt-pack-2026-08.md` "D93".
+Charter: `docs/records/forecast/capx-director-prompt-pack-2026-08.md` "D93".
 Written and pushed BEFORE any edit under `scripts/` or `src/`.
 
 ## 0. STATE AT MY HEAD — THE CHARTER'S STATE HAS ALREADY MOVED ONCE
@@ -161,7 +161,7 @@ rows. That is D79's designed re-key, reported by the census and repaired nowhere
 The first implementation encoded §2's declared fallback (ii) literally ("`git.dirty: true` → the sha
 leg FAILS") and measured **5** failures with the seam row seeded, not the pre-declared **4**: the
 extra one was `scn-ws5b-neiso/CES-T80`, recorded `dirty: true` with
-`changed_files: ["docs/handoffs/FINDING-scn-ws5b-neiso-2026-09-08.md"]` — its own FINDING doc.
+`changed_files: ["docs/records/forecast/FINDING-scn-ws5b-neiso-2026-09-08.md"]` — its own FINDING doc.
 
 Fallback (ii)'s stated reason was "the tree may carry an uncommitted registration", and a
 registration lives in exactly one file, `src/market_sim/config/scenarios.py`. **Refined leg (ii):** a

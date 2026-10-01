@@ -1,6 +1,6 @@
 {
  "session": "nyiso-178",
- "prereg": "results/calibration/PREREG-nyiso178-offer-side-idling.md",
+ "prereg": "docs/records/nyiso/PREREG-nyiso178-offer-side-idling.md",
  "keeper_control": "2026-09-02-nyiso-177-vintage-matched",
  "bundle": "results/calibration/nyiso177_vintage_B1p",
  "years": [

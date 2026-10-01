@@ -5,8 +5,8 @@ ceiling far more often than CAMPD, while ST_GAS, coal and lignite under-run. The
 adjustment, then chose "CC min-load commit" on the decision card.
 **Control.** Keeper `2026-09-28-spp-94-curtail-rows` (`spp94_arm_span`). **LP spent: 0.**
 **Probes.**
-- `scripts/probes/_spp97_cc_incremental_hr.py` → `docs/handoffs/spp97/cc_incremental_hr.json`
-- `scripts/probes/_spp97_cc_commit_reach.py` → `docs/handoffs/spp97/cc_commit_reach.json`
+- `scripts/probes/_spp97_cc_incremental_hr.py` → `docs/records/spp/spp97/cc_incremental_hr.json`
+- `scripts/probes/_spp97_cc_commit_reach.py` → `docs/records/spp/spp97/cc_commit_reach.json`
 
 ## 1. How the dashboard defines CF
 

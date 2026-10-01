@@ -1,8 +1,8 @@
 # FINDING — SCN-WS2b: the CES premium ladder re-proved at HEAD on ERCOT and NEISO, a national clearing script, and a CCS emission-rate seam that inverts the sign of NEISO's headline CO2 answer
 
 **Lane:** SCN-WS2b · **Branch:** `claude/scn-ws2b-ces-clearing-y40sks` · **Date:** 2026-09-06
-**Charter:** `docs/handoffs/forecast-scenario-readiness-plan-2026-09.md` §3 WS-2 items 3–6 / §7 "WS-2b"
-**PRECOMMIT:** `docs/handoffs/PRECOMMIT-scn-ws2b-2026-09-06.md` (pushed before the first solve)
+**Charter:** `docs/records/forecast/forecast-scenario-readiness-plan-2026-09.md` §3 WS-2 items 3–6 / §7 "WS-2b"
+**PRECOMMIT:** `docs/records/forecast/PRECOMMIT-scn-ws2b-2026-09-06.md` (pushed before the first solve)
 **Model:** `claude-opus-5` (rule 27 `[R-PUSH]`) · **Data profile:** `ercot`, then `neiso`
 **Base:** `origin/main` `af6269cf` at the PRECOMMIT, rebased to `3dcf1b22` mid-session
 

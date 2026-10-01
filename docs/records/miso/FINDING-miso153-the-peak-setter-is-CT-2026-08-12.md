@@ -4,7 +4,7 @@
 **Keeper** `2026-08-09-miso-148-basis-aware` (`miso148_basis_B`), **UNCHANGED** ·
 **Model** `claude-opus-5`.
 
-**PREREG** `results/calibration/PREREG-miso153-summer-peak-phase0-2026-08-12.md`,
+**PREREG** `docs/records/miso/PREREG-miso153-summer-peak-phase0-2026-08-12.md`,
 pushed at **`857a434`**, blob **`c2c1df03356f3b2f6f02351163cadce5ff5384a7`**,
 **verified byte-identical against the FETCHED remote ref** before any
 adjudicating statistic was computed (rule 27 `[R-PUSH]`).
@@ -252,7 +252,7 @@ column.
 2. **The `weather_year` repair** (§6). A bug fix caught by the pre-registered
    gate, not a new statistic. Both pre- and post-repair magnitudes reported;
    the pre-repair record is preserved at
-   `results/calibration/_miso153_summer_cushion_PREREPAIR.json`.
+   `results/phase0/miso/_miso153_summer_cushion_PREREPAIR.json`.
 3. **The D-2 mechanism attribution** read from the keeper's committed
    `legitimacy_diagnostics.json` — the attribution miso-143 said *"must precede
    any floor work"*. 2025 forced energy: `st_gas_mustrun_per_plant × ST_GAS`
@@ -309,7 +309,7 @@ between them beyond reporting what was measured.
 
 **Owner decision 2026-08-12: investigate the §8(4) governance item in this
 lane.** Done, no LP. Probe `scripts/probes/_miso153_stgas_window.py`, record
-`results/calibration/_miso153_stgas_window.json`. **The flag does not survive
+`results/phase0/miso/_miso153_stgas_window.json`. **The flag does not survive
 its own investigation, and is withdrawn.**
 
 **First, the citation I had not read closely enough.** `D4_WINDOWS`
@@ -373,7 +373,7 @@ level claim is made from this probe.
 `[R-STRUCT]` requires. **It does not survive.** No `ScenarioConfig` field was
 added, no solve was run, no run was registered. Probe
 `scripts/probes/_miso153_ct_dispersion.py`, record
-`results/calibration/_miso153_ct_dispersion.json`.
+`results/phase0/miso/_miso153_ct_dispersion.json`.
 
 ### Ground 1 — the measured side **cannot be scoped to CT_PEAKER**, and the attempt is already adjudicated
 
@@ -449,7 +449,7 @@ recorded as the most specific open thread this lane has.
 it. Three candidate causes were put up and **all three are refuted**, in order,
 each before anything was built on it. Probe
 `scripts/probes/_miso153_fuel_dispersion.py`, record
-`results/calibration/_miso153_fuel_dispersion.json`, plus a direct read of the
+`results/phase0/miso/_miso153_fuel_dispersion.json`, plus a direct read of the
 F923 source table.
 
 **Candidate A — "the 2025 preliminary EIA-923 vintage strips per-plant
@@ -515,7 +515,7 @@ commitment.** That is the lane's next dependency, and it is an owner decision.
 ---
 
 **Artifacts.** Probe `scripts/probes/_miso153_summer_cushion.py` (ruff clean).
-Record `results/calibration/_miso153_summer_cushion.json`; pre-repair record
-`results/calibration/_miso153_summer_cushion_PREREPAIR.json`.
-PREREG `results/calibration/PREREG-miso153-summer-peak-phase0-2026-08-12.md`
+Record `results/phase0/miso/_miso153_summer_cushion.json`; pre-repair record
+`results/phase0/miso/_miso153_summer_cushion_PREREPAIR.json`.
+PREREG `docs/records/miso/PREREG-miso153-summer-peak-phase0-2026-08-12.md`
 (`857a434`, blob `c2c1df03`).

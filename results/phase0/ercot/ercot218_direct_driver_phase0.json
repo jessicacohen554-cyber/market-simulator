@@ -2,7 +2,7 @@
  "_provenance": {
   "probe": "scripts/probes/ercot218_direct_driver_phase0.py",
   "session": "ercot-218 DIRECT-DRIVER PHASE-0 (no LP, no solve)",
-  "precommit": "docs/PRECOMMIT-ercot218-direct-driver-phase0-2026-08-17.md",
+  "precommit": "docs/records/ercot/PRECOMMIT-ercot218-direct-driver-phase0-2026-08-17.md",
   "charter": "the ercot-218 owner dispatch (the owner card for ercot-211 handback item (ii))",
   "keeper_at_run": "2026-08-17-ercot215-arm-decontam",
   "instrument": "ercot-210/211 verbatim except the driver swap (precommit \u00a72)",

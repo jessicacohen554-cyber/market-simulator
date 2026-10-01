@@ -1,7 +1,7 @@
 # SCORE-GATE — the >=300 MW retirement recall gate, redefined against the REACHABLE set
 
 **Owner decision D-24**, SIGNED at the sitting, Addendum **X.6**, 2026-08-06.
-**Evidence:** FFR-7C `docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md`
+**Evidence:** FFR-7C `docs/records/forecast/ffr-7c-exit-decode-corrected-target-2026-08-06.md`
 §5 + sitting Addendum X.1.
 
 **Lane: SCORER-ONLY.** No model mechanism, no `ScenarioConfig` field, no solve, no keeper
@@ -99,7 +99,7 @@ Measured across all five committed targets:
 Evidence sources, all committed:
 `data/raw/_validation-source/capacity_actuals_ercot.csv` (md5
 `03b34821ba53854a410de42ca69afbc0`) · `data/raw/confirmed-retirements/ercot.csv` ·
-`docs/handoffs/ffr-7c/exit-decode-2026-08-06.json` (FFR-7C §2.2 per-unit margins / §2.4
+`docs/records/forecast/ffr-7c/exit-decode-2026-08-06.json` (FFR-7C §2.2 per-unit margins / §2.4
 fleet-basis facts).
 
 Run basis: `use_campd_bins = True`, `eia860_vintage_year = 2020` ⇒ **cutoff 2020-12-31**

@@ -2,9 +2,9 @@
 
 **Lane:** CAISO calibration · **Date:** 2026-09-13 · **LP spent: ZERO** · **Keeper unchanged**
 (`2026-09-12-caiso-275-gascoupling`) · **Nothing promoted, no cell verdict moved.**
-**Charter:** `docs/PRECOMMIT-caiso280-does-the-import-envelope-understate-2026-09-13.md`
+**Charter:** `docs/records/caiso/PRECOMMIT-caiso280-does-the-import-envelope-understate-2026-09-13.md`
 (committed and pushed **before** any number was computed).
-**Predecessor:** `docs/RESULT-caiso279-the-binding-object-is-the-import-envelope-2026-09-12.md`.
+**Predecessor:** `docs/records/caiso/RESULT-caiso279-the-binding-object-is-the-import-envelope-2026-09-12.md`.
 
 ---
 

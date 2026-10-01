@@ -1,6 +1,6 @@
 # Retirement-lane data intake — 2026-07-15 (RC-0A)
 
-Intake session for `docs/handoffs/forecast-retirement-calibration-plan-2026-07.md`
+Intake session for `docs/records/forecast/forecast-retirement-calibration-plan-2026-07.md`
 §1/§2/§5 (RD-1, RD-2, RD-3, RD-4, RD-5, RD-6, RD-9, RD-10): per-delivery-year
 capacity-curve vintages for PJM/NYISO/MISO, a new PJM Avoidable Cost Rate
 datatype, the retired-sheet actuals-coverage fix (Indian Point 3 / Palisades),
@@ -354,7 +354,7 @@ researched against whatever accreditation-reform process succeeds it.
   and every `cdn.misoenergy.org`/`docs.misoenergy.org` Attachment Y URL
   tried — **HTTP 403 on every attempt, every agent, this entire session.**
   This is the same MISO-403 pattern documented in the P-0B precedent
-  (`docs/handoffs/capacity-market-intake-2026-07.md`) and in the pre-existing
+  (`docs/records/misc/capacity-market-intake-2026-07.md`) and in the pre-existing
   `data/raw/miso-pra/SOURCES.md`. Given three independent agents hit this
   identically across `misoenergy.org`, `docs.misoenergy.org`, and
   `cdn.misoenergy.org` today, **this reads as a standing egress-policy block

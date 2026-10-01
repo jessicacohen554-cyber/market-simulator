@@ -12,7 +12,7 @@ the whole datatype writes one partition
 ``data/clean/carb-cap-schedule/carb-cap-schedule.parquet`` (``year=None``).
 Reads only ``data/raw``; idempotent; skips cleanly when the CSV has not landed
 yet (the optional power-sector mass-cap row stays inert until then; see
-``docs/handoffs/emissions-mass-cap-plan-2026-07.md`` §7).
+``docs/records/misc/emissions-mass-cap-plan-2026-07.md`` §7).
 
 HOLDOUT QUARANTINE (CLAUDE.md rule 22): rows for 2022 or 2026 are rejected —
 those years are under full quarantine (no data intake) until the holdout is

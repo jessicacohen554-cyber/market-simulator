@@ -4,7 +4,7 @@
 
 ## Card 1 — CC_REGULAR 2023 (the only training-span failure)
 
-Detail: `docs/FINDING-pjm-next-9-east-south-boundary-2026-09-28.md`.
+Detail: `docs/records/pjm/FINDING-pjm-next-9-east-south-boundary-2026-09-28.md`.
 - **Method.** PJM's DA binding-constraint record for 2019–2025 (re-fetched, gitignored) regressed onto DA hub congestion spreads. R² is 0.90–0.98.
 - **Result.** The missing boundary is the **Peach Bottom / Conastone corridor** (PECO/PPL → BGE): Nottingham 230 kV 2-3, Graceton–Safe Harbor and Conastone–Northwest.
   - It carries **35–91 % of NJ–Western congestion in every year**.
@@ -36,7 +36,7 @@ Monthly model − EIA-923 on bench plants (TWh):
 
 ## Retrievability (rule 34(e))
 
-Nothing was solved. Probe `scripts/probes/_pjmnext9_congestion_boundary.py` and output `results/calibration/_pjmnext9_congestion_boundary.json` are on `main` via this lane's PR.
+Nothing was solved. Probe `scripts/probes/_pjmnext9_congestion_boundary.py` and output `results/phase0/pjm/_pjmnext9_congestion_boundary.json` are on `main` via this lane's PR.
 
 ## Next (PJM-NEXT-10)
 

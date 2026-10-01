@@ -14,7 +14,7 @@ per ISO, under the repaired resolver, at the T0 year 2026?
 Same builder as the solves (``run_full_horizon.reference_config(iso, ..., cmc=False)``),
 so this is the config the arms would actually receive.
 
-Run:  PYTHONPATH=. .venv/bin/python docs/handoffs/scn-ws1b/phase0-recensus-path-2026-09-06.py
+Run:  PYTHONPATH=. .venv/bin/python docs/records/forecast/scn-ws1b/phase0-recensus-path-2026-09-06.py
 """
 
 from __future__ import annotations

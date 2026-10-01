@@ -3,7 +3,7 @@
 **Date** 2026-07-27 · **ISO** ERCOT · **Lane** ercot123-coal-sced-reach ·
 **Keeper under audit** `2026-07-26-ercot115-coal-marginal-hr` (bundle
 `results/calibration/ercot115_coal_floor_only`) — **unchanged by this session** ·
-**Chartered by** `docs/DIAGNOSIS-ercot122-coal-offer-envelope-2026-07-27.md`
+**Chartered by** `docs/records/ercot/DIAGNOSIS-ercot122-coal-offer-envelope-2026-07-27.md`
 §4/§5.4 (which refuted the coal offer-LEVEL lever and routed the *reach*
 question to the SCED TPO instrument) ·
 **Method** Phase 1 only — raw-direct measurement from the 60-Day SCED

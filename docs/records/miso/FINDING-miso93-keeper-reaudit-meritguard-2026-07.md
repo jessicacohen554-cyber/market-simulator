@@ -10,7 +10,7 @@ newly-failing gate: **C3a-2024, −8.7 % → −10.1 %**, crossing the ±10 % ve
 (`results/calibration/miso93_meritguard_a1`, MISO 2023/2024/2025, one bundle,
 rule 16). Rule 15: registered whatever the verdict.
 **Charter, pre-registered before any result was read:**
-`docs/handoffs/miso-93-keeper-reaudit-charter-2026-07.md`.
+`docs/records/miso/miso-93-keeper-reaudit-charter-2026-07.md`.
 **Parent:** `campd-economic-layup-fix-charter-2026-07.md` §5/§8 blast radius.
 **Predecessor:** miso-89 attempted this and was RAM-blocked; miso-92's 35 %
 floor reduction is what made the staged recipe fit.

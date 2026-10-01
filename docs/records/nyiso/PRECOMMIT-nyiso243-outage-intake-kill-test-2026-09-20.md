@@ -3,7 +3,7 @@
 **Session** nyiso-243 (ORCHESTRATOR — rule 32 `[R-SHARD]` (a); **zero LP in this container**).
 **Date** 2026-09-20. **Base** `origin/main` at `48151074`.
 **Keeper** `2026-09-19-nyiso241-ct-committed-measured`, bundle `results/calibration/nyiso241_ctcommitted_span`, years {2022, 2023, 2024, 2025}. **UNCHANGED by this document.**
-**Charter** `docs/RESULT-nyiso242-cc-winter-refused-and-the-intake-charter-2026-09-20.md` §2.5.
+**Charter** `docs/records/nyiso/RESULT-nyiso242-cc-winter-refused-and-the-intake-charter-2026-09-20.md` §2.5.
 **Object** the missed RT price tail, worth **$5.44/MWh** on 2022 (`FINDING-nyiso242-…` §2); its winter cluster needs ~**4,716 MW** of model-believed-available capacity to not be there (§3.2).
 
 **This document is written and committed BEFORE any price-conditioned number is

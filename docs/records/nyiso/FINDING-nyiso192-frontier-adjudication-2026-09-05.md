@@ -11,9 +11,9 @@ payload was re-rendered. **Markers:** `complete.NYISO` held and keyed to the
 keeper (D56-R); `final` empty; freeze active; **nothing re-keyed, no marker
 requested, no out-of-training year touched.** Frontier stays WITHDRAWN; the
 assessment for card C-10 / Q39 is
-`results/calibration/ASSESSMENT-nyiso192-frontier-2026-09-05.md` and the owner's
-one-card decision `docs/DECISION-CARD-nyiso192-frontier-2026-09-05.md`.
-**Pre-registration:** `results/calibration/PREREG-nyiso192-frontier-adjudication.md`
+`docs/records/nyiso/ASSESSMENT-nyiso192-frontier-2026-09-05.md` and the owner's
+one-card decision `docs/records/nyiso/DECISION-CARD-nyiso192-frontier-2026-09-05.md`.
+**Pre-registration:** `docs/records/nyiso/PREREG-nyiso192-frontier-adjudication.md`
 (§0–§6 pushed before the control replay and before any payload re-render; §7
 Amendment 1 pushed before the arm was solved); every bar below is executed
 verbatim.

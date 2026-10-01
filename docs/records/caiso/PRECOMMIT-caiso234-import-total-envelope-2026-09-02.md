@@ -47,7 +47,7 @@ specification; it does not choose it.
 
 **§0.3 — WHAT IS ALREADY SEEN. Stated against interest, because it materially
 weakens one of the two gates.** caiso-233 committed the per-year total-corridor
-percentiles in `results/calibration/_caiso233_import_depth_decomp.json`:
+percentiles in `results/phase0/caiso/_caiso233_import_depth_decomp.json`:
 p98(TOTAL) = 7,872.52 / 7,804.84 / 8,844.88 and p99.9(TOTAL) = 9,630.02 /
 9,111.67 / 10,434.92 MW. Consequently:
 

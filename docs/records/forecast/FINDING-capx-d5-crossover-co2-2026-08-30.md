@@ -1,6 +1,6 @@
 # FINDING — D5 crossover CO2 derivation: the three-ISO CO2 miss is dominated by a scoring-taxonomy drop, not by dispatch volumes and not by the emission-rate derivation
 
-**Lane:** capacity-expansion D5 (director refresh #14, `docs/handoffs/capx-director-ledger-2026-08.md` §0k) ·
+**Lane:** capacity-expansion D5 (director refresh #14, `docs/records/forecast/capx-director-ledger-2026-08.md` §0k) ·
 **Session:** capx-d5-crossover-co2 · **Date:** 2026-08-30 · **Zero-solve:** yes — every number below
 is computed from committed artifacts; nothing was solved, tuned, re-scored, or registered, and no
 board surface was edited.
@@ -34,7 +34,7 @@ Two corollaries, both established from the same committed artifacts:
    physical CO2 (dispatch × own rates, committed as `co2.model`) against a bench-intensity
    reconstruction of the *identical* mix (coal mapped), the model's own rates agree with the
    same-year bench intensities within **±5 % in every ISO-year** (§2, "own-rate" column). The
-   multi-year-CAMPD-conditioned forward rates (`docs/handoffs/emissions-co2-rate-plan-2026-07.md`)
+   multi-year-CAMPD-conditioned forward rates (`docs/records/misc/emissions-co2-rate-plan-2026-07.md`)
    are doing their job.
 2. **As constructed, FC-4's co2 metric cannot measure rate error at all** — it applies bench
    (actual) intensities to the model mix on both sides, so the scored miss is *by construction*
@@ -232,7 +232,7 @@ intensities/BTM/classFull/egrid from `bench.co2` / `bench.classFull`.
    (model `COAL_PRB`/`COAL_LIGNITE` read 0.0 vs actual 45.1/15.3 TWh — the spurious ~60 TWh
    per-class FAIL rows in the same score files).
 5. **What the rate chain shows.** The forecast emission-rate derivation
-   (`use_plant_emission_rates`/`_v2`, spec + `docs/handoffs/emissions-co2-rate-plan-2026-07.md`)
+   (`use_plant_emission_rates`/`_v2`, spec + `docs/records/misc/emissions-co2-rate-plan-2026-07.md`)
    is validated by this decomposition, not implicated: own-rate vs bench-intensity agreement is
    within ±5 % everywhere (table §2.2, last column) — including at NYISO where the scored basis
    is fully mapped end-to-end.

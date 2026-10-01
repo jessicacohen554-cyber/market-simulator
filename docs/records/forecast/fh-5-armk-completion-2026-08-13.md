@@ -4,7 +4,7 @@
 `origin/main` `5b05f84`. Solve lane. **Complete.**
 
 **Deliverables, all committed and pushed.** Pre-registration
-`docs/handoffs/PREREG-fh5-armk-2026-08-13.md` (committed before the solve);
+`docs/records/forecast/PREREG-fh5-armk-2026-08-13.md` (committed before the solve);
 run bundle + sidecar + crossover report; the completion record as
 **`fh-5-phase-b-2026-08-11.md` §8**, appended — §1–§7 are byte-untouched (the
 diff is 224 insertions, **0 deletions**).

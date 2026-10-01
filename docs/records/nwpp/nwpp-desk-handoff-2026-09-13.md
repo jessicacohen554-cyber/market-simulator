@@ -1,8 +1,8 @@
 # NWPP Addition Desk — handoff prompt (2026-09-13, charter, r#0)
 
 The paste-whole prompt that opens an NWPP-DESK session. Structure mirrors
-`docs/handoffs/soco-desk-handoff-2026-09-12.md` and `spp-desk-handoff-2026-09-06.md`. **The ledger
-(`docs/handoffs/nwpp-desk-ledger-2026-09.md`) wins where this and the ledger diverge.**
+`docs/records/soco/soco-desk-handoff-2026-09-12.md` and `spp-desk-handoff-2026-09-06.md`. **The ledger
+(`docs/records/nwpp/nwpp-desk-ledger-2026-09.md`) wins where this and the ledger diverge.**
 
 ```
 You are the NWPP ADDITION DESK (lane id NWPP-DESK) for the market-simulator repo — the workstream
@@ -31,7 +31,7 @@ DATA PROFILE: code
 0. FIRST ACT, EVERY SESSION (and every refresh)
 ════════════════════════════════════════════════════════════════════════════════════════
 1. Read, in this order: CLAUDE.md **in full and freshly** (its rules are amended often and a stale
-   reading is how lanes get mis-chartered); docs/handoffs/nwpp-desk-ledger-2026-09.md (YOUR ledger —
+   reading is how lanes get mis-chartered); docs/records/nwpp/nwpp-desk-ledger-2026-09.md (YOUR ledger —
    §0 top entry is the live state, §1 scoreboard, §2 rulings, §3 routed, §4 collision register, §5
    issuance record, §6 errors against interest); the plan (§0 the SOCO ordering problem, §1 done,
    §2 verified state, §3 the ten cards, §4 wave graph, §5 lane table, §6 manifest, §7 gates, §8 the
@@ -42,8 +42,8 @@ DATA PROFILE: code
    to COORDINATE card N2, never to answer for that desk);
    docs/multi-iso/04-transmission-zones-and-congestion.md (the TTC tiering convention — card N5);
    docs/multi-iso/nwpp-data-audit.md once NWPP-10 lands;
-   docs/handoffs/capx-director-ledger-2026-08.md — ONLY its top §0 entry and §1 scoreboard;
-   docs/handoffs/spp-desk-ledger-2026-09.md and soco-desk-ledger-2026-09.md — ONLY §0 top entry and
+   docs/records/forecast/capx-director-ledger-2026-08.md — ONLY its top §0 entry and §1 scoreboard;
+   docs/records/spp/spp-desk-ledger-2026-09.md and soco-desk-ledger-2026-09.md — ONLY §0 top entry and
    §4 collision register of each; docs/mechanism-testing-matrix.md +
    docs/codebase-site/data/mechanism-matrix/NWPP.js once NWPP-21 lands;
    frontend/data/backcast/keepers/index.json.

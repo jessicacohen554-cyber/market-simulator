@@ -2,7 +2,7 @@
 
 **Branch:** `claude/ercot-storage-as-gap-gzvo6m`
 **Register row:** `G-37` (`docs/gap-register-2026-07.md`).
-**Reads first:** `docs/handoffs/ercot-storage-as-duration-gate-2026-07.md` (the WS-B build),
+**Reads first:** `docs/records/ercot/ercot-storage-as-duration-gate-2026-07.md` (the WS-B build),
 CLAUDE.md rules **1** (structure-first), **9** (storage ε), **11**/**12** (measured-data admissibility).
 **Bundle reproduced:** `results/calibration/166/storage_as.parquet` (run 166 = run 164 + duration gate,
 the one-delta probe; `ercot_storage_as_endogenous` + `ercot_storage_as_duration_gate` on).

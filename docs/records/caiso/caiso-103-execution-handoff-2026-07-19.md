@@ -31,9 +31,9 @@ measured + designed but did NOT build: BOTH residual lanes are DA-fixed
 volumes the LP re-optimizes at the RT margin (FINDING-caiso103). TWO asks
 PENDING owner ruling:
   M1 (belly): DA-allocation-profile charge schedule
-     (docs/handoffs/caiso-103-belly-allocation-ask-2026-07-19.md)
+     (docs/records/caiso/caiso-103-belly-allocation-ask-2026-07-19.md)
   M-EVE-1 (evening): price-taking firm import blocks
-     (docs/handoffs/caiso-103-evening-firm-import-ask-2026-07-19.md)
+     (docs/records/caiso/caiso-103-evening-firm-import-ask-2026-07-19.md)
 caiso-92 re-derive CLOSED byte-identical (issue #2562 item 3). #2546 OPEN.
 
 DO (priority):

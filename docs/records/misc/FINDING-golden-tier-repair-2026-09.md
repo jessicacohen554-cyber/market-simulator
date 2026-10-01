@@ -5,7 +5,7 @@
 red on its own schedule (runs #5 2026-08-17, #6 2026-08-24, #7 2026-08-31 — the
 last post-dating the R-V un-park), so byte-green certification had no working
 instrument and a failing cron was billing minutes unwatched.
-**Precedent read first:** `docs/FINDING-golden-tier-cron-red-2026-08-17.md`
+**Precedent read first:** `docs/records/misc/FINDING-golden-tier-cron-red-2026-08-17.md`
 (run #5's same-day diagnosis, PR #4071, verified by a full local four-step
 replay) and the workflow itself.
 
@@ -50,7 +50,7 @@ The last green of any kind was run #4 (2026-08-15, `workflow_dispatch`, the
 
 ### 2.1 Run #5 — `curate_lmp` dtype crash (RESOLVED BEFORE THIS SESSION)
 
-Fully recorded in `docs/FINDING-golden-tier-cron-red-2026-08-17.md` §2: the
+Fully recorded in `docs/records/misc/FINDING-golden-tier-cron-red-2026-08-17.md` §2: the
 neiso-97 flat-24 DST repair relabelled the true spring-forward HE02 row with a
 string in an int64 column; pandas 3.0.x raises instead of upcasting; the unit
 test modelled the wrong dtype. #4071 relabels with the integer `2` and pins the

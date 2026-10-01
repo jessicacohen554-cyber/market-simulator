@@ -24,7 +24,7 @@ It is MISO's **only** remaining named, un-adjudicated, non-data-blocked §5.4
 item. Everything else is spoken for: the C7 `COAL_PRB` regulated-self-commitment
 family is closed (`R`/`R`/`I`, rule 19 `[R-ONE-MECH]` forbids a fourth
 mechanism), items 1–2 are data-blocked at a **sourcing** step (Form 580 count,
-`docs/handoffs/miso-coal-contract-tonnage-data-ask-2026-07.md` §8), item 3 is
+`docs/records/miso/miso-coal-contract-tonnage-data-ask-2026-07.md` §8), item 3 is
 `R` ex ante, items 4/5/6 are `K`/`I`/`I`, miso-122 executed the hybrid-cogen
 scope gate and miso-123 closed the seam hour-of-day lane.
 
@@ -266,10 +266,10 @@ A null is not trusted until both fire.
 
 | artifact | path |
 |---|---|
-| this prereg | `results/calibration/PREREG-miso125-chp-prime-mover-split-2026-08-04.md` |
+| this prereg | `docs/records/miso/PREREG-miso125-chp-prime-mover-split-2026-08-04.md` |
 | no-LP probe | `scripts/probes/_miso125_chp_prime_mover_split.py` |
-| probe record | `results/calibration/_miso125_prime_mover_split.json` |
-| probe transcript | `results/calibration/PROBE-miso125-chp-prime-mover-split-2026-08-04.txt` |
+| probe record | `results/phase0/miso/_miso125_prime_mover_split.json` |
+| probe transcript | `results/phase0/miso/PROBE-miso125-chp-prime-mover-split-2026-08-04.txt` |
 | A/B scorer (if live) | `scripts/probes/_miso125_pm_split_ab.py` |
 | A/B record (if live) | `results/calibration/_miso125_pm_split_ab.json` |
-| finding | `results/calibration/FINDING-miso125-chp-prime-mover-split-2026-08-04.md` |
+| finding | `docs/records/miso/FINDING-miso125-chp-prime-mover-split-2026-08-04.md` |

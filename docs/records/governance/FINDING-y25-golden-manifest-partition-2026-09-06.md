@@ -281,7 +281,7 @@ manifests for the schema and coverage mechanics
 | `scripts/check_golden_manifest.py` | `MAX_SCHEMA_VERSION`, `PARTITION_IDENTITY_SCHEMA_VERSION`, `REQUIRED_PARTITION_V3_KEYS`, `COVERAGE_MARK`; `shard_config_identity()`, `live_state()` (extracted), `config_coverage()`; v3 entry validation; coverage split out of every tally |
 | `scripts/capture_keeper_goldens.py` | `MANIFEST_SCHEMA_VERSION = 3`; `_partition_block()` emits the identity; `manifest_version()` declares what the merged entries satisfy |
 | `tests/scoring/test_golden_manifest_provenance.py` | +10 tests (coverage reporting, v3 identity, version bounds, mixed-file honesty, live-corpus sweep) |
-| `docs/handoffs/FINDING-y25-golden-manifest-partition-2026-09-06.md` | this record |
+| `docs/records/governance/FINDING-y25-golden-manifest-partition-2026-09-06.md` | this record |
 
 Untouched, per the lane's scope: every keeper shard, every marker, the holdout
 freeze, every mechanism-matrix shard, `CLAUDE.md`, and every committed manifest

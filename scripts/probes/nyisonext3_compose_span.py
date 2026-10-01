@@ -4,7 +4,7 @@ The arm is the incumbent keeper's recipe with ZERO ``scenario_config`` changes, 
 pin carrying (a) the bin builder's committed-share read on the full CAMPD artifact selector
 pair (``campd_bins.fleet_to_bins`` now passes ``merit_guard``; rule 19) and (b) the
 ``-perunitmerit-`` tranche artifact re-derived on the current outage-extract basis (rule 23).
-Checks, per ``docs/PRECOMMIT-nyiso-next3-tranche-basis-2026-09-26.md`` §6:
+Checks, per ``docs/records/nyiso/PRECOMMIT-nyiso-next3-tranche-basis-2026-09-26.md`` §6:
 
 * S0 -- every leg solved at the PRECOMMIT pin (``--pin``), not dirty;
 * S1 -- the keeper's flags exactly (no new field) and the keeper's offer-curve block;

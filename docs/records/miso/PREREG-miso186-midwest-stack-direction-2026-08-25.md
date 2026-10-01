@@ -146,7 +146,7 @@ load-split) formation input must deviate, and this session measures which.
 ## 2. The instrument (frozen construction)
 
 One read-only probe, `scripts/probes/_miso186_direction_decomposition.py` →
-`results/calibration/_miso186_direction_decomposition.json`, committed
+`results/phase0/miso/_miso186_direction_decomposition.json`, committed
 **after this PREREG and before it is run** (the miso-184 order). Frozen
 constructions:
 

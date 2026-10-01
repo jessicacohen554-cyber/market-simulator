@@ -3,7 +3,7 @@
 **Session `claude/stage0-capture-caiso-nyiso-vicx26`, 2026-09-02.** Two keeper
 re-solves at HEAD with determinism pinned, run strictly sequentially with the
 first committed and pushed before the second began. Follows the proven recipe
-`docs/FINDING-stage0-capture-neiso-ercot-2026-09.md`. **No keeper shard,
+`docs/records/neiso/FINDING-stage0-capture-neiso-ercot-2026-09.md`. **No keeper shard,
 marker, matrix shard, registry, freeze file or `program-status.json` edit; no
 determination changed; no workflow created; no dashboard registration**
 (standing reading, §3 of the recipe finding).
@@ -235,7 +235,7 @@ out-of-training year was solved, scored or registered.
   (commit `75a55a4c`) and NYISO entry (commit `9613842c`), each blob-verified
   byte-identical against the remote after push (rule 27 `[R-PUSH]`; 756 and 759
   lines).
-* `docs/FINDING-stage0-capture-caiso-nyiso-2026-09.md` — this file.
+* `docs/records/caiso/FINDING-stage0-capture-caiso-nyiso-2026-09.md` — this file.
 * Golden bundles under `results/regression-goldens/perfb-stage0/{CAISO,NYISO}/`
   — gitignored by design, retained on disk in this container.
 

@@ -2,7 +2,7 @@
 
 Lane SOCO-20 · model Fable (`claude-fable-5-1`) · branch `claude/soco-20-register-fvj01g` ·
 built on `origin/main` tip `d083b0b1` (charter pin `39a1c9a1` is its ancestor; every precondition
-landed between the two) · PRECOMMIT `docs/handoffs/PRECOMMIT-soco-20-2026-09-14.md` (`7e6978ee`).
+landed between the two) · PRECOMMIT `docs/records/soco/PRECOMMIT-soco-20-2026-09-14.md` (`7e6978ee`).
 Zero LP (rule 32 `[R-SHARD]` (a): the parent never solves; nothing here needed one).
 
 **Result.** `SOCO` — the Southern Company **balancing authority**, not an ISO — is registered in

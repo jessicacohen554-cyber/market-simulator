@@ -8,7 +8,7 @@ Pre-registration: `PRECOMMIT-caiso256-storage-cycling-basis-2026-09-06.md`
 matters (§5 #1 below). Rule 22 `[R-HOLDOUT]`: 2023–2025 only; no
 `complete`/`final` marker; freeze ACTIVE. Probe:
 `scripts/probes/_caiso256_storage_cycling_basis.py`; artifact
-`results/calibration/_caiso256_storage_cycling_basis.json`.
+`results/phase0/caiso/_caiso256_storage_cycling_basis.json`.
 
 ---
 

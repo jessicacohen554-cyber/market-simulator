@@ -1,6 +1,6 @@
 # FINDING — entry signal L-1/L-1b measured, L-5 landed
 
-_2026-08-24 · ENTRY SIGNAL lane (charter: `docs/FINDING-entry-screen-t1h-2026-08.md`
+_2026-08-24 · ENTRY SIGNAL lane (charter: `docs/records/misc/FINDING-entry-screen-t1h-2026-08.md`
 §7 levers L-1, L-1b, L-5) · **NO LP SOLVE, NO HINDCAST RE-RUN. Two probes replaying
 committed arithmetic on committed artifacts, plus ONE code change (a diagnostic dump
 gate, output-only, proven).** This rung produces EVIDENCE ONLY: no signal replacement
@@ -188,7 +188,7 @@ feedbacks stay at shipped values. VRE decisions are held at shipped in both arms
 ¹ The bundle commits no evolution ledgers; the shipped per-step split is
 reconstructed from the committed report's window totals (9.0/7.571/5.0 GW), the
 ladder arithmetic (gas_ct seed 0.7855 GW × 2 = 1,571, committed in
-`docs/handoffs/ffr-9b/entry-screen-replay.json`), the charter's §2 storage replay,
+`docs/records/forecast/ffr-9b/entry-screen-replay.json`), the charter's §2 storage replay,
 and this lane's own margin signs. ² 1,500 vs the 1,571 ladder is tranche
 quantization (< one tranche).
 
@@ -366,10 +366,10 @@ Committed artifacts, `code` data profile, no solve:
 uv run python scripts/probes/entry_signal_l1_dual_replay.py \
     --bundle results/hindcast/ercot-2021-2025-realized-t1h-refresh \
     --duals-bundle results/calibration/ercot223_release_arm \
-    --out results/calibration/entry_signal_l1_dual_replay_ercot.json
+    --out results/phase0/ercot/entry_signal_l1_dual_replay_ercot.json
 
 uv run python scripts/probes/entry_signal_l1b_allocator_counterfactual.py \
-    --out results/calibration/entry_signal_l1b_allocator_ercot.json
+    --out results/phase0/ercot/entry_signal_l1b_allocator_ercot.json
 
 uv run python -m pytest tests/unit/model/test_price_signal.py -q
 ```

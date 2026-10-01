@@ -2,7 +2,7 @@
 
 **Purpose.** Scope the two forward-admissible fixes for the ERCOT VRE
 under-curtailment localised in step 2
-(`docs/handoffs/ercot-vre-undercurtailment-step2-2026-07.md`): (A) a
+(`docs/records/ercot/ercot-vre-undercurtailment-step2-2026-07.md`): (A) a
 West/Panhandle **zone split** and (B) a **derived curtailment-share driver**.
 Re-scoped now that two things changed since the Far_West split was built and
 reverted (`docs/ercot-far-west-zone-split-2026-06.md`):
@@ -109,7 +109,7 @@ exists in the current archive).
 
 A forward-admissible curtailment share applied to West/Panhandle wind (and
 midday solar), in the WS-A mould
-(`docs/handoffs/ercot-as-coopt-plan-2026-07.md` §4). **The NP6-86 archive is
+(`docs/records/ercot/ercot-as-coopt-plan-2026-07.md` §4). **The NP6-86 archive is
 what makes this legitimate now** — it supplies the measured identification
 source rule 21/23 demands.
 

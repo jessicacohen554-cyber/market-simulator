@@ -16,7 +16,7 @@ G-CTRL **form 4** — the keeper's committed bundle is the control; no control
 solve (rule 29(b)).
 
 Instrument: `scripts/probes/_caiso266_belly_margin_identity.py` →
-`results/calibration/_caiso266_belly_margin_identity.json`. Every figure below
+`results/phase0/caiso/_caiso266_belly_margin_identity.json`. Every figure below
 regenerates from committed bytes in about a minute.
 
 ---
@@ -359,7 +359,7 @@ the two cells this session measured (`negative_renewable_offers`,
 ## §12 — Reproduction
 
 `python3 scripts/probes/_caiso266_belly_margin_identity.py` →
-`results/calibration/_caiso266_belly_margin_identity.json`. Zero LP; committed
+`results/phase0/caiso/_caiso266_belly_margin_identity.json`. Zero LP; committed
 inputs only (the keeper's `hourly/` sidecars, the committed actual-LMP
 reference, the committed `bench/CAISO/<y>.json.gz` CAMPD panel, the EIA-930
 `CISO hourly` extract, the committed measured offer surface, the keeper's

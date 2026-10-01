@@ -37,7 +37,7 @@
 - Capability restored per year (TWh): coal +0.63…+0.83; CC +2.5…+4.8 gross (−0.65…−1.15 redistributed by the DAM class-hour water-fill); ST +0.5…+1.7 gross.
 - Capability below own-hour CEMS (TWh, A → B): CC 3.77 → 2.17 (2019), 4.09 → 2.34 (2020), 3.71 → 1.85 (2021), 4.11 → 2.93 (2023), 4.89 → 3.96 (2024), 4.52 → 3.57 (2025); coal −0.3…−0.4 every year.
 - Mean MW restored in P1 >$1k/slack hours: 2019 ~694 (coal 148 / CC 277 / ST 269); 2021 ~865; 2022 ~967; 2023 ~91; 2024 ~1,135.
-- Table: `docs/handoffs/r-ercot/r_ercot5_hourgrain_seam.txt`.
+- Table: `docs/records/ercot/r-ercot/r_ercot5_hourgrain_seam.txt`.
 
 ## 3. G-DRIFT (keeper leg SHA `845ca5f13c2b1a2777f472406afc8dd8f0a85318` → HEAD)
 
@@ -246,7 +246,7 @@ Keeper baselines (committed sidecars / R-ERCOT-4 RESULT, official `calibration_v
     3.0077
    ],
    "n_scalars": 2,
-   "source": "EWMA half-life (days) and gain beta of the daily spike-frequency expectation P_hat, SSE-fit of implied_P(d) = evening storage offer p50 / ordc_voll on P_hat(d) over admissible days 2023-06-10..12-31 on the pre-registered grid (PRECOMMIT-ercot221-adaptive-expectation-2026-08-18.md Amendment 1 family v2; artifact results/calibration/ercot221_adaptive_phase0.json). The armed path consumes only the model's own pass-1 price path (Amendment 4) \u2014 the measured surface is identification evidence only. Phase-0 v1+v2 FAILED their gates; Phase-1 entered on owner instruction (recorded in the precommit Amendment 2), so these constants are additionally flagged by that standing record."
+   "source": "EWMA half-life (days) and gain beta of the daily spike-frequency expectation P_hat, SSE-fit of implied_P(d) = evening storage offer p50 / ordc_voll on P_hat(d) over admissible days 2023-06-10..12-31 on the pre-registered grid (PRECOMMIT-ercot221-adaptive-expectation-2026-08-18.md Amendment 1 family v2; artifact results/phase0/ercot/ercot221_adaptive_phase0.json). The armed path consumes only the model's own pass-1 price path (Amendment 4) \u2014 the measured surface is identification evidence only. Phase-0 v1+v2 FAILED their gates; Phase-1 entered on owner instruction (recorded in the precommit Amendment 2), so these constants are additionally flagged by that standing record."
   },
   {
    "name": "CHP_BTM_PCT_BY_SECTOR['merchant']",
@@ -255,7 +255,7 @@ Keeper baselines (committed sidecars / R-ERCOT-4 RESULT, official `calibration_v
    "lineage_solves": ">=165 solves (audit \u00a75.1)",
    "value": 35.0,
    "source": "merchant CHP behind-the-meter share \u2014 industrial/commercial re-derived from EIA-923 Schedule-8 (S3), merchant retained at its prior fitted value (audit C-4; W1d marker)",
-   "root_cause": "no independent merchant-CHP host-load source found yet \u2014 replace when one exists (constants.py comment); survey of candidate sources + recommended EIA-923 Schedule-8 intake path: docs/handoffs/merchant-chp-host-load-memo-2026-07.md; open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1335"
+   "root_cause": "no independent merchant-CHP host-load source found yet \u2014 replace when one exists (constants.py comment); survey of candidate sources + recommended EIA-923 Schedule-8 intake path: docs/records/misc/merchant-chp-host-load-memo-2026-07.md; open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1335"
   },
   {
    "name": "reliability_floor coefficients",
@@ -303,7 +303,7 @@ Keeper baselines (committed sidecars / R-ERCOT-4 RESULT, official `calibration_v
 
 ## 7. Execution
 
-**Shards:** seven, one per year 2019–2025 (rules 34(c) / 36). Prompts: `docs/handoffs/r-ercot/SHARD-PROMPTS-r-ercot-5.md`, pinned to the SHA of the commit carrying this file.
+**Shards:** seven, one per year 2019–2025 (rules 34(c) / 36). Prompts: `docs/records/ercot/r-ercot/SHARD-PROMPTS-r-ercot-5.md`, pinned to the SHA of the commit carrying this file.
 
 **Each shard** runs `replay_keeper.py results/calibration/r_ercot4_dayguard_span --years <Y> --set unit_outage_window_hour_grain=true`, checks the input sha256s, the per-year config signature and the resolved-input record (`campd_unit_outages.path` = the `-hourgrain` companion), and pushes its full bundle (`dispatch/<Y>_P1.parquet` included) through a `.gitignore` negation and a plain `git add`.
 

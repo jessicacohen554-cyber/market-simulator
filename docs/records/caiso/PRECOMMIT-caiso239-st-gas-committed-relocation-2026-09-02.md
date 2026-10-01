@@ -31,7 +31,7 @@ pattern, and it is stated first because it changes what this precommit can
 honestly pre-register. The handoff directed a choice between two values for
 `offer_curve_by_group["ST_GAS"]["committed"]` and instructed that the measured
 inputs *not* be re-derived, citing
-`results/calibration/_caiso238_grounding_charter.json`. **That artifact does not
+`results/phase0/caiso/_caiso238_grounding_charter.json`. **That artifact does not
 exist**: caiso-238 pushed only its PRECOMMIT (`6b7e6492`, PR #4625); its
 `ASSESSMENT-…md`, its probe and its JSON were never committed. The §3 charter I
 was told to read as my whole brief therefore had to be reconstructed from
@@ -75,7 +75,7 @@ directive itself prescribes — not as a spent LP run.
 ## §1 — THE MEASUREMENT, AND WHAT IT FALSIFIES
 
 Probe: `scripts/probes/_caiso239_st_gas_committed_footprint.py`, output
-`results/calibration/_caiso239_st_gas_committed_footprint.json`. **Zero solves**:
+`results/phase0/caiso/_caiso239_st_gas_committed_footprint.json`. **Zero solves**:
 the marginal-rung attribution and the §H bounding form are imported UNCHANGED
 from `_caiso230_abovefloor_decomposition.py` and **re-pointed at the caiso-231
 keeper**, as caiso-231's DO-NOT-REDO requires. The footprint is established by
@@ -285,7 +285,7 @@ verdict flip. A C3a regression **within** the bound does not block promotion
 
 1. This PRECOMMIT, pushed to `origin` **before the solve**.
 2. `scripts/probes/_caiso239_st_gas_committed_footprint.py` +
-   `results/calibration/_caiso239_st_gas_committed_footprint.json` (already
+   `results/phase0/caiso/_caiso239_st_gas_committed_footprint.json` (already
    produced; zero solves).
 3. The mechanism (§4) with unit tests, its `constants.py` citation, its
    `--replay-bundle` thread, and its mechanism-matrix base row + a cell line in

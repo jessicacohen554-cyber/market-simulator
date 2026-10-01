@@ -3,8 +3,8 @@
 **Session:** ercot-227 (hub) · **Branch:** `claude/ercot-2023-summer-scarcity-9lg3nm`
 **Charter:** the owner dispatch of ercot-226 as EXTENDED 2026-08-22 — *"Proceed
 with all the factors to test not just 1 keep going"* — recorded verbatim in
-`docs/PRECOMMIT-ercot226-held-sequestration-2026-08-22.md` §5.11 (Amendment 3).
-**Predecessor:** `docs/FINDING-ercot226-held-sequestration-2026-08-22.md`.
+`docs/records/ercot/PRECOMMIT-ercot226-held-sequestration-2026-08-22.md` §5.11 (Amendment 3).
+**Predecessor:** `docs/records/ercot/FINDING-ercot226-held-sequestration-2026-08-22.md`.
 
 ## 0. What the extension changed
 
@@ -33,7 +33,7 @@ leverage through a path the screen did not measure.
 | **F4** operator load-forecast conservatism | DA-forecast bias as a reserve-demand adder | fetch attempted across every ERCOT surface (ercot-228) | **DATA-ABSENT** (§5) |
 | **F5** deployment-design depth | anything beyond rigid-at-VOLL | representation audited feature-by-feature | **ALREADY-CARRIED** |
 
-Committed record: `results/calibration/ercot227_probe_f1.json`,
+Committed record: `results/phase0/ercot/ercot227_probe_f1.json`,
 `ercot227_f1_gates.json`, `ercot227_ruc_sizing.json`,
 `ercot228_probe_f4.json`, plus ercot-226's `ercot226_probe_f2.json` and
 `ercot226_helddepth_phase0.json`.
@@ -154,7 +154,7 @@ correction:
 the 303 unit-hours the ercot97 plant-grain lane found on its 2024/25 subset.
 By class: ST_GAS 6,632 rows / 35 units (mean LSL 49.4 MW), CC_REGULAR 1,148 /
 26 units (mean LSL 126.2 MW), CT_PEAKER 183 / 9 units; COAL none. Sizing
-record: `results/calibration/ercot227_ruc_sizing.json`.
+record: `results/phase0/ercot/ercot227_ruc_sizing.json`.
 
 ### 4.1 The D-9 boundary it had to clear first
 
@@ -218,7 +218,7 @@ they are the sizing record that overturned the ercot97 premise.
 
 Carried by the ercot-228 spoke, which discharged the Amendment 3 obligation
 to *attempt the fetch at execution* rather than infer absence. The attempt log
-(`results/calibration/ercot228_probe_f4.json`, `phase_a_attempt_log`) records
+(`results/phase0/ercot/ercot228_probe_f4.json`, `phase_a_attempt_log`) records
 every ERCOT surface tried:
 
 - **MIS report archive** (NP3-560-CD / NP3-561-CD, reportTypeIds 12311/12312):

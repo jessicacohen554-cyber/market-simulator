@@ -3,7 +3,7 @@
 **Lane:** caiso-281 BACKFILL, fetch+aggregate shard, quarter **2021 Q2 (2021-04-01 .. 2021-06-30)**
 **Date:** 2026-09-14
 **Pin:** `7fe0a10c77983946b1e06a90ca2eea3c30794d0c`
-**Charter:** `docs/PRECOMMIT-caiso281-rtm-offer-surface-intake-2026-09-13.md`
+**Charter:** `docs/records/caiso/PRECOMMIT-caiso281-rtm-offer-surface-intake-2026-09-13.md`
 **Outcome:** STOPPED AT THE LIVENESS GATE. Nothing fetched, nothing aggregated. 6 HTTP requests
 spent instead of ~180.
 

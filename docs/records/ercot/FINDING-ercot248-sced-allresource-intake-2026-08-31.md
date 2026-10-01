@@ -205,7 +205,7 @@ publishes more rows per day.)
 * **deliveries 2024-01-10 .. 2024-01-23 (14 days)** — publications
   2024-03-10..23, aged out of the free MIS list before any fetch reached them.
   The credentialed `data.ercot.com` archive is the only remaining source and is
-  **owner-declined** (`docs/handoffs/ercot-as-coopt-plan-2026-07.md` §WS-E).
+  **owner-declined** (`docs/records/ercot/ercot-as-coopt-plan-2026-07.md` §WS-E).
   Measured today as still 14 days, not grown.
 
 No other delivery day in 2022-12-31 .. 2025-12-31 is missing.
@@ -345,7 +345,7 @@ are permanently absent on the free path.
 | `scripts/data/audit_sced_corpus.py` | **new** — writes/checks it + the five structural checks |
 | `data/raw/ercot/SCED/README.md` | recovery route 2 rewritten: verified command, the `--pub-start` trap, the RTC+B move, the SHA256SUMS correction, the measured retention floor, raw-vs-slim guidance |
 | `data/raw/ercot/SCED-CT/README.md` | stale coverage table corrected; scope warning sharpened to the real glob mechanism; all-resource sibling pointed to |
-| `docs/FINDING-ercot248-sced-allresource-intake-2026-08-31.md` | this record |
+| `docs/records/ercot/FINDING-ercot248-sced-allresource-intake-2026-08-31.md` | this record |
 | `.gitignore` | **unchanged** — the existing owner-signed A2 globs already cover every restored shard (verified with `git check-ignore`; working tree clean) |
 | `data/raw/ercot/SCED/SHA256SUMS.txt` | **unchanged, deliberately** — see §4 |
 

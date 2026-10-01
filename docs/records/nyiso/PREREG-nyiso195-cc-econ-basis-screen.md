@@ -11,7 +11,7 @@ not lone). The object is the top of the §5.5 queue as handed forward by
 nyiso-194 §3.
 
 Phase 0 (zero LP): `scripts/probes/nyiso195_econ_basis_phase0.py` →
-`results/calibration/_nyiso195_econ_basis_phase0.json`. Inputs are the
+`results/phase0/nyiso/_nyiso195_econ_basis_phase0.json`. Inputs are the
 keeper's COMMITTED artifacts only — an on-recipe `run_year(fleet_only=True)`
 rebuild of its 2024 fleet (`scripts/lib/bundle_fleet.reconstruct_bundle_fleet`,
 the same assembled `mc_base` the LP solved on), its per-plant hourly MW decoded

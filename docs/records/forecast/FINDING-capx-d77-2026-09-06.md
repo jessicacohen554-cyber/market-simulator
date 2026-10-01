@@ -2,7 +2,7 @@
 
 **Lane:** capx D77 · **Branch:** `claude/capx-d77-ccs-emission-rate-seam-pvfezi` (fresh off
 `origin/main` `2fa2f23a`) · **Date:** 2026-09-06 · **Model:** `claude-opus-5` (rule 27 `[R-PUSH]`)
-**Data profile:** `neiso` · **PRECOMMIT:** `docs/handoffs/PRECOMMIT-capx-d77-2026-09-06.md`
+**Data profile:** `neiso` · **PRECOMMIT:** `docs/records/forecast/PRECOMMIT-capx-d77-2026-09-06.md`
 (pushed at `ae8dd2a0`, **before** either solve)
 **Charter:** pack §D77 + `FINDING-scn-ws2b-2026-09-06.md` §5.3 / §8 item 1 +
 `FINDING-capx-d50-2026-09-04.md` / `FINDING-capx-d65-2026-09-05.md`

@@ -2,7 +2,7 @@
 
 **Pushed BEFORE the solve.** Session ERCOT-145, 2026-07-31. The session's first
 lane (item 5, `tranche_startup_amortization`) closed no-solve with the cell
-stamped `G` (`docs/DIAGNOSIS-ercot145-tranche-startup-2026-07-31.md`); the
+stamped `G` (`docs/records/ercot/DIAGNOSIS-ercot145-tranche-startup-2026-07-31.md`); the
 chartered alternate is item 4 — the five-ISO fuel-stack consistency audit
 (`gas_daily_shape` / `gas_monthly_actuals` / `gas_plant_monthly_fuel_pricing`)
 on ERCOT. Baseline keeper: `2026-07-31-ercot144-coal-perplant-offer` (bundle

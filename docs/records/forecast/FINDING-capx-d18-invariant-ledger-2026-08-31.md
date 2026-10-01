@@ -1,7 +1,7 @@
 # FINDING — capx D-18: the FR-24 invariant declaration ledger (records lane)
 
 **Lane:** capx D-18 · **Model:** Opus · **Branch:** `claude/capx-d18-invariant-ledger-v6x8c2`
-**Routed from:** `docs/handoffs/FINDING-capx-d4i3-ercot-slack-2026-08-31.md` §5.3 (R-6) — "a records
+**Routed from:** `docs/records/forecast/FINDING-capx-d4i3-ercot-slack-2026-08-31.md` §5.3 (R-6) — "a records
 duty needing one owner, not a measurement question"
 **Date:** 2026-08-31 · **Zero solves.** Every number below is read from a committed artifact or
 printed by the checker at this HEAD.
@@ -79,9 +79,9 @@ rules 1/11; rule 1 `[R-STRUCT]` is the live one).
 **(a) Five ERCOT T1-H `I3` rows — FR-6, measured.**
 `t1h-refresh` (W2-P5, `docs/hindcast-reports/ercot-2021-2025-realized-t1h-refresh-2026-08-22.md`);
 `t1h-d11r-control` + `t1h-d11r-exhaustion` (lane capx D11-R,
-`docs/handoffs/FINDING-capx-d11r-entry-volume-rule-2026-08-30.md`);
+`docs/records/forecast/FINDING-capx-d11r-entry-volume-rule-2026-08-30.md`);
 `t1h-d12c-control` + `t1h-d12c-armed` (lane capx D12-C,
-`docs/handoffs/FINDING-capx-d12c-confirm-pair-2026-08-30.md`).
+`docs/records/forecast/FINDING-capx-d12c-confirm-pair-2026-08-30.md`).
 Cause is the standing FR-6 energy-only scarcity slack — the adequacy backstop is disabled for ERCOT
 by market design (`resolve_reserve_margin_build_enabled` returns `False`;
 `model/capacity_evolution/adequacy.py:396-426`, whose docstring now names FR-6 and D4-I3
@@ -114,18 +114,18 @@ FH-1 signature); the open lane is the retirement screen itself.
 **false until this commit** and is now true. No report text was edited.
 
 **(d) MISO `s123-verify` `I3`.** Five-step measured mechanism in
-`docs/handoffs/FINDING-capx-s123-miso-adequacy-2026-08-30.md` §5, with the per-year table (2029:
+`docs/records/forecast/FINDING-capx-s123-miso-adequacy-2026-08-30.md` §5, with the per-year table (2029:
 145,993 MWh, 31 h, peak 14,568 MW; 2030: 231,272 MWh, 58 h, peak 17,329 MW). The S-123 package
 closed MISO's I7 and the FC-1 failure **moved** to I3 rather than clearing — that finding states it
 as its own result and routes a named follow-up. **Not FR-6.**
 
 **(e) NEISO `t3-golden-bau` `I3`.** The **dump** leg,
-`docs/handoffs/FINDING-capx-t3-neiso-golden-2026-08-30.md` §6.3(2), reported at full magnitude as
+`docs/records/forecast/FINDING-capx-t3-neiso-golden-2026-08-30.md` §6.3(2), reported at full magnitude as
 the model's own consequence of **zero storage entry in all 25 years** against a 9× VRE buildout.
 **Not FR-6.**
 
 **(f) PJM `s6-ledger` `I7` + `I12`.** Per-year ledger in
-`docs/handoffs/FINDING-capx-s6-pjm-ledger-2026-08-30.md` §5; §5.3 records that I12 **newly FAILS**
+`docs/records/forecast/FINDING-capx-s6-pjm-ledger-2026-08-30.md` §5; §5.3 records that I12 **newly FAILS**
 (three consecutive band excursions — the chain length at which I12 stops being a WARN) and takes
 FC-2 with it.
 
@@ -134,7 +134,7 @@ FC-2 with it.
 penetration (I9, CAISO →5.8 % of throughput)"), routed to lane **FF-3C item 2**. Stated honestly:
 that is a **conditional lane** whose trigger includes "I9/I10 FAILs persisting at T1" and it has
 **never been run** — so the mechanism is *named* and the diagnosis is *not yet done*. Corroborated
-independently by `docs/handoffs/fh-5-phase-b-2026-08-11.md` §8.6, which records CAISO
+independently by `docs/records/forecast/fh-5-phase-b-2026-08-11.md` §8.6, which records CAISO
 storage-integrity FAILs at the same grain across both FH-5 arms.
 
 ### 3b. The one row declared as honestly untracked — CAISO 2021 `I7`
@@ -143,7 +143,7 @@ storage-integrity FAILs at the same grain across both FH-5 arms.
 50,157 MW. The run's own W2-P5 report
 (`docs/hindcast-reports/caiso-2021-2025-realized-2026-08-22.md`) discusses storage entry, the
 backstop ratchet and the Diablo Canyon false-retire — **and never mentions this row**. The only
-committed record that does is `docs/handoffs/fh-5-phase-b-2026-08-11.md` §8.6, which reproduces the
+committed record that does is `docs/records/forecast/fh-5-phase-b-2026-08-11.md` §8.6, which reproduces the
 *identical* pair across two FH-5 arms and reasons that this is "expected rather than suspicious:
 accredited firm capacity is a property of the 2021 seed fleet, and the arms differ only in gas path,
 weather posture and demand vintage, none of which changes the vintage-2020 starting fleet" —

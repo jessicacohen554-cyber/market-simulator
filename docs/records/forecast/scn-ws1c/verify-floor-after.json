@@ -563,8 +563,8 @@
   "n_files": 90,
   "n_keys": 66,
   "keys": {
-   "docs/handoffs/scn-ws1a/t0/base-run_config.json": "706eec14f63096e8",
-   "docs/handoffs/scn-ws1a/t0/carbon_plus25-run_config.json": "f129fd3720e3e874",
+   "docs/records/forecast/scn-ws1a/t0/base-run_config.json": "706eec14f63096e8",
+   "docs/records/forecast/scn-ws1a/t0/carbon_plus25-run_config.json": "f129fd3720e3e874",
    "results/ff-t1f-d45r/miso/run_config.json": "8d8bc63a0d4378a9",
    "results/ff-t1f-d45r/nyiso/run_config.json": "cc7d1050a8090c76",
    "results/ff-t1f-d45r/pjm/run_config.json": "321f04e9060787f0",

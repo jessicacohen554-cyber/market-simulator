@@ -2,7 +2,7 @@
 
 **Date:** 2026-07-14. **Session:** `claude/miso-lane3-north-supply-nfd8um`.
 **Lane:** lane 3 of the miso-64 handoff (the dominant remaining July-2025 piece;
-`docs/DIAGNOSIS-miso-july2025-lmp-2026-07.md` §1(1), §6). Every number below is
+`docs/records/miso/DIAGNOSIS-miso-july2025-lmp-2026-07.md` §1(1), §6). Every number below is
 from committed measured sources (the DA hub LMP record with MCC/MLC components,
 CAMPD unit-level CEMS, EIA-860, the pbc RDT record, the MISO-AS cleared-reserve
 parquets, SOM conduct rows) or a no-LP fleet reconstruction of the promoted

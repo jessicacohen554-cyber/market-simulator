@@ -3,11 +3,11 @@
 **Date:** 2026-08-24 · **ISO:** ERCOT · **Keeper (untouched):**
 `2026-08-24-231-tie-zone-measured` (`results/calibration/ercot231_tiegtc_full`)
 · **Authorization:** card Y signed **(Y-C — hold the lane open)**, RESOLUTIONS
-item (`docs/DECISION-CARD-ercot233-2023-object-closure-2026-08-24.md`)
-· **Charter:** `docs/PRECOMMIT-ercot233-nelob-timing-phase0-2026-08-24.md`,
+item (`docs/records/ercot/DECISION-CARD-ercot233-2023-object-closure-2026-08-24.md`)
+· **Charter:** `docs/records/ercot/PRECOMMIT-ercot233-nelob-timing-phase0-2026-08-24.md`,
 pushed + blob-verified (blob `b09116f`) BEFORE any measurement
 · **Probe:** `scripts/probes/ercot233_nelob_timing_phase0.py` →
-`results/calibration/ercot233_nelob_timing_phase0.json`
+`results/phase0/ercot/ercot233_nelob_timing_phase0.json`
 
 **NO SOLVE, NO LP, NO MECHANISM BUILT, NO `ScenarioConfig` FIELD (28(c) not
 engaged), NO RUN REGISTERED, KEEPER UNCHANGED, ZERO FITTED SCALARS.** Every

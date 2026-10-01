@@ -7,7 +7,7 @@ determination NOT-YET, fail set {C3a-2023 −40.1 %, C3b-2023 NRMSE 0.736}, C3c
 the ledgered CAVEAT ×3 (68/181, 22/53, 1/31). RETENTION HOLD honoured:
 `2026-08-16-ercot213-ctl-headbase` and `2026-08-15-ercot204-rule26-delete`
 NOT pruned. Pre-registered in
-`docs/PRECOMMIT-ercot219-option-b-phase1-2026-08-18.md` (+ Amendment 1),
+`docs/records/ercot/PRECOMMIT-ercot219-option-b-phase1-2026-08-18.md` (+ Amendment 1),
 pushed and blob-verified BEFORE any solve. This lane is **off-queue by the
 owner dispatch of ERCOT-219 itself and the signed card** (the ERCOT §5.1
 queue holds no live un-adjudicated in-model item — FINDING-ercot218 §0).
@@ -78,7 +78,7 @@ of a data artifact. The degenerate branch `T_tel ≤ N` is now
 reconciliation-inert like a NaN hour — zero scalars, the mechanism's own
 degenerate point.
 
-## 2. SEAM PROOFS — ALL ASSERTIONS PASS (`results/calibration/ercot219_seamproof.json`)
+## 2. SEAM PROOFS — ALL ASSERTIONS PASS (`results/phase0/ercot/ercot219_seamproof.json`)
 
 | proof | result |
 |---|---|
@@ -208,7 +208,7 @@ and its own licence. Recorded as the diagnosis, not as a charter.
 ## 7. GOVERNANCE
 
 Owner dispatch executed as the lane's charter; B-1 appended verbatim at the
-foot of `docs/DECISION-CARD-ercot218b-artificial-shortage-structural-2026-08-18.md`
+foot of `docs/records/ercot/DECISION-CARD-ercot218b-artificial-shortage-structural-2026-08-18.md`
 (commit `ecbad28`) before any build step, per the card's closing clause and
 the X-1/X-2 precedent. Precommit pushed and blob-verified (`fe1596ed`, 437
 lines) BEFORE any solve; Amendment 1 appended pre-solve. **Rule 15:** both

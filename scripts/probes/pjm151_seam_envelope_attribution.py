@@ -37,7 +37,7 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
 TIE_DIR = REPO / "data/raw/iso-specific-transmission"
-OUT = REPO / "results/calibration/_pjm151_seam_envelope_attribution.json"
+OUT = REPO / "results/phase0/pjm/_pjm151_seam_envelope_attribution.json"
 
 YEARS = (2023, 2024, 2025)
 PCT = 90.0  # constants.PJM_SEAM_FLOW_PERCENTILE

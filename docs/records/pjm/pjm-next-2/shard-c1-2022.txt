@@ -5,7 +5,7 @@ You are a SHARD of orchestrator session PJM-NEXT-2 (CLAUDE.md rules 32/33/34/36)
 "A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE."
 
 PINNED COMMIT: e8cb6516b10f7fe7966dbb8dbc1fb04902802d2a
-Record: docs/PRECOMMIT-pjm-next-2-card1-outage-membership-2026-09-25.md (in your checkout).
+Record: docs/records/pjm/PRECOMMIT-pjm-next-2-card1-outage-membership-2026-09-25.md (in your checkout).
 
 STEPS
 1. HARD STOP: `git rev-parse HEAD` must equal e8cb6516b10f7fe7966dbb8dbc1fb04902802d2a. If not, `git fetch origin e8cb6516b10f7fe7966dbb8dbc1fb04902802d2a && git checkout --detach e8cb6516b10f7fe7966dbb8dbc1fb04902802d2a` once; if it still differs, STOP and report. Never rebase, never `git pull`, never "sync" to any branch.

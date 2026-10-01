@@ -2,7 +2,7 @@
 
 **Session:** nyiso-228 · **Shard:** A (TAIL) · **ISO:** NYISO · **Date:** 2026-09-12
 **Branch:** `claude/nyiso228-tail-span` · **Bundle:** `results/calibration/nyiso228_tail_span`
-**Charter:** `docs/PRECOMMIT-nyiso228-amplitude-2026-09-12.md` §3.1 (authorized channel), §4 (STOP gates)
+**Charter:** `docs/records/nyiso/PRECOMMIT-nyiso228-amplitude-2026-09-12.md` §3.1 (authorized channel), §4 (STOP gates)
 **Arm variable:** `offer_curve_by_group[*].peak` **×1.50** — frozen ex ante, one config across every
 scored year, **never swept** (rules 1 `[R-STRUCT]` / 13 `[R-MEASURED]` amendment 2026-09-05).
 

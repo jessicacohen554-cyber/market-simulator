@@ -1,6 +1,6 @@
 {
   "session": "caiso-181",
-  "precheck": "results/calibration/PRECHECK-caiso181-envelope-depth-2026-08-07.md",
+  "precheck": "docs/records/caiso/PRECHECK-caiso181-envelope-depth-2026-08-07.md",
   "envelope_csv": "data/raw/campd-unit-outages-CAISO.csv",
   "detector_contract": {
     "rule": "detect_outages_eventbased",

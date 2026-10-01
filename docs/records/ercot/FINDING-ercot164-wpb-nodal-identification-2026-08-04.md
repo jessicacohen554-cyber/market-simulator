@@ -15,7 +15,7 @@ h15–16 vs model overnight h22–23, hod corr −0.079).
 
 Probe (no-LP, committed data only):
 `scripts/probes/ercot164_wpb_nodal_identification.py` →
-`results/calibration/ercot164_wpb_nodal_identification.json`. Inputs: NP6-86
+`results/phase0/ercot/ercot164_wpb_nodal_identification.json`. Inputs: NP6-86
 2023–2025 parquets, the NP4-160-SG spine, HIFLD TX substations
 (validation-grade), `ercot-hsl` hourly + zonal (shape target),
 `data/raw/reference/ercot_wtx_curtailment_share.csv` (the armed pooled share),

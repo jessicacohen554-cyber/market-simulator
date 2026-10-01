@@ -13,7 +13,7 @@ governs the verdict and the citation; this one governs only the screen.
 `G-CLAMP-N` (addendum 1 §0c) was declared before its numbers existed and **passes at every entry**:
 each reaching value is the **unclamped** quantile, at margins of **23.29 / 34.08 $/MWh** below the
 same-seam no-wash limit, and no value in `Δ ∈ {−1, 0, +1}` is clamped anywhere
-(`results/calibration/_miso245_gclamp_n.json`). **It removes a way `A-CONFIRMED` could have been
+(`results/phase0/miso/_miso245_gclamp_n.json`). **It removes a way `A-CONFIRMED` could have been
 false; it adds no evidence, and it is not read as if it did.** The mechanism it exposes is exact:
 
 | entry | at `Δ = 0` | **at the reaching `Δ`** | committed |

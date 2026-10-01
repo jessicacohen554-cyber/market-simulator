@@ -11,9 +11,9 @@ determination changed. **Rule 22 `[R-HOLDOUT]`: every year read is 2023, 2024
 or 2025** — no out-of-training year was solved, scored, registered or read; no
 marker was requested; the spend freeze is untouched.
 **Probes of record:** `scripts/probes/nyiso168_gap_anatomy.py` →
-`results/calibration/_nyiso168_gap_anatomy.json`;
+`results/phase0/nyiso/_nyiso168_gap_anatomy.json`;
 `scripts/probes/nyiso168_reserve_supply_slack.py` →
-`results/calibration/_nyiso168_reserve_supply_slack.json`.
+`results/phase0/nyiso/_nyiso168_reserve_supply_slack.json`.
 **nyiso-167's probe re-run first and reproduces bit-identically** (no diff on
 `_nyiso167_price_gain_attribution.json`), so this session measures the same object.
 
@@ -375,14 +375,14 @@ plans around the card, and nothing here re-litigates it.
 
 ## 11. Evidence
 
-* `results/calibration/_nyiso168_gap_anatomy.json` + `scripts/probes/nyiso168_gap_anatomy.py`
+* `results/phase0/nyiso/_nyiso168_gap_anatomy.json` + `scripts/probes/nyiso168_gap_anatomy.py`
   — measurements A–G.
-* `results/calibration/_nyiso168_reserve_supply_slack.json` +
+* `results/phase0/nyiso/_nyiso168_reserve_supply_slack.json` +
   `scripts/probes/nyiso168_reserve_supply_slack.py` — the AS-price/dual gap and
   the ramp10 ceiling.
-* `results/calibration/_nyiso167_price_gain_attribution.json` — re-run first,
+* `results/phase0/nyiso/_nyiso167_price_gain_attribution.json` — re-run first,
   reproduces bit-identically.
-* `docs/FINDING-nyiso167-c3a-price-response-gain-2026-09-01.md` §§2–6 — the
+* `docs/records/nyiso/FINDING-nyiso167-c3a-price-response-gain-2026-09-01.md` §§2–6 — the
   object, and the four lines it closed which this session did not re-open.
 * `src/market_sim/model/reserves/spec.py::_nyiso_design` (no `supply_cap`, no
   `headroom_eligible`, no `pergen_*`) vs `_ercot_design` / `_ercot_multiproduct_design`
@@ -392,7 +392,7 @@ plans around the card, and nothing here re-litigates it.
 * `docs/codebase-site/data/mechanism-matrix/NYISO.js` — `nyiso_spin_reserve_online`
   (nyiso-144 §1.4, nyiso-145 §5) and `measured_ramp_capability` (nyiso-113 §4),
   both re-read before anything was proposed; neither verdict moves.
-* `docs/handoffs/audit-program-director-board-2026-08.md` D-7 — ruling R-H (§10).
+* `docs/records/governance/audit-program-director-board-2026-08.md` D-7 — ruling R-H (§10).
 * CLAUDE.md rules 1 `[R-STRUCT]`, 13 `[R-MEASURED]`, 14 `[R-ACCURATE]`,
   17 `[R-FLOOR-WINDOW]`, 19 `[R-ONE-MECH]`, 22 `[R-HOLDOUT]`, 25 `[R-ISO-SCOPE]`,
   28 `[R-MECH-MATRIX]`.

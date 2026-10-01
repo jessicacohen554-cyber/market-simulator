@@ -3,15 +3,15 @@
 **Session.** WAVE FI session **FF-G4** (memo-first, FF-0C pattern — **no code, no
 solve, no default moved**; the implementing session is chartered from this memo's
 §8 decision boxes). Verified against `origin/main` HEAD `40dde11` (2026-07-20).
-Structural template: `docs/handoffs/ff-retirement-rule-redesign-2026-07.md`
-(FF-0C); DC-block precedent: `docs/handoffs/cx4-datacenter-load-design-2026-07.md`
-(CX-4); currency evidence: `docs/handoffs/ff-inputs-currency-audit-2026-07.md`
+Structural template: `docs/records/forecast/ff-retirement-rule-redesign-2026-07.md`
+(FF-0C); DC-block precedent: `docs/records/misc/cx4-datacenter-load-design-2026-07.md`
+(CX-4); currency evidence: `docs/records/forecast/ff-inputs-currency-audit-2026-07.md`
 (FF-0D) §1.1/§7.3.
 
 **Registration note (FF-G1 patch not on main).** The prompt's two status-row
 targets — FF plan §1.2-11 (WAVE FI frontier row) and gap-register §3.11 (FF-G4
 row) — do **not exist on `origin/main` at HEAD `40dde11`**: the FF-G1 core-wiring
-change that adds them lives only in `docs/handoffs/patches/ff-g1-core-wiring.patch`
+change that adds them lives only in `docs/records/misc/patches/ff-g1-core-wiring.patch`
 (the patch also carries the FF-G1 CHANGELOG entry and the WAVE FI §6 table). Per
 the FF-G4 charter ("if absent on main, note it in the memo — do not create them"),
 this memo records here what those rows should say once the patch lands: **FF-G4
@@ -631,7 +631,7 @@ sha256-pinned sources; rows marked ⬇ are bot-walled manual downloads):
 
 - **No code, no solve, no default, no dashboard touch.** Deliverables: this
   memo + a CHANGELOG entry (shipped as
-  `docs/handoffs/patches/ff-g4-memo-changelog.patch` — CHANGELOG.md is 4.5 k
+  `docs/records/misc/patches/ff-g4-memo-changelog.patch` — CHANGELOG.md is 4.5 k
   lines, not safely API-transportable whole; same byte-verified-patch
   precedent as the 2026-07-19 costs session, commit `ae6bf68`).
   `constants.py` untouched (per charter: anything

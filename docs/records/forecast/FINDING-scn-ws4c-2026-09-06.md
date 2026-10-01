@@ -2,7 +2,7 @@
 
 **Lane** SCN-WS4c · **Model** Opus (`claude-opus-5`) · **Date** 2026-09-06 ·
 **Branch** `claude/scn-ws4c-load-hi-probes-o85iyi` · **Data profile** `all` ·
-**PRECOMMIT** `docs/handoffs/PRECOMMIT-scn-ws4c-2026-09-06.md` (pushed before the first solve) ·
+**PRECOMMIT** `docs/records/forecast/PRECOMMIT-scn-ws4c-2026-09-06.md` (pushed before the first solve) ·
 **Charter** plan §7 "WS-4" item 4 / readiness plan §3 WS-4 item 4, §3.5, §4 ·
 **Campaign** `scn-ws4-probe` — 19 registered arms (15 T0 + 4 T1-F), disjoint from `scn-ws1-probe`
 

@@ -1,7 +1,7 @@
 # RESULTS — cross-ISO keeper re-audits on the corrected envelope + the CAISO crosswalk (neiso-65, 2026-07-26)
 
 The execution session for the charter verdict recorded in
-`docs/handoffs/campd-economic-layup-fix-charter-2026-07.md` §8:
+`docs/records/misc/campd-economic-layup-fix-charter-2026-07.md` §8:
 **ADOPTED-AS-IMPROVEMENT, freeze HELD** (owner, 2026-07-26). This document
 records (1) the adoption landing, (2) the keeper re-audits on the corrected
 envelope for the five ISOs the neiso-64 session did not cover, and (3) the
@@ -72,7 +72,7 @@ partition is unneeded is exactly wrong. The tell in the log is the presence of
 `seasonal CIL/CEL interface caps on 5 zone group(s) … static summer fallbacks
 replaced` (healthy) versus `capacity-deliverability clean partition absent`
 (degraded). See
-`results/calibration/FINDING-miso93-keeper-reaudit-meritguard-2026-07.md` §5. Every log was then audited for
+`docs/records/miso/FINDING-miso93-keeper-reaudit-meritguard-2026-07.md` §5. Every log was then audited for
 missing-input warnings. NEISO's "zonal load file not found" is NOT a
 degradation: `data/raw/zone-specific-demand/` has never carried a NEISO
 subdirectory, so the keeper itself solved on the identical fallback (and the
@@ -163,9 +163,9 @@ and **one fresh process per solve-year** (the staged `--reuse-solved` chain,
 already recorded in `pjm121_ccbelt`'s own attestation as how the keeper itself was
 solved, "peak ~14.8 GB") fits every PJM and MISO year in the standard ~15.7 GB
 container. No ≥24 GB box was needed for either. Verdicts:
-`results/calibration/FINDING-miso93-keeper-reaudit-meritguard-2026-07.md` (MISO,
+`docs/records/miso/FINDING-miso93-keeper-reaudit-meritguard-2026-07.md` (MISO,
 RE-TUNE REQUIRED) and
-`results/calibration/FINDING-pjm129-keeper-reaudit-meritguard-2026-07.md` (PJM,
+`docs/records/pjm/FINDING-pjm129-keeper-reaudit-meritguard-2026-07.md` (PJM,
 RE-TUNE REQUIRED). The original text is kept below as the historical record.
 
 **Original text (2026-07-26, as written):**

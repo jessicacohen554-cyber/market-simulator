@@ -4,10 +4,10 @@
 ZERO-SOLVE — every number read from the FORWARD keeper's committed 2024
 sidecars (`ercot234_eastex_identity`), the committed actuals, the EIA-930
 wide extract and the measured ORDC/reserves series.** Precommit
-`docs/PRECOMMIT-ercot239-h3068-phase0-2026-08-30.md` pushed +
+`docs/records/ercot/PRECOMMIT-ercot239-h3068-phase0-2026-08-30.md` pushed +
 blob-verified before any measurement; V-0 exact (model 798.20 / actual
 110.41). Probe `scripts/probes/ercot239_h3068_phase0.py` →
-`results/calibration/ercot239_h3068_phase0.json` (committed). No lever,
+`results/phase0/ercot/ercot239_h3068_phase0.json` (committed). No lever,
 no gate change, no matrix verdict; keepers untouched.
 
 ## 0. Verdict in five lines

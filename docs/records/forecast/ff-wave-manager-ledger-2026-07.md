@@ -56,7 +56,7 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
 | FF-3B | OPUS | 3 | L-CES | — | **verified-pass (t30)** — #2613 | W3-R = NO-GO (R1/R2 NOT MET; routed). POC machinery-proven 3×5yr, premium moves full surface. |
 | FF-3C | FABLE | 3 | L-PERF | conditional | not-sent | trigger-gated — inactive (only remaining FABLE prompt); trigger = active-tier breach (plan §6). |
 | FF-3D / FF-3D-run | OPUS | 3 | L-CAP | — | **landed** (#2463 / #2471/#2473/#2478) | NYISO Option-B pairing registered. ⚠ pair evidence rule-11-tainted (pre-re-audit) — regenerate before NYISO flip. |
-| FF-3E | OPUS | 3 | L-VAL | ⛔ §2.1b evidence | **verified-pass (t39)** — #2691 | Readiness battery (`scripts/ff_readiness_battery.py`, 5 parts + test) + `run_full_horizon.py` guard `MAX_UNAUTHORIZED_SOLVE_YEARS=5` + POC close-out `docs/handoffs/ff-poc-closeout-2026-07.md` (11 sections). |
+| FF-3E | OPUS | 3 | L-VAL | ⛔ §2.1b evidence | **verified-pass (t39)** — #2691 | Readiness battery (`scripts/ff_readiness_battery.py`, 5 parts + test) + `run_full_horizon.py` guard `MAX_UNAUTHORIZED_SOLVE_YEARS=5` + POC close-out `docs/records/forecast/ff-poc-closeout-2026-07.md` (11 sections). |
 | FF-3F | OPUS | 3 | L-CES | — | **verified-pass (t39)** — #2700/#2704/#2706 | CES infra hardening at T1. F-3 FIXED; premium-ladder harness exercised ERCOT 2026-2030 ×{BAU,CES-20,CES-40}; forward numbers labeled STRUCTURAL. |
 | FF-3G | OPUS | 3 | L-VAL | — | **verified-pass (t39)** — #2701 | T2 scorer shakeout (no solve). All 8 FC categories resolve; §2.1b-gated instruments degrade to SKIPPED (correctly HOLDs T2); I12 coupling found+fixed. |
 | FF-3H | OPUS | 3 | L-PB | — | **verified-pass (t40)** — #2722 | PB band machinery T1. Found+fixed `ensemble._member_metric_values` horizon-hardcode (T1 ensembles crashed; default byte-identical) + regression tests; published `ercot-pb-bands-t1`; n=5 disclosed machinery-proof. |
@@ -141,7 +141,7 @@ independently of the FF waves above.
 - **(nothing dispatchable at T1)** — all T1-infra prompts verified-pass. Only §2.1b-gated
   full-horizon campaigns remain (owner-held). FF-3C trigger-gated inactive.
 - **⚠ HOUSEKEEPING flag still open (out-of-program, not stop-the-line):**
-  (2) PJM M-3 gas-bridge (#2756) — `docs/handoffs/pjm-m3-gas-bridge.patch` (836L) remains an
+  (2) PJM M-3 gas-bridge (#2756) — `docs/records/pjm/pjm-m3-gas-bridge.patch` (836L) remains an
   UNAPPLIED stale-based patch; the M-3 mechanism is NOT in main. Needs a fresh working-clone
   session to re-base + apply. Out-of-program PJM deliverable; keep visible.
 

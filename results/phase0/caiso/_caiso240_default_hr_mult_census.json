@@ -45,7 +45,7 @@
    "/tmp/census_pjm.json"
   ],
   "note": "Assembled from per-ISO invocations of the same probe at the same HEAD. The probe is deterministic per (ISO, year) and every ISO is measured on its own keeper, so the split is a scheduling detail, not a method change: PJM had to run separately because its keeper's pjm_da_virtual_bids corpus is payload-untracked in this checkout (see _provenance.rebuild_deviations).",
-  "precommit": "results/calibration/PRECOMMIT-caiso240-default-hr-mult-census-2026-09-03.md",
+  "precommit": "docs/records/caiso/PRECOMMIT-caiso240-default-hr-mult-census-2026-09-03.md",
   "probe_factors": {
    "CC_CHP:econ": 1.0003,
    "CC_CHP:mc": 1.0002,

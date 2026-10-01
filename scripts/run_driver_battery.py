@@ -1,7 +1,7 @@
 """Tier-1 single-driver directional & elasticity ladders (forecast probes).
 
 Plan §2 Tier 1 of
-``docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md`` — the
+``docs/records/forecast/forecast-driver-capacity-revenue-audit-plan-2026-07.md`` — the
 measurement rig the rest of that program is graded on. It **generalizes** the
 existing paired directional invariants P1-P3
 (``scripts/check_forecast_invariants.py``, run weekly at best) into single-driver
@@ -478,7 +478,7 @@ def build_ladders() -> list[Ladder]:
     # held short vs long").
     #
     # RE-POINTED 2026-09-01 to ``entry_rate_limits`` by OWNER RULING Q27
-    # (capx r#27 sitting, `docs/handoffs/capx-director-ledger-2026-08.md` §3),
+    # (capx r#27 sitting, `docs/records/forecast/capx-director-ledger-2026-08.md` §3),
     # executed by lane capx-T16-A. The ladder was OUT OF SERVICE between
     # 2026-09-01 (lane capx-T16) and this ruling.
     #
@@ -1102,7 +1102,7 @@ def _acp_ceiling(config) -> float | None:
 #: capx-D26) — never an absolute ``carbon_price`` override, which on a program
 #: ISO REPLACES the projected program trajectory and turns the "high-carbon"
 #: arm into a price CUT in every year (the D21/D23 premise inversion,
-#: ``docs/handoffs/FINDING-capx-d23-p1-carbon-sign-2026-09-01.md``). With the
+#: ``docs/records/forecast/FINDING-capx-d23-p1-carbon-sign-2026-09-01.md``). With the
 #: delta construction the strictly-positive year-by-year premise the paired
 #: checker asserts (``check_forecast_invariants.carbon_pair_premise``) holds
 #: by construction on every ISO, program or not.

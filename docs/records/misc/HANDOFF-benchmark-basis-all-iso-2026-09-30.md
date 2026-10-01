@@ -13,7 +13,7 @@ DIRECTIONS (owner, standing)
 WHY
 - render_calibration_html.reconcile_vintage_classes scales every fossil class by one factor k when EIA-923
   gas+coal(+oil) is outside ±3 % of EIA-930. SCORER-COAL-1 measured every keeper
-  (docs/handoffs/RESULT-scorer-coal1-reconcile-options-2026-09-29.md) and found that the gap sits on a
+  (docs/records/misc/RESULT-scorer-coal1-reconcile-options-2026-09-29.md) and found that the gap sits on a
   DIFFERENT fuel in different ISOs:
   - NWPP 2019–24: on gas (−10 to −12 TWh/yr);
   - SPP 2023–25: on coal, because 930 books coal near CEMS gross (SPP-87);

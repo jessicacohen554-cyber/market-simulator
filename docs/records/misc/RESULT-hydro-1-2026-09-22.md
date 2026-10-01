@@ -1,6 +1,6 @@
 # RESULT — hydro-1: hydro dispatch physics, PJM + NYISO (2026-09-22)
 
-Companion to `docs/PRECOMMIT-hydro-1-2026-09-20.md`, which carries the phase-0 census, the
+Companion to `docs/records/misc/PRECOMMIT-hydro-1-2026-09-20.md`, which carries the phase-0 census, the
 mechanism design and the pre-registered gates. **This doc carries every number the lane will
 cite**, so it is the record even where a bundle is not retained (rules 29(c) / 31).
 

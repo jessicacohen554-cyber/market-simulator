@@ -25,8 +25,8 @@ agree. It reports total moves and OFF-TARGET moves (a move in a config the seam 
 reach) and never collapses the two.
 
 Usage:
-    uv run python docs/handoffs/spp49/key_census.py --out docs/handoffs/spp49/key_census_pre.json
-    uv run python docs/handoffs/spp49/key_census.py --check-live --out .../key_census_post.json
+    uv run python docs/records/spp/spp49/key_census.py --out docs/records/spp/spp49/key_census_pre.json
+    uv run python docs/records/spp/spp49/key_census.py --check-live --out .../key_census_post.json
 """
 
 from __future__ import annotations

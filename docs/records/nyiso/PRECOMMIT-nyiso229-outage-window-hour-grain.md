@@ -5,7 +5,7 @@
 may be re-cut after a number lands.
 **Arm:** `unit_outage_window_hour_grain` `False` → `True` — ONE registered field.
 **Keeper `2026-09-09-nyiso-221-fuelvintage-span` UNCHANGED until the owner rules.**
-Phase 0 (zero LP, complete): `docs/FINDING-nyiso229-phase0-the-outage-window-grain-2026-09-12.md`.
+Phase 0 (zero LP, complete): `docs/records/nyiso/FINDING-nyiso229-phase0-the-outage-window-grain-2026-09-12.md`.
 
 ---
 

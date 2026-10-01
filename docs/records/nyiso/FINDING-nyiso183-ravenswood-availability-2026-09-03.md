@@ -8,10 +8,10 @@ track, 2026-09-03. **Solves run: ZERO.**
 grade 5, fail set **{C1-2023 `ST_GAS` +3.86 TWh, C3a-2025 −11.2 %, C3c}**.
 **Unchanged.** No parameter touched, no band swept, no `ScenarioConfig` field
 added, no constant moved or swept, no arm built, `src/market_sim/` untouched.
-**Pre-registration:** `results/calibration/PREREG-nyiso183-ravenswood-availability.md`,
+**Pre-registration:** `docs/records/nyiso/PREREG-nyiso183-ravenswood-availability.md`,
 pushed to `origin` at `53767546` **before the first measurement**, amended at
 `3085f253` **before any gate below G0 was read**.
-**Machine records:** `results/calibration/_nyiso183_ravenswood_availability.json`,
+**Machine records:** `results/phase0/nyiso/_nyiso183_ravenswood_availability.json`,
 `_nyiso183_g4c_offer_position.json`, `_nyiso183_g4d_offer_anatomy.json`; probes
 `scripts/probes/nyiso183_ravenswood_availability.py`,
 `nyiso183_g4c_offer_position.py`, `nyiso183_g4d_offer_anatomy.py`.

@@ -125,7 +125,7 @@ back.
 ## 5. OUTCOME — DEBUG-B session, 2026-08-15
 
 **Executed on branch `claude/debug-b-pjm-input-clock-kcwiwn`, off `origin/main` @ `c447199`.**
-Full write-up: `docs/FINDING-debug-b-pjm-input-clock-2026-08-15.md`.
+Full write-up: `docs/records/pjm/FINDING-debug-b-pjm-input-clock-2026-08-15.md`.
 
 **§1 reproduced exactly.** Both probes re-run before anything changed; every figure in the
 charter's §1 tables matched (July `NG: SUN` centroid 10.91 / 10.94 / 12.03; wind/solar/gas

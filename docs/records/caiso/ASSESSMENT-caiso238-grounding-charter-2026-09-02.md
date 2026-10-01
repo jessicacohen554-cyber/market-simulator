@@ -10,7 +10,7 @@ attach — no calibration run was produced). CAISO holds no `complete` and no
 Pre-registered in `PRECOMMIT-caiso238-grounding-charter-2026-09-02.md`, pushed
 to `origin` before any measurement was computed. Every number below comes from
 `scripts/probes/_caiso238_grounding_charter.py` →
-`results/calibration/_caiso238_grounding_charter.json`, reading only the
+`results/phase0/caiso/_caiso238_grounding_charter.json`, reading only the
 keeper's own `run_config.json` + `hourly/` sidecars, the committed offer-curve
 registries and the fleet basis. **No LP was built and no solver was called.**
 

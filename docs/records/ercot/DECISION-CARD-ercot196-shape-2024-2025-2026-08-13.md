@@ -6,13 +6,13 @@
 `claude/ercot-scar-shape-charter-1`, assembled at origin/main `5b05f84`.**
 This is the measure-first charter assembly for the object card R re-pointed
 ERCOT bandwidth to: the outage-season/fuel-shape monthly object named by
-`docs/PRECOMMIT-ercot193-soc-regate-2026-08-13.md` §0(c) as *"2024/2025 shape
+`docs/records/ercot/PRECOMMIT-ercot193-soc-regate-2026-08-13.md` §0(c) as *"2024/2025 shape
 work for a later charter"*. The card performs exactly ONE new measurement — a
 **read-only counterfactual re-scoring and attribution** of the keeper's
 registered dashboard payload against committed bench actuals and the
 committed hub-hourly actual series, using the rubric's own `_wmean`/`_nrmse`
 (`scripts/probes/ercot196_shape_decomposition.py`, output
-`results/calibration/ercot196_shape_decomposition.json`; the
+`results/phase0/ercot/ercot196_shape_decomposition.json`; the
 ercot-189/ercot-193 footing). Actuals enter counterfactual *scoring and
 attribution* only, never any model input (rule 13 `[R-MEASURED]`). No lever
 is built, no LP is solved, no year is solved or scored, no run is registered,
@@ -23,10 +23,10 @@ the keeper is untouched.
 SHAPE-QUALITY and forecast-readiness work, never determination work —
 **ERCOT's determination stays NOT-YET regardless of anything on this card**,
 under the standing rulings **Q-B** (no C3a-2023 spend of any kind, final —
-`docs/DECISION-CARD-ercot189-c3a2023-after-the-offer-family-2026-08-11.md`)
+`docs/records/ercot/DECISION-CARD-ercot189-c3a2023-after-the-offer-family-2026-08-11.md`)
 and **R-A** (NOT-YET stands as the public claim; no C3b-2023-targeted
 determination rounds —
-`docs/DECISION-CARD-ercot193-determination-ceiling-2026-08-13.md`). 2023
+`docs/records/ercot/DECISION-CARD-ercot193-determination-ceiling-2026-08-13.md`). 2023
 appears on this card only in this ceiling citation.
 
 **What the work can concretely buy** (the reported numbers that move, §3):
@@ -54,7 +54,7 @@ One signable card. §1–§2 are its evidence; §4 is the option board.
 
 ## 1. THE MEASUREMENT — where the 2024 and 2025 residuals live, at full magnitude
 
-From `results/calibration/ercot196_shape_decomposition.json` (rubric
+From `results/phase0/ercot/ercot196_shape_decomposition.json` (rubric
 arithmetic; model = the scorer's demand-weighted `pMon`, actual = bench
 `rt_lw_mon`). The probe's year-grain tail counts reproduce the C3c ledger
 exactly (2024: 53 actual / 22 model max-zonal > $200; 2025: 31 / 1), which
@@ -317,7 +317,7 @@ no `complete`/`final` marker; every artifact read is inside {2023, 2024,
 2025}, no year was solved or scored, and 2023 appears only in the ceiling
 citation (rulings Q-B, R-A). Rule 13: measured actuals entered counterfactual
 re-scoring of committed payloads only. The L-SCAR lane is stopped at V0 and
-is not touched (`docs/FINDING-ercot195-lscar-v0-nonidentifiable-2026-08-13.md`);
+is not touched (`docs/records/ercot/FINDING-ercot195-lscar-v0-nonidentifiable-2026-08-13.md`);
 its finding is cited as evidence only. The frozen composition lane (D2) is
 not touched. The ercot-188/E2 P0 bit-identity forfeiture is inherited
 unexpired and untouched. New artifacts of this session: the probe, its JSON,
@@ -329,7 +329,7 @@ this card, and the calibration-log entry — nothing else.
 
 The sitting was held on 2026-08-14 in the ERCOT-SCAR workstream manager
 session (owner selections made interactively in-session; primary sitting
-record: `docs/handoffs/ercot-scar-workstream-pack-2026-08.md` §0 cycle-9
+record: `docs/records/ercot/ercot-scar-workstream-pack-2026-08.md` §0 cycle-9
 board + addendum A9). The card body above is preserved AS PUT, unedited by
 the outcome.
 

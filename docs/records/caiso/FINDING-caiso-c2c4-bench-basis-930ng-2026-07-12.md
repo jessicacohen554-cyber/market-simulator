@@ -105,7 +105,7 @@ authority; the measured replacement exists in-repo with complete coverage:
    block` (complete vintages: as booked; preliminary vintage: prior-vintage
    cogen block carried, CAMPD backfill for CEMS plants as today). Equivalent
    framing: the "CAMPD-per-class target" refinement already filed as the G-21
-   follow-up (docs/handoffs/pjm-cc-overrun-benchmark-basis-g21-2026-07.md §6),
+   follow-up (docs/records/pjm/pjm-cc-overrun-benchmark-basis-g21-2026-07.md §6),
    applied first to the ISO where the 930 cell is demonstrably corrupt.
 2. **C4 gas actual (CAISO)**: CEMS fleet hourly + the flat cogen block instead
    of 930 NG hourly, from the onset vintage (≥2024; 2023 may keep 930 for

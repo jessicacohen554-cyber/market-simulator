@@ -24,7 +24,7 @@ gate's remaining effect there runs through accreditation, the reliability
 floor / backstop and the CR-1 position. That change is the whole reason this
 must be re-measured rather than carried forward.
 
-Output: ``docs/handoffs/d76/p2_predeclare.json`` + a printed table.
+Output: ``docs/records/forecast/d76/p2_predeclare.json`` + a printed table.
 """
 
 import argparse
@@ -57,7 +57,7 @@ ALL_ISOS = ("CAISO", "ERCOT", "MISO", "NEISO", "NYISO", "PJM")
 # with ``--isos`` rather than hard-coded. **The default is unchanged**, so
 # ``p2_predeclare.py`` with no arguments still reproduces the phase-2
 # declaration exactly; phase 3 passes ``--isos NEISO NYISO --out
-# docs/handoffs/d76/p3_predeclare.json`` and writes a separate file, leaving
+# docs/records/forecast/d76/p3_predeclare.json`` and writes a separate file, leaving
 # phase 2's committed record untouched.
 SPANS = {
     "PJM": (2021, 2025),
@@ -176,7 +176,7 @@ def predeclare_one(iso: str) -> dict:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--out", default="docs/handoffs/d76/p2_predeclare.json")
+    ap.add_argument("--out", default="docs/records/forecast/d76/p2_predeclare.json")
     ap.add_argument(
         "--isos", nargs="+", default=None, choices=sorted(SPANS),
         help="ISOs to declare (default: the phase-2 four). Phase 3 passes "

@@ -30,10 +30,10 @@ THEN run `git log origin/main --grep=<LANE-ID>` for EVERY lane the ledger marks 
 the r#35 desk graded D48 Phase 1 "running" when it had merged 13 hours before the pin (§0ag.0).
 
 READ ON EVERY REFRESH, IN THIS ORDER:
-1. docs/handoffs/capx-director-ledger-2026-08.md — §0-series newest-first (§0ap = r#45 is the
+1. docs/records/forecast/capx-director-ledger-2026-08.md — §0-series newest-first (§0ap = r#45 is the
    newest at this writing), §1 scoreboard, §3 the rulings Q1–Q51 (ALL SPENT; Q45's premise LAPSED
    when NYISO's marker withdrew), §4 issuance record, §2 backcast watch.
-2. docs/handoffs/capx-director-prompt-pack-2026-08.md — every charter; landed ones annotated.
+2. docs/records/forecast/capx-director-prompt-pack-2026-08.md — every charter; landed ones annotated.
    EVERY charter you issue is COMMITTED to the pack in the same sitting (the r#24 chat-only
    lesson: unlanded work restarts FRESH from the committed charter, so one must exist).
 3. frontend/data/forecast/program-status.json + ff-verdicts.json — BARE keys only; suffixed
@@ -43,7 +43,7 @@ READ ON EVERY REFRESH, IN THIS ORDER:
 6. Newest FINDINGs/PRECOMMITs in docs/handoffs/ AND results/calibration/ (the owner's backcast
    findings live there), newest first.
 7. BEFORE serving any owner card: grep the audit board's R-series ruling ledger
-   (docs/handoffs/audit-program-director-board-2026-08.md) for card-adjacent rulings — the
+   (docs/records/governance/audit-program-director-board-2026-08.md) for card-adjacent rulings — the
    never-re-serve duty (the Q22/R-H duplication, and now the R-AG/Q38 double ruling at Z-4,
    are the incidents behind this step; an audit ruling can be recorded ONLY in the board's
    newest entry, so read that entry whole).

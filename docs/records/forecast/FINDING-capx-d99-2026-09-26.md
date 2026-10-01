@@ -177,7 +177,7 @@ and are the **identical fail set on `origin/main`**.
 
 * **`vre_short` was not solved.** G-DRIFT `5a48f437 → f1ea324a` was all-INERT: 20 code files and 20 data
   paths, classified hunk by hunk in PRECOMMIT §2.3. The resolved config keys to D96 `base`'s literal. The row
-  was built at zero LP (`docs/handoffs/d99/battery_golden_rung.py reuse`) with two asserted inputs: 25/25
+  was built at zero LP (`docs/records/forecast/d99/battery_golden_rung.py reuse`) with two asserted inputs: 25/25
   ledgers byte-identical to D94 `vre_short`, and an identical trajectory.
 * **`vre_long`: one shard, one 2026–2050 invocation.**
   * **Launch 1 never solved.** Its container came up on `main` (`f1ea324`) instead of the pinned SHA. It

@@ -8,7 +8,7 @@
 > scope this task assumed.**
 
 This is the analysis-pass deliverable for the NYISO CT_PEAKER under-run + >$300
-scarcity-tail miss. It mirrors `docs/handoffs/pjm-cc-level-tuning-2026-06.md`:
+scarcity-tail miss. It mirrors `docs/records/pjm/pjm-cc-level-tuning-2026-06.md`:
 read the code + one diagnostic solve, then a ranked recommendation of the single
 change to test first. It does **not** register a dashboard keeper (rule #1: an
 analysis probe is never a keeper).

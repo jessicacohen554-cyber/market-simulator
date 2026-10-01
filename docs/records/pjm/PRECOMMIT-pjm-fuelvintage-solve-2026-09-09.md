@@ -1,6 +1,6 @@
 > **TWO SESSIONS RAN THIS LANE CONCURRENTLY, AND BOTH RECORDS ARE KEPT.** A sibling
 > `pjm-fuelvintage-1` session (PRs #5741 / #5748 / #5759) landed its own PRECOMMIT at
-> `docs/PRECOMMIT-pjm-fuelvintage-2026-09-09.md` before this branch merged; it reached the SAME
+> `docs/records/pjm/PRECOMMIT-pjm-fuelvintage-2026-09-09.md` before this branch merged; it reached the SAME
 > G-DRIFT conclusion independently (the keeper's `git_sha` is dead, so rule 29(b) cannot be run)
 > and left the matrix cell at `O` — it did not complete an A/B, register a run, or promote.
 > **This document is the PRECOMMIT of the session that solved the span, registered
@@ -36,7 +36,7 @@ shallow clone from 506 to 5,553 commits (back to 2026-08-09) does not recover it
 replaced the object, it did not hide it.
 
 **Session `pjm-177` reached the identical conclusion earlier TODAY**
-(`results/calibration/FINDING-pjm177-st-gas-commitment-persistence-2026-09-09.md` §4, verbatim):
+(`docs/records/pjm/FINDING-pjm177-st-gas-commitment-persistence-2026-09-09.md` §4, verbatim):
 
 > *"The keeper's recorded `git_sha` `457ae04` **does not resolve at HEAD** and has no entry in
 > `docs/governance/citation-commit-map.txt`, so G-DRIFT could not be run against it and G-CTRL form 4

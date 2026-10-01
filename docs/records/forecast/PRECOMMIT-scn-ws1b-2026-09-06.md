@@ -2,8 +2,8 @@
 
 **Lane:** SCN-WS1b · **Branch:** `claude/scn-ws1b-carbon-probe-70cqt8` · **Date:** 2026-09-06
 **Model:** `claude-opus-5` (rule 27 `[R-PUSH]`; this lane writes no `src/`)
-**Charter:** plan `docs/handoffs/forecast-scenario-readiness-plan-2026-09.md` §7 "WS-1b"
-(= §3 WS-1 items 4–6); desk ledger `docs/handoffs/scenario-desk-ledger-2026-09.md` §0 r#3.
+**Charter:** plan `docs/records/forecast/forecast-scenario-readiness-plan-2026-09.md` §7 "WS-1b"
+(= §3 WS-1 items 4–6); desk ledger `docs/records/misc/scenario-desk-ledger-2026-09.md` §0 r#3.
 **DATA PROFILE:** `all` · **Rule 29 `[R-SCREEN]`:** this document is pushed **before the first
 solve**. Nothing below may be edited after a result is seen; corrections are appended and dated.
 
@@ -56,13 +56,13 @@ keeps leg 2's output directly comparable to every later campaign leg. The rungs 
 **ILLUSTRATIVE pending owner card D-2**, exactly as the YAML says, and the FINDING will name them
 `CARB-LO/MID/HI (delta rungs +$15/+$25/+$50 on the resolved signal)` — never "RFF low/mid/high".
 I do not edit that file (it is SCN-WS4b's); leg 2 passes a carbon-only *subset* of it, written
-under `docs/handoffs/scn-ws1b/`, so no owned file is touched.
+under `docs/records/forecast/scn-ws1b/`, so no owned file is touched.
 
 ---
 
 ## 2. Phase 0 — the zero-LP census (rule 29 step 0; instrument + outputs committed)
 
-Instrument: `docs/handoffs/scn-ws1b/phase0-census-2026-09-06.py`
+Instrument: `docs/records/forecast/scn-ws1b/phase0-census-2026-09-06.py`
 (`.json` / `.txt` outputs beside it). It builds each ISO's config with
 `scripts/run_full_horizon.reference_config(iso, 2026, 2030, cmc=False)` — the **same builder the
 solves use** — so this is the config the arms actually receive, not a reconstruction.
@@ -215,7 +215,7 @@ section at full magnitude with the reasoning that produced it**, whichever way i
 
 - **NEISO then ERCOT**, 2026–2030, `market-sim matrix --config
   configs/scenarios/<iso>_scenario_base_2026_2030.yaml --matrix
-  docs/handoffs/scn-ws1b/carbon-ladder-cases.yaml --workers 2`. Four cases: `REF` (no override) +
+  docs/records/forecast/scn-ws1b/carbon-ladder-cases.yaml --workers 2`. Four cases: `REF` (no override) +
   `CARB-LO/MID/HI` = `carbon_price_delta` 15 / 25 / 50 (§1.1). 5 solve-years per case, inside the
   §2.1b cap; **NEVER both ISOs at once**, and never alongside a PJM/MISO/CAISO leg (rule 12; this
   is a 15 GB / 4-core box).
@@ -247,7 +247,7 @@ solve OOMs twice at the rule-12 concurrency, or any deliverable would require ed
 outside this lane's regions (then it is routed to SCN-DESK in the FINDING, per the charter).
 
 **Files this lane may write:** `results/` registrations, this PRECOMMIT and the FINDING,
-`docs/handoffs/scn-ws1b/*`, plan §5.1 + ledger §3 Carbon rows, and the six matrix cells (last
+`docs/records/forecast/scn-ws1b/*`, plan §5.1 + ledger §3 Carbon rows, and the six matrix cells (last
 commit, one appended line per ISO, after `git fetch origin main` + rebase).
 **Files this lane may NOT touch, and will not:** `policy/carbon.py`, `policy/cap_and_trade.py`,
 `interchange/spec.py`, `runner.py`, `model/lp/rows.py`, `policy/federal_ces.py`,

@@ -9,7 +9,7 @@ penetration-indexed curves that will eventually replace the model's flat
 ``RENEWABLE_CAPACITY_CREDIT`` wind/solar constants — and, since PJM's 2025/26
 CIFP accreditation reform extended ELCC class ratings to thermal, also the
 supply-basis-extension input for the accreditation-basis adjudication
-(docs/handoffs/accreditation-basis-memo-2026-07-12.md §4.3 R3): PJM thermal
+(docs/records/misc/accreditation-basis-memo-2026-07-12.md §4.3 R3): PJM thermal
 classes (nuclear, coal, gas CC/CT, diesel, steam, …) alongside the
 intermittent/storage/DR classes already here.
 

@@ -18,7 +18,7 @@
 Instruments (committed, no LP, no network except where stated):
 `scripts/probes/_caiso186os_ps_intake_bound.py` · `_caiso186os_dof_repair.py` ·
 re-run of `scripts/probes/_caiso141_water_source_survey.py` (network).
-Records: `results/calibration/_caiso186os_ps_intake_bound.json` ·
+Records: `results/phase0/caiso/_caiso186os_ps_intake_bound.json` ·
 `_caiso186os_dof_repair.json`.
 
 ---
@@ -496,7 +496,7 @@ substance got worse, and both halves of that belong in front of the owner.
 > (4 + 2)". The first half is right; **the second half is not** — this memo prints 7 over a
 > 1 + 2 + 4 enumeration across three rows, at a scope the ledger row does not cover, and
 > its own §3.3 arithmetic is sound. Only the matrix header needed the fix. Cited in
-> `results/calibration/FINDING-caiso189-c6-attestation-2026-08-11.md` §4.
+> `docs/records/caiso/FINDING-caiso189-c6-attestation-2026-08-11.md` §4.
 
 ## §3.4 What this licenses, and what it does NOT
 

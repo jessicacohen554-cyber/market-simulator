@@ -12,7 +12,7 @@ budget year is a *column* (one file spans many years), so the whole datatype
 writes one partition ``data/clean/rggi-co2-budgets/rggi-co2-budgets.parquet``
 (``year=None``). Reads only ``data/raw``; idempotent; skips cleanly when the CSV
 has not landed yet (the optional power-sector mass-cap row stays inert until
-then; see ``docs/handoffs/emissions-mass-cap-plan-2026-07.md`` §7).
+then; see ``docs/records/misc/emissions-mass-cap-plan-2026-07.md`` §7).
 
 HOLDOUT QUARANTINE (CLAUDE.md rule 22): rows for 2022 or 2026 are rejected —
 those years are under full quarantine (no data intake) until the holdout is

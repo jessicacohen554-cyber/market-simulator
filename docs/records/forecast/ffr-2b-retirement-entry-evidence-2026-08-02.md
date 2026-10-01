@@ -53,7 +53,7 @@ flips are the owner's, executed at FFR-3A step 0. Rules 1, 5, 11, 12, 14, 15,
 ## 0. Pre-registration (written and committed BEFORE any leg was solved)
 
 Registered here so the §3 grading protocol of
-`docs/handoffs/forecast-retirement-calibration-plan-2026-07.md` is honoured:
+`docs/records/forecast/forecast-retirement-calibration-plan-2026-07.md` is honoured:
 expectations first, measurement second. **Bands are imported by reference and
 never restated looser.**
 

@@ -1,6 +1,6 @@
 {
  "probe": "entry_signal_l1_dual_replay",
- "finding": "docs/FINDING-entry-screen-t1h-2026-08.md \u00a77 L-1",
+ "finding": "docs/records/misc/FINDING-entry-screen-t1h-2026-08.md \u00a77 L-1",
  "iso": "CAISO",
  "bundle": "results/hindcast/caiso-2021-2025-realized-dumps",
  "duals_bundle": "results/calibration/caiso200_h1_memberpanel",

@@ -15,7 +15,7 @@ building one pre-registered single delta — candidate (a), the caiso-114
 endogenous WECC-West node, evening-scoped so the West does not set CA's evening
 LMP. A derive-first pass (rule #1, before committing a mechanism) uncovered a
 DATA-SCOPE gap the caiso-114/115 handoffs did not anticipate. Full record +
-reproduction: `results/calibration/FINDING-caiso116-endogenous-datascope-2026-07-23.md`
+reproduction: `docs/records/caiso/FINDING-caiso116-endogenous-datascope-2026-07-23.md`
 / `scripts/probes/_caiso116_endogenous_datascope_derive.py` (no LP).
 
 **Inv 1 — the data-scope gap (load-bearing).** Modeled West net-export capability

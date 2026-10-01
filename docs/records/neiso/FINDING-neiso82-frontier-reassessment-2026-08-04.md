@@ -240,7 +240,7 @@ and which needs a NEW measured identification rather than any existing lever.
 | `results/calibration/neiso81_chpheatrate_B/calibration_attestation.json` | Corrected stale `~$204` → `~$218` ($218.24) in the 2024 C3c exception `reason`. Editorial text only; determination re-verified identical after the edit. |
 | `frontend/data/backcast/keepers/NEISO.json` | Added `frontier.reverified`. Only key added; `keeper`, `note`, `prior_keeper_note`, `disposition_note` and `frontier.declared` / `.note` / `.carried_forward_through` verified byte-identical. |
 | `frontend/data/backcast/status/NEISO.js` | Regenerated via `scripts/build_status.py --iso NEISO` (NEISO shard only). |
-| `results/calibration/FINDING-neiso82-frontier-reassessment-2026-08-04.md` | This document. |
+| `docs/records/neiso/FINDING-neiso82-frontier-reassessment-2026-08-04.md` | This document. |
 
 No bundle was created. `manifest.js` / `benchmark.js` untouched (the Pages deploy is their single
 writer). No other ISO's lane touched.

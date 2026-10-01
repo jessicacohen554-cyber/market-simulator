@@ -34,7 +34,7 @@ sign-off**, not an overlooked promotion:
 - Its registry sidecar states "NOT a keeper; owner sign-off pending on the
   G-20 §5 over-forcing flag."
 - The G-21 diagnosis (calibration-log 2026-07-11;
-  `docs/handoffs/pjm-cc-overrun-benchmark-basis-g21-2026-07.md`) root-caused
+  `docs/records/pjm/pjm-cc-overrun-benchmark-basis-g21-2026-07.md`) root-caused
   most of pjm-98's scored C1 cost to two scorer-layer benchmark defects and
   **re-flagged the promotion decision to the owner together with the proposed
   benchmark repairs** — on the measured basis pjm-98's 2024 CC over-run is

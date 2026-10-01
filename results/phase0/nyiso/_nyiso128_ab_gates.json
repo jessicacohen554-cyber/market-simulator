@@ -1,6 +1,6 @@
 {
  "probe": "_nyiso128_ab_gates",
- "prereg": "results/calibration/PREREG-nyiso128-market-solar-basis-2026-08-05.md",
+ "prereg": "docs/records/nyiso/PREREG-nyiso128-market-solar-basis-2026-08-05.md",
  "control_bundle": "results/calibration/nyiso128_control",
  "treatment_bundle": "results/calibration/nyiso128_treatment",
  "keeper_bundle": "results/calibration/nyiso125_seam_A",

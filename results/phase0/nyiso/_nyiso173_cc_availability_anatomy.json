@@ -1,5 +1,5 @@
 {
- "prereg": "results/calibration/PREREG-nyiso173-cc-availability-anatomy.md",
+ "prereg": "docs/records/nyiso/PREREG-nyiso173-cc-availability-anatomy.md",
  "keeper": "2026-08-30-nyiso-159-loss-surface",
  "solves": 0,
  "by_year": {

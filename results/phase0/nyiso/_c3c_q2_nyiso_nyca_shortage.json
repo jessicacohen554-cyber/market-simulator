@@ -1,6 +1,6 @@
 {
- "charter": "docs/CHARTER-c3c-scarcity-program-2026-08-31.md section 5 Q2",
- "opened_by": "docs/FINDING-c3c-q1-pjm-phantom-audit-2026-08-31.md (Q1 = REAL)",
+ "charter": "docs/records/misc/CHARTER-c3c-scarcity-program-2026-08-31.md section 5 Q2",
+ "opened_by": "docs/records/pjm/FINDING-c3c-q1-pjm-phantom-audit-2026-08-31.md (Q1 = REAL)",
  "keeper": "2026-08-30-nyiso-159-loss-surface",
  "bundle": "results/calibration/nyiso159_lossarm_B",
  "nyca_observable": {
@@ -375,5 +375,5 @@
    }
   }
  },
- "SUPERSEDED": "DEFECTIVE \u2014 do not cite. Charter Q2 is answered CONFIRMED by scripts/probes/nyiso164_nyca_shortage_check.py; this construction inherits two defects from actual_as_reserve_NYISO.parquet (cascade summed instead of maxed; naive prevailing->8760 positional clock). See docs/FINDING-c3c-q2-nyiso-nyca-shortage-2026-08-31.md sections 3-4."
+ "SUPERSEDED": "DEFECTIVE \u2014 do not cite. Charter Q2 is answered CONFIRMED by scripts/probes/nyiso164_nyca_shortage_check.py; this construction inherits two defects from actual_as_reserve_NYISO.parquet (cascade summed instead of maxed; naive prevailing->8760 positional clock). See docs/records/nyiso/FINDING-c3c-q2-nyiso-nyca-shortage-2026-08-31.md sections 3-4."
 }

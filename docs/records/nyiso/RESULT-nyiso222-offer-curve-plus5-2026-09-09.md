@@ -3,7 +3,7 @@
 **Session:** nyiso-222 · **ISO:** NYISO · **Date:** 2026-09-09
 **Run:** `2026-09-09-nyiso-222-offer-plus5` · bundle `results/calibration/nyiso222_offer_plus5`
 **Control:** the committed keeper `2026-09-09-nyiso-221-fuelvintage-span` (G-CTRL form 4; no control solve spent)
-**Pre-registration:** `docs/PRECOMMIT-nyiso222-offer-curve-plus5-2026-09-09.md` (pushed before the first LP)
+**Pre-registration:** `docs/records/nyiso/PRECOMMIT-nyiso222-offer-curve-plus5-2026-09-09.md` (pushed before the first LP)
 
 ## Headline
 

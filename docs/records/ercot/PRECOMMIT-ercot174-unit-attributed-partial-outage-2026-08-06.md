@@ -12,7 +12,7 @@ grants owner adjudication for the **derive half** (a rule-23 derive-construction
 change: GRAIN, not constants) and specifies the mechanism half.
 
 Base: `origin/main` at `241d8019` (the ercot-173 merge, verified present:
-`results/calibration/FINDING-ercot173-event-cap-reconciliation-2026-08-06.md`
+`docs/records/ercot/FINDING-ercot173-event-cap-reconciliation-2026-08-06.md`
 exists and `docs/mechanism-testing-matrix.md` §5.1 carries "Item 16 — EXECUTED
 at ercot-173").
 

@@ -1,6 +1,6 @@
 {
  "probe": "miso-238 phase 0 \u2014 MERIT / ENVELOPE / INTERACT attribution of the MISO seam reconstruction's own-net-load response and residual price alignment",
- "prereg": "results/calibration/PREREG-miso238-pjm-seam-channel-attribution-2026-09-07.md (pushed 0deffdb9)",
+ "prereg": "docs/records/miso/PREREG-miso238-pjm-seam-channel-attribution-2026-09-07.md (pushed 0deffdb9)",
  "keeper": "2026-09-07-miso-233-spp-hourly",
  "zero_lp": true,
  "price_basis": "Indiana hub RT builds the ok mask and is the alignment price P; every regressor and every merit signal is Indiana hub DA",

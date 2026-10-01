@@ -525,7 +525,7 @@ def apply_ccs_retrofit(
         # screen is byte-identical. Zero cache keys move: this is a runtime
         # prior-year value, not a config field, and this module is not a
         # ``solve_surface`` registry.
-        # docs/handoffs/PRECOMMIT-capx-d87-2026-09-08.md
+        # docs/records/forecast/PRECOMMIT-capx-d87-2026-09-08.md
         clean_zone_idx = (
             zone_names.index(gen.zone)
             if zone_names and gen.zone in zone_names
@@ -655,7 +655,7 @@ def apply_ccs_retrofit(
         # while the two writes bracketing it (``heat_rate``, ``fuel_type``)
         # persisted. Same value, one composition point (rule 19 [R-ONE-MECH]);
         # no new free parameter (rule 21 [R-DOF]).
-        # docs/handoffs/FINDING-capx-d77-2026-09-06.md
+        # docs/records/forecast/FINDING-capx-d77-2026-09-06.md
         gen.ccs_capture_fraction = config.ccs_retrofit_capture_rate
         gen.fuel_type = "gas_cc_ccs"
         # capx D88: RE-MINT a legacy REPRESENTATIVE's id, because after the
@@ -689,7 +689,7 @@ def apply_ccs_retrofit(
         # through unchanged, so a fleet with no legacy representative is
         # byte-identical. No config field, no constant (rules 21 [R-DOF] /
         # 24 [R-REGISTRY]); no cache key moves (ids are not hashed).
-        # docs/handoffs/DESIGN-capx-d87-d88-s19-read-2026-09-08.md §2.4
+        # docs/records/forecast/DESIGN-capx-d87-d88-s19-read-2026-09-08.md §2.4
         if not gen.is_campd_bin and gen.unit_id == (
             f"gas_cc_{gen.efficiency_bin}_{gen.zone}"
         ):

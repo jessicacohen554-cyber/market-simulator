@@ -3,7 +3,7 @@
 **Session.** FF-3G (Wave 3, L-VAL) of `docs/forecast-development-plan-2026-07.md`.
 Exercises the `scripts/forecast_verdict.py --tier t2` path — which had **never been
 run on any bundle** before this session (FF-2D scored only `t1f`/`t1x`/`t1h`;
-`docs/handoffs/ff-t1-gate-verdicts.json`). Real T2 solves (2026–2035) are
+`docs/records/forecast/ff-t1-gate-verdicts.json`). Real T2 solves (2026–2035) are
 **§2.1b-deferred**, so this is a scorer shakeout against **existing + synthetic**
 inputs — **NO LP solve of any kind**. Findings-first; no model code, threshold,
 band, or default changed (rules 1/6/22). The only code added is the additive T2

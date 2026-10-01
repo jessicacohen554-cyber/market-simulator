@@ -68,7 +68,7 @@ Instruments (committed, no LP, no solve):
   `run_year(fleet_only=True)` input assembly (the committed caiso-202
   pattern) rebuilt from the keeper bundle's own `meta.json`; imports the
   committed caiso-215 probe for the hub actuals and the committed hour clock.
-* `results/calibration/_caiso216_belly_surplus.json` — every number below,
+* `results/phase0/caiso/_caiso216_belly_surplus.json` — every number below,
   committed (deterministic: sorted keys, rounded floats, no timestamps).
 * Controls (§A): the reconstructed per-zone demand matches the keeper
   sidecar's per-zone demand to **0.0 MW** in all 7 zones × 3 years (the

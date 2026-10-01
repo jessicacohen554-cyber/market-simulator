@@ -74,7 +74,7 @@ is tested and armed HERE for MISO only; every sister cell is minted `U`.
 
 Phase-0 (this session, zero-solve, committed sources only; probe
 `scripts/probes/_miso190_partial_exit_phase0.py` → committed record
-`results/calibration/_miso190_partial_exit_phase0.json`) computed, before
+`results/phase0/miso/_miso190_partial_exit_phase0.json`) computed, before
 this document:
 
 * **Ask A validation:** `calibration_verdict.py --run-id
@@ -368,7 +368,7 @@ unchanged at 2 (ledger 36/2 → 37/2).
 ## 5. Instrument
 
 `scripts/probes/_miso190_ab_gates.py` →
-`results/calibration/_miso190_ab_gates.json` — the miso-188 scorer
+`results/phase0/miso/_miso190_ab_gates.json` — the miso-188 scorer
 re-keyed (KEEPER `miso188_rvs_B` / CONTROL `miso190_ppx_A` / ARM
 `miso190_ppx_B`; the S-1 witnesses, S-2 class-sum form and charter kills
 above), committed **after this PREREG and before it is run** (the

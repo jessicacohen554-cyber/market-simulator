@@ -8,7 +8,7 @@ C3c (`price_tail`) the sole ledgered caveat (budget **1 of 3, unspent**).
 constant, derive script or artifact changed.**
 
 **Prereg (committed and pushed BEFORE any measurement that follows §1):**
-`results/calibration/PREREG-nyiso122-iroquois-winter-spread-2026-08-04.md`.
+`docs/records/nyiso/PREREG-nyiso122-iroquois-winter-spread-2026-08-04.md`.
 **Probes:** `scripts/probes/_nyiso122_c3a_2025_decomp.py`,
 `_nyiso122_iroquois_construction.py`, `_nyiso122_winter_zonal_spread.py`.
 **Records:** `_nyiso122_c3a_2025_decomp.json`, `_nyiso122_iroquois_construction.json`,

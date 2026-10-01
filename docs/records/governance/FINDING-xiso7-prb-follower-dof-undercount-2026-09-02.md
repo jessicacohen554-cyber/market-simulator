@@ -1,10 +1,10 @@
 # FINDING — xiso-7: the `prb_follower` DOF under-count is REAL IN THE GENERATOR and INERT ON EVERY KEEPER
 
 **Session xiso-7, 2026-09-02.** Pre-registration:
-`results/calibration/PRECOMMIT-xiso7-prb-follower-dof-undercount-2026-09-02.md`
+`docs/records/governance/PRECOMMIT-xiso7-prb-follower-dof-undercount-2026-09-02.md`
 (pushed before any keeper artifact was opened). Instrument:
 `scripts/probes/_xiso7_prb_follower_dof_probe.py`. Transcript:
-`results/calibration/_xiso7_prb_follower_dof.json`.
+`results/phase0/governance/_xiso7_prb_follower_dof.json`.
 
 **No LP solved. No bundle. No scoring. No dashboard registration. No keeper
 changed. No CAISO artifact, config or number touched.** Takes option B of the

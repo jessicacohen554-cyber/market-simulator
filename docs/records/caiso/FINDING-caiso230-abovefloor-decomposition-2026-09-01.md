@@ -22,7 +22,7 @@ gate exists to produce.**
 
 **Instrument (committed, no LP, no solve, re-runs from cache in minutes):**
 `scripts/probes/_caiso230_abovefloor_decomposition.py` →
-`results/calibration/_caiso230_abovefloor_decomposition.json`. Inputs: the
+`results/phase0/caiso/_caiso230_abovefloor_decomposition.json`. Inputs: the
 keeper's `hourly/` sidecars, the committed actual-LMP reference, the committed
 per-(ISO,year) benchmark parts, the committed raw CAISO hub-LMP CSVs, the
 committed measured offer-surface artifact, `_CAISO_OFFER_CURVE`, and the

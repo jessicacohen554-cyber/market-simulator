@@ -7,7 +7,7 @@ created, no matrix row added.** PREREG
 `PREREG-miso214-ct-peaker-conduct-2026-09-05.md` pushed **BLIND** at `067a305a`, before
 any adjudicating statistic and before any arm was designed. Probe
 `scripts/probes/_miso214_ct_peaker_conduct_phase0.py` → record
-`results/calibration/_miso214_ct_peaker_conduct.json`. Rule 22 `[R-HOLDOUT]`: 2023–2025
+`results/phase0/miso/_miso214_ct_peaker_conduct.json`. Rule 22 `[R-HOLDOUT]`: 2023–2025
 only.
 
 ---

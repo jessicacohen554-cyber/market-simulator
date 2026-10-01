@@ -232,9 +232,9 @@ dispatch consequences at multiple plants in four ISOs; (b) was measured by neiso
 0.0022 TWh = **0.11 %** of the ±1.955 TWh C1 band and is a consistency question with no
 magnitude behind it. (a) is the better use of a cross-ISO lane.
 
-Full charter: **`docs/handoffs/oil-plantgroup-outage-routing-charter-2026-08.md`**.
+Full charter: **`docs/records/misc/oil-plantgroup-outage-routing-charter-2026-08.md`**.
 Census artifacts: `scripts/probes/_neiso84_oil_plantgroup_census.py` +
-`results/calibration/_neiso84_oil_plantgroup_census.json`. **No LP.**
+`results/phase0/neiso/_neiso84_oil_plantgroup_census.json`. **No LP.**
 
 ### 4.1 The mechanism, stated exactly
 
@@ -364,9 +364,9 @@ capacity, not outage routing, and is not re-opened here.
 
 | file | change |
 |---|---|
-| `results/calibration/FINDING-neiso84-frontier-recheck-2026-08-05.md` | this finding |
-| `docs/handoffs/oil-plantgroup-outage-routing-charter-2026-08.md` | the chartered cross-ISO lane (object (a)) |
-| `scripts/probes/_neiso84_oil_plantgroup_census.py` + `results/calibration/_neiso84_oil_plantgroup_census.json` | the six-ISO Phase-0 census (no LP) |
+| `docs/records/neiso/FINDING-neiso84-frontier-recheck-2026-08-05.md` | this finding |
+| `docs/records/misc/oil-plantgroup-outage-routing-charter-2026-08.md` | the chartered cross-ISO lane (object (a)) |
+| `scripts/probes/_neiso84_oil_plantgroup_census.py` + `results/phase0/neiso/_neiso84_oil_plantgroup_census.json` | the six-ISO Phase-0 census (no LP) |
 | `results/calibration/neiso83_ca1reclass_B/calibration_attestation.json` | corrections 3 and 4 + the `P2`-basis disclosure (2 lines of 400; determination re-verified identical) |
 | `frontend/data/backcast/keepers/NEISO.json` | `.frontier.reverified` re-verified on this keeper; `.frontier.carried_forward_through` stamped (2 lines of 13) |
 | `docs/mechanism-testing-matrix.md` | §5.6 lever-queue entry for the chartered lane |

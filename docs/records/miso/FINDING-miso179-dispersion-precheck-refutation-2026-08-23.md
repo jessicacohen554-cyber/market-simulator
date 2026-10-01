@@ -211,6 +211,6 @@ uv run --no-project --with pyarrow,pandas,numpy,pydantic,scipy,openpyxl,pyyaml \
   --python 3.12 python scripts/probes/_miso179_dispersion_precheck.py
 ```
 
-Records: `results/calibration/_miso179_dispersion_precheck.json`,
+Records: `results/phase0/miso/_miso179_dispersion_precheck.json`,
 `data/raw/_validation-source/miso_offer_level_dispersion.json`. PREREG:
 `PREREG-miso179-offer-level-dispersion-2026-08-23.md` (commit `4712ae8`).

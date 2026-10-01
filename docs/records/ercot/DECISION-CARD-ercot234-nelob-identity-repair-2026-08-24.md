@@ -5,7 +5,7 @@
 
 **For the owner. Session ercot-234, 2026-08-24. Status at assembly: AWAITING
 OWNER SIGNATURE — NOTHING IS REPAIRED, SOLVED, OR ARMED BY THIS CARD.** Evidence
-basis: `docs/FINDING-ercot234-subzonal-survey-nelob-identity-2026-08-24.md`
+basis: `docs/records/ercot/FINDING-ercot234-subzonal-survey-nelob-identity-2026-08-24.md`
 (primary-source documentary facts + descriptive reads of the committed NP6-86
 archives; no solve, no LP, no bar-bearing measurement, keeper untouched).
 
@@ -111,7 +111,7 @@ committed measured source.
 - The ercot-232/233 records stand as measured; their physical narrative is
   superseded by the FINDING's identity reading, recorded, not rewritten.
 - **Independent and still pending: the ercot-225 G-SPUR band-top gate card**
-  (`results/calibration/DECISION-ercot225-gspur-bandtop-gate-2026-08-21.md`,
+  (`docs/records/ercot/DECISION-ercot225-gspur-bandtop-gate-2026-08-21.md`,
   Option A recommended, AWAITING SIGN-OFF since 2026-08-21, scorer-only).
   Signing it is worthwhile BEFORE the Z-A re-solve gates run, so the
   repair's G-SPUR reading is lidless from the start — but it is a separate
@@ -167,5 +167,5 @@ Consequences adopted with the signature, per the card's own text:
 verdict (with precommit Amendment 1 recording the P-1 NE_LOB-seed firing),
 all P-6 gates PASS with no STOP leg, run
 `2026-08-25-234-eastex-identity` registered and PROMOTED to keeper. Records:
-`docs/FINDING-ercot234-eastex-identity-repair-2026-08-25.md` and the
+`docs/records/ercot/FINDING-ercot234-eastex-identity-repair-2026-08-25.md` and the
 ercot-234 execution addendum in `docs/calibration-log/ercot.md`.**

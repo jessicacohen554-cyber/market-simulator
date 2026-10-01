@@ -1,7 +1,7 @@
 # PRECOMMIT caiso-281 — is the +1.024 marginal-heat-rate bias a MEASURED-INPUT defect, or is it the offer markup?
 
 **Lane:** CAISO calibration · **Date:** 2026-09-13 · **LP budget: ZERO.**
-**Predecessor:** `docs/RESULT-caiso280-the-envelope-binds-above-the-actuals-2026-09-13.md`.
+**Predecessor:** `docs/records/caiso/RESULT-caiso280-the-envelope-binds-above-the-actuals-2026-09-13.md`.
 **Keeper unchanged:** `2026-09-12-caiso-275-gascoupling` (CALIBRATED 2023–2025, one ledgered C3c).
 Rule 32 `[R-SHARD]` (a) is not reached: no solve is chartered. Nothing will be promoted here.
 

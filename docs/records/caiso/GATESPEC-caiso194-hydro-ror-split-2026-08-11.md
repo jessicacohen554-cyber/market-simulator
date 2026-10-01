@@ -97,7 +97,7 @@ curation against updated EHA/HILARRI vintages — the module docstring's own wor
 * `results/calibration/PRECHECK-caiso194-hydro-ror-split-<date>.md` — committed
   before the curator runs on the full population; carries the G-SHARE labeled-subset
   share.
-* Record: `results/calibration/_caiso194_ror_partition.json` — per-plant
+* Record: `results/phase0/caiso/_caiso194_ror_partition.json` — per-plant
   classification, method counts, coverage arithmetic, the two-run byte-identity
   hashes.
 * Run bundles `caiso194_l4_control`, `caiso194_l4_ror`.

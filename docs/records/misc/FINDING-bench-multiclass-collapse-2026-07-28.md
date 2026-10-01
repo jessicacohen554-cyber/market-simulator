@@ -1,14 +1,14 @@
 # The bench multi-class collapse: characterized, fixed, and re-scored — no gate moves
 
 **Session:** bench-multiclass-collapse (scorer-correctness lane) · **Date:** 2026-07-28
-**Premise:** `docs/FINDING-nyiso88-peaker-heat-rate-2026-07-27.md` §5 (the defect),
-`docs/FINDING-nyiso91-ct-start-frequency-2026-07-27.md` §0/§6 (why it blocked the
+**Premise:** `docs/records/nyiso/FINDING-nyiso88-peaker-heat-rate-2026-07-27.md` §5 (the defect),
+`docs/records/nyiso/FINDING-nyiso91-ct-start-frequency-2026-07-27.md` §0/§6 (why it blocked the
 NYISO lane's interpretation), `docs/calibration-log/nyiso.md` nyiso-87…91.
 **Mode:** scorer-only. No LP, no re-solve, no mechanism, no ScenarioConfig field.
 **All six keepers UNCHANGED.** Characterization artifact:
-`results/calibration/bench_multiclass_collapse.json` (produced BEFORE the fix was
+`results/phase0/misc/bench_multiclass_collapse.json` (produced BEFORE the fix was
 applied, so the correction was known in advance — rule-24 discipline applied to a
-scorer). Migration record: `results/calibration/bench_multiclass_migration_report.json`.
+scorer). Migration record: `results/phase0/misc/bench_multiclass_migration_report.json`.
 
 ---
 
@@ -71,7 +71,7 @@ scorer). Migration record: `results/calibration/bench_multiclass_migration_repor
 ## 1. Measured blast radius (from committed artifacts, before any fix)
 
 Share of benched CEMS energy on multi-class plants, and TWh moved per class
-(2023; 2024/2025 in `results/calibration/bench_multiclass_collapse.json`):
+(2023; 2024/2025 in `results/phase0/misc/bench_multiclass_collapse.json`):
 
 | ISO | plants | share of benched CEMS | largest per-class moves (2023, TWh) |
 |---|--:|--:|---|

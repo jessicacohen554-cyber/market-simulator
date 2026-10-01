@@ -1,7 +1,7 @@
 # RESULT — NWPP-NEXT-4: coal committed band nested on must-run (owner card D3), 2019–2025 → KEEPER #11
 
 **Run:** `2026-09-26-nwppnext4-coal-nested`, bundle `results/calibration/nwppnext4_span`.
-**PRECOMMIT:** `docs/handoffs/PRECOMMIT-nwppnext4-coal-nested-2019-2025-2026-09-25.md`.
+**PRECOMMIT:** `docs/records/nwpp/PRECOMMIT-nwppnext4-coal-nested-2019-2025-2026-09-25.md`.
 **Control:** keeper #10 `2026-09-25-nwppnext3-plant-basis`, using its committed bundle (G-DRIFT form 4, PRECOMMIT §4).
 **Solved by:** seven year-isolated shards at pin `fac3d392` (rule 36). The parent session ran no LP.
 **Status: PROMOTED** to NWPP keeper #11 on the owner's standing structure ruling. The gate regressions are reported

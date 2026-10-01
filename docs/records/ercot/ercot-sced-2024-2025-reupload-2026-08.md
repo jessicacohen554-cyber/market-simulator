@@ -1,7 +1,7 @@
 # ERCOT-183 — the 2024/2025 NP3-965 full-year re-upload (owner card D4, 2026-08-09)
 
 **Authorization:** owner sitting 2026-08-09, card D4 — SIGNED
-(`docs/DECISION-CARD-ercot182-c3a2023-reachability-2026-08-09.md` §8 is the
+(`docs/records/ercot/DECISION-CARD-ercot182-c3a2023-reachability-2026-08-09.md` §8 is the
 ask; the sitting record carries the signature). Rule 22 places data intake
 OUTSIDE the spend gate: no year's answer is looked at here — no solve, no
 scoring, no registration, keeper `2026-08-09-run181-position-tail` untouched.

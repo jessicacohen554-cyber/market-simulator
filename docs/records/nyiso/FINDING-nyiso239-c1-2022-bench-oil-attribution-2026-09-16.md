@@ -3,7 +3,7 @@
 **Session** nyiso-239 (ORCHESTRATOR — rule 32 `[R-SHARD]` (a); **the parent ran ZERO LP, and no shard was launched**).
 **Date** 2026-09-16. **Base** `origin/main` at `4cf338b2`; branch `claude/nyiso-central-east-hydro-830ppy` (`a3453eeb`) verified merged.
 **Keeper** `2026-09-16-nyiso-238-hydro-budget` (bundle `results/calibration/nyiso238_hydroperiod_span`), years {2022, 2023, 2024, 2025} — **UNCHANGED by this session. Nothing armed, screened, solved, promoted or registered.**
-**Probe** `scripts/probes/nyiso239_c1_bench_oil_phase0.py` → `results/calibration/_nyiso239_bench_oil_phase0.json`. Every number below regenerates from committed artifacts plus the immutable `data/raw` extracts.
+**Probe** `scripts/probes/nyiso239_c1_bench_oil_phase0.py` → `results/phase0/nyiso/_nyiso239_bench_oil_phase0.json`. Every number below regenerates from committed artifacts plus the immutable `data/raw` extracts.
 
 > ## HEADLINE
 > 1. **The C1 object is not model over-dispatch — it is the ACTUAL.** In 2022 alone, every NYISO

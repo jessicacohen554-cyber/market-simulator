@@ -18,7 +18,7 @@ PRECOMMIT declared:
 
 | check | result |
 |---|---|
-| `docs/handoffs/d78arm/keys_probe.py` re-run at HEAD vs the branch's committed `keys_measured.json` | **byte-identical** |
+| `docs/records/forecast/d78arm/keys_probe.py` re-run at HEAD vs the branch's committed `keys_measured.json` | **byte-identical** |
 | every key leg of `PRECOMMIT-capx-d78arm-2026-09-06.md` §2 (13 rows) | **all reproduce**, bare `pjm-t1h` `b518f5fe7d02f961` → `fb16fda2ddb0a94a`, `--no-retirement-sector-gate` unmoved at `b518f5fe7d02f961` |
 | `scripts/probes/capxd78arm_iso_override_no_op_check.py` at HEAD | **the structural property holds**: every moved key is PJM/forecast; every non-PJM and every backcast config byte-identical |
 | the branch's re-pinned `tests/unit/model/test_capacity.py`, `test_d53_sector_gate_miso_arming.py`, `test_d60_arming_batch.py`, `test_d67arm_pjm_requirement.py::TestD67ArmGdriftPosture` | **pass** |
@@ -26,8 +26,8 @@ PRECOMMIT declared:
 So the following are salvaged verbatim: the `_pjm_config` override + its cite block, the
 `results/cache.py` epoch entry, the CLAUDE.md capacity-evolution bullet, the
 `--retirement-sector-gate` help string, the `build_forecast_dof_ledger.py` PJM row, the
-override pin and the three posture tests, `docs/handoffs/d78arm/keys_measured.json`,
-`docs/handoffs/d78arm/run_arm.sh`.
+override pin and the three posture tests, `docs/records/forecast/d78arm/keys_measured.json`,
+`docs/records/forecast/d78arm/run_arm.sh`.
 
 ## 2. What was STALE and is corrected here
 
@@ -62,7 +62,7 @@ re-key is correct **at registration** and wrong before it, so it lands with step
 
 ## 4. Still owed by the D78-ARM lane (the WIP commit's own list, re-verified)
 
-1. `bash docs/handoffs/d78arm/run_arm.sh` — the armed `pjm-t1h`, key `fb16fda2ddb0a94a`,
+1. `bash docs/records/forecast/d78arm/run_arm.sh` — the armed `pjm-t1h`, key `fb16fda2ddb0a94a`,
    PJM solo, years sequential (rule 12), HEAD-guarded. *(A `data/clean` rebuild may be needed
    first; the interrupted session's was killed at 6/56 datatypes.)*
 2. `score_capacity_hindcast.py --bundle … ` + `--flip-gate-extras`.

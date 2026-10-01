@@ -4,7 +4,7 @@
 structural-fidelity lane; explicitly NOT gate-chasing — ST_CHP is D-1-ungated
 and D-2-exempt, so no gate is at risk). **Keeper
 `2026-07-27-miso-98b-sectormeasured` UNCHANGED.** Premise:
-`docs/FINDING-bench-multiclass-collapse-2026-07-28.md` §0.5/§5/§6 — the
+`docs/records/misc/FINDING-bench-multiclass-collapse-2026-07-28.md` §0.5/§5/§6 — the
 post-fix signal `profile_r` +0.45/+0.74/+0.58 → **−0.795/−0.751/−0.765**
 (2023/24/25, committed `legitimacy_diagnostics.json` D-1 rows; reproduced
 bit-exactly here from the corrected slice-keyed bench + the keeper payload).

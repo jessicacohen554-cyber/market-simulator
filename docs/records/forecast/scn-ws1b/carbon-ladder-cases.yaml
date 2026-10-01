@@ -19,7 +19,7 @@
 # Levels are ILLUSTRATIVE pending owner card D-2, exactly as the committed
 # campaign file says of the same three numbers.
 #
-# Declared in docs/handoffs/PRECOMMIT-scn-ws1b-2026-09-06.md §1.1, before any
+# Declared in docs/records/forecast/PRECOMMIT-scn-ws1b-2026-09-06.md §1.1, before any
 # solve (rule 29 [R-SCREEN]).
 mode: cases
 

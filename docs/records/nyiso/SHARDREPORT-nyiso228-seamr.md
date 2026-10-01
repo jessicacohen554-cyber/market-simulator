@@ -2,7 +2,7 @@
 
 **Session:** nyiso-228 shard B · **ISO:** NYISO · **Date:** 2026-09-12
 **Branch:** `claude/nyiso228-seamr-span` · **Bundle:** `results/calibration/nyiso228_seamr_span`
-**Charter:** `docs/PRECOMMIT-nyiso228-amplitude-2026-09-12.md` §3.2 (DIAGNOSTIC, not a promotion
+**Charter:** `docs/records/nyiso/PRECOMMIT-nyiso228-amplitude-2026-09-12.md` §3.2 (DIAGNOSTIC, not a promotion
 candidate) and §4 (STOP gates).
 
 **Variable — ONE flag:** `nyiso_import_reconciliation` **True → False**.

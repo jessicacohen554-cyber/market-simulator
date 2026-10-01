@@ -14,7 +14,7 @@ result."* The lane reads *"declare it"* as **both instruments**, per the Q39 pre
 *"both instruments, as the withdrawal removed both"*); the 2026-09-05 withdrawal removed both.
 
 **Companion record (the first half of this session):**
-`docs/FINDING-nyiso209-gas-bridge-params-reproduce-2026-09-06.md` — the zero-LP clean negative
+`docs/records/nyiso/FINDING-nyiso209-gas-bridge-params-reproduce-2026-09-06.md` — the zero-LP clean negative
 that preceded the owner's question.
 
 ---

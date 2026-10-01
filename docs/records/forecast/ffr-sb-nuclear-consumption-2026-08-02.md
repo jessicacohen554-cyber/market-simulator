@@ -8,11 +8,11 @@ mechanism-matrix cell change (nothing is tested here; rule 28 duty (b) does not 
 `[R-ONE-MECH]`) — every candidate is graded on whether it composes with the existing
 screen + registries or smuggles in a parallel exit path.
 
-Predecessor: `docs/handoffs/ff-g5-nuclear-registry-2026-07.md` (the registry — 59 units,
+Predecessor: `docs/records/forecast/ff-g5-nuclear-registry-2026-07.md` (the registry — 59 units,
 loader `data/nuclear_license.py`, consumed by NOTHING in the solve path) and its §2 design
 memo (DB-1…DB-6, unresolved). This memo re-derives the design **against the PIPELINE
 retirement rule** (owner D-1, signed 2026-08-02,
-`docs/handoffs/ffr-owner-sitting-2026-08-02.md` Addendum C; executed by FFR-3A), which the
+`docs/records/forecast/ffr-owner-sitting-2026-08-02.md` Addendum C; executed by FFR-3A), which the
 FF-G5 memo predates, and grades the three chartered candidates against rules 13
 `[R-MEASURED]`, 19 `[R-ONE-MECH]`, 23 `[R-FROZEN-DERIVE]`.
 

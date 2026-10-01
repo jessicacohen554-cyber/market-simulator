@@ -11,7 +11,7 @@ verdict, marker or determination changed. **Rule 22 `[R-HOLDOUT]`: every year
 read is 2023, 2024 or 2025** — no out-of-training year was solved, scored,
 registered or read; no marker was requested; the spend freeze is untouched.
 **Probe of record:** `scripts/probes/nyiso169_congestion_gradient_anatomy.py`
-→ `results/calibration/_nyiso169_congestion_gradient_anatomy.json`, **committed
+→ `results/phase0/nyiso/_nyiso169_congestion_gradient_anatomy.json`, **committed
 before it was run** (`bccf58f4`) so its §F decision rule is verifiably
 pre-registered.
 **The three predecessor probes were re-run first.** `nyiso167_price_gain_attribution`
@@ -343,17 +343,17 @@ than solved away.
 
 ## 9. Evidence
 
-* `results/calibration/_nyiso169_congestion_gradient_anatomy.json` +
+* `results/phase0/nyiso/_nyiso169_congestion_gradient_anatomy.json` +
   `scripts/probes/nyiso169_congestion_gradient_anatomy.py` — measurements A–E, G;
   the probe committed at `bccf58f4` **before** it was run.
-* `results/calibration/_nyiso168_gap_anatomy.json` §F — the gradient/level split
+* `results/phase0/nyiso/_nyiso168_gap_anatomy.json` §F — the gradient/level split
   this session decomposes, reproduced bit-identically in §A.
-* `docs/FINDING-nyiso168-supply-curve-slope-anatomy-2026-09-01.md` §5, §8 — the
+* `docs/records/nyiso/FINDING-nyiso168-supply-curve-slope-anatomy-2026-09-01.md` §5, §8 — the
   object handed forward and the seven lines it closed, none re-opened here.
-* `docs/FINDING-nyiso167-c3a-price-response-gain-2026-09-01.md` §2 — the gain
+* `docs/records/nyiso/FINDING-nyiso167-c3a-price-response-gain-2026-09-01.md` §2 — the gain
   law and the C3a pass window §6 plans around.
-* `results/calibration/_nyiso109_trough_offer_stack.json` +
-  `results/calibration/FINDING-nyiso109-zonal-margin-anchor-2026-08-01.md` — the
+* `results/phase0/nyiso/_nyiso109_trough_offer_stack.json` +
+  `docs/records/nyiso/FINDING-nyiso109-zonal-margin-anchor-2026-08-01.md` — the
   `measured_interface_limits` `G` this session reproduces and strengthens.
 * `scripts/data/derive_nyiso_loss_surface.py` — the published component identity
   `LBMP = E + MCL − MCC` and the MCL half the keeper already prices.

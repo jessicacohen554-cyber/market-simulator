@@ -9,13 +9,13 @@ INSTRUMENT: bit-identical to the committed keeper, registers nothing).
 **Keeper at entry and exit: `2026-09-02-nyiso-177-vintage-matched`** —
 determination NOT-YET, target grade 5, fail set {C1-2023 `ST_GAS` +3.86 TWh,
 C3a-2025 −11.2 %, C3c}. **Unchanged: this session does not promote.**
-**Pre-registration:** `results/calibration/PREREG-nyiso185-stgas-family-hr-ab.md`,
+**Pre-registration:** `docs/records/nyiso/PREREG-nyiso185-stgas-family-hr-ab.md`,
 pushed to `origin` at `588aa141` before the first measurement; its §0
 discloses that this author holds nyiso-184's post-hoc numbers in context.
 **Owner ruling carried (2026-09-04, verbatim):** *"If structural integrity
 improves but gates regress that may still be a keeper.."* — read as
 authorizing the A/B nyiso-184's S2 withheld, NOT as a promotion in advance.
-**Machine records:** `results/calibration/_nyiso185_grounding.json` (G0/G1),
+**Machine records:** `results/phase0/nyiso/_nyiso185_grounding.json` (G0/G1),
 `results/calibration/nyiso185_family_hr/calibration_attestation.json`
 (`computed_checks`: G-CONTROL / G-DELTA / G-INPUTS / G-DOF / G-ENGAGE, every
 premise computed by `scripts/gen_nyiso185_attestation.py`), the arm's

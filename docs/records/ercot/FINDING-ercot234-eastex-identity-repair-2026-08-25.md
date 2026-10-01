@@ -2,17 +2,17 @@
 
 **Date:** 2026-08-25 · **ISO:** ERCOT · **Authorization:** card Z signed
 **(Z-A)** with the owner's advance promotion standard
-(`docs/DECISION-CARD-ercot234-nelob-identity-repair-2026-08-24.md`
+(`docs/records/ercot/DECISION-CARD-ercot234-nelob-identity-repair-2026-08-24.md`
 RESOLUTIONS) · **Charter:**
-`docs/PRECOMMIT-ercot234-eastex-identity-repair-2026-08-25.md`, pushed +
+`docs/records/ercot/PRECOMMIT-ercot234-eastex-identity-repair-2026-08-25.md`, pushed +
 blob-verified (blob `ddbcde2`) BEFORE any derivation or solve, including its
 Amendment 1 (the P-1 firing record) and the phase-0 verdict.
 · **Bundle:** `results/calibration/ercot234_eastex_identity` (3-year replay
 of the ercot-231 keeper recipe at repaired HEAD; control = the committed
 keeper bundle BY IDENTITY per P-5's drift audit — two changed files since
 `c9a07b9`, both provably inert at the keeper's flags).
-· **Gates artifact:** `results/calibration/ercot234_gates.json` ·
-**Official scores:** `results/calibration/ercot234_official_score.json`
+· **Gates artifact:** `results/phase0/ercot/ercot234_gates.json` ·
+**Official scores:** `results/phase0/ercot/ercot234_official_score.json`
 (scorer validated against the keeper's registered values exactly:
 −38.0 % / 0.696 / 93 · +0.4 / 0.130 / 22 · −7.7 / 0.099 / 1).
 

@@ -18,9 +18,9 @@ STATE (2026-10-01):
   The fold DSW residual is LEDGERED as data-availability limited (R-CAISO-20). Do not re-open it without a
   new pre-2021 hourly Palo Verde source.
 - R-CAISO-21 (zero LP) closed the evening under-price as DART basis + C3c tail.
-- R-CAISO-22 (zero LP) found no admissible lever for C3c 2024 (docs/handoffs/r-caiso-22/).
+- R-CAISO-22 (zero LP) found no admissible lever for C3c 2024 (docs/records/caiso/r-caiso-22/).
 - R-CAISO-23 (zero LP) found no admissible lever for the midday RT N–S spread
-  (docs/handoffs/r-caiso-23/FINDING-r-caiso-23-ns-spread-2026-10-01.md; probe
+  (docs/records/caiso/r-caiso-23/FINDING-r-caiso-23-ns-spread-2026-10-01.md; probe
   scripts/probes/_rcaiso23_ns_spread_phase0.py). The spread is collapsed, not wrong-signed: model ~$1 vs
   measured +$11–19, all on Path 15, set by stranded southern solar behind Gates–Midway element limits. It is
   ledgered as data-availability limited (a C3b / D-A fidelity object, not a C3a lever).

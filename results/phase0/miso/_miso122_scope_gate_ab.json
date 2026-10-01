@@ -1,7 +1,7 @@
 {
   "session": "miso-122",
   "lever": "hybrid-cogen dark-fuel scope gate on chp_power_only_heat_rates",
-  "prereg": "results/calibration/PREREG-miso122-hybrid-cogen-scope-gate-2026-08-03.md",
+  "prereg": "docs/records/miso/PREREG-miso122-hybrid-cogen-scope-gate-2026-08-03.md",
   "keeper": "2026-08-03-miso-117b-ct-heat",
   "arms": {
     "A": "miso122_control_A",

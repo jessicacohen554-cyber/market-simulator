@@ -6,7 +6,7 @@ metadata only — no data restored, no solve, no workflow dispatched) ·
 (run #18), dispatched with `dry_run=false` + the `REWRITE-HISTORY` confirm
 phrase, SUCCESS 15:17–15:49 UTC, force-push 15:41:58–15:48:57 UTC.
 **This was an explicit owner decision superseding the Addendum AQ NO-GO**
-(REWRITE-PREP 2026-08-13; `docs/FINDING-rewrite-prep-2026-08-11.md` §8) and
+(REWRITE-PREP 2026-08-13; `docs/records/governance/FINDING-rewrite-prep-2026-08-11.md` §8) and
 the BLOAT-B-7 report's §5 "harmful, not just pointless" restatement of it.
 
 ---
@@ -153,7 +153,7 @@ detect it").
   first stripped blob; the history prefix before that point is byte-identical
   pre/post rewrite, so the citation still points at the right commit.
 - `00abb60` (7 occurrences, e.g. release-plan §8 "fully clean at `00abb60`",
-  `docs/handoffs/debug-sweep-2026-08.md`): **FALSE survivor.** Written
+  `docs/records/misc/debug-sweep-2026-08.md`): **FALSE survivor.** Written
   pre-rewrite about a pre-rewrite main commit (the #4008-merge-era tip). That
   commit is gone — but the **rewritten** #3995 merge (the rewrite's new main
   tip) happens to be `00abb60fd4b635…`, so the token now silently resolves to
@@ -243,7 +243,7 @@ stays profile-scoped.
   paragraph rewritten ("recoverable forever" is false as of 2026-08-16);
   the standing NO-GO line annotated as superseded by the owner's 2026-08-16
   decision.
-- `docs/FINDING-rewrite-prep-2026-08-11.md` — supersession note at top
+- `docs/records/governance/FINDING-rewrite-prep-2026-08-11.md` — supersession note at top
   (§8's NO-GO overtaken; its analysis remains the record of *why* the cost
   was what it was).
 - `docs/bloat-removal-plan-2026-08.md` §0 constraint bullet and

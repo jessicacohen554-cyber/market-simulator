@@ -5,7 +5,7 @@
   "bundle": "results/calibration/ercot158_poolarm_B",
   "keeper": "2026-08-03-ercot158-pool-arm",
   "year": 2023,
-  "finding": "results/calibration/FINDING-ercot-2023-summer-underrun-2026-08-04.md"
+  "finding": "docs/records/ercot/FINDING-ercot-2023-summer-underrun-2026-08-04.md"
  },
  "hour_set": {
   "definition": "top-N hours of (actual_rt - model_loadweighted_price) x system_load; the FINDING-ercot-2023-summer-underrun-2026-08-04 construction",

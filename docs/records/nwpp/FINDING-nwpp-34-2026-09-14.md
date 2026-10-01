@@ -312,7 +312,7 @@ decide against a number instead of a name.
 
 | File | Change |
 |---|---|
-| `docs/handoffs/FINDING-nwpp-34-2026-09-14.md` | **NEW** — this file |
+| `docs/records/nwpp/FINDING-nwpp-34-2026-09-14.md` | **NEW** — this file |
 | `tests/unit/data/test_nwpp_served_interchange_trap.py` | **NEW** — 7 pins: the identity holds for PACW/PSEI/TPWR to 0.000 MW; BPAT misses in > 99 % of pre-step hours at a mean below −3 GW; **the step is in TI and nowhere else** (largest \|ΔTI\| of 2025, D and NG ordinary); the identity closes post-step; the naive `Σ TI` derive reverses the annual sign and disagrees hour-by-hour in > 60 % of 2024; GRID's external DIBA set is exactly `{PNM, SRP, WALC}`. Hydration-guarded, 0.7 s, no solve |
 | `src/market_sim/data/eia930/envelopes.py` | `nwpp_net_interchange` docstring **only** — the routed adjudication line (*"is routed (FINDING-nwpp-20 §5; NWPP-34)"*) replaced by its result: the one-hour step, the natural experiment, the internal/external mirror split, and the test that pins it. **No executable line changed**; `nwpp_net_interchange(2024)` reads −12.890671 TWh on both trees |
 
@@ -405,7 +405,7 @@ BCHA/LDWP/BANC legs with no counterparty file to mirror-test) — immaterial to 
 a priced seam (NWPP-56). And the 2023 → 2025 narrowing of the net position is **two bases and two
 water years**, never a trend.
 
-Deliverables: `docs/handoffs/FINDING-nwpp-34-2026-09-14.md`; `tests/unit/data/
+Deliverables: `docs/records/nwpp/FINDING-nwpp-34-2026-09-14.md`; `tests/unit/data/
 test_nwpp_served_interchange_trap.py` (7 pins, hydration-guarded, 0.7 s); a docstring-only update
 to `nwpp_net_interchange` closing its routed line. Derive output byte-identical
 (−12.890671 TWh, 2024).

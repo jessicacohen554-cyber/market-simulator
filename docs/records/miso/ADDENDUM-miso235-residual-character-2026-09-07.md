@@ -4,7 +4,7 @@ Extends `PREREG-miso235-manitoba-seam-and-the-sigma-question-2026-09-07.md`. Pus
 numbers it governs**, on the miso-233 addendum pattern. **No pre-registered decision rule is
 touched and no pre-registered verdict can move** — the PREREG's Q1/Q2/Q3 values are already
 computed, committed and published in
-`results/calibration/_miso235_seam_variance_decomposition_phase0.json`, and they stand exactly
+`results/phase0/miso/_miso235_seam_variance_decomposition_phase0.json`, and they stand exactly
 as measured whatever this addendum finds.
 
 ## Why a supplementary measurement is needed
@@ -55,4 +55,4 @@ and pinned to its derive by test (rule 23 `[R-FROZEN-DERIVE]`); a factor swept a
 residual remains the rule 1 `[R-STRUCT]` fitted mechanism the handoff forbids.
 
 Deliverable: `scripts/probes/_miso235_residual_character_addendum.py` →
-`results/calibration/_miso235_residual_character_addendum.json`.
+`results/phase0/miso/_miso235_residual_character_addendum.json`.

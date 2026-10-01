@@ -1,6 +1,6 @@
 # FINDING — neiso-70: two measured heat-rate arms off one same-HEAD control
 
-**Pre-registration:** `results/calibration/PREREG-neiso70-heat-rate-provenance-2026-07-31.md`,
+**Pre-registration:** `docs/records/neiso/PREREG-neiso70-heat-rate-provenance-2026-07-31.md`,
 committed at `20ce479` and pushed **before either arm solved**. Every gate,
 threshold and prediction below was fixed in advance; none was revised after a
 number was seen.

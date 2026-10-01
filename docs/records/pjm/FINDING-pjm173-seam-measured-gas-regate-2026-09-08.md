@@ -1,8 +1,8 @@
 # FINDING — pjm-173: the F-A seam gas repair is **STRUCTURALLY INERT on the PJM keeper** — the measured seam ladder already owns the seam price
 
 **Session** pjm-173 · **ISO** PJM · **Date** 2026-09-08 · **LP spent: 2022 (one year, ~13 min)**
-**Card** `docs/handoffs/PRECOMMIT-pjm173-seam-measured-gas-regate-2026-09-08.md` (committed `b8112519` BEFORE any solve; not rewritten)
-**Predecessor** `results/calibration/FINDING-pjm172-seam-measured-gas-2026-09-07.md`
+**Card** `docs/records/pjm/PRECOMMIT-pjm173-seam-measured-gas-regate-2026-09-08.md` (committed `b8112519` BEFORE any solve; not rewritten)
+**Predecessor** `docs/records/pjm/FINDING-pjm172-seam-measured-gas-2026-09-07.md`
 **Keeper** `2026-08-15-pjm-162-inputclock` — **unchanged**. Nothing promoted, nothing registered.
 **PJM headline determination** — **CALIBRATED**, untouched (rule 30(c)).
 

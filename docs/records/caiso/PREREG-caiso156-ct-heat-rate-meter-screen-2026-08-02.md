@@ -77,7 +77,7 @@ extends `_caiso146_hourly_hr_integrity.py` to BOTH band sides, all six
 committed artifacts, the valid-hours consequence, and a faithfulness check —
 its as-is reconstruction reproduces every committed `heat_rate_gross` to
 ≤ 5e-5 in all six ISOs, so the screened preview is computed by the derive's
-own recipe. Transcript: `results/calibration/PROBE-caiso156-band-screen-2026-08-02.txt`.
+own recipe. Transcript: `results/phase0/caiso/PROBE-caiso156-band-screen-2026-08-02.txt`.
 
 | ISO | sub-6.0 loaded hours | > 25.0 loaded hours | applied map (net, cap-wt) | applied map (net, gen-wt) | units dropping < 50 valid h |
 |---|---|---|---|---|---|

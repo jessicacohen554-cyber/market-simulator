@@ -1,6 +1,6 @@
 {
  "charter": "miso-213 phase 0 \u2014 the rule-19 zonal-basis layering on 923-priced cells; zero-solve.",
- "prereg": "results/calibration/PREREG-miso213-zonal-basis-layering-2026-09-05.md @ a1a4a48",
+ "prereg": "docs/records/miso/PREREG-miso213-zonal-basis-layering-2026-09-05.md @ a1a4a48",
  "keeper": "2026-09-04-miso-210-clock",
  "anchor_usd_mmbtu": 3.0492,
  "instrument": {

@@ -3,13 +3,13 @@
 **Session ercot-198 `[FABLE]` (T3B-AUDIT executor lane), 2026-08-14, branch
 `claude/ercot-scar-t3b-adder-audit`.** Executes **T-3b only** — the
 published-adder overlay-completeness audit signed as card T's read-only
-companion (`docs/DECISION-CARD-ercot196-shape-2024-2025-2026-08-13.md` §4
+companion (`docs/records/ercot/DECISION-CARD-ercot196-shape-2024-2025-2026-08-13.md` §4
 T-3b, RESOLUTIONS appended 2026-08-14, on main at `fb6d08d` via PR #3931;
 dispatch: pack §0 cycle-9 / A9 staging). READ WORK ONLY: no mechanism, no
 `ScenarioConfig` field, no solve, no LP, no run registered, no year scored,
 no matrix cell or row edit, no keeper/registry/bench edit. Probe:
 `scripts/probes/ercot198_t3b_adder_overlay_audit.py` → committed JSON
-`results/calibration/ercot198_t3b_adder_overlay_audit.json`.
+`results/phase0/ercot/ercot198_t3b_adder_overlay_audit.json`.
 
 ## 0. VERDICT
 

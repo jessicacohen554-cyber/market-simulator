@@ -23,7 +23,7 @@ What this module adds, BY EXECUTION (:func:`_verify_combined`):
    their pinned ``budget / hours`` (clipped to nameplate), 2025 fleet flat base
    230.9 MW-avg, and the nameplate clip within the declared 5.45 GWh.
 
-Pre-registration: ``docs/handoffs/PRECOMMIT-soco-60-2026-09-23.md``.
+Pre-registration: ``docs/records/soco/PRECOMMIT-soco-60-2026-09-23.md``.
 """
 
 from __future__ import annotations
@@ -182,7 +182,7 @@ def main() -> None:
         ),
     }
     att["disclosures"] = {
-        "precommit": "docs/handoffs/PRECOMMIT-soco-60-2026-09-23.md",
+        "precommit": "docs/records/soco/PRECOMMIT-soco-60-2026-09-23.md",
         "composed_from_lanes": "SOCO hydro-4 (hydro_ror_split) + SOCO-59 (2025 hydro pin + PS-split registry)",
         "ror_nameplate_clip_2025": f"{hyd['2025']['ror_clip_GWh']} GWh clipped (plants 706, 54322, 54462; May/June)",
         "eia930_wat_gap": "SOCO NG: WAT missing 2024-11-25..12-31 (not used: 2024 refuses the pin)",

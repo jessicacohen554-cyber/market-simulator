@@ -71,7 +71,7 @@ unresolvable-provenance defect.
 
 ### The schema-v2 invariant, exercised for real for the first time
 
-The v1 defect (`docs/FINDING-stage0-provenance-repair-2026-09.md`) was that one
+The v1 defect (`docs/records/misc/FINDING-stage0-provenance-repair-2026-09.md`) was that one
 capture silently re-stamped the shared top-level provenance for every earlier
 entry. This session ran **two consecutive captures**, so the repair could be
 tested rather than asserted. Measured by diffing the manifest against its
@@ -95,7 +95,7 @@ reachable additively; capturing it needs a schema change to two scripts, which
 this lane did not make.**
 
 ERCOT is a two-config keeper (`keepers/ERCOT.json` → `config_partition`, owner
-ruling 2026-08-26, `docs/FINDING-ercot-two-config-keeper-2026-08-26.md`):
+ruling 2026-08-26, `docs/records/ercot/FINDING-ercot-two-config-keeper-2026-08-26.md`):
 
 * **forward** `2026-08-25-234-eastex-identity`, designated span **{2024, 2025}**;
 * **carve-out** `2026-08-25-236-swcap-clip-k33` (bundle `ercot236_k33_clip`),
@@ -270,7 +270,7 @@ rows come from a separate touchpoint run and were not read or re-solved here.
   (commit `a64cc7aa`) and ERCOT entry (commit `637e51ce`), each blob-verified
   byte-identical against the remote after push (rule 27 `[R-PUSH]`; 670 and 676
   lines).
-* `docs/FINDING-stage0-capture-neiso-ercot-2026-09.md` — this file.
+* `docs/records/neiso/FINDING-stage0-capture-neiso-ercot-2026-09.md` — this file.
 * Golden bundles under `results/regression-goldens/perfb-stage0/{NEISO,ERCOT}/`
   — gitignored by design, retained on disk in this container.
 

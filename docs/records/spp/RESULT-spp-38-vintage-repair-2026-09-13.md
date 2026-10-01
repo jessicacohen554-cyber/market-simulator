@@ -9,7 +9,7 @@ values FINDING-spp-37 §4c measured for the CORRECT single-year construction (20
 Lane **SPP-38** · base `origin/main` @ `859c5dd52f4ac9e2be6381faf595a85ec66de217` ·
 repair commit `760012f7a12b5d6fae01c5a6a4c96c9dc8588ed9` (**merged to `main`**) ·
 branch `claude/spp-38-vintage-cache-repair-k4m2` ·
-PRECOMMIT `docs/handoffs/PRECOMMIT-spp-38-vintage-cache-repair-2026-09-13.md`.
+PRECOMMIT `docs/records/spp/PRECOMMIT-spp-38-vintage-cache-repair-2026-09-13.md`.
 **Parent LP: ZERO** (rule 32(a)). **Shards: ONE**, archived.
 
 ---

@@ -1,6 +1,6 @@
 # RESULT — SPP-104: CT_PEAKER outage from SPP's own LOLE-study EFOR, solved
 
-**Lane** SPP-104. PRECOMMIT `docs/handoffs/PRECOMMIT-spp-104-ct-lole-efor-2026-09-30.md` (pin `264dbb2a`, Addenda
+**Lane** SPP-104. PRECOMMIT `docs/records/spp/PRECOMMIT-spp-104-ct-lole-efor-2026-09-30.md` (pin `264dbb2a`, Addenda
 A/B). Control = keeper `2026-09-28-spp-100-chp-scope` (rule 29(b) form 4). Run
 **`2026-09-30-spp-104-ct-lole`**, bundle `results/calibration/spp104_arm_span` (2019–2025).
 
@@ -111,4 +111,4 @@ refused the aggregate pro-rata rebase, so this needs an owner charter and a rule
   record.
 
 **Owner card SPP-105 (2026-09-30): "Continue: gas-family design".** SPP-105 is chartered as a zero-LP design lane. Its
-handoff is `docs/handoffs/spp104/SPP-105-handoff.md`.
+handoff is `docs/records/spp/spp104/SPP-105-handoff.md`.

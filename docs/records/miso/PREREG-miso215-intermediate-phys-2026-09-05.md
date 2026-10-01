@@ -99,7 +99,7 @@ keeper.
 ## 3. What will be measured (M-1 … M-4)
 
 Probe `scripts/probes/_miso215_intermediate_phys_phase0.py` → record
-`results/calibration/_miso215_intermediate_phys.json`. Reuses the miso-214 readers
+`results/phase0/miso/_miso215_intermediate_phys.json`. Reuses the miso-214 readers
 (`build_year`, `keeper_config`, the static screen, `campd_ct`, `actual_lmp_by_zone`,
 `_capw_hr`, `io_fit`).
 

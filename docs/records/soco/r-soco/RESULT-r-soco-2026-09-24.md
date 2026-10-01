@@ -1,6 +1,6 @@
 # RESULT — R-SOCO: SOCO re-solved on the corrected backcast inputs (F1 + F2)
 
-Charter: `docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md` §5.3.8.
+Charter: `docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md` §5.3.8.
 PRECOMMIT: [`PRECOMMIT-r-soco-2026-09-24.md`](PRECOMMIT-r-soco-2026-09-24.md), pinned
 `455e002177738e8291a84da08f76123336b7dabc`. The parent spent no LP. Three year-isolated shards ran
 8–10 min each.

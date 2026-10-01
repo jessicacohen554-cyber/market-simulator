@@ -5,7 +5,7 @@
 downloading** and before any 2020–2022 ladder exists.
 **PJM keeper `2026-09-11-pjm-d4-4-gasoutage`: CALIBRATED, 8/8, zero caveats — UNTOUCHED**, and
 re-verified at HEAD this session across all six registered years
-(`docs/RESULT-pjm-h9b-sixyear-resolve-2026-09-16.md`: max |keeper − re-solve| = 0.073 TWh).
+(`docs/records/pjm/RESULT-pjm-h9b-sixyear-resolve-2026-09-16.md`: max |keeper − re-solve| = 0.073 TWh).
 
 **No screen.** Rule 29 `[R-SCREEN]`'s screen-year regime was removed by owner instruction this
 session; this goes straight to the full span, one shard per year (rule 34 `[R-SHARD-PROMOTABLE]`
@@ -74,7 +74,7 @@ Pre-registered, before the derive runs:
 * **D-3 REPRODUCTION FLOOR.** pjm-h9 already measured that the frozen surface is **no longer
   byte-reproducible** from PJM's live feed (129/432 cells; segment membership exact, per-bin
   capacity weight to 1.6e-3, median 0.10 implied-HR, sign-balanced, 2025 exact —
-  `docs/RESULT-pjm-h9-comparator-admixture-bound-2026-09-16.md` §3). So D-2 is read **against that
+  `docs/records/pjm/RESULT-pjm-h9-comparator-admixture-bound-2026-09-16.md` §3). So D-2 is read **against that
   known floor**: a drift at or below ~0.10 implied-HR median is restatement noise, not the arm.
 
 **None of D-1/D-2/D-3 is gated on a residual** (rule 1 `[R-STRUCT]`). They describe what the
@@ -87,7 +87,7 @@ re-derivation does to the input. They may narrow or kill the arm's scope; they c
 full bundle including `dispatch/<year>_P1.parquet` (rule 34 (a)).
 
 **G-CTRL is form 4 and no control is solved** (rule 29 clause (b), which survives): the control is
-`docs/RESULT-pjm-h9b-sixyear-resolve-2026-09-16.md`'s six bundles — the **same recipe, same HEAD,
+`docs/records/pjm/RESULT-pjm-h9b-sixyear-resolve-2026-09-16.md`'s six bundles — the **same recipe, same HEAD,
 same pinned SHA**, retrievable by full SHA. That is a tighter control than the committed keeper,
 and it cost nothing extra because it is already solved.
 

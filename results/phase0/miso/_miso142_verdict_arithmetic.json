@@ -1,5 +1,5 @@
 {
- "prereg": "results/calibration/PREREG-miso142-summer-supply-stack-2026-08-08.md",
+ "prereg": "docs/records/miso/PREREG-miso142-summer-supply-stack-2026-08-08.md",
  "gate": "G-C2 -- the counterfactual arithmetic",
  "keeper": "2026-08-05-miso-132b-cc-committed",
  "H1_gw_bar": 2.0,

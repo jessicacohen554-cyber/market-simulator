@@ -1,7 +1,7 @@
 # FINDING — c3c-Q1, INDEPENDENT REPLICATION: PJM's reserve dual is **REAL**, not the ercot-214 phantom — reached by a different construction from pjm-164's and agreeing with it. Four new legs: the requirement is an **exact published identity** in 26,229 family-hours, the channel **never touches a penalty step** and is structurally bounded below the published $300 one, the positive-dual hours coincide with PJM's own posted shortage intervals at **75–91× base rate (p ≤ 9.7e-11)**, and the model **under**-prices reality by 2.7–7×. Plus one alignment caveat pjm-164 did not carry
 
 **Session c3c-Q1/Q2, 2026-08-31, branch `claude/c3c-scarcity-charter-audit-uxmjon`.**
-Executes Q1 of `docs/CHARTER-c3c-scarcity-program-2026-08-31.md` §5 under owner
+Executes Q1 of `docs/records/misc/CHARTER-c3c-scarcity-program-2026-08-31.md` §5 under owner
 ruling R-E. **ZERO SOLVE as dispatched: no LP built, no solver called, no year
 scored, no run registered, no bundle modified, no holdout year touched (2023–2025
 committed records only; `--holdout-authorized` never passed).**
@@ -13,9 +13,9 @@ marker, determination or matrix cell.
 > ## PRIOR-ART NOTICE — this is a REPLICATION, not a first execution
 >
 > **Charter Q1 was already executed, at HEAD, by session pjm-164**
-> (`docs/FINDING-pjm164-c3c-phantom-audit-2026-09-01.md`; log entry
+> (`docs/records/pjm/FINDING-pjm164-c3c-phantom-audit-2026-09-01.md`; log entry
 > `docs/calibration-log/pjm.md` "pjm-164"; artifact
-> `results/calibration/_pjm164_c3c_overlap.json`), which returned **REAL**. This
+> `results/phase0/pjm/_pjm164_c3c_overlap.json`), which returned **REAL**. This
 > session ran in parallel and did not see that record until after its own
 > measurement was complete. **The verdict below is theirs first.** What this
 > finding contributes is an *independent replication by a different
@@ -27,7 +27,7 @@ marker, determination or matrix cell.
 > disagreement on the verdict.
 
 Committed instrument: `scripts/probes/c3c_q1_pjm_phantom_audit.py` (no LP, no
-solver) → `results/calibration/_c3c_q1_pjm_phantom_audit.json`.
+solver) → `results/phase0/pjm/_c3c_q1_pjm_phantom_audit.json`.
 
 ---
 
@@ -258,7 +258,7 @@ same phenomenon and must **not** be read as an established model behaviour.
 
 * **Q1 = REAL**, agreeing with pjm-164, by an independent construction.
 * **Q2 opened** per the charter's chaining condition →
-  `docs/FINDING-c3c-q2-nyiso-nyca-shortage-2026-08-31.md`. (It too was executed in
+  `docs/records/nyiso/FINDING-c3c-q2-nyiso-nyca-shortage-2026-08-31.md`. (It too was executed in
   parallel, by nyiso-164, which reached **CONFIRM**; that finding records this
   session's own initial contrary reading, its refutation, and the two data defects
   that produced it.)
@@ -284,9 +284,9 @@ same phenomenon and must **not** be read as an established model behaviour.
   pjm-164's own caveat list.
 
 *Evidence:* `scripts/probes/c3c_q1_pjm_phantom_audit.py` →
-`results/calibration/_c3c_q1_pjm_phantom_audit.json` (this session) ·
-**`docs/FINDING-pjm164-c3c-phantom-audit-2026-09-01.md` +
-`results/calibration/_pjm164_c3c_overlap.json` (the prior execution this
+`results/phase0/pjm/_c3c_q1_pjm_phantom_audit.json` (this session) ·
+**`docs/records/pjm/FINDING-pjm164-c3c-phantom-audit-2026-09-01.md` +
+`results/phase0/pjm/_pjm164_c3c_overlap.json` (the prior execution this
 replicates)** · `results/calibration/pjm_debugb_inputclock_A/` ·
 `frontend/data/backcast/runs/2026-08-15-pjm-162-inputclock.js` ·
 `data/raw/PJM-AS/reserve_market_results_<y>.parquet` + `README.md` ·
@@ -294,7 +294,7 @@ replicates)** · `results/calibration/pjm_debugb_inputclock_A/` ·
 `src/market_sim/model/reserves/spec.py::_pjm_design`,
 `results/scarcity.py::pjm_ordc_shortfall_steps`,
 `scripts/data/derive_actual_lmp.py::_STD_TZ` ·
-`docs/FINDING-ercot214-gspur-phase0-2026-08-17.md` §0/§2,
-`docs/FINDING-ercot215-counterpart-decontamination-2026-08-17.md` §3 ·
-`results/calibration/FINDING-caiso144-coopt-dormancy-c3c-frontier-2026-07-30.md` §C/§D ·
-`docs/CHARTER-c3c-scarcity-program-2026-08-31.md`.
+`docs/records/ercot/FINDING-ercot214-gspur-phase0-2026-08-17.md` §0/§2,
+`docs/records/ercot/FINDING-ercot215-counterpart-decontamination-2026-08-17.md` §3 ·
+`docs/records/caiso/FINDING-caiso144-coopt-dormancy-c3c-frontier-2026-07-30.md` §C/§D ·
+`docs/records/misc/CHARTER-c3c-scarcity-program-2026-08-31.md`.

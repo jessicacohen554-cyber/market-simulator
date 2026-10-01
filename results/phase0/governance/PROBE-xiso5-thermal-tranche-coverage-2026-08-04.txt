@@ -81,4 +81,4 @@ chp_steam_floor_p25            False    True   False   False   False   False
     NYISO  chp_steam 0.04-0.54
     NEISO  chp_steam 0.02-0.04
 
-wrote results/calibration/_xiso5_thermal_tranche_coverage.json
+wrote results/phase0/governance/_xiso5_thermal_tranche_coverage.json

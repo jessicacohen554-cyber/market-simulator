@@ -20,7 +20,7 @@ PASS · `governance` PASS · `shape` **FAIL** · `forced_share` PASS; reasons
 budget 2 of 3 used, `{C3a, C3c}`.
 
 C3a per-year magnitudes are carried from **miso-137's own committed
-re-verification** (`results/calibration/_miso137_c3a_gap_decomposition.json`,
+re-verification** (`results/phase0/miso/_miso137_c3a_gap_decomposition.json`,
 read this session), which the charter directs is not to be re-derived:
 RT **−0.46 / −5.90 / −13.97 %**, DA **−4.45 / −8.34 / −15.65 %** for
 2023 / 2024 / 2025. Model scalars 32.7179 / 30.3667 / 39.0472.
@@ -320,4 +320,4 @@ is the finding, and the flip is reported rather than resolved by choosing.
 ---
 
 **Probe:** `scripts/probes/_miso138_da_co_class_bridge.py` ·
-**Record:** `results/calibration/_miso138_da_co_class_bridge.json`.
+**Record:** `results/phase0/miso/_miso138_da_co_class_bridge.json`.

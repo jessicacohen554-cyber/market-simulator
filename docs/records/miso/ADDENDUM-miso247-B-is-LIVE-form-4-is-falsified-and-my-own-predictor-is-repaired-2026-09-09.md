@@ -2,7 +2,7 @@
 
 **Governs:** `PREREG-miso247-the-P19-posture-at-MISO-2026-09-09.md` §2a's pre-declared branch, and
 the **reporting** of `P-3`. **`D-1`…`D-5`, `P-1`, `P-2`, §4's selection rule and `G-1`…`G-4`'s bars
-are UNTOUCHED.** Machine record `results/calibration/_miso247_p19_posture_phase0.json`,
+are UNTOUCHED.** Machine record `results/phase0/miso/_miso247_p19_posture_phase0.json`,
 provenance-stamped at HEAD **`ebb47756`**, tree clean. **ZERO LP so far.**
 
 ---

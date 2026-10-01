@@ -257,7 +257,7 @@ numbers. Both legs of every comparison in the RESULT are on one bench.
 - **Rule 32 `[R-SHARD]`:** the parent solves nothing. The screen runs in ONE shard, SPP 2024,
   pinned to this PRECOMMIT's full 40-char SHA, own `--out-dir`, own branch, pushing its slim
   artifacts and a METRICS json to `results/shard-staging/spp58/2024/` per
-  `docs/handoffs/SHARD-ARTIFACT-HANDOFF-BLOCK.md`, including `system.parquet`,
+  `docs/records/misc/SHARD-ARTIFACT-HANDOFF-BLOCK.md`, including `system.parquet`,
   `dispatch/2024_P1*.parquet` and `results/calibration/_shared/SPP/*.parquet` (the ercot-265
   correction — `render_calibration_html.build_payload` reads all three and the parent cannot
   register without them).

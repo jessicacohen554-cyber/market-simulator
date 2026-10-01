@@ -9,7 +9,7 @@ arm A's ``f0e050e820c1159a`` (the same payload arm A hashed explicitly), the exp
 control must still resolve D45-R's ``c6091bd5b62bbc3f``, every other ISO's bare key must be
 unmoved, and a PJM plain-backcast config must resolve with all three fields coerced (key unmoved).
 
-Run from the repo root: ``uv run python docs/handoffs/d57/promotion-keys-2026-09-05.py``
+Run from the repo root: ``uv run python docs/records/forecast/d57/promotion-keys-2026-09-05.py``
 """
 
 import json

@@ -3,7 +3,7 @@
 Lane **SPP-38** · base `origin/main` @ **`859c5dd52f4ac9e2be6381faf595a85ec66de217`** ·
 branch `claude/spp-38-vintage-cache-repair-<suffix>` · DATA PROFILE `spp`.
 
-**Object:** the defect `docs/handoffs/FINDING-spp-37-order-sensitivity-2026-09-12.md`
+**Object:** the defect `docs/records/spp/FINDING-spp-37-order-sensitivity-2026-09-12.md`
 measured at zero LP — years 2+ of every SPP span run compute their unit-outage
 denominator and their CC duct-peaking offer band from **year 1's** EIA-860 vintage,
 because the loaders are `lru_cache`d on keys that omit the active directory.

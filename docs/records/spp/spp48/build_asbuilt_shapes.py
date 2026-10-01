@@ -17,7 +17,7 @@ Cross-check: run against SPP's two-zone map it must reproduce the committed
 parquets, and against the three-zone map at design commit ``8d427adc`` it must
 reproduce FINDING-spp-54 §4.2's annual potentials.
 
-usage: python docs/handoffs/spp48/build_asbuilt_shapes.py --iso SPP --out-dir <dir>
+usage: python docs/records/spp/spp48/build_asbuilt_shapes.py --iso SPP --out-dir <dir>
 """
 
 from __future__ import annotations

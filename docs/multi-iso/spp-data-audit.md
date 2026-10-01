@@ -796,10 +796,10 @@ gg[gg.plant_id.isin([210, 8036])][["plant_id", "plant_name", "year", "netgen_ann
   zonal-load row, the SPP hydro row, and the §8 blockers note.
 * `docs/multi-iso/spp-addition-plan-2026-09.md` — the §5 SPP-10 lane cell only, marked
   LANDED with a pointer to this audit. No charter text, no other row.
-* `docs/handoffs/spp-desk-ledger-2026-09.md` — the §1 scoreboard SPP-10 row only
+* `docs/records/spp/spp-desk-ledger-2026-09.md` — the §1 scoreboard SPP-10 row only
   (status, realised branch, FINDING pointer). No sitting entry was written or amended;
   that is the desk's.
-* `docs/handoffs/FINDING-spp-10-2026-09-06.md` — new; a pointer to this document.
+* `docs/records/spp/FINDING-spp-10-2026-09-06.md` — new; a pointer to this document.
 
 **Concurrency note.** Lane **SPP-11** landed its four charter items on `main` while this
 audit was being written. Every row it closed is marked in place above (§1 rows 2, 8c, 18;

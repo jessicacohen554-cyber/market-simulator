@@ -7,7 +7,7 @@ parent; the four shards are solving.
 
 ## B.1 The end-to-end control: the committed d46 file, re-assembled from ITS OWN slim artifacts
 
-`docs/handoffs/d92/assemble_paired_invariants.py` is pointed at
+`docs/records/forecast/d92/assemble_paired_invariants.py` is pointed at
 `results/ff-t3-neiso-golden/bau-d46/fc6/arms` — four committed arms that carry **summaries,
 run_configs and `evolution_*.json` and NO dispatch parquets**, i.e. exactly the artifact set this
 lane's shards will hand back. Output versus the committed

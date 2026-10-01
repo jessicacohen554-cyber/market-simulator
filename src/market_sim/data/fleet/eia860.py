@@ -907,7 +907,7 @@ def _apply_simple_cycle_hr_floor(df: pd.DataFrame) -> pd.DataFrame:
 
     The mirror of :func:`_apply_egrid_boundary_hr_repairs` on the other side of
     the physics (SPP-46 R-2; owner ruling P19, 2026-09-08, repo-wide;
-    ``docs/handoffs/PRECOMMIT-spp-49-2026-09-08.md`` §1.1 / §2.2). eGRID's
+    ``docs/records/spp/PRECOMMIT-spp-49-2026-09-08.md`` §1.1 / §2.2). eGRID's
     plant-grain ``PLHTRT`` is ``PLHTIAN / PLNGENAN``; a plant whose every
     operating row is a simple-cycle prime mover (:data:`_SIMPLE_CYCLE_PRIME_MOVERS`)
     cannot convert fuel to net electricity at better than the best bare
@@ -1052,7 +1052,7 @@ def _reconcile_cc_pmax_to_nameplate(
     plant-total-on-one-row pattern (Keys 60302, Camden 10751) hides behind NaN
     component rows the loader nameplate-fills, so a raw summer-sum audit misses
     it — only the fleet pmax sum exposes every instance (diagnosis
-    ``docs/DIAGNOSIS-pjm-july-cc-overrun-2026-07.md`` §3b, probe block 3 of
+    ``docs/records/pjm/DIAGNOSIS-pjm-july-cc-overrun-2026-07.md`` §3b, probe block 3 of
     ``scripts/probes/_pjm_cc_netgross_bases.py``). ISO-agnostic in mechanism
     (the corruption lives in the shared EIA-860 loader; each ISO reads only its
     own peak table — rule 24). Mutates ``records`` in place; logs one warning per
@@ -1061,7 +1061,7 @@ def _reconcile_cc_pmax_to_nameplate(
     This is a data-integrity validator (an EIA-860 schema bound that never
     discards measured capability), not a tunable market feature — deliberately
     always-on and ISO-agnostic, so it is ungated. See A.4.3 of
-    ``docs/handoffs/pjm-cc-capacity-reconcile-2026-07.md``.
+    ``docs/records/pjm/pjm-cc-capacity-reconcile-2026-07.md``.
 
     Rule-14/15 basis: the clipped figure regenerates for any forward EIA-860
     vintage and CAMPD peak and responds to re-rates — a reproducible physical
@@ -3081,7 +3081,7 @@ _PLANT_PARQUET_NAME = "eia860_plant.parquet"
 # plant-keyed COD map would hold the whole plant online and double-count), and
 # this window then hid it from the one channel that can carry it at unit grain.
 # The two halves must move together or the split is incoherent.
-# (docs/ADDENDUM-ercot261-partial-plant-scope-2026-09-09.md)
+# (docs/records/ercot/ADDENDUM-ercot261-partial-plant-scope-2026-09-09.md)
 _PARTIAL_EXIT_WINDOW_START = 2019
 _PARTIAL_EXIT_COLUMN_MAP: dict[str, str] = {
     "Plant Code": "plant_id",
@@ -3183,7 +3183,7 @@ def _mid_vintage_exit_rows(
     """Whole-plant exits that retired DURING a year-matched native vintage.
 
     The SPP-48 repair of the mid-vintage-year gap
-    (``docs/handoffs/RESULT-spp-47-four-failures-2026-09-18.md`` §2;
+    (``docs/records/spp/RESULT-spp-47-four-failures-2026-09-18.md`` §2;
     ``ScenarioConfig.mid_vintage_exit_carry``). Under
     ``eia860_vintage_tracks_solve_year`` the active directory is
     ``vintage_<year>/``, which ships no whole-plant retiree parquet, so
@@ -3301,7 +3301,7 @@ def _mid_vintage_exit_rows_from_window(
     plant that retired DURING 2023 or 2024 then vanished from that year's
     fleet with its real operating months (NEISO: Mystic 1588, ~1.4 GW of CC
     plus its steam part, retired 2024-05 per EIA; measured in
-    ``docs/handoffs/r-neiso/PRECOMMIT-r-neiso-2026-09-24.md`` §5).
+    ``docs/records/neiso/r-neiso/PRECOMMIT-r-neiso-2026-09-24.md`` §5).
 
     The same membership is read from the canonical snapshot's whole-plant
     retiree parquet instead — EIA's own later record of the same retirements,
@@ -3929,7 +3929,7 @@ def load_procured_vre_additions(
     """Load EIA-860 construction-committed proposed WIND / SOLAR rows for an ISO.
 
     The VRE limb of the step-4 known-additions channel (FFR-5E; design
-    ``docs/handoffs/ffr-5b-procurement-channel-design-2026-08-05.md`` §§2-3),
+    ``docs/records/forecast/ffr-5b-procurement-channel-design-2026-08-05.md`` §§2-3),
     GATED on ``ScenarioConfig.vre_procurement_additions_enabled`` (default
     OFF) and applied by :func:`evolve_fleet` step 4. The exact sibling of
     :func:`load_planned_additions`, which skips wind and solar because
@@ -4622,7 +4622,7 @@ def eia860_plant_sectors(eia860_dir: Path | None = None) -> dict[int, int]:
 
     The per-plant ownership-sector attribute the retirement-screen sector gate
     partitions on (capx D53, ``ScenarioConfig.retirement_sector_gate``;
-    ``docs/handoffs/DESIGN-capx-d53-sector-gate-2026-09-05.md`` §1.2, §1.10):
+    ``docs/records/forecast/DESIGN-capx-d53-sector-gate-2026-09-05.md`` §1.2, §1.10):
     Form EIA-860 Schedule 2 ``Sector`` — 1 Electric Utility, 2 IPP Non-CHP,
     3 IPP CHP, 4 Commercial Non-CHP, 5 Commercial CHP, 6 Industrial Non-CHP,
     7 Industrial CHP. Resolves through :func:`paths.active_eia860_dir` when
@@ -4797,7 +4797,7 @@ def _eia860_selfcommit_scope_plants_cached(eia860_dir: str) -> frozenset[int]:
     Status`` RE operators (:func:`eia860_regulated_plants`) and plants
     majority-owned by cost-of-service entities
     (:func:`eia860_costofservice_majority_plants`). See
-    docs/handoffs/miso-coal-conduct-design-2026-07.md §4 (the pre-declared
+    docs/records/miso/miso-coal-conduct-design-2026-07.md §4 (the pre-declared
     V1b refinement, engaged when the RE-only probe broke the 2023 COAL_BIT
     band on the Prairie State reversion).
     """

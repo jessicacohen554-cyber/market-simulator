@@ -2,7 +2,7 @@
 
 Written and committed **before any solve**. Phase 0 is zero LP. Owner ruling Q-a (2026-09-28) chose this scope after seeing NEXT-10's phase 0, so the gates below are fresh and the promotion is on structure only (rule 1), never on C3a.
 
-- **Probe:** `scripts/probes/nyisonext11_ne_ac_node_phase0.py` → `results/calibration/_nyisonext11_phase0.json`.
+- **Probe:** `scripts/probes/nyisonext11_ne_ac_node_phase0.py` → `results/phase0/nyiso/_nyisonext11_phase0.json`.
 - **Producer:** `scripts/data/derive_nyiso_ne_ac_ladder.py` (the two committed tables).
 - **Keeper (control):** `2026-09-28-nyisonext9-hq-floor-span` (2022–2025) + stamped `2026-09-28-nyisonext9-hq-floor-2021`, basis `7900ac51`.
 
@@ -121,7 +121,7 @@ This session's own two commits are the arm (the rule-26 deletion is hash- and pa
 
 **§9 addendum 3 (NYISO-NEXT-12, a launch defect found by the first shard wave; no gate changed).** All five legs pinned at `4ba64817` failed at LP construction (`model/lp/layout.py:336`, zone index 6 out of range for 6 zones), 41–49 s in; nothing was solved. **Cause:** `run_calibration_full.solve_and_persist` builds its own copy of the topology (pooled node + the CAISO / MISO splits) to size demand, must-run and report frames, and threads that demand into `run_year`. It never applied the NE AC split, so it passed 6 demand rows to a 7-zone solve. **Fix** (`scripts/run_calibration_full.py`, beside the MISO south-seam split): apply `split_nyiso_ne_ac_node` there too when the flag is armed. Only the zone set matters to that caller. Checked with no LP: the orchestrator's zone list equals `apply_interchange_topology`'s for 2021 and 2025, and `load_demand` returns 7×8760 with a zero NE AC row. **Inert for the keeper and every other ISO:** the code is reached only with `nyiso_ne_ac_node` armed and `iso == "NYISO"`. The five legs are relaunched at the `main` SHA that carries the fix. The gates in §6 and the promotion rule in §7 are unchanged.
 
-**G-2 (b), zero LP, computed at the pin before any leg returned** (`scripts/probes/nyisonext12_g2b.py` → `results/calibration/_nyisonext12_g2b.json`): PASS in all five years. The pooled ladder served equals `NYISO_IMPORT_TRANCHES_NE_SPLIT_BY_YEAR[y]` and re-derives byte-for-byte. The node ladder re-derives exactly. The pooled Capital_Hudson envelope equals the attribution with the NE row removed and differs from the attribution that includes it. Mean pooled CH import envelope (with NE row → arm): 2022 280→465, 2023 406→596, 2024 369→680, 2025 464→722 MW.
+**G-2 (b), zero LP, computed at the pin before any leg returned** (`scripts/probes/nyisonext12_g2b.py` → `results/phase0/nyiso/_nyisonext12_g2b.json`): PASS in all five years. The pooled ladder served equals `NYISO_IMPORT_TRANCHES_NE_SPLIT_BY_YEAR[y]` and re-derives byte-for-byte. The node ladder re-derives exactly. The pooled Capital_Hudson envelope equals the attribution with the NE row removed and differs from the attribution that includes it. Mean pooled CH import envelope (with NE row → arm): 2022 280→465, 2023 406→596, 2024 369→680, 2025 464→722 MW.
 
 **§9 addendum 4 (NYISO-NEXT-12, before the relaunch; `332c8048` → `origin/main` `0b7982bd`).** 11 backcast-path commits, 25 files. **Every hunk INERT for NYISO.**
 

@@ -4,7 +4,7 @@
 **Session** `pjm-h9` · **ISO** PJM · **Date** 2026-09-16 · **Base** `origin/main` @ `af764ec8`
 **ZERO LP. NO SHARD.** Rule 32 `[R-SHARD]` (a) — the parent ran no LP and none was needed.
 **PJM keeper `2026-09-11-pjm-d4-4-gasoutage`: CALIBRATED, 8/8, zero caveats — UNTOUCHED.**
-Pre-registration: `docs/PRECOMMIT-pjm-h9-coal-only-comparator-2026-09-16.md` (committed at
+Pre-registration: `docs/records/pjm/PRECOMMIT-pjm-h9-coal-only-comparator-2026-09-16.md` (committed at
 `eda1169d` **before** the corpus finished downloading; the three probes at `b73f846f`, before
 any decisive number existed).
 

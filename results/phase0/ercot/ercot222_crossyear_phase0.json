@@ -1,7 +1,7 @@
 {
  "probe": "ercot222_crossyear_phase0",
  "date": "2026-08-19",
- "precommit": "docs/PRECOMMIT-ercot222-crossyear-seed-2026-08-19.md",
+ "precommit": "docs/records/ercot/PRECOMMIT-ercot222-crossyear-seed-2026-08-19.md",
  "keeper_at_dispatch": "2026-08-19-ercot221-arm-adaptive (armed)",
  "conventions": {
   "voll": 5000.0,

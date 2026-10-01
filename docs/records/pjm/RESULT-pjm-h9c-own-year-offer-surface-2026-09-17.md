@@ -4,10 +4,10 @@
 
 **Session** `pjm-h9` · **ISO** PJM · **Date** 2026-09-17 · **Pinned SHA** `73a682347d175fd001c8a5cfcd08e3241d03c82e`
 **Six shards, one per year.** Parent ran no LP (rule 32 `[R-SHARD]` (a)). No control solved —
-G-CTRL form 4 against `docs/RESULT-pjm-h9b-sixyear-resolve-2026-09-16.md`'s six bundles (same
+G-CTRL form 4 against `docs/records/pjm/RESULT-pjm-h9b-sixyear-resolve-2026-09-16.md`'s six bundles (same
 recipe, same HEAD, same pinned SHA). **No screen** — that regime was removed by owner
 instruction 2026-09-16 (`rule-history.md` §21).
-Pre-registration: `docs/PRECOMMIT-pjm-h9c-offer-surface-own-year-2026-09-16.md`.
+Pre-registration: `docs/records/pjm/PRECOMMIT-pjm-h9c-offer-surface-own-year-2026-09-16.md`.
 
 ---
 

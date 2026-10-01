@@ -1,6 +1,6 @@
 {
  "session": "nyiso-211",
- "prereg": "results/calibration/PREREG-nyiso211-cricket-valley-lineage-attribution.md",
+ "prereg": "docs/records/nyiso/PREREG-nyiso211-cricket-valley-lineage-attribution.md",
  "basis": "CAMPD (bench c_ann) on both sides in every year; E-923 not used",
  "years": [
   2023,

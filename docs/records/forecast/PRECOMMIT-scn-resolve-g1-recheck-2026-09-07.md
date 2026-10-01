@@ -117,8 +117,8 @@ All structural and **kill-only** (rules 1 `[R-STRUCT]`, 29 `[R-SCREEN]`). A PASS
 
 ## 3. Deliverables
 
-1. `docs/handoffs/FINDING-scn-resolve-g1-recheck-2026-09-07.md` — Task 1.
-2. `docs/handoffs/ADDENDUM-B-scn-ws5a-policy-ercot-2026-09-07.md` — Task 2, with a pointer added
+1. `docs/records/forecast/FINDING-scn-resolve-g1-recheck-2026-09-07.md` — Task 1.
+2. `docs/records/forecast/ADDENDUM-B-scn-ws5a-policy-ercot-2026-09-07.md` — Task 2, with a pointer added
    from `FINDING-scn-ws5a-policy-ercot-2026-09-06.md` §7 item 1.
 3. A **card** opened on the desk ledger for the code question (fleet builder emitting unique ids vs
    every consumer qualifying by fuel type) — **proposed, not implemented**, per the charter.

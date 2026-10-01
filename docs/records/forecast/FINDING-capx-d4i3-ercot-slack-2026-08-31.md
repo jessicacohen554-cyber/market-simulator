@@ -1,8 +1,8 @@
 # FINDING — capx D4-I3: the ERCOT I3 scarcity-slack invariant (half scope)
 
 **Lane:** capx D4-I3 · **Model:** Opus · **Branch:** `claude/capx-d4i3-ercot-slack`
-**Charter:** `docs/handoffs/capx-director-prompt-pack-2026-08.md` §D4-I3 (r#21) ·
-ledger `docs/handoffs/capx-director-ledger-2026-08.md` §6 / §1153
+**Charter:** `docs/records/forecast/capx-director-prompt-pack-2026-08.md` §D4-I3 (r#21) ·
+ledger `docs/records/forecast/capx-director-ledger-2026-08.md` §6 / §1153
 **Binding prior:** `docs/forecast-readiness-audit-2026-07.md` FR-6
 **Date:** 2026-08-31 · **Zero-solve.** Every number below is read from a committed artifact.
 

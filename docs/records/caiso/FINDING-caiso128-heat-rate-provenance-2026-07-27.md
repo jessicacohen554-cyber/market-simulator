@@ -239,7 +239,7 @@ factors with each plant's own CEMS power-only rate where CEMS covers it.**
   `CHP_STEAM_CREDIT_HR_CORRECTION_ISOS` as a per-ISO channel wherever CEMS
   covers the plant.
 * **(g) Forward story (rule 13), the CO2-rate precedent.** Exactly
-  `data/emission_rates.py` / `docs/handoffs/emissions-co2-rate-plan-2026-07.md`:
+  `data/emission_rates.py` / `docs/records/misc/emissions-co2-rate-plan-2026-07.md`:
   backcast years consume the target year's measured rate, forecast years a
   gen-weighted trailing average of the plant's own CAMPD history with a
   class-median fallback. The 0.9 % cross-year CV says it is stable enough to

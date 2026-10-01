@@ -1,7 +1,7 @@
 # RESULT — NWPP-NEXT-8: monthly pile grain of the per-yard coal identity, 2019–2025 → KEEPER #15
 
 **Run:** `2026-09-28-nwppnext8-coal-monthly-pile`, bundle `results/calibration/nwppnext8mp_span`.
-**PRECOMMIT:** `docs/handoffs/PRECOMMIT-nwppnext8-coal-monthly-pile-2019-2025-2026-09-28.md`.
+**PRECOMMIT:** `docs/records/nwpp/PRECOMMIT-nwppnext8-coal-monthly-pile-2019-2025-2026-09-28.md`.
 **Control:** keeper #14 `2026-09-27-nwppnext7-coal-take-floor`, compared against its committed bundle (G-DRIFT form 4,
 PRECOMMIT §4). All hunks are inert.
 **Solved by:** 7 year-isolated shards at pin `e7478536`. The parent ran no LP.

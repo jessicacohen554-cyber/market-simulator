@@ -1,7 +1,7 @@
 # FFR-3F — The G-31 exit-throughput fix lane: cap grain first, then the measured throughput term
 
 **Session.** FFR Wave 3, the G-31 fix lane, chartered by **owner decision D-8**
-(`docs/handoffs/ffr-owner-sitting-2026-08-02.md` Addendum F.1, signed 2026-08-03) to
+(`docs/records/forecast/ffr-owner-sitting-2026-08-02.md` Addendum F.1, signed 2026-08-03) to
 FFR-3C §6's specification. Branch `claude/g31-exit-throughput-fix-gsy4md`, off `origin/main`
 **`edf5c5a`** (the packet's stated HEAD `01b6a6a` was already stale at session start; `98ad9c1`
 at first fetch, `edf5c5a` by the time the first commit was pushed).

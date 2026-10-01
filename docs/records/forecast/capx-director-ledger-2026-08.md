@@ -71,7 +71,7 @@ is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction onl
 **r#27 (HEAD `a2e80dbf`):** GOLDEN-2 REGISTERED — verdict HOLD, **FC-7 PASSES (first on any golden)**, FC-6 FAIL on the NEW P2 only, storage entry survives arming as a −56.2 % divergence (720 MW iron-air, 2050 only); Q25 SPENT · D34 + D20 LANDED · T1.6 deleted under rule 26 and **Q27 re-points it to `entry_rate_limits`** · D36 issued; T16-A held for golden-close; D35/D37 named-queued (§0x) ·
 *(previous)* **Last refresh #26:**
 **HEAD at refresh:** `8462da22` — the nine-writer wave lands 7-of-9 with two clean mid-lane checkpoints (§0w.1); **D27 vindicates D17's arithmetic and refutes it as a remedy — coal ate all 14.7 GW** (§0w.1); CAISO promotes caiso-231 (§0w.5); the Q22/R-H duplication recorded AGAINST INTEREST (§0w.2); Q24 funds the MISO PRA/RBDC intake; D26-S/D31/D33 issued (§0w.4) · **Owner cards A/B/C SIGNED 2026-08-25; Q20–Q23 r#25; Q24 r#26** (§3)
-**Handoff prompt for a successor director session:** `docs/handoffs/capx-director-handoff-2026-08-30.md` (rewritten whole at r#36; the ledger wins where they diverge)
+**Handoff prompt for a successor director session:** `docs/records/forecast/capx-director-handoff-2026-08-30.md` (rewritten whole at r#36; the ledger wins where they diverge)
 
 ---
 
@@ -322,7 +322,7 @@ lag, FC-6 or board onboarding.
   non-reproduction is new, is undiagnosed, and is capx's own, so D93 must diagnose it before any class
   rule is allowed to absorb it) and **1 G6**:
   `coal_mustrun_requires_measured_row`, a ScenarioConfig field added by the PJM lane (pjm-h14,
-  `docs/RESULT-pjm-h14-2026-09-20.md`), absent from 235 payloads and unregistered, so it moves the key
+  `docs/records/pjm/RESULT-pjm-h14-2026-09-20.md`), absent from 235 payloads and unregistered, so it moves the key
   of every config newer than those. → **D93** (Q66 + the G6 registration).
 * **`audit_keepers --check`** EXIT 1: SOCO E13 (`soco53g-prb-own-iso` left registered behind today's
   soco61 promotion). **ROUTED → the SOCO desk**, rule 35(a).
@@ -431,7 +431,7 @@ and repaired what it found.
   baseline of the historical 79 names, offline and pure arithmetic — **with both directions proved by
   test**, quoting §0bh's own doctrine back: *"a gate seen only green is indistinguishable from one
   that cannot fail."*
-* **THE ORPHAN COUNT: ONE, counted before the edit** — `docs/handoffs/scn-ws5b-neiso/REF/run_config.json`,
+* **THE ORPHAN COUNT: ONE, counted before the edit** — `docs/records/forecast/scn-ws5b-neiso/REF/run_config.json`,
   solved ~33 h after `f2a834de`. Zero of 74 committed bundle dirs and zero of 55 `ff-verdicts`
   cache_epochs carry the field. **Pin tests 33 → 2 red (fixed 31, newly broken 0)**, both survivors
   other lanes'.
@@ -1036,8 +1036,8 @@ is **EXIT 0 on all seven rows** at my HEAD, so the seventeenth firing is closed.
   one** — ercot-255 (`614f3691`) *and* ercot-256 (`baa5fe16`, PR #5605). My charter named a single
   transition; the row had been stale across a promotion I never counted.
 * Both promotion **instruments named as documents**, which is the element §0bc's SPP-45 lane had to
-  add after the fact: `docs/RESULT-ercot256-drag-layup-window-mask-2026-09-08.md` (`fe63e461`) and
-  `results/calibration/ASSESSMENT-miso243-spp-pairing-repair-fullspan-2026-09-07.md`.
+  add after the fact: `docs/records/ercot/RESULT-ercot256-drag-layup-window-mask-2026-09-08.md` (`fe63e461`) and
+  `docs/records/miso/ASSESSMENT-miso243-spp-pairing-repair-fullspan-2026-09-07.md`.
 * **Every fact re-read LIVE at the lane's own HEAD**, not carried from my charter — keeper ids from
   the shards, marker state from BOTH blocks (`final` EMPTY for every ISO, so no locked-test claim
   appears in either row), determinations from the committed status sidecars. **The lane computed no
@@ -2205,7 +2205,7 @@ owner lane and neither is capx's.
   `default_scenario_overrides` gains `retirement_sector_gate=True`, the shared `ScenarioConfig`
   default stays False, **every other ISO and every backcast key byte-identical**; bare `pjm-t1h`
   `b518f5fe7d02f961 → fb16fda2ddb0a94a`; **the post-edit probes reproduce the PRECOMMIT's expectation
-  exactly** (`docs/handoffs/d78arm/`); cache-epoch `2026-09-06h`, the CLI help string, the CLAUDE.md
+  exactly** (`docs/records/forecast/d78arm/`); cache-epoch `2026-09-06h`, the CLI help string, the CLAUDE.md
   bullet, PJM matrix cell `O → K`, the `VERDICT_MAP` re-key (`d67arm → pjm-t1h-pre-d78arm`), the
   override pin re-keyed with every inverse beside it.
   **`3b369f26` is the model of how to be interrupted**: a WIP commit whose message is a six-item
@@ -2214,7 +2214,7 @@ owner lane and neither is capx's.
   leg needing all three `False` flags to reach `15a723ba3b6dc856` (measured at that HEAD: bare
   `fb16fda2ddb0a94a`, no-req `250882fbbbf64377`, no-req+no-vre+no-gate `15a723ba3b6dc856`); (2) a
   `data/clean` rebuild (`regenerate_clean.py`, killed at 6/56 datatypes); (3) the solve
-  (`docs/handoffs/d78arm/run_arm.sh`); (4) `score_capacity_hindcast.py`; (5)
+  (`docs/records/forecast/d78arm/run_arm.sh`); (4) `score_capacity_hindcast.py`; (5)
   `register_forecast_run.py`; (6) the slim record + sidecar + FINDING + PR. It also **diagnosed a red
   that was not its own** — `TestQ52ArmingKeys` had been red on `main` since `6164231e`, when Q55
   moved the bare key without re-pinning that file; a separate commit `d41ac928` ("repair the stale
@@ -2562,7 +2562,7 @@ PRs #5245–#5259). Two departures from the handoff's state block, both recorded
   was **classified, not assumed**. The dropped tip is a **Sep-4 lineage of 251 commits** that current
   `main` contains under no sha (PRs #4716–#4719; `git log --grep` on `main` finds none of their
   messages) — **but their content is on `main`**: `FINDING-capx-d48-2026-09-04.md` and the whole
-  `docs/handoffs/d48/` instrument set are present, added by `5a910016` (#5081). So it is a
+  `docs/records/forecast/d48/` instrument set are present, added by `5a910016` (#5081). So it is a
   **sha-rebasing event, not data loss**. Measured consequence for this ledger rather than assumed: all
   eleven sha citations in the header were tested — **nine LIVE on `main`, two DEAD** (`fb0868eb` =
   r#46's HEAD, `04e6906d` = r#43's HEAD). Every sha from r#44 forward resolves. This is the
@@ -2987,7 +2987,7 @@ per-delivery-year and the CT plateau is live by 2024/25.
 should not wait on a sequenced lane). **SEQUENCED:** D75-R-ARM (after D65-B-R's board write
 merges) → D76 PHASE 3 (after D75-R-ARM merges) → the D76 arming card. **RESERVED:** D82, D83,
 D84. **HELD:** D69/D70 parked (owner); T3-NYISO on the NYISO marker; Q50/Q51 parked at owner
-direction. **Collision map:** D65-B-R sole board writer; D78-R3 on `docs/handoffs/d78r3/` + at
+direction. **Collision map:** D65-B-R sole board writer; D78-R3 on `docs/records/forecast/d78r3/` + at
 most a re-graded instrument (no `retirements.py` change unless the derivation needs a stack
 export — declare it); D75-R FACADE FIX on `constants.py`'s facade only (rule 27 — a ≥300-line
 file, edit-only, blob-verified); D75-R-ARM on `iso_configs.py::_pjm_config` + the `pjm-t1h` board
@@ -4631,7 +4631,7 @@ fails those two steps until the bundles are disposed of; branch protection still
 `protected: false` (v31, ninth reading), so merges are not mechanically blocked.
 
 **1. GRADED BY CONTENT — capx lanes:**
-- **D61 — LANDED (#4848, `27a2996e`), zero solves, docs + `docs/handoffs/d61/` instruments.**
+- **D61 — LANDED (#4848, `27a2996e`), zero solves, docs + `docs/records/forecast/d61/` instruments.**
   Adjudication: **the E&AS operand is NOT the object.** (1) PJM's zero is exact and structural —
   the hindcast recipe's screen sees the energy dual only (no co-opt in the recipe; the runner
   wires reserve duals to the screen for ERCOT alone), and the 2022/23–2023/24 offers were built
@@ -5820,7 +5820,7 @@ mid-cycle again; recreated off `b168260e`.
 **1. GRADED — capx lanes:**
 
 - **D46 STAGE 1 — LANDED IN FULL** (PRs #4661 `…-oe1h77`, #4668 `…-ofmvb8`; finding
-  `docs/handoffs/FINDING-capx-d46-remeasure-2026-09-03.md`, 585 lines; pre-declaration pushed
+  `docs/records/forecast/FINDING-capx-d46-remeasure-2026-09-03.md`, 585 lines; pre-declaration pushed
   `71d3f1a6` BEFORE the first solve, graded at full magnitude: **13 hits, 6 misses, 1 split, 8/8
   cache keys realized exactly**). Every Stage-1 deliverable is on main: four T1-H legs
   (`neiso/miso/caiso/ercot-t1h`, the last two MINTED as pre-declared), three t1f legs
@@ -6255,7 +6255,7 @@ The audit desk may close Q-4 by citing this entry — this desk does not edit it
   SATISFIED — fast test tier green for the first time ever** (run 2351) — though the two
   post-v23 promotions re-reddened `test_live_board_passes` until this desk's re-key. Q-4
   executed by the audit desk itself (K-13: all 22 labels present). X-1: ruff is red on
-  main from per-run probe scripts under `docs/handoffs/d37/` and `d45/` — the owner's
+  main from per-run probe scripts under `docs/records/forecast/d37/` and `d45/` — the owner's
   decision whether session artifacts under `docs/handoffs/` are linted at all (X-1(ii)) is
   a question this desk endorses answering NO. X-2: stage-0 goldens regressed 7→4 of 7
   (CAISO/MISO/NYISO stale on the 09-02 promotions; now caiso-240/miso-202 make two of
@@ -6881,7 +6881,7 @@ the owner ruled tighter than the offer:
   (miso-197+, after miso-196 lands) — recorded here, not chartered here.
 - **Q22 — nyiso-161 winter-face waiver = OPTION A, no amendment.** NOT-YET stands; the card
   RETIRES answered-by-measurement (nyiso-167 supplied the probe its own test (a) called for);
-  annotated in place at `docs/DECISION-CARD-nyiso161-winter-face-waiver-2026-08-30.md`. The
+  annotated in place at `docs/records/nyiso/DECISION-CARD-nyiso161-winter-face-waiver-2026-08-30.md`. The
   audit programme's parked-trigger row (ruling R-F) should retire on that board's next sitting
   — flagged there, not edited cross-program. No rubric class is created; the "only C3c is
   non-downgrading" line holds intact.
@@ -7372,7 +7372,7 @@ test**, which is a board fact no lane has yet written — routed into the next b
 (item 5).
 
 **3. THE C3c SCARCITY PROGRAM EXISTS, IS CHARTERED, AND HAS ALREADY SPENT BOTH ITS MEASURABLE
-QUESTIONS** — the r#21 open card (b) is CLOSED by owner act. `docs/CHARTER-c3c-scarcity-program-2026-08-31.md`
+QUESTIONS** — the r#21 open card (b) is CLOSED by owner act. `docs/records/misc/CHARTER-c3c-scarcity-program-2026-08-31.md`
 scopes it and is worth reading for its cross-ISO census alone: **the blanket framing carried in
 several ledgers is wrong** — "an hourly LP with $0 reserve offers cannot form the RT scarcity
 tail" is not uniform, since PJM forms 54–67 % of its tail in the same LP and passes all three
@@ -7711,7 +7711,7 @@ recollection):
 - **LOST (4) — session containers reclaimed before landing; per the owner instruction each
   restarts FRESH:**
   - **S-6**: the pre-declaration LANDED (PR #4418,
-    `docs/handoffs/FINDING-capx-s6-pjm-ledger-2026-08-30.md`, which ends at the
+    `docs/records/forecast/FINDING-capx-s6-pjm-ledger-2026-08-30.md`, which ends at the
     "*(Sections below were written AFTER the solve.)*" sentinel with nothing after it). The
     solve, the FC re-score, the `pjm-2026-2030-s6-ledger` registration, the
     preserve-then-overwrite verdict keys and the PJM board refresh are ALL owed. Branch
@@ -7754,7 +7754,7 @@ repair phase is a next-batch decision on its landed Phase-0 finding.
 **6. BACKCAST-TRACK WATCH (deconfliction only — backcast prompts are handed to the owner, not
 issued by this ledger):** **ercot-245 died mid-lane** — the precommit + Amendment 1 + the
 680-line census probe LANDED (PRs #4417/#4421,
-`docs/PRECOMMIT-ercot245-commitment-state-phase0-2026-08-30.md`), but the census run, kill
+`docs/records/ercot/PRECOMMIT-ercot245-commitment-state-phase0-2026-08-30.md`), but the census run, kill
 grading, FINDING, log entry and matrix evidence are owed; relaunch prompt handed to the owner
 (**Fable**; dispatch strictly AFTER D12-A-R lands — shared ERCOT matrix shard). **nyiso-161**
 delivered `DECISION-CARD-nyiso161-winter-face-waiver-2026-08-30.md` (PR #4420) — an OWNER
@@ -7910,7 +7910,7 @@ NYISO untouched. No FC-4 category status flips (surviving price/volume rows stil
 §2.1b leg moves (leg (c) is measurement-keyed per Q7). Ancillary honesty fix shipped: the
 `register_hindcast --preserve-invariants` fall-through that fabricated 13 vacuous PASS
 invariant rows over an absent cache now reuses-or-omits, never recomputes.
-`docs/handoffs/RESULT-crossover-co2-grain-repair-2026-08-30.md`.
+`docs/records/misc/RESULT-crossover-co2-grain-repair-2026-08-30.md`.
 
 **2. THE FIFTH BUNDLE, ADJUDICATED (the r#16 handoff's open question — the prompt named five
 keys, the lane rescored four).** The committed NEISO bundle
@@ -8164,7 +8164,7 @@ deconfliction covers the ERCOT one).
 **1. THE ENTIRE IN-FLIGHT SET CLEARED IN ONE MERGE WINDOW — five lanes, zero refusals, every
 deliverable where its charter said it would be.**
 
-- **Q5-W LANDED** (PR #4343, `ecc2d60`; `docs/FINDING-q5w-nyiso-marker-withdrawal-2026-08-30.md`):
+- **Q5-W LANDED** (PR #4343, `ecc2d60`; `docs/records/nyiso/FINDING-q5w-nyiso-marker-withdrawal-2026-08-30.md`):
   NYISO's `complete` marker WITHDRAWN on the r#12 ruling, both surfaces in one session —
   `complete` = **{NEISO, PJM}**, board NYISO gate (a) PASS → fail. Keeper nyiso-157 untouched;
   validation-tier authorization lapsed with the marker; re-entry = new owner declaration on a
@@ -8177,7 +8177,7 @@ deliverable where its charter said it would be.**
   exact** (control preserved as `neiso-t1f-s4control`). Board NEISO block refreshed and the
   `hydro_accreditation` matrix cell re-stamped O → K by the lane itself. S-4's finding §5/§8
   TBDs filled. **S-4b UNBLOCKS.**
-- **S-5 LANDED** (PR #4340; `docs/handoffs/FINDING-capx-s5-pjm-horizon-edge-2026-08-30.md`):
+- **S-5 LANDED** (PR #4340; `docs/records/forecast/FINDING-capx-s5-pjm-horizon-edge-2026-08-30.md`):
   hold-last-FPR implemented as the declared convention in `resolve_forecast_pool_requirement`
   (card C-A cited in code; zero DOF — the held value is the table's own last published entry),
   D-1 checker year-threading repaired (I7/I12 now grade the same bar the model builds to), and
@@ -8186,7 +8186,7 @@ deliverable where its charter said it would be.**
   director's D7-class input, so **the board's PJM block restatement is OWED → carried by D13**.
   Rule-23 check done on publication terms: 2029/30 BRA is Dec 2026; intake pointer at the table
   edge. **S-6 UNBLOCKS** (held on the heavy slot, §0j.3).
-- **D10 LANDED** (PR #4354; `docs/handoffs/FINDING-capx-d10-nyiso-t1x-2026-08-30.md`): NYISO's
+- **D10 LANDED** (PR #4354; `docs/records/forecast/FINDING-capx-d10-nyiso-t1x-2026-08-30.md`): NYISO's
   FIRST-EVER T1-X (`nyiso-2023-2027-crossover-capxd10`, ~10 min, <3 GB, shipped posture verified
   in the resolved config), **FC-4 measured and reported at FULL MAGNITUDE: FAIL** — price 2023
   +29.9 % / 2024 +2.5 % / 2025 −24.0 %; **co2 10.1 / 10.3 / 3.9 % — NYISO does NOT reproduce
@@ -8194,7 +8194,7 @@ deliverable where its charter said it would be.**
   ERCOT/PJM/MISO's, not universal). Quarantine PASS (no H1-2026 read). Registered `nyiso-t1x`
   with run_config.json (no D8 debt). **Leg (c) closes on measurement: NYISO gate now
   (a) fail · (b) PASS · (c) PASS · (d) none.**
-- **D11-R LANDED** (PR #4355; `docs/handoffs/FINDING-capx-d11r-entry-volume-rule-2026-08-30.md`):
+- **D11-R LANDED** (PR #4355; `docs/records/forecast/FINDING-capx-d11r-entry-volume-rule-2026-08-30.md`):
   `entry_margin_exhaustion` shipped default-OFF (one field, both allocators, rule 19; matrix row
   + all-shard cells), zero-DOF confirmed (the walk re-invokes `runner._lookahead_reprice_signal`
   itself, delta-anchored; byte-identical off). A/B on ERCOT T1-H at the registered posture,
@@ -8280,7 +8280,7 @@ to NEISO on S-4V's measurement** (NEISO would be the only ISO with (a)+(b) both 
 
 **3. FF-2D RE-SCORE — MY NAMESPACE WAS TOUCHED BY AN OWNER LANE, AND IT WAS BENIGN
 (verified, not assumed).** PR #4325 re-scored the 7 re-scorable FF-2D verdicts at HEAD
-(`docs/FINDING-ff2d-verdict-rescore-2026-08-30.md`): **every one reproduces
+(`docs/records/forecast/FINDING-ff2d-verdict-rescore-2026-08-30.md`): **every one reproduces
 byte-identically**; the diff is provenance-only (`scored_at_sha/date`); the FR-21 staleness
 gate resets to Δ=0; the kill-rule did not fire. Bare keys unchanged (nyiso-t1f
 PROMOTE-WITH-CAVEATS, all others HOLD). The board's verdicts are now *known* to describe
@@ -8352,7 +8352,7 @@ test. Bare verdicts: nyiso-t1f PROMOTE-WITH-CAVEATS, all others HOLD.
 ## 0g. Refresh #10 (2026-08-30, HEAD `9f73357`) — S-4 LANDED (factor 0.7352, verification pair pending); D11-R RUNNING; ERCOT becomes a two-config keeper
 
 **1. S-4 LANDED — the second capx lane to complete, and it worked exactly as chartered** (PR
-#4312, `docs/handoffs/FINDING-capx-s4-neiso-hydro-2026-08-30.md`). The NEISO hydro class factor
+#4312, `docs/records/forecast/FINDING-capx-s4-neiso-hydro-2026-08-30.md`). The NEISO hydro class factor
 is SOURCED: **0.7352** = ISO-NE's own per-resource summer Seasonal Claimed Capability aggregated
 over the active conventional-hydro fleet (August 2026 SCC Monthly Report, 244 assets,
 1,396.472 MW) ÷ the model's own 1,899.5 MW accreditation basis — zero free parameters, shipped
@@ -8402,7 +8402,7 @@ queued behind D11-R per the ratified sequencing.
 ## 0f. Refresh #9 (2026-08-30, HEAD `a53b7b3`) — freeze goes TIER-SCOPED (card 6 executed); rubric v3.5 determination-neutral; still no capx lane started
 
 **1. THE HOLDOUT SPEND FREEZE IS NOW TIER-SCOPED** (owner ruling 2026-08-26 card 6, executed
-2026-08-30, `0589b6f`; record `docs/FINDING-holdout-governance-2026-08-26.md`): `active: true`
+2026-08-30, `0589b6f`; record `docs/records/governance/FINDING-holdout-governance-2026-08-26.md`): `active: true`
 with `scope.tiers = ["locked_test"]` — the VALIDATION tier (2020–2022) is lifted from the freeze
 and governed by the `complete` marker + `--holdout-authorized` alone, so the diagnostic
 touchpoint loop is actually runnable for {NEISO, NYISO, PJM}; the locked test (2019/H1-2026)
@@ -8449,7 +8449,7 @@ holdout spend freeze ACTIVE. (Keepers: MISO moved mid-refresh — item 4.)
 
 **2. BACKCAST MOVEMENT — nyiso-156b: the owner RULED the nyiso-156 card's Q1 as OPTION A, the
 winter locational identification intake is AUTHORIZED** (PR #4295, `ab0513e`; spec
-`docs/INTAKE-SPEC-nyiso156-winter-locational-2026-08-30.md`). Two legs: **Leg 1** — the
+`docs/records/nyiso/INTAKE-SPEC-nyiso156-winter-locational-2026-08-30.md`). Two legs: **Leg 1** — the
 eastern-seam PAR attribution from NYISO's own published NY-NJ PAR interchange percentages
 (**session-executable, the owner gate on PREREG-nyiso126 is LIFTED**; adds an ABC→NYC AC border
 path the model does not carry); **Leg 2** — MyNYISO as-enforced AORR access (owner-executable,
@@ -8590,7 +8590,7 @@ characterization is zero-solve.
 
 **1. NONE OF THE SIX PROMPTS HAS BEEN STARTED.** `git ls-remote` at `6af12ee`: no `capx-*` branch
 exists except this ledger. D7, D10, D11, S-123, S-4 and S-5 all stand as written
-(`docs/handoffs/capx-director-prompt-pack-2026-08.md`); the only thing that moved under them is
+(`docs/records/forecast/capx-director-prompt-pack-2026-08.md`); the only thing that moved under them is
 `main` (`99c8cf5` → `6af12ee`), which every prompt already handles by fetching fresh.
 
 **2. NYISO'S KEEPER IS NOW NOT-YET, AND IT STILL HOLDS `complete`.** Promoted 2026-08-25:
@@ -8937,7 +8937,7 @@ the gap.
 | **NYISO (r#41)** | Keeper unchanged at 192 (NOT-YET). **nyiso-195 KILLED on E-3** (PREREG `9a0b80fe` before the solve): the CC_REGULAR econ ramp at its measured marginal basis (`econ_low 0.784 / econ_high 0.925`, markup → 0) RAISES the 80–90 % loading share 32.96 → 33.54 (CAMPD 16.51) and worsens C1-2024 +3.68 → +4.34 TWh; phase 0 refuted nyiso-194's marginal-slice premise (0.7 % of plant-hours on a marginal slice). Matrix: `offer_curve_by_group` / `gas_offer_net_revenue_margin` econ-basis direction R. **Queue top (U): the AVAILABILITY side** — does the `-perunitmerit-` derate/outage series reproduce CAMPD's hours > 90 % (30.1 k / 34.0 k / 30.2 k vs model 20.7 k / 29.5 k / 31.3 k); rule-14 data question, phase 0 first. **2022 touchpoint (#4850):** one solve+score of the nyiso-189 recipe, launched under the D56-R `complete` entry, the marker WITHDRAWN on main while the LP ran; UN-REGISTERED at merge, numbers recorded once as diagnostic (NOT-YET: C1 CC_REGULAR +5.19 TWh, C3a −12.2 %, C3b 0.240, C3c 17 vs 101 h); marker addendum written. Nothing certified; locked test untouched. |
 | **NEISO (r#41)** | Keeper unchanged at neiso-99. **THE WHOLE VALIDATION LADDER WALKED (#4839/#4852; authorized — NEISO holds `complete`)**: **2022 CALIBRATED** (clean; lone C3c ledgered, 0 vs 117 h > $300; C3a −0.7 % vs DA), **2021 CALIBRATED** (first solve of that rung ever), **2020 NOT-YET on lone C3a +13.7 %** ($27.81 vs $23.39). A **control solve `neiso_headctrl_k99`** (keeper recipe on 2023–25 at HEAD) WAS run: the lane declared the 120-file / +119 k-line G-DRIFT diff unclassifiable ⇒ LIVE ⇒ rule 29(b)'s control clause; result price −0.008 %, demand/slack/dump/reserve bit-identical — HEAD drift INERT for NEISO. Both touchpoint bundles REGISTERED (`2026-09-05-neiso-2022-touchpoint-k99`, `2026-09-05-neiso-2020-2021-touchpoints`; bench 2020/2021 added) with `holdout` blocks; **tension with rule 15 keeper-only retention unreconciled**, `keepers/NEISO.json.holdout_touchpoint` still names the pruned 2026-08-06 run, no `calibration-log/neiso.md` entry — ROUTED to the audit/calibration desk. `neiso_headctrl_k99` unmapped → parity RED. `status/NEISO.js` S1 stale (sysvol actual 59.77 → 59.72) — regenerated by this desk. |
 | **PJM (r#41)** | Keeper unchanged at pjm-162. Zero touchpoint years spent: 2020 REFUSED on three measured data blockers (demand feed inflated — max 197,438 MW vs p99.9 148,785, seven of eight zones +15–27 % over mean(2019, 2021); no PJM 2020 block in `calibration_reference.json`; `PJM_2020_renewable_capacity.csv` absent). ASSESSMENT §3 left explicitly incomplete. |
-| **Governance (r#41)** | **PR #4855 OPEN** (see MISO row) — an owner ruling amending rules 1 `[R-STRUCT]` / 13 `[R-MEASURED]`. **Third desk: SCN-DESK** (#4843/#4853, `docs/handoffs/scenario-desk-ledger-2026-09.md`) — scenario readiness (carbon / CES / voluntary demand / load growth / emissions), wave 1 = WS-0 (Opus) · WS-1a (Fable; `policy/carbon.py`, `cap_and_trade.py`, a named `scenarios.py` region) · WS-2a (Fable; `policy/federal_ces.py`, `clean_tiers.py`, `federal_ces_*` region, matrix row + shards) · WS-3a (memo) · WS-4a (Opus; `DATACENTER_*` constants); cards D-1/D-2/D-3/D-6 presented to the owner; explicit clause: never charters this desk's queue, no SCN lane touches `program-status.json` / `ff-verdicts.json`. Fourth branch `claude/wc-desk-log` (wall-clock desk, docs-only, unmerged). |
+| **Governance (r#41)** | **PR #4855 OPEN** (see MISO row) — an owner ruling amending rules 1 `[R-STRUCT]` / 13 `[R-MEASURED]`. **Third desk: SCN-DESK** (#4843/#4853, `docs/records/misc/scenario-desk-ledger-2026-09.md`) — scenario readiness (carbon / CES / voluntary demand / load growth / emissions), wave 1 = WS-0 (Opus) · WS-1a (Fable; `policy/carbon.py`, `cap_and_trade.py`, a named `scenarios.py` region) · WS-2a (Fable; `policy/federal_ces.py`, `clean_tiers.py`, `federal_ces_*` region, matrix row + shards) · WS-3a (memo) · WS-4a (Opus; `DATACENTER_*` constants); cards D-1/D-2/D-3/D-6 presented to the owner; explicit clause: never charters this desk's queue, no SCN lane touches `program-status.json` / `ff-verdicts.json`. Fourth branch `claude/wc-desk-log` (wall-clock desk, docs-only, unmerged). |
 | **Audit programme (r#41)** | **v31 (#4844/#4851): R-AP** flip = ROUTE 2 owner click-path (Y-9) · **R-AQ** rule 15 keeper-only (G-1) · **R-AR the R-V KEEPER FREEZE LIFTED NOW for ERCOT/NEISO/PJM** (supersedes R-AN's at-G2 timing) · **R-AS** bench fingerprint hashes the AST (Y-12 landed: `3d0fd19d` + 20 parts re-stamped at `4254168edcfe`) · **R-AT** Y-11 (3 of 5 fast-tier pins repaired, two ERCOT golden-manifest tests routed). **Card N untranscribed** (no label). Open owner items there (never re-served here): the rule-29 screen-bundle disposal duty; four un-owned CI-path defects (path-filter glob, DOCS-B paths, shrink-guard two-dot base, `ci_refactor_guards` fixture scan); the `gen_*_attestation.py` ruff class. G2 NOT declared (`protected: false`, ninth reading); the required-check set changed state five times in 70 min. |
 | **NYISO (r#40)** | **KEEPER → `2026-09-05-nyiso-192-astoria-panel` (Q46, in-lane owner ruling, #4817)**: NOT-YET grade 6 / fails 2 (C1-2024 CC_REGULAR +3.68 TWh; C3c not lone); the D-5(b) stop fired and the owner chose the cost — **`complete` + `frontier` WITHDRAWN (third time: 07-19, 08-30, 09-05), gate (a) FAIL, validation tier lapses**; bundle restored after the cleanup's prune. **nyiso-194**: the owner-named CC_REGULAR duct-burner tranche lever — phase 0 measured, two 2024 screens pre-registered, **BOTH KILLED on frozen structural gates** (S-3, D-2); no full span spent; keeper unchanged. T3-NYISO-GOLDEN HELD. |
 | **CAISO (r#40)** | Keeper unchanged at 251. **caiso-252** (zero-LP): the C4 2025 cell is CC_REGULAR's DIURNAL error (90–95 % of gas-fleet MSE), the mirror of the model's too-flat import diurnal shape; the caiso-251 degradation is Aug–Dec, 56 % CC / 59 % CT; the CT miss is ONE plant (Panoche, NP15); 7/10 predictions falsified. The import diurnal SHAPE joins the import LEVEL (caiso-244) as the live object. |
@@ -8979,7 +8979,7 @@ the gap.
 | **CAISO (r#32, post-pin)** | **KEEPER → `2026-09-03-caiso-240-b1-stgas`** (#4641): rule-24 census of all 28 `_DEFAULT_HR_MULT_BY_GROUP` literals on all six keepers, zero solves — **22/28 DEAD in every ISO**; `ST_CHP`'s entire offer surface is uncited literals (an ask for MISO/PJM/NYISO/NEISO, rule 25); CAISO's one groundable cell `ST_GAS:peak` armed measured. NOT-YET C3a alone (+12.6/+15.6 %). **Skipped step 4 AGAIN** → re-keyed by this desk under C-2. |
 | **MISO (r#32, post-pin)** | **KEEPER → `2026-09-03-miso-202-unitclip`** (#4651): the boundary-day double-count is real (845 overlaps, every one exactly 24.0 h), repaired as a per-unit ceiling on a sum; all ten A/B gates pass; NOT-YET C3a-2025 alone (−12.4 %). **C3a-2025 anatomy: entirely a missing scarcity TAIL — the same object as C3c**; the outage family closes. **Skipped step 4 AGAIN** → re-keyed under C-2. |
 | **NYISO (r#32, post-pin)** | **nyiso-179 + nyiso-180** (zero solves): the ST_GAS offer position is not the governing object (62 % of the 2025 top-decile deficit is the model's own price level); all four un-dispatched-in-the-money candidates close; per-generator dispatch limit lifted (`class_band_hourly` sidecar ships in the keeper bundle). Keeper unchanged at nyiso-177. Gain-family data points. |
-| **Audit programme (r#32, post-pin)** | **v23** (#4645/#4646/#4648): R-X + R-Y DISCHARGED (golden tier green, cron removed), **G2 leg 2 SATISFIED (fast tier green, first ever)**, all three 09-02 stale stamps re-keyed (job 0 widened to three by owner decision; miso-200 found as a fourth miss the r#31 desk also missed). X-1: ruff red from `docs/handoffs/d37|d45/` probe scripts — lint-scope decision owed to the owner. X-2: stage-0 goldens 7→4 of 7. |
+| **Audit programme (r#32, post-pin)** | **v23** (#4645/#4646/#4648): R-X + R-Y DISCHARGED (golden tier green, cron removed), **G2 leg 2 SATISFIED (fast tier green, first ever)**, all three 09-02 stale stamps re-keyed (job 0 widened to three by owner decision; miso-200 found as a fourth miss the r#31 desk also missed). X-1: ruff red from `docs/records/forecast/d37|d45/` probe scripts — lint-scope decision owed to the owner. X-2: stage-0 goldens 7→4 of 7. |
 | **CAISO (r#32)** | **KEEPER → `2026-09-02-caiso-239-b1-stgas`** (PR #4634): the caiso-238 object-2 premise FALSIFIED zero-solve — the funded `ST_GAS committed 0.81` scalar reaches 2 of 25 tranches (both retired, zero 2025 availability), none of the three OTC steamers, which price off the uncited `1.15` class literal; both candidates REFUSED, repair RELOCATED there as gated `caiso_st_gas_committed_measured`; C3a cost +0.0001/+0.0060/+0.0001 $/MWh. **NOT-YET on C3a alone** (2024 +12.6 / 2025 +15.6 %); `audit_keepers` PASS 0/0. **Records defect:** finding + log headers say "Keeper UNCHANGED at caiso-231" while the same commit promoted — addendum owed. **Gate-(a) stamp NOT re-keyed** (R-T step 4 skipped). |
 | **MISO (r#32)** | **KEEPER → `2026-09-02-miso-201-stbasis`** (PR #4630): ST-side capacity basis put on the LP's own basis (numerator, deliberately opposite to the CC flag's denominator move); single-field delta, S-0 bit-identical, scorer blind, 32/55 steam bins; **one frozen kill K-3 FIRED on one cell, disclosed**; promoted under the owner's standing re-scoped bar. **NOT-YET on C3a-2025 alone (−12.4 %)**; `audit_keepers` PASS 0/0. **Gate-(a) stamp NOT re-keyed.** |
 | **NYISO (r#32)** | **KEEPER → `2026-09-02-nyiso-177-vintage-matched` BY OWNER RULING** (PR #4632; the override class, lane's own §1–§9 recommended against and stand): nyiso-176's degradation was the unguarded availability basis, NOT the accurate attribution; guarded companion reproduces Ravenswood `np.array_equal`. **NOT-YET, grade 6 → 5, fail set WIDENED to {C1-2023 ST_GAS +3.86 TWh, C3a-2025 −11.2 %, C3c}** (C3c no longer lone). No marker, no re-key duty. **nyiso-178** (PR #4633, zero solves): the ST_GAS envelope is NOT binding in either direction — measured-availability family closed for ST_GAS; duty-curve successor refuted ex ante; a response deficit (the gain family). **Gate-(a) stamp NOT re-keyed.** |
@@ -9019,7 +9019,7 @@ the gap.
 | **C3c audit (r#22, amendment)** | **PR #4466** independently replicated Q1 (REAL, by a different construction: overlap with PJM's posted penalty-step intervals at 75–91× base rate, p ≤ 9.7e-11; the model UNDER-prices reality by 2.7–7×) and **RETRACTED its own Q2 false positive**, tracing it to two defects in the committed reference `data/raw/_validation-source/actual_as_reserve_NYISO.parquet` — `build_reference` SUMS a cumulative cascade (spin_10 ≥ nonsync_10 ≥ op_30 in 100.0000 % of 289,344 rows) and maps naive prevailing timestamps onto the fixed `Etc/GMT+5` clock, off by an hour in 65.2 % of the year. **No keeper or scored result depends on it** (sole consumer is the disarmed RCPF comparator) — a trap for diagnostic sessions, filed for repair. **Generalizable rule for five other ISO lanes: a nested reserve cascade must be MAXED, never SUMMED.** → offered backcast prompt. |
 | **MISO (r#22, amendment)** | **miso-194 LANDED** (PR #4468): the MISO cold-snap gas derate is REFUTED on W4 absorption at phase-0 census; cell U → **I** (inert), keeper unchanged, lever queue stamped. A clean negative. |
 | **Offered prompts (r#22)** | TWO handed to the owner this sitting, neither chartered as a capx lane: **(1) the ERCOT 2024/2025 all-resource SCED conduct-corpus intake** (funded by ruling Q18; ercot-245's named unblock; additive intake through the data contract) and **(2) the NYISO AS-reserve reference repair** (the C3c audit's routed defect pair + the max-not-sum cascade rule carried to the other five ISOs). |
-| **C3c scarcity program (r#22)** | **CHARTERED and both measurable questions SPENT.** `docs/CHARTER-c3c-scarcity-program-2026-08-31.md`. **Q1 pjm-164** (PR #4456): PJM's reserve-dual channel is **REAL**, not the ercot-214 phantom — binds on opportunity cost, $187.90 max dual, zero shortfall hours ever. **Q2 nyiso-164** (`e983bf50`): the pre-registered kill gate FIRES ON BOTH CLAUSES — NYISO's C3c ledger CONFIRMED on its own evidence. **Q3 is an architecture decision** (stochastic/multi-settlement vs rules 4/8/no-MIP) the charter recommends NOT opening → owner card. |
+| **C3c scarcity program (r#22)** | **CHARTERED and both measurable questions SPENT.** `docs/records/misc/CHARTER-c3c-scarcity-program-2026-08-31.md`. **Q1 pjm-164** (PR #4456): PJM's reserve-dual channel is **REAL**, not the ercot-214 phantom — binds on opportunity cost, $187.90 max dual, zero shortfall hours ever. **Q2 nyiso-164** (`e983bf50`): the pre-registered kill gate FIRES ON BOTH CLAUSES — NYISO's C3c ledger CONFIRMED on its own evidence. **Q3 is an architecture decision** (stochastic/multi-settlement vs rules 4/8/no-MIP) the charter recommends NOT opening → owner card. |
 | **MISO (r#22)** | **miso-193 CONCLUDED** (PRs #4462/#4463/#4464): `cc_duct_peaking` examined end-to-end, both A/B legs registered, MISO cell U → K, keeper `2026-08-30-miso-191-bexit` UNCHANGED (NOT-YET on {C3a-2025} alone). miso-192's D-4 posture options (i)/(ii)/(iii) still an open owner card. |
 | **CAISO (r#22)** | **caiso-228 CONCLUDED WITHOUT A SOLVE** (PR #4461): the SoCalGas OFO arm dies at gate D1 and the kill is **size-independent** — the band's import limb is delivered across the WECC seam, so no gas-side quantity mechanism of any magnitude lifts λ past $200 in the measured tail hours. caiso-131 A3 answered negatively and conclusively; keeper `2026-08-26-caiso-220-c1-crosswalk` unchanged. The r#21 "caiso-227 arm funding" card is CLOSED (owner funded it; this is the result). |
 | **ERCOT (r#22)** | **ercot-247: declared `complete` + frontier** (PR #4454) — the first ERCOT rule-22 marker, resting on the ercot-246 partitioned-keeper ruling. `complete` = {ERCOT, NEISO, PJM}. The 2024/2025 SCED conduct-corpus intake (ercot-245's named unblock) remains an open owner card. |
@@ -9460,7 +9460,7 @@ reading 2 ($0 price-taker correct as built) / defer. **RULED 2026-09-06: READING
 **r#32 (2026-09-03): NO new numbered ruling — Q1–Q31 all spent. Cards: C-1 (D44/D45 status) — owner: "they have all landed I think"; CONFIRMED by content post-pin (D44 landed; D45 checkpoint). C-2 (stale gate-(a) stamps) — owner: GRANT one push; SPENT on caiso-240/miso-202 (the rows the card named had been repaired by audit v23 in the same window). C-3 (the priced re-measure, §0ac.7) — RULED Q32: STAGED; D46 issued (amendment 2).**
 
 Full signature record and the consequences adopted:
-**`docs/DECISION-CARD-capx-director-open-rulings-2026-08-25.md` §5** (cards A/B/C/Y);
+**`docs/records/forecast/DECISION-CARD-capx-director-open-rulings-2026-08-25.md` §5** (cards A/B/C/Y);
 Q7–Q9 were ruled via in-session decision cards at r#13 and are recorded here + in §0j.3
 (execution of Q7 = lane D13).
 

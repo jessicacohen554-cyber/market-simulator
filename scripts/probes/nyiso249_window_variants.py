@@ -51,7 +51,7 @@ import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
-OUT = REPO / "results" / "calibration" / "_nyiso249_window_variants.json"
+OUT = REPO / "results" / "phase0" / "nyiso" / "_nyiso249_window_variants.json"
 REPORT_AT = (0.10, 0.25, 0.50, 0.75, 0.90, 0.99)
 
 

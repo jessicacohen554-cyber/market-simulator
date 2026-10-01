@@ -67,7 +67,7 @@ measurements off committed artifacts plus the primary record:
 | `results/calibration/nyiso159_lossarm_B/legitimacy_diagnostics.json` | D-1 / D-2 rows |
 | `data/raw/campd-unit-outages-NYISO.csv` + `market_sim.data.outages` | the overlay's own routing decision, run through the engine's function |
 
-Output: `results/calibration/_nyiso174_class_crosswalk_audit.json`.
+Output: `results/phase0/nyiso/_nyiso174_class_crosswalk_audit.json`.
 
 **Reproduction check, run before anything was restated.** On the *old*
 construction the probe reproduces nyiso-171 §2.3's committed A3 numbers
@@ -531,12 +531,12 @@ so any model-side reading of that object is currently unidentified.
 ## 8. Evidence
 
 * `scripts/probes/nyiso174_class_crosswalk_audit.py` — M1–M5, zero solve
-* `results/calibration/_nyiso174_class_crosswalk_audit.json` — full output
+* `results/phase0/nyiso/_nyiso174_class_crosswalk_audit.json` — full output
 * `scripts/lib/campd_measured_classes.py` — the corrected construction
 * `tests/unit/data/test_campd_measured_classes.py` — 19 tests, crosswalk-repair
   properties
-* Prior: `docs/FINDING-nyiso173-cc-availability-envelope-not-binding-2026-09-02.md`
-  §2.5, §5 · `docs/FINDING-nyiso172-st-gas-response-deficit-2026-09-01.md`
-  §3.4, §5 · `docs/FINDING-nyiso171-chp-floor-portfolio-artifact-2026-09-01.md`
-  §2.3, §5 · `docs/FINDING-nyiso170-merit-order-displacement-2026-09-01.md` §3 ·
-  `docs/FINDING-nyiso168-supply-curve-slope-anatomy-2026-09-01.md` §4
+* Prior: `docs/records/nyiso/FINDING-nyiso173-cc-availability-envelope-not-binding-2026-09-02.md`
+  §2.5, §5 · `docs/records/nyiso/FINDING-nyiso172-st-gas-response-deficit-2026-09-01.md`
+  §3.4, §5 · `docs/records/nyiso/FINDING-nyiso171-chp-floor-portfolio-artifact-2026-09-01.md`
+  §2.3, §5 · `docs/records/nyiso/FINDING-nyiso170-merit-order-displacement-2026-09-01.md` §3 ·
+  `docs/records/nyiso/FINDING-nyiso168-supply-curve-slope-anatomy-2026-09-01.md` §4

@@ -5,7 +5,7 @@ pre-rebase HEAD `69cd53d`; the 6 intervening main commits touched only CAISO
 artifacts and forecast docs). **Outgoing keeper:** `2026-07-31-nyiso105-chp-heat-rates`.
 **NEW KEEPER:** `2026-07-31-nyiso108-hydro-input-repair`
 (bundle `results/calibration/nyiso108_hydrorepair_B`).
-**Pre-registration:** `results/calibration/PREREG-nyiso108-hydro-input-repair-2026-07-31.md`,
+**Pre-registration:** `docs/records/nyiso/PREREG-nyiso108-hydro-input-repair-2026-07-31.md`,
 committed **and pushed** (PR #3235) before either arm solved.
 **Solves: 2** — one same-HEAD zero-delta control, one single-delta arm, three years each.
 

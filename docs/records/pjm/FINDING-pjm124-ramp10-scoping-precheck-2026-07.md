@@ -1,7 +1,7 @@
 # FINDING — pjm-124: `ramp10` deliverability scoping cannot tighten PJM's reserve balance (2026-07-26)
 
 **Verdict: framing 2 is REFUTED — NO SOLVE SPENT.** The candidate named in
-`docs/FINDING-pjm120-c3a-extreme-tail-depth-2026-07.md` §7 ("scope `ramp10`
+`docs/records/pjm/FINDING-pjm120-c3a-extreme-tail-depth-2026-07.md` §7 ("scope `ramp10`
 deliverability to genuinely committed-and-online capacity rather than the
 availability-scaled fleet") fails its own pre-registered K1 magnitude gate in
 **all three keeper years, unanimously**, by roughly a factor of three.
@@ -221,11 +221,11 @@ committed keeper sidecars directly.
 
 ## Pointers
 
-* Charter and ledger: `docs/handoffs/pjm-frontier-path-2026-07.md` §2–§4.
-* The framing this closes: `docs/FINDING-pjm120-c3a-extreme-tail-depth-2026-07.md`
+* Charter and ledger: `docs/records/pjm/pjm-frontier-path-2026-07.md` §2–§4.
+* The framing this closes: `docs/records/pjm/FINDING-pjm120-c3a-extreme-tail-depth-2026-07.md`
   §7, framing 2 (framing 1 stays open as pjm-125).
 * The LP-vs-MIP attribution this qualifies: pjm-82, and
-  `docs/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md` §B.3–B.4.
+  `docs/records/pjm/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md` §B.3–B.4.
 * Wiring precedent the framing would have used:
   `market_sim.pipeline.commitment.build_pjm_reserve_p1_prep` (path B) and
   `pjm_pergen_sync_reserve_caps`.

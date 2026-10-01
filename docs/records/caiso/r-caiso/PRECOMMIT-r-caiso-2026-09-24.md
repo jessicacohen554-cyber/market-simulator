@@ -1,6 +1,6 @@
 # PRECOMMIT — R-CAISO: CAISO re-solve on corrected backcast inputs (2026-09-24)
 
-Charter: `docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md` §5.3.1. Owner instruction
+Charter: `docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md` §5.3.1. Owner instruction
 (2026-09-24): every backcast year runs on the year-correct EIA-860 vintage, plant-specific heat rates (never
 the asset-class table), and granular CAMPD outage data. Precondition met: F1 (#6572) and F2 (#6569) merged;
 lane cut from `9210075392a128d14a5efb168ab1f9955a9b6946`. The parent solves nothing (rule 32(a)); every

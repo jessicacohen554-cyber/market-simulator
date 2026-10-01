@@ -63,7 +63,7 @@ its infeasible ramping is ~0.45 % of NYISO thermal energy against ~0.07 % of
 PJM's — i.e. relative to its own fleet NYISO is ramping infeasibly ~6× harder.
 
 Probe: `scripts/probes/_nyiso111_ramp_envelope_precheck.py` →
-`results/calibration/_nyiso111_ramp_precheck.json`.
+`results/phase0/nyiso/_nyiso111_ramp_precheck.json`.
 
 **This is a one-sided test.** Crossings PROVE the rows would bind; their
 absence would not prove inertness. It is evidence that the mechanism is live at

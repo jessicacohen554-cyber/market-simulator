@@ -97,7 +97,7 @@ branch, not a post-hoc rationalization.
 ## 2. The instrument (frozen construction)
 
 One read-only probe, `scripts/probes/_miso184_ladder_tail_methodology.py` →
-`results/calibration/_miso184_ladder_tail_methodology.json`, committed with
+`results/phase0/miso/_miso184_ladder_tail_methodology.json`, committed with
 this PREREG **before it is run**. Frozen constructions, carried verbatim:
 
 * **Row set:** the derive script's own — `load_joined()` (EIA-930 DIBA pooled

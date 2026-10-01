@@ -313,6 +313,6 @@ C3c-relevant volume lives.
   `cc_nameplate_summer_derate=True`, `pjm_seam_measured_ladder=True`).
 * Temp-derate refutation lineage: calibration-log 2026-07-10 (pjm-95 demotion,
   `scripts/probes/_pjm_temp_capability_envelope.py`); ERCOT closure 2026-07-09.
-* C3c winter half: `docs/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md` Part C.
+* C3c winter half: `docs/records/pjm/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md` Part C.
 * Probes for this doc: `scripts/probes/_pjm_july_cc_overrun_temp.py`,
   `scripts/probes/_pjm_cc_netgross_bases.py`.

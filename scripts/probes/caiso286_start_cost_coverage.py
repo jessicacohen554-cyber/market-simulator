@@ -1,6 +1,6 @@
 """caiso-286 — what the MEASURED CC start cost would hold in the belly. ZERO LP.
 
-Executes ``docs/PRECOMMIT-caiso286-cc-start-cost-2026-09-19.md`` section 7
+Executes ``docs/records/caiso/PRECOMMIT-caiso286-cc-start-cost-2026-09-19.md`` section 7
 verbatim. The declared value, the mapping rule, the escalation index and both
 verdict words were fixed and pushed
 (``7562f345d25eb96c7785f82b201c230f00f7402f``) **before this script was
@@ -18,7 +18,7 @@ distribution selects — actually holds.
 
 WHAT IT READS
 -------------
-* ``results/calibration/_caiso285_belly_2024.json`` — the frozen 876-hour belly
+* ``results/phase0/caiso/_caiso285_belly_2024.json`` — the frozen 876-hour belly
   set (``sha256[:16] = c5948fb0d43620a1``), re-verified here.
 * the caiso-285 instrumented bundle, recovered from its immutable SHA
   ``203124e310f7be4f806ad968d6cf5755f96bbc00``: the bit-packed P0 on/off
@@ -76,7 +76,7 @@ MIN_LOAD_FRAC = 0.26
 FUEL_TYPES = ("gas_cc", "gas_ct")
 BRIDGE_DECOMMIT = True
 
-BELLY = REPO / "results/calibration/_caiso285_belly_2024.json"
+BELLY = REPO / "results/phase0/caiso/_caiso285_belly_2024.json"
 BELLY_SHA16 = "c5948fb0d43620a1"
 PROBE_BUNDLE = REPO / "results/calibration/caiso285_instr_2024"
 PROBE_BUNDLE_SHA = "203124e310f7be4f806ad968d6cf5755f96bbc00"
@@ -361,7 +361,7 @@ def main(out_path: Path) -> None:
     n_belly = float(belly.size)
     report = {
         "lane": "caiso-286",
-        "precommit": "docs/PRECOMMIT-caiso286-cc-start-cost-2026-09-19.md",
+        "precommit": "docs/records/caiso/PRECOMMIT-caiso286-cc-start-cost-2026-09-19.md",
         "precommit_sha": "7562f345d25eb96c7785f82b201c230f00f7402f",
         "probe_bundle": str(PROBE_BUNDLE.relative_to(REPO)),
         "probe_bundle_recovered_from_sha": PROBE_BUNDLE_SHA,
@@ -477,7 +477,7 @@ def main(out_path: Path) -> None:
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument(
-        "--out", default="results/calibration/_caiso286_start_cost_coverage.json"
+        "--out", default="results/phase0/caiso/_caiso286_start_cost_coverage.json"
     )
     a = ap.parse_args()
     main(REPO / a.out)

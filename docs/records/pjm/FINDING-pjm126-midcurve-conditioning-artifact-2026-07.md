@@ -12,7 +12,7 @@ CT_FAST inversion collapses from **+10.00 to −0.85** — it reverses sign — 
 CC_LIKE's from **+0.35 to −0.20**.
 
 Criteria were committed before the run (`9409f7f`); result JSON in
-`results/calibration/pjm126_conditioning_precheck_2025.json`.
+`results/phase0/pjm/pjm126_conditioning_precheck_2025.json`.
 
 ---
 
@@ -151,7 +151,7 @@ other — a scope question for that memo, not for this probe.
 ```
 python scripts/data/fetch_pjm_energy_offers.py --years 2025    # ~3 h, ~142 MB
 python scripts/probes/pjm126_midcurve_conditioning_precheck.py \
-    --years 2025 --json-out results/calibration/pjm126_conditioning_precheck_2025.json
+    --years 2025 --json-out results/phase0/pjm/pjm126_conditioning_precheck_2025.json
 ```
 
 The seasonal-composition table (§2) needs no offer corpus at all — it is the
@@ -159,8 +159,8 @@ EIA-930 net-load frame plus the month→season map.
 
 ## Pointers
 
-* Charter and ledger: `docs/handoffs/pjm-frontier-path-2026-07.md` §3 Lane 2.
-* The generalization this narrows: `docs/FINDING-pjm123-composite-precheck-2026-07.md` §3.
+* Charter and ledger: `docs/records/pjm/pjm-frontier-path-2026-07.md` §3 Lane 2.
+* The generalization this narrows: `docs/records/pjm/FINDING-pjm123-composite-precheck-2026-07.md` §3.
 * The frozen derive under review: `scripts/data/derive_pjm_offer_midcurve.py`
   (and its shared-edge sibling `derive_pjm_offer_surface.py`).
-* Why the lane matters now: `docs/FINDING-pjm125-commitment-constraint-precheck-2026-07.md` §5.
+* Why the lane matters now: `docs/records/pjm/FINDING-pjm125-commitment-constraint-precheck-2026-07.md` §5.

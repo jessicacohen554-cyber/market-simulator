@@ -4,7 +4,7 @@
 `2026-08-30-nyiso-159-loss-surface` (determination **NOT-YET** on
 {C3a-2025 −11.5 %, C3c}) · **Solves run: ZERO.**
 **No parameter was touched, no band was swept, no run was registered.**
-**Pre-registration:** `results/calibration/PREREG-nyiso175-ct-conduct-and-d2-basis.md`,
+**Pre-registration:** `docs/records/nyiso/PREREG-nyiso175-ct-conduct-and-d2-basis.md`,
 committed with the probe at `6c3f0cf7` **before either was run**.
 
 ---
@@ -69,7 +69,7 @@ committed artifacts plus the primary record:
 | `data/raw/_processed-legacy/thermal_tranches_NYISO.csv` | the CHP floor level source |
 | `scripts/data/derive_thermal_tranches.py` | `_fleet_nameplate_and_group`, the attribution rule under audit |
 
-Output: `results/calibration/_nyiso175_ct_conduct_and_d2_basis.json`.
+Output: `results/phase0/nyiso/_nyiso175_ct_conduct_and_d2_basis.json`.
 
 ### 1.1 Reproduction of the inherited probes, run before anything was restated
 
@@ -729,18 +729,18 @@ heat-rate refutation of CAMPD's `"Combined cycle"` label (correction 3).
 
 ## 10. Evidence
 
-* `results/calibration/PREREG-nyiso175-ct-conduct-and-d2-basis.md` — committed
+* `docs/records/nyiso/PREREG-nyiso175-ct-conduct-and-d2-basis.md` — committed
   with the probe at `6c3f0cf7`, before either ran
 * `scripts/probes/nyiso175_ct_conduct_and_d2_basis.py` — A / B / B6 / B7 / C +
   the rule 19 enumeration, zero solve
-* `results/calibration/_nyiso175_ct_conduct_and_d2_basis.json` — full output
-* Prior: `docs/FINDING-nyiso174-east-river-class-crosswalk-2026-09-02.md`
-  §4.3, §5, §6 · `docs/FINDING-nyiso173-cc-availability-envelope-not-binding-2026-09-02.md`
-  §2.5 · `docs/FINDING-nyiso171-chp-floor-portfolio-artifact-2026-09-01.md`
-  §2.5–§2.6 · `docs/FINDING-nyiso170-merit-order-displacement-2026-09-01.md`
-  §3, §5 · `docs/FINDING-nyiso168-supply-curve-slope-anatomy-2026-09-01.md`
-  §2, §6.3 · `docs/FINDING-nyiso96-ct-start-frequency-2026-07-29.md` §2, §5 ·
-  `docs/FINDING-nyiso91-ct-start-frequency-2026-07-27.md` §5–§6 ·
-  `docs/FINDING-nyiso90-ct-block-commitment-2026-07-27.md` §2 ·
-  `results/calibration/FINDING-nyiso120-eastriver-scope-gate-2026-08-04.md`
+* `results/phase0/nyiso/_nyiso175_ct_conduct_and_d2_basis.json` — full output
+* Prior: `docs/records/nyiso/FINDING-nyiso174-east-river-class-crosswalk-2026-09-02.md`
+  §4.3, §5, §6 · `docs/records/nyiso/FINDING-nyiso173-cc-availability-envelope-not-binding-2026-09-02.md`
+  §2.5 · `docs/records/nyiso/FINDING-nyiso171-chp-floor-portfolio-artifact-2026-09-01.md`
+  §2.5–§2.6 · `docs/records/nyiso/FINDING-nyiso170-merit-order-displacement-2026-09-01.md`
+  §3, §5 · `docs/records/nyiso/FINDING-nyiso168-supply-curve-slope-anatomy-2026-09-01.md`
+  §2, §6.3 · `docs/records/nyiso/FINDING-nyiso96-ct-start-frequency-2026-07-29.md` §2, §5 ·
+  `docs/records/nyiso/FINDING-nyiso91-ct-start-frequency-2026-07-27.md` §5–§6 ·
+  `docs/records/nyiso/FINDING-nyiso90-ct-block-commitment-2026-07-27.md` §2 ·
+  `docs/records/nyiso/FINDING-nyiso120-eastriver-scope-gate-2026-08-04.md`
   KE1–KE3

@@ -1,6 +1,6 @@
 # RESULT — hydro-5: hydro dispatch physics, SPP + NEISO + MISO (2026-09-22)
 
-Companion to `docs/PRECOMMIT-hydro-5-2026-09-22.md` (phase 0, gates, G-DRIFT, launch record),
+Companion to `docs/records/misc/PRECOMMIT-hydro-5-2026-09-22.md` (phase 0, gates, G-DRIFT, launch record),
 pushed and pinned at `fda9ece3` before any solve. **This doc carries every number the lane
 cites.** Read-outs: `scripts/probes/_hydro5_arm_readout.py` (G1–G3),
 `scripts/screen_collateral_gate.py` per arm-year (G4, committed bench held fixed).

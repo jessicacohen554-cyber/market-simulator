@@ -7,7 +7,7 @@ Rule 32 ``[R-SHARD]`` (a): never solves.
             for every unit; ``mc`` moves only on coal tranches of plants with a
             measured must-run floor, and only on ``_committed`` / ``_econ*``;
             each moved tranche's heat rate equals the plant average x the
-            artifact ratio. Writes ``docs/handoffs/r-soco/soco81_fleet_census.json``.
+            artifact ratio. Writes ``docs/records/soco/r-soco/soco81_fleet_census.json``.
 
 ``greedy`` — price-taker greedy, baseline-differenced. For each moved plant, the
             tranche set is dispatched against its zone's committed P1 price at the
@@ -49,7 +49,7 @@ KEEPER = "2026-09-27-soco76-egrid-identity-hr"
 SPAN = _ROOT / "results/calibration/soco76_span"
 YEARS = (2019, 2020, 2021, 2022, 2023, 2024, 2025)
 T = 8760
-OUT = _ROOT / "docs/handoffs/r-soco"
+OUT = _ROOT / "docs/records/soco/r-soco"
 FLAG = "coal_econ_marginal_hr_two_sided"
 RATIO = _ROOT / "data/raw/_processed-legacy/coal_incremental_hr_ratio_SOCO.csv"
 RECIPE_SETS = (

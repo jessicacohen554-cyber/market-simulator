@@ -5,7 +5,7 @@
 (`results/calibration/nyiso177_vintage_B1p`) — determination **NOT-YET**, target grade 5, fail
 set **{C1-2023 `ST_GAS` +3.86 TWh, C3a-2025 −11.2 %, C3c}**. **Unchanged.** No keeper, no
 determination, no gate, no score and no parameter moved.
-**Pre-registration:** `results/calibration/PREREG-nyiso181-itm-degeneracy.md`, committed with its
+**Pre-registration:** `docs/records/nyiso/PREREG-nyiso181-itm-degeneracy.md`, committed with its
 probes **before either ran** (`0d508cdb`).
 
 ---

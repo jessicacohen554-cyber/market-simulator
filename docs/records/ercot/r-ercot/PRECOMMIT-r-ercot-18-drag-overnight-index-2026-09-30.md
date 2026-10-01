@@ -64,7 +64,7 @@ New default-off flag `netload_drag_prior_year_commitment_index`. It is an alloca
 
 ## 4. Phase 0 — fleet delta through the real code path (zero LP)
 
-Probe: `scripts/probes/_r_ercot18_drag_index_delta.py` → `docs/handoffs/r-ercot/r_ercot18_drag_index_delta.json`. It rebuilds each year fleet-only through `replay_keeper`'s recipe, with the flag off vs on. Checks: pmax, availability, mc and every non-drag min_gen are byte-identical; the row sets are identical.
+Probe: `scripts/probes/_r_ercot18_drag_index_delta.py` → `docs/records/ercot/r-ercot/r_ercot18_drag_index_delta.json`. It rebuilds each year fleet-only through `replay_keeper`'s recipe, with the flag off vs on. Checks: pmax, availability, mc and every non-drag min_gen are byte-identical; the row sets are identical.
 
 Nominal drag floor energy, TWh (off → on):
 
@@ -86,7 +86,7 @@ Exactly one file changed on the backcast path: `scripts/lib/forecast_parity_regi
 
 ## 6. Arm
 
-Seven shards (rule 36), one per year. Each runs `replay_keeper.py results/calibration/r_ercot17_span --years <Y> --set netload_drag_prior_year_commitment_index=true`. Prompts are in `docs/handoffs/r-ercot/SHARD-PROMPTS-r-ercot-18.md`. 2019 is solved as a byte-identity check of the fail-closed path.
+Seven shards (rule 36), one per year. Each runs `replay_keeper.py results/calibration/r_ercot17_span --years <Y> --set netload_drag_prior_year_commitment_index=true`. Prompts are in `docs/records/ercot/r-ercot/SHARD-PROMPTS-r-ercot-18.md`. 2019 is solved as a byte-identity check of the fail-closed path.
 
 ## 7. Predictions (written before solving)
 

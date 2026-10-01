@@ -4,7 +4,7 @@
 `claude/capx-d66-pjm-supply-census-wet2pd`. **ZERO LP — no solve of any kind was run, and none is
 authorized in this lane.** Every model number is read from committed artifacts; every market number
 is a published observable (rule 13). Instrument and output:
-`docs/handoffs/d66/supply-census-2026-09-06.{py,json}`. **Nothing built, nothing armed, no field, no
+`docs/records/forecast/d66/supply-census-2026-09-06.{py,json}`. **Nothing built, nothing armed, no field, no
 default, no matrix cell, no board byte, no keeper, no bundle** (§5).
 
 DATA PROFILE: `pjm` (full clone; `data/clean` is EMPTY in this session and was deliberately NOT
@@ -356,7 +356,7 @@ large, and the residual D57 measured is the small difference between two much la
 - **Cells (28b):** **no mechanism was tested — no probe, no candidate, no keeper, no solve — so no
   cell moves.** `capacity_market_supply_clearing` PJM stays `fc: "K"` on the D57 §8.1 ruling.
 - **New mechanism (28c):** none added. The §8 cards add their own rows in their own build PRs.
-- **Records:** this finding + `docs/handoffs/d66/supply-census-2026-09-06.{py,json}`. No bundle, no
+- **Records:** this finding + `docs/records/forecast/d66/supply-census-2026-09-06.{py,json}`. No bundle, no
   registry sidecar, no board row, no keeper, no marker, no shard, no `data/raw` file (§8 names the
   intake as a successor rather than doing it, so the lane's "changes NOTHING" holds literally).
 - **Collision:** docs only, and this lane wrote **no source file at all** — disjoint by construction

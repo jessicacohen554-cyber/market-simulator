@@ -446,7 +446,7 @@ Steps 3 and 4 of the charter sequence commit nothing, for the reasons in §9.
 ## 2026-09-14 — NWPP-30: unit outage windows + thermal tranches landed (frozen derives)
 
 Lane NWPP-30 `[OPUS]`, branch `claude/nwpp-30-outages-tranches-q7m4`, base `d54cd9c5`.
-`docs/handoffs/FINDING-nwpp-30-2026-09-14.md`.
+`docs/records/nwpp/FINDING-nwpp-30-2026-09-14.md`.
 
 **Coverage, measured now that NWPP-11 has landed** (NWPP-10 §2 item (8) projected it):
 CAMPD reaches **30.15 %** of the 98,238.1 MW footprint nameplate (projected 30.98 %,

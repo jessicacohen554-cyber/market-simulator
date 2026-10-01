@@ -659,7 +659,7 @@ validating the mechanism. What the probe legitimately establishes:
 
 ```
 Implement the emissions mass-cap / cap-and-trade LP constraint per
-docs/handoffs/emissions-mass-cap-plan-2026-07.md. Read that plan and CLAUDE.md first
+docs/records/misc/emissions-mass-cap-plan-2026-07.md. Read that plan and CLAUDE.md first
 (rules 1, 2, 5, 9, 13/14, 22, 24). Work on branch phase-2/emissions-mass-cap. Do NOT
 solve, score, or intake any 2022 or H1-2026 data (rule 22).
 

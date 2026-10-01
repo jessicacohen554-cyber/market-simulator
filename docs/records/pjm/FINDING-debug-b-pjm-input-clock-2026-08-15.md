@@ -2,7 +2,7 @@
 
 **Date:** 2026-08-15 · **Lane:** DEBUG-B (measured-input repair, solve-affecting)
 · **Head:** `origin/main` @ `c447199` · **Branch:** `claude/debug-b-pjm-input-clock-kcwiwn`
-**Charter:** `docs/handoffs/debug-b-pjm-input-clock-charter-2026-08.md`, written by DEBUG-A
+**Charter:** `docs/records/pjm/debug-b-pjm-input-clock-charter-2026-08.md`, written by DEBUG-A
 and merged in #3937. **Authority:** owner decision D-5,
 `docs/model-audit-release-plan-2026-08.md` §6 decision 2 (SIGNED 2026-08-13) — chartered
 without a further owner round-trip.

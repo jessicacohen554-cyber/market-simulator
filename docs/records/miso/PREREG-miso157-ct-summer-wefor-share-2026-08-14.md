@@ -196,7 +196,7 @@ one phenomenon.
 ## 4. The measurement — two legs, both fixed here
 
 **Instrument.** `scripts/probes/_miso157_ct_summer_wefor.py`, record
-`results/calibration/_miso157_ct_summer_wefor.json`. Production types only, the
+`results/phase0/miso/_miso157_ct_summer_wefor.json`. Production types only, the
 keeper's own config, `weather_year` pinned per solve year.
 
 ### Leg 1 — SHAPE: is 0.30 supported by measurement?

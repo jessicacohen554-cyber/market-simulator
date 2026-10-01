@@ -7,7 +7,7 @@ by this section, no marker moved, no mechanism proposed for arming.**
 **ZERO LP.** Every input is a committed artifact.
 **Instruments:** `scripts/probes/nyiso218_hydro_shape_decomposition.py` (committed) plus two
 census scripts whose full records are committed as
-`results/calibration/_nyiso218_hydro_envelope_census.json` and
+`results/phase0/nyiso/_nyiso218_hydro_envelope_census.json` and
 `_nyiso218_hydro_ceiling_mechanism.json`.
 
 **The handoff names `scripts/probes/nyiso92_hourly_r_decomposition.py` as "THE instrument" for this

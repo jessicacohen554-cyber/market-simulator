@@ -39,12 +39,12 @@ file *on disk at the coordinator*. So every shard copies exactly two files —
 `full_horizon_summary.json` and `run_config.json`, a few KB — to
 
 ```
-docs/handoffs/scn-ws5b-nyiso/<CASE>/
+docs/records/forecast/scn-ws5b-nyiso/<CASE>/
 ```
 
 and commits **those**. No shard runs `git add -f`, and **no shard edits `.gitignore`**. The
 mirror is the lane's transport and its provenance attachment (the same convention this lane's
-Stage-A `docs/handoffs/scn-ws5a-policy-nyiso/score_gates_2026-09-06.json` used); it is **not** a
+Stage-A `docs/records/forecast/scn-ws5a-policy-nyiso/score_gates_2026-09-06.json` used); it is **not** a
 second copy of a bundle — the bundle itself, all of it, stays on local disk in each shard,
 undeleted, per rule 31.
 
@@ -73,7 +73,7 @@ that is a one-line ignore-rule change and a re-commit — **but this lane will n
 
 ```
 python3 scripts/register_forecast_run.py \
-  --summary docs/handoffs/scn-ws5b-nyiso/<CASE>/full_horizon_summary.json \
+  --summary docs/records/forecast/scn-ws5b-nyiso/<CASE>/full_horizon_summary.json \
   --label scn-campaign-stageb-2026-09-07-<slug> --kind scenario
 ```
 
@@ -109,4 +109,4 @@ substitution question is routed to SCN-DESK there. **25 solve-years are not spen
 
 ---
 
-*Pushed before any leg returned. Parent: `docs/handoffs/PRECOMMIT-scn-ws5b-nyiso-2026-09-07.md`.*
+*Pushed before any leg returned. Parent: `docs/records/forecast/PRECOMMIT-scn-ws5b-nyiso-2026-09-07.md`.*

@@ -3,9 +3,9 @@
 **Lane** SPP-27 · **Registered run** `2026-09-10-spp-27-commitment-grain`, bundle
 `results/calibration/spp27_span` · **Control** `2026-09-10-spp-64-stgas-selfcommit` /
 `results/calibration/spp64_span`, **differenced, never re-solved** (rule 29(b) form 4) ·
-**Charter** `docs/handoffs/PRECOMMIT-spp-27-commitment-grain-2026-09-10.md` (pushed at `32dfd75e`,
-before any LP) · **Screen** `docs/RESULT-spp27-screen-2023.md` (six of six STOP gates PASS) ·
-**Shard report** `docs/SHARDREPORT-spp27-span.md` · **Object** card **R-be**.
+**Charter** `docs/records/spp/PRECOMMIT-spp-27-commitment-grain-2026-09-10.md` (pushed at `32dfd75e`,
+before any LP) · **Screen** `docs/records/spp/RESULT-spp27-screen-2023.md` (six of six STOP gates PASS) ·
+**Shard report** `docs/records/spp/SHARDREPORT-spp27-span.md` · **Object** card **R-be**.
 
 **SCORER'S DETERMINATION: `CALIBRATED`** — grade 7 of 8, **0 fails**, 1 ledgered C3c caveat.
 **Identical to the keeper on every scored criterion**, both re-scored live at HEAD (rubric v3.7).
@@ -30,7 +30,7 @@ replay_keeper.py results/calibration/spp64_span --years 2023 2024 2025 \
 Exit 0, **499 s (8 min 19 s)**. Rule 32 `[R-SHARD]`: the parent ran **no LP** — phase 0, the
 scoring, the composition and this document are the parent's; the solve, the attestation and the
 registration were the shard's (the seam deviation is declared in
-`docs/handoffs/ADDENDUM-spp-27-registration-seam-2026-09-10.md`, pushed before the span).
+`docs/records/spp/ADDENDUM-spp-27-registration-seam-2026-09-10.md`, pushed before the span).
 
 **Config identity — EXACTLY ONE differing key across the entire `scenario_config`:**
 `mustrun_window_commitment_grain`, control `None` (the declared default materializing for a field

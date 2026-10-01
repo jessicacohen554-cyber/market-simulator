@@ -65,7 +65,7 @@ blind, not because the forcing stopped**. A unit test pins the opposite property
 
 ## 2. THE DEFECT, MEASURED ON COMMITTED ARTIFACTS (zero LP)
 
-Full record: `docs/handoffs/FINDING-ercot259-c8-allocation-2026-09-08.md`.
+Full record: `docs/records/ercot/FINDING-ercot259-c8-allocation-2026-09-08.md`.
 
 `st_netload_drag` is convicted by the D-4 **per-unit conduct rider** of flooring
 a plant whose meter reads zero in **every scored year** — 3452 Lake Hubbard in

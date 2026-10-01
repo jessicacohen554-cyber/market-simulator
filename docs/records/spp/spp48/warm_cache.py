@@ -12,7 +12,7 @@ It changes NO value: it calls the builder's own
 :func:`~scripts.lib.wind_shape.fetch_nasa_power_ws50m` with the builder's own
 cache directory, so warm output is byte-identical to cold output (PRECOMMIT P7).
 
-usage: python docs/handoffs/spp48/warm_cache.py SPP MISO --years 2023 2024 2025
+usage: python docs/records/spp/spp48/warm_cache.py SPP MISO --years 2023 2024 2025
 """
 
 from __future__ import annotations

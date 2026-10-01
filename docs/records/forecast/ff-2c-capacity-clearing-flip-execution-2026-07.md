@@ -1,12 +1,12 @@
 # FF-2C — capacity_market_clearing flip execution (PJM/MISO/CAISO/NEISO) + R4 — 2026-07-20
 
 **Lane.** F-9 / RC-3A of the flip-gate lane
-(`docs/handoffs/forecast-retirement-calibration-plan-2026-07.md` §2.3;
+(`docs/records/forecast/forecast-retirement-calibration-plan-2026-07.md` §2.3;
 `docs/forecast-development-plan-2026-07.md` §7 binds). Executes the owner's
 2026-07-19 sign-off (via the FF wave manager, turn 31) to **flip the CR-1
 sloped capacity demand curve ON by default for PJM, MISO, CAISO, NEISO** —
 the decision the RC-2B per-ISO flip memo
-(`docs/handoffs/capacity-clearing-flip-memo-2026-07-16.md`) put to the owner
+(`docs/records/misc/capacity-clearing-flip-memo-2026-07-16.md`) put to the owner
 and the §5 D1=3 re-probe unblocked. **NYISO is excluded** this session (its
 train-tier determination is NOT-YET — nyiso-65, marker withdrawn — and its
 flip-gate pair evidence predates the corrected outage envelope, a rule-11
@@ -93,14 +93,14 @@ not re-grade):
   (actual 6.885; +44% overshoot), recall 0 → 76%; in the one year its position
   entered the priced region (2024) it paid 112 $/kW-yr vs the 10.6 cleared;
   the coupled BLK-10 backstop fired 6.43 GW gas_ct in one 2025 step.
-  (`docs/handoffs/position-calibration-findings-2026-07-16.md` §1.)
+  (`docs/records/misc/position-calibration-findings-2026-07-16.md` §1.)
 - **MISO (RC-1A, seasonal grain, D1=1):** coal 0 → 11.809 GW (actual 10.934;
   +8%), false-retire 0.874 GW band-PASS; the 2025 shortage year stays
   under-priced (24.5 vs 243.3 cleared at cap) — a one-sided position residual.
 - **NEISO (FF-2B first capacity-hindcast pair, 2026-07-19):** curve-ON retired
   9.3 GW (+880%, 8.4 GW false) vs 0.002 GW fixed — the BLK-9/BLK-10 over-fire
   signature, now measured for NEISO for the first time.
-  (`docs/handoffs/ff-2b-adequacy-basis-2026-07.md` §6.)
+  (`docs/records/forecast/ff-2b-adequacy-basis-2026-07.md` §6.)
 
 The consistent finding: the flip **trades the fixed mode's 0-retirement /
 nuclear-inversion pathology (BLK-9) for a curve-ON over-retirement wave

@@ -1,7 +1,7 @@
 {
  "session": "ercot-239 round 3",
  "bundle": "ercot234_eastex_identity (forward keeper)",
- "precommit": "docs/PRECOMMIT-ercot239-h3068-phase0-2026-08-30.md",
+ "precommit": "docs/records/ercot/PRECOMMIT-ercot239-h3068-phase0-2026-08-30.md",
  "v0": {
   "model_h3068": 798.2,
   "actual_h3068": 110.41

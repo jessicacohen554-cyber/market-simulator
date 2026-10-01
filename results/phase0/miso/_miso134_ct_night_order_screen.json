@@ -2,7 +2,7 @@
  "session": "miso-134",
  "keeper": "2026-08-05-miso-132b-cc-committed",
  "bundle": "results/calibration/miso132_ccmin_B",
- "prereg": "results/calibration/PREREG-miso134-ct-peaker-night-order-screen-2026-08-05.md",
+ "prereg": "docs/records/miso/PREREG-miso134-ct-peaker-night-order-screen-2026-08-05.md",
  "prereg_pushed_at": "06918ca1",
  "note": "pre-registered ORDER screen; NO LP solved. S-4 declared UNGATED (descriptive). S-6 gates the C7 claim only.",
  "screen": {

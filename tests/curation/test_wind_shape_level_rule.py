@@ -4,7 +4,7 @@ These pin R-LEVEL — each zone's hourly series is the capacity-weighted mean ov
 its WHOLE operable fleet — and the property that makes it the right rule: the
 construction is **partition-consistent**, so re-cutting one zone's boundary
 cannot move any other zone's redistribution weight. That is the defect
-``docs/handoffs/FINDING-spp-54-2026-09-07.md`` §4.2 (C-4) measured under the old
+``docs/records/spp/FINDING-spp-54-2026-09-07.md`` §4.2 (C-4) measured under the old
 six-largest-plants sampling rule, and the reason SPP-54's C-3 stopped at h8509.
 
 Every test here is offline: the reanalysis fetch is replaced by a deterministic

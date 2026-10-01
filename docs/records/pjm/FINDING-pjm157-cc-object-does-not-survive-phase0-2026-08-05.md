@@ -132,7 +132,7 @@ fleet must serve or displace.
 
 The reference row is the mechanism's **own rule-13 admissibility argument**
 (`virtual_bids.py` module docstring, citing pjm-105 /
-`docs/FINDING-pjm-midmerit-level-2026-07.md` §7): *"the annual net of the whole
+`docs/records/pjm/FINDING-pjm-midmerit-level-2026-07.md` §7): *"the annual net of the whole
 curve cleared at actual DA prices is ≈ 0 … vs the one-sided clamp's
 +10.3/+14.8/+17.2 TWh of phantom demand"*. That near-zero is precisely what
 distinguishes the symmetric net form from the **condemned** pjm-101 gross-INC and

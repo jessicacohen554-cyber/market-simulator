@@ -111,7 +111,7 @@ as the shipped panel already does. Any price read voids the session.
   the session's date) — committed and pushed BEFORE the filtered extract is built,
   restating these gates unchanged and declaring any new threshold per G-LOYO.
 * Probe + record: `scripts/probes/_caiso192_overlay_identification.py`,
-  `results/calibration/_caiso192_overlay_identification.json` — per-span
+  `results/phase0/caiso/_caiso192_overlay_identification.json` — per-span
   classification, out-of-merit shares, per-year post-filter rates, LOYO table.
 * Run bundles `caiso192_l1_control`, `caiso192_l1_overlay`.
 * `results/calibration/FINDING-caiso192-overlay-identification-2026-08-12.md` with

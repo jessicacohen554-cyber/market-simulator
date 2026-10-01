@@ -3,7 +3,7 @@
 **Governs:** `ADDENDUM-miso246-my-own-gate-G-PARSE-failed-because-main-moved-under-it-2026-09-08.md`
 §4 `M-a4` and, through it, the classification of PREREG item **(a)**. **`G-PARSE′`, `G-MODE`,
 `G-ISO`, `G-BASIS`, `G-BUS`, `G-RECON`, §3a's bar, `M-a1`, `M-a2`, `M-b1`, `M-b2` and `M-c1` are
-UNTOUCHED.** Machine record: `results/calibration/_miso246_lever_queue_census_phase0.json`,
+UNTOUCHED.** Machine record: `results/phase0/miso/_miso246_lever_queue_census_phase0.json`,
 provenance-stamped at HEAD **`c4ba68a1`**, tree clean.
 
 ---

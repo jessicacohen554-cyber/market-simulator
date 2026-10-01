@@ -40,7 +40,7 @@ NEISO backcast can use *instead of* the CAMPD fallback.
 | `src/market_sim/data/neiso_operable_capacity.py` | loader + `neiso_thermal_availability_series(year, hours)` — the consumption API |
 | `tests/test_build_neiso_operable_capacity.py` | parser + loader-math test (no network, no LP) |
 
-**Ships as a patch** (`docs/handoffs/patches/neiso-operable-capacity-wiring.patch`,
+**Ships as a patch** (`docs/records/misc/patches/neiso-operable-capacity-wiring.patch`,
 the oversized-core-file transport — `scenarios.py`/`fleet.py` are ~0.5 MB each,
 too large for the API push, `git push` is forbidden). Purely additive; applies
 cleanly onto pristine `origin/main`; verified end-to-end this session:
@@ -51,7 +51,7 @@ cleanly onto pristine `origin/main`; verified end-to-end this session:
 | `data.fleet.generators_to_fleet_arrays` block (+79) | applies the measured fleet availability, superseding the CAMPD derate for covered thermal classes |
 
 Regenerate: `python scripts/data/fetch_neiso_morning_report.py && python scripts/data/build_neiso_operable_capacity.py`.
-Apply the wiring after merge: `git apply docs/handoffs/patches/neiso-operable-capacity-wiring.patch`.
+Apply the wiring after merge: `git apply docs/records/misc/patches/neiso-operable-capacity-wiring.patch`.
 
 ## Design (mirrors the ERCOT DAM-availability precedent)
 

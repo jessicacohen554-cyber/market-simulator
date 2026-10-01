@@ -2,7 +2,7 @@
 
 WRITTEN AND COMMITTED BEFORE ANY LEG LANDED: a kill condition coded after the
 numbers are in hand can be written to fit them. Every threshold below is
-transcribed from ``docs/handoffs/PRECOMMIT-nwpp-47-2026-09-22.md`` §4-§5.
+transcribed from ``docs/records/nwpp/PRECOMMIT-nwpp-47-2026-09-22.md`` §4-§5.
 
 The arm (``nwpp_grid_carried_wind_served``) changes ONE input: it adds GRID's
 pool-carried wind back onto the served schedule, raising the LP's energy

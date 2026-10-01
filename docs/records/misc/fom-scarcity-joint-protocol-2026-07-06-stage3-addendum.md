@@ -97,7 +97,7 @@ requirement match the physical adequacy the dispatch shows?), **not** an FOM or 
 revenue-stack tuning — and it lives in `capacity.py`, which is quiet this wave
 (recorded as a recommendation, per the no-model-code-changes scope guard).
 
-*Grid JSON: `docs/handoffs/fom-scarcity-grid-2026-07-06-stage3-backstop-off.json`.
+*Grid JSON: `docs/records/misc/fom-scarcity-grid-2026-07-06-stage3-backstop-off.json`.
 Produced 2026-07-06, W2-P3 Stage 3. Harness variant only; no model default or
 `capacity.py` change.*
 </content>

@@ -4,7 +4,7 @@
   "arm": "/home/user/market-simulator/results/calibration/ercot215_decontam_B",
   "control": "/home/user/market-simulator/results/calibration/ercot215_control_A",
   "keeper": "/home/user/market-simulator/results/calibration/ercot213_anchor_B",
-  "counterfactual": "/home/user/market-simulator/results/calibration/ercot214_gspur_phase0.json",
+  "counterfactual": "/home/user/market-simulator/results/phase0/ercot/ercot214_gspur_phase0.json",
   "gate": "PRECOMMIT-ercot215-counterpart-decontamination-2026-08-17.md \u00a73 G-EXACT",
   "voll": 5000.0
  },

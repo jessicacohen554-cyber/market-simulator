@@ -347,7 +347,7 @@ bear on this substitution, but it is a genuine demand-input gap and a future
 
 ## 7. Files
 
-* pre-registration `results/calibration/PRECHECK-caiso172-path15-load-split-2026-08-04.md`
+* pre-registration `docs/records/caiso/PRECHECK-caiso172-path15-load-split-2026-08-04.md`
 * survey probe `scripts/probes/_caiso172_subtac_load_survey.py`
 * frozen derive `scripts/data/derive_caiso_path15_load_split.py`
 * derived artifact `data/raw/zone-specific-demand/CAISO/CAISO_path15_load_split.{csv,json}`

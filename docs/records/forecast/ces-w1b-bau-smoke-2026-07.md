@@ -4,7 +4,7 @@
 `scripts/check_forecast_invariants.py`. **ERCOT: 14/14 PASS.** **PJM: 12 PASS /
 1 FAIL (I7 reliability floor) / 1 WARN (I12, derivative)** — the I7 FAIL is a
 structural adequacy-accounting gap diagnosed below (B1), reported per the W1-B
-charter, not fixed. Plan: `docs/handoffs/national-ces-eac-premium-plan-2026-07.md`
+charter, not fixed. Plan: `docs/records/forecast/national-ces-eac-premium-plan-2026-07.md`
 (v2, §0 gap 4, §7, §8 W1-B). Branch: `claude/wave-1b-ces-eac-premium-p1stlx`.
 
 PJM's first-ever forecast-mode run otherwise completes end-to-end on pure

@@ -1,6 +1,6 @@
 {
  "session": "miso-127",
- "prereg": "results/calibration/PREREG-miso127-takeorpay-period-budget-2026-08-04.md",
+ "prereg": "docs/records/miso/PREREG-miso127-takeorpay-period-budget-2026-08-04.md",
  "incumbent_keeper": {
   "bundle": "miso126_steampart_B",
   "run_id": "2026-08-04-miso-126-steampart-b"

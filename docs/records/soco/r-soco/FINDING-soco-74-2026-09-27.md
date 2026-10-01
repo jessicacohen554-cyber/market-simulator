@@ -104,7 +104,7 @@ Delivered $/MMBtu, contract vs spot, wherever both exist in the same plant-year:
   obligation is observable, SOCO's contracted tons tracked burn in 2020, and the family's scope misses the econ-tranche
   object. No LP was built.
   - **What would reopen it:** a plant-grain contractual minimum-quantity source for Georgia Power / Alabama Power /
-    Mississippi Power / Gulf Power, of the kind MISO's standing ask `docs/handoffs/miso-coal-contract-tonnage-data-ask-2026-07.md`
+    Mississippi Power / Gulf Power, of the kind MISO's standing ask `docs/records/miso/miso-coal-contract-tonnage-data-ask-2026-07.md`
     describes. Georgia PSC fuel-case filings are the obvious lead to check. That is a data intake, not a solve.
 - **Not greedied.** Task 1 says to stop if the split is not identifiable. The thinnest-row table was not produced
   because no field was admitted.

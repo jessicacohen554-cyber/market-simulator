@@ -1,8 +1,8 @@
 # FINDING — NYISO-NEXT-15 phase 0: the pooled import node lands imports on the wrong side of Central East (ZERO LP)
 
 - **Session:** NYISO-NEXT-15, the orchestrator. No LP, no shard.
-- **Keeper read:** `2026-09-30-nyisonext14-total-east-span` + stamped 2021. Its P1 network/system sidecars were read from the NEXT-14 leg commits (provenance SHAs: `docs/RESULT-nyiso-next14-total-east-cutset-2026-09-30.md` §3).
-- **Probe:** `scripts/probes/nyisonext15_landing_phase0.py` → `results/calibration/_nyisonext15_phase0.json`.
+- **Keeper read:** `2026-09-30-nyisonext14-total-east-span` + stamped 2021. Its P1 network/system sidecars were read from the NEXT-14 leg commits (provenance SHAs: `docs/records/nyiso/RESULT-nyiso-next14-total-east-cutset-2026-09-30.md` §3).
+- **Probe:** `scripts/probes/nyisonext15_landing_phase0.py` → `results/phase0/nyiso/_nyisonext15_phase0.json`.
 - **Question (queue item 1):** why does the Total-East link bind in the wrong hours, with a $2–8 spread where the market shows $20–56?
 
 ## 1. The market's Central East binds when Total East flow is high, and the model's link carries too little then

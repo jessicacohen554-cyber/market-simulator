@@ -2,7 +2,7 @@
 
 **Lane:** the PJM re-tune opened by pjm-129's `NOT-YET`, continued from pjm-130.
 Charter (pre-registered, committed as `e454b87` **before** the probe was run):
-`docs/handoffs/pjm-131-gate1-arm-charter-2026-07.md`.
+`docs/records/pjm/pjm-131-gate1-arm-charter-2026-07.md`.
 **No LP was solved.** Every verdict below comes from a rule committed before the
 measurement that decides it.
 
@@ -215,9 +215,9 @@ PYTHONPATH=. .venv/bin/python scripts/data/fetch_pjm_da_virtuals.py \
     --years 2023 2024 2025 --feeds hrl_da_incs_decs        # all 36 months
 PYTHONPATH=. .venv/bin/python scripts/probes/pjm131_chp_btm_precheck.py \
     --bundle results/calibration/pjm129_meritguard_a1 --year 2023 \
-    --json-out results/calibration/pjm131_chp_btm_precheck_2023.json
+    --json-out results/phase0/pjm/pjm131_chp_btm_precheck_2023.json
 PYTHONPATH=. .venv/bin/python scripts/probes/pjm131_chp_btm_artifact_audit.py \
-    --json-out results/calibration/pjm131_chp_btm_artifact_audit.json
+    --json-out results/phase0/pjm/pjm131_chp_btm_artifact_audit.json
 ```
 
 Fidelity anchor re-verified this session (no solve): `pjm120_c3a_stratum_readout.py

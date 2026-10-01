@@ -216,7 +216,7 @@ an adequacy-basis change.
 ## 6. NEISO first capacity-hindcast PAIR
 
 Bands pre-registered **before** the run in
-`docs/handoffs/ff-2b-neiso-hindcast-bands-2026-07.md` (standard T-R battery, NOT
+`docs/records/forecast/ff-2b-neiso-hindcast-bands-2026-07.md` (standard T-R battery, NOT
 widened; band-file commit precedes the run commit in history). Plain hindcast,
 EIA-860 2020 vintage, 2021 seed / 2022 bridged / 2023–2025 scored (rule-22
 `{2021}` allowance; NEISO calibration-complete marker verified present 2026-07-19

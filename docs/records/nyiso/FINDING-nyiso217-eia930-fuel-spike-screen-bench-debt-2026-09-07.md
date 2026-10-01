@@ -4,9 +4,9 @@
 `claude/nyiso-backcast-calibration-bzuqb3`, on `main` at `12e71b89`. **Date:** 2026-09-07.
 **Keeper:** `2026-09-07-nyiso-213-summer-seam` — **keeper unchanged; nothing promoted, armed,
 screened, registered or regenerated, no marker moved.**
-**Pre-registration:** `results/calibration/PREREG-nyiso217-eia930-fuel-spike-screen-bench-debt.md`,
+**Pre-registration:** `docs/records/nyiso/PREREG-nyiso217-eia930-fuel-spike-screen-bench-debt.md`,
 committed and pushed at `d27b3705` **before P1–P5 were measured** and not edited since.
-**Machine record:** `results/calibration/_nyiso217_screen_bench_debt.json`.
+**Machine record:** `results/phase0/nyiso/_nyiso217_screen_bench_debt.json`.
 **Instrument:** `scripts/probes/nyiso217_screen_bench_debt.py`.
 **ZERO LP: no solve was spent.** No screen bundle, no control bundle, nothing under
 `results/calibration/` to delete before merge under rule 29(c).

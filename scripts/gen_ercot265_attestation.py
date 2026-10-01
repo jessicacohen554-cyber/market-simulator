@@ -81,10 +81,10 @@ ATTESTED_BY = (
     "failures against the incumbent's 309 / 89 -- one extra row and two extra convictions, "
     "all 2021, inherited from the same pre-existing mechanism family and not introduced "
     "by this field. "
-    "Records: docs/handoffs/PRECOMMIT-ercot265-receipts-fallback-2026-09-09.md (with "
+    "Records: docs/records/ercot/PRECOMMIT-ercot265-receipts-fallback-2026-09-09.md (with "
     "AMENDMENT 1, which withdrew a mis-specified C3c kill gate on the owner's correction "
     "that C3c is an accepted caveat and cannot kill a run), and "
-    "results/calibration/METRICS-ercot265-2021.json / METRICS-ercot265-2022.json."
+    "results/phase0/ercot/METRICS-ercot265-2021.json / METRICS-ercot265-2022.json."
 )
 
 C3C_2021_EXCEPTION = {

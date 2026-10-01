@@ -1,7 +1,7 @@
 # ADDENDUM — R-CAISO-15 (2026-09-29): repair completed to the HSL generation term and the battery envelope
 
-Extends `docs/handoffs/r-caiso-13/PRECOMMIT-r-caiso-13-2026-09-28.md` and
-`docs/handoffs/r-caiso-14/ADDENDUM-r-caiso-14-gdrift-2026-09-29.md`. Written before any shard is launched.
+Extends `docs/records/caiso/r-caiso-13/PRECOMMIT-r-caiso-13-2026-09-28.md` and
+`docs/records/caiso/r-caiso-14/ADDENDUM-r-caiso-14-gdrift-2026-09-29.md`. Written before any shard is launched.
 Owner card 2026-09-29: "Complete repair, re-solve". §3 predictions and decision rule are reused **unchanged**.
 
 ## 1. The build (zero parameters; rules 14, 19, 23)
@@ -101,7 +101,7 @@ carry no CAISO rows.
 
 ## 6. Solve
 
-7 shards, one per year 2019–2025 (rule 36), prompt `docs/handoffs/r-caiso-15/shard-prompt.md`, out-dir
+7 shards, one per year 2019–2025 (rule 36), prompt `docs/records/caiso/r-caiso-15/shard-prompt.md`, out-dir
 `rcaiso15_A_{Y}`, branch `claude/r-caiso-15-A-{Y}`. `{SRC}` = `rcaiso11_A_tp_2019_2021` (2019–21) /
 `rcaiso11_A_span` (2022–25); `{SDCAP}` = 1436.0 (2019–23) / 2074.0 (2024) / 2071.0 (2025).
 

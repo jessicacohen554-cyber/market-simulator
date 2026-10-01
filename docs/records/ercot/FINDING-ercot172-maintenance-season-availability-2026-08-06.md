@@ -4,7 +4,7 @@
 `ScenarioConfig` field written, no mechanism armed, no cell verdict flipped,
 keeper UNCHANGED at `2026-08-05-run168b-year-curves`.** Decision rule
 pre-registered, committed and pushed **before** any capture ran
-(`docs/PRECOMMIT-ercot172-maintenance-season-availability-2026-08-06.md`); no
+(`docs/records/ercot/PRECOMMIT-ercot172-maintenance-season-availability-2026-08-06.md`); no
 bar, band, floor or window moved after measurement.
 
 ## 0. Verdict
@@ -220,7 +220,7 @@ population must clear G-NEUT before it may be built.
 
 Rule 15 `[R-DASHBOARD]`: **no solve was run, so no bundle and no dashboard
 registration** — the deliverable is the committed record
-`results/calibration/ercot172_maintenance_availability.json`, the probe
+`results/phase0/ercot/ercot172_maintenance_availability.json`, the probe
 `scripts/probes/ercot172_maintenance_availability_phase0.py` (which reproduces
 every number here from committed inputs plus two cached no-LP captures), and this
 write-up. Rule 16 `[R-ALLYEARS]`: not engaged — no bundle. Rule 22
@@ -261,7 +261,7 @@ split.
 Added on the owner's direction after the main result, because the standing ERCOT
 object is **C3a-2023** and no session had put this question to the delivery-2023
 SCED corpus. Record:
-`results/calibration/ercot172_addendum_2023_topofstack.json`; probe
+`results/phase0/ercot/ercot172_addendum_2023_topofstack.json`; probe
 `scripts/probes/ercot172_addendum_2023_topofstack.py`. No LP, 2023 only.
 
 **M1 — the miss, priced.** 2023 tail recall **0.32** (58 of 181 actual >$200

@@ -4,9 +4,9 @@
 `claude/nyiso-backcast-calibration-acwrdd`, on `main` at `dcb609f4`. **Date:** 2026-09-07.
 **Keeper:** `2026-09-07-nyiso-213-summer-seam` — **keeper unchanged; nothing promoted, nothing
 armed, nothing registered, no marker moved.**
-**Pre-registration:** `results/calibration/PREREG-nyiso215-reserve-duty-single-peak.md`, committed
+**Pre-registration:** `docs/records/nyiso/PREREG-nyiso215-reserve-duty-single-peak.md`, committed
 and pushed at `f0cf9d54` **before P1–P5 were measured** and not edited since.
-**Machine record:** `results/calibration/_nyiso215_reserve_duty_census.json` and
+**Machine record:** `results/phase0/nyiso/_nyiso215_reserve_duty_census.json` and
 `_nyiso215_band_energy_bound.json`. **Instruments:**
 `scripts/probes/nyiso215_reserve_duty_census.py`, `scripts/probes/nyiso215_band_energy_bound.py`.
 **ZERO LP: no solve was spent.** Every fleet rebuild is `fleet_only=True`; every dispatch number

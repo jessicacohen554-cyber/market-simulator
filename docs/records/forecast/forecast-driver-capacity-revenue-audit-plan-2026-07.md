@@ -19,10 +19,10 @@ model assignments and an explicit parallel-vs-sequential schedule.
 testing/validation infra) verified against `origin/main` 2026-07-11, reconciled
 with the standing program docs. **This plan builds on, and does not duplicate:**
 
-- `docs/forecast-validation-plan.md` + `docs/handoffs/forecast-validation-program-2026-07.md`
+- `docs/forecast-validation-plan.md` + `docs/records/forecast/forecast-validation-program-2026-07.md`
   — hindcast harness, invariant suite I1–I14 / P1–P3, golden bands (built; §2 below
   reports their status honestly).
-- `docs/handoffs/capacity-economics-plan-2026-07.md` (W2-P3) — FOM/floor/foresight/DC
+- `docs/records/misc/capacity-economics-plan-2026-07.md` (W2-P3) — FOM/floor/foresight/DC
   block; Stage 1–3 executed; **FOM flip still blocked on the scarcity-revenue side**.
 - `docs/forecasting-entry-exit-assessment.md` — the ERCOT net-revenue reconciliation
   (peaker/storage revenue ~1–6 % of the Potomac PNM benchmark at time of writing).
@@ -323,8 +323,8 @@ assigned model. ⛔ = gate: don't start dependents until it lands green.
 ```
 [OPUS] P-0A — Build the driver-response battery + per-PR directional smoke tests
 
-Read CLAUDE.md, then docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md
-(THE PLAN — §2 Tier 1 is your spec), then docs/handoffs/forecast-validation-program-2026-07.md
+Read CLAUDE.md, then docs/records/forecast/forecast-driver-capacity-revenue-audit-plan-2026-07.md
+(THE PLAN — §2 Tier 1 is your spec), then docs/records/forecast/forecast-validation-program-2026-07.md
 §2 (the invariant suite you are extending, NOT duplicating). Fresh branch off latest origin/main.
 
 Deliverables:
@@ -346,7 +346,7 @@ Deliverables:
    ERCOT zero-capacity-revenue negative control. NOT @slow — this is the per-PR gate the
    testing audit found missing (its G2/G3/G4).
 3. Wire the weekly forecast-invariants.yml artifacts to also commit their findings JSON
-   to docs/handoffs/weekly-invariant-findings/ (append-only) so weekly results stop being
+   to docs/records/misc/weekly-invariant-findings/ (append-only) so weekly results stop being
    ephemeral (testing-audit G9). Keep runtime budget unchanged.
 Do NOT run the full battery in this session (that is P-1A) — smoke one rung per ladder
 to prove the harness. Tests green; push via mcp__github__push_files.
@@ -413,7 +413,7 @@ for anything blocked, no LP solves, push via mcp__github__push_files.
 ```
 [SONNET] P-1A — Execute the Tier-1 driver ladders and commit the findings
 
-Read CLAUDE.md and docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md
+Read CLAUDE.md and docs/records/forecast/forecast-driver-capacity-revenue-audit-plan-2026-07.md
 §2 Tier 1. Requires P-0A merged. Fresh branch.
 
 Run scripts/run_driver_battery.py for all nine ladders (T1.1–T1.9) on ERCOT + PJM
@@ -433,8 +433,8 @@ registration. Push via mcp__github__push_files.
 ```
 [OPUS] P-1B — Implement reserve-margin-indexed capacity demand curves (CR-1)
 
-Read CLAUDE.md, then docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md
-§3 (THE SPEC for this session), then docs/handoffs/capacity-economics-plan-2026-07.md §0
+Read CLAUDE.md, then docs/records/forecast/forecast-driver-capacity-revenue-audit-plan-2026-07.md
+§3 (THE SPEC for this session), then docs/records/misc/capacity-economics-plan-2026-07.md §0
 scope guard (same guard applies: annual capacity-evolution layer only; never touch the
 dispatch-layer floors). Requires P-0B merged. Fresh branch.
 
@@ -486,7 +486,7 @@ parameters. Fresh branch.
 [SONNET] P-1D — Driver completeness: AEO-file wiring, coal/oil paths, uranium,
 carbon_program_price_path, PJM RGGI option, DC tables
 
-Read CLAUDE.md and docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md
+Read CLAUDE.md and docs/records/forecast/forecast-driver-capacity-revenue-audit-plan-2026-07.md
 §1 D2/D3 + §4. Requires P-0C merged. Fresh branch. Coordinate constants.py sections
 with P-1B if concurrent (disjoint tables; rebase before push).
 
@@ -513,7 +513,7 @@ byte-identity where defaults shouldn't move). Push via mcp__github__push_files.
 ```
 [OPUS] P-2A — Validate the capacity demand curves against published auction outcomes
 
-Read CLAUDE.md and docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md
+Read CLAUDE.md and docs/records/forecast/forecast-driver-capacity-revenue-audit-plan-2026-07.md
 §3.3 + §2 T3.1. Requires P-1B + P-0B merged. Fresh branch.
 
 Build scripts/validate_capacity_prices.py: for each capacity-market ISO and delivery
@@ -558,7 +558,7 @@ mcp__github__push_files.
 ```
 [OPUS] P-2C — Penetration-indexed ELCC curves for wind/solar (and storage reconcile)
 
-Read CLAUDE.md, docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md
+Read CLAUDE.md, docs/records/forecast/forecast-driver-capacity-revenue-audit-plan-2026-07.md
 §3.4.1, the P-2B memo (follow its adopted basis), and the P-0B ELCC datatype. Fresh
 branch.
 
@@ -582,7 +582,7 @@ dashboard like the Stage-2 precedent). Push via mcp__github__push_files.
 ```
 [SONNET] P-3A — First full 2026–2050 forecast solves, all six ISOs, invariants scored
 
-Read CLAUDE.md and docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md
+Read CLAUDE.md and docs/records/forecast/forecast-driver-capacity-revenue-audit-plan-2026-07.md
 §2 (testing-audit G1: the full horizon has never been run). Requires Wave 1 merged;
 run with capacity_market_clearing per the P-2A decision (or both A/B if undecided).
 
@@ -604,7 +604,7 @@ Push via mcp__github__push_files.
 ```
 [SONNET] P-3B — Capacity-market equilibrium tests (T2.1–T2.5)
 
-Read CLAUDE.md and docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md
+Read CLAUDE.md and docs/records/forecast/forecast-driver-capacity-revenue-audit-plan-2026-07.md
 §2 Tier 2. Requires P-1B (+P-2A decision) and P-3A merged.
 
 Extend scripts/run_driver_battery.py with the Tier-2 suite: T2.1 price-to-curve
@@ -622,7 +622,7 @@ Push via mcp__github__push_files.
 ```
 [FABLE] P-3C — Cross-model benchmark corridor and the updated forecast-fitness verdict
 
-Read CLAUDE.md, docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md,
+Read CLAUDE.md, docs/records/forecast/forecast-driver-capacity-revenue-audit-plan-2026-07.md,
 the P-1A/P-3A/P-3B findings, docs/forecasting-entry-exit-assessment.md (the verdict
 you are updating), and the latest hindcast reports. WebSearch/WebFetch allowed.
 
@@ -645,8 +645,8 @@ Push via mcp__github__push_files.
 ```
 [OPUS] P-3D — Re-score ERCOT/PJM capacity hindcasts post-CR; extend to MISO + NYISO
 
-Read CLAUDE.md, docs/handoffs/forecast-validation-program-2026-07.md §1 (harness +
-§6 baseline misses), and docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md
+Read CLAUDE.md, docs/records/forecast/forecast-validation-program-2026-07.md §1 (harness +
+§6 baseline misses), and docs/records/forecast/forecast-driver-capacity-revenue-audit-plan-2026-07.md
 §2 T3.4. Requires CR-1 (+CR-3.1 if landed).
 
 1. Re-run the ERCOT + PJM 2021–2025 realized-fuel hindcasts at HEAD with the new
@@ -657,7 +657,7 @@ Read CLAUDE.md, docs/handoffs/forecast-validation-program-2026-07.md §1 (harnes
    Attribute per screen; findings only, no tuning.
 2. Build capacity_actuals CSVs + hindcast configs for MISO and NYISO (next two ISOs
    by data readiness); run + score their 2021–2025 realized hindcasts.
-3. Update docs/handoffs/forecast-validation-program-2026-07.md §6 status.
+3. Update docs/records/forecast/forecast-validation-program-2026-07.md §6 status.
 Push via mcp__github__push_files.
 ```
 

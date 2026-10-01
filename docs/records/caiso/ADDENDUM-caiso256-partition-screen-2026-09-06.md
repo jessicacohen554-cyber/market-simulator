@@ -51,7 +51,7 @@ shared data tree (restored on exit, `git status` clean):
 
 > `scripts/probes/_caiso255_gdrift_identity.py --keeper-sha fa23c1f7`
 > → **VERDICT: ALL LP INPUTS BIT-IDENTICAL**, all three years
-> (`results/calibration/_caiso256_gdrift_input_identity_artifact_reverted.json`).
+> (`results/phase0/caiso/_caiso256_gdrift_input_identity_artifact_reverted.json`).
 
 So on the input side the artifact pair is the **only** thing that moves.
 Instruments 1–2 report what moved and instrument 3 settles it:
@@ -152,7 +152,7 @@ mc_old ≈ 75.5–76.3 → mc_new ≈ 73.5–75.0 $/MWh, 329–592 band-hours ea
 * **C3a EXCLUDED both ways; neither C3a nor C4 promotes; `co2` excluded.**
 
 Scorer: `scripts/probes/_caiso256_screen2023.py`, artifact
-`results/calibration/_caiso256_screen2023.json`. **Every number this session
+`results/phase0/caiso/_caiso256_screen2023.json`. **Every number this session
 will ever cite from the screen bundle lives in the FINDING; the bundle
 (`results/calibration/caiso256_screen2023`) is deleted before the PR merges
 (rule 29(c)).**

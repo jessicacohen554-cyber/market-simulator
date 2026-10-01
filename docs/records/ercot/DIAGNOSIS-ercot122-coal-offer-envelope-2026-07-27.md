@@ -3,7 +3,7 @@
 **Date** 2026-07-27 · **ISO** ERCOT · **Lane** ercot122-coal-offer-envelope ·
 **Keeper under audit** `2026-07-26-ercot115-coal-marginal-hr` (bundle
 `results/calibration/ercot115_coal_floor_only`) — **unchanged by this session** ·
-**Chartered by** `docs/DIAGNOSIS-ercot121-fleet-representation-2026-07-27.md` §3.2
+**Chartered by** `docs/records/ercot/DIAGNOSIS-ercot121-fleet-representation-2026-07-27.md` §3.2
 (the paired arm: measured availability envelope × measured coal offer top) ·
 **Method** Phase 1 only — raw-direct measurement from the 60-Day DAM disclosure
 plus one no-LP model-side capture (`scripts/probes/ercot117_coal_gas_ranking.py`,

@@ -1,7 +1,7 @@
 """FFR-8A ``capacity_screen_scarcity_restoration``: the lookahead scarcity tail.
 
 Owner decision D-21(a), re-opened at sitting Addendum AC.1 (2026-08-07);
-handoff ``docs/handoffs/ffr-8a-scarcity-restoration-2026-08-08.md``. The gate
+handoff ``docs/records/forecast/ffr-8a-scarcity-restoration-2026-08-08.md``. The gate
 repairs the unified lookahead's ORDC tail with three published-design
 elements, all from existing model state:
 
@@ -52,7 +52,7 @@ from market_sim.runner import _lookahead_reprice_signal
 # Nothing about THIS file's mechanism moved — the pin advances because the
 # global default did. Rationale and provenance live on the pin in
 # tests/regression/test_persisted_identity.py; pre-declared BEFORE the solve
-# in docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md §3. Re-pinned here by
+# in docs/records/forecast/PRECOMMIT-capx-d65b-2026-09-06.md §3. Re-pinned here by
 # capx D65-B-R, completing the partial re-key fb93b76e left behind.
 _PINNED_DEFAULT_KEY = "547053bdfccd4264"
 

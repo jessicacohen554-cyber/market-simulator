@@ -71,8 +71,8 @@ for _p in (
 
 BUNDLE = REPO / "results/calibration/ercot158_poolarm_B"
 HOURLY = BUNDLE / "hourly"
-PHASE0_JSON = REPO / "results/calibration/_ercot161_wall_phase0.json"
-DEFAULT_OUT = REPO / "results/calibration/_ercot163_cc_commitment.json"
+PHASE0_JSON = REPO / "results/phase0/ercot/_ercot161_wall_phase0.json"
+DEFAULT_OUT = REPO / "results/phase0/ercot/_ercot163_cc_commitment.json"
 YEAR = 2023
 
 #: SCED ``Resource Type`` -> the census class. CCGT90/CCLE90 are the combined

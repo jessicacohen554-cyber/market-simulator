@@ -1,7 +1,7 @@
 # FINDING — the entry-signal DISARM probe adjudicated; CAISO L-1 measured
 
-_2026-08-24 · ENTRY SIGNAL lane (charter: `docs/FINDING-entry-signal-l1-2026-08.md`
-§4 item 2 / §5 — "the named next rung"; parent `docs/FINDING-entry-screen-t1h-2026-08.md`
+_2026-08-24 · ENTRY SIGNAL lane (charter: `docs/records/misc/FINDING-entry-signal-l1-2026-08.md`
+§4 item 2 / §5 — "the named next rung"; parent `docs/records/misc/FINDING-entry-screen-t1h-2026-08.md`
 §7–§8) · **Four LP solves: the ERCOT disarm probe, a same-tree ERCOT control, the
 CAISO dump-production run, and a same-tree CAISO control.** This rung ADJUDICATES
 one mechanism cell (`entry_lookahead_reprice`, ERCOT `fc` column) and MEASURES
@@ -92,7 +92,7 @@ second result matters because a later section depends on it:
 Re-solving this pipeline at the same cache key is **bit-reproducible**.
 
 Per repo policy the ledgers stay uncommitted; the ledger-derived evidence is
-committed instead as `results/calibration/entry_signal_disarm_ledger_ercot.json`
+committed instead as `results/phase0/ercot/entry_signal_disarm_ledger_ercot.json`
 (probe `scripts/probes/entry_signal_disarm_ledger_compare.py`), the established
 probe-artifact pattern, so the next session reads the per-step decisions without
 replaying a solve.
@@ -102,7 +102,7 @@ replaying a solve.
 ## 2. The pre-registered predictions, scored
 
 L-1's predictions were committed in
-`results/calibration/entry_signal_l1_dual_replay_ercot.json` and tabulated in that
+`results/phase0/ercot/entry_signal_l1_dual_replay_ercot.json` and tabulated in that
 finding §1.2–§1.4 **before this solve existed**. Scored against the ledger:
 
 | # | L-1 prediction | ledger outcome | verdict |
@@ -476,11 +476,11 @@ uv run python scripts/probes/entry_signal_disarm_ledger_compare.py \
     --disarm results/hindcast/ercot-2021-2025-realized-t1h-disarm \
     --control results/hindcast/ercot-2021-2025-realized-t1h-control \
     --registered results/hindcast/ercot-2021-2025-realized-t1h-refresh \
-    --out results/calibration/entry_signal_disarm_ledger_ercot.json
+    --out results/phase0/ercot/entry_signal_disarm_ledger_ercot.json
 uv run python scripts/probes/entry_signal_l1_dual_replay.py --iso CAISO \
     --bundle results/hindcast/caiso-2021-2025-realized-dumps \
     --duals-bundle results/calibration/caiso200_h1_memberpanel \
-    --out results/calibration/entry_signal_l1_dual_replay_caiso.json
+    --out results/phase0/caiso/entry_signal_l1_dual_replay_caiso.json
 ```
 
 `data/clean` is derived and gitignored, so a fresh container must run

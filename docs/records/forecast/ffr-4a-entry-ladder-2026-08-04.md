@@ -44,7 +44,7 @@ price signal, §3.4) — that relocation is **escalated, not landed here**.
 
 Repo history is squash-merged (`entry_config.py` carries a single merge commit),
 so the intent record is the FF-2A completion handoff
-(`docs/handoffs/ff-entry-stack-completion-2026-07.md`), which itemises the FF-2A
+(`docs/records/forecast/ff-entry-stack-completion-2026-07.md`), which itemises the FF-2A
 gates one row per gate. Two separate rows:
 
 | gate | row | what it bounds | citation |
@@ -517,6 +517,6 @@ judgment.** Not this lane's subject, but §2 leans on them: their own comment
 **engineering-judgment estimates**, not measured throughput. Since the netting
 deforms exactly these caps into `C / L`, the two issues compound in the 16 cells
 where the static cap binds first. The standing rule-11 follow-up is
-`docs/handoffs/queue-cap-citation-2026-07.md`.
+`docs/records/misc/queue-cap-citation-2026-07.md`.
 
 ---

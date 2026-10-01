@@ -28,7 +28,7 @@ full magnitude in the FINDING.
 | precondition | check | result |
 |---|---|---|
 | SPP-40 landed — keeper-1 exists | `frontend/data/backcast/keepers/SPP.json` → `2026-09-07-spp-1-baseline`; bundle `results/calibration/spp40_baseline_B/` + `hourly/` | **yes** |
-| SPP-53 landed (the FCITC construction and the corridor sidecar) | `rtbm_bc_corridor_limits_2026.parquet`, `docs/handoffs/spp53/psi_all.csv` (134 regressors), `_spp_config` link 3,400 MW | **yes** |
+| SPP-53 landed (the FCITC construction and the corridor sidecar) | `rtbm_bc_corridor_limits_2026.parquet`, `docs/records/spp/spp53/psi_all.csv` (134 regressors), `_spp_config` link 3,400 MW | **yes** |
 | SPP-14 landed (four-group rules, per-hub parquet, `SL_to_Pnode_to_Zone_with_Area.csv`) | `spp14/groups.py`; `actual_lmp_hourly_zonal_SPP.parquet` 52,560 rows; SL map 296,791 rows | **yes** |
 | SPP-32 landed (`_SPP_SUBBA_ZONE_GROUPS`, wind shape, gas-hub rows) | in tree | **yes** |
 | **SPP-42** (repaired-input re-baseline) | `git ls-remote --heads origin` → no `claude/spp-42*`, `spp-41*` or `spp-36*` head; `git log origin/main --grep=SPP-42` empty | **NOT LANDED, NOT LAUNCHED** at the pin |
@@ -338,8 +338,8 @@ reported as the expectation being wrong, and the gate below runs on the data-nam
 | `data/raw/_validation-source/actual_lmp_hourly_area_SPP.parquet` (+ README row) | NEW: hourly RT `SPS_SPS`, the P_SW mean (with its per-month SL count) and p_S, 2023–2025, on the model calendar — the third point of the spread, so the identification is reproducible without the 500 MB pull |
 | `data/raw/eia-861/` (NEW dir: reduced csv of the PSO / SWEPCO `Sales_Ult_Cust` rows 2023–2024 + README / SOURCES / SHA256SUMS) | the w_OK source |
 | the registries of §2.3, their tests, the three rebuilt wind-shape parquets, the regenerated clean `zonal-shares` rows, the regenerated SPP block of `calibration_reference.json` | design (D) |
-| `docs/handoffs/spp57/` | the instruments (pull, parse, regression, aggregation, area-price build) beside their outputs, the `spp53/` convention |
-| `docs/handoffs/FINDING-spp-57-2026-09-07.md` | design (A)–(D) as executed, the identification tables, the two T* tables, the STOP-gate table, the LOYO table, the DOF ledger, the P15 recommendation |
+| `docs/records/spp/spp57/` | the instruments (pull, parse, regression, aggregation, area-price build) beside their outputs, the `spp53/` convention |
+| `docs/records/spp/FINDING-spp-57-2026-09-07.md` | design (A)–(D) as executed, the identification tables, the two T* tables, the STOP-gate table, the LOYO table, the DOF ledger, the P15 recommendation |
 | matrix shard `docs/codebase-site/data/mechanism-matrix/SPP.js` | the cell for the topology / interface mechanism moved by this lane (`measured_interface_limits` O → the screen's verdict), in this session (rule 28(b)) |
 
 Not touched: any other ISO's config, maps, rows or shard; `ScenarioConfig` (no field, G8);

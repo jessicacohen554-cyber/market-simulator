@@ -76,7 +76,7 @@ def run_config_census() -> dict:
 if __name__ == "__main__":
     tag = sys.argv[sys.argv.index("--tag") + 1] if "--tag" in sys.argv else "run"
     payload = {"tag": tag, "snapshot": snapshot(), "run_configs": run_config_census()}
-    path = f"docs/handoffs/scn-ws1c/verify-floor-{tag}.json"
+    path = f"docs/records/forecast/scn-ws1c/verify-floor-{tag}.json"
     json.dump(payload, open(path, "w"), indent=1)
     print(f"wrote {path}")
     print(f"  default cache_key      : {payload['snapshot']['default_cache_key']}")

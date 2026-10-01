@@ -425,7 +425,7 @@ untouched.*
   instrument bar is restated two-regime for CAR-PD (ER26-925: one-year
   unpriced deactivation notifications from 2026-03-31).
 - **R3 (scorer trio)** — (i) committed NEISO exit decode
-  (`docs/handoffs/neiso-rc-r/exit-decode-2026-08-31.json`) with
+  (`docs/records/neiso/neiso-rc-r/exit-decode-2026-08-31.json`) with
   vintage-aware fleet-absence evidence (1588_7, 568_3 leave the ≥300 MW
   denominator at vintage ≥2021; Androscoggin at ≥2023; margin-noted units
   stay members fail-closed); (ii) `score_crossover` reports the retirement

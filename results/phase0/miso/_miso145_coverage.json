@@ -1,5 +1,5 @@
 {
- "prereg": "results/calibration/PREREG-miso145-summer-offer-conduct-2026-08-09.md",
+ "prereg": "docs/records/miso/PREREG-miso145-summer-offer-conduct-2026-08-09.md",
  "gate": "G-A intake coverage (P-A1..P-A5); structural checks only",
  "source": "https://docs.misoenergy.org/marketreports/YYYYMMDD_<market>_co.zip",
  "span": "Jun 1 - Aug 31, 2023/2024/2025, both markets (rule 22: no year outside 2023-2025)",

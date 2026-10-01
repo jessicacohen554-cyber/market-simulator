@@ -321,7 +321,7 @@ fleet short and still pass C2. Flagged for the audit desk; no gate is changed he
    spans three years. Add a gate that resolves the vintage **per solve year**, falling through to
    the canonical snapshot where no vintage directory exists. Zero fitted scalars; forward-
    applicable (a forecast takes the latest vintage, as it does today). PRECOMMIT:
-   `docs/handoffs/PRECOMMIT-pjm167-fleet-vintage-screen-2026-09-06.md`.
+   `docs/records/pjm/PRECOMMIT-pjm167-fleet-vintage-screen-2026-09-06.md`.
    *Note the field's own docstring calls its effect "small (~0.4 % of ERCOT installed capacity)"
    — an assessment made on ERCOT inside 2023–2025, where it is small. For PJM 2021 it is 39 % of
    the coal fleet. The docstring should be corrected in the same PR.*
@@ -344,7 +344,7 @@ fleet short and still pass C2. Flagged for the audit desk; no gate is changed he
    year, 2019–2022 included; only the three **"Average" regional envelopes** fail, and only
    "Average Eastern" and "Average Western", only in 2020–2022. So the gate is **inert on the whole
    keeper span** and every committed backcast keeper is byte-identical under it. Screen
-   pre-registered in `docs/handoffs/PRECOMMIT-pjm167-interface-feed-admissibility-2026-09-06.md`,
+   pre-registered in `docs/records/pjm/PRECOMMIT-pjm167-interface-feed-admissibility-2026-09-06.md`,
    to run **after** F1: both act on the same pocket and would otherwise confound.
 4. **F3 — WITHDRAWN** (§3.5). The plants are in the model, in NYISO; the apparent gap was a
    state-filtered census of mine, not a model defect. No action, and no screen.

@@ -6,7 +6,7 @@
 **Control of record** keeper `2026-09-22-soco-h4-hydro-ror` (`results/calibration/soco_h4_ror_span`),
 rule 29 (b) form 4. Its per-year legs were recovered at zero LP, and all 12 hourly sidecars are
 byte-identical to the committed composite.
-**PRECOMMIT** `docs/handoffs/PRECOMMIT-soco-60b-2026-09-23.md`, pushed at `f8e534e6` (§1–§4) and
+**PRECOMMIT** `docs/records/soco/PRECOMMIT-soco-60b-2026-09-23.md`, pushed at `f8e534e6` (§1–§4) and
 `71a23bb0` / `eab5c585` (addendum B), each before the solves it covers.
 **Registered run** `2026-09-23-soco60-boundary-span` (bundle `results/calibration/soco60_boundary_span`).
 **PROMOTED TO KEEPER 2026-09-23** on the owner's ruling (§10).
@@ -255,8 +255,8 @@ PHYSICALLY-CALIBRATED (PRICE UNSCORED) is not cited as SOCO's determination.
 The four named CC leads were not needed; they stay the leads for per-plant
 allocation. PROMOTED 2026-09-23 on the owner's ruling; h4-ror and soco59-hydro-split pruned (rule 35).
 E13 for soco53g re-raised, fourteenth lane. Records:
-docs/handoffs/PRECOMMIT-soco-60b-2026-09-23.md,
-docs/handoffs/FINDING-soco-60b-2026-09-23.md (filed as 60b: a concurrent
+docs/records/soco/PRECOMMIT-soco-60b-2026-09-23.md,
+docs/records/soco/FINDING-soco-60b-2026-09-23.md (filed as 60b: a concurrent
 session also named SOCO-60 merged first), scripts/gen_soco60b_attestation.py,
 scripts/probes/_soco60b_phase0.py, scripts/probes/soco60b_compose_span.py.
 ```

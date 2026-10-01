@@ -1,6 +1,6 @@
 # FOM + scarcity joint protocol — Stage 2 re-run (2026-07-05, W2-P3 Stage 2)
 
-*Executes the Stage-2 leg of `docs/handoffs/capacity-economics-plan-2026-07.md` §5: the
+*Executes the Stage-2 leg of `docs/records/misc/capacity-economics-plan-2026-07.md` §5: the
 step-2 **revenue-side fix** (landed this session) and the §5.4-gated **grid re-run against
 the accredited floor** the Stage-1 reconciliation note required before any FOM flip. The
 Stage-1 report (`fom-scarcity-joint-protocol-2026-07-05.md`) and its grid JSON remain the
@@ -170,5 +170,5 @@ revenue toward each other (rules 1/14).
 3. **Backstop-off grid variant** — the natural Stage-3 probe isolating whether FOM
    becomes observable once adequacy expresses as price instead of forced MW.
 
-*Grid JSON: `docs/handoffs/fom-scarcity-grid-2026-07-05-stage2.json`. Produced
+*Grid JSON: `docs/records/misc/fom-scarcity-grid-2026-07-05-stage2.json`. Produced
 2026-07-05, W2-P3 Stage 2.*

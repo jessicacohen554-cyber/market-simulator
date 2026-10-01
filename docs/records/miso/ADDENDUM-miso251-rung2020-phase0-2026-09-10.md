@@ -8,7 +8,7 @@ PINNED SHA      : dc57d4a29b374cb7897c1503bc4d4721aa568fb0
 YEAR            : 2020        (Henry Hub $2.03)
 KEEPER REPLAYED : 2026-09-09-miso-250-ep-gas  (results/calibration/miso_fuelvintage_A)
 OUT-DIR         : results/calibration/miso251_tp2020
-CHARTER         : docs/ADDENDUM-miso251-the-falsifiable-regime-test-2026-09-10.md §3
+CHARTER         : docs/records/miso/ADDENDUM-miso251-the-falsifiable-regime-test-2026-09-10.md §3
 SIBLING         : RUNG-2021 on claude/miso251-tp2021 — never touched by this shard
 ```
 
@@ -29,7 +29,7 @@ result** (shard protocol §4, T+25 heartbeat; rule 29 `[R-SCREEN]` pre-registrat
 | 3 | `parse_miso_shares(2020, zones)` | **`(6, 8760)`** — a real measured array, not `None` | **PASS** |
 
 Hard stop 3 is the zonal-allocation repair the SCREEN shard landed for 2022
-(`docs/RESULT-miso251-screen2022-2026-09-10.md`), confirmed live for 2020: this rung
+(`docs/records/miso/RESULT-miso251-screen2022-2026-09-10.md`), confirmed live for 2020: this rung
 solves on measured hourly zone shares, not flat sample averages.
 
 Never pulled, never rebased, never synced. The tree is the pinned SHA exactly.

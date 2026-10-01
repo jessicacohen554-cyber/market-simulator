@@ -20,14 +20,14 @@ D. RE-CLEARING PREDICTOR — per hour, the thermal quantity the keeper cleared i
    response a per-class multiplier set implies. It selects nothing; the candidate's values,
    if any, come from the declared conduct construction, never from this table.
 
-Usage: uv run python docs/handoffs/spp46/offer_analysis.py <scratch_dir>
+Usage: uv run python docs/records/spp/spp46/offer_analysis.py <scratch_dir>
 """
 import json, sys
 from pathlib import Path
 import numpy as np, pandas as pd
 
 REPO = Path(__file__).resolve().parents[3]
-OUT = REPO / "docs/handoffs/spp46"
+OUT = REPO / "docs/records/spp/spp46"
 SCR = Path(sys.argv[1])
 BUNDLE = REPO / "results/calibration/spp43_screened_B"
 YEARS = (2023, 2024, 2025)

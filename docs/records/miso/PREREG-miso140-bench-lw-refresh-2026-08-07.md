@@ -228,4 +228,4 @@ from the model.
 ---
 
 **Finding to follow:** `results/calibration/FINDING-miso140-…-2026-08-07.md` ·
-**Handoff:** `docs/handoffs/miso-140-bench-refresh-2026-08-07.md`.
+**Handoff:** `docs/records/miso/miso-140-bench-refresh-2026-08-07.md`.

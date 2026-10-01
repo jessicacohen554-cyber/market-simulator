@@ -1,6 +1,6 @@
 {
   "session": "nyiso-190",
-  "prereg": "results/calibration/PREREG-nyiso190-cc2024-displacement-provenance.md",
+  "prereg": "docs/records/nyiso/PREREG-nyiso190-cc2024-displacement-provenance.md",
   "arm_run": "2026-09-05-nyiso-189-steam-identity",
   "control_run": "2026-09-04-nyiso-188-combined",
   "control_basis": "the nyiso-189 same-HEAD control was BIT-IDENTICAL to this run (0 of 52,560 prices differ in every year, FINDING-nyiso189 \u00a73)",

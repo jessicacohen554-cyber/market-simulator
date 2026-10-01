@@ -2,9 +2,9 @@
 
 **Session** nyiso-234 · **Date** 2026-09-14 · **ZERO LP.** Keeper **UNCHANGED**
 (`2026-09-13-nyiso-232-st-gas`). Executed under the owner ruling of 2026-09-14
-(*"Yes to 1 and 2"*) on `docs/DECISION-CARD-nyiso234-tail-gas-coverage-2026-09-14.md`.
+(*"Yes to 1 and 2"*) on `docs/records/nyiso/DECISION-CARD-nyiso234-tail-gas-coverage-2026-09-14.md`.
 
-Companion to `docs/FINDING-nyiso234-tail-gas-is-unobserved-2026-09-14.md`, which measured the
+Companion to `docs/records/nyiso/FINDING-nyiso234-tail-gas-is-unobserved-2026-09-14.md`, which measured the
 defect from the model side. This one finds its cause, and it is **cheaper and larger** than that
 finding assumed: cheaper because no new data source is needed, larger because the committed series
 is not only incomplete — in some weeks it is **wrong**.

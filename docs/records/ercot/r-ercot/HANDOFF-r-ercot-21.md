@@ -13,10 +13,10 @@ HOUSEKEEPING FIRST
 PRECONDITION: frontend/data/backcast/keepers/ERCOT.json on main names keeper 2026-09-30-r-20-gt-split (bundle results/calibration/r_ercot20_span, 2019–2025), ISO NOT-YET. If not, STOP and report.
 
 READ FIRST
-- docs/handoffs/r-ercot/RESULT-r-ercot-20-gt-split-2026-09-30.md (the per-year table + prediction scorecard)
-- docs/handoffs/r-ercot/FINDING-r-ercot-20-2024-c3a-and-gt-in-cc-2026-09-30.md (2024 C3a decomposition; econ-vs-DAM test)
-- docs/handoffs/r-ercot/PRECOMMIT-r-ercot-20-gt-split-2026-09-30.md
-- docs/handoffs/r-ercot/DESIGN-r-ercot-20-d4-day-grain-drag-mask-2026-09-30.md (HELD by owner — do not build)
+- docs/records/ercot/r-ercot/RESULT-r-ercot-20-gt-split-2026-09-30.md (the per-year table + prediction scorecard)
+- docs/records/ercot/r-ercot/FINDING-r-ercot-20-2024-c3a-and-gt-in-cc-2026-09-30.md (2024 C3a decomposition; econ-vs-DAM test)
+- docs/records/ercot/r-ercot/PRECOMMIT-r-ercot-20-gt-split-2026-09-30.md
+- docs/records/ercot/r-ercot/DESIGN-r-ercot-20-d4-day-grain-drag-mask-2026-09-30.md (HELD by owner — do not build)
 - the ERCOT matrix shard docs/codebase-site/data/mechanism-matrix/ERCOT.js and docs/mechanism-testing-matrix.md §5.1 (rule 28(a))
 
 STANDING STATE (r-20 keeper, P1)
@@ -43,7 +43,7 @@ DO-NOT-REDO (matrix R/I/G or landed)
 
 LESSONS FROM R-ERCOT-20
 - A per-plant over-run that scales with heat rate can be a CAPACITY-BOUNDARY defect, not an offer one: check EIA-860 prime movers against the model's class capacity before designing commitment mechanics.
-- Shard prompts: docs/handoffs/r-ercot/SHARD-PROMPTS-r-ercot-20.md (replay_keeper on the keeper bundle, no --set, signature + input sha256 hard stops). Compose with scripts/probes/_r_ercot_compose_span.py --side arm --chp-off; stamp_config_partition with --leg Y=run_config_Y.json for each year.
+- Shard prompts: docs/records/ercot/r-ercot/SHARD-PROMPTS-r-ercot-20.md (replay_keeper on the keeper bundle, no --set, signature + input sha256 hard stops). Compose with scripts/probes/_r_ercot_compose_span.py --side arm --chp-off; stamp_config_partition with --leg Y=run_config_Y.json for each year.
 - A fresh container needs `uv sync --frozen`. Seven legs + a span is ~2.2 GB.
 
 DIRECTIONS FROM THE OWNER (carry forward verbatim in spirit)

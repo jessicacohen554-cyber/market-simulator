@@ -9,7 +9,7 @@ the SPS pocket (FINDING-spp-54 §4.2 C-4). This re-runs the same arithmetic with
 R-LEVEL.
 
 Everything except wind is taken verbatim from SPP-54's committed
-``docs/handoffs/spp54/dec21_window_2025.csv`` — the three-zone demand
+``docs/records/spp/spp54/dec21_window_2025.csv`` — the three-zone demand
 (N / S / SPS), the thermal + hydro capability **net of keeper-3's own
 availability arrays** and the regional solar, all produced by
 ``run_year(fleet_only=True)`` on keeper-3's recipe at design commit
@@ -32,7 +32,7 @@ three-zone inputs that was feasible under the two-zone inputs?
 Zero LP.
 
 usage:
-  python docs/handoffs/spp48/h8509.py --three-zone-after <dir> --two-zone-after <dir>
+  python docs/records/spp/spp48/h8509.py --three-zone-after <dir> --two-zone-after <dir>
 """
 
 from __future__ import annotations
@@ -51,7 +51,7 @@ sys.path.insert(0, str(REPO / "src"))
 from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
 from market_sim.data import renewables as rn  # noqa: E402
 
-sys.path.insert(0, str(REPO / "docs/handoffs/spp48"))
+sys.path.insert(0, str(REPO / "docs/records/spp/spp48"))
 from wind_delta import backcast_cf_profile  # noqa: E402
 
 YEAR = 2025
@@ -98,10 +98,10 @@ def main() -> int:
     ap.add_argument(
         "--two-zone-before", type=Path, default=REPO / "data/raw/spp-wind-shape"
     )
-    ap.add_argument("--out", type=Path, default=REPO / "docs/handoffs/spp48/h8509.csv")
+    ap.add_argument("--out", type=Path, default=REPO / "docs/records/spp/spp48/h8509.csv")
     args = ap.parse_args()
 
-    base = pd.read_csv(REPO / "docs/handoffs/spp54/dec21_window_2025.csv").set_index(
+    base = pd.read_csv(REPO / "docs/records/spp/spp54/dec21_window_2025.csv").set_index(
         "hour"
     )
     monthly3 = rn._eia860_monthly_capacity("SPP", "wind", ZONES3, YEAR)

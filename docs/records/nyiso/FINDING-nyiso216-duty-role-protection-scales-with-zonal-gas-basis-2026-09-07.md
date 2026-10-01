@@ -4,9 +4,9 @@
 `claude/nyiso-backcast-calibration-n1kwem`, on `main` at `71e62675`. **Date:** 2026-09-07.
 **Keeper:** `2026-09-07-nyiso-213-summer-seam` — **keeper unchanged; nothing promoted, armed,
 screened or registered, no marker moved.**
-**Pre-registration:** `results/calibration/PREREG-nyiso216-rensselaer-counterexample.md`, committed
+**Pre-registration:** `docs/records/nyiso/PREREG-nyiso216-rensselaer-counterexample.md`, committed
 and pushed at `1b3795e5` **before P1–P5 were measured** and not edited since.
-**Machine record:** `results/calibration/_nyiso216_rensselaer_counterexample.json`.
+**Machine record:** `results/phase0/nyiso/_nyiso216_rensselaer_counterexample.json`.
 **Instrument:** `scripts/probes/nyiso216_rensselaer_counterexample.py`.
 **ZERO LP: no solve was spent.** Every fleet rebuild is `fleet_only=True`; every price is the
 keeper's own committed P1 sidecar (rule 29(b) form 4 — **no control solve**). Nothing under

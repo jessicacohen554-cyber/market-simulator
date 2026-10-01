@@ -5,9 +5,9 @@
 **Authority:** OWNER RULING **Q72** (2026-09-26, capx ledger §0bl / §3): *"Re-point, 2041–2050 mean"* =
 DESIGN-capx-d97 §6 option **(a)** with sub-choice **(a-2)**. Rejected by the owner: (a-1) the final-year scalar,
 and retiring T1.6 for NEISO.
-**Binding charter:** `docs/handoffs/capx-director-prompt-pack-2026-08.md` "D99".
+**Binding charter:** `docs/records/forecast/capx-director-prompt-pack-2026-08.md` "D99".
 **Design (read whole; its §3 outcome map A–E, honesty clause and "no third lever" BIND):**
-`docs/handoffs/DESIGN-capx-d97-t16-repoint-2026-09-25.md`.
+`docs/records/forecast/DESIGN-capx-d97-t16-repoint-2026-09-25.md`.
 **Precedents cited:** Q27 / capx **T16-A** (`FINDING-capx-t16a-ladder-repoint-2026-09-02.md`, the previous
 T1.6 re-point) and capx **D35** (`FINDING-capx-d35-p2-scope-2026-09-02.md`, the worked FC-6 re-scope);
 D94 (`FINDING-capx-d94-2026-09-24.md`, the golden-recipe battery discipline); D96
@@ -60,7 +60,7 @@ partial-window mean. `rps_dual_over_acp` itself (T1.6a's metric) is byte-unchang
 
 ### 1.3 The plan-§2 edit
 
-`docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md` §2 Tier-1 table, T1.6 row: the
+`docs/records/forecast/forecast-driver-capacity-revenue-audit-plan-2026-07.md` §2 Tier-1 table, T1.6 row: the
 "Ladder" and claim text are untouched; one italic sentence is appended recording the Q72 scoring
 construction (T1.6a on the final-year dual; T1.6b on the 2041–2050 mean; rules unchanged).
 
@@ -151,7 +151,7 @@ consistent with §2.2's key reproduction). Every hunk classified (delegated read
 (`vre_long`), as the charter directs.** Confidence: high — the audit is corroborated by the §2.2 key
 reproduction, and D96's own E1 showed its window's all-INERT audit held byte-for-byte.
 
-### 2.4 The `vre_short` row, built here at zero LP (`docs/handoffs/d99/battery_golden_rung.py reuse`)
+### 2.4 The `vre_short` row, built here at zero LP (`docs/records/forecast/d99/battery_golden_rung.py reuse`)
 
 D96's cache parquets are off `main` (its shard branches are cut), so `vre_short`'s row is built as follows,
 and the construction is declared here, before any LP:
@@ -180,7 +180,7 @@ and the construction is declared here, before any LP:
 * **Rule 34 (a):** append `!results/ff-t3-neiso-golden/d99/vre_long/**` to `.gitignore`, then a **plain**
   `git add .gitignore results/ff-t3-neiso-golden/d99/vre_long`; never `-f`, never `-A` / `.`. Slim files first
   (one commit, pushed), cache parquets after.
-* After the solve: `docs/handoffs/d99/battery_golden_rung.py metrics --out-dir … --rung vre_long` (zero LP; it
+* After the solve: `docs/records/forecast/d99/battery_golden_rung.py metrics --out-dir … --rung vre_long` (zero LP; it
   REFUSES on a config-signature mismatch).
 * Hard stops: SHA; the solved `run_config.json` shows both pins, `entry_rate_limits` True,
   `entry_pipeline_aware_signal` True, `mode=forecast`, ISO NEISO; key = `883f25eb5ee3e55e` (a mismatch is
@@ -255,7 +255,7 @@ the standing record's committed inputs — `--summary/--run-config/--dof-ledger/
 are registry-authored). Measured here, with this lane's scorer change applied.
 
 **Step 1, the swap:** only `--driver-battery` → `results/ff-t3-neiso-golden/d99/driver-battery-neiso-2026-09-26.json`,
-assembled by `docs/handoffs/d99/battery_golden_rung.py assemble` from the `vre_short` (reused) and `vre_long`
+assembled by `docs/records/forecast/d99/battery_golden_rung.py assemble` from the `vre_short` (reused) and `vre_long`
 (solved) rows through the instrument's own `run_ladder`. Every other input is held byte-identical.
 
 **Registration.** The prior `neiso-t3` record is preserved **byte-equal at `neiso-t3-pre-d99`**. Scoring happens

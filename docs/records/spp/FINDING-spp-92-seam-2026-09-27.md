@@ -2,7 +2,7 @@
 
 **Lane** SPP-92 · **ZERO LP** · keeper `2026-09-26-spp-86-coal-extract` (bundle `spp86_arm_span`, basis_sha `d72e5f10`) ·
 probes `scripts/probes/_spp92_seam_probe.py`, `_spp92_load_lmp_fetch.py`, `_spp92_bubble_spread.py`, `_spp92_psi_repair.py` ·
-records `docs/handoffs/spp92/` (`_spp92_seam_probe.json`, `_spp92_bubble_spread.json`, `psi_repair.json`, `tstar_*.csv`,
+records `docs/records/spp/spp92/` (`_spp92_seam_probe.json`, `_spp92_bubble_spread.json`, `psi_repair.json`, `tstar_*.csv`,
 `PREDECLARE-psi-repair.md` committed at `48711d25` **before** the ψ re-run was computed).
 Nothing solved, registered or promoted. Keeper unchanged. No promotion question (rule 31).
 

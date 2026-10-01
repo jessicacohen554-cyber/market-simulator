@@ -52,7 +52,7 @@ blamed on floor interaction.
 
 ## 3. Why the D-8 instability is structural, not statistical
 
-`results/calibration/FINDING-caiso-evening-merit-2026-07-04.md`: in an energy-only,
+`docs/records/caiso/FINDING-caiso-evening-merit-2026-07-04.md`: in an energy-only,
 ramp-free, 3-zone LP, CC (HR ~7.6) thermodynamically dominates CT (HR ~10.4) — CT's
 *cheapest* band (~$59 at 2024 SoCal gas + CARB) exceeds the evening LMP in ~70% of evening
 hours, so on pure merit the model clears only ~600 MW of evening CT vs ~1,000+ MW actual.

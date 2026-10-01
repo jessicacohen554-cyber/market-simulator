@@ -3,7 +3,7 @@
 **Lane:** capx D49 — a ZERO-SOLVE diagnostic over artifacts D46 committed. Branch
 `claude/capx-d49-d46-phase0s-eaw7am`, fresh off `origin/main` `8a18e9e1`.
 **Date:** 2026-09-04. **Pre-declaration:**
-`docs/handoffs/PREDECL-capx-d49-2026-09-04.md`, pushed at `e2a7fbf2` BEFORE either
+`docs/records/forecast/PREDECL-capx-d49-2026-09-04.md`, pushed at `e2a7fbf2` BEFORE either
 probe script existed; graded at full magnitude in §1.6 and §2.7, misses included.
 **Nothing solved, armed, moved or repaired.** No `ScenarioConfig` field touched,
 no keeper / shard verdict / marker moved, no CI job. Rules 13, 14, 21, 22, 25,
@@ -13,9 +13,9 @@ emissions-unit-annual fuel-prices outages …`) so the base fleets could be
 rebuilt through `build_base_fleet` — stated because the dispatch asked.
 
 **Committed with this finding:** `scripts/probes/_capxd49_ercot_ccs_reconstruction.py`
-→ `results/calibration/capxd49_ccs_reconstruction.json`;
+→ `results/phase0/forecast/capxd49_ccs_reconstruction.json`;
 `scripts/probes/_capxd49_miso_exit_margin.py` →
-`results/calibration/capxd49_miso_exit_margin.json`; evidence appends to the
+`results/phase0/forecast/capxd49_miso_exit_margin.json`; evidence appends to the
 ERCOT `ccs_retrofit_screen` cell and the MISO `economic_retirement_screen`,
 `capacity_market_clearing`, `adequacy_internal_supply_accounting` cells (no
 verdict letter moves; `check_mechanism_matrix.py` clean).
@@ -463,7 +463,7 @@ forecast surfaces and nothing here touches them.
 
 ```
 uv run python scripts/regenerate_clean.py fleet reference egrid emissions-unit-annual fuel-prices outages confirmed-retirements
-uv run python scripts/probes/_capxd49_ercot_ccs_reconstruction.py --out results/calibration/capxd49_ccs_reconstruction.json
-uv run python scripts/probes/_capxd49_miso_exit_margin.py --out results/calibration/capxd49_miso_exit_margin.json
+uv run python scripts/probes/_capxd49_ercot_ccs_reconstruction.py --out results/phase0/forecast/capxd49_ccs_reconstruction.json
+uv run python scripts/probes/_capxd49_miso_exit_margin.py --out results/phase0/forecast/capxd49_miso_exit_margin.json
 uv run python scripts/check_mechanism_matrix.py
 ```

@@ -54,7 +54,7 @@ probes. Zero LP, zero shards, zero container-hours of solve.**
 
 ## 2. G-1 — THE GRAIN. **100 % DAILY, EVERY CLASS, EVERY YEAR.**
 
-`scripts/probes/nyiso248_gas_grain_census.py` → `results/calibration/_nyiso248_gas_grain_census.json`.
+`scripts/probes/nyiso248_gas_grain_census.py` → `results/phase0/nyiso/_nyiso248_gas_grain_census.json`.
 Reads the committed keeper's own assembled `fuel_prices` out of the fleet cache. A row is MONTHLY
 iff its mean within-month CV is < 1e-9.
 

@@ -1,10 +1,10 @@
 # FINDING — the forward-expectation entry signal, measured
 
 _2026-08-25 · ENTRY-SIGNAL lane (charter: the rung named by
-`docs/FINDING-entry-signal-disarm-2026-08.md` §6; root object
-`docs/FINDING-entry-screen-t1h-2026-08.md` §6 D-8, §7 L-1/L-1b; predictions
+`docs/records/misc/FINDING-entry-signal-disarm-2026-08.md` §6; root object
+`docs/records/misc/FINDING-entry-screen-t1h-2026-08.md` §6 D-8, §7 L-1/L-1b; predictions
 pre-registered in
-`docs/PRECOMMIT-entry-signal-forward-expectation-2026-08-25.md` **before the
+`docs/records/misc/PRECOMMIT-entry-signal-forward-expectation-2026-08-25.md` **before the
 solve**). **Two LP solves: the ERCOT treatment arm and a same-tree control.**
 This rung adjudicates the new `entry_forward_expectation_signal` cell (ERCOT)
 and closes the disarm's open trajectory question. **Nothing is armed as a
@@ -67,7 +67,7 @@ comparison in this document; only CO2 must be compared same-tree.
 
 Committed in the precommit §3 before the treatment bundle existed; executed
 mechanically by the probe
-(`results/calibration/entry_signal_fwd_expectation_ercot.json`).
+(`results/phase0/ercot/entry_signal_fwd_expectation_ercot.json`).
 
 | # | prediction | outcome | verdict |
 |---|---|---|:--|
@@ -249,7 +249,7 @@ uv run python scripts/score_capacity_hindcast.py --bundle <each bundle>
 uv run python scripts/probes/entry_signal_fwd_expectation_compare.py \
     --treatment results/hindcast/ercot-2021-2025-realized-t1h-fwdexp \
     --control results/hindcast/ercot-2021-2025-realized-t1h-fwdexp-control \
-    --out results/calibration/entry_signal_fwd_expectation_ercot.json
+    --out results/phase0/ercot/entry_signal_fwd_expectation_ercot.json
 ```
 
 `data/clean` is derived and gitignored: run
@@ -257,7 +257,7 @@ uv run python scripts/probes/entry_signal_fwd_expectation_compare.py \
 datatypes succeed on this tree; the one failure is a MISO raw mirror absent
 from the profile and irrelevant here). *(Historical since 2026-08-30: the
 `miso-m2m-flowgates` mirrors are tracked in-repo — owner card ruling,
-`docs/handoffs/miso-m2m-flowgates-raw-mirror-2026-08.md` — so a tree whose
+`docs/records/miso/miso-m2m-flowgates-raw-mirror-2026-08.md` — so a tree whose
 hydration covers the MISO subtrees regenerates 51/51.)* Evolution ledgers stay uncommitted
 per repo policy; the probe artifact carries both arms' per-step rows, and
 the committed dumps carry every §4 number.

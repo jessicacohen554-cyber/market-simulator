@@ -1,7 +1,7 @@
 # Capacity-market equilibrium tests (T2.1-T2.5) — 2026-07-12 (P-3B)
 
 **Session.** P-3B of
-`docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md` §2
+`docs/records/forecast/forecast-driver-capacity-revenue-audit-plan-2026-07.md` §2
 Tier 2, rescoped 2026-07-12 to the ISOs partial-P-3A coverage and the
 settled-backcast frontier actually support: **NEISO** (T2.1-T2.4, the
 capacity-market case — completed 25/25 in P-3A, backcast frontier-declared)
@@ -11,7 +11,7 @@ attempted this session; NEISO alone already gives a clean, fully-powered
 T2.1-T2.4 result and a PJM replication is a natural, cheap follow-up rather
 than a blocker. NYISO/MISO are out per the manager's scoping (NYISO 1/25
 thin, MISO 0/25 hard-blocked, per
-`docs/handoffs/full-horizon-findings-2026-07-12.md` §3-4).
+`docs/records/misc/full-horizon-findings-2026-07-12.md` §3-4).
 
 **Container caveat.** `results/full-horizon/` is a gitignored disposable
 solve cache (rule-16 throwaway-baseline spirit), and this session's execution
@@ -27,7 +27,7 @@ is the same run, re-derived, not a different one.
 
 **What's active vs. dormant (read this before the results).** Both P-3A and
 this session run `capacity_market_clearing=False` (the P-2A recommendation,
-`docs/handoffs/capacity-price-validation-2026-07-12.md` §7). The CR-1 sloped
+`docs/records/misc/capacity-price-validation-2026-07-12.md` §7). The CR-1 sloped
 VRR/ICAP/FCA/RBDC demand curve (`MarketDesign.demand_curve`, landed in P-1B) is
 **dormant** under this default. The ACTIVE capacity-value mechanism for every
 capacity-market ISO is the flat, pre-CR-1 stub:

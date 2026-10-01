@@ -1,6 +1,6 @@
 # FOM + scarcity joint sensitivity protocol — ERCOT/PJM (2026-07-05, W2-P3 Stage 1)
 
-*Executes `docs/handoffs/capacity-economics-plan-2026-07.md` §5 (the joint FOM+scarcity
+*Executes `docs/records/misc/capacity-economics-plan-2026-07.md` §5 (the joint FOM+scarcity
 protocol) and §1 (the ATB going-forward FOM recalibration). This is the **verification** leg
 that keeps the cost side (FOM) and the revenue side (scarcity/AS) from being co-tuned against a
 single retirement/emissions residual (CLAUDE.md rule 1). It records the probe matrix and decides
@@ -221,4 +221,4 @@ The current 8 / 12 / 40 defaults are **mis-cited** in `frontend/data/parameters.
 **Collision note honoured:** no CAISO-touching change (scalar remediation B-CAI-1… is live on CAISO
 scalars).
 
-*Grid JSON: `docs/handoffs/fom-scarcity-grid-2026-07-05.json`. Produced 2026-07-05, W2-P3.*
+*Grid JSON: `docs/records/misc/fom-scarcity-grid-2026-07-05.json`. Produced 2026-07-05, W2-P3.*

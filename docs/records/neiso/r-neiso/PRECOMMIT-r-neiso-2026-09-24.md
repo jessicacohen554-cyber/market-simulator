@@ -1,6 +1,6 @@
 # PRECOMMIT — R-NEISO: re-solve NEISO 2019–2025 on corrected backcast inputs (2026-09-24)
 
-**Lane:** R-NEISO (`docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md` §5.3.4) ·
+**Lane:** R-NEISO (`docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md` §5.3.4) ·
 **ISO:** NEISO · **Mode:** backcast · **LP spent before this doc:** zero ·
 **Base:** `9210075392a128d14a5efb168ab1f9955a9b6946` (main after F1 #6572 and F2 #6569 merged; precondition met).
 
@@ -43,7 +43,7 @@ commit (§4), sha256 `aaa3bb379eb7655276401d6d7726cfd783007d81a6eeb7234a879a69c9
 
 ## 2. Short-coal stays R — the rejection did not run on contaminated inputs
 
-neiso-69 (`results/calibration/FINDING-neiso69-unit-availability-windows-2026-07-28.md`) rejected the
+neiso-69 (`docs/records/neiso/FINDING-neiso69-unit-availability-windows-2026-07-28.md`) rejected the
 family **on provenance, not fit**: its one 2023 window (Merrimack u2, Feb 1–3) is contradicted by the
 unit's own hourly CEMS (it produced in 72 of 72 masked hours, peaking at 441 MW), and the baseload guard
 judges Merrimack on 6–10 % of the year. That evidence is CEMS generation, not heat rate — D1 (vintage
@@ -102,7 +102,7 @@ untouched); the layup companion regenerates identically in every year and is unc
 data change cited is the fleet / retiree membership change, not a residual. A `.meta.json` sidecar now
 records the invocation.
 
-## 5. Phase-0 census (zero LP) — `docs/handoffs/r-neiso/phase0_census.{py,json}`
+## 5. Phase-0 census (zero LP) — `docs/records/neiso/r-neiso/phase0_census.{py,json}`
 
 `run_year(fleet_only=True)` per year, recipe **A** = keeper at this HEAD with F1's vintage + coal/ST/CC
 flags forced off (isolates the flag posture; the F1-rejoined eGRID data is read by both), **B** = the
@@ -137,7 +137,7 @@ MW @ MW-weighted heat rate (MMBtu/MWh), A → B:
 
 ## 6. G-DRIFT (rule 29(b)) — keeper `fda9ece3` → `9210075`
 
-`fda9ece3..40f4ed7a` was audited by neiso-113 (`docs/RESULT-neiso113-bench-refresh-2026-09-24.md` §1):
+`fda9ece3..40f4ed7a` was audited by neiso-113 (`docs/records/neiso/RESULT-neiso113-bench-refresh-2026-09-24.md` §1):
 every hunk INERT for NEISO except the EIA-923 benchmark builder (post-LP, BENCHMARK). `40f4ed7a..9210075`:
 
 | commit / hunk | verdict | reason |
@@ -189,7 +189,7 @@ MARKET_SIM_WARMSTART_XYEAR=0 MARKET_SIM_P1_BASIS_SEED=0 uv run python scripts/re
   --set mid_vintage_exit_carry=true --set partial_plant_exit_carry=true \
   --out-dir results/calibration/rneiso_<Y> \
   --note "R-NEISO: keeper + F1/F2 corrected backcast inputs, <Y> (rule 36 single-year)"
-uv run python docs/handoffs/r-neiso/shard_check.py --leg results/calibration/rneiso_<Y> --year <Y>
+uv run python docs/records/neiso/r-neiso/shard_check.py --leg results/calibration/rneiso_<Y> --year <Y>
 ```
 
 The parent fetches each leg, verifies (`git ls-tree` > 0 files, shard_check re-run), composes 2019–2025

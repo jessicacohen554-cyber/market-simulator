@@ -41,7 +41,7 @@ ATTESTED_BY = (
     "legitimacy_diagnostics.json REGENERATED over each composite. CONTROL = the "
     "committed keeper bundles (rule 29 [R-SCREEN] (b) form 4); G-DRIFT "
     "c25d7e50 -> 152c546a audited ALL INERT for a PJM backcast and recorded in "
-    "docs/PRECOMMIT-hydro-2-pjm-2026-09-22.md BEFORE any solve. Gates G1-G4 were "
+    "docs/records/pjm/PRECOMMIT-hydro-2-pjm-2026-09-22.md BEFORE any solve. Gates G1-G4 were "
     "fixed ex ante in that PRECOMMIT and not amended after a number landed. "
     "pjm_da_virtual_bids stays TRUE: the gitignored DataMiner2 corpus was "
     "re-fetched per shard, so the A/B is not confounded (disclosed: no "

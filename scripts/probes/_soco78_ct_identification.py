@@ -30,7 +30,7 @@ YEARS = (2019, 2020, 2021, 2022, 2023, 2024, 2025)
 CT = "CT_PEAKER"
 T = 8760
 RAW = _ROOT / "data/raw"
-OUT = _ROOT / "docs/handoffs/r-soco"
+OUT = _ROOT / "docs/records/soco/r-soco"
 SPLIT = OUT / "soco77_ct_plant_split.csv"
 
 

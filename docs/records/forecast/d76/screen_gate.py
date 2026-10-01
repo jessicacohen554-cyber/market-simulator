@@ -3,7 +3,7 @@
 
 Grades the PJM 2021-2023 screen (arm vs control at the same HEAD) against the
 STOP gates pre-registered in
-``docs/handoffs/PRECOMMIT-capx-d76-measured-screen-peak-2026-09-06.md`` §4 --
+``docs/records/forecast/PRECOMMIT-capx-d76-measured-screen-peak-2026-09-06.md`` §4 --
 **and against nothing else**. The D67 lane recorded, against interest, that its
 first grading script carried four fields beyond its PRECOMMIT's own enumeration
 and reported a FAIL on an exiting-side quantity the gate never named; the fix
@@ -15,7 +15,7 @@ A STOP may KILL the arm; it can never promote it. Nothing here is gated on a
 residual, and the §5 pre-declared expectations are REPORTED separately, marked
 as not-a-gate.
 
-Output: ``docs/handoffs/d76/screen_gate.json`` + a printed table.
+Output: ``docs/records/forecast/d76/screen_gate.json`` + a printed table.
 """
 
 import json
@@ -259,7 +259,7 @@ def main() -> int:
     print(f"SCREEN GATE (STOPs 1-4, structural): {verdict}")
     print("STOP 5 (no non-target load-bearing flip) and STOP 6 (one measured "
           "load per armed year) are graded outside this script -- see the FINDING.")
-    Path("docs/handoffs/d76/screen_gate.json").write_text(
+    Path("docs/records/forecast/d76/screen_gate.json").write_text(
         json.dumps({"verdict": verdict, "stops": results,
                     "reported_not_gated": report(ctrl, arm)}, indent=2) + "\n"
     )

@@ -362,7 +362,7 @@ about the outside-mask hours (§4.3).
 
 `PRECOMMIT-caiso250-lambda-carrier-2026-09-05.md` (pushed first);
 `scripts/probes/_caiso250_lambda_carrier_anatomy.py` +
-`results/calibration/_caiso250_lambda_carrier_anatomy.json`; this finding; the
+`results/phase0/caiso/_caiso250_lambda_carrier_anatomy.json`; this finding; the
 `docs/calibration-log/caiso.md` entry; an **evidence-only** append on the CAISO
 matrix shard. **No cell verdict moves; no mechanism was tested; no run
 registered; keeper unchanged.**

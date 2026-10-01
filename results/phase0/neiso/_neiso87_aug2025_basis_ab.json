@@ -1,6 +1,6 @@
 {
   "session": "neiso-87",
-  "prereg": "results/calibration/PREREG-neiso87-aug2025-basis-refresh-2026-08-06.md",
+  "prereg": "docs/records/neiso/PREREG-neiso87-aug2025-basis-refresh-2026-08-06.md",
   "arm_a": "results/calibration/neiso87_control_A",
   "arm_b": "results/calibration/neiso87_aug2025basis_B",
   "edited_row": {

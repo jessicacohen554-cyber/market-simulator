@@ -72,7 +72,7 @@ YAML parse via PyYAML + `bash -n` on the extracted `run:` body; the regression s
 extracts the step from the workflow file and replays it under `bash -e`, the shell Actions uses); and
 a live replay of the phantom case in this repo with `BASE_SHA=2886235c` (tip) and `HEAD_SHA=5cc1e7ce`
 (an older commit, standing in for a PR head whose base moved): the OLD two-dot diff reports
-`D docs/handoffs/wallclock-desk-log-2026-09.md` (a phantom), the repaired step prints
+`D docs/records/misc/wallclock-desk-log-2026-09.md` (a phantom), the repaired step prints
 *"Base tip … is past the fork point; diffing from merge-base 5cc1e7ce… instead. Scanned 0/0 core
 paths. file-integrity-guard passed."* This guard is not one of the six R-AE checks (Y-9 §3).
 
@@ -110,8 +110,8 @@ register / prune / allowlist; rule 29 forbade the first and nothing chose betwee
 
 | dir | tracked files | where its numbers live (opened and confirmed) |
 |---|---:|---|
-| `results/calibration/miso220_nonsteamlift_screen2025` | 8 | G-1 `$39.869 → $42.276` (+6.039 %, band 3–12 %), G-2 `ST_GAS 16.0362 → 18.3038 TWh` (+2.2676), G-3 no flip, verdict "SCREEN CLEARS" — `results/calibration/_miso220_screen_gates.json` (committed, `7ccdc4fd`, whose commit body also carries the table); gate definitions and the screen-year argument in `PREREG-miso220-nonsteam-offer-lift-2026-09-05.md` Addendum A. *(Dispatch-vs-repo: the dispatch said "the miso-220 FINDING/PRECOMMIT docs from PRs #4838/#4840/#4841". There is no `FINDING-miso220` doc; the PRs are the miso-219 branch's and carry the PREREG + the `_`-prefixed gate JSON. The JSON is the committed gate table; that satisfied the stop condition.)* |
-| `results/calibration/neiso_headctrl_k99` | 17 | worst-drift table (price −0.008 %, demand/slack/dump/reserve_price bit-identical, total generation ≤ 0.0008 %, worst per-class energy 0.17 %) — `results/calibration/ASSESSMENT-neiso-pjm-validation-touchpoints-2026-09-05.md` §4(i), PR #4852. Confirmed. *(That doc cites the drift audit as "rule-30 G-DRIFT"; CLAUDE.md numbers it rule 29(b). Not this lane's to fix; noted.)* |
+| `results/calibration/miso220_nonsteamlift_screen2025` | 8 | G-1 `$39.869 → $42.276` (+6.039 %, band 3–12 %), G-2 `ST_GAS 16.0362 → 18.3038 TWh` (+2.2676), G-3 no flip, verdict "SCREEN CLEARS" — `results/phase0/miso/_miso220_screen_gates.json` (committed, `7ccdc4fd`, whose commit body also carries the table); gate definitions and the screen-year argument in `PREREG-miso220-nonsteam-offer-lift-2026-09-05.md` Addendum A. *(Dispatch-vs-repo: the dispatch said "the miso-220 FINDING/PRECOMMIT docs from PRs #4838/#4840/#4841". There is no `FINDING-miso220` doc; the PRs are the miso-219 branch's and carry the PREREG + the `_`-prefixed gate JSON. The JSON is the committed gate table; that satisfied the stop condition.)* |
+| `results/calibration/neiso_headctrl_k99` | 17 | worst-drift table (price −0.008 %, demand/slack/dump/reserve_price bit-identical, total generation ≤ 0.0008 %, worst per-class energy 0.17 %) — `docs/records/neiso/ASSESSMENT-neiso-pjm-validation-touchpoints-2026-09-05.md` §4(i), PR #4852. Confirmed. *(That doc cites the drift audit as "rule-30 G-DRIFT"; CLAUDE.md numbers it rule 29(b). Not this lane's to fix; noted.)* |
 
 Neither dir was allowlisted, registered or archived. Parity: 2 problems before, OK after. One
 residual reference remains and is harmless: `scripts/probes/_miso220_screen_gates.py` still names

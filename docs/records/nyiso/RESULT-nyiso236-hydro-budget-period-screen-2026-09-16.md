@@ -2,8 +2,8 @@
 
 **Session** nyiso-236 (ORCHESTRATOR — rule 32 `[R-SHARD]` (a); this session ran ZERO LP).
 **Date** 2026-09-16. **Pre-registration**
-`docs/PRECOMMIT-nyiso236-hydro-budget-period-screen-2026-09-16.md`, which adopts
-`results/calibration/PRECOMMIT-nyiso220-screen.md` in full — both pushed before the solve.
+`docs/records/nyiso/PRECOMMIT-nyiso236-hydro-budget-period-screen-2026-09-16.md`, which adopts
+`docs/records/nyiso/PRECOMMIT-nyiso220-screen.md` in full — both pushed before the solve.
 **Keeper** `2026-09-14-nyiso-235-gas-repair` — **UNCHANGED by this session.**
 
 > ## THE SCREEN CLEARS. G1 · G2 · G3 · G5 PASS. G4 SPLITS EXACTLY WHERE IT WAS PREDICTED TO.
@@ -38,7 +38,7 @@ bundle-root `system.parquet` and `hourly/unit_hourly_2025.parquet`.
 `solve_surface.fingerprint` = **`bd2b4657f9b5df7e`**, identical to the keeper's.
 
 **Control = the keeper's committed bundle** (rule 29(b) form 4), valid on this session's own G-DRIFT
-(`docs/FINDING-nyiso236-the-anchor-grain-and-the-gas-slope-2026-09-16.md` §1). **No control solve
+(`docs/records/nyiso/FINDING-nyiso236-the-anchor-grain-and-the-gas-slope-2026-09-16.md` §1). **No control solve
 was spent.**
 
 ## 2. THE GATES
@@ -256,7 +256,7 @@ span leg reproduces the screen probe **byte-identically** (max |ΔMW| = 0.000000
 > and 32(b) `[R-SHARD]`). nyiso-238 executed that re-solve into
 > `results/calibration/nyiso238_hydroperiod_span` and **pushed the bundle** under rule 34
 > `[R-SHARD-PROMOTABLE]` (a), so the arm is promotable again; see
-> `docs/RESULT-nyiso238-hydro-budget-span-2026-09-16.md` for the live retrievability line.
+> `docs/records/nyiso/RESULT-nyiso238-hydro-budget-span-2026-09-16.md` for the live retrievability line.
 >
 > Nothing in §A1–A5 is withdrawn: those numbers stand as measured. What is corrected is only the
 > claim that the artifacts behind them survive.

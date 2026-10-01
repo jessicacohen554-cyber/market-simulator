@@ -3,14 +3,14 @@
 **Session** nyiso-245 (ORCHESTRATOR — rule 32 `[R-SHARD]` (a); **zero LP in this container**).
 **Date** 2026-09-20. **Base** `origin/main` at `5c0bec8b`, **rebased mid-session onto `e8b80102`**
 at the owner's instruction.
-**PRECOMMIT** `docs/PRECOMMIT-nyiso245-position-shape-offer-surface-2026-09-20.md`, committed at
+**PRECOMMIT** `docs/records/nyiso/PRECOMMIT-nyiso245-position-shape-offer-surface-2026-09-20.md`, committed at
 **`398f0437`** before any gated number was computed; the rebase moved that commit to **`5cbf4fef`**
 with its content unchanged.
 **Keeper** `2026-09-19-nyiso241-ct-committed-measured`, bundle
 `results/calibration/nyiso241_ctcommitted_span`, years {2022, 2023, 2024, 2025} — **UNCHANGED.
 Nothing armed, promoted or registered for this mechanism. No `ScenarioConfig` field survives in
 the tree. NYISO still reads `CALIBRATED` on its ISO tier, with C3c the lone ledgered caveat.**
-**Predecessor** `docs/RESULT-nyiso244-the-object-is-in-the-body-not-the-top-2026-09-20.md` §7.
+**Predecessor** `docs/records/nyiso/RESULT-nyiso244-the-object-is-in-the-body-not-the-top-2026-09-20.md` §7.
 
 > ## HEADLINE
 > 1. **BOTH LIMBS OF nyiso-244's RE-OPEN CONDITION WERE SATISFIED, AND THE MECHANISM WAS REFUSED

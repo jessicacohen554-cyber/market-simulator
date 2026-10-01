@@ -6,7 +6,7 @@ measurement is a rule 29 `[R-SCREEN]` clause-0 phase 0 — there is no arm, no g
 residual, and nothing here can promote anything.
 **PJM keeper `2026-09-11-pjm-d4-4-gasoutage`: CALIBRATED, 8/8, zero caveats — UNTOUCHED.**
 
-Chartered by `docs/RESULT-pjm-h8-minload-measured-offer-screen-2026-09-16.md` §5 route **(b)**,
+Chartered by `docs/records/pjm/RESULT-pjm-h8-minload-measured-offer-screen-2026-09-16.md` §5 route **(b)**,
 which the handoff names as the cheap test to run first. This document is written **before any
 decisive number is computed** and carries the decision rule.
 
@@ -24,7 +24,7 @@ arm **−12.70** against 103.026 actual). Two readings were left unadjudicated. 
 > over-correction of a measurable size.
 
 The already-measured magnitudes this bears on, from the committed h8 ladder
-(`results/calibration/_pjm_h8_offer_ladder.json`, 2023, gas mean 3.2024 $/MMBtu):
+(`results/phase0/pjm/_pjm_h8_offer_ladder.json`, 2023, gas mean 3.2024 $/MMBtu):
 
 | row | MW | share | model bid | measured (blended) | model/meas | gap |
 |---|---:|---:|---:|---:|---:|---:|

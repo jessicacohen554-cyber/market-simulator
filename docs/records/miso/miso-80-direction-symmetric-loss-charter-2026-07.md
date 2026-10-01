@@ -7,7 +7,7 @@ evidenced" clause), chartered per the miso-78 precedent: adjudicate at the
 design layer BEFORE any build, with NO-BUILD an acceptable verdict.
 **Model per rule 27: Fable/Opus** (the lane's build target would edit
 `transmission.py`). **Base documents:** the FROZEN miso-76 charter
-`docs/handoffs/miso-nc-price-separation-design-2026-07.md` (untouched);
+`docs/records/miso/miso-nc-price-separation-design-2026-07.md` (untouched);
 the miso-76 adjudication (frozen monolith `docs/calibration-log.md`
 ~L17992; registry sidecars `2026-07-19-miso-76-loss-{surface,base}`);
 the miso-78 M4 NO-BUILD charter + miso-79 RO-3 NEGATIVE probe.

@@ -2,7 +2,7 @@
 
 **Session ercot-202, 2026-08-14, branch `claude/ercot-202-gas-hh-shape-ab-3ldc3z`,
 assembled at `origin/main` `d5a0b94`.** Dispatched to execute
-`docs/DECISION-CARD-ercot196-shape-2024-2025-2026-08-13.md` card T option **(T-1)**
+`docs/records/ercot/DECISION-CARD-ercot196-shape-2024-2025-2026-08-13.md` card T option **(T-1)**
 — arm the measured Henry Hub monthly shape as an input-correctness A/B against the
 run192 keeper recipe — **with (T-3b)**, the published-adder overlay-completeness
 audit, as its read-only companion.
@@ -18,7 +18,7 @@ armed, considered, or prepared.
 
 Everything below is reproducible from committed artifacts by
 `scripts/probes/ercot202_t1_viability.py` (output:
-`results/calibration/ercot202_t1_viability.json`). Rule 13 `[R-MEASURED]`: every
+`results/phase0/ercot/ercot202_t1_viability.json`). Rule 13 `[R-MEASURED]`: every
 measured series is read for audit/attribution only — none enters a model input.
 Rule 22: only {2023, 2024, 2025} were read; no marker was granted or spent.
 
@@ -132,7 +132,7 @@ The record contains **both** the correct and the stale statement; the stale one 
 carried forward verbatim in each session's "open owner rulings carried" block
 without being re-checked against the keeper config.
 
-**Origin (stale).** `docs/PRECOMMIT-ercot145-gas-daily-shape-2026-07-31.md` §1b:
+**Origin (stale).** `docs/records/ercot/PRECOMMIT-ercot145-gas-daily-shape-2026-07-31.md` §1b:
 *"Its admissible descendant is `gas_hh_monthly_shape` … built for exactly this
 reason, **currently unarmed**, and **carrying no matrix row**"*, restated as §6 open
 ruling 1.
@@ -145,9 +145,9 @@ ruling 1.
 **Corrected in-record on 2026-08-04, but never back-propagated.** The xiso-3/xiso-4
 cross-ISO census read the arming correctly and acted on it:
 
-* `results/calibration/PREREG-xiso3-shared-stem-backlog-2026-08-04.md` #37 homes the
+* `docs/records/governance/PREREG-xiso3-shared-stem-backlog-2026-08-04.md` #37 homes the
   field on `gas_daily_shape` — *"(`KKKKKK`, **ERCOT armed**)"*.
-* `results/calibration/FINDING-xiso4-cross-iso-shared-stem-2026-08-04.md` adjudicates
+* `docs/records/governance/FINDING-xiso4-cross-iso-shared-stem-2026-08-04.md` adjudicates
   the same choice: *"`gas_daily_shape` is `KKKKKK` and **matches ERCOT's arming**,
   where `gas_monthly_actuals` reads `G`."*
 * `mechanism-matrix.js:1886` records it as **"ARMED ON THE ERCOT KEEPER"**.
@@ -324,5 +324,5 @@ owner authorization plus its own precommit and rule-19 reconciliation.
 **Session consumed the ercot-202 shorthand. Next shorthand: ercot-198.**
 
 **Artifacts produced:** this finding; `scripts/probes/ercot202_t1_viability.py`;
-`results/calibration/ercot202_t1_viability.json`; the `docs/calibration-log/ercot.md`
+`results/phase0/ercot/ercot202_t1_viability.json`; the `docs/calibration-log/ercot.md`
 entry; the two-note `mechanism-matrix.js` correction. Nothing else.

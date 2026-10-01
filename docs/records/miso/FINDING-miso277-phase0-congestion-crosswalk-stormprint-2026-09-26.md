@@ -4,9 +4,9 @@
 LANE    : miso-277 (MISO lever queue §5.4; routed by FINDING-miso276 §5)
 KEEPER  : 2026-09-26-miso-275-cc-exempt (results/calibration/miso275_span) — unchanged
 LP      : none (zero-LP phase 0)
-PROBES  : scripts/probes/_miso277_c3a2022_congestion.py     -> results/calibration/_miso277_c3a2022_congestion.json
-          scripts/probes/_miso277_storm_print_conventions.py -> results/calibration/_miso277_storm_print_conventions.json
-          scripts/probes/_miso277_crosswalk_footprint.py     -> results/calibration/_miso277_crosswalk_footprint.json
+PROBES  : scripts/probes/_miso277_c3a2022_congestion.py     -> results/phase0/miso/_miso277_c3a2022_congestion.json
+          scripts/probes/_miso277_storm_print_conventions.py -> results/phase0/miso/_miso277_storm_print_conventions.json
+          scripts/probes/_miso277_crosswalk_footprint.py     -> results/phase0/miso/_miso277_crosswalk_footprint.json
 CODE    : src/market_sim/data/fuel/basis/miso.py::_miso_zone_hub_kind (bug fix, default-off paths only)
 DATA    : DATA PROFILE: miso
 ```
@@ -142,7 +142,7 @@ The owner question built on this table is §4.
 
 ## 5. Owner rulings (2026-09-26)
 
-1. **C3b:** "Re-solve D1 as ruled (Recommended)" → `docs/PRECOMMIT-miso277-d1-as-ruled-2026-09-26.md`, 7 shards.
-2. **C1 ST_GAS:** "Charter re-derive (Recommended)" → `docs/handoffs/CHARTER-miso-stgas-unit-fuel-attribution-2026-09-26.md`.
+1. **C3b:** "Re-solve D1 as ruled (Recommended)" → `docs/records/miso/PRECOMMIT-miso277-d1-as-ruled-2026-09-26.md`, 7 shards.
+2. **C1 ST_GAS:** "Charter re-derive (Recommended)" → `docs/records/miso/CHARTER-miso-stgas-unit-fuel-attribution-2026-09-26.md`.
 3. **C3a 2022:** "Leave as routed miss (Recommended)". Recorded as a known structural limitation (no intra-MISO
    transfer limits; no measured 2022 limit exists). RO-2 not chartered.

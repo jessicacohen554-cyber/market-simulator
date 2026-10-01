@@ -64,7 +64,7 @@ session; NEISO also needs its bundle), then `build_status.py --iso NEISO`.
 ## 2026-07-19 — gas_daily_shape §3.7 interp-mislocation fix: all-ISO A/B (true-date + trade-date staircase); PJM + MISO keepers advanced
 
 **Task (standing correctness follow-up from the miso-72 winter lane, spec
-`docs/handoffs/miso-winter-fuel-security-design-2026-07.md` §3.7 — NOT a miso-N
+`docs/records/miso/miso-winter-fuel-security-design-2026-07.md` §3.7 — NOT a miso-N
 session).** `gas_daily_shape_factors` resampled each month's Henry Hub daily
 quote LIST with an even-spread `np.interp`, mislocating any convex single-day
 spike bracketed by a trading-holiday gap (the Jan-12-2024 Heather Friday print
@@ -129,7 +129,7 @@ pruned pjm-102/102b, caiso-84-gas-spot, miso-70-tier-base.
 ## 2026-07-24 — CROSS-ISO: the CAMPD unit-outage detector books economic layup as outage in ALL SIX ISO extracts
 
 Escalated from the NEISO lane (`neiso-63`, 2026-07-24; evidence
-`results/calibration/FINDING-neiso63-campd-economic-layup-2026-07.md`). Data-layer
+`docs/records/neiso/FINDING-neiso63-campd-economic-layup-2026-07.md`). Data-layer
 audit only — no solve, no keeper change, no parameter touched, any ISO.
 
 **Finding.** `scripts/lib/outage_detect.py::filter_revealed_outages` keeps a down
@@ -215,7 +215,7 @@ ground truth; dedupe the raw parquet to one row per outage mrid first).
 ## 2026-07-26 — caiso-123: the CAISO "RE-TUNE REQUIRED" cell of the guard re-audit rests on a CONFOUNDED A0 — trigger withdrawn as stated, re-derived onto the 07-24 extract-content change; guard's own isolated effect is −0.18 % (favourable)
 
 **Notification to the campd-economic-layup charter lane** (charter §8 amended in
-place; full record `results/calibration/FINDING-caiso123-c3a-drift-attribution-2026-07-26.md`):
+place; full record `docs/records/caiso/FINDING-caiso123-c3a-drift-attribution-2026-07-26.md`):
 
 - The CAMPD unit-outage extracts were **derived-not-committed until 07-24**
   (no `campd-unit-outages*.csv` main extract exists in any pre-07-24 tree, any
@@ -295,14 +295,14 @@ not reopened and no rule-22 leave-one-year-out obligation arises. `MERIT_OOM_FRA
 was held at 0.90 for both cuts throughout (rule 23 — re-tuning it to flatter one
 cut would be fitting to a residual). **The freeze stays ACTIVE**; Lane B was
 never one of its conditions, and only the owner lifts it. Charter §9 updated.
-Record: `results/calibration/FINDING-campd-daygrain-crossiso-2026-07-26.md`.
+Record: `docs/records/governance/FINDING-campd-daygrain-crossiso-2026-07-26.md`.
 
 ## 2026-07-26 — CAMPD economic-layup charter: the PJM keeper re-audit cell is RESOLVED (pjm-129, RE-TUNE REQUIRED) and its RAM block is CLOSED — the "≥24 GB" conclusion was wrong
 
-Charter cell (`docs/handoffs/campd-economic-layup-fix-charter-2026-07.md` §5/§8),
+Charter cell (`docs/records/misc/campd-economic-layup-fix-charter-2026-07.md` §5/§8),
 executed in the PJM lane as **pjm-129**. Registered arm
 `2026-07-26-pjm-129-meritguard-a1` (2023/2024/2025, one bundle, rule 16; rule 15).
-Full record: `results/calibration/FINDING-pjm129-keeper-reaudit-meritguard-2026-07.md`;
+Full record: `docs/records/pjm/FINDING-pjm129-keeper-reaudit-meritguard-2026-07.md`;
 per-ISO entry in `docs/calibration-log/pjm.md`.
 
 **Verdict:** `CALIBRATED` 10/10 → **`NOT-YET` 7/10, RE-TUNE REQUIRED** on C3a-2025
@@ -357,7 +357,7 @@ miso-92/93 had already established it for MISO. Two lessons:
 ## 2026-07-27 (miso-95) — derived artifacts carry no vintage stamp, and all five `thermal_tranches_<ISO>.csv` are provenance-orphaned
 
 Cross-ISO, no-solve. Full evidence:
-`results/calibration/FINDING-miso95-thermal-tranches-provenance-2026-07.md`.
+`docs/records/miso/FINDING-miso95-thermal-tranches-provenance-2026-07.md`.
 
 **Finding.** None of the five committed `thermal_tranches_<ISO>.csv` artifacts
 reproduces from a HEAD re-derive on any constructible input vintage. Two of the
@@ -400,7 +400,7 @@ by pjm-129 and miso-93/94 and should not be re-run.
 
 ## 2026-07-27 (nyiso-86) — the demand-basis wedge is a FLEET-WIDE property: screened across all six keepers, MISO carries the largest (+3.7 %/+3.1 % of load)
 
-The nyiso-86 reconciliation (`docs/FINDING-nyiso-calibration-reconciliation-2026-07-27.md`
+The nyiso-86 reconciliation (`docs/records/nyiso/FINDING-nyiso-calibration-reconciliation-2026-07-27.md`
 §2.1–§2.3) found NYISO's only load-bearing C1 fail is dominated by a
 **demand-basis wedge**: the model serves the BA-reported metered-load basis
 (EIA-930 Demand ≡ NYISO pal, verified identical) with a lossless LP, while C1
@@ -434,7 +434,7 @@ load to EIA-930, the native load files are the same series.
 Owner-raised question, pre-registered no-LP probe over all six ISOs ×
 2023–2025 (`scripts/probes/guard_falseneg_audit.py`, verdict rules committed
 before the run). Full evidence:
-`results/calibration/FINDING-guard-falseneg-audit-2026-07-27.md`.
+`docs/records/governance/FINDING-guard-falseneg-audit-2026-07-27.md`.
 
 **Verdicts (pre-registered, unmet-means-dead):** ERCOT / CAISO / NEISO / PJM
 **SUSPECT** (D3 tightness placement fires, D2 population test clean);
@@ -501,8 +501,8 @@ contamination), coal_cems 176→192.5 TWh, NYISO/PJM CT_PEAKER cv_ratio toward
 the model — all inside bands. Discovered and left for owner scoping: MISO
 ST_CHP model diurnal profile is anti-correlated with its true actual
 (profile_r ≈ −0.75..−0.80; ungated/exempt today). Full record:
-`docs/FINDING-bench-multiclass-collapse-2026-07-28.md`;
-`results/calibration/bench_multiclass_collapse.json` +
+`docs/records/misc/FINDING-bench-multiclass-collapse-2026-07-28.md`;
+`results/phase0/misc/bench_multiclass_collapse.json` +
 `bench_multiclass_migration_report.json`.
 
 ## 2026-08-01 — xiso-1: diurnal price-amplitude compression is SYSTEMIC at all six ISOs (cross-cutting audit, NO LP)
@@ -511,7 +511,7 @@ ST_CHP model diurnal profile is anti-correlated with its true actual
 produced, no keeper touched, no dashboard registration** (rule 15
 `[R-DASHBOARD]` binds bundles; there is none — same disposition as
 neiso-71/73/74). Record:
-`results/calibration/FINDING-xiso1-diurnal-price-amplitude-is-systemic-2026-08-01.md`,
+`docs/records/governance/FINDING-xiso1-diurnal-price-amplitude-is-systemic-2026-08-01.md`,
 transcript `PROBE-xiso1-diurnal-amplitude-audit-2026-08-01.txt`, probe
 `scripts/probes/_xiso1_diurnal_amplitude_audit.py`.
 
@@ -608,7 +608,7 @@ open cross-ISO audit" — has sat unaudited since the merit-order guard was adop
 It is now answered for all six ISOs, mechanically and at **zero LP**: no solve, no
 scoring, no registration, no bundle. Probe
 `scripts/probes/_xiso2_outage_artifact_provenance_census.py`, record
-`results/calibration/FINDING-xiso2-outage-artifact-provenance-census-2026-08-02.md`,
+`docs/records/governance/FINDING-xiso2-outage-artifact-provenance-census-2026-08-02.md`,
 transcript `PROBE-xiso2-outage-artifact-provenance-census-2026-08-02.txt`.
 
 **The construction.** The guard-landing boundary is commit `6a8f285c5`
@@ -705,8 +705,8 @@ provenance item remains blocked at HEAD (miso-95).
 once, scored entirely from the committed `legitimacy_diagnostics.json` artifacts.
 Zero LP by construction — the C8 gate is scorer-only. Probe
 `scripts/probes/_xiso3_forced_share_d4_census.py`, transcript
-`results/calibration/PROBE-xiso3-forced-share-d4-census-2026-08-02.txt`, record
-`results/calibration/FINDING-xiso3-forced-share-d4-census-2026-08-02.md`.
+`results/phase0/governance/PROBE-xiso3-forced-share-d4-census-2026-08-02.txt`, record
+`docs/records/governance/FINDING-xiso3-forced-share-d4-census-2026-08-02.md`.
 
 **Method is the production scorer, not a re-implementation.** The probe loads each
 keeper's committed artifacts via `calibration_verdict.load_artifacts`, runs the full
@@ -799,7 +799,7 @@ solve-state floors; D-13: measured degenerate-vertex non-reproduction of the
 caiso153 solve — same duals, class dispatch shuffled ≤2 GW — carrying
 caiso-154 §H's "reproductions are not a standing guarantee" from artifacts
 to solves). Main entry `docs/calibration-log/caiso.md`; record
-`results/calibration/FINDING-caiso155-diagnostics-plant-set-2026-08-02.md`;
+`docs/records/caiso/FINDING-caiso155-diagnostics-plant-set-2026-08-02.md`;
 matrix audit row `diagnostics_plant_set`.
 
 ## 2026-08-03 — caiso-159: a designated keeper's committed bundle was CORRUPT ON MAIN, and a rule-22 marker breach had been failing `audit_keepers` for a day (governance repair, NO LP)
@@ -853,7 +853,7 @@ NOT promoted; CAISO and NEISO were. **An A/B is only promotable against the
 keeper it was controlled on: re-diff at PROMOTION time, because a parallel
 per-ISO session can promote underneath you while your arms solve.**
 
-Evidence: `results/calibration/FINDING-caiso159-ct-heat-rate-promotion-2026-08-03.md`.
+Evidence: `docs/records/caiso/FINDING-caiso159-ct-heat-rate-promotion-2026-08-03.md`.
 
 ---
 
@@ -862,9 +862,9 @@ Evidence: `results/calibration/FINDING-caiso159-ct-heat-rate-promotion-2026-08-0
 Cross-ISO scoring-infrastructure charter opened from the pjm-148 side finding.
 **Zero LP, no keeper touched, no artifact regenerated, no determination moved at
 any of the six ISOs.** Evidence:
-`results/calibration/FINDING-pjm149-d2-floor-attribution-path-2026-08-03.md`;
+`docs/records/pjm/FINDING-pjm149-d2-floor-attribution-path-2026-08-03.md`;
 pre-registration pushed at `01cb248` before any measurement that decided the
-contract; machine record `results/calibration/_pjm149_census.json`.
+contract; machine record `results/phase0/pjm/_pjm149_census.json`.
 
 **(1) The defect.** `scripts/legitimacy_diagnostics.py` built the D-2/D-4 row set
 as a comprehension over the *dispatch map*, so a plant that was FLOORED but
@@ -999,7 +999,7 @@ already `K`. It is not; minting it is NEISO's lane's call. Only index 3 moved.
 CAISO 5, overlapping, all armed on keepers with no cell) is the only remaining rule-28(c)
 debt. That lane must **register these fields on rows, not enumerate them in prose.**
 
-Evidence: `results/calibration/PREREG-nyiso121-miso-matrix-column-2026-08-04.md` (pushed
+Evidence: `docs/records/nyiso/PREREG-nyiso121-miso-matrix-column-2026-08-04.md` (pushed
 before any row was written) · `FINDING-nyiso121-miso-matrix-column-2026-08-04.md` ·
 `scripts/probes/_nyiso121_miso_border_anchor_displacement_probe.py` →
 `nyiso121_miso_border_anchor_displacement_probe.json` · sweeps `_matrix_gap_sweep_*.json`.
@@ -1092,7 +1092,7 @@ the cell mismatch), **CAISO** (three unreadable coefficients), and **NEISO**, wh
 `matrix_gap_census` audit cell is still `O` while its own-family sweep reads 20/0/0/0 —
 that mint is NEISO's lane's call, not this one's.
 
-Evidence: `results/calibration/PREREG-xiso3-shared-stem-backlog-2026-08-04.md` (pushed
+Evidence: `docs/records/governance/PREREG-xiso3-shared-stem-backlog-2026-08-04.md` (pushed
 before any row was written, any anchor repaired or the probe run) ·
 `FINDING-xiso3-shared-stem-backlog-2026-08-04.md` ·
 `scripts/probes/_xiso3_shared_stem_gate_probe.py` → `xiso3_shared_stem_gate_probe.json` ·
@@ -1151,7 +1151,7 @@ mislabelled in the matrix without either moving. The remaining exposure is no lo
 contradicts**, and nothing in CI looks for that. xiso-3's gate-reachability probe, run across
 every keeper-armed flag that has a gate, would be the third ratchet.
 
-Evidence: `results/calibration/PREREG-xiso4-cross-iso-shared-stem-2026-08-04.md` (committed
+Evidence: `docs/records/governance/PREREG-xiso4-cross-iso-shared-stem-2026-08-04.md` (committed
 before any matrix byte and before the collision was known; carries the independently-derived
 map) · `FINDING-xiso4-cross-iso-shared-stem-2026-08-04.md`.
 
@@ -1362,7 +1362,7 @@ reported-only-`co2` case directly.
 ## 2026-08-12 — ercot-190 addendum CLOSED: the C3c scarcity-tail limitation now carries into the forecast namespace (doc-only, NO solve)
 
 **Session:** FC-DISCLAIMER-1 · **Authority:**
-`docs/DECISION-CARD-ercot189-c3a2023-after-the-offer-family-2026-08-11.md` RESOLUTIONS
+`docs/records/ercot/DECISION-CARD-ercot189-c3a2023-after-the-offer-family-2026-08-11.md` RESOLUTIONS
 addendum, signed with card Q on 2026-08-12: *"the §5 `readiness_limits` price-tail
 disclaimer follow-up is **AUTHORIZED** as a named, doc-only open item for the forecast
 lane … It is not implemented by this signature."* This session implements it, and the
@@ -1388,7 +1388,7 @@ cross-reference was added at forecast plan §0 item 4 — the "what remains unfi
 **named**" clause, which is that plan's disclaimers home (it has no other limits section).
 
 **Every figure is read off the committed evidence, not re-derived** —
-`results/calibration/ercot189_c3a_c3c_overlap.json`: `decomposition.sets.h_tail_181`
+`results/phase0/ercot/ercot189_c3a_c3c_overlap.json`: `decomposition.sets.h_tail_181`
 contributes **$14.273/MWh** of the 2023 gap over **181 hours** (181/8760 = 2.07% of hours;
 14.273 / 64.32 = 22.2% of the bench actual `rt_lw` of $64.32), and
 `baseline_gate.guards_2024_2025` reads 2024 **+1.2% PASS** / 2025 **−8.0% PASS** — the
@@ -1417,7 +1417,7 @@ infrastructure — **no lever, no `ScenarioConfig` field, no solve, no run regis
 matrix movement.**
 
 **Authority.** Decision card F, signature **F1 — "schedule the data-provisioned tier"**, owner-signed
-2026-08-11 (`docs/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md`). That signature is the
+2026-08-11 (`docs/records/ercot/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md`). That signature is the
 explicit cron sign-off CLAUDE.md's GitHub-Actions rule requires on this private repo, and it is
 cited in the workflow header.
 
@@ -1480,7 +1480,7 @@ governance-log blob verified after push).
 ## 2026-08-12 — g3-delete: `split_coal_tranches` + the six `coal_tranche_*` scalars DELETED (ercot-188 G#3 owner ruling executed; cross-ISO hygiene, NO LP)
 
 **What.** Rule 26 `[R-DELETE]` executed on the signed ercot-188 ruling
-(`docs/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md` §G.3): the legacy
+(`docs/records/ercot/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md` §G.3): the legacy
 non-CAMPD coal take-or-pay split `offer_curves.split_coal_tranches` (and its
 `_coal_tranches` helper) is deleted, together with the six registered scalars
 `coal_tranche_{1,2,3}_frac` / `coal_tranche_{1,2,3}_fuel_passthrough` — deleted,
@@ -1490,7 +1490,7 @@ parses is a re-armable answer key").
 **The proof came first, as the ruling requires — every registered bundle, not just
 the six keepers.** Probe
 `scripts/probes/ercot188_g3_split_coal_tranches_unreachability.py` (committed
-evidence `results/calibration/ercot188_g3_unreachability_proof.json`): all **158**
+evidence `results/phase0/ercot/ercot188_g3_unreachability_proof.json`): all **158**
 committed `run_config.json` under `results/` (calibration, hindcast, ffr*
 experiments) and all **66** backcast registry sidecars carry
 `use_campd_bins=True`, every ISO is in `CAMPD_BINNING_ISOS`, and each ISO's bin
@@ -1780,7 +1780,7 @@ behind `floor_klass=None` — legacy artifacts re-score byte-identically.
 **Re-score of all six designated keepers** (regen before/after on one
 rebuilt-floors baseline; verdicts on in-place-swapped diagnostics, bundles
 restored byte-identical; record
-`results/calibration/_miso171_d4_attribution_rescore.json`, report
+`results/phase0/miso/_miso171_d4_attribution_rescore.json`, report
 `RESULT-miso171-d4-attribution-repair-2026-08-20.md`):
 **zero determination flips in any ISO; the charter's other-ISO escalation
 trigger does not fire.** ERCOT/CAISO/NYISO/NEISO: zero deltas of any kind.
@@ -1806,7 +1806,7 @@ session's.
 
 Owner ruling (session nyiso-151, rule 22 D-5(b)): `RHO_CLIP` moves
 `(0.5, 4.0) → (0.0, 4.0)` in `src/market_sim/data/online_reserve_rho.py` —
-option A of `docs/DECISION-CARD-nyiso145-rho-clip-band-2026-08-19.md`, on the
+option A of `docs/records/nyiso/DECISION-CARD-nyiso145-rho-clip-band-2026-08-19.md`, on the
 card's own recommendation (the floor had no primary citation, no physical
 basis, and was inherited across a change of estimand; every measured row on
 two ISOs' fleets sat below it). Every measured `online_rho` now solves at its
@@ -1825,7 +1825,7 @@ every registered NYISO run.
 ## 2026-08-22 — `_ramp10_capability` measured-reconciliation seam: cross-ISO code note from the NYISO lane (nyiso-152 phase-0)
 
 The NYISO lane's phase-0 measurement
-(`results/calibration/FINDING-nyiso152-phase0-reserve-posture-overturned-2026-08-22.md`)
+(`docs/records/nyiso/FINDING-nyiso152-phase0-reserve-posture-overturned-2026-08-22.md`)
 adjudicated the "hydro RAMP10 seams" queue item **provably LP-inert for
 NYISO** (its reserve design consumes no ramp10 quantity). The two code seams
 the item recorded are real, and they now belong to the lanes whose designs DO
@@ -1856,7 +1856,7 @@ determination re-written, no dashboard registration.**
 The owner call filed by **neiso-74** and re-filed by **xiso-1** on 2026-08-01 —
 should the rubric gain a diurnal price-amplitude criterion? — is **answered:
 OPTION B, REPORTED-ONLY and BAND-FREE** (card
-`docs/DECISION-CARD-xiso-diurnal-amplitude-rubric-2026-08.md`, ruled 2026-08-25).
+`docs/records/governance/DECISION-CARD-xiso-diurnal-amplitude-rubric-2026-08.md`, ruled 2026-08-25).
 
 **What made it answerable** was measuring what the answer would *do*, which
 neither prior filing had: `scripts/probes/_xiso6_amplitude_criterion_band_probe.py`
@@ -1913,7 +1913,7 @@ No lane's verdict, keeper or matrix cell verdict is touched by this amendment.
 
 ## 2026-08-25 — audit_keepers E11: keeper-lineage recipe fidelity extended to the FULL `solve_and_persist` kwarg surface (the nyiso-108→155 silent-de-arm guard)
 
-Chartered by `docs/FINDING-nyiso-hydro-truncation-repair-2026-08.md` §2/§6
+Chartered by `docs/records/nyiso/FINDING-nyiso-hydro-truncation-repair-2026-08.md` §2/§6
 (the "own charter" successor item), landed from session nyiso-156. The
 incident class: `hydro_backfill_year`/`hydro_eia930_monthly` are
 `solve_and_persist` kwargs, not `ScenarioConfig` fields, so the
@@ -1950,7 +1950,7 @@ its free-form supersession prose. No verdict, keeper, or matrix cell moves.
 ## 2026-08-30 — Q5 RE-RULED at capx r#12: NYISO `complete` marker WITHDRAWN (CAISO precedent applied UNIFORMLY) — the written reconciliation lands
 
 **Owner ruling, capacity-expansion director refresh-#12 decision card** (recorded
-`docs/handoffs/capx-director-ledger-2026-08.md` §0i.2 and §3 Q5; option selected
+`docs/records/forecast/capx-director-ledger-2026-08.md` §0i.2 and §3 Q5; option selected
 on the card, verbatim label: *"Withdraw the marker (CAISO precedent)"*),
 superseding the r#8 WAIT-FOR-WINTER-INTAKE ruling after Q5's recurrence clause
 fired: the nyiso-157 promotion (2026-08-30) re-keyed the marker onto a **second
@@ -1958,7 +1958,7 @@ consecutive NOT-YET keeper** with the fail set widened (nyiso-155 {C3a-2025,
 C3c} → nyiso-157 {C3a-2025 −12.0 %, C3b-2025 0.203 knife-edge, C3c
 silenced-lone}). Executed by the Q5-W governance records lane — **records only:
 no solve, no re-score, no keeper change**. Record:
-`docs/FINDING-q5w-nyiso-marker-withdrawal-2026-08-30.md`.
+`docs/records/nyiso/FINDING-q5w-nyiso-marker-withdrawal-2026-08-30.md`.
 
 ### The uniform rule — what Q5's written reconciliation says
 
@@ -2055,7 +2055,7 @@ Owner ruling, verbatim: **"Open c3c scarcity question"** — taken in preference
 ruling the nyiso-161 winter-face waiver card, and immediately after the owner
 permanently closed the NYISO AORR access route (*"I'm not getting new data access
 so just kill that request on 1"*). Scoped and costed before any commitment in
-`docs/CHARTER-c3c-scarcity-program-2026-08-31.md`. **Nothing armed, promoted or
+`docs/records/misc/CHARTER-c3c-scarcity-program-2026-08-31.md`. **Nothing armed, promoted or
 adjudicated; no keeper, shard, marker, determination or matrix cell moves.**
 
 **(1) The blanket framing is FALSIFIED.** Measured across all six designated
@@ -2085,7 +2085,7 @@ all** (`caiso_reserve_coopt=False`).
   rests on the exact opposite measurement (caiso-144 §C/§D: 1.6–10.5 GW of model
   slack in reality's tail hours; overlay-to-reality overlap 1/47, 0/35, 0/8).
   NYISO is short in the right hours and cannot PRICE them. Artifact:
-  `results/calibration/_nyiso163b_c3c_reserve_timing.json`.
+  `results/phase0/nyiso/_nyiso163b_c3c_reserve_timing.json`.
 * **PJM's C3c PASS has never been audited for the ercot-214 phantom signature.**
   ERCOT's ercot-213 tail gains were measured at ercot-214 to ride an AS-product
   shortfall-ramp leak — a price-formation channel the market does not have — and
@@ -2152,7 +2152,7 @@ pin by the records lane — nothing carried from the dispatch.
 ---
 
 **Ruling R-D — C-1 WIND: TERMINAL REST AT THIS REPRESENTATION GRAIN + DECISION
-MAP.** On `docs/FINDING-c1-joint-wind-ab-2026-08-31.md` (owner ruling R-B's
+MAP.** On `docs/records/misc/FINDING-c1-joint-wind-ab-2026-08-31.md` (owner ruling R-B's
 chartered A/B; both kill-gates **PASS**; joint posture **`NON_COMPLEMENTARY`**).
 Executed per the **caiso-222 §1(c) option-3 pattern** (owner ruling R-3,
 2026-08-30): the residual is designated **ATTRIBUTED AND CLOSED at this grain**
@@ -2188,7 +2188,7 @@ with a map attached rather than an open investigation.
   REPRESENTATION-GRAIN CHANGE** — the caiso-223 class, *a program, not a lever*,
   earning its arming separately. **Neither route may be opened by re-running a
   lever at hub grain.**
-* **Records:** `docs/DECISION-MAP-ercot-wind-entry-2026-08-31.md` (new) ·
+* **Records:** `docs/records/ercot/DECISION-MAP-ercot-wind-entry-2026-08-31.md` (new) ·
   `docs/calibration-log/ercot.md` 2026-08-31 R-D entry · R-D ruling stamps
   appended to the **evidence strings only** of `entry_lookahead_reprice`
   (**cell K / fc O**) and `entry_margin_exhaustion` (**cell O / fc K**) in
@@ -2199,7 +2199,7 @@ with a map attached rather than an open investigation.
 ---
 
 **Ruling R-E — THE C3c SCARCITY PROGRAM: Q1 + Q2 CHARTERED AND CHAINED; Q3
-UNOPENED AND UNRECOMMENDED.** On `docs/CHARTER-c3c-scarcity-program-2026-08-31.md`
+UNOPENED AND UNRECOMMENDED.** On `docs/records/misc/CHARTER-c3c-scarcity-program-2026-08-31.md`
 (filed at nyiso-163 under the owner's *"Open c3c scarcity question"* ruling,
 recorded in this log's 2026-08-31 entry above). **Q1 — the PJM phantom audit —
 first**; **Q2 opens only on Q1 = REAL**; **Q3 (the probabilistic-RT-premium
@@ -2211,7 +2211,7 @@ calibration lane.** Executed by its own dispatched lanes, not here.
 HAVE ALREADY REPORTED.** The dispatch that produced this record described Q1/Q2
 as pending; at `d44446e0` they are landed findings:
 
-* **Q1 = REAL** — `docs/FINDING-pjm164-c3c-phantom-audit-2026-09-01.md` (pjm-164,
+* **Q1 = REAL** — `docs/records/pjm/FINDING-pjm164-c3c-phantom-audit-2026-09-01.md` (pjm-164,
   #4456, zero solve). PJM's reserve-dual channel is **not** the ercot-214 phantom:
   in 2025 the model tail overlaps reality's tail **14 of 32** hours (0.44 of the
   model tail, 0.24 of the actual), **13** of them with a positive reserve dual,
@@ -2221,7 +2221,7 @@ as pending; at `d44446e0` they are landed findings:
   caveats recorded, **none determination-level**. **Consequence: the
   determination-integrity branch does NOT open** — no PJM keeper is resting on a
   phantom channel, and no PJM card is owed.
-* **Q2 = CONFIRM** — `docs/FINDING-nyiso164-c3c-product-level-2026-09-01.md`
+* **Q2 = CONFIRM** — `docs/records/nyiso/FINDING-nyiso164-c3c-product-level-2026-09-01.md`
   (nyiso-164, #4459, zero solve). The pre-registered kill gate **fires on both
   clauses**: reality's NYCA-tier reserve price never exceeds the concurrent LMP in
   **65/65** tail hours (median 0.54–0.65× LMP; a declared NYCA-wide pick-up covers
@@ -2277,7 +2277,7 @@ entries.
 ---
 
 **Ruling R-G — nyiso-160 / leg2: CLOSED BY ARCHIVE.** On
-`docs/FINDING-nyiso-leg2-reverify-2026-08-31.md` (nyiso-162, #4431, executing
+`docs/records/nyiso/FINDING-nyiso-leg2-reverify-2026-08-31.md` (nyiso-162, #4431, executing
 owner ruling R-C zero-solve on committed artifacts), the owner ruled **archive**.
 
 The re-verification dissolved the question it was ordered to answer: **there is
@@ -2322,7 +2322,7 @@ drift**.
 
 **Cross-ISO entry, written under owner ruling R-E** (2026-08-31 director refresh
 sitting, which chartered and chained Q1 and Q2 of
-`docs/CHARTER-c3c-scarcity-program-2026-08-31.md` in one grant). **Zero solve
+`docs/records/misc/CHARTER-c3c-scarcity-program-2026-08-31.md` in one grant). **Zero solve
 across every lane below; committed artifacts and published data only; no holdout
 year touched by any of them.** Both executing lanes deliberately left this file
 alone pending the other (`pjm-164`: *"Cross-ISO governance log deliberately
@@ -2335,8 +2335,8 @@ were each executed **twice, in parallel, by lanes that could not see each other*
 
 | question | first execution | replication | agree? |
 |---|---|---|---|
-| Q1 — is PJM's reserve dual REAL or the ercot-214 phantom? | **pjm-164** (`docs/FINDING-pjm164-c3c-phantom-audit-2026-09-01.md`) → **REAL** | **pjm-165** (`docs/FINDING-c3c-q1-pjm-phantom-audit-2026-08-31.md`), different construction → **REAL** | **yes** |
-| Q2 — was NYISO reality NYCA-short in its tail hours? | **nyiso-164** (`docs/FINDING-nyiso164-c3c-product-level-2026-09-01.md`) → **CONFIRMED (not short)** | **nyiso-165** (`docs/FINDING-c3c-q2-nyiso-nyca-shortage-2026-08-31.md`) → first **NOT short-confirmed**, i.e. the OPPOSITE; **retracted** on re-derivation, reproducing nyiso-164 exactly | **yes, after correction** |
+| Q1 — is PJM's reserve dual REAL or the ercot-214 phantom? | **pjm-164** (`docs/records/pjm/FINDING-pjm164-c3c-phantom-audit-2026-09-01.md`) → **REAL** | **pjm-165** (`docs/records/pjm/FINDING-c3c-q1-pjm-phantom-audit-2026-08-31.md`), different construction → **REAL** | **yes** |
+| Q2 — was NYISO reality NYCA-short in its tail hours? | **nyiso-164** (`docs/records/nyiso/FINDING-nyiso164-c3c-product-level-2026-09-01.md`) → **CONFIRMED (not short)** | **nyiso-165** (`docs/records/nyiso/FINDING-c3c-q2-nyiso-nyca-shortage-2026-08-31.md`) → first **NOT short-confirmed**, i.e. the OPPOSITE; **retracted** on re-derivation, reproducing nyiso-164 exactly | **yes, after correction** |
 
 The duplication cost sessions and should not recur — a charter chaining two
 questions in one grant needs one lane, or explicit lane assignment per question.
@@ -2455,11 +2455,11 @@ keeper changed and no CAISO artifact, config or number touched** (the CAISO lane
 is rested at NOT-YET, caiso-201). Takes **option B** of the three items caiso-236
 handed on (`FINDING-caiso236-dof-residual-ledger-audit-2026-09-02.md` §10.3).
 Pre-registration
-`results/calibration/PRECOMMIT-xiso7-prb-follower-dof-undercount-2026-09-02.md`
+`docs/records/governance/PRECOMMIT-xiso7-prb-follower-dof-undercount-2026-09-02.md`
 (pushed before any keeper artifact was opened), record
-`results/calibration/FINDING-xiso7-prb-follower-dof-undercount-2026-09-02.md`,
+`docs/records/governance/FINDING-xiso7-prb-follower-dof-undercount-2026-09-02.md`,
 instrument `scripts/probes/_xiso7_prb_follower_dof_probe.py`, transcript
-`results/calibration/_xiso7_prb_follower_dof.json`.
+`results/phase0/governance/_xiso7_prb_follower_dof.json`.
 
 **(1) The defect is real and structural.** `prb_follower` is the one coal
 passthrough tier with **no sigmoid toggle of its own** — its gate is the
@@ -2642,7 +2642,7 @@ protects is exactly where this failure mode lives.
 calibration lane precisely because the fix changes MISO's published status part as well as NEISO's —
 which is why neiso-106 escalated instead of patching (rule 25 `[R-ISO-SCOPE]`). Diagnosis, blast
 radius and the proposed fix were already on record in
-`results/calibration/FINDING-neiso106-per-year-ladder-governance-defect-2026-09-06.md`, now annotated
+`docs/records/neiso/FINDING-neiso106-per-year-ladder-governance-defect-2026-09-06.md`, now annotated
 RESOLVED.
 
 **The defect.** `build_status.build_years` — the rule 30(b) per-year ladder — scores each year in
@@ -2738,7 +2738,7 @@ Manual 11 §4.2/§4.3.3 SYNCHRONIZED reserve sub-product split: measured RTO `sr
 `mad_sr_req_mw` balance families on the published two-step ORDC rows, a per-pool SYNC/NON-SYNC
 column split, and P0-derived online scoping of the SYNC caps). **Zero parameters fitted to the price
 residual.** Prerequisites `energy_reserve_coopt` + `pjm_reserve_pergen` were already in the keeper.
-Pre-registration: `docs/PRECOMMIT-pjm-h3-reserve-sync-2026-09-13.md`, pushed at
+Pre-registration: `docs/records/pjm/PRECOMMIT-pjm-h3-reserve-sync-2026-09-13.md`, pushed at
 `ed6bb0996d2685884d1f05eb105c3bef4dea138c` before any solve.
 
 **THE RULE-28(a) NEW EVIDENCE, since the standing verdict on that field is an owner closure on
@@ -2829,8 +2829,8 @@ forbids the workaround (*"do not work around it by reformatting files you do not
 reported here for the owning lane: one `uv run ruff format --force-exclude --
 tests/scoring/test_audit_keepers_orphan_runs.py` clears it.
 
-Record: `results/calibration/PRECOMMIT-nyiso231-mirror-repair-rescreen.md`,
-`docs/RESULT-nyiso231-the-mirror-and-the-2022-rescreen-2026-09-13.md`,
+Record: `docs/records/nyiso/PRECOMMIT-nyiso231-mirror-repair-rescreen.md`,
+`docs/records/nyiso/RESULT-nyiso231-the-mirror-and-the-2022-rescreen-2026-09-13.md`,
 `docs/calibration-log/nyiso.md` "## nyiso-231 — 2026-09-13".
 
 ## scorer-coal-1 — 2026-09-29
@@ -2840,5 +2840,5 @@ allocations were re-scored against the status quo. The combined EIA-930 gap sits
 gas in NWPP, coal (gross metering) in SPP 2023–25, and 930's coal cell in MISO 2019. Both "coal at 923"
 and "coal at CEMS×k" flip SPP's 2023–25 determination from CALIBRATED to NOT-YET through that
 misattribution. **Owner ruling: status quo + route.** No scorer change; every determination stands.
-Successor: `docs/handoffs/HANDOFF-benchmark-basis-all-iso-2026-09-30.md`.
-Record: `docs/handoffs/RESULT-scorer-coal1-reconcile-options-2026-09-29.md`.
+Successor: `docs/records/misc/HANDOFF-benchmark-basis-all-iso-2026-09-30.md`.
+Record: `docs/records/misc/RESULT-scorer-coal1-reconcile-options-2026-09-29.md`.

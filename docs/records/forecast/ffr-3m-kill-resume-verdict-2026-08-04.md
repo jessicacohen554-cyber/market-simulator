@@ -2,7 +2,7 @@
 
 **Session:** FFR-3M (2026-08-04) · **Lane:** small · **HEAD at dispatch:** `d7363b0e` · **rebased onto:** `f53fff65` (mechanism re-verified unchanged there; `scenarios.py` line 9760→9834, `runner.py` 890/1431/2135 unmoved)
 **Instrument:** `scripts/ff_readiness_battery.py kill-resume` (FFR-3J `ef5695b0` discriminator)
-**Evidence:** `docs/handoffs/ffr-3m/` (three result JSONs + the probe driver)
+**Evidence:** `docs/records/forecast/ffr-3m/` (three result JSONs + the probe driver)
 
 ---
 
@@ -29,7 +29,7 @@ here.
 
 Three cells, all NEISO 2026–2028 (the drill's own T0 window; rule 12 — years sequential,
 ≤2 concurrent invocations, NEISO is the light ISO). Driver:
-`docs/handoffs/ffr-3m/ffr3m_probe.py`.
+`docs/records/forecast/ffr-3m/ffr3m_probe.py`.
 
 | cell | what it does | why |
 |---|---|---|
@@ -245,7 +245,7 @@ keys, confirming it predates the FFR-3J instrumentation and was a byte-hash-only
   explicitly does not block. No backcast year solved, no marker consulted as spendable.
 - **Registration:** none. This session produced no forecast/hindcast run worth
   registering — three diagnostic drill cells, not a hindcast. Evidence is committed as
-  flat JSON under `docs/handoffs/ffr-3m/` instead.
+  flat JSON under `docs/records/forecast/ffr-3m/` instead.
 - **Rule 28 (mechanism matrix):** no cell claimed. The matrix is "one row per **model
   mechanism**"; `forecast_xyear_warmstart` is a solver warm-start flag whose design
   intent is result-neutrality, not a market mechanism, and this session tested no market
@@ -282,9 +282,9 @@ here so it is not mistaken for an oversight.
 
 ```
 uv sync && uv run python scripts/regenerate_clean.py     # prerequisites, in this order
-uv run python docs/handoffs/ffr-3m/ffr3m_probe.py drill        --work-dir <wd> --out drill.json
-uv run python docs/handoffs/ffr-3m/ffr3m_probe.py control      --work-dir <wd> --out control.json
-uv run python docs/handoffs/ffr-3m/ffr3m_probe.py drill-noxyear --work-dir <wd> --out noxyear.json
+uv run python docs/records/forecast/ffr-3m/ffr3m_probe.py drill        --work-dir <wd> --out drill.json
+uv run python docs/records/forecast/ffr-3m/ffr3m_probe.py control      --work-dir <wd> --out control.json
+uv run python docs/records/forecast/ffr-3m/ffr3m_probe.py drill-noxyear --work-dir <wd> --out noxyear.json
 ```
 
 `drill` is exactly `ff_readiness_battery.kill_resume_drill` with no modification;

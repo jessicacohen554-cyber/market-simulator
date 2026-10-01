@@ -1,7 +1,7 @@
 # FINDING — PJM-NEXT-9 cards 1–2 phase 0: the missing east→south boundary is the Peach Bottom / Conastone corridor (zero LP), 2026-09-28
 
 **Keeper** `2026-09-28-pjm-next8-exitfix` (bundle `results/calibration/pjmnext8_xf_span`). **Zero LP; no model input changed.**
-**Probe** `scripts/probes/_pjmnext9_congestion_boundary.py` → `results/calibration/_pjmnext9_congestion_boundary.json`.
+**Probe** `scripts/probes/_pjmnext9_congestion_boundary.py` → `results/phase0/pjm/_pjmnext9_congestion_boundary.json`.
 **Inputs:** PJM DataMiner2 `da_marginal_value` 2019–2025 (re-fetched with `scripts/data/fetch_pjm_binding_constraints.py`; gitignored, `SHA256SUMS.txt` rewritten) and DA hub LMP components (`data/clean/lmp/PJM/DAM`).
 
 ## 1. Method

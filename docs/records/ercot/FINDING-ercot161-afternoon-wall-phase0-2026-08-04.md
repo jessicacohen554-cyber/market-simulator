@@ -11,7 +11,7 @@ below on committed artifacts + the ERCOT-157 delivery-2023 corpus. Probes (all
 no-LP):
 
 - `scripts/probes/ercot161_afternoon_wall_phase0.py` →
-  `results/calibration/_ercot161_wall_phase0.json` (hour set verified to the
+  `results/phase0/ercot/_ercot161_wall_phase0.json` (hour set verified to the
   cent against the FINDING; keeper fleet reconstructed via
   `reconstruct_bundle_fleet` with the prb-overrides channel asserted — 426
   conditional / 369 walled / 173 pool rows, the keeper's exact builder

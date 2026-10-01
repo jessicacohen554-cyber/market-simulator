@@ -5,10 +5,10 @@
 `src/market_sim/` change, no scorer change, no marker touched, no matrix cell letter changed, no
 held-out year spent.**
 
-**Evidence:** `docs/FINDING-nyiso219-hydro-daily-driver-data-question-2026-09-07.md`; machine
-records `results/calibration/_nyiso219_hydro_daily_driver_census.json`,
+**Evidence:** `docs/records/nyiso/FINDING-nyiso219-hydro-daily-driver-data-question-2026-09-07.md`; machine
+records `results/phase0/nyiso/_nyiso219_hydro_daily_driver_census.json`,
 `_nyiso219_posthoc_overresponse.json`, cached source data `_nyiso219_usgs_daily_discharge.csv.gz`;
-pre-registration `results/calibration/PREREG-nyiso219-hydro-daily-driver-data-question.md`,
+pre-registration `docs/records/nyiso/PREREG-nyiso219-hydro-daily-driver-data-question.md`,
 **committed and pushed before any number was read**.
 **Keeper, unchanged:** `2026-09-07-nyiso-213-summer-seam` — **CALIBRATED, grade 7/8, zero failing
 criteria** across 2023–2025, C3c the lone ledgered caveat.

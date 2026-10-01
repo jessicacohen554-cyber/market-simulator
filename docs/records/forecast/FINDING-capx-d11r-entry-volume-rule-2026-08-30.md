@@ -2,14 +2,14 @@
 
 _2026-08-30 · capacity-expansion (Forecast Finalization) track, lane D11-R ·
 chartered by the owner's card-B signature (B-C, 2026-08-25,
-`docs/DECISION-CARD-capx-director-open-rulings-2026-08-25.md` §5), re-scoped by
+`docs/records/forecast/DECISION-CARD-capx-director-open-rulings-2026-08-25.md` §5), re-scoped by
 the director at refresh #8 on the forward-expectation A/B's evidence
-(`docs/handoffs/capx-director-ledger-2026-08.md` §0e.3). Branch
+(`docs/records/forecast/capx-director-ledger-2026-08.md` §0e.3). Branch
 `claude/capx-d11r-entry-volume-rule`._
 
 **What this lane did:** productionized the L-1b margin-exhaustion closure —
 *build until the screen's own repriced margin is exhausted, bounded by the same
-caps* (`docs/FINDING-entry-signal-l1-2026-08.md` §2, probe
+caps* (`docs/records/misc/FINDING-entry-signal-l1-2026-08.md` §2, probe
 `scripts/probes/entry_signal_l1b_allocator_counterfactual.py`) — behind the NEW
 default-OFF `ScenarioConfig.entry_margin_exhaustion`, applying to BOTH entry
 allocators (thermal/VRE and storage; one mechanism, one field, rule 19
@@ -156,7 +156,7 @@ on the fleet side, so every committed bracket is a valid anchor. The arm
 differs in EXACTLY one `run_config` field (`entry_margin_exhaustion:
 False → True`, key `cc7bbe1170db65c2`); the probe
 (`scripts/probes/entry_volume_rule_compare.py`,
-artifact `results/calibration/entry_volume_rule_ab_ercot.json`) hard-fails
+artifact `results/phase0/ercot/entry_volume_rule_ab_ercot.json`) hard-fails
 unless that single-delta condition holds. Both arms registered on the
 FORECAST namespace with `run_config.json` committed (FC-7):
 `ercot-2021-2025-realized-t1h-d11r-{control,exhaustion}`; the backcast
@@ -324,7 +324,7 @@ uv run python scripts/score_capacity_hindcast.py --bundle <each bundle>
 uv run python scripts/probes/entry_volume_rule_compare.py \
     --arm results/hindcast/ercot-2021-2025-realized-t1h-d11r-exhaustion \
     --control results/hindcast/ercot-2021-2025-realized-t1h-d11r-control \
-    --out results/calibration/entry_volume_rule_ab_ercot.json
+    --out results/phase0/ercot/entry_volume_rule_ab_ercot.json
 
 uv run python -m pytest tests/unit/model/test_entry_margin_exhaustion.py -q
 ```

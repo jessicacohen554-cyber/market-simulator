@@ -2,7 +2,7 @@
 
 **Lane:** capx D24-R · **Model:** Opus · **Branch:** `claude/capx-d24r-cachekey-repair-hjz6un`
 **Charter:** owner ruling **Q20 (r#25)** on
-`docs/handoffs/FINDING-capx-d24-cache-key-defect-2026-09-01.md` §7 — land **(c′) + (b′-1)**,
+`docs/records/forecast/FINDING-capx-d24-cache-key-defect-2026-09-01.md` §7 — land **(c′) + (b′-1)**,
 the zero-cost pair, exactly as D24 specifies them. Nothing else.
 **Graded object:** `src/market_sim/config/scenarios.py::ScenarioConfig.cache_key` /
 `_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS`, `src/market_sim/results/cache.py`,
@@ -113,7 +113,7 @@ without protecting anything:
 committed `scenario_config` payload (everything downstream — retired-field re-insertion, path
 folding, `json.dumps(sort_keys=True)`, `sha256[:16]` — is shared), so the comparison isolates the
 drop rule and nothing else. Record committed at
-`docs/handoffs/capxd24r-cache-key-no-op-record.json`.
+`docs/records/forecast/capxd24r-cache-key-no-op-record.json`.
 
 ```
 checked 170 committed run configs (backcast: 64, forecast: 106)
@@ -258,7 +258,7 @@ Found while establishing this lane's baseline, unrelated to it, and left alone:
 | `src/market_sim/runner.py` | the (c′) refusal at the `is_cached` seam |
 | `scripts/check_cache_key_registration.py` | check 3 reads the appended flip; new check 4 (append-only); `_declared_flips`, `_retired`, `append_only_violations` |
 | `scripts/probes/capxd24r_cache_key_no_op_check.py` | the merge gate (new) |
-| `docs/handoffs/capxd24r-cache-key-no-op-record.json` | its committed record (new) |
+| `docs/records/forecast/capxd24r-cache-key-no-op-record.json` | its committed record (new) |
 | `tests/unit/config/test_cache_key_declared_default_drop.py` | (b′-1) + append-only (new) |
 | `tests/unit/results/test_cache_config_agreement.py` | (c′) + the 14-group replay (new) |
 | `tests/unit/pipeline/test_runner.py` | `TestCachedBundleConfigCheck` |

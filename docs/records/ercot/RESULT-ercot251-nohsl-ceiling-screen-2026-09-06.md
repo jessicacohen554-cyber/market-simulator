@@ -1,6 +1,6 @@
 # RESULT — the 2023 HSL-withheld ceiling screen: G-3 and G-4 PASS, **G-5 FAILS, arm KILLED** (ercot-251)
 
-> Scored against `docs/PRECOMMIT-ercot251-nohsl-ceiling-screen-2026-09-06.md`, committed before
+> Scored against `docs/records/ercot/PRECOMMIT-ercot251-nohsl-ceiling-screen-2026-09-06.md`, committed before
 > the solve. **Not registered** (rule 29(2)); bundle **deleted before merge** (rule 29(c)) —
 > every number it produced is carried here. **2022 was not touched.** The screen may kill an
 > arm and never promote one, and it did kill this one.

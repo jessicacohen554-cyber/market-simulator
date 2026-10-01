@@ -8,11 +8,11 @@ the EIA-930 wide extract, the measured ORDC/reserves series, the
 delivery-2023 all-resource NP3-965 SCED corpus (323 shards scanned), the
 2025 tail-day extract (11/11 days parsed, 0 excluded), and a
 fidelity-guarded no-LP fleet reconstruction. Precommit
-`docs/PRECOMMIT-ercot245-commitment-state-phase0-2026-08-30.md` (with
+`docs/records/ercot/PRECOMMIT-ercot245-commitment-state-phase0-2026-08-30.md` (with
 Amendment 1, the V-0(d) storage-excluded level leg) pushed + blob-verified
 BEFORE any measurement; probe
 `scripts/probes/ercot245_commitment_state_phase0.py` →
-`results/calibration/ercot245_commitment_state_phase0.json` (committed,
+`results/phase0/ercot/ercot245_commitment_state_phase0.json` (committed,
 blob-verified). **The Phase-1 A/B license is NOT spent** — no lever, no
 solve, no ScenarioConfig change, no matrix verdict move; the two-config
 keeper untouched. Kills graded exactly as declared: ANY kill ⇒ record and

@@ -18,9 +18,9 @@ HOUSEKEEPING FIRST
 PRECONDITION: frontend/data/backcast/keepers/ERCOT.json on main names keeper 2026-09-30-r-18-drag-index (bundle results/calibration/r_ercot18_span, 2019–2025), ISO NOT-YET. If not, STOP and report.
 
 READ FIRST
-- docs/handoffs/r-ercot/RESULT-r-ercot-18-drag-overnight-index-2026-09-30.md (all of it, incl. the Task 2 characterization)
-- docs/handoffs/r-ercot/PRECOMMIT-r-ercot-18-drag-overnight-index-2026-09-30.md
-- docs/handoffs/RESULT-r-ercot-17-south-texas-pool-2026-09-29.md
+- docs/records/ercot/r-ercot/RESULT-r-ercot-18-drag-overnight-index-2026-09-30.md (all of it, incl. the Task 2 characterization)
+- docs/records/ercot/r-ercot/PRECOMMIT-r-ercot-18-drag-overnight-index-2026-09-30.md
+- docs/records/ercot/RESULT-r-ercot-17-south-texas-pool-2026-09-29.md
 - the ERCOT matrix shard docs/codebase-site/data/mechanism-matrix/ERCOT.js and docs/mechanism-testing-matrix.md §5.1 (rule 28(a))
 
 STANDING STATE (r-18 keeper, P1)
@@ -81,7 +81,7 @@ LESSONS FROM R-ERCOT-17/18
 - Keep the branch rebase-free: merge origin/main into your branch, never rebase it, so the shards' pinned SHA stays in history. A matrix-anchor merge conflict resolves by taking main's mechanism-matrix.js, re-inserting your text, and re-running check_mechanism_matrix.py --fix-anchors.
 - The D-4 conduct rider is binary (the median of the meter over the plant's own binding hours). A small residual floor that binds in off hours still convicts. Predict with that in mind.
 - Concentrating a mandate onto efficient plants can RAISE realized forced share even when the nominal mandate is preserved.
-- Shard prompt template: docs/handoffs/r-ercot/SHARD-PROMPTS-r-ercot-18.md (keeper bundle r_ercot17_span → use r_ercot18_span).
+- Shard prompt template: docs/records/ercot/r-ercot/SHARD-PROMPTS-r-ercot-18.md (keeper bundle r_ercot17_span → use r_ercot18_span).
   - Partition signatures per year (swcap / ep_referenced / CC_REGULAR.peak / CT_PEAKER.peak):
 
     | Years | swcap | ep_referenced | CC_REGULAR.peak | CT_PEAKER.peak |

@@ -19,7 +19,7 @@ in MISO's shard (an existing `ScenarioConfig` field — no new row, duty 26(c)
 not triggered).
 
 Instruments: `scripts/probes/_miso187_ab_gates.py` →
-`results/calibration/_miso187_ab_gates.json` (S-0…S-5 + the charter kill);
+`results/phase0/miso/_miso187_ab_gates.json` (S-0…S-5 + the charter kill);
 `scripts/gen_miso187_attestation.py` (the keeper attestation; ledger 35
 entries / `n_residual` 2 unchanged).
 

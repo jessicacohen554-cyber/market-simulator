@@ -5,7 +5,7 @@ Extends `PREREG-miso236-neighbour-state-and-the-idiosyncratic-residual-2026-09-0
 
 **No pre-registered decision rule is touched and NO PRE-REGISTERED VERDICT CAN MOVE.** The
 PREREG's provenance gate, census, Q-A and Q-B values are already computed and committed in
-`results/calibration/_miso236_neighbour_state_residual_phase0.json`, and they stand exactly as
+`results/phase0/miso/_miso236_neighbour_state_residual_phase0.json`, and they stand exactly as
 measured whatever this addendum finds. Nothing here can arm a mechanism, charter a lever, move a
 matrix cell, or touch the keeper (`2026-09-07-miso-233-spp-hourly`, CALIBRATED, C3c the single
 ledgered caveat, DOF 41/2). Zero LP, as the PREREG declared.

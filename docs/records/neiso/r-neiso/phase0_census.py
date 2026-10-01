@@ -29,7 +29,7 @@ post-overlay fleet the LP would dispatch), and mean unavailable MW by group.
 
 Usage::
 
-    uv run python docs/handoffs/r-neiso/phase0_census.py --out docs/handoffs/r-neiso/phase0_census.json
+    uv run python docs/records/neiso/r-neiso/phase0_census.py --out docs/records/neiso/r-neiso/phase0_census.json
 """
 
 from __future__ import annotations

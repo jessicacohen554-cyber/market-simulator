@@ -22,7 +22,7 @@ STATE (2026-09-30):
   - The Jan-2024 event price sits above the in-state gas stack's cost at the day's print. Adding +2.3 GW
     of gas demand gives $195; +4 GW gives $201–206; measured is $207–286.
   - The event-hour import excess is 2024-specific.
-  - Record: docs/handoffs/r-caiso-22/FINDING-r-caiso-22-c3c-2024-tail-2026-09-30.md.
+  - Record: docs/records/caiso/r-caiso-22/FINDING-r-caiso-22-c3c-2024-tail-2026-09-30.md.
   - Probe: scripts/probes/_rcaiso22_tail_phase0.py. Part A is the tail census; `--stack` is the zero-LP
     offer-stack bound via reconstruct_bundle_fleet. Reuse both.
 

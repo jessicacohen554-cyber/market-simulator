@@ -4,7 +4,7 @@
 **Phase** 2 (mechanism + full-span arm) ·
 **Keeper under test** `2026-07-29-ercot137-coal-margin-measured`
 (bundle `results/calibration/ercot137_margin_arm`) ·
-**Chartered by** `docs/DIAGNOSIS-ercot138-coal-gas-ranking-2026-07-29.md` §6
+**Chartered by** `docs/records/ercot/DIAGNOSIS-ercot138-coal-gas-ranking-2026-07-29.md` §6
 (the gas-side Phase 2 it licenses) and §7.3 (which of two forms) ·
 **Derive** `scripts/data/derive_cc_committed_offer_margin.py` ·
 **Precommit pushed BEFORE any solve** (rule 15/26b discipline).

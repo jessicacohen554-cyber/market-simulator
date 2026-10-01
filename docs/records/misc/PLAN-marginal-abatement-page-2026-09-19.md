@@ -248,7 +248,7 @@ shaded tail and the meter; 3 → the heatmap's national-capex note).
 - `docs/codebase-site/marginal-abatement.html` — new, the mock, synthetic data inline + banner.
 - `docs/codebase-site/js/nav.js` — one line under **Backcast**. (269 lines, under rule 27's
   300-line bar; edited locally regardless.)
-- `docs/handoffs/PLAN-marginal-abatement-page-2026-09-19.md` — this plan, committed.
+- `docs/records/misc/PLAN-marginal-abatement-page-2026-09-19.md` — this plan, committed.
 
 **The follow-up that wires real data (NOT this session):**
 - `scripts/build_mac_sidecar.py` — new; `--iso/--year` (pandas, writes the committed sidecar)

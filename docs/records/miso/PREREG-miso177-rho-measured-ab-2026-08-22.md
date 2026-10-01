@@ -95,7 +95,7 @@ python3 scripts/replay_keeper.py results/calibration/miso175_hourkey \
 ```
 
 Scorer: `scripts/probes/_miso177_rho_ab.py` →
-`results/calibration/_miso177_rho_ab.json` (committed before either result
+`results/phase0/miso/_miso177_rho_ab.json` (committed before either result
 exists). Registration ids: `2026-08-22-miso-177-control` /
 `2026-08-22-miso-177-rho-measured` (BOTH registered whatever the outcome,
 rule 15, full span, rule 16).

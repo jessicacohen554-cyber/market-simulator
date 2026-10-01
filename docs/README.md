@@ -93,9 +93,9 @@ produced is L3.)
 | [`adding-new-data-types.md`](adding-new-data-types.md) | ACTIVE | Data — how to intake a new datatype | — |
 | [`us-gen-ownership.md`](us-gen-ownership.md) | ACTIVE | Data/ownership — US generation ownership (moved from repo root, PR #2551) | — |
 | [`multi-iso/README.md`](multi-iso/README.md) | ACTIVE | Multi-ISO — protocol & reference index (nine registered regions) | — |
-| [`multi-iso/spp-addition-plan-2026-09.md`](multi-iso/spp-addition-plan-2026-09.md) | ACTIVE | Multi-ISO — the SPP addition program: cards, waves, lane table, manifest, gates, prompt pack; desk handoff [`handoffs/spp-desk-handoff-2026-09-06.md`](handoffs/spp-desk-handoff-2026-09-06.md), ledger [`handoffs/spp-desk-ledger-2026-09.md`](handoffs/spp-desk-ledger-2026-09.md) | — |
+| [`multi-iso/spp-addition-plan-2026-09.md`](multi-iso/spp-addition-plan-2026-09.md) | ACTIVE | Multi-ISO — the SPP addition program: cards, waves, lane table, manifest, gates, prompt pack; desk handoff [`records/spp/spp-desk-handoff-2026-09-06.md`](records/spp/spp-desk-handoff-2026-09-06.md), ledger [`records/spp/spp-desk-ledger-2026-09.md`](records/spp/spp-desk-ledger-2026-09.md) | — |
 | [`forecast-development-plan-2026-07.md`](forecast-development-plan-2026-07.md) | ACTIVE | Forecast — THE forecast program (tiers, lanes, waves, §9 doc ledger) | — |
-| [`handoffs/forecast-scenario-readiness-plan-2026-09.md`](handoffs/forecast-scenario-readiness-plan-2026-09.md) | ACTIVE | Forecast — scenario-readiness lane plan (carbon price, national CES, voluntary clean demand, load growth, system-wide emissions); subordinate to the FF plan | — |
+| [`records/forecast/forecast-scenario-readiness-plan-2026-09.md`](records/forecast/forecast-scenario-readiness-plan-2026-09.md) | ACTIVE | Forecast — scenario-readiness lane plan (carbon price, national CES, voluntary clean demand, load growth, system-wide emissions); subordinate to the FF plan | — |
 | [`refactor-consolidation-plan-2026-07.md`](refactor-consolidation-plan-2026-07.md) | ACTIVE | Governance/refactor — consolidation program charter | — |
 | [`refactor-consolidation-prompt-pack-2026-07.md`](refactor-consolidation-prompt-pack-2026-07.md) | ACTIVE | Governance/refactor — companion prompt pack | — |
 | [`gap-register-2026-07.md`](gap-register-2026-07.md) | ACTIVE | Forecast — live gap register | — |
@@ -136,10 +136,10 @@ the refactor-consolidation moves land.
 | Was | Now | By |
 |---|---|---|
 | `us-gen-ownership.md` (repo root) | [`us-gen-ownership.md`](us-gen-ownership.md) | root-cleanup PR #2551 (merged) |
-| `docs/multi-iso/` — 27 executed session/investigation notes | [`sessions/multi-iso/`](sessions/multi-iso/) | 2026-07 docs reorg (see [`handoffs/multi-iso-triage-2026-07.md`](handoffs/multi-iso-triage-2026-07.md)) |
+| `docs/multi-iso/` — 27 executed session/investigation notes | [`sessions/multi-iso/`](sessions/multi-iso/) | 2026-07 docs reorg (see [`records/misc/multi-iso-triage-2026-07.md`](records/misc/multi-iso-triage-2026-07.md)) |
 | the 8 merged `docs/_*_log_entry.md` staging files + the two `_caiso79_*.patch.xz.b64` payloads | [`sessions/`](sessions/) | `phase-refactor/stale-refs-docs` (this session) |
 | the 5 executed one-shot `docs/*-session-prompt.md` prompts (now banner'd `RECORD`) | [`sessions/`](sessions/) | `phase-refactor/stale-refs-docs` (this session) |
-| `src/market_sim/pipeline/stage7_getattr_extraction_design.md` | [`handoffs/stage7_getattr_extraction_design.md`](handoffs/stage7_getattr_extraction_design.md) | `phase-refactor/stale-refs-docs` (this session) |
+| `src/market_sim/pipeline/stage7_getattr_extraction_design.md` | [`records/misc/stage7_getattr_extraction_design.md`](records/misc/stage7_getattr_extraction_design.md) | `phase-refactor/stale-refs-docs` (this session) |
 
 The `phase-refactor/stale-refs-docs` moves listed above have **landed** — the
 docs-index author's earlier "pending moves" note is now resolved: the staging
@@ -169,6 +169,17 @@ this index.
 > sat at 172 rows against 489 files for seven weeks before the 2026-09-05
 > regeneration. Re-derive rather than trust a number here; the class *locations*
 > and the filename conventions are what this page is for.
+
+## Session records
+
+Per-session records (FINDING-, PRECOMMIT-, RESULT-, ADDENDUM-, PREREG-, … and the
+former `docs/handoffs/` files and lane subdirectories) live under
+`docs/records/<lane>/`, where `<lane>` is an ISO (`ercot` … `soco`), `forecast`,
+`governance` or `misc`. Loose phase-0 census outputs (`_*.json`, `_*.csv`, …) that
+used to sit directly in `results/calibration/` live under `results/phase0/<lane>/`.
+The lane is the first lane token in the filename — `scripts/lib/record_lanes.py`
+assigns it, so file new records the same way. Git history is the record for
+anything since pruned.
 
 ## Further reading (newcomer path)
 

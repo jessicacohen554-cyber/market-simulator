@@ -3,7 +3,7 @@
 **Lane:** capx D78-R (director r#48; pack §D78-R; D78 §8 item 2 is this lane's spec).
 Predecessors: `FINDING-capx-d78-2026-09-06.md` (the three-leg screen, identities to the digit, G6
 fired), `PRECOMMIT-capx-d78-sector-gate-offer-seam-2026-09-06.md` (§6 the full-window leg runner —
-already committed as `docs/handoffs/d78/run_full.sh`; §7 the flip condition),
+already committed as `docs/records/forecast/d78/run_full.sh`; §7 the flip condition),
 `FINDING-capx-d58-2026-09-06.md` §5 (the band-calibration lesson), `FINDING-capx-d74-2026-09-06.md`
 §9 item 3 (the bracket procedure this document follows).
 **Branch:** `claude/capx-d78r-full-window-s35hos`, FRESH off `origin/main` **`acbb5350`**.
@@ -24,7 +24,7 @@ override, no parameter value, no keeper, no marker. The owner decides on §6.
 | The D78 seam repair (`exit_exempt_unit_ids`) is on main | **PASS** — `retirements.py:2964` (the parameter), `:3707–3708` (the partition after the clearing), `:3133` (the docstring); merge `9d25457b` (#5144) is an ancestor of `acbb5350` |
 | `retirement_sector_gate` default-off, registered at `"False"` | **PASS** — unchanged by #5144 (D78 added no field) |
 | `capacity_market_supply_clearing_by_iso` armed for PJM through `_pjm_config` (D57 / Q44) | **PASS** — the bare `pjm-t1h` recipe clears the stack, so the seam under test is live |
-| The full-window leg runner committed | **PASS** — `docs/handoffs/d78/run_full.sh` (D78 PRECOMMIT §6), unmodified by this lane |
+| The full-window leg runner committed | **PASS** — `docs/records/forecast/d78/run_full.sh` (D78 PRECOMMIT §6), unmodified by this lane |
 | D65-B-R is the sole board writer until its batch registers | **STANDING** — no D65-B-R FINDING on main at `acbb5350`. This lane commits its sidecar and its `VERDICT_MAP` entry and **HOLDS the `ff-verdicts.json` / `program-status.json` snapshot row**, stated in the FINDING either way (§7) |
 | D81 collision (`retirements.py` clearing path) | **NONE** — D78-R touches no code (pack §D81: *"D78-R touches no code, so compose"*) |
 | `data/clean` present | **ABSENT at session start**, rebuilt in full with `scripts/regenerate_clean.py` before any leg (as D78 did); the exit code is reported in the FINDING |
@@ -40,7 +40,7 @@ override, no parameter value, no keeper, no marker. The owner decides on §6.
 
 Both: `run_capacity_hindcast.py --iso PJM --start-year 2021 --end-year 2025 --vintage 2020
 --fuel-variant realized --entry-screen-diagnostics`, through the committed
-`docs/handoffs/d78/run_full.sh`, each under a **HEAD guard** (`H0=$(git rev-parse HEAD); <solve>;
+`docs/records/forecast/d78/run_full.sh`, each under a **HEAD guard** (`H0=$(git rev-parse HEAD); <solve>;
 [ "$(git rev-parse HEAD)" = "$H0" ] || exit 90`). Years sequential inside each invocation, one
 invocation at a time (rule 12; a PJM year is ~7–9 GB on this 15 GB / 4-core box).
 
@@ -73,7 +73,7 @@ data/raw/_validation-source data/raw/reference` → **10 files, +598 / −750**.
 | `data/raw/_validation-source/caiso_offer_*` (3 files) | CAISO offer-surface measurements | **INERT** — another ISO's inputs |
 | `scripts/run_capacity_hindcast.py`, `scripts/run_calibration_full.py`, `scripts/lib/*` | **no change** | — |
 
-**Config axis, measured not assumed** (`docs/handoffs/d78/keys_probe.py` re-run at HEAD): the
+**Config axis, measured not assumed** (`docs/records/forecast/d78/keys_probe.py` re-run at HEAD): the
 full-span keys resolve to **`15a723ba3b6dc856`** (control-P) and **`bc387828f931e0ac`** (arm) —
 **byte-identical to the values D78 declared and realized** (PRECOMMIT-d78 §4). The screen-span keys
 likewise (`afda79ba04cbfdbf` / `d527c3299b8c00b5`), and the D65-B attribution still closes
@@ -272,10 +272,10 @@ structural gates; control-P's bundle deleted before merge.
 ## 10. Reproduction
 
 ```
-uv run python docs/handoffs/d78/keys_probe.py                          # keys at HEAD, zero LP
-bash docs/handoffs/d78/run_full.sh control-P                           # leg 1
-bash docs/handoffs/d78/run_full.sh arm --retirement-sector-gate        # leg 2 (after the §3.3 addendum)
-uv run python docs/handoffs/d78r/window_compare.py --ctl <ctl> --arm <arm>
+uv run python docs/records/forecast/d78/keys_probe.py                          # keys at HEAD, zero LP
+bash docs/records/forecast/d78/run_full.sh control-P                           # leg 1
+bash docs/records/forecast/d78/run_full.sh arm --retirement-sector-gate        # leg 2 (after the §3.3 addendum)
+uv run python docs/records/forecast/d78r/window_compare.py --ctl <ctl> --arm <arm>
 ```
 
 ---
@@ -286,7 +286,7 @@ uv run python docs/handoffs/d78r/window_compare.py --ctl <ctl> --arm <arm>
 **`15a723ba3b6dc856`** realized as declared; run banner asserts the holdout freeze active, solve
 years **{2021, 2023, 2024, 2025}**, 2022 **bridged**, scoring bounded to the training window).
 **The arm has NOT been solved.** Everything below is a control-only read
-(`docs/handoffs/d78r/control_band.json`).
+(`docs/records/forecast/d78r/control_band.json`).
 
 ## A1.1 control-P, per screen year
 
@@ -431,7 +431,7 @@ discipline, and it is cheaper than an arming recommendation against a superseded
 `17:02:18Z`, **19.1 min** wall, HEAD guard held, key **`a9c66d8ea25acb9d`** realized exactly as
 A2.2 declared, holdout freeze active, solves {2021, 2023, 2024, 2025} and bridges 2022.
 **The arm has NOT been solved.** A1.2's band is **SUPERSEDED** by A3.2. Source:
-`docs/handoffs/d78r/control_band.json`.
+`docs/records/forecast/d78r/control_band.json`.
 
 ## A3.1 control-P at `f7057f4c`, per screen year
 

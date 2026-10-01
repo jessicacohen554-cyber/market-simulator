@@ -5,14 +5,14 @@
 `results/calibration/nyiso159_lossarm_B`; determination NOT-YET on
 {C3a-2025 −11.5 %, C3c}). Freeze ACTIVE; every solve year ∈ {2023, 2024,
 2025}; no `--holdout-authorized` (NYISO holds no `complete` marker — Q5-W).
-Machine-readable audit record: `results/calibration/_nyiso160_tpaudit.json`.
+Machine-readable audit record: `results/phase0/nyiso/_nyiso160_tpaudit.json`.
 
 ---
 
 ## §1 — Leg 2 stops with cause: the owner cannot produce the AORR files
 
 The handoff's Step 1 executed as written. The MyNYISO artifacts the Leg-2
-charter requires (`docs/INTAKE-SPEC-nyiso156-winter-locational-2026-08-30.md`
+charter requires (`docs/records/nyiso/INTAKE-SPEC-nyiso156-winter-locational-2026-08-30.md`
 §2: the current-vintage AORR table — all Con Edison and LIPA rows, esp. the
 successors of Table B.4 LRR 1–3, ARR 37, ARR 66, ARR 28 — any
 Manual-12-linked replacement tables for the former Appendix B, and the
@@ -92,7 +92,7 @@ the clean-tree contract working as designed, not drift.
 
 ## §3 — Audit verdict: THE KEEPER REPLAYS IDENTICALLY AT HEAD — no drift to close
 
-Record: `results/calibration/_nyiso160_tpaudit.json`. The replay solved at
+Record: `results/phase0/nyiso/_nyiso160_tpaudit.json`. The replay solved at
 the branch head `cda9b18` (= main `74775c4` + this session's records commit;
 no solve-affecting file differs from main).
 

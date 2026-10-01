@@ -3,7 +3,7 @@
 **Session caiso-278, 2026-09-12. CAISO only (rule 25 `[R-ISO-SCOPE]`). No arm, no
 `ScenarioConfig` field, no bundle, no run registered, no keeper changed in any ISO, no cell
 verdict moved.** The charter this session inherited is
-`docs/PRECOMMIT-caiso278-chp-offer-ablation-2026-09-12.md` (staged by the prior sitting at
+`docs/records/caiso/PRECOMMIT-caiso278-chp-offer-ablation-2026-09-12.md` (staged by the prior sitting at
 `65c8e467`, banner: *"STAGED, NOT EXECUTED"*). It is **VOIDED, not executed** — annotated in
 place, never rewritten.
 
@@ -27,7 +27,7 @@ be measured; it is a committed number in this repository.
 
 ## §1 — THE KILL: the ablation's own A/B, from the committed record
 
-`results/calibration/FINDING-caiso231-ungrounded-offer-regrounding-2026-09-01.md` §3 — the
+`docs/records/caiso/FINDING-caiso231-ungrounded-offer-regrounding-2026-09-01.md` §3 — the
 measured LP effect of arming this flag (the ablation is its mirror, to first order):
 
 | year | first-order prediction (caiso-230 §H) | **MEASURED, solved** | ratio |

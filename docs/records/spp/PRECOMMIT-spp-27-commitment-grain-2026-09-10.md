@@ -4,8 +4,8 @@
 `2026-09-10-spp-64-stgas-selfcommit`, bundle `results/calibration/spp64_span` (committed WITH
 `hourly/` sidecars — **differenced, NEVER re-solved**) · **Object** card **R-be**, the named,
 unfixed rule-17 `[R-FLOOR-WINDOW]` defect the keeper carries · **Predecessors**
-`docs/RESULT-spp64-span.md` §4(i), `docs/handoffs/PRECOMMIT-spp-64-stgas-selfcommit-2026-09-10.md`,
-`docs/handoffs/FINDING-spp-64-2026-09-10.md`, `docs/calibration-log/spp.md` (spp-25/spp-26).
+`docs/records/spp/RESULT-spp64-span.md` §4(i), `docs/records/spp/PRECOMMIT-spp-64-stgas-selfcommit-2026-09-10.md`,
+`docs/records/spp/FINDING-spp-64-2026-09-10.md`, `docs/calibration-log/spp.md` (spp-25/spp-26).
 
 **THIS DOCUMENT IS PUSHED BEFORE ANY LP.** Every number below is re-derived in this session from
 the committed artifacts and three zero-LP `run_year(fleet_only=True)` rebuilds of the keeper's own

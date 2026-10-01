@@ -1,7 +1,7 @@
 # FINDING — ercot-201 / L2-BUILD: Phase-0 STOP — the chartered E1 dispersion surface is superseded on main, and its identification route is barred by an adjudicated prior stop
 
 > **Session.** ercot-201 / L2-BUILD (ERCOT-SCAR workstream manager dispatch,
-> cycle 9, 2026-08-14; pack `docs/handoffs/ercot-scar-workstream-pack-2026-08.md`
+> cycle 9, 2026-08-14; pack `docs/records/ercot/ercot-scar-workstream-pack-2026-08.md`
 > §2.8; child session `session_017mYAd1w2geiUyhvBtYPxC4`). Branch
 > `claude/ercot-scar-l2-e1-dispersion` off `origin/main` `5bf5f13`. Model:
 > Fable (rule 27). **PHASE-0 STOP under the dispatch's own named STOP
@@ -22,7 +22,7 @@ dispatch pricing at all); card R = (R-A) — NOT-YET stands, no C3b-2023-targete
 determination rounds; the L-SCAR §4 must-nots bind verbatim (nothing here
 touches dispatch prices, LP objectives/bounds, any scored series, or any
 backcast artifact — nothing was built); the V0-FAIL adjudication
-(`docs/DECISION-CARD-lscar-screen-revenue-2026-08-13.md`, foot) — no
+(`docs/records/misc/DECISION-CARD-lscar-screen-revenue-2026-08-13.md`, foot) — no
 tightness-conditioned identification re-attempted, none contemplated here.
 
 ---
@@ -37,7 +37,7 @@ V0-FAIL ADJUDICATION item (i)) and by the dispatch as:
 > measured RTOLCAP — p1 13.3 GW modeled vs 7.9 GW measured — so the screen's
 > ORDC/lookahead tail under-visits the knee"
 
-with the FFR-8A finding (`docs/handoffs/ffr-8a-scarcity-restoration-2026-08-08.md`
+with the FFR-8A finding (`docs/records/forecast/ffr-8a-scarcity-restoration-2026-08-08.md`
 §2.5 / §4.1 / §5(c)) as the candidate surface, and the identification
 pre-registered as: *"the dispersion target derives from MEASURED RTOLCAP
 telemetry only … NO model residual anywhere in the fit; if the telemetry on
@@ -89,9 +89,9 @@ pack, nor the dispatch cites either one.
 
 ### 2.1 FFR-8B (2026-08-09) — the dispersion decomposed; the gap re-attributed
 
-`docs/handoffs/ffr-8b-rebase-dispersion-2026-08-09.md` §2–§3 (its §2
+`docs/records/forecast/ffr-8b-rebase-dispersion-2026-08-09.md` §2–§3 (its §2
 supersedes FFR-8A §4 AS BASELINE by its own clause; probes
-`scripts/probes/ffr8b_e1_dispersion.py` → `docs/handoffs/ffr-8b/
+`scripts/probes/ffr8b_e1_dispersion.py` → `docs/records/forecast/ffr-8b/
 e1-dispersion-2026-08-09.json`, identity self-check exact):
 
 * **The "p1 13.3 vs 7.9" gap is SCREEN-ASYMMETRIC and does not reproduce as
@@ -116,7 +116,7 @@ e1-dispersion-2026-08-09.json`, identity self-check exact):
   admissible sources can produce it. … Therefore the repair cannot be built
   without inventing a parameter → STOP."*
 * That stop was **adjudicated CLEAN by the FFR-FH workstream manager**
-  (`docs/handoffs/ffr-owner-sitting-2026-08-02.md` Addendum **AG.1**,
+  (`docs/records/forecast/ffr-owner-sitting-2026-08-02.md` Addendum **AG.1**,
   2026-08-09): *"the Phase-2 admissibility test applied verbatim and the
   repair correctly ESCALATED rather than parameterized (the measured RTOLCAP
   conduct sources may validate, never parameterize — no admissible
@@ -125,7 +125,7 @@ e1-dispersion-2026-08-09.json`, identity self-check exact):
 
 ### 2.2 FFR-9A (2026-08-09) — the dominant inflator removed, UNGATED; E1 now tracks measured
 
-`docs/handoffs/ffr-9a-storage-vintage-seed-2026-08-09.md` (fix `57cb3e7`,
+`docs/records/forecast/ffr-9a-storage-vintage-seed-2026-08-09.md` (fix `57cb3e7`,
 **ungated — it re-bases every capacity hindcast at HEAD**; its record
 supersedes FFR-8B §2 as baseline by the same clause):
 

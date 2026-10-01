@@ -2,7 +2,7 @@
 
 **Session:** `neiso-fuelvintage-1`, 2026-09-09. **Branch:** `claude/neiso-fuelvintage-1`.
 **Scope: NEISO only.** No other ISO's keeper shard, matrix shard or log was written.
-**Companion:** `docs/FINDING-neiso-gas-index-vs-delivered-2026-09-09.md` (the zero-LP fuel
+**Companion:** `docs/records/neiso/FINDING-neiso-gas-index-vs-delivered-2026-09-09.md` (the zero-LP fuel
 investigation — read it first; it is the larger result).
 
 ## 0. Headline

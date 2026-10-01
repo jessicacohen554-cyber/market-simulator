@@ -1,8 +1,8 @@
 # RESULT — NYISO-NEXT-20: CENTRAL EAST flowgate pre-check — FAIL, CE ledgered — 2026-10-01
 
 - **Session:** NYISO-NEXT-20 (orchestrator). **Zero LP**, no shards, keeper unchanged (`2026-09-30-nyisonext18-retiree-carry-span` + stamped `-2021`).
-- **Card:** `docs/DESIGN-nyiso-next19-ce-flowgate-2026-10-01.md` (NEXT-19; landed on `main` in this lane's PR).
-- **Probe:** `scripts/probes/nyisonext20_ce_precheck.py` → `results/calibration/_nyisonext20_ce_precheck.json`. Method choices are fixed in the probe docstring and were set before the first run.
+- **Card:** `docs/records/nyiso/DESIGN-nyiso-next19-ce-flowgate-2026-10-01.md` (NEXT-19; landed on `main` in this lane's PR).
+- **Probe:** `scripts/probes/nyisonext20_ce_precheck.py` → `results/phase0/nyiso/_nyisonext20_ce_precheck.json`. Method choices are fixed in the probe docstring and were set before the first run.
 
 ## Owner rulings (decision card, this session)
 

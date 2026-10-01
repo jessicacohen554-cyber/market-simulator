@@ -4,7 +4,7 @@
 `claude/capx-d75-pjm-vre-elcc-x1lilr`, fresh off `origin/main` **2fa2f23a**.
 **ZERO LP — no solve of any kind was run.** **NOTHING BUILT, NOTHING ARMED**: no `ScenarioConfig`
 field, no registry vintage axis, no default, no cache-key change, no matrix cell, no registration,
-no bundle (§7). Instrument: `docs/handoffs/d75/vre-elcc-vintage-phase0-2026-09-06.{py,json}`;
+no bundle (§7). Instrument: `docs/records/forecast/d75/vre-elcc-vintage-phase0-2026-09-06.{py,json}`;
 ex-ante record: `PRECOMMIT-capx-d75-pjm-vre-elcc-vintage-2026-09-06.md` (pushed `1cd1fc95`,
 corrected `715eb278` — §1.4). **DATA PROFILE: pjm.**
 

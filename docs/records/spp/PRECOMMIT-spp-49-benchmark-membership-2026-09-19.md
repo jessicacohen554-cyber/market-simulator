@@ -91,7 +91,7 @@ Gate 2 already tracks the fleet. Gate 1 tracks nothing. That asymmetry *is* the 
 
 ## 2. Phase 0.2 — the blast-radius census, EVERY registered region
 
-`results/calibration/_spp49_membership_census.json`. Plants in the ISO's EIA-860 BA footprint in
+`results/phase0/spp/_spp49_membership_census.json`. Plants in the ISO's EIA-860 BA footprint in
 some committed vintage but **absent from `build_zone_lookup`**, with the EIA-923 generation they
 carry:
 

@@ -4,7 +4,7 @@ Lane: SPP-85 (SPP coal outage-basis reconciliation). Parent: SPP-84
 (`FINDING-spp-84-published-outage-vs-keeper-2026-09-26.md` §5.1).
 Keeper: `2026-09-24-r-spp-corrected-inputs`, bundle `results/calibration/rspp_span` (2019–2025),
 `basis_sha` `ec13e5c2ad35c4f817cc496ff2363affb3fed2f9`. Session base: `origin/main` `56272c15`.
-Phase 0 (zero LP): `docs/handoffs/FINDING-spp-85-coal-outage-basis-2026-09-26.md`.
+Phase 0 (zero LP): `docs/records/spp/FINDING-spp-85-coal-outage-basis-2026-09-26.md`.
 
 **Written before any price effect of this change was computed.** No re-clear, no merit instrument
 and no solve has been run on the arm. The only numbers in hand are availability quantities

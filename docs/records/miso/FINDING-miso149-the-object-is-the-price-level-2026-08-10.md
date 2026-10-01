@@ -1,7 +1,7 @@
 # FINDING — miso-149: BOTH queue-head objects are REFUTED as independent objects. The all-months CC residual is **95 % the model's own price level** (item 9), the availability double-count MISO was assumed to carry **does not exist**, and what the census actually sized is a **7.9 GW PLANT-GRAIN RATING gap** that fleet-aggregate auditing cannot see
 
 **Session:** miso-149, 2026-08-10, branch `claude/miso-149-calibration-whwlu0`.
-**PREREG** `results/calibration/PREREG-miso149-overlay-contradiction-2026-08-10.md`
+**PREREG** `docs/records/miso/PREREG-miso149-overlay-contradiction-2026-08-10.md`
 pushed at **`318c0542`** (424 lines, blob `sha256 e29817a4…`, verified against the
 **FETCHED** remote ref) **BEFORE any adjudicating statistic**. Instruments committed
 at **`d1740f7f`**, before any value existed.

@@ -1,7 +1,7 @@
 # PREREG nyiso-140 — arm the Long_Island ST_GAS floor's per-plant membership correction (exclude the laid-up Port Jefferson)
 
 **Written BEFORE any solve.** Identification:
-`results/calibration/FINDING-nyiso140-li-st-floor-membership-2026-08-16.md`.
+`docs/records/nyiso/FINDING-nyiso140-li-st-floor-membership-2026-08-16.md`.
 Owner decision 2026-08-16: **standalone arm first, then Zone-K** — the transfer
 bound and this floor are not one phenomenon (nyiso-139b §4), so folding them
 together would confound a rule-17 bug fix with an untested lever.

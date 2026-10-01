@@ -2,7 +2,7 @@
 
 **Lane** SCN-RESOLVE-G1-RECHECK · **Model** Opus (`claude-opus-5`) · **Date** 2026-09-07 ·
 **Branch** `claude/scn-resolve-g1-recheck-t13bm6` · **DATA PROFILE** `code` · **PRECOMMIT**
-`docs/handoffs/PRECOMMIT-scn-resolve-g1-recheck-2026-09-07.md` (pushed before any measurement) ·
+`docs/records/forecast/PRECOMMIT-scn-resolve-g1-recheck-2026-09-07.md` (pushed before any measurement) ·
 **Trigger** `FINDING-scn-ws5a-resolve-ercot-2026-09-07.md` §1.5 and §4 items 2–3.
 
 **ZERO LP.** Every claim below is read from committed source, committed run configs, or the sibling
@@ -325,10 +325,10 @@ than 5.3 hours of LP.
 
 ## 8. Files
 
-- `docs/handoffs/FINDING-scn-resolve-g1-recheck-2026-09-07.md` (this file)
-- `docs/handoffs/PRECOMMIT-scn-resolve-g1-recheck-2026-09-07.md` (pushed pre-measurement)
-- `docs/handoffs/ADDENDUM-B-scn-ws5a-policy-ercot-2026-09-07.md` (this lane's Task 2)
-- `docs/handoffs/scenario-desk-ledger-2026-09.md` — the §4 card, added
-- `docs/handoffs/FINDING-scn-ws5a-resolve-ercot-2026-09-07.md` §4 items 2/3 — a one-line pointer
+- `docs/records/forecast/FINDING-scn-resolve-g1-recheck-2026-09-07.md` (this file)
+- `docs/records/forecast/PRECOMMIT-scn-resolve-g1-recheck-2026-09-07.md` (pushed pre-measurement)
+- `docs/records/forecast/ADDENDUM-B-scn-ws5a-policy-ercot-2026-09-07.md` (this lane's Task 2)
+- `docs/records/misc/scenario-desk-ledger-2026-09.md` — the §4 card, added
+- `docs/records/forecast/FINDING-scn-ws5a-resolve-ercot-2026-09-07.md` §4 items 2/3 — a one-line pointer
 
 No solve, no bundle, no registry sidecar, no `src/`, no `config/`, no CI. Zero LP.

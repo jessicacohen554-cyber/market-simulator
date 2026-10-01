@@ -11,7 +11,7 @@ coupled halves (rule 19 ``[R-ONE-MECH]``):
   band's effective basis IS the measured multiplier in every hour.
 
 These pin the properties the charter
-(``docs/PRECOMMIT-pjm-h5-coal-committed-charter-2026-09-13.md`` §4/§7) froze
+(``docs/records/pjm/PRECOMMIT-pjm-h5-coal-committed-charter-2026-09-13.md`` §4/§7) froze
 before any solve: flag-off byte identity, the IDENTITY the arm claims, the
 non-selective class scope, band confinement, the zero-free-parameter operand,
 and the rule-25 ``[R-ISO-SCOPE]`` posture (default off for every ISO).

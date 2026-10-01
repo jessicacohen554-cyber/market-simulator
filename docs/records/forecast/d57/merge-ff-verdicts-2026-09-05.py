@@ -10,7 +10,7 @@ registry bakes at deploy time (keyed by verdict key, one entry = the bundle's
 * ``pjm-t1h-d57-clearing-headbasis`` is added (arm B).
 
 Idempotent: a re-run leaves the file unchanged. Run from the repo root:
-``uv run python docs/handoffs/d57/merge-ff-verdicts-2026-09-05.py``
+``uv run python docs/records/forecast/d57/merge-ff-verdicts-2026-09-05.py``
 """
 
 import json

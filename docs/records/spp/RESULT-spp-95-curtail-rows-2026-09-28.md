@@ -1,7 +1,7 @@
 # RESULT — SPP-95: SPP's own 2020/2021 wind curtailment rows, solved and PROMOTED.
 
 **Lane** SPP-95 (solves SPP-94's plan) · keeper `2026-09-26-spp-86-coal-extract` (bundle `spp86_arm_span`) is the
-control (rule 29(b) form 4, no control solve) · PRECOMMIT `docs/handoffs/PRECOMMIT-spp-94-curtail-rows-2026-09-27.md`,
+control (rule 29(b) form 4, no control solve) · PRECOMMIT `docs/records/spp/PRECOMMIT-spp-94-curtail-rows-2026-09-27.md`,
 merged at `020bb1c5cb38b73da686dc4e83d1620c415b1437` before any shard launched · registered run
 **`2026-09-28-spp-94-curtail-rows`**, bundle `results/calibration/spp94_arm_span` (2019–2025) · owner ruling on
 promotion: **PROMOTE** (decision card "Promote (Recommended)", 2026-09-28).

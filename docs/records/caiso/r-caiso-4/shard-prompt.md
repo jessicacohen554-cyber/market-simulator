@@ -9,7 +9,7 @@ FIRST ACTION (exactly this, before anything else):
   git fetch origin 9a1980bc38529de8049cf99f6094868d80a3ce93 || git fetch --unshallow origin main || git fetch origin claude/caiso-margins-pastoria-lgucsd; git checkout --detach 9a1980bc38529de8049cf99f6094868d80a3ce93
 Then HARD STOP 1: `git rev-parse HEAD` must print 9a1980bc38529de8049cf99f6094868d80a3ce93. Never rebase, never `git pull`, never "sync", never force-push.
 
-PRECOMMIT: docs/handoffs/r-caiso-4/PRECOMMIT-r-caiso-4-2026-09-26.md (read §1, §2 and §6 only).
+PRECOMMIT: docs/records/caiso/r-caiso-4/PRECOMMIT-r-caiso-4-2026-09-26.md (read §1, §2 and §6 only).
 
 SETUP (in this order):
   pip install -r requirements.txt && pip install -e .     (only if imports fail; if PyYAML refuses to uninstall add --ignore-installed PyYAML)

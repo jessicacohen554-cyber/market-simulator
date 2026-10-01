@@ -8,7 +8,7 @@ submitted curve, which no LEVEL statistic can see. Object: **C3a-2023**
 fail set {C3a, C3b}); owner standing instruction: under 10 % without
 disturbing 2024/2025.
 
-Pre-registration: `docs/PRECOMMIT-ercot181-quantity-position-2026-08-09.md`,
+Pre-registration: `docs/records/ercot/PRECOMMIT-ercot181-quantity-position-2026-08-09.md`,
 pushed BEFORE any corpus measurement, derive, build, or solve, + its
 pre-solve Amendment 1 (tail years 2023-only). It fixed the instrument and its
 bars, the mechanism-form election with three ex-ante refusals, the build-free

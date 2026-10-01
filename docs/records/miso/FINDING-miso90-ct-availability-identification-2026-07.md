@@ -13,7 +13,7 @@ coverage is not an oversight, a fetch failure, or an unfilled TODO. It is a
 proves that no *output-derived* source — CAMPD CEMS, EIA-923, or any successor of
 the same family — can ever fill it. Closing it needs a **capability-declaring**
 source, which is precisely the standing data ask
-(`docs/handoffs/miso-outage-grain-data-ask-2026-07.md`).
+(`docs/records/miso/miso-outage-grain-data-ask-2026-07.md`).
 
 ---
 
@@ -155,7 +155,7 @@ Two follow-ons, neither of which is a C3b lane:
 1. **DOF-ledger `_SUMMER_WEFOR_SHARE`** (and audit the sibling
    `_SUMMER_CLASS_DERATE` literals for citations) — a governance defect that is
    real, cheap, and independent of any residual.
-2. **The standing data ask** — `docs/handoffs/miso-outage-grain-data-ask-2026-07.md`.
+2. **The standing data ask** — `docs/records/miso/miso-outage-grain-data-ask-2026-07.md`.
    §2–§3 above sharpen its acceptance test: the required source must declare
    **capability**, not output. That single criterion rejects CAMPD, EIA-923, and
    every derivative of either, and it is the reason the ask is genuinely

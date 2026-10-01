@@ -1,6 +1,6 @@
 {
  "charter": "miso-210 phase 0 \u2014 the max-gen clock repair; zero-solve; nothing under data/raw touched.",
- "prereg": "results/calibration/PREREG-miso210-maxgen-clock-repair-2026-09-04.md @ 83e73bf8",
+ "prereg": "docs/records/miso/PREREG-miso210-maxgen-clock-repair-2026-09-04.md @ 83e73bf8",
  "keeper": "2026-09-03-miso-202-unitclip",
  "clocks": {
   "armed_at_head": "Etc/GMT+5",

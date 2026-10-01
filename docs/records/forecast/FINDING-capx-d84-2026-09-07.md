@@ -4,8 +4,8 @@
 (2026-09-07, capx ledger §0bd.3(c) — *"D84 first, D83 after"*). Branch
 `claude/capx-d84-thermal-elcc-vintage-cblmzl`. **DATA PROFILE: pjm.** MODEL: Opus. Ex-ante record:
 `PRECOMMIT-capx-d84-pjm-thermal-elcc-vintage-2026-09-07.md`, **pushed before either solve**;
-the gate analyzer `docs/handoffs/d84/gates.py` was committed **between the two legs**, so it could
-not be written to fit the arm. Instruments: `docs/handoffs/d84/{thermal-elcc-vintage-phase0,
+the gate analyzer `docs/records/forecast/d84/gates.py` was committed **between the two legs**, so it could
+not be written to fit the arm. Instruments: `docs/records/forecast/d84/{thermal-elcc-vintage-phase0,
 screen-gates,measurement}.json`.
 
 **GATED DEFAULT-OFF. NOTHING ARMED, and no default was moved** — arming is an owner card, served in
@@ -91,7 +91,7 @@ by test.
 
 ## 4. PHASE 0 (zero LP) — PASSED the charter's STOP gate
 
-`docs/handoffs/d84/thermal-elcc-vintage-phase0-2026-09-07.json`, calling the shipped code path under
+`docs/records/forecast/d84/thermal-elcc-vintage-phase0-2026-09-07.json`, calling the shipped code path under
 a control config and an armed one that differ in exactly one field.
 
 **Exactly ONE delivery year in the 2021–2025 window sits on the ELCC axis at all** — DY 2025/2026,

@@ -20,7 +20,7 @@ read are the committed keeper's.
 ## §0 — DISCLOSURE: the owner ruling, and what has been measured (no LP)
 
 **The owner ruling (this sitting, 2026-09-05, `AskUserQuestion`, three
-questions from `docs/DECISION-CARD-nyiso189-bethlehem-vintage-form-2026-09-04.md`
+questions from `docs/records/nyiso/DECISION-CARD-nyiso189-bethlehem-vintage-form-2026-09-04.md`
 §3, answered verbatim as offered):**
 
 1. Form: **"B2 identity, record-admitted"** — the CT-heat identity

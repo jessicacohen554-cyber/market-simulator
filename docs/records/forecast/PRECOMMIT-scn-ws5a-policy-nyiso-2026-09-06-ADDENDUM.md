@@ -79,7 +79,7 @@ rather than an exact sha, which survives each container's own artifact commits.
 The grouping is by **mechanism**, not by cost: the CES premium ladder, the two target-row
 legs, the voluntary legs, and the cap case. Each group therefore reports one coherent block,
 and each is scored by the **same committed instrument**
-(`docs/handoffs/scn-ws5a-policy-nyiso/score_gates_2026-09-06.py`, pushed at `de06bcd6`
+(`docs/records/forecast/scn-ws5a-policy-nyiso/score_gates_2026-09-06.py`, pushed at `de06bcd6`
 *before* the first leg precisely so no group scores its own legs its own way).
 
 ### 3.2 Why every group also solves `REF` — and what it buys

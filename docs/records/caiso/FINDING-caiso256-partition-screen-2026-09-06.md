@@ -10,7 +10,7 @@ grant, merged) + `ADDENDUM-caiso256-partition-screen-2026-09-06.md`
 2023–2025 only; no marker; freeze ACTIVE. **ONE LP-year spent** (the screen);
 the screen bundle `results/calibration/caiso256_screen2023` is **deleted**
 before this PR merges (rule 29(c)); every number it produced is below and in
-`results/calibration/_caiso256_screen2023.json`.
+`results/phase0/caiso/_caiso256_screen2023.json`.
 
 ---
 

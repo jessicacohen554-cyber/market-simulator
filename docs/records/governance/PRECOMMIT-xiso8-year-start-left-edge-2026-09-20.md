@@ -1,7 +1,7 @@
 # PRECOMMIT xiso-8 — the year-start left-edge object
 
 **Lane:** xiso-8 (cross-ISO: CAISO + MISO) · **Date:** 2026-09-20 · **Phase 0 = ZERO LP**
-**Opened by:** owner ruling 2026-09-20, `docs/FINDING-caiso289-the-bridge-flag-carries-two-mechanisms-2026-09-20.md`
+**Opened by:** owner ruling 2026-09-20, `docs/records/caiso/FINDING-caiso289-the-bridge-flag-carries-two-mechanisms-2026-09-20.md`
 §7(1) — *"the left-edge repair → open it as its own cross-ISO object"*, and, the same day,
 *"do a single lane."*
 
@@ -44,7 +44,7 @@ target.
 
 ## 2. PHASE 0 (a) — MISO'S EXPOSURE, AND THE TRAP IT EXPOSED
 
-Harness: `scripts/probes/xiso8_left_edge_census.py` → `results/calibration/_xiso8_left_edge_census.json`.
+Harness: `scripts/probes/xiso8_left_edge_census.py` → `results/phase0/governance/_xiso8_left_edge_census.json`.
 Zero LP; arithmetic over the committed dated maps.
 
 ### 2.1 The trap: not every year-boundary gap is a package
@@ -170,7 +170,7 @@ is valid and both committed keepers are the control. No control solve is spent.*
 Construction is caiso-288's: **[no movement, full pass-through]**, where the upper limb prices
 every edge hour's move at the CAISO CC_REGULAR cap-weighted heat rate 7.44 MMBtu/MWh and weights it
 by that hour's share of annual load, both read from the keeper's **committed** hourlies. Computed
-before any solve; harness `results/calibration/_xiso8_band.json`.
+before any solve; harness `results/phase0/governance/_xiso8_band.json`.
 
 | year | edge days | Δ gas $/MMBtu | keeper load-wtd mean $/MWh | edge-hour load share | **BAND on the annual mean** |
 |---|--:|--:|--:|--:|---|

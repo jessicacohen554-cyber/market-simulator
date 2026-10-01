@@ -6,7 +6,7 @@ Charter: the owner's 2026-08-30 PM charter of
 (objects 1 and 3 not chartered): the event-hour demand gap — EIA-930 actual
 `Demand` minus model demand = **+651…+873 MW in 12 of the 14 missed-event
 hours** against a **+98 MW** 2023 year mean (finding §0.5/§4; per-hour rows
-in the committed `results/calibration/ercot239_missedevents_phase0.json`).
+in the committed `results/phase0/ercot/ercot239_missedevents_phase0.json`).
 This is a CHARACTERIZATION round: enumerate candidate root causes BEFORE any
 input change — (a) 4CP / load-resource response in the demand source,
 (b) the EIA-930-vs-MIS settlement boundary, (c) weather-hour alignment —
@@ -85,7 +85,7 @@ re-opens (a)/(b)/(c) at headline magnitude.
 ## 2. Measurements (all zero-solve; committed artifacts + raw measured inputs only)
 
 Probe `scripts/probes/ercot240_eventhour_demandgap.py` →
-`results/calibration/ercot240_eventhour_demandgap.json`. Sources (all
+`results/phase0/ercot/ercot240_eventhour_demandgap.json`. Sources (all
 already on disk; no fetch): the keeper sidecar system_2023.parquet; the
 EIA-930 wide extract `data/raw/eia-930-hourly/ERCO hourly.parquet`
 (columns `Demand`, `Net generation`, `Total interchange`, `CEN`/`CFE`/

@@ -9,7 +9,7 @@ session that builds no mechanism mints no cell.
 
 **Queue precedence, stated because it selected this work.** The prompt's item 1
 (MISO C7 COAL_PRB) is gated on the miso-104 ex-ante coal-contract tonnage ask
-having landed. **It has not** — `docs/handoffs/miso-coal-contract-tonnage-data-ask-2026-07.md`
+having landed. **It has not** — `docs/records/miso/miso-coal-contract-tonnage-data-ask-2026-07.md`
 carries a single commit (its original upload) and no commit has touched
 `data/raw/` with contract tonnage since. Per the DO-NOT-REDO discipline the
 receipts-derived construction (miso-103, cell `R`) was **not** re-attempted.
@@ -106,7 +106,7 @@ into a quarantined year cannot smuggle a day in.
   after the committed corpus ends. The fetcher reported all 14 as `NOT LISTED`;
   none was fabricated or interpolated. Closing it needs the credentialed
   `data.ercot.com` archive, which is **owner-declined**
-  (`docs/handoffs/ercot-as-coopt-plan-2026-07.md` §WS-E). **This gap grows over
+  (`docs/records/ercot/ercot-as-coopt-plan-2026-07.md` §WS-E). **This gap grows over
   time** — the window rolls forward, so a later re-run recovers fewer early-2024
   days, never more.
 * **Gap 2 — delivery ≥ 2026-01-01 not fetched, by design.** The MIS window
@@ -124,7 +124,7 @@ carries and the command that regenerates them is in the README verbatim.
 ERCOT-147 §4 part (2) explicitly said "licensing must be checked before
 promising it". Checked on both free paths the repo already reads, and recorded
 as a reproducible probe (`scripts/probes/ercot160_texas_hub_daily_screen.py`,
-record `results/calibration/ercot160_texas_hub_screen.json`) so it is not
+record `results/phase0/ercot/ercot160_texas_hub_screen.json`) so it is not
 re-litigated from memory.
 
 **EIA's Natural Gas Weekly Update spot table** — the page the four committed
@@ -216,7 +216,7 @@ sites, 6 accepted" counts **resources**, and the "~150-site hand crosswalk"
 sizing is wrong in kind.
 
 **What the census actually finds** (final numbers in
-`results/calibration/ercot160_ct_population.json`; see §5.1):
+`results/phase0/ercot/ercot160_ct_population.json`; see §5.1):
 
 * the corpus publishes far fewer CT **sites** than the resource count suggests;
 * the large majority of CT resources — and of CT capacity — **already have a
@@ -240,7 +240,7 @@ correctly shaped for whoever charters it.
 
 ### 5.1 Census numbers (full corpus)
 
-See `results/calibration/ercot160_ct_population.json` / `.csv` — regenerated
+See `results/phase0/ercot/ercot160_ct_population.json` / `.csv` — regenerated
 against the completed full-span corpus, so the counts there supersede any
 intermediate figure quoted during the session.
 

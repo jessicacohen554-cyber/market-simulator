@@ -16,8 +16,8 @@ in 2025), winter's expensive offers are deposited into the middle bins, and
 under within-season ranking the inversion reverses sign in the two segments
 that carry it (2025: CT_FAST +10.00 → −0.85, CC_LIKE +0.35 → −0.20). The
 three-year gap table lives in the pjm-127 finding. Findings:
-`docs/FINDING-pjm126-midcurve-conditioning-artifact-2026-07.md`,
-`docs/FINDING-pjm127-conditioning-multiyear-2026-07.md`.
+`docs/records/pjm/FINDING-pjm126-midcurve-conditioning-artifact-2026-07.md`,
+`docs/records/pjm/FINDING-pjm127-conditioning-multiyear-2026-07.md`.
 
 > **Status (confirmation landed).** This memo was first committed (`cee35d5`,
 > merged to main) while the pjm-127a probes were still running, so §3 and §4
@@ -26,7 +26,7 @@ three-year gap table lives in the pjm-127 finding. Findings:
 > 2024 (2/3), 2025 (2/3, reproduced identically on the re-fetched corpus),
 > and on the pooled three-year corpus with the fidelity hard-guard (3/3
 > FLIP, worst deviation 9.2e-13)** —
-> `docs/FINDING-pjm127-conditioning-multiyear-2026-07.md`. Nothing in §1–§6
+> `docs/records/pjm/FINDING-pjm127-conditioning-multiyear-2026-07.md`. Nothing in §1–§6
 > was changed in response to those numbers; this banner is the only edit.
 > The memo is live and awaits the owner's decision.
 
@@ -333,14 +333,14 @@ ledger entry for the frontier question, though not a completion of it.
 
 ## Pointers
 
-* The artifact evidence: `docs/FINDING-pjm126-midcurve-conditioning-artifact-2026-07.md`,
-  `docs/FINDING-pjm127-conditioning-multiyear-2026-07.md`.
-* The lane and its ledger: `docs/handoffs/pjm-frontier-path-2026-07.md` §3.
+* The artifact evidence: `docs/records/pjm/FINDING-pjm126-midcurve-conditioning-artifact-2026-07.md`,
+  `docs/records/pjm/FINDING-pjm127-conditioning-multiyear-2026-07.md`.
+* The lane and its ledger: `docs/records/pjm/pjm-frontier-path-2026-07.md` §3.
 * The frozen derives: `scripts/data/derive_pjm_offer_midcurve.py`,
   `scripts/data/derive_pjm_offer_surface.py`.
 * The consumption seams: `src/market_sim/data/fleet/offer_surfaces.py`
   (`_pjm_midcurve_context`, `build_pjm_offer_midcurve_conditional_markup`,
   `build_pjm_ct_measured_max_target`, and the top-of-curve conditional path).
-* The dispersion caveat this aims at: `docs/FINDING-pjm121-ccbelt-c3a-close-2026-07.md` §2/§4.
+* The dispersion caveat this aims at: `docs/records/pjm/FINDING-pjm121-ccbelt-c3a-close-2026-07.md` §2/§4.
 * Rule 20's text and genealogy: `CLAUDE.md` rule 21 `[R-FROZEN-DERIVE]`;
   `docs/governance/rule-history.md`.

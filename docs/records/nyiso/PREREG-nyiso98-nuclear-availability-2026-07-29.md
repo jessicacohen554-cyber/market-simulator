@@ -84,7 +84,7 @@ it costs signal (G2 below).
 
 ## 3. The PJM precedent this gate is shaped by
 
-pjm-nuc-1b (`docs/DIAGNOSIS-pjm-c3c-summer-tail-2026-07.md` §8.2.1) built this
+pjm-nuc-1b (`docs/records/pjm/DIAGNOSIS-pjm-c3c-summer-tail-2026-07.md` §8.2.1) built this
 same overlay in full and **stopped at its build-time provenance gate**: the
 923-anchor reconciliation redistributes event-day energy onto near-full pool
 days, and PJM's target (scarcity tail hours) *is* near-full pool days, so net

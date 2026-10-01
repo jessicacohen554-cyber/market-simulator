@@ -10,7 +10,7 @@ gate evaluation and the promotion question are the parent's).
 |---|---|
 | pinned `git rev-parse HEAD` | `a61c1131ea7fb63147c3067fd284dc3fb898ae03` (verified equal) |
 | keeper replayed | `results/calibration/nyiso_fuelvintage_A`, `meta.json` `git_sha` = `da2e7076` (verified) |
-| authority | `docs/PRECOMMIT-nyiso226-nyc-base-rebasis-2026-09-10.md` §1, §6 |
+| authority | `docs/records/nyiso/PRECOMMIT-nyiso226-nyc-base-rebasis-2026-09-10.md` §1, §6 |
 | arm out-dir | `results/calibration/nyiso226_screen_2023/` (local disk only — NOT committed, NOT deleted) |
 | solve wall clock | **5 min 00 s** (16:07:48 → 16:12:48 UTC); budget 20 min |
 

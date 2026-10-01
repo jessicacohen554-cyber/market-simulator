@@ -7,9 +7,9 @@ the committed artifacts (`results/calibration/nyiso187_control`, an instrument).
 **Keeper at entry: `2026-09-04-nyiso-186-astoria-identity`** — NOT-YET, target
 grade 5, fail set {C1-2024 `CC_REGULAR` +3.80 TWh / +3.1 pp, C3a-2025 −10.4 %
 (owner-court, not touched), C3c}.
-**Pre-registration:** `results/calibration/PREREG-nyiso187-ct-steam-merit-position.md`,
+**Pre-registration:** `docs/records/nyiso/PREREG-nyiso187-ct-steam-merit-position.md`,
 pushed at `533e37e6` before the first measurement; every bar below is read
-verbatim. **Machine records:** `results/calibration/_nyiso187_merit_position.json`
+verbatim. **Machine records:** `results/phase0/nyiso/_nyiso187_merit_position.json`
 (installed-offer basis), `_nyiso187_merit_position_bare_srmc.json` (the
 post-hoc sensitivity, labelled), probe `scripts/probes/nyiso187_merit_position.py`.
 

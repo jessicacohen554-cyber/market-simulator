@@ -11,7 +11,7 @@ zero-LP look before anything else"*. Everything below is read from committed
 artifacts: both bundles' `hourly/` sidecars and `legitimacy_diagnostics.json`,
 and the CAMPD bench D-1 itself scores against. Probe
 `scripts/probes/_miso231_coal_d1_attribution.py` →
-`results/calibration/_miso231_coal_d1_attribution.json`. **No solve, no
+`results/phase0/miso/_miso231_coal_d1_attribution.json`. **No solve, no
 mechanism, no parameter, nothing licensed.**
 
 ---

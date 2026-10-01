@@ -18,7 +18,7 @@ STATE (2026-10-01):
   The fold DSW residual is LEDGERED as data-availability limited (R-CAISO-20).
 - R-CAISO-21/-22/-23 (zero LP): evening = DART basis + C3c tail; no lever for C3c 2024; no lever for the
   midday N–S spread (ledgered, data-availability limited).
-- R-CAISO-24 (zero LP; docs/handoffs/r-caiso-24/, probe scripts/probes/_rcaiso24_h18_bound.py): the
+- R-CAISO-24 (zero LP; docs/records/caiso/r-caiso-24/, probe scripts/probes/_rcaiso24_h18_bound.py): the
   aggregated-battery pointer is SPENT ON REACH. SP15 RT h18 −13.9/−6.0/−1.1 (2023–25) = C3c tail
   −8.6/−4.7/−1.6 + body −5.3/−1.3/+0.5. Moving model h18 battery output onto measured moves price
   +0.5/−0.2/−1.5 $/MWh. The h18 body residual is LEDGERED as a shape residual, not a lever.

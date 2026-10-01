@@ -4,7 +4,7 @@
 IS the owner — Amendment 3, "Proceed with all the factors to test not just
 1 keep going"), 2026-08-22, branch `claude/ercot-2023-summer-scarcity-9lg3nm`
 at `705ec9b`. Factor F4 ONLY. Committed record:
-`results/calibration/ercot228_probe_f4.json` (full attempt log). Keeper
+`results/phase0/ercot/ercot228_probe_f4.json` (full attempt log). Keeper
 untouched: `2026-08-20-ercot223-arm-eventrelease`.**
 
 ## 1. The verdict
@@ -28,7 +28,7 @@ session, URL by URL.
 | 2 | `www.ercot.com/misapp/servlets/IceDocListJsonWS?reportTypeId=12311` | live, 346 docs — a **7-day rolling window** (2026-08-15 → 2026-08-22; ExpiredDate = publish + 7 d). The right edge always tracks "now": 2023 will never re-enter it |
 | 3 | same, reportTypeId 12312 | identical 7-day window |
 | 4 | ERCOT's own EMIL catalog (`all-emil-items-search.json`) | advertised `misDisplayDuration_i = 7` for both products; a sweep of **every** load-forecast catalog item finds only rolling windows: NP3-562/565/566-CD + GEN-55-CD (7 d), NP8-927/928/929/930 accuracy reports (31 d — metrics, not vintages), NP12-753 settlement extract (31 d), NP4-159-CD distribution factors + NP3-778-M 36-month monthly (365 d — not DA vintages). **None reaches 2023** |
-| 5 | `api.ercot.com/api/public-reports/archive/NP3-560-CD` | **401** missing subscription key. This credentialed archive is the one surface that does span the 2023 vintages — and it requires the data.ercot.com key the owner **closed permanently 2026-07-05** ("owner will not procure a data.ercot.com key", `docs/handoffs/ercot-as-coopt-plan-2026-07.md` §WS-E / open-items row 3). No credentials in the session env (swept) |
+| 5 | `api.ercot.com/api/public-reports/archive/NP3-560-CD` | **401** missing subscription key. This credentialed archive is the one surface that does span the 2023 vintages — and it requires the data.ercot.com key the owner **closed permanently 2026-07-05** ("owner will not procure a data.ercot.com key", `docs/records/ercot/ercot-as-coopt-plan-2026-07.md` §WS-E / open-items row 3). No credentials in the session env (swept) |
 | 6 | any other ERCOT-published bulk archive | none exists: `gridinfo/load` carries current forecasts + actual-load archives only; the data-product pages front the same 7-day MIS listing |
 
 ## 3. What was pinned but never exercised

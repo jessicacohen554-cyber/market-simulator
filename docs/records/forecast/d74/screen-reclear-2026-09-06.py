@@ -3,7 +3,7 @@ with the no-default-cap class moved into Q_0 (the arm's own arithmetic, zero
 LP) and compare with the solved arm, delivery year by delivery year.
 
 Usage (repo root):
-  PYTHONPATH=.:src .venv/bin/python docs/handoffs/d74/screen-reclear-2026-09-06.py \
+  PYTHONPATH=.:src .venv/bin/python docs/records/forecast/d74/screen-reclear-2026-09-06.py \
       --ctlp <control-P out-dir> --arm <arm out-dir> [--years 2022 ...] [--out out.json]
 """
 

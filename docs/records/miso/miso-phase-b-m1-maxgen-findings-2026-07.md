@@ -2,7 +2,7 @@
 
 **Date:** 2026-07-15. **Session:** `claude/miso-phase-b-execution` (Phase B).
 **Scope:** M-1 of the price-formation lane
-(`docs/handoffs/miso-price-formation-design-2026-07.md` §3/M-1) — the
+(`docs/records/miso/miso-price-formation-design-2026-07.md` §3/M-1) — the
 `miso-maxgen-events` declared-event-window registry that M-2's CT/CC revealed
 derates are scoped to. This memo records what the **primary sources** reachable
 this session actually say, under the pre-declared **F4** discipline ("a window

@@ -3,11 +3,11 @@
 **Lane:** capx **D96** · **Date:** 2026-09-25 · **Model:** Opus (rule 27 `[R-PUSH]`) · **Data profile:** `neiso`
 **Branch:** `claude/capx-d96-neiso-t3-postf1`, fresh off `origin/main` **`c64e69ebeb2eb4c9e16106aa044b15285225393a`**
 **Authority:** OWNER RULING **Q69** (2026-09-25, capx ledger §0bk / §3): *"Re-solve now."*
-**Binding charter:** `docs/handoffs/capx-director-prompt-pack-2026-08.md` "D96" (a relaunch; the first
+**Binding charter:** `docs/records/forecast/capx-director-prompt-pack-2026-08.md` "D96" (a relaunch; the first
 launch stayed PENDING for 11 h, never started, and was archived — nothing from it exists)
 **Predecessors read:** `FINDING-capx-d94-2026-09-24.md` (whole) · `FINDING-capx-d92-2026-09-10.md` ·
 `PRECOMMIT-capx-d92-2026-09-10.md` + ADDENDA A/B · `PRECOMMIT-capx-d94-2026-09-24.md` ·
-`docs/handoffs/f1/RESULT-f1-backcast-heatrate-vintage-2026-09-24.md` + `results/cache.py`'s F1 epoch note
+`docs/records/misc/f1/RESULT-f1-backcast-heatrate-vintage-2026-09-24.md` + `results/cache.py`'s F1 epoch note
 
 **PUSHED BEFORE ANY LP.** The recipe, the G-DRIFT audit, every prediction and the scoring rules are
 fixed at this commit. The four shards are pinned to this commit's full 40-character SHA.
@@ -216,7 +216,7 @@ Per-leg wall: **[28, 50] min**, peak RSS **< 5 GB** (D92 31.8–46.9 min, 3.65�
 
 Two dry runs were done here **before any leg exists**, on committed artifacts:
 
-* **FC-5.** `docs/handoffs/d92/rebase_disposition.py` over `d94/vre_short` (the config-identical post-F1
+* **FC-5.** `docs/records/forecast/d92/rebase_disposition.py` over `d94/vre_short` (the config-identical post-F1
   proxy): **0 of 54 rows change class**; 25 EXPLAINED DIVERGENCE / 29 IN CORRIDOR, unchanged. The co2 rows
   move −25.0 → −28.2 % (2030), −57.0 → −58.6 % (2035), −60.0 → −61.5 % (2040);
   `generation:total@2040` stays −15.3 % (the row that sits 0.3 pt past the line).
@@ -261,14 +261,14 @@ over the committed inputs —
 
 **The instruments, validated at this HEAD before use:**
 
-* `docs/handoffs/d92/assemble_paired_invariants.py results/ff-t3-neiso-golden/d92` re-emits the committed
+* `docs/records/forecast/d92/assemble_paired_invariants.py results/ff-t3-neiso-golden/d92` re-emits the committed
   `d92/paired_invariants.json` **byte-identically**. It is the registered FC-6 paired path, at the same
   summary grain D92 registered, so the paired diff is a data diff and not a grain change. P2 therefore keeps
   its `[not scored at this grain: objective↑]` clause (D92 Addendum B §B.2(2)). **Declared now:** because the
   shards push full bundles this time, the parent will ALSO run the cache-grain
   `check_forecast_invariants` paired path as a **reported cross-check, not registered** — changing the
   registered grain inside a vintage swap would confound the two.
-* `docs/handoffs/d92/rebase_disposition.py` over `d92/base` reproduces **54/54** committed FC-5
+* `docs/records/forecast/d92/rebase_disposition.py` over `d92/base` reproduces **54/54** committed FC-5
   `model_value`s, and **54/54** `divergence_pct`s when the divergence is taken from the 4-dp-rounded model
   value (the table's own convention; from the raw value one row, `generation:oil@2040`, reads −83.6 vs the
   committed −84.0). The new table uses the same convention.

@@ -1,7 +1,7 @@
 # PRECOMMIT — SPP-62: R-ay, the coal supply-class census vintage repair
 
 **Lane** SPP-62 · **Base** `bba0904ddcae387b730e77c4329c70c663d94a85` ·
-**Predecessor** `docs/handoffs/FINDING-spp-61-2026-09-10.md` (its §8 successor card R-ay is
+**Predecessor** `docs/records/spp/FINDING-spp-61-2026-09-10.md` (its §8 successor card R-ay is
 this lane's object) · **Control** SPP keeper 5 `2026-09-09-spp-52a-fossil-offer`, bundle
 `results/calibration/spp52a_fossil93` — rule 29(b) **form 4**, the committed keeper IS the
 control and **no control solve is spent** (§6) · **DATA PROFILE** `spp`.

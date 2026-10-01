@@ -5,7 +5,7 @@
 **Screen** PJM 2023, ONE arm shard at one pinned sha (`618c023e`). Parent ran no LP (rule 32
 `[R-SHARD]` (a)). **No control solve was spent** — G-CTRL form 4, discharged at zero LP.
 **PJM keeper `2026-09-11-pjm-d4-4-gasoutage`: CALIBRATED, 8/8, zero caveats — UNTOUCHED.**
-Spec and pre-registration: `docs/PRECOMMIT-pjm-h7-gasmid-joint-2026-09-14.md`.
+Spec and pre-registration: `docs/records/pjm/PRECOMMIT-pjm-h7-gasmid-joint-2026-09-14.md`.
 
 ---
 
@@ -133,9 +133,9 @@ and an owner ruling — the frontier was opened for the joint arm, which is now 
 > by session pjm-h8, which also carries new evidence *for* it: measured against PJM's own
 > published offers, this arm's committed-band basis lands at **1.205 / 1.294 / 1.324×** the
 > measured offer level (2023/2024/2025), i.e. it overshoots PJM's own bids by 21-32 %
-> (`docs/FINDING-pjm-h8-coal-minload-is-the-undisciplined-offer-surface-2026-09-16.md` §2).
+> (`docs/records/pjm/FINDING-pjm-h8-coal-minload-is-the-undisciplined-offer-surface-2026-09-16.md` §2).
 > The same ruling **RE-OPENED the pjm-142 frontier** for the min-load offer basis; successor
-> charter `docs/PRECOMMIT-pjm-h8-minload-measured-offer-2026-09-16.md`.
+> charter `docs/records/pjm/PRECOMMIT-pjm-h8-minload-measured-offer-2026-09-16.md`.
 > Rule 33 `[R-SHARD-ARCHIVE]` (f)(3) now permits deleting branch `claude/pjm-h7-screen-2023`;
 > pjm-h8 attempted it and **deletion was REFUSED in-session**, so the branch STANDS and §7's
 > recovery command remains valid (rule 33 (f)(5): a session that cannot delete says so rather

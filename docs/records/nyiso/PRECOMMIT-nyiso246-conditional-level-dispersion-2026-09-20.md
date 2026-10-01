@@ -6,7 +6,7 @@
 `results/calibration/nyiso241_ctcommitted_span`, `git_sha` `5356fb71`, years {2022, 2023, 2024,
 2025}. **ISO tier (2023–2025, rule 30 `[R-TOUCHPOINT-FOLD]` (c)) = CALIBRATED**, C3c the lone
 ledgered caveat. **Registered full span (2022–2025) = NOT-YET, on 2022's C3a + C3b alone.**
-**Predecessor** `docs/RESULT-nyiso245-the-object-is-level-dispersion-not-shape-2026-09-20.md` §5.
+**Predecessor** `docs/records/nyiso/RESULT-nyiso245-the-object-is-level-dispersion-not-shape-2026-09-20.md` §5.
 
 **THIS DOCUMENT IS COMMITTED AND PUSHED BEFORE ANY GATED NUMBER IS COMPUTED.** Everything cited
 below is either (i) a committed prior artifact, (ii) a property of an *input* series that selects

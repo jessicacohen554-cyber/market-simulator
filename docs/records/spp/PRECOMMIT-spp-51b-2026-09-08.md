@@ -228,5 +228,5 @@ how much better §1's story reads.
 - **Rule 28 `[R-MECH-MATRIX]`.** `offer_curve_by_group` is `R` for SPP and this lane **does not
   re-test it**; §1 is new evidence *for the R*, not against it. The cells this lane may move are
   those in §4, both `U`.
-- **Files.** PRECOMMIT/FINDING/`docs/handoffs/spp51b/`, `.gitignore`, and SPP's shard cell lines
+- **Files.** PRECOMMIT/FINDING/`docs/records/spp/spp51b/`, `.gitignore`, and SPP's shard cell lines
   only. No source file, no plan, no ledger, no log, no keeper shard, no other ISO's anything.

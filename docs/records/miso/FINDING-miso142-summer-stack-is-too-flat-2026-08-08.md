@@ -10,7 +10,7 @@ Keeper **UNCHANGED** at `2026-08-05-miso-132b-cc-committed` (bundle
 `results/calibration/miso132_ccmin_B`). Every instrument is a committed artifact;
 G-D was never reached, so no solve was licensed and none was spent.
 
-**PREREG** `results/calibration/PREREG-miso142-summer-supply-stack-2026-08-08.md`,
+**PREREG** `docs/records/miso/PREREG-miso142-summer-supply-stack-2026-08-08.md`,
 pushed at **`771cf19c`** (blob `f2315248`, verified against the remote) **BEFORE
 any adjudicating statistic**, with **ten** falsifiable numeric predictions, four
 pre-committed verdict branches, a stop rule, kill-gate bars fixed before their
@@ -449,7 +449,7 @@ artifacts on both sides, without a single solve.
 ---
 
 **Artifacts** (all committed):
-`results/calibration/PREREG-miso142-summer-supply-stack-2026-08-08.md` (`771cf19c`) ·
+`docs/records/miso/PREREG-miso142-summer-supply-stack-2026-08-08.md` (`771cf19c`) ·
 `_miso142_gap_attribution.json` · `_miso142_supply_vs_eia930.json` ·
 `_miso142_marginal_and_slope.json` · `_miso142_stack_slope_vs_actual.json` ·
 `_miso142_other_bucket_and_hydro.json` · `_miso142_verdict_arithmetic.json` ·

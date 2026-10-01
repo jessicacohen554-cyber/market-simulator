@@ -76,7 +76,7 @@ read their charter from the repo, so a charter that is not in their clone does n
 assumed.** Per-year shards carry **different year-scoped `eia923` / `eia930` / `campd` snapshots**,
 so a hand-composed bundle scores one year against another's inputs. The CAISO lane did exactly this
 on 2026-09-09 and got a broken **C4 `r=None, NRMSE=8.406`** against a real 0.877 / 0.298
-(`docs/RESULT-caiso-fuelvintage-2026-09-09.md` §6a). **Rule 16 `[R-ALLYEARS]`'s "one bundle" also
+(`docs/records/caiso/RESULT-caiso-fuelvintage-2026-09-09.md` §6a). **Rule 16 `[R-ALLYEARS]`'s "one bundle" also
 means ONE INPUT SNAPSHOT.**
 
 So the per-year shards earn their containers by returning **fast, in parallel, with the structural

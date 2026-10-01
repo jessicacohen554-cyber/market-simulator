@@ -63,7 +63,7 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--isos", nargs="+", default=["ERCOT", "NYISO", "MISO", "NEISO"])
     ap.add_argument("--years", nargs="+", type=int, default=[2026])
-    ap.add_argument("--out", default="docs/handoffs/scn-ws4c/phase0_demand_shape.json")
+    ap.add_argument("--out", default="docs/records/forecast/scn-ws4c/phase0_demand_shape.json")
     args = ap.parse_args()
 
     out: dict = {}

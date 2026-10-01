@@ -1,6 +1,6 @@
 {
  "probe": "ercot181_positiontail_seamproof",
- "precommit": "docs/PRECOMMIT-ercot181-quantity-position-2026-08-09.md \u00a76",
+ "precommit": "docs/records/ercot/PRECOMMIT-ercot181-quantity-position-2026-08-09.md \u00a76",
  "bundle": "results/calibration/ercot176_control_A",
  "years": {
   "2023": {

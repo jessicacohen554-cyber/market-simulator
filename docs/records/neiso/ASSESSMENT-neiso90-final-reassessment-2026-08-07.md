@@ -12,7 +12,7 @@ artifacts (`calibration_verdict.py --run-id`, no solve). Under rule 22 as rewrit
 spend is looking at an answer, which nothing here does. No mechanism was tested, no lever
 opened, no matrix cell verdict minted, the keeper is unchanged.
 
-Probe: `scripts/probes/neiso90_final_prereq_audit.py` → `results/calibration/_neiso90_prereq_audit.json`.
+Probe: `scripts/probes/neiso90_final_prereq_audit.py` → `results/phase0/neiso/_neiso90_prereq_audit.json`.
 
 ---
 
@@ -402,4 +402,4 @@ uv run python scripts/probes/neiso90_final_prereq_audit.py
 uv run python scripts/calibration_verdict.py --run-id 2026-08-05-neiso-83-ca1-reclass
 ```
 
-Machine-readable audit: `results/calibration/_neiso90_prereq_audit.json`.
+Machine-readable audit: `results/phase0/neiso/_neiso90_prereq_audit.json`.

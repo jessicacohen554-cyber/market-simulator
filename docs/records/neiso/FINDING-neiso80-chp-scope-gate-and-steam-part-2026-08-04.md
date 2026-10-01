@@ -1,10 +1,10 @@
 # FINDING — neiso-80: the CHP dark-fuel scope gate lands at NEISO; Stony Brook's steam part was never missing
 
 **Session:** neiso-80 · **ISO:** NEISO · **Date:** 2026-08-04
-**Prereg:** `results/calibration/PREREG-neiso80-chp-scope-gate-and-steam-part-2026-08-04.md`
+**Prereg:** `docs/records/neiso/PREREG-neiso80-chp-scope-gate-and-steam-part-2026-08-04.md`
 (pushed as commit `e89d08b5`, **before** any arm and before any adjudicating statistic)
 **Probe:** `scripts/probes/_neiso80_stonybrook_presence.py`
-**Record:** `results/calibration/_neiso80_stonybrook_presence.json`
+**Record:** `results/phase0/neiso/_neiso80_stonybrook_presence.json`
 **Keeper:** `2026-08-03-neiso-caiso156-meter-screen` — **UNCHANGED.**
 
 ## §0 — the verdict in one table

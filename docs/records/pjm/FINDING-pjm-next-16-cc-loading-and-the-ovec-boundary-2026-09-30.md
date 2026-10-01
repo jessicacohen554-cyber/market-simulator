@@ -3,8 +3,8 @@
 **Keeper** `2026-09-28-pjm-next8-exitfix` (bundle `results/calibration/pjmnext8_xf_span`), unchanged by this finding.
 
 **Probes** (zero LP):
-- `scripts/probes/_pjmnext16_cc_loading.py` → `results/calibration/_pjmnext16_cc_loading.json`: CC loading term by hour class and zone, plus the hourly system ledger.
-- `scripts/probes/_pjmnext16_fleet_boundary.py` → `results/calibration/_pjmnext16_fleet_boundary.json`: the energy identity and the LP-fleet vs C1-benchmark boundary.
+- `scripts/probes/_pjmnext16_cc_loading.py` → `results/phase0/pjm/_pjmnext16_cc_loading.json`: CC loading term by hour class and zone, plus the hourly system ledger.
+- `scripts/probes/_pjmnext16_fleet_boundary.py` → `results/phase0/pjm/_pjmnext16_fleet_boundary.json`: the energy identity and the LP-fleet vs C1-benchmark boundary.
 - `scripts/probes/_pjmnext16_fleet_delta.py`: a `fleet_only` rebuild delta against the keeper, with `--set` routed as `replay_keeper` routes it.
 
 ## Card 1 — what pushes CC loading up in 2019/2020/2022/2023

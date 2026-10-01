@@ -1,13 +1,13 @@
 # F2-45U — the §45U gross-receipts composition seam
 
 **Owner decision D-28 option A, sequencing step 2 of 3.** F-1 + F-3 landed first
-(PR #3746, merged `6c3b551`, `docs/handoffs/f1-45u-ordering-2026-08-08.md`). This charter is the
+(PR #3746, merged `6c3b551`, `docs/records/misc/f1-45u-ordering-2026-08-08.md`). This charter is the
 `model/capacity_evolution/retirements.py` seam ONLY. **Arm-3 arming is the next charter and was
 not performed here** — `miso_clean_tier_rows` stays default-OFF.
 
-Authority: `docs/handoffs/d28-45u-composition-memo-2026-08-08.md` §1.3 (the two-branch
+Authority: `docs/records/forecast/d28-45u-composition-memo-2026-08-08.md` §1.3 (the two-branch
 anti-stacking design), §3 (the interaction audit), §5 (the signed card); and
-`docs/handoffs/f1-45u-ordering-2026-08-08.md` §7 (what F-1 deliberately left).
+`docs/records/misc/f1-45u-ordering-2026-08-08.md` §7 (what F-1 deliberately left).
 
 ---
 
@@ -323,10 +323,10 @@ stays **`O`** (rule 25 — a blocker being cleared is not a verdict). What the a
 **Primary statute** — 26 U.S.C. §45U(a), (b)(2)(A), (b)(2)(B)(i)–(iii), (c)(1)–(2), (d)(1), read
 via the D-28 memo's own verified citations (uscode.house.gov prelim; Cornell LII), 2026-08-08.
 
-**In-repo** — `docs/handoffs/d28-45u-composition-memo-2026-08-08.md` §1.3/§2.3/§3/§5;
-`docs/handoffs/f1-45u-ordering-2026-08-08.md` §7;
-`docs/handoffs/ffr-6b-rps-grain-clean-tiers-2026-08-05.md` §6.4;
-`docs/handoffs/ffr-7b2-rps-krow-clean-rows-2026-08-06.md`;
+**In-repo** — `docs/records/forecast/d28-45u-composition-memo-2026-08-08.md` §1.3/§2.3/§3/§5;
+`docs/records/misc/f1-45u-ordering-2026-08-08.md` §7;
+`docs/records/forecast/ffr-6b-rps-grain-clean-tiers-2026-08-05.md` §6.4;
+`docs/records/forecast/ffr-7b2-rps-krow-clean-rows-2026-08-06.md`;
 `src/market_sim/policy/ira.py`, `policy/federal_ces.py`, `policy/clean_tiers.py`,
 `model/capacity_evolution/retirements.py`, `config/scenarios.py`, `config/capacity_market.py`;
 `frontend/data/backcast/bench/MISO/{2024,2025}.json.gz` (the committed RT ATC price basis);

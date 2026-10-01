@@ -10,7 +10,7 @@ solve, no year scored, no run registered, no bundle modified, no
 ercot-163/170/208/214/216 no-LP precedent). No precommit was pushed because no
 solve was reached — the pre-solve gate is what this session did not pass.
 Committed probe: `scripts/probes/ercot217_regime_phase0.py` →
-`results/calibration/ercot217_regime_phase0.json`. Everything below is read
+`results/phase0/ercot/ercot217_regime_phase0.json`. Everything below is read
 from the five committed lineage bundles' `hourly/` sidecars, the committed
 actual-RT parquet, the committed measured AS inputs, and the re-fetched IMM
 State-of-the-Market volumes (per `data/raw/ERCOT/README.md`; 2023/2024/2025

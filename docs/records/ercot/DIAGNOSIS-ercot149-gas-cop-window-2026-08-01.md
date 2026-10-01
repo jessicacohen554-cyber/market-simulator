@@ -5,12 +5,12 @@ ERCOT-148 named successor, diagnosis §6.1; open owner ruling #7) · **Keeper
 under audit** `2026-07-31-ercot148-dam-event-cap` (bundle
 `ercot148_dam_event_cap_arm`) · **Method** Phase 0/1 no-LP reconciliation
 through `scripts/probes/ercot149_gas_outage_phase0.py` (committed record
-`results/calibration/ercot149_gas_outage_phase0.json`), the raw 60-Day DAM
+`results/phase0/ercot/ercot149_gas_outage_phase0.json`), the raw 60-Day DAM
 disclosure rows, the merit-order guard's own panel
 (`scripts/lib/outage_detect.build_merit_order_panel`), and the keeper's
 committed dashboard payload as dispatch ground truth. **No LP was built and no
 year was solved in Phase 0/1.** Phase 2 (the single-delta arm) is chartered by
-`docs/PRECOMMIT-ercot149-dam-gas-event-cap-2026-08-01.md`.
+`docs/records/ercot/PRECOMMIT-ercot149-dam-gas-event-cap-2026-08-01.md`.
 
 **Preconditions.** `audit_keepers.py --iso ERCOT` PASS 0/0 at session start.
 The default `ScenarioConfig().cache_key()` has drifted name-only again
@@ -267,4 +267,4 @@ off `ercot148_dam_event_cap_arm`, full span 2023–2025, precommit pushed
 before the solve. Zero fitted parameters (a precedence rule between two
 measured instruments) ⇒ structurally LOYO-exempt, per-year guard table
 standing in (the ERCOT-145b/148 precedent). Ex-ante predictions and guards:
-`docs/PRECOMMIT-ercot149-dam-gas-event-cap-2026-08-01.md`.
+`docs/records/ercot/PRECOMMIT-ercot149-dam-gas-event-cap-2026-08-01.md`.

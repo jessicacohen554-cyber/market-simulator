@@ -2,7 +2,7 @@
 
 **Session caiso-270, 2026-09-10. Branch `claude/caiso-scarcity-ordc-overlay-8ehxye`. CAISO only (rule 25 `[R-ISO-SCOPE]`).**
 Keeper: **`2026-09-10-caiso-269-lateevening-clean`**, **CALIBRATED**, single ledgered C3c. **This does not change it.**
-Companion: `docs/FINDING-caiso270-scarcity-ordc-phase0-2026-09-10.md` (the chartered lever, closed by measurement).
+Companion: `docs/records/caiso/FINDING-caiso270-scarcity-ordc-phase0-2026-09-10.md` (the chartered lever, closed by measurement).
 **Pushed before the first LP of any shard.**
 
 ---

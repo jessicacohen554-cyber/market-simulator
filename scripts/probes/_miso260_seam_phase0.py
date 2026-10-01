@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Phase-0 (ZERO LP): can MISO's measured seam ladder be derived for 2020-2022?
 
-``docs/FINDING-miso252-seam-fallback-and-the-923-block-2026-09-10.md`` §3(a)
+``docs/records/miso/FINDING-miso252-seam-fallback-and-the-923-block-2026-09-10.md`` §3(a)
 recorded the 2020-2022 seam ladder as BLOCKED on inputs, with
 ``eia-930-interchange/MISO interchange hourly.parquet`` covering "2023-2025"
 as the binding blocker. **Both halves of that blocker were landed three days

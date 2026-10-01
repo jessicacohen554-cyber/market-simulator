@@ -1,6 +1,6 @@
 # PRECOMMIT — pjm-h20: Card C, the CC/CT pair — CC econ rungs at PJM's own offer (LEVEL form) + CT_FAST measured max()-seam, all six PJM years (2026-09-24)
 
-Card C of `docs/FINDING-pjm-h18-price-object-localised-2026-09-23.md` §5, chartered as a **pair**.
+Card C of `docs/records/pjm/FINDING-pjm-h18-price-object-localised-2026-09-23.md` §5, chartered as a **pair**.
 Written and pushed **before any solve**; the six shards are pinned to this commit's full SHA.
 
 **Keeper (control):** `2026-09-23-pjm-h19-dbs-span` (2023–25, CALIBRATED 8/8) + folded
@@ -8,7 +8,7 @@ Written and pushed **before any solve**; the six shards are pinned to this commi
 `results/calibration/pjm_h19_dbs_{span,touchpoint}`, every leg solved at `2d57aa20`.
 **Rules:** 1 `[R-STRUCT]`, 13 `[R-MEASURED]`, 14 `[R-ACCURATE]`, 16/34(c) all years, 19 `[R-ONE-MECH]`,
 21 `[R-DOF]`, 28 `[R-MECH-MATRIX]`, 29(b) G-DRIFT, 31 `[R-RETAIN]`, 32/34/36 shards.
-**Phase 0 (zero LP):** `scripts/probes/pjm_h20_cardc_phase0.py` → `results/calibration/_pjm_h20_cardc_phase0.json`.
+**Phase 0 (zero LP):** `scripts/probes/pjm_h20_cardc_phase0.py` → `results/phase0/pjm/_pjm_h20_cardc_phase0.json`.
 
 ## 1. The arm — two existing default-off switches, zero new code, zero new parameters
 

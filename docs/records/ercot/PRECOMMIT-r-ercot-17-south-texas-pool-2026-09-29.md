@@ -54,7 +54,7 @@ See §8: ALL INERT. The keeper's committed legs are the control (form 4); no con
 
 ## 5. Arm
 
-Seven shards (rule 36), one per year, each `replay_keeper.py results/calibration/r_ercot16_span --years <Y> --set ercot_south_texas_pooled_basis=true`. Prompts: `docs/handoffs/r-ercot/SHARD-PROMPTS-r-ercot-17.md`. Partition signatures unchanged (2019–22 swcap true / EP ref true / CC_REGULAR.peak 151.008; 2023 true / **false** / 151.008; 2024–25 false / true / 4.576).
+Seven shards (rule 36), one per year, each `replay_keeper.py results/calibration/r_ercot16_span --years <Y> --set ercot_south_texas_pooled_basis=true`. Prompts: `docs/records/ercot/r-ercot/SHARD-PROMPTS-r-ercot-17.md`. Partition signatures unchanged (2019–22 swcap true / EP ref true / CC_REGULAR.peak 151.008; 2023 true / **false** / 151.008; 2024–25 false / true / 4.576).
 
 ## 6. Predictions (written before solving)
 

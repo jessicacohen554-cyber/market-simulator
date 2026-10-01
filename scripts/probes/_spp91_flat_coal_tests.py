@@ -1,6 +1,6 @@
 """SPP-91 stage 2 (ZERO LP): is SPP-90's flat on-line coal shortfall reserve headroom or nodal congestion?
 
-Record: ``docs/handoffs/FINDING-spp-91-flat-coal-headroom-2026-09-27.md``.
+Record: ``docs/records/spp/FINDING-spp-91-flat-coal-headroom-2026-09-27.md``.
 
 Reads stage 1 (``_spp91_flat_coal_series.py``: per plant x hour flat shortfall ``F``), the committed SPP
 RTBM operating-reserve cleared MW (``spp_rtbm_or_cleared_hourly.parquet``, SPP-81) and MCPs

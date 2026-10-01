@@ -30,9 +30,9 @@ STATE ON MAIN
 - Determination: NOT-YET on {dispatch_corr}, ONE record: C4 coal 2023 r 0.662 / NRMSE 0.317 (floor 0.70 / 0.30).
   Price is UNSCORED (rubric v3.8).
 - Read first:
-  - docs/handoffs/RESULT-nwppnext13-perunit-attribution-2026-09-30.md (all of it, esp. §2 and §4)
-  - docs/handoffs/FINDING-nwppnext13-wefor-and-perunit-phase0-2026-09-30.md
-  - docs/handoffs/PRECOMMIT-nwppnext13-perunit-attribution-2019-2025-2026-09-30.md (§3 G-DRIFT, §4 recipe, §5 stops)
+  - docs/records/nwpp/RESULT-nwppnext13-perunit-attribution-2026-09-30.md (all of it, esp. §2 and §4)
+  - docs/records/nwpp/FINDING-nwppnext13-wefor-and-perunit-phase0-2026-09-30.md
+  - docs/records/nwpp/PRECOMMIT-nwppnext13-perunit-attribution-2019-2025-2026-09-30.md (§3 G-DRIFT, §4 recipe, §5 stops)
   - docs/calibration-log/nwpp.md (latest entry), docs/codebase-site/data/mechanism-matrix/NWPP.js,
     docs/mechanism-testing-matrix.md §5.9
 

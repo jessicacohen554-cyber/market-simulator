@@ -3,8 +3,8 @@
 **Branch:** `claude/ercot-storage-as-duration-bxwr0w`
 **Status:** mechanism BUILT, tested, default-off, ERCOT-gated, flag-off byte-identical,
 pure-LP (vectorized, no hour loop). Closes WS-B of
-`docs/handoffs/ercot-as-coopt-plan-2026-07.md` and ercot32 **root cause (1)**.
-**Reads first:** `docs/handoffs/ercot-as-coopt-plan-2026-07.md` WS-B,
+`docs/records/ercot/ercot-as-coopt-plan-2026-07.md` and ercot32 **root cause (1)**.
+**Reads first:** `docs/records/ercot/ercot-as-coopt-plan-2026-07.md` WS-B,
 `docs/ercot-storage-as-endogenous-2026-06.md` (G5/run164), the 2026-07-03
 ercot32 calibration-log entry (root causes 1 and 2).
 
@@ -100,7 +100,7 @@ The gate cuts the over-hold decisively (1.97× → 0.55×). The 2024 residual la
 durations, LP-linear SOC gate) is kept as-is; the under-provision is a **documented
 residual**, not closed by tuning. Full 2023–2025 split table is on the dashboard (bundle `166`).
 
-> **Correction (2026-07-07, G-37 diagnosis — `docs/handoffs/FINDING-ercot-storage-as-g37-2026-07.md`):**
+> **Correction (2026-07-07, G-37 diagnosis — `docs/records/ercot/FINDING-ercot-storage-as-g37-2026-07.md`):**
 > the mechanism above ("idle thermal reserve free in loose hours … storage gets its
 > tight-hour share") is **backwards**. The hourly split (bundle 166) shows storage keeps
 > its award in the **loose midday hours** (h11–16, ratio ~0.8) and **loses** it in the
@@ -136,7 +136,7 @@ all off — the endogenous split forces them off; never mixed, per the ercot30 b
 ## Open follow-ups
 
 1. The under-provision (0.54–0.61× ×3yr): **DIAGNOSED 2026-07-07** (G-37,
-   `docs/handoffs/FINDING-ercot-storage-as-g37-2026-07.md`) — it is a **dispatch-choice
+   `docs/records/ercot/FINDING-ercot-storage-as-g37-2026-07.md`) — it is a **dispatch-choice
    limitation, not a coupling bug**. The coupling (`dispatch.py:1441-1494`) is structurally
    correct: the shortfall is concentrated in the evening peak (h17–22) where the
    deterministic P1 co-opt discharges the battery for energy arbitrage, drawing down SOC so

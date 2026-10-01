@@ -16,7 +16,7 @@ move between yards. The pooled row therefore lets the LP burn coal at a yard tha
 against tons sitting at another.
 
 **Measured on the keeper's own solved dispatch, zero LP**
-(`scripts/probes/_miso268_plant_grain_phase0.py` → `results/calibration/_miso268_plant_grain_phase0.json`;
+(`scripts/probes/_miso268_plant_grain_phase0.py` → `results/phase0/miso/_miso268_plant_grain_phase0.json`;
 per-unit P1 dispatch from the miso-267 leg commits, LP heat rates from a `fleet_only` rebuild,
 budgets from the exact builder the arm uses):
 

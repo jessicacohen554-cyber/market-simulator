@@ -17,7 +17,7 @@ docstring and **pushed + blob-verified at `251fb0e2` BEFORE any adjudicating
 quantity** (remote blob `076e298c` == local, rule 27), satisfiability-verified
 with one disclosed basis correction (slice-keyed plants → per-(plant, class)
 ceilings) made pre-freeze. Record:
-`results/calibration/_miso197_cc_overdispatch_phase0.json`. Bases: the
+`results/phase0/miso/_miso197_cc_overdispatch_phase0.json`. Bases: the
 keeper's committed sidecars + dashboard payload/bench artifacts, the miso-196
 B1 tranche build, raw CAMPD heat-input, the miso-193 duct map. No witness was
 weighed against the price residual (rule 1); C3a appears nowhere in the

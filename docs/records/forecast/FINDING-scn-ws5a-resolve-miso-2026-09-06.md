@@ -337,8 +337,8 @@ the session's single largest wall-clock item — start it before phase 0, not af
 ## 8. Files
 
 **Written by this lane**
-- `docs/handoffs/PRECOMMIT-scn-ws5a-resolve-miso-2026-09-06.md` (pushed at `95ad76d4`, before the first solve)
-- `docs/handoffs/FINDING-scn-ws5a-resolve-miso-2026-09-06.md` (this document)
+- `docs/records/forecast/PRECOMMIT-scn-ws5a-resolve-miso-2026-09-06.md` (pushed at `95ad76d4`, before the first solve)
+- `docs/records/forecast/FINDING-scn-ws5a-resolve-miso-2026-09-06.md` (this document)
 - `results/scn-campaign-load-2026-09-06-r2/MISO/{REF,LOAD-HI,LOAD-HI-ORGANIC}/{run_config.json,full_horizon_summary.json}`
 - `results/scn-campaign-load-2026-09-06/MISO/{bundle,report}/` — refreshed on the repaired legs
 - `frontend/data/hindcast/miso-2026-2030-scn-campaign-load-2026-09-06-{ref,load-hi,load-hi-organic}.json` — re-registered under the **same three run ids**; only `git_sha`, `cache_epoch` and the out-dir change

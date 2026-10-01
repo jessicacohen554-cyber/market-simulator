@@ -6,12 +6,12 @@ read of the tracked delivery-2023 SCED corpus (`data/raw/ercot/SCED/`, 306
 of 323 shards carrying 2023 rows), the committed k33 carve-out sidecar,
 the measured ORDC reserves parquet, EIA-930 and the committed ercot-239
 JSON. Precommit
-`docs/PRECOMMIT-ercot241-offcore-conduct-phase0-2026-08-30.md` pushed +
+`docs/records/ercot/PRECOMMIT-ercot241-offcore-conduct-phase0-2026-08-30.md` pushed +
 blob-verified (merged as PR #4349) BEFORE any measurement; **no
 amendments** — every §2 construction ran as declared (three
 within-convention notes in §1 below). Probe:
 `scripts/probes/ercot241_offcore_conduct_phase0.py` →
-`results/calibration/ercot241_offcore_conduct_phase0.json` (committed).
+`results/phase0/ercot/ercot241_offcore_conduct_phase0.json` (committed).
 Charter: FINDING-ercot239 §6 **OBJECT 1** only; the wind pair (h6399/h7145)
 stays queued and untouched; the two-config keeper is untouched. Reads ⊂
 {2023}.

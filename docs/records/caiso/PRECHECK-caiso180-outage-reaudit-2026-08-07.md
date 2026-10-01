@@ -185,7 +185,7 @@ and the session **stops and reports that**, rather than proceeding with a caveat
 exempted, no allow-list is written after seeing the diff.
 
 Instrument: `scripts/probes/_caiso180_arm_identity.py`, which also asserts §3a's sha ladder.
-It writes `results/calibration/_caiso180_outage_reaudit.json`.
+It writes `results/phase0/caiso/_caiso180_outage_reaudit.json`.
 
 ---
 
@@ -316,5 +316,5 @@ Not re-opened, not re-tested, not re-derived here:
 `PRECHECK-caiso180-outage-reaudit-2026-08-07.md` (this file, pushed first) ·
 `FINDING-caiso180-outage-reaudit-2026-08-07.md` · three registered bundles with
 `legitimacy_diagnostics.json` each · `scripts/probes/_caiso180_arm_identity.py` ·
-`results/calibration/_caiso180_outage_reaudit.json` · CAISO matrix cell + §5.2 header stamped
+`results/phase0/caiso/_caiso180_outage_reaudit.json` · CAISO matrix cell + §5.2 header stamped
 in this session (rule 28 duty b) · `docs/calibration-log/caiso.md` entry.

@@ -5,8 +5,8 @@ at `54849585`, composed at zero LP). Control: keeper `2026-09-25-pjm-next-2-join
 G-DRIFT hunk-by-hunk INERT, PRECOMMIT §4). **PROMOTED 2026-09-26** on the owner's ruling ("If structural integrity
 improves but gates regress that may still be a keeper"); the outgoing keeper was pruned (rule 35).
 
-Pre-registration: `docs/PRECOMMIT-pjm-next-3-card2-unit-fuel-routing-2026-09-26.md`. Zero-LP cards 1/3/4:
-`docs/FINDING-pjm-next-3-phase0-cards-1-3-4-2026-09-26.md`.
+Pre-registration: `docs/records/pjm/PRECOMMIT-pjm-next-3-card2-unit-fuel-routing-2026-09-26.md`. Zero-LP cards 1/3/4:
+`docs/records/pjm/FINDING-pjm-next-3-phase0-cards-1-3-4-2026-09-26.md`.
 
 ## 1. Card 2 — the mechanism
 

@@ -3,7 +3,7 @@
 Grades the PREDECL §3 predictions and the §4 screen gates S1-S5 from the two
 bundles' committed ledgers and (where present) their ``score.json``. Zero LP.
 
-    uv run python docs/handoffs/d58/ab_compare.py <control-dir> <arm-dir> [out.json]
+    uv run python docs/records/forecast/d58/ab_compare.py <control-dir> <arm-dir> [out.json]
 """
 
 from __future__ import annotations

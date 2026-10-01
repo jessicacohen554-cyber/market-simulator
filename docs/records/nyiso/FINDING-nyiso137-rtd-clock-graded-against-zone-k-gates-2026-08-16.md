@@ -9,7 +9,7 @@ committed parquet is unchanged. This is the nyiso-136 shape: identification
 before mechanism, no solve spent.
 
 Probe `scripts/probes/_nyiso137_rtd_clock_c3c_grading.py`, record
-`results/calibration/_nyiso137_rtd_clock_c3c_grading.json`. Read-only, input
+`results/phase0/nyiso/_nyiso137_rtd_clock_c3c_grading.json`. Read-only, input
 side only.
 
 **Rule 22:** 2023–2025 only. The twelve 2022 source zips **are on disk** and were
@@ -164,7 +164,7 @@ governs, not the direction.**
 1. **Lever (a) is NOT blocked by the RTD-clock disclosure.** Its kill gates are
    model-side and invariant (§2); its promote criteria that read the series are
    measured safe by three orders of magnitude (§3). **The charter request
-   stands** — see `docs/DECISION-CARD-nyiso137-zone-k-charter-2026-08-16.md`.
+   stands** — see `docs/records/nyiso/DECISION-CARD-nyiso137-zone-k-charter-2026-08-16.md`.
 2. **A CONDITION the charter should carry.** The lever's whole purpose is C3c,
    and C3c's denominator is verdict-fragile (§5). The **arm-vs-control C3c
    delta** stays invariant — both arms score against the same actual — and that

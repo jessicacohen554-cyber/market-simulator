@@ -6,7 +6,7 @@ derive's ``union_fleet`` swapped for the class-preserving form neiso-118 landed
 (``klass=`` — for CHP, preserving either topping-cycle class) — and prints the
 row-level diff. Never writes a committed artifact.
 
-Usage: uv run python docs/handoffs/neiso119/phase0_rederive_st_chp.py <scratch_dir>
+Usage: uv run python docs/records/neiso/neiso119/phase0_rederive_st_chp.py <scratch_dir>
 """
 
 from __future__ import annotations

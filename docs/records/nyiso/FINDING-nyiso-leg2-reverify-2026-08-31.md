@@ -19,7 +19,7 @@ and moves no keeper, shard, marker or matrix cell.**
 
 The named session is **nyiso-160**, branch
 `claude/nyiso-leg2-winter-locational-wymoa4`, merged as **#4385** (records:
-`results/calibration/FINDING-nyiso160-leg2-stop-and-tpaudit-2026-08-30.md` +
+`docs/records/nyiso/FINDING-nyiso160-leg2-stop-and-tpaudit-2026-08-30.md` +
 `scripts/probes/_nyiso160_tpaudit.py`) and **#4393** (registration + bundle +
 log entry). Both PRs are merged; **the remote branch is deleted and no commit
 from it is unmerged** (`git fetch origin claude/nyiso-leg2-winter-locational-wymoa4`
@@ -179,7 +179,7 @@ decision and not decided here:**
   control and tests no mechanism. Nothing is gained and the promotion basis is
   weakened.
 * **Archiving costs nothing evidentially** — the touchpoint-prep verdict is
-  durable in `results/calibration/_nyiso160_tpaudit.json`, the nyiso-160
+  durable in `results/phase0/nyiso/_nyiso160_tpaudit.json`, the nyiso-160
   finding, the log entry and this finding, none of which depend on the run
   staying registered.
 * The genuine open choice is therefore **dashboard retention**, not promotion:

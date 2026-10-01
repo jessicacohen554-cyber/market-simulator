@@ -104,7 +104,7 @@ magnitude, or of an overlay-vs-CEMS contradiction exists** — grep of
 
 ### 1.2 Rule 25 `[R-ISO-SCOPE]` — what caiso-187 is, and what it is NOT here
 
-`results/calibration/FINDING-caiso187-wefor-overlay-2026-08-09.md` measured the
+`docs/records/caiso/FINDING-caiso187-wefor-overlay-2026-08-09.md` measured the
 *same instrument* on CAISO and **inverted its own charter's premise**: for CAISO
 CC the overlay removes **24–35 % of capacity-hours against a ~10 % published
 planned-plus-forced expectation**, so `max(0, W_c − X_c) = 0` and a

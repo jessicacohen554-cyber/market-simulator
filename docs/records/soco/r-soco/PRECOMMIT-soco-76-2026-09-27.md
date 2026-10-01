@@ -30,7 +30,7 @@ NOT built here.
 
 ## 1. The census (zero LP, soco72-2019 leg): who clears in coal's CEMS-synced, model-off hours
 
-`scripts/probes/_soco76_gas_census.py all`, record `docs/handoffs/r-soco/soco76_gas_census.json`.
+`scripts/probes/_soco76_gas_census.py all`, record `docs/records/soco/r-soco/soco76_gas_census.json`.
 
 - **Coal plants synced in CEMS but off in the model (2019):** Barry 8,053 h, Crist 6,302, Wansley 3,532, Daniel 193,
   Gaston 151, Bowen 48.
@@ -99,7 +99,7 @@ For the 15 largest undercutting gas plants (undercut-TWh-weighted):
 
 ## 3. Census (zero LP): the lever in the fleet
 
-`_soco76_gas_census.py fleet`, record `docs/handoffs/r-soco/soco76_identity_fleet_census.json`. A `fleet_only`
+`_soco76_gas_census.py fleet`, record `docs/records/soco/r-soco/soco76_identity_fleet_census.json`. A `fleet_only`
 rebuild on the keeper recipe, flag off vs on, all seven years:
 
 - **Exactly six units move in every year** (Dahlberg and Hartwell `_econlo` / `_econhi` / `_peak`); neither plant has
@@ -119,7 +119,7 @@ rebuild on the keeper recipe, flag off vs on, all seven years:
 
 ## 4. Greedy estimate, baseline-differenced
 
-`_soco76_gas_census.py greedy`, record `docs/handoffs/r-soco/soco76_identity_greedy.json`.
+`_soco76_gas_census.py greedy`, record `docs/records/soco/r-soco/soco76_identity_greedy.json`.
 
 - **Construction.** The six tranches are re-dispatched as price-takers against the leg's zone price at the keeper
   offer (baseline) and at the arm offer. The hourly arm − baseline delta is refilled from the cheapest idle headroom

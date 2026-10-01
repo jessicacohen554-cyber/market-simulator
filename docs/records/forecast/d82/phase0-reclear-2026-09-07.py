@@ -215,5 +215,5 @@ if __name__ == "__main__":
                     f"E&AS-to-price={r['eas_to_reach_price_kw_yr'][f]:+.2f} $/kW-yr"
                 )
     json.dump(
-        out, open("docs/handoffs/d82/phase0-reclear-2026-09-07.json", "w"), indent=1
+        out, open("docs/records/forecast/d82/phase0-reclear-2026-09-07.json", "w"), indent=1
     )

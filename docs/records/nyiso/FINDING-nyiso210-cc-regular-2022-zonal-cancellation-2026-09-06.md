@@ -9,11 +9,11 @@ coefficient, no offer curve, no derive script, no scorer, no marker, no keeper, 
 committed to `main`. No solve, no screen, no arm, no bundle, no registration — so rule 29(c) has
 nothing to delete and rule 15 has nothing to register.
 
-**Pre-registration:** `results/calibration/PREREG-nyiso210-cc-regular-2022-overrun-attribution.md`
+**Pre-registration:** `docs/records/nyiso/PREREG-nyiso210-cc-regular-2022-overrun-attribution.md`
 (committed and pushed at `f520bd1f` **before the probe was written**), plus
-`results/calibration/ADDENDUM-nyiso210-band-vocabulary-2026-09-06.md` (`c30612c5`, a construction
+`docs/records/nyiso/ADDENDUM-nyiso210-band-vocabulary-2026-09-06.md` (`c30612c5`, a construction
 repair to the band partition, **written before any P1/P2/P3 verdict value was read**).
-**Machine record:** `results/calibration/_nyiso210_cc_overrun_attribution.json`.
+**Machine record:** `results/phase0/nyiso/_nyiso210_cc_overrun_attribution.json`.
 **Reproduce:** `uv run python scripts/probes/nyiso210_cc_overrun_attribution.py`.
 
 **THERE ARE STILL NO IN-SAMPLE RUBRIC FAILURES TO FIX.** NYISO's keeper reads **CALIBRATED,

@@ -4,7 +4,7 @@
 **Keeper** `2026-08-16-miso-160-wefor-shape` (bundle `miso160_wefor_B`),
 promoted from `2026-08-15-miso-159-cod-vintage`.
 
-**PREREG** `results/calibration/PREREG-miso160-summer-wefor-measured-share-2026-08-16.md`,
+**PREREG** `docs/records/miso/PREREG-miso160-summer-wefor-measured-share-2026-08-16.md`,
 pushed at **`a96702b`**, blob **`57d2b8b1`**, **verified byte-identical against
 the FETCHED remote ref BEFORE the construction was built, the derive statistic
 was computed, or any solve was launched** (rule 27 `[R-PUSH]`).
@@ -23,7 +23,7 @@ cushion: `SUMMER_WEFOR_SHARE = 0.30`, **gated on the owner's data-provenance
 decision** (miso-157 §11 item 2: which measured record adjudicates a
 forced-outage seasonal shape — the question miso-157's B-DISAGREE kill gate
 could not answer for itself). **The owner took the decision this session**,
-recorded in `docs/handoffs/miso-outage-grain-data-ask-2026-07.md` §9:
+recorded in `docs/records/miso/miso-outage-grain-data-ask-2026-07.md` §9:
 
 - **MISO's published MOM outage record is the admissible seasonal-shape
   source** — ticket-based (clears the standing ask's §2A, the criterion whose
@@ -175,7 +175,7 @@ root-cause item on `SUMMER_WEFOR_SHARE` is RETIRED for MISO**.
 ---
 
 **Artifacts.** Probe `scripts/probes/_miso160_wefor_shape_instrument.py`;
-record `results/calibration/_miso160_wefor_shape_instrument.json`; unit tests
+record `results/phase0/miso/_miso160_wefor_shape_instrument.json`; unit tests
 `tests/unit/config/test_miso160_summer_wefor_override.py` (4/4);
 attestations `scripts/gen_miso160_attestation.py` (control 30/2, arm 31/2);
 runs `2026-08-16-miso-160-control` (bundle `miso160_wefor_A`) /

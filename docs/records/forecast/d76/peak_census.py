@@ -14,14 +14,14 @@ LP in the same year dispatches the MEASURED one.
 
 This script measures that gap for all six ISOs, in both hindcast recipe shapes
 (bare T1-H, ``weather_year=2024``; T1-X crossover, ``weather_year=2025``), at
-HEAD. It reuses ``docs/handoffs/d67/gdrift_peak_probe.py``'s seam helpers
+HEAD. It reuses ``docs/records/forecast/d67/gdrift_peak_probe.py``'s seam helpers
 rather than re-deriving them, so the seam reproduced here is the same object
 D67 measured to 0.000 MW on the 2024 row (charter: "extend, do not fork").
 
 Zero LP, zero solve, read-only: it loads demand arrays and calls the shipped
 requirement resolver. Nothing is armed and no config is changed.
 
-Output: ``docs/handoffs/d76/peak_census.json`` + a printed table.
+Output: ``docs/records/forecast/d76/peak_census.json`` + a printed table.
 """
 
 import argparse
@@ -152,7 +152,7 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--iso", nargs="*", default=list(ISOS))
     ap.add_argument("--recipe", nargs="*", default=list(RECIPES))
-    ap.add_argument("--out", default="docs/handoffs/d76/peak_census.json")
+    ap.add_argument("--out", default="docs/records/forecast/d76/peak_census.json")
     args = ap.parse_args()
 
     out, errors = [], {}

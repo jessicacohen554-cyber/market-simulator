@@ -3,7 +3,7 @@
 **Date** 2026-08-12 · **ISO** ERCOT (rule 25 `[R-ISO-SCOPE]`) · years
 {2023, 2024, 2025} only (rule 22) · pushed BEFORE the re-derive and the solve
 (the ERCOT-148/149 protocol). **Authority: owner signature A1, 2026-08-11**
-(`docs/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md` card A /
+(`docs/records/ercot/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md` card A /
 RESOLUTIONS): *"authorize as ONE lane, #9 first"* — sequence #9 → #8 → #10,
 one precommit, one re-derive of the DAM availability family, one re-gate
 sweep of every armed DAM keeper mechanism. The rule-23 `[R-FROZEN-DERIVE]`
@@ -22,11 +22,11 @@ itself is armed as `ercot_thermal_dam_availability` +
 `ercot_thermal_dam_availability_coal`, backcast-auto).
 
 Defect record being repaired (all committed): ruling **#9** —
-`docs/DIAGNOSIS-ercot149-gas-cop-window-2026-08-01.md` §3.1–3.2, §6.1–6.2
+`docs/records/ercot/DIAGNOSIS-ercot149-gas-cop-window-2026-08-01.md` §3.1–3.2, §6.1–6.2
 (the `_site()` cross-train collapse takes the MAX not the SUM of ON-row HSL;
 name-grain OFF CC 48.9 GW vs 14.1 GW train-collapsed, card A §A; the gas
 crosswalk's partial site acceptance). Ruling **#8** —
-`docs/DIAGNOSIS-ercot148-coal-outage-windows-2026-07-31.md` §5.1, §6.2 (the
+`docs/records/ercot/DIAGNOSIS-ercot148-coal-outage-windows-2026-07-31.md` §5.1, §6.2 (the
 same-year p98 rating basis makes an all-year-OUT site vanish from both sides
 of the class fraction; Martin Lake U1 2025, COP `OUT` all 8,760 h @ 815 MW).
 Ruling **#10** — ercot-149 §6.3 (the pin's remove-direction over-removal at

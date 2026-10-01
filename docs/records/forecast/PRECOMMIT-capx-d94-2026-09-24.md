@@ -3,7 +3,7 @@
 **Lane:** capx **D94** · **Date:** 2026-09-24 · **Model:** Opus (rule 27 `[R-PUSH]`) · **Data profile:** `neiso`
 **Branch:** `claude/capx-d94-fc6-driver-battery`, fast-forwarded to `origin/main` **`3affcd71`**
 **Authority:** OWNER RULING **Q67** (2026-09-24, capx ledger §0bj / §3): *"Charter D94 now."*
-**Binding charter:** `docs/handoffs/capx-director-prompt-pack-2026-08.md` "D94"
+**Binding charter:** `docs/records/forecast/capx-director-prompt-pack-2026-08.md` "D94"
 **Predecessors read:** `FINDING-capx-d92-2026-09-10.md` (§1.5, §4, §5, §6, §11) ·
 `PRECOMMIT-capx-d92-2026-09-10.md` + ADDENDA A/B · `scripts/run_driver_battery.py` ·
 `scripts/forecast_verdict.py` (`--driver-battery`, `score_fc6`)
@@ -72,7 +72,7 @@ helper's `metrics` subcommand REFUSES (exit 2) on any pin, rung-override, mode o
 
 ### 1.3 The metrics and the assembly — the instrument's own code, not a re-implementation
 
-`docs/handoffs/d94/battery_golden_rung.py` (a measurement record, like D92's `docs/handoffs/d92/`
+`docs/records/forecast/d94/battery_golden_rung.py` (a measurement record, like D92's `docs/records/forecast/d92/`
 helpers — **no file under `scripts/` or `src/` is edited**):
 
 * **`metrics`** (in the shard, zero LP, after the solve) — calls the battery instrument's own

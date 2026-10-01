@@ -2,7 +2,7 @@
 
 **Session.** FFR Wave 7, DATA/SCORER lane (owner decision **D-21(b)**, sitting Addendum V.5/V.6,
 signed 2026-08-06). Branch `claude/retirement-scoring-target-fix-yyd4py`, off `origin/main`
-`746661f1`. Evidence base: FFR-6A `docs/handoffs/ffr-6a-margin-gap-decomposition-2026-08-05.md`
+`746661f1`. Evidence base: FFR-6A `docs/records/forecast/ffr-6a-margin-gap-decomposition-2026-08-05.md`
 §3.3, admissibility verdict rows **5a/5b**.
 
 **No model mechanism, no `ScenarioConfig` field, no arming, no keeper contact, no solve.** The
@@ -120,7 +120,7 @@ committed target and none was created.
 
 ### 2.1 Every changed row, named and sourced
 
-**All 334 changed rows are committed as `docs/handoffs/ffr-7a/target-delta.csv`** — one row per
+**All 334 changed rows are committed as `docs/records/forecast/ffr-7a/target-delta.csv`** — one row per
 change, carrying `iso, change, unit_id, plant_id, fuel, mw, old_year, new_year`, the unit's full
 **`eia860_status_series`** across releases, and the **`eia860_reported_retirement_year`** the old
 builder used. Regenerate with `uv run python scripts/probes/ffr7a_target_delta.py` (it reads the
@@ -409,7 +409,7 @@ ISO and confound the delta above. Flagged as a candidate for its own charter.
 | `scripts/data/build_capacity_actuals.py` | the fix: `physical_exit_year`, `release_series`, `load_release_history`, `FLEET_VINTAGE_YEAR`, `--fleet-vintage` |
 | `tests/curation/test_build_capacity_actuals.py` | 28 tests — the rule on hand-written status series, a three-release fixture tree incl. the vintage gate and an inertness check, committed-artifact smoke tests |
 | `data/raw/_validation-source/capacity_actuals_{ercot,pjm,miso,nyiso,neiso}.csv` | regenerated targets |
-| `docs/handoffs/ffr-7a/target-delta.csv` | **all 334 changed rows** with `Status` series + reported year |
+| `docs/records/forecast/ffr-7a/target-delta.csv` | **all 334 changed rows** with `Status` series + reported year |
 | `scripts/probes/ffr7a_target_delta.py` | regenerates the delta artifact (reads the "before" side from git) |
 | `scripts/probes/ffr7a_rescore_ffr5d_arms.py` | the §3 re-score, committed artifacts only |
 | `data/raw/eia-860/README.md`, `data/raw/_validation-source/README.md` | doc sync: the 106-unit coverage hole, the partial 2023/2024 vintages, the new dating rule |

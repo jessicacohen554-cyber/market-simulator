@@ -1,7 +1,7 @@
 # RESULT — NWPP-NEXT-10: EIA-860 exit-month routing of the CAMPD outage layer — PROMOTED, keeper #16 (owner, 2026-09-29)
 
 **Arm:** keeper #15 (`2026-09-28-nwppnext8-coal-monthly-pile`) plus `unit_outage_exit_ym_from_eia860=true`.
-Precommit: `docs/handoffs/PRECOMMIT-nwppnext10-exit-ym-routing-2019-2025-2026-09-29.md`.
+Precommit: `docs/records/nwpp/PRECOMMIT-nwppnext10-exit-ym-routing-2019-2025-2026-09-29.md`.
 **Solve:** seven year-isolated shards at pin `0ec8eb79`. Every hard stop passed.
 **Registered:** `2026-09-29-nwppnext10-exit-month-routing`, bundle `results/calibration/nwppnext10xy_span`.
 **Owner ruling (decision card):** "Promote on structure". It is now keeper #16, and #15 is pruned (rule 35).

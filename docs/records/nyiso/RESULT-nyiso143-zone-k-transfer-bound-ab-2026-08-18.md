@@ -1,7 +1,7 @@
 # RESULT nyiso-143 — the Zone-K transfer-bound A/B: **all six gates PASS, including the one that killed it — and the arm is still not promotable.** An owner escalation, NOT a rejection on fit
 
 **Session nyiso-143, 2026-08-18.** Pre-registration:
-`results/calibration/PREREG-nyiso143-zone-k-transfer-bound-2026-08-18.md`,
+`docs/records/nyiso/PREREG-nyiso143-zone-k-transfer-bound-2026-08-18.md`,
 written and committed **before** either solve was launched. Charter D1
 **GRANTED** 2026-08-16. Both arms solved 2023 / 2024 / 2025 in one bundle
 (rule 16), years sequential (rule 12), and **both registered** (rule 15):
@@ -11,7 +11,7 @@ written and committed **before** either solve was launched. Charter D1
 | control (keeper recipe replayed at this HEAD) | `2026-08-18-nyiso-143-control` | `results/calibration/nyiso143_control` |
 | treatment (`nyiso_li_tsl_n11_security=True`) | `2026-08-18-nyiso-143-n11tsl-arm` | `results/calibration/nyiso143_n11tsl_arm` |
 
-Gate record: `results/calibration/_nyiso143_ab_gates.json`, probe
+Gate record: `results/phase0/nyiso/_nyiso143_ab_gates.json`, probe
 `scripts/probes/_nyiso143_ab_gates.py`.
 
 ---

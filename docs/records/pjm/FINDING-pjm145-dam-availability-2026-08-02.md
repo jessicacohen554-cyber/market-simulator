@@ -1,7 +1,7 @@
 # FINDING — pjm-145: `pjm_dam_availability` (measured PJM generation-outage availability)
 
 **Session pjm-145, 2026-08-02.** PREREG:
-`results/calibration/PREREG-pjm145-dam-availability-2026-08-02.md` (committed
+`docs/records/pjm/PREREG-pjm145-dam-availability-2026-08-02.md` (committed
 before any measurement; the ex-ante instrument
 `scripts/probes/_pjm145_damavail_exante.py` and the chain script
 `scripts/probes/_pjm145_chain.sh` committed before running).
@@ -99,7 +99,7 @@ Plus the standing setup: `uv sync --frozen`, the three curate scripts, and
 
 ## §4 — Ex-ante measurement (PREREG §3) and the kill scoring (PREREG §4)
 
-Evidence: `results/calibration/_pjm145_damavail_exante.json` (instrument
+Evidence: `results/phase0/pjm/_pjm145_damavail_exante.json` (instrument
 committed at c053a51 before running).
 
 **Loader half.** Coverage is essentially complete — 364/364/365 covered days
@@ -135,7 +135,7 @@ disqualified.
 
 ## §5 — The decomposition that closed the lane (addendum instrument, no LP)
 
-Evidence: `results/calibration/_pjm145_damavail_decompose.json`
+Evidence: `results/phase0/pjm/_pjm145_damavail_decompose.json`
 (`scripts/probes/_pjm145_damavail_decompose.py`, committed before running).
 On restore days, the per-unit lift decomposes into **structural-zero
 resurrection** (pre-overlay day-mean availability ≈ 0 → lifted to λ by the

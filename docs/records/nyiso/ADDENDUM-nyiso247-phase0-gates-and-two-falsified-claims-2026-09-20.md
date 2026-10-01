@@ -1,9 +1,9 @@
 # ADDENDUM nyiso-247 — the four ZERO-LP gates PASS, and TWO OF MY OWN PRECOMMIT CLAIMS ARE FALSIFIED
 
 **Session nyiso-247 (ORCHESTRATOR, zero LP).** **Date** 2026-09-20.
-**PRECOMMIT** `docs/PRECOMMIT-nyiso247-fuel-invariance-limb-2026-09-20.md`, committed and pushed at
+**PRECOMMIT** `docs/records/nyiso/PRECOMMIT-nyiso247-fuel-invariance-limb-2026-09-20.md`, committed and pushed at
 **`40316764`** before any number below existed.
-**Record** `results/calibration/_nyiso247_fuelinv_phase0.json`,
+**Record** `results/phase0/nyiso/_nyiso247_fuelinv_phase0.json`,
 built by `scripts/probes/nyiso247_fuelinv_phase0.py` (which imports nyiso-246's own `affected`
 selector, `weighted_quantiles` estimator and `GRID`, and `derive_nyiso_offer_level_dispersion`'s
 `state_windows`, all unchanged — one construction, one identification).

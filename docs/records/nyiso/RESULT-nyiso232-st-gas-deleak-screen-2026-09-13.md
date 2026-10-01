@@ -1,7 +1,7 @@
 # RESULT — nyiso-232: the ST_GAS econ bands **do** carry ERCOT's de-leaked 1.21, the de-leak is built and screened, and the screen **STOPS** on the gate the PRECOMMIT said it would
 
 **Session** nyiso-232 · **ISO** NYISO · **Date** 2026-09-13 · **DATA PROFILE: nyiso**
-**Pre-registration** `results/calibration/PRECOMMIT-nyiso232-st-gas-deleak.md`, pushed at
+**Pre-registration** `docs/records/nyiso/PRECOMMIT-nyiso232-st-gas-deleak.md`, pushed at
 `77b47576` **before** the arm was launched; gate scorer
 `scripts/probes/_nyiso232_screen_gates.py` committed at `4b2586da`, **before** the arm's numbers
 existed. **Keeper `2026-09-13-nyiso231-anchor-span` UNCHANGED.**
@@ -180,7 +180,7 @@ Matrix cell `nyiso_st_gas_econ_bands_deleaked` → **`R`**, re-test condition st
 **pair it with a mechanism that restores the scarcity tail (issue #1344), and re-screen.**
 
 That is not a stalling device; this session's companion finding
-(`docs/FINDING-nyiso232-c3a-is-two-objects-2026-09-13.md`) measured why the two belong together.
+(`docs/records/nyiso/FINDING-nyiso232-c3a-is-two-objects-2026-09-13.md`) measured why the two belong together.
 With each year's top 5 % of actual-price hours removed, the model is **over**-priced by **+4.1 to
 +14.2 %** in every one of 2022–2025. The headline C3a is a **difference of two large errors of
 opposite sign**: a missing scarcity tail pulling it down, and an over-priced ordinary-hour level
@@ -256,7 +256,7 @@ year**, which is what physics demands: the same floors are a smaller share of a 
 more. The D-4 provenance failures C8 escalates to are **pre-existing and unchanged** — 9
 unit-conduct rows on **both** legs, same plants.
 
-Mechanism and proof: `docs/FINDING-d2-plant-class-is-a-tranche-count-vote-2026-09-13.md`. Ravenswood
+Mechanism and proof: `docs/records/misc/FINDING-d2-plant-class-is-a-tranche-count-vote-2026-09-13.md`. Ravenswood
 (plant 2500) was labelled `ST_GAS` on an **8–7 tranche-count vote**; this mechanism's declared,
 pre-registered ladder collapse takes ST_GAS to 4 rows and the label flips to `CC_REGULAR`, moving a
 ~2.5 GW site's whole dispatch between denominators.

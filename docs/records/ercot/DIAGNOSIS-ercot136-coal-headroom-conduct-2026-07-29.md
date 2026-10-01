@@ -10,7 +10,7 @@ conventions (imported, not re-implemented); every model number is read from the
 `603c2498bf71d21d` at session start and end. ·
 **Reproduction** `scripts/probes/ercot136_coal_headroom_conduct.py` (committed
 with this document); artifact
-`results/calibration/ercot136_coal_headroom_conduct.json`.
+`results/phase0/ercot/ercot136_coal_headroom_conduct.json`.
 
 ---
 
@@ -32,7 +32,7 @@ antecedent**, and the contrapositive is what this session delivers:
 
 **This licenses a correction — the first this lane has produced.** §7 states its
 exact scope, §8 states why it is still not solved here, and
-`docs/PRECOMMIT-ercot136-coal-minload-reprice-2026-07-29.md` pre-registers it.
+`docs/records/ercot/PRECOMMIT-ercot136-coal-minload-reprice-2026-07-29.md` pre-registers it.
 
 ## 1. Prior art — ERCOT-123 already closed the three-way fork, and this session says so
 
@@ -245,7 +245,7 @@ confirms `ercot_thermal_dam_availability_coal = False` in the keeper.
 
 **So this session recommends and STOPS**, on the ercot122 §5 / ercot132 §7
 precedent. The arm is pre-registered in full at
-`docs/PRECOMMIT-ercot136-coal-minload-reprice-2026-07-29.md`, written before any
+`docs/records/ercot/PRECOMMIT-ercot136-coal-minload-reprice-2026-07-29.md`, written before any
 solve, and is one owner ruling away from executable.
 
 **Also surfaced, not decided** (carried forward from ERCOT-135 §7.2): the

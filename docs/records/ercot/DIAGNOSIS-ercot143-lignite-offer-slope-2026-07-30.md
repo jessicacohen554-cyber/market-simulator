@@ -4,7 +4,7 @@
 **Phase 2 — NO LP built, NO year solved, NO parameter changed** ·
 **Keeper under test** `2026-07-30-ercot140-coal-peak-offer`
 (bundle `results/calibration/ercot140_coal_peak_arm`) — **UNCHANGED** ·
-**Chartered by** `docs/DIAGNOSIS-ercot142-lignite-shape-2026-07-30.md` §8 ·
+**Chartered by** `docs/records/ercot/DIAGNOSIS-ercot142-lignite-shape-2026-07-30.md` §8 ·
 **Queue item** `docs/mechanism-testing-matrix.md` §5.1 #3 ·
 **Reproduce** `scripts/probes/ercot143_lignite_offer_slope.py`
 

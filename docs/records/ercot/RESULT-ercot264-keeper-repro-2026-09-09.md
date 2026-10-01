@@ -1,7 +1,7 @@
 # RESULT — ercot-264: the ERCOT keeper reproduces EXACTLY at HEAD. Zero drift.
 
 **Session:** ercot-264, 2026-09-09. Branch `claude/ercot264-keeper-repro`.
-**PRECOMMIT:** `ff148b37`, `docs/handoffs/PRECOMMIT-ercot264-keeper-repro-2026-09-09.md`.
+**PRECOMMIT:** `ff148b37`, `docs/records/ercot/PRECOMMIT-ercot264-keeper-repro-2026-09-09.md`.
 **Keeper under test:** `2026-09-09-ercot261-corroborated-gas-level`.
 **Shards pinned to:** `754a91d90fefbf0d403ae4ea4a6e784611e99fb1`.
 

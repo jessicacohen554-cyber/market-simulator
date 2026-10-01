@@ -141,7 +141,7 @@ is a **bounded** within-day shaping constraint — a Lewiston-class
 reservoir-energy bound — which is a new mechanism with its own charter and its
 own identification, never this transfer. Probe:
 `scripts/probes/_nyiso111_hydro_ror_split_screen.py` →
-`results/calibration/_nyiso111_hydro_ror_split_screen.json`.
+`results/phase0/nyiso/_nyiso111_hydro_ror_split_screen.json`.
 
 ## §4 — `ramp_envelopes`: the pjm-140 transfer, pre-registered, solved, PROMOTED KEEPER
 
@@ -180,7 +180,7 @@ PJM's superseded keeper crossed in 0.393 / 0.463 / 0.319 % carrying 555,882 /
 Control `2026-08-02-nyiso111-control-zerodelta` / arm
 `2026-08-02-nyiso111-ramp-envelopes`, both `[2023, 2024, 2025]` in one bundle
 (rule 16). Scorer: `scripts/probes/_nyiso111_ramp_envelopes_ab.py` →
-`results/calibration/_nyiso111_ramp_envelopes_ab.json`.
+`results/phase0/nyiso/_nyiso111_ramp_envelopes_ab.json`.
 
 **Construction (K1–K6), all PASS:**
 

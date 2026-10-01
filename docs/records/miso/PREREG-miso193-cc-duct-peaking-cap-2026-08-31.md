@@ -3,7 +3,7 @@
 Pre-registration for the miso-193 A/B, frozen and pushed BEFORE the arm leg
 exists. Phase-0 rule and census: `scripts/probes/_miso193_duct_peaking_phase0.py`
 (rule frozen at commit `92847a8`, census at `9a27c7a`),
-`results/calibration/_miso193_duct_peaking_phase0.json`.
+`results/phase0/miso/_miso193_duct_peaking_phase0.json`.
 
 ## 1. Premise correction (carried from phase 0)
 

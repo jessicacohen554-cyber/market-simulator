@@ -3,12 +3,12 @@ from the on-recipe `run_year(fleet_only=True)` LP inputs (keeper-3's recipe + th
 topology) — demand, wind / solar potential, thermal + hydro capability net of the recipe's
 own availability (outage) arrays — and the regional feasibility arithmetic for the South + SPS
 region behind the N->S 3,400 MW link: own available capability + wind + solar + 3,400 >= demand.
-Beside it, the same arithmetic with the TWO-zone wind split (docs/handoffs/spp54/
+Beside it, the same arithmetic with the TWO-zone wind split (docs/records/spp/spp54/
 dec21_window_2025_wind.csv, from wind_reconcile.py), so the STOP condition — an hour the
 three-zone INPUTS make infeasible that the two-zone inputs left feasible — is read directly.
 Zero LP.
 
-usage: uv run python docs/handoffs/spp54/dec21_window.py
+usage: uv run python docs/records/spp/spp54/dec21_window.py
 """
 
 import json
@@ -58,7 +58,7 @@ wcf, wcap = np.asarray(r["wind_cf"]), np.asarray(r["wind_cap"])
 scf, scap = np.asarray(r["solar_cf"]), np.asarray(r["solar_cap"])
 wind = wcf * (wcap[:, None] if wcap.ndim == 1 else wcap)
 solar = scf * (scap[:, None] if scap.ndim == 1 else scap)
-two = pd.read_csv(REPO / "docs/handoffs/spp54/dec21_window_2025_wind.csv").set_index(
+two = pd.read_csv(REPO / "docs/records/spp/spp54/dec21_window_2025_wind.csv").set_index(
     "hour"
 )
 NS_TTC = 3400.0
@@ -104,7 +104,7 @@ for h in WINDOW:
         }
     )
 df = pd.DataFrame(rows)
-df.to_csv(REPO / "docs/handoffs/spp54/dec21_window_2025.csv", index=False)
+df.to_csv(REPO / "docs/records/spp/spp54/dec21_window_2025.csv", index=False)
 print(
     f"\nC-3: hours the three-zone inputs make infeasible while the two-zone inputs were feasible: {int(df['stop'].sum())} "
     f"-> {'STOP' if df['stop'].any() else 'PASS'}; min regional margin 3z {df['region_margin_3z'].min():+.0f} MW (2z {df['region_margin_2z'].min():+.0f})"

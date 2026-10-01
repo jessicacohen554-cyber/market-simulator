@@ -1,6 +1,6 @@
 {
  "session": "caiso-183",
- "precheck": "results/calibration/PRECHECK-caiso183-hedge-grain-2026-08-08.md",
+ "precheck": "docs/records/caiso/PRECHECK-caiso183-hedge-grain-2026-08-08.md",
  "recipe": "--years 2018 \u2026 2026 --merit-order-guard",
  "be_ledger": {
   "ERCOT": {

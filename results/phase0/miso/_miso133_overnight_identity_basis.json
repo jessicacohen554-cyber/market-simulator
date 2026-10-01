@@ -1,6 +1,6 @@
 {
  "probe": "miso-133 overnight supply identity \u2014 basis and coverage",
- "prereg": "results/calibration/PREREG-miso133-overnight-supply-identity-basis-2026-08-05.md",
+ "prereg": "docs/records/miso/PREREG-miso133-overnight-supply-identity-basis-2026-08-05.md",
  "keeper_run": "2026-08-05-miso-132b-cc-committed",
  "keeper_bundle": "results/calibration/miso132_ccmin_B",
  "note": "NO LP SOLVED. Nothing here sizes any parameter (KILL-1); no mechanism is armed, no run is registered, the keeper does not move. Rule 22: 2023-2025 only.",

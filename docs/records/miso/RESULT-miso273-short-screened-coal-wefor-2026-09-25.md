@@ -2,7 +2,7 @@
 
 ```
 LANE     : miso-273 (charter candidate 1)
-PREREG   : docs/PRECOMMIT-miso273-short-screened-coal-wefor-2026-09-25.md (pin 09b152c5)
+PREREG   : docs/records/miso/PRECOMMIT-miso273-short-screened-coal-wefor-2026-09-25.md (pin 09b152c5)
 KEEPER   : 2026-09-25-miso-272-edwardsport-block (miso272b_span) — unchanged, see §5
 RUN      : 2026-09-25-miso-273-screened-coal (results/calibration/miso273_span, 2019-2025), registered
 DELTA    : wefor_residual_short_screened_coal=true + its input pair (screened set; short-coal +30 rows 2019-22). DOF +0

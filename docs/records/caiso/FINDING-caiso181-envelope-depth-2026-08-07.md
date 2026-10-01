@@ -16,7 +16,7 @@ registered** (stated explicitly so the absence is not read as a skipped registra
 Pre-registration: `PRECHECK-caiso181-envelope-depth-2026-08-07.md`, pushed and
 blob-verified (sha256 `1c8e91f8…`, 482 lines, byte-identical both sides) **before any
 metric was read**. Instrument: `scripts/probes/_caiso181_cems_confrontation.py`.
-Record: `results/calibration/_caiso181_cems_confrontation.json`.
+Record: `results/phase0/caiso/_caiso181_cems_confrontation.json`.
 
 ---
 

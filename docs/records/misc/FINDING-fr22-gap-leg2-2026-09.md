@@ -4,11 +4,11 @@
 **PR:** see §7
 **Executes:** owner ruling **R-X** (2026-09-02) — on the
 `ercot_storage_adaptive_expectation` + `ercot_adaptive_event_release`
-backcast→forecast fork routed by R-W (`docs/FINDING-fast-tier-repair-2026-09.md`
+backcast→forecast fork routed by R-W (`docs/records/misc/FINDING-fast-tier-repair-2026-09.md`
 §3.8 + §7.1), the owner ruled **FILE GAP DECLARATIONS**, the FFR-1E precedent
 route the two storage-envelope fields took.
 **Evidence base:** R-W's finding (§3.8, §4, §6, §7), the FFR-1E filing record
-(`docs/handoffs/ffr-1e-forecast-parity-check-2026-07-31.md` §4 and its
+(`docs/records/forecast/ffr-1e-forecast-parity-check-2026-07-31.md` §4 and its
 adjudication note), `scripts/lib/forecast_parity_registry.py`, director board
 v21/v22's leg-2 corrections, and `scripts/check_forecast_parity.py` run on
 the current keepers AND on the keepers `main` carried at R-W's pin.
@@ -330,8 +330,8 @@ touched); `scripts/archive`, `scripts/probes`, `results/` likewise.
 plus ten that landed after its pin:
 
 ```
-docs/handoffs/d37/grade-2026-09-02.py
-docs/handoffs/d37/predecl-screen-grain-2026-09-02.py
+docs/records/forecast/d37/grade-2026-09-02.py
+docs/records/forecast/d37/predecl-screen-grain-2026-09-02.py
 scripts/gen_nyiso177_attestation.py
 src/market_sim/data/fleet/arrays.py
 src/market_sim/data/fleet/assembly.py
@@ -351,8 +351,8 @@ minutes" dynamic, still running.
 
 **And the job never reaches the format step on this PR: `ruff check` itself
 is red on `main` content.** `uv run ruff check .` → `Found 2 errors`, both
-`E731` (lambda assignment): `docs/handoffs/d37/grade-2026-09-02.py:127` and
-`docs/handoffs/d37/predecl-screen-grain-2026-09-02.py:113` — two D37 scratch
+`E731` (lambda assignment): `docs/records/forecast/d37/grade-2026-09-02.py:127` and
+`docs/records/forecast/d37/predecl-screen-grain-2026-09-02.py:113` — two D37 scratch
 scripts committed under `docs/handoffs/` (`c87452f5`, 2026-09-02 16:08Z), a
 directory `pyproject.toml` does not exclude, unlike `scripts/probes` /
 `scripts/archive` / `results`. Run 2344's `Ruff lint` step fails on them and
@@ -398,7 +398,7 @@ Every job, as found:
 | `Pinned default cache key` | 🟢 success | |
 | `Structural refactor guards` | 🟢 success | |
 | `Rule-28 mechanism-matrix guard` | 🟢 success | the R-W §7.7 anchor drift was repaired upstream; not this lane's |
-| `Ruff lint + format` | 🔴 failure | **`Ruff lint` step** — the two `E731`s in `docs/handoffs/d37/` (§6); the format step is skipped behind it, so the rider's three files are not even reached |
+| `Ruff lint + format` | 🔴 failure | **`Ruff lint` step** — the two `E731`s in `docs/records/forecast/d37/` (§6); the format step is skipped behind it, so the rider's three files are not even reached |
 | `FR-21 forecast-board staleness (WARN only)` | 🔴 failure | `check_gate_a_provenance` step — the SAME object as the tier's one red (§5.1); `check_forecast_staleness` green |
 | `FR-22 backcast->forecast parity` | 🔴 failure | as designed (DO-NOT-REQUIRE, H-1): exit 1 on the two pinned fields only (§4) — down from seven UNACCOUNTED on `main` |
 | `Forecast-invariant artifact audit` | 🔴 failure | as on `main` (DO-NOT-REQUIRE, H-1); untouched |
@@ -441,7 +441,7 @@ evidence beyond 2344's and is expected to read identically.
    any PR's run can be fast-tier-green. Leg 2 is BLOCKED on exactly this
    until it lands.
 4. **→ owner / next CI lane.** `Ruff lint + format` is red on `main` content
-   twice over (§6): two `E731`s in a `docs/handoffs/d37/` script fail the
+   twice over (§6): two `E731`s in a `docs/records/forecast/d37/` script fail the
    lint step outright, and ten files beyond R-W's three would fail the
    format step behind it. This rider was chartered for three files.
 5. **⚪ as found.** `Rule-28 mechanism-matrix guard` is **green** on run 2344

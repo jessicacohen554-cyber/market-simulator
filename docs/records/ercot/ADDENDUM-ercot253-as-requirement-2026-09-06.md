@@ -1,7 +1,7 @@
 # ADDENDUM to PRECOMMIT-ercot253 — the 2021 AS requirement was ZERO; a measured cleared-DAM series replaces it (ercot-253)
 
 > **Committed BEFORE the re-solve**, amending
-> `docs/PRECOMMIT-ercot253-2021-rung-2026-09-06.md`. The first 2021 solve was
+> `docs/records/ercot/PRECOMMIT-ercot253-2021-rung-2026-09-06.md`. The first 2021 solve was
 > **STOPPED ~5 minutes in and its partial bundle deleted** — nothing from it is
 > registered, quoted or carried. Every prediction in the PRECOMMIT §3 stands
 > except where §3a below amends it.

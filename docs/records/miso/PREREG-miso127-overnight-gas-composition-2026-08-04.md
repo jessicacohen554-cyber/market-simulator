@@ -191,9 +191,9 @@ magnitude at MISO and is not used here.
 
 ## 6. Deliverables
 
-* `results/calibration/FINDING-miso127-overnight-gas-composition-2026-08-04.md`
+* `docs/records/miso/FINDING-miso127-overnight-gas-composition-2026-08-04.md`
 * probe `scripts/probes/_miso127_overnight_gas_composition.py` (committed)
-* machine record `results/calibration/_miso127_overnight_gas_composition.json`
+* machine record `results/phase0/miso/_miso127_overnight_gas_composition.json`
 * mechanism-matrix cell + evidence stamped in **this** session (rule 28(b)) —
   an **audit/measurement** stamp where one is warranted, never a mechanism
   verdict, since no mechanism is tested.

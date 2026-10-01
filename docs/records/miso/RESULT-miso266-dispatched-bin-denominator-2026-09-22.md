@@ -326,7 +326,7 @@ refused**:
 
 `hydro-5` independently reached the same conclusion the same day: *"MISO's
 regenerated parts moved content (miso266 builder drift) and were NOT committed."*
-Record and routing: `docs/FINDING-miso266-bench-regeneration-hazard-2026-09-23.md`
+Record and routing: `docs/records/miso/FINDING-miso266-bench-regeneration-hazard-2026-09-23.md`
 — now **`miso-267` STEP 1**.
 
 **§5's second defect, for the record.** It also named `campd` as the blocker; that

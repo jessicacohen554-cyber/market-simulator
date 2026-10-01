@@ -9,7 +9,7 @@ release) and ``--hydro-cascade-coupling`` (owner rulings N3 / N12: the Columbia
 mainstem hydraulic coupling NWPP-36 built and measured, ARMED for the first
 keeper). Every offer band is 1.0, no floor / bridge / adder / seam ladder /
 scarcity overlay is armed, and there is no NWPP price series
-(``docs/handoffs/FINDING-nwpp-13-2026-09-13.md`` read NO), so the run scores on
+(``docs/records/nwpp/FINDING-nwpp-13-2026-09-13.md`` read NO), so the run scores on
 the rubric-v3.8 ``PHYSICALLY-CALIBRATED … (PRICE UNSCORED)`` class.
 
 **Rule 21 [R-DOF].** ``free_parameters`` is seeded by ``scripts/build_dof_ledger.py``
@@ -151,7 +151,7 @@ def build(bundle: Path = DEFAULT_BUNDLE) -> dict:
             "(NWPP-32's posture; the 2025 eia930_monthly repin REFUSED on rule-14 "
             "grounds, card R-f) and --hydro-cascade-coupling (owner rulings N3 / N12). "
             "The recipe, the phase-0 census, the DOF ledger and every declaration below "
-            "were fixed in docs/handoffs/PRECOMMIT-nwpp-40-2026-09-16.md, pushed at "
+            "were fixed in docs/records/nwpp/PRECOMMIT-nwpp-40-2026-09-16.md, pushed at "
             "c8819f51de3d8a8d5e754f016d7f3620e59e5185 BEFORE the shard was launched; "
             "the shard machine-checked the config signature before pushing and the "
             "parent re-checked it after. Rule 21 [R-DOF]: the ledger is seeded by "

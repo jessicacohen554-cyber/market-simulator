@@ -22,7 +22,7 @@ the belly over-price. (4) **DAM-outage crosswalk stage DONE** (139 thermal
 resources → 88 plants, 10 EIA-860-verified pins, 6 excludes). Keeper:
 `2026-07-19-caiso-102-hourfix` (NOT-YET, fail {C3c, C4, C5a(2024 CAVEAT)})
 — UNCHANGED. Full record:
-`results/calibration/FINDING-caiso105-basis-pin-decomp-2026-07-20.md`;
+`docs/records/caiso/FINDING-caiso105-basis-pin-decomp-2026-07-20.md`;
 log: `docs/calibration-log/caiso.md` 2026-07-20 CAISO-105 entry.
 
 ## Open lanes for CAISO-106 (priority order)

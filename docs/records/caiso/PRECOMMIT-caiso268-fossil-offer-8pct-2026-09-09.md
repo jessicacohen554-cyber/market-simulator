@@ -20,7 +20,7 @@ Two halves, and both are executed literally:
 **"Current levels" is resolved to the LIVE keeper**, `2026-09-09-caiso-fuelvintage-860-gas`
 (bundle `results/calibration/caiso_fuelvintage_span`), and **not** to the caiso-267 ×0.92 arm.
 The reason is that caiso-267 was **refused** by the owner on 2026-09-09
-(`results/calibration/FINDING-caiso267-fossil-offer-8pct-2026-09-09.md` §9, *"DO NOT PROMOTE"*),
+(`docs/records/caiso/FINDING-caiso267-fossil-offer-8pct-2026-09-09.md` §9, *"DO NOT PROMOTE"*),
 so its cut levels are live nowhere: there is exactly one live CAISO offer curve, and it is the
 keeper's. The cut is therefore **×0.92, not ×0.92² = 0.8464**. If the owner intended the deeper
 compounding cut, this is the sentence to correct, and it must be corrected **before** any shard
@@ -77,7 +77,7 @@ their armed values). This is the **authorized price-tuning channel** and nothing
   physics), `econ_low_share` and `pct_peaking` (the structural shares), every non-band key. No
   adder, offset, haircut, load proxy or gas discount exists anywhere in this run.
 * **(b) ONE config across EVERY scored year.** A single factor, **0.92**; a single override file,
-  `results/calibration/_caiso268_fossil92_offer_curve.json`, read byte-for-byte by **all four**
+  `results/phase0/caiso/_caiso268_fossil92_offer_curve.json`, read byte-for-byte by **all four**
   shards. **No per-year value exists and none will be produced.** This is the condition the
   sharding puts under the most pressure, so it is stated twice: sharding splits the *solve*, never
   the *config*. C6 checks it by exact set equality against each bundle's own scored years, so the
@@ -211,7 +211,7 @@ not assumed.
 
 ### §6.1 — The measured reason hand-composition is refused
 
-`docs/RESULT-caiso-fuelvintage-2026-09-09.md` **§6a** records this lane trying exactly the
+`docs/records/caiso/RESULT-caiso-fuelvintage-2026-09-09.md` **§6a** records this lane trying exactly the
 compose-from-shards route four hours ago and getting a **broken measurement**: T1 (2023-2024) and
 T2 (2025) carried **different year-scoped `eia923` / `eia930` / `campd` snapshots**, so the composed
 bundle scored 2025 against T1's inputs and C4-2025 came back **`r=None, NRMSE=8.406`** against the
@@ -259,7 +259,7 @@ prompt:
   its own uniquely-named doc (`docs/RESULT-caiso268-<shard>-2026-09-09.md`,
   `docs/ADDENDUM-caiso268-<shard>-*.md`). Nothing else.
 * **NO shard may write** — this is the collision surface, and it is closed by prohibition:
-  `.gitignore` · `results/calibration/_caiso268_fossil92_offer_curve.json` · this PRECOMMIT ·
+  `.gitignore` · `results/phase0/caiso/_caiso268_fossil92_offer_curve.json` · this PRECOMMIT ·
   `CLAUDE.md` · anything under `src/` or `scripts/` · any **other** shard's bundle or doc.
 * **ONLY the SPAN shard may write the shared CAISO surfaces**, and only after its own solve:
   `frontend/data/backcast/registry/*` · `frontend/data/backcast/runs/*` ·

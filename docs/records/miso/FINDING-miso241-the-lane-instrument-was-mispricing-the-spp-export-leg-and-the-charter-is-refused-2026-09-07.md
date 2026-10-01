@@ -14,7 +14,7 @@ the probe **before it was run**) and `ADDENDUM-miso241-the-census-is-too-narrow-
 written after seeing a number.
 
 Probe: `scripts/probes/_miso241_spp_quantity_side_charter_phase0.py` →
-`results/calibration/_miso241_spp_quantity_side_charter_phase0.json`.
+`results/phase0/miso/_miso241_spp_quantity_side_charter_phase0.json`.
 
 **Queue item taken (rule 28(a)): item 1, THE SPP QUANTITY-SIDE CHARTER** — miso-237's named
 successor and the handoff's recommended item.

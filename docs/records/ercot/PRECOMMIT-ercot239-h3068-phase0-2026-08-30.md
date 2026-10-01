@@ -34,7 +34,7 @@ All zero-solve, committed artifacts + measured inputs only:
 price reproduces the card's $798.20 (±$0.05) and the actual reproduces
 $110.41 (±$0.05). Mismatch STOPS the probe (Amendment protocol).
 
-## 2. What is measured (probe `scripts/probes/ercot239_h3068_phase0.py` → `results/calibration/ercot239_h3068_phase0.json`)
+## 2. What is measured (probe `scripts/probes/ercot239_h3068_phase0.py` → `results/phase0/ercot/ercot239_h3068_phase0.json`)
 
 Over the event window **h3060–h3078** (May 8 12:00 – May 9 06:00 CST),
 per hour:

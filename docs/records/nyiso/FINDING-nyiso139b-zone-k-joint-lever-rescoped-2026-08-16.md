@@ -10,7 +10,7 @@ artifacts of the designated keeper `2026-08-08-nyiso-133-cod-arm`.
 
 ## 1. WHAT THE CHARTER ASSUMED
 
-`docs/DECISION-CARD-nyiso137-zone-k-charter-2026-08-16.md` asks to reconcile, as
+`docs/records/nyiso/DECISION-CARD-nyiso137-zone-k-charter-2026-08-16.md` asks to reconcile, as
 ONE mechanism under rule 19 `[R-ONE-MECH]`:
 
 > the mainland→Zone-K transfer bound **and** the downstate ST_GAS `min_gen`

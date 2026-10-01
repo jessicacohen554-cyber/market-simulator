@@ -36,7 +36,7 @@ def build() -> dict:
         "CONTROL: the committed keeper bundle for every year (rule 29(b) form 4), validated by a G-DRIFT "
         "audit recorded before any solve: fleet-only rebuilds of the keeper recipe at the keeper SHA "
         "7f095384 and at HEAD are byte-identical (unit ids, availability, min_gen, offers, fuel, pmax, "
-        "demand; 2019 and 2024) - docs/PRECOMMIT-pjm-next-2-card1-outage-membership-2026-09-25.md §5."
+        "demand; 2019 and 2024) - docs/records/pjm/PRECOMMIT-pjm-next-2-card1-outage-membership-2026-09-25.md §5."
     )
     g["note"] = (
         "THREE STRUCTURAL REPAIRS OF MEASURED INPUTS (rule 14 / rule 19 basis, never the residual), each "

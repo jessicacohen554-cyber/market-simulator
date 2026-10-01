@@ -1,6 +1,6 @@
 {
  "session": "caiso-235",
- "precommit": "results/calibration/PRECOMMIT-caiso235-import-depth-widesample-2026-09-02.md",
+ "precommit": "docs/records/caiso/PRECOMMIT-caiso235-import-depth-widesample-2026-09-02.md",
  "method": {
   "estimator": "caiso-234 TOTAL envelope, imported verbatim from scripts/data/derive_caiso_import_total_envelope.py",
   "single_change": "pooled sample 2023-2025 -> 2019-2025",

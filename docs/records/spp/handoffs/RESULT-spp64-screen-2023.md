@@ -2,7 +2,7 @@
 
 **Lane** SPP-64 SCREEN · **Branch** `claude/spp64-screen-2023b` ·
 **Pin** `967db1ff63049b18d38d2de36838593054b6bed3` (verified at start; no fetch/pull/rebase before the
-final push) · **Charter** `docs/handoffs/PRECOMMIT-spp-64-stgas-selfcommit-2026-09-10.md` §6 —
+final push) · **Charter** `docs/records/spp/PRECOMMIT-spp-64-stgas-selfcommit-2026-09-10.md` §6 —
 **no bar in it was re-cut by this shard.**
 
 **VERDICT: PROCEED TO SPAN.** All six §6 STOP gates PASS. One material adverse finding that is **not**

@@ -4,7 +4,7 @@
 **Keeper (and G-CTRL form 4 control)** `2026-09-09-pjm-fuelvintage-ep-level`
 = `results/calibration/pjm_fuelvintage_A` (2023-25) + `results/calibration/pjm_fuelvintage_TP`
 (2020-22, folded). **Scope: PJM ONLY.**
-**Predecessor** `docs/RESULT-pjm-d4-1-stgas-merit-order-2026-09-09.md` §12 specifies this card.
+**Predecessor** `docs/records/pjm/RESULT-pjm-d4-1-stgas-merit-order-2026-09-09.md` §12 specifies this card.
 
 > Every number below is **ZERO LP** — a committed artifact, or an on-recipe
 > `run_year(..., fleet_only=True)` rebuild through `replay_keeper.run_year_kwargs`, the only

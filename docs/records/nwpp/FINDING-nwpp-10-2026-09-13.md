@@ -279,7 +279,7 @@ posted saying exactly this (#6104, the CI-red standing-down comment).
 | `docs/multi-iso/nwpp-data-audit.md` | **NEW** — the Phase-0 census (§0 headline, §1 status table, §2 fleet + adjudications, §3 curated-fleet seam, §4 load spine, §5 seasonal peak, §6 timezone, §7 registry values, §8 CEMS, §9 zoning, §10 manual manifest, §11 reproduction) |
 | `docs/multi-iso/00-iso-addition-protocol.md` | §0 NWPP row added; the §0 "eighth region" paragraph and the **§3 registered-count sentence** rewritten to carry both chartered-not-registered regions. **The count was re-measured at this lane's own base sha: `_ISO_BUILDERS` carries SEVEN** (ERCOT, CAISO, MISO, PJM, NYISO, NEISO, SPP); SOCO and NWPP are charter-order eighth and ninth, neither registered |
 | `docs/multi-iso/01-data-needs-and-upload-manifest.md` | NWPP rows in §2 (EIA-930), §3 (CAMPD), §4 (gas basis), §5 (zonal load), §7 (hydro). **NWPP rows only** |
-| `docs/handoffs/FINDING-nwpp-10-2026-09-13.md` | this file |
+| `docs/records/nwpp/FINDING-nwpp-10-2026-09-13.md` | this file |
 
 No shared record was touched: not the plan, not the ledger, not `docs/calibration-log/`, not
 `CHANGELOG.md`, not `docs/mechanism-testing-matrix.md`, not any matrix shard (rule 28 — this

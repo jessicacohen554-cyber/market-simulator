@@ -36,7 +36,7 @@ same basis). Determination **CALIBRATED**, C3c the single ledgered caveat.
 
 ## 1. Phase 0 (zero LP), committed evidence
 
-Probe `scripts/probes/nyiso_next_floor_layup_phase0.py` → `results/calibration/_nyiso_next_floor_layup_phase0.json`.
+Probe `scripts/probes/nyiso_next_floor_layup_phase0.py` → `results/phase0/nyiso/_nyiso_next_floor_layup_phase0.json`.
 It makes two fleet-only rebuilds per year through `replay_keeper.run_year_kwargs`: the keeper
 recipe (CONTROL), and the same recipe with the mask on (ARM). It reads the reliability-floor
 `min_gen` rows (`min_gen_mechanism == reliability_floor`) at LP-row grain and sums them per plant.

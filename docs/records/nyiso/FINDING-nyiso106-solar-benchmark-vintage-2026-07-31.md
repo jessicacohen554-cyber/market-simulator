@@ -312,4 +312,4 @@ size or judge a mechanism either.**
 ---
 
 Evidence in-repo: `scripts/probes/_nyiso106_solar_benchmark_audit.py`;
-`results/calibration/_nyiso106_solar_benchmark_audit.json`.
+`results/phase0/nyiso/_nyiso106_solar_benchmark_audit.json`.

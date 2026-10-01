@@ -557,6 +557,6 @@ change, measured both ways in a clean worktree: ZERO new failures.
 
 PROMOTION IS OPEN AND IS THE OWNER'S (rule 31). Recommendation: PROMOTE, on rules 1
 and 14 and explicitly NOT on the residual, which got worse. Cost from the current
-state: ZERO re-solves. Record: docs/handoffs/PRECOMMIT-soco-55-2026-09-20.md,
-docs/handoffs/FINDING-soco-55-2026-09-20.md.
+state: ZERO re-solves. Record: docs/records/soco/PRECOMMIT-soco-55-2026-09-20.md,
+docs/records/soco/FINDING-soco-55-2026-09-20.md.
 ```

@@ -1,6 +1,6 @@
 # RESULT — the 2021 C8 breach is a TRUE POSITIVE, the repair is real and structural, and it does NOT close the gate (ercot-256)
 
-> Scored against `docs/PRECOMMIT-ercot256-drag-layup-window-mask-2026-09-07.md`,
+> Scored against `docs/records/ercot/PRECOMMIT-ercot256-drag-layup-window-mask-2026-09-07.md`,
 > pushed (`fa1da7a0`) before any LP ran. Every gate, the screen year, the drift
 > audit and all seven predictions were registered there, upstream of the arm.
 > **Rule 30(c): ERCOT's determination is the train-tier verdict and this session

@@ -5,7 +5,7 @@ MODEL: Opus or Fable (rule 27). CLAUDE.md is binding; rules 1, 13, 14, 17, 19, 2
 
 STATE (verify against origin/main)
 - Keeper: 2026-09-28-spp-100-chp-scope, bundle results/calibration/spp100_arm_span (2019–2025). Train 2023–25 CALIBRATED (lone ledgered C3c); validation 2019–22 NOT-YET. Train C3a −6.7 / −8.6 / −5.4 % (under-priced), C3c 0 / 7 / 2 h vs RT 42 / 59 / 68.
-- SPP-105 (docs/handoffs/DESIGN-spp-105-gas-family-outage-2026-09-30.md, RESULT-spp-105-gas-family-outage-2026-09-30.md; results/calibration/_spp105_gas_outage_phase0.json; data/raw/spp-gen-outage):
+- SPP-105 (docs/records/spp/DESIGN-spp-105-gas-family-outage-2026-09-30.md, RESULT-spp-105-gas-family-outage-2026-09-30.md; results/phase0/spp/_spp105_gas_outage_phase0.json; data/raw/spp-gen-outage):
   * The keeper's gas outage tracks SPP's published hourly gas outage (r 0.65–0.91). No SPP CT/ST/CC split exists for 2024–25.
   * Arm A (wefor_residual 0.0 on CC/ST) and arm B (spp_gas_crow_residual_outage, the CROW pin) were both solved and REJECTED (cells R). A broke C3a 2024 (−12.5 %). B added 64 / 20 GWh unserved in 2024 / 25, and its price move was scarcity.
   * READING: the 2023+ upper-tercile price shortfall is NOT an outage-availability object. Candidates are offer / commitment side.

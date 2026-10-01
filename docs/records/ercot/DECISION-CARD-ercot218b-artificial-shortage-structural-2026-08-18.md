@@ -2,7 +2,7 @@
 
 > Drafted 2026-08-18 in the ercot-218 session on the owner's instruction
 > ("Do it" → option **b**), from
-> `docs/RESEARCH-ercot218b-why-2023-prices-2026-08-18.md` §5. Status:
+> `docs/records/ercot/RESEARCH-ercot218b-why-2023-prices-2026-08-18.md` §5. Status:
 > **DRAFT AWAITING SIGNATURE.** No `ScenarioConfig` field exists, no LP has
 > run, no matrix cell is minted. The Phase-1 session that executes this card
 > pushes its own precommit before any solve, per program discipline. Keeper
@@ -202,5 +202,5 @@ text signed is §1 above, verbatim:
 > form stays closed.
 
 Executing session: ercot-219, branch `claude/ercot-219-option-b-phase1-5cs9bf`.
-The Phase-1 precommit (`docs/PRECOMMIT-ercot219-option-b-phase1-2026-08-18.md`)
+The Phase-1 precommit (`docs/records/ercot/PRECOMMIT-ercot219-option-b-phase1-2026-08-18.md`)
 pins the §7 open choices before any solve.

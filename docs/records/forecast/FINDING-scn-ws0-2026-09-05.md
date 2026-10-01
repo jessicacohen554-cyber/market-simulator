@@ -1,8 +1,8 @@
 # FINDING — SCN-WS0: emissions grain + scenario harness (foundation)
 
 **Lane:** SCN-WS0 · **Branch:** `claude/scn-ws0-k7m2-8743yi` · **Date:** 2026-09-05
-**Charter:** `docs/handoffs/forecast-scenario-readiness-plan-2026-09.md` §3 WS-0 / §7 "WS-0"
-**PRECOMMIT:** `docs/handoffs/PRECOMMIT-scn-ws0-t0-2026-09-05.md`
+**Charter:** `docs/records/forecast/forecast-scenario-readiness-plan-2026-09.md` §3 WS-0 / §7 "WS-0"
+**PRECOMMIT:** `docs/records/forecast/PRECOMMIT-scn-ws0-t0-2026-09-05.md`
 **Data profile:** `neiso` · **Model:** `claude-opus-5` (rule 27 `[R-PUSH]`: this lane
 writes `src/market_sim/` and `scripts/`)
 

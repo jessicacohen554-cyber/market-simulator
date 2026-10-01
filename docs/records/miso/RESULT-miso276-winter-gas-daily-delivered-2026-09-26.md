@@ -2,7 +2,7 @@
 
 ```
 LANE     : miso-276 (D1, owner rulings 2026-09-26 "Daily delivered price" + "Chicago proxy")
-PREREG   : docs/PRECOMMIT-miso276-winter-gas-daily-delivered-2026-09-26.md (pin 2837e3c9)
+PREREG   : docs/records/miso/PRECOMMIT-miso276-winter-gas-daily-delivered-2026-09-26.md (pin 2837e3c9)
 KEEPER   : 2026-09-26-miso-275-cc-exempt (miso275_span) — unchanged
 RUN      : 2026-09-26-miso-276-winter-daily (results/calibration/miso276_span, 2019-2025), registered
 DELTA    : miso_winter_gas_daily_delivered = true (new field, default off). DOF +0

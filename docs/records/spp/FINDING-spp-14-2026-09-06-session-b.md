@@ -130,7 +130,7 @@ promoted under the gate exactly as the charter allows. Promoted file:
 3 years × 8,760 × 2 hubs, `year/hour/zone/rt/da`, `zone` = the SPP settlement-location name (not a
 model zone — card P1's topology is not pre-empted). The per-hub NaN counts equal the system-hub's
 (6 / 12 / 6 RT; 6 / 6 / 6 DA — the DST hour and SPP's own gaps), i.e. no hub has a gap the other fills.
-Record: `docs/handoffs/spp14/crosscheck.json`.
+Record: `docs/records/spp/spp14/crosscheck.json`.
 
 *Routed, not done:* a row for the new parquet in `data/raw/_validation-source/README.md` (that README is
 outside this lane's file regions — SPP-DESK).
@@ -139,7 +139,7 @@ outside this lane's file regions — SPP-DESK).
 
 `derived=yes`; per hour on the 8760 calendar, `d = SPPNORTH − SPPSOUTH` where both hubs are non-NaN;
 `mean |d|` and quantiles of `|d|`; sign convention of the MMU (spread = South − North) in the signed
-column. Record: `docs/handoffs/spp14/crosscheck.json` → `spread`.
+column. Record: `docs/records/spp/spp14/crosscheck.json` → `spread`.
 
 | Year | market | hours | mean S − N (signed) | **mean \|N − S\|** | p50 | **p90 \|N − S\|** | p99 | max | share of hours North > South | North mean | South mean |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
@@ -192,7 +192,7 @@ Share = hours (UTC hour of `GMTIntervalEnd`) with ≥ 1 binding row in the group
 the year-hours variant differs only in 2024, shown). Shadow price = mean of `|Shadow Price|` over the
 group's binding rows (SPP publishes negative values; interval-weighted, `derived=yes`). Groups
 overlap by construction (a Kansas flowgate and an Oklahoma flowgate can bind in the same hour), so
-shares do not sum to 1. Instrument: `docs/handoffs/spp14/groups.py`; records `four_group_table.csv`,
+shares do not sum to 1. Instrument: `docs/records/spp/spp14/groups.py`; records `four_group_table.csv`,
 `four_group_detail.csv`, `census.csv` (every distinct constraint × monitored × contingent with hours,
 mean/max shadow price).
 
@@ -356,7 +356,7 @@ the gate); `data/raw/spp-planning/` +3 payloads, README/SOURCES/SHA256SUMS rows;
 +36 payloads + `SHA256SUMS.txt`; `spp-or-mcp/` +5 payloads + `da-mcp-2025/` ×365 + `SHA256SUMS.txt`;
 `spp-genmix/` +3 + `SHA256SUMS.txt`; `spp-binding-constraints/` +14 + `SHA256SUMS.txt`; README/SOURCES
 rows in each; NEW producer `scripts/data/fetch_spp_alt_portal.py` (197 lines, ruff-clean, `--dry-run`
-lists all 402 files); `docs/handoffs/spp14/` (the instruments and JSON/CSV records); this FINDING;
+lists all 402 files); `docs/records/spp/spp14/` (the instruments and JSON/CSV records); this FINDING;
 plan §5 row SPP-14 → LANDED, §6 rows 5–9, §9 index. **`data/raw/spp-lmp-alt/` was NOT created** — no
 third-party LMP copy was landed (the source is SPP's own portal and the payload is the parquet the
 builder writes); the charter's directory exists for a mirror and there is none.
@@ -379,4 +379,4 @@ lines; the ≥300-line files touched (`README.md`s of the product dirs, the plan
 at the final push. 28 — no mechanism tested, no `ScenarioConfig` field, **no cell moves**.
 
 **Every URL was fetched or probed on 2026-09-06; every quotation is verbatim from the fetched page or
-file; every number is in the committed records under `docs/handoffs/spp14/`.**
+file; every number is in the committed records under `docs/records/spp/spp14/`.**

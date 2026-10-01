@@ -131,7 +131,7 @@ Measured with **no LP**, from committed artifacts only: the §1b series, the kee
 own `hourly/class_hourly_<year>.parquet`, and the fleet assembled at HEAD under the
 keeper's committed config (the miso-130/131 construction). Probe:
 `scripts/probes/_miso132_online_gating_sizing.py`; record
-`results/calibration/_miso132_online_gating_sizing.json`.
+`results/phase0/miso/_miso132_online_gating_sizing.json`.
 
 Definitions, fixed here:
 

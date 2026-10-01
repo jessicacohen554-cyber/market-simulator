@@ -3,13 +3,13 @@
 **Charter.** FF-1A of the Forecast Finalization Program
 (`docs/forecast-development-plan-2026-07.md` §1.2-1; §7 binds): implement the
 owner-approved R-NEW decision/execution retirement pipeline
-(`docs/handoffs/ff-retirement-rule-redesign-2026-07.md` §3.6 — THE approved
+(`docs/records/forecast/ff-retirement-rule-redesign-2026-07.md` §3.6 — THE approved
 design) and re-measure the flip-gate battery. Owner decisions executed, keyed
 on dispatch: **D1 = Option B** (R-NEW per memo §3.6; NOT B2 — no pre-window
 seeding this pass), **D2 = delete staged thinning at the flip commit**
 (rule 26), **D3 = adopt measured gas_cc execution lag = 1** (rule 14).
 BEFORE legs are the committed RC-1A-D1 probes
-(`docs/handoffs/position-calibration-d1-findings-2026-07-16.md`) — reused,
+(`docs/records/misc/position-calibration-d1-findings-2026-07-16.md`) — reused,
 never re-solved. Rules 1/13/14/19/21/23/24/26/27 govern.
 
 ---

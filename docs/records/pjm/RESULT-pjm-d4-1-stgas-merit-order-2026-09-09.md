@@ -1,7 +1,7 @@
 # RESULT — PJM: the ST_GAS card resolves to ONE channel, and the allocation family is falsified at zero LP
 
 **Session** `pjm-d4-1` · **ISO** PJM · **Date** 2026-09-09 · **Branch** `claude/pjm-d4-1-qa8gwk`
-**PRECOMMIT** `docs/PRECOMMIT-pjm-d4-1-stgas-merit-order-2026-09-09.md` — committed **before** any arm
+**PRECOMMIT** `docs/records/pjm/PRECOMMIT-pjm-d4-1-stgas-merit-order-2026-09-09.md` — committed **before** any arm
 was built; every gate bar, the control posture and the rule-1 non-gates are quoted from it unchanged.
 **Keeper UNCHANGED** `2026-09-09-pjm-fuelvintage-ep-level`. PJM's headline is **untouched**.
 **No LP was solved. Nothing was promoted, nothing registered, no holdout year touched.**

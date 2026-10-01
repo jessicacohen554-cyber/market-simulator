@@ -53,7 +53,7 @@ The re-derive uses the committed sidecar's own `derive_invocation` (`--iso SOCO 
 in the keeper (mechanism K). Wansley was missing only because its units were not in the retiree parquet at derive time
 (a data-completeness defect F1 fixed). Rule 14: the accurate input stands whatever it does to the fit.
 
-## 2. Census (zero LP; `docs/handoffs/r-soco/soco82_fleet_census.json`)
+## 2. Census (zero LP; `docs/records/soco/r-soco/soco82_fleet_census.json`)
 
 Seven `fleet_only` rebuilds per artifact on the keeper recipe (§5 flag set), committed vs regenerated:
 

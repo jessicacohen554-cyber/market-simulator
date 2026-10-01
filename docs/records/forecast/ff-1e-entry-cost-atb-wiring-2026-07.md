@@ -3,7 +3,7 @@
 **Session.** Wave-1 lane **L-INP** of the Forecast Finalization Program
 (`docs/forecast-development-plan-2026-07.md` §6, FF-1E). Executes the FF-0D
 audit's `NEW_ENTRY_COSTS` / `TECH_COST_MULTIPLIERS` recommendations
-(`docs/handoffs/ff-inputs-currency-audit-2026-07.md` §3.2/§3.3/§3.6, routed in
+(`docs/records/forecast/ff-inputs-currency-audit-2026-07.md` §3.2/§3.3/§3.6, routed in
 §7.2) and verifies the policy-currency items (§4). Branch
 `claude/entry-costs-atb-source-hwxvbp` off `origin/main`.
 
@@ -141,7 +141,7 @@ FF-2D gate, not FF-1E's.
   unchanged from FF-0D). The 2033–2036 steps remain triangulated from two
   secondary sources; unchanged.
 - **State RPS / ACP (§4.3):** deferred here to the item-2 session and now
-  **landed** in `docs/handoffs/ff-1e-policy-currency-2026-07.md` — the precision
+  **landed** in `docs/records/forecast/ff-1e-policy-currency-2026-07.md` — the precision
   refresh DID surface a citable delta: the **MA Class I RPS ACP was stale
   ($67.62 → $40/MWh, 225 CMR 14.08 2021 reset)**, dropping `STATE_RPS_ACP["NEISO"]
   65 → 50; the PJM load weights were refreshed to the primary Monitoring Analytics

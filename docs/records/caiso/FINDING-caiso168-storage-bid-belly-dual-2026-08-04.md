@@ -24,7 +24,7 @@ is a measurement-only Phase 0 on committed artifacts, the caiso-167 pattern.
 python scripts/probes/caiso168_storage_bid_phase0.py
 ```
 
-Artifact: `results/calibration/_caiso168_storage_bid_phase0.json`.
+Artifact: `results/phase0/caiso/_caiso168_storage_bid_phase0.json`.
 
 ---
 

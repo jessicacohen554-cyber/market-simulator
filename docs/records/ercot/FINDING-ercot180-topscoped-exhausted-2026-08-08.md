@@ -7,7 +7,7 @@ structure, never realized prices. Object: **C3a-2023** (−32.4 % on keeper
 `2026-08-07-run176-control-offline-increment`, NOT-YET, fail set {C3a, C3b});
 owner standing instruction: under 10 % without disturbing 2024/2025.
 
-Pre-registration: `docs/PRECOMMIT-ercot180-top-scoped-grain-2026-08-08.md`,
+Pre-registration: `docs/records/ercot/PRECOMMIT-ercot180-top-scoped-grain-2026-08-08.md`,
 pushed BEFORE any derive, any corpus measurement, and any solve. It fixed the
 edge-identification instrument, its bars, MAX_EDGES = 2, the kill gates
 (G-SHED promoted to PRIMARY), the honest ceiling (≤ ~$2.6/MWh), the
@@ -72,7 +72,7 @@ across CC+CT deciding, per-class reported; ≥ 30 hours of 2023 per sub-bin;
 day-block permutation p < 0.01; MAX_EDGES = 2; delivery-2023 corpus only —
 7,917 full-year hour-nodes; N_PERM = 999; KS on a 1024-point common quantile
 grid, disclosed). Record:
-`results/calibration/ercot180_edge_identification.json`.
+`results/phase0/ercot/ercot180_edge_identification.json`.
 
 * **Population measured:** 263 hours above p97, **403,007 top-of-curve
   segment rows** (~1,530 rows/hour).
@@ -118,7 +118,7 @@ no mechanism, no scalar; hour selection reads the control residual under the
 rule-13 diagnostic license and its output is barred from parameter
 identification.)*
 
-Record: `results/calibration/ercot180_marginal_position.json` (top-100 2023
+Record: `results/phase0/ercot/ercot180_marginal_position.json` (top-100 2023
 hours by demand-weighted actual−control gap; mean gap **$1,041/MWh**, actual
 RT p50 $1,032 vs model p50 $156; corpus side = delivery-2023 NP3-965, ON
 merchant gas CC/CT, per-interval SCED2 step price at Base Point).

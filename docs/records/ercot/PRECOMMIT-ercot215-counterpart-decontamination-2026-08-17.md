@@ -6,11 +6,11 @@ Keeper resolved fresh from `frontend/data/backcast/keepers/ERCOT.json`:
 **`2026-08-16-ercot213-arm-pubanchor`**, determination NOT-YET, fail set
 {C3b-2023} ALONE, C3c-2025 the single ledgered CAVEAT.
 
-This is Phase-1 of the fork `docs/FINDING-ercot214-gspur-phase0-2026-08-17.md`
+This is Phase-1 of the fork `docs/records/ercot/FINDING-ercot214-gspur-phase0-2026-08-17.md`
 §5 escalated to the owner, entered on the owner's answer (below). The lever is
 the ONE lever ercot-214 identified (§3), unchanged; its full-span consequences
 are already EXACTLY measured pre-solve
-(`results/calibration/ercot214_gspur_phase0.json`), because the delta is
+(`results/phase0/ercot/ercot214_gspur_phase0.json`), because the delta is
 post-solve additive and moves no MW.
 
 ## §0 THE OWNER AUTHORIZATION, GIVEN IN ADVANCE — recorded verbatim so the promotion is honest ex ante

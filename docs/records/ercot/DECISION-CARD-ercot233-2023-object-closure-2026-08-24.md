@@ -5,9 +5,9 @@
 **For the owner. Session ercot-233, 2026-08-24, HEAD `7cf572e`. NOTHING IS
 DECIDED HERE.** This card performs **zero new measurements** — every number is
 read from committed artifacts, chiefly
-`docs/FINDING-ercot232-gspur-tie-deliverability-2026-08-24.md` (the post-
+`docs/records/ercot/FINDING-ercot232-gspur-tie-deliverability-2026-08-24.md` (the post-
 promotion exhaustion record whose own conclusion this card puts to signature),
-`docs/FINDING-ercot231-nonas-tightness-2026-08-23.md`, and the signed cards
+`docs/records/ercot/FINDING-ercot231-nonas-tightness-2026-08-23.md`, and the signed cards
 Q/R/W/X. No solve, no LP, no probe, no mechanism, no matrix cell verdict
 (rule 28(b) — nothing tested), no dashboard change, keeper untouched.
 
@@ -206,8 +206,8 @@ standing fences, which the signature does NOT lift:
   §2's bounds exactly (read-only, zero fitted scalars, precommit pushed and
   blob-verified before any measurement, borderline verdicts escalated,
   never self-adopted). Record:
-  `docs/PRECOMMIT-ercot233-nelob-timing-phase0-2026-08-24.md` →
-  `docs/FINDING-ercot233-nelob-timing-phase0-2026-08-24.md`.
+  `docs/records/ercot/PRECOMMIT-ercot233-nelob-timing-phase0-2026-08-24.md` →
+  `docs/records/ercot/FINDING-ercot233-nelob-timing-phase0-2026-08-24.md`.
 - Door D (card W) remains the recorded data horizon for the scarcity-
   formation object itself; Y-C keeps the lane open in the meantime, it does
   not manufacture admissibility.

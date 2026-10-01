@@ -98,7 +98,7 @@ SPP's registered years are 2019–2025, all on keeper `2026-09-28-spp-100-chp-sc
 - the recipe plus a stray field (`hydro_pondage_bound`) → **FAIL** (RECIPE);
 - the exact recipe with a leg identical to the keeper → **FAIL** (ARMED: the posture never reached the solve).
 
-The shard prompt is `docs/handoffs/spp102/shard_prompt_template.txt`.
+The shard prompt is `docs/records/spp/spp102/shard_prompt_template.txt`.
 
 ## Addendum A (2026-09-29, before any number was read) — calibration-path wiring
 

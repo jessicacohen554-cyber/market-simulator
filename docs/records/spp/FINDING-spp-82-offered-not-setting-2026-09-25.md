@@ -5,7 +5,7 @@ Lane: SPP-82. Parents: SPP-79 (`FINDING-spp-79-c3a-is-a-cancellation-2026-09-25.
 (`FINDING-spp-81-residual-upper-tercile-2026-09-25.md`, `FINDING-spp-81-upper-tercile-residual-2026-09-25.md`).
 Keeper: `2026-09-24-r-spp-corrected-inputs`, bundle `results/calibration/rspp_span`, `basis_sha`
 `ec13e5c2ad35c4f817cc496ff2363affb3fed2f9`. Session base: `origin/main` `d5d5e0e8`.
-Probe: `scripts/probes/_spp82_offered_not_setting.py`. Numbers: `results/calibration/_spp82_offered_not_setting_phase0.json`.
+Probe: `scripts/probes/_spp82_offered_not_setting.py`. Numbers: `results/phase0/spp/_spp82_offered_not_setting_phase0.json`.
 **No LP. No shard. No bundle. No `src/` edit. No `ScenarioConfig` field. No multiplier touched. Nothing landed under `data/`.**
 
 ## 0. Headline

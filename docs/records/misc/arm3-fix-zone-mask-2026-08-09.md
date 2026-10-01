@@ -6,7 +6,7 @@ evidence.** FIX + MEASUREMENT ONLY. **No arming decision (`miso_clean_tier_rows`
 default-OFF), no keeper contact, no backcast-registry touch.** The arming card is the
 MANAGER's to put and the OWNER's to sign; this document is its evidence table.
 
-**The finding this fixes:** `docs/handoffs/arm3-clean-row-horizon-2026-08-09.md` §3 —
+**The finding this fixes:** `docs/records/misc/arm3-clean-row-horizon-2026-08-09.md` §3 —
 `model/lp/rows.py::_build_rps_region_rows` zone-masks a clean row's WIND/SOLAR columns but
 appended its `region_gen_idx` columns with no zone filter, because
 `_resolve_clean_region_gen_idx` resolved by FUEL ALONE across the whole fleet. Michigan's

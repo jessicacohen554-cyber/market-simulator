@@ -2,7 +2,7 @@
 
 **Session:** ercot-263, 2026-09-09. Branch `claude/ercot-c3b-closure-uon654`.
 **Base:** `74671cca` (origin/main at session start). **PRECOMMIT:** `3964ff00`,
-`docs/handoffs/PRECOMMIT-ercot263-c3b-basis-2026-09-09.md` — predictions sealed before the repair.
+`docs/records/ercot/PRECOMMIT-ercot263-c3b-basis-2026-09-09.md` — predictions sealed before the repair.
 **Scope:** DATA + BENCHMARK + DOCS. **Zero LP solved. No `ScenarioConfig` field changed. The
 keeper's payload is byte-identical. No `src/` or `scripts/` file edited.**
 
@@ -183,7 +183,7 @@ artifacts with no solve, and it names no mechanism.
 
 ## 6c. The object was then traced to its cause and KILLED at phase 0 — no LP
 
-`docs/handoffs/ADDENDUM-ercot263-february-object-phase0-2026-09-09.md`. The keeper prices Feb-2021
+`docs/records/ercot/ADDENDUM-ercot263-february-object-phase0-2026-09-09.md`. The keeper prices Feb-2021
 gas as an ordinary month (raw EIA N3045TX3 basis **+54.376 $/MMBtu**; keeper uses **+0.390**), because
 `ercot_ep_gas_basis_corroborated` replaces the two 2021 months failing EIA-923 corroboration. **That
 removal is the 95.7%, and it is correct** — the print is a monthly cost/volume ratio over a month

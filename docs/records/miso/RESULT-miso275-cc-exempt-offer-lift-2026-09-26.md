@@ -2,7 +2,7 @@
 
 ```
 LANE     : miso-275 (FINDING-miso274 §6 candidate 3; owner-authorized price-tuning channel)
-PREREG   : docs/PRECOMMIT-miso275-cc-exempt-offer-lift-2026-09-26.md (pin e5acf0fe)
+PREREG   : docs/records/miso/PRECOMMIT-miso275-cc-exempt-offer-lift-2026-09-26.md (pin e5acf0fe)
 KEEPER   : 2026-09-25-miso-273-screened-coal (miso273_span) — unchanged, see §5
 RUN      : 2026-09-26-miso-275-cc-exempt (results/calibration/miso275_span, 2019-2025), registered
 DELTA    : offer_curve_by_group CC_REGULAR + CC_INTERMEDIATE committed/econ_low/econ_high/peak 1.1055/1.045/1.188/2.475 -> 1.005/0.95/1.08/2.25. DOF +0

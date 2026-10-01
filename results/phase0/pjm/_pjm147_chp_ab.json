@@ -1,5 +1,5 @@
 {
- "prereg": "results/calibration/PREREG-pjm147-measured-chp-heat-rates-2026-08-03.md",
+ "prereg": "docs/records/pjm/PREREG-pjm147-measured-chp-heat-rates-2026-08-03.md",
  "arms": {
   "control": "/home/user/market-simulator/results/calibration/pjm147_control_A",
   "arm": "/home/user/market-simulator/results/calibration/pjm147_chp_B",
@@ -12,7 +12,7 @@
  },
  "K0_wiring_liveness_presolve": {
   "passed": true,
-  "source": "results/calibration/_pjm147_flag_fidelity.json",
+  "source": "results/phase0/pjm/_pjm147_flag_fidelity.json",
   "per_year": {
    "2023": {
     "n_generators": 3407,

@@ -5,7 +5,7 @@ and LOYO psi columns verbatim (rule 23: no regression re-fitted, no limit re-rea
 per direction n, pooled hours, the binding-hours-weighted median -> nearest-100 TTC, weighted p25/p75,
 LOYO, and R1-R4 at the measured w_OK. Writes tstar_n_ok_57b.csv / tstar_ok_s_57b.csv beside this file.
 
-usage: uv run python docs/handoffs/spp57b/aggregate_ttc_57b.py
+usage: uv run python docs/records/spp/spp57b/aggregate_ttc_57b.py
 """
 
 from pathlib import Path

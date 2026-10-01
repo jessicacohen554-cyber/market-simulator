@@ -94,7 +94,7 @@ reads **8760 h/year** (not the degraded 1,464) and the probe reproduces at
 
 ## 2. The pre-registered gates and their outcomes
 
-Registered in `results/calibration/PREREG-nyiso172-st-gas-level-deficit.md` and
+Registered in `docs/records/nyiso/PREREG-nyiso172-st-gas-level-deficit.md` and
 committed **with the probe, before either was run** (`8c3e9b6c`).
 
 | gate | PASS condition | outcome |
@@ -445,15 +445,15 @@ availability intake.
 
 ## 7. Evidence
 
-* `results/calibration/PREREG-nyiso172-st-gas-level-deficit.md` — the gates,
+* `docs/records/nyiso/PREREG-nyiso172-st-gas-level-deficit.md` — the gates,
   committed with the probe before either ran (`8c3e9b6c`)
 * `scripts/probes/nyiso172_st_gas_level_deficit.py` — the probe
-* `results/calibration/_nyiso172_st_gas_level_deficit.json` — every number above
+* `results/phase0/nyiso/_nyiso172_st_gas_level_deficit.json` — every number above
 * keeper `results/calibration/nyiso159_lossarm_B/` — `legitimacy_diagnostics.json`
   (D-2), `run_config.json`, `hourly/class_hourly_<year>.parquet`
 * `src/market_sim/model/commitment.py:280` (`_amortized`), `:312` (the `gas_st`
   gate); `src/market_sim/pipeline/solve.py:308` (`mc_bid = mc_base + markup`);
   `src/market_sim/data/outages.py:239` (`UNIT_OUTAGE_MIN_DAYS = 5`)
-* predecessors: `docs/FINDING-nyiso167-c3a-price-response-gain-2026-09-01.md`,
+* predecessors: `docs/records/nyiso/FINDING-nyiso167-c3a-price-response-gain-2026-09-01.md`,
   `-nyiso168-supply-curve-slope-anatomy-`, `-nyiso169-congestion-gradient-anatomy-`,
   `-nyiso170-merit-order-displacement-`, `-nyiso171-chp-floor-portfolio-artifact-`

@@ -3,7 +3,7 @@
 **Session** miso-151 · **ISO** MISO · **Keeper** `2026-08-09-miso-148-basis-aware`
 (`miso148_basis_B`) · **Date** 2026-08-11 · **Owner charter given in session**
 (item 9, full-year corpus variant), recorded in
-`results/calibration/DECISION-miso151-item9-measured-offer-surface-2026-08-11.md`
+`docs/records/miso/DECISION-miso151-item9-measured-offer-surface-2026-08-11.md`
 §10 option 1 and re-confirmed in plain terms after the owner asked for the ask
 to be simplified.
 

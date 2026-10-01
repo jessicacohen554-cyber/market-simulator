@@ -11,7 +11,7 @@ Rule 22 `[R-HOLDOUT]` — 2023/2024/2025 only. Rule 15 `[R-DASHBOARD]` is not en
 no run was produced, so there is nothing to register (the miso-203 posture).
 
 Instrument: `scripts/probes/_miso219_evening_tail_phase0.py` → record
-`results/calibration/_miso219_evening_tail.json`. Every input is a committed
+`results/phase0/miso/_miso219_evening_tail.json`. Every input is a committed
 artifact of the keeper bundle or a primary measured source under `data/raw`.
 
 ---

@@ -3,7 +3,7 @@
 **Keeper 15 promoted**: `2026-09-22-spp-71-ensemble-syncfloor` (CALIBRATED), rung
 `2026-09-22-spp-71-rung-ensemble` (NOT-YET) stamped to it. `audit_keepers --iso SPP`: **PASS, 0
 failures** — the two standing SPP-68 E13 failures cleared in this session.
-PRECOMMIT: `docs/handoffs/PRECOMMIT-spp-71-ensemble-sync-floor-2026-09-22.md`, pushed at
+PRECOMMIT: `docs/records/spp/PRECOMMIT-spp-71-ensemble-sync-floor-2026-09-22.md`, pushed at
 `6edc996d1051296b6fb62185df7b304adbc7f3d1` **before any shard was launched**.
 
 ---
@@ -196,7 +196,7 @@ FAIL → PASS** — the only status move anywhere.
   > **CORRECTION, entered after this lane's solves and before its RESULT was final.** An earlier
   > draft of this section read *"the offer-curve family is now unblocked in principle — this card
   > was the thing it was sequenced behind."* **That is wrong, and a stronger cross-ISO result
-  > refutes it.** `docs/RESULT-xiso-stack-climb-attribution-2026-09-22.md` (merged to `main` at
+  > refutes it.** `docs/records/governance/RESULT-xiso-stack-climb-attribution-2026-09-22.md` (merged to `main` at
   > `919e674d` while this lane's shards were solving, zero LP, 44 `fleet_only` rebuilds) measures
   > the same idle-thermal signature in **nine ISOs of nine** and concludes that **the offer-curve
   > family is refused everywhere BY CONSTRUCTION**, because adding vertical extent above a
@@ -211,7 +211,7 @@ FAIL → PASS** — the only status move anywhere.
   2. **COMMITMENT REACH** — the xiso lane's new first-ranked lever: the idle capacity concentrates
      in exactly the classes a no-MIP LP commits worst (CT 13–46 %, oil 1–5 %). SPP's fossil fleet
      carries `min_down_hours = min_run_hours = startup_cost_per_mw = 0` on every unit.
-     > **CORRECTION (SPP-73, 2026-09-22, measured on a `fleet_only` rebuild of rung 2020):** not every unit. 135 `_committed` tranches (103 gas, 32 coal) carry generic start-up costs (CT $20, ST_GAS/ST_CHP $35, CC $50, coal $100 per MW) and the 32 coal `_committed` tranches carry min-run 36 h / min-down 16 h. What is zero is every gas econ/peak tranche's start-up cost and every gas row's min-run/min-down. `docs/handoffs/RESULT-spp-73-commitment-reach-2026-09-22.md` §5.
+     > **CORRECTION (SPP-73, 2026-09-22, measured on a `fleet_only` rebuild of rung 2020):** not every unit. 135 `_committed` tranches (103 gas, 32 coal) carry generic start-up costs (CT $20, ST_GAS/ST_CHP $35, CC $50, coal $100 per MW) and the 32 coal `_committed` tranches carry min-run 36 h / min-down 16 h. What is zero is every gas econ/peak tranche's start-up cost and every gas row's min-run/min-down. `docs/records/spp/RESULT-spp-73-commitment-reach-2026-09-22.md` §5.
   3. **R-ba** (the ST_GAS / CT_PEAKER inversion) is untouched and is still the most persistent C1
      error (ST_GAS short 4.41–9.40 TWh in all seven years) — but note C1 **PASSES**, so it is not
      a rubric failure.

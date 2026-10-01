@@ -6,7 +6,7 @@ curve MW (the top tranche), summarised by ERCOT Resource Type. Compared in the
 FINDING with the keeper's 2023 carve-out peak-tranche offer levels.
 
 Usage: ``python3 scripts/probes/_r_ercot9_dam_top_offer.py``.
-Record: ``docs/handoffs/FINDING-r-ercot-9-2023-scarcity-2026-09-27.md``.
+Record: ``docs/records/ercot/FINDING-r-ercot-9-2023-scarcity-2026-09-27.md``.
 """
 
 import numpy as np

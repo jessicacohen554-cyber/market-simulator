@@ -25,7 +25,7 @@
 > disagrees between the two documents.**
 
 **Filed:** 2026-08-31, executing owner ruling **R-D** of the 2026-08-31 director
-REFRESH sitting, on `docs/FINDING-c1-joint-wind-ab-2026-08-31.md`. **Pattern:**
+REFRESH sitting, on `docs/records/misc/FINDING-c1-joint-wind-ab-2026-08-31.md`. **Pattern:**
 the caiso-222 §1(c) **option 3 — TERMINAL REST + MAP** (owner ruling R-3,
 2026-08-30; `docs/calibration-log/caiso.md`, the caiso-222 entry). **Zero solve;
 this document changes no keeper, shard, marker, determination, default or matrix
@@ -66,7 +66,7 @@ object was characterized before any of the A/Bs below were run:
   re-prices the entering year's net load against the current stack and produces
   a system-wide MC step: measured `zonal_mean_range` and
   `hourly_cross_zone_spread` are **exactly 0.0** in both ISOs tested
-  (`docs/FINDING-entry-signal-disarm-2026-08.md` §, the L-1 characterization).
+  (`docs/records/misc/FINDING-entry-signal-disarm-2026-08.md` §, the L-1 characterization).
   ERCOT's seven model zones see one number.
 - **~90 % of what dispersion it does carry is the ORDC adder** — a
   summer-afternoon artifact, not a price any generator is paid
@@ -74,7 +74,7 @@ object was characterized before any of the A/Bs below were run:
 - **That shape inverts wind's value at hub grain.** Against each arm's own mean,
   the build-zone (West) capture ratio reads **0.494 / 0.805 / 0.927** on the
   shipped signal versus **0.988 / 0.988 / 1.055** on the model's own hourly
-  zonal LP duals (`docs/FINDING-entry-signal-l1-2026-08.md` §1, entering
+  zonal LP duals (`docs/records/misc/FINDING-entry-signal-l1-2026-08.md` §1, entering
   2023/2024/2025). **Wind is at capture parity on the duals and below parity on
   the shipped object**, and the B-3 inversion the parent finding chased (wind
   anti-correlated, solar 2.6×-correlated) is **manufactured by the ORDC adder's
@@ -265,24 +265,24 @@ charter, not a calibration lane's and not this map's.
 
 ## 8. Evidence
 
-- `docs/FINDING-c1-joint-wind-ab-2026-08-31.md` — the deciding A/B (charter
-  `docs/PRECOMMIT-c1-joint-wind-2026-08-31.md` + its pre-solve Amendment 1,
+- `docs/records/misc/FINDING-c1-joint-wind-ab-2026-08-31.md` — the deciding A/B (charter
+  `docs/records/misc/PRECOMMIT-c1-joint-wind-2026-08-31.md` + its pre-solve Amendment 1,
   merged **before** any solve); artifact
-  `results/calibration/joint_wind_entry_ab_ercot.json`; driver
+  `results/phase0/ercot/joint_wind_entry_ab_ercot.json`; driver
   `scripts/probes/joint_wind_entry_compare.py` (hard-gates the exactly-two-field
   posture); registered `ercot-2021-2025-realized-t1h-c1joint-{control,arm}`
   (forecast namespace only).
-- `docs/FINDING-entry-signal-l1-2026-08.md` — the L-1 signal characterization
+- `docs/records/misc/FINDING-entry-signal-l1-2026-08.md` — the L-1 signal characterization
   (capture ratios, dispersion, the B-3 attribution).
-- `docs/FINDING-entry-signal-disarm-2026-08.md` — the single-flag disarm
+- `docs/records/misc/FINDING-entry-signal-disarm-2026-08.md` — the single-flag disarm
   (zone-flatness measured at 0.0; the ~90 % ORDC dispersion attribution; the
   `fc K → O` verdict and its "trade of one structural defect for another"
   reasoning).
-- `docs/handoffs/FINDING-capx-d11r-entry-volume-rule-2026-08-30.md` — the volume
+- `docs/records/forecast/FINDING-capx-d11r-entry-volume-rule-2026-08-30.md` — the volume
   rule's own A/B (the 4.91 %, here identified as a shipped-signal artifact).
-- `docs/FINDING-t1h-capacity-entry-phase0-2026-08-30.md` §4.1 — the Leg-B
+- `docs/records/misc/FINDING-t1h-capacity-entry-phase0-2026-08-30.md` §4.1 — the Leg-B
   measurement that produced the 8.87 %.
-- `docs/FINDING-t1h-capentry-phase1-ab-2026-08-30.md` — Leg A, armed by R-A;
+- `docs/records/misc/FINDING-t1h-capentry-phase1-ab-2026-08-30.md` — Leg A, armed by R-A;
   `src/market_sim/results/cache.py` epoch 2026-08-31.
 - `docs/codebase-site/data/mechanism-matrix/ERCOT.js` — the two cells' R-D
   ruling stamps.

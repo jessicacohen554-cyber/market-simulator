@@ -1,6 +1,6 @@
 # RESULT — pjm-h22 Card E: RGGI allowance cost on the PJM keeper, all six years (2026-09-24)
 
-Charter: `docs/PRECOMMIT-pjm-h22-card-e-rggi-six-years-2026-09-24.md` (pushed before any solve, pin
+Charter: `docs/records/pjm/PRECOMMIT-pjm-h22-card-e-rggi-six-years-2026-09-24.md` (pushed before any solve, pin
 `d58121c34e0b79259ae3d4103fe4ee828080c79e`). Arm = keeper `2026-09-23-pjm-h19-dbs-span` +
 `pjm_rggi_allowance_pricing=true`. One shard per year; zero LP in the parent.
 
@@ -24,7 +24,7 @@ keeper passed at 336.3. Every other scored row passes.
 | **Dominion** | −4.4 → **−8.6** | −1.7 → −4.6 | −13.7 → **−15.5** | −12.3 → −9.9 | −4.0 → −2.9 |
 | all bench CC | +9.9 → +2.2 | +20.2 → +12.0 | +3.6 → −7.8 | +0.9 → −13.4 | +2.6 → −7.8 |
 
-`results/calibration/_pjm_h22_carde_result_zones.json` (`scripts/probes/pjm_h22_carde_result_zones.py`).
+`results/phase0/pjm/_pjm_h22_carde_result_zones.json` (`scripts/probes/pjm_h22_carde_result_zones.py`).
 
 ## 3. Scored rows, 2023–25, keeper → arm (same benchmark)
 

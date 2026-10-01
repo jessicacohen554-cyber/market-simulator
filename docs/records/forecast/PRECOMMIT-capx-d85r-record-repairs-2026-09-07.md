@@ -1,7 +1,7 @@
 # PRECOMMIT — capx D85-R: the four record repairs
 
 **Session:** capx D85-R, executing the recommendations of
-`docs/handoffs/FINDING-capx-d85-key-provenance-2026-09-07.md` §5 — repairs **(ii)** and
+`docs/records/forecast/FINDING-capx-d85-key-provenance-2026-09-07.md` §5 — repairs **(ii)** and
 **(v-a)/(v-b)/(v-c)**. Owner ruling **Q59**'s follow-on; capx ledger **§0bc.3(c)**.
 **Model:** Opus. **DATA PROFILE:** code. **Branch:** `claude/capx-d85r-record-repairs-wyrs3y`,
 fresh off `origin/main` at `12e71b89` (2026-09-07).

@@ -1,7 +1,7 @@
 # RESULT — NYISO-NEXT-13: the NE AC node taken out of the monthly net-interchange band — 2026-09-29
 
 - **Session:** NYISO-NEXT-13, the orchestrator. This container ran no LP (rule 32 (a)).
-- **PRECOMMIT:** `docs/PRECOMMIT-nyiso-next13-ne-ac-recon-detach-2026-09-29.md`. Its gates (§5) and promotion rule (§6) were fixed before any solve.
+- **PRECOMMIT:** `docs/records/nyiso/PRECOMMIT-nyiso-next13-ne-ac-recon-detach-2026-09-29.md`. Its gates (§5) and promotion rule (§6) were fixed before any solve.
 - **Code:** PR #6875, which adds `nyiso_ne_ac_recon_detach` (default off, NYISO, backcast only, zero DOF).
 - **Arm pin:** `3145578d94c73b6042ecabf1ff6723c70af3c742`.
 - **Owner ruling (this session):** "Promote per rule". It was given after the price-fit regression below was put to the owner as a decision card.
@@ -23,7 +23,7 @@
 
 ## 2. Gates (arm vs the NEXT-12 keeper's committed bundles, form 4)
 
-Records: `results/calibration/_nyisonext13_gates.json`, `_nyisonext13_compare_span.txt`, `_nyisonext13_compare_2021.txt`, `_nyisonext13_phase0.json`.
+Records: `results/phase0/nyiso/_nyisonext13_gates.json`, `_nyisonext13_compare_span.txt`, `_nyisonext13_compare_2021.txt`, `_nyisonext13_phase0.json`.
 
 | | 2021 | 2022 | 2023 | 2024 | 2025 |
 |---|---|---|---|---|---|

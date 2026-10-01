@@ -8,12 +8,12 @@ constant, derive script or model artifact changed. No run produced, so none
 registered (rule 15 registers runs; a no-LP session registering nothing is
 correct, not an omission).**
 
-**Charter worked:** `docs/handoffs/nyiso-downstate-topology-split-charter-2026-08.md`
+**Charter worked:** `docs/records/nyiso/nyiso-downstate-topology-split-charter-2026-08.md`
 (precommit, opened 2026-08-04 at nyiso-123 by owner ruling "charter both, paired").
 **Gates in scope:** G0 (identifiability) and G1 (Object B diagnosed) — both no-LP,
 both gating every solve (charter §5).
 **Probe:** `scripts/probes/_nyiso124_charter_g0_g1.py` ·
-**Record:** `results/calibration/_nyiso124_charter_g0_g1.json`.
+**Record:** `results/phase0/nyiso/_nyiso124_charter_g0_g1.json`.
 
 **Verified at this session's HEAD (`afe19a56`), committed artifacts only, no solve:**
 `scripts/calibration_verdict.py --run-id 2026-08-04-nyiso-120-c119-scope` returns

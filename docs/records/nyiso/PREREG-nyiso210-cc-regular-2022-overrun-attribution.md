@@ -77,7 +77,7 @@ Decoder basis: `scripts/calibration_verdict.py` L2133-2140 (`base64.b64decode(..
 `scale = npl / 100.0`). No new decoder is written; the production one's construction is reused.
 
 **Probe:** `scripts/probes/nyiso210_cc_overrun_attribution.py` ->
-`results/calibration/_nyiso210_cc_overrun_attribution.json`.
+`results/phase0/nyiso/_nyiso210_cc_overrun_attribution.json`.
 
 ### 3.1 Instrument identity gate — I1
 

@@ -1,6 +1,6 @@
 # RESULT — R-ERCOT-17: pooled South-Texas gas basis, all seven years
 
-PRECOMMIT: `docs/handoffs/PRECOMMIT-r-ercot-17-south-texas-pool-2026-09-29.md` (pinned SHA `4aaa1a1f0f44b89f3fb57fa55a2293711a2ecb7a`). Arm run `2026-09-29-r-17-south-texas` (`results/calibration/r_ercot17_span`, 2019–2025) vs keeper `2026-09-28-r-16-oklaunion-hr`.
+PRECOMMIT: `docs/records/ercot/PRECOMMIT-r-ercot-17-south-texas-pool-2026-09-29.md` (pinned SHA `4aaa1a1f0f44b89f3fb57fa55a2293711a2ecb7a`). Arm run `2026-09-29-r-17-south-texas` (`results/calibration/r_ercot17_span`, 2019–2025) vs keeper `2026-09-28-r-16-oklaunion-hr`.
 
 ## Headline
 

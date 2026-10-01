@@ -97,7 +97,7 @@ scripts/lib data/raw/_validation-source data/raw/reference` touches **115 files,
 +18,810 / -1,921**. That is ten days of engine commits and it is NOT
 hunk-classified here, deliberately: the replay measures the answer directly.
 The last measurement of this question was ercot-264 (2026-09-09,
-`docs/RESULT-ercot264-keeper-repro-2026-09-09.md`), which reproduced all five
+`docs/records/ercot/RESULT-ercot264-keeper-repro-2026-09-09.md`), which reproduced all five
 years **to the cent** at `754a91d9` — i.e. zero drift as of the keeper's own era,
 with ten days of commits landing since.
 
@@ -140,7 +140,7 @@ rather than assumed.
 ## 7. Budget, stated rather than hidden
 
 One ERCOT per-plant year measured at **974 s / ~9 GB**
-(`docs/RESULT-ercot252-2022-repair-resolve-2026-09-06.md`). Five years is
+(`docs/records/ercot/RESULT-ercot252-2022-repair-resolve-2026-09-06.md`). Five years is
 therefore **~80-90 min of LP**, plus hydration and the per-leg verification.
 Rule 32(b)'s 20-minute ceiling is a STOP rule, and the rule's own remedy for a
 span that cannot fit is *"a longer single shard with the budget stated in its
@@ -187,7 +187,7 @@ launched concurrently, each pushing its own bundle to its own branch:
 **Wall-clock is now ~35 min, not ~120** — five per-plant years solve in parallel in five
 containers instead of sequentially in one. Rule 12 `[R-PARALLEL]`'s ~2-invocation cap is a
 **within-container memory** limit and does not bind across separate containers; the
-precedent is exact — ercot-264 (`docs/RESULT-ercot264-keeper-repro-2026-09-09.md`) ran this
+precedent is exact — ercot-264 (`docs/records/ercot/RESULT-ercot264-keeper-repro-2026-09-09.md`) ran this
 identical five-shard, one-year-each fan-out on this identical keeper.
 
 **Rule 32 `[R-SHARD]` (b) is set aside on the owner's instruction, and the cost is stated

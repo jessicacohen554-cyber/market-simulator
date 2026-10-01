@@ -1,7 +1,7 @@
 # ERCOT AS co-opt overlay-replacement — staged prompt pack (2026-07)
 
 Ready-to-paste handoff prompts, one per stage of
-`docs/handoffs/ercot-as-coopt-plan-2026-07.md`. Each is self-contained: drop it
+`docs/records/ercot/ercot-as-coopt-plan-2026-07.md`. Each is self-contained: drop it
 into a fresh Claude Code session on this repo. Ordered 0→5; stages 1/2/3 are
 mutually independent, stage 4 needs 1+2, stage 5 needs 4.
 
@@ -23,7 +23,7 @@ commitment is SHELVED (ercot27 verdict) — do not resurrect it in any stage.**
 ```
 Re-baseline the ERCOT keeper without the measured DAM-AS overlay and decompose
 what the overlay actually carries, BEFORE any new mechanism is built. This is
-WS-F / stage 0 of docs/handoffs/ercot-as-coopt-plan-2026-07.md (read it first,
+WS-F / stage 0 of docs/records/ercot/ercot-as-coopt-plan-2026-07.md (read it first,
 plus the ercot32 and ercot27 entries in docs/calibration-log.md dated
 2026-07-03).
 
@@ -65,7 +65,7 @@ dashboard + the decomposition table, committed and pushed in-session.
 ```
 Build the forward analogue of ERCOT's measured RTOLCAP/RTOFFCAP reserve-supply
 cap — the last AS-path lever with NO forward analogue. Read first:
-docs/handoffs/ercot-as-coopt-plan-2026-07.md §3-§4 (WS-A and the failure-mode
+docs/records/ercot/ercot-as-coopt-plan-2026-07.md §3-§4 (WS-A and the failure-mode
 ledger F1-F7), docs/ercot-reserve-supply-cap-ordc-adder-2026-06.md, and
 scarcity.ercot_rtolcap_supply_cap_mw (results/scarcity.py:1080 — note it
 returns None when no measured parquet covers the year, so forward years run
@@ -120,7 +120,7 @@ nothing on the path reads LMP/RTSPP/MCPC/RTORPA.
 ```
 Add the published per-product duration requirements to the endogenous storage
 energy-vs-AS split so it can replace the measured battery AS-award treatment in
-the ERCOT keeper. Read first: docs/handoffs/ercot-as-coopt-plan-2026-07.md
+the ERCOT keeper. Read first: docs/records/ercot/ercot-as-coopt-plan-2026-07.md
 WS-B, docs/ercot-storage-as-endogenous-2026-06.md (G5, run164), and the ercot32
 calibration-log entry root causes (1) and (2).
 
@@ -161,7 +161,7 @@ docs/ handoff note, committed in-session.
 
 ```
 Complete the ERCOT HSL intake for 2024/2025 (the P4 remainder). Read first:
-docs/handoffs/ercot-as-coopt-plan-2026-07.md WS-E,
+docs/records/ercot/ercot-as-coopt-plan-2026-07.md WS-E,
 docs/forecast-methodology-gaps-2026-06.md G7, and
 src/market_sim/data/renewables.py (_UNCURTAILED_FALLBACK_ISOS,
 _reference_curtailment_rate, hsl_potential_mw): ERCOT 2024/25 have no NP6 HSL
@@ -200,7 +200,7 @@ tests per the data contract, committed in-session.
 Run the overlay-replacement backcast: the endogenous multi-product AS co-opt
 stack REPLACING the measured DAM-AS overlay, scored on the same benchmarks as
 the keeper. Read FIRST and follow exactly:
-docs/handoffs/ercot-as-coopt-plan-2026-07.md §5 (out of scope) and §6 (run
+docs/records/ercot/ercot-as-coopt-plan-2026-07.md §5 (out of scope) and §6 (run
 design, gates G-1..G-7, pre-committed keeper decision), plus the stage-0
 FINDING decomposition and the stage-1/-2 probe writeups.
 
@@ -247,7 +247,7 @@ mcp__github__push_files per CLAUDE.md (avoid the 413 loop).
 ```
 Prove the ERCOT AS path is fully forward-native: a forecast-mode run in the
 RTC+B regime with every AS input regenerating from forward drivers. Read
-first: docs/handoffs/ercot-as-coopt-plan-2026-07.md stage 5, and the mode-aware
+first: docs/records/ercot/ercot-as-coopt-plan-2026-07.md stage 5, and the mode-aware
 seams: ercot_as_forward_requirement_mw (G3), ercot_load_resource_reserve_credit
 _mw (G4), ercot_rtolcap_supply_cap_mw forward branch (WS-A),
 ercot_storage_as_endogenous (G5+WS-B).

@@ -1,6 +1,6 @@
 # RESULT — R-CAISO: CAISO 2022–2025 re-solved on corrected backcast inputs (2026-09-24)
 
-Charter: `docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md` §5.3.1. Recipe, census and
+Charter: `docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md` §5.3.1. Recipe, census and
 G-DRIFT fixed ex ante in `PRECOMMIT-r-caiso-2026-09-24.md` (pin `18bb99b1`). Full tables: `_comparison.md`.
 
 ## Headline

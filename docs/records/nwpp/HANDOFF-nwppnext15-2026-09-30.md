@@ -37,9 +37,9 @@ STATE ON MAIN
 - Determination: NOT-YET on {dispatch_corr}, ONE record: C4 coal 2023 r 0.670 / NRMSE 0.317 (floor 0.70 / 0.30).
   Price is UNSCORED (rubric v3.8).
 - Read first:
-  - docs/handoffs/FINDING-nwppnext14-bridger-and-clark-phase0-2026-09-30.md (all of it, esp. §1)
-  - docs/handoffs/RESULT-nwppnext14-clark-hr-bridger-vintage-2026-09-30.md (§2 regressions, §4 open)
-  - docs/handoffs/PRECOMMIT-nwppnext14-clark-hr-bridger-vintage-2019-2025-2026-09-30.md (§3 G-DRIFT, §4 recipe, §5 stops)
+  - docs/records/nwpp/FINDING-nwppnext14-bridger-and-clark-phase0-2026-09-30.md (all of it, esp. §1)
+  - docs/records/nwpp/RESULT-nwppnext14-clark-hr-bridger-vintage-2026-09-30.md (§2 regressions, §4 open)
+  - docs/records/nwpp/PRECOMMIT-nwppnext14-clark-hr-bridger-vintage-2019-2025-2026-09-30.md (§3 G-DRIFT, §4 recipe, §5 stops)
   - docs/calibration-log/nwpp.md (latest entry), docs/codebase-site/data/mechanism-matrix/NWPP.js,
     docs/mechanism-testing-matrix.md §5.9
 
@@ -59,7 +59,7 @@ OPEN LEVERS, highest value first
    - Test it as the REPLACEMENT: arm vintage_denominator, disarm campd_unit_fuel_split (the selector refuses both),
      run 7 shards, and diff against keeper #19.
    - If promoted, DELETE the per-unit fuel-split path (rule 26).
-   - Do NOT launch the other lane's docs/handoffs/nwppnext14/shards/* or PRECOMMIT-nwppnext14-vintage-denominator:
+   - Do NOT launch the other lane's docs/records/nwpp/nwppnext14/shards/* or PRECOMMIT-nwppnext14-vintage-denominator:
      they arm the DELETED cc_subfloor_eia923_heat_rates. Write a fresh PRECOMMIT on keeper #19's recipe.
    - Also read DESIGN-nwppnext14-captive-mine-marginal-fuel-2026-09-30.md (lever 1 below): in 2023 the captive mine
      was booked at $4.21/MMBtu while contract sources ran $2.42–2.62.

@@ -5,7 +5,7 @@
 solve was launched; nothing in this document changes after that commit.
 
 **This lane designs nothing.** The prereg of record is
-`docs/handoffs/fh-5-phase-b-2026-08-11.md` **§1**, in force unmodified — its
+`docs/records/forecast/fh-5-phase-b-2026-08-11.md` **§1**, in force unmodified — its
 window (§1.2), arm definitions and per-ISO arming (§1.3), I6 rider (§1.5),
 horizon read (§1.6) and governance (§1.8) all bind here verbatim. This session
 executes the ONE cell that section left unexecuted and adds the completed row to

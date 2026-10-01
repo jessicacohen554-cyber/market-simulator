@@ -1,7 +1,7 @@
 {
  "session": "ercot-241",
  "keeper": "2026-08-25-236-swcap-clip-k33 (2023 carve-out, untouched)",
- "precommit": "docs/PRECOMMIT-ercot241-offcore-conduct-phase0-2026-08-30.md",
+ "precommit": "docs/records/ercot/PRECOMMIT-ercot241-offcore-conduct-phase0-2026-08-30.md",
  "v0_identity": {
   "family": [
    2058,

@@ -7,7 +7,7 @@
 
 **THIS IS A READ. Nothing is solved, armed, built, or recommended.** No `src/market_sim/` file,
 no `ScenarioConfig` field, no matrix cell, no ledger row moves. The one instrument this read adds,
-`docs/handoffs/d82/phase0-reclear-2026-09-07.py` (+ `.json`), is a zero-LP re-clear of the
+`docs/records/forecast/d82/phase0-reclear-2026-09-07.py` (+ `.json`), is a zero-LP re-clear of the
 REGISTERED `pjm-t1h` stacks through the code's own `clear_capacity_supply_stack` — the D57 / D61 /
 pjm-eas form — and reads nothing but committed ledgers. Every number below is cited to a committed
 artifact by section; every claim that could not be established is in §6.
@@ -276,7 +276,7 @@ D62 + D74 posture, rows 1–8 all move, discontinuously, at the first positive v
 **One exists, it is validated, and it is already the family's convention.** Three committed instruments
 re-clear a committed `offer_stack` through the code's own `clear_capacity_supply_stack` +
 `capacity_supply_curve` at the committed `price_takers_mw` / `requirement_mw`:
-`docs/handoffs/d57/phase0-reproduction-2026-09-05.py` (0.000 / 0.000 on 16 rows),
+`docs/records/forecast/d57/phase0-reproduction-2026-09-05.py` (0.000 / 0.000 on 16 rows),
 `d61/reclear-2026-09-05.py` (S0 to the cent), `pjmeas/phase0-eas-operand-2026-09-07.py` (≤ 5.0e-4
 $/MW-day, position exact, on the registered bundle) — and this read's `d82/phase0-reclear-2026-09-07.py`
 reproduces S0 to 0.0000 in 2022–2024 (§1.4). D74 §4.2 G1 closed the loop in the other direction: the
@@ -436,6 +436,6 @@ no solve; 2022 discussed only as the bridge the harness declares. **Rule 25** �
 **Rule 29** — this is the read that precedes any screen; §7 is the screen it would have to be. **Rule 27**
 — docs and one read-only instrument; no source file edited.
 
-**Records added:** this document; `docs/handoffs/d82/phase0-reclear-2026-09-07.py` and its `.json`
+**Records added:** this document; `docs/records/forecast/d82/phase0-reclear-2026-09-07.py` and its `.json`
 (the S0 / S62 / S74 re-clear of the registered stacks, every number in §1.4). **Nothing solved, armed,
 built or recommended.** The capx ledger and the PJM matrix shard are the director's to stamp.

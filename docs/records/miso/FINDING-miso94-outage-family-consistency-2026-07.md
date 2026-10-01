@@ -5,7 +5,7 @@
 the ±10 % veto. Every other gate unchanged from miso-93.
 
 Charter, pre-registered before any solve:
-`docs/handoffs/miso-94-outage-family-consistency-charter-2026-07.md`.
+`docs/records/miso/miso-94-outage-family-consistency-charter-2026-07.md`.
 
 ---
 

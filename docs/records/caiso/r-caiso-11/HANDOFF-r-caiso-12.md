@@ -28,7 +28,7 @@ STATE (2026-09-28):
   | C3c h > $200 (RT 27) | — | — | 87 |
 
 READ FIRST:
-- docs/handoffs/r-caiso-11/RESULT-r-caiso-11-2026-09-28.md (§1–§7)
+- docs/records/caiso/r-caiso-11/RESULT-r-caiso-11-2026-09-28.md (§1–§7)
 - results/calibration/_rcaiso11/{object1_dual_census,ps_boundary_footprint}.json
 - docs/mechanism-testing-matrix.md §5.2 and docs/codebase-site/data/mechanism-matrix/CAISO.js
 
@@ -79,7 +79,7 @@ DO NOT re-test (R/G/I cells or censused):
 
 SOLVE RECIPE, if anything is armed:
 - keeper recipe + the flag, one shard per year, 2019–2025 (rules 34(c), 35(c), 36);
-- template docs/handoffs/r-caiso-11/shard-prompt.md (give the shard a short prompt pointing at that file with
+- template docs/records/caiso/r-caiso-11/shard-prompt.md (give the shard a short prompt pointing at that file with
   {Y}/{SHA}/{SRC}/{SDCAP}; swap the --set line and the hard-stop-3 arm field);
   - {SRC} is rcaiso11_A_tp_2019_2021 for 2019–21 and rcaiso11_A_span for 2022–25;
   - {SDCAP} is 1436.0 for 2019–23, 2074.0 for 2024 and 2071.0 for 2025;

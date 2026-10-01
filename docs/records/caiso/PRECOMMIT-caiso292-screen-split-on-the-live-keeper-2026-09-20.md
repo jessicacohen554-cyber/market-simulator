@@ -13,7 +13,7 @@ mean-belly-MW pass the restart inequality yet are floored by nothing; which scre
 the surplus decommit screen or the `startup_aware` gap-merging channel?* — and costs it at "now
 zero-LP, but only after the fleet-rebuild repair".
 
-**That question was already answered.** `docs/RESULT-caiso287-startup-decommit-split-2026-09-19.md`
+**That question was already answered.** `docs/records/caiso/RESULT-caiso287-startup-decommit-split-2026-09-19.md`
 §2 split it **unanimously across all four years**, verdict **(A) GAP-MERGING DOMINANT**, with the
 decommit screen exonerated; the probe is `scripts/probes/caiso287_screen_split.py` and its
 artifacts are `results/calibration/_caiso287_screen_split_{2022,2023,2024,2025}.json`. What caiso-287
@@ -53,7 +53,7 @@ the rebuild must splat `replay_keeper.DERIVED_RUN_YEAR_INPUTS`; without it the r
 
 ## 3. CUTS — INHERITED VERBATIM, NOTHING NEW IS CHOSEN
 
-From `docs/PRECOMMIT-caiso287-startup-decommit-split-2026-09-19.md`, unchanged:
+From `docs/records/caiso/PRECOMMIT-caiso287-startup-decommit-split-2026-09-19.md`, unchanged:
 
 * `DOMINANCE_FRAC = 0.70` of `R_total`;
 * `NO_OBJECT_MW = 10.0` mean-belly-MW;
@@ -69,7 +69,7 @@ From `docs/PRECOMMIT-caiso287-startup-decommit-split-2026-09-19.md`, unchanged:
 **G-V — harness validation, and it binds first.** The probe runs end-to-end on
 `caiso287_instr_2022` (recovered by full immutable SHA `bb3034214d1d3da70d0db8d8435540f82387222d`,
 the pin `.gitignore` records) and must reproduce
-`results/calibration/_caiso287_screen_split_2022.json`:
+`results/phase0/caiso/_caiso287_screen_split_2022.json`:
 
 | tier | condition | reading |
 |---|---|---|

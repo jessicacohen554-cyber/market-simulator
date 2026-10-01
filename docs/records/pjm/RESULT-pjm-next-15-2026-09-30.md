@@ -2,7 +2,7 @@
 
 **Keeper unchanged:** `2026-09-28-pjm-next8-exitfix`.
 - **Solves:** none (zero LP, zero shards). Nothing registered or promoted.
-- **Detail:** `docs/FINDING-pjm-next-15-cc-cheap-block-and-commitment-2026-09-30.md`.
+- **Detail:** `docs/records/pjm/FINDING-pjm-next-15-cc-cheap-block-and-commitment-2026-09-30.md`.
 
 | card | result |
 |---|---|

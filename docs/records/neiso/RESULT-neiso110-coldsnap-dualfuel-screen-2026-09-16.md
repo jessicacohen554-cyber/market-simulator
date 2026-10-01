@@ -1,8 +1,8 @@
 # RESULT — neiso-110 screen: the dual-fuel exemption is real, unearned, and NOT load-bearing
 
 **Session** neiso-110 · **ISO** NEISO · **PRECOMMIT**
-`docs/PRECOMMIT-neiso110-coldsnap-dualfuel-2026-09-16.md` (written and pushed before the solve).
-**Phase-0 evidence** `docs/FINDING-neiso110-winter-oil-driver-2026-09-16.md`.
+`docs/records/neiso/PRECOMMIT-neiso110-coldsnap-dualfuel-2026-09-16.md` (written and pushed before the solve).
+**Phase-0 evidence** `docs/records/neiso/FINDING-neiso110-winter-oil-driver-2026-09-16.md`.
 
 **VERDICT: the screen KILLS the arm as a fix for oil.** Gate G5 fails its pre-registered
 non-triviality threshold by two orders of magnitude. **The remaining five years are NOT

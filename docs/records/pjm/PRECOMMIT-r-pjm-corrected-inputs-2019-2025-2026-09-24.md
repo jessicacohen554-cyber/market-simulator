@@ -2,7 +2,7 @@
 
 Written and pushed **before any solve**. The seven shards pin to this commit's full SHA.
 
-**Charter:** `docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md` §5.3.7 (owner
+**Charter:** `docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md` §5.3.7 (owner
 instruction 2026-09-24: every backcast year 2019–2025 runs on the year-correct EIA-860 vintage,
 plant-specific heat rates, and granular CAMPD outage data). **Precondition met:** F1 (#6572) and F2
 (#6569) are merged; this branch is cut from `9210075392a128d14a5efb168ab1f9955a9b6946`.
@@ -88,7 +88,7 @@ committed 2018 window ends in 2019, so they reach no backcast year.)
 
 ### 3a. EIA-860 vintage and class-table heat rate (F1 census at this HEAD, backcast default)
 
-`docs/handoffs/f1/census.py --iso PJM --posture backcast-default`, re-run in this session —
+`docs/records/misc/f1/census.py --iso PJM --posture backcast-default`, re-run in this session —
 reproduces F1's table exactly.
 
 | | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 |

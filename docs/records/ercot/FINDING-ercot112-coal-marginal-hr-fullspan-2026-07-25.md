@@ -2,7 +2,7 @@
 
 **Date** 2026-07-25 · **ISO** ERCOT · **Years** 2023–2025 (one invocation each, years sequential) ·
 **Gate** `ScenarioConfig.coal_econ_marginal_hr_bound` (default **off**; keeper unchanged) ·
-**Pre-commit** `results/calibration/PRECOMMIT-ercot112-coal-marginal-hr-fullspan-2026-07-25.md`
+**Pre-commit** `docs/records/ercot/PRECOMMIT-ercot112-coal-marginal-hr-fullspan-2026-07-25.md`
 (written and pushed **before** any 2024/2025 result was read) ·
 **Scorer** `scripts/probes/ercot112_score_coal_arms.py`
 

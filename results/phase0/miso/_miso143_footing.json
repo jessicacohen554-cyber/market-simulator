@@ -1,5 +1,5 @@
 {
-  "prereg": "results/calibration/PREREG-miso143-coal-gas-merit-order-2026-08-08.md",
+  "prereg": "docs/records/miso/PREREG-miso143-coal-gas-merit-order-2026-08-08.md",
   "gate": "G-A0 (footing STOP gate) + P2 marginal-class + P9 self-check",
   "keeper": "2026-08-05-miso-132b-cc-committed",
   "posture": "NO SOLVE -- run_year(fleet_only=True) reconstruction only",

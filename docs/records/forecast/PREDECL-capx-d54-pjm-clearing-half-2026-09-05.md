@@ -2,7 +2,7 @@
 
 **Pushed with the design (`DESIGN-capx-d54-pjm-clearing-half-2026-09-05.md`) BEFORE any
 code exists.** Docs-only lane: nothing below was solved; every number is computed by the
-committed instrument `docs/handoffs/d54/clearing-predecl-2026-09-05.py` (D48 basis) and
+committed instrument `docs/records/forecast/d54/clearing-predecl-2026-09-05.py` (D48 basis) and
 `clearing-predecl-headbasis-2026-09-05.py` (HEAD basis) from the committed D45-R and D48
 ledgers, the D48 position instrument and the D45 published-positions instrument — outputs
 `clearing-predecl[-headbasis]-2026-09-05.{json,txt}` beside them. The build lane grades this
@@ -197,7 +197,7 @@ re-runs the committed instrument on D53's ledgers and re-declares §2 before sol
 
 ## 6. Records this lane commits
 
-`docs/handoffs/DESIGN-capx-d54-pjm-clearing-half-2026-09-05.md`, this document, and
-`docs/handoffs/d54/clearing-predecl-2026-09-05.py` / `-headbasis-2026-09-05.py` with their
+`docs/records/forecast/DESIGN-capx-d54-pjm-clearing-half-2026-09-05.md`, this document, and
+`docs/records/forecast/d54/clearing-predecl-2026-09-05.py` / `-headbasis-2026-09-05.py` with their
 `.json` and stdout `.txt`. Nothing else: no code, no field, no matrix row, no solve, no
 registration, no keeper / shard / marker.

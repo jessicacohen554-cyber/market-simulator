@@ -183,7 +183,7 @@ block" **DOES NOT EXIST** (ERCOT-163); `energy_online_capability_cap` `R`
 (ERCOT-159); `ercot_storage_rt_offer_surface` `R` (ERCOT-162); the ercot-167
 SOC-reserve re-gate still waits on the H4-item-4 2024 maintenance-season
 availability defect; the West/Panhandle topology split is **CLOSED**
-(`docs/DIAGNOSIS-ercot-trough-price-formation-2026-07.md` §§7–10). **ERCOT-170's
+(`docs/records/ercot/DIAGNOSIS-ercot-trough-price-formation-2026-07.md` §§7–10). **ERCOT-170's
 item-11 result stands**: the CC headroom object is a capability object, its
 per-unit crosswalk is `FILED-UNLICENSED`, and it is re-pointed to a data-intake
 charter — untouched here.

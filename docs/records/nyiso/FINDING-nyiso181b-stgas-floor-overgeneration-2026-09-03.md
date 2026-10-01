@@ -7,9 +7,9 @@ backcast-calibration track, 2026-09-03. **Solves run: ZERO.**
 fail set **{C1-2023 `ST_GAS` +3.86 TWh, C3a-2025 −11.2 %, C3c}**. **Unchanged.** No parameter
 touched, no band swept, no `ScenarioConfig` field added, no arm built, `src/market_sim/`
 untouched.
-**Pre-registration:** `results/calibration/PREREG-nyiso181-stgas-floor-overgeneration.md`,
+**Pre-registration:** `docs/records/nyiso/PREREG-nyiso181-stgas-floor-overgeneration.md`,
 committed and **pushed to origin at `a1f717b5`** before the first measurement.
-**Machine record:** `results/calibration/_nyiso181b_stgas_floor_overgeneration.json`
+**Machine record:** `results/phase0/nyiso/_nyiso181b_stgas_floor_overgeneration.json`
 (probe `scripts/probes/nyiso181b_stgas_floor_overgeneration.py`).
 **NO LEVER OPENED — PREREG §4 S2 FIRED**, on its own pre-declared terms.
 

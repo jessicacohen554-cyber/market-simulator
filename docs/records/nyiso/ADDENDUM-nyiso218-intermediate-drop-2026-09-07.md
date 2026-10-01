@@ -27,7 +27,7 @@ of the override.
 
 Instrument: two `fleet_only` rebuilds of the keeper's 2023 fleet (zero LP), one carrying the
 13-group override, one carrying the 10-group override; `mc_base` compared row-for-row.
-Record: `results/calibration/_nyiso218_intermediate_drop_equivalence.json`.
+Record: `results/phase0/nyiso/_nyiso218_intermediate_drop_equivalence.json`.
 
 | | |
 |---|---|

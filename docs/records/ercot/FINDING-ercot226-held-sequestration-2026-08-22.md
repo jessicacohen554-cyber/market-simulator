@@ -5,7 +5,7 @@ waivers W-1..W-5), 2026-08-22, branch
 `claude/ercot-2023-summer-scarcity-9lg3nm`. Keeper at open:
 `2026-08-20-ercot223-arm-eventrelease` (NOT-YET, {C3a-2023 −39.7 %,
 C3b-2023 0.729}, C3c ledgered ×3). Precommit
-`docs/PRECOMMIT-ercot226-held-sequestration-2026-08-22.md` pushed +
+`docs/records/ercot/PRECOMMIT-ercot226-held-sequestration-2026-08-22.md` pushed +
 blob-verified (519 lines, blob-sha-verified against the remote) BEFORE any
 measurement or solve; Amendment 1 (§5.10) landed before any probe was
 scored. Executed hub-and-spokes per the owner's mid-session parallelization
@@ -39,10 +39,10 @@ instruction (precommit §0/§6).**
 | **F4** load-forecast conservatism | operator DA-forecast bias | no measured series in repo; procurement-sizing entry double-counts the armed plan; ORDC entry channel-forbidden (RTORPA ≈ $1 at target hours) | **REFUTED-P0** |
 | **F5** deployment-design depth | anything beyond rigid-at-VOLL | armed representation already maximal; storage AS measured-credited (telemetered/award means: regup 205/269, rrs 882/844, ecrs 127/120, nonspin 16/15 MW); LR-RRS armed; online-NSPIN → F1b | **ALREADY-CARRIED** |
 
-Committed record: `results/calibration/ercot226_helddepth_phase0.json`
+Committed record: `results/phase0/ercot/ercot226_helddepth_phase0.json`
 (kill checks, margins, location screen), the derive's printed validations
 (HASL ≈ HSL − Σresp median dev **0.00 MW** on 26,052 sample rows), and
-`results/calibration/ercot226_probe_f2.json` (the F2 A/B).
+`results/phase0/ercot/ercot226_probe_f2.json` (the F2 A/B).
 
 **Why F1's zero is itself a finding.** The Gen-resource ONLINE telemetered
 basis is a *subset* of the plan's provider space — Load Resources and
@@ -85,7 +85,7 @@ shortfall hour-set ⊆ control's per family), never absolute zero
 ## 3. THE F2 PROBE (2023-only A/B vs the keeper config, hub-executed) —
 **REJECTED-AS-ARMED, direction NEGATIVE**
 
-Committed record: `results/calibration/ercot226_probe_f2.json` +
+Committed record: `results/phase0/ercot/ercot226_probe_f2.json` +
 `ercot226_f2_gates_hub.json` (full hour lists). Control G-REPRO: the hub
 control replay reproduces the keeper's committed 2023 sidecars to
 **numeric identity** (max|Δ| = 0.0 on every numeric column; the sha256

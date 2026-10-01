@@ -9,7 +9,7 @@ FIRST ACTION (exactly this, before anything else):
   git fetch origin cd5897987106193b34b84c5f4bb4a7c9bb1e4760 || git fetch origin main; git checkout --detach cd5897987106193b34b84c5f4bb4a7c9bb1e4760
 Then HARD STOP 1: `git rev-parse HEAD` must print cd5897987106193b34b84c5f4bb4a7c9bb1e4760. Never rebase, never `git pull`, never "sync", never force-push.
 
-PRECOMMIT: docs/handoffs/r-caiso-20/PRECOMMIT-r-caiso-20-2026-09-30.md (read §2, §3 and §5 only).
+PRECOMMIT: docs/records/caiso/r-caiso-20/PRECOMMIT-r-caiso-20-2026-09-30.md (read §2, §3 and §5 only).
 
 SETUP (in this order):
   pip install -r requirements.txt && pip install -e .     (only if imports fail; if PyYAML refuses to uninstall add --ignore-installed PyYAML; if zoneinfo cannot find US/Pacific, `pip install tzdata`)

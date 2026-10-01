@@ -67,7 +67,7 @@ Code:
 
 The probe rebuilds keeper #14's fleet on its own recipe plus the arm and calls the builders exactly as `run_year`
 does. The gate resolved `(pooled False, yard True)`, floor True and monthly pile True in all 7 years. Output:
-`results/calibration/_nwppnext8_monthly_pile_phase0.json`.
+`results/phase0/nwpp/_nwppnext8_monthly_pile_phase0.json`.
 
 | Year | Yards | Annual floor TWh | Annual ceiling | Keeper #14 coal (rowed) | Peak floor gap vs #14 (month) | Peak ceiling excess (month) | Clipped cells (ceil / cap) |
 |---|---|---|---|---|---|---|---|

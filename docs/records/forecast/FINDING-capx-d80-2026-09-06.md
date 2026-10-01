@@ -146,4 +146,4 @@ and `dominant_open_causes` text are untouched; the T1-H I7 cause stays as Y-22 r
 |---|---|
 | `frontend/data/hindcast/invariant-failures.json` | +8 `declared_failures` rows (10 pairs); `registration_ratchet_baseline` → `{}`; `d80_note` appended (244 lines — under rule 27's 300-line blob-verify bar; the pushed blob's sha256 was compared to local anyway) |
 | `tests/scoring/test_invariant_declaration_ratchet.py` | the empty-baseline assertion (§4.1) |
-| `docs/handoffs/FINDING-capx-d80-2026-09-06.md` | this document |
+| `docs/records/forecast/FINDING-capx-d80-2026-09-06.md` | this document |

@@ -1,6 +1,6 @@
 {
  "session": "nyiso-186",
- "prereg": "results/calibration/PREREG-nyiso186-cc-regular-2024-class.md",
+ "prereg": "docs/records/nyiso/PREREG-nyiso186-cc-regular-2024-class.md",
  "bundle": "results/calibration/nyiso186_control",
  "years": {
   "2023": {

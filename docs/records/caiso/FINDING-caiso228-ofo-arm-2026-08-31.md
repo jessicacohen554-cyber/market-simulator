@@ -7,7 +7,7 @@
 C1 12/12 free 8/8; C2/C3b/C4/C6/C8 PASS) · **Solves run: NONE.**
 
 **NUMBERING.** The binding pre-registration for this arm is
-`results/calibration/PRECOMMIT-caiso227-ofo-arm-2026-08-31.md`. Its "227" label
+`docs/records/caiso/PRECOMMIT-caiso227-ofo-arm-2026-08-31.md`. Its "227" label
 is historical — caiso-227 was the C3a root-cause round
 (`FINDING-caiso227-c3a-rootcause-ps-intake-2026-08-31.md`) — and **caiso-228 is
 the session executing it**, funded by the owner dispatching the arm prompt (the

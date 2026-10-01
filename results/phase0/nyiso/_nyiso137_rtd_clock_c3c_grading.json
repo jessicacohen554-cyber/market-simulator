@@ -5,7 +5,7 @@
  "convention": {
   "committed_producer": "derive_actual_lmp._nyiso_wide -> .floor('h') (interval-BEGINNING, ADJUDICATED WRONG)",
   "correct": "(ts - 1s).floor('h') (interval-ENDING, ADJUDICATED RIGHT)",
-  "adjudication": "docs/handoffs/d32-f6fix-2026-08-13.md ADDENDUM A.1-A.7"
+  "adjudication": "docs/records/forecast/d32-f6fix-2026-08-13.md ADDENDUM A.1-A.7"
  },
  "holdout": "2023-2025 only. The twelve 2022 zips are on disk and were NOT read -- ACTIVE spend freeze re-confirmed 2026-08-15.",
  "part_a_exact_staged_months": {

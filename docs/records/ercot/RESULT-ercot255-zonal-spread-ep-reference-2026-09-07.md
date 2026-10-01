@@ -1,7 +1,7 @@
 # RESULT — the 2025 SCREEN CLEARS EVERY GATE, and the mechanism's sign REVERSES between the screen year and 2021, which is the point (ercot-255)
 
-> Scored against `docs/PRECOMMIT-ercot255-zonal-spread-ep-reference-2026-09-07.md`
-> and its `docs/ADDENDUM-ercot255-g1c-correction-2026-09-07.md`, both pushed
+> Scored against `docs/records/ercot/PRECOMMIT-ercot255-zonal-spread-ep-reference-2026-09-07.md`
+> and its `docs/records/ercot/ADDENDUM-ercot255-g1c-correction-2026-09-07.md`, both pushed
 > before any LP ran. All bundles are **deleted before merge** (rule 29
 > `[R-SCREEN]` clause c); every number this session cites is in these three
 > documents, and git history is the record for the bytes.

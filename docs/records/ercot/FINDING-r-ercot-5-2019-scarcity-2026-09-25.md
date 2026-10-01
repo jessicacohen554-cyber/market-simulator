@@ -55,7 +55,7 @@ Named cases:
 
 `outages.unit_outage_event_window` reconstructs a window with no hour columns as `[outage_start 00:00, outage_end + 1 day)`. The detector finds windows in HOURS (`derive_campd_unit_outages.py`). So the extract asserts up to 23 h at each edge that the detector never detected — exactly where the event contract guarantees the neighbouring hour was running.
 
-Unit-grain census, probe `scripts/probes/_r_ercot5_window_edge_census.py` → `docs/handoffs/r-ercot/r_ercot5_window_edge.json`. It counts hours inside a window at which CAMPD shows the SAME unit (same facility id, same unit id) with gross load > 0:
+Unit-grain census, probe `scripts/probes/_r_ercot5_window_edge_census.py` → `docs/records/ercot/r-ercot/r_ercot5_window_edge.json`. It counts hours inside a window at which CAMPD shows the SAME unit (same facility id, same unit id) with gross load > 0:
 
 | year | std windows contradicted | std GWh inside | short-coal | GWh | short-gas | GWh | unit-h on first/last day (all families) |
 |---|---|---|---|---|---|---|---|
@@ -75,7 +75,7 @@ Unit-grain census, probe `scripts/probes/_r_ercot5_window_edge_census.py` → `d
 - `unit_outage_window_hour_grain` (nyiso-229, **K** on NYISO) selects the `-perunitmerithour-` extract, and only when `campd_per_unit_attribution` AND `campd_outage_merit_order_guard` are armed.
 - ERCOT routes through its bin sheet and arms neither. ERCOT's cell was **U** ("reads the field as n/a in practice").
 
-**Seam, zero LP.** Field ON vs the keeper, fleet-only, TWh of capability per year. `gap` is the capability below own-hour CEMS; `scar` is the mean MW restored in that year's P1 > $1k / slack hours. Full table: `docs/handoffs/r-ercot/r_ercot5_hourgrain_seam.txt`.
+**Seam, zero LP.** Field ON vs the keeper, fleet-only, TWh of capability per year. `gap` is the capability below own-hour CEMS; `scar` is the mean MW restored in that year's P1 > $1k / slack hours. Full table: `docs/records/ercot/r-ercot/r_ercot5_hourgrain_seam.txt`.
 
 | year | coal lift | CC lift / cut | ST lift / cut | coal gap A→B | CC gap A→B | scar MW (coal/CC/ST) |
 |---|---|---|---|---|---|---|
@@ -115,7 +115,7 @@ This is new evidence for the R cell, and it is **surfaced, not armed**:
 - ercot-185's own log names exactly this re-test ("removing the double-count against a REPAIRED partial layer may no longer flood").
 - ercot-173's G-COAL148 gate scored the flood against the product ceiling itself. It never scored against the plant's own CEMS output.
 - Coal is now SHORT of actual in every year (2023 −4.3, 2024 −4.9 TWh PRB), where the 2026-08 flood concern was over-dispatch.
-- Unit-scoped zero-LP table: `docs/handoffs/r-ercot/r_ercot5_unitscoped_seam.txt`.
+- Unit-scoped zero-LP table: `docs/records/ercot/r-ercot/r_ercot5_unitscoped_seam.txt`.
 
 **DAM COP below CEMS (107 MW in the 2019 tail):**
 - The pin's measured fraction sits below the plant's same-hour output (e.g. Lost Pines 55154). This is the COP's day-ahead declaration versus RT reality.

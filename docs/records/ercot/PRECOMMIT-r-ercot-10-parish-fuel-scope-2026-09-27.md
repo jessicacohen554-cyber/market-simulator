@@ -258,7 +258,7 @@ A fuel-family unit filter carries no free scalar. The offer-curve band multiplie
     3.0077
    ],
    "n_scalars": 2,
-   "source": "EWMA half-life (days) and gain beta of the daily spike-frequency expectation P_hat, SSE-fit of implied_P(d) = evening storage offer p50 / ordc_voll on P_hat(d) over admissible days 2023-06-10..12-31 on the pre-registered grid (PRECOMMIT-ercot221-adaptive-expectation-2026-08-18.md Amendment 1 family v2; artifact results/calibration/ercot221_adaptive_phase0.json). The armed path consumes only the model's own pass-1 price path (Amendment 4) \u2014 the measured surface is identification evidence only. Phase-0 v1+v2 FAILED their gates; Phase-1 entered on owner instruction (recorded in the precommit Amendment 2), so these constants are additionally flagged by that standing record."
+   "source": "EWMA half-life (days) and gain beta of the daily spike-frequency expectation P_hat, SSE-fit of implied_P(d) = evening storage offer p50 / ordc_voll on P_hat(d) over admissible days 2023-06-10..12-31 on the pre-registered grid (PRECOMMIT-ercot221-adaptive-expectation-2026-08-18.md Amendment 1 family v2; artifact results/phase0/ercot/ercot221_adaptive_phase0.json). The armed path consumes only the model's own pass-1 price path (Amendment 4) \u2014 the measured surface is identification evidence only. Phase-0 v1+v2 FAILED their gates; Phase-1 entered on owner instruction (recorded in the precommit Amendment 2), so these constants are additionally flagged by that standing record."
   },
   {
    "name": "CHP_BTM_PCT_BY_SECTOR['merchant']",
@@ -267,7 +267,7 @@ A fuel-family unit filter carries no free scalar. The offer-curve band multiplie
    "lineage_solves": ">=165 solves (audit \u00a75.1)",
    "value": 35.0,
    "source": "merchant CHP behind-the-meter share \u2014 industrial/commercial re-derived from EIA-923 Schedule-8 (S3), merchant retained at its prior fitted value (audit C-4; W1d marker)",
-   "root_cause": "no independent merchant-CHP host-load source found yet \u2014 replace when one exists (constants.py comment); survey of candidate sources + recommended EIA-923 Schedule-8 intake path: docs/handoffs/merchant-chp-host-load-memo-2026-07.md; open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1335"
+   "root_cause": "no independent merchant-CHP host-load source found yet \u2014 replace when one exists (constants.py comment); survey of candidate sources + recommended EIA-923 Schedule-8 intake path: docs/records/misc/merchant-chp-host-load-memo-2026-07.md; open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1335"
   },
   {
    "name": "reliability_floor coefficients",
@@ -315,7 +315,7 @@ A fuel-family unit filter carries no free scalar. The offer-curve band multiplie
 
 ## 8. Execution
 
-**Seven shards**, one per year 2019–2025 (rules 34(c) / 36), from `docs/handoffs/r-ercot/SHARD-PROMPTS-r-ercot-10.md`, pinned to the SHA of the commit carrying this file.
+**Seven shards**, one per year 2019–2025 (rules 34(c) / 36), from `docs/records/ercot/r-ercot/SHARD-PROMPTS-r-ercot-10.md`, pinned to the SHA of the commit carrying this file.
 
 **Each shard:**
 - runs `replay_keeper.py results/calibration/r_ercot8_fusco_span --years <Y>` with **no `--set`**, because the arm is the data;

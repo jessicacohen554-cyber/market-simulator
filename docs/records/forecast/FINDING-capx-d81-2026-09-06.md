@@ -6,7 +6,7 @@ enumerates. **Branch:** `claude/capx-d81-must-offer-8jzvbj`, fresh off `origin/m
 **Date:** 2026-09-06. **Model:** Opus. **DATA PROFILE:** `pjm`.
 Companion: `PRECOMMIT-capx-d81-2026-09-06.md` (phase 0 + the gate table, pushed at `5428387b`
 **before any code and before any solve**; Addendum A pushed at `6123188e` **before the full
-window**). Instruments and every number: `docs/handoffs/d81/`.
+window**). Instruments and every number: `docs/records/forecast/d81/`.
 
 **NOTHING ARMS.** No `ScenarioConfig` field added or changed, no default flip, no override, zero
 DOF, no cache key moved (`ScenarioConfig().cache_key()` = `547053bdfccd4264` before and after).
@@ -36,7 +36,7 @@ delivery years. So the lane delivers a structural correction at zero cost to any
 
 ## 2. PHASE 0 — the pending dated block, sized with no LP
 
-`docs/handoffs/d81/phase0_dated_block.py` → `phase0_dated_block.json`. The base fleet, both
+`docs/records/forecast/d81/phase0_dated_block.py` → `phase0_dated_block.json`. The base fleet, both
 exogenous-exit registries and the resolved config are the run's own — captured by patching
 `market_sim.runner.build_base_fleet` inside the D78/D57 recipe and aborting before the first solve —
 then walked through evolve steps 0/1/1b per year, reading `dated_plant_unit_ids(fleet_Y, afx, Y)`,
@@ -367,14 +367,14 @@ number this session will ever cite lives in the PRECOMMIT, this FINDING,
 ## 9. Reproduction
 
 ```
-uv run python docs/handoffs/d81/phase0_dated_block.py --out docs/handoffs/d81/phase0_dated_block.json
-bash docs/handoffs/d81/run_screen.sh control     # base code (acbb5350)
-bash docs/handoffs/d81/run_screen.sh arm         # post-fix code
-uv run python docs/handoffs/d81/screen_compare.py \
+uv run python docs/records/forecast/d81/phase0_dated_block.py --out docs/records/forecast/d81/phase0_dated_block.json
+bash docs/records/forecast/d81/run_screen.sh control     # base code (acbb5350)
+bash docs/records/forecast/d81/run_screen.sh arm         # post-fix code
+uv run python docs/records/forecast/d81/screen_compare.py \
     --ctl results/hindcast/pjm-2021-2023-realized-t1h-d81-control \
     --arm results/hindcast/pjm-2021-2023-realized-t1h-d81-arm \
-    --phase0 docs/handoffs/d81/phase0_dated_block.json \
-    --out docs/handoffs/d81/screen_compare.json
-bash docs/handoffs/d81/run_full.sh arm
-bash docs/handoffs/d81/run_full.sh control       # with evolve.py checked out at acbb5350
+    --phase0 docs/records/forecast/d81/phase0_dated_block.json \
+    --out docs/records/forecast/d81/screen_compare.json
+bash docs/records/forecast/d81/run_full.sh arm
+bash docs/records/forecast/d81/run_full.sh control       # with evolve.py checked out at acbb5350
 ```

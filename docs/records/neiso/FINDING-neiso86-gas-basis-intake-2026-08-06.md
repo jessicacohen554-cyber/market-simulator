@@ -2,7 +2,7 @@
 
 **Session:** neiso-86, 2026-08-06
 **Type:** DATA INTAKE (rule 22 channel 1). **NO LP WAS BUILT. NO YEAR WAS SOLVED, SCORED OR REGISTERED.**
-**Pre-registration:** `results/calibration/PREREG-neiso86-gas-basis-intake-2026-08-06.md`, committed
+**Pre-registration:** `docs/records/neiso/PREREG-neiso86-gas-basis-intake-2026-08-06.md`, committed
 (`5b27332f`) **before** any data byte was edited.
 **Keeper:** UNCHANGED (`2026-08-05-neiso-83-ca1-reclass`).
 **Mechanism cells:** UNCHANGED. No mechanism tested, proposed or armed (rule 28(d)).
@@ -248,4 +248,4 @@ discontinuity. **Nothing here re-opens, re-scores or re-interprets it** (rule 22
 | `data/raw/gas-prices/isone_ma_gas_index_monthly.csv` | The measured index series, 97 months, one source URL per row |
 | `data/raw/gas_basis_by_iso_month.csv` | 61 NEISO rows corrected (2018×8, 2019×12, 2020×12, 2021×12, 2022×12, 2026×5) |
 | `data/raw/gas-prices/algonquin_citygate_daily.csv` | +313 measured AGT prints (2018–2022, 2026) |
-| `results/calibration/_neiso86_intake_gates.json` | Machine-readable gate outcomes |
+| `results/phase0/neiso/_neiso86_intake_gates.json` | Machine-readable gate outcomes |

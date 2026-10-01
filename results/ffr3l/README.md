@@ -52,4 +52,4 @@ parts. Full accounting in the deliverable.
 
 ## Deliverable
 
-`docs/handoffs/ffr-3l-ercot-t1x-attribution-2026-08-04.md`.
+`docs/records/forecast/ffr-3l-ercot-t1x-attribution-2026-08-04.md`.

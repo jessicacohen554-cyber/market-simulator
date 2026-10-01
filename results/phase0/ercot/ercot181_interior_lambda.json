@@ -1,6 +1,6 @@
 {
  "probe": "ercot181_interior_lambda",
- "precommit": "docs/PRECOMMIT-ercot181-quantity-position-2026-08-09.md \u00a71",
+ "precommit": "docs/records/ercot/PRECOMMIT-ercot181-quantity-position-2026-08-09.md \u00a71",
  "license": "DIAGNOSTIC ONLY: Base Points are realized dispatch outcomes and I-2 reuses the committed residual-selected top-100 hours; output barred from parameter identification and every mechanism input (rule 13 diagnostic clause)",
  "year": 2023,
  "rank_bar": 0.97,

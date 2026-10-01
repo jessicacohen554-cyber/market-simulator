@@ -4,9 +4,9 @@
 *"Charter both legs now"* — the T1-H capacity-entry defect (carried as
 "two defects, not one" since board v13 item 11 / A-7) gets a charter and a
 lane this sitting. Program: `docs/forecast-development-plan-2026-07.md`
-(T1-H); parent diagnosis: `docs/FINDING-entry-screen-t1h-2026-08.md` (the
+(T1-H); parent diagnosis: `docs/records/misc/FINDING-entry-screen-t1h-2026-08.md` (the
 defect register D-1…D-8 cited below); adjudication context:
-`docs/FINDING-entry-signal-disarm-2026-08.md` (the C-1 verdict —
+`docs/records/misc/FINDING-entry-signal-disarm-2026-08.md` (the C-1 verdict —
 `entry_lookahead_reprice` ERCOT cell `K`, `fc O`; arming/disarming the
 signal replacement is an OWNER promotion decision and is NOT re-opened
 here). This precommit is pushed before any measurement runs.
@@ -89,7 +89,7 @@ Registration through `scripts/register_forecast_run.py` alone (rule 15).
 
 ## Records duties
 
-Phase-0 finding: `docs/FINDING-t1h-capacity-entry-phase0-2026-08-30.md`
+Phase-0 finding: `docs/records/misc/FINDING-t1h-capacity-entry-phase0-2026-08-30.md`
 (or dated day of landing); matrix cells updated in the session that tests
 a mechanism, rejections included (rule 26 duty (b)); this charter is cited
 by the §8 ledger entry of the 2026-08-30 decision-card sitting.

@@ -282,7 +282,7 @@ measured side. A channel share is never read as a defect on its own.
 ## 6. Deliverables
 
 * `scripts/probes/_miso238_pjm_seam_channel_attribution_phase0.py` →
-  `results/calibration/_miso238_pjm_seam_channel_attribution_phase0.json`.
+  `results/phase0/miso/_miso238_pjm_seam_channel_attribution_phase0.json`.
 * `results/calibration/FINDING-miso238-*.md` carrying **every number this session will ever cite**.
 * Evidence appended to MISO's matrix shard + the §5.4 queue stamp (rule 25, rule 28(b) evidence
   form).

@@ -171,7 +171,7 @@ summary** rather than scored by identity. This lane will say which limbs it read
 
 ## 4. Two NEW pre-registrations the Stage-C memo asks this lane for
 
-`docs/handoffs/FINDING-scenario-campaign-2026-09-07.md` §5–§6 routes two questions to the 25-year
+`docs/records/misc/FINDING-scenario-campaign-2026-09-07.md` §5–§6 routes two questions to the 25-year
 horizon. Both are answered from committed inputs at zero LP, so the predictions are falsifiable.
 
 **The arithmetic.** `ccs_retrofit_available_year = 2028` and `ccs_retrofit_max_gw_per_year = 3.0`
@@ -241,7 +241,7 @@ tree. **SCN-WS5B-NYISO owns that one-line change and this lane does not make it*
 files — `full_horizon_summary.json` and `run_config.json`, a few KB — to
 
 ```
-docs/handoffs/scn-ws5b-neiso/<CASE>/
+docs/records/forecast/scn-ws5b-neiso/<CASE>/
 ```
 
 matching NYISO's ADDENDUM 1 §1 resolution and Stage A's layout. **`git fetch origin main` is re-run

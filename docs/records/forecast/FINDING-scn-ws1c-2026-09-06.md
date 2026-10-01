@@ -1,6 +1,6 @@
 # FINDING — SCN-WS1c: the D-1 federal-carbon FLOOR (owner ruling S2), executed
 
-**Lane:** SCN-WS1c (desk ledger `docs/handoffs/scenario-desk-ledger-2026-09.md` §0 r#5 am.1,
+**Lane:** SCN-WS1c (desk ledger `docs/records/misc/scenario-desk-ledger-2026-09.md` §0 r#5 am.1,
 §2 ruling S2, §5), plan §7 "WS-1a" **item 1** — the one item SCN-WS1a's card gate withheld,
 released by the ruling. Model Fable. Branch `claude/scn-ws1c-carbon-floor-tmlmjl` (the harness
 assigned this stem in place of the ledger's nominal `claude/scn-ws1c-carbon-floor-v2rk`).
@@ -11,7 +11,7 @@ resolver; its evidence is arithmetic over committed trajectories plus a cache-ke
 Rule 29 `[R-SCREEN]` clause (0) is satisfied with nothing left over, so no screen bundle exists
 and clause (c) DELETE-BEFORE-MERGE has nothing to reach.
 
-**PRECOMMIT:** `docs/handoffs/PRECOMMIT-scn-ws1c-2026-09-06.md`, pushed at `2c1f34dc` **before
+**PRECOMMIT:** `docs/records/forecast/PRECOMMIT-scn-ws1c-2026-09-06.md`, pushed at `2c1f34dc` **before
 any code change**, carrying the three edits, the predicted trajectory, the cache-key list and
 the STOP gate.
 
@@ -149,7 +149,7 @@ in any ISO in any year. The repair is monotone by construction, and G2 measured 
 moving cells positive.
 
 **G1's form is worth naming.** The prediction was not written by this lane. SCN-WS1a's
-`docs/handoffs/scn-ws1a/phase0-carbon-trajectory-2026-09-05.json` already carried a `floor`
+`docs/records/forecast/scn-ws1a/phase0-carbon-trajectory-2026-09-05.json` already carried a `floor`
 column computed as `max(path, program)`, committed to `main` **before this branch existed and
 before the ruling was made**. G1 asked whether the live resolver reproduces that column, cell by
 cell: **450/450**. The prediction could not have been fitted to the result.
@@ -394,13 +394,13 @@ only), `src/market_sim/config/scenario_resolvers.py` (bundle comments; no value 
 `tests/unit/policy/` **311 passed**; full `tests/unit` at exact parity with clean `HEAD`
 (244 failures, the same ones test-for-test; +43 passing).
 
-**Instruments (zero LP, committed):** `docs/handoffs/scn-ws1c/verify-floor-2026-09-06.py` (runs
+**Instruments (zero LP, committed):** `docs/records/forecast/scn-ws1c/verify-floor-2026-09-06.py` (runs
 identically before and after; `--tag before|after` → the two JSON snapshots),
 `verify-floor-{before,after}.json`, `score-gates-2026-09-06.py` + `.txt` (the G1/G2/G3 scorer
 and its output). The prediction they are scored against is SCN-WS1a's committed
-`docs/handoffs/scn-ws1a/phase0-carbon-trajectory-2026-09-05.json`, not re-derived here.
+`docs/records/forecast/scn-ws1a/phase0-carbon-trajectory-2026-09-05.json`, not re-derived here.
 
-**Docs:** plan `docs/handoffs/forecast-scenario-readiness-plan-2026-09.md` §5.1 Carbon rows 1
+**Docs:** plan `docs/records/forecast/forecast-scenario-readiness-plan-2026-09.md` §5.1 Carbon rows 1
 and 4, plus a **STATUS** stamp on §7's WS-1a prompt (item 1 executed here; it read "gated on
 D-1", which is now stale); desk ledger §3 Carbon rows 1 and 4.
 

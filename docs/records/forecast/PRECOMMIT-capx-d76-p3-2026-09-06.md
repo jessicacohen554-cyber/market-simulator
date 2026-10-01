@@ -2,11 +2,11 @@
 
 **Pushed BEFORE any solve.** Lane capx D76 phase 3. Branch
 `claude/capx-d76-p3-neiso-nyiso-pjm-sraz8b`, base `origin/main` **`0f7a4842`**.
-Charter: the phase-3 card in `docs/handoffs/capx-director-prompt-pack-2026-08.md`
+Charter: the phase-3 card in `docs/records/forecast/capx-director-prompt-pack-2026-08.md`
 (r#51 §D76 PHASE 3). Protocol carried verbatim from
 `PRECOMMIT-capx-d76-p2-2026-09-06.md` + Addendum 1 and
 `FINDING-capx-d76-p2-2026-09-06.md`; instruments **extended, not forked**
-(`docs/handoffs/d76/p2_predeclare.py`, `p2_gate.py`, `p2_consumer_probe.py`,
+(`docs/records/forecast/d76/p2_predeclare.py`, `p2_gate.py`, `p2_consumer_probe.py`,
 `p2_accreditation_probe.py`).
 
 **NOTHING ARMS IN THIS LANE.** The exit deliverable includes an arming card
@@ -283,7 +283,7 @@ pre-declaration and would be reported as one.
 ## 6. Delete before merge (rule 29(c))
 
 All four bundles are deleted from `results/hindcast/` before this PR merges. This
-PRECOMMIT, the phase-3 FINDING and `docs/handoffs/d76/p3_gate_<iso>.json` +
+PRECOMMIT, the phase-3 FINDING and `docs/records/forecast/d76/p3_gate_<iso>.json` +
 `p3_predeclare.json` carry **every number the lane will ever cite**; git history
 is the record for the bytes. An unregistered bundle directory reaching `main` is
 a parity-gate RED, and `KEEP_REQUIRED_UNMAPPED_BUNDLES` is not the route for a
@@ -375,7 +375,7 @@ was `a9c66d8ea25acb9d`; at this head it is:
 | 7-A | PJM | 2021-2025 | `--capacity-screen-peak-measured-hindcast` | **`559c05579b47684b`** |
 
 Control still equals the bare recipe key at this head (`control_equals_bare: true`), and
-the arm is distinct. Machine-emitted into `docs/handoffs/d76/p3_predeclare_addendum.json`
+the arm is distinct. Machine-emitted into `docs/records/forecast/d76/p3_predeclare_addendum.json`
 **before the first PJM solve**, never typed.
 
 **The ELCC vintage is armed on BOTH legs**, which is what makes this the right A/B: it

@@ -1,7 +1,7 @@
 # PRECOMMIT — R-ERCOT: re-solve ERCOT 2019–2025 on corrected backcast inputs
 
 **Session:** R-ERCOT (parent/orchestrator; never solves — rule 32(a)), 2026-09-24.
-**Charter:** `docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md` §5.3.2, executed in full.
+**Charter:** `docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md` §5.3.2, executed in full.
 **Precondition:** F1 (#6572) and F2 (#6569) merged; branch cut from `9210075392a128d14a5efb168ab1f9955a9b6946`.
 **Incumbent:** `2026-09-19-ercot266-mer-five-year`, bundle `results/calibration/ercot_mer20260919_five_year`, registered **{2021, 2022, 2023, 2024, 2025}**.
 **Owner instruction (2026-09-24):** every backcast year 2019–2025 on the year-correct EIA-860 vintage, plant-specific heat rates (never the asset-class table), and granular CAMPD outage data.
@@ -32,7 +32,7 @@ The incumbent is the owner's two-config keeper (ruling 2026-08-26), which has th
 - 2019 and 2020 share that pre-ECRS market design: ECRS went live June 2023, and they predate the post-Uri ORDC and market reforms.
 - The SWCAP clip is an offer-domain invariant, "no thermal offer above the cap", which holds by market design in every year.
 
-No 2019 or 2020 number was looked at to make this choice; neither year has ever been solved. The carve-out-A offer curve is committed verbatim, copied from the keeper's own 2021 overlay, at `docs/handoffs/r-ercot/carveout_a_offer_curve_by_group.json`. The 2021 and 2022 overlays are byte-equal.
+No 2019 or 2020 number was looked at to make this choice; neither year has ever been solved. The carve-out-A offer curve is committed verbatim, copied from the keeper's own 2021 overlay, at `docs/records/ercot/r-ercot/carveout_a_offer_curve_by_group.json`. The 2021 and 2022 overlays are byte-equal.
 
 ## 3. The arm — what changes over the incumbent, in every year
 
@@ -76,7 +76,7 @@ F2 derived the ERCOT short-gas extract with `merit_order_guard=true`. The guard 
 
 **The standing ERCOT objection (matrix cell `U`) is answered by measurement, not inherited from PJM.** Where the 60-Day DAM availability overlay covers an hour, it **rescales the class-hour (and pins crosswalked plants) to the measured DAM level after every other layer**. On covered hours, short-gas windows therefore only redistribute within the class. They bind at the level only on DAM-uncovered hours.
 
-## 4. Phase-0 census (zero LP): `docs/handoffs/r-ercot/census_r_ercot.json`
+## 4. Phase-0 census (zero LP): `docs/records/ercot/r-ercot/census_r_ercot.json`
 
 The census comes from `scripts/probes/_r_ercot_census.py`, which rebuilds each year's LP fleet with `run_year(fleet_only=True)` twice: once with the incumbent recipe at HEAD (all eight §3 flags pinned False), and once with the arm.
 

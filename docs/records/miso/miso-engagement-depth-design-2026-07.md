@@ -2,8 +2,8 @@
 
 **Date:** 2026-07-17. **Session:** `claude/miso-engagement-depth-phase-a-17mnb4`
 (Fable, rule 27). **Parent contracts:**
-`docs/handoffs/miso-f5-scarcity-depth-design-2026-07.md` §1e (the pre-named
-engagement legs) + `docs/handoffs/miso-price-formation-design-2026-07.md`
+`docs/records/miso/miso-f5-scarcity-depth-design-2026-07.md` §1e (the pre-named
+engagement legs) + `docs/records/miso/miso-price-formation-design-2026-07.md`
 (§2b re-read discipline, §7 non-relitigation) +
 `docs/multi-iso/miso-scarcity-posture-design-2026-07.md` §B (the DATA-BLOCKED
 Midwest family this lane un-blocks). **Run number: miso-71.** This document is
@@ -430,7 +430,7 @@ from the measured record:
 ```
 MODEL: Opus or Fable (CLAUDE.md rule 27 — this lane writes core infrastructure;
 never Sonnet). PHASE B of the MISO engagement-depth lane — execute the FROZEN
-contract in docs/handoffs/miso-engagement-depth-design-2026-07.md (Fable
+contract in docs/records/miso/miso-engagement-depth-design-2026-07.md (Fable
 Phase A, 2026-07-17) VERBATIM. That doc pre-declares the mechanism
 (miso_midwest_subregional_reserves — the Midwest sub-regional reserve-holding
 family: measured N+C cleared OR requirement, published $200 RPE demand value,

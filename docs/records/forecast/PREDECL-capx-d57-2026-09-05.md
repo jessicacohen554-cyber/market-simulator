@@ -48,7 +48,7 @@ origin/main` green). Plain-backcast coercion verified by keeper replay: the PJM 
 
 ## 2. Phase 0 — the instrument reproduced in code (STOP 1 clear, I5)
 
-`docs/handoffs/d57/phase0-reproduction-2026-09-05.{py,json,txt}`: the code's
+`docs/records/forecast/d57/phase0-reproduction-2026-09-05.{py,json,txt}`: the code's
 `clear_capacity_supply_stack` + `capacity_supply_curve` (the registry vintage curves through the
 same `MarketDesign.capacity_price_per_firm_mw_yr` seam the solve prices) fed the D54 instrument's
 stack off the committed `pjm-t1h` and `pjm-t1h-d48-devintage` ledgers:
@@ -189,7 +189,7 @@ the bare key → re-resolve, re-declare, say so.
 
 ## 7. Records this lane commits before the solve
 
-`docs/handoffs/d57/phase0-reproduction-2026-09-05.{py,json,txt}`; this addendum; the build
+`docs/records/forecast/d57/phase0-reproduction-2026-09-05.{py,json,txt}`; this addendum; the build
 (`4e8877fb`). After the solves: the two suffixed bundles' slim committed sets (the D45-R / D48
 template), their registrations, `FINDING-capx-d57-2026-09-05.md`, and the PJM shard's cell
 stamped with the measured verdict. Nothing arms; no keeper / shard-stamp of another ISO / marker.

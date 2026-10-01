@@ -213,7 +213,7 @@ recorded here rather than silently substituted). Diff over `src/market_sim`,
 | `d6cbc03a` netload_drag_merit_allocation | **INERT** — default-off, ercot-259 refused it, absent from the recipe |
 | `e1c7bc08`, `32f0110a`, `f0d6ba2d`, `815a0066` capx D83/D87 CCS + ledger | **INERT** — forecast-only capacity evolution; a `mode="backcast"` run never enters it |
 | `663f5967` miso-245 seam ladder | **INERT** — MISO |
-| `203c031e` spp-49 **seam 1** (F923 gas plausibility screen, default ON) | **INERT for this keeper** — the spp-49 lane's own census marks `ercot256_five_year_keeper` `"reachable": false` (`docs/handoffs/spp49/key_census_post.json`); ERCOT does not arm `gas_plant_monthly_fuel_pricing` |
+| `203c031e` spp-49 **seam 1** (F923 gas plausibility screen, default ON) | **INERT for this keeper** — the spp-49 lane's own census marks `ercot256_five_year_keeper` `"reachable": false` (`docs/records/spp/spp49/key_census_post.json`); ERCOT does not arm `gas_plant_monthly_fuel_pricing` |
 | `203c031e` spp-49 **seam 2** (simple-cycle eGRID HR floor) | **LIVE** |
 
 **The LIVE hunk, measured.** Seam 2 is **ungated and unconditional** ("same seam,
@@ -346,7 +346,7 @@ That is not a cosmetic tidy: it is exactly what hides **Decker Creek** (plant
 3548, 405 MW gas ST, retired 2022) — **98 % of ERCOT's 2021–2022 affected
 capacity**, invisible to both halves, and still absent from main's widened
 parquet (ERCOT 2022 = 0 rows there). The finding and its declared footprint in
-`docs/ADDENDUM-ercot261-partial-plant-scope-2026-09-09.md` stand unamended; only
+`docs/records/ercot/ADDENDUM-ercot261-partial-plant-scope-2026-09-09.md` stand unamended; only
 the *delivery mechanism* changed, from a new gated field to a one-line mirror
 repair.
 

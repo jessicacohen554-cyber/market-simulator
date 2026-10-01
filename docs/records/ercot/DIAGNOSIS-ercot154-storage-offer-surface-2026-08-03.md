@@ -6,7 +6,7 @@ Phase 1 only — NO LP built, NO year solved, NO mechanism armed, NO flag added,
 keeper UNCHANGED.** Probes
 `scripts/probes/ercot154_storage_offer_surface.py` (the measurement) and
 `ercot154_storage_binding_check.py` (the keeper confrontation); committed
-records `results/calibration/ercot154_storage_offer_surface.json` and
+records `results/phase0/ercot/ercot154_storage_offer_surface.json` and
 `ercot154_storage_binding_check.json`. Every input is already committed: the
 four 60-Day SCED sample-day parquets, the ercot150b keeper hourly sidecars,
 `data/raw/eia-930-hourly/ERCO hourly.parquet`.
@@ -147,7 +147,7 @@ does not survive contact with the model's own supply curve.
 
 ## 3. The confrontation numbers (committed record)
 
-`results/calibration/ercot154_storage_binding_check.json`, all on the ercot150b
+`results/phase0/ercot/ercot154_storage_binding_check.json`, all on the ercot150b
 keeper's committed sidecars:
 
 | | 2023 | 2024 | 2025 |
@@ -211,7 +211,7 @@ some ERCOT-reachable path *reads* `ramp10`.
 
 An AST census of `src/market_sim` (probe
 `scripts/probes/ercot154_ramp_capability_census.py` → committed record
-`results/calibration/ercot154_ramp_capability_census.json`; parsed, so
+`results/phase0/ercot/ercot154_ramp_capability_census.json`; parsed, so
 docstrings and comments cannot inflate the count) finds **5 functional read
 sites, all of them behind a non-ERCOT gate**:
 

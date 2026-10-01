@@ -46,11 +46,11 @@ like the storage epsilon tiebreaker), or use HiGHS interior-point.
 - `tests/test_wecc_west_fleet.py` — passing.
 - `scripts/probes/_caiso110_endogenous_diag.py` — throwaway 2024 diagnostic (recipe above).
 - `scripts/probes/_caiso110_endogenous_B.py` — 3-year A/B B-leg (run AFTER the MC fix).
-- `docs/handoffs/caiso110-wiring.patch.b64` — the 3 large-file edits.
+- `docs/records/caiso/caiso110-wiring.patch.b64` — the 3 large-file edits.
 
 ## RESTORE the 3 large-file edits (run at repo root, on a fresh clone)
 ```
-base64 -d docs/handoffs/caiso110-wiring.patch.b64 > /tmp/caiso110-wiring.patch
+base64 -d docs/records/caiso/caiso110-wiring.patch.b64 > /tmp/caiso110-wiring.patch
 git apply --3way /tmp/caiso110-wiring.patch
 ```
 Verified to reconstruct these exact blobs: scenarios.py `fa0c97b3`, run_calibration.py
@@ -60,7 +60,7 @@ fields); if main advanced, `--3way`/fuzz. Also `.venv/bin/python scripts/regener
 then `scripts/data/derive_wecc_west_supply.py` (fresh container) to rebuild `data/clean/`.
 
 ## Design (committed to main earlier)
-`docs/handoffs/caiso-endogenous-wecc-node-design-2026-07-21.md`; the derive + schema.
+`docs/records/caiso/caiso-endogenous-wecc-node-design-2026-07-21.md`; the derive + schema.
 EIA-860-West nameplate: gas 54.6 / coal 20.3 / nuclear 5.4 GW (thermal 80.2 >> peak+export
 63.7). Clock: fold via `campd._hour_index_8760` on US/Pacific, SHIFT=0 (West solar aligns to
 model CAISO solar r=0.984). West thermal-marginal in 100% of hours (structural belly fix holds

@@ -152,7 +152,7 @@ SpreadsheetML XML (no pandas/openpyxl dependency) and **deliberately not
 committed** — the closure is no-intake, so no corpus, README or `SHA256SUMS.txt`
 is created. The hashes above are the identity record.
 
-**Surfaces stamped:** `docs/handoffs/miso-outage-grain-data-ask-2026-07.md`
+**Surfaces stamped:** `docs/records/miso/miso-outage-grain-data-ask-2026-07.md`
 (status header, candidate 1 section, §8 Net) and
 `docs/calibration-log/miso.md` (miso-164). Keeper untouched; no dashboard
 mutation; no matrix cell minted (no mechanism was tested).

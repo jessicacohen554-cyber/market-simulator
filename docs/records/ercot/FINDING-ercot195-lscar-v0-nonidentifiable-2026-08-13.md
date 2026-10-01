@@ -17,7 +17,7 @@
 > promoted.** Per card S1 — *"stay inside that distinction or stop"* — the lane
 > stops.
 
-Authority: `docs/DECISION-CARD-lscar-screen-revenue-2026-08-13.md`, S1/S2/S3
+Authority: `docs/records/misc/DECISION-CARD-lscar-screen-revenue-2026-08-13.md`, S1/S2/S3
 signed by the owner 2026-08-13. §3's **V0 identification gate** is
 pre-registered and gates the lane; §3 states a miss "routes to diagnosis …
 never to widening a band or re-fitting `R_f` against the miss."

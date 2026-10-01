@@ -3,7 +3,7 @@
 **Date:** 2026-07-19 (Phase A, derive-only — NO LP was solved for this
 document). **Lane:** post-miso-75, owner-selected 2026-07-19 (the owner
 DECLINED the determination-path ledger conversion — see
-`docs/handoffs/miso-76-determination-proposal-2026-07.md`, which remains on
+`docs/records/miso/miso-76-determination-proposal-2026-07.md`, which remains on
 record un-applied — and chose lane B, this charter). **Design discipline:**
 this charter is committed BEFORE any build; the bands (§5) and refutation
 criteria (§6) are pre-registered and may not be revised after the first LP

@@ -66,12 +66,12 @@ each independently sufficient:
   *precisely because* K6 "cannot adjudicate any import-relief lever";
 * **K6′ leg (a) became non-vacuous** — this session's D-4 conduct rider.
 
-Pre-registration: `results/calibration/PREREG-nyiso143-zone-k-transfer-bound-2026-08-18.md`,
+Pre-registration: `docs/records/nyiso/PREREG-nyiso143-zone-k-transfer-bound-2026-08-18.md`,
 written and committed **before** either solve was launched.
 
 ### 1.2b THE RESULT — all six gates pass, and the arm is still not promotable
 
-Full record: `results/calibration/RESULT-nyiso143-zone-k-transfer-bound-ab-2026-08-18.md`.
+Full record: `docs/records/nyiso/RESULT-nyiso143-zone-k-transfer-bound-ab-2026-08-18.md`.
 Both arms solved 2023/2024/2025 in one bundle and **both registered** (rule 15):
 `2026-08-18-nyiso-143-control` and `2026-08-18-nyiso-143-n11tsl-arm`.
 
@@ -278,7 +278,7 @@ survives, it is simply the smallest of the set.)*
 
 ## 3. OBJECTS 3 AND 4 — the reserve family: the closing argument is FALSIFIED
 
-Full record: `results/calibration/FINDING-nyiso143-online-rho-unidentified-2026-08-18.md`.
+Full record: `docs/records/nyiso/FINDING-nyiso143-online-rho-unidentified-2026-08-18.md`.
 No solve spent.
 
 The handoff expected `nyiso_synchronised_reserve` to be closable on the

@@ -74,7 +74,7 @@ total up to the EIA-930 grid series when `923/930 < VINTAGE_RECONCILE_FRAC` (**0
 C1.** PJM's 2021/2022 EIA-923 fossil filings under-count EIA-930 by 3.2-3.5 % where every
 passing year is within 0.6 %. So the holdout C1 actual is on a **different construction** from
 the training C1 actual — the same defect CLASS as the hydro benchmark seam closed earlier today
-(`docs/FINDING-gov-hydro-seam-1-2026-09-12.md`), though not the same seam.
+(`docs/records/governance/FINDING-gov-hydro-seam-1-2026-09-12.md`), though not the same seam.
 
 **STATED HONESTLY, BECAUSE IT MATTERS: the reconcile is already helping and is NOT on its own
 the explanation.** The committed `classFull` values are POST-reconcile, so 2021's CC actual

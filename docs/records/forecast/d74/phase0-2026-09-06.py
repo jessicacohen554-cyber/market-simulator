@@ -14,7 +14,7 @@ Also reads the D62 arm's 2022 admission-cap outcome (decided vs entry_capped
 MW by fuel) so the composition consequence can be pre-declared.
 
 Run from the repo root:
-    PYTHONPATH=.:src .venv/bin/python docs/handoffs/d74/phase0-2026-09-06.py [out.json]
+    PYTHONPATH=.:src .venv/bin/python docs/records/forecast/d74/phase0-2026-09-06.py [out.json]
 """
 
 from __future__ import annotations

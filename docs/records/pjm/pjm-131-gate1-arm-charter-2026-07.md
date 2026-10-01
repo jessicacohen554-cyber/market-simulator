@@ -1,8 +1,8 @@
 # CHARTER — pjm-131, arming gate 1 (the CC_CHP / ST_GAS overshoot against the meter)
 
-**Lane:** `docs/handoffs/pjm-frontier-path-2026-07.md`.
+**Lane:** `docs/records/pjm/pjm-frontier-path-2026-07.md`.
 **Predecessor:** pjm-130 (PR #2978 code / #2980 docs) —
-`results/calibration/FINDING-pjm130-gate1-and-bench-symmetry-2026-07.md`.
+`docs/records/pjm/FINDING-pjm130-gate1-and-bench-symmetry-2026-07.md`.
 **Inherited kill criteria:** pjm-130 charter §5, reproduced in §4 below, unmet-means-dead.
 
 This document and the probe it pre-registers are **committed before the probe is
@@ -20,7 +20,7 @@ owner-only and is not touched.
 
 ## 1. Priority 1 — the re-conditioning memo — checked, still UNDECIDED
 
-`docs/handoffs/pjm-midcurve-reconditioning-memo-2026-07.md` is **verified
+`docs/records/pjm/pjm-midcurve-reconditioning-memo-2026-07.md` is **verified
 undecided this session**: last commit `f1070d4`, the live banner still reads
 "awaits the owner's decision", and no authorization exists anywhere in the tree.
 Per the session's own instruction the memo is **not nudged, not re-derived, and

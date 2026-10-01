@@ -13,7 +13,7 @@ silenced lone-failure guard, C3c).
 > sub-zonal in-city commitment / AORR parameters (and/or a source splitting
 > the Capital_Hudson seam leg)"*. Execution spec, converting the ruling into
 > two legs with gates and owners:
-> `docs/INTAKE-SPEC-nyiso156-winter-locational-2026-08-30.md`. Q2 remains
+> `docs/records/nyiso/INTAKE-SPEC-nyiso156-winter-locational-2026-08-30.md`. Q2 remains
 > dissolved as filed.
 >
 > **Correction recorded with the ruling:** §3 item 1 below repeats
@@ -28,10 +28,10 @@ silenced lone-failure guard, C3c).
 > the spec's §0 carries the full correction.
 
 This card **supersedes the numbers** of
-`docs/DECISION-CARD-nyiso148-2025-level-remainder-2026-08-21.md` (filed
+`docs/records/nyiso/DECISION-CARD-nyiso148-2025-level-remainder-2026-08-21.md` (filed
 against the pre-CHP, pre-hydro-repair keeper); the questions it put to the
 owner are restated here against what is now measured. Evidence:
-`results/calibration/_nyiso156_offer_level_phase0.json` (probe
+`results/phase0/nyiso/_nyiso156_offer_level_phase0.json` (probe
 `scripts/probes/_nyiso156_offer_level_phase0.py`, declared in
 `PRECOMMIT-nyiso156-offer-level-phase0-2026-08-25.md` before measurement; no
 solve — everything is read from the two registered nyiso-155 bundles, a
@@ -187,11 +187,11 @@ determination-bearing work available.
 
 ## 7. EVIDENCE
 
-* `results/calibration/_nyiso156_offer_level_phase0.json` — M1–M6 in full
+* `results/phase0/nyiso/_nyiso156_offer_level_phase0.json` — M1–M6 in full
   (lw monthly faces, eqh/lw split, demand deciles, zonal continuity, hydro
   calendar, event windows), plus every anchor check.
-* `results/calibration/PRECOMMIT-nyiso156-offer-level-phase0-2026-08-25.md`
-* `docs/FINDING-nyiso-hydro-truncation-repair-2026-08.md` §4.4, §7
-* `results/calibration/ASSESSMENT-nyiso150-frontier-2026-08-22.md` §1–§2, §4
-* `docs/DECISION-CARD-nyiso148-2025-level-remainder-2026-08-21.md`
+* `docs/records/nyiso/PRECOMMIT-nyiso156-offer-level-phase0-2026-08-25.md`
+* `docs/records/nyiso/FINDING-nyiso-hydro-truncation-repair-2026-08.md` §4.4, §7
+* `docs/records/nyiso/ASSESSMENT-nyiso150-frontier-2026-08-22.md` §1–§2, §4
+* `docs/records/nyiso/DECISION-CARD-nyiso148-2025-level-remainder-2026-08-21.md`
   (superseded numbers; question genealogy)

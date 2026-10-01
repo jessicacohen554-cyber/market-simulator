@@ -10,14 +10,14 @@ no derive-script edit, no `src/market_sim/` change, no scorer change, no marker 
 would: the only outcomes on the table were a measurement and a card, **neither is an arm**, so no
 screen year was pre-registered because there was nothing for a screen to gate.
 
-**PREREG:** `results/calibration/PREREG-nyiso208-ramp-slope-census.md` — committed and pushed
+**PREREG:** `docs/records/nyiso/PREREG-nyiso208-ramp-slope-census.md` — committed and pushed
 **before any number was read** (`8b7fefd8`); **addendum A declared POST-HOC**, committed and pushed
 **before the checks it declares were executed**.
 **Instruments:** the **shipped** `scripts/data/derive_nyiso_{st,ct}_reliability_floor.py`, run
 directly (`--no-fetch --years 2023 2024 2025`); `scripts/probes/_nyiso208_ramp_slope_census.py` →
-`results/calibration/_nyiso208_ramp_slope_census.json`; addendum A →
+`results/phase0/nyiso/_nyiso208_ramp_slope_census.json`; addendum A →
 `_nyiso208_posthoc_addendumA.json`.
-**Companion:** `docs/DECISION-CARD-nyiso208-ch-ramp-slope-2026-09-06.md`.
+**Companion:** `docs/records/nyiso/DECISION-CARD-nyiso208-ch-ramp-slope-2026-09-06.md`.
 
 **THERE ARE NO RUBRIC FAILURES TO FIX.** NYISO reads **fails 0**. C3c is the ledgered,
 non-downgrading caveat (rubric v3.3 / v3.6) and was **not an objective**. **No metrics file, price
@@ -312,7 +312,7 @@ NYISO floor derivation pipeline is **not** drifting — which is what makes the 
 finding rather than noise.
 
 **Open.** The identification of `CH_ST_ev`'s 0.0246/°C, handed to the owner in
-`docs/DECISION-CARD-nyiso208-ch-ramp-slope-2026-09-06.md`, with the pre-2023-span hypothesis named
+`docs/records/nyiso/DECISION-CARD-nyiso208-ch-ramp-slope-2026-09-06.md`, with the pre-2023-span hypothesis named
 and deliberately untested. Rule 20 `[R-FORCED-BUDGET]` leg (a) and the unit-grain C8 exposure are
 unchanged. `DECISION-CARD-nyiso193`, `-nyiso206` and `-nyiso207` all remain **UNRULED**.
 

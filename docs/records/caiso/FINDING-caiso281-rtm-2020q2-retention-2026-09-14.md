@@ -2,7 +2,7 @@
 
 **Session:** caiso-281 FETCH+AGGREGATE shard, quarter **2020 Q2
 (2020-04-01 .. 2020-06-30)**. **Lane:** CAISO RTM offer-surface intake backfill.
-**Charter:** `docs/PRECOMMIT-caiso281-rtm-offer-surface-intake-2026-09-13.md`.
+**Charter:** `docs/records/caiso/PRECOMMIT-caiso281-rtm-offer-surface-intake-2026-09-13.md`.
 
 **Pin:** `7fe0a10c77983946b1e06a90ca2eea3c30794d0c` (verified at session start; no
 rebase, no pull).

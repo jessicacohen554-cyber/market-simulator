@@ -4,7 +4,7 @@
 LANE     : miso-288 (owner ruling "2022 coal-scarcity study", miso-287 §6)
 KEEPER   : 2026-09-28-miso-280-splitremap (results/calibration/miso280_span, 2019-2025), unchanged
 LP       : none
-PRECOMMIT: docs/PRECOMMIT-miso288-yard-only-precheck-2026-09-30.md (c4ffbefa, pushed before the pre-check probe existed)
+PRECOMMIT: docs/records/miso/PRECOMMIT-miso288-yard-only-precheck-2026-09-30.md (c4ffbefa, pushed before the pre-check probe existed)
 PROBES   : scripts/probes/_miso288_coal_scarcity.py  (phase 0: EIA-923 stocks/receipts, CAMPD hourly, hub, keeper)
            scripts/probes/_miso288_yard_precheck.py  (INC vs YARD dual emulation)
 OUTPUTS  : results/calibration/_miso288_{coal_scarcity,yard_precheck}.json

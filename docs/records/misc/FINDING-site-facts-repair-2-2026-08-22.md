@@ -2,7 +2,7 @@
 
 **Session:** `claude/site-facts-2-repair-43gm3p`, 2026-08-22.
 **Charter:** WS5 Job 1 (site factual repair), continuing
-`docs/FINDING-site-facts-repair-2026-08-19.md`. **Not SITE-A** — no restructure, no §7.6
+`docs/records/misc/FINDING-site-facts-repair-2026-08-19.md`. **Not SITE-A** — no restructure, no §7.6
 signed-disposition work.
 **Owner-reported defects:** three, listed below. **Owner ruling on scope, binding:** site content
 only. P2 stays in the codebase behind `--enable-legacy-p2`; nothing under `src/` was touched.
@@ -83,11 +83,11 @@ so it survives that truncation.
 Authoritative records used throughout, and now cited **on the pages themselves** so the figures are
 traceable without this doc:
 
-- `docs/handoffs/wallclock-baseline-2026-07.md` — the plain-recipe per-year tables, the P-4 solver
+- `docs/records/misc/wallclock-baseline-2026-07.md` — the plain-recipe per-year tables, the P-4 solver
   experiments, the H2/H3/H3b warm-start and full-horizon A/Bs, and the **2026-08-17 PERF-B at-HEAD
   keeper-replay anchor**.
-- `docs/handoffs/perf-recheck-2026-08.md` §2 — at-HEAD phase re-measures.
-- `results/calibration/FINDING-miso169-15gb-memory-fit-2026-08-19.md` — MISO LP dimensions and peak RSS.
+- `docs/records/governance/perf-recheck-2026-08.md` §2 — at-HEAD phase re-measures.
+- `docs/records/miso/FINDING-miso169-15gb-memory-fit-2026-08-19.md` — MISO LP dimensions and peak RSS.
 
 **A caveat that governs every wall figure and is now stated on both pages:** cross-run solve walls
 on this host class vary up to **±35 %** (the PERF-B record measures the same ERCOT-2025 P0 at 574.5 s
@@ -245,7 +245,7 @@ The page must not imply the payloads sit in the repo. It now says, in a callout:
 - **The recovery route is re-fetch**, and each README carries the verified source-URL table and fetch
   command.
 - **No `git restore --source=<pin>` command appears anywhere on the site.** Those pins are dead
-  (`docs/FINDING-history-rewrite-2026-08-16.md`).
+  (`docs/records/governance/FINDING-history-rewrite-2026-08-16.md`).
 - Named as **unrecoverable from this repository**: the CAISO OASIS group-zip dailies, and pre-slim
   SCED columns past ERCOT MIS retention.
 - The two non-size reasons for gitignoring are given: the PJM DataMiner2 non-member redistribution

@@ -17,7 +17,7 @@ pre-check quantities (§3) → the adjudication.
 ## 1. The object, as measured (Phase 0, already run — not gated by this prereg)
 
 Instrument `scripts/probes/_miso174_seam_overimport_decomposition.py`, record
-`results/calibration/_miso174_seam_overimport_decomposition.json`. Read-only;
+`results/phase0/miso/_miso174_seam_overimport_decomposition.json`. Read-only;
 no LP; nothing re-enters a solve (rule 13 `[R-MEASURED]`).
 
 **The defect reproduces on the CURRENT keeper** (miso-166/167 §2d measured it
@@ -124,8 +124,8 @@ Reading (b) is killed if **either**:
 * **(i)** no measured MW-limit series exists at LRZ-pair grain that is
   reconcilable to the model's six-zone reduction **without inventing an
   apportionment** (the M1 refutation of
-  `docs/handoffs/miso-nc-price-separation-design-2026-07.md` §3, re-affirmed by
-  `docs/handoffs/miso-77-m4-afc-feasibility-2026-07.md` §5.2: *no PTDF /
+  `docs/records/miso/miso-nc-price-separation-design-2026-07.md` §3, re-affirmed by
+  `docs/records/miso/miso-77-m4-afc-feasibility-2026-07.md` §5.2: *no PTDF /
   shift-factor data is published anywhere in the family*); **or**
 * **(ii)** the phenomenon already has an owner — the armed seasonal CIL/CEL
   interface-group family plus the armed RDT/TCDC — so a second internal limit

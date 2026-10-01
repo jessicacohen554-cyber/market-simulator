@@ -2,7 +2,7 @@
 
 **Date:** 2026-09-01 · **Lane:** cross-ISO instrument audit (backcast track) ·
 **Shorthand:** xiso-cascade
-**Rule carried:** nyiso-166 §2 (`docs/FINDING-nyiso166-as-reference-repair-2026-08-31.md`) —
+**Rule carried:** nyiso-166 §2 (`docs/records/nyiso/FINDING-nyiso166-as-reference-repair-2026-08-31.md`) —
 **a reserve cascade nested by duration/quality posts CUMULATIVE prices, so a
 reserve MW earns the cascade MAX, never the SUM.** · **Zero solve.** Committed
 artifacts + committed raw only. No LP, no holdout spend, no mechanism, no
@@ -164,10 +164,10 @@ no prose citation of any summed figure"*. **That claim is FALSE** — it grepped
 for the field names; the prose cites the VALUE. `$484.87`, quoted as *"MISO's
 OWN published RT ASM MCP"*, appears in:
 
-1. `results/calibration/FINDING-miso167-summer-scarcity-anatomy-2026-08-18.md` §3 — the origin headline, *"accounts for 118.8 % of the energy gap"* (2023 120.9 %, 2024 19.2 %);
-2. `results/calibration/PREREG-miso167-online-gated-reserve-supply-2026-08-18.md` §1 — evidence context for the `miso_reserve_online_gated` pre-registration;
-3. `results/calibration/FINDING-miso171-reserve-requirement-decomposition-2026-08-20.md` §5 — plus its own summed "$222.37 / DA total" table column and the "**~71 % synchronised / ~29 % supplemental**" price shares computed off the sum;
-4. `results/calibration/FINDING-miso178-c3a2025-anatomy-and-lever-plan-2026-08-23.md` §3 — *"still ≈120 % of the energy gap"*;
+1. `docs/records/miso/FINDING-miso167-summer-scarcity-anatomy-2026-08-18.md` §3 — the origin headline, *"accounts for 118.8 % of the energy gap"* (2023 120.9 %, 2024 19.2 %);
+2. `docs/records/miso/PREREG-miso167-online-gated-reserve-supply-2026-08-18.md` §1 — evidence context for the `miso_reserve_online_gated` pre-registration;
+3. `docs/records/miso/FINDING-miso171-reserve-requirement-decomposition-2026-08-20.md` §5 — plus its own summed "$222.37 / DA total" table column and the "**~71 % synchronised / ~29 % supplemental**" price shares computed off the sum;
+4. `docs/records/miso/FINDING-miso178-c3a2025-anatomy-and-lever-plan-2026-08-23.md` §3 — *"still ≈120 % of the energy gap"*;
 5. `docs/mechanism-testing-matrix.md` — the MISO lever-queue narrative ("WHAT IT IS");
 6. `docs/calibration-log/miso.md` — the miso-167 and miso-171 entries.
 
@@ -232,7 +232,7 @@ structural grounds and MW-based gates, untouched.
   **independent construction** (its own implementations of both instruments'
   hour mappings, no import of either): reproduces every committed summed value
   **exactly** (n, sum, per-product means; every `reproduces` flag True in
-  `results/calibration/_xiso1_miso_asm_cascade_check.json`), verifies
+  `results/phase0/governance/_xiso1_miso_asm_cascade_check.json`), verifies
   top == `GENREGMCP` in every scarce hour, then emits the corrections the
   JSON keys carry.
 * **Regression test** — `tests/test_miso_asm_cascade.py` (7 tests, passing)

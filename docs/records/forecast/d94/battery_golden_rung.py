@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """T1.6 driver-battery rungs on the ``neiso-t3`` GOLDEN recipe — metrics + assembly.
 
-capx D94 measurement helper (``docs/handoffs/PRECOMMIT-capx-d94-2026-09-24.md``).
+capx D94 measurement helper (``docs/records/forecast/PRECOMMIT-capx-d94-2026-09-24.md``).
 Not standing tooling: the measurement record for
-``docs/handoffs/FINDING-capx-d94-2026-09-24.md``. Nothing under ``scripts/`` or
+``docs/records/forecast/FINDING-capx-d94-2026-09-24.md``. Nothing under ``scripts/`` or
 ``src/`` is edited by the lane.
 
 WHY IT EXISTS. ``scripts/run_driver_battery.py`` solves a rung as

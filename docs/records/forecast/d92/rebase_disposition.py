@@ -16,7 +16,7 @@ whose class changes is emitted with ``verdict: "NEEDS AUTHORING"`` so it cannot
 slip through as an EXPLAINED DIVERGENCE nobody explained.
 
 Not standing tooling: the measurement record for
-``docs/handoffs/FINDING-capx-d92-2026-09-10.md``.
+``docs/records/forecast/FINDING-capx-d92-2026-09-10.md``.
 """
 
 from __future__ import annotations

@@ -72,7 +72,7 @@ the §1.2 table lists every producer command):
 - `docs/out-of-sample-results-2026-07.md` §1 (coverage table), §1.1
   (ERCOT+PJM 2022/H1-2026 intake, 2026-07-04), §1.2 (NEISO 2022 intake,
   2026-07-07 — includes the two known NEISO asymmetries below).
-- `docs/handoffs/holdout-policy-memo-2026-07.md` (quarantine mechanics,
+- `docs/records/governance/holdout-policy-memo-2026-07.md` (quarantine mechanics,
   Option-2 decision, the `--holdout-authorized` gate).
 - The marker-gated intake tooling (all landed): `fetch_campd_unit_level.py
   --holdout-intake`, `curate_emissions_unit_annual.py --holdout-intake`,

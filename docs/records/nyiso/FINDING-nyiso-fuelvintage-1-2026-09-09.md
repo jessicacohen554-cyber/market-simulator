@@ -3,9 +3,9 @@
 **Session:** `nyiso-fuelvintage-1` · **ISO:** NYISO only · **Date:** 2026-09-09
 **Branch:** `claude/nyiso-fuelvintage-1` off `origin/main` `87ad084b`
 **Keeper:** `2026-09-07-nyiso-213-summer-seam` (`results/calibration/nyiso213_summer_seam`)
-**Pre-registration:** `results/calibration/PRECOMMIT-nyiso-fuelvintage-1.md` (committed `7f211902`,
+**Pre-registration:** `docs/records/nyiso/PRECOMMIT-nyiso-fuelvintage-1.md` (committed `7f211902`,
 **before** any measurement below)
-**Charter:** `docs/handoffs/fleet-vintage-retiree-window-charter-2026-08.md`, tasks 3 + 4
+**Charter:** `docs/records/misc/fleet-vintage-retiree-window-charter-2026-08.md`, tasks 3 + 4
 
 ---
 

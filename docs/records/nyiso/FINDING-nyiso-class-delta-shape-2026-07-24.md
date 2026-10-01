@@ -19,7 +19,7 @@ not an applied fix (rules 1 / 11 / 21 / 23–25). No probe number consumed —
 > happened. A parallel session diagnosed it the same afternoon and landed the fix
 > (`_ZERO_CODED_GAP_SERIES`, commit `d13a3f2`, ~27 min before this doc was
 > committed and therefore not reflected in it) — see
-> `docs/FINDING-nyiso-import-hour-assignment-and-nuclear-benchmark-2026-07-24.md`
+> `docs/records/nyiso/FINDING-nyiso-import-hour-assignment-and-nuclear-benchmark-2026-07-24.md`
 > §4, which reaches the opposite conclusion against NYISO's own hourly fuel-mix
 > posting.
 >
@@ -334,4 +334,4 @@ and `data/raw/eia-930-hourly/NYIS hourly.parquet`, via
 --dry-run`. Clock alignment verified before any panel was emitted: model-vs-930
 demand cross-correlation peaks at lag 0 with r = 1.0000 in all three years
 (±1 h: 0.971–0.978), so no DST re-pairing is involved — cf.
-`docs/DIAGNOSIS-ercot-lmp-clock-artifact-and-summer-residuals-2026-07.md`.*
+`docs/records/ercot/DIAGNOSIS-ercot-lmp-clock-artifact-and-summer-residuals-2026-07.md`.*

@@ -6,7 +6,7 @@ the five sibling legs RELEASED). Branch `claude/fh-4-neiso-leg-j42x61`, off
 the ERCOT step-0 gate PASSED at 0.0 %/0.0 %/0.0 % vs the 26.8 % FAIL
 reference), so this leg carries **no step-0 gate** — the I6 invariant rides as
 a stop-the-line check on both arms instead (§1.1). Protocol of record:
-`docs/handoffs/fh-4-ercot-leg-2026-08-09.md`, executed for NEISO at **SHIPPED
+`docs/records/forecast/fh-4-ercot-leg-2026-08-09.md`, executed for NEISO at **SHIPPED
 DEFAULTS** — no keeper contact, no arming, no tuning. Standing NEISO gas-basis
 facts (neiso-86) noted and untouched: the window is 2023–2025; nothing here
 re-opens the 2018-era basis.

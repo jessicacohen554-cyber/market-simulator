@@ -7,7 +7,7 @@
 # its full_horizon_summary.json survives for registration; the per-case caches
 # are merged into one tree afterwards for report_scenario_deltas.py.
 #
-# Usage: bash docs/handoffs/scn-ws4c/launch_arm.sh <ISO> <CASE> <START> <END> <CAMPAIGN_DIR>
+# Usage: bash docs/records/forecast/scn-ws4c/launch_arm.sh <ISO> <CASE> <START> <END> <CAMPAIGN_DIR>
 set -uo pipefail
 ISO="$1"; CASE="$2"; START="$3"; END="$4"; ROOT="${5:-results/scn-ws4-probe}"
 LOW="$(echo "$ISO" | tr 'A-Z' 'a-z')"

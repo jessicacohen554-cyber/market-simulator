@@ -7,8 +7,8 @@ recipes, artifact reads and code audits — the rule 29 `[R-SCREEN]` clause-0 pa
 **PJM keeper `2026-09-11-pjm-d4-4-gasoutage`: CALIBRATED, 8/8, zero caveats — UNTOUCHED.**
 
 Chartered by the **OWNER RULING 2026-09-14** opening the `gas_mid` re-centring, which had
-been escalated by `docs/PRECOMMIT-pjm-h5-coal-committed-charter-2026-09-13.md` §9 and again by
-`docs/RESULT-pjm-h6-route-a-replace-screen-2026-09-14.md` §5 and held inside the
+been escalated by `docs/records/pjm/PRECOMMIT-pjm-h5-coal-committed-charter-2026-09-13.md` §9 and again by
+`docs/records/pjm/RESULT-pjm-h6-route-a-replace-screen-2026-09-14.md` §5 and held inside the
 owner-declared-closed **pjm-142 frontier**. The frontier's own closure note names the
 re-opening condition — *"a NEW defect or a NEW measured identification with its own charter"* —
 and this lane presents both: the rule-23 `[R-FROZEN-DERIVE]` wart (§1) and pjm-170's measured

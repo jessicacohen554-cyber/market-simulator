@@ -26,7 +26,7 @@ grounds with a VERIFIED population** — it is not a search. Everything else in
 §5.4 is spoken for: C7 `COAL_PRB` regulated self-commitment is CLOSED
 (miso-111 `R` / 112 `R` / 113 `I`, confirmed 114; rule 19 `[R-ONE-MECH]` forbids
 a fourth mechanism); items 1–2 are data-blocked at a **sourcing** step
-(`docs/handoffs/miso-coal-contract-tonnage-data-ask-2026-07.md` §8); item 3 is
+(`docs/records/miso/miso-coal-contract-tonnage-data-ask-2026-07.md` §8); item 3 is
 `R` ex ante; items 4/5/6 are `K`/`I`/`I`; miso-122 executed the hybrid-cogen
 scope gate, miso-123 closed the seam hour-of-day lane, and miso-125 adjudicated
 the prime-mover grain `R`.

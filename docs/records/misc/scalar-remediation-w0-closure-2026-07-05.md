@@ -2,7 +2,7 @@
 
 **Session type:** verification + DOF-ledger completion only. No dispatch-affecting value
 changed, no LP solved, no residual chased. Executes
-`docs/handoffs/scalar-remediation-plan-2026-07.md` §5 W0 / `docs/handoffs/scalar-remediation-prompts-2026-07.md`
+`docs/records/misc/scalar-remediation-plan-2026-07.md` §5 W0 / `docs/records/misc/scalar-remediation-prompts-2026-07.md`
 B-GOV-1.
 
 ## 1. C-2 closure — confirmed
@@ -22,7 +22,7 @@ keeper that (a) `gas_offer_curve=True` never leaves a group uncovered by
 `_GAS_TRANCHE_SHARES`), and (b) no committed-HR-override group is missing its
 econ/peak override (which would fall through to the ERCOT-fitted HR literals). Zero failures
 across CAISO/PJM/NYISO/NEISO/MISO. Full report attached:
-`docs/handoffs/d9-keeper-quarantine-report-2026-07-05.md` (+ `.json` machine artifact). **Closed.**
+`docs/records/misc/d9-keeper-quarantine-report-2026-07-05.md` (+ `.json` machine artifact). **Closed.**
 
 ## 3. `offer_curves.py` rule-24 sweep
 

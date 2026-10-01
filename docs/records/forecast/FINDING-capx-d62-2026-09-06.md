@@ -3,13 +3,13 @@
 **Lane:** capx D62 (director r#43, re-issue of the r#41 charter). Branch
 `claude/capx-d62-pjm-acr-bar`. Base `fca3b656`, rebased onto main before the final push.
 DATA PROFILE `pjm`. Model Opus.
-**Binding charter:** `docs/handoffs/capx-director-prompt-pack-2026-08.md` §D62 +
+**Binding charter:** `docs/records/forecast/capx-director-prompt-pack-2026-08.md` §D62 +
 `FINDING-capx-d61-2026-09-05.md` §4. **Pre-registration:**
-`docs/handoffs/PRECOMMIT-capx-d62-pjm-acr-bar-2026-09-06.md`, committed and pushed
+`docs/records/forecast/PRECOMMIT-capx-d62-pjm-acr-bar-2026-09-06.md`, committed and pushed
 (`1f4a548f`) **before** the first line of build and every solve.
-**Instruments:** `docs/handoffs/d62/phase0-2026-09-06.{py,json}` (the zero-LP gate),
-`docs/handoffs/d62/screen-2026-09-06.json` (every screen number),
-`docs/handoffs/d62/full-window-2026-09-06.json` (every full-window number).
+**Instruments:** `docs/records/forecast/d62/phase0-2026-09-06.{py,json}` (the zero-LP gate),
+`docs/records/forecast/d62/screen-2026-09-06.json` (every screen number),
+`docs/records/forecast/d62/full-window-2026-09-06.json` (every full-window number).
 **Nothing arms in this lane.**
 
 ---
@@ -103,7 +103,7 @@ Full table: PRECOMMIT §2. Summary and the two facts that matter:
 
 ## 3. PHASE 0 — the zero-LP STOP gate: **PASS**
 
-`docs/handoffs/d62/phase0-2026-09-06.py` re-clears the committed arm-A offer stacks **through the
+`docs/records/forecast/d62/phase0-2026-09-06.py` re-clears the committed arm-A offer stacks **through the
 code path** — the new resolver under a real `ScenarioConfig` feeding the code's own
 `clear_capacity_supply_stack` / `capacity_supply_curve`.
 
@@ -150,7 +150,7 @@ Screen year chosen as the year the mechanism's own measured footprint is **large
 / oil offer on the bar plateau: 330 CT, 115 gas_st, 421 oil units at exactly zero E&AS; coal's ATB
 gap widest at 2.0×) — **not** the year with the biggest residual. One solve year (2021 solved, 2022
 the rule-22 bridge). **No control solve**: the committed `evolution_2022.json` is the control.
-Every number: `docs/handoffs/d62/screen-2026-09-06.json`.
+Every number: `docs/records/forecast/d62/screen-2026-09-06.json`.
 
 | | control (committed `pjm-t1h`) | arm (published bar + reactive) | pre-solve prediction (S6R) |
 |---|---:|---:|---:|
@@ -252,7 +252,7 @@ recipe **plus** `--capacity-going-forward-bar-published`, one
 `--start-year 2021 --end-year 2025` invocation, years sequential. Solved [2021, 2023, 2024, 2025],
 2022 the rule-22 bridge — the control's own span. **Control:** the committed `pjm-t1h`
 (`f0e050e820c1159a`), differenced, never re-solved (§2). Key `b98060898fceb3da`, pre-computed and
-matched. Every number: `docs/handoffs/d62/full-window-2026-09-06.json`.
+matched. Every number: `docs/records/forecast/d62/full-window-2026-09-06.json`.
 
 ### 5.1 The clearing, per delivery year
 

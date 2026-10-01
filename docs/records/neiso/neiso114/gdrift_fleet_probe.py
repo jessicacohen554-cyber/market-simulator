@@ -12,7 +12,7 @@ unit by unit, at zero LP.
 
 Usage::
 
-    python <tree>/docs/handoffs/neiso114/gdrift_fleet_probe.py --bundle-meta <meta.json> --out <dir> --tag <basis|head>
+    python <tree>/docs/records/neiso/neiso114/gdrift_fleet_probe.py --bundle-meta <meta.json> --out <dir> --tag <basis|head>
 """
 
 from __future__ import annotations

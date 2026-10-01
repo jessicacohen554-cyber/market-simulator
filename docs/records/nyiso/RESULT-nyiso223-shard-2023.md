@@ -2,7 +2,7 @@
 
 > **SUPERSEDED — read this as the record of a STOP, not as an open action item.**
 > This shard stopped without a solve artifact. The 2023 leg was re-run by the
-> replacement shard whose report is **`docs/RESULT-nyiso223-shard-2023-r2.md`**,
+> replacement shard whose report is **`docs/records/nyiso/RESULT-nyiso223-shard-2023-r2.md`**,
 > which confirms the two curations named in §3 below were **sufficient** — it hit
 > no third missing datatype. The mechanism has since been adjudicated across all
 > four solvable years and its NYISO matrix cell reads **`R` (rejected on effect,
@@ -101,8 +101,8 @@ stopped rather than run long.
 clean tree built, and that is **not a 20-minute step**. Two repo findings put a
 number on it:
 
-- `docs/FINDING-debug-b-pjm-input-clock-2026-08-15.md:226` — *"`scripts/regenerate_clean.py` — 50 datatypes across all ISOs, **~2 h wall-clock on this box**"*
-- `docs/FINDING-entry-signal-disarm-2026-08.md:487` — *"`PYTHONPATH=. uv run python scripts/regenerate_clean.py` before any solve (48/51 …)"*
+- `docs/records/pjm/FINDING-debug-b-pjm-input-clock-2026-08-15.md:226` — *"`scripts/regenerate_clean.py` — 50 datatypes across all ISOs, **~2 h wall-clock on this box**"*
+- `docs/records/misc/FINDING-entry-signal-disarm-2026-08.md:487` — *"`PYTHONPATH=. uv run python scripts/regenerate_clean.py` before any solve (48/51 …)"*
 
 So a full regeneration **cannot** live inside a 20-minute solve shard. Options
 for the parent, in the order I'd recommend them:

@@ -2,7 +2,7 @@
 
 **Lane** SPP-91 · **ZERO LP** · keeper `2026-09-26-spp-86-coal-extract` (bundle `spp86_arm_span`, basis_sha `d72e5f10`)
 · probes `scripts/probes/_spp91_flat_coal_series.py` (stage 1), `_spp91_node_lmp_fetch.py` (node LMPs),
-`_spp91_flat_coal_tests.py` (stage 2) · record `results/calibration/_spp91_flat_coal_tests.json`.
+`_spp91_flat_coal_tests.py` (stage 2) · record `results/phase0/spp/_spp91_flat_coal_tests.json`.
 Nothing solved, registered or promoted. Keeper unchanged. No promotion question (rule 31).
 
 ## 0. Object

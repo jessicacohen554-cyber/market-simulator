@@ -3,7 +3,7 @@
 ZERO LP. Everything here is arithmetic over one instrumented bundle's committed
 sidecars plus a ``fleet_only`` rebuild, exactly as caiso-285 and caiso-286 were.
 
-THE OBJECT (``docs/RESULT-caiso286-cc-start-cost-2026-09-19.md`` section 7):
+THE OBJECT (``docs/records/caiso/RESULT-caiso286-cc-start-cost-2026-09-19.md`` section 7):
 270.279 mean-belly-MW pass the RA bridge's restart inequality at the incumbent
 $50/MW, and the committed floor array shows those gen-hours floored by nothing.
 Two screens can remove them and caiso-286 could not tell which did --
@@ -21,7 +21,7 @@ carried either -- which is why caiso-286's number is an upper bound. The
 PRODUCTION detector, unmodified, in four configurations and reads the answer off
 the floors it returns.
 
-Pre-registration: ``docs/PRECOMMIT-caiso287-startup-decommit-split-2026-09-19.md``.
+Pre-registration: ``docs/records/caiso/PRECOMMIT-caiso287-startup-decommit-split-2026-09-19.md``.
 Every metric, gate, cut and verdict word below is fixed there, before the
 instrumented replay was solved.
 """
@@ -93,7 +93,7 @@ def surplus_floor_value(cfg: dict) -> float:
         return 0.0
     return -float(cfg["renewable_keep_running_value"])
 
-BELLY = REPO / "results/calibration/_caiso285_belly_2024.json"
+BELLY = REPO / "results/phase0/caiso/_caiso285_belly_2024.json"
 BELLY_SHA16 = "c5948fb0d43620a1"
 
 # caiso-286's published census, which this rebuild must reproduce (G-R1).

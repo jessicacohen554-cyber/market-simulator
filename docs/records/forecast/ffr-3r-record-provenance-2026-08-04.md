@@ -350,7 +350,7 @@ against the leg's own `run_config.json` before citing it. The list:
 ### 5.3 `entry_lookahead_reprice` / `correlated_forced_outage` — FFR-3D
 
 Priced by the owner at signature (Addendum D.3) and documented in
-`docs/handoffs/ffr-3d-instrument-repair-2026-08-03.md` §2.1: every T1-H verdict committed
+`docs/records/forecast/ffr-3d-instrument-repair-2026-08-03.md` §2.1: every T1-H verdict committed
 before that fix was scored with both forced OFF and is **legacy evidence on a superseded
 posture**. That statement stands; this lane adds nothing to it beyond confirming the
 sidecar record agrees (pre-fix sidecars carry `false` for both).
@@ -451,4 +451,4 @@ added (private repo, owner-billed runners). If it should gate PRs explicitly, ex
 | `scripts/run_full_horizon.py` | `SUMMARY_RECORD_SPEC`; `solve_and_summarize(extra_spec=…)`; post-merge assertion |
 | `scripts/run_ces_leg.py` | `CES_LEG_SPEC`; `_leg_meta` builds from it and passes it as `extra_spec` |
 | `tests/regression/test_run_record_provenance.py` | **NEW** — 21 tests / 62 subtests: the class contract, the historical reproduction, instance five, the composition seams, the static lint + its negative control |
-| `docs/handoffs/ffr-3r-record-provenance-2026-08-04.md` | this document |
+| `docs/records/forecast/ffr-3r-record-provenance-2026-08-04.md` | this document |

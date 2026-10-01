@@ -1,7 +1,7 @@
 # RESULT — NYISO-NEXT-9: the always-on 900 MW HQ_hydro import floor removed; promoted — 2026-09-28
 
 - **Session:** NYISO-NEXT-9, the orchestrator. No LP ran in this container (rule 32 (a)).
-- **PRECOMMIT:** `docs/PRECOMMIT-nyiso-next9-hq-floor-2026-09-28.md`, which holds phase 0, G-DRIFT, the gates and the promotion rule. It was written before any solve.
+- **PRECOMMIT:** `docs/records/nyiso/PRECOMMIT-nyiso-next9-hq-floor-2026-09-28.md`, which holds phase 0, G-DRIFT, the gates and the promotion rule. It was written before any solve.
 - **Arm pin:** `7900ac511f710940bc039aa4de354646d4e10f26`.
 - **New keeper:** `2026-09-28-nyisonext9-hq-floor-span` (bundle `results/calibration/nyisonext9_span`, 2022–2025).
 - **Stamped held-out run:** `2026-09-28-nyisonext9-hq-floor-2021` (bundle `results/calibration/nyisonext9_2021`).
@@ -22,7 +22,7 @@
 
 ## 2. Gates (arm vs the NEXT-8 keeper's committed bundles, form 4)
 
-Records: `results/calibration/_nyisonext9_gates.json` and `results/calibration/_nyisonext9_compare_span.txt`.
+Records: `results/phase0/nyiso/_nyisonext9_gates.json` and `results/phase0/nyiso/_nyisonext9_compare_span.txt`.
 
 | | 2021 | 2022 | 2023 | 2024 | 2025 |
 |---|---|---|---|---|---|

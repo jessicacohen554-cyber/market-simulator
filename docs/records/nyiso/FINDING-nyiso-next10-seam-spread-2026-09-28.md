@@ -7,10 +7,10 @@
   PJM_HTP, NE_AC, NE_1385). 4 are not (PJM_AC, PJM_VFT, PJM_NEPTUNE, NE_CSC). The rule required
   NE_AC **and** the downstate DC groups carrying the NYC/LI excess; VFT, Neptune and CSC fail.
   No PRECOMMIT for a solve, no shard, no keeper change.
-- **Rule.** `docs/PRECOMMIT-nyiso-next10-seam-spread-phase0-2026-09-28.md`, committed at
+- **Rule.** `docs/records/nyiso/PRECOMMIT-nyiso-next10-seam-spread-phase0-2026-09-28.md`, committed at
   `c635751a` before any spread statistic was computed.
 - **Probe.** `scripts/probes/nyisonext10_seam_spread_phase0.py` →
-  `results/calibration/_nyisonext10_phase0.json`. Reads raw inputs only.
+  `results/phase0/nyiso/_nyisonext10_phase0.json`. Reads raw inputs only.
 
 ## 1. Intake (`seam-neighbour-price`, new clean datatype)
 

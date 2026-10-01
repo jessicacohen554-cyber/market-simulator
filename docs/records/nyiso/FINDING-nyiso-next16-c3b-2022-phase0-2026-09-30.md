@@ -2,7 +2,7 @@
 
 - **Session:** NYISO-NEXT-16 (orchestrator; zero LP).
 - **Keeper read:** `2026-09-30-nyisonext15-landing-band-span` (bundle `results/calibration/nyisonext15_span`), plus the per-plant sidecars of its 2022 and 2025 legs (`8433152e`, `eedd688c`).
-- **Probe:** `scripts/probes/nyisonext16_phase0.py` → `results/calibration/_nyisonext16_phase0.json`. The gas block is a `fleet_only` rebuild of the keeper's `(n_gen, 8760)` fuel-price array (no LP; none of the gas-path files changed between the keeper's `4c98e6dd` and `c8a93df6`).
+- **Probe:** `scripts/probes/nyisonext16_phase0.py` → `results/phase0/nyiso/_nyisonext16_phase0.json`. The gas block is a `fleet_only` rebuild of the keeper's `(n_gen, 8760)` fuel-price array (no LP; none of the gas-path files changed between the keeper's `4c98e6dd` and `c8a93df6`).
 
 ## 1. C3b 2022 by month (model − RT actual, load-weighted, $/MWh; share of squared error)
 

@@ -33,7 +33,7 @@ clauses.
 
 **Evidence carried forward unchanged, not re-litigated.** The nyiso-115 ex-ante
 screen (`scripts/probes/_nyiso115_nyc_rcpf_curve_screen.py` →
-`results/calibration/nyiso115_nyc_rcpf_curve_screen.json`) stands on its own
+`results/phase0/nyiso/nyiso115_nyc_rcpf_curve_screen.json`) stands on its own
 instrument and is unaffected by a CT heat-rate artifact — it is a measurement of
 **NYISO's posted prices**, not of the model. Only the *bundle's* CT input was
 stale.

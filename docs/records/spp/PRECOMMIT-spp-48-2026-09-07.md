@@ -154,13 +154,13 @@ All are arithmetic over committed inputs plus the repaired shapes. **No LP. No h
 every year touched is 2023 / 2024 / 2025, and nothing is solved at all).
 
 **(M1) Identity legs, both ISOs, all three years** (charter item 2 → P3). SPP-54's committed
-`docs/handoffs/spp54/wind_reconcile.py` is the instrument for the identity legs; this lane's copy runs the
+`docs/records/spp/spp54/wind_reconcile.py` is the instrument for the identity legs; this lane's copy runs the
 same C-1 / C-2 arithmetic through the real path
 (`_eia860_monthly_capacity → _forecast_uncurtailed_cf → _wind_zone_reanalysis_shapes →
 _distribute_by_eia860`) for SPP two-zone and for MISO, before and after. Reported: max relative
 `|Σ_z cap_z cf_z − M|`, hours with lost overflow, max per-zone CF.
 
-**(M2) The h8509 test** (charter item 3). SPP-54's committed `docs/handoffs/spp54/dec21_window_2025.csv`
+**(M2) The h8509 test** (charter item 3). SPP-54's committed `docs/records/spp/spp54/dec21_window_2025.csv`
 carries, for every hour of the 2025-12-21 window, the three-zone demand (N / S / SPS), the thermal + hydro
 capability **net of keeper-3's own availability arrays**, and the regional solar — all from
 `run_year(fleet_only=True)` on keeper-3's recipe at design commit `8d427adc`. This lane **replaces only
@@ -232,6 +232,6 @@ and it is not an overlay.
 - No shared record touched (plan §8.0 collision rules r#11): not the plan, the ledger,
   `docs/calibration-log/spp.md`, `CHANGELOG.md`, `docs/mechanism-testing-matrix.md`, MISO's log / shard /
   status, or any keeper/gates stamp. This lane's record is its PRECOMMIT, its FINDING and
-  `docs/handoffs/spp48/`.
+  `docs/records/spp/spp48/`.
 - No change to the construction after any number is read (rule 23) — the rule above is frozen at this
   commit.

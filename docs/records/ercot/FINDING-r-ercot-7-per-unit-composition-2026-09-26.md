@@ -75,7 +75,7 @@ The flag off on this branch is **byte-identical to `main`** on all 242–251 sta
 - **In-merit lift** exceeds B's in every year, so the risk that coal is added where it already runs over actual (2022, 2025) is larger, not smaller.
 - **Scarcity-hour / top-100 MW** (D): 76 / 68 (2019), 0 / 164 (2020), 444 / 442 (2021), 235 / 192 (2022), **70 / 99 (2023), 485 / 247 (2024), — / 163 (2025)**. These are the same order as B's.
 - **CC_REGULAR lift (D):** 0.58–1.84 TWh/yr, 0.35–0.97 of it ≤ CEMS. This is close to B's.
-- Full output: `docs/handoffs/r-ercot/r_ercot7_perunit_seam.txt`.
+- Full output: `docs/records/ercot/r-ercot/r_ercot7_perunit_seam.txt`.
 
 ### Reading
 

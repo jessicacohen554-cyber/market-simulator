@@ -1,6 +1,6 @@
 {
   "charter": "miso-215 phase 0 \u2014 the phys_* coverage gap on the intermediate-duty cohorts; zero-solve.",
-  "prereg": "results/calibration/PREREG-miso215-intermediate-phys-2026-09-05.md @ cae766ec",
+  "prereg": "docs/records/miso/PREREG-miso215-intermediate-phys-2026-09-05.md @ cae766ec",
   "keeper": "2026-09-05-miso-213-layering",
   "keeper_bundle": "results/calibration/miso213_layering_B",
   "anchor_usd_mmbtu": 3.0492,

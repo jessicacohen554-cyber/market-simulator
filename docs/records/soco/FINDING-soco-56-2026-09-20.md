@@ -546,8 +546,8 @@ on structure and not on the residual. A SECOND RULING IS ASKED FOR:
 2026-09-20-soco53g-prb-own-iso has now fired audit_keepers E13 for the NINTH
 consecutive lane; the standing recommendation is to DECLINE it so the next
 promoting session may prune it. Records:
-docs/handoffs/PRECOMMIT-soco-56-2026-09-20.md,
-docs/handoffs/FINDING-soco-56-2026-09-20.md, scripts/gen_soco56_attestation.py,
+docs/records/soco/PRECOMMIT-soco-56-2026-09-20.md,
+docs/records/soco/FINDING-soco-56-2026-09-20.md, scripts/gen_soco56_attestation.py,
 scripts/probes/soco56_compose_span.py.
 ```
 

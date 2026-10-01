@@ -1,6 +1,6 @@
 {
  "probe": "miso-244 phase 0 \u2014 diagnose the one-cent gap between MISO_SEAM_LADDER_BY_YEAR and its own derive at HEAD",
- "prereg": "results/calibration/PREREG-miso244-diagnose-the-incumbent-ladder-cent-2026-09-08.md",
+ "prereg": "docs/records/miso/PREREG-miso244-diagnose-the-incumbent-ladder-cent-2026-09-08.md",
  "keeper": "2026-09-07-miso-243-spp-pairing",
  "zero_lp": true,
  "read_only": true,

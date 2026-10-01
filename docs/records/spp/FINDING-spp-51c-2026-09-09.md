@@ -343,7 +343,7 @@ this PR (rule 28c, CI-verified), SPP stamped R, ERCOT/CAISO/MISO U, PJM/NYISO/NE
 section 7 with reproduction costs (~3 min screen, ~10-15 min full span). Incidental, pre-existing on
 main and not fixed here: run_calibration_full.py --help raises ValueError on an unescaped % in some
 argument's help text.
-FINDING: docs/handoffs/FINDING-spp-51c-2026-09-09.md
+FINDING: docs/records/spp/FINDING-spp-51c-2026-09-09.md
 ```
 
 ---

@@ -23,7 +23,7 @@ solve output of this session's own making exists**, and `metrics.json` /
 
 **Inherited findings, read in full or in the cited part:**
 
-1. `docs/FINDING-nyiso181b-stgas-floor-overgeneration-2026-09-03.md` — in full.
+1. `docs/records/nyiso/FINDING-nyiso181b-stgas-floor-overgeneration-2026-09-03.md` — in full.
    Supplies: the C1-2023 miss is ONE PLANT (Ravenswood 2500, +5.472 / +2.787 /
    +1.618 TWh over its own CAMPD meter, the other ten `ST_GAS` plants netting
    −2.365 TWh); the excess is **economic, not forced** (5.631 of 6.328 TWh in
@@ -33,7 +33,7 @@ solve output of this session's own making exists**, and `metrics.json` /
    Kill 4.8×, Northport 2.4×, Barrett 1.3×, Bowline 1.3×, Greenidge 1.07×); the
    rule-17 violation (0.316 / 0.268 / 0.049 TWh in metered-off hours); the D-2 /
    C8 grain under-count (escalated, not mine).
-2. `docs/FINDING-nyiso177-availability-basis-root-cause-2026-09-02.md` — in
+2. `docs/records/nyiso/FINDING-nyiso177-availability-basis-root-cause-2026-09-02.md` — in
    full. Supplies: `(2500, ST_GAS)` availability **0.772 / 0.465 / 0.297** on
    the keeper path against **0.129 / 0.097 / 0.111** on the unguarded per-unit
    path; the G2 over-booking (`ST_GAS` booked share 0.536 / 0.560 / 0.501 on the
@@ -42,12 +42,12 @@ solve output of this session's own making exists**, and `metrics.json` /
    FAILED on both legs; the **rejection of the unguarded arm** (B1: grade 3,
    fails 4, load-weighted price 38.01 / 40.49 / 62.00 against actual RT 32.25 /
    38.12 / 66.43); §7.5's unmade `unit_layup_csv_for_iso` resolver extension.
-3. `results/calibration/FINDING-nyiso140-li-st-floor-membership-2026-08-16.md`
+3. `docs/records/nyiso/FINDING-nyiso140-li-st-floor-membership-2026-08-16.md`
    — in full. The repair template and the evidentiary standard (a plant
    convicted only on **median when-available CF exactly 0.000 in every hour
    block of every year**), and its rule-1 disposition (the fit got worse and the
    repair was promoted anyway).
-4. `docs/FINDING-nyiso178-offer-side-idling-2026-09-02.md` §4 only. Supplies the
+4. `docs/records/nyiso/FINDING-nyiso178-offer-side-idling-2026-09-02.md` §4 only. Supplies the
    guard's class-level census: **449 `ST_GAS` windows / 221,016 window-hours
    REMOVED at mean `out_of_merit_share` 0.989**, against **450 windows /
    362,736 window-hours KEPT at mean 0.173 / median 0.000**, and the three
@@ -56,7 +56,7 @@ solve output of this session's own making exists**, and `metrics.json` /
    AGAINST hypothesis A**: at class grain the guard's statistic demonstrably
    separates. §3 G1 below is written knowing that, and is deliberately a
    **per-unit** test of the same thing.
-5. `docs/FINDING-nyiso179-st-gas-offer-position-2026-09-03.md` §1 only. The
+5. `docs/records/nyiso/FINDING-nyiso179-st-gas-offer-position-2026-09-03.md` §1 only. The
    offer-POSITION type was refuted at class grain (G1 `NOT-OFFER-GOVERNED`: the
    model dispatches only 0.767 / 0.522 / 0.740 of the `ST_GAS` its own offer
    puts in the money) and the 2025 top-decile deficit decomposes 62 % onto the

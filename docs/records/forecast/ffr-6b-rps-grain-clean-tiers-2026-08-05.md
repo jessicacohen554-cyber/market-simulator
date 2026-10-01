@@ -3,7 +3,7 @@
 **Lane:** structural scoping (owner signature, sitting Addendum U.5, 2026-08-05). **Design only.**
 No code, no `ScenarioConfig` field, no schema, no solve, no matrix cell, no dashboard contact. The
 deliverable is a design plus an implementation card, on the FFR-5B pattern. The escalation record is
-`docs/handoffs/ffr-5b-procurement-channel-design-2026-08-05.md` §5.3 (E-1/E-2) and §5.4 (the rider).
+`docs/records/forecast/ffr-5b-procurement-channel-design-2026-08-05.md` §5.3 (E-1/E-2) and §5.4 (the rider).
 
 **Head at start:** `origin/main` `57120845` (the prompt's `8693b75d` had moved; the branch was reset
 onto the later head before any work). **State re-verified at this session's own head, from the shards
@@ -649,7 +649,7 @@ Statutory sources cited in §3.4, §6.1 and §8.1: Minn. Stat. §216B.1691 (2023
 ```
 ### CARD D-19 — The RPS row: fix the tier/eligibility level first, then the compliance grain?
 
-**Measured (FFR-6B, docs/handoffs/ffr-6b-rps-grain-clean-tiers-2026-08-05.md).** Three findings, and
+**Measured (FFR-6B, docs/records/forecast/ffr-6b-rps-grain-clean-tiers-2026-08-05.md).** Three findings, and
 the ordering is the decision.
 
 (i) E-1's DIAGNOSIS NEEDS ONE CORRECTION. The defect is not that the row is ISO-wide — it is that

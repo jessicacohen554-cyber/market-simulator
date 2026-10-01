@@ -34,8 +34,8 @@
 ## 1. Phase 0 (zero LP), committed evidence
 
 Probes: `scripts/probes/nyisonext2_astoria_pair_phase0.py` →
-`results/calibration/_nyisonext2_astoria_pair_phase0.json`; the floor-in-meter-zero census →
-`results/calibration/_nyisonext2_astoria_floor_meterzero.json`. Fleet-only rebuilds through
+`results/phase0/nyiso/_nyisonext2_astoria_pair_phase0.json`; the floor-in-meter-zero census →
+`results/phase0/nyiso/_nyisonext2_astoria_floor_meterzero.json`. Fleet-only rebuilds through
 `replay_keeper.run_year_kwargs`, committed pair (CONTROL) vs repaired pair (ARM).
 
 ### 1.1 Reproducibility and the extract footprint

@@ -348,7 +348,7 @@ their own measured loss deviations instead of the SP15 hub's (§2).
 | control bundle | `results/calibration/caiso164_control_lossless` |
 | keeper run id | `2026-08-04-caiso164-zonal-loss-surface` |
 | control run id | `2026-08-04-control-flagoff-lossless-baseline` |
-| prereg | `results/calibration/PRECHECK-caiso164-zonal-loss-surface-2026-08-04.md` (`eda8ebe8`) |
+| prereg | `docs/records/caiso/PRECHECK-caiso164-zonal-loss-surface-2026-08-04.md` (`eda8ebe8`) |
 | §0 decomposition probe | `scripts/probes/caiso164_ns_basis_decomp.py` |
 | §0 surplus probe | `scripts/probes/caiso164_zonal_surplus.py` |
 | pre-solve wiring probe | `scripts/probes/caiso164_wiring_probe.py` |

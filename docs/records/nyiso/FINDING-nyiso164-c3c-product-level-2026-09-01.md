@@ -4,7 +4,7 @@
 **Mode:** zero-solve, committed artifacts + published raw only ·
 **Keeper under test:** `2026-08-30-nyiso-159-loss-surface`
 (`results/calibration/nyiso159_lossarm_B`) ·
-**Artifact:** `results/calibration/_nyiso164_nyca_shortage_check.json` ·
+**Artifact:** `results/phase0/nyiso/_nyiso164_nyca_shortage_check.json` ·
 **Probe:** `scripts/probes/nyiso164_nyca_shortage_check.py`
 
 ## 0. Verdict — the pre-registered kill gate FIRES on BOTH clauses

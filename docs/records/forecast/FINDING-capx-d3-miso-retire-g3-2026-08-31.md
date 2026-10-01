@@ -1,6 +1,6 @@
 # FINDING — capx D3: MISO's T1-H `retire.total_gw` PASS→FAIL flip is ATTRIBUTED — the G3 cap-grain fix unmasked a compensating error; the FAIL value is the model's stable, control-corroborated number, and the pre-fix PASS was the artifact
 
-**Lane:** capx D3 (r#21), charter `docs/handoffs/capx-director-prompt-pack-2026-08.md` §D3.
+**Lane:** capx D3 (r#21), charter `docs/records/forecast/capx-director-prompt-pack-2026-08.md` §D3.
 **Precommit:** `PRECOMMIT-capx-d3-miso-retire-g3-2026-08-31.md`, pushed before measurement;
 the candidate classes, evidence plan (E1–E5), adjudication rule and kills below are executed
 as frozen there. **Phase 0 only: ZERO solves — every number in this finding is read from a

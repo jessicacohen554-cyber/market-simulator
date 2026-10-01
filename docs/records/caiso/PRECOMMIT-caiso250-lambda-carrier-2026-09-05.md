@@ -206,7 +206,7 @@ headline. These are registered wide and against interest.
 ## §4 — DELIVERABLES
 
 This PRECOMMIT (pushed first); `scripts/probes/_caiso250_lambda_carrier_anatomy.py`
-+ `results/calibration/_caiso250_lambda_carrier_anatomy.json`;
++ `results/phase0/caiso/_caiso250_lambda_carrier_anatomy.json`;
 `FINDING-caiso250-lambda-carrier-2026-09-05.md`; the `docs/calibration-log/caiso.md`
 entry; an **evidence-only** append on the CAISO matrix shard (no cell verdict
 moves — no mechanism is tested). **No run is registered** (none is produced) and

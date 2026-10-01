@@ -261,7 +261,7 @@ measured for SPP. Re-opening it needs new evidence meeting rule 28(a), not a fre
 ## 7. THE ORDERED WORK PLAN
 
 Ordering principle: **zero-LP first, then the one card with a real structural object behind it.** SPP's
-measured span cost is **499 s of LP for 2023–2025** (`docs/SHARDREPORT-spp27-span.md:24`), ≈166 s/year,
+measured span cost is **499 s of LP for 2023–2025** (`docs/records/spp/SHARDREPORT-spp27-span.md:24`), ≈166 s/year,
 so under rule 32 `[R-SHARD]` (b) **one year = one shard = one commit**, comfortably inside the 20-minute
 ceiling once a cold container's clone + `--profile spp` hydrate is counted (~20–35 min wall per shard,
 of which the LP is under 3 min). A screen is 1 shard; a span is 3 parallel shards. **The parent runs no

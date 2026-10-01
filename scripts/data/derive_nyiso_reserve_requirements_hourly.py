@@ -3,7 +3,7 @@
 Reconstructs ``NYISO_reserve_requirements_{year}.csv`` — the loader contract of
 ``src/market_sim/data/nyiso_reserve_requirements.py`` (consumed when
 ``ScenarioConfig.nyiso_dynamic_reserve_requirements`` is on) — from the two
-intaken measured sources of Ask B (``docs/handoffs/nyiso-data-asks-2026-07.md``):
+intaken measured sources of Ask B (``docs/records/nyiso/nyiso-data-asks-2026-07.md``):
 
 * ``nyiso-reserve-requirements`` (clean) — the published dated "Locational
   Reserve Requirements" schedule, including the SENY 30-minute hourly step

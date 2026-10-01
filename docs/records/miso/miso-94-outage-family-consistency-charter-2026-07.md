@@ -8,8 +8,8 @@ measured from committed artifacts with **no LP solve** (extract A/B re-derives o
 question: *which offer-curve parameters were fitted against the inflated envelope,
 and do they re-derive?*
 
-**Parent:** `docs/handoffs/miso-93-keeper-reaudit-charter-2026-07.md`;
-`results/calibration/FINDING-miso93-keeper-reaudit-meritguard-2026-07.md`.
+**Parent:** `docs/records/miso/miso-93-keeper-reaudit-charter-2026-07.md`;
+`docs/records/miso/FINDING-miso93-keeper-reaudit-meritguard-2026-07.md`.
 
 ---
 

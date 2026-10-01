@@ -2,7 +2,7 @@
 
 **Lane:** SCN-WS2b · **Branch:** `claude/scn-ws2b-ces-clearing-y40sks` · **Date:** 2026-09-06
 **Base:** `origin/main` `af6269cf11ffd5953f64a4767277fa8724171d0f`
-**Charter:** `docs/handoffs/forecast-scenario-readiness-plan-2026-09.md` §3 WS-2 items 3–6 / §7 "WS-2b"
+**Charter:** `docs/records/forecast/forecast-scenario-readiness-plan-2026-09.md` §3 WS-2 items 3–6 / §7 "WS-2b"
 **Model:** `claude-opus-5` (rule 27 `[R-PUSH]`: this lane adds `scripts/ces_national_clearing.py`)
 **Data profile:** `ercot`, then `neiso` (full clone — every blob local; `hydrate_data.py` is a no-op here)
 
@@ -19,7 +19,7 @@ reported at full magnitude in the FINDING, per the SCN-WS0 §3.1 precedent.
 ## 0. What is being screened, and what is not
 
 **The object under test is the federal CES premium at the HEAD forecast posture.** The July
-FF-3B POC (`docs/handoffs/ff-3b-ces-poc-2026-07.md`) proved the machinery carries the signal at
+FF-3B POC (`docs/records/forecast/ff-3b-ces-poc-2026-07.md`) proved the machinery carries the signal at
 a posture that no longer exists: at least **eight** solve-affecting defaults on the ERCOT
 forecast path have moved since (§2). G-S5 pruned the three POC sidecars, so the POC now survives
 as a handoff doc only. Item 1 restores the evidence at the current posture.
@@ -87,7 +87,7 @@ dead arm regardless of what its clean share does.
 ## 2. The default-flip census (the G-DRIFT analogue) — declared before the solve
 
 A literal `git diff <july-sha> HEAD` is **not available**: the 2026-08-16 history rewrite
-(`docs/FINDING-history-rewrite-2026-08-16.md`) killed every pre-rewrite sha, and the FF-3B doc's
+(`docs/records/governance/FINDING-history-rewrite-2026-08-16.md`) killed every pre-rewrite sha, and the FF-3B doc's
 `57ed9fc` / `415df68` are among them. The census below is therefore built from each field's own
 **dated provenance comment** in `src/market_sim/config/scenarios.py` and from
 `config/iso_configs.py::_ercot_config` / `_neiso_config` — a stronger instrument than a diff for

@@ -151,5 +151,5 @@
     "chromium": "cannot reach any host from this container (example.com resets identically), so driving the SPA is unavailable",
     "session_proxy": "open and healthy (selective:false, no relay failures) \u2014 the 403 is FERC's edge, not ours"
   },
-  "csv": "results/calibration/_nyiso219_ferc_licence_index.csv"
+  "csv": "results/phase0/nyiso/_nyiso219_ferc_licence_index.csv"
 }

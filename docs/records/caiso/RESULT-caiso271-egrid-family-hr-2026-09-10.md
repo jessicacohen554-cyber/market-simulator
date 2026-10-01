@@ -4,7 +4,7 @@
 Arm: **`ScenarioConfig.egrid_family_heat_rates`**, default off, ONE flag on the committed keeper recipe via
 `--replay-bundle`. Solved as four per-year shards (rule 32 `[R-SHARD]`, the parent ran **zero LP**), all
 pinned to `9ee5319bcd48a025aa3cd126283c895fcc72fa65`.
-Charter: `docs/PRECOMMIT-caiso271-egrid-family-hr-2026-09-10.md`.
+Charter: `docs/records/caiso/PRECOMMIT-caiso271-egrid-family-hr-2026-09-10.md`.
 **KEEPER UNCHANGED at `2026-09-10-caiso-269-lateevening-clean`. NOT PROMOTED — the owner's call (§7).**
 
 ---

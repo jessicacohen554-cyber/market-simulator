@@ -3,7 +3,7 @@
 **Session ercot-162, 2026-08-04.** The ercot-161-chartered
 `ercot_storage_rt_offer_surface` successor, built (Phase A/B) and A/B-tested
 (Phase C) exactly per
-`docs/PRECOMMIT-ercot162-storage-rt-offer-surface-2026-08-04.md`. Keeper
+`docs/records/ercot/PRECOMMIT-ercot162-storage-rt-offer-surface-2026-08-04.md`. Keeper
 UNCHANGED (`2026-08-03-ercot158-pool-arm`). Verdict **R (rejected)** — multiple
 pre-registered kills fire, matching **both** pre-declared refutation branches.
 Single-delta A/B off the ercot158 keeper: control `ercot162_control_A` (fresh
@@ -11,8 +11,8 @@ same-HEAD replay, gap-hour mean $441.27 = the committed keeper to the cent),
 arm `ercot162_stormarm_B` (`--set ercot_storage_rt_offer_surface=true`), both
 `--year 2023 2024 2025`, invocations sequential (15 GB box). Scorers
 `scripts/probes/_ercot162_storage_ab.py` →
-`results/calibration/_ercot162_storage_ab.json` and the standing
-`_ercot89_span_check.py` → `results/calibration/_ercot162_span_check.txt`.
+`results/phase0/ercot/_ercot162_storage_ab.json` and the standing
+`_ercot89_span_check.py` → `results/phase0/ercot/_ercot162_span_check.txt`.
 
 ## 1. The verdict, on the pre-registered gates
 

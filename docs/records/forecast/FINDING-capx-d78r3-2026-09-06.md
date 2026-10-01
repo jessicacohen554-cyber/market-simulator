@@ -358,7 +358,7 @@ before merge (29(c)); the arm never re-solved.
 
 **Retention (rule 29(c)).** `results/hindcast/pjm-2021-2025-realized-t1h-d78r3-control-P` is
 **deleted before merge**. Every number this lane will ever cite is in this document, the PRECOMMIT
-with its two addenda, and `docs/handoffs/d78r3/{zero_eas_set,w5_regrade}.json`.
+with its two addenda, and `docs/records/forecast/d78r3/{zero_eas_set,w5_regrade}.json`.
 
 ## 8. Matrix (rule 28) and what is routed on
 
@@ -376,8 +376,8 @@ with its two addenda, and `docs/handoffs/d78r3/{zero_eas_set,w5_regrade}.json`.
 
 ```
 uv run python scripts/probes/d78r3_stack_census.py --regrade          # zero LP
-bash docs/handoffs/d78r3/run_ctl.sh                                   # ~15 min
-uv run python docs/handoffs/d78r2/window_compare2.py \
+bash docs/records/forecast/d78r3/run_ctl.sh                                   # ~15 min
+uv run python docs/records/forecast/d78r2/window_compare2.py \
     --ctl results/hindcast/pjm-2021-2025-realized-t1h-d78r3-control-P --band-only   # S1
 uv run python scripts/probes/d78r3_stack_census.py --census \
     --ctl results/hindcast/pjm-2021-2025-realized-t1h-d78r3-control-P

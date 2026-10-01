@@ -1,7 +1,7 @@
 {
  "session": "nyiso-215",
  "keeper": "2026-09-07-nyiso-213-summer-seam",
- "prereg": "results/calibration/PREREG-nyiso215-reserve-duty-single-peak.md",
+ "prereg": "docs/records/nyiso/PREREG-nyiso215-reserve-duty-single-peak.md",
  "zero_lp": true,
  "P1": {
   "peak_only_plants": [

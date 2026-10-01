@@ -73,7 +73,7 @@ forms off-limit. The degraded JSON was never committed.
 
 ## 2. The pre-registered gates and their outcomes
 
-Registered in `results/calibration/PREREG-nyiso171-chp-floor-identification.md`
+Registered in `docs/records/nyiso/PREREG-nyiso171-chp-floor-identification.md`
 and committed **with the probe, before either was run** (`138fe2ea`).
 
 | gate | PASS condition | outcome |
@@ -331,12 +331,12 @@ rather than solved away.
 
 ## 7. Evidence
 
-* `scripts/probes/nyiso171_chp_floor_identification.py` + `results/calibration/_nyiso171_chp_floor_identification.json` — gates A1–A7; committed at `138fe2ea` **before** it was run.
-* `results/calibration/PREREG-nyiso171-chp-floor-identification.md` — the gates, the stop condition, and the two directions fixed in advance so a favourable re-read was not available.
+* `scripts/probes/nyiso171_chp_floor_identification.py` + `results/phase0/nyiso/_nyiso171_chp_floor_identification.json` — gates A1–A7; committed at `138fe2ea` **before** it was run.
+* `docs/records/nyiso/PREREG-nyiso171-chp-floor-identification.md` — the gates, the stop condition, and the two directions fixed in advance so a favourable re-read was not available.
 * `results/calibration/nyiso159_lossarm_B/legitimacy_diagnostics.json` — the D-2 attribution of §2.1, read not regenerated.
 * `data/raw/_processed-legacy/thermal_tranches_NYISO.csv` — the `chp_pmin_cf` level source of §2.2; **read, never re-derived** (rule 23 `[R-FROZEN-DERIVE]`).
 * `src/market_sim/data/fleet/assembly.py` (the `chp_pmin_mw` construction) and `src/market_sim/data/fleet/arrays.py::MECH_CHP_STEAM` — the floor path, read but **not modified**.
-* `docs/FINDING-nyiso170-merit-order-displacement-2026-09-01.md` §3–§6; `docs/FINDING-nyiso169-congestion-gradient-anatomy-2026-09-01.md` §7–§8; `docs/FINDING-nyiso168-supply-curve-slope-anatomy-2026-09-01.md` §4, §8–§9; `docs/FINDING-nyiso167-c3a-price-response-gain-2026-09-01.md` §2, §5 — the closed lines, none re-opened.
+* `docs/records/nyiso/FINDING-nyiso170-merit-order-displacement-2026-09-01.md` §3–§6; `docs/records/nyiso/FINDING-nyiso169-congestion-gradient-anatomy-2026-09-01.md` §7–§8; `docs/records/nyiso/FINDING-nyiso168-supply-curve-slope-anatomy-2026-09-01.md` §4, §8–§9; `docs/records/nyiso/FINDING-nyiso167-c3a-price-response-gain-2026-09-01.md` §2, §5 — the closed lines, none re-opened.
 * `docs/codebase-site/data/mechanism-matrix/NYISO.js` — `chp_steam_following` (`K`, evidence added; **no verdict moves**); `node --check` and `scripts/check_mechanism_matrix.py` both pass.
 * CLAUDE.md rules 1 `[R-STRUCT]`, 13 `[R-MEASURED]`, 15 `[R-DASHBOARD]`, 17 `[R-FLOOR-WINDOW]`, 19 `[R-ONE-MECH]`, 20 `[R-FORCED-BUDGET]`, 22 `[R-HOLDOUT]`, 23 `[R-FROZEN-DERIVE]`, 25 `[R-ISO-SCOPE]`, 28 `[R-MECH-MATRIX]`.
 

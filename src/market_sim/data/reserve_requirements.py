@@ -37,7 +37,7 @@ responds to changed conditions). The measured reserve *prices*
 (``data/raw/NYISO-AS/NYISO_as_{rt,da}_{year}.csv``) are the validation target
 and are NEVER read here.
 
-Data contract (the Ask-B intake, ``docs/handoffs/nyiso-data-asks-2026-07.md``):
+Data contract (the Ask-B intake, ``docs/records/nyiso/nyiso-data-asks-2026-07.md``):
 
 * ``data/raw/NYISO-AS/requirements/NYISO_reserve_requirements_{year}.csv``
 * columns: ``Time Stamp`` (Eastern wall-clock, hour-beginning — the same
@@ -171,7 +171,7 @@ from market_sim.config.paths import RAW_DATA_DIR
 # NYISO — measured hourly locational reserve-requirement series (issue #1344)
 # ==========================================================================
 
-#: Drop zone for the Ask-B intake (docs/handoffs/nyiso-data-asks-2026-07.md).
+#: Drop zone for the Ask-B intake (docs/records/nyiso/nyiso-data-asks-2026-07.md).
 NYISO_RESERVE_REQUIREMENTS_DIR: Path = RAW_DATA_DIR / "NYISO-AS" / "requirements"
 
 #: (region, product) -> in-LP reserve family name (reserve_config._nyiso_design).
@@ -218,7 +218,7 @@ def load_nyiso_reserve_requirements(
         FileNotFoundError: The intake file is absent — the
             ``nyiso_dynamic_reserve_requirements`` flag hard-errors rather
             than silently reverting to the static requirements (see the Ask-B
-            data ask, ``docs/handoffs/nyiso-data-asks-2026-07.md``).
+            data ask, ``docs/records/nyiso/nyiso-data-asks-2026-07.md``).
         ValueError: Unknown (region, product) rows, or a present series that
             does not cover the full horizon.
     """
@@ -227,7 +227,7 @@ def load_nyiso_reserve_requirements(
         raise FileNotFoundError(
             f"nyiso_dynamic_reserve_requirements=True but the measured "
             f"requirement series is absent: {src}. This is the Ask-B external "
-            f"data intake (docs/handoffs/nyiso-data-asks-2026-07.md); the flag "
+            f"data intake (docs/records/nyiso/nyiso-data-asks-2026-07.md); the flag "
             f"must not solve on the static requirements it claims to replace."
         )
 

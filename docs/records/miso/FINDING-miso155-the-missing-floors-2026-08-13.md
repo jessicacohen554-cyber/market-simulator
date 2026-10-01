@@ -4,7 +4,7 @@
 **Keeper** `2026-08-09-miso-148-basis-aware` (`miso148_basis_B`), **UNCHANGED** ·
 **Model** `claude-opus-5`.
 
-**PREREG** `results/calibration/PREREG-miso155-p0-exact-commitment-instrument-2026-08-13.md`,
+**PREREG** `docs/records/miso/PREREG-miso155-p0-exact-commitment-instrument-2026-08-13.md`,
 pushed at **`a920c85`**, blob **`07b12e5aa081de79f15adebc4ac8321e0233d0d5`**,
 **verified byte-identical against the FETCHED remote ref** before any
 adjudicating statistic was computed (rule 27 `[R-PUSH]`).
@@ -292,7 +292,7 @@ already offers at its own base heat rate plus a startup markup.
 ---
 
 **Artifacts.** Probe `scripts/probes/_miso155_p0_exact_instrument.py`
-(ruff clean). Record `results/calibration/_miso155_p0_exact_instrument.json`.
+(ruff clean). Record `results/phase0/miso/_miso155_p0_exact_instrument.json`.
 Tests `tests/test_miso155_p0_commitment_sidecar.py` (11 passing). Build
 `scripts/run_calibration.py::p0_commitment_pattern` +
 `scripts/run_calibration_full.py::_write_p0_commitment_sidecar`. Run

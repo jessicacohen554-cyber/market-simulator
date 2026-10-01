@@ -140,7 +140,7 @@ TWh; hourly 3.0–6.3 GW (mean 4.06 / 4.18 / 4.31 GW). Static `load_share`s ther
 the pocket is carved from the South alone), SPP-SPS **0.1259**, SPP-South **0.3616** (residual, sum 1.0000) —
 confirmed to four decimals by the census before they are written.
 
-To be produced by `docs/handoffs/spp54/census.py` (an on-recipe `run_year(fleet_only=True)` on keeper-3's meta via
+To be produced by `docs/records/spp/spp54/census.py` (an on-recipe `run_year(fleet_only=True)` on keeper-3's meta via
 `replay_keeper.run_year_kwargs`, the SPP-57b instrument re-pointed) for 2023–2025: per zone the plants, LP units,
 thermal + hydro MW by class, wind / solar MW and potential TWh, demand TWh and min–max MW. Pre-census expectation
 from EIA-860 nameplate under the rule (reported so it can be wrong): SPS pocket 76 plants / 12,167 MW — wind 4,654
@@ -204,7 +204,7 @@ set, rounded to the nearest 100 MW** (the SPP-53 median rule).
 
 | leg | source | fixed now |
 |---|---|---|
-| membership set | the `sps_tie` group as `docs/handoffs/spp14/groups.py` assigns it, ≥ 263 pooled binding hours — the 7 constituents of `spp57/tstar_ok_s.csv` (`TEMP50_23126`, `TMP555_29231`, `TMP200_25341`, `TMP775_29068` — Potter County 345/230 kV; `SPSNMTIES`, `SPPSPSTIES`; `TMP703_28546` FPL Switch–Woodward) | **yes** — the charter's set; `oklahoma_internal` and the CSWS-only rows are EXCLUDED (an intra-Oklahoma / intra-CSWS object is not a pocket boundary) |
+| membership set | the `sps_tie` group as `docs/records/spp/spp14/groups.py` assigns it, ≥ 263 pooled binding hours — the 7 constituents of `spp57/tstar_ok_s.csv` (`TEMP50_23126`, `TMP555_29231`, `TMP200_25341`, `TMP775_29068` — Potter County 345/230 kV; `SPSNMTIES`, `SPPSPSTIES`; `TMP703_28546` FPL Switch–Woodward) | **yes** — the charter's set; `oklahoma_internal` and the CSWS-only rows are EXCLUDED (an intra-Oklahoma / intra-CSWS object is not a pocket boundary) |
 | L_f | SPP-57's committed limit-at-bind per constituent (`tstar_ok_s.csv` column `L_f`: Potter 505.9 / 508.7 / 503.1 / 508.7; the two ITP interfaces 1,018.0; FPL–Woodward 119.2 — 2026 archive, SPP-53's join order) | **yes** — reused, never re-read |
 | weights | SPP-57's pooled binding hours per constituent (same file) | **yes** |
 | **ψ₂** | **SPP-58's second, independent identification** — whatever `FINDING-spp-58` hands over for these constituents under its own identification rule (which constituents identify, in which direction, with what ψ₂). **SPP-57's ψ column is NOT used** (SPP-57b R-20) | **waits** |
@@ -306,7 +306,7 @@ uv run python scripts/run_calibration_full.py --iso SPP --year 2024 \
 
 The bundle is TEMPORARY: gitignored the moment it is written (rules 29(c) / 31 — kept on local disk until the
 owner rules, never committed); every number cited from it lives in the FINDING and
-`docs/handoffs/spp54/grade_screen_2024.log`.
+`docs/records/spp/spp54/grade_screen_2024.log`.
 
 **STOP gate — structural, kill-only, ex-ante thresholds (E-6). It never reads C3a / C3b.** Graded by
 `spp54/grade_screen.py` (SPP-57b's instrument re-pointed: one link, the named direction South→SPS, the census
@@ -369,12 +369,12 @@ inherited `wefor_multiplier` 0.7 residual entry carries over unchanged.
 | file | change |
 |---|---|
 | the solve-path files of §5 + the three wind-shape parquets + README | the topology (on the branch; landing posture per §5) |
-| `docs/handoffs/spp54/` | `census.py` (+ `census.csv`, log), `wind_reconcile.py` (+ log, `dec21_window_2025.csv`), `rate_link.py` (+ log, `tstar_s_sps.csv`) once SPP-58 lands, `grade_screen.py` / `flows_at_ratings.py` (+ logs) if the screen runs |
-| `docs/handoffs/FINDING-spp-54-2026-09-07.md` | the census, the wind reconciliation, the rating (ψ₂ cited), the STOP-gate table beside SPP-57b's, LOYO if the span ran, DOF, the P15 recommendation |
+| `docs/records/spp/spp54/` | `census.py` (+ `census.csv`, log), `wind_reconcile.py` (+ log, `dec21_window_2025.csv`), `rate_link.py` (+ log, `tstar_s_sps.csv`) once SPP-58 lands, `grade_screen.py` / `flows_at_ratings.py` (+ logs) if the screen runs |
+| `docs/records/spp/FINDING-spp-54-2026-09-07.md` | the census, the wind reconciliation, the rating (ψ₂ cited), the STOP-gate table beside SPP-57b's, LOYO if the span ran, DOF, the P15 recommendation |
 | `docs/calibration-log/spp.md`; plan §5 row; ledger row; matrix shard `SPP.js` | the record |
 
 Not touched: any other ISO's config, maps, rows or shard; `ScenarioConfig` (no field, G8); offer bands (1.0);
-`keepers/SPP.json`; the N↔S 3,400 value; `calibration-complete.json`; `docs/handoffs/spp57*/` (read only);
+`keepers/SPP.json`; the N↔S 3,400 value; `calibration-complete.json`; `docs/records/spp/spp57*/` (read only);
 `frontend/data/forecast/`.
 
 ## 9. What is not a rejection condition

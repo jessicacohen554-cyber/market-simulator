@@ -7,7 +7,7 @@ the registered `-ff2a` hindcast bundles, the CES path, nor the `scenarios.py` de
 verdict rests on — so the verdict is unaffected; a fresh re-solve at `415df68` is a lane
 re-measure, out of scope for a §2.1b committed-evidence readiness read). **Deliverable:** the
 explicit W3-R go/no-go the CES plan §8 specifies
-(`docs/handoffs/national-ces-eac-premium-plan-2026-07.md` §7 R1–R4, §8 W3-R).
+(`docs/records/forecast/national-ces-eac-premium-plan-2026-07.md` §7 R1–R4, §8 W3-R).
 
 ## Verdict: **NO-GO** for the W4 premium-ladder campaign
 
@@ -77,7 +77,7 @@ GW-class PJM through the window).
 - **PJM solar = 19.32 vs 13.07 actual** (band FAIL but **recall > 0** — solar entry is
   alive, it over-builds) (`pjm-2021-2025-realized-cmc-ff2a.json`).
 - FF-2A's own verdict is explicit: **"R1 verdict: PJM ✓ (recall > 0, over-build
-  tightening), ERCOT ✗ (still 0)"** (`docs/handoffs/ff-entry-stack-completion-2026-07.md:77`).
+  tightening), ERCOT ✗ (still 0)"** (`docs/records/forecast/ff-entry-stack-completion-2026-07.md:77`).
   ERCOT solar zero is measured as a pure term-(a) **price-signal residual** — the screen's
   best-year entry margin for solar is ≈ **−$9.7k/MW-yr** below the entry hurdle (`:270`,
   `:84`), i.e. the ERCOT energy-only price signal alone never clears solar's screen.
@@ -105,7 +105,7 @@ fixed**.
   (`correlated_forced_outage`, now default-True): in-year scarcity forms only on thin
   fleets (2024 Heather, mean $0.87/MWh), and the CT screen residual to the SOM anchor is
   still **≈56 $/kW-yr (event-year) / ≈66 (event-free)** —
-  `docs/handoffs/ff-1b-correlated-availability-2026-07-17.md` §3. The revenue-*level* half
+  `docs/records/forecast/ff-1b-correlated-availability-2026-07-17.md` §3. The revenue-*level* half
   is carried forward as G-20/G-22, not yet re-chartered.
 
 **Why R2 fails:** "false-retire collapses from 96 %" and "screen revenue basis fixed" are
@@ -228,7 +228,7 @@ mechanism yields **0** against realized 2021–2025 prices. The forward solar is
 exactly the *unvalidated* forward entry R1 flags; a forward run building it is not evidence
 the mechanism works. (Nuance 2's `retirement_rule=legacy` point stands — it governs
 retirements, not entry.) POC results, the wall/RSS ledger, and the three findings are in the
-companion doc `docs/handoffs/ff-3b-ces-poc-2026-07.md`.
+companion doc `docs/records/forecast/ff-3b-ces-poc-2026-07.md`.
 
 ---
 

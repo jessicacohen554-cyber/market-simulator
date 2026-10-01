@@ -1,6 +1,6 @@
 # ADDENDUM nyiso-226 — **OWNER RULING 2026-09-10: SPEND THE SPAN.** The `S3(a′)` repair is accepted, the full 2023–2025 arm is authorized, and the two zero-LP findings are RECORD-ONLY
 
-**Governs:** `docs/RESULT-nyiso226-nyc-base-rebasis-2026-09-10.md` §6 (a) and (b), and §7.
+**Governs:** `docs/records/nyiso/RESULT-nyiso226-nyc-base-rebasis-2026-09-10.md` §6 (a) and (b), and §7.
 **Written and pushed BEFORE the span solve.** Nothing here changes a gate, a bar or a
 determination.
 

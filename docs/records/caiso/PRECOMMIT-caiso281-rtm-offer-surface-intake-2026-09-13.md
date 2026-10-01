@@ -2,7 +2,7 @@
 
 **Lane:** CAISO calibration · **Date:** 2026-09-13 · **LP budget: ZERO** · keeper unchanged
 (`2026-09-12-caiso-275-gascoupling`). **Owner-funded** this sitting ("Yes fund it"), on
-`docs/RESULT-caiso281-two-objects-not-one-and-the-bias-is-a-basis-artifact-2026-09-13.md` §5.1.
+`docs/records/caiso/RESULT-caiso281-two-objects-not-one-and-the-bias-is-a-basis-artifact-2026-09-13.md` §5.1.
 
 ## 1. THE QUESTION, AND WHY IT IS AN INTAKE RATHER THAN A LEVER
 

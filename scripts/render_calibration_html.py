@@ -278,7 +278,7 @@ def reconcile_vintage_classes(
     every BA, no per-ISO branch. LIMITATION: the uniform scale still distributes a
     preliminary-vintage (2025) level repair proportionally across coal and gas; a
     CAMPD-per-class target (complete in every vintage) is the follow-up refinement
-    (docs/handoffs/pjm-cc-overrun-benchmark-basis-g21-2026-07.md §6).
+    (docs/records/pjm/pjm-cc-overrun-benchmark-basis-g21-2026-07.md §6).
 
     Some BAs silently fold geothermal + biomass into the EIA-930 "Natural Gas"
     cell, so the GAS target must be deflated by that fold-in before scaling — else
@@ -316,7 +316,7 @@ def reconcile_vintage_classes(
     # still distributes a preliminary-vintage (2025) level repair proportionally
     # across coal and gas even when they under-report by different amounts — a
     # CAMPD-per-class target (complete in every vintage) is the follow-up refinement
-    # (docs/handoffs/pjm-cc-overrun-benchmark-basis-g21-2026-07.md §6).
+    # (docs/records/pjm/pjm-cc-overrun-benchmark-basis-g21-2026-07.md §6).
     # FAMILY MEMBERSHIP. Gas + coal, plus OIL when — and only when — the bundle's
     # extract carries EIA-930's own `NG: OIL` cell (nyiso-239). EIA-923 books a
     # plant's MWh under the fuel it BURNED, so a dual-fuel unit's oil hours land
@@ -517,7 +517,7 @@ def build_nonfossil_hourly(
     model's chronological fixed-standard-time 8760 clock, so hour ``k`` pairs
     hour ``k`` with no DST correction — verified by cross-correlating model
     against actual demand (lag 0 must dominate; see
-    docs/DIAGNOSIS-ercot-lmp-clock-artifact-and-summer-residuals-2026-07.md and
+    docs/records/ercot/DIAGNOSIS-ercot-lmp-clock-artifact-and-summer-residuals-2026-07.md and
     tests/test_nonfossil_hourly.py::test_clock_alignment_lag_zero_dominates).
 
     Returns ``{panel: {...}}`` over :data:`NONFOSSIL_930_SERIES` (the non-fossil
@@ -909,7 +909,7 @@ def _actual_lmp_hourly(iso: str, year: int) -> np.ndarray | None:
     DA-contaminated number sat in a keeper's committed payload labelled
     ``actual``. Rules 13 `[R-MEASURED]` / 14 `[R-ACCURATE]`: an hour with no
     measured RT price has no measured RT price, and NaN says so.
-    (`docs/RESULT-caiso284-rescore-on-rt-audit-2026-09-16.md` §2 rows 10–12.)
+    (`docs/records/caiso/RESULT-caiso284-rescore-on-rt-audit-2026-09-16.md` §2 rows 10–12.)
     """
     from market_sim.config.paths import CALIBRATION_DIR
 
@@ -1073,7 +1073,7 @@ def _capture(r: float, nrmse: float, dev: float) -> float:
 # Net/gross parasitic-load factor for reconstructing CAMPD annual GROSS from the
 # committed NET series (net = gross x factor). Absent-plant fallback is the
 # measured PJM-CC pooled mean (~2.7% parasitic, flat year-round; diagnosis
-# docs/DIAGNOSIS-pjm-july-cc-overrun-2026-07.md §2).
+# docs/records/pjm/DIAGNOSIS-pjm-july-cc-overrun-2026-07.md §2).
 _DEFAULT_PARASITIC = 0.973
 # EIA-923-net / CAMPD-gross ratio above which a CEMS record is judged INCOMPLETE
 # (physically gross >= net, so a ratio > 1 already signals missing MWh; 1.1 adds

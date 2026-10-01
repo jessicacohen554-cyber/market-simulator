@@ -3,7 +3,7 @@
 **Session ercot-215, 2026-08-17, branch
 `claude/ercot-215-ordc-decontamination-xsbhwn`.** Precommit (pushed before any
 solve, commit `c0ed2f7`):
-`docs/PRECOMMIT-ercot215-counterpart-decontamination-2026-08-17.md`. Keeper
+`docs/records/ercot/PRECOMMIT-ercot215-counterpart-decontamination-2026-08-17.md`. Keeper
 resolved fresh at session start: **`2026-08-16-ercot213-arm-pubanchor`**
 (NOT-YET, fail set {C3b-2023} alone, C3c-2025 the single ledgered caveat).
 Keeper at session end: **`2026-08-17-ercot215-arm-decontam`** — promoted per
@@ -13,7 +13,7 @@ If structural integrity improves but gates regress that may still be a
 keeper."). Runs registered with payloads:
 **`2026-08-17-ercot215-ctl-headbase`** / **`2026-08-17-ercot215-arm-decontam`**
 (bundles `results/calibration/ercot215_control_A` / `ercot215_decontam_B`).
-Probes: `results/calibration/ercot215_gexact.json`, `ercot215_ab.json`,
+Probes: `results/phase0/ercot/ercot215_gexact.json`, `ercot215_ab.json`,
 `ercot215_anchor_gates.json`, `ercot215_coal148.json`.
 
 ## 0. VERDICT — both halves, neither rewritten

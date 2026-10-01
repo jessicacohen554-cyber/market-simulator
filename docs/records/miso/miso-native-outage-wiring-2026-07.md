@@ -207,7 +207,7 @@ the CAMPD per-unit derate it replaces (0.763 / 0.768 / 0.782) — so the swap is
 other availability flag (`coal_drop_pof`, `wefor_residual`) needs to move. That
 is the point of the overlay: it substitutes MISO's own published unavailability
 bookkeeping for a CEMS-inferred detector that reads economic idleness as outage
-(`results/calibration/FINDING-ercot79-phantom-outage-2026-07.md`, the finding the
+(`docs/records/ercot/FINDING-ercot79-phantom-outage-2026-07.md`, the finding the
 miso-81 keeper is named for). The ERCOT/PJM water-fill *rescale* was considered
 and not adopted: it sets **total** class-day availability to an unplanned-only
 target, which would erase the model's spring maintenance dip for classes whose

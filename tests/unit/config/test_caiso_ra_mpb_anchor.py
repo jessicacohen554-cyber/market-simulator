@@ -12,7 +12,7 @@ Pins the four properties the mechanism's charter rests on:
   re-publication, never a residual).
 
 This is NOT a row-4 fix and nothing here scores FC-2; see
-``docs/handoffs/ffr-4f-caiso-anchor-merits-2026-08-09.md``.
+``docs/records/forecast/ffr-4f-caiso-anchor-merits-2026-08-09.md``.
 """
 
 from __future__ import annotations
@@ -135,7 +135,7 @@ def test_armed_run_keys_distinctly_and_default_key_is_unmoved() -> None:
     # (Act B, re-identified off the widened ATB extract). Act B is NOT a
     # _CACHE_KEY_OPTIONAL_FIELDS member, so it has no drop value and re-keys
     # unconditionally. Pre-declared BEFORE the solve in
-    # docs/handoffs/PRECOMMIT-capx-d65b-2026-09-06.md §3; cache-epoch ledger
+    # docs/records/forecast/PRECOMMIT-capx-d65b-2026-09-06.md §3; cache-epoch ledger
     # entry 2026-09-06c in src/market_sim/results/cache.py. Nothing about THIS
     # field moved — the pin advances because the global default did.
     assert default.cache_key() == "547053bdfccd4264"

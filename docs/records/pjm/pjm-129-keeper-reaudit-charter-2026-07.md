@@ -1,7 +1,7 @@
 # CHARTER — pjm-129: PJM keeper re-audit on the guard-corrected CAMPD envelope
 
 **Opened** 2026-07-26, executing the last unresolved cell of
-`docs/handoffs/campd-economic-layup-fix-charter-2026-07.md` §5/§8 that this
+`docs/records/misc/campd-economic-layup-fix-charter-2026-07.md` §5/§8 that this
 session can reach. **Pre-registered before any result was read.**
 **Model assignment:** Opus/Fable (charter scope, core infrastructure — rule 27).
 

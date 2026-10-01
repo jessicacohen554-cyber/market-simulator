@@ -1,6 +1,6 @@
 """Emit the NWPP-NEXT-4 calibration attestation for ``results/calibration/nwppnext4_span``.
 
-NWPP-NEXT-4 (PRECOMMIT ``docs/handoffs/PRECOMMIT-nwppnext4-coal-nested-2019-2025-2026-09-25.md``)
+NWPP-NEXT-4 (PRECOMMIT ``docs/records/nwpp/PRECOMMIT-nwppnext4-coal-nested-2019-2025-2026-09-25.md``)
 is keeper #10's recipe (NWPP-NEXT-3) plus ONE gated field,
 ``coal_committed_nested_on_mustrun`` (owner card D3): a coal plant with a
 measured thermal-tranche row sizes its committed band as the increment above

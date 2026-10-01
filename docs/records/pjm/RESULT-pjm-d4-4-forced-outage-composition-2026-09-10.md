@@ -2,8 +2,8 @@
 
 **Session:** pjm-d4-4 · **Date:** 2026-09-10 · **Branch:** `claude/pjm-forced-outage-gap-o0kzlz`
 **Scope:** PJM only. **Nothing is promoted, armed by default, or registered on the dashboard.**
-Pre-registration: `docs/PRECOMMIT-pjm-d4-4-forced-outage-composition-2026-09-10.md` (the kill bar,
-committed BEFORE the measurement) and `docs/PRECOMMIT-pjm-d4-4-screen-addendum-2026-09-10.md`
+Pre-registration: `docs/records/pjm/PRECOMMIT-pjm-d4-4-forced-outage-composition-2026-09-10.md` (the kill bar,
+committed BEFORE the measurement) and `docs/records/pjm/PRECOMMIT-pjm-d4-4-screen-addendum-2026-09-10.md`
 (the screen gates, committed BEFORE the shard).
 
 ---
@@ -57,7 +57,7 @@ the wrong scaling variable — a CC block is several times a coal unit's share o
 **Measured through the production consumer, not a reconstruction.** Every number above is
 `outages.unit_outage_short_derate_factors(..., gas_scope=True)` minus the same call with
 `gas_scope=False`, converted to MW on `_iso_plant_capacity("PJM")` — the same object and the same
-denominator the LP applies. Record: `results/calibration/_pjmd44_gas_shortwindow_census.json`.
+denominator the LP applies. Record: `results/phase0/pjm/_pjmd44_gas_shortwindow_census.json`.
 
 ## §3 — the six-year census, INCLUDING the years that do not support the card
 
@@ -240,7 +240,7 @@ and gated in neither.**
 
 **THE SCREEN'S VERDICT: S-1, S-2 and S-4 PASS; S-3 FAILS by 3.4x. The arm does not clear the gate
 this session pre-registered, and it is NOT carried to the full span on this card's rationale.**
-Full shard report, every number, every method note: `docs/SHARD-REPORT-pjm-d4-4-screen-2022.md`.
+Full shard report, every number, every method note: `docs/records/pjm/SHARD-REPORT-pjm-d4-4-screen-2022.md`.
 Solve: 24 min 13 s, peak RSS 13.94 GB, P0 892 s + P1 283 s — **4 minutes over the rule-32(b) shard
 budget**, which matters before anyone launches six of them.
 
@@ -404,5 +404,5 @@ explicitly so the two are never conflated:
 `results/calibration/pjm_d4_4_screen_2022/` lived on the SHARD's disk, gitignored and uncommitted,
 and **does not survive that session**. It was never `rm`'d. Under rule 29 clause 2 a screen bundle is
 a throwaway whose numbers are the record — and every number it produced is in
-`docs/SHARD-REPORT-pjm-d4-4-screen-2022.md`, committed here. Reproducing it, if ever needed, is one
+`docs/records/pjm/SHARD-REPORT-pjm-d4-4-screen-2022.md`, committed here. Reproducing it, if ever needed, is one
 ~25-minute solve.

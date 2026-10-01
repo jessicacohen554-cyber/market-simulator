@@ -14,7 +14,7 @@
 thirteen legs' `full_horizon_summary.json` / `duals.json` / `run_config.json`, the six shard
 report groups' absolute CSV columns, the committed REF and LOAD-HI legs at THE PIN, and this
 lane's own phase-0 JSON. Instrument:
-`docs/handoffs/scn-ws5a-policy-miso/score_gates_final_2026-09-07.py` →
+`docs/records/forecast/scn-ws5a-policy-miso/score_gates_final_2026-09-07.py` →
 `gate-scores-final-2026-09-07.json`. The pre-solve scorer
 (`score_gates_2026-09-07.py`, committed before the legs landed) is left untouched so its
 pre-solve form stays on the record.
@@ -114,7 +114,7 @@ pre-solve form stays on the record.
 ## 1. Phase 0 as committed — nothing was killed, and the one crossing is razor-thin
 
 **Reproduced from the PRECOMMIT, not re-derived.** Instruments
-`docs/handoffs/scn-ws5a-policy-miso/phase0-miso-2026-09-07.{py,json}` and
+`docs/records/forecast/scn-ws5a-policy-miso/phase0-miso-2026-09-07.{py,json}` and
 `rps-region-census-2026-09-07.{py,json}`, both committed before the first solve.
 
 ### 1.1 Cases killed at phase 0: **NONE in the chartered set; ONE out-of-scope case proven inert**
@@ -738,12 +738,12 @@ carried to MISO's zonal reality.
 
 | file | note |
 |---|---|
-| `docs/handoffs/FINDING-scn-ws5a-policy-miso-2026-09-07.md` | this document |
-| `docs/handoffs/scn-ws5a-policy-miso/score_gates_final_2026-09-07.py` | the final gate scorer, zero-LP, committed-artifacts-only |
-| `docs/handoffs/scn-ws5a-policy-miso/gate-scores-final-2026-09-07.json` | its output — every gate, every case, every year |
-| `docs/handoffs/scn-ws5a-policy-miso/gate-scores-2026-09-07.json` | the output of the **pre-solve scorer run unchanged against the landed legs** — its `.py` was written and committed before any leg existed and is not edited here, so this file is that pre-registered form's verdict on the real numbers, committed as a cross-check on the final scorer |
-| `docs/handoffs/forecast-scenario-readiness-plan-2026-09.md` | §5.1 rows 3 and 7, MISO cells only, in the Carbon / CES premium / CES target / Voluntary columns — **plus the eight-pipe rendering repair of §8 item 10**, which is not MISO's cell but without which the row does not render |
-| `docs/handoffs/scenario-desk-ledger-2026-09.md` | §3 mirror of the same, MISO rows only, with the same rendering repair |
+| `docs/records/forecast/FINDING-scn-ws5a-policy-miso-2026-09-07.md` | this document |
+| `docs/records/forecast/scn-ws5a-policy-miso/score_gates_final_2026-09-07.py` | the final gate scorer, zero-LP, committed-artifacts-only |
+| `docs/records/forecast/scn-ws5a-policy-miso/gate-scores-final-2026-09-07.json` | its output — every gate, every case, every year |
+| `docs/records/forecast/scn-ws5a-policy-miso/gate-scores-2026-09-07.json` | the output of the **pre-solve scorer run unchanged against the landed legs** — its `.py` was written and committed before any leg existed and is not edited here, so this file is that pre-registered form's verdict on the real numbers, committed as a cross-check on the final scorer |
+| `docs/records/forecast/forecast-scenario-readiness-plan-2026-09.md` | §5.1 rows 3 and 7, MISO cells only, in the Carbon / CES premium / CES target / Voluntary columns — **plus the eight-pipe rendering repair of §8 item 10**, which is not MISO's cell but without which the row does not render |
+| `docs/records/misc/scenario-desk-ledger-2026-09.md` | §3 mirror of the same, MISO rows only, with the same rendering repair |
 | `docs/codebase-site/data/mechanism-matrix/MISO.js` | four cells appended: `federal_ces_target`, the CES premium row, `carbon_price_path`, `voluntary_clean_demand` (rule 28 `[R-MECH-MATRIX]` duty b) |
 
 **Read, never edited:** every committed leg and bundle, `configs/scenario_campaign_matrix.yaml`,

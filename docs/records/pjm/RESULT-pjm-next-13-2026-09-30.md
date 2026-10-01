@@ -1,6 +1,6 @@
 # RESULT — PJM-NEXT-13 (2026-09-30): availability falsified; replacement-cost fuel built and refuted at zero LP
 
-**Keeper unchanged:** `2026-09-28-pjm-next8-exitfix`. **Zero LP, zero shards, nothing registered or promoted.** Detail: `docs/FINDING-pjm-next-13-availability-gas-coalmarginal-2026-09-29.md` (the addendum carries the arm delta).
+**Keeper unchanged:** `2026-09-28-pjm-next8-exitfix`. **Zero LP, zero shards, nothing registered or promoted.** Detail: `docs/records/pjm/FINDING-pjm-next-13-availability-gas-coalmarginal-2026-09-29.md` (the addendum carries the arm delta).
 
 | card | result |
 |---|---|

@@ -2,7 +2,7 @@
 
 **Filed BEFORE any solve.** No LP has run in this session. Everything below is
 Phase-0 identification on published NYISO postings. It amends
-`results/calibration/PREREG-nyiso126-eastern-seam-attribution-2026-08-04.md`,
+`docs/records/nyiso/PREREG-nyiso126-eastern-seam-attribution-2026-08-04.md`,
 which the owner authorised for execution on 2026-08-05 ("Authorise intake +
 execute"). **The parent pre-registration's §6 predictions, §7 kill gates and §8
 decision rule are NOT rewritten** — §6-P2 is *reported as weakened by

@@ -2,7 +2,7 @@
 
 ```
 LANE     : miso-277 (owner ruling 2026-09-26 "Re-solve D1 as ruled (Recommended)")
-PREREG   : docs/PRECOMMIT-miso277-d1-as-ruled-2026-09-26.md (pin bd0329ed)
+PREREG   : docs/records/miso/PRECOMMIT-miso277-d1-as-ruled-2026-09-26.md (pin bd0329ed)
 KEEPER   : 2026-09-26-miso-275-cc-exempt (miso275_span) — unchanged
 RUN      : 2026-09-26-miso-277-d1-as (results/calibration/miso277_span, 2019-2025), registered
 DELTA    : miso_winter_gas_daily_delivered = true, with MISO-South on Henry Hub in every year. DOF +0

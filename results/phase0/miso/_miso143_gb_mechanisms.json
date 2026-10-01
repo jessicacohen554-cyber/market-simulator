@@ -1,5 +1,5 @@
 {
-  "prereg": "results/calibration/PREREG-miso143-coal-gas-merit-order-2026-08-08.md",
+  "prereg": "docs/records/miso/PREREG-miso143-coal-gas-merit-order-2026-08-08.md",
   "gate": "G-B (why the model re-ranks harder) -- B-1 / B-2 / B-4",
   "keeper": "2026-08-05-miso-132b-cc-committed",
   "posture": "NO SOLVE -- run_year(fleet_only=True) offer stack only",

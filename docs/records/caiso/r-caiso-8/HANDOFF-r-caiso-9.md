@@ -26,7 +26,7 @@ STATE (2026-09-27):
   | C3b 2021 | | | PASS |
 
 READ FIRST:
-- docs/handoffs/r-caiso-8/RESULT-r-caiso-8-2026-09-27.md (Object 2 section and "Owner rulings")
+- docs/records/caiso/r-caiso-8/RESULT-r-caiso-8-2026-09-27.md (Object 2 section and "Owner rulings")
 - results/calibration/_rcaiso8/object2_sd_census.json (probe: scripts/probes/_rcaiso8_sd_import_census.py)
 - docs/mechanism-testing-matrix.md §5.2
 - docs/codebase-site/data/mechanism-matrix/CAISO.js
@@ -62,7 +62,7 @@ OBJECT 1 — implement the SD floor.
 - Solve:
   - the keeper recipe + the flag, one shard per year, 2019–2025 (rules 34(c), 35(c), 36);
   - full bundles pushed (34(a)); SHA pinned; solves run in the FOREGROUND;
-  - template docs/handoffs/r-caiso-8/shard-prompt.md, with `--set caiso_import_cap_floor_static=true` added;
+  - template docs/records/caiso/r-caiso-8/shard-prompt.md, with `--set caiso_import_cap_floor_static=true` added;
   - pin the new constants' sha / hashes in the hard stops;
   - per-year legs gitignored in CONTENTS form.
 - Parent seam:

@@ -4,11 +4,11 @@
 `claude/ercot-224-calibration-ye2ivp`. NO LP, no solve, no intake, no
 arming, no registration; keeper untouched at
 `2026-08-20-ercot223-arm-eventrelease`.** Precommit
-`docs/PRECOMMIT-ercot224-item8-cme-screen-2026-08-20.md` pushed +
+`docs/records/ercot/PRECOMMIT-ercot224-item8-cme-screen-2026-08-20.md` pushed +
 blob-verified (blob `df65c0eb`, 151 lines) BEFORE any CME/NYMEX content was
 read; executed as written. Probe record:
 `scripts/probes/ercot224_cme_basis_screen.py` →
-`results/calibration/ercot224_cme_basis_screen.json`.
+`results/phase0/ercot/ercot224_cme_basis_screen.json`.
 
 ## 1. What was screened
 

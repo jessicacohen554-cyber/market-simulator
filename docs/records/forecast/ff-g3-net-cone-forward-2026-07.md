@@ -70,11 +70,11 @@ does not depend on it.
   charter says landed them 2026-07-19 is not on `main`. Per charter instruction I
   did **not** create them; when FF-G1 lands, its §3.11/§1.2-11 rows should mark
   FF-G3 as "design shipped; re-anchoring intake + FF-2C seam-wiring pending."
-- `docs/handoffs/ff-wave-manager-ledger-2026-07.md` — **not edited** (manager-owned).
+- `docs/records/forecast/ff-wave-manager-ledger-2026-07.md` — **not edited** (manager-owned).
 
 ## 5. OWNER-DECISION BOX
 
-> **POPULATED 2026-08-02 by FFR-2C** (`docs/handoffs/ffr-2c-net-cone-currency-2026-08-02.md`,
+> **POPULATED 2026-08-02 by FFR-2C** (`docs/records/forecast/ffr-2c-net-cone-currency-2026-08-02.md`,
 > audit FR-19, owner decision D-3). Every number below is measured, not estimated;
 > **no default was flipped and none is recommended by the act of measuring.** The
 > shipped mode is still `hold_last` and every real rate is still 0.0.

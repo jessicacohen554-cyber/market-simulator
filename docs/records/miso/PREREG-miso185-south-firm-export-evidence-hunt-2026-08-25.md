@@ -327,6 +327,6 @@ no PR unless asked.
 **Instrument (declared):** `scripts/probes/_miso185_firm_export_hunt.py` —
 written AFTER this prereg commits, executing E-0 and the E-1 classification
 mechanically per §3, emitting
-`results/calibration/_miso185_firm_export_hunt.json`. Source-access probes
+`results/phase0/miso/_miso185_firm_export_hunt.json`. Source-access probes
 (HTTP status, route viability) are recorded in the finding; no adjudicating
 quantity exists outside the probe's output.

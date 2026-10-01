@@ -8,7 +8,7 @@ caveat. Pre-registration `PRECOMMIT-caiso258-hod2223-closure-2026-09-06.md`
 (`origin`, pushed before any cell of the object was computed). Rule 22
 `[R-HOLDOUT]`: 2023–2025 only; no `complete`/`final` marker; freeze ACTIVE.
 Instrument `scripts/probes/_caiso258_hod2223_closure.py` → artifact
-`results/calibration/_caiso258_hod2223_closure.json`. Every EIA-930 actual is
+`results/phase0/caiso/_caiso258_hod2223_closure.json`. Every EIA-930 actual is
 read through `eia930.frames._eia_hourly_frame_filled` (the model's clock,
 caiso-255b §6 #1); the gas basis is the scorer's own
 `_cems_gas_hourly_fit` construction; the model side is the keeper's committed
@@ -428,7 +428,7 @@ price rather than exhausted.
 
 `PRECOMMIT-caiso258-hod2223-closure-2026-09-06.md` (pushed first);
 `scripts/probes/_caiso258_hod2223_closure.py` +
-`results/calibration/_caiso258_hod2223_closure.json`; this finding; the
+`results/phase0/caiso/_caiso258_hod2223_closure.json`; this finding; the
 `docs/calibration-log/caiso.md` entry; rule-28 CAISO matrix-shard
 **evidence appends** on `import_hub_pricing` and `caiso_firm_selfsched_floor`
 (no verdict move — no mechanism was tested); the §5.2 queue clause in

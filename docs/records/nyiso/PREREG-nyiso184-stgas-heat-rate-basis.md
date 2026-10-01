@@ -21,7 +21,7 @@ disclosed in full so a reader can judge what it could have contaminated.
 
 ### A. Inherited record
 
-1. `docs/FINDING-nyiso183-ravenswood-availability-2026-09-03.md` — in full.
+1. `docs/records/nyiso/FINDING-nyiso183-ravenswood-availability-2026-09-03.md` — in full.
    Supplies: the availability route is REFUTED and DO-NOT-REDO (G1 separation
    +0.33 / +0.64 / +0.81, G3 `sel_fleet` 0.867 / 0.923); hypothesis B fires
    3/3 on the merit-position inversion (model rank 3 of 11, measured 8/8/6 of
@@ -33,16 +33,16 @@ disclosed in full so a reader can judge what it could have contaminated.
    hypothesis (plant-grain eGRID `PLHTIAN`/`PLNGENAN`/`PLHTRT` join, facility
    blend 8.24) explicitly NOT adjudicated; the unexplained CC/ST base split
    (8.80 vs 9.50); the corrected keeper availability 0.786 / 0.478 / 0.309.
-2. `results/calibration/PREREG-nyiso183-ravenswood-availability.md` — in full.
+2. `docs/records/nyiso/PREREG-nyiso183-ravenswood-availability.md` — in full.
    Its §5 forbidden-form list (F1–F8) and §8 amendment (a mis-specified bar is
    recorded FAILED and re-anchored on HARDER evidence, never moved) are binding
    precedent here.
-3. `docs/FINDING-nyiso177-availability-basis-root-cause-2026-09-02.md` §5.4 and
+3. `docs/records/nyiso/FINDING-nyiso177-availability-basis-root-cause-2026-09-02.md` §5.4 and
    §10.2 — the facility-summed-denominator defect family repaired on the OUTAGE
    (`_resolve_unit_group`) and TRANCHE (`_fleet_nameplate_and_group`) paths;
    the four integrity gains a promotion rests on (accuracy, no off-registry
    channel, reproducibility, internal consistency).
-4. `docs/FINDING-nyiso181b-stgas-floor-overgeneration-2026-09-03.md` §5 and §12
+4. `docs/records/nyiso/FINDING-nyiso181b-stgas-floor-overgeneration-2026-09-03.md` §5 and §12
    — Ravenswood +5.472 / +2.787 / +1.618 TWh over its meter, economic not
    forced; the other ten plants −5.197 / −6.776 / −7.957 TWh economically short;
    the DO-NOT-REDO list (floor deletion/narrowing, volume-buying levers); the

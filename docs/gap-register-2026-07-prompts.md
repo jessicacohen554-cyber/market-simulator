@@ -59,7 +59,7 @@ CT/ST_GAS reliability drag. Not reopening.
 **Data-blocked / accepted:** MISO C2/C3a coal-vs-gas = #1347 (S&P-proprietary coal spot), MISO
 G-20e, G-26 #1335/#1336/#1348 + #1344, G-19, G-40.
 
-**Owner decisions — see `docs/handoffs/owner-decision-briefs-2026-07-08.md`:** G-61(b) `caiso-66`
+**Owner decisions — see `docs/records/misc/owner-decision-briefs-2026-07-08.md`:** G-61(b) `caiso-66`
 adoption; G-20b PJM reserve magnitude.
 
 ## Open lanes (this pack)

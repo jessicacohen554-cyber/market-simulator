@@ -7,7 +7,7 @@ payloads, the P-32 raw/clean intake, `constants.NYISO_INTERFACE_TTC_BY_MONTH`)
 and the deterministic input-side attribution module. Freeze ACTIVE; no year
 outside {2023, 2024, 2025} touched; zero fitted scalars; nothing armed,
 disarmed, rescaled or scoped. Machine-readable measurement record:
-`results/calibration/_nyiso158_winter_phase0.json`.
+`results/phase0/nyiso/_nyiso158_winter_phase0.json`.
 
 **Keeper under diagnosis:** `2026-08-30-nyiso-157-par-attribution`
 (NOT-YET on {C3a, C3b, C3c} by the 2026-08-30 owner ruling).

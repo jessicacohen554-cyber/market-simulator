@@ -1,7 +1,7 @@
 # RESULT — NYISO-NEXT-2: the Astoria stack-duplicate boiler pair in the outage extract; promoted — 2026-09-26
 
 **Session:** NYISO-NEXT-2 (orchestrator; no LP in this container, rule 32 (a)).
-**PRECOMMIT:** `docs/PRECOMMIT-nyiso-next2-astoria-pair-2026-09-26.md`, pinned
+**PRECOMMIT:** `docs/records/nyiso/PRECOMMIT-nyiso-next2-astoria-pair-2026-09-26.md`, pinned
 `9fe82bde8aa2090c55c1440a307a8a99cf6861f8` before any solve.
 **New keeper:** `2026-09-26-nyisonext2-astoria-pair-span` (bundle `results/calibration/nyisonext2_span`,
 2022–2025).

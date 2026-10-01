@@ -350,7 +350,7 @@ against current postings/dockets and corrected. All rows below pass
   audit-trail example the schema was designed around.
 
 > **Superseded in two places by the 2026-07-31 re-query pass (FFR-PA)** —
-> `docs/handoffs/ffr-pa-confirmed-retirements-refresh-2026-07-31.md`. Both of
+> `docs/records/forecast/ffr-pa-confirmed-retirements-refresh-2026-07-31.md`. Both of
 > this section's hold-outs were reversed, on the grounds that they were
 > inconsistent with rows already registered: **ERCOT Braunig Unit 3** now
 > carries an `rmr_end` row at its RMR end date (2027-03), as §4.3 originally
@@ -554,7 +554,7 @@ mid-window reversal ever lands.
   postings, and CI runner minutes are owner-billed — the cadence is a
   scheduling discipline for session prompts, not a job. Motivating evidence
   (three expiries inside five months, none of which anything in the repo would
-  notice): `docs/handoffs/ffr-pa-confirmed-retirements-refresh-2026-07-31.md`
+  notice): `docs/records/forecast/ffr-pa-confirmed-retirements-refresh-2026-07-31.md`
   §6, which also raises two smaller follow-ups — a curation-time assertion that
   every `superseded=true` row carries a `superseding_instrument_date` (the
   Eddystone null it caught), and a machine-readable
@@ -639,7 +639,7 @@ mid-window reversal ever lands.
 ```
 W2-P2 [OPUS] — Implement the confirmed-retirement channel
 
-Prerequisite: read docs/handoffs/confirmed-retirement-plan-2026-07.md (THE PLAN),
+Prerequisite: read docs/records/misc/confirmed-retirement-plan-2026-07.md (THE PLAN),
 then CLAUDE.md rules 13/14/17/19/24/26 and docs/fable-repo-audit-2026-07.md §B.
 Implement exactly per the plan; where this prompt and the plan disagree, the plan
 wins. Design decisions are settled — do not relitigate them.

@@ -1,7 +1,7 @@
 # Position calibration — curve-ON probe hindcasts, PJM + MISO (RC-1A, 2026-07-16)
 
 **Charter.** F-6 of the flip-gate lane
-(`docs/handoffs/forecast-retirement-calibration-plan-2026-07.md` §2.2/§2.3 —
+(`docs/records/forecast/forecast-retirement-calibration-plan-2026-07.md` §2.2/§2.3 —
 the measurement that breaks the position↔payment circularity, and the ⛔ gate
 input for RC-2B). A/B capacity hindcasts, PJM and MISO, 2021→2025 realized
 fuel, EIA-860 2020 vintage, 2022 bridged-never-solved (rule 22): the committed

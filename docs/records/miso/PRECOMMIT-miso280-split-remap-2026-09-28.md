@@ -17,7 +17,7 @@ CAMPD files West Riverside Energy Center's 2020 CTs (EIA plant 64020, CTG3/CTG4)
 units `CT-03`/`CT-04`. CAMPD CT-03+04 gross tracks EIA-923 64020 net within 2 % every year 2020–2025. Every
 CAMPD-derived artifact the keeper reads books those units on 55641: 55641 carries its sibling's outage windows (64020
 none of its own), 55641's CC heat-rate row is refused `boundary_above_band` (64020 on a fallback rate), and 55641's
-tranche row reads a 150 % median CF. Phase 0: `docs/FINDING-miso280-phase0-riverside-vlr-southgas-2026-09-28.md` §1, §5.
+tranche row reads a 150 % median CF. Phase 0: `docs/records/miso/FINDING-miso280-phase0-riverside-vlr-southgas-2026-09-28.md` §1, §5.
 
 **This lever targets no failing criterion** (C1 CC_REGULAR passes every year). It is taken on structure (owner ruling).
 
@@ -56,7 +56,7 @@ it `false` every year), ERCOT W A Parish bin rows and ERCOT LMP benchmark. MISO 
 (216 rows, `2d9f493abe84`). Plus this lane's own hunks: **the delta** (LIVE only under the gate) and the `runner.py` /
 `assembly.py` selector plumbing (returns the plain bool when unarmed — INERT). Form 4 holds.
 
-## 4. Zero-LP footprint (fleet_only, keeper vs arm; `results/calibration/_miso280_splitremap_footprint.json`)
+## 4. Zero-LP footprint (fleet_only, keeper vs arm; `results/phase0/miso/_miso280_splitremap_footprint.json`)
 
 | yr | CC_REGULAR availability TWh | Δ |
 |---|---|---:|

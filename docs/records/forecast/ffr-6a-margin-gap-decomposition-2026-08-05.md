@@ -7,8 +7,8 @@ measured decomposition of the FFR-5D-M finding plus an admissibility verdict per
 fix; any fix is a separate charter on these findings. NO lift recommendation (U.2's
 determination is the manager's).
 
-**The measured fact this starts from** (FFR-5D-M, `docs/handoffs/ffr-5d-price-object-2026-08-05.md`
-§3, probe `docs/handoffs/ffr-5d/paired-arm-probe-2026-08-05.json`, registered arms
+**The measured fact this starts from** (FFR-5D-M, `docs/records/forecast/ffr-5d-price-object-2026-08-05.md`
+§3, probe `docs/records/forecast/ffr-5d/paired-arm-probe-2026-08-05.json`, registered arms
 `ercot-2021-2025-t1ff-armr-ffr5d-{shipped,unified}`): under the unified+repaired price object
 the retirement screen fails essentially the whole ERCOT merchant fleet (entry_capped 564 /
 63.0 GW in 2024, 554 / 66.1 GW in 2025), the adequacy admission cap does ALL retention work,
@@ -40,7 +40,7 @@ price $65/MWh ("highly profitable").
 SOM's net-revenue construction is the **same pro-forma as the screen's**: attainable
 `max(0, price − mc, reserve)` against generation-weighted real-time settlement prices, new-unit
 proxy assumptions (CT HR 10.5 / CC 7.0 MMBtu/MWh, VOM $4/MWh, 10 % outage). The standing
-replica (`docs/handoffs/fom-scarcity-revenue-audit-2026-07-05.json`) reproduces the published
+replica (`docs/records/governance/fom-scarcity-revenue-audit-2026-07-05.json`) reproduces the published
 SOM values within 0.89–0.97 from measured hub RT prices + Henry Hub gas — i.e. **the screen's
 pro-forma CONSTRUCTION is validated against its own external observable; what varies between
 arms is the PRICE OBJECT it consumes.**
@@ -123,7 +123,7 @@ is **byte-identical to the committed one** (absent from `git status`; only
 `meta.json`/`run_config.json` timestamps+provenance moved, restored to the committed bytes
 after the read). Cohort rows reproduce the probe JSON exactly (2022 gas_st decided 45 /
 10,942.9 MW at net $17.90 vs bar $35.00; 2025 coal decided 11 at $0.04; every entry_capped
-census identical). Artifacts: `docs/handoffs/ffr-6a/perfuel-margin-probe-2026-08-06.json`
+census identical). Artifacts: `docs/records/forecast/ffr-6a/perfuel-margin-probe-2026-08-06.json`
 (R1, via `scripts/probes/ffr6a_margin_gap.py`),
 `screen-revenue-stack-log-2026-08-06.txt` (the runtime per-fuel diagnostic, nuclear
 included), `measured-price-replica-2026-08-06.txt` (R2).

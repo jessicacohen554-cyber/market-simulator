@@ -1,6 +1,6 @@
 # ADDENDUM caiso-281 — the diurnal coincidence leg (Gate D), fixed before it is computed
 
-**Charter:** `docs/PRECOMMIT-caiso281-is-the-marginal-hr-bias-a-measured-input-defect-2026-09-13.md`
+**Charter:** `docs/records/caiso/PRECOMMIT-caiso281-is-the-marginal-hr-bias-a-measured-input-defect-2026-09-13.md`
 **Date:** 2026-09-13 · **LP budget: still ZERO** · keeper unchanged.
 
 ## Why an addendum rather than a note in the RESULT

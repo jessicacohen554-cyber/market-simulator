@@ -203,7 +203,7 @@ keeper fleet.
 ## §3 — THE CENSUS METHOD, FIXED BEFORE ANY MEASUREMENT
 
 **Instrument:** `scripts/probes/_caiso240_default_hr_mult_census.py` →
-`results/calibration/_caiso240_default_hr_mult_census.json`. **ZERO SOLVES.**
+`results/phase0/caiso/_caiso240_default_hr_mult_census.json`. **ZERO SOLVES.**
 The rebuild harness is imported UNCHANGED from
 `scripts/probes/_caiso239_st_gas_committed_footprint.py` (itself the caiso-230
 §H form re-pointed), and the marginal-rung attribution / §H bounding form come
@@ -444,7 +444,7 @@ LEVEL object.
 1. **This PRECOMMIT, pushed to `origin` before any footprint measurement and
    before any solve.**
 2. `scripts/probes/_caiso240_default_hr_mult_census.py` +
-   `results/calibration/_caiso240_default_hr_mult_census.json` — the 28-cell ×
+   `results/phase0/caiso/_caiso240_default_hr_mult_census.json` — the 28-cell ×
    6-ISO census with M-1 and M-2 reported first, zero solves.
 3. `ASSESSMENT-caiso240-default-hr-mult-census-2026-09-03.md` — the census
    table, the per-cell F0–F4 grade with its footprint, the counterpart finding,

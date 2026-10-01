@@ -3,8 +3,8 @@
 **Lane:** capx D62 (director r#43, re-issue of the r#41 charter). Branch
 `claude/capx-d62-pjm-acr-bar`. Base `fca3b65619b2bcde1e2a970e49827094e6a73d2f`.
 DATA PROFILE `pjm`. Model Opus.
-**Binding charter:** `docs/handoffs/capx-director-prompt-pack-2026-08.md` §D62 +
-`docs/handoffs/FINDING-capx-d61-2026-09-05.md` §4 (construction, vintage rule, signs, STOPs).
+**Binding charter:** `docs/records/forecast/capx-director-prompt-pack-2026-08.md` §D62 +
+`docs/records/forecast/FINDING-capx-d61-2026-09-05.md` §4 (construction, vintage rule, signs, STOPs).
 **Written BEFORE any build, any Phase-0 arithmetic and any solve.** Every number this lane will
 ever cite from a screen or control bundle is recorded here or in its FINDING (rule 29(c):
 those bundles are deleted before the PR merges; git history is the record).
@@ -179,7 +179,7 @@ D60 whose value effect is provably nil on this horizon (§2.4).
 ## 3. PHASE 0 — the zero-LP STOP gate
 
 Reproduce **S0** (the committed clearing) and **S6** (every class bar at the published default gross
-ACR) of `docs/handoffs/d61/reclear-2026-09-05.py` **through the code path** — the new
+ACR) of `docs/records/forecast/d61/reclear-2026-09-05.py` **through the code path** — the new
 `resolve_going_forward_bar` feeding `clear_capacity_supply_stack` — against the committed arm-A
 ledgers `results/hindcast/pjm-2021-2025-realized-t1h-d57-clearing/PJM/f0e050e820c1159a/evolution_<year>.json`.
 

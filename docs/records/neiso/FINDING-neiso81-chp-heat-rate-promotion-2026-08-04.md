@@ -1,7 +1,7 @@
 # FINDING — neiso-81: `measured_chp_heat_rates` re-adjudicated `O` → `K` and PROMOTED
 
 **Pre-registration:**
-`results/calibration/PREREG-neiso81-chp-heat-rate-readjudication-2026-08-04.md`,
+`docs/records/neiso/PREREG-neiso81-chp-heat-rate-readjudication-2026-08-04.md`,
 committed at `66d7b44a` and pushed **before either arm solved**. Every property,
 threshold, falsifier, verdict branch **and the promotion standard itself** was
 fixed in advance; none was revised after a number was seen.

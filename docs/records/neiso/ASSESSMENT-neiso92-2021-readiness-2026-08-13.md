@@ -281,9 +281,9 @@ touchpoint loop, step 3.
 
 | Path | What |
 |---|---|
-| `results/calibration/ASSESSMENT-neiso92-2021-readiness-2026-08-13.md` | This assessment |
+| `docs/records/neiso/ASSESSMENT-neiso92-2021-readiness-2026-08-13.md` | This assessment |
 | `scripts/probes/_neiso92_2021_gas_chain.py` | Same-recipe delivered-gas chain reproduction on the keeper's config, 2020–2025 |
-| `results/calibration/_neiso92_gas_chain.json` | Its output — per-stage monthly series + per-year coverage |
+| `results/phase0/neiso/_neiso92_gas_chain.json` | Its output — per-stage monthly series + per-year coverage |
 
 **Prior art:** `FINDING-neiso85-2022-seasonal-inversion-2026-08-05.md` (the precedent this gate
 exists to prevent repeating), `FINDING-neiso86-gas-basis-intake-2026-08-06.md` (the repair that

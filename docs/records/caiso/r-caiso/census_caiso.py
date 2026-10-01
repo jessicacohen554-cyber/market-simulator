@@ -14,7 +14,7 @@ source: ``class_table`` (equals a ``HEAT_RATE_BINS`` value AND the plant has no 
 rate in the active table), else ``plant_specific``. Also reports the per-family CAMPD
 outage windows / MW-h that fall in each year for CAISO's fleet.
 
-Usage: python docs/handoffs/r-caiso/census_caiso.py --out docs/handoffs/r-caiso/census_caiso.json
+Usage: python docs/records/caiso/r-caiso/census_caiso.py --out docs/records/caiso/r-caiso/census_caiso.json
 """
 
 from __future__ import annotations

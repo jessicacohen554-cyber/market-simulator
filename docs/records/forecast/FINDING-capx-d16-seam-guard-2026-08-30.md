@@ -2,7 +2,7 @@
 
 **Session.** capx-d16-seam-guard (capacity-expansion / Forecast Finalization track), chartered
 at director refresh #19 to execute the director's mechanism decision on S-123 routed item 5
-(`docs/handoffs/FINDING-capx-s123-miso-adequacy-2026-08-30.md` §5/§7.5: the armed-interface
+(`docs/records/forecast/FINDING-capx-s123-miso-adequacy-2026-08-30.md` §5/§7.5: the armed-interface
 mc=0 seam degradation). Branch `claude/capx-d16-seam-guard-i9rnne`, fresh off `origin/main` at
 `3960244`. 2026-08-30. **Zero-solve:** yes — no LP built or solved; every verification is an
 injector-level call or a test. No out-of-training year solved/scored/registered; freeze posture

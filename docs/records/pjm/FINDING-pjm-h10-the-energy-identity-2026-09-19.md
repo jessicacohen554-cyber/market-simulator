@@ -2,7 +2,7 @@
 
 **Session:** pjm-h10 · **Branch:** `claude/pjm-energy-identity-s4l8ow` · **Base:** `origin/main` @ `4583e70b864a7d5c99a206b06eddf3c36af495bf`
 **Keeper UNCHANGED** (`2026-09-11-pjm-d4-4-gasoutage`) · **no run registered · no mechanism armed · no matrix cell moved · ZERO LP minutes in this session** (rule 32 `[R-SHARD]` (a); the two control replays run in shards).
-**PRECOMMIT:** `docs/handoffs/PRECOMMIT-pjm-h10-2026-09-19.md` (the G-DRIFT audit and the ex-ante prediction, written before either shard reported).
+**PRECOMMIT:** `docs/records/pjm/PRECOMMIT-pjm-h10-2026-09-19.md` (the G-DRIFT audit and the ex-ante prediction, written before either shard reported).
 
 ---
 
@@ -205,7 +205,7 @@ Also measured and set aside rather than absorbed: the per-seam envelope cap bind
 | **NET** | **−1.883** | **−9.971** | **−12.138** | **+1.987** | **+2.416** | **−2.415** |
 | gross volume | 21.682 | 20.377 | 29.976 | 28.877 | 34.193 | 36.038 |
 
-**Q3 IS ALREADY ADJUDICATED, and not by me.** `docs/RESULT-pjm-d4-3-da-virtual-net-2026-09-10.md` §4
+**Q3 IS ALREADY ADJUDICATED, and not by me.** `docs/records/pjm/RESULT-pjm-d4-3-da-virtual-net-2026-09-10.md` §4
 measured exactly this question on all six years and reached a stronger result than the charter's
 framing assumes. Recording it here rather than re-deriving it (rule 28 `[R-MECH-MATRIX]` (a),
 DO-NOT-REDO), because the PJM matrix cell `da_virtual_bids` already carries it:
@@ -446,4 +446,4 @@ There is a second, independent obstacle: **the benchmark is not settled per ISO.
 | 5 | The **pumped-storage benchmark seam** (§4.3) | 923 books PS net-negative; the model reports discharge | accounting only |
 | 6 | Interchange volume as a **reported-only** stream | §7 | none by construction |
 
-**Not re-litigated** (rule 28 `[R-MECH-MATRIX]` (a)): the 2022 price miss is the 18-hour Winter Storm Elliott scarcity tail with no admissible lever (`docs/FINDING-pjm-h3b-2022-miss-is-the-elliott-tail-2026-09-13.md`); the Dominion CT zonal-congestion route is closed by measurement at pjm-137; pjm-158 closed the virtual layer's invariant-price question, and pjm-d4-3 §4 owns the six-year virtual-net measurement — §3 here is corroboration on a newer keeper, not a new result.
+**Not re-litigated** (rule 28 `[R-MECH-MATRIX]` (a)): the 2022 price miss is the 18-hour Winter Storm Elliott scarcity tail with no admissible lever (`docs/records/pjm/FINDING-pjm-h3b-2022-miss-is-the-elliott-tail-2026-09-13.md`); the Dominion CT zonal-congestion route is closed by measurement at pjm-137; pjm-158 closed the virtual layer's invariant-price question, and pjm-d4-3 §4 owns the six-year virtual-net measurement — §3 here is corroboration on a newer keeper, not a new result.

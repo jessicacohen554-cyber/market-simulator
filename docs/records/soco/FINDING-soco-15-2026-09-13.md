@@ -2,7 +2,7 @@
 
 **SOCO-20 IS CLEARED TO PROCEED: the COD-seam repair is on main (commit 9398000d, PR #6127), all three exit conditions are met, and the eight-footprint A/B moved results in the direction and at the order of magnitude the availability delta implied, in both directions, with no ISO where the repair is wrong.**
 
-**Lane:** SOCO-15 `[FABLE]` · **Date:** 2026-09-13 · **Branch:** `claude/soco-15-cod-ramp-b0080o` (arm SHA `4f33476c520dbbec61f05abcfdbeb1a4b18540a4`; base `origin/main` `33a7c961`) · **PRECOMMIT:** `docs/handoffs/PRECOMMIT-soco-15-2026-09-13.md` (registered before any solve; every number below that came from a solve is differenced exactly as §4–§6 there pre-registered).
+**Lane:** SOCO-15 `[FABLE]` · **Date:** 2026-09-13 · **Branch:** `claude/soco-15-cod-ramp-b0080o` (arm SHA `4f33476c520dbbec61f05abcfdbeb1a4b18540a4`; base `origin/main` `33a7c961`) · **PRECOMMIT:** `docs/records/soco/PRECOMMIT-soco-15-2026-09-13.md` (registered before any solve; every number below that came from a solve is differenced exactly as §4–§6 there pre-registered).
 **Ruling served:** owner card S12 — *"Charter a cross-ISO repair lane BEFORE SOCO-20."* **Model:** Fable, because the repair deliberately MOVES RESULTS for all seven registered keepers.
 
 ## 1. The eight-footprint A/B — energy and fuel mix, both directions, full magnitude

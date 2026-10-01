@@ -2,7 +2,7 @@
 
 **Lane:** dispatch-matching (matrix §5.5 **item 9**, opened by the nyiso-86 §3 /
 nyiso-92 charter).
-**Pre-registration:** `docs/PREREG-nyiso99-import-audit-demand-dropout-2026-07-29.md`,
+**Pre-registration:** `docs/records/nyiso/PREREG-nyiso99-import-audit-demand-dropout-2026-07-29.md`,
 committed and pushed before any solve.
 **Instruments:** `scripts/probes/nyiso99_import_benchmark_provenance.py`
 (no-LP; sections `census` / `falsify` / `baseline` / `attribute`).
@@ -119,7 +119,7 @@ C3c's root cause") quantitatively on the current keeper, and adds what nyiso-86
 could not: **the import node itself is not the defect.** The too-flat internal
 diurnal price swing *is* C3c — the diagnosed, unclosed structural limitation of
 the five-zone representation whose lever queue nyiso-94/95/96/97 emptied
-(`docs/FINDING-nyiso97-load-pocket-identification-2026-07-29.md`, re-open
+(`docs/records/nyiso/FINDING-nyiso97-load-pocket-identification-2026-07-29.md`, re-open
 conditions §5).
 
 ### 2.1 Why no import-side lever is admissible

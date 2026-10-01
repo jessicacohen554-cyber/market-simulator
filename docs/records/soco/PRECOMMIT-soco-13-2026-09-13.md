@@ -4,7 +4,7 @@
 **Branch** `claude/soco-13-eqr-price-84k5yi` · **Base** `33a7c961` (`origin/main`, the charter's pin) ·
 **Data profile** `shared` · **Charter** `docs/multi-iso/soco-addition-plan-2026-09.md` §8 W1 SOCO-13,
 §2.6, §3 card S2, §5 row SOCO-13 · **Ruling** card S2, both limbs (owner, 2026-09-13) · **Sister
-precedent** `docs/handoffs/PRECOMMIT-nwpp-13-2026-09-13.md` / `FINDING-nwpp-13-2026-09-13.md`.
+precedent** `docs/records/nwpp/PRECOMMIT-nwpp-13-2026-09-13.md` / `FINDING-nwpp-13-2026-09-13.md`.
 
 **This document is pushed BEFORE any price or quantity value is read.** Every filter, every
 allocation rule and every gate number below is declared here and is not re-cut after the series

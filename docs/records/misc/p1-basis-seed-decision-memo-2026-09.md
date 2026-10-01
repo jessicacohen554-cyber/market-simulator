@@ -4,11 +4,11 @@
 the signature line at the end of this memo.** Written 2026-09-05 by B-0
 (`claude/wc-b0-p1-seed-memo-9euk97`, main @ `2886235c` when the bench ran, rebased onto
 `2cc135bb` — Y-14 landed in between, see §3.1), chartered by the WALLCLOCK desk
-(`docs/handoffs/wallclock-desk-log-2026-09.md` §2.2, wave 1f): *"the plan-§6 memo for seeding
+(`docs/records/misc/wallclock-desk-log-2026-09.md` §2.2, wave 1f): *"the plan-§6 memo for seeding
 the cold-rebuilt P1 model from the same year's P0 basis … the owner cannot sign a flip memo
 without the number, and the wave-2 implementation is gated on the signature, so the
 measurement is yours."* The lever is item B of
-`docs/handoffs/wallclock-opportunities-2026-09.md` (§3, ranked #4 in §5); this memo supplies
+`docs/records/misc/wallclock-opportunities-2026-09.md` (§3, ranked #4 in §5); this memo supplies
 the measurement that doc's `<!-- ERCOT_BENCH_TABLE -->` placeholder was waiting for, and the
 same PR fills that placeholder and adds the doc's §6.3 bench record.
 
@@ -86,7 +86,7 @@ The signature of a cold P1 is that it costs about as much as P0. On the warm-P1 
 
 | keeper | why P1 is cold | `solve_p0` / `solve_p1` on record | source |
 |---|---|---|---|
-| ERCOT `2026-09-05-ercot248-two-config-keeper`, forward config (2024/2025; registered 3-year) | `ercot_gas_commitment_bridge` raises availability; feeds reserve/ramp rows → refloor declines | 2023: 398.6 / **762.0** (two passes); 2024: 446.3 / **715.3** (two passes); 2025: 524.0 / **351.3** (one pass after C-1a) | `docs/FINDING-perfb-s3-adaptive-pass-2026-09.md` §5 (shipped tree) |
+| ERCOT `2026-09-05-ercot248-two-config-keeper`, forward config (2024/2025; registered 3-year) | `ercot_gas_commitment_bridge` raises availability; feeds reserve/ramp rows → refloor declines | 2023: 398.6 / **762.0** (two passes); 2024: 446.3 / **715.3** (two passes); 2025: 524.0 / **351.3** (one pass after C-1a) | `docs/records/governance/FINDING-perfb-s3-adaptive-pass-2026-09.md` §5 (shipped tree) |
 | ERCOT same keeper, carve-out config (2023) | same bridge | 381.1 / **795.4** (two passes) | same |
 | ERCOT ercot213 recipe (pre-s3 anchor) | same bridge | 473.0/416.7/416.1 vs **447.1/321.8/344.8** | `wallclock-baseline-2026-07.md` §PERF-B anchor |
 | NYISO `2026-09-05-nyiso-192-astoria-panel` (nyiso-140 recipe anchor) | `nyiso_gas_commitment_bridge` + co-opt + ramp | 180.1/149.5/97.7 vs **170.7/172.7/99.7** | same anchor |
@@ -311,7 +311,7 @@ Two consequences worth stating so nobody re-derives them:
    3-year calibration-CLI bundle pair for ERCOT (`--year 2023 2024 2025`, seed off vs on,
    `diff_warmstart_bundles.py` per year) plus NYISO as the co-opt ISO that also pays — the P-2
    precedent used ERCOT + MISO; here MISO is warm-P1 and inert, so NYISO is the informative
-   second ISO. `docs/handoffs/wallclock-baseline-2026-07.md` gets its dated row; CHANGELOG entry;
+   second ISO. `docs/records/misc/wallclock-baseline-2026-07.md` gets its dated row; CHANGELOG entry;
    the mechanism-matrix CI guard warns on a new calibration CLI flag with no matrix touch, and
    the flag is a solve-path knob like `forecast_xyear_warmstart`'s row, so wave 2a notes it the
    same way that row does ("SOLVE-PATH knob, NOT a market mechanism").
@@ -359,7 +359,7 @@ byte-identical items (A-1/A-2/A-3/A-6/A-4/A-5); this memo decides item 4 only.
 | P-2 precedence resolver the new switch mirrors | `scripts/run_calibration.py` L6654–6690 (`resolve_xyear_warmstart_default`) |
 | Pinning-test file exists (contrary to desk log §2.3's root-path lookup) | `tests/unit/pipeline/test_xyear_warmstart_default.py` (10 tests) |
 | Every shipped forecast runner passes `forecast_xyear_warmstart=False` (D-10) | `scripts/lib/forecast_posture.py::shipped_forecast_xyear_warmstart` |
-| C-1a made ERCOT 2025 a two-run year; C-1b keeps a reused pass off the P0 export | `docs/FINDING-perfb-s3-adaptive-pass-2026-09.md` §2–§3 |
+| C-1a made ERCOT 2025 a two-run year; C-1b keeps a reused pass off the P0 export | `docs/records/governance/FINDING-perfb-s3-adaptive-pass-2026-09.md` §2–§3 |
 
 ---
 

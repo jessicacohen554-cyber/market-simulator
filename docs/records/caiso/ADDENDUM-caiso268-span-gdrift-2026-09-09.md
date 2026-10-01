@@ -5,7 +5,7 @@
 committed artifacts at **zero LP cost**; no solver has been called at the moment this document is
 committed. That ordering is the point — an audit written after a result can be written to fit it.
 
-Charter: `docs/PRECOMMIT-caiso268-fossil-offer-8pct-2026-09-09.md` §5, which defers G-DRIFT to
+Charter: `docs/records/caiso/PRECOMMIT-caiso268-fossil-offer-8pct-2026-09-09.md` §5, which defers G-DRIFT to
 this shard as its Card 0.
 
 ---
@@ -27,7 +27,7 @@ earns a control solve.
 `873f7564` resolves: `873f7564b2bc879df68334df4796a7f4d440f9c6`. It is a real object in this
 repository, so unlike the immediately preceding CAISO lane — whose keeper recorded an
 **unresolvable** `git_sha e162147b` and which therefore had to fall back to a measured
-G-DRIFT-M (`docs/RESULT-caiso-fuelvintage-2026-09-09.md` §4) — the code audit rule 29(b) actually
+G-DRIFT-M (`docs/records/caiso/RESULT-caiso-fuelvintage-2026-09-09.md` §4) — the code audit rule 29(b) actually
 names **can be run here**, and is.
 
 ## §2 — The diff, in full

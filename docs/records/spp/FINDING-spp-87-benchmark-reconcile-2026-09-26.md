@@ -2,7 +2,7 @@
 
 Lane: SPP-87. Parent: SPP-86 (`FINDING-spp-86-coal-floor-conduct-2026-09-26.md` §3).
 Keeper: `2026-09-26-spp-86-coal-extract`, bundle `results/calibration/spp86_arm_span`. Base: `origin/main` `76eaeeea`.
-Probe: `scripts/probes/_spp87_benchmark_reconcile.py` → `results/calibration/_spp87_benchmark_reconcile.json`.
+Probe: `scripts/probes/_spp87_benchmark_reconcile.py` → `results/phase0/spp/_spp87_benchmark_reconcile.json`.
 **Card taken: A (benchmark reconciliation).** No LP, no shard, no bundle, no scorer change. Cards B and C not scoped.
 
 ## 0. Headline

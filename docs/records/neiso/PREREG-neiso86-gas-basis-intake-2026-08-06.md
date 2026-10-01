@@ -26,7 +26,7 @@ Measured `winter(Jan,Feb,Dec) − summer(Jun,Jul,Aug)` basis, NEISO:
 | −0.58 | −2.29 | −4.37 | −4.79 | −6.71 | −7.18 | −8.56 | −7.84 | **+2.83** | **+4.54** | **+10.97** |
 
 The proxy years are inverted; the measured years are correct. Full diagnosis:
-`results/calibration/FINDING-neiso85-2022-seasonal-inversion-2026-08-05.md`.
+`docs/records/neiso/FINDING-neiso85-2022-seasonal-inversion-2026-08-05.md`.
 
 This is rule 14 `[R-ACCURATE]`'s misalignment clause exactly — **a real measured series used on the
 wrong boundary**. The remedy is a correctly-bounded measured series, not a model parameter. The repo
@@ -138,7 +138,7 @@ to fix. Verified by byte comparison of every non-NEISO row against `git show HEA
 
 Both neiso-85 probes were re-run **before** any edit and reproduce the committed baseline, emitting
 artifacts **byte-identical** to the committed ones (`git diff` empty on
-`results/calibration/_neiso85_gas_chain.json` and `_neiso85_attribution.json`):
+`results/phase0/neiso/_neiso85_gas_chain.json` and `_neiso85_attribution.json`):
 
 - 2022 resolved gas winter/summer = **0.397** (INVERTED); 2023/2024/2025 = 2.390 / 3.778 / 4.608.
 - Stage-4 hub overlay 2022: Jan **6.738**, Aug **19.199**; overlay covers **8760/8760 hours**.

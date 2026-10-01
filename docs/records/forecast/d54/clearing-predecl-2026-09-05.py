@@ -12,8 +12,8 @@ from market_sim.config.capacity_market import (resolve_demand_curve_vintage, eva
     THERMAL_ELCC_CLASS_RATING_BY_ISO)
 from market_sim.config.constants import EFORD
 
-D48 = json.load(open("docs/handoffs/d48/devintage-positions-d45r-2026-09-04.json"))["years"]
-PUB = {r["delivery_year"]: r for r in json.load(open("docs/handoffs/d45/published-positions-2026-09-03.json"))["pjm"]}
+D48 = json.load(open("docs/records/forecast/d48/devintage-positions-d45r-2026-09-04.json"))["years"]
+PUB = {r["delivery_year"]: r for r in json.load(open("docs/records/forecast/d45/published-positions-2026-09-03.json"))["pjm"]}
 # BRA 2024/2025 Report Table 7 (RPM-only, UCAP): offered / cleared by resource type, 2021/22..2024/25
 T7 = {"2021/2022": {"coal": (44936, 39022), "gas": (77514, 74814), "nuclear": (30561, 19918), "oil": (5218, 3955), "dr": (11887, 11126)},
       "2022/2023": {"coal": (33935, 27411), "gas": (75526, 69292), "nuclear": (26855, 21050), "oil": (2419, 2271), "dr": (10513, 8812)},

@@ -1,12 +1,12 @@
 # RESULT — nyiso-229: the 2022 screen. **The spurious VOLL event is GONE. One of my four gates was mis-specified, and it was the only one that failed.**
 
 **Session:** nyiso-229 · **ISO:** NYISO · **Date:** 2026-09-12
-**Pre-registration:** `results/calibration/PRECOMMIT-nyiso229-outage-window-hour-grain.md`, pushed
+**Pre-registration:** `docs/records/nyiso/PRECOMMIT-nyiso229-outage-window-hour-grain.md`, pushed
 before any LP, plus ADDENDUM 1 (G-DRIFT / control-in-shard), ADDENDUM 2 (pre-solve threading
 verification), ADDENDUM 3 (the OOM and the per-container split).
 **Keeper `2026-09-09-nyiso-221-fuelvintage-span` UNCHANGED. Nothing promoted. Nothing registered.**
 **Rule 32 `[R-SHARD]`: the parent ran ZERO LP.** Five shard containers; two produced the two legs.
-Gate JSON: `results/calibration/_nyiso229_screen_gates_2022.json`.
+Gate JSON: `results/phase0/nyiso/_nyiso229_screen_gates_2022.json`.
 
 ---
 

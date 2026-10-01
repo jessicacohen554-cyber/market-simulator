@@ -1,6 +1,6 @@
 """SPP-80 (zero LP): decompose the 2022+ SPP upper-tercile price premium by MEASUREMENT.
 
-SPP-79 (``docs/handoffs/FINDING-spp-79-c3a-is-a-cancellation-2026-09-25.md``) found
+SPP-79 (``docs/records/spp/FINDING-spp-79-c3a-is-a-cancellation-2026-09-25.md``) found
 that the real SPP system hub's upper price tercile (RT p67-p99, February excluded)
 cleared at a much higher implied heat rate from 2022 on (HR / Henry Hub 12.5-13.6
 in 2019-21, 16.3 / 20.6 in 2023-24) and the model's did not. This probe splits
@@ -26,7 +26,7 @@ keeper's P1 system hourly, unweighted p67 <= RT < p99, February excluded. Henry
 Hub is the annual mean of ``gas-prices/henry_hub_monthly.csv`` as in SPP-79.
 
 Solves nothing and writes nothing. Record:
-``docs/handoffs/FINDING-spp-80-upper-tercile-premium-2026-09-25.md``.
+``docs/records/spp/FINDING-spp-80-upper-tercile-premium-2026-09-25.md``.
 """
 
 from __future__ import annotations

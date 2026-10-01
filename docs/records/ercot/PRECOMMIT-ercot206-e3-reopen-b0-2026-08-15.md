@@ -28,7 +28,7 @@ FFR-8A §3.3 ESCALATED-not-landed the ORDC LOLP-parameter question (element E3):
 the §1.1(b)/§2.2 reproduction test — the implemented curve evaluated on the measured
 NP6-905-CD RTOLCAP/RTOFFCAP series against the measured RTORPA series — **neither**
 in-repo parameter set reproduced the published adder series in both years (committed
-record `docs/handoffs/ffr-8a/part-a-measured-2026-08-08.json` `legs_ab`):
+record `docs/records/forecast/ffr-8a/part-a-measured-2026-08-08.json` `legs_ab`):
 
 | year | series | h>$1 | h>$10 | h>$100 | max $ | mean $ | top-50 mean $ |
 |---|---|---|---|---|---|---|---|
@@ -45,7 +45,7 @@ reopen was gated on new evidence bearing on the published series; FFR-8B's Phase
 was quantity-side and produced none.
 
 **The new evidence exists and is committed.** ercot-198 (T-3b,
-`docs/FINDING-ercot198-t3b-adder-overlay-audit-2026-08-14.md` §4) produced a
+`docs/records/ercot/FINDING-ercot198-t3b-adder-overlay-audit-2026-08-14.md` §4) produced a
 settlement-closed, SOM-cross-checked measured published RTORPA series for 2024/2025:
 the MIS archive retains pre-price-correction prints, and exactly one hour trips the
 settlement-closure guard (archive adder total > settled hub RTSPP + $50) — **2025
@@ -120,7 +120,7 @@ VERBATIM: armed on measured-input/parameter correctness, fit gain NOT predicted)
 ## 3. PHASE B0 — THE PROBE (read-only; measured vs measured; no LP, no solve)
 
 `scripts/probes/ercot206_e3_settled_reproduction.py` →
-`results/calibration/ercot206_e3_settled_reproduction.json`.
+`results/phase0/ercot/ercot206_e3_settled_reproduction.json`.
 
 Construction identical to FFR-8A `leg_ab` (same `ordc_adder` call: full reserve =
 rtolcap+rtoffcap, online = rtolcap, floor_active=True for 2024/2025), with ONE
@@ -207,10 +207,10 @@ Branches, exhaustive:
 ## 6. FENCES (cited, binding, none re-litigated)
 
 **Q-B FINAL** (ercot-190/191: no further ERCOT C3a-2023 spend) and **R-A**
-(`docs/DECISION-CARD-ercot193-determination-ceiling-2026-08-13.md` RESOLUTIONS:
+(`docs/records/ercot/DECISION-CARD-ercot193-determination-ceiling-2026-08-13.md` RESOLUTIONS:
 hold NOT-YET; no C3b-2023-targeted determination rounds; 2023 appears in this lane
 only in ceiling citations and side-effect reports). **L-SCAR §4 must-nots**
-(`docs/DECISION-CARD-lscar-screen-revenue-2026-08-13.md`) bind any mechanism
+(`docs/records/misc/DECISION-CARD-lscar-screen-revenue-2026-08-13.md`) bind any mechanism
 touched — this lane is not an L-SCAR successor and touches no screen mechanism;
 the must-nots that reach it are honoured by construction: no ORDC double-count
 (rule 19 — the delta re-parameterizes the ONE armed formation mechanism, stacks

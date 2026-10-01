@@ -268,7 +268,7 @@ MISO_MIDWEST_ZONES: tuple[str, ...] = (
 # these floors reprice the load-slack (the administrative last-resort supply)
 # inside declared Warning+ window zone-hours via min(iso voll, floor); the
 # RBDC/zonal-ORDC curves above are never edited (rule 19; the frozen design
-# is docs/handoffs/miso-f5-scarcity-depth-design-2026-07.md §1).
+# is docs/records/miso/miso-f5-scarcity-depth-design-2026-07.md §1).
 MISO_EMERGENCY_TIER1_OFFER_FLOOR: float = 500.0
 MISO_EMERGENCY_TIER2_OFFER_FLOOR: float = 1000.0
 
@@ -481,7 +481,7 @@ NYISO_RCPF_LOCATIONAL: dict[str, dict] = {
 # the $40 regime spans ALL of 2023-2025.
 #
 # MEASURED CORROBORATION, ex ante and with no solve spent (nyiso-117,
-# results/calibration/nyiso117_seny_rcpf_curve_screen.json): the isolated
+# results/phase0/nyiso/nyiso117_seny_rcpf_curve_screen.json): the isolated
 # SENY-only 30-minute adder on NYISO's OWN posted zonal DA prices caps at
 # $23.92/$30.37/$40.00 in 2023/24/25, with 52 hours of 2025 at EXACTLY $40.00
 # and ZERO hours above it in any year — the published increment realised as an
@@ -500,7 +500,7 @@ NYISO_SENY_30MIN_FAMILY: str = "seny_30min_total"
 # NYISO's OWN posted zonal Day-Ahead ancillary-service prices
 # (data/raw/NYISO-AS/NYISO_as_da_<year>.csv) — nyiso-115,
 # scripts/probes/_nyiso115_nyc_rcpf_curve_screen.py ->
-# results/calibration/nyiso115_nyc_rcpf_curve_screen.json.
+# results/phase0/nyiso/nyiso115_nyc_rcpf_curve_screen.json.
 #
 # The locational regions NEST (NYCA ⊃ East ⊃ SENY ⊃ NYC), so differencing zone J
 # against a zone sharing every region EXCEPT NYC isolates the NYC-only shadow
@@ -539,7 +539,7 @@ NYISO_RCPF_STEP_CURVE_FAMILIES: tuple[str, ...] = (
 # The published LI limb of the SAME "Locational Reserve Requirements" posting
 # that grounds NYISO_RCPF_LOCATIONAL above, and the ONE in-city/load-pocket
 # instrument the Zone-J/K must-run survey found passing rule 13 [R-MEASURED]
-# outright (docs/handoffs/nyiso-incity-instrument-survey-2026-07.md §2; owner
+# outright (docs/records/nyiso/nyiso-incity-instrument-survey-2026-07.md §2; owner
 # adjudication 2026-07-26 reopening the closed C3a "reserve" lever as a
 # COMMITMENT-OBLIGATION driver — it was closed as a *pricing* lever, measured
 # Δ$0.00 on the 2023 trough, docs/calibration-log/nyiso.md nyiso-71).
@@ -650,7 +650,7 @@ NYISO_SPIN_ONLINE_FAMILIES: frozenset[str] = frozenset(
 # in-city 10-minute reserve on in-city steam + fast-start GTs (2008 ARR
 # vintage / PSC Order 27302; the CURRENT Applications-of-Reliability-Rules
 # table is MyNYISO login-walled and so is NOT relied on as the basis here —
-# see docs/handoffs/nyiso-incity-instrument-survey-2026-07.md §3).
+# see docs/records/nyiso/nyiso-incity-instrument-survey-2026-07.md §3).
 NYISO_INCITY_OBLIGATION_FAMILIES: frozenset[str] = frozenset(
     {"nyc_10min_total", "li_10min_total"}
 )
@@ -1301,7 +1301,7 @@ def ercot_commitment_posture_spec(
 
     ERCOT runs a fleet-wide ORDC co-opt with no pergen substrate, so the
     commitment-posture lever (``ercot_commitment_posture``, design note §A;
-    ``docs/handoffs/ercot-commitment-thinness-2026-07.md``) is built
+    ``docs/records/ercot/ercot-commitment-thinness-2026-07.md``) is built
     reserve-decoupled: pool the MERCHANT GAS fleet by (zone, fuel-class) and
     posture the non-fast-start pools with only the energy-side rows (headroom
     + min-load + startup), leaving ERCOT's reserve design untouched.
@@ -1424,7 +1424,7 @@ def spp_commitment_posture_spec(
     """Return the SPP standalone posture spec WITH min-up/min-down, or ``None``.
 
     ``spp_commitment_posture`` (SPP-102, owner card "Build relaxed-UC engine",
-    ``docs/handoffs/DESIGN-spp-102-cc-commitment-state-2026-09-29.md``): the
+    ``docs/records/spp/DESIGN-spp-102-cc-commitment-state-2026-09-29.md``): the
     SAME standalone energy-only construction as ERCOT's
     (:func:`_standalone_posture_pools` — headroom, measured min-load, startup
     charge on the pooled online capacity U), plus the min-up / min-down
@@ -1773,7 +1773,7 @@ def _ercot_multiproduct_design(
             wids = np.zeros(0)
         elif getattr(config, "ercot_ordc_only_scarcity", False):
             # Pre-RTC+B ORDC-only design (the ercot57 product-ladder question,
-            # docs/DIAGNOSIS-ercot-june2023-scarcity-formation-2026-07.md §4.2):
+            # docs/records/ercot/DIAGNOSIS-ercot-june2023-scarcity-formation-2026-07.md §4.2):
             # 2023-25 ERCOT has NO real-time per-product scarcity pricing — RT
             # reserve scarcity prices via the ORDC on the REALIZED total online
             # reserves, added post-SCED (RTSPP = SPP + RTORPA;
@@ -2355,7 +2355,7 @@ def _ercot_multiproduct_design(
     # series, arithmetic only — the award series under-state the capability
     # components, so the netting is conservative). Scoped to the MEASURED cap
     # branch: the WS-A forward formula composes storage explicitly and carries
-    # no LR term (docs/FINDING-ercot212-reserve-basis-phase0-2026-08-16.md §3).
+    # no LR term (docs/records/ercot/FINDING-ercot212-reserve-basis-phase0-2026-08-16.md §3).
     if (
         getattr(config, "ercot_reserve_supply_cap_net_credits", False)
         and supply_cap is not None
@@ -2894,7 +2894,7 @@ def _pjm_design(
                 balance_col_mask=balance_col_mask,
             )
         # Commitment-posture lever (design note §A; PJM port
-        # docs/handoffs/pjm-commitment-posture-port-2026-07.md): U/SU columns
+        # docs/records/pjm/pjm-commitment-posture-port-2026-07.md): U/SU columns
         # on the non-fast-start pools, gated on pjm_commitment_posture. Shares
         # MISO's _posture_pool_params verbatim (measured/published pool params
         # only — CEMS committed_pct mlf, NREL class startup, physics fast-start

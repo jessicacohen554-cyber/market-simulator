@@ -2,7 +2,7 @@
 
 **Lane** SOCO-13 · **Model** Fable (`claude-fable-5-1`) · **Date** 2026-09-13 ·
 **Branch** `claude/soco-13-eqr-price-84k5yi` · **Base** `33a7c961` at launch, rebased onto `28e7a6a3` ·
-**Data profile** `shared` · **PRECOMMIT** `docs/handoffs/PRECOMMIT-soco-13-2026-09-13.md` (pushed at
+**Data profile** `shared` · **PRECOMMIT** `docs/records/soco/PRECOMMIT-soco-13-2026-09-13.md` (pushed at
 `ee32cf75` before any value was read; addendum A at `535d87c5` before any index value existed; both
 carried unchanged through the rebase as `81faf6a4` / `7757ef9d`) · **Ruling** card S2, both limbs ·
 **Raw store** `data/raw/ferc-eqr/` (README, SOURCES, SHA256SUMS, `gate.json`, `filter_ledger.json`) ·
@@ -276,7 +276,7 @@ Rules 1 / 13 / 14 / 23 / 25 / 27 / §8.0 as the PRECOMMIT §9 states them, each 
 read; every input a regenerable market quantity; the accurate series kept as what it is; the builder
 re-runs only on source change; nothing priced in a neighbouring market entered (index- and
 RTO-priced rows excluded); every pushed file ≥ 300 lines fetch-back verified by blob hash; no shared
-record edited. **Files touched:** `docs/handoffs/PRECOMMIT-soco-13-2026-09-13.md`, this FINDING,
+record edited. **Files touched:** `docs/records/soco/PRECOMMIT-soco-13-2026-09-13.md`, this FINDING,
 `scripts/data/build_soco_eqr_price_index.py`, `data/raw/ferc-eqr/**` (with its own `.gitignore` for
 `_pulls/`). Nothing under `src/`, `tests/`, any `_validation-source` file, `actual_lmp.json`, the
 plan, the ledger, `soco.md`, or any other lane's files.

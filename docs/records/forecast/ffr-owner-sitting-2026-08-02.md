@@ -50,8 +50,8 @@ land (pack §Wave 2 gate: "evidence docs committed → OWNER SITTING"):
 | `docs/handoffs/ffr-2c-<topic>-<date>.md` (+ re-anchor commits) | **D-3** | pending |
 | `docs/handoffs/ffr-2e-<topic>-<date>.md` (posture-divergence table) | context for **D-1/D-3** — a sloped-curve validation posture changes what those flips are judged against (pack §FFR-2E) | pending |
 | `docs/handoffs/ffr-2a-<topic>-<date>.md` (input-gap table vs current keepers) | sitting context (worth-the-compute, §2.1b(c)) | pending |
-| `docs/handoffs/ff-g2-fuel-forward-2026-07.md` | **D-4** | **landed** |
-| `docs/handoffs/ff-g3-net-cone-forward-2026-07.md` | **D-3** owner box | **landed** |
+| `docs/records/forecast/ff-g2-fuel-forward-2026-07.md` | **D-4** | **landed** |
+| `docs/records/forecast/ff-g3-net-cone-forward-2026-07.md` | **D-3** owner box | **landed** |
 | This packet §D-5/§D-6/§D-7 (no Wave-2 dependency) | **D-5, D-6, D-7** | **decidable now** |
 
 ---
@@ -65,13 +65,13 @@ read this before signing D-1 or D-2.*
 
 **A.1 §W1-X is no longer outstanding — Wave 1 is CLOSED.** The state-basis bullet above was
 true at `a92ae97` and is now stale. §W1-X ran and reported **GREEN** (PR #3265,
-`docs/handoffs/ffr-w1x-wave1-close-2026-08-02.md`): the three attestations pass, the single
+`docs/records/forecast/ffr-w1x-wave1-close-2026-08-02.md`): the three attestations pass, the single
 operator cache epoch was taken 2026-08-02 (ledger in `src/market_sim/results/cache.py:47+` —
 every pre-2026-08-02 **forecast-mode** cache invalid; backcast caches and all six keeper
 bundles explicitly NOT), the three-part regression audit passes, and FFR-1E's
 `forecast-parity-guard` job is in CI. FFR-3A's battery is therefore unblocked on this axis.
 
-**A.2 D-1 / D-2 attachment has LANDED:** `docs/handoffs/ffr-2b-retirement-entry-evidence-2026-08-02.md`
+**A.2 D-1 / D-2 attachment has LANDED:** `docs/records/forecast/ffr-2b-retirement-entry-evidence-2026-08-02.md`
 (PR #3277). Its bottom line, relayed without re-litigation:
 
 - **D-1 — the pre-registered bar is MET in both curve-ON ISOs.** T-R10a and T-R10b go
@@ -127,7 +127,7 @@ five are unchanged from the state-basis list above. Re-read the shards at the si
 
 ## Addendum B — FFR-2C landed; **D-3 is now decidable** (workstream manager, 2026-08-02, HEAD `cb1c416`)
 
-Evidence doc: `docs/handoffs/ffr-2c-net-cone-currency-2026-08-02.md`; the owner box itself is
+Evidence doc: `docs/records/forecast/ffr-2c-net-cone-currency-2026-08-02.md`; the owner box itself is
 written into `ff-g3-net-cone-forward-2026-07.md` §5. **No default was flipped and no escalation
 option was armed** — the shipped mode is still `hold_last` with every real rate at 0.0.
 
@@ -256,7 +256,7 @@ not a flag. **The move needs its own scoped session and its own signed seed auth
 
 ### C.3 FFR-2E LANDED MID-SITTING — D-3a's defer condition is discharged
 
-`docs/handoffs/ffr-2e-shipped-capacity-posture-2026-08-02.md` (base `a900c67`) merged **while the
+`docs/records/forecast/ffr-2e-shipped-capacity-posture-2026-08-02.md` (base `a900c67`) merged **while the
 sitting was in progress**, unannounced; the manager found it on a routine refresh. D-3a was deferred
 *"until FFR-2E lands."* **It has landed — the condition is spent and D-3a is decidable now.**
 
@@ -369,7 +369,7 @@ the load-bearing path. Economic retirement (step 3) is otherwise the sole determ
 
 ### E.4 FFR-3C landed in the same window — blocker 0 is ANSWERED
 
-`docs/handoffs/ffr-3c-collapse-attribution-2026-08-03.md` (PR #3360). Nothing was tuned, unarmed,
+`docs/records/forecast/ffr-3c-collapse-attribution-2026-08-03.md` (PR #3360). Nothing was tuned, unarmed,
 widened, promoted or registered; both signed mechanisms stay armed. Its answer to the owner's
 question is **(c) — both, with a measured split, and the split is MEMBERSHIP vs CALENDAR**:
 
@@ -485,7 +485,7 @@ counter outside commercial practice entirely (no analogue in IPM/ReEDS/PLEXOS-LT
 going-forward NPV / lifetimes+margin / integer NPV — peer review §3.1).
 
 **Evidence doc.** ~~FFR-2B (pending)~~ → **LANDED 2026-08-02**:
-`docs/handoffs/ffr-2b-retirement-entry-evidence-2026-08-02.md` (PR #3277) — pipeline-armed probe
+`docs/records/forecast/ffr-2b-retirement-entry-evidence-2026-08-02.md` (PR #3277) — pipeline-armed probe
 arms at post-W1 HEAD, PJM + MISO curve-ON T1-H legs, scored on the T-R battery + T-R10
 no-inversion + LOYO within 2023–2025, bands never restated looser. **The conditional
 recommendation below is satisfied; see Addendum A.2.** Note also **A.3**: the pre-W1 FF-1A
@@ -528,7 +528,7 @@ precondition is landed: FR-13 (commissioned pipeline units invisible to I4 when 
 armed) was fixed by FFR-1A (2026-07-31).
 
 **Evidence doc.** ~~FFR-2B (pending)~~ → **LANDED 2026-08-02**:
-`docs/handoffs/ffr-2b-retirement-entry-evidence-2026-08-02.md` (PR #3277) — MISO T1-F with
+`docs/records/forecast/ffr-2b-retirement-entry-evidence-2026-08-02.md` (PR #3277) — MISO T1-F with
 pipeline + both dampers armed. **I4 stays PASS with the lag armed** (the FR-13 regression check
 passes). I13 and BLK-10 re-measured. **The bar is only PARTLY met — read Addendum A.2 before
 signing:** the rate limit re-phases rather than reduces backstop MW (−0.07 %), I13 had no cobweb
@@ -803,7 +803,7 @@ changes how much of this program can run at once, so it is recorded with the sam
 
 ### F.1 — D-8: queue latency and queue throughput are **TWO mechanisms**. The G-31 fix lane is **CHARTERED**.
 
-**The question put.** FFR-3C (`docs/handoffs/ffr-3c-collapse-attribution-2026-08-03.md` §1.2,
+**The question put.** FFR-3C (`docs/records/forecast/ffr-3c-collapse-attribution-2026-08-03.md` §1.2,
 §6.2) established that the R-NEW retirement redesign replaced a mechanism carrying **both** a
 queue-latency term and a queue-throughput cap with one carrying **only** the latency term, on
 the argument that rule 19 `[R-ONE-MECH]` — *"the same physical queue, carried once"* — makes
@@ -898,7 +898,7 @@ is established, one manager determination, and one decision the owner needs.
 
 ### G.1 — D-8 executed. Both mechanisms are built, registered, default-off, and MEASURED INERT in ERCOT.
 
-FFR-3F (`docs/handoffs/ffr-3f-exit-throughput-2026-08-03.md`) discharged the D-8 charter to its
+FFR-3F (`docs/records/forecast/ffr-3f-exit-throughput-2026-08-03.md`) discharged the D-8 charter to its
 bounds:
 
 * **The G3 cap-grain fix landed** (`2adfb49`). The pipeline's admission cap now resolves its
@@ -1098,7 +1098,7 @@ regression table against FF-2D:
 
 ### H.2 — CAISO's 65.5 % is diagnosed: three stacked causes, and the prompt's hypothesis was refuted-then-sharpened
 
-FFR-3H (`docs/handoffs/ffr-3h-caiso-backstop-2026-08-04.md`), diagnosis only, nothing fixed:
+FFR-3H (`docs/records/forecast/ffr-3h-caiso-backstop-2026-08-04.md`), diagnosis only, nothing fixed:
 
 1. **~37 pp is a BOOKING-CONVENTION ARTIFACT of the row-4 ratio** — the backstop books in-year
    while economic entry books at decision + 2. Measured: 65.48 % → **28.61 %** with the
@@ -1462,7 +1462,7 @@ holdout spend freeze, and **read** measured 2022 demand, renewable CF, forced-ou
 hydro. `meta.json`, both arms: `solved_years: [2021, 2022, 2023, 2024, 2025]`,
 `bridged_years: []`. Rule 22's bridge contract — *"evolved across, never solved, data never
 read"* — is violated in **both** halves. Evidence: `4724fa83`, and
-`docs/handoffs/ffr-3q-window-recut-2026-08-04.md` §2.2.
+`docs/records/forecast/ffr-3q-window-recut-2026-08-04.md` §2.2.
 
 **Cause is a harness defect, not an operator choice.** Two predicates disagree about what a
 "forward year" is:
@@ -2238,7 +2238,7 @@ solve:
 
 ### R.2 — CARD D-17, put this sitting: implement the FFR-4A entry-cap fix?
 
-**Measured (FFR-4A, `docs/handoffs/ffr-4a-entry-ladder-2026-08-04.md`; the diagnosis is already
+**Measured (FFR-4A, `docs/records/forecast/ffr-4a-entry-ladder-2026-08-04.md`; the diagnosis is already
 accepted on record, Q.3).** The freeze is a **dimensional double-count**: the pending-pipeline
 **stock** is netted from two annual-**flow** caps, capping long-run average decisions at `C / L`
 and freezing the ladder ratchet whenever `K ≤ L` — and `(K, L) = (2, 2)` puts **24 of 24**
@@ -2885,7 +2885,7 @@ earlier) with zero shipped-default flips (R.1-checked).
 ### X.4 The NEISO locked-test record is FALSE — neiso-87's governance finding, verified
 
 Not an FFR lane, but a record the manager's own brief repeats. neiso-87
-(`results/calibration/ASSESSMENT-neiso87-declaration-2026-08-06.md` §1) searched the
+(`docs/records/neiso/ASSESSMENT-neiso87-declaration-2026-08-06.md` §1) searched the
 artifact record at HEAD: **no NEISO 2019 solve, score, bundle, bench row, or registry entry
 exists**; the memo cited as authorization contains no mention of 2019; `locked_test_scored_on`
 points at a config id whose own record says "solved full-span 2023–2025"; and the 2026-07-07
@@ -3155,8 +3155,8 @@ this one.
 
 The FFR-8A prompt WAS pasted. PR #3722 (branch `claude/forward-price-scarcity-repair-3ak5b9`,
 merged 2026-08-08 01:58Z) landed: the §1 pre-registration
-(`docs/handoffs/ffr-8a-scarcity-restoration-2026-08-08.md`, committed before any probe); the
-Phase-1 Part-A measured decomposition (`docs/handoffs/ffr-8a/part-a-measured-2026-08-08.json`);
+(`docs/records/forecast/ffr-8a-scarcity-restoration-2026-08-08.md`, committed before any probe); the
+Phase-1 Part-A measured decomposition (`docs/records/forecast/ffr-8a/part-a-measured-2026-08-08.json`);
 the repair elements **E1/E2/E4** on the lookahead tail; the gated field
 `capacity_screen_scarcity_restoration` (default OFF, `__post_init__` requires
 `capacity_screen_unified_lookahead` + iso==ERCOT); and the Part-B ablation probe **script**
@@ -3185,7 +3185,7 @@ paired-arm measurement (V.3 α/β/γ as sharpened by FFR-7C, plus the price-side
 ### AD.2 D-28 memo returned and VERIFIED against the code; the card is put
 
 D28-MEMO WAS pasted. PR #3720 returned
-`docs/handoffs/d28-45u-composition-memo-2026-08-08.md` — design-only as chartered, and it
+`docs/records/forecast/d28-45u-composition-memo-2026-08-08.md` — design-only as chartered, and it
 answers the composition question from the statute itself: §45U(b)(2)(B) is a purpose-built
 two-branch anti-stacking rule; the recommended composition is **(c) branch (i)** —
 `attribute = max(eac, ces, rps, clean)` unchanged, `+ §45U(gross receipts = energy +
@@ -4108,7 +4108,7 @@ desk-refused), **miso-151** (matrix cell U→R).
 
 ### AN.2 FH-5 landed SCAFFOLDING-ONLY — the FFR-9C-PROMOTE gate is NOT satisfied
 
-PR #3862 landed exactly three files: `docs/handoffs/fh-5-phase-b-2026-08-11.md`,
+PR #3862 landed exactly three files: `docs/records/forecast/fh-5-phase-b-2026-08-11.md`,
 `scripts/probes/fh5_horizon_table.py` and `scripts/probes/fh5_run_leg.sh`. The handoff runs
 §0 caveats → §1 pre-registration → §2 one solve-independent finding, **and stops there.**
 Verified against the artifacts, not the summary: **no hindcast registration file was touched
@@ -4385,7 +4385,7 @@ summary.*
 AQ's first-priority item (decide and dispatch the retroactive epoch declaration) was executed
 by the FFR-9C-PROMOTE continuation lane itself, merged as **PR #3903** at 03:04Z
 (`claude/ffr-9c-stage-b-commit-av87x7`, handoff
-`docs/handoffs/ffr-9c-promote-stageb-completion-2026-08-13.md`). Verified by content at
+`docs/records/forecast/ffr-9c-promote-stageb-completion-2026-08-13.md`). Verified by content at
 `0fcd19cd`, item by item:
 
 * **The epoch is DECLARED.** `scripts/probes/_ffr9c_stageb_cache_epoch.py` (three reads, all
@@ -4475,7 +4475,7 @@ solves either run now or died with a container. No evidence yet; the manager adj
 RG verdict when the bundles register, and an RG-FAIL escalates to the owner as the precommit
 specifies.
 
-It also landed **card R** (`docs/DECISION-CARD-ercot193-determination-ceiling-2026-08-13.md`)
+It also landed **card R** (`docs/records/ercot/DECISION-CARD-ercot193-determination-ceiling-2026-08-13.md`)
 — a genuinely new owner item, surfaced in AR.7.
 
 ### AR.7 Open owner items at this sitting (put, not nagged; dispositions recorded here by addendum)
@@ -4528,7 +4528,7 @@ rather than fighting the classifier.
 claude/ffr-fh-workstream-handoff-w8w7dg. 16 PRs merged since AR landed (#3904–#3923,
 excluding my own #3908). Every claim below read from the artifact, not a lane summary.*
 
-### AS.1 OVERRIDE-FIX LANDED — adjudicated ACCEPTED (#3915, `docs/handoffs/override-fix-2026-08-13.md`)
+### AS.1 OVERRIDE-FIX LANDED — adjudicated ACCEPTED (#3915, `docs/records/misc/override-fix-2026-08-13.md`)
 
 Remedy 2 exactly as dispatched: non-field `_explicitly_set_fields` record + seam consults
 it; strict narrowing (an untracked copy degrades to today's behaviour, never to a stripped
@@ -4594,7 +4594,7 @@ scoreboard is complete; no FH dispatch remains open.**
   ACTIVE at G0, its own PM session; six workstreams AUDIT/DEBUG/PERF/DOCS/SITE/BLOAT,
   gates G1–G4). Owns: branch protection (at G2), repo slimming (BLOAT), known-reds
   (DEBUG), docs/site finalization.
-* **ERCOT-SCAR workstream** (`docs/handoffs/ercot-scar-workstream-pack-2026-08.md`, its
+* **ERCOT-SCAR workstream** (`docs/records/ercot/ercot-scar-workstream-pack-2026-08.md`, its
   own manager, cycles 1–6 so far; L-SCAR chartered/S-signed, ercot-195 V0 FAIL recorded,
   ercot-196 card T assembled, HYGIENE-1/2 landed). Owns ERCOT scarcity-formation work,
   including the L-1 lane whose promotion gate AS.1 cleared.
@@ -4608,7 +4608,7 @@ now collides head-on with the release program's BLOAT workstream (inventory → 
 Wave-3 tip prunes with `intentional-shrink` labels and a post-prune `golden-data-tier`
 verification — a MORE governed path than the single-lane §0ar-3 prompt). Withdrawn to
 prevent two uncoordinated actors editing `.gitignore`/CLAUDE.md/repo-size state. The
-charter material BLOAT should inherit: `docs/FINDING-rewrite-prep-2026-08-11.md` §8 (GO:
+charter material BLOAT should inherit: `docs/records/governance/FINDING-rewrite-prep-2026-08-11.md` §8 (GO:
 untrack `data/raw` going forward; NO-GO on history rewrite stands), AR.8 + `#3909`'s
 `docs/fast-clone.md` (partial clone + `hydrate_data.py` profiles — the recovery story
 untracking depends on), and §0ar-3's pre-merge check list (workflows, integrity guard,
@@ -4669,7 +4669,7 @@ not an epoch-key pin; the prompt says so explicitly.
 
 ### AT.2 D-32 — SIGNED (owner, this sitting, in chat): the F6 fix, option A as recommended
 
-Per `docs/FINDING-f6-lmp-backend-parity-2026-08-11.md` §A (RECOMMENDED there and
+Per `docs/records/misc/FINDING-f6-lmp-backend-parity-2026-08-11.md` §A (RECOMMENDED there and
 adopted here): fix the CLEAN-backed consumer reduction — `_neighbor_lmp_clean` in
 `src/market_sim/data/neighbor_price.py` indexes `interval_start_utc` converted to the
 ISO's fixed standard offset, plus the per-ISO hub-definition table, plus the docstring
@@ -4709,7 +4709,7 @@ and nothing else. No FFR or FH dispatch remains or is contemplated.
 during this sitting (`b48d4b1` → `f4d9888` → `8f83900`); every claim below is read from
 `8f83900` artifacts after the second fetch. Addendum AT is merged and on main.*
 
-### AU.1 D-32-F6FIX — LANDED, adjudicated ACCEPTED (#3949, `docs/handoffs/d32-f6fix-2026-08-13.md`)
+### AU.1 D-32-F6FIX — LANDED, adjudicated ACCEPTED (#3949, `docs/records/forecast/d32-f6fix-2026-08-13.md`)
 
 Option A exactly as signed, two files, nothing else touched. **All five acceptance rows
 met**, verified against the handoff's own measured tables:
@@ -4807,7 +4807,7 @@ trigger the release program's ledger already carries. No FFR or FH work remains.
 *Written 2026-08-14 at `315a245`, session claude/ffr-fh-workstream-handoff-w8w7dg. This is
 the FFR/FH workstream desk's CLOSING entry. Addendum AU is merged and on main.*
 
-### AV.1 D-31-ADOPT — LANDED, adjudicated ACCEPTED (#3950, `docs/handoffs/d31-adopt-2026-08-13.md`)
+### AV.1 D-31-ADOPT — LANDED, adjudicated ACCEPTED (#3950, `docs/records/forecast/d31-adopt-2026-08-13.md`)
 
 `QUEUE_CAP_PER_TECH_GW["ERCOT"]["solar"]` = **8.0** at
 `src/market_sim/config/capacity_market.py`. The citation block carries the full rule-23

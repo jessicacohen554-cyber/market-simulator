@@ -1,6 +1,6 @@
 # neiso-64 merit-order guard — patch application notes
 
-Companion to `docs/handoffs/patches/README.md`. The CAMPD **economic-layup
+Companion to `docs/records/misc/patches/README.md`. The CAMPD **economic-layup
 merit-order guard** ships as two patches because both files it touches clear the
 rule-27 300-line bar (`scripts/lib/outage_detect.py` 390 → 827,
 `scripts/data/derive_campd_unit_outages.py` 1484 → 1599), so neither may be
@@ -9,11 +9,11 @@ landed as a regenerated full-file push.
 **Apply lib first — the deriver imports from it:**
 
 ```
-git apply docs/handoffs/patches/campd-merit-order-guard-lib.patch
-git apply docs/handoffs/patches/campd-merit-order-guard-deriver.patch
+git apply docs/records/misc/patches/campd-merit-order-guard-lib.patch
+git apply docs/records/misc/patches/campd-merit-order-guard-deriver.patch
 ```
 
-Design frozen in `docs/handoffs/campd-economic-layup-fix-charter-2026-07.md`
+Design frozen in `docs/records/misc/campd-economic-layup-fix-charter-2026-07.md`
 §3a (owner sign-off 2026-07-25).
 
 ## What it does

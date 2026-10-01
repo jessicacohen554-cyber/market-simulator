@@ -129,7 +129,7 @@ coal_committed_takeorpay_regulated  None → True
 ```
 
 Per the mechanism's own design doc
-(`docs/handoffs/miso-coal-conduct-design-2026-07.md` §4, wiring check): arming
+(`docs/records/miso/miso-coal-conduct-design-2026-07.md` §4, wiring check): arming
 the regulated scope moves **RE PRB 9,403 MW from $28.09 → $5.07/MWh**. Nine GW
 of PRB committed capacity priced at $5 is inframarginal in every hour of the
 year, which is exactly the measured signature.
@@ -258,7 +258,7 @@ rather than a follow-on edit:
 the standing MISO evidence says the system is ~10 GW tighter at summer peak than
 the model can see (FINDING-miso89 §2), and a fleet with no headroom cannot cycle
 whatever its offer says. That is the **already-adjudicated, data-blocked**
-outage-grain gap (`docs/handoffs/miso-outage-grain-data-ask-2026-07.md`), not a
+outage-grain gap (`docs/records/miso/miso-outage-grain-data-ask-2026-07.md`), not a
 new phenomenon. It is **not** re-attacked with a second mechanism (rule 19
 `[R-ONE-MECH]`) and it is **not** ledgered — C7 is protective and hard, and
 MISO's ledgered budget is 3/3 saturated regardless.
@@ -285,4 +285,4 @@ envelope is ~8.4% below the measured fleet peak, broadly (21 of 26 plants), and
 the model sits at its monthly-max ceiling in 34.9% of HE18 plant-hours against a
 measured 14.6% (2025). That is the **peak** side, is consistent with the miso-89
 under-derate, and is covered by the standing outage-grain data ask
-(`docs/handoffs/miso-outage-grain-data-ask-2026-07.md`). It is not what fails C7.
+(`docs/records/miso/miso-outage-grain-data-ask-2026-07.md`). It is not what fails C7.

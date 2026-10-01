@@ -1,6 +1,6 @@
 # RESULT — R-ERCOT-14: Oklaunion joins ERCOT + the pre-2022 SWCAP vintage, PROMOTED; ISO still NOT-YET
 
-PRECOMMIT: `docs/handoffs/PRECOMMIT-r-ercot-14-oklaunion-swcap-2026-09-28.md` (pinned SHA `edbfdad5235eae5bacc2e8b0248024cae625a503`).
+PRECOMMIT: `docs/records/ercot/PRECOMMIT-r-ercot-14-oklaunion-swcap-2026-09-28.md` (pinned SHA `edbfdad5235eae5bacc2e8b0248024cae625a503`).
 New keeper `2026-09-28-r-14-oklaunion-swcap` (`results/calibration/r_ercot14_span`, 2019–2025) supersedes `2026-09-28-r-13-2019-reserve`.
 Owner decision card, answer verbatim: **"Promote B (Recommended)"**.
 

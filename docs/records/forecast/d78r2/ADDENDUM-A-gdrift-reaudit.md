@@ -51,7 +51,7 @@ solve at one HEAD (`b22b91c3`) by construction.
 
 D79 changes `cache_key()` itself, so "it moved zero keys" is exactly the kind of
 claim a lane must not accept on the changing party's word. This lane already owns
-the instrument to check it: `docs/handoffs/d78r2/keys_probe.py`, whose output at
+the instrument to check it: `docs/records/forecast/d78r2/keys_probe.py`, whose output at
 **pristine `e6a0402f`** is committed as `keys_probe_origin_main.json`. Re-run at
 `b22b91c3`:
 

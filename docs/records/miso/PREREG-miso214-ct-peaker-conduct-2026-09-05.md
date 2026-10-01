@@ -80,7 +80,7 @@ start commitment of its own.
 ## 2. Instrument, and its limits — stated in advance
 
 Probe `scripts/probes/_miso214_ct_peaker_conduct_phase0.py` →
-`results/calibration/_miso214_ct_peaker_conduct.json`. **Zero solve.** Readers reused from
+`results/phase0/miso/_miso214_ct_peaker_conduct.json`. **Zero solve.** Readers reused from
 `_miso213_basis_layering_phase0.py` / `_miso211_rdt_binding_state.py` /
 `_miso134_ct_night_order_screen.py` with `_miso134.BUNDLE`, `m207.KEEPER` and `m208.KEEPER`
 re-pointed to `results/calibration/miso213_layering_B` before any helper runs;

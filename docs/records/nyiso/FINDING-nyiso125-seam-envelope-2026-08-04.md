@@ -3,7 +3,7 @@
 **Date:** 2026-08-04 · **ISO:** NYISO · **Years:** 2023–2025 (training only, rule 22) ·
 **Keeper at dispatch:** `2026-08-04-nyiso-120-c119-scope`.
 
-Pre-registration: `results/calibration/PREREG-nyiso125-seam-envelope-2026-08-04.md`,
+Pre-registration: `docs/records/nyiso/PREREG-nyiso125-seam-envelope-2026-08-04.md`,
 committed and pushed **before** any solve (§8 addendum, recording the owner's
 promotion disposition, likewise written before any result existed).
 
@@ -68,7 +68,7 @@ dropped.
 ## §3 — Phase 0, four verdicts
 
 Probe: `scripts/probes/_nyiso125_seam_envelope.py` ·
-record: `results/calibration/_nyiso125_seam_envelope.json`. No LP.
+record: `results/phase0/nyiso/_nyiso125_seam_envelope.json`. No LP.
 
 ### 3.1 One posting row is an accounting duplicate
 
@@ -211,7 +211,7 @@ Control `2026-08-04-nyiso-125-control` (bundle `nyiso125_control`) ·
 treatment `2026-08-04-nyiso-125-seam-envelope` (bundle `nyiso125_seam_A`).
 Single delta, same HEAD, 2023 2024 2025 in ONE invocation and ONE bundle each
 (rule 16). Both registered on the backcast dashboard (rule 15). Gate record:
-`results/calibration/_nyiso125_gate_scores.json`.
+`results/phase0/nyiso/_nyiso125_gate_scores.json`.
 
 **The delta is clean.** The treatment logs the envelope on exactly the two
 identified links, with the MW removed matching Phase 0 to the decimal; the
@@ -371,5 +371,5 @@ uv run python scripts/gen_nyiso125_attestation.py
 uv run python scripts/probes/_nyiso125_score_gates.py \
     --control results/calibration/nyiso125_control \
     --treatment results/calibration/nyiso125_seam_A \
-    --json-out results/calibration/_nyiso125_gate_scores.json
+    --json-out results/phase0/nyiso/_nyiso125_gate_scores.json
 ```

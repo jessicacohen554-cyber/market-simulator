@@ -72,7 +72,7 @@ Valmy), merged them, and could not solve (nesting limit). Owner card **"Keep #19
   pin, with no value moved.
 - `campd_per_unit_vintage_denominator` stays default-off as NEXT-15's replacement candidate for the fuel-split
   composition. The selector now **refuses** arming it beside `campd_unit_fuel_split` (rule 19).
-- The other lane's `PRECOMMIT-nwppnext14-vintage-denominator-*` and `docs/handoffs/nwppnext14/shards/*` arm the deleted
+- The other lane's `PRECOMMIT-nwppnext14-vintage-denominator-*` and `docs/records/nwpp/nwppnext14/shards/*` arm the deleted
   field. They are **stale and must not be launched**.
 - Re-scored on `main`'s rubric v3.13: same determination, same single FAIL record.
 

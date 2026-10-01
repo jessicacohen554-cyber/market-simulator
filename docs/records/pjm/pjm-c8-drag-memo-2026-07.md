@@ -195,7 +195,7 @@ adjudicate now.
 
 **Addendum 2026-07-06 (L-13 posture probe — null result).** The
 `pjm_commitment_posture` A/B probe (pjm-82 vs pjm-81;
-`docs/handoffs/pjm-commitment-posture-port-2026-07.md`) does **not** move the
+`docs/records/pjm/pjm-commitment-posture-port-2026-07.md`) does **not** move the
 CT_PEAKER denominator: 2024 class total 20.69 → 20.59 TWh (−0.10), the breach-year
 forced share stays **12.0 %** (D-2 numerator 2.49 → 2.47 TWh). The posture's
 min-load coupling pins a little more CC_REGULAR baseload (+1.5 TWh/yr) and shaves
@@ -208,7 +208,7 @@ The C8 decision remains the owner's.
 - `results/calibration/pjm77_ct_relfloor_reconcile/legitimacy_diagnostics.json`
   (D-2/D-4 committed rows), `calibration_attestation.json` (drag coefficients,
   residuals_note, DOF ledger).
-- `docs/FINDING-pjm-burndown-2026-07.md` §4–§7 + 2026-07-06 addendum.
+- `docs/records/pjm/FINDING-pjm-burndown-2026-07.md` §4–§7 + 2026-07-06 addendum.
 - `frontend/data/backcast/bench/PJM/{2023,2024,2025}.json.gz` `classFull`
   (EIA-923 actuals used in §3).
 - `scripts/data/derive_pjm_ct_netload_drag.py` (derivation + its frozen-parameter

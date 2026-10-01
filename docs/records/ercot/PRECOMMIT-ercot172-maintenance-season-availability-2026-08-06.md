@@ -288,7 +288,7 @@ adjudicated); `coal_min_load_floor` both grains; lignite daily unit commitment;
 coal seasonal LEVEL split; `coal_offer_level_rebasis` `R`;
 `tranche_startup_amortization` `G`; ercot-168 **OPTION B** stays DEFERRED; the
 West/Panhandle topology split is **CLOSED**
-(`docs/DIAGNOSIS-ercot-trough-price-formation-2026-07.md` §§7–10).
+(`docs/records/ercot/DIAGNOSIS-ercot-trough-price-formation-2026-07.md` §§7–10).
 
 **Additional hard fences for this lane.** Whatever the verdict, this session will
 NOT propose: a per-hour telemetered-HSL or COP cap on dispatch (rule 13

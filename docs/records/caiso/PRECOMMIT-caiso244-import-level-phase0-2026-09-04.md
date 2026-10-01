@@ -164,7 +164,7 @@ residual, not a mechanism.
 ## §2 — THE INSTRUMENT: row-level import dispatch reconstructed from the keeper's own duals, zero LP
 
 `scripts/probes/_caiso244_import_level_anatomy.py` →
-`results/calibration/_caiso244_import_level_anatomy.json`.
+`results/phase0/caiso/_caiso244_import_level_anatomy.json`.
 
 1. **Rebuild the keeper fleet on-recipe** for each year through
    `replay_keeper.run_year_kwargs` (§0.1 — the first CAISO probe to run on the

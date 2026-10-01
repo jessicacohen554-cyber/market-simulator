@@ -14,8 +14,8 @@ DIRECTIONS (owner, standing)
 THE QUESTION
 - scripts/render_calibration_html.py::reconcile_vintage_classes scales EVERY fossil class by ONE factor so the EIA-923
   gas + coal (+ oil) total matches EIA-930. It is ISO-agnostic. The docstring names its own limitation: "a CAMPD-per-class
-  target (complete in every vintage) is the follow-up refinement (docs/handoffs/pjm-cc-overrun-benchmark-basis-g21-2026-07.md §6)".
-- NWPP evidence (docs/handoffs/FINDING-nwppnext11-coal-c1-c4-decomposition-2026-09-29.md §1):
+  target (complete in every vintage) is the follow-up refinement (docs/records/pjm/pjm-cc-overrun-benchmark-basis-g21-2026-07.md §6)".
+- NWPP evidence (docs/records/nwpp/FINDING-nwppnext11-coal-c1-c4-decomposition-2026-09-29.md §1):
   - k is 0.87–0.92 in 2019–2024 and applies to coal too.
   - EIA-930's coal cell matches EIA-923 coal within 1 % in 2020 and 2024.
   - So a gas-side 930 shortfall is charged to coal: about 2.5 of the 4.2 TWh "COAL_PRB 2020 over-run".

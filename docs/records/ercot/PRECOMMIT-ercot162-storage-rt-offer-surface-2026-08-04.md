@@ -8,7 +8,7 @@ precedent for a structural arm). Basis keeper `2026-08-03-ercot158-pool-arm`
 (bundle `results/calibration/ercot158_poolarm_B`, determination NOT-YET, fail
 set {C3a 2023-only −32.8%, C3b 2023-only, C3c, C7 2023-lignite cv-leg}, C1
 16/16 all-class / 12/12 free-class, C6 ATTESTED+PASS). Charter:
-`results/calibration/FINDING-ercot161-afternoon-wall-phase0-2026-08-04.md`
+`docs/records/ercot/FINDING-ercot161-afternoon-wall-phase0-2026-08-04.md`
 §4; mechanism-matrix §5.1 item 9/9b. Phase A (identification, this session):
 `scripts/data/derive_ercot_storage_rt_offer_surface.py` →
 `data/raw/_validation-source/ercot_storage_rt_offer_condbinned.json`.

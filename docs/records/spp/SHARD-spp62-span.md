@@ -1,7 +1,7 @@
 # SHARD REPORT — SPP-62 SPAN (2023 · 2024 · 2025)
 
-**Charter** `docs/handoffs/PRECOMMIT-spp-62-2026-09-10.md` §9–§10 ·
-**Protocol** `docs/handoffs/shard-launcher-protocol-2026-09-09.md` §3, §6, §7 ·
+**Charter** `docs/records/spp/PRECOMMIT-spp-62-2026-09-10.md` §9–§10 ·
+**Protocol** `docs/records/misc/shard-launcher-protocol-2026-09-09.md` §3, §6, §7 ·
 **Role** §3 SPAN shard — the only registerable one · **DATA PROFILE** `spp`.
 
 **RUN_ID `2026-09-10-spp-62-vintage-census`** · bundle `results/calibration/spp62_span`.
@@ -214,7 +214,7 @@ Recorded at the end of the session — see the commit on `claude/spp62-span`. Th
 | file | local | remote (`origin/claude/spp62-span`) | match |
 |---|---|---|---|
 | `frontend/data/backcast/runs/2026-09-10-spp-62-vintage-census.js` | 768,863 B · sha256 `4fb4ecac71eaf662…` | 768,863 B · sha256 `4fb4ecac71eaf662…` | ✓ |
-| `docs/handoffs/SHARD-spp62-span.md` | 210 lines · sha256 `b769f04212ad5ce5…` | 210 lines · sha256 `b769f04212ad5ce5…` | ✓ |
+| `docs/records/spp/SHARD-spp62-span.md` | 210 lines · sha256 `b769f04212ad5ce5…` | 210 lines · sha256 `b769f04212ad5ce5…` | ✓ |
 
 `git push` succeeded on the first attempt — no HTTP 408/500, no HTTP/1.1 fallback needed.
 Nothing under `dispatch/`, `floors/`, or any top-level `*.parquet` was staged; nothing under

@@ -4,7 +4,7 @@
 **Model:** Opus (rule 27 `[R-PUSH]`) · **Data profile:** `neiso`
 **Authority:** OWNER RULING **Q63** (2026-09-08, capx ledger §0bg.3(a)) — *"Charter the re-score as its
 own lane now."*
-**Predecessor:** `docs/handoffs/FINDING-capx-d88-2026-09-08.md` (the repair being re-scored)
+**Predecessor:** `docs/records/forecast/FINDING-capx-d88-2026-09-08.md` (the repair being re-scored)
 
 > **Everything below is fixed BEFORE the solve.** The predictions in §5 are graded against the
 > realized re-score in the FINDING, whether they hit or miss. Rule 1 `[R-STRUCT]` governs: the D88

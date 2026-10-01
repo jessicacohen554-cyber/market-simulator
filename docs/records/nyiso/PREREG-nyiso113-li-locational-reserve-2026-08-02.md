@@ -39,7 +39,7 @@ omission class nyiso-83/84 fixed one tier up.
 The brief's binding constraint: a locational requirement is a new lever **only
 if it can be shown to bind where the NYCA aggregate does not**, measured before
 any solve. `scripts/probes/_nyiso113_locational_reserve_screen.py` →
-`results/calibration/_nyiso113_locational_reserve_screen.json`:
+`results/phase0/nyiso/_nyiso113_locational_reserve_screen.json`:
 
 **(a) It is not dominated.** A family row is
 `Σ_{z∈region} R[c,z] + shortfall ≥ requirement`, so an armed family with the

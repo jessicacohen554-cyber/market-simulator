@@ -79,7 +79,7 @@ rule amendment governance fails and this reads NOT-YET."*
   "years_held": [2023, 2024, 2025],
   "set_ex_ante": true,
   "not_swept": true,
-  "prereg": "results/calibration/PREREG-miso220-nonsteam-offer-lift-2026-09-05.md @ e1a2eb01",
+  "prereg": "docs/records/miso/PREREG-miso220-nonsteam-offer-lift-2026-09-05.md @ e1a2eb01",
   "merit_order_effect": "intended and measured: _miso220_liveness.json S-3 records 121 non-steam tranches crossing above the steam-gas median at the mid-year probe hour",
   "dof_entry": "offer_curve_by_group non-steam fossil lift (1.10), identified by owner ruling"
 }
@@ -117,7 +117,7 @@ to a ledger row that does not exist as such. Reading: the multipliers ARE the
 `offer_curve_by_group` row, so the lift is "in the ledger" in the loose sense that the row
 covers the same 92 scalars; but R-AY's specific requirement — a ledgered free parameter
 *identified by the ruling rather than by a measured source* — is not met on the ledger's face.
-The miso-220 finding (`results/calibration/FINDING-miso220-nonsteam-offer-lift-2026-09-05.md`
+The miso-220 finding (`docs/records/miso/FINDING-miso220-nonsteam-offer-lift-2026-09-05.md`
 line 146) asserts *"(e) declared in the attestation and carried as a DOF free parameter"*; the
 declaration half is true, the carried-as-a-row half is the gap. **Not edited** — routed, §4(a).
 

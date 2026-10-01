@@ -58,7 +58,7 @@ sitting 1–2 h later. Three displacement channels, in order of size:
    model under-imports the deep evening by **1.4–2.2 GW** and over-imports the
    pre-evening (+0.5–1.0 GW at h15–16, +2.3 GW at h14 annual) — the import
    *shape* miss already flagged as Tier-2 in
-   `docs/handoffs/caiso-transmission-ttc-diagnosis-2026-07-09.md` §4.
+   `docs/records/caiso/caiso-transmission-ttc-diagnosis-2026-07-09.md` §4.
 3. **The afternoon demand-basis deficit (h12–17).** The model's demand input is
    the EIA-930 `Demand` series (verified value-identical after clock mapping),
    which in summer runs **1.4–1.7 GW below** the supply-implied actual load

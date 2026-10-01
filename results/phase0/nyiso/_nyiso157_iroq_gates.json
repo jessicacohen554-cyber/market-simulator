@@ -1,6 +1,6 @@
 {
  "probe": "nyiso-157 iroquois companion A/B (seam+iroquois vs seam)",
- "prereg": "results/calibration/PREREG-nyiso157-iroquois-companion-2026-08-30.md",
+ "prereg": "docs/records/nyiso/PREREG-nyiso157-iroquois-companion-2026-08-30.md",
  "arms": {
   "control_seam": "nyiso157_pararm_B",
   "arm_companion": "nyiso157_iroq_C"

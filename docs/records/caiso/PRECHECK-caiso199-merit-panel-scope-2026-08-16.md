@@ -220,10 +220,10 @@ NOT-YET is the honest fallback). **No new lane is improvised.**
 * Bundles `results/calibration/caiso199_g0_control`, `caiso199_g1_meritpin`.
 * Probes `scripts/probes/_caiso199_ctrl_tolerance.py` (G-CTRL),
   `_caiso199_panel_pin_gates.py` (G-DELTA legs a–d + G-ENGAGE); committed records
-  `results/calibration/_caiso199_ctrl_tolerance.json`,
+  `results/phase0/caiso/_caiso199_ctrl_tolerance.json`,
   `_caiso199_panel_pin_gates.json`, and the re-measured
   `_caiso199_gcov_landed.json`.
-* `results/calibration/FINDING-caiso199-merit-panel-scope-2026-08-16.md` — gate
+* `docs/records/caiso/FINDING-caiso199-merit-panel-scope-2026-08-16.md` — gate
   tally, the §0 clause quoted, the single-mechanism statement verbatim, the §5
   flip adjudication if it fires, and the owner decision package.
 * Matrix duty (b): `campd_outage_windows` CAISO cell updated in

@@ -4,7 +4,7 @@
 LANE    : miso-287 (owner ruling "P1 vs P0 residual (Recommended)", miso-286 §6)
 KEEPER  : 2026-09-28-miso-280-splitremap (results/calibration/miso280_span, 2019-2025), unchanged
 LP      : none. Keeper committed P1 hourly sidecars + run payload, fleet-only rebuilds
-PRECOMMIT: docs/PRECOMMIT-miso287-coal-carry-precheck-2026-09-29.md (5d7aac49, pushed before the probe existed)
+PRECOMMIT: docs/records/miso/PRECOMMIT-miso287-coal-carry-precheck-2026-09-29.md (5d7aac49, pushed before the probe existed)
 PROBES  : scripts/probes/_miso287_p1_residual.py    P0 stack vs rebuilt P1 bid stack (base + startup markup)
           scripts/probes/_miso287_class_gap.py      summer-night class MW, P1 vs merit clear
           scripts/probes/_miso287_carry_precheck.py  FLAT vs CARRY coal-row emulation (the pre-check)

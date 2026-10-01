@@ -247,6 +247,6 @@ the miso-238 probe repair is an on-disk edit, not a regenerated full-file push, 
 only. Rule 29 `[R-SCREEN]`: clause 0 in full — zero-LP phase 0, and no screen is chartered.
 
 **Artifacts.** `scripts/probes/_miso239_merit_ladder_property_attribution_phase0.py` →
-`results/calibration/_miso239_merit_ladder_property_attribution_phase0.json`; miso-238's
+`results/phase0/miso/_miso239_merit_ladder_property_attribution_phase0.json`; miso-238's
 ADDENDUM §2 repair applied to `scripts/probes/_miso238_pjm_seam_channel_attribution_phase0.py`
-with `results/calibration/_miso238_pjm_seam_channel_attribution_phase0.json` regenerated (§0c).
+with `results/phase0/miso/_miso238_pjm_seam_channel_attribution_phase0.json` regenerated (§0c).

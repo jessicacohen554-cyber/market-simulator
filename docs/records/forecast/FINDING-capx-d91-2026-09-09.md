@@ -4,7 +4,7 @@
 **Model:** Opus (rule 27 `[R-PUSH]`) · **Data profile:** `code` · **ZERO LP spent.**
 **Authority:** OWNER RULING **Q64** (2026-09-09, capx ledger §0bh.3(a)) — *"Re-emit D91 to diagnose
 fully, then repair."*
-**Pre-registration:** `docs/handoffs/PRECOMMIT-capx-d91-2026-09-09.md`, pushed before any edit.
+**Pre-registration:** `docs/records/forecast/PRECOMMIT-capx-d91-2026-09-09.md`, pushed before any edit.
 
 > **HEADLINE.** The field is **`pjm_seam_neighbour_hourly_ladder`**, the commit is **`f2a834de`**
 > (pjm-174, 2026-09-08 16:21:53 +0000), and it landed with **no `_CACHE_KEY_OPTIONAL_FIELDS` entry**,
@@ -228,10 +228,10 @@ move (CAISO / ERCOT only) · **D** a record already listed in
 | 193 | `results/scn-ws4-probe/nyiso/REF/run_config.json` | NYISO | `7c0ad83004421a23` | `3f1d2a8a29fc66c0` | **✓ reproduces** | A | **REPAIRED** — key restored |
 | 194 | `results/scn-ws4-probe/pjm/LOAD-HI/run_config.json` | PJM | `7370b703046ef374` | `136c6a248026e60e` | **✓ reproduces** | A | **REPAIRED** — key restored |
 | 195 | `results/scn-ws4-probe/pjm/REF/run_config.json` | PJM | `058444cfe884b79b` | `d58eee45207b1433` | **✓ reproduces** | A | **REPAIRED** — key restored |
-| 196 | `docs/handoffs/scn-ws1a/t0/base-run_config.json` | CAISO | `706eec14f63096e8` | `d1f4f8710aad99a2` | `a382feb9c4b4ae24` | A+B+C | A repaired; B+C designed |
-| 197 | `docs/handoffs/scn-ws1a/t0/carbon_plus25-run_config.json` | CAISO | `f129fd3720e3e874` | `4b4293a6debabadd` | `54c563c7337c21f4` | A+B+C | A repaired; B+C designed |
-| 198 | `docs/handoffs/scn-ws5b-neiso/REF/run_config.json` | NEISO | `1b452c457ca786a6` | `1b452c457ca786a6` | `09b7e61d88f83579` | NONE | **ORPHANED** by R1 — now `lag` exception #16 |
-| 199 | `docs/handoffs/scn-ws5b-nyiso/REF/run_config.json` | NYISO | `f1a2ef17634b0467` | `f849e7fbfffad267` | **✓ reproduces** | A | **REPAIRED** — key restored |
+| 196 | `docs/records/forecast/scn-ws1a/t0/base-run_config.json` | CAISO | `706eec14f63096e8` | `d1f4f8710aad99a2` | `a382feb9c4b4ae24` | A+B+C | A repaired; B+C designed |
+| 197 | `docs/records/forecast/scn-ws1a/t0/carbon_plus25-run_config.json` | CAISO | `f129fd3720e3e874` | `4b4293a6debabadd` | `54c563c7337c21f4` | A+B+C | A repaired; B+C designed |
+| 198 | `docs/records/forecast/scn-ws5b-neiso/REF/run_config.json` | NEISO | `1b452c457ca786a6` | `1b452c457ca786a6` | `09b7e61d88f83579` | NONE | **ORPHANED** by R1 — now `lag` exception #16 |
+| 199 | `docs/records/forecast/scn-ws5b-nyiso/REF/run_config.json` | NYISO | `f1a2ef17634b0467` | `f849e7fbfffad267` | **✓ reproduces** | A | **REPAIRED** — key restored |
 | 200 | `tests/golden/ercot_2026_2040.run_config.json` | ERCOT | `0d6f2710f8dedf56` | `f4f5dd8c8060a4d2` | `9958b15244616e29` | D | listed exception (unchanged) |
 
 **Disposition, and it reconciles to 200 exactly:**
@@ -423,7 +423,7 @@ was computed with the field present. Enumerated, not estimated:
 
 ```
 committed run_config.json payloads carrying the field      : 1 of 232
-  docs/handoffs/scn-ws5b-neiso/REF/run_config.json  value=False  key=1b452c457ca786a6
+  docs/records/forecast/scn-ws5b-neiso/REF/run_config.json  value=False  key=1b452c457ca786a6
   NEISO, solved 2026-09-09T01:57:16Z (~33 h after f2a834de), branch claude/scn-ws5b-neiso-stageb-solve
 committed bundle dirs named by a 16-hex key                : 74  — of which field-present: 0
 committed ff-verdicts.json cache_epoch values              : 55  — of which field-present: 0

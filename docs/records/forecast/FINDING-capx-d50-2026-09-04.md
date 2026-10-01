@@ -26,7 +26,7 @@ and NEISO §4. This document follows the §D50-R charter's numbering: **ERCOT is
 rewrite another lane's ISO text); read their "§3"/"§4" as §2/§3 here. The PJM and MISO
 cells were written by this lane and cite §4 / §4b, which resolve as written.
 
-**The pre-declaration** (`docs/handoffs/PREDECL-capx-d50-2026-09-04.md`, pushed before any
+**The pre-declaration** (`docs/records/forecast/PREDECL-capx-d50-2026-09-04.md`, pushed before any
 repair code existed) is graded at full magnitude in §7 — every prediction P1–P8, Addendum
 A included, misses reported as misses.
 
@@ -35,7 +35,7 @@ A included, misses reported as misses.
 ## 1. The whole-fleet census — what the repair does to the candidate set (zero solve)
 
 The census instrument is `scripts/probes/_capxd50_scaled_ceiling_census.py`, output
-`results/calibration/capxd50_scaled_ceiling_census.json`, run on the rebuilt base fleets
+`results/phase0/forecast/capxd50_scaled_ceiling_census.json`, run on the rebuilt base fleets
 through the same resolved golden-posture configs the arms solve. It evaluates every
 eligible gas-CC tranche at the **hour ceiling** — the most generous possible test, a host
 in merit for every available hour — against three bars:
@@ -634,7 +634,7 @@ Every file ≥ 300 lines pushed by this session, fetched back from
 | `frontend/data/forecast/ff-verdicts.json` | 11,966 | `20fe6be80c73711b` | **OK** |
 | `docs/codebase-site/data/mechanism-matrix/PJM.js` | 311 | `3af02c65975e560e` | **OK** |
 | `docs/codebase-site/data/mechanism-matrix/MISO.js` | 484 | `93134fa08dc3f53b` | **OK** |
-| `docs/handoffs/FINDING-capx-d50-2026-09-04.md` | 624 | `d83e9dad9c57ac70` | **OK** |
+| `docs/records/forecast/FINDING-capx-d50-2026-09-04.md` | 624 | `d83e9dad9c57ac70` | **OK** |
 | `CHANGELOG.md` | 5,518 | `c0ee1fde86b7e5d4` | **OK** |
 
 *(This table records the state at the verification push; the finding's own row is its

@@ -6,7 +6,7 @@ Rule 25 `[R-ISO-SCOPE]`: nothing measured in one ISO is transferred to another; 
 verdict moves.
 
 Instrument: `scripts/probes/_caiso277_crossiso_hr.py`.
-Output: `results/calibration/_caiso277_crossiso_hr.json`.
+Output: `results/phase0/caiso/_caiso277_crossiso_hr.json`.
 
 ---
 

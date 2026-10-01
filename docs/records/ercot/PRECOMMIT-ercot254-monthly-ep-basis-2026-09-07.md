@@ -4,7 +4,7 @@
 > declared here — the arm, the screen year, the control form, the gate values and
 > the rule-23 non-re-derivations — is fixed at this commit and is not rewritten
 > afterwards. The measurement that motivates it is
-> `docs/FINDING-ercot254-2021-offer-level-root-cause-2026-09-07.md`, which is
+> `docs/records/ercot/FINDING-ercot254-2021-offer-level-root-cause-2026-09-07.md`, which is
 > zero-LP and read-only.
 
 ## 1. The arm — one delta, zero free parameters

@@ -13,7 +13,7 @@ Resolves every chartered case at THE PIN through the SAME chain a solve uses
   re-derivation of the memo's arithmetic;
 * the CES premium / target row presence.
 
-Run:  PYTHONPATH=. python3 docs/handoffs/scn-ws5a-policy-nyiso/phase0-nyiso-2026-09-06.py
+Run:  PYTHONPATH=. python3 docs/records/forecast/scn-ws5a-policy-nyiso/phase0-nyiso-2026-09-06.py
 """
 
 from __future__ import annotations

@@ -1,7 +1,7 @@
 # FFR-SA — FF-G4 Option-B load-shape implementation (2026-08-03, DEFAULT OFF)
 
 **Session.** FFR-SA (Fable), implementing the DECIDED design of
-`docs/handoffs/ff-g4-load-shape-design-memo-2026-07.md` (§8-D1 = **Option B —
+`docs/records/forecast/ff-g4-load-shape-design-memo-2026-07.md` (§8-D1 = **Option B —
 additive end-use layers**; charter: implement, do not re-design). Branch
 `claude/ff-g4-load-shape-mzfsgg` off `origin/main` 5e934b8 (2026-08-03).
 Closes the *mechanism* half of audit **FR-16**; the *posture* half (arming) is

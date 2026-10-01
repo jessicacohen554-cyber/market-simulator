@@ -2,8 +2,8 @@
 
 **Session:** `nyiso-fuelvintage-1` (v4, `session_01SvrWuTXxLxC1YRf2oZcGd9`) · **ISO:** NYISO only
 · **Date:** 2026-09-09
-**Pre-registration:** `results/calibration/PRECOMMIT-nyiso-fuelvintage-1.md` (v3, pushed before any
-measurement) + `docs/ADDENDUM-nyiso-fuelvintage-1-promotion-2026-09-09.md` (pushed before the
+**Pre-registration:** `docs/records/nyiso/PRECOMMIT-nyiso-fuelvintage-1.md` (v3, pushed before any
+measurement) + `docs/records/nyiso/ADDENDUM-nyiso-fuelvintage-1-promotion-2026-09-09.md` (pushed before the
 composed bundle was scored)
 **PROMOTED KEEPER:** `2026-09-09-nyiso-221-fuelvintage-span` (bundle `results/calibration/nyiso_fuelvintage_A`) — **CALIBRATED**
 **Touchpoint:** `2026-09-09-nyiso-221-fuelvintage-tp2022`, folded to the keeper under rule 30
@@ -165,7 +165,7 @@ unverifiable from a recipe**: the field is set by `pipeline/backcast_config.py:2
 make 2021 solve today is to disarm that flag for one year, which is **refused on rule 22**: a
 touchpoint *is* the keeper's frozen recipe on a held-out year, so a per-year recipe variant is
 per-year fitting wearing a touchpoint's name. Details and the intake route:
-`docs/FINDING-nyiso-2020-touchpoint-data-blocked-2026-09-09.md` §§3, 7.
+`docs/records/nyiso/FINDING-nyiso-2020-touchpoint-data-blocked-2026-09-09.md` §§3, 7.
 
 **Nothing is spent.** `holdout_policy` returns no refusal for 2020 or 2021, the `complete` marker
 is present and correctly re-keyed, and the freeze is scoped to the locked test alone. Rule 22's own

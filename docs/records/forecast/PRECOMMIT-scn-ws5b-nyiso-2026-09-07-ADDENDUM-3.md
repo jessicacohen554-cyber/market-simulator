@@ -132,4 +132,4 @@ there also keeps every leg inside the audit that was published before the first 
 ---
 
 *Written after the S-3b mismatch and before any further leg was solved. Parent:
-`docs/handoffs/PRECOMMIT-scn-ws5b-nyiso-2026-09-07.md`, ADDENDUM 1, ADDENDUM 2.*
+`docs/records/forecast/PRECOMMIT-scn-ws5b-nyiso-2026-09-07.md`, ADDENDUM 1, ADDENDUM 2.*

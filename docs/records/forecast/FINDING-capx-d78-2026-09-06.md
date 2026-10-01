@@ -3,7 +3,7 @@
 **Lane:** capx D78 (director r#47; **owner ruling Q53 = READING 1**, capx ledger §3, 2026-09-06).
 Design `DESIGN-capx-d78-sector-gate-offer-seam-2026-09-06.md`; pre-registration
 `PRECOMMIT-capx-d78-sector-gate-offer-seam-2026-09-06.md`, **pushed at `34d78e91` before any code
-and before any solve**; build at `fd0d01e1`; instruments `docs/handoffs/d78/`.
+and before any solve**; build at `fd0d01e1`; instruments `docs/records/forecast/d78/`.
 **Branch:** `claude/capx-d78-sector-gate-offer-seam-d1tfcd`, off `origin/main` `ba894c9c` (main did
 not move during the session: re-fetched before leg 3, still `ba894c9c`).
 **Date:** 2026-09-06. **Model:** Fable. **DATA PROFILE:** `pjm`.
@@ -280,10 +280,10 @@ D65-B default-key pins `test_capacity.py::TestRetirementSectorGate::test_cache_k
 ## 9. Reproduction
 
 ```
-uv run python docs/handoffs/d78/keys_probe.py                      # keys at HEAD + the D65-B attribution
-bash docs/handoffs/d78/run_screen.sh control-P                     # pre-fix code (34d78e91)
-bash docs/handoffs/d78/run_screen.sh d58-arm --retirement-sector-gate   # pre-fix code
-bash docs/handoffs/d78/run_screen.sh arm --retirement-sector-gate       # post-fix code (9fcdf19c)
-uv run python docs/handoffs/d78/screen_compare.py --ctl <ctl> --d58 <d58> --arm <arm>
-PYTHONPATH=docs/handoffs/d78 uv run python docs/handoffs/d78/exit_diagnosis.py --ctl <ctl> --d58 <d58> --arm <arm>
+uv run python docs/records/forecast/d78/keys_probe.py                      # keys at HEAD + the D65-B attribution
+bash docs/records/forecast/d78/run_screen.sh control-P                     # pre-fix code (34d78e91)
+bash docs/records/forecast/d78/run_screen.sh d58-arm --retirement-sector-gate   # pre-fix code
+bash docs/records/forecast/d78/run_screen.sh arm --retirement-sector-gate       # post-fix code (9fcdf19c)
+uv run python docs/records/forecast/d78/screen_compare.py --ctl <ctl> --d58 <d58> --arm <arm>
+PYTHONPATH=docs/records/forecast/d78 uv run python docs/records/forecast/d78/exit_diagnosis.py --ctl <ctl> --d58 <d58> --arm <arm>
 ```

@@ -3,8 +3,8 @@
 # rule-29 screen clears: the repaired arm and a same-HEAD control-P, one
 # invocation each, PJM solo, sequential, HEAD-guarded.
 #
-#   bash docs/handoffs/d78/run_full.sh control-P
-#   bash docs/handoffs/d78/run_full.sh arm --retirement-sector-gate
+#   bash docs/records/forecast/d78/run_full.sh control-P
+#   bash docs/records/forecast/d78/run_full.sh arm --retirement-sector-gate
 #
 # The control bundle is deleted before merge (rule 29(c)); the arm keeps only
 # its slim registered files (meta / run_config / forecast_verdict), as every

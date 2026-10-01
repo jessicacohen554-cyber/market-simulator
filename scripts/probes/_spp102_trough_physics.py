@@ -12,7 +12,7 @@ SPP-73 M4), pmin 0.209 (SPP-44), (mc - p) = the keeper's CC offer at the plant m
 The CC offer cost per plant is approximated by the fleet median CC offer in `_spp89` (not re-derived):
 we use the per-year break-even at the median spread, reported alongside, never gated.
 Also: CEMS CC OFF-spell length distribution (the empirical min-down).
-Writes docs/handoffs/spp102/trough_physics.json.
+Writes docs/records/spp/spp102/trough_physics.json.
 """
 
 from __future__ import annotations
@@ -144,7 +144,7 @@ def main() -> int:
         acc["actual_da_med_low"] = round(float(np.median(da[low])), 2)
         out[y] = acc
         print(y, acc)
-    (REPO / "docs/handoffs/spp102/trough_physics.json").write_text(
+    (REPO / "docs/records/spp/spp102/trough_physics.json").write_text(
         json.dumps(out, indent=1)
     )
     return 0

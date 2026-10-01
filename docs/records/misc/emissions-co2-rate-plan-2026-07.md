@@ -35,7 +35,7 @@ facility sum double-counts generation and halves every derived intensity. NYISO'
 boiler whose peers sit at 520–575. A facility-level extract has the double-count baked in
 with no unit identity to see it with, so such a facility must be rebuilt from its unit-level
 companion (`_FACILITIES_NEEDING_UNIT_ROWS`).
-`results/calibration/FINDING-nyiso141-astoria-stack-duplication-2026-08-17.md`.
+`docs/records/nyiso/FINDING-nyiso141-astoria-stack-duplication-2026-08-17.md`.
 
 ### 1.2 The live rate artifact is stale, TX-only, and carries quarantined rows
 
@@ -254,7 +254,7 @@ backcast, estimator-generated analogue in forecast.
 > only**; never treat them as the forecast methodology. (Forecast-year emission rates for
 > existing units are *derived from* multi-year CAMPD history conditioned on model-simulated
 > operation — a rule-13-admissible measured input, not an overlay; see
-> `docs/handoffs/emissions-co2-rate-plan-2026-07.md`.)
+> `docs/records/misc/emissions-co2-rate-plan-2026-07.md`.)
 
 ## 7. Out of scope / explicitly deferred
 
@@ -595,7 +595,7 @@ regardless of carbon pricing.
 
 This is **not a new finding invented for this memo** — it is exactly the
 mechanism the 2026-07-05 R2 physical-heat-rate re-basis re-gate
-(`docs/handoffs/co2-keeper-regate-2026-07-05.md`) already measured and
+(`docs/records/misc/co2-keeper-regate-2026-07-05.md`) already measured and
 banked: "Carbon-zero ISOs (ERCOT/PJM/MISO): `emission_rate_co2` never enters
 `mc`... Re-score = provable no-op," while CAISO/NYISO/NEISO were re-solved via
 `scripts/replay_keeper.py` and registered as **PROBEs** (`...-co2re-probe`),
@@ -624,7 +624,7 @@ the same shape of change and should follow the same procedure:
 **Do not spend a standalone SH re-gate wave on this flag alone.** Every
 carbon-priced keeper that would need a real re-solve is already scheduled for
 (or blocked pending) its own HEAD re-gate for unrelated structural reasons
-(§ above; see also `docs/handoffs/co2-keeper-regate-2026-07-05.md`'s running
+(§ above; see also `docs/records/misc/co2-keeper-regate-2026-07-05.md`'s running
 per-ISO log and gap-register G-11/G-13/G-15/G-16). Folding
 `use_plant_emission_rates_v2=True` into whichever re-solve each of those waves
 already performs:
@@ -664,7 +664,7 @@ already performs:
 ### W10 retrofit-channel activation conditions (explicit, per task scope)
 
 The forward emission-control retrofit channel
-(`docs/handoffs/emission-control-retrofit-forward-channel-2026-07.md`) is
+(`docs/records/misc/emission-control-retrofit-forward-channel-2026-07.md`) is
 **triple-gated** and this memo's v2 decision does not change that gating:
 
 ```
@@ -702,7 +702,7 @@ stays inert until E2 ships.
 ## 8. Implementation prompt
 
 ```
-Implement the CO2-first emissions plan in docs/handoffs/emissions-co2-rate-plan-2026-07.md
+Implement the CO2-first emissions plan in docs/records/misc/emissions-co2-rate-plan-2026-07.md
 (read it first, plus CLAUDE.md rules 1, 13, 14, 22 and docs/fable-repo-audit-2026-07.md §A).
 CO2 accuracy is the objective; NOx/SO2 are secondary. Work on a feature branch; do not launch
 any multi-year calibration solves; 2022 and H1-2026 are under FULL quarantine — no reads, no

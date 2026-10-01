@@ -8,11 +8,11 @@ C1 all 16/16 · free 12/12, zero fails, zero caveats — identical scorecard to
 the superseded `2026-07-31-pjm-143b-hy-level`, with the target class materially
 closer to its measured actual in all three years.
 
-Charter: `docs/handoffs/pjm-matrix-column-triage-2026-08.md` §2.2 (the triage's
+Charter: `docs/records/pjm/pjm-matrix-column-triage-2026-08.md` §2.2 (the triage's
 rank-2 live candidate). Pre-registration:
-`results/calibration/PREREG-pjm147-measured-chp-heat-rates-2026-08-03.md`,
+`docs/records/pjm/PREREG-pjm147-measured-chp-heat-rates-2026-08-03.md`,
 committed **and pushed** before either arm solved. Machine record:
-`results/calibration/_pjm147_chp_ab.json`; drift record
+`results/phase0/pjm/_pjm147_chp_ab.json`; drift record
 `_pjm147_k2_drift.json`; pre-solve wiring record `_pjm147_flag_fidelity.json`.
 
 Rule 25 `[R-ISO-SCOPE]`: MISO/CAISO/NYISO `K` and NEISO `O` transferred

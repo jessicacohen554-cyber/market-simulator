@@ -30,7 +30,7 @@ what the model itself paid, and the miss is reported whichever way it falls.
 uv run python scripts/probes/entry_signal_d43_dispersion_replay.py --mode basis \
   --bundle results/hindcast/caiso-2021-2025-realized-dumps \
   --duals-bundle results/calibration/caiso231_b1_ungrounded \
-  --out results/calibration/entry_signal_d43_dispersion_replay_caiso.json
+  --out results/phase0/forecast/entry_signal_d43_dispersion_replay_caiso.json
 
 # control: the D39 basis recipe at HEAD (bare invocation + the output-only dump flag)
 uv run python scripts/run_capacity_hindcast.py --iso CAISO --start-year 2021 --end-year 2025 \

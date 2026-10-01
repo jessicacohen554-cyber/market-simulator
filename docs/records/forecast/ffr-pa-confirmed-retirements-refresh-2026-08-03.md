@@ -2,7 +2,7 @@
 
 **Date:** 2026-08-03 · **Session:** FFR-PA refresh (data only, no LP solve) ·
 **Base:** `origin/main` 98ad9c1 · **Branch:** `claude/confirmed-retirements-refresh-i9q0ha`
-**Predecessor:** `docs/handoffs/ffr-pa-confirmed-retirements-refresh-2026-07-31.md`
+**Predecessor:** `docs/records/forecast/ffr-pa-confirmed-retirements-refresh-2026-07-31.md`
 (registry vintage 2026-07-31 — three days before this pass, not the 2026-07-05
 vintage the session prompt assumed).
 
@@ -249,8 +249,8 @@ session): a curation-time assertion that every `superseded=true` row carries a
 | `data/raw/confirmed-retirements/neiso.csv` | 2 rows re-stamped + notes; header gains the no-change block. |
 | `data/raw/confirmed-retirements/nyiso.csv` | Header only (0 rows): Danskammer re-adjudicated, 2026-08-01 contingency watch added. |
 | `data/raw/confirmed-retirements/README.md` | Vintage → **2026-08-03**; new current status section; MANUAL DOWNLOADS NEEDED table updated with the re-characterised MISO blocker; 2026-07-31 section demoted to audit trail. |
-| `docs/handoffs/confirmed-retirement-plan-2026-07.md` | §7 cadence bullet **amended** (discovery leg + expiry calendar), still PROPOSED / owner decision pending. |
-| `docs/handoffs/ffr-pa-confirmed-retirements-refresh-2026-08-03.md` | This document. |
+| `docs/records/misc/confirmed-retirement-plan-2026-07.md` | §7 cadence bullet **amended** (discovery leg + expiry calendar), still PROPOSED / owner decision pending. |
+| `docs/records/forecast/ffr-pa-confirmed-retirements-refresh-2026-08-03.md` | This document. |
 
 `data/clean/confirmed-retirements/` was regenerated locally to run the checks; it
 is derived and gitignored, so it is not part of the commit.

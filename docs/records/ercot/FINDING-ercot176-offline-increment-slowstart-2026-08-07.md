@@ -5,7 +5,7 @@ owner-authorized in-session 2026-08-07 (the ercot-175 decision card), dischargin
 that document's §4 ask (2). Object: **C3a-2023** (−29.9 % lw-hub / −32.2 %
 scorer), fail set {C3a, C3b}.
 
-Pre-registration: `docs/PRECOMMIT-ercot176-offline-increment-2026-08-07.md`,
+Pre-registration: `docs/records/ercot/PRECOMMIT-ercot176-offline-increment-2026-08-07.md`,
 pushed **before** any derive or measurement, with **three pre-solve amendments**
 (all pushed before the solve, none after).
 
@@ -173,7 +173,7 @@ ever becomes heterogeneous.
    share — but note ERCOT-163 already measured the CC fleet 96.4 % committed at
    the gap hours, so that route needs a new premise, not a new mechanism.
 4. **The ERCOT-148/149 double-count memo**
-   (`docs/handoffs/DECISION-MEMO-ercot-148149-doublecount-2026-08-07.md`) stays
+   (`docs/records/ercot/DECISION-MEMO-ercot-148149-doublecount-2026-08-07.md`) stays
    **PENDING**; the ceiling lane was not entered.
 
 ## 6. Governance

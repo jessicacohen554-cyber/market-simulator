@@ -3,7 +3,7 @@
 **Session:** nyiso-226 (parent / orchestrator) · **ISO:** NYISO · **Date:** 2026-09-10
 **Keeper / control:** `2026-09-09-nyiso-221-fuelvintage-span`
 (`results/calibration/nyiso_fuelvintage_A`), **UNCHANGED by this document.**
-**Predecessor:** `docs/FINDING-nyiso225-topology-split-closed-2026-09-10.md` §8 —
+**Predecessor:** `docs/records/nyiso/FINDING-nyiso225-topology-split-closed-2026-09-10.md` §8 —
 the OUTSTANDING OWNER CALL it carried, put and answered.
 
 **Written and pushed BEFORE any solve** (rule 29 `[R-SCREEN]`). Everything below is
@@ -85,7 +85,7 @@ It will be reported at full magnitude on any determination basis it reaches.
 ## 2. PHASE 0 — the LP-input footprint, measured (ZERO LP)
 
 `scripts/probes/_nyiso226_nyc_base_screen_phase0.py`, record
-`results/calibration/_nyiso226_nyc_base_phase0.json`. Two `run_year(fleet_only=True)`
+`results/phase0/nyiso/_nyiso226_nyc_base_phase0.json`. Two `run_year(fleet_only=True)`
 rebuilds per year on the keeper's own `meta.json` recipe — frozen vs re-based — differenced
 at the `min_gen` array. **No solve, no price, no metric, no residual was opened.**
 

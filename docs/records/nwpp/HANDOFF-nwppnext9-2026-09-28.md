@@ -39,8 +39,8 @@ STATE ON MAIN
   - Every other C4 record passes. The lowest are coal 2025 at 0.721 and coal 2019 at 0.733.
   - gas 2025 regressed 0.864 → 0.854 (still PASS).
 - Records to read first:
-  - docs/handoffs/RESULT-nwppnext8-coal-monthly-pile-2019-2025-2026-09-28.md (§3 routed list)
-  - docs/handoffs/PRECOMMIT-nwppnext8-coal-monthly-pile-2019-2025-2026-09-28.md (§0 seasonal diagnosis, §5 recipe,
+  - docs/records/nwpp/RESULT-nwppnext8-coal-monthly-pile-2019-2025-2026-09-28.md (§3 routed list)
+  - docs/records/nwpp/PRECOMMIT-nwppnext8-coal-monthly-pile-2019-2025-2026-09-28.md (§0 seasonal diagnosis, §5 recipe,
     §6 hard stops)
   - docs/calibration-log/nwpp.md, docs/codebase-site/data/mechanism-matrix/NWPP.js, docs/mechanism-testing-matrix.md §5.9
 

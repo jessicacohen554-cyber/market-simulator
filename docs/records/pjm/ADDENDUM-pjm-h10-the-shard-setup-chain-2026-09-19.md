@@ -1,6 +1,6 @@
 # ADDENDUM — pjm-h10: the PJM replay SETUP CHAIN, and why four shards died on it (2026-09-19)
 
-**Session:** pjm-h10 · **Parent finding:** `docs/FINDING-pjm-h10-the-energy-identity-2026-09-19.md`
+**Session:** pjm-h10 · **Parent finding:** `docs/records/pjm/FINDING-pjm-h10-the-energy-identity-2026-09-19.md`
 **Why this is a separate document:** it is not about PJM's calibration. It is about **rule 32
 `[R-SHARD]` (c)'s documented launch recipe being incomplete**, which cost this session four shard
 containers and is going to cost every other lane the same until it is written down.
@@ -170,7 +170,7 @@ cannot be corrected, extended or nudged after launch. Two concrete duties follow
 ## 3b. THE MEMORY FINDING, which is governance-relevant and is NOT about the emissions dual
 
 Shard 4 was **OOM-killed by the binding memcg**, and its numbers contradict a premise rule 32
-`[R-SHARD]` (c)(8) rests on. Full record: `docs/FINDING-pjm-h10-shard-mer-tp-oom-2026-09-19.md`.
+`[R-SHARD]` (c)(8) rests on. Full record: `docs/records/pjm/FINDING-pjm-h10-shard-mer-tp-oom-2026-09-19.md`.
 
 ```
 oom-kill:constraint=CONSTRAINT_MEMCG, task=python

@@ -2,7 +2,7 @@
 
 **Session `claude/golden-partition-carveout-3j0le7`, 2026-09-02.** Executes owner
 ruling R-O (re-issued under R-S) and the recommendation left open by
-`docs/FINDING-stage0-capture-neiso-ercot-2026-09.md` §2. **No keeper shard,
+`docs/records/neiso/FINDING-stage0-capture-neiso-ercot-2026-09.md` §2. **No keeper shard,
 marker, freeze file, matrix shard, registry sidecar, `program-status.json` or
 dashboard file was edited; no determination changed; no workflow created; no
 bare-ISO golden re-captured.**

@@ -7,7 +7,7 @@ Keeper: `2026-09-24-r-spp-corrected-inputs`, bundle `results/calibration/rspp_sp
 `basis_sha` `ec13e5c2ad35c4f817cc496ff2363affb3fed2f9`. Session base: `origin/main` `56272c15`.
 
 Probes:
-- `scripts/probes/_spp85_coal_window_attribution.py`, whose numbers are in `results/calibration/_spp85_coal_window_attribution.json`;
+- `scripts/probes/_spp85_coal_window_attribution.py`, whose numbers are in `results/phase0/spp/_spp85_coal_window_attribution.json`;
 - `scripts/probes/_spp85_fleet_delta.py`.
 
 This is phase 0: zero LP, no solve. The solve that followed it is pre-registered in

@@ -5,9 +5,9 @@
 **KEEPER AT CLOSE: `2026-09-06-nyiso-202-startup-aware`** — CALIBRATED, grade 7 of 8, fails 0,
 C3c the lone ledgered caveat.
 **Control:** the keeper's committed bundle (rule 29(b) form 4; G-DRIFT §2.2, empirical at this HEAD).
-**Pre-registration:** `results/calibration/PREREG-nyiso202-bridge-startup-aware-2025-screen.md`,
+**Pre-registration:** `docs/records/nyiso/PREREG-nyiso202-bridge-startup-aware-2025-screen.md`,
 pushed with **ZERO solves**; its Addendum A records the screen **before the span was launched**.
-**Machine records:** `results/calibration/_nyiso202_screen_gates_a1_2025.json` (every screen number)
+**Machine records:** `results/phase0/nyiso/_nyiso202_screen_gates_a1_2025.json` (every screen number)
 and the span bundle's computed `calibration_attestation.json` (every governance number).
 **TWO LPs spent:** one rule-29 screen (2025, ~7 min, **deleted before merge** per 29(c)) and one
 span (`--year 2023 2024 2025`, one invocation, one bundle, registered).

@@ -73,7 +73,7 @@ two-config keeper untouched.
   `M_y = {t : actual_rt > 200 ∧ model_maxzonal ≤ 200}`.** Committed
   populations this census must reproduce EXACTLY: |M_2024| = 36,
   |M_2025| = 31 (+ report-only |M_2023| = 115), model tails 22/1, actual
-  tails 53/31 (`results/calibration/ercot244_online_cap_phase0.json`).
+  tails 53/31 (`results/phase0/ercot/ercot244_online_cap_phase0.json`).
 * **Model basis bundle:** the committed FORWARD keeper
   `results/calibration/ercot234_eastex_identity` (span verdict CALIBRATED on
   {2024, 2025}; C3c the lone ledgered caveat ×2). Its committed hourly
@@ -307,7 +307,7 @@ with the retired `ercot_energy_online_capability_cap` gate.
 ## 5. The census (every quantity below is committed to the probe JSON; nothing else is measured)
 
 Probe `scripts/probes/ercot245_commitment_state_phase0.py` →
-`results/calibration/ercot245_commitment_state_phase0.json`.
+`results/phase0/ercot/ercot245_commitment_state_phase0.json`.
 
 * **V-0 anchors (measured first; any failure = STOP-AND-INVESTIGATE, no
   census is graded):**

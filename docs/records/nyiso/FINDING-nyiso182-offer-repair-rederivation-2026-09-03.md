@@ -3,7 +3,7 @@
 **Session:** nyiso-182, NYISO backcast-calibration track, 2026-09-03.
 **Keeper:** `2026-09-02-nyiso-177-vintage-matched` (`results/calibration/nyiso177_vintage_B1p`),
 determination NOT-YET, target grade 5, fails 3 {C1-2023 `ST_GAS` +3.86 TWh, C3a-2025 −11.2 %, C3c}.
-**Pre-registration:** `results/calibration/PREREG-nyiso182-offer-repair-rederivation.md`, committed
+**Pre-registration:** `docs/records/nyiso/PREREG-nyiso182-offer-repair-rederivation.md`, committed
 with the probe and the repair **before any quantity on the repaired basis was computed** (commit
 `85ae68bf`).
 **Solves:** **ZERO non-control.** One bit-identical control replay (the instrument), **not
@@ -70,7 +70,7 @@ apply_gas_offer_margin(mc, gens, fuel, cfg_y)
 
 `legacy_defective_offer=True` reproduces the published form exactly, **`main()` is pinned to it**,
 and the module carries a repair banner. So `_nyiso179_st_gas_offer_position.json` — and every number
-in `docs/FINDING-nyiso179-st-gas-offer-position-2026-09-03.md` — stays byte-reproducible by running
+in `docs/records/nyiso/FINDING-nyiso179-st-gas-offer-position-2026-09-03.md` — stays byte-reproducible by running
 that file, which is the condition under which nyiso-181 declined to make this edit. The repair also
 swaps nyiso-179's hardcoded `0.0` NOx/SO₂ prices for the config's own (both **are** 0.0 on this
 keeper, so it is a no-op here and a correctness fix anywhere else).

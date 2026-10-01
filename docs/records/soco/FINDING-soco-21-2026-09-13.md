@@ -157,7 +157,7 @@ clean against the 8-ISO store.
 | `docs/codebase-site/js/backcast-runs.js` | `ISO_COLORS.SOCO` |
 | `docs/codebase-site/js/chart-utils.js` | `soco`/`SOCO` → `cssColor('--iso-soco')`, the same precedent (without it SOCO renders in the generic fallback colour in every d3 chart) |
 | `docs/mechanism-testing-matrix.md` | **§5.8 SOCO lever queue** (the charter's ONE granted exception to §8.0 rule 1) + the §5.8→§5.9 renumber in §4 |
-| `docs/handoffs/FINDING-soco-21-2026-09-13.md` | this file |
+| `docs/records/soco/FINDING-soco-21-2026-09-13.md` | this file |
 
 The §5.8 queue is seeded verbatim from the plan's W5 list — **SOCO-54**
 inter-OpCo TTC derive (card S3), **SOCO-55** VOLL/adequacy (cards S5/S6),

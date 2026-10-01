@@ -3,7 +3,7 @@
 **Session** nyiso-240 (ORCHESTRATOR — rule 32 `[R-SHARD]` (a); **the parent ran ZERO LP and launched NO shard**).
 **Date** 2026-09-19. **Base** `origin/main` at `5017c360`.
 **Owner ruling** (2026-09-19, verbatim): *"Is this a recommended keeper candidate? If so plz promote. If structural integrity improves but gates regress that may still be a keeper.."*
-**Phase-0 evidence** `docs/FINDING-nyiso240-c1-margin-bench-attribution-2026-09-19.md`, merged to `main` as PR **#6285 BEFORE this rebuild**; probe `scripts/probes/nyiso240_c1_margin_bench_phase0.py` → `results/calibration/_nyiso240_c1_margin_bench_phase0.json`.
+**Phase-0 evidence** `docs/records/nyiso/FINDING-nyiso240-c1-margin-bench-attribution-2026-09-19.md`, merged to `main` as PR **#6285 BEFORE this rebuild**; probe `scripts/probes/nyiso240_c1_margin_bench_phase0.py` → `results/phase0/nyiso/_nyiso240_c1_margin_bench_phase0.json`.
 
 > ## HEADLINE
 > 1. **NYISO keeper → `2026-09-17-nyiso240-bench-attribution`** (bundle

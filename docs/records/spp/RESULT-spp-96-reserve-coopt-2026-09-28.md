@@ -1,8 +1,8 @@
 # RESULT — SPP-96: reserve co-optimisation (queue item 6, SPP-56) is INERT at zero LP. The §5.7 queue is exhausted.
 
 **Lane** SPP-96 · control = keeper `2026-09-28-spp-94-curtail-rows` (bundle `spp94_arm_span`, rule 29(b) form 4, G-DRIFT
-all INERT) · PRECOMMIT `docs/handoffs/PRECOMMIT-spp-96-reserve-coopt-2026-09-28.md`, pushed at `58d98cb8` **before** any
-measurement · probe `scripts/probes/_spp96_reserve_coopt_phase0.py` → `docs/handoffs/spp96/phase0.json` · **LP spent: 0.
+all INERT) · PRECOMMIT `docs/records/spp/PRECOMMIT-spp-96-reserve-coopt-2026-09-28.md`, pushed at `58d98cb8` **before** any
+measurement · probe `scripts/probes/_spp96_reserve_coopt_phase0.py` → `docs/records/spp/spp96/phase0.json` · **LP spent: 0.
 Shards: 0. Nothing registered; the keeper is unchanged.**
 
 ## 1. Result

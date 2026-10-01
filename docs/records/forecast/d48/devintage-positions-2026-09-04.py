@@ -5,7 +5,7 @@ D45 L1 ledgers (``results/hindcast/pjm-2021-2025-realized-t1h-d45``, key
 writing; D45-R's HEAD replay of the same recipe keys ``c6091bd5b62bbc3f`` and
 had not landed on origin/main when this ran).
 
-    uv run python docs/handoffs/d48/devintage-positions-2026-09-04.py [<run_dir>]
+    uv run python docs/records/forecast/d48/devintage-positions-2026-09-04.py [<run_dir>]
 
 Zero solves. Every model quantity is a committed ledger field
 (``fleet_by_fuel_before`` — the ENTERING fleet the year's screens priced —

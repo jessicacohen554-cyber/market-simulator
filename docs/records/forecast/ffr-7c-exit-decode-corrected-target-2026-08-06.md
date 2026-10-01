@@ -4,9 +4,9 @@
 Addendum **W.4**). Branch `claude/ffr-7c-exit-decode-corrected-y3p9to`, off `origin/main`
 `3b671bf5`. **No solve, no model change, no arming, no keeper contact, no registration.**
 
-**Evidence chain.** FFR-6A `docs/handoffs/ffr-6a-margin-gap-decomposition-2026-08-05.md` §3.3
+**Evidence chain.** FFR-6A `docs/records/forecast/ffr-6a-margin-gap-decomposition-2026-08-05.md` §3.3
 (the four-row exit decode that produced the "≈ 0 GW margin-driven exits" bound) →
-FFR-7A `docs/handoffs/ffr-7a-scoring-target-hygiene-2026-08-06.md` §4 / §9.1 (the corrected
+FFR-7A `docs/records/forecast/ffr-7a-scoring-target-hygiene-2026-08-06.md` §4 / §9.1 (the corrected
 target is **larger**, thermal 1.534 → 2.294 GW, and contains +1.7 GW of physical exits the
 FFR-6A decode never saw — so its bound "needs re-deriving on the corrected target before it
 is relied on again").
@@ -31,7 +31,7 @@ Selection rule, applied to `data/raw/_validation-source/capacity_actuals_ercot.c
 > the scored window 2021–2025.
 
 That is **5 units / 2,009.0 MW = 87.6 % of the corrected 2.294 GW thermal target**. Four are
-newly visible (`change == added` in `docs/handoffs/ffr-7a/target-delta.csv`); one is the
+newly visible (`change == added` in `docs/records/forecast/ffr-7a/target-delta.csv`); one is the
 pre-existing row FFR-6A already decoded.
 
 | # | unit_id | plant | name | target fuel | MW | exit yr | in FFR-6A decode? |
@@ -61,7 +61,7 @@ thermal delta. Selection verified mechanically before commit: 5 rows / 2,009.0 M
 `M_u(y)` = pro-forma **attainable** margin at MEASURED prices, $/kW-yr, exactly the SOM
 price-taker pro-forma the standing replica validates at **0.89–0.97** against published
 Potomac-SOM net revenue (`scripts/probes/fom_scarcity_revenue_audit.py`,
-`docs/handoffs/fom-scarcity-revenue-audit-2026-07-05.json`), reused by import:
+`docs/records/governance/fom-scarcity-revenue-audit-2026-07-05.json`), reused by import:
 
 ```
 M_u(y) = Σ_t max(0, p_t − mc_t) × (1 − 0.10) / 1000
@@ -534,13 +534,13 @@ Reading it:
 | path | what |
 |---|---|
 | `scripts/probes/ffr7c_exit_decode.py` | the decode: reproduction gate + per-unit margins, all variants |
-| `docs/handoffs/ffr-7c/exit-decode-2026-08-06.json` | its output — per unit, per year, every variant, both bars, both loss years |
+| `docs/records/forecast/ffr-7c/exit-decode-2026-08-06.json` | its output — per unit, per year, every variant, both bars, both loss years |
 | `scripts/probes/ffr7c_op_only_gate.py` | the §6 OP-only measurement (shipped builder, read-only) |
-| `docs/handoffs/ffr-7c/op-only-gate-2026-08-06.json` | its output — per-ISO census + the dropped-unit lists |
+| `docs/records/forecast/ffr-7c/op-only-gate-2026-08-06.json` | its output — per-ISO census + the dropped-unit lists |
 
 Reproduce with:
 
 ```
-uv run python scripts/probes/ffr7c_exit_decode.py  --out docs/handoffs/ffr-7c/exit-decode-2026-08-06.json
-uv run python scripts/probes/ffr7c_op_only_gate.py --out docs/handoffs/ffr-7c/op-only-gate-2026-08-06.json
+uv run python scripts/probes/ffr7c_exit_decode.py  --out docs/records/forecast/ffr-7c/exit-decode-2026-08-06.json
+uv run python scripts/probes/ffr7c_op_only_gate.py --out docs/records/forecast/ffr-7c/op-only-gate-2026-08-06.json
 ```

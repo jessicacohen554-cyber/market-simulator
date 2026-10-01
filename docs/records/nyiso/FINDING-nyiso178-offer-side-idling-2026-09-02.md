@@ -6,10 +6,10 @@
 grade 5, fails 3 {C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c}.
 **ZERO SOLVES.** No parameter touched, no band swept, no arm built, no run
 registered — **by the pre-registration's own stop condition S3, which fired.**
-**Gates:** `results/calibration/PREREG-nyiso178-offer-side-idling.md`, committed
+**Gates:** `docs/records/nyiso/PREREG-nyiso178-offer-side-idling.md`, committed
 with the probe at `31180c9b` **before either ran**, including its §5 amendment
 (two construction defects found by CODE READING, corrected before any execution).
-**Machine artifact:** `results/calibration/_nyiso178_offer_side_idling.json`;
+**Machine artifact:** `results/phase0/nyiso/_nyiso178_offer_side_idling.json`;
 probe `scripts/probes/nyiso178_offer_side_idling.py`.
 
 ---

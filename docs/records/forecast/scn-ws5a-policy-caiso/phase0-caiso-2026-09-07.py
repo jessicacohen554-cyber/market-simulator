@@ -13,10 +13,10 @@ Resolves every chartered case at THE PIN through the SAME chain a solve uses
 * the CES premium / target row presence;
 * the entry-fold attribute components for the S15 bracketing gate G-B1.
 
-Adapted from ``docs/handoffs/scn-ws5a-policy-nyiso/phase0-nyiso-2026-09-06.py``
+Adapted from ``docs/records/forecast/scn-ws5a-policy-nyiso/phase0-nyiso-2026-09-06.py``
 (SCN-WS5A-POLICY-NYISO), which is the committed template for this lane's phase 0.
 
-Run:  PYTHONPATH=. python3 docs/handoffs/scn-ws5a-policy-caiso/phase0-caiso-2026-09-07.py
+Run:  PYTHONPATH=. python3 docs/records/forecast/scn-ws5a-policy-caiso/phase0-caiso-2026-09-07.py
 """
 
 from __future__ import annotations

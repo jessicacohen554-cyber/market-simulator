@@ -1,6 +1,6 @@
 """SPP-99 (zero LP): LP-input delta of the CEMS->EIA remap re-derives on the SPP keeper.
 
-Record: ``docs/handoffs/PRECOMMIT-spp-99-remap-rederive-2026-09-28.md``.
+Record: ``docs/records/spp/PRECOMMIT-spp-99-remap-rederive-2026-09-28.md``.
 
 Rebuilds keeper ``results/calibration/spp98_remap_span``'s fleet ``fleet_only`` for one year with
 a chosen set of SPP artifacts swapped for their re-derivations under the SPP-98 remap rows, and

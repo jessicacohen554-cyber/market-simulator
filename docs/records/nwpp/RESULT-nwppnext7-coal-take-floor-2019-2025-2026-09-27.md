@@ -1,7 +1,7 @@
 # RESULT — NWPP-NEXT-7: per-coal-yard coal take floor, 2019–2025 → KEEPER #14
 
 **Run:** `2026-09-27-nwppnext7-coal-take-floor`, bundle `results/calibration/nwppnext7sf_span`.
-**PRECOMMIT:** `docs/handoffs/PRECOMMIT-nwppnext7-coal-take-floor-2019-2025-2026-09-27.md`. §9 is the soft-floor
+**PRECOMMIT:** `docs/records/nwpp/PRECOMMIT-nwppnext7-coal-take-floor-2019-2025-2026-09-27.md`. §9 is the soft-floor
 addendum.
 **Control:** keeper #13 `2026-09-26-nwppnext6-path76-ctrederive`, compared against its committed bundle (G-DRIFT form
 4, PRECOMMIT §3). All hunks are inert.

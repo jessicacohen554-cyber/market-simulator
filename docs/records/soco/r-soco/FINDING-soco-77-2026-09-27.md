@@ -6,7 +6,7 @@
 **Legs:** the seven soco-76 legs, fetched at the full SHAs in RESULT-soco-76 §6. They are gitignored and were not committed.
 **Shared inputs:** restored with `run_calibration_full --restore-shared-inputs results/calibration/soco76_span`. All three were hash-verified.
 **Probe:** `scripts/probes/_soco77_ct_start.py` (`conduct`, `markup`, `greedy`).
-**Outputs:** `docs/handoffs/r-soco/soco77_ct_{conduct_units,plant_split,markup}.csv`, `soco77_ct_start_greedy.json`.
+**Outputs:** `docs/records/soco/r-soco/soco77_ct_{conduct_units,plant_split,markup}.csv`, `soco77_ct_start_greedy.json`.
 
 ## 1. Headline
 

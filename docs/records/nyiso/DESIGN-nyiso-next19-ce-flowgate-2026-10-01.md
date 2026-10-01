@@ -2,7 +2,7 @@
 
 - **Session:** NYISO-NEXT-19 (orchestrator; zero LP in this container, rule 32 (a)).
 - **Queue item:** 1, the CENTRAL EAST object. The handoff asked for a design card before any build.
-- **Probe (zero LP):** `scripts/probes/nyisonext19_ce_shiftfactor.py` → `results/calibration/_nyisonext19_ce_shiftfactor.json`.
+- **Probe (zero LP):** `scripts/probes/nyisonext19_ce_shiftfactor.py` → `results/phase0/nyiso/_nyisonext19_ce_shiftfactor.json`.
 - **New evidence:** NYISO RT 5-min zonal **congestion components** (`data/raw/lmp-data/NYISO`). No prior NYISO lane has used them. Every earlier CE design was identified on the flow side (CE ~ TE, NEXT-16/17).
 - **Status:** design only. No code, no solve, no PRECOMMIT. This card needs owner decisions (§6).
 

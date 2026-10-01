@@ -10,7 +10,7 @@ and untouched.
 Everything in §1–§3 is measured, from committed artifacts and NYISO's own
 postings, with **no solve spent**:
 `scripts/probes/_nyiso130_li_tsl_identification.py` →
-`results/calibration/_nyiso130_li_tsl_identification.json`.
+`results/phase0/nyiso/_nyiso130_li_tsl_identification.json`.
 
 ---
 

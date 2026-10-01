@@ -295,7 +295,7 @@ per-year shard bundles are likewise retained on local disk, gitignored, never re
 
 ### §10.1 — Card B returned a measured negative: CAISO cannot score 2020, and 2021 only partly
 
-caiso-274 (`docs/FINDING-caiso274-2020-2021-intake-census-2026-09-10.md`) delivered **neither**
+caiso-274 (`docs/records/caiso/FINDING-caiso274-2020-2021-intake-census-2026-09-10.md`) delivered **neither**
 target, for two independent measured reasons, and the verdict is re-verified here:
 
 * **No CAISO 2020 LMP exists in the repo at all** — `data/raw/lmp-data/CAISO/` starts at

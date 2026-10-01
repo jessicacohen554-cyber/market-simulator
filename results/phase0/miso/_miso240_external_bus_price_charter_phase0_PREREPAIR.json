@@ -1,7 +1,7 @@
 {
   "probe": "miso-240 phase 0 \u2014 charter or refuse queue item 1: the model's own external-bus price s = p(MISO_external) - p(PJM_border)",
-  "prereg": "results/calibration/PREREG-miso240-charter-or-refuse-the-external-bus-price-2026-09-07.md (pushed 5c503155)",
-  "addendum": "results/calibration/ADDENDUM-miso240-two-decision-rules-fixed-before-the-numbers-2026-09-07.md (pushed before the numbers it governs)",
+  "prereg": "docs/records/miso/PREREG-miso240-charter-or-refuse-the-external-bus-price-2026-09-07.md (pushed 5c503155)",
+  "addendum": "docs/records/miso/ADDENDUM-miso240-two-decision-rules-fixed-before-the-numbers-2026-09-07.md (pushed before the numbers it governs)",
   "keeper": "2026-09-07-miso-233-spp-hourly",
   "zero_lp": true,
   "evidence_class": "Q-A and Q-D read the keeper's OWN committed P1 zonal duals from hourly/system_<year>.parquet \u2014 NOT a reconstruction. Q-B rides miso-239's committed four-seam RECONSTRUCTION (harness corr +0.9845/+0.9745/+0.9839) and is labelled as one. Q-C/Q-C2 read committed measured parquets only.",

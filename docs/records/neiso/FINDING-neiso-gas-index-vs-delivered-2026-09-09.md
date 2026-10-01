@@ -2,7 +2,7 @@
 
 **Session:** `neiso-fuelvintage-1`, 2026-09-09. **Zero LP.** **Scope: NEISO only.**
 **Closes:** the named open question of
-`docs/FINDING-xiso-fuelvintage-monthly-gas-level-2026-09-09.md` §6a
+`docs/records/governance/FINDING-xiso-fuelvintage-monthly-gas-level-2026-09-09.md` §6a
 ("a discrepancy this session did NOT resolve, stated not absorbed").
 
 ## 0. Bottom line

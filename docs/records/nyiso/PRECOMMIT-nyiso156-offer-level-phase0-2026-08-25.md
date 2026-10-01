@@ -5,10 +5,10 @@ measurement**, per the lane's prereg-first rail. **HEAD at declaration:**
 `6af12ee`.
 
 **Charter:** the 2025 offer-level object — the C3a-2025 failure the hydro
-truncation repair unmasked (`docs/FINDING-nyiso-hydro-truncation-repair-2026-08.md`
+truncation repair unmasked (`docs/records/nyiso/FINDING-nyiso-hydro-truncation-repair-2026-08.md`
 §4.4; keeper `2026-08-25-nyiso-155-hydro-repair`, determination NOT-YET written
 explicitly on owner instruction). The object was ALREADY owner-court before the
-repair: `docs/DECISION-CARD-nyiso148-2025-level-remainder-2026-08-21.md`
+repair: `docs/records/nyiso/DECISION-CARD-nyiso148-2025-level-remainder-2026-08-21.md`
 (owner Q1 pending), decomposed at nyiso-150 into ~2/3 winter locational
 (blocked on identification, BLOCKER-B intake class) + ~1/3 the ledgered C3c
 summer face. The hydro repair added ~$1.79/MWh of unmasked 2025 under-pricing
@@ -43,7 +43,7 @@ scope.
 ## 2. DECLARED MEASUREMENTS
 
 Probe: `scripts/probes/_nyiso156_offer_level_phase0.py`, record:
-`results/calibration/_nyiso156_offer_level_phase0.json`. All on P1 rows of
+`results/phase0/nyiso/_nyiso156_offer_level_phase0.json`. All on P1 rows of
 the five internal model zones (external node excluded), 2023–2025.
 
 * **M1 — the lw monthly face table.** Model system load-weighted monthly mean
@@ -86,7 +86,7 @@ the five internal model zones (external node excluded), 2023–2025.
 
 1. The probe + JSON record (committed).
 2. **A sharpened owner decision card** —
-   `docs/DECISION-CARD-nyiso156-2025-offer-level-2026-08-25.md` — superseding
+   `docs/records/nyiso/DECISION-CARD-nyiso156-2025-offer-level-2026-08-25.md` — superseding
    the nyiso-148 card's NUMBERS (its questions remain the owner's): Q1
    restated with post-repair magnitudes and the component typing M1–M6
    measure; Q2 re-stated against the fact that its subject (the −2.2 %

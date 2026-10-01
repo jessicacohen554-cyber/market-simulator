@@ -4,7 +4,7 @@
  "no_lp": true,
  "keeper_unchanged": true,
  "charter": "mechanism-testing-matrix \u00a75.1 item 13",
- "precommit": "docs/PRECOMMIT-ercot169-margin-fuel-invariance-2026-08-05.md",
+ "precommit": "docs/records/ercot/PRECOMMIT-ercot169-margin-fuel-invariance-2026-08-05.md",
  "armed_constants": {
   "coal_mustrun": 15.8807,
   "cc_committed": 10.354,

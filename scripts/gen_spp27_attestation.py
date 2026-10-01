@@ -19,7 +19,7 @@ keeper 8 carries: the floor asserts a COMMITMENT — a day-ahead, whole-operatin
 day decision — but the engine places it by ranking INDIVIDUAL HOURS by system
 load, so it inherits the diurnal shape of LOAD rather than of COMMITMENT.
 Charter and every phase-0 number:
-``docs/handoffs/PRECOMMIT-spp-27-commitment-grain-2026-09-10.md``.
+``docs/records/spp/PRECOMMIT-spp-27-commitment-grain-2026-09-10.md``.
 
 This is NOT the ``replay_keeper --out-dir`` attestation gap being papered over:
 that driver does not propagate ``calibration_attestation.json`` into an

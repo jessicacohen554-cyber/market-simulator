@@ -5,9 +5,9 @@ document is an **addendum** to both predecessors. Neither is rewritten; where a
 number or a claim moves, it is stated here and a pointer left behind (the
 Addenda A–G convention).
 
-* `docs/handoffs/ffr-3a2-battery-close-2026-08-03.md` — the 14-leg battery and
+* `docs/records/forecast/ffr-3a2-battery-close-2026-08-03.md` — the 14-leg battery and
   its self-recorded **provenance ceiling**.
-* `docs/handoffs/ffr-3a3-battery-close-2026-08-04.md` — the six-leg post-fix
+* `docs/records/forecast/ffr-3a3-battery-close-2026-08-04.md` — the six-leg post-fix
   re-measurement that corrects it. **Its §§2–5 are FINAL and are not revisited
   here.**
 

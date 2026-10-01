@@ -250,7 +250,7 @@ rule-22 D-5(b) re-key is owed.
 ## 5. Instrument
 
 `scripts/probes/_miso187_ab_gates.py` → 
-`results/calibration/_miso187_ab_gates.json` — the miso-186 scorer re-keyed
+`results/phase0/miso/_miso187_ab_gates.json` — the miso-186 scorer re-keyed
 (KEEPER/CONTROL/ARM paths, the S-1 witness above, baselines 7/47 and
 +0.682), committed **after this PREREG and before it is run** (the miso-184
 order). If promoted, `scripts/gen_miso187_attestation.py` (the miso-186

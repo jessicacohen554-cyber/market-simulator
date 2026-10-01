@@ -1699,7 +1699,7 @@
  },
  "iso": "MISO",
  "keeper": "2026-08-05-miso-132b-cc-committed",
- "prereg": "results/calibration/PREREG-miso141-summer-derate-basis-2026-08-07.md",
+ "prereg": "docs/records/miso/PREREG-miso141-summer-derate-basis-2026-08-07.md",
  "scope": [
   "CC_REGULAR",
   "CC_CHP",

@@ -1,6 +1,6 @@
 # Tier-1 driver battery — findings (2026-07-12)
 
-**Session:** P-1A, `docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md`
+**Session:** P-1A, `docs/records/forecast/forecast-driver-capacity-revenue-audit-plan-2026-07.md`
 §2 Tier 1. Requires P-0A (`scripts/run_driver_battery.py`, merged on `main`).
 
 **Scope:** all nine ladders (T1.1-T1.9), ERCOT + PJM, T1.6 on NEISO (RPS/ACP-bearing

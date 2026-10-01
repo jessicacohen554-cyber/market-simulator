@@ -6,13 +6,13 @@ delivered at the 2023 missed tail hours — now that the full delivery-2023
 NP3-965 corpus is on disk. Decision rules, licensing bars, the rule-13 line,
 kill-gate assignment and predictions were pre-registered and pushed **before
 any measurement**
-(`docs/PRECOMMIT-ercot175-sced-deliverable-wedge-2026-08-06.md`); the kill
+(`docs/records/ercot/PRECOMMIT-ercot175-sced-deliverable-wedge-2026-08-06.md`); the kill
 gates were PRECOMMIT-ercot172 §5 inherited verbatim and were **never
 reached** (no arm was licensed). Keeper **UNCHANGED** at
 `2026-08-05-run168b-year-curves`. **No run was solved, so none is
 registered** (rules 15/16 — stated explicitly so the absence is not read as a
 skipped registration). Record:
-`results/calibration/ercot175_sced_wedge_phase0.json`; probe
+`results/phase0/ercot/ercot175_sced_wedge_phase0.json`; probe
 `scripts/probes/ercot175_sced_wedge_phase0.py`.
 
 ---

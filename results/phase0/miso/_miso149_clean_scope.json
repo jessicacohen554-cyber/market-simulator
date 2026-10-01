@@ -1,6 +1,6 @@
 {
  "session": "miso-149",
- "prereg": "results/calibration/PREREG-miso149-overlay-contradiction-2026-08-10.md",
+ "prereg": "docs/records/miso/PREREG-miso149-overlay-contradiction-2026-08-10.md",
  "prereg_commit": "318c0542",
  "gate": "G-1/G-2 CLEAN SCOPE (PREREG \u00a75 traps 2+3 counter-measurements)",
  "construction": "PLANT TOTAL over all four fossil families on BOTH sides, so a family-crosswalk split inside a matched plant cancels; CHP-bearing plants reported separately (the adjudicated BTM boundary); and the rating question separated from the availability question by conditioning on model total pmax >= plant CAMPD total p99.",

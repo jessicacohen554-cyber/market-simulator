@@ -2,9 +2,9 @@
 
 **Lane:** hydro-5 · **ISOs:** SPP, NEISO, MISO · **Mode:** backcast · **LP spent before this doc:** zero.
 
-Successor to `docs/RESULT-hydro-1-2026-09-22.md` §D (the cross-ISO census). Every number below
+Successor to `docs/records/misc/RESULT-hydro-1-2026-09-22.md` §D (the cross-ISO census). Every number below
 is measured with no solve — `scripts/probes/_hydro5_phase0.py`, output committed as
-`results/calibration/_hydro5_phase0.json` — from each keeper's own committed `hourly/` sidecars,
+`results/phase0/misc/_hydro5_phase0.json` — from each keeper's own committed `hourly/` sidecars,
 EIA-930 `NG: WAT`, EIA-923/860 and the committed ORNL-EHA / HILARRI sources. Shards launch
 **after** this doc is pushed and its SHA pinned (rule 32(c)(1)).
 

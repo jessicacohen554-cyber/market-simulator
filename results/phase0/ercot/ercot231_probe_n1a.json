@@ -279,7 +279,7 @@
  },
  "gtc_discovery": {
   "finding": "the keeper lineage (ercot-215/221/223) solved on the static-TTC fallback despite ercot_gtc_limits_measured=True \u2014 no session since the July checklist curated the gtc-limits clean partition, and G-REPRO numeric identity is achieved exactly and only WITHOUT it",
-  "measured_gtc_delta_vs_keeper": "all six gates PASS incl. G-SPUR 11<->11; official 38.81->38.82 (+$0.01), C3c 74->75; 4 improved miss hours lambda-carried (max +$6.49) \u2014 the first factor in the 226/227/231 program to move any missed hour; record: results/calibration/ercot231_gtc_gates.json + the preserved ercot231_ctl_gtc bundle (W-2 local)"
+  "measured_gtc_delta_vs_keeper": "all six gates PASS incl. G-SPUR 11<->11; official 38.81->38.82 (+$0.01), C3c 74->75; 4 improved miss hours lambda-carried (max +$6.49) \u2014 the first factor in the 226/227/231 program to move any missed hour; record: results/phase0/ercot/ercot231_gtc_gates.json + the preserved ercot231_ctl_gtc bundle (W-2 local)"
  },
  "verdict": {
   "adoption_pass": false,

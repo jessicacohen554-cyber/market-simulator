@@ -9,13 +9,13 @@
 > pocket battery build and the 2025 slice-of-day RA reform), the same
 > not-year-stable signature that rejected the NYISO ST_GAS drag alternative.
 > Adjudication: `scripts/data/derive_caiso_local_commitment.py`; full record:
-> `results/calibration/FINDING-caiso81-local-commitment-driver-refuted-2026-07-13.md`.
+> `docs/records/caiso/FINDING-caiso81-local-commitment-driver-refuted-2026-07-13.md`.
 > The CT_PEAKER deficit stays OPEN pending a measured per-year
 > local-commitment source (DMM ED/min-online volumes by area) or an
 > RA-regime field. Nothing below is enabled.
 
 The caiso-79 STEP-0 fork deliverable
-(`results/calibration/FINDING-caiso79-step0-greaterbay-bind-2026-07-12.md`
+(`docs/records/caiso/FINDING-caiso79-step0-greaterbay-bind-2026-07-12.md`
 §3): the Greater Bay import cap was measured non-binding, so the CT_PEAKER
 evening lane cannot be closed by topology. What remains — per caiso-71 §3,
 now with the import-cap alternative eliminated by measurement — is that real

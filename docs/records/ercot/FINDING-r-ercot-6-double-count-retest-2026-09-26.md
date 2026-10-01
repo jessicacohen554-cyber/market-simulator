@@ -16,7 +16,7 @@
 
 ## 1. The double count, re-measured (Step 1)
 
-Probe: `scripts/probes/_r_ercot5_availability_census.py`, repointed at `r_ercot5_hourgrain_span` (new `--bundle` / `--variant` options), and `scripts/probes/_r_ercot6_unitscoped_seam.py` (the A-vs-variant comparer). Full table, all three classes and all variants: `docs/handoffs/r-ercot/r_ercot6_unitscoped_seam.txt`.
+Probe: `scripts/probes/_r_ercot5_availability_census.py`, repointed at `r_ercot5_hourgrain_span` (new `--bundle` / `--variant` options), and `scripts/probes/_r_ercot6_unitscoped_seam.py` (the A-vs-variant comparer). Full table, all three classes and all variants: `docs/records/ercot/r-ercot/r_ercot6_unitscoped_seam.txt`.
 
 Definitions, all TWh unless marked:
 - **lift** = Σ pmax × (final availability, arm − keeper).
@@ -73,7 +73,7 @@ At a shared-unit hour the unit-exact window ceiling stands alone, instead of `mi
 
 ## 2. The train-tier under-price (Step 2)
 
-Probes `scripts/probes/_r_ercot6_c3a_zonal.py` and `_r_ercot6_c3a_basis.py`. They reproduce the official C3a exactly: 2023 59.47 vs 64.32 (−7.5 %), 2024 29.24 vs 30.99 (−5.6 %), 2025 33.79 vs 36.29 (−6.9 %). Full output: `docs/handoffs/r-ercot/r_ercot6_c3a_decomp.txt` and `r_ercot6_c3a_basis.txt`.
+Probes `scripts/probes/_r_ercot6_c3a_zonal.py` and `_r_ercot6_c3a_basis.py`. They reproduce the official C3a exactly: 2023 59.47 vs 64.32 (−7.5 %), 2024 29.24 vs 30.99 (−5.6 %), 2025 33.79 vs 36.29 (−6.9 %). Full output: `docs/records/ercot/r-ercot/r_ercot6_c3a_decomp.txt` and `r_ercot6_c3a_basis.txt`.
 
 ### The benchmark is zonal, and the gap is mostly its congestion basis
 

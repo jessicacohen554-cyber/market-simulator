@@ -122,4 +122,4 @@ KE-R — validity of the construction's own assumption (NOT pre-registered)
 
   KE-R verdict: PREREGISTERED_CONSTRUCTION_REFUTED
 
-wrote results/calibration/_miso125_prime_mover_split.json
+wrote results/phase0/miso/_miso125_prime_mover_split.json

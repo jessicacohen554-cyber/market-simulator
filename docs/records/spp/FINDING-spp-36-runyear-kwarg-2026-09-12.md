@@ -100,8 +100,8 @@ requires recovery to be recorded by **full immutable SHA, never by branch name**
 | record | unique to | rescued as | recovery SHA |
 |---|---|---|---|
 | SPP-36 shard 1 — the blocker report (NO SOLVE, the defect above) | already on `main` | *(no action)* | `7ed7d11b2b6c274aec3e85350f8c5a5c5a7036a9` |
-| SPP-36 shard 1b — year **2023** solved | `claude/spp36-2023b` | `docs/handoffs/SHARDREPORT-spp36-2023-relaunch.md` | `026efc9194a93da7752101574e38b23730e52b15` |
-| SPP-36 shard 2 — year **2024** solved | `claude/spp36-2024` | `docs/handoffs/SHARDREPORT-spp36-2024.md` | `c37f678a87bb741c4e4026f887a31f45cf4b657a` |
+| SPP-36 shard 1b — year **2023** solved | `claude/spp36-2023b` | `docs/records/spp/SHARDREPORT-spp36-2023-relaunch.md` | `026efc9194a93da7752101574e38b23730e52b15` |
+| SPP-36 shard 2 — year **2024** solved | `claude/spp36-2024` | `docs/records/spp/SHARDREPORT-spp36-2024.md` | `c37f678a87bb741c4e4026f887a31f45cf4b657a` |
 | SPP-36 shard 3 — year **2025** solved | already on `main` | *(no action)* | `18ef91756ac84482a78ea719c2fc8d57ec7d5cf5` |
 
 **A filename collision was caught rather than allowed to overwrite**: shard 1 and shard 1b both wrote

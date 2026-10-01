@@ -1,7 +1,7 @@
 # Per-ISO LP handoff prompts — the 2019-2022 retiree window + the monthly gas LEVEL
 
 **Issued by:** session xiso-fuelvintage-1, 2026-09-09 (zero LP).
-**Read first:** `docs/FINDING-xiso-fuelvintage-monthly-gas-level-2026-09-09.md` — the phase-0
+**Read first:** `docs/records/governance/FINDING-xiso-fuelvintage-monthly-gas-level-2026-09-09.md` — the phase-0
 tables, the pre-registered per-ISO expectations, and why C3b should not break the way
 ercot-254's did. **Nothing below may be solved without reading it.**
 
@@ -60,9 +60,9 @@ BRANCH: your own claude/<name> branch off the latest origin/main.
 SCOPE: PJM ONLY. Never write another ISO's keeper shard, matrix shard or calibration log.
 
 READ FIRST, IN THIS ORDER:
-  docs/FINDING-xiso-fuelvintage-monthly-gas-level-2026-09-09.md   (phase 0, all tables)
-  docs/RESULT-ercot254-monthly-ep-basis-2026-09-07.md  §3b, §5, §6  (the failure mode)
-  docs/handoffs/fleet-vintage-retiree-window-charter-2026-08.md    (Card A's charter)
+  docs/records/governance/FINDING-xiso-fuelvintage-monthly-gas-level-2026-09-09.md   (phase 0, all tables)
+  docs/records/ercot/RESULT-ercot254-monthly-ep-basis-2026-09-07.md  §3b, §5, §6  (the failure mode)
+  docs/records/misc/fleet-vintage-retiree-window-charter-2026-08.md    (Card A's charter)
   docs/codebase-site/data/mechanism-matrix/PJM.js  cell gas_electric_power_monthly_level (O)
 
 TWO CHANGES ARE ALREADY ON MAIN, BOTH ZERO-LP, BOTH DEFAULT-SAFE:
@@ -165,8 +165,8 @@ MODEL: Opus or Fable (rule 27 [R-PUSH])
 BRANCH: your own claude/<name> branch off the latest origin/main.
 SCOPE: MISO ONLY. Never write another ISO's shard or log.
 
-READ FIRST: docs/FINDING-xiso-fuelvintage-monthly-gas-level-2026-09-09.md (§1a, §3, §3b, §5)
-            docs/RESULT-ercot254-monthly-ep-basis-2026-09-07.md §3b/§5/§6
+READ FIRST: docs/records/governance/FINDING-xiso-fuelvintage-monthly-gas-level-2026-09-09.md (§1a, §3, §3b, §5)
+            docs/records/ercot/RESULT-ercot254-monthly-ep-basis-2026-09-07.md §3b/§5/§6
             docs/codebase-site/data/mechanism-matrix/MISO.js cell
             gas_electric_power_monthly_level (O)
 
@@ -251,7 +251,7 @@ MODEL: Opus or Fable (rule 27 [R-PUSH])
 BRANCH: your own claude/<name> branch off the latest origin/main.
 SCOPE: NYISO ONLY.
 
-READ FIRST: docs/FINDING-xiso-fuelvintage-monthly-gas-level-2026-09-09.md §3, §4, §5
+READ FIRST: docs/records/governance/FINDING-xiso-fuelvintage-monthly-gas-level-2026-09-09.md §3, §4, §5
 
 THE HEADLINE FOR NYISO IS THE FLEET, NOT THE FUEL. The retiree window (commit 7934e92c) adds
 31 units / 3,671.9 MW to NYISO's 2019-2022 fleets, and it is dominated by NUCLEAR: Indian
@@ -322,7 +322,7 @@ MODEL: Opus or Fable (rule 27 [R-PUSH])
 BRANCH: your own claude/<name> branch off the latest origin/main.
 SCOPE: NEISO ONLY.
 
-READ FIRST: docs/FINDING-xiso-fuelvintage-monthly-gas-level-2026-09-09.md §3, §4, §6a
+READ FIRST: docs/records/governance/FINDING-xiso-fuelvintage-monthly-gas-level-2026-09-09.md §3, §4, §6a
 
 THE FLEET FIX. The retiree window (commit 7934e92c) adds 44 units / 1,696.5 MW to NEISO's
 2019-2022 fleets, of which PILGRIM (plant 1590, 673.6 MW nuclear, retired 2019-05) is the
@@ -395,7 +395,7 @@ MODEL: Opus or Fable (rule 27 [R-PUSH])
 BRANCH: your own claude/<name> branch off the latest origin/main.
 SCOPE: CAISO ONLY.
 
-READ FIRST: docs/FINDING-xiso-fuelvintage-monthly-gas-level-2026-09-09.md §3, §4, §5
+READ FIRST: docs/records/governance/FINDING-xiso-fuelvintage-monthly-gas-level-2026-09-09.md §3, §4, §5
 
 CAISO IS THE SMALL CASE AND THAT IS THE PRE-REGISTERED PREDICTION, NOT A HEDGE.
 The retiree window (commit 7934e92c) adds 86 units / 1,700.6 MW to CAISO's 2019-2022 fleets
@@ -648,7 +648,7 @@ Every lane is additionally told to **re-baseline `pytest tests/scoring` on its o
 of any ISO (MISO 11.5, SPP/ERCOT 6.0, CAISO 4.5, NYISO/NEISO 4.0), and it is the only ISO that
 is both `per_plant` **and** `co_opt`. A CCR container is **15.7 GiB with ZERO swap**. The
 wallclock/RSS baseline those numbers were measured on had a **pre-existing `/swapfile`**
-(`docs/handoffs/perf-recheck-2026-08.md` §1.2). That is precisely why PJM "has run in this
+(`docs/records/governance/perf-recheck-2026-08.md` §1.2). That is precisely why PJM "has run in this
 container before" and is dying now: the box is the same, the **swap backstop is gone**, so a
 13 GB peak that used to page now gets SIGKILL'd (child return code −9).
 

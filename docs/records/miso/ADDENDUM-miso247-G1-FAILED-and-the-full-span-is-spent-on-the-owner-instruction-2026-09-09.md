@@ -3,7 +3,7 @@
 **Governs:** what happens after the 2024 screen. **No bar in
 `PREREG-miso247-the-P19-posture-at-MISO-2026-09-09.md` §5 is moved, re-scoped or relaxed**, and
 `G-1`'s failure is not withdrawn anywhere below. Machine records
-`results/calibration/_miso247_screen_gates.json` and `_miso247_g4_collateral.json`, pushed **before**
+`results/phase0/miso/_miso247_screen_gates.json` and `_miso247_g4_collateral.json`, pushed **before**
 this prose.
 
 ---

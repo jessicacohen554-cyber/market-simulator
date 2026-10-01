@@ -6,7 +6,7 @@ Queue item 1 of the §5.4 MISO lever queue (owner-selected 2026-08-06).
 verdict minted. Keeper UNCHANGED** at `2026-08-05-miso-132b-cc-committed`
 (bundle `results/calibration/miso132_ccmin_B`).
 
-**PREREG** `results/calibration/PREREG-miso140-bench-lw-refresh-2026-08-07.md`,
+**PREREG** `docs/records/miso/PREREG-miso140-bench-lw-refresh-2026-08-07.md`,
 pushed at **`483091b3`** BEFORE any adjudicating statistic, carrying the
 expected per-year deltas, the weight provenance written out in advance, and the
 pre-committed decision rule for whether the determination may change.
@@ -203,6 +203,6 @@ definition* → **miso-140 *a repair is not a verification***.
 ---
 
 **Probe** `scripts/probes/_miso140_bench_lw_verify.py` ·
-**Record** `results/calibration/_miso140_bench_lw_verify.json` ·
-**PREREG** `results/calibration/PREREG-miso140-bench-lw-refresh-2026-08-07.md` ·
-**Handoff** `docs/handoffs/miso-140-bench-refresh-2026-08-07.md`.
+**Record** `results/phase0/miso/_miso140_bench_lw_verify.json` ·
+**PREREG** `docs/records/miso/PREREG-miso140-bench-lw-refresh-2026-08-07.md` ·
+**Handoff** `docs/records/miso/miso-140-bench-refresh-2026-08-07.md`.

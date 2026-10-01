@@ -150,7 +150,7 @@ This is also why this lane does **not** re-screen (see §5).
 > `PREREG-neiso104` §2.1 — `committed` / `econ_low` / `econ_high` of CC_REGULAR, CC_CHP, CT_PEAKER,
 > ST_GAS — computed against the **pre-cut (neiso-99) base values**, not compounded onto neiso-105's.
 > Derivation, fixed: `0.034678 / 0.76550 = 0.045301`. Bands in
-> `results/calibration/_neiso106_arm_offer_curve.json`, committed with this file.
+> `results/phase0/neiso/_neiso106_arm_offer_curve.json`, committed with this file.
 >
 > **Unchanged and still excluded**, exactly as in both prior PREREGs: all four `peak` bands (three
 > equal their `phys_peak`; CT_PEAKER's 4.0 is the ISO-NE offer cap), every `phys_*`,

@@ -1,7 +1,7 @@
 {
  "_what": "pjm-153: no-LP attribution of PJM root-cause item 15 (net-export level). Reads the committed pjm-152 scope file and the keeper's own attestation; solves nothing.",
  "inputs": {
-  "scope": "results/calibration/_pjm152_item15_scope.json",
+  "scope": "results/phase0/pjm/_pjm152_item15_scope.json",
   "attestation": "results/calibration/pjm151_seam_B/calibration_attestation.json"
  },
  "item15_as_stated_at_pjm151": {

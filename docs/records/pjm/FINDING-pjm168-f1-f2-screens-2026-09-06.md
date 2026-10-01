@@ -4,8 +4,8 @@
 **Branch:** `claude/pjm-calibration-f1-f2-screens-x34r7s`
 **Keeper:** `2026-08-15-pjm-162-inputclock` (`pjm_debugb_inputclock_A`) — **UNCHANGED, not promoted**
 **Base bundle (replayed):** `pjm_tp2022_2021_k162` (touchpoint `2026-09-05-pjm-2022-2021-touchpoints`)
-**PRECOMMITs executed:** `docs/handoffs/PRECOMMIT-pjm167-fleet-vintage-screen-2026-09-06.md` (F1, G1–G7)
-and `docs/handoffs/PRECOMMIT-pjm167-interface-feed-admissibility-2026-09-06.md` (F2, H1–H6)
+**PRECOMMITs executed:** `docs/records/pjm/PRECOMMIT-pjm167-fleet-vintage-screen-2026-09-06.md` (F1, G1–G7)
+and `docs/records/pjm/PRECOMMIT-pjm167-interface-feed-admissibility-2026-09-06.md` (F2, H1–H6)
 
 Rule 29 `[R-SCREEN]` bundles. **Never registered, deleted before merge** (clause c) — every number
 this session will ever cite is in this document.
@@ -67,7 +67,7 @@ never spent.** Step 2 was NOT run. Nothing is promoted.
 
 Zero-LP, `run_year(fleet_only=True)` on the bundle's own recipe
 (`scripts/probes/_pjm168_f1_fleet_census.py`; artifact
-`results/calibration/_pjm168_f1_census_2021.json`):
+`results/phase0/pjm/_pjm168_f1_census_2021.json`):
 
 | class (MW) | control | arm | Δ | pjm-167 §3.3 predicted Δ |
 |---|---|---|---|---|

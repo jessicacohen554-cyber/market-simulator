@@ -2,11 +2,11 @@
 legs' committed evolution ledgers. Zero LP, read-only.
 
 Usage:
-    uv run python docs/handoffs/d81/screen_compare.py \
+    uv run python docs/records/forecast/d81/screen_compare.py \
         --ctl results/hindcast/pjm-2021-2023-realized-t1h-d81-control \
         --arm results/hindcast/pjm-2021-2023-realized-t1h-d81-arm \
-        --phase0 docs/handoffs/d81/phase0_dated_block.json \
-        --out docs/handoffs/d81/screen_compare.json
+        --phase0 docs/records/forecast/d81/phase0_dated_block.json \
+        --out docs/records/forecast/d81/screen_compare.json
 
 Every gate is STRUCTURAL and STOP-only: it may kill the arm, never promote it.
 No gate reads retire.total_gw, false_retire, recall, precision or any residual.

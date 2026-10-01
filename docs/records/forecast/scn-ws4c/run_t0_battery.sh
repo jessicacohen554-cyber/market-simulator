@@ -8,7 +8,7 @@
 #     two of those cannot co-run on this 15 GB box.
 # Phase A pairs the small ISOs; phase B runs the heavy ones strictly alone.
 set -uo pipefail
-L="docs/handoffs/scn-ws4c/launch_arm.sh"
+L="docs/records/forecast/scn-ws4c/launch_arm.sh"
 R="results/scn-ws4-probe"
 say () { echo "[$(date -u +%H:%M:%S)] === $* ==="; }
 

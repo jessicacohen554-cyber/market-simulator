@@ -1,7 +1,7 @@
 # FINDING — neiso-83: NEISO 6081 Stony Brook `CA1` was burning a fuel it does not have
 
 **Session:** neiso-83 · **Date:** 2026-08-05 · **ISO:** NEISO (rule 25 `[R-ISO-SCOPE]`)
-**Prereg:** `results/calibration/PREREG-neiso83-stonybrook-ca1-2026-08-05.md`, pushed
+**Prereg:** `docs/records/neiso/PREREG-neiso83-stonybrook-ca1-2026-08-05.md`, pushed
 BEFORE either arm solved
 **Keeper replayed:** `2026-08-04-neiso81-chpheatrate` · **New keeper:**
 `2026-08-05-neiso-83-ca1-reclass` · **Control:** `2026-08-05-neiso-83-control-zerodelta`

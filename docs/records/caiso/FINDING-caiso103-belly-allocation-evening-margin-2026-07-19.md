@@ -10,7 +10,7 @@ keeper bytes since the loader fix is in code; gitignored `caiso102_repro_A`,
 un-registered per the FINDING-caiso92b protocol) [and the caiso-92 re-derive
 adjudication leg if the artifact moves — its own section]. NO belly mechanism
 was built or solved; the design goes to the §3 owner ask
-(`docs/handoffs/caiso-103-belly-allocation-ask-2026-07-19.md`). Instruments
+(`docs/records/caiso/caiso-103-belly-allocation-ask-2026-07-19.md`). Instruments
 (committed, NEW): `scripts/probes/_caiso103_alloc_stats.py` (the allocation
 statistics), `scripts/probes/_caiso103_evening_margin.py` (the Q1 marginal
 economics decomposition).**
@@ -68,7 +68,7 @@ the fleet size).
 
 Full design, rule-12/13/19/24/25 statements, D-2/C8 implications, and the
 caiso-76/99/100/101 interaction analysis:
-`docs/handoffs/caiso-103-belly-allocation-ask-2026-07-19.md`. Shape summary:
+`docs/records/caiso/caiso-103-belly-allocation-ask-2026-07-19.md`. Shape summary:
 per solve-day scheduled-volume variable `S[d]`, fleet-battery floor rows
 `Chg[h,d] >= alloc_share[hod] × S[d]` + day cap `Σ_h Chg[h,d] <= S[d] /
 da_frac` — every charged MWh buys the measured allocation bundle except a
@@ -148,7 +148,7 @@ fix (owner-gated, NOT built): offer the firm blocks as price-takers (≤$0 /
 −ε bids on their existing caiso-73 measured shaped availability) so they
 flow whenever λ ≥ 0 and the margin moves to the hub-priced tranches / the
 domestic CT rung — see
-`docs/handoffs/caiso-103-evening-firm-import-ask-2026-07-19.md`. NOT a CT
+`docs/records/caiso/caiso-103-evening-firm-import-ask-2026-07-19.md`. NOT a CT
 floor (caiso-91b untouched), NOT an import throttle (it INCREASES import
 flow toward the measured volume), NOT a caiso-95-artifact patch (the §4
 aligned measurement is the basis), and it RETIRES two Tier-3 fitted contract

@@ -318,7 +318,7 @@ def load_hydro_cascade(
 
     Reads the measured cascade artifact (NWPP-36, owner ruling N3; derived by
     ``scripts/data/build_nwpp_hydro_cascade.py`` from the CROHMS hourly project
-    feed, NID and EIA-923 — ``docs/handoffs/PRECOMMIT-nwpp-36-2026-09-16.md``
+    feed, NID and EIA-923 — ``docs/records/nwpp/PRECOMMIT-nwpp-36-2026-09-16.md``
     §4) at ``data/raw/<iso>-hydro/<iso>_hydro_cascade_{links,monthly}.csv`` and
     maps it onto this year's hydro fleet.
 

@@ -10,9 +10,9 @@ and folded to it under rule 30 `[R-TOUCHPOINT-FOLD]` (a). The outgoing keeper's 
 touchpoint's were pruned in this same session per rule 35 `[R-PROMOTE]`. **§4 below is the question
 as it was put to the owner and is left standing as written; §4b records the ruling and what was
 executed.**
-**PRECOMMIT:** `docs/handoffs/PRECOMMIT-pjm-h11-2026-09-19.md` ·
-**Measurements:** `docs/ADDENDUM-pjm-h11-the-2020-readout-2026-09-19.md` ·
-**Infra finding:** `docs/FINDING-pjm-h11-the-pjm-oom-is-a-disk-ordering-bug-2026-09-19.md`
+**PRECOMMIT:** `docs/records/pjm/PRECOMMIT-pjm-h11-2026-09-19.md` ·
+**Measurements:** `docs/records/pjm/ADDENDUM-pjm-h11-the-2020-readout-2026-09-19.md` ·
+**Infra finding:** `docs/records/pjm/FINDING-pjm-h11-the-pjm-oom-is-a-disk-ordering-bug-2026-09-19.md`
 
 ---
 

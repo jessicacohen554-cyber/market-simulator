@@ -1,6 +1,6 @@
 {
  "probe": "ercot206_e3_settled_reproduction",
- "precommit": "docs/PRECOMMIT-ercot206-e3-reopen-b0-2026-08-15.md",
+ "precommit": "docs/records/ercot/PRECOMMIT-ercot206-e3-reopen-b0-2026-08-15.md",
  "guard": "archive RTORPA+RTORDPA > settled hub RTSPP + $50",
  "construction": "FFR-8A leg_ab (ordc_adder on measured RTOLCAP/RTOFFCAP)",
  "verdict_years": [

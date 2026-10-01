@@ -3,7 +3,7 @@
 **Session:** miso-249 (`miso-fuelvintage-1`) · **Date:** 2026-09-09 · **ZERO LP.**
 **Scope:** MISO ONLY. No other ISO's shard, keeper, log or calibration-complete entry is touched.
 **Branch:** `claude/miso-fuelvintage-1` off `origin/main` `87ad084b`.
-**Task:** `docs/handoffs/xiso-fuelvintage-per-iso-lp-prompts-2026-09-09.md` PROMPT 2 (MISO) + ADDENDUM A1–A4, plus the launch prompt's ADDITIONS 0–5.
+**Task:** `docs/records/governance/xiso-fuelvintage-per-iso-lp-prompts-2026-09-09.md` PROMPT 2 (MISO) + ADDENDUM A1–A4, plus the launch prompt's ADDITIONS 0–5.
 
 > **NO SOLVE WAS SPENT AND NONE WILL BE.** The rule 29 `[R-SCREEN]` clause-(0) pre-solve gate the
 > prompt's ADDITION 1 named — measure the F923 print-path coverage before spending an LP — **fires**,

@@ -1,7 +1,7 @@
 # RESULT — PJM: the measured monthly gas LEVEL + the 2019-2022 retiree window
 
 **Session:** `pjm-fuelvintage-1` · **Date:** 2026-09-09 · **Branch:** `claude/pjm-fuelvintage-1`
-**PRECOMMIT (registered before any LP):** `docs/PRECOMMIT-pjm-fuelvintage-2026-09-09.md`
+**PRECOMMIT (registered before any LP):** `docs/records/pjm/PRECOMMIT-pjm-fuelvintage-2026-09-09.md`
 **Keeper / control (G-CTRL form 4, IMPAIRED — see PRECOMMIT (a)):** `pjm_debugb_inputclock_A`
 = run `2026-08-15-pjm-162-inputclock`.
 

@@ -1,7 +1,7 @@
 # RESULT — PJM reads CALIBRATED: the ST_GAS defect was MEMBERSHIP, and the registry's own criterion closes it
 
 **Session** `pjm-d4-2` · **ISO** PJM · **Date** 2026-09-10 · **Branch** `claude/pjm-d4-2-1xm7l3`
-**PRECOMMIT** `docs/PRECOMMIT-pjm-d4-2-stgas-membership-2026-09-10.md` and its 2023-leg
+**PRECOMMIT** `docs/records/pjm/PRECOMMIT-pjm-d4-2-stgas-membership-2026-09-10.md` and its 2023-leg
 `ADDENDUM`, both committed and pushed **before any shard solved**. Every gate bar, the criterion,
 the control posture and the rule-1 non-gates below are quoted from them unchanged.
 **Six years solved** (2020-2025), **one LP per rule-32 `[R-SHARD]` container**, all pinned to

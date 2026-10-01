@@ -2,7 +2,7 @@
 
 **Session.** capx-d5r-scorer-coal-grain (capacity-expansion / Forecast Finalization track),
 chartered at director refresh #15 under the owner's **Q12 ruling** (full fix, D5 preference (a) —
-`docs/handoffs/capx-director-ledger-2026-08.md` §0l.2/§3 Q12). Branch
+`docs/records/forecast/capx-director-ledger-2026-08.md` §0l.2/§3 Q12). Branch
 `claude/capx-d5r-scorer-coal-grain-t6hoe2`, created fresh off `origin/main` at `e72e20f`;
 main advanced 27 commits mid-session (S-4b, S-123, director r#17), so the delivery was
 **rebuilt identically on `bd97c6e`** — every zero-solve step re-run at the new HEAD, controls
@@ -22,7 +22,7 @@ field added — no matrix row or cell.
    started, via the sibling repair session (PR
    [#4388](https://github.com/jessicacohen554-cyber/market-simulator/pull/4388), commits
    `3d58495` + `d2a318c`, record
-   `docs/handoffs/RESULT-crossover-co2-grain-repair-2026-08-30.md`): `build_gmmodel` now splits
+   `docs/records/misc/RESULT-crossover-co2-grain-repair-2026-08-30.md`): `build_gmmodel` now splits
    generic-`COAL` generators to their supply class through the keeper's own canonical chain
    (`run_calibration_full._coal_supply_class` on `_plant_codes_from_unit_ids` — one taxonomy
    chain, rule 19 `[R-ONE-MECH]`), a zero-solve `--rescore-co2-grain` mode re-derives committed
@@ -57,7 +57,7 @@ bound assumed) while remaining seam-only.
 | `frontend/data/hindcast/neiso-2023-2027-crossover-capxd14.json` | Re-registered via the single `register_forecast_run.py --bundle … --preserve-invariants` path; 14 diffs, all the same seam + fresh provenance stamps; committed invariant block preserved. |
 | `frontend/data/forecast/ff-verdicts.json` | `neiso-t1x` re-emitted from the scorer (`rescore_forecast_verdicts.py --apply`; co2 2024 \|10.6 %\|→\|11.1 %\| in the FC-4 detail, statuses unchanged, determination HOLD); **`neiso-t1x-pre-d5r`** added — the pre-repair record verbatim plus a provenance note; D5-R instrument notes appended to `ercot-t1x`, `pjm-2023-2027-crossover-ffr3a3-t1x`, `miso-2023-2027-crossover-ffr3a4-t1x` (`notes` array only — no scored value touched). The 8 other tracked verdicts re-scored identically and their pure provenance re-stamps reverted to keep the diff minimal. |
 | `frontend/data/forecast/program-status.json` | §3 below: re-scored magnitudes + citations on every FC-4-co2-citing string, the `d5r_co2_grain_repair` block, a sources entry. Asserted in the edit script: no `fc` scorecard, no gate `status`/`open`, no determination field moved. |
-| `docs/handoffs/FINDING-capx-d5r-scorer-coal-grain-2026-08-30.md` | This record. |
+| `docs/records/forecast/FINDING-capx-d5r-scorer-coal-grain-2026-08-30.md` | This record. |
 
 `scripts/score_crossover.py` itself is **untouched by this session** — the fix was verified
 already landed (commit `3d58495`), not re-implemented.
@@ -225,7 +225,7 @@ gas over-dispatch and retirement composition → D14's findings).
 
 ## 6. Reconciliation with director refresh #17 (landed mid-session)
 
-Refresh #17 (`docs/handoffs/capx-director-ledger-2026-08.md` §0n) adjudicated two things this
+Refresh #17 (`docs/records/forecast/capx-director-ledger-2026-08.md` §0n) adjudicated two things this
 delivery must be read against:
 
 - **§0n.2, "the fifth bundle, adjudicated … no follow-up owed."** The director bounded the

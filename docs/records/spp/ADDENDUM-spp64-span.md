@@ -6,10 +6,10 @@ start, before any command that could move it. No `fetch` / `pull` / `rebase` / `
 and none will be until the final push, which will merge `origin/main` and resolve **only in this
 lane's own files**.
 
-**Charter** `docs/handoffs/PRECOMMIT-spp-64-stgas-selfcommit-2026-09-10.md`, plus
-`docs/handoffs/ADDENDUM-spp-64-g2-arithmetic-2026-09-10.md` (the G-2 pre-solve correction),
-`docs/handoffs/RESULT-spp64-screen-2023.md` (six of six §6 STOP gates PASS — the span is
-authorised), `docs/handoffs/FINDING-spp-64-2026-09-10.md`.
+**Charter** `docs/records/spp/PRECOMMIT-spp-64-stgas-selfcommit-2026-09-10.md`, plus
+`docs/records/spp/ADDENDUM-spp-64-g2-arithmetic-2026-09-10.md` (the G-2 pre-solve correction),
+`docs/records/spp/handoffs/RESULT-spp64-screen-2023.md` (six of six §6 STOP gates PASS — the span is
+authorised), `docs/records/spp/FINDING-spp-64-2026-09-10.md`.
 
 ## What this shard will run
 

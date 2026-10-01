@@ -2,7 +2,7 @@
 
 **Lane:** implementation (owner decision **D-18(a)**, sitting Addendum S.2/S.5, signed
 2026-08-05). Wave 5. The spec is FFR-5B's design —
-`docs/handoffs/ffr-5b-procurement-channel-design-2026-08-05.md` §§2-3, admissibility contract
+`docs/records/forecast/ffr-5b-procurement-channel-design-2026-08-05.md` §§2-3, admissibility contract
 §5.1 — implemented, not re-derived and not widened.
 
 **Head at start:** branch rebased onto `origin/main` **`57d4d66a`** before any work (main had

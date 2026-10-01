@@ -4,7 +4,7 @@ The LP row id is ``<CLASS>_<ZONE>_p<plant>_<band>``, so the committed per-unit h
 already carries the band layer the offer curve is written in — no solve and no offer-array
 rebuild is needed to read where each band sits.
 
-THE OBJECT (docs/FINDING-nyiso240-c1-margin-bench-attribution-2026-09-19.md §7): CT_PEAKER
+THE OBJECT (docs/records/nyiso/FINDING-nyiso240-c1-margin-bench-attribution-2026-09-19.md §7): CT_PEAKER
 falls 2.43 -> 0.25 / 0.30 / 0.77 TWh from 2023 against a flat ~2.1-2.8 TWh actual, with
 capacity intact, so the cause is merit order.
 
@@ -26,7 +26,7 @@ sha256-identical to the keeper's). No LP is solved; nothing is swept against any
 Usage:
     python3 scripts/probes/nyiso241_band_merit_phase0.py \
         --legs results/calibration/nyiso_mer_2026-09-19_{2022,2023,2024,2025} \
-        --out results/calibration/_nyiso241_band_merit_phase0.json
+        --out results/phase0/nyiso/_nyiso241_band_merit_phase0.json
 """
 
 from __future__ import annotations

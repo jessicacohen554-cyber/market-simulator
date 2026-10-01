@@ -202,7 +202,7 @@ Probe: ERCOT, base 2023, vintage 2023, window 2023-2025 (3 solve years — T0
 scale), Arm R, `results/hindcast/ercot-2023-2025-t1ff-armr-fh1gate`
 (hindcast namespace, `kind="full_forward"`).
 
-The T1-X reference (`docs/handoffs/ff-t1-gate-2026-07.md` §4.2): FC-1 I6
+The T1-X reference (`docs/records/forecast/ff-t1-gate-2026-07.md` §4.2): FC-1 I6
 FAIL — 25.6 % of prior thermal economically retired in a single forward year
 by 2025, adjudicated "a legacy-bin crossover-harness property, not the T1-F
 config."

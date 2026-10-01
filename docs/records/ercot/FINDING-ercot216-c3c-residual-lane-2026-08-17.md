@@ -10,7 +10,7 @@ modified, no `ScenarioConfig` field, no matrix cell verdict minted** (the
 ercot-163/170/208/214 no-LP precedent). No precommit was pushed because **no
 solve was reached** — the pre-solve gate is what this session did not pass.
 Committed probe: `scripts/probes/ercot216_c3c_lane_phase0.py` →
-`results/calibration/ercot216_c3c_lane_phase0.json`. Everything below is read
+`results/phase0/ercot/ercot216_c3c_lane_phase0.json`. Everything below is read
 from the keeper bundle's committed `hourly/` sidecars, the committed actual-RT
 parquet, the committed NP6-905 ORDC curation, the EIA-930 ERCO extract and the
 committed 15-minute RTM settlement-point workbooks — no new data, no measured
@@ -114,7 +114,7 @@ series exists. There is no MW there to buy, in either direction.
   `FILED-UNLICENSED` again; identity error 0.0000 GW, A = 102.6 % of the gap.
   Per the ercot-190 signed rule this read **(Q-B) AUTOMATIC AND FINAL — no
   further ERCOT C3a-2023 spend, item 11 CLOSED**
-  (`results/calibration/ercot191_cc_headroom_licence_retest.json`).
+  (`results/phase0/ercot/ercot191_cc_headroom_licence_retest.json`).
 
 This session does not re-open it and does not re-derive it (Q-B FINAL is a
 standing ruling, cited and not re-litigated). What §3 adds is only that the
@@ -285,7 +285,7 @@ explicit UTC stamps (`data/eia930/frames.py`, `scripts/data/convert_eia930.py`)
 
 Both are repaired in place with citations, and the corrected constructions are
 carried in this session's own probe. **Consequence for the record:**
-`docs/DIAGNOSIS-ercot-2023-summer-tail-attribution-2026-07.md` §[3]'s
+`docs/records/ercot/DIAGNOSIS-ercot-2023-summer-tail-attribution-2026-07.md` §[3]'s
 physical-balance numbers were computed on the uncorrected join (2023, so
 defect 1 only) and should be read as superseded by §3 above; its other
 sections are untouched by this.

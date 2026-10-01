@@ -4,7 +4,7 @@ pjm-99 proved the measured TOP-of-curve surface is inert in PJM: the LP's
 marginal unit at the missed summer peaks sits at $30-45 inside a ~21 GW
 idle mid-curve (COAL / CT_PEAKER / ST_GAS econ bands), while the measured
 fleet prices the SAME capacity band at $35-83+
-(docs/FINDING-pjm-offer-surface-noop-2026-07.md). The depth-price sweep on
+(docs/records/pjm/FINDING-pjm-offer-surface-noop-2026-07.md). The depth-price sweep on
 the 2026-07-12 baseline quantified it: +10 GW of served depth moves the
 model's implied price only +$2-4/MWh — the mid-curve, not the peak band,
 caps the dual. This derive measures the mid-curve so the P1 mechanism

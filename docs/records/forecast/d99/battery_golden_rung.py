@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """T1.6 driver-battery rungs on the ``neiso-t3`` GOLDEN recipe, Q72 lever — metrics + assembly.
 
-capx D99 measurement helper (``docs/handoffs/PRECOMMIT-capx-d99-2026-09-26.md``).
-A copy of capx D94's ``docs/handoffs/d94/battery_golden_rung.py`` (kept as the
+capx D99 measurement helper (``docs/records/forecast/PRECOMMIT-capx-d99-2026-09-26.md``).
+A copy of capx D94's ``docs/records/forecast/d94/battery_golden_rung.py`` (kept as the
 D94 record), re-pointed to the lever owner ruling Q72 put on the T1.6 ladder:
 ``entry_pipeline_aware_signal`` (``vre_short`` = False, ``vre_long`` = True).
 Not standing tooling. Nothing under ``scripts/`` or ``src/`` is imported

@@ -1,6 +1,6 @@
 {
   "session": "nyiso-183",
-  "prereg": "results/calibration/PREREG-nyiso183-ravenswood-availability.md",
+  "prereg": "docs/records/nyiso/PREREG-nyiso183-ravenswood-availability.md",
   "keeper": "2026-09-02-nyiso-177-vintage-matched",
   "constants": {
     "MERIT_OOM_FRAC": 0.9,

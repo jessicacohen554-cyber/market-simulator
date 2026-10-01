@@ -25,7 +25,7 @@ specified, uncommented) — what was missing was the disclosure, so the case com
 **completed, not duplicated**: the ERCOT tail-regime arithmetic, the six-ISO reading and
 the degeneracy of the ORGANIC companion are in the YAML. The "backstop-built" column is
 in the report with 13 tests. The adjudication is
-`docs/handoffs/load-hi-adequacy-reading-2026-09-06.md`; §2 below is the one table SCN-WS4c
+`docs/records/misc/load-hi-adequacy-reading-2026-09-06.md`; §2 below is the one table SCN-WS4c
 scores against.
 
 Three things the arithmetic surfaced that the charter did not anticipate, all zero-solve:
@@ -53,7 +53,7 @@ Three things the arithmetic surfaced that the charter did not anticipate, all ze
 | 1 | `configs/scenario_campaign_matrix.yaml` | `LOAD-HI` / `LOAD-HI-ORGANIC` case comment completed: electrification as-is (= `off` in all six), the ERCOT tail-regime table, the three-ISO degeneracy, the six-line adequacy reading, the slack-understatement sentence. Keys unchanged; file re-parses. |
 | 2 | `scripts/report_scenario_deltas.py` | the "backstop-built" column: `backstop_built_mw` (reserve-backstop `gas_ct` on the books in the year — ledger `thermal_additions` rows tagged `source == "reserve_backstop"`, cumulative, net of a later retirement) and `backstop_built_mwh` (those units' dispatch, matched on `unit_id`) in the headline frame, hence in the CSV with `_bau` / `_delta` and in the markdown table + notes. Derived from the ledger the report already reads and the dispatch it already loads; an optional `backstop_units=` argument on `collect_case_year_frames` (omitted ⇒ the pre-WS4b frame column-for-column). A ledger unit absent from the cached fleet is a report note, never a silent 0. |
 | 3 | `tests/scoring/test_report_backstop_built.py` | 13 tests, trivial-first: the pure ledger walk on hand-built dicts (only `reserve_backstop` rows count; cumulative; a retirement nets out; the prior-ledger-year fallback), then a 24-hour three-unit REF/LOAD-HI fixture through the real cache + matrix bundle (500 → 800 MW on the books; 200 × 24 then 300 × 24 MWh; deltas equal levels; the CT energy sits inside `generation_twh`, never beside it; markdown carries the definition; the unmatched-unit note; the omitted-map identity). |
-| 4 | `docs/handoffs/load-hi-adequacy-reading-2026-09-06.md` | the adjudication: definitions, the per-ISO load arithmetic, the attribution limits, the two fail-set readings, the six readings (a)–(e), what WS-4c does with it. |
+| 4 | `docs/records/misc/load-hi-adequacy-reading-2026-09-06.md` | the adjudication: definitions, the per-ISO load arithmetic, the attribution limits, the two fail-set readings, the six readings (a)–(e), what WS-4c does with it. |
 | 5 | plan §5.1 Load-HI row 1 + §2.4 G-L3/G-L4 stamps; desk ledger §3 row 1 | the scorecard: **named case landed** (WS-4a's siting half + this lane's case half = row 1 `yes`). |
 
 Tests: `tests/scoring/test_report_backstop_built.py` + `test_report_scenario_deltas.py` +
@@ -164,9 +164,9 @@ shape effect. Full per-ISO tables: the reading doc §2.
 
 - `configs/scenario_campaign_matrix.yaml` — the case comment (keys unchanged).
 - `scripts/report_scenario_deltas.py` — the column; `tests/scoring/test_report_backstop_built.py`.
-- `docs/handoffs/load-hi-adequacy-reading-2026-09-06.md` — the adjudication.
-- `docs/handoffs/forecast-scenario-readiness-plan-2026-09.md` §5.1 Load-HI row 1 (+ the
-  §2.4 G-L3 / G-L4 stamps); `docs/handoffs/scenario-desk-ledger-2026-09.md` §3 row 1.
+- `docs/records/misc/load-hi-adequacy-reading-2026-09-06.md` — the adjudication.
+- `docs/records/forecast/forecast-scenario-readiness-plan-2026-09.md` §5.1 Load-HI row 1 (+ the
+  §2.4 G-L3 / G-L4 stamps); `docs/records/misc/scenario-desk-ledger-2026-09.md` §3 row 1.
 - No registered run, no bundle, no dashboard entry — this lane has no solve.
 
 **This landing is the LAST thing blocking SCN-WS4c.**

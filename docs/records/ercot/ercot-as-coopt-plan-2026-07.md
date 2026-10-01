@@ -6,7 +6,7 @@
 measured ERCOT DAM-AS overlay (`ercot_dam_as_overlay_series`,
 `results/scarcity.py:536`). This is a **design/plan document — no model code
 changed.** Companion prompt pack:
-`docs/handoffs/ercot-as-coopt-prompts-2026-07.md`.
+`docs/records/ercot/ercot-as-coopt-prompts-2026-07.md`.
 **Reads first:** `docs/ercot-multiproduct-as-coopt-2026-06.md` (run159),
 `docs/ercot-as-forward-requirement-2026-06.md` (G3 / run163),
 `docs/ercot-as-aware-commitment-2026-06.md` (run160, rejected),
@@ -387,4 +387,4 @@ per CLAUDE.md #12 (separate `--out-dir`s, ≤2 concurrent per-plant runs); years
 within any invocation stay sequential.
 
 The ready-to-paste prompts are in
-`docs/handoffs/ercot-as-coopt-prompts-2026-07.md`, one per stage.
+`docs/records/ercot/ercot-as-coopt-prompts-2026-07.md`, one per stage.

@@ -144,6 +144,6 @@ cells if minted; §5.4 stamp. Rule 25: MISO only. Rule 22: 2023–2025 (the
 offer fetch refused other years by construction). Rule 13: offers, 923, CAMPD,
 HH are measured inputs read as diagnostics. Rule 27: blob-verify.
 Instrument: `scripts/probes/_miso212_south_gas_cost_basis.py` → record
-`results/calibration/_miso212_south_gas_cost_basis.json`.
+`results/phase0/miso/_miso212_south_gas_cost_basis.json`.
 
 Next shorthand: **miso-213**.

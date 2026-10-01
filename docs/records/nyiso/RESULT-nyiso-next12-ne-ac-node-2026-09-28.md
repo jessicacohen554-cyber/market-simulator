@@ -1,7 +1,7 @@
 # RESULT — NYISO-NEXT-12: the NE AC tie on its own two-way node; promoted on structure — 2026-09-29
 
 - **Session:** NYISO-NEXT-12, the orchestrator. This container ran no LP (rule 32 (a)).
-- **PRECOMMIT:** `docs/PRECOMMIT-nyiso-next11-ne-ac-node-2026-09-28.md`. The gates (§6) and promotion rule (§7) were fixed before any solve. §9 addenda 2–4 hold the G-DRIFT top-ups and the launch defect.
+- **PRECOMMIT:** `docs/records/nyiso/PRECOMMIT-nyiso-next11-ne-ac-node-2026-09-28.md`. The gates (§6) and promotion rule (§7) were fixed before any solve. §9 addenda 2–4 hold the G-DRIFT top-ups and the launch defect.
 - **Owner ruling in force:** Q-a (2026-09-28): NE AC as its own node, promoted on structure only (rule 1), never on C3a.
 - **Arm pin:** `7d238cc95ed843e93c9b934e97983926345479dc` (after PR #6867).
 - **New keeper:** `2026-09-29-nyisonext12-neac-node-span` (bundle `results/calibration/nyisonext12_span`, 2022–2025).
@@ -18,7 +18,7 @@
 
 ## 2. Gates (arm vs the NEXT-9 keeper's committed bundles, form 4)
 
-Records: `results/calibration/_nyisonext12_gates.json`, `_nyisonext12_g2b.json`, `_nyisonext12_compare_span.txt`, `_nyisonext12_compare_2021.txt`.
+Records: `results/phase0/nyiso/_nyisonext12_gates.json`, `_nyisonext12_g2b.json`, `_nyisonext12_compare_span.txt`, `_nyisonext12_compare_2021.txt`.
 
 | | 2021 | 2022 | 2023 | 2024 | 2025 |
 |---|---|---|---|---|---|

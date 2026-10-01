@@ -1,7 +1,7 @@
 # RESULT — R-NYISO: NYISO re-solved on corrected backcast inputs (2022–2025); 2019–2021 data-blocked — 2026-09-24
 
 **Session:** R-NYISO (orchestrator; four year-isolated shards; zero LP in this container).
-**Pre-registration:** `docs/PRECOMMIT-r-nyiso-backcast-inputs-2026-09-24.md`, pinned at
+**Pre-registration:** `docs/records/nyiso/PRECOMMIT-r-nyiso-backcast-inputs-2026-09-24.md`, pinned at
 `e95436d5024fc14096eed558d6dd15a65128e524` before any solve.
 **Registered run:** `2026-09-24-nyiso-r-inputs-860vintage` (bundle `results/calibration/rnyiso_span`).
 **Incumbent keeper, untouched:** `2026-09-22-nyiso-hydro3-ror-split`. **Nothing was promoted and

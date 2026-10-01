@@ -67,7 +67,7 @@ valid test — that is exactly what stopped keeper-3's own promotion (`FINDING-s
 measured on (1) the P0 objective and (2) the LP input arrays, and P1 objectives are **reported, never
 gated**.
 
-The instrument is `docs/handoffs/spp50/array_census.py` (zero LP): keeper-3's fleet rebuilt with
+The instrument is `docs/records/spp/spp50/array_census.py` (zero LP): keeper-3's fleet rebuilt with
 `run_year(fleet_only=True)` on its own recipe (`scripts.replay_keeper.run_year_kwargs` +
 `derived_run_year_inputs` — the sanctioned reconstruction, the seam SPP-49's census used), run **twice**:
 `pre` in a code-only sparse git worktree at keeper-3's own `git_sha 623184f3` with the as-built wind
@@ -106,7 +106,7 @@ promotes**. Reported either way: the LP re-curtailment percentage per year.
 ### Leg (iii) — the attribution moves as SPP-49 §0.5 measured
 
 Same rows, same direction, same order — or the solve is not carrying the repairs it is supposed to.
-Measured with SPP-49's own instrument (`docs/handoffs/spp49/attribution.py`; 2024, GWh, model in-merit at
+Measured with SPP-49's own instrument (`docs/records/spp/spp49/attribution.py`; 2024, GWh, model in-merit at
 keeper-3's P1 prices minus CAMPD) on **this lane's** arrays. Because the wind parquets do not touch any
 thermal marginal cost, this lane's thermal arrays should reproduce SPP-49's `post` arrays, so the bar is
 tight:

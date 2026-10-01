@@ -9,11 +9,11 @@ this one is open). **NOT a lever-queue entry and NEVER a mechanism flag.**
 **NOT-YET**, C3c the sole ledgered caveat (budget **1 of 3, unspent**).
 
 **Evidence base, all committed and all no-LP:**
-`docs/handoffs/nyiso-123-downstate-boundary-2026-08-04.md` (this charter's grounding),
-`results/calibration/FINDING-nyiso122-c3a-2025-is-two-objects-2026-08-04.md`,
+`docs/records/nyiso/nyiso-123-downstate-boundary-2026-08-04.md` (this charter's grounding),
+`docs/records/nyiso/FINDING-nyiso122-c3a-2025-is-two-objects-2026-08-04.md`,
 `_nyiso123_month_band_allyears.json`, `_nyiso123_zonal_identity_allyears.json`,
 `_nyiso122_c3a_2025_decomp.json`, `_nyiso122_winter_zonal_spread.json`,
-`docs/FINDING-nyiso97-load-pocket-identification-2026-07-29.md`.
+`docs/records/nyiso/FINDING-nyiso97-load-pocket-identification-2026-07-29.md`.
 
 ---
 

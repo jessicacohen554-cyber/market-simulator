@@ -2,7 +2,7 @@
 
 **Filed BEFORE any solve.** No LP has run in this session. This is a
 **scope expansion** of
-`results/calibration/PREREG-nyiso126-eastern-seam-attribution-2026-08-04.md` §5,
+`docs/records/nyiso/PREREG-nyiso126-eastern-seam-attribution-2026-08-04.md` §5,
 authorised by the owner on 2026-08-05 ("Expand scope: rebuild all four seam
 caps") after Phase 0 established that the pre-registered scope cannot be built
 without violating the parent's own §3. It is filed so the wider construction,

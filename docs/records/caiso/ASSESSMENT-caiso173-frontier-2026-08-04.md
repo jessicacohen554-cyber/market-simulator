@@ -9,7 +9,7 @@ design. Nothing in `calibration-complete.json` or `holdout-freeze.json` is touch
 marker is an owner act (rule 22). No out-of-training year was solved, scored or read.
 
 Instrument: `scripts/probes/caiso173_frontier_recheck.py` (committed artifacts only,
-re-runs in seconds); record `results/calibration/_caiso173_frontier_recheck.json`.
+re-runs in seconds); record `results/phase0/caiso/_caiso173_frontier_recheck.json`.
 
 ---
 
@@ -464,6 +464,6 @@ moves** — no mechanism was tested.
 
 - This assessment.
 - `scripts/probes/caiso173_frontier_recheck.py` — the instrument (no LP, no solve, no network).
-- `results/calibration/_caiso173_frontier_recheck.json` — its record.
+- `results/phase0/caiso/_caiso173_frontier_recheck.json` — its record.
 - `docs/mechanism-testing-matrix.md` §5.2 header — assessment + verdict recorded (rule 28 duty b).
 - `docs/calibration-log/caiso.md` — appended.

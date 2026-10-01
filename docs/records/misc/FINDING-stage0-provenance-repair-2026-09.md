@@ -86,7 +86,7 @@ by `docs/model-audit-release-plan-2026-08.md` (Card-1, merged as #4369).
 
 Both discrepancies are recorded verbatim in each entry's `provenance.recovery`
 block rather than smoothed away. The 2026-08-17 staleness ledger
-(`docs/handoffs/perfb-stage0-staleness-ledger-2026-08-17.md`) independently names
+(`docs/records/governance/perfb-stage0-staleness-ledger-2026-08-17.md`) independently names
 the same solve trees for ERCOT, NEISO, NYISO and CAISO — a fourth corroborating
 source, written by a different lane, two weeks before this repair.
 
@@ -318,7 +318,7 @@ files:**
 | `scripts/check_golden_manifest.py` | **new** — the schema + retention-invariant gate with the enumerated legacy ratchet |
 | `tests/scoring/test_golden_manifest_provenance.py` | **new** — 20 tests |
 | `.github/workflows/ci.yml` | one step added to the existing `keeper-gates` job; **no new workflow** |
-| `docs/FINDING-stage0-provenance-repair-2026-09.md` | this finding |
+| `docs/records/misc/FINDING-stage0-provenance-repair-2026-09.md` | this finding |
 
 **Not touched:** the board, the release plan, any keeper shard, marker,
 `holdout-freeze.json`, the registry, any mechanism-matrix shard, any bench part,

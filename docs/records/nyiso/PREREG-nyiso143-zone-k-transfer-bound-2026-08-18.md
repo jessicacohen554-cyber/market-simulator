@@ -1,11 +1,11 @@
 # PREREG nyiso-143 — the chartered Zone-K reconciliation, written as the transfer bound alone against the CORRECTED control
 
 **Written BEFORE any solve is launched.** Charter:
-`docs/DECISION-CARD-nyiso137-zone-k-charter-2026-08-16.md` (D1 **GRANTED**,
+`docs/records/nyiso/DECISION-CARD-nyiso137-zone-k-charter-2026-08-16.md` (D1 **GRANTED**,
 2026-08-16: *"Grant — write, prereg, solve"*). Re-scoping:
-`results/calibration/FINDING-nyiso139b-zone-k-joint-lever-rescoped-2026-08-16.md`.
+`docs/records/nyiso/FINDING-nyiso139b-zone-k-joint-lever-rescoped-2026-08-16.md`.
 Both blocking questions answered by the owner at
-`results/calibration/FINDING-nyiso140-li-st-floor-membership-2026-08-16.md` §6.
+`docs/records/nyiso/FINDING-nyiso140-li-st-floor-membership-2026-08-16.md` §6.
 
 ---
 
@@ -51,7 +51,7 @@ Limit**, 940 MW (`model/interchange/nyiso.py::apply_nyiso_li_tsl_import_cap`).
 * **Rule 21 `[R-DOF]` — ZERO new free parameters.** The 940 MW is read from
   TABLE 1 note 2 of NYISO's Locality Bulk Power Transmission Capability
   Reports, identically in the 2024-25, 2025-26 and 2026-27 editions
-  (`results/calibration/_nyiso130_li_tsl_identification.json`). The DOF ledger
+  (`results/phase0/nyiso/_nyiso130_li_tsl_identification.json`). The DOF ledger
   gains no entry: this SWAPS one published number for another.
 * **Rule 14 `[R-ACCURATE]`** — the incumbent basis nets a 660 MW
   generation loss-of-source that the model **already carries twice elsewhere**;
@@ -94,7 +94,7 @@ at full magnitude, **not gated**.
 
 ## 4. EX-ANTE PREDICTIONS — stated before the solve, including against interest
 
-From `results/calibration/_nyiso130_ab_gates.json` (the same lever on the
+From `results/phase0/nyiso/_nyiso130_ab_gates.json` (the same lever on the
 pre-repair control):
 
 * **The C3c tail collapses.** nyiso-130 measured 2 / 0 / 5 h against a control

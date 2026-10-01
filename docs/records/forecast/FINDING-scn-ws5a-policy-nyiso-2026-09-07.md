@@ -183,7 +183,7 @@ Every one of the twelve committed bundles records `git.dirty: false`, 5/5 solved
 pin whose entire diff against it is 7–9 files, all of them documentation or this lane's own
 artifacts, with a zero solve-path diff**
 (`git diff --name-only bdfb3095 <sha>` lists only `docs/handoffs/PRECOMMIT-…`,
-`docs/handoffs/scn-ws5a-policy-nyiso/*` and this campaign's own `REF`/`LOAD-HI` slim files).
+`docs/records/forecast/scn-ws5a-policy-nyiso/*` and this campaign's own `REF`/`LOAD-HI` slim files).
 That is exactly the ADDENDUM 1 §3.1 convention — "the pin itself or a doc-only descendant with a
 zero solve-path diff, and every leg's HEAD guard is the diff itself" — and the key equality is the
 independent second proof.
@@ -330,7 +330,7 @@ it so the size of the open modelling choice is visible.
 ## 3. Gate verdicts — the nine Stage-A legs
 
 Scored with the committed instrument
-`docs/handoffs/scn-ws5a-policy-nyiso/score_gates_2026-09-06.py`, whose JSON output is committed
+`docs/records/forecast/scn-ws5a-policy-nyiso/score_gates_2026-09-06.py`, whose JSON output is committed
 beside it. `CAP-STATE-TIGHT` is **excluded from Stage-A gate scoring per ruling S17** and is scored
 separately in §8.
 
@@ -756,10 +756,10 @@ Every leg's key matches its pre-declared key exactly:
 
 ### 10.2 Written by this session
 
-- `docs/handoffs/FINDING-scn-ws5a-policy-nyiso-2026-09-07.md` (this document)
-- `docs/handoffs/scn-ws5a-policy-nyiso/score_gates_2026-09-06.json` (the committed scorer's output)
-- `docs/handoffs/forecast-scenario-readiness-plan-2026-09.md` §5.1 rows 3 and 7, NYISO cells only
-- `docs/handoffs/scenario-desk-ledger-2026-09.md` §3, the same two rows (the plan's mirror)
+- `docs/records/forecast/FINDING-scn-ws5a-policy-nyiso-2026-09-07.md` (this document)
+- `docs/records/forecast/scn-ws5a-policy-nyiso/score_gates_2026-09-06.json` (the committed scorer's output)
+- `docs/records/forecast/forecast-scenario-readiness-plan-2026-09.md` §5.1 rows 3 and 7, NYISO cells only
+- `docs/records/misc/scenario-desk-ledger-2026-09.md` §3, the same two rows (the plan's mirror)
 - `docs/codebase-site/data/mechanism-matrix/NYISO.js` — **NYISO's shard only**, four cells:
   `federal_ces`, `federal_ces_target`, `voluntary_clean_demand`, `carbon_price_path`
 

@@ -54,7 +54,7 @@ keys and ten backcast keepers — while an ISO override moves PJM forecast keys 
 Instrument: `scripts/probes/capxd84arm_iso_override_no_op_check.py` (the D78-ARM probe verbatim with
 the field name changed, so the backcast coercion and the OVERRIDE-FIX explicit-caller rule are the
 shipped path's own semantics, not a restatement). Records:
-`docs/handoffs/d84arm/no-op-{expectation,measured}.json`.
+`docs/records/forecast/d84arm/no-op-{expectation,measured}.json`.
 
 | ISO / mode | configs | moved |
 |---|---:|---:|

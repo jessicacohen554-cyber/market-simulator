@@ -30,7 +30,7 @@ Nov/Dec 2022 is partial), so years are comparable.
 Usage::
 
     uv run python scripts/probes/_miso277_c3a2022_congestion.py \
-        --out results/calibration/_miso277_c3a2022_congestion.json
+        --out results/phase0/miso/_miso277_c3a2022_congestion.json
 """
 
 from __future__ import annotations

@@ -78,7 +78,7 @@ $44.2) sits below the overnight λ, so first order it runs at capability and dis
 ## 5. Shards (rule 36) and G-DRIFT
 
 - Seven shards, one per year 2019–2025, pinned to the build PR's merge SHA. The parent never solves (rule 32(a)).
-- Template `docs/handoffs/r-caiso-18/shard-prompt.md`, adding `--set caiso_dsw_overnight_clean_unprinted_arm=true`.
+- Template `docs/records/caiso/r-caiso-18/shard-prompt.md`, adding `--set caiso_dsw_overnight_clean_unprinted_arm=true`.
   `{SRC}` = `rcaiso18_A_tp_2019_2021` (2019–21) / `rcaiso18_A_span` (2022–25). The 2025 shard gets a 50-min budget.
 - New hard stop (THE ARM): the mask probe must print, per year, `<unprinted hod0-5 hours> <depth>`:
   2019 `2190 6566.0`, 2020 `2190 7166.0`, 2021 `696 6187.0`, 2022 `0 6309.0`, 2023 `0 5870.0`, 2024 `0 6205.0`,

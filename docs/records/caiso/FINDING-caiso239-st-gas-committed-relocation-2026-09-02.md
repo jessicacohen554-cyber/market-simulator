@@ -31,7 +31,7 @@ its pre-registered adverse bound, and changes no verdict.
 ## §2 — THE FALSIFICATION, IN FOUR MEASUREMENTS
 
 Instrument: `scripts/probes/_caiso239_st_gas_committed_footprint.py` →
-`results/calibration/_caiso239_st_gas_committed_footprint.json`. **Zero solves.**
+`results/phase0/caiso/_caiso239_st_gas_committed_footprint.json`. **Zero solves.**
 The marginal-rung attribution and the §H bounding form are imported UNCHANGED
 from `_caiso230_abovefloor_decomposition.py` and re-pointed at the caiso-231
 keeper, as caiso-231's DO-NOT-REDO requires. The footprint is established by

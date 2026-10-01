@@ -2,7 +2,7 @@
 screen year across the three legs, unit by unit, from the committed ledgers
 (zero LP). Writes ``exit_diagnosis.json`` beside this file.
 
-    uv run python docs/handoffs/d78/exit_diagnosis.py --ctl <dir> --d58 <dir> --arm <dir>
+    uv run python docs/records/forecast/d78/exit_diagnosis.py --ctl <dir> --d58 <dir> --arm <dir>
 """
 
 from __future__ import annotations

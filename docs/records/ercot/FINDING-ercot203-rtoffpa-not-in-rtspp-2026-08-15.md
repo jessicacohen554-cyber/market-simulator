@@ -4,7 +4,7 @@
 `claude/ercot-203-rtoffpa-completeness-v8e324`, assembled at `origin/main` `315a245` and
 rebased onto `633d12f`.** Dispatched to resolve the protocol gate the
 ercot-202 (T-3b) audit named as its one open ask
-(`docs/FINDING-ercot202-t1-nonviable-2026-08-14.md` §3 limit 1, §4 item 3(a)), and — only
+(`docs/records/ercot/FINDING-ercot202-t1-nonviable-2026-08-14.md` §3 limit 1, §4 item 3(a)), and — only
 on a YES — to charter an RTOFFPA overlay leg.
 
 **THE GATE RETURNED NO. NO MECHANISM WAS CHARTERED, NO `ScenarioConfig` FIELD WAS ADDED,
@@ -39,7 +39,7 @@ framing invited: **the overlay reads exactly the published adder columns that be
 scored basis, and RTOFFPA is not one of them.**
 
 **This determination is not new to the record — it re-derives, from primary sources, a
-conclusion the repo already held.** `docs/FINDING-ercot198-t3b-adder-overlay-audit-2026-08-14.md`
+conclusion the repo already held.** `docs/records/ercot/FINDING-ercot198-t3b-adder-overlay-audit-2026-08-14.md`
 §1 — the *other* T-3b execution, committed one day before ercot-202 — states it outright:
 *"there is no third settled adder; **RTOFFPA** (published in the same report) is not part of
 energy settlement and is excluded (measured anyway: 0.178 $/MWh dw 2024, 0.010 2025)."*
@@ -171,7 +171,7 @@ on the protocol boundary to the hour.
 
 The protocol citation is the load-bearing evidence. It was corroborated against the measured
 series alone by `scripts/probes/ercot203_rtoffpa_basis.py`
-(→ `results/calibration/ercot203_rtoffpa_basis.json`), which decomposes the **measured**
+(→ `results/phase0/ercot/ercot203_rtoffpa_basis.json`), which decomposes the **measured**
 settlement price we score against — `HB_HUBAVG` from
 `data/raw/lmp-data/RTMLZHBSPP_<year>.zip`, ERCOT's *Real-Time Market Load Zone and Hub
 Settlement Point Prices*, i.e. RTSPP itself — onto the published adders and the SCED
@@ -286,7 +286,7 @@ question (rule 19 bars overlaying the published series as a shortcut), not a T-3
 ## 5. RECORD STAMPS MADE BY THIS SESSION
 
 1. **This finding** — the closure record with the verbatim citation.
-2. **`scripts/probes/ercot203_rtoffpa_basis.py`** + `results/calibration/ercot203_rtoffpa_basis.json`
+2. **`scripts/probes/ercot203_rtoffpa_basis.py`** + `results/phase0/ercot/ercot203_rtoffpa_basis.json`
    — the read-only empirical corroboration.
 3. **`scripts/data/fetch_ercot_ordc_reserves.py`** — the intake docstring's **silence on
    `rtoffpa` was the gate itself** (ercot-202 §3 limit 1). It is now filled: each of the
@@ -357,5 +357,5 @@ the next free shorthand after both is **ercot-205**. §4.1's duplicated T-3b exe
 the visible cost of the same tangle, one object-space earlier.)*
 
 **Artifacts produced:** this finding; `scripts/probes/ercot203_rtoffpa_basis.py`;
-`results/calibration/ercot203_rtoffpa_basis.json`; the two docstring stamps; the matrix
+`results/phase0/ercot/ercot203_rtoffpa_basis.json`; the two docstring stamps; the matrix
 base-row note + ERCOT shard `ev`; the `docs/calibration-log/ercot.md` entry. Nothing else.

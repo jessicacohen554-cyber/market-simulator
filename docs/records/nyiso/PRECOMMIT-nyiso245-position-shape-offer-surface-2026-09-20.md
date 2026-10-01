@@ -9,7 +9,7 @@ fixed at the pre-rebase commit**. Both ids are recorded so the ordering stays au
 `results/calibration/nyiso241_ctcommitted_span`, years {2022, 2023, 2024, 2025}. **UNCHANGED at
 the time of writing.** ISO tier (2023–2025, rule 30 `[R-TOUCHPOINT-FOLD]` (c)) = **CALIBRATED**,
 C3c the lone ledgered caveat.
-**Predecessor** `docs/RESULT-nyiso244-the-object-is-in-the-body-not-the-top-2026-09-20.md` §7,
+**Predecessor** `docs/records/nyiso/RESULT-nyiso244-the-object-is-in-the-body-not-the-top-2026-09-20.md` §7,
 which set `measured_offer_surface` NYISO `U` → `G` and wrote a **two-limb re-open condition**.
 
 **THIS FILE IS COMMITTED BEFORE ANY GATED NUMBER BELOW IS COMPUTED.** Every threshold, every

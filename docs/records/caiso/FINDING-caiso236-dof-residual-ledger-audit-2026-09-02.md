@@ -2,7 +2,7 @@
 
 **Session caiso-236, 2026-09-02. Branch `claude/caiso-dof-residual-audit-7nvz6x`,
 cut fresh from `origin/main` (`4692598f`). Pre-registered in
-`results/calibration/PRECOMMIT-caiso236-dof-residual-ledger-audit-2026-09-02.md`,
+`docs/records/caiso/PRECOMMIT-caiso236-dof-residual-ledger-audit-2026-09-02.md`,
 pushed BEFORE any classification was computed.**
 
 **NO SOLVE WAS RUN. NO SCORED NUMBER MOVED. C3a WAS NOT THIS SESSION'S OBJECT
@@ -362,4 +362,4 @@ owner and left alone: `offer_curve_by_group`, the `ST_GAS 0.81` committed band,
 
 *Written 2026-09-02, session caiso-236. Instrument:
 `scripts/probes/_caiso236_dof_residual_classifier.py`. Pre-registration:
-`results/calibration/PRECOMMIT-caiso236-dof-residual-ledger-audit-2026-09-02.md`.*
+`docs/records/caiso/PRECOMMIT-caiso236-dof-residual-ledger-audit-2026-09-02.md`.*

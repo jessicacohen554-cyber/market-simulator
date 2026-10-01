@@ -8,16 +8,16 @@ keeper) and the one arm (`results/calibration/nyiso189_steam_identity`,
 registered `2026-09-05-nyiso-189-steam-identity`). **Keeper at entry:
 `2026-09-04-nyiso-188-combined`** — CALIBRATED, grade 7, fails 0, C3c
 ledgered; C3a +7.9 / +3.8 / −6.9 %; C1-2024 `CC_REGULAR` +2.05 TWh.
-**Pre-registration:** `results/calibration/PREREG-nyiso189-steam-collapse-identity-ab.md`,
+**Pre-registration:** `docs/records/nyiso/PREREG-nyiso189-steam-collapse-identity-ab.md`,
 pushed at `a73d1df0` (now `46930e8` after the rebase) BEFORE the mechanism was
 built and before any solve; every bar below is read verbatim. **Owner ruling
 (this sitting, 2026-09-05, `AskUserQuestion` on the three questions of
-`docs/DECISION-CARD-nyiso189-bethlehem-vintage-form-2026-09-04.md` §3):**
+`docs/records/nyiso/DECISION-CARD-nyiso189-bethlehem-vintage-form-2026-09-04.md` §3):**
 form **B2**, the plant's own **T1-clean median** steam share, the
 plant-history bound **authorized**. **Machine records:** the bundle's computed
 `calibration_attestation.json` (`scripts/gen_nyiso189_attestation.py`, every
 premise computed, refuses on any failed check),
-`results/calibration/_nyiso189_ab_report.json`
+`results/phase0/nyiso/_nyiso189_ab_report.json`
 (`scripts/probes/nyiso189_ab_report.py`), the committed artifact
 `data/raw/_processed-legacy/egrid_steam_collapse_heat_rates_NYISO.csv`
 (`scripts/data/derive_egrid_steam_collapse_heat_rates.py --check` reproduces).

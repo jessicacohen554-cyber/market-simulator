@@ -8,7 +8,7 @@ position definition). Branch `claude/capx-d75-pjm-vre-elcc-x1lilr`, fresh off `o
 **Pushed BEFORE any solve, and — as it turns out — before any build.** Every number below is
 measured from committed artifacts, from the code at HEAD, or from a primary PJM publication whose
 sha256 is recorded. **No LP has been run in this lane, and none will be**: phase 0 stops the card
-short of the build (§5). Instrument: `docs/handoffs/d75/vre-elcc-vintage-phase0-2026-09-06.{py,json}`.
+short of the build (§5). Instrument: `docs/records/forecast/d75/vre-elcc-vintage-phase0-2026-09-06.{py,json}`.
 
 ---
 

@@ -2,7 +2,7 @@
 
 **Filed:** 2026-08-30, session nyiso-156 (ruling-execution continuation).
 **Authorization being executed:** the owner's Q1 ruling on
-`docs/DECISION-CARD-nyiso156-2025-offer-level-2026-08-25.md`, delivered
+`docs/records/nyiso/DECISION-CARD-nyiso156-2025-offer-level-2026-08-25.md`, delivered
 2026-08-30 via the in-session decision card: **OPTION A — "Authorize winter
 intake"**, on the option text *"Authorize/fund the BLOCKER-B identification
 intake: MyNYISO-grade access to the as-enforced sub-zonal in-city commitment /
@@ -15,7 +15,7 @@ before any work runs.
 Jan+Feb 2025 downstate under-pricing worth **−$3.92/MWh of the annual
 load-weighted mean** (whole-month, sustained; upstate near-exact; model
 gradient $0.81 vs actual $14.83), per
-`results/calibration/_nyiso156_offer_level_phase0.json` M1/M4/M6. Closing this
+`results/phase0/nyiso/_nyiso156_offer_level_phase0.json` M1/M4/M6. Closing this
 face alone returns C3a-2025 to ≈ −5.3 % (in band) and the determination to
 CALIBRATED via the C3c standing rule (card §4).
 
@@ -99,7 +99,7 @@ percentages need no intake (cited constants).
 
 **What it is.** The in-city (Con Edison, NYC Zone J) sub-zonal commitment
 formation — BLOCKER-B proper. nyiso-97
-(`docs/FINDING-nyiso97-load-pocket-identification-2026-07-29.md`) established:
+(`docs/records/nyiso/FINDING-nyiso97-load-pocket-identification-2026-07-29.md`) established:
 the as-enforced requirements live in the **Applications of the Reliability
 Rules (AORR)** table, reachable only through the NYISO **Reports & Info**
 page behind a **MyNYISO login** (nyiso.com/reports-information →

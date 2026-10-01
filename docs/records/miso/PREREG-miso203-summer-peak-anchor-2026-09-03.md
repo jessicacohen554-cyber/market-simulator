@@ -182,4 +182,4 @@ verdict, rejections included.
 ---
 
 **Probe:** `scripts/probes/_miso203_summer_peak_anchor_phase0.py` ·
-**Record:** `results/calibration/_miso203_summer_peak_anchor_phase0.json`
+**Record:** `results/phase0/miso/_miso203_summer_peak_anchor_phase0.json`

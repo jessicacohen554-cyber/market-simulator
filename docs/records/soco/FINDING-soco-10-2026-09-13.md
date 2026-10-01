@@ -15,7 +15,7 @@ parameters derived (rule 23 `[R-FROZEN-DERIVE]`). No shared record touched (coll
 | `docs/multi-iso/soco-data-audit.md` | **NEW** — the Phase-0 census |
 | `docs/multi-iso/00-iso-addition-protocol.md` | §0 SOCO row + §0 narrative note + the §3 ISO-count sentence |
 | `docs/multi-iso/01-data-needs-and-upload-manifest.md` | SOCO rows in §2 (EIA-930), §3 (CEMS + note), §4 (gas), §5 (zonal), §8 (status note) |
-| `docs/handoffs/FINDING-soco-10-2026-09-13.md` | this file |
+| `docs/records/soco/FINDING-soco-10-2026-09-13.md` | this file |
 
 ---
 
@@ -293,7 +293,7 @@ It was performed after the push — remote blob line count + SHA-256 compared to
 | `docs/multi-iso/soco-data-audit.md` | 1,174 | `85dd8b5e524047a7` |
 | `docs/multi-iso/00-iso-addition-protocol.md` | 304 | `e2dea1829bf2e4ab` |
 | `docs/multi-iso/01-data-needs-and-upload-manifest.md` | 307 | `b45bfeafdcaf44e5` |
-| `docs/handoffs/FINDING-soco-10-2026-09-13.md` | 401 | `997acfe786ad735a` (this table's own edit re-hashes it; the verified value is the pre-edit blob) |
+| `docs/records/soco/FINDING-soco-10-2026-09-13.md` | 401 | `997acfe786ad735a` (this table's own edit re-hashes it; the verified value is the pre-edit blob) |
 
 Transport: `git push` (rebased onto `origin/main`, so the pack carries only this lane's
 objects — ~95 KB of text, well inside the small-pack case CLAUDE.md licenses).

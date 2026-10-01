@@ -4,7 +4,7 @@
 **Date** 2026-09-17. **Base** `origin/main` at `73281357`.
 **Incumbent keeper** `2026-09-16-nyiso-238-hydro-budget` (bundle `results/calibration/nyiso238_hydroperiod_span`), years {2022, 2023, 2024, 2025}.
 **Owner ruling that authorizes this** (2026-09-17, verbatim): *"Is this a recommended keeper candidate? If so plz promote. If structural integrity improves but gates regress that may still be a keeper.."* — given on
-`docs/FINDING-nyiso239-c1-2022-bench-oil-attribution-2026-09-16.md`, whose §7 put exactly this
+`docs/records/nyiso/FINDING-nyiso239-c1-2022-bench-oil-attribution-2026-09-16.md`, whose §7 put exactly this
 question (Q1 land the repair, Q2 re-solve to realize it).
 
 **THIS IS PUSHED BEFORE THE FIRST LP.** Its commit SHA is the `source_revision` every shard pins.
@@ -59,7 +59,7 @@ The selecting evidence is a fuel IDENTITY, a SHAPE and a source the model never 
 * **SHAPE**, which no level scale can fake: model(gas+oil) vs 930(gas+oil) beats model(gas) vs
   930(gas) on **r AND NRMSE in all four years, 8 of 8**.
 
-Full record: `docs/FINDING-nyiso239-c1-2022-bench-oil-attribution-2026-09-16.md`; probe
+Full record: `docs/records/nyiso/FINDING-nyiso239-c1-2022-bench-oil-attribution-2026-09-16.md`; probe
 `scripts/probes/nyiso239_c1_bench_oil_phase0.py`.
 
 ---

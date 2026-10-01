@@ -8,7 +8,7 @@
 your solve"* — issued in response to this lane's recommendation to defer to lane SPP-58. SPP-58 is
 dead, so `spp_curtailment_ceiling` is unowned and this lane takes it.
 
-**PRIOR IN THIS LANE:** `docs/handoffs/FINDING-spp-63-2026-09-10.md` (pushed at `ec0f1df2`) refuted
+**PRIOR IN THIS LANE:** `docs/records/spp/FINDING-spp-63-2026-09-10.md` (pushed at `ec0f1df2`) refuted
 the chartered object **R-az** (the ST_GAS offer / commitment defect) at phase 0 on measured
 arithmetic, zero LP. This PRECOMMIT does not re-open it.
 

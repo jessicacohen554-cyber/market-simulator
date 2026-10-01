@@ -2,7 +2,7 @@
 
 **Date:** 2026-09-04 · **Lane:** `claude/y4-caiso241-duties-nvcroc` · **Pin:** `a8464861`
 **Executes:** owner rulings **R-AB / R-AE** (2026-09-04); board
-`docs/handoffs/audit-program-director-board-2026-08.md` v24, item Y-4 + the
+`docs/records/governance/audit-program-director-board-2026-08.md` v24, item Y-4 + the
 path-filter addendum. The two duties are the caiso-241 promoting lane's
 (R-T; R-X route), discharged here under the standing audit-lane exception
 (#4488 / v23 job 0 precedent).
@@ -62,7 +62,7 @@ filed GAP on the identical reason.
 Fork measured at the pin: the only consumers are `pipeline/backcast_config.py`
 (role `backcast` in `SOURCE_ROLES`) and the two calibration CLIs; `runner.py`
 never names the field and nothing else under `src/market_sim/` does either.
-Finding: `docs/FINDING-caiso-ct-peaker-committed-measured-parity-2026-09.md`.
+Finding: `docs/records/caiso/FINDING-caiso-ct-peaker-committed-measured-parity-2026-09.md`.
 
 `_FR22_OPEN_UNACCOUNTED` was **not** extended; no other row was touched.
 
@@ -86,7 +86,7 @@ list, and it makes six jobs report green having tested nothing — a false green
 construction. That is an owner decision, not a lane's.
 
 **Taken instead:** three paths added to `ci.yml`'s `pull_request.paths` —
-`docs/handoffs/audit-program-director-board-2026-08.md`,
+`docs/records/governance/audit-program-director-board-2026-08.md`,
 `docs/model-audit-release-plan-2026-08.md`, `docs/FINDING-*.md`. Deliberately
 **not** `docs/**`: running the suite on every docs PR is the runner-minute cost
 the repo CI policy exists to avoid. Cost ≈ 10 min per records or finding PR. The

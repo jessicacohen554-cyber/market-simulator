@@ -6,10 +6,10 @@
 > REJECTED-AS-ARMED G-SHED verdict; both records stand). This lane
 > diagnoses and repairs the keeper's one failing kill gate — the
 > manufactured 2024 h3066 load shed — under
-> `docs/PRECOMMIT-ercot223-event-release-guard-2026-08-19.md` (pushed +
+> `docs/records/ercot/PRECOMMIT-ercot223-event-release-guard-2026-08-19.md` (pushed +
 > blob-verified before any solve).
 > Phase-0 artifacts: `scripts/probes/ercot223_shed_phase0.py` →
-> `results/calibration/ercot223_shed_phase0.json` (read-only, committed
+> `results/phase0/ercot/ercot223_shed_phase0.json` (read-only, committed
 > bundles + committed measured inputs only, no LP).
 
 ## 1. The question
@@ -151,7 +151,7 @@ story and the not-a-shed-hour-patch argument: precommit §1.
     0.723). The A/B is therefore internally coherent at HEAD with the
     keeper's exact baselines.
 
-## 7. Gates and verdict (`results/calibration/ercot223_gates.json`)
+## 7. Gates and verdict (`results/phase0/ercot/ercot223_gates.json`)
 
 | gate | result | verdict |
 |---|---|---|

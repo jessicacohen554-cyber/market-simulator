@@ -15,7 +15,7 @@ audit and the promotion rule below are declared here so none of them can be writ
 
 | precondition | check | state |
 |---|---|---|
-| SPP-41 LANDED (PR #5497) | `origin/main:docs/handoffs/FINDING-spp-41-2026-09-07.md` exists; `actuals._screen_fuel_spike_columns` live at HEAD | **MET** |
+| SPP-41 LANDED (PR #5497) | `origin/main:docs/records/spp/FINDING-spp-41-2026-09-07.md` exists; `actuals._screen_fuel_spike_columns` live at HEAD | **MET** |
 | SPP-42 LANDED (PR #5471) | `origin/main:results/calibration/spp42_crosswalk_B/meta.json` exists; `keepers/SPP.json` keyed to `2026-09-07-spp-2-crosswalk-hydro` | **MET** |
 | Rule 12 — no concurrent per-plant SPP solve | `ps aux` clean in this isolated container; 15 GB free vs keeper-2's measured 5.55 GB peak RSS. Containers are isolated, so a solve in another session cannot contend for this host's RAM; the desk's concurrency cap is satisfied by construction | **MET** |
 

@@ -295,4 +295,4 @@ pass; the guard stays stdlib-only.
 ---
 
 Evidence in-repo: `scripts/probes/_nyiso107_hydro_basis_audit.py`;
-`results/calibration/_nyiso107_hydro_basis_audit.json`.
+`results/phase0/nyiso/_nyiso107_hydro_basis_audit.json`.

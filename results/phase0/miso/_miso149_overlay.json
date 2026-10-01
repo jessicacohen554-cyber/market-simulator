@@ -1,6 +1,6 @@
 {
  "session": "miso-149",
- "prereg": "results/calibration/PREREG-miso149-overlay-contradiction-2026-08-10.md",
+ "prereg": "docs/records/miso/PREREG-miso149-overlay-contradiction-2026-08-10.md",
  "prereg_commit": "318c0542",
  "keeper": "2026-08-09-miso-148-basis-aware",
  "keeper_bundle": "results/calibration/miso148_basis_B",

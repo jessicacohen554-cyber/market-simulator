@@ -1,7 +1,7 @@
 # RESULT — R-ERCOT-13: 2019 onto the measured reserve inputs, PROMOTED; ISO still NOT-YET
 
 **Session:** R-ERCOT-13, 2026-09-28.
-**PRECOMMIT:** `docs/handoffs/PRECOMMIT-r-ercot-13-2019-reserve-inputs-2026-09-28.md`, pinned SHA `dac2fa2c234c590920cbc944dd64c82aeaa95b72`.
+**PRECOMMIT:** `docs/records/ercot/PRECOMMIT-r-ercot-13-2019-reserve-inputs-2026-09-28.md`, pinned SHA `dac2fa2c234c590920cbc944dd64c82aeaa95b72`.
 **Keeper:** `2026-09-28-r-13-2019-reserve` (bundle `results/calibration/r_ercot13_span`, 2019–2025). It supersedes `2026-09-28-r-12-frontera-membership`.
 **Promotion basis:** the owner's standing instruction carried in the handoff, verbatim *"Is it an improvement? Then promote"*, with the fixed PRECOMMIT §5 rule met. No decision card was needed: every scored 2019 price criterion improves, and every other year is identical.
 

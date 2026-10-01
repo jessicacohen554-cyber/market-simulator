@@ -14,7 +14,7 @@ and a matrix cell.
 ## §0 — session numbering, and a PRECONDITION CORRECTION
 
 The dispatching prompt opened this lane as "caiso-168". That id is **SPENT**:
-`results/calibration/FINDING-caiso168-storage-bid-belly-dual-2026-08-04.md` is
+`docs/records/caiso/FINDING-caiso168-storage-bid-belly-dual-2026-08-04.md` is
 on `origin/main`, as is caiso-167. This lane is therefore **caiso-170**.
 
 **The prompt's stated PRECONDITION does not reproduce from the repository, and

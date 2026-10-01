@@ -217,7 +217,7 @@ pushed its bundle per rule 34(a), which is the correction.
 
 ## 8. G-DRIFT (rule 29(b)) — recorded BEFORE the solve
 
-Full audit: `docs/handoffs/ADDENDUM-soco40-armB-relaunch-and-gdrift-2026-09-16.md` §3, pushed as
+Full audit: `docs/records/soco/ADDENDUM-soco40-armB-relaunch-and-gdrift-2026-09-16.md` §3, pushed as
 the pin `71884144abf4f08a4063d3c7a32e03a2c2f5d04d` before the arm was launched.
 
 Arm A solved on `13198951…`; the keeper is pinned to `71884144…` (= `origin/main` `5e7cbb7d…` plus
@@ -325,4 +325,4 @@ One criterion row still fails: 2023 CT_PEAKER at +8.221 TWh, +3.4 pp of share. I
 
 Two things are recorded rather than absorbed. 2025 carries an EIA-923 hydro input hole named in the PRECOMMIT before the solve — five plants and 0.327 TWh resolve against 6.012 TWh measured, where the other years resolve forty-two — which coal backfills and which posts 8,930 MWh of VOLL slack across thirteen summer afternoon hours; no repair was armed, because arming a one-year input repair inside the first keeper is a desk-queue decision. And disclosure R-w is discharged by measurement: lane NWPP-39's zero-baseline guard landed between the unsplit arm's basis and this keeper's pin, and where the unsplit arm repaired away both SOCO NG: OIL false positives, this run repairs neither while the genuine 2025 NG: NG spikes still fire in both. That hunk was audited and declared as the single LIVE G-DRIFT item before the solve, not discovered in the result.
 
-The session also lost an arm. The first coal-split shard was archived mid-solve, in violation of rule 33(b), before it had pushed anything, and no branch survived; the owner was given the eleven-minute cost and ruled re-launch. The replacement pushed its bundle per rule 34(a), which is the correction, and all three of the lane's bundles — screen, unsplit arm and keeper — are retrievable by immutable SHA, so a promotion from here costs zero re-solves. Record: `docs/handoffs/FINDING-soco-40-2026-09-16.md`.
+The session also lost an arm. The first coal-split shard was archived mid-solve, in violation of rule 33(b), before it had pushed anything, and no branch survived; the owner was given the eleven-minute cost and ruled re-launch. The replacement pushed its bundle per rule 34(a), which is the correction, and all three of the lane's bundles — screen, unsplit arm and keeper — are retrievable by immutable SHA, so a promotion from here costs zero re-solves. Record: `docs/records/soco/FINDING-soco-40-2026-09-16.md`.

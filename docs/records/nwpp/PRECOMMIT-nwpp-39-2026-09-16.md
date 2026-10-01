@@ -169,7 +169,7 @@ Otherwise it **restores real data**. A single re-admitted artifact is a STOP, pe
   the guard line in `_screen_fuel_spike_columns`, the docstring's "known defect" paragraph rewritten
   as the repair, and the "no operating scale" sentence extended.
 * `tests/unit/data/test_eia930_fuel_spike_screen.py`: the pins in G4, plus a live SOCO 2024 pin.
-* `docs/handoffs/PRECOMMIT-nwpp-39-2026-09-16.md` (this), `FINDING-nwpp-39-2026-09-16.md`.
+* `docs/records/nwpp/PRECOMMIT-nwpp-39-2026-09-16.md` (this), `FINDING-nwpp-39-2026-09-16.md`.
 
 Not touched: `frames.py` (the seam does not need to know about the guard — it is inside the one
 function), `demand.py`, any registry, config, verdict script, `frontend/`, the plan, the ledger, the

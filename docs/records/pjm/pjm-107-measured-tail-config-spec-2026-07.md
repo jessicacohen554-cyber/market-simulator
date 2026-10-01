@@ -1,7 +1,7 @@
 # pjm-107/108/109 run-config spec — measured-tail cycle (gas daily shape + CC_LIKE belt)
 
 **Date:** 2026-07-14 (Fable design session; owner approval required before any
-solve). **Grounding:** `docs/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md`.
+solve). **Grounding:** `docs/records/pjm/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md`.
 **Base:** the `2026-07-13-pjm-105-symmetric-net` keeper recipe, replayed
 byte-faithfully off its bundle meta (the `_pjm105_symmetric_net_probe.py`
 pattern: pjm-98 meta replay + the G-22 flag set + symmetric-net virtuals).

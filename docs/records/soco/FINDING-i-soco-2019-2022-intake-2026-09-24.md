@@ -2,8 +2,8 @@
 
 **Lane:** I-SOCO (data intake). **Date:** 2026-09-24. **Base:** `origin/main` @ `8ebb7805`.
 **Charter:** owner instruction 2026-09-24, "every ISO's backcast covers 2019–2025 on year-correct
-inputs" (`docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md`). Work list: the
-missing-input table of R-SOCO's `docs/handoffs/r-soco/PRECOMMIT-r-soco-2026-09-24.md` §2 (branch
+inputs" (`docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md`). Work list: the
+missing-input table of R-SOCO's `docs/records/soco/r-soco/PRECOMMIT-r-soco-2026-09-24.md` §2 (branch
 `claude/r-soco-2019-2025-inputs`), which refused 2019–2022 with
 `ValueError: No EIA-930 data for ISO 'SOCO' in year 2022`. SOCO addition plan §6 **row 9**.
 **LP spent: ZERO.** Nothing solved, scored or registered; no keeper, matrix or dashboard file touched.

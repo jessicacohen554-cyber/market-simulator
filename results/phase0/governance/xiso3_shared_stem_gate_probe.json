@@ -1,6 +1,6 @@
 {
   "probe": "xiso-3 O-1 shared-stem gate readability (CONSTRUCTION, no LP)",
-  "prereg": "results/calibration/PREREG-xiso3-shared-stem-backlog-2026-08-04.md",
+  "prereg": "docs/records/governance/PREREG-xiso3-shared-stem-backlog-2026-08-04.md",
   "keepers": {
     "ERCOT": "2026-08-03-ercot158-pool-arm",
     "CAISO": "2026-08-04-caiso164-zonal-loss-surface"

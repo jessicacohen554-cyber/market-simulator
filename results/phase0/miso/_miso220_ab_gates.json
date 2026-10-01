@@ -1,6 +1,6 @@
 {
   "probe": "miso-220 A/B gates - non-steam fossil x1.10 offer lift",
-  "prereg": "results/calibration/PREREG-miso220-nonsteam-offer-lift-2026-09-05.md",
+  "prereg": "docs/records/miso/PREREG-miso220-nonsteam-offer-lift-2026-09-05.md",
   "control": "results/calibration/miso217_intermphys_B",
   "arm": "results/calibration/miso220_nonsteamlift_B",
   "kills": {

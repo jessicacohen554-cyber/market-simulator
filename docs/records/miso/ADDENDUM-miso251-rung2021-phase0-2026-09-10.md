@@ -1,7 +1,7 @@
 # ADDENDUM — miso-251 RUNG-2021 shard: phase-0 heartbeat (ZERO LP)
 
 **Written and pushed BEFORE the first LP is built.** This is the shard's heartbeat under
-`docs/handoffs/shard-launcher-protocol-2026-09-09.md` §4: a shard that was created is not a shard
+`docs/records/misc/shard-launcher-protocol-2026-09-09.md` §4: a shard that was created is not a shard
 that is working, so the branch carries evidence of a live, verified container before it spends any
 solve time.
 
@@ -9,9 +9,9 @@ solve time.
 SHARD           : RUNG-2021 of session miso-251
 ISO             : MISO      DATA PROFILE: miso      YEAR: 2021
 BRANCH          : claude/miso251-tp2021
-CHARTER         : docs/ADDENDUM-miso251-the-falsifiable-regime-test-2026-09-10.md  (the PREDICTION)
-                  docs/PRECOMMIT-miso251-holdout-ladder-2026-09-10.md              (the ladder)
-                  docs/RESULT-miso251-screen2022-2026-09-10.md                     (the 2022 rung)
+CHARTER         : docs/records/miso/ADDENDUM-miso251-the-falsifiable-regime-test-2026-09-10.md  (the PREDICTION)
+                  docs/records/miso/PRECOMMIT-miso251-holdout-ladder-2026-09-10.md              (the ladder)
+                  docs/records/miso/RESULT-miso251-screen2022-2026-09-10.md                     (the 2022 rung)
 SIBLING         : RUNG-2020 on claude/miso251-tp2020 — never touched by this shard.
 ```
 

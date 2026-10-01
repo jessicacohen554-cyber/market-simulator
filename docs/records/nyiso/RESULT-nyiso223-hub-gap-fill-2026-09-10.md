@@ -2,8 +2,8 @@
 
 **Session:** nyiso-223 · **ISO:** NYISO · **Date:** 2026-09-10
 **Arm:** `nyiso_hub_gap_month_level=true` on the keeper recipe, solved **2022 · 2023 · 2024 · 2025**
-**Pre-registration:** `docs/PRECOMMIT-nyiso223-hub-gap-fill-2026-09-10.md`, pushed at
-`ce4779ec` **before the first LP**. Correction: `docs/ADDENDUM-nyiso223-basis-correction-2026-09-10.md`.
+**Pre-registration:** `docs/records/nyiso/PRECOMMIT-nyiso223-hub-gap-fill-2026-09-10.md`, pushed at
+`ce4779ec` **before the first LP**. Correction: `docs/records/nyiso/ADDENDUM-nyiso223-basis-correction-2026-09-10.md`.
 **Control:** the committed keeper `2026-09-09-nyiso-221-fuelvintage-span` (G-CTRL form 4, all
 G-DRIFT hunks INERT). **No control solve was spent.**
 **Execution:** rule 32 `[R-SHARD]` — four per-year shards, the parent solved nothing.
@@ -111,7 +111,7 @@ The 2022 shard reported `CC_REGULAR` worsening **+0.378 TWh**. It compared `clas
 dispatch classes) against `gmModel` (the scorer's classes, which carve out an `OTHER_FOSSIL`
 bucket). Measured on **two independent committed controls**, that offset is **+0.3175** and
 **+0.3292** TWh — reproducing to 0.012 TWh, with totals identical across bases on both. Corrected,
-the move is **≈ +0.05 TWh**. Full record: `docs/ADDENDUM-nyiso223-basis-correction-2026-09-10.md`.
+the move is **≈ +0.05 TWh**. Full record: `docs/records/nyiso/ADDENDUM-nyiso223-basis-correction-2026-09-10.md`.
 
 Both 2023 and 2025 shards independently reproduced the same two-basis hazard on their own years
 (D-2 `class_total_twh` differs from `class_hourly` by −1.87 / +2.04 TWh on CC_REGULAR / ST_GAS in

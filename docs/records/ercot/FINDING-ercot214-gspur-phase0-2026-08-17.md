@@ -7,7 +7,7 @@ fail set {C3b-2023} alone, C3c-2025 the single ledgered CAVEAT. **Phase-0
 READ-ONLY as dispatched: no LP, no solve, no year scored, no run registered,
 no bundle modified, no cell verdict minted** (the ercot-163/170/208 no-LP
 precedent). Committed probe: `scripts/probes/ercot214_gspur_phase0.py` →
-`results/calibration/ercot214_gspur_phase0.json`. Everything below is read
+`results/phase0/ercot/ercot214_gspur_phase0.json`. Everything below is read
 from the two registered ercot-213 bundles' committed `hourly/` sidecars, the
 committed actual-RT parquet, and the published NP6-905-CD telemetry already
 on disk — no new data, no measured input touched.

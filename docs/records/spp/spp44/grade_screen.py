@@ -1,14 +1,14 @@
 """SPP-44 PRECOMMIT §4: grade the rule-29(a) screen (or any full-span year) against
 the ex-ante STOP gate, beside its control.
 
-usage: uv run python docs/handoffs/spp44/grade_screen.py <arm_bundle> <control_bundle> <year>
+usage: uv run python docs/records/spp/spp44/grade_screen.py <arm_bundle> <control_bundle> <year>
 
 Reads ONLY: the two bundles' ``hourly/class_hourly_<year>.parquet`` and
 ``hourly/system_<year>.parquet``; the arm's ``floors/<year>_P1.npz`` (the LP's
 own min_gen + mechanism ids) and ``legitimacy_diagnostics.json`` (written by
 ``scripts/legitimacy_diagnostics.py --bundle <arm> --iso SPP --years <year>``
 before this runs); the CAMPD plant online matrix
-``docs/handoffs/spp44/campd_online_<year>.parquet``; the committed bench part
+``docs/records/spp/spp44/campd_online_<year>.parquet``; the committed bench part
 ``frontend/data/backcast/bench/SPP/<year>.json.gz``; and the EIA-930 family
 hourlies through the SAME loader the registration path uses. Every number is
 printed; each leg is graded exactly as the PRECOMMIT wrote it.
@@ -82,7 +82,7 @@ z = np.load(arm / "floors" / f"{year}_P1.npz", allow_pickle=False)
 mg, mech = z["min_gen"], z["mechanism"]
 pcode = z["plant_code"]
 pgroup = z["plant_group"] if "plant_group" in z else np.array([""] * len(pcode))
-on = pd.read_parquet(REPO / "docs/handoffs/spp44" / f"campd_online_{year}.parquet")
+on = pd.read_parquet(REPO / "docs/records/spp/spp44" / f"campd_online_{year}.parquet")
 bridge = (mech == MECH_SPP_GAS_COMMITMENT_BRIDGE) & (mg > 0)
 V_twh = float(mg[bridge].sum()) / 1e6
 print(

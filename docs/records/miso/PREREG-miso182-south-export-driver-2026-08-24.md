@@ -56,7 +56,7 @@ spread arbitrage, never a residual fit.
 ## 2. The instrument (frozen construction)
 
 One read-only probe, `scripts/probes/_miso182_south_export_driver.py` →
-`results/calibration/_miso182_south_export_driver.json`. Every quantity is a
+`results/phase0/miso/_miso182_south_export_driver.json`. Every quantity is a
 measurement of committed artifacts against measured actuals.
 
 **Hour key (frozen, no re-solve).** The keeper's **−1 h** DIBA key, already

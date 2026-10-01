@@ -8,7 +8,7 @@ Charter lane: the ambient-derate class scope, identified on MISO's own data.
 `data/raw/`.** MISO keeper unchanged at **`2026-08-05-miso-132b-cc-committed`**
 (bundle `results/calibration/miso132_ccmin_B`).
 
-**PREREG** `results/calibration/PREREG-miso139-ambient-derate-class-scope-2026-08-06.md`,
+**PREREG** `docs/records/miso/PREREG-miso139-ambient-derate-class-scope-2026-08-06.md`,
 pushed at **`6263f43d`** BEFORE any adjudicating statistic, with a two-sided
 prior carrying **four falsifiable numeric predictions**, the convention decision
 rule fixed on basis consistency in advance, and four look-alike traps named with
@@ -452,6 +452,6 @@ parameter***.
 **Probes** `scripts/probes/_miso139_derate_gates.py`,
 `scripts/probes/_miso139_g2_binding.py`,
 `scripts/probes/_miso139_successor_bound.py` ·
-**Records** `results/calibration/_miso139_derate_gates.json`,
+**Records** `results/phase0/miso/_miso139_derate_gates.json`,
 `_miso139_g2_binding.json`, `_miso139_successor_bound.json` ·
-**PREREG** `results/calibration/PREREG-miso139-ambient-derate-class-scope-2026-08-06.md` @ `6263f43d`.
+**PREREG** `docs/records/miso/PREREG-miso139-ambient-derate-class-scope-2026-08-06.md` @ `6263f43d`.

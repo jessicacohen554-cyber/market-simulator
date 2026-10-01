@@ -1,6 +1,6 @@
 {
  "lane": "SPP-106",
- "design": "docs/handoffs/DESIGN-spp-106-offer-side-unavailability-2026-10-01.md",
+ "design": "docs/records/spp/DESIGN-spp-106-offer-side-unavailability-2026-10-01.md",
  "bundle": "results/calibration/spp100_arm_span",
  "mmu_digitized": {
   "rated_conv": {

@@ -6,8 +6,8 @@ committed artifacts: the keeper bundle `results/calibration/miso109_hy_level_B`,
 `data/raw/campd-unit-level/`, the EIA-860 generator parquet, and
 `data/raw/eia-930-hourly/MISO hourly.parquet`. Probe
 `scripts/probes/_miso115_trough_marginal_unit.py`; transcript
-`results/calibration/PROBE-miso115-trough-marginal-unit-2026-08-02.txt`;
-pre-registration `results/calibration/PREREG-miso115-trough-marginal-unit-2026-08-02.md`,
+`results/phase0/miso/PROBE-miso115-trough-marginal-unit-2026-08-02.txt`;
+pre-registration `docs/records/miso/PREREG-miso115-trough-marginal-unit-2026-08-02.md`,
 written and committed **before** the probe ran.
 
 **Keeper UNCHANGED** (`2026-07-31-miso-109b-hy-level`). Rule 15: no run

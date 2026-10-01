@@ -1,9 +1,9 @@
 # RESULT — SPP-72, card R-bf (demand leg of the stack-climb defect): DEMAND IS NOT THE CAUSE
 
-**Zero LP.** Pre-registration: `docs/handoffs/PRECOMMIT-spp-72-demand-tightness-2026-09-22.md`,
+**Zero LP.** Pre-registration: `docs/records/spp/PRECOMMIT-spp-72-demand-tightness-2026-09-22.md`,
 pushed at `a5478fab` before any tightness number was read. Base `aaaaeb61`. Probe:
-`scripts/probes/_spp72_demand_tightness.py`; output `results/calibration/_spp72_demand_tightness_phase0.json`.
-Charter: `docs/RESULT-xiso-stack-climb-attribution-2026-09-22.md` §10, lever (c). This is the
+`scripts/probes/_spp72_demand_tightness.py`; output `results/phase0/spp/_spp72_demand_tightness_phase0.json`.
+Charter: `docs/records/governance/RESULT-xiso-stack-climb-attribution-2026-09-22.md` §10, lever (c). This is the
 first time demand has been measured for this question in any ISO.
 
 ---

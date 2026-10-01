@@ -102,7 +102,7 @@ deepening**, and repairing it will not restore the class default. It is a rule-1
 ## 5. Lever 2 (CT under / CC over): Clark 2322's CC block is priced at an impossible heat rate
 
 Zero LP, from the two payloads, the benchmark and a fleet-only rebuild of keeper #18
-(`docs/handoffs/nwppnext14/ccfloor_census.json`).
+(`docs/records/nwpp/nwppnext14/ccfloor_census.json`).
 
 - At #18, Clark's CC_REGULAR block (462 MW) dispatches 3.69 TWh in **every** year, at 70–75 % CF in every hour
   (min 70 %). EIA-923 CC net is 0.43–0.86 TWh. At #17 the same block was nearly unavailable, because its GT-peaker

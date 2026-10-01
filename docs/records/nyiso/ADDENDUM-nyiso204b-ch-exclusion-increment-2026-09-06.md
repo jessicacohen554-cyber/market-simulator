@@ -1,13 +1,13 @@
 # ADDENDUM nyiso-204b — three additions to the merged Capital_Hudson refusal: the narrowed **2480-only** fallback is foreclosed, the lay-up census **flags the limb's own backbone**, and 2625 is **Bowline**, not Bethlehem
 
-**Parent (merged, PR #5199):** `docs/FINDING-nyiso204-ch-layup-exclusion-2026-09-06.md`.
+**Parent (merged, PR #5199):** `docs/records/nyiso/FINDING-nyiso204-ch-layup-exclusion-2026-09-06.md`.
 **Session:** nyiso-204b, `claude/capital-hudson-exclusion-7uaogz`, 2026-09-06 — a **parallel lane
 on the same object**, run independently and landing second.
 **Keeper UNCHANGED: `2026-09-06-nyiso-202-startup-aware`.** ZERO LP. Nothing registered, no
 `ScenarioConfig` field, no coefficient edit; `reliability_floor_coeffs_NYISO.csv` byte-unchanged.
 **Rule 22 `[R-HOLDOUT]`:** 2023–2025 only. **Markers untouched** — owner acts.
 **Instruments:** `scripts/probes/_nyiso204b_ch_exclusion_variants.py` →
-`results/calibration/_nyiso204b_ch_exclusion_2480only.json` (`--exclude 2480`) and
+`results/phase0/nyiso/_nyiso204b_ch_exclusion_2480only.json` (`--exclude 2480`) and
 `_nyiso204b_layup_census_cells.json` (`--census`).
 
 **THE PARENT'S VERDICT IS UNCHANGED AND IS NOT RE-LITIGATED.** This lane reached the same

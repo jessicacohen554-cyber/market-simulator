@@ -12,7 +12,7 @@ row and six cells). No keeper, shard or marker; the backcast namespace untouched
 **The frozen pre-declaration** (`PREDECL-capx-d37-neiso-t1h-armed-2026-09-02.md`, pushed
 **before** the solve started, blob-verified 365 lines / sha256 `1d32c222…`) is graded at full
 magnitude in §5, misses included. Its launch record is
-`docs/handoffs/d37/ADDENDUM-launch-2026-09-02.md`.
+`docs/records/forecast/d37/ADDENDUM-launch-2026-09-02.md`.
 
 ## 0. Verdict (one paragraph)
 

@@ -5,7 +5,7 @@ Addendum V.6, RE-OPENED by the owner at Addendum AC.1, 2026-08-07). Branch
 `claude/forward-price-scarcity-repair-3ak5b9`, off `origin/main` `82edc344`. Model: Fable
 (rule 27 — runner/model core).
 
-**Charter.** FFR-6A verdict row 1 (`docs/handoffs/ffr-6a-margin-gap-decomposition-2026-08-05.md`
+**Charter.** FFR-6A verdict row 1 (`docs/records/forecast/ffr-6a-margin-gap-decomposition-2026-08-05.md`
 §5): the repaired unified lookahead's pro-forma scarcity is ZERO on a 21.9–31.8 % RM fleet
 (p_mean $9.54–10.49, p_max $24.4–46.2, zero hours > $100, reserve signal 0.000 at the
 2024/2025 screens) while the measured 2024/2025 market priced 161/217 h > $100 and the energy
@@ -132,7 +132,7 @@ uv run python scripts/run_capacity_hindcast.py \
 ```
 
 Cold, 4 LP years (2022 bridged), years sequential (rule 12). **Reproduction gate (all from
-the FFR-5D-M/FFR-6A record, `docs/handoffs/ffr-5d-price-object-2026-08-05.md` §3 /
+the FFR-5D-M/FFR-6A record, `docs/records/forecast/ffr-5d-price-object-2026-08-05.md` §3 /
 `ffr-6a-...md` §3): runtime `cache_key=49eac64f146b3460`; 2022-ledger gas_st decided 45 /
 10,942.9 MW at net $17.90 vs bar $35.00, executed in-ledger; 2025-ledger coal decided 11 /
 1,482.1 MW at $0.04; entry_capped 564 / 62,971.7 MW (2024) and 554 / 66,060.5 MW (2025);
@@ -160,7 +160,7 @@ after (the nyiso-128 discipline).
   (`results/scarcity.py::ercot_rtolcap_forward_supply_cap_mw` share tables:
   `ERCOT_RTOLCAP_FWD_ONLINE_SHARE`/`OFFLINE_SHARE` per class × season × net-load decile,
   deliverability 0.8959/0.7756 — CAMPD-quantity-identified, never a price;
-  `docs/handoffs/ercot-rtolcap-forward-2026-07.md`), evaluated on the ENTERING year's own
+  `docs/records/ercot/ercot-rtolcap-forward-2026-07.md`), evaluated on the ENTERING year's own
   net load and the EVOLVED fleet's class capacities; `storage_as` = the evolved storage
   fleet's power × `ERCOT_RTOLCAP_FWD_STORAGE_RESERVE_FRAC` (0.35, the observed AS-award /
   installed ratio — the formula's own mode-aware storage term, on the evolved fleet rather
@@ -282,7 +282,7 @@ curve) remain REFUSED BY NAME.
 *(filled after §1 was committed; nothing above this line changed after. Part A — the
 measured-data legs — was probed and committed in the FFR-8A Phase-1/2 session
 (`scripts/probes/ffr8a_scarcity_decomposition.py` →
-`docs/handoffs/ffr-8a/part-a-measured-2026-08-08.json`); this narrative is written FROM that
+`docs/records/forecast/ffr-8a/part-a-measured-2026-08-08.json`); this narrative is written FROM that
 committed JSON, no re-measurement. Part B — the A1–A5 ablation chain on the control arm's
 dumps — is §2.5, filled by the Phase-3 session after the control arm solved.)*
 
@@ -392,7 +392,7 @@ expected to have the wrong sign to explain the missing scarcity.
 
 *(Filled after the control arm solved and its reproduction gate passed on all six content
 legs; `scripts/probes/ffr8a_ablation_chain.py` →
-`docs/handoffs/ffr-8a/part-b-ablation-2026-08-08.json`. A3 records A2 unchanged per §3.3;
+`docs/records/forecast/ffr-8a/part-b-ablation-2026-08-08.json`. A3 records A2 unchanged per §3.3;
 the refuted-table counterfactual is the clearly-labelled annex column.)*
 
 **A1 reproduces the record exactly** at all four screens: into-2024 mean $10.490 / max
@@ -643,7 +643,7 @@ invocations run verbatim, cold, years sequential, 2026-08-08. Control runtime ke
 `49eac64f146b3460` — byte-identical to the FFR-5D-M record after this session's caiso-184
 cache-key backfill; repair `816031a3308cccde` (distinct, as the gate requires). The control's
 reproduction gate PASSED on all six enumerated content legs before the repair arm started.
-Committed reads: `docs/handoffs/ffr-8a/paired-arm-probe-2026-08-08.json` (ledgers; the
+Committed reads: `docs/records/forecast/ffr-8a/paired-arm-probe-2026-08-08.json` (ledgers; the
 standing `ffr5d_paired_arm.py` probe unmodified — its "shipped"/"unified" labels map to
 control/repair, see `_labels`) + `paired-price-side-2026-08-08.json` (dump price series, the
 FFR-6A replica margin construction). Two session-found blockers were repaired before any arm

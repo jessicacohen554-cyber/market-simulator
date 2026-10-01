@@ -1,7 +1,7 @@
 # FINDING — capx D93: the key-provenance `lag` CLASS RULE (Q66), and the G6 registration
 
 Lane capx D93 · Opus · ZERO LP · branch `claude/capx-d93-key-lag-class` · owner ruling **Q66 ("Class rule.")**
-PRECOMMIT: `docs/handoffs/PRECOMMIT-capx-d93-2026-09-24.md` (pushed first, `07f23424`; addendum A1
+PRECOMMIT: `docs/records/forecast/PRECOMMIT-capx-d93-2026-09-24.md` (pushed first, `07f23424`; addendum A1
 written before the code commit).
 
 ## 0. BEFORE / AFTER — `scripts/check_key_provenance.py`

@@ -1,6 +1,6 @@
 """soco-69 (ZERO LP): verify the seven per-year legs and compose them into one span bundle.
 
-PRECOMMIT: ``docs/handoffs/r-soco/PRECOMMIT-soco-69-2026-09-25.md`` §3/§5. Each leg is
+PRECOMMIT: ``docs/records/soco/r-soco/PRECOMMIT-soco-69-2026-09-25.md`` §3/§5. Each leg is
 the soco-68 keeper recipe (seven ``--set`` fields incl. ``summer_derate_basis_aware``)
 plus ``coal_mustrun_requires_measured_row=true``, one shard per year (rule 36). Checks
 run BEFORE anything is written:

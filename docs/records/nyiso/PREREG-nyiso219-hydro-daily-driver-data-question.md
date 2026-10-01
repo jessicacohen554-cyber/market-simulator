@@ -34,7 +34,7 @@ against the model's own residual) is restricted to **2023–2025 committed keepe
 
 ## 1. The object, inherited and not re-derived
 
-nyiso-218 §8 (`docs/FINDING-nyiso218-hydro-within-month-daily-allocation-2026-09-07.md`) localized
+nyiso-218 §8 (`docs/records/nyiso/FINDING-nyiso218-hydro-within-month-daily-allocation-2026-09-07.md`) localized
 NYISO's hydro shape residual completely. Its numbers are **inherited, not re-measured**:
 
 | year | hourly r | month energy r | **within-month day energy r** | hour-of-day r | vol err |

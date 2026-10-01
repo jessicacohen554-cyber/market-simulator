@@ -29,7 +29,7 @@ Writes census_<year>.csv (per plant), census_summary.csv, and
 class_series_<year>.parquet (hourly ON capacity, measured gen, F, D per class)
 for the phase-0.2 revealed-conduct construction.
 
-Usage: uv run python docs/handoffs/spp46/campd_census.py
+Usage: uv run python docs/records/spp/spp46/campd_census.py
 """
 import gzip, json, sys
 from pathlib import Path
@@ -42,7 +42,7 @@ from derive_campd_gas_commitment_params import _ONLINE_FRAC, UNIT_LEVEL_DIR  # n
 from market_sim.data.campd import _ONLINE_MW, states_for_iso  # noqa: E402
 from market_sim.model.commitment import find_runs  # noqa: E402
 
-OUT = REPO / "docs/handoffs/spp46"
+OUT = REPO / "docs/records/spp/spp46"
 BUNDLE = REPO / "results/calibration/spp43_screened_B"
 YEARS = (2023, 2024, 2025)
 CLASSES = {"CC_REGULAR": "cc", "CT_PEAKER": "ct", "ST_GAS": "st"}

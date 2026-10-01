@@ -4,7 +4,7 @@ Zero LP. Keeper `2026-09-30-nyisonext18-retiree-carry-span` + stamped `-2021`, u
 
 ## 1. Open item 1 — the D-4 unit-conduct FAIL rows
 
-Probe `scripts/probes/nyisonext21_d4_conduct_phase0.py` → `results/calibration/_nyisonext21_d4_conduct_phase0.json`. It decodes each failing plant's hourly model output (registered run payload) and its hourly CAMPD output (committed bench part), both % of nameplate.
+Probe `scripts/probes/nyisonext21_d4_conduct_phase0.py` → `results/phase0/nyiso/_nyisonext21_d4_conduct_phase0.json`. It decodes each failing plant's hourly model output (registered run payload) and its hourly CAMPD output (committed bench part), both % of nameplate.
 
 **The keeper fails 11 rows**, together < 15 GWh of floored energy: `reliability_floor × ST_GAS` at Danskammer 2480 (every year) and Roseton 8006 (2025); `nyiso_gas_commitment_bridge` at Astoria 8906 ST_GAS (2021, 2024), Saranac 54574 CC (2021, 2024) and Athens 55405 CC (2025).
 
@@ -53,7 +53,7 @@ This is the same stack-duplicate defect nyiso-192 repaired in the outage merit-o
 - Rule 23 trigger: the stack-duplicate identity defect (nyiso-141/192), not a residual.
 - Tests: `tests/unit/data/test_measured_st_heat_rates.py::TestStackDuplicateMerge` (4 new; 22 pass).
 
-**G-1 offer delta (fleet-only rebuild, all five years, control vs repaired artifact)** → `results/calibration/_nyisonext21_g1_offer_delta.json`:
+**G-1 offer delta (fleet-only rebuild, all five years, control vs repaired artifact)** → `results/phase0/nyiso/_nyisonext21_g1_offer_delta.json`:
 
 - Exactly **4 rows move per year**, all Astoria 8906 ST_GAS. pmax and availability byte-identical everywhere.
 - Econ-tranche offer, mean $/MWh: 2021 45.25 → 55.05; 2022 78.88 → 93.85; 2023 32.76 → 37.31; 2024 38.11 → 42.70; 2025 53.48 → 60.22.
@@ -64,4 +64,4 @@ Not a lever this lane. The dual-fuel cap is `min(gas, oil)` with oil on the meas
 
 ## 5. Next
 
-PRECOMMIT `docs/PRECOMMIT-nyiso-next21-astoria-heat-rate-2026-10-01.md`: one replay of the keeper's recipe on the repaired artifact, one shard per year.
+PRECOMMIT `docs/records/nyiso/PRECOMMIT-nyiso-next21-astoria-heat-rate-2026-10-01.md`: one replay of the keeper's recipe on the repaired artifact, one shard per year.

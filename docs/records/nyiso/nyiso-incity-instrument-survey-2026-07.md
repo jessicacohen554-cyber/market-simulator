@@ -1,6 +1,6 @@
 # NYISO in-city (Zone J / K) instrument survey — charter §3 answered (nyiso-82 session)
 
-**Date:** 2026-07-26 · **Charter:** `docs/handoffs/nyiso-incity-mustrun-charter-2026-07.md` §3
+**Date:** 2026-07-26 · **Charter:** `docs/records/nyiso/nyiso-incity-mustrun-charter-2026-07.md` §3
 ("Step 1 of this lane is a search, not a build") · **Method:** primary-source web survey
 (NYSRC, NYISO, Potomac SOM, FERC/SEC corroboration); no code written, no data intaken,
 no solve run. **Status: SEARCH DONE.** Outcome below; the charter's §3 gate stays CLOSED

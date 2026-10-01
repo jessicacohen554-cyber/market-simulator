@@ -4,8 +4,8 @@
 # a HEAD guard. Everything phase 3 reports is REPORTED, NOT GATED (Addendum
 # A.3): nothing here is a criterion and nothing here can promote the arm.
 #
-#   bash docs/handoffs/d81/run_full.sh control   # base code (acbb5350)
-#   bash docs/handoffs/d81/run_full.sh arm       # post-fix code
+#   bash docs/records/forecast/d81/run_full.sh control   # base code (acbb5350)
+#   bash docs/records/forecast/d81/run_full.sh arm       # post-fix code
 #
 # Throwaway diagnostic probes (rule 29(c)): never registered, never a keeper,
 # DELETED from results/ before the PR merges.

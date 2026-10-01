@@ -2,7 +2,7 @@
 
 **Session:** capx-D1 (capacity-expansion / Forecast Finalization track), 2026-08-24
 **Branch:** `claude/capx-d1-board-refresh-nfb31y` · **Base:** `origin/main` @ `3ca40e9b6534`
-**Chartered by:** the capacity-expansion director (`docs/handoffs/capx-director-ledger-2026-08.md` §3)
+**Chartered by:** the capacity-expansion director (`docs/records/forecast/capx-director-ledger-2026-08.md` §3)
 **Scope:** **RECORDS ONLY.** No LP was built, no year was solved, no forecast run was scored or
 re-scored, nothing was registered on either dashboard, no mechanism was tested and no
 mechanism-matrix cell was minted (rule 28d). No out-of-training backcast year was touched; the
@@ -97,7 +97,7 @@ Three independent committed records, none of which is a re-score:
    scoreable (their derated MW is then genuinely unexplained, **which is exactly the A1 leak this
    invariant exists to catch**)."* The writer is
    `src/market_sim/model/capacity_evolution/evolve.py` (`events.setdefault("confirmed_derates", …)`).
-2. **The date and the root cause.** `docs/handoffs/ffr-1a-confirmed-exit-accounting-2026-07-31.md`
+2. **The date and the root cause.** `docs/records/forecast/ffr-1a-confirmed-exit-accounting-2026-07-31.md`
    §1 — landed **2026-07-31**, finding FR-1, *"BLOCKER"*. Root cause verbatim: `apply_confirmed_exits`
    derates plant-binned tranches **in place** (the `unit_id` survives with a smaller `pmax_mw`)
    while the events recorder emitted retirement rows only for unit_ids *absent* from the surviving

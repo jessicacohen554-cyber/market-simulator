@@ -3,7 +3,7 @@
 **Session:** neiso-93 (verified free against `docs/calibration-log/neiso.md`, whose neiso-92
 entry names `neiso-93` as the next shorthand, and against the run registry).
 **Date:** 2026-08-14 · **Branch:** `claude/neiso-envelope-repair-8k0ptq`
-**Spec:** `results/calibration/ASSESSMENT-neiso92-2021-readiness-2026-08-13.md` §5.
+**Spec:** `docs/records/neiso/ASSESSMENT-neiso92-2021-readiness-2026-08-13.md` §5.
 **Scope:** data prep across 2019–2025 + an IN-SAMPLE (2023–2025) keeper re-solve.
 
 ---
@@ -270,7 +270,7 @@ computed pooled `year == 0` row is kept **only** for plants the file does not al
 | `data/raw/_processed-legacy/eia860_chp_by_year.parquet` | 40,037 → 92,633 rows |
 | `scripts/data/derive_parasitic_load.py` | new `--merge` back-fill (prevents cross-ISO wipe) |
 | `data/raw/_processed-legacy/parasitic_load_factors.{parquet,csv}` | 2,113 → 2,712 rows; NEISO added |
-| `scripts/probes/_neiso93_nuclear_crossval.py` + `results/calibration/_neiso93_nuclear_crossval.json` | EIA-930 cross-validation |
+| `scripts/probes/_neiso93_nuclear_crossval.py` + `results/phase0/neiso/_neiso93_nuclear_crossval.json` | EIA-930 cross-validation |
 
 **Prior art:** `ASSESSMENT-neiso92-2021-readiness-2026-08-13.md` (the spec),
 `FINDING-neiso85-2022-seasonal-inversion-2026-08-05.md` (the precedent this gate prevents

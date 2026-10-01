@@ -17,7 +17,7 @@ unchanged for the record.
 ---
 
 **Status: PENDING owner ruling.** No mechanism built or solved; measured
-derivation in `results/calibration/FINDING-caiso106-intertie-elasticity-2026-07-20.md`
+derivation in `docs/records/caiso/FINDING-caiso106-intertie-elasticity-2026-07-20.md`
 §2 (`scripts/probes/_caiso106_intertie_elasticity.py`, pure raw-data, gated).
 The BELLY arm of the caiso-105 intertie diagnosis is explicitly NOT in this
 ask — its measured conduct is not year-stable on any CAISO-observable state

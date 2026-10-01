@@ -9,7 +9,7 @@ byte-unchanged in this session. This card performs exactly ONE new measurement �
 **read-only counterfactual re-scoring** of the keeper's registered dashboard payload
 against the committed bench actuals, using the rubric's own `_wmean`/`_nrmse`
 (`scripts/probes/ercot193_c3b_decomposition.py`, output
-`results/calibration/ercot193_c3b_decomposition.json`). Actuals enter only
+`results/phase0/ercot/ercot193_c3b_decomposition.json`). Actuals enter only
 counterfactual *scoring*, never any model input (rule 13 `[R-MEASURED]` clean; the
 ercot-189 footing). Every other number is read off committed artifacts.
 
@@ -61,7 +61,7 @@ C3b-2023 criterion itself is not independently reachable either — §2.
 
 ## 2. THE MEASUREMENT — C3b-2023 is the same object as C3a-2023, and it is 96 % of the criterion
 
-From `results/calibration/ercot193_c3b_decomposition.json` (the rubric's own C3b
+From `results/phase0/ercot/ercot193_c3b_decomposition.json` (the rubric's own C3b
 arithmetic, keeper payload vs bench `rt_lw_mon`):
 
 | | Jan | Feb | Mar | Apr | May | Jun | Jul | **Aug** | **Sep** | Oct | Nov | Dec |

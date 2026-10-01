@@ -1,6 +1,6 @@
 # ADDENDUM A2 (nyiso-249) — G-6: test the counter-argument to G-3 instead of dismissing it
 
-**Added to `docs/PRECOMMIT-nyiso249-upper-tail-offer-dispersion-2026-09-20.md` BEFORE the gate is
+**Added to `docs/records/nyiso/PRECOMMIT-nyiso249-upper-tail-offer-dispersion-2026-09-20.md` BEFORE the gate is
 run.** Zero LP. Nothing in G-6 has been measured yet.
 
 ## What G-3 and G-4 established, and the one objection they invite

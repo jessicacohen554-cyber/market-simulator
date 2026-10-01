@@ -114,7 +114,7 @@ Read from the two committed `run_config.json` files:
 | `scarcity_price_overlay` | **False** | **False** |
 
 `scarcity_price_overlay=False` on the **backcast** keeper is correct and is the
-adjudicated position: `docs/handoffs/miso-price-formation-design-2026-07.md`
+adjudicated position: `docs/records/miso/miso-price-formation-design-2026-07.md`
 §2b lists the post-solve overlays as "**OFF (correct)** — MISO scarcity is in-LP
 only — no overlay may be added (one mechanism per phenomenon)". The mechanism
 matrix records the same verdict as a hard **`G`** (governance-refused) in the

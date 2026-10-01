@@ -1,7 +1,7 @@
 # FINDING — miso-148: the summer flat-derate double count is REPAIRED by a new class-agnostic basis-aware mechanism, and the repair CLOSES the summer availability hole while making the price gates WORSE — NOT promoted, ESCALATED to the owner
 
 **Session:** miso-148, 2026-08-09, branch `claude/miso-148-cc-availability-l3czbc`.
-**PREREG** `results/calibration/PREREG-miso148-cc-availability-summer-basis-2026-08-09.md`
+**PREREG** `docs/records/miso/PREREG-miso148-cc-availability-summer-basis-2026-08-09.md`
 pushed at **`456b376`** (blob `bd0a0a97`, 420 lines, verified against the
 **fetched** remote ref) **BEFORE any adjudicating statistic**.
 

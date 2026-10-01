@@ -6,7 +6,7 @@ the companion-condition measurement and the record correction are on the
 record ahead of any result (the nyiso-115/117/119 discipline the intake spec
 §1 condition 2 orders).
 
-**Authority executed:** `docs/INTAKE-SPEC-nyiso156-winter-locational-2026-08-30.md`
+**Authority executed:** `docs/records/nyiso/INTAKE-SPEC-nyiso156-winter-locational-2026-08-30.md`
 §1 (Leg 1), under the owner's Q1 ruling of 2026-08-30 (OPTION A). The standing
 pre-registration is `PREREG-nyiso126-eastern-seam-attribution-2026-08-04.md`
 **plus its two nyiso-127 addenda** (`PREREG-nyiso127-addendum-eastern-seam-

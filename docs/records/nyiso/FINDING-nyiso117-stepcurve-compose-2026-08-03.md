@@ -233,5 +233,5 @@ more) and were not adjudicated here.
   dispatch instead — and if you do use the ancestry test, check the exit code.
 * **SENY is open** (`nyiso_ordc_measured_step_span`, `U`), with its measurement
   already done and recorded in
-  `results/calibration/nyiso117_seny_rcpf_curve_screen.json`. It needs a
+  `results/phase0/nyiso/nyiso117_seny_rcpf_curve_screen.json`. It needs a
   pre-registration and an arm, not another screen.

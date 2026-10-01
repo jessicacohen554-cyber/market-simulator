@@ -1,7 +1,7 @@
 # FINDING — capx D95: D94's two key-provenance UNKNOWNs are a SOLVE-SURFACE re-key (disposition c)
 
 Lane capx D95 (relaunch) · Opus · ZERO LP · DATA PROFILE code · branch `claude/capx-d95-d94-key-unknowns`
-PRECOMMIT: `docs/handoffs/PRECOMMIT-capx-d95-2026-09-25.md` (pushed first, `c58309bc`).
+PRECOMMIT: `docs/records/forecast/PRECOMMIT-capx-d95-2026-09-25.md` (pushed first, `c58309bc`).
 
 ## 0. THE ATTRIBUTION, AND THE CENSUS BEFORE / AFTER
 

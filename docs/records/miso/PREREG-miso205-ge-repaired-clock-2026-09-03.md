@@ -74,7 +74,7 @@ scarce hours sit **BELOW** the EIA summer-peak-demand rating condition in
 
 ## 2. The instrument
 
-`scripts/probes/_miso205_ge_repaired_clock.py` → `results/calibration/_miso205_ge_repaired_clock.json`.
+`scripts/probes/_miso205_ge_repaired_clock.py` → `results/phase0/miso/_miso205_ge_repaired_clock.json`.
 
 * **Object set (OBJ):** top 1 % of Jun–Jul hours of
   `data/raw/_validation-source/actual_lmp_hourly_zonal_MISO.parquet`,

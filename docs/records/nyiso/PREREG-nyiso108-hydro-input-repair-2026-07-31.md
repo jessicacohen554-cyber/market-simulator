@@ -11,7 +11,7 @@ nyiso-107 §E). **Keeper under test:** `2026-07-31-nyiso105-chp-heat-rates`
 (bundle `results/calibration/nyiso105_chpheatrate_B`, CALIBRATED-WITH-CAVEATS,
 0 FAILs, 1 ledgered caveat C3c).
 **Pre-solve evidence:** `scripts/probes/_nyiso108_hydro_construction_audit.py`
-→ `results/calibration/_nyiso108_hydro_construction_audit.json`.
+→ `results/phase0/nyiso/_nyiso108_hydro_construction_audit.json`.
 
 ---
 

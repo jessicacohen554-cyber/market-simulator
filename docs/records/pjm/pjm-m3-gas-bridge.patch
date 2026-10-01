@@ -122,7 +122,7 @@ index 0000000..2fd1e4f
 +(``derive_ercot_thermal_dam_availability`` family, 60-Day DAM disclosure): for
 +the M-3 overnight commitment bridge
 +(``ScenarioConfig.pjm_gas_commitment_bridge``,
-+``docs/DIAGNOSIS-pjm-2025-phase-drift-and-zonal-structure-2026-07.md`` §6) the
++``docs/records/pjm/DIAGNOSIS-pjm-2025-phase-drift-and-zonal-structure-2026-07.md`` §6) the
 +one parameter the mechanism needs is ``min_load_frac`` — a bridged CC's minimum
 +stable load as a fraction of its available capacity.
 +
@@ -355,7 +355,7 @@ index ea14534..59d9413 100644
  
 +    # PJM gas-CC COMMITMENT BRIDGE (default off, PJM-gated): the PJM analogue
 +    # of ercot_gas_commitment_bridge above (M-3 in
-+    # docs/DIAGNOSIS-pjm-2025-phase-drift-and-zonal-structure-2026-07.md §6 —
++    # docs/records/pjm/DIAGNOSIS-pjm-2025-phase-drift-and-zonal-structure-2026-07.md §6 —
 +    # "overnight commitment inertia"). The model-side ~1 h-early lead (§1c) and
 +    # the D-1p flat-overnight residual (§4) are one phenomenon: P1 has no
 +    # overnight commitment posture, so it cycles CC off between run-days and
@@ -564,7 +564,7 @@ index 8eab3fe..6153a29 100644
 +
 +    The PJM analogue of :func:`build_ercot_gas_bridge_p1_prep`
 +    (``pjm_gas_commitment_bridge``, M-3 — the committed-STATE overnight bridge,
-+    docs/DIAGNOSIS-pjm-2025-phase-drift-and-zonal-structure-2026-07.md §6): the
++    docs/records/pjm/DIAGNOSIS-pjm-2025-phase-drift-and-zonal-structure-2026-07.md §6): the
 +    ISO-neutral detector (:func:`_pjm_gas_bridge_floor`) scoped to merchant
 +    gas-CC with the measured PJM committed-CC LSL/HSL p50 min-load and a
 +    DA-operating-day cap on the economic leg. D-2 attribution

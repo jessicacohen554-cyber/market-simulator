@@ -17,7 +17,7 @@ by this pre-registration. 2020, 2021 and the locked test are untouched. No marke
 
 ## 1. The object
 
-nyiso-210 (`docs/FINDING-nyiso210-cc-regular-2022-zonal-cancellation-2026-09-06.md` §5) hands
+nyiso-210 (`docs/records/nyiso/FINDING-nyiso210-cc-regular-2022-zonal-cancellation-2026-09-06.md` §5) hands
 forward one lead as "the sharper end":
 
 > The Cricket Valley / CPV Valley deficit is monotone (−0.441 → −0.608 → −1.010 TWh at Cricket)
@@ -44,7 +44,7 @@ four:
 
 | anchor | source of per-plant model energy | isolable? |
 |---|---|---|
-| **nyiso-186 control** | `results/calibration/_nyiso186_cc_attribution.json` → `years.<y>.plants[].model_mwh` | bundle pruned; record only |
+| **nyiso-186 control** | `results/phase0/nyiso/_nyiso186_cc_attribution.json` → `years.<y>.plants[].model_mwh` | bundle pruned; record only |
 | **`2026-09-05-nyiso-192-astoria-panel`** | `frontend/data/backcast/runs/<id>.js` → `m_ann` / `m_mon` | — |
 | **`2026-09-06-nyiso-196-extract-basis`** | same | **YES** — `meta.json` diff 192→196 is exactly one live flag, `unit_outage_extract_basis_share: absent → True` |
 | **`2026-09-06-nyiso-202-startup-aware`** | same | **YES** — `run_config.json` diff 196→202 is exactly one live flag, `nyiso_gas_bridge_startup_aware: absent → True` (every other moved key is a new dataclass default or a forecast-only field) |

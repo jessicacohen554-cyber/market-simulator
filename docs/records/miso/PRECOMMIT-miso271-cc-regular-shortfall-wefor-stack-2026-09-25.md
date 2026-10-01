@@ -20,7 +20,7 @@ all seven.
 
 Probes: `scripts/probes/_miso271_cc_decomp.py` (fleet-only rebuilds of the keeper recipe toggling one family at a
 time), `scripts/probes/_miso271_wefor_ident.py` (the identification). Record:
-`results/calibration/_miso271_wefor_ident.json`.
+`results/phase0/miso/_miso271_wefor_ident.json`.
 
 ### 2.1 Where the class dispatch moved (committed hourly sidecars)
 

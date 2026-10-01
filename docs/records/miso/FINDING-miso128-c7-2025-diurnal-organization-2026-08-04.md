@@ -10,11 +10,11 @@ REGISTERED** — the pre-registration's §3 P10 successor screen fired its decla
 default (rule 15 is satisfied by this statement, not by a registration).
 
 **Pre-registration:**
-`results/calibration/PREREG-miso128-c7-2025-diurnal-organization-2026-08-04.md`,
+`docs/records/miso/PREREG-miso128-c7-2025-diurnal-organization-2026-08-04.md`,
 committed and pushed at `010e22ba` **before** any adjudicating statistic, with
 §0 disclosing in full every number already measured in exploration.
 **Probe:** `scripts/probes/_miso128_c7_diurnal_organization.py`.
-**Record:** `results/calibration/_miso128_c7_diurnal_organization.json`.
+**Record:** `results/phase0/miso/_miso128_c7_diurnal_organization.json`.
 
 Rule 22 `[R-HOLDOUT]`: 2023–2025 only — MISO holds no `calibration-complete`
 marker, so no out-of-training year was solved, scored **or read**.
@@ -281,4 +281,4 @@ python scripts/probes/_miso128_c7_diurnal_organization.py
 
 No LP, no bundle, no network; reads only committed artifacts plus a HEAD fleet
 assembly for P9 grain 2 (`--skip-grain2` runs the dispatch half alone). Writes
-`results/calibration/_miso128_c7_diurnal_organization.json`.
+`results/phase0/miso/_miso128_c7_diurnal_organization.json`.

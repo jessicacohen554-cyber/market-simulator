@@ -3,7 +3,7 @@
 **Written 2026-07-28, BEFORE any year of either bundle was solved.** Rule 1:
 criteria fixed here so no verdict can be reverse-engineered from a residual.
 Companion synthesis (Phase 1, no-LP, pushed with this document):
-`docs/DIAGNOSIS-ercot134-coal-availability-pin-2026-07-28.md` + the
+`docs/records/ercot/DIAGNOSIS-ercot134-coal-availability-pin-2026-07-28.md` + the
 reproduction probe `scripts/probes/ercot134_coal_availability_pin.py`.
 
 ## What this A/B is FOR — and what it is not
@@ -167,7 +167,7 @@ does under either config.
 
 **G0 PASS · measurement delivered · ARM rejected on level as predicted · BASE
 promoted keeper (owner sign-off this session).** Full write-up:
-`results/calibration/FINDING-ercot134-regate-2026-07-28.md`. Runs
+`docs/records/ercot/FINDING-ercot134-regate-2026-07-28.md`. Runs
 `2026-07-28-ercot116-regate-base` (keeper) / `2026-07-28-ercot116-regate-arm`
 (rejected probe). Predictions: 6 of 8 confirmed; misses — ARM plant-hour pin
 share fell only to 28.1/27.9/38.6 % (the <25 % prediction anchored to

@@ -11,7 +11,7 @@ tested for arming). Keeper **UNCHANGED** at `2026-08-05-miso-132b-cc-committed`
 artifact or the orchestrator's own no-solve reconstruction exit; **G-C was never
 reached, so no solve was licensed and none was spent.**
 
-**PREREG** `results/calibration/PREREG-miso143-coal-gas-merit-order-2026-08-08.md`,
+**PREREG** `docs/records/miso/PREREG-miso143-coal-gas-merit-order-2026-08-08.md`,
 pushed at **`1f79a700`** (blob **`a7979fd8`**, verified against the remote)
 **BEFORE any adjudicating statistic**, with **ten** falsifiable numeric
 predictions, **four** pre-committed verdict branches (including the explicit
@@ -435,7 +435,7 @@ chartered.
 ---
 
 **Artifacts** (all committed):
-`results/calibration/PREREG-miso143-coal-gas-merit-order-2026-08-08.md` (`1f79a700`, blob `a7979fd8`) ·
+`docs/records/miso/PREREG-miso143-coal-gas-merit-order-2026-08-08.md` (`1f79a700`, blob `a7979fd8`) ·
 `_miso143_footing.json` · `_miso143_ladder.json` · `_miso143_gb_mechanisms.json` ·
 probes `scripts/probes/_miso143_stack.py`, `_miso143_footing.py`,
 `_miso143_ladder.py`, `_miso143_gb_mechanisms.py`.

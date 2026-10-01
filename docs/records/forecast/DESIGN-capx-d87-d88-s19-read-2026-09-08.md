@@ -451,5 +451,5 @@ to report and stop on, and this read finds nothing in them that is SPP's, the au
 
 ## 5. What this read touched
 
-`docs/handoffs/DESIGN-capx-d87-d88-s19-read-2026-09-08.md` — this file. Nothing else: no `src/`,
+`docs/records/forecast/DESIGN-capx-d87-d88-s19-read-2026-09-08.md` — this file. Nothing else: no `src/`,
 no test, no config, no matrix shard, no registration, no result bundle.

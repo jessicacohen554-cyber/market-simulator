@@ -28,7 +28,7 @@ is not carried forward (§6).
 ### 1.1 The measurement (probe `scripts/probes/neiso99_declaration_recheck.py`, re-run at HEAD)
 
 The keeper has **not moved** since neiso-99, so the probe is correctly targeted and was re-run
-unmodified. Its record `results/calibration/_neiso99_declaration_recheck.json` came back
+unmodified. Its record `results/phase0/neiso/_neiso99_declaration_recheck.json` came back
 **byte-unchanged against the committed copy** — the strongest form of "the declaration still holds":
 the re-derivation is bit-reproducible, not merely concordant.
 
@@ -274,7 +274,7 @@ step signature exactly — **Jan–May −2.146 TWh, Jun–Dec +0.023 TWh** — 
 of **2.366 TWh**, i.e. **~91 % of the band consumed by a known fleet-vintage defect** before the
 model is asked anything. Blast radius of lowering `RETIREMENT_WINDOW_START` 2023 → 2019: **264
 plants / 21,467.5 MW across all six ISOs** (NEISO 21 / 914.2 MW). Chartered at
-`docs/handoffs/fleet-vintage-retiree-window-charter-2026-08.md`. **Not a NEISO lane item.**
+`docs/records/misc/fleet-vintage-retiree-window-charter-2026-08.md`. **Not a NEISO lane item.**
 It does **not** touch 2023–2025: every affected plant retired before the training window.
 
 **(c) One stale clause in the owner's `locked_test` field, measured false at HEAD — flagged, NOT
@@ -410,9 +410,9 @@ closed it; it is dropped from the carry-forward list rather than repeated.
 ## 8. Artifacts
 
 * This assessment.
-* `results/calibration/_neiso98_escalations.json` — re-measured at HEAD (both escalations closed).
-* `results/calibration/_neiso99_declaration_recheck.json` — re-run, **byte-unchanged**.
-* `results/calibration/_neiso94_pilgrim_vintage_audit.json` — re-measured at HEAD.
+* `results/phase0/neiso/_neiso98_escalations.json` — re-measured at HEAD (both escalations closed).
+* `results/phase0/neiso/_neiso99_declaration_recheck.json` — re-run, **byte-unchanged**.
+* `results/phase0/neiso/_neiso94_pilgrim_vintage_audit.json` — re-measured at HEAD.
 * `scripts/probes/neiso100_touchpoint_staleness.py` — new; the §3 hash-grain and window-overlap
   measurement, with its record `_neiso100_touchpoint_staleness.json`.
 

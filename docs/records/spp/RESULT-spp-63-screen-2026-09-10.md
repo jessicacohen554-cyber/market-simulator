@@ -1,6 +1,6 @@
 # RESULT — SPP-63: the curtailment ceiling reproduces measured wind almost exactly, and the SCREEN KILLS IT on two pre-registered gates
 
-**Lane** SPP-63 · **PRECOMMIT** `docs/handoffs/PRECOMMIT-spp-63-curtailment-ceiling-2026-09-10.md`,
+**Lane** SPP-63 · **PRECOMMIT** `docs/records/spp/PRECOMMIT-spp-63-curtailment-ceiling-2026-09-10.md`,
 pushed at `efd60202` **before any solve** · **Screen shard** pinned to `92b59c7335b9ab44e095819060b1bcbae998b461`,
 branch `claude/spp63-screen-2025` · **LP spent: ONE year (~150 s).** Rule 32 `[R-SHARD]`: the parent
 ran no LP. **The span was NOT spent.** · **Keeper UNCHANGED** `2026-09-10-spp-62-vintage-census`.

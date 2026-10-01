@@ -4,7 +4,7 @@
  "lp_solved": false,
  "year": 2023,
  "bundle": "results/calibration/ercot168_yearcurves_B",
- "precommit": "docs/PRECOMMIT-ercot175-sced-deliverable-wedge-2026-08-06.md",
+ "precommit": "docs/records/ercot/PRECOMMIT-ercot175-sced-deliverable-wedge-2026-08-06.md",
  "m_reproduction": {
   "mean_gw": 3.300302360064066,
   "p50_gw": 2.213113741697616,

@@ -3,7 +3,7 @@
 **This document RECORDS the ruling the owner gave on 2026-08-17 via the caiso-201 session.
 It is quoted as a RULING, not a proposal — nothing below is re-argued, and nothing below is
 this session's recommendation.** The decision packet it answers is
-`results/calibration/ASSESSMENT-caiso200-frontier-2026-08-17.md` §5 (Q1/Q2/Q3), whose own §0
+`docs/records/caiso/ASSESSMENT-caiso200-frontier-2026-08-17.md` §5 (Q1/Q2/Q3), whose own §0
 recommendation was Q1.
 
 Session caiso-201 is **READ-AND-WRITE-DOCS ONLY**: no code, no config, no data file, no
@@ -111,14 +111,14 @@ keeper alone**, per the standing 2026-08-15 site-retention directive.
 
 ## Reference chain (nothing new is argued in this record)
 
-1. `results/calibration/ASSESSMENT-caiso200-frontier-2026-08-17.md` — the decision packet: §0
+1. `docs/records/caiso/ASSESSMENT-caiso200-frontier-2026-08-17.md` — the decision packet: §0
    the recommendation, §1 the measured keeper state, §2 what caiso-200 settled about C1-2023,
    §3 the citation chain, §4 the two objects, §5 the sitting, §6 `final` readiness.
-2. `results/calibration/FINDING-caiso200-panel-membership-2026-08-17.md` — the last in-model
+2. `docs/records/caiso/FINDING-caiso200-panel-membership-2026-08-17.md` — the last in-model
    object landed, promoted, and its C1 hypothesis measured at +3 GWh; §3 the record correction.
-3. `results/calibration/caiso191-owner-rulings-2026-08-11.md` — ruling 4 (PS purchase
+3. `docs/records/caiso/caiso191-owner-rulings-2026-08-11.md` — ruling 4 (PS purchase
    DECLINED), ruling 5 (C3a ledgering DECLINED), lane 6 (desk-adjudicated NO), and the CLOSED
    lane inventory: *"the campaign outcome is an exhaustion memo, not an improvised new lane."*
-4. `results/calibration/FINDING-caiso197-wave2-promotion-2026-08-16.md` §4 — the close-out
+4. `docs/records/caiso/FINDING-caiso197-wave2-promotion-2026-08-16.md` §4 — the close-out
    campaign exhausted as chartered, with the C3a residual honestly declared.
 5. `docs/calibration-log/caiso.md` — the caiso-201 lane entry recording this ruling.

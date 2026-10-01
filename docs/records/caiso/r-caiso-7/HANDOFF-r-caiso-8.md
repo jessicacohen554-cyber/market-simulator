@@ -12,9 +12,9 @@ STATE (2026-09-27):
 - R-CAISO-7 was zero LP; the keeper is unchanged.
 
 READ FIRST:
-- docs/handoffs/r-caiso-7/RESULT-r-caiso-7-2026-09-27.md
+- docs/records/caiso/r-caiso-7/RESULT-r-caiso-7-2026-09-27.md
 - results/calibration/_rcaiso7/object1_census.json (probe: scripts/probes/_rcaiso7_dsw_import_census.py)
-- docs/handoffs/r-caiso-6/RESULT-r-caiso-6-2026-09-27.md
+- docs/records/caiso/r-caiso-6/RESULT-r-caiso-6-2026-09-27.md
 - docs/mechanism-testing-matrix.md §5.2
 - docs/codebase-site/data/mechanism-matrix/CAISO.js (import_hub_pricing and reference_price_interface notes)
 
@@ -41,7 +41,7 @@ OBJECT 1 — the 2021 lever (owner standing instruction: "If structural integrit
   - PNW_midC down;
   - C3a 2021 price direction stated.
 - Solve: the keeper recipe + the flag, one shard per year (rule 36), 2019-2025 (all 7; rules 34(c) / 35(c)), full bundle pushed (rule 34(a)), SHA pinned.
-  - Template: docs/handoffs/r-caiso-6/shard-prompt.md.
+  - Template: docs/records/caiso/r-caiso-6/shard-prompt.md.
   - Tell shards to run the solve in the FOREGROUND.
   - Per-year legs gitignored in CONTENTS form (results/calibration/<legs>_20*/**).
 - Parent seam:

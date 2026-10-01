@@ -22,10 +22,10 @@ STATE ON MAIN
   - Path 76 runs at its rating 83–91 % of hours, in both directions. The measured BPAT->NEVP seam averages
     20–28 MW net.
 - Records to read first:
-  - docs/handoffs/RESULT-nwppnext6-path76-and-ct-rederive-2019-2025-2026-09-26.md (§3 routed list)
-  - docs/handoffs/PRECOMMIT-nwppnext6-path76-and-ct-rederive-2019-2025-2026-09-26.md (§4 recipe, §5 hard stops,
+  - docs/records/nwpp/RESULT-nwppnext6-path76-and-ct-rederive-2019-2025-2026-09-26.md (§3 routed list)
+  - docs/records/nwpp/PRECOMMIT-nwppnext6-path76-and-ct-rederive-2019-2025-2026-09-26.md (§4 recipe, §5 hard stops,
     §8 launch record)
-  - docs/handoffs/FINDING-nwppnext5-coal-take-obligation-design-2026-09-26.md (owner questions Q1–Q6, still open)
+  - docs/records/nwpp/FINDING-nwppnext5-coal-take-obligation-design-2026-09-26.md (owner questions Q1–Q6, still open)
   - docs/calibration-log/nwpp.md
   - docs/codebase-site/data/mechanism-matrix/NWPP.js
   - docs/mechanism-testing-matrix.md §5.9

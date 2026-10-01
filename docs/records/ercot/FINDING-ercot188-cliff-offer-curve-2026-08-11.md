@@ -2,12 +2,12 @@
 
 **Session ercot-188, 2026-08-11, opened at HEAD `d542a28`. ERCOT only (rule
 25).** Pre-registration:
-`docs/PRECOMMIT-ercot188-cliff-offer-curve-refinement-2026-08-11.md`, pushed at
+`docs/records/ercot/PRECOMMIT-ercot188-cliff-offer-curve-refinement-2026-08-11.md`, pushed at
 `b73e383` **BEFORE** any measurement, derive, build or solve, plus its
 **pre-solve Amendment 1** (the minimum-tranche feasibility guard, §4 below).
 
 **Authorization: OWNER DECISION — option (B) BUILD ANYWAY** on the
-`docs/MEMO-ercot184-cliff-resolution-costing-2026-08-09.md` §8 card, taken as a
+`docs/records/ercot/MEMO-ercot184-cliff-resolution-costing-2026-08-09.md` §8 card, taken as a
 **structural-fidelity purchase under rule 1 `[R-STRUCT]`**.
 
 > ### The memo's own recommendation was (A) CLOSE THE LANE, and it is NOT rewritten
@@ -125,7 +125,7 @@ same commit:
 ## 3. The seam proof — ALL_ASSERTIONS_PASS
 
 `scripts/probes/ercot188_topfine_seamproof.py` →
-`results/calibration/ercot188_topfine_seamproof.json`. Real reconstructed keeper
+`results/phase0/ercot/ercot188_topfine_seamproof.json`. Real reconstructed keeper
 fleets, no LP built.
 
 | | assertion | result |
@@ -523,7 +523,7 @@ made it, the other way.
 
 **Signed: card E, option E2 — "promote on the standing structural standard"** —
 on the signable open-ruling board assembled by this session
-(`docs/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md`, RESOLUTIONS),
+(`docs/records/ercot/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md`, RESOLUTIONS),
 under the standing owner standard that *structural integrity outranks gate
 regression*. The session's contrary recommendation is recorded alongside it and
 is **not retracted**; both belong in the record.

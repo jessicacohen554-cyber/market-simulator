@@ -1,7 +1,7 @@
 # PRECOMMIT — R-NYISO: re-solve NYISO on corrected backcast inputs (EIA-860 vintage, plant heat rates, CAMPD outages) — 2026-09-24
 
 **Session:** R-NYISO (ORCHESTRATOR, rule 32 `[R-SHARD]` (a): this container runs no LP).
-**Charter:** `docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md` §5.3.6.
+**Charter:** `docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md` §5.3.6.
 **Owner instruction (2026-09-24, verbatim, from the audit):** *"every backcast year 2019–2025 runs on
 the year-correct EIA-860 vintage, plant-specific heat rates (never the asset-class table), and granular
 CAMPD outage data."*
@@ -10,7 +10,7 @@ CAMPD outage data."*
 **Incumbent:** `2026-09-22-nyiso-hydro3-ror-split` (bundle `results/calibration/hydro3_nyiso_ror_span`,
 solved at `57e3c77f`, registered 2022–2025).
 **Phase-0 evidence (zero LP, committed with this doc):** `scripts/probes/_rnyiso_phase0_census.py` →
-`results/calibration/_rnyiso_phase0_census.json`.
+`results/phase0/nyiso/_rnyiso_phase0_census.json`.
 
 ---
 
@@ -212,7 +212,7 @@ plant would apply the wrong rate.
 
 ## 5. Years 2019–2021: DATA-BLOCKED (named per rule 34 (c)), routed
 
-Both blocks were first measured in `docs/FINDING-nyiso-2020-touchpoint-data-blocked-2026-09-09.md` and
+Both blocks were first measured in `docs/records/nyiso/FINDING-nyiso-2020-touchpoint-data-blocked-2026-09-09.md` and
 are re-measured unchanged at HEAD:
 
 | year | binding input | status at HEAD | scope |

@@ -37,7 +37,7 @@ correct — they left the fleet before step 3, which is exception [c] (`§5.4.7`
 
 ## 1. PHASE 0 — ZERO LP: the pending dated block, sized
 
-**Instrument:** `docs/handoffs/d81/phase0_dated_block.py` → `docs/handoffs/d81/phase0_dated_block.json`.
+**Instrument:** `docs/records/forecast/d81/phase0_dated_block.py` → `docs/records/forecast/d81/phase0_dated_block.json`.
 **Construction (why it needs no LP, and why it is exact):** the base fleet, both exogenous-exit
 registries and the resolved config are the **run's own** — captured by patching
 `market_sim.runner.build_base_fleet` inside the D78/D57 recipe (`--iso PJM --start-year 2021
@@ -189,7 +189,7 @@ footprint, never from a residual. It is also D78's own screen span, so the two l
 directly comparable.
 
 **Two legs, PJM solo, sequential (rule 12), each under a HEAD guard**
-(`docs/handoffs/d81/run_screen.sh`):
+(`docs/records/forecast/d81/run_screen.sh`):
 
 | leg | code | role |
 |---|---|---|
@@ -225,7 +225,7 @@ gate reads `retire.total_gw`, `false_retire`, recall, precision or any residual.
 **ALL PASS ⇒ the full window (§4); any FAIL ⇒ the arm is killed, the remaining years are never
 spent, and the kill is the session's result.** Both bundles are throwaway probes: never registered,
 never a keeper, never quoted as a keeper number, **DELETED from `results/` before the PR merges**
-(rule 29(c)); this document, the FINDING and `docs/handoffs/d81/screen_compare.json` carry every
+(rule 29(c)); this document, the FINDING and `docs/records/forecast/d81/screen_compare.json` carry every
 number the session will ever cite.
 
 ---
@@ -285,7 +285,7 @@ registers — this lane writes no board file.
 
 **Written and committed AFTER the screen and BEFORE the full window.** The §3 gate table is not
 edited: both literal misses stand in the record and in
-`docs/handoffs/d81/screen_compare.json`'s `gates` block exactly as the comparator graded them. What
+`docs/records/forecast/d81/screen_compare.json`'s `gates` block exactly as the comparator graded them. What
 this addendum adds is the separate per-year re-measurement (`diagnosis_by_year`, in the same JSON)
 that says whether each miss is the MECHANISM or the INSTRUMENT, plus the phase-3 signs.
 

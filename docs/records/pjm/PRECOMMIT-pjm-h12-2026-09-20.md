@@ -2,8 +2,8 @@
 
 **Session:** pjm-h12 · **Branch:** `claude/pjm-h12-midcurve-seam-ar8wcb`
 **GATES ARE DECLARED HERE, EX ANTE, BEFORE ANY SOLVE. None is re-read once a number is on the table.**
-**Prior cards (both closed, zero LP):** `docs/FINDING-pjm-h12-the-midcurve-rebuild-is-a-clean-rederivation-2026-09-20.md` (D-1),
-`docs/ADDENDUM-pjm-h12-the-seam-is-a-variance-compression-2026-09-20.md` (D-2).
+**Prior cards (both closed, zero LP):** `docs/records/pjm/FINDING-pjm-h12-the-midcurve-rebuild-is-a-clean-rederivation-2026-09-20.md` (D-1),
+`docs/records/pjm/ADDENDUM-pjm-h12-the-seam-is-a-variance-compression-2026-09-20.md` (D-2).
 
 ---
 

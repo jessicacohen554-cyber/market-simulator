@@ -387,7 +387,7 @@ The owner's open question — answered structurally, not by assumption:
 ## 7. Capacity-screen readiness gate (owner decision D9 — fix BEFORE running)
 
 The forecast retirement/entry screens are the model's documented weak frontier
-(`docs/handoffs/forecast-retirement-calibration-plan-2026-07.md`, lane mostly OPEN):
+(`docs/records/forecast/forecast-retirement-calibration-plan-2026-07.md`, lane mostly OPEN):
 capacity-market ISOs economically retire ≈ nothing (payment clears 1.26–4.92× FOM —
 PJM), ERCOT over-retires ~15× (22.8 vs 1.5 GW, 96% false-retire; no in-year scarcity
 formation in the screen), and **solar new entry is zero in both ISOs against 25.1 / 13.1
@@ -448,7 +448,7 @@ Creates `configs/scenarios/{ercot,pjm}_ces_base_2026_2050.yaml` (mode: forecast,
 `entry_screen_diagnostics: true`) + 2026-only smoke variants; runs both 1-year BAU
 smokes in-session; runs `check_forecast_invariants.py`; documents PJM blockers (there is
 no committed PJM forecast config today — expect issues) in
-`docs/handoffs/ces-w1b-bau-smoke-2026-07.md`. Fix-forward only trivial config-level
+`docs/records/forecast/ces-w1b-bau-smoke-2026-07.md`. Fix-forward only trivial config-level
 issues; report (don't fix) anything structural.
 
 **W1-C — Crediting input audit (Sonnet-eligible; additive docs only)**
@@ -460,7 +460,7 @@ reconciles `federal_ces_ccs_capture_fraction` vs the engineering
 S.1359/S.2146 for 0.82; EPA §111(b) 1,000 lb CO2/MWh correspondence for 0.45) +
 `parameters.json` drafts, and sanity-checks ladder {10,20,30} against
 `EAC_PRICE_REFERENCE` + scope2 breakevens. Deliverable:
-`docs/handoffs/ces-ci-crediting-audit-2026-07.md`.
+`docs/records/forecast/ces-ci-crediting-audit-2026-07.md`.
 
 ### Wave 2 (W1 complete. Launch W2-A ∥ W2-B ∥ W2-D in parallel — disjoint files;
 W2-E in parallel once the owner approves its approach; **W2-C AFTER W2-A merges** —
@@ -474,7 +474,7 @@ assertion and :370 tech-fraction assertion; `frontend/data/parameters.json`
 merged before the Q4 decision. Then:
 implements §5.3 (retrofit row deferred), incl. the `nuclear_smr`/`hydrogen` candidate
 mapping and cesa_ci unabated-CCGT crediting through dispatch + retirement + entry.
-Read `docs/handoffs/ces-ci-crediting-audit-2026-07.md` first (production-path and
+Read `docs/records/forecast/ces-ci-crediting-audit-2026-07.md` first (production-path and
 provenance findings shape the wiring).
 Neutrality golden: CES-off run byte-identical vs main. Integration tests: premium moves
 entry margins/retirement retention in trivial fixtures; year-escalation visible across

@@ -1,7 +1,7 @@
 # Forward emission-control retrofit channel — 2026-07-05
 
 **Owner direction / context:** the CO2-first emissions plan
-(`docs/handoffs/emissions-co2-rate-plan-2026-07.md`) §7 flagged a gap in the
+(`docs/records/misc/emissions-co2-rate-plan-2026-07.md`) §7 flagged a gap in the
 forward rate estimator: the trailing-window average in
 `market_sim.data.emission_rates.forward_plant_co2_rate` only picks up **realized**
 emission-rate drift as measured history grows. It has **no forward channel** for

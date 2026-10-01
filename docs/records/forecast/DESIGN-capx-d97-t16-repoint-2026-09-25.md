@@ -4,7 +4,7 @@
 **Model:** Fable. **Data profile:** `code`. **LP solves: ZERO.** **Branch:**
 `claude/capx-d97-t16-design`, off `origin/main` `8d80839b`.
 **Authority:** OWNER RULING **Q70** (2026-09-25, capx ledger §0bk / §3): *"Design lane first."*
-**Charter:** `docs/handoffs/capx-director-prompt-pack-2026-08.md` "D97".
+**Charter:** `docs/records/forecast/capx-director-prompt-pack-2026-08.md` "D97".
 **Precedents read:** Q27 (the ruling class for re-pointing a ladder; ledger §3), capx T16 / T16-A
 (the previous T1.6 adjudication and execution), D35 (the worked FC-6 re-scope), D94 §1.1 (the
 measurement this lane designs against), FFR-4A / FFR-5B / FFR-5C / FFR-5E (the entry-stack seams).
@@ -272,7 +272,7 @@ with both `neiso-t3` pins (`ccs_retrofit_vom_adder=8.0`, `ccs_retrofit_fixed_cos
 `entry_rate_limits=True` (the golden's own, no longer perturbed), and the rung's override through the
 existing generic `--set entry_pipeline_aware_signal=True` (SCN-WS0; validated as a `ScenarioConfig`
 field, recorded in `set_overrides`) — **no `src/` or `scripts/` edit is needed to solve either rung**.
-Metrics and assembly through `docs/handoffs/d94/battery_golden_rung.py`'s two zero-LP halves (its
+Metrics and assembly through `docs/records/forecast/d94/battery_golden_rung.py`'s two zero-LP halves (its
 `RUNG_OVERRIDE` guard names `entry_rate_limits`; the execution lane updates that helper, which lives
 under `docs/`, not `scripts/`). Both rungs at **one pinned SHA**, in shards (rule 32(c)), each pushing
 its full bundle (rule 34). `True` is non-default, so the long rung mints its own cache key; the short

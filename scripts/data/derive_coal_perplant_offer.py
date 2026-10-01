@@ -55,7 +55,7 @@ recorded with its day-share in the provenance JSON). Timestamps are
 converted CPT -> fixed CST at derivation so emitted hour windows sit on the
 model's clock (the ercot-166 DST-defect class, closed at the source).
 Construction and convention-boundary disclosure:
-``docs/PRECOMMIT-ercot168-coal-perplant-year-curves-2026-08-05.md`` §0/§1e.
+``docs/records/ercot/PRECOMMIT-ercot168-coal-perplant-year-curves-2026-08-05.md`` §0/§1e.
 
 Reporting/derivation tool only — default-off in every solve path. The model
 artifact it informs is the hand-set ``COAL_PERPLANT_OFFER_CURVE_BY_ISO``
@@ -192,7 +192,7 @@ def merge_plant_curve(
 #: ``Telemetered Net Output ``. Never make that glob recursive — RTC+B
 #: deliveries are calendar-2025, so the delivery-year filter would keep them.
 #: They are readable only through ``scripts.lib.sced_rtcb_adapter`` (owner card
-#: D / signature D1, ``docs/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md``).
+#: D / signature D1, ``docs/records/ercot/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md``).
 SCED_CORPUS_DIR = REPO / "data" / "raw" / "ercot" / "SCED"
 
 #: Columns the per-year mode reads from each corpus shard (the ercot-123

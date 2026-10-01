@@ -2,7 +2,7 @@
 
 **Date:** 2026-09-14 · **Lane:** CAISO (caiso-281) · **Role:** fetch+aggregate shard (backfill)
 **Pin:** `7fe0a10c77983946b1e06a90ca2eea3c30794d0c` (verified before any work)
-**Charter:** `docs/PRECOMMIT-caiso281-rtm-offer-surface-intake-2026-09-13.md`
+**Charter:** `docs/records/caiso/PRECOMMIT-caiso281-rtm-offer-surface-intake-2026-09-13.md`
 **Quarter:** 2020 Q1 (2020-01-01 .. 2020-03-31) · **Branch:** `claude/caiso281-agg-2020q1`
 **Scope:** fetch only. No LP, no solve, no parser, no edit under `src/` or `scripts/`.
 
@@ -77,7 +77,7 @@ control date:
 | rtm | **2023-02-15** | **`DATA_CSV`** | **1,447,289** | `20230215_20230215_PUB_BID_RTM_v3.csv` | **41,495,083** |
 | rtm | 2020-02-15 | `ERR_1000` | 613 | `20200215_20200215_PUB_BID_RTM_v3.xml` | 729 |
 
-Both numbers match `docs/FINDING-caiso281-rtm-2023q1-2026-09-13.md` §1 **exactly**
+Both numbers match `docs/records/caiso/FINDING-caiso281-rtm-2023q1-2026-09-13.md` §1 **exactly**
 (1,447,289 compressed / 41,495,083 uncompressed), reproducing that shard's measurement
 from a different session a day later. The live/dead contrast is **2,363×** in compressed
 bytes and **56,920×** uncompressed. There is no ambiguity to adjudicate.

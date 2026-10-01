@@ -4,7 +4,7 @@
 Branch `claude/ercot-195-lever-selection-scssqc` (the branch name carries a
 stale shorthand — see §0).
 Pre-registration:
-`docs/PRECOMMIT-ercot202-rule18-grain-successor-2026-08-14.md`, pushed at
+`docs/records/ercot/PRECOMMIT-ercot202-rule18-grain-successor-2026-08-14.md`, pushed at
 `f73b9a1` **BEFORE** any measurement, derive or solve.
 
 Keeper at session start: **`2026-08-12-run192-arm-coal-peak`**
@@ -71,7 +71,7 @@ none was claimed to.
 ## 2. SEAM PROOF — re-measured at this HEAD, on the run192 keeper fleet
 
 `scripts/probes/ercot202_grain_seamproof.py` →
-`results/calibration/ercot202_grain_seamproof.json`. **`ALL_ASSERTIONS_PASS =
+`results/phase0/ercot/ercot202_grain_seamproof.json`. **`ALL_ASSERTIONS_PASS =
 true`; `ARM_IS_INERT = false`.**
 
 Re-measured rather than inherited: ercot-186 measured on
@@ -141,7 +141,7 @@ effect was predicted, and none may be read from this table.
 ## 3. `p6243` — the charter's open question, SETTLED
 
 `scripts/probes/ercot202_p6243_provenance.py` →
-`results/calibration/ercot202_p6243_provenance.json`.
+`results/phase0/ercot/ercot202_p6243_provenance.json`.
 
 The charter asked: *is `p6243`'s assembled 8 h min-down **correct**, or a CAMPD
 `Min_Down_Hours` artifact on a CT-classified plant?* — with rule 14
@@ -378,7 +378,7 @@ reason to skip it; the successor stands.
 ## 5. HYGIENE — the ERCOT-137 anchoring convention: RE-FILED WITH A MEASUREMENT
 
 `scripts/probes/ercot202_ercot137_anchoring.py` →
-`results/calibration/ercot202_ercot137_anchoring.json`.
+`results/phase0/ercot/ercot202_ercot137_anchoring.json`.
 
 The ercot-192 DOF ledger left this open on the `coal_offer_margin_level /
 _anchor` (ERCOT-137, limb A) entry: the identification pools the four subsets'

@@ -4,7 +4,7 @@
 
 **Probes:**
 - `scripts/probes/_pjmnext13_fleet_dump.py`: a `fleet_only` rebuild of the keeper recipe, one override. `pjm_da_virtual_bids` is off: those are demand-side rows, and the `_pjmnext8_exitfix_avail_delta.py` precedent applies. The fidelity guard still runs.
-- `scripts/probes/_pjmnext13_cards.py` → `results/calibration/_pjmnext13_cards.json`.
+- `scripts/probes/_pjmnext13_cards.py` → `results/phase0/pjm/_pjmnext13_cards.json`.
 
 **Intake:** the IMM's monthly Platts spot fuel prices, 2019–2025, were added to `som-competitive-conduct` (546 PJM rows, `spot_price_digitized_usd_per_mmbtu`).
 - **Source.** The SOM prints them only as a chart. The chart is vector, so `scripts/data/digitize_pjm_som_spot_fuel.py` reads each point exactly from the PDF drawing paths.
@@ -104,7 +104,7 @@ Nothing here is called a model-class limit.
 - new raw intakes `data/raw/eia-coal-mine-region/` (MSHA ID → EIA coal supply region) and `data/raw/eia-coal-transport-rates/` (EIA basin → state → mode transport, $/ton);
 - tests and the matrix row.
 
-**Before any solve**, the zero-LP offer delta was taken on paired `fleet_only` rebuilds (`scripts/probes/_pjmnext13_arm_delta.py` → `results/calibration/_pjmnext13_arm_delta.json`). It reads the P1 bid (`mc_base` + the mid-curve floor) and a static marginal-unit re-pricing of the keeper's own zonal prices, with no re-dispatch.
+**Before any solve**, the zero-LP offer delta was taken on paired `fleet_only` rebuilds (`scripts/probes/_pjmnext13_arm_delta.py` → `results/phase0/pjm/_pjmnext13_arm_delta.json`). It reads the P1 bid (`mc_base` + the mid-curve floor) and a static marginal-unit re-pricing of the keeper's own zonal prices, with no re-dispatch.
 
 | year | CC_REGULAR Δfuel / Δbid | CT_PEAKER Δbid | ST_GAS Δbid | COAL_BIT Δbid | static Δ LW price, joint / gas leg only | C3a keeper → static arm |
 |---|---|---|---|---|---|---|

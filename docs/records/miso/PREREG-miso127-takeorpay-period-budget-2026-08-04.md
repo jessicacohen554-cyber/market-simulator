@@ -152,7 +152,7 @@ budget construction must introduce a level. Every available source fails:
    variants is explicit and this is the least disguised of them.
 2. **Genuinely contractual ex-ante tonnage** — does not exist at plant grain
    across the 39-plant / 26-owner / 12-state target set (miso-104's sourcing
-   pass; the standing ask `docs/handoffs/miso-coal-contract-tonnage-data-ask-2026-07.md`).
+   pass; the standing ask `docs/records/miso/miso-coal-contract-tonnage-data-ask-2026-07.md`).
 3. **A level derived from the model's own realized volume** — the one candidate
    that introduces no *data*. It is disposed of by proof, below.
 

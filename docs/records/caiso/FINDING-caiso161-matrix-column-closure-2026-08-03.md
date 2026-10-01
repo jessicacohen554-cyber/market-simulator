@@ -4,7 +4,7 @@
 > **No LP, no solve, keeper UNCHANGED at `2026-08-03-caiso156-meter-screen-b`.**
 > Holdouts untouched (no year touched at all — this is a bookkeeping census,
 > rule 28(c)). Instrument: `scripts/mechanism_matrix_gap_sweep.py --iso CAISO`,
-> before/after committed in `results/calibration/_matrix_gap_sweep_CAISO.json`.
+> before/after committed in `results/phase0/governance/_matrix_gap_sweep_CAISO.json`.
 
 ## §1 — what was measured
 

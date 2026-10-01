@@ -256,4 +256,4 @@ Offer-curve multipliers are unchanged, the DOF ledger stays 9/6, and there is no
 
 The supply-consistent demand guard needs one of two choices: (a) rebuild the guard on the measured EIA-930 basis
 for 2019–21, or (b) re-derive the fold-in for all years, which moves the 2022–25 keeper inputs.
-`docs/handoffs/i-caiso/INTAKE-i-caiso-2019-2021-2026-09-24.md` §1. 2019–21 is not solved until the owner rules.
+`docs/records/caiso/i-caiso/INTAKE-i-caiso-2019-2021-2026-09-24.md` §1. 2019–21 is not solved until the owner rules.

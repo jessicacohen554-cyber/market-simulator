@@ -1,5 +1,5 @@
 {
- "prereg": "results/calibration/PREREG-miso132-synchronized-reserve-online-gating-2026-08-05.md",
+ "prereg": "docs/records/miso/PREREG-miso132-synchronized-reserve-online-gating-2026-08-05.md",
  "prereg_pushed_at": "9a0033bb",
  "keeper": "2026-08-04-miso-127-onlinepmin",
  "bundle": "results/calibration/miso127_onlinepmin_B",

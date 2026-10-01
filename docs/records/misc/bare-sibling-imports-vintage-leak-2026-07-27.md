@@ -2,7 +2,7 @@
 
 > Status: RECORD (frozen) — session record of the refactor-consolidation lane
 > executing the bare-sibling-imports + test-pollution-bisect charter seeded by
-> `docs/handoffs/path-registry-routing-2026-07.md` §4. Branch
+> `docs/records/misc/path-registry-routing-2026-07.md` §4. Branch
 > `claude/market-sim-refactor-consolidation-b8f9xc` off main @ `874ff27`.
 
 ## 1. Re-census (measured this session, not inherited)

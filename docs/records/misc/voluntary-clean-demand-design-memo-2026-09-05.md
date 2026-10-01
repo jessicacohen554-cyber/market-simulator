@@ -1,8 +1,8 @@
 # Voluntary clean-energy demand — design memo (SCN-WS3a, 2026-09-05)
 
 **Lane:** SCN-WS3a `[FABLE]`, plan §3 WS-3 item 1 / §7 "WS-3a"
-(`docs/handoffs/forecast-scenario-readiness-plan-2026-09.md`, "the plan"). Issued by the
-Scenario Readiness Desk r#1 (`docs/handoffs/scenario-desk-ledger-2026-09.md`, "the ledger").
+(`docs/records/forecast/forecast-scenario-readiness-plan-2026-09.md`, "the plan"). Issued by the
+Scenario Readiness Desk r#1 (`docs/records/misc/scenario-desk-ledger-2026-09.md`, "the ledger").
 **Memo-first, the FF-0C / FF-G4 pattern: no code, no config, no test, no solve, no default, no
 matrix cell.** This file is the lane's only artifact. The implementing lane (SCN-WS3b) is
 chartered from §7's signed boxes and builds nothing this memo has not written down.
@@ -78,7 +78,7 @@ this memo — a memo proves nothing.**
 
 ### 1.1 What the ruling was about
 
-`docs/handoffs/ffr-5b-procurement-channel-design-2026-08-05.md` §1.4 (lines 226-243) adjudicated
+`docs/records/forecast/ffr-5b-procurement-channel-design-2026-08-05.md` §1.4 (lines 226-243) adjudicated
 **Candidate D — corporate PPA demand — as a *driver of VRE entry*** inside the capacity-evolution
 loop: a quantity the model would carry in its default posture, whose value would have to be
 *identified* from data, and whose correctness the model's forecast skill would then depend on.
@@ -451,7 +451,7 @@ the value, so it is a D-2 what-if level with the candidate range disclosed.
 | 11 | Hyperscaler commitment targets and target years | `f_commit` shape | Google (24/7 carbon-free energy by 2030, 2020 announcement); Microsoft ("100/100/0" by 2030, 2021); Amazon (100 % renewable matching, reported met 2023); Meta (100 % renewable matching, reported met 2020) — each in the company's published sustainability report | **public / needs-citation** — document and page per company |
 | 12 | Share of the DC block operated by committed buyers | `f_commit` level | no public ISO-resolved series (hyperscale vs colocation vs enterprise DC shares are proprietary market research) | **owner level** — recommend `low = 0`, `high = 1.0` (the whole block committed), `mid` an owner choice; **the weakest cell in the construction, said plainly** |
 | 13 | Annual-matching vs 24/7 form of the commitment | eligibility, §2.2 | same corporate reports | public; only annual matching is modelled (D-3b) |
-| 14 | WTP ceiling `w`, real 2026$/MWh, low/mid/high | escape price | national voluntary REC price ranges (Green-e / public market reports); the range already cited in-repo — *"national voluntary RECs $2–7/MWh"* and *"Platts Type-2 hourly certificates $0.90–5.00/MWh"* (`docs/handoffs/ces-ci-crediting-audit-2026-07.md:683-687`, from the portfolio tool's `eac_prices.csv`); bundled-PPA premia (LevelTen) are **proprietary and refused** | **public / needs-citation** for the REC range; the ceiling itself is an **owner level** (D-2) |
+| 14 | WTP ceiling `w`, real 2026$/MWh, low/mid/high | escape price | national voluntary REC price ranges (Green-e / public market reports); the range already cited in-repo — *"national voluntary RECs $2–7/MWh"* and *"Platts Type-2 hourly certificates $0.90–5.00/MWh"* (`docs/records/forecast/ces-ci-crediting-audit-2026-07.md:683-687`, from the portfolio tool's `eac_prices.csv`); bundled-PPA premia (LevelTen) are **proprietary and refused** | **public / needs-citation** for the REC range; the ceiling itself is an **owner level** (D-2) |
 | 15 | Eligible fuel set | row LHS | Green-e Energy standard (renewable set; new/low-impact hydro only); the corporate "carbon-free" definitions for nuclear (row 11) | public; the **choice** is D-3c |
 
 **Reading the table honestly.** Rows 1–5 and 10 are on disk today. Rows 6, 7, 9, 11, 14 have

@@ -1,6 +1,6 @@
 # PRECOMMIT — capx lane D3: attribution of MISO's T1-H `retire.total_gw` PASS→FAIL flip (the cap-grain G3 regression)
 
-**Lane:** capx D3 (r#21), charter `docs/handoffs/capx-director-prompt-pack-2026-08.md` §D3.
+**Lane:** capx D3 (r#21), charter `docs/records/forecast/capx-director-prompt-pack-2026-08.md` §D3.
 **Session date:** 2026-08-31. **Branch:** `claude/miso-t1h-retire-g3-regression-i97mkq`.
 **Discipline:** PRECOMMIT-FIRST — this document is pushed BEFORE any attribution
 measurement. Phase 0 is ZERO-SOLVE, committed artifacts only. No mechanism, no tuning, no
@@ -128,7 +128,7 @@ carried at all) are adjudicated as two separate verdicts.
 
 ## 5. Exit contract
 
-Finding `docs/handoffs/FINDING-capx-d3-miso-retire-g3-2026-08-31.md` with the attributed
+Finding `docs/records/forecast/FINDING-capx-d3-miso-retire-g3-2026-08-31.md` with the attributed
 driver class + routed repair (or the clean adjudicated "scorer-grain, repair = R3-style
 dual-basis reporting"), the MISO G3 board row refreshed in
 `frontend/data/forecast/program-status.json` (MISO block only — no other ISO's fields, no

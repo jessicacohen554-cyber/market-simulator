@@ -1,6 +1,6 @@
 {
  "session": "caiso-180",
- "precheck": "results/calibration/PRECHECK-caiso180-outage-reaudit-2026-08-07.md",
+ "precheck": "docs/records/caiso/PRECHECK-caiso180-outage-reaudit-2026-08-07.md",
  "arms_present": [
   "A0",
   "A1",

@@ -6,7 +6,7 @@ is the parent's zero-LP job (rule 32 (d)). The mechanics are
 ``_hydro5_compose_span.py``'s (``compose`` / ``regenerate_diagnostics``), reused
 unchanged. The recipe check is this lane's: every leg must equal the PJM-NEXT
 keeper's own year (``pjmnext_c1_span/run_config_<y>.json``) plus EXACTLY the
-three PJM-NEXT-2 flags (docs/PRECOMMIT-pjm-next-2-joint-2026-09-25.md), with the
+three PJM-NEXT-2 flags (docs/records/pjm/PRECOMMIT-pjm-next-2-joint-2026-09-25.md), with the
 COAL-SUB bare-``COAL`` offer-curve fold still tolerated.
 Anything else differing aborts, so a control leg or a wrong-recipe leg can
 never compose in.

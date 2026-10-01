@@ -11,7 +11,7 @@ engaged; the miso-142…179 no-LP precedent). Determination unchanged:
 
 Instrument (read-only, reproducing from committed artifacts + measured
 series): `scripts/probes/_miso181_seam_response_precheck.py` →
-`results/calibration/_miso181_seam_response_precheck.json`.
+`results/phase0/miso/_miso181_seam_response_precheck.json`.
 
 ## 0. The verdict
 
@@ -271,5 +271,5 @@ Reads `results/calibration/miso177_rho_B/hourly/{system,class_hourly}_<y>.parque
 `data/raw/_validation-source/{actual_lmp_hourly_MISO,miso_offer_level_dispersion}.parquet|json`,
 and rebuilds the model offer surface via the committed `_miso178`/`_miso156`
 wrapper path (bundle `miso177_rho_B`). Record:
-`results/calibration/_miso181_seam_response_precheck.json`. PREREG:
+`results/phase0/miso/_miso181_seam_response_precheck.json`. PREREG:
 `PREREG-miso181-seam-coincident-envelope-2026-08-24.md` (commit `9e9d1a1`).

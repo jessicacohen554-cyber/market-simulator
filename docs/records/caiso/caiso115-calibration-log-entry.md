@@ -15,7 +15,7 @@ coexist, and (B) what is C4, with measurement not another tweak. All from
 committed artifacts + raw EIA-930 via `scripts/probes/_caiso115_c4_freshlook.py`
 (no LP; keeper-proxy `caiso104_m1_B` for the model hourly, reproduces the keeper
 C4 gas digit-for-digit). Full record:
-`results/calibration/FINDING-caiso115-c4-freshlook-and-separability-2026-07-23.md`.
+`docs/records/caiso/FINDING-caiso115-c4-freshlook-and-separability-2026-07-23.md`.
 
 **Inv 1a — cross-ISO C4 benchmark: the gate is NOT mis-specified, CAISO is a
 marginal-NRMSE outlier, not a broken one.** Scoring every ISO keeper's gas

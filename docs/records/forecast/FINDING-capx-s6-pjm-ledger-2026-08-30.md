@@ -5,7 +5,7 @@
 **Charter:** director ledger `capx-director-ledger-2026-08.md` lane S-6 (§0p.2, r#19 pack
 prompt; owner-held at dispatch, hold lifted by the owner's own dispatch of this session —
 its release condition, CAISO-224-FIN landing, is satisfied at this HEAD: PR #4415 merged).
-Predecessors: `docs/handoffs/FINDING-capx-s5-pjm-horizon-edge-2026-08-30.md` (the corrected
+Predecessors: `docs/records/forecast/FINDING-capx-s5-pjm-horizon-edge-2026-08-30.md` (the corrected
 bar; landed PR #4340), `FINDING-capx-d2b-i7-ledger-2026-08-25.md` §5 (the PJM leg's
 observability limit), `FINDING-capx-s4b-neiso-ara-2026-08-30.md` §§4–5 (the pre-declaration
 discipline and the floor-retention response pattern this finding mirrors).

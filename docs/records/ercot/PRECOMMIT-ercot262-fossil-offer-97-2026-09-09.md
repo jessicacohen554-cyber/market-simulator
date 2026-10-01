@@ -20,7 +20,7 @@ Part 2 was ambiguous between two objects and the owner ruled on it before any so
 | **CC_REGULAR peak, total** | **0.9409** (= 0.97²) | the CC_REGULAR duct-fired / peaking band only |
 
 The resolved arm curve for all three recipe legs is committed at
-`results/calibration/_ercot262_fossil97_offer_curve.json`, generated before the solve.
+`results/phase0/ercot/_ercot262_fossil97_offer_curve.json`, generated before the solve.
 
 ## 2. Rule 1 `[R-STRUCT]` carve-out conditions, each discharged
 

@@ -37,7 +37,7 @@ The ARM series is a DIAGNOSTIC reconstruction; the admissible forward-mode
 mechanism it motivates is a *quantile-indexed* ladder (store each rung's
 quantile and evaluate it against the model's own distribution), which carries no
 measured price level and so regenerates for a forecast year -- see
-``docs/ADDENDUM-pjm-h12-the-seam-is-a-variance-compression-2026-09-20.md``.
+``docs/records/pjm/ADDENDUM-pjm-h12-the-seam-is-a-variance-compression-2026-09-20.md``.
 
 Usage::
 

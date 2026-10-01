@@ -5,9 +5,9 @@ SESSION PJM-NEXT-5 — PJM calibration: close the remaining rubric failures on k
 DATA PROFILE: pjm
 Model: Opus/Fable only (rule 27 — may write src/market_sim).
 
-READ FIRST: CLAUDE.md (rules 1, 13, 14, 19, 21, 23, 25, 28, 29(b), 31–36); docs/RESULT-pjm-next-4-2026-09-26.md;
-docs/PRECOMMIT-pjm-next-4-card1-midcurve-2019-2026-09-26.md; docs/RESULT-pjm-next-3-2026-09-26.md;
-docs/FINDING-pjm-next-3-phase0-cards-1-3-4-2026-09-26.md; the PJM lever queue in docs/mechanism-testing-matrix.md §5.3
+READ FIRST: CLAUDE.md (rules 1, 13, 14, 19, 21, 23, 25, 28, 29(b), 31–36); docs/records/pjm/RESULT-pjm-next-4-2026-09-26.md;
+docs/records/pjm/PRECOMMIT-pjm-next-4-card1-midcurve-2019-2026-09-26.md; docs/records/pjm/RESULT-pjm-next-3-2026-09-26.md;
+docs/records/pjm/FINDING-pjm-next-3-phase0-cards-1-3-4-2026-09-26.md; the PJM lever queue in docs/mechanism-testing-matrix.md §5.3
 and docs/codebase-site/data/mechanism-matrix/PJM.js. Never re-test an R/I/G cell without new evidence. In particular,
 coal_passthrough_sigmoids re-centring (joint form) is R, committed_band_measured_basis is R, AP South is I, and
 Dominion sub-zonal congestion is closed (pjm-137).
@@ -32,7 +32,7 @@ CARDS, in order. Each gets its own PRECOMMIT pushed before any solve. Zero-LP ph
 offer_curve_by_group multipliers.
  (1) CC econ cost vs PJM's measured CC offers, 2019–2022 and 2024.
      - Fleet-only rebuild via replay_keeper.run_year_kwargs (template: scripts/probes/pjm_h20_cardc_phase0.py;
-       method in docs/PRECOMMIT-pjm-next-4-card1-midcurve-2019-2026-09-26.md §3).
+       method in docs/records/pjm/PRECOMMIT-pjm-next-4-card1-midcurve-2019-2026-09-26.md §3).
      - Decompose the cap-weighted CC_REGULAR econ bid (gas × HR + VOM + RGGI + startup amortization) against the
        measured CC_LIKE mid-curve target at the same share.
      - Where is the model CC above PJM's own offers, by zone, and by how much? Name the operand (delivered gas basis,

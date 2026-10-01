@@ -376,12 +376,12 @@ lever.**
 1. `CLAUDE.md` (repo instructions) and the session handoff prompt.
 2. `docs/mechanism-testing-matrix.md` §5.4 — the miso-144 LIVE QUEUE stamp and
    the miso-143 prior stamp beneath it.
-3. `results/calibration/FINDING-miso136-ct-offer-conduct-corpus-exists-2026-08-06.md`
+3. `docs/records/miso/FINDING-miso136-ct-offer-conduct-corpus-exists-2026-08-06.md`
    (§§1–6) — corpus existence, grain, the absent type column, masked-ID
    persistence.
-4. `results/calibration/FINDING-miso138-da-co-class-bridge-refuted-2026-08-06.md`
+4. `docs/records/miso/FINDING-miso138-da-co-class-bridge-refuted-2026-08-06.md`
    (§§1–3) — the REFUTED class bridge and the passing G-0 fleet reconciliation.
-5. `results/calibration/FINDING-miso144-idle-block-is-universe-artifact-2026-08-08.md`
+5. `docs/records/miso/FINDING-miso144-idle-block-is-universe-artifact-2026-08-08.md`
    (via the §5.4 stamp) and `PREREG-miso144-inmerit-idle-attribution-2026-08-08.md`
    §§2–3.
 6. Committed prior JSON, read this session for the footing numbers reproduced in

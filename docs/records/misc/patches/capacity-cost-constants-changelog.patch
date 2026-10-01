@@ -189,7 +189,7 @@ index 3f963c2..0fdf758 100644
 @@ -4497,99 +4536,113 @@ NEW_ENTRY_COSTS: dict[str, dict[str, float]] = {
  # Per-tech capex + learning-rate multipliers for the PB-1 tech-cost
  # uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile,
- # docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to
+ # docs/records/misc/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to
 -# NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to
 -# NREL ATB 2024 cost scenarios: "low"=Advanced, "mid"=Moderate, "high"=
 -# Conservative. "mid" is 1.0 by construction (Moderate is NEW_ENTRY_COSTS' base

@@ -1,7 +1,7 @@
 # RESULT — NWPP-NEXT: FERC 714 PSEI fill + partial-plant exit carry, 2019–2025 (PROMOTED)
 
 **Run:** `2026-09-25-nwpp-next-ferc714-partial` · **bundle** `results/calibration/nwppnext_span` (on `main` with this PR)
-**PRECOMMIT:** `docs/handoffs/PRECOMMIT-nwpp-next-ferc714-partialcarry-2019-2025-2026-09-25.md`
+**PRECOMMIT:** `docs/records/nwpp/PRECOMMIT-nwpp-next-ferc714-partialcarry-2019-2025-2026-09-25.md`
 **Solved:** seven year-isolated shards (rule 36), all pinned to `fd35f164a97f74e241ea90daa8fff2ae95135219`. The
 parent session ran no LP.
 **Promotion:** NWPP keeper #8. The owner asked for a recommended candidate to be promoted, and this one was

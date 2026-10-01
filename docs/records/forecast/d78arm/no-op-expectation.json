@@ -401,7 +401,7 @@
   "off_target_detail": [],
   "rows": [
     {
-      "run_config": "docs/handoffs/scn-ws1a/t0/base-run_config.json",
+      "run_config": "docs/records/forecast/scn-ws1a/t0/base-run_config.json",
       "mode": "forecast",
       "iso": "CAISO",
       "recorded_cache_key": "706eec14f63096e8",
@@ -415,7 +415,7 @@
       "committed_differs_from_pre_arm_resolution": false
     },
     {
-      "run_config": "docs/handoffs/scn-ws1a/t0/carbon_plus25-run_config.json",
+      "run_config": "docs/records/forecast/scn-ws1a/t0/carbon_plus25-run_config.json",
       "mode": "forecast",
       "iso": "CAISO",
       "recorded_cache_key": "f129fd3720e3e874",

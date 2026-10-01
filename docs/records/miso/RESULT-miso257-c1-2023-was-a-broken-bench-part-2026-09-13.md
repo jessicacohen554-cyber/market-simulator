@@ -84,7 +84,7 @@ in the registration path notices.
 The keeper bundle is the SLIM committed form, so `dispatch/`, `system.parquet` and
 `btm.parquet` had to be reconstructed before `build_payload` could run
 (`scripts/probes/_miso257_bench_rebuild.py`, recipe from
-`docs/RESULT-pjm-h4-bench-move-landed-2026-09-13.md` §2). The rebuilt part is accepted ONLY if
+`docs/records/pjm/RESULT-pjm-h4-bench-move-landed-2026-09-13.md` §2). The rebuilt part is accepted ONLY if
 its plant key set and every dispatch-scoped field (`name / zone / group / npl / nodata / campd
 / c_ann / c_mon`) come back byte-identical (`scripts/probes/_miso257_bench_gate.py`):
 

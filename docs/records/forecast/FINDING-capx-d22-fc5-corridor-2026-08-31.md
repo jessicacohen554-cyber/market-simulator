@@ -11,7 +11,7 @@ charter; lane D8-V is re-scoring through that file byte-for-byte in this batch).
 rationale).** Nothing intaken here may become a target any model quantity is
 moved toward. The rubric deliberately makes FC-5 conformance non-numeric: what
 gates is the **explanation** discipline of
-`docs/handoffs/cross-model-corridor-2026-07-13.md` ("divergence is not failure;
+`docs/records/misc/cross-model-corridor-2026-07-13.md` ("divergence is not failure;
 unexplained divergence is"), never closeness. No numeric conformance band was
 added, no ISO is ranked by corridor distance, and ReEDS' practice of adjusting
 cost coefficients until generation matches history — explicitly rejected by the
@@ -42,7 +42,7 @@ the rubric intends until dispositions are written. That wiring is its own charte
 
 ## 2. Root cause: why the tables did not exist
 
-FF-0F (`docs/handoffs/ff-0f-fc5-benchmark-intake-2026-07.md`) built the entire
+FF-0F (`docs/records/forecast/ff-0f-fc5-benchmark-intake-2026-07.md`) built the entire
 machinery — schema, registry, per-source modules, fetcher, curate script, loader,
 FC-5 scorer wiring, 13 tests — and fetched 1,008 AEO rows. **The defect was not
 missing code; it was that nothing was committed.**

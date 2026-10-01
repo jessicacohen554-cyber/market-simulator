@@ -4,12 +4,12 @@ For each year 2019-2025, rebuild the NEISO keeper's fleet with
 ``run_year(fleet_only=True)`` on the keeper recipe (``replay_keeper.run_year_kwargs``,
 the sanctioned reconstruction) with ``coal_fuel_inventory_plant_grain`` armed,
 call ``build_coal_plant_budget`` exactly as ``run_year`` does, and compare each
-yard's budget (TBtu) to ``docs/handoffs/neiso116/phase0_coal_budget_census.json``.
+yard's budget (TBtu) to ``docs/records/neiso/neiso116/phase0_coal_budget_census.json``.
 Also asserts the gate resolves to annual-rows-only for the armed NEISO config.
 
 Usage::
 
-    uv run python docs/handoffs/neiso117/phase0_yard_rows_probe.py --out docs/handoffs/neiso117/phase0_yard_rows_probe.json
+    uv run python docs/records/neiso/neiso117/phase0_yard_rows_probe.py --out docs/records/neiso/neiso117/phase0_yard_rows_probe.json
 """
 
 from __future__ import annotations
@@ -27,7 +27,7 @@ for p in (str(REPO), str(REPO / "src")):
         sys.path.insert(0, p)
 
 BUNDLE = REPO / "results/calibration/neiso114b_span"
-CENSUS = REPO / "docs/handoffs/neiso116/phase0_coal_budget_census.json"
+CENSUS = REPO / "docs/records/neiso/neiso116/phase0_coal_budget_census.json"
 
 
 def main() -> int:

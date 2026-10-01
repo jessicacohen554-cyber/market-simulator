@@ -12,7 +12,7 @@
 > allocation-floor family for this defect, including an evening-only-scoped
 > variant. §4's candidate **S2 (DA/RT two-settlement separation) is therefore
 > the remaining diagnosis** and per §4 must be chartered separately. Evidence:
-> `results/calibration/FINDING-caiso129-s1-discharge-allocation-gates-2026-07-27.md`;
+> `docs/records/caiso/FINDING-caiso129-s1-discharge-allocation-gates-2026-07-27.md`;
 > instrument `scripts/probes/_caiso129_s1_gates.py`. Grant items 2–4 (the
 > caiso-114 refinement unfunded, `hydro_budget_nameplate_aware` in its own
 > single-delta A/B, pumped storage flagged-not-built) are untouched.
@@ -20,7 +20,7 @@
 **Status: GRANTED 2026-07-27 (owner, in-session), EXECUTED AND KILLED AT THE
 GATES 2026-07-27 (caiso-129) — see the outcome note above.** This is the
 TASK-2 design memo of
-`results/calibration/FINDING-caiso127-evening-formation-2026-07-27.md`. Nothing
+`docs/records/caiso/FINDING-caiso127-evening-formation-2026-07-27.md`. Nothing
 in it was armed in the caiso-127 session, no A/B was run, and the keeper
 (`2026-07-27-caiso-126-ror-split`) is unchanged.
 

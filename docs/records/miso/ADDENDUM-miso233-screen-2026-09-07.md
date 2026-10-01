@@ -4,7 +4,7 @@ Written when the screen was scored and the span launched, **before any span year
 exists**. Bars are the ones fixed in `PRECOMMIT-miso233-spp-hourly-seam-2026-09-07.md` §4
 and pushed at `79f73030`; the scorer `scripts/probes/_miso233_screen_gates.py` was written
 and pushed **while the screen LP ran**, before the arm's bundle was opened. Machine record:
-`results/calibration/_miso233_screen_gates.json`.
+`results/phase0/miso/_miso233_screen_gates.json`.
 
 **Arm:** the miso-232 keeper recipe with the single field
 `miso_seam_neighbour_hourly_spp=true`, 2023 only, via `replay_keeper --set`. Verified from

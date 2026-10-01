@@ -14,13 +14,13 @@ first statistic**, before the derive it would have licensed. Rule 15
 produced no run.**
 
 **Pre-registration:**
-`results/calibration/PREREG-miso129-coal-within-band-incremental-slope-2026-08-05.md`,
+`docs/records/miso/PREREG-miso129-coal-within-band-incremental-slope-2026-08-05.md`,
 committed and pushed at `ec5323a4` **before any adjudicating statistic, any
 derive output and any arm**, with §1 disclosing in full every structural fact
 read first — including that `data/raw/reference/miso_campd_marginal_hr_summary.csv`
 was **not opened**.
 **Probe:** `scripts/probes/_miso129_coal_within_band_slope.py`.
-**Record:** `results/calibration/_miso129_coal_within_band_slope.json`.
+**Record:** `results/phase0/miso/_miso129_coal_within_band_slope.json`.
 
 Rule 22 `[R-HOLDOUT]`: 2023–2025 only — MISO holds no `calibration-complete`
 marker, so no out-of-training year was solved, scored **or read**.
@@ -248,4 +248,4 @@ uv run python scripts/probes/_miso129_coal_within_band_slope.py
 
 No LP, no bundle, no network; reads the committed bench and keeper sidecar plus
 one HEAD fleet assembly for P1 grain 2. Writes
-`results/calibration/_miso129_coal_within_band_slope.json`.
+`results/phase0/miso/_miso129_coal_within_band_slope.json`.

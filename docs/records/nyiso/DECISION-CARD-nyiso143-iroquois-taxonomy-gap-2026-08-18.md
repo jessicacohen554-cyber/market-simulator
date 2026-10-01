@@ -50,7 +50,7 @@ admissible, **open** object that is structurally incapable of ever recording a
 verdict is the exact thing that declaration cannot survive — and it is invisible
 to both instruments a reviewer would reach for. nyiso-143's frontier assessment
 lists it as one of three objects still open
-(`results/calibration/ASSESSMENT-nyiso143-frontier-redeclaration-2026-08-18.md` §4).
+(`docs/records/nyiso/ASSESSMENT-nyiso143-frontier-redeclaration-2026-08-18.md` §4).
 
 ## 4. THE TWO DECISIONS REQUESTED
 

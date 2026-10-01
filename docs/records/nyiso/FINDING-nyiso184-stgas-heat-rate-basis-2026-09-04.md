@@ -10,9 +10,9 @@ grade 5, fail set **{C1-2023 `ST_GAS` +3.86 TWh, C3a-2025 −11.2 %, C3c}**.
 `ScenarioConfig` field added, DEFAULT-OFF and byte-identical off, with its
 matrix row and a cell in every shard in the same PR (rule 28c) — NOT armed in
 any run and NOT proposed as a keeper candidate.**
-**Pre-registration:** `results/calibration/PREREG-nyiso184-stgas-heat-rate-basis.md`,
+**Pre-registration:** `docs/records/nyiso/PREREG-nyiso184-stgas-heat-rate-basis.md`,
 pushed to `origin` at `19d809d9` **before the first gate measurement**.
-**Machine records:** `results/calibration/_nyiso184_heat_rate_basis.json`
+**Machine records:** `results/phase0/nyiso/_nyiso184_heat_rate_basis.json`
 (gates G0–G4 + a labelled post-hoc block) and
 `_nyiso184_heat_rate_basis_prefix_g1unit.json` (the pre-repair run, preserved
 unread-past-G1, §3.1); probe `scripts/probes/nyiso184_heat_rate_basis.py`;

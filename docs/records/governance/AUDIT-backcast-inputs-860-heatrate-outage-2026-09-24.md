@@ -132,7 +132,7 @@ SESSION F1 — BACKCAST HEAT-RATE + EIA-860 VINTAGE FOUNDATION (ISO-agnostic; co
 DATA PROFILE: all
 MODEL: Opus or Fable (rule 27 — writes src/market_sim/ and scripts/)
 
-READ FIRST: docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md (§1 D1–D4, §3a–3c),
+READ FIRST: docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md (§1 D1–D4, §3a–3c),
 src/market_sim/config/scenarios.py (eia860_vintage_year … measured_cc_heat_rates block, ~L5225–5620),
 scripts/data/process_eia860.py::_join_egrid_heat_rate, src/market_sim/data/fleet/eia860.py
 (load_fleet_from_csv, load_retired_within_window, _rows_to_generators ~L1377), the mechanism matrix rows
@@ -203,7 +203,7 @@ SESSION F2 — CAMPD OUTAGE COVERAGE 2019–2025, EVERY ISO (data intake + deriv
 DATA PROFILE: all
 MODEL: Opus or Fable (rule 27 — scripts/ + src/ outage loader touch)
 
-READ FIRST: docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md (§1 D5, §3d),
+READ FIRST: docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md (§1 D5, §3d),
 scripts/data/fetch_campd_unit_level.py, scripts/data/derive_campd_unit_outages.py (std / --short-windows /
 --short-window-groups gas --merit-order-guard / --partial-windows / --per-unit-crosswalk modes),
 src/market_sim/data/outages.py, each ISO's committed campd-unit-outages*-<ISO>.meta.json, and the
@@ -253,7 +253,7 @@ DO NOT run any LP or register anything. Open a PR to main; final report = the co
 SESSION R-CAISO — RE-SOLVE CAISO 2019–2025 ON CORRECTED BACKCAST INPUTS (vintage EIA-860, plant heat rates, granular CAMPD outages)
 DATA PROFILE: caiso
 MODEL: Opus or Fable
-PRECONDITION: F1 AND F2 (docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md §5) are MERGED to
+PRECONDITION: F1 AND F2 (docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md §5) are MERGED to
 main. If either is not, STOP and report — do not solve on the old inputs.
 
 READ FIRST: the audit doc (§1–§3, the CAISO rows), the F1 and F2 PRs' census/coverage tables,
@@ -308,7 +308,7 @@ never re-tune multipliers to recover it.
 SESSION R-ERCOT — RE-SOLVE ERCOT 2019–2025 ON CORRECTED BACKCAST INPUTS (vintage EIA-860, plant heat rates, granular CAMPD outages)
 DATA PROFILE: ercot
 MODEL: Opus or Fable
-PRECONDITION: F1 AND F2 (docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md §5) are MERGED to
+PRECONDITION: F1 AND F2 (docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md §5) are MERGED to
 main. If either is not, STOP and report — do not solve on the old inputs.
 
 READ FIRST: the audit doc (§1–§3, the ERCOT rows), the F1 and F2 PRs' census/coverage tables,
@@ -370,7 +370,7 @@ never re-tune multipliers to recover it.
 SESSION R-MISO — RE-SOLVE MISO 2019–2025 ON CORRECTED BACKCAST INPUTS (vintage EIA-860, plant heat rates, granular CAMPD outages)
 DATA PROFILE: miso
 MODEL: Opus or Fable
-PRECONDITION: F1 AND F2 (docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md §5) are MERGED to
+PRECONDITION: F1 AND F2 (docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md §5) are MERGED to
 main. If either is not, STOP and report — do not solve on the old inputs.
 
 READ FIRST: the audit doc (§1–§3, the MISO rows), the F1 and F2 PRs' census/coverage tables,
@@ -424,7 +424,7 @@ never re-tune multipliers to recover it.
 SESSION R-NEISO — RE-SOLVE NEISO 2019–2025 ON CORRECTED BACKCAST INPUTS (vintage EIA-860, plant heat rates, granular CAMPD outages)
 DATA PROFILE: neiso
 MODEL: Opus or Fable
-PRECONDITION: F1 AND F2 (docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md §5) are MERGED to
+PRECONDITION: F1 AND F2 (docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md §5) are MERGED to
 main. If either is not, STOP and report — do not solve on the old inputs.
 
 READ FIRST: the audit doc (§1–§3, the NEISO rows), the F1 and F2 PRs' census/coverage tables,
@@ -477,7 +477,7 @@ never re-tune multipliers to recover it.
 SESSION R-NWPP — RE-SOLVE NWPP 2019–2025 ON CORRECTED BACKCAST INPUTS (vintage EIA-860, plant heat rates, granular CAMPD outages)
 DATA PROFILE: nwpp
 MODEL: Opus or Fable
-PRECONDITION: F1 AND F2 (docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md §5) are MERGED to
+PRECONDITION: F1 AND F2 (docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md §5) are MERGED to
 main. If either is not, STOP and report — do not solve on the old inputs.
 
 READ FIRST: the audit doc (§1–§3, the NWPP rows), the F1 and F2 PRs' census/coverage tables,
@@ -532,7 +532,7 @@ never re-tune multipliers to recover it.
 SESSION R-NYISO — RE-SOLVE NYISO 2019–2025 ON CORRECTED BACKCAST INPUTS (vintage EIA-860, plant heat rates, granular CAMPD outages)
 DATA PROFILE: nyiso
 MODEL: Opus or Fable
-PRECONDITION: F1 AND F2 (docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md §5) are MERGED to
+PRECONDITION: F1 AND F2 (docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md §5) are MERGED to
 main. If either is not, STOP and report — do not solve on the old inputs.
 
 READ FIRST: the audit doc (§1–§3, the NYISO rows), the F1 and F2 PRs' census/coverage tables,
@@ -586,7 +586,7 @@ never re-tune multipliers to recover it.
 SESSION R-PJM — RE-SOLVE PJM 2019–2025 ON CORRECTED BACKCAST INPUTS (vintage EIA-860, plant heat rates, granular CAMPD outages)
 DATA PROFILE: pjm
 MODEL: Opus or Fable
-PRECONDITION: F1 AND F2 (docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md §5) are MERGED to
+PRECONDITION: F1 AND F2 (docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md §5) are MERGED to
 main. If either is not, STOP and report — do not solve on the old inputs.
 
 READ FIRST: the audit doc (§1–§3, the PJM rows), the F1 and F2 PRs' census/coverage tables,
@@ -644,7 +644,7 @@ never re-tune multipliers to recover it.
 SESSION R-SOCO — RE-SOLVE SOCO 2019–2025 ON CORRECTED BACKCAST INPUTS (vintage EIA-860, plant heat rates, granular CAMPD outages)
 DATA PROFILE: soco
 MODEL: Opus or Fable
-PRECONDITION: F1 AND F2 (docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md §5) are MERGED to
+PRECONDITION: F1 AND F2 (docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md §5) are MERGED to
 main. If either is not, STOP and report — do not solve on the old inputs.
 
 READ FIRST: the audit doc (§1–§3, the SOCO rows), the F1 and F2 PRs' census/coverage tables,
@@ -700,7 +700,7 @@ never re-tune multipliers to recover it.
 SESSION R-SPP — RE-SOLVE SPP 2019–2025 ON CORRECTED BACKCAST INPUTS (vintage EIA-860, plant heat rates, granular CAMPD outages)
 DATA PROFILE: spp
 MODEL: Opus or Fable
-PRECONDITION: F1 AND F2 (docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md §5) are MERGED to
+PRECONDITION: F1 AND F2 (docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md §5) are MERGED to
 main. If either is not, STOP and report — do not solve on the old inputs.
 
 READ FIRST: the audit doc (§1–§3, the SPP rows), the F1 and F2 PRs' census/coverage tables,

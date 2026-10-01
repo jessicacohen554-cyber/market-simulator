@@ -1,7 +1,7 @@
 {
  "probe": "ercot227_probe_f3",
  "factor": "F3 ercot_ruc_commitment_floor \u2014 measured RUC (out-of-market) commitment as an instruction-state min-gen floor: ONRUC telemetered resource status x LSL, class grain",
- "charter": "docs/PRECOMMIT-ercot226-held-sequestration-2026-08-22.md \u00a75.11 Amendment 3 (the owner proceed-with-all-factors order); waiver W-3 (ercot-226) category (iii) 'measured RUC / out-of-market commitment MW'",
+ "charter": "docs/records/ercot/PRECOMMIT-ercot226-held-sequestration-2026-08-22.md \u00a75.11 Amendment 3 (the owner proceed-with-all-factors order); waiver W-3 (ercot-226) category (iii) 'measured RUC / out-of-market commitment MW'",
  "session": "hub (ercot-227)",
  "branch_sha": "14ce4ce83328344cfe1ec274fcda351a766e4b06",
  "env": {
@@ -13,7 +13,7 @@
  "amendment3_reopening": {
   "ercot226_phase0_premise": "REFUTED-P0 on 'no 2023 RUC MW data on disk (only 2025/2026 RUC AS disclosure)'",
   "what_changed": "the NP3-965 60-Day SCED Gen Resource Data corpus carries a Telemetered Resource Status column whose ONRUC rows ARE the RUC-instructed unit-hours, with LSL and HSL alongside. The 2023 series was derived (scripts/data/derive_ercot_ruc_committed.py) rather than assumed absent.",
-  "overturned_prior": "the ercot97 plant-grain RUC lane's SCALE premise: 2023 carries 2,031 distinct ONRUC unit-hours over 96 days (7,963 SCED rows), not the 303 unit-hours the 2024/25-subset lane measured \u2014 a 6.7x larger object. Sizing record: results/calibration/ercot227_ruc_sizing.json",
+  "overturned_prior": "the ercot97 plant-grain RUC lane's SCALE premise: 2023 carries 2,031 distinct ONRUC unit-hours over 96 days (7,963 SCED rows), not the 303 unit-hours the 2024/25-subset lane measured \u2014 a 6.7x larger object. Sizing record: results/phase0/ercot/ercot227_ruc_sizing.json",
   "by_class_2023": {
    "CC_REGULAR": {
     "rows": 1148,

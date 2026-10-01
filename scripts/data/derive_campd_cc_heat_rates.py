@@ -376,7 +376,7 @@ def _campd_cc_hours(iso: str, years: list[int], codes: set[int]) -> pd.DataFrame
         # outage and emissions derives already do. Without it El Segundo
         # (510 MW, no eGRID row in any vintage) matched no fleet plant and
         # stayed at the HEAT_RATE_BINS class table (R-CAISO phase 0,
-        # docs/handoffs/r-caiso/PRECOMMIT-r-caiso-2026-09-24.md §2).
+        # docs/records/caiso/r-caiso/PRECOMMIT-r-caiso-2026-09-24.md §2).
         fac = df["facilityId"].fillna(-1).astype(int)
         uid = df["unitId"].astype(str)
         at_split = fac.isin(campd.CAMPD_SPLIT_FACILITIES)

@@ -312,7 +312,7 @@ A kill on any of (i)–(iii) is the result; the full span is never spent. Screen
   name uniqueness, other ISOs' anchors unchanged, unregistered ISO fails loud.
 * `docs/codebase-site/data/mechanism-matrix/SPP.js` — `priced_interchange` and `reference_price_interface` cells
   `U → R`, evidence = this doc + FINDING-spp-51 §3.5 (phase-0 kill on the measured premise; no solve).
-* `docs/handoffs/FINDING-spp-51-2026-09-07.md`, plan §5 row → LANDED, `docs/calibration-log/spp.md` entry.
+* `docs/records/spp/FINDING-spp-51-2026-09-07.md`, plan §5 row → LANDED, `docs/calibration-log/spp.md` entry.
 * NOT touched: `keepers/SPP.json`, offer bands, `ScenarioConfig`, `neighbor_price.py`, any other ISO's row,
   `derive_neighbor_hr_elasticity.py` (its own copy of the global map is R3's, forward-only — reported).
 

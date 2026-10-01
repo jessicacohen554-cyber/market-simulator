@@ -1,6 +1,6 @@
 {
  "session": "caiso-234",
- "precommit": "results/calibration/PRECOMMIT-caiso234-import-total-envelope-2026-09-02.md",
+ "precommit": "docs/records/caiso/PRECOMMIT-caiso234-import-total-envelope-2026-09-02.md",
  "method": {
   "gated_object": [
    "routine_total",

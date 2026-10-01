@@ -192,7 +192,7 @@ def _resolve_clean_region_gen_idx(
     whole fleet let Michigan's East-only row (MCL 460.1029, in-state systems
     only) be satisfied by MISO-South nuclear, defeating the row's own cited
     statutory basis (ARM3-FIX; the finding is
-    ``docs/handoffs/arm3-clean-row-horizon-2026-08-09.md`` §3). Filtering
+    ``docs/records/misc/arm3-clean-row-horizon-2026-08-09.md`` §3). Filtering
     happens here, at index construction, so the row builder stays a pure
     column-append (rule 2 [R-VECTOR] — no hour loops, no per-hour masking).
 
@@ -1224,7 +1224,7 @@ def _build_posture_energy_rows(
 
     The reserve-decoupled half of the pooled-linear commitment-posture lever
     (design note ``docs/multi-iso/miso-scarcity-posture-design-2026-07.md`` §A;
-    ERCOT port ``docs/handoffs/ercot-commitment-thinness-2026-07.md``). The
+    ERCOT port ``docs/records/ercot/ercot-commitment-thinness-2026-07.md``). The
     MISO/CAISO/PJM posture re-anchors a pergen RESERVE pool
     (:func:`_build_reserve_rows_pergen`), but ERCOT runs a fleet-wide ORDC
     co-opt with no pergen substrate, so this builds only the energy-side rows on

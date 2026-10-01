@@ -1,8 +1,8 @@
 # RESULT — NYISO-NEXT-17: the F/G re-partition (`nyiso_fg_split`) — 2026-09-30
 
 - **Session:** NYISO-NEXT-17 (orchestrator; no LP in this container).
-- **Pre-registration:** `docs/PRECOMMIT-nyiso-next17-fg-split-2026-09-30.md`, merged in PR #6925 before any shard. Pin `fd1269a703a68c8298beee97f28533ede43c8d79`.
-- **Design and phase 0:** `docs/DESIGN-nyiso-next17-fg-split-2026-09-30.md`.
+- **Pre-registration:** `docs/records/nyiso/PRECOMMIT-nyiso-next17-fg-split-2026-09-30.md`, merged in PR #6925 before any shard. Pin `fd1269a703a68c8298beee97f28533ede43c8d79`.
+- **Design and phase 0:** `docs/records/nyiso/DESIGN-nyiso-next17-fg-split-2026-09-30.md`.
 - **Owner card:** "Build design A anyway".
 - **Outcome: DECLINED by owner card ("Decline; land as rejected").** NEXT-16 stays keeper.
   - Both runs were registered and scored, then pruned at the ruling (rule 31 trigger (i); `audit_keepers` E13 clean). This doc and git history (commit `7c9c18de`) are the record:
@@ -13,7 +13,7 @@
 
 ## 1. Gates (arm vs the NEXT-16 keeper's committed bundles, form 4)
 
-Record: `results/calibration/_nyisonext17_gates.json`.
+Record: `results/phase0/nyiso/_nyisonext17_gates.json`.
 
 | | 2021 | 2022 | 2023 | 2024 | 2025 |
 |---|---|---|---|---|---|

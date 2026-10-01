@@ -133,6 +133,6 @@ Offer decomposition of the gap tranches:
 
 *"Charter EcoMin price-taker build"*. `diurnal_price_amplitude` is re-opened **G → O** (rule 28(a): the
 owner card is the re-open instrument; the new evidence is §3–§4). The build is chartered in
-`docs/handoffs/CHARTER-miso285-ecomin-price-taker-2026-09-29.md` for the successor lane. **Admissible scope is
+`docs/records/miso/CHARTER-miso285-ecomin-price-taker-2026-09-29.md` for the successor lane. **Admissible scope is
 merchant CC only** (rule 18 physics, rule 19): CHP classes carry their own host-steam must-run and ST_GAS its
 p25/OOM floors, so the arm's upper bound is **CF1, −$0.6 to −1.9** night median, not CF2.

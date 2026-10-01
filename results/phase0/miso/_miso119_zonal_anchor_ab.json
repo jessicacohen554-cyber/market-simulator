@@ -1,6 +1,6 @@
 {
  "probe": "miso-119 zone-resolved gas-offer margin anchor A/B",
- "prereg": "results/calibration/PREREG-miso119-zonal-anchor-screen-2026-08-03.md",
+ "prereg": "docs/records/miso/PREREG-miso119-zonal-anchor-screen-2026-08-03.md",
  "arms": {
   "A_control": "miso119_control_A",
   "B": "miso119_zonalanchor_B",

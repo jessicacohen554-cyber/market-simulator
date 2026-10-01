@@ -78,7 +78,7 @@ Both ATB terms are `constants.NEW_ENTRY_COSTS[...]["fom_per_kw_yr"]`, NREL ATB 2
 `INFLATION_RATE` basis. Reproduced this session: `gas_cc 36.1 / gas_cc_ccs 71.1`.
 
 **Rule 23 trigger is a DATA change, never a residual.** The re-derivation is caused by
-the **G-32 ATB flip** (`docs/handoffs/fom-scarcity-defaults-flip-2026-07-07.md`,
+the **G-32 ATB flip** (`docs/records/misc/fom-scarcity-defaults-flip-2026-07-07.md`,
 2026-07-07), which moved the host `fixed_om_gas_cc` 12.0 → 30.0 onto the ATB 2024
 basis and left this "host CC + capture island" figure at its pre-flip 25.0 — *below its
 own host*. Nothing about any residual was consulted, and the screen's residual was not

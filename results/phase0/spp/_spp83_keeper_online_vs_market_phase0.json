@@ -2,7 +2,7 @@
  "lane": "SPP-83",
  "date": "2026-09-26",
  "probe": "scripts/probes/_spp83_keeper_online_vs_market.py",
- "finding": "docs/handoffs/FINDING-spp-83-keeper-clears-on-offline-capacity-2026-09-26.md",
+ "finding": "docs/records/spp/FINDING-spp-83-keeper-clears-on-offline-capacity-2026-09-26.md",
  "per_year": [
   {
    "year": 2019,

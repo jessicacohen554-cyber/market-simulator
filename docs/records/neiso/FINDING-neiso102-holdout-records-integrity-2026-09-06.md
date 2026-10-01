@@ -44,7 +44,7 @@ Same year, same ISO, same card, two different answers — and the one printed
 *first* was the stale one.
 
 The staleness was already worse than a dead link. The neiso-100 probe
-(`results/calibration/_neiso100_touchpoint_staleness.json`) had measured the
+(`results/phase0/neiso/_neiso100_touchpoint_staleness.json`) had measured the
 pruned run's recipe as **diverging from the current keeper on 4 of 7 data axes**
 (`campd`, `eia923`, `eia930`, `unit_outages`, `unit_outages_layup`), so the
 block was not merely pointing at a pruned run — it was quoting a result taken

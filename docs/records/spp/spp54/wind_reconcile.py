@@ -14,7 +14,7 @@ two-zone parquets, the South = South + SPS capacity), then grades:
   C-4  attribution of the North's change, three-zone minus two-zone, annual and in the window,
        against a counterfactual in which the SPS zone keeps the OLD South shape
 
-usage: uv run python docs/handoffs/spp54/wind_reconcile.py <two_zone_parquet_dir>
+usage: uv run python docs/records/spp/spp54/wind_reconcile.py <two_zone_parquet_dir>
 """
 
 import sys
@@ -152,8 +152,8 @@ for year in (2023, 2024, 2025):
                     "south_2z": float(W2[1, h]),
                 }
             )
-pd.DataFrame(rows).to_csv(REPO / "docs/handoffs/spp54/wind_reconcile.csv", index=False)
+pd.DataFrame(rows).to_csv(REPO / "docs/records/spp/spp54/wind_reconcile.csv", index=False)
 pd.DataFrame(window_rows).to_csv(
-    REPO / "docs/handoffs/spp54/dec21_window_2025_wind.csv", index=False
+    REPO / "docs/records/spp/spp54/dec21_window_2025_wind.csv", index=False
 )
 print(f"\n===== C-1/C-2 over all years: {'PASS' if verdict else 'STOP'} =====")

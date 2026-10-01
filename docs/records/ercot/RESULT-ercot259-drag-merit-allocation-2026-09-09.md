@@ -1,6 +1,6 @@
 # RESULT — the merit-allocation arm CLEARS every screen gate, does NOT clear the 2021 objective, and promotion is BLOCKED on a pre-existing defect (ercot-259)
 
-> Scored against `docs/PRECOMMIT-ercot259-drag-merit-allocation-2026-09-08.md`,
+> Scored against `docs/records/ercot/PRECOMMIT-ercot259-drag-merit-allocation-2026-09-08.md`,
 > pushed before either LP ran. Every gate, the screen year, the drift audit and
 > all seven predictions were registered there, upstream of the arm.
 > Bundles are **gitignored, not deleted** (rule 31 `[R-RETAIN]`) and live on

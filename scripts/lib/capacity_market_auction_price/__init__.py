@@ -35,7 +35,7 @@ import pandas as pd
 DATATYPE = "capacity-market-auction-price"
 
 # No auction-clearing outcome for a delivery year starting after this may be
-# admitted (docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md
+# admitted (docs/records/forecast/forecast-driver-capacity-revenue-audit-plan-2026-07.md
 # §4: "delivery years <= 2026/27 only").
 MAX_DELIVERY_YEAR_START: int = 2026
 

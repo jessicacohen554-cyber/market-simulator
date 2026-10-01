@@ -5,10 +5,10 @@
 document.** This file registers the stage-0 kill bar *before* the measurement that tests it, so the
 bar cannot be written to fit the result (rule 29 `[R-SCREEN]` clause 0).
 
-Predecessors: `docs/handoffs/pjm-d4-4-missing-price-tail-2026-09-10.md` (the card),
-`docs/ADDENDUM-pjm-d4-3-lmp-gap-next-lp-2026-09-10.md` (the price-side measurement),
-`results/calibration/FINDING-pjm162-outage-envelope-basis-closure-2026-08-15.md` §3–§5,
-`docs/RESULT-pjm-d4-3-da-virtual-net-2026-09-10.md` §6.
+Predecessors: `docs/records/pjm/pjm-d4-4-missing-price-tail-2026-09-10.md` (the card),
+`docs/records/pjm/ADDENDUM-pjm-d4-3-lmp-gap-next-lp-2026-09-10.md` (the price-side measurement),
+`docs/records/pjm/FINDING-pjm162-outage-envelope-basis-closure-2026-08-15.md` §3–§5,
+`docs/records/pjm/RESULT-pjm-d4-3-da-virtual-net-2026-09-10.md` §6.
 
 ---
 
@@ -29,7 +29,7 @@ the bar that decides whether it is ever built.
 pjm-162 §4 declined this route partly because "any specific [duration] cut is a **free parameter**",
 having swept the CUMULATIVE family and found corr positive across 2–10 days with no optimum. **The
 PER-STRATUM sign is a different statistic and it is categorical.** From the committed
-`results/calibration/_pjm162_split_derivability.json`, `corr_vs_published_FORCED`:
+`results/phase0/pjm/_pjm162_split_derivability.json`, `corr_vs_published_FORCED`:
 
 | stratum | 2022 | 2023 | 2024 | 2025 |
 |---|---|---|---|---|

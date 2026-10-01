@@ -4,7 +4,7 @@
 `claude/ercot-220-lever-phase0-je3znm`.** Keeper resolved fresh at session
 start: `2026-08-17-ercot215-arm-decontam` (NOT-YET, {C3a-2023 −40.1 %,
 C3b-2023 0.736}, C3c ledgered CAVEAT ×3). Owner card: the direct dispatch
-recorded verbatim in `docs/PRECOMMIT-ercot221-adaptive-expectation-2026-08-18.md`
+recorded verbatim in `docs/records/ercot/PRECOMMIT-ercot221-adaptive-expectation-2026-08-18.md`
 §0 ("Ok yes let's do this"; "I want you to do the adaptive battery fix for
 sure"), with the precommit + Amendments 1–4 pushed and blob-verified before
 every corresponding step. RETENTION HOLD honoured. A parallel owner-side

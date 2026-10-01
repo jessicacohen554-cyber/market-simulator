@@ -2,7 +2,7 @@
 
 **Session:** nyiso-224 · **ISO:** NYISO · **Date:** 2026-09-10
 **Arm:** `nyiso_total_east_cutset_ttc=true`, **2022 screen only** (rule 29 `[R-SCREEN]`)
-**Pre-registration:** `docs/PRECOMMIT-nyiso224-total-east-cutset-2026-09-10.md`, pushed at
+**Pre-registration:** `docs/records/nyiso/PRECOMMIT-nyiso224-total-east-cutset-2026-09-10.md`, pushed at
 `3215d7c1114f9d401dcc65bb6b48c157ce01b8c7` **before the first LP**.
 **Control:** the committed keeper-recipe 2022 touchpoint `nyiso_fuelvintage_H2`
 (G-CTRL form 4, G-DRIFT all hunks INERT). **No control solve was spent.**

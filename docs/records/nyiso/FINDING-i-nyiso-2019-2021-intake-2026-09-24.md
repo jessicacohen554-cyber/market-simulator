@@ -2,9 +2,9 @@
 
 **Session:** I-NYISO (data intake, zero LP; nothing solved, nothing registered).
 **Charter:** owner instruction 2026-09-24, "every ISO's backcast covers 2019–2025 on year-correct
-inputs" (`docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md`), routed from
-R-NYISO `docs/PRECOMMIT-r-nyiso-backcast-inputs-2026-09-24.md` §5 and
-`docs/FINDING-nyiso-2020-touchpoint-data-blocked-2026-09-09.md`.
+inputs" (`docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md`), routed from
+R-NYISO `docs/records/nyiso/PRECOMMIT-r-nyiso-backcast-inputs-2026-09-24.md` §5 and
+`docs/records/nyiso/FINDING-nyiso-2020-touchpoint-data-blocked-2026-09-09.md`.
 
 ## Headline
 

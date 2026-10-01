@@ -4,7 +4,7 @@
 **Branch** `claude/spp-53-ttc-link-limit-67e3yf` (stem `claude/spp-53-ns-ttc-f6dz`) ·
 **Data profile** `spp` · **Charter** plan §8 SPP-53 (owner ruling **P13**, sitting r#5) ·
 **Predecessors** `FINDING-spp-20-2026-09-06.md` §3 / §5 R-6 (the 48,700 MW placeholder),
-`FINDING-spp-14-2026-09-06-session-b.md` §5 (the four-group rules, `docs/handoffs/spp14/groups.py`,
+`FINDING-spp-14-2026-09-06-session-b.md` §5 (the four-group rules, `docs/records/spp/spp14/groups.py`,
 §5.4 the 2026-01-28 schema break), `FINDING-spp-13-2026-09-06.md` (row 11 is NDA/CEII).
 
 **Pushed before a single limit value is read.** Everything below is either a structural census
@@ -148,7 +148,7 @@ class as a measured delivered fuel price. It is identified from SPP's prices and
 prices, never from anything this model produces.
 
 **Aggregation, fixed.** Constituents = every `Constraint Name` in `n_s_corridor` under
-`docs/handoffs/spp14/groups.py`'s rules **unchanged**, with ≥ 263 pooled binding hours. For each
+`docs/records/spp/spp14/groups.py`'s rules **unchanged**, with ≥ 263 pooled binding hours. For each
 IDENTIFIED constituent with an L_f, **T*_f = L_f / ψ_f**. The link TTC is the **binding-hours-
 weighted (2023–2025 pooled) MEDIAN of T*_f** across identified constituents, **rounded to the
 nearest 100 MW**. Median, not minimum: the single number stands for the corridor over the year and
@@ -240,7 +240,7 @@ identification's order of magnitude, not as an input.
 | `src/market_sim/data/transmission_expansion.py` | `TRANSMISSION_BASE_STATIC_VINTAGE["SPP"]` → 2026 (the limit vintage) with its comment; the charter names this file's `config/` path, the dict lives under `data/` |
 | `docs/parameter-citations.md` | one row (the file is generator-rendered; the row is added by hand under the transmission section and the generator note is left intact) |
 | `docs/multi-iso/spp-addition-plan-2026-09.md` | §5 SPP-53 row → LANDED; §3 P13 ruling cell annotated with the value; §9 index |
-| `docs/handoffs/FINDING-spp-53-2026-09-07.md` | the per-flowgate table, the regression, the construction, the number, the cross-check, the G8 proof |
+| `docs/records/spp/FINDING-spp-53-2026-09-07.md` | the per-flowgate table, the regression, the construction, the number, the cross-check, the G8 proof |
 
 Not touched: anything else in `iso_configs.py`; `ScenarioConfig`; `groups.py` and the README's
 four-group spec; any other ISO; the matrix shards (a TTC value is an input, no mechanism is tested);

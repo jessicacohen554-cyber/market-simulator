@@ -10,7 +10,7 @@ The clip's level operand ``cc_mustrun_pmin_mw`` is not carried on ``FleetArrays`
 so the census uses the identity the mechanism's own docstring states -- "the
 committed tranche's ``cc_mustrun_pmin_mw`` IS its own ``pmax``" -- over the rows
 carrying ``MECH_CC_MUSTRUN_PER_PLANT`` / ``MECH_ST_GAS_MUSTRUN_PER_PLANT``.
-Gate G2 of ``docs/handoffs/PRECOMMIT-pjm-h12-2026-09-20.md`` checks this offline
+Gate G2 of ``docs/records/pjm/PRECOMMIT-pjm-h12-2026-09-20.md`` checks this offline
 census against the armed solver's own log line, so the identity is verified
 rather than assumed.
 

@@ -19,7 +19,7 @@ mustrun/committed tranches the gas-keyed sigmoid offered at ~$15-20/MWh —
 below CC at every observed gas price, so the merit order never flips. The
 remaining structural suspect was the sigmoid MECHANISM's premise: that
 contracted coal discounts deeply below delivered cost to hold merit.
-`results/calibration/FINDING-miso-burndown-2026-07.md` Evidence 2 already
+`docs/records/miso/FINDING-miso-burndown-2026-07.md` Evidence 2 already
 showed the real market prices marginal coal at full delivered cost (actual
 RT mean LMP $30.8 ≈ marginal coal's measured F923 SRMC $30.4, 2024).
 

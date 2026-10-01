@@ -1,7 +1,7 @@
 """Unit tests for the ERCOT DAM availability deriver repairs (ercot-191).
 
 Covers the three signature-A1 rulings
-(docs/PRECOMMIT-ercot191-a1-dam-deriver-2026-08-12.md):
+(docs/records/ercot/PRECOMMIT-ercot191-a1-dam-deriver-2026-08-12.md):
 
 * #9 — ``_site()`` collapses a CC config resource name to its PHYSICAL TRAIN
   (``GUADG_CC1``), never the bare mnemonic, so multi-train families sum

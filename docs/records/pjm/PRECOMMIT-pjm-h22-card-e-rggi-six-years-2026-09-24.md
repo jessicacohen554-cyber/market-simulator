@@ -5,7 +5,7 @@ Written and pushed **before any solve**. The six shards pin to this commit's ful
 **Keeper (control):** `2026-09-23-pjm-h19-dbs-span` (2023–25, CALIBRATED 8/8) + folded
 `2026-09-23-pjm-h19-dbs-touchpoint` (2020–22, NOT-YET: C1, C3a, C3b). Bundles
 `results/calibration/pjm_h19_dbs_{span,touchpoint}`, every leg solved at `2d57aa20`.
-**Charter:** `docs/FINDING-pjm-h21-card-d-cc-volume-is-locational-2026-09-24.md` §6.1 (owner: build the
+**Charter:** `docs/records/pjm/FINDING-pjm-h21-card-d-cc-volume-is-locational-2026-09-24.md` §6.1 (owner: build the
 2020–22 inputs, run six shards). **Rules:** 1, 13, 14, 16/34(c), 19, 21, 28, 29(b), 31, 32/34/36.
 
 ## 1. The arm — one existing default-off switch
@@ -29,7 +29,7 @@ no committed number changes, no other ISO reads membership in any armed path). L
 
 ## 3. Phase 0 — predicted move (zero LP)
 
-`scripts/probes/pjm_h22_carde_phase0.py` → `results/calibration/_pjm_h22_carde_phase0.json`.
+`scripts/probes/pjm_h22_carde_phase0.py` → `results/phase0/pjm/_pjm_h22_carde_phase0.json`.
 Response = pjm-146's own solved per-zone Δ (git `25dd3b3d`, older keeper) for 2023–25. For 2020–22 the
 response is scaled by price ratio against the year with the same membership (2021/22 ← 2023; 2020 ←
 mean of 2024/25). **Linear scaling is an approximation, stated, not fitted.** Per-$ EMAAC CC response:

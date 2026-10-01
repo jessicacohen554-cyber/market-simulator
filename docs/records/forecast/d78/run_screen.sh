@@ -2,14 +2,14 @@
 # capx D78 — the rule-29 SCREEN legs on D58's own span (2021-2023: solve years
 # {2021, 2023}, 2022 bridged), PJM solo, sequential, each under a HEAD guard.
 #
-#   bash docs/handoffs/d78/run_screen.sh control-P            # gate off
-#   bash docs/handoffs/d78/run_screen.sh d58-arm --retirement-sector-gate   # seam as built (pre-fix code)
-#   bash docs/handoffs/d78/run_screen.sh arm --retirement-sector-gate       # seam repaired (post-fix code)
+#   bash docs/records/forecast/d78/run_screen.sh control-P            # gate off
+#   bash docs/records/forecast/d78/run_screen.sh d58-arm --retirement-sector-gate   # seam as built (pre-fix code)
+#   bash docs/records/forecast/d78/run_screen.sh arm --retirement-sector-gate       # seam repaired (post-fix code)
 #
 # Every bundle is a THROWAWAY diagnostic probe (rule 29(c)): never registered,
 # never a keeper, deleted from results/ before the PR merges. Every number the
 # session cites lives in PRECOMMIT/FINDING-capx-d78-2026-09-06.md and
-# docs/handoffs/d78/screen_compare.json.
+# docs/records/forecast/d78/screen_compare.json.
 set -euo pipefail
 
 name="$1"; shift

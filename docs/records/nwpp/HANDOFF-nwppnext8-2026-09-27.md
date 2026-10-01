@@ -43,10 +43,10 @@ STATE ON MAIN
   | coal 2025 | 0.678 / 0.261 | 0.655 |
 
 - Records to read first:
-  - docs/handoffs/RESULT-nwppnext7-coal-take-floor-2019-2025-2026-09-27.md (§3 routed list)
-  - docs/handoffs/PRECOMMIT-nwppnext7-coal-take-floor-2019-2025-2026-09-27.md (§4 recipe, §5 hard stops, §9 soft floor)
-  - docs/handoffs/FINDING-nwppnext7-cc-long-is-coal-short-2026-09-26.md
-  - docs/handoffs/FINDING-nwppnext5-coal-take-obligation-design-2026-09-26.md (Q6 is still open)
+  - docs/records/nwpp/RESULT-nwppnext7-coal-take-floor-2019-2025-2026-09-27.md (§3 routed list)
+  - docs/records/nwpp/PRECOMMIT-nwppnext7-coal-take-floor-2019-2025-2026-09-27.md (§4 recipe, §5 hard stops, §9 soft floor)
+  - docs/records/nwpp/FINDING-nwppnext7-cc-long-is-coal-short-2026-09-26.md
+  - docs/records/nwpp/FINDING-nwppnext5-coal-take-obligation-design-2026-09-26.md (Q6 is still open)
   - docs/calibration-log/nwpp.md, docs/codebase-site/data/mechanism-matrix/NWPP.js, docs/mechanism-testing-matrix.md §5.9
 
 CLOSED — do NOT redo:

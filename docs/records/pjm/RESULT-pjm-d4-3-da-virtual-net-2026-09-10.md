@@ -1,7 +1,7 @@
 # RESULT — pjm-d4-3: the DA-virtual layer owns 41.5 % of the 2022 FOSSIL surplus and only 7 % of the CC_REGULAR one, and the arm was already adjudicated
 
 **Session** `pjm-d4-3` · **ISO** PJM · **Date** 2026-09-10 · **Branch** `claude/pjm-d4-3-1o5yev`
-**PRECOMMIT** `docs/PRECOMMIT-pjm-d4-3-da-virtual-net-2026-09-10.md`, committed and pushed before
+**PRECOMMIT** `docs/records/pjm/PRECOMMIT-pjm-d4-3-da-virtual-net-2026-09-10.md`, committed and pushed before
 the shard launched (`6eb223b58102c4ddd1009c05ffc510e6451755f1`). Every gate bar, the screen year
 and the rule-1 non-gates below are quoted from it unchanged.
 

@@ -321,8 +321,8 @@ than absorbed.
 
 **Added / changed by this lane, all inside its declared regions:**
 
-- `docs/handoffs/PRECOMMIT-scn-ws5a-resolve-caiso-2026-09-06.md` (new, pushed pre-solve)
-- `docs/handoffs/FINDING-scn-ws5a-resolve-caiso-2026-09-06.md` (this file)
+- `docs/records/forecast/PRECOMMIT-scn-ws5a-resolve-caiso-2026-09-06.md` (new, pushed pre-solve)
+- `docs/records/forecast/FINDING-scn-ws5a-resolve-caiso-2026-09-06.md` (this file)
 - `results/scn-campaign-load-2026-09-06-r2/CAISO/{REF,LOAD-HI,LOAD-HI-ORGANIC}/` — the three
   legs' slim artifacts (`full_horizon_summary.json` + `run_config.json`)
 - `results/scn-campaign-load-2026-09-06-r2/CAISO/{bundle,report}/` — refreshed (§7 item 5)

@@ -15,7 +15,7 @@ Commit `7934e92c` moved `RETIREMENT_WINDOW_START` from 2023 to 2019 and rebuilt
 Every downstream document asserts the same thing:
 
 > "**Zero effect on 2023-2025 by construction.**"
-> — `docs/handoffs/xiso-fuelvintage-per-iso-lp-prompts-2026-09-09.md`, the landed-changes table;
+> — `docs/records/governance/xiso-fuelvintage-per-iso-lp-prompts-2026-09-09.md`, the landed-changes table;
 > repeated in `FINDING-xiso-fuelvintage-monthly-gas-level-2026-09-09.md` §2 and in every one of
 > the five per-ISO prompts ("ZERO in 2023-2025", "Card A is inert here").
 

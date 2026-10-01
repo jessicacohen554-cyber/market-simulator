@@ -1,5 +1,5 @@
 {
- "charter": "docs/CHARTER-c3c-scarcity-program-2026-08-31.md section 5 Q1",
+ "charter": "docs/records/misc/CHARTER-c3c-scarcity-program-2026-08-31.md section 5 Q1",
  "keeper": "2026-08-15-pjm-162-inputclock",
  "bundle": "results/calibration/pjm_debugb_inputclock_A",
  "published_source": "data/raw/PJM-AS/reserve_market_results_<year>.parquet (PJM DataMiner2, Ancillary Services Market Results - Reserve Market Results, RT, 5-minute; service=PR)",

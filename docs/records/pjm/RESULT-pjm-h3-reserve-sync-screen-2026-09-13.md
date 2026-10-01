@@ -1,7 +1,7 @@
 # RESULT — pjm-h3: the `pjm_reserve_pergen_sync` SCREEN, PJM 2022
 
 **Session** `pjm-h3` · **ISO** PJM · **Date** 2026-09-13 · **Base** `origin/main` @ `7404ef12`
-**Pre-registration** `docs/PRECOMMIT-pjm-h3-reserve-sync-2026-09-13.md`, pushed at
+**Pre-registration** `docs/records/pjm/PRECOMMIT-pjm-h3-reserve-sync-2026-09-13.md`, pushed at
 `ed6bb0996d2685884d1f05eb105c3bef4dea138c` **before any solve**. Its §5 gates are read here
 exactly as fixed and are not re-specified.
 **Owner ruling** re-opening the pjm-142 price-formation frontier: `docs/calibration-log/governance.md`
@@ -304,7 +304,7 @@ is now specified rather than merely flagged.
 name). Its parent commit is `ed6bb0996d2685884d1f05eb105c3bef4dea138c` — **the exact pin; it never
 pulled, rebased or synced**. It changed **exactly one file**, its own FINDING doc: no `src/`, no
 `scripts/`, no `frontend/`. Its unique record was rescued onto this branch as
-`docs/handoffs/FINDING-pjm-h3-syncarm-2022-blocked-2026-09-13.md` (rule 33(f)(1)) **before** the
+`docs/records/pjm/FINDING-pjm-h3-syncarm-2022-blocked-2026-09-13.md` (rule 33(f)(1)) **before** the
 shard was archived (rule 33(a)).
 
 **Rule 34(d) retrievability: `git ls-tree -r ad589bd3 -- results/calibration/pjmh3_syncarm_2022`
@@ -418,7 +418,7 @@ around**.
 **Shard** `session_01HBTXoSZmnAD9KZoNWAhi6B`, branch `claude/pjm-h3-syncarm2-2022`, recovery SHA
 **`96da85894876c67ee0a44dc1fc14521afaef381f`**, parent = the pin. Again exactly one file changed
 (its own FINDING, rescued here as
-`docs/handoffs/FINDING-pjm-h3-syncarm2-2022-blocked-2026-09-13.md`), no `src/`, no `scripts/`.
+`docs/records/pjm/FINDING-pjm-h3-syncarm2-2022-blocked-2026-09-13.md`), no `src/`, no `scripts/`.
 **Rule 34(d): `git ls-tree` returns ZERO files** — no bundle, nothing pushed but the doc, which is
 correct.
 

@@ -6,8 +6,8 @@
 model artifact changed. No run produced, so none registered** (rule 15 `[R-DASHBOARD]`
 registers runs; a no-LP session registering nothing is correct, not an omission).
 
-**Predecessor:** `docs/RESULT-nyiso224-total-east-cutset-2026-09-10.md` /
-`docs/PRECOMMIT-nyiso224-total-east-cutset-2026-09-10.md`.
+**Predecessor:** `docs/records/nyiso/RESULT-nyiso224-total-east-cutset-2026-09-10.md` /
+`docs/records/nyiso/PRECOMMIT-nyiso224-total-east-cutset-2026-09-10.md`.
 **Control:** the committed keeper bundles `nyiso_fuelvintage_A` (2023–25) and
 `nyiso_fuelvintage_H2` (2022), plus the preserved arm bundle on branch
 `claude/nyiso224-cutset-2022` — rule 29(b) form 4 throughout, **no control solve spent**.
@@ -61,7 +61,7 @@ is the C/E → F cutset; the parallel non-CE leg of Total East (mean **1,626 / 1
 1,465 MW**, remarkably stable while `MOSES SOUTH` swings from **+1,352** to **−188 MW** — so it
 is *not* Moses South, corr **0.238**) bypasses zone F into zone G. **Both legs leave the same
 upstate zone**, so no split of A–E separates them; the separation is on the **receiving** side,
-at F|G. `docs/handoffs/nyiso-124-charter-g0-g1-2026-08-04.md` §2.1 closed exactly that split:
+at F|G. `docs/records/nyiso/nyiso-124-charter-g0-g1-2026-08-04.md` §2.1 closed exactly that split:
 **no F/G transfer limit exists** in MIS P-32, in **36 months** of MIS ATC/TTC, or in any of the
 **four** Gold Book editions on disk, and quantity 3 (`ext_G`, the zone-G share of the eastern
 seam) is unrecoverable. **DO-NOT-REDO honoured** (rule 30(a)): this session's new 2022
@@ -159,7 +159,7 @@ lane to the queue; a seam charter would need its own phase 0 and PRECOMMIT.
 
 `scripts/probes/_nyiso225_topology_phase0.py` (committed) regenerates §1–§4 from
 `data/raw/NYISO/interface-flows/`, `data/raw/lmp-data/NYISO/` and the two sidecars on
-`claude/nyiso224-cutset-2022`. Record: `results/calibration/_nyiso225_topology_phase0.json`.
+`claude/nyiso224-cutset-2022`. Record: `results/phase0/nyiso/_nyiso225_topology_phase0.json`.
 
 ---
 

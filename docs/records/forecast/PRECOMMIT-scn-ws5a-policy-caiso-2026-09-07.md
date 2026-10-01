@@ -102,7 +102,7 @@ Resolved exactly as `runner.run_scenario_iso` does (`runner.py:1384-1423`): `mat
 → `resolve_policy_bundle` → `set_caiso_fsno_partition(iso=="CAISO" and
 config.caiso_fsno_subzonal_topology)` → `apply_iso_scenario_defaults` → `.cache_key()`. Base:
 `configs/scenarios/caiso_scenario_base_2026_2030.yaml`. Script + machine-readable output:
-`docs/handoffs/scn-ws5a-policy-caiso/phase0-caiso-2026-09-07.{py,json}`.
+`docs/records/forecast/scn-ws5a-policy-caiso/phase0-caiso-2026-09-07.{py,json}`.
 
 **Chain validation — RESOLVE's own two CAISO rows reproduce independently:** `REF`
 **`2d16a246bb372e4a`** and `LOAD-HI` **`86bfde6ed2896b99`**, identical to

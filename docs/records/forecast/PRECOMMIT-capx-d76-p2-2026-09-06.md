@@ -144,7 +144,7 @@ binding delta is 2022's, and it is inside this window.
 
 Pre-registered here so none can be written to fit a result. A STOP **may kill an arm; it may never
 promote one**, it contributes to no determination, and **not one is gated on a residual**. Graded by
-`docs/handoffs/d76/p2_gate.py`, whose partition (below) is fixed in this commit.
+`docs/records/forecast/d76/p2_gate.py`, whose partition (below) is fixed in this commit.
 
 - **STOP 1 — no pre-existing cache key moves.** All six ISOs' bare T1-H and T1-X keys: explicit-OFF
   == bare, armed distinct. *(Already measured green at this head before this push, 12/12 —
@@ -234,7 +234,7 @@ arm; only §4 can.**
 ## 6. Delete before merge (rule 29(c))
 
 All eight bundles are deleted from `results/hindcast/` before this PR merges. This PRECOMMIT, the
-phase-2 FINDING and `docs/handoffs/d76/p2_gate_<iso>.json` + `p2_predeclare.json` carry **every
+phase-2 FINDING and `docs/records/forecast/d76/p2_gate_<iso>.json` + `p2_predeclare.json` carry **every
 number the lane will ever cite**; git history is the record for the bytes. An unregistered bundle
 directory reaching `main` is a parity-gate RED, and `KEEP_REQUIRED_UNMAPPED_BUNDLES` is not the route
 for a screen or a control.

@@ -51,7 +51,7 @@
   {
    "target": "ERCOT Public Data API archive (the credentialed EMIL history route)",
    "url": "https://api.ercot.com/api/public-reports/archive/NP3-560-CD",
-   "outcome": "HTTP 401 {\"statusCode\": 401, \"message\": \"Access denied due to missing subscription key...\"}. This archive DOES span the 2023 vintages (multi-year history per the developer portal), but requires an apiexplorer/developer.ercot.com account + subscription key + OAuth bearer — the exact route the owner CLOSED PERMANENTLY 2026-07-05: 'owner will not procure a data.ercot.com key' (docs/handoffs/ercot-as-coopt-plan-2026-07.md §WS-E and open-items row 3; docs/ercot-hsl-2024-25-intake-attempt-2026-07.md). No credentials exist in the session environment (swept)."
+   "outcome": "HTTP 401 {\"statusCode\": 401, \"message\": \"Access denied due to missing subscription key...\"}. This archive DOES span the 2023 vintages (multi-year history per the developer portal), but requires an apiexplorer/developer.ercot.com account + subscription key + OAuth bearer — the exact route the owner CLOSED PERMANENTLY 2026-07-05: 'owner will not procure a data.ercot.com key' (docs/records/ercot/ercot-as-coopt-plan-2026-07.md §WS-E and open-items row 3; docs/ercot-hsl-2024-25-intake-attempt-2026-07.md). No credentials exist in the session environment (swept)."
   },
   {
    "target": "any other ERCOT-published bulk archive of 2023 forecast vintages",

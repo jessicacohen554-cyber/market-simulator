@@ -1,6 +1,6 @@
 # RESULT — PJM-NEXT-11 (2026-09-29): offered EcoMax falsified; the COAL_BIT over-run is coal's price RESPONSE, and the model's price floor is too high (zero LP)
 
-**Keeper unchanged:** `2026-09-28-pjm-next8-exitfix` (bundle `pjmnext8_xf_span`). **Zero LP, zero shards, nothing registered, nothing promoted.** Detail: `docs/FINDING-pjm-next-11-offered-ecomax-2026-09-29.md`.
+**Keeper unchanged:** `2026-09-28-pjm-next8-exitfix` (bundle `pjmnext8_xf_span`). **Zero LP, zero shards, nothing registered, nothing promoted.** Detail: `docs/records/pjm/FINDING-pjm-next-11-offered-ecomax-2026-09-29.md`.
 
 | card | result |
 |---|---|

@@ -32,4 +32,4 @@ C-3 verdict (repaired): hours the three-zone inputs make infeasible while the tw
 P2 end-to-end: max |margin_3z - margin_2z| over the window = 0.000000 MW (the ex-ante prediction is 0 — a boundary change cannot move the region's own wind)
 
 h8509 (SPP-54's STOP hour): repaired three-zone margin -75 MW; repaired two-zone -75; as-built three-zone -545; as-built two-zone +440 (SPP-54 read -545 / +440)
-wrote /home/user/market-simulator/docs/handoffs/spp48/h8509.csv
+wrote /home/user/market-simulator/docs/records/spp/spp48/h8509.csv

@@ -5,7 +5,7 @@
 session start: `2026-08-19-ercot221-arm-adaptive` (the adaptive mechanism
 ARMED ON THE KEEPER; NOT-YET, fail set {C3a-2023 −39.4 %, C3b-2023 0.723},
 C3c ledgered CAVEAT ×3). Precommit
-`docs/PRECOMMIT-ercot222-crossyear-seed-2026-08-19.md` pushed and
+`docs/records/ercot/PRECOMMIT-ercot222-crossyear-seed-2026-08-19.md` pushed and
 blob-verified BEFORE any evaluation; executed as written, nothing re-pinned.
 Read-only throughout: no LP, no solve, no year scored, no run registered, no
 `ScenarioConfig` field, no arming.
@@ -23,7 +23,7 @@ discarded). The →2025 as-scanned value (1,660, +68 % vs the $990 anchor) is
 **cited from the research record, not recomputed** — computing it would read
 Jan–May-2025 measured prices, which enter no statistic in this session.
 Probe: `scripts/probes/ercot222_crossyear_phase0.py`; committed output:
-`results/calibration/ercot222_crossyear_phase0.json`.
+`results/phase0/ercot/ercot222_crossyear_phase0.json`.
 
 **The purity-form seed series (window ends Jan-1 of the solve year, start
 rolling daily; 2020-01-01..2024-12-31 history only):**

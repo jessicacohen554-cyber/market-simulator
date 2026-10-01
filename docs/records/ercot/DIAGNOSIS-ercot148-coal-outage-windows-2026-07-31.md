@@ -5,12 +5,12 @@
 `2026-07-31-ercot145-gas-daily-shape` (bundle `ercot145_gas_daily_arm`) ·
 **Method** Phase 0/1 no-LP reconciliation through
 `scripts/probes/ercot148_coal_outage_phase0.py` (committed record
-`results/calibration/ercot148_coal_outage_phase0.json`), the raw 60-Day DAM
+`results/phase0/ercot/ercot148_coal_outage_phase0.json`), the raw 60-Day DAM
 disclosure rows, one frozen-derive re-run to scratch, and one byte-identical
 keeper replay of 2023 used as dispatch ground truth (65.64 TWh coal
 reproduced exactly; kept out of the dashboard — it is the keeper, not a new
 run). Phase 2 (the single-delta arm) is chartered by
-`docs/PRECOMMIT-ercot148-dam-coal-event-cap-2026-07-31.md`.
+`docs/records/ercot/PRECOMMIT-ercot148-dam-coal-event-cap-2026-07-31.md`.
 
 **Preconditions.** `audit_keepers.py` PASS 0/0. The directive's
 `cache_key 603c2498bf71d21d` no longer reproduces — post-ERCOT-147 merges

@@ -1,9 +1,9 @@
 # FINDING — PERF-B session 3: the adaptive pass, skipped when vacuous and never re-solving its P0
 
 **Session `claude/perfb-s3-adaptive-pass-soq3wl` (+ `-c1a`, `-c1b`), 2026-09-05.**
-Executes the WS3-next charter (`docs/handoffs/perfb-session2-markup-charter-2026-09.md`,
+Executes the WS3-next charter (`docs/records/governance/perfb-session2-markup-charter-2026-09.md`,
 director 2026-09-04) in its §5 order under its §6 constraints. Evidence it opens from:
-`docs/FINDING-perfb-s2-markup-attribution-2026-09.md`. **Byte-gated at `atol=rtol=0`**
+`docs/records/governance/FINDING-perfb-s2-markup-attribution-2026-09.md`. **Byte-gated at `atol=rtol=0`**
 against merge-base control captures of the stage-0 ERCOT configs (ERCOT forward 2023-25 +
 `ERCOT__carveout-2023`) and NEISO as the one-pass control. **No `ScenarioConfig` default
 changed, no keeper shard, marker, matrix shard, registry or workflow touched, nothing

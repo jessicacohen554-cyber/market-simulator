@@ -12,7 +12,7 @@ shard, marker or determination changed. **Rule 22 `[R-HOLDOUT]`: every year read
 is 2023, 2024 or 2025** — no out-of-training year was solved, scored, registered
 or read; the spend freeze is untouched and no marker was requested.
 **Probe of record:** `scripts/probes/nyiso167_price_gain_attribution.py`
-→ `results/calibration/_nyiso167_price_gain_attribution.json`.
+→ `results/phase0/nyiso/_nyiso167_price_gain_attribution.json`.
 
 ---
 
@@ -385,22 +385,22 @@ measurement.
 
 ## 8. Evidence
 
-* `results/calibration/_nyiso167_price_gain_attribution.json` — the probe record
+* `results/phase0/nyiso/_nyiso167_price_gain_attribution.json` — the probe record
   (all five measurements, both bases, per-month residuals).
 * `scripts/probes/nyiso167_price_gain_attribution.py` — the probe.
 * `results/calibration/nyiso159_lossarm_B/` — the keeper bundle read
   (`metrics.json`, `run_config.json`, `meta.json`, `hourly/`).
-* `docs/DECISION-CARD-nyiso161-winter-face-waiver-2026-08-30.md` §2, §4.5(a),
+* `docs/records/nyiso/DECISION-CARD-nyiso161-winter-face-waiver-2026-08-30.md` §2, §4.5(a),
   §5 — the framing this finding tests, and the eligibility test it answers.
-* `docs/DECISION-CARD-nyiso156-2025-offer-level-2026-08-25.md` §4 — the face
+* `docs/records/nyiso/DECISION-CARD-nyiso156-2025-offer-level-2026-08-25.md` §4 — the face
   arithmetic (−$3.92 / −$3.94 / +$0.59) reproduced and re-attributed here.
-* `docs/FINDING-nyiso164-c3c-product-level-2026-09-01.md`,
-  `docs/FINDING-nyiso165-as-reference-repair-2026-09-01.md` — the C3c and
+* `docs/records/nyiso/FINDING-nyiso164-c3c-product-level-2026-09-01.md`,
+  `docs/records/nyiso/FINDING-nyiso165-as-reference-repair-2026-09-01.md` — the C3c and
   instrument-defect lines this session did not re-open (§5).
 * `docs/codebase-site/data/mechanism-matrix/NYISO.js` — the shard, annotated
   (no verdict moves) and syntax-repaired (§5.1);
   `scripts/check_mechanism_matrix.py` — the guard that passed either way.
-* `results/calibration/FINDING-nyiso111-ramp-envelopes-2026-08-02.md` §2 —
+* `docs/records/nyiso/FINDING-nyiso111-ramp-envelopes-2026-08-02.md` §2 —
   `temp_dependent_derate` refused ex-ante on NYISO's own conduct.
 * `scripts/data/derive_gas_offer_margin_anchor.py`,
   `src/market_sim/config/constants.py` `GAS_OFFER_MARGIN_ANCHOR_BY_ZONE`,

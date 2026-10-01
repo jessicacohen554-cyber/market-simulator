@@ -3,9 +3,9 @@
 **Keeper** `2026-09-28-pjm-next8-exitfix` (bundle `results/calibration/pjmnext8_xf_span`), unchanged. **Zero LP, zero shards, nothing registered or promoted.** Card 3 (design card) is **not reached**: neither card yields an admissible, year-discriminating operand.
 
 **Probes** (all zero LP):
-- `scripts/probes/_pjmnext15_cc_cheap_block.py` → `results/calibration/_pjmnext15_cc_cheap_block.json` (card 1; offers corpus 2019–2025, 84 month-files re-fetched this session, no errors).
-- `scripts/probes/_pjmnext15_cc_commitment.py` → `results/calibration/_pjmnext15_cc_commitment.json` (card 2; keeper payload vs CAMPD bench).
-- `scripts/probes/_pjmnext15_cc_floor_window.py` → `results/calibration/_pjmnext15_cc_floor_window.json` (card 2b; the `cc_mustrun_per_plant` window rebuilt from the keeper's own hourly demand).
+- `scripts/probes/_pjmnext15_cc_cheap_block.py` → `results/phase0/pjm/_pjmnext15_cc_cheap_block.json` (card 1; offers corpus 2019–2025, 84 month-files re-fetched this session, no errors).
+- `scripts/probes/_pjmnext15_cc_commitment.py` → `results/phase0/pjm/_pjmnext15_cc_commitment.json` (card 2; keeper payload vs CAMPD bench).
+- `scripts/probes/_pjmnext15_cc_floor_window.py` → `results/phase0/pjm/_pjmnext15_cc_floor_window.json` (card 2b; the `cc_mustrun_per_plant` window rebuilt from the keeper's own hourly demand).
 
 ## Card 1 — the cheap CC block, all seven years
 

@@ -8,7 +8,7 @@ modal derive, fed the year's own rows, zero new DOF.* No commodity backing is cl
 lignite repricing (precommit §1f: no measured fuel series moves at any offer step — the Aug–Oct
 repricing is conduct, not commodity). OPTION B (spread-regime-conditional offer top) stays
 DEFERRED as the forecast-side successor. Gates were pre-registered in
-`docs/PRECOMMIT-ercot168-coal-perplant-year-curves-2026-08-05.md` BEFORE any solve; **no
+`docs/records/ercot/PRECOMMIT-ercot168-coal-perplant-year-curves-2026-08-05.md` BEFORE any solve; **no
 amendment was needed — no gate was touched, and no feasibility repair was required.**
 
 **Mechanism** (`coal_perplant_offer_yearly`, default off, zero fitted scalars): for a solve year

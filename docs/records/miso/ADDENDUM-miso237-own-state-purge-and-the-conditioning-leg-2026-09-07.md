@@ -5,7 +5,7 @@ Extends `PREREG-miso237-price-representation-or-quantity-channel-2026-09-07.md`
 
 **No pre-registered decision rule is touched and NO PRE-REGISTERED VERDICT CAN MOVE.** The
 PREREG's provenance gate, Q-1, Q-2 and Q-3 values are already computed and committed in
-`results/calibration/_miso237_price_representation_vs_state_phase0.json`, and they stand exactly
+`results/phase0/miso/_miso237_price_representation_vs_state_phase0.json`, and they stand exactly
 as measured whatever this addendum finds. Nothing here can arm a mechanism, charter a lever, move
 a matrix cell, or touch the keeper (`2026-09-07-miso-233-spp-hourly`, CALIBRATED, C3c the single
 ledgered caveat, DOF 41/2). Zero LP, as the PREREG declared.

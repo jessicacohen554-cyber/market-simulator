@@ -13,7 +13,7 @@ mechanism, mean availability, and the 12 monthly mean offers and fuel prices.
 
 Usage::
 
-    uv run python docs/handoffs/neiso114/phase0_offer_census.py --out <dir>
+    uv run python docs/records/neiso/neiso114/phase0_offer_census.py --out <dir>
 """
 
 from __future__ import annotations

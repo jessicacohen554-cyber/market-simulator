@@ -2,7 +2,7 @@
 
 **Lane** SCN-WS5A-LOAD (ERCOT) · **Model** Opus (`claude-opus-5`) · **Date** 2026-09-06 ·
 **Branch** `claude/scn-ws5a-load-campaign-f5znk9` ·
-**PRECOMMIT** `docs/handoffs/PRECOMMIT-scn-ws5a-load-2026-09-06.md` + its pin ADDENDUM
+**PRECOMMIT** `docs/records/forecast/PRECOMMIT-scn-ws5a-load-2026-09-06.md` + its pin ADDENDUM
 (both pushed before the first solve) · **Frozen pin** `1cc45bb2` (solved at `20f9ce9f`
 = that pin + the docs-only addendum commit; `git.dirty = false` on every leg) ·
 **Campaign** `scn-campaign-load-2026-09-06`, kind `scenario`, `reference_case: REF` ·

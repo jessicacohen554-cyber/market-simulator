@@ -6,7 +6,7 @@ committed artifacts (keeper bundle `results/calibration/miso109_hy_level_B`,
 `data/raw/lmp-data/MISO/`, `data/raw/eia-930-hourly/MISO hourly.parquet`,
 `data/raw/_validation-source/pjm_border_lmp_hourly_MISO.parquet`). Probe:
 `scripts/probes/_miso114_seam_hod_shape.py`; transcript
-`results/calibration/PROBE-miso114-seam-hod-shape-2026-08-02.txt`.
+`results/phase0/miso/PROBE-miso114-seam-hod-shape-2026-08-02.txt`.
 
 **Keeper UNCHANGED** (`2026-07-31-miso-109b-hy-level`). Rule 15: no run was
 produced, so there is nothing to register — the miso-103/104/105/107/108

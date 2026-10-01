@@ -15,7 +15,7 @@ measured record and were written after.
 This campaign executes the **FIRST full-solve authorization ever granted under the §2.1b
 gate** (`docs/forecast-development-plan-2026-07.md` §2.1b — the "10-hour rule"). The
 authorization, owner ruling Q13, capx r#17 sitting 2026-08-30, recorded in
-`docs/handoffs/capx-director-ledger-2026-08.md` §3:
+`docs/records/forecast/capx-director-ledger-2026-08.md` §3:
 
 > **Q13** — NEISO §2.1b leg (d): first-ever full-solve authorization, presented on S-4b's
 > measured result per Q11 — **RULED 2026-08-30 (r#17 sitting) — AUTHORIZED: the T3 BAU
@@ -26,7 +26,7 @@ authorization, owner ruling Q13, capx r#17 sitting 2026-08-30, recorded in
 > pack).
 
 Scope discipline: ISO=NEISO, window=2026–2050 T3 BAU golden, budget ~1.0 h wall /
-~4.3 GB RSS (the FF-3E projected table, `docs/handoffs/ff-poc-closeout-2026-07.md` §
+~4.3 GB RSS (the FF-3E projected table, `docs/records/forecast/ff-poc-closeout-2026-07.md` §
 "projected full-horizon" row: NEISO 78 s median/yr → **0.95 h**, **4.3 GB**, pairable) —
 **THIS CAMPAIGN ONLY**: no standing authorization, and any gate-condition regression
 re-closes the gate (charter §2.1b(2)(d)). `--full-solve-authorized` is the FF-3E

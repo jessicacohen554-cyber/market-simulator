@@ -4,7 +4,7 @@
 this session's mechanism-registration commits). **Keeper under test — and
 still the keeper:** `2026-07-31-pjm-143b-hy-level` (CALIBRATED, 9/9 target
 grade, C1 16/16 all-class / 12/12 free-class, zero FAILs).
-**Pre-registration:** `results/calibration/PREREG-pjm144-zonal-margin-anchor-2026-08-02.md`,
+**Pre-registration:** `docs/records/pjm/PREREG-pjm144-zonal-margin-anchor-2026-08-02.md`,
 committed and pushed **before either arm solved**, including the derived
 anchor table, the K6 drop, the zonal K3 construction, and the K3-fail ⇒ `I`
 disposition this finding executes.
@@ -14,7 +14,7 @@ disposition this finding executes.
 (`2026-08-02-pjm-144b-zonal-anchor`, bundle
 `results/calibration/pjm144_zonalanchor_B`), three years each, sequential
 (the recipe peaks ~15.5 GB RSS; swap re-asserted per keeper note 14).
-**Scorer artifact:** `results/calibration/_pjm144_zonal_anchor_ab.json`.
+**Scorer artifact:** `results/phase0/pjm/_pjm144_zonal_anchor_ab.json`.
 **Owner instruction (in-session, 3×):** *"Is this a recommended keeper
 candidate? If so plz promote. If structural integrity improves but gates
 regress that may still be a keeper."* — §6 answers it directly.
@@ -93,7 +93,7 @@ all pre-registered:
 Three zones above the centroid, five below. The mean-zero invariant is
 **exact**: the gas-capacity-weighted mean of the zone anchors is **3.3483,
 Δ +0.0000** (weights + census in
-`results/calibration/_pjm144_zonal_anchor_derivation.json`: window gas
+`results/phase0/pjm/_pjm144_zonal_anchor_derivation.json`: window gas
 capacity ComEd 13.3 / AEP_Ohio 20.6 / ATSI 4.7 / West_APS 6.3 /
 Central_PA 18.1 / Dominion 14.7 / EMAAC 15.4 / SWMAAC 5.9 GW; 986/994/993
 marked-up tranches, 0 band-scoped, so all resolve zone anchors).

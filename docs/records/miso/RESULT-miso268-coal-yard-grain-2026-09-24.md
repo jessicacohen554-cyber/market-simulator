@@ -3,7 +3,7 @@
 ```
 RUN     : 2026-09-24-miso-268-coal-yard  (results/calibration/miso268_yard_span, 2020-2025)
 RECIPE  : keeper 2026-09-23-miso-267-dispatched-bin + coal_fuel_inventory_plant_grain=true. ONE flag.
-PREREG  : docs/PRECOMMIT-miso268-coal-yard-grain-2026-09-24.md (pinned 49c898c7; relaunched at bb31b95c, check-only fix)
+PREREG  : docs/records/miso/PRECOMMIT-miso268-coal-yard-grain-2026-09-24.md (pinned 49c898c7; relaunched at bb31b95c, check-only fix)
 BENCH   : committed parts; registering this run moved NONE of the 44 (sha256)
 VERDICT : full span NOT-YET 8/5/1/2 (was 8/4/1/3); train 2023-2025 CALIBRATED 8/7/1/0 (unchanged). PROMOTED.
 ```

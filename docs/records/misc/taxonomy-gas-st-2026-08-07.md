@@ -23,7 +23,7 @@ gas_st bin). Paired controls: §4.
 Method: the real loader path (`load_fleet_from_csv`) per ISO at `origin/main` c710d17e; a
 "physically gas steam" row is one whose `plant_group` resolved to `ST_GAS`/`ST_CHP`, which
 `classify_plant` keys on prime mover `ST` + fuel `NG` — the same physical predicate as the
-fix. Per-unit table: `docs/handoffs/taxonomy-gas-st/blast-radius-units.csv`.
+fix. Per-unit table: `docs/records/misc/taxonomy-gas-st/blast-radius-units.csv`.
 
 | ISO | gas_ct-class units | gas_ct MW | steam units | steam MW | % of class MW | ST_GAS / ST_CHP |
 |---|--:|--:|--:|--:|--:|---|
@@ -121,7 +121,7 @@ gas_st bar**; every margin and every `economically_consistent_*` verdict is unch
 
 `score_gate_d24_rescore_ffr5d.py` re-emitted (committed-artifact, no solve, the arms'
 registered bundles untouched; JSON:
-`docs/handoffs/taxonomy-gas-st/score-gate-rescore-2026-08-07.json`):
+`docs/records/misc/taxonomy-gas-st/score-gate-rescore-2026-08-07.json`):
 
 * **Every band verdict and the D-24 recall identical**: shipped recall n/a (0 of 2
   reachable), unified recall n/a; thermal-GW band FAIL both arms; false-retire PASS

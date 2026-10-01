@@ -131,7 +131,7 @@
   },
   "moved_detail": [
     {
-      "run_config": "docs/handoffs/scn-ws1a/t0/base-run_config.json",
+      "run_config": "docs/records/forecast/scn-ws1a/t0/base-run_config.json",
       "iso": "CAISO",
       "mode": "forecast",
       "hindcast": false,
@@ -146,7 +146,7 @@
       "moved": true
     },
     {
-      "run_config": "docs/handoffs/scn-ws1a/t0/carbon_plus25-run_config.json",
+      "run_config": "docs/records/forecast/scn-ws1a/t0/carbon_plus25-run_config.json",
       "iso": "CAISO",
       "mode": "forecast",
       "hindcast": false,
@@ -2040,7 +2040,7 @@
   ],
   "rows": [
     {
-      "run_config": "docs/handoffs/scn-ws1a/t0/base-run_config.json",
+      "run_config": "docs/records/forecast/scn-ws1a/t0/base-run_config.json",
       "iso": "CAISO",
       "mode": "forecast",
       "hindcast": false,
@@ -2055,7 +2055,7 @@
       "moved": true
     },
     {
-      "run_config": "docs/handoffs/scn-ws1a/t0/carbon_plus25-run_config.json",
+      "run_config": "docs/records/forecast/scn-ws1a/t0/carbon_plus25-run_config.json",
       "iso": "CAISO",
       "mode": "forecast",
       "hindcast": false,

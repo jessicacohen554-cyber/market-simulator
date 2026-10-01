@@ -1,7 +1,7 @@
 # PREREG pjm-146 — PJM RGGI allowance cost in dispatch (`state_carbon_pricing` cell)
 
 **Committed BEFORE any arm solves** (the pjm-144 protocol). Charter:
-`docs/handoffs/pjm-matrix-column-triage-2026-08.md` §2.1 (the Phase-1 triage's
+`docs/records/pjm/pjm-matrix-column-triage-2026-08.md` §2.1 (the Phase-1 triage's
 rank-1 live candidate). Keeper under test: `2026-07-31-pjm-143b-hy-level`
 (CALIBRATED 9/9). One lever, zero fitted parameters, single-delta A/B.
 
@@ -143,7 +143,7 @@ West_APS 0.0108 → 0 (zone fossil-nameplate shares; per-unit test refines).
   `_pjm144_zonal_anchor_ab.py` — all criteria from the two bundles'
   `metrics.json` + the K-gates above from the built fleet and hourly
   sidecars; attestation from the committed A/B JSON
-  (`results/calibration/_pjm146_rggi_ab.json`).
+  (`results/phase0/pjm/_pjm146_rggi_ab.json`).
 - Verdict mapping: K2/K3/K4 breach ⇒ no verdict, fix-or-stop. K5 ⇒ `I`.
   Constructed-live + gates-intact ⇒ surface to owner with the E1d numbers as
   a promotion candidate (`U → K` only on owner promotion; `U → O` if left

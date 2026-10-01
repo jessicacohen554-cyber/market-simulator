@@ -1,6 +1,6 @@
 # FINDING — F2: CAMPD outage coverage 2019–2025, every ISO (data intake + derive; zero LP)
 
-Charter: `docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md` §5.2 (owner instruction
+Charter: `docs/records/governance/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md` §5.2 (owner instruction
 2026-09-24: granular CAMPD outage data for every ISO and every backcast year 2019–2025). Branch
 `claude/f2-campd-outage-coverage`, cut from `origin/main` at `fd04cfda`. **No LP was run, nothing was
 registered, no flag was armed or flipped, no keeper shard or `frontend/data/backcast/**` file was touched,

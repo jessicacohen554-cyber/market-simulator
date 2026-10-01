@@ -10,7 +10,7 @@ anything and BEFORE any bid-corpus value is read. NO SOLVE in Phase-0.
 Charter: the owner re-opening of the rested CAISO lane for this ONE lever
 (direct owner dispatch 2026-08-19, "test the adaptive battery offer lever on
 CAISO"), bound by the caiso-203b owner rulings
-(`results/calibration/caiso203-owner-rulings-2026-08-19.md`): C3a is judged
+(`docs/records/caiso/caiso203-owner-rulings-2026-08-19.md`): C3a is judged
 against ACTUAL (RT) LMP — no DA-basis framing anywhere in this lane — and NO
 funded data intake in any branch.
 
@@ -157,7 +157,7 @@ the keeper's storage offer, so `base` never enters the armed floor).
 Verdict rule, mechanical: ALL six gates PASS ⇒ Phase-1 (build + A/B per the
 charter, its PRECHECK pushed before any solve). ANY gate FAIL ⇒ the lane stops,
 the verdict is recorded unrewritten in
-`results/calibration/caiso204_adaptive_phase0.json`, the CAISO cell is stamped
+`results/phase0/caiso/caiso204_adaptive_phase0.json`, the CAISO cell is stamped
 from the failure mode — conduct absent (G-ID/G-DECAY fail) → **R**; conduct
 present but the armed path infeasible on this keeper (G-BOOT the sole
 structural fail) → **I** with the wall recorded — and Phase-1 entry over a

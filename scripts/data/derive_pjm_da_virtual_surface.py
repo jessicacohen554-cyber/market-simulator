@@ -6,7 +6,7 @@ measure the hourly INCrement-offer (virtual supply) and DECrement-bid
 (virtual demand) curves — the *submitted ex-ante* bid ladders that give the
 real Day-Ahead market its extra procurement depth at peaks (net cleared
 DEC − INC ≈ +7–11 GW at the July-2024 top hours; the ~9-10 GW gap of
-docs/FINDING-pjm-offer-surface-noop-2026-07.md) — condition-binned by a
+docs/records/pjm/FINDING-pjm-offer-surface-noop-2026-07.md) — condition-binned by a
 forward-reproducible tightness driver, and freeze them into a condbinned
 JSON the LP mechanism reads (``ScenarioConfig.pjm_da_virtual_bids``).
 

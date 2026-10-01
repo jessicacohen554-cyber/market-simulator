@@ -3,7 +3,7 @@
 **Lane:** capx D74 (director r#46). Branch `claude/capx-d74-pjm-steam-oil-gsxcx5`, fresh off
 `origin/main` `6887484f`, fast-forwarded to `2eb65038` before this text. Companion:
 `DESIGN-capx-d74-pjm-steam-oil-convention-2026-09-06.md` (the phase-0 record, the census, the
-mechanism choice). Instrument: `docs/handoffs/d74/phase0-2026-09-06.{py,json}`. DATA PROFILE
+mechanism choice). Instrument: `docs/records/forecast/d74/phase0-2026-09-06.{py,json}`. DATA PROFILE
 `pjm`. Model Fable. **Date:** 2026-09-06. **Pushed before the first line of mechanism code.**
 The cache keys of §5 that need the field to exist are added as **Addendum A in the build commit,
 before the first solve** — never after a number is seen.

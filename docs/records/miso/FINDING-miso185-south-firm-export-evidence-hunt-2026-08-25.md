@@ -14,7 +14,7 @@ evidence line updated in MISO's shard (rule 26(b) engages via that update +
 the §5.4 queue stamp + calibration-log entry).
 
 Instrument: `scripts/probes/_miso185_firm_export_hunt.py` →
-`results/calibration/_miso185_firm_export_hunt.json` + the committed
+`results/phase0/miso/_miso185_firm_export_hunt.json` + the committed
 698-report PDF corpus `results/calibration/_miso185_eqr_pdfs/`.
 
 ## 0. The verdict

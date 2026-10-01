@@ -1,7 +1,7 @@
 # FFR-3A-3 — the T1-H / T1-X halves re-measured at the post-FFR-3F HEAD
 
 **Session.** FFR Wave 3, battery-close lane, third pass. This document is an
-**addendum** to `docs/handoffs/ffr-3a2-battery-close-2026-08-03.md`. That
+**addendum** to `docs/records/forecast/ffr-3a2-battery-close-2026-08-03.md`. That
 document's sections stand as written; nothing in it is deleted or rewritten
 here. Where a number moved, the correction is stated in §5 below and a forward
 pointer is left at the affected section.

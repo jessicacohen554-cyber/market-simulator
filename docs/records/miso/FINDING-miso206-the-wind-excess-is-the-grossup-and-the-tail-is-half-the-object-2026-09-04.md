@@ -11,7 +11,7 @@
 `data/raw/`. NO SCORING ARTIFACT CHANGED. NO CELL VERDICT MOVED** (one new base
 row minted for an existing unregistered construction, §10).
 
-**PREREG** `results/calibration/PREREG-miso206-wind-availability-object-hours-2026-09-04.md`,
+**PREREG** `docs/records/miso/PREREG-miso206-wind-availability-object-hours-2026-09-04.md`,
 pushed at **`f55af87f`** before any object-hour statistic, with a §0 disclosure
 of the two numbers the instrument pre-condition had already produced, three
 reproduction pre-conditions, ten predictions each carrying a sign against its

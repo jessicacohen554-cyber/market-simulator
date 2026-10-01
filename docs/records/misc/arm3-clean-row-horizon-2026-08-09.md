@@ -8,9 +8,9 @@ OWNER's to sign; this document is its evidence table.
 **Head at lane start:** `origin/main` `e9f99e6`. Branch
 `claude/arm3-clean-row-horizon-ifcfsb`, cut at that head with zero divergence.
 
-Authority: `docs/handoffs/d28-45u-composition-memo-2026-08-08.md` §2.1 (the fleet the rows
-pay); `docs/handoffs/f2-45u-composition-2026-08-09.md` (the landed §45U seam);
-`docs/handoffs/ffr-7b2-rps-krow-clean-rows-2026-08-06.md` §3.2 (the established 2026–2030
+Authority: `docs/records/forecast/d28-45u-composition-memo-2026-08-08.md` §2.1 (the fleet the rows
+pay); `docs/records/misc/f2-45u-composition-2026-08-09.md` (the landed §45U seam);
+`docs/records/forecast/ffr-7b2-rps-krow-clean-rows-2026-08-06.md` §3.2 (the established 2026–2030
 quiet window); `config/capacity_market.py` `MISO_CLEAN_TIER_REGIONS` + `STATE_RPS_ACP["MISO"]`.
 
 ---

@@ -110,7 +110,7 @@ retired 2023-12, so the COD ramp zeroes the *whole plant's* availability — `pm
 is 0 either way. The leak needs a surviving sibling to land on, and after 2023 plant 356 has none.
 
 **CAISO CORROBORATES THE PJM LANE'S FINDING, INDEPENDENTLY AND IN A DIFFERENT MECHANISM CLASS**
-(`docs/FINDING-pjm-retiree-window-redistribution-2026-09-09.md`: W H Sammis, 720 MW of coal,
+(`docs/records/pjm/FINDING-pjm-retiree-window-redistribution-2026-09-09.md`: W H Sammis, 720 MW of coal,
 +0.0615 % of PJM's 2023 effective capacity). CAISO's relative leak, **+0.848 %**, is **~14× PJM's**,
 on a *gas-ST* plant rather than coal. The cross-ISO exposure table in that finding lists CAISO at
 480.0 MW; **that number is confirmed here as exact and fully realised in 2023.**

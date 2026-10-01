@@ -17,7 +17,7 @@ flipped**; arming remains the owner's box, and nothing here argues for it.
 > carries owner decisions D-1 (`retirement_rule="pipeline"`) and D-2 (both entry
 > dampers), and FFR-3A measured that those decisions **degrade capacity adequacy in
 > every ISO** — ERCOT's reserve margin to **−1.5 %**, CAISO's to **−3.1 %**
-> (`docs/handoffs/ffr-t1-regate-2026-08-02.md` §6.4, open blocker 0). That finding is
+> (`docs/records/forecast/ffr-t1-regate-2026-08-02.md` §6.4, open blocker 0). That finding is
 > **unresolved and is not this lane's to resolve.** Every delta below is measured
 > **arm-to-arm against this session's own gate-OFF leg**, never against a
 > pre-decision citation, and the absolute level of both arms sits inside that open

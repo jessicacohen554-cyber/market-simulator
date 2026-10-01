@@ -47,7 +47,7 @@ owner-visible charter — this document does not request one.
   caiso-172 keeper method does.
 * Everything derived here is CAISO's [R-ISO-SCOPE].
 * Committed evidence base (all pre-existing bytes, nothing re-surveyed):
-  - `results/calibration/_caiso219_deliverability_census.json` — the
+  - `results/phase0/caiso/_caiso219_deliverability_census.json` — the
     93-constraint Attachment-A census with On/Off-Peak flags (off-peak mass:
     PG&E Fresno 14/19, PG&E Kern 7/10, SCE Northern incl. Tehachapi 2/8 with
     Tehachapi proper 0/3).
@@ -250,10 +250,10 @@ did — sufficiency untested and untestable without the program itself.
 2. `scripts/probes/_caiso223_subzonal_scope.py` — the probe (sections:
    A partition adjudication inputs, B membership re-cut, C LDF split,
    D controls/witnesses); deterministic JSON output.
-3. `results/calibration/_caiso223_subzonal_scope.json` — every number;
+3. `results/phase0/caiso/_caiso223_subzonal_scope.json` — every number;
    `_caiso223_membership_recut.csv` + `_caiso223_pnode_subzone_map.csv` —
    the membership artifacts; optionally `_caiso223_b2_boundaries.json`.
-4. `results/calibration/FINDING-caiso223-subzonal-scope-2026-08-30.md` —
+4. `docs/records/caiso/FINDING-caiso223-subzonal-scope-2026-08-30.md` —
    partition statement (§A), membership (§B), LDF split (§C), sufficiency
    statement (§D), records/fences (§E).
 5. `docs/calibration-log/caiso.md` caiso-223 entry (rebase on fresh main

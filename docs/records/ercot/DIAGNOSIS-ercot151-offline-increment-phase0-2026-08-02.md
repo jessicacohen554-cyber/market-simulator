@@ -25,7 +25,7 @@
 > offline block" survives only as *the model has ~2.7 GW of CC headroom the
 > market did not have* — a fleet-scope capability object, not a commitment-state
 > one. Full record:
-> `results/calibration/FINDING-ercot163-cc-commitment-state-refuted-2026-08-04.md`;
+> `docs/records/ercot/FINDING-ercot163-cc-commitment-state-refuted-2026-08-04.md`;
 > probes `scripts/probes/ercot163_cc_commitment_state_census.py` +
 > `scripts/probes/ercot163_dam_config_collapse.py`.
 
@@ -46,7 +46,7 @@ gates C3a 2023-only −32.6 %, C3b 2023-only 0.616, C3c, C7 2023-lignite cv-leg)
 Phase 0 only — NO LP built, NO year solved, NO mechanism armed, keeper
 UNCHANGED.** Probes: `scripts/probes/ercot151_offline_phase0.py` +
 `ercot151_offline_phase0b.py` (committed record
-`results/calibration/ercot151_offline_phase0.json`); all inputs committed
+`results/phase0/ercot/ercot151_offline_phase0.json`); all inputs committed
 (60-Day DAM Gen Resource 2023 parquets, keeper hourly sidecars,
 `actual_lmp_hourly_ERCOT.parquet`, the ERCOT-88 pool artifact).
 

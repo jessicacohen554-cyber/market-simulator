@@ -2,7 +2,7 @@
 
 **Lane:** cross-ISO (governance), owner-raised 2026-07-27. Audits the
 owner-adopted merit-order guard
-(`docs/handoffs/campd-economic-layup-fix-charter-2026-07.md` §3a/§8) for
+(`docs/records/misc/campd-economic-layup-fix-charter-2026-07.md` §3a/§8) for
 FALSE NEGATIVES: a unit that breaks during a stretch when it is ALSO out of
 merit is indistinguishable from economic layup on the guard's discriminator
 and gets erased — if material, the corrected envelope under-counts outages in
@@ -18,7 +18,7 @@ holdout year (rule 22), no keeper/frontier state touched.
 BEFORE the first run; post-hoc placement-null diagnostic added at `1b63004`
 AFTER the pre-registered results existed, labelled post-hoc at the site and
 never a verdict input (pjm-131 §4 / pjm-132 §4 precedent). Output:
-`results/calibration/guard_falseneg_audit_2026-07.json` (pre-registered
+`results/phase0/governance/guard_falseneg_audit_2026-07.json` (pre-registered
 fields verified byte-identical across both runs). Committed inputs only: the
 guard-on extracts, their `campd-unit-outages-layup[-<ISO>].csv` companions,
 the five charter-§4 published anchors, and measured EIA-930 net load.
@@ -246,7 +246,7 @@ confirmed, and the D3 signal is mostly length composition. What is warranted:
 uv sync
 PYTHONPATH=. .venv/bin/python scripts/probes/guard_falseneg_audit.py \
     --posthoc-placement \
-    --json results/calibration/guard_falseneg_audit_2026-07.json
+    --json results/phase0/governance/guard_falseneg_audit_2026-07.json
 ```
 
 No `data/clean/` regeneration is required (net load reads raw EIA-930).

@@ -4,7 +4,7 @@
 Branch `claude/d76-arm-capacity-peak-oxltrr`, fresh off `origin/main` `59155c2c`.
 Pre-registered in `PRECOMMIT-capx-d76-arm-2026-09-07.md`, **pushed before any cache key was
 computed**. Instruments: `scripts/probes/capxd76arm_default_flip_key_census.py` +
-`docs/handoffs/d76arm/key-census-variant-{a,b}.json`. **ZERO LP. `src/market_sim/` is untouched.**
+`docs/records/forecast/d76arm/key-census-variant-{a,b}.json`. **ZERO LP. `src/market_sim/` is untouched.**
 
 ---
 
@@ -95,7 +95,7 @@ both populations and the FINDING quotes both.
 
 ### 3.2 Variant A — the flip alone
 
-`capxd76arm_default_flip_key_census.py --variant a` (`docs/handoffs/d76arm/key-census-variant-a.json`):
+`capxd76arm_default_flip_key_census.py --variant a` (`docs/records/forecast/d76arm/key-census-variant-a.json`):
 
 | bucket | configs (validated) | moved | configs (all) | moved (all) | on target? |
 |---|---:|---:|---:|---:|---|
@@ -245,9 +245,9 @@ hindcast bundle** and so owes nothing, though its bare recipe key moves like eve
 ```bash
 uv sync
 .venv/bin/python scripts/probes/capxd76arm_default_flip_key_census.py \
-    --variant a --expect-live-default false --out docs/handoffs/d76arm/key-census-variant-a.json
+    --variant a --expect-live-default false --out docs/records/forecast/d76arm/key-census-variant-a.json
 .venv/bin/python scripts/probes/capxd76arm_default_flip_key_census.py \
-    --variant b --expect-live-default false --out docs/handoffs/d76arm/key-census-variant-b.json
+    --variant b --expect-live-default false --out docs/records/forecast/d76arm/key-census-variant-b.json
 .venv/bin/python scripts/check_cache_key_registration.py --base origin/main   # ok, 273 declared defaults match
 .venv/bin/python scripts/solve_surface_register.py --diff origin/main HEAD    # 0 values moved
 .venv/bin/python -m pytest tests/unit/pipeline/test_capacity_screen_peak_measured_hindcast.py

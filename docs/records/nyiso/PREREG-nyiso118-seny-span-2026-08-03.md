@@ -11,7 +11,7 @@ pushed BEFORE either solve.**
 
 `nyiso_ordc_measured_step_span` is matrix cell **`U`** — implemented, never armed.
 nyiso-117 screened it **ex ante with no solve spent** and recorded **S-OVER**
-(`results/calibration/nyiso117_seny_rcpf_curve_screen.json`). **That measurement is
+(`results/phase0/nyiso/nyiso117_seny_rcpf_curve_screen.json`). **That measurement is
 DONE and is NOT re-run here.** This session spends the solve the screen deliberately
 did not.
 
@@ -55,7 +55,7 @@ to LI.
 
 **DISCHARGED BEFORE THE SOLVE, on CONSTRUCTION.**
 `scripts/probes/_nyiso118_span_construction_probe.py` →
-`results/calibration/nyiso118_span_construction_probe.json` builds the NYISO
+`results/phase0/nyiso/nyiso118_span_construction_probe.json` builds the NYISO
 `ReserveDesign` **twice at one HEAD** on the keeper's reserve flags and diffs every
 family's `requirement`, `ordc_penalties` and `ordc_step_widths`. **No LP is solved and
 no dual is read** — because the question is about how the curve is BUILT, and `dual` /

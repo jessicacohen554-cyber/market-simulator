@@ -1,7 +1,7 @@
 # Per-fuel capacity-revenue / going-forward-cost ratio check — 2026-07-13
 
 **Session.** Direct follow-up to
-`docs/handoffs/equilibrium-battery-2026-07-12.md` §6 item 3 (P-3B), which
+`docs/records/misc/equilibrium-battery-2026-07-12.md` §6 item 3 (P-3B), which
 found NEISO retires **0 MW of thermal capacity across the entire 25-year
 reference horizon** and hypothesized the flat `$95k/firm-MW-yr` capacity
 payment alone exceeds FOM-only going-forward cost for every unit, making the

@@ -203,7 +203,7 @@ the work, the log entry and the matrix stamp are all NYISO's).
 **Renumber, recorded rather than quietly rewritten.** This prereg was first
 committed as `nyiso-119` (commit `e473d29f`). That shorthand is already SPENT on
 main by the SENY-increment session
-(`results/calibration/PREREG-nyiso119-seny-increment-2026-08-03.md` +
+(`docs/records/nyiso/PREREG-nyiso119-seny-increment-2026-08-03.md` +
 `nyiso119_seny_increment_construction_probe.json`), which the NYISO log's entry
 headers do not yet carry — the log tail ends at nyiso-117 while the keeper shard
 is at nyiso-118, so the log's own "next number" line was stale in both

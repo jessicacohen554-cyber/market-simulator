@@ -1,7 +1,7 @@
 # FINDING — caiso-79 STEP-0: the Greater Bay LCT import cap CANNOT bind on energy — the NP15 → GREATER_BAY split is REFUTED ex-ante (no solve); the CT lane's driver is local *commitment*, not an import-limited pocket (2026-07-12)
 
 **STEP-0 for the caiso-79 CT_PEAKER local-commitment granularity lane**
-(docs/handoffs/caiso-79-next-run-plan-2026-07-12.md §3, the caiso-70/71/78
+(docs/records/caiso/caiso-79-next-run-plan-2026-07-12.md §3, the caiso-70/71/78
 decide-before-solving method). Diagnostic:
 `scripts/probes/_caiso79_step0_greaterbay_bind.py` (measured inputs only —
 Final LCT report parameters, CAMPD hourly, PGE-TAC / EIA-930 hourly load,
@@ -78,7 +78,7 @@ rule-1 violation, and the honest cap is inert. **No caiso-79 solve was run
 this session** (STEP-0 gates the LP). The lane redirects to an explicit
 **measured local-commitment driver** on the pocket's named CT units — design
 doc filed owner-visible at
-`docs/handoffs/caiso-local-commitment-driver-design-2026-07.md` (window +
+`docs/records/caiso/caiso-local-commitment-driver-design-2026-07.md` (window +
 driver + forward story + the `D4_WINDOWS` entry plan, rules 12/17/18/19),
 for owner review BEFORE any solve.
 
@@ -93,5 +93,5 @@ for owner review BEFORE any solve.
   so every solve-path consumer (`load_lcr_parameters`,
   `apply_caiso_local_import_limits`, the local-capacity floor) is unchanged
   — the intake is scorer/solve-inert by construction.
-* `docs/handoffs/caiso-local-commitment-driver-design-2026-07.md` — the
+* `docs/records/caiso/caiso-local-commitment-driver-design-2026-07.md` — the
   redirect design.

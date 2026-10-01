@@ -2,7 +2,7 @@
 
 > Status: RECORD (frozen) — session record of the path-registry hygiene lane.
 > Executes items 1–3 of the session chartered off
-> `docs/handoffs/inputs-dead-path-inventory-2026-07.md` ("Out of scope" §);
+> `docs/records/misc/inputs-dead-path-inventory-2026-07.md` ("Out of scope" §);
 > item 4 (keeper_store.py's CLI) was owner-adjudicated 2026-07-26 to STAY and
 > was not touched.
 

@@ -31,7 +31,7 @@ HEAD (C8 coal-subclass code): forced shares move ≤ 0.001, C8 PASS unchanged.
 
 ## 1. G-DRIFT (rule 29(b)) — keeper basis `9db30b45` → HEAD `f30e3704`: ALL INERT
 
-37 solve-path files changed. Audited **mechanically**: `docs/handoffs/neiso114/gdrift_fleet_probe.py` rebuilt
+37 solve-path files changed. Audited **mechanically**: `docs/records/neiso/neiso114/gdrift_fleet_probe.py` rebuilt
 the keeper recipe's LP inputs with the basis code (a code-only worktree at `9db30b45`, data from this tree)
 and with HEAD, per year.
 

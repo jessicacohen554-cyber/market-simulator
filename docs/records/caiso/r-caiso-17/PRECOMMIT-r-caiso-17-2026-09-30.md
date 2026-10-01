@@ -159,7 +159,7 @@ EIA930_CISO_CLOCK_EARLY_WINDOWS_UTC = {"generation": ("2019-01-01 08:00", "2022-
 ## 4. Solve
 
 - 7 shards, one per year 2019–2025 (rule 36). The parent never solves.
-- Template: `docs/handoffs/r-caiso-16/shard-prompt.md`.
+- Template: `docs/records/caiso/r-caiso-16/shard-prompt.md`.
 - `{SRC}` is `rcaiso16_A_tp_2019_2021` for 2019–21 and `rcaiso16_A_span` for 2022–25.
 - The pin is the full SHA after the build PR merges.
 - 2023–25 lie outside the new window, so their inputs are byte-identical to the incumbent's. The legs are solved anyway,

@@ -1,7 +1,7 @@
 {
  "session": "nyiso-175",
  "keeper": "2026-08-30-nyiso-159-loss-surface",
- "prereg": "results/calibration/PREREG-nyiso175-ct-conduct-and-d2-basis.md",
+ "prereg": "docs/records/nyiso/PREREG-nyiso175-ct-conduct-and-d2-basis.md",
  "years": [
   2023,
   2024,

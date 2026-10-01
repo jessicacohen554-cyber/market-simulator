@@ -192,7 +192,7 @@ is **narrower and cheaper than the record says**, not that it is gone.
 
 ## 6. ITEM (b) — THE `RHO_CLIP` RULING, PREPARED NOT TAKEN
 
-`docs/DECISION-CARD-nyiso145-rho-clip-band-2026-08-19.md`. Headline: **all three
+`docs/records/nyiso/DECISION-CARD-nyiso145-rho-clip-band-2026-08-19.md`. Headline: **all three
 measured `online_rho` rows that exist in the repo** — NYISO's two and MISO's,
 across 5.8 M online unit-hours at 80–96 % metered coverage — **fall below the 0.5
 floor**, while **all three of their `rho_minload` counterparts fall inside the
@@ -215,7 +215,7 @@ shard** — it appears only inside the `def:`/note text of the sibling
 `gas_hub_basis_overlay` row, exactly as nyiso-143 filed it. The arming decision
 remains the owner's D-5(b) call and the taxonomy remedy remains a base-row +
 all-six-shards edit, out of a single-ISO lane's scope.
-`docs/DECISION-CARD-nyiso143-iroquois-taxonomy-gap-2026-08-18.md`.
+`docs/records/nyiso/DECISION-CARD-nyiso143-iroquois-taxonomy-gap-2026-08-18.md`.
 
 ---
 

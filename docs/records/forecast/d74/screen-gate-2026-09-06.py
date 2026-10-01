@@ -5,7 +5,7 @@ DY 2022/23. Also used on the full-window bundles with --years 2022 2023 2024
 written here (rule 29(c): the bundles are deleted before merge).
 
 Usage (repo root):
-  PYTHONPATH=.:src .venv/bin/python docs/handoffs/d74/screen-gate-2026-09-06.py \
+  PYTHONPATH=.:src .venv/bin/python docs/records/forecast/d74/screen-gate-2026-09-06.py \
       --arm results/hindcast/d74-screen-arm --ctlp results/hindcast/d74-screen-ctlP \
       [--ctlb results/hindcast/d74-screen-ctlB] [--years 2022] [--out out.json]
 """

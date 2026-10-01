@@ -212,7 +212,7 @@
  "load_nyiso_reserve_requirements": {
   "2019": [
    "ERR",
-   "FileNotFoundError: nyiso_dynamic_reserve_requirements=True but the measured requirement series is absent: /home/user/market-simulator/data/raw/NYISO-AS/requirements/NYISO_reserve_requirements_2019.csv. This is the Ask-B external data intake (docs/handoffs/nyiso-data-asks-2026-07.md); the flag must not solve on the static requirements it claims to replace."
+   "FileNotFoundError: nyiso_dynamic_reserve_requirements=True but the measured requirement series is absent: /home/user/market-simulator/data/raw/NYISO-AS/requirements/NYISO_reserve_requirements_2019.csv. This is the Ask-B external data intake (docs/records/nyiso/nyiso-data-asks-2026-07.md); the flag must not solve on the static requirements it claims to replace."
   ],
   "2023": [
    "OK",
@@ -220,7 +220,7 @@
   ],
   "2026": [
    "ERR",
-   "FileNotFoundError: nyiso_dynamic_reserve_requirements=True but the measured requirement series is absent: /home/user/market-simulator/data/raw/NYISO-AS/requirements/NYISO_reserve_requirements_2026.csv. This is the Ask-B external data intake (docs/handoffs/nyiso-data-asks-2026-07.md); the flag must not solve on the static requirements it claims to replace."
+   "FileNotFoundError: nyiso_dynamic_reserve_requirements=True but the measured requirement series is absent: /home/user/market-simulator/data/raw/NYISO-AS/requirements/NYISO_reserve_requirements_2026.csv. This is the Ask-B external data intake (docs/records/nyiso/nyiso-data-asks-2026-07.md); the flag must not solve on the static requirements it claims to replace."
   ]
  },
  "nyiso_market_solar (keeper arms the COD basis)": {

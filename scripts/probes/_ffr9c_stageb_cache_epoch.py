@@ -38,7 +38,7 @@ config's five stage-B fields back to their ``ScenarioConfig`` field defaults —
 NOT by passing the default values to the constructor, which
 ``apply_iso_scenario_defaults`` would re-arm (a caller value equal to the field
 default is indistinguishable from unset; see
-``docs/handoffs/FINDING-ffr-9c-iso-override-precedence-2026-08-12.md``).
+``docs/records/forecast/FINDING-ffr-9c-iso-override-precedence-2026-08-12.md``).
 
 Usage::
 

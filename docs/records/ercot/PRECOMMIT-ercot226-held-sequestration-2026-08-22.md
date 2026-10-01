@@ -73,7 +73,7 @@ the single reviewing/combining/recording session.
 ## 0b. Directive-premise corrections (recorded; substance unaffected)
 
 1. **B-1 is SIGNED, not unsigned.** The record
-   (`docs/DECISION-CARD-ercot218b-artificial-shortage-structural-2026-08-18.md`,
+   (`docs/records/ercot/DECISION-CARD-ercot218b-artificial-shortage-structural-2026-08-18.md`,
    signature appendix, commit `ecbad28`) carries "B-1 SIGNED (owner, by
    dispatch of ERCOT-219, 2026-08-18)"; it was spent at ercot-219 and the
    arm was REJECTED-AS-ARMED. The card that is UNSIGNED (with a DO-NOT-SIGN

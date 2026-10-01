@@ -7,7 +7,7 @@ nyiso-93/94/95/97/99/101/105/107 disposition — rule 15 governs completed runs;
 there is none). **Probe:** `scripts/probes/_nyiso110_peak_half_decomposition.py`
 (committed; sidecar measurements A–D re-run in seconds with `--no-fleet`, the
 stack/dormancy measurements E rebuild one fleet per year with no LP).
-**Machine output:** `results/calibration/_nyiso110_peak_half_decomposition.json`.
+**Machine output:** `results/phase0/nyiso/_nyiso110_peak_half_decomposition.json`.
 
 The handoff asked (a) for a no-LP decomposition of the peak-half miss on the
 keeper's own sidecars — how much is reserve/scarcity formation vs offer-surface
@@ -372,7 +372,7 @@ calibration_verdict → build_status).
 ```
 PYTHONPATH=.:src python scripts/probes/_nyiso110_peak_half_decomposition.py \
     --bundle results/calibration/nyiso109_zonalanchor_B \
-    --out results/calibration/_nyiso110_peak_half_decomposition.json
+    --out results/phase0/nyiso/_nyiso110_peak_half_decomposition.json
 ```
 
 Measurements A–D read only committed artifacts and run in seconds
@@ -390,7 +390,7 @@ The A/B ran at the rebased HEAD (both arms after the ercot-150 landing;
 registered `2026-08-01-nyiso110-control-zerodelta` /
 `2026-08-02-nyiso110-spin-online-inert`; gate scorer
 `scripts/probes/_nyiso110_spin_online_ab.py`, output
-`results/calibration/_nyiso110_spin_online_ab.json`).
+`results/phase0/nyiso/_nyiso110_spin_online_ab.json`).
 
 **Verdict: INERT, by the prereg's own K3 rule.** K1/K4 pass (the flag is armed
 and recorded, exactly one config delta); K2 passes at **0.0 MW** max

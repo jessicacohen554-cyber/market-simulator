@@ -1,7 +1,7 @@
 # FINDING — PJM-NEXT card 1, arm shard 2023: G1 hard stops (e) and (c) fail, so the bundle was not pushed (2026-09-25)
 
 Shard of orchestrator PJM-NEXT. Pinned commit `7f0953845350089732892f83248726d4b04fb84f` (verified).
-Record: `docs/PRECOMMIT-pjm-next-c1-year-correct-membership-2026-09-25.md` §4 G1.
+Record: `docs/records/pjm/PRECOMMIT-pjm-next-c1-year-correct-membership-2026-09-25.md` §4 G1.
 
 The solve **completed** (exit 0, wall 678 s; phase total 657.7 s: data_prep 70.7, P0 353.3, markup 47.7,
 P1 141.4, results_write 44.5). The bundle `results/calibration/pjmnext_c1_2023/` exists **on this shard's

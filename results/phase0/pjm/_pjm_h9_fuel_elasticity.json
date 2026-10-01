@@ -1,6 +1,6 @@
 {
  "what": "per-unit log-log elasticity of the offer on the delivered-gas day price (calendar-month fixed effects); beta~1 = gas-fired, beta~0 = coal-fired",
- "precommit": "docs/PRECOMMIT-pjm-h9-coal-only-comparator-2026-09-16.md",
+ "precommit": "docs/records/pjm/PRECOMMIT-pjm-h9-coal-only-comparator-2026-09-16.md",
  "role": "CORROBORATIVE ONLY -- M1's bound is the load-bearing measurement",
  "beta_share": 0.55,
  "gas_threshold": 0.5,

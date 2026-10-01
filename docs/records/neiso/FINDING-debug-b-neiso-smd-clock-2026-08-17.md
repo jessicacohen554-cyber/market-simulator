@@ -5,7 +5,7 @@
 **Charter:** `docs/audit/third-party-audit-2026-08.md` §8 row O8 ("Owner: charter the repair"),
 served as an in-session owner card per the `debug-sweep-2026-08.md` §A.2 two-card pattern and
 **SIGNED 2026-08-17: option A (repair + full-span re-solve) with promotion pre-signed on
-not-worse**. Direct precedent: `docs/FINDING-debug-b-pjm-input-clock-2026-08-15.md` (the PJM
+not-worse**. Direct precedent: `docs/records/pjm/FINDING-debug-b-pjm-input-clock-2026-08-15.md` (the PJM
 EIA-930 input-clock repair — same genus, same §2a verification protocol).
 **Instruments:** `scripts/probes/neiso97_smd_dst_defect_quantify.py` (Phase-1 quantification +
 truth adjudication) and `scripts/probes/neiso97_smd_repair_byteverify.py` (§2a verification),
@@ -27,7 +27,7 @@ provably untouched; annual means move ≤ $0.008/MWh — this repair cannot buy 
 
 ## 1. REPRODUCE — the neiso-96 §1.4 finding confirmed, then measured to the cell
 
-neiso-96 (`results/calibration/ASSESSMENT-neiso96-h12026-intake-2026-08-15.md` §1.4) found the
+neiso-96 (`docs/records/neiso/ASSESSMENT-neiso96-h12026-intake-2026-08-15.md` §1.4) found the
 defect on four sampled DST days and deliberately did not repair it in an intake lane. This
 session measured the full extent from the committed bytes before serving the owner card.
 

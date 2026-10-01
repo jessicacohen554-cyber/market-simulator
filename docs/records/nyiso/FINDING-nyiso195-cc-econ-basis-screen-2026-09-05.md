@@ -5,7 +5,7 @@ to see if it fixes the c1 gas cc miss. C3c is an acceptable caveat and known lim
 this model type."* and *"No control arm just use the last keeper."*
 **Keeper / control:** `2026-09-05-nyiso-192-astoria-panel` (rule 29(b) form 4; G-DRIFT
 `d5bba63b..HEAD` all INERT — PREREG §4). **Pre-registration:**
-`results/calibration/PREREG-nyiso195-cc-econ-basis-screen.md`, pushed at `9a0b80fe` before
+`docs/records/nyiso/PREREG-nyiso195-cc-econ-basis-screen.md`, pushed at `9a0b80fe` before
 the screen was launched, with the phase-0 prediction written in it. **Keeper unchanged. No
 full span solved. Nothing registered** (rule 29: the screen bundle
 `results/calibration/nyiso195_screen_2024` is a local throwaway probe).
@@ -152,7 +152,7 @@ the comparison stands on the keeper's committed numbers.
 - **Cost:** one one-year screen (~35 min LP), two zero-LP rebuilds; zero full-span solves;
   zero control solves.
 
-*(nyiso-195, 2026-09-05. Records: `results/calibration/PREREG-nyiso195-cc-econ-basis-screen.md`,
+*(nyiso-195, 2026-09-05. Records: `docs/records/nyiso/PREREG-nyiso195-cc-econ-basis-screen.md`,
 `_nyiso195_econ_basis_phase0.json`, `_nyiso195_screen_gates.json`,
 `scripts/probes/nyiso195_econ_basis_phase0.py`, `scripts/probes/nyiso195_screen_gates.py`.
 Screen bundle `results/calibration/nyiso195_screen_2024` local, never registered.)*

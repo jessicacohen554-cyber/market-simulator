@@ -3,8 +3,8 @@
 **Session:** miso-284 (2026-09-28). **Keeper:** `2026-09-28-miso-280-splitremap` (unchanged). **Solves:** none.
 **Lane:** owner ruling on the miso-283 card: *"Do standby units and un route ro2 before going after night overshoot"*.
 **Evidence:**
-- `scripts/probes/_miso284_standby_conduct.py` → `results/calibration/_miso284_standby_conduct.json` (unit conduct)
-- `scripts/probes/_miso282_standby_delta.py` (fleet delta, re-run for 2019–2025 this session; numbers match `results/calibration/_miso282_standby_delta.json`)
+- `scripts/probes/_miso284_standby_conduct.py` → `results/phase0/miso/_miso284_standby_conduct.json` (unit conduct)
+- `scripts/probes/_miso282_standby_delta.py` (fleet delta, re-run for 2019–2025 this session; numbers match `results/phase0/miso/_miso282_standby_delta.json`)
 
 ## 1. Answer
 

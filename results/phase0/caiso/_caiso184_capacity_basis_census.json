@@ -5,7 +5,7 @@
     2024,
     2025
   ],
-  "precheck": "results/calibration/PRECHECK-caiso184-capacity-basis-2026-08-08.md",
+  "precheck": "docs/records/caiso/PRECHECK-caiso184-capacity-basis-2026-08-08.md",
   "precheck_sha256": "33fa2093a8a253982f816a56c420515d4a5ddebbcf2ad1432974a15ccbce9a23",
   "bars": {
     "B_ATTRIB": 0.5,

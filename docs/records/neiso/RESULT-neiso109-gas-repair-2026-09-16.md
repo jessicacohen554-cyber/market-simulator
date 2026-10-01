@@ -2,9 +2,9 @@
 
 **Session** neiso-109 · **Date** 2026-09-16 · **Keeper under test** `2026-09-09-neiso-108-fuelvintage`
 (+ its folded touchpoint `…-touchpoints`), **UNCHANGED by this session**.
-**Pre-registration:** `docs/PRECOMMIT-neiso109-gas-repair-screen-2026-09-16.md` +
-`docs/ADDENDUM-neiso109-run-all-years-2026-09-16.md`, both pushed before any solve.
-**The repair itself:** `docs/FINDING-neiso109-the-agt-series-is-contaminated-2026-09-16.md`.
+**Pre-registration:** `docs/records/neiso/PRECOMMIT-neiso109-gas-repair-screen-2026-09-16.md` +
+`docs/records/neiso/ADDENDUM-neiso109-run-all-years-2026-09-16.md`, both pushed before any solve.
+**The repair itself:** `docs/records/neiso/FINDING-neiso109-the-agt-series-is-contaminated-2026-09-16.md`.
 
 > ## THE SHORT VERSION
 > **The input repair is unambiguously correct** — 82 rows of the committed file were other

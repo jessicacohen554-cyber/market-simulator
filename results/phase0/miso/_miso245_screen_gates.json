@@ -1,6 +1,6 @@
 {
  "probe": "miso-245 rule-29 screen gates S-1/S-2/S-3 (STRUCTURAL, STOP-only)",
- "addendum": "results/calibration/ADDENDUM-miso245-the-four-screen-gates-2026-09-08.md \u00a71",
+ "addendum": "docs/records/miso/ADDENDUM-miso245-the-four-screen-gates-2026-09-08.md \u00a71",
  "control": "results/calibration/miso243_sppair_K (COMMITTED keeper bundle, form 4)",
  "arm": "/tmp/claude-0/-home-user-market-simulator/db5feb19-a82e-56da-a252-94c2e4e968ed/scratchpad/miso245_screen2024",
  "screen_year": 2024,

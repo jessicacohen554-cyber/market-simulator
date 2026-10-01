@@ -1,6 +1,6 @@
 # PJM CC over-generation — ranked tuning recommendation (research, no solves)
 
-**Companion to** `docs/handoffs/pjm-cc-level-tuning-2026-06.md` (the brief) and
+**Companion to** `docs/records/pjm/pjm-cc-level-tuning-2026-06.md` (the brief) and
 `docs/cc-high-cf-investigation.md` §"PJM and the net-summer ISOs". This is the
 analysis deliverable that brief asked for: a ranked, evidence-backed tuning
 direction. **No calibration solves were run.** ERCOT/CAISO/MISO/SPP stay

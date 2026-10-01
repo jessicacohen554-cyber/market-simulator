@@ -6,7 +6,7 @@ C3c the lone ledgered caveat). **Nothing was promoted and nothing was registered
 **Solves run: ONE** — the rule-29 2024 screen, a throwaway probe, deleted before merge (rule
 29(c)). **No control solve** (control = the keeper's committed bundle, rule 29(b) form 4;
 G-DRIFT audited, all INERT).
-**Pre-registration:** `results/calibration/PREREG-nyiso198-duct-peaking-row-scope-screen.md`
+**Pre-registration:** `docs/records/nyiso/PREREG-nyiso198-duct-peaking-row-scope-screen.md`
 (§0–§7 pushed at `f56e23cd` before the arm was built; **Addendum A** pushed before the screen
 solve). Every gate below is the PREREG's, executed as written.
 **Machine records:** `_nyiso198_cricket_partload_phase0.json`,

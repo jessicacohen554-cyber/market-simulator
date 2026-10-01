@@ -37,13 +37,13 @@ at Jun/Jul HE16–18 is flat across years (20.07 / 19.07 / 20.83 GW, +1.76 GW in
 2025. Established by difference-in-differences, so it needs no cross-fuel
 attribution (miso-87 respected). 2025 was not hot (zone-mean summer-peak TMAX
 29.6 / 29.2 / 29.8 °C) and gas was cheap — it was a supply-side event.
-Evidence: `results/calibration/FINDING-miso89-diurnal-spread-compression-2026-07.md` §7.
+Evidence: `docs/records/miso/FINDING-miso89-diurnal-spread-compression-2026-07.md` §7.
 
 **(b) CT measured-availability — 22.39 GW carrying no measured derate at all.**
 Not a fetch gap: an *identification* exclusion. A CT down-window cannot be
 certified a forced outage versus out-of-merit-at-peak, so every **output-derived**
 source is structurally incapable of measuring it.
-Evidence: `results/calibration/FINDING-miso90-ct-availability-identification-2026-07.md`.
+Evidence: `docs/records/miso/FINDING-miso90-ct-availability-identification-2026-07.md`.
 
 **The single blocking fact for both:** the only MISO-public outage record is
 aggregate. MISO's daily Multiday Operating Margin Forecast Report
@@ -280,7 +280,7 @@ multi-year rolling class averages and therefore fail C — was *untested*.
 
 **Resolved at miso-164 (2026-08-17). The browser was never required, and the
 prior was half-wrong but its CONCLUSION stands.** Evidence:
-`results/calibration/FINDING-miso164-gads-candidate1-resolved-2026-08-17.md`.
+`docs/records/miso/FINDING-miso164-gads-candidate1-resolved-2026-08-17.md`.
 
 * **The Chromium blocker is REAL and UNCHANGED** — re-tested 2026-08-17,
   `example.com` still returns `ERR_CONNECTION_RESET` through the agent proxy.
@@ -341,7 +341,7 @@ is required — the Reports page embeds its file listing as JSON and plain `curl
 retrieves every brochure. **Candidate 4 (MISO stakeholder data request) is now
 the ONLY route left standing**, and it is a human/owner action, not a session
 that can be chartered here.
-`docs/handoffs/xiso-4-queue-ratchet-2026-08-04.md` §3(b).
+`docs/records/governance/xiso-4-queue-ratchet-2026-08-04.md` §3(b).
 
 ## 9. Owner decision, miso-160 (2026-08-16) — provenance adjudicated for the §2a deliverable; fleet-grain amendment
 

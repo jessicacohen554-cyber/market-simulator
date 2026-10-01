@@ -4,7 +4,7 @@
 lane). **Keeper (unchanged):** `2026-07-31-ercot145-gas-daily-shape` (bundle
 `ercot145_gas_daily_arm`). **Probe (committed, reproducible):**
 `scripts/probes/ercot147_ct_band_phase0.py`; record
-`results/calibration/ercot147_ct_band_phase0.json`. Preconditions verified:
+`results/phase0/ercot/ercot147_ct_band_phase0.json`. Preconditions verified:
 default `cache_key` byte-stable (`603c2498bf71d21d`), `audit_keepers.py`
 PASS 0/0.
 

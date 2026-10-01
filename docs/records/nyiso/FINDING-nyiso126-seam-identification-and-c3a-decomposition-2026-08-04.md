@@ -138,7 +138,7 @@ envelope question and was not previously on the record.
 percentages. **Nothing was intaken.** The 87 MB of `ParFlows` used for §1.5 lives
 in the session scratchpad, was used only to test the posting, and is not written
 to `data/raw/`. The pre-registration is
-`results/calibration/PREREG-nyiso126-eastern-seam-attribution-2026-08-04.md`;
+`docs/records/nyiso/PREREG-nyiso126-eastern-seam-attribution-2026-08-04.md`;
 arming it is the owner's call.
 
 ---
@@ -218,7 +218,7 @@ by the next generator run).
 **(a) Its stated re-open condition is falsified as written.** The ledger says the
 re-open route is *"a `Capital_Hudson` → Zone-F/Zone-G TOPOLOGY SPLIT"*. nyiso-124
 closed that with cause (G0, CLOSED). Citation:
-`docs/handoffs/nyiso-124-charter-g0-g1-2026-08-04.md`; probe
+`docs/records/nyiso/nyiso-124-charter-g0-g1-2026-08-04.md`; probe
 `scripts/probes/_nyiso124_charter_g0_g1.py`; already flagged-not-edited at
 `docs/codebase-site/data/mechanism-matrix.js:1258-1264` and in
 `docs/calibration-log/nyiso.md` §(6).
@@ -228,7 +228,7 @@ closed that with cause (G0, CLOSED). Citation:
 scarcity"*. nyiso-125 moved the tail **3/0/14 h → 18/2/21 h** with a **seam-side
 input correction carrying no scarcity parameter** — no ORDC change, no floor, no
 reserve mechanism. Citation:
-`results/calibration/FINDING-nyiso125-seam-envelope-2026-08-04.md` §5.5, which
+`docs/records/nyiso/FINDING-nyiso125-seam-envelope-2026-08-04.md` §5.5, which
 states the finding and explicitly declines to act on it.
 
 **This session adds a third item to that disposition.** §2.3(3) shows C3a-2025

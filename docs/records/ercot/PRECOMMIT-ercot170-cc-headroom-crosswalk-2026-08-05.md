@@ -51,7 +51,7 @@ probe that built it and fed delivery-year rows.
   guard asserted; dispatch from the keeper's committed
   `hourly/class_hourly_2023.parquet` (P1). No LP.
 * **Hour set**: the committed top-100 2023 gap hours,
-  `results/calibration/_ercot161_wall_phase0.json` — the same set ERCOT-163
+  `results/phase0/ercot/_ercot161_wall_phase0.json` — the same set ERCOT-163
   scored, so the 3.07 / 0.35 GW figures are reproduced, not re-cut. Every
   statistic is additionally reported over `all` 8760 hours as a
   **non-gating** control.
@@ -258,7 +258,7 @@ commitment; coal seasonal LEVEL split; `coal_offer_level_rebasis` `R`;
 `tranche_startup_amortization` `G`; ercot-168 **OPTION B** stays DEFERRED; the
 ercot-167 SOC-reserve re-gate waits on the H4-item-4 2024 maintenance-season
 availability defect; the West/Panhandle topology split is **CLOSED**
-(`docs/DIAGNOSIS-ercot-trough-price-formation-2026-07.md` §§7–10).
+(`docs/records/ercot/DIAGNOSIS-ercot-trough-price-formation-2026-07.md` §§7–10).
 
 **Item 11's extreme-hour face** (the 4 phantom shed hours and the 1.7–3.1 GW gas
 shortness at the top-10 actual hours) is **explicitly out of scope for this

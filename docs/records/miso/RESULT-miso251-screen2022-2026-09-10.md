@@ -9,7 +9,7 @@ RUN ID          : 2026-09-10-miso-251-screen2022
 BUNDLE          : results/calibration/miso251_screen2022
 KEEPER REPLAYED : 2026-09-09-miso-250-ep-gas  (results/calibration/miso_fuelvintage_A)
 SUPERSEDES      : 2026-09-10-miso-251-tp2022
-CHARTER         : docs/PRECOMMIT-miso251-holdout-ladder-2026-09-10.md
+CHARTER         : docs/records/miso/PRECOMMIT-miso251-holdout-ladder-2026-09-10.md
 DETERMINATION   : NOT-YET
 ```
 
@@ -41,7 +41,7 @@ Since `[R-HOLDOUT]` was removed (2026-09-09) that is true of every year.
 | 2 | `CC_REGULAR.committed` / `CT_PEAKER.peak` / `summer_wefor_share_override` | `1.1055` / `4.4` / `1.0599` | **PASS** |
 | 3 | `parse_miso_shares(2022, zones)` | **`(6, 8760)`** real array, not `None` | **PASS** |
 
-Recorded before the first LP in `docs/ADDENDUM-miso251-screen-phase0-2026-09-10.md`
+Recorded before the first LP in `docs/records/miso/ADDENDUM-miso251-screen-phase0-2026-09-10.md`
 and pushed as the heartbeat, so the record could not be written to fit the result.
 
 ## 2. Config verification — MACHINE-PROVEN

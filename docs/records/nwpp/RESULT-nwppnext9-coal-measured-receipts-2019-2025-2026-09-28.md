@@ -1,7 +1,7 @@
 # RESULT — NWPP-NEXT-9: same-year measured receipts on the monthly coal pile — REJECTED (owner, 2026-09-29)
 
 **Arm:** keeper #15 (`2026-09-28-nwppnext8-coal-monthly-pile`) plus `coal_monthly_pile_measured_receipts=true`.
-Precommit: `docs/handoffs/PRECOMMIT-nwppnext9-coal-measured-receipts-2019-2025-2026-09-28.md`.
+Precommit: `docs/records/nwpp/PRECOMMIT-nwppnext9-coal-measured-receipts-2019-2025-2026-09-28.md`.
 **Solve:** seven year-isolated shards at pin `677273fb`. Every hard stop passed.
 **Owner ruling (decision card):** "Reject, keep #15". Keeper #15 stands.
 

@@ -1,7 +1,7 @@
 # PRECOMMIT — NYISO-NEXT-17: the F/G re-partition (`nyiso_fg_split`) — 2026-09-30
 
 - **Session:** NYISO-NEXT-17, the orchestrator. This container runs no LP (rule 32 (a)).
-- **Design and phase 0:** `docs/DESIGN-nyiso-next17-fg-split-2026-09-30.md`.
+- **Design and phase 0:** `docs/records/nyiso/DESIGN-nyiso-next17-fg-split-2026-09-30.md`.
 - **Owner decision card (this session):** "Build design A anyway".
 - **Queue:** item 1 (2021 C3a +11.1 %, the owner's block on `complete`).
 - **Rule 28:** `nyiso_fg_split` is a new row (cell U); no adjudicated cell is re-tested.

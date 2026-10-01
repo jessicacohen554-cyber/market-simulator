@@ -7,7 +7,7 @@ the default, D-10 disarmed the forecast lane; no flip ships) — and dropped it
 from the owner decision queue after twenty-one director cycles. A records
 acknowledgement only: no code, no config, no determination changed. Queue
 removals: plan §6 item 1 + §8 ledger, director-board item 6. Record:
-`docs/FINDING-holdout-governance-2026-08-26.md`.
+`docs/records/governance/FINDING-holdout-governance-2026-08-26.md`.
 
 *Original header:* **STATUS: DECISION INPUT — for the owner at gate G1.**
 Written 2026-08-15 by PERF-A (`claude/ci-infrastructure-blocker-bp3zv3`), chartered by
@@ -25,7 +25,7 @@ artifact record says otherwise, in two layers:
    the plan asks this memo to produce. `ScenarioConfig.forecast_xyear_warmstart = True`
    at HEAD (`src/market_sim/config/scenarios.py:11646`), registered in
    `_CACHE_KEY_OPTIONAL_FIELDS` with declared default `"True"` (`scenarios.py:648,1152`).
-   Evidence on record (`docs/handoffs/wallclock-baseline-2026-07.md` §H3/§H3b):
+   Evidence on record (`docs/records/misc/wallclock-baseline-2026-07.md` §H3/§H3b):
    - ERCOT 2026–2050 full horizon, cold vs warm arms: **capacity trajectory bit-identical
      in all 25 years** (`total_cap_mw`, per-fuel capacity, builds, retirements, peak,
      reserve margin, `max_hourly_price` all 0.000e+00); largest non-capacity residual
@@ -42,7 +42,7 @@ artifact record says otherwise, in two layers:
    `ff_readiness_battery.golden_posture_config` all wire through it. The field default
    stays `True` deliberately (a default flip would have collided every forecast cache key
    with its warm predecessor and moved all six backcast keeper keys — measured both ways
-   in `docs/handoffs/ffr-3t-warmstart-off-2026-08-04.md`; cache epoch 2026-08-04).
+   in `docs/records/forecast/ffr-3t-warmstart-off-2026-08-04.md`; cache epoch 2026-08-04).
 
 **Why D-10 overrode D-9.** FFR-3M (`ffr-3m-kill-resume-verdict-2026-08-04.md`) measured
 a defect D-9's guardrail could not see, because D-9 compared two *uninterrupted* runs: a

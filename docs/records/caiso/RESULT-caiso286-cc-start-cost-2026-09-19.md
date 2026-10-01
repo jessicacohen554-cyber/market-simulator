@@ -4,7 +4,7 @@
 `2026-09-12-caiso-275-gascoupling` · **LP SPENT: ZERO.** No shard was launched, no span, no
 `ScenarioConfig` field, no constant changed, no derive re-run, nothing armed, nothing registered,
 nothing deleted. Pre-registration:
-`docs/PRECOMMIT-caiso286-cc-start-cost-2026-09-19.md`, pushed at
+`docs/records/caiso/PRECOMMIT-caiso286-cc-start-cost-2026-09-19.md`, pushed at
 `7562f345d25eb96c7785f82b201c230f00f7402f` **before** the coverage arithmetic was written or run.
 Every value, mapping rule, cut and verdict word below was fixed there.
 
@@ -295,7 +295,7 @@ two screens exactly. One year, one shard, its own PRECOMMIT — the caiso-285 sh
   line is extended with §5, §7 and §8.
 * **Code added:** `scripts/probes/caiso286_start_cost_coverage.py` only. Nothing under `src/` was
   touched.
-* **Artifacts:** `results/calibration/_caiso286_start_cost_coverage.json` (the full gate table,
+* **Artifacts:** `results/phase0/caiso/_caiso286_start_cost_coverage.json` (the full gate table,
   response curve, gap census and per-gap sample).
 * **Rule 31 `[R-RETAIN]`:** the caiso-285 instrumented bundle was **recovered**, not re-solved, from
   `203124e310f7be4f806ad968d6cf5755f96bbc00` (17 files, 96,114,526 bytes); it is `.gitignore`d and was

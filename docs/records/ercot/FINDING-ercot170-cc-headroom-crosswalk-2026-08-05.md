@@ -6,13 +6,13 @@
 0.604 + 2024 0.206, C3c ledgered CAVEAT ×3).** Charter: mechanism-testing-matrix
 §5.1 **item 11**, the ERCOT-163 close-out. Decision rule pre-registered, committed
 and pushed **before** the corpus was read:
-`docs/PRECOMMIT-ercot170-cc-headroom-crosswalk-2026-08-05.md`. **No band,
+`docs/records/ercot/PRECOMMIT-ercot170-cc-headroom-crosswalk-2026-08-05.md`. **No band,
 threshold or licence was moved after measurement in the permissive direction**;
 one pre-registered tier was **retracted** after measurement, which moves the
 verdict further from its bar (§4).
 
 Probe: `scripts/probes/ercot170_cc_headroom_phase0.py` →
-`results/calibration/ercot170_cc_headroom_phase0.json`. Harness:
+`results/phase0/ercot/ercot170_cc_headroom_phase0.json`. Harness:
 `scripts/lib/sced_corpus_instruments.capability_census` (ercot-169's module,
 EXTENDED — it imports `ercot163_cc_commitment_state_census`'s `_cap_ref` /
 `_train` / `_state_of` / `_hoy` verbatim).
@@ -293,7 +293,7 @@ both grains; lignite daily unit commitment; coal seasonal LEVEL split;
 `coal_offer_level_rebasis` `R`; `tranche_startup_amortization` `G`; ERCOT-168
 **OPTION B** stays DEFERRED; the ercot-167 SOC-reserve re-gate still waits on the
 H4-item-4 2024 maintenance-season availability defect; the West/Panhandle topology
-split is **CLOSED** (`docs/DIAGNOSIS-ercot-trough-price-formation-2026-07.md`
+split is **CLOSED** (`docs/records/ercot/DIAGNOSIS-ercot-trough-price-formation-2026-07.md`
 §§7–10).
 
 **Next shorthand: ercot-171.**

@@ -2,7 +2,7 @@
 
 **Lane** SPP-51b · **Model** Opus 5 (`claude-opus-5`) · **Date** 2026-09-09 ·
 **Branch** `claude/spp-c3a-c3b-price-1i4bgi` · **Base** `15bbb371` (`origin/main` at launch) ·
-**PRECOMMIT** `docs/handoffs/PRECOMMIT-spp-51b-2026-09-08.md`, pushed at `6f2ba0b8` **before legs A,
+**PRECOMMIT** `docs/records/spp/PRECOMMIT-spp-51b-2026-09-08.md`, pushed at `6f2ba0b8` **before legs A,
 B and C were computed** · **Data profile** `spp` · **Charter** plan §8 W5-r#15 ·
 **Owner ruling** P15 ("open the price level").
 
@@ -293,5 +293,5 @@ output in those hours ~12 GW, close to the model's), R-3 the zonal spread as a t
 the negative hours, and a -$26 zone produced only a -$1.12 to -$6.22 system LW price), R-4/R-5.
 ZERO LP, no bundle, no registration, keepers/SPP.json untouched, no source file touched. Also
 recorded: the committed SPP `rt` series is the simple mean of the two hubs (maxdiff 1e-4).
-FINDING: docs/handoffs/FINDING-spp-51b-2026-09-09.md
+FINDING: docs/records/spp/FINDING-spp-51b-2026-09-09.md
 ```

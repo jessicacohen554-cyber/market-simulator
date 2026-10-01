@@ -1,7 +1,7 @@
 # FFR-3U — Fix the bridge/un-bridge seam, and discharge D-11
 
 **Session.** FFR Wave 3, the seam-fix lane, chartered by **owner decision D-11 + Addendum L.4**
-(`docs/handoffs/ffr-owner-sitting-2026-08-02.md` Addendum L, signed 2026-08-04). Branch
+(`docs/records/forecast/ffr-owner-sitting-2026-08-02.md` Addendum L, signed 2026-08-04). Branch
 `claude/ffr-3u-bridge-seam-fix-oj1fzo`, off `origin/main` **`6d24a84d`** (the packet's stated
 HEAD `bf43122e` was already stale at session start; re-verified per the packet's own
 instruction).

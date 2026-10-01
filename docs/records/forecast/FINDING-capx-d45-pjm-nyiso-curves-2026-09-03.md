@@ -73,7 +73,7 @@ touched a PJM default solve.
 | `add.by_tech` wind / solar / gas_cc / gas_ct / storage | 3.0 / 9.762 / 8.118 / 1.013 / 0.0 | 1.619 / 13.066 / 8.525 / 0.442 / 0.283 | FAIL / FAIL / PASS / FAIL / FAIL |
 | LOYO recall folds (−2024 / −2025) | 0/19 / 15/19 | — | FAIL / PASS |
 
-**The mechanism, read off the committed ledgers** (`docs/handoffs/d45/positions-from-ledgers-2026-09-03.json`):
+**The mechanism, read off the committed ledgers** (`docs/records/forecast/d45/positions-from-ledgers-2026-09-03.json`):
 
 | screen yr | peak | HEAD requirement | entering position (ledger) | curve pays | coal decided / executed | failing-but-capped (all fossil) |
 |---|---:|---:|---:|---:|---|---:|
@@ -100,7 +100,7 @@ decides gas_ct.
 
 ### 2.1 Where the RPM really sat
 
-Instrument: `docs/handoffs/d45/published-positions-2026-09-03.py/.json`. Sources: the
+Instrument: `docs/records/forecast/d45/published-positions-2026-09-03.py/.json`. Sources: the
 six BRA reports fetched in-session (sha256 in §8; Table 6 UCAP offered by type, Table 1/2
 cleared UCAP, price and Total Reserve Margin, Table 5 ICAP supply ledger), the committed
 `auction-price/pjm/pjm.csv` and `demand-curve/pjm/pjm.csv` rows.
@@ -349,11 +349,11 @@ every year — the flat anchor × the UCAP fraction, never a curve.
 
 ### 5.2 NYISO stage 2 — the position and evaluation-quantity reconciliation (published data only)
 
-Instruments: `docs/handoffs/d45/published-positions-2026-09-03.py/.json` (D45's, NYISO
+Instruments: `docs/records/forecast/d45/published-positions-2026-09-03.py/.json` (D45's, NYISO
 block — every Table D.2 row re-verified this session against the fetched NYSRC 2026-27
 IRM Study Appendices, sha256 in §8, and the Potomac SOM summer-margin rows for 2023 and
 2024 re-verified the same way) and this lane's
-`docs/handoffs/d45/nyiso-reconciliation-2026-09-04.py/.json` (zero solves; reads the L2/L3
+`docs/records/forecast/d45/nyiso-reconciliation-2026-09-04.py/.json` (zero solves; reads the L2/L3
 ledgers beside the published record and the committed LCR rows).
 
 **5.2.1 Where the NYCA really sat, and where the model sat.** The published position is

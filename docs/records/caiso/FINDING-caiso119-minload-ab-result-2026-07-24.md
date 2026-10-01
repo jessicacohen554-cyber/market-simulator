@@ -2,7 +2,7 @@
 
 Companion to `FINDING-caiso119-gas-basis-adjudication-2026-07-24.md` (the basis
 refutation that re-scoped this lane). Gates were **pre-registered before either
-arm finished**: `results/calibration/caiso119_ab_pregistered_gates.md`.
+arm finished**: `docs/records/caiso/caiso119_ab_pregistered_gates.md`.
 
 **Arms** (same HEAD `f28340b`, same box, three years):
 

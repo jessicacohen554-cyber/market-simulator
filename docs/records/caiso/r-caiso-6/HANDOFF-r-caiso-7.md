@@ -16,8 +16,8 @@ STATE (2026-09-27):
 - Recipe = XE. DOF 9/6. Offer curves unchanged.
 
 READ FIRST:
-- docs/handoffs/r-caiso-6/RESULT-r-caiso-6-2026-09-27.md and PRECOMMIT §1-§3;
-- docs/handoffs/r-caiso-5/RESULT-r-caiso-5-2026-09-26.md §5-§6;
+- docs/records/caiso/r-caiso-6/RESULT-r-caiso-6-2026-09-27.md and PRECOMMIT §1-§3;
+- docs/records/caiso/r-caiso-5/RESULT-r-caiso-5-2026-09-26.md §5-§6;
 - docs/mechanism-testing-matrix.md §5.2;
 - docs/codebase-site/data/mechanism-matrix/CAISO.js.
 
@@ -50,7 +50,7 @@ OBJECT 3 — C4 2025 margin.
 
 HARD RULES: CLAUDE.md binding, especially 1, 13, 14, 19, 21, 23, 25, 27, 28, 29(b)/(c), 30-36.
 - The parent never solves (rule 32(a)). One shard per year (rule 36), full bundle pushed (rule 34(a)); pin a full
-  SHA. Template: docs/handoffs/r-caiso-6/shard-prompt.md.
+  SHA. Template: docs/records/caiso/r-caiso-6/shard-prompt.md.
 - Per-year legs are gitignored in CONTENTS form (results/calibration/<legs>_20*/**); a directory-form pattern
   blocks the shard's negation.
 - G-DRIFT: scripts/probes/_rcaiso6_gdrift_identity.py (edit PIN / BUNDLES).

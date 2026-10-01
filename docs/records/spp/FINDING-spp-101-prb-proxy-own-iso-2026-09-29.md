@@ -2,7 +2,7 @@
 
 **Lane** SPP-101 · control = keeper `2026-09-28-spp-100-chp-scope` (bundle `spp100_arm_span`) · no solve,
 no PRECOMMIT (nothing was solved) · probe `scripts/probes/_spp101_prb_proxy_phase0.py`, numbers
-`results/calibration/_spp101_prb_proxy_phase0.json`.
+`results/phase0/spp/_spp101_prb_proxy_phase0.json`.
 
 ## 1. Why this lever (off-queue, stated reason)
 

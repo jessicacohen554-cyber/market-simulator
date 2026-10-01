@@ -125,12 +125,12 @@ No solves; scripts + tests only. Do not touch any keeper bundle or `src/`.
 ```
 
 ### FIX-C — Doc/bookkeeping hygiene (bundle) — **no solve (Opus)**
-Lane: `docs/handoffs/orchestrator-unification-plan-2026-07.md`, `docs/gap-register-2026-07.md`,
+Lane: `docs/records/misc/orchestrator-unification-plan-2026-07.md`, `docs/gap-register-2026-07.md`,
 `frontend/data/backcast/registry/` (miso-42/caiso-58 only if promos re-run).
 
 ```
 Three small hygiene items surfaced in the #1503–#1532 review. Fix docs/registry only, no solves:
-1. `docs/handoffs/orchestrator-unification-plan-2026-07.md`: the `<!-- STAGE6_GATE_RESULT -->`
+1. `docs/records/misc/orchestrator-unification-plan-2026-07.md`: the `<!-- STAGE6_GATE_RESULT -->`
    marker still literally reads `RESULT-PENDING` even though §7.3.6/7.3.7 record 3/5 ISO fidelity
    PASS (ERCOT/CAISO/NEISO) and PJM/MISO OOM-blocked + NYISO recapture-in-progress. Fill the
    marker with the honest partial state (3 PASS, PJM/MISO OOM-waived pending G-40 memory host,
@@ -231,7 +231,7 @@ passes): enumerate every `getattr(config,…)` fallback literal on the solve pat
 extraction into explicit `backcast_config.py`/`overlays.py` fields, and specifically flag
 `caiso_ra_min_load_frac`'s `0.40` getattr fallback for deletion (rule 26 — a deprecated knob that
 still parses is a re-armable answer key). Lane: src/market_sim/pipeline/*, scripts/*orchestrat*,
-docs/handoffs/orchestrator-unification-plan-2026-07.md.
+docs/records/misc/orchestrator-unification-plan-2026-07.md.
 ```
 
 ### 6. Capacity economics Stage 5 → 6 — **BLOCKED on G-31**

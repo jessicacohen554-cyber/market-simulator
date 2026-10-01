@@ -85,7 +85,7 @@ Two things follow. **The handoff under-estimated the object by 2.7×** — it sa
 10/10, 13/13, 39/42. It is a span-wide structural absence that happens to be *scored* only where
 the band is tight.
 
-Record: `results/calibration/_nyiso242_tail_ceiling.json`.
+Record: `results/phase0/nyiso/_nyiso242_tail_ceiling.json`.
 
 ---
 
@@ -242,7 +242,7 @@ no admissible lever for its largest object, and saying so is the finding.
    one genuinely untested cell in this family. Note the likely direction is *against* the object
    (CC output rises in cold air), which is a reason to measure it, not to skip it.~~
    **CLOSED THE SAME DAY — the owner selected it, it was measured, and the cell is now `G`.**
-   See `docs/RESULT-nyiso242-cc-winter-refused-and-the-intake-charter-2026-09-20.md` §1.
+   See `docs/records/nyiso/RESULT-nyiso242-cc-winter-refused-and-the-intake-charter-2026-09-20.md` §1.
    **This item's own parenthetical guess was wrong and is corrected by the measurement**: the
    basis swap is two-directional and mostly *removes* off-summer capability (`winter/nameplate`
    median **0.9677**, 25 of 40 plants below 1.0), so its direction is mostly *favourable* to the

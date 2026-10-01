@@ -1,7 +1,7 @@
 # Probability-Bounds Implementation Prompt Pack — 2026-07
 
 Model-assigned, paste-one-per-session implementation prompts for the design in
-`docs/handoffs/probability-bounds-plan-2026-07.md`. Each is a self-contained brief for a
+`docs/records/misc/probability-bounds-plan-2026-07.md`. Each is a self-contained brief for a
 fresh Claude Code session. Read the plan doc first — these prompts assume its §-numbers.
 
 **Model key** (matches `docs/fable-prompt-pack-2026-07.md`): `[OPUS]` complex
@@ -66,7 +66,7 @@ gas_price_factor guard. No solves.
 ## PB-0 `[SONNET]` — Scenario matrix (deterministic range)
 
 ```
-Build the AEO/IPM-style scenario matrix from docs/handoffs/probability-bounds-plan-2026-07.md
+Build the AEO/IPM-style scenario matrix from docs/records/misc/probability-bounds-plan-2026-07.md
 §1. Depends on PB-1 (policy_bundle + tech_cost_path levers). Read §1.2 (the 13 named cases),
 §1.3, and config/scenarios.py:3484 (SweepDefinition) first.
 
@@ -182,7 +182,7 @@ not shifted; convolution recovers input spread when eps=0; asymmetry when b_i !=
 ## PB-4 `[SONNET]` — Output surface (fan chart + storage)
 
 ```
-Build the forecast-band output surface from docs/handoffs/probability-bounds-plan-2026-07.md
+Build the forecast-band output surface from docs/records/misc/probability-bounds-plan-2026-07.md
 §4. Depends on PB-2/PB-3 schemas. Read §4.1, §4.2 first.
 
 Storage (§4.1): finalize results/ensemble/<ensemble_id>/ with draws.parquet, metrics.parquet,
@@ -256,5 +256,5 @@ is validated; MISO needs the concurrency-1 / pooled-reserve decision from §2.4.
   a nicety: seed, UncertaintySpec hash, correlation matrix, and structural-prior version all
   land in `ensemble_meta.json` / `run_config.json`.
 
-*Companion to `docs/handoffs/probability-bounds-plan-2026-07.md` (design). Produced
+*Companion to `docs/records/misc/probability-bounds-plan-2026-07.md` (design). Produced
 2026-07-04, Fable F-1 session.*

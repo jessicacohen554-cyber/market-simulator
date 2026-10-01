@@ -156,7 +156,7 @@ gas_st **1.438**/0.480, gas_ct **0.000**/0.319, oil **0.000**/1.208, biomass 0.0
 
 ### 2.1 The lever projected onto THIS trajectory (zero solves) — and why it is only a bound
 
-Instrument: `docs/handoffs/d37/predecl-screen-grain-2026-09-02.py` (rows in the sibling JSON).
+Instrument: `docs/records/forecast/d37/predecl-screen-grain-2026-09-02.py` (rows in the sibling JSON).
 It evaluates HEAD's own committed resolvers and R2 vintage curves on the (b) ledgers. It
 **self-checks** first, reproducing D33 §2's cross-validation: HEAD's curves at the REAL FCA
 positions return the real clearing prices to the cent ($24.01 / $31.33 / $31.09).

@@ -1,6 +1,6 @@
 {
  "session": "caiso-184",
- "precheck": "results/calibration/PRECHECK-caiso184-capacity-basis-2026-08-08.md",
+ "precheck": "docs/records/caiso/PRECHECK-caiso184-capacity-basis-2026-08-08.md",
  "reused_instruments": [
   "scripts/probes/_caiso180_arm_identity.py (DOF ledger)",
   "scripts/probes/_caiso183_arm_identity.py (check_arms_distinct, hourly signature)"

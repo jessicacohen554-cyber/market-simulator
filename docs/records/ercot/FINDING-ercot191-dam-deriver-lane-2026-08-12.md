@@ -1,12 +1,12 @@
 # FINDING — ercot-191: the signed A1 DAM-deriver lane executed (#9 → #8 → #10), the family re-derived and re-gated, and the card-Q checkpoint read FAIL → (Q-B) final
 
 **Session ercot-191, 2026-08-12.** Authority: owner signature **A1**
-(`docs/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md` card A,
+(`docs/records/ercot/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md` card A,
 RESOLUTIONS) — one precommit, one re-derive, one re-gate sweep, #9 first.
 Precommit pushed before any derive or solve:
-`docs/PRECOMMIT-ercot191-a1-dam-deriver-2026-08-12.md`. Checkpoint authority:
+`docs/records/ercot/PRECOMMIT-ercot191-a1-dam-deriver-2026-08-12.md`. Checkpoint authority:
 the signed card-Q rule (ercot-190, RESOLUTIONS of
-`docs/DECISION-CARD-ercot189-c3a2023-after-the-offer-family-2026-08-11.md`).
+`docs/records/ercot/DECISION-CARD-ercot189-c3a2023-after-the-offer-family-2026-08-11.md`).
 ISO: ERCOT only (rule 25). Years: {2023, 2024, 2025} (rule 22). The rule-23
 re-derivation citation for every artifact regenerated here is the A1
 signature itself.
@@ -134,7 +134,7 @@ coverage-licence re-test ran as a phase-0 read, NO LP, bars unchanged:
   A_capability 2.5869 GW = 102.6 % of the 2.5224 GW gap (the object itself
   remains intact and characterised — it is the *licence* that fails).
 
-Read: `results/calibration/ercot191_cc_headroom_licence_retest.json`
+Read: `results/phase0/ercot/ercot191_cc_headroom_licence_retest.json`
 (baseline `ercot170_cc_headroom_phase0.json` preserved). Per the signed
 rule: **(Q-B) — no further ERCOT C3a-2023 spend; ERCOT stands at NOT-YET on
 C3a-2023 as a model-class limit. Recorded and stopped.** Item 11 CLOSED in

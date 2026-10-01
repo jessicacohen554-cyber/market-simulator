@@ -15,7 +15,7 @@ is still live and owner-gated.
 
 Census: `scripts/probes/pjm128_da_award_feed_scope.py` (admissibility test
 committed `d52740b`, **before** the census ran); machine-readable result:
-`results/calibration/pjm128_da_award_feed_scope.json`. No LP, no solve, no
+`results/phase0/pjm/pjm128_da_award_feed_scope.json`. No LP, no solve, no
 surface written, no keeper touched, no bulk intake — every request is a sample
 of a few thousand rows.
 
@@ -115,7 +115,7 @@ option.
   mechanism that is not the one claimed is not evidence. The half stays
   untested.
 * **No re-derive, and no nudge on the memo.** The owner has not decided
-  `docs/handoffs/pjm-midcurve-reconditioning-memo-2026-07.md`; rule 20 leaves
+  `docs/records/pjm/pjm-midcurve-reconditioning-memo-2026-07.md`; rule 20 leaves
   the re-derive inadmissible until they do. Nothing in this session touches
   either surface, either derive, or the keeper.
 
@@ -137,8 +137,8 @@ option.
 
 ## Pointers
 
-* The vacuity that opened this: `docs/FINDING-pjm126-midcurve-conditioning-artifact-2026-07.md` §"Limitation", `docs/FINDING-pjm127-conditioning-multiyear-2026-07.md`.
-* The lane and its ledger: `docs/handoffs/pjm-frontier-path-2026-07.md` §3 Lane 2, §4.3b.
-* The pending decision: `docs/handoffs/pjm-midcurve-reconditioning-memo-2026-07.md`.
+* The vacuity that opened this: `docs/records/pjm/FINDING-pjm126-midcurve-conditioning-artifact-2026-07.md` §"Limitation", `docs/records/pjm/FINDING-pjm127-conditioning-multiyear-2026-07.md`.
+* The lane and its ledger: `docs/records/pjm/pjm-frontier-path-2026-07.md` §3 Lane 2, §4.3b.
+* The pending decision: `docs/records/pjm/pjm-midcurve-reconditioning-memo-2026-07.md`.
 * The frontier bar: `docs/codebase-site/calibration-rubric.html` §frontier.
-* The census: `scripts/probes/pjm128_da_award_feed_scope.py`, `results/calibration/pjm128_da_award_feed_scope.json`.
+* The census: `scripts/probes/pjm128_da_award_feed_scope.py`, `results/phase0/pjm/pjm128_da_award_feed_scope.json`.

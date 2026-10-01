@@ -3,7 +3,7 @@ beside the keeper-2 control (rule 29(b) form 4 — the control's committed hourl
 
 usage: grade_screen.py <bundle_dir> <year> [control_bundle_dir]
 Reads the bundle's flows.parquet (gitignored, per-link hourly MW), hourly/system_<year>.parquet,
-hourly/class_hourly_<year>.parquet; the wind potential from docs/handoffs/spp57/census.csv; the
+hourly/class_hourly_<year>.parquet; the wind potential from docs/records/spp/spp57/census.csv; the
 measured spreads from spread_identification.csv; the EIA-923/930 family actuals from
 calibration_reference.json. Every number is printed; the gate verdict is graded as written."""
 
@@ -71,7 +71,7 @@ P = sy.pivot_table(index="hour", columns="zone", values="price")
 dem = sy.pivot_table(index="hour", columns="zone", values="demand")
 ok_n = P["SPP-Oklahoma"] - P["SPP-North"]
 s_ok = P["SPP-South"] - P["SPP-Oklahoma"]
-spread = pd.read_csv(REPO / "docs/handoffs/spp57/spread_identification.csv")
+spread = pd.read_csv(REPO / "docs/records/spp/spp57/spread_identification.csv")
 meas = spread[spread.year == year].set_index("spread")
 print(f"\n=== LEG (ii) spreads, {year} ===")
 leg_ii = True
@@ -112,7 +112,7 @@ print(
 ch = pd.read_parquet(bundle / "hourly" / f"class_hourly_{year}.parquet")
 ch = ch[ch["pass"] == "P1"]
 twh = (ch.groupby("klass", observed=True)["mw"].sum() / 1e6).round(3)
-census = pd.read_csv(REPO / "docs/handoffs/spp57/census.csv")
+census = pd.read_csv(REPO / "docs/records/spp/spp57/census.csv")
 wpot = float(census[census.year == year]["wind_potential_twh"].sum())
 wdel = float(twh.get("wind", 0.0))
 recurt = 1 - wdel / wpot

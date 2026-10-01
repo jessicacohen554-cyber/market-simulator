@@ -1,7 +1,7 @@
 {
   "session": "nyiso-179",
   "kind": "POST-GATE ROBUSTNESS \u2014 reports only, no gate verdict changes",
-  "frozen_gate_record": "results/calibration/_nyiso179_st_gas_offer_position.json",
+  "frozen_gate_record": "results/phase0/nyiso/_nyiso179_st_gas_offer_position.json",
   "R1_marginal_tranche": {
     "bar": {
       "R_low": 0.7,

@@ -204,7 +204,7 @@ Each prompt is self-contained for a fresh session on a fresh branch off `main`.
 In market-simulator, add per-year phase timing to both orchestrators, then capture a baseline. This is a wallclock-efficiency enabler; outputs must be byte-identical.
 
 1. In scripts/run_calibration_full.py::solve_and_persist (year loop at ~line 2278) and src/market_sim/runner.py::run_scenario_iso (year loop at ~line 652), add time.perf_counter() phase marks and ONE summary log line per year: data_prep_s, solve_p0_s, markup_s, solve_p1_s, results_write_s, total_s. Reuse DispatchResult.build_time/solve_time (src/market_sim/model/dispatch.py, populated at ~3352/3867/3927) instead of re-timing the solve. Logging only — no behavior change, no new files, no env knobs.
-2. Run the ERCOT backcast (scripts/run_calibration_full.py --iso ERCOT --year 2023 2024 2025, throwaway --out-dir, do NOT register on the dashboard) and one big co-opt ISO (PJM or MISO, same years) and record the per-phase table in docs/handoffs/wallclock-baseline-2026-07.md.
+2. Run the ERCOT backcast (scripts/run_calibration_full.py --iso ERCOT --year 2023 2024 2025, throwaway --out-dir, do NOT register on the dashboard) and one big co-opt ISO (PJM or MISO, same years) and record the per-phase table in docs/records/misc/wallclock-baseline-2026-07.md.
 3. Verify: full pytest passes; a golden replay (scripts/capture_keeper_goldens.py before/after on one keeper) is byte-identical.
 Commit with the baseline doc. Do not change any solver options or caching in this session.
 ```
@@ -253,7 +253,7 @@ In market-simulator, run three bounded HiGHS experiments for the cold first solv
 1. IPM for the cold P0: solver=ipm + run_crossover=on for the FIRST solve of a year only, then hand the crossover basis to the existing P1 warm-start (changeColsCost path at dispatch.py:3925). Bench cold-P0 wall and P1 iterations vs the dual-simplex baseline on ERCOT and one big co-opt ISO capture. NEVER touch primal/dual feasibility tolerances.
 2. numpy setBasis: apply_cross_year_basis materializes two Python lists over ~1.8M columns (dispatch.py:4184-4185). If the installed highspy accepts array input for setBasis, use it with a list-comp fallback; bench the xyear apply overhead before/after.
 3. Threads: bench MARKET_SIM_HIGHS_THREADS in {1, 4, unset} on the big-ISO capture, recording wall and peak RSS. Deliverable is a documented per-ISO recommendation in the docs, not a default change — single-thread stays the golden/repro pin.
-Adoption rule per experiment: adopt only if >=10% cold-solve wall improvement AND objective/prices identical (marginal-tie-only diffs); otherwise record the negative result in docs/handoffs/wallclock-baseline-2026-07.md so it is not re-run. Full pytest + golden replay for anything adopted.
+Adoption rule per experiment: adopt only if >=10% cold-solve wall improvement AND objective/prices identical (marginal-tie-only diffs); otherwise record the negative result in docs/records/misc/wallclock-baseline-2026-07.md so it is not re-run. Full pytest + golden replay for anything adopted.
 ```
 
 ## Expected end state

@@ -25,7 +25,7 @@ refutes FF-3E's ~1.76× projection on a second ISO. The PRECOMMIT's flat-median 
 right instrument; the projection was not.
 
 Run id `nyiso-2026-2050-scn-campaign-stageb-2026-09-07-ref` (ADDENDUM 1 §2), committed at
-`docs/handoffs/scn-ws5b-nyiso/REF/`, solved by shard S-1's sibling S-2 (commit `5e2d851e`,
+`docs/records/forecast/scn-ws5b-nyiso/REF/`, solved by shard S-1's sibling S-2 (commit `5e2d851e`,
 **two files, both inside its own directory** — scope verified by `git show --stat`).
 
 ---
@@ -166,4 +166,4 @@ solve running* is behaving correctly and must **not** be poked.
 ---
 
 *Written before `CAP-STATE-TIGHT`, `CES-P60`, `CES-T80` or `ALL-CLEAN` returned. Parent:
-`docs/handoffs/PRECOMMIT-scn-ws5b-nyiso-2026-09-07.md` and its ADDENDUM 1.*
+`docs/records/forecast/PRECOMMIT-scn-ws5b-nyiso-2026-09-07.md` and its ADDENDUM 1.*

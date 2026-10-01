@@ -1,7 +1,7 @@
 # RESULT — NYISO-STGAS-2023: the Con Ed generator delivery leg closes C1-2023; NYISO is CALIBRATED — 2026-09-25
 
 **Session:** NYISO-STGAS-2023 (orchestrator; no LP in this container, rule 32 (a)).
-**PRECOMMIT:** `docs/PRECOMMIT-nyiso-stgas-2023-ldc-leg-2026-09-25.md`, pinned
+**PRECOMMIT:** `docs/records/nyiso/PRECOMMIT-nyiso-stgas-2023-ldc-leg-2026-09-25.md`, pinned
 `54ac9e1a509c0cad01aadcb9d7583535fd27d883` before any solve.
 **New keeper:** `2026-09-25-nyiso-stgas-ldc-leg` (bundle `results/calibration/nyisostg_span`,
 2022–2025).

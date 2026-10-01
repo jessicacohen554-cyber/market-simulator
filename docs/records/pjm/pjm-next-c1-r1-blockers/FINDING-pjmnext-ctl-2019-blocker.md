@@ -1,6 +1,6 @@
 # FINDING — PJM-NEXT card 1, CONTROL leg 2019: solve OOM-killed, no bundle (2026-09-25)
 
-Shard of orchestrator PJM-NEXT. Record: `docs/PRECOMMIT-pjm-next-c1-year-correct-membership-2026-09-25.md` §3/§7.
+Shard of orchestrator PJM-NEXT. Record: `docs/records/pjm/PRECOMMIT-pjm-next-c1-year-correct-membership-2026-09-25.md` §3/§7.
 
 **Outcome: STOPPED, no bundle pushed.** The keeper-recipe replay for 2019 was OOM-killed by the
 container's memory cgroup inside the P1 build/solve, after P0 had solved. No artifact was written

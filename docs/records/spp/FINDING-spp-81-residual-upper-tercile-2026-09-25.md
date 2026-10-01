@@ -1,6 +1,6 @@
 # FINDING — SPP-81: what carries SPP's residual upper-tercile cost object (data intake, zero LP, 2026-09-25)
 
-Parent: `docs/handoffs/FINDING-spp-80-upper-tercile-premium-2026-09-25.md`.
+Parent: `docs/records/spp/FINDING-spp-80-upper-tercile-premium-2026-09-25.md`.
 Probe: `scripts/probes/_spp81_residual_upper_tercile.py` (SPP-80's exact hour set: RT p67–p99,
 Feb excluded, interval-level scarcity flag). Pin: `5c6e7ab8` (contains SPP-80 `2e1215b5`).
 **No LP, no shard, no bundle, no `src/` edit, no `ScenarioConfig` field, no multiplier touched.**

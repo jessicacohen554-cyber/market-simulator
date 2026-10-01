@@ -4,8 +4,8 @@
 ahead of its own arm. Branch `claude/capx-d67-pjm-requirement-operand-18wzjf`.
 Pre-registered in `PRECOMMIT-capx-d67-pjm-requirement-operand-2026-09-06.md`, **pushed before any
 solve** (commit `905cce42`, merged to `main` as PR #5012). Instruments:
-`docs/handoffs/d67/gdrift_peak_probe.{py,json}` (G-DRIFT, zero LP) and
-`docs/handoffs/d67/phase0_reproduction.{py,json}` (phase 0, zero LP).
+`docs/records/forecast/d67/gdrift_peak_probe.{py,json}` (G-DRIFT, zero LP) and
+`docs/records/forecast/d67/phase0_reproduction.{py,json}` (phase 0, zero LP).
 **Nothing arms.** DATA PROFILE: `pjm`.
 
 ---

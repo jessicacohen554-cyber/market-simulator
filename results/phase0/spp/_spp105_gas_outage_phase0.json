@@ -1,6 +1,6 @@
 {
  "lane": "SPP-105",
- "design": "docs/handoffs/DESIGN-spp-105-gas-family-outage-2026-09-30.md",
+ "design": "docs/records/spp/DESIGN-spp-105-gas-family-outage-2026-09-30.md",
  "bundle": "results/calibration/spp100_arm_span",
  "decomp": {
   "2019": {

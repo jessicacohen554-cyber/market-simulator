@@ -3,7 +3,7 @@
 **Lane** SOCO-61 · **DATA PROFILE** soco · **Model** Opus (rule 27 — scope wrote `src/` and `scripts/`).
 **Control of record** `2026-09-23-soco60-boundary-span`, rule 29 (b) form 4. Its per-plant legs were
 recovered at zero LP; all 12 hourly sidecars were byte-identical to the committed composite.
-**PRECOMMIT** `docs/handoffs/PRECOMMIT-soco-61-2026-09-24.md`, pushed at `1d7edc1b` before any LP.
+**PRECOMMIT** `docs/records/soco/PRECOMMIT-soco-61-2026-09-24.md`, pushed at `1d7edc1b` before any LP.
 Addendum A (rebase + G-DRIFT) was written before any leg was read.
 **Run** `2026-09-24-soco61-dark-unit` (bundle `results/calibration/soco61_dark_unit_span`). **PROMOTED
 TO KEEPER 2026-09-24** on the owner's standing ruling (§6).
@@ -160,7 +160,7 @@ ROUTED: 2023 ST_GAS / CT_PEAKER are now the thinnest rows (0.7-0.8 pp); the CC
 economic over-dispatch (E B Harris +2.0, H A Franklin +1.5) has no admissible
 input. Outgoing keeper 2026-09-23-soco60-boundary-span pruned (rule 35). E13 for
 2026-09-20-soco53g-prb-own-iso still unruled (recommendation: decline).
-Records: docs/handoffs/PRECOMMIT-soco-61-2026-09-24.md,
-docs/handoffs/FINDING-soco-61-2026-09-24.md, scripts/gen_soco61_attestation.py,
+Records: docs/records/soco/PRECOMMIT-soco-61-2026-09-24.md,
+docs/records/soco/FINDING-soco-61-2026-09-24.md, scripts/gen_soco61_attestation.py,
 scripts/probes/soco61_compose_span.py, scripts/probes/_soco61_phase0.py.
 ```

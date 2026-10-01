@@ -3,7 +3,7 @@
 **Keeper unchanged:** `2026-09-28-pjm-next8-exitfix`.
 - **Solves:** one diagnostic keeper replay (2020, one shard, Δ = 0.000 TWh vs the keeper). Nothing registered or promoted.
 - **Owner ruling:** *"Record, hand off"*.
-- **Detail:** `docs/FINDING-pjm-next-14-lowend-units-supply-point-midcurve-2026-09-30.md`.
+- **Detail:** `docs/records/pjm/FINDING-pjm-next-14-lowend-units-supply-point-midcurve-2026-09-30.md`.
 
 | card | result |
 |---|---|

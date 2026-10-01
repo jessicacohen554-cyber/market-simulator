@@ -78,7 +78,7 @@ no tuned value (rule 5).
 class, every year, and every price statistic (§3.2). The reason is a rule-19
 [R-ONE-MECH] overlap that has already been resolved from the supply side: the
 original probe (the arm that handoff calls "S2" —
-`docs/handoffs/nyiso-overrun-underrun-2026-07.md` §3: summer
+`docs/records/nyiso/nyiso-overrun-underrun-2026-07.md` §3: summer
 +10.9 → +9.2, 36-mo MAE 4.33 → 4.22) was measured on keeper
 `nyiso62_cc_hr_regate`, **before** `nyiso_scr_edrp_reserve_eligible` and
 `nyiso_hydro_reserve_eligible` were added to the downstate reserve supply. Those
@@ -201,7 +201,7 @@ in the 81 commits touches NYISO. No further bisect is needed.
 ### 3.4 The extract change is CORRECT — the defect is a coupling
 
 `6a8f285` is not a regression to revert. The economic-layup charter
-(`docs/handoffs/campd-economic-layup-fix-charter-2026-07.md`) established that
+(`docs/records/misc/campd-economic-layup-fix-charter-2026-07.md`) established that
 `filter_revealed_outages` was booking sustained economic layup as mechanical
 outage, so every ISO booked **23–46 % of its CC capacity-year as outage against
 a real EFOR + planned-maintenance norm of ~10–15 %**. The owner adopted the fix.

@@ -22,7 +22,7 @@ candidate arm, so no screen year was named and no LP was spent.
 **And the question B was asking is already answered.** The second factor is not the
 offer curve — it is the **Uri-contaminated annual EP gas basis** that ercot-254 measured
 and documented the day before this card was written
-(`docs/FINDING-ercot254-2021-offer-level-root-cause-2026-09-07.md`). B and C are the
+(`docs/records/ercot/FINDING-ercot254-2021-offer-level-root-cause-2026-09-07.md`). B and C are the
 same object seen from two ends.
 
 ---

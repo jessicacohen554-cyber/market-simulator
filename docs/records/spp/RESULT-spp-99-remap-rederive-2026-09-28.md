@@ -1,7 +1,7 @@
 # RESULT — SPP-99: SPP's CEMS-derived inputs under the SPP-98 remap, through miso-280's split-remap companions
 
 **Lane** SPP-99 · control = keeper `2026-09-28-spp-98-cems-remap` (`spp98_remap_span`, rule 29(b) form 4) · PRECOMMIT
-`docs/handoffs/PRECOMMIT-spp-99-remap-rederive-2026-09-28.md`, merged at `289d4baf7b0819e7d0b5279cb6ac71930e12ec09`
+`docs/records/spp/PRECOMMIT-spp-99-remap-rederive-2026-09-28.md`, merged at `289d4baf7b0819e7d0b5279cb6ac71930e12ec09`
 before any shard launched · owner decision card **"Extend miso-280 (Rec.)"** · registered run
 **`2026-09-28-spp-99-remap-rederive`**, bundle `results/calibration/spp99_remap_span` (2019–2025).
 

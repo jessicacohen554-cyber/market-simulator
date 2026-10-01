@@ -86,7 +86,7 @@ class TestThresholdsAreFrozen(unittest.TestCase):
 class TestNoCommittedTableIsWidened(unittest.TestCase):
     """The widening was TESTED AND REJECTED (nyiso-191) — no ISO ships it.
 
-    ``docs/FINDING-nyiso191-ccchp-capacity-scope-2026-09-05.md``: widening NYISO
+    ``docs/records/nyiso/FINDING-nyiso191-ccchp-capacity-scope-2026-09-05.md``: widening NYISO
     to ``CC_CHP`` is inert and mildly counterproductive because
     ``chp_layup_duty_curve`` (matrix row ``offer_curve_by_group``, NYISO cell
     ``K``) already withholds those plants' capacity to a MEASURED

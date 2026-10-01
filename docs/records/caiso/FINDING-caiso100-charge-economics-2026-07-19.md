@@ -5,7 +5,7 @@ derive-first + owner-gated). Every number in §1-§5 is a committed-data or
 same-machine-repro measurement — no new-mechanism LP was built or solved. §6
 pre-registers the mechanism's bands and gates BEFORE any B-leg exists
 (caiso-98/99 discipline). §7 is the owner ask's summary; the ask itself is
-`docs/handoffs/caiso-100-charge-econ-ask-2026-07-19.md`.**
+`docs/records/caiso/caiso-100-charge-econ-ask-2026-07-19.md`.**
 
 ## 1. Where caiso-99 left the residual, and what this session measured
 
@@ -84,7 +84,7 @@ cycles × STORAGE_DEGRADATION_REPLACEMENT_FRACTION = 285,000 / 5,000 × 0.25 =
 **$14.25/MWh discharged** (NREL ATB 2024 capex, LFP warranty cycle life,
 replacement fraction 0.25 — `constants.py:4128-4136`; the identical
 construction ERCOT's cycling lane quoted at $14.25,
-`docs/DIAGNOSIS-ercot-storage-cycling-lane-2026-07.md` §3) — sits inside the
+`docs/records/ercot/DIAGNOSIS-ercot-storage-cycling-lane-2026-07.md` §3) — sits inside the
 revealed 5-10 % margin band ($11-17 in the mature years, $14-24 in 2023) on
 every spread basis. The margin where reality's day-skipping and
 intensity-thinning actually happens IS the physical cycling cost, to within a
@@ -265,13 +265,13 @@ values; LOYO is vacuous for a derived constant but the verdict-flip clause
   day threshold, is refuted (§2) and closed.** No LP was solved with the
   mechanism; no flag/knob was changed; nothing registered. The keeper stays
   `2026-07-19-caiso-99-storage-shape`.
-- **Owner ask filed:** `docs/handoffs/caiso-100-charge-econ-ask-2026-07-19.md`
+- **Owner ask filed:** `docs/records/caiso/caiso-100-charge-econ-ask-2026-07-19.md`
   — authorize the B-leg per §6, or rule the knob stays 0.0 (in which case the
   residual belly is re-chartered to the remaining conduct channels: DA-award
   allocation and AS-deployment variance, both currently unmeasured at the
   needed grain).
 - WP-3 (CT_CHP steam-floor rule-23 re-derive) remains PENDING its own ask
-  (`docs/handoffs/caiso-wp3-ctchp-steam-floor-ask-2026-07-18.md`) — untouched
+  (`docs/records/caiso/caiso-wp3-ctchp-steam-floor-ask-2026-07-18.md`) — untouched
   this session per the charter's "if ruled" condition.
 
 ## 8. Execution addendum (CAISO-101 session, 2026-07-19) — the B-leg exposed a hidden live $5 adder; the A/B baseline is $5, not $0

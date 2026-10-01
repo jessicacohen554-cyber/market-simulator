@@ -1,9 +1,9 @@
 # RESULT — the root cause is CONFIRMED and the level repair works on the price; it is **NOT a keeper candidate**, and the reason is a diagnosed second-order defect (ercot-254)
 
-> Scored against `docs/PRECOMMIT-ercot254-monthly-ep-basis-2026-09-07.md`, its
-> `docs/ADDENDUM-ercot254-g1-scope-correction-2026-09-07.md`, and the 2021
+> Scored against `docs/records/ercot/PRECOMMIT-ercot254-monthly-ep-basis-2026-09-07.md`, its
+> `docs/records/ercot/ADDENDUM-ercot254-g1-scope-correction-2026-09-07.md`, and the 2021
 > predictions registered **before the solve** in
-> `docs/ADDENDUM-ercot254-2021-retest-prediction-2026-09-07.md`. All four bundles
+> `docs/records/ercot/ADDENDUM-ercot254-2021-retest-prediction-2026-09-07.md`. All four bundles
 > were **deleted before merge** (rule 29 `[R-SCREEN]` clause c); every number this
 > session cites is here, and git history is the record for the bytes.
 > **Rule 30(c): ERCOT's determination is the train-tier verdict and is untouched —

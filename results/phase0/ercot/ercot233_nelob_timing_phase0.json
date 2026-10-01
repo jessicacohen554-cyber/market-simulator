@@ -1,6 +1,6 @@
 {
  "probe": "ercot233_nelob_timing_phase0",
- "precommit": "docs/PRECOMMIT-ercot233-nelob-timing-phase0-2026-08-24.md",
+ "precommit": "docs/records/ercot/PRECOMMIT-ercot233-nelob-timing-phase0-2026-08-24.md",
  "authorization": "card Y signed (Y-C) 2026-08-24; RESOLUTIONS item",
  "keeper": "ercot231_tiegtc_full",
  "year": 2023,

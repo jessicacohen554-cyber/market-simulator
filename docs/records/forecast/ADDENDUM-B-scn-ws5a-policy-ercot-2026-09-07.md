@@ -4,7 +4,7 @@
 `FINDING-scn-ws5a-resolve-ercot-2026-09-07.md` §4 items 1 and 4 · **Lane**
 ERCOT-POLICY-ADDENDUM-B (with SCN-RESOLVE-G1-RECHECK) · **Model** Opus (`claude-opus-5`) ·
 **Date** 2026-09-07 · **Branch** `claude/scn-resolve-g1-recheck-t13bm6` · **PRECOMMIT**
-`docs/handoffs/PRECOMMIT-scn-resolve-g1-recheck-2026-09-07.md` (pushed before any measurement).
+`docs/records/forecast/PRECOMMIT-scn-resolve-g1-recheck-2026-09-07.md` (pushed before any measurement).
 
 **ZERO LP.** Every number is read from a committed artifact: the eleven policy legs'
 `full_horizon_summary.json` / headline CSVs, the three re-solved load legs in
@@ -327,9 +327,9 @@ prediction and leaves the other failing for a cleaner reason.
 
 ## 9. Files
 
-- `docs/handoffs/ADDENDUM-B-scn-ws5a-policy-ercot-2026-09-07.md` (this file)
-- `docs/handoffs/PRECOMMIT-scn-resolve-g1-recheck-2026-09-07.md` (pushed pre-measurement)
-- `docs/handoffs/FINDING-scn-ws5a-policy-ercot-2026-09-06.md` §7 item 1 — a one-line pointer to
+- `docs/records/forecast/ADDENDUM-B-scn-ws5a-policy-ercot-2026-09-07.md` (this file)
+- `docs/records/forecast/PRECOMMIT-scn-resolve-g1-recheck-2026-09-07.md` (pushed pre-measurement)
+- `docs/records/forecast/FINDING-scn-ws5a-policy-ercot-2026-09-06.md` §7 item 1 — a one-line pointer to
   this addendum, and nothing else in that document touched.
 
 No bundle, no registry sidecar, no solve, no config, no `src/`. Zero LP.

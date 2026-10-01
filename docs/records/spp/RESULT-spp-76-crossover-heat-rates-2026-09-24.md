@@ -3,7 +3,7 @@
 **Zero LP. No solve, no shard, no bundle.** Nothing owed under rule 15, nothing at risk under
 rule 31. PRECOMMIT `PRECOMMIT-spp-76-crossover-heat-rates-2026-09-24.md` pushed at
 `27874eb79804b84976558fb487a73ae0924a1311` before any number below was read. Base `b024e34c`.
-Probe `scripts/probes/_spp76_crossover_hr.py`; all numbers in `results/calibration/_spp76_crossover_hr.json`.
+Probe `scripts/probes/_spp76_crossover_hr.py`; all numbers in `results/phase0/spp/_spp76_crossover_hr.json`.
 
 **Verdict: the pre-registered test (4) FAILS. SPP's heat rates are within 2–3 % of CAMPD, and
 correcting them moves coal by ≤ 0.1 TWh in the years that fail. No heat-rate lever is built.**

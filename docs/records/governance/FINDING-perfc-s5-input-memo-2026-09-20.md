@@ -1,6 +1,6 @@
 # FINDING — PERF-C S5: a content-addressed disk memo for the per-year pre-LP inputs
 
-**Shard S5 of the PERF-C lane** (`docs/handoffs/PRECOMMIT-perfc-orchestration-2026-09-20.md`
+**Shard S5 of the PERF-C lane** (`docs/records/governance/PRECOMMIT-perfc-orchestration-2026-09-20.md`
 lever **L5**). Branch `claude/perfc-s5-input-memo`, pinned HEAD
 `2a87343f8d7302ce84e66f45430a8d3b9e807d80`. **Zero LP solves**, zero timing work on the
 solve path: every gate here is array equality on a `run_year(fleet_only=True)` rebuild.

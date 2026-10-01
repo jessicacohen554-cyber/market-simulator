@@ -1,7 +1,7 @@
 # ADDENDUM — SPP-64 SCREEN shard (2023). HEARTBEAT: written BEFORE any LP.
 
 **Lane** SPP-64 SCREEN · **Branch** `claude/spp64-screen-2023b` ·
-**Charter** `docs/handoffs/PRECOMMIT-spp-64-stgas-selfcommit-2026-09-10.md`
+**Charter** `docs/records/spp/PRECOMMIT-spp-64-stgas-selfcommit-2026-09-10.md`
 
 ## Pin (HARD STOP 1 — verified)
 
@@ -39,11 +39,11 @@ COAL_PRB +1.598, COAL_LIGNITE −2.103, CC_CHP +0.116, ST_CHP −0.230.
 
 **No bar above may be re-cut by this shard.** A failing gate IS the result and will be reported as
 such. Filled table + the class-delta table, prices, slack/dump and the one-line verdict land in
-`docs/RESULT-spp64-screen-2023.md` on this branch.
+`docs/records/spp/RESULT-spp64-screen-2023.md` on this branch.
 
 
 ## FILLED — verdict
 
 **All six §6 STOP gates PASS. Verdict: PROCEED TO SPAN.**
 Full evidence, the class-delta tables, prices and the non-gating D-4 unit-conduct finding:
-`docs/RESULT-spp64-screen-2023.md`.
+`docs/records/spp/RESULT-spp64-screen-2023.md`.

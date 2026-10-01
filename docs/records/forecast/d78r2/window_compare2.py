@@ -25,10 +25,10 @@ SAME reader functions (imported, never re-implemented) so the two lanes cannot
 drift on what a "failing pool" or a "decided row" is.
 
     # after control-P, BEFORE the arm — the W4' band addendum:
-    uv run python docs/handoffs/d78r2/window_compare2.py --ctl <ctl-dir> --band-only
+    uv run python docs/records/forecast/d78r2/window_compare2.py --ctl <ctl-dir> --band-only
 
     # after both legs — the full grade:
-    uv run python docs/handoffs/d78r2/window_compare2.py --ctl <ctl> --arm <arm>
+    uv run python docs/records/forecast/d78r2/window_compare2.py --ctl <ctl> --arm <arm>
 """
 
 from __future__ import annotations

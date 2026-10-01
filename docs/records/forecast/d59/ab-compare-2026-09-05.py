@@ -1,6 +1,6 @@
 """capx D59 A/B instrument (ZERO solves): the locality half measured on the record.
 
-    uv run python docs/handoffs/d59/ab-compare-2026-09-05.py
+    uv run python docs/records/forecast/d59/ab-compare-2026-09-05.py
 
 Reads three committed bundles — the D52 curve-ON probe (``nyiso-2021-2025-realized-t1h-
 d52-curveon``, key 589f031432b6dc7d, solved at the D52 HEAD), the D59 CONTROL replay of the

@@ -5,7 +5,7 @@ evidence gate to the hod 0-5 hours the R-CAISO-18 unprinted-year branch prices
 (all of 2019-2020, the unprinted Jan-Apr 2021). Default off and byte-identical
 off; inert in 2022-2025 on (the 2023 Jan-Feb gap is a <=25 % gap and never
 arms). Trivial cases first. Record:
-``docs/handoffs/r-caiso-20/PRECOMMIT-r-caiso-20-2026-09-30.md``.
+``docs/records/caiso/r-caiso-20/PRECOMMIT-r-caiso-20-2026-09-30.md``.
 """
 
 from __future__ import annotations

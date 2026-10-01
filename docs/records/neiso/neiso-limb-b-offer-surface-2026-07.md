@@ -5,7 +5,7 @@ A/B executed 2026-07-11 on `claude/neiso-calibration-improvements-rz9oqy`.
 **Status:** EXECUTED 2026-07-11 — surface derived, `neiso-58` A/B + twin solved
 full-span and registered. **DORMANT; charter gates not met; keeper stays
 neiso-56.** See §5.
-**Reads first:** `docs/handoffs/ercot-g22-offer-surface-2026-07.md` (§5 the
+**Reads first:** `docs/records/ercot/ercot-g22-offer-surface-2026-07.md` (§5 the
 honesty gate this note instantiates; §8 why the flat variant was REJECTED and
 what the heterogeneity-preserving successor must do), the 2026-07-10
 calibration-log entry (neiso-57: the dynamic-requirement channel engages 1 of

@@ -35,9 +35,9 @@ as the basis for it.
 
 **No solve was spent.** Every number is measured on committed artifacts
 (`scripts/probes/_xiso6_amplitude_criterion_band_probe.py`, transcript
-`results/calibration/PROBE-xiso6-amplitude-criterion-bands-2026-08-25.txt`;
+`results/phase0/governance/PROBE-xiso6-amplitude-criterion-bands-2026-08-25.txt`;
 amplitude re-taken by
-`results/calibration/PROBE-xiso1-diurnal-amplitude-audit-RETAKE-2026-08-25.txt`).
+`results/phase0/governance/PROBE-xiso1-diurnal-amplitude-audit-RETAKE-2026-08-25.txt`).
 **The scorer was NOT changed** — `scripts/calibration_verdict.py`,
 `rubric-consts.js`, `CRITERIA`, `LEDGERABLE_CRITERIA` and `MAX_LEDGERED_CAVEATS`
 are untouched; the hypothetical aggregation is replayed inside the probe. No

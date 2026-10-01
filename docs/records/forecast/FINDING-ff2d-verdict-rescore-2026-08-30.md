@@ -4,7 +4,7 @@
 ruling 2026-08-30, director sitting) · **Charter:**
 `docs/forecast-development-plan-2026-07.md` FR-21 + CLAUDE.md rule 15
 `[R-DASHBOARD]` forecast-namespace half.
-**Predecessor:** `docs/FINDING-ffr3a-verdict-rescore-2026-08-24.md` — the
+**Predecessor:** `docs/records/forecast/FINDING-ffr3a-verdict-rescore-2026-08-24.md` — the
 coverage measurement (which verdicts are re-scorable at all) is unchanged and
 is not re-litigated here.
 **Commit:** `2e398cf` on `claude/ff-2d-verdict-rescore-jh3xfs`.

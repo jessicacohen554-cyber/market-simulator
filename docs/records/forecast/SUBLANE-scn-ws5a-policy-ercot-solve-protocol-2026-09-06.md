@@ -3,7 +3,7 @@
 **Who runs this:** a sub-lane session launched by the owner to solve ONE GROUP of the eleven
 ERCOT Stage A-POLICY legs. You are a SOLVER for lane SCN-WS5A-POLICY-ERCOT, not a new lane:
 the phase 0, the case set, the keys, the kills and the gates are all committed in
-`docs/handoffs/PRECOMMIT-scn-ws5a-policy-ercot-2026-09-06.md` (+ its ADDENDUM A), and the
+`docs/records/forecast/PRECOMMIT-scn-ws5a-policy-ercot-2026-09-06.md` (+ its ADDENDUM A), and the
 FINDING, the gate scoring, the plan/ledger rows and the matrix cells are the parent lane's.
 **MODEL:** Opus (`claude-opus-5`) or Fable. **DATA PROFILE:** `ercot`.
 **Branch:** `claude/scn-ws5a-policy-ercot-solve-g<N>-<4 random chars>`.

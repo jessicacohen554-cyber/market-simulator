@@ -12,7 +12,7 @@ Instruments (committed):
 
 * `scripts/data/derive_caiso_import_depths.py` — the derivation + both gates.
 * `scripts/probes/_caiso233_import_depth_decomp.py` — the failure decomposition.
-* `results/calibration/_caiso233_import_depth_derivation.json`,
+* `results/phase0/caiso/_caiso233_import_depth_derivation.json`,
   `_caiso233_import_depth_decomp.json`.
 
 Every number reproduces from `data/raw/eia-930-interchange/CISO interchange

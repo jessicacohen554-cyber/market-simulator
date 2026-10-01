@@ -90,7 +90,7 @@ adds the flag when it also moves the tail.
   all five gas classes (`_CAISO_OFFER_CURVE`, cited to
   `caiso_campd_marginal_hr_summary.csv` p50s) + anchor 4.7964
   (`GAS_OFFER_MARGIN_ANCHOR_BY_ISO`). 0 free parameters fitted (rule 25 / the design
-  DOF ledger). Design: `docs/handoffs/gas-offer-net-revenue-margin-design-2026-07.md`.
+  DOF ledger). Design: `docs/records/misc/gas-offer-net-revenue-margin-design-2026-07.md`.
 - caiso-112 A/B bundles (`caiso_netrev_base` / `caiso_netrev_margin`, slim — hourlies
   only) reproduce the numbers above; a full keeper bundle (dispatch frames for
   C1/C4/C5a) is produced at the joint re-keeper.

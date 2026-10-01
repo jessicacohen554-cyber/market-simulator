@@ -7,7 +7,7 @@
   and import is **over**-delivered **east** of Central-East. **No per-neighbour lever is identifiable
   at zero DOF from data in the repo.** Refused on identification (rules 20/21). No solve, no keeper
   change.
-- **Probe.** `scripts/probes/nyisonext7_star_node_phase0.py` → `results/calibration/_nyisonext7_phase0.json`.
+- **Probe.** `scripts/probes/nyisonext7_star_node_phase0.py` → `results/phase0/nyiso/_nyisonext7_phase0.json`.
   Control = the NEXT-3 keeper hourlies read from git (`8227c1f3^`).
 
 ## 0. G-DRIFT (keeper `git_sha` 671fa815 → HEAD 571147d0)

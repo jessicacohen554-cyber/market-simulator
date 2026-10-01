@@ -40,7 +40,7 @@ is not corrupt: CEMS facility 55641 **covers two EIA plants** (§2).
 
 **(c) Defect 2 (Cottonwood 55358) is NOT LIVE — it is already fixed.** The
 `carry_operating_mothballs` channel (`load_mothballed_but_operating`, the
-2026-07-16 Cottonwood lane, `docs/handoffs/miso-cc-vintage-undercarry-plan-2026-07.md`)
+2026-07-16 Cottonwood lane, `docs/records/miso/miso-cc-vintage-undercarry-plan-2026-07.md`)
 is **`True` in the miso-86 keeper's `run_config.json`**. Verified against the
 live fleet:
 

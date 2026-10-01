@@ -3,7 +3,7 @@
 ```
 RUN     : 2026-09-23-miso-267-dispatched-bin  (results/calibration/miso267_dbd_span, 2020-2025)
 RECIPE  : keeper 2026-09-22-hydro-5-miso-ror + unit_outage_dispatched_bin_denominator=true. ONE flag.
-PREREG  : docs/PRECOMMIT-miso267-dispatched-bin-on-hydro5-2026-09-23.md (pinned 3ea64fa5, before any shard)
+PREREG  : docs/records/miso/PRECOMMIT-miso267-dispatched-bin-on-hydro5-2026-09-23.md (pinned 3ea64fa5, before any shard)
 BENCH   : the parts miso-267 STEP 1 regenerated; registering this run moved NONE of the 44 (sha256)
 VERDICT : full span NOT-YET (= keeper), train tier 2023-2025 CALIBRATED (= keeper). Keeper UNCHANGED.
 ```

@@ -319,4 +319,4 @@ Reads the committed `miso191_bax_B` bundle, `data/raw/_processed-legacy/`
 (`plant_emission_rates_v2.parquet`, `eia923_monthly_generation.parquet`,
 `thermal_tranches_MISO.csv`), the EIA-860 fleet, and
 `docs/codebase-site/data/mechanism-matrix/*.js`. Record:
-`results/calibration/_miso192_chp_btm_phase0.json`.
+`results/phase0/miso/_miso192_chp_btm_phase0.json`.

@@ -135,7 +135,7 @@ untested transfer and it should be stated whenever the CT/ST tail is discussed.
 > 1.140) — it **raises** price. Its `committed` band is **NaN in 2024 and 2025**, so it cannot be
 > the "ONE config across EVERY scored year" rule 1 condition (b) requires. A rules-14/23 fidelity
 > item for a future session, to be chartered **on the data** and never on a price residual.
-> `docs/FINDING-caiso276-c3a-2022-no-admissible-lever-2026-09-12.md` §6/§8.
+> `docs/records/caiso/FINDING-caiso276-c3a-2022-no-admissible-lever-2026-09-12.md` §6/§8.
 
 ### (c) It is NOT the D-4 floor family
 
@@ -191,7 +191,7 @@ next session's charter.
    > non-fuel adder. §2's own reading ("Dec-2022 is not a missing-daily-gas defect", and a
    > December-only lever would be year-scoped) was right; what is withdrawn is the **two-objects**
    > framing, and with it the premise that a separate December mechanism exists to be found.
-   > `docs/FINDING-caiso276-c3a-2022-no-admissible-lever-2026-09-12.md` §3/§8.
+   > `docs/records/caiso/FINDING-caiso276-c3a-2022-no-admissible-lever-2026-09-12.md` §3/§8.
 4. **The monthly gap uses a 730-hour month approximation** (`hour // 730`) against the bench's
    calendar-month actuals. That is accurate enough for a several-dollar monthly signal and the
    ranking is unambiguous, but it is not an exact calendar alignment and should not be quoted to

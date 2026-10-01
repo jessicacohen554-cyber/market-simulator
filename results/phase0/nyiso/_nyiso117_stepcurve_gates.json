@@ -1,6 +1,6 @@
 {
   "probe": "nyiso-117 step-curve compose gates (prereg discharge)",
-  "prereg": "results/calibration/PREREG-nyiso117-nyc-stepcurve-compose-2026-08-03.md",
+  "prereg": "docs/records/nyiso/PREREG-nyiso117-nyc-stepcurve-compose-2026-08-03.md",
   "control": "results/calibration/nyiso117_control",
   "treatment": "results/calibration/nyiso117_nyc_stepcurve",
   "keeper_composed_onto": "results/calibration/nyiso160_ctmeter_screen_B",

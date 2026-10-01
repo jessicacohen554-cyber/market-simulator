@@ -1,7 +1,7 @@
 {
  "probe": "caiso204_adaptive_phase0",
  "date": "2026-08-19",
- "precheck": "results/calibration/PRECHECK-caiso204-adaptive-phase0-2026-08-19.md",
+ "precheck": "docs/records/caiso/PRECHECK-caiso204-adaptive-phase0-2026-08-19.md",
  "conventions": {
   "event_usd": 200.0,
   "trail_days": 120,

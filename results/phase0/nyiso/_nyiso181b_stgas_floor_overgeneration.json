@@ -1,6 +1,6 @@
 {
  "probe": "nyiso181b_stgas_floor_overgeneration",
- "prereg": "results/calibration/PREREG-nyiso181-stgas-floor-overgeneration.md",
+ "prereg": "docs/records/nyiso/PREREG-nyiso181-stgas-floor-overgeneration.md",
  "unit_bundle": "results/calibration/nyiso180_unitdispatch (PR #4656, UNMERGED at the time of this run; extracted read-only from ref 6addbda5)",
  "keeper_bundle": "results/calibration/nyiso177_vintage_B1p",
  "I1_bundle_identity": {

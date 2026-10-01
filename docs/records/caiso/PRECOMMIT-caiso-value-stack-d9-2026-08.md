@@ -1,9 +1,9 @@
 # PRECOMMIT — CAISO storage AS revenue: identification method, then value
 
 _2026-08-25 · CAISO value-stack lane (D-9's missing AS credit). Charter:
-`docs/FINDING-entry-signal-disarm-2026-08.md` §5.4/§6 ("CAISO's storage miss is
+`docs/records/misc/FINDING-entry-signal-disarm-2026-08.md` §5.4/§6 ("CAISO's storage miss is
 not signal-bound, so the CAISO queue's next rung is the value stack");
-`docs/FINDING-entry-screen-t1h-2026-08.md` §4/§6 D-9._
+`docs/records/misc/FINDING-entry-screen-t1h-2026-08.md` §4/§6 D-9._
 
 This document is pushed in two stages so the identification can never be
 steered by the answer (rule 13 `[R-MEASURED]`, rule 21 `[R-DOF]`):
@@ -91,7 +91,7 @@ in the DESR).
 
 _Appended 2026-08-25, after the probe ran on complete 2023–2025 price coverage and
 BEFORE any effect-on-entry arithmetic. Artifact:
-`results/calibration/caiso_storage_as_revenue_phase0.json`._
+`results/phase0/caiso/caiso_storage_as_revenue_phase0.json`._
 
 **The identified CAISO storage AS revenue rate (per §2 rule 1):**
 

@@ -1,6 +1,6 @@
 {
   "session": "nyiso-219",
-  "prereg": "results/calibration/PREREG-nyiso219-hydro-daily-driver-data-question.md",
+  "prereg": "docs/records/nyiso/PREREG-nyiso219-hydro-daily-driver-data-question.md",
   "keeper": "2026-09-07-nyiso-213-summer-seam",
   "keeper_cache_key": "95d4d8d167373eb7",
   "zero_lp": true,

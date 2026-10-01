@@ -36,7 +36,7 @@ labels a mixed-class plant by its most common unit group, charging a CT floor
 to ST_GAS's provenance leg — **stands separately** as an open cross-ISO
 scorer defect, now decoupled from MISO's C8.
 
-## 2. Gates (`results/calibration/_miso170b_sitegrain_ab.json`, arm-2 vs the canonical control `miso170_membership_A`)
+## 2. Gates (`results/phase0/miso/_miso170b_sitegrain_ab.json`, arm-2 vs the canonical control `miso170_membership_A`)
 
 | gate | result |
 |---|---|

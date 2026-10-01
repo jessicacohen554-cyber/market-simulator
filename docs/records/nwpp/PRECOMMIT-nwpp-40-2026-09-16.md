@@ -516,7 +516,7 @@ ST_CHP 0.034. Generation-weighted mean LMP 47.63 $/MWh (MODEL-ONLY / UNVERIFIED;
 Shard B (session `session_01MFciPYgGSZcAsqp8UKDxs7`, branch `claude/nwpp-40-span-b`, pin
 `9580bdd040a10ba5998ccf303129b2cca26bd4f4`) launched the §2.1 invocation at 09:26:44 UTC. **That
 attempt was killed by a container restart at ~10:30 UTC while the shard session sat idle** (its log
-is retained as `results/calibration/nwpp40_span_A.launch.attempt1-killed-by-container-restart.log`
+is retained as `results/phase0/nwpp/nwpp40_span_A.launch.attempt1-killed-by-container-restart.log`
 and is committed beside the shard's report). The shard **relaunched the identical invocation at
 10:31:30 UTC**; that relaunch is THE run — an identical invocation restarted after an infrastructure
 kill is not a second recipe and not a fan-out. To stop a second idle-kill the parent pokes the shard

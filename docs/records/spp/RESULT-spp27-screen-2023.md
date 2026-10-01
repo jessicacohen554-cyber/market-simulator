@@ -1,10 +1,10 @@
 # RESULT — SPP-27 SCREEN, 2023. **SIX OF SIX STOP GATES PASS. The span is authorized.**
 
-**Lane** SPP-27 · **Charter** `docs/handoffs/PRECOMMIT-spp-27-commitment-grain-2026-09-10.md` (pushed
+**Lane** SPP-27 · **Charter** `docs/records/spp/PRECOMMIT-spp-27-commitment-grain-2026-09-10.md` (pushed
 at `32dfd75e`, **before** any LP) · **Addendum**
-`docs/handoffs/ADDENDUM-spp-27-registration-seam-2026-09-10.md` · **Screen shard** pinned
+`docs/records/spp/ADDENDUM-spp-27-registration-seam-2026-09-10.md` · **Screen shard** pinned
 `1d175c88b6f99738c4e32a96c3b6438d742335cb`, raw report
-`docs/SHARDREPORT-spp27-screen-2023.md` · **Control** `2026-09-10-spp-64-stgas-selfcommit` /
+`docs/records/spp/SHARDREPORT-spp27-screen-2023.md` · **Control** `2026-09-10-spp-64-stgas-selfcommit` /
 `results/calibration/spp64_span`, **differenced, never re-solved** (rule 29(b) form 4; §7 of the
 charter found ZERO solve-path drift).
 

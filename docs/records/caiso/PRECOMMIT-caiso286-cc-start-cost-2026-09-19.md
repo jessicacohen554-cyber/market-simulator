@@ -2,7 +2,7 @@
 
 **Lane:** CAISO calibration · **Date:** 2026-09-19 · **Keeper UNCHANGED**
 `2026-09-12-caiso-275-gascoupling` · **LP spent so far: ZERO, and none is authorized by this
-document.** Predecessor: `docs/RESULT-caiso285-bridge-candidacy-2026-09-17.md`, whose §8 named this
+document.** Predecessor: `docs/records/caiso/RESULT-caiso285-bridge-candidacy-2026-09-17.md`, whose §8 named this
 session's job — *"find out what a CAISO CC actually charges to restart after 8–24 hours down"* — as a
 **measured-input question (rule 14 `[R-ACCURATE]`)**, to be answered before any solve and with its
 own PRECOMMIT.

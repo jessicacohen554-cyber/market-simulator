@@ -193,7 +193,7 @@ decision.
 ## §4 — THE ESTIMATOR (zero LP), with falsifiers
 
 Instrument: `scripts/probes/_caiso261_import_intake_adjudication.py` →
-`results/calibration/_caiso261_import_intake_adjudication.json`. It reads
+`results/phase0/caiso/_caiso261_import_intake_adjudication.json`. It reads
 the keeper's committed `hourly/` sidecars, EIA-930 CISO through
 `eia930.frames._eia_hourly_frame_filled` (the model's clock, caiso-255b §6
 #1), the S-2 artifact, the caiso-245 holdings json, the S-1 / S-5 values

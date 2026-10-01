@@ -258,7 +258,7 @@ engaged). No determination changed. Next number: caiso-266.**
 
 ## §8 — Reproduction
 
-Every figure: `results/calibration/_caiso265_m1.json` (the 48-row table and the
+Every figure: `results/phase0/caiso/_caiso265_m1.json` (the 48-row table and the
 statistics), regenerable from committed artifacts with no LP.
 
 ## §9 — The 48-month table

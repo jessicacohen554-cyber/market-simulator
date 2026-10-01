@@ -3,7 +3,7 @@
 **Date:** 2026-08-24 · **Lane:** FFR-3A verdict re-score · **Charter:**
 `docs/forecast-development-plan-2026-07.md` §7.5; FR-21 (staleness detection),
 FFR-3A (re-score the battery through the stamped scorer).
-**Predecessor:** `docs/FINDING-fr21-provenance-not-lost-2026-08-24.md` — the
+**Predecessor:** `docs/records/misc/FINDING-fr21-provenance-not-lost-2026-08-24.md` — the
 stamps were never lost; that question stays closed.
 
 **Headline.** The T1 battery's source artifacts mostly **do not survive**, and

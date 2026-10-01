@@ -6,7 +6,7 @@ Arm: each per-year shard leg's ``hourly/unit_hourly_<y>.parquet`` (P1), summed b
 the same population as pjm-h21's zonal table and this lane's phase 0.
 
 Run: ``python scripts/probes/pjm_h22_carde_result_zones.py [years ...]``
-Writes ``results/calibration/_pjm_h22_carde_result_zones.json``.
+Writes ``results/phase0/pjm/_pjm_h22_carde_result_zones.json``.
 """
 
 from __future__ import annotations
@@ -97,7 +97,7 @@ def main(years: list[int]) -> None:
             "total",
             cc["_bench_total"],
         )
-    dst = REPO / "results/calibration/_pjm_h22_carde_result_zones.json"
+    dst = REPO / "results/phase0/pjm/_pjm_h22_carde_result_zones.json"
     prev = json.loads(dst.read_text()) if dst.exists() else {"years": {}}
     prev["what"] = out["what"]
     prev["years"].update(out["years"])

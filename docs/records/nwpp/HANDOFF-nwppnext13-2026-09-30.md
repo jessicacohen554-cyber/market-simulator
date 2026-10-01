@@ -30,9 +30,9 @@ STATE ON MAIN
 - Determination: NOT-YET on {dispatch_corr}, ONE record: C4 coal 2023 r 0.695 against the 0.70 floor.
   Price is UNSCORED (rubric v3.8).
 - Read first:
-  - docs/handoffs/FINDING-nwppnext12-layup-guard-and-coal-availability-2026-09-29.md (all of it)
-  - docs/handoffs/RESULT-nwppnext12-boardman-membership-2026-09-30.md
-  - docs/handoffs/PRECOMMIT-nwppnext12-boardman-membership-2019-2025-2026-09-29.md (§3 G-DRIFT, §4 recipe, §5 stops)
+  - docs/records/nwpp/FINDING-nwppnext12-layup-guard-and-coal-availability-2026-09-29.md (all of it)
+  - docs/records/nwpp/RESULT-nwppnext12-boardman-membership-2026-09-30.md
+  - docs/records/nwpp/PRECOMMIT-nwppnext12-boardman-membership-2019-2025-2026-09-29.md (§3 G-DRIFT, §4 recipe, §5 stops)
   - docs/calibration-log/nwpp.md (latest entry), docs/codebase-site/data/mechanism-matrix/NWPP.js,
     docs/mechanism-testing-matrix.md §5.9
 

@@ -1,6 +1,6 @@
 {
   "probe": "miso-242 phase 0 \u2014 why is the model's SPP seam at EXACTLY ZERO in 42/41/48 % of hours?",
-  "prereg": "results/calibration/PREREG-miso242-why-the-spp-seam-is-idle-2026-09-07.md",
+  "prereg": "docs/records/miso/PREREG-miso242-why-the-spp-seam-is-idle-2026-09-07.md",
   "keeper": "2026-09-07-miso-233-spp-hourly",
   "zero_lp": true,
   "queue_item": "miso-241 handoff item 1 (RECOMMENDED)",

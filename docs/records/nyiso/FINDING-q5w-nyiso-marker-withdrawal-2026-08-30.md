@@ -1,7 +1,7 @@
 # FINDING — Q5-W: NYISO `complete` marker WITHDRAWN (CAISO precedent, uniform) — 2026-08-30
 
 **Lane:** Q5-W governance records lane (chartered at the capx director's refresh-#12
-decision card, `docs/handoffs/capx-director-ledger-2026-08.md` §0i.2; prompt canonical
+decision card, `docs/records/forecast/capx-director-ledger-2026-08.md` §0i.2; prompt canonical
 in the pack; issuance record ledger §4).
 **Scope:** RECORDS ONLY — no LP, no solve, no re-score, no registration, no keeper
 change, no out-of-training year touched in any way.
@@ -17,7 +17,7 @@ decision card. The option selected on the card, **verbatim label**:
 
 > **"Withdraw the marker (CAISO precedent)"**
 
-Recorded: `docs/handoffs/capx-director-ledger-2026-08.md` §0i item 2 (the refresh's
+Recorded: `docs/records/forecast/capx-director-ledger-2026-08.md` §0i item 2 (the refresh's
 own record of the ruling) and §3 Q5, whose row now reads: *"RE-RULED 2026-08-30 (r#12
 decision card) — WITHDRAW THE MARKER (CAISO precedent), superseding the r#8 WAIT. The
 recurrence clause fired (nyiso-157 promotion re-keyed the marker onto a second
@@ -177,7 +177,7 @@ more. Checked at HEAD:
 3. `docs/codebase-site/model-validity.html` carries *"As of 2026-08-19 three ISOs hold
    a `complete` marker (NEISO, NYISO, PJM …)"* — self-dating prose, true as of its own
    date; the CAISO precedent did not edit that page and neither does this lane.
-4. `docs/handoffs/capx-director-ledger-2026-08.md` lane row Q5-W ("ISSUED r#12") — the
+4. `docs/records/forecast/capx-director-ledger-2026-08.md` lane row Q5-W ("ISSUED r#12") — the
    director's own document; its LANDED stamp belongs to the director's next refresh.
 
 ## 7. Re-entry condition (explicit)

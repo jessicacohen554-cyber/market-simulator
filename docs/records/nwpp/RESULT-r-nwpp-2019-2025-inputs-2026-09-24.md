@@ -1,7 +1,7 @@
 # RESULT R-NWPP: NWPP 2019 + 2021–2025 on corrected backcast inputs (2026-09-24)
 
 **Run:** `2026-09-24-rnwpp-inputs-span`, bundle `results/calibration/rnwpp_span`, registered, **not promoted**.
-**Recipe:** `docs/handoffs/PRECOMMIT-r-nwpp-2019-2025-inputs-2026-09-24.md` §4.
+**Recipe:** `docs/records/nwpp/PRECOMMIT-r-nwpp-2019-2025-inputs-2026-09-24.md` §4.
 **Solved:** six year-isolated shards (rule 36), all pinned to `b6ce536ad1e7e41e083b81f784f8e94084bbce2f`. The parent spent zero LP.
 **Control:** keeper `2026-09-24-nwpp-49-ror-split`, 2023–2025 (rule 29(b) form 4).
 

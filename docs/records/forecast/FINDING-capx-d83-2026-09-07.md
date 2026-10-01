@@ -221,7 +221,7 @@ for every committed `run_config.json` payload. Run on the pre-repair tree and th
 ```
 hashed 230 committed payloads (reproduced 123, mismatch 107, unbuildable 0)   [before]
 hashed 230 committed payloads (reproduced 123, mismatch 107, unbuildable 0)   [after]
-diff docs/handoffs/d83/key-census-{before,after}.json  ->  IDENTICAL
+diff docs/records/forecast/d83/key-census-{before,after}.json  ->  IDENTICAL
 ```
 
 **230 payloads, zero moves.** The `mismatch` count is the known instrument caveat, not a result of
@@ -392,7 +392,7 @@ are committed and pushed.
 | `src/market_sim/runner.py` | the repair — `if is_bridge:` writer only |
 | `tests/unit/results/test_bridge_ledger_field_parity.py` | the recurrence guard |
 | `scripts/probes/capxd83_bridge_ledger_key_census.py` | the key census instrument |
-| `docs/handoffs/d83/key-census-{before,after}.json` | its two byte-identical outputs |
+| `docs/records/forecast/d83/key-census-{before,after}.json` | its two byte-identical outputs |
 | `.gitignore` | `results/hindcast/pjm-d83-*/` (rule 31) |
 
 Boundary respected: `tests/unit/model/test_d62_published_going_forward_bar.py`,

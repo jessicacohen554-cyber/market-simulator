@@ -127,7 +127,7 @@ resolution note in `docs/calibration-log/caiso.md`. The landed derive half
 FF-G1 (2026-07-19, commits `65ca0a89`…`221c5e10`) deliberately landed the data
 half (schema, per-ISO lib, curation, fetch, loader `src/market_sim/data/
 transmission_expansion.py` — its ~15 sibling tests in the same file pass) and
-shipped the engine wiring as `docs/handoffs/patches/ff-g1-core-wiring.patch`:
+shipped the engine wiring as `docs/records/misc/patches/ff-g1-core-wiring.patch`:
 scenarios.py gate field + backcast/hindcast coercion + `_CACHE_KEY_OPTIONAL_FIELDS`
 entry (the patch itself uses the sanctioned optional-field route — pin
 `edbc1b103207170a` unmoved), runner pre-loop load + per-year seam. `221c5e10`:
@@ -167,7 +167,7 @@ ERCOT-93 machinery never merged; its delivery patch has ROTTED
   steam RT/SCED basis + online span"). The 197-line engine wiring
   (`ScenarioConfig.ercot_offer_surface_cleared_share_rt_steam_path`,
   `ercot_shoulder_online_span_steam{,_path}` + fleet offer-surface blocks) was
-  delivered as `docs/handoffs/ercot93-core-mechanism.patch` by `bb1c27a1`
+  delivered as `docs/records/ercot/ercot93-core-mechanism.patch` by `bb1c27a1`
   ("transport workaround — git push HTTP-413'd; push_files cannot carry
   fleet.py/scenarios.py"), and **never applied on main** (verified: no apply
   commit in the scenarios.py history; pickaxe zero hits; fields absent).
@@ -192,8 +192,8 @@ rejected, default-off probe, so porting ~197 lines of engine wiring plus
 regenerating a missing artifact buys no live behaviour.
 `tests/test_ercot_offer_surface_cleared_share_steam_rt.py` C-deleted;
 correction/resolution notes added to `docs/calibration-log/ercot.md`,
-`docs/handoffs/ercot93-session-handoff.md` (its `git apply` step marked dead)
-and `docs/handoffs/ercot94-scarcity-tail-diagnosis-2026-07.md`. The patch bytes
+`docs/records/ercot/ercot93-session-handoff.md` (its `git apply` step marked dead)
+and `docs/records/ercot/ercot94-scarcity-tail-diagnosis-2026-07.md`. The patch bytes
 and the landed derive script stay as the wiring's only surviving record.
 
 ### D4 — orchestrator-extraction conversion half unlanded:

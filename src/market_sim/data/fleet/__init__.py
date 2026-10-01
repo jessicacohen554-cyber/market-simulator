@@ -210,7 +210,7 @@ class Generator(BaseModel):
     # measured host rate and the capture TOGETHER -- one mechanism at one
     # composition point (rule 19 [R-ONE-MECH]) -- instead of the two writes
     # racing. Measured defect and repair:
-    # docs/handoffs/FINDING-capx-d77-2026-09-06.md.
+    # docs/records/forecast/FINDING-capx-d77-2026-09-06.md.
     ccs_capture_fraction: float = 0.0
     nox_rate: float = 0.0
     so2_rate: float = 0.0

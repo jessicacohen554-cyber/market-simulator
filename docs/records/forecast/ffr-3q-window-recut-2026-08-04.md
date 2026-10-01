@@ -1,7 +1,7 @@
 # FFR-3Q — Re-cut the FH-1 §3.3 gate and the T1-H window to five years
 
 **Session.** FFR Wave 3, the window re-cut lane, chartered by **owner decision G.5(a) + D-9**
-(`docs/handoffs/ffr-owner-sitting-2026-08-02.md` **Addendum I**, signed 2026-08-04). Branch
+(`docs/records/forecast/ffr-owner-sitting-2026-08-02.md` **Addendum I**, signed 2026-08-04). Branch
 `claude/ffr-3q-window-recut-aolov4`, off `origin/main` **`fab72654`** (the packet's stated HEAD
 `5055b1a5` was already stale at session start).
 
@@ -481,11 +481,11 @@ Mirrors FFR-3C §5 / FFR-3F §7.
 **This document is unchanged above this line.** §2.1's pre-registration was reused **verbatim**,
 as §2.2.4 item 3 said it could be, and §2.2 stands as the permanent stop-the-line record.
 
-The seam fix landed as **FFR-3U** (`docs/handoffs/ffr-3u-bridge-seam-2026-08-04.md`), and the
+The seam fix landed as **FFR-3U** (`docs/records/forecast/ffr-3u-bridge-seam-2026-08-04.md`), and the
 owner authorized the re-probe on 2026-08-04 (sitting **Addendum O**). The result is reported in
 full at:
 
-> **`docs/handoffs/ffr-3q3-gate-reprobe-2026-08-04.md`**
+> **`docs/records/forecast/ffr-3q3-gate-reprobe-2026-08-04.md`**
 
 Three things from it that a reader of §2.2 will want immediately:
 

@@ -317,6 +317,6 @@ object touches.
   unchanged at **NOT-YET**, fail set **{C3a, C3b}**, re-verified from committed
   artifacts at session open.
 
-**Artifacts.** `results/calibration/_miso150_universe.json`; probe
+**Artifacts.** `results/phase0/miso/_miso150_universe.json`; probe
 `scripts/probes/_miso150_universe.py`; PREREG
-`results/calibration/PREREG-miso150-model-side-universe-2026-08-10.md`.
+`docs/records/miso/PREREG-miso150-model-side-universe-2026-08-10.md`.

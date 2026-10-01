@@ -26,7 +26,7 @@ recomputed here, so the identity test cannot drift onto the result.
 
 Usage::
 
-    python docs/handoffs/d76/p2_gate.py --iso PJM \
+    python docs/records/forecast/d76/p2_gate.py --iso PJM \
         --control results/hindcast/d76p2-pjm-control \
         --arm     results/hindcast/d76p2-pjm-arm
 """

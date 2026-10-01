@@ -4,7 +4,7 @@
 - **Control (form 4):** keeper `2026-09-29-nyisonext12-neac-node-span` (bundle `results/calibration/nyisonext12_span`, 2022–2025) + stamped `2026-09-29-nyisonext12-neac-node-2021` (bundle `results/calibration/nyisonext12_2021`).
 - **Arm:** the keeper recipe + `nyiso_ne_ac_recon_detach: true`. Nothing else changes.
 - **Queue item:** §5.5 "Queue after NEXT-12" item (1). Phase 0 re-routes it (§1).
-- **Probe:** `scripts/probes/nyisonext13_ch_pricing_phase0.py` → `results/calibration/_nyisonext13_phase0.json`. Band and node checks below were run on the keeper's per-year dispatch parquet (fetched from the NEXT-12 leg branches, zero LP).
+- **Probe:** `scripts/probes/nyisonext13_ch_pricing_phase0.py` → `results/phase0/nyiso/_nyisonext13_phase0.json`. Band and node checks below were run on the keeper's per-year dispatch parquet (fetched from the NEXT-12 leg branches, zero LP).
 
 ## 1. Phase 0 (zero LP): what puts the node at its bound
 

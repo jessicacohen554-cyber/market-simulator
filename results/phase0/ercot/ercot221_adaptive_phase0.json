@@ -1,7 +1,7 @@
 {
  "probe": "ercot221_adaptive_phase0",
  "date": "2026-08-18",
- "precommit": "docs/PRECOMMIT-ercot221-adaptive-expectation-2026-08-18.md",
+ "precommit": "docs/records/ercot/PRECOMMIT-ercot221-adaptive-expectation-2026-08-18.md",
  "daily_surface_n_days": 365,
  "measured_spike_days_2023": 23,
  "daily_monthly_measured_p50": {

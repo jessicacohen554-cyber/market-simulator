@@ -7,7 +7,7 @@ The parent session PJM-NEXT-9 (`session_01ER7chbHCBdnMTh7v26hrtp`) was archived 
 
 ## Card 1 — COAL_BIT level offset
 
-Detail: `docs/FINDING-pjm-next-10-coal-loading-2026-09-29.md`. Probe `scripts/probes/_pjmnext10_coal_phase0.py` → `results/calibration/_pjmnext10_coal_phase0.json`.
+Detail: `docs/records/pjm/FINDING-pjm-next-10-coal-loading-2026-09-29.md`. Probe `scripts/probes/_pjmnext10_coal_phase0.py` → `results/phase0/pjm/_pjmnext10_coal_phase0.json`.
 
 - **Online hours match CAMPD.** The over-run is **loading within synced capacity**: +10.47 / +7.70 / +10.07 / +1.87 / −0.58 / −2.11 / +11.43 TWh (2019–25). It is flat in time (the same at night and in the day, on weekdays and weekends).
 - **It tracks coal's depth in merit.** Delivered coal ÷ gas of 0.55 (2021) gives +17.1 TWh; 1.21–1.38 (2023/24) gives ≈0. 2022 is the coal-supply-constrained exception.

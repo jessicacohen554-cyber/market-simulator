@@ -98,7 +98,7 @@ for link, y in dep.items():
         .to_string(index=False, max_colwidth=40)
     )
 # reuse check: does n_ok reproduce spp53/psi_all.csv?
-old = pd.read_csv("/home/user/market-simulator/docs/handoffs/spp53/psi_all.csv")
+old = pd.read_csv("/home/user/market-simulator/docs/records/spp/spp53/psi_all.csv")
 new = pd.read_csv(f"{S}/bc/psi_n_ok.csv")
 j = old.merge(new, on="Constraint Name", suffixes=("_53", "_57"))
 print(

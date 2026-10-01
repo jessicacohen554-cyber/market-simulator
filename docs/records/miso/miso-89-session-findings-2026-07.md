@@ -18,7 +18,7 @@ bundle is not one).
 
 ---
 
-## Lane A + B — see `results/calibration/FINDING-miso89-diurnal-spread-compression-2026-07.md`
+## Lane A + B — see `docs/records/miso/FINDING-miso89-diurnal-spread-compression-2026-07.md`
 
 The full evidence is in that finding. Headlines:
 

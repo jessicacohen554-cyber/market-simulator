@@ -96,7 +96,7 @@ same-day pattern:
 ## 6. Solve recipe
 
 - One shard per year, 2019–2025 (rules 34(c), 35(c), 36). Template:
-  `docs/handoffs/r-caiso-10/shard-prompt.md`.
+  `docs/records/caiso/r-caiso-10/shard-prompt.md`.
   - `{SRC}` = `rcaiso9_A_tp_2019_2021` for 2019–21 and `rcaiso9_A_span` for 2022–25.
   - `{SDCAP}` as in R-CAISO-9.
 - Parent seam: `rcaiso_compose_span.py --require caiso_import_cap_floor_static

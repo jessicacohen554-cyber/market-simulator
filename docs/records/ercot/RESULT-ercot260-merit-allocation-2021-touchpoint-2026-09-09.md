@@ -1,6 +1,6 @@
 # RESULT — the 2021 touchpoint moves the failing gate the RIGHT way but does NOT close it, and my own P1 was wrong in direction (ercot-260, card 2)
 
-> Scored against `docs/PRECOMMIT-ercot260-merit-allocation-2021-touchpoint-2026-09-09.md`,
+> Scored against `docs/records/ercot/PRECOMMIT-ercot260-merit-allocation-2021-touchpoint-2026-09-09.md`,
 > pushed before the LP ran. Every gate, the control basis, the drift evidence,
 > the decision rule and all five predictions were registered there, upstream of
 > the solve.

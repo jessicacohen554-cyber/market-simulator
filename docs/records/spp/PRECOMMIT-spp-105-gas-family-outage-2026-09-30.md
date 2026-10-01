@@ -2,7 +2,7 @@
 
 Lane: SPP-105. Owner card **"Build carrier a and b"** (2026-09-30), over the DESIGN's recommendation to
 record a model-class limit.
-Design, phase 0 and built census: `docs/handoffs/DESIGN-spp-105-gas-family-outage-2026-09-30.md` (§4, §7).
+Design, phase 0 and built census: `docs/records/spp/DESIGN-spp-105-gas-family-outage-2026-09-30.md` (§4, §7).
 Keeper / control: `2026-09-28-spp-100-chp-scope`, bundle `results/calibration/spp100_arm_span` (git `11b72265`).
 **Written before any solve. Nothing below is chosen from a solved number.**
 
@@ -105,7 +105,7 @@ seven.
 | B recipe, leg identical to the keeper | FAIL | **FAIL** (ARMED) |
 | B recipe checked as arm A | FAIL | **FAIL** (RECIPE) |
 
-Prompt: `docs/handoffs/spp105/shard_prompt_template.txt`.
+Prompt: `docs/records/spp/spp105/shard_prompt_template.txt`.
 
 ## Addendum A (2026-09-30, before any solve): G-DRIFT over the `main` merged into this PR
 

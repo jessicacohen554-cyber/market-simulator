@@ -1,9 +1,9 @@
 # PRECOMMIT — ercot-242 (2026-08-30): PHASE-1 of the SCED room-conduct lane — the room-axis EXTENSION of the armed RT wall, built as declared here, armed on ONE 2023 probe solve on the k33 carve-out, kill-gated, registered, verdict unrewritten, keeper consequence ESCALATED
 
 **Session ercot-242, branch `claude/ercot-242-sced-phase1-sb3zj7`.** Executes
-the Phase-1 that `docs/PRECOMMIT-ercot241-offcore-conduct-phase0-2026-08-30.md`
+the Phase-1 that `docs/records/ercot/PRECOMMIT-ercot241-offcore-conduct-phase0-2026-08-30.md`
 §4 opened (gate measured OPEN on all four legs,
-`docs/FINDING-ercot241-offcore-conduct-phase0-2026-08-30.md` §4: kills K-1/K-2/
+`docs/records/ercot/FINDING-ercot241-offcore-conduct-phase0-2026-08-30.md` §4: kills K-1/K-2/
 K-3 clear; gate (ii) 12/12 reach; gate (iii) CC 4 / CT 3 contrast bins > 1.25×;
 gate (iv) occupancy ×35–670 over floor). This precommit is pushed and
 blob-verified BEFORE any derive, measurement, or solve runs. It is written
@@ -207,7 +207,7 @@ re-thresholded.**
   G-REPRO branch). Absent drift, only the armed run registers a new id.
 * **Scoring probe:** `scripts/probes/ercot242_room_ab.py` (the
   `ercot239_gradedladder_ab.py` template with control = the committed keeper
-  bundle) → `results/calibration/ercot242_room_ab.json`. Officials via
+  bundle) → `results/phase0/ercot/ercot242_room_ab.json`. Officials via
   `ercot226_official_score.py --bundle`; legitimacy diagnostics regenerated
   by `replay_keeper`'s own post-step (C8/D-family scored from the committed
   artifact).

@@ -4,7 +4,7 @@
 **Keeper at open: `2026-09-06-nyiso-196-extract-basis`** (CALIBRATED, grade 7 of 8, fails 0,
 C3c the lone ledgered caveat).
 **Control:** the keeper's committed bundle (rule 29(b) form 4; G-DRIFT §3).
-**Pre-registration:** `results/calibration/PREREG-nyiso200-bridge-run-screen.md`, pushed before
+**Pre-registration:** `docs/records/nyiso/PREREG-nyiso200-bridge-run-screen.md`, pushed before
 any solve. **Owner ruling recorded there before the first solve** (2026-09-06, verbatim): *"Is
 this a recommended keeper candidate? If so plz promote. If structural integrity improves but
 gates regress that may still be a keeper.."*

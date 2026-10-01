@@ -10,7 +10,7 @@ modified, no `ScenarioConfig` field, no matrix cell verdict minted.** No
 precommit was pushed because no solve was reached — the pre-solve gate is what
 this session did not pass (the ercot-217 precedent). Committed probe:
 `scripts/probes/ercot220_stage1_basis_phase0.py` →
-`results/calibration/ercot220_stage1_basis_phase0.json` — read exclusively
+`results/phase0/ercot/ercot220_stage1_basis_phase0.json` — read exclusively
 from committed artifacts: the ercot-219 arm's committed
 `hourly/exhaustion_<year>.parquet` audit trail (READ, never re-run — the
 DO-NOT-REDO is honoured), the keeper bundle's `class_hourly`/`system`
@@ -263,7 +263,7 @@ commitment-side capability reconciliation (the model's committed/online
 state bounded to `T_tel`, LP dispatch free within it) — the ercot-163-refuted
 route, which is accordingly **written up as a closure and escalated, never
 armed**. The drafted card is
-`docs/DECISION-CARD-ercot220-commitment-side-reconciliation-2026-08-18.md`
+`docs/records/ercot/DECISION-CARD-ercot220-commitment-side-reconciliation-2026-08-18.md`
 (DRAFT AWAITING SIGNATURE; decision text B-2). It carries this finding's
 measured ex-ante predictions as pre-registered kill facts: (i) the firing
 incidence of any T_tel-margin-reproducing basis is 1,557 / 5,780 hours

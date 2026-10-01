@@ -4,7 +4,7 @@
 **Phase** 2 (mechanism + full-span arm) ·
 **Keeper under test** `2026-07-30-ercot139-cc-committed-offer`
 (bundle `results/calibration/ercot139_cc_committed_arm`) ·
-**Chartered by** `docs/DIAGNOSIS-ercot138-coal-gas-ranking-2026-07-29.md` §5.6
+**Chartered by** `docs/records/ercot/DIAGNOSIS-ercot138-coal-gas-ranking-2026-07-29.md` §5.6
 (the p90 finding) routed through the ERCOT-123 §7.2 successor charter
 (the coal offer-curve UPPER TAIL), owner-issued as the ERCOT-140 lane ·
 **Derive** `scripts/data/derive_coal_peak_offer_margin.py` ·

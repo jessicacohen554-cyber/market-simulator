@@ -1,7 +1,7 @@
 # RESULT — ercot-261: the corroborated monthly gas LEVEL takes ERCOT 2021 from **+26.4 % to +4.2 %** without breaking Uri, C3c or C3b. **Card B is measured INERT, and the reason is a pre-existing ERCOT defect worth more than this card.**
 
-> Scored against `docs/PRECOMMIT-ercot261-gas-level-retirements-2026-09-09.md` (§5 gates
-> and predictions, §7 arm definition) and `docs/ADDENDUM-ercot261-partial-plant-scope-2026-09-09.md`.
+> Scored against `docs/records/ercot/PRECOMMIT-ercot261-gas-level-retirements-2026-09-09.md` (§5 gates
+> and predictions, §7 arm definition) and `docs/records/ercot/ADDENDUM-ercot261-partial-plant-scope-2026-09-09.md`.
 > Ten bundles: five ARM legs and five same-HEAD CONTROL legs, one year each, all ten
 > solved on the pinned commit `6bc4350111dfd9ca23c87dac7cecfe073dc59b33`.
 

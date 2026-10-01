@@ -9,10 +9,10 @@ committed keeper in all three years, registers nothing) and the arm
 **Keeper at entry: `2026-09-04-nyiso-185-family-hr`** — NOT-YET, target grade
 5, fail set {C1-2024 `CC_REGULAR` +3.87 TWh / +3.18 pp, C3a-2025 −10.5 %
 (owner-court, not touched), C3c}.
-**Pre-registration:** `results/calibration/PREREG-nyiso186-cc-regular-2024-class.md`,
+**Pre-registration:** `docs/records/nyiso/PREREG-nyiso186-cc-regular-2024-class.md`,
 pushed at `3d9747aa` before the first per-plant measurement; its §7 addendum
 (pushed at `d926bf48` before the artifact was re-derived) fixes the one A/B.
-**Machine records:** `results/calibration/_nyiso186_cc_attribution.json`
+**Machine records:** `results/phase0/nyiso/_nyiso186_cc_attribution.json`
 (M1–M6, probe `scripts/probes/nyiso186_cc_attribution.py`); the arm bundle's
 `calibration_attestation.json` (`scripts/gen_nyiso186_attestation.py`, every
 premise computed), `metrics.json`, `legitimacy_diagnostics.json`.

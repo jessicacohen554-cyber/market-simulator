@@ -1,7 +1,7 @@
 # FINDING — NWPP-37: the `NG:` unit-slip screen now runs at the frame seam
 
 **Lane** NWPP-37 · **Base sha** `5a696353` · **Date** 2026-09-16 · **Model** Fable
-**PRECOMMIT** `docs/handoffs/PRECOMMIT-nwpp-37-2026-09-16.md` · **No LP run** (nothing to solve)
+**PRECOMMIT** `docs/records/nwpp/PRECOMMIT-nwpp-37-2026-09-16.md` · **No LP run** (nothing to solve)
 
 ---
 

@@ -1,13 +1,13 @@
 # FINDING — CAISO storage AS revenue, measured (D-9); the RA/AS reconciliation; the gap that remains
 
-_2026-08-25 · CAISO VALUE-STACK lane (charter: `docs/FINDING-entry-signal-disarm-2026-08.md`
+_2026-08-25 · CAISO VALUE-STACK lane (charter: `docs/records/misc/FINDING-entry-signal-disarm-2026-08.md`
 §5.4/§6 — "CAISO's storage miss is not signal-bound, so the CAISO queue's next rung is the
-value stack — D-9's missing AS credit"; parent `docs/FINDING-entry-screen-t1h-2026-08.md`
+value stack — D-9's missing AS credit"; parent `docs/records/misc/FINDING-entry-screen-t1h-2026-08.md`
 §4/§6 D-9) · **NO LP SOLVE, NO MECHANISM ARMED, NO ScenarioConfig OR constants CHANGE.**
 Phase-0 measurement only: two new measured-data intakes (OASIS PRC_AS clearing prices; the
 re-fetched Daily Energy Storage Report awards), one committed probe, and arithmetic on
 committed artifacts. Identification method and decision rules were pushed BEFORE any
-full-year rate existed (`docs/PRECOMMIT-caiso-value-stack-d9-2026-08.md` stage 1), and the
+full-year rate existed (`docs/records/caiso/PRECOMMIT-caiso-value-stack-d9-2026-08.md` stage 1), and the
 measured value was pushed (stage 2) BEFORE any effect-on-entry arithmetic was taken._
 
 ---
@@ -84,7 +84,7 @@ all-product hourly mean 1,031 MW (2023, DMM ~1,040) and 1,501 MW (2024, DMM ~1,5
 | 2024 | 68.7 [59.6–77.8] | 9,267 | 7.41 [6.43–8.40] |
 | 2025 | 74.8 [48.4–101.2] | 13,161 | 5.68 [3.67–7.69] |
 
-The product structure (artifact `results/calibration/caiso_storage_as_revenue_phase0.json`):
+The product structure (artifact `results/phase0/caiso/caiso_storage_as_revenue_phase0.json`):
 **regulation is the market** — reg-down is the largest line every year ($46.9M/$41.0M/$58.4M
 central), reg-up second; spin+nonspin together are $5.7M/$8.9M/$2.6M. 2025's wider bracket
 is the NP26 sub-regional adders (RU +$2.12, RD +$4.22 mean) — a north-side locational AS
@@ -195,7 +195,7 @@ backcast dispatch reservation share data, not a mechanism.
 ## 5. The gap that remains — computed only after the stage-2 precommit was pushed
 
 The committed CAISO dual-replay ledger
-(`results/calibration/entry_signal_l1_dual_replay_caiso.json`) already carries the
+(`results/phase0/caiso/entry_signal_l1_dual_replay_caiso.json`) already carries the
 missing leg explicitly — `as_revenue_per_mw_yr: 0.0` on every tech row. Adding the
 identified credit **A = 14,820 $/MW-yr** (the §2 CENTRAL rate × 1000; at the
 screen-time fleet of 2,022 MW, below the 5.517 GW reference, the saturation factor is
@@ -293,9 +293,9 @@ PYTHONPATH=. uv run python scripts/data/curate_storage_as_awards.py --isos CAISO
 
 # the measurement
 PYTHONPATH=. uv run python scripts/probes/caiso_storage_as_revenue_phase0.py \
-    --out results/calibration/caiso_storage_as_revenue_phase0.json
+    --out results/phase0/caiso/caiso_storage_as_revenue_phase0.json
 ```
 
 The probe hard-fails on incomplete price coverage (no partial-year rate can be reported),
-and the committed artifact `results/calibration/caiso_storage_as_revenue_phase0.json`
+and the committed artifact `results/phase0/caiso/caiso_storage_as_revenue_phase0.json`
 carries every number in §2.

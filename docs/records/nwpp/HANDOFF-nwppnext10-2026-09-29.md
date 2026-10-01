@@ -35,8 +35,8 @@ STATE ON MAIN
   - Annual coal volume became more accurate: C1 COAL_BIT 2023 +4.73 → +0.72 TWh.
   - C4 went from 1 to 3 failing records: coal 2022 0.695, 2023 0.648, 2024 0.664.
 - Records to read first:
-  - docs/handoffs/RESULT-nwppnext9-coal-measured-receipts-2019-2025-2026-09-28.md (§2 finding, §5 routed)
-  - docs/handoffs/PRECOMMIT-nwppnext9-coal-measured-receipts-2019-2025-2026-09-28.md (§0 census, §4a G-DRIFT)
+  - docs/records/nwpp/RESULT-nwppnext9-coal-measured-receipts-2019-2025-2026-09-28.md (§2 finding, §5 routed)
+  - docs/records/nwpp/PRECOMMIT-nwppnext9-coal-measured-receipts-2019-2025-2026-09-28.md (§0 census, §4a G-DRIFT)
   - docs/calibration-log/nwpp.md, docs/codebase-site/data/mechanism-matrix/NWPP.js, docs/mechanism-testing-matrix.md §5.9
 
 WHAT DRIVES C4 COAL 2023 (NEXT-9 census, zero LP)

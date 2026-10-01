@@ -4,7 +4,7 @@ Session miso-117, 2026-08-03, branch `claude/miso-117-measured-ct-heat-rates-nc5
 off `origin/main` at `f6d9a4b`. Two full solves (arm A control, arm B
 treatment), each `--year 2023 2024 2025` in ONE invocation, years sequential
 inside it, chains run one at a time. Pre-registration
-`results/calibration/PREREG-miso117-ct-heat-rates-2026-08-03.md` was written,
+`docs/records/miso/PREREG-miso117-ct-heat-rates-2026-08-03.md` was written,
 committed **and pushed** before either arm solved.
 
 **KEEPER: `2026-08-03-miso-117b-ct-heat`** (bundle
@@ -218,7 +218,7 @@ Why this matters beyond this session: `mcp__github__push_files` caps at ~457 KB
 per payload, so it can carry **neither** a run payload **nor** an `hourly/`
 parquet. A session that reads 413 as "the pack is too big" will conclude a
 registration cannot be pushed and strand it sidecar-only — the exact trap in
-`docs/handoffs/dashboard-payload-push-gap-2026-07.md`. The working remedies,
+`docs/records/misc/dashboard-payload-push-gap-2026-07.md`. The working remedies,
 in order: create the ref via the API if it does not exist; if pushes start
 failing after a large attempt, `git gc --prune=now` and retry.
 

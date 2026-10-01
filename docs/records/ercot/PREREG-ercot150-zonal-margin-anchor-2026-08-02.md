@@ -198,7 +198,7 @@ window-mean level correction (2.2494 + 0.321 = 2.570) carries a small
 positive residual from the West floor lift weighted by West's ~5 % gas
 capacity share plus the `_GAS_PRICE_FLOOR` hourly clip — the per-year
 decomposition is committed in
-`results/calibration/_ercot150_zonal_anchor_derivation.json`. **Zero fitted
+`results/phase0/ercot/_ercot150_zonal_anchor_derivation.json`. **Zero fitted
 parameters** (+1 derived DOF entry; `n_residual` unchanged).
 
 **Inertness bar (pre-declared in the handoff): if every zone anchor were

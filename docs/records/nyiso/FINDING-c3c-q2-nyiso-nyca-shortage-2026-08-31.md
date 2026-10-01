@@ -1,9 +1,9 @@
 # FINDING — c3c-Q2: **CONFIRMED, agreeing with nyiso-164** — reality was NOT NYCA-short in its own price tail, and NYISO's C3c ledger stands. This session first measured the OPPOSITE, and this finding records the false positive, its refutation by exact re-derivation, and the **two live defects in a committed calibration reference** that produced it — the session's one original contribution
 
 **Session c3c-Q1/Q2, 2026-08-31, branch `claude/c3c-scarcity-charter-audit-uxmjon`.**
-Executes Q2 of `docs/CHARTER-c3c-scarcity-program-2026-08-31.md` §5 under owner
+Executes Q2 of `docs/records/misc/CHARTER-c3c-scarcity-program-2026-08-31.md` §5 under owner
 ruling R-E, opened by Q1 returning REAL
-(`docs/FINDING-c3c-q1-pjm-phantom-audit-2026-08-31.md`). **ZERO SOLVE: no LP, no
+(`docs/records/pjm/FINDING-c3c-q1-pjm-phantom-audit-2026-08-31.md`). **ZERO SOLVE: no LP, no
 solver, no year scored, no run registered, no bundle modified, no holdout year
 touched (2023–2025 only; `--holdout-authorized` never passed).**
 
@@ -14,8 +14,8 @@ shard, marker, determination or matrix cell. **No NYISO shard is edited.**
 > ## PRIOR-ART NOTICE AND CONCESSION
 >
 > **Charter Q2 was already executed, at HEAD, by session nyiso-164**
-> (`docs/FINDING-nyiso164-c3c-product-level-2026-09-01.md`; artifact
-> `results/calibration/_nyiso164_nyca_shortage_check.json`; probe
+> (`docs/records/nyiso/FINDING-nyiso164-c3c-product-level-2026-09-01.md`; artifact
+> `results/phase0/nyiso/_nyiso164_nyca_shortage_check.json`; probe
 > `scripts/probes/nyiso164_nyca_shortage_check.py`), which returned **CONFIRMED —
 > the kill gate fires**. This session ran in parallel, reached the **opposite**
 > answer, discovered their record afterwards, re-derived the measurement
@@ -29,7 +29,7 @@ shard, marker, determination or matrix cell. **No NYISO shard is edited.**
 > session got it wrong; §4 is the part that is new and worth keeping.
 
 Committed instrument: `scripts/probes/c3c_q2_nyiso_nyca_shortage.py` (no LP, no
-solver) → `results/calibration/_c3c_q2_nyiso_nyca_shortage.json`. **That probe
+solver) → `results/phase0/nyiso/_c3c_q2_nyiso_nyca_shortage.json`. **That probe
 carries the DEFECTIVE construction of §3 and its module docstring says so** — it
 is retained as the reproducible record of the false positive, not as a
 measurement to cite. **For the correct measurement, cite
@@ -194,7 +194,7 @@ tail can price (refuted)"* is now refuted twice, independently.
 DIRECTOR re-serves it). Per the dispatch, what our result implies — and nothing
 further:
 
-The card (`docs/DECISION-CARD-nyiso161-winter-face-waiver-2026-08-30.md` §2)
+The card (`docs/records/nyiso/DECISION-CARD-nyiso161-winter-face-waiver-2026-08-30.md` §2)
 decomposes C3a-2025's −11.48 % as **winter face −$3.92**, **summer face −$3.94
 ("ten scarcity-event days — the ledgered C3c limitation seen in the mean")**, and
 shoulder +$0.59, and argues that removing the winter face returns the year to
@@ -234,11 +234,11 @@ moves; (c) **we rule nothing on the card and change nothing about it.**
 * Carried forward unchanged: nyiso-164 §10's retirements, nyiso-144, nyiso-143,
   nyiso-110 §10, caiso-144 §G.
 
-*Evidence:* **`docs/FINDING-nyiso164-c3c-product-level-2026-09-01.md` +
-`results/calibration/_nyiso164_nyca_shortage_check.json` +
+*Evidence:* **`docs/records/nyiso/FINDING-nyiso164-c3c-product-level-2026-09-01.md` +
+`results/phase0/nyiso/_nyiso164_nyca_shortage_check.json` +
 `scripts/probes/nyiso164_nyca_shortage_check.py` (the prior — and CORRECT —
 execution)** · `scripts/probes/c3c_q2_nyiso_nyca_shortage.py` →
-`results/calibration/_c3c_q2_nyiso_nyca_shortage.json` (this session's DEFECTIVE
+`results/phase0/nyiso/_c3c_q2_nyiso_nyca_shortage.json` (this session's DEFECTIVE
 construction, retained as the record of the false positive) ·
 `data/raw/NYISO-AS/NYISO_as_rt_<year>.csv` + `data/raw/NYISO-AS/README.md` ·
 `data/raw/_validation-source/actual_as_reserve_NYISO.parquet` (the defective
@@ -247,6 +247,6 @@ reference) · `scripts/data/process_nyiso_as.py::build_reference` ·
 `scripts/data/derive_actual_lmp.py::_STD_TZ` ·
 `results/calibration/nyiso159_lossarm_B/` · `src/market_sim/model/reserves/spec.py`
 (`NYISO_RCPF_PRODUCTS`, `NYISO_RCPF_LOCATIONAL`, `_nyiso_design`) ·
-`docs/DECISION-CARD-nyiso161-winter-face-waiver-2026-08-30.md` §2 ·
-`docs/FINDING-c3c-q1-pjm-phantom-audit-2026-08-31.md` ·
-`docs/CHARTER-c3c-scarcity-program-2026-08-31.md`.
+`docs/records/nyiso/DECISION-CARD-nyiso161-winter-face-waiver-2026-08-30.md` §2 ·
+`docs/records/pjm/FINDING-c3c-q1-pjm-phantom-audit-2026-08-31.md` ·
+`docs/records/misc/CHARTER-c3c-scarcity-program-2026-08-31.md`.

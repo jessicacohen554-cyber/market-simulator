@@ -6,12 +6,12 @@ Keeper `2026-09-24-miso-268-coal-yard` (`results/calibration/miso268_yard_span`)
 **Why Task C only.** No owner ruling exists on either miso-269 decision (D1 storm-month gas
 construction; D2 thin extreme-event prints) — not in the handoff, `docs/calibration-log/miso.md`,
 or the matrix. F2's MISO short-gas FINDING (`cf7e068a`,
-`docs/handoffs/FINDING-f2-campd-outage-coverage-2026-09-24.md`) is an outage-data intake. It lands
+`docs/records/misc/FINDING-f2-campd-outage-coverage-2026-09-24.md`) is an outage-data intake. It lands
 an unarmed `shortgas-MISO` file and flags drift in the armed `unitroute-MISO` / `short-MISO` extracts,
 routed to R-MISO; the committed files are untouched. It does **not** change miso-269 §1/§2, which are
 gas-price objects.
 
-Instrument: `scripts/probes/_miso270_octnov2021_phase0.py` → `results/calibration/_miso270_octnov2021_phase0.json`.
+Instrument: `scripts/probes/_miso270_octnov2021_phase0.py` → `results/phase0/miso/_miso270_octnov2021_phase0.json`.
 Scorer basis reproduced first: 2021 C3b NRMSE on bench `rt_lw_mon` = **0.3086** (registered 0.309).
 
 ## 1. Localization table (2021; Sep and Dec are the adjacent controls)

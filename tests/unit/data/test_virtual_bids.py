@@ -3,7 +3,7 @@
 The mechanism is a single per-hour symmetric NET virtual curve
 (``net(λ) = Σ DEC≥λ − Σ INC≤λ``): the ``net > 0`` region rendered as
 DEC-form withdrawal rungs and the ``net < 0`` region as INC-form net-supply
-rungs (pjm-105; docs/FINDING-pjm-midmerit-level-2026-07.md §6 item 1). The
+rungs (pjm-105; docs/records/pjm/FINDING-pjm-midmerit-level-2026-07.md §6 item 1). The
 tests exercise the symmetric compression (trivial hand-built curve first,
 then round-trip properties) and the DEC/INC bound and price appliers.
 """

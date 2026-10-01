@@ -1,6 +1,6 @@
 {
   "charter": "miso-216 phase 0 \u2014 the gas-offer margin anchor's BASIS/CLASS grain; zero-solve, OWNER PACKET, nothing armed.",
-  "prereg": "results/calibration/PREREG-miso216-anchor-basis-grain-2026-09-05.md @ 9fcd69cd",
+  "prereg": "docs/records/miso/PREREG-miso216-anchor-basis-grain-2026-09-05.md @ 9fcd69cd",
   "keeper": "2026-09-05-miso-213-layering",
   "keeper_bundle": "results/calibration/miso213_layering_B",
   "registered_anchor_usd_mmbtu": 3.0492,

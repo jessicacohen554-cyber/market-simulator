@@ -1,6 +1,6 @@
 {
  "probe": "miso-235 addendum \u2014 residual character (price-coherent vs non-price)",
- "addendum": "results/calibration/ADDENDUM-miso235-residual-character-2026-09-07.md",
+ "addendum": "docs/records/miso/ADDENDUM-miso235-residual-character-2026-09-07.md",
  "keeper": "2026-09-07-miso-233-spp-hourly",
  "zero_lp": true,
  "bars": {

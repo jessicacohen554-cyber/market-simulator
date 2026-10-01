@@ -1,7 +1,7 @@
 # NYISO CT_PEAKER: the measured heat rate lands — and it is 2.5x smaller than nyiso-88 measured
 
 **Session:** nyiso-89 (CT heat-rate input) · **Date:** 2026-07-27
-**Premise:** `docs/FINDING-nyiso88-peaker-heat-rate-2026-07-27.md` §4 / §7 step 1
+**Premise:** `docs/records/nyiso/FINDING-nyiso88-peaker-heat-rate-2026-07-27.md` §4 / §7 step 1
 **Mode:** input build + one registered arm against a same-HEAD zero-delta control
 
 ---

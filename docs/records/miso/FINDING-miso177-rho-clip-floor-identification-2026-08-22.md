@@ -53,7 +53,7 @@ here at HEAD:
   family is PJM's `pjm_reserve_online_gated`/`pjm_reserve_online_rho`, whose
   own default carries `needs-citation` in `docs/parameter-citations.md:894`).
   nyiso-145's `git log -S` archaeology found **no earlier primary citation**
-  (`docs/DECISION-CARD-nyiso145-rho-clip-band-2026-08-19.md` §3).
+  (`docs/records/nyiso/DECISION-CARD-nyiso145-rho-clip-band-2026-08-19.md` §3).
 * **The band's true genealogy** (decision card §2(b)): it was written for the
   LEGACY estimand — cap-weighted `(pmax−pmin)/pmin` **at minimum stable
   load**, where the value is `(1−f)/f` and `[0.5, 4.0]` brackets
@@ -177,7 +177,7 @@ the artifact's, to full precision. The DOF ledger gains a selector entry with
 ## 6. Provenance
 
 * Charter: the miso-169 §5 ask 1 / nyiso-144 §2.3 escalation;
-  `docs/DECISION-CARD-nyiso145-rho-clip-band-2026-08-19.md`.
+  `docs/records/nyiso/DECISION-CARD-nyiso145-rho-clip-band-2026-08-19.md`.
 * Code: `src/market_sim/data/online_reserve_rho.py:87` (`RHO_CLIP`);
   `src/market_sim/model/reserves/spec.py::_identified_online_rho` and the
   `_miso_design` gated branch.

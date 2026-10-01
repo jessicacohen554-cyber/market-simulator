@@ -1,6 +1,6 @@
 {
  "probe": "caiso-178 PUB_DAM_GRP battery discharge bid floor",
- "prereg": "results/calibration/PRECHECK-caiso178-public-bids-2026-08-06.md",
+ "prereg": "docs/records/caiso/PRECHECK-caiso178-public-bids-2026-08-06.md",
  "source": "data/raw/caiso-public-bids/zips/*_PUB_BID_DAM_v3_csv.zip (OASIS PUB_DAM_GRP)",
  "incumbent_adder": 5.0,
  "caiso176_bound": 15.0,

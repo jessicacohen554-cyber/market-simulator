@@ -3,7 +3,7 @@
  "iso": "MISO",
  "vintage": 2023,
  "keeper": "2026-08-04-miso-124-dualfuel-rearm",
- "prereg": "results/calibration/PREREG-miso126-cc-steam-part-capacity-2026-08-04.md",
+ "prereg": "docs/records/miso/PREREG-miso126-cc-steam-part-capacity-2026-08-04.md",
  "KE1": {
   "census": [
    {

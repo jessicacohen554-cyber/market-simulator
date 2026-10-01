@@ -1,8 +1,8 @@
 # FINDING — pjm-172: F-A **KILLED at zero LP**, at gates S1 and S3, before any solve
 
 **Session** pjm-172 · **ISO** PJM · **Date** 2026-09-07 · **LP spent: NONE**
-**Card** `docs/handoffs/PRECOMMIT-pjm172-seam-measured-gas-2026-09-07.md` (binding; not rewritten)
-**Predecessor** `results/calibration/ADDENDUM-pjm171-seam-fuel-basis-freeze-2026-09-07.md`
+**Card** `docs/records/pjm/PRECOMMIT-pjm172-seam-measured-gas-2026-09-07.md` (binding; not rewritten)
+**Predecessor** `docs/records/pjm/ADDENDUM-pjm171-seam-fuel-basis-freeze-2026-09-07.md`
 **Keeper** `2026-08-15-pjm-162-inputclock` — **unchanged**. Nothing promoted, nothing registered.
 **PJM headline determination** — **CALIBRATED**, untouched (rule 30(c)).
 
@@ -200,7 +200,7 @@ session could not answer.
   series, the repair, the look-ahead refusal (with a reachability assertion so it cannot go vacuous),
   the S2 inertness identities across every registered ISO, and the §3 root cause asserted rather
   than narrated.
-- `docs/handoffs/PRECOMMIT-pjm172-seam-measured-gas-2026-09-07.md` **Appendix A** — the G-DRIFT
+- `docs/records/pjm/PRECOMMIT-pjm172-seam-measured-gas-2026-09-07.md` **Appendix A** — the G-DRIFT
   audit: 69 changed solve-path files, **zero LIVE hunks**, PJM solve-surface fingerprint
   `0f749d17202c32d9` identical at `f36cee6e` and HEAD. G-CTRL form 4 was valid and no control LP was
   spent — a conclusion the kill then made moot, but which is recorded because it was established

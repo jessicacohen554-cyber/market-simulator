@@ -13,11 +13,11 @@ LP SPENT: The parent ran no solve (rule 32(a)). BOTH screen shards DID run and B
 > `SESSION_STATUS_PENDING` ... never provisioning a container" and that the session "did not
 > even measure a cgroup ceiling". **Both statements were wrong.** They were written while the
 > shards still read PENDING; both subsequently ran, reported, and merged
-> (`docs/SHARD-miso253-screen2023.md`, `docs/SHARD-miso253-screen2023b.md`). The corrected
+> (`docs/records/miso/SHARD-miso253-screen2023.md`, `docs/records/miso/SHARD-miso253-screen2023b.md`). The corrected
 > account is §3 below, and it carries a finding that is more useful than the arm: **the
 > parent's own HARD STOP 0 probe was wrong, and the shards caught it.**
 
-Read with `docs/PRECOMMIT-miso253-mustrun-chp-btm-2026-09-10.md`, which carries the
+Read with `docs/records/miso/PRECOMMIT-miso253-mustrun-chp-btm-2026-09-10.md`, which carries the
 mechanism, the screen year, the G-DRIFT audit, the pre-registered gates and three addenda —
 **all pushed before any solve was attempted**, and none edited since.
 

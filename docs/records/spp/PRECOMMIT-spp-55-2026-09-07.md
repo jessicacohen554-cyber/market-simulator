@@ -123,7 +123,7 @@ unit raises it; the availability overlay moves it hour by hour. No year key, no 
 
 `SPP_BA_CR_REQUIREMENT_RATIO = 0.964`, identified ONCE before any solve as the pooled 2023–2024 median of the hourly-mean
 SPP-BAA cleared Spinning + Supplemental reserve (portal `operating-reserves` RTBM-OR 5-minute files, 2023 + 2024 annual
-archives, 103,087 + 104,789 intervals; instrument `docs/handoffs/spp55/extract_or.py`; the ~95 MB archives are NOT landed —
+archives, 103,087 + 104,789 intervals; instrument `docs/records/spp/spp55/extract_or.py`; the ~95 MB archives are NOT landed —
 a scratch read, re-fetchable by the same URL grammar SPP-14 documented) over 1.2 × Wolf Creek 1's nameplate:
 
 | year | cleared CR, hourly-mean median | ÷ (1.2 × 1,296.3) |
@@ -132,7 +132,7 @@ a scratch read, re-fetchable by the same URL grammar SPP-14 documented) over 1.2
 | 2024 | 1,484 MW (p1 1,403 · p99 1,651) | 0.954 |
 | pooled | | **0.964** |
 
-The construction evaluated on keeper-3's own fleet (`docs/handoffs/spp55/req_align.py`, `fleet_only` rebuild):
+The construction evaluated on keeper-3's own fleet (`docs/records/spp/spp55/req_align.py`, `fleet_only` rebuild):
 
 | year | model req median (max) | measured median | model ÷ measured p5 / median / p95 | months the model reads > 10 % low |
 |---|---|---|---|---|
@@ -151,7 +151,7 @@ bind LESS — it cannot manufacture the verdict in §6.
 
 ## 3. THE FOOTPRINT — measured, by year, from the RTBM MCPs (reserve zone 1; every zone identical; hourly on the fixed 8,760 local calendar)
 
-`docs/handoffs/spp55/footprint.csv`. "CR-short" = Supplemental MCP ≥ $275 (the curve's first step). Cross with the RT hourly
+`docs/records/spp/spp55/footprint.csv`. "CR-short" = Supplemental MCP ≥ $275 (the curve's first step). Cross with the RT hourly
 LMP the scorer uses (`actual_lmp_hourly_SPP.parquet`, which reproduces the C3c counts 42 / 59 / 68 exactly).
 
 | | 2023 | 2024 | 2025 |
@@ -221,7 +221,7 @@ Reported beside the gate, never gated: hours > $200 vs 42 / 59 / 68, the C3c row
 The reserve balance row `Σ_z R[z,t] + Σ_k shortfall_k[t] ≥ req_t` with `R[z,t] ≤ cap_z,t − P_z,t` can carry a positive dual
 only in an hour where the reserve-eligible headroom `Σ_g∈elig (pmax_g·avail_g,t) − Σ_g∈elig P_g,t` is below `req_t`; where it
 is above, `R` absorbs the requirement out of existing slack at zero cost and the keeper's dispatch remains optimal
-unchanged. So leg (i) is decided by keeper-3's own sidecars **before any LP** — `docs/handoffs/spp55/headroom.py`
+unchanged. So leg (i) is decided by keeper-3's own sidecars **before any LP** — `docs/records/spp/spp55/headroom.py`
 (`fleet_only` rebuild for `pmax × availability`, `class_hourly_<year>.parquet` for the dispatch of the same classes,
 `_spp_design` for `req_t`): **if the headroom is above the requirement in every measured shortage hour, leg (i)(a) reads
 0 and the arm is killed without a solve** (rule 29 step 0: "an arm that has a computable pre-solve gate does not reach a
@@ -231,7 +231,7 @@ solve until that gate passes").
 
 ## 6. Pre-solve result — the gate is decided at zero LP, and it KILLS the arm
 
-`docs/handoffs/spp55/presolve_gate.csv` / `headroom_summary.csv`:
+`docs/records/spp/spp55/presolve_gate.csv` / `headroom_summary.csv`:
 
 | | 2023 | 2024 | **2025 (screen year)** |
 |---|---|---|---|

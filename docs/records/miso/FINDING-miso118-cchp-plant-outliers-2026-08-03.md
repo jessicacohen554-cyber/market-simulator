@@ -9,9 +9,9 @@ committed artifacts: the CURRENT keeper bundle
 repo's own fleet build. Probe
 `scripts/probes/_miso118_cchp_plant_outlier_basis.py` (re-runnable, ~6 min,
 zero LP); transcript
-`results/calibration/PROBE-miso118-cchp-plant-outliers-2026-08-03.txt`;
+`results/phase0/miso/PROBE-miso118-cchp-plant-outliers-2026-08-03.txt`;
 pre-registration
-`results/calibration/PREREG-miso118-cchp-plant-outliers-2026-08-03.md`, written,
+`docs/records/miso/PREREG-miso118-cchp-plant-outliers-2026-08-03.md`, written,
 committed **and pushed** (`d94905f`) before the probe ran.
 
 **Keeper UNCHANGED** (`2026-08-03-miso-117b-ct-heat`). Rule 15: no run

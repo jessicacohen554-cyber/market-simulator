@@ -6,13 +6,13 @@ SESSION         : miso-251
 BRANCH          : claude/miso251-screen2022
 PINNED SHA      : 34b0e557440b5ce956c73c75889f07a17761ac92
 KEEPER REPLAYED : 2026-09-09-miso-250-ep-gas  (results/calibration/miso_fuelvintage_A)
-SUPERSEDES      : 2026-09-10-miso-251-tp2022  (docs/RESULT-miso251-span-tp2022-2026-09-10.md)
-CHARTER         : docs/PRECOMMIT-miso251-holdout-ladder-2026-09-10.md
+SUPERSEDES      : 2026-09-10-miso-251-tp2022  (docs/records/miso/RESULT-miso251-span-tp2022-2026-09-10.md)
+CHARTER         : docs/records/miso/PRECOMMIT-miso251-holdout-ladder-2026-09-10.md
 STATUS          : phase 0 complete, all hard stops PASS, LP not yet started
 ```
 
 This is the pre-LP heartbeat required by the charter step 2 and by
-`docs/handoffs/shard-launcher-protocol-2026-09-09.md`. It records the values the
+`docs/records/misc/shard-launcher-protocol-2026-09-09.md`. It records the values the
 three hard stops actually read, **before** any solve, so the record cannot be
 written to fit a result.
 

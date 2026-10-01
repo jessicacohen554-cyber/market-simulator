@@ -2,8 +2,8 @@
 
 **Session ercot-212, 2026-08-16, branch `claude/ercot-reserve-basis-x3-gjpsh9`.
 Pushed BEFORE any solve.** Entered under the Phase-0 viability rule
-(`docs/PRECOMMIT-ercot212-reserve-basis-phase0-2026-08-16.md` §4, all of
-V1–V5 PASS — `docs/FINDING-ercot212-reserve-basis-phase0-2026-08-16.md` §3).
+(`docs/records/ercot/PRECOMMIT-ercot212-reserve-basis-phase0-2026-08-16.md` §4, all of
+V1–V5 PASS — `docs/records/ercot/FINDING-ercot212-reserve-basis-phase0-2026-08-16.md` §3).
 Keeper: **`2026-08-15-ercot204-rule26-delete`**; the keeper cannot change
 in-session — the outcome is a promotion RECOMMENDATION at most (X-3).
 

@@ -1,7 +1,7 @@
 # Retirement-screen DOF identification & hindcast scoring adjudication — 2026-07-15 (RC-0B)
 
 **Charter.** F-2 of the flip-gate lane
-(`docs/handoffs/forecast-retirement-calibration-plan-2026-07.md` §1.1/§1.3, prompt
+(`docs/records/forecast/forecast-retirement-calibration-plan-2026-07.md` §1.1/§1.3, prompt
 §4.2 RC-0B). Three deliverables: (a) identify the per-fuel loss-year thresholds
 (`retirement_years_*`) from measured behaviour, (b) reconcile the FOM-only
 going-forward-cost (GFC) construction against the published avoidable-cost bar, and

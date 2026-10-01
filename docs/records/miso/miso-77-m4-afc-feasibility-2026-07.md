@@ -2,7 +2,7 @@
 
 **Status: INVESTIGATION COMPLETE — VERDICT: GO (qualified). No LP, no build, no solve.**
 Owner-selected lane (2026-07-19 session): charter
-`docs/handoffs/miso-nc-price-separation-design-2026-07.md` §3 **M4** — "If a
+`docs/records/miso/miso-nc-price-separation-design-2026-07.md` §3 **M4** — "If a
 measured per-flowgate MW-limit series proves publicly fetchable, the
 congestion component becomes representable and gets its OWN charter."
 This document is that investigation's record: fetchability, coverage

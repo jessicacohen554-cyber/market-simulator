@@ -7,7 +7,7 @@ fleet rebuilds, which build no LP).
 **AUTHORISATION.** This is a **SHARED SCORER** change reaching every ISO column, which rule 25
 `[R-ISO-SCOPE]` forbids a NYISO lane from deciding on its own. It is made under an **explicit owner
 ruling given in this session**, answering the question nyiso-232 pre-registered and left open
-(`docs/RESULT-nyiso232-st-gas-deleak-screen-2026-09-13.md` §11.5): *measure every ISO, then land the
+(`docs/records/nyiso/RESULT-nyiso232-st-gas-deleak-screen-2026-09-13.md` §11.5): *measure every ISO, then land the
 capacity-weighted vote.* The ruling also settled the disposition of any verdict change elsewhere:
 **a C8 move in another ISO is a CORRECTION, not a regression — the current number is the artifact.**
 
@@ -22,7 +22,7 @@ or expands a class's tranche ladder can move a whole site's dispatch between cla
 no physical change at all.
 
 Proved and committed by nyiso-232:
-`docs/FINDING-d2-plant-class-is-a-tranche-count-vote-2026-09-13.md`, probe
+`docs/records/misc/FINDING-d2-plant-class-is-a-tranche-count-vote-2026-09-13.md`, probe
 `scripts/probes/_nyiso232_d2_plant_class_vote.py`. **That finding is not re-opened here** (rule 28(a)
 DO-NOT-REDO); this PRECOMMIT only governs the repair.
 

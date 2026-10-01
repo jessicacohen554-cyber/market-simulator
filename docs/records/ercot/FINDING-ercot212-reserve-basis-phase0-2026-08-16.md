@@ -5,9 +5,9 @@ Dispatch RESERVE-BASIS-1 (X-3 signed by dispatch; signature appended to
 ASSESSMENT-ercot209 "RESOLUTIONS — CARD X" this session).** Phase-0 is
 READ-ONLY: no LP, no year solved or scored in Phase-0, keeper
 **`2026-08-15-ercot204-rule26-delete`** untouched. Precommit (pushed before the
-probe ran): `docs/PRECOMMIT-ercot212-reserve-basis-phase0-2026-08-16.md`.
+probe ran): `docs/records/ercot/PRECOMMIT-ercot212-reserve-basis-phase0-2026-08-16.md`.
 Probe: `scripts/probes/ercot212_reserve_basis_phase0.py` →
-`results/calibration/ercot212_reserve_basis_phase0.json`.
+`results/phase0/ercot/ercot212_reserve_basis_phase0.json`.
 
 ## 0. VERDICT
 
@@ -172,7 +172,7 @@ measured branch; the forward composition's own basis audit is a forecast-lane
 item, named not opened.
 
 Phase-1 (the armed A/B) proceeds under its own pushed precommit:
-`docs/PRECOMMIT-ercot212-netcredits-phase1-2026-08-16.md`. Any 2023 movement
+`docs/records/ercot/PRECOMMIT-ercot212-netcredits-phase1-2026-08-16.md`. Any 2023 movement
 is side-effect-reported at full magnitude under Q-B/R-A phrasing, never a
 basis (X-3). §5 of this finding records the Phase-1 outcome.
 
@@ -203,7 +203,7 @@ commits, since merged as PR #4016) on the keeper's true solve environment
 **`2026-08-16-ercot212-ctl-headbase`** / **`2026-08-16-ercot212-arm-netcredits`**,
 then PRUNED in the same session per the dispatch roster duty (adjudication
 rejected-wholesale; this finding + the matrix cell + the log entry are the
-durable record). Probes: `results/calibration/ercot212_ab.json`,
+durable record). Probes: `results/phase0/ercot/ercot212_ab.json`,
 `ercot212_coal148.json`.
 
 **The HEAD drift is score-inert** (control vs keeper): price dw Δ ≤ ±0.07

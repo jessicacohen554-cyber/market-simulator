@@ -132,7 +132,7 @@ Benchmarks/strips are context, never fit targets, regardless of the pick.
   or `1.2-11` provenance row in either file). Per the task's instruction I did
   **not** create them; noting here instead. The gap-register/plan status update
   is an open item for whoever lands the FF-G1 patch or a follow-up.
-- **`docs/handoffs/ff-wave-manager-ledger-2026-07.md`** — not edited
+- **`docs/records/forecast/ff-wave-manager-ledger-2026-07.md`** — not edited
   (manager-owned, per the task).
 - **FC-5 external-corridor pin** stays on AEO2025 (FF-0F's choice) — out of
   scope; the AEO2026 vintage is now available should the owner re-pin.
@@ -144,7 +144,7 @@ Benchmarks/strips are context, never fit targets, regardless of the pick.
 
 constants.py (350 KB) + CHANGELOG.md exceed a safe single `push_files` payload;
 per the FF-G1 / capacity-cost precedent they ship via a committed, verified
-patch (`docs/handoffs/patches/ff-g2-fuel-forward.patch`) if the API push path is
+patch (`docs/records/misc/patches/ff-g2-fuel-forward.patch`) if the API push path is
 used; the owner directed `git push` for this session, so the branch carries the
 real on-disk bytes directly. Everything else (scripts, the AEO2026 CSV, the
 benchmark datatype, new tests, docs) is source-sized.

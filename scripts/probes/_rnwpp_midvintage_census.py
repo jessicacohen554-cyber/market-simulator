@@ -1,6 +1,6 @@
 """R-NWPP phase 0: fleet footprint of mid_vintage_exit_carry on the R-NWPP arm, 2019-2024. ZERO LP.
 
-Writes results/calibration/_rnwpp_midvintage_census.json (per year: thermal plants whose
+Writes results/phase0/nwpp/_rnwpp_midvintage_census.json (per year: thermal plants whose
 available TWh moves when the flag is added to the arm recipe of _rnwpp_census.py).
 Usage: PYTHONPATH=.:src python3 scripts/probes/_rnwpp_midvintage_census.py
 """
@@ -18,4 +18,4 @@ for y in [2019,2020,2021,2022,2023,2024]:
     mv=m[m.d.abs()>0.001].round(3).reset_index()
     out[y]=mv.to_dict('records')
     print(y,'units',len(a),'->',len(b),'| moves:',[(r['plant'],r['name'][:16],r['mw_on'],r['twh_off'],r['twh_on']) for r in out[y]])
-json.dump(out,open('results/calibration/_rnwpp_midvintage_census.json','w'),indent=1,default=str)
+json.dump(out,open('results/phase0/nwpp/_rnwpp_midvintage_census.json','w'),indent=1,default=str)

@@ -12,7 +12,7 @@ nyiso-129 set — reconcile 981.8 vs 1,081.8 GWh before sizing anything — is
 session's A/B is committed to Priority 1, and stacking a second lever on the
 same arms would confound both. Everything below is reproducible from
 `scripts/probes/_nyiso130_solar_gwh_reconciliation.py` →
-`results/calibration/_nyiso130_solar_gwh_reconciliation.json`.
+`results/phase0/nyiso/_nyiso130_solar_gwh_reconciliation.json`.
 
 ---
 

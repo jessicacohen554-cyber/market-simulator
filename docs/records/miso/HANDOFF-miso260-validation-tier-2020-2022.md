@@ -36,7 +36,7 @@ what it fixed. Against the superseded `2026-09-12-miso-255-sil-measured` record:
 
 ## THE STANDING DIAGNOSIS — read before proposing anything
 
-`docs/FINDING-miso256-2022-passthrough-inversion-2026-09-13.md` §0 measured the
+`docs/records/miso/FINDING-miso256-2022-passthrough-inversion-2026-09-13.md` §0 measured the
 object and it is **still the live one**: MISO's gas passthrough slope is
 **4.63 $/MWh per $/MMBtu against the market's 8.41 — 55 %** — carried by a fixed
 intercept of 21.17 against 8.95, with `corr(gas price, model error %) = −0.841`.
@@ -181,8 +181,8 @@ Ruff: `uv run ruff check --fix --force-exclude -- <files>` then
 
 ## RECORDS
 
-`docs/RESULT-miso259-coal-inventory-screen-2026-09-16.md` ·
-`docs/PRECOMMIT-miso259-coal-fuel-inventory-2026-09-16.md` ·
-`docs/FINDING-miso258-coal-stock-falsification-2026-09-14.md` ·
-`docs/FINDING-miso256-2022-passthrough-inversion-2026-09-13.md` ·
+`docs/records/miso/RESULT-miso259-coal-inventory-screen-2026-09-16.md` ·
+`docs/records/miso/PRECOMMIT-miso259-coal-fuel-inventory-2026-09-16.md` ·
+`docs/records/miso/FINDING-miso258-coal-stock-falsification-2026-09-14.md` ·
+`docs/records/miso/FINDING-miso256-2022-passthrough-inversion-2026-09-13.md` ·
 `docs/codebase-site/data/mechanism-matrix/MISO.js`

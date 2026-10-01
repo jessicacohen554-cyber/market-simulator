@@ -1,7 +1,7 @@
 # RESULT — crossover CO2 class-grain repair (FC-4 co2)
 
 **Lane:** crossover-co2-grain-repair (successor of
-`docs/handoffs/FINDING-capx-d5-crossover-co2-2026-08-30.md` §5.1) ·
+`docs/records/forecast/FINDING-capx-d5-crossover-co2-2026-08-30.md` §5.1) ·
 **Date:** 2026-08-30 · **Zero-solve:** yes — no LP was solved, no model input,
 rate or curve changed (rule 13: scorer-side only), no backcast surface touched,
 no out-of-training year read, freeze posture unchanged. No mechanism tested and

@@ -400,7 +400,7 @@ contradiction. That strengthens the HOLD: the standing instrument protecting the
 locked tier was affirmed on the same date as this assessment.
 
 **The charter's evidence, for completeness.**
-`docs/handoffs/campd-economic-layup-fix-charter-2026-07.md` §9 (*"Residual
+`docs/records/misc/campd-economic-layup-fix-charter-2026-07.md` §9 (*"Residual
 over-count investigation — CLOSED on evidence; the freeze-lift decision is now
 the owner's"*) records all three steps done, no LP solve used:
 

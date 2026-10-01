@@ -29,7 +29,7 @@ exactly that key**.
 ## 1. STEP 3 — the solve
 
 One invocation, PJM solo, 2021–2025 **sequential** (rule 12 `[R-PARALLEL]`), through
-`docs/handoffs/d75rarm/run_steps34.sh`, which carries both guards fail-closed (HEAD → `exit 90`,
+`docs/records/forecast/d75rarm/run_steps34.sh`, which carries both guards fail-closed (HEAD → `exit 90`,
 key mismatch → `exit 91`). The governance banner records the tier discipline in the run's own words:
 
 > this window **SOLVES [2021, 2023, 2024, 2025]** and **BRIDGES [2022]** (evolved across, LP never
@@ -87,7 +87,7 @@ things follow, both declared in ADDENDUM B §2 before the solve:
 1. **No number in §4 may be attributed to Q55 alone.** The isolated attribution already exists and
    is untouched: `FINDING-capx-d75r-2026-09-06.md`'s A/B, control `a9c66d8ea25acb9d` → arm
    `b518f5fe7d02f961`, on one base. This registration does not re-open, re-measure or supersede it.
-2. **This solve IS the solve D78-ARM still owed** — `docs/handoffs/d78arm/run_arm.sh` is the same
+2. **This solve IS the solve D78-ARM still owed** — `docs/records/forecast/d78arm/run_arm.sh` is the same
    invocation at the same key against the same control (`FINDING-pr5319-d78arm-salvage-2026-09-07.md`
    §4 item 1). Registering it once **discharges both lanes**; D78-ARM COMPLETION must rebase and
    re-declare rather than solve or register a second `pjm-t1h`. Rule 19 `[R-ONE-MECH]` in its

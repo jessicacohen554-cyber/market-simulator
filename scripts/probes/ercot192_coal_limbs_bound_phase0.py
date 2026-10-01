@@ -1,9 +1,9 @@
 """ERCOT-192 Phase 0 — the COVERAGE-BOUND identification interval for the COAL limbs.
 
 NO LP, no solve, no mechanism armed, keeper UNCHANGED. Charter: owner signature
-**B1** on ``docs/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md`` card B.
+**B1** on ``docs/records/ercot/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md`` card B.
 Decision rule pre-registered and pushed before this file ran:
-``docs/PRECOMMIT-ercot192-coal-limbs-2023-reapplication-2026-08-12.md``.
+``docs/records/ercot/PRECOMMIT-ercot192-coal-limbs-2023-reapplication-2026-08-12.md``.
 
 **The instrument (precommit §2).** Both COAL limbs are *weighted quantiles*:
 limb A is the α = 0.50 HSL-weighted quantile of the per-interval curve bottom;
@@ -61,7 +61,7 @@ for _p in (
     if str(_p) not in sys.path:
         sys.path.insert(0, str(_p))
 
-DEFAULT_OUT = REPO / "results/calibration/ercot192_coal_limbs_bound.json"
+DEFAULT_OUT = REPO / "results/phase0/ercot/ercot192_coal_limbs_bound.json"
 
 #: Armed constants under test (``constants.py``), read back, never re-derived.
 ARMED = {"coal_mustrun": 15.8807, "coal_peak": 35.1989}
@@ -379,7 +379,7 @@ def main() -> None:
     out: dict = {
         "probe": "ercot192_coal_limbs_bound_phase0",
         "charter": "DECISION-CARD-ercot188 card B / signature B1 (2026-08-11)",
-        "precommit": "docs/PRECOMMIT-ercot192-coal-limbs-2023-reapplication-2026-08-12.md",
+        "precommit": "docs/records/ercot/PRECOMMIT-ercot192-coal-limbs-2023-reapplication-2026-08-12.md",
         "armed": ARMED,
         "bands": {k: LIMBS[k]["band_usd"] for k in ARMED},
         "matched_hours": list(MATCHED_HOURS),

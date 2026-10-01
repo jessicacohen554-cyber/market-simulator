@@ -2,7 +2,7 @@
 
 **Session ercot-204, 2026-08-15, branch
 `claude/ercot-204-published-adder-gap-5nvuuw`.** Precommit pushed before any
-solve: `docs/PRECOMMIT-ercot204-rtorpa-gate-and-rule26-successor-2026-08-15.md`.
+solve: `docs/records/ercot/PRECOMMIT-ercot204-rtorpa-gate-and-rule26-successor-2026-08-15.md`.
 Keeper at session start and at this session's HEAD:
 **`2026-08-14-ercot202-arm-plantphysics`**, determination **NOT-YET**, fail set
 **{C3a-2023, C3b-2023}**, C3c the single ledgered **CAVEAT ×3**. ERCOT holds no
@@ -27,7 +27,7 @@ That verification was performed first and **falsified this charter's premise**.
 verdict changed, and no LP was built for it.
 
 Probe: `scripts/probes/ercot204_rtorpa_admissibility.py` →
-`results/calibration/ercot204_rtorpa_admissibility.json`.
+`results/phase0/ercot/ercot204_rtorpa_admissibility.json`.
 
 ### A.1 The three gates, decided direction-blind and before any residual
 
@@ -209,7 +209,7 @@ solve and every downstream read must use `./.venv/bin/python` directly.)*
 
 ### B.3 G-REPRO — the PRIMARY gate: **PASS, 12/12 sidecars byte-identical**
 
-`scripts/probes/ercot204_repro.py` → `results/calibration/ercot204_repro.json`.
+`scripts/probes/ercot204_repro.py` → `results/phase0/ercot/ercot204_repro.json`.
 Every one of the 12 committed hourly sidecars (`class_hourly`, `system`,
 `storage`, `reserve_family` × 2023/2024/2025) has a **sha256 identical to the
 keeper's**.

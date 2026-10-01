@@ -313,7 +313,7 @@ this lane wrote only that file's HEADER and did not write this entry into it.)*
 ## soco-34 — 2026-09-16 — SOCO site wiring, nine-region prose, log header, 3 WCAG fixes (zero-LP)
 
 Lane SOCO-34, Opus claude-opus-5, branch claude/soco-34-site-docs-pxkmb5, base
-edd40943. FINDING `docs/handoffs/FINDING-soco-34-2026-09-16.md`. No solve, no
+edd40943. FINDING `docs/records/soco/FINDING-soco-34-2026-09-16.md`. No solve, no
 src/ edit, no ScenarioConfig field, no matrix cell, no shared record.
 
 THE index.html ARITHMETIC, CHECKED NOT ASSUMED: 47/44/58 ALREADY counted SOCO's

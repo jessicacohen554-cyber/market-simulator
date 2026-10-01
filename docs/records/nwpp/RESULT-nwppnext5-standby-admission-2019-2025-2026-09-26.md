@@ -1,7 +1,7 @@
 # RESULT — NWPP-NEXT-5: EIA-860 standby (SB) units admitted by status alone, 2019–2025 → KEEPER #12
 
 **Run:** `2026-09-26-nwppnext5-standby`, bundle `results/calibration/nwppnext5_span`.
-**PRECOMMIT:** `docs/handoffs/PRECOMMIT-nwppnext5-standby-admission-2019-2025-2026-09-26.md`.
+**PRECOMMIT:** `docs/records/nwpp/PRECOMMIT-nwppnext5-standby-admission-2019-2025-2026-09-26.md`.
 **Control:** keeper #11 `2026-09-26-nwppnext4-coal-nested`, using its committed bundle (G-DRIFT form 4, PRECOMMIT §2:
 every hunk INERT).
 **Solved by:** seven year-isolated shards at pin `19f2eace` (rule 36). The parent session ran no LP. The first 2021

@@ -14,7 +14,7 @@ Instruments (committed, no network):
   ceiling stack. Record `_caiso188_import_tranche_census.json`.
 * `scripts/probes/_caiso188_seam_cap_forensics.py` — §4. Committed bytes only.
   Record `_caiso188_seam_cap_forensics.json`.
-* `results/calibration/PRECHECK-caiso188-mic-seam-2026-08-09.md` — the A/B gates,
+* `docs/records/caiso/PRECHECK-caiso188-mic-seam-2026-08-09.md` — the A/B gates,
   pre-registered before any solve.
 
 No scored criterion was read to select or reject anything below. **C3a is a live
@@ -409,7 +409,7 @@ The body opens "**Keeper `2026-08-09-caiso-184-c1-lpbasis` UNCHANGED; no promoti
 proposed**". That was true when it was written and is **SUPERSEDED**: the **owner promoted
 `2026-08-09-caiso-188-d1-micseam` in the SAME session**, superseding
 `2026-08-09-caiso-184-c1-lpbasis`. The promotion record is
-`docs/handoffs/caiso-186-owner-sitting-2026-08-09.md` — "**KEEPER PROMOTED,
+`docs/records/caiso/caiso-186-owner-sitting-2026-08-09.md` — "**KEEPER PROMOTED,
 OWNER-DIRECTED IN THE SAME SESSION**" — and it is reflected in
 `frontend/data/backcast/keepers/CAISO.json` and the mechanism matrix §5.2 header.
 
@@ -476,6 +476,6 @@ invented. Under rubric v3.1 `LEDGERABLE_CRITERIA` is `price_tail` alone, so the 
 entries **reclassify nothing** — they are carried as the historical record and C3a's FAIL
 stands at full magnitude.
 
-Record: `results/calibration/FINDING-caiso189-c6-attestation-2026-08-11.md`,
+Record: `docs/records/caiso/FINDING-caiso189-c6-attestation-2026-08-11.md`,
 `scripts/gen_caiso189_attestation.py`, `scripts/audit_keepers.py` (new check **E10**,
 which closes the E8 blind spot), `tests/scoring/test_audit_keepers_attestation_shape.py`.

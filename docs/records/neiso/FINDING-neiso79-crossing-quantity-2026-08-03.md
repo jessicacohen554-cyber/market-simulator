@@ -9,8 +9,8 @@ completed runs and there is none). **Keeper:**
 
 **Probe (committed):** `scripts/probes/_neiso79_crossing_quantity.py`.
 **Prereg (committed BEFORE any statistic was computed):**
-`results/calibration/PREREG-neiso79-crossing-quantity-2026-08-03.md`.
-**Record:** `results/calibration/PROBE-neiso79-crossing-quantity-2026-08-03.txt`.
+`docs/records/neiso/PREREG-neiso79-crossing-quantity-2026-08-03.md`.
+**Record:** `results/phase0/neiso/PROBE-neiso79-crossing-quantity-2026-08-03.txt`.
 **New raw corpus:** `data/raw/NEISO-AS/da-import-export/` (README + committed
 fetcher; corpus gitignored, the NYISO-archive precedent).
 

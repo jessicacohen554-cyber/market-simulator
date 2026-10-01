@@ -53,7 +53,7 @@ this session's shard edit.
 ## 2. Instrument
 
 Phase 0: `scripts/probes/_miso213_basis_layering_phase0.py` →
-`results/calibration/_miso213_basis_layering.json`. Readers from `_miso212_south_gas_cost_
+`results/phase0/miso/_miso213_basis_layering.json`. Readers from `_miso212_south_gas_cost_
 basis.py` (`build_year`, `resolve_fuel_prices` with overlays toggled, `hh_daily_on_clock`,
 `_band`) and `_miso211_rdt_binding_state.py` (real S→N binding hour sets, zone prices,
 regional series). Print-derived cells are identified WITHOUT touching production code:

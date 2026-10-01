@@ -4,9 +4,9 @@
 **Zero solve. Nothing armed, nothing re-scored, no `src/market_sim/` change, no derive-script
 change, no coefficient edit, no CSV edit, no scorer edit, no marker touched.**
 
-**Evidence:** `docs/FINDING-nyiso208-ramp-slope-census-2026-09-06.md`; machine records
-`results/calibration/_nyiso208_ramp_slope_census.json`, `_nyiso208_posthoc_addendumA.json`;
-pre-registration `results/calibration/PREREG-nyiso208-ramp-slope-census.md` **+ addendum A, declared
+**Evidence:** `docs/records/nyiso/FINDING-nyiso208-ramp-slope-census-2026-09-06.md`; machine records
+`results/phase0/nyiso/_nyiso208_ramp_slope_census.json`, `_nyiso208_posthoc_addendumA.json`;
+pre-registration `docs/records/nyiso/PREREG-nyiso208-ramp-slope-census.md` **+ addendum A, declared
 POST-HOC and committed before it was run**.
 **Keeper, unchanged:** `2026-09-06-nyiso-202-startup-aware` (CALIBRATED, fails 0).
 

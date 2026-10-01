@@ -96,7 +96,7 @@ the outcome pin in a limit costume and is equally forbidden.
 ## §D — The substantive result: §F.3a's pocket is MIS-LOCATED
 
 Instrument: `scripts/probes/_caiso219_deliverability_census.py` →
-`results/calibration/_caiso219_deliverability_census.json` (93 constraints;
+`results/phase0/caiso/_caiso219_deliverability_census.json` (93 constraints;
 no LP, no solve — a parse of the published worksheet). Reading the ON-PEAK /
 OFF-PEAK binding flag by interconnection area:
 
@@ -163,7 +163,7 @@ assumed and nothing is recommended by this FINDING.
 Committed by this session (branch `claude/caiso-path-limit-survey-dvrpn0`):
 
 * This FINDING; `scripts/probes/_caiso219_deliverability_census.py`;
-  `results/calibration/_caiso219_deliverability_census.json` (93-constraint
+  `results/phase0/caiso/_caiso219_deliverability_census.json` (93-constraint
   census + output factors + alignment notes).
 * `docs/calibration-log/caiso.md` caiso-219 entry; matrix §5.2 caiso-219
   block; CAISO shard evidence append (**NO verdict moves — nothing was

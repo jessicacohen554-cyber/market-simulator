@@ -23,8 +23,8 @@ NEISO's locked test remains **NEVER GRANTED and NEVER SPENT** (owner decision D-
 
 | probe | output |
 |---|---|
-| `scripts/probes/neiso95_declaration_recheck.py` | `results/calibration/_neiso95_declaration_recheck.json` |
-| `scripts/probes/neiso95_gap3_chp_downstream.py` | `results/calibration/_neiso95_gap3_chp_downstream.json` |
+| `scripts/probes/neiso95_declaration_recheck.py` | `results/phase0/neiso/_neiso95_declaration_recheck.json` |
+| `scripts/probes/neiso95_gap3_chp_downstream.py` | `results/phase0/neiso/_neiso95_gap3_chp_downstream.json` |
 
 ---
 
@@ -275,7 +275,7 @@ The 2019 **Pilgrim** fleet-vintage gap (neiso-93 found it, neiso-94 adjudicated 
 in the shard. It is stated there as what it is: **a 2019-only blocker that does not touch 2023–2025**,
 because `RETIREMENT_WINDOW_START = 2023` means every affected plant retired before the training
 window and is availability-zero within it. The repair is **cross-ISO** (264 plants / 21.5 GW across
-all six) and belongs to `docs/handoffs/fleet-vintage-retiree-window-charter-2026-08.md`. **It is not
+all six) and belongs to `docs/records/misc/fleet-vintage-retiree-window-charter-2026-08.md`. **It is not
 a NEISO lane item and this session did not touch it** — per the prompt's instruction.
 
 ---
@@ -391,11 +391,11 @@ pursued, per the prompt.
 
 | deliverable | path |
 |---|---|
-| This assessment | `results/calibration/ASSESSMENT-neiso95-declaration-recheck-2026-08-15.md` |
+| This assessment | `docs/records/neiso/ASSESSMENT-neiso95-declaration-recheck-2026-08-15.md` |
 | Frontier/`complete` re-verification probe | `scripts/probes/neiso95_declaration_recheck.py` |
-| — its machine output | `results/calibration/_neiso95_declaration_recheck.json` |
+| — its machine output | `results/phase0/neiso/_neiso95_declaration_recheck.json` |
 | Gap-3 downstream probe | `scripts/probes/neiso95_gap3_chp_downstream.py` |
-| — its machine output | `results/calibration/_neiso95_gap3_chp_downstream.json` |
+| — its machine output | `results/phase0/neiso/_neiso95_gap3_chp_downstream.json` |
 | Repaired keeper shard (NEISO only) | `frontend/data/backcast/keepers/NEISO.json` |
 | Rebuilt status part | `frontend/data/backcast/status/NEISO.js` |
 | Calibration-log continuation | `docs/calibration-log/neiso.md` |

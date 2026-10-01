@@ -6,7 +6,7 @@
 document is written against what is actually at HEAD).
 **ZERO LP by default.** Committed artifacts + measured sources only. The parent never
 solves (rule 32 `[R-SHARD]` (a)), and nothing here earns a solve.
-**Commissioned by** `docs/FINDING-pjm-h1-hydro-accounting-seam-2026-09-12.md` §7 and §9.
+**Commissioned by** `docs/records/pjm/FINDING-pjm-h1-hydro-accounting-seam-2026-09-12.md` §7 and §9.
 
 ---
 

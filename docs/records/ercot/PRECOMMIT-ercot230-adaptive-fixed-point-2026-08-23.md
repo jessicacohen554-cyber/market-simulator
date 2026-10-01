@@ -295,7 +295,7 @@ files untouched.
 
 ## 7. PROBE JSON SCHEMA
 
-`results/calibration/ercot230_probe_fixedpoint.json` — the ercot-226 §5.9
+`results/phase0/ercot/ercot230_probe_fixedpoint.json` — the ercot-226 §5.9
 schema verbatim (probe/factor/charter/session/branch_sha/env/control{grepro}/
 arm/official/probe_basis/gates/family_diagnostics/summer/adaptive/verdict)
 plus one block:

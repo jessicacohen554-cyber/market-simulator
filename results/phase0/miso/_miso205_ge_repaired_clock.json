@@ -1,6 +1,6 @@
 {
  "charter": "miso-205 phase 0 \u2014 miso-203's G-E driver characterisation RE-DONE on the repaired instrument (INDIANA.HUB on the model's fixed-CST non-leap 8760, read from the committed zonal parquet). miso-203's hour-of-day claims were corrected by miso-204 \u00a76.5 and are inherited; its DRIVER claims were computed on the misaligned hour set and are UNMEASURED \u2014 neither re-affirmed nor refuted. This probe measures them.",
- "prereg": "results/calibration/PREREG-miso205-ge-repaired-clock-2026-09-03.md @ fc8006d9",
+ "prereg": "docs/records/miso/PREREG-miso205-ge-repaired-clock-2026-09-03.md @ fc8006d9",
  "keeper": "2026-09-03-miso-202-unitclip",
  "basis": "committed artifacts only \u2014 no LP solved. Rule 22: 2023/2024/2025.",
  "instrument": "OBJ = top 1% of Jun-Jul hours of actual_lmp_hourly_zonal_MISO.parquet hub=INDIANA.HUB col=rt. Drivers from the keeper's hourly/ sidecars and iso_zone_hourly_drybulb \u2014 already on the model clock, unaffected by the LMP defect; only the hour SET moves.",

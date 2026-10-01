@@ -1,6 +1,6 @@
 {
  "charter": "miso-208 phase 0 \u2014 find the 8-11 GW; zero-solve; nothing armed.",
- "prereg": "results/calibration/PREREG-miso208-find-the-supply-2026-09-04.md @ 6a50d0fc",
+ "prereg": "docs/records/miso/PREREG-miso208-find-the-supply-2026-09-04.md @ 6a50d0fc",
  "keeper": "2026-09-03-miso-202-unitclip",
  "instrument": "the production fleet chain at HEAD through\n``_miso134_ct_night_order_screen.build_year`` (BUNDLE re-pointed to the\nmiso-202 keeper, ``weather_year`` pinned to the solve year \u2014 the miso-153 T-6\nrepair), interrogated against the keeper's committed ``hourly/`` sidecars.\nTwo caveats, stated in the",
  "model_clock": "CST hour-beginning (measured: V-KEY-930 winner +2 on hour-ending UTC->EST labels, V-KEY-LMP winner +1 on EST HE labels); EST_TO_MODEL = -1",

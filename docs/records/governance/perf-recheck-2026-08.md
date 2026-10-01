@@ -3,9 +3,9 @@
 **STATUS: MEASUREMENT RECORD** — Wave-1 PERF-A deliverable
 (`docs/model-audit-release-plan-2026-08.md` §3/WS3; extends
 `docs/refactor-consolidation-plan-2026-07.md` workstream H and the
-`docs/handoffs/wallclock-baseline-2026-07.md` table format).
+`docs/records/misc/wallclock-baseline-2026-07.md` table format).
 **Branch:** `claude/ci-infrastructure-blocker-bp3zv3` off `origin/main` @ `c447199`.
-Companion owner memo: `docs/handoffs/perf-a-warmstart-decision-memo-2026-08.md`.
+Companion owner memo: `docs/records/governance/perf-a-warmstart-decision-memo-2026-08.md`.
 Everything on this branch is measurement + NOT-FOR-MERGE prototypes; PERF-B is the
 merge pass.
 
@@ -194,7 +194,7 @@ see task 4.
 
 ### 2.5 Task 5 — `forecast_xyear_warmstart` owner memo
 
-Written: `docs/handoffs/perf-a-warmstart-decision-memo-2026-08.md`. Headline: the
+Written: `docs/records/governance/perf-a-warmstart-decision-memo-2026-08.md`. Headline: the
 decision the plan defers to G1 was **already adjudicated twice** — D-9 (2026-07-26)
 flipped the default ON with the full-horizon A/B; D-10 (2026-08-04, sitting Addendum
 K.3) then **disarmed the forecast lane** (`shipped_forecast_xyear_warmstart()` one
@@ -247,7 +247,7 @@ per-element. Two facts measured here:
 | Low-mem emissions curation prototype | `scripts/data/curate_emissions_lowmem.py` — **NOT-FOR-MERGE** |
 | Basis-LUT prototype | `src/market_sim/model/lp/model.py` diff on this branch — **NOT-FOR-MERGE** |
 | results_write frames prototype | `scripts/run_calibration_full.py` diff on this branch — **NOT-FOR-MERGE** |
-| Warm-start owner memo | `docs/handoffs/perf-a-warmstart-decision-memo-2026-08.md` |
+| Warm-start owner memo | `docs/records/governance/perf-a-warmstart-decision-memo-2026-08.md` |
 
 Mechanism-matrix duty check (rule 28): this session tested no calibration/forecast
 mechanism and added no `ScenarioConfig` field — no matrix touch required.
@@ -263,7 +263,7 @@ skip-reason deltas, repeat until run-A parity.
 ## 4. PERF-B completion note (2026-08-17, session perf-b-ws3-recheck)
 
 Executed on branch `claude/perf-b-ws3-recheck-9r11sg`; measured deltas + the HEAD-era
-keeper-replay anchor are in `docs/handoffs/wallclock-baseline-2026-07.md` §PERF-B.
+keeper-replay anchor are in `docs/records/misc/wallclock-baseline-2026-07.md` §PERF-B.
 
 **Disposition of the five changes:**
 

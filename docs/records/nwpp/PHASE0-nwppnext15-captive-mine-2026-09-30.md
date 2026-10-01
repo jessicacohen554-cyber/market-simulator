@@ -46,7 +46,7 @@ already named `TC`. The codes on disk 2019–2024 are `GL OP RR RV TC TP TR WT`.
 Bridger conveyor row as non-captive. The code list was corrected to `{TC, TR}`; the rule's intent (mine-mouth, no common
 carrier, in-state, not spot) is unchanged and no other part of §1 moved. Both runs are reported here.
 
-## §2 Census (zero LP) — `docs/handoffs/nwppnext15/captive_census.json`, `scripts/probes/_nwppnext15_captive_census.py`
+## §2 Census (zero LP) — `docs/records/nwpp/nwppnext15/captive_census.json`, `scripts/probes/_nwppnext15_captive_census.py`
 
 Fleet source: `thermal_tranches-perunit-vintage-NWPP.csv` `COAL_*` rows (13 plants). Keeper #18's bundle on `main` is slim
 (no `dispatch/`), so the fleet list is the tranche table the keeper loads, not its dispatch. $/MMBtu, MMBtu-weighted.

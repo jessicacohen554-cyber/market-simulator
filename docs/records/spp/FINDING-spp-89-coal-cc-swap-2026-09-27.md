@@ -2,7 +2,7 @@
 
 **Lane** SPP-89 · **ZERO LP** · keeper `2026-09-26-spp-86-coal-extract` (bundle `spp86_arm_span`, basis_sha `d72e5f10`)
 · probes `scripts/probes/_spp89_stack_dump.py` (fleet_only rebuild, one year per process) +
-`scripts/probes/_spp89_coal_cc_swap.py` · records `results/calibration/_spp89_coal_cc_swap.json`,
+`scripts/probes/_spp89_coal_cc_swap.py` · records `results/phase0/spp/_spp89_coal_cc_swap.json`,
 `_spp89_gas_offer_sensitivity.json`. Nothing solved, nothing registered, keeper unchanged, no promotion question (rule 31).
 
 ## 1. Method

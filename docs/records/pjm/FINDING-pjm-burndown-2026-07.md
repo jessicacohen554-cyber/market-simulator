@@ -206,4 +206,4 @@ pjm-77 bundle, same method pre/post): pre-fix reproduces the
 mechanism carries zero floored MWh and **D-4 passes all three years** (the drag
 rows pass at 0 % off-window throughout). The only remaining D-2 failure is the
 pre-existing §4.2 drag 2024 peaker-budget breach — see
-`docs/handoffs/pjm-c8-drag-memo-2026-07.md` (owner decision).
+`docs/records/pjm/pjm-c8-drag-memo-2026-07.md` (owner decision).

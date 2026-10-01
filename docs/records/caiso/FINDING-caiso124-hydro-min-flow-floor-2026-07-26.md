@@ -6,7 +6,7 @@ session does not touch (the neiso-66 extract over-count freeze, ACTIVE; the
 caiso-123 §6 re-tune-vs-wait question).**
 
 Gates were written down and committed **before arm B solved**
-(`results/calibration/PREREG-caiso124-hydro-min-flow-floor-2026-07-26.md`,
+(`docs/records/caiso/PREREG-caiso124-hydro-min-flow-floor-2026-07-26.md`,
 commit `353d88e`). This finding scores them; it does not add or move any.
 
 ---

@@ -16,7 +16,7 @@ STATE (2026-09-30):
   Fold `-touchpoints` (2019–21) NOT-YET (fuelmix, dispatch_corr, price_mean 2021); ISO determination NOT-YET
   under rubric v3.13. The fold DSW residual is LEDGERED data-availability limited (R-CAISO-20): do not re-open it
   without a new pre-2021 hourly Palo Verde source.
-- R-CAISO-21 (docs/handoffs/r-caiso-21/FINDING-r-caiso-21-evening-2026-09-30.md), zero LP, CLOSED the evening
+- R-CAISO-21 (docs/records/caiso/r-caiso-21/FINDING-r-caiso-21-evening-2026-09-30.md), zero LP, CLOSED the evening
   under-price: on the gated RT basis the SP15 h17–22 residual is +7.0/−3.7/−2.5/−1.2 $/MWh (2022–25); the DAM gap is
   72–80 % measured DART; 80–100 % of the 2023–25 RT residual lies in the top-5 % measured evening hours. **Those
   tail hours are now yours.** Probe: scripts/probes/_rcaiso21_evening_phase0.py (reuse its clock/hub alignment).

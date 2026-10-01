@@ -5,8 +5,8 @@
 - Determination: run-level NOT-YET, training tier 2023–2025 NOT-YET, ISO (v3.13) NOT-YET.
 
 **Records:**
-- `docs/FINDING-pjm-next-16-cc-loading-and-the-ovec-boundary-2026-09-30.md` (cards 1/1b, zero LP)
-- `docs/PRECOMMIT-pjm-next-16-2026-09-30.md` (arms, predictions, decision rule, G-DRIFT, two B re-pins)
+- `docs/records/pjm/FINDING-pjm-next-16-cc-loading-and-the-ovec-boundary-2026-09-30.md` (cards 1/1b, zero LP)
+- `docs/records/pjm/PRECOMMIT-pjm-next-16-2026-09-30.md` (arms, predictions, decision rule, G-DRIFT, two B re-pins)
 
 **Solves:** 14 year-isolated shards (rule 36). The parent ran zero LP.
 - Arm A: pin `6d4c7749`.

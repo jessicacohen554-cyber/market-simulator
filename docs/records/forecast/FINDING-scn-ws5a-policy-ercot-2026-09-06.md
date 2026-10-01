@@ -2,8 +2,8 @@
 
 **Lane** SCN-WS5A-POLICY-ERCOT (resumed) · **Model** Fable (`claude-fable-5-1`; the eleven solves ran in
 four owner-launched Opus sub-lanes G1–G4, ADDENDUM A(d)) · **Date** 2026-09-07 · **Branch**
-`claude/scn-ws5a-policy-ercot-r2-mmt8w7` · **PRECOMMIT** `docs/handoffs/PRECOMMIT-scn-ws5a-policy-ercot-2026-09-06.md`
-(+ ADDENDUM A) · **Protocol the sub-lanes executed** `docs/handoffs/SUBLANE-scn-ws5a-policy-ercot-solve-protocol-2026-09-06.md`
+`claude/scn-ws5a-policy-ercot-r2-mmt8w7` · **PRECOMMIT** `docs/records/forecast/PRECOMMIT-scn-ws5a-policy-ercot-2026-09-06.md`
+(+ ADDENDUM A) · **Protocol the sub-lanes executed** `docs/records/forecast/SUBLANE-scn-ws5a-policy-ercot-solve-protocol-2026-09-06.md`
 · **Campaign** `scn-campaign-policy-2026-09-06`, kind `scenario`, `reference_case: REF` · **Charter** v6-RESUME (ledger §5.3).
 
 Every number below is read from a committed artifact: the eleven legs' `full_horizon_summary.json` /
@@ -366,7 +366,7 @@ are fast because the LP is degenerate on slack.
    REF in §2 is a number with a code seam inside it. The synthesis and cost table (RESOLVE's owed addendum) gain three
    legs. **The G-DRIFT lesson for the record:** an input change to a screen is never inert because the screen's
    pre-change output was zero — it is inert only if the changed input cannot cross the screen's threshold.
-   **DISCHARGED 2026-09-07 — `docs/handoffs/ADDENDUM-B-scn-ws5a-policy-ercot-2026-09-07.md`.** The three legs
+   **DISCHARGED 2026-09-07 — `docs/records/forecast/ADDENDUM-B-scn-ws5a-policy-ercot-2026-09-07.md`.** The three legs
    were re-solved at THE PIN (`FINDING-scn-ws5a-resolve-ercot-2026-09-07.md`) and the eleven policy legs are
    re-differenced against that REF there. **The embargo above is lifted, and §2 / §4 at 2029–2030 are superseded by
    the addendum's §5 Table A** — 2026–2028 are unchanged to the digit. Headlines: ~60 % of the 2030 abatement was the
@@ -404,16 +404,16 @@ are fast because the LP is degenerate on slack.
 
 ## 8. Files
 
-- `docs/handoffs/FINDING-scn-ws5a-policy-ercot-2026-09-06.md` — this document.
-- `docs/handoffs/PRECOMMIT-scn-ws5a-policy-ercot-2026-09-06.md` — ADDENDUM A appended (commit `867a1915`, merged).
-- `docs/handoffs/SUBLANE-scn-ws5a-policy-ercot-solve-protocol-2026-09-06.md` — the protocol the four sub-lanes ran.
+- `docs/records/forecast/FINDING-scn-ws5a-policy-ercot-2026-09-06.md` — this document.
+- `docs/records/forecast/PRECOMMIT-scn-ws5a-policy-ercot-2026-09-06.md` — ADDENDUM A appended (commit `867a1915`, merged).
+- `docs/records/forecast/SUBLANE-scn-ws5a-policy-ercot-solve-protocol-2026-09-06.md` — the protocol the four sub-lanes ran.
 - `results/scn-campaign-policy-2026-09-06/ERCOT/<CASE>/{full_horizon_summary.json, run_config.json, duals.json}` ×11,
   `CARB-MID/fc6_paired_premise.json`, `bundle/G{1..4}/`, `report/G{1..4}/` — committed by the sub-lanes
   (`7f4d17c3`…`c629432e`).
 - `frontend/data/hindcast/ercot-2026-2030-scn-campaign-policy-2026-09-06-<case>.json` ×11 + their lines in
   `frontend/data/hindcast/invariant-failures.json` — the sub-lanes'.
-- `docs/handoffs/forecast-scenario-readiness-plan-2026-09.md` §5.1 rows 3 and 7 (Carbon / CES premium / CES target /
-  Voluntary, ERCOT) and `docs/handoffs/scenario-desk-ledger-2026-09.md` §3 mirror — this commit.
+- `docs/records/forecast/forecast-scenario-readiness-plan-2026-09.md` §5.1 rows 3 and 7 (Carbon / CES premium / CES target /
+  Voluntary, ERCOT) and `docs/records/misc/scenario-desk-ledger-2026-09.md` §3 mirror — this commit.
 - `docs/codebase-site/data/mechanism-matrix/ERCOT.js` — the four cells, last commit.
 
 **Duties.** No default moved, no knob moved, no `ScenarioConfig` field added; DOF ledger zero; no `authorized_price_tuning`.

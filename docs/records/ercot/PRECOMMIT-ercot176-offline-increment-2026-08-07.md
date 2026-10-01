@@ -289,7 +289,7 @@ item (ercot-173 §5). ERCOT holds **no `complete` marker**, so no
 ## 9. Scope fences — DO-NOT-REDO honoured in full
 
 Not entered, not re-litigated, not re-tested: the **event-cap ceiling lane**
-(FROZEN — `docs/handoffs/DECISION-MEMO-ercot-148149-doublecount-2026-08-07.md` is
+(FROZEN — `docs/records/ercot/DECISION-MEMO-ercot-148149-doublecount-2026-08-07.md` is
 filed and its ruling is **PENDING**; this session does **not** act on its
 recommendation); blanket `min()` (`R`); unit-scoped (`R`); the 2023
 depth/excess-cheap-depth premise (**REFUTED**, sharpened at ercot-175 — and §0
@@ -452,7 +452,7 @@ round. Filed as an owner item (FINDING §5).
 
 **Status when written: no year solved.** §7 pre-registered "ONE pair, control +
 arm, BOTH registered whatever the outcome". The seam proof
-(`results/calibration/ercot176_offline_commit_seamproof.json`,
+(`results/phase0/ercot/ercot176_offline_commit_seamproof.json`,
 `ALL_ASSERTIONS_PASS = true`) shows the arm is **not a different run**:
 
 * `build_ercot_offline_commit_target` returns `None` for **2023, 2024 and 2025**

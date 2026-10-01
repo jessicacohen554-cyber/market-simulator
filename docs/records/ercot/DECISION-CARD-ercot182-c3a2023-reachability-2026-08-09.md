@@ -104,7 +104,7 @@ Consequences:
 3. C3b-2024 is **a different root entirely** — the two 2024 shed hours the model
    over-amplifies to VOLL, whose only named structural route is the ercot-172
    fault-3 partial-layer re-charter, **FROZEN** behind
-   `docs/handoffs/DECISION-MEMO-ercot-148149-doublecount-2026-08-07.md`
+   `docs/records/ercot/DECISION-MEMO-ercot-148149-doublecount-2026-08-07.md`
    (ercot-177 §7). It is an adjudicated *mechanism collision awaiting an owner
    ruling*, not a model-class limitation, so it is not carve-out-eligible on any
    honest construction.

@@ -145,7 +145,7 @@ channel's pre-existing tighten-only invariant (never a loosening, disclosed).
 * This PRECHECK + `_caiso197_ps_citations.json` + the probe + the two source
   corpora (all committed before the lane-5 solve).
 * Bundle `caiso197_l5_psphys` (control shared).
-* `results/calibration/FINDING-caiso197-ps-physical-2026-08-16.md` — gate
+* `docs/records/caiso/FINDING-caiso197-ps-physical-2026-08-16.md` — gate
   tally, §0 quoted verbatim, the caiso-140/141 fence discharge restated,
   matrix duties (b)+(c) (the row landed with the build; the CAISO cell moves
   on this arm's verdict), calibration-log entry in-session.

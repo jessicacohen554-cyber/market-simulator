@@ -275,7 +275,7 @@ carry `pmax = 0` with a negative `min_gen` and are excluded from D-2 attribution
 by construction; the INC rungs carry no floor at all). So no stacking question
 arose. **C3b's ledgered root cause is untouched**: the ~10 GW 2025 summer-peak
 under-derate remains the instrument-blocked driver
-(miso-89 §7; `docs/handoffs/miso-outage-grain-data-ask-2026-07.md`), and this
+(miso-89 §7; `docs/records/miso/miso-outage-grain-data-ask-2026-07.md`), and this
 finding does not widen, re-scope or substitute for that ledger entry.
 
 ## 7. Rule 25 `[R-ISO-SCOPE]` — and one honest cross-ISO flag

@@ -1,7 +1,7 @@
 # FINDING — Y-29: keeper-promotion provenance debt (2026-09-24)
 
 **Lane:** `Y-29`, Model Audit & Release-Finalization Program, chartered at director board
-**v42** §4 row 1 + §5 (`docs/handoffs/audit-program-director-board-2026-08.md`). Director pin
+**v42** §4 row 1 + §5 (`docs/records/governance/audit-program-director-board-2026-08.md`). Director pin
 `40f4ed7a`; this lane worked at `origin/main` **`a4708b25`** (the pin plus the v42 board
 merge, #6556). Records/registry only. **No keeper designation, calibration verdict, scorer
 threshold or matrix cell verdict was changed. No LP was solved. No cache-key pin was touched

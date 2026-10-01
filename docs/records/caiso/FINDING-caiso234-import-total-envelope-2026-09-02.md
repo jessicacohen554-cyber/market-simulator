@@ -14,7 +14,7 @@ Instruments (committed):
 
 * `scripts/data/derive_caiso_import_total_envelope.py` — the derivation, both
   gates, and the §5 ungated diagnostics.
-* `results/calibration/_caiso234_import_total_envelope.json`.
+* `results/phase0/caiso/_caiso234_import_total_envelope.json`.
 
 Every number reproduces from `data/raw/eia-930-interchange/CISO interchange
 hourly.parquet` on the model clock (`_caiso_interchange_model_clock`,

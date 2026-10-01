@@ -13,13 +13,13 @@ measured it on the delivery-2023 SCED corpus and found the block is not there.
 Probes (both no-LP, both on committed data):
 
 - `scripts/probes/ercot163_cc_commitment_state_census.py` →
-  `results/calibration/_ercot163_cc_commitment.json` — the RT capability-state
+  `results/phase0/ercot/_ercot163_cc_commitment.json` — the RT capability-state
   census of the CC and CT fleets over the delivery-2023 SCED corpus (315
   shards) at four hour sets, against the keeper's own reconstructed CC
   availability / dispatch / bid ladder (`reconstruct_bundle_fleet`, the
   ERCOT-161 machinery, fidelity flags asserted).
 - `scripts/probes/ercot163_dam_config_collapse.py` →
-  `results/calibration/_ercot163_dam_config_collapse.json` — the 60-Day DAM
+  `results/phase0/ercot/_ercot163_dam_config_collapse.json` — the 60-Day DAM
   block ERCOT-151 measured, re-cut at train grain and **joined train-by-train
   to the RT telemetry at the same hours**.
 
@@ -75,7 +75,7 @@ Probes (both no-LP, both on committed data):
 ## 1. The measurement — reality's CC capability state at the gap hours
 
 Hour set: the committed top-100 2023 gap hours
-(`results/calibration/_ercot161_wall_phase0.json`; 98.3 % of the load-weighted
+(`results/phase0/ercot/_ercot161_wall_phase0.json`; 98.3 % of the load-weighted
 residual, model $441.27 vs actual $1,487.84, λ $1,470.16; 83 of 100 in Aug/Sep,
 all in h12–19). 400 SCED intervals. Every ERCOT CC resource
 (`CCGT90`/`CCLE90`) is given a fixed capability reference `cap_ref` = its p98
@@ -241,7 +241,7 @@ Explicitly **not** proposed, and **not** to be re-derived from this finding:
 - **No mechanism tested ⇒ no matrix cell verdict minted** (rule 28(b)). The
   §5.1 queue and the two ERCOT cell notes that carried the refuted premise
   (`ercot_faststart_pool_offer`, `ercot_storage_rt_offer_surface`) are
-  corrected in this session; `docs/DIAGNOSIS-ercot151-offline-increment-phase0-2026-08-02.md`
+  corrected in this session; `docs/records/ercot/DIAGNOSIS-ercot151-offline-increment-phase0-2026-08-02.md`
   carries a correction banner over its §0.2/§0.4.
 - **No run produced ⇒ no dashboard registration** (rule 15; the
   ERCOT-147/152/161 no-LP pattern). Keeper UNCHANGED.

@@ -16,7 +16,7 @@ DOF     : +0 (CAMPD primaryFuelInfo/unitType + EIA-860 vintage fleets + the froz
 
 The tranche family is derived over a pooled 2023–2025 window. An ST_GAS bin whose boilers ran only before it has no
 row, hence no measured `st_gas_mustrun_per_plant` floor. The backcast span now reaches 2019, where those units ran.
-Census and sizing: `docs/FINDING-miso279-stgas-span-coverage-2026-09-27.md` §1 (ceiling ~1.5 TWh of the 2019 gap).
+Census and sizing: `docs/records/miso/FINDING-miso279-stgas-span-coverage-2026-09-27.md` §1 (ceiling ~1.5 TWh of the 2019 gap).
 
 ## 2. The delta
 

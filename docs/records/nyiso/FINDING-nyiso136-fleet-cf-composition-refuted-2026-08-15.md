@@ -10,7 +10,7 @@ identified, and **no LP was solved**. This is the nyiso-133 pattern applied to
 nyiso-133's own successor.
 
 Probe `scripts/probes/_nyiso136_fleet_cf_composition.py`, record
-`results/calibration/_nyiso136_fleet_cf_composition.json`. Both published inputs
+`results/phase0/nyiso/_nyiso136_fleet_cf_composition.json`. Both published inputs
 were already committed: EIA-860 `eia860_solar_operable` (per-plant
 `Single-Axis Tracking?` / `Fixed Tilt?` / `Tilt Angle`, `Operating Year/Month`)
 and EIA-923 monthly net generation, joined on the **same** 15-row registry

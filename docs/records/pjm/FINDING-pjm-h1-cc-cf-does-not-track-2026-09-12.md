@@ -5,7 +5,7 @@
 **Session** `pjm-h1` · **ISO** PJM · **Date** 2026-09-12 · **Branch** `claude/pjm-h1`
 **ZERO LP.** Committed run payloads, committed bench parts, CAMPD unit-level, the model's own
 fleet loader. **Nothing solved, nothing armed, nothing registered, no verdict moved.**
-Companion: `docs/FINDING-pjm-h1-hydro-accounting-seam-2026-09-12.md` (the commissioned card).
+Companion: `docs/records/pjm/FINDING-pjm-h1-hydro-accounting-seam-2026-09-12.md` (the commissioned card).
 
 ---
 

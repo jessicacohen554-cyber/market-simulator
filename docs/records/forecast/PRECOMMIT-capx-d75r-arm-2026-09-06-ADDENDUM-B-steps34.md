@@ -41,7 +41,7 @@ Measured through `build_config(iso, 2021, 2025, "realized", vintage=2020,
 entry_screen_diagnostics=True, **flags)` → `apply_iso_scenario_defaults` → `cache_key()`, the
 `TestQ52ArmingKeys` path — instrument
 `scripts/probes/capxd75rarm_steps34_key_declaration.py`, output
-`docs/handoffs/d75rarm/steps34-keys.json`, both committed with this addendum:
+`docs/records/forecast/d75rarm/steps34-keys.json`, both committed with this addendum:
 
 | recipe | key at `f37121bd` | what that key IS |
 |---|---|---|
@@ -94,7 +94,7 @@ consequences follow, and neither is optional:
    attributed to Q55 alone.** The Q55-only attribution already exists and stays where it was
    measured: `FINDING-capx-d75r-2026-09-06.md`'s A/B, control `a9c66d8ea25acb9d` → arm
    `b518f5fe7d02f961`, on one base. This registration does not re-open, re-measure or supersede it.
-2. **This solve IS the solve D78-ARM still owes.** `docs/handoffs/d78arm/run_arm.sh` and this lane's
+2. **This solve IS the solve D78-ARM still owes.** `docs/records/forecast/d78arm/run_arm.sh` and this lane's
    step 3 are the same invocation at the same key against the same control — `FINDING-pr5319-d78arm-
    salvage-2026-09-07.md` §4 item 1, verbatim: *"the armed `pjm-t1h`, key `fb16fda2ddb0a94a`, PJM
    solo, years sequential (rule 12), HEAD-guarded."* There is no second row to solve. Registering it
@@ -264,7 +264,7 @@ than diverging. Because §4's D-1 declaration and §3's G-DRIFT window were both
 **the key was re-measured at the new head before the solve was started** — a solve launched at a
 stale head either trips its own guard or registers a key that was never declared.
 
-**Instrument:** the same probe, unmodified. **Output:** `docs/handoffs/d75rarm/steps34-keys-abdd30c9.json`,
+**Instrument:** the same probe, unmodified. **Output:** `docs/records/forecast/d75rarm/steps34-keys-abdd30c9.json`,
 committed beside the `f37121bd` measurement so both are inspectable.
 
 **Result: every one of the twelve PJM legs is byte-identical to §1.1.** The bare row is

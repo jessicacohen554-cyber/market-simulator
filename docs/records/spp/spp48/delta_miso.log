@@ -44,4 +44,4 @@ C-5 model weight cap_z vs builder capacity C_z: ratio {'MISO-West': np.float64(1
       MISO-South             328     0.647     0.612    -0.036   -5.53        15.2     -104      +62        300
     max |delta| over all zone-hours: 4,236 MW  (re-baseline threshold: > 1 MW in any hour)
 
-wrote docs/handoffs/spp48/delta_miso.csv
+wrote docs/records/spp/spp48/delta_miso.csv

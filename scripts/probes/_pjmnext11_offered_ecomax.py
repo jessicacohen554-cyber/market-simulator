@@ -25,7 +25,7 @@ unit's own best-offered MW that year), ``D/T`` and ``D/E`` (offer-implied loadin
 Rows with ``avg_ecomax == 0`` are counted separately (``T`` MW offered at zero).
 
 Sliced by year, hour-ending, month and the surface's own net-load bin (edges 0.80/0.90/0.97,
-``_netload_pct`` within-year). Writes ``results/calibration/_pjmnext11_offered_ecomax.json``.
+``_netload_pct`` within-year). Writes ``results/phase0/pjm/_pjmnext11_offered_ecomax.json``.
 """
 
 from __future__ import annotations
@@ -53,7 +53,7 @@ from scripts.data.derive_pjm_offer_midcurve import (  # noqa: E402
 YEARS = tuple(range(2019, 2026))
 EDGES = (0.80, 0.90, 0.97)
 ACTUAL = REPO / "data/raw/_validation-source/actual_lmp_hourly_PJM.parquet"
-OUT = REPO / "results/calibration/_pjmnext11_offered_ecomax.json"
+OUT = REPO / "results/phase0/pjm/_pjmnext11_offered_ecomax.json"
 KEYS = ("E", "T", "Umax", "D", "Dm", "Emin", "n")
 BUNDLE = REPO / "results/calibration/pjmnext8_xf_span"
 

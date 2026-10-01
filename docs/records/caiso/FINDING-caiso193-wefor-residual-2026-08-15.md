@@ -8,7 +8,7 @@ Gate spec applied as written: `GATESPEC-caiso193-wefor-residual-2026-08-11.md`
 (authored by caiso-191 BEFORE any lane-2 measurement, owner ruling 2). No band was
 edited or reinterpreted. Measurement instrument:
 `scripts/probes/_caiso193_wefor_coverage.py` → committed record
-`results/calibration/_caiso193_wefor_coverage.json`.
+`results/phase0/caiso/_caiso193_wefor_coverage.json`.
 
 ## 0. Direction-hazard regime (verbatim, binding)
 

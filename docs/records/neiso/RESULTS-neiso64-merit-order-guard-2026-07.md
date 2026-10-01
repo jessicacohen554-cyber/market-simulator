@@ -1,6 +1,6 @@
 # RESULTS — CAMPD merit-order guard (neiso-64, 2026-07-25)
 
-STEP 2 + STEP 3 of `docs/handoffs/campd-economic-layup-fix-charter-2026-07.md`.
+STEP 2 + STEP 3 of `docs/records/misc/campd-economic-layup-fix-charter-2026-07.md`.
 Design frozen in charter §3a (owner sign-off 2026-07-25). Everything below is
 **no-solve**: derived extracts scored against each ISO's published outage
 instrument. The keeper re-audit (STEP 4) is reported separately.
@@ -15,7 +15,7 @@ envelope and are written to `campd-unit-outages-layup[-{ISO}].csv`, which no
 loader reads by default.
 
 Ships as two patches (rule 27; both files clear the 300-line bar):
-`docs/handoffs/patches/campd-merit-order-guard-{lib,deriver}.patch`.
+`docs/records/misc/patches/campd-merit-order-guard-{lib,deriver}.patch`.
 
 **Byte-inertness, proven at full extract scale (2018–2026, all six ISOs).** With
 `--merit-order-guard` absent, a complete re-derive reproduces every committed
@@ -218,8 +218,8 @@ was changed in this session.**
 ## 5. Reproduction
 
 ```
-git apply docs/handoffs/patches/campd-merit-order-guard-lib.patch
-git apply docs/handoffs/patches/campd-merit-order-guard-deriver.patch
+git apply docs/records/misc/patches/campd-merit-order-guard-lib.patch
+git apply docs/records/misc/patches/campd-merit-order-guard-deriver.patch
 python scripts/data/derive_campd_unit_outages.py --iso <ISO> \
     --years 2018 2019 2020 2021 2022 2023 2024 2025 2026 --merit-order-guard
 python scripts/probes/_neiso64_meritguard_score.py --iso <ISO> \

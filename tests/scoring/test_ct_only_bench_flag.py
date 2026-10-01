@@ -5,7 +5,7 @@ GROSS is submitting an incomplete CEMS record (gross >= net for any complete
 record) — the 2x1 combined-cycle signature where only the combustion-turbine
 block reports. Those plants must be flagged so their per-plant capture scores
 on the EIA-923 monthly row, not the understated CAMPD series
-(docs/DIAGNOSIS-pjm-july-cc-overrun-2026-07.md §3a, §6 Leg B).
+(docs/records/pjm/DIAGNOSIS-pjm-july-cc-overrun-2026-07.md §3a, §6 Leg B).
 """
 
 import importlib.util

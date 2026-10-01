@@ -15,7 +15,7 @@ inspection is unrestricted; the spend is looking at an out-of-training answer, w
 does. No mechanism was tested, no lever opened, no matrix cell verdict minted, no keeper changed,
 no governance file edited.
 
-Probes: `scripts/probes/neiso94_pilgrim_vintage_audit.py` → `results/calibration/_neiso94_pilgrim_vintage_audit.json`
+Probes: `scripts/probes/neiso94_pilgrim_vintage_audit.py` → `results/phase0/neiso/_neiso94_pilgrim_vintage_audit.json`
 (new), and `scripts/probes/neiso90_final_prereq_audit.py` re-run at the post-neiso-93 HEAD.
 
 ---
@@ -41,7 +41,7 @@ Probes: `scripts/probes/neiso94_pilgrim_vintage_audit.py` → `results/calibrati
 > **The gap is repairable, the mechanism already ships, and the fix is not NEISO-local.** See §2:
 > (a) **YES**, (b) **YES — 264 plants / 21.5 GW across all six ISOs**, (c) **YES, it disqualifies
 > 2019**. The named next object is the charter written this session,
-> `docs/handoffs/fleet-vintage-retiree-window-charter-2026-08.md`.
+> `docs/records/misc/fleet-vintage-retiree-window-charter-2026-08.md`.
 
 | prompt question | answer |
 |---|---|
@@ -211,7 +211,7 @@ Two observations that matter:
 > NEISO-local patch in this session.** The prompt's deliverable-3 condition — *"NOT a patch landed
 > in this session unless it is provably NEISO-local and in-sample-validated on 2023-2025"* — fails
 > its first clause on measurement. A charter is written instead:
-> **`docs/handoffs/fleet-vintage-retiree-window-charter-2026-08.md`**.
+> **`docs/records/misc/fleet-vintage-retiree-window-charter-2026-08.md`**.
 
 **The in-sample risk is real but bounded and testable, which is what makes it charterable.** All
 264 added plants retired *before* 2023, so `monthly_online_mask` returns all-`False` for every year
@@ -423,10 +423,10 @@ running the archived P2 commitment pass** (keeper frontier note item 5), escalat
 
 | deliverable | path |
 |---|---|
-| This assessment | `results/calibration/ASSESSMENT-neiso94-final-readiness-2026-08-15.md` |
-| Pilgrim/vintage charter (§2.3) | `docs/handoffs/fleet-vintage-retiree-window-charter-2026-08.md` |
+| This assessment | `docs/records/neiso/ASSESSMENT-neiso94-final-readiness-2026-08-15.md` |
+| Pilgrim/vintage charter (§2.3) | `docs/records/misc/fleet-vintage-retiree-window-charter-2026-08.md` |
 | Reproducible probe | `scripts/probes/neiso94_pilgrim_vintage_audit.py` |
-| Machine-readable measurements | `results/calibration/_neiso94_pilgrim_vintage_audit.json` |
+| Machine-readable measurements | `results/phase0/neiso/_neiso94_pilgrim_vintage_audit.json` |
 | Calibration-log continuation | `docs/calibration-log/neiso.md` |
 
 ---
@@ -454,5 +454,5 @@ running the archived P2 commitment pass** (keeper frontier note item 5), escalat
 ```
 uv run python scripts/probes/neiso94_pilgrim_vintage_audit.py
 uv run python scripts/probes/neiso90_final_prereq_audit.py
-git diff results/calibration/_neiso90_prereq_audit.json   # one row: 463 -> 544 plants
+git diff results/phase0/neiso/_neiso90_prereq_audit.json   # one row: 463 -> 544 plants
 ```

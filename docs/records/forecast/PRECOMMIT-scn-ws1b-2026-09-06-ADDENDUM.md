@@ -4,7 +4,7 @@
 **Date:** 2026-09-06 · **Model:** `claude-opus-5` (rule 27 `[R-PUSH]`; this lane writes no `src/`)
 **Base:** rebased onto `origin/main` at `1aab49a0`.
 
-This is an **APPENDIX to `docs/handoffs/PRECOMMIT-scn-ws1b-2026-09-06.md`, which is NOT edited**
+This is an **APPENDIX to `docs/records/forecast/PRECOMMIT-scn-ws1b-2026-09-06.md`, which is NOT edited**
 (rule 29 `[R-SCREEN]`: nothing in a precommit may be rewritten after a result is seen). It is
 pushed **before this lane's first solve**, and it records the three things the relaunch charter
 requires — plus a **fourth that the charter did not anticipate and that changes the leg**.
@@ -39,7 +39,7 @@ CCS emission-rate seam can make that answer **sign-wrong**: **+9.99 Mt as scored
 capture applied**, on NEISO 2030 (`FINDING-scn-ws2b-2026-09-06.md` §8). Ruling **S5** holds every
 case with that exposure.
 
-`docs/handoffs/scn-ws1b/launch_ladder.sh` and `carbon-ladder-cases.yaml` stay **committed and
+`docs/records/forecast/scn-ws1b/launch_ladder.sh` and `carbon-ladder-cases.yaml` stay **committed and
 unrun**. **What releases leg 2:** the capx lane's repair of the CCS emission-rate seam in
 `src/market_sim/model/capacity_evolution/ccs.py` (the routed defect — explicitly **not** this
 lane's file), after which the ladder runs as §3.5 specifies with no other change.
@@ -75,7 +75,7 @@ Rule 29 `[R-SCREEN]` clause **(0)**: *"An arm that has a computable pre-solve ga
 solve until that gate passes."* This lane re-ran its phase-0 census against the **repaired**
 resolver and the **new** form, through the solves' own builder
 (`run_full_horizon.reference_config(iso, 2026, 2030, cmc=False)`).
-Instrument + output: `docs/handoffs/scn-ws1b/phase0-recensus-path-2026-09-06.py` / `.json`.
+Instrument + output: `docs/records/forecast/scn-ws1b/phase0-recensus-path-2026-09-06.py` / `.json`.
 
 **The `carbon_price_path=mid` arm is INERT AT 2026 IN ALL SIX ISOs — including ERCOT, PJM and
 MISO, which the charter expects to be live.**

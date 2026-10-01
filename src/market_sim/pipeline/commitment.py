@@ -33,7 +33,7 @@ CLAUDE.md; P2 never runs unless a gate below is set):
 - **NYISO path B** (``nyiso_synchronised_reserve``, NYISO only): force-commit
   the cheapest-startup NYC quick-start units until committed capacity covers
   the measured NYC spinning requirement, so the locational spinning family
-  binds endogenously (docs/handoffs/nyiso-downstate-reserve-incidence-2026-06.md).
+  binds endogenously (docs/records/nyiso/nyiso-downstate-reserve-incidence-2026-06.md).
   Previously reachable only from the forecast orchestrator.
 - **ERCOT AS-aware commitment** (``ercot_as_aware_commitment`` + multi-product
   co-opt, ERCOT only): value a unit's AS revenue (its own P1 reserve dual —
@@ -484,7 +484,7 @@ def ercot_gas_bridge_p1_floor_fleet(
     The ERCOT gas-CC commitment bridge (``ercot_gas_commitment_bridge``, the
     committed-state mechanism promoted from the ERCOT-62b probe — see the
     ScenarioConfig field docstring and
-    docs/DIAGNOSIS-ercot-trough-price-formation-2026-07.md §5-6): the same
+    docs/records/ercot/DIAGNOSIS-ercot-trough-price-formation-2026-07.md §5-6): the same
     ISO-neutral detector as the CAISO RA must-offer bridge
     (:func:`model.commitment.caiso_ra_mustoffer_min_gen`, fed the model's own
     base-cost P0 run pattern and duals), scoped to the merchant gas-CC fleet
@@ -2498,7 +2498,7 @@ def run_commitment_pass(state: dict, config=None):
     # requirement (NYISO_SPIN_FRACTION x NYC 10-min total = 250 MW),
     # so the P2 class-1 NYC headroom row equals Sum_online(pmax - P)
     # and the family binds endogenously in genuinely tight hours
-    # (docs/handoffs/nyiso-downstate-reserve-incidence-2026-06.md,
+    # (docs/records/nyiso/nyiso-downstate-reserve-incidence-2026-06.md,
     # "Path B"). NYISO-only behind the default-off flag.
     if getattr(cfg, "nyiso_synchronised_reserve", False) and iso == "NYISO":
         from market_sim.results.scarcity import (

@@ -2,7 +2,7 @@
 hindcast information gate, channel-attributed ledger — 2026-07-15
 
 **Charter.** F-4 of the flip-gate lane
-(`docs/handoffs/forecast-retirement-calibration-plan-2026-07.md` §2.1 items
+(`docs/records/forecast/forecast-retirement-calibration-plan-2026-07.md` §2.1 items
 2/5, §2.3 F-4; prompt §4.2 RC-1B). Scope guard: annual capacity-evolution
 layer + hindcast harness/scorer only — no dispatch-layer floors, no AS
 co-opt, no backcast keeper touched. **No LP solved this session.** No holdout

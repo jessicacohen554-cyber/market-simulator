@@ -6,7 +6,7 @@
 > `run_config.json`, the keeper's committed sidecars, and the keeper's own registered
 > verdict via `scripts/calibration_verdict.py --run-id … --json`).
 >
-> PRECOMMIT: `docs/PRECOMMIT-ercot262-fossil-offer-97-2026-09-09.md`.
+> PRECOMMIT: `docs/records/ercot/PRECOMMIT-ercot262-fossil-offer-97-2026-09-09.md`.
 
 ## 1. Verdict
 

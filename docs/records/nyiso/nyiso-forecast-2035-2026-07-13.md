@@ -1,9 +1,9 @@
 # NYISO forecast findings — 2026–2035 (P-3A completion)
 
 **Session.** Continuation of P-3A of
-`docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md` §2
+`docs/records/forecast/forecast-driver-capacity-revenue-audit-plan-2026-07.md` §2
 (testing-audit **G1**). The prior P-3A session
-(`docs/handoffs/full-horizon-findings-2026-07-12.md`) stopped mid-horizon at
+(`docs/records/misc/full-horizon-findings-2026-07-12.md`) stopped mid-horizon at
 the owner's request with **NYISO at only 1/25 years (2026)**. This session
 completes NYISO's window: reference-config forecast, **2026–2035** (10 years,
 not the full 2050 horizon — scoped run per this session's task), years

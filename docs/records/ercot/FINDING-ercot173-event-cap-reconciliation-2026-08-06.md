@@ -4,7 +4,7 @@
 2023 LMP; no fleet/volume lanes; no coal offer work; ONE LP run). Decision
 rules, licensing bars, gate assignment and predictions pre-registered and
 pushed BEFORE any measurement
-(`docs/PRECOMMIT-ercot173-2023-depth-and-ceiling-reconciliation-2026-08-06.md`);
+(`docs/records/ercot/PRECOMMIT-ercot173-2023-depth-and-ceiling-reconciliation-2026-08-06.md`);
 the kill gates are PRECOMMIT-ercot172 §5 inherited verbatim, not renegotiated.
 Keeper **UNCHANGED** at `2026-08-05-run168b-year-curves`. Runs registered
 (rules 15/16, full span in one bundle each):
@@ -30,7 +30,7 @@ pre-registered gates, which is where it fails (§2).
 
 ## 1. Phase 0 — the 2023 depth object: **FILED-REDIRECTED**
 
-Record: `results/calibration/ercot173_depth_phase0.json`; probe
+Record: `results/phase0/ercot/ercot173_depth_phase0.json`; probe
 `scripts/probes/ercot173_depth_phase0.py`; no LP. Licences: **L1 corpus
 1.0000** (all 160 tail/shed hours resolved over all 12 delivery-2023 months),
 **L2 COP 0.9675** per class (bars 0.90). The pre-registered decision rule

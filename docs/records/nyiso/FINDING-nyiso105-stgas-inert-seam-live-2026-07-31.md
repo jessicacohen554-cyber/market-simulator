@@ -3,7 +3,7 @@
 **Session:** nyiso-105. **Keeper under test:** `2026-07-30-nyiso-100-silretire`
 (CALIBRATED-WITH-CAVEATS, 0 FAILs, 1 ledgered caveat C3c).
 **Frozen HEAD:** `0852d5b`. **Pre-registration:**
-`results/calibration/PREREG-nyiso105-chp-heat-rates-2026-07-31.md`.
+`docs/records/nyiso/PREREG-nyiso105-chp-heat-rates-2026-07-31.md`.
 **Probe (no LP):** `scripts/probes/_nyiso105_seam_recipe_stgas.py`.
 
 Three of the session's four scoped items closed **on measurement alone, with no
@@ -301,6 +301,6 @@ re-opened as a scored cleanup**, not as "verified zero".
 * **Zero fitted parameters introduced. No keeper changed by this finding.**
 
 Evidence: `scripts/probes/_nyiso105_seam_recipe_stgas.py`;
-`results/calibration/_nyiso105_noLP_measurements.json`;
-`results/calibration/_nyiso105_a2.json`;
-`results/calibration/_nyiso105_b2_byteident.json`.
+`results/phase0/nyiso/_nyiso105_noLP_measurements.json`;
+`results/phase0/nyiso/_nyiso105_a2.json`;
+`results/phase0/nyiso/_nyiso105_b2_byteident.json`.

@@ -4,7 +4,7 @@
 `2026-09-19-caiso-287-mer-keeper` (bundle `caiso287_mer_span`, 2023–2025) with
 `2026-09-19-caiso-287-mer-2022` (bundle `caiso287_instr_2022`) folded to it under rule 30
 `[R-TOUCHPOINT-FOLD]` (a). **LP spent so far: ZERO.** Predecessor:
-`docs/RESULT-caiso287-startup-decommit-split-2026-09-19.md`, whose §8 named the 2022 C3a
+`docs/records/caiso/RESULT-caiso287-startup-decommit-split-2026-09-19.md`, whose §8 named the 2022 C3a
 object "on its own terms" as the honest successor. This document fixes **the object, the
 mechanism, the identification, the gates, the predicted numbers and every outcome word
 before a single shard is launched.** Nothing below was computed after seeing a solve,

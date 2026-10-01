@@ -3,7 +3,7 @@
 **This document RECORDS rulings the owner gave on 2026-08-11 via the orchestrating
 session. They are quoted as RULINGS, not proposals — nothing below is re-argued, and
 nothing below is this session's recommendation.** The decision packets they answer are
-`docs/handoffs/caiso-186-owner-sitting-2026-08-09.md` (§a, §b, §4, §5) and
+`docs/records/caiso/caiso-186-owner-sitting-2026-08-09.md` (§a, §b, §4, §5) and
 `FINDING-caiso187-wefor-overlay-2026-08-09.md` §6.
 
 Session caiso-191 is READ-AND-WRITE-DOCS ONLY: no code, no config, no keeper, no

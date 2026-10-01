@@ -1,6 +1,6 @@
 # PRECOMMIT — NYISO-NEXT-21: Astoria's measured heat rate on the merged stack-duplicate meter — 2026-10-01
 
-Phase 0: `docs/FINDING-nyiso-next21-d4-rows-and-astoria-heat-rate-2026-10-01.md`. Fixed before any solve.
+Phase 0: `docs/records/nyiso/FINDING-nyiso-next21-d4-rows-and-astoria-heat-rate-2026-10-01.md`. Fixed before any solve.
 
 **The arm.** The keeper's recipe, byte for byte (`replay_keeper.py`, **no `--set`**), on the re-derived `campd_st_heat_rates_NYISO.csv` (sha256 `4bfe374744884196bc63912d847354ccb71090c590720f9c644163945aeda538`). Zero `ScenarioConfig` changes, zero free parameters, zero new mechanisms. The only input that moves is Astoria 8906's ST_GAS heat rate: 9.449 → 11.18–12.07 (per year), the merged CEMS meter (rule 14; rule 23 trigger = the stack-duplicate identity defect).
 
@@ -19,7 +19,7 @@ Every commit touching the backcast solve path since the keeper:
 | `c361efe0`, `10b20574` NWPP-NEXT-15 | `coal_captive_marginal_fuel_price`, `unit_outage_dispatched_bin_live_denominator` | INERT: default off, absent from the recipe |
 | `450c1b33` miso-294 | `actual_lmp.json` | INERT: only the `MISO` key changes |
 
-All INERT. Form 4 holds: the keeper's committed bundles are the control. The arm's single LIVE input is the artifact; its footprint is measured zero-LP in all five years (FINDING §3): **4 rows per year, all Astoria ST_GAS, pmax and availability byte-identical** (`results/calibration/_nyisonext21_g1_offer_delta.json`).
+All INERT. Form 4 holds: the keeper's committed bundles are the control. The arm's single LIVE input is the artifact; its footprint is measured zero-LP in all five years (FINDING §3): **4 rows per year, all Astoria ST_GAS, pmax and availability byte-identical** (`results/phase0/nyiso/_nyisonext21_g1_offer_delta.json`).
 
 ## 2. Legs (rule 36: one year-isolated shard per year, all five registered years)
 

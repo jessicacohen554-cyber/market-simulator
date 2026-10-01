@@ -8,7 +8,7 @@ LP solved, no run registered, no matrix cell minted, and the ERCOT keeper is unt
 This session performed exactly ONE new measurement — a **read-only counterfactual
 re-scoring** of the keeper's committed hourly sidecars against the committed actuals,
 using the rubric's own scorer (`scripts/probes/ercot189_c3a_c3c_overlap.py`, output
-`results/calibration/ercot189_c3a_c3c_overlap.json`). Actuals enter only counterfactual
+`results/phase0/ercot/ercot189_c3a_c3c_overlap.json`). Actuals enter only counterfactual
 *scoring*, never any model input (rule 13 `[R-MEASURED]` clean). Every other number below
 is read off committed artifacts.
 
@@ -106,7 +106,7 @@ Every face of the object has been closed **on measurement, not on fatigue**
 * **Sub-hourly** — (c1) refused on scale (ercot-182 §5/D5: 12× LP columns against a
   measured ~6.6 GB / ~20 min per per-plant year; a spec-level program, not a lane).
 * **Topology** — the West/Panhandle split is CLOSED
-  (`docs/DIAGNOSIS-ercot-trough-price-formation-2026-07.md` §§9–10).
+  (`docs/records/ercot/DIAGNOSIS-ercot-trough-price-formation-2026-07.md` §§9–10).
 * **Outcome pins** — forbidden outright (rule 13 `[R-MEASURED]`).
 
 ### 1.3 The convergent structural fact — the position wedge
@@ -432,7 +432,7 @@ L2 ≤ 0.10**), as a phase-0 read:
 disclaimer follow-up is **AUTHORIZED** as a named, doc-only open item for the
 forecast lane — *"a 2023-like scarcity-concentration year carries up to
 −$14/MWh (−22% of level) annual load-weighted price bias, concentrated in ~2%
-of hours"* (quantified at `results/calibration/ercot189_c3a_c3c_overlap.json`).
+of hours"* (quantified at `results/phase0/ercot/ercot189_c3a_c3c_overlap.json`).
 It is not implemented by this signature.
 
 ### What signing does NOT do
@@ -464,7 +464,7 @@ It is not implemented by this signature.
 
 ## EVIDENCE APPENDIX — every figure above is read off these committed artifacts, with no re-derivation
 
-* `results/calibration/ercot189_c3a_c3c_overlap.json` — this session's single new
+* `results/phase0/ercot/ercot189_c3a_c3c_overlap.json` — this session's single new
   measurement (probe: `scripts/probes/ercot189_c3a_c3c_overlap.py`; baseline gate
   dict-equal, CF-0 seam −$0.01, additivity exact).
 * `results/calibration/ercot188_topfine_arm_B/` — the keeper bundle:
@@ -477,21 +477,21 @@ It is not implemented by this signature.
 * `scripts/calibration_verdict.py` (rubric v3.2 — the scorer whose functions produced
   every counterfactual score) and `scripts/render_calibration_html.py:2107–2155, 817`
   (the payload-builder and `_tail_hours` arithmetic the probe replicates).
-* `docs/DECISION-CARD-ercot182-c3a2023-reachability-2026-08-09.md` §§2, 4, 5, 7, 10 —
+* `docs/records/ercot/DECISION-CARD-ercot182-c3a2023-reachability-2026-08-09.md` §§2, 4, 5, 7, 10 —
   D1/D5 signatures, the 18%-of-bar decomposition, the double-count objection, (c1).
-* `docs/MEMO-ercot184-cliff-resolution-costing-2026-08-09.md` §§2, 4, 5, 8 — the (c2)
+* `docs/records/ercot/MEMO-ercot184-cliff-resolution-costing-2026-08-09.md` §§2, 4, 5, 8 — the (c2)
   ceiling, the ~0.70 clearing position, the family budget.
-* `docs/DIAGNOSIS-ercot177-c3a2023-anatomy-2026-08-07.md` §§3, 7 — the energy-stack
+* `docs/records/ercot/DIAGNOSIS-ercot177-c3a2023-anatomy-2026-08-07.md` §§3, 7 — the energy-stack
   decomposition, the same-object claim, the $14.44 bar.
-* `results/calibration/FINDING-ercot180-topscoped-exhausted-2026-08-08.md` §8,
+* `docs/records/ercot/FINDING-ercot180-topscoped-exhausted-2026-08-08.md` §8,
   `FINDING-ercot181-position-tail-2026-08-09.md` §§4, 7,
   `FINDING-ercot188-cliff-offer-curve-2026-08-11.md` §5.2 — the position instruments.
-* `results/calibration/FINDING-ercot163-cc-commitment-state-refuted-2026-08-04.md`,
+* `docs/records/ercot/FINDING-ercot163-cc-commitment-state-refuted-2026-08-04.md`,
   `FINDING-ercot170-cc-headroom-crosswalk-2026-08-05.md`, matrix §5.1 item 11 — the
   capability object and its licence record.
 * `docs/calibration-log/ercot.md` (ERCOT-159 entry: the four kill gates;
   ERCOT-107/108 entry: the bistability table) and
-  `docs/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md` (A1–G, §H).
+  `docs/records/ercot/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md` (A1–G, §H).
 * `docs/forecast-development-plan-2026-07.md` §2.1b and
   `frontend/data/forecast/program-status.json` (stale-seed caveat stated in §5).
 

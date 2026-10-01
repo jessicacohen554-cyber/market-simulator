@@ -5,7 +5,7 @@
 pair's `hourly/system_<year>.parquet` sidecars (rule 15 `[R-DASHBOARD]` commits them so a diagnostic
 need not replay a solve), `data/raw/_validation-source/actual_lmp_hourly_PJM.parquet`, and
 `data/raw/eia-930-interchange/`. Probe: `scripts/probes/pjm_h12_seam_qq_phase0.py`.
-**Companion:** `docs/FINDING-pjm-h12-the-midcurve-rebuild-is-a-clean-rederivation-2026-09-20.md` (card D-1).
+**Companion:** `docs/records/pjm/FINDING-pjm-h12-the-midcurve-rebuild-is-a-clean-rederivation-2026-09-20.md` (card D-1).
 
 ---
 

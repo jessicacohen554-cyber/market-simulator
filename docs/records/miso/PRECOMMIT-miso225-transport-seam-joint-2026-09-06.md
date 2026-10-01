@@ -101,7 +101,7 @@ story, screened jointly. Phase 0 refuses it, on the keeper's own committed evide
 LP cost — which is what rule 29 clause 0 exists for.
 
 1. **The phenomenon is already represented, and in a BETTER form.** miso-53 adjudicated exactly
-   this question in 2026-07 (`docs/handoffs/miso-coal-offer-som-redesign-2026-07.md` §3): the
+   this question in 2026-07 (`docs/records/miso/miso-coal-offer-som-redesign-2026-07.md` §3): the
    per-plant CAMPD `_mustrun` fuel-free price-taker band **is** the realized self-commitment
    floor at plant granularity, and replacing 44 measured per-plant floors with one fleet-level
    SOM start-share *"would lose measured granularity (rule 14) and manufacture a floor level no

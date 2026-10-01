@@ -2,7 +2,7 @@
 # INSUFFICIENT — measured, and repaired on structure before any effect number
 
 **Session** `gov-hydro-seam-1` · **Date** 2026-09-12 · **ZERO LP.**
-Amends §0 decision 1 of `docs/PRECOMMIT-gov-hydro-seam-1-2026-09-12.md`.
+Amends §0 decision 1 of `docs/records/governance/PRECOMMIT-gov-hydro-seam-1-2026-09-12.md`.
 
 ---
 

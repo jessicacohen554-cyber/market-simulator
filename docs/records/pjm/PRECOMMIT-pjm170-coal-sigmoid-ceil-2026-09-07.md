@@ -4,7 +4,7 @@
 **Branch:** `claude/pjm-coal-sigmoid-ceiling-pz4ckl`
 **Keeper:** `2026-08-15-pjm-162-inputclock` (`pjm_debugb_inputclock_A`) — **UNCHANGED, not promoted**
 **Control (G-CTRL form 4, committed, no control LP):** `results/calibration/pjm169_tp2022_2021_f2arm`, year 2022, F2-armed, git `f36cee6e`
-**Predecessor evidence:** `docs/handoffs/PRECOMMIT-pjm169-f4-anchor-vintage-2026-09-06.md` §7.2 / §9.2–§9.3
+**Predecessor evidence:** `docs/records/pjm/PRECOMMIT-pjm169-f4-anchor-vintage-2026-09-06.md` §7.2 / §9.2–§9.3
 
 Written **before any build and before any LP is solved**, per rule 29 `[R-SCREEN]`. Every
 threshold, the screen-year selection rule, and every gate below are fixed here and are **not
@@ -57,7 +57,7 @@ the answer predates this session.
 ### 2.1 The source-data trigger
 
 The **#1803 intake** (`data/raw/coal-prices/`,
-`docs/handoffs/coal-price-data-intake-2026-07.md`) landed the EIA **Annual Coal Report** region
+`docs/records/misc/coal-price-data-intake-2026-07.md`) landed the EIA **Annual Coal Report** region
 f.o.b.-mine price by rank and the **BLS coal-mining PPI** — the series a real re-derivation of
 this mechanism needs. `scripts/data/derive_coal_sigmoid.py` exists **for that trigger and states
 so in its own docstring**: "A source-data update is the ONLY admissible re-derivation trigger, so
@@ -274,7 +274,7 @@ number the session will ever cite from it. Git history is the record.
 ## 7. Phase-0 census and the pre-solve prediction
 
 Run before the screen and before any LP, per §4 and rule 29 clause (0). Artifacts:
-`results/calibration/_pjm170_census.json` and `_pjm170_offer_delta.json`; probe
+`results/phase0/pjm/_pjm170_census.json` and `_pjm170_offer_delta.json`; probe
 `scripts/probes/_pjm170_bitceil_census.py`. Measured on the keeper's own resolved config
 through `run_calibration.run_year(fleet_only=True)`.
 

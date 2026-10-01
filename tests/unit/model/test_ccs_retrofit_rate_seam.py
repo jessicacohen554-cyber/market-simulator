@@ -19,7 +19,7 @@ its RGGI carbon adder and was accounted at 0.4149 t/MWh against unabated
 gas_cc's 0.4663. This module is the seam test that table implies: a unit's rate
 **across its retrofit year, through the restoration**.
 
-``docs/handoffs/FINDING-capx-d77-2026-09-06.md``
+``docs/records/forecast/FINDING-capx-d77-2026-09-06.md``
 """
 
 import tempfile

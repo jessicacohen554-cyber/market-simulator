@@ -4,7 +4,7 @@
 `2026-09-12-caiso-275-gascoupling` · **LP spent: ONE year, in ONE shard** (rule 32 `[R-SHARD]` (a):
 the parent never solved). Nothing armed, no `ScenarioConfig` field, no derive re-run, **nothing
 registered** (a 2024-only replay of a 2023–2025 keeper is not a registrable run under rule 16
-`[R-ALLYEARS]`). Pre-registration: `docs/PRECOMMIT-caiso285-instrumented-probe-2026-09-17.md`,
+`[R-ALLYEARS]`). Pre-registration: `docs/records/caiso/PRECOMMIT-caiso285-instrumented-probe-2026-09-17.md`,
 pushed at `b48448cbacc3eabebf57a051039797847ff9cf14` **before** the shard was launched. Every
 threshold, bucket and verdict word below was fixed there.
 
@@ -295,6 +295,6 @@ respected and **no span was launched.**
   extended with this result.
 * **Code changed:** `scripts/lib/bundle_fleet.py` only (§3), a correctness repair to the sanctioned
   zero-LP rebuild route.
-* **Artifacts:** `results/calibration/_caiso285_bridge_candidacy.json` (the full partition, per-unit
-  census and gap table), `results/calibration/_caiso285_belly_2024.json` (the frozen hour set),
+* **Artifacts:** `results/phase0/caiso/_caiso285_bridge_candidacy.json` (the full partition, per-unit
+  census and gap table), `results/phase0/caiso/_caiso285_belly_2024.json` (the frozen hour set),
   `scripts/probes/caiso285_bridge_candidacy.py` (committed before the answer existed).

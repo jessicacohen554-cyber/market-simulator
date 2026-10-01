@@ -21,7 +21,7 @@ from market_sim.model.capacity_evolution.retirements import (
 from scripts.run_capacity_hindcast import build_config
 
 ap = argparse.ArgumentParser(description=__doc__)
-ap.add_argument("--predeclare", default="docs/handoffs/d76/p2_predeclare.json")
+ap.add_argument("--predeclare", default="docs/records/forecast/d76/p2_predeclare.json")
 ap.add_argument("--bundle", nargs="+", default=["PJM=results/hindcast/d76p2-pjm-control"],
                 help="ISO=CONTROL_BUNDLE_DIR pairs.")
 args = ap.parse_args()

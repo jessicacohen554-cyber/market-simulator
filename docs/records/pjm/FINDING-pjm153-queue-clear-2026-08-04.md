@@ -57,7 +57,7 @@ regression.
 **Decision 2 — sign-off on the G-20b within-window tight-hour memo (item 5).**
 The memo owed by `FINDING-guard-falseneg-audit-2026-07-27` §7.2 is **written and
 committed** at
-`results/calibration/MEMO-pjm153-g20b-within-window-tight-hour-2026-08-04.md`.
+`docs/records/pjm/MEMO-pjm153-g20b-within-window-tight-hour-2026-08-04.md`.
 It asks exactly one question and answers none of it:
 
 > the merit-order guard vetoes an outage window when **≥ 90 %** of its hours are
@@ -442,7 +442,7 @@ nowhere in the repository. I filed it as an open verification debt needing a sol
 Re-verified on the rebased head:
 
 * `results/calibration/pjm152_collapse_A` — the bundle exists.
-* `results/calibration/_pjm152_collapse_gates.json` — the gate record exists.
+* `results/phase0/pjm/_pjm152_collapse_gates.json` — the gate record exists.
 * `frontend/data/backcast/registry/2026-08-04-pjm-152-collapse.json` — registered
   on the backcast dashboard (rule 15 honoured).
 

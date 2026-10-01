@@ -71,7 +71,7 @@ none of which has been measured.**
 
 **NORM.** The detector's own documented real-world rate: **EFOR + planned
 ≈ 10–15 %** (`derive_campd_unit_outages.py --merit-order-guard` help text;
-`docs/handoffs/campd-economic-layup-fix-charter-2026-07.md`, which sizes the
+`docs/records/misc/campd-economic-layup-fix-charter-2026-07.md`, which sizes the
 unguarded detector at 23–46 % of every ISO's CC capacity-year).
 
 * **G2 DECLARES THE OVERLAY OVER-BOOKED** iff `booked_share > 0.40` in any year

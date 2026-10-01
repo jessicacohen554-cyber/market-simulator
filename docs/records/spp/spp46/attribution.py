@@ -24,7 +24,7 @@ touched, dE per class, LW price ratio. A second band [0.6, 1.67] is reported as 
 robustness line. Gap-filled rows are left untouched (the pool they draw from would
 also move under a screen; that effect is stated, not modelled).
 
-Usage: uv run python docs/handoffs/spp46/attribution.py <scratch_dir>
+Usage: uv run python docs/records/spp/spp46/attribution.py <scratch_dir>
 """
 import sys
 from pathlib import Path
@@ -35,7 +35,7 @@ sys.path.insert(0, str(REPO / "src"))
 from market_sim.data.fuel.plant_prices import _load_monthly_cache  # noqa: E402
 from market_sim.data.eia923 import plant_month_price_grid  # noqa: E402
 
-OUT = REPO / "docs/handoffs/spp46"; SCR = Path(sys.argv[1])
+OUT = REPO / "docs/records/spp/spp46"; SCR = Path(sys.argv[1])
 BUNDLE = REPO / "results/calibration/spp43_screened_B"
 YEARS = (2023, 2024, 2025); TOL = 0.25
 CLASSES = {"CC_REGULAR": "cc", "CT_PEAKER": "ct", "ST_GAS": "st"}

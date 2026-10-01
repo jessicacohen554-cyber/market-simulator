@@ -22,7 +22,7 @@ Instruments:
 - `scripts/data/derive_campd_unit_outages.py --short-windows --emit-screened-set` (new opt-in output, §2.2).
 - `scripts/probes/_miso273_screened_phase0.py`: fleet-only rebuilds of the keeper recipe per variant, plus the
   identification. Records:
-  - `results/calibration/_miso273_screened_phase0.json` — on the arm's input pair;
+  - `results/phase0/miso/_miso273_screened_phase0.json` — on the arm's input pair;
   - `..._committed_extract.json` — on the committed extract.
 - `data/clean` was built first (`curate_hydro_plant_modes.py --iso MISO`, `curate_coal_stocks.py`,
   `curate_coal_receipts.py`).

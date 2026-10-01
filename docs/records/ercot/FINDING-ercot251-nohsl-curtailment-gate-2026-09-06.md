@@ -177,5 +177,5 @@ makes the §5 repair worth deciding on rather than waiting out.
 
 Diagnosed in session ercot-251 (2026-09-06) from the committed
 `ercot250_2022_touchpoint_carveout` bundle and the loader's own constants; no LP was solved.
-Companion records: `docs/FINDING-ercot249-250-2022-touchpoint-2026-09-05.md` §2 (the touchpoint
+Companion records: `docs/records/ercot/FINDING-ercot249-250-2022-touchpoint-2026-09-05.md` §2 (the touchpoint
 that surfaced the miss) and Addendum 1, and `docs/calibration-log/ercot.md` (ercot-251).

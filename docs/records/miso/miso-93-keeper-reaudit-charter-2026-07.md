@@ -2,7 +2,7 @@
 
 **Status:** pre-registered 2026-07-26, BEFORE any result of this session was read.
 **Lane:** A of the miso-93 handoff — the top-ranked ready item.
-**Parent charter:** `docs/handoffs/campd-economic-layup-fix-charter-2026-07.md` §5
+**Parent charter:** `docs/records/misc/campd-economic-layup-fix-charter-2026-07.md` §5
 (blast radius) + §8 (owner verdict: *"ERCOT / PJM / MISO / CAISO / NYISO replay
 their keepers in-sample (2023–2025, one bundle, rule 16) on the corrected
 envelope, both arms registered (rule 15)"*).

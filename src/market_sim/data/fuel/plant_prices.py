@@ -799,7 +799,7 @@ class _NearbyFuelPrices:
     class with no reporting peers fills exactly as before. Rationale: the
     fuel-group pool is quantity-weighted, so for gas it is CC-burn-dominated
     and prices a non-filing CT ~$1.6/MMBtu below its measured class cost
-    (docs/DIAGNOSIS-miso-july2025-lmp-2026-07.md §6).
+    (docs/records/miso/DIAGNOSIS-miso-july2025-lmp-2026-07.md §6).
     """
 
     def __init__(

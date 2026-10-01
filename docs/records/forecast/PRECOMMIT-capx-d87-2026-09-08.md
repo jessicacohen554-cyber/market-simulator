@@ -448,7 +448,7 @@ closer to the premium legs" would be fitted-mechanism selection and is not among
    family (§3).
 4. The NYISO mechanism-matrix shard cells `ccs_retrofit_screen` and `federal_ces`
    (rule 28 `[R-MECH-MATRIX]` duty b). No new `ScenarioConfig` field ⇒ duty (c) is not engaged.
-5. `docs/handoffs/FINDING-capx-d87-2026-09-08.md` — re-bases the campaign's target-row rows and
+5. `docs/records/forecast/FINDING-capx-d87-2026-09-08.md` — re-bases the campaign's target-row rows and
    **ROUTES** the six ISO policy FINDINGs' `CES-T80` numbers to the SCN desk for re-statement,
    including the two §2.4 corrections. This lane does not re-state them itself.
 
@@ -462,5 +462,5 @@ explicitly in the close, with a plain statement that the bundles will not surviv
 
 ## 9. WHAT THIS PRECOMMIT TOUCHED
 
-`docs/handoffs/PRECOMMIT-capx-d87-2026-09-08.md` — this file. Nothing else: no `src/`, no test,
+`docs/records/forecast/PRECOMMIT-capx-d87-2026-09-08.md` — this file. Nothing else: no `src/`, no test,
 no config, no matrix shard, no registration, no result bundle. Zero LP.

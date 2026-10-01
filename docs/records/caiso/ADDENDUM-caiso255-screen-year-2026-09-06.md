@@ -47,7 +47,7 @@ differenced on the model's own offer arrays.
 > The P1 channel independently agrees (`argmax_y F_p1(y)` = 2023), and the two
 > channels are recorded as agreeing in the artifact's `channels_agree` field.
 
-Evidence: `results/calibration/_caiso254_partition_footprint_phase0.json`.
+Evidence: `results/phase0/caiso/_caiso254_partition_footprint_phase0.json`.
 
 **BOTH artifacts were swapped together.** The keeper carries
 `caiso_offer_surface_conditional = True`, so the conditional ladder is armed

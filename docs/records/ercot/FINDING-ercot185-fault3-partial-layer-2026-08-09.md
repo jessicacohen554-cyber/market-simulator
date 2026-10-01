@@ -13,7 +13,7 @@ authorized as its successor, with G-COAL148 carried live."* Decision rules, the
 construction, the DO-NOT-REDO check, the seam proofs, a binding pre-solve screen
 and the kill gates were pre-registered and pushed **before any measurement or
 derive**
-(`docs/PRECOMMIT-ercot185-fault3-partial-layer-construction-2026-08-09.md`);
+(`docs/records/ercot/PRECOMMIT-ercot185-fault3-partial-layer-construction-2026-08-09.md`);
 the gates are `PRECOMMIT-ercot172` §5 inherited verbatim with **G-COAL148
 carried live** per the ruling. Keeper at session start:
 `2026-08-09-run181-position-tail`, **NOT-YET {C3a, C3b}**.
@@ -65,7 +65,7 @@ G-NEUT is not reached — exactly as it was not reached for C1/C2.
 
 ## 2. Seam proofs and the pre-solve screen — all measured BEFORE the solve
 
-Record: `results/calibration/ercot185_shaped_seam_proof.json`; probe
+Record: `results/phase0/ercot/ercot185_shaped_seam_proof.json`; probe
 `scripts/probes/ercot185_shaped_seam_proof.py`; SP-2/SP-6 additionally asserted
 **inside the deriver** (stop-the-line, the ercot-174 BE-3 precedent).
 

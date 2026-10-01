@@ -1,10 +1,10 @@
 # FINDING — nyiso-175b: the per-unit attribution repair is BUILT and VALIDATED at artifact level, it resolves nyiso-174 §6 item 2's named object, and a NEW blocker — the keeper's tranche input is not reproducible at HEAD — is what stops it becoming a scored run, not anything about the repair itself
 
 **Session:** nyiso-175 (second charter; the first is discharged and merged —
-`docs/FINDING-nyiso175-ct-deficit-two-objects-2026-09-02.md`).
+`docs/records/nyiso/FINDING-nyiso175-ct-deficit-two-objects-2026-09-02.md`).
 **Keeper:** `2026-08-30-nyiso-159-loss-surface`, determination **NOT-YET** on
 {C3a-2025 −11.5 %, C3c}. **Unchanged — no LP ran, so rule 15 registers nothing.**
-**Pre-registration:** `results/calibration/PREREG-nyiso175b-tranche-attribution-repair.md`,
+**Pre-registration:** `docs/records/nyiso/PREREG-nyiso175b-tranche-attribution-repair.md`,
 committed at `22bfe37a` **before** the probe or any derivation was run.
 
 ---
@@ -50,7 +50,7 @@ below are unconfounded:
 
 * **S-0 control** — `derive_thermal_tranches --iso NYISO --years 2023 2024 2025`,
   unrepaired. 79 rows. Committed as
-  `results/calibration/_nyiso175b_tranches_NYISO_S0_control.csv`.
+  `results/phase0/nyiso/_nyiso175b_tranches_NYISO_S0_control.csv`.
 * **ARM** — the same invocation `--per-unit-attribution`. 85 rows. Committed as
   `data/raw/_processed-legacy/thermal_tranches-perunit-NYISO.csv`.
 * **outage companion** — `derive_campd_unit_outages --iso NYISO
@@ -77,7 +77,7 @@ this corpus keeps paying for:
 
 ## 2. The four pre-solve gates
 
-Verdicts from `results/calibration/_nyiso175b_tranche_attribution_repair.json`.
+Verdicts from `results/phase0/nyiso/_nyiso175b_tranche_attribution_repair.json`.
 
 ### 2.1 K1 — the object is the size its predecessor measured: **PASS**
 
@@ -486,10 +486,10 @@ is the one that should change what the next session does first.
 
 | artifact | what it holds |
 |---|---|
-| `results/calibration/PREREG-nyiso175b-tranche-attribution-repair.md` | the four pre-solve gates and the post-solve kills, committed at `22bfe37a` before anything ran |
+| `docs/records/nyiso/PREREG-nyiso175b-tranche-attribution-repair.md` | the four pre-solve gates and the post-solve kills, committed at `22bfe37a` before anything ran |
 | `scripts/probes/nyiso175b_tranche_attribution_repair.py` | the gate probe, incl. `reseat_group` and the K2 amendment |
-| `results/calibration/_nyiso175b_tranche_attribution_repair.json` | all four gate verdicts and the per-plant census |
-| `results/calibration/_nyiso175b_tranches_NYISO_S0_control.csv` | the HEAD-unrepaired control derivation (79 rows) |
+| `results/phase0/nyiso/_nyiso175b_tranche_attribution_repair.json` | all four gate verdicts and the per-plant census |
+| `results/phase0/nyiso/_nyiso175b_tranches_NYISO_S0_control.csv` | the HEAD-unrepaired control derivation (79 rows) |
 | `data/raw/_processed-legacy/thermal_tranches-perunit-NYISO.csv` | the repaired tranche companion (85 rows) |
 | `data/raw/campd-unit-outages-perunit-NYISO.csv` | the repaired outage companion |
 | `src/market_sim/data/campd.py` | `plant_group_hourly_net`, the two guards, `prefer_unit_level` |

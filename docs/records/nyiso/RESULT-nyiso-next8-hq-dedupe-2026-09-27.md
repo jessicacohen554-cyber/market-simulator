@@ -1,7 +1,7 @@
 # RESULT — NYISO-NEXT-8: HQ double count removed from the import-ladder derivation; promoted — 2026-09-27
 
 - **Session:** NYISO-NEXT-8, the orchestrator. No LP ran in this container (rule 32 (a)).
-- **PRECOMMIT:** `docs/PRECOMMIT-nyiso-next8-hq-dedupe-2026-09-27.md`, which holds phase 0, G-DRIFT, the gates and the promotion rule. It was written before any solve.
+- **PRECOMMIT:** `docs/records/nyiso/PRECOMMIT-nyiso-next8-hq-dedupe-2026-09-27.md`, which holds phase 0, G-DRIFT, the gates and the promotion rule. It was written before any solve.
 - **Arm pin:** `8184ca75cbfc4142996b8cc6bb792df04e9c2f70`.
 - **New keeper:** `2026-09-27-nyisonext8-hq-dedupe-span` (bundle `results/calibration/nyisonext8_span`, 2022–2025).
 - **Stamped held-out run:** `2026-09-27-nyisonext8-hq-dedupe-2021` (bundle `results/calibration/nyisonext8_2021`).
@@ -17,7 +17,7 @@
 
 ## 2. Gates (arm vs the NEXT-6 keeper's committed bundles, form 4)
 
-Records: `results/calibration/_nyisonext8_gates.json` and `results/calibration/_nyisonext8_compare_span.txt`.
+Records: `results/phase0/nyiso/_nyisonext8_gates.json` and `results/phase0/nyiso/_nyisonext8_compare_span.txt`.
 
 | | 2021 | 2022 | 2023 | 2024 | 2025 |
 |---|---|---|---|---|---|

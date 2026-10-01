@@ -79,7 +79,7 @@ pre-declared key on the known answer above.
 
 ## 2. The prediction — read off the committed D45 L1 ledgers with HEAD's own resolvers (zero-solve)
 
-Instrument: `docs/handoffs/d48/devintage-positions-2026-09-04.py` (+ rows JSON,
+Instrument: `docs/records/forecast/d48/devintage-positions-2026-09-04.py` (+ rows JSON,
 stdout). It evaluates the SAME resolvers the solve will use
 (`thermal_accreditation_fraction` with config/year threaded,
 `resolve_adequacy_requirement_mw`, `resolve_demand_response_supply_mw`, the R2

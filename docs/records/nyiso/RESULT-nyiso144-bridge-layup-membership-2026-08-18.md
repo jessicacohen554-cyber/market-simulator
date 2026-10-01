@@ -43,7 +43,7 @@ plants whose own meter says they were mothballed.
 | **K6′** forced-share escalation | **PASS without escalating** — every material class's share **falls** |
 
 Scorer `scripts/probes/_nyiso144_layup_ab.py`; record
-`results/calibration/_nyiso144_layup_ab.json`.
+`results/phase0/nyiso/_nyiso144_layup_ab.json`.
 
 ## 3. K2 — THE PREDICTION WAS MADE BEFORE THE SOLVE AND LANDED WITHIN 1.3 %
 

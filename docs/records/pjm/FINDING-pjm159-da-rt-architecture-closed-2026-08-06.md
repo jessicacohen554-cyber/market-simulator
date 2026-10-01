@@ -38,7 +38,7 @@ measurement rather than by assertion — the same mechanism family is `G` in MIS
 ## §1 — K-A1 / K-C1: the DA−RT spread is not a function of anything the model can see
 
 `scripts/probes/_pjm159_dart_predictability.py`;
-`results/calibration/_pjm159_dart_predictability.json`.
+`results/phase0/pjm/_pjm159_dart_predictability.json`.
 
 Both surviving candidates rest on one premise. A second LP pass can differ from
 the first **only through state it can see**, and rule 13's forward test asks
@@ -105,7 +105,7 @@ here. So C-A fails both on measurement and on mandate.
 ## §2 — K-B1: PJM is **not** a λ0 attractor (the pre-identified test, finally run)
 
 `scripts/probes/_pjm159_lambda0_attractor.py`;
-`results/calibration/_pjm159_lambda0_attractor.json`. Reuses pjm-158's loaders
+`results/phase0/pjm/_pjm159_lambda0_attractor.json`. Reuses pjm-158's loaders
 verbatim (`load_curve`, `build_hour_arrays`, `crossing_price`, `gain`,
 `actual_da_price`), so the curve identification is the one the LP itself uses —
 reproduced, not reimplemented.
@@ -256,7 +256,7 @@ DO-NOT-REDO discipline).
 scripts/probes/_pjm159_dart_predictability.py   # §1  K-A1 / K-C1
 scripts/probes/_pjm159_lambda0_attractor.py     # §2  K-B1
 ```
-Committed outputs: `results/calibration/_pjm159_dart_predictability.json`,
+Committed outputs: `results/phase0/pjm/_pjm159_dart_predictability.json`,
 `_pjm159_lambda0_attractor.json`.
 
 Inputs, all committed or in-sample: `data/raw/_validation-source/actual_lmp_hourly_PJM.parquet`;

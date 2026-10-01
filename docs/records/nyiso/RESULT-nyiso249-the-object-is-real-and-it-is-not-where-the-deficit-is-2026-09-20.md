@@ -268,7 +268,7 @@ register** — the keeper's dashboard entry is untouched and correct.
 | `scripts/probes/nyiso249_window_tail_overlap.py` → `_nyiso249_window_tail_overlap.json` | **G-3** | coverage and exposure against the C3c gate's own quantities |
 | `scripts/probes/nyiso249_deficit_coordinates.py` → `_nyiso249_deficit_coordinates.json` | **G-4** | where the deficit is: zone, month, hour, load/gas percentile |
 | `scripts/probes/nyiso249_li_reachability.py` → `_nyiso249_li_reachability.json` | **G-5** | the per-zone bound + the sidecar zone-column gap |
-| `results/calibration/_nyiso249_li_demand_bands.json` | **G-5** | LI demand vs LI supply; band mix in the missed hours |
+| `results/phase0/nyiso/_nyiso249_li_demand_bands.json` | **G-5** | LI demand vs LI supply; band mix in the missed hours |
 | `scripts/probes/nyiso249_window_variants.py` → `_nyiso249_window_variants.json` | **G-6** | W1 / W2 / W3, each with its own coverage |
 
 **Shards launched: none. Bundles produced: none. LP spent: none.** Total cost: one fleet-cache

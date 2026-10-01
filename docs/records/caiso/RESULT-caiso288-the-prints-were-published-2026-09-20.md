@@ -3,7 +3,7 @@
 **Lane:** CAISO calibration · **Date:** 2026-09-20 · **KEEPER PROMOTED** to
 `2026-09-20-caiso-288-citygate-recovery` (bundle `caiso288_gasfix_span`) under the owner ruling
 of this date (*"If so plz promote"*). Charter:
-`docs/PRECOMMIT-caiso288-citygate-catchup-tables-2026-09-20.md`, pushed at
+`docs/records/caiso/PRECOMMIT-caiso288-citygate-catchup-tables-2026-09-20.md`, pushed at
 `35adf93cfcde5020f484b0a1057c5ad9a9115434` **before any shard was launched**. Every gate,
 band and named outcome below was fixed there.
 

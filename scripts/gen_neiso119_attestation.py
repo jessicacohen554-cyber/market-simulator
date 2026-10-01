@@ -1,6 +1,6 @@
 """Emit the neiso-119 calibration attestation for the composite ``neiso119_span``.
 
-neiso-119 (``docs/handoffs/neiso119/PRECOMMIT-neiso119-2026-09-26.md``) replays
+neiso-119 (``docs/records/neiso/neiso119/PRECOMMIT-neiso119-2026-09-26.md``) replays
 the NEISO keeper ``2026-09-26-neiso-118-canal-ct`` (``neiso118_span``) with two
 owner-ruled arms (2026-09-26): ``gas_offer_margin_anchor_vintage`` (the gas
 net-revenue margin identified on the solved year's own delivered gas instead of
@@ -30,8 +30,8 @@ CAL = REPO / "results" / "calibration"
 COMPOSITE = "neiso119_span"
 KEEPER = "neiso118_span"
 KEEPER_ID = "2026-09-26-neiso-118-canal-ct"
-PRECOMMIT = "docs/handoffs/neiso119/PRECOMMIT-neiso119-2026-09-26.md"
-RESULT = "docs/handoffs/neiso119/RESULT-neiso119-2026-09-26.md"
+PRECOMMIT = "docs/records/neiso/neiso119/PRECOMMIT-neiso119-2026-09-26.md"
+RESULT = "docs/records/neiso/neiso119/RESULT-neiso119-2026-09-26.md"
 PINNED = "00d4a7691c2f30c39a72d9d99e31a2ce1d07546f"
 CT_ARTIFACT = "data/raw/_processed-legacy/winter_fuelsec_conduct_NEISO.csv"
 CT_SHA256 = "1952101d29f51222bba9f5b8579a4dccc2e762a76f705238cc525b0a84fb5a58"
@@ -95,7 +95,7 @@ def main() -> int:
         "scripts/replay_keeper.py with --set gas_offer_margin_anchor_vintage=true and "
         "--set neiso_winter_fuelsec_conduct_roster=true (owner rulings 2026-09-26), ONE YEAR "
         f"PER SHARD (rule 36); conduct artifact {CT_ARTIFACT} sha256 {CT_SHA256[:12]}. Every "
-        "leg verified by docs/handoffs/neiso119/shard_check.py at composition. Zero LP in the "
+        "leg verified by docs/records/neiso/neiso119/shard_check.py at composition. Zero LP in the "
         f"parent. Pre-registered in {PRECOMMIT} (pinned {PINNED[:8]}) before any shard "
         f"launched; record {RESULT}."
     )

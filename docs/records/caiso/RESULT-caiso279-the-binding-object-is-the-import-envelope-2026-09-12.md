@@ -2,7 +2,7 @@
 
 **Session caiso-279, 2026-09-12. CAISO only (rule 25 `[R-ISO-SCOPE]`). Two shards, one LP each;
 the parent spent ZERO LP.** Charter:
-`docs/PRECOMMIT-caiso279-dsw-import-gas-regional-basis-2026-09-12.md` (pushed at `0901c503`
+`docs/records/caiso/PRECOMMIT-caiso279-dsw-import-gas-regional-basis-2026-09-12.md` (pushed at `0901c503`
 before either solve). Control: keeper `2026-09-12-caiso-275-gascoupling`, G-CTRL **form 4**, no
 control solve spent. **KEEPER UNCHANGED. NOTHING PROMOTED.**
 

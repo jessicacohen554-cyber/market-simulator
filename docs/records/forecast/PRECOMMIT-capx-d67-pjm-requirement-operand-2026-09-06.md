@@ -8,7 +8,7 @@ Branch `claude/capx-d67-pjm-requirement-operand-18wzjf`, fresh off `origin/main`
 
 **Pushed BEFORE any solve.** Every number below is measured from committed artifacts and the code
 at HEAD; no LP has been run in this lane at the time of this commit. Instrument:
-`docs/handoffs/d67/gdrift_peak_probe.{py,json}`.
+`docs/records/forecast/d67/gdrift_peak_probe.{py,json}`.
 
 ---
 
@@ -94,7 +94,7 @@ This recipe resolves `crossover_solve_year_weather = False`, `weather_year = 202
 the **current** `DEMAND_GROWTH_RATES` table, not a frozen vintage. The moved PJM rate therefore
 lands directly on the operand this lane repairs.
 
-**Measured** (`docs/handoffs/d67/gdrift_peak_probe.py`, zero LP — reproduces the runner's preamble
+**Measured** (`docs/records/forecast/d67/gdrift_peak_probe.py`, zero LP — reproduces the runner's preamble
 and seam exactly; the 2024 row is the weather year, where the growth factor is 1.0 by construction
 and the reproduction is therefore also the probe's own faithfulness check):
 

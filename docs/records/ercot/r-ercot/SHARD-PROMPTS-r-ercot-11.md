@@ -5,7 +5,7 @@ Each shard's launch message names its YEAR and the PINNED SHA (the commit that c
 ## LEG arm-2019
 
 ```text
-SHARD R-ERCOT-11 ARM 2019 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT-11 (docs/handoffs/PRECOMMIT-r-ercot-11-parish-split-2026-09-28.md). CLAUDE.md is binding.
+SHARD R-ERCOT-11 ARM 2019 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT-11 (docs/records/ercot/PRECOMMIT-r-ercot-11-parish-split-2026-09-28.md). CLAUDE.md is binding.
 DATA PROFILE: ercot
 MODEL: Opus/Fable. BUDGET: ~25 min of LP. If you reach 40 min with no bundle, STOP and report.
 
@@ -65,7 +65,7 @@ FINAL MESSAGE — REPORT IN NUMBERS: the SHA you solved at; the pushed commit's 
 ## LEG arm-2020
 
 ```text
-SHARD R-ERCOT-11 ARM 2020 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT-11 (docs/handoffs/PRECOMMIT-r-ercot-11-parish-split-2026-09-28.md). CLAUDE.md is binding.
+SHARD R-ERCOT-11 ARM 2020 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT-11 (docs/records/ercot/PRECOMMIT-r-ercot-11-parish-split-2026-09-28.md). CLAUDE.md is binding.
 DATA PROFILE: ercot
 MODEL: Opus/Fable. BUDGET: ~25 min of LP. If you reach 40 min with no bundle, STOP and report.
 
@@ -125,7 +125,7 @@ FINAL MESSAGE — REPORT IN NUMBERS: the SHA you solved at; the pushed commit's 
 ## LEG arm-2021
 
 ```text
-SHARD R-ERCOT-11 ARM 2021 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT-11 (docs/handoffs/PRECOMMIT-r-ercot-11-parish-split-2026-09-28.md). CLAUDE.md is binding.
+SHARD R-ERCOT-11 ARM 2021 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT-11 (docs/records/ercot/PRECOMMIT-r-ercot-11-parish-split-2026-09-28.md). CLAUDE.md is binding.
 DATA PROFILE: ercot
 MODEL: Opus/Fable. BUDGET: ~25 min of LP. If you reach 40 min with no bundle, STOP and report.
 
@@ -185,7 +185,7 @@ FINAL MESSAGE — REPORT IN NUMBERS: the SHA you solved at; the pushed commit's 
 ## LEG arm-2022
 
 ```text
-SHARD R-ERCOT-11 ARM 2022 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT-11 (docs/handoffs/PRECOMMIT-r-ercot-11-parish-split-2026-09-28.md). CLAUDE.md is binding.
+SHARD R-ERCOT-11 ARM 2022 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT-11 (docs/records/ercot/PRECOMMIT-r-ercot-11-parish-split-2026-09-28.md). CLAUDE.md is binding.
 DATA PROFILE: ercot
 MODEL: Opus/Fable. BUDGET: ~25 min of LP. If you reach 40 min with no bundle, STOP and report.
 
@@ -245,7 +245,7 @@ FINAL MESSAGE — REPORT IN NUMBERS: the SHA you solved at; the pushed commit's 
 ## LEG arm-2023
 
 ```text
-SHARD R-ERCOT-11 ARM 2023 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT-11 (docs/handoffs/PRECOMMIT-r-ercot-11-parish-split-2026-09-28.md). CLAUDE.md is binding.
+SHARD R-ERCOT-11 ARM 2023 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT-11 (docs/records/ercot/PRECOMMIT-r-ercot-11-parish-split-2026-09-28.md). CLAUDE.md is binding.
 DATA PROFILE: ercot
 MODEL: Opus/Fable. BUDGET: ~25 min of LP. If you reach 40 min with no bundle, STOP and report.
 
@@ -305,7 +305,7 @@ FINAL MESSAGE — REPORT IN NUMBERS: the SHA you solved at; the pushed commit's 
 ## LEG arm-2024
 
 ```text
-SHARD R-ERCOT-11 ARM 2024 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT-11 (docs/handoffs/PRECOMMIT-r-ercot-11-parish-split-2026-09-28.md). CLAUDE.md is binding.
+SHARD R-ERCOT-11 ARM 2024 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT-11 (docs/records/ercot/PRECOMMIT-r-ercot-11-parish-split-2026-09-28.md). CLAUDE.md is binding.
 DATA PROFILE: ercot
 MODEL: Opus/Fable. BUDGET: ~25 min of LP. If you reach 40 min with no bundle, STOP and report.
 
@@ -365,7 +365,7 @@ FINAL MESSAGE — REPORT IN NUMBERS: the SHA you solved at; the pushed commit's 
 ## LEG arm-2025
 
 ```text
-SHARD R-ERCOT-11 ARM 2025 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT-11 (docs/handoffs/PRECOMMIT-r-ercot-11-parish-split-2026-09-28.md). CLAUDE.md is binding.
+SHARD R-ERCOT-11 ARM 2025 — ONE ERCOT BACKCAST YEAR, ONE SOLVE. You are a SHARD of parent session R-ERCOT-11 (docs/records/ercot/PRECOMMIT-r-ercot-11-parish-split-2026-09-28.md). CLAUDE.md is binding.
 DATA PROFILE: ercot
 MODEL: Opus/Fable. BUDGET: ~25 min of LP. If you reach 40 min with no bundle, STOP and report.
 

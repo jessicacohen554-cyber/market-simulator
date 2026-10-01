@@ -3,9 +3,9 @@
 **Session 2026-07-18 (CAISO-98) outcome:** derive-first measurement DONE and
 verified; **no keeper** (Mechanism A inert, Mechanism B not built). Keeper stays
 `2026-07-18-caiso-97-evening-trim`. Deliverables committed: the FINDING
-(`results/calibration/FINDING-caiso98-evening-storage-timing-2026-07-18.md`, incl.
+(`docs/records/caiso/FINDING-caiso98-evening-storage-timing-2026-07-18.md`, incl.
 §11 B-leg result), the two probe scripts, and the WP-3 owner-ask
-(`docs/handoffs/caiso-wp3-ctchp-steam-floor-ask-2026-07-18.md`).
+(`docs/records/caiso/caiso-wp3-ctchp-steam-floor-ask-2026-07-18.md`).
 
 The next-session prompt is the fenced block below (paste-ready).
 
@@ -57,7 +57,7 @@ The next-session prompt is the fenced block below (paste-ready).
    +8.4 → lower WITHOUT lowering overnight/evening λ. Gate on measured-anchor
    (no residual scalar, rule 25).
 3. **WP-3 CT_CHP steam-floor level (rule-23 derive) — still PENDING** (filed
-   2026-07-18, `docs/handoffs/caiso-wp3-ctchp-steam-floor-ask-2026-07-18.md`).
+   2026-07-18, `docs/records/caiso/caiso-wp3-ctchp-steam-floor-ask-2026-07-18.md`).
    Independent of storage; owner ruling awaited.
 
 ## Paste-ready next-session prompt

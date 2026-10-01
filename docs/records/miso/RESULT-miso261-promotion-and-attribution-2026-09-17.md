@@ -173,7 +173,7 @@ touch 2020 and may widen it. This session did not test either object and claims 
 ## 5. THE BENCH FUEL-FAMILY ATTRIBUTION IS SETTLED — SEPARATE DOCUMENT
 
 The charter's **first task**. Answered at zero LP, nothing fetched, in
-**`docs/FINDING-miso261-bench-fuel-attribution-2026-09-17.md`**. Headline: the bench is not
+**`docs/records/miso/FINDING-miso261-bench-fuel-attribution-2026-09-17.md`**. Headline: the bench is not
 mis-attributing gas; miso-253's 68.1 TWh differenced a **grid-delivered** benchmark against a
 **full-plant** telemetry cell, and the coal leg is the EIA-930 MISO COL cell reading **17.5-21.1
 TWh below CAMPD in every year** — which `render_calibration_html.py:260` already records. The

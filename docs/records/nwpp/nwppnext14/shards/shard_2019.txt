@@ -5,7 +5,7 @@ MODEL: Opus or Fable. CLAUDE.md is binding (rules 12, 27, 31, 32, 34, 36).
 "A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE."
 
 PIN: b4e567fb1de9a53146730e0e75f95cb8db505c66 (branch claude/nwppnext14). The PRECOMMIT is
-docs/handoffs/PRECOMMIT-nwppnext14-vintage-denominator-2019-2025-2026-09-30.md — read §1, §4, §5 first.
+docs/records/nwpp/PRECOMMIT-nwppnext14-vintage-denominator-2019-2025-2026-09-30.md — read §1, §4, §5 first.
 
 STEP 0 — setup
 - `git rev-parse HEAD` MUST equal the PIN. If not: `git fetch origin claude/nwppnext14 && git checkout --detach b4e567fb1de9a53146730e0e75f95cb8db505c66`. If it still does not match, STOP.

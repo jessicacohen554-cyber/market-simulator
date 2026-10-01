@@ -10,14 +10,14 @@ no `src/market_sim/` change, no scorer change.
 would: the only outcomes on the table were a measurement and a card, and **neither is an arm**, so
 no screen year was pre-registered because there was nothing for a screen to gate.
 
-**PREREG:** `results/calibration/PREREG-nyiso207-floor-coeff-basis-census.md` — committed and
+**PREREG:** `docs/records/nyiso/PREREG-nyiso207-floor-coeff-basis-census.md` — committed and
 pushed **before any number was read** (`c62ef3cc`), with **addendum §A declared POST-HOC and
 labelled as such**, committed **before the check it declares was executed** (§5 below).
 **Instruments:** `scripts/probes/_nyiso207_floor_coeff_basis_census.py` →
-`results/calibration/_nyiso207_floor_coeff_basis_census.json`;
+`results/phase0/nyiso/_nyiso207_floor_coeff_basis_census.json`;
 `scripts/probes/_nyiso207_ct_denominator_check.py` →
-`results/calibration/_nyiso207_ct_denominator_check.json`.
-**Companion:** `docs/DECISION-CARD-nyiso207-floor-coeff-basis-2026-09-06.md`.
+`results/phase0/nyiso/_nyiso207_ct_denominator_check.json`.
+**Companion:** `docs/records/nyiso/DECISION-CARD-nyiso207-floor-coeff-basis-2026-09-06.md`.
 
 **THERE ARE NO RUBRIC FAILURES TO FIX.** NYISO reads **fails 0**. C3c is the ledgered,
 non-downgrading caveat (rubric v3.3 / v3.6) and was **not an objective**. **No metrics file, price
@@ -341,7 +341,7 @@ dispersion alone** — across two derive scripts, two plant classes, three zones
 exposure it rests on (`ST_GAS` 0.351 / 0.343 / 0.268 against the 0.30 cap, 2 of 3 years).
 `DECISION-CARD-nyiso193` and `DECISION-CARD-nyiso206` both remain **UNRULED**. The construction
 question this session measures is handed to the owner in
-`docs/DECISION-CARD-nyiso207-floor-coeff-basis-2026-09-06.md`.
+`docs/records/nyiso/DECISION-CARD-nyiso207-floor-coeff-basis-2026-09-06.md`.
 
 ---
 

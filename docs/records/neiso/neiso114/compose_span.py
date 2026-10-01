@@ -7,13 +7,13 @@ year-stamped files copy, ``run_config_<y>.json`` per leg, ``meta.json`` years /
 gas prices / ``composed_from`` re-spanned, the year-dependent shared benchmark
 frames rebuilt over the span, ``legitimacy_diagnostics.json`` regenerated over
 the composite) — imported, not re-derived. Only the recipe check differs: every
-leg must pass ``docs/handoffs/neiso114/shard_check.py --arm <A|B>`` (keeper +
+leg must pass ``docs/records/neiso/neiso114/shard_check.py --arm <A|B>`` (keeper +
 exactly the arm's PRECOMMIT delta, std extract sha256, classifier hash) and all legs
 must share one solve-surface fingerprint.
 
 Usage::
 
-    uv run python docs/handoffs/neiso114/compose_span.py --arm A \\
+    uv run python docs/records/neiso/neiso114/compose_span.py --arm A \\
         --leg 2019=neiso114a_2019 ... --leg 2025=neiso114a_2025 --out results/calibration/neiso114a_span
 """
 

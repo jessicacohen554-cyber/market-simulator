@@ -3,7 +3,7 @@
 **Session:** T16-A (capacity-expansion / Forecast Finalization track), branch
 `claude/capx-t16a-ladder-repoint`. **Date:** 2026-09-02. **HEAD at launch:** `69b6c8d9`
 (origin/main). **Authorization:** owner ruling **Q27**, capx r#27 sitting, 2026-09-01
-(`docs/handoffs/capx-director-ledger-2026-08.md` §3) — *"RE-POINT T1.6 TO
+(`docs/records/forecast/capx-director-ledger-2026-08.md` §3) — *"RE-POINT T1.6 TO
 `entry_rate_limits`, at the T16 recommendation … Execution = T16-A (Opus; 2 rungs +
 artifact-only re-score, no golden re-solve), HELD until the golden session closes … The
 re-point-vs-amend question (T1.6's cell names an economic condition, not a config field)
@@ -39,7 +39,7 @@ record and were written after.
 
 **Verdict: RE-POINT. Plan §2 is not edited, and does not need to be.**
 
-Plan §2's Tier-1 table (`docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md`,
+Plan §2's Tier-1 table (`docs/records/forecast/forecast-driver-capacity-revenue-audit-plan-2026-07.md`,
 the "Ladder" column) was read live this session. T1.6's cell reads, verbatim:
 
 > **NEISO or CAISO forecast, VRE fleet held short vs long**

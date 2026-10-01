@@ -4,7 +4,7 @@
 **Control** the keeper's committed bundle — `2026-09-16-neiso109-gas-repair`,
 `results/calibration/neiso109_gasrepair_span`, years 2020–2025. **No control LP is spent**
 (G-DRIFT form 4 valid, §4).
-**Phase-0 evidence** `docs/FINDING-neiso110-winter-oil-driver-2026-09-16.md`.
+**Phase-0 evidence** `docs/records/neiso/FINDING-neiso110-winter-oil-driver-2026-09-16.md`.
 
 ---
 

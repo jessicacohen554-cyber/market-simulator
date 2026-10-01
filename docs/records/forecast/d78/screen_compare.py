@@ -3,11 +3,11 @@ read off three bundles' committed ledgers. Zero LP. Grades the PRECOMMIT §3
 screen gates G0-G6 and writes every number the FINDING cites (rule 29(c): the
 bundles are deleted before merge; this JSON and the FINDING are the record).
 
-    uv run python docs/handoffs/d78/screen_compare.py \
+    uv run python docs/records/forecast/d78/screen_compare.py \
         --ctl  results/hindcast/pjm-2021-2023-realized-t1h-d78-control-P \
         --d58  results/hindcast/pjm-2021-2023-realized-t1h-d78-d58-arm \
         --arm  results/hindcast/pjm-2021-2023-realized-t1h-d78-arm \
-        [--years 2022 2023] [--out docs/handoffs/d78/screen_compare.json]
+        [--years 2022 2023] [--out docs/records/forecast/d78/screen_compare.json]
 
 The sector map is the EIA-860 2020-vintage plant table (the gate's own key,
 ``plant_code``), joined exactly as D58's ``ab_compare.py`` did.

@@ -63,7 +63,7 @@ wiring. Recorded here only so a future session does not re-investigate.
 
 ## Cross-references
 
-- `docs/handoffs/nyiso-data-asks-2026-07.md` — the standing NYISO data-ask
+- `docs/records/nyiso/nyiso-data-asks-2026-07.md` — the standing NYISO data-ask
   register (this determination closes the implicit "native outage feed" line;
   it was never a filed ask because CAMPD already covers it).
 - `scripts/data/fetch_caiso_dam_outages.py` — the CAISO instrument this ask asked

@@ -16,7 +16,7 @@ PYTHONPATH=.:src .venv/bin/python scripts/probes/_miso97_chp_sector_btm.py --iso
 PYTHONPATH=.:src .venv/bin/python scripts/probes/_miso97_chp_delivery.py  --iso MISO
 ```
 
-Source lead: `results/calibration/FINDING-caiso128-heat-rate-provenance-2026-07-27.md`.
+Source lead: `docs/records/caiso/FINDING-caiso128-heat-rate-provenance-2026-07-27.md`.
 
 ---
 

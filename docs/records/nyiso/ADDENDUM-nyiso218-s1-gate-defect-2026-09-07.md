@@ -8,7 +8,7 @@ and the number it failed on is given.
 
 Screen year **2023** (declared in the PREREG §5.2 before the solve). Arm bundle
 `results/calibration/_nyiso218_screen_2023`, gitignored per rule 31 `[R-RETAIN]` / rule 29(c).
-Record: `results/calibration/_nyiso218_screen_gates_2023.json`.
+Record: `results/phase0/nyiso/_nyiso218_screen_gates_2023.json`.
 
 | gate | verdict | |
 |---|---|---|

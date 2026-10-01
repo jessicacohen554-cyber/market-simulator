@@ -3,8 +3,8 @@
 **Lane:** caiso-294 · **Date:** 2026-09-20 · **Keeper:** `2026-09-20-caiso-290-leftedge`
 (bundle `xiso8_leftedge_span`, 2022–2025, DETERMINATION CALIBRATED with a single ledgered C3c).
 **Phase 0 LP spent: ZERO** (rule 32 `[R-SHARD]` (a) — the parent never solves).
-Predecessor: `docs/PRECOMMIT-caiso293-chp-steam-duty-window-2026-09-20.md` +
-`docs/RESULT-caiso293-the-chp-steam-floor-is-an-energy-average-2026-09-20.md`.
+Predecessor: `docs/records/caiso/PRECOMMIT-caiso293-chp-steam-duty-window-2026-09-20.md` +
+`docs/records/caiso/RESULT-caiso293-the-chp-steam-floor-is-an-energy-average-2026-09-20.md`.
 
 **This document is pushed BEFORE the ARM B level statistic is computed.** §3 declares the
 percentile ex ante; §5 declares the D-4 outcome ex ante. Nothing in either is swept

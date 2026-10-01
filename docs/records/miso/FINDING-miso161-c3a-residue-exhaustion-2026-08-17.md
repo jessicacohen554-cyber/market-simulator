@@ -189,7 +189,7 @@ evidence (rule 28 DO-NOT-REDO) or tune the residual (rules 13/20/23).
 `_miso161_summer_cushion.py`, `_miso161_peakday_outage_shape.py` (all `ruff`
 clean; the first two are T-1 repoints of pre-registered constructions, the
 third is an identification-materiality measurement). Records
-`results/calibration/_miso161_c3a_decomposition.json`,
+`results/phase0/miso/_miso161_c3a_decomposition.json`,
 `_miso161_summer_cushion.json`, `_miso161_peakday_outage_shape.json`. Keeper
 `2026-08-16-miso-160-wefor-shape`, **unchanged**. Session precondition
 delivered: PR #4044 (the miso-160 branch) merged to main at `bad0807` with a

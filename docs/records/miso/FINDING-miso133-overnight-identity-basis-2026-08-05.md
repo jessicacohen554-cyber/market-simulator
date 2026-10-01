@@ -10,10 +10,10 @@ off `origin/main` at `bb01b7e5`.
 2/3 {C3a, C3c}). Rule 22 `[R-HOLDOUT]`: 2023–2025 only — MISO holds no `complete`
 marker; no 2022 / 2019 / H1-2026 year was solved, scored or read.
 
-**Pre-registration** `results/calibration/PREREG-miso133-overnight-supply-identity-basis-2026-08-05.md`,
+**Pre-registration** `docs/records/miso/PREREG-miso133-overnight-supply-identity-basis-2026-08-05.md`,
 committed and pushed at **`a2be76c6`** *before* any adjudicating statistic.
 **Probe** `scripts/probes/_miso133_overnight_identity_basis.py`; **record**
-`results/calibration/_miso133_overnight_identity_basis.json`.
+`results/phase0/miso/_miso133_overnight_identity_basis.json`.
 
 **Lane:** charter option (b), restricted to the two un-adjudicated rows of
 `FINDING-miso130-c7-night-regime-2026-08-05.md` §4. Option (a) was not taken; §7
@@ -232,7 +232,7 @@ if it were full.
 
 ## 7. Why charter option (a) was not taken
 
-`docs/handoffs/miso-coal-contract-tonnage-data-ask-2026-07.md` §9 (xiso-4, 2026-08-04)
+`docs/records/miso/miso-coal-contract-tonnage-data-ask-2026-07.md` §9 (xiso-4, 2026-08-04)
 had already established that the §8 Form 580 count is **not producible from a standard
 session**. This session re-probed the one cheap discriminator rather than re-deriving
 the whole assessment (rule 28(a) DO-NOT-REDO):

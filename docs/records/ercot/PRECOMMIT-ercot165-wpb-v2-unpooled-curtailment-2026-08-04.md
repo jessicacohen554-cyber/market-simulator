@@ -97,7 +97,7 @@ a fabricated relaxation with no forward analogue (rule 13) — refused. **No
 ## 2. Phase-0 results, declared before the LP (identification, no solve)
 
 Probe `scripts/probes/ercot165_family_split_phase0.py` →
-`results/calibration/ercot165_family_split_phase0.json`.
+`results/phase0/ercot/ercot165_family_split_phase0.json`.
 
 **Vintage duty — this session's OWN match rate, on this session's OWN
 population, on the production curate path's spine

@@ -9,7 +9,7 @@ existed**. No addendum was needed: no registered input changed mid-session.
 
 Instrument: `scripts/probes/_caiso153_offer_classifier_reid.py`
 (`curate` / `diagnose` / `derive`). Outputs
-`results/calibration/caiso153_classifier_reid.json`,
+`results/phase0/caiso/caiso153_classifier_reid.json`,
 `caiso153_classifier_slopes.csv`, `caiso153_P035_TS/`,
 `caiso153_shipped_verify/`.
 

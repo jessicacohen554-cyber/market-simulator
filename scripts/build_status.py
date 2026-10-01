@@ -724,7 +724,7 @@ def build_part(iso: str) -> dict | None:
     # touching the verdict, and it never restates or softens a magnitude — every
     # criterion keeps reporting its own number from the scorer. Added by
     # ercot-210 for the ERCOT card-X item X-2 signature (Door C of
-    # docs/ASSESSMENT-ercot209-2023-scarcity-calibration-path-2026-08-15.md).
+    # docs/records/ercot/ASSESSMENT-ercot209-2023-scarcity-calibration-path-2026-08-15.md).
     if rec.get("standing_note"):
         verdict["standing_note"] = rec["standing_note"]
     # Owner-declared TOUCHPOINT designation (the shard's "frontier_touchpoint"

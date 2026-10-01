@@ -19,7 +19,7 @@ solves all seven.
 
 Instruments:
 - `scripts/probes/_miso272_block_phase0.py`, a fleet-only rebuild of the keeper recipe per variant.
-- Record: `results/calibration/_miso272_block_phase0.json`.
+- Record: `results/phase0/miso/_miso272_block_phase0.json`.
 - The raw census came from the EIA-860 operable sheets of every vintage.
 
 ### 2.1 The defect

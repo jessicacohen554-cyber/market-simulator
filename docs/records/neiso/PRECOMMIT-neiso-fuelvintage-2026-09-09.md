@@ -47,7 +47,7 @@ at exactly 0 decimals of movement.**
 
 ### 1b. The retiree window is EXACTLY inert in 2023-2025 — charter task 3, discharged at the input layer
 
-This one was **at genuine risk**. `docs/FINDING-pjm-retiree-window-redistribution-2026-09-09.md`
+This one was **at genuine risk**. `docs/records/pjm/FINDING-pjm-retiree-window-redistribution-2026-09-09.md`
 proved the "zero effect on 2023-2025 by construction" claim FALSE for PJM (720 MW of coal retired in
 May 2020 redistributed onto live siblings at W H Sammis) and tabulated **NEISO's exposure at 521.5 MW
 — Mystic Generating Station**, warning that "each ISO must measure its own rather than assume the
@@ -79,7 +79,7 @@ joint-attribution problem PJM's §5 item 2 has to live with does not arise here.
 **The audit cannot be run as specified, for the same reason it could not be run in PJM's lane.**
 `neiso106_offerlevel/meta.json` records `git_sha: 70ee7fca`, and that object **does not exist in this
 repository** (`git cat-file -t 70ee7fca` → `fatal: Not a valid object name`). The 2026-08-16 history
-rewrite (`docs/FINDING-history-rewrite-2026-08-16.md`) invalidated pre-rewrite short shas, and
+rewrite (`docs/records/governance/FINDING-history-rewrite-2026-08-16.md`) invalidated pre-rewrite short shas, and
 `docs/governance/citation-commit-map.txt` carries no mapping for this one. The bundle also predates
 capx D79 and so carries no `solve_surface.json`. **There is no auditable base, so G-CTRL form 4
 cannot be certified in its literal form. Stated, not worked around.**
@@ -124,7 +124,7 @@ claimed by this session.
 
 ## 4. THE ZERO-LP INVESTIGATION — settled, and it is the session's headline
 
-`docs/FINDING-neiso-index-vs-delivered-gas-2026-09-09.md`. The 3.24× January-2023 disagreement
+`docs/records/neiso/FINDING-neiso-index-vs-delivered-gas-2026-09-09.md`. The 3.24× January-2023 disagreement
 between the ISO-NE Algonquin index ($4.73) and the EIA N3045 MA/CT/RI/ME/NH blend ($15.35) is
 **settled in the index's favour by a physical falsification**: over 84 months the index never once
 implies a marginal heat rate below 7.99 MMBtu/MWh, while the N3045 blend implies one below NEISO's

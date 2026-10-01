@@ -1,20 +1,20 @@
 # FINDING — capx D85: key-provenance audit of the 15 non-reproducible committed `cache_key`s
 
 > **ANNOTATION (capx D85-R, 2026-09-07) — the instrument MOVED; every measurement below stands.**
-> §5's recommended repairs (ii) and (v) are landed. `docs/handoffs/d85/key_provenance_census.py` was
+> §5's recommended repairs (ii) and (v) are landed. `docs/records/forecast/d85/key_provenance_census.py` was
 > promoted verbatim to `scripts/lib/key_provenance.py` (library) + `scripts/check_key_provenance.py`
 > (CLI gate), the derivation of the 15 is committed as the checked record
 > `docs/governance/key-provenance-exceptions.json`, and the census now reports BOTH key
 > constructions. **§7's second command is therefore dead — use `scripts/check_key_provenance.py`.**
 > Nothing else here is amended: no key, bundle, registration, flip or surface declaration was
-> changed, and this lane's own measurement record `docs/handoffs/d85/key-provenance-census.json`
-> is untouched evidence. See `docs/handoffs/FINDING-capx-d85r-record-repairs-2026-09-07.md`.
+> changed, and this lane's own measurement record `docs/records/forecast/d85/key-provenance-census.json`
+> is untouched evidence. See `docs/records/forecast/FINDING-capx-d85r-record-repairs-2026-09-07.md`.
 
 **Session:** capx D85 (owner ruling **Q59**, capx ledger §0bb.3(a), r#57). **Model:** Fable.
 **Branch:** `claude/capx-d85-key-provenance-etmyjh`, fresh off `origin/main` at `db0c1d85`
 (2026-09-07). **DATA PROFILE:** code. **An AUDIT: nothing committed was rewritten, re-registered,
-deleted or solved.** Instrument and record: `docs/handoffs/d85/key_provenance_census.py` →
-`docs/handoffs/d85/key-provenance-census.json`.
+deleted or solved.** Instrument and record: `docs/records/forecast/d85/key_provenance_census.py` →
+`docs/records/forecast/d85/key-provenance-census.json`.
 
 ---
 
@@ -122,7 +122,7 @@ recorded the request rather than the resolution (§3.4).
 
 `caiso_offer_surface_measured_ungrounded` landed in `aebeb60e` (caiso-231) **without** its
 `_CACHE_KEY_OPTIONAL_FIELDS` entry and was registered on **2026-09-02** by the CI-red repair lane
-(`scenarios.py` lines 1168–1180, `docs/FINDING-ci-red-repair-2026-09.md`). The six bundles solved
+(`scenarios.py` lines 1168–1180, `docs/records/misc/FINDING-ci-red-repair-2026-09.md`). The six bundles solved
 2026-09-01 (03:19 → 22:04) on trees where the field existed unregistered, so the solving code
 **hashed** it at `False`; today's rule **drops** it at `False`. Un-dropping that one field
 reproduces all six literals, and each also reproduces under its own vintage's rules. The record
@@ -310,7 +310,7 @@ for s in 54ca19ae0782871bd4adbcb482bc531a66618402 9e56f0fecd861b79bae12a2049a049
 .venv/bin/python scripts/probes/capxd76arm_default_flip_key_census.py --variant b   # 214 / 169 / 30 / 15
 # SUPERSEDED by capx D85-R — the instrument now lives in scripts/ and gates against
 # the committed exception record. The line below is kept as the historical command.
-#   .venv/bin/python docs/handoffs/d85/key_provenance_census.py \
-#       --out docs/handoffs/d85/key-provenance-census.json                          # exit 0, 0 unclassified
+#   .venv/bin/python docs/records/forecast/d85/key_provenance_census.py \
+#       --out docs/records/forecast/d85/key-provenance-census.json                          # exit 0, 0 unclassified
 .venv/bin/python scripts/check_key_provenance.py                                    # exit 0, 0 UNKNOWN
 ```

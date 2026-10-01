@@ -2,7 +2,7 @@
 
 **Lane:** NWPP-NEXT-7, lever 1 of `HANDOFF-nwppnext7-2026-09-26.md`. **LP spent: none.** No shard was launched.
 **Keeper read:** #13 `2026-09-26-nwppnext6-path76-ctrederive` (committed bundle, run payload and benchmark).
-**Probe:** `scripts/probes/_nwppnext7_cc_long_census.py` → `results/calibration/_nwppnext7_cc_long_census.json`.
+**Probe:** `scripts/probes/_nwppnext7_cc_long_census.py` → `results/phase0/nwpp/_nwppnext7_cc_long_census.json`.
 
 ## 1. Answer
 

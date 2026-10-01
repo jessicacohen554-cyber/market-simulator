@@ -1,8 +1,8 @@
 # P-2C — Penetration-indexed ELCC curves for wind/solar (CR-3.1) — 2026-07-12
 
-**Session.** P-2C of `docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md`
+**Session.** P-2C of `docs/records/forecast/forecast-driver-capacity-revenue-audit-plan-2026-07.md`
 (§3.4.1), building on the P-2B adopted basis (Option A — per-ISO
-published-basis consistency, `docs/handoffs/accreditation-basis-memo-2026-07-12.md`
+published-basis consistency, `docs/records/misc/accreditation-basis-memo-2026-07-12.md`
 §4.1) and the P-0B `capacity-market-elcc` datatype
 (`data/raw/capacity-market/elcc/`). Replaces the flat generic
 `RENEWABLE_CAPACITY_CREDIT` wind 0.16 / solar 0.18 in the adequacy ledger with
@@ -118,7 +118,7 @@ duration-ELCC/saturation/dilution stack (rule 19). Reconciling
 First real read (P-1A's round crashed all three rungs on #2063 and the
 metric was a SKIP placeholder). ERCOT 2026–2030, legacy bins, seeds
 {5, 15, 25} GW via the storage-deployment pace mapping; report
-`docs/handoffs/driver-battery-ercot-2026-07-12.md`:
+`docs/records/ercot/driver-battery-ercot-2026-07-12.md`:
 
 | rung | final storage fleet | marginal accreditation (ELCC₄ₕ × saturation × dilution) | fleet-avg ELCC | long-duration share of new builds |
 |---|---|---|---|---|

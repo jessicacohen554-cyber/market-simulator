@@ -1,7 +1,7 @@
 # PRECOMMIT — capx lane D17: MISO's missing non-coal economic exit channel
 
 **Lane:** capx D17 (r#22 relaunch, dispatched as D17R), charter
-`docs/handoffs/capx-director-prompt-pack-2026-08.md` §D17.
+`docs/records/forecast/capx-director-prompt-pack-2026-08.md` §D17.
 **Session date:** 2026-09-01. **Branch:** `claude/capx-d17r-miso-exit-channel-ngkyxk`.
 **Discipline:** PRECOMMIT-FIRST — this document is pushed BEFORE any measurement. Phase 0 is
 ZERO-SOLVE (no LP solve, no re-score, no bundle regeneration); every number in the finding
@@ -199,7 +199,7 @@ code + committed inputs without a solve, that gap is REPORTED and the measuremen
 
 ## 6. Exit contract
 
-`docs/handoffs/FINDING-capx-d17-miso-exit-channel-2026-09-01.md` with the attribution,
+`docs/records/forecast/FINDING-capx-d17-miso-exit-channel-2026-09-01.md` with the attribution,
 each thread's verdict against its own frozen kill, the routed repairs (priced,
 admissibility stated per rules 13/21, not built), and the explicit MISO-specific vs
 shared-machinery statement. Both documents pushed per CLAUDE.md Git & Pushing (fresh off

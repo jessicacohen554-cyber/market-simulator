@@ -6,7 +6,7 @@ below is either read off committed artifacts, computed from `src/` at head, or
 measured by the one instrumented run this session spent.
 
 **The question (inherited, not re-argued):**
-`docs/handoffs/ffr-3s-cod-shifted-scoring-2026-08-04.md` §6 — MISO's registered
+`docs/records/forecast/ffr-3s-cod-shifted-scoring-2026-08-04.md` §6 — MISO's registered
 T1-H leg `miso-2021-2025-realized-ffr3a3` reports **solar model 0.0 GW vs actual
 18.649 GW (−100 %)**, and FFR-3S proved the COD-shifted scoring basis cannot
 explain a zero: every decision cohort whose COD lands inside the window decided

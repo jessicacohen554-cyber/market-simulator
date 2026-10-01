@@ -4,11 +4,11 @@
 `claude/nyiso-hydro-within-month-cq14o1`, on `main` at `ad78cc3e`. **Date:** 2026-09-07.
 **Keeper:** `2026-09-07-nyiso-213-summer-seam` — **untouched. Nothing armed, screened, solved or
 registered; no marker moved; no matrix cell letter changed; no held-out year spent.**
-**ZERO LP.** **PREREG:** `results/calibration/PREREG-nyiso219-hydro-daily-driver-data-question.md`,
+**ZERO LP.** **PREREG:** `docs/records/nyiso/PREREG-nyiso219-hydro-daily-driver-data-question.md`,
 committed and pushed **before any number below was read**.
 **Instruments (both committed, both deterministic — re-running each reproduces its JSON
 byte-identically):** `scripts/probes/nyiso219_hydro_daily_driver_census.py` →
-`results/calibration/_nyiso219_hydro_daily_driver_census.json`;
+`results/phase0/nyiso/_nyiso219_hydro_daily_driver_census.json`;
 `scripts/probes/nyiso219_posthoc_overresponse.py` →
 `_nyiso219_posthoc_overresponse.json`; cached source data
 `_nyiso219_usgs_daily_discharge.csv.gz` (USGS NWIS, public domain).

@@ -207,7 +207,7 @@ the top-100-hour ratio (2.7–3.2×), because the peak band prices only the top 
 sized on the whole tail would blow C3a. **This number is now frozen.**
 
 **Scope — generated deterministically from the keeper's own `run_config.json`, never hand-typed**
-(`results/calibration/nyiso228_peak_x150.json`, committed with this doc): the 10 router-valid classes
+(`results/phase0/nyiso/nyiso228_peak_x150.json`, committed with this doc): the 10 router-valid classes
 that carry a `peak` entry.
 
 ```
@@ -224,7 +224,7 @@ registered `peak` band** — inventing one would be a NEW value, which rule 1(a)
 is a known limit on the channel's reach, not an oversight. The keeper's `offer_curve_overrides` is
 `{}`, so `--offer-curve-json` replaces nothing.
 
-**Delta:** `--offer-curve-json results/calibration/nyiso228_peak_x150.json`
+**Delta:** `--offer-curve-json results/phase0/nyiso/nyiso228_peak_x150.json`
 
 ### 3.2 ARM B — a DIAGNOSTIC, and it is declared as one
 

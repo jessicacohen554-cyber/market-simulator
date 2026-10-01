@@ -10,10 +10,10 @@ off `origin/main` at `57120845`.
 caveats 2/3 {C3a, C3c}). Rule 22 `[R-HOLDOUT]`: 2023–2025 only — MISO holds no
 marker; no 2022 / 2019 / H1-2026 year was solved, scored or read.
 
-**Pre-registration** `results/calibration/PREREG-miso134-ct-peaker-night-order-screen-2026-08-05.md`,
+**Pre-registration** `docs/records/miso/PREREG-miso134-ct-peaker-night-order-screen-2026-08-05.md`,
 committed and pushed at **`06918ca1`** *before* any adjudicating statistic.
 **Probe** `scripts/probes/_miso134_ct_night_order_screen.py`; **record**
-`results/calibration/_miso134_ct_night_order_screen.json`.
+`results/phase0/miso/_miso134_ct_night_order_screen.json`.
 
 **Lane:** charter option **(a)** — the new-evidence ORDER-dimension screen on the
 `CT_PEAKER` overnight row of `FINDING-miso133-overnight-identity-basis-2026-08-05.md`
@@ -294,7 +294,7 @@ defect*.**
    `gas_offer_margin_zonal_anchor` (MISO `I`).
 7. **The standing continuation for C7-2025 is unchanged**: the coal offer LEVEL
    route via the ex-ante contract-tonnage data ask
-   (`docs/handoffs/miso-coal-contract-tonnage-data-ask-2026-07.md`), still
+   (`docs/records/miso/miso-coal-contract-tonnage-data-ask-2026-07.md`), still
    environment-blocked on the Form 580 count and calendar-blocked until
    2026-10-30, with the **Michigan PSCR state lead still UNSPENT** — charter
    option (b), untouched by this session and inherited exactly as the ask left

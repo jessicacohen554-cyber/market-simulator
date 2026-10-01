@@ -3,7 +3,7 @@
 **Lane.** LANE 2 of the miso-92 handoff: *"READ THE MEMORY TELEMETRY (still
 unread). Do NOT propose a fourth story — TAKE THE MEASUREMENT."* Charter, written
 before any telemetry line existed to look at:
-`docs/handoffs/miso-92-memory-attribution-charter-2026-07.md`.
+`docs/records/miso/miso-92-memory-attribution-charter-2026-07.md`.
 
 **Keeper `2026-07-25-miso-88-egrid-hr` UNCHANGED. Determination UNCHANGED:
 CALIBRATED-WITH-CAVEATS, 3/3 ledgered caveats.** No scoring criterion is touched

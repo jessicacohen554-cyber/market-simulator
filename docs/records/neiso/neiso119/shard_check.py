@@ -1,6 +1,6 @@
 """neiso-119 shard self-check (zero LP): is this leg the NEISO keeper replayed with the two owner-ruled arms?
 
-Adapted from ``docs/handoffs/neiso118/shard_check.py``. Run by each neiso-119
+Adapted from ``docs/records/neiso/neiso118/shard_check.py``. Run by each neiso-119
 shard AFTER its solve and BEFORE it pushes (rule 32(c)(4)). The keeper is
 ``results/calibration/neiso118_span`` (``2026-09-26-neiso-118-canal-ct``),
 which carries a ``run_config_<Y>.json`` for every year 2019-2025. Checks:
@@ -22,7 +22,7 @@ Exit 0 when every check passes, 1 otherwise; a failing shard does not push.
 
 Usage::
 
-    python docs/handoffs/neiso119/shard_check.py --leg results/calibration/neiso119_<Y> --year <Y>
+    python docs/records/neiso/neiso119/shard_check.py --leg results/calibration/neiso119_<Y> --year <Y>
 """
 
 from __future__ import annotations
@@ -40,7 +40,7 @@ for p in (str(ROOT), str(ROOT / "src")):
         sys.path.insert(0, p)
 
 KEEPER = ROOT / "results/calibration/neiso118_span"
-#: Solve-year gas-offer-margin anchors (docs/handoffs/neiso119/lp_input_diff_<Y>.json).
+#: Solve-year gas-offer-margin anchors (docs/records/neiso/neiso119/lp_input_diff_<Y>.json).
 ANCHOR = {
     2019: 3.1751,
     2020: 2.0025,

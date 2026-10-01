@@ -254,7 +254,7 @@ Also routed:
 - PJM's `economic_retirement_screen` cell gains the D58 evidence.
 - **Both screen bundles are deleted from `results/hindcast/` before this PR merges.** Every number
   this lane will ever cite is in this document and in the committed instruments
-  (`docs/handoffs/d58/census_probe.json`, `keys_probe.json`, `screen_compare.json`); git history is
+  (`docs/records/forecast/d58/census_probe.json`, `keys_probe.json`, `screen_compare.json`); git history is
   the record for the bytes (rule 15's delete-not-archive discipline, rule 29(c)).
 - **Nothing is registered on either dashboard.** Rule 29 clause (2) forbids registering a screen
   bundle, and the full span — the only thing that would have been registered — was never solved.
@@ -291,11 +291,11 @@ no parameter value.**
 
 ```
 uv run python scripts/regenerate_clean.py
-bash docs/handoffs/d58/run_screen.sh          # both legs, HEAD-guarded, ~22 min
-uv run python docs/handoffs/d58/ab_compare.py \
+bash docs/records/forecast/d58/run_screen.sh          # both legs, HEAD-guarded, ~22 min
+uv run python docs/records/forecast/d58/ab_compare.py \
     results/hindcast/pjm-2021-2023-realized-t1h-d58-screen-control \
     results/hindcast/pjm-2021-2023-realized-t1h-d58-screen-arm \
-    docs/handoffs/d58/screen_compare.json
-uv run python docs/handoffs/d58/census_probe.py    # the pre-solve census
-uv run python docs/handoffs/d58/keys_probe.py      # the keys, at HEAD
+    docs/records/forecast/d58/screen_compare.json
+uv run python docs/records/forecast/d58/census_probe.py    # the pre-solve census
+uv run python docs/records/forecast/d58/keys_probe.py      # the keys, at HEAD
 ```

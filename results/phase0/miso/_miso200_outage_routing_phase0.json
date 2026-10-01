@@ -3,7 +3,7 @@
  "session": "miso-200",
  "keeper_bundle": "miso198_oom_B",
  "run_id": "2026-09-01-miso-198-oomlevel",
- "prereg": "results/calibration/PREREG-miso200-outage-routing-mixedgas-2026-09-02.md",
+ "prereg": "docs/records/miso/PREREG-miso200-outage-routing-mixedgas-2026-09-02.md",
  "frozen_lines": {
   "L1a_min_misrouted_mw": 500.0,
   "L1a_min_years": 2,

@@ -249,7 +249,7 @@ declaration. **None of this requires spending the locked tier, and all of it sho
 ---
 
 *Precedent for a NOT-YET-on-the-merits recommendation:
-`results/calibration/ASSESSMENT-neiso87-declaration-2026-08-06.md`.
+`docs/records/neiso/ASSESSMENT-neiso87-declaration-2026-08-06.md`.
 Immediate predecessor for NYISO: `ASSESSMENT-nyiso142-final-readiness-2026-08-17` (same day,
 pre-v3.3 framing); this assessment independently re-verifies its grounds 1 and 3 at HEAD, adds
 the v3.3 determination analysis (§1) and the touchpoint-loop finding (§4).*

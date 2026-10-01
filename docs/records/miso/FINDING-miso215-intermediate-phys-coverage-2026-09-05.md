@@ -7,7 +7,7 @@ created, no matrix row added, no cell verdict changed.** PREREG
 `PREREG-miso215-intermediate-phys-2026-09-05.md` pushed **BLIND** at `cae766ec`, before any
 adjudicating statistic of this session and before any arm was designed. Probe
 `scripts/probes/_miso215_intermediate_phys_phase0.py` → record
-`results/calibration/_miso215_intermediate_phys.json`. Rule 22 `[R-HOLDOUT]`: 2023–2025
+`results/phase0/miso/_miso215_intermediate_phys.json`. Rule 22 `[R-HOLDOUT]`: 2023–2025
 only (the probe hard-asserts it).
 
 ---

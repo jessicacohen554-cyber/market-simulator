@@ -1,7 +1,7 @@
 # PRECOMMIT — NYISO-NEXT-16: re-test `nyiso_iroquois_winter_spread` under the cutset link — 2026-09-30
 
 - **Session:** NYISO-NEXT-16, the orchestrator. This container runs no LP (rule 32 (a)).
-- **Phase 0:** `docs/FINDING-nyiso-next16-c3b-2022-phase0-2026-09-30.md`.
+- **Phase 0:** `docs/records/nyiso/FINDING-nyiso-next16-c3b-2022-phase0-2026-09-30.md`.
 - **Owner decision card (this session):** "Re-test, 5 yrs".
 - **Queue:** item 1 (C3b 2022). Phase 0 splits it into winter under-pricing (48 % of the squared error) and Upstate_West shoulder over-pricing (41 %). It rejects the CENTRAL EAST distribution-factor cap ex ante (no solve).
 - **Rule 28 (re-test of an R cell):**

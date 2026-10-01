@@ -1,7 +1,7 @@
 # ADDENDUM — pjm-166 independently corroborated, and two hypotheses foreclosed
 
 Session: BC-TOUCHPOINT-2022-PJM, 2026-09-06 (branch `claude/bc-touchpoint-2022-iso-vp92q8`).
-Parent: `results/calibration/FINDING-pjm166-c1-object-phase0-2026-09-06.md` (landed, `ac7ceab0`).
+Parent: `docs/records/pjm/FINDING-pjm166-c1-object-phase0-2026-09-06.md` (landed, `ac7ceab0`).
 Keeper `2026-08-15-pjm-162-inputclock`; touchpoint `2026-09-05-pjm-2022-2021-touchpoints`.
 
 **No solve, no config change, no mechanism armed. Nothing tuned to 2021 or 2022.**

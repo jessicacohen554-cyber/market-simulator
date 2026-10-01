@@ -209,7 +209,7 @@
    "ST1"
   ]
  ],
- "prereg": "results/calibration/PREREG-neiso80-chp-scope-gate-and-steam-part-2026-08-04.md",
+ "prereg": "docs/records/neiso/PREREG-neiso80-chp-scope-gate-and-steam-part-2026-08-04.md",
  "presence_resolved": "REPRESENTED",
  "q1_bases_agree": true,
  "q3_predicate_match": true,

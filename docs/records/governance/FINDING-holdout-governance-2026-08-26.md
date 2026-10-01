@@ -155,7 +155,7 @@ PASS including **D-6 holdout quarantine — PASS**.
 
 ### 1.4 Records closed by ruling 1
 
-- `docs/handoffs/campd-economic-layup-fix-charter-2026-07.md` — **§10 CLOSED
+- `docs/records/misc/campd-economic-layup-fix-charter-2026-07.md` — **§10 CLOSED
   WITH CAUSE** (ruling verbatim, the honest §7-clause caveat, the open-seam
   cost, the execution list, and what the closure does NOT do); header status
   updated; §6's freeze statement annotated as superseded with the original
@@ -205,7 +205,7 @@ found.**
 ## 3. Ruling 3 (card 10) — decision-1 acknowledged CLOSED-OVERTAKEN
 
 The owner acknowledged **decision-1** (the `forecast_xyear_warmstart` default
-flip, `docs/handoffs/perf-a-warmstart-decision-memo-2026-08.md`) as
+flip, `docs/records/governance/perf-a-warmstart-decision-memo-2026-08.md`) as
 **CLOSED — OVERTAKEN BY EVENTS** and dropped it from the owner decision queue.
 The substance was decided at K.3 (D-9 flipped the default ON; D-10 disarmed the
 forecast lane through `shipped_forecast_xyear_warmstart()`; no flip ships) and

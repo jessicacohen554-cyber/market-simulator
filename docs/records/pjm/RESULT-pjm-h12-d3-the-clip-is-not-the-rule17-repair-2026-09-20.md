@@ -3,7 +3,7 @@
 **Session:** pjm-h12 · **Branch:** `claude/pjm-h12-midcurve-seam-ar8wcb` · **ZERO LP IN THE PARENT**
 (rule 32 `[R-SHARD]` (a)) — six shards, one year each (rule 36 `[R-YEAR-ISOLATION]` (a)), each
 solving ARM + CONTROL at pinned SHA `65ab6205c40a3d5703f084bf747f2b132eee5c28`.
-**CHARTER:** `docs/handoffs/PRECOMMIT-pjm-h12-2026-09-20.md` — **every gate below was fixed there
+**CHARTER:** `docs/records/pjm/PRECOMMIT-pjm-h12-2026-09-20.md` — **every gate below was fixed there
 before any solve, and none was re-read or adjusted after a number landed.**
 **KEEPER UNCHANGED:** `2026-09-19-pjm-h11-c1seam-span` stands. Nothing registered, nothing pruned.
 

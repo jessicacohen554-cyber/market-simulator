@@ -15,11 +15,11 @@ the same over-build). NO tuning, NO arming beyond the measurement arm, NO
 keeper contact, NO backcast-registry touch.
 
 **Evidence cited, never re-derived:**
-`docs/handoffs/ffr-8b-rebase-dispersion-2026-08-09.md` §2.3 (the additions
+`docs/records/forecast/ffr-8b-rebase-dispersion-2026-08-09.md` §2.3 (the additions
 METRIC passes at −5.0 % — the BASE seeding is the error), §3 (the B̃→B
 storage-term step), §4 (the de-prioritization evidence);
-`docs/handoffs/ffr-3v-fix-2026-08-08.md` (the pattern mirrored);
-`docs/handoffs/ffr-4d-caiso-fleet-vintage-2026-08-04.md` §5 (the
+`docs/records/forecast/ffr-3v-fix-2026-08-08.md` (the pattern mirrored);
+`docs/records/forecast/ffr-4d-caiso-fleet-vintage-2026-08-04.md` §5 (the
 `storage_measured_base_fleet` machinery REUSED, not parallel-built), §7 D-3 and
 D-5 (the ERCOT scalar and the five-ISO scalar exposure, routed there to this
 judgment).
@@ -181,7 +181,7 @@ bundle).
 
 **Reproduction gate (control).** The control is expected to reproduce
 **FFR-8B §2 BY CONTENT**: its read set (the §1.4 probes below) against the
-committed `docs/handoffs/ffr-8b/rebase-reads-2026-08-09.json` +
+committed `docs/records/forecast/ffr-8b/rebase-reads-2026-08-09.json` +
 `e1-dispersion-2026-08-09.json`. Reproduction failure is diagnosed before the
 treated arm is compared to anything.
 
@@ -302,7 +302,7 @@ below as "control" is therefore also the re-verified baseline.
 Registered: `ercot-2021-2025-t1ff-armr-ffr9a-control` and
 `ercot-2021-2025-t1ff-armr-ffr9a-storageseed` (hindcast namespace,
 `meta.kind="full_forward"`). Probe records:
-`docs/handoffs/ffr-9a/{storage-trajectory,rebase-reads,e1-dispersion}-{control,treated}.json`.
+`docs/records/forecast/ffr-9a/{storage-trajectory,rebase-reads,e1-dispersion}-{control,treated}.json`.
 
 ## 3. The pre-registered reads
 

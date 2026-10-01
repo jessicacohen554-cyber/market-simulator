@@ -11,7 +11,7 @@ unchanged: **NOT-YET on C3a-2025 alone**, C3c the single ledgered caveat.
 
 Instrument (read-only, reproducing from committed artifacts + measured series):
 `scripts/probes/_miso182_south_export_driver.py` →
-`results/calibration/_miso182_south_export_driver.json`.
+`results/phase0/miso/_miso182_south_export_driver.json`.
 
 ## 0. The verdict
 
@@ -445,7 +445,7 @@ cd <repo root> && uv run --no-project \
 
 Reads `data/raw/eia-930-interchange/MISO interchange hourly.parquet`,
 `data/raw/_validation-source/{actual_lmp_hourly_MISO,actual_lmp_hourly_zonal_MISO}.parquet`,
-and the committed `results/calibration/_miso174_seam_overimport_decomposition.json`
+and the committed `results/phase0/miso/_miso174_seam_overimport_decomposition.json`
 (model side; the `miso169_gated_A` `unit_hourly` bundle is pruned). Record:
-`results/calibration/_miso182_south_export_driver.json`. PREREG:
+`results/phase0/miso/_miso182_south_export_driver.json`. PREREG:
 `PREREG-miso182-south-export-driver-2026-08-24.md` (commit `50efc4d`).

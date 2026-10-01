@@ -1,6 +1,6 @@
 {
  "probe": "entry_volume_rule_compare",
- "lane": "D11-R (docs/handoffs/FINDING-capx-d11r-entry-volume-rule-2026-08-30.md)",
+ "lane": "D11-R (docs/records/forecast/FINDING-capx-d11r-entry-volume-rule-2026-08-30.md)",
  "iso": "ERCOT",
  "bundles": {
   "control": "/home/user/market-simulator/results/hindcast/ercot-2021-2025-realized-t1h-d11r-control",
@@ -261,8 +261,8 @@
      "evidence": {
       "target": "data/raw/_validation-source/capacity_actuals_ercot.csv",
       "confirmed_registry": "data/raw/confirmed-retirements/ercot.csv",
-      "exit_decode": "docs/handoffs/ffr-7c/exit-decode-2026-08-06.json",
-      "exit_decode_citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+      "exit_decode": "docs/records/forecast/ffr-7c/exit-decode-2026-08-06.json",
+      "exit_decode_citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/records/forecast/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
      },
      "applicability": {
       "use_campd_bins": true,
@@ -284,7 +284,7 @@
        "reason": "no_instrument",
        "why": "no admissible channel \u2014 economic screen must not retire it (primary-year margin 73.41 vs bar 58.5 $/kW-yr in 2024 (unit_net), bar-invariant), and no confirmed-registry instrument exists",
        "gated": true,
-       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/records/forecast/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
       },
       {
        "unit_id": "3548_2",
@@ -296,7 +296,7 @@
        "reason": "not_in_fleet_basis",
        "why": "ABSENT (3548 carries only CT8, CT_PEAKER 206.0 MW) \u2014 no screen can retire capacity the run's fleet never carried",
        "gated": true,
-       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/records/forecast/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
       },
       {
        "unit_id": "3612_2",
@@ -308,7 +308,7 @@
        "reason": "post_vintage_instrument",
        "why": "no admissible channel \u2014 economic screen must not retire it (primary-year margin 63.35 vs bar 35.0 $/kW-yr in 2024 (unit_net), bar-invariant), and its only instrument (ercot-nso-braunig-2, 2024-03-13) post-dates the vintage cutoff 2020-12-31",
        "gated": false,
-       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/records/forecast/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
       },
       {
        "unit_id": "3612_1",
@@ -320,7 +320,7 @@
        "reason": "post_vintage_instrument",
        "why": "no admissible channel \u2014 economic screen must not retire it (primary-year margin 69.74 vs bar 35.0 $/kW-yr in 2024 (unit_net), bar-invariant), and its only instrument (ercot-nso-braunig-1, 2024-03-13) post-dates the vintage cutoff 2020-12-31",
        "gated": false,
-       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/records/forecast/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
       },
       {
        "unit_id": "52120_G-66",
@@ -332,7 +332,7 @@
        "reason": "no_instrument",
        "why": "no admissible channel \u2014 economic screen must not retire it (primary-year margin 176.44 vs bar 30.0 $/kW-yr in 2022 (class_proxy), bar-invariant), and no confirmed-registry instrument exists",
        "gated": false,
-       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/records/forecast/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
       }
      ],
      "n_target_large": 2,
@@ -408,8 +408,8 @@
      "evidence": {
       "target": "data/raw/_validation-source/capacity_actuals_ercot.csv",
       "confirmed_registry": "data/raw/confirmed-retirements/ercot.csv",
-      "exit_decode": "docs/handoffs/ffr-7c/exit-decode-2026-08-06.json",
-      "exit_decode_citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+      "exit_decode": "docs/records/forecast/ffr-7c/exit-decode-2026-08-06.json",
+      "exit_decode_citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/records/forecast/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
      },
      "applicability": {
       "use_campd_bins": true,
@@ -431,7 +431,7 @@
        "reason": "no_instrument",
        "why": "no admissible channel \u2014 economic screen must not retire it (primary-year margin 73.41 vs bar 58.5 $/kW-yr in 2024 (unit_net), bar-invariant), and no confirmed-registry instrument exists",
        "gated": true,
-       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/records/forecast/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
       },
       {
        "unit_id": "3548_2",
@@ -443,7 +443,7 @@
        "reason": "not_in_fleet_basis",
        "why": "ABSENT (3548 carries only CT8, CT_PEAKER 206.0 MW) \u2014 no screen can retire capacity the run's fleet never carried",
        "gated": true,
-       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/records/forecast/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
       },
       {
        "unit_id": "3612_2",
@@ -455,7 +455,7 @@
        "reason": "post_vintage_instrument",
        "why": "no admissible channel \u2014 economic screen must not retire it (primary-year margin 63.35 vs bar 35.0 $/kW-yr in 2024 (unit_net), bar-invariant), and its only instrument (ercot-nso-braunig-2, 2024-03-13) post-dates the vintage cutoff 2020-12-31",
        "gated": false,
-       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/records/forecast/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
       },
       {
        "unit_id": "3612_1",
@@ -467,7 +467,7 @@
        "reason": "post_vintage_instrument",
        "why": "no admissible channel \u2014 economic screen must not retire it (primary-year margin 69.74 vs bar 35.0 $/kW-yr in 2024 (unit_net), bar-invariant), and its only instrument (ercot-nso-braunig-1, 2024-03-13) post-dates the vintage cutoff 2020-12-31",
        "gated": false,
-       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/records/forecast/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
       },
       {
        "unit_id": "52120_G-66",
@@ -479,7 +479,7 @@
        "reason": "no_instrument",
        "why": "no admissible channel \u2014 economic screen must not retire it (primary-year margin 176.44 vs bar 30.0 $/kW-yr in 2022 (class_proxy), bar-invariant), and no confirmed-registry instrument exists",
        "gated": false,
-       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/records/forecast/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
       }
      ],
      "n_target_large": 2,
@@ -648,7 +648,7 @@
      "solar": 6.0
     },
     "commissioned_in_window_decided_before_window_gw": {},
-    "note": "Scored on the DECISION basis (D-9(ii)). Additions verdicts on this basis are NOT comparable to any additions verdict committed before 2026-08-04, which were scored on the COD basis \u2014 the metric means something different. Retirements-side comparability is unaffected. See docs/handoffs/ffr-3s-cod-shifted-scoring-2026-08-04.md.",
+    "note": "Scored on the DECISION basis (D-9(ii)). Additions verdicts on this basis are NOT comparable to any additions verdict committed before 2026-08-04, which were scored on the COD basis \u2014 the metric means something different. Retirements-side comparability is unaffected. See docs/records/forecast/ffr-3s-cod-shifted-scoring-2026-08-04.md.",
     "entry_commissioning_lag": true
    },
    "co2": {
@@ -758,8 +758,8 @@
      "evidence": {
       "target": "data/raw/_validation-source/capacity_actuals_ercot.csv",
       "confirmed_registry": "data/raw/confirmed-retirements/ercot.csv",
-      "exit_decode": "docs/handoffs/ffr-7c/exit-decode-2026-08-06.json",
-      "exit_decode_citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+      "exit_decode": "docs/records/forecast/ffr-7c/exit-decode-2026-08-06.json",
+      "exit_decode_citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/records/forecast/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
      },
      "applicability": {
       "use_campd_bins": true,
@@ -781,7 +781,7 @@
        "reason": "no_instrument",
        "why": "no admissible channel \u2014 economic screen must not retire it (primary-year margin 73.41 vs bar 58.5 $/kW-yr in 2024 (unit_net), bar-invariant), and no confirmed-registry instrument exists",
        "gated": true,
-       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/records/forecast/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
       },
       {
        "unit_id": "3548_2",
@@ -793,7 +793,7 @@
        "reason": "not_in_fleet_basis",
        "why": "ABSENT (3548 carries only CT8, CT_PEAKER 206.0 MW) \u2014 no screen can retire capacity the run's fleet never carried",
        "gated": true,
-       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/records/forecast/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
       },
       {
        "unit_id": "3612_2",
@@ -805,7 +805,7 @@
        "reason": "post_vintage_instrument",
        "why": "no admissible channel \u2014 economic screen must not retire it (primary-year margin 63.35 vs bar 35.0 $/kW-yr in 2024 (unit_net), bar-invariant), and its only instrument (ercot-nso-braunig-2, 2024-03-13) post-dates the vintage cutoff 2020-12-31",
        "gated": false,
-       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/records/forecast/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
       },
       {
        "unit_id": "3612_1",
@@ -817,7 +817,7 @@
        "reason": "post_vintage_instrument",
        "why": "no admissible channel \u2014 economic screen must not retire it (primary-year margin 69.74 vs bar 35.0 $/kW-yr in 2024 (unit_net), bar-invariant), and its only instrument (ercot-nso-braunig-1, 2024-03-13) post-dates the vintage cutoff 2020-12-31",
        "gated": false,
-       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/records/forecast/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
       },
       {
        "unit_id": "52120_G-66",
@@ -829,7 +829,7 @@
        "reason": "no_instrument",
        "why": "no admissible channel \u2014 economic screen must not retire it (primary-year margin 176.44 vs bar 30.0 $/kW-yr in 2022 (class_proxy), bar-invariant), and no confirmed-registry instrument exists",
        "gated": false,
-       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/records/forecast/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
       }
      ],
      "n_target_large": 2,
@@ -905,8 +905,8 @@
      "evidence": {
       "target": "data/raw/_validation-source/capacity_actuals_ercot.csv",
       "confirmed_registry": "data/raw/confirmed-retirements/ercot.csv",
-      "exit_decode": "docs/handoffs/ffr-7c/exit-decode-2026-08-06.json",
-      "exit_decode_citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+      "exit_decode": "docs/records/forecast/ffr-7c/exit-decode-2026-08-06.json",
+      "exit_decode_citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/records/forecast/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
      },
      "applicability": {
       "use_campd_bins": true,
@@ -928,7 +928,7 @@
        "reason": "no_instrument",
        "why": "no admissible channel \u2014 economic screen must not retire it (primary-year margin 73.41 vs bar 58.5 $/kW-yr in 2024 (unit_net), bar-invariant), and no confirmed-registry instrument exists",
        "gated": true,
-       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/records/forecast/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
       },
       {
        "unit_id": "3548_2",
@@ -940,7 +940,7 @@
        "reason": "not_in_fleet_basis",
        "why": "ABSENT (3548 carries only CT8, CT_PEAKER 206.0 MW) \u2014 no screen can retire capacity the run's fleet never carried",
        "gated": true,
-       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/records/forecast/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
       },
       {
        "unit_id": "3612_2",
@@ -952,7 +952,7 @@
        "reason": "post_vintage_instrument",
        "why": "no admissible channel \u2014 economic screen must not retire it (primary-year margin 63.35 vs bar 35.0 $/kW-yr in 2024 (unit_net), bar-invariant), and its only instrument (ercot-nso-braunig-2, 2024-03-13) post-dates the vintage cutoff 2020-12-31",
        "gated": false,
-       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/records/forecast/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
       },
       {
        "unit_id": "3612_1",
@@ -964,7 +964,7 @@
        "reason": "post_vintage_instrument",
        "why": "no admissible channel \u2014 economic screen must not retire it (primary-year margin 69.74 vs bar 35.0 $/kW-yr in 2024 (unit_net), bar-invariant), and its only instrument (ercot-nso-braunig-1, 2024-03-13) post-dates the vintage cutoff 2020-12-31",
        "gated": false,
-       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/records/forecast/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
       },
       {
        "unit_id": "52120_G-66",
@@ -976,7 +976,7 @@
        "reason": "no_instrument",
        "why": "no admissible channel \u2014 economic screen must not retire it (primary-year margin 176.44 vs bar 30.0 $/kW-yr in 2022 (class_proxy), bar-invariant), and no confirmed-registry instrument exists",
        "gated": false,
-       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/handoffs/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
+       "citation": "FFR-7C \u00a72.2 (per-unit margin table) / \u00a72.4 (fleet-basis facts) \u2014 docs/records/forecast/ffr-7c-exit-decode-corrected-target-2026-08-06.md"
       }
      ],
      "n_target_large": 2,
@@ -1144,7 +1144,7 @@
      "gas_ct": 6.0
     },
     "commissioned_in_window_decided_before_window_gw": {},
-    "note": "Scored on the DECISION basis (D-9(ii)). Additions verdicts on this basis are NOT comparable to any additions verdict committed before 2026-08-04, which were scored on the COD basis \u2014 the metric means something different. Retirements-side comparability is unaffected. See docs/handoffs/ffr-3s-cod-shifted-scoring-2026-08-04.md.",
+    "note": "Scored on the DECISION basis (D-9(ii)). Additions verdicts on this basis are NOT comparable to any additions verdict committed before 2026-08-04, which were scored on the COD basis \u2014 the metric means something different. Retirements-side comparability is unaffected. See docs/records/forecast/ffr-3s-cod-shifted-scoring-2026-08-04.md.",
     "entry_commissioning_lag": true
    },
    "co2": {

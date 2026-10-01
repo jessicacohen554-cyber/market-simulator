@@ -244,7 +244,7 @@ session will ever cite from it lives in the FINDING.
 ## §6 — DELIVERABLES
 
 This addendum (pushed before `--gate` runs); the re-fetched corpus
-(gitignored); `results/calibration/_caiso253b_ct_bucket_bimodality.json`; a
+(gitignored); `results/phase0/caiso/_caiso253b_ct_bucket_bimodality.json`; a
 FINDING scoring P-1, P-2 and G-BIMODAL; the `docs/calibration-log/caiso.md`
 entry; the rule-28 CAISO matrix-shard stamp. **Only if G-BIMODAL passes:** the
 derive's class-partition repair, the re-frozen artifact, the phase-0 census,

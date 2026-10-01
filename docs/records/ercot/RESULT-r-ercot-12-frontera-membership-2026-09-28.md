@@ -1,7 +1,7 @@
 # RESULT — R-ERCOT-12: Frontera dated membership, PROMOTED; the 2024 tight-hour lever closes with no arm; ISO reads NOT-YET
 
 **Session:** R-ERCOT-12, 2026-09-28.
-**PRECOMMIT:** `docs/handoffs/PRECOMMIT-r-ercot-12-frontera-membership-2026-09-28.md`, pinned SHA `2af9ab74cae3ca183801ce6989ab930de6417c86`.
+**PRECOMMIT:** `docs/records/ercot/PRECOMMIT-r-ercot-12-frontera-membership-2026-09-28.md`, pinned SHA `2af9ab74cae3ca183801ce6989ab930de6417c86`.
 **Keeper:** `2026-09-28-r-12-frontera-membership` (bundle `results/calibration/r_ercot12_frontera_span`, 2019–2025). It supersedes `2026-09-28-r-11-parish-split`.
 
 **Owner cards, verbatim answers:**

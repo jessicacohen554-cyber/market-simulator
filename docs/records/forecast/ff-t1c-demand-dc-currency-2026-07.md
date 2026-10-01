@@ -13,11 +13,11 @@
 > only as a record of what this session independently produced: the **T0 smokes** (§5 —
 > NEISO+MISO 2026–2028 green; **MISO forecast path executes end-to-end, clearing the
 > FF-0B blocker**) and the analytic demand-delta method. For the authoritative FF-1C
-> writeup see `docs/handoffs/ff-1c-demand-dc-currency-2026-07.md` on main.
+> writeup see `docs/records/forecast/ff-1c-demand-dc-currency-2026-07.md` on main.
 
 **Session.** FF-1C of `docs/forecast-development-plan-2026-07.md` §6 (Wave 1, L-INP
 lane), executing the FF-0D audit's §7.1 fix list
-(`docs/handoffs/ff-inputs-currency-audit-2026-07.md`). Scope boundary honoured: this
+(`docs/records/forecast/ff-inputs-currency-audit-2026-07.md`). Scope boundary honoured: this
 session touched **only** the demand/DC constants (`DEMAND_GROWTH_RATES`,
 `DATACENTER_ADDITIONS_MW`, `DATACENTER_ZONE_SHARE`) and their tests/citations. It did
 **not** touch `NEW_ENTRY_COSTS` / `TECH_COST_MULTIPLIERS` / policy (FF-1E) or
@@ -222,5 +222,5 @@ above** (rule 5 satisfied at the source), so the numbers are fully traced withou
 generated registry view.
 
 *Produced 2026-07-17 (FF-1C, Opus). Feeds the T1-F baseline and every Wave-1/2 demand-side
-comparison. Source URLs: `docs/handoffs/ff-inputs-currency-audit-2026-07.md` §1.1–§1.2,
+comparison. Source URLs: `docs/records/forecast/ff-inputs-currency-audit-2026-07.md` §1.1–§1.2,
 §7.3; `docs/parameter-citations.md`.*

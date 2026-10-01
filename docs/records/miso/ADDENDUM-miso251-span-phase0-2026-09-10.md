@@ -1,7 +1,7 @@
 # ADDENDUM — miso-251 SPAN shard: phase-0 hard stops PASSED (2026-09-10)
 
 Shard: **SPAN** of session `miso-251`. Branch `claude/miso251-tp2022`.
-Charter: `docs/PRECOMMIT-miso251-holdout-ladder-2026-09-10.md`.
+Charter: `docs/records/miso/PRECOMMIT-miso251-holdout-ladder-2026-09-10.md`.
 Job: replay the MISO keeper's frozen recipe on held-out **2022** and register it.
 
 This addendum is the heartbeat required before the first LP. It records the three

@@ -394,7 +394,7 @@ published margins and spot prices per year.
   Otherwise RECOMMEND DO NOT ARM and route the named cause.
 
 ### 8.2 The zero-solve instrument (appended before the build; no model code)
-`docs/handoffs/d59/locality-predecl-2026-09-05.py` rebuilds the D52 curve-ON entering
+`docs/records/forecast/d59/locality-predecl-2026-09-05.py` rebuilds the D52 curve-ON entering
 fleet per year from the same loaders the hindcast runs (`load_or_synthesize_bins` →
 `build_base_fleet` at the 2020 vintage, then the ledger's own per-unit exits / derates /
 additions applied year by year, validated against each ledger's `fleet_by_fuel_before`
@@ -408,7 +408,7 @@ instrument ran.)_
 
 ### 8.2 The instrument's readings (appended 2026-09-05 after the instrument ran, BEFORE any code was committed)
 
-`docs/handoffs/d59/locality-predecl-2026-09-05.py` → `.json` + `-stdout-….txt` beside it,
+`docs/records/forecast/d59/locality-predecl-2026-09-05.py` → `.json` + `-stdout-….txt` beside it,
 plus `goldbook-zone-jk-summer-capability-2026-09-05.json` (Gold Book Table III-2a sums).
 **Reconstruction caveat, stated up front:** the instrument rebuilds the base fleet through
 the hindcast's own loaders but does not reproduce the runner's base fleet exactly at the

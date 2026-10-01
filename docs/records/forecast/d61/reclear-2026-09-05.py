@@ -109,7 +109,7 @@ def run_eas_replace(label, eas_by_year, bars):
 
 
 if __name__ == "__main__":
-    # Run from the repo root: python3 docs/handoffs/d61/reclear-2026-09-05.py docs/handoffs/d61/reclear-2026-09-05.json
+    # Run from the repo root: python3 docs/records/forecast/d61/reclear-2026-09-05.py docs/records/forecast/d61/reclear-2026-09-05.json
     out = {}
     out["S0"] = run("S0 — reproduction of the committed arm-A clearing (zero delta)", {})
     scenarios(out)

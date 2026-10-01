@@ -257,4 +257,4 @@ studying Central-East congestion should know the number is not on record.
   (2026-07-30 section)
 * matrix: row `nyiso_central_east_measured_ttc`, cells `....K.` / fc `....G.`
 * the fork this one deliberately did **not** follow:
-  `docs/FINDING-nyiso102-d5-parity-wiring-2026-07-30.md`
+  `docs/records/nyiso/FINDING-nyiso102-d5-parity-wiring-2026-07-30.md`

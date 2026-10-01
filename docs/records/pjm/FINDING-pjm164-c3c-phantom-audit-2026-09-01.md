@@ -1,11 +1,11 @@
 # FINDING pjm-164 — C3c program Q1: PJM's reserve-dual channel is REAL, not the ercot-214 phantom
 
-**Session:** pjm-164, 2026-09-01. **Charter:** `docs/CHARTER-c3c-scarcity-program-2026-08-31.md`
+**Session:** pjm-164, 2026-09-01. **Charter:** `docs/records/misc/CHARTER-c3c-scarcity-program-2026-08-31.md`
 Q1. **Zero solve — committed artifacts + in-repo published data only.** Keeper audited:
 `2026-08-15-pjm-162-inputclock` (bundle `results/calibration/pjm_debugb_inputclock_A`,
 CALIBRATED, every criterion PASS — state re-verified this session with
 `calibration_verdict.py --run-id` and `audit_keepers.py --iso PJM`, both clean).
-**Artifact:** `results/calibration/_pjm164_c3c_overlap.json`. **No keeper, shard, marker,
+**Artifact:** `results/phase0/pjm/_pjm164_c3c_overlap.json`. **No keeper, shard, marker,
 matrix-cell or determination change** (nothing tested — this audits existing artifacts).
 
 ## Verdict: REAL — charter Q2 proceeds
@@ -154,7 +154,7 @@ transferable mechanism (rule 25 — any transfer enters other shards as `U`).
   (the cross-ISO governance log is deliberately untouched; nyiso-164 may be running in
   parallel).
 
-*Evidence: `results/calibration/_pjm164_c3c_overlap.json` (per-year counts, shares, hour
+*Evidence: `results/phase0/pjm/_pjm164_c3c_overlap.json` (per-year counts, shares, hour
 lists, T2/T3 tables) · keeper sidecars `pjm_debugb_inputclock_A/hourly/` ·
 `data/raw/PJM-AS/reserve_market_results_{2023,2024,2025}.parquet` ·
 `actual_lmp_hourly_PJM.parquet` · construction: `render_calibration_html.py::_tail_hours`

@@ -7,7 +7,7 @@ instrument JSON) — evaluated with HEAD's EXISTING machinery only (``evaluate_d
 ``resolve_demand_curve_vintage``, ``thermal_accreditation_fraction``, the registry
 composite), so the pre-declaration is fixed before the repair exists.
 
-    uv run python docs/handoffs/d52/predecl-positions-2026-09-04.py
+    uv run python docs/records/forecast/d52/predecl-positions-2026-09-04.py
 
 Arms per year: OFF (HEAD composite on the model's realized weather-year peak), PEAK
 (the composite factor on the published ICAP-market forecast peak — item 1 alone),

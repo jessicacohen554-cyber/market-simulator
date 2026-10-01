@@ -2,7 +2,7 @@
 
 **Date:** 2026-07-14. **Session:** Fable diagnosis + run-config design (no solve —
 the solve is a gated follow-on after owner approval of the companion spec,
-`docs/handoffs/pjm-107-measured-tail-config-spec-2026-07.md`).
+`docs/records/pjm/pjm-107-measured-tail-config-spec-2026-07.md`).
 **Keeper:** `2026-07-13-pjm-105-symmetric-net` (owner-promoted 2026-07-14;
 PR #2212 rebased, conflict-resolved and merged to main this session —
 `keepers.json` PJM pointer live, `audit_keepers.py --check` PASS).
@@ -300,12 +300,12 @@ registered reject (C1). See the 2026-07-14 calibration-log entry.
 ## Pointers
 
 - Companion spec (the deliverable this note grounds):
-  `docs/handoffs/pjm-107-measured-tail-config-spec-2026-07.md`
-- Keeper record: `docs/FINDING-pjm-midmerit-level-2026-07.md` §7;
+  `docs/records/pjm/pjm-107-measured-tail-config-spec-2026-07.md`
+- Keeper record: `docs/records/pjm/FINDING-pjm-midmerit-level-2026-07.md` §7;
   attestation/DOF ledger in `results/calibration/pjm105_symmetric_net/`
 - Scarcity lane history: `docs/multi-iso/pjm-reserve-ordc.md` (phases,
   memtests, pjm-62/81 empirics);
-  `docs/handoffs/pjm-commitment-posture-port-2026-07.md` (pjm-82 gate);
+  `docs/records/pjm/pjm-commitment-posture-port-2026-07.md` (pjm-82 gate);
   calibration-log 2026-07-11 "PJM G-20b hold CONFIRMED" (owner closure)
 - Measured curve provenance: `docs/multi-iso/pjm-reserve-curve-source.md`
 - Open issues: #1302 (committed-below-floor), #1347 (sigmoid identification —

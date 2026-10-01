@@ -1,7 +1,7 @@
 # FINDING — pjm-170: the coal-sigmoid ceiling arm is REJECTED at the 2022 screen
 
 **Session** pjm-170 · **ISO** PJM · **Branch** `claude/pjm-coal-sigmoid-ceiling-a97so9`
-**PRECOMMIT** `docs/handoffs/PRECOMMIT-pjm170-coal-sigmoid-ceiling-2026-09-07.md`
+**PRECOMMIT** `docs/records/pjm/PRECOMMIT-pjm170-coal-sigmoid-ceiling-2026-09-07.md`
 (committed 03478006, before any build or solve; Amendment 1 24454429; Addendum A
 234ec26f; Addendum B before the solve)
 **Keeper UNCHANGED** `2026-08-15-pjm-162-inputclock`. **Nothing is promoted.**
@@ -206,8 +206,8 @@ read only by offline derive scripts, never by the model package.
 `results/calibration/pjm170_screen2022_ceil10` is **deleted before this PR merges**.
 This document carries every number this session will ever cite from it; git history
 is the record for the bytes. Retained artifacts (both small, both zero-LP or
-scorer-only): `results/calibration/_pjm170_ceil_census.json` (phase 0) and
-`results/calibration/_pjm170_g4.json` (the G-4 record).
+scorer-only): `results/phase0/pjm/_pjm170_ceil_census.json` (phase 0) and
+`results/phase0/pjm/_pjm170_g4.json` (the G-4 record).
 
 ---
 

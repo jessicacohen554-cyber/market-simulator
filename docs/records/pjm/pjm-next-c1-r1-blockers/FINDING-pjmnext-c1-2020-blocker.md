@@ -1,7 +1,7 @@
 # FINDING — PJM-NEXT card 1, arm leg 2020: shard STOPPED (G1 fail + OOM), no bundle pushed
 
 Shard of orchestrator PJM-NEXT, pinned `7f0953845350089732892f83248726d4b04fb84f`
-(HEAD verified before any work). Record: `docs/PRECOMMIT-pjm-next-c1-year-correct-membership-2026-09-25.md`.
+(HEAD verified before any work). Record: `docs/records/pjm/PRECOMMIT-pjm-next-c1-year-correct-membership-2026-09-25.md`.
 Command run unmodified (§7 arm command, `--years 2020`, out-dir `results/calibration/pjmnext_c1_2020`).
 
 ## Two independent blockers

@@ -161,7 +161,7 @@ and its duals from `duals.json` directly.
 runner's own chain `load_demand` → `runner._scale_demand` → `data.datacenter.add_load_layers`
 — never by re-deriving the memo's arithmetic. Zones: the six MISO zones
 `[MISO-West, MISO-Plains, MISO-Illinois, MISO-Indiana, MISO-East, MISO-South]`; no import node.
-Instrument: `docs/handoffs/scn-ws5a-policy-miso/phase0-miso-2026-09-07.py` →
+Instrument: `docs/records/forecast/scn-ws5a-policy-miso/phase0-miso-2026-09-07.py` →
 `…-2026-09-07.json`, both committed with this document.
 
 ### 3.1 The resolved volumes (TWh)
@@ -309,7 +309,7 @@ is not moved.**
 ## 6. What each surviving leg is expected to do — pre-registered
 
 Sources, all measured before this lane and none of them a residual: **WS-1b-r2** (the MISO 2027
-carbon pair, `docs/handoffs/scn-ws1b/score-MISO-2027.json`), **WS-2a** (the CES target row's
+carbon pair, `docs/records/forecast/scn-ws1b/score-MISO-2027.json`), **WS-2a** (the CES target row's
 escape regime), **WS-3b §6** (the voluntary row's arithmetic), **WS-4c** (the MISO load
 response), and the committed MISO REF itself.
 
@@ -554,7 +554,7 @@ shard may run ~62 min of LP; that is the disclosed upside, and it is why the wid
 | **G6** | `CES-P20+VOL-HI`, `ALL-CLEAN` | `ed42e5d7d1d95d3e`, `00edacf5f50c88fc` |
 | **G7** | `CES-P60` (via `--set`) | `e5fb002f78c0c681` |
 
-Protocol: `docs/handoffs/SUBLANE-scn-ws5a-policy-miso-solve-protocol-2026-09-07.md`.
+Protocol: `docs/records/forecast/SUBLANE-scn-ws5a-policy-miso-solve-protocol-2026-09-07.md`.
 **Cache isolation:** all thirteen keys are new; `results/MISO/` exists in no lane container, and
 a pre-existing key directory in a shard is a **STOP**. Registration: kind `scenario`, campaign
 `scn-campaign-policy-2026-09-06`, run id `miso-2026-2030-scn-campaign-policy-2026-09-06-<label>`,
@@ -621,7 +621,7 @@ solved). This is **zero-LP registry arithmetic that belonged in §7.1 and was no
 it sharpens a prediction rather than revising one against an answer, and §7.1's own stated limit
 ("whether a *lower*-dual MISO region exists … is not determinable at zero LP") is what it
 closes. **No case, key, kill, level or gate moves.** Instrument:
-`docs/handoffs/scn-ws5a-policy-miso/rps-region-census-2026-09-07.py` → `…json`.
+`docs/records/forecast/scn-ws5a-policy-miso/rps-region-census-2026-09-07.py` → `…json`.
 
 ### A(a) MISO's RPS row is FIVE regions with FIVE different eligible geographies
 

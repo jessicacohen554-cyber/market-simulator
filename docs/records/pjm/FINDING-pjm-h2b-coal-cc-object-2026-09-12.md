@@ -5,7 +5,7 @@
 **Session** `pjm-h2` · **ISO** PJM · **Date** 2026-09-12 · **Base** `origin/main`
 **ZERO LP.** The parent never solved and no shard was launched (rule 32 `[R-SHARD]` (a)).
 **PJM keeper UNCHANGED: `2026-09-11-pjm-d4-4-gasoutage`, CALIBRATED, 8/8, zero caveats.**
-Part 1: `docs/FINDING-pjm-h2-holdout-basis-2026-09-12.md` (the basis split).
+Part 1: `docs/records/pjm/FINDING-pjm-h2-holdout-basis-2026-09-12.md` (the basis split).
 
 ---
 

@@ -85,7 +85,7 @@ blocker against `full_forward_climatology_years` returning `()` silently).
 
 ## 5. Correction owed to this lane's own pre-registration
 
-`docs/handoffs/PREREG-ffr-9c-promote-stageb-2026-08-12.md` §1.5 states:
+`docs/records/forecast/PREREG-ffr-9c-promote-stageb-2026-08-12.md` §1.5 states:
 
 > An ISO-level default fills only a field the caller left at the `ScenarioConfig`
 > default — **an explicit caller value always wins**, so every existing invocation
@@ -229,7 +229,7 @@ on the intermediate state and returns its declared MISO poles
 **Standing lesson: for this defect class the grep is the dynamic differential,
 not the static scan.** A future promotion into `default_scenario_overrides`
 should re-run the differential (harness shape recorded in
-`docs/handoffs/override-fix-2026-08-13.md` §5).
+`docs/records/misc/override-fix-2026-08-13.md` §5).
 
 ## R4. One deliberate new raise
 

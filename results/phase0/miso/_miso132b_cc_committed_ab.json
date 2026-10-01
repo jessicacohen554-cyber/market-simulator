@@ -1,6 +1,6 @@
 {
  "session": "miso-132(b)",
- "prereg": "results/calibration/PREREG-miso132b-cc-committed-band-regrounding-2026-08-05.md",
+ "prereg": "docs/records/miso/PREREG-miso132b-cc-committed-band-regrounding-2026-08-05.md",
  "incumbent_keeper": {
   "bundle": "miso127_onlinepmin_B",
   "run_id": "2026-08-04-miso-127-onlinepmin"

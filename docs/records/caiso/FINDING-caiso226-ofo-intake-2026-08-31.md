@@ -35,7 +35,7 @@ are each one module or one `OfoSource` away, with no shared-file edit.
 ## §2 — verification: the curated frame reproduces the caiso-225 source record exactly
 
 The caiso-225 §A3 archaeology embedded the 2023–2025 low-OFO event lists and
-the per-year counts in `results/calibration/_caiso225_watch_results.json`. The
+the per-year counts in `results/phase0/caiso/_caiso225_watch_results.json`. The
 curated parquet was checked against them, not merely fetched:
 
 - **Per-year counts, low side, 2015–2026** — exact match, all 12 years
@@ -152,7 +152,7 @@ mechanism is not real.
 
 ## §5 — the pre-registration, and the one design fact that changes it
 
-Full falsifiable design: **`results/calibration/PRECOMMIT-caiso227-ofo-arm-2026-08-31.md`**.
+Full falsifiable design: **`docs/records/caiso/PRECOMMIT-caiso227-ofo-arm-2026-08-31.md`**.
 
 The finding that must reach the arm before it picks a trigger, derivable from
 the **source record alone** (no model output, no solve):

@@ -16,13 +16,13 @@ PASS).
 > **depth, not height**, and ERCOT-107/108's completed 2×2 shows the envelope/ORDC
 > reserve family is bistable with no configuration that recovers the depth without
 > repricing the whole year. See
-> `results/calibration/FINDING-ercot107-108-scarcity-tail-bistable-2026-07-24.md`.
+> `docs/records/ercot/FINDING-ercot107-108-scarcity-tail-bistable-2026-07-24.md`.
 > No other change; the four governance assertions and the DOF ledger are untouched.
 
 This is a governance sign-off, not a model change. It asserts the four
 machine-cross-checked governance claims and ledgers the three price gates as
 **accepted measured-input limitations** (attributed scarcity-tail bound, evidence
-in `docs/DIAGNOSIS-ercot-101-scarcity-tail-attribution-2026-07.md`). No solve
+in `docs/records/ercot/DIAGNOSIS-ercot-101-scarcity-tail-attribution-2026-07.md`). No solve
 input changes; the DOF ledger is carried byte-identical from ercot99/100 (9
 entries / 8 residual, zero delta for the margin flag).
 
@@ -57,7 +57,7 @@ four attestations below being true and owner-signed.
     "no_fit_to_price_residuals": true,
     "no_pinning_to_actuals": true,
     "outage_filter_exogenous_net_load": true,
-    "note": "ERCOT-101: machine check clean (outage_source=historic exogenous; no forbidden flags). The three price gates are ledgered below as attributed measured-input limitations (scarcity-tail bound; docs/DIAGNOSIS-ercot-101-scarcity-tail-attribution-2026-07.md), not model misses. No residual tuning applied (rule 1/11/13). DOF ledger unchanged from ercot99/100 (9/8)."
+    "note": "ERCOT-101: machine check clean (outage_source=historic exogenous; no forbidden flags). The three price gates are ledgered below as attributed measured-input limitations (scarcity-tail bound; docs/records/ercot/DIAGNOSIS-ercot-101-scarcity-tail-attribution-2026-07.md), not model misses. No residual tuning applied (rule 1/11/13). DOF ledger unchanged from ercot99/100 (9/8)."
   },
   "exceptions": [
     {"criterion": "price_mean", "year": 2023,

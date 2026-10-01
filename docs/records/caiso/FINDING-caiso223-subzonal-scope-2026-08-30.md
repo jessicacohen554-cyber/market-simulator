@@ -11,7 +11,7 @@ ante in `PRECOMMIT-caiso223-subzonal-scope-2026-08-30.md` (pushed before any
 derivation ran).
 
 Instruments (committed): `scripts/probes/_caiso223_subzonal_scope.py` →
-`results/calibration/_caiso223_subzonal_scope.json` (+
+`results/phase0/caiso/_caiso223_subzonal_scope.json` (+
 `_caiso223_membership_recut.csv`, `_caiso223_pnode_subzone_map.csv`);
 `scripts/probes/_caiso223_b2_extract.py` → `_caiso223_b2_boundaries.json`.
 All read committed bytes only (census JSON, caiso-172 Atlas snapshots,

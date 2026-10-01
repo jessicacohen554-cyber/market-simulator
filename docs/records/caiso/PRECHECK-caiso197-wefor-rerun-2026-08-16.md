@@ -9,7 +9,7 @@ original lane-2 arm was killed before solve at G-COV on the frozen instrument
 (both granted classes below the 95 % bar); the caiso-196 El Segundo remap repair
 made the instrument complete, G-COV now passes for CC_REGULAR under BOTH
 population readings on the committed record
-(`results/calibration/_caiso196_gcov_remeasure.json`), and the owner's caiso-196
+(`results/phase0/caiso/_caiso196_gcov_remeasure.json`), and the owner's caiso-196
 promotion (2026-08-16, FINDING-caiso196 §7) re-anchored the campaign control to
 the caiso-196 keeper base and chartered exactly this arm ("the lane-2 re-run
 ({CC_REGULAR}-scoped) and lanes 3/5 compose on it"). The session brief
@@ -152,7 +152,7 @@ failure of the thesis and is reported as one.
 * This PRECHECK, committed and pushed before any solve (control included).
 * Bundles `results/calibration/caiso197_l2_control`, `caiso197_l2_wefor`
   (run ids minted by the replay driver's dating rule for overridden runs).
-* `results/calibration/FINDING-caiso197-wefor-rerun-2026-08-16.md` — gate tally,
+* `docs/records/caiso/FINDING-caiso197-wefor-rerun-2026-08-16.md` — gate tally,
   §0 clause quoted verbatim, single-mechanism statement verbatim, matrix duty
   (b) in-session (`wefor_residual` CAISO cell moves off R on this arm's verdict;
   evidence citation updated either way), calibration-log entry in

@@ -2,8 +2,8 @@
 
 **Session** nyiso-247 (ORCHESTRATOR — rule 32 `[R-SHARD]` (a); **zero LP in this container**).
 **Date** 2026-09-20. **Base** `origin/main` at `f5b2356a`.
-**PRECOMMIT** `docs/PRECOMMIT-nyiso247-fuel-invariance-limb-2026-09-20.md`, pushed at **`40316764`**
-before any gated number existed. **Phase 0** `docs/ADDENDUM-nyiso247-phase0-gates-and-two-falsified-claims-2026-09-20.md`,
+**PRECOMMIT** `docs/records/nyiso/PRECOMMIT-nyiso247-fuel-invariance-limb-2026-09-20.md`, pushed at **`40316764`**
+before any gated number existed. **Phase 0** `docs/records/nyiso/ADDENDUM-nyiso247-phase0-gates-and-two-falsified-claims-2026-09-20.md`,
 pushed at **`42d75053`** — the SHA all four shards were pinned to.
 **Keeper (incumbent, UNCHANGED)** `2026-09-19-nyiso241-ct-committed-measured`.
 **Arm (registered)** `2026-09-20-nyiso247-fuel-invariance-disarm`, bundle
@@ -238,10 +238,10 @@ untouched, and the NYISO cell stays `K` with this session's refutation recorded 
 
 | path | what |
 |---|---|
-| `docs/PRECOMMIT-nyiso247-fuel-invariance-limb-2026-09-20.md` | the pre-registration, at `40316764` |
-| `docs/ADDENDUM-nyiso247-phase0-gates-and-two-falsified-claims-2026-09-20.md` | phase 0 + the two falsified claims, at `42d75053` |
-| `scripts/probes/nyiso247_fuelinv_phase0.py` → `results/calibration/_nyiso247_fuelinv_phase0.json` | G-A / G-B / G-E / G-F |
-| `scripts/probes/nyiso247_loading_shape.py` → `results/calibration/_nyiso247_loading_shape.json` | G-C, both legs |
+| `docs/records/nyiso/PRECOMMIT-nyiso247-fuel-invariance-limb-2026-09-20.md` | the pre-registration, at `40316764` |
+| `docs/records/nyiso/ADDENDUM-nyiso247-phase0-gates-and-two-falsified-claims-2026-09-20.md` | phase 0 + the two falsified claims, at `42d75053` |
+| `scripts/probes/nyiso247_fuelinv_phase0.py` → `results/phase0/nyiso/_nyiso247_fuelinv_phase0.json` | G-A / G-B / G-E / G-F |
+| `scripts/probes/nyiso247_loading_shape.py` → `results/phase0/nyiso/_nyiso247_loading_shape.json` | G-C, both legs |
 | `scripts/probes/nyiso247_gate_table.py` | G-D, the per-year delta table |
 | `scripts/probes/nyiso247_compose_span.py` | the composer + this lane's delta assertion |
 | `scripts/gen_nyiso247_attestation.py` | the arm's C6 attestation |

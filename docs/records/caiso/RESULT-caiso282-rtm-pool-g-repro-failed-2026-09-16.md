@@ -4,9 +4,9 @@
 (`2026-09-12-caiso-275-gascoupling`, CALIBRATED 2023–2025, lone ledgered C3c). Nothing
 promoted, nothing registered, no mechanism cell moved, no threshold moved.
 
-**Charter:** `docs/PRECOMMIT-caiso281-rtm-offer-surface-intake-2026-09-13.md` §4 +
-`docs/ADDENDUM-caiso281-rtm-classification-is-independent-2026-09-13.md` §3.
-**Method fixed before any number:** `docs/PRECOMMIT-caiso282-rtm-pool-and-gates-2026-09-16.md`
+**Charter:** `docs/records/caiso/PRECOMMIT-caiso281-rtm-offer-surface-intake-2026-09-13.md` §4 +
+`docs/records/caiso/ADDENDUM-caiso281-rtm-classification-is-independent-2026-09-13.md` §3.
+**Method fixed before any number:** `docs/records/caiso/PRECOMMIT-caiso282-rtm-pool-and-gates-2026-09-16.md`
 (pushed at `b2101553`). **Instrument:** `scripts/probes/_caiso282_rtm_pool.py`; its three
 outputs sit beside the data under `results/rtm-intake/caiso281/_caiso282_pool_*.json`.
 

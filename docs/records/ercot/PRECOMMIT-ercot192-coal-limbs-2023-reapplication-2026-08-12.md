@@ -5,7 +5,7 @@
 **Model** Opus (rule 27 `[R-PUSH]`) ·
 **Branch** `claude/ercot-192-b1-coal-limbs-3qzot2`
 
-**Authority.** `docs/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md`
+**Authority.** `docs/records/ercot/DECISION-CARD-ercot188-open-owner-rulings-2026-08-11.md`
 **card B, signature B1** (owner, 2026-08-11): *"re-adjudicate under a fresh
 precommit before any arm."* Sequenced after **A1**, which landed 2026-08-12 (PR
 #3887, keeper `2026-08-12-run191-dam-deriver-regate` on the repaired DAM
@@ -94,7 +94,7 @@ disclosure, and the re-derivation is licensed by its arrival, not by a fit.
 ### 1c. INSTRUMENT-DESIGN BASIS — the Phase-0a structure read (measured before this file; NO price read)
 
 `scripts/probes/ercot192_coal_peak_structure_phase0a.py` →
-`results/calibration/ercot192_coal_peak_structure.json`. It reports only
+`results/phase0/ercot/ercot192_coal_peak_structure.json`. It reports only
 `ercot123._decompose`'s own coverage/headroom quantities. Matched window
 (h11–22 CST, the identification subsets' window):
 

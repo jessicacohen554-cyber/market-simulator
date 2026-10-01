@@ -5,7 +5,7 @@
 > `ScenarioConfig` field, no CLI flag, no mechanism-matrix cell or row edit, no
 > keeper contact.** Executed under owner signature **X-1** against the
 > pre-registered
-> `docs/PRECOMMIT-ercot210-conduct-transfer-phase0-2026-08-16.md`, pushed before
+> `docs/records/ercot/PRECOMMIT-ercot210-conduct-transfer-phase0-2026-08-16.md`, pushed before
 > any delivery-2023 SCED row was read.
 >
 > Keeper at session start and end: **`2026-08-15-ercot204-rule26-delete`** —
@@ -386,7 +386,7 @@ none chartered, none costed:
   non-recursive and this lane stops at delivery 2025-12-04.
 - **Keeper at session start and end:** `2026-08-15-ercot204-rule26-delete`.
 - **Artifacts:** this finding, the precommit, `scripts/probes/ercot210_conduct_transfer_phase0.py`,
-  `results/calibration/ercot210_conduct_transfer_phase0.json`, one calibration-log
+  `results/phase0/ercot/ercot210_conduct_transfer_phase0.json`, one calibration-log
   entry (**ercot-211**, per the collision note above), and the X-1 signature
   appended to ASSESSMENT-ercot209's `RESOLUTIONS — CARD X` (appended below X-2 in
   landing order; no line of X-2 edited). Nothing else.

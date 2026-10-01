@@ -11,7 +11,7 @@ untouched; every read stayed inside 2023–2025 (rule 22) — the watch tests re
 *publication surfaces* (OASIS report schemas/universes, DMM report text, Envoy
 event pages), never model years or actuals.
 
-Instrument: `results/calibration/_caiso225_watch_results.json` — every measured
+Instrument: `results/phase0/caiso/_caiso225_watch_results.json` — every measured
 output of the five tests below (fetched 2026-08-30 UTC through the session
 proxy). The governing records: the watch table
 `ASSESSMENT-caiso222-owner-sitting-2026-08-30.md` §(i) (armed by its §9
@@ -215,7 +215,7 @@ this sweep would be the re-survey the fences forbid.
 
 ## §8 — Records and filed items (CAISO lane only)
 
-* This ASSESSMENT; `results/calibration/_caiso225_watch_results.json` (all
+* This ASSESSMENT; `results/phase0/caiso/_caiso225_watch_results.json` (all
   five tests' measured outputs, including the full 2023–2025 low-OFO event
   lists and both TI universe censuses).
 * `docs/calibration-log/caiso.md`: caiso-225 entry.

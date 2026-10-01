@@ -284,7 +284,7 @@ against `caiso98_repro_A`:
 (runner.py + re-test), not a flag-flip; Mechanism B (the measured dispatch-shape
 anchor for the 2025 residual) is unchanged (novel, owner-gated). Neither is a
 keeper this session; the keeper stays caiso-97. See the handoff prompt
-(`docs/handoffs/caiso-98-storage-charter-handoff-2026-07-18.md`).
+(`docs/records/caiso/caiso-98-storage-charter-handoff-2026-07-18.md`).
 
 ---
 

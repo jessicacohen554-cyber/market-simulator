@@ -9,7 +9,7 @@ attestation and calibration-log reference. **Part A is an Opus engineering
 charter; Part B is a Fable/diagnostic design session** (no solve until the
 design is agreed, mirroring the pjm-107 spec-then-execute split).
 
-Grounding: `docs/DIAGNOSIS-pjm-july-cc-overrun-2026-07.md` (§3b, §6, §7);
+Grounding: `docs/records/pjm/DIAGNOSIS-pjm-july-cc-overrun-2026-07.md` (§3b, §6, §7);
 `docs/calibration-log.md` 2026-07-14 PJM-110 entry; the guard
 (`fleet._reconcile_cc_pmax_to_nameplate` + `fleet.cc_summer_capacity`), the
 demonstrated-peak reconcile (`fleet._reconcile_cc_capacity` /

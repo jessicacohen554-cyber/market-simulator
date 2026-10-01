@@ -28,7 +28,7 @@ lever's object:
 ## 2. PHASE 0 — the measurement, taken BEFORE the construction was chosen
 
 Probe `scripts/probes/_nyiso148_chp_conduct_phase0.py`; record
-`results/calibration/_nyiso148_chp_conduct_phase0.json` (+ `.csv`). **No LP.**
+`results/phase0/nyiso/_nyiso148_chp_conduct_phase0.json` (+ `.csv`). **No LP.**
 It reads two meters (EPA CAMPD unit-level hourly gross load; EIA-923 Page-1 net
 generation), the model's own CHP population, and the frozen nyiso-147 share
 artifact. It reads **no price residual, no D-4 verdict and no A/B gate**, which

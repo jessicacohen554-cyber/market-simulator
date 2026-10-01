@@ -109,7 +109,7 @@
   "verdict": "PASS"
  },
  "measurement": {
-  "prereg": "results/calibration/PREREG-miso150-model-side-universe-2026-08-10.md",
+  "prereg": "docs/records/miso/PREREG-miso150-model-side-universe-2026-08-10.md",
   "keeper": "2026-08-09-miso-148-basis-aware",
   "bundle": "results/calibration/miso148_basis_B",
   "posture": "NO SOLVE -- run_year(fleet_only=True) stack vs the measured MISO offer corpus",

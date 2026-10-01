@@ -2,7 +2,7 @@
  "session": "caiso-261",
  "keeper": "2026-09-06-caiso-260-b1-demand",
  "control": "form 4 - the keeper's committed bundle; no control solve",
- "closure_json": "results/calibration/_caiso261_closure_on_caiso260.json",
+ "closure_json": "results/phase0/caiso/_caiso261_closure_on_caiso260.json",
  "precommit": "PRECOMMIT-caiso261-import-intake-adjudication-2026-09-06.md",
  "transcribed_operands": {
   "S1_final_shown_ra_mw": {

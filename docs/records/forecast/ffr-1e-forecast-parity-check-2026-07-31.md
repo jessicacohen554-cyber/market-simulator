@@ -233,7 +233,7 @@ Path filters to extend on the same edit: `src/market_sim/**`,
 | `scripts/check_forecast_parity.py` | new — the no-LP detector (AST scan, evidence tiers, keeper sweep, text/JSON/markdown reports) |
 | `scripts/lib/forecast_parity_registry.py` | new — the committed declaration registry + source roles + archived-function exclusions + dynamic-consumer patterns |
 | `tests/scoring/test_forecast_parity.py` | new — 22 tests, trivial-first (synthetic config source, synthetic one-field keeper postures) through the real six-keeper sweep, the nyiso-102 regression, and the stale-declaration guard |
-| `docs/handoffs/ffr-1e-forecast-parity-check-2026-07-31.md` | this doc |
+| `docs/records/forecast/ffr-1e-forecast-parity-check-2026-07-31.md` | this doc |
 
 ## 8. What this session did NOT do
 

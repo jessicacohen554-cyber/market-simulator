@@ -32,7 +32,7 @@
 > is what closes item 3 rather than merely bounding it. Neither session alone
 > does: caiso-169 left the charter standing, and caiso-170 alone would not have
 > refuted the cheap substitute on its own reach.
-**Prereg** `results/calibration/PRECHECK-caiso170-s2-foresight-phase0-2026-08-04.md`,
+**Prereg** `docs/records/caiso/PRECHECK-caiso170-s2-foresight-phase0-2026-08-04.md`,
 pushed **before any value in it existed**.
 
 **CAISO keeper** `2026-08-04-caiso-166-measured-dlap` (CALIBRATED-WITH-CAVEATS,
@@ -49,7 +49,7 @@ was added, no derive was run, nothing was registered on the dashboard.
 python scripts/probes/caiso170_s2_foresight_phase0.py
 ```
 
-Artifact: `results/calibration/_caiso170_s2_foresight_phase0.json`.
+Artifact: `results/phase0/caiso/_caiso170_s2_foresight_phase0.json`.
 
 ---
 

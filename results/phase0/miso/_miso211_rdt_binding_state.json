@@ -1,6 +1,6 @@
 {
  "charter": "miso-211 phase 0 \u2014 the RDT South->North binding state; zero-solve.",
- "prereg": "results/calibration/PREREG-miso211-rdt-binding-state-2026-09-04.md @ 5320e4dc",
+ "prereg": "docs/records/miso/PREREG-miso211-rdt-binding-state-2026-09-04.md @ 5320e4dc",
  "keeper": "2026-09-04-miso-210-clock",
  "corridor_in_keeper": {
   "s2n_tiers_mw": [

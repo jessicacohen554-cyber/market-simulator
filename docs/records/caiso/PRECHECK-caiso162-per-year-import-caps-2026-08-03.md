@@ -45,7 +45,7 @@ So the static bake under-states 2025 pocket import capability by **3,801 MW**
 (LA_BASIN 3,166 + SDGE 635). Under-stating pocket import capability forces
 dearer in-pocket generation and **lifts** the pocket price — the same sign as
 the open C3a-2025 defect. `scenarios.py:8955` and the SP15-split scope doc
-(`docs/handoffs/caiso-sp15-split-implementation-scope-2026-07-09.md`,
+(`docs/records/caiso/caiso-sp15-split-implementation-scope-2026-07-09.md`,
 "Import-cap values") both name per-year as **the deferred end state** of the
 2026-07-09 split; this arm is that deferral being closed.
 

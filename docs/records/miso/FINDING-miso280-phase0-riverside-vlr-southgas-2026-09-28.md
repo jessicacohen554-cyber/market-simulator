@@ -4,7 +4,7 @@
 LANE    : miso-280 (MISO lever queue §5.4; handoff candidates B, C, D)
 KEEPER  : 2026-09-27-miso-279-stcov (results/calibration/miso279_span, 2019-2025) — unchanged
 LP      : none (zero-LP phase 0)
-PROBES  : scripts/probes/_miso280_riverside_remap_footprint.py -> results/calibration/_miso280_riverside_remap_footprint.json
+PROBES  : scripts/probes/_miso280_riverside_remap_footprint.py -> results/phase0/miso/_miso280_riverside_remap_footprint.json
 G-DRIFT : 47d3f872..6ca311d4 (26 solve-path files, 96 commits): ALL INERT for MISO; MISO solve-surface
           fingerprint unchanged (216 rows, hash 2d9f493abe84). Keeper bundle remains a valid form-4 control.
 ```
@@ -69,7 +69,7 @@ N-1-G-1), i.e. a reduced-network pocket model — the same RO-2 class as C3a 202
 
 ## 3. B — MISO-South storm-week gas (C3b 2021)
 
-South Feb 2021, $/MMBtu, capacity-weighted (from `results/calibration/_miso277_storm_print_conventions.json`):
+South Feb 2021, $/MMBtu, capacity-weighted (from `results/phase0/miso/_miso277_storm_print_conventions.json`):
 
 | convention | storm Feb 13–16 | calm Feb | burn-weighted |
 |---|---:|---:|---:|
@@ -109,11 +109,11 @@ buy a daily Gulf-hub print (ICE/NGI — a data purchase), or leave C3b 2021 as a
 - **Emissions** (`plant_emission_rates_v2`, shared across ISOs): out of scope. The MISO backcast has no carbon, NOx
   or SO2 price, so emission rates do not enter dispatch.
 - **Footprint** (fleet_only, keeper vs +flag): only 55641/64020 units move, and no other class moves.
-  `scripts/probes/_miso280_splitremap_footprint.py` → `results/calibration/_miso280_splitremap_footprint.json`.
+  `scripts/probes/_miso280_splitremap_footprint.py` → `results/phase0/miso/_miso280_splitremap_footprint.json`.
 
 ## 6. Owner rulings (2026-09-28)
 
-1. **C (Riverside):** "Build it (Recommended)" → `docs/PRECOMMIT-miso280-split-remap-2026-09-28.md`, 7 shards.
+1. **C (Riverside):** "Build it (Recommended)" → `docs/records/miso/PRECOMMIT-miso280-split-remap-2026-09-28.md`, 7 shards.
 2. **B (C3b 2021):** "Leave as routed miss (Recommended)". Recorded as a known extreme-event limitation: no admissible
    daily Gulf-hub print is on disk, EIA withholds LA/MS/AR delivered prices for Feb 2021, and the zero-DOF "paid level"
    construction would lift calm-day South gas to ~$17 vs ~$3–5 traded. Reopens on a purchased daily Gulf-hub series.

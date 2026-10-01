@@ -253,7 +253,7 @@ audit.
 > point-version of the 2024 edition (**v4.0.0**, mirrored 2026-07-28), fetched
 > in-session over this very OEDI channel — no manual download. Step 2 below
 > should read "intake ATB 2024 v4.0.0", and it is done. See
-> `docs/handoffs/ffr-pb-atb-statute-intake-2026-07-31.md`.
+> `docs/records/forecast/ffr-pb-atb-statute-intake-2026-07-31.md`.
 
 The fetch script pulls from the **OEDI S3 data lake** (`atb.nrel.gov` is blocked).
 Direct probe of the bucket this session:
@@ -446,7 +446,7 @@ byte-identical):
 FF-0A merged (both `docs/forecast-determination-rubric.md` and
 `scripts/forecast_verdict.py` exist; the concrete FC-5 inventory is rubric §6),
 and **FF-0F built the intake** it called for — the `benchmark-corridor` clean
-datatype (`docs/handoffs/ff-0f-fc5-benchmark-intake-2026-07.md`). FC-5 now reads
+datatype (`docs/records/forecast/ff-0f-fc5-benchmark-intake-2026-07.md`). FC-5 now reads
 one curated parquet as **context, never a fit target** (rule 13); a
 model-vs-benchmark divergence is reported with an explanation and never scored as
 a miss. Status of each rubric §6 source:

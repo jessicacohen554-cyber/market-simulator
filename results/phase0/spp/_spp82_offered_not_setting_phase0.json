@@ -2,7 +2,7 @@
  "lane": "SPP-82",
  "date": "2026-09-25",
  "probe": "scripts/probes/_spp82_offered_not_setting.py",
- "finding": "docs/handoffs/FINDING-spp-82-offered-not-setting-2026-09-25.md",
+ "finding": "docs/records/spp/FINDING-spp-82-offered-not-setting-2026-09-25.md",
  "per_year": {
   "2019": {
    "year": 2019,

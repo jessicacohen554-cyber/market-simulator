@@ -8,11 +8,11 @@ cv_ratio 0.347 vs 0.5, ledgered caveats 2/3 {C3a, C3c}). Rule 15 is satisfied
 by this statement: a no-LP phase produced no run.
 
 **Pre-registration**
-`results/calibration/PREREG-miso131-granularity-infinite-bound-2026-08-05.md`,
+`docs/records/miso/PREREG-miso131-granularity-infinite-bound-2026-08-05.md`,
 pushed at `6e3562a4` BEFORE the probe ran, with the expected-kill prior
 declared two-sidedly and §0 disclosing every previously-measured number.
 **Probe** `scripts/probes/_miso131_granularity_infinite_bound.py`; **record**
-`results/calibration/_miso131_granularity_infinite_bound.json`. Rule 22:
+`results/phase0/miso/_miso131_granularity_infinite_bound.json`. Rule 22:
 2023–2025 only; the probe hard-errors on any other year.
 
 **Session-number note.** The inbound owner handoff carried the label

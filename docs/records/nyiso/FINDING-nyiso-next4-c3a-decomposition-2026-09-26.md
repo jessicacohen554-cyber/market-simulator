@@ -6,7 +6,7 @@ Session NYISO-NEXT-4, 2026-09-26. ZERO LP (rule 32 (a)). Keeper
 or footprint was owed.
 
 Probe: `scripts/probes/nyisonext4_c3a_decompose.py`, which writes
-`results/calibration/_nyisonext4_c3a_decompose.json`. Its inputs are:
+`results/phase0/nyiso/_nyisonext4_c3a_decompose.json`. Its inputs are:
 
 - the keeper's committed `hourly/system_<y>.parquet` and `class_band_hourly_<y>.parquet`;
 - the RT bench `actual_lmp_hourly_NYISO.parquet`;

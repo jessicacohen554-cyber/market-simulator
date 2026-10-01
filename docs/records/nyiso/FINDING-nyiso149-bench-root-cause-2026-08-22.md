@@ -219,7 +219,7 @@ basis. Shipped, verified, and byte-stable:
 
 ```
 cd scripts && ../.venv/bin/python probes/_nyiso149_bench_reconcile_closure.py
-# → results/calibration/_nyiso149_bench_reconcile_closure.json (all EXACT)
+# → results/phase0/nyiso/_nyiso149_bench_reconcile_closure.json (all EXACT)
 ../.venv/bin/python -m pytest tests/regression/test_btm_bench_basis_pin.py -q
 git show 92d8eee:frontend/data/backcast/bench/NYISO/2024.json.gz | zcat | jq .bench.classFull.CC_REGULAR   # 38.0395
 zcat frontend/data/backcast/bench/NYISO/2024.json.gz | jq .bench.classFull.CC_REGULAR                      # 34.0604

@@ -4,7 +4,7 @@ Lane: SPP-83 (SPP commitment-state owner). Parent: SPP-82
 (`FINDING-spp-82-offered-not-setting-2026-09-25.md` §7.1–7.2). Keeper: `2026-09-24-r-spp-corrected-inputs`,
 bundle `results/calibration/rspp_span`, `basis_sha` `ec13e5c2ad35c4f817cc496ff2363affb3fed2f9`.
 Session base: `origin/main` `f30e3704`.
-Probe: `scripts/probes/_spp83_keeper_online_vs_market.py`. Numbers: `results/calibration/_spp83_keeper_online_vs_market_phase0.json`.
+Probe: `scripts/probes/_spp83_keeper_online_vs_market.py`. Numbers: `results/phase0/spp/_spp83_keeper_online_vs_market_phase0.json`.
 **No LP. No shard. No bundle. No `src/` edit. No `ScenarioConfig` field. No multiplier touched. Nothing landed under `data/`.**
 
 ## 0. Headline

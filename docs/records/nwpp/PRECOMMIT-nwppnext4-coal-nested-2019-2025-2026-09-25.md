@@ -5,7 +5,7 @@
 **Lever:** queue item 1 (C4 coal amplitude). Phase 0 found the cause, and the one structural defect in it is
 owner card D3, the FINDING-nwpp-48 §6 stacking defect (deferred at NWPP-49, never refused).
 **Written before any leg is solved.** The parent session runs no LP (rule 32(a)).
-**Probe:** `scripts/probes/_nwppnext4_coal_census.py` → `results/calibration/_nwppnext4_coal_census.json`.
+**Probe:** `scripts/probes/_nwppnext4_coal_census.py` → `results/phase0/nwpp/_nwppnext4_coal_census.json`.
 It reproduces keeper #10's C4 coal r in all seven years exactly (0.759 / 0.718 / 0.747 / 0.769 / 0.683 / 0.617 / 0.689).
 
 ## 0. In one paragraph

@@ -1,7 +1,7 @@
 # FINDING — SPP-94: SPP did publish 2020 and 2021 wind curtailment. The rows are on `main`; the solve is blocked by session nesting.
 
 **Lane** SPP-94 · keeper `2026-09-26-spp-86-coal-extract` (bundle `spp86_arm_span`) unchanged ·
-PRECOMMIT `docs/handoffs/PRECOMMIT-spp-94-curtail-rows-2026-09-27.md`, merged to `main` at
+PRECOMMIT `docs/records/spp/PRECOMMIT-spp-94-curtail-rows-2026-09-27.md`, merged to `main` at
 **`020bb1c5cb38b73da686dc4e83d1620c415b1437`** (PR #6812) before any model output existed · nothing solved, nothing
 registered, no promotion question yet (rule 31).
 
@@ -22,7 +22,7 @@ that "SPP published no curtailment MW for them". An SPP-7x audit repeated that r
 - The 2019 and 2020 editions print no curtailment MW; 2020's figure comes from the 2022 edition, just as 2019's
   comes from the 2023 edition.
 
-## 2. What it changes, at zero LP (`docs/handoffs/spp94/census.json`)
+## 2. What it changes, at zero LP (`docs/records/spp/spp94/census.json`)
 
 Wind headroom above delivered, as the keeper builds it:
 
@@ -42,7 +42,7 @@ Wind headroom above delivered, as the keeper builds it:
 
 The seven shards (one per year, rule 36) were written and pinned to `020bb1c5`. `create_session` refused all seven:
 **"caller session is at lineage depth 8 (limit 8)"**. Rule 32(a) forbids the parent from solving, so the lane stops
-here. The shard prompt template is `docs/handoffs/spp94/shard_prompt_template.txt`. Cost when run: SPP is a 2-zone ISO, so each shard is minutes;
+here. The shard prompt template is `docs/records/spp/spp94/shard_prompt_template.txt`. Cost when run: SPP is a 2-zone ISO, so each shard is minutes;
 the whole span is about 500 s of LP.
 
 ## 4. State left behind (read before G-DRIFT)

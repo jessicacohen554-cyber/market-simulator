@@ -9,7 +9,7 @@
 
 ## 1. Object
 
-`docs/FINDING-ercot251-nohsl-curtailment-gate-2026-09-06.md`: in an ERCOT backcast year with
+`docs/records/ercot/FINDING-ercot251-nohsl-curtailment-gate-2026-09-06.md`: in an ERCOT backcast year with
 no measured HSL parquet, the renewable bound is `forecast_uncurtailed` (delivered × the 2025
 reference curtailment rate) but `scripts/run_calibration.py` L2687/L2805 skip **both**
 curtailment mechanisms on the premise that renewables "ride delivered-as-CF". The gross-up is

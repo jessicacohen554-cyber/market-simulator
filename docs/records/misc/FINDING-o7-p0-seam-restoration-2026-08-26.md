@@ -5,7 +5,7 @@ carries the ruling date per the charter) · **Lane:** O7 restoration, Phase 0 ·
 **Branch:** `claude/ercot-p0-bit-identity-o7-tuzrjm` · **Base:** `origin/main`
 @ `4ed7cd3` · **Solves run: ZERO.** Every number in this finding is read from
 committed artifacts; the one prediction it makes was pushed first as
-`docs/PRECOMMIT-o7-p0-seam-restoration-2026-08-30.md` (commit `9513366`).
+`docs/records/misc/PRECOMMIT-o7-p0-seam-restoration-2026-08-30.md` (commit `9513366`).
 
 ---
 
@@ -214,7 +214,7 @@ that counterfactual either, except as an instrument (§5).
 ## 4. Charter Q3 — the predicted cost in keeper results (the decisive question)
 
 **Prediction pushed before this finding** as
-`docs/PRECOMMIT-o7-p0-seam-restoration-2026-08-30.md` (P-1…P-4). Summary:
+`docs/records/misc/PRECOMMIT-o7-p0-seam-restoration-2026-08-30.md` (P-1…P-4). Summary:
 restoration-by-B moves the CALIBRATED keeper by **order +$1–3/MWh on the 2023
 annual load-weighted price (center ≈ +$2.2/MWh)**, reverses a commitment-state
 change measured at **73 of 132 committed rows / 12,474 MW**, moves the armed
@@ -223,7 +223,7 @@ unpredictably.
 
 **Evidence base — committed, no new solve.** ercot-188's mandatory P0-delta
 probe (`scripts/probes/ercot188_p0_delta.py` →
-`results/calibration/ercot188_p0_delta.json`, reported in
+`results/phase0/ercot/ercot188_p0_delta.json`, reported in
 `FINDING-ercot188-cliff-offer-curve-2026-08-11.md` §6) measured, control vs
 arm, 2023: P0 total energy conserved to 2.8e-05 TWh while **55.3 % of the
 committed fleet changed commitment pattern** (−8 starts, +96 on-hours; ~0.011
@@ -366,9 +366,9 @@ re-basing if the designated recipe changes.
   (`:272` in-docstring, `:243` the def; `:128` in-docstring, `:106` the def;
   `:833` inside the `:832` gate expression).
 * **Evidence chain:** `results/calibration/{ercot236_k33_clip,ercot234_eastex_identity}/run_config.json`;
-  `docs/PRECOMMIT-ercot188-cliff-offer-curve-refinement-2026-08-11.md`
+  `docs/records/ercot/PRECOMMIT-ercot188-cliff-offer-curve-refinement-2026-08-11.md`
   §2.6/§3/Amendment 1;
-  `results/calibration/FINDING-ercot188-cliff-offer-curve-2026-08-11.md`
+  `docs/records/ercot/FINDING-ercot188-cliff-offer-curve-2026-08-11.md`
   §5–§6.3, §9; `docs/audit/third-party-audit-2026-08.md` row O7;
   `src/market_sim/{config/scenarios.py,data/offer_curves.py,data/fleet/assembly.py,pipeline/solve.py,pipeline/year.py}`
   at `4ed7cd3`.

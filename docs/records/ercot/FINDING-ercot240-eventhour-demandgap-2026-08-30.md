@@ -7,11 +7,11 @@ read from committed artifacts and raw measured inputs (the
 native-load record NP3-565-CD, the committed actuals parquet, the committed
 ercot-239 JSON); the model demand series is recomputed through the engine's
 own loader and gated against the sidecar.** Precommit
-`docs/PRECOMMIT-ercot240-eventhour-demandgap-2026-08-30.md` pushed +
+`docs/records/ercot/PRECOMMIT-ercot240-eventhour-demandgap-2026-08-30.md` pushed +
 blob-verified before any measurement; no amendments were needed (§1 notes
 one within-convention join-mechanics detail). Probe:
 `scripts/probes/ercot240_eventhour_demandgap.py` →
-`results/calibration/ercot240_eventhour_demandgap.json` (committed).
+`results/phase0/ercot/ercot240_eventhour_demandgap.json` (committed).
 Charter: FINDING-ercot239 §6 OBJECT 2 only (owner 2026-08-30 PM charter);
 objects 1 and 3 untouched. The two-config keeper structure is UNTOUCHED; no
 input changed; no lever armed or tested; no matrix cell changes (nothing

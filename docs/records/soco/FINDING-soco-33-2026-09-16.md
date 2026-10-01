@@ -794,5 +794,5 @@ DOUBLES (net 10–13 TWh vs 21–25 gross export / 11–12 gross import), which 
 the step change SOCO-56 must screen under rule 29 — its phase 0 is computable
 with no LP from soco_seam_diba_duration.csv.
 
-docs/handoffs/FINDING-soco-33-2026-09-16.md.
+docs/records/soco/FINDING-soco-33-2026-09-16.md.
 ```

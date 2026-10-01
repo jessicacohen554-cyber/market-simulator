@@ -1,7 +1,7 @@
 {
   "_provenance": {
     "probe": "scripts/probes/ercot186_grain_seamproof.py",
-    "precommit": "docs/PRECOMMIT-ercot186-rule18-grain-2026-08-10.md",
+    "precommit": "docs/records/ercot/PRECOMMIT-ercot186-rule18-grain-2026-08-10.md",
     "bundle": "results/calibration/ercot185_shapedarm_B",
     "note": "SP-3 is a MEASUREMENT reported at full magnitude, not an assertion; SP-4 adjudicates inertness (prediction P-2). No bound moves in response to either."
   },

@@ -13,7 +13,7 @@ ledgered caveat; C1 all 14/14, free 10/10.**
 **Solves run: TWO** — one rule-29 2024 screen (throwaway, deleted after its gates were recorded)
 and ONE full 2023–2025 bundle. **No control solve** (control = the keeper's committed bundle,
 rule 29(b) form 4; G-DRIFT audited).
-**Pre-registration:** `results/calibration/PREREG-nyiso196-cc-outage-share-basis-screen.md`,
+**Pre-registration:** `docs/records/nyiso/PREREG-nyiso196-cc-outage-share-basis-screen.md`,
 pushed at `64cc970b` BEFORE the screen (Addendum A before the solve); every gate below is the
 PREREG's, executed verbatim. **Machine records:** `_nyiso196_cc_overrun_decomp.json`,
 `_nyiso196_extract_basis_census.json`, `_nyiso196_rebuild_checks_2024.json`,
@@ -170,8 +170,8 @@ scored by `calibration_verdict.py --run-id` from committed artifacts only.
 > (payload) against `screen_gwh` 5235.5 (LP) — the 5.24 printed above. **Nothing else in this
 > document changes**: the repair, the screen, the determination and every other §4.2 row are
 > unaffected, and the promotion never rested on this row. Evidence:
-> `docs/FINDING-nyiso197-linden-addback-basis-2026-09-06.md`,
-> `results/calibration/_nyiso197_linden_phase0.json`. Original text preserved below, unedited.
+> `docs/records/nyiso/FINDING-nyiso197-linden-addback-basis-2026-09-06.md`,
+> `results/phase0/nyiso/_nyiso197_linden_phase0.json`. Original text preserved below, unedited.
 
 **Regressions, stated:** (i) **Linden 50006 falls ~1.0 TWh in every year, AWAY from a 7.2–7.4 TWh
 meter, although its own availability ROSE (+0.3 TWh/yr)** — the LP re-placed the released
@@ -226,7 +226,7 @@ Bethlehem +0.08 / +0.17 TWh further above its meter in 2024 / 2025; Sithe +0.05 
    internal Zone-J station, and I-1 already measured 0 of 8,760 h of binding import capability);
    the duty limb is inert (the lay-up census abstains at Linden). Any lever is an OFFER-position
    lever on `CC_CHP` and needs an owner ruling under rule 1's carve-out conditions.
-   Evidence: `docs/FINDING-nyiso197-linden-addback-basis-2026-09-06.md`.
+   Evidence: `docs/records/nyiso/FINDING-nyiso197-linden-addback-basis-2026-09-06.md`.
 2. **The deriver's id resolution** (`derive_campd_unit_outages.unit_capacity_mw`): a CAMPD stack
    id must never resolve to a CA (steam) generator; the shared EIA-860 `Unit Code` links the CA
    row to its CTs. A record-only follow-up (rule 23: re-derive only citing this defect); the

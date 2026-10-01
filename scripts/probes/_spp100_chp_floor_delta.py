@@ -1,6 +1,6 @@
 """SPP-100 (zero LP): the CHP steam floor the conduct scope builds on the SPP keeper.
 
-Record: ``docs/handoffs/PRECOMMIT-spp-100-chp-conduct-scope-2026-09-28.md``.
+Record: ``docs/records/spp/PRECOMMIT-spp-100-chp-conduct-scope-2026-09-28.md``.
 
 Rebuilds keeper ``results/calibration/spp99_remap_span``'s fleet ``fleet_only`` for one year
 under one arm and dumps the per-row arrays. Arms: ``control`` (the keeper recipe), ``P``

@@ -4,7 +4,7 @@
 `claude/capx-d76-p2-full-span-4jkhit`, base `origin/main` **`e6a0402f`**.
 Pre-registered in `PRECOMMIT-capx-d76-p2-2026-09-06.md` + Addendum 1, **pushed before the first
 LP**. Phase 0/1 record: `FINDING-capx-d76-2026-09-06.md`.
-Instruments (all committed): `docs/handoffs/d76/p2_predeclare.{py,json}` (the pre-solve
+Instruments (all committed): `docs/records/forecast/d76/p2_predeclare.{py,json}` (the pre-solve
 declaration), `p2_gate.py` + `p2_gate_{pjm,caiso,ercot,miso}.json` (the STOP grader and the
 whole-ledger diff), `p2_consumer_probe.py`, `p2_accreditation_probe.py` (both zero-LP).
 DATA PROFILE: `pjm`, then `caiso` / `ercot` / `miso`.
@@ -171,7 +171,7 @@ to my own commits, which is the same hazard wearing a different hat.
 **The substantive check is clean.** `git diff aea30cd5 b9262222` over `src/market_sim`,
 `scripts/run_capacity_hindcast.py`, `scripts/lib`, `data/raw/_validation-source` and
 `data/raw/reference` is **EMPTY**. The entire delta between the two shas is **one file** —
-`docs/handoffs/d76/p2_gate.py`, a zero-LP grader no solve imports. Both legs were `dirty: false`.
+`docs/records/forecast/d76/p2_gate.py`, a zero-LP grader no solve imports. Both legs were `dirty: false`.
 So no operand moved and the A/B is sound on the merits.
 
 **It is still reported as a FAIL.** This is post-result, so the pre-registered text stands as
@@ -380,7 +380,7 @@ NEISO's and NYISO's cells are untouched, because this lane did not test them. Th
 **`O`** in all four: the mechanism is measured but not adjudicated — arming is an owner card.
 
 **All eight bundles are DELETED from `results/hindcast/` before this PR merges** (rule 29(c)). This
-FINDING, the PRECOMMIT and `docs/handoffs/d76/p2_gate_{pjm,caiso,ercot,miso}.json` +
+FINDING, the PRECOMMIT and `docs/records/forecast/d76/p2_gate_{pjm,caiso,ercot,miso}.json` +
 `p2_predeclare.json` carry every number the lane will ever cite; git history is the record for the
 bytes. Nothing is registered on any dashboard — a screen bundle is never registered, and
 `KEEP_REQUIRED_UNMAPPED_BUNDLES` is not the route for one.
@@ -388,15 +388,15 @@ bytes. Nothing is registered on any dashboard — a screen bundle is never regis
 ## 11. Reproduction
 
 ```bash
-.venv/bin/python docs/handoffs/d76/p2_predeclare.py          # the pre-solve declaration, zero LP
+.venv/bin/python docs/records/forecast/d76/p2_predeclare.py          # the pre-solve declaration, zero LP
 # eight legs, sequential, one at a time (see §1 for flags):
 #   scripts/run_capacity_hindcast.py --iso <ISO> --start-year 2021 --end-year <2023|2025> \
 #     --vintage 2020 --entry-screen-diagnostics [--no-]capacity-screen-peak-measured-hindcast \
 #     --out-dir results/hindcast/d76p2-<iso>-<control|arm>
-.venv/bin/python docs/handoffs/d76/p2_gate.py --iso <ISO> \
+.venv/bin/python docs/records/forecast/d76/p2_gate.py --iso <ISO> \
     --control results/hindcast/d76p2-<iso>-control --arm results/hindcast/d76p2-<iso>-arm
-.venv/bin/python docs/handoffs/d76/p2_accreditation_probe.py   # §4.1, zero LP
-.venv/bin/python docs/handoffs/d76/p2_consumer_probe.py        # §4, zero LP
+.venv/bin/python docs/records/forecast/d76/p2_accreditation_probe.py   # §4.1, zero LP
+.venv/bin/python docs/records/forecast/d76/p2_consumer_probe.py        # §4, zero LP
 ```
 
 ---

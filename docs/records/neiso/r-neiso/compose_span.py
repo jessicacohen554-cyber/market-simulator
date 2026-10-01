@@ -13,7 +13,7 @@ must share one solve-surface fingerprint.
 
 Usage::
 
-    uv run python docs/handoffs/r-neiso/compose_span.py \\
+    uv run python docs/records/neiso/r-neiso/compose_span.py \\
         --leg 2019=rneiso_2019 ... --leg 2025=rneiso_2025 --out results/calibration/rneiso_span
 """
 

@@ -5,7 +5,7 @@
 comparator):** `2026-08-20-ercot223-arm-eventrelease`
 (`ercot223_release_arm`) · **Probe:**
 `scripts/probes/ercot232_gspur_phase0.py` →
-`results/calibration/ercot232_gspur_phase0.json`
+`results/phase0/ercot/ercot232_gspur_phase0.json`
 
 **NO SOLVE, NO LP, NO MECHANISM BUILT, NO `ScenarioConfig` FIELD, NO RUN
 REGISTERED, KEEPER UNCHANGED.** Every number below is read from artifacts
@@ -122,7 +122,7 @@ the load-share spread was masking**, not a defect of the tie placement.
 **That object is not admissibly tunable at zonal grain**, and this is already
 adjudicated. A generic transmission constraint binds on contingency/nodal
 conditions a 7-zone reduction cannot carry;
-`docs/DIAGNOSIS-ercot-trough-price-formation-2026-07.md` §10 (ERCOT-117,
+`docs/records/ercot/DIAGNOSIS-ercot-trough-price-formation-2026-07.md` §10 (ERCOT-117,
 matrix cell `internal_congestion_split` = **G**) measured nodal-only binding at
 36–47 % of all SCED intervals, concentrated in **138 kV single elements binding
 66–83 % of intervals**, and refused sub-zonal splits because their link TTC

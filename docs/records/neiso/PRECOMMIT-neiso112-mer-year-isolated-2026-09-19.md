@@ -99,7 +99,7 @@ Because §3 finds no live mechanism change, the **only** channel that can move a
 is the one the owner's instruction names: **year grouping**. The keeper solved all six
 years in ONE invocation; each shard solves ONE year alone.
 
-Measured in MISO on 2026-09-19 (`docs/RESULT-miso262-mer-control-and-the-year-grouping-defect-2026-09-19.md`),
+Measured in MISO on 2026-09-19 (`docs/records/miso/RESULT-miso262-mer-control-and-the-year-grouping-defect-2026-09-19.md`),
 this is not nothing: a keeper year re-solved standalone reproduced the **first** year of
 each invocation leg and diverged in the later ones, up to **24.18 TWh** of class energy
 and 43,160 of 70,080 price cells, deterministically, with the 2022 swap moving 24 TWh

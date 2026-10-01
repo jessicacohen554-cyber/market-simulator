@@ -149,7 +149,7 @@ run and both keepers' determinations. Nothing here touches `data/raw`, any sidec
 keeper or scoring file. What is recomputed is this lane's own **diagnostic** tables, on the
 alignment SPP-51c established and this addendum independently reproduced to 0.001 $/MWh.
 
-**Instruments:** `docs/handoffs/spp51b/clock_recheck.py` (new; the alignment gate and all five
+**Instruments:** `docs/records/spp/spp51b/clock_recheck.py` (new; the alignment gate and all five
 recomputations). The finding's original five instruments are unchanged and still reproduce the
 published numbers on the committed basis, which is what makes the before/after comparison auditable.
 
@@ -185,5 +185,5 @@ C3a-zeroing strength the bottom stays +30 to +86 % dear and the top goes to -35 
 +10 to +25 and -20 to -38). NO CONCLUSION WITHDRAWN OR REVERSED. Does NOT land the clock repair --
 that is SPP-51c R-1, a scoring-basis change needing its own pre-registration; no data/raw, sidecar,
 bench, status, keeper or scoring file touched. ZERO LP.
-FINDING: docs/handoffs/FINDING-spp-51b-session-b-ADDENDUM-2026-09-09.md
+FINDING: docs/records/spp/FINDING-spp-51b-session-b-ADDENDUM-2026-09-09.md
 ```

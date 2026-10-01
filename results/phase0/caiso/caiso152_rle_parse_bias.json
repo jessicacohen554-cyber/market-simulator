@@ -1,7 +1,7 @@
 {
  "probe": "caiso-152 dam-public-bids RLE parse bias",
- "prereg": "results/calibration/PREREG-caiso152-dam-bid-rle-parse-2026-08-01.md",
- "prereg_addendum": "results/calibration/PREREG-caiso152-ADDENDUM-corpus-2026-08-01.md",
+ "prereg": "docs/records/caiso/PREREG-caiso152-dam-bid-rle-parse-2026-08-01.md",
+ "prereg_addendum": "docs/records/caiso/PREREG-caiso152-ADDENDUM-corpus-2026-08-01.md",
  "tolerance": {
   "abs": 0.08,
   "rel": 0.1,

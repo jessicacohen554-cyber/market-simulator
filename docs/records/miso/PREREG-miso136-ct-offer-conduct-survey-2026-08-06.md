@@ -182,7 +182,7 @@ report names against `docs.misoenergy.org/marketreports/`, fetch ≤2 sample
 days per training year per existing report, parse headers and structural
 facts only; survey S2 catalog; survey S3 index/appendix listing; adjudicate
 S4 on the purpose test. 3. Record
-`results/calibration/_miso136_ct_offer_conduct_survey.json`. 4. FINDING +
+`results/phase0/miso/_miso136_ct_offer_conduct_survey.json`. 4. FINDING +
 §5.4 queue stamp + `measured_offer_surface` MISO note ground update (record
 repair of "unsurveyed" → surveyed, no verdict) + calibration-log entry, all
 this session. 5. If NO: open lane (c) in this session.

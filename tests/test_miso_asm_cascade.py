@@ -12,7 +12,7 @@ overstating the published scarce-hour reserve price ~2.5x and the
 "share of the energy gap" headline by the same factor (118.8 % -> 47.3 % in
 2025). Corrected 2026-09-01; measured and independently reproduced by
 ``scripts/probes/_xiso1_miso_asm_cascade_check.py``; record:
-``docs/FINDING-xiso-cascade-scan-2026-09-01.md`` (the nyiso-166 §2 instrument
+``docs/records/governance/FINDING-xiso-cascade-scan-2026-09-01.md`` (the nyiso-166 §2 instrument
 rule carried cross-ISO).
 
 These tests pin:
@@ -49,7 +49,7 @@ sys.path.insert(0, str(REPO / "src"))
 
 PROBES = REPO / "scripts" / "probes"
 ASDIR = REPO / "data" / "raw" / "MISO-AS"
-CAL = REPO / "results" / "calibration"
+CAL = REPO / "results" / "phase0" / "miso"
 CORRECTION_KEY = "CORRECTION_2026-09-01_xiso-cascade"
 
 MCP_YEARS = (2023, 2024, 2025, 2026)

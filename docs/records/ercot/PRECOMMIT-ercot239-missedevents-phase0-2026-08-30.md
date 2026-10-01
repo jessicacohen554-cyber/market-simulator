@@ -39,14 +39,14 @@ h4578).
 **V-0:** the recomputed population must be EXACTLY the 14 hours named in
 the committed record — {h2058, h2971, h4623, h4626, h5369, h5484, h5777,
 h5943, h5945, h6399, h7001, h7145, h7480} ∪ {h4578} — and list-identical
-to the committed `results/calibration/ercot237_bandswap_phase0.json`
+to the committed `results/phase0/ercot/ercot237_bandswap_phase0.json`
 cell-hour lists. Any mismatch STOPS the probe (no result recorded) and is
 an Amendment (§5), never worked around.
 
 ## 2. What is measured (all zero-solve; committed artifacts + raw measured inputs only)
 
 The probe (`scripts/probes/ercot239_missedevents_phase0.py`, writes
-`results/calibration/ercot239_missedevents_phase0.json`) computes, per
+`results/phase0/ercot/ercot239_missedevents_phase0.json`) computes, per
 event hour and against fixed peer framings:
 
 * **M-1 — actual-side driver panel** (EIA-930 wide extract
@@ -153,7 +153,7 @@ measurement, pushed, and the FINDING cites it — never silently absorbed.
 ## the V-0 cross-check's cited artifact does not carry the corner hour's list
 
 §1 declared V-0 "list-identical to the committed
-`results/calibration/ercot237_bandswap_phase0.json` cell-hour lists". On
+`results/phase0/ercot/ercot237_bandswap_phase0.json` cell-hour lists". On
 first run the probe hard-stopped on a KeyError: that JSON carries hour
 lists only for off-diagonal cells touching `[200,500)` or `[500,1000)`
 (the ercot-237 precommit's own recording rule), so the `lt_200|ge_1000`

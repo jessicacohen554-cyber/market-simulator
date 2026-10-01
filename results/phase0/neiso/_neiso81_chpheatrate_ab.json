@@ -1,7 +1,7 @@
 {
   "session": "neiso-81",
   "iso": "NEISO",
-  "prereg": "results/calibration/PREREG-neiso81-chp-heat-rate-readjudication-2026-08-04.md",
+  "prereg": "docs/records/neiso/PREREG-neiso81-chp-heat-rate-readjudication-2026-08-04.md",
   "arms": {
     "A": "results/calibration/neiso81_control_A",
     "B": "results/calibration/neiso81_chpheatrate_B"

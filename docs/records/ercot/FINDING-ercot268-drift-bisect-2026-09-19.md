@@ -2,7 +2,7 @@
 
 **Session:** ercot-268 (parent/orchestrator), 2026-09-19. Branch
 `claude/ercot-engine-drift-bisect-2z2z1a`.
-**Predecessor:** `docs/handoffs/RESULT-ercot-mer-keeper-resolve-2026-09-19.md` — the run that
+**Predecessor:** `docs/records/ercot/RESULT-ercot-mer-keeper-resolve-2026-09-19.md` — the run that
 found the drift and correctly stopped at "report and stop" (its sealed prediction P4).
 **ZERO LP SOLVED.** Every number below comes from `run_year(fleet_only=True)` rebuilds
 (~90 s each) and from git. No shard was launched (rule 32 `[R-SHARD]` (a) never had to bind).

@@ -11,7 +11,7 @@
 > do not launch sessions from it.**
 
 **Purpose.** The forecast-driver capacity-revenue audit program
-(`docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md`, Waves 0–3 +
+(`docs/records/forecast/forecast-driver-capacity-revenue-audit-plan-2026-07.md`, Waves 0–3 +
 follow-ups through N-5 complete; the N-6 full-horizon re-run was dropped by the owner
 and is NOT re-proposed here) localized the model's entry/exit unfitness to one
 dominant frontier: **the economic retirement/entry screens are miscalibrated in
@@ -516,7 +516,7 @@ channels (memo, no code)
 
 Read CLAUDE.md (rules 1/13/14/21/23 govern this memo), docs/handoffs/
 forecast-retirement-calibration-plan-2026-07.md §1.1/§1.3 (your spec),
-docs/handoffs/capacity-revenue-fom-ratio-2026-07-13.md, the four hindcast reports
+docs/records/misc/capacity-revenue-fom-ratio-2026-07-13.md, the four hindcast reports
 (docs/hindcast-reports/{ercot,pjm}-2021-2025-realized-p2c*-2026-07-12.md,
 {miso,nyiso}-2021-2025-realized-2026-07-14.md), scenarios.py:283-366, and the RC-0A
 ACR + notice-period intakes. No code changes — memo session; findings only, never
@@ -550,7 +550,7 @@ Push via mcp__github__push_files.
 ```
 [OPUS] RC-0C — Decompose the solar-entry zero (BLK-8): which term starves the screen?
 
-Read CLAUDE.md, docs/handoffs/forecast-retirement-calibration-plan-2026-07.md §1.4
+Read CLAUDE.md, docs/records/forecast/forecast-retirement-calibration-plan-2026-07.md §1.4
 (THE SPEC — terms a-e and the split trigger), docs/gap-register-2026-07.md §3.9
 BLK-8, model/capacity.py::apply_economic_new_entry + compute_lcoe, and the ERCOT/PJM/
 MISO hindcast reports. Fresh branch off latest origin/main. Findings only — no model
@@ -581,9 +581,9 @@ default changes, no tuning, no threshold widening (rules 1/11/14).
 [SONNET] RC-1B — Plumbing: per-ISO capacity_market_clearing + vintage-resolved
 net-CONE anchors (prereq 3 + gate item 5)
 
-Read CLAUDE.md, docs/handoffs/forecast-retirement-calibration-plan-2026-07.md §2.1
-items 2/5, docs/handoffs/capacity-price-validation-2026-07-12.md §7, and
-docs/handoffs/accreditation-basis-memo-2026-07-12.md §4.3 (R4 stays deferred to the
+Read CLAUDE.md, docs/records/forecast/forecast-retirement-calibration-plan-2026-07.md §2.1
+items 2/5, docs/records/misc/capacity-price-validation-2026-07-12.md §7, and
+docs/records/misc/accreditation-basis-memo-2026-07-12.md §4.3 (R4 stays deferred to the
 flip commit — do NOT re-derive the legacy fixed anchor here). Fresh branch off latest
 origin/main. Scope guard: annual capacity-evolution layer only (capacity.py /
 constants.py / scenarios.py / pipeline seams) — never the dispatch-layer floors, the
@@ -614,8 +614,8 @@ AS co-opt, or any backcast keeper.
 ```
 [OPUS] RC-1C — MISO seasonal RBDC + NYISO multi-vintage ICAP curves (prereq 4)
 
-Read CLAUDE.md, docs/handoffs/forecast-retirement-calibration-plan-2026-07.md §2.1
-item 2, docs/handoffs/capacity-price-validation-2026-07-12.md §3.3-3.4 (why MISO and
+Read CLAUDE.md, docs/records/forecast/forecast-retirement-calibration-plan-2026-07.md §2.1
+item 2, docs/records/misc/capacity-price-validation-2026-07-12.md §3.3-3.4 (why MISO and
 NYISO are not curve-eligible today), and the RC-0A intakes. Requires RC-0A + RC-1B
 merged. Fresh branch off latest origin/main. Same scope guard as RC-1B.
 
@@ -669,7 +669,7 @@ mcp__github__push_files.
 [OPUS] RC-1A — Position calibration: curve-ON probe hindcasts for PJM + MISO
 (§2.2 — the measurement that breaks the circularity)
 
-Read CLAUDE.md, docs/handoffs/forecast-retirement-calibration-plan-2026-07.md
+Read CLAUDE.md, docs/records/forecast/forecast-retirement-calibration-plan-2026-07.md
 §2.1/§2.2/§3 (T-R1/T-R2/T-R4/T-R5-inv/T-R7 are YOUR pre-registered scorecard — read
 them before any run and do not restate them looser), docs/handoffs/
 capacity-price-validation-2026-07-14.md, and the RC-0B scoring memo. Requires RC-1B
@@ -704,10 +704,10 @@ curve and label it). Fresh branch off latest origin/main.
 [OPUS] RC-2A — ERCOT retirement-level composition probe + forced-outage availability
 scoping (G-30/G-31 continuation; BLK-6 stays with G-20/G-22)
 
-Read CLAUDE.md, docs/handoffs/forecast-retirement-calibration-plan-2026-07.md
+Read CLAUDE.md, docs/records/forecast/forecast-retirement-calibration-plan-2026-07.md
 §1.2/§3 T-R3, docs/hindcast-reports/ercot-g30-entry-lookahead-2026-07-08.md +
 ercot-g31-staged-thinning-limited-foresight-2026-07-08.md (the arms you are
-composing), and docs/handoffs/cross-model-corridor-2026-07-13.md §2.1 (the SOM
+composing), and docs/records/misc/cross-model-corridor-2026-07-13.md §2.1 (the SOM
 anchors). Fresh branch off latest origin/main. HARD BOUNDARY: the AS co-opt
 mechanism itself is G-20/G-22's lane — you consume whatever is on main, you do not
 extend it.
@@ -740,7 +740,7 @@ extend it.
 [FABLE] RC-2B — The flip memo: grade the gate, per ISO, and put the decision to the
 owner
 
-Read CLAUDE.md, docs/handoffs/forecast-retirement-calibration-plan-2026-07.md §2.1
+Read CLAUDE.md, docs/records/forecast/forecast-retirement-calibration-plan-2026-07.md §2.1
 (the gate you are grading) + §3 (the battery), the RC-1A position-calibration
 findings, the RC-2A ERCOT findings, the RC-1C validation refresh, and the RC-1D
 audit memos. Memo only — no code, no solve, no tuning.
@@ -767,8 +767,8 @@ reality. Push via mcp__github__push_files.
 [OPUS] RC-3A — Execute the approved flips + the gated re-runs
 
 Read CLAUDE.md, the RC-2B memo + the owner's sign-off (do NOT start without it),
-docs/handoffs/forecast-retirement-calibration-plan-2026-07.md §2.3 F-9, and
-docs/handoffs/accreditation-basis-memo-2026-07-12.md §4.3-R4. Fresh branch off
+docs/records/forecast/forecast-retirement-calibration-plan-2026-07.md §2.3 F-9, and
+docs/records/misc/accreditation-basis-memo-2026-07-12.md §4.3-R4. Fresh branch off
 latest origin/main.
 
 1. One dedicated commit per approved ISO: per-ISO gate ON, citing the RC-2B memo;

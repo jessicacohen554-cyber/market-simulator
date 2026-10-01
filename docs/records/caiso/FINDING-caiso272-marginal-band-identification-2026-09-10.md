@@ -63,7 +63,7 @@ because it is the standing precondition for any successor lane that does solve.
 
 ## §2 — CARD 0(b): THE INSTRUMENT, AND ITS VALIDATION BEFORE ANY CONCLUSION
 
-`scripts/probes/_caiso272_marginal_band.py` → `results/calibration/_caiso272_marginal_band.json`.
+`scripts/probes/_caiso272_marginal_band.py` → `results/phase0/caiso/_caiso272_marginal_band.json`.
 The caiso-250 `mc = λ` instrument, run at **LP-ROW grain** on the keeper's own reconstructed
 offer array (`run_year(..., fleet_only=True)` — which the orchestrator documents as *"the
 assembled P0 objective ... so post-solve offer-stack diagnostics read the SAME offer prices the
@@ -394,7 +394,7 @@ reason the answer to the charter is **accept**, not **rebase**.
 
 ## §9 — DELIVERABLES
 
-`scripts/probes/_caiso272_marginal_band.py` + `results/calibration/_caiso272_marginal_band.json`;
+`scripts/probes/_caiso272_marginal_band.py` + `results/phase0/caiso/_caiso272_marginal_band.json`;
 this finding; the `docs/calibration-log/caiso.md` entry; an **evidence-only** append on the
 CAISO matrix shard. **No cell verdict moves; no mechanism was tested; no run registered; keeper
 unchanged; no bundle produced, so rule 31 `[R-RETAIN]` has nothing at risk in this container.**

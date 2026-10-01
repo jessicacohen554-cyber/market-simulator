@@ -62,7 +62,7 @@ The §2 census was re-run at the rebased HEAD: `soco81_fleet_census.json` is byt
 
 ## 2. Census (zero LP)
 
-`scripts/probes/_soco81_census.py fleet`, record `docs/handoffs/r-soco/soco81_fleet_census.json`. `fleet_only` rebuild
+`scripts/probes/_soco81_census.py fleet`, record `docs/records/soco/r-soco/soco81_fleet_census.json`. `fleet_only` rebuild
 on the soco76 recipe (the nine §5 `--set` fields included), flag off vs on, every year:
 
 - **Exactly 11 tranches move in every year 2019–2025.** Bowen 703 and Gaston 26 move their `_committed` only (neither
@@ -86,7 +86,7 @@ Ratios, lo / hi (year rows):
 
 ## 3. Greedy (zero LP), baseline-differenced
 
-`_soco81_census.py greedy`, record `docs/handoffs/r-soco/soco81_greedy.csv`.
+`_soco81_census.py greedy`, record `docs/records/soco/r-soco/soco81_greedy.csv`.
 
 - **Construction.** Each moved plant's tranche set is dispatched as a price-taker against its zone's committed P1
   price, at the keeper offer and at the arm offer. The hourly difference is added to the plant's committed payload MW,

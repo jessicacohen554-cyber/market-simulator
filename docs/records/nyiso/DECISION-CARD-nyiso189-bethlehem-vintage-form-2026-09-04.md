@@ -3,7 +3,7 @@
 **Session:** nyiso-189, NYISO backcast-calibration lane, 2026-09-04. **Zero
 solves.** Keeper `2026-09-04-nyiso-188-combined` (CALIBRATED, grade 7, fails
 0, C3c ledgered) is untouched. **Pre-registration:**
-`results/calibration/PREREG-nyiso189-bethlehem-gen-collapse-census.md`,
+`docs/records/nyiso/PREREG-nyiso189-bethlehem-gen-collapse-census.md`,
 pushed at `65dc4094` before the census ran. **Record:**
 `results/calibration/_nyiso189_gen_collapse_census/` (probe
 `scripts/probes/nyiso189_gen_collapse_census.py`).

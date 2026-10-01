@@ -192,7 +192,7 @@ current keeper recipe at current HEAD — BASE (recipe unchanged) vs ARM
 (single delta `ercot_thermal_dam_availability_coal=true`) — to **size the
 un-pinning and expose the merit bias**, NOT to produce a keeper. Gates,
 predictions and the decision rule are pre-registered in
-`docs/PRECOMMIT-ercot134-coal-avail-regate-2026-07-28.md`, pushed before any
+`docs/records/ercot/PRECOMMIT-ercot134-coal-avail-regate-2026-07-28.md`, pushed before any
 solve. The expected outcome is that the ARM FAILS on level (C1/C3a) — that
 is the measurement, not the verdict.
 

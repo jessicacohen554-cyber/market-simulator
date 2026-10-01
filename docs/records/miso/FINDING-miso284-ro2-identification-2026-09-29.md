@@ -2,7 +2,7 @@
 
 **Session:** miso-284 (2026-09-29). **Keeper:** `2026-09-28-miso-280-splitremap` (unchanged). **Solves:** none.
 **Lane:** RO-2 `scuc_load_pocket_commitment`. It was un-routed by the owner on the miso-283 card and opened by the miso-284 card (*"Park, go to RO-2"*).
-**Evidence:** `results/calibration/_miso281_south_steam_oom.json` (re-read); EIA-860 tip (new-build census); a public-source search (§3).
+**Evidence:** `results/phase0/miso/_miso281_south_steam_oom.json` (re-read); EIA-860 tip (new-build census); a public-source search (§3).
 
 ## 1. Answer
 

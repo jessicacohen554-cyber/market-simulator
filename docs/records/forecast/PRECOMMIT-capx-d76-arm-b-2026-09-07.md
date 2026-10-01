@@ -218,10 +218,10 @@ character ','`) — one line, first reported `FINDING-capx-d76-p3` §8.2, outsid
 uv sync
 # ex ante (this document's numbers), scenarios.py untouched:
 .venv/bin/python scripts/probes/capxd76arm_default_flip_key_census.py \
-    --variant b --expect-live-default false --out docs/handoffs/d76armb/key-census-variant-b-preflip.json
+    --variant b --expect-live-default false --out docs/records/forecast/d76armb/key-census-variant-b-preflip.json
 # ex post, after the edit — the SAME arithmetic, now proving it measured the edited tree:
 .venv/bin/python scripts/probes/capxd76arm_default_flip_key_census.py \
-    --variant b --expect-live-default true --out docs/handoffs/d76armb/key-census-variant-b-postflip.json
+    --variant b --expect-live-default true --out docs/records/forecast/d76armb/key-census-variant-b-postflip.json
 .venv/bin/python scripts/check_cache_key_registration.py --base origin/main
 .venv/bin/python -m pytest tests/unit/pipeline/test_capacity_screen_peak_measured_hindcast.py \
     tests/unit/config/test_cache_key_declared_default_drop.py

@@ -15,7 +15,7 @@ session's.
 ## 1. The two arms
 
 Both at THIS head, i.e. at/after the FFR-3V-FIX epoch — **condition 2** of
-`docs/handoffs/ffr-3v-fix-2026-08-08.md` §6: no pre-epoch cached bundle may serve as either
+`docs/records/forecast/ffr-3v-fix-2026-08-08.md` §6: no pre-epoch cached bundle may serve as either
 side, because the arms hash to the same key as their pre-epoch predecessors while producing
 different output.
 

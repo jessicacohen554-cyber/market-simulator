@@ -11,7 +11,7 @@ Inputs: bench `frontend/data/backcast/bench/PJM/<y>.json.gz` (CAMPD hourly shape
 keeper payloads; pjm-h20's six shard legs (`unit_hourly`, `floors`), read from shard SHAs
 `30a0fcc5 196a2016 3ee80dfc e7cdb7ef 34e34286 61c3c77f` (provenance only); pjm-146's two payloads
 from git at `25dd3b3d`. Probes: `scripts/probes/pjm_h21_cardd_phase0.py`,
-`scripts/probes/pjm_h21_cardd_zonal_phase0.py`. Artifacts: `results/calibration/_pjm_h21_cardd_phase0.json`,
+`scripts/probes/pjm_h21_cardd_zonal_phase0.py`. Artifacts: `results/phase0/pjm/_pjm_h21_cardd_phase0.json`,
 `_pjm_h21_cardd_zonal_phase0.json`, `_pjm_h21_cc_heat_rate_census.csv`.
 
 ## 1. Answer

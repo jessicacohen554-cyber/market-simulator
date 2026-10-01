@@ -1,14 +1,14 @@
 # RESULT — NYISO-NEXT-16: `nyiso_iroquois_winter_spread` under the cutset link — 2026-09-30
 
 - **Session:** NYISO-NEXT-16 (orchestrator; no LP in this container).
-- **Pre-registration:** `docs/PRECOMMIT-nyiso-next16-winter-spread-2026-09-30.md` (merged in PR #6909 before any shard; pin `38ea5423e3f7ff992f2a8ae69bf3fa2bde25f2b4`).
-- **Phase 0:** `docs/FINDING-nyiso-next16-c3b-2022-phase0-2026-09-30.md`.
+- **Pre-registration:** `docs/records/nyiso/PRECOMMIT-nyiso-next16-winter-spread-2026-09-30.md` (merged in PR #6909 before any shard; pin `38ea5423e3f7ff992f2a8ae69bf3fa2bde25f2b4`).
+- **Phase 0:** `docs/records/nyiso/FINDING-nyiso-next16-c3b-2022-phase0-2026-09-30.md`.
 - **Owner cards:** "Re-test, 5 yrs", then "Promote (override)".
 - **Outcome:** keeper `2026-09-30-nyisonext16-winter-spread-span` (2022–2025) plus stamped `2026-09-30-nyisonext16-winter-spread-2021`. **Span CALIBRATED** (C3c the lone ledgered caveat). 2021 NOT-YET.
 
 ## 1. Gates (arm vs the NEXT-15 keeper's committed bundles, form 4)
 
-Record: `results/calibration/_nyisonext16_gates.json`.
+Record: `results/phase0/nyiso/_nyisonext16_gates.json`.
 
 | | 2021 | 2022 | 2023 | 2024 | 2025 |
 |---|---|---|---|---|---|

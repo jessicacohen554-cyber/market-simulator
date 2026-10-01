@@ -15,11 +15,11 @@ records it. The §5 caveat is CONFIRMED: with the extreme tail reproduced on
 the measured data, the over-fire persists through the ORDC-span-vs-energy
 competition. The envelope family (base + extreme) is now exhausted as a G-22
 remedy; keeper stays `ercot42-wtx-curtailment-driver`.
-**Reads first:** `docs/FINDING-ercot-priceshape-2026-07.md` §3 / structural
+**Reads first:** `docs/records/ercot/FINDING-ercot-priceshape-2026-07.md` §3 / structural
 conclusion #2 (the ~3.2 GW online-capability wedge this builds), the ercot34
 calibration-log entry (the G-22 fold), `docs/handoffs/ercot-g22-offer-surface-
 2026-07.md` (the rejected offer-surface, remedy (a); this is remedy (b)), and
-`docs/handoffs/ercot-rtolcap-forward-2026-07.md` (the measured RTOLCAP anchor).
+`docs/records/ercot/ercot-rtolcap-forward-2026-07.md` (the measured RTOLCAP anchor).
 
 ---
 

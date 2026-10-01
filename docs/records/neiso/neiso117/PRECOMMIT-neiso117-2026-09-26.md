@@ -2,7 +2,7 @@
 
 Keeper (precondition verified): `2026-09-25-neiso114-arm-b-stgas`, bundle `results/calibration/neiso114b_span`,
 years 2019–2025. Train tier 2023–2025 CALIBRATED (C3c ledgered); full span NOT-YET on C1 CC_REGULAR only
-(2019 −2.87 TWh, 2022 −3.03 TWh). Phase 0: `docs/handoffs/neiso116/PRECOMMIT-neiso116-2026-09-26.md`.
+(2019 −2.87 TWh, 2022 −3.03 TWh). Phase 0: `docs/records/neiso/neiso116/PRECOMMIT-neiso116-2026-09-26.md`.
 
 ## 1. Owner rulings (2026-09-26, asked before any solve — PRECOMMIT-neiso116 §5)
 
@@ -77,7 +77,7 @@ offer curve byte-identical (no authorized-price-tuning change). DOF: zero new.
 
 A passing gate does not promote and a failing one does not kill; both are reported at full magnitude.
 
-- **G1 recipe:** `docs/handoffs/neiso117/shard_check.py` passes on every leg; log line
+- **G1 recipe:** `docs/records/neiso/neiso117/shard_check.py` passes on every leg; log line
   `coal per-yard budget (NEISO <Y>)` present, `NOT APPLIED` absent.
 - **G2 mechanism fires where predicted:** annual yard burn (Σ HR·P) ≤ budget + 1e-6 relative on every rowed yard;
   binding (burn within 0.5 % of budget) at 568 & 2364 in 2019, 2364 in 2021 and 2022, 2367 in 2025 (budget 0).
@@ -92,7 +92,7 @@ A passing gate does not promote and a failing one does not kill; both are report
 
 Seven shards `neiso117_<Y>`, 2019–2025 (the keeper's whole year set, rule 34(c)), pinned to this doc's commit
 SHA (§8). Branch `claude/neiso117-<Y>`. Full bundle incl. `dispatch/<Y>_P1.parquet` pushed via `.gitignore`
-negation + plain `git add`. Parent composes (`docs/handoffs/neiso117/compose_span.py`), attests, registers
+negation + plain `git add`. Parent composes (`docs/records/neiso/neiso117/compose_span.py`), attests, registers
 `--no-prune`, scores; it never solves (rule 32(a)). Per-year dirs gitignored in the parent's tree.
 
 ## 8. Launch record

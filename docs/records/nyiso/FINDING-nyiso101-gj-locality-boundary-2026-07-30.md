@@ -47,7 +47,7 @@ resolved item — with an explicit and *satisfiable* re-open condition (§6).
 nyiso-100 proved the retired 4,350 MW `NYISO_simultaneous_import` scalar was
 *exactly* the G-J locality Bulk Power Transmission Limit for capability year
 2024/25, mis-installed on the EXTERNAL NYCA seam
-(`docs/FINDING-nyiso100-simultaneous-import-misattribution-2026-07-30.md`).
+(`docs/records/nyiso/FINDING-nyiso100-simultaneous-import-misattribution-2026-07-30.md`).
 Retiring it from the external seam left the limit itself represented **nowhere**.
 The limit is published every capability year
 (`data/raw/capacity-deliverability/nyiso/nyiso.csv`, area `G-J`):
@@ -263,7 +263,7 @@ reliability-floor limb keys (`Capital_Hudson:ST_GAS`), D-2 attribution ids,
 reserve/interchange registries and every NYISO keeper's comparability all move
 with it. It is the same class of change as the ERCOT West/Panhandle topology
 split, which is **CLOSED**
-(`docs/DIAGNOSIS-ercot-trough-price-formation-2026-07.md` §§7–10) — so it needs
+(`docs/records/ercot/DIAGNOSIS-ercot-trough-price-formation-2026-07.md` §§7–10) — so it needs
 its own owner-authorized charter, not a lever-queue entry.
 
 ---

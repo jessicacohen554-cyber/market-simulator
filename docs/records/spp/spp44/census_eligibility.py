@@ -16,7 +16,7 @@ Also prints, per eligible plant, the floor level the detector would apply:
 min(min_load_frac x PLANT pmax, base-tranche pmax) on both measured bases, so
 the PRECOMMIT can state which basis the consumer's denominator is on.
 
-Usage: uv run python docs/handoffs/spp44/census_eligibility.py
+Usage: uv run python docs/records/spp/spp44/census_eligibility.py
 """
 
 import json
@@ -36,7 +36,7 @@ from market_sim.model.commitment import (  # noqa: E402
 )
 
 BUNDLE = REPO / "results/calibration/spp42_crosswalk_B"
-OUT = REPO / "docs/handoffs/spp44"
+OUT = REPO / "docs/records/spp/spp44"
 PROC = REPO / "data/raw/_processed-legacy"
 
 FUELS = ("gas_cc", "gas_st", "gas_ct")

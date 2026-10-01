@@ -6,7 +6,7 @@
 (`results/calibration/soco56_perunit_outage`), rule 29 `[R-SCREEN]` (b) **form 4**, no control solve.
 **Arm** `measured_cc_heat_rates = True` — ONE new default-off `ScenarioConfig` field, one new derive,
 one new per-ISO artifact.
-**PRECOMMIT** `docs/handoffs/PRECOMMIT-soco-57-2026-09-20.md`, pushed at
+**PRECOMMIT** `docs/records/soco/PRECOMMIT-soco-57-2026-09-20.md`, pushed at
 `7751541416ce0f5199ada9fcb508c6038de23ba1` **before any LP was solved**.
 
 ---
@@ -560,8 +560,8 @@ renames at every sharded keeper because rule 36 requires per-year re-solves.
 2026-09-20-soco53g-prb-own-iso is KEPT (rule 31) and unstamped (rule 30(a)), so
 audit_keepers E13 fires once by design and is RE-RAISED FOR THE TENTH CONSECUTIVE LANE;
 the standing recommendation across SOCO-55/56/57 is to DECLINE it so the next promoting
-session may prune it. Records: docs/handoffs/PRECOMMIT-soco-57-2026-09-20.md,
-docs/handoffs/FINDING-soco-57-2026-09-20.md, scripts/gen_soco57_attestation.py,
+session may prune it. Records: docs/records/soco/PRECOMMIT-soco-57-2026-09-20.md,
+docs/records/soco/FINDING-soco-57-2026-09-20.md, scripts/gen_soco57_attestation.py,
 scripts/probes/soco57_compose_span.py, scripts/data/derive_campd_cc_heat_rates.py,
 scripts/probes/_soco57_phase0.py, scripts/probes/_soco57_rule19.py.
 ```

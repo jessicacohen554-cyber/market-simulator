@@ -4,8 +4,8 @@
 **Charter:** the D24 prompt (director pack section unpushed at r#23; the prompt is the charter)
 **Graded object:** `src/market_sim/config/scenarios.py::ScenarioConfig.cache_key`,
 `_CACHE_KEY_OPTIONAL_FIELDS`, and the cache-epoch ledger in `src/market_sim/results/cache.py`
-**Upgraded from:** `docs/handoffs/FINDING-capx-d4m-ercot-t1h-2026-08-31.md` §6 (R-5, demonstrated)
-· original observation `docs/handoffs/FINDING-capx-d4i3-ercot-slack-2026-08-31.md` §5.1
+**Upgraded from:** `docs/records/forecast/FINDING-capx-d4m-ercot-t1h-2026-08-31.md` §6 (R-5, demonstrated)
+· original observation `docs/records/forecast/FINDING-capx-d4i3-ercot-slack-2026-08-31.md` §5.1
 **Date:** 2026-09-01 · **ZERO SOLVES.** Every number below is computed from committed artifacts
 and from git history. **NO REPAIR WAS LANDED** — see §7.
 
@@ -452,7 +452,7 @@ Stop reading the live default; drop a field only when it equals the value record
 declaration; it does not overwrite the old). A post-flip config at the new default then carries a
 non-default value, enters the hash, and gets its own key. **This is the "deeper fix" already
 recorded as the open follow-up** in `scenarios.py`'s own ledger comment and
-`docs/handoffs/ffr-3d-instrument-repair-2026-08-03.md` §4.
+`docs/records/forecast/ffr-3d-instrument-repair-2026-08-03.md` §4.
 
 Two variants, and they differ enormously in price:
 

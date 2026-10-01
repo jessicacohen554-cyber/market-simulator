@@ -7,11 +7,11 @@ matrix cells stay `K`, and BOTH CONSTANT VALUES ARE UNCHANGED (15.8807 /
 2026-08-05** on the ERCOT-169 §6 open decision — *option 2, "charter a licensed
 sub-population instrument for the 2023 COAL rows."* Decision rule pre-registered,
 committed and pushed **before** any derive ran:
-`docs/PRECOMMIT-ercot171-coal-licensed-subpopulation-2026-08-05.md`. **No bar,
+`docs/records/ercot/PRECOMMIT-ercot171-coal-licensed-subpopulation-2026-08-05.md`. **No bar,
 band, floor or window was moved after measurement.**
 
 Probe: `scripts/probes/ercot171_coal_licensed_subpop_phase0.py` →
-`results/calibration/ercot171_coal_licensed_subpop.json`. Harness:
+`results/phase0/ercot/ercot171_coal_licensed_subpop.json`. Harness:
 `scripts/lib/sced_corpus_instruments.py`, **unchanged** — `LIMBS`, `assess_limb`,
 `fuel_basis_by_year`, `coverage`, `curve_bottom`, `inc_bid_quantiles` all reused
 verbatim, and through them `ercot123._decompose` / `ercot136._curve`,`._wq` /

@@ -16,7 +16,7 @@ improves but gates regress that may still be a keeper.."* — permissive ("may")
 ## §0 — Phase 0 (zero LP). The nyiso-200 records ARE this session's phase 0; §0.4–§0.6 are new and measured here.
 
 **0.1 Inherited, not re-derived** (rule 29's DO-NOT-REDO discipline). The following are established
-in `docs/FINDING-nyiso200-bridge-run-screen-2026-09-06.md` and its machine records
+in `docs/records/nyiso/FINDING-nyiso200-bridge-run-screen-2026-09-06.md` and its machine records
 (`_nyiso200_bridge_phase0.json`, `_nyiso200_screen_gates_{a1,a3}_2023.json`) and are **not
 re-measured**: the nyiso-199 7314/50978 stop was a one-year `ct_only` union artifact, since
 repaired scorer-side (`legitimacy_diagnostics.ct_only_guard_years` unions over the training span);
@@ -283,6 +283,6 @@ improves but gates regress that may still be a keeper"*), applied as nyiso-198 �
   **decertify NYISO**. The owner's formula admits gates regressing; it does not reach a
   decertification.
 * Screen bundle deleted before merge (29(c)); every number lives in
-  `_nyiso201_screen_gates_a3_2025.json` and `docs/FINDING-nyiso201-threeway-2025-screen-2026-09-06.md`.
+  `_nyiso201_screen_gates_a3_2025.json` and `docs/records/nyiso/FINDING-nyiso201-threeway-2025-screen-2026-09-06.md`.
 
 *(nyiso-201, 2026-09-06. One screen solve. Nothing registered, nothing promoted, no span spent.)*

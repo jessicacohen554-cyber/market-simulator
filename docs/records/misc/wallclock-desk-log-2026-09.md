@@ -2,9 +2,9 @@
 
 **Desk:** session `claude/wc-desk-coordination-pyy4eo` (this file lives on branch
 `claude/wc-desk-log` and is the only thing the desk commits). Implements
-`docs/handoffs/wallclock-opportunities-2026-09.md` §5 by issuing worker prompts, tracking
+`docs/records/misc/wallclock-opportunities-2026-09.md` §5 by issuing worker prompts, tracking
 their PRs and phasing them so no two open branches edit the same file. The standing
-constraints every prompt carries are `docs/handoffs/perfb-session2-markup-charter-2026-09.md`
+constraints every prompt carries are `docs/records/governance/perfb-session2-markup-charter-2026-09.md`
 §6 plus the desk charter's "Constraints" block. Main at desk open: `d01ab8b0`.
 
 Gate state vocabulary: `issued` (prompt sent, no PR yet) · `pr-open` (PR up, gates being

@@ -68,7 +68,7 @@ So the damage is **real but class-dependent**: the CC fleet that carries the bel
 **exactly**, while 104 rows — CHP and raw per-plant units the rebuild fails to bin — do not.
 
 The census behind these counts is
-`results/calibration/_caiso291_rebuild_reachability.json`; the recovered/lost split is reproduced
+`results/phase0/caiso/_caiso291_rebuild_reachability.json`; the recovered/lost split is reproduced
 by comparing the rebuilt `state["config"]` field-by-field against `run_config.json`, normalising
 list-vs-tuple and dict ordering and excluding the two per-year identity fields (`weather_year`,
 `gas_price_override`) that a composite bundle carries at one leg's value.
@@ -130,7 +130,7 @@ ISO's bundle is on disk under keeper-only retention.
 ## 3. The candidacy census — caiso-285's 2024 measurement, extended to all four years
 
 Probe: `scripts/probes/caiso291_bridge_candidacy_census.py`; artifact
-`results/calibration/_caiso291_bridge_census.json`. It replays
+`results/phase0/caiso/_caiso291_bridge_census.json`. It replays
 `caiso_ra_mustoffer_min_gen`'s candidacy loop over the keeper's **committed** P0 and ends by
 asserting its own run census equals the shipped function's `screen_stats`. **All four years
 reproduce exactly**, so the census is the mechanism and not a paraphrase.

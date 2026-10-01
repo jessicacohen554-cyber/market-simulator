@@ -2,8 +2,8 @@
 
 **Session `claude/stage0-recapture-nyiso-yqp94v`, 2026-09-04.** Two keeper
 re-solves at HEAD with determinism pinned, run strictly sequentially. Follows the
-recipe `docs/FINDING-stage0-capture-caiso-nyiso-2026-09.md` (§1, §4) and
-`docs/FINDING-stage0-capture-miso-2026-09.md` (§2 schema-v2 invariant +
+recipe `docs/records/caiso/FINDING-stage0-capture-caiso-nyiso-2026-09.md` (§1, §4) and
+`docs/records/miso/FINDING-stage0-capture-miso-2026-09.md` (§2 schema-v2 invariant +
 merge-base hazard). **No keeper shard, marker, matrix shard, registry, freeze
 file or `program-status.json` edit; no determination changed; no workflow
 created; no dashboard registration** (standing reading R-L: goldens are NEVER
@@ -282,7 +282,7 @@ out-of-training year was solved, scored or registered.
 
 * `results/regression-goldens/perfb-stage0/manifest.json` — the NYISO entry
   re-stamped to `2026-09-04-nyiso-186-astoria-identity`.
-* `docs/FINDING-stage0-recapture-nyiso-2026-09.md` — this file.
+* `docs/records/nyiso/FINDING-stage0-recapture-nyiso-2026-09.md` — this file.
 * Golden bundle under `results/regression-goldens/perfb-stage0/NYISO/` —
   gitignored by design, retained on disk in this container.
 

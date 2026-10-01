@@ -148,7 +148,7 @@ miso-151/ercot-223 artifact pattern).
 ## 4. The no-LP pre-checks — kills fixed NOW, before any of them is computed
 
 Probe `scripts/probes/_miso179_dispersion_precheck.py` →
-`results/calibration/_miso179_dispersion_precheck.json`. Model side: the
+`results/phase0/miso/_miso179_dispersion_precheck.json`. Model side: the
 `_miso156.model_year` path via the `_miso178_c3a_decomposition.py` wrapper
 pattern (bundle repointed to `miso177_rho_B`, import shim included), with its
 own V1/V4 validity gates required to PASS before anything else is read (V1:

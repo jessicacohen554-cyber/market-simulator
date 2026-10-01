@@ -17,7 +17,7 @@ FIRST:
 STATE (2026-09-30):
 - Keeper `2026-09-30-caiso-r18-dswgas` (bundle rcaiso18_A_span, 2022–25) is CALIBRATED: a single ledgered C3c 2024.
 - Fold `-touchpoints` (2019–21, bundle rcaiso18_A_tp_2019_2021) is NOT-YET. It is reported only (rule 30(c)).
-- R-CAISO-19 finding (docs/handoffs/r-caiso-19/FINDING-r-caiso-19-2026-09-30.md, zero LP):
+- R-CAISO-19 finding (docs/records/caiso/r-caiso-19/FINDING-r-caiso-19-2026-09-30.md, zero LP):
   - the fold's DSW gap (−13.3 / −20.6 / −11.0 TWh vs EIA-930) is the four clean rungs that carry 0 MW in 2019–20;
   - in 2021 the gap is in the unprinted Jan–Apr;
   - no measured arming exists.
@@ -52,7 +52,7 @@ TASK (do only (1) and (2)):
 2. Zero-LP first-order estimate of the added DSW TWh per fold year, in the PRECOMMIT.
 3. Build PR → merge → pin the full SHA.
 4. Then 7 shards, one per year 2019–2025 (rule 36). The parent never solves (rule 32(a)).
-   - Template: docs/handoffs/r-caiso-18/shard-prompt.md, with `{SRC}` = rcaiso18_A_tp_2019_2021 (2019–21) /
+   - Template: docs/records/caiso/r-caiso-18/shard-prompt.md, with `{SRC}` = rcaiso18_A_tp_2019_2021 (2019–21) /
      rcaiso18_A_span (2022–25). Add `--set <new flag>=true` and new hard-stop values.
    - **2025 needs a 50-min budget.**
 5. PARENT SEAM, as R-CAISO-18:
@@ -72,7 +72,7 @@ TASK (do only (1) and (2)):
 7. Ledger the remaining fold DSW residual in the RESULT and the calibration log, as data-availability limited.
 
 OWNER RULINGS IN FORCE (do not re-ask):
-- All rulings in docs/handoffs/r-caiso-18/HANDOFF-r-caiso-19.md.
+- All rulings in docs/records/caiso/r-caiso-18/HANDOFF-r-caiso-19.md.
 - Plus 2026-09-30: arm the overnight rung pre-2021; ledger the fold gap; next links are the evening under-price, then
   C3c 2024.
 

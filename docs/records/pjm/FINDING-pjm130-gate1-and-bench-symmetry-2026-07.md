@@ -1,7 +1,7 @@
 # FINDING — pjm-130: gate 1 is displacement, its lever is real, and it sits on a benchmark cell the scored run writes itself — the one-sided BTM repair is fixed
 
 **Lane:** the PJM re-tune opened by pjm-129's `NOT-YET`.
-Charter (kill criteria + named exposure): `docs/handoffs/pjm-130-retune-charter-2026-07.md`.
+Charter (kill criteria + named exposure): `docs/records/pjm/pjm-130-retune-charter-2026-07.md`.
 **No LP was solved.** Every measurement below comes from a probe whose question,
 method and decision rule were committed *before* it was run.
 
@@ -137,7 +137,7 @@ The only *level*-bearing admissible route to C3a-2025 is the measured
 re-ownership of the $40–150 region (pjm-122: fitted coal rungs own a region the
 measured corpus assigns to the CC top belt and CT_FAST). The surface that
 carries it is inadmissible until the owner decides
-`docs/handoffs/pjm-midcurve-reconditioning-memo-2026-07.md` (rule 23
+`docs/records/pjm/pjm-midcurve-reconditioning-memo-2026-07.md` (rule 23
 `[R-FROZEN-DERIVE]`). **Verified undecided this session** — last commit `f1070d4`,
 no decision has landed. Not nudged, not re-derived, no proxy taken.
 
@@ -204,10 +204,10 @@ uv sync
 PYTHONPATH=. .venv/bin/python scripts/regenerate_clean.py \
     transfer-interface-limits ramp-capability lmp
 PYTHONPATH=. .venv/bin/python scripts/probes/pjm130_c1_ccregular_displacement.py \
-    --json-out results/calibration/pjm130_c1_displacement.json
+    --json-out results/phase0/pjm/pjm130_c1_displacement.json
 PYTHONPATH=. .venv/bin/python scripts/probes/pjm130_chp_bench_attribution.py \
     --iso PJM --years 2023 2024 2025 --backfill-from 2024 \
-    --json-out results/calibration/pjm130_chp_bench_attribution.json
+    --json-out results/phase0/pjm/pjm130_chp_bench_attribution.json
 PYTHONPATH=. .venv/bin/python -m pytest tests/regression/test_btm_benchmark_symmetry.py -q
 ```
 

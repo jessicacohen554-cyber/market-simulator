@@ -80,7 +80,7 @@
    }
   }
  },
- "card": "docs/DECISION-CARD-nyiso193-d2-unit-grain-2026-09-05.md (UNRULED); prior measurement was on 2026-09-05-nyiso-189-steam-identity: ST_GAS 0.393 / 0.414 / 0.305",
+ "card": "docs/records/nyiso/DECISION-CARD-nyiso193-d2-unit-grain-2026-09-05.md (UNRULED); prior measurement was on 2026-09-05-nyiso-189-steam-identity: ST_GAS 0.393 / 0.414 / 0.305",
  "committed_plant_grain_c8_ST_GAS": {
   "2023": 0.155,
   "2024": 0.199,

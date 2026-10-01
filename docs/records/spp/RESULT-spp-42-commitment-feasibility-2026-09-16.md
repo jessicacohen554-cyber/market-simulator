@@ -1,6 +1,6 @@
 # RESULT — SPP-42: the commitment-feasibility clip (card R-be, open half)
 
-**Lane** SPP-42 · **Charter** `docs/handoffs/PRECOMMIT-spp-42-commitment-feasibility-2026-09-14.md`
+**Lane** SPP-42 · **Charter** `docs/records/spp/PRECOMMIT-spp-42-commitment-feasibility-2026-09-14.md`
 **Mechanism base** `78d7c0345d29cef0f45ee3e8721ceecdff577870` (auto-merged to `main`)
 **Screen base / span base** `1f586ed75b20db7085eddf70c5c3926687861c69`
 **Control** keeper 11 `2026-09-13-spp-38-vintage-cache`, recipe replayed at the SAME base.

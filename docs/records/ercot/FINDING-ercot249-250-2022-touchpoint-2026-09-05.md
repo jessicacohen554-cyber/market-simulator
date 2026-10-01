@@ -121,7 +121,7 @@ only 38 hours clear $200. **The open object is the ORDC price function at shortf
 shortfall detector.**
 
 This reproduces, on 2022 itself, the M-3 result of
-`docs/RESEARCH-ercot221prep-2022-regime-point-2026-08-19.md` §3 ("the *selection* instrument …
+`docs/records/ercot/RESEARCH-ercot221prep-2022-regime-point-2026-08-19.md` §3 ("the *selection* instrument …
 already exists inside the model … the open object is purely the **price function** on the
 selected hours"), and it is exactly what that doc's §1 regime table predicts 2022 would test:
 

@@ -39,9 +39,9 @@ they draw from is rebuilt from screened months by the repair, so the ex-post reb
 against the pre-edit arrays saved here.
 
 Usage:
-    uv run python docs/handoffs/spp49/census.py --iso SPP [--years 2023 2024 2025]
-    uv run python docs/handoffs/spp49/census.py --iso ALL
-    uv run python docs/handoffs/spp49/census.py --iso SPP --post   # after the edit
+    uv run python docs/records/spp/spp49/census.py --iso SPP [--years 2023 2024 2025]
+    uv run python docs/records/spp/spp49/census.py --iso ALL
+    uv run python docs/records/spp/spp49/census.py --iso SPP --post   # after the edit
 """
 
 from __future__ import annotations
@@ -58,7 +58,7 @@ REPO = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "src"))
 
-OUT = REPO / "docs/handoffs/spp49"
+OUT = REPO / "docs/records/spp/spp49"
 SCRATCH = Path(
     "/tmp/claude-0/-home-user-market-simulator/69eb6bae-6a21-5168-9aa6-aef31b40ec2d/scratchpad/spp49"
 )

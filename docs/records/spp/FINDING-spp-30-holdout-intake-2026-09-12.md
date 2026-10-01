@@ -81,7 +81,7 @@ Two charter items were checked and declined on evidence. Both would have been wa
   and NOT read by any scorer"** — it is the third point of the three-point spread lane
   SPP-57 identified the OK↔S link TTC on, kept so that identification is reproducible
   "without the ~900 MB pull". Extending it buys no scorable year at a ~900 MB cost. Its
-  builder is `docs/handoffs/spp57/build_area_price.py`, not a `scripts/` instrument.
+  builder is `docs/records/spp/spp57/build_area_price.py`, not a `scripts/` instrument.
 * **`lmp-data/DAMLZHBSPP_<year>.zip` — NOT AN SPP PRODUCT.** The charter lists it as SPP
   intake. It is **ERCOT** data: `DAMLZHBSPP` = *DAM Load Zone and Hub Settlement Point
   Prices*, where the trailing "SPP" is *Settlement Point Prices*, not Southwest Power
@@ -160,7 +160,7 @@ Measured at `9e499b0e`:
 | "`run_calibration_full.enforce_holdout_year_gate` exists and is CALLED at two entry points (lines ~8889 and ~13049)" | **No such function anywhere in the repo.** `grep -rn "def enforce_holdout_year_gate"` → no match. Line 8889 is inside a docstring about `ercot_reserve_supply_cap_from_year`; line 13049 is the `--nyiso-gas-bridge-startup` argparse block. Neither is a gate call. | `scripts/run_calibration_full.py:8885–8893`, `:13045–13053` |
 | "`--holdout-authorized` is still a registered CLI flag in BOTH `run_calibration_full.py` and `run_calibration.py`" | **Not a registered flag in either, or anywhere.** The only `add_argument` matching `holdout` in the repo is `--holdout-year` in `stamp_touchpoint_holdout.py:141`, an unrelated stamping tool. | `grep -rn 'add_argument.*holdout'` → 1 hit, not this flag |
 | "`dashboard_add_run.py` still reads the marker file" | **`enforce_registration_marker_gate` does not exist.** `dashboard_add_run.py:31` and `:151–155` are stale *prose* naming it; `_load_json_doc` is a generic JSON reader with no holdout caller. | `scripts/dashboard_add_run.py:31,148–160` |
-| "`frontend/data/backcast/holdout-freeze.json` is `active: true` scoped `{isos: ALL, tiers: [locked_test]}`" | **The file does not exist.** Deleted in `b0a807a8`. The only match in the tree is an unapplied patch, `docs/handoffs/patches/holdout-freeze-gate.patch`. | `find . -name 'holdout-freeze*'` |
+| "`frontend/data/backcast/holdout-freeze.json` is `active: true` scoped `{isos: ALL, tiers: [locked_test]}`" | **The file does not exist.** Deleted in `b0a807a8`. The only match in the tree is an unapplied patch, `docs/records/misc/patches/holdout-freeze-gate.patch`. | `find . -name 'holdout-freeze*'` |
 | "`derive_actual_tail.py` + `derive_actual_amplitude.py` still carry a per-tier marker gate that SILENTLY SKIPS an unauthorized ISO-year" | **Both `_year_emittable` seams are `return True`** with the docstring "Always True — every year is emittable." | `scripts/data/derive_actual_tail.py:103–111`, `scripts/data/derive_actual_amplitude.py:74–82` |
 | "even with the data landed, SPP holds no `complete` marker, so `derive_actual_tail.py` will emit NO 2020-2022 rows for SPP and C3c would score SKIPPED there" | **False.** Both derives iterate every year present in the parquet with an always-true gate; `TAIL_THRESHOLD["SPP"] = 200.0` is registered. §5 gate 2 shows the new years emitted. | `derive_actual_tail.py:57–65, 118–125` |
 

@@ -91,7 +91,7 @@ The six D-4 unit-conduct FAIL rows, at full magnitude:
 
 **Five of six are trivial** (≤ 0.0028 TWh). The one that is not is Astoria 8906 in 2023, which
 this session's companion finding
-(`docs/FINDING-nyiso203-nyc-persistent-base-basis-2026-09-06.md`) characterises: its basis is
+(`docs/records/nyiso/FINDING-nyiso203-nyc-persistent-base-basis-2026-09-06.md`) characterises: its basis is
 **sound as built** on window, membership and operator, so no basis change reaches it.
 
 **The sharpest single fact here:** in **2024** — the year with the worse unit-grain breach —

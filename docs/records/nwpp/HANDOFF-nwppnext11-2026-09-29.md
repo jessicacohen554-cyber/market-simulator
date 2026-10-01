@@ -35,8 +35,8 @@ STATE ON MAIN
 - 2019 and 2021–2025 are byte-identical to keeper #15. In 2020, C4 coal went 0.762 → 0.772, C1 COAL_PRB
   +2.14 → +4.20 TWh (worse, still PASS), and CC_REGULAR +2.22 → +0.75.
 - Records to read first:
-  - docs/handoffs/RESULT-nwppnext10-exit-ym-routing-2019-2025-2026-09-29.md (§2, §4 routed)
-  - docs/handoffs/PRECOMMIT-nwppnext10-exit-ym-routing-2019-2025-2026-09-29.md (§0 lever-1 closure, §3 G-DRIFT,
+  - docs/records/nwpp/RESULT-nwppnext10-exit-ym-routing-2019-2025-2026-09-29.md (§2, §4 routed)
+  - docs/records/nwpp/PRECOMMIT-nwppnext10-exit-ym-routing-2019-2025-2026-09-29.md (§0 lever-1 closure, §3 G-DRIFT,
     §4 recipe, §5 hard stops)
   - docs/calibration-log/nwpp.md, docs/codebase-site/data/mechanism-matrix/NWPP.js, docs/mechanism-testing-matrix.md §5.9
 

@@ -1,7 +1,7 @@
 # PRECOMMIT — NYISO-NEXT-15: per-landing-link monthly import band — 2026-09-30
 
 - **Session:** NYISO-NEXT-15, the orchestrator. This container runs no LP (rule 32 (a)).
-- **Phase 0:** `docs/FINDING-nyiso-next15-landing-allocation-phase0-2026-09-30.md`.
+- **Phase 0:** `docs/records/nyiso/FINDING-nyiso-next15-landing-allocation-phase0-2026-09-30.md`.
 - **Owner decision cards (this session):** "Build + test 5 yrs", then "P-32 per link".
 - **Queue:** item 1 (the overshoot and the wrong-hours binding). Phase 0 traces it to the pooled node's landing allocation.
 - **Control (form 4):** keeper `2026-09-30-nyisonext14-total-east-span` (bundle `results/calibration/nyisonext14_span`, 2022–2025) and stamped `2026-09-30-nyisonext14-total-east-2021` (bundle `results/calibration/nyisonext14_2021`).

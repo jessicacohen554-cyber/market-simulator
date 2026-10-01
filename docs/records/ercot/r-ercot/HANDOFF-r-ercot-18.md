@@ -9,7 +9,7 @@ HOUSEKEEPING FIRST
 
 PRECONDITION: frontend/data/backcast/keepers/ERCOT.json on main names keeper 2026-09-29-r-17-south-texas (bundle results/calibration/r_ercot17_span, 2019–2025), ISO NOT-YET. If not, STOP and report.
 
-READ FIRST: docs/handoffs/RESULT-r-ercot-17-south-texas-pool-2026-09-29.md (all of it); docs/handoffs/PRECOMMIT-r-ercot-17-south-texas-pool-2026-09-29.md; results/calibration/r_ercot17_span/legitimacy_diagnostics.json (D2/D4 rows for ST_GAS and plant 3452, every year); scripts/legitimacy_diagnostics.py (D4_WINDOWS, the unit-conduct check); the st_netload_drag / gas_st_netload_drag mechanism in src/ (its window, driver, per-plant eligibility); the ERCOT matrix shard docs/codebase-site/data/mechanism-matrix/ERCOT.js and docs/mechanism-testing-matrix.md §5.1 (rule 28(a)).
+READ FIRST: docs/records/ercot/RESULT-r-ercot-17-south-texas-pool-2026-09-29.md (all of it); docs/records/ercot/PRECOMMIT-r-ercot-17-south-texas-pool-2026-09-29.md; results/calibration/r_ercot17_span/legitimacy_diagnostics.json (D2/D4 rows for ST_GAS and plant 3452, every year); scripts/legitimacy_diagnostics.py (D4_WINDOWS, the unit-conduct check); the st_netload_drag / gas_st_netload_drag mechanism in src/ (its window, driver, per-plant eligibility); the ERCOT matrix shard docs/codebase-site/data/mechanism-matrix/ERCOT.js and docs/mechanism-testing-matrix.md §5.1 (rule 28(a)).
 
 THE OBJECT (R-ERCOT-17, measured)
 - 2022 went CALIBRATED → NOT-YET on C8 alone. ST_GAS forced share is 30.4 % (cap 30 %; 28.7 % on the prior keeper). The above-cap escape (rule 21: D-4 window + D-1 shape) fails on one row: D-4 unit-conduct FAIL for st_netload_drag at plant 3452 (Lake Hubbard, North, ST_GAS, 927.5 MW, min-run/down 8 h).
@@ -40,7 +40,7 @@ DO-NOT-REDO (matrix R/I/G or landed): the vintage anchor (both cells R); the win
 LESSONS FROM R-ERCOT-17
 - The ERCOT zonal spread is recentred to a capacity-weighted mean of zero. Moving one zone's row shifts every other gas unit by the opposite constant. Predict with that in mind; prices barely moved there because the cheaper zone then set price in more hours.
 - Rebase-free: merge origin/main into your branch, never rebase it, so the shards' pinned SHA stays in history.
-- Shard prompt template: docs/handoffs/r-ercot/SHARD-PROMPTS-r-ercot-17.md (partition signatures per year: 2019–2022 swcap true / ep_referenced true / CC_REGULAR.peak 151.008; 2023 true / FALSE / 151.008; 2024–2025 false / true / 4.576; CT_PEAKER.peak 433.95 / 433.95 / 13.15). Update the zonal-hub sha256 there to the committed value.
+- Shard prompt template: docs/records/ercot/r-ercot/SHARD-PROMPTS-r-ercot-17.md (partition signatures per year: 2019–2022 swcap true / ep_referenced true / CC_REGULAR.peak 151.008; 2023 true / FALSE / 151.008; 2024–2025 false / true / 4.576; CT_PEAKER.peak 433.95 / 433.95 / 13.15). Update the zonal-hub sha256 there to the committed value.
 - On a fresh container, delete scratch worktrees; the disk allowance is ~8 GB free.
 
 DIRECTIONS FROM THE OWNER (carry forward verbatim in spirit):

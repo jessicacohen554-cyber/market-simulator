@@ -415,11 +415,11 @@
    "replicated_zp26_weight_mean": 0.116049
   }
  },
- "precommit": "results/calibration/PRECOMMIT-caiso223-subzonal-scope-2026-08-30.md",
+ "precommit": "docs/records/caiso/PRECOMMIT-caiso223-subzonal-scope-2026-08-30.md",
  "probe": "caiso-223 sub-zonal scope (zero-solve; precommit-registered)",
  "sources": {
   "atlas": "data/raw/caiso-atlas/{ATL_LDF,ATL_PNODE_MAP}.csv (caiso-172 snapshots)",
-  "census": "results/calibration/_caiso219_deliverability_census.json",
+  "census": "results/phase0/caiso/_caiso219_deliverability_census.json",
   "committed_split": "data/raw/zone-specific-demand/CAISO/CAISO_path15_load_split.json",
   "crosswalk": "data/raw/reference/caiso-plant-hub-membership.csv (caiso-217)",
   "dmm_elements": "FINDING-caiso218-path-limit-survey-2026-08-24.md \u00a7B (DMM 2023 annual ch.6)",

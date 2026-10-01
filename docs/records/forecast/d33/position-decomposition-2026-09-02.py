@@ -178,7 +178,7 @@ for r in rows:
 json.dump(
     rows,
     open(
-        "docs/handoffs/d33/position-decomposition-rows-2026-09-02.json",
+        "docs/records/forecast/d33/position-decomposition-rows-2026-09-02.json",
         "w",
     ),
     indent=1,

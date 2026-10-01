@@ -7,7 +7,7 @@ scored here is **2023, 2024 or 2025**; the holdout spend freeze is ACTIVE and
 untouched (rule 22).
 
 Probes: `scripts/probes/_nyiso145_smallcc_overrun.py` (record
-`results/calibration/_nyiso145_smallcc_overrun.json`). Its solves are throwaway
+`results/phase0/nyiso/_nyiso145_smallcc_overrun.json`). Its solves are throwaway
 single-year in-process replays of the keeper's OWN recipe with **zero config
 delta** — instrumentation, not runs: no bundle is written and none is
 registrable (see §7).

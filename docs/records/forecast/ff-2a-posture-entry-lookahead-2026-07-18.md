@@ -23,7 +23,7 @@ explicitly). No new tuned value anywhere.
 | `config/scenarios.py` (field default) | `entry_lookahead_reprice` default `False` → `True`; comment records owner-approved default-ON (FF-2A 2026-07-18), the G-30 validation, and the forecast-only/byte-identity story. Field stays on-registry (`TIER_TAGS` row + the runner read site unchanged). |
 | `config/scenarios.py` (`__post_init__`) | coerce `entry_lookahead_reprice=False` whenever `mode=="backcast"` — belt-and-braces with the runner's `mode=="forecast"` read gate, keeping every calibration/keeper `cache_key` + `run_config.json` byte-identical after the flip (the exact FF-1F `datacenter_load_path` coercion pattern; NOT triggered in hindcast, which is `mode=="forecast"`). |
 | `docs/forecast-development-plan-2026-07.md §2.1a` | posture-defaults table row **e** + the FF-2A-posture byte-identity attestation. |
-| `docs/handoffs/ff-2a-posture-entry-lookahead-2026-07-18.md` | this findings note. |
+| `docs/records/forecast/ff-2a-posture-entry-lookahead-2026-07-18.md` | this findings note. |
 
 **Scope discipline.** Only `entry_lookahead_reprice` was flipped. The three
 sibling FF-2A entry gates (`entry_vre_capacity_revenue`, `entry_rate_limits`,

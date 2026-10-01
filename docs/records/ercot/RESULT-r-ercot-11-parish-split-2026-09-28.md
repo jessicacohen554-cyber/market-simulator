@@ -1,6 +1,6 @@
 # RESULT — R-ERCOT-11: W A Parish split repaired — PROMOTED, ISO reads NOT-YET
 
-**Session:** R-ERCOT-11, 2026-09-28. **PRECOMMIT:** `docs/handoffs/PRECOMMIT-r-ercot-11-parish-split-2026-09-28.md`, merged in PR #6820, pinned SHA `d6ffbda93f5ec3fdfe219416fd612a846a2caf11`.
+**Session:** R-ERCOT-11, 2026-09-28. **PRECOMMIT:** `docs/records/ercot/PRECOMMIT-r-ercot-11-parish-split-2026-09-28.md`, merged in PR #6820, pinned SHA `d6ffbda93f5ec3fdfe219416fd612a846a2caf11`.
 
 **Keeper:** `2026-09-28-r-11-parish-split` (bundle `results/calibration/r_ercot11_parish_split_span`, 2019–2025). It supersedes `2026-09-27-r-10-parish-fuelscope`. Owner decision card, verbatim: *"Promote (Recommended)"*.
 
@@ -109,7 +109,7 @@
   2. File an ERCOT data request.
   3. Procure commercially (from 2021-11 only).
 
-**Ruling 3, "Diagnose only": report written, no scorer change.** `docs/handoffs/FINDING-r-ercot-11-benchmark-vs-930-2026-09-28.md`.
+**Ruling 3, "Diagnose only": report written, no scorer change.** `docs/records/ercot/FINDING-r-ercot-11-benchmark-vs-930-2026-09-28.md`.
 - **The gap is not positive every year.** It is +3.03 / +5.86 / +4.47 / +4.79 / +2.38 / +4.78 / **−1.27** TWh.
 - **Largest single item: Frontera (55098)** is counted in ERCOT in 2019–22 while it was outside ERCOT, adding 2.2–3.1 TWh/yr.
   - The model fleet dispatches it in those years too.

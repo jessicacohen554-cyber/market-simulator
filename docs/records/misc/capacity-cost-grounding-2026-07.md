@@ -152,7 +152,7 @@ effect and resolution:
   delegated push subagent confirmed it stalls before landing the file, and
   `git push` is repo-forbidden (413). They are therefore shipped as a
   **mechanical, verified patch**:
-  `docs/handoffs/patches/capacity-cost-constants-changelog.patch`.
+  `docs/records/misc/patches/capacity-cost-constants-changelog.patch`.
 - The patch is `git diff origin/main → (3-way-merged constants + CHANGELOG)`.
   **Verified**: applies cleanly onto a pristine `origin/main` checkout and
   reproduces the merged files byte-for-byte; the merged tree passes all 19
@@ -163,7 +163,7 @@ effect and resolution:
 **To complete (one command after the branch merges, or applied by any
 large-file-capable mechanism):**
 ```
-git apply docs/handoffs/patches/capacity-cost-constants-changelog.patch
+git apply docs/records/misc/patches/capacity-cost-constants-changelog.patch
 ```
 Until `constants.py` lands, **main CI is red**: the merged tests assert the new
 constant values and read the EGS rows. The EGS rows land via API in this

@@ -6,7 +6,7 @@ measurement says") plus the owner's in-session promotion standard, verbatim:
 *"Is this a recommended keeper candidate? If so plz promote. If structural
 integrity improves but gates regress that may still be a keeper.."* —
 the same standard that funded caiso-217. Pre-registration:
-`docs/PRECOMMIT-caiso220-c1-crosswalk-replay-2026-08-26.md`, pushed BEFORE
+`docs/records/caiso/PRECOMMIT-caiso220-c1-crosswalk-replay-2026-08-26.md`, pushed BEFORE
 the solve; the gate table is the committed caiso-216 §G table adopted
 verbatim. Off-queue statement: the CAISO in-model queue is EMPTY with every
 cell adjudicated (caiso-185/200), both ranked C3a successors are

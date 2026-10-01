@@ -157,6 +157,6 @@ question (rule 28 duty (b)).
 **Rule 22:** 2023–2025 only. No out-of-training year was solved, scored, read or
 registered; the holdout spend freeze was not touched.
 
-Evidence: `results/calibration/_nyiso128_ab_gates.json`,
+Evidence: `results/phase0/nyiso/_nyiso128_ab_gates.json`,
 `PREREG-nyiso128-market-solar-basis-2026-08-05.md`,
 `scripts/probes/_nyiso128_solve_ab.py`, `scripts/probes/_nyiso128_ab_gates.py`.

@@ -5,7 +5,7 @@
 (2026-08-13). Owner card **D-30, SIGNED 2026-08-11, sitting Addendum AK.8**.
 Predecessor lane: `claude/ffr-9c-promote-stageb-hlfnpg` (merged and deleted
 mid-lane; see §1). Pre-registration:
-`docs/handoffs/PREREG-ffr-9c-promote-stageb-2026-08-12.md` (its §6 is this
+`docs/records/forecast/PREREG-ffr-9c-promote-stageb-2026-08-12.md` (its §6 is this
 lane's execution record).
 
 ---
@@ -77,7 +77,7 @@ resolve `False/False`.
    key MOVES" line (the GLOBAL pin does NOT move; the ERCOT resolved key
    does).
 4. **C6 attestation**:
-   `results/calibration/ATTESTATION-ffr9c-stageb-promotion-2026-08-13.json`
+   `results/phase0/forecast/ATTESTATION-ffr9c-stageb-promotion-2026-08-13.json`
    (`"schema": "calibration-attestation/v1"`, 4/4 governance assertions,
    empty exceptions ledger, zero-parameter DOF block; PREREG §4 / E10).
 5. **PREREG §6 execution record** + this handoff.

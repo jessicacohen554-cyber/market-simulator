@@ -7,8 +7,8 @@ committed artifacts: the keeper bundle `results/calibration/miso109_hy_level_B`,
 `parasitic_load_factors.parquet`, `data/raw/campd-unit-level/`, and the repo's
 own fleet build. Probe
 `scripts/probes/_miso116_chp_floor_deriver_audit.py` (re-runnable, ~8 min, zero
-LP); transcript `results/calibration/PROBE-miso116-chp-floor-deriver-2026-08-02.txt`;
-pre-registration `results/calibration/PREREG-miso116-chp-floor-deriver-2026-08-02.md`,
+LP); transcript `results/phase0/miso/PROBE-miso116-chp-floor-deriver-2026-08-02.txt`;
+pre-registration `docs/records/miso/PREREG-miso116-chp-floor-deriver-2026-08-02.md`,
 written and committed **before** the probe ran.
 
 **Keeper UNCHANGED** (`2026-07-31-miso-109b-hy-level`). Rule 15: no run

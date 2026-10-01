@@ -2,7 +2,7 @@
 
 **Session** caiso-166 · **Date** 2026-08-04 · **Branch**
 `claude/caiso166-measured-loss-zones-uwsq1n` · **Base** `3bc37ce2`
-**Prereg** `results/calibration/PRECHECK-caiso166-measured-loss-zones-2026-08-04.md`
+**Prereg** `docs/records/caiso/PRECHECK-caiso166-measured-loss-zones-2026-08-04.md`
 (pushed at `6c2dbfd5`, **before either arm solved**)
 
 **Runs** `2026-08-04-caiso-166-measured-dlap` (Arm A) ·

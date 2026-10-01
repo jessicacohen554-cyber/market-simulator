@@ -4,7 +4,7 @@
 (`docs/forecast-development-plan-2026-07.md` §1.2-1, §4, §6 Wave 0; §7 binds):
 redesign the economic-retirement decision rule to kill the per-fuel threshold
 inversion that RC-1A-D1 measured
-(`docs/handoffs/position-calibration-d1-findings-2026-07-16.md` §6/§7 — the
+(`docs/records/misc/position-calibration-d1-findings-2026-07-16.md` §6/§7 — the
 blocker this memo solves). **Memo only — no code, no solve, no tuning, no
 parameter or default changed, nothing registered on any dashboard.** Rules
 1/13/14/21/23 govern: every candidate is graded on its forward story,
@@ -13,9 +13,9 @@ because it would move a hindcast number. This memo gates FF-1A (implementation
 + re-probe + LOYO), which must not start without owner sign-off on §6.
 
 **Inputs read.** The D1=3 findings (RC-1A-D1), the DOF-identification memo
-(`docs/handoffs/retirement-dof-identification-2026-07-15.md` — the §a.3 lag
+(`docs/records/misc/retirement-dof-identification-2026-07-15.md` — the §a.3 lag
 identification that MUST survive this redesign), the flip memo
-(`docs/handoffs/capacity-clearing-flip-memo-2026-07-16.md`),
+(`docs/records/misc/capacity-clearing-flip-memo-2026-07-16.md`),
 `model/capacity.py::apply_economic_retirements` (+ `_apply_reliability_floor`,
 `_apply_staged_thinning_cap`), `scenarios.py:355-433` (the
 `retirement_years_*` / `staged_oversupply_thinning` fields and their

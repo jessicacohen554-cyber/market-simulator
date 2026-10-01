@@ -5,11 +5,11 @@
 **Keeper:** `2026-09-07-nyiso-213-summer-seam` — **untouched.**
 **ZERO LP.** Nothing armed, screened, solved or registered; no `ScenarioConfig` field; no
 `src/market_sim/` change; no marker moved; no matrix cell letter changed; **no held-out year spent.**
-**PRECOMMIT:** `results/calibration/PRECOMMIT-nyiso220-hydro-operating-ranges.md`, committed and
+**PRECOMMIT:** `docs/records/nyiso/PRECOMMIT-nyiso220-hydro-operating-ranges.md`, committed and
 pushed **before any substantive document was read**.
 **Instrument (committed, deterministic — re-running reproduces its JSON byte-identically):**
 `scripts/probes/nyiso220_hydro_instrument_index.py` →
-`results/calibration/_nyiso220_hydro_instrument_index.json`.
+`results/phase0/nyiso/_nyiso220_hydro_instrument_index.json`.
 
 ---
 

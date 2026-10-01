@@ -1,12 +1,12 @@
 # CAISO-100 handoff — charge-economics DERIVE-FIRST executed; ask filed; keeper unchanged
 
 **Session 2026-07-19 (CAISO-100) outcome:** derive-first measurement complete
-(`results/calibration/FINDING-caiso100-charge-economics-2026-07-19.md` + the
+(`docs/records/caiso/FINDING-caiso100-charge-economics-2026-07-19.md` + the
 committed probe `scripts/probes/_caiso100_charge_econ.py`); the DA-spread
 day-threshold hypothesis is measured-REFUTED and closed; the cited
 cycling-cost hypothesis is SUPPORTED (revealed margin conduct cost $11-17
 brackets the derived $14.25/MWh); **owner ask filed**
-(`docs/handoffs/caiso-100-charge-econ-ask-2026-07-19.md`), pre-registered
+(`docs/records/caiso/caiso-100-charge-econ-ask-2026-07-19.md`), pre-registered
 bands/gates in FINDING §6 are BINDING on the build session. Nothing solved
 with the mechanism; CAISO keeper stays `2026-07-19-caiso-99-storage-shape`.
 WP-3 CT_CHP ask still PENDING. Calibration-log entry: 2026-07-19 caiso-100.
@@ -37,7 +37,7 @@ MODEL ASSIGNMENT: Opus or Fable (core-infra scope possible; CLAUDE.md rule 26).
 STATE (2026-07-19, post-CAISO-100): CAISO keeper = 2026-07-19-caiso-99-storage-shape
 (UNCHANGED), NOT-YET, fail {C3a-2025 +10.8%, C3c, C4, C5a(2024 CAVEAT)}; C1 12/12,
 C2/C3b/C6/C7/C8 PASS. CAISO-100 ran the derive-first charge-economics measurement
-(results/calibration/FINDING-caiso100-charge-economics-2026-07-19.md): the
+(docs/records/caiso/FINDING-caiso100-charge-economics-2026-07-19.md): the
 DA-spread day-threshold hypothesis is MEASURED-REFUTED (2024/25 skip-share ~2%,
 u in a broad 0.4-0.9 band, weak spread corr) and CLOSED; the cited cycling-cost
 hypothesis is SUPPORTED — the fleet's revealed margin conduct cost ($11-17/MWh)
@@ -45,7 +45,7 @@ brackets the DERIVED li-ion cycling cost $14.25/MWh discharged (285$/kWh NREL
 ATB 2024 x1000 / 5000 LFP cycles x 0.25, constants.py:4128), while the keeper's
 own margin prices only its efficiency-loss floor (c* ~$7) and its charge-wtd
 lambda sits $5.8-12.2 above the measured glut floor. OWNER ASK FILED
-(docs/handoffs/caiso-100-charge-econ-ask-2026-07-19.md): battery_dispatch_adder
+(docs/records/caiso/caiso-100-charge-econ-ask-2026-07-19.md): battery_dispatch_adder
 0.0 -> derived 14.25 for the CAISO backcast recipe (re-opens caiso-76 no-change
 on moved evidence).
 
@@ -69,7 +69,7 @@ DO (priority):
    under-charge OUTSIDE the belly, DA-award allocation, AS-deployment variance;
    derive-first, no LP until measured).
 2. WP-3 CT_CHP steam-floor rule-23 derive if ruled (ask STILL PENDING from
-   CAISO-98, docs/handoffs/caiso-wp3-ctchp-steam-floor-ask-2026-07-18.md).
+   CAISO-98, docs/records/caiso/caiso-wp3-ctchp-steam-floor-ask-2026-07-18.md).
 
 GUARDRAILS: all 3 years one bundle (rule 16); NO twin (rule 21); SEQUENTIAL
 solves (~30 min/leg, 15 GB box OOMs on 2 concurrent); solves IN-SESSION only

@@ -174,7 +174,7 @@ the 12 GW ISO total (5 + 5 + 3 = 13 ≈ 12), and **wind and solar were given the
 |---|---|
 | `capacity_market.py` comment | `Source: ERCOT CDR, CAISO TPP — approximate historical queue throughput by tech`. A source **name** and the hedge *"approximate"*. **No window, no statistic, no vintage.** |
 | `docs/parameter-citations.md:1750` | `queue_cap_per_tech_gw.ERCOT.solar \| 5.0 \| … \| auto-generated, needs-citation` — **citation column empty**. The repo's own "every numeric input traced to a primary source" registry carries it as uncited. |
-| `docs/handoffs/queue-cap-citation-2026-07.md` | The 2026-07 citation pass cited the **ISO totals** and relabelled the **eastern** per-tech splits as engineering judgment. It **never examined ERCOT/CAISO per-tech**, leaving them the only unreviewed cells. Its §"In-repo check (Step 0)" confirms **no queue/COD-throughput dataset exists on disk** — the named ERCOT CDR source was never curated. |
+| `docs/records/misc/queue-cap-citation-2026-07.md` | The 2026-07 citation pass cited the **ISO totals** and relabelled the **eastern** per-tech splits as engineering judgment. It **never examined ERCOT/CAISO per-tech**, leaving them the only unreviewed cells. Its §"In-repo check (Step 0)" confirms **no queue/COD-throughput dataset exists on disk** — the named ERCOT CDR source was never curated. |
 | `CHANGELOG.md` | **No entry** records the constant's introduction (the CHANGELOG begins 2026-05-16, the same day). |
 
 So the named source (ERCOT CDR) is real and plausible but **unverifiable in-repo**, and the

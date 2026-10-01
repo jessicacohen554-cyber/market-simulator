@@ -4,7 +4,7 @@
 LANE     : miso-290 (owner ruling "Pile + take floor (Recommended)", miso-289 §6)
 KEEPER   : 2026-09-28-miso-280-splitremap (results/calibration/miso280_span, 2019-2025), unchanged
 LP       : none
-PRECOMMIT: docs/PRECOMMIT-miso290-pile-take-floor-2026-09-30.md (86f1017f, pushed before CAND ran)
+PRECOMMIT: docs/records/miso/PRECOMMIT-miso290-pile-take-floor-2026-09-30.md (86f1017f, pushed before CAND ran)
 PROBE    : scripts/probes/_miso290_pile_floor_precheck.py (--census, --solver-test, default, --diag)
 OUTPUTS  : results/calibration/_miso290_pile_floor_{census,solver,precheck,diag}.json
 CELLS    : coal_fuel_inventory_take_floor MISO U -> R; coal_fuel_inventory_monthly_pile stays R (note added)

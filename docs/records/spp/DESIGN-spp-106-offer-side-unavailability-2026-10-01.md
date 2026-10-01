@@ -3,7 +3,7 @@
 Lane: SPP-106, chartered by the owner's SPP-105 card "Offer-side design" (2026-09-30).
 Keeper: `2026-09-28-spp-100-chp-scope`, bundle `results/calibration/spp100_arm_span` (2019–2025).
 Probe: `scripts/probes/_spp106_offer_unavailability_phase0.py` (reuses SPP-105's rebuild harness and SPP-84's merit re-clear).
-Numbers: `results/calibration/_spp106_offer_unavailability_phase0.json`.
+Numbers: `results/phase0/spp/_spp106_offer_unavailability_phase0.json`.
 Source: SPP MMU, *Unavailable Generation Capacity in SPP Markets: Causes and Impacts* (2025-12-19),
 <https://spp.org/documents/75563/unavailable%20generation%20capacity%20in%20spp%20markets%20causes%20and%20impacts.pdf>;
 SPP MMU *State of the Market* 2024 (doc 73953) and 2025 (doc 76798).

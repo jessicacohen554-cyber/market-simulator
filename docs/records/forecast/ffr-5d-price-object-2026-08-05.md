@@ -115,7 +115,7 @@ manager's check at `34473b0c` (the only diffs are docs/dashboard/2022-touchpoint
 `capacity_screen_unified_lookahead` ship default False. Runtime keys from the `cache_key=` log
 lines: **shipped `6a824992b5fb1baf`** — identical to FFR-5A's recorded key — and **unified
 `49eac64f146b3460`**. Read-out: `scripts/probes/ffr5d_paired_arm.py`, unmodified; full JSON at
-`docs/handoffs/ffr-5d/paired-arm-probe-2026-08-05.json`. Both metas record
+`docs/records/forecast/ffr-5d/paired-arm-probe-2026-08-05.json`. Both metas record
 `leakage_violations: []`, solved {2021, 2023, 2024, 2025}, bridged {2022}.
 
 ### 3.0 Reproduction gate — BOTH §2 shipped expectations HELD

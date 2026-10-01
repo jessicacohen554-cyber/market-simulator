@@ -7,8 +7,8 @@
 > nyiso-167's added evidence. Same outcome both times; the duplication is recorded against
 > interest at capx ledger §0w.2.)*
 > Ruled by the owner at the capx-director r#25 sitting (ledger
-> `docs/handoffs/capx-director-ledger-2026-08.md` §0v.2 / §3 ruling **Q22**), on the evidence of
-> `docs/FINDING-nyiso167-c3a-price-response-gain-2026-09-01.md`: the probe this card's own §4.5
+> `docs/records/forecast/capx-director-ledger-2026-08.md` §0v.2 / §3 ruling **Q22**), on the evidence of
+> `docs/records/nyiso/FINDING-nyiso167-c3a-price-response-gain-2026-09-01.md`: the probe this card's own §4.5
 > eligibility test (a) called for was run and answers **NO as written** — 87.4 % of the winter
 > face is a year-invariant price-response gain (0.703) present in all 36 training months; the
 > genuinely winter-specific residue is −$0.51/MWh. The blocked AORR input is not the object.
@@ -220,16 +220,16 @@ NYISO`, and log the ruling in `docs/calibration-log/nyiso.md` +
 
 ## 8. EVIDENCE
 
-* `docs/DECISION-CARD-nyiso156-2025-offer-level-2026-08-25.md` §4–§5 (the
+* `docs/records/nyiso/DECISION-CARD-nyiso156-2025-offer-level-2026-08-25.md` §4–§5 (the
   face arithmetic; Option C precedent and its guard reasoning; Q1 ruling)
-* `docs/INTAKE-SPEC-nyiso156-winter-locational-2026-08-30.md` §2 (the gate
+* `docs/records/nyiso/INTAKE-SPEC-nyiso156-winter-locational-2026-08-30.md` §2 (the gate
   and the re-open bar, restated from nyiso-97 §5)
-* `results/calibration/FINDING-nyiso160-leg2-stop-and-tpaudit-2026-08-30.md`
+* `docs/records/nyiso/FINDING-nyiso160-leg2-stop-and-tpaudit-2026-08-30.md`
   (the access stop; the bit-identical HEAD replay)
 * `docs/calibration-log/nyiso.md` 2026-08-30 entries (nyiso-157/158/159/160:
   Leg 1 executed, companion chain closed, loss surface promoted, Leg 2
   stopped)
-* `docs/FINDING-q5w-nyiso-marker-withdrawal-2026-08-30.md` (the re-entry
+* `docs/records/nyiso/FINDING-q5w-nyiso-marker-withdrawal-2026-08-30.md` (the re-entry
   route this card declines to touch)
 * CLAUDE.md rule 22 `[R-HOLDOUT]` (the C3c standing rule verbatim: guards,
   budgets, v3.1–v3.3 genealogy) and `docs/governance/rule-history.md` §4

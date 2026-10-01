@@ -1,6 +1,6 @@
 {
  "probe": "nyiso-109 zone-resolved gas-offer margin anchor A/B",
- "prereg": "results/calibration/PREREG-nyiso109-zonal-margin-anchor-2026-08-01.md",
+ "prereg": "docs/records/nyiso/PREREG-nyiso109-zonal-margin-anchor-2026-08-01.md",
  "arms": {
   "A_control": "nyiso109_control_A",
   "B": "nyiso109_zonalanchor_B",

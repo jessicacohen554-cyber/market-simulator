@@ -2,7 +2,7 @@
 
 **Date:** 2026-08-25 · **ISO:** ERCOT · **Authorization:** card Z SIGNED
 **(Z-A)** with the owner's advance promotion standard
-(`docs/DECISION-CARD-ercot234-nelob-identity-repair-2026-08-24.md`
+(`docs/records/ercot/DECISION-CARD-ercot234-nelob-identity-repair-2026-08-24.md`
 RESOLUTIONS). **This document is pushed and blob-verified BEFORE the EASTEX
 static is computed, before any phase-0 boundary evidence is adjudicated, and
 before any solve.** The only EASTEX numbers known at push time are the
@@ -10,7 +10,7 @@ survey's descriptive reads (FINDING-ercot234 §II.3: active/binding counts and
 limit p50s) — the DERIVED static statistic has not been computed.
 
 Evidence basis inherited:
-`docs/FINDING-ercot234-subzonal-survey-nelob-identity-2026-08-24.md`.
+`docs/records/ercot/FINDING-ercot234-subzonal-survey-nelob-identity-2026-08-24.md`.
 Keeper at start: `2026-08-24-231-tie-zone-measured`
 (`results/calibration/ercot231_tiegtc_full`), 2023 −38.0 % / 0.696 / 93 ·
 2024 +0.4 % / 0.130 / 22 · 2025 −7.7 % / 0.099 / 1, NOT-YET on

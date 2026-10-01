@@ -10,7 +10,7 @@
 `ScenarioConfig` FIELD ADDED. NO PARAMETER SET. NOTHING WRITTEN UNDER
 `data/raw/`. NO SCORING ARTIFACT CHANGED.**
 
-**PREREG** `results/calibration/PREREG-miso204-lmp-component-decomposition-2026-09-03.md`,
+**PREREG** `docs/records/miso/PREREG-miso204-lmp-component-decomposition-2026-09-03.md`,
 pushed at **`fd6c4dff`** BEFORE any adjudicating statistic, with four gates,
 their decision rules fixed in advance, seven scored predictions, six traps each
 carrying a pre-committed counter-measurement, and a re-aim map written before the

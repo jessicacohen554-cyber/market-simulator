@@ -5,7 +5,7 @@
 `…-w9tf`; the harness provisioned and binds pushes to the branch above — the same mismatch
 SCN-WS4a and SCN-WS4b each recorded) · **Base** `origin/main` at `d13d1cba` ·
 **Solves** none — this lane runs no LP and owed no rule-29 PRECOMMIT.
-**Scope note (the prediction this is scored against):** `docs/handoffs/SCOPE-scn-load-2026-09-06.md`,
+**Scope note (the prediction this is scored against):** `docs/records/forecast/SCOPE-scn-load-2026-09-06.md`,
 pushed before any constant was written (`b7fb4796`, now on `main`).
 
 ---

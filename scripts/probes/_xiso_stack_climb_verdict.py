@@ -2,7 +2,7 @@
 
 Reads the per-ISO-year blobs written by ``_xiso_stack_climb_phase0.py`` and
 applies, mechanically, the test declared in
-``docs/PRECOMMIT-xiso-stack-climb-attribution-2026-09-22.md`` §4 BEFORE any
+``docs/records/governance/PRECOMMIT-xiso-stack-climb-attribution-2026-09-22.md`` §4 BEFORE any
 number was computed:
 
   An ISO SHOWS THE SIGNATURE iff the MEDIAN over its scored years of

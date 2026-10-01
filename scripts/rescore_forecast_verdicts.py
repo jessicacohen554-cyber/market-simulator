@@ -108,7 +108,7 @@ SCORED_YEARS_ALLOWED = frozenset({2023, 2024, 2025})
 #:
 #: Neither is reachable in a shallow checkout and neither appears in
 #: ``docs/governance/citation-commit-map.txt``, so local absence proves nothing
-#: either way (docs/FINDING-history-rewrite-2026-08-16.md). A prefix that cannot
+#: either way (docs/records/governance/FINDING-history-rewrite-2026-08-16.md). A prefix that cannot
 #: be resolved to exactly one commit is NOT listed here and stays 8 chars: an
 #: unreachable true sha beats a reachable false one.
 SHA_EXPANSIONS = {

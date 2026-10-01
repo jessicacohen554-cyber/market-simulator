@@ -2,7 +2,7 @@
 
 **Governs:** everything after it. Every rule applied below was fixed in
 `PREREG-miso248-the-spp-hourly-ladder-rederive-on-the-repaired-clock-2026-09-09.md`, pushed with the
-probe before either ran. Machine record `results/calibration/_miso248_spp_rederive_phase0.json`,
+probe before either ran. Machine record `results/phase0/miso/_miso248_spp_rederive_phase0.json`,
 pushed **before** this prose. Probe HEAD stamp `10377aec`, tree clean; blob sha256/16 of every parsed
 file is in the record's `P0_provenance` block, so no gate literal here is a hand-copied number from a
 file that can move.

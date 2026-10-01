@@ -21,7 +21,7 @@ untouched; every read stayed inside 2023–2025.
 Instruments (committed, no LP, no solve):
 
 * `scripts/probes/_caiso232_solar_ramp_december_decomp.py` →
-  `results/calibration/_caiso232_solar_ramp_december_decomp.json` — §A–§E below.
+  `results/phase0/caiso/_caiso232_solar_ramp_december_decomp.json` — §A–§E below.
 * Charts (all eight figures, both themes, table views):
   <https://claude.ai/code/artifact/24d8650d-fd6d-47ca-8967-9a6b91ace598>
 

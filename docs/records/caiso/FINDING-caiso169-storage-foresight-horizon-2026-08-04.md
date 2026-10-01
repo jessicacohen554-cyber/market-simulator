@@ -22,7 +22,7 @@ is a measurement-only Phase 0 on committed artifacts, the caiso-167/168 pattern.
 python scripts/probes/caiso169_storage_foresight_phase0.py
 ```
 
-Artifact: `results/calibration/_caiso169_storage_foresight_phase0.json`.
+Artifact: `results/phase0/caiso/_caiso169_storage_foresight_phase0.json`.
 
 ---
 

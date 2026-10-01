@@ -3,7 +3,7 @@
   "probe": "scripts/probes/ercot171_coal_licensed_subpop_phase0.py",
   "session": "ercot-171 Phase 0 (no LP, no solve, keeper unchanged)",
   "keeper": "2026-08-05-run168b-year-curves",
-  "precommit": "docs/PRECOMMIT-ercot171-coal-licensed-subpopulation-2026-08-05.md",
+  "precommit": "docs/records/ercot/PRECOMMIT-ercot171-coal-licensed-subpopulation-2026-08-05.md",
   "charter": "OWNER ADJUDICATION in-session 2026-08-05 on the ercot-169 \u00a76 open decision: option 2, a licensed sub-population instrument",
   "year": 2023,
   "licence_floor": 0.9876,

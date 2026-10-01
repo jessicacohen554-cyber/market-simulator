@@ -1,6 +1,6 @@
 # PRECOMMIT — PJM-NEXT-8 card 2: exit-cohort repair of the CAMPD outage layer (2026-09-28)
 
-- **Owner approval.** Decision card 2026-09-28, card 2: *"Build + solve"*. Basis: `docs/FINDING-pjm-next-7-coal-phase0-2026-09-28.md` §3–§5 (rule 14 `[R-ACCURATE]`).
+- **Owner approval.** Decision card 2026-09-28, card 2: *"Build + solve"*. Basis: `docs/records/pjm/FINDING-pjm-next-7-coal-phase0-2026-09-28.md` §3–§5 (rule 14 `[R-ACCURATE]`).
 - **Keeper and control.** Keeper `2026-09-28-pjm-next-7-virtual` (`results/calibration/pjmnext7_vs_span`, solved at `f2850356`). The control is the keeper's committed bundle plus G-DRIFT (§4); no control solve (rule 29(b)).
 - Written and pushed **before any solve**.
 
@@ -45,7 +45,7 @@ Net = gross × 40–70 % (other synced coal backfills, as FINDING §5 assumed).
 | every row 2024, 2025 | — | **byte-identical** | unchanged |
 | CC_REGULAR 2019–2020 | | +1 to +4 (backfill) | 2020 stays FAIL |
 
-**Falsifiers:** (i) any 2024/2025 class-hour moves (the arrays are identical and years are isolated); (ii) |ΔCOAL_BIT 2023| > 0.3; (iii) ΔCOAL_BIT 2019 outside −3 to −9. **Expected determination:** run-level still NOT-YET; training span unchanged (CC_REGULAR 2023 +8.40, the zonal defect in `docs/FINDING-pjm-next-8-cc2023-phase0-2026-09-28.md`). Promotion is the owner's, on structure (rules 1, 31).
+**Falsifiers:** (i) any 2024/2025 class-hour moves (the arrays are identical and years are isolated); (ii) |ΔCOAL_BIT 2023| > 0.3; (iii) ΔCOAL_BIT 2019 outside −3 to −9. **Expected determination:** run-level still NOT-YET; training span unchanged (CC_REGULAR 2023 +8.40, the zonal defect in `docs/records/pjm/FINDING-pjm-next-8-cc2023-phase0-2026-09-28.md`). Promotion is the owner's, on structure (rules 1, 31).
 
 ## 4. G-DRIFT (keeper `f2850356` → this pin)
 

@@ -31,7 +31,7 @@ CAISO's committed day-ahead component record. Reproducible in one command:
 python scripts/probes/caiso167_import_basis_phase0.py
 ```
 
-Artifact: `results/calibration/_caiso167_import_basis_phase0.json`.
+Artifact: `results/phase0/caiso/_caiso167_import_basis_phase0.json`.
 
 ---
 

@@ -1,6 +1,6 @@
 # FINDING — SCN-WS2a: the endogenous federal CES target row is built, wired to the screens, and probed on NEISO 2026 (escape regime); the G-S3 coupling is relaxed for WS-3b; D-2 stays open
 
-**Lane:** SCN-WS2a, plan §3 WS-2 items 1–2 / §7 "WS-2a" (`docs/handoffs/forecast-scenario-readiness-plan-2026-09.md`).
+**Lane:** SCN-WS2a, plan §3 WS-2 items 1–2 / §7 "WS-2a" (`docs/records/forecast/forecast-scenario-readiness-plan-2026-09.md`).
 **Model:** Fable (`claude-fable-5-1`), per the desk's §5.1 assignment. **Branch:** `claude/scn-ws2a-federal-ces-qm512t`
 (harness-assigned; the desk's issuance stem was `claude/scn-ws2a-t9xb` — same lane, one branch). **Base:**
 `origin/main` `5cc1e7ce` (desk pin `d01ab8b0` is an ancestor; every §2 anchor re-verified by reading at

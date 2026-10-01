@@ -8,10 +8,10 @@ MODEL: Opus or Fable (rule 27)
 FIRST: archive the previous NYISO session (NYISO-NEXT-7) once its PR is confirmed on main.
 
 READ FIRST. CLAUDE.md is binding, especially rules 1, 13, 14, 19, 21, 23, 24, 25, 28, 31, 32, 34, 35 and 36.
-- docs/FINDING-nyiso-next7-star-node-2026-09-27.md (sec. 2 eastern over-delivery; sec. 3 why per-neighbour routing is refused; sec. 4 the HQ double count)
-- results/calibration/_nyisonext7_phase0.json and scripts/probes/nyisonext7_star_node_phase0.py
-- docs/RESULT-nyiso-next6-li-posted-limit-2026-09-27.md
-- docs/FINDING-nyiso-next4-c3a-decomposition-2026-09-26.md
+- docs/records/nyiso/FINDING-nyiso-next7-star-node-2026-09-27.md (sec. 2 eastern over-delivery; sec. 3 why per-neighbour routing is refused; sec. 4 the HQ double count)
+- results/phase0/nyiso/_nyisonext7_phase0.json and scripts/probes/nyisonext7_star_node_phase0.py
+- docs/records/nyiso/RESULT-nyiso-next6-li-posted-limit-2026-09-27.md
+- docs/records/nyiso/FINDING-nyiso-next4-c3a-decomposition-2026-09-26.md
 - scripts/data/derive_nyiso_import_tranches.py (EXTERNAL_SEAMS["HQ"] lists SCH - HQ_IMPORT_EXPORT)
 - src/market_sim/data/nyiso_par_attribution.py (ACCOUNTING_DUPLICATE already excludes that row)
 - src/market_sim/model/interchange/spec.py: IMPORT_TRANCHES["NYISO"] and IMPORT_TRANCHES_BY_YEAR["NYISO"] (2018-2025)

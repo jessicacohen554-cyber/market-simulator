@@ -1,7 +1,7 @@
 # RESULT — SPP-105: gas-family outage carriers A and B, solved
 
 - **Lane:** SPP-105, on the owner card "Build carrier a and b".
-- **PRECOMMIT:** `docs/handoffs/PRECOMMIT-spp-105-gas-family-outage-2026-09-30.md` (pin `5e0599c8`, Addendum A).
+- **PRECOMMIT:** `docs/records/spp/PRECOMMIT-spp-105-gas-family-outage-2026-09-30.md` (pin `5e0599c8`, Addendum A).
 - **Control:** keeper `2026-09-28-spp-100-chp-scope` (rule 29(b) form 4).
 - **Arms:**
   - **A:** `wefor_residual 0.0` + `wefor_residual_groups` CC/ST (existing fields). Run `2026-09-30-spp105-wefor-off-covered`, bundle `spp105A_span`.

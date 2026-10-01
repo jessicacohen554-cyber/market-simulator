@@ -1,6 +1,6 @@
 {
  "probe": "miso-127 overnight gas composition",
- "prereg": "results/calibration/PREREG-miso127-overnight-gas-composition-2026-08-04.md",
+ "prereg": "docs/records/miso/PREREG-miso127-overnight-gas-composition-2026-08-04.md",
  "keeper_run": "2026-08-04-miso-126-steampart-b",
  "night_hod": [
   1,

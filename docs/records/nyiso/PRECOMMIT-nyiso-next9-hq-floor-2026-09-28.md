@@ -3,7 +3,7 @@
 - **Session:** NYISO-NEXT-9, the orchestrator. No LP runs in this container (rule 32 (a)).
 - **Written before any solve.**
 - **Keeper (control, form 4):** `2026-09-27-nyisonext8-hq-dedupe-span`, bundle `results/calibration/nyisonext8_span` (2022–2025), plus the stamped 2021 run `2026-09-27-nyisonext8-hq-dedupe-2021` (bundle `results/calibration/nyisonext8_2021`). Keeper `git_sha` `8184ca75`.
-- **Probe:** `scripts/probes/nyisonext9_hq_floor_phase0.py` writes `results/calibration/_nyisonext9_phase0.json` (zero LP).
+- **Probe:** `scripts/probes/nyisonext9_hq_floor_phase0.py` writes `results/phase0/nyiso/_nyisonext9_phase0.json` (zero LP).
 - **Routed from:** NEXT-8 PRECOMMIT §3. It is a rule-17 `[R-FLOOR-WINDOW]` question on `nyiso_firm_imports`.
 
 ## 1. The object

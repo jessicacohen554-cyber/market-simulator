@@ -3,7 +3,7 @@
 **Session:** miso-147, 2026-08-09, branch `claude/miso-147-dispatch-diagnosis-6in9hz`.
 PREREG pushed at `13ece35` (blob `7089dbd8`, verified against the remote, 481 lines)
 BEFORE any adjudicating statistic — merged as PR #3785 —
-`results/calibration/PREREG-miso147-highprice-dispatch-composition-2026-08-09.md`.
+`docs/records/miso/PREREG-miso147-highprice-dispatch-composition-2026-08-09.md`.
 **Posture held: NO LP. NO KEEPER MOVE. NO `ScenarioConfig` FIELD. NO ARM. NO CELL VERDICT.
 The licensed keeper replay was NOT spent** (its pre-committed trigger — P-2 indeterminate
 within ±10 pp — did not fire; P-2 resolved decisively; the license lapses).

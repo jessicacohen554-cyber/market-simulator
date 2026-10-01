@@ -6,7 +6,7 @@ registered (rule 15). **KEEPER → `2026-08-04-ercot165-unpooled-share`**
 the fail set IDENTICAL in kind (C3a 2023-only, C3b 2023-only, C3c, C7
 2023-lignite cv-leg). Charter: `FINDING-ercot164-wpb-nodal-identification-2026-08-04.md` §6,
 authorized by the ercot-165 dispatch prompt (the ercot-159/162 precedent).
-Pre-registration: `docs/PRECOMMIT-ercot165-wpb-v2-unpooled-curtailment-2026-08-04.md`,
+Pre-registration: `docs/records/ercot/PRECOMMIT-ercot165-wpb-v2-unpooled-curtailment-2026-08-04.md`,
 written and pushed **before either arm solved**.
 
 Rule 22: 2023–2025 only. No holdout year solved, scored or read.
@@ -110,7 +110,7 @@ it. Resulting depths: tie 0.1507 / 0.1627, share 0.1354 / 0.1614.
 ## 2. Phase 0 — identification, measured before the LP
 
 Probe `scripts/probes/ercot165_family_split_phase0.py` →
-`results/calibration/ercot165_family_split_phase0.json`.
+`results/phase0/ercot/ercot165_family_split_phase0.json`.
 
 **Vintage duty, on THIS session's own population and the production curate
 path's spine (`data/raw/ercot-settlement-points`):**
@@ -172,7 +172,7 @@ Runs `2026-08-04-ercot165-unpooled-tie` (`ercot165_unpooled_tie_A`) and
 `2026-08-04-ercot165-unpooled-share` (`ercot165_unpooled_share_B`), single-delta
 replays off the keeper via `scripts/replay_keeper.py --set`. Scorer
 `scripts/probes/_ercot165_unpooled_ab.py` →
-`results/calibration/_ercot165_unpooled_ab.json`.
+`results/phase0/ercot/_ercot165_unpooled_ab.json`.
 
 **[3e] wind curtailment, model / reported TWh:**
 

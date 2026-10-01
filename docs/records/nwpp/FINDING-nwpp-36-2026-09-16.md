@@ -4,7 +4,7 @@
 `6d1a144d62949b53af088df51787de68d2edf738` (`origin/main` at this session's start) · **Branch:**
 `claude/upbeat-edison-93gxck` (harness-designated, as the PRECOMMIT and NWPP-32 both recorded for
 their own lanes) · **DATA PROFILE:** `nwpp` · **PRECOMMIT:**
-`docs/handoffs/PRECOMMIT-nwpp-36-2026-09-16.md` (on main at `04706651`, base `edd40943`, written by
+`docs/records/nwpp/PRECOMMIT-nwpp-36-2026-09-16.md` (on main at `04706651`, base `edd40943`, written by
 the first NWPP-36 session, which pushed nothing beyond it — this is a FRESH session executing that
 PRECOMMIT as binding, per the issuance notice; nothing in it was re-decided) · **Zero calibration
 LP** (rule 32: every solve in this lane is a ≤ 19-generator × 744-hour unit test; no shard, no

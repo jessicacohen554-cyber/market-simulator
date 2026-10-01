@@ -65,7 +65,7 @@ capped 2023/24/25).
 > `measured_west_belly_export_cap` exists anywhere under `src/` at HEAD, so the
 > `replay_keeper … --set caiso_belly_import_cap=true` reproduction below CANNOT
 > RUN, and `tests/test_caiso_belly_import_cap.py` was C-deleted as an orphan
-> (it failed collection). Owner decision, `docs/handoffs/fast-tier-triage-2026-07-26.md`
+> (it failed collection). Owner decision, `docs/records/misc/fast-tier-triage-2026-07-26.md`
 > §4-D1: **record the drop.** The DO-NOT-REDO clause below ("stays built …
 > do not re-derive it") is therefore superseded on its factual half only —
 > its INTENT stands: the cap is still not re-armable as a standalone delta.

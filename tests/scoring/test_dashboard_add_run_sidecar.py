@@ -1,7 +1,7 @@
 """Regression tests for the dashboard_add_run metrics-sidecar path fix.
 
 The ercot-193 tooling defect (docs/calibration-log/ercot.md, ercot-193
-"Disclosures"; results/calibration/FINDING-ercot193-soc-regate-2026-08-13.md
+"Disclosures"; docs/records/ercot/FINDING-ercot193-soc-regate-2026-08-13.md
 §4): ``scripts/dashboard_add_run.py`` used the raw CLI ``--bundle`` path, so a
 relative bundle argument composed against the process CWD instead of the repo
 root — run from outside the repo root the ``metrics.json`` sidecar landed

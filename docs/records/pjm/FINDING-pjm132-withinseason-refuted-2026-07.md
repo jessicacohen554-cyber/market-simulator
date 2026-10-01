@@ -1,11 +1,11 @@
 # FINDING — pjm-132: the authorized within-season re-conditioning is INERT at the price level — Lane 2 ends, and PJM is NOT frontier for a reason that is not the ledger
 
-**Lane:** `docs/handoffs/pjm-frontier-path-2026-07.md` §3c — the last named
+**Lane:** `docs/records/pjm/pjm-frontier-path-2026-07.md` §3c — the last named
 admissible mechanism.
 **Authority:** the owner AUTHORIZED the re-conditioning memo on 2026-07-27 with
-an amendment (`docs/handoffs/pjm-midcurve-reconditioning-memo-2026-07.md`
+an amendment (`docs/records/pjm/pjm-midcurve-reconditioning-memo-2026-07.md`
 decision banner). Charter, committed before the re-derive and before any solve:
-`docs/handoffs/pjm-132-midcurve-reconditioning-charter-2026-07.md`.
+`docs/records/pjm/pjm-132-midcurve-reconditioning-charter-2026-07.md`.
 **Registered:** `2026-07-27-pjm-132-control` and
 `2026-07-27-pjm-132-withinseason`, both 2023+2024+2025 in one bundle (rule 16),
 both **rejected probes**. `keepers.json` untouched.
@@ -231,7 +231,7 @@ PYTHONPATH=. .venv/bin/python scripts/data/derive_pjm_offer_midcurve.py \
     --years 2023 2024 2025 --conditioning within-season
 PYTHONPATH=. .venv/bin/python scripts/probes/pjm132_withinseason_precheck.py \
     results/calibration/pjm121_ccbelt --years 2023 2024 2025 \
-    --json-out results/calibration/pjm132_stage1_k1.json
+    --json-out results/phase0/pjm/pjm132_stage1_k1.json
 PYTHONPATH=. .venv/bin/python scripts/probes/pjm132_conditioning_artifact_by_iso.py \
-    --json-out results/calibration/pjm132_artifact_by_iso.json
+    --json-out results/phase0/pjm/pjm132_artifact_by_iso.json
 ```

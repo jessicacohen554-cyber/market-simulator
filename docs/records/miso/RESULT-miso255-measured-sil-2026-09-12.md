@@ -5,7 +5,7 @@
 **Session** `miso-255` · **ISO** MISO · **Date** 2026-09-12 · **Pin** `d0fec486fa2218afc55dbd2eb377bc2570e61699`
 **Five shards, one per year, all on one pin.** Parent solved nothing (rule 32(a)). Controls are the
 committed bundles (rule 29(b) form 4 — no control solve spent).
-PRECOMMIT: `docs/PRECOMMIT-miso255-measured-sil-2026-09-12.md` + addenda 1/2/3.
+PRECOMMIT: `docs/records/miso/PRECOMMIT-miso255-measured-sil-2026-09-12.md` + addenda 1/2/3.
 
 ---
 

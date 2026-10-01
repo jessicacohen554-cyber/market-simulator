@@ -11,8 +11,8 @@ mixed coal/gas facilities gas-steam units are filed as COAL (Brame 6190 unit 1; 
 all (Baxter Wilson 2050 unit 1; Teche 1400 unit 3 under CT_PEAKER), and coal units count as ST_GAS sync (Dan E Karn
 1702 units 1–2; Burlington 1104 through 2021; R D Green 6639). Measured: 4.81 / 3.92 / 1.73 / 1.74 / 2.85 TWh of
 gas-steam generation filed outside ST_GAS (2019–23); 5.38 TWh (2019) of coal inside ST_GAS-filed facilities.
-Evidence: `docs/FINDING-miso277-phase0-congestion-crosswalk-stormprint-2026-09-26.md` §2,
-`results/calibration/_miso277_crosswalk_footprint.json`.
+Evidence: `docs/records/miso/FINDING-miso277-phase0-congestion-crosswalk-stormprint-2026-09-26.md` §2,
+`results/phase0/miso/_miso277_crosswalk_footprint.json`.
 
 **Rule 23 trigger.** The attribution defect (nyiso-175 "crosswalk repair" precedent), never the C1 residual. CAMPD's
 own per-unit `primaryFuelInfo` gives the same totals as the EPA crosswalk; the crosswalk

@@ -10,7 +10,7 @@ Usage::
     PYTHONPATH=.:src:scripts:scripts/data python3 \
         scripts/probes/_r_ercot4_shaped_derate_footprint.py <out.json>
 
-Record: ``docs/handoffs/FINDING-r-ercot-4-validation-years-2026-09-25.md``.
+Record: ``docs/records/ercot/FINDING-r-ercot-4-validation-years-2026-09-25.md``.
 """
 import json, sys, numpy as np, pandas as pd
 sys.path[:0] = ["scripts/data", "scripts", "src", "."]

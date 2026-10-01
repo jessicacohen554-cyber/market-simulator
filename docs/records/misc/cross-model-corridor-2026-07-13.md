@@ -1,6 +1,6 @@
 # Cross-model benchmark corridor (T3.3) + SOM net-revenue check (T3.2) — 2026-07-13 (P-3C)
 
-**Session.** P-3C of `docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md`
+**Session.** P-3C of `docs/records/forecast/forecast-driver-capacity-revenue-audit-plan-2026-07.md`
 (§2 Tier 3). Report only — **no LP was solved**, nothing registered on any
 dashboard, no holdout year touched (rule 22). External projections and monitor
 net-revenue tables are **validation observables — compared, never fit**
@@ -12,7 +12,7 @@ live in the gitignored `results/full-horizon/` cache and were not present in
 this session's fresh container. The model side of the corridor is therefore
 built from the **committed** P-3A artifacts: the reserve-margin and
 capacity/price/CO2 snapshot tables in
-`docs/handoffs/full-horizon-findings-2026-07-12.md` (§5, §7 — 2026/2030
+`docs/records/misc/full-horizon-findings-2026-07-12.md` (§5, §7 — 2026/2030
 anchors for all four scored ISOs, 2040/2050 trend anchors) and the committed
 per-year ERCOT golden fixture `tests/golden/ercot_2026_2040.json` (annual CO2,
 LW price, and end-2040 capacity/builds for the pinned reference scenario).
@@ -363,7 +363,7 @@ this table gains its model column without a dedicated solve.
   H1-2026-delivery auction rows were not used in any verdict).
 
 *Produced 2026-07-13 (P-3C). External sources accessed 2026-07-13; primary
-URLs inline. Model anchors: `docs/handoffs/full-horizon-findings-2026-07-12.md`
-§5/§7; `tests/golden/ercot_2026_2040.json`; `docs/handoffs/equilibrium-battery-2026-07-12.md`;
-`docs/handoffs/capacity-revenue-fom-ratio-2026-07-13.md`;
+URLs inline. Model anchors: `docs/records/misc/full-horizon-findings-2026-07-12.md`
+§5/§7; `tests/golden/ercot_2026_2040.json`; `docs/records/misc/equilibrium-battery-2026-07-12.md`;
+`docs/records/misc/capacity-revenue-fom-ratio-2026-07-13.md`;
 `fom-scarcity-grid-2026-07-05-stage2.json`; hindcast reports 2026-07-12.*

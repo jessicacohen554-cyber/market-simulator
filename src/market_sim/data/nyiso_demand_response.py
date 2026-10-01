@@ -84,7 +84,7 @@ _SUMMER_MONTHS: frozenset[int] = frozenset({5, 6, 7, 8, 9, 10})
 # vintages in the CSV changed nothing, because the clamp still floored every
 # year at 2023. Deriving the bounds means the clamp tracks the data — adding a
 # vintage is now a pure data change, and the D-3 defect of
-# results/calibration/ASSESSMENT-nyiso134-2022-readiness-2026-08-14.md
+# docs/records/nyiso/ASSESSMENT-nyiso134-2022-readiness-2026-08-14.md
 # (a 2022 solve silently using the 2023 vintage's ~1.23 GW of $500/MWh DR)
 # cannot recur for any year whose vintage is present.
 def _gb_year_bounds() -> tuple[int, int]:

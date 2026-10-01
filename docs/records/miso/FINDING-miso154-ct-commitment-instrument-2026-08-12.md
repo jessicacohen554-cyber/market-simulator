@@ -4,7 +4,7 @@
 **Keeper** `2026-08-09-miso-148-basis-aware` (`miso148_basis_B`), **UNCHANGED** ·
 **Model** `claude-opus-5`.
 
-**PREREG** `results/calibration/PREREG-miso154-ct-commitment-instrument-2026-08-12.md`,
+**PREREG** `docs/records/miso/PREREG-miso154-ct-commitment-instrument-2026-08-12.md`,
 pushed at **`065c83e`**, blob **`771ebc33775f342a7e7b6a69632c2fcb74ed474a`**,
 **verified byte-identical against the FETCHED remote ref** before any
 adjudicating statistic was computed (rule 27 `[R-PUSH]`).
@@ -315,6 +315,6 @@ question, and it is an owner decision.
 
 **Artifacts.** Probe `scripts/probes/_miso154_ct_commitment.py` (ruff clean,
 reusable helper surface, limitation in its module docstring). Record
-`results/calibration/_miso154_ct_commitment.json`. PREREG
-`results/calibration/PREREG-miso154-ct-commitment-instrument-2026-08-12.md`
+`results/phase0/miso/_miso154_ct_commitment.json`. PREREG
+`docs/records/miso/PREREG-miso154-ct-commitment-instrument-2026-08-12.md`
 (`065c83e`, blob `771ebc33`).

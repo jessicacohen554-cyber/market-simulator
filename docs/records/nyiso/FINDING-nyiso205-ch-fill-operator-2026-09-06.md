@@ -8,10 +8,10 @@
 **ZERO LP WAS SPENT.** Rule 29 `[R-SCREEN]` step 0 did what it exists to do: the arm was killed
 before it reached a solve. No screen year was pre-registered, because no solve was earned.
 
-**PREREG:** `results/calibration/PREREG-nyiso205-ch-fill-operator.md` — committed and pushed
+**PREREG:** `docs/records/nyiso/PREREG-nyiso205-ch-fill-operator.md` — committed and pushed
 **before any number was read** (`375b3d9a`, since merged to `main`), including its addendum §A.
 **Instrument:** `scripts/probes/_nyiso205_ch_fill_operator.py` →
-`results/calibration/_nyiso205_ch_fill_operator.json`.
+`results/phase0/nyiso/_nyiso205_ch_fill_operator.json`.
 
 ---
 

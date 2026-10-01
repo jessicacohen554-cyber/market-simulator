@@ -3,7 +3,7 @@
 Lane: SPP-105, chartered by the owner card "Continue: gas-family design" (SPP-104).
 Keeper: `2026-09-28-spp-100-chp-scope`, bundle `results/calibration/spp100_arm_span` (2019–2025).
 Probe: `scripts/probes/_spp105_gas_outage_hourly_phase0.py` (+ `_spp105_carriers.py`).
-Numbers: `results/calibration/_spp105_gas_outage_phase0.json`.
+Numbers: `results/phase0/spp/_spp105_gas_outage_phase0.json`.
 **No LP. No shard. No bundle. No `src/` edit. No `ScenarioConfig` field. No multiplier touched.**
 
 ## 0. Headline
@@ -264,4 +264,4 @@ Notes on the census:
   (upper −0.05).
 - **2024, carrier B.** The 17 short hours are a pre-registered risk to unserved energy (E3).
 
-The solve is pre-registered in `docs/handoffs/PRECOMMIT-spp-105-gas-family-outage-2026-09-30.md`.
+The solve is pre-registered in `docs/records/spp/PRECOMMIT-spp-105-gas-family-outage-2026-09-30.md`.

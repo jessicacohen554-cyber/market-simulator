@@ -2,7 +2,7 @@
 
 **Session** nyiso-237 (ORCHESTRATOR — rule 32 `[R-SHARD]` (a); **ZERO LP ran, no shard launched**).
 **Date** 2026-09-16. **Keeper** `2026-09-14-nyiso-235-gas-repair` — **UNCHANGED.**
-**Inputs** `docs/RESULT-nyiso236-hydro-budget-period-screen-2026-09-16.md` (addendum A2–A3),
+**Inputs** `docs/records/nyiso/RESULT-nyiso236-hydro-budget-period-screen-2026-09-16.md` (addendum A2–A3),
 `docs/PRECOMMIT-nyiso236-…`, `docs/FINDING-nyiso236-…`. **Probe**
 `scripts/probes/nyiso237_hydro_negprice_phase0.py` (every number below; all inputs committed).
 

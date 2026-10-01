@@ -4,7 +4,7 @@
 verdict is *read*, never the rule itself), §2.4 R-4, and §4 (the disposition this session now enters).
 **Pushed BEFORE the numbers it governs. NO BAR IS MOVED. The one leg added is STRICTER — it can
 invalidate the verdict and can never rescue it.** Machine record:
-`results/calibration/_miso245_ladder_drift_attribution_phase0.json`; evaluator
+`results/phase0/miso/_miso245_ladder_drift_attribution_phase0.json`; evaluator
 `scripts/probes/_miso245_ladder_drift_attribution_phase0.py`, whose bars are literals quoted from the
 PREREG.
 

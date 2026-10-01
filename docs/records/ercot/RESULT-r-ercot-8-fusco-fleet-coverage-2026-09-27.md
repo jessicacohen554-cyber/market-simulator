@@ -1,6 +1,6 @@
 # RESULT — R-ERCOT-8: Jack Fusco (55357) joins the ERCOT fleet — PROMOTED, ISO reads NOT-YET
 
-**Session:** R-ERCOT-8, 2026-09-27. **PRECOMMIT:** `docs/handoffs/PRECOMMIT-r-ercot-8-fusco-fleet-coverage-2026-09-27.md`, merged in PR #6772, pinned SHA `5696a72ce54327901681016a417e4900bba70db1`.
+**Session:** R-ERCOT-8, 2026-09-27. **PRECOMMIT:** `docs/records/ercot/PRECOMMIT-r-ercot-8-fusco-fleet-coverage-2026-09-27.md`, merged in PR #6772, pinned SHA `5696a72ce54327901681016a417e4900bba70db1`.
 
 **Keeper:** `2026-09-27-r-8-fusco` (bundle `results/calibration/r_ercot8_fusco_span`, 2019–2025). It supersedes `2026-09-25-r-5-hour-grain`.
 

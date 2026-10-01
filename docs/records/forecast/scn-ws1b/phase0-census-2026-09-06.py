@@ -15,7 +15,7 @@ sign / magnitude / footprint predictions rest on:
   4. The CCS retrofit availability year, which decides whether the T0 (2026)
      can show a retrofit response at all.
 
-Run:  PYTHONPATH=src python docs/handoffs/scn-ws1b/phase0-census-2026-09-06.py
+Run:  PYTHONPATH=src python docs/records/forecast/scn-ws1b/phase0-census-2026-09-06.py
 """
 
 from __future__ import annotations

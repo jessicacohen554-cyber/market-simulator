@@ -1,6 +1,6 @@
 # ADDENDUM nyiso-226 — **MY OWN SCREEN GATE `S3(a)` FAILED, AND IT FAILED BECAUSE I WROTE IT AGAINST AN INVARIANT THE MODEL DOES NOT HAVE.** Published FIRST, at full magnitude; the repair MOVES NO BAR, and its bar is read from the model's own loss table rather than from the number I saw
 
-**Governs:** `docs/PRECOMMIT-nyiso226-nyc-base-rebasis-2026-09-10.md` §4 gate **`S3(a)` only**.
+**Governs:** `docs/records/nyiso/PRECOMMIT-nyiso226-nyc-base-rebasis-2026-09-10.md` §4 gate **`S3(a)` only**.
 **`S1`, `S2`, `S3(b)`, `S3(c)` and `S4` are UNTOUCHED** — no bar, no operand and no disposition
 of theirs moves.
 

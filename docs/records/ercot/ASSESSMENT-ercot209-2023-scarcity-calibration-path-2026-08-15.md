@@ -335,8 +335,8 @@ pre-registered STOP rule, so **nothing was chartered** and **Door D is the
 recorded floor**. Determination `NOT-YET` untouched, keeper untouched, no matrix
 cell minted. This signs Door A's Phase-0 (§3) only — Door B remains unsigned and
 Q-B FINAL / R-A are scoped, not reopened, with no C3a/C3b/C3c value computed in
-any year. Precommit `docs/PRECOMMIT-ercot210-conduct-transfer-phase0-2026-08-16.md`,
-finding `docs/FINDING-ercot210-conduct-transfer-phase0-2026-08-16.md`.
+any year. Precommit `docs/records/ercot/PRECOMMIT-ercot210-conduct-transfer-phase0-2026-08-16.md`,
+finding `docs/records/ercot/FINDING-ercot210-conduct-transfer-phase0-2026-08-16.md`.
 
 *Ordering and shorthand note (collision, nothing renamed).* X-1 and X-2 were
 dispatched concurrently on 2026-08-16 and raced. REPORTING-TEXT-1 (X-2) landed

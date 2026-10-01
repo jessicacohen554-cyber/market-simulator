@@ -1,6 +1,6 @@
 # RESULT — R-ERCOT: ERCOT 2019–2025 re-solved on corrected backcast inputs
 
-**Session:** R-ERCOT, parent/orchestrator, 2026-09-24. **PRECOMMIT:** `docs/handoffs/PRECOMMIT-r-ercot-2019-2025-inputs-2026-09-24.md`. **Pinned SHA:** `b1f800e80b03c47abc68c947f7f000dc5c615b18`.
+**Session:** R-ERCOT, parent/orchestrator, 2026-09-24. **PRECOMMIT:** `docs/records/ercot/PRECOMMIT-r-ercot-2019-2025-inputs-2026-09-24.md`. **Pinned SHA:** `b1f800e80b03c47abc68c947f7f000dc5c615b18`.
 **Registered:** `2026-09-24-r-inputs-2019-2025`, bundle `results/calibration/r_ercot_arm_span`, years 2019–2025. **NOT promoted.** The incumbent keeper `2026-09-19-ercot266-mer-five-year` is untouched.
 
 ## Headline

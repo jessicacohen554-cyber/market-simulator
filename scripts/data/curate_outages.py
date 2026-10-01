@@ -18,7 +18,7 @@ The facility-summed source (``campd-outages.csv``, output of the deleted
 ``scripts/derive_campd_outages.py``) was removed 2026-07-17: the per-unit
 detector is now the sole CAMPD outage source for every ISO, so this datatype is
 unit-grain only and carries no ``unit_id="ALL"`` rows
-(``results/calibration/FINDING-ercot79-phantom-outage-2026-07.md``).
+(``docs/records/ercot/FINDING-ercot79-phantom-outage-2026-07.md``).
 
 We deliberately do NOT re-run the zero-gross-load detection here: those CSVs
 *are* the derive scripts' output (the existing logic over

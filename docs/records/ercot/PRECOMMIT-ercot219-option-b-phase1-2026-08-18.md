@@ -12,7 +12,7 @@ are NOT pruned this session.
 ## §0 CHARTER, SIGNATURE, AND QUEUE POSITION
 
 This session executes §5 of
-`docs/DECISION-CARD-ercot218b-artificial-shortage-structural-2026-08-18.md`
+`docs/records/ercot/DECISION-CARD-ercot218b-artificial-shortage-structural-2026-08-18.md`
 (the card), whose **B-1 is SIGNED (owner, by dispatch of ERCOT-219,
 2026-08-18)** — the signature is appended verbatim at the foot of the card
 (commit `ecbad28`), constituted by the owner's dispatch per the card's closing
@@ -31,7 +31,7 @@ ERCOT-219 itself and the signed card** — the dispatch is the charter.
 
 **Pre-solve basis measurement, committed with this precommit:**
 `scripts/probes/ercot219_basis_phase0.py` →
-`results/calibration/ercot219_basis_phase0.json` (read-only, no LP,
+`results/phase0/ercot/ercot219_basis_phase0.json` (read-only, no LP,
 quantity-only; the actual-RT read enumerates gate hour sets only). Its numbers
 are cited below as `basis_phase0`.
 
@@ -342,7 +342,7 @@ Aug-2023 storage p50 $3,361) is context, not a prediction, and no gate reads
 it. Q-B/R-A: every 2023 price number in the A/B is side-effect reporting at
 full magnitude — the gate table contains no 2023 price criterion by design.
 
-## §4 SEAM PROOFS (before any A/B solve; committed as `results/calibration/ercot219_seamproof.json`)
+## §4 SEAM PROOFS (before any A/B solve; committed as `results/phase0/ercot/ercot219_seamproof.json`)
 
 * **SP-1 gate-off byte-identity ×3 years (array grain):** at HEAD with all
   three fields at default, the assembled ERCOT fleet availability matrix and

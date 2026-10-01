@@ -5,7 +5,7 @@ UNIT-ATTRIBUTED partial-outage extract, the route to (a) the 2024 event-cap
 ceiling defect and (b) the ercot-167 SOC re-gate. Decision rules, the
 composition rule, the proofs, the predictions and the **stop rules** were
 pre-registered and pushed **before the derive was built**
-(`docs/PRECOMMIT-ercot174-unit-attributed-partial-outage-2026-08-06.md`); the
+(`docs/records/ercot/PRECOMMIT-ercot174-unit-attributed-partial-outage-2026-08-06.md`); the
 kill gates are `PRECOMMIT-ercot172` §5 inherited verbatim. Keeper **UNCHANGED**
 at `2026-08-05-run168b-year-curves`. **No run was solved, so none is
 registered** — the pre-registered AT-2 stop rule fired before the solve, which
@@ -116,7 +116,7 @@ removes more than the control anywhere.
 ## 3. THE RESULT — AT-1/AT-2, and what they refute
 
 `scripts/probes/ercot174_attribution_check.py` →
-`results/calibration/ercot174_attribution_check.json`. No LP; read straight
+`results/phase0/ercot/ercot174_attribution_check.json`. No LP; read straight
 from the loaders the cap block itself uses.
 
 | year | both-layers-active bin-hours | **min()-composed (AT-1)** | share | **AT-2 ρ** | stop bar 0.5 |

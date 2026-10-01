@@ -1,7 +1,7 @@
 {
  "session": "ercot-239 round 2, Stage A",
  "keeper": "2026-08-25-236-swcap-clip-k33",
- "precommit": "docs/PRECOMMIT-ercot239-graded-ladder-2026-08-30.md",
+ "precommit": "docs/records/ercot/PRECOMMIT-ercot239-graded-ladder-2026-08-30.md",
  "fuel_aug_hh_2023": 2.583,
  "anchor": 2.2494,
  "grain_note": "implied $/MWh at each class's condbinned base_hr (class-representative); per-plant base HRs spread around it",

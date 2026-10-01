@@ -17,8 +17,8 @@ candidate arms on the strength of their `U` cells. All three `unit_outage_*` fie
 they change the derate **denominator**, i.e. they are LEVEL levers on the envelope, and none reaches
 the composition defect. That draft's lever space was wrong and is replaced here.
 
-Evidence base: `docs/ADDENDUM-pjm-d4-3-lmp-gap-next-lp-2026-09-10.md` (the price-side measurement),
-`docs/RESULT-pjm-d4-3-da-virtual-net-2026-09-10.md` (the session), and pjm-162's committed
+Evidence base: `docs/records/pjm/ADDENDUM-pjm-d4-3-lmp-gap-next-lp-2026-09-10.md` (the price-side measurement),
+`docs/records/pjm/RESULT-pjm-d4-3-da-virtual-net-2026-09-10.md` (the session), and pjm-162's committed
 `_pjm162_split_derivability.json` / `_pjm162_split_threshold.json` (the outage stratification).
 
 ---
@@ -31,10 +31,10 @@ SCOPE: PJM ONLY. BASE: origin/main. `git checkout -b claude/pjm-d4-4`.
 Do NOT open a PR unless the owner asks. Never write another ISO's keeper/matrix/status/log.
 
 READ IN FULL FIRST:
-  docs/ADDENDUM-pjm-d4-3-lmp-gap-next-lp-2026-09-10.md          (the price-side measurement)
-  results/calibration/FINDING-pjm162-outage-envelope-basis-closure-2026-08-15.md   (sections 3, 4, 5 — YOUR EVIDENCE BASE)
-  results/calibration/FINDING-pjm161-outage-inversion-and-da-virtual-energy-2026-08-14.md (7, 7.5)
-  docs/RESULT-pjm-d4-3-da-virtual-net-2026-09-10.md             (section 6 = the DO-NOT-REDO record)
+  docs/records/pjm/ADDENDUM-pjm-d4-3-lmp-gap-next-lp-2026-09-10.md          (the price-side measurement)
+  docs/records/pjm/FINDING-pjm162-outage-envelope-basis-closure-2026-08-15.md   (sections 3, 4, 5 — YOUR EVIDENCE BASE)
+  docs/records/pjm/FINDING-pjm161-outage-inversion-and-da-virtual-energy-2026-08-14.md (7, 7.5)
+  docs/records/pjm/RESULT-pjm-d4-3-da-virtual-net-2026-09-10.md             (section 6 = the DO-NOT-REDO record)
   src/market_sim/data/outages.py  lines 269, 795-850, 1180-1215 (UNIT_OUTAGE_MIN_DAYS and the short-window overlay)
   docs/codebase-site/data/mechanism-matrix/PJM.js               (the outage family)
 
