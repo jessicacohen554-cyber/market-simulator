@@ -15,5 +15,56 @@
    2.815,
    3.094
   ]
+ },
+ "2019": {
+  "rows_moved": 61,
+  "cc_floor_rows": 61,
+  "non_cc_rows_moved": [],
+  "cc_floor_hours_off_on": [
+   355576,
+   360994
+  ],
+  "cc_floor_mwh_off_on": [
+   153.395,
+   155.327
+  ],
+  "floor_twh_in_metered_offline_hours_off_on": [
+   3.306,
+   3.564
+  ]
+ },
+ "2021": {
+  "rows_moved": 65,
+  "cc_floor_rows": 65,
+  "non_cc_rows_moved": [],
+  "cc_floor_hours_off_on": [
+   380498,
+   384379
+  ],
+  "cc_floor_mwh_off_on": [
+   171.317,
+   172.499
+  ],
+  "floor_twh_in_metered_offline_hours_off_on": [
+   4.508,
+   5.349
+  ]
+ },
+ "2025": {
+  "rows_moved": 69,
+  "cc_floor_rows": 69,
+  "non_cc_rows_moved": [],
+  "cc_floor_hours_off_on": [
+   417233,
+   424267
+  ],
+  "cc_floor_mwh_off_on": [
+   189.368,
+   192.423
+  ],
+  "floor_twh_in_metered_offline_hours_off_on": [
+   2.883,
+   3.15
+  ]
  }
 }
