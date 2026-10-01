@@ -42,6 +42,7 @@ from scripts.data.derive_campd_gas_st_heat_rates import (
     BOILER_CLASSES,
     TARGET_CLASS,
     _is_boiler,
+    merge_stack_duplicates,
     pair_units_to_rows,
     plant_table,
 )
@@ -564,6 +565,66 @@ class TestBackcastFleetSourcing(unittest.TestCase):
                 "measured_st_heat_rates — the backcast would silently solve "
                 "on eGRID heat rates" % call.lineno,
             )
+
+
+class TestStackDuplicateMerge(unittest.TestCase):
+    """NYISO-NEXT-21: a split-boiler pair is ONE boiler, not two half-fuel units.
+
+    CEMS repeats Astoria 8906's full ``grossLoad`` on both monitored paths
+    (``31RH``/``32SH``) while each row carries only its own path's heat input,
+    so scoring the paths separately prices the boiler at half its fuel.
+    """
+
+    def _frame(self) -> pd.DataFrame:
+        rows = []
+        for h in range(3):
+            # One boiler: 300 MW gross, 3,300 MMBtu total split 1,650/1,650.
+            rows.append((8906, "31RH", h, 1.0, 300.0, 1650.0))
+            rows.append((8906, "32SH", h, 1.0, 300.0, 1650.0))
+            rows.append((2500, "10", h, 1.0, 200.0, 2200.0))
+        df = pd.DataFrame(
+            rows,
+            columns=[
+                "facilityId",
+                "unitId",
+                "hour",
+                "opTime",
+                "grossLoad",
+                "heatInput",
+            ],
+        )
+        return df.assign(
+            facilityName="x",
+            year=2023,
+            date="2023-01-01",
+            primaryFuelInfo="Pipeline Natural Gas",
+            unitType="Tangentially-fired",
+        )
+
+    def test_pair_sums_fuel_counts_load_once(self):
+        out = merge_stack_duplicates(self._frame())
+        ast = out[out["facilityId"] == 8906]
+        self.assertEqual(set(ast["unitId"]), {"31RH"})
+        self.assertEqual(len(ast), 3)
+        rate = ast["heatInput"].sum() / ast["grossLoad"].sum()
+        self.assertAlmostEqual(rate, 11.0)
+
+    def test_other_facilities_untouched(self):
+        df = self._frame()
+        out = merge_stack_duplicates(df)
+        before = df[df["facilityId"] == 2500].reset_index(drop=True)
+        after = out[out["facilityId"] == 2500].reset_index(drop=True)
+        pd.testing.assert_frame_equal(before, after[before.columns])
+
+    def test_no_duplicate_facility_is_identity(self):
+        df = self._frame()
+        df = df[df["facilityId"] == 2500]
+        self.assertIs(merge_stack_duplicates(df), df)
+
+    def test_committed_nyiso_astoria_row(self):
+        """The re-derived committed artifact carries the merged-meter rate."""
+        got = measured_st_heat_rates.__wrapped__("NYISO")
+        self.assertAlmostEqual(got[8906], 11.6452, places=4)
 
 
 if __name__ == "__main__":
