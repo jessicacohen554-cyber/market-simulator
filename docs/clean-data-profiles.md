@@ -46,12 +46,18 @@ use `--force` after changing one. A bare run is unchanged (no skip, no manifest)
 | `--solve-profile SPP` (4 datatypes, 1.1 MB) | 46 s cold / 2 s warm |
 | `--solve-profile NEISO` (7 datatypes, 1.2 MB) | 46 s cold / 1 s warm |
 | all 17 profile scripts, every ISO | 156 s |
-| bare default run (59 datatypes) | measuring — see PR |
+| bare default run (59 datatypes) | **partial, run stopped at emissions-unit-annual (7th of 59) after 20.6 min** |
 
 Per-datatype (all ISOs): coal-receipts 41.5 s · ramp-capability 49.6 s (1.1 GiB) ·
 gtc-limits 26.6 s · hydro-plant-modes 13.2 s · transfer-interface-limits 5.8 s ·
 nyiso-interface-flows 5.1 s · seam-neighbour-price 4.9 s · chp-btm-share 2.6 s ·
 coal-stocks 1.3 s · the other eight < 1.2 s each.
+
+Partial bare-run per-datatype times (relocated `MARKET_SIM_DATA_ROOT`):
+lmp 100.0 s · load 6.8 s · demand-profile 6.3 s · ancillary-services 10.3 s ·
+generation FAIL (an artifact of the relocated data root: it records its source
+path relative to `REPO_ROOT`) · renewables 18.3 s · **emissions 1040.9 s**.
+Six datatypes = 19.7 min, against 46 s for a whole per-ISO profile.
 
 **Caveats.** Entries whose raw inputs default to all of `data/raw` are
 invalidated by any new untracked file there (e.g. eGRID mirrors a solve writes)
