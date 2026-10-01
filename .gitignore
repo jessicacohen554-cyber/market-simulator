@@ -3953,3 +3953,7 @@ results/calibration/nwppnext14_pr6932_span/
 # NWPP-NEXT-15 per-year legs of THIS lane's arm (transport only; composite nwppnext14vd_span is registered).
 results/calibration/nwppnext14vd_20[0-9][0-9]/
 results/calibration/_rcaiso24/
+
+# SPP-106 per-year shard legs and the local composite (rule 29(c) / 31: kept out of main until the owner rules)
+results/calibration/spp106EX_20*/
+results/calibration/spp106EX_span/
