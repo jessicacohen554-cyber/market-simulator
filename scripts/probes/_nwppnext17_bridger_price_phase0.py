@@ -76,16 +76,22 @@ def price_setters(leg: Path, raw: Path) -> pd.DataFrame:
     )
     u = u[(u.zone == "NWPP-EAST") & (u.fuel == "hydro")].copy()
     u["m"] = _month(u.hour)
-    pond = pd.read_csv(raw / "nwpp-hydro/nwpp_hydro_pondage.csv")[["plant_id", "pondage_hours"]]
+    pond = pd.read_csv(raw / "nwpp-hydro/nwpp_hydro_pondage.csv")[
+        ["plant_id", "pondage_hours"]
+    ]
     u = u.merge(pond, left_on="plant_code", right_on="plant_id", how="left")
-    marg = u[(u.mw > 0.05) & (u.mw < u.cap_mw - 0.05) & (u.red_cost.abs() < 0.05)].copy()
+    marg = u[
+        (u.mw > 0.05) & (u.mw < u.cap_mw - 0.05) & (u.red_cost.abs() < 0.05)
+    ].copy()
     bins = [-np.inf, 24, 168, 720, np.inf]
     labels = ["<24h", "<168h", "<720h", ">=720h"]
     marg["cls"] = pd.cut(marg.pondage_hours, bins=bins, labels=labels).cat.codes
     best = marg.groupby(["m", "hour"]).cls.max()
     out = best.groupby(level=0).value_counts().unstack(fill_value=0)
     out.columns = [labels[c] if c >= 0 else "no NID row" for c in out.columns]
-    print(f"NWPP-EAST hydro: {u.plant_code.nunique()} plants, {u.groupby('plant_code').cap_mw.max().sum():.0f} MW")
+    print(
+        f"NWPP-EAST hydro: {u.plant_code.nunique()} plants, {u.groupby('plant_code').cap_mw.max().sum():.0f} MW"
+    )
     return out
 
 
@@ -109,7 +115,10 @@ def price_variance(leg: Path, raw: Path) -> pd.DataFrame:
             }
         )
 
-    parts = {ba: _dec(w[w.baa == ba][["hour", "lmp"]].dropna(), "lmp") for ba in ("PACE", "IPCO", "BPAT")}
+    parts = {
+        ba: _dec(w[w.baa == ba][["hour", "lmp"]].dropna(), "lmp")
+        for ba in ("PACE", "IPCO", "BPAT")
+    }
     for z in ("NWPP-EAST", "NWPP-NW"):
         parts[f"model {z}"] = _dec(sysd[sysd.zone == z][["hour", "price"]], "price")
     return pd.concat(parts, axis=1).loc[6:12].round(1)
@@ -131,15 +140,29 @@ def measured_price_taker(b: pd.DataFrame, raw: Path) -> pd.DataFrame:
 
 def main() -> None:
     """Print every phase-0 table for the leg directory given on the command line."""
-    leg = Path(sys.argv[1] if len(sys.argv) > 1 else "results/calibration/nwppnext16c_2023")
+    leg = Path(
+        sys.argv[1] if len(sys.argv) > 1 else "results/calibration/nwppnext16c_2023"
+    )
     raw = Path("data/raw")
     pd.set_option("display.width", 250)
-    print("1. Bridger delivered price by mine ($/MMBtu)\n", bridger_receipts(raw).to_string())
+    print(
+        "1. Bridger delivered price by mine ($/MMBtu)\n",
+        bridger_receipts(raw).to_string(),
+    )
     tab, b = bridger_offer_vs_price(leg)
     print("\n2. Bridger offer, pile dual, NWPP-EAST price\n", tab.T.to_string())
-    print("\n3. NWPP-EAST price-setting hydro (hours)\n", price_setters(leg, raw).to_string())
-    print("\n4. Price mean / within-day SD / between-day SD\n", price_variance(leg, raw).T.to_string())
-    print("\n5. Bridger at measured WEIM prices (TWh)\n", measured_price_taker(b, raw).T.to_string())
+    print(
+        "\n3. NWPP-EAST price-setting hydro (hours)\n",
+        price_setters(leg, raw).to_string(),
+    )
+    print(
+        "\n4. Price mean / within-day SD / between-day SD\n",
+        price_variance(leg, raw).T.to_string(),
+    )
+    print(
+        "\n5. Bridger at measured WEIM prices (TWh)\n",
+        measured_price_taker(b, raw).T.to_string(),
+    )
 
 
 if __name__ == "__main__":
