@@ -1,0 +1,16 @@
+{
+  "id": "2026-10-02-nyisonext34-oilburn-probe",
+  "label": "nyisonext34 oilburn probe",
+  "date": "2026-10-02",
+  "shorthand": "nyisonext34-oilburn-probe",
+  "definition": "NYISO-NEXT-34: measured oil burn on the keeper recipe",
+  "years": [
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-10-02-nyisonext34-oilburn-probe.js",
+  "bundle": "results/calibration/nyisonext34_span"
+}
