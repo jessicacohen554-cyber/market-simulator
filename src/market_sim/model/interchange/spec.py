@@ -1791,6 +1791,13 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             # measured hourly maximum 1,933 MW = 6,733 MW; the measured
             # three-leg envelope reads max export 3,884-4,316 / max import
             # 1,424-1,737 MW. Border zones = the reporting BAs' zones.
+            # Shape = CISO NET load (demand - solar - wind), NWPP-NEXT-20
+            # (owner card 2026-10-02 "Fix both, then solve"): CAISO's price is
+            # set by its net load. Within-day r of the shaped seam vs CAISO's
+            # own RT price, gross 0.37 / 0.24 / 0.08 -> net 0.56 / 0.58 / 0.62
+            # (2023/24/25; FINDING-nwppnext19 §6a). Categorical, the same form
+            # as CAISO's WECC_DSW corridor; the mean-1 shape leaves the annual
+            # hr_by_year anchors unchanged.
             name="CAISO",
             ba_code="CISO",
             gas_basis=GAS_BASIS_DIFFERENTIAL["CAISO"],
@@ -1798,6 +1805,7 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             hurdle=3.0,
             interface_limit_mw=6733.0,
             border_zones=("NWPP-NW", "NWPP-OR", "NWPP-SNV"),
+            load_shape_kind="net",
             load_shape_exponent=1.0,
             hr_by_year={2023: 13.31, 2024: 11.81, 2025: 8.04},
         ),
@@ -1835,25 +1843,33 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             # p. 10: N->S 3,150 / S->N 3,000 MW, through BPAT) and AESO (Path
             # 83 MATL, 325 southbound / 300 northbound, through NWMT). Canada
             # is OUT of the footprint (ruling N1) and this is its exogenous
-            # seam. No Canadian market price is committed; the anchor is the
-            # footprint's OWN traded hub, the Mid-C Peak ICE index Powerex
-            # clears against (data/raw/nwpp-weim/midc_peak_daily.parquet,
-            # NWPP-13): daily weighted-average 87.07 / 61.52 / 46.41 $/MWh —
-            # PEAK-ONLY and DAILY, so an upward-biased PROXY, declared — over
-            # HH + NWPP basis -0.19 = 2.346 / 2.002 / 3.339 -> 37.11 / 30.73
-            # / 13.90; flat = their mean 27.25. Limit = Path 3 N->S 3,150 +
+            # seam. Anchor (NWPP-NEXT-20, owner card 2026-10-02 "Fix both,
+            # then solve"): the seam's OWN price on Canada's side, BC Hydro /
+            # Powerex's all-hours WEIM load-aggregation LMP ELAP_BCHA-APND
+            # (data/raw/nwpp-weim/bcha_elap_hourly.parquet; the MALIN
+            # construction of the CAISO seam): mean 88.47 / 41.21 / 34.99
+            # $/MWh over the hour-matched measured monthly HH + NWPP basis
+            # -0.19 = 2.451 / 2.006 / 3.336 -> 36.10 / 20.55 / 10.49; flat =
+            # their mean 22.38 (scripts/data/fetch_nwpp_bcha_elap.py::
+            # bcha_anchor_heat_rates). 2023 is Jun 22 - Dec 31 (OASIS
+            # retention) and carries BC's drought-year import premium (BCHA
+            # ~$40 over BPAT every month). It replaces the Mid-C PEAK ICE
+            # index (peak-only, $12-38 above measured BPAT, HR 37.11 / 30.73 /
+            # 13.90; FINDING-nwppnext19 §6b). AESO's 325 MW MATL leg has no
+            # price here (rule 14 misalignment, declared in the store README
+            # §5). Limit = Path 3 N->S 3,150 +
             # Path 83 325 = 3,475 MW published; measured envelope max export
             # 2,690-2,743 / max import 2,312-2,362 MW sits inside it.
             name="WECC_CAN",
             ba_code="BCHA",
             proxy_ba="BPAT",
             gas_basis=GAS_BASIS_DIFFERENTIAL["NWPP"],
-            marginal_heat_rate=27.25,
+            marginal_heat_rate=22.38,
             hurdle=2.0,
             interface_limit_mw=3475.0,
             border_zones=("NWPP-NW", "NWPP-INLAND"),
             load_shape_exponent=1.0,
-            hr_by_year={2023: 37.11, 2024: 30.73, 2025: 13.90},
+            hr_by_year={2023: 36.10, 2024: 20.55, 2025: 10.49},
         ),
     ],
     # SOCO — the Southern Company BALANCING AUTHORITY, registered 2026-09-14

@@ -80,3 +80,50 @@ def test_empty_priced_build_is_refused():
     with pytest.raises(ValueError, match="builds no import/export rows"):
         require_priced_interchange_rows("NWPP", 2023, [])
     require_priced_interchange_rows("NWPP", 2023, [object()])
+
+
+def _seam_named(name: str) -> NeighborInterface:
+    return next(s for s in INTERFACE_NEIGHBORS["NWPP"] if s.name == name)
+
+
+def test_caiso_seam_troughs_with_the_ciso_solar_glut(monkeypatch):
+    """NWPP-NEXT-20: CAISO's price is set by its net load, so the CAISO seam's
+    shape must fall where CISO solar is large even when gross demand is flat."""
+    import numpy as np
+    import pandas as pd
+
+    from market_sim.data import neighbor_price
+
+    hours = 8760
+    noon = (np.arange(hours) % 24) == 12
+    frame = pd.DataFrame(
+        {
+            "Demand": np.full(hours, 100.0),
+            "NG: SUN": np.where(noon, 60.0, 0.0),
+            "NG: WND": np.zeros(hours),
+        }
+    )
+    monkeypatch.setattr(
+        neighbor_price, "_eia_hourly_frame_filled", lambda ba, year: frame
+    )
+    seam = _seam_named("CAISO")
+    shape, ba = neighbor_price.neighbor_load_shape(seam, 2024, hours)
+    assert ba == "CISO"
+    assert shape.mean() == pytest.approx(1.0)
+    assert shape[noon].max() < shape[~noon].min()
+
+
+def test_wecc_can_anchor_is_bc_hydros_all_hours_elap_price():
+    """NWPP-NEXT-20: the WECC_CAN heat rates re-derive from the committed BCHA
+    ELAP store (all hours, Canada's side of the seam), not the peak-only Mid-C
+    index; the forward fallback is their mean."""
+    from scripts.data.fetch_nwpp_bcha_elap import bcha_anchor_heat_rates
+
+    seam = _seam_named("WECC_CAN")
+    derived = bcha_anchor_heat_rates()["hr"]
+    assert set(seam.hr_by_year) == set(derived.index) == {2023, 2024, 2025}
+    for year, hr in seam.hr_by_year.items():
+        assert hr == pytest.approx(derived[year], abs=0.005)
+    assert seam.marginal_heat_rate == pytest.approx(
+        sum(seam.hr_by_year.values()) / 3, abs=0.005
+    )

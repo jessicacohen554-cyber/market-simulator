@@ -81,3 +81,22 @@ refresh" the committed years — that would silently shorten them.
   (p99 of the gap $27/MWh, max $175) — the index uses the published `LMP_PRC`
   (the settlement price) as the PRECOMMIT declares; the components are stored
   and the identity is reported, not assumed.
+
+## 5. `bcha_elap_hourly.parquet` — the WECC_CAN seam anchor (NWPP-NEXT-20, 2026-10-02)
+
+Added by lane closeout-NWPP (owner card 2026-10-02 "Fix both, then solve"). The RTPD LMP at
+**`ELAP_BCHA-APND`**, BC Hydro / Powerex's WEIM load-aggregation point, i.e. the price on the
+**Canadian** side of the WECC_CAN seam. Canada is outside the footprint (ruling N1), so this is a
+counterparty price, the analogue of the CAISO seam's MALIN anchor, never the footprint's own WEIM
+price (rule 13). It replaces the peak-only Mid-C ICE index as that seam's heat-rate anchor
+(`scripts/data/fetch_nwpp_bcha_elap.py::bcha_anchor_heat_rates`, `model/interchange/spec.py`
+WECC_CAN block). Not a benchmark: it enters only as three annual heat rates.
+
+- Columns `hour_utc · lmp · n_intervals`, UTC hour-beginning; hour = mean of the 15-minute
+  `LMP_PRC` prints, fewer than 3 → NaN (§4's rule). Same OASIS client and month windows as §1.
+- **Retention.** Fetched 2026-10-02: the served window began **2023-06-22** (the edge has slid
+  three weeks since NWPP-13's pull), so 2023 is a Jun 22 – Dec 31 window and the 2023 heat rate is
+  a matched-window ratio (gas over the same hours). The raw pulls (`_pulls/bcha_lmp_*.csv`) are
+  untracked; this parquet is the record.
+- **Misalignment, stated (rule 14).** The seam also carries AESO's 325 MW MATL leg (Path 83), whose
+  Alberta pool price is not represented; BCHA's Path 3 is 3,150 of the seam's 3,475 MW.

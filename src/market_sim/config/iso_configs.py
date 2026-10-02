@@ -2167,11 +2167,16 @@ def _nwpp_config() -> ISOConfig:
     only: its first binding season is Winter 2027-28, from 1 November 2027
     (WPP BPM 109 printed p. 4), two years past the backcast window.
 
-    Fleet representation (owner ruling N8): legacy heat-rate bins
-    (``use_campd_bins=False`` — NWPP is absent from ``CAMPD_BINNING_ISOS``,
-    so the runner's per-plant path is never entered). CAMPD reaches 30.98 % of
+    Fleet representation (owner ruling N8): the FORECAST path uses legacy
+    heat-rate bins — NWPP is absent from ``CAMPD_BINNING_ISOS``, which gates
+    only ``runner.py``'s per-plant path. The BACKCAST runs per-plant CAMPD
+    tranches: ``scripts/run_calibration.py`` synthesizes bins from the
+    committed ``thermal_tranches_NWPP.csv`` (gated on ``plant_level_fleet``,
+    not on ``CAMPD_BINNING_ISOS``), and every NWPP keeper's ``run_config``
+    records ``use_campd_bins: true`` (correction NWPP-43,
+    ``docs/mechanism-testing-matrix.md`` §5.9). CAMPD reaches 30.98 % of
     nameplate / 41.8-43.6 % of energy, and 36.3 % of the footprint is hydro
-    that CEMS can never cover; per-plant binning is a W5 lever.
+    that CEMS can never cover.
 
     Offer-curve bands stay 1.0 (gate G5): NWPP takes the generic base curve
     with no per-ISO delta. ``pipeline/backcast_config.py`` neutralizes the
