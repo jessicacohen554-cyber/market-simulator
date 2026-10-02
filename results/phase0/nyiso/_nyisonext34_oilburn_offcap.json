@@ -1,0 +1,1251 @@
+[
+ {
+  "year": 2021,
+  "c3a_vs_rt_pct": {
+   "price": 3.91,
+   "lo": 6.18
+  },
+  "c3b_monthly_nrmse": {
+   "price": 0.12,
+   "lo": 0.128
+  },
+  "arm_cells_written_share": 0.2296,
+  "high_oil_days": 12,
+  "high_oil_days_cap_binds": 2,
+  "high_oil_off_cap": {
+   "n": 10,
+   "sum_err_vs_rt": {
+    "price": -102.5,
+    "lo": -26.7
+   },
+   "sum_err_vs_da": {
+    "price": -78.2,
+    "lo": -2.4
+   },
+   "sum_abs_err_vs_rt": {
+    "price": 246.7,
+    "lo": 221.3
+   }
+  },
+  "high_oil_cap_binds": {
+   "n": 2,
+   "sum_err_vs_rt": {
+    "price": 64.4,
+    "lo": 71.0
+   },
+   "sum_err_vs_da": {
+    "price": 59.1,
+    "lo": 65.7
+   },
+   "sum_abs_err_vs_rt": {
+    "price": 64.4,
+    "lo": 71.0
+   }
+  },
+  "days": [
+   {
+    "date": "2021-01-28",
+    "price": 68.04,
+    "lo": 69.7,
+    "rt": 43.0,
+    "da": 39.6,
+    "share": 0.11,
+    "cap_binds": false
+   },
+   {
+    "date": "2021-01-29",
+    "price": 47.14,
+    "lo": 65.41,
+    "rt": 122.15,
+    "da": 74.18,
+    "share": 0.28,
+    "cap_binds": false
+   },
+   {
+    "date": "2021-01-30",
+    "price": 42.78,
+    "lo": 58.18,
+    "rt": 86.56,
+    "da": 72.4,
+    "share": 0.4,
+    "cap_binds": false
+   },
+   {
+    "date": "2021-01-31",
+    "price": 42.94,
+    "lo": 51.23,
+    "rt": 57.1,
+    "da": 73.73,
+    "share": 0.23,
+    "cap_binds": false
+   },
+   {
+    "date": "2021-02-01",
+    "price": 62.44,
+    "lo": 69.96,
+    "rt": 49.19,
+    "da": 55.13,
+    "share": 0.26,
+    "cap_binds": false
+   },
+   {
+    "date": "2021-02-09",
+    "price": 56.34,
+    "lo": 64.61,
+    "rt": 57.87,
+    "da": 69.4,
+    "share": 0.22,
+    "cap_binds": false
+   },
+   {
+    "date": "2021-02-12",
+    "price": 71.53,
+    "lo": 77.29,
+    "rt": 64.01,
+    "da": 75.08,
+    "share": 0.18,
+    "cap_binds": false
+   },
+   {
+    "date": "2021-02-13",
+    "price": 81.55,
+    "lo": 83.11,
+    "rt": 61.54,
+    "da": 74.39,
+    "share": 0.25,
+    "cap_binds": false
+   },
+   {
+    "date": "2021-02-14",
+    "price": 85.38,
+    "lo": 87.7,
+    "rt": 52.94,
+    "da": 69.12,
+    "share": 0.11,
+    "cap_binds": true
+   },
+   {
+    "date": "2021-02-17",
+    "price": 125.5,
+    "lo": 129.78,
+    "rt": 93.54,
+    "da": 82.64,
+    "share": 0.11,
+    "cap_binds": true
+   },
+   {
+    "date": "2021-08-13",
+    "price": 54.16,
+    "lo": 61.22,
+    "rt": 94.25,
+    "da": 75.93,
+    "share": 0.14,
+    "cap_binds": false
+   },
+   {
+    "date": "2021-09-10",
+    "price": 45.16,
+    "lo": 47.14,
+    "rt": 38.91,
+    "da": 40.41,
+    "share": 0.1,
+    "cap_binds": false
+   }
+  ],
+  "monthly_pct_vs_rt": {
+   "1": {
+    "price": 11.19,
+    "lo": 16.29
+   },
+   "2": {
+    "price": 22.32,
+    "lo": 25.84
+   },
+   "3": {
+    "price": 14.28,
+    "lo": 15.02
+   },
+   "4": {
+    "price": 26.51,
+    "lo": 26.73
+   },
+   "5": {
+    "price": 13.91,
+    "lo": 16.13
+   },
+   "6": {
+    "price": -8.13,
+    "lo": -7.72
+   },
+   "7": {
+    "price": -0.5,
+    "lo": 0.08
+   },
+   "8": {
+    "price": -14.05,
+    "lo": -8.5
+   },
+   "9": {
+    "price": 3.46,
+    "lo": 7.05
+   },
+   "10": {
+    "price": -0.4,
+    "lo": 0.53
+   },
+   "11": {
+    "price": 1.16,
+    "lo": 2.38
+   },
+   "12": {
+    "price": 10.13,
+    "lo": 10.26
+   }
+  }
+ },
+ {
+  "year": 2022,
+  "c3a_vs_rt_pct": {
+   "price": -1.03,
+   "lo": 1.23
+  },
+  "c3b_monthly_nrmse": {
+   "price": 0.131,
+   "lo": 0.112
+  },
+  "arm_cells_written_share": 0.2336,
+  "high_oil_days": 34,
+  "high_oil_days_cap_binds": 17,
+  "high_oil_off_cap": {
+   "n": 17,
+   "sum_err_vs_rt": {
+    "price": -727.2,
+    "lo": -478.3
+   },
+   "sum_err_vs_da": {
+    "price": -855.0,
+    "lo": -606.1
+   },
+   "sum_abs_err_vs_rt": {
+    "price": 748.3,
+    "lo": 536.3
+   }
+  },
+  "high_oil_cap_binds": {
+   "n": 17,
+   "sum_err_vs_rt": {
+    "price": -865.1,
+    "lo": -723.9
+   },
+   "sum_err_vs_da": {
+    "price": 49.9,
+    "lo": 191.1
+   },
+   "sum_abs_err_vs_rt": {
+    "price": 1240.7,
+    "lo": 1194.0
+   }
+  },
+  "days": [
+   {
+    "date": "2022-01-07",
+    "price": 129.08,
+    "lo": 132.08,
+    "rt": 129.26,
+    "da": 99.35,
+    "share": 0.21,
+    "cap_binds": false
+   },
+   {
+    "date": "2022-01-08",
+    "price": 128.26,
+    "lo": 130.49,
+    "rt": 127.32,
+    "da": 119.96,
+    "share": 0.17,
+    "cap_binds": true
+   },
+   {
+    "date": "2022-01-09",
+    "price": 119.03,
+    "lo": 120.04,
+    "rt": 76.63,
+    "da": 102.57,
+    "share": 0.27,
+    "cap_binds": true
+   },
+   {
+    "date": "2022-01-10",
+    "price": 133.82,
+    "lo": 138.67,
+    "rt": 92.24,
+    "da": 121.0,
+    "share": 0.24,
+    "cap_binds": true
+   },
+   {
+    "date": "2022-01-11",
+    "price": 115.49,
+    "lo": 143.9,
+    "rt": 162.27,
+    "da": 167.76,
+    "share": 0.45,
+    "cap_binds": false
+   },
+   {
+    "date": "2022-01-12",
+    "price": 104.46,
+    "lo": 120.28,
+    "rt": 134.78,
+    "da": 124.29,
+    "share": 0.24,
+    "cap_binds": false
+   },
+   {
+    "date": "2022-01-14",
+    "price": 130.22,
+    "lo": 135.3,
+    "rt": 93.84,
+    "da": 141.69,
+    "share": 0.14,
+    "cap_binds": true
+   },
+   {
+    "date": "2022-01-15",
+    "price": 134.47,
+    "lo": 142.66,
+    "rt": 153.45,
+    "da": 150.78,
+    "share": 0.49,
+    "cap_binds": true
+   },
+   {
+    "date": "2022-01-16",
+    "price": 121.88,
+    "lo": 134.63,
+    "rt": 274.58,
+    "da": 140.19,
+    "share": 0.36,
+    "cap_binds": false
+   },
+   {
+    "date": "2022-01-17",
+    "price": 114.31,
+    "lo": 119.94,
+    "rt": 104.06,
+    "da": 123.72,
+    "share": 0.16,
+    "cap_binds": false
+   },
+   {
+    "date": "2022-01-18",
+    "price": 110.48,
+    "lo": 120.5,
+    "rt": 110.19,
+    "da": 133.5,
+    "share": 0.25,
+    "cap_binds": false
+   },
+   {
+    "date": "2022-01-20",
+    "price": 153.16,
+    "lo": 167.88,
+    "rt": 146.1,
+    "da": 132.06,
+    "share": 0.13,
+    "cap_binds": true
+   },
+   {
+    "date": "2022-01-21",
+    "price": 163.2,
+    "lo": 174.4,
+    "rt": 206.58,
+    "da": 193.29,
+    "share": 0.36,
+    "cap_binds": true
+   },
+   {
+    "date": "2022-01-22",
+    "price": 142.99,
+    "lo": 148.56,
+    "rt": 212.18,
+    "da": 168.17,
+    "share": 0.43,
+    "cap_binds": true
+   },
+   {
+    "date": "2022-01-23",
+    "price": 123.97,
+    "lo": 127.36,
+    "rt": 130.76,
+    "da": 137.79,
+    "share": 0.4,
+    "cap_binds": false
+   },
+   {
+    "date": "2022-01-24",
+    "price": 116.35,
+    "lo": 123.8,
+    "rt": 155.81,
+    "da": 163.74,
+    "share": 0.28,
+    "cap_binds": false
+   },
+   {
+    "date": "2022-01-25",
+    "price": 147.04,
+    "lo": 152.13,
+    "rt": 123.58,
+    "da": 134.15,
+    "share": 0.21,
+    "cap_binds": true
+   },
+   {
+    "date": "2022-01-26",
+    "price": 148.88,
+    "lo": 152.67,
+    "rt": 137.86,
+    "da": 181.82,
+    "share": 0.4,
+    "cap_binds": true
+   },
+   {
+    "date": "2022-01-27",
+    "price": 122.52,
+    "lo": 128.7,
+    "rt": 152.53,
+    "da": 174.32,
+    "share": 0.36,
+    "cap_binds": false
+   },
+   {
+    "date": "2022-01-28",
+    "price": 169.06,
+    "lo": 175.86,
+    "rt": 204.15,
+    "da": 136.29,
+    "share": 0.28,
+    "cap_binds": true
+   },
+   {
+    "date": "2022-01-29",
+    "price": 167.32,
+    "lo": 175.29,
+    "rt": 209.22,
+    "da": 160.26,
+    "share": 0.49,
+    "cap_binds": true
+   },
+   {
+    "date": "2022-01-30",
+    "price": 148.47,
+    "lo": 163.26,
+    "rt": 201.65,
+    "da": 163.88,
+    "share": 0.5,
+    "cap_binds": true
+   },
+   {
+    "date": "2022-01-31",
+    "price": 124.37,
+    "lo": 146.05,
+    "rt": 173.47,
+    "da": 206.18,
+    "share": 0.38,
+    "cap_binds": false
+   },
+   {
+    "date": "2022-02-01",
+    "price": 91.2,
+    "lo": 97.37,
+    "rt": 132.71,
+    "da": 153.37,
+    "share": 0.28,
+    "cap_binds": false
+   },
+   {
+    "date": "2022-02-05",
+    "price": 129.11,
+    "lo": 131.87,
+    "rt": 120.59,
+    "da": 131.0,
+    "share": 0.14,
+    "cap_binds": true
+   },
+   {
+    "date": "2022-02-06",
+    "price": 105.61,
+    "lo": 106.49,
+    "rt": 119.62,
+    "da": 137.2,
+    "share": 0.17,
+    "cap_binds": false
+   },
+   {
+    "date": "2022-02-14",
+    "price": 105.25,
+    "lo": 114.21,
+    "rt": 190.35,
+    "da": 159.21,
+    "share": 0.38,
+    "cap_binds": false
+   },
+   {
+    "date": "2022-02-15",
+    "price": 73.85,
+    "lo": 90.03,
+    "rt": 164.13,
+    "da": 139.25,
+    "share": 0.22,
+    "cap_binds": false
+   },
+   {
+    "date": "2022-12-23",
+    "price": 180.82,
+    "lo": 208.69,
+    "rt": 403.93,
+    "da": 113.77,
+    "share": 0.34,
+    "cap_binds": true
+   },
+   {
+    "date": "2022-12-24",
+    "price": 218.3,
+    "lo": 229.87,
+    "rt": 786.37,
+    "da": 209.74,
+    "share": 0.62,
+    "cap_binds": true
+   },
+   {
+    "date": "2022-12-25",
+    "price": 215.8,
+    "lo": 223.52,
+    "rt": 199.36,
+    "da": 219.65,
+    "share": 0.78,
+    "cap_binds": true
+   },
+   {
+    "date": "2022-12-26",
+    "price": 163.47,
+    "lo": 192.15,
+    "rt": 228.77,
+    "da": 294.43,
+    "share": 0.65,
+    "cap_binds": false
+   },
+   {
+    "date": "2022-12-27",
+    "price": 99.31,
+    "lo": 147.09,
+    "rt": 148.55,
+    "da": 227.2,
+    "share": 0.52,
+    "cap_binds": false
+   },
+   {
+    "date": "2022-12-28",
+    "price": 72.95,
+    "lo": 98.86,
+    "rt": 109.92,
+    "da": 168.01,
+    "share": 0.37,
+    "cap_binds": false
+   }
+  ],
+  "monthly_pct_vs_rt": {
+   "1": {
+    "price": -5.5,
+    "lo": 0.44
+   },
+   "2": {
+    "price": -10.2,
+    "lo": -7.48
+   },
+   "3": {
+    "price": -1.89,
+    "lo": 1.36
+   },
+   "4": {
+    "price": 26.92,
+    "lo": 26.96
+   },
+   "5": {
+    "price": 22.55,
+    "lo": 22.67
+   },
+   "6": {
+    "price": 0.38,
+    "lo": 0.7
+   },
+   "7": {
+    "price": -2.88,
+    "lo": -2.46
+   },
+   "8": {
+    "price": -5.64,
+    "lo": -5.43
+   },
+   "9": {
+    "price": 5.86,
+    "lo": 5.88
+   },
+   "10": {
+    "price": 11.47,
+    "lo": 12.11
+   },
+   "11": {
+    "price": 16.74,
+    "lo": 20.05
+   },
+   "12": {
+    "price": -20.22,
+    "lo": -14.47
+   }
+  }
+ },
+ {
+  "year": 2023,
+  "c3a_vs_rt_pct": {
+   "price": 1.01,
+   "lo": 3.91
+  },
+  "c3b_monthly_nrmse": {
+   "price": 0.13,
+   "lo": 0.13
+  },
+  "arm_cells_written_share": 0.2229,
+  "high_oil_days": 8,
+  "high_oil_days_cap_binds": 0,
+  "high_oil_off_cap": {
+   "n": 8,
+   "sum_err_vs_rt": {
+    "price": -197.2,
+    "lo": -101.5
+   },
+   "sum_err_vs_da": {
+    "price": -283.7,
+    "lo": -187.9
+   },
+   "sum_abs_err_vs_rt": {
+    "price": 218.7,
+    "lo": 206.1
+   }
+  },
+  "high_oil_cap_binds": {
+   "n": 0,
+   "sum_err_vs_rt": {
+    "price": 0.0,
+    "lo": 0.0
+   },
+   "sum_err_vs_da": {
+    "price": 0.0,
+    "lo": 0.0
+   },
+   "sum_abs_err_vs_rt": {
+    "price": 0.0,
+    "lo": 0.0
+   }
+  },
+  "days": [
+   {
+    "date": "2023-02-03",
+    "price": 62.74,
+    "lo": 85.18,
+    "rt": 130.9,
+    "da": 165.54,
+    "share": 0.43,
+    "cap_binds": false
+   },
+   {
+    "date": "2023-02-04",
+    "price": 54.59,
+    "lo": 78.9,
+    "rt": 182.29,
+    "da": 234.99,
+    "share": 0.49,
+    "cap_binds": false
+   },
+   {
+    "date": "2023-06-13",
+    "price": 28.62,
+    "lo": 40.38,
+    "rt": 23.31,
+    "da": 25.28,
+    "share": 0.23,
+    "cap_binds": false
+   },
+   {
+    "date": "2023-10-17",
+    "price": 29.82,
+    "lo": 36.45,
+    "rt": 28.63,
+    "da": 29.18,
+    "share": 0.12,
+    "cap_binds": false
+   },
+   {
+    "date": "2023-10-21",
+    "price": 27.54,
+    "lo": 34.89,
+    "rt": 27.6,
+    "da": 24.94,
+    "share": 0.1,
+    "cap_binds": false
+   },
+   {
+    "date": "2023-10-22",
+    "price": 26.7,
+    "lo": 34.1,
+    "rt": 23.41,
+    "da": 24.96,
+    "share": 0.11,
+    "cap_binds": false
+   },
+   {
+    "date": "2023-10-23",
+    "price": 30.08,
+    "lo": 37.45,
+    "rt": 42.12,
+    "da": 36.17,
+    "share": 0.11,
+    "cap_binds": false
+   },
+   {
+    "date": "2023-10-25",
+    "price": 26.08,
+    "lo": 34.58,
+    "rt": 25.15,
+    "da": 28.81,
+    "share": 0.17,
+    "cap_binds": false
+   }
+  ],
+  "monthly_pct_vs_rt": {
+   "1": {
+    "price": 2.9,
+    "lo": 3.2
+   },
+   "2": {
+    "price": -9.69,
+    "lo": 2.53
+   },
+   "3": {
+    "price": 25.37,
+    "lo": 27.7
+   },
+   "4": {
+    "price": 8.46,
+    "lo": 10.77
+   },
+   "5": {
+    "price": 22.2,
+    "lo": 22.89
+   },
+   "6": {
+    "price": 3.53,
+    "lo": 8.33
+   },
+   "7": {
+    "price": -4.88,
+    "lo": -4.54
+   },
+   "8": {
+    "price": -6.75,
+    "lo": -6.24
+   },
+   "9": {
+    "price": -21.1,
+    "lo": -20.08
+   },
+   "10": {
+    "price": -0.59,
+    "lo": 7.87
+   },
+   "11": {
+    "price": 13.54,
+    "lo": 14.23
+   },
+   "12": {
+    "price": 10.04,
+    "lo": 10.64
+   }
+  },
+  "feb_2023_pct_vs_rt": {
+   "price": -9.69,
+   "lo": 2.53
+  }
+ },
+ {
+  "year": 2024,
+  "c3a_vs_rt_pct": {
+   "price": -2.68,
+   "lo": -1.31
+  },
+  "c3b_monthly_nrmse": {
+   "price": 0.13,
+   "lo": 0.138
+  },
+  "arm_cells_written_share": 0.2314,
+  "high_oil_days": 5,
+  "high_oil_days_cap_binds": 1,
+  "high_oil_off_cap": {
+   "n": 4,
+   "sum_err_vs_rt": {
+    "price": -159.8,
+    "lo": -114.7
+   },
+   "sum_err_vs_da": {
+    "price": -169.2,
+    "lo": -124.1
+   },
+   "sum_abs_err_vs_rt": {
+    "price": 167.0,
+    "lo": 156.3
+   }
+  },
+  "high_oil_cap_binds": {
+   "n": 1,
+   "sum_err_vs_rt": {
+    "price": 39.9,
+    "lo": 65.7
+   },
+   "sum_err_vs_da": {
+    "price": 3.0,
+    "lo": 28.9
+   },
+   "sum_abs_err_vs_rt": {
+    "price": 39.9,
+    "lo": 65.7
+   }
+  },
+  "days": [
+   {
+    "date": "2024-01-16",
+    "price": 172.53,
+    "lo": 198.4,
+    "rt": 132.68,
+    "da": 169.53,
+    "share": 0.16,
+    "cap_binds": true
+   },
+   {
+    "date": "2024-01-17",
+    "price": 110.8,
+    "lo": 127.95,
+    "rt": 107.19,
+    "da": 149.67,
+    "share": 0.26,
+    "cap_binds": false
+   },
+   {
+    "date": "2024-12-21",
+    "price": 104.09,
+    "lo": 112.04,
+    "rt": 139.49,
+    "da": 137.98,
+    "share": 0.11,
+    "cap_binds": false
+   },
+   {
+    "date": "2024-12-22",
+    "price": 76.59,
+    "lo": 90.55,
+    "rt": 149.63,
+    "da": 141.99,
+    "share": 0.21,
+    "cap_binds": false
+   },
+   {
+    "date": "2024-12-23",
+    "price": 69.4,
+    "lo": 75.41,
+    "rt": 124.38,
+    "da": 100.41,
+    "share": 0.2,
+    "cap_binds": false
+   }
+  ],
+  "monthly_pct_vs_rt": {
+   "1": {
+    "price": 15.14,
+    "lo": 20.74
+   },
+   "2": {
+    "price": 7.31,
+    "lo": 7.54
+   },
+   "3": {
+    "price": 9.54,
+    "lo": 9.63
+   },
+   "4": {
+    "price": 0.7,
+    "lo": 1.23
+   },
+   "5": {
+    "price": 3.81,
+    "lo": 4.01
+   },
+   "6": {
+    "price": -4.39,
+    "lo": -4.06
+   },
+   "7": {
+    "price": -22.58,
+    "lo": -22.05
+   },
+   "8": {
+    "price": -2.35,
+    "lo": -2.23
+   },
+   "9": {
+    "price": 0.83,
+    "lo": 0.96
+   },
+   "10": {
+    "price": -0.88,
+    "lo": 1.01
+   },
+   "11": {
+    "price": -4.17,
+    "lo": -3.2
+   },
+   "12": {
+    "price": -12.15,
+    "lo": -10.42
+   }
+  }
+ },
+ {
+  "year": 2025,
+  "c3a_vs_rt_pct": {
+   "price": -9.53,
+   "lo": -6.34
+  },
+  "c3b_monthly_nrmse": {
+   "price": 0.16,
+   "lo": 0.155
+  },
+  "arm_cells_written_share": 0.2228,
+  "high_oil_days": 26,
+  "high_oil_days_cap_binds": 14,
+  "high_oil_off_cap": {
+   "n": 12,
+   "sum_err_vs_rt": {
+    "price": -199.5,
+    "lo": -83.6
+   },
+   "sum_err_vs_da": {
+    "price": -303.3,
+    "lo": -187.4
+   },
+   "sum_abs_err_vs_rt": {
+    "price": 336.2,
+    "lo": 253.9
+   }
+  },
+  "high_oil_cap_binds": {
+   "n": 14,
+   "sum_err_vs_rt": {
+    "price": 135.3,
+    "lo": 334.7
+   },
+   "sum_err_vs_da": {
+    "price": -125.4,
+    "lo": 74.0
+   },
+   "sum_abs_err_vs_rt": {
+    "price": 316.8,
+    "lo": 468.2
+   }
+  },
+  "days": [
+   {
+    "date": "2025-01-07",
+    "price": 145.81,
+    "lo": 147.07,
+    "rt": 109.39,
+    "da": 127.42,
+    "share": 0.17,
+    "cap_binds": true
+   },
+   {
+    "date": "2025-01-08",
+    "price": 135.63,
+    "lo": 139.22,
+    "rt": 103.42,
+    "da": 135.96,
+    "share": 0.14,
+    "cap_binds": false
+   },
+   {
+    "date": "2025-01-19",
+    "price": 170.79,
+    "lo": 278.41,
+    "rt": 108.7,
+    "da": 177.48,
+    "share": 0.22,
+    "cap_binds": true
+   },
+   {
+    "date": "2025-01-20",
+    "price": 200.45,
+    "lo": 234.12,
+    "rt": 175.0,
+    "da": 243.68,
+    "share": 0.51,
+    "cap_binds": true
+   },
+   {
+    "date": "2025-01-21",
+    "price": 212.86,
+    "lo": 219.34,
+    "rt": 240.52,
+    "da": 267.52,
+    "share": 0.68,
+    "cap_binds": true
+   },
+   {
+    "date": "2025-01-22",
+    "price": 196.79,
+    "lo": 199.51,
+    "rt": 225.22,
+    "da": 260.34,
+    "share": 0.65,
+    "cap_binds": true
+   },
+   {
+    "date": "2025-01-23",
+    "price": 125.28,
+    "lo": 149.11,
+    "rt": 166.48,
+    "da": 183.04,
+    "share": 0.42,
+    "cap_binds": false
+   },
+   {
+    "date": "2025-01-24",
+    "price": 111.52,
+    "lo": 127.34,
+    "rt": 172.15,
+    "da": 153.7,
+    "share": 0.24,
+    "cap_binds": false
+   },
+   {
+    "date": "2025-02-17",
+    "price": 148.23,
+    "lo": 156.09,
+    "rt": 128.35,
+    "da": 124.53,
+    "share": 0.11,
+    "cap_binds": true
+   },
+   {
+    "date": "2025-02-18",
+    "price": 165.43,
+    "lo": 171.2,
+    "rt": 144.41,
+    "da": 160.7,
+    "share": 0.39,
+    "cap_binds": true
+   },
+   {
+    "date": "2025-02-19",
+    "price": 152.24,
+    "lo": 156.06,
+    "rt": 162.28,
+    "da": 165.71,
+    "share": 0.36,
+    "cap_binds": true
+   },
+   {
+    "date": "2025-02-20",
+    "price": 133.51,
+    "lo": 144.76,
+    "rt": 150.69,
+    "da": 160.05,
+    "share": 0.25,
+    "cap_binds": false
+   },
+   {
+    "date": "2025-02-21",
+    "price": 97.31,
+    "lo": 108.18,
+    "rt": 140.48,
+    "da": 138.74,
+    "share": 0.12,
+    "cap_binds": false
+   },
+   {
+    "date": "2025-12-02",
+    "price": 102.01,
+    "lo": 109.04,
+    "rt": 106.09,
+    "da": 101.46,
+    "share": 0.13,
+    "cap_binds": false
+   },
+   {
+    "date": "2025-12-04",
+    "price": 114.71,
+    "lo": 119.16,
+    "rt": 104.48,
+    "da": 120.85,
+    "share": 0.17,
+    "cap_binds": false
+   },
+   {
+    "date": "2025-12-05",
+    "price": 144.94,
+    "lo": 146.72,
+    "rt": 138.51,
+    "da": 158.56,
+    "share": 0.2,
+    "cap_binds": false
+   },
+   {
+    "date": "2025-12-06",
+    "price": 125.96,
+    "lo": 126.46,
+    "rt": 122.71,
+    "da": 127.35,
+    "share": 0.11,
+    "cap_binds": true
+   },
+   {
+    "date": "2025-12-07",
+    "price": 132.58,
+    "lo": 134.78,
+    "rt": 117.62,
+    "da": 133.39,
+    "share": 0.1,
+    "cap_binds": true
+   },
+   {
+    "date": "2025-12-08",
+    "price": 156.06,
+    "lo": 159.15,
+    "rt": 167.64,
+    "da": 162.42,
+    "share": 0.21,
+    "cap_binds": true
+   },
+   {
+    "date": "2025-12-09",
+    "price": 122.47,
+    "lo": 130.98,
+    "rt": 178.28,
+    "da": 157.58,
+    "share": 0.33,
+    "cap_binds": false
+   },
+   {
+    "date": "2025-12-10",
+    "price": 120.34,
+    "lo": 121.73,
+    "rt": 115.26,
+    "da": 129.51,
+    "share": 0.13,
+    "cap_binds": false
+   },
+   {
+    "date": "2025-12-11",
+    "price": 105.75,
+    "lo": 108.4,
+    "rt": 91.38,
+    "da": 122.89,
+    "share": 0.1,
+    "cap_binds": false
+   },
+   {
+    "date": "2025-12-12",
+    "price": 146.93,
+    "lo": 158.07,
+    "rt": 113.73,
+    "da": 135.1,
+    "share": 0.12,
+    "cap_binds": true
+   },
+   {
+    "date": "2025-12-14",
+    "price": 148.64,
+    "lo": 154.06,
+    "rt": 138.91,
+    "da": 138.21,
+    "share": 0.39,
+    "cap_binds": true
+   },
+   {
+    "date": "2025-12-15",
+    "price": 154.42,
+    "lo": 162.3,
+    "rt": 167.44,
+    "da": 158.76,
+    "share": 0.59,
+    "cap_binds": true
+   },
+   {
+    "date": "2025-12-16",
+    "price": 84.36,
+    "lo": 109.11,
+    "rt": 130.12,
+    "da": 138.81,
+    "share": 0.34,
+    "cap_binds": false
+   }
+  ],
+  "monthly_pct_vs_rt": {
+   "1": {
+    "price": -6.73,
+    "lo": 6.46
+   },
+   "2": {
+    "price": -11.33,
+    "lo": -8.44
+   },
+   "3": {
+    "price": -1.94,
+    "lo": -1.68
+   },
+   "4": {
+    "price": -3.55,
+    "lo": -3.04
+   },
+   "5": {
+    "price": 0.69,
+    "lo": 0.82
+   },
+   "6": {
+    "price": -35.18,
+    "lo": -34.58
+   },
+   "7": {
+    "price": -20.58,
+    "lo": -19.96
+   },
+   "8": {
+    "price": -0.64,
+    "lo": -0.35
+   },
+   "9": {
+    "price": -6.78,
+    "lo": -6.71
+   },
+   "10": {
+    "price": -5.52,
+    "lo": -5.31
+   },
+   "11": {
+    "price": -4.97,
+    "lo": -4.72
+   },
+   "12": {
+    "price": 3.34,
+    "lo": 6.97
+   }
+  }
+ }
+]
