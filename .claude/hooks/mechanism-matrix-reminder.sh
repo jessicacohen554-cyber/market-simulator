@@ -34,5 +34,11 @@ If this session proposes, tests, or adds a calibration/forecast mechanism:
 - NEW ScenarioConfig mechanism: add its row in $MATRIX plus a cell
   line in EVERY shard, in the same PR
   (CI enforces this half: scripts/check_mechanism_matrix.py).
+[CLOSE-OUT PLAN] docs/backcast-closeout-plan-2026-10.md is the backcast close-out
+program (2026-10-02): section 3.<ISO> is the ranked lever sequence a calibration
+lane takes its next step from (also at the head of each ISO's lever queue in
+docs/mechanism-testing-matrix.md section 5); section 5 is the owner decision
+queue; section 2.1 is the EIA-860 settlement (W0). Go off-plan only with a
+stated reason in the PRECOMMIT. Evidence: docs/records/governance/closeout-2026-10/.
 EOF
 exit 0
