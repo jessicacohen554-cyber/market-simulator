@@ -16,15 +16,16 @@ FIRST:
 STATE (2026-10-02):
 - Keeper `2026-09-30-caiso-r20-overnight` (bundle rcaiso20_A_span, 2022–25) is CALIBRATED with one ledgered
   C3c 2024. The fold `-touchpoints` (2019–21) is NOT-YET, so the ISO determination is NOT-YET under v3.13.
-- R-CAISO-33 (zero LP; docs/records/caiso/r-caiso-33/PRECOMMIT-r-caiso-33-joint-gas-rebasis-2026-10-02.md):
-  the keeper's two gas bases differ by exactly the 0.46 adder (solve: composite + 0.46; offer-surface
-  denominator: composite, no adder). EIA N3045CA3 is a utility-only census, 65 % outside CAISO by volume, so its
-  1.15–1.28 is a rule-14 misalignment, not the fleet's transport. The fleet's own bids imply 0.12–0.93 over the
-  composite and come out at SRMC (mult 0.93–1.00) only on composite + 0.46. Recommendation: keep 0.46, re-derive
-  the denominator on it, solve 7 shards; C4-2025 (0.288 vs ≤ 0.30) is the stated risk. Owner ruling: see the
-  PRECOMMIT §8 (appended at the card). If the ruling was "freeze and queue", the execution is link 18
-  (R-CAISO-36): stage 1 data shard (fetch DAM 2023–25 bids, rebuild the reduced store, re-derive) then stage 2
-  seven solve shards, per PRECOMMIT §5.
+- R-CAISO-33 (zero LP; docs/records/caiso/r-caiso-33/PRECOMMIT-r-caiso-33-joint-gas-rebasis-2026-10-02.md
+  §0–§11): link 15 (joint gas re-basis) is CLOSED, keeper unchanged, no solve. The owner ruled "keep 0.46, repair
+  the denominator, solve"; stage 1 re-derived the offer surface on composite + 0.46 (G1–G4 pass), but the
+  pre-registered round-trip gate failed, and the hour-grain re-gate (Amendment A, pushed before computing) failed
+  on 2 of 18 per-year cells (CC and CT peak 2024; all pooled cells ≤ $0.03/MWh). Owner card: close as
+  pre-registered. The derive edit was reverted; 0.46 keeps its original citation. RECORDED, not levers: (a) at hour
+  grain the keeper's measured gas bands sit +$3.6–6.4/MWh above the fleet's own DAM bids (pooled, every consumed
+  class and band); (b) the re-fetched OASIS bid corpus moves the CT/ST partition (st_cut 11.74 → 11.19, ~1.5 GW
+  CT → ST_GAS) while consumed bands move ≤ 0.022 — any future re-derive inherits this. The cell is adjudicated
+  (rule 28): re-opening needs new evidence or an explicit owner override.
 
 TASK — link 16 (owner-selected, R-CAISO-31 FINDING §4): RUN EXPLORER STORAGE PANEL — display only.
 - Render the `storage-soc-bounds` envelope (submitters' mean min/max share of ceiling by Pacific hour of day,
@@ -46,14 +47,11 @@ QUEUED AFTER YOU (owner-selected). Carry into your end-of-session handoff:
   (data/raw/reference/caiso-storage-shape-envelope.csv) already carries the measured battery MW outages
   (14–21 % of fleet MW, scripts/probes/_rcaiso32_soc_derate_reach.py Part B): the rule-19 test. No consumer is
   proposed until that test is adjudicated. End with a decision card.
-- Link 18 (only if the R-CAISO-33 ruling was "freeze and queue"), R-CAISO-36: EXECUTE THE JOINT GAS RE-BASIS per
-  PRECOMMIT-r-caiso-33 §4–§5 under the selected option; G-RT before any solve; 7 shards; promote on the structure
-  rule or card the C4-2025 outcome.
 
 OWNER RULINGS IN FORCE (do not re-ask): all rulings in HANDOFF-r-caiso-19..-33, the R-CAISO-21 FINDING §7,
 the R-CAISO-22 FINDING §6, the R-CAISO-23 FINDING §7, the R-CAISO-24 PRECOMMIT §7, the R-CAISO-25 FINDING §6,
 the R-CAISO-26 PRECOMMIT §6, the R-CAISO-27 FINDING §4, the R-CAISO-28 FINDING §3, the R-CAISO-29 FINDING §3,
-the R-CAISO-30 FINDING §5, the R-CAISO-31 FINDING §4, the R-CAISO-32 FINDING §7 and the R-CAISO-33 PRECOMMIT §8.
+the R-CAISO-30 FINDING §5, the R-CAISO-31 FINDING §4, the R-CAISO-32 FINDING §7 and the R-CAISO-33 PRECOMMIT §8, §10 and §11.
 
 NOTES:
 - Fresh container: `pip install -e . pytest tzdata`, then `python3 scripts/hydrate_data.py --profile caiso`
@@ -67,7 +65,7 @@ NOTES:
 - Never name a scratch script after a stdlib module.
 - matplotlib and pdfplumber are not installed by default (`pip install matplotlib pdfplumber`).
 - The CAISO public-bid zips are gitignored and the derive's reduced store is not on disk; a re-derive needs
-  the stage-1 fetch (~2 h at the 6 s OASIS spacing).
+  the fetch (~2 h at the OASIS spacing) plus the pass-1 reduce (~15 min).
 
 HARD RULES: CLAUDE.md is binding, especially rules 1, 13, 14, 19, 21, 22, 23–25, 27, 28, 29(b)/(c), 30–36.
 Owner decisions go as clickable decision cards (AskUserQuestion, multiSelect where the choices are not

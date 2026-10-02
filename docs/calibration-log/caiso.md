@@ -15766,6 +15766,8 @@ Record: `docs/records/caiso/r-caiso-20/`.
   - CISO utility plants (EIA-923): CC 1.43–2.10 in 2023–25 (4 plants, 2.1 GW);
   - the fleet's bids: CC econ 0.12–0.45, CT econ 0.46–0.93 (19 GW). Re-based on composite + 0.46 the CC econ multipliers read 0.93–1.00 (SRMC bidding); on composite + 1.2 they read 0.82–0.91 and the `committed` tranche sits +$5–8/MWh above the measured econ bid in every year.
 - Recommendation: keep 0.46 (identification re-stated), re-derive the denominator on composite + 0.46 (exact derive needs the DAM bid zips re-fetched, ~2 h), then 7 shards. Stated risk: C4 gas NRMSE 2025 0.288 vs ≤ 0.30; the caiso-267/268 move of the same sign cost +0.010.
-- Nothing armed, no constant changed, keeper unchanged. Owner ruling: PRECOMMIT §8.
+- Owner card: keep 0.46, repair the denominator, solve. Stage 1 (DAM bids re-fetched, re-derived on composite + 0.46) passed G1–G4; the pre-registered round-trip gate FAILED (3 per-year cells; pooled pass). Owner: re-gate at hour grain (Amendment A, pushed before computing).
+- G-RT-H FAILED on 2 of 18 per-year cells (CC and CT peak 2024); all pooled cells pass at ≤ $0.03/MWh. Owner card: **close link 15 as pre-registered.** Keeper unchanged; the derive edit is reverted.
+- Recorded: at hour grain the keeper's measured gas bands sit +$3.6–6.4/MWh above the fleet's own DAM bids (pooled, every consumed class and band). Recorded: the re-fetched OASIS corpus moves the CT/ST partition (st_cut 11.74 → 11.19) with consumed bands ≤ 0.022.
 
 Record: `docs/records/caiso/r-caiso-33/`.

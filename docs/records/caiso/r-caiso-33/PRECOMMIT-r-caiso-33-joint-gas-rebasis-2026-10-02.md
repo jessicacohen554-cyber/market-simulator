@@ -241,3 +241,37 @@ convention on today's corpus). **FAIL ⇒ link 15 closes with the keeper unchang
 PASS ⇒ the next session commits `stage1/rebased/` into `data/raw/_validation-source/`, re-syncs
 `ST_GAS_PEAK_MEASURED_HR_MULT_BY_ISO["CAISO"]` to the re-based `CT_PEAKER.bands.peak` (its stated identity), and
 launches the seven solve shards (§5 stage 2; promotion rule §4.1).
+
+## 11. Amendment A result: G-RT-H FAILED. Link 15 CLOSED (owner ruling). Keeper unchanged.
+
+Probe `scripts/probes/_rcaiso33_hour_grain_gate.py` → `roundtrip_gate_hour.json`. Statistic = cap-weighted median
+of resource-year median (model offer − measured band bid), $/MWh, at the solve's own pricing (composite + 0.46).
+
+| Class · band | Keeper, pooled | Re-based, pooled | Condition 1 (≤ 0.75) | Per-year cells failing condition 2 |
+|---|--:|--:|:--:|---|
+| CC_REGULAR econ_low | +3.62 | +0.01 | pass | none |
+| CC_REGULAR econ_high | +3.70 | −0.02 | pass | none |
+| CC_REGULAR peak | +5.74 | +0.01 | pass | **2024: −3.20 vs keeper +1.99 (limit 2.24)** |
+| CT_PEAKER econ_low | +5.71 | +0.03 | pass | none |
+| CT_PEAKER econ_high | +6.36 | +0.02 | pass | none |
+| CT_PEAKER peak | +5.27 | −0.03 | pass | **2024: −3.06 vs keeper +1.00 (limit 1.25)** |
+
+**Verdict: FAIL** (2 of 18 per-year cells). Owner card 2026-10-02: **"Close link 15 as pre-registered."** Not selected:
+an owner override solving the full re-basis; an econ-bands-only override.
+
+**What closes and what is recorded:**
+- No constant, artifact or derive change lands. The derive-script edit (`b19f3d5e`) is reverted on the same
+  branch, so the committed `caiso_offer_curve_measured.json` and the derive that produced it stay consistent
+  (rule 23). `CAISO_CITYGATE_TRANSPORT_ADDER` stays 0.46 with its original citation.
+- **Recorded finding, not a lever:** measured at the derive's own grain on the re-fetched 2023–25 corpus, the
+  keeper's measured gas bands are offered **+$3.6 to +6.4/MWh above the fleet's own DAM bids** (pooled, every
+  consumed class and band), because the multipliers were divided by the bare composite while the solve prices
+  composite + 0.46. The re-based surface removes this to ≤ $0.03 pooled; it failed only on the 2024 peak cells,
+  where a single pooled peak multiplier meets a year of low peak bids and the keeper's bias happened to offset it.
+  This is the caiso-242/244 identity error, now measured at hour grain. Any future re-opening needs new evidence or
+  an explicit owner override (rule 28: this cell is adjudicated).
+- **Recorded, unresolved:** the re-fetched OASIS corpus moves the CT/ST partition (`st_cut` 11.74 → 11.19, ~1.5 GW
+  CT → ST_GAS; ST_GAS G1 1.67) while the consumed bands move ≤ 0.022. A future re-derive of the CAISO offer
+  surface for any reason inherits this; cause not identified.
+- Stage-1 evidence stays in `stage1/` (re-based and same-corpus control artifacts, 84 KB). The bid zips and the
+  reduced store are gitignored and do not survive the container (~4 h to rebuild).

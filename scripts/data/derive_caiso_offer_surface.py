@@ -79,10 +79,6 @@ Method (measured, NOT fit to any residual — CLAUDE.md rules 1/13/23)
    * STATIC band mult (committed / econ_low / econ_high windows):
        mult = (band_price - VOM_class) / (base_HR_class x (gas_flow_day
               + CO2_FACTOR x P_carbon_year))
-     where gas_flow_day is the DELIVERED series -- the composite staircase
-     plus ``CAISO_CITYGATE_TRANSPORT_ADDER`` -- i.e. exactly the series the
-     solve multiplies the band by (R-CAISO-33; before it the denominator was
-     the bare composite and the rungs were offered 2-14 % above the bids).
      because a model tranche prices at mult x base_HR x gas + VOM +
      0.057 x (mult x base_HR) x P_carbon — the CCA allowance cost ($15-22/MWh,
      STATE_CARBON_PRICE_BY_ISO) is far too large to fold into the
@@ -193,7 +189,6 @@ from market_sim.config.paths import (  # noqa: E402
 )
 
 from scripts.lib import clean_io  # noqa: E402
-from market_sim.config.constants import CAISO_CITYGATE_TRANSPORT_ADDER  # noqa: E402
 
 OUT_STATIC = CALIBRATION_DIR / "caiso_offer_curve_measured.json"
 OUT_COND = CALIBRATION_DIR / "caiso_offer_surface_condbinned.json"
@@ -258,30 +253,16 @@ def _carbon_price(year: int) -> float:
 
 
 def _gas_staircase() -> pd.Series:
-    """DELIVERED gas on gas FLOW days: CA-composite spot staircase + transport.
+    """CA-composite citygate daily spot on gas FLOW days (trade+1 staircase).
 
     The caiso-90 keeper placement semantics (a print keyed to trade day T
-    fuels burns on T+1; weekend/holiday packages carry forward), PLUS the
-    citygate->burner-tip transport adder the solve layers on the same series
-    (``hubs.apply_hub_basis_overlay``, ``CAISO_CITYGATE_TRANSPORT_ADDER``).
-
-    R-CAISO-33 (2026-10-02, the joint gas re-basis, link 15): a multiplier is
-    dimensionless only against its own denominator (caiso-242 §3.1). Until this
-    repair the denominator was the bare composite while the solve evaluated the
-    multiplier on composite + adder, so every measured econ rung was offered
-    2-14 % above the bid it encodes (caiso-244 §2.2). Importing the SAME
-    constant the solve adds keeps the two bases identical by construction;
-    the adder's own identification is on the constant
-    (``docs/records/caiso/r-caiso-33/PRECOMMIT-r-caiso-33-joint-gas-rebasis-2026-10-02.md``
-    §4.1). Rule 23 [R-FROZEN-DERIVE]: this is a basis reconciliation (rule 14),
-    not a re-derivation against any residual; no source data changed.
+    fuels burns on T+1; weekend/holiday packages carry forward).
     """
     gas = pd.read_csv(CITYGATE_DAILY, parse_dates=["date"])
     gas = gas.sort_values("date")
     gas["flow"] = gas["date"] + pd.Timedelta(days=1)
     cal = pd.date_range(gas["flow"].min(), gas["flow"].max() + pd.Timedelta(days=7))
     s = gas.set_index("flow")["ca_composite_usd_mmbtu"].reindex(cal).ffill()
-    s = s + CAISO_CITYGATE_TRANSPORT_ADDER
     s.index.name = "day"
     return s
 
@@ -1130,13 +1111,9 @@ def main(argv: list[str] | None = None) -> int:
         "derived_utc": _dt.datetime.now(_dt.timezone.utc).isoformat(timespec="seconds"),
         "method": "see scripts/data/derive_caiso_offer_surface.py module docstring",
         "gas_basis": (
-            "DELIVERED: CA-composite citygate daily on gas FLOW days (trade+1 "
-            "staircase, caiso-90 semantics), data/raw/gas-prices/"
-            "caiso_citygate_daily.csv, PLUS CAISO_CITYGATE_TRANSPORT_ADDER "
-            f"{CAISO_CITYGATE_TRANSPORT_ADDER} $/MMBtu -- the same series the "
-            "solve prices gas units at (R-CAISO-33 joint re-basis, 2026-10-02)"
+            "CA-composite citygate daily on gas FLOW days (trade+1 staircase, "
+            "caiso-90 semantics), data/raw/gas-prices/caiso_citygate_daily.csv"
         ),
-        "transport_adder_usd_per_mmbtu": CAISO_CITYGATE_TRANSPORT_ADDER,
         "carbon_basis": {
             "usd_per_t": {str(y): _carbon_price(y) for y in years},
             "co2_factor_t_per_mmbtu": CO2_FACTOR,

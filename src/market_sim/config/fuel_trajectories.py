@@ -503,31 +503,21 @@ GAS_BASIS_DIFFERENTIAL_MEASURED_BY_YEAR: dict[str, dict[int, float]] = {
 }
 
 # CAISO citygate -> burner-tip transport adder ($/MMBtu). The CAISO gas-hub
-# overlay (gas_hub_basis_overlay + caiso_citygate_spot_level + _flow_date)
-# reprices each gas unit at the measured NGI California Composite citygate
-# daily SPOT, flow-dated (data/raw/gas-prices/caiso_citygate_daily.csv). That
-# citygate is the price where the interstate pipe hands to the CA LDC; a power
-# plant on the SoCalGas / PG&E system pays the citygate PLUS the LDC intrastate
-# backbone / local transmission to its burner tip, so its delivered fuel cost
-# (the cost-based DEB basis in CAISO's mitigated market) is citygate + transport.
-# IDENTIFICATION (re-stated R-CAISO-33, 2026-10-02, on the base the adder rides
-# on -- the composite -- docs/records/caiso/r-caiso-33/PRECOMMIT-r-caiso-33-
-# joint-gas-rebasis-2026-10-02.md §2/§4.1): a transport over the composite
-# bounded by the fleet's own measured DAM bids (0.12-0.45 $/MMBtu CC_REGULAR
-# econ bands, 0.46-0.93 CT_PEAKER, 2023-25, caiso_offer_curve_measured.json),
-# consistent with CAISO's published backbone-level GHG-twin fuel-region
-# transports (0.07-0.9, Gas Price Template / OASIS PRC_FUEL, R-CAISO-29), and
-# BELOW the EIA N3045CA3 census gap (1.15-1.28), which is a utility-only
-# EIA-923 Schedule 2 sample with 65 % of its gas volume outside CAISO (LADWP,
-# SMUD, TID, IID) -- a rule-14 boundary misalignment, documented, not used.
-# On composite + 0.46 the measured CC econ multipliers read 0.93-1.00 (SRMC
-# bidding); on composite + 1.2 they read 0.82-0.91 (a fleet bidding below cost).
-# The 0.46 itself was first measured as N3045CA3 - N3050CA3 (2024 annual) when
-# the overlay rode the N3050CA3 survey; the value is retained, the base is not.
-# A slow-moving regulated intrastate tariff, held flat across years, forward-
-# reproducible (rule 13); NOT tuned to any residual. The offer-surface derive
-# (scripts/data/derive_caiso_offer_surface.py::_gas_staircase) imports this
-# constant so the measured multipliers round-trip on the same delivered series.
+# overlay (gas_hub_basis_overlay) reprices each gas unit at the measured SoCal /
+# PG&E Citygate spot (EIA N3050CA3 - Henry Hub, data/raw/gas_basis_by_iso_month.csv).
+# That citygate is the price where the interstate pipe hands to the CA LDC; a
+# power plant deep in the SoCalGas / PG&E system pays the citygate PLUS the LDC
+# intrastate backbone + local transmission to its burner tip, so the plant's true
+# delivered fuel cost (the cost-based DEB bid in CAISO's mitigated market) is the
+# citygate + that transport. The adder is the MEASURED differential between the
+# two EIA series: CA delivered-to-electric-power (N3045CA3, 2024 annual $3.98/Mcf
+# = $3.84/MMBtu) minus the CA citygate (N3050CA3, 2024 $3.38/MMBtu) = +$0.46. It
+# is a slow-moving regulated intrastate tariff (held flat across years like the
+# basis differentials) and forward-reproducible (rule #11) — NOT tuned to the
+# price or interchange residual. Without it the pure citygate under-prices the
+# marginal CC to ~the import price and collapses the import knife-edge (the
+# discovered caiso-38 under-import); reconciling up to the measured census level
+# restores it. Source: EIA N3045CA3 - N3050CA3, 2024 annual.
 CAISO_CITYGATE_TRANSPORT_ADDER: float = 0.46
 
 # --- Monthly Gas Price Seasonality Factors ---
