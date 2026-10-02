@@ -1,0 +1,506 @@
+{
+ "what": "PJM-NEXT-26 (zero LP): the PRECOMMIT's S1 / S2 / P1 readings, candidate vs controls.",
+ "appended": [
+  594,
+  883,
+  884,
+  1554,
+  1571,
+  1572,
+  1573,
+  2836,
+  2840,
+  2866,
+  3122,
+  3140,
+  3149,
+  3797,
+  6019,
+  8226,
+  10678,
+  54304
+ ],
+ "years": {
+  "2019": {
+   "candidate": {
+    "slack_dump_twh": 0.0002,
+    "coal_bit_twh": 191.73,
+    "cohort": {
+     "appended": {
+      "plants": 18,
+      "model_twh": 36.99,
+      "real_twh": 25.65,
+      "within_contrast_rt": {
+       "plants": 2,
+       "real": -0.476,
+       "model": 0.501
+      }
+     },
+     "rest": {
+      "plants": 42,
+      "model_twh": 164.62,
+      "real_twh": 156.04,
+      "within_contrast_rt": {
+       "plants": 17,
+       "real": 0.343,
+       "model": 0.635
+      }
+     }
+    }
+   },
+   "w0_control": {
+    "slack_dump_twh": 0.0002,
+    "coal_bit_twh": 189.29,
+    "cohort": {
+     "appended": {
+      "plants": 18,
+      "model_twh": 33.14,
+      "real_twh": 25.65,
+      "within_contrast_rt": {
+       "plants": 9,
+       "real": 0.255,
+       "model": 0.664
+      }
+     },
+     "rest": {
+      "plants": 42,
+      "model_twh": 165.94,
+      "real_twh": 156.04,
+      "within_contrast_rt": {
+       "plants": 17,
+       "real": 0.341,
+       "model": 0.627
+      }
+     }
+    }
+   },
+   "keeper": {
+    "slack_dump_twh": 0.0009,
+    "coal_bit_twh": 188.19,
+    "cohort": {
+     "appended": {
+      "plants": 18,
+      "model_twh": 30.86,
+      "real_twh": 25.61,
+      "within_contrast_rt": {
+       "plants": 9,
+       "real": 0.265,
+       "model": 0.688
+      }
+     },
+     "rest": {
+      "plants": 42,
+      "model_twh": 167.1,
+      "real_twh": 156.06,
+      "within_contrast_rt": {
+       "plants": 17,
+       "real": 0.339,
+       "model": 0.629
+      }
+     }
+    }
+   }
+  },
+  "2020": {
+   "candidate": {
+    "slack_dump_twh": 0.0,
+    "coal_bit_twh": 156.0,
+    "cohort": {
+     "appended": {
+      "plants": 17,
+      "model_twh": 26.35,
+      "real_twh": 19.91,
+      "within_contrast_rt": {
+       "plants": 7,
+       "real": 0.204,
+       "model": 0.619
+      }
+     },
+     "rest": {
+      "plants": 39,
+      "model_twh": 136.22,
+      "real_twh": 127.41,
+      "within_contrast_rt": {
+       "plants": 14,
+       "real": 0.286,
+       "model": 0.572
+      }
+     }
+    }
+   },
+   "w0_control": null,
+   "keeper": {
+    "slack_dump_twh": 0.0,
+    "coal_bit_twh": 151.64,
+    "cohort": {
+     "appended": {
+      "plants": 16,
+      "model_twh": 19.88,
+      "real_twh": 19.71,
+      "within_contrast_rt": {
+       "plants": 9,
+       "real": 0.234,
+       "model": 0.77
+      }
+     },
+     "rest": {
+      "plants": 39,
+      "model_twh": 138.34,
+      "real_twh": 127.42,
+      "within_contrast_rt": {
+       "plants": 15,
+       "real": 0.285,
+       "model": 0.58
+      }
+     }
+    }
+   }
+  },
+  "2021": {
+   "candidate": {
+    "slack_dump_twh": 0.0,
+    "coal_bit_twh": 176.62,
+    "cohort": {
+     "appended": {
+      "plants": 15,
+      "model_twh": 30.57,
+      "real_twh": 25.06,
+      "within_contrast_rt": {
+       "plants": 5,
+       "real": 0.129,
+       "model": 0.546
+      }
+     },
+     "rest": {
+      "plants": 38,
+      "model_twh": 161.35,
+      "real_twh": 148.58,
+      "within_contrast_rt": {
+       "plants": 14,
+       "real": 0.213,
+       "model": 0.584
+      }
+     }
+    }
+   },
+   "w0_control": {
+    "slack_dump_twh": 0.0,
+    "coal_bit_twh": 175.58,
+    "cohort": {
+     "appended": {
+      "plants": 15,
+      "model_twh": 28.75,
+      "real_twh": 25.06,
+      "within_contrast_rt": {
+       "plants": 10,
+       "real": 0.178,
+       "model": 0.519
+      }
+     },
+     "rest": {
+      "plants": 38,
+      "model_twh": 161.98,
+      "real_twh": 148.58,
+      "within_contrast_rt": {
+       "plants": 14,
+       "real": 0.214,
+       "model": 0.577
+      }
+     }
+    }
+   },
+   "keeper": {
+    "slack_dump_twh": 0.0,
+    "coal_bit_twh": 176.14,
+    "cohort": {
+     "appended": {
+      "plants": 15,
+      "model_twh": 29.87,
+      "real_twh": 25.65,
+      "within_contrast_rt": {
+       "plants": 10,
+       "real": 0.164,
+       "model": 0.529
+      }
+     },
+     "rest": {
+      "plants": 38,
+      "model_twh": 162.45,
+      "real_twh": 148.58,
+      "within_contrast_rt": {
+       "plants": 15,
+       "real": 0.213,
+       "model": 0.582
+      }
+     }
+    }
+   }
+  },
+  "2022": {
+   "candidate": {
+    "slack_dump_twh": 0.0,
+    "coal_bit_twh": 148.59,
+    "cohort": {
+     "appended": {
+      "plants": 13,
+      "model_twh": 23.33,
+      "real_twh": 18.39,
+      "within_contrast_rt": {
+       "plants": 6,
+       "real": 0.175,
+       "model": 0.31
+      }
+     },
+     "rest": {
+      "plants": 38,
+      "model_twh": 143.39,
+      "real_twh": 137.37,
+      "within_contrast_rt": {
+       "plants": 21,
+       "real": 0.22,
+       "model": 0.348
+      }
+     }
+    }
+   },
+   "w0_control": {
+    "slack_dump_twh": 0.0,
+    "coal_bit_twh": 147.56,
+    "cohort": {
+     "appended": {
+      "plants": 13,
+      "model_twh": 21.63,
+      "real_twh": 18.39,
+      "within_contrast_rt": {
+       "plants": 13,
+       "real": 0.167,
+       "model": 0.341
+      }
+     },
+     "rest": {
+      "plants": 38,
+      "model_twh": 143.83,
+      "real_twh": 137.37,
+      "within_contrast_rt": {
+       "plants": 21,
+       "real": 0.219,
+       "model": 0.343
+      }
+     }
+    }
+   },
+   "keeper": {
+    "slack_dump_twh": 0.0,
+    "coal_bit_twh": 147.73,
+    "cohort": {
+     "appended": {
+      "plants": 11,
+      "model_twh": 19.61,
+      "real_twh": 16.62,
+      "within_contrast_rt": {
+       "plants": 11,
+       "real": 0.158,
+       "model": 0.351
+      }
+     },
+     "rest": {
+      "plants": 38,
+      "model_twh": 144.84,
+      "real_twh": 137.38,
+      "within_contrast_rt": {
+       "plants": 21,
+       "real": 0.216,
+       "model": 0.346
+      }
+     }
+    }
+   }
+  },
+  "2023": {
+   "candidate": {
+    "slack_dump_twh": 0.0,
+    "coal_bit_twh": 107.9,
+    "cohort": {
+     "appended": {
+      "plants": 6,
+      "model_twh": 6.89,
+      "real_twh": 3.08,
+      "within_contrast_rt": {
+       "plants": 3,
+       "real": -0.012,
+       "model": 0.232
+      }
+     },
+     "rest": {
+      "plants": 36,
+      "model_twh": 109.2,
+      "real_twh": 109.56,
+      "within_contrast_rt": {
+       "plants": 19,
+       "real": 0.246,
+       "model": 0.291
+      }
+     }
+    }
+   },
+   "w0_control": {
+    "slack_dump_twh": 0.0,
+    "coal_bit_twh": 106.42,
+    "cohort": {
+     "appended": {
+      "plants": 6,
+      "model_twh": 5.01,
+      "real_twh": 3.08,
+      "within_contrast_rt": {
+       "plants": 2,
+       "real": -0.026,
+       "model": 0.425
+      }
+     },
+     "rest": {
+      "plants": 36,
+      "model_twh": 109.67,
+      "real_twh": 109.56,
+      "within_contrast_rt": {
+       "plants": 19,
+       "real": 0.246,
+       "model": 0.289
+      }
+     }
+    }
+   },
+   "keeper": {
+    "slack_dump_twh": 0.0,
+    "coal_bit_twh": 103.64,
+    "cohort": {
+     "appended": {
+      "plants": 5,
+      "model_twh": 1.02,
+      "real_twh": 2.26,
+      "within_contrast_rt": {
+       "plants": 1,
+       "real": 0.497,
+       "model": 0.035
+      }
+     },
+     "rest": {
+      "plants": 36,
+      "model_twh": 110.83,
+      "real_twh": 109.57,
+      "within_contrast_rt": {
+       "plants": 19,
+       "real": 0.241,
+       "model": 0.296
+      }
+     }
+    }
+   }
+  },
+  "2024": {
+   "candidate": {
+    "slack_dump_twh": 0.0015,
+    "coal_bit_twh": 106.62,
+    "cohort": {
+     "appended": {
+      "plants": 3,
+      "model_twh": 2.02,
+      "real_twh": 0.55,
+      "within_contrast_rt": {
+       "plants": 2,
+       "real": 0.137,
+       "model": 0.271
+      }
+     },
+     "rest": {
+      "plants": 36,
+      "model_twh": 112.33,
+      "real_twh": 114.1,
+      "within_contrast_rt": {
+       "plants": 24,
+       "real": 0.219,
+       "model": 0.34
+      }
+     }
+    }
+   },
+   "w0_control": null,
+   "keeper": {
+    "slack_dump_twh": 0.0062,
+    "coal_bit_twh": 106.32,
+    "cohort": {
+     "appended": {
+      "plants": 3,
+      "model_twh": 1.54,
+      "real_twh": 0.55,
+      "within_contrast_rt": {
+       "plants": 2,
+       "real": 0.084,
+       "model": 0.397
+      }
+     },
+     "rest": {
+      "plants": 36,
+      "model_twh": 112.79,
+      "real_twh": 114.11,
+      "within_contrast_rt": {
+       "plants": 25,
+       "real": 0.208,
+       "model": 0.337
+      }
+     }
+    }
+   }
+  },
+  "2025": {
+   "candidate": {
+    "slack_dump_twh": 0.0011,
+    "coal_bit_twh": 135.38,
+    "cohort": {
+     "appended": {
+      "plants": 1,
+      "model_twh": 0.25,
+      "real_twh": 0.25,
+      "within_contrast_rt": {
+       "plants": 1,
+       "real": -0.012,
+       "model": 0.379
+      }
+     },
+     "rest": {
+      "plants": 31,
+      "model_twh": 147.69,
+      "real_twh": 134.68,
+      "within_contrast_rt": {
+       "plants": 15,
+       "real": 0.227,
+       "model": 0.248
+      }
+     }
+    }
+   },
+   "w0_control": null,
+   "keeper": {
+    "slack_dump_twh": 0.0128,
+    "coal_bit_twh": 137.11,
+    "cohort": {
+     "appended": {
+      "plants": 0,
+      "model_twh": 0.0,
+      "real_twh": 0.0,
+      "within_contrast_rt": null
+     },
+     "rest": {
+      "plants": 31,
+      "model_twh": 149.53,
+      "real_twh": 134.68,
+      "within_contrast_rt": {
+       "plants": 15,
+       "real": 0.221,
+       "model": 0.258
+      }
+     }
+    }
+   }
+  }
+ }
+}
