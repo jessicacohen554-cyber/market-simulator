@@ -76,6 +76,19 @@ human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-10-02e — SPP MMU ambient band x W0 seasonal basis (rule 19; desk
+owner card "Drop band on rated rows", 2026-10-02). KEY-MOVING for backcast SPP,
+through ``solve_surface.SolveEpoch`` 2026-10-02e.** WHAT CHANGED: with
+``spp_mmu_offer_unavailability`` armed, a fossil row carrying a published
+seasonal pair (``seasonal_capacity_basis``) takes its EIA-860 summer rating
+Jun-Sep and no longer also loses the MMU ambient Jun-Sep share
+(``fleet.arrays._spp_mmu_cut``). Unpaired rows keep the same per-MW share, and
+the SPP-107 pool recovers each row's own slice. Measured zero-LP on the W0 SPP
+fleet: 158-196 MW of Jun-Sep capacity returned in 2023-25. WHAT IS NOT
+INVALIDATED: every pre-W0 SPP fleet (no row carries a pair) is byte-identical,
+including the spp-107 keeper, and every other ISO. Record:
+``docs/records/governance/closeout-2026-10/RESULT-closeout-b-w0-phase3-2026-10-02.md``.
+
 **Epoch 2026-10-02d — closeout-W0 denominator fix, part 2 (desk ruling D-1): the
 dispatched-bin outage denominator is the LIVE roster, sum pmax x online(month).
 KEY-MOVING for backcast MISO / NWPP / PJM / SOCO, through
