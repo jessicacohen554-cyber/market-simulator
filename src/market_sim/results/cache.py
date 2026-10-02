@@ -76,6 +76,27 @@ human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-10-02 — closeout PJM renewables fix: ``fleet_zone_vintage_coords``
+now also admits wind/solar. A SAME-KEY INVALIDATION for configs that ARM that
+flag, which in practice is PJM only.** Record:
+``docs/records/pjm/closeout-renewables-fix/RESULT-pjm-renewables-fix-2026-10-02.md``.
+WHAT CHANGED (code): ``data.renewables._renewable_zone_lookup`` (read by
+``_eia860_monthly_capacity``, ``wind_ptc_eligible_monthly_share`` and
+``_eia860_zone_solar_geometry``) adds, when the flag is armed, every plant the
+eGRID-2023 lookup lacks from the coordinates in the plant file of the EIA-860
+directory being read (``setdefault``: no plant already zoned moves). PJM
+2024 / 2025 year-end solar 11,053.8 -> 14,791.3 / 11,062.8 -> 18,048.8 MW,
+wind 11,270.6 -> 11,459.6 / 11,280.0 -> 11,727.9 MW; PJM 2019-2022 solar
++1.3 to +7.0 MW. WHAT IS INVALIDATED: every cached bundle whose config sets
+``fleet_zone_vintage_coords=True`` for PJM (committed: ``pjmnext16_A_span``,
+all years). WHAT IS NOT: NYISO, the only other ISO that arms the flag (its
+loader outputs are byte-identical armed vs off for every vintage 2019-2025,
+since the canonical EIA-860 supplement already admits every NYISO plant);
+every config with the flag off (the default; the lookup is unchanged).
+**PROSE-ONLY** (no ``SolveEpoch``): an epoch cannot be scoped to a flag state,
+so ``isos=("PJM",)`` would also re-key every flag-off PJM bundle, which
+nothing invalidates; the PJM lane re-solves its keeper.
+
 **Epoch 2026-09-25 (b) — R-SOCO-B2: the Gulf Power exit is DATED (owner ruling
 (C), hour grain). KEY-MOVING for SOCO only.** Record:
 ``docs/records/soco/r-soco/FINDING-r-soco-b2-boundary-2026-09-25.md`` and
