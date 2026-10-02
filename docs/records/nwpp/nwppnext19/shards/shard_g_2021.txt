@@ -1,0 +1,68 @@
+SHARD NWPP-NEXT-19 / arm G (gas_daily_shape on keeper #20) / year 2021 — one backcast solve, then push the bundle. You are a SHARD, not an orchestrator.
+DATA PROFILE: nwpp
+MODEL: Opus or Fable. CLAUDE.md is binding (rules 12, 27, 31, 32, 34, 36).
+
+"A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE."
+Push without asking: you cannot be messaged, and a shard that stops to ask strands its bundle. Do NOT run
+legitimacy_diagnostics.py or any scorer yourself (replay_keeper's own post-step is fine); a legitimacy FAIL is never a hard stop.
+
+PIN: {PIN}. The PRECOMMIT is docs/records/nwpp/PRECOMMIT-nwppnext19-gas-daily-shape-2019-2025-2026-10-02.md — read §1, §4 first.
+
+STEP 0 — setup
+- `git rev-parse HEAD` MUST equal the PIN. If not: `git fetch --depth=50 origin {PIN} && git checkout --detach {PIN}`. If it still does not match, STOP.
+- NEVER rebase, pull, merge or "sync". Never switch to another commit after this.
+- `pip install --ignore-installed pyyaml==6.0.3 && pip install -r requirements.txt && pip install -e . --no-deps` (EXACTLY this — never a bare `pip install -e .`).
+- `python3 scripts/hydrate_data.py --profile nwpp`.
+- `git checkout -b claude/nwppnext19g-2021` (your own branch, from the pin).
+
+STEP 1 — hard-stop pre-checks (any miss = STOP, report, no push)
+python3 -c "import highspy,pandas,pyarrow,pydantic,importlib.metadata as m;print(m.version('highspy'),pandas.__version__,pyarrow.__version__,pydantic.__version__)"
+  -> MUST print: 1.14.0 3.0.3 24.0.0 2.13.4. Anything else = STOP.
+sha256sum data/raw/_processed-legacy/campd_ct_heat_rates_NWPP.csv  -> 29baa2f1ecfa10d9734c7e44cc306a88d527adb28968ea260f3409de37d7ff92
+sha256sum data/raw/campd-unit-outages-perunit-NWPP.csv             -> ff5b0644553095e6600691673f3442877e287b42623a772bda052b4df734e5f3
+sha256sum data/raw/_processed-legacy/thermal_tranches-perunit-vintage-NWPP.csv -> 6fe20358860f826f8051ccf8989c46a34bb5347e0ff2e8adf5d60b9bbbe65ab9
+sha256sum data/raw/_processed-legacy/eia923_cc_family_heat_rates_NWPP.csv -> cc9ac299d93ad256e7315c86b24cd9abed2535625561e496cf1dae32dada9d38
+
+STEP 2 — the solve (run the runner UNMODIFIED; never pass --no-container-preflight)
+mkdir -p /tmp/leg && git fetch --depth=1 origin 3b38fefe402b5168c1557459a28978eb9274ed92 \
+  && git archive 3b38fefe402b5168c1557459a28978eb9274ed92 results/calibration/nwppnext16c_2021 | tar -x -C /tmp/leg
+python3 scripts/data/curate_hydro_plant_modes.py --iso NWPP
+python3 scripts/data/curate_coal_receipts.py && python3 scripts/data/curate_coal_stocks.py
+nohup python3 scripts/replay_keeper.py /tmp/leg/results/calibration/nwppnext16c_2021 \
+  --out-dir results/calibration/nwppnext19g_2021 --years 2021 \
+  --set gas_daily_shape=true \
+  --note "NWPP-NEXT-19 arm G: keeper #20 + gas_daily_shape" \
+  > /tmp/solve_2021.log 2>&1 &
+BUDGET: 260 minutes of solve. NEVER end your turn while the solve runs — poll IN-TURN with bounded wait loops
+(e.g. `timeout 540 bash -c 'while kill -0 <pid> 2>/dev/null; do sleep 30; done'`, repeated) until it exits. If it passes
+the budget with no bundle, STOP and report (never push a half-written bundle).
+
+STEP 3 — hard stops on the result (any miss = STOP, report, no push)
+a) run_config diff vs the keeper leg:
+   python3 -c "import json;a=json.load(open('results/calibration/nwppnext19g_2021/run_config.json'));b=json.load(open('/tmp/leg/results/calibration/nwppnext16c_2021/run_config.json'));A=a.get('scenario_config',a);B=b.get('scenario_config',b);print(sorted((k,B.get(k),A.get(k)) for k in set(A)|set(B) if A.get(k)!=B.get(k)))"
+   Allowed: exactly [('gas_daily_shape', False, True)] (plus provenance-only keys such as a note/timestamp if they are not in scenario_config). Anything else = STOP.
+b) Arm live:
+   python3 -c "import pandas as pd;u=pd.read_parquet('results/calibration/nwppnext19g_2021/hourly/unit_hourly_2021.parquet',columns=['unit_id','fuel','hour','mc']);u=u[u.fuel=='gas_cc'];u['m']=(pd.Timestamp('2021-01-01')+pd.to_timedelta(u.hour,'h')).dt.month;print(u.groupby(['unit_id','m'],observed=True).mc.std().max())"
+   MUST print a value > 0.01. Otherwise STOP.
+c) meta.json hydro_backfill_year equals the leg's (`/tmp/leg/results/calibration/nwppnext16c_2021/meta.json`).
+d) P1 summed demand = 289.358 TWh ± 0.05.
+e) Log lines present: `coal per-yard budget`; `coal take floor`; `coal monthly pile`; `NWPP Path 76 (Alturas)`.
+f) Bundle contains dispatch/2021_P1.parquet, hourly/class_hourly_2021.parquet, hourly/system_2021.parquet, hourly/hydro_cascade_2021.parquet, hourly/unit_hourly_2021.parquet.
+g) Solve not infeasible / Unknown (if so: STOP, report the log tail, no retry).
+
+STEP 4 — push the FULL bundle to YOUR branch (rule 34(a)); a PLAIN git add, NEVER `git add -f`, NEVER `git add -A` / `git add .`
+printf '\n!results/calibration/nwppnext19g_2021/\n!results/calibration/nwppnext19g_2021/**\n!results/calibration/nwppnext19g_2021/dispatch/**\n!results/calibration/nwppnext19g_2021/hourly/**\n' >> .gitignore
+git add .gitignore && git add results/calibration/nwppnext19g_2021
+git status --short   # MUST show nothing outside .gitignore and results/calibration/nwppnext19g_2021/
+git commit -m "NWPP-NEXT-19 shard G 2021"
+git push -u origin claude/nwppnext19g-2021   (on HTTP 408/500: git config http.version HTTP/1.1 and retry)
+Verify: `git ls-tree -r --name-only HEAD -- results/calibration/nwppnext19g_2021 | grep -E 'dispatch/2021_P1.parquet|unit_hourly_2021.parquet'` (must print both).
+
+FORBIDDEN, by name: git add -A / git add . / git add -f; dashboard_add_run.py, build_manifest.py, build_status.py,
+prune_iso_runs.py, anything under frontend/data/backcast/**; ANY edit under src/ or scripts/; opening a PR; rebasing;
+deleting any result (rule 31).
+
+FINAL MESSAGE — report in numbers: pushed commit SHA (full 40 chars); solve wall time; the `container preflight:` and
+`memory peak:` log lines; the library versions; each hard stop a)–g) with its value; P1 class energy TWh (CC_REGULAR,
+CT_PEAKER, COAL_PRB, COAL_BIT, COAL_WC, ST_GAS, CC_CHP); and Jim Bridger (plant_code 8066) and North Valmy (8224) coal
+energy TWh from dispatch/2021_P1.parquet.

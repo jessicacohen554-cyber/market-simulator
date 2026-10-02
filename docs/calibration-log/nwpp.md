@@ -872,3 +872,18 @@ card "Keep #19; retire dup Clark field":
   track CAISO/the West (between-day r 0.72–0.90).
 - Owner card: **"Both, one census"**. NEXT-19 runs a zero-LP split of measured price variance into gas-daily and
   interface parts, then picks the lever. Record: `docs/records/nwpp/FINDING-nwppnext18-hydro-within-month-phase0-2026-10-01.md`.
+
+## NWPP-NEXT-19 — 2026-10-02 — census + gas-daily arm (R); priced interface wired, held for two registry fixes
+
+- **Zero-LP census.** Henry Hub daily explains ~0–5 % of NW within-month between-day price variance (Jan 2024 aside).
+  CAISO coupling adds 0.11–0.43 R² beyond gas. PACE/IPCO carry CAISO's diurnal shape; BPAT's weak link is real, not a
+  clock artifact. The measured price lifts the 2023 Jun–Dec coal shape (+0.10 r) but not 2024/25; CT energy rises 2–2.7×.
+  No admissible daily NW gas hub series exists. Record: `docs/records/nwpp/FINDING-nwppnext19-price-census-phase0-2026-10-02.md`.
+- **Arm G (`gas_daily_shape`, 7 shards, clean A/B on keeper #20's code):** 0 status changes. C4 coal 2023 0.669 → 0.677,
+  still a FAIL. **C4 gas r falls in every year (−0.019 to −0.147; 2019/2020 at 0.703/0.702)**, all between days.
+  CT +0.03 to +0.54 TWh. Owner card: **"Reject, keep #20"** → `gas_daily_shape` R for NWPP.
+  Record: `docs/records/nwpp/RESULT-nwppnext19-gas-daily-shape-2026-10-02.md`.
+- **Priced interface wired, default-off:** `NWPP_external` node, links derived from the seam limits, and a refusal of empty
+  priced builds (these used to zero interchange silently). Not solved. The registered CAISO seam uses a gross-load shape
+  (within-day r vs CAISO RT 0.08 by 2025; net 0.62). The WECC_CAN anchor (peak-only Mid-C) sits $12–38 above BPAT,
+  $170 in 2022. Owner card: **"Fix both, then solve"** (NEXT-20).
