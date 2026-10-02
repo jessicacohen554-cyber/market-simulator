@@ -178,3 +178,17 @@ Decision card, 2026-10-02: **"Keep 0.46, repair denominator, solve"** (option 1,
 census re-basis (§4.2), freeze-and-queue, close. Execution follows §5 in this session: stage 1 (re-fetch the
 DAM 2023–25 bids, rebuild the reduced store, re-derive on composite + 0.46, G-RT), then seven solve shards.
 The ruling is in force for the chain; the adder's identification is re-stated on the constant (§4.1).
+
+## 9. G-DRIFT (rule 29(b)), keeper pin `cd589798` → HEAD `b19f3d5e`
+
+Zero-LP code audit over 159 changed files on the solve path. **Zero LIVE hunks** for a CAISO backcast replay:
+110 files are AST-identical (the `docs/handoffs → docs/records` path rewrite in comments); the 49 code-changed or
+new files are gated behind another ISO branch (PJM gas bridge, ERCOT SWCAP/ORDC, NYISO Transco flow-date, SPP MMU
+bands, SOCO neighbour tables, captive coal, measured oil burn) or behind one of 12 new `ScenarioConfig` fields,
+all default-off and registered at default in the cache key; no existing default moved; the one deleted field
+(`cc_subfloor_eia923_heat_rates`) was False on the keeper and is absent from its recipe. `calibration_verdict.py`
+is AST-identical; `legitimacy_diagnostics.py` only adds the PJM bridge mechanism id. Data on the path: the EIA-860
+2019/2020 vintages gained 11 OVEC (PJM) rows each, CISO rows identical; `actual_lmp.json` CAISO leaves unchanged.
+One additive output: every solve now also writes `hourly/unit_marginal_<year>.parquet` (rule 15). CAISO's cache
+key does not move (the 10 CAISO solve-surface rows hash identically); only the informational `solve_surface.json`
+fingerprint changes. **No control solve is earned; the committed keeper is the control.**
