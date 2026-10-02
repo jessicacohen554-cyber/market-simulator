@@ -1,0 +1,131 @@
+{
+ "2019": {
+  "avail_twh": 380.2766771061683,
+  "dead_cohorts": [],
+  "hashes": {
+   "availability": "151378ee451ce36b",
+   "min_gen": "92a5153e320d0e6a",
+   "pmax": "22b6836d6f9b33db",
+   "pmin": "5699f44c2eb2ccbf"
+  },
+  "in_year_cohorts": [
+   "54216|ST_CHP|r201901",
+   "6124|COAL_PRB|r201907",
+   "708|COAL_BIT|r201907",
+   "8|COAL_BIT|r201904"
+  ],
+  "n_units": 425,
+  "overrides": null
+ },
+ "2020": {
+  "avail_twh": 359.81446141537486,
+  "dead_cohorts": [
+   "54216|ST_CHP|r201901",
+   "6124|COAL_PRB|r201907"
+  ],
+  "hashes": {
+   "availability": "54df4ac9b661d2a8",
+   "min_gen": "7bc4d74fe1e41ec0",
+   "pmax": "bbe51ac348b374b4",
+   "pmin": "3c5f2841366c47b9"
+  },
+  "in_year_cohorts": [],
+  "n_units": 418,
+  "overrides": null
+ },
+ "2021": {
+  "avail_twh": 368.285561804062,
+  "dead_cohorts": [
+   "54216|ST_CHP|r201901",
+   "6124|COAL_PRB|r201907"
+  ],
+  "hashes": {
+   "availability": "a06437fe3e92aed4",
+   "min_gen": "c50d99ac2847ca0c",
+   "pmax": "39554b9e6858880a",
+   "pmin": "a087678c00459657"
+  },
+  "in_year_cohorts": [
+   "54730|CT_PEAKER|r202101"
+  ],
+  "n_units": 427,
+  "overrides": null
+ },
+ "2022": {
+  "avail_twh": 375.8004277044932,
+  "dead_cohorts": [
+   "54216|ST_CHP|r201901",
+   "6124|COAL_PRB|r201907"
+  ],
+  "hashes": {
+   "availability": "3576cfa4bad28747",
+   "min_gen": "9db10630e9a8f75e",
+   "pmax": "9363f9b4d8404bb8",
+   "pmin": "1d6247bf1d9af1e1"
+  },
+  "in_year_cohorts": [
+   "6052|COAL_BIT|r202209",
+   "6257|COAL_PRB|r202201"
+  ],
+  "n_units": 437,
+  "overrides": null
+ },
+ "2023": {
+  "avail_twh": 367.41203146379195,
+  "dead_cohorts": [
+   "54216|ST_CHP|r201901",
+   "56|COAL_BIT|r202010",
+   "6124|COAL_PRB|r201907",
+   "6257|COAL_PRB|r202201"
+  ],
+  "hashes": {
+   "availability": "82879206b76a7dba",
+   "min_gen": "362e774bb5ad5916",
+   "pmax": "ec7eedd2d8ead4fe",
+   "pmin": "794661cd120ef176"
+  },
+  "in_year_cohorts": [
+   "7|ST_GAS|r202301"
+  ],
+  "n_units": 416,
+  "overrides": null
+ },
+ "2024": {
+  "avail_twh": 377.55388102321587,
+  "dead_cohorts": [
+   "54216|ST_CHP|r201901",
+   "55304|CT_PEAKER|r202301",
+   "56|COAL_BIT|r202010",
+   "6124|COAL_PRB|r201907",
+   "6257|COAL_PRB|r202201"
+  ],
+  "hashes": {
+   "availability": "30bdf45f1a7a9da8",
+   "min_gen": "79dc01722e30f6ef",
+   "pmax": "4c2b44e1d41681ca",
+   "pmin": "224e476d68041cd1"
+  },
+  "in_year_cohorts": [],
+  "n_units": 419,
+  "overrides": null
+ },
+ "2025": {
+  "avail_twh": 376.3807821031766,
+  "dead_cohorts": [
+   "54216|ST_CHP|r201901",
+   "55304|CT_PEAKER|r202301",
+   "56|COAL_BIT|r202010",
+   "6124|COAL_PRB|r201907",
+   "6257|COAL_PRB|r202201"
+  ],
+  "hashes": {
+   "availability": "3aeab5be5b90d0a9",
+   "min_gen": "7d700865142d7bbc",
+   "pmax": "362ee098c21de7a7",
+   "pmin": "4ce98edc01714a2b"
+  },
+  "in_year_cohorts": [],
+  "n_units": 407,
+  "overrides": null
+ }
+}

@@ -48,7 +48,9 @@ for iso, b in BUNDLES:
         rows.append(rec)
 (d / "table.json").write_text(json.dumps(rows, indent=1))
 print(
-    "| ISO | Year | Δ vs main (TWh) | Δ vs pre-#7047 (TWh) | ≥0.1 | byte-identical | changed arrays | dead cohorts | largest movers vs main |"
+    "| ISO | Year | Δ vs main (TWh) | Δ vs pre-#7047 (TWh) | ≥ 0.1 vs main | "
+    "byte-identical vs main | changed arrays | rows offline all year | "
+    "largest movers vs main (plant/group, TWh) |"
 )
 print("|---|---|---|---|---|---|---|---|---|")
 for r in rows:
@@ -56,6 +58,8 @@ for r in rows:
         f"| {r['iso']} | {r['year']} | {r['d_vs_main_twh']:+.3f} | {r['d_vs_pre7047_twh']:+.3f} | "
         f"{'**yes**' if r['flag_ge_0p1'] else ''} | {'yes' if r['byte_identical_vs_main'] else 'no'} | "
         f"{', '.join(r['changed_arrays'])} | {len(r['offline_all_year'])} | "
-        + "; ".join(f"{k} {v:+.3f}" for k, v in r["movers_vs_main"][:3])
+        + "; ".join(
+            f"{k.replace('|', '/')} {v:+.3f}" for k, v in r["movers_vs_main"][:3]
+        )
         + " |"
     )

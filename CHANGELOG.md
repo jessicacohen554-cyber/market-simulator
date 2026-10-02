@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-10-02 — closeout-W0 denominator fix, part 2: the live dispatched-bin roster (desk ruling D-1, zero LP)
+
+With `unit_outage_dispatched_bin_denominator` on in a COD-ramped backcast, the unit-outage denominator
+is the LIVE roster, Σ pmax × online(month), read off the COD ramp's own resolver
+(`cod_ramp.generator_online_mask`): a row offline all year (a dead exit cohort — Scherer, Centralia
+3845, Colstrip 6076, Schahfer 6085, Petersburg, Dallman) leaves the divide, and a bin held below its
+pmax in some month divides hour by hour (PR #7047's monthly mechanics and zero-month fallback kept).
+NWPP-NEXT-15's `unit_outage_dispatched_bin_live_denominator` is folded in and **deleted** (rule 26:
+field, cache-key registrations, runner kwargs, `--[no-]unit-outage-dispatched-bin-live-denominator`,
+matrix row and every shard cell); its screened-coal-first limb now belongs to
+`wefor_residual_short_screened_coal`. `SolveEpoch` 2026-10-02d re-keys backcast MISO / NWPP / PJM /
+SOCO. Record: `docs/records/governance/closeout-2026-10/RESULT-closeout-w0-denominator-fix-2-2026-10-02.md`.
+
 ## 2026-10-02 — W0 EIA-860 settlement foundation (closeout-B, phases 1 + 2, zero LP)
 
 Owner ruling R-2 (Q1–Q8). Backcast-default flips with `--no-…` escapes, coerced off outside a
