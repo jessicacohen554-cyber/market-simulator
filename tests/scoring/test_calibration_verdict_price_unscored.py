@@ -8,9 +8,12 @@ of an actual_lmp.json block — no existing ISO can reach it".
 
 These tests pin the four things that make the class safe:
 
-* it is REACHED by a region with no block (NWPP; SOCO until its FERC-714
+* it is REACHED by a region with no block (NWPP until its labelled WEIM ELAP
+  block landed, owner ruling R-9 2026-10-02; SOCO until its FERC-714
   system-lambda block landed, owner ruling 2026-09-28 "Score C3a vs lambda",
-  lane soco-84), on synthetic artifacts;
+  lane soco-84), on synthetic artifacts — the synthetic tests hide NWPP's
+  block from the committed reference (:class:`_HiddenBlock`) so they keep
+  pinning the no-block path itself;
 * it is UNREACHABLE by a region WITH a block, whether the price scored or not,
   and unreachable by leg (ii) when a price somehow scored without a block;
 * it is never ``CALIBRATED``, every NOT-YET route is untouched, and the price
@@ -37,8 +40,43 @@ from tests.scoring.test_calibration_verdict import (
     cv,
 )
 
-_REGISTERED_ISOS = ("CAISO", "ERCOT", "MISO", "NEISO", "NYISO", "PJM", "SOCO", "SPP")
-_NO_BLOCK_ISOS = ("NWPP",)
+_REGISTERED_ISOS = (
+    "CAISO",
+    "ERCOT",
+    "MISO",
+    "NEISO",
+    "NWPP",
+    "NYISO",
+    "PJM",
+    "SOCO",
+    "SPP",
+)
+# Since rubric v3.16 (owner ruling R-9, 2026-10-02) every registered ISO
+# carries a block; NWPP's starts in 2023, so its 2019-2022 years reach the
+# class PER YEAR (pinned in RegisteredRunsTests below).
+_NO_BLOCK_ISOS: tuple[str, ...] = ()
+
+
+class _HiddenBlock(unittest.TestCase):
+    """Hide NWPP's block from the committed reference for the synthetic tests.
+
+    The no-block path is keyed on absence, and no registered ISO is absent any
+    more; the synthetic fixtures re-key to NWPP, so they see the reference as
+    it stood before R-9 (every other ISO's block untouched).
+    """
+
+    def setUp(self):
+        saved = (cv._ACTUAL_LMP_CACHE, cv._ACTUAL_LMP_READABLE)
+        cv._ACTUAL_LMP_CACHE = None
+        cv._ACTUAL_LMP_READABLE = None
+        ref = cv._actual_lmp_reference() or {}
+        cv._ACTUAL_LMP_CACHE = {k: v for k, v in ref.items() if k != "NWPP"}
+        cv._ACTUAL_LMP_READABLE = True
+        self.addCleanup(self._restore, saved)
+
+    @staticmethod
+    def _restore(saved):
+        cv._ACTUAL_LMP_CACHE, cv._ACTUAL_LMP_READABLE = saved
 
 
 def _no_price_art(iso, *, avg_lmp=False, legit=True, target_years=None, fail=False):
@@ -138,7 +176,7 @@ class PredicateTests(unittest.TestCase):
         self.assertTrue(cv._price_reference_absent("NWPP"))
 
 
-class ReachedTests(unittest.TestCase):
+class ReachedTests(_HiddenBlock):
     """A region with no block, otherwise clean, reads the new class."""
 
     def test_clean_no_price_run_reads_physically_calibrated(self):
@@ -201,7 +239,7 @@ class ReachedTests(unittest.TestCase):
         self.assertEqual(cv.condensed_metrics(v)["price_unscored"], v["price_unscored"])
 
 
-class NeverCalibratedTests(unittest.TestCase):
+class NeverCalibratedTests(_HiddenBlock):
     """Ruling consequence (ii): never CALIBRATED, and every other route intact."""
 
     def test_labels_are_distinct_from_every_existing_label(self):
@@ -261,7 +299,7 @@ class NeverCalibratedTests(unittest.TestCase):
         self.assertNotEqual(cv.PHYSICALLY_CALIBRATED_CAVEATS, cv.NOT_YET)
 
 
-class UnreachableTests(unittest.TestCase):
+class UnreachableTests(_HiddenBlock):
     """A region WITH a block can never reach the class, whatever its price does."""
 
     def test_block_present_price_absent_reads_as_before(self):
@@ -282,7 +320,9 @@ class UnreachableTests(unittest.TestCase):
         self.assertNotIn("price_unscored", v)
 
     def test_every_registered_iso_is_unreachable(self):
-        for iso in _REGISTERED_ISOS:
+        # NWPP is hidden by this class's fixture; its committed block is pinned
+        # by PredicateTests.test_every_registered_iso_has_a_block.
+        for iso in (i for i in _REGISTERED_ISOS if i != "NWPP"):
             with self.subTest(iso=iso):
                 v = cv.determine_from_artifacts("t", _no_price_art(iso))
                 self.assertNotIn("price_unscored", v)
@@ -305,6 +345,11 @@ class UnreachableTests(unittest.TestCase):
 
         _tail({"NWPP": {"2024": {"da_gt": 80, "rt_gt": 100, "rt_coverage": 1.0}}})
         self.addCleanup(_reset_tail)
+        # NWPP's C3c is NOT scored on its labelled benchmark since v3.16; lift
+        # that for this leg-(ii) test, which needs a scorable tail.
+        saved = dict(cv.C3C_NOT_SCORED)
+        cv.C3C_NOT_SCORED.pop("NWPP", None)
+        self.addCleanup(cv.C3C_NOT_SCORED.update, saved)
         art = _no_price_art("NWPP")
         art["payload"]["years"]["2024"]["ordc"] = {
             "hoursGt200": {"actual": 100, "model": 100}
@@ -343,27 +388,34 @@ class RegisteredRunsTests(unittest.TestCase):
                     (cv.PHYSICALLY_CALIBRATED, cv.PHYSICALLY_CALIBRATED_CAVEATS),
                 )
                 self.assertFalse(
-                    any(r.startswith("PRICE UNSCORED") for r in v["reasons"])
+                    any(r.startswith("PRICE UNSCORED —") for r in v["reasons"])
                 )
 
-    def test_no_block_registered_runs_reach_the_class(self):
+    def test_nwpp_pre_reference_years_reach_the_class_per_year(self):
+        """Rubric v3.16: NWPP 2019-2022 read PHYSICALLY-CALIBRATED (price unscored)."""
+        start = cv.LABELLED_PRICE_REFERENCE_FROM["NWPP"]
         sidecars = [
             p
             for p in sorted(cv.REGISTRY_DIR.glob("*.json"))
-            if json.loads(p.read_text()).get("iso") in _NO_BLOCK_ISOS
+            if json.loads(p.read_text()).get("iso") == "NWPP"
         ]
         for p in sidecars:
-            iso = json.loads(p.read_text()).get("iso")
-            with self.subTest(run=p.stem, iso=iso):
-                self.assertTrue(cv._price_reference_absent(iso))
-                v = cv.determine(p.stem)
+            years = [int(y) for y in json.loads(p.read_text()).get("years", [])]
+            pre = [y for y in years if y < start]
+            if not pre:
+                continue
+            with self.subTest(run=p.stem):
+                v = cv.determine(p.stem, years=pre)
                 self.assertIn("price_unscored", v)
                 self.assertNotIn(
                     v["determination"], (cv.CALIBRATED, cv.CALIBRATED_CAVEATS)
                 )
-                self.assertTrue(
-                    any(r.startswith("PRICE UNSCORED") for r in v["reasons"])
-                )
+                if any(y >= start for y in years):
+                    full = cv.determine(p.stem)
+                    self.assertNotIn("price_unscored", full)
+                    self.assertTrue(
+                        any(r.startswith("PRICE UNSCORED in") for r in full["reasons"])
+                    )
 
 
 if __name__ == "__main__":

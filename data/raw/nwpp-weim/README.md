@@ -74,6 +74,7 @@ refresh" the committed years — that would silently shorten them.
 - **Footprint price = demand-weighted mean** over the 11 load-carrying priced BAs,
   weights EIA-930 `Demand (MW) (Adjusted)`; an hour whose priced BAs carry < 90 % of
   the 11-BA demand is NaN.
+- **LANDED 2026-10-02 under owner ruling R-9** (*"WEIM ELAP 2023-06 onward as a labelled imbalance-price benchmark, STOP-gated like SOCO's lambda"*): `land-labelled` writes `data/raw/_validation-source/actual_lmp_hourly_NWPP.parquet` from the committed 15-minute store, gated on D1/D2/D4 (D3 — the Mid-C-proxy test that read `NO` — is answered by the label, not re-run). The text below describes the 2026-09-13 posture.
 - `da` in a landed sidecar would be **all NaN** — there was no day-ahead market.
   **No sidecar was landed** (the gate read `NO`); `gate --land` refuses unless every
   cell passes, and a desk ruling to use the series as a labelled imbalance-price

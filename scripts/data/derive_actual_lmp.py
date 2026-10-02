@@ -66,6 +66,12 @@ system-wide hub-average series of each market:
     real-time analogue). Owner ruling 2026-09-28 "Score C3a vs lambda" (lane
     soco-84); :data:`SOCO_COMMENT` is stated on every SOCO record.
 
+  * NWPP — NOT AN LMP OF THE FOOTPRINT'S ENERGY. The CAISO WEIM 15-minute
+    imbalance price at each footprint BA's ELAP, demand-weighted to the
+    footprint (``scripts/data/build_nwpp_weim_price_index.py land-labelled``),
+    2023-06 onward; read from the committed hourly sidecar like SPP. Owner
+    ruling R-9 (2026-10-02); :data:`NWPP_COMMENT` is stated on every record.
+
 The zonal ISOs (NYISO, NEISO, SPP) additionally carry a ``zones`` sub-dict —
 ``{key: {da, rt, da_mon, rt_mon}}`` — alongside the hub-level
 ``da``/``rt``/``*_mon``/``*_pct``; the dashboard reads only the top-level hub
@@ -189,6 +195,23 @@ SOCO_COMMENT = (
     "scored as a SYSTEM benchmark against the model's load-weighted price (owner "
     "ruling 2026-09-28, lane soco-84). C3c is NOT scored on it: a lambda above a "
     "tail threshold is fuel cost, not scarcity pricing (same ruling session)."
+)
+
+NWPP_SRC = (
+    "CAISO WEIM 15-minute RTPD LMP at each footprint BA's default EIM load "
+    "aggregation point (ELAP_<BAA>-APND), hour = mean of the 4 intervals, "
+    "demand-weighted over the 11 load-carrying priced BAs (EIA-930 Demand "
+    "Adjusted) — data/raw/nwpp-weim/, actual_lmp_hourly_NWPP.parquet"
+)
+#: Stated on every NWPP record: the ``rt`` key is borrowed, not literal.
+NWPP_COMMENT = (
+    "NWPP runs no organized energy market. rt/rt_mon/rt_lw carry the WEIM "
+    "IMBALANCE price (it settles only real-time deviations from bilateral base "
+    "schedules), scored as a LABELLED benchmark (owner ruling R-9, 2026-10-02: "
+    "'WEIM ELAP 2023-06 onward as a labelled imbalance-price benchmark, "
+    "STOP-gated like SOCO's lambda'). 2023 is partial by OASIS retention "
+    "(2023-06-01 onward); 2019-2022 carry no reference and stay "
+    "PHYSICALLY-CALIBRATED (price unscored). C3c is NOT scored on it."
 )
 
 #: Stated on every SPP record because the key names invite the wrong reading.
@@ -1311,6 +1334,40 @@ def _soco(year: int) -> tuple[dict, pd.DataFrame] | None:
     return rec, hourly
 
 
+def _nwpp(year: int) -> tuple[dict, None] | None:
+    """Return ``(record, None)`` for NWPP's labelled WEIM ELAP imbalance price.
+
+    NOT AN LMP OF THE FOOTPRINT'S ENERGY. Reads the COMMITTED hourly sidecar
+    ``actual_lmp_hourly_NWPP.parquet`` landed by
+    ``scripts/data/build_nwpp_weim_price_index.py land-labelled`` (owner ruling
+    R-9, 2026-10-02) — like :func:`_spp`, the raw OASIS pulls are not staged in
+    the repo, so this builder emits no hourly frame and never rewrites the
+    sidecar. One footprint series, RT only (no day-ahead market existed). 2023
+    is partial by OASIS retention (2023-06-01 onward); ``rt_cov`` says so and
+    the scorer masks both sides to the staged months.
+    """
+    hp = HOURLY_OUT / "actual_lmp_hourly_NWPP.parquet"
+    if not hp.exists():
+        return None
+    h = pd.read_parquet(hp)
+    g = h[h["year"] == int(year)]
+    if g.empty:
+        return None
+    v = _dense_year(g, "rt")
+    if np.isnan(v).all():
+        return None
+    months = _month_of_hour()
+    rec = {
+        "rt": round(float(np.nanmean(v)), 2),
+        "rt_mon": _by_month(v, months),
+        "rt_pct": _pct(v),
+        "rt_cov": _coverage(v, months),
+        "src": NWPP_SRC,
+        "comment": NWPP_COMMENT,
+    }
+    return rec, None
+
+
 BUILDERS = {
     "ERCOT": _ercot,
     "PJM": _pjm,
@@ -1319,6 +1376,7 @@ BUILDERS = {
     "NEISO": _neiso,
     "SPP": _spp,
     "SOCO": _soco,
+    "NWPP": _nwpp,
 }
 
 
@@ -1372,7 +1430,7 @@ def build(years, isos=None) -> tuple[dict, dict]:
 # dispatches in a backcast (``eia_loader.load_demand`` — same series, so the
 # two sides of C3a finally share weights). Where a committed ZONAL hourly
 # archive is registered in ``ZONAL_LW_SOURCES`` (ERCOT; MISO since miso-294;
-# NYISO since NYISO-NEXT-22),
+# NYISO since NYISO-NEXT-22; PJM since owner ruling R-13),
 # the construction mirrors the scorer zone-by-zone; elsewhere it weights the
 # system hub series by system load. The legacy equal-hour fields stay
 # untouched (display continuity + fallback basis).
@@ -1406,6 +1464,12 @@ MISO_ZONAL_PARQUET = "actual_lmp_hourly_zonal_MISO.parquet"
 # Identity map: each model zone is its own series. (Owner ruling 2026-10-01,
 # NYISO-NEXT-22: "Adopt for NYISO now".)
 NYISO_ZONAL_PARQUET = "actual_lmp_hourly_zonal_NYISO.parquet"
+
+# PJM: one series per MODEL zone — the simple mean of its constituent PJM
+# transmission-zone ``type = ZONE`` pnodes (DataMiner2 rt/da_hrl_lmps), written
+# by ``scripts/data/derive_pjm_zonal_lmp.py``. Identity map, as NYISO. (Owner
+# ruling R-13, 2026-10-02: "adopt zonal load-weighted C3a for PJM".)
+PJM_ZONAL_PARQUET = "actual_lmp_zonal_PJM.parquet"
 MISO_PLAINS_PROXY_HUBS: tuple[str, ...] = ("MINN.HUB", "ILLINOIS.HUB")
 
 
@@ -1425,7 +1489,8 @@ def _miso_zone_to_hubs(z: pd.DataFrame) -> dict[str, tuple[str, ...]]:
 #: maps the year's archive slice to ``{model zone: series keys}``. MISO was
 #: adopted by owner ruling 2026-10-01 (docs/DESIGN-miso293-flowgate-stage1-
 #: 2026-10-01.md §8) for MISO ONLY — the cross-ISO question is unruled, so
-#: no other ISO is added here without its own ruling.
+#: no other ISO is added here without its own ruling. Rulings since: NYISO
+#: (2026-10-01, NYISO-NEXT-22) and PJM (R-13, 2026-10-02).
 ZONAL_LW_SOURCES: dict[str, dict] = {
     "ERCOT": {
         "parquet": ERCOT_ZONAL_PARQUET,
@@ -1459,6 +1524,18 @@ ZONAL_LW_SOURCES: dict[str, dict] = {
             "RTD 5-min averaged to the hour / DAM hourly) load-weighted by "
             "measured zonal demand (eia_loader.load_demand), zone-demand-"
             "weighted across zones (owner ruling 2026-10-01, NYISO-NEXT-22)"
+        ),
+    },
+    "PJM": {
+        "parquet": PJM_ZONAL_PARQUET,
+        "key": "zone",
+        "zone_map": lambda z: {str(k): (str(k),) for k in z["zone"].unique()},
+        "src_lw": (
+            "zone-resolved: per model zone the simple mean of its constituent "
+            "PJM transmission-zone LMPs (DataMiner2 rt_hrl_lmps / da_hrl_lmps, "
+            "type ZONE; actual_lmp_zonal_PJM.parquet) load-weighted by measured "
+            "zonal demand (eia_loader.load_demand), zone-demand-weighted across "
+            "zones (owner ruling R-13, 2026-10-02)"
         ),
     },
 }
@@ -1498,7 +1575,7 @@ def _measured_zone_demand(iso: str, year: int) -> np.ndarray | None:
 def _lw_fields(iso: str, year: int) -> dict | None:
     """Return the ``*_lw`` record fields for one ISO-year, or ``None``.
 
-    ISOs in :data:`ZONAL_LW_SOURCES` (ERCOT, MISO, NYISO): zone-resolved — the
+    ISOs in :data:`ZONAL_LW_SOURCES` (ERCOT, MISO, NYISO, PJM): zone-resolved — the
     scorer's exact formula mirrored on the actual (per-model-zone hourly
     series, multi-series zones averaged, weighted by that zone's measured
     demand, then zone-demand-weighted across zones). Other ISOs: the

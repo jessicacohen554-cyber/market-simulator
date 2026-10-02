@@ -69,6 +69,11 @@ Usage::
     python scripts/data/build_nwpp_weim_price_index.py reconcile-ties
     python scripts/data/build_nwpp_weim_price_index.py build
     python scripts/data/build_nwpp_weim_price_index.py gate [--land]
+    python scripts/data/build_nwpp_weim_price_index.py land-labelled
+
+``land-labelled`` (owner ruling R-9, 2026-10-02) writes the same sidecar as a
+LABELLED imbalance-price benchmark from the committed stores, gated on D1/D2/D4
+(the D3 Mid-C-proxy question is answered by the label, not the gate).
 
 ``gate --land`` writes ``data/raw/_validation-source/actual_lmp_hourly_NWPP.parquet``
 ONLY when every gate cell passes. Raw pulls live in ``data/raw/nwpp-weim/_pulls/``
@@ -1361,6 +1366,58 @@ def cmd_gate(land: bool) -> None:
         )
 
 
+#: Owner ruling R-9 (2026-10-02, backcast close-out plan §5.0, verbatim: "NWPP
+#: price reference: WEIM ELAP 2023-06 onward as a labelled imbalance-price
+#: benchmark, STOP-gated like SOCO's lambda; 2019-2022 stay
+#: PHYSICALLY-CALIBRATED (price unscored)"). The ruling replaces the gate's
+#: D3 question (does the imbalance price track the Mid-C bilateral index within
+#: 10 %?) with a LABEL: the series is landed as what it is — an imbalance price —
+#: not as a proxy for Mid-C. The cells that test the SERIES itself stay STOP
+#: gates: D1 coverage, D2 materiality of WEIM transfers, D4 sanity range.
+LABELLED_GATE_CELLS: tuple[str, ...] = ("D1", "D2", "D4")
+
+
+def cmd_land_labelled() -> None:
+    """``land-labelled``: land the footprint series under owner ruling R-9.
+
+    Rebuilt from the COMMITTED 15-minute store (``weim_rtpd_lmp_15min.parquet``)
+    and the committed EIA-930 demand, by the exact functions the gate scored
+    (:func:`hourly_utc_by_ba`, :func:`weighted_group_price` over
+    :data:`LOAD_BAS`, :func:`to_model_clock`) — no raw pull is needed. Refuses
+    unless every cell in :data:`LABELLED_GATE_CELLS` of the committed
+    ``gate.json`` reads pass.
+    """
+    gate = json.loads((RAW_DIR / "gate.json").read_text())
+    failed = [k for k in LABELLED_GATE_CELLS if not (gate.get(k) or {}).get("pass")]
+    if failed:
+        raise SystemExit(f"STOP gate cell(s) {failed} fail — nothing written")
+    store = pd.read_parquet(RAW_DIR / "weim_rtpd_lmp_15min.parquet")
+    store["interval_start_utc"] = pd.to_datetime(store["interval_start_utc"], utc=True)
+    hourly = hourly_utc_by_ba(store)
+    demand = load_demand_hourly()
+    cand = weighted_group_price(hourly, demand, LOAD_BAS)
+    rows = []
+    for year in YEARS:
+        dense = to_model_clock(cand, "price", year)
+        rows.append(
+            pd.DataFrame(
+                {
+                    "year": np.int16(year),
+                    "hour": np.arange(_HOURS_PER_YEAR, dtype=np.int16),
+                    "rt": dense.astype("float32"),
+                    "da": np.full(_HOURS_PER_YEAR, np.nan, dtype="float32"),
+                }
+            )
+        )
+        print(f"  {year}: {int(np.isfinite(dense).sum())} priced hours")
+    out = pd.concat(rows, ignore_index=True)
+    out.to_parquet(LAND_PATH, index=False)
+    print(
+        f"landed {LAND_PATH} rows={len(out)} "
+        f"sha256={hashlib.sha256(LAND_PATH.read_bytes()).hexdigest()}"
+    )
+
+
 def cmd_fetch_counterparty() -> None:
     """Fetch each counterparty ELAP (RTPD LMP) and write its hourly model-clock series.
 
@@ -1441,6 +1498,7 @@ def main(argv: list[str] | None = None) -> None:
     sub.add_parser("transcribe-benefits")
     sub.add_parser("reconcile-ties")
     sub.add_parser("build")
+    sub.add_parser("land-labelled")
     g = sub.add_parser("gate")
     g.add_argument(
         "--land",
@@ -1464,6 +1522,8 @@ def main(argv: list[str] | None = None) -> None:
         cmd_build()
     elif a.cmd == "gate":
         cmd_gate(a.land)
+    elif a.cmd == "land-labelled":
+        cmd_land_labelled()
 
 
 if __name__ == "__main__":
