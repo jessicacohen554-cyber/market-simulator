@@ -144,6 +144,31 @@ class TestWriterDerivation(unittest.TestCase):
         leg = {"weather_year": 2021, "ordc_voll": 9000.0, "a": 2}
         self.assertEqual(derive_overlay(base, leg), {"a": 2})
 
+    def test_an_inert_rule26_deleted_field_is_not_an_overlay(self):
+        import tempfile
+        from pathlib import Path
+
+        with tempfile.TemporaryDirectory() as tmp:
+            bundle = Path(tmp)
+            (bundle / "meta.json").write_text(json.dumps({"iso": "PJM"}))
+            (bundle / "run_config.json").write_text(
+                json.dumps({"scenario_config": {"voll": 5000.0}})
+            )
+            (bundle / "run_config_2025.json").write_text(
+                json.dumps(
+                    {
+                        "scenario_config": {
+                            "voll": 5000.0,
+                            "unit_outage_dispatched_bin_live_denominator": False,
+                        }
+                    }
+                )
+            )
+            block = build_block(
+                bundle, [([2025], "run_config_2025.json")], "run_config.json"
+            )
+        self.assertNotIn("2025", block)
+
     def test_an_identical_leg_derives_an_empty_overlay(self):
         self.assertEqual(derive_overlay({"a": 1}, {"a": 1}), {})
 

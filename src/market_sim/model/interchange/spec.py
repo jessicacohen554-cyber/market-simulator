@@ -1334,6 +1334,13 @@ class NeighborInterface:
     load_shape_kind: str = "gross"
     import_emission_factor: float | None = None
     hr_by_year: dict[int, float] | None = field(default=None, compare=False)
+    # FORWARD heat rate for an untabulated year (lane soco-101): when set,
+    # ``neighbor_heat_rate`` prices every year NOT in ``hr_by_year`` (and the
+    # ``"flat"`` forward-skill path) off it instead of ``marginal_heat_rate``,
+    # which stays the structural fallback. Produced, never typed, by
+    # ``scripts/data/derive_neighbor_forward_hr.py`` (the seam-own flat mean of
+    # the registered ``hr_by_year`` cells); ``None`` keeps the old resolution.
+    forward_heat_rate: float | None = field(default=None, compare=False)
     # NWPP-NEXT-20: True = the seam is priced ONLY in years carrying a measured
     # ``hr_by_year`` anchor; in any other year it builds no band and its
     # counterparty stays on the served measured schedule (rule 19 per year).
@@ -1937,10 +1944,24 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
     #     a seam price. FPC / TAL 2019-22 and 2025 landed with soco-99 (R-4):
     #     the FLA load-shape extract was extended from the BALANCE archive
     #     as the sum of the FLA region's member BAs; 2023-24 unchanged.
-    #     TAL's lambda sits 25-35 % below FPC / JEA every year (sub-CC
-    #     implied HR 5.7-7.7), flagged in FINDING-soco-99, not adjusted.
-    #   * NOT anchored: SOCO_SCEG (Dominion SC files 0.00 every hour) and
-    #     SOCO_FPL (lambda ~40 % below its peers, basis unresolved).
+    #     TAL's low lambda (implied HR 5.7-7.7) is confirmed by soco-100:
+    #     it matches its own CCs' measured INCREMENTAL heat rate (5.5-6.1;
+    #     the soco-99 flag compared it with their 7.8 average HR).
+    #   * SOCO_FPL (soco-100, owner ruling): same Sch. 6 definition; its
+    #     lambda is its all-CC, coal-free fleet's incremental fuel cost
+    #     (lambda / HH 6.0-6.8 vs measured CC incremental HR 6.4-6.8).
+    #     2021 is refused: FPL's 2021 filing re-files its 2019 series
+    #     (duplicate-filing guard), so 2021 keeps the structural 11.6.
+    #   * NOT anchored: SOCO_SCEG (Dominion SC files 0.00 every hour).
+    # ``forward_heat_rate`` (lane soco-101, owner ruling 2026-10-02,
+    #   FINDING-soco-100 §7) = the seam-own flat mean of the registered
+    #   ``hr_by_year`` cells, the OUTPUT of
+    #   ``scripts/data/derive_neighbor_forward_hr.py --iso SOCO`` (rule 23), not
+    #   typed. It prices every untabulated (forecast) year in place of the
+    #   ``marginal_heat_rate`` flat below; it replaces the FINDING-soco-98 §3
+    #   elasticity fits (none is keyed) and the 11.6 flat. SOCO_SCEG has no
+    #   cells and keeps 11.6. Inert: no SOCO block is armed, and every backcast
+    #   year is tabulated.
     # ``marginal_heat_rate`` anchors are TIER-3, labelled, default-off, and
     # UNCHANGED by soco-98 (the seam-own flat mean is a forecast-lane arming
     # choice, recorded in FINDING-soco-98):
@@ -1991,6 +2012,7 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
                 2024: 10.65,
                 2025: 9.62,
             },
+            forward_heat_rate=9.15,
         ),
         NeighborInterface(
             # Winter Avg TC 2,374 (summer 1,791); measured envelope
@@ -2012,6 +2034,7 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
                 2024: 10.09,
                 2025: 9.28,
             },
+            forward_heat_rate=9.24,
         ),
         NeighborInterface(
             # Duke Energy Carolinas. Winter Avg TC 407 (summer 34); measured
@@ -2035,6 +2058,7 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
                 2024: 11.16,
                 2025: 11.03,
             },
+            forward_heat_rate=10.15,
         ),
         NeighborInterface(
             # Dominion Energy South Carolina (SCEG). Winter Avg TC 126
@@ -2072,6 +2096,7 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
                 2024: 17.27,
                 2025: 10.56,
             },
+            forward_heat_rate=12.32,
         ),
         NeighborInterface(
             # Florida Power & Light incl. FPL-Northwest (the former Gulf
@@ -2087,6 +2112,16 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             interface_limit_mw=1317.0,
             border_zones=("SOCO_GA", "SOCO_AL"),
             load_shape_exponent=1.0,
+            # No 2021 cell: FPL's 2021 Sch. 6 filing re-files 2019 (soco-100).
+            hr_by_year={
+                2019: 6.75,
+                2020: 6.73,
+                2022: 5.98,
+                2023: 6.06,
+                2024: 6.55,
+                2025: 5.96,
+            },
+            forward_heat_rate=6.34,
         ),
         NeighborInterface(
             # Duke Energy Florida (Progress FL, EIA-930 ``FPC``). Winter Avg
@@ -2110,6 +2145,7 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
                 2024: 9.69,
                 2025: 8.69,
             },
+            forward_heat_rate=8.71,
         ),
         NeighborInterface(
             # City of Tallahassee. Winter Avg TC 20 (summer 12); measured
@@ -2133,6 +2169,7 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
                 2024: 7.69,
                 2025: 7.22,
             },
+            forward_heat_rate=6.7,
         ),
     ],
 }

@@ -123,10 +123,12 @@ NEIGHBOR_LMP_ANCHORS: dict[str, dict[str, Anchor]] = {
     # SOCO (lane soco-98, FINDING-soco-33 §7 R-2 / FINDING-soco-97 §5 step 3).
     # SOCO_MISO reads MISO-South's own zonal LMP (the SPP-51 construction for
     # the same zone; rule 19, one physical seam). The five non-market seams
-    # read the neighbour's OWN FERC 714 Sch. 6 system lambda. NOT anchored,
-    # and reported as such: SOCO_SCEG (Dominion SC files 0.00 in every hour,
-    # not shipped) and SOCO_FPL (its lambda runs ~40 % below its peers on an
-    # unresolved basis, ferc-714 README "Flags"). JEA files a lambda but is
+    # read the neighbour's OWN FERC 714 Sch. 6 system lambda. SOCO_FPL joins
+    # them under owner ruling soco-100 (FINDING-soco-100: its low lambda is
+    # its own CC fleet's incremental fuel cost, not a basis error); its 2021
+    # filing re-files 2019 and is refused by the duplicate-filing guard. NOT
+    # anchored, and reported as such: SOCO_SCEG (Dominion SC files 0.00 in
+    # every hour, not shipped). JEA files a lambda but is
     # not a SOCO EIA-930 counterparty, so it has no block to anchor. SOCO's
     # own lambda never enters (G17: each anchor is the neighbour's price on
     # the neighbour's side of the seam). Rule 25: none of these is PJM's
@@ -138,6 +140,7 @@ NEIGHBOR_LMP_ANCHORS: dict[str, dict[str, Anchor]] = {
         "SOCO_SC": Anchor("SC", kind="ferc714_lambda"),
         "SOCO_FPC": Anchor("FPC", kind="ferc714_lambda"),
         "SOCO_TAL": Anchor("TAL", kind="ferc714_lambda"),
+        "SOCO_FPL": Anchor("FPL", kind="ferc714_lambda"),
     },
 }
 
@@ -145,6 +148,53 @@ NEIGHBOR_LMP_ANCHORS: dict[str, dict[str, Anchor]] = {
 ANCHOR_KINDS: frozenset[str] = frozenset({"lmp", "ferc714_lambda"})
 
 _HOURS = 8760
+
+#: Share of hour-aligned values two report years must share, at whole-dollar
+#: rounding, for the later year to be read as a RE-FILING of the earlier one
+#: rather than a measurement. Two independently measured years of an hourly
+#: lambda share far fewer: across the nine SOCO neighbours 2019-25 the highest
+#: non-duplicate pair shares < 0.5 even at a +-1 h shift, while FPL 2021 equals
+#: FPL 2019 in all 8,760 hours (FINDING-soco-100 §2). A data-validity guard,
+#: not a tunable: it never moves a value, it refuses a non-measurement.
+DUPLICATE_FILING_SHARE = 0.99
+
+
+def duplicate_filing_of(ba_code: str, year: int) -> int | None:
+    """Return the earlier report year that ``year``'s Sch. 6 filing re-files, or None.
+
+    A respondent-year whose hour-aligned lambda equals an EARLIER report
+    year's, after rounding both to whole dollars (some filers round from 2021),
+    in at least :data:`DUPLICATE_FILING_SHARE` of the common hours is a copy
+    carried over in the filing, not a measurement of ``year``. Case: FPL's
+    2021 XBRL filing (its only one) is its 2019 series rounded; its first 2022
+    filing carried the same copy before FPL resubmitted (FINDING-soco-100 §2).
+    """
+    from market_sim.data.ferc714 import (
+        SOCO_NEIGHBOR_LAMBDA_RESPONDENTS,
+        load_ferc714_system_lambda,
+    )
+
+    respondent = SOCO_NEIGHBOR_LAMBDA_RESPONDENTS.get(ba_code)
+    if respondent is None:
+        return None
+    try:
+        df = load_ferc714_system_lambda(respondent.respondent_id)
+    except FileNotFoundError:
+        return None
+    df = df.sort_values("datetime_utc")
+    by_year = {
+        int(y): np.round(g["system_lambda_usd_mwh"].to_numpy(dtype=float))
+        for y, g in df.groupby("report_year")
+    }
+    this = by_year.get(year)
+    if this is None:
+        return None
+    for earlier in sorted(y for y in by_year if y < year):
+        other = by_year[earlier]
+        n = min(this.size, other.size)
+        if n and float(np.mean(this[:n] == other[:n])) >= DUPLICATE_FILING_SHARE:
+            return earlier
+    return None
 
 
 def _measured_mean_lambda(ba_code: str, year: int) -> float | None:
@@ -215,6 +265,7 @@ def derive(
     years: list[int],
     run: str = "rt",
     shapeless: dict[str, list[int]] | None = None,
+    refused: dict[str, dict[int, int]] | None = None,
 ) -> dict[str, dict[int, float]]:
     """Return ``{neighbor_name: {year: hr}}`` anchored to measured neighbor LMP.
 
@@ -225,6 +276,11 @@ def derive(
         shapeless: When given, a (neighbour, year) with no EIA-930 load shape is
             RECORDED here (``{neighbour: [years]}``) and left out of the table
             instead of raising — an armed seam could not price that year either.
+        refused: When given, a lambda anchor's year refused by
+            :func:`duplicate_filing_of` is RECORDED here as
+            ``{neighbour: {year: re-filed year}}``. A refused year is ALWAYS
+            left out of the table (it is not a measurement; the seam keeps its
+            structural ``marginal_heat_rate`` there) — the dict only reports it.
             ``None`` (the default) keeps the fail-closed behaviour.
 
     Raises:
@@ -245,6 +301,12 @@ def derive(
             continue
         per_year: dict[int, float] = {}
         for year in years:
+            if anchor.kind == "ferc714_lambda":
+                copied = duplicate_filing_of(anchor.product, year)
+                if copied is not None:
+                    if refused is not None:
+                        refused.setdefault(neighbor.name, {})[year] = copied
+                    continue
             measured = _measured_mean_lmp(anchor, year, run)
             if measured is None:
                 raise FileNotFoundError(
@@ -290,8 +352,9 @@ def main() -> None:
     args = ap.parse_args()
     iso = args.iso.upper()
     shapeless: dict[str, list[int]] | None = {} if args.skip_shapeless else None
+    refused: dict[str, dict[int, int]] = {}
     try:
-        table = derive(iso, args.years, args.run, shapeless)
+        table = derive(iso, args.years, args.run, shapeless, refused)
     except (KeyError, FileNotFoundError) as exc:
         sys.exit(f"derive_neighbor_hr_by_year: {exc}")
     print(f"# Derived measured-anchored neighbor heat rates for {iso} ({args.run})")
@@ -310,6 +373,12 @@ def main() -> None:
             f"# {name}: no measured anchor registered — structural "
             "marginal_heat_rate kept (see the ISO's NEIGHBOR_LMP_ANCHORS entry)"
         )
+    for name, years in refused.items():
+        for year, copied in sorted(years.items()):
+            print(
+                f"# {name}: {year} filing re-files {copied} (duplicate-filing "
+                "guard) — not anchored, structural marginal_heat_rate kept"
+            )
     for name, gap in (shapeless or {}).items():
         print(f"# {name}: no EIA-930 load shape for {sorted(gap)} — not anchored")
 

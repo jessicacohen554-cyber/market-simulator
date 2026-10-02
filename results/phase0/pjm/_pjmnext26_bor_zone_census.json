@@ -1,0 +1,778 @@
+{
+ "what": "PJM-NEXT-26 card (a): IMM BOR credits by zone vs keeper CT location residual. ZERO LP.",
+ "zone_mapping": {
+  "ComEd": "PJM_ComEd",
+  "COMED": "PJM_ComEd",
+  "AEP": "PJM_AEP_Ohio",
+  "DAY": "PJM_AEP_Ohio",
+  "DEOK": "PJM_AEP_Ohio",
+  "DUKE": "PJM_AEP_Ohio",
+  "OVEC": "PJM_AEP_Ohio",
+  "EKPC": "PJM_AEP_Ohio",
+  "ATSI": "PJM_ATSI",
+  "APS": "PJM_West_APS",
+  "DLCO": "PJM_West_APS",
+  "DUQ": "PJM_West_APS",
+  "PPL": "PJM_Central_PA",
+  "PENELEC": "PJM_Central_PA",
+  "PE": "PJM_Central_PA",
+  "Met-Ed": "PJM_Central_PA",
+  "MEC": "PJM_Central_PA",
+  "METED": "PJM_Central_PA",
+  "Dominion": "PJM_Dominion",
+  "DOM": "PJM_Dominion",
+  "PSEG": "PJM_EMAAC",
+  "JCPL": "PJM_EMAAC",
+  "JCPLC": "PJM_EMAAC",
+  "PECO": "PJM_EMAAC",
+  "DPL": "PJM_EMAAC",
+  "AECO": "PJM_EMAAC",
+  "ACEC": "PJM_EMAAC",
+  "RECO": "PJM_EMAAC",
+  "REC": "PJM_EMAAC",
+  "BGE": "PJM_SWMAAC",
+  "Pepco": "PJM_SWMAAC",
+  "PEPCO": "PJM_SWMAAC"
+ },
+ "notes": [
+  "zone credits = regionally allocated DA OR + BOR (incl. LOC), all unit types; printed 2019-2022 only",
+  "IMM prints no full zone x unit-type split; zone_x_type = top-10 BOR recipients only",
+  "EKPC credits mapped to PJM_AEP_Ohio (resource location, KY), External dropped"
+ ],
+ "years": {
+  "2019": {
+   "ct_share_of_bg": 0.863,
+   "top10_ct_share_of_bor_by_zone": {
+    "PJM_Dominion": 0.0556,
+    "PJM_AEP_Ohio": 0.0366,
+    "PJM_SWMAAC": 0.0123
+   },
+   "by_zone": {
+    "PJM_AEP_Ohio": {
+     "real_minus_model_twh": 2.55,
+     "model_minus_real_twh": -2.55,
+     "real_credit_share": 0.2046,
+     "load_share_cfg": 0.2178,
+     "charge_share": 0.2231
+    },
+    "PJM_ATSI": {
+     "real_minus_model_twh": -0.2,
+     "model_minus_real_twh": 0.2,
+     "real_credit_share": 0.0337,
+     "load_share_cfg": 0.0844,
+     "charge_share": 0.0774
+    },
+    "PJM_Central_PA": {
+     "real_minus_model_twh": 0.24,
+     "model_minus_real_twh": -0.24,
+     "real_credit_share": 0.0421,
+     "load_share_cfg": 0.1101,
+     "charge_share": 0.1234
+    },
+    "PJM_ComEd": {
+     "real_minus_model_twh": 0.46,
+     "model_minus_real_twh": -0.46,
+     "real_credit_share": 0.2226,
+     "load_share_cfg": 0.1185,
+     "charge_share": 0.1312
+    },
+    "PJM_Dominion": {
+     "real_minus_model_twh": 2.13,
+     "model_minus_real_twh": -2.13,
+     "real_credit_share": 0.1637,
+     "load_share_cfg": 0.1499,
+     "charge_share": 0.1142
+    },
+    "PJM_EMAAC": {
+     "real_minus_model_twh": -0.61,
+     "model_minus_real_twh": 0.61,
+     "real_credit_share": 0.0939,
+     "load_share_cfg": 0.1672,
+     "charge_share": 0.1759
+    },
+    "PJM_SWMAAC": {
+     "real_minus_model_twh": 0.47,
+     "model_minus_real_twh": -0.47,
+     "real_credit_share": 0.2142,
+     "load_share_cfg": 0.0736,
+     "charge_share": 0.0814
+    },
+    "PJM_West_APS": {
+     "real_minus_model_twh": 1.04,
+     "model_minus_real_twh": -1.04,
+     "real_credit_share": 0.0253,
+     "load_share_cfg": 0.0785,
+     "charge_share": 0.0735
+    }
+   },
+   "test_literal": {
+    "under_run_zone": "PJM_AEP_Ohio",
+    "top2_credit_zones": [
+     "PJM_ComEd",
+     "PJM_SWMAAC"
+    ],
+    "under_in_top2": false,
+    "over_run_zones_below_load_share": {
+     "PJM_ATSI": true,
+     "PJM_EMAAC": true
+    },
+    "all_over_below_load": true,
+    "pass": false
+   },
+   "test_as_published": {
+    "under_run_zone": "PJM_EMAAC",
+    "top2_credit_zones": [
+     "PJM_ComEd",
+     "PJM_SWMAAC"
+    ],
+    "under_in_top2": false,
+    "over_run_zones_below_load_share": {
+     "PJM_AEP_Ohio": true,
+     "PJM_Central_PA": true,
+     "PJM_ComEd": false,
+     "PJM_Dominion": false,
+     "PJM_SWMAAC": false,
+     "PJM_West_APS": true
+    },
+    "all_over_below_load": false,
+    "pass": false
+   },
+   "test_literal_chargeproxy": {
+    "under_run_zone": "PJM_AEP_Ohio",
+    "top2_credit_zones": [
+     "PJM_ComEd",
+     "PJM_SWMAAC"
+    ],
+    "under_in_top2": false,
+    "over_run_zones_below_load_share": {
+     "PJM_ATSI": true,
+     "PJM_EMAAC": true
+    },
+    "all_over_below_load": true,
+    "pass": false
+   },
+   "test_as_published_chargeproxy": {
+    "under_run_zone": "PJM_EMAAC",
+    "top2_credit_zones": [
+     "PJM_ComEd",
+     "PJM_SWMAAC"
+    ],
+    "under_in_top2": false,
+    "over_run_zones_below_load_share": {
+     "PJM_AEP_Ohio": true,
+     "PJM_Central_PA": true,
+     "PJM_ComEd": false,
+     "PJM_Dominion": false,
+     "PJM_SWMAAC": false,
+     "PJM_West_APS": true
+    },
+    "all_over_below_load": false,
+    "pass": false
+   }
+  },
+  "2020": {
+   "ct_share_of_bg": 0.912,
+   "top10_ct_share_of_bor_by_zone": {
+    "PJM_Dominion": 0.0727,
+    "PJM_ATSI": 0.0271,
+    "PJM_AEP_Ohio": 0.0496
+   },
+   "by_zone": {
+    "PJM_AEP_Ohio": {
+     "real_minus_model_twh": 1.73,
+     "model_minus_real_twh": -1.73,
+     "real_credit_share": 0.245,
+     "load_share_cfg": 0.2178,
+     "charge_share": 0.2194
+    },
+    "PJM_ATSI": {
+     "real_minus_model_twh": 0.57,
+     "model_minus_real_twh": -0.57,
+     "real_credit_share": 0.0577,
+     "load_share_cfg": 0.0844,
+     "charge_share": 0.071
+    },
+    "PJM_Central_PA": {
+     "real_minus_model_twh": 0.12,
+     "model_minus_real_twh": -0.12,
+     "real_credit_share": 0.0353,
+     "load_share_cfg": 0.1101,
+     "charge_share": 0.1226
+    },
+    "PJM_ComEd": {
+     "real_minus_model_twh": 0.64,
+     "model_minus_real_twh": -0.64,
+     "real_credit_share": 0.2367,
+     "load_share_cfg": 0.1185,
+     "charge_share": 0.1123
+    },
+    "PJM_Dominion": {
+     "real_minus_model_twh": 1.47,
+     "model_minus_real_twh": -1.47,
+     "real_credit_share": 0.1531,
+     "load_share_cfg": 0.1499,
+     "charge_share": 0.1252
+    },
+    "PJM_EMAAC": {
+     "real_minus_model_twh": 0.03,
+     "model_minus_real_twh": -0.03,
+     "real_credit_share": 0.1143,
+     "load_share_cfg": 0.1672,
+     "charge_share": 0.1884
+    },
+    "PJM_SWMAAC": {
+     "real_minus_model_twh": 0.82,
+     "model_minus_real_twh": -0.82,
+     "real_credit_share": 0.1331,
+     "load_share_cfg": 0.0736,
+     "charge_share": 0.089
+    },
+    "PJM_West_APS": {
+     "real_minus_model_twh": 0.36,
+     "model_minus_real_twh": -0.36,
+     "real_credit_share": 0.0247,
+     "load_share_cfg": 0.0785,
+     "charge_share": 0.0723
+    }
+   },
+   "test_literal": {
+    "under_run_zone": "PJM_AEP_Ohio",
+    "top2_credit_zones": [
+     "PJM_AEP_Ohio",
+     "PJM_ComEd"
+    ],
+    "under_in_top2": true,
+    "over_run_zones_below_load_share": {},
+    "all_over_below_load": true,
+    "pass": true
+   },
+   "test_as_published": {
+    "under_run_zone": "PJM_EMAAC",
+    "top2_credit_zones": [
+     "PJM_AEP_Ohio",
+     "PJM_ComEd"
+    ],
+    "under_in_top2": false,
+    "over_run_zones_below_load_share": {
+     "PJM_AEP_Ohio": false,
+     "PJM_ATSI": true,
+     "PJM_Central_PA": true,
+     "PJM_ComEd": false,
+     "PJM_Dominion": false,
+     "PJM_EMAAC": true,
+     "PJM_SWMAAC": false,
+     "PJM_West_APS": true
+    },
+    "all_over_below_load": false,
+    "pass": false
+   },
+   "test_literal_chargeproxy": {
+    "under_run_zone": "PJM_AEP_Ohio",
+    "top2_credit_zones": [
+     "PJM_AEP_Ohio",
+     "PJM_ComEd"
+    ],
+    "under_in_top2": true,
+    "over_run_zones_below_load_share": {},
+    "all_over_below_load": true,
+    "pass": true
+   },
+   "test_as_published_chargeproxy": {
+    "under_run_zone": "PJM_EMAAC",
+    "top2_credit_zones": [
+     "PJM_AEP_Ohio",
+     "PJM_ComEd"
+    ],
+    "under_in_top2": false,
+    "over_run_zones_below_load_share": {
+     "PJM_AEP_Ohio": false,
+     "PJM_ATSI": true,
+     "PJM_Central_PA": true,
+     "PJM_ComEd": false,
+     "PJM_Dominion": false,
+     "PJM_EMAAC": true,
+     "PJM_SWMAAC": false,
+     "PJM_West_APS": true
+    },
+    "all_over_below_load": false,
+    "pass": false
+   }
+  },
+  "2021": {
+   "ct_share_of_bg": 0.9279999999999999,
+   "top10_ct_share_of_bor_by_zone": {
+    "PJM_Dominion": 0.075,
+    "PJM_ATSI": 0.0286,
+    "PJM_AEP_Ohio": 0.0266
+   },
+   "by_zone": {
+    "PJM_AEP_Ohio": {
+     "real_minus_model_twh": 3.02,
+     "model_minus_real_twh": -3.02,
+     "real_credit_share": 0.2459,
+     "load_share_cfg": 0.2178,
+     "charge_share": 0.2438
+    },
+    "PJM_ATSI": {
+     "real_minus_model_twh": 1.34,
+     "model_minus_real_twh": -1.34,
+     "real_credit_share": 0.0655,
+     "load_share_cfg": 0.0844,
+     "charge_share": 0.0702
+    },
+    "PJM_Central_PA": {
+     "real_minus_model_twh": 0.12,
+     "model_minus_real_twh": -0.12,
+     "real_credit_share": 0.0553,
+     "load_share_cfg": 0.1101,
+     "charge_share": 0.1073
+    },
+    "PJM_ComEd": {
+     "real_minus_model_twh": 1.37,
+     "model_minus_real_twh": -1.37,
+     "real_credit_share": 0.2171,
+     "load_share_cfg": 0.1185,
+     "charge_share": 0.1177
+    },
+    "PJM_Dominion": {
+     "real_minus_model_twh": 2.23,
+     "model_minus_real_twh": -2.23,
+     "real_credit_share": 0.1936,
+     "load_share_cfg": 0.1499,
+     "charge_share": 0.1307
+    },
+    "PJM_EMAAC": {
+     "real_minus_model_twh": -0.17,
+     "model_minus_real_twh": 0.17,
+     "real_credit_share": 0.1161,
+     "load_share_cfg": 0.1672,
+     "charge_share": 0.1808
+    },
+    "PJM_SWMAAC": {
+     "real_minus_model_twh": 1.09,
+     "model_minus_real_twh": -1.09,
+     "real_credit_share": 0.0782,
+     "load_share_cfg": 0.0736,
+     "charge_share": 0.0819
+    },
+    "PJM_West_APS": {
+     "real_minus_model_twh": 0.06,
+     "model_minus_real_twh": -0.06,
+     "real_credit_share": 0.0283,
+     "load_share_cfg": 0.0785,
+     "charge_share": 0.0676
+    }
+   },
+   "test_literal": {
+    "under_run_zone": "PJM_AEP_Ohio",
+    "top2_credit_zones": [
+     "PJM_AEP_Ohio",
+     "PJM_ComEd"
+    ],
+    "under_in_top2": true,
+    "over_run_zones_below_load_share": {
+     "PJM_EMAAC": true
+    },
+    "all_over_below_load": true,
+    "pass": true
+   },
+   "test_as_published": {
+    "under_run_zone": "PJM_EMAAC",
+    "top2_credit_zones": [
+     "PJM_AEP_Ohio",
+     "PJM_ComEd"
+    ],
+    "under_in_top2": false,
+    "over_run_zones_below_load_share": {
+     "PJM_AEP_Ohio": false,
+     "PJM_ATSI": true,
+     "PJM_Central_PA": true,
+     "PJM_ComEd": false,
+     "PJM_Dominion": false,
+     "PJM_SWMAAC": false,
+     "PJM_West_APS": true
+    },
+    "all_over_below_load": false,
+    "pass": false
+   },
+   "test_literal_chargeproxy": {
+    "under_run_zone": "PJM_AEP_Ohio",
+    "top2_credit_zones": [
+     "PJM_AEP_Ohio",
+     "PJM_ComEd"
+    ],
+    "under_in_top2": true,
+    "over_run_zones_below_load_share": {
+     "PJM_EMAAC": true
+    },
+    "all_over_below_load": true,
+    "pass": true
+   },
+   "test_as_published_chargeproxy": {
+    "under_run_zone": "PJM_EMAAC",
+    "top2_credit_zones": [
+     "PJM_AEP_Ohio",
+     "PJM_ComEd"
+    ],
+    "under_in_top2": false,
+    "over_run_zones_below_load_share": {
+     "PJM_AEP_Ohio": false,
+     "PJM_ATSI": true,
+     "PJM_Central_PA": true,
+     "PJM_ComEd": false,
+     "PJM_Dominion": false,
+     "PJM_SWMAAC": true,
+     "PJM_West_APS": true
+    },
+    "all_over_below_load": false,
+    "pass": false
+   }
+  },
+  "2022": {
+   "ct_share_of_bg": 0.752,
+   "top10_ct_share_of_bor_by_zone": {
+    "PJM_Dominion": 0.1025,
+    "PJM_ComEd": 0.0111
+   },
+   "by_zone": {
+    "PJM_AEP_Ohio": {
+     "real_minus_model_twh": 3.7,
+     "model_minus_real_twh": -3.7,
+     "real_credit_share": 0.2145,
+     "load_share_cfg": 0.2178,
+     "charge_share": 0.2464
+    },
+    "PJM_ATSI": {
+     "real_minus_model_twh": 1.65,
+     "model_minus_real_twh": -1.65,
+     "real_credit_share": 0.0362,
+     "load_share_cfg": 0.0844,
+     "charge_share": 0.0692
+    },
+    "PJM_Central_PA": {
+     "real_minus_model_twh": -0.04,
+     "model_minus_real_twh": 0.04,
+     "real_credit_share": 0.1085,
+     "load_share_cfg": 0.1101,
+     "charge_share": 0.1059
+    },
+    "PJM_ComEd": {
+     "real_minus_model_twh": -2.38,
+     "model_minus_real_twh": 2.38,
+     "real_credit_share": 0.0977,
+     "load_share_cfg": 0.1185,
+     "charge_share": 0.1099
+    },
+    "PJM_Dominion": {
+     "real_minus_model_twh": 2.44,
+     "model_minus_real_twh": -2.44,
+     "real_credit_share": 0.1847,
+     "load_share_cfg": 0.1499,
+     "charge_share": 0.159
+    },
+    "PJM_EMAAC": {
+     "real_minus_model_twh": 0.18,
+     "model_minus_real_twh": -0.18,
+     "real_credit_share": 0.1103,
+     "load_share_cfg": 0.1672,
+     "charge_share": 0.1723
+    },
+    "PJM_SWMAAC": {
+     "real_minus_model_twh": 0.49,
+     "model_minus_real_twh": -0.49,
+     "real_credit_share": 0.2263,
+     "load_share_cfg": 0.0736,
+     "charge_share": 0.0745
+    },
+    "PJM_West_APS": {
+     "real_minus_model_twh": 0.85,
+     "model_minus_real_twh": -0.85,
+     "real_credit_share": 0.0218,
+     "load_share_cfg": 0.0785,
+     "charge_share": 0.0628
+    }
+   },
+   "test_literal": {
+    "under_run_zone": "PJM_AEP_Ohio",
+    "top2_credit_zones": [
+     "PJM_SWMAAC",
+     "PJM_AEP_Ohio"
+    ],
+    "under_in_top2": true,
+    "over_run_zones_below_load_share": {
+     "PJM_Central_PA": true,
+     "PJM_ComEd": true
+    },
+    "all_over_below_load": true,
+    "pass": true
+   },
+   "test_as_published": {
+    "under_run_zone": "PJM_ComEd",
+    "top2_credit_zones": [
+     "PJM_SWMAAC",
+     "PJM_AEP_Ohio"
+    ],
+    "under_in_top2": false,
+    "over_run_zones_below_load_share": {
+     "PJM_AEP_Ohio": true,
+     "PJM_ATSI": true,
+     "PJM_Dominion": false,
+     "PJM_EMAAC": true,
+     "PJM_SWMAAC": false,
+     "PJM_West_APS": true
+    },
+    "all_over_below_load": false,
+    "pass": false
+   },
+   "test_literal_chargeproxy": {
+    "under_run_zone": "PJM_AEP_Ohio",
+    "top2_credit_zones": [
+     "PJM_SWMAAC",
+     "PJM_AEP_Ohio"
+    ],
+    "under_in_top2": true,
+    "over_run_zones_below_load_share": {
+     "PJM_Central_PA": false,
+     "PJM_ComEd": true
+    },
+    "all_over_below_load": false,
+    "pass": false
+   },
+   "test_as_published_chargeproxy": {
+    "under_run_zone": "PJM_ComEd",
+    "top2_credit_zones": [
+     "PJM_SWMAAC",
+     "PJM_AEP_Ohio"
+    ],
+    "under_in_top2": false,
+    "over_run_zones_below_load_share": {
+     "PJM_AEP_Ohio": true,
+     "PJM_ATSI": true,
+     "PJM_Dominion": false,
+     "PJM_EMAAC": true,
+     "PJM_SWMAAC": false,
+     "PJM_West_APS": true
+    },
+    "all_over_below_load": false,
+    "pass": false
+   }
+  },
+  "2023": {
+   "ct_share_of_bg": 0.857,
+   "top10_ct_share_of_bor_by_zone": {
+    "PJM_Dominion": 0.0902,
+    "PJM_AEP_Ohio": 0.0373
+   },
+   "by_zone": {
+    "PJM_AEP_Ohio": {
+     "real_minus_model_twh": 3.83,
+     "model_minus_real_twh": -3.83,
+     "real_credit_share": null,
+     "load_share_cfg": 0.2178,
+     "charge_share": null
+    },
+    "PJM_ATSI": {
+     "real_minus_model_twh": 1.56,
+     "model_minus_real_twh": -1.56,
+     "real_credit_share": null,
+     "load_share_cfg": 0.0844,
+     "charge_share": null
+    },
+    "PJM_Central_PA": {
+     "real_minus_model_twh": -0.48,
+     "model_minus_real_twh": 0.48,
+     "real_credit_share": null,
+     "load_share_cfg": 0.1101,
+     "charge_share": null
+    },
+    "PJM_ComEd": {
+     "real_minus_model_twh": -3.67,
+     "model_minus_real_twh": 3.67,
+     "real_credit_share": null,
+     "load_share_cfg": 0.1185,
+     "charge_share": null
+    },
+    "PJM_Dominion": {
+     "real_minus_model_twh": 2.28,
+     "model_minus_real_twh": -2.28,
+     "real_credit_share": null,
+     "load_share_cfg": 0.1499,
+     "charge_share": null
+    },
+    "PJM_EMAAC": {
+     "real_minus_model_twh": 0.2,
+     "model_minus_real_twh": -0.2,
+     "real_credit_share": null,
+     "load_share_cfg": 0.1672,
+     "charge_share": null
+    },
+    "PJM_SWMAAC": {
+     "real_minus_model_twh": 0.65,
+     "model_minus_real_twh": -0.65,
+     "real_credit_share": null,
+     "load_share_cfg": 0.0736,
+     "charge_share": null
+    },
+    "PJM_West_APS": {
+     "real_minus_model_twh": -2.06,
+     "model_minus_real_twh": 2.06,
+     "real_credit_share": null,
+     "load_share_cfg": 0.0785,
+     "charge_share": null
+    }
+   }
+  },
+  "2024": {
+   "ct_share_of_bg": 0.7609999999999999,
+   "top10_ct_share_of_bor_by_zone": {
+    "PJM_AEP_Ohio": 0.0777
+   },
+   "by_zone": {
+    "PJM_AEP_Ohio": {
+     "real_minus_model_twh": 5.25,
+     "model_minus_real_twh": -5.25,
+     "real_credit_share": null,
+     "load_share_cfg": 0.2178,
+     "charge_share": null
+    },
+    "PJM_ATSI": {
+     "real_minus_model_twh": 0.9,
+     "model_minus_real_twh": -0.9,
+     "real_credit_share": null,
+     "load_share_cfg": 0.0844,
+     "charge_share": null
+    },
+    "PJM_Central_PA": {
+     "real_minus_model_twh": -0.67,
+     "model_minus_real_twh": 0.67,
+     "real_credit_share": null,
+     "load_share_cfg": 0.1101,
+     "charge_share": null
+    },
+    "PJM_ComEd": {
+     "real_minus_model_twh": -5.01,
+     "model_minus_real_twh": 5.01,
+     "real_credit_share": null,
+     "load_share_cfg": 0.1185,
+     "charge_share": null
+    },
+    "PJM_Dominion": {
+     "real_minus_model_twh": 1.28,
+     "model_minus_real_twh": -1.28,
+     "real_credit_share": null,
+     "load_share_cfg": 0.1499,
+     "charge_share": null
+    },
+    "PJM_EMAAC": {
+     "real_minus_model_twh": 0.15,
+     "model_minus_real_twh": -0.15,
+     "real_credit_share": null,
+     "load_share_cfg": 0.1672,
+     "charge_share": null
+    },
+    "PJM_SWMAAC": {
+     "real_minus_model_twh": 0.32,
+     "model_minus_real_twh": -0.32,
+     "real_credit_share": null,
+     "load_share_cfg": 0.0736,
+     "charge_share": null
+    },
+    "PJM_West_APS": {
+     "real_minus_model_twh": -2.91,
+     "model_minus_real_twh": 2.91,
+     "real_credit_share": null,
+     "load_share_cfg": 0.0785,
+     "charge_share": null
+    }
+   }
+  },
+  "2025": {
+   "ct_share_of_bg": 0.564,
+   "top10_ct_share_of_bor_by_zone": {},
+   "by_zone": {
+    "PJM_AEP_Ohio": {
+     "real_minus_model_twh": 2.53,
+     "model_minus_real_twh": -2.53,
+     "real_credit_share": null,
+     "load_share_cfg": 0.2178,
+     "charge_share": null
+    },
+    "PJM_ATSI": {
+     "real_minus_model_twh": 1.15,
+     "model_minus_real_twh": -1.15,
+     "real_credit_share": null,
+     "load_share_cfg": 0.0844,
+     "charge_share": null
+    },
+    "PJM_Central_PA": {
+     "real_minus_model_twh": -0.55,
+     "model_minus_real_twh": 0.55,
+     "real_credit_share": null,
+     "load_share_cfg": 0.1101,
+     "charge_share": null
+    },
+    "PJM_ComEd": {
+     "real_minus_model_twh": -5.15,
+     "model_minus_real_twh": 5.15,
+     "real_credit_share": null,
+     "load_share_cfg": 0.1185,
+     "charge_share": null
+    },
+    "PJM_Dominion": {
+     "real_minus_model_twh": 0.14,
+     "model_minus_real_twh": -0.14,
+     "real_credit_share": null,
+     "load_share_cfg": 0.1499,
+     "charge_share": null
+    },
+    "PJM_EMAAC": {
+     "real_minus_model_twh": 0.47,
+     "model_minus_real_twh": -0.47,
+     "real_credit_share": null,
+     "load_share_cfg": 0.1672,
+     "charge_share": null
+    },
+    "PJM_SWMAAC": {
+     "real_minus_model_twh": 0.66,
+     "model_minus_real_twh": -0.66,
+     "real_credit_share": null,
+     "load_share_cfg": 0.0736,
+     "charge_share": null
+    },
+    "PJM_West_APS": {
+     "real_minus_model_twh": -2.79,
+     "model_minus_real_twh": 2.79,
+     "real_credit_share": null,
+     "load_share_cfg": 0.0785,
+     "charge_share": null
+    }
+   }
+  }
+ },
+ "verdict": {
+  "literal": {
+   "years_tested": [
+    2019,
+    2020,
+    2021,
+    2022
+   ],
+   "years_pass": [
+    2020,
+    2021,
+    2022
+   ],
+   "CONFIRMED": true
+  },
+  "as_published": {
+   "years_tested": [
+    2019,
+    2020,
+    2021,
+    2022
+   ],
+   "years_pass": [],
+   "CONFIRMED": false
+  }
+ }
+}

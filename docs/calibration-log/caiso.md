@@ -15824,3 +15824,53 @@ is capped (caiso-119), so the fraction barely moves the energy. Zero DOF was add
 - Recorded: at hour grain the keeper's measured gas bands sit +$3.6–6.4/MWh above the fleet's own DAM bids (pooled, every consumed class and band). Recorded: the re-fetched OASIS corpus moves the CT/ST partition (st_cut 11.74 → 11.19) with consumed bands ≤ 0.022.
 
 Record: `docs/records/caiso/r-caiso-33/`.
+
+## R-CAISO-34 — 2026-10-02: Run Explorer storage panel, SOC-bound envelope (link 16), display only
+
+- The storage panel gains, for CAISO 2023–25, the submitters' mean [min, max] end-of-hour SOC bound (share of ceiling) beside the keeper's li-ion SOC ÷ energy capacity, by hour of day, all year or Jun–Sep. It is labelled a self-selected subset (2.7 / 12.2 / 19.8 % of storage MW), never a target, and no statistic is computed against it. The R-CAISO-32 digitized DMM quarterly SOC-outage shares (2023–24) sit below it as a reference card.
+- Built in `scripts/lib/storage_compare.py::build_soc_bounds`, as an optional `storageCmp.socBounds` block that every future render carries. The block is on the model's fixed-PST clock, which removes the R-CAISO-31 probe's prevailing-time 1 h summer shift. The arm-3 keeper payload was injected in place by `scripts/probes/_rcaiso34_inject_soc_bounds.py`; the rest of the payload is byte-identical.
+- Descriptive only: the model's mean SOC share sits inside the band at all 24 hours, 2023–25. The band is wide and its submitters are a minority, so this is not a fit and not a lever.
+- Owner card: **ship as rendered.** Zero LP, keeper unchanged.
+
+Record: `docs/records/caiso/r-caiso-34/`.
+
+## 2026-10-02 — closeout-CAISO wave 1 arm 2: keeper 2026-10-02-closeout-caiso-w1-arm2 (measured zonal citygate gas basis, rule-14 fidelity arm), NOT-YET → NOT-YET
+
+The arm-3 keeper plus `caiso_zonal_gas_basis`: the measured PG&E Citygate basis for NP15/ZP26 and SoCal Citygate for
+the south, applied as a mean-zero capacity-weighted spread so the calibrated composite level is kept. The desk ruled
+(R-14) to run it as a declared rule-14 fidelity arm with no gate claim. It ran as seven year-isolated shards at
+`566bc8fa`.
+
+- **Tripwires held:** C3a 2024 +6.1 → +6.6 % (bar +1.5 pp), C4 2025 NRMSE 0.286 → 0.283 (bar 0.30).
+- **No regressions:** no gate regressed, and 2019 is identical (no hub row).
+- **Determination unchanged at NOT-YET:**
+  - C1 CC_REGULAR 2019/20/21: +10.19 / +16.45 / +8.11 TWh (2021 eases 0.58);
+  - C3a 2021: +12.7 %;
+  - C4 NRMSE 2019/20/21: 0.385 / 0.399 / 0.348;
+  - C3c: 2021 caveat, 2024 ledgered.
+
+The arm delivers the measured N–S gradient:
+- NP15 falls and the south rises in 2021.
+- In 2024 the measured spread reverses sign, and the 2024 CT_PEAKER deficit halves (−2.07 → −1.04 TWh).
+- C4 NRMSE 2023 improves 0.245 → 0.235.
+
+Matrix `zonal_gas_basis` moves R → K on structure, with zero DOF. During promotion, `scripts/lib/replay_recipe.py`
+gained an exemption for fields registered after a bundle was solved (excused only at their registered default). Record:
+`docs/records/caiso/closeout-caiso-w1/RESULT-closeout-caiso-w1-arm2-2026-10-02.md`.
+
+## R-CAISO-35 — 2026-10-02: battery-outage census, rule-19 test vs the shape anchor (link 17), zero LP
+
+- Pre-registered (PRECOMMIT at `70a63570`): does the `caiso_storage_shape_anchor` p95 envelope already carry the CNOG battery MW outages? CARRIED if the envelope exceeds the outage-available fleet share in ≤ 1 % of hours.
+- **CARRIED.** CNOG battery outages average 25.8 / 16.6 / 17.4 % of EIA-860 fleet MW (2023 / 24 / 25), at most 31 % in 2024–25. The envelope peaks at 0.46–0.55 (charge) and 0.60–0.66 (discharge). It passes the available share in 4 of 26,280 hours (0.046 %, all 2023 hod 18, ≤ 1.5 pp), inside the CNOG-vs-nameplate basis error that T2 measures. Both sensitivities read 0 hours. A stacked outage consumer would double-count (rule 19), so none is proposed.
+- Battery crosswalk: `build_caiso_resource_crosswalk.py --storage` → sibling file `data/raw/reference/caiso-storage-resource-eia-crosswalk.csv`. It has no reader, and `load_crosswalk` is untouched. 64 of 176 rows are accepted, covering 19–31 % of offline MW-h.
+- Owner card: **close report-only; crosswalk review queued as R-CAISO-36.** Keeper unchanged. Matrix: evidence only on `storage_measured_anchors` (K).
+
+Record: `docs/records/caiso/r-caiso-35/`.
+
+## R-CAISO-36 — 2026-10-02: battery crosswalk review and census selector fix (link 18), zero LP
+
+- Hand review recorded per row in `data/raw/reference/caiso-storage-crosswalk-review.csv` (`match_method = reviewed`, a `review_note` for each row). The 0.6 threshold and capacity sanity are unchanged. 168 of 233 rows are accepted (83 name-token, 85 reviewed), covering **78–85 % of offline MW-h**, up from 19–31 %. The T1 crosswalk-only sensitivity stays at 0 hours.
+- **Selector bug:** the R-CAISO-32 id pattern `_(?:BT|BX|ES|BE)\d` missed storage codes that follow a plant prefix (`ROMOLA_5_MPBBT1`). The fix adds 58 battery resources (including Menifee 680 MW, Crimson, Tahoe and Kola 1) and drops 2 pumped-hydro units. `RATSKE_2_WAVBT1` is fixed. The corrected census has outages at 28.4 / 22.3 / 23.8 % of fleet and T1 primary at 0.548 %. That is **still CARRIED**, and it is not re-opened.
+- Owner card: **close report-only; the next link is R-CAISO-37, an EIA-860M intake for the unmatched rows.** The keeper is unchanged. Matrix: evidence only on `storage_measured_anchors` (K).
+
+Record: `docs/records/caiso/r-caiso-36/`.
