@@ -1,4 +1,41 @@
 {
+ "2019": {
+  "shift_pred": -0.4,
+  "S3_median_gas_dmc": 0.0,
+  "S3": true,
+  "S4a_max_nongas_dmc": 13.461536407470703,
+  "S4a": false,
+  "S4b_i_pct": {
+   "nuclear": 0.0,
+   "wind": 0.0,
+   "solar": 0.0,
+   "hydro": 0.0,
+   "biomass": 0.0,
+   "OTHER": 0.0
+  },
+  "S4b_i": true,
+  "S4b_ii_d_displaced_twh": 0.265,
+  "S4b_ii_d_gas_cc_ct_twh": -0.304,
+  "S4b_ii": true,
+  "S4b_iii_flip_band_frac": 1.0,
+  "S4b_iii": true,
+  "S4b_iv_d_coal_twh": 0.073,
+  "S4b_iv_d_gas_twh": -0.109,
+  "S4b_iv": true,
+  "class_delta_twh": {
+   "CC_CHP": 0.097,
+   "CC_REGULAR": -0.231,
+   "COAL_BIT": 0.121,
+   "COAL_PRB": -0.041,
+   "COAL_WC": -0.008,
+   "CT_CHP": -0.019,
+   "CT_PEAKER": -0.151,
+   "ST_CHP": 0.0,
+   "ST_GAS": 0.194,
+   "import": 0.021,
+   "oil": -0.001
+  }
+ },
  "2020": {
   "shift_pred": -2.42,
   "S3_median_gas_dmc": -0.065,
