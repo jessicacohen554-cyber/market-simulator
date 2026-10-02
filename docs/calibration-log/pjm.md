@@ -6993,6 +6993,45 @@ over-run partly an exit-cohort outage-layer construction defect (~8.3 TWh phanto
   - The finding supports the CT_PEAKER 2021 ledger entry.
 - **Records:** `docs/records/pjm/RESULT-pjm-next-26-2026-10-02.md`, `FINDING-pjm-next-26-bor-zone-census-2026-10-02.md`.
 
+## 2026-10-02 — closeout-B W0 phase 3 fix-2: keeper 2026-10-02-w0-pjm-fix2, NOT-YET → NOT-YET
+
+**What changed.** The pjm-next-16 A recipe (`pjmnext16_A_span`) was re-solved year by year (rule 36) with the ten W0 EIA-860 settlement backcast defaults (owner ruling R-2; PRECOMMIT `docs/records/governance/closeout-2026-10/PRECOMMIT-closeout-b-w0-phase3-2026-10-02.md`). The dispatched-bin denominator is LIVE for PJM, in its live-roster form (#7047/#7049). Zero DOF.
+
+**Legs (mixed SHA, desk ruling 14:31).**
+- 2019–2023 were re-solved at `25da6022`.
+- 2024–2025 are kept at `ce8820dd`. Their LP inputs are byte-identical at `25da6022`; the zero-LP proof is `docs/records/governance/closeout-2026-10/W0-phase3/KEPT-LEG-INERT-PROOF-2026-10-02.md`, and the bundle records the per-year SHAs in `mixed_solve_sha.json`.
+- All legs ran on highspy 1.14.0 (locked).
+
+**Scores.** The ISO stays NOT-YET → NOT-YET.
+- C1 CC_REGULAR moves FAIL → PASS in three years:
+  - 2020: +9.84 → +6.50 TWh
+  - 2022: +10.94 → +7.95 TWh
+  - 2023: +8.48 → +3.40 TWh
+- 2025 moves PASS → FAIL on two criteria:
+  - C3a: −9.6 → −11.6 %
+  - C3b: NRMSE 0.182 → 0.222
+
+C3a vs RT by year:
+
+| | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 |
+|---|---|---|---|---|---|---|---|
+| Before (pjm-next-16 A) | +3.2 % | +9.5 % | −1.4 % | −17.4 % | +1.0 % | −5.3 % | −9.6 % |
+| After (W0 fix-2) | +1.9 % | +9.6 % | −0.5 % | −16.9 % | +1.0 % | −5.4 % | −11.6 % |
+
+- **What before → after mixes:** W0, the renewables fix (#7040), and the incumbent's off-lockfile solver stack (highspy 1.15.1 vs locked 1.14.0). These are not separated, by design.
+- **Data drift (labelled, not W0):** the 2025 injected must-run (biomass and OTHER) is +5.3 TWh above the incumbent's. The incumbent carried a partial 2025 EIA-923; the current data has the complete year. 2019–2024 are equal.
+
+**Census (in-bundle `fleet_census_<y>.json`).** Total thermal summer reads −5.9 to −9.8 % against EIA-860 in every year, OUTSIDE.
+- Main cause: "rating differs", e.g. CC 55801/60302 and COAL 6004.
+- 2019 rows not carried: CC 60589 (−1,100 MW) and ST_GAS 1571 (−1,183 MW).
+- Exit-channel carries: COAL (+2,800 MW, 2019) and NUCLEAR 8011 (+779 MW, 2019).
+
+**Infrastructure.** Promotion needed two guard fixes, carried in this PR and in the ERCOT L1 PR:
+- `scripts/lib/replay_recipe.py`: a field registered after the solve, replayed at its default, is not a mismatch.
+- `scripts/stamp_config_partition.py`: an inert rule-26-deleted field recorded by an older leg is not a per-year overlay.
+
+Preflight 0d also needs the gitignored PJM DataMiner2 virtual-bid parquets (`pjm_da_virtual_bids` is on), fetched locally with `scripts/data/fetch_pjm_da_virtuals.py`.
+
 ## PJM close-out — 2026-10-02 — Winter Storm Elliott closed as a DATA-LIMITED residual (zero LP)
 
 - **Owner ruling:** "It counts but we should be able to simulate it?" → two ex-ante phase-0 attempts → owner card **"Accept as data-limited"** (relayed by the close-out desk).
