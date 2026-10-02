@@ -2103,3 +2103,36 @@ docs/records/soco/r-soco/FINDING-soco-98-lambda-anchors-2026-10-01.md.
 unchanged). Flag: TAL λ runs 25–35 % below FPC / JEA (implied HR 5.7–7.7), routed with the FPL basis question. Inert:
 all 11 keeper cache keys identical. Matrix cells stay `U`. Record:
 docs/records/soco/r-soco/FINDING-soco-99-fla-extract-2026-10-02.md.
+
+## 2026-10-02 — closeout-B W0 phase 3: keeper 2026-10-02-w0-soco (W0 EIA-860 settlement re-solve), CALIBRATED-WITH-CAVEATS → NOT-YET
+
+**What changed.** The soco-96 recipe (`soco96_span`) was re-solved year by year (rule 36: seven shards at `306f2c00`). The only change was the W0 EIA-860 settlement backcast defaults (owner ruling R-2; PRECOMMIT `docs/records/governance/closeout-2026-10/PRECOMMIT-closeout-b-w0-phase3-2026-10-02.md`):
+- seasonal summer/winter capacity basis;
+- actual-retirement-only;
+- the five registry-read repairs;
+- standby admission;
+- the dispatched-bin outage denominator, which is LIVE for SOCO.
+
+`hydro_ror_split` inputs were rebuilt before every leg (45 classified / 28 shapeable plants, matching the keeper). Recipe equality was checked field by field by `scripts/probes/_w0_compose_span.py`. The deleted knob `cc_subfloor_eia923_heat_rates` (rule 26) was off in the keeper. Zero DOF.
+
+| | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 |
+|---|---|---|---|---|---|---|---|
+| C3a vs RT, before | +14.3 % | +14.5 % | −2.4 % | −12.0 % | +2.6 % | −2.9 % | −1.1 % |
+| C3a vs RT, after | +11.9 % | +12.0 % | −4.3 % | −15.1 % | +0.1 % | −5.0 % | −5.2 % |
+| ST_GAS forced share (D-2) | 29.3 → 33.0 % | 38.4 → 42.4 % | 42.5 → 46.3 % | 29.6 → 34.2 % | 34.3 → 39.3 % | 44.8 → 48.2 % | 47.3 → 54.2 % |
+
+- The ST_GAS forced shares stay GROUNDED (every binding mechanism clears D-4; the profile gates pass).
+- C2 fuelmix fails in three records:
+  - CC_REGULAR 2019: share +2.6 → +3.6 pp.
+  - CC_REGULAR 2021: share +2.7 → +3.6 pp.
+  - COAL_PRB 2022: +5.69 → +8.01 TWh, share +3.5 pp.
+- Determination: **CALIBRATED-WITH-CAVEATS → NOT-YET**. The keeper is promoted on structure (rules 1/14): a worse fit after measured capacity enters is a discovered bug elsewhere.
+
+**Census (rated-capacity rebuild at the W0 posture, phase 2).** Total thermal reads −0.8 to −11.0 % summer against EIA-860, OUTSIDE the 0.5 % tolerance in every year.
+- **CC** is −7.6 to −19.2 %, mostly "rating differs". The largest plants are 6073 (−710 to −778 MW) and 57037 (−440 to −468 MW).
+- **2023 rows not carried:**
+  - CC: 643 (−1,066 MW) and 3 (−778 MW).
+  - CT and ST_GAS: 641 (−934 MW / −924 MW).
+- **COAL exit-channel carries:** 708 (+840 MW) in 2019 and 6052 (+1,744 MW) in 2022.
+
+These are residuals for the SOCO lane, not tuned (rule 23). Ledgers: `W0-census/SOCO/fleet_census_<Y>_w0.json`.
