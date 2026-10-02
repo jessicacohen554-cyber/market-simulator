@@ -592,6 +592,67 @@ def enforce_single_recipe_partition(
     apply_config_overlay(kwargs, groups[0][0] if groups else {})
 
 
+def flipped_default_overlay(
+    bundle: "Path | str", years: "list[int]", meta: "dict | None" = None
+) -> dict:
+    """``{field: value}`` that pins each flipped-default field to the bundle's own posture.
+
+    A field whose backcast default was flipped ON after a bundle was solved
+    (``scenarios._CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS``, e.g. the ten W0
+    fields) is not in ``meta.json``. The bundle's ``run_config_<Y>.json`` either
+    records it at the value it solved with, or lacks it because the bundle
+    predates it. Left alone, the replay resolves it to TODAY's default and
+    silently arms a mechanism the bundle never solved with (spp-107 replayed at
+    HEAD armed all ten W0 fields).
+
+    Each such field is pinned to its recorded value. When the field is absent,
+    it is pinned to :func:`~market_sim.config.scenarios.registration_time_default`,
+    the value the field was registered as byte-identical at. A field ``meta``
+    carries is left to ``build_kwargs``. Only values that differ from the live
+    default are returned. A year with no ``run_config`` gives no evidence and is
+    skipped.
+
+    Raises:
+        SystemExit: the requested years disagree on a field's value. The span
+            mixes postures, so chain one ``--years`` per group.
+    """
+    from market_sim.config.scenarios import (
+        _CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS,
+        ScenarioConfig,
+        registration_time_default,
+    )
+
+    live = {
+        f.name: f.default
+        for f in dataclasses.fields(ScenarioConfig)
+        if f.default is not dataclasses.MISSING
+    }
+    flipped = sorted({name for _, name, _ in _CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS})
+    recorded: list[dict] = []
+    for y in years:
+        path = Path(bundle) / f"run_config_{int(y)}.json"
+        if path.is_file():
+            recorded.append(json.loads(path.read_text()).get("scenario_config") or {})
+    out: dict = {}
+    for name in flipped:
+        if name not in live or not recorded or name in (meta or {}):
+            continue
+        values = {
+            json.dumps(sc[name] if name in sc else registration_time_default(name))
+            for sc in recorded
+        }
+        if len(values) > 1:
+            raise SystemExit(
+                f"{name} differs across the requested years ({sorted(values)}): "
+                "the span mixes postures. Chain one invocation per group with "
+                "--years."
+            )
+        value = json.loads(values.pop())
+        if value != live[name]:
+            out[name] = value
+    return out
+
+
 #: ``run_year`` parameters that are NEVER part of a bundle's recipe: the four
 #: positional arguments, the per-call plumbing ``solve_and_persist`` fills in
 #: itself (``ttc_overrides``, ``must_run_mw``, ``demand``, ``xyear_cache``) and
@@ -1046,6 +1107,9 @@ def main() -> None:
     # it for the requested span — or refuse a span that mixes recipes — BEFORE
     # the --set loop, so an explicit operator override still wins.
     enforce_single_recipe_partition(meta, kwargs["years"], kwargs)
+    # Flipped-default fields replay at the bundle's own recorded (or
+    # absent-equivalent) posture, never today's default (also before --set).
+    apply_config_overlay(kwargs, flipped_default_overlay(bundle, kwargs["years"], meta))
     # --set routes through BOTH channels: the explicit solve_and_persist kwarg
     # (when one exists) AND the generic prb_overrides ScenarioConfig channel
     # (when the key is a config field). run_year's override application order
