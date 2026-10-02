@@ -15772,3 +15772,25 @@ frozen derive's own cross-check".
   desk's W0 span is MISO's next solve. This chain ends. Declined: "Charter: per-yard R-3 with B/12 kept summer-only"; "Move the chain to another ISO".
 
 Full span NOT-YET on C1 ST_GAS 2019, C3a 2020, C3b 2021. Train 2023–2025 CALIBRATED. No frontier.
+
+## 2026-10-02 — closeout-B W0 phase 3 fix-2: keeper 2026-10-02-w0-miso-fix2, NOT-YET → NOT-YET
+
+**What changed.** The miso-280 split-remap recipe (`miso280_span`) was re-solved one year per shard (rule 36), plus the ten W0 EIA-860 settlement backcast defaults (owner ruling R-2; PRECOMMIT `docs/records/governance/closeout-2026-10/PRECOMMIT-closeout-b-w0-phase3-2026-10-02.md`). The dispatched-bin denominator is LIVE for MISO, in its live-roster form (#7047/#7049). Zero DOF. Every leg solved at `25da6022` (fix-2) on highspy 1.14.0 (locked); no kept legs.
+
+**Scores.** The ISO stays NOT-YET → NOT-YET. Train 2023–2025 stays CALIBRATED (C3c the lone ledgered caveat); validation stays NOT-YET.
+- price_mean moves FAIL → PASS: 2020 C3a +11.6 → +9.6 %.
+- fuelmix and price_shape still FAIL (C1 ST_GAS 2019; C3b 2021).
+
+| C3a vs RT | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 |
+|---|---|---|---|---|---|---|---|
+| Before (miso-280) | +8.7 % | +11.6 % | −5.6 % | −5.1 % | +8.4 % | +5.1 % | −1.1 % |
+| After (W0 fix-2) | +7.2 % | +9.6 % | −7.8 % | −6.8 % | +4.8 % | +2.5 % | −3.7 % |
+
+- **Data drift (labelled, not W0):** the 2025 injected must-run (biomass and OTHER) is +6.5 TWh above the incumbent's. The incumbent carried a partial 2025 EIA-923; the current data has the complete year.
+- **Census (in-bundle `fleet_census_<y>.json`):** total thermal summer reads −12.0 to −16.4 % against EIA-860 in every year (winter −16.2 to −22.9 %), OUTSIDE.
+
+**Transport and memory.**
+- Dispatch files above 100 MiB (2021, 2023, 2024) travelled as `split -b 90M` chunks plus a `.sha256`, reassembled and checked at verify (2023: `3ade2505…24fd`).
+- 2023 needs about 17.4 GiB. It was OOM-killed once at 13.36 GiB RAM + 2 GiB swap, then solved swap-first with a 17.44 GiB peak against an 18.4 GiB ceiling (RAM + a 5 GiB swapfile on about 11.7 GiB free disk).
+
+**Infrastructure.** `scripts/lib/replay_recipe.py` now compares a set-valued `ScenarioConfig` field by its members (the resolved config holds a frozenset; `run_config` records a sorted list), which was a false preflight-0d mismatch on `temp_derate_classes`. The partition configs in `keepers/MISO.json` were re-keyed by hand after `promote_keeper`'s audit (E12/S1), as for ERCOT.

@@ -32,7 +32,14 @@ NON_RECIPE_FIELDS = frozenset({"_explicitly_set_fields"})
 
 
 def _norm(value: object) -> object:
-    return json.loads(json.dumps(value, sort_keys=True, default=str))
+    return json.loads(json.dumps(value, sort_keys=True, default=_json_default))
+
+
+def _json_default(value: object) -> object:
+    """Serialise a set as its sorted members, as run_config records it; else str."""
+    if isinstance(value, (set, frozenset)):
+        return sorted(value, key=str)
+    return str(value)
 
 
 def resolve_replay_config(bundle: Path, year: int) -> dict:
