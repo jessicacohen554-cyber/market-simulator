@@ -1,0 +1,2526 @@
+{
+ "probe": "nyisonext31_bridge_d4_legs",
+ "rows": [
+  {
+   "year": 2021,
+   "plant": 0,
+   "group": "",
+   "floor_hours": 0,
+   "floored_gwh": 0.0,
+   "binding_hours": 0,
+   "binding_gwh": 0.0,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter": "none"
+  },
+  {
+   "year": 2021,
+   "plant": 2500,
+   "group": "ST_GAS",
+   "floor_hours": 88,
+   "floored_gwh": 21.75,
+   "binding_hours": 34,
+   "binding_gwh": 4.25,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 34
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 0,
+   "measured_runs": 11,
+   "measured_run_median_h": 49.0
+  },
+  {
+   "year": 2021,
+   "plant": 2517,
+   "group": "ST_GAS",
+   "floor_hours": 197,
+   "floored_gwh": 24.62,
+   "binding_hours": 60,
+   "binding_gwh": 2.44,
+   "binding_by_leg": {
+    "min_run": 4,
+    "min_run_or_gap": 0,
+    "gap": 44,
+    "other": 8,
+    "unanchored": 4
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.017,
+   "meter_zero_by_leg": {
+    "min_run": 1,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.02,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 0,
+   "measured_runs": 200,
+   "measured_run_median_h": 4.0
+  },
+  {
+   "year": 2021,
+   "plant": 2527,
+   "group": "ST_GAS",
+   "floor_hours": 266,
+   "floored_gwh": 8.05,
+   "binding_hours": 197,
+   "binding_gwh": 4.42,
+   "binding_by_leg": {
+    "min_run": 14,
+    "min_run_or_gap": 0,
+    "gap": 170,
+    "other": 13,
+    "unanchored": 0
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 0,
+   "measured_runs": 4,
+   "measured_run_median_h": 1204.0
+  },
+  {
+   "year": 2021,
+   "plant": 2539,
+   "group": "CC_REGULAR",
+   "floor_hours": 6772,
+   "floored_gwh": 4729.99,
+   "binding_hours": 226,
+   "binding_gwh": 51.93,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 5,
+    "unanchored": 221
+   },
+   "meter": "ct_only"
+  },
+  {
+   "year": 2021,
+   "plant": 7314,
+   "group": "CC_REGULAR",
+   "floor_hours": 2181,
+   "floored_gwh": 51.33,
+   "binding_hours": 2104,
+   "binding_gwh": 46.57,
+   "binding_by_leg": {
+    "min_run": 41,
+    "min_run_or_gap": 61,
+    "gap": 338,
+    "other": 211,
+    "unanchored": 1453
+   },
+   "meter": "ct_only"
+  },
+  {
+   "year": 2021,
+   "plant": 8906,
+   "group": "ST_GAS",
+   "floor_hours": 3,
+   "floored_gwh": 0.32,
+   "binding_hours": 0,
+   "binding_gwh": 0.0,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 0,
+   "measured_runs": 11,
+   "measured_run_median_h": 35.0
+  },
+  {
+   "year": 2021,
+   "plant": 50292,
+   "group": "CC_REGULAR",
+   "floor_hours": 1482,
+   "floored_gwh": 58.28,
+   "binding_hours": 1431,
+   "binding_gwh": 54.55,
+   "binding_by_leg": {
+    "min_run": 124,
+    "min_run_or_gap": 26,
+    "gap": 317,
+    "other": 185,
+    "unanchored": 779
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.146,
+   "meter_zero_by_leg": {
+    "min_run": 6,
+    "min_run_or_gap": 6,
+    "gap": 76,
+    "other": 31,
+    "unanchored": 90
+   },
+   "meter_zero_gwh": 6.84,
+   "meter_zero_in_measured_off_gt24h": 3,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 151,
+   "measured_runs": 135,
+   "measured_run_median_h": 16.0
+  },
+  {
+   "year": 2021,
+   "plant": 50978,
+   "group": "CC_REGULAR",
+   "floor_hours": 563,
+   "floored_gwh": 27.76,
+   "binding_hours": 553,
+   "binding_gwh": 26.73,
+   "binding_by_leg": {
+    "min_run": 21,
+    "min_run_or_gap": 24,
+    "gap": 83,
+    "other": 21,
+    "unanchored": 404
+   },
+   "meter": "ct_only"
+  },
+  {
+   "year": 2021,
+   "plant": 54574,
+   "group": "CC_REGULAR",
+   "floor_hours": 25,
+   "floored_gwh": 0.7,
+   "binding_hours": 25,
+   "binding_gwh": 0.7,
+   "binding_by_leg": {
+    "min_run": 12,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 13
+   },
+   "meter": "campd",
+   "measured_zero_share": 1.0,
+   "meter_zero_by_leg": {
+    "min_run": 12,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 13
+   },
+   "meter_zero_gwh": 0.7,
+   "meter_zero_in_measured_off_gt24h": 7,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 0,
+   "measured_runs": 22,
+   "measured_run_median_h": 10.5
+  },
+  {
+   "year": 2021,
+   "plant": 55375,
+   "group": "CC_REGULAR",
+   "floor_hours": 69,
+   "floored_gwh": 36.0,
+   "binding_hours": 2,
+   "binding_gwh": 0.56,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 2
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 2,
+   "measured_runs": 7,
+   "measured_run_median_h": 248.0
+  },
+  {
+   "year": 2021,
+   "plant": 56196,
+   "group": "CC_REGULAR",
+   "floor_hours": 7854,
+   "floored_gwh": 3657.85,
+   "binding_hours": 119,
+   "binding_gwh": 19.98,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 119
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.244,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 29
+   },
+   "meter_zero_gwh": 4.91,
+   "meter_zero_in_measured_off_gt24h": 10,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 30,
+   "measured_runs": 42,
+   "measured_run_median_h": 46.0
+  },
+  {
+   "year": 2021,
+   "plant": 56234,
+   "group": "CC_REGULAR",
+   "floor_hours": 8294,
+   "floored_gwh": 2426.15,
+   "binding_hours": 615,
+   "binding_gwh": 112.27,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 204,
+    "unanchored": 411
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 0,
+   "measured_runs": 5,
+   "measured_run_median_h": 1623.0
+  },
+  {
+   "year": 2021,
+   "plant": 56940,
+   "group": "CC_REGULAR",
+   "floor_hours": 120,
+   "floored_gwh": 57.92,
+   "binding_hours": 59,
+   "binding_gwh": 20.73,
+   "binding_by_leg": {
+    "min_run": 14,
+    "min_run_or_gap": 14,
+    "gap": 29,
+    "other": 2,
+    "unanchored": 0
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.068,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 4,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 1.41,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 2,
+   "measured_runs": 11,
+   "measured_run_median_h": 691.0
+  },
+  {
+   "year": 2021,
+   "plant": 57185,
+   "group": "CC_REGULAR",
+   "floor_hours": 91,
+   "floored_gwh": 72.88,
+   "binding_hours": 16,
+   "binding_gwh": 4.68,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 11,
+    "other": 0,
+    "unanchored": 5
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.312,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 2,
+    "other": 0,
+    "unanchored": 3
+   },
+   "meter_zero_gwh": 1.28,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 1,
+   "measured_runs": 91,
+   "measured_run_median_h": 21.0
+  },
+  {
+   "year": 2021,
+   "plant": 57664,
+   "group": "CC_REGULAR",
+   "floor_hours": 113,
+   "floored_gwh": 39.13,
+   "binding_hours": 65,
+   "binding_gwh": 14.58,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 2,
+    "gap": 56,
+    "other": 0,
+    "unanchored": 7
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.154,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 2,
+    "gap": 6,
+    "other": 0,
+    "unanchored": 2
+   },
+   "meter_zero_gwh": 2.19,
+   "meter_zero_in_measured_off_gt24h": 2,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 13,
+   "measured_runs": 34,
+   "measured_run_median_h": 94.5
+  },
+  {
+   "year": 2022,
+   "plant": 0,
+   "group": "",
+   "floor_hours": 0,
+   "floored_gwh": 0.0,
+   "binding_hours": 0,
+   "binding_gwh": 0.0,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter": "none"
+  },
+  {
+   "year": 2022,
+   "plant": 2490,
+   "group": "ST_GAS",
+   "floor_hours": 6,
+   "floored_gwh": 0.42,
+   "binding_hours": 0,
+   "binding_gwh": 0.0,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 0,
+   "measured_runs": 40,
+   "measured_run_median_h": 13.5
+  },
+  {
+   "year": 2022,
+   "plant": 2500,
+   "group": "ST_GAS",
+   "floor_hours": 81,
+   "floored_gwh": 21.79,
+   "binding_hours": 14,
+   "binding_gwh": 1.9,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 14
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 0,
+   "measured_runs": 25,
+   "measured_run_median_h": 67.0
+  },
+  {
+   "year": 2022,
+   "plant": 2517,
+   "group": "ST_GAS",
+   "floor_hours": 464,
+   "floored_gwh": 39.21,
+   "binding_hours": 247,
+   "binding_gwh": 8.13,
+   "binding_by_leg": {
+    "min_run": 27,
+    "min_run_or_gap": 0,
+    "gap": 163,
+    "other": 36,
+    "unanchored": 21
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.202,
+   "meter_zero_by_leg": {
+    "min_run": 8,
+    "min_run_or_gap": 0,
+    "gap": 32,
+    "other": 10,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 1.06,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 4,
+   "measured_runs": 178,
+   "measured_run_median_h": 5.0
+  },
+  {
+   "year": 2022,
+   "plant": 2527,
+   "group": "ST_GAS",
+   "floor_hours": 528,
+   "floored_gwh": 13.96,
+   "binding_hours": 447,
+   "binding_gwh": 10.1,
+   "binding_by_leg": {
+    "min_run": 42,
+    "min_run_or_gap": 5,
+    "gap": 227,
+    "other": 99,
+    "unanchored": 74
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 0,
+   "measured_runs": 5,
+   "measured_run_median_h": 376.0
+  },
+  {
+   "year": 2022,
+   "plant": 2539,
+   "group": "CC_REGULAR",
+   "floor_hours": 6923,
+   "floored_gwh": 4865.42,
+   "binding_hours": 310,
+   "binding_gwh": 69.86,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 121,
+    "unanchored": 189
+   },
+   "meter": "ct_only"
+  },
+  {
+   "year": 2022,
+   "plant": 7314,
+   "group": "CC_REGULAR",
+   "floor_hours": 1128,
+   "floored_gwh": 26.59,
+   "binding_hours": 1086,
+   "binding_gwh": 24.04,
+   "binding_by_leg": {
+    "min_run": 75,
+    "min_run_or_gap": 81,
+    "gap": 541,
+    "other": 110,
+    "unanchored": 279
+   },
+   "meter": "ct_only"
+  },
+  {
+   "year": 2022,
+   "plant": 8906,
+   "group": "ST_GAS",
+   "floor_hours": 29,
+   "floored_gwh": 12.18,
+   "binding_hours": 0,
+   "binding_gwh": 0.0,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 0,
+   "measured_runs": 18,
+   "measured_run_median_h": 57.5
+  },
+  {
+   "year": 2022,
+   "plant": 50292,
+   "group": "CC_REGULAR",
+   "floor_hours": 1156,
+   "floored_gwh": 44.78,
+   "binding_hours": 1024,
+   "binding_gwh": 31.73,
+   "binding_by_leg": {
+    "min_run": 114,
+    "min_run_or_gap": 63,
+    "gap": 373,
+    "other": 119,
+    "unanchored": 355
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.144,
+   "meter_zero_by_leg": {
+    "min_run": 33,
+    "min_run_or_gap": 7,
+    "gap": 40,
+    "other": 12,
+    "unanchored": 55
+   },
+   "meter_zero_gwh": 3.89,
+   "meter_zero_in_measured_off_gt24h": 7,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 479,
+   "measured_runs": 91,
+   "measured_run_median_h": 18.0
+  },
+  {
+   "year": 2022,
+   "plant": 50978,
+   "group": "CC_REGULAR",
+   "floor_hours": 1013,
+   "floored_gwh": 50.85,
+   "binding_hours": 996,
+   "binding_gwh": 49.26,
+   "binding_by_leg": {
+    "min_run": 100,
+    "min_run_or_gap": 115,
+    "gap": 446,
+    "other": 95,
+    "unanchored": 240
+   },
+   "meter": "ct_only"
+  },
+  {
+   "year": 2022,
+   "plant": 52056,
+   "group": "CC_REGULAR",
+   "floor_hours": 212,
+   "floored_gwh": 8.64,
+   "binding_hours": 55,
+   "binding_gwh": 1.19,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 4,
+    "gap": 46,
+    "other": 0,
+    "unanchored": 5
+   },
+   "meter": "none"
+  },
+  {
+   "year": 2022,
+   "plant": 54574,
+   "group": "CC_REGULAR",
+   "floor_hours": 40,
+   "floored_gwh": 2.89,
+   "binding_hours": 27,
+   "binding_gwh": 0.86,
+   "binding_by_leg": {
+    "min_run": 2,
+    "min_run_or_gap": 0,
+    "gap": 17,
+    "other": 0,
+    "unanchored": 8
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.407,
+   "meter_zero_by_leg": {
+    "min_run": 2,
+    "min_run_or_gap": 0,
+    "gap": 5,
+    "other": 0,
+    "unanchored": 4
+   },
+   "meter_zero_gwh": 0.41,
+   "meter_zero_in_measured_off_gt24h": 2,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 5,
+   "measured_runs": 66,
+   "measured_run_median_h": 16.0
+  },
+  {
+   "year": 2022,
+   "plant": 55375,
+   "group": "CC_REGULAR",
+   "floor_hours": 293,
+   "floored_gwh": 154.12,
+   "binding_hours": 16,
+   "binding_gwh": 4.93,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 5,
+    "other": 0,
+    "unanchored": 11
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 4,
+   "measured_runs": 6,
+   "measured_run_median_h": 1440.5
+  },
+  {
+   "year": 2022,
+   "plant": 55405,
+   "group": "CC_REGULAR",
+   "floor_hours": 11,
+   "floored_gwh": 4.61,
+   "binding_hours": 11,
+   "binding_gwh": 4.61,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 4,
+    "gap": 1,
+    "other": 0,
+    "unanchored": 6
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 0,
+   "measured_runs": 34,
+   "measured_run_median_h": 52.5
+  },
+  {
+   "year": 2022,
+   "plant": 56196,
+   "group": "CC_REGULAR",
+   "floor_hours": 7535,
+   "floored_gwh": 3405.72,
+   "binding_hours": 43,
+   "binding_gwh": 7.08,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 43
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 19,
+   "measured_runs": 25,
+   "measured_run_median_h": 133.0
+  },
+  {
+   "year": 2022,
+   "plant": 56234,
+   "group": "CC_REGULAR",
+   "floor_hours": 7688,
+   "floored_gwh": 2328.46,
+   "binding_hours": 108,
+   "binding_gwh": 19.72,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 84,
+    "unanchored": 24
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 0,
+   "measured_runs": 6,
+   "measured_run_median_h": 1142.0
+  },
+  {
+   "year": 2022,
+   "plant": 56940,
+   "group": "CC_REGULAR",
+   "floor_hours": 398,
+   "floored_gwh": 223.52,
+   "binding_hours": 92,
+   "binding_gwh": 31.27,
+   "binding_by_leg": {
+    "min_run": 9,
+    "min_run_or_gap": 6,
+    "gap": 64,
+    "other": 13,
+    "unanchored": 0
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 1,
+   "measured_runs": 14,
+   "measured_run_median_h": 76.5
+  },
+  {
+   "year": 2022,
+   "plant": 57185,
+   "group": "CC_REGULAR",
+   "floor_hours": 309,
+   "floored_gwh": 289.6,
+   "binding_hours": 17,
+   "binding_gwh": 3.08,
+   "binding_by_leg": {
+    "min_run": 3,
+    "min_run_or_gap": 0,
+    "gap": 14,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.118,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 2,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.21,
+   "meter_zero_in_measured_off_gt24h": 2,
+   "meter_zero_anchor_phantom": 2,
+   "meter_below_floor_hours": 0,
+   "measured_runs": 26,
+   "measured_run_median_h": 54.5
+  },
+  {
+   "year": 2022,
+   "plant": 57664,
+   "group": "CC_REGULAR",
+   "floor_hours": 289,
+   "floored_gwh": 143.04,
+   "binding_hours": 28,
+   "binding_gwh": 6.83,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 28,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.214,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 6,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 1.46,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 7,
+   "measured_runs": 27,
+   "measured_run_median_h": 115.0
+  },
+  {
+   "year": 2023,
+   "plant": 0,
+   "group": "",
+   "floor_hours": 0,
+   "floored_gwh": 0.0,
+   "binding_hours": 0,
+   "binding_gwh": 0.0,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter": "none"
+  },
+  {
+   "year": 2023,
+   "plant": 2490,
+   "group": "ST_GAS",
+   "floor_hours": 227,
+   "floored_gwh": 54.64,
+   "binding_hours": 0,
+   "binding_gwh": 0.0,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 0,
+   "measured_runs": 20,
+   "measured_run_median_h": 90.0
+  },
+  {
+   "year": 2023,
+   "plant": 2500,
+   "group": "ST_GAS",
+   "floor_hours": 219,
+   "floored_gwh": 132.77,
+   "binding_hours": 5,
+   "binding_gwh": 0.68,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 5
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 0,
+   "measured_runs": 21,
+   "measured_run_median_h": 10.0
+  },
+  {
+   "year": 2023,
+   "plant": 2517,
+   "group": "ST_GAS",
+   "floor_hours": 129,
+   "floored_gwh": 10.21,
+   "binding_hours": 86,
+   "binding_gwh": 3.24,
+   "binding_by_leg": {
+    "min_run": 16,
+    "min_run_or_gap": 0,
+    "gap": 50,
+    "other": 20,
+    "unanchored": 0
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 0,
+   "measured_runs": 156,
+   "measured_run_median_h": 5.0
+  },
+  {
+   "year": 2023,
+   "plant": 2527,
+   "group": "ST_GAS",
+   "floor_hours": 332,
+   "floored_gwh": 9.59,
+   "binding_hours": 247,
+   "binding_gwh": 5.42,
+   "binding_by_leg": {
+    "min_run": 4,
+    "min_run_or_gap": 0,
+    "gap": 226,
+    "other": 11,
+    "unanchored": 6
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.004,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 1,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.02,
+   "meter_zero_in_measured_off_gt24h": 1,
+   "meter_zero_anchor_phantom": 1,
+   "meter_below_floor_hours": 0,
+   "measured_runs": 5,
+   "measured_run_median_h": 1251.0
+  },
+  {
+   "year": 2023,
+   "plant": 2539,
+   "group": "CC_REGULAR",
+   "floor_hours": 5931,
+   "floored_gwh": 4053.51,
+   "binding_hours": 565,
+   "binding_gwh": 139.67,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 111,
+    "unanchored": 454
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.011,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 6
+   },
+   "meter_zero_gwh": 1.53,
+   "meter_zero_in_measured_off_gt24h": 1,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 10,
+   "measured_runs": 7,
+   "measured_run_median_h": 608.0
+  },
+  {
+   "year": 2023,
+   "plant": 7314,
+   "group": "CC_REGULAR",
+   "floor_hours": 795,
+   "floored_gwh": 18.68,
+   "binding_hours": 770,
+   "binding_gwh": 17.04,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 7,
+    "unanchored": 763
+   },
+   "meter": "ct_only"
+  },
+  {
+   "year": 2023,
+   "plant": 8906,
+   "group": "ST_GAS",
+   "floor_hours": 4,
+   "floored_gwh": 0.77,
+   "binding_hours": 1,
+   "binding_gwh": 0.08,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 1,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter": "campd",
+   "measured_zero_share": 1.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 1,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.08,
+   "meter_zero_in_measured_off_gt24h": 1,
+   "meter_zero_anchor_phantom": 1,
+   "meter_below_floor_hours": 0,
+   "measured_runs": 25,
+   "measured_run_median_h": 71.0
+  },
+  {
+   "year": 2023,
+   "plant": 50292,
+   "group": "CC_REGULAR",
+   "floor_hours": 445,
+   "floored_gwh": 21.26,
+   "binding_hours": 377,
+   "binding_gwh": 13.66,
+   "binding_by_leg": {
+    "min_run": 3,
+    "min_run_or_gap": 0,
+    "gap": 10,
+    "other": 35,
+    "unanchored": 329
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.042,
+   "meter_zero_by_leg": {
+    "min_run": 1,
+    "min_run_or_gap": 0,
+    "gap": 7,
+    "other": 0,
+    "unanchored": 8
+   },
+   "meter_zero_gwh": 0.34,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 50,
+   "measured_runs": 64,
+   "measured_run_median_h": 16.5
+  },
+  {
+   "year": 2023,
+   "plant": 50978,
+   "group": "CC_REGULAR",
+   "floor_hours": 275,
+   "floored_gwh": 14.96,
+   "binding_hours": 262,
+   "binding_gwh": 13.64,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 1,
+    "gap": 103,
+    "other": 8,
+    "unanchored": 150
+   },
+   "meter": "ct_only"
+  },
+  {
+   "year": 2023,
+   "plant": 54574,
+   "group": "CC_REGULAR",
+   "floor_hours": 113,
+   "floored_gwh": 11.21,
+   "binding_hours": 47,
+   "binding_gwh": 1.34,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 19,
+    "other": 3,
+    "unanchored": 25
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.255,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 6,
+    "other": 0,
+    "unanchored": 6
+   },
+   "meter_zero_gwh": 0.35,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 12,
+   "measured_runs": 120,
+   "measured_run_median_h": 21.0
+  },
+  {
+   "year": 2023,
+   "plant": 55375,
+   "group": "CC_REGULAR",
+   "floor_hours": 240,
+   "floored_gwh": 131.58,
+   "binding_hours": 1,
+   "binding_gwh": 0.31,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 1,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 0,
+   "measured_runs": 6,
+   "measured_run_median_h": 1250.5
+  },
+  {
+   "year": 2023,
+   "plant": 55405,
+   "group": "CC_REGULAR",
+   "floor_hours": 27,
+   "floored_gwh": 8.56,
+   "binding_hours": 20,
+   "binding_gwh": 5.57,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 11,
+    "other": 0,
+    "unanchored": 9
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 2,
+   "measured_runs": 28,
+   "measured_run_median_h": 24.0
+  },
+  {
+   "year": 2023,
+   "plant": 56196,
+   "group": "CC_REGULAR",
+   "floor_hours": 8029,
+   "floored_gwh": 4028.84,
+   "binding_hours": 6,
+   "binding_gwh": 0.61,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 6
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 0,
+   "measured_runs": 10,
+   "measured_run_median_h": 240.5
+  },
+  {
+   "year": 2023,
+   "plant": 56234,
+   "group": "CC_REGULAR",
+   "floor_hours": 7916,
+   "floored_gwh": 2361.81,
+   "binding_hours": 234,
+   "binding_gwh": 42.49,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 127,
+    "unanchored": 107
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 0,
+   "measured_runs": 5,
+   "measured_run_median_h": 1671.0
+  },
+  {
+   "year": 2023,
+   "plant": 56940,
+   "group": "CC_REGULAR",
+   "floor_hours": 206,
+   "floored_gwh": 90.81,
+   "binding_hours": 132,
+   "binding_gwh": 43.76,
+   "binding_by_leg": {
+    "min_run": 21,
+    "min_run_or_gap": 8,
+    "gap": 73,
+    "other": 29,
+    "unanchored": 1
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 1,
+   "measured_runs": 11,
+   "measured_run_median_h": 391.0
+  },
+  {
+   "year": 2023,
+   "plant": 57185,
+   "group": "CC_REGULAR",
+   "floor_hours": 275,
+   "floored_gwh": 127.76,
+   "binding_hours": 179,
+   "binding_gwh": 51.84,
+   "binding_by_leg": {
+    "min_run": 15,
+    "min_run_or_gap": 0,
+    "gap": 46,
+    "other": 35,
+    "unanchored": 83
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.017,
+   "meter_zero_by_leg": {
+    "min_run": 2,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 1
+   },
+   "meter_zero_gwh": 0.96,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 25,
+   "measured_runs": 24,
+   "measured_run_median_h": 35.0
+  },
+  {
+   "year": 2023,
+   "plant": 57664,
+   "group": "CC_REGULAR",
+   "floor_hours": 183,
+   "floored_gwh": 99.6,
+   "binding_hours": 5,
+   "binding_gwh": 1.22,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 5,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 4,
+   "measured_runs": 11,
+   "measured_run_median_h": 179.0
+  },
+  {
+   "year": 2024,
+   "plant": 0,
+   "group": "",
+   "floor_hours": 0,
+   "floored_gwh": 0.0,
+   "binding_hours": 0,
+   "binding_gwh": 0.0,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter": "none"
+  },
+  {
+   "year": 2024,
+   "plant": 2500,
+   "group": "ST_GAS",
+   "floor_hours": 170,
+   "floored_gwh": 29.12,
+   "binding_hours": 95,
+   "binding_gwh": 12.39,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 95
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.021,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 2
+   },
+   "meter_zero_gwh": 0.27,
+   "meter_zero_in_measured_off_gt24h": 1,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 4,
+   "measured_runs": 14,
+   "measured_run_median_h": 64.5
+  },
+  {
+   "year": 2024,
+   "plant": 2517,
+   "group": "ST_GAS",
+   "floor_hours": 504,
+   "floored_gwh": 45.2,
+   "binding_hours": 356,
+   "binding_gwh": 14.24,
+   "binding_by_leg": {
+    "min_run": 18,
+    "min_run_or_gap": 0,
+    "gap": 292,
+    "other": 31,
+    "unanchored": 15
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.18,
+   "meter_zero_by_leg": {
+    "min_run": 9,
+    "min_run_or_gap": 0,
+    "gap": 46,
+    "other": 9,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 2.62,
+   "meter_zero_in_measured_off_gt24h": 5,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 5,
+   "measured_runs": 196,
+   "measured_run_median_h": 4.0
+  },
+  {
+   "year": 2024,
+   "plant": 2527,
+   "group": "ST_GAS",
+   "floor_hours": 380,
+   "floored_gwh": 9.66,
+   "binding_hours": 327,
+   "binding_gwh": 7.35,
+   "binding_by_leg": {
+    "min_run": 8,
+    "min_run_or_gap": 0,
+    "gap": 268,
+    "other": 51,
+    "unanchored": 0
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 0,
+   "measured_runs": 4,
+   "measured_run_median_h": 1863.0
+  },
+  {
+   "year": 2024,
+   "plant": 2539,
+   "group": "CC_REGULAR",
+   "floor_hours": 7763,
+   "floored_gwh": 5770.23,
+   "binding_hours": 152,
+   "binding_gwh": 38.57,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 152
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 34,
+   "measured_runs": 6,
+   "measured_run_median_h": 1189.5
+  },
+  {
+   "year": 2024,
+   "plant": 7314,
+   "group": "CC_REGULAR",
+   "floor_hours": 750,
+   "floored_gwh": 18.69,
+   "binding_hours": 706,
+   "binding_gwh": 15.63,
+   "binding_by_leg": {
+    "min_run": 4,
+    "min_run_or_gap": 14,
+    "gap": 38,
+    "other": 2,
+    "unanchored": 648
+   },
+   "meter": "ct_only"
+  },
+  {
+   "year": 2024,
+   "plant": 8906,
+   "group": "ST_GAS",
+   "floor_hours": 52,
+   "floored_gwh": 18.96,
+   "binding_hours": 7,
+   "binding_gwh": 0.47,
+   "binding_by_leg": {
+    "min_run": 5,
+    "min_run_or_gap": 1,
+    "gap": 0,
+    "other": 1,
+    "unanchored": 0
+   },
+   "meter": "campd",
+   "measured_zero_share": 1.0,
+   "meter_zero_by_leg": {
+    "min_run": 5,
+    "min_run_or_gap": 1,
+    "gap": 0,
+    "other": 1,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.47,
+   "meter_zero_in_measured_off_gt24h": 7,
+   "meter_zero_anchor_phantom": 7,
+   "meter_below_floor_hours": 0,
+   "measured_runs": 23,
+   "measured_run_median_h": 219.0
+  },
+  {
+   "year": 2024,
+   "plant": 50292,
+   "group": "CC_REGULAR",
+   "floor_hours": 499,
+   "floored_gwh": 30.75,
+   "binding_hours": 324,
+   "binding_gwh": 12.47,
+   "binding_by_leg": {
+    "min_run": 15,
+    "min_run_or_gap": 13,
+    "gap": 106,
+    "other": 12,
+    "unanchored": 178
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.204,
+   "meter_zero_by_leg": {
+    "min_run": 2,
+    "min_run_or_gap": 0,
+    "gap": 20,
+    "other": 0,
+    "unanchored": 44
+   },
+   "meter_zero_gwh": 2.36,
+   "meter_zero_in_measured_off_gt24h": 2,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 42,
+   "measured_runs": 108,
+   "measured_run_median_h": 11.0
+  },
+  {
+   "year": 2024,
+   "plant": 50978,
+   "group": "CC_REGULAR",
+   "floor_hours": 521,
+   "floored_gwh": 21.06,
+   "binding_hours": 492,
+   "binding_gwh": 18.99,
+   "binding_by_leg": {
+    "min_run": 13,
+    "min_run_or_gap": 0,
+    "gap": 11,
+    "other": 0,
+    "unanchored": 468
+   },
+   "meter": "ct_only"
+  },
+  {
+   "year": 2024,
+   "plant": 54574,
+   "group": "CC_REGULAR",
+   "floor_hours": 277,
+   "floored_gwh": 23.92,
+   "binding_hours": 142,
+   "binding_gwh": 4.65,
+   "binding_by_leg": {
+    "min_run": 13,
+    "min_run_or_gap": 0,
+    "gap": 6,
+    "other": 27,
+    "unanchored": 96
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.57,
+   "meter_zero_by_leg": {
+    "min_run": 5,
+    "min_run_or_gap": 0,
+    "gap": 3,
+    "other": 27,
+    "unanchored": 46
+   },
+   "meter_zero_gwh": 2.54,
+   "meter_zero_in_measured_off_gt24h": 31,
+   "meter_zero_anchor_phantom": 12,
+   "meter_below_floor_hours": 12,
+   "measured_runs": 139,
+   "measured_run_median_h": 19.0
+  },
+  {
+   "year": 2024,
+   "plant": 54808,
+   "group": "CC_REGULAR",
+   "floor_hours": 753,
+   "floored_gwh": 3.77,
+   "binding_hours": 717,
+   "binding_gwh": 3.43,
+   "binding_by_leg": {
+    "min_run": 14,
+    "min_run_or_gap": 3,
+    "gap": 43,
+    "other": 11,
+    "unanchored": 646
+   },
+   "meter": "none"
+  },
+  {
+   "year": 2024,
+   "plant": 55375,
+   "group": "CC_REGULAR",
+   "floor_hours": 354,
+   "floored_gwh": 189.43,
+   "binding_hours": 8,
+   "binding_gwh": 2.46,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 8
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 3,
+   "measured_runs": 4,
+   "measured_run_median_h": 1490.5
+  },
+  {
+   "year": 2024,
+   "plant": 55405,
+   "group": "CC_REGULAR",
+   "floor_hours": 16,
+   "floored_gwh": 2.73,
+   "binding_hours": 16,
+   "binding_gwh": 2.73,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 16
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.375,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 6
+   },
+   "meter_zero_gwh": 1.02,
+   "meter_zero_in_measured_off_gt24h": 6,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 3,
+   "measured_runs": 14,
+   "measured_run_median_h": 56.5
+  },
+  {
+   "year": 2024,
+   "plant": 56196,
+   "group": "CC_REGULAR",
+   "floor_hours": 7920,
+   "floored_gwh": 4021.18,
+   "binding_hours": 25,
+   "binding_gwh": 4.76,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 25
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 0,
+   "measured_runs": 5,
+   "measured_run_median_h": 1764.0
+  },
+  {
+   "year": 2024,
+   "plant": 56234,
+   "group": "CC_REGULAR",
+   "floor_hours": 6156,
+   "floored_gwh": 1887.43,
+   "binding_hours": 104,
+   "binding_gwh": 18.99,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 82,
+    "unanchored": 22
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.058,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 6
+   },
+   "meter_zero_gwh": 1.1,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 0,
+   "measured_runs": 7,
+   "measured_run_median_h": 640.0
+  },
+  {
+   "year": 2024,
+   "plant": 56940,
+   "group": "CC_REGULAR",
+   "floor_hours": 411,
+   "floored_gwh": 240.94,
+   "binding_hours": 62,
+   "binding_gwh": 21.78,
+   "binding_by_leg": {
+    "min_run": 9,
+    "min_run_or_gap": 5,
+    "gap": 33,
+    "other": 15,
+    "unanchored": 0
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 4,
+   "measured_runs": 3,
+   "measured_run_median_h": 2616.0
+  },
+  {
+   "year": 2024,
+   "plant": 57185,
+   "group": "CC_REGULAR",
+   "floor_hours": 309,
+   "floored_gwh": 170.05,
+   "binding_hours": 70,
+   "binding_gwh": 14.77,
+   "binding_by_leg": {
+    "min_run": 7,
+    "min_run_or_gap": 0,
+    "gap": 42,
+    "other": 0,
+    "unanchored": 21
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 6,
+   "measured_runs": 22,
+   "measured_run_median_h": 97.5
+  },
+  {
+   "year": 2024,
+   "plant": 57664,
+   "group": "CC_REGULAR",
+   "floor_hours": 380,
+   "floored_gwh": 168.76,
+   "binding_hours": 102,
+   "binding_gwh": 23.4,
+   "binding_by_leg": {
+    "min_run": 12,
+    "min_run_or_gap": 10,
+    "gap": 40,
+    "other": 0,
+    "unanchored": 40
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 11,
+   "measured_runs": 6,
+   "measured_run_median_h": 1238.5
+  },
+  {
+   "year": 2025,
+   "plant": 0,
+   "group": "",
+   "floor_hours": 0,
+   "floored_gwh": 0.0,
+   "binding_hours": 0,
+   "binding_gwh": 0.0,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter": "none"
+  },
+  {
+   "year": 2025,
+   "plant": 2490,
+   "group": "ST_GAS",
+   "floor_hours": 69,
+   "floored_gwh": 10.96,
+   "binding_hours": 0,
+   "binding_gwh": 0.0,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 0,
+   "measured_runs": 12,
+   "measured_run_median_h": 224.0
+  },
+  {
+   "year": 2025,
+   "plant": 2500,
+   "group": "ST_GAS",
+   "floor_hours": 44,
+   "floored_gwh": 9.09,
+   "binding_hours": 25,
+   "binding_gwh": 3.34,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 25
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 0,
+   "measured_runs": 11,
+   "measured_run_median_h": 451.0
+  },
+  {
+   "year": 2025,
+   "plant": 2517,
+   "group": "ST_GAS",
+   "floor_hours": 613,
+   "floored_gwh": 51.86,
+   "binding_hours": 451,
+   "binding_gwh": 18.14,
+   "binding_by_leg": {
+    "min_run": 56,
+    "min_run_or_gap": 0,
+    "gap": 258,
+    "other": 68,
+    "unanchored": 69
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.206,
+   "meter_zero_by_leg": {
+    "min_run": 39,
+    "min_run_or_gap": 0,
+    "gap": 34,
+    "other": 16,
+    "unanchored": 4
+   },
+   "meter_zero_gwh": 3.7,
+   "meter_zero_in_measured_off_gt24h": 37,
+   "meter_zero_anchor_phantom": 23,
+   "meter_below_floor_hours": 5,
+   "measured_runs": 161,
+   "measured_run_median_h": 4.0
+  },
+  {
+   "year": 2025,
+   "plant": 2527,
+   "group": "ST_GAS",
+   "floor_hours": 349,
+   "floored_gwh": 10.49,
+   "binding_hours": 231,
+   "binding_gwh": 4.88,
+   "binding_by_leg": {
+    "min_run": 31,
+    "min_run_or_gap": 1,
+    "gap": 135,
+    "other": 56,
+    "unanchored": 8
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.074,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 17,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.31,
+   "meter_zero_in_measured_off_gt24h": 17,
+   "meter_zero_anchor_phantom": 13,
+   "meter_below_floor_hours": 0,
+   "measured_runs": 9,
+   "measured_run_median_h": 428.0
+  },
+  {
+   "year": 2025,
+   "plant": 2539,
+   "group": "CC_REGULAR",
+   "floor_hours": 8400,
+   "floored_gwh": 6121.78,
+   "binding_hours": 53,
+   "binding_gwh": 13.39,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 53
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 24,
+   "measured_runs": 7,
+   "measured_run_median_h": 487.0
+  },
+  {
+   "year": 2025,
+   "plant": 7314,
+   "group": "CC_REGULAR",
+   "floor_hours": 1199,
+   "floored_gwh": 35.61,
+   "binding_hours": 1032,
+   "binding_gwh": 22.84,
+   "binding_by_leg": {
+    "min_run": 51,
+    "min_run_or_gap": 64,
+    "gap": 364,
+    "other": 25,
+    "unanchored": 528
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.764,
+   "meter_zero_by_leg": {
+    "min_run": 48,
+    "min_run_or_gap": 32,
+    "gap": 307,
+    "other": 22,
+    "unanchored": 379
+   },
+   "meter_zero_gwh": 17.44,
+   "meter_zero_in_measured_off_gt24h": 687,
+   "meter_zero_anchor_phantom": 275,
+   "meter_below_floor_hours": 48,
+   "measured_runs": 106,
+   "measured_run_median_h": 20.0
+  },
+  {
+   "year": 2025,
+   "plant": 8906,
+   "group": "ST_GAS",
+   "floor_hours": 157,
+   "floored_gwh": 32.93,
+   "binding_hours": 16,
+   "binding_gwh": 0.61,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 16,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter": "campd",
+   "measured_zero_share": 1.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 16,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.61,
+   "meter_zero_in_measured_off_gt24h": 16,
+   "meter_zero_anchor_phantom": 15,
+   "meter_below_floor_hours": 0,
+   "measured_runs": 14,
+   "measured_run_median_h": 208.5
+  },
+  {
+   "year": 2025,
+   "plant": 50292,
+   "group": "CC_REGULAR",
+   "floor_hours": 973,
+   "floored_gwh": 67.94,
+   "binding_hours": 638,
+   "binding_gwh": 29.26,
+   "binding_by_leg": {
+    "min_run": 48,
+    "min_run_or_gap": 33,
+    "gap": 277,
+    "other": 81,
+    "unanchored": 199
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.114,
+   "meter_zero_by_leg": {
+    "min_run": 4,
+    "min_run_or_gap": 0,
+    "gap": 20,
+    "other": 19,
+    "unanchored": 30
+   },
+   "meter_zero_gwh": 2.77,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 123,
+   "measured_runs": 63,
+   "measured_run_median_h": 11.0
+  },
+  {
+   "year": 2025,
+   "plant": 50978,
+   "group": "CC_REGULAR",
+   "floor_hours": 430,
+   "floored_gwh": 18.42,
+   "binding_hours": 364,
+   "binding_gwh": 14.05,
+   "binding_by_leg": {
+    "min_run": 7,
+    "min_run_or_gap": 9,
+    "gap": 45,
+    "other": 28,
+    "unanchored": 275
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.808,
+   "meter_zero_by_leg": {
+    "min_run": 4,
+    "min_run_or_gap": 9,
+    "gap": 20,
+    "other": 28,
+    "unanchored": 233
+   },
+   "meter_zero_gwh": 11.35,
+   "meter_zero_in_measured_off_gt24h": 187,
+   "meter_zero_anchor_phantom": 38,
+   "meter_below_floor_hours": 16,
+   "measured_runs": 97,
+   "measured_run_median_h": 8.0
+  },
+  {
+   "year": 2025,
+   "plant": 54574,
+   "group": "CC_REGULAR",
+   "floor_hours": 465,
+   "floored_gwh": 58.85,
+   "binding_hours": 140,
+   "binding_gwh": 5.24,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 84,
+    "other": 32,
+    "unanchored": 24
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.464,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 46,
+    "other": 3,
+    "unanchored": 16
+   },
+   "meter_zero_gwh": 2.08,
+   "meter_zero_in_measured_off_gt24h": 52,
+   "meter_zero_anchor_phantom": 10,
+   "meter_below_floor_hours": 3,
+   "measured_runs": 117,
+   "measured_run_median_h": 21.0
+  },
+  {
+   "year": 2025,
+   "plant": 55375,
+   "group": "CC_REGULAR",
+   "floor_hours": 514,
+   "floored_gwh": 272.26,
+   "binding_hours": 0,
+   "binding_gwh": 0.0,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 0,
+   "measured_runs": 4,
+   "measured_run_median_h": 1764.0
+  },
+  {
+   "year": 2025,
+   "plant": 55405,
+   "group": "CC_REGULAR",
+   "floor_hours": 3,
+   "floored_gwh": 0.51,
+   "binding_hours": 3,
+   "binding_gwh": 0.51,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 3,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter": "campd",
+   "measured_zero_share": 1.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 3,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.51,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 0,
+   "measured_runs": 64,
+   "measured_run_median_h": 12.0
+  },
+  {
+   "year": 2025,
+   "plant": 56196,
+   "group": "CC_REGULAR",
+   "floor_hours": 7202,
+   "floored_gwh": 3566.28,
+   "binding_hours": 5,
+   "binding_gwh": 0.95,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 5
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 0,
+   "measured_runs": 11,
+   "measured_run_median_h": 269.0
+  },
+  {
+   "year": 2025,
+   "plant": 56234,
+   "group": "CC_REGULAR",
+   "floor_hours": 8168,
+   "floored_gwh": 2513.02,
+   "binding_hours": 18,
+   "binding_gwh": 3.29,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 17,
+    "unanchored": 1
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 0,
+   "measured_runs": 9,
+   "measured_run_median_h": 676.0
+  },
+  {
+   "year": 2025,
+   "plant": 56940,
+   "group": "CC_REGULAR",
+   "floor_hours": 439,
+   "floored_gwh": 275.21,
+   "binding_hours": 11,
+   "binding_gwh": 3.86,
+   "binding_by_leg": {
+    "min_run": 3,
+    "min_run_or_gap": 0,
+    "gap": 8,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 0,
+   "measured_runs": 7,
+   "measured_run_median_h": 853.0
+  },
+  {
+   "year": 2025,
+   "plant": 57185,
+   "group": "CC_REGULAR",
+   "floor_hours": 407,
+   "floored_gwh": 304.31,
+   "binding_hours": 16,
+   "binding_gwh": 3.4,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 5,
+    "gap": 11,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.0,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 0
+   },
+   "meter_zero_gwh": 0.0,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 0,
+   "measured_runs": 13,
+   "measured_run_median_h": 156.0
+  },
+  {
+   "year": 2025,
+   "plant": 57664,
+   "group": "CC_REGULAR",
+   "floor_hours": 427,
+   "floored_gwh": 200.13,
+   "binding_hours": 13,
+   "binding_gwh": 2.81,
+   "binding_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 6,
+    "other": 0,
+    "unanchored": 7
+   },
+   "meter": "campd",
+   "measured_zero_share": 0.308,
+   "meter_zero_by_leg": {
+    "min_run": 0,
+    "min_run_or_gap": 0,
+    "gap": 0,
+    "other": 0,
+    "unanchored": 4
+   },
+   "meter_zero_gwh": 0.98,
+   "meter_zero_in_measured_off_gt24h": 0,
+   "meter_zero_anchor_phantom": 0,
+   "meter_below_floor_hours": 5,
+   "measured_runs": 18,
+   "measured_run_median_h": 219.5
+  }
+ ]
+}
