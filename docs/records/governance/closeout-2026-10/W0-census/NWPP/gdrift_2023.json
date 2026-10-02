@@ -1,0 +1,116 @@
+{
+  "bundle": "nwppnext16c_span",
+  "year": 2023,
+  "overrides": {},
+  "fields": {
+    "seasonal_capacity_basis": {
+      "verdict": "LIVE",
+      "moved": [
+        "availability",
+        "efficiency_bin",
+        "emission_rate",
+        "fuel_type_idx",
+        "heat_rate",
+        "mc_base",
+        "min_gen",
+        "min_gen_mechanism",
+        "nox_rate",
+        "plant_code",
+        "plant_group",
+        "pmax",
+        "pmin",
+        "ramp10",
+        "so2_rate",
+        "state",
+        "unit_ids",
+        "vom",
+        "zone_idx"
+      ]
+    },
+    "backcast_actual_retirement_only": {
+      "verdict": "INERT",
+      "moved": []
+    },
+    "commission_year_cod_fallback": {
+      "verdict": "LIVE",
+      "moved": [
+        "availability",
+        "min_gen"
+      ]
+    },
+    "cc_block_summer_rating": {
+      "verdict": "INERT",
+      "moved": []
+    },
+    "cc_steam_part_capacity": {
+      "verdict": "INERT",
+      "moved": []
+    },
+    "retiree_vintage_status_scope": {
+      "verdict": "LIVE",
+      "moved": [
+        "availability",
+        "efficiency_bin",
+        "emission_rate",
+        "fuel_type_idx",
+        "heat_rate",
+        "mc_base",
+        "min_gen",
+        "min_gen_mechanism",
+        "nox_rate",
+        "plant_code",
+        "plant_group",
+        "pmax",
+        "pmin",
+        "ramp10",
+        "so2_rate",
+        "state",
+        "unit_ids",
+        "vom",
+        "zone_idx"
+      ]
+    },
+    "admit_standby_units": {
+      "verdict": "INERT",
+      "moved": []
+    },
+    "partial_plant_exit_carry": {
+      "verdict": "INERT",
+      "moved": []
+    },
+    "mid_vintage_exit_carry": {
+      "verdict": "INERT",
+      "moved": []
+    },
+    "unit_outage_dispatched_bin_denominator": {
+      "verdict": "LIVE",
+      "moved": [
+        "availability"
+      ]
+    }
+  },
+  "all_w0": {
+    "verdict": "LIVE",
+    "moved": [
+      "availability",
+      "efficiency_bin",
+      "emission_rate",
+      "fuel_type_idx",
+      "heat_rate",
+      "mc_base",
+      "min_gen",
+      "min_gen_mechanism",
+      "nox_rate",
+      "plant_code",
+      "plant_group",
+      "pmax",
+      "pmin",
+      "ramp10",
+      "so2_rate",
+      "state",
+      "unit_ids",
+      "vom",
+      "zone_idx"
+    ]
+  }
+}

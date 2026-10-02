@@ -29,7 +29,8 @@ class TestCaisoKeeperDefaults(unittest.TestCase):
         # Step-1 design: must-offer bridge ON, the retired slab + per-ISO CT
         # floor OFF, the generic registry-driven reliability floor ON.
         self.assertTrue(c.caiso_ra_mustoffer)
-        self.assertAlmostEqual(c.caiso_ra_min_load_frac, 0.26)
+        # CEMS-measured CC min stable load (closeout-CAISO wave 1 arm 3).
+        self.assertAlmostEqual(c.caiso_ra_min_load_frac, 0.570)
         self.assertTrue(c.negative_renewable_offers)
         self.assertTrue(c.reliability_floor)
         # Legacy lever superseded by the must-offer bridge / generic registry.

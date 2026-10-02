@@ -214,7 +214,30 @@ fixes the readings (§0) and hands them to that lane. The owner decides whether 
 **Ruled 2026-10-02 (owner card), verbatim: "Fold into close-out (Recommended)".** The miso chain ends with this lane; the
 close-out lane carries R-A and R-B against §0.
 
-## 7. Where MISO stands
+## 7. Outcome: the close-out lane ran both candidates, and both failed as §0 read them
 
-Keeper unchanged. Train 2023–2025 CALIBRATED (C3c ledgered). Full span NOT-YET on C1 ST_GAS 2019 (routed,
-exhausted), C3a 2020 (+11.6 %; candidate R-A) and C3b 2021 (0.201; candidate R-B). **No frontier.**
+`docs/records/miso/FINDING-closeout-miso-wave1-2026-10-02.md` landed on main while this ledger was in review. It ran both
+candidates against the plan §3.3 gates, which were set before that lane ran.
+
+- **R-A (L3+L4).** No arm passes.
+  - The arms that reach the price (L3 −$1.24 at q1–q4) take COAL_PRB 2019/2021 to +10.29/+8.54 TWh.
+  - The arms that keep coal in band move q1–q4 by only −$0.44 to +$0.88.
+  - This is the coal-headroom kill §0 named. `coal_econ_two_sided` U → R; both committed-band R cells stay R.
+- **R-B (R-3 ceiling).**
+  - The static C3b 2021 overlay goes 0.201 → 0.189, with yards binding Sep–Nov.
+  - But removing B/12 releases summer and 2022 coal: C3a 2019 +11.5 %, C3a 2022 −15.8 %, C3b 2022 0.220. K3 fails.
+  - This is the summer-relief / 2022 kill §0 named, plus a pinning finding: where the envelope binds it approaches measured
+    burn, which crosses rule 13's "never the burn". No PRECOMMIT; `coal_fuel_inventory` stays K.
+
+**Every admissible, identified lever on the three open failures is now adjudicated.**
+- C1 ST_GAS 2019: routed, R-15.
+- C3a 2020: honest ceiling ≈ +7 % with West/Plains G.
+- C3b 2021: Uri routed; the fall conservation stays a ledger row.
+
+The step-3 span (the W0 re-solve, writing `unit_marginal_<Y>`) is held by the desk on W0 and carries no new MISO lever.
+
+## 8. Where MISO stands
+
+Keeper unchanged. Train 2023–2025 CALIBRATED (C3c ledgered; C3c 2019/2021 model-class caveats, 2020 PASS). Full span
+NOT-YET on C1 ST_GAS 2019 (routed, exhausted), C3a 2020 (+11.6 %, exhausted) and C3b 2021 (0.201, exhausted).
+**No frontier** (owner clarification 2026-09-28).

@@ -35,7 +35,10 @@ from market_sim.config.iso_configs import (
 from market_sim.config.paths import (
     PROCESSED_DIR,
     active_eia860_dir,
+    cc_capacity_reconcile_path,
+    eia860_actual_retirement_only,
     eia860_operable_statuses,
+    eia860_seasonal_capacity_basis,
     eia860_standby_admitted,
 )
 from market_sim.config.plant_taxonomy import (
@@ -66,6 +69,8 @@ from market_sim.data.fleet.models import (
     Generator,
     MIXED_FACILITY_STEAM_HR,
     ba_codes,
+    generator_footprint_mask,
+    program_footprint_mask,
     _clean_fleet_year,
     _read_clean,
     _use_clean,
@@ -256,6 +261,33 @@ def _to_year(value: object) -> int | None:
     text = str(value).strip()
     match = re.search(r"(?:19|20)\d{2}", text)
     return int(match.group(0)) if match else None
+
+
+#: EIA-860's "month unknown" codes for ``Operating Month`` (Form EIA-860
+#: instructions; W0 audit §D). Mirrors ``cod_ramp.COD_FALLBACK_MONTH`` (imported
+#: lazily there — the fleet package loads before ``cod_ramp``).
+_EIA860_UNKNOWN_MONTH_CODES: frozenset[int] = frozenset({88, 99})
+
+
+def _operating_month(value: object) -> int:
+    """A unit's online month: the sheet's month, else a documented default.
+
+    A blank cell keeps the January default the loader has always used (a unit
+    the sheet carries no month for). An EIA-860 unknown-month sentinel
+    (:data:`_EIA860_UNKNOWN_MONTH_CODES`) is NOT a blank: EIA states the unit
+    came online during the year at an unknown month, so it takes the ramp's
+    neutral mid-year :data:`market_sim.data.cod_ramp.COD_FALLBACK_MONTH` — the
+    same reading the plant-collapsed COD reducer gives it (W0 audit §E.8).
+    """
+    month = _to_month(value)
+    if month is not None:
+        return month
+    number = _to_float(value)
+    if number is not None and int(number) in _EIA860_UNKNOWN_MONTH_CODES:
+        from market_sim.data.cod_ramp import COD_FALLBACK_MONTH
+
+        return COD_FALLBACK_MONTH
+    return 1
 
 
 def _to_month(value: object) -> int | None:
@@ -1539,6 +1571,9 @@ def _rows_to_generators(
         else frozenset()
     )
 
+    # W0 E.1 seasonal capacity basis (paths.set_eia860_seasonal_capacity_basis).
+    seasonal_basis = eia860_seasonal_capacity_basis()
+
     records: list[dict] = []
     # Per-plant EIA-860 nameplate sum over merchant-CC generators, for the
     # summer-capacity consistency guard applied after the row loop.
@@ -1609,9 +1644,15 @@ def _rows_to_generators(
             pmax = _to_float(data.get("nameplate_capacity_mw"))
         if pmax is None or pmax <= 0.0:
             continue
+        # The published WINTER rating (W0 E.1), joined per unit from the same
+        # vintage's operable sheet when the seasonal basis is armed. A blank /
+        # non-positive winter takes the row's summer-basis pmax above.
+        winter_mw = _to_float(data.get("winter_capacity_mw"))
+        if winter_mw is None or winter_mw <= 0.0:
+            winter_mw = pmax
 
         operating_year = _to_year(data.get("operating_year")) or 2000
-        operating_month = _to_month(data.get("operating_month")) or 1
+        operating_month = _operating_month(data.get("operating_month"))
         retirement_month = _to_month(data.get("planned_retirement_month"))
         ebin = _efficiency_bin(fuel_type, operating_year)
 
@@ -1735,6 +1776,27 @@ def _rows_to_generators(
             if measured_cc_hr is not None:
                 heat_rate = measured_cc_hr
 
+        # W0 E.1 seasonal capacity basis (ScenarioConfig.seasonal_capacity_basis,
+        # process-global via paths.set_eia860_seasonal_capacity_basis): a
+        # binnable thermal row is carried at its published seasonal envelope
+        # B = max(summer, winter) and records each season's rating; the shares
+        # are taken AFTER the CC guard below so a guard clip of B never
+        # understates the published summer rating. A non-CC row's winter never
+        # exceeds max(nameplate, summer) (audit §E.1); a CC plant is bounded by
+        # the guard's max(nameplate, CAMPD p99.9) instead, since a published
+        # winter rating above plate is physical for a gas turbine (caiso-186).
+        seasonal_mw: tuple[float, float] | None = None
+        if seasonal_basis and group in BIN_GROUP_TO_FUEL:
+            summer_mw = pmax
+            win = winter_mw
+            if group not in ("CC_REGULAR", "CC_CHP"):
+                plate = _to_float(data.get("nameplate_capacity_mw")) or 0.0
+                win = min(win, max(plate, summer_mw))
+            pmax = max(summer_mw, win)
+            seasonal_mw = (summer_mw, win)
+            if fuel_type == "coal":
+                pmin = 0.4 * pmax
+
         record = {
             "plant_id": plant_id,
             "plant_code": plant_code,
@@ -1757,6 +1819,8 @@ def _rows_to_generators(
             "retirement_month": retirement_month,
             "is_must_run": fuel_type == "nuclear",
         }
+        if seasonal_mw is not None:
+            record["_seasonal_mw"] = seasonal_mw
         records.append(record)
         # Accumulate the per-plant EIA-860 nameplate sum for the merchant-CC
         # consistency guard below. Keyed on plant_code, summed over the same
@@ -1769,6 +1833,7 @@ def _rows_to_generators(
 
     if apply_cc_summer_guard:
         _reconcile_cc_pmax_to_nameplate(records, cc_nameplate_sum, iso)
+    _set_seasonal_capability_fracs(records)
     zones = _assign_zones(records, iso, iso_config)
     return [
         Generator(
@@ -1777,6 +1842,27 @@ def _rows_to_generators(
         )
         for rec, zone in zip(records, zones)
     ]
+
+
+def _set_seasonal_capability_fracs(records: list[dict]) -> None:
+    """Turn each seasonal-basis row's published MW pair into pmax shares.
+
+    W0 E.1. Runs AFTER the merchant-CC guard, on the row's FINAL ``pmax_mw``
+    (the envelope, possibly clipped by the guard): each season's share is
+    ``min(1, rating / pmax)``, so a clipped envelope still carries the
+    published summer rating whenever it fits under the clip, and never more
+    than the clip. Rows without the private ``_seasonal_mw`` key (every legacy
+    path) are untouched; the key is removed in place.
+    """
+    for rec in records:
+        pair = rec.pop("_seasonal_mw", None)
+        if pair is None:
+            continue
+        pmax = float(rec["pmax_mw"])
+        if pmax <= 0.0:
+            continue
+        rec["summer_capability_frac"] = min(1.0, float(pair[0]) / pmax)
+        rec["winter_capability_frac"] = min(1.0, float(pair[1]) / pmax)
 
 
 from market_sim.data.chp import (  # noqa: E402
@@ -1906,7 +1992,9 @@ _CC_BLOCK_PRIME_MOVERS: tuple[str, str] = ("CT", "CA")
 
 
 @lru_cache(maxsize=16)
-def _cc_block_summer_ratings(eia860_dir: Path) -> dict[tuple[int, str], float]:
+def _cc_block_summer_ratings(
+    eia860_dir: Path, include_ng: bool = False
+) -> dict[tuple[int, str], float]:
     """``{(plant_code, generator_id): MW}`` for blocks rated on ONE row.
 
     ``ScenarioConfig.cc_block_summer_rating`` (miso-272). Some EIA-860 filers
@@ -1946,6 +2034,14 @@ def _cc_block_summer_ratings(eia860_dir: Path) -> dict[tuple[int, str], float]:
       MISO 1004 Edwardsport's syngas IGCC, whose CAMPD record (max 480 MW
       gross, 2023) corroborates the 555 MW block rating and refutes the
       1,036 MW the fill carried.
+
+      W0 (owner ruling R-2 / Q4, audit §E.3, 2026-10-02): ``include_ng`` lifts
+      this exclusion for an ISO with NO demonstrated-peak table
+      (:func:`market_sim.config.paths.cc_capacity_reconcile_path` absent —
+      SPP, NWPP, SOCO at HEAD). There the measured bound the exclusion defers
+      to does not exist, so the guard can only clip the block to nameplate and
+      the published block rating is the most accurate statement available
+      (rule 14). Where the table exists the measured bound keeps the block.
 
     The block's reported summer total (the sum of its ``CA`` ratings) is then
     allocated across ALL of the block's rows in proportion to nameplate, so
@@ -2020,7 +2116,7 @@ def _cc_block_summer_ratings(eia860_dir: Path) -> dict[tuple[int, str], float]:
             continue
         if not (ca["su"] > ca["np"] * _CC_NAMEPLATE_GUARD_TOL).any():
             continue  # no row reports more than its own nameplate
-        if (ca["es"] == "NG").any():
+        if not include_ng and (ca["es"] == "NG").any():
             continue  # gas block: owned by the measured CC guard / cap (rule 19)
         np_sum = float(grp["np"].fillna(0.0).sum())
         if np_sum <= 0.0:
@@ -2049,7 +2145,8 @@ def _apply_cc_block_summer_rating(
     naming the MW the reconciliation removes relative to the loader's
     ``summer, else nameplate`` fill.
     """
-    ratings = _cc_block_summer_ratings(Path(eia860_dir))
+    include_ng = not cc_capacity_reconcile_path(iso).exists()
+    ratings = _cc_block_summer_ratings(Path(eia860_dir), include_ng)
     if not ratings or df.empty:
         return df
     keys = list(
@@ -2068,6 +2165,13 @@ def _apply_cc_block_summer_rating(
     before = summer.where(summer > 0.0, nameplate).fillna(0.0)
     after = pd.Series([v if v is not None else np.nan for v in new], index=df.index)
     df.loc[hit, "net_summer_capacity_mw"] = after[hit]
+    if "winter_capacity_mw" in df.columns:
+        # W0 E.1: a block rated on one row files its WINTER rating on that row
+        # too, so the per-row winter is no more a generator's rating than the
+        # summer was. The block's rows take their allocated summer share as
+        # their winter (the seasonal-basis fallback for a blank winter) rather
+        # than re-introducing the one-row block total as a phantom.
+        df.loc[hit, "winter_capacity_mw"] = np.nan
     moved = (
         pd.DataFrame(
             {
@@ -2179,6 +2283,74 @@ def _dual_fuel_plant_groups(
 
 
 @lru_cache(maxsize=8)
+@lru_cache(maxsize=16)
+def _program_operable_plant_ids(op_path: Path) -> set[int]:
+    """Plant ids of a processed generator table inside the PROGRAM footprint.
+
+    W0 E.6: the presence tests of the exit channels used to read every row of
+    a derive-filtered table, i.e. every plant in ANY modelled region. With the
+    table unfiltered, the same population is re-selected at load time by
+    :func:`~market_sim.data.fleet.models.program_footprint_mask` (the
+    derive-time predicate, moved), so the sets are identical.
+    """
+    from market_sim.config.constants import ISO_BA_EXITS, ISO_BA_JOINS
+    from market_sim.data.ba_membership import ba_exit_stamps
+
+    op = pd.read_parquet(op_path)
+    if "balancing_authority_code" in op.columns:
+        # The derive-time population also carried the registered joining BAs'
+        # rows and the dated exit members (``--admit-ba`` / ``--admit-plant``).
+        # Each dated: a joining BA from its join year, an exit member through
+        # its exit year — the vintages the derive admitted them in.
+        vy = operable_vintage_year(op_path.parent)
+        joins = {
+            ba
+            for bas in ISO_BA_JOINS.values()
+            for ba, (jy, _jm) in bas.items()
+            if vy >= jy
+        }
+        exits = {
+            p
+            for iso in ISO_BA_EXITS
+            for p, stamp in ba_exit_stamps(iso).items()
+            if vy <= stamp.year
+        }
+        ba = op["balancing_authority_code"].astype(str).str.strip()
+        pid = pd.to_numeric(op["plant_id"], errors="coerce")
+        op = op[program_footprint_mask(op) | ba.isin(joins) | pid.isin(exits)]
+    return set(pd.to_numeric(op["plant_id"], errors="coerce").dropna().astype(int))
+
+
+@lru_cache(maxsize=16)
+def _winter_capacity_by_unit(eia860_dir) -> dict[tuple[int, str], float]:
+    """Return ``{(plant_code, generator_id): Winter Capacity (MW)}`` (W0 E.1).
+
+    Read from ``<eia860_dir>/eia860_generator_operable.parquet`` — the vintage
+    the fleet is loading — keyed exactly as :func:`_operating_month_by_unit`.
+    Only positive ratings are returned; a blank is the caller's summer
+    fallback. Empty when the sheet or the column is absent.
+    """
+    path = Path(eia860_dir) / "eia860_generator_operable.parquet"
+    if not path.exists():
+        return {}
+    try:
+        raw = pd.read_parquet(
+            path, columns=["Plant Code", "Generator ID", "Winter Capacity (MW)"]
+        )
+    except Exception:
+        logger.warning("EIA-860 operable sheet at %s has no winter rating", path)
+        return {}
+    raw.columns = [str(c).strip() for c in raw.columns]
+    pc = pd.to_numeric(raw["Plant Code"], errors="coerce")
+    win = pd.to_numeric(raw["Winter Capacity (MW)"], errors="coerce")
+    gid = raw["Generator ID"].astype(str).str.strip()
+    return {
+        (int(code), gen_id): float(mw)
+        for code, mw, gen_id in zip(pc, win, gid)
+        if pd.notna(code) and pd.notna(mw) and mw > 0.0
+    }
+
+
 def _operating_month_by_unit(eia860_dir) -> dict[tuple[int, str], int]:
     """Return ``{(plant_code, generator_id): Operating Month}`` from the operable sheet.
 
@@ -2188,8 +2360,9 @@ def _operating_month_by_unit(eia860_dir) -> dict[tuple[int, str], int]:
     from a year-matched ``vintage_<year>/`` directory takes that vintage's own
     months. Keys mirror the processed parquet's ``(plant_id, generator_id)``
     (the id stripped, as ``_rows_to_generators`` strips it). Rows with no
-    month are omitted so the caller's January default applies. Empty when the
-    sheet is absent.
+    month are omitted so the caller's January default applies; EIA-860's
+    unknown-month codes (88/99) are kept for :func:`_operating_month`. Empty
+    when the sheet is absent.
     """
     path = Path(eia860_dir) / "eia860_generator_operable.parquet"
     if not path.exists():
@@ -2203,8 +2376,14 @@ def _operating_month_by_unit(eia860_dir) -> dict[tuple[int, str], int]:
     gid = raw["Generator ID"].astype(str).str.strip()
     out: dict[tuple[int, str], int] = {}
     for code, month, gen_id in zip(pc, om, gid):
-        if pd.isna(code) or pd.isna(month) or not (1 <= int(month) <= 12):
+        if pd.isna(code) or pd.isna(month):
             continue
+        if not (1 <= int(month) <= 12) and (
+            int(month) not in _EIA860_UNKNOWN_MONTH_CODES
+        ):
+            continue
+        # An unknown-month sentinel passes through so :func:`_operating_month`
+        # resolves it to the mid-year fallback rather than January (W0 E.8).
         out[(int(code), gen_id)] = int(month)
     return out
 
@@ -2259,13 +2438,14 @@ def _load_fleet_from_parquet(
     # region, so their filter is unchanged.
     codes = ba_codes(iso) + joining_ba_codes(iso, year)
     if codes and "balancing_authority_code" in df.columns:
-        ba = df["balancing_authority_code"].astype(str).str.strip()
         # Plus the recoded plants still inside the region for part of ``year``
         # (constants.ISO_BA_EXITS, lane R-SOCO-B2): a vintage may already code
         # one to its destination BA before it left (SOCO: Santa Rosa 55242 is
         # FPL in vintage 2022; its post-exit hours are masked in fleet.arrays).
         # Empty for every other region and year, so their filter is unchanged.
-        df = df[ba.isin(codes) | _exit_member_mask(df, iso, year)]
+        df = df[
+            generator_footprint_mask(iso, df, codes) | _exit_member_mask(df, iso, year)
+        ]
     # One membership rule for benchmark, injection and fleet (rule 19): plants
     # the CURRENT EIA-860 recodes out of the region leave the vintage fleet too
     # (constants.ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE — SOCO's former Gulf
@@ -2297,6 +2477,31 @@ def _load_fleet_from_parquet(
                 )
             )
             df["operating_month"] = [months.get(k) for k in keys]
+
+    # W0 E.5 (ScenarioConfig.backcast_actual_retirement_only): the operable
+    # generator table's planned retirement is never read in a backcast — a
+    # unit leaves only at an ACTUAL EIA-860 retirement, which the retiree /
+    # exit channels carry on their own rows.
+    if eia860_actual_retirement_only():
+        for _col in ("planned_retirement_year", "planned_retirement_month"):
+            if _col in df.columns:
+                df[_col] = np.nan
+
+    # W0 E.1: each unit's published WINTER rating from the SAME directory's raw
+    # operable sheet (the processed parquet carries nameplate + net summer
+    # only), joined only while the seasonal capacity basis is armed so every
+    # other path is byte-identical.
+    if eia860_seasonal_capacity_basis() and "winter_capacity_mw" not in df.columns:
+        winters = _winter_capacity_by_unit(parquet_path.parent)
+        keys = list(
+            zip(
+                pd.to_numeric(df["plant_id"], errors="coerce"),
+                df["generator_id"].astype(str).str.strip(),
+            )
+        )
+        df["winter_capacity_mw"] = [
+            winters.get((int(p), g)) if pd.notna(p) else None for p, g in keys
+        ]
 
     # Combined-cycle blocks rated on ONE row (config.cc_block_summer_rating,
     # miso-272; default off, byte-identical off): the block's reported summer
@@ -3164,8 +3369,7 @@ def _partial_plant_exit_rows(
     # The canonical fleet snapshot (snake_case schema) — the same membership
     # the dispatch fleet actually reads: a plant with any surviving row is
     # "present", exactly the builder's whole-plant test.
-    op = pd.read_parquet(op_path, columns=["plant_id"])
-    op_ids = set(pd.to_numeric(op["plant_id"], errors="coerce").dropna().astype(int))
+    op_ids = _program_operable_plant_ids(op_path)
     df = df[df["plant_id"].isin(op_ids)]
     if df.empty:
         return df
@@ -3277,8 +3481,7 @@ def _mid_vintage_exit_rows(
     # operable snapshot (the canonical snake_case fleet file, the same
     # membership the dispatch fleet reads). A plant with any surviving row is
     # "present" and belongs to the partial-exit channel, never to this one.
-    op = pd.read_parquet(op_path, columns=["plant_id"])
-    op_ids = set(pd.to_numeric(op["plant_id"], errors="coerce").dropna().astype(int))
+    op_ids = _program_operable_plant_ids(op_path)
     df = df[~df["plant_id"].isin(op_ids)]
     if df.empty:
         return df
@@ -3331,8 +3534,7 @@ def _mid_vintage_exit_rows_from_window(
         df["planned_retirement_year"], errors="coerce"
     )
     df = df[df["planned_retirement_year"] == int(year)]
-    op = pd.read_parquet(op_path, columns=["plant_id"])
-    op_ids = set(pd.to_numeric(op["plant_id"], errors="coerce").dropna().astype(int))
+    op_ids = _program_operable_plant_ids(op_path)
     df = df[~df["plant_id"].isin(op_ids)]
     if df.empty:
         return df
@@ -3701,8 +3903,10 @@ def load_mothballed_but_operating(
         return []
     codes = ba_codes(iso)
     if codes and "balancing_authority_code" in snap.columns:
-        ba = snap["balancing_authority_code"].astype(str).str.strip()
-        snap = snap[ba.isin(codes) | _exit_member_mask(snap, iso, year)]
+        snap = snap[
+            generator_footprint_mask(iso, snap, codes)
+            | _exit_member_mask(snap, iso, year)
+        ]
     # Same membership rule as the operable loader (rule 19; SOCO Gulf plants).
     snap = drop_current_ba_recoded_rows(snap, iso, year=year)
     status = snap["status"].astype(str).str.strip().str.upper()
@@ -3731,8 +3935,7 @@ def load_mothballed_but_operating(
     if "status" not in vint.columns:
         return []
     if codes and "balancing_authority_code" in vint.columns:
-        ba = vint["balancing_authority_code"].astype(str).str.strip()
-        vint = vint[ba.isin(codes)]
+        vint = vint[generator_footprint_mask(iso, vint, codes)]
     vstatus = vint["status"].astype(str).str.strip().str.upper()
     vint = vint[vstatus == "OP"]
 

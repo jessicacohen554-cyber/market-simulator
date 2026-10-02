@@ -1463,7 +1463,9 @@ def _vintage_coords_zone_lookup_cached(iso: str, plant_path: str) -> dict[int, s
     return _eia860_ba_zones(iso, Path(plant_path))
 
 
-def vintage_coords_zone_lookup(iso: str) -> dict[int, str]:
+def vintage_coords_zone_lookup(
+    iso: str, eia860_dir: "Path | None" = None
+) -> dict[int, str]:
     """``{oris: zone}`` from the ACTIVE EIA-860 vintage's own plant coordinates.
 
     THE DEFECT (PJM-NEXT phase 0, 2026-09-25, zero LP). The fleet zones each
@@ -1486,10 +1488,18 @@ def vintage_coords_zone_lookup(iso: str) -> dict[int, str]:
     benchmark's population is ``build_zone_lookup``'s keys, untouched here).
     Zero free parameters (rule 21): EIA's own published coordinates through the
     existing zone rules. Returns an empty dict when the plant file is absent.
-    """
-    from market_sim.config.paths import active_eia860_dir
 
-    path = active_eia860_dir() / _EIA860_PLANT_PATH.name
+    Also consulted by the renewables loader
+    (:func:`market_sim.data.renewables._eia860_monthly_capacity`), which passes
+    the EIA-860 directory it is reading as ``eia860_dir`` so the wind/solar
+    generators and the plant coordinates come from the same vintage; omitted,
+    the active vintage directory is used.
+    """
+    if eia860_dir is None:
+        from market_sim.config.paths import active_eia860_dir
+
+        eia860_dir = active_eia860_dir()
+    path = Path(eia860_dir) / _EIA860_PLANT_PATH.name
     return dict(_vintage_coords_zone_lookup_cached(iso.upper(), str(path)))
 
 

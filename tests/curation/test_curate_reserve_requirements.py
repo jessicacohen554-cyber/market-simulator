@@ -137,6 +137,80 @@ class TestCurateReserveRequirements(unittest.TestCase):
         with self.assertRaises(ValueError):
             neiso.parse(self.raw, 2023)
 
+    def test_parse_drops_exact_duplicate_row_on_normal_day(self):
+        dest = self.raw / "NEISO-AS" / "requirements"
+        lines = _window_csv({"2023-06-03": _HE_NORMAL}).splitlines()
+        # The 2020-12-16 HE 11 pattern: the same row published twice in a row.
+        dup = next(
+            i for i, ln in enumerate(lines) if ln.startswith("D,2023-06-03,11,7000,")
+        )
+        lines.insert(dup + 1, lines[dup])
+        (dest / "requirements_20230603_20230603.csv").write_text(
+            "\n".join(lines) + "\n"
+        )
+        df = neiso.parse(self.raw, 2023)
+        sys10 = df[
+            (df["location"] == "ROS")
+            & (df["product"] == "10min_total")
+            & (df["interval_start_local"].dt.date.astype(str) == "2023-06-03")
+        ].sort_values("interval_start_utc")
+        self.assertEqual(list(sys10["requirement_mw"]), [1200.0 + h for h in range(24)])
+
+    def test_parse_keeps_identical_fall_back_repeat(self):
+        dest = self.raw / "NEISO-AS" / "requirements"
+        lines = _window_csv({"2024-11-03": _HE_FALL}).splitlines()
+        # Make HE 02X carry exactly HE 02's values: a legitimate repeat, not a dup.
+        he02 = next(ln for ln in lines if ln.startswith("D,2024-11-03,02,7000,"))
+        lines = [
+            he02.replace(",02,", ",02X,")
+            if ln.startswith("D,2024-11-03,02X,7000,")
+            else ln
+            for ln in lines
+        ]
+        (dest / "requirements_20241103_20241103.csv").write_text(
+            "\n".join(lines) + "\n"
+        )
+        df = neiso.parse(self.raw, 2024)
+        sys30 = df[(df["location"] == "ROS") & (df["product"] == "30min_total")]
+        self.assertEqual(len(sys30), 25)
+
+    def test_parse_treats_zero_system_ten_minute_as_hole(self):
+        dest = self.raw / "NEISO-AS" / "requirements"
+        lines = _window_csv({"2023-06-04": _HE_NORMAL}).splitlines()
+        # The 2020-12-10..17 outage pattern: ROS publishes 0, 0, 830.
+        lines = [
+            "D,2023-06-04,05,7000,0,0,830"
+            if ln.startswith("D,2023-06-04,05,7000,")
+            else ln
+            for ln in lines
+        ]
+        (dest / "requirements_20230604_20230604.csv").write_text(
+            "\n".join(lines) + "\n"
+        )
+        df = neiso.parse(self.raw, 2023)
+        day = df["interval_start_local"].dt.date.astype(str) == "2023-06-04"
+        sys10 = df[day & (df["location"] == "ROS") & (df["product"] == "10min_total")]
+        sys10 = sys10.sort_values("interval_start_utc")["requirement_mw"].tolist()
+        self.assertNotIn(0.0, sys10)
+        self.assertEqual(sys10[4], sys10[3])  # step-held from HE 04
+        # Local zones legitimately publish zero ten-minute values and are untouched.
+        loc10 = df[day & (df["location"] == "CT") & (df["product"] == "10min_total")]
+        self.assertTrue((loc10["requirement_mw"] == 0.0).all())
+
+    def test_curate_refuses_defective_year_and_continues(self):
+        dest = self.raw / "NEISO-AS" / "requirements"
+        # 2022 is structurally defective (gap budget overrun); 2023 is clean.
+        (dest / "requirements_20220701_20220704.csv").write_text(
+            _window_csv({f"2022-07-{d:02d}": ["01"] for d in range(1, 5)})
+        )
+        written = curate_rr.curate(
+            raw_root=self.raw, isos=["NEISO"], years=[2022, 2023]
+        )
+        self.assertEqual(
+            [p.name for p in written], ["reserve-requirements_2023.parquet"]
+        )
+        self.assertFalse(clean_io.clean_exists(rr.DATATYPE, iso="NEISO", year=2022))
+
     def test_curate_writes_schema_valid_partition(self):
         written = curate_rr.curate(raw_root=self.raw, isos=["NEISO"], years=[2023])
         self.assertEqual(len(written), 1)

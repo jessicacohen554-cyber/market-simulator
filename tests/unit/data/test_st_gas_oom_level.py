@@ -79,6 +79,13 @@ def _floor(oom: bool, measured: bool = True) -> np.ndarray:
         st_gas_mustrun_p25_level=True,
         st_gas_mustrun_p25_measured_level=measured,
         st_gas_mustrun_oom_level=oom,
+        # W0 flipped commission_year_cod_fallback default-on in backcast; this
+        # fixture exercises the floor's LEVEL wiring on the literal-2010 age
+        # its invariants were written against, so it pins the pre-W0 age
+        # resolution (under the plant's real COD the oom-off window floors
+        # 20,876 h against 17,204 h armed — recorded in the W0 RESULT for the
+        # MISO lane, not absorbed here).
+        commission_year_cod_fallback=False,
     )
     fleet, _ = bins_to_fleet(bins, ZONES, cfg)
     # A rising synthetic load shape: the floor's window is the top-online_frac

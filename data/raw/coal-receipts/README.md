@@ -73,10 +73,13 @@ carries heat content and delivered cost as quantity-weighted means.
 |---|---|
 | 2017 | **yes** (Final Revision vintage) — landed 2026-09-24 by R-MISO so the 2019 budget's delivery rate averages its full Y-2..Y-1 window (2017 + 2018) |
 | 2018–2024 | **yes** (Final Revision vintage) |
-| 2025 | **no** — awaiting the EIA-923 2025 Final Revision, same gap the `coal-stocks` README records |
+| 2025 | **yes** (Final vintage) — landed 2026-10-02 (closeout-ERCOT, L1 PRECOMMIT §2.4 precondition) from `f923_2025.zip`, workbook `EIA923_Schedules_2_3_4_5_M_12_2025_Final.xlsx`, `Page 5 Fuel Receipts and Costs`: 6,652 coal rows of 36,789 (395.58 Mt, 201 plants curated). sha256 in `SHA256SUMS.txt` |
 
-The 2025 gap does **not** block a 2025 budget: a 2025 delivery rate is built
-from 2023 + 2024, and a 2025 opening stock is December 2024 — both curated.
+A 2025 budget's prior-years delivery rate is still 2023 + 2024 and its opening stock
+December 2024; the 2025 rows are read only by the same-year measured-receipts overlay
+(`coal_monthly_pile_measured_receipts`, owner ruling R-3). Note: Sandy Creek (56611)
+reports **no** 2025 receipts while generating 0.72 TWh (burn from stock during a long
+outage year); under that overlay its yard keeps the ratable profile, never zero.
 
 Two vintage facts, both handled in the curation script:
 

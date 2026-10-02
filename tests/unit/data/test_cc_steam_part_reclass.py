@@ -234,9 +234,16 @@ class TestIsoScope(unittest.TestCase):
     def test_only_neiso_is_enrolled(self) -> None:
         self.assertEqual(CC_STEAM_PART_RECLASS_ISOS, frozenset({"NEISO"}))
 
-    def test_the_two_registries_are_disjoint(self) -> None:
-        """Separate objects, separate populations, separate gates."""
-        self.assertFalse(CC_STEAM_PART_RECLASS_ISOS & CC_STEAM_PART_REPAIR_ISOS)
+    def test_the_two_gates_stay_separate(self) -> None:
+        """Separate objects, separate populations, separate gates.
+
+        W0 enrolled every ISO in the REPAIR set, so the registries now overlap
+        (NEISO); the POPULATIONS stay disjoint by construction — the repair
+        acts only on a row the fuel map DROPS, the re-class only on a row it
+        CARRIES under a non-gas fuel — and the re-class keeps its own registry.
+        """
+        self.assertEqual(CC_STEAM_PART_RECLASS_ISOS, frozenset({"NEISO"}))
+        self.assertIsNot(CC_STEAM_PART_RECLASS_ISOS, CC_STEAM_PART_REPAIR_ISOS)
 
     def test_edwardsport_stays_coal_in_miso(self) -> None:
         """MISO is not enrolled, so the armed flag cannot reach its IGCC ST."""

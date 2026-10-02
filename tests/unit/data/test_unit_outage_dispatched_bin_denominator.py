@@ -411,10 +411,29 @@ class TestRegistration:
         assert "unit_outage_dispatched_bin_denominator" in _CACHE_KEY_OPTIONAL_FIELDS
 
     def test_default_key_is_unmoved_and_armed_key_differs(self):
-        base = ScenarioConfig(iso="MISO")
-        assert base.cache_key() == ScenarioConfig(iso="MISO").cache_key()
-        armed = ScenarioConfig(iso="MISO", unit_outage_dispatched_bin_denominator=True)
-        assert armed.cache_key() != base.cache_key()
+        # W0 companion (owner ruling R-2): backcast default ON, coerced to its
+        # frozen False outside a backcast, so the forecast key never moves.
+        fore = ScenarioConfig(iso="MISO")
+        armed_fore = ScenarioConfig(
+            iso="MISO", unit_outage_dispatched_bin_denominator=True
+        )
+        assert armed_fore.cache_key() == fore.cache_key()
+        back = ScenarioConfig(iso="MISO", mode="backcast")
+        assert back.unit_outage_dispatched_bin_denominator is True
+        off = ScenarioConfig(
+            iso="MISO", mode="backcast", unit_outage_dispatched_bin_denominator=False
+        )
+        assert off.cache_key() != back.cache_key()
+
+    def test_yields_to_an_explicit_alternative_denominator(self):
+        """W0: never two denominator constructions (rule 19)."""
+        for alt in (
+            "unit_outage_extract_basis_share",
+            "unit_outage_coal_extract_basis_share",
+            "unit_outage_lp_capacity_basis",
+        ):
+            cfg = ScenarioConfig(iso="MISO", mode="backcast", **{alt: True})
+            assert cfg.unit_outage_dispatched_bin_denominator is False, alt
 
     def test_not_declared_backcast_only(self):
         """It adds no year-keyed record: a forecast fleet has ``pmax`` too.

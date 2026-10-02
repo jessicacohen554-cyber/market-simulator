@@ -1060,7 +1060,10 @@ def _load_hydro_nameplate(iso: str) -> dict[int, float]:
         codes = ba_codes(iso)
         mask = df["prime_mover"] == HYDRO_PRIME_MOVER
         if codes and "balancing_authority_code" in df.columns:
-            mask &= df["balancing_authority_code"].isin(codes)
+            # W0 E.6: load-time footprint (BA + NWPP's NERC key).
+            from market_sim.data.fleet.models import generator_footprint_mask
+
+            mask &= generator_footprint_mask(iso, df, codes)
         hydro = df[mask]
         if not hydro.empty:
             totals = hydro.groupby("plant_id")["nameplate_capacity_mw"].sum()

@@ -837,6 +837,7 @@ def reconcile_floors_to_yard_budget(
     budget: np.ndarray,
     coeff: np.ndarray,
     group_index: np.ndarray,
+    month_index: np.ndarray | None = None,
 ) -> list[tuple[int, float, float]]:
     """Scale each coal yard's must-run floors so they fit inside its fuel budget.
 
@@ -858,18 +859,47 @@ def reconcile_floors_to_yard_budget(
     Args:
         min_gen: ``(n_gen, T)`` floor array; modified IN PLACE.
         gen_idx: Rowed generator indices (``build_coal_plant_budget``'s first return).
-        budget: ``(n_rows, 1)`` annual budgets, MMBtu.
+        budget: ``(n_rows, 1)`` annual budgets, MMBtu; or ``(n_rows, n_months)``
+            CUMULATIVE month-end ceilings (the monthly pile) with ``month_index``.
         coeff: Per-rowed-generator MMBtu/MWh coefficients.
         group_index: Budget row of each rowed generator.
+        month_index: ``(T,)`` month of each hour, required when ``budget`` has
+            more than one column. Each yard's floors are then scaled by the
+            smallest month-end ratio ``ceiling(m) / cumulative floor draw(m)``
+            over the months it exceeds (closeout-L1, ERCOT ceiling-only pile),
+            so the floor fits under every month-end row; a yard that already
+            fits is untouched.
 
     Returns:
-        ``[(row, floor_mmbtu, scale), ...]`` for every row whose floor was scaled.
+        ``[(row, floor_mmbtu, scale), ...]`` for every row whose floor was scaled
+        (``floor_mmbtu`` is the draw at the binding month-end on the monthly grain).
     """
     gen_idx = np.asarray(gen_idx, dtype=int)
     group_index = np.asarray(group_index, dtype=int)
     coeff = np.asarray(coeff, dtype=float)
-    draw = coeff * min_gen[gen_idx].sum(axis=1)
+    budget = np.asarray(budget, dtype=float)
     scaled: list[tuple[int, float, float]] = []
+    if budget.shape[1] > 1:
+        if month_index is None:
+            raise ValueError("a multi-month budget needs month_index")
+        mi = np.asarray(month_index, dtype=int)[: min_gen.shape[1]]
+        n_m = budget.shape[1]
+        by_month = np.zeros((gen_idx.size, n_m), dtype=float)
+        np.add.at(by_month.T, mi, min_gen[gen_idx][:, : mi.size].T)
+        draw_m = np.zeros((budget.shape[0], n_m), dtype=float)
+        np.add.at(draw_m, group_index, coeff[:, None] * by_month)
+        cum = np.cumsum(draw_m, axis=1)
+        for i in range(budget.shape[0]):
+            over = cum[i] > budget[i]
+            if not over.any():
+                continue
+            ratio = np.maximum(budget[i, over], 0.0) / cum[i, over]
+            k = int(np.argmin(ratio))
+            s = float(ratio[k])
+            min_gen[gen_idx[group_index == i]] *= s
+            scaled.append((i, float(cum[i, over][k]), s))
+        return scaled
+    draw = coeff * min_gen[gen_idx].sum(axis=1)
     for i in range(budget.shape[0]):
         sel = group_index == i
         e = float(draw[sel].sum())

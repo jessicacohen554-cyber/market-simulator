@@ -1621,10 +1621,35 @@ determination. ISO headlines:
 `frontier_withdrawn_2026_09_30`, text kept). PJM's `complete` marker already stood on a NOT-YET keeper before
 this change; the owner card left it for the PJM lane. Tests: `tests/scoring/test_iso_determination_holdout.py`.
 
-## 27. Changes to this file
+## 27. Rubric v3.14–v3.17 — the close-out-C amendments: ERCOT 2023 configuration exception, SOCO λ budget, NWPP WEIM ELAP, PJM zonal C3a (owner, 2026-10-02)
+
+**Owner rulings, verbatim** (backcast close-out plan `docs/backcast-closeout-plan-2026-10.md` §5.0, decision cards of 2026-10-02):
+
+> R-6 (ERCOT): "We had it set up so 2023 was allowed to have a different config because of the ECRS; then that got eliminated. I'm comfortable with a different config for a single year we know was off."
+> R-8 (SOCO): "scope the caveat budget for a lambda-referenced BA → CALIBRATED-WITH-CAVEATS."
+> R-9 (NWPP): "WEIM ELAP 2023-06 onward as a labelled imbalance-price benchmark, STOP-gated like SOCO's lambda; 2019–2022 stay PHYSICALLY-CALIBRATED (price unscored)."
+> R-13 (PJM): "adopt zonal load-weighted C3a for PJM."
+
+**What changed.** v3.14 adds the *configuration-exception* caveat kind (exact-keyed to ERCOT 2023 C3a/C3b, bound to the
+year's solved carve-out config, direction-bound, governance-gated, never a PASS, off every budget, non-downgrading,
+IMM counterfactual printed beside the actual). v3.15 carries a lambda-referenced BA's scoped C3a/C3b rows off the single
+ledgered slot (still downgrading). v3.16 lands the labelled NWPP ELAP block (gate cells D1/D2/D4), does not score C3c on
+it, and gives pre-2023 NWPP years the v3.8 no-price treatment per year. v3.17 makes PJM's `*_lw` actual zone-resolved
+from the DataMiner2 `type = ZONE` archive. `LEDGERABLE_CRITERIA`, `MAX_LEDGERED_CAVEATS` (1), `MAX_PROTECTIVE_CAVEATS`
+(0) and every band are unchanged. No solve ran.
+
+**ISO determinations moved:** SOCO NOT-YET → CALIBRATED-WITH-CAVEATS. Every other ISO headline unchanged (ERCOT's
+carve-out-2023 scope NOT-YET → CALIBRATED; PJM C3a 2020 FAIL → PASS; NWPP now price-scored and failing C3a/C3b
+2023/2024). Full tables: `docs/records/governance/closeout-2026-10/RESULT-closeout-c-rubric-2026-10-02.md`. Tests:
+`tests/scoring/test_calibration_verdict_closeout_c.py`, `tests/scoring/test_calibration_verdict_scoped_ledger.py`,
+`tests/curation/test_lw_zonal_registry.py`.
+
+## 28. Changes to this file
 
 | date | change |
 |---|---|
+| 2026-10-02 | Rule 35 `[R-PROMOTE]` order text corrected to match `scripts/promote_keeper.py` (lane closeout-promote-tooling; reported by NYISO #7041, SPP-107 #7025, closeout-CAISO #7050): the audit ran before the prune, so E13 failed on the outgoing keeper in every promotion. Now a pre-prune audit (every check but E13; E11 still sees the former bundle) and a strict post-prune audit that refuses to finish. Attest now carries the outgoing keeper's `exceptions` ledger forward (C3c entries re-measured on the incoming bundle; an entry whose year left the span, or whose C3c no longer fails, is refused unless `--drop-exception` records a reason under `exceptions_dropped`). No norm loosened. |
+| 2026-10-02 | Added §27: **rubric v3.14–v3.17** (owner rulings R-6, R-8, R-9, R-13 verbatim in §27): ERCOT 2023 configuration-exception caveat kind, SOCO lambda-referenced reference-definition rows off the single slot, NWPP labelled WEIM ELAP benchmark 2023-06+, PJM zone-resolved C3a actual. SOCO NOT-YET → CALIBRATED-WITH-CAVEATS; no other ISO headline moves. "Changes to this file" renumbered §27 → §28 (no external reference cited §27). |
 | 2026-09-30 | Added §26: **rule 30 `[R-TOUCHPOINT-FOLD]` (c) reversed, rubric v3.13** — the ISO determination covers every registered year, held-out and folded runs included (owner instruction and decision cards verbatim in §26). 0 run-level moves; CAISO, MISO, NYISO, SPP headlines CALIBRATED → NOT-YET; CAISO/SPP `complete` and CAISO/NYISO `frontier` withdrawn. "Changes to this file" renumbered §26 → §27 (the only external citation of §26 is the new one in `calibration_verdict.py`). |
 | 2026-09-30 | Added §25: **rubric v3.12**, one scoped SOCO C3b 2022 row (new `above_band` direction; downgrading, spending the single slot); budget kept at 1 (owner rulings verbatim in §25). Only the SOCO keeper's verdict moves; its full span stays NOT-YET on the budget. "Changes to this file" renumbered §25 → §26 (no external reference cited §25). |
 | 2026-09-30 | Added §24: **rubric v3.11**, three scoped SOCO C3a rows (2019 over, 2020 over, 2022 under; downgrading, spending the single slot), owner rulings verbatim in §24. Only the SOCO keeper's verdict moves; its full span stays NOT-YET. "Changes to this file" renumbered §24 → §25 (no external reference cited §24). |

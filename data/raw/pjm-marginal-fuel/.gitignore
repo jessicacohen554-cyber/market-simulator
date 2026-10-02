@@ -1,0 +1,9 @@
+# PJM IMM Marginal Fuel Postings (intaken 2026-10-02, PJM close-out step 0e).
+# Not committed: Monitoring Analytics posts the files "(c) All rights reserved"
+# and its legal page says access "does not confer any license" -- redistribution
+# terms unverified (docs/data-licensing.md, same treatment as NYISO/atc-ttc/).
+# ~6.6 MB raw + ~11 MB derived; both regenerate from a bare checkout with
+#   python scripts/data/fetch_pjm_marginal_fuel.py --start 2019-01 --end 2025-12
+# and the raw bytes are pinned by the committed SHA256SUMS.txt.
+monthly/
+by-year/

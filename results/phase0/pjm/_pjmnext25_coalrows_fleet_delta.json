@@ -1,0 +1,2143 @@
+{
+ "added_plants": [
+  594,
+  883,
+  884,
+  1554,
+  1571,
+  1572,
+  1573,
+  2836,
+  2840,
+  2866,
+  3122,
+  3140,
+  3149,
+  3797,
+  6019,
+  8226,
+  10678,
+  54304
+ ],
+ "2019": {
+  "units_moved": 165,
+  "foreign_units_moved": [
+   "COAL_PJM_ComEd_p54556_econc03",
+   "COAL_PJM_ComEd_p876_committed",
+   "COAL_PJM_ComEd_p876_econc03",
+   "COAL_PJM_ComEd_p879_econc01",
+   "COAL_PJM_West_APS_p10151_committed",
+   "COAL_PJM_West_APS_p10743_peak",
+   "COAL_PJM_West_APS_p3118_econc00",
+   "COAL_PJM_West_APS_p3118_econc01",
+   "COAL_PJM_West_APS_p3130_econc04",
+   "COAL_PJM_West_APS_p3130_econc05",
+   "COAL_PJM_West_APS_p3136_econc00",
+   "COAL_PJM_West_APS_p3136_econc01",
+   "COAL_PJM_West_APS_p3943_econc00",
+   "COAL_PJM_West_APS_p3943_econc01",
+   "COAL_PJM_West_APS_p3944_econc00",
+   "COAL_PJM_West_APS_p3944_econc01",
+   "COAL_PJM_West_APS_p3948_econc00",
+   "COAL_PJM_West_APS_p3954_econc00",
+   "COAL_PJM_West_APS_p3954_econc01",
+   "COAL_PJM_West_APS_p6004_econc00",
+   "COAL_PJM_West_APS_p6004_econc01",
+   "COAL_PJM_West_APS_p6094_r201911_econc00"
+  ],
+  "foreign_delta": {
+   "COAL_PJM_ComEd_p54556_econc03": {
+    "pmax": 0.0,
+    "min_gen": 81.492,
+    "mc": 0.0
+   },
+   "COAL_PJM_ComEd_p876_committed": {
+    "pmax": 0.0,
+    "min_gen": 15170.261,
+    "mc": 0.0
+   },
+   "COAL_PJM_ComEd_p876_econc03": {
+    "pmax": 0.0,
+    "min_gen": 877.256,
+    "mc": 0.0
+   },
+   "COAL_PJM_ComEd_p879_econc01": {
+    "pmax": 0.0,
+    "min_gen": 50263.108,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p10151_committed": {
+    "pmax": 0.0,
+    "min_gen": -186.24,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p10743_peak": {
+    "pmax": 0.0,
+    "min_gen": -23.28,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3118_econc00": {
+    "pmax": 0.0,
+    "min_gen": -2809.896,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3118_econc01": {
+    "pmax": 0.0,
+    "min_gen": -5619.792,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3130_econc04": {
+    "pmax": 0.0,
+    "min_gen": -824.519,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3130_econc05": {
+    "pmax": 0.0,
+    "min_gen": -824.519,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3136_econc00": {
+    "pmax": 0.0,
+    "min_gen": -2284.916,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3136_econc01": {
+    "pmax": 0.0,
+    "min_gen": -1576.444,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3943_econc00": {
+    "pmax": 0.0,
+    "min_gen": -741.282,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3943_econc01": {
+    "pmax": 0.0,
+    "min_gen": -3118.496,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3944_econc00": {
+    "pmax": 0.0,
+    "min_gen": -2289.619,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3944_econc01": {
+    "pmax": 0.0,
+    "min_gen": -5592.467,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3948_econc00": {
+    "pmax": 0.0,
+    "min_gen": -5139.555,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3954_econc00": {
+    "pmax": 0.0,
+    "min_gen": -4760.932,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3954_econc01": {
+    "pmax": 0.0,
+    "min_gen": -977.829,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p6004_econc00": {
+    "pmax": 0.0,
+    "min_gen": -3424.377,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p6004_econc01": {
+    "pmax": 0.0,
+    "min_gen": -1770.694,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p6094_r201911_econc00": {
+    "pmax": 0.0,
+    "min_gen": -5989.944,
+    "mc": 0.0
+   }
+  },
+  "floor_twh_added_plants": {
+   "incumbent": 0.326,
+   "candidate": 5.932
+  },
+  "plants": {
+   "594": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 20.5,
+     "econ": 381.3,
+     "peak": 8.2,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 25.1
+    },
+    "candidate": {
+     "mustrun": 71.8,
+     "sync": 0.0,
+     "committed": 71.8,
+     "econ": 258.3,
+     "peak": 8.2,
+     "floor_gwh": 27.6,
+     "offer_capwtd": 21.7
+    }
+   },
+   "883": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 34.5,
+     "econ": 640.8,
+     "peak": 13.8,
+     "floor_gwh": 222.6,
+     "offer_capwtd": 20.1
+    },
+    "candidate": {
+     "mustrun": 135.7,
+     "sync": 0.0,
+     "committed": 135.7,
+     "econ": 403.8,
+     "peak": 13.8,
+     "floor_gwh": 440.2,
+     "offer_capwtd": 17.2
+    }
+   },
+   "884": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 25.5,
+     "econ": 474.3,
+     "peak": 10.2,
+     "floor_gwh": 86.6,
+     "offer_capwtd": 20.8
+    },
+    "candidate": {
+     "mustrun": 195.8,
+     "sync": 0.0,
+     "committed": 195.8,
+     "econ": 108.1,
+     "peak": 10.2,
+     "floor_gwh": 139.5,
+     "offer_capwtd": 14.8
+    }
+   },
+   "1554": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 21.1,
+     "econ": 393.4,
+     "peak": 8.5,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 26.5
+    },
+    "candidate": {
+     "mustrun": 104.9,
+     "sync": 0.0,
+     "committed": 104.9,
+     "econ": 204.7,
+     "peak": 8.5,
+     "floor_gwh": 19.9,
+     "offer_capwtd": 21.1
+    }
+   },
+   "1571": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 33.5,
+     "econ": 623.1,
+     "peak": 13.4,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 28.6
+    },
+    "candidate": {
+     "mustrun": 173.5,
+     "sync": 0.0,
+     "committed": 182.9,
+     "econ": 300.2,
+     "peak": 13.4,
+     "floor_gwh": 79.2,
+     "offer_capwtd": 22.4
+    }
+   },
+   "1572": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 25.9,
+     "econ": 482.7,
+     "peak": 10.4,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 25.0
+    },
+    "candidate": {
+     "mustrun": 56.6,
+     "sync": 0.0,
+     "committed": 56.6,
+     "econ": 395.5,
+     "peak": 10.4,
+     "floor_gwh": 7.5,
+     "offer_capwtd": 23.0
+    }
+   },
+   "1573": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 60.2,
+     "econ": 1120.7,
+     "peak": 24.1,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 24.4
+    },
+    "candidate": {
+     "mustrun": 216.9,
+     "sync": 0.0,
+     "committed": 216.9,
+     "econ": 747.1,
+     "peak": 24.1,
+     "floor_gwh": 324.6,
+     "offer_capwtd": 21.0
+    }
+   },
+   "2836": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 30.8,
+     "econ": 572.0,
+     "peak": 12.3,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 25.9
+    },
+    "candidate": {
+     "mustrun": 241.1,
+     "sync": 0.0,
+     "committed": 241.1,
+     "econ": 120.5,
+     "peak": 12.3,
+     "floor_gwh": 127.3,
+     "offer_capwtd": 14.4
+    }
+   },
+   "2840": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 39.0,
+     "econ": 725.4,
+     "peak": 15.6,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 19.6
+    },
+    "candidate": {
+     "mustrun": 286.3,
+     "sync": 0.0,
+     "committed": 286.3,
+     "econ": 191.9,
+     "peak": 15.6,
+     "floor_gwh": 562.5,
+     "offer_capwtd": 12.0
+    }
+   },
+   "2866": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 110.5,
+     "econ": 2055.3,
+     "peak": 44.2,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 20.1
+    },
+    "candidate": {
+     "mustrun": 187.8,
+     "sync": 0.0,
+     "committed": 472.9,
+     "econ": 1505.0,
+     "peak": 44.2,
+     "floor_gwh": 397.5,
+     "offer_capwtd": 17.7
+    }
+   },
+   "3122": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 94.8,
+     "econ": 1762.3,
+     "peak": 37.9,
+     "floor_gwh": 5.8,
+     "offer_capwtd": 22.2
+    },
+    "candidate": {
+     "mustrun": 271.0,
+     "sync": 0.0,
+     "committed": 818.6,
+     "econ": 767.5,
+     "peak": 37.9,
+     "floor_gwh": 1313.2,
+     "offer_capwtd": 16.8
+    }
+   },
+   "3140": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 37.1,
+     "econ": 690.1,
+     "peak": 14.8,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 20.5
+    },
+    "candidate": {
+     "mustrun": 72.7,
+     "sync": 0.0,
+     "committed": 213.7,
+     "econ": 440.7,
+     "peak": 14.8,
+     "floor_gwh": 216.4,
+     "offer_capwtd": 17.3
+    }
+   },
+   "3149": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 75.2,
+     "econ": 1398.7,
+     "peak": 30.1,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 19.8
+    },
+    "candidate": {
+     "mustrun": 354.9,
+     "sync": 0.0,
+     "committed": 711.4,
+     "econ": 407.6,
+     "peak": 30.1,
+     "floor_gwh": 199.9,
+     "offer_capwtd": 13.5
+    }
+   },
+   "3797": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 50.3,
+     "econ": 935.6,
+     "peak": 20.1,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 26.0
+    },
+    "candidate": {
+     "mustrun": 191.1,
+     "sync": 0.0,
+     "committed": 475.8,
+     "econ": 318.9,
+     "peak": 20.1,
+     "floor_gwh": 148.7,
+     "offer_capwtd": 18.1
+    }
+   },
+   "6019": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 65.2,
+     "econ": 1213.7,
+     "peak": 26.1,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 17.3
+    },
+    "candidate": {
+     "mustrun": 531.1,
+     "sync": 0.0,
+     "committed": 531.1,
+     "econ": 216.6,
+     "peak": 26.1,
+     "floor_gwh": 1593.4,
+     "offer_capwtd": 10.1
+    }
+   },
+   "8226": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 28.2,
+     "econ": 525.5,
+     "peak": 11.3,
+     "floor_gwh": 5.4,
+     "offer_capwtd": 22.1
+    },
+    "candidate": {
+     "mustrun": 154.2,
+     "sync": 0.0,
+     "committed": 154.2,
+     "econ": 245.2,
+     "peak": 11.3,
+     "floor_gwh": 299.6,
+     "offer_capwtd": 15.6
+    }
+   },
+   "10678": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 9.0,
+     "econ": 104.4,
+     "peak": 3.6,
+     "floor_gwh": 5.5,
+     "offer_capwtd": 29.6
+    },
+    "candidate": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 78.5,
+     "econ": 34.9,
+     "peak": 3.6,
+     "floor_gwh": 8.5,
+     "offer_capwtd": 25.1
+    }
+   },
+   "54304": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 11.9,
+     "econ": 221.2,
+     "peak": 4.8,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 24.2
+    },
+    "candidate": {
+     "mustrun": 39.0,
+     "sync": 0.0,
+     "committed": 39.0,
+     "econ": 155.1,
+     "peak": 4.8,
+     "floor_gwh": 26.2,
+     "offer_capwtd": 20.0
+    }
+   }
+  }
+ },
+ "2020": {
+  "units_moved": 152,
+  "foreign_units_moved": [
+   "COAL_PJM_ComEd_p54556_peak",
+   "COAL_PJM_ComEd_p876_committed",
+   "COAL_PJM_ComEd_p876_econc03",
+   "COAL_PJM_ComEd_p876_econc04",
+   "COAL_PJM_ComEd_p879_econc00",
+   "COAL_PJM_ComEd_p879_econc01",
+   "COAL_PJM_West_APS_p10151_committed",
+   "COAL_PJM_West_APS_p10151_econc00",
+   "COAL_PJM_West_APS_p10151_econc01",
+   "COAL_PJM_West_APS_p10151_econc02",
+   "COAL_PJM_West_APS_p10151_econc03",
+   "COAL_PJM_West_APS_p10151_econc04",
+   "COAL_PJM_West_APS_p3118_econc00",
+   "COAL_PJM_West_APS_p3118_econc01",
+   "COAL_PJM_West_APS_p3130_econc03",
+   "COAL_PJM_West_APS_p3130_econc04",
+   "COAL_PJM_West_APS_p3130_econc05",
+   "COAL_PJM_West_APS_p3136_econc00",
+   "COAL_PJM_West_APS_p3943_econc00",
+   "COAL_PJM_West_APS_p3943_econc01",
+   "COAL_PJM_West_APS_p3944_econc00",
+   "COAL_PJM_West_APS_p3944_econc01",
+   "COAL_PJM_West_APS_p3944_econc02",
+   "COAL_PJM_West_APS_p3954_econc00",
+   "COAL_PJM_West_APS_p6004_econc00"
+  ],
+  "foreign_delta": {
+   "COAL_PJM_ComEd_p54556_peak": {
+    "pmax": 0.0,
+    "min_gen": 19.344,
+    "mc": 0.0
+   },
+   "COAL_PJM_ComEd_p876_committed": {
+    "pmax": 0.0,
+    "min_gen": 21708.888,
+    "mc": 0.0
+   },
+   "COAL_PJM_ComEd_p876_econc03": {
+    "pmax": 0.0,
+    "min_gen": 2921.247,
+    "mc": 0.0
+   },
+   "COAL_PJM_ComEd_p876_econc04": {
+    "pmax": 0.0,
+    "min_gen": 2200.975,
+    "mc": 0.0
+   },
+   "COAL_PJM_ComEd_p879_econc00": {
+    "pmax": 0.0,
+    "min_gen": 1548.384,
+    "mc": 0.0
+   },
+   "COAL_PJM_ComEd_p879_econc01": {
+    "pmax": 0.0,
+    "min_gen": 14173.908,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p10151_committed": {
+    "pmax": 0.0,
+    "min_gen": -372.48,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p10151_econc00": {
+    "pmax": 0.0,
+    "min_gen": -3464.657,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p10151_econc01": {
+    "pmax": 0.0,
+    "min_gen": -1732.032,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p10151_econc02": {
+    "pmax": 0.0,
+    "min_gen": -288.672,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p10151_econc03": {
+    "pmax": 0.0,
+    "min_gen": -288.672,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p10151_econc04": {
+    "pmax": 0.0,
+    "min_gen": -288.672,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3118_econc00": {
+    "pmax": 0.0,
+    "min_gen": -32067.392,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3118_econc01": {
+    "pmax": 0.0,
+    "min_gen": -1197.512,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3130_econc03": {
+    "pmax": 0.0,
+    "min_gen": -6920.687,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3130_econc04": {
+    "pmax": 0.0,
+    "min_gen": -16634.738,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3130_econc05": {
+    "pmax": 0.0,
+    "min_gen": -14346.998,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3136_econc00": {
+    "pmax": 0.0,
+    "min_gen": -1576.444,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3943_econc00": {
+    "pmax": 0.0,
+    "min_gen": -11869.901,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3943_econc01": {
+    "pmax": 0.0,
+    "min_gen": -1559.248,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3944_econc00": {
+    "pmax": 0.0,
+    "min_gen": -3208.388,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3944_econc01": {
+    "pmax": 0.0,
+    "min_gen": -6109.607,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3944_econc02": {
+    "pmax": 0.0,
+    "min_gen": -1478.239,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3954_econc00": {
+    "pmax": 0.0,
+    "min_gen": -20493.201,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p6004_econc00": {
+    "pmax": 0.0,
+    "min_gen": -23898.245,
+    "mc": 0.0
+   }
+  },
+  "floor_twh_added_plants": {
+   "incumbent": 0.233,
+   "candidate": 5.378
+  },
+  "plants": {
+   "594": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 20.5,
+     "econ": 381.3,
+     "peak": 8.2,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 24.9
+    },
+    "candidate": {
+     "mustrun": 71.8,
+     "sync": 0.0,
+     "committed": 71.8,
+     "econ": 258.3,
+     "peak": 8.2,
+     "floor_gwh": 25.8,
+     "offer_capwtd": 21.8
+    }
+   },
+   "883": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 34.5,
+     "econ": 640.8,
+     "peak": 13.8,
+     "floor_gwh": 148.6,
+     "offer_capwtd": 20.1
+    },
+    "candidate": {
+     "mustrun": 135.7,
+     "sync": 0.0,
+     "committed": 135.7,
+     "econ": 403.8,
+     "peak": 13.8,
+     "floor_gwh": 339.3,
+     "offer_capwtd": 17.1
+    }
+   },
+   "884": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 25.5,
+     "econ": 474.3,
+     "peak": 10.2,
+     "floor_gwh": 49.7,
+     "offer_capwtd": 21.5
+    },
+    "candidate": {
+     "mustrun": 195.8,
+     "sync": 0.0,
+     "committed": 195.8,
+     "econ": 108.1,
+     "peak": 10.2,
+     "floor_gwh": 190.8,
+     "offer_capwtd": 15.3
+    }
+   },
+   "1554": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 15.2,
+     "econ": 283.6,
+     "peak": 6.1,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 27.8
+    },
+    "candidate": {
+     "mustrun": 75.6,
+     "sync": 0.0,
+     "committed": 75.6,
+     "econ": 147.6,
+     "peak": 6.1,
+     "floor_gwh": 27.2,
+     "offer_capwtd": 22.6
+    }
+   },
+   "1571": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 33.5,
+     "econ": 623.1,
+     "peak": 13.4,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 29.1
+    },
+    "candidate": {
+     "mustrun": 173.5,
+     "sync": 0.0,
+     "committed": 182.9,
+     "econ": 300.2,
+     "peak": 13.4,
+     "floor_gwh": 51.5,
+     "offer_capwtd": 23.2
+    }
+   },
+   "1573": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 60.2,
+     "econ": 1120.7,
+     "peak": 24.1,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 24.6
+    },
+    "candidate": {
+     "mustrun": 216.9,
+     "sync": 0.0,
+     "committed": 216.9,
+     "econ": 747.1,
+     "peak": 24.1,
+     "floor_gwh": 272.6,
+     "offer_capwtd": 21.5
+    }
+   },
+   "2836": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 31.4,
+     "econ": 583.1,
+     "peak": 12.5,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 23.6
+    },
+    "candidate": {
+     "mustrun": 245.8,
+     "sync": 0.0,
+     "committed": 245.8,
+     "econ": 122.9,
+     "peak": 12.5,
+     "floor_gwh": 165.2,
+     "offer_capwtd": 13.3
+    }
+   },
+   "2866": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 74.5,
+     "econ": 1385.7,
+     "peak": 29.8,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 18.6
+    },
+    "candidate": {
+     "mustrun": 126.7,
+     "sync": 0.0,
+     "committed": 318.9,
+     "econ": 1014.7,
+     "peak": 29.8,
+     "floor_gwh": 468.6,
+     "offer_capwtd": 16.4
+    }
+   },
+   "3122": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 94.4,
+     "econ": 1756.1,
+     "peak": 37.8,
+     "floor_gwh": 13.6,
+     "offer_capwtd": 20.8
+    },
+    "candidate": {
+     "mustrun": 270.0,
+     "sync": 0.0,
+     "committed": 815.7,
+     "econ": 764.8,
+     "peak": 37.8,
+     "floor_gwh": 693.3,
+     "offer_capwtd": 15.9
+    }
+   },
+   "3149": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 75.2,
+     "econ": 1398.7,
+     "peak": 30.1,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 20.8
+    },
+    "candidate": {
+     "mustrun": 354.9,
+     "sync": 0.0,
+     "committed": 711.4,
+     "econ": 407.6,
+     "peak": 30.1,
+     "floor_gwh": 24.9,
+     "offer_capwtd": 14.1
+    }
+   },
+   "3797": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 50.3,
+     "econ": 935.6,
+     "peak": 20.1,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 19.0
+    },
+    "candidate": {
+     "mustrun": 191.1,
+     "sync": 0.0,
+     "committed": 475.8,
+     "econ": 318.9,
+     "peak": 20.1,
+     "floor_gwh": 305.7,
+     "offer_capwtd": 13.7
+    }
+   },
+   "6019": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 65.2,
+     "econ": 1213.7,
+     "peak": 26.1,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 15.9
+    },
+    "candidate": {
+     "mustrun": 531.1,
+     "sync": 0.0,
+     "committed": 531.1,
+     "econ": 216.6,
+     "peak": 26.1,
+     "floor_gwh": 2026.8,
+     "offer_capwtd": 9.5
+    }
+   },
+   "8226": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 28.2,
+     "econ": 525.5,
+     "peak": 11.3,
+     "floor_gwh": 13.7,
+     "offer_capwtd": 19.5
+    },
+    "candidate": {
+     "mustrun": 154.2,
+     "sync": 0.0,
+     "committed": 154.2,
+     "econ": 245.2,
+     "peak": 11.3,
+     "floor_gwh": 309.1,
+     "offer_capwtd": 14.0
+    }
+   },
+   "10678": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 9.0,
+     "econ": 104.4,
+     "peak": 3.6,
+     "floor_gwh": 7.3,
+     "offer_capwtd": 30.8
+    },
+    "candidate": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 78.5,
+     "econ": 34.9,
+     "peak": 3.6,
+     "floor_gwh": 4.8,
+     "offer_capwtd": 26.4
+    }
+   },
+   "54304": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 11.9,
+     "econ": 221.1,
+     "peak": 4.8,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 21.0
+    },
+    "candidate": {
+     "mustrun": 39.0,
+     "sync": 0.0,
+     "committed": 39.0,
+     "econ": 155.0,
+     "peak": 4.8,
+     "floor_gwh": 26.2,
+     "offer_capwtd": 17.5
+    }
+   },
+   "2840": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 39.0,
+     "econ": 725.4,
+     "peak": 15.6,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 17.3
+    },
+    "candidate": {
+     "mustrun": 286.3,
+     "sync": 0.0,
+     "committed": 286.3,
+     "econ": 191.9,
+     "peak": 15.6,
+     "floor_gwh": 446.6,
+     "offer_capwtd": 10.8
+    }
+   }
+  }
+ },
+ "2021": {
+  "units_moved": 138,
+  "foreign_units_moved": [
+   "COAL_PJM_ComEd_p876_committed",
+   "COAL_PJM_ComEd_p876_econc03",
+   "COAL_PJM_ComEd_p876_econc04",
+   "COAL_PJM_ComEd_p879_econc00",
+   "COAL_PJM_ComEd_p879_econc01",
+   "COAL_PJM_ComEd_p879_econc02",
+   "COAL_PJM_West_APS_p10151_committed",
+   "COAL_PJM_West_APS_p10151_econc00",
+   "COAL_PJM_West_APS_p10151_econc01",
+   "COAL_PJM_West_APS_p10151_econc02",
+   "COAL_PJM_West_APS_p3118_econc00",
+   "COAL_PJM_West_APS_p3130_econc04",
+   "COAL_PJM_West_APS_p3130_econc05",
+   "COAL_PJM_West_APS_p3136_econc00",
+   "COAL_PJM_West_APS_p3943_econc00",
+   "COAL_PJM_West_APS_p3944_econc00",
+   "COAL_PJM_West_APS_p3948_econc00",
+   "COAL_PJM_West_APS_p3954_econc00",
+   "COAL_PJM_West_APS_p6004_econc00"
+  ],
+  "foreign_delta": {
+   "COAL_PJM_ComEd_p876_committed": {
+    "pmax": 0.0,
+    "min_gen": 5511.713,
+    "mc": 0.0
+   },
+   "COAL_PJM_ComEd_p876_econc03": {
+    "pmax": 0.0,
+    "min_gen": 344.579,
+    "mc": 0.0
+   },
+   "COAL_PJM_ComEd_p876_econc04": {
+    "pmax": 0.0,
+    "min_gen": 14731.99,
+    "mc": 0.0
+   },
+   "COAL_PJM_ComEd_p879_econc00": {
+    "pmax": 0.0,
+    "min_gen": 14012.275,
+    "mc": 0.0
+   },
+   "COAL_PJM_ComEd_p879_econc01": {
+    "pmax": 0.0,
+    "min_gen": 17110.883,
+    "mc": 0.0
+   },
+   "COAL_PJM_ComEd_p879_econc02": {
+    "pmax": 0.0,
+    "min_gen": 3077.537,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p10151_committed": {
+    "pmax": 0.0,
+    "min_gen": -93.12,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p10151_econc00": {
+    "pmax": 0.0,
+    "min_gen": -866.016,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p10151_econc01": {
+    "pmax": 0.0,
+    "min_gen": -866.016,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p10151_econc02": {
+    "pmax": 0.0,
+    "min_gen": -577.344,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3118_econc00": {
+    "pmax": 0.0,
+    "min_gen": -12866.87,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3130_econc04": {
+    "pmax": 0.0,
+    "min_gen": -132.584,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3130_econc05": {
+    "pmax": 0.0,
+    "min_gen": -6322.397,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3136_econc00": {
+    "pmax": 0.0,
+    "min_gen": -3152.888,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3943_econc00": {
+    "pmax": 0.0,
+    "min_gen": -7796.239,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3944_econc00": {
+    "pmax": 0.0,
+    "min_gen": -11448.095,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3948_econc00": {
+    "pmax": 0.0,
+    "min_gen": -7679.982,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3954_econc00": {
+    "pmax": 0.0,
+    "min_gen": -10504.704,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p6004_econc00": {
+    "pmax": 0.0,
+    "min_gen": -1429.339,
+    "mc": 0.0
+   }
+  },
+  "floor_twh_added_plants": {
+   "incumbent": 0.317,
+   "candidate": 5.1
+  },
+  "plants": {
+   "594": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 20.5,
+     "econ": 381.3,
+     "peak": 8.2,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 36.1
+    },
+    "candidate": {
+     "mustrun": 71.8,
+     "sync": 0.0,
+     "committed": 71.8,
+     "econ": 258.3,
+     "peak": 8.2,
+     "floor_gwh": 34.4,
+     "offer_capwtd": 31.3
+    }
+   },
+   "883": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 34.5,
+     "econ": 640.8,
+     "peak": 13.8,
+     "floor_gwh": 202.1,
+     "offer_capwtd": 20.5
+    },
+    "candidate": {
+     "mustrun": 135.7,
+     "sync": 0.0,
+     "committed": 135.7,
+     "econ": 403.8,
+     "peak": 13.8,
+     "floor_gwh": 614.3,
+     "offer_capwtd": 17.5
+    }
+   },
+   "884": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 25.5,
+     "econ": 474.3,
+     "peak": 10.2,
+     "floor_gwh": 95.1,
+     "offer_capwtd": 21.4
+    },
+    "candidate": {
+     "mustrun": 195.8,
+     "sync": 0.0,
+     "committed": 195.8,
+     "econ": 108.1,
+     "peak": 10.2,
+     "floor_gwh": 253.9,
+     "offer_capwtd": 15.2
+    }
+   },
+   "1554": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 15.2,
+     "econ": 283.6,
+     "peak": 6.1,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 37.8
+    },
+    "candidate": {
+     "mustrun": 75.6,
+     "sync": 0.0,
+     "committed": 75.6,
+     "econ": 147.6,
+     "peak": 6.1,
+     "floor_gwh": 38.1,
+     "offer_capwtd": 30.5
+    }
+   },
+   "1573": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 60.2,
+     "econ": 1120.7,
+     "peak": 24.1,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 34.6
+    },
+    "candidate": {
+     "mustrun": 216.9,
+     "sync": 0.0,
+     "committed": 216.9,
+     "econ": 747.1,
+     "peak": 24.1,
+     "floor_gwh": 299.1,
+     "offer_capwtd": 29.8
+    }
+   },
+   "2836": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 31.4,
+     "econ": 583.1,
+     "peak": 12.5,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 33.8
+    },
+    "candidate": {
+     "mustrun": 245.8,
+     "sync": 0.0,
+     "committed": 245.8,
+     "econ": 122.9,
+     "peak": 12.5,
+     "floor_gwh": 177.0,
+     "offer_capwtd": 18.0
+    }
+   },
+   "2866": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 74.5,
+     "econ": 1385.7,
+     "peak": 29.8,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 26.8
+    },
+    "candidate": {
+     "mustrun": 126.7,
+     "sync": 0.0,
+     "committed": 318.9,
+     "econ": 1014.7,
+     "peak": 29.8,
+     "floor_gwh": 403.9,
+     "offer_capwtd": 23.4
+    }
+   },
+   "3122": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 94.4,
+     "econ": 1756.1,
+     "peak": 37.8,
+     "floor_gwh": 7.1,
+     "offer_capwtd": 26.4
+    },
+    "candidate": {
+     "mustrun": 270.0,
+     "sync": 0.0,
+     "committed": 815.7,
+     "econ": 764.8,
+     "peak": 37.8,
+     "floor_gwh": 832.7,
+     "offer_capwtd": 19.8
+    }
+   },
+   "3140": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 70.5,
+     "econ": 1312.2,
+     "peak": 28.2,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 26.1
+    },
+    "candidate": {
+     "mustrun": 138.3,
+     "sync": 0.0,
+     "committed": 406.4,
+     "econ": 838.1,
+     "peak": 28.2,
+     "floor_gwh": 352.2,
+     "offer_capwtd": 21.9
+    }
+   },
+   "3149": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 75.2,
+     "econ": 1398.7,
+     "peak": 30.1,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 23.1
+    },
+    "candidate": {
+     "mustrun": 354.9,
+     "sync": 0.0,
+     "committed": 711.4,
+     "econ": 407.6,
+     "peak": 30.1,
+     "floor_gwh": 310.2,
+     "offer_capwtd": 15.4
+    }
+   },
+   "3797": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 50.3,
+     "econ": 935.6,
+     "peak": 20.1,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 35.1
+    },
+    "candidate": {
+     "mustrun": 191.1,
+     "sync": 0.0,
+     "committed": 475.8,
+     "econ": 318.9,
+     "peak": 20.1,
+     "floor_gwh": 159.3,
+     "offer_capwtd": 27.5
+    }
+   },
+   "6019": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 65.2,
+     "econ": 1213.7,
+     "peak": 26.1,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 23.3
+    },
+    "candidate": {
+     "mustrun": 531.1,
+     "sync": 0.0,
+     "committed": 531.1,
+     "econ": 216.6,
+     "peak": 26.1,
+     "floor_gwh": 1287.5,
+     "offer_capwtd": 12.8
+    }
+   },
+   "8226": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 28.2,
+     "econ": 525.5,
+     "peak": 11.3,
+     "floor_gwh": 7.4,
+     "offer_capwtd": 25.3
+    },
+    "candidate": {
+     "mustrun": 154.2,
+     "sync": 0.0,
+     "committed": 154.2,
+     "econ": 245.2,
+     "peak": 11.3,
+     "floor_gwh": 332.6,
+     "offer_capwtd": 17.7
+    }
+   },
+   "10678": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 9.0,
+     "econ": 104.4,
+     "peak": 3.6,
+     "floor_gwh": 5.7,
+     "offer_capwtd": 40.5
+    },
+    "candidate": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 78.5,
+     "econ": 34.9,
+     "peak": 3.6,
+     "floor_gwh": 4.6,
+     "offer_capwtd": 34.6
+    }
+   },
+   "54304": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 11.9,
+     "econ": 221.1,
+     "peak": 4.8,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 38.1
+    },
+    "candidate": {
+     "mustrun": 39.0,
+     "sync": 0.0,
+     "committed": 39.0,
+     "econ": 155.0,
+     "peak": 4.8,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 33.0
+    }
+   }
+  }
+ },
+ "2022": {
+  "units_moved": 98,
+  "foreign_units_moved": [
+   "COAL_PJM_ComEd_p876_econc04",
+   "COAL_PJM_ComEd_p879_econc02",
+   "COAL_PJM_West_APS_p10151_econc00",
+   "COAL_PJM_West_APS_p3118_econc00",
+   "COAL_PJM_West_APS_p3130_econc04",
+   "COAL_PJM_West_APS_p3130_econc05",
+   "COAL_PJM_West_APS_p3136_econc00",
+   "COAL_PJM_West_APS_p3943_econc00",
+   "COAL_PJM_West_APS_p3944_econc00",
+   "COAL_PJM_West_APS_p3954_econc00",
+   "COAL_PJM_West_APS_p6004_econc00"
+  ],
+  "foreign_delta": {
+   "COAL_PJM_ComEd_p876_econc04": {
+    "pmax": 0.0,
+    "min_gen": 9764.935,
+    "mc": 0.0
+   },
+   "COAL_PJM_ComEd_p879_econc02": {
+    "pmax": 0.0,
+    "min_gen": 27166.74,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p10151_econc00": {
+    "pmax": 0.0,
+    "min_gen": -577.344,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3118_econc00": {
+    "pmax": 0.0,
+    "min_gen": -1738.782,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3130_econc04": {
+    "pmax": 0.0,
+    "min_gen": -2544.112,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3130_econc05": {
+    "pmax": 0.0,
+    "min_gen": -5639.929,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3136_econc00": {
+    "pmax": 0.0,
+    "min_gen": -708.472,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3943_econc00": {
+    "pmax": 0.0,
+    "min_gen": -4055.494,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3944_econc00": {
+    "pmax": 0.0,
+    "min_gen": -8052.763,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3954_econc00": {
+    "pmax": 0.0,
+    "min_gen": -852.829,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p6004_econc00": {
+    "pmax": 0.0,
+    "min_gen": -1865.899,
+    "mc": 0.0
+   }
+  },
+  "floor_twh_added_plants": {
+   "incumbent": 0.057,
+   "candidate": 2.764
+  },
+  "plants": {
+   "594": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 20.5,
+     "econ": 381.3,
+     "peak": 8.2,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 46.3
+    },
+    "candidate": {
+     "mustrun": 71.8,
+     "sync": 0.0,
+     "committed": 71.8,
+     "econ": 258.3,
+     "peak": 8.2,
+     "floor_gwh": 13.8,
+     "offer_capwtd": 40.1
+    }
+   },
+   "1554": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 15.2,
+     "econ": 283.6,
+     "peak": 6.1,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 62.4
+    },
+    "candidate": {
+     "mustrun": 75.6,
+     "sync": 0.0,
+     "committed": 75.6,
+     "econ": 147.6,
+     "peak": 6.1,
+     "floor_gwh": 52.6,
+     "offer_capwtd": 50.3
+    }
+   },
+   "2866": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 74.5,
+     "econ": 1385.7,
+     "peak": 29.8,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 46.4
+    },
+    "candidate": {
+     "mustrun": 126.7,
+     "sync": 0.0,
+     "committed": 318.9,
+     "econ": 1014.7,
+     "peak": 29.8,
+     "floor_gwh": 502.2,
+     "offer_capwtd": 39.9
+    }
+   },
+   "3122": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 94.4,
+     "econ": 1756.1,
+     "peak": 37.8,
+     "floor_gwh": 2.6,
+     "offer_capwtd": 36.0
+    },
+    "candidate": {
+     "mustrun": 270.0,
+     "sync": 0.0,
+     "committed": 815.7,
+     "econ": 764.8,
+     "peak": 37.8,
+     "floor_gwh": 606.1,
+     "offer_capwtd": 26.5
+    }
+   },
+   "3149": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 75.2,
+     "econ": 1398.7,
+     "peak": 30.1,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 30.3
+    },
+    "candidate": {
+     "mustrun": 354.9,
+     "sync": 0.0,
+     "committed": 711.4,
+     "econ": 407.6,
+     "peak": 30.1,
+     "floor_gwh": 254.8,
+     "offer_capwtd": 19.6
+    }
+   },
+   "3797": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 50.3,
+     "econ": 935.6,
+     "peak": 20.1,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 47.8
+    },
+    "candidate": {
+     "mustrun": 191.1,
+     "sync": 0.0,
+     "committed": 475.8,
+     "econ": 318.9,
+     "peak": 20.1,
+     "floor_gwh": 285.4,
+     "offer_capwtd": 37.3
+    }
+   },
+   "10678": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 9.0,
+     "econ": 104.4,
+     "peak": 3.6,
+     "floor_gwh": 5.1,
+     "offer_capwtd": 54.0
+    },
+    "candidate": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 78.5,
+     "econ": 34.9,
+     "peak": 3.6,
+     "floor_gwh": 11.6,
+     "offer_capwtd": 46.1
+    }
+   },
+   "884": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 25.5,
+     "econ": 474.3,
+     "peak": 10.2,
+     "floor_gwh": 49.5,
+     "offer_capwtd": 21.3
+    },
+    "candidate": {
+     "mustrun": 195.8,
+     "sync": 0.0,
+     "committed": 195.8,
+     "econ": 108.1,
+     "peak": 10.2,
+     "floor_gwh": 83.7,
+     "offer_capwtd": 15.2
+    }
+   },
+   "2836": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 31.4,
+     "econ": 583.1,
+     "peak": 12.5,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 42.1
+    },
+    "candidate": {
+     "mustrun": 245.8,
+     "sync": 0.0,
+     "committed": 245.8,
+     "econ": 122.9,
+     "peak": 12.5,
+     "floor_gwh": 64.9,
+     "offer_capwtd": 21.9
+    }
+   },
+   "6019": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 65.2,
+     "econ": 1213.7,
+     "peak": 26.1,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 39.2
+    },
+    "candidate": {
+     "mustrun": 531.1,
+     "sync": 0.0,
+     "committed": 531.1,
+     "econ": 216.6,
+     "peak": 26.1,
+     "floor_gwh": 752.1,
+     "offer_capwtd": 19.8
+    }
+   },
+   "8226": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 28.2,
+     "econ": 525.5,
+     "peak": 11.3,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 32.6
+    },
+    "candidate": {
+     "mustrun": 154.2,
+     "sync": 0.0,
+     "committed": 154.2,
+     "econ": 245.2,
+     "peak": 11.3,
+     "floor_gwh": 137.0,
+     "offer_capwtd": 22.3
+    }
+   }
+  }
+ },
+ "2023": {
+  "units_moved": 41,
+  "foreign_units_moved": [
+   "COAL_PJM_West_APS_p3118_econc00",
+   "COAL_PJM_West_APS_p3944_econc00"
+  ],
+  "foreign_delta": {
+   "COAL_PJM_West_APS_p3118_econc00": {
+    "pmax": 0.0,
+    "min_gen": -1617.494,
+    "mc": 0.0
+   },
+   "COAL_PJM_West_APS_p3944_econc00": {
+    "pmax": 0.0,
+    "min_gen": -4852.483,
+    "mc": 0.0
+   }
+  },
+  "floor_twh_added_plants": {
+   "incumbent": 0.004,
+   "candidate": 0.259
+  },
+  "plants": {
+   "594": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 20.5,
+     "econ": 381.3,
+     "peak": 8.2,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 37.2
+    },
+    "candidate": {
+     "mustrun": 71.8,
+     "sync": 0.0,
+     "committed": 71.8,
+     "econ": 258.3,
+     "peak": 8.2,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 33.5
+    }
+   },
+   "3122": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 31.3,
+     "econ": 582.3,
+     "peak": 12.5,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 27.3
+    },
+    "candidate": {
+     "mustrun": 89.5,
+     "sync": 0.0,
+     "committed": 270.5,
+     "econ": 253.6,
+     "peak": 12.5,
+     "floor_gwh": 92.4,
+     "offer_capwtd": 20.4
+    }
+   },
+   "3149": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 37.6,
+     "econ": 699.4,
+     "peak": 15.0,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 22.1
+    },
+    "candidate": {
+     "mustrun": 177.5,
+     "sync": 0.0,
+     "committed": 355.7,
+     "econ": 203.8,
+     "peak": 15.0,
+     "floor_gwh": 59.6,
+     "offer_capwtd": 14.8
+    }
+   },
+   "10678": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 9.0,
+     "econ": 104.4,
+     "peak": 3.6,
+     "floor_gwh": 4.5,
+     "offer_capwtd": 46.6
+    },
+    "candidate": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 78.5,
+     "econ": 34.9,
+     "peak": 3.6,
+     "floor_gwh": 11.0,
+     "offer_capwtd": 40.6
+    }
+   },
+   "2866": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 74.5,
+     "econ": 1385.7,
+     "peak": 29.8,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 31.3
+    },
+    "candidate": {
+     "mustrun": 126.7,
+     "sync": 0.0,
+     "committed": 318.9,
+     "econ": 1014.7,
+     "peak": 29.8,
+     "floor_gwh": 96.1,
+     "offer_capwtd": 27.2
+    }
+   }
+  }
+ },
+ "2024": {
+  "units_moved": 31,
+  "foreign_units_moved": [],
+  "foreign_delta": {},
+  "floor_twh_added_plants": {
+   "incumbent": 0.002,
+   "candidate": 0.436
+  },
+  "plants": {
+   "594": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 20.5,
+     "econ": 381.3,
+     "peak": 8.2,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 45.0
+    },
+    "candidate": {
+     "mustrun": 71.8,
+     "sync": 0.0,
+     "committed": 71.8,
+     "econ": 258.3,
+     "peak": 8.2,
+     "floor_gwh": 41.3,
+     "offer_capwtd": 41.2
+    }
+   },
+   "3149": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 37.6,
+     "econ": 699.4,
+     "peak": 15.0,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 20.3
+    },
+    "candidate": {
+     "mustrun": 177.5,
+     "sync": 0.0,
+     "committed": 355.7,
+     "econ": 203.8,
+     "peak": 15.0,
+     "floor_gwh": 225.7,
+     "offer_capwtd": 13.8
+    }
+   },
+   "3122": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 31.3,
+     "econ": 582.3,
+     "peak": 12.5,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 25.4
+    },
+    "candidate": {
+     "mustrun": 89.5,
+     "sync": 0.0,
+     "committed": 270.5,
+     "econ": 253.6,
+     "peak": 12.5,
+     "floor_gwh": 167.6,
+     "offer_capwtd": 19.1
+    }
+   },
+   "10678": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 9.0,
+     "econ": 104.4,
+     "peak": 3.6,
+     "floor_gwh": 1.7,
+     "offer_capwtd": 54.0
+    },
+    "candidate": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 78.5,
+     "econ": 34.9,
+     "peak": 3.6,
+     "floor_gwh": 1.7,
+     "offer_capwtd": 48.5
+    }
+   }
+  }
+ },
+ "2025": {
+  "units_moved": 72,
+  "foreign_units_moved": [],
+  "foreign_delta": {},
+  "floor_twh_added_plants": {
+   "incumbent": 0.0,
+   "candidate": 0.0
+  },
+  "plants": {
+   "2866": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 110.5,
+     "econ": 2055.3,
+     "peak": 44.2,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 34.8
+    },
+    "candidate": {
+     "mustrun": 187.8,
+     "sync": 0.0,
+     "committed": 472.9,
+     "econ": 1505.0,
+     "peak": 44.2,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 30.1
+    }
+   },
+   "3122": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 94.4,
+     "econ": 1756.1,
+     "peak": 37.8,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 32.8
+    },
+    "candidate": {
+     "mustrun": 270.0,
+     "sync": 0.0,
+     "committed": 815.7,
+     "econ": 764.8,
+     "peak": 37.8,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 24.3
+    }
+   },
+   "10678": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 9.0,
+     "econ": 167.4,
+     "peak": 3.6,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 65.5
+    },
+    "candidate": {
+     "mustrun": 78.5,
+     "sync": 0.0,
+     "committed": 78.5,
+     "econ": 19.4,
+     "peak": 3.6,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 47.1
+    }
+   },
+   "2840": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 76.5,
+     "econ": 1422.9,
+     "peak": 30.6,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 32.2
+    },
+    "candidate": {
+     "mustrun": 561.5,
+     "sync": 0.0,
+     "committed": 561.5,
+     "econ": 376.4,
+     "peak": 30.6,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 18.3
+    }
+   },
+   "54304": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 11.9,
+     "econ": 221.1,
+     "peak": 4.8,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 31.6
+    },
+    "candidate": {
+     "mustrun": 39.0,
+     "sync": 0.0,
+     "committed": 39.0,
+     "econ": 155.0,
+     "peak": 4.8,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 25.8
+    }
+   },
+   "2836": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 31.4,
+     "econ": 583.1,
+     "peak": 12.5,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 28.7
+    },
+    "candidate": {
+     "mustrun": 245.8,
+     "sync": 0.0,
+     "committed": 245.8,
+     "econ": 122.9,
+     "peak": 12.5,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 15.7
+    }
+   },
+   "6019": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 65.2,
+     "econ": 1213.7,
+     "peak": 26.1,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 29.3
+    },
+    "candidate": {
+     "mustrun": 531.1,
+     "sync": 0.0,
+     "committed": 531.1,
+     "econ": 216.6,
+     "peak": 26.1,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 15.4
+    }
+   },
+   "8226": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 28.2,
+     "econ": 525.5,
+     "peak": 11.3,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 31.6
+    },
+    "candidate": {
+     "mustrun": 154.2,
+     "sync": 0.0,
+     "committed": 154.2,
+     "econ": 245.2,
+     "peak": 11.3,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 21.6
+    }
+   },
+   "884": {
+    "incumbent": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 25.5,
+     "econ": 474.3,
+     "peak": 10.2,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 16.9
+    },
+    "candidate": {
+     "mustrun": 195.8,
+     "sync": 0.0,
+     "committed": 195.8,
+     "econ": 108.1,
+     "peak": 10.2,
+     "floor_gwh": 0.0,
+     "offer_capwtd": 12.4
+    }
+   }
+  }
+ }
+}
