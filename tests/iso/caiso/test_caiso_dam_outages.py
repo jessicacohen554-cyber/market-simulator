@@ -157,6 +157,77 @@ class StorageCrosswalkTest(unittest.TestCase):
             0.99,
         )
 
+    def test_review_ledger_eia860m_source(self):
+        # R-CAISO-37: an eia860m row resolves against the monthly inventory,
+        # minus the plants the annual schedule already carries.
+        proposed = pd.DataFrame(
+            {
+                "resource_id": ["A_1_ABT1"],
+                "resource_name": ["Alpha BESS"],
+                "resource_pmax_mw": [50.0],
+                "plant_code": pd.array([1], dtype="Int64"),
+                "plant_group": ["BATTERY"],
+                "plant_name": ["Wrong Plant"],
+                "plant_pmax_mw": [10.0],
+                "match_score": [0.4],
+                "match_method": ["name_token"],
+                "accepted": [0],
+            }
+        )
+        annual = pd.DataFrame(
+            {
+                "plant_code": [1],
+                "plant_name": ["Wrong Plant"],
+                "plant_pmax_mw": [10.0],
+                "plant_group": ["BATTERY"],
+                "eia_status": ["OP"],
+            }
+        )
+        monthly = pd.DataFrame(
+            {
+                "plant_code": [1, 7],
+                "plant_name": ["Wrong Plant", "Alpha Storage LLC"],
+                "plant_pmax_mw": [10.0, 50.0],
+                "plant_group": ["BATTERY", "BATTERY"],
+                "eia_status": ["OP", "OP"],
+            }
+        )
+        orig = (
+            self.builder.load_storage_targets,
+            self.builder.load_storage_targets_860m,
+        )
+        self.builder.load_storage_targets = lambda statuses=("OP",): annual
+        self.builder.load_storage_targets_860m = lambda: monthly
+
+        def run(code, source):
+            with TemporaryDirectory() as d:
+                rev = Path(d) / "review.csv"
+                pd.DataFrame(
+                    {
+                        "resource_id": ["A_1_ABT1"],
+                        "plant_code": [code],
+                        "accepted": [1],
+                        "review_note": ["exact MW"],
+                        "source": [source],
+                    }
+                ).to_csv(rev, index=False)
+                return self.builder.apply_storage_review(proposed, rev)
+
+        try:
+            out = run(7, "eia860m")
+            for code, source in ((7, "eia860"), (1, "eia860m"), (7, "pdf")):
+                with self.assertRaises(ValueError):
+                    run(code, source)
+        finally:
+            (
+                self.builder.load_storage_targets,
+                self.builder.load_storage_targets_860m,
+            ) = orig
+        a = out.set_index("resource_id")
+        self.assertEqual(int(a.loc["A_1_ABT1", "plant_code"]), 7)
+        self.assertEqual(a.loc["A_1_ABT1", "match_method"], "reviewed_eia860m")
+        self.assertEqual(a.loc["A_1_ABT1", "plant_pmax_mw"], 50.0)
+
     def test_storage_output_is_a_separate_file(self):
         self.assertNotEqual(self.builder.STORAGE_OUT_CSV, self.builder.OUT_CSV)
         self.assertEqual(co.CROSSWALK_CSV.name, self.builder.OUT_CSV.name)

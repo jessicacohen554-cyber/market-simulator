@@ -15874,3 +15874,13 @@ Record: `docs/records/caiso/r-caiso-35/`.
 - Owner card: **close report-only; the next link is R-CAISO-37, an EIA-860M intake for the unmatched rows.** The keeper is unchanged. Matrix: evidence only on `storage_measured_anchors` (K).
 
 Record: `docs/records/caiso/r-caiso-36/`.
+
+## R-CAISO-37 — 2026-10-02: EIA-860M intake for the unmatched battery rows (link 19), zero LP
+
+- **What changed in the review.** The ledger gains a `source` column, and EIA-860M (August 2026, operating sheet) becomes a declared second lookup. It may only name batteries in a CAISO zone that the annual Final lacks, and they carry `match_method = reviewed_eia860m`. The threshold and capacity sanity are unchanged.
+- **What 860M names.** 7 of the 65 unaccepted resources (600 MW, MW exact, EIA COD 2026): Hummingbird, Nighthawk, Painter, Ventasso, Aratina 1A/1B, and Pomegranate = Cherry. One annual-schedule miss is also recovered: BTF Storage DIDF = Blackwell's Corner.
+- **Result.** 176 of 233 rows are accepted. Coverage is 79.6 / 81.7 / **90.0 %**, so only 2025 moves (+4.6 pp). T1 crosswalk-only reads 0 → 1 h (0.011 %), and T1 primary is unchanged, so CARRIED stands.
+- **New observation:** the matched resources' 2025 CNOG outages predate their EIA COD. They sit in the census numerator but not its denominator, about 1.07 pp of `o_860` in 2025. The bias is conservative.
+- Owner card: **close report-only; the next link is R-CAISO-38, a pre-COD basis note.** The keeper is unchanged. Matrix: evidence only on `storage_measured_anchors` (K).
+
+Record: `docs/records/caiso/r-caiso-37/`.

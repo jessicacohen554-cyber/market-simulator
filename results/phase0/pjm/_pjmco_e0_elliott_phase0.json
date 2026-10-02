@@ -1,0 +1,1303 @@
+{
+ "probe": "pjmco-E0 Elliott cold-correlated outage phase 0 (zero-LP)",
+ "tmin_weights": "load-weighted, iso_configs PJM zone load_share (2023 metered load): {\"PJM_ComEd\": 0.1185, \"PJM_AEP_Ohio\": 0.2178, \"PJM_ATSI\": 0.0844, \"PJM_West_APS\": 0.0785, \"PJM_Central_PA\": 0.1101, \"PJM_Dominion\": 0.1499, \"PJM_EMAAC\": 0.1672, \"PJM_SWMAAC\": 0.0736}",
+ "windows_loadweighted": [
+  {
+   "window": "2018-01-01..2018-01-07",
+   "n_days": 7,
+   "coldest": "2018-01-07",
+   "tmin_min": -17.08,
+   "max_netload_over_p99": 0.997,
+   "certified": false,
+   "why": "net-load certificate failed (max daily-max/p99 = 0.997)"
+  },
+  {
+   "window": "2018-01-13..2018-01-18",
+   "n_days": 6,
+   "coldest": "2018-01-14",
+   "tmin_min": -12.61,
+   "max_netload_over_p99": 0.939,
+   "certified": false,
+   "why": "net-load certificate failed (max daily-max/p99 = 0.939)"
+  },
+  {
+   "window": "2018-01-30..2018-01-30",
+   "n_days": 1,
+   "coldest": "2018-01-30",
+   "tmin_min": -7.26,
+   "max_netload_over_p99": 0.871,
+   "certified": false,
+   "why": "net-load certificate failed (max daily-max/p99 = 0.871)"
+  },
+  {
+   "window": "2018-02-02..2018-02-05",
+   "n_days": 3,
+   "coldest": "2018-02-02",
+   "tmin_min": -9.51,
+   "max_netload_over_p99": 0.864,
+   "certified": false,
+   "why": "net-load certificate failed (max daily-max/p99 = 0.864)"
+  },
+  {
+   "window": "2018-02-08..2018-02-08",
+   "n_days": 1,
+   "coldest": "2018-02-08",
+   "tmin_min": -7.22,
+   "max_netload_over_p99": 0.837,
+   "certified": false,
+   "why": "net-load certificate failed (max daily-max/p99 = 0.837)"
+  },
+  {
+   "window": "2019-01-20..2019-01-22",
+   "n_days": 3,
+   "coldest": "2019-01-21",
+   "tmin_min": -14.51,
+   "max_netload_over_p99": 0.96,
+   "certified": false,
+   "why": "net-load certificate failed (max daily-max/p99 = 0.960)"
+  },
+  {
+   "window": "2019-01-25..2019-02-02",
+   "n_days": 9,
+   "coldest": "2019-01-31",
+   "tmin_min": -17.72,
+   "max_netload_over_p99": 1.03,
+   "certified": true,
+   "instrumented": true,
+   "classes": {
+    "COAL": {
+     "best": 0.964,
+     "excess": 0.0,
+     "inst_cap_mw": 49927
+    },
+    "CC_REGULAR": {
+     "best": 0.69,
+     "excess": 0.26,
+     "inst_cap_mw": 50588
+    },
+    "CT_PEAKER": {
+     "best": 0.45,
+     "excess": 0.49,
+     "inst_cap_mw": 21975
+    },
+    "ST_GAS": {
+     "best": 0.461,
+     "excess": 0.469,
+     "inst_cap_mw": 5977
+    }
+   }
+  },
+  {
+   "window": "2019-02-09..2019-02-09",
+   "n_days": 1,
+   "coldest": "2019-02-09",
+   "tmin_min": -7.37,
+   "max_netload_over_p99": 0.781,
+   "certified": false,
+   "why": "net-load certificate failed (max daily-max/p99 = 0.781)"
+  },
+  {
+   "window": "2019-03-04..2019-03-07",
+   "n_days": 4,
+   "coldest": "2019-03-05",
+   "tmin_min": -9.53,
+   "max_netload_over_p99": 0.885,
+   "certified": false,
+   "why": "net-load certificate failed (max daily-max/p99 = 0.885)"
+  },
+  {
+   "window": "2019-11-13..2019-11-13",
+   "n_days": 1,
+   "coldest": "2019-11-13",
+   "tmin_min": -8.04,
+   "max_netload_over_p99": 0.822,
+   "certified": false,
+   "why": "net-load certificate failed (max daily-max/p99 = 0.822)"
+  },
+  {
+   "window": "2019-12-19..2019-12-19",
+   "n_days": 1,
+   "coldest": "2019-12-19",
+   "tmin_min": -8.44,
+   "max_netload_over_p99": 0.871,
+   "certified": false,
+   "why": "net-load certificate failed (max daily-max/p99 = 0.871)"
+  },
+  {
+   "window": "2020-01-20..2020-01-22",
+   "n_days": 3,
+   "coldest": "2020-01-21",
+   "tmin_min": -7.57,
+   "max_netload_over_p99": 0.889,
+   "certified": false,
+   "why": "net-load certificate failed (max daily-max/p99 = 0.889)"
+  },
+  {
+   "window": "2020-02-14..2020-02-15",
+   "n_days": 2,
+   "coldest": "2020-02-15",
+   "tmin_min": -10.03,
+   "max_netload_over_p99": 0.815,
+   "certified": false,
+   "why": "net-load certificate failed (max daily-max/p99 = 0.815)"
+  },
+  {
+   "window": "2020-02-21..2020-02-21",
+   "n_days": 1,
+   "coldest": "2020-02-21",
+   "tmin_min": -7.88,
+   "max_netload_over_p99": 0.853,
+   "certified": false,
+   "why": "net-load certificate failed (max daily-max/p99 = 0.853)"
+  },
+  {
+   "window": "2020-12-26..2020-12-26",
+   "n_days": 1,
+   "coldest": "2020-12-26",
+   "tmin_min": -7.12,
+   "max_netload_over_p99": 0.778,
+   "certified": false,
+   "why": "net-load certificate failed (max daily-max/p99 = 0.778)"
+  },
+  {
+   "window": "2021-01-29..2021-01-29",
+   "n_days": 1,
+   "coldest": "2021-01-29",
+   "tmin_min": -7.2,
+   "max_netload_over_p99": 0.844,
+   "certified": false,
+   "why": "net-load certificate failed (max daily-max/p99 = 0.844)"
+  },
+  {
+   "window": "2021-02-07..2021-02-08",
+   "n_days": 2,
+   "coldest": "2021-02-08",
+   "tmin_min": -9.13,
+   "max_netload_over_p99": 0.864,
+   "certified": false,
+   "why": "net-load certificate failed (max daily-max/p99 = 0.864)"
+  },
+  {
+   "window": "2021-02-17..2021-02-17",
+   "n_days": 1,
+   "coldest": "2021-02-17",
+   "tmin_min": -9.26,
+   "max_netload_over_p99": 0.859,
+   "certified": false,
+   "why": "net-load certificate failed (max daily-max/p99 = 0.859)"
+  },
+  {
+   "window": "2021-02-20..2021-02-21",
+   "n_days": 2,
+   "coldest": "2021-02-21",
+   "tmin_min": -9.53,
+   "max_netload_over_p99": 0.782,
+   "certified": false,
+   "why": "net-load certificate failed (max daily-max/p99 = 0.782)"
+  },
+  {
+   "window": "2022-01-07..2022-01-08",
+   "n_days": 2,
+   "coldest": "2022-01-08",
+   "tmin_min": -9.07,
+   "max_netload_over_p99": 0.9,
+   "certified": false,
+   "why": "net-load certificate failed (max daily-max/p99 = 0.900)"
+  },
+  {
+   "window": "2022-01-11..2022-01-11",
+   "n_days": 1,
+   "coldest": "2022-01-11",
+   "tmin_min": -9.27,
+   "max_netload_over_p99": 0.915,
+   "certified": false,
+   "why": "net-load certificate failed (max daily-max/p99 = 0.915)"
+  },
+  {
+   "window": "2022-01-15..2022-01-16",
+   "n_days": 2,
+   "coldest": "2022-01-16",
+   "tmin_min": -9.82,
+   "max_netload_over_p99": 0.861,
+   "certified": false,
+   "why": "net-load certificate failed (max daily-max/p99 = 0.861)"
+  },
+  {
+   "window": "2022-01-20..2022-01-31",
+   "n_days": 12,
+   "coldest": "2022-01-27",
+   "tmin_min": -12.41,
+   "max_netload_over_p99": 0.951,
+   "certified": false,
+   "why": "net-load certificate failed (max daily-max/p99 = 0.951)"
+  },
+  {
+   "window": "2022-02-05..2022-02-06",
+   "n_days": 2,
+   "coldest": "2022-02-05",
+   "tmin_min": -8.89,
+   "max_netload_over_p99": 0.833,
+   "certified": false,
+   "why": "net-load certificate failed (max daily-max/p99 = 0.833)"
+  },
+  {
+   "window": "2022-02-14..2022-02-15",
+   "n_days": 2,
+   "coldest": "2022-02-14",
+   "tmin_min": -8.95,
+   "max_netload_over_p99": 0.931,
+   "certified": false,
+   "why": "net-load certificate failed (max daily-max/p99 = 0.931)"
+  },
+  {
+   "window": "2022-02-19..2022-02-20",
+   "n_days": 2,
+   "coldest": "2022-02-20",
+   "tmin_min": -7.43,
+   "max_netload_over_p99": 0.782,
+   "certified": false,
+   "why": "net-load certificate failed (max daily-max/p99 = 0.782)"
+  },
+  {
+   "window": "2022-03-13..2022-03-13",
+   "n_days": 1,
+   "coldest": "2022-03-13",
+   "tmin_min": -7.49,
+   "max_netload_over_p99": 0.755,
+   "certified": false,
+   "why": "net-load certificate failed (max daily-max/p99 = 0.755)"
+  },
+  {
+   "window": "2022-12-23..2022-12-26",
+   "n_days": 4,
+   "coldest": "2022-12-23",
+   "tmin_min": -16.5,
+   "max_netload_over_p99": 0.985,
+   "certified": false,
+   "why": "net-load certificate failed (max daily-max/p99 = 0.985)"
+  },
+  {
+   "window": "2023-02-03..2023-02-04",
+   "n_days": 2,
+   "coldest": "2023-02-04",
+   "tmin_min": -10.77,
+   "max_netload_over_p99": 0.945,
+   "certified": false,
+   "why": "net-load certificate failed (max daily-max/p99 = 0.945)"
+  },
+  {
+   "window": "2024-01-14..2024-01-22",
+   "n_days": 9,
+   "coldest": "2024-01-17",
+   "tmin_min": -11.99,
+   "max_netload_over_p99": 0.94,
+   "certified": false,
+   "why": "net-load certificate failed (max daily-max/p99 = 0.940)"
+  },
+  {
+   "window": "2024-12-22..2024-12-23",
+   "n_days": 2,
+   "coldest": "2024-12-22",
+   "tmin_min": -8.32,
+   "max_netload_over_p99": 0.854,
+   "certified": false,
+   "why": "net-load certificate failed (max daily-max/p99 = 0.854)"
+  },
+  {
+   "window": "2025-01-05..2025-01-10",
+   "n_days": 4,
+   "coldest": "2025-01-09",
+   "tmin_min": -8.74,
+   "max_netload_over_p99": 0.908,
+   "certified": false,
+   "why": "net-load certificate failed (max daily-max/p99 = 0.908)"
+  },
+  {
+   "window": "2025-01-13..2025-01-16",
+   "n_days": 4,
+   "coldest": "2025-01-15",
+   "tmin_min": -10.43,
+   "max_netload_over_p99": 0.935,
+   "certified": false,
+   "why": "net-load certificate failed (max daily-max/p99 = 0.935)"
+  },
+  {
+   "window": "2025-01-19..2025-01-25",
+   "n_days": 7,
+   "coldest": "2025-01-22",
+   "tmin_min": -16.47,
+   "max_netload_over_p99": 1.026,
+   "certified": true,
+   "instrumented": true,
+   "classes": {
+    "COAL": {
+     "best": 0.925,
+     "excess": 0.0,
+     "inst_cap_mw": 34000
+    },
+    "CC_REGULAR": {
+     "best": 0.862,
+     "excess": 0.088,
+     "inst_cap_mw": 58798
+    },
+    "CT_PEAKER": {
+     "best": 0.765,
+     "excess": 0.175,
+     "inst_cap_mw": 21907
+    },
+    "ST_GAS": {
+     "best": 0.716,
+     "excess": 0.214,
+     "inst_cap_mw": 8497
+    }
+   }
+  },
+  {
+   "window": "2025-02-18..2025-02-22",
+   "n_days": 4,
+   "coldest": "2025-02-19",
+   "tmin_min": -10.46,
+   "max_netload_over_p99": 0.937,
+   "certified": false,
+   "why": "net-load certificate failed (max daily-max/p99 = 0.937)"
+  },
+  {
+   "window": "2025-12-09..2025-12-09",
+   "n_days": 1,
+   "coldest": "2025-12-09",
+   "tmin_min": -8.74,
+   "max_netload_over_p99": 0.883,
+   "certified": false,
+   "why": "net-load certificate failed (max daily-max/p99 = 0.883)"
+  },
+  {
+   "window": "2025-12-13..2025-12-16",
+   "n_days": 4,
+   "coldest": "2025-12-15",
+   "tmin_min": -12.17,
+   "max_netload_over_p99": 0.954,
+   "certified": false,
+   "why": "net-load certificate failed (max daily-max/p99 = 0.954)"
+  }
+ ],
+ "windows_plainmean": [
+  "2018-01-01..2018-01-07 tmin=-17.2",
+  "2018-01-13..2018-01-18 tmin=-12.6",
+  "2018-01-30..2018-02-05 tmin=-9.6",
+  "2018-02-08..2018-02-08 tmin=-7.6",
+  "2019-01-20..2019-01-22 tmin=-14.3",
+  "2019-01-25..2019-02-02 tmin=-17.9",
+  "2019-02-09..2019-02-09 tmin=-7.4",
+  "2019-03-04..2019-03-07 tmin=-9.6",
+  "2019-11-13..2019-11-13 tmin=-8.0",
+  "2019-12-19..2019-12-19 tmin=-8.6",
+  "2020-01-20..2020-01-22 tmin=-7.5",
+  "2020-02-14..2020-02-15 tmin=-10.3",
+  "2020-02-21..2020-02-21 tmin=-7.9",
+  "2020-12-25..2020-12-26 tmin=-7.1",
+  "2021-01-29..2021-01-30 tmin=-7.3",
+  "2021-02-07..2021-02-08 tmin=-9.3",
+  "2021-02-17..2021-02-17 tmin=-9.3",
+  "2021-02-20..2021-02-21 tmin=-9.7",
+  "2022-01-07..2022-01-08 tmin=-9.2",
+  "2022-01-11..2022-01-11 tmin=-9.4",
+  "2022-01-15..2022-01-16 tmin=-10.0",
+  "2022-01-20..2022-01-31 tmin=-12.7",
+  "2022-02-05..2022-02-06 tmin=-9.1",
+  "2022-02-14..2022-02-15 tmin=-9.1",
+  "2022-02-19..2022-02-20 tmin=-7.8",
+  "2022-03-13..2022-03-13 tmin=-7.8",
+  "2022-12-23..2022-12-26 tmin=-16.5",
+  "2023-02-03..2023-02-04 tmin=-11.0",
+  "2024-01-14..2024-01-22 tmin=-12.2",
+  "2024-12-22..2024-12-23 tmin=-8.4",
+  "2025-01-05..2025-01-10 tmin=-9.0",
+  "2025-01-13..2025-01-16 tmin=-10.3",
+  "2025-01-19..2025-01-25 tmin=-16.9",
+  "2025-02-17..2025-02-22 tmin=-10.8",
+  "2025-12-05..2025-12-05 tmin=-7.1",
+  "2025-12-09..2025-12-09 tmin=-9.1",
+  "2025-12-13..2025-12-16 tmin=-12.0"
+ ],
+ "e0a": {
+  "curve": {
+   "COAL": {
+    "slope_per_c": 0.0,
+    "cap": 0.0,
+    "n_windows": 2,
+    "anchors": [
+     "2019-01-31",
+     "2025-01-22"
+    ]
+   },
+   "CC_REGULAR": {
+    "slope_per_c": 0.0177,
+    "cap": 0.26,
+    "n_windows": 2,
+    "anchors": [
+     "2019-01-31",
+     "2025-01-22"
+    ]
+   },
+   "CT_PEAKER": {
+    "slope_per_c": 0.0338,
+    "cap": 0.49,
+    "n_windows": 2,
+    "anchors": [
+     "2019-01-31",
+     "2025-01-22"
+    ]
+   },
+   "ST_GAS": {
+    "slope_per_c": 0.0345,
+    "cap": 0.469,
+    "n_windows": 2,
+    "anchors": [
+     "2019-01-31",
+     "2025-01-22"
+    ]
+   }
+  },
+  "instrumented_windows": 2,
+  "non_elliott_instrumented": 2,
+  "verdict": "PASS"
+ },
+ "control_warm_certified_bestfrac_median": {
+  "2019": {
+   "COAL": 0.791,
+   "CC_REGULAR": 0.832,
+   "CT_PEAKER": 0.667,
+   "ST_GAS": 0.613,
+   "n_days": 16
+  },
+  "2020": {
+   "COAL": 0.772,
+   "CC_REGULAR": 0.854,
+   "CT_PEAKER": 0.701,
+   "ST_GAS": 0.603,
+   "n_days": 23
+  },
+  "2021": {
+   "COAL": 0.823,
+   "CC_REGULAR": 0.796,
+   "CT_PEAKER": 0.773,
+   "ST_GAS": 0.604,
+   "n_days": 18
+  },
+  "2022": {
+   "COAL": 0.714,
+   "CC_REGULAR": 0.85,
+   "CT_PEAKER": 0.664,
+   "ST_GAS": 0.564,
+   "n_days": 16
+  },
+  "2023": {
+   "COAL": 0.703,
+   "CC_REGULAR": 0.869,
+   "CT_PEAKER": 0.627,
+   "ST_GAS": 0.662,
+   "n_days": 16
+  },
+  "2024": {
+   "COAL": 0.874,
+   "CC_REGULAR": 0.877,
+   "CT_PEAKER": 0.683,
+   "ST_GAS": 0.77,
+   "n_days": 16
+  },
+  "2025": {
+   "COAL": 0.862,
+   "CC_REGULAR": 0.874,
+   "CT_PEAKER": 0.805,
+   "ST_GAS": 0.769,
+   "n_days": 13
+  }
+ },
+ "e0b": {
+  "residual_full_mw": {
+   "2022-12-24": 8199.0,
+   "2022-12-25": 4479.0
+  },
+  "residual_loo_mw": {
+   "2022-12-24": 8199.0,
+   "2022-12-25": 4479.0
+  },
+  "change_24_25_sum": 0.0,
+  "curve_loo": {
+   "COAL": {
+    "slope_per_c": 0.0,
+    "cap": 0.0,
+    "n_windows": 2,
+    "anchors": [
+     "2019-01-31",
+     "2025-01-22"
+    ]
+   },
+   "CC_REGULAR": {
+    "slope_per_c": 0.0177,
+    "cap": 0.26,
+    "n_windows": 2,
+    "anchors": [
+     "2019-01-31",
+     "2025-01-22"
+    ]
+   },
+   "CT_PEAKER": {
+    "slope_per_c": 0.0338,
+    "cap": 0.49,
+    "n_windows": 2,
+    "anchors": [
+     "2019-01-31",
+     "2025-01-22"
+    ]
+   },
+   "ST_GAS": {
+    "slope_per_c": 0.0345,
+    "cap": 0.469,
+    "n_windows": 2,
+    "anchors": [
+     "2019-01-31",
+     "2025-01-22"
+    ]
+   }
+  },
+  "verdict": "PASS"
+ },
+ "e0c": {
+  "days_nonzero_residual": 97,
+  "days_outside_dec_feb": [
+   "2019-03-04",
+   "2019-03-05",
+   "2019-03-06",
+   "2019-03-07",
+   "2019-11-13",
+   "2022-03-13"
+  ],
+  "verdict": "FAIL (construction defect)",
+  "by_day": [
+   {
+    "date": "2019-01-20",
+    "tmin": -11.0,
+    "curve_mw": 6771.0,
+    "overlay_mw": 2849.0,
+    "residual_mw": 3922.0
+   },
+   {
+    "date": "2019-01-21",
+    "tmin": -15.0,
+    "curve_mw": 11811.0,
+    "overlay_mw": 4536.0,
+    "residual_mw": 7275.0
+   },
+   {
+    "date": "2019-01-22",
+    "tmin": -12.0,
+    "curve_mw": 8151.0,
+    "overlay_mw": 5325.0,
+    "residual_mw": 4475.0
+   },
+   {
+    "date": "2019-01-25",
+    "tmin": -9.0,
+    "curve_mw": 2712.0,
+    "overlay_mw": 228.0,
+    "residual_mw": 2621.0
+   },
+   {
+    "date": "2019-01-26",
+    "tmin": -8.0,
+    "curve_mw": 2203.0,
+    "overlay_mw": 228.0,
+    "residual_mw": 2127.0
+   },
+   {
+    "date": "2019-01-27",
+    "tmin": -8.0,
+    "curve_mw": 2223.0,
+    "overlay_mw": 228.0,
+    "residual_mw": 2146.0
+   },
+   {
+    "date": "2019-01-28",
+    "tmin": -8.0,
+    "curve_mw": 1606.0,
+    "overlay_mw": 228.0,
+    "residual_mw": 1548.0
+   },
+   {
+    "date": "2019-01-29",
+    "tmin": -9.0,
+    "curve_mw": 3077.0,
+    "overlay_mw": 228.0,
+    "residual_mw": 2975.0
+   },
+   {
+    "date": "2019-01-30",
+    "tmin": -17.0,
+    "curve_mw": 15725.0,
+    "overlay_mw": 32.0,
+    "residual_mw": 15692.0
+   },
+   {
+    "date": "2019-01-31",
+    "tmin": -18.0,
+    "curve_mw": 16785.0,
+    "overlay_mw": 743.0,
+    "residual_mw": 16041.0
+   },
+   {
+    "date": "2019-02-01",
+    "tmin": -12.0,
+    "curve_mw": 7325.0,
+    "overlay_mw": 3893.0,
+    "residual_mw": 3727.0
+   },
+   {
+    "date": "2019-02-02",
+    "tmin": -11.0,
+    "curve_mw": 6168.0,
+    "overlay_mw": 5008.0,
+    "residual_mw": 3221.0
+   },
+   {
+    "date": "2019-02-09",
+    "tmin": -7.0,
+    "curve_mw": 563.0,
+    "overlay_mw": 0.0,
+    "residual_mw": 563.0
+   },
+   {
+    "date": "2019-03-04",
+    "tmin": -8.0,
+    "curve_mw": 1235.0,
+    "overlay_mw": 1222.0,
+    "residual_mw": 661.0
+   },
+   {
+    "date": "2019-03-05",
+    "tmin": -10.0,
+    "curve_mw": 3921.0,
+    "overlay_mw": 1072.0,
+    "residual_mw": 2850.0
+   },
+   {
+    "date": "2019-03-06",
+    "tmin": -9.0,
+    "curve_mw": 3355.0,
+    "overlay_mw": 2184.0,
+    "residual_mw": 1678.0
+   },
+   {
+    "date": "2019-03-07",
+    "tmin": -7.0,
+    "curve_mw": 300.0,
+    "overlay_mw": 2556.0,
+    "residual_mw": 150.0
+   },
+   {
+    "date": "2019-11-13",
+    "tmin": -8.0,
+    "curve_mw": 1537.0,
+    "overlay_mw": 0.0,
+    "residual_mw": 1537.0
+   },
+   {
+    "date": "2019-12-19",
+    "tmin": -8.0,
+    "curve_mw": 2378.0,
+    "overlay_mw": 1180.0,
+    "residual_mw": 1335.0
+   },
+   {
+    "date": "2020-01-20",
+    "tmin": -7.0,
+    "curve_mw": 412.0,
+    "overlay_mw": 232.0,
+    "residual_mw": 219.0
+   },
+   {
+    "date": "2020-01-21",
+    "tmin": -8.0,
+    "curve_mw": 953.0,
+    "overlay_mw": 1023.0,
+    "residual_mw": 516.0
+   },
+   {
+    "date": "2020-01-22",
+    "tmin": -7.0,
+    "curve_mw": 284.0,
+    "overlay_mw": 1420.0,
+    "residual_mw": 132.0
+   },
+   {
+    "date": "2020-02-14",
+    "tmin": -8.0,
+    "curve_mw": 2337.0,
+    "overlay_mw": 0.0,
+    "residual_mw": 2337.0
+   },
+   {
+    "date": "2020-02-15",
+    "tmin": -10.0,
+    "curve_mw": 4901.0,
+    "overlay_mw": 485.0,
+    "residual_mw": 4416.0
+   },
+   {
+    "date": "2020-02-21",
+    "tmin": -8.0,
+    "curve_mw": 1405.0,
+    "overlay_mw": 479.0,
+    "residual_mw": 1190.0
+   },
+   {
+    "date": "2020-12-26",
+    "tmin": -7.0,
+    "curve_mw": 182.0,
+    "overlay_mw": 0.0,
+    "residual_mw": 182.0
+   },
+   {
+    "date": "2021-01-29",
+    "tmin": -7.0,
+    "curve_mw": 311.0,
+    "overlay_mw": 0.0,
+    "residual_mw": 311.0
+   },
+   {
+    "date": "2021-02-07",
+    "tmin": -8.0,
+    "curve_mw": 1406.0,
+    "overlay_mw": 62.0,
+    "residual_mw": 1344.0
+   },
+   {
+    "date": "2021-02-08",
+    "tmin": -9.0,
+    "curve_mw": 3331.0,
+    "overlay_mw": 0.0,
+    "residual_mw": 3331.0
+   },
+   {
+    "date": "2021-02-17",
+    "tmin": -9.0,
+    "curve_mw": 3505.0,
+    "overlay_mw": 0.0,
+    "residual_mw": 3505.0
+   },
+   {
+    "date": "2021-02-20",
+    "tmin": -8.0,
+    "curve_mw": 1125.0,
+    "overlay_mw": 857.0,
+    "residual_mw": 1110.0
+   },
+   {
+    "date": "2021-02-21",
+    "tmin": -10.0,
+    "curve_mw": 3876.0,
+    "overlay_mw": 857.0,
+    "residual_mw": 3850.0
+   },
+   {
+    "date": "2022-01-07",
+    "tmin": -8.0,
+    "curve_mw": 2173.0,
+    "overlay_mw": 6071.0,
+    "residual_mw": 1168.0
+   },
+   {
+    "date": "2022-01-08",
+    "tmin": -9.0,
+    "curve_mw": 3338.0,
+    "overlay_mw": 6911.0,
+    "residual_mw": 1842.0
+   },
+   {
+    "date": "2022-01-11",
+    "tmin": -9.0,
+    "curve_mw": 3582.0,
+    "overlay_mw": 1292.0,
+    "residual_mw": 2514.0
+   },
+   {
+    "date": "2022-01-15",
+    "tmin": -8.0,
+    "curve_mw": 1940.0,
+    "overlay_mw": 1376.0,
+    "residual_mw": 1032.0
+   },
+   {
+    "date": "2022-01-16",
+    "tmin": -10.0,
+    "curve_mw": 4549.0,
+    "overlay_mw": 1148.0,
+    "residual_mw": 3401.0
+   },
+   {
+    "date": "2022-01-20",
+    "tmin": -7.0,
+    "curve_mw": 551.0,
+    "overlay_mw": 0.0,
+    "residual_mw": 551.0
+   },
+   {
+    "date": "2022-01-21",
+    "tmin": -10.0,
+    "curve_mw": 5555.0,
+    "overlay_mw": 2569.0,
+    "residual_mw": 3099.0
+   },
+   {
+    "date": "2022-01-22",
+    "tmin": -12.0,
+    "curve_mw": 7301.0,
+    "overlay_mw": 2672.0,
+    "residual_mw": 4629.0
+   },
+   {
+    "date": "2022-01-23",
+    "tmin": -8.0,
+    "curve_mw": 1986.0,
+    "overlay_mw": 2699.0,
+    "residual_mw": 1106.0
+   },
+   {
+    "date": "2022-01-24",
+    "tmin": -8.0,
+    "curve_mw": 924.0,
+    "overlay_mw": 2529.0,
+    "residual_mw": 517.0
+   },
+   {
+    "date": "2022-01-25",
+    "tmin": -7.0,
+    "curve_mw": 595.0,
+    "overlay_mw": 1705.0,
+    "residual_mw": 330.0
+   },
+   {
+    "date": "2022-01-26",
+    "tmin": -12.0,
+    "curve_mw": 8961.0,
+    "overlay_mw": 0.0,
+    "residual_mw": 8961.0
+   },
+   {
+    "date": "2022-01-27",
+    "tmin": -12.0,
+    "curve_mw": 8645.0,
+    "overlay_mw": 2232.0,
+    "residual_mw": 6413.0
+   },
+   {
+    "date": "2022-01-28",
+    "tmin": -7.0,
+    "curve_mw": 289.0,
+    "overlay_mw": 2168.0,
+    "residual_mw": 162.0
+   },
+   {
+    "date": "2022-01-29",
+    "tmin": -12.0,
+    "curve_mw": 7501.0,
+    "overlay_mw": 2952.0,
+    "residual_mw": 4549.0
+   },
+   {
+    "date": "2022-01-30",
+    "tmin": -11.0,
+    "curve_mw": 6774.0,
+    "overlay_mw": 3628.0,
+    "residual_mw": 3370.0
+   },
+   {
+    "date": "2022-01-31",
+    "tmin": -8.0,
+    "curve_mw": 2357.0,
+    "overlay_mw": 2580.0,
+    "residual_mw": 1141.0
+   },
+   {
+    "date": "2022-02-05",
+    "tmin": -9.0,
+    "curve_mw": 3144.0,
+    "overlay_mw": 1033.0,
+    "residual_mw": 2112.0
+   },
+   {
+    "date": "2022-02-06",
+    "tmin": -9.0,
+    "curve_mw": 3016.0,
+    "overlay_mw": 1033.0,
+    "residual_mw": 1984.0
+   },
+   {
+    "date": "2022-02-14",
+    "tmin": -9.0,
+    "curve_mw": 3084.0,
+    "overlay_mw": 721.0,
+    "residual_mw": 2363.0
+   },
+   {
+    "date": "2022-02-15",
+    "tmin": -8.0,
+    "curve_mw": 2273.0,
+    "overlay_mw": 1433.0,
+    "residual_mw": 1108.0
+   },
+   {
+    "date": "2022-02-19",
+    "tmin": -7.0,
+    "curve_mw": 74.0,
+    "overlay_mw": 0.0,
+    "residual_mw": 74.0
+   },
+   {
+    "date": "2022-02-20",
+    "tmin": -7.0,
+    "curve_mw": 711.0,
+    "overlay_mw": 0.0,
+    "residual_mw": 711.0
+   },
+   {
+    "date": "2022-03-13",
+    "tmin": -7.0,
+    "curve_mw": 806.0,
+    "overlay_mw": 277.0,
+    "residual_mw": 765.0
+   },
+   {
+    "date": "2022-12-23",
+    "tmin": -16.0,
+    "curve_mw": 15642.0,
+    "overlay_mw": 3589.0,
+    "residual_mw": 12052.0
+   },
+   {
+    "date": "2022-12-24",
+    "tmin": -16.0,
+    "curve_mw": 14670.0,
+    "overlay_mw": 7548.0,
+    "residual_mw": 8199.0
+   },
+   {
+    "date": "2022-12-25",
+    "tmin": -12.0,
+    "curve_mw": 7711.0,
+    "overlay_mw": 8296.0,
+    "residual_mw": 4479.0
+   },
+   {
+    "date": "2022-12-26",
+    "tmin": -11.0,
+    "curve_mw": 6262.0,
+    "overlay_mw": 9138.0,
+    "residual_mw": 3540.0
+   },
+   {
+    "date": "2023-02-03",
+    "tmin": -10.0,
+    "curve_mw": 6281.0,
+    "overlay_mw": 274.0,
+    "residual_mw": 6007.0
+   },
+   {
+    "date": "2023-02-04",
+    "tmin": -11.0,
+    "curve_mw": 6432.0,
+    "overlay_mw": 1029.0,
+    "residual_mw": 5867.0
+   },
+   {
+    "date": "2024-01-14",
+    "tmin": -9.0,
+    "curve_mw": 3742.0,
+    "overlay_mw": 1532.0,
+    "residual_mw": 2210.0
+   },
+   {
+    "date": "2024-01-15",
+    "tmin": -10.0,
+    "curve_mw": 4553.0,
+    "overlay_mw": 938.0,
+    "residual_mw": 3616.0
+   },
+   {
+    "date": "2024-01-16",
+    "tmin": -11.0,
+    "curve_mw": 7032.0,
+    "overlay_mw": 1257.0,
+    "residual_mw": 5775.0
+   },
+   {
+    "date": "2024-01-17",
+    "tmin": -12.0,
+    "curve_mw": 9041.0,
+    "overlay_mw": 2263.0,
+    "residual_mw": 6779.0
+   },
+   {
+    "date": "2024-01-18",
+    "tmin": -7.0,
+    "curve_mw": 712.0,
+    "overlay_mw": 4601.0,
+    "residual_mw": 381.0
+   },
+   {
+    "date": "2024-01-19",
+    "tmin": -7.0,
+    "curve_mw": 125.0,
+    "overlay_mw": 5687.0,
+    "residual_mw": 68.0
+   },
+   {
+    "date": "2024-01-20",
+    "tmin": -11.0,
+    "curve_mw": 6273.0,
+    "overlay_mw": 4518.0,
+    "residual_mw": 3347.0
+   },
+   {
+    "date": "2024-01-21",
+    "tmin": -9.0,
+    "curve_mw": 3340.0,
+    "overlay_mw": 3257.0,
+    "residual_mw": 1760.0
+   },
+   {
+    "date": "2024-01-22",
+    "tmin": -9.0,
+    "curve_mw": 2733.0,
+    "overlay_mw": 3799.0,
+    "residual_mw": 1431.0
+   },
+   {
+    "date": "2024-12-22",
+    "tmin": -8.0,
+    "curve_mw": 2435.0,
+    "overlay_mw": 0.0,
+    "residual_mw": 2435.0
+   },
+   {
+    "date": "2024-12-23",
+    "tmin": -7.0,
+    "curve_mw": 75.0,
+    "overlay_mw": 1197.0,
+    "residual_mw": 34.0
+   },
+   {
+    "date": "2025-01-05",
+    "tmin": -9.0,
+    "curve_mw": 2848.0,
+    "overlay_mw": 53.0,
+    "residual_mw": 2794.0
+   },
+   {
+    "date": "2025-01-07",
+    "tmin": -7.0,
+    "curve_mw": 936.0,
+    "overlay_mw": 631.0,
+    "residual_mw": 470.0
+   },
+   {
+    "date": "2025-01-09",
+    "tmin": -9.0,
+    "curve_mw": 3287.0,
+    "overlay_mw": 19.0,
+    "residual_mw": 3268.0
+   },
+   {
+    "date": "2025-01-10",
+    "tmin": -8.0,
+    "curve_mw": 2284.0,
+    "overlay_mw": 143.0,
+    "residual_mw": 2140.0
+   },
+   {
+    "date": "2025-01-13",
+    "tmin": -7.0,
+    "curve_mw": 361.0,
+    "overlay_mw": 0.0,
+    "residual_mw": 361.0
+   },
+   {
+    "date": "2025-01-14",
+    "tmin": -9.0,
+    "curve_mw": 3405.0,
+    "overlay_mw": 1210.0,
+    "residual_mw": 2195.0
+   },
+   {
+    "date": "2025-01-15",
+    "tmin": -10.0,
+    "curve_mw": 6715.0,
+    "overlay_mw": 1449.0,
+    "residual_mw": 5266.0
+   },
+   {
+    "date": "2025-01-16",
+    "tmin": -9.0,
+    "curve_mw": 3150.0,
+    "overlay_mw": 964.0,
+    "residual_mw": 2185.0
+   },
+   {
+    "date": "2025-01-19",
+    "tmin": -8.0,
+    "curve_mw": 1801.0,
+    "overlay_mw": 0.0,
+    "residual_mw": 1801.0
+   },
+   {
+    "date": "2025-01-20",
+    "tmin": -13.0,
+    "curve_mw": 13464.0,
+    "overlay_mw": 0.0,
+    "residual_mw": 13464.0
+   },
+   {
+    "date": "2025-01-21",
+    "tmin": -16.0,
+    "curve_mw": 19339.0,
+    "overlay_mw": 0.0,
+    "residual_mw": 19339.0
+   },
+   {
+    "date": "2025-01-22",
+    "tmin": -16.0,
+    "curve_mw": 19714.0,
+    "overlay_mw": 0.0,
+    "residual_mw": 19714.0
+   },
+   {
+    "date": "2025-01-23",
+    "tmin": -12.0,
+    "curve_mw": 9450.0,
+    "overlay_mw": 3062.0,
+    "residual_mw": 6388.0
+   },
+   {
+    "date": "2025-01-24",
+    "tmin": -12.0,
+    "curve_mw": 8351.0,
+    "overlay_mw": 5254.0,
+    "residual_mw": 3704.0
+   },
+   {
+    "date": "2025-01-25",
+    "tmin": -10.0,
+    "curve_mw": 4602.0,
+    "overlay_mw": 7204.0,
+    "residual_mw": 2001.0
+   },
+   {
+    "date": "2025-02-18",
+    "tmin": -10.0,
+    "curve_mw": 5972.0,
+    "overlay_mw": 0.0,
+    "residual_mw": 5972.0
+   },
+   {
+    "date": "2025-02-19",
+    "tmin": -10.0,
+    "curve_mw": 6821.0,
+    "overlay_mw": 0.0,
+    "residual_mw": 6821.0
+   },
+   {
+    "date": "2025-02-20",
+    "tmin": -9.0,
+    "curve_mw": 4016.0,
+    "overlay_mw": 0.0,
+    "residual_mw": 4016.0
+   },
+   {
+    "date": "2025-02-22",
+    "tmin": -8.0,
+    "curve_mw": 1349.0,
+    "overlay_mw": 2771.0,
+    "residual_mw": 602.0
+   },
+   {
+    "date": "2025-12-09",
+    "tmin": -9.0,
+    "curve_mw": 3145.0,
+    "overlay_mw": 1457.0,
+    "residual_mw": 1688.0
+   },
+   {
+    "date": "2025-12-13",
+    "tmin": -7.0,
+    "curve_mw": 624.0,
+    "overlay_mw": 0.0,
+    "residual_mw": 624.0
+   },
+   {
+    "date": "2025-12-14",
+    "tmin": -11.0,
+    "curve_mw": 8151.0,
+    "overlay_mw": 0.0,
+    "residual_mw": 8151.0
+   },
+   {
+    "date": "2025-12-15",
+    "tmin": -12.0,
+    "curve_mw": 10126.0,
+    "overlay_mw": 0.0,
+    "residual_mw": 10126.0
+   },
+   {
+    "date": "2025-12-16",
+    "tmin": -10.0,
+    "curve_mw": 5065.0,
+    "overlay_mw": 0.0,
+    "residual_mw": 5065.0
+   }
+  ]
+ },
+ "e0d": {
+  "by_day": {
+   "Dec24": {
+    "published_rise_mw": 20273,
+    "model_own_rise_mw": 4773,
+    "missing_increment_mw": 15500,
+    "residual_mw": 8199,
+    "model_rise_with_residual_mw": 12972,
+    "ratio_primary": 0.64,
+    "ratio_strict_residual_over_missing": 0.529
+   },
+   "Dec25": {
+    "published_rise_mw": 25039,
+    "model_own_rise_mw": 4230,
+    "missing_increment_mw": 20809,
+    "residual_mw": 4479,
+    "model_rise_with_residual_mw": 8709,
+    "ratio_primary": 0.348,
+    "ratio_strict_residual_over_missing": 0.215
+   }
+  },
+  "definition": "primary = (model thermal unavail rise over 20-22 Dec mean, residual applied on every day) / (published forced rise over its 20-22 Dec mean); strict = residual's added rise / (published rise - model own rise)",
+  "band": [
+   0.7,
+   1.3
+  ],
+  "verdict": "FAIL"
+ },
+ "e0e": {
+  "hours_below_pjm_primary": 0,
+  "min_headroom_mw": 10564,
+  "min_at": "Dec23 HE19",
+  "min_headroom_by_day": {
+   "23": 10564.0,
+   "24": 15085.0,
+   "25": 27258.0,
+   "26": 25628.0
+  },
+  "req_range": [
+   2560,
+   2887
+  ]
+ },
+ "stop_label": null
+}

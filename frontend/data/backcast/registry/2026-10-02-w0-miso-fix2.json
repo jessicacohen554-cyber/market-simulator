@@ -1,0 +1,19 @@
+{
+  "id": "2026-10-02-w0-miso-fix2",
+  "label": "w0 miso fix2",
+  "date": "2026-10-02",
+  "shorthand": "w0-miso-fix2",
+  "definition": "closeout-B W0 phase 3: MISO full-span re-solve at the W0 defaults (owner ruling R-2)",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-10-02-w0-miso-fix2.js",
+  "bundle": "results/calibration/w0_miso_span"
+}
