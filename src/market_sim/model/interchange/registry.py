@@ -57,10 +57,10 @@ INTERCHANGE_INJECTIONS: dict[str, tuple] = {
     "SPP": (apply_reference_price_seam_injections,),
     # NWPP (registered 2026-09-14, lane NWPP-20, owner ruling N4): the same
     # self-gating generic seam step alone. ``reference_price_interface`` is
-    # DEFAULT-OFF for NWPP (REFERENCE_PRICE_DEFAULT_ISOS is untouched) and
-    # NWPP has no IMPORT_ZONE, so the first keeper serves the measured
-    # schedule (eia930.envelopes.nwpp_net_interchange) and this entry is a
-    # byte-identical no-op until a later lane (NWPP-56) arms the priced seams.
+    # DEFAULT-OFF for NWPP (REFERENCE_PRICE_DEFAULT_ISOS is untouched), so the
+    # keeper serves the measured schedule (eia930.envelopes.nwpp_net_interchange)
+    # and this entry is a byte-identical no-op. NWPP-NEXT-19 wired the
+    # NWPP_external node, so arming the flag now prices the seams.
     "NWPP": (apply_reference_price_seam_injections,),
     # SOCO (registered 2026-09-14, lane SOCO-20; owner card S4): the generic
     # seam step alone, the SPP posture. It self-gates on

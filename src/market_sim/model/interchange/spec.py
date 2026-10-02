@@ -38,6 +38,11 @@ IMPORT_ZONE: dict[str, str] = {
     "NYISO": "NYISO_external",
     "NEISO": "HQ_import",
     "MISO": "MISO_external",
+    # NWPP-NEXT-19: the external node the registered NWPP seams
+    # (INTERFACE_NEIGHBORS["NWPP"]) land in. Inert unless priced interchange is
+    # armed (reference_price_interface is DEFAULT-OFF for NWPP); the keeper
+    # serves the measured schedule (eia930.envelopes.nwpp_net_interchange).
+    "NWPP": "NWPP_external",
 }
 
 # Per-ISO forced-outage derate on import tranches.
@@ -47,6 +52,9 @@ IMPORT_EFORD: dict[str, float] = {
     "NYISO": 0.0,
     "NEISO": 0.0,
     "MISO": 0.0,
+    # The seam bands carry their own eford 0.0 (build_reference_price_node);
+    # NWPP has no static import tranche for this derate to act on.
+    "NWPP": 0.0,
 }
 
 # Per-tranche CO2 emission factor (tCO2/MWh) for the CARB border-carbon
@@ -1742,12 +1750,12 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
     # NWPP — registered 2026-09-14 by lane NWPP-20 under owner ruling N4
     # (NWPP desk sitting #4: "SERVED MEASURED INTERCHANGE, PRICED LINKS
     # DEFAULT-OFF"). ALL THREE ARE DEFAULT-OFF: ``reference_price_interface``
-    # is off for NWPP (REFERENCE_PRICE_DEFAULT_ISOS is untouched) and NWPP has
-    # NO IMPORT_ZONE / IMPORT_NODE_LINKS entry (plan §7 G7), so
-    # get_interchange_spec returns an EMPTY spec and these blocks build no
-    # rows even under --priced-interchange; the first keeper serves the
-    # measured energy-balance schedule (eia930.envelopes.nwpp_net_interchange)
-    # instead. A priced seam is UNVALIDATABLE in the first keeper because
+    # is off for NWPP (REFERENCE_PRICE_DEFAULT_ISOS is untouched). Since
+    # NWPP-NEXT-19 NWPP has an IMPORT_ZONE (``NWPP_external``) and
+    # seam-derived IMPORT_NODE_LINKS, so arming ``reference_price_interface``
+    # builds these bands IN PLACE OF the measured energy-balance schedule
+    # (eia930.envelopes.nwpp_net_interchange; rule 19, never stacked); the
+    # keeper serves the schedule. A priced seam is UNVALIDATABLE in the first keeper because
     # NWPP-13 read NO — the footprint has no admissible hourly price series
     # — so these are the registered forward objects for lever NWPP-56 and
     # nothing more. The counterparty sets are MEASURED off the seventeen
@@ -2102,6 +2110,36 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
         ),
     ],
 }
+
+
+def seam_derived_border_links(iso: str) -> list[tuple[str, float]]:
+    """Return border links whose TTC per zone is the sum of the seams landing there.
+
+    For an ISO whose seams publish no per-zone tie split, each border zone's link
+    from the external node is rated at the summed ``interface_limit_mw`` of every
+    registered seam whose ``border_zones`` include it. The link therefore never
+    binds tighter than the seams it serves (no new number enters), and each
+    seam's own bands (which sum to its limit) bound the seam total. Zone order
+    follows first appearance in the registry, so the topology is deterministic.
+
+    Args:
+        iso: ISO identifier with an :data:`INTERFACE_NEIGHBORS` entry.
+
+    Returns:
+        ``[(border_zone, ttc_mw), ...]``.
+    """
+    totals: dict[str, float] = {}
+    for neighbor in INTERFACE_NEIGHBORS[iso]:
+        for zone in neighbor.border_zones:
+            totals[zone] = totals.get(zone, 0.0) + neighbor.interface_limit_mw
+    return list(totals.items())
+
+
+# NWPP-NEXT-19 (FINDING-nwppnext19-price-census-phase0-2026-10-02.md §4): the
+# NWPP seams publish one rating per seam (Path 66 + NEVP, the WECC_SW envelope,
+# Path 3 + Path 83), not a per-zone split, so the border links are derived from
+# the registered seam limits rather than apportioned by a new number.
+IMPORT_NODE_LINKS["NWPP"] = seam_derived_border_links("NWPP")
 
 # MISO per-seam measured BA-to-BA deliverability envelope.
 MISO_SEAM_DIBA: dict[str, tuple[str, ...]] = {
@@ -3643,6 +3681,35 @@ class InterchangeSpec:
     # The solve year the spec was resolved for (the NE AC node's ladder is
     # year-indexed); ``None`` when unresolved.
     year: int | None = None
+
+
+def require_priced_interchange_rows(iso: str, year: int, rows: list) -> None:
+    """Refuse a priced-interchange build that produced no import/export rows.
+
+    Priced interchange drops the measured schedule from demand (the backcast
+    loads demand with ``include_interchange=not priced_interchange``). If the
+    ISO's spec builds no rows — no ``IMPORT_ZONE``, or no seam bands / tranches —
+    the solve would run at ZERO interchange with nothing in the schedule's
+    place. Rule 19: the priced interface replaces the schedule, never vanishes
+    it (``docs/records/nwpp/FINDING-nwppnext19-price-census-phase0-2026-10-02.md``
+    §4).
+
+    Args:
+        iso: ISO identifier.
+        year: Solve year.
+        rows: The generators :func:`build_interchange_fleet` returned.
+
+    Raises:
+        ValueError: when ``rows`` is empty.
+    """
+    if not rows:
+        raise ValueError(
+            f"{iso} {year}: priced interchange is armed but the interchange spec "
+            "builds no import/export rows (no IMPORT_ZONE, or no seam bands / "
+            "tranches for this ISO); the measured schedule would be dropped with "
+            "nothing in its place. Arm reference_price_interface for an ISO with "
+            "registered seams, or leave priced interchange off."
+        )
 
 
 def get_interchange_spec(config, iso: str, year: int | None = None) -> InterchangeSpec:
