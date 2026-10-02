@@ -38,13 +38,16 @@ class TestAdmitStandbyConfig(unittest.TestCase):
     def test_cache_key_registered_at_default(self):
         self.assertIn(FIELD, _CACHE_KEY_OPTIONAL_FIELDS)
         self.assertEqual(_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS[FIELD], "False")
+        # W0 (owner ruling R-2 / Q2): backcast default ON, coerced to its
+        # frozen False outside a backcast, so the forecast key never moves.
         self.assertEqual(
             ScenarioConfig(iso="NWPP").cache_key(),
-            ScenarioConfig(iso="NWPP", **{FIELD: False}).cache_key(),
-        )
-        self.assertNotEqual(
-            ScenarioConfig(iso="NWPP").cache_key(),
             ScenarioConfig(iso="NWPP", **{FIELD: True}).cache_key(),
+        )
+        self.assertTrue(getattr(ScenarioConfig(iso="NWPP", mode="backcast"), FIELD))
+        self.assertNotEqual(
+            ScenarioConfig(iso="NWPP", mode="backcast").cache_key(),
+            ScenarioConfig(iso="NWPP", mode="backcast", **{FIELD: False}).cache_key(),
         )
 
     def test_setter_round_trip(self):

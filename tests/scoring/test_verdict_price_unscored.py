@@ -51,11 +51,19 @@ def _span_art(iso, *, avg_lmp, drop_fuelrows=False):
 
 
 class NwppSpanTests(unittest.TestCase):
-    """An NWPP-shaped 2023–2025 run against the committed store, no injection."""
+    """An NWPP-shaped 2023–2025 run against the committed store, NWPP block hidden.
+
+    Since rubric v3.16 (owner ruling R-9, 2026-10-02) NWPP carries a labelled
+    2023-06+ block, so these no-block readings hide it to keep pinning the
+    v3.8 class itself; every other ISO's block is the committed one.
+    """
 
     def setUp(self):
         cv._ACTUAL_LMP_CACHE = None
         cv._ACTUAL_LMP_READABLE = None
+        ref = cv._actual_lmp_reference() or {}
+        cv._ACTUAL_LMP_CACHE = {k: v for k, v in ref.items() if k != "NWPP"}
+        cv._ACTUAL_LMP_READABLE = True
         cv._TAIL_CACHE = {}
 
     def tearDown(self):

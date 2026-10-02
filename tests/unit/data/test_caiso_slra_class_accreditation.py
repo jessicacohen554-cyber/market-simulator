@@ -29,10 +29,11 @@ _PUBLISHED_BATTERY_NQC_MW = 13_365
 # The published Total row's NQC, which the fuel rows foot to EXACTLY — the
 # check that proves the digitization, not merely the one row this test needs.
 _PUBLISHED_TOTAL_NQC_MW = 59_069
-# EIA-860 2025 Early Release, BA CISO, Status "OP" battery nameplate — the
-# model's own multiplicand and the object STORAGE_BASE_FLEET_MW["CAISO"] is
-# built from (FFR-4D §4.1).
-_EIA860_CISO_BATTERY_NAMEPLATE_MW = 15_448.4
+# EIA-860 FINAL 2025 release (canonical since 2026-10-02; was the 2025 Early
+# Release's 15,448.4), BA CISO, Status "OP" battery nameplate — the model's own
+# multiplicand and the object STORAGE_BASE_FLEET_MW["CAISO"] is built from
+# (FFR-4D §4.1).
+_EIA860_CISO_BATTERY_NAMEPLATE_MW = 15_519.3
 
 _CSV = (
     RAW_DIR
@@ -81,7 +82,7 @@ class CaisoSlraClassAccreditationTest(unittest.TestCase):
             STORAGE_WHOLE_CLASS_ACCREDITATION_BY_ISO["CAISO"], expected, places=12
         )
         self.assertAlmostEqual(
-            STORAGE_WHOLE_CLASS_ACCREDITATION_BY_ISO["CAISO"], 0.865138, places=6
+            STORAGE_WHOLE_CLASS_ACCREDITATION_BY_ISO["CAISO"], 0.861186, places=6
         )
 
     def test_registry_is_not_the_published_ndc_basis_ratio(self) -> None:

@@ -15675,3 +15675,49 @@ pick another lane"; "Promote the killed arm anyway".
   estimator change on a frozen derive — needs a ruling); (C) solve the per-year table anyway (not recommended); (D) other.
 
 Full span NOT-YET on C1 ST_GAS 2019, C3a 2020, C3b 2021. Train 2023–2025 CALIBRATED. No frontier.
+
+## miso-300 — 2026-10-02 — lag-aware pooled gas variable transport (one `v` per plant, seven receipt years, the print's lag as a regressor; zero LP): the pre-stated rule fails on 2022 and on the cross-check; FINDING only, both R cells stay R
+
+Keeper `2026-09-28-miso-280-splitremap` unchanged (legs at `8f765fef`). No LP. Record `docs/records/miso/FINDING-miso300-lagaware-transport-2026-10-02.md`
+(§0 pre-stated at `b3b56fde` before any number); derive `scripts/data/derive_miso_gas_variable_transport_lagaware.py` →
+`data/raw/reference/miso_gas_variable_transport_lagaware.csv` (+ `.pool.csv`; the frozen table untouched; estimator change under the owner
+ruling below, source years 2019–2025, commit `4ccb8e6b`), `results/phase0/miso/_miso300_lagaware_table.json`, `_miso300_lagaware_diagnostics.json`;
+census `scripts/probes/_miso300_lagaware_census.py` → `results/phase0/miso/_miso300_lagaware_census.json`.
+
+**Owner ruling that opened this lane (2026-10-02, miso-299 decision card *"What should miso-300 do?"*; miso-299 could not log it), verbatim:**
+**"Lag-aware pooled estimator (phase 0)"** — described in the card as: Re-fit one v per plant on all seven receipt years with the month's hub
+change as a regressor (the −0.69 lag slope the frozen derive measured becomes a term, not a contaminant). An estimator change on a frozen
+derive: this card is the rule-23 ruling it needs. Zero LP; pre-stated reading first; shards only if it clears. The alternatives the owner
+declined: "Record; next zero-LP object (Recommended)"; "Solve the per-year table anyway"; "Something else".
+
+- **Pre-stated rule (§0, before any number):** proceed to a PRECOMMIT + 7 shards only if (a) the lag-aware table moves static cap-weighted
+  CC_REGULAR fuel DOWN in each of 2019–2022 against the keeper print, (b) DOWN in 2023 and 2024, and (c) identification holds: fleet-wide
+  λ in −1.0 … −0.4 AND the regression-free flat-hub top-quartile cross-check agrees with `v` at r ≥ 0.90. λ one fleet-wide coefficient;
+  two steps (λ jointly with every plant's `v`, `F`; then the frozen `_fit` / bars / ladder on `wedge − λ·Δhub`); the offer stays `hub + v`.
+- **Table:** 8,446 plant-months / 103 plants; λ = **−0.420** (se 0.009; CC −0.38, CT −0.57, ST −0.42 diagnostic); 101 of 103 plants on the
+  own rung; `v` CC_REGULAR 0.200 / CT_PEAKER 0.911 / ST_GAS 1.657 / all 0.624 (frozen 0.209 / 1.441 / 1.288 / 0.744). Cross-check
+  r = **0.706** (CC 0.85, CT 0.79, ST 0.98; the all-months top quartile, not the declared check, reads 0.905). Against the frozen table the
+  own-plant `v` agree at r 0.58, against the same seven-year panel at λ = 0 at r 0.997: the move is the year set, not the lag term.
+- **Census (fleet cap-weighted, keeper P1 quantity):** CC_REGULAR fuel lag-aware − print **−0.008 / −0.055 / −0.016 / +0.065** (2019–2022)
+  → (a) FAILS in 2022; **−0.321 / −0.194** (2023–2024) → (b) holds; 2025 −0.101. Lag-aware − frozen −0.05 to −0.12 every year. Static
+  dispatch within ±0.16 GW of the keeper in 2019–2021 (the miso-298 K-1 mechanism gone); q1–q2 error 2023 / 2024 / 2025 +4.82 → +3.51,
+  +3.56 → +2.63, +3.19 → +2.75; all-hours 2022 −12.08 (keeper −12.43), 2025 −2.88 (keeper −2.74).
+- **Verdict:** FINDING only; no PRECOMMIT, no shard, no field. `gas_marginal_commodity_pricing` R, `gas_variable_transport` R — stay R
+  (evidence added). Reading: the lag term is real but small in the level form and does not re-rank plants; the ruling's estimator delivers a
+  seven-year pooled `v` that lands within ±$0.06 of the print in 2019–2021 and above it in 2022 because the 2022 print-over-hub wedge is
+  itself a lag artifact (hub rising all year). Read as written, the rule failed.
+- **Owner card:** (A) record, keeper unchanged, next zero-LP object (recommended under the rule as written); (B) solve the lag-aware table
+  anyway (7 shards, field minted, miso-298 kill rules); (C) other.
+
+Full span NOT-YET on C1 ST_GAS 2019, C3a 2020, C3b 2021. Train 2023–2025 CALIBRATED. No frontier.
+
+## closeout-MISO wave 1 — 2026-10-02 — tail derive (C3c 2019–21 scored), L3/L4 and R-3 censuses both fail their zero-LP gates; FINDING only
+
+Keeper `2026-09-28-miso-280-splitremap` unchanged. No LP. Record `docs/records/miso/FINDING-closeout-miso-wave1-2026-10-02.md`.
+
+- **0a:** `derive_actual_tail.py` → MISO RT >$200 2019/20/21 = 17/8/48 h. C3c 2019 SKIP→CAVEAT, 2020 SKIP→PASS, 2021 SKIP→CAVEAT; determination NOT-YET unchanged.
+- **Step 2 (L3+L4):** MISO incremental-HR ratio pooled 0.898/0.923. No arm passes (≥ −$1.0 q1–q4 2020 with COAL_PRB in band): L3 −1.24 but PRB 2019/2021 +10.29/+8.54; in-band arms −0.44…+0.88. `coal_econ_two_sided` U→R; the two committed-band R cells stay R.
+- **R-3 ceiling:** static C3b 2021 0.201→0.189, but C3a 2019 +11.5 %, C3a 2022 −15.8 %, C3b 2022 0.220 (K3 fail). No PRECOMMIT; `coal_fuel_inventory` stays K.
+- **0b** deferred (owner, no downloads today). Keeper lacks `unit_marginal_<Y>` (next span writes it). Span held on W0.
+
+Full span NOT-YET on C1 ST_GAS 2019, C3a 2020, C3b 2021. Train 2023–2025 CALIBRATED.

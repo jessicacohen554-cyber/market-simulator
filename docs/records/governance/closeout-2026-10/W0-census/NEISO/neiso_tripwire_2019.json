@@ -1,0 +1,313 @@
+{
+  "year": 2019,
+  "bundle": "neiso119_span",
+  "watched_plants_byte_stable": {
+    "1588 Mystic": false,
+    "1590 Pilgrim": true,
+    "1595 Kendall": false,
+    "1599 Canal": false
+  },
+  "tripped_zero_lp": true,
+  "recorded": {
+    "units": {
+      "1588 Mystic": [
+        {
+          "unit": "1588_7",
+          "group": "",
+          "fuel": "oil",
+          "pmax_mw": 541.8,
+          "available_gwh": 4271.551
+        },
+        {
+          "unit": "1588_GT1",
+          "group": "",
+          "fuel": "oil",
+          "pmax_mw": 9.0,
+          "available_gwh": 70.956
+        },
+        {
+          "unit": "CC_REGULAR_Boston_p1588_committed",
+          "group": "CC_REGULAR",
+          "fuel": "gas_cc",
+          "pmax_mw": 784.98,
+          "available_gwh": 235.407
+        },
+        {
+          "unit": "CC_REGULAR_Boston_p1588_econc00",
+          "group": "CC_REGULAR",
+          "fuel": "gas_cc",
+          "pmax_mw": 105.25,
+          "available_gwh": 31.562
+        },
+        {
+          "unit": "CC_REGULAR_Boston_p1588_econc01",
+          "group": "CC_REGULAR",
+          "fuel": "gas_cc",
+          "pmax_mw": 105.25,
+          "available_gwh": 31.562
+        },
+        {
+          "unit": "CC_REGULAR_Boston_p1588_econc02",
+          "group": "CC_REGULAR",
+          "fuel": "gas_cc",
+          "pmax_mw": 105.25,
+          "available_gwh": 31.562
+        },
+        {
+          "unit": "CC_REGULAR_Boston_p1588_econc03",
+          "group": "CC_REGULAR",
+          "fuel": "gas_cc",
+          "pmax_mw": 105.25,
+          "available_gwh": 31.562
+        },
+        {
+          "unit": "CC_REGULAR_Boston_p1588_econc04",
+          "group": "CC_REGULAR",
+          "fuel": "gas_cc",
+          "pmax_mw": 105.25,
+          "available_gwh": 31.562
+        },
+        {
+          "unit": "CC_REGULAR_Boston_p1588_econc05",
+          "group": "CC_REGULAR",
+          "fuel": "gas_cc",
+          "pmax_mw": 105.25,
+          "available_gwh": 31.562
+        },
+        {
+          "unit": "CC_REGULAR_Boston_p1588_peak",
+          "group": "CC_REGULAR",
+          "fuel": "gas_cc",
+          "pmax_mw": 327.95,
+          "available_gwh": 98.348
+        }
+      ],
+      "1595 Kendall": [
+        {
+          "unit": "1595_JET1",
+          "group": "",
+          "fuel": "oil",
+          "pmax_mw": 18.0,
+          "available_gwh": 141.912
+        },
+        {
+          "unit": "CC_CHP_Boston_p1595_committed",
+          "group": "CC_CHP",
+          "fuel": "gas_cc",
+          "pmax_mw": 138.71,
+          "available_gwh": 1085.877
+        }
+      ],
+      "1599 Canal": [
+        {
+          "unit": "1599_1",
+          "group": "",
+          "fuel": "oil",
+          "pmax_mw": 560.0,
+          "available_gwh": 4415.04
+        },
+        {
+          "unit": "1599_2",
+          "group": "",
+          "fuel": "oil",
+          "pmax_mw": 553.0,
+          "available_gwh": 4359.852
+        },
+        {
+          "unit": "CT_PEAKER_Central_p1599_econlo",
+          "group": "CT_PEAKER",
+          "fuel": "gas_ct",
+          "pmax_mw": 161.43,
+          "available_gwh": 691.873
+        },
+        {
+          "unit": "CT_PEAKER_Central_p1599_econhi",
+          "group": "CT_PEAKER",
+          "fuel": "gas_ct",
+          "pmax_mw": 145.47,
+          "available_gwh": 623.474
+        },
+        {
+          "unit": "CT_PEAKER_Central_p1599_peak",
+          "group": "CT_PEAKER",
+          "fuel": "gas_ct",
+          "pmax_mw": 23.1,
+          "available_gwh": 99.005
+        }
+      ],
+      "1590 Pilgrim": [
+        {
+          "unit": "1590_1",
+          "group": "",
+          "fuel": "nuclear",
+          "pmax_mw": 673.6,
+          "available_gwh": 2180.524
+        }
+      ]
+    },
+    "mc_by_group": {
+      "CC_CHP": 37.187,
+      "CC_REGULAR": 33.026,
+      "COAL_BIT": 44.008,
+      "COAL_PRB": 37.364,
+      "CT_CHP": 24.44,
+      "CT_PEAKER": 48.825,
+      "ST_CHP": 24.913,
+      "ST_GAS": 64.548,
+      "hydro": 1.4,
+      "nuclear": 2.5,
+      "oil": 233.121
+    }
+  },
+  "w0": {
+    "units": {
+      "1588 Mystic": [
+        {
+          "unit": "1588_7",
+          "group": "",
+          "fuel": "oil",
+          "pmax_mw": 541.8,
+          "available_gwh": 4271.551
+        },
+        {
+          "unit": "1588_GT1",
+          "group": "",
+          "fuel": "oil",
+          "pmax_mw": 9.0,
+          "available_gwh": 70.956
+        },
+        {
+          "unit": "CC_REGULAR_Boston_p1588_committed",
+          "group": "CC_REGULAR",
+          "fuel": "gas_cc",
+          "pmax_mw": 764.55,
+          "available_gwh": 594.565
+        },
+        {
+          "unit": "CC_REGULAR_Boston_p1588_econc00",
+          "group": "CC_REGULAR",
+          "fuel": "gas_cc",
+          "pmax_mw": 102.51,
+          "available_gwh": 79.716
+        },
+        {
+          "unit": "CC_REGULAR_Boston_p1588_econc01",
+          "group": "CC_REGULAR",
+          "fuel": "gas_cc",
+          "pmax_mw": 102.51,
+          "available_gwh": 79.716
+        },
+        {
+          "unit": "CC_REGULAR_Boston_p1588_econc02",
+          "group": "CC_REGULAR",
+          "fuel": "gas_cc",
+          "pmax_mw": 102.51,
+          "available_gwh": 79.716
+        },
+        {
+          "unit": "CC_REGULAR_Boston_p1588_econc03",
+          "group": "CC_REGULAR",
+          "fuel": "gas_cc",
+          "pmax_mw": 102.51,
+          "available_gwh": 79.716
+        },
+        {
+          "unit": "CC_REGULAR_Boston_p1588_econc04",
+          "group": "CC_REGULAR",
+          "fuel": "gas_cc",
+          "pmax_mw": 102.51,
+          "available_gwh": 79.716
+        },
+        {
+          "unit": "CC_REGULAR_Boston_p1588_econc05",
+          "group": "CC_REGULAR",
+          "fuel": "gas_cc",
+          "pmax_mw": 102.51,
+          "available_gwh": 79.716
+        },
+        {
+          "unit": "CC_REGULAR_Boston_p1588_peak",
+          "group": "CC_REGULAR",
+          "fuel": "gas_cc",
+          "pmax_mw": 319.41,
+          "available_gwh": 248.396
+        }
+      ],
+      "1595 Kendall": [
+        {
+          "unit": "1595_JET1",
+          "group": "",
+          "fuel": "oil",
+          "pmax_mw": 18.0,
+          "available_gwh": 141.912
+        },
+        {
+          "unit": "CC_CHP_Boston_p1595_committed",
+          "group": "CC_CHP",
+          "fuel": "gas_cc",
+          "pmax_mw": 136.7,
+          "available_gwh": 1067.199
+        }
+      ],
+      "1599 Canal": [
+        {
+          "unit": "1599_1",
+          "group": "",
+          "fuel": "oil",
+          "pmax_mw": 560.0,
+          "available_gwh": 4415.04
+        },
+        {
+          "unit": "1599_2",
+          "group": "",
+          "fuel": "oil",
+          "pmax_mw": 553.0,
+          "available_gwh": 4359.852
+        },
+        {
+          "unit": "CT_PEAKER_Central_p1599_econlo",
+          "group": "CT_PEAKER",
+          "fuel": "gas_ct",
+          "pmax_mw": 161.43,
+          "available_gwh": 690.266
+        },
+        {
+          "unit": "CT_PEAKER_Central_p1599_econhi",
+          "group": "CT_PEAKER",
+          "fuel": "gas_ct",
+          "pmax_mw": 145.47,
+          "available_gwh": 622.027
+        },
+        {
+          "unit": "CT_PEAKER_Central_p1599_peak",
+          "group": "CT_PEAKER",
+          "fuel": "gas_ct",
+          "pmax_mw": 23.1,
+          "available_gwh": 98.775
+        }
+      ],
+      "1590 Pilgrim": [
+        {
+          "unit": "1590_1",
+          "group": "",
+          "fuel": "nuclear",
+          "pmax_mw": 673.6,
+          "available_gwh": 2180.524
+        }
+      ]
+    },
+    "mc_by_group": {
+      "CC_CHP": 36.873,
+      "CC_REGULAR": 32.947,
+      "COAL_BIT": 44.031,
+      "COAL_PRB": 37.364,
+      "CT_CHP": 24.275,
+      "CT_PEAKER": 48.915,
+      "ST_CHP": 25.775,
+      "ST_GAS": 64.374,
+      "hydro": 1.4,
+      "nuclear": 2.5,
+      "oil": 234.041
+    }
+  }
+}

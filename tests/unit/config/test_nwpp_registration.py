@@ -159,30 +159,46 @@ class TestFootprintAdmission(unittest.TestCase):
         )
 
     def test_curated_fleet_reproduces_the_post_adjudication_census(self):
-        """939 plants / 1,930 generators / 98,238.1 MW; Pine Forest absent."""
+        """940 plants / 1,926 generators / 98,194.9 MW on the EIA-860 FINAL 2025
+        canonical snapshot (2026-10-02; was 939 / 1,930 / 98,238.1 on the 2025
+        Early Release); Pine Forest absent."""
         path = EIA_860_DIR / EIA_860_PARQUET_NAME
         if not path.exists():
             self.skipTest("eia860_generators.parquet not hydrated")
-        df = pd.read_parquet(
-            path,
-            columns=["plant_id", "balancing_authority_code", "nameplate_capacity_mw"],
-        )
-        fleet = df[df["balancing_authority_code"].isin(NWPP_BAS)]
-        self.assertEqual(fleet["plant_id"].nunique(), 939)
-        self.assertEqual(len(fleet), 1930)
+        from market_sim.data.fleet.models import generator_footprint_mask
+
+        df = pd.read_parquet(path)
+        # W0 E.6: the table is unfiltered (every BA + nerc_region); NWPP's
+        # NERC=WECC key is applied at LOAD time, so Pine Forest (DOPD-coded,
+        # NERC TRE) is in the table but never in the NWPP footprint.
+        fleet = df[generator_footprint_mask("NWPP", df)]
+        self.assertTrue(set(fleet["balancing_authority_code"]) <= set(NWPP_BAS))
+        self.assertEqual(fleet["plant_id"].nunique(), 940)
+        self.assertEqual(len(fleet), 1926)
         self.assertAlmostEqual(
-            float(fleet["nameplate_capacity_mw"].sum()), 98_238.1, places=1
+            float(fleet["nameplate_capacity_mw"].sum()), 98_194.9, places=1
         )
-        self.assertFalse((df["plant_id"] == 68906).any())  # Pine Forest Solar I, TX/TRE
+        self.assertFalse((fleet["plant_id"] == 68906).any())  # Pine Forest, TX/TRE
+        self.assertTrue((df["plant_id"] == 68906).any())  # ...present unfiltered
         self.assertFalse((df["plant_id"] == 69290).any())  # Desert Bloom, proposed only
 
 
 class TestDeliberateAbsences(unittest.TestCase):
     """Each absence is a ruling, not an oversight (cards N7 / N8, gates G5-G7)."""
 
-    def test_no_import_node(self):
+    def test_import_node_is_seam_only_and_default_off(self):
+        """NWPP-NEXT-19 owner card (2026-10-02) wired the external node for the
+        registered seams; there are still no static tranches, and the priced
+        seams stay default-off (the keeper serves the measured schedule)."""
+        from market_sim.config.interchange_config import (
+            PRICED_INTERCHANGE_DEFAULT_ISOS,
+            REFERENCE_PRICE_DEFAULT_ISOS,
+        )
+
         self.assertNotIn("NWPP", IMPORT_TRANCHES)
-        self.assertNotIn("NWPP", IMPORT_ZONE)
+        self.assertEqual(IMPORT_ZONE["NWPP"], "NWPP_external")
+        self.assertNotIn("NWPP", REFERENCE_PRICE_DEFAULT_ISOS)
+        self.assertNotIn("NWPP", PRICED_INTERCHANGE_DEFAULT_ISOS)
 
     def test_no_capacity_market_and_no_campd_binning(self):
         self.assertNotIn("NWPP", MARKET_DESIGN)
@@ -199,9 +215,11 @@ class TestDeliberateAbsences(unittest.TestCase):
         for tech in ("wind", "solar", "gas_cc", "gas_ct", "nuclear"):
             self.assertIn(tech, QUEUE_CAP_PER_TECH_GW["NWPP"])
 
-    def test_neighbour_blocks_are_the_three_ruled_seams(self):
+    def test_neighbour_blocks_are_the_priced_seams(self):
+        """NWPP-NEXT-20: CAISO split at its two physical paths, BC priced;
+        WECC_SW (failed the SPP-51 gate) and AESO are served measured."""
         names = [n.name for n in INTERFACE_NEIGHBORS["NWPP"]]
-        self.assertEqual(names, ["CAISO", "WECC_SW", "WECC_CAN"])
+        self.assertEqual(names, ["CAISO_COI", "CAISO_NEVP", "WECC_CAN"])
         zones = set(get_iso_config("NWPP").zone_names)
         for neighbor in INTERFACE_NEIGHBORS["NWPP"]:
             self.assertTrue(set(neighbor.border_zones) <= zones, neighbor.name)

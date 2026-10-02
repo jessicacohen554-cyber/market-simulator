@@ -3,8 +3,8 @@ DATA PROFILE: caiso
 MODEL: Opus or Fable
 
 FIRST:
-- Archive R-CAISO-33 (its session id is in your launch prompt) with mcp__claude-code-remote__archive_session,
-  only once its PR (branch `claude/r-caiso-33`) reads MERGED on the GitHub MCP. If it is not merged, do not
+- Archive R-CAISO-33 (session_01Hk5iBxXCm9KeyeKcNdd8Y4) with mcp__claude-code-remote__archive_session,
+  only once its PR #7056 (branch `claude/r-caiso-33`) reads MERGED on the GitHub MCP. If it is not merged, do not
   archive, and say so.
 - Check for unmerged CAISO branches and open CAISO PRs. Salvage anything not on main into your branch, close the
   PRs you salvaged, and report which branches the owner can delete. Deleting a ref returns 403, so do not try.
@@ -14,8 +14,11 @@ FIRST:
 - Work on a fresh branch off origin/main.
 
 STATE (2026-10-02):
-- Keeper `2026-09-30-caiso-r20-overnight` (bundle rcaiso20_A_span, 2022–25) is CALIBRATED with one ledgered
-  C3c 2024. The fold `-touchpoints` (2019–21) is NOT-YET, so the ISO determination is NOT-YET under v3.13.
+- Keeper `2026-10-02-closeout-caiso-w1-arm3` (bundle `results/calibration/closeout_caiso_w1_a3_span`, 2019–2025 in one
+  span), promoted 2026-10-02 by the closeout-CAISO lane (W0 EIA-860 settlement re-solve, then `caiso_ra_min_load_frac`
+  0.26 → measured 0.570). Determination NOT-YET (C1 CC_REGULAR 2019–21, C3a 2021, C4 gas 2019–21; C3c 2024 ledgered).
+  The close-out sequence is in docs/mechanism-testing-matrix.md §5.2 and docs/backcast-closeout-plan-2026-10.md §3.7;
+  check it before acting, because the closeout-CAISO lane is running in parallel. Do not touch its arms.
 - R-CAISO-33 (zero LP; docs/records/caiso/r-caiso-33/PRECOMMIT-r-caiso-33-joint-gas-rebasis-2026-10-02.md
   §0–§11): link 15 (joint gas re-basis) is CLOSED, keeper unchanged, no solve. The owner ruled "keep 0.46, repair
   the denominator, solve"; stage 1 re-derived the offer surface on composite + 0.46 (G1–G4 pass), but the

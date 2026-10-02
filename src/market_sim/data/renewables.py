@@ -1330,6 +1330,40 @@ def _optional_numeric(df: pd.DataFrame, column: str) -> np.ndarray:
     return np.full(len(df), np.nan)
 
 
+def _renewable_zone_lookup(iso: str, data_dir: Path) -> dict[int, str]:
+    """Return the ``{oris: zone}`` lookup that admits EIA-860 wind/solar plants.
+
+    The eGRID-2023 lookup (:func:`market_sim.data.zone_assignment.
+    build_zone_lookup`, supplemented from the canonical EIA-860 plant file for
+    the ISOs in ``_EIA860_SUPPLEMENT_ISOS``). Under
+    ``ScenarioConfig.fleet_zone_vintage_coords`` (GATED default-off; set per
+    solve by ``zone_assignment.set_fleet_zone_vintage_coords``) a plant that
+    lookup lacks is admitted from the coordinates in the plant file of the
+    EIA-860 directory ``data_dir`` — the thermal fleet's fallback
+    (``fleet.eia860._assign_zones``) applied to wind/solar. ``setdefault``
+    only: a plant already zoned is never re-zoned. For PJM, absent from
+    ``_EIA860_SUPPLEMENT_ISOS``, this admits the 2024-2025 PJM-BA solar/wind
+    build that post-dates eGRID 2023 (W0 renewable-membership census: 3.9 GW
+    in 2024, 7.4 GW in 2025 dropped). Off, the lookup is unchanged.
+
+    Returns an empty dict when the ISO has no geographic zone rules.
+    """
+    from market_sim.data.zone_assignment import (
+        build_zone_lookup,
+        fleet_zone_vintage_coords_active,
+        vintage_coords_zone_lookup,
+    )
+
+    try:
+        zone_lookup = build_zone_lookup(iso)
+    except Exception:
+        return {}
+    if zone_lookup and fleet_zone_vintage_coords_active():
+        for oris, zone in vintage_coords_zone_lookup(iso, data_dir).items():
+            zone_lookup.setdefault(oris, zone)
+    return zone_lookup
+
+
 def _eia860_monthly_capacity(
     iso: str,
     fuel: str,
@@ -1340,8 +1374,9 @@ def _eia860_monthly_capacity(
     """Return an ``(n_zones, 12)`` array of operable capacity (MW) by month.
 
     Each EIA-860 operable wind/solar plant is placed in a model zone via the
-    eGRID ORIS->zone lookup (see :mod:`market_sim.data.zone_assignment`) and
-    contributes its nameplate capacity to the months it was online — the
+    eGRID ORIS->zone lookup (see :mod:`market_sim.data.zone_assignment`;
+    :func:`_renewable_zone_lookup` for the gated vintage-coordinate fallback)
+    and contributes its nameplate capacity to the months it was online — the
     month-precise COD ON-ramp **and** planned-retirement OFF-ramp, evaluated by
     the shared :func:`market_sim.data.cod_ramp.monthly_online_mask`:
 
@@ -1378,12 +1413,7 @@ def _eia860_monthly_capacity(
     if not path.exists():
         return None
 
-    from market_sim.data.zone_assignment import build_zone_lookup
-
-    try:
-        zone_lookup = build_zone_lookup(iso)
-    except Exception:
-        return None
+    zone_lookup = _renewable_zone_lookup(iso, data_dir)
     if not zone_lookup:
         return None
 
@@ -1547,9 +1577,9 @@ def wind_ptc_eligible_monthly_share(
     online wind nameplate capacity still inside its federal §45 production
     tax credit window — 10 years (120 months, :data:`_PTC_WINDOW_MONTHS`)
     from the unit's placed-in-service month (26 U.S.C. §45(a)(2)(A)(ii)).
-    Same source, zone assignment (eGRID ORIS -> zone), status filter and
-    month-precise online conventions as :func:`_eia860_monthly_capacity`
-    (EIA-860 Generator_Operable, ``Operating Year``/``Month``), so the share
+    Same source, zone assignment (:func:`_renewable_zone_lookup`), status
+    filter and month-precise online conventions as
+    :func:`_eia860_monthly_capacity` (EIA-860 Generator_Operable, ``Operating Year``/``Month``), so the share
     denominator is the exact fleet the capacity loader distributes.
     Measured, rule-13 admissible and forward-native: for a forward year the
     same registry ages vintages out of the window and the proposed-plant
@@ -1581,12 +1611,7 @@ def wind_ptc_eligible_monthly_share(
     if not path.exists():
         return None
 
-    from market_sim.data.zone_assignment import build_zone_lookup
-
-    try:
-        zone_lookup = build_zone_lookup(iso)
-    except Exception:
-        return None
+    zone_lookup = _renewable_zone_lookup(iso, data_dir)
     if not zone_lookup:
         return None
 
@@ -2142,7 +2167,7 @@ def _eia860_zone_solar_geometry(
     """Return per-zone solar tracking mix and capacity-weighted centroids.
 
     Reads the EIA-860 operable solar schedule, assigns each plant to a model
-    zone (eGRID/EIA-860 ORIS→zone lookup, the same geography as
+    zone (:func:`_renewable_zone_lookup`, the same geography as
     :func:`_eia860_monthly_capacity`), and aggregates, weighted by nameplate
     capacity and restricted to plants online by ``cal_year``:
 
@@ -2179,12 +2204,7 @@ def _eia860_zone_solar_geometry(
     if not path.exists() or not plant_path.exists():
         return None
 
-    from market_sim.data.zone_assignment import build_zone_lookup
-
-    try:
-        zone_lookup = build_zone_lookup(iso)
-    except Exception:
-        return None
+    zone_lookup = _renewable_zone_lookup(iso, data_dir)
     if not zone_lookup:
         return None
 

@@ -1053,13 +1053,25 @@ def _extract_basis_groups(
 def _fleet_cache_dir_key() -> str:
     """Return the fleet-derived caches' EIA-860 key: the active directory, plus
     a ``|SB`` suffix while ``admit_standby_units`` widens the fleet's status
-    filter (the fleet these maps sum depends on both). Identical to
+    filter, plus ``|SEASONAL`` while the W0 seasonal capacity basis is armed
+    (the fleet these maps sum depends on all three). Identical to
     ``str(active_eia860_dir())`` while off, so every off-path key is unchanged.
     """
     from market_sim.config.paths import active_eia860_dir
 
+    from market_sim.config.paths import (
+        eia860_fleet_row_repairs,
+        eia860_seasonal_capacity_basis,
+    )
+
     key = str(active_eia860_dir())
-    return f"{key}|SB" if eia860_standby_admitted() else key
+    if eia860_standby_admitted():
+        key = f"{key}|SB"
+    for repair in sorted(eia860_fleet_row_repairs()):
+        key = f"{key}|{repair}"
+    # W0 E.1: the seasonal capacity basis moves every thermal bin's pmax, so
+    # the fleet-derived denominators key on it too (off: unchanged key).
+    return f"{key}|SEASONAL" if eia860_seasonal_capacity_basis() else key
 
 
 def _joining_ba_generators(
@@ -1103,9 +1115,26 @@ def _joining_ba_generators(
     if not codes:
         return []
     fleet = load_fleet_from_csv(
-        iso, iso_config, year=int(year), cc_steam_part_reclass=cc_steam_part_reclass
+        iso,
+        iso_config,
+        year=int(year),
+        cc_steam_part_reclass=cc_steam_part_reclass,
+        **_row_repair_kwargs(),
     )
     return [g for g in fleet if int(g.plant_code) in codes]
+
+
+def _row_repair_kwargs() -> dict[str, bool]:
+    """The W0 row repairs the LP fleet carries, for a reconstructed fleet load.
+
+    Read from :func:`market_sim.config.paths.eia860_fleet_row_repairs`; empty
+    (every legacy key byte-identical) while none is armed. The repairs enter
+    :func:`_fleet_cache_dir_key`, so a cached map can never be served across
+    the two bases.
+    """
+    from market_sim.config.paths import eia860_fleet_row_repairs
+
+    return {name: True for name in sorted(eia860_fleet_row_repairs())}
 
 
 def _iso_plant_unit_capacity(
@@ -1167,7 +1196,10 @@ def _iso_plant_unit_capacity_cached(
 
     iso_config = get_iso_config(iso)
     fleet = load_fleet_from_csv(
-        iso, iso_config, cc_steam_part_reclass=cc_steam_part_reclass
+        iso,
+        iso_config,
+        cc_steam_part_reclass=cc_steam_part_reclass,
+        **_row_repair_kwargs(),
     ) + load_retired_within_window(
         iso,
         iso_config,
@@ -1409,7 +1441,10 @@ def _iso_plant_capacity_cached(
     # route to a (plant_code, plant_group) absent from this map and are skipped,
     # leaving the injected retiree (e.g. Mystic) un-capped.
     fleet = load_fleet_from_csv(
-        iso, iso_config, cc_steam_part_reclass=cc_steam_part_reclass
+        iso,
+        iso_config,
+        cc_steam_part_reclass=cc_steam_part_reclass,
+        **_row_repair_kwargs(),
     ) + load_retired_within_window(
         iso,
         iso_config,
@@ -1423,6 +1458,7 @@ def _iso_plant_capacity_cached(
             iso, iso_config, retiree_year, cc_steam_part_reclass
         )
     cap: dict[tuple[int, str], float] = {}
+    _seasonal_keys: set[tuple[int, str]] = set()
     for g in fleet:
         code = int(g.plant_code)
         if code <= 0 or not g.plant_group:
@@ -1431,6 +1467,8 @@ def _iso_plant_capacity_cached(
         # extract rows this denominator is joined against (COAL-SUB).
         _key = (code, artifact_class(g.plant_group))
         cap[_key] = cap.get(_key, 0.0) + float(g.pmax_mw)
+        if getattr(g, "summer_capability_frac", None) is not None:
+            _seasonal_keys.add(_key)
     if cc_nameplate_basis:
         # Reproduce fleet_to_bins' CC nameplate raise EXACTLY (campd_bins.py,
         # `cap = cap / _ratio` under cc_nameplate_summer_derate) so this
@@ -1442,6 +1480,11 @@ def _iso_plant_capacity_cached(
 
         for key in list(cap):
             if key[1] not in _CC_NAMEPLATE_BASIS_GROUPS:
+                continue
+            if key in _seasonal_keys:
+                # W0 E.1: a seasonal-basis bin is ALREADY at the capacity the
+                # LP carries (its published envelope); fleet_to_bins skips the
+                # nameplate raise for it, so this mirror skips it too.
                 continue
             ratio = cc_summer_derate_ratio(int(key[0]))
             if ratio is not None and ratio > 0.0:
@@ -1514,84 +1557,160 @@ def _dispatched_denominator(
         {
             k: v
             for k, v in lp_bin_capacity
-            if k[1] not in _DISPATCHED_DENOM_EXCLUDED_GROUPS
+            if len(k) == 2 and k[1] not in _DISPATCHED_DENOM_EXCLUDED_GROUPS
         }
     )
     return merged
 
 
-def exit_cohort_tag(gen: object) -> tuple[int, int] | None:
-    """``(ret_year, ret_month)`` of a dated exit-cohort row, read off its unit id.
+#: Third key element of a roster entry that carries a bin's MONTHLY dispatched
+#: capacity (``((plant_code, plant_group, ROSTER_MONTHLY_TAG), (12 MW))``) beside
+#: its ordinary full-year ``((plant_code, plant_group), MW)`` entry. Emitted by
+#: :func:`lp_bin_capacity_index` only for a bin the COD ramp holds below its
+#: full ``pmax`` in some month of the solve year (:func:`dispatched_bin_live_year`),
+#: so every other roster is byte-identical to the one it always was.
+ROSTER_MONTHLY_TAG = "monthly"
 
-    ``fleet.assembly`` (miso-191) gives every date-scoped exit-cohort bin a
-    ``_p{plant}_r{yyyy}{mm}`` token in its unit id, stamped from the cohort's
-    own EIA-860 retirement (month 12 when the filing names none) — the SAME
-    retirement it stamps on the tranche's ``retirement_year`` /
-    ``retirement_month``. An ordinary tranche carries no such token and returns
-    ``None``. Reading the id rather than the attributes lets the one test serve
-    the callers that hold only ``FleetArrays`` (``unit_ids`` + ``plant_code``),
-    which carry no retirement attributes.
+
+def _dispatched_denominator_hourly(
+    lp_bin_capacity: tuple | None,
+    hours: int,
+) -> dict[tuple[int, str], np.ndarray]:
+    """Hour-resolved dispatched denominator for bins whose roster moves in-year.
+
+    The closeout-W0 denominator fix (desk ruling D-1, 2026-10-02): a bin whose
+    roster holds an exit cohort carried for only part of the solve year
+    (``partial_plant_exit_carry`` / ``mid_vintage_exit_carry``, masked offline
+    after its EIA-860 retirement month by ``cod_ramp.monthly_online_mask``) has a
+    dispatched capacity that CHANGES at the retirement month, so a full-year
+    denominator over-counts the survivors' capacity in every month after it and
+    dilutes their measured derate (Scherer 6257 2022: unit 4 carried January
+    only, the COAL_PRB denominator 3,440 MW all year against 2,580 MW live
+    Feb-Dec). The identity :func:`lp_bin_capacity_index` states —
+    ``denom == cap_LP`` — holds hour by hour only if the denominator is the bin's
+    capacity ONLINE in that hour, which the live roster reads off the COD ramp's
+    own mask for every row (an in-year exit, a partly in-service plant-level
+    bin, a mid-year new build alike). Zero free parameters: the months are the
+    rows' own stamped EIA-860 dates, at the COD ramp's month grain
+    (``fleet.models._hour_to_month_index``). An hour whose monthly roster is zero
+    (the whole bin retired) keeps the full-year value: the LP carries no
+    capacity there for the factor to act on, so nothing it removes is real.
 
     Args:
-        gen: Any object exposing ``unit_id`` and ``plant_code``.
+        lp_bin_capacity: :func:`lp_bin_capacity_index`'s roster (or ``None``).
+        hours: Model-clock hours.
 
     Returns:
-        ``(ret_year, ret_month)``, or ``None`` for a row that is not a dated
-        exit-cohort row.
+        ``{(plant_code, plant_group): (hours,) MW}`` for the time-varying bins
+        only (CHP groups excepted, as in :func:`_dispatched_denominator`); empty
+        when no bin's roster moves in-year.
     """
-    uid = str(getattr(gen, "unit_id", "") or "")
-    code = int(getattr(gen, "plant_code", 0) or 0)
-    if code <= 0:
-        return None
-    tag = f"_p{code}_r"
-    i = uid.find(tag)
-    if i < 0:
-        return None
-    digits = uid[i + len(tag) : i + len(tag) + 6]
-    if len(digits) != 6 or not digits.isdigit():
-        return None
-    return int(digits[:4]), int(digits[4:])
+    if not lp_bin_capacity:
+        return {}
+    monthly = {
+        (k[0], k[1]): v
+        for k, v in lp_bin_capacity
+        if len(k) == 3
+        and k[2] == ROSTER_MONTHLY_TAG
+        and k[1] not in _DISPATCHED_DENOM_EXCLUDED_GROUPS
+    }
+    if not monthly:
+        return {}
+    # Local import: the fleet package imports this module.
+    from market_sim.data.fleet.models import _hour_to_month_index
+
+    month_idx = _hour_to_month_index(hours)
+    full = dict(k_v for k_v in lp_bin_capacity if len(k_v[0]) == 2)
+    out: dict[tuple[int, str], np.ndarray] = {}
+    for key, months in monthly.items():
+        prof = np.asarray(months, dtype=float)
+        prof = np.where(prof > 0.0, prof, float(full[key]))
+        out[key] = prof[month_idx]
+    return out
+
+
+def _roster_online_masks(generators: Sequence[object], year: int) -> np.ndarray:
+    """``(n, 12)`` online-capacity masks of the LP rows, exactly as the COD ramp applies them.
+
+    The live roster (:func:`lp_bin_capacity_index`) must divide by the capacity
+    the LP carries ONLINE, so it reads each row's mask off the one resolver the
+    COD ramp itself uses (``cod_ramp.generator_online_mask``, applied last in
+    ``fleet.arrays``), with the same inputs: the row's own online / retirement
+    year and month, its plant-level flag, and the EIA-860 COD maps. A dated exit
+    cohort, a pre-COD or retired constituent of a plant-level bin and a
+    mid-year new build therefore leave the denominator in exactly the months
+    they leave the LP.
+
+    Args:
+        generators: The LP's generator objects, in fleet-array row order.
+        year: The solve year the COD ramp masks against.
+
+    Returns:
+        ``(len(generators), 12)`` float masks, clipped to ``[0, 1]``.
+    """
+    # Local import: the fleet package imports this module.
+    from market_sim.data.cod_ramp import (
+        generator_online_mask,
+        load_cod_map,
+        load_unit_cod_map,
+    )
+
+    cod_map, unit_cod_map = load_cod_map(), load_unit_cod_map()
+    out = np.ones((len(generators), 12), dtype=float)
+    for i, gen in enumerate(generators):
+        if int(getattr(gen, "plant_code", 0) or 0) <= 0:
+            continue
+        out[i] = generator_online_mask(
+            int(gen.plant_code),
+            gen.plant_group,
+            gen.online_year,
+            gen.online_month,
+            gen.retirement_year,
+            gen.retirement_month,
+            bool(gen.is_campd_bin),
+            cod_map,
+            unit_cod_map,
+            int(year),
+        )[0]
+    # An online fraction cannot exceed 1: cod_ramp.bin_online_fraction's
+    # weighted mean of all-online constituents can land one ulp above it
+    # (NWPP 10761 CC_REGULAR, 2020), which would emit a monthly entry for a bin
+    # that is fully online and break the roster's byte-identity there.
+    return np.minimum(out, 1.0)
 
 
 def dispatched_bin_live_year(config: object, year: int | None) -> int | None:
-    """Solve year for the LIVE dispatched-bin denominator, or ``None`` while off.
+    """Solve year the dispatched-bin roster is made LIVE in, or ``None``.
 
-    ``ScenarioConfig.unit_outage_dispatched_bin_live_denominator``
-    (NWPP-NEXT-15), a SUB-GATE of ``unit_outage_dispatched_bin_denominator``
-    (miso-266). The one accessor every :func:`lp_bin_capacity_index` call site
-    reads its ``live_year`` through, so the sub-gate and its requirement are
-    checked in one place (rule 19 ``[R-ONE-MECH]``). Enforced at the point of
-    use, like every cross-field invariant in this codebase (a config is
-    assembled by long ``with_overrides`` chains, so ``__post_init__`` sees
-    legitimately split intermediate configs — see its miso-225 note).
+    ``ScenarioConfig.unit_outage_dispatched_bin_denominator`` (miso-266) divides
+    each bin's measured outage MW by the capacity the LP carries ONLINE, month
+    by month (closeout-W0 desk ruling D-1, 2026-10-02; the NWPP-NEXT-15 live
+    sub-gate folded in under rule 19 ``[R-ONE-MECH]``, its field deleted under
+    rule 26 ``[R-DELETE]``). The LP takes a dated exit cohort offline through the
+    COD ramp (``cod_ramp.monthly_online_mask``): a cohort retired before the
+    solve year is carried at zero availability all year, and one retiring in it
+    is carried through its retirement month only. The ramp runs only for a
+    backcast with ``cod_ramp_enabled``; outside it every cohort is carried all
+    year, its full-year ``pmax`` is the right denominator, and this returns
+    ``None`` (the miso-266 roster). The one accessor every
+    :func:`lp_bin_capacity_index` call site reads its ``live_year`` through.
 
     Args:
         config: The run's ``ScenarioConfig`` (or ``None``).
         year: The year the outage loaders are keyed on at the call site.
 
     Returns:
-        ``int(year)`` when the sub-gate is armed, else ``None`` (the parent's
-        incumbent roster, byte-identical).
-
-    Raises:
-        ValueError: armed without the parent flag, or with no year to test
-            liveness against.
+        ``int(year)`` when the companion is on and the COD ramp masks exit
+        cohorts in this run, else ``None``.
     """
-    if config is None or not getattr(
-        config, "unit_outage_dispatched_bin_live_denominator", False
+    if (
+        config is None
+        or year is None
+        or not getattr(config, "unit_outage_dispatched_bin_denominator", False)
+        or not getattr(config, "cod_ramp_enabled", True)
+        or getattr(config, "mode", "forecast") != "backcast"
     ):
         return None
-    if not getattr(config, "unit_outage_dispatched_bin_denominator", False):
-        raise ValueError(
-            "unit_outage_dispatched_bin_live_denominator requires "
-            "unit_outage_dispatched_bin_denominator: it narrows the dispatched-"
-            "bin roster that flag builds, and has no roster to narrow alone"
-        )
-    if year is None:
-        raise ValueError(
-            "unit_outage_dispatched_bin_live_denominator needs the solve year "
-            "to decide which exit cohorts are live"
-        )
     return int(year)
 
 
@@ -1599,7 +1718,7 @@ def lp_bin_capacity_index(
     generators: Sequence[object],
     pmax: np.ndarray | None = None,
     live_year: int | None = None,
-) -> tuple[tuple[tuple[int, str], float], ...]:
+) -> tuple:
     """Return the DISPATCHED fleet's own ``(plant_code, plant_group) -> MW`` roster.
 
     ``ScenarioConfig.unit_outage_dispatched_bin_denominator`` (miso-266). The
@@ -1641,51 +1760,80 @@ def lp_bin_capacity_index(
     the map is read off the year's own fleet, so a cohort that has retired out
     of a later year leaves the denominator on its own.
 
-    **The LIVE sub-gate** (``live_year``; NWPP-NEXT-15,
-    ``ScenarioConfig.unit_outage_dispatched_bin_live_denominator``). "Read off
-    the year's own fleet" is not the same as "live in the year": a dated exit
-    cohort (:func:`exit_cohort_tag`) whose retirement year precedes the solve
-    year is still CARRIED by the LP under the plant's key, at zero availability
-    for every hour (``cod_ramp.monthly_online_mask``: ``retirement_year <
-    run_year`` -> all months off), so its ``pmax`` dilutes the denominator.
-    Measured on NWPP (FINDING-nwppnext13 §1.3): Centralia 3845's dead
-    ``_r202012`` BW21 and Colstrip 6076's dead ``_r202001`` units 1-2 put the
-    coal bin at 1,340 / 2,094 MW against the live 670 / 1,480 MW, so a measured
-    full outage of the live unit leaves 250-280 MW falsely available. With
-    ``live_year`` set, such a row is skipped. A cohort retiring IN the solve
-    year is live through its retirement month and is kept. Zero free
-    parameters: the exit date is the cohort's own stamped EIA-860 month.
+    **The LIVE roster** (``live_year``; closeout-W0 desk ruling D-1, which
+    folds in the NWPP-NEXT-15 live sub-gate). "Read off the year's own fleet" is
+    not the same as "online in the hour": the COD ramp
+    (``cod_ramp.generator_online_mask``, applied last to the availability)
+    keeps a row's ``pmax`` on the LP but takes it offline in the months it was
+    not in service. So the denominator is
+    ``D_k(t) = sum_i pmax_i * online_i(month t)``, read off that same mask
+    (:func:`_roster_online_masks`):
+
+    * A row offline every month of the solve year (a dated exit cohort retired
+      before it, ``_p{plant}_r{yyyy}{mm}``) is skipped. Measured on NWPP
+      (FINDING-nwppnext13 §1.3): Centralia 3845's dead ``_r202012`` BW21 and
+      Colstrip 6076's dead ``_r202001`` units 1-2 put the coal bin at
+      1,340 / 2,094 MW against the live 670 / 1,480 MW.
+    * A bin whose online capacity is not its full ``pmax`` in some month (an
+      exit cohort retiring in the year, a plant-level bin whose EIA-860
+      constituents are only partly in service, a mid-year new build) ALSO
+      carries a monthly entry ``((plant_code, plant_group, ROSTER_MONTHLY_TAG),
+      (12 MW))`` holding the capacity online in each month, and the factor
+      loaders divide hour by hour (:func:`_dispatched_denominator_hourly`).
+      Measured on SOCO 2022 (PR #7043 attribution): Scherer 6257's unit 4
+      (891 MW, retired 2022-01) is carried January only, yet the COAL_PRB
+      denominator read 3,440 MW all year against the 2,580 MW live Feb-Dec.
+      The full-year entry stays the ``pmax`` sum of the rows online in any
+      month (every scalar consumer's).
+
+    A bin whose rows are all online all year gets the miso-266 entry and no
+    monthly entry, so its roster is byte-identical. Zero free parameters: the
+    months are the rows' own stamped EIA-860 dates, through the COD ramp's own
+    resolver.
 
     Args:
         generators: The LP's generator objects, in fleet-array row order.
         pmax: Row-aligned ``pmax`` MW. Defaults to each generator's own
             ``pmax_mw``, which is what the fleet arrays are built from.
-        live_year: ``None`` (default) keeps every row — the miso-266 roster,
-            byte-identical. A solve year drops the dated exit-cohort rows
-            retired before it (:func:`dispatched_bin_live_year`).
+        live_year: ``None`` (default) keeps every row all year — the miso-266
+            roster. A solve year makes it live in that year's COD-ramp months
+            (:func:`dispatched_bin_live_year`).
 
     Returns:
-        A SORTED tuple of ``((plant_code, plant_group), mw)`` pairs — hashable,
-        so it crosses the loaders' ``lru_cache`` boundary and keys the cache on
-        the fleet it was built from.
+        A SORTED tuple of ``((plant_code, plant_group), mw)`` pairs, plus the
+        monthly entries described above — hashable, so it crosses the loaders'
+        ``lru_cache`` boundary and keys the cache on the fleet it was built from.
     """
     acc: dict[tuple[int, str], float] = {}
+    # live_year only: every bin's MW online per month, accumulated in the same
+    # row order as ``acc`` (so a fully-online month equals it exactly).
+    mon: dict[tuple[int, str], np.ndarray] = {}
+    masks = (
+        _roster_online_masks(generators, live_year) if live_year is not None else None
+    )
     for i, gen in enumerate(generators):
         code = int(getattr(gen, "plant_code", 0) or 0)
         group = str(getattr(gen, "plant_group", "") or "")
         if code <= 0 or not group:
             continue
-        if live_year is not None:
-            _exit = exit_cohort_tag(gen)
-            if _exit is not None and _exit[0] < live_year:
-                continue
+        if masks is not None and not masks[i].any():
+            # Offline every month of the solve year (a dead exit cohort).
+            continue
         # Artifact vocabulary, matching the extract rows (COAL-SUB).
         group = artifact_class(group)
         mw = float(pmax[i]) if pmax is not None else float(getattr(gen, "pmax_mw", 0.0))
         if not mw > 0.0:
             continue
         acc[(code, group)] = acc.get((code, group), 0.0) + mw
-    return tuple(sorted(acc.items()))
+        if masks is not None:
+            mon[(code, group)] = mon.get((code, group), np.zeros(12)) + mw * masks[i]
+    items: list = list(acc.items())
+    items.extend(
+        ((k[0], k[1], ROSTER_MONTHLY_TAG), tuple(float(x) for x in v))
+        for k, v in mon.items()
+        if np.any(v != acc[k])
+    )
+    return tuple(sorted(items))
 
 
 @lru_cache(maxsize=None)
@@ -2231,6 +2379,7 @@ def _unit_outage_factors_from_events(
             "unit_outage_lp_capacity_basis (rule 19 [R-ONE-MECH]): both act on "
             "the combined-cycle bins' removed share — arm exactly one construction"
         )
+    cap_hourly: dict[tuple[int, str], np.ndarray] = {}
     if iso == "ERCOT":
         from market_sim.data.fleet import load_campd_bins
 
@@ -2274,6 +2423,10 @@ def _unit_outage_factors_from_events(
             # exactly, so the flag is the identity on them and a CHP bin absent
             # from the roster is still skipped exactly as it is today.
             cap = _dispatched_denominator(cap, lp_bin_capacity)
+            # closeout-W0 (desk ruling D-1): the bins whose roster holds an exit
+            # cohort carried only part of the year divide hour by hour; empty
+            # (byte-inert) wherever no mid-year exit cohort exists.
+            cap_hourly = _dispatched_denominator_hourly(lp_bin_capacity, hours)
         target_fn = partial(
             _generic_unit_outage_target, per_unit_crosswalk=per_unit_crosswalk
         )
@@ -2371,6 +2524,13 @@ def _unit_outage_factors_from_events(
                     denom = float(row_pc)
                 elif group_basis > 0.0:
                     denom = group_basis
+        hourly = cap_hourly.get(tgt) if dated is None or tgt not in dated else None
+        if hourly is not None:
+            # closeout-W0 (desk ruling D-1): this bin's roster changes at an
+            # in-year exit, so divide by the capacity online in each hour. Not
+            # under dated routing (PJM-NEXT-8), which already gives the cohort
+            # and the survivors denominators of their own.
+            denom = hourly
         if dated is not None and tgt in dated:
             # PJM-NEXT-8: route to the unit's own dated exit bin.
             ym = _parse_exit_ym(getattr(r, "exit_ym", None))
@@ -2402,6 +2562,9 @@ def _unit_outage_factors_from_events(
             sums.setdefault(key, np.zeros(hours))
             continue
         arr = sums.setdefault(key, np.zeros(hours))
+        if hourly is not None:
+            arr[mask] += removed_frac * float(ucap) / denom[mask]
+            continue
         arr[mask] += removed_frac * float(ucap) / denom
     for (tgt, _uid), (removed_mw, unit_cap, denom) in per_unit.items():
         if unit_cap <= 0.0:
@@ -2953,6 +3116,11 @@ def unit_outage_maxgen_derate_factors(
         # shared accumulator (rule 19 [R-ONE-MECH]). Non-ERCOT only, matching
         # the accumulator's own scoping.
         cap = _dispatched_denominator(cap, lp_bin_capacity)
+        # closeout-W0 (desk ruling D-1): the same hour-resolved denominator as
+        # the shared accumulator, for the bins an in-year exit cohort moves.
+        cap_hourly = _dispatched_denominator_hourly(lp_bin_capacity, hours)
+    else:
+        cap_hourly = {}
     sums: dict[tuple[int, str], np.ndarray] = {}
     for r in df.itertuples(index=False):
         code = int(r.facility_id)
@@ -2980,6 +3148,9 @@ def unit_outage_maxgen_derate_factors(
         if not mask.any():
             continue
         arr = sums.setdefault(tgt, np.zeros(hours))
+        if tgt in cap_hourly:
+            arr[mask] += removed / cap_hourly[tgt][mask]
+            continue
         arr[mask] += removed / cap[tgt]
     return {k: np.clip(1.0 - v, 0.0, 1.0) for k, v in sums.items()}
 

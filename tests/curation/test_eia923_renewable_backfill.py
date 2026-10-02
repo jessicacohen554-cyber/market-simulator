@@ -263,10 +263,22 @@ class TestLiveNyiso2025Solar(unittest.TestCase):
             raw.copy(), 2025, "NYISO", generation, e930
         )
         by = out.groupby("klass")["annual_mwh"].sum() / rcf._MWH_PER_TWH
-        # The truncated survey reads 0.66 TWh; 2024 was 2.90 and the vintage is
-        # ~88.5% complete, so the repair lands ~2.57 TWh.
-        self.assertGreater(by.get("solar", 0.0), 2.0)
-        self.assertLess(by.get("solar", 0.0), 3.0)
+        raw_solar = (
+            raw.groupby("klass")["annual_mwh"].sum().get("solar", 0.0)
+            / rcf._MWH_PER_TWH
+        )
+        completeness = rcf._vintage_completeness(2025, generation, "NYISO", e930)
+        if completeness < rcf._EIA923_RENEWABLE_COMPLETENESS_FRACTION:
+            # The truncated early survey read 0.66 TWh; 2024 was 2.90 and the
+            # vintage was ~88.5% complete, so the repair landed ~2.57 TWh.
+            self.assertGreater(by.get("solar", 0.0), 2.0)
+            self.assertLess(by.get("solar", 0.0), 3.0)
+        else:
+            # Complete vintage (the EIA-923 Final 2025, landed 2026-10-02): the
+            # carry-forward must be a no-op -- the class keeps its own filed
+            # total, which exceeds 2024's 2.90 TWh as NY solar grew.
+            self.assertAlmostEqual(by.get("solar", 0.0), raw_solar, places=6)
+            self.assertGreater(raw_solar, 2.9)
 
     def test_complete_vintages_are_byte_identical(self):
         """2023 / 2024 are complete NYISO vintages — the repair must not move."""

@@ -1,0 +1,482 @@
+{
+ "what": "PJM-NEXT-25 card 1: coal response by tranche-row cohort. ZERO LP.",
+ "measured_rows": 29,
+ "years": {
+  "2019": {
+   "default_bins": {
+    "plants": 31,
+    "cap_gw": 16.61,
+    "model_twh": 40.1,
+    "real_twh": 33.25,
+    "model_minus_real_twh": 6.86,
+    "within_contrast_rt": {
+     "plants": 19,
+     "real": 0.239,
+     "model": 0.686
+    },
+    "pooled_contrast_rt": {
+     "real": 0.19,
+     "model": 0.751
+    },
+    "tranche_share_capwtd": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 0.05,
+     "econ": 0.929,
+     "peak": 0.02
+    }
+   },
+   "measured_row": {
+    "plants": 29,
+    "cap_gw": 32.78,
+    "model_twh": 157.86,
+    "real_twh": 148.42,
+    "model_minus_real_twh": 9.44,
+    "within_contrast_rt": {
+     "plants": 7,
+     "real": 0.452,
+     "model": 0.6
+    },
+    "pooled_contrast_rt": {
+     "real": 0.47,
+     "model": 0.564
+    },
+    "tranche_share_capwtd": {
+     "mustrun": 0.226,
+     "sync": 0.024,
+     "committed": 0.347,
+     "econ": 0.383,
+     "peak": 0.02
+    }
+   },
+   "default_bin_plants": {
+    "594": 397.7,
+    "883": 668.3,
+    "884": 487.1,
+    "1554": 404.0,
+    "1571": 649.9,
+    "1572": 503.4,
+    "1573": 1168.8,
+    "2836": 596.6,
+    "2840": 326.0,
+    "2866": 1404.9,
+    "3122": 1838.2,
+    "3130": 505.4,
+    "3140": 719.7,
+    "3149": 1458.9,
+    "3797": 975.8,
+    "6019": 1265.8,
+    "6094": 805.1,
+    "8226": 548.0,
+    "10043": 212.4,
+    "10113": 50.4,
+    "10151": 77.6,
+    "10566": 236.7,
+    "10641": 85.4,
+    "10678": 113.5,
+    "10743": 31.5,
+    "50776": 80.5,
+    "50879": 41.2,
+    "50974": 82.1,
+    "54304": 230.8,
+    "54634": 54.2,
+    "56808": 591.7
+   }
+  },
+  "2020": {
+   "default_bins": {
+    "plants": 26,
+    "cap_gw": 13.6,
+    "model_twh": 24.66,
+    "real_twh": 25.95,
+    "model_minus_real_twh": -1.29,
+    "within_contrast_rt": {
+     "plants": 18,
+     "real": 0.202,
+     "model": 0.755
+    },
+    "pooled_contrast_rt": {
+     "real": 0.209,
+     "model": 0.808
+    },
+    "tranche_share_capwtd": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 0.051,
+     "econ": 0.929,
+     "peak": 0.02
+    }
+   },
+   "measured_row": {
+    "plants": 29,
+    "cap_gw": 32.81,
+    "model_twh": 133.57,
+    "real_twh": 121.28,
+    "model_minus_real_twh": 12.29,
+    "within_contrast_rt": {
+     "plants": 6,
+     "real": 0.396,
+     "model": 0.52
+    },
+    "pooled_contrast_rt": {
+     "real": 0.54,
+     "model": 0.642
+    },
+    "tranche_share_capwtd": {
+     "mustrun": 0.226,
+     "sync": 0.024,
+     "committed": 0.347,
+     "econ": 0.383,
+     "peak": 0.02
+    }
+   },
+   "default_bin_plants": {
+    "594": 397.7,
+    "883": 668.3,
+    "884": 494.7,
+    "1554": 295.9,
+    "1571": 649.9,
+    "1573": 1168.8,
+    "2836": 608.2,
+    "2840": 744.9,
+    "2866": 1121.3,
+    "3122": 1831.7,
+    "3130": 505.4,
+    "3149": 619.9,
+    "3797": 975.8,
+    "6019": 1265.8,
+    "8226": 548.0,
+    "10043": 212.4,
+    "10113": 50.4,
+    "10151": 77.6,
+    "10566": 236.7,
+    "10678": 113.5,
+    "50776": 80.5,
+    "50879": 40.6,
+    "54304": 230.6,
+    "54556": 12.3,
+    "54634": 54.2,
+    "56808": 591.7
+   }
+  },
+  "2021": {
+   "default_bins": {
+    "plants": 24,
+    "cap_gw": 14.76,
+    "model_twh": 37.49,
+    "real_twh": 32.78,
+    "model_minus_real_twh": 4.7,
+    "within_contrast_rt": {
+     "plants": 18,
+     "real": 0.15,
+     "model": 0.527
+    },
+    "pooled_contrast_rt": {
+     "real": 0.252,
+     "model": 0.677
+    },
+    "tranche_share_capwtd": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 0.05,
+     "econ": 0.929,
+     "peak": 0.02
+    }
+   },
+   "measured_row": {
+    "plants": 29,
+    "cap_gw": 32.82,
+    "model_twh": 154.84,
+    "real_twh": 141.45,
+    "model_minus_real_twh": 13.39,
+    "within_contrast_rt": {
+     "plants": 7,
+     "real": 0.259,
+     "model": 0.608
+    },
+    "pooled_contrast_rt": {
+     "real": 0.471,
+     "model": 0.658
+    },
+    "tranche_share_capwtd": {
+     "mustrun": 0.226,
+     "sync": 0.024,
+     "committed": 0.347,
+     "econ": 0.383,
+     "peak": 0.02
+    }
+   },
+   "default_bin_plants": {
+    "594": 397.7,
+    "883": 668.3,
+    "884": 494.7,
+    "1554": 295.9,
+    "1573": 1168.8,
+    "2836": 608.2,
+    "2866": 1445.3,
+    "3122": 1831.7,
+    "3130": 505.4,
+    "3140": 1368.7,
+    "3149": 1458.9,
+    "3797": 975.8,
+    "6019": 1265.8,
+    "8226": 548.0,
+    "10043": 212.4,
+    "10113": 50.4,
+    "10151": 77.6,
+    "10566": 236.7,
+    "10678": 113.5,
+    "50776": 77.6,
+    "50974": 80.7,
+    "54304": 227.0,
+    "54634": 54.2,
+    "56808": 591.7
+   }
+  },
+  "2022": {
+   "default_bins": {
+    "plants": 20,
+    "cap_gw": 10.62,
+    "model_twh": 26.52,
+    "real_twh": 23.89,
+    "model_minus_real_twh": 2.63,
+    "within_contrast_rt": {
+     "plants": 20,
+     "real": 0.158,
+     "model": 0.352
+    },
+    "pooled_contrast_rt": {
+     "real": 0.142,
+     "model": 0.375
+    },
+    "tranche_share_capwtd": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 0.051,
+     "econ": 0.929,
+     "peak": 0.02
+    }
+   },
+   "measured_row": {
+    "plants": 29,
+    "cap_gw": 32.82,
+    "model_twh": 137.93,
+    "real_twh": 130.11,
+    "model_minus_real_twh": 7.82,
+    "within_contrast_rt": {
+     "plants": 12,
+     "real": 0.227,
+     "model": 0.344
+    },
+    "pooled_contrast_rt": {
+     "real": 0.343,
+     "model": 0.353
+    },
+    "tranche_share_capwtd": {
+     "mustrun": 0.227,
+     "sync": 0.024,
+     "committed": 0.347,
+     "econ": 0.383,
+     "peak": 0.02
+    }
+   },
+   "default_bin_plants": {
+    "594": 397.7,
+    "884": 494.7,
+    "1554": 295.9,
+    "2836": 598.8,
+    "2866": 1445.3,
+    "3122": 1191.5,
+    "3130": 505.4,
+    "3149": 1436.3,
+    "3797": 975.8,
+    "6019": 1246.3,
+    "8226": 539.6,
+    "10043": 209.1,
+    "10113": 50.4,
+    "10151": 77.6,
+    "10566": 236.7,
+    "10678": 113.5,
+    "50776": 77.6,
+    "50974": 80.3,
+    "54634": 54.2,
+    "56808": 591.7
+   }
+  },
+  "2023": {
+   "default_bins": {
+    "plants": 12,
+    "cap_gw": 4.36,
+    "model_twh": 3.98,
+    "real_twh": 7.64,
+    "model_minus_real_twh": -3.66,
+    "within_contrast_rt": {
+     "plants": 7,
+     "real": 0.147,
+     "model": 0.499
+    },
+    "pooled_contrast_rt": {
+     "real": 0.141,
+     "model": 0.617
+    },
+    "tranche_share_capwtd": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 0.051,
+     "econ": 0.928,
+     "peak": 0.021
+    }
+   },
+   "measured_row": {
+    "plants": 29,
+    "cap_gw": 32.82,
+    "model_twh": 107.88,
+    "real_twh": 104.19,
+    "model_minus_real_twh": 3.68,
+    "within_contrast_rt": {
+     "plants": 13,
+     "real": 0.25,
+     "model": 0.28
+    },
+    "pooled_contrast_rt": {
+     "real": 0.351,
+     "model": 0.529
+    },
+    "tranche_share_capwtd": {
+     "mustrun": 0.226,
+     "sync": 0.024,
+     "committed": 0.347,
+     "econ": 0.383,
+     "peak": 0.02
+    }
+   },
+   "default_bin_plants": {
+    "594": 379.7,
+    "2866": 1104.0,
+    "3122": 597.9,
+    "3130": 505.4,
+    "3149": 729.4,
+    "10113": 50.4,
+    "10151": 77.6,
+    "10678": 113.5,
+    "50776": 77.6,
+    "50974": 80.0,
+    "54634": 54.2,
+    "56808": 591.7
+   }
+  },
+  "2024": {
+   "default_bins": {
+    "plants": 10,
+    "cap_gw": 2.67,
+    "model_twh": 5.44,
+    "real_twh": 6.04,
+    "model_minus_real_twh": -0.6,
+    "within_contrast_rt": {
+     "plants": 9,
+     "real": 0.084,
+     "model": 0.459
+    },
+    "pooled_contrast_rt": {
+     "real": 0.177,
+     "model": 0.67
+    },
+    "tranche_share_capwtd": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 0.052,
+     "econ": 0.927,
+     "peak": 0.021
+    }
+   },
+   "measured_row": {
+    "plants": 29,
+    "cap_gw": 32.82,
+    "model_twh": 108.89,
+    "real_twh": 108.61,
+    "model_minus_real_twh": 0.28,
+    "within_contrast_rt": {
+     "plants": 18,
+     "real": 0.218,
+     "model": 0.323
+    },
+    "pooled_contrast_rt": {
+     "real": 0.324,
+     "model": 0.541
+    },
+    "tranche_share_capwtd": {
+     "mustrun": 0.227,
+     "sync": 0.024,
+     "committed": 0.347,
+     "econ": 0.383,
+     "peak": 0.02
+    }
+   },
+   "default_bin_plants": {
+    "594": 397.7,
+    "3130": 505.4,
+    "3149": 729.4,
+    "10113": 50.4,
+    "10151": 77.6,
+    "10678": 111.7,
+    "50776": 77.6,
+    "50974": 78.8,
+    "54634": 54.2,
+    "56808": 591.7
+   }
+  },
+  "2025": {
+   "default_bins": {
+    "plants": 3,
+    "cap_gw": 1.15,
+    "model_twh": 5.02,
+    "real_twh": 5.75,
+    "model_minus_real_twh": -0.74,
+    "within_contrast_rt": {
+     "plants": 3,
+     "real": 0.157,
+     "model": 0.351
+    },
+    "pooled_contrast_rt": {
+     "real": 0.26,
+     "model": 0.501
+    },
+    "tranche_share_capwtd": {
+     "mustrun": 0.0,
+     "sync": 0.0,
+     "committed": 0.051,
+     "econ": 0.928,
+     "peak": 0.021
+    }
+   },
+   "measured_row": {
+    "plants": 28,
+    "cap_gw": 32.79,
+    "model_twh": 144.51,
+    "real_twh": 129.09,
+    "model_minus_real_twh": 15.43,
+    "within_contrast_rt": {
+     "plants": 12,
+     "real": 0.228,
+     "model": 0.248
+    },
+    "pooled_contrast_rt": {
+     "real": 0.321,
+     "model": 0.484
+    },
+    "tranche_share_capwtd": {
+     "mustrun": 0.227,
+     "sync": 0.024,
+     "committed": 0.347,
+     "econ": 0.383,
+     "peak": 0.02
+    }
+   },
+   "default_bin_plants": {
+    "3130": 505.4,
+    "54634": 54.2,
+    "56808": 591.7
+   }
+  }
+ }
+}
