@@ -1,10 +1,9 @@
-# PRECOMMIT closeout-CAISO wave 1, arm 3: `caiso_ra_min_load_frac` 0.26 → 0.570 measured (2026-10-02)
+# PRECOMMIT closeout-CAISO wave 1, arm 3 (runs first): `caiso_ra_min_load_frac` 0.26 → 0.570 measured (2026-10-02)
 
 Written before any solve. Plan §3.7 step 3; owner rulings R-11 (retire residual free parameters; "CAISO min-load
 0.26 → 0.570 … promoted only if nothing regresses") and R-14 ("re-solve `caiso_ra_min_load_frac` at the measured
-0.570"). **SOLVES HELD** until the W0 foundation lane merges and the desk releases this lane. Sequenced after arm 2:
-- If arm 2 is promoted, this arm stacks on arm 2's keeper.
-- If arm 2 is killed or not released, this arm runs on the post-W0 baseline directly.
+0.570"). **SOLVES HELD** until the W0 foundation lane merges and the desk releases this lane. **Runs FIRST** (desk ruling 2026-10-02, after the W0 merge `306f2c00`). Arm 2 follows sequentially and stacks on this
+arm's keeper if it promotes.
 
 ## 1. Mechanism, driver, forward story (rule 13)
 
@@ -29,7 +28,8 @@ Written before any solve. Plan §3.7 step 3; owner rulings R-11 (retire residual
 ## 2. Exact config delta
 
 - One field: `--set caiso_ra_min_load_frac=0.570`. Nothing else moves.
-- Recipe: arm 2's keeper if promoted, else the post-W0 CAISO baseline. The incumbent `rcaiso20_*` bundles are not
+- Recipe (control): the post-W0 CAISO keeper (W0 step 4). The recipe resolves on `306f2c00`: a fleet-only rebuild
+  gives `caiso_ra_min_load_frac=0.57`. The incumbent `rcaiso20_*` bundles are not
   usable as control (FINDING §4: the 2025 fleet drift is LIVE).
 - If this arm promotes, the same PR updates the `pipeline/backcast_config.py` CAISO value 0.26 → 0.570 and its
   comment. Under rule 26 the stale 0.259 `committed_pct` justification is deleted, not kept beside the new value.
