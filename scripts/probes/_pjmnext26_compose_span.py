@@ -362,7 +362,9 @@ def main(argv: list[str] | None = None) -> int:
             pins.update({yy: spec for yy in legs if yy not in pins})
     mixed = len(set(pins.values())) > 1
     if mixed and not args.inert_proof:
-        raise SystemExit("ABORT: legs pin to more than one sha; --inert-proof is required")
+        raise SystemExit(
+            "ABORT: legs pin to more than one sha; --inert-proof is required"
+        )
     keepers: dict[int, Path] = {}
     for spec in args.keeper:
         ys, sep, b = spec.partition("=")
@@ -373,9 +375,7 @@ def main(argv: list[str] | None = None) -> int:
             keepers.update({y: _resolve(ys) for y in legs if y not in keepers})
     lines: list[str] = []
     for kb in sorted(set(keepers.values())):
-        lines += check_legs(
-            kb, {y: legs[y] for y in legs if keepers[y] == kb}, pins
-        )
+        lines += check_legs(kb, {y: legs[y] for y in legs if keepers[y] == kb}, pins)
     print("recipe check:\n" + "\n".join(lines))
     if args.check_only:
         return 0

@@ -77,18 +77,38 @@ OUT = REPO / "results/phase0/pjm/_pjmnext26_bor_zone_census.json"
 YEARS = list(range(2019, 2026))
 
 IMM_TO_MODEL: dict[str, str] = {
-    "ComEd": "PJM_ComEd", "COMED": "PJM_ComEd",
-    "AEP": "PJM_AEP_Ohio", "DAY": "PJM_AEP_Ohio", "DEOK": "PJM_AEP_Ohio",
-    "DUKE": "PJM_AEP_Ohio", "OVEC": "PJM_AEP_Ohio", "EKPC": "PJM_AEP_Ohio",
+    "ComEd": "PJM_ComEd",
+    "COMED": "PJM_ComEd",
+    "AEP": "PJM_AEP_Ohio",
+    "DAY": "PJM_AEP_Ohio",
+    "DEOK": "PJM_AEP_Ohio",
+    "DUKE": "PJM_AEP_Ohio",
+    "OVEC": "PJM_AEP_Ohio",
+    "EKPC": "PJM_AEP_Ohio",
     "ATSI": "PJM_ATSI",
-    "APS": "PJM_West_APS", "DLCO": "PJM_West_APS", "DUQ": "PJM_West_APS",
-    "PPL": "PJM_Central_PA", "PENELEC": "PJM_Central_PA", "PE": "PJM_Central_PA",
-    "Met-Ed": "PJM_Central_PA", "MEC": "PJM_Central_PA", "METED": "PJM_Central_PA",
-    "Dominion": "PJM_Dominion", "DOM": "PJM_Dominion",
-    "PSEG": "PJM_EMAAC", "JCPL": "PJM_EMAAC", "JCPLC": "PJM_EMAAC",
-    "PECO": "PJM_EMAAC", "DPL": "PJM_EMAAC", "AECO": "PJM_EMAAC",
-    "ACEC": "PJM_EMAAC", "RECO": "PJM_EMAAC", "REC": "PJM_EMAAC",
-    "BGE": "PJM_SWMAAC", "Pepco": "PJM_SWMAAC", "PEPCO": "PJM_SWMAAC",
+    "APS": "PJM_West_APS",
+    "DLCO": "PJM_West_APS",
+    "DUQ": "PJM_West_APS",
+    "PPL": "PJM_Central_PA",
+    "PENELEC": "PJM_Central_PA",
+    "PE": "PJM_Central_PA",
+    "Met-Ed": "PJM_Central_PA",
+    "MEC": "PJM_Central_PA",
+    "METED": "PJM_Central_PA",
+    "Dominion": "PJM_Dominion",
+    "DOM": "PJM_Dominion",
+    "PSEG": "PJM_EMAAC",
+    "JCPL": "PJM_EMAAC",
+    "JCPLC": "PJM_EMAAC",
+    "PECO": "PJM_EMAAC",
+    "DPL": "PJM_EMAAC",
+    "AECO": "PJM_EMAAC",
+    "ACEC": "PJM_EMAAC",
+    "RECO": "PJM_EMAAC",
+    "REC": "PJM_EMAAC",
+    "BGE": "PJM_SWMAAC",
+    "Pepco": "PJM_SWMAAC",
+    "PEPCO": "PJM_SWMAAC",
 }
 DROP = {"External", "All Zones"}
 
@@ -126,7 +146,11 @@ def top10_ct_by_zone(rows: list[dict], year: int) -> dict[str, float]:
     """Return top-10-recipient CT BOR credits by model zone as a share of total BOR."""
     out: dict[str, float] = defaultdict(float)
     for r in rows:
-        if r["year"] == year and r["dimension"] == "zone_x_type" and r["key"].endswith("|CT"):
+        if (
+            r["year"] == year
+            and r["dimension"] == "zone_x_type"
+            and r["key"].endswith("|CT")
+        ):
             out[IMM_TO_MODEL[r["key"].split("|")[0]]] += r["share"]
     return dict(out)
 
@@ -134,13 +158,18 @@ def top10_ct_by_zone(rows: list[dict], year: int) -> dict[str, float]:
 def ct_share_of_bg(rows: list[dict], year: int) -> float | None:
     """Return the Combustion Turbine share of Balancing Generator credits."""
     for r in rows:
-        if r["year"] == year and r["dimension"] == "unit_type" and r["key"] == "Combustion Turbine":
+        if (
+            r["year"] == year
+            and r["dimension"] == "unit_type"
+            and r["key"] == "Combustion Turbine"
+        ):
             return r["share"]
     return None
 
 
-def apply_reading(resid: dict[str, float], credit: dict[str, float],
-                  load: dict[str, float]) -> dict:
+def apply_reading(
+    resid: dict[str, float], credit: dict[str, float], load: dict[str, float]
+) -> dict:
     """Apply the pre-fixed test for one year and one residual sign convention."""
     under = min(resid, key=resid.get)
     top2 = sorted(credit, key=credit.get, reverse=True)[:2]
@@ -186,7 +215,8 @@ def main() -> None:
                     "real_credit_share": round(credit[z], 4) if credit else None,
                     "load_share_cfg": load_cfg[z],
                     "charge_share": round(charges[z], 4) if charges else None,
-                } for z in sorted(rmm)
+                }
+                for z in sorted(rmm)
             },
         }
         if credit:
@@ -199,8 +229,11 @@ def main() -> None:
             passes["as_published"].append((y, rec["test_as_published"]["pass"]))
         out["years"][str(y)] = rec
     out["verdict"] = {
-        k: {"years_tested": [y for y, _ in v], "years_pass": [y for y, p in v if p],
-            "CONFIRMED": sum(p for _, p in v) >= 2}
+        k: {
+            "years_tested": [y for y, _ in v],
+            "years_pass": [y for y, p in v if p],
+            "CONFIRMED": sum(p for _, p in v) >= 2,
+        }
         for k, v in passes.items()
     }
     OUT.write_text(json.dumps(out, indent=1))
