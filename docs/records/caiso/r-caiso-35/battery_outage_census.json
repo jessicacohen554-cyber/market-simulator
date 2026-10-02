@@ -1,0 +1,216 @@
+{
+  "population": {
+    "census_resources": 177,
+    "crosswalk_rows": 176,
+    "crosswalk_accepted": 64,
+    "crosswalk_accepted_plants": 57
+  },
+  "years": {
+    "2023": {
+      "fleet_860_mw_mean": 5554,
+      "fleet_rtm_mw_mean": 6654,
+      "offline_mw_mean": 1409,
+      "offline_mw_p99": 2224,
+      "o_860_mean": 0.2576,
+      "o_860_p99": 0.4031,
+      "o_860_max": 0.502,
+      "o_rtm_mean": 0.2137,
+      "coverage_accepted_offline_mwh_share": 0.1858,
+      "envelope_max": {
+        "chg": 0.4594,
+        "dis": 0.6
+      },
+      "min_headroom_a_minus_e": {
+        "chg": 0.0914,
+        "dis": -0.015
+      },
+      "T1_primary": {
+        "chg": {
+          "bind_share": 0.0,
+          "bind_hours": 0,
+          "excess_mwh_share_of_envelope": 0.0
+        },
+        "dis": {
+          "bind_share": 0.00046,
+          "bind_hours": 4,
+          "excess_mwh_share_of_envelope": 2e-05
+        }
+      },
+      "T1_sens_rtm_denominator": {
+        "chg": {
+          "bind_share": 0.0,
+          "bind_hours": 0,
+          "excess_mwh_share_of_envelope": 0.0
+        },
+        "dis": {
+          "bind_share": 0.0,
+          "bind_hours": 0,
+          "excess_mwh_share_of_envelope": 0.0
+        }
+      },
+      "T1_sens_crosswalk_only": {
+        "chg": {
+          "bind_share": 0.0,
+          "bind_hours": 0,
+          "excess_mwh_share_of_envelope": 0.0
+        },
+        "dis": {
+          "bind_share": 0.0,
+          "bind_hours": 0,
+          "excess_mwh_share_of_envelope": 0.0
+        }
+      },
+      "T2_measured_over_available_share": {
+        "chg": 0.0,
+        "dis": 0.00046
+      },
+      "T3_spearman_daily_o_vs_peak_dis": {
+        "Q1": -0.047,
+        "Q2": 0.034,
+        "Q3": 0.125,
+        "Q4": 0.231
+      }
+    },
+    "2024": {
+      "fleet_860_mw_mean": 9347,
+      "fleet_rtm_mw_mean": 10763,
+      "offline_mw_mean": 1516,
+      "offline_mw_p99": 2252,
+      "o_860_mean": 0.1662,
+      "o_860_p99": 0.2759,
+      "o_860_max": 0.306,
+      "o_rtm_mean": 0.1443,
+      "coverage_accepted_offline_mwh_share": 0.3102,
+      "envelope_max": {
+        "chg": 0.5536,
+        "dis": 0.6598
+      },
+      "min_headroom_a_minus_e": {
+        "chg": 0.1404,
+        "dis": 0.0533
+      },
+      "T1_primary": {
+        "chg": {
+          "bind_share": 0.0,
+          "bind_hours": 0,
+          "excess_mwh_share_of_envelope": 0.0
+        },
+        "dis": {
+          "bind_share": 0.0,
+          "bind_hours": 0,
+          "excess_mwh_share_of_envelope": 0.0
+        }
+      },
+      "T1_sens_rtm_denominator": {
+        "chg": {
+          "bind_share": 0.0,
+          "bind_hours": 0,
+          "excess_mwh_share_of_envelope": 0.0
+        },
+        "dis": {
+          "bind_share": 0.0,
+          "bind_hours": 0,
+          "excess_mwh_share_of_envelope": 0.0
+        }
+      },
+      "T1_sens_crosswalk_only": {
+        "chg": {
+          "bind_share": 0.0,
+          "bind_hours": 0,
+          "excess_mwh_share_of_envelope": 0.0
+        },
+        "dis": {
+          "bind_share": 0.0,
+          "bind_hours": 0,
+          "excess_mwh_share_of_envelope": 0.0
+        }
+      },
+      "T2_measured_over_available_share": {
+        "chg": 0.0,
+        "dis": 0.0
+      },
+      "T3_spearman_daily_o_vs_peak_dis": {
+        "Q1": 0.299,
+        "Q2": -0.447,
+        "Q3": 0.152,
+        "Q4": -0.199
+      }
+    },
+    "2025": {
+      "fleet_860_mw_mean": 13242,
+      "fleet_rtm_mw_mean": 15855,
+      "offline_mw_mean": 2278,
+      "offline_mw_p99": 3235,
+      "o_860_mean": 0.1738,
+      "o_860_p99": 0.2486,
+      "o_860_max": 0.3082,
+      "o_rtm_mean": 0.1447,
+      "coverage_accepted_offline_mwh_share": 0.1865,
+      "envelope_max": {
+        "chg": 0.5265,
+        "dis": 0.6492
+      },
+      "min_headroom_a_minus_e": {
+        "chg": 0.21,
+        "dis": 0.0926
+      },
+      "T1_primary": {
+        "chg": {
+          "bind_share": 0.0,
+          "bind_hours": 0,
+          "excess_mwh_share_of_envelope": 0.0
+        },
+        "dis": {
+          "bind_share": 0.0,
+          "bind_hours": 0,
+          "excess_mwh_share_of_envelope": 0.0
+        }
+      },
+      "T1_sens_rtm_denominator": {
+        "chg": {
+          "bind_share": 0.0,
+          "bind_hours": 0,
+          "excess_mwh_share_of_envelope": 0.0
+        },
+        "dis": {
+          "bind_share": 0.0,
+          "bind_hours": 0,
+          "excess_mwh_share_of_envelope": 0.0
+        }
+      },
+      "T1_sens_crosswalk_only": {
+        "chg": {
+          "bind_share": 0.0,
+          "bind_hours": 0,
+          "excess_mwh_share_of_envelope": 0.0
+        },
+        "dis": {
+          "bind_share": 0.0,
+          "bind_hours": 0,
+          "excess_mwh_share_of_envelope": 0.0
+        }
+      },
+      "T2_measured_over_available_share": {
+        "chg": 0.0,
+        "dis": 0.0
+      },
+      "T3_spearman_daily_o_vs_peak_dis": {
+        "Q1": 0.075,
+        "Q2": -0.124,
+        "Q3": 0.238,
+        "Q4": 0.233
+      }
+    }
+  },
+  "adjudication": {
+    "T1_primary_max_bind_share": 0.00046,
+    "T1_primary_band": "CARRIED",
+    "T1_sensitivity_max_bind_share": {
+      "T1_sens_rtm_denominator": 0.0,
+      "T1_sens_crosswalk_only": 0.0
+    },
+    "reading": "CARRIED",
+    "T2_max_share": 0.00046,
+    "T2_caveat": false
+  }
+}
