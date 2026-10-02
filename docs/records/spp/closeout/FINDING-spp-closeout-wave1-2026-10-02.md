@@ -143,8 +143,25 @@ appended (rule 28).
 |---|---|
 | 0a shadow-score on the 930-aligned basis | **waits** on lane closeout-D (R-4 study), per the charter |
 | 0c `_spp96_reserve_coopt_phase0.py` on posture legs | **not runnable**: the SPP-102 legs are gitignored and not on disk (RESULT-spp-102 §5). Re-run on the pairing bundle (PRECOMMIT-spp-pair §6). |
-| step 3 (STB EP 724 rail) | **waits** on the owner's download (R-17 defer) |
+| step 3 (STB EP 724 rail) | **deferred** by the owner (desk update 2026-10-02); draft data-limited ledger row in §3a |
 | SPP-107 PRECOMMIT | **held by another session** (§0) |
+
+## 3a. DRAFT ledger row: the 2022 coal rail / markup object (data-limited; desk update 2026-10-02)
+
+The owner deferred the STB EP 724 download (desk update, 2026-10-02: "proceed without them"). This is the draft
+row the plan's §3.4 step 5 would carry if the rail intake never lands. It is **DRAFT**: not ledgered, not
+signed, and not applied to any score.
+
+| field | draft |
+|---|---|
+| rows | C1 CC_REGULAR 2022 (−10.84 TWh) and COAL_PRB 2022 (+13.17 TWh); C4 gas 2022 (NRMSE 0.356) |
+| class | **data-limited** (not model-class): the admissible driver has a named free source that is not on disk |
+| share of the miss it covers | ~40 % of the 2022 CC shortfall. The other ~60 % is the DA-commitment low side SPP-75/77 measured, which is the pairing span's object (`FINDING-spp-89` §5). |
+| evidence | (1) ASOM 2022 names rail supply-chain problems and RR502 opportunity-cost coal offers. (2) The SPP fleet bottomed at 16.9 days of burn in 2022 vs 31.6 in 2021 (`RESULT-spp-44`). (3) Real coal in-the-money loading was price-invariant (0.83–0.92), while the keeper's rises to 0.96 when gas is dear (`FINDING-spp-89` §3). |
+| what was refuted already | EIA-923 receipts as the driver: 2022 was the smoothest delivery year (SPP-44 R). Cumulative inventory ceiling: it never binds. Gas-price level: inverted (SPP-89). |
+| basis caveat | Part of the C1 coal miss is the EIA-923 vs EIA-930 basis. On the gross basis coal is over by +2.0/+5.5 TWh, not +13 (SPP-87). R-4 / lane D sets the residual this row must carry; **re-size the row after D-P3**. |
+| route (re-open) | **STB EP 724 intake.** Weekly BNSF/UP average daily coal unit-train loadings vs plan by basin (PRB), 2019–2025, https://www.stb.gov/reports-data/rail-service-data/ → `data/raw/stb-ep724-rail/` → SPP-44 re-measure. If 2022 PRB loadings-vs-plan is the only anomalous year, PRECOMMIT the RR502-form P1 coal opportunity-cost adder keyed to it, its form fixed ex ante (plan §3.4 step 3). It is not a tuned value: the driver would be the measured shortfall, with zero free parameters, or the lane refuses it. |
+| closes when | (a) the rail series lands and the step-3 lever is promoted or recorded R, or (b) the owner signs the row as a permanent data-limited caveat. |
 
 ## 4. Rules
 
