@@ -109,6 +109,80 @@
    "oil": 0.002
   }
  },
+ "2023": {
+  "shift_pred": -0.26,
+  "S3_median_gas_dmc": 0.0,
+  "S3": true,
+  "S4a_max_nongas_dmc": 49.99999237060547,
+  "S4a": false,
+  "S4b_i_pct": {
+   "nuclear": 0.0,
+   "wind": 0.0,
+   "solar": 0.0,
+   "hydro": 0.0,
+   "biomass": 0.0,
+   "OTHER": 0.0
+  },
+  "S4b_i": true,
+  "S4b_ii_d_displaced_twh": 1.187,
+  "S4b_ii_d_gas_cc_ct_twh": -1.205,
+  "S4b_ii": true,
+  "S4b_iii_flip_band_frac": 0.998,
+  "S4b_iii": true,
+  "S4b_iv_d_coal_twh": -0.445,
+  "S4b_iv_d_gas_twh": 0.426,
+  "S4b_iv": false,
+  "class_delta_twh": {
+   "CC_CHP": 0.119,
+   "CC_REGULAR": -0.86,
+   "COAL_BIT": -0.336,
+   "COAL_PRB": -0.079,
+   "COAL_WC": -0.03,
+   "CT_CHP": -0.011,
+   "CT_PEAKER": -0.453,
+   "ST_CHP": -0.001,
+   "ST_GAS": 1.632,
+   "import": 0.006,
+   "oil": -0.0
+  }
+ },
+ "2024": {
+  "shift_pred": -1.38,
+  "S3_median_gas_dmc": 0.0,
+  "S3": false,
+  "S4a_max_nongas_dmc": 50.0,
+  "S4a": false,
+  "S4b_i_pct": {
+   "nuclear": 0.0,
+   "wind": 0.0,
+   "solar": 0.0,
+   "hydro": 0.0,
+   "biomass": 0.0,
+   "OTHER": 0.0
+  },
+  "S4b_i": true,
+  "S4b_ii_d_displaced_twh": 1.649,
+  "S4b_ii_d_gas_cc_ct_twh": -1.444,
+  "S4b_ii": true,
+  "S4b_iii_flip_band_frac": 0.999,
+  "S4b_iii": true,
+  "S4b_iv_d_coal_twh": -0.885,
+  "S4b_iv_d_gas_twh": 1.089,
+  "S4b_iv": true,
+  "class_delta_twh": {
+   "CC_CHP": 0.049,
+   "CC_REGULAR": -0.449,
+   "COAL_BIT": -0.715,
+   "COAL_PRB": -0.101,
+   "COAL_WC": -0.069,
+   "CT_CHP": -0.007,
+   "CT_PEAKER": -1.037,
+   "ST_CHP": -0.001,
+   "ST_GAS": 2.535,
+   "import": -0.194,
+   "oil": -0.0
+  }
+ },
  "2025": {
   "shift_pred": 1.71,
   "S3_median_gas_dmc": 0.0,
