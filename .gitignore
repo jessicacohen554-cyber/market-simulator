@@ -3994,6 +3994,8 @@ results/calibration/nyisonext26p_202[2-5]/
 # PJM-NEXT-18: year-isolated diagnostic keeper replays (never on main; rule 29(c)/32(d)).
 results/calibration/pjmnext18_rp_*/
 
+# R-ERCOT-24 per-year legs (rule 29(c)/32(d)); composite r_ercot24_span is the keeper. Provenance (rule 33(d)): 2019 a22bd87c011d327781f4dea103703bcd1ad980bf, 2020 a467a690456255247e1b7fcf09f14a68d5e147ce, 2021 5806b79df855d6d4c346f9abc955f9b36b770ae5, 2022 03322df5fba8d5f7d2ce138d9427b2a584822677, 2023 457ce3620c84aec105295bd140c9652194f63d55, 2024 b679aeb986aac98e6463037ab196188e608d8658, 2025 6abb7bef0192c9e061c5ffef656fb7d2a9f52f0f
+results/calibration/r_ercot_24_20*/
 # miso-298 (2026-10-01) per-year ARM LEGS: kept out of main (rule 32(d)); the
 # composite miso298_span is the registrable bundle. Provenance SHAs in
 # docs/records/miso/RESULT-miso298-gas-form-alone-2026-10-01.md.

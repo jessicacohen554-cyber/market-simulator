@@ -15029,3 +15029,12 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
 - **Result:** 2021 C3a +4.2 → +1.0 %, LW 172.88 → 167.58, LCAP-window adder 4.60 → 1.02 (measured 0.47), max $10,771 → $9,000; 2019 C3a +7.5 → +7.0 %, C3b 0.231 → 0.219. C1/C8 unchanged; every determination unchanged.
 - **Carded:** the ORDC curve-parameter vintage (OBD half-hour mean 0.5(μ+Sσ) + ERCOT's published seasonal μ/σ) takes 2020 from 1.43× to 0.85× of measured RTORPA, but moves every year incl. the 2023 hold.
 - **Record:** `docs/records/ercot/r-ercot/RESULT-r-ercot-23-swcap-effective-hourly-2026-10-01.md`.
+
+## R-ERCOT-24/24b — 2026-10-02 — ERCOT's published ORDC curve (OBD half-hour form + seasonal μ/σ, rules 1/14) — PROMOTED `2026-10-02-r-24-ordc-published` (owner card "Promote (Recommended)"); ISO NOT-YET
+
+- **Phase 0 (zero LP, R-ERCOT-24):** the published RTORPA formula on ERCOT's measured reserves reads 1.04/1.45/1.14/1.08/1.09/0.90× of measured RTORPA (2019–2024) on the keeper curve and 0.94/0.84/1.06/0.86/0.85/0.81× on the published curve. Below 1 is the expected Jensen sign (convex curve on hourly-mean reserves).
+- **Built (R-ERCOT-24):** `ercot_ordc_published_curve` (default off, ERCOT-gated, backcast-only, zero DOF). Owner card "All years incl. 2023 (Recommended)".
+- **Solve (R-ERCOT-24b):** all seven years, one shard each at `02f67d13`.
+- **Result:** ORDC adder LW 2019 10.92 → 10.81 (measured 9.63), 2020 3.17 → 2.50 (2.64), 2022 6.46 → 6.11 (6.87, away — predicted), 2023 2.64 → 2.44 (1.27), 2024 0.34 → 0.32 (0.24). 2020 C3a +5.2 → +2.5 %, C3b 0.221 → 0.209; 2019 C3b 0.219 → 0.228. C1 ≤ 0.35 TWh per class, C8 ≤ 0.1 pp. Every determination unchanged.
+- **Promotion:** PRECOMMIT §6 tripped on 2022 (its own §5 prediction); put to the owner, who chose "Promote (Recommended)".
+- **Record:** `docs/records/ercot/r-ercot/RESULT-r-ercot-24-ordc-published-curve-2026-10-02.md`.

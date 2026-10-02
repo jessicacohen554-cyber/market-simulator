@@ -1,0 +1,19 @@
+{
+  "id": "2026-10-02-r-24-ordc-published",
+  "label": "r 24 ordc published",
+  "date": "2026-10-02",
+  "shorthand": "r-24-ordc-published",
+  "definition": "R-ERCOT-24 ARM 2025: keeper 2026-10-01-r-23-swcap-hourly recipe + ercot_ordc_published_curve (OBD half-hour form + ERCOT seasonal mu/sigma) - PRECOMMIT-r-ercot-24-ordc-published-curve",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-10-02-r-24-ordc-published.js",
+  "bundle": "results/calibration/r_ercot24_span"
+}
