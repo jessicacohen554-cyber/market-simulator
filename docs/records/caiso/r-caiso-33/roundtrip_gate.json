@@ -1,0 +1,237 @@
+{
+ "gate": "G-RT",
+ "tolerance_usd_mwh": 0.75,
+ "adder": 0.46,
+ "keeper_sha": "cd5897987106193b34b84c5f4bb4a7c9bb1e4760",
+ "pass": false,
+ "rows": [
+  {
+   "class": "CC_REGULAR",
+   "band": "econ_low",
+   "year": 2023,
+   "keeper_usd_mwh": 56.03,
+   "rebased_usd_mwh": 56.02,
+   "delta": -0.01,
+   "pass": true
+  },
+  {
+   "class": "CC_REGULAR",
+   "band": "econ_low",
+   "year": 2024,
+   "keeper_usd_mwh": 34.39,
+   "rebased_usd_mwh": 34.36,
+   "delta": -0.03,
+   "pass": true
+  },
+  {
+   "class": "CC_REGULAR",
+   "band": "econ_low",
+   "year": 2025,
+   "keeper_usd_mwh": 37.03,
+   "rebased_usd_mwh": 36.95,
+   "delta": -0.08,
+   "pass": true
+  },
+  {
+   "class": "CC_REGULAR",
+   "band": "econ_low",
+   "year": "pooled",
+   "keeper_usd_mwh": 42.75,
+   "rebased_usd_mwh": 42.61,
+   "delta": -0.14,
+   "pass": true,
+   "keeper_mult": 1.066,
+   "rebased_mult": 0.979
+  },
+  {
+   "class": "CC_REGULAR",
+   "band": "econ_high",
+   "year": 2023,
+   "keeper_usd_mwh": 55.87,
+   "rebased_usd_mwh": 55.29,
+   "delta": -0.58,
+   "pass": true
+  },
+  {
+   "class": "CC_REGULAR",
+   "band": "econ_high",
+   "year": 2024,
+   "keeper_usd_mwh": 36.8,
+   "rebased_usd_mwh": 35.72,
+   "delta": -1.07,
+   "pass": false
+  },
+  {
+   "class": "CC_REGULAR",
+   "band": "econ_high",
+   "year": 2025,
+   "keeper_usd_mwh": 37.47,
+   "rebased_usd_mwh": 37.55,
+   "delta": 0.08,
+   "pass": true
+  },
+  {
+   "class": "CC_REGULAR",
+   "band": "econ_high",
+   "year": "pooled",
+   "keeper_usd_mwh": 42.99,
+   "rebased_usd_mwh": 43.01,
+   "delta": 0.01,
+   "pass": true,
+   "keeper_mult": 1.072,
+   "rebased_mult": 0.988
+  },
+  {
+   "class": "CC_REGULAR",
+   "band": "peak",
+   "year": 2023,
+   "keeper_usd_mwh": 68.84,
+   "rebased_usd_mwh": 66.57,
+   "delta": -2.27,
+   "pass": false
+  },
+  {
+   "class": "CC_REGULAR",
+   "band": "peak",
+   "year": 2024,
+   "keeper_usd_mwh": 50.32,
+   "rebased_usd_mwh": 49.93,
+   "delta": -0.39,
+   "pass": true
+  },
+  {
+   "class": "CC_REGULAR",
+   "band": "peak",
+   "year": 2025,
+   "keeper_usd_mwh": 49.72,
+   "rebased_usd_mwh": 49.6,
+   "delta": -0.12,
+   "pass": true
+  },
+  {
+   "class": "CC_REGULAR",
+   "band": "peak",
+   "year": "pooled",
+   "keeper_usd_mwh": 55.59,
+   "rebased_usd_mwh": 54.76,
+   "delta": -0.83,
+   "pass": false,
+   "keeper_mult": 1.386,
+   "rebased_mult": 1.258
+  },
+  {
+   "class": "CT_PEAKER",
+   "band": "econ_low",
+   "year": 2023,
+   "keeper_usd_mwh": 84.63,
+   "rebased_usd_mwh": 83.65,
+   "delta": -0.98,
+   "pass": false
+  },
+  {
+   "class": "CT_PEAKER",
+   "band": "econ_low",
+   "year": 2024,
+   "keeper_usd_mwh": 53.85,
+   "rebased_usd_mwh": 53.49,
+   "delta": -0.37,
+   "pass": true
+  },
+  {
+   "class": "CT_PEAKER",
+   "band": "econ_low",
+   "year": 2025,
+   "keeper_usd_mwh": 56.78,
+   "rebased_usd_mwh": 56.39,
+   "delta": -0.39,
+   "pass": true
+  },
+  {
+   "class": "CT_PEAKER",
+   "band": "econ_low",
+   "year": "pooled",
+   "keeper_usd_mwh": 64.57,
+   "rebased_usd_mwh": 64.93,
+   "delta": 0.37,
+   "pass": true,
+   "keeper_mult": 1.103,
+   "rebased_mult": 1.022
+  },
+  {
+   "class": "CT_PEAKER",
+   "band": "econ_high",
+   "year": 2023,
+   "keeper_usd_mwh": 87.09,
+   "rebased_usd_mwh": 85.29,
+   "delta": -1.8,
+   "pass": false
+  },
+  {
+   "class": "CT_PEAKER",
+   "band": "econ_high",
+   "year": 2024,
+   "keeper_usd_mwh": 57.86,
+   "rebased_usd_mwh": 58.77,
+   "delta": 0.91,
+   "pass": false
+  },
+  {
+   "class": "CT_PEAKER",
+   "band": "econ_high",
+   "year": 2025,
+   "keeper_usd_mwh": 58.12,
+   "rebased_usd_mwh": 58.64,
+   "delta": 0.52,
+   "pass": true
+  },
+  {
+   "class": "CT_PEAKER",
+   "band": "econ_high",
+   "year": "pooled",
+   "keeper_usd_mwh": 67.08,
+   "rebased_usd_mwh": 67.03,
+   "delta": -0.06,
+   "pass": true,
+   "keeper_mult": 1.146,
+   "rebased_mult": 1.055
+  },
+  {
+   "class": "CT_PEAKER",
+   "band": "peak",
+   "year": 2023,
+   "keeper_usd_mwh": 88.4,
+   "rebased_usd_mwh": 87.42,
+   "delta": -0.98,
+   "pass": false
+  },
+  {
+   "class": "CT_PEAKER",
+   "band": "peak",
+   "year": 2024,
+   "keeper_usd_mwh": 57.81,
+   "rebased_usd_mwh": 61.08,
+   "delta": 3.27,
+   "pass": false
+  },
+  {
+   "class": "CT_PEAKER",
+   "band": "peak",
+   "year": 2025,
+   "keeper_usd_mwh": 58.12,
+   "rebased_usd_mwh": 58.69,
+   "delta": 0.57,
+   "pass": true
+  },
+  {
+   "class": "CT_PEAKER",
+   "band": "peak",
+   "year": "pooled",
+   "keeper_usd_mwh": 67.55,
+   "rebased_usd_mwh": 68.3,
+   "delta": 0.75,
+   "pass": true,
+   "keeper_mult": 1.154,
+   "rebased_mult": 1.075
+  }
+ ]
+}
