@@ -15756,3 +15756,33 @@ Record: `docs/records/caiso/r-caiso-19/`.
 - Promoted on the pre-registered structure rule: keeper `2026-09-30-caiso-r20-overnight` (+ `-touchpoints`). r18 was pruned.
 
 Record: `docs/records/caiso/r-caiso-20/`.
+
+## 2026-10-02 — closeout-B W0 phase 3: keeper 2026-10-02-w0-caiso (W0 EIA-860 settlement re-solve), NOT-YET → NOT-YET
+
+**What changed.** The r-caiso-20 recipe (`rcaiso20_A_span` for 2022–2025 and the folded `rcaiso20_A_tp_2019_2021`) was re-solved year by year (rule 36: seven shards at `306f2c00`). The only change was the W0 EIA-860 settlement backcast defaults (owner ruling R-2; PRECOMMIT `docs/records/governance/closeout-2026-10/PRECOMMIT-closeout-b-w0-phase3-2026-10-02.md`):
+- seasonal summer/winter capacity basis;
+- actual-retirement-only;
+- the five registry-read repairs;
+- standby admission.
+
+`unit_outage_dispatched_bin_denominator` yields to the keeper's armed extract-basis share. The seven years compose into ONE bundle, `w0_caiso_span`, which absorbs the touchpoint fold. Recipe equality was checked field by field by `scripts/probes/_w0_compose_span.py`. The deleted knob `cc_subfloor_eia923_heat_rates` (rule 26) was off in the keeper. Zero DOF.
+
+| | 2021 | 2022 | 2023 | 2024 | 2025 |
+|---|---|---|---|---|---|
+| C3a vs RT, before | +12.5 % | +8.6 % | +6.3 % | +4.7 % | +6.6 % |
+| C3a vs RT, after | +12.8 % | +8.2 % | +7.5 % | +5.9 % | +6.0 % |
+
+- 2019 and 2020 C3a stay unscoreable: there is no RT reference.
+- CC_REGULAR over-dispatch narrows: 2020 +17.55 → +16.28 TWh, 2021 +10.17 → +8.70 TWh.
+- No criterion record changes status.
+- Determination: NOT-YET → NOT-YET. Under rule 30 the 2019–2021 rungs already carried their C2/C3a/C4 FAILs.
+
+**Census (rated-capacity rebuild at the W0 posture, phase 2).** Total thermal reads −2.1 to −7.2 % summer against EIA-860, OUTSIDE the 0.5 % tolerance.
+- **CC** is −7.6 to −8.5 %, "rating differs": 50216 (−259 MW) and 55217 (−198 MW).
+- **CT** is −9.7 to −10.6 %, "rating differs": 50134 (−105 MW) and 10496 (−101 MW).
+- **ST_GAS:**
+  - 2019 is +41.9 %, rating: 315 (+845 MW) and 356 (+480 MW).
+  - 2023 is +28.9 %: 356 exit-channel carry (+830 MW).
+- **COAL** is −70 %: 10684 (−35 to −40 MW).
+
+These are residuals for the CAISO lane, not tuned (rule 23). Ledgers: `W0-census/CAISO/fleet_census_<Y>_w0.json`.
