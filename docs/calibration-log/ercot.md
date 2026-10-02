@@ -15071,3 +15071,24 @@ The run id is `2026-10-02-w0-settlement`; "ercot" is a stopword in the dashboard
 | TRUE EXIT CARRIES | Oklaunion 2020 (23 % CF); Decker Creek 2022; Sandy Creek and V H Braunig 2025 (OS/OA) |
 
 These are residuals for the ERCOT lane, not tuned (rule 23).
+
+## 2026-10-02 — closeout-L1: keeper 2026-10-02-closeout-l1-coal-fuel (coal fuel ceiling on the W0 keeper), owner "Override + promote"
+
+**What changed.** The W0 keeper `2026-10-02-w0-settlement` was re-solved year-isolated at `106d6bb7` with only the three ERCOT coal-pile arm flags added (`coal_fuel_inventory_plant_grain`, `coal_fuel_inventory_monthly_pile`, `coal_monthly_pile_measured_receipts`). That gives a ceiling-only, plant-grain, monthly coal pile on measured EIA-923 receipts. Zero DOF; offer curves are untouched. Record: `docs/records/ercot/closeout/RESULT-closeout-l1-coal-fuel-ceiling-2026-10-02.md`.
+
+The legs are the canonical ones named by closeout-ERCOT: 2019 is `claude/closeout-ercot-l1-2019`, and 2020–2025 are `claude/closeout-ercot-l1b-<Y>`. The closeout-B W0 phase-3 lane composed them (`_r_ercot_compose_span.py --side arm --chp-off`), dropped the per-year pins from the base recipe, and stamped `config_partition_overrides` (`--check` OK). Preflight 0d (replay recipe) passed after one guard fix in `scripts/lib/replay_recipe.py`: a field registered after the solve (`spp_mmu_offer_repair`, #7025), replayed at its registered default, is not a recipe mismatch.
+
+**Owner ruling (decision card 2026-10-02, relayed by the desk): "Override + promote".** The pre-registered gate K2 (binding only where the census showed excess) tripped on its literal terms. The RESULT diagnoses the trip as the coal heat-rate basis, not a construction bug.
+
+**Scores (W0 keeper → L1).** The ISO stays NOT-YET → NOT-YET.
+
+| Record | W0 keeper | L1 |
+|---|---|---|
+| 2022 C1 CC_REGULAR | −10.12 TWh, FAIL | −3.47 TWh, PASS |
+| 2022 COAL_PRB | +5.79 TWh | −1.38 TWh (PASS) |
+| 2025 C3a | −10.0 %, FAIL | −9.2 %, PASS |
+
+- **Forward tier:** 2024 stays NOT-YET (C3a −11.3 %); 2025 is CALIBRATED.
+- **2023:** keeps its configuration-exception caveats (R-6).
+- **2019–2022:** stay NOT-YET (C1 CC_REGULAR/COAL_PRB in 2019/2020, C3b in 2019/2020).
+- **Census:** total thermal summer reads −3.2 to −6.8 % against EIA-860, OUTSIDE. The capacity census for ERCOT is owner-signed ("Sign all three", 2026-10-02).
