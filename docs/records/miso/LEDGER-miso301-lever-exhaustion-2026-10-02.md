@@ -236,6 +236,10 @@ candidates against the plan §3.3 gates, which were set before that lane ran.
 
 The step-3 span (the W0 re-solve, writing `unit_marginal_<Y>`) is held by the desk on W0 and carries no new MISO lever.
 
+**Owner ruling (2026-10-02, miso-301 second card "MISO next"), verbatim: "Record; MISO waits on W0 (Recommended)"**, described in the
+card as: Record MISO as train-tier CALIBRATED / full-span NOT-YET with all three misses exhausted (not frontier). No new MISO chain; the
+desk's W0 span is MISO's next solve. This chain ends. Declined: "Charter: per-yard R-3 with B/12 kept summer-only"; "Move the chain to another ISO".
+
 ## 8. Where MISO stands
 
 Keeper unchanged. Train 2023–2025 CALIBRATED (C3c ledgered; C3c 2019/2021 model-class caveats, 2020 PASS). Full span

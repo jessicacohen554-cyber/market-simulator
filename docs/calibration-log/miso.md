@@ -15767,5 +15767,8 @@ frozen derive's own cross-check".
   - R-A: the arms that reach the price take PRB 2019/2021 out of band.
   - R-B: removing B/12 releases summer and 2022 coal (K3).
   - All three failures are now exhausted on every admissible, identified lever (ledger §7). The W0 span is held by the desk.
+- **Owner ruling (2026-10-02, miso-301 second card "MISO next"), verbatim: "Record; MISO waits on W0 (Recommended)"**, described in the
+  card as: Record MISO as train-tier CALIBRATED / full-span NOT-YET with all three misses exhausted (not frontier). No new MISO chain; the
+  desk's W0 span is MISO's next solve. This chain ends. Declined: "Charter: per-yard R-3 with B/12 kept summer-only"; "Move the chain to another ISO".
 
 Full span NOT-YET on C1 ST_GAS 2019, C3a 2020, C3b 2021. Train 2023–2025 CALIBRATED. No frontier.
