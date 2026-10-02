@@ -4018,3 +4018,5 @@ results/calibration/nwppnext19g_span/
 
 # PJM-NEXT-26 shard legs (staged by the parent; transport only, rule 33/34)
 results/calibration/pjm_next_26_20*/
+# NWPP-NEXT-21 shard legs + span (staged locally; never committed off a promotion)
+results/calibration/nwppnext21_*/
