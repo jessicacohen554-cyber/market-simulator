@@ -294,11 +294,31 @@ class TestRowLoop(unittest.TestCase):
 class TestIsoScope(unittest.TestCase):
     """Rule 25 [R-ISO-SCOPE]: the repair is gated to verified ISOs only."""
 
-    def test_only_miso_is_enrolled(self) -> None:
-        self.assertEqual(CC_STEAM_PART_REPAIR_ISOS, frozenset({"MISO"}))
+    def test_every_program_iso_is_enrolled(self) -> None:
+        # W0 (owner ruling R-2 / Q4, audit §E.3): the miso-126 predicate is an
+        # EIA-860 row semantic, run everywhere; the per-ISO census is the gate.
+        self.assertEqual(
+            CC_STEAM_PART_REPAIR_ISOS,
+            frozenset(
+                {
+                    "ERCOT",
+                    "CAISO",
+                    "PJM",
+                    "MISO",
+                    "NYISO",
+                    "NEISO",
+                    "SPP",
+                    "NWPP",
+                    "SOCO",
+                }
+            ),
+        )
 
-    def test_the_flag_defaults_off(self) -> None:
+    def test_the_flag_defaults_on_in_backcast_only(self) -> None:
         self.assertIs(ScenarioConfig(iso="MISO").cc_steam_part_capacity, False)
+        self.assertIs(
+            ScenarioConfig(iso="MISO", mode="backcast").cc_steam_part_capacity, True
+        )
 
 
 class TestBackcastFleetSourcing(unittest.TestCase):

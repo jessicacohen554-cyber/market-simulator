@@ -300,7 +300,17 @@ CC_STEAM_PART_PRIME_MOVER: str = "CA"
 # handed to its own lane unstamped. NEISO's ``CA1`` is NOT a member of this
 # set's population at all — it is CARRIED, not dropped, so nothing is there to
 # restore; its object is :data:`CC_STEAM_PART_RECLASS_ISOS` below.
-CC_STEAM_PART_REPAIR_ISOS: frozenset[str] = frozenset({"MISO"})
+#
+# W0 (owner ruling R-2 / Q4, 2026-10-02; audit
+# docs/records/governance/closeout-2026-10/AUDIT-eia860-capacity-vintage-
+# settlement-2026-10-02.md §E.3): the owner declared the class of registry-read
+# correctness repairs STRUCTURAL — the miso-126 predicate is an EIA-860 row
+# semantic (a ``CA`` row's ``Energy Source 1`` is the duct fuel), not an
+# ISO-scoped tuning — so the set is every program region. The per-ISO zero-LP
+# census (W0 phase 2) is the gate, never a per-ISO admission.
+CC_STEAM_PART_REPAIR_ISOS: frozenset[str] = frozenset(
+    {"ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP", "NWPP", "SOCO"}
+)
 
 # ISOs whose fleet build RE-CLASSES the ``CA`` combined-cycle steam parts the
 # fuel map resolves to a NON-gas fuel from the row's own (stale / duct)

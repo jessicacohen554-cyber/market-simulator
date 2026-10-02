@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-10-02 — W0 EIA-860 settlement foundation (closeout-B, phases 1 + 2, zero LP)
+
+Owner ruling R-2 (Q1–Q8). Backcast-default flips with `--no-…` escapes, coerced off outside a
+backcast (F1 two-half landing; forecast/hindcast keys byte-stable; the bare backcast key moves by
+design): **new** `seasonal_capacity_basis` (E.1: published summer Jun–Sep / winter Oct–May of the
+solved vintage, flat class derate deleted on per-plant fleets), **new** `backcast_actual_retirement_only`
+(E.5), and `commission_year_cod_fallback`, `cc_block_summer_rating`, `cc_steam_part_capacity`,
+`retiree_vintage_status_scope`, `admit_standby_units`, `partial_plant_exit_carry`,
+`mid_vintage_exit_carry` (E.3/E.4) plus the companion `unit_outage_dispatched_bin_denominator` (yields to
+an explicit alternative denominator). Steam-part predicate in every ISO; block predicate includes NG
+blocks where no demonstrated-peak table exists. E.6: every `eia860_generators.parquet` regenerated
+unfiltered + `nerc_region` (zero-diff verified); membership at load time. E.7:
+`scripts/build_fleet_census.py`, `promote_keeper.py` preflight, `audit_keepers.py` E15. E.9:
+`solve_surface.json` records `eia860_vintages` sha256. Q7: PUDL subplant crosswalk intaken; every
+hand CEMS remap confirmed or a cited override. Month sentinels 88/99 → mid-year. Phase-2 census,
+NEISO tripwire and G-DRIFT under `docs/records/governance/closeout-2026-10/W0-census/`.
+
 ## 2026-10-01 — Repo cleanup: protocol condensed, records filed, dead weight pruned, clean-data profiles
 
 Orchestrated from one parent session over five shards (PRs #6968, #6973, #6974, #6979, #6982). No

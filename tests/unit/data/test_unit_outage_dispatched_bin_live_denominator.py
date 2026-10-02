@@ -189,6 +189,7 @@ class TestRequiresParent:
     def test_armed_with_parent_returns_year(self):
         cfg = ScenarioConfig(
             iso="NWPP",
+            mode="backcast",
             unit_outage_dispatched_bin_denominator=True,
             unit_outage_dispatched_bin_live_denominator=True,
         )

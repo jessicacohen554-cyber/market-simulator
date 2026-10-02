@@ -121,6 +121,8 @@ window.MECH_MATRIX_SHARDS.SOCO = {
   keeper: "2026-09-30-soco96-measured-oil-burn",
   gates: "PROMOTED 2026-09-30 (lane soco-96, owner ruling 'Promote, admit as backcast input', which also admits the plant-day measured gas/oil mix as a backcast-only measured physical input under rule 13; PRECOMMIT-soco-96 section 7 held): keeper 2026-09-30-soco96-measured-oil-burn = soco-93 recipe + dual_fuel_measured_oil_burn (zero DOF). NOT-YET, grade 7/4/0/3/0 on the caveat budget (3 ledgered vs 1): C1 2019 COAL_BIT (v3.10 row), C3a 2019 / 2020 over and 2022 -12.0% under (v3.11 rows), C3b 2022 0.266 (v3.12 row); zero FAIL. Rubric v3.13: every registered year (2019-2025, one bundle) gates. Records: docs/records/soco/r-soco/RESULT-soco-96-2026-09-30.md.",
   cells: {
+    seasonal_capacity_basis: { cell: "U" },
+    backcast_actual_retirement_only: { cell: "U" },
     cc_steam_part_capacity: { cell: "U", ev: "SOCO-21 (2026-09-13) shard seed, no verdict minted (docs/multi-iso/soco-addition-plan-2026-09.md §4 W5 queue / §5 row SOCO-21) — U: UNTESTED. SOCO has no keeper, no registered run and no solve of any kind at HEAD; rules 25 [R-ISO-SCOPE] / 28(d) mean no other ISO's verdict fills this cell. The lever queue is docs/mechanism-testing-matrix.md §5.8." },
     cc_steam_part_reclass: { cell: "U", ev: "SOCO-21 (2026-09-13) shard seed, no verdict minted (docs/multi-iso/soco-addition-plan-2026-09.md §4 W5 queue / §5 row SOCO-21) — U: UNTESTED. SOCO has no keeper, no registered run and no solve of any kind at HEAD; rules 25 [R-ISO-SCOPE] / 28(d) mean no other ISO's verdict fills this cell. The lever queue is docs/mechanism-testing-matrix.md §5.8." },
     cc_block_summer_rating: { cell: "U" },

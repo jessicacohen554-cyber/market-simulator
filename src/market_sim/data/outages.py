@@ -1053,13 +1053,25 @@ def _extract_basis_groups(
 def _fleet_cache_dir_key() -> str:
     """Return the fleet-derived caches' EIA-860 key: the active directory, plus
     a ``|SB`` suffix while ``admit_standby_units`` widens the fleet's status
-    filter (the fleet these maps sum depends on both). Identical to
+    filter, plus ``|SEASONAL`` while the W0 seasonal capacity basis is armed
+    (the fleet these maps sum depends on all three). Identical to
     ``str(active_eia860_dir())`` while off, so every off-path key is unchanged.
     """
     from market_sim.config.paths import active_eia860_dir
 
+    from market_sim.config.paths import (
+        eia860_fleet_row_repairs,
+        eia860_seasonal_capacity_basis,
+    )
+
     key = str(active_eia860_dir())
-    return f"{key}|SB" if eia860_standby_admitted() else key
+    if eia860_standby_admitted():
+        key = f"{key}|SB"
+    for repair in sorted(eia860_fleet_row_repairs()):
+        key = f"{key}|{repair}"
+    # W0 E.1: the seasonal capacity basis moves every thermal bin's pmax, so
+    # the fleet-derived denominators key on it too (off: unchanged key).
+    return f"{key}|SEASONAL" if eia860_seasonal_capacity_basis() else key
 
 
 def _joining_ba_generators(
@@ -1103,9 +1115,26 @@ def _joining_ba_generators(
     if not codes:
         return []
     fleet = load_fleet_from_csv(
-        iso, iso_config, year=int(year), cc_steam_part_reclass=cc_steam_part_reclass
+        iso,
+        iso_config,
+        year=int(year),
+        cc_steam_part_reclass=cc_steam_part_reclass,
+        **_row_repair_kwargs(),
     )
     return [g for g in fleet if int(g.plant_code) in codes]
+
+
+def _row_repair_kwargs() -> dict[str, bool]:
+    """The W0 row repairs the LP fleet carries, for a reconstructed fleet load.
+
+    Read from :func:`market_sim.config.paths.eia860_fleet_row_repairs`; empty
+    (every legacy key byte-identical) while none is armed. The repairs enter
+    :func:`_fleet_cache_dir_key`, so a cached map can never be served across
+    the two bases.
+    """
+    from market_sim.config.paths import eia860_fleet_row_repairs
+
+    return {name: True for name in sorted(eia860_fleet_row_repairs())}
 
 
 def _iso_plant_unit_capacity(
@@ -1167,7 +1196,10 @@ def _iso_plant_unit_capacity_cached(
 
     iso_config = get_iso_config(iso)
     fleet = load_fleet_from_csv(
-        iso, iso_config, cc_steam_part_reclass=cc_steam_part_reclass
+        iso,
+        iso_config,
+        cc_steam_part_reclass=cc_steam_part_reclass,
+        **_row_repair_kwargs(),
     ) + load_retired_within_window(
         iso,
         iso_config,
@@ -1409,7 +1441,10 @@ def _iso_plant_capacity_cached(
     # route to a (plant_code, plant_group) absent from this map and are skipped,
     # leaving the injected retiree (e.g. Mystic) un-capped.
     fleet = load_fleet_from_csv(
-        iso, iso_config, cc_steam_part_reclass=cc_steam_part_reclass
+        iso,
+        iso_config,
+        cc_steam_part_reclass=cc_steam_part_reclass,
+        **_row_repair_kwargs(),
     ) + load_retired_within_window(
         iso,
         iso_config,
@@ -1423,6 +1458,7 @@ def _iso_plant_capacity_cached(
             iso, iso_config, retiree_year, cc_steam_part_reclass
         )
     cap: dict[tuple[int, str], float] = {}
+    _seasonal_keys: set[tuple[int, str]] = set()
     for g in fleet:
         code = int(g.plant_code)
         if code <= 0 or not g.plant_group:
@@ -1431,6 +1467,8 @@ def _iso_plant_capacity_cached(
         # extract rows this denominator is joined against (COAL-SUB).
         _key = (code, artifact_class(g.plant_group))
         cap[_key] = cap.get(_key, 0.0) + float(g.pmax_mw)
+        if getattr(g, "summer_capability_frac", None) is not None:
+            _seasonal_keys.add(_key)
     if cc_nameplate_basis:
         # Reproduce fleet_to_bins' CC nameplate raise EXACTLY (campd_bins.py,
         # `cap = cap / _ratio` under cc_nameplate_summer_derate) so this
@@ -1442,6 +1480,11 @@ def _iso_plant_capacity_cached(
 
         for key in list(cap):
             if key[1] not in _CC_NAMEPLATE_BASIS_GROUPS:
+                continue
+            if key in _seasonal_keys:
+                # W0 E.1: a seasonal-basis bin is ALREADY at the capacity the
+                # LP carries (its published envelope); fleet_to_bins skips the
+                # nameplate raise for it, so this mirror skips it too.
                 continue
             ratio = cc_summer_derate_ratio(int(key[0]))
             if ratio is not None and ratio > 0.0:

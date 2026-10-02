@@ -74,6 +74,46 @@ _DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
         "F1 2026-09-24: backcast-default ON, coerced to its frozen False outside "
         "a backcast; the backcast re-key was paid at the pin above"
     ),
+    "commission_year_cod_fallback": (
+        "W0 2026-10-02 (owner ruling R-2): backcast-default ON, coerced to its "
+        "frozen False outside a backcast; the backcast re-key is paid at the pin"
+    ),
+    "cc_block_summer_rating": (
+        "W0 2026-10-02 (owner ruling R-2): backcast-default ON, coerced to its "
+        "frozen False outside a backcast; the backcast re-key is paid at the pin"
+    ),
+    "cc_steam_part_capacity": (
+        "W0 2026-10-02 (owner ruling R-2): backcast-default ON, coerced to its "
+        "frozen False outside a backcast; the backcast re-key is paid at the pin"
+    ),
+    "retiree_vintage_status_scope": (
+        "W0 2026-10-02 (owner ruling R-2): backcast-default ON, coerced to its "
+        "frozen False outside a backcast; the backcast re-key is paid at the pin"
+    ),
+    "admit_standby_units": (
+        "W0 2026-10-02 (owner ruling R-2): backcast-default ON, coerced to its "
+        "frozen False outside a backcast; the backcast re-key is paid at the pin"
+    ),
+    "partial_plant_exit_carry": (
+        "W0 2026-10-02 (owner ruling R-2): backcast-default ON, coerced to its "
+        "frozen False outside a backcast; the backcast re-key is paid at the pin"
+    ),
+    "mid_vintage_exit_carry": (
+        "W0 2026-10-02 (owner ruling R-2): backcast-default ON, coerced to its "
+        "frozen False outside a backcast; the backcast re-key is paid at the pin"
+    ),
+    "seasonal_capacity_basis": (
+        "W0 2026-10-02 (owner ruling R-2): backcast-default ON, coerced to its "
+        "frozen False outside a backcast; the backcast re-key is paid at the pin"
+    ),
+    "unit_outage_dispatched_bin_denominator": (
+        "W0 2026-10-02 (owner ruling R-2): backcast-default ON companion of the "
+        "seasonal basis, coerced to its frozen False outside a backcast"
+    ),
+    "backcast_actual_retirement_only": (
+        "W0 2026-10-02 (owner ruling R-2): backcast-default ON, coerced to its "
+        "frozen False outside a backcast; the backcast re-key is paid at the pin"
+    ),
 }
 
 

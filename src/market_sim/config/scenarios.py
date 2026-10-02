@@ -2407,6 +2407,16 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # SHARED field -- very end, per HOUSE-3. Registered IN THE SAME COMMIT as the
     # field (the nyiso-119 discipline).
     "cc_mustrun_conduct_window",
+    # W0 E.1 (owner ruling R-2 / Q1, 2026-10-02): the published seasonal
+    # capacity basis. Registered at its pre-W0 False and flipped default-on in
+    # backcast in the SAME commit (the F1 two-half landing), so every
+    # forecast / hindcast key and every committed keeper key is byte-stable.
+    # SHARED field -- very end, per HOUSE-3.
+    "seasonal_capacity_basis",
+    # W0 E.5 (owner ruling R-2, 2026-10-02): actual retirement only in a
+    # backcast. Registered at False and flipped default-on in backcast in the
+    # same commit. SHARED field -- very end, per HOUSE-3.
+    "backcast_actual_retirement_only",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -3281,6 +3291,10 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "dual_fuel_measured_oil_burn": "False",
     # Added by PJM-NEXT-17 WITH the field (the nyiso-119 discipline).
     "cc_mustrun_conduct_window": "False",
+    # Added by W0 (closeout-B) WITH the field (the nyiso-119 discipline).
+    "seasonal_capacity_basis": "False",
+    # Added by W0 (closeout-B) WITH the field (the nyiso-119 discipline).
+    "backcast_actual_retirement_only": "False",
 }
 
 
@@ -3588,6 +3602,32 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS: tuple[tuple[str, str, str], ...] = (
     ("2026-09-24", "measured_st_heat_rates", "True"),
     ("2026-09-24", "measured_cc_heat_rates", "True"),
     ("2026-09-24", "measured_chp_heat_rates", "True"),
+    # W0 EIA-860 settlement (owner ruling R-2, Q4 "flip the registry-read
+    # correctness flags default-on in backcast everywhere", 2026-10-02;
+    # docs/records/governance/closeout-2026-10/AUDIT-eia860-capacity-vintage-
+    # settlement-2026-10-02.md §E.3/E.4). The F1 two-half landing: the flip,
+    # plus the __post_init__ coercion back to the frozen declaration outside
+    # ``mode == "backcast"`` (_BACKCAST_DEFAULT_FROZEN_DECLARATIONS), so every
+    # forecast / hindcast key is byte-stable and every committed keeper that
+    # recorded the field explicitly keeps its recorded key. Registry-read
+    # correctness repairs, zero free parameters; the --no-... form (or
+    # replay_keeper --set <field>=false) reaches the pre-W0 posture.
+    ("2026-10-02", "commission_year_cod_fallback", "True"),
+    ("2026-10-02", "cc_block_summer_rating", "True"),
+    ("2026-10-02", "cc_steam_part_capacity", "True"),
+    ("2026-10-02", "retiree_vintage_status_scope", "True"),
+    ("2026-10-02", "admit_standby_units", "True"),
+    ("2026-10-02", "partial_plant_exit_carry", "True"),
+    ("2026-10-02", "mid_vintage_exit_carry", "True"),
+    # W0 E.1 (owner ruling R-2 / Q1): the published seasonal capacity basis,
+    # registered and flipped in the same commit.
+    ("2026-10-02", "seasonal_capacity_basis", "True"),
+    # W0 E.5: actual retirement only in a backcast, registered and flipped in
+    # the same commit.
+    ("2026-10-02", "backcast_actual_retirement_only", "True"),
+    # W0 companion: the dispatched-bin outage denominator (miso-266), the
+    # only denominator correct by construction under the seasonal basis.
+    ("2026-10-02", "unit_outage_dispatched_bin_denominator", "True"),
 )
 
 # The default each field carried WHEN IT WAS REGISTERED, for the seven fields
@@ -3723,8 +3763,38 @@ _BACKCAST_DEFAULT_FROZEN_DECLARATIONS: dict[str, object] = {
         "measured_st_heat_rates",
         "measured_cc_heat_rates",
         "measured_chp_heat_rates",
+        # W0 (owner ruling R-2 / Q4, 2026-10-02): the registry-read correctness
+        # repairs, backcast default everywhere.
+        "commission_year_cod_fallback",
+        "cc_block_summer_rating",
+        "cc_steam_part_capacity",
+        "retiree_vintage_status_scope",
+        "admit_standby_units",
+        "partial_plant_exit_carry",
+        "mid_vintage_exit_carry",
+        "seasonal_capacity_basis",
+        "backcast_actual_retirement_only",
+        "unit_outage_dispatched_bin_denominator",
     )
 }
+
+
+#: W0 (owner ruling R-2 / Q4, 2026-10-02): the registry-read correctness
+#: repairs flipped default-on in backcast — a subset of
+#: :data:`_BACKCAST_DEFAULT_FROZEN_DECLARATIONS`, named once so the CLI, the
+#: census and the tests read one list.
+_W0_BACKCAST_DEFAULT_FIELDS: tuple[str, ...] = (
+    "seasonal_capacity_basis",
+    "backcast_actual_retirement_only",
+    "commission_year_cod_fallback",
+    "cc_block_summer_rating",
+    "cc_steam_part_capacity",
+    "retiree_vintage_status_scope",
+    "admit_standby_units",
+    "partial_plant_exit_carry",
+    "mid_vintage_exit_carry",
+    "unit_outage_dispatched_bin_denominator",
+)
 
 
 def cache_key_drop_defaults() -> dict:
@@ -6326,7 +6396,7 @@ class ScenarioConfig:
     # retirement or re-rate moves them) — not a measured outcome fed back to
     # close a residual. Zero fitted parameters. See
     # docs/records/miso/FINDING-miso126-cc-steam-part-capacity-2026-08-04.md.
-    cc_steam_part_capacity: bool = False
+    cc_steam_part_capacity: bool = True  # W0 2026-10-02 (owner ruling R-2/Q4): backcast default; coerced off outside a backcast
 
     # Combined-cycle steam-part RE-CLASS (neiso-83; default OFF, byte-identical
     # off). When True, a ``CA``-prime-mover row that the steam-part predicate
@@ -6386,7 +6456,7 @@ class ScenarioConfig:
     # this reconciliation and would divide by the phantom. Implemented on the
     # EIA-860 parquet path only (the CSV override / clean seam raise). See
     # docs/records/miso/PRECOMMIT-miso272-cc-block-summer-rating-2026-09-25.md.
-    cc_block_summer_rating: bool = False
+    cc_block_summer_rating: bool = True  # W0 2026-10-02 (owner ruling R-2/Q4): backcast default; coerced off outside a backcast
 
     # Forward emission-control retrofit channel (Tier 2; default OFF).
     # docs/records/misc/emission-control-retrofit-forward-channel-2026-07.md
@@ -12887,7 +12957,7 @@ class ScenarioConfig:
     # ante from the year's own vintage (backcast) or the current snapshot
     # (forecast), so it regenerates for any forward year. REFUSED variant:
     # selecting SB units by same-year EIA-923 generation (outcome selection).
-    admit_standby_units: bool = False
+    admit_standby_units: bool = True  # W0 2026-10-02 (owner ruling R-2/Q4): backcast default; coerced off outside a backcast
     # WECC PATH 76 "ALTURAS PROJECT" LINK, NWPP-NW <-> NWPP-SNV (NWPP-NEXT-6,
     # GATED default off, NWPP-only, ZERO free parameters). The NWPP topology
     # carries no link between NW and SNV because data/raw/nwpp-planning/
@@ -16804,7 +16874,7 @@ class ScenarioConfig:
     # map (0.0–0.6% of capacity per ISO, miso-158 census), disclosed rather
     # than silently clamped. ZERO continuous degrees of freedom: a boolean
     # over a measured registry (rules 5 [R-NO-MAGIC] / 14 [R-ACCURATE]).
-    commission_year_cod_fallback: bool = False
+    commission_year_cod_fallback: bool = True  # W0 2026-10-02 (owner ruling R-2/Q4): backcast default; coerced off outside a backcast
 
     # Measured seasonal forced-outage shape override
     # (summer_wefor_share_override, default None; miso-160). Replaces the
@@ -17192,7 +17262,19 @@ class ScenarioConfig:
     # is read off the year's own fleet. Rule 14 [R-ACCURATE]: this is chosen on
     # the construction, never on the residual, and a worse residual would not
     # retract it. Byte-inert while off.
-    unit_outage_dispatched_bin_denominator: bool = False
+    #
+    # W0 COMPANION (owner ruling R-2, 2026-10-02): backcast default ON. The
+    # seasonal capacity basis (seasonal_capacity_basis, E.1) moves EVERY
+    # thermal bin's pmax, and the block / steam-part repairs (E.3) move the
+    # bins they touch; the reconstructed denominator (_iso_plant_capacity)
+    # cannot follow all of them, while this construction is the LP's own pmax
+    # by definition — the only denominator correct by construction under the
+    # settlement (rule 19). It YIELDS to an explicitly armed alternative
+    # denominator (unit_outage_extract_basis_share — the NYISO / CAISO keepers'
+    # CC share —, unit_outage_coal_extract_basis_share — SPP's coal share — or
+    # unit_outage_lp_capacity_basis): __post_init__ coerces it
+    # off then, so two constructions never stack and no recipe is refused.
+    unit_outage_dispatched_bin_denominator: bool = True  # W0 2026-10-02 (owner ruling R-2): backcast default; coerced off outside a backcast
 
     # LIVE-CAPACITY SUB-GATE OF THE DISPATCHED-BIN DENOMINATOR (NWPP-NEXT-15,
     # GATED default-off; REQUIRES unit_outage_dispatched_bin_denominator — the
@@ -17699,7 +17781,7 @@ class ScenarioConfig:
     # snapshot's OP filter wrongly drops; unit_outage_fleet_status_scope
     # drops event rows of units the fleet does not model; this drops
     # units the paper retirement date wrongly carries.
-    retiree_vintage_status_scope: bool = False
+    retiree_vintage_status_scope: bool = True  # W0 2026-10-02 (owner ruling R-2/Q4): backcast default; coerced off outside a backcast
 
     # Partial-plant mid-window exit carry (partial_plant_exit_carry, off by
     # default; miso-190, PREREG-miso190-partial-plant-exit-carry-2026-08-30
@@ -17741,7 +17823,7 @@ class ScenarioConfig:
     # surviving plant's bin keeps running. Whole-plant retirees, leg-2
     # re-carries and announced operable retirements are NOT cohort-routed
     # (frozen scope, PREREG-miso191 §1).
-    partial_plant_exit_carry: bool = False
+    partial_plant_exit_carry: bool = True  # W0 2026-10-02 (owner ruling R-2/Q4): backcast default; coerced off outside a backcast
 
     # MID-VINTAGE-YEAR whole-plant exit carry (SPP-48; GATED default-off,
     # backcast-only, armed for SPP alone through iso_configs._spp_config's
@@ -17794,7 +17876,7 @@ class ScenarioConfig:
     # SPP's 2023-2025 keeper: vintage_2023/ and vintage_2024/ ship no
     # Retired-and-Canceled sheet at all, and 2025 has no vintage directory, so
     # the channel is inert by construction in all three scored years.
-    mid_vintage_exit_carry: bool = False
+    mid_vintage_exit_carry: bool = True  # W0 2026-10-02 (owner ruling R-2/Q4): backcast default; coerced off outside a backcast
 
     # ACTIVE-VINTAGE COORDINATE ZONING for plants eGRID 2023 lacks (PJM-NEXT,
     # 2026-09-25; GATED default-off, armed per recipe). Rule 14 [R-ACCURATE] is
@@ -17901,6 +17983,49 @@ class ScenarioConfig:
     # hazard does not apply — and because the named successor reuses this exact
     # code once the WEFOR double count is resolved.
     cc_winter_capability_basis: bool = False
+
+    # W0 E.1 — THE PUBLISHED SEASONAL CAPACITY BASIS (owner ruling R-2 / Q1,
+    # 2026-10-02; docs/records/governance/closeout-2026-10/AUDIT-eia860-
+    # capacity-vintage-settlement-2026-10-02.md §E.1). One rule, every thermal
+    # class, every per-plant-fleet ISO: the LP bound of a unit in month m is the
+    # published seasonal capability of the SOLVED year's own EIA-860 vintage —
+    # ``Summer Capacity (MW)`` in Jun-Sep, ``Winter Capacity (MW)`` in Oct-May.
+    # A blank winter takes the summer rating, a blank summer the nameplate; a
+    # non-CC row's winter never exceeds max(nameplate, summer), and a CC
+    # plant's envelope stays under the always-on max(nameplate, CAMPD p99.9)
+    # guard. The unit is carried at the envelope B = max(summer, winter) and
+    # each season's availability leg is its own rating / B, so the flat
+    # SUMMER_CLASS_DERATE (the nameplate->summer loss the rating already
+    # embeds, miso-141) is DELETED from per-plant fleets, and the five basis
+    # flags above (cc_nameplate_summer_derate's capacity rescale,
+    # summer_derate_basis_aware, cc_summer_derate_reconciled_basis,
+    # cc_winter_capability_basis, coal_nameplate_summer_derate) are superseded
+    # on the rows it covers — one construction (rule 19 [R-ONE-MECH]); each
+    # flag keeps only its outage-model half.
+    #
+    # Scope: per-plant EIA-860 fleets (plant_level_fleet). ERCOT's curated bin
+    # sheet keeps its own nameplate basis until the Q5 migration ("audit now,
+    # migrate later"). Nuclear / oil / biomass rows carry no thermal group and
+    # stay on net summer year-round (named residual in the W0 census).
+    #
+    # Zero fitted scalars: every number is an EIA-860 field of the solved
+    # year's vintage (rules 13/14/21/24). Backcast default ON, coerced off
+    # outside a backcast (F1 two-half landing); --no-seasonal-capacity-basis
+    # reaches the pre-W0 posture and its key.
+    seasonal_capacity_basis: bool = True  # W0 2026-10-02 (owner ruling R-2/Q1): backcast default; coerced off outside a backcast
+
+    # W0 E.5 — ACTUAL RETIREMENT ONLY IN A BACKCAST (owner ruling R-2,
+    # 2026-10-02; audit §E.5). A backcast unit is online through its ACTUAL
+    # ``Retirement Month / Year`` (the retired-and-canceled sheet of the first
+    # vintage listing it, carried by the retiree / mid-vintage / partial-exit
+    # channels); the operable sheet's ``Planned Retirement`` is never read.
+    # Audit §C.4: under year-matched vintages the planned field binds 0 MW in
+    # every ISO-year, so this is a guarantee, not a level move (the W0 census
+    # re-measures it per ISO-year). Forecasts keep reading planned dates (the
+    # forecast's step 0/1). Zero free parameters. Backcast default ON, coerced
+    # off outside a backcast; --no-backcast-actual-retirement-only reaches the
+    # pre-W0 posture and its key.
+    backcast_actual_retirement_only: bool = True  # W0 2026-10-02 (owner ruling R-2/Q3): backcast default; coerced off outside a backcast
 
     # COAL net-summer capacity derate (coal_nameplate_summer_derate, off by
     # default). The exact coal analogue of cc_nameplate_summer_derate above: a
@@ -22767,6 +22892,16 @@ class ScenarioConfig:
         # this, "never fires in forecast" was enforced only by the front end —
         # a YAML or sweep member could arm any of them in a forecast and the
         # overlay would silently no-op or reach for measured history.
+        # W0 (owner ruling R-2 / Q4, 2026-10-02): the three registry-read
+        # repairs that are ALSO in the overlay family default ON, so outside a
+        # backcast they are coerced to their frozen declaration HERE, before
+        # the guard reads them — the F1 "even an explicit True cannot arm them
+        # outside a backcast" semantics (the coercion below repeats it for the
+        # whole family). The guard still holds behaviourally: none of them can
+        # reach a forecast solve.
+        if self.mode != "backcast":
+            for _name in _W0_BACKCAST_DEFAULT_FIELDS:
+                setattr(self, _name, _BACKCAST_DEFAULT_FROZEN_DECLARATIONS[_name])
         _armed_overlays = [
             f"{name} ({why})"
             for name, why in _BACKCAST_ONLY_OVERLAY_FIELDS.items()
@@ -23191,6 +23326,15 @@ class ScenarioConfig:
         if self.mode != "backcast":
             for _name, _frozen in _BACKCAST_DEFAULT_FROZEN_DECLARATIONS.items():
                 setattr(self, _name, _frozen)
+        # W0 companion: the dispatched-bin denominator YIELDS to an explicitly
+        # armed alternative denominator construction (rule 19 [R-ONE-MECH]: one
+        # denominator, never two) — the recipe's own choice stands.
+        if self.unit_outage_dispatched_bin_denominator and (
+            self.unit_outage_extract_basis_share
+            or self.unit_outage_coal_extract_basis_share
+            or self.unit_outage_lp_capacity_basis
+        ):
+            self.unit_outage_dispatched_bin_denominator = False
 
         # capx D59: the NYISO locality capacity-curve gate is likewise a
         # forecast-lane mechanism — coerced to the DATACLASS DEFAULT in a plain

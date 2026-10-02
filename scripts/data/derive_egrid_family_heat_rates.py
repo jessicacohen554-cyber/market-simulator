@@ -106,7 +106,6 @@ from market_sim.data.egrid import _EGRID_FILES  # noqa: E402
 from market_sim.data.fleet.eia860 import EIA_860_PARQUET_NAME  # noqa: E402
 from market_sim.data.fleet.models import (  # noqa: E402
     EGRID_PRIME_MOVER_FAMILIES,
-    ba_codes,
     egrid_prime_mover_family,
 )
 from scripts.data.process_eia860 import EGRID_HR_WINDOW_BTU_KWH  # noqa: E402
@@ -190,13 +189,13 @@ def _sheets(vintage: int) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
 
 def iso_plant_ids(iso: str) -> dict[int, str]:
     """``{plant_id: plant_name}`` for the ISO's operable EIA-860 thermal plants."""
-    df = pd.read_parquet(
-        EIA_860_DIR / EIA_860_PARQUET_NAME,
-        columns=["plant_id", "plant_name", "balancing_authority_code", "status"],
-    )
-    # Membership over every BA the region comprises (NWPP is seventeen).
+    df = pd.read_parquet(EIA_860_DIR / EIA_860_PARQUET_NAME)
+    # Membership over every BA the region comprises (NWPP is seventeen), at
+    # load time with NWPP's NERC key (W0 E.6).
+    from market_sim.data.fleet.models import generator_footprint_mask
+
     df = df[
-        df["balancing_authority_code"].astype(str).str.strip().isin(ba_codes(iso))
+        generator_footprint_mask(iso, df)
         & (df["status"].astype(str).str.strip().str.upper() == "OP")
     ]
     return {

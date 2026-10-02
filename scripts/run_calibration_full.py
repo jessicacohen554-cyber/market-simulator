@@ -15285,6 +15285,82 @@ def main() -> None:
         "no-op for an ISO with no artifact.",
     )
     parser.add_argument(
+        "--commission-year-cod-fallback",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="ScenarioConfig.commission_year_cod_fallback (W0 EIA-860 settlement, owner ruling R-2 / "
+        "Q4 2026-10-02: BACKCAST DEFAULT ON in every ISO; coerced off outside "
+        "a backcast). --no-commission-year-cod-fallback reaches the pre-W0 posture and its key.",
+    )
+    parser.add_argument(
+        "--cc-block-summer-rating",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="ScenarioConfig.cc_block_summer_rating (W0 EIA-860 settlement, owner ruling R-2 / "
+        "Q4 2026-10-02: BACKCAST DEFAULT ON in every ISO; coerced off outside "
+        "a backcast). --no-cc-block-summer-rating reaches the pre-W0 posture and its key.",
+    )
+    parser.add_argument(
+        "--cc-steam-part-capacity",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="ScenarioConfig.cc_steam_part_capacity (W0 EIA-860 settlement, owner ruling R-2 / "
+        "Q4 2026-10-02: BACKCAST DEFAULT ON in every ISO; coerced off outside "
+        "a backcast). --no-cc-steam-part-capacity reaches the pre-W0 posture and its key.",
+    )
+    parser.add_argument(
+        "--retiree-vintage-status-scope",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="ScenarioConfig.retiree_vintage_status_scope (W0 EIA-860 settlement, owner ruling R-2 / "
+        "Q4 2026-10-02: BACKCAST DEFAULT ON in every ISO; coerced off outside "
+        "a backcast). --no-retiree-vintage-status-scope reaches the pre-W0 posture and its key.",
+    )
+    parser.add_argument(
+        "--admit-standby-units",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="ScenarioConfig.admit_standby_units (W0 EIA-860 settlement, owner ruling R-2 / "
+        "Q4 2026-10-02: BACKCAST DEFAULT ON in every ISO; coerced off outside "
+        "a backcast). --no-admit-standby-units reaches the pre-W0 posture and its key.",
+    )
+    parser.add_argument(
+        "--partial-plant-exit-carry",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="ScenarioConfig.partial_plant_exit_carry (W0 EIA-860 settlement, owner ruling R-2 / "
+        "Q4 2026-10-02: BACKCAST DEFAULT ON in every ISO; coerced off outside "
+        "a backcast). --no-partial-plant-exit-carry reaches the pre-W0 posture and its key.",
+    )
+    parser.add_argument(
+        "--mid-vintage-exit-carry",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="ScenarioConfig.mid_vintage_exit_carry (W0 EIA-860 settlement, owner ruling R-2 / "
+        "Q4 2026-10-02: BACKCAST DEFAULT ON in every ISO; coerced off outside "
+        "a backcast). --no-mid-vintage-exit-carry reaches the pre-W0 posture and its key.",
+    )
+    parser.add_argument(
+        "--backcast-actual-retirement-only",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="ScenarioConfig.backcast_actual_retirement_only (W0 E.5, owner "
+        "ruling R-2 2026-10-02: BACKCAST DEFAULT ON): the operable sheet's "
+        "Planned Retirement is never read in a backcast; units leave only at "
+        "an actual EIA-860 retirement. --no-backcast-actual-retirement-only "
+        "reaches the pre-W0 posture and its key.",
+    )
+    parser.add_argument(
+        "--seasonal-capacity-basis",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="ScenarioConfig.seasonal_capacity_basis (W0 E.1, owner ruling R-2 / "
+        "Q1 2026-10-02: BACKCAST DEFAULT ON for per-plant fleets): each thermal "
+        "unit carried at its published EIA-860 seasonal envelope, summer rating "
+        "Jun-Sep and winter rating Oct-May; the flat class derate is deleted. "
+        "--no-seasonal-capacity-basis reaches the pre-W0 posture and its key.",
+    )
+    parser.add_argument(
         "--eia860-vintage-tracks-solve-year",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -15797,6 +15873,19 @@ def main() -> None:
             "eia860_vintage_tracks_solve_year": args.eia860_vintage_tracks_solve_year,
             "measured_cc_heat_rates": args.measured_cc_heat_rates,
             "measured_chp_heat_rates": args.measured_chp_heat_rates,
+            # W0 (owner ruling R-2 / Q4, 2026-10-02): the registry-read
+            # correctness repairs, backcast default ON everywhere, ride the same
+            # bag. None leaves the ScenarioConfig default untouched; --no-...
+            # reaches the pre-W0 posture and its key.
+            "commission_year_cod_fallback": args.commission_year_cod_fallback,
+            "cc_block_summer_rating": args.cc_block_summer_rating,
+            "cc_steam_part_capacity": args.cc_steam_part_capacity,
+            "retiree_vintage_status_scope": args.retiree_vintage_status_scope,
+            "admit_standby_units": args.admit_standby_units,
+            "partial_plant_exit_carry": args.partial_plant_exit_carry,
+            "mid_vintage_exit_carry": args.mid_vintage_exit_carry,
+            "seasonal_capacity_basis": args.seasonal_capacity_basis,
+            "backcast_actual_retirement_only": args.backcast_actual_retirement_only,
             # miso-280: the split-remap companion gate rides the same generic
             # channel (None keeps the config/recipe value untouched).
             "campd_split_remap_companions": args.campd_split_remap_companions,
