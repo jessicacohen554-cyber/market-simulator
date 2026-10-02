@@ -7031,3 +7031,14 @@ C3a vs RT by year:
 - `scripts/stamp_config_partition.py`: an inert rule-26-deleted field recorded by an older leg is not a per-year overlay.
 
 Preflight 0d also needs the gitignored PJM DataMiner2 virtual-bid parquets (`pjm_da_virtual_bids` is on), fetched locally with `scripts/data/fetch_pjm_da_virtuals.py`.
+
+## PJM close-out — 2026-10-02 — Winter Storm Elliott closed as a DATA-LIMITED residual (zero LP)
+
+- **Owner ruling:** "It counts but we should be able to simulate it?" → two ex-ante phase-0 attempts → owner card **"Accept as data-limited"** (relayed by the close-out desk).
+- **v1** (temperature-only `correlated_forced_outage` with a backcast residual form) failed E0c (no season gate) and E0d (0.64 / 0.35 of the published 24 / 25 Dec rise). Elliott was not certified (0.985 × the annual p99).
+- **v2** (Dec–Feb gate, winter certificate, warm-day-referenced CAMPD instrument, gas leg on the Transco Z6 NY − HH daily basis) failed E1b (leave-Elliott-out −38.8 %) and E1d (0.20 / 0.14).
+- **Ledger row:** C3a / C3b / C3c 2022 — Winter Storm Elliott. About 20 GW of published forced outage on 23–26 Dec 2022 does not enter the LP. **DATA-LIMITED.**
+  - Reason: CAMPD measures output, not forced unavailability.
+  - Reason: no free daily PJM-zone gas series exists.
+  - **Re-open** on GADS-grade per-unit outage data, or on a daily Transco Z5 / TETCO M3 series.
+- **Records:** `docs/records/pjm/PRECOMMIT-pjm-closeout-elliott-cold-outage{,-v2}-2026-10-02.md`, `RESULT-pjm-closeout-elliott-phase0{,-v2}-2026-10-02.md`.
