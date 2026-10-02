@@ -69,7 +69,7 @@ Plus **E.6** (BA membership at load time, never at derive time — SPP-40, SOCO 
 | 4 | G-DRIFT classification per ISO (rule 29): every hunk LIVE → one full-span re-solve per ISO, promoted on structure (rule 1) with the census in the bundle; NEISO regression tripwire (C3a > 2 pp) armed first | 9 × 7 shards |
 | 5 | Freeze (E.9): the next re-derive is the Sept-2027 Final release | 0 |
 
-Side observation for the NWPP lane: EIA-930 NWPP peak demand reads 68.6/68.7 GW in 2019–20 then ~49–51 GW in 2021–25 — a series discontinuity in the pool's demand input that no record explains.
+Side observation for the NWPP lane, **resolved 2026-10-02 (closeout-NWPP, PR #7028)**: the 68.6/68.7 GW 2019–20 EIA-930 NWPP peak is an AVA raw-`Demand` artifact that is never on the solve path; the Adjusted-demand peaks are 46.5/43.3/49.7/49.4/49.3/52.6/51.0 GW (2019–2025), so there is no discontinuity in the pool's demand input.
 
 
 ---
