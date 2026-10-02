@@ -112,3 +112,27 @@ def test_reducer_reproduces_the_derive_on_real_ladders(tmp_path: Path):
     # the 514544 ladder at hour 15 PT: body (35 % of 140 = 49 MW) prices 18.59
     r = hourly[hourly.resource_seq == 514544]
     assert r.p_body.iloc[0] == 18.59
+
+
+def test_gas_staircase_is_the_delivered_series():
+    """R-CAISO-33: the derive's denominator carries the SAME transport adder the solve adds.
+
+    A multiplier is dimensionless only against its own denominator (caiso-242
+    §3.1); the keeper prices gas units at composite + CAISO_CITYGATE_TRANSPORT_ADDER,
+    so the staircase must sit exactly that far above the bare flow-dated composite.
+    """
+    from market_sim.config.constants import CAISO_CITYGATE_TRANSPORT_ADDER
+    from scripts.data import derive_caiso_offer_surface as D
+
+    raw = pd.read_csv(D.CITYGATE_DAILY, parse_dates=["date"]).sort_values("date")
+    s = D._gas_staircase()
+    # a trade-day print keyed to T prices flow day T+1
+    t = raw.iloc[len(raw) // 2]
+    flow = t["date"] + pd.Timedelta(days=1)
+    assert s[flow] == pytest.approx(
+        float(t["ca_composite_usd_mmbtu"]) + CAISO_CITYGATE_TRANSPORT_ADDER
+    )
+    assert CAISO_CITYGATE_TRANSPORT_ADDER > 0
+    assert (
+        s - CAISO_CITYGATE_TRANSPORT_ADDER
+    ).min() >= raw.ca_composite_usd_mmbtu.min() - 1e-9

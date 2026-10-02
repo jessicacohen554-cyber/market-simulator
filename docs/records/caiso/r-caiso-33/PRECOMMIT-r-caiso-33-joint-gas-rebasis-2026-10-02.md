@@ -171,3 +171,10 @@ keep 0.46 and the keeper as is).
 ## Retrievability (rule 34(e))
 
 Nothing was solved. The probe re-reads committed files only.
+
+## 8. Owner ruling
+
+Decision card, 2026-10-02: **"Keep 0.46, repair denominator, solve"** (option 1, §4.1). Not selected: the
+census re-basis (§4.2), freeze-and-queue, close. Execution follows §5 in this session: stage 1 (re-fetch the
+DAM 2023–25 bids, rebuild the reduced store, re-derive on composite + 0.46, G-RT), then seven solve shards.
+The ruling is in force for the chain; the adder's identification is re-stated on the constant (§4.1).
