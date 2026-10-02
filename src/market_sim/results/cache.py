@@ -76,6 +76,22 @@ human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-10-02 (b) — closeout NYISO anchor re-derive: NYISO's
+``GAS_OFFER_MARGIN_ANCHOR_BY_ISO`` / ``GAS_OFFER_MARGIN_ANCHOR_BY_ZONE`` rows
+re-derived. KEY-MOVING for NYISO only; not a same-key invalidation.** Rule 23
+re-derive on a source-data update: c0a9d5ba (#6155, 2026-09-14) recomputed the
+NYISO rows of ``data/raw/gas_basis_by_iso_month.csv`` from the repaired Transco
+Z6 dailies, and the frozen anchors were never re-run on it. Re-run of
+``scripts/data/derive_gas_offer_margin_anchor.py --iso NYISO --by-zone``
+moves every zone by the same -0.0307 $/MMBtu: ISO / reference zones 3.9046 ->
+3.8739, NYC 2.7612 -> 2.7306, Upstate_West 2.0346 -> 2.0039. Both rows stay at
+their frozen declarations, so they enter NYISO's key (capx D79). WHAT IS
+INVALIDATED: NYISO configs that arm ``gas_offer_net_revenue_margin`` (the only
+reader of either table, with the zonal anchor flags on top). WHAT IS NOT: every
+NYISO config with the margin off, including the keeper ``w0_nyiso_span``. Its
+key moves but its solve does not, because the anchor is never read. Every other
+ISO's rows are byte-identical.
+
 **Epoch 2026-10-02 — closeout PJM renewables fix: ``fleet_zone_vintage_coords``
 now also admits wind/solar. A SAME-KEY INVALIDATION for configs that ARM that
 flag, which in practice is PJM only.** Record:

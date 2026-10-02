@@ -15,14 +15,17 @@ import unittest
 import numpy as np
 import pandas as pd
 
-from market_sim.config.constants import GAS_OFFER_MARGIN_ANCHOR_BY_ZONE
+from market_sim.config.constants import (
+    GAS_OFFER_MARGIN_ANCHOR_BY_ISO,
+    GAS_OFFER_MARGIN_ANCHOR_BY_ZONE,
+)
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import bins_to_fleet
 from market_sim.data.offer_curves import apply_gas_offer_margin
 
 ZONE_NAMES = get_iso_config("NYISO").zone_names
-ISO_ANCHOR = 3.9046
+ISO_ANCHOR = GAS_OFFER_MARGIN_ANCHOR_BY_ISO["NYISO"]
 CT_HR = 10.6
 
 CT_BANDS = {
