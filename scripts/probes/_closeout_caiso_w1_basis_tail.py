@@ -74,13 +74,23 @@ def census_tail(year: int = 2021) -> dict:
         "tail_by_argmax_zone": {
             str(k): int(v) for k, v in price.idxmax(axis=1)[tail].value_counts().items()
         },
-        "tail_in_caiso_zones": int((price[list(IN_CAISO)].max(axis=1) > THRESHOLD).sum()),
-        "tail_sdge_only": int(((price["SDGE"] > THRESHOLD) & (others <= THRESHOLD)).sum()),
+        "tail_in_caiso_zones": int(
+            (price[list(IN_CAISO)].max(axis=1) > THRESHOLD).sum()
+        ),
+        "tail_sdge_only": int(
+            ((price["SDGE"] > THRESHOLD) & (others <= THRESHOLD)).sum()
+        ),
         "tail_with_slack": int((_wide(sy, "slack").sum(axis=1)[tail] > 0).sum()),
-        "tail_price_min_max": [round(float(t.price.min()), 1), round(float(t.price.max()), 1)],
+        "tail_price_min_max": [
+            round(float(t.price.min()), 1),
+            round(float(t.price.max()), 1),
+        ],
         "actual_rt_tail_by_month": {
             int(k): int(v)
-            for k, v in pd.Series(ts[(rt > THRESHOLD).to_numpy()].month).value_counts().sort_index().items()
+            for k, v in pd.Series(ts[(rt > THRESHOLD).to_numpy()].month)
+            .value_counts()
+            .sort_index()
+            .items()
         },
     }
 
@@ -144,7 +154,9 @@ def size_basis(bundle: Path, year: int, months: list[int]) -> dict:
     w = dem[inz]
     ws = w.sum(axis=0)
     lw = (dl[inz] * w).sum(axis=0) / ws
-    mon = (pd.Timestamp(f"{year}-01-01") + pd.to_timedelta(np.arange(n_t), "h")).month.to_numpy()
+    mon = (
+        pd.Timestamp(f"{year}-01-01") + pd.to_timedelta(np.arange(n_t), "h")
+    ).month.to_numpy()
     gated = np.isin(mon, months)
     bench = json.loads(BENCH.read_text())["CAISO"][str(year)]["rt_lw"]
     d_gated = float((lw * ws)[gated].sum() / ws[gated].sum())
@@ -162,8 +174,13 @@ def size_basis(bundle: Path, year: int, months: list[int]) -> dict:
             {
                 "month": m,
                 "gated": m in months,
-                "dlambda_lw": round(float((lw * ws)[mon == m].sum() / ws[mon == m].sum()), 2),
-                **{f"d_{zones[i]}": round(float(dl[i, mon == m].mean()), 2) for i in inz},
+                "dlambda_lw": round(
+                    float((lw * ws)[mon == m].sum() / ws[mon == m].sum()), 2
+                ),
+                **{
+                    f"d_{zones[i]}": round(float(dl[i, mon == m].mean()), 2)
+                    for i in inz
+                },
             }
             for m in range(1, 13)
         ],
@@ -183,7 +200,9 @@ def main() -> None:
     if args.cmd == "tail":
         out = census_tail()
     else:
-        out = size_basis(args.bundle, args.year, [int(m) for m in args.months.split(",")])
+        out = size_basis(
+            args.bundle, args.year, [int(m) for m in args.months.split(",")]
+        )
     print(json.dumps(out, indent=1))
 
 
