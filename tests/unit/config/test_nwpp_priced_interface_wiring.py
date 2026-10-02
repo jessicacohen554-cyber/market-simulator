@@ -18,6 +18,8 @@ from market_sim.config.interchange_config import (
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.neighbor_price import SEAM_FLOW_TRANCHES
+from scripts.data.fetch_nwpp_bcha_elap import OUT_PATH as BCHA_ELAP_PATH
+from tests.helpers.base import requires_raw
 
 
 def _seam(name: str, limit: float, zones: tuple[str, ...]) -> NeighborInterface:
@@ -113,6 +115,7 @@ def test_caiso_seam_troughs_with_the_ciso_solar_glut(monkeypatch):
     assert shape[noon].max() < shape[~noon].min()
 
 
+@requires_raw(BCHA_ELAP_PATH)
 def test_wecc_can_anchor_is_bc_hydros_all_hours_elap_price():
     """NWPP-NEXT-20: the WECC_CAN heat rates re-derive from the committed BCHA
     ELAP store (all hours, Canada's side of the seam), not the peak-only Mid-C
