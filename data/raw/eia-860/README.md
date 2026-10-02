@@ -5,8 +5,9 @@ EIA Form 860 annual fleet-registry release, several vintages:
 - Top level: `eia860_*.parquet` (generators, plant, owner, utility,
   energy-storage {operable,proposed,retired_and_canceled},
   multifuel {operable,proposed,retired}, solar/wind {operable,retired},
-  environmental association/equipment schedules) — the current (2025 Early
-  Release) snapshot.
+  environmental association/equipment schedules) — the current snapshot:
+  **the Final 2025 release since 2026-10-02** (owner ruling "replace the early
+  release snapshot"; previously the 2025 Early Release).
 - `vintage_2018/`, `vintage_2019/`, `vintage_2020/`, `vintage_2021/`,
   `vintage_2022/`, `vintage_2023/`, `vintage_2024/`, `vintage_2025/` — the same schema at an
   earlier EIA-860 release vintage, used for forecast-validation hindcasts
@@ -15,8 +16,8 @@ EIA Form 860 annual fleet-registry release, several vintages:
   register intake, `docs/data-register-2026-07.md`) to close the pre-2020
   vintage gap; `vintage_2025/` is the Final 2025 release (added 2026-10-02, see below).
 
-**Source:** EIA Form 860 (`eia8602024.zip`, `eia860<year>.zip` archive
-releases), public domain — see `docs/data-licensing.md` §1.
+**Source:** EIA Form 860 (`eia8602025.zip` Final for the top level and `vintage_2025/`; `eia860<year>.zip` archive
+releases for the other vintages), public domain — see `docs/data-licensing.md` §1.
 
 **Regeneration:**
 - `python scripts/process_eia860.py --zip data/raw/eia-860/eia8602024.zip --out-dir data/raw/eia-860`
@@ -92,13 +93,33 @@ Lane `claude/backcast-calibration-plan-753xwl` (closeout W0, owner instruction
   OP census Final vs ER: ERCOT +0.08 GW, CAISO +0.09, PJM −0.77, MISO +0.08, NYISO +0.01,
   NEISO +0.11, SPP −0.09, NWPP −0.02, SOCO −0.08 (nameplate). Retired sheet rows with
   Retirement Year 2023/2024/2025: 329 / 278 / 206.
-- The top level is STILL the 2025 Early Release (serves forecasts and any backcast year
-  without a vintage directory). Replacing it with the Final re-keys every forecast run —
-  owner ruling Q3 of `docs/records/governance/closeout-2026-10/AUDIT-eia860-capacity-vintage-settlement-2026-10-02.md`.
+- **The top level is the Final 2025 release too (owner ruling 2026-10-02, audit Q3).**
+  Every top-level parquet was re-derived from `eia8602025.zip` with
+  `process_eia860.py --zip … --out-dir data/raw/eia-860` (the within-window retiree
+  parquet was left as extended above). Measured against the Early-Release tables it
+  replaced, `eia860_generators.parquet`: 22,443 → 22,581 rows; 18 ER rows absent from
+  the Final (822 MW — Astoria 8906 gen 4 387 MW `OS`, Beaver Creek 65019 ×3, International
+  Paper Savanna 50398, US Magnesium 58191, Fall River Solar 64968 …), 156 Final rows absent
+  from the ER (570 MW, PJM 251 / CISO 110 / ISNE 106 / MISO 74); among shared rows 13
+  nameplate, 12 net-summer, 23 planned-retirement-year, 8 status and 16 energy-source
+  revisions; no balancing-authority or prime-mover change. All EIA revisions — no
+  hand-admitted row existed on the canonical table to lose. Consequence: every forecast
+  run and every backcast year without a `vintage_<Y>/` directory now reads the Final;
+  cache keys move through the solve-surface fingerprint. Not regenerated here (they read
+  the zip series, not this snapshot): `_processed-legacy/eia860_chp_by_year.parquet`
+  (still carries the ER as its 2025 member) and `_validation-source/capacity_actuals_*`
+  (forecast scoring; `build_capacity_actuals.py` walks every vintage plus the current
+  release and will pick the Final up on its next run).
 - `eia860_generator_retired_within_window.parquet` was EXTENDED (`--retired-only
-  --retired-window-from vintage_2023 vintage_2024 vintage_2025 --retired-extend`):
-  1,187 → 1,332 rows; +145 units / 814 MW (retirement years 2020–2025, mostly 2024–25;
-  ISNE 212 MW, SWPP 212, MISO 81, SOCO 79, PJM 78); every pre-existing row byte-stable.
+  --retired-window-from vintage_2023 vintage_2024 vintage_2025 --retired-extend
+  --retired-until-year 2023`): 1,187 → 1,221 rows; +34 units / 167 MW, all with
+  retirement years 2020–2022 (SOCO 59 MW, MISO 49, SWPP 26, ERCO 12); every pre-existing
+  row byte-stable. The 2023–2025 retirements the new sheets also carry (113 units) were
+  deliberately NOT added: `tests/unit/data/test_retiree_window_extension.py` pins the
+  ≥ 2023 subset of this artifact (adding rows there would re-key every keeper's
+  canonical-path fleet), and the 2023–2025 retiree gap stays the separately routed item
+  of `docs/FINDING-xiso-fuelvintage-retiree-window-2026-09-09.md` §2 — which the
+  year-matched vintages now cover for backcasts anyway (each vintage's own retired sheet).
 - EIA-860M (monthly) now lives beside this store at `data/raw/eia-860m/` (forecast-only layer).
 
 **Vintage snapshot completeness (history).** `vintage_2018`-`vintage_2022` carry the
