@@ -59,3 +59,11 @@ plants, so it is byte-inert on every ERCOT year that has receipts.
   lever outside the two the desk has chartered elsewhere (handoff Task 2: "do not
   invent a lever").
 - No promotion: the keeper stays `2026-10-02-r-24-ordc-published`.
+
+## 4. Owner ruling (decision card, 2026-10-02)
+
+Answer, verbatim: **"Cede to desk (Recommended)"**. This PR merges the triage (this
+FINDING + two ERCOT matrix cells). There is no arm and no promotion, and the R-ERCOT
+chain ends here with no R-ERCOT-26 handoff. The `closeout-ERCOT` lane carries L1/L2
+after W0 merges. The 2019/20 route still needs the owner to re-open the ERCOT account
+(R-7), and the 2023 rubric work stays with `closeout-C` (R-6).
