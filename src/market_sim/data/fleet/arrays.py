@@ -233,12 +233,39 @@ def _mmu_fossil(gen: "Generator") -> bool:
     return gen.fuel_type in _MMU_FOSSIL_FUELS or is_coal_class(gen.plant_group)
 
 
+def _spp_mmu_repair_armed(config: "ScenarioConfig | None", iso: str | None) -> bool:
+    """True when the SPP-107 repair sub-gate (spp_mmu_offer_repair) is armed too."""
+    return _spp_mmu_armed(config, iso) and bool(
+        getattr(config, "spp_mmu_offer_repair", False)
+    )
+
+
+def _spp_mmu_cut(
+    generators: list["Generator"], pmax: np.ndarray, hours: int, year: int
+) -> tuple[np.ndarray, np.ndarray, "object"]:
+    """Fossil row indices, the hourly total band share, and the MMU shares for ``year``.
+
+    The total share is "above emergency max" + "economic to emergency max" all
+    year, plus the ambient MW-days on Jun-Sep as a share of fossil pmax.
+    """
+    from market_sim.data.spp_mmu_unavailability import mmu_shares
+
+    idx = np.array([i for i, g in enumerate(generators) if _mmu_fossil(g)], dtype=int)
+    sh = mmu_shares(year)
+    fos_mw = float(np.asarray(pmax, dtype=float)[idx].sum()) if idx.size else 0.0
+    amb = sh.ambient_mw / fos_mw if fos_mw > 0.0 else 0.0
+    cut = np.full(hours, sh.above_emer + sh.eco_to_emer)
+    cut[np.isin(_hour_to_month_index(hours), (5, 6, 7, 8))] += amb  # Jun-Sep
+    return idx, cut, sh
+
+
 def _apply_spp_mmu_bands(
     generators: list["Generator"],
     availability: np.ndarray,
     pmax: np.ndarray,
     hours: int,
     year: int,
+    multiplicative: bool = False,
 ) -> None:
     """Remove the SPP MMU offer-side bands from every fossil row, in place (SPP-106).
 
@@ -248,33 +275,99 @@ def _apply_spp_mmu_bands(
     share of fossil pmax. Clipped at 0, so a row on full outage stays at 0.
     The caller runs it after the outage overlays and before the COD ramp. The
     flat derates it replaces are skipped in ``_availability_matrix`` (rule 19).
-    """
-    from market_sim.data.spp_mmu_unavailability import mmu_shares
 
-    idx = np.array([i for i, g in enumerate(generators) if _mmu_fossil(g)], dtype=int)
+    ``multiplicative`` (ScenarioConfig.spp_mmu_offer_repair, SPP-107 repair 1):
+    the bands are shares of the row's post-outage AVAILABLE MW, ``a x (1 -
+    share)``, as the MMU measures them (report s3.1.2), not of rated pmax. The
+    economic-to-emergency slice this removes is returned to the LP as the
+    zonal scarcity pool (:func:`_apply_spp_mmu_pool`).
+    """
+    idx, cut, sh = _spp_mmu_cut(generators, pmax, hours, year)
     if not idx.size:
         return
-    sh = mmu_shares(year)
-    fos_mw = float(np.asarray(pmax, dtype=float)[idx].sum())
-    amb = sh.ambient_mw / fos_mw if fos_mw > 0.0 else 0.0
-    cut = np.full(hours, sh.above_emer + sh.eco_to_emer)
-    cut[np.isin(_hour_to_month_index(hours), (5, 6, 7, 8))] += amb  # Jun-Sep
-    availability[idx, :hours] = np.maximum(
-        0.0, availability[idx, :hours] - cut[None, :]
-    )
+    if multiplicative:
+        availability[idx, :hours] = availability[idx, :hours] * np.maximum(
+            0.0, 1.0 - cut[None, :]
+        )
+    else:
+        availability[idx, :hours] = np.maximum(
+            0.0, availability[idx, :hours] - cut[None, :]
+        )
     logger.info(
-        "SPP MMU offer-side bands (SPP %d, MMU year %d): %d fossil rows; flat "
+        "SPP MMU offer-side bands (SPP %d, MMU year %d, %s): %d fossil rows; flat "
         "perf + summer class derate replaced; above-emer %.4f + eco-to-emer "
-        "%.4f all year, ambient %.4f Jun-Sep (%.0f MW of %.0f MW fossil pmax)",
+        "%.4f all year, ambient %.4f Jun-Sep (%.0f MW)",
         year,
         sh.year_used,
+        "x available (SPP-107)" if multiplicative else "x rated",
         idx.size,
         sh.above_emer,
         sh.eco_to_emer,
-        amb,
+        float(cut.max() - cut.min()),
         sh.ambient_mw,
-        fos_mw,
     )
+
+
+def _apply_spp_mmu_pool(
+    generators: list["Generator"],
+    availability: np.ndarray,
+    pmax: np.ndarray,
+    hours: int,
+    year: int,
+) -> None:
+    """Stamp the SPP-107 economic-to-emergency pool rows' availability, in place.
+
+    ScenarioConfig.spp_mmu_offer_repair (repair 2). Each ``emergency_band`` row
+    (one per zone, :func:`market_sim.data.spp_mmu_unavailability.build_spp_mmu_pool_generators`)
+    carries, hour by hour, exactly the MW the multiplicative bands took off its
+    zone's fossil rows as the economic-to-emergency slice: ``eco x a_pre x
+    pmax`` per row, recovered from the FINAL availability as ``a x pmax x eco /
+    (1 - total share)`` so every later mask (COD ramp, BA join / exit, plant
+    entry / exit) is carried. The units' economic max plus the pool is their
+    emergency max. Runs last in ``generators_to_fleet_arrays``.
+    """
+    pool = np.array(
+        [i for i, g in enumerate(generators) if g.fuel_type == "emergency_band"],
+        dtype=int,
+    )
+    if not pool.size:
+        return
+    idx, cut, sh = _spp_mmu_cut(generators, pmax, hours, year)
+    pm = np.asarray(pmax, dtype=float)
+    keep = np.maximum(1.0 - cut, 1e-12)
+    zones = np.array([generators[i].zone for i in idx])
+    clipped = 0.0
+    for p in pool:
+        rows = idx[zones == generators[p].zone]
+        mw = (
+            (availability[rows, :hours] * pm[rows, None]).sum(axis=0)
+            * sh.eco_to_emer
+            / keep
+            if rows.size
+            else np.zeros(hours)
+        )
+        cap = float(pm[p])
+        frac = mw / cap if cap > 0.0 else np.zeros(hours)
+        clipped += float(np.maximum(0.0, mw - cap).sum())
+        availability[p, :hours] = np.clip(frac, 0.0, 1.0)
+        logger.info(
+            "SPP MMU emergency pool (SPP %d, %s): eco-to-emer %.4f of %d fossil "
+            "rows, %.0f-%.0f MW (mean %.0f), offered at the shed price - eps",
+            year,
+            generators[p].zone,
+            sh.eco_to_emer,
+            rows.size,
+            float(mw.min()),
+            float(mw.max()),
+            float(mw.mean()),
+        )
+    if clipped > 0.0:
+        logger.warning(
+            "SPP MMU emergency pool (SPP %d): %.0f MWh above the pool rows' pmax "
+            "clipped",
+            year,
+            clipped,
+        )
 
 
 # Per-plant coal sustained-output ceilings now live in
@@ -4541,7 +4634,14 @@ def generators_to_fleet_arrays(
     )
 
     if _spp_mmu_armed(config, _iso) and _yr is not None:
-        _apply_spp_mmu_bands(generators, availability, pmax, hours, int(_yr))
+        _apply_spp_mmu_bands(
+            generators,
+            availability,
+            pmax,
+            hours,
+            int(_yr),
+            multiplicative=_spp_mmu_repair_armed(config, _iso),
+        )
 
     if _crow_rate is not None and _crow_idx.size:
         from market_sim.data.spp_gas_outage import (
@@ -5004,6 +5104,12 @@ def generators_to_fleet_arrays(
                     float(pmax[first_in > 0].sum()),
                     int(min(first_in[first_in > 0].min(), hours)),
                 )
+
+    # SPP-107 (ScenarioConfig.spp_mmu_offer_repair): the economic-to-emergency
+    # pool rows take, hour by hour, the slice the multiplicative bands removed
+    # from their zone's fossil rows -- after every availability mask above.
+    if _spp_mmu_repair_armed(config, _iso) and _yr is not None:
+        _apply_spp_mmu_pool(generators, availability, pmax, hours, int(_yr))
 
     # Measured ramp/fast-start capability (GATED config.measured_ramp_capability,
     # default off): reconcile the class 10-minute fractions against the
