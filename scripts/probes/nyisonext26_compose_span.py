@@ -36,7 +36,7 @@ from scripts.probes.rnyiso_compose_span import _offer_block  # noqa: E402
 
 sys.path.insert(0, str(_REPO / "src"))
 
-PIN = "SET_AT_MERGE"
+PIN = "4213945ed8b3cfb7fd2256b08a3fca7de9518f3d"
 CAL = _REPO / "results" / "calibration"
 DELTAS: dict = {
     "A": {"nyiso_li_tsl_all_hours": (False, True)},

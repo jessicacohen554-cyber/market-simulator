@@ -6949,3 +6949,19 @@ over-run partly an exit-cohort outage-layer construction defect (~8.3 TWh phanto
 - **Card 2 (persistent under-run):** Doswell GT7–9, Tait, West Lorain, Louisa run when actual DA is about half their modeled offer; only 0.43–0.71 of real CT energy is produced where DA or RT clears the modeled offer. Real CT dispatch is much flatter across plant cost than the LP's merit order: the CT form of NEXT-22's coal finding. Data note: Tait's CAMPD record is split across facility IDs 2847/55248, so its measured HR (13.1) covers GT1–3 only (EIA-923 12.5–12.7); ~$1–2/MWh, not the object.
 - Cards 3–4 not reached. **OPEN, not limits.**
 - **Record:** `docs/records/pjm/RESULT-pjm-next-23-2026-10-01.md`.
+
+## PJM-NEXT-24 — 2026-10-02 — coal and CT are two objects: coal within-plant (2019–21), CT across-plant (zero LP)
+
+- **Solves and keeper:** zero LP, zero shards. Keeper unchanged (`2026-09-30-pjm-next16-ovec`); 10 failing cells, NOT-YET.
+- **Card 1:** on one axis (actual RT/DA − keeper offer), real coal and CT loading respond flatly and near year-invariantly. Coal's excess is in-money (+12 to +17 TWh at margin ≥ 0 in 2019–21). CT's deficit is deep out-of-money (−3 to −8 TWh every year).
+- **Card 1b (refutes "one object"):**
+  - Coal's keeper response is steeper **within plants**: contrast 0.56–0.69 vs real 0.19–0.30 in 2019–21, the COAL_BIT fail years; 1.2–1.7× real in 2022–25.
+  - CT's keeper response is steeper **across plants**: ordering 2–3.5× real in every year; within-plant ≈ real.
+- **Card 2:**
+  - Real CTs start about twice as often (5,000–9,000 vs 2,100–3,800 blocks). Their run blocks are no longer than the keeper's, so min-run is not the object.
+  - About half the energy in cleared blocks falls in out-of-money shoulder hours (5.2–8.4 TWh; the gap is widest in 2021).
+  - Whole deep-out-of-money blocks are 1.2–2.6 TWh.
+  - BOR / reliability commitments not measured: no data on disk.
+- **Card 3:** Tait (55248 → 2847) is the only bench-relevant CAMPD/EIA-923 split (0.66–0.95 TWh/yr gross). A one-entry PJM remap would fix it; C1 is unaffected.
+- Card 4 not reached. **OPEN, not limits.**
+- **Record:** `docs/records/pjm/RESULT-pjm-next-24-2026-10-02.md`.

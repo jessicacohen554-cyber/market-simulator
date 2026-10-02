@@ -240,7 +240,7 @@ class TestBuildDefaultStorage(unittest.TestCase):
         # this row is a source-data change, and this is what detects one).
         self.assertEqual(
             STORAGE_BASE_FLEET_MW["CAISO"],
-            {"low": 11_590.0, "mid": 15_450.0, "high": 19_260.0},
+            {"low": 11_640.0, "mid": 15_520.0, "high": 19_400.0},
         )
 
         plant = pd.read_parquet(RAW_DIR / "eia-860" / "eia860_plant.parquet")

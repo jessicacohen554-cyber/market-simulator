@@ -33,6 +33,27 @@ All of the above are **derived from other committed raw sources**
 (EIA-860/923, CAMPD, model config), not independent upstream downloads —
 regenerate by re-running the listed script, not by re-fetching from an
 external source. `eia923_monthly_fuel_costs.parquet` /
+**2026-10-02 — 2025 rows refreshed from the EIA-923 FINAL 2025 release.** Both
+`eia923_monthly_fuel_costs.parquet` and `eia923_monthly_generation.parquet` had their
+2025 rows replaced (`scripts/data/process_f923_fuel_costs.py --merge-years 2025
+--include-generation`) from `f923_2025.zip` as published on
+`https://www.eia.gov/electricity/data/eia923/xls/` (EIA: "September 14, 2026; Final
+release 2025 data"; sha256
+`1bff7092a86f6678c069c986829da5a23104048fc1aafb65b0776e3c904284de`, the same bytes
+already recorded in `data/raw/eia-923-generation-fuel/SHA256SUMS.txt`). Generation 2025:
+7,653 → 18,889 rows (the earlier rows were the February-2026 early file); fuel costs
+2025: 8,140 rows refreshed; every other year byte-stable. Two consequences, neither
+executed here: (1) the F923 delivered-fuel overlay for 2025 backcasts changed, so every
+2025 keeper leg is G-DRIFT LIVE against HEAD; (2) the committed benchmark parts
+`frontend/data/backcast/bench/<ISO>/2025.json.gz` and `completeness/eia923_2025.json`
+still carry the early-vintage actuals — re-benching 2025 is the owner-visible operation
+the `--merge-years` help names (nyiso-148 instability), to be done by a lane that restores
+each keeper's shared inputs and regenerates the 2025 parts for every ISO in one pass.
+`scripts/audit_eia923_completeness.py --year 2025` on the refreshed parquet reads 22
+gate-eligible (ISO, class) pairs (NWPP gas+coal complete; SOCO gas incomplete on ST_CHP
+1/26 plants); that JSON was NOT committed so the scorer never reads "complete" against
+stale parts.
+
 `eia923_monthly_generation.parquet` now span 2018–2026 (2018–2021 landed
 2026-07-08, data-register intake, `docs/data-register-2026-07.md`); see
 `data/raw/campd-unit-level/README.md` for the resulting still-open

@@ -1,0 +1,2059 @@
+{
+ "what": "PJM-NEXT-24 card 3: CAMPD vs EIA-923 plant-ID splits. ZERO LP.",
+ "2019": {
+  "campd_facilities": 466,
+  "orphans": [
+   {
+    "facility": 2709,
+    "name": "H F Lee Steam Electric Plant",
+    "state": "NC",
+    "units": [
+     "01A",
+     "01B",
+     "01C",
+     "10",
+     "11",
+     "12",
+     "13",
+     "14"
+    ],
+    "gross_gwh": 6914.6,
+    "host_candidates": [
+     58215
+    ],
+    "host_in_bench": []
+   },
+   {
+    "facility": 2713,
+    "name": "L V Sutton",
+    "state": "NC",
+    "units": [
+     "01A",
+     "01B",
+     "4",
+     "5"
+    ],
+    "gross_gwh": 4707.5,
+    "host_candidates": [
+     58697
+    ],
+    "host_in_bench": []
+   },
+   {
+    "facility": 7258,
+    "name": "48th Street Peaking Station",
+    "state": "MI",
+    "units": [
+     "**7",
+     "**8",
+     "9"
+    ],
+    "gross_gwh": 22.3,
+    "host_candidates": [],
+    "host_in_bench": []
+   },
+   {
+    "facility": 10525,
+    "name": "Craven County Wood Energy",
+    "state": "NC",
+    "units": [
+     "ES5A"
+    ],
+    "gross_gwh": 359.0,
+    "host_candidates": [],
+    "host_in_bench": []
+   },
+   {
+    "facility": 54415,
+    "name": "Cadillac Renewable Energy",
+    "state": "MI",
+    "units": [
+     "EUBLR"
+    ],
+    "gross_gwh": 95.5,
+    "host_candidates": [],
+    "host_in_bench": []
+   },
+   {
+    "facility": 54751,
+    "name": "Genesee Power Station",
+    "state": "MI",
+    "units": [
+     "01"
+    ],
+    "gross_gwh": 97.2,
+    "host_candidates": [],
+    "host_in_bench": []
+   },
+   {
+    "facility": 55248,
+    "name": "Tait Electric Generating Station",
+    "state": "OH",
+    "units": [
+     "CT4",
+     "CT5",
+     "CT6",
+     "CT7"
+    ],
+    "gross_gwh": 664.0,
+    "host_candidates": [
+     2847
+    ],
+    "host_in_bench": [
+     2847
+    ]
+   },
+   {
+    "facility": 880079,
+    "name": "Tate & Lyle-Loudon",
+    "state": "TN",
+    "units": [
+     "34",
+     "35",
+     "37",
+     "38"
+    ],
+    "gross_gwh": 411.7,
+    "host_candidates": [],
+    "host_in_bench": []
+   }
+  ],
+  "orphans_n": 8,
+  "orphans_gwh": 13271.8,
+  "orphans_hosted_in_bench_n": 1,
+  "orphans_hosted_in_bench_gwh": 664.0,
+  "partial": [
+   {
+    "plant": 2398,
+    "e923_net_gwh": 2915.4,
+    "campd_gross_gwh": 1949.3,
+    "ratio": 0.669
+   },
+   {
+    "plant": 2847,
+    "e923_net_gwh": 856.4,
+    "campd_gross_gwh": 227.1,
+    "ratio": 0.265
+   },
+   {
+    "plant": 3130,
+    "e923_net_gwh": 1866.6,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 10043,
+    "e923_net_gwh": 482.3,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 10113,
+    "e923_net_gwh": 624.3,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 10151,
+    "e923_net_gwh": 598.0,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 10244,
+    "e923_net_gwh": 140.5,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 10566,
+    "e923_net_gwh": 564.9,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 10641,
+    "e923_net_gwh": 110.1,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 10743,
+    "e923_net_gwh": 344.1,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 10805,
+    "e923_net_gwh": 151.1,
+    "campd_gross_gwh": 101.6,
+    "ratio": 0.672
+   },
+   {
+    "plant": 50282,
+    "e923_net_gwh": 50.3,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50397,
+    "e923_net_gwh": 151.1,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50463,
+    "e923_net_gwh": 910.5,
+    "campd_gross_gwh": 384.7,
+    "ratio": 0.423
+   },
+   {
+    "plant": 50481,
+    "e923_net_gwh": 1043.3,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50491,
+    "e923_net_gwh": 682.9,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50776,
+    "e923_net_gwh": 105.4,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50879,
+    "e923_net_gwh": 338.3,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50900,
+    "e923_net_gwh": 310.1,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50974,
+    "e923_net_gwh": 241.1,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 52089,
+    "e923_net_gwh": 179.9,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 52193,
+    "e923_net_gwh": 1322.0,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 54556,
+    "e923_net_gwh": 241.8,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 54634,
+    "e923_net_gwh": 600.5,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 55231,
+    "e923_net_gwh": 3928.9,
+    "campd_gross_gwh": 2558.9,
+    "ratio": 0.651
+   },
+   {
+    "plant": 55239,
+    "e923_net_gwh": 5092.1,
+    "campd_gross_gwh": 3440.1,
+    "ratio": 0.676
+   },
+   {
+    "plant": 55337,
+    "e923_net_gwh": 4843.5,
+    "campd_gross_gwh": 3296.5,
+    "ratio": 0.681
+   },
+   {
+    "plant": 55710,
+    "e923_net_gwh": 4340.8,
+    "campd_gross_gwh": 2955.6,
+    "ratio": 0.681
+   },
+   {
+    "plant": 55976,
+    "e923_net_gwh": 5864.0,
+    "campd_gross_gwh": 3880.1,
+    "ratio": 0.662
+   },
+   {
+    "plant": 56808,
+    "e923_net_gwh": 993.0,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 60589,
+    "e923_net_gwh": 371.6,
+    "campd_gross_gwh": 169.4,
+    "ratio": 0.456
+   }
+  ]
+ },
+ "2020": {
+  "campd_facilities": 450,
+  "orphans": [
+   {
+    "facility": 874,
+    "name": "Joliet 9",
+    "state": "IL",
+    "units": [
+     "5"
+    ],
+    "gross_gwh": 21.5,
+    "host_candidates": [
+     384
+    ],
+    "host_in_bench": [
+     384
+    ]
+   },
+   {
+    "facility": 2709,
+    "name": "H F Lee Steam Electric Plant",
+    "state": "NC",
+    "units": [
+     "01A",
+     "01B",
+     "01C",
+     "10",
+     "11",
+     "12",
+     "13",
+     "14"
+    ],
+    "gross_gwh": 5968.3,
+    "host_candidates": [
+     58215
+    ],
+    "host_in_bench": []
+   },
+   {
+    "facility": 2713,
+    "name": "L V Sutton",
+    "state": "NC",
+    "units": [
+     "01A",
+     "01B",
+     "4",
+     "5"
+    ],
+    "gross_gwh": 4158.9,
+    "host_candidates": [
+     58697
+    ],
+    "host_in_bench": []
+   },
+   {
+    "facility": 7258,
+    "name": "48th Street Peaking Station",
+    "state": "MI",
+    "units": [
+     "**7",
+     "**8",
+     "9"
+    ],
+    "gross_gwh": 79.1,
+    "host_candidates": [],
+    "host_in_bench": []
+   },
+   {
+    "facility": 10525,
+    "name": "Craven County Wood Energy",
+    "state": "NC",
+    "units": [
+     "ES5A"
+    ],
+    "gross_gwh": 252.2,
+    "host_candidates": [],
+    "host_in_bench": []
+   },
+   {
+    "facility": 54415,
+    "name": "Cadillac Renewable Energy",
+    "state": "MI",
+    "units": [
+     "EUBLR"
+    ],
+    "gross_gwh": 51.0,
+    "host_candidates": [],
+    "host_in_bench": []
+   },
+   {
+    "facility": 54751,
+    "name": "Genesee Power Station",
+    "state": "MI",
+    "units": [
+     "01"
+    ],
+    "gross_gwh": 107.7,
+    "host_candidates": [],
+    "host_in_bench": []
+   },
+   {
+    "facility": 55248,
+    "name": "Tait Electric Generating Station",
+    "state": "OH",
+    "units": [
+     "CT4",
+     "CT5",
+     "CT6",
+     "CT7"
+    ],
+    "gross_gwh": 725.6,
+    "host_candidates": [
+     2847
+    ],
+    "host_in_bench": [
+     2847
+    ]
+   },
+   {
+    "facility": 880079,
+    "name": "Tate & Lyle-Loudon",
+    "state": "TN",
+    "units": [
+     "34",
+     "35",
+     "37",
+     "38"
+    ],
+    "gross_gwh": 330.3,
+    "host_candidates": [],
+    "host_in_bench": []
+   }
+  ],
+  "orphans_n": 9,
+  "orphans_gwh": 11694.6,
+  "orphans_hosted_in_bench_n": 2,
+  "orphans_hosted_in_bench_gwh": 747.1,
+  "partial": [
+   {
+    "plant": 2398,
+    "e923_net_gwh": 1677.2,
+    "campd_gross_gwh": 1137.9,
+    "ratio": 0.678
+   },
+   {
+    "plant": 2847,
+    "e923_net_gwh": 952.2,
+    "campd_gross_gwh": 267.5,
+    "ratio": 0.281
+   },
+   {
+    "plant": 3130,
+    "e923_net_gwh": 2213.9,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 10043,
+    "e923_net_gwh": 443.2,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 10113,
+    "e923_net_gwh": 634.3,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 10151,
+    "e923_net_gwh": 617.7,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 10244,
+    "e923_net_gwh": 130.6,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 10566,
+    "e923_net_gwh": 478.6,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50397,
+    "e923_net_gwh": 156.9,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50410,
+    "e923_net_gwh": 94.6,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50463,
+    "e923_net_gwh": 923.5,
+    "campd_gross_gwh": 375.8,
+    "ratio": 0.407
+   },
+   {
+    "plant": 50481,
+    "e923_net_gwh": 1122.9,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50491,
+    "e923_net_gwh": 719.5,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50776,
+    "e923_net_gwh": 60.1,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50879,
+    "e923_net_gwh": 50.7,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50900,
+    "e923_net_gwh": 287.4,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 52089,
+    "e923_net_gwh": 185.6,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 52193,
+    "e923_net_gwh": 1149.4,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 54556,
+    "e923_net_gwh": 253.5,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 54634,
+    "e923_net_gwh": 655.2,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 55231,
+    "e923_net_gwh": 3757.7,
+    "campd_gross_gwh": 2411.8,
+    "ratio": 0.642
+   },
+   {
+    "plant": 55239,
+    "e923_net_gwh": 2779.5,
+    "campd_gross_gwh": 1871.7,
+    "ratio": 0.673
+   },
+   {
+    "plant": 55337,
+    "e923_net_gwh": 4869.6,
+    "campd_gross_gwh": 3300.8,
+    "ratio": 0.678
+   },
+   {
+    "plant": 55710,
+    "e923_net_gwh": 4340.7,
+    "campd_gross_gwh": 2953.7,
+    "ratio": 0.68
+   },
+   {
+    "plant": 55976,
+    "e923_net_gwh": 6570.7,
+    "campd_gross_gwh": 4283.0,
+    "ratio": 0.652
+   },
+   {
+    "plant": 56808,
+    "e923_net_gwh": 710.9,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   }
+  ]
+ },
+ "2021": {
+  "campd_facilities": 442,
+  "orphans": [
+   {
+    "facility": 2709,
+    "name": "H F Lee Steam Electric Plant",
+    "state": "NC",
+    "units": [
+     "01A",
+     "01B",
+     "01C",
+     "10",
+     "11",
+     "12",
+     "13",
+     "14"
+    ],
+    "gross_gwh": 5884.1,
+    "host_candidates": [
+     58215
+    ],
+    "host_in_bench": []
+   },
+   {
+    "facility": 2713,
+    "name": "L V Sutton",
+    "state": "NC",
+    "units": [
+     "01A",
+     "01B",
+     "4",
+     "5"
+    ],
+    "gross_gwh": 4261.8,
+    "host_candidates": [
+     58697
+    ],
+    "host_in_bench": []
+   },
+   {
+    "facility": 7258,
+    "name": "48th Street Peaking Station",
+    "state": "MI",
+    "units": [
+     "**7",
+     "**8",
+     "9"
+    ],
+    "gross_gwh": 61.3,
+    "host_candidates": [],
+    "host_in_bench": []
+   },
+   {
+    "facility": 10525,
+    "name": "Craven County Wood Energy",
+    "state": "NC",
+    "units": [
+     "ES5A"
+    ],
+    "gross_gwh": 345.9,
+    "host_candidates": [],
+    "host_in_bench": []
+   },
+   {
+    "facility": 54415,
+    "name": "Cadillac Renewable Energy",
+    "state": "MI",
+    "units": [
+     "EUBLR"
+    ],
+    "gross_gwh": 147.7,
+    "host_candidates": [],
+    "host_in_bench": []
+   },
+   {
+    "facility": 54751,
+    "name": "Genesee Power Station",
+    "state": "MI",
+    "units": [
+     "01"
+    ],
+    "gross_gwh": 142.3,
+    "host_candidates": [],
+    "host_in_bench": []
+   },
+   {
+    "facility": 55248,
+    "name": "Tait Electric Generating Station",
+    "state": "OH",
+    "units": [
+     "CT4",
+     "CT5",
+     "CT6",
+     "CT7"
+    ],
+    "gross_gwh": 718.8,
+    "host_candidates": [
+     2847
+    ],
+    "host_in_bench": [
+     2847
+    ]
+   },
+   {
+    "facility": 59073,
+    "name": "Cove Point LNG Terminal",
+    "state": "MD",
+    "units": [
+     "214JA",
+     "214JB",
+     "B921A",
+     "B921B",
+     "GT501A",
+     "GT501B"
+    ],
+    "gross_gwh": 1494.7,
+    "host_candidates": [],
+    "host_in_bench": []
+   },
+   {
+    "facility": 880079,
+    "name": "Tate & Lyle-Loudon",
+    "state": "TN",
+    "units": [
+     "34",
+     "35",
+     "37",
+     "38"
+    ],
+    "gross_gwh": 345.8,
+    "host_candidates": [],
+    "host_in_bench": []
+   }
+  ],
+  "orphans_n": 9,
+  "orphans_gwh": 13402.4,
+  "orphans_hosted_in_bench_n": 1,
+  "orphans_hosted_in_bench_gwh": 718.8,
+  "partial": [
+   {
+    "plant": 2398,
+    "e923_net_gwh": 1739.7,
+    "campd_gross_gwh": 1177.8,
+    "ratio": 0.677
+   },
+   {
+    "plant": 2847,
+    "e923_net_gwh": 1004.7,
+    "campd_gross_gwh": 282.9,
+    "ratio": 0.282
+   },
+   {
+    "plant": 3130,
+    "e923_net_gwh": 2858.7,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 10043,
+    "e923_net_gwh": 565.5,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 10113,
+    "e923_net_gwh": 583.5,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 10151,
+    "e923_net_gwh": 631.4,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 10244,
+    "e923_net_gwh": 122.3,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 10566,
+    "e923_net_gwh": 473.8,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50397,
+    "e923_net_gwh": 188.2,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50463,
+    "e923_net_gwh": 842.4,
+    "campd_gross_gwh": 375.3,
+    "ratio": 0.445
+   },
+   {
+    "plant": 50481,
+    "e923_net_gwh": 1128.8,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50491,
+    "e923_net_gwh": 752.6,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50776,
+    "e923_net_gwh": 127.2,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50900,
+    "e923_net_gwh": 292.7,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50974,
+    "e923_net_gwh": 305.4,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 52089,
+    "e923_net_gwh": 172.3,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 52193,
+    "e923_net_gwh": 900.1,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 54081,
+    "e923_net_gwh": 52.5,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 54556,
+    "e923_net_gwh": 253.8,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 54634,
+    "e923_net_gwh": 659.7,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 55231,
+    "e923_net_gwh": 4176.3,
+    "campd_gross_gwh": 2771.2,
+    "ratio": 0.664
+   },
+   {
+    "plant": 55239,
+    "e923_net_gwh": 2417.9,
+    "campd_gross_gwh": 1623.4,
+    "ratio": 0.671
+   },
+   {
+    "plant": 55337,
+    "e923_net_gwh": 4394.6,
+    "campd_gross_gwh": 2975.6,
+    "ratio": 0.677
+   },
+   {
+    "plant": 55710,
+    "e923_net_gwh": 3569.7,
+    "campd_gross_gwh": 2422.4,
+    "ratio": 0.679
+   },
+   {
+    "plant": 55976,
+    "e923_net_gwh": 5707.5,
+    "campd_gross_gwh": 3763.3,
+    "ratio": 0.659
+   },
+   {
+    "plant": 56808,
+    "e923_net_gwh": 843.2,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 58933,
+    "e923_net_gwh": 212.4,
+    "campd_gross_gwh": 18.4,
+    "ratio": 0.086
+   }
+  ]
+ },
+ "2022": {
+  "campd_facilities": 434,
+  "orphans": [
+   {
+    "facility": 2709,
+    "name": "H F Lee Steam Electric Plant",
+    "state": "NC",
+    "units": [
+     "01A",
+     "01B",
+     "01C",
+     "10",
+     "11",
+     "12",
+     "13",
+     "14"
+    ],
+    "gross_gwh": 6727.6,
+    "host_candidates": [
+     58215
+    ],
+    "host_in_bench": []
+   },
+   {
+    "facility": 2713,
+    "name": "L V Sutton",
+    "state": "NC",
+    "units": [
+     "01A",
+     "01B",
+     "4",
+     "5"
+    ],
+    "gross_gwh": 4002.8,
+    "host_candidates": [
+     58697
+    ],
+    "host_in_bench": []
+   },
+   {
+    "facility": 7258,
+    "name": "48th Street Peaking Station",
+    "state": "MI",
+    "units": [
+     "**7",
+     "**8",
+     "9"
+    ],
+    "gross_gwh": 89.5,
+    "host_candidates": [],
+    "host_in_bench": []
+   },
+   {
+    "facility": 10525,
+    "name": "Craven County Wood Energy",
+    "state": "NC",
+    "units": [
+     "ES5A"
+    ],
+    "gross_gwh": 318.8,
+    "host_candidates": [],
+    "host_in_bench": []
+   },
+   {
+    "facility": 54415,
+    "name": "Cadillac Renewable Energy",
+    "state": "MI",
+    "units": [
+     "EUBLR"
+    ],
+    "gross_gwh": 142.6,
+    "host_candidates": [],
+    "host_in_bench": []
+   },
+   {
+    "facility": 54751,
+    "name": "Genesee Power Station",
+    "state": "MI",
+    "units": [
+     "01"
+    ],
+    "gross_gwh": 192.8,
+    "host_candidates": [],
+    "host_in_bench": []
+   },
+   {
+    "facility": 55248,
+    "name": "Tait Electric Generating Station",
+    "state": "OH",
+    "units": [
+     "CT4",
+     "CT5",
+     "CT6",
+     "CT7"
+    ],
+    "gross_gwh": 817.8,
+    "host_candidates": [
+     2847
+    ],
+    "host_in_bench": [
+     2847
+    ]
+   },
+   {
+    "facility": 59073,
+    "name": "Cove Point LNG Terminal",
+    "state": "MD",
+    "units": [
+     "214JA",
+     "214JB",
+     "B921A",
+     "B921B",
+     "GT501A",
+     "GT501B"
+    ],
+    "gross_gwh": 1523.0,
+    "host_candidates": [],
+    "host_in_bench": []
+   },
+   {
+    "facility": 880079,
+    "name": "Tate & Lyle-Loudon",
+    "state": "TN",
+    "units": [
+     "34",
+     "35",
+     "37",
+     "38"
+    ],
+    "gross_gwh": 384.8,
+    "host_candidates": [],
+    "host_in_bench": []
+   }
+  ],
+  "orphans_n": 9,
+  "orphans_gwh": 14199.7,
+  "orphans_hosted_in_bench_n": 1,
+  "orphans_hosted_in_bench_gwh": 817.8,
+  "partial": [
+   {
+    "plant": 2847,
+    "e923_net_gwh": 1154.3,
+    "campd_gross_gwh": 381.9,
+    "ratio": 0.331
+   },
+   {
+    "plant": 3130,
+    "e923_net_gwh": 2676.1,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 10043,
+    "e923_net_gwh": 195.9,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 10113,
+    "e923_net_gwh": 637.5,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 10151,
+    "e923_net_gwh": 614.2,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 10244,
+    "e923_net_gwh": 130.3,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 10566,
+    "e923_net_gwh": 308.1,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50279,
+    "e923_net_gwh": 101.2,
+    "campd_gross_gwh": 65.9,
+    "ratio": 0.651
+   },
+   {
+    "plant": 50397,
+    "e923_net_gwh": 193.5,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50463,
+    "e923_net_gwh": 838.0,
+    "campd_gross_gwh": 369.1,
+    "ratio": 0.44
+   },
+   {
+    "plant": 50481,
+    "e923_net_gwh": 1028.5,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50491,
+    "e923_net_gwh": 513.8,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50776,
+    "e923_net_gwh": 508.4,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50900,
+    "e923_net_gwh": 281.8,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50974,
+    "e923_net_gwh": 376.8,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 52089,
+    "e923_net_gwh": 165.0,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 52193,
+    "e923_net_gwh": 1066.7,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 54081,
+    "e923_net_gwh": 68.2,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 54556,
+    "e923_net_gwh": 216.6,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 54634,
+    "e923_net_gwh": 631.3,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 55231,
+    "e923_net_gwh": 3556.3,
+    "campd_gross_gwh": 2477.5,
+    "ratio": 0.697
+   },
+   {
+    "plant": 55239,
+    "e923_net_gwh": 3137.7,
+    "campd_gross_gwh": 2107.0,
+    "ratio": 0.672
+   },
+   {
+    "plant": 55337,
+    "e923_net_gwh": 5136.6,
+    "campd_gross_gwh": 3456.4,
+    "ratio": 0.673
+   },
+   {
+    "plant": 55710,
+    "e923_net_gwh": 4405.2,
+    "campd_gross_gwh": 2988.4,
+    "ratio": 0.678
+   },
+   {
+    "plant": 55976,
+    "e923_net_gwh": 5914.1,
+    "campd_gross_gwh": 3869.6,
+    "ratio": 0.654
+   },
+   {
+    "plant": 56808,
+    "e923_net_gwh": 1251.0,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   }
+  ]
+ },
+ "2023": {
+  "campd_facilities": 421,
+  "orphans": [
+   {
+    "facility": 594,
+    "name": "Indian River",
+    "state": "DE",
+    "units": [
+     "10",
+     "4"
+    ],
+    "gross_gwh": 27.3,
+    "host_candidates": [],
+    "host_in_bench": []
+   },
+   {
+    "facility": 2709,
+    "name": "H F Lee Steam Electric Plant",
+    "state": "NC",
+    "units": [
+     "01A",
+     "01B",
+     "01C",
+     "10",
+     "11",
+     "12",
+     "13",
+     "14"
+    ],
+    "gross_gwh": 6604.0,
+    "host_candidates": [
+     58215
+    ],
+    "host_in_bench": []
+   },
+   {
+    "facility": 2713,
+    "name": "L V Sutton",
+    "state": "NC",
+    "units": [
+     "01A",
+     "01B",
+     "4",
+     "5"
+    ],
+    "gross_gwh": 3966.6,
+    "host_candidates": [
+     58697
+    ],
+    "host_in_bench": []
+   },
+   {
+    "facility": 7258,
+    "name": "48th Street Peaking Station",
+    "state": "MI",
+    "units": [
+     "**7",
+     "**8",
+     "9"
+    ],
+    "gross_gwh": 64.6,
+    "host_candidates": [],
+    "host_in_bench": []
+   },
+   {
+    "facility": 10525,
+    "name": "Craven County Wood Energy",
+    "state": "NC",
+    "units": [
+     "ES5A"
+    ],
+    "gross_gwh": 343.2,
+    "host_candidates": [],
+    "host_in_bench": []
+   },
+   {
+    "facility": 54415,
+    "name": "Cadillac Renewable Energy",
+    "state": "MI",
+    "units": [
+     "EUBLR"
+    ],
+    "gross_gwh": 131.0,
+    "host_candidates": [],
+    "host_in_bench": []
+   },
+   {
+    "facility": 54751,
+    "name": "Genesee Power Station",
+    "state": "MI",
+    "units": [
+     "01"
+    ],
+    "gross_gwh": 137.1,
+    "host_candidates": [],
+    "host_in_bench": []
+   },
+   {
+    "facility": 55248,
+    "name": "Tait Electric Generating Station",
+    "state": "OH",
+    "units": [
+     "CT4",
+     "CT5",
+     "CT6",
+     "CT7"
+    ],
+    "gross_gwh": 931.3,
+    "host_candidates": [
+     2847
+    ],
+    "host_in_bench": [
+     2847
+    ]
+   },
+   {
+    "facility": 59073,
+    "name": "Cove Point LNG Terminal",
+    "state": "MD",
+    "units": [
+     "214JA",
+     "214JB",
+     "B921A",
+     "B921B",
+     "GT501A",
+     "GT501B"
+    ],
+    "gross_gwh": 1511.2,
+    "host_candidates": [],
+    "host_in_bench": []
+   },
+   {
+    "facility": 880079,
+    "name": "Tate & Lyle-Loudon",
+    "state": "TN",
+    "units": [
+     "34",
+     "35",
+     "37",
+     "38"
+    ],
+    "gross_gwh": 397.2,
+    "host_candidates": [],
+    "host_in_bench": []
+   }
+  ],
+  "orphans_n": 10,
+  "orphans_gwh": 14113.5,
+  "orphans_hosted_in_bench_n": 1,
+  "orphans_hosted_in_bench_gwh": 931.3,
+  "partial": [
+   {
+    "plant": 2847,
+    "e923_net_gwh": 1298.0,
+    "campd_gross_gwh": 412.4,
+    "ratio": 0.318
+   },
+   {
+    "plant": 3130,
+    "e923_net_gwh": 2031.8,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 10113,
+    "e923_net_gwh": 624.1,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 10151,
+    "e923_net_gwh": 598.7,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 10244,
+    "e923_net_gwh": 123.8,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50397,
+    "e923_net_gwh": 176.7,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50463,
+    "e923_net_gwh": 847.7,
+    "campd_gross_gwh": 353.1,
+    "ratio": 0.417
+   },
+   {
+    "plant": 50481,
+    "e923_net_gwh": 932.9,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50491,
+    "e923_net_gwh": 667.4,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50776,
+    "e923_net_gwh": 476.5,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50900,
+    "e923_net_gwh": 254.9,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50974,
+    "e923_net_gwh": 287.6,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 52089,
+    "e923_net_gwh": 161.4,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 52193,
+    "e923_net_gwh": 1248.9,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 54081,
+    "e923_net_gwh": 56.9,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 54556,
+    "e923_net_gwh": 216.2,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 54634,
+    "e923_net_gwh": 647.1,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 55337,
+    "e923_net_gwh": 4241.8,
+    "campd_gross_gwh": 2853.4,
+    "ratio": 0.673
+   },
+   {
+    "plant": 55710,
+    "e923_net_gwh": 4480.4,
+    "campd_gross_gwh": 3050.0,
+    "ratio": 0.681
+   },
+   {
+    "plant": 55976,
+    "e923_net_gwh": 5057.6,
+    "campd_gross_gwh": 3232.3,
+    "ratio": 0.639
+   },
+   {
+    "plant": 56808,
+    "e923_net_gwh": 661.2,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   }
+  ]
+ },
+ "2024": {
+  "campd_facilities": 409,
+  "orphans": [
+   {
+    "facility": 2709,
+    "name": "H F Lee Steam Electric Plant",
+    "state": "NC",
+    "units": [
+     "01A",
+     "01B",
+     "01C",
+     "10",
+     "11",
+     "12",
+     "13",
+     "14"
+    ],
+    "gross_gwh": 6748.9,
+    "host_candidates": [
+     58215
+    ],
+    "host_in_bench": []
+   },
+   {
+    "facility": 2713,
+    "name": "L V Sutton",
+    "state": "NC",
+    "units": [
+     "01A",
+     "01B",
+     "4",
+     "5"
+    ],
+    "gross_gwh": 4079.1,
+    "host_candidates": [
+     58697
+    ],
+    "host_in_bench": []
+   },
+   {
+    "facility": 7258,
+    "name": "48th Street Peaking Station",
+    "state": "MI",
+    "units": [
+     "**7",
+     "**8",
+     "9"
+    ],
+    "gross_gwh": 106.3,
+    "host_candidates": [],
+    "host_in_bench": []
+   },
+   {
+    "facility": 10525,
+    "name": "Craven County Wood Energy",
+    "state": "NC",
+    "units": [
+     "ES5A"
+    ],
+    "gross_gwh": 289.2,
+    "host_candidates": [],
+    "host_in_bench": []
+   },
+   {
+    "facility": 54415,
+    "name": "Cadillac Renewable Energy",
+    "state": "MI",
+    "units": [
+     "EUBLR"
+    ],
+    "gross_gwh": 135.0,
+    "host_candidates": [],
+    "host_in_bench": []
+   },
+   {
+    "facility": 54751,
+    "name": "Genesee Power Station",
+    "state": "MI",
+    "units": [
+     "01"
+    ],
+    "gross_gwh": 113.5,
+    "host_candidates": [],
+    "host_in_bench": []
+   },
+   {
+    "facility": 55248,
+    "name": "Tait Electric Generating Station",
+    "state": "OH",
+    "units": [
+     "CT4",
+     "CT5",
+     "CT6",
+     "CT7"
+    ],
+    "gross_gwh": 950.9,
+    "host_candidates": [
+     2847
+    ],
+    "host_in_bench": [
+     2847
+    ]
+   },
+   {
+    "facility": 59073,
+    "name": "Cove Point LNG Terminal",
+    "state": "MD",
+    "units": [
+     "214JA",
+     "214JB",
+     "B921A",
+     "B921B",
+     "GT501A",
+     "GT501B"
+    ],
+    "gross_gwh": 1519.6,
+    "host_candidates": [],
+    "host_in_bench": []
+   },
+   {
+    "facility": 880079,
+    "name": "Tate & Lyle-Loudon",
+    "state": "TN",
+    "units": [
+     "34",
+     "35",
+     "37",
+     "38"
+    ],
+    "gross_gwh": 393.6,
+    "host_candidates": [],
+    "host_in_bench": []
+   }
+  ],
+  "orphans_n": 9,
+  "orphans_gwh": 14336.1,
+  "orphans_hosted_in_bench_n": 1,
+  "orphans_hosted_in_bench_gwh": 950.9,
+  "partial": [
+   {
+    "plant": 2847,
+    "e923_net_gwh": 1332.3,
+    "campd_gross_gwh": 432.9,
+    "ratio": 0.325
+   },
+   {
+    "plant": 3130,
+    "e923_net_gwh": 2091.3,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 7336,
+    "e923_net_gwh": 1013.7,
+    "campd_gross_gwh": 164.1,
+    "ratio": 0.162
+   },
+   {
+    "plant": 10113,
+    "e923_net_gwh": 616.9,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 10151,
+    "e923_net_gwh": 614.8,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 10244,
+    "e923_net_gwh": 100.3,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50397,
+    "e923_net_gwh": 180.2,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50463,
+    "e923_net_gwh": 612.1,
+    "campd_gross_gwh": 184.3,
+    "ratio": 0.301
+   },
+   {
+    "plant": 50481,
+    "e923_net_gwh": 1136.5,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50491,
+    "e923_net_gwh": 712.7,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50776,
+    "e923_net_gwh": 446.7,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50900,
+    "e923_net_gwh": 297.8,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50974,
+    "e923_net_gwh": 65.4,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 52089,
+    "e923_net_gwh": 172.4,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 52193,
+    "e923_net_gwh": 1140.1,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 54081,
+    "e923_net_gwh": 57.4,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 54556,
+    "e923_net_gwh": 219.6,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 54634,
+    "e923_net_gwh": 639.8,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 54795,
+    "e923_net_gwh": 54.0,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 55337,
+    "e923_net_gwh": 4407.3,
+    "campd_gross_gwh": 3005.9,
+    "ratio": 0.682
+   },
+   {
+    "plant": 55710,
+    "e923_net_gwh": 4049.6,
+    "campd_gross_gwh": 2785.4,
+    "ratio": 0.688
+   },
+   {
+    "plant": 55976,
+    "e923_net_gwh": 5465.1,
+    "campd_gross_gwh": 3501.2,
+    "ratio": 0.641
+   },
+   {
+    "plant": 56808,
+    "e923_net_gwh": 960.7,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 58933,
+    "e923_net_gwh": 1610.4,
+    "campd_gross_gwh": 1021.6,
+    "ratio": 0.634
+   }
+  ]
+ },
+ "2025": {
+  "campd_facilities": 399,
+  "orphans": [
+   {
+    "facility": 2709,
+    "name": "H F Lee Steam Electric Plant",
+    "state": "NC",
+    "units": [
+     "01A",
+     "01B",
+     "01C",
+     "10",
+     "11",
+     "12",
+     "13",
+     "14"
+    ],
+    "gross_gwh": 6498.1,
+    "host_candidates": [
+     58215
+    ],
+    "host_in_bench": []
+   },
+   {
+    "facility": 2713,
+    "name": "L V Sutton",
+    "state": "NC",
+    "units": [
+     "01A",
+     "01B",
+     "4",
+     "5"
+    ],
+    "gross_gwh": 3602.7,
+    "host_candidates": [
+     58697
+    ],
+    "host_in_bench": []
+   },
+   {
+    "facility": 7258,
+    "name": "48th Street Peaking Station",
+    "state": "MI",
+    "units": [
+     "**7",
+     "**8",
+     "9"
+    ],
+    "gross_gwh": 142.8,
+    "host_candidates": [],
+    "host_in_bench": []
+   },
+   {
+    "facility": 10525,
+    "name": "Craven County Wood Energy",
+    "state": "NC",
+    "units": [
+     "ES5A"
+    ],
+    "gross_gwh": 315.5,
+    "host_candidates": [],
+    "host_in_bench": []
+   },
+   {
+    "facility": 54415,
+    "name": "Cadillac Renewable Energy",
+    "state": "MI",
+    "units": [
+     "EUBLR"
+    ],
+    "gross_gwh": 168.5,
+    "host_candidates": [],
+    "host_in_bench": []
+   },
+   {
+    "facility": 54751,
+    "name": "Genesee Power Station",
+    "state": "MI",
+    "units": [
+     "01"
+    ],
+    "gross_gwh": 139.9,
+    "host_candidates": [],
+    "host_in_bench": []
+   },
+   {
+    "facility": 55248,
+    "name": "Tait Electric Generating Station",
+    "state": "OH",
+    "units": [
+     "CT4",
+     "CT5",
+     "CT6",
+     "CT7"
+    ],
+    "gross_gwh": 754.0,
+    "host_candidates": [
+     2847
+    ],
+    "host_in_bench": [
+     2847
+    ]
+   },
+   {
+    "facility": 59073,
+    "name": "Cove Point LNG Terminal",
+    "state": "MD",
+    "units": [
+     "214JA",
+     "214JB",
+     "B921A",
+     "B921B",
+     "GT501A",
+     "GT501B"
+    ],
+    "gross_gwh": 1546.8,
+    "host_candidates": [],
+    "host_in_bench": []
+   },
+   {
+    "facility": 66918,
+    "name": "Trumbull Energy Center",
+    "state": "OH",
+    "units": [
+     "GT11",
+     "GT12"
+    ],
+    "gross_gwh": 113.5,
+    "host_candidates": [],
+    "host_in_bench": []
+   },
+   {
+    "facility": 880079,
+    "name": "Tate & Lyle-Loudon",
+    "state": "TN",
+    "units": [
+     "34",
+     "35",
+     "37",
+     "38"
+    ],
+    "gross_gwh": 365.5,
+    "host_candidates": [],
+    "host_in_bench": []
+   }
+  ],
+  "orphans_n": 10,
+  "orphans_gwh": 13647.3,
+  "orphans_hosted_in_bench_n": 1,
+  "orphans_hosted_in_bench_gwh": 754.0,
+  "partial": [
+   {
+    "plant": 2847,
+    "e923_net_gwh": 957.6,
+    "campd_gross_gwh": 249.8,
+    "ratio": 0.261
+   },
+   {
+    "plant": 3130,
+    "e923_net_gwh": 3098.2,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 10113,
+    "e923_net_gwh": 641.9,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 10151,
+    "e923_net_gwh": 409.3,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50397,
+    "e923_net_gwh": 188.8,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50463,
+    "e923_net_gwh": 761.4,
+    "campd_gross_gwh": 300.6,
+    "ratio": 0.395
+   },
+   {
+    "plant": 50481,
+    "e923_net_gwh": 1063.8,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50491,
+    "e923_net_gwh": 617.3,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50776,
+    "e923_net_gwh": 340.5,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50900,
+    "e923_net_gwh": 266.6,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 50974,
+    "e923_net_gwh": 438.9,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 52089,
+    "e923_net_gwh": 152.5,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 52193,
+    "e923_net_gwh": 1134.8,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 54081,
+    "e923_net_gwh": 66.5,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 54556,
+    "e923_net_gwh": 186.3,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 54634,
+    "e923_net_gwh": 663.9,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 54795,
+    "e923_net_gwh": 54.2,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   },
+   {
+    "plant": 55337,
+    "e923_net_gwh": 4899.1,
+    "campd_gross_gwh": 3337.4,
+    "ratio": 0.681
+   },
+   {
+    "plant": 55701,
+    "e923_net_gwh": 4028.8,
+    "campd_gross_gwh": 2391.7,
+    "ratio": 0.594
+   },
+   {
+    "plant": 55710,
+    "e923_net_gwh": 4408.0,
+    "campd_gross_gwh": 2986.9,
+    "ratio": 0.678
+   },
+   {
+    "plant": 55976,
+    "e923_net_gwh": 6086.6,
+    "campd_gross_gwh": 3971.2,
+    "ratio": 0.652
+   },
+   {
+    "plant": 56808,
+    "e923_net_gwh": 1871.7,
+    "campd_gross_gwh": 0.0,
+    "ratio": 0.0
+   }
+  ]
+ }
+}

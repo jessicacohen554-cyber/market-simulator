@@ -1,9 +1,13 @@
 # Calibration lane runbook
 
 The one page a calibration session needs. Every command here exists at HEAD;
-the rules it enforces are the `[R-*]` IDs in `CLAUDE.md`. Read this, the
-target ISO's keeper shard (`frontend/data/backcast/keepers/<ISO>.json`) and
-its lever queue (`docs/mechanism-testing-matrix.md` §5), and start.
+the rules it enforces are the `[R-*]` IDs in `CLAUDE.md`. Read this, **the
+close-out program plan (`docs/backcast-closeout-plan-2026-10.md`: §3.<ISO> is
+the ranked sequence your lane takes its next lever from, §5 the owner decision
+queue)**, the target ISO's keeper shard
+(`frontend/data/backcast/keepers/<ISO>.json`) and its lever queue
+(`docs/mechanism-testing-matrix.md` §5, whose head carries the same sequence),
+and start. A lane that goes off-plan says why in its PRECOMMIT.
 
 ## 0. Session setup (5 minutes, zero LP)
 

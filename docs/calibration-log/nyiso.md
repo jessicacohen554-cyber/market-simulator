@@ -15112,6 +15112,13 @@ too.
   ISO NOT-YET. Residual is spatial (Upstate_West high, Long Island low) plus the 2025 downstate top decile.
 - Record: `docs/records/nyiso/RESULT-nyiso-next22-zone-resolved-basis-2026-10-01.md`.
 
+## NYISO-NEXT-26 — 2026-10-01 — Zone-K import security cap in every hour; gates pass, owner card
+
+- PRECOMMIT #6988, pin `4213945e`; ten year-isolated shards (arm A keeper + `nyiso_li_tsl_all_hours`; arm B + `nyiso_gas_daily_print_level`).
+- Arm A: G-1..G-6 PASS all five years (cap live 1,016–2,099 h/yr above 940 MW in the control; no new D-4 row). Zone K vs DA −16.1 → −10.7 % (2021), −11.3 → −10.1, −13.9 → −13.2, −12.0 → −11.4, −12.8 → −11.9; LI fossil +5–46 MW vs a 180–390 MW CAMPD gap. C3a ≤ 0.5 pt; no determination change (span NOT-YET, 2021 CALIBRATED).
+- Arm B: gates PASS vs NEXT-25 arm A; system scores equal to A's, K 2025 −10.9 → −10.1; span and ISO CALIBRATED (C3c lone, rule 22).
+- Four runs registered; owner card open (promote B recommended). Record: `docs/records/nyiso/RESULT-nyiso-next26-li-tsl-all-hours-2026-10-01.md`.
+
 ## NYISO-NEXT-28 — 2026-10-01 — Ravenswood 2023 phase 0 (zero LP, keeper unchanged)
 
 Ravenswood 2500 steam 2023, model 4.00 TWh against CAMPD 0.88:
@@ -15151,3 +15158,58 @@ The question was whether any public posting gives a forward-reproducible driver 
 Records: `docs/records/nyiso/FINDING-nyiso-next30-zone-k-import-drivers-phase0-2026-10-01.md`, `results/phase0/nyiso/_nyisonext30_zone_k_import_drivers.json`, `scripts/probes/nyisonext30_zone_k_import_drivers.py`.
 
 Owner cards #6992 / #6987 / #6984 / NEXT-24 are unchanged; no ruling was found.
+
+## NYISO-NEXT-23 — 2026-10-01 — Transco Z6 NY on its flow day; registered, not promoted (G-5)
+
+- Phase 0 (zero LP): the 2025 C3a miss is the tail (deciles 1–8 +$3.4; hours > $150 −$8.8 of −$8.0). January sits below DA too. NYISO's daily Z6 gas was trade-dated and interpolated across weekends (the $97.90 MLK print priced Fri 1/17).
+- New flag `nyiso_gas_flow_date` (default off, zero DOF, rule 14), PR #6980. Five year-isolated shards at `f2b83ef2`.
+- G-1..G-4 PASS; G-5 FAIL (one tiny new bridge unit-conduct D-4 row per year 2021–2024). C3a 2022/2024 better, 2025 −11.6 → −12.7 %; determinations unchanged (span NOT-YET, 2021 CALIBRATED, ISO NOT-YET).
+- Runs `2026-10-01-nyisonext23-flowdate-span` / `-2021` registered; owner card open. Next: the dual-fuel parity cap. Record: `docs/records/nyiso/RESULT-nyiso-next23-z6-flow-date-2026-10-01.md`.
+- 2026-10-02 (NYISO-NEXT-32): owner ruling 'Promote arm B' declines flow-date as a standalone promotion; runs never reached `main` and their branch is gone; docs kept; `nyiso_gas_flow_date` stays O.
+
+## NYISO-NEXT-25 — 2026-10-01 — daily gas at each day's own Z6 print; arm A passes its promotion rule (owner card)
+
+- Phase 0 (zero LP): the 2025 off-cap winter NYC gap sits east of Central East (Upstate_West right; DA F−E spread is 93–96 % congestion, ledgered). Separately, `_nyiso_hub_daily_gas_prices` renormalised calendar-day factors to a trade-day monthly level: ordinary days in package-spike months are scaled by trade/calendar mean (Jan-2025 0.78 trade-dated, 0.65 flow-dated; corr with the NYC monthly gap 0.65 / 0.84).
+- New flag `nyiso_gas_daily_print_level` (default off, zero DOF, rules 14/19), PRECOMMIT #6986. Ten year-isolated shards at `f43f609b`.
+- Arm A: G-1..G-5 PASS; C3a 2025 −11.6 → −9.6 %; span and ISO NOT-YET → CALIBRATED (C3c lone, rule 22). Arm B (+ flow-date): 2025 −10.3 %, NOT-YET.
+- Four runs registered; owner card open (promote A recommended; decline #6984 standalone). Record: `docs/records/nyiso/RESULT-nyiso-next25-print-level-2026-10-01.md`.
+- 2026-10-02 (NYISO-NEXT-32): superseded by NEXT-26 arm B (print-level + all-hours TSL), promoted on the owner's ruling; NEXT-25 runs never reached `main`; docs kept.
+
+## 2026-10-02 — NYISO-NEXT-32: keeper promoted to nyisonext26p-tslprint (print-level gas + all-hours Zone-K TSL); ISO CALIBRATED
+
+Owner ruling 'Promote arm B' (NEXT-26 RESULT §5, card 1). `promote_keeper.py` designated
+`2026-10-01-nyisonext26p-tslprint-span` (2022-2025) with `-2021` folded. Recipe: the
+nyisonext21 keeper + `nyiso_gas_daily_print_level` + `nyiso_li_tsl_all_hours`; zero new DOF.
+
+| C3a vs RT | 2021 | 2022 | 2023 | 2024 | 2025 |
+|---|---|---|---|---|---|
+| outgoing nyisonext21 | +2.9 | −2.4 | +1.2 | −4.0 | −11.6 FAIL |
+| **nyisonext26p** | +3.4 | −2.1 | +0.4 | −2.6 | −9.6 |
+
+Determination: span CALIBRATED (lone C3c, rule 22), ISO NOT-YET → **CALIBRATED** (2025 margin
+0.4 pt). Cells `nyiso_gas_daily_print_level`, `nyiso_li_tsl_all_hours` O → K. Pruned (rule 35):
+nyisonext21 span/2021 and NEXT-26 arm A. The tool's audit runs before its prune, so E13 on the
+runs being pruned stopped it; steps 9–10 (prune, parity) were run by hand, then the audit passed
+(E11 warning pre-existing). NEXT-25 (#6987) and NEXT-23 (#6984) runs pruned on their own
+branches with docs kept; `nyiso_gas_flow_date` stays O. Full legs remain on the shard branches
+`claude/nyisonext26p-2021..2025`. Next lead: open item 3 (2023 winter under-pricing after
+print-level).
+
+## 2026-10-02 — NYISO-NEXT-32: open items 2 and 4 ledgered as model-class limitations (cards 5, 6)
+
+Owner delegation ("merge any relevant PRs yourself … decision cards only if unsure"); both cards
+applied per their recommendations, zero LP.
+
+- **Item 2, uncapped-hour Zone-K congestion** (NEXT-30): ledgered like CENTRAL EAST. No admissible
+  public driver; re-open only on published Zone-K shift factors or a published Y49 PAR schedule rule.
+  Evidence on `nyiso_li_tsl_all_hours`.
+- **Item 4, bridge D-4 unit-conduct rows** (NEXT-31): ledgered as a P0-anchored-detection seam
+  limitation (5.9 GWh over the span, ≤ 0.3 % of bridge-floored energy). Re-open only with an
+  admissible P1-native commitment detector or a row above materiality. Evidence on
+  `gas_commitment_bridge`.
+- Card 4 (NEXT-24 dual-fuel): option A, nothing armed; `dual_fuel_measured_oil_burn` stays U.
+- Also lands the keeper shard's promotion note, lineage (`superseded.former_keeper` =
+  nyisonext21) and rule-35/E11 declaration for nyisonext26p, which missed #7016's merge.
+
+Remaining queue: item 3 (2023 winter under-pricing after print-level) is the lead; item 5 needs
+MyNYISO access; item 6 only on the nyiso-179 re-open condition; item 1 is below zonal grain.
