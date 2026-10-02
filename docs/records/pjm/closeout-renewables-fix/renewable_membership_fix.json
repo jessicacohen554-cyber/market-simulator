@@ -1,0 +1,3026 @@
+{
+  "ERCOT|2019|wind": {
+    "footprint_mw": 25690.0,
+    "missed_mw_off": 213.0,
+    "missed_plants_off": 2,
+    "admitted_outside_ba_mw_off": 10.0,
+    "loader_dec_mw_off": 25487.0,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 10.0,
+    "loader_dec_mw_on": 25700.0,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "4e69a19bb8e68e92",
+      "monthly_solar": "f41d99458325d82c",
+      "ptc_share": "a179ec9c6804db05",
+      "solar_geometry": "6515f3b3bb1edaf2|a0ce6b6716e0778d"
+    },
+    "digests_on": {
+      "monthly_wind": "a0c8b2a3d51d36b3",
+      "monthly_solar": "f41d99458325d82c",
+      "ptc_share": "0c329a94a32d9b0d",
+      "solar_geometry": "6515f3b3bb1edaf2|a0ce6b6716e0778d"
+    }
+  },
+  "ERCOT|2019|solar": {
+    "footprint_mw": 2428.7,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 2428.7,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 2428.7,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "4e69a19bb8e68e92",
+      "monthly_solar": "f41d99458325d82c",
+      "ptc_share": "a179ec9c6804db05",
+      "solar_geometry": "6515f3b3bb1edaf2|a0ce6b6716e0778d"
+    },
+    "digests_on": {
+      "monthly_wind": "a0c8b2a3d51d36b3",
+      "monthly_solar": "f41d99458325d82c",
+      "ptc_share": "0c329a94a32d9b0d",
+      "solar_geometry": "6515f3b3bb1edaf2|a0ce6b6716e0778d"
+    }
+  },
+  "ERCOT|2020|wind": {
+    "footprint_mw": 27743.9,
+    "missed_mw_off": 213.0,
+    "missed_plants_off": 2,
+    "admitted_outside_ba_mw_off": 10.0,
+    "loader_dec_mw_off": 27540.9,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 10.0,
+    "loader_dec_mw_on": 27753.9,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "6ad5f673fadb8cc8",
+      "monthly_solar": "00409d9af67a0e3c",
+      "ptc_share": "b25849fcfc4023cb",
+      "solar_geometry": "fcfd203885e3bc3e|fe0fd70f26697e34"
+    },
+    "digests_on": {
+      "monthly_wind": "9088c11aa05b7d98",
+      "monthly_solar": "00409d9af67a0e3c",
+      "ptc_share": "2759c6cf9f065f24",
+      "solar_geometry": "fcfd203885e3bc3e|fe0fd70f26697e34"
+    }
+  },
+  "ERCOT|2020|solar": {
+    "footprint_mw": 4864.0,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 4864.0,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 4864.0,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "6ad5f673fadb8cc8",
+      "monthly_solar": "00409d9af67a0e3c",
+      "ptc_share": "b25849fcfc4023cb",
+      "solar_geometry": "fcfd203885e3bc3e|fe0fd70f26697e34"
+    },
+    "digests_on": {
+      "monthly_wind": "9088c11aa05b7d98",
+      "monthly_solar": "00409d9af67a0e3c",
+      "ptc_share": "2759c6cf9f065f24",
+      "solar_geometry": "fcfd203885e3bc3e|fe0fd70f26697e34"
+    }
+  },
+  "ERCOT|2021|wind": {
+    "footprint_mw": 32027.8,
+    "missed_mw_off": 63.0,
+    "missed_plants_off": 1,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 31964.8,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 32027.8,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "b50539133a9cbad5",
+      "monthly_solar": "19f7491eb8d9989c",
+      "ptc_share": "e71076090c0d8125",
+      "solar_geometry": "78066ef67a98ee0f|79fe4893ca88e2aa"
+    },
+    "digests_on": {
+      "monthly_wind": "35ca18222fd8c984",
+      "monthly_solar": "19f7491eb8d9989c",
+      "ptc_share": "327e812303f5cdf8",
+      "solar_geometry": "78066ef67a98ee0f|79fe4893ca88e2aa"
+    }
+  },
+  "ERCOT|2021|solar": {
+    "footprint_mw": 8822.2,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 8822.2,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 8822.2,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "b50539133a9cbad5",
+      "monthly_solar": "19f7491eb8d9989c",
+      "ptc_share": "e71076090c0d8125",
+      "solar_geometry": "78066ef67a98ee0f|79fe4893ca88e2aa"
+    },
+    "digests_on": {
+      "monthly_wind": "35ca18222fd8c984",
+      "monthly_solar": "19f7491eb8d9989c",
+      "ptc_share": "327e812303f5cdf8",
+      "solar_geometry": "78066ef67a98ee0f|79fe4893ca88e2aa"
+    }
+  },
+  "ERCOT|2022|wind": {
+    "footprint_mw": 35954.6,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 35954.6,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 35954.6,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "54cba310f4792324",
+      "monthly_solar": "5c2997de69c8ae0f",
+      "ptc_share": "66c63c5a0045fe65",
+      "solar_geometry": "4081f9887de3ea76|0ab432804a939151"
+    },
+    "digests_on": {
+      "monthly_wind": "54cba310f4792324",
+      "monthly_solar": "5c2997de69c8ae0f",
+      "ptc_share": "66c63c5a0045fe65",
+      "solar_geometry": "4081f9887de3ea76|0ab432804a939151"
+    }
+  },
+  "ERCOT|2022|solar": {
+    "footprint_mw": 11354.1,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 11354.1,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 11354.1,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "54cba310f4792324",
+      "monthly_solar": "5c2997de69c8ae0f",
+      "ptc_share": "66c63c5a0045fe65",
+      "solar_geometry": "4081f9887de3ea76|0ab432804a939151"
+    },
+    "digests_on": {
+      "monthly_wind": "54cba310f4792324",
+      "monthly_solar": "5c2997de69c8ae0f",
+      "ptc_share": "66c63c5a0045fe65",
+      "solar_geometry": "4081f9887de3ea76|0ab432804a939151"
+    }
+  },
+  "ERCOT|2023|wind": {
+    "footprint_mw": 36684.5,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 36684.5,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 36684.5,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "3b80d8f3b3bd220a",
+      "monthly_solar": "3935c10783df7bfd",
+      "ptc_share": "a85e43c6368cfb0d",
+      "solar_geometry": "5977d7547c000b18|33a3b401b6ee95bf"
+    },
+    "digests_on": {
+      "monthly_wind": "3b80d8f3b3bd220a",
+      "monthly_solar": "3935c10783df7bfd",
+      "ptc_share": "a85e43c6368cfb0d",
+      "solar_geometry": "5977d7547c000b18|33a3b401b6ee95bf"
+    }
+  },
+  "ERCOT|2023|solar": {
+    "footprint_mw": 14889.6,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 14889.6,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 14889.6,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "3b80d8f3b3bd220a",
+      "monthly_solar": "3935c10783df7bfd",
+      "ptc_share": "a85e43c6368cfb0d",
+      "solar_geometry": "5977d7547c000b18|33a3b401b6ee95bf"
+    },
+    "digests_on": {
+      "monthly_wind": "3b80d8f3b3bd220a",
+      "monthly_solar": "3935c10783df7bfd",
+      "ptc_share": "a85e43c6368cfb0d",
+      "solar_geometry": "5977d7547c000b18|33a3b401b6ee95bf"
+    }
+  },
+  "ERCOT|2024|wind": {
+    "footprint_mw": 38317.7,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 148.4,
+    "loader_dec_mw_off": 38466.1,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 148.4,
+    "loader_dec_mw_on": 38466.1,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "e3afab510b950daf",
+      "monthly_solar": "edd0cd755c05a258",
+      "ptc_share": "9dba81b18924ca69",
+      "solar_geometry": "4ab2af1853954856|3c0f8d317404d1f5"
+    },
+    "digests_on": {
+      "monthly_wind": "e3afab510b950daf",
+      "monthly_solar": "edd0cd755c05a258",
+      "ptc_share": "9dba81b18924ca69",
+      "solar_geometry": "4ab2af1853954856|3c0f8d317404d1f5"
+    }
+  },
+  "ERCOT|2024|solar": {
+    "footprint_mw": 22179.5,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 22179.5,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 22179.5,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "e3afab510b950daf",
+      "monthly_solar": "edd0cd755c05a258",
+      "ptc_share": "9dba81b18924ca69",
+      "solar_geometry": "4ab2af1853954856|3c0f8d317404d1f5"
+    },
+    "digests_on": {
+      "monthly_wind": "e3afab510b950daf",
+      "monthly_solar": "edd0cd755c05a258",
+      "ptc_share": "9dba81b18924ca69",
+      "solar_geometry": "4ab2af1853954856|3c0f8d317404d1f5"
+    }
+  },
+  "ERCOT|2025|wind": {
+    "footprint_mw": 40233.8,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 148.4,
+    "loader_dec_mw_off": 40382.2,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 148.4,
+    "loader_dec_mw_on": 40382.2,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "751c0b08ee38bfd4",
+      "monthly_solar": "e9ac850796320dcf",
+      "ptc_share": "7583f56cae902f7d",
+      "solar_geometry": "2e2d10389e5242ca|ffa89d9cee08bf69"
+    },
+    "digests_on": {
+      "monthly_wind": "751c0b08ee38bfd4",
+      "monthly_solar": "e9ac850796320dcf",
+      "ptc_share": "7583f56cae902f7d",
+      "solar_geometry": "2e2d10389e5242ca|ffa89d9cee08bf69"
+    }
+  },
+  "ERCOT|2025|solar": {
+    "footprint_mw": 30016.3,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 30016.3,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 30016.3,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "751c0b08ee38bfd4",
+      "monthly_solar": "e9ac850796320dcf",
+      "ptc_share": "7583f56cae902f7d",
+      "solar_geometry": "2e2d10389e5242ca|ffa89d9cee08bf69"
+    },
+    "digests_on": {
+      "monthly_wind": "751c0b08ee38bfd4",
+      "monthly_solar": "e9ac850796320dcf",
+      "ptc_share": "7583f56cae902f7d",
+      "solar_geometry": "2e2d10389e5242ca|ffa89d9cee08bf69"
+    }
+  },
+  "CAISO|2019|wind": {
+    "footprint_mw": 6010.1,
+    "missed_mw_off": 112.9,
+    "missed_plants_off": 6,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 5897.2,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 6010.1,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "897cf37e693b2548",
+      "monthly_solar": "d2e822bb2aafef72",
+      "ptc_share": "bee90aebd62de1c7",
+      "solar_geometry": "775c7339335d25eb|ed4f354ba2026265"
+    },
+    "digests_on": {
+      "monthly_wind": "598fa8b555c14526",
+      "monthly_solar": "3976fe88bd261c94",
+      "ptc_share": "f638f6a55313321c",
+      "solar_geometry": "6ea4988e006391d9|00633a36df821137"
+    }
+  },
+  "CAISO|2019|solar": {
+    "footprint_mw": 12823.3,
+    "missed_mw_off": 13.1,
+    "missed_plants_off": 5,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 12810.2,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 12823.3,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "897cf37e693b2548",
+      "monthly_solar": "d2e822bb2aafef72",
+      "ptc_share": "bee90aebd62de1c7",
+      "solar_geometry": "775c7339335d25eb|ed4f354ba2026265"
+    },
+    "digests_on": {
+      "monthly_wind": "598fa8b555c14526",
+      "monthly_solar": "3976fe88bd261c94",
+      "ptc_share": "f638f6a55313321c",
+      "solar_geometry": "6ea4988e006391d9|00633a36df821137"
+    }
+  },
+  "CAISO|2020|wind": {
+    "footprint_mw": 5781.5,
+    "missed_mw_off": 5.9,
+    "missed_plants_off": 1,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 5775.6,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 5781.5,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "4a861e9b1256a41a",
+      "monthly_solar": "b3664e05626a3b9d",
+      "ptc_share": "e6cf210201a17d43",
+      "solar_geometry": "6c61ad67370fb7ae|3c399af11234a419"
+    },
+    "digests_on": {
+      "monthly_wind": "129ded9bd9059a41",
+      "monthly_solar": "1ef9cf4786150472",
+      "ptc_share": "e4fe787378f7016a",
+      "solar_geometry": "b76a70187ba6960c|83b033cc3c9eb5af"
+    }
+  },
+  "CAISO|2020|solar": {
+    "footprint_mw": 14616.2,
+    "missed_mw_off": 1.1,
+    "missed_plants_off": 1,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 14615.1,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 14616.2,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "4a861e9b1256a41a",
+      "monthly_solar": "b3664e05626a3b9d",
+      "ptc_share": "e6cf210201a17d43",
+      "solar_geometry": "6c61ad67370fb7ae|3c399af11234a419"
+    },
+    "digests_on": {
+      "monthly_wind": "129ded9bd9059a41",
+      "monthly_solar": "1ef9cf4786150472",
+      "ptc_share": "e4fe787378f7016a",
+      "solar_geometry": "b76a70187ba6960c|83b033cc3c9eb5af"
+    }
+  },
+  "CAISO|2021|wind": {
+    "footprint_mw": 6063.8,
+    "missed_mw_off": 5.9,
+    "missed_plants_off": 1,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 6057.9,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 6063.8,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "da16f02a9517a992",
+      "monthly_solar": "ac79424db6d3a792",
+      "ptc_share": "80959b8c52e974d1",
+      "solar_geometry": "8947bb87ca0f2531|9784c9991a0ac1e2"
+    },
+    "digests_on": {
+      "monthly_wind": "9c26bbb3d45cbf95",
+      "monthly_solar": "4929f9de0cd29e93",
+      "ptc_share": "d37877681a75cc92",
+      "solar_geometry": "d1f865ba1efa7843|6b40c7b2772de7d4"
+    }
+  },
+  "CAISO|2021|solar": {
+    "footprint_mw": 15869.0,
+    "missed_mw_off": 4.8,
+    "missed_plants_off": 4,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 15864.2,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 15869.0,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "da16f02a9517a992",
+      "monthly_solar": "ac79424db6d3a792",
+      "ptc_share": "80959b8c52e974d1",
+      "solar_geometry": "8947bb87ca0f2531|9784c9991a0ac1e2"
+    },
+    "digests_on": {
+      "monthly_wind": "9c26bbb3d45cbf95",
+      "monthly_solar": "4929f9de0cd29e93",
+      "ptc_share": "d37877681a75cc92",
+      "solar_geometry": "d1f865ba1efa7843|6b40c7b2772de7d4"
+    }
+  },
+  "CAISO|2022|wind": {
+    "footprint_mw": 6040.9,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 6040.9,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 6040.9,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "71a6f2d40331e362",
+      "monthly_solar": "50b6ccc3c7ab4263",
+      "ptc_share": "a36452c844c1d904",
+      "solar_geometry": "4a59803bba76d846|56ce19b094d68a84"
+    },
+    "digests_on": {
+      "monthly_wind": "71a6f2d40331e362",
+      "monthly_solar": "5557a1caf27a6fa5",
+      "ptc_share": "a36452c844c1d904",
+      "solar_geometry": "7529543e407701f4|34440324bb693fa4"
+    }
+  },
+  "CAISO|2022|solar": {
+    "footprint_mw": 17942.9,
+    "missed_mw_off": 2.9,
+    "missed_plants_off": 2,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 17940.0,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 17942.9,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "71a6f2d40331e362",
+      "monthly_solar": "50b6ccc3c7ab4263",
+      "ptc_share": "a36452c844c1d904",
+      "solar_geometry": "4a59803bba76d846|56ce19b094d68a84"
+    },
+    "digests_on": {
+      "monthly_wind": "71a6f2d40331e362",
+      "monthly_solar": "5557a1caf27a6fa5",
+      "ptc_share": "a36452c844c1d904",
+      "solar_geometry": "7529543e407701f4|34440324bb693fa4"
+    }
+  },
+  "CAISO|2023|wind": {
+    "footprint_mw": 6179.5,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 6179.5,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 6179.5,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "07355142e6d7ff14",
+      "monthly_solar": "ccd9306f6c089348",
+      "ptc_share": "f9d0e2bdcf0d2912",
+      "solar_geometry": "2ca4d7980ed630ea|26f2f11463eb83d2"
+    },
+    "digests_on": {
+      "monthly_wind": "07355142e6d7ff14",
+      "monthly_solar": "ccd9306f6c089348",
+      "ptc_share": "f9d0e2bdcf0d2912",
+      "solar_geometry": "2ca4d7980ed630ea|26f2f11463eb83d2"
+    }
+  },
+  "CAISO|2023|solar": {
+    "footprint_mw": 20397.9,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 20397.9,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 20397.9,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "07355142e6d7ff14",
+      "monthly_solar": "ccd9306f6c089348",
+      "ptc_share": "f9d0e2bdcf0d2912",
+      "solar_geometry": "2ca4d7980ed630ea|26f2f11463eb83d2"
+    },
+    "digests_on": {
+      "monthly_wind": "07355142e6d7ff14",
+      "monthly_solar": "ccd9306f6c089348",
+      "ptc_share": "f9d0e2bdcf0d2912",
+      "solar_geometry": "2ca4d7980ed630ea|26f2f11463eb83d2"
+    }
+  },
+  "CAISO|2024|wind": {
+    "footprint_mw": 6334.7,
+    "missed_mw_off": 30.0,
+    "missed_plants_off": 1,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 6304.7,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 6334.7,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "a1612218c7644cf2",
+      "monthly_solar": "711e7946582ca0f5",
+      "ptc_share": "078af968c78af797",
+      "solar_geometry": "80d65050ea7609c8|8fb85e284ef5e500"
+    },
+    "digests_on": {
+      "monthly_wind": "6b9785aab23ca0d1",
+      "monthly_solar": "711e7946582ca0f5",
+      "ptc_share": "a989916fa7975aed",
+      "solar_geometry": "80d65050ea7609c8|8fb85e284ef5e500"
+    }
+  },
+  "CAISO|2024|solar": {
+    "footprint_mw": 23085.9,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 23085.9,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 23085.9,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "a1612218c7644cf2",
+      "monthly_solar": "711e7946582ca0f5",
+      "ptc_share": "078af968c78af797",
+      "solar_geometry": "80d65050ea7609c8|8fb85e284ef5e500"
+    },
+    "digests_on": {
+      "monthly_wind": "6b9785aab23ca0d1",
+      "monthly_solar": "711e7946582ca0f5",
+      "ptc_share": "a989916fa7975aed",
+      "solar_geometry": "80d65050ea7609c8|8fb85e284ef5e500"
+    }
+  },
+  "CAISO|2025|wind": {
+    "footprint_mw": 6326.3,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 6326.3,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 6326.3,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "23bdb4bb1961117e",
+      "monthly_solar": "d2793bd6d069286f",
+      "ptc_share": "419c505292a0b8d9",
+      "solar_geometry": "e1a485648c3c09d7|fb5a4decf7acdfe7"
+    },
+    "digests_on": {
+      "monthly_wind": "23bdb4bb1961117e",
+      "monthly_solar": "d2793bd6d069286f",
+      "ptc_share": "419c505292a0b8d9",
+      "solar_geometry": "e1a485648c3c09d7|fb5a4decf7acdfe7"
+    }
+  },
+  "CAISO|2025|solar": {
+    "footprint_mw": 24935.3,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 24935.3,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 24935.3,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "23bdb4bb1961117e",
+      "monthly_solar": "d2793bd6d069286f",
+      "ptc_share": "419c505292a0b8d9",
+      "solar_geometry": "e1a485648c3c09d7|fb5a4decf7acdfe7"
+    },
+    "digests_on": {
+      "monthly_wind": "23bdb4bb1961117e",
+      "monthly_solar": "d2793bd6d069286f",
+      "ptc_share": "419c505292a0b8d9",
+      "solar_geometry": "e1a485648c3c09d7|fb5a4decf7acdfe7"
+    }
+  },
+  "PJM|2019|wind": {
+    "footprint_mw": 9215.5,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 9215.5,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 9215.5,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "7bd6efdf9d79cec0",
+      "monthly_solar": "7f60f07bad005715",
+      "ptc_share": "129dc9c80de7a92b",
+      "solar_geometry": "1557403bb8cc9565|a54f246865935b28"
+    },
+    "digests_on": {
+      "monthly_wind": "7bd6efdf9d79cec0",
+      "monthly_solar": "d75d1f8145353f69",
+      "ptc_share": "129dc9c80de7a92b",
+      "solar_geometry": "221f954fef4cc931|87b63657aa9c19a6"
+    }
+  },
+  "PJM|2019|solar": {
+    "footprint_mw": 3315.9,
+    "missed_mw_off": 5.0,
+    "missed_plants_off": 4,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 3310.9,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 3315.9,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "7bd6efdf9d79cec0",
+      "monthly_solar": "7f60f07bad005715",
+      "ptc_share": "129dc9c80de7a92b",
+      "solar_geometry": "1557403bb8cc9565|a54f246865935b28"
+    },
+    "digests_on": {
+      "monthly_wind": "7bd6efdf9d79cec0",
+      "monthly_solar": "d75d1f8145353f69",
+      "ptc_share": "129dc9c80de7a92b",
+      "solar_geometry": "221f954fef4cc931|87b63657aa9c19a6"
+    }
+  },
+  "PJM|2020|wind": {
+    "footprint_mw": 10153.9,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 10153.9,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 10153.9,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "33094adc09d96d8f",
+      "monthly_solar": "9e54350ee44a9e6b",
+      "ptc_share": "2bc110833c6eff92",
+      "solar_geometry": "c034fecdd70da52f|0c0aa395b9e006cd"
+    },
+    "digests_on": {
+      "monthly_wind": "33094adc09d96d8f",
+      "monthly_solar": "a2ecbdcf77003caa",
+      "ptc_share": "2bc110833c6eff92",
+      "solar_geometry": "5a77cdc272755122|0fdf5d8109c926ea"
+    }
+  },
+  "PJM|2020|solar": {
+    "footprint_mw": 4556.8,
+    "missed_mw_off": 7.0,
+    "missed_plants_off": 5,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 4549.8,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 4556.8,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "33094adc09d96d8f",
+      "monthly_solar": "9e54350ee44a9e6b",
+      "ptc_share": "2bc110833c6eff92",
+      "solar_geometry": "c034fecdd70da52f|0c0aa395b9e006cd"
+    },
+    "digests_on": {
+      "monthly_wind": "33094adc09d96d8f",
+      "monthly_solar": "a2ecbdcf77003caa",
+      "ptc_share": "2bc110833c6eff92",
+      "solar_geometry": "5a77cdc272755122|0fdf5d8109c926ea"
+    }
+  },
+  "PJM|2021|wind": {
+    "footprint_mw": 10657.2,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 10657.2,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 10657.2,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "bd3f3c7d6f1942f5",
+      "monthly_solar": "c64a507e6e8a69f5",
+      "ptc_share": "39172d35ae8db3b2",
+      "solar_geometry": "eb8b35feaffbfec5|78d4af69cc135d1c"
+    },
+    "digests_on": {
+      "monthly_wind": "bd3f3c7d6f1942f5",
+      "monthly_solar": "61aabc3d0e34f889",
+      "ptc_share": "39172d35ae8db3b2",
+      "solar_geometry": "d589fb1f3726d94b|acc67bb9bad90456"
+    }
+  },
+  "PJM|2021|solar": {
+    "footprint_mw": 6453.5,
+    "missed_mw_off": 4.0,
+    "missed_plants_off": 3,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 6449.5,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 6453.5,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "bd3f3c7d6f1942f5",
+      "monthly_solar": "c64a507e6e8a69f5",
+      "ptc_share": "39172d35ae8db3b2",
+      "solar_geometry": "eb8b35feaffbfec5|78d4af69cc135d1c"
+    },
+    "digests_on": {
+      "monthly_wind": "bd3f3c7d6f1942f5",
+      "monthly_solar": "61aabc3d0e34f889",
+      "ptc_share": "39172d35ae8db3b2",
+      "solar_geometry": "d589fb1f3726d94b|acc67bb9bad90456"
+    }
+  },
+  "PJM|2022|wind": {
+    "footprint_mw": 10772.2,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 10772.2,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 10772.2,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "fbf99c61114a212b",
+      "monthly_solar": "fa915d5bc6ba9e92",
+      "ptc_share": "2793187c10288c27",
+      "solar_geometry": "bed42b5041fbddb6|9897effeba28d735"
+    },
+    "digests_on": {
+      "monthly_wind": "fbf99c61114a212b",
+      "monthly_solar": "7d2cece5371e8894",
+      "ptc_share": "2793187c10288c27",
+      "solar_geometry": "55b93e66dca94911|05b738138a20e32c"
+    }
+  },
+  "PJM|2022|solar": {
+    "footprint_mw": 7411.6,
+    "missed_mw_off": 1.3,
+    "missed_plants_off": 1,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 7410.3,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 7411.6,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "fbf99c61114a212b",
+      "monthly_solar": "fa915d5bc6ba9e92",
+      "ptc_share": "2793187c10288c27",
+      "solar_geometry": "bed42b5041fbddb6|9897effeba28d735"
+    },
+    "digests_on": {
+      "monthly_wind": "fbf99c61114a212b",
+      "monthly_solar": "7d2cece5371e8894",
+      "ptc_share": "2793187c10288c27",
+      "solar_geometry": "55b93e66dca94911|05b738138a20e32c"
+    }
+  },
+  "PJM|2023|wind": {
+    "footprint_mw": 11270.6,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 11270.6,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 11270.6,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "94ef36c2d2906102",
+      "monthly_solar": "5ccca1e97e3c444a",
+      "ptc_share": "9519e024c38b35b3",
+      "solar_geometry": "d9eb7083205cccdb|2de7390297a2d996"
+    },
+    "digests_on": {
+      "monthly_wind": "94ef36c2d2906102",
+      "monthly_solar": "5ccca1e97e3c444a",
+      "ptc_share": "9519e024c38b35b3",
+      "solar_geometry": "d9eb7083205cccdb|2de7390297a2d996"
+    }
+  },
+  "PJM|2023|solar": {
+    "footprint_mw": 10991.0,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 10991.0,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 10991.0,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "94ef36c2d2906102",
+      "monthly_solar": "5ccca1e97e3c444a",
+      "ptc_share": "9519e024c38b35b3",
+      "solar_geometry": "d9eb7083205cccdb|2de7390297a2d996"
+    },
+    "digests_on": {
+      "monthly_wind": "94ef36c2d2906102",
+      "monthly_solar": "5ccca1e97e3c444a",
+      "ptc_share": "9519e024c38b35b3",
+      "solar_geometry": "d9eb7083205cccdb|2de7390297a2d996"
+    }
+  },
+  "PJM|2024|wind": {
+    "footprint_mw": 11459.6,
+    "missed_mw_off": 189.0,
+    "missed_plants_off": 1,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 11270.6,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 11459.6,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "b1edbce1e391e6a9",
+      "monthly_solar": "09f7b5ebfcf55009",
+      "ptc_share": "08fc8106431f043f",
+      "solar_geometry": "6882efeecde1abb1|1b6e46b6683c3542"
+    },
+    "digests_on": {
+      "monthly_wind": "4814fd2f8c489195",
+      "monthly_solar": "f4b15f210b81de2f",
+      "ptc_share": "08fc8106431f043f",
+      "solar_geometry": "a5dca92e34ada255|cbefe979e2dac4c1"
+    }
+  },
+  "PJM|2024|solar": {
+    "footprint_mw": 14791.3,
+    "missed_mw_off": 3737.5,
+    "missed_plants_off": 129,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 11053.8,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 14791.3,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "b1edbce1e391e6a9",
+      "monthly_solar": "09f7b5ebfcf55009",
+      "ptc_share": "08fc8106431f043f",
+      "solar_geometry": "6882efeecde1abb1|1b6e46b6683c3542"
+    },
+    "digests_on": {
+      "monthly_wind": "4814fd2f8c489195",
+      "monthly_solar": "f4b15f210b81de2f",
+      "ptc_share": "08fc8106431f043f",
+      "solar_geometry": "a5dca92e34ada255|cbefe979e2dac4c1"
+    }
+  },
+  "PJM|2025|wind": {
+    "footprint_mw": 11727.9,
+    "missed_mw_off": 447.9,
+    "missed_plants_off": 3,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 11280.0,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 11727.9,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "8a071e68c4099982",
+      "monthly_solar": "89b152cc5e9d0a61",
+      "ptc_share": "fd3952aebe38e63b",
+      "solar_geometry": "2e7133ee9e01c52d|fdf85b824600da73"
+    },
+    "digests_on": {
+      "monthly_wind": "0d4e2c39752ec438",
+      "monthly_solar": "12275acbbb5e0fb3",
+      "ptc_share": "1260bf9aa956ee73",
+      "solar_geometry": "9431cb3641845c94|588edb5e75ea267c"
+    }
+  },
+  "PJM|2025|solar": {
+    "footprint_mw": 18048.8,
+    "missed_mw_off": 6986.0,
+    "missed_plants_off": 349,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 11062.8,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 18048.8,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "8a071e68c4099982",
+      "monthly_solar": "89b152cc5e9d0a61",
+      "ptc_share": "fd3952aebe38e63b",
+      "solar_geometry": "2e7133ee9e01c52d|fdf85b824600da73"
+    },
+    "digests_on": {
+      "monthly_wind": "0d4e2c39752ec438",
+      "monthly_solar": "12275acbbb5e0fb3",
+      "ptc_share": "1260bf9aa956ee73",
+      "solar_geometry": "9431cb3641845c94|588edb5e75ea267c"
+    }
+  },
+  "MISO|2019|wind": {
+    "footprint_mw": 21734.3,
+    "missed_mw_off": 50.8,
+    "missed_plants_off": 7,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 21683.5,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 21734.3,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "2585c8f23d46b8ef",
+      "monthly_solar": "b8efe955b9cb2113",
+      "ptc_share": "ae441eeecad66a99",
+      "solar_geometry": "a674717f5991eec2|3f0d1720b2706284"
+    },
+    "digests_on": {
+      "monthly_wind": "a8f95368de7d6603",
+      "monthly_solar": "33d13d16f4d5f683",
+      "ptc_share": "08fd58e6ed42501d",
+      "solar_geometry": "cc01710aa6fcff77|81d76c9a5f526cfb"
+    }
+  },
+  "MISO|2019|solar": {
+    "footprint_mw": 1404.6,
+    "missed_mw_off": 8.4,
+    "missed_plants_off": 7,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 1396.2,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 1404.6,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "2585c8f23d46b8ef",
+      "monthly_solar": "b8efe955b9cb2113",
+      "ptc_share": "ae441eeecad66a99",
+      "solar_geometry": "a674717f5991eec2|3f0d1720b2706284"
+    },
+    "digests_on": {
+      "monthly_wind": "a8f95368de7d6603",
+      "monthly_solar": "33d13d16f4d5f683",
+      "ptc_share": "08fd58e6ed42501d",
+      "solar_geometry": "cc01710aa6fcff77|81d76c9a5f526cfb"
+    }
+  },
+  "MISO|2020|wind": {
+    "footprint_mw": 26098.5,
+    "missed_mw_off": 48.5,
+    "missed_plants_off": 6,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 26050.0,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 26098.5,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "7d2aa0566ee9fcdf",
+      "monthly_solar": "2771b3ab725d7758",
+      "ptc_share": "430af8bcb62df77c",
+      "solar_geometry": "dc4ad0132c863c27|946a525c81f39b2f"
+    },
+    "digests_on": {
+      "monthly_wind": "54e9eec4fdf6035f",
+      "monthly_solar": "3f0b1bdd671908b3",
+      "ptc_share": "3b3b8f3acc1dea6b",
+      "solar_geometry": "89177f9acfbae479|c4f69d8343e0cb87"
+    }
+  },
+  "MISO|2020|solar": {
+    "footprint_mw": 2056.4,
+    "missed_mw_off": 8.4,
+    "missed_plants_off": 7,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 2048.0,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 2056.4,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "7d2aa0566ee9fcdf",
+      "monthly_solar": "2771b3ab725d7758",
+      "ptc_share": "430af8bcb62df77c",
+      "solar_geometry": "dc4ad0132c863c27|946a525c81f39b2f"
+    },
+    "digests_on": {
+      "monthly_wind": "54e9eec4fdf6035f",
+      "monthly_solar": "3f0b1bdd671908b3",
+      "ptc_share": "3b3b8f3acc1dea6b",
+      "solar_geometry": "89177f9acfbae479|c4f69d8343e0cb87"
+    }
+  },
+  "MISO|2021|wind": {
+    "footprint_mw": 29016.0,
+    "missed_mw_off": 21.0,
+    "missed_plants_off": 1,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 28995.0,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 29016.0,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "d31d0bd647351fe0",
+      "monthly_solar": "3b74176eca9570b3",
+      "ptc_share": "7e0b0cecb5de21aa",
+      "solar_geometry": "086d45fc5eee079f|a0d10bb5d4dd7714"
+    },
+    "digests_on": {
+      "monthly_wind": "2265341596d78e69",
+      "monthly_solar": "50d46a2e590b7fae",
+      "ptc_share": "163922dd3ee679e1",
+      "solar_geometry": "db3f105cade88452|ef9ee3418bb6bbc1"
+    }
+  },
+  "MISO|2021|solar": {
+    "footprint_mw": 3212.0,
+    "missed_mw_off": 4.4,
+    "missed_plants_off": 3,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 3207.6,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 3212.0,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "d31d0bd647351fe0",
+      "monthly_solar": "3b74176eca9570b3",
+      "ptc_share": "7e0b0cecb5de21aa",
+      "solar_geometry": "086d45fc5eee079f|a0d10bb5d4dd7714"
+    },
+    "digests_on": {
+      "monthly_wind": "2265341596d78e69",
+      "monthly_solar": "50d46a2e590b7fae",
+      "ptc_share": "163922dd3ee679e1",
+      "solar_geometry": "db3f105cade88452|ef9ee3418bb6bbc1"
+    }
+  },
+  "MISO|2022|wind": {
+    "footprint_mw": 29843.8,
+    "missed_mw_off": 21.0,
+    "missed_plants_off": 1,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 29822.8,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 29843.8,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "8fcbb3c18a9b36fc",
+      "monthly_solar": "8c1ffaf26ffd6a3f",
+      "ptc_share": "d09df92a1c8da008",
+      "solar_geometry": "2b5ba28ba2690210|f88fba78a7ec34ef"
+    },
+    "digests_on": {
+      "monthly_wind": "876afd256a6b63b3",
+      "monthly_solar": "0fdbb133da5dad2f",
+      "ptc_share": "35fb2996f087d8b4",
+      "solar_geometry": "4164f1093fefc08a|e4bf378aba110e59"
+    }
+  },
+  "MISO|2022|solar": {
+    "footprint_mw": 4548.7,
+    "missed_mw_off": 2.5,
+    "missed_plants_off": 1,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 4546.2,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 4548.7,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "8fcbb3c18a9b36fc",
+      "monthly_solar": "8c1ffaf26ffd6a3f",
+      "ptc_share": "d09df92a1c8da008",
+      "solar_geometry": "2b5ba28ba2690210|f88fba78a7ec34ef"
+    },
+    "digests_on": {
+      "monthly_wind": "876afd256a6b63b3",
+      "monthly_solar": "0fdbb133da5dad2f",
+      "ptc_share": "35fb2996f087d8b4",
+      "solar_geometry": "4164f1093fefc08a|e4bf378aba110e59"
+    }
+  },
+  "MISO|2023|wind": {
+    "footprint_mw": 31214.5,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 31214.5,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 31214.5,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "bc6bbc36a36a087a",
+      "monthly_solar": "89e0cffc3ecf0b78",
+      "ptc_share": "f73516f636bc1fd1",
+      "solar_geometry": "638593ae8cf2a78c|5ac21f3e7b8b0aaa"
+    },
+    "digests_on": {
+      "monthly_wind": "bc6bbc36a36a087a",
+      "monthly_solar": "89e0cffc3ecf0b78",
+      "ptc_share": "f73516f636bc1fd1",
+      "solar_geometry": "638593ae8cf2a78c|5ac21f3e7b8b0aaa"
+    }
+  },
+  "MISO|2023|solar": {
+    "footprint_mw": 7348.2,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 7348.2,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 7348.2,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "bc6bbc36a36a087a",
+      "monthly_solar": "89e0cffc3ecf0b78",
+      "ptc_share": "f73516f636bc1fd1",
+      "solar_geometry": "638593ae8cf2a78c|5ac21f3e7b8b0aaa"
+    },
+    "digests_on": {
+      "monthly_wind": "bc6bbc36a36a087a",
+      "monthly_solar": "89e0cffc3ecf0b78",
+      "ptc_share": "f73516f636bc1fd1",
+      "solar_geometry": "638593ae8cf2a78c|5ac21f3e7b8b0aaa"
+    }
+  },
+  "MISO|2024|wind": {
+    "footprint_mw": 32131.1,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 32131.1,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 32131.1,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "86aeede772be8608",
+      "monthly_solar": "ba8fde362b709224",
+      "ptc_share": "3e91055eb981c421",
+      "solar_geometry": "78cf7430687e8461|58fe8410de3bd393"
+    },
+    "digests_on": {
+      "monthly_wind": "86aeede772be8608",
+      "monthly_solar": "ba8fde362b709224",
+      "ptc_share": "3e91055eb981c421",
+      "solar_geometry": "78cf7430687e8461|58fe8410de3bd393"
+    }
+  },
+  "MISO|2024|solar": {
+    "footprint_mw": 13574.9,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 13574.9,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 13574.9,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "86aeede772be8608",
+      "monthly_solar": "ba8fde362b709224",
+      "ptc_share": "3e91055eb981c421",
+      "solar_geometry": "78cf7430687e8461|58fe8410de3bd393"
+    },
+    "digests_on": {
+      "monthly_wind": "86aeede772be8608",
+      "monthly_solar": "ba8fde362b709224",
+      "ptc_share": "3e91055eb981c421",
+      "solar_geometry": "78cf7430687e8461|58fe8410de3bd393"
+    }
+  },
+  "MISO|2025|wind": {
+    "footprint_mw": 33226.2,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 33226.2,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 33226.2,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "2556e117fa8ab314",
+      "monthly_solar": "2f5433216ef94184",
+      "ptc_share": "14322415d0d42d28",
+      "solar_geometry": "9f2700f436a02107|c367a04b8705600d"
+    },
+    "digests_on": {
+      "monthly_wind": "2556e117fa8ab314",
+      "monthly_solar": "2f5433216ef94184",
+      "ptc_share": "14322415d0d42d28",
+      "solar_geometry": "9f2700f436a02107|c367a04b8705600d"
+    }
+  },
+  "MISO|2025|solar": {
+    "footprint_mw": 20802.1,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 20802.1,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 20802.1,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "2556e117fa8ab314",
+      "monthly_solar": "2f5433216ef94184",
+      "ptc_share": "14322415d0d42d28",
+      "solar_geometry": "9f2700f436a02107|c367a04b8705600d"
+    },
+    "digests_on": {
+      "monthly_wind": "2556e117fa8ab314",
+      "monthly_solar": "2f5433216ef94184",
+      "ptc_share": "14322415d0d42d28",
+      "solar_geometry": "9f2700f436a02107|c367a04b8705600d"
+    }
+  },
+  "NYISO|2019|wind": {
+    "footprint_mw": 1990.9,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 1990.9,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 1990.9,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "8da866aaac342043",
+      "monthly_solar": "78792424b9ec1e05",
+      "ptc_share": "08b1f8a564855115",
+      "solar_geometry": "478f0a70d326329a|cda20c04f8aee102"
+    },
+    "digests_on": {
+      "monthly_wind": "8da866aaac342043",
+      "monthly_solar": "78792424b9ec1e05",
+      "ptc_share": "08b1f8a564855115",
+      "solar_geometry": "478f0a70d326329a|cda20c04f8aee102"
+    }
+  },
+  "NYISO|2019|solar": {
+    "footprint_mw": 475.5,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 475.5,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 475.5,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "8da866aaac342043",
+      "monthly_solar": "78792424b9ec1e05",
+      "ptc_share": "08b1f8a564855115",
+      "solar_geometry": "478f0a70d326329a|cda20c04f8aee102"
+    },
+    "digests_on": {
+      "monthly_wind": "8da866aaac342043",
+      "monthly_solar": "78792424b9ec1e05",
+      "ptc_share": "08b1f8a564855115",
+      "solar_geometry": "478f0a70d326329a|cda20c04f8aee102"
+    }
+  },
+  "NYISO|2020|wind": {
+    "footprint_mw": 1988.9,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 1988.9,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 1988.9,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "b860d5bf97f72fee",
+      "monthly_solar": "81941bac2a9dae87",
+      "ptc_share": "7f0ee139dbcbaefb",
+      "solar_geometry": "e821bdd4db77e2cb|496eb7ec8461f073"
+    },
+    "digests_on": {
+      "monthly_wind": "b860d5bf97f72fee",
+      "monthly_solar": "81941bac2a9dae87",
+      "ptc_share": "7f0ee139dbcbaefb",
+      "solar_geometry": "e821bdd4db77e2cb|496eb7ec8461f073"
+    }
+  },
+  "NYISO|2020|solar": {
+    "footprint_mw": 664.1,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 664.1,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 664.1,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "b860d5bf97f72fee",
+      "monthly_solar": "81941bac2a9dae87",
+      "ptc_share": "7f0ee139dbcbaefb",
+      "solar_geometry": "e821bdd4db77e2cb|496eb7ec8461f073"
+    },
+    "digests_on": {
+      "monthly_wind": "b860d5bf97f72fee",
+      "monthly_solar": "81941bac2a9dae87",
+      "ptc_share": "7f0ee139dbcbaefb",
+      "solar_geometry": "e821bdd4db77e2cb|496eb7ec8461f073"
+    }
+  },
+  "NYISO|2021|wind": {
+    "footprint_mw": 2189.1,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 2189.1,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 2189.1,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "3ed819fa383be697",
+      "monthly_solar": "6e25103d4b5597f2",
+      "ptc_share": "f08e79b6a2702fba",
+      "solar_geometry": "ecd540e172cc9b18|779a421f44784e1e"
+    },
+    "digests_on": {
+      "monthly_wind": "3ed819fa383be697",
+      "monthly_solar": "6e25103d4b5597f2",
+      "ptc_share": "f08e79b6a2702fba",
+      "solar_geometry": "ecd540e172cc9b18|779a421f44784e1e"
+    }
+  },
+  "NYISO|2021|solar": {
+    "footprint_mw": 856.1,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 856.1,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 856.1,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "3ed819fa383be697",
+      "monthly_solar": "6e25103d4b5597f2",
+      "ptc_share": "f08e79b6a2702fba",
+      "solar_geometry": "ecd540e172cc9b18|779a421f44784e1e"
+    },
+    "digests_on": {
+      "monthly_wind": "3ed819fa383be697",
+      "monthly_solar": "6e25103d4b5597f2",
+      "ptc_share": "f08e79b6a2702fba",
+      "solar_geometry": "ecd540e172cc9b18|779a421f44784e1e"
+    }
+  },
+  "NYISO|2022|wind": {
+    "footprint_mw": 2189.1,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 2189.1,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 2189.1,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "1d8763b79e396e57",
+      "monthly_solar": "b1c0b28cc4f18fb7",
+      "ptc_share": "115ec840b9003100",
+      "solar_geometry": "d34814eab0fb3a61|fa33b5526564b36d"
+    },
+    "digests_on": {
+      "monthly_wind": "1d8763b79e396e57",
+      "monthly_solar": "b1c0b28cc4f18fb7",
+      "ptc_share": "115ec840b9003100",
+      "solar_geometry": "d34814eab0fb3a61|fa33b5526564b36d"
+    }
+  },
+  "NYISO|2022|solar": {
+    "footprint_mw": 1276.7,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 1276.7,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 1276.7,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "1d8763b79e396e57",
+      "monthly_solar": "b1c0b28cc4f18fb7",
+      "ptc_share": "115ec840b9003100",
+      "solar_geometry": "d34814eab0fb3a61|fa33b5526564b36d"
+    },
+    "digests_on": {
+      "monthly_wind": "1d8763b79e396e57",
+      "monthly_solar": "b1c0b28cc4f18fb7",
+      "ptc_share": "115ec840b9003100",
+      "solar_geometry": "d34814eab0fb3a61|fa33b5526564b36d"
+    }
+  },
+  "NYISO|2023|wind": {
+    "footprint_mw": 2745.6,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 2745.6,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 2745.6,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "0b0a8b8289db0112",
+      "monthly_solar": "0afa0e1a990826ec",
+      "ptc_share": "fe775b0fc403dac8",
+      "solar_geometry": "96bdb048d1a30e1d|e1550f1012ad4397"
+    },
+    "digests_on": {
+      "monthly_wind": "0b0a8b8289db0112",
+      "monthly_solar": "0afa0e1a990826ec",
+      "ptc_share": "fe775b0fc403dac8",
+      "solar_geometry": "96bdb048d1a30e1d|e1550f1012ad4397"
+    }
+  },
+  "NYISO|2023|solar": {
+    "footprint_mw": 1599.2,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 1599.2,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 1599.2,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "0b0a8b8289db0112",
+      "monthly_solar": "0afa0e1a990826ec",
+      "ptc_share": "fe775b0fc403dac8",
+      "solar_geometry": "96bdb048d1a30e1d|e1550f1012ad4397"
+    },
+    "digests_on": {
+      "monthly_wind": "0b0a8b8289db0112",
+      "monthly_solar": "0afa0e1a990826ec",
+      "ptc_share": "fe775b0fc403dac8",
+      "solar_geometry": "96bdb048d1a30e1d|e1550f1012ad4397"
+    }
+  },
+  "NYISO|2024|wind": {
+    "footprint_mw": 2869.0,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 2869.0,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 2869.0,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "8b39af26b1f34f2d",
+      "monthly_solar": "a772379c18f7cef5",
+      "ptc_share": "ab0c5368c38d27ab",
+      "solar_geometry": "d8f8062a116f5072|efd846fa53a880e7"
+    },
+    "digests_on": {
+      "monthly_wind": "8b39af26b1f34f2d",
+      "monthly_solar": "a772379c18f7cef5",
+      "ptc_share": "ab0c5368c38d27ab",
+      "solar_geometry": "d8f8062a116f5072|efd846fa53a880e7"
+    }
+  },
+  "NYISO|2024|solar": {
+    "footprint_mw": 2517.4,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 2517.4,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 2517.4,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "8b39af26b1f34f2d",
+      "monthly_solar": "a772379c18f7cef5",
+      "ptc_share": "ab0c5368c38d27ab",
+      "solar_geometry": "d8f8062a116f5072|efd846fa53a880e7"
+    },
+    "digests_on": {
+      "monthly_wind": "8b39af26b1f34f2d",
+      "monthly_solar": "a772379c18f7cef5",
+      "ptc_share": "ab0c5368c38d27ab",
+      "solar_geometry": "d8f8062a116f5072|efd846fa53a880e7"
+    }
+  },
+  "NYISO|2025|wind": {
+    "footprint_mw": 2868.1,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 2868.1,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 2868.1,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "98f203074171c62b",
+      "monthly_solar": "0956609fb10d6edd",
+      "ptc_share": "1012234a8f3563b6",
+      "solar_geometry": "c014983d140fa367|50f1dd7763685842"
+    },
+    "digests_on": {
+      "monthly_wind": "98f203074171c62b",
+      "monthly_solar": "0956609fb10d6edd",
+      "ptc_share": "1012234a8f3563b6",
+      "solar_geometry": "c014983d140fa367|50f1dd7763685842"
+    }
+  },
+  "NYISO|2025|solar": {
+    "footprint_mw": 2942.9,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 2942.9,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 2942.9,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "98f203074171c62b",
+      "monthly_solar": "0956609fb10d6edd",
+      "ptc_share": "1012234a8f3563b6",
+      "solar_geometry": "c014983d140fa367|50f1dd7763685842"
+    },
+    "digests_on": {
+      "monthly_wind": "98f203074171c62b",
+      "monthly_solar": "0956609fb10d6edd",
+      "ptc_share": "1012234a8f3563b6",
+      "solar_geometry": "c014983d140fa367|50f1dd7763685842"
+    }
+  },
+  "NEISO|2019|wind": {
+    "footprint_mw": 1427.8,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 1427.8,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 1427.8,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "04fe02f7bca684b0",
+      "monthly_solar": "7e0fc91d17bb36e5",
+      "ptc_share": "d4e90cb0e1f07f02",
+      "solar_geometry": "05b53e6e06c578e0|0111b033d2a8d0ef"
+    },
+    "digests_on": {
+      "monthly_wind": "04fe02f7bca684b0",
+      "monthly_solar": "7e0fc91d17bb36e5",
+      "ptc_share": "d4e90cb0e1f07f02",
+      "solar_geometry": "05b53e6e06c578e0|0111b033d2a8d0ef"
+    }
+  },
+  "NEISO|2019|solar": {
+    "footprint_mw": 1212.9,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 1212.9,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 1212.9,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "04fe02f7bca684b0",
+      "monthly_solar": "7e0fc91d17bb36e5",
+      "ptc_share": "d4e90cb0e1f07f02",
+      "solar_geometry": "05b53e6e06c578e0|0111b033d2a8d0ef"
+    },
+    "digests_on": {
+      "monthly_wind": "04fe02f7bca684b0",
+      "monthly_solar": "7e0fc91d17bb36e5",
+      "ptc_share": "d4e90cb0e1f07f02",
+      "solar_geometry": "05b53e6e06c578e0|0111b033d2a8d0ef"
+    }
+  },
+  "NEISO|2020|wind": {
+    "footprint_mw": 1500.4,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 1500.4,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 1500.4,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "b3824fbcebd76f14",
+      "monthly_solar": "9bc7e0151ced46ea",
+      "ptc_share": "bf491a8ee4d2f2aa",
+      "solar_geometry": "a94f32ccb4efab8e|b698cabeea6525ed"
+    },
+    "digests_on": {
+      "monthly_wind": "b3824fbcebd76f14",
+      "monthly_solar": "c1dd822d68b83996",
+      "ptc_share": "bf491a8ee4d2f2aa",
+      "solar_geometry": "d69e979ffebc7618|fc96717805c3b492"
+    }
+  },
+  "NEISO|2020|solar": {
+    "footprint_mw": 1525.5,
+    "missed_mw_off": 6.8,
+    "missed_plants_off": 2,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 1518.7,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 1525.5,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "b3824fbcebd76f14",
+      "monthly_solar": "9bc7e0151ced46ea",
+      "ptc_share": "bf491a8ee4d2f2aa",
+      "solar_geometry": "a94f32ccb4efab8e|b698cabeea6525ed"
+    },
+    "digests_on": {
+      "monthly_wind": "b3824fbcebd76f14",
+      "monthly_solar": "c1dd822d68b83996",
+      "ptc_share": "bf491a8ee4d2f2aa",
+      "solar_geometry": "d69e979ffebc7618|fc96717805c3b492"
+    }
+  },
+  "NEISO|2021|wind": {
+    "footprint_mw": 1518.2,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 1518.2,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 1518.2,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "9f77380481a3fc78",
+      "monthly_solar": "a1be911bbc989211",
+      "ptc_share": "0d0b8e398b970f12",
+      "solar_geometry": "9989e94585deabaf|40ec49059a7d2d50"
+    },
+    "digests_on": {
+      "monthly_wind": "9f77380481a3fc78",
+      "monthly_solar": "00ad3f63e2fa0ab1",
+      "ptc_share": "0d0b8e398b970f12",
+      "solar_geometry": "d10a50d9c3ee22a5|cef4a6c2c2de4d44"
+    }
+  },
+  "NEISO|2021|solar": {
+    "footprint_mw": 2073.5,
+    "missed_mw_off": 4.8,
+    "missed_plants_off": 1,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 2068.7,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 2073.5,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "9f77380481a3fc78",
+      "monthly_solar": "a1be911bbc989211",
+      "ptc_share": "0d0b8e398b970f12",
+      "solar_geometry": "9989e94585deabaf|40ec49059a7d2d50"
+    },
+    "digests_on": {
+      "monthly_wind": "9f77380481a3fc78",
+      "monthly_solar": "00ad3f63e2fa0ab1",
+      "ptc_share": "0d0b8e398b970f12",
+      "solar_geometry": "d10a50d9c3ee22a5|cef4a6c2c2de4d44"
+    }
+  },
+  "NEISO|2022|wind": {
+    "footprint_mw": 1538.2,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 1538.2,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 1538.2,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "91e53e311ca7f8a3",
+      "monthly_solar": "231c2eae397944a9",
+      "ptc_share": "c13705915beef10f",
+      "solar_geometry": "2b7d56f9b14f52ab|5f432a5b820637d4"
+    },
+    "digests_on": {
+      "monthly_wind": "91e53e311ca7f8a3",
+      "monthly_solar": "231c2eae397944a9",
+      "ptc_share": "c13705915beef10f",
+      "solar_geometry": "2b7d56f9b14f52ab|5f432a5b820637d4"
+    }
+  },
+  "NEISO|2022|solar": {
+    "footprint_mw": 2336.7,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 2336.7,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 2336.7,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "91e53e311ca7f8a3",
+      "monthly_solar": "231c2eae397944a9",
+      "ptc_share": "c13705915beef10f",
+      "solar_geometry": "2b7d56f9b14f52ab|5f432a5b820637d4"
+    },
+    "digests_on": {
+      "monthly_wind": "91e53e311ca7f8a3",
+      "monthly_solar": "231c2eae397944a9",
+      "ptc_share": "c13705915beef10f",
+      "solar_geometry": "2b7d56f9b14f52ab|5f432a5b820637d4"
+    }
+  },
+  "NEISO|2023|wind": {
+    "footprint_mw": 1538.2,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 1538.2,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 1538.2,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "3c4856d7bccd6307",
+      "monthly_solar": "a20a1ee62d567a3f",
+      "ptc_share": "bba85e1c2eaa83c1",
+      "solar_geometry": "b62b16d8f3251e23|80fa44e0f487a32f"
+    },
+    "digests_on": {
+      "monthly_wind": "3c4856d7bccd6307",
+      "monthly_solar": "a20a1ee62d567a3f",
+      "ptc_share": "bba85e1c2eaa83c1",
+      "solar_geometry": "b62b16d8f3251e23|80fa44e0f487a32f"
+    }
+  },
+  "NEISO|2023|solar": {
+    "footprint_mw": 2765.7,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 2765.7,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 2765.7,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "3c4856d7bccd6307",
+      "monthly_solar": "a20a1ee62d567a3f",
+      "ptc_share": "bba85e1c2eaa83c1",
+      "solar_geometry": "b62b16d8f3251e23|80fa44e0f487a32f"
+    },
+    "digests_on": {
+      "monthly_wind": "3c4856d7bccd6307",
+      "monthly_solar": "a20a1ee62d567a3f",
+      "ptc_share": "bba85e1c2eaa83c1",
+      "solar_geometry": "b62b16d8f3251e23|80fa44e0f487a32f"
+    }
+  },
+  "NEISO|2024|wind": {
+    "footprint_mw": 1538.2,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 1538.2,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 1538.2,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "3c4856d7bccd6307",
+      "monthly_solar": "17ebea6a51f320dd",
+      "ptc_share": "f4fd27b7603401f5",
+      "solar_geometry": "9ad54ab143fab5ae|66ca3bd83cdfdfd1"
+    },
+    "digests_on": {
+      "monthly_wind": "3c4856d7bccd6307",
+      "monthly_solar": "17ebea6a51f320dd",
+      "ptc_share": "f4fd27b7603401f5",
+      "solar_geometry": "9ad54ab143fab5ae|66ca3bd83cdfdfd1"
+    }
+  },
+  "NEISO|2024|solar": {
+    "footprint_mw": 3305.2,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 3305.2,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 3305.2,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "3c4856d7bccd6307",
+      "monthly_solar": "17ebea6a51f320dd",
+      "ptc_share": "f4fd27b7603401f5",
+      "solar_geometry": "9ad54ab143fab5ae|66ca3bd83cdfdfd1"
+    },
+    "digests_on": {
+      "monthly_wind": "3c4856d7bccd6307",
+      "monthly_solar": "17ebea6a51f320dd",
+      "ptc_share": "f4fd27b7603401f5",
+      "solar_geometry": "9ad54ab143fab5ae|66ca3bd83cdfdfd1"
+    }
+  },
+  "NEISO|2025|wind": {
+    "footprint_mw": 1721.2,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 1721.2,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 1721.2,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "0785113ba00c9b0f",
+      "monthly_solar": "1a2dcd70a803b65c",
+      "ptc_share": "4e9d77a08ecdcf05",
+      "solar_geometry": "33d2b28f9f2e135b|3f76c350e992b8c5"
+    },
+    "digests_on": {
+      "monthly_wind": "0785113ba00c9b0f",
+      "monthly_solar": "1a2dcd70a803b65c",
+      "ptc_share": "4e9d77a08ecdcf05",
+      "solar_geometry": "33d2b28f9f2e135b|3f76c350e992b8c5"
+    }
+  },
+  "NEISO|2025|solar": {
+    "footprint_mw": 3724.4,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 3724.4,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 3724.4,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "0785113ba00c9b0f",
+      "monthly_solar": "1a2dcd70a803b65c",
+      "ptc_share": "4e9d77a08ecdcf05",
+      "solar_geometry": "33d2b28f9f2e135b|3f76c350e992b8c5"
+    },
+    "digests_on": {
+      "monthly_wind": "0785113ba00c9b0f",
+      "monthly_solar": "1a2dcd70a803b65c",
+      "ptc_share": "4e9d77a08ecdcf05",
+      "solar_geometry": "33d2b28f9f2e135b|3f76c350e992b8c5"
+    }
+  },
+  "SPP|2019|wind": {
+    "footprint_mw": 20557.5,
+    "missed_mw_off": 24.2,
+    "missed_plants_off": 3,
+    "admitted_outside_ba_mw_off": 171.7,
+    "loader_dec_mw_off": 20705.0,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 171.7,
+    "loader_dec_mw_on": 20729.2,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "65042f4e0d563426",
+      "monthly_solar": "0373efd6e24ac518",
+      "ptc_share": "a741f1c7ca5feee1",
+      "solar_geometry": "47927f5e9aada4f5|8e5e8db97b73d597"
+    },
+    "digests_on": {
+      "monthly_wind": "7f2dff8a95e5c985",
+      "monthly_solar": "0373efd6e24ac518",
+      "ptc_share": "7e636c5331b80a76",
+      "solar_geometry": "47927f5e9aada4f5|8e5e8db97b73d597"
+    }
+  },
+  "SPP|2019|solar": {
+    "footprint_mw": 357.2,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 5.0,
+    "loader_dec_mw_off": 362.2,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 5.0,
+    "loader_dec_mw_on": 362.2,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "65042f4e0d563426",
+      "monthly_solar": "0373efd6e24ac518",
+      "ptc_share": "a741f1c7ca5feee1",
+      "solar_geometry": "47927f5e9aada4f5|8e5e8db97b73d597"
+    },
+    "digests_on": {
+      "monthly_wind": "7f2dff8a95e5c985",
+      "monthly_solar": "0373efd6e24ac518",
+      "ptc_share": "7e636c5331b80a76",
+      "solar_geometry": "47927f5e9aada4f5|8e5e8db97b73d597"
+    }
+  },
+  "SPP|2020|wind": {
+    "footprint_mw": 24226.8,
+    "missed_mw_off": 14.2,
+    "missed_plants_off": 2,
+    "admitted_outside_ba_mw_off": 169.4,
+    "loader_dec_mw_off": 24382.0,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 169.4,
+    "loader_dec_mw_on": 24396.2,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "b8d78e308aae49ff",
+      "monthly_solar": "db8251ff05898ce7",
+      "ptc_share": "76a1405b610a9a1a",
+      "solar_geometry": "b8054e1cc529b155|6304e1fd19b0c6e2"
+    },
+    "digests_on": {
+      "monthly_wind": "a8e0fa6aea0f2d11",
+      "monthly_solar": "db8251ff05898ce7",
+      "ptc_share": "bd332eb4d7f51fb4",
+      "solar_geometry": "b8054e1cc529b155|6304e1fd19b0c6e2"
+    }
+  },
+  "SPP|2020|solar": {
+    "footprint_mw": 393.1,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 5.0,
+    "loader_dec_mw_off": 398.1,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 5.0,
+    "loader_dec_mw_on": 398.1,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "b8d78e308aae49ff",
+      "monthly_solar": "db8251ff05898ce7",
+      "ptc_share": "76a1405b610a9a1a",
+      "solar_geometry": "b8054e1cc529b155|6304e1fd19b0c6e2"
+    },
+    "digests_on": {
+      "monthly_wind": "a8e0fa6aea0f2d11",
+      "monthly_solar": "db8251ff05898ce7",
+      "ptc_share": "bd332eb4d7f51fb4",
+      "solar_geometry": "b8054e1cc529b155|6304e1fd19b0c6e2"
+    }
+  },
+  "SPP|2021|wind": {
+    "footprint_mw": 28017.8,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 169.4,
+    "loader_dec_mw_off": 28187.2,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 169.4,
+    "loader_dec_mw_on": 28187.2,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "f25c5d7608d57d3d",
+      "monthly_solar": "5fbc776e54777a04",
+      "ptc_share": "2a2215c0eab79c21",
+      "solar_geometry": "847e34c5d1580f27|ff3b9c8001bd8415"
+    },
+    "digests_on": {
+      "monthly_wind": "f25c5d7608d57d3d",
+      "monthly_solar": "5fbc776e54777a04",
+      "ptc_share": "2a2215c0eab79c21",
+      "solar_geometry": "847e34c5d1580f27|ff3b9c8001bd8415"
+    }
+  },
+  "SPP|2021|solar": {
+    "footprint_mw": 418.8,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 5.0,
+    "loader_dec_mw_off": 423.8,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 5.0,
+    "loader_dec_mw_on": 423.8,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "f25c5d7608d57d3d",
+      "monthly_solar": "5fbc776e54777a04",
+      "ptc_share": "2a2215c0eab79c21",
+      "solar_geometry": "847e34c5d1580f27|ff3b9c8001bd8415"
+    },
+    "digests_on": {
+      "monthly_wind": "f25c5d7608d57d3d",
+      "monthly_solar": "5fbc776e54777a04",
+      "ptc_share": "2a2215c0eab79c21",
+      "solar_geometry": "847e34c5d1580f27|ff3b9c8001bd8415"
+    }
+  },
+  "SPP|2022|wind": {
+    "footprint_mw": 30793.4,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 169.4,
+    "loader_dec_mw_off": 30962.8,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 169.4,
+    "loader_dec_mw_on": 30962.8,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "6a0f912b85cb23da",
+      "monthly_solar": "128793a404698e01",
+      "ptc_share": "950546fa702e2c5f",
+      "solar_geometry": "f8c72588a86be983|142437d764a63cfb"
+    },
+    "digests_on": {
+      "monthly_wind": "6a0f912b85cb23da",
+      "monthly_solar": "128793a404698e01",
+      "ptc_share": "950546fa702e2c5f",
+      "solar_geometry": "f8c72588a86be983|142437d764a63cfb"
+    }
+  },
+  "SPP|2022|solar": {
+    "footprint_mw": 448.6,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 5.0,
+    "loader_dec_mw_off": 453.6,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 5.0,
+    "loader_dec_mw_on": 453.6,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "6a0f912b85cb23da",
+      "monthly_solar": "128793a404698e01",
+      "ptc_share": "950546fa702e2c5f",
+      "solar_geometry": "f8c72588a86be983|142437d764a63cfb"
+    },
+    "digests_on": {
+      "monthly_wind": "6a0f912b85cb23da",
+      "monthly_solar": "128793a404698e01",
+      "ptc_share": "950546fa702e2c5f",
+      "solar_geometry": "f8c72588a86be983|142437d764a63cfb"
+    }
+  },
+  "SPP|2023|wind": {
+    "footprint_mw": 32707.0,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 148.4,
+    "loader_dec_mw_off": 32855.4,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 148.4,
+    "loader_dec_mw_on": 32855.4,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "032e5fb13123c3f5",
+      "monthly_solar": "eaaddea48fe745b6",
+      "ptc_share": "bdc4208bef3a57c3",
+      "solar_geometry": "d559b964c997d76d|bc5164da37c8ef3d"
+    },
+    "digests_on": {
+      "monthly_wind": "032e5fb13123c3f5",
+      "monthly_solar": "eaaddea48fe745b6",
+      "ptc_share": "bdc4208bef3a57c3",
+      "solar_geometry": "d559b964c997d76d|bc5164da37c8ef3d"
+    }
+  },
+  "SPP|2023|solar": {
+    "footprint_mw": 608.7,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 608.7,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 608.7,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "032e5fb13123c3f5",
+      "monthly_solar": "eaaddea48fe745b6",
+      "ptc_share": "bdc4208bef3a57c3",
+      "solar_geometry": "d559b964c997d76d|bc5164da37c8ef3d"
+    },
+    "digests_on": {
+      "monthly_wind": "032e5fb13123c3f5",
+      "monthly_solar": "eaaddea48fe745b6",
+      "ptc_share": "bdc4208bef3a57c3",
+      "solar_geometry": "d559b964c997d76d|bc5164da37c8ef3d"
+    }
+  },
+  "SPP|2024|wind": {
+    "footprint_mw": 33773.1,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 33773.1,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 33773.1,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "594bd4ad22a2b873",
+      "monthly_solar": "683003a751769b46",
+      "ptc_share": "af2209a199bf826a",
+      "solar_geometry": "87ffd1eb6a1ca4e3|bf646425939c68bf"
+    },
+    "digests_on": {
+      "monthly_wind": "594bd4ad22a2b873",
+      "monthly_solar": "683003a751769b46",
+      "ptc_share": "af2209a199bf826a",
+      "solar_geometry": "87ffd1eb6a1ca4e3|bf646425939c68bf"
+    }
+  },
+  "SPP|2024|solar": {
+    "footprint_mw": 869.6,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 869.6,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 869.6,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "594bd4ad22a2b873",
+      "monthly_solar": "683003a751769b46",
+      "ptc_share": "af2209a199bf826a",
+      "solar_geometry": "87ffd1eb6a1ca4e3|bf646425939c68bf"
+    },
+    "digests_on": {
+      "monthly_wind": "594bd4ad22a2b873",
+      "monthly_solar": "683003a751769b46",
+      "ptc_share": "af2209a199bf826a",
+      "solar_geometry": "87ffd1eb6a1ca4e3|bf646425939c68bf"
+    }
+  },
+  "SPP|2025|wind": {
+    "footprint_mw": 35453.4,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 35453.4,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 35453.4,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "d1bd69e0afdcbe88",
+      "monthly_solar": "1b8de5646afde281",
+      "ptc_share": "c329614916892293",
+      "solar_geometry": "ebfcc007952f6af8|53ff7bccd1ba722c"
+    },
+    "digests_on": {
+      "monthly_wind": "d1bd69e0afdcbe88",
+      "monthly_solar": "1b8de5646afde281",
+      "ptc_share": "c329614916892293",
+      "solar_geometry": "ebfcc007952f6af8|53ff7bccd1ba722c"
+    }
+  },
+  "SPP|2025|solar": {
+    "footprint_mw": 1362.8,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 80.0,
+    "loader_dec_mw_off": 1442.8,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 80.0,
+    "loader_dec_mw_on": 1442.8,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "d1bd69e0afdcbe88",
+      "monthly_solar": "1b8de5646afde281",
+      "ptc_share": "c329614916892293",
+      "solar_geometry": "ebfcc007952f6af8|53ff7bccd1ba722c"
+    },
+    "digests_on": {
+      "monthly_wind": "d1bd69e0afdcbe88",
+      "monthly_solar": "1b8de5646afde281",
+      "ptc_share": "c329614916892293",
+      "solar_geometry": "ebfcc007952f6af8|53ff7bccd1ba722c"
+    }
+  },
+  "NWPP|2019|wind": {
+    "footprint_mw": 9677.1,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 9677.1,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 9677.1,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "78f3a2a337eac9cc",
+      "monthly_solar": "3d5f325609e76de4",
+      "ptc_share": "e5f52fe90b173241",
+      "solar_geometry": "f2283c426abf9f56|fa30decf852fcfe4"
+    },
+    "digests_on": {
+      "monthly_wind": "78f3a2a337eac9cc",
+      "monthly_solar": "217f9c8a7acd6606",
+      "ptc_share": "e5f52fe90b173241",
+      "solar_geometry": "cef7f6e04aa85747|f26d36a87ba41f50"
+    }
+  },
+  "NWPP|2019|solar": {
+    "footprint_mw": 3122.6,
+    "missed_mw_off": 15.0,
+    "missed_plants_off": 1,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 3107.6,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 3122.6,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "78f3a2a337eac9cc",
+      "monthly_solar": "3d5f325609e76de4",
+      "ptc_share": "e5f52fe90b173241",
+      "solar_geometry": "f2283c426abf9f56|fa30decf852fcfe4"
+    },
+    "digests_on": {
+      "monthly_wind": "78f3a2a337eac9cc",
+      "monthly_solar": "217f9c8a7acd6606",
+      "ptc_share": "e5f52fe90b173241",
+      "solar_geometry": "cef7f6e04aa85747|f26d36a87ba41f50"
+    }
+  },
+  "NWPP|2020|wind": {
+    "footprint_mw": 11144.3,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 11144.3,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 11144.3,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "167d345703566d29",
+      "monthly_solar": "75e1cc9ce1086691",
+      "ptc_share": "ac1246d7ae245bb4",
+      "solar_geometry": "ec72d27d7f9bf2d2|4a0df8bd7bb93f16"
+    },
+    "digests_on": {
+      "monthly_wind": "167d345703566d29",
+      "monthly_solar": "fd11d1b0e7c0e87a",
+      "ptc_share": "ac1246d7ae245bb4",
+      "solar_geometry": "a030d6bcca67f652|cc4fcc66548dffd7"
+    }
+  },
+  "NWPP|2020|solar": {
+    "footprint_mw": 3739.8,
+    "missed_mw_off": 15.0,
+    "missed_plants_off": 1,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 3724.8,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 3739.8,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "167d345703566d29",
+      "monthly_solar": "75e1cc9ce1086691",
+      "ptc_share": "ac1246d7ae245bb4",
+      "solar_geometry": "ec72d27d7f9bf2d2|4a0df8bd7bb93f16"
+    },
+    "digests_on": {
+      "monthly_wind": "167d345703566d29",
+      "monthly_solar": "fd11d1b0e7c0e87a",
+      "ptc_share": "ac1246d7ae245bb4",
+      "solar_geometry": "a030d6bcca67f652|cc4fcc66548dffd7"
+    }
+  },
+  "NWPP|2021|wind": {
+    "footprint_mw": 11911.6,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 11911.6,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 11911.6,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "b8980b9342255bee",
+      "monthly_solar": "6dda1e816e7327fd",
+      "ptc_share": "71921c8b8c8cfe3a",
+      "solar_geometry": "14f8d018354c1e41|db74eca17981cab8"
+    },
+    "digests_on": {
+      "monthly_wind": "b8980b9342255bee",
+      "monthly_solar": "1408a42859403245",
+      "ptc_share": "71921c8b8c8cfe3a",
+      "solar_geometry": "0faf6beae64cfa22|ba357c4da1ba15a1"
+    }
+  },
+  "NWPP|2021|solar": {
+    "footprint_mw": 4602.0,
+    "missed_mw_off": 15.0,
+    "missed_plants_off": 1,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 4587.0,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 4602.0,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "b8980b9342255bee",
+      "monthly_solar": "6dda1e816e7327fd",
+      "ptc_share": "71921c8b8c8cfe3a",
+      "solar_geometry": "14f8d018354c1e41|db74eca17981cab8"
+    },
+    "digests_on": {
+      "monthly_wind": "b8980b9342255bee",
+      "monthly_solar": "1408a42859403245",
+      "ptc_share": "71921c8b8c8cfe3a",
+      "solar_geometry": "0faf6beae64cfa22|ba357c4da1ba15a1"
+    }
+  },
+  "NWPP|2022|wind": {
+    "footprint_mw": 12483.9,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 12483.9,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 12483.9,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "9f5bf3e632e5a50b",
+      "monthly_solar": "2d27e101704ab150",
+      "ptc_share": "e5d9bc6a6c56272c",
+      "solar_geometry": "7694f1a271fa605a|6980ae30efdbb5d3"
+    },
+    "digests_on": {
+      "monthly_wind": "9f5bf3e632e5a50b",
+      "monthly_solar": "bb6710df9a23062d",
+      "ptc_share": "e5d9bc6a6c56272c",
+      "solar_geometry": "c389124f023cdf48|c35e5de89c54999b"
+    }
+  },
+  "NWPP|2022|solar": {
+    "footprint_mw": 5351.0,
+    "missed_mw_off": 15.0,
+    "missed_plants_off": 1,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 5336.0,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 5351.0,
+    "loader_outputs_identical": false,
+    "digests_off": {
+      "monthly_wind": "9f5bf3e632e5a50b",
+      "monthly_solar": "2d27e101704ab150",
+      "ptc_share": "e5d9bc6a6c56272c",
+      "solar_geometry": "7694f1a271fa605a|6980ae30efdbb5d3"
+    },
+    "digests_on": {
+      "monthly_wind": "9f5bf3e632e5a50b",
+      "monthly_solar": "bb6710df9a23062d",
+      "ptc_share": "e5d9bc6a6c56272c",
+      "solar_geometry": "c389124f023cdf48|c35e5de89c54999b"
+    }
+  },
+  "NWPP|2023|wind": {
+    "footprint_mw": 12578.3,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 12578.3,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 12578.3,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "2aea35bd43ccfd94",
+      "monthly_solar": "fb5d592a17c32c65",
+      "ptc_share": "8accb1fc1009a401",
+      "solar_geometry": "db565951eefe4e86|0d84acbe53e0e74e"
+    },
+    "digests_on": {
+      "monthly_wind": "2aea35bd43ccfd94",
+      "monthly_solar": "fb5d592a17c32c65",
+      "ptc_share": "8accb1fc1009a401",
+      "solar_geometry": "db565951eefe4e86|0d84acbe53e0e74e"
+    }
+  },
+  "NWPP|2023|solar": {
+    "footprint_mw": 6503.0,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 6503.0,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 6503.0,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "2aea35bd43ccfd94",
+      "monthly_solar": "fb5d592a17c32c65",
+      "ptc_share": "8accb1fc1009a401",
+      "solar_geometry": "db565951eefe4e86|0d84acbe53e0e74e"
+    },
+    "digests_on": {
+      "monthly_wind": "2aea35bd43ccfd94",
+      "monthly_solar": "fb5d592a17c32c65",
+      "ptc_share": "8accb1fc1009a401",
+      "solar_geometry": "db565951eefe4e86|0d84acbe53e0e74e"
+    }
+  },
+  "NWPP|2024|wind": {
+    "footprint_mw": 13420.1,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 13420.1,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 13420.1,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "e1aa92c47e735787",
+      "monthly_solar": "cabf0b760efeb434",
+      "ptc_share": "96520dde89daedf9",
+      "solar_geometry": "90c2d8c3b4e09ea5|b9992383767ea1e0"
+    },
+    "digests_on": {
+      "monthly_wind": "e1aa92c47e735787",
+      "monthly_solar": "cabf0b760efeb434",
+      "ptc_share": "96520dde89daedf9",
+      "solar_geometry": "90c2d8c3b4e09ea5|b9992383767ea1e0"
+    }
+  },
+  "NWPP|2024|solar": {
+    "footprint_mw": 8464.4,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 8464.4,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 8464.4,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "e1aa92c47e735787",
+      "monthly_solar": "cabf0b760efeb434",
+      "ptc_share": "96520dde89daedf9",
+      "solar_geometry": "90c2d8c3b4e09ea5|b9992383767ea1e0"
+    },
+    "digests_on": {
+      "monthly_wind": "e1aa92c47e735787",
+      "monthly_solar": "cabf0b760efeb434",
+      "ptc_share": "96520dde89daedf9",
+      "solar_geometry": "90c2d8c3b4e09ea5|b9992383767ea1e0"
+    }
+  },
+  "NWPP|2025|wind": {
+    "footprint_mw": 14457.1,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 14457.1,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 14457.1,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "29f4ea50351d1124",
+      "monthly_solar": "b891d7e39ef74610",
+      "ptc_share": "eb5042931a4b087d",
+      "solar_geometry": "aee9014dba07030d|607b1bbca2cc172a"
+    },
+    "digests_on": {
+      "monthly_wind": "29f4ea50351d1124",
+      "monthly_solar": "b891d7e39ef74610",
+      "ptc_share": "eb5042931a4b087d",
+      "solar_geometry": "aee9014dba07030d|607b1bbca2cc172a"
+    }
+  },
+  "NWPP|2025|solar": {
+    "footprint_mw": 9956.8,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 9956.8,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 9956.8,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "29f4ea50351d1124",
+      "monthly_solar": "b891d7e39ef74610",
+      "ptc_share": "eb5042931a4b087d",
+      "solar_geometry": "aee9014dba07030d|607b1bbca2cc172a"
+    },
+    "digests_on": {
+      "monthly_wind": "29f4ea50351d1124",
+      "monthly_solar": "b891d7e39ef74610",
+      "ptc_share": "eb5042931a4b087d",
+      "solar_geometry": "aee9014dba07030d|607b1bbca2cc172a"
+    }
+  },
+  "SOCO|2019|wind": {
+    "footprint_mw": 0.0,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 0.0,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 0.0,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "None",
+      "monthly_solar": "b71542afc2d2e03d",
+      "ptc_share": "None",
+      "solar_geometry": "538448c45d5f6748|bae15170fc2b3192"
+    },
+    "digests_on": {
+      "monthly_wind": "None",
+      "monthly_solar": "b71542afc2d2e03d",
+      "ptc_share": "None",
+      "solar_geometry": "538448c45d5f6748|bae15170fc2b3192"
+    }
+  },
+  "SOCO|2019|solar": {
+    "footprint_mw": 1878.3,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 1878.3,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 1878.3,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "None",
+      "monthly_solar": "b71542afc2d2e03d",
+      "ptc_share": "None",
+      "solar_geometry": "538448c45d5f6748|bae15170fc2b3192"
+    },
+    "digests_on": {
+      "monthly_wind": "None",
+      "monthly_solar": "b71542afc2d2e03d",
+      "ptc_share": "None",
+      "solar_geometry": "538448c45d5f6748|bae15170fc2b3192"
+    }
+  },
+  "SOCO|2020|wind": {
+    "footprint_mw": 0.0,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 0.0,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 0.0,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "None",
+      "monthly_solar": "815880e354da1a2b",
+      "ptc_share": "None",
+      "solar_geometry": "2d96d08f1cd43975|3a6fd1667b64d061"
+    },
+    "digests_on": {
+      "monthly_wind": "None",
+      "monthly_solar": "815880e354da1a2b",
+      "ptc_share": "None",
+      "solar_geometry": "2d96d08f1cd43975|3a6fd1667b64d061"
+    }
+  },
+  "SOCO|2020|solar": {
+    "footprint_mw": 2635.4,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 2635.4,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 2635.4,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "None",
+      "monthly_solar": "815880e354da1a2b",
+      "ptc_share": "None",
+      "solar_geometry": "2d96d08f1cd43975|3a6fd1667b64d061"
+    },
+    "digests_on": {
+      "monthly_wind": "None",
+      "monthly_solar": "815880e354da1a2b",
+      "ptc_share": "None",
+      "solar_geometry": "2d96d08f1cd43975|3a6fd1667b64d061"
+    }
+  },
+  "SOCO|2021|wind": {
+    "footprint_mw": 0.0,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 0.0,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 0.0,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "None",
+      "monthly_solar": "c1815117e0790565",
+      "ptc_share": "None",
+      "solar_geometry": "3cda95a0f005b3e9|70214161f111fb70"
+    },
+    "digests_on": {
+      "monthly_wind": "None",
+      "monthly_solar": "c1815117e0790565",
+      "ptc_share": "None",
+      "solar_geometry": "3cda95a0f005b3e9|70214161f111fb70"
+    }
+  },
+  "SOCO|2021|solar": {
+    "footprint_mw": 3657.1,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 3657.1,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 3657.1,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "None",
+      "monthly_solar": "c1815117e0790565",
+      "ptc_share": "None",
+      "solar_geometry": "3cda95a0f005b3e9|70214161f111fb70"
+    },
+    "digests_on": {
+      "monthly_wind": "None",
+      "monthly_solar": "c1815117e0790565",
+      "ptc_share": "None",
+      "solar_geometry": "3cda95a0f005b3e9|70214161f111fb70"
+    }
+  },
+  "SOCO|2022|wind": {
+    "footprint_mw": 0.0,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 0.0,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 0.0,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "None",
+      "monthly_solar": "2932ffb61d57c088",
+      "ptc_share": "None",
+      "solar_geometry": "88f07c0a620f241a|f4515dd5c504c872"
+    },
+    "digests_on": {
+      "monthly_wind": "None",
+      "monthly_solar": "2932ffb61d57c088",
+      "ptc_share": "None",
+      "solar_geometry": "88f07c0a620f241a|f4515dd5c504c872"
+    }
+  },
+  "SOCO|2022|solar": {
+    "footprint_mw": 4220.0,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 4220.0,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 4220.0,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "None",
+      "monthly_solar": "2932ffb61d57c088",
+      "ptc_share": "None",
+      "solar_geometry": "88f07c0a620f241a|f4515dd5c504c872"
+    },
+    "digests_on": {
+      "monthly_wind": "None",
+      "monthly_solar": "2932ffb61d57c088",
+      "ptc_share": "None",
+      "solar_geometry": "88f07c0a620f241a|f4515dd5c504c872"
+    }
+  },
+  "SOCO|2023|wind": {
+    "footprint_mw": 0.0,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 0.0,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 0.0,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "None",
+      "monthly_solar": "7b018ef2647b74b5",
+      "ptc_share": "None",
+      "solar_geometry": "44651b0a0235de1d|e19da487b79d2cf5"
+    },
+    "digests_on": {
+      "monthly_wind": "None",
+      "monthly_solar": "7b018ef2647b74b5",
+      "ptc_share": "None",
+      "solar_geometry": "44651b0a0235de1d|e19da487b79d2cf5"
+    }
+  },
+  "SOCO|2023|solar": {
+    "footprint_mw": 4893.6,
+    "missed_mw_off": 0.5,
+    "missed_plants_off": 1,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 4893.1,
+    "missed_mw_on": 0.5,
+    "missed_plants_on": 1,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 4893.1,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "None",
+      "monthly_solar": "7b018ef2647b74b5",
+      "ptc_share": "None",
+      "solar_geometry": "44651b0a0235de1d|e19da487b79d2cf5"
+    },
+    "digests_on": {
+      "monthly_wind": "None",
+      "monthly_solar": "7b018ef2647b74b5",
+      "ptc_share": "None",
+      "solar_geometry": "44651b0a0235de1d|e19da487b79d2cf5"
+    }
+  },
+  "SOCO|2024|wind": {
+    "footprint_mw": 0.0,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 0.0,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 0.0,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "None",
+      "monthly_solar": "ef49c4c1b0ebb64e",
+      "ptc_share": "None",
+      "solar_geometry": "b2f078c216e260e8|fbd1f5bb1b47ff31"
+    },
+    "digests_on": {
+      "monthly_wind": "None",
+      "monthly_solar": "ef49c4c1b0ebb64e",
+      "ptc_share": "None",
+      "solar_geometry": "b2f078c216e260e8|fbd1f5bb1b47ff31"
+    }
+  },
+  "SOCO|2024|solar": {
+    "footprint_mw": 5484.9,
+    "missed_mw_off": 0.5,
+    "missed_plants_off": 1,
+    "admitted_outside_ba_mw_off": 223.5,
+    "loader_dec_mw_off": 5707.9,
+    "missed_mw_on": 0.5,
+    "missed_plants_on": 1,
+    "admitted_outside_ba_mw_on": 223.5,
+    "loader_dec_mw_on": 5707.9,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "None",
+      "monthly_solar": "ef49c4c1b0ebb64e",
+      "ptc_share": "None",
+      "solar_geometry": "b2f078c216e260e8|fbd1f5bb1b47ff31"
+    },
+    "digests_on": {
+      "monthly_wind": "None",
+      "monthly_solar": "ef49c4c1b0ebb64e",
+      "ptc_share": "None",
+      "solar_geometry": "b2f078c216e260e8|fbd1f5bb1b47ff31"
+    }
+  },
+  "SOCO|2025|wind": {
+    "footprint_mw": 0.0,
+    "missed_mw_off": 0.0,
+    "missed_plants_off": 0,
+    "admitted_outside_ba_mw_off": 0.0,
+    "loader_dec_mw_off": 0.0,
+    "missed_mw_on": 0.0,
+    "missed_plants_on": 0,
+    "admitted_outside_ba_mw_on": 0.0,
+    "loader_dec_mw_on": 0.0,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "None",
+      "monthly_solar": "6012ae87ebac89c9",
+      "ptc_share": "None",
+      "solar_geometry": "59a22d56ca361506|925bf3dc8ca7430f"
+    },
+    "digests_on": {
+      "monthly_wind": "None",
+      "monthly_solar": "6012ae87ebac89c9",
+      "ptc_share": "None",
+      "solar_geometry": "59a22d56ca361506|925bf3dc8ca7430f"
+    }
+  },
+  "SOCO|2025|solar": {
+    "footprint_mw": 5824.9,
+    "missed_mw_off": 0.5,
+    "missed_plants_off": 1,
+    "admitted_outside_ba_mw_off": 223.5,
+    "loader_dec_mw_off": 6047.9,
+    "missed_mw_on": 0.5,
+    "missed_plants_on": 1,
+    "admitted_outside_ba_mw_on": 223.5,
+    "loader_dec_mw_on": 6047.9,
+    "loader_outputs_identical": true,
+    "digests_off": {
+      "monthly_wind": "None",
+      "monthly_solar": "6012ae87ebac89c9",
+      "ptc_share": "None",
+      "solar_geometry": "59a22d56ca361506|925bf3dc8ca7430f"
+    },
+    "digests_on": {
+      "monthly_wind": "None",
+      "monthly_solar": "6012ae87ebac89c9",
+      "ptc_share": "None",
+      "solar_geometry": "59a22d56ca361506|925bf3dc8ca7430f"
+    }
+  }
+}
