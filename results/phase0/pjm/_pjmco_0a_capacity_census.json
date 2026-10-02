@@ -1,0 +1,2139 @@
+{
+ "census": "PJM close-out 0a -- installed MW by class, model vs IMM SOM \u00a712 Table 12-1, 31 Dec 2019-2025",
+ "pre_fixed_reading": "PASS iff every class within +/-2 % of IMM in every year; else FAIL and name the units",
+ "overall": "FAIL",
+ "keeper_bundle": "results/calibration/pjmnext16_A_span",
+ "model_basis": "EIA-860 vintage_<Y> net summer (OP, BA PJM + OVEC join, plants carried by the keeper LP in Y); wind/solar nameplate via data.renewables._eia860_monthly_capacity December",
+ "caveats": [
+  "Fleet rebuild through run_year(fleet_only=True) was not run in this session (tool permission denied); membership = plant codes present in the keeper's own unit_marginal sidecar, MW = EIA-860 vintage net summer per the loader's pmax rule.",
+  "The committed 2025 keeper leg was solved on the EIA-860 2025 Early Release; vintage_2025 is now the Final (PJM OP -0.77 GW nameplate per data/raw/eia-860/README.md). lp_annual_max_mw reflects what the LP carried.",
+  "IMM Total includes the XIC (external) zone; diff_ex_xic_pct shows the comparison without it."
+ ],
+ "rows": [
+  {
+   "year": 2019,
+   "class": "coal",
+   "model_mw": 51622.7,
+   "imm_mw": 52667.6,
+   "diff_pct": -1.98,
+   "verdict": "PASS",
+   "imm_xic_mw": 2482.0,
+   "imm_ex_xic_mw": 50185.6,
+   "diff_ex_xic_pct": 2.86,
+   "lp_annual_max_mw": 50152.1,
+   "eia860_net_summer_ye_mw": 51622.7
+  },
+  {
+   "year": 2019,
+   "class": "gas_cc",
+   "model_mw": 49826.9,
+   "imm_mw": 49641.6,
+   "diff_pct": 0.37,
+   "verdict": "PASS",
+   "imm_xic_mw": 0.0,
+   "imm_ex_xic_mw": 49641.6,
+   "diff_ex_xic_pct": 0.37,
+   "lp_annual_max_mw": 52226.5,
+   "eia860_net_summer_ye_mw": 49826.9
+  },
+  {
+   "year": 2019,
+   "class": "gas_ct",
+   "model_mw": 25994.6,
+   "imm_mw": 25345.9,
+   "diff_pct": 2.56,
+   "verdict": "FAIL",
+   "imm_xic_mw": 858.6,
+   "imm_ex_xic_mw": 24487.3,
+   "diff_ex_xic_pct": 6.16,
+   "lp_annual_max_mw": 23002.9,
+   "eia860_net_summer_ye_mw": 25994.6
+  },
+  {
+   "year": 2019,
+   "class": "gas_st",
+   "model_mw": 8805.1,
+   "imm_mw": 8414.6,
+   "diff_pct": 4.64,
+   "verdict": "FAIL",
+   "imm_xic_mw": 0.0,
+   "imm_ex_xic_mw": 8414.6,
+   "diff_ex_xic_pct": 4.64,
+   "lp_annual_max_mw": 7039.1,
+   "eia860_net_summer_ye_mw": 8805.1
+  },
+  {
+   "year": 2019,
+   "class": "oil",
+   "model_mw": 5640.2,
+   "imm_mw": 6256.9,
+   "diff_pct": -9.86,
+   "verdict": "FAIL",
+   "imm_xic_mw": 0.0,
+   "imm_ex_xic_mw": 6256.9,
+   "diff_ex_xic_pct": -9.86,
+   "lp_annual_max_mw": 5337.7,
+   "eia860_net_summer_ye_mw": 5640.2
+  },
+  {
+   "year": 2019,
+   "class": "nuclear",
+   "model_mw": 32664.5,
+   "imm_mw": 33452.6,
+   "diff_pct": -2.36,
+   "verdict": "FAIL",
+   "imm_xic_mw": 1140.0,
+   "imm_ex_xic_mw": 32312.6,
+   "diff_ex_xic_pct": 1.09,
+   "lp_annual_max_mw": 32463.3,
+   "eia860_net_summer_ye_mw": 32664.5
+  },
+  {
+   "year": 2019,
+   "class": "hydro",
+   "model_mw": 2659.6,
+   "imm_mw": 3040.6,
+   "diff_pct": -12.53,
+   "verdict": "FAIL",
+   "imm_xic_mw": 269.1,
+   "imm_ex_xic_mw": 2771.5,
+   "diff_ex_xic_pct": -4.04,
+   "lp_annual_max_mw": 2659.6,
+   "eia860_net_summer_ye_mw": 3299.3
+  },
+  {
+   "year": 2019,
+   "class": "wind",
+   "model_mw": 9215.5,
+   "imm_mw": 9812.2,
+   "diff_pct": -6.08,
+   "verdict": "FAIL",
+   "imm_xic_mw": 0.0,
+   "imm_ex_xic_mw": 9812.2,
+   "diff_ex_xic_pct": -6.08,
+   "lp_annual_max_mw": 9215.5,
+   "eia860_net_summer_ye_mw": null
+  },
+  {
+   "year": 2019,
+   "class": "solar",
+   "model_mw": 3310.9,
+   "imm_mw": 2002.7,
+   "diff_pct": 65.32,
+   "verdict": "FAIL",
+   "imm_xic_mw": 0.0,
+   "imm_ex_xic_mw": 2002.7,
+   "diff_ex_xic_pct": 65.32,
+   "lp_annual_max_mw": 3310.9,
+   "eia860_net_summer_ye_mw": null
+  },
+  {
+   "year": 2020,
+   "class": "coal",
+   "model_mw": 48534.9,
+   "imm_mw": 50230.8,
+   "diff_pct": -3.38,
+   "verdict": "FAIL",
+   "imm_xic_mw": 1955.0,
+   "imm_ex_xic_mw": 48275.8,
+   "diff_ex_xic_pct": 0.54,
+   "lp_annual_max_mw": 46643.0,
+   "eia860_net_summer_ye_mw": 48534.9
+  },
+  {
+   "year": 2020,
+   "class": "gas_cc",
+   "model_mw": 51029.0,
+   "imm_mw": 50602.0,
+   "diff_pct": 0.84,
+   "verdict": "PASS",
+   "imm_xic_mw": 0.0,
+   "imm_ex_xic_mw": 50602.0,
+   "diff_ex_xic_pct": 0.84,
+   "lp_annual_max_mw": 53153.2,
+   "eia860_net_summer_ye_mw": 51029.0
+  },
+  {
+   "year": 2020,
+   "class": "gas_ct",
+   "model_mw": 25775.8,
+   "imm_mw": 24817.4,
+   "diff_pct": 3.86,
+   "verdict": "FAIL",
+   "imm_xic_mw": 858.6,
+   "imm_ex_xic_mw": 23958.8,
+   "diff_ex_xic_pct": 7.58,
+   "lp_annual_max_mw": 22975.0,
+   "eia860_net_summer_ye_mw": 25775.8
+  },
+  {
+   "year": 2020,
+   "class": "gas_st",
+   "model_mw": 10353.4,
+   "imm_mw": 8414.6,
+   "diff_pct": 23.04,
+   "verdict": "FAIL",
+   "imm_xic_mw": 0.0,
+   "imm_ex_xic_mw": 8414.6,
+   "diff_ex_xic_pct": 23.04,
+   "lp_annual_max_mw": 9485.3,
+   "eia860_net_summer_ye_mw": 10353.4
+  },
+  {
+   "year": 2020,
+   "class": "oil",
+   "model_mw": 4187.7,
+   "imm_mw": 6316.9,
+   "diff_pct": -33.71,
+   "verdict": "FAIL",
+   "imm_xic_mw": 0.0,
+   "imm_ex_xic_mw": 6316.9,
+   "diff_ex_xic_pct": -33.71,
+   "lp_annual_max_mw": 3791.6,
+   "eia860_net_summer_ye_mw": 4187.7
+  },
+  {
+   "year": 2020,
+   "class": "nuclear",
+   "model_mw": 32672.1,
+   "imm_mw": 33452.6,
+   "diff_pct": -2.33,
+   "verdict": "FAIL",
+   "imm_xic_mw": 1140.0,
+   "imm_ex_xic_mw": 32312.6,
+   "diff_ex_xic_pct": 1.11,
+   "lp_annual_max_mw": 31691.9,
+   "eia860_net_summer_ye_mw": 32672.1
+  },
+  {
+   "year": 2020,
+   "class": "hydro",
+   "model_mw": 2567.3,
+   "imm_mw": 3040.6,
+   "diff_pct": -15.56,
+   "verdict": "FAIL",
+   "imm_xic_mw": 269.1,
+   "imm_ex_xic_mw": 2771.5,
+   "diff_ex_xic_pct": -7.37,
+   "lp_annual_max_mw": 2567.3,
+   "eia860_net_summer_ye_mw": 3289.8
+  },
+  {
+   "year": 2020,
+   "class": "wind",
+   "model_mw": 10153.9,
+   "imm_mw": 10918.4,
+   "diff_pct": -7.0,
+   "verdict": "FAIL",
+   "imm_xic_mw": 0.0,
+   "imm_ex_xic_mw": 10918.4,
+   "diff_ex_xic_pct": -7.0,
+   "lp_annual_max_mw": 10153.9,
+   "eia860_net_summer_ye_mw": null
+  },
+  {
+   "year": 2020,
+   "class": "solar",
+   "model_mw": 4549.8,
+   "imm_mw": 3484.1,
+   "diff_pct": 30.59,
+   "verdict": "FAIL",
+   "imm_xic_mw": 0.0,
+   "imm_ex_xic_mw": 3484.1,
+   "diff_ex_xic_pct": 30.59,
+   "lp_annual_max_mw": 4549.8,
+   "eia860_net_summer_ye_mw": null
+  },
+  {
+   "year": 2021,
+   "class": "coal",
+   "model_mw": 48992.6,
+   "imm_mw": 49074.4,
+   "diff_pct": -0.17,
+   "verdict": "PASS",
+   "imm_xic_mw": 1955.0,
+   "imm_ex_xic_mw": 47119.4,
+   "diff_ex_xic_pct": 3.98,
+   "lp_annual_max_mw": 47720.3,
+   "eia860_net_summer_ye_mw": 48992.6
+  },
+  {
+   "year": 2021,
+   "class": "gas_cc",
+   "model_mw": 53494.1,
+   "imm_mw": 52094.7,
+   "diff_pct": 2.69,
+   "verdict": "FAIL",
+   "imm_xic_mw": 0.0,
+   "imm_ex_xic_mw": 52094.7,
+   "diff_ex_xic_pct": 2.69,
+   "lp_annual_max_mw": 55695.3,
+   "eia860_net_summer_ye_mw": 53494.1
+  },
+  {
+   "year": 2021,
+   "class": "gas_ct",
+   "model_mw": 26091.6,
+   "imm_mw": 24884.4,
+   "diff_pct": 4.85,
+   "verdict": "FAIL",
+   "imm_xic_mw": 858.6,
+   "imm_ex_xic_mw": 24025.8,
+   "diff_ex_xic_pct": 8.6,
+   "lp_annual_max_mw": 23048.3,
+   "eia860_net_summer_ye_mw": 26091.6
+  },
+  {
+   "year": 2021,
+   "class": "gas_st",
+   "model_mw": 7912.1,
+   "imm_mw": 8312.6,
+   "diff_pct": -4.82,
+   "verdict": "FAIL",
+   "imm_xic_mw": 0.0,
+   "imm_ex_xic_mw": 8312.6,
+   "diff_ex_xic_pct": -4.82,
+   "lp_annual_max_mw": 6318.8,
+   "eia860_net_summer_ye_mw": 7912.1
+  },
+  {
+   "year": 2021,
+   "class": "oil",
+   "model_mw": 4948.9,
+   "imm_mw": 5603.6,
+   "diff_pct": -11.68,
+   "verdict": "FAIL",
+   "imm_xic_mw": 0.0,
+   "imm_ex_xic_mw": 5603.6,
+   "diff_ex_xic_pct": -11.68,
+   "lp_annual_max_mw": 4454.0,
+   "eia860_net_summer_ye_mw": 4948.9
+  },
+  {
+   "year": 2021,
+   "class": "nuclear",
+   "model_mw": 32654.1,
+   "imm_mw": 33452.6,
+   "diff_pct": -2.39,
+   "verdict": "FAIL",
+   "imm_xic_mw": 1140.0,
+   "imm_ex_xic_mw": 32312.6,
+   "diff_ex_xic_pct": 1.06,
+   "lp_annual_max_mw": 31674.5,
+   "eia860_net_summer_ye_mw": 32654.1
+  },
+  {
+   "year": 2021,
+   "class": "hydro",
+   "model_mw": 2596.3,
+   "imm_mw": 3040.6,
+   "diff_pct": -14.61,
+   "verdict": "FAIL",
+   "imm_xic_mw": 269.1,
+   "imm_ex_xic_mw": 2771.5,
+   "diff_ex_xic_pct": -6.32,
+   "lp_annual_max_mw": 2596.3,
+   "eia860_net_summer_ye_mw": 3324.0
+  },
+  {
+   "year": 2021,
+   "class": "wind",
+   "model_mw": 10657.2,
+   "imm_mw": 11228.4,
+   "diff_pct": -5.09,
+   "verdict": "FAIL",
+   "imm_xic_mw": 0.0,
+   "imm_ex_xic_mw": 11228.4,
+   "diff_ex_xic_pct": -5.09,
+   "lp_annual_max_mw": 10657.2,
+   "eia860_net_summer_ye_mw": null
+  },
+  {
+   "year": 2021,
+   "class": "solar",
+   "model_mw": 6449.5,
+   "imm_mw": 4842.2,
+   "diff_pct": 33.19,
+   "verdict": "FAIL",
+   "imm_xic_mw": 0.0,
+   "imm_ex_xic_mw": 4842.2,
+   "diff_ex_xic_pct": 33.19,
+   "lp_annual_max_mw": 6449.5,
+   "eia860_net_summer_ye_mw": null
+  },
+  {
+   "year": 2022,
+   "class": "coal",
+   "model_mw": 42214.4,
+   "imm_mw": 44329.4,
+   "diff_pct": -4.77,
+   "verdict": "FAIL",
+   "imm_xic_mw": 1955.0,
+   "imm_ex_xic_mw": 42374.4,
+   "diff_ex_xic_pct": -0.38,
+   "lp_annual_max_mw": 43582.0,
+   "eia860_net_summer_ye_mw": 42214.4
+  },
+  {
+   "year": 2022,
+   "class": "gas_cc",
+   "model_mw": 55755.7,
+   "imm_mw": 56278.2,
+   "diff_pct": -0.93,
+   "verdict": "PASS",
+   "imm_xic_mw": 0.0,
+   "imm_ex_xic_mw": 56278.2,
+   "diff_ex_xic_pct": -0.93,
+   "lp_annual_max_mw": 57619.2,
+   "eia860_net_summer_ye_mw": 55755.7
+  },
+  {
+   "year": 2022,
+   "class": "gas_ct",
+   "model_mw": 25764.2,
+   "imm_mw": 24597.4,
+   "diff_pct": 4.74,
+   "verdict": "FAIL",
+   "imm_xic_mw": 670.6,
+   "imm_ex_xic_mw": 23926.8,
+   "diff_ex_xic_pct": 7.68,
+   "lp_annual_max_mw": 22821.8,
+   "eia860_net_summer_ye_mw": 25764.2
+  },
+  {
+   "year": 2022,
+   "class": "gas_st",
+   "model_mw": 9347.1,
+   "imm_mw": 8370.9,
+   "diff_pct": 11.66,
+   "verdict": "FAIL",
+   "imm_xic_mw": 0.0,
+   "imm_ex_xic_mw": 8370.9,
+   "diff_ex_xic_pct": 11.66,
+   "lp_annual_max_mw": 8578.7,
+   "eia860_net_summer_ye_mw": 9347.1
+  },
+  {
+   "year": 2022,
+   "class": "oil",
+   "model_mw": 4970.5,
+   "imm_mw": 5256.4,
+   "diff_pct": -5.44,
+   "verdict": "FAIL",
+   "imm_xic_mw": 0.0,
+   "imm_ex_xic_mw": 5256.4,
+   "diff_ex_xic_pct": -5.44,
+   "lp_annual_max_mw": 4740.6,
+   "eia860_net_summer_ye_mw": 4970.5
+  },
+  {
+   "year": 2022,
+   "class": "nuclear",
+   "model_mw": 32654.1,
+   "imm_mw": 33452.6,
+   "diff_pct": -2.39,
+   "verdict": "FAIL",
+   "imm_xic_mw": 1140.0,
+   "imm_ex_xic_mw": 32312.6,
+   "diff_ex_xic_pct": 1.06,
+   "lp_annual_max_mw": 31674.5,
+   "eia860_net_summer_ye_mw": 32654.1
+  },
+  {
+   "year": 2022,
+   "class": "hydro",
+   "model_mw": 2561.5,
+   "imm_mw": 2771.1,
+   "diff_pct": -7.56,
+   "verdict": "FAIL",
+   "imm_xic_mw": 0.0,
+   "imm_ex_xic_mw": 2771.1,
+   "diff_ex_xic_pct": -7.56,
+   "lp_annual_max_mw": 2561.5,
+   "eia860_net_summer_ye_mw": 3316.4
+  },
+  {
+   "year": 2022,
+   "class": "wind",
+   "model_mw": 10772.2,
+   "imm_mw": 11428.4,
+   "diff_pct": -5.74,
+   "verdict": "FAIL",
+   "imm_xic_mw": 0.0,
+   "imm_ex_xic_mw": 11428.4,
+   "diff_ex_xic_pct": -5.74,
+   "lp_annual_max_mw": 10772.2,
+   "eia860_net_summer_ye_mw": null
+  },
+  {
+   "year": 2022,
+   "class": "solar",
+   "model_mw": 7410.3,
+   "imm_mw": 5396.0,
+   "diff_pct": 37.33,
+   "verdict": "FAIL",
+   "imm_xic_mw": 0.0,
+   "imm_ex_xic_mw": 5396.0,
+   "diff_ex_xic_pct": 37.33,
+   "lp_annual_max_mw": 7410.3,
+   "eia860_net_summer_ye_mw": null
+  },
+  {
+   "year": 2023,
+   "class": "coal",
+   "model_mw": 37387.4,
+   "imm_mw": 39949.4,
+   "diff_pct": -6.41,
+   "verdict": "FAIL",
+   "imm_xic_mw": 1955.0,
+   "imm_ex_xic_mw": 37994.4,
+   "diff_ex_xic_pct": -1.6,
+   "lp_annual_max_mw": 37327.5,
+   "eia860_net_summer_ye_mw": 37387.4
+  },
+  {
+   "year": 2023,
+   "class": "gas_cc",
+   "model_mw": 59197.9,
+   "imm_mw": 56124.2,
+   "diff_pct": 5.48,
+   "verdict": "FAIL",
+   "imm_xic_mw": 0.0,
+   "imm_ex_xic_mw": 56124.2,
+   "diff_ex_xic_pct": 5.48,
+   "lp_annual_max_mw": 60782.8,
+   "eia860_net_summer_ye_mw": 59197.9
+  },
+  {
+   "year": 2023,
+   "class": "gas_ct",
+   "model_mw": 26152.3,
+   "imm_mw": 24995.2,
+   "diff_pct": 4.63,
+   "verdict": "FAIL",
+   "imm_xic_mw": 670.6,
+   "imm_ex_xic_mw": 24324.6,
+   "diff_ex_xic_pct": 7.51,
+   "lp_annual_max_mw": 23109.5,
+   "eia860_net_summer_ye_mw": 26152.3
+  },
+  {
+   "year": 2023,
+   "class": "gas_st",
+   "model_mw": 8754.1,
+   "imm_mw": 7044.9,
+   "diff_pct": 24.26,
+   "verdict": "FAIL",
+   "imm_xic_mw": 0.0,
+   "imm_ex_xic_mw": 7044.9,
+   "diff_ex_xic_pct": 24.26,
+   "lp_annual_max_mw": 10053.6,
+   "eia860_net_summer_ye_mw": 8754.1
+  },
+  {
+   "year": 2023,
+   "class": "oil",
+   "model_mw": 4471.8,
+   "imm_mw": 4356.4,
+   "diff_pct": 2.65,
+   "verdict": "FAIL",
+   "imm_xic_mw": 0.0,
+   "imm_ex_xic_mw": 4356.4,
+   "diff_ex_xic_pct": 2.65,
+   "lp_annual_max_mw": 4036.3,
+   "eia860_net_summer_ye_mw": 4471.8
+  },
+  {
+   "year": 2023,
+   "class": "nuclear",
+   "model_mw": 32691.5,
+   "imm_mw": 33452.6,
+   "diff_pct": -2.28,
+   "verdict": "FAIL",
+   "imm_xic_mw": 1140.0,
+   "imm_ex_xic_mw": 32312.6,
+   "diff_ex_xic_pct": 1.17,
+   "lp_annual_max_mw": 32691.5,
+   "eia860_net_summer_ye_mw": 32691.5
+  },
+  {
+   "year": 2023,
+   "class": "hydro",
+   "model_mw": 2769.3,
+   "imm_mw": 2771.1,
+   "diff_pct": -0.07,
+   "verdict": "PASS",
+   "imm_xic_mw": 0.0,
+   "imm_ex_xic_mw": 2771.1,
+   "diff_ex_xic_pct": -0.07,
+   "lp_annual_max_mw": 2769.3,
+   "eia860_net_summer_ye_mw": 3238.0
+  },
+  {
+   "year": 2023,
+   "class": "wind",
+   "model_mw": 11270.6,
+   "imm_mw": 12072.7,
+   "diff_pct": -6.64,
+   "verdict": "FAIL",
+   "imm_xic_mw": 100.0,
+   "imm_ex_xic_mw": 11972.7,
+   "diff_ex_xic_pct": -5.86,
+   "lp_annual_max_mw": 11270.6,
+   "eia860_net_summer_ye_mw": null
+  },
+  {
+   "year": 2023,
+   "class": "solar",
+   "model_mw": 10991.0,
+   "imm_mw": 9004.6,
+   "diff_pct": 22.06,
+   "verdict": "FAIL",
+   "imm_xic_mw": 0.0,
+   "imm_ex_xic_mw": 9004.6,
+   "diff_ex_xic_pct": 22.06,
+   "lp_annual_max_mw": 10991.0,
+   "eia860_net_summer_ye_mw": null
+  },
+  {
+   "year": 2024,
+   "class": "coal",
+   "model_mw": 36594.4,
+   "imm_mw": 38776.4,
+   "diff_pct": -5.63,
+   "verdict": "FAIL",
+   "imm_xic_mw": 1955.0,
+   "imm_ex_xic_mw": 36821.4,
+   "diff_ex_xic_pct": -0.62,
+   "lp_annual_max_mw": 36237.8,
+   "eia860_net_summer_ye_mw": 36594.4
+  },
+  {
+   "year": 2024,
+   "class": "gas_cc",
+   "model_mw": 59176.4,
+   "imm_mw": 56124.2,
+   "diff_pct": 5.44,
+   "verdict": "FAIL",
+   "imm_xic_mw": 0.0,
+   "imm_ex_xic_mw": 56124.2,
+   "diff_ex_xic_pct": 5.44,
+   "lp_annual_max_mw": 60683.9,
+   "eia860_net_summer_ye_mw": 59176.4
+  },
+  {
+   "year": 2024,
+   "class": "gas_ct",
+   "model_mw": 26518.2,
+   "imm_mw": 25276.0,
+   "diff_pct": 4.91,
+   "verdict": "FAIL",
+   "imm_xic_mw": 670.6,
+   "imm_ex_xic_mw": 24605.4,
+   "diff_ex_xic_pct": 7.77,
+   "lp_annual_max_mw": 23842.6,
+   "eia860_net_summer_ye_mw": 26518.2
+  },
+  {
+   "year": 2024,
+   "class": "gas_st",
+   "model_mw": 8742.1,
+   "imm_mw": 7732.9,
+   "diff_pct": 13.05,
+   "verdict": "FAIL",
+   "imm_xic_mw": 0.0,
+   "imm_ex_xic_mw": 7732.9,
+   "diff_ex_xic_pct": 13.05,
+   "lp_annual_max_mw": 8020.7,
+   "eia860_net_summer_ye_mw": 8742.1
+  },
+  {
+   "year": 2024,
+   "class": "oil",
+   "model_mw": 4463.2,
+   "imm_mw": 3902.8,
+   "diff_pct": 14.36,
+   "verdict": "FAIL",
+   "imm_xic_mw": 0.0,
+   "imm_ex_xic_mw": 3902.8,
+   "diff_ex_xic_pct": 14.36,
+   "lp_annual_max_mw": 4023.4,
+   "eia860_net_summer_ye_mw": 4463.2
+  },
+  {
+   "year": 2024,
+   "class": "nuclear",
+   "model_mw": 32686.8,
+   "imm_mw": 33452.6,
+   "diff_pct": -2.29,
+   "verdict": "FAIL",
+   "imm_xic_mw": 1140.0,
+   "imm_ex_xic_mw": 32312.6,
+   "diff_ex_xic_pct": 1.16,
+   "lp_annual_max_mw": 32686.8,
+   "eia860_net_summer_ye_mw": 32686.8
+  },
+  {
+   "year": 2024,
+   "class": "hydro",
+   "model_mw": 2767.4,
+   "imm_mw": 2771.1,
+   "diff_pct": -0.13,
+   "verdict": "PASS",
+   "imm_xic_mw": 0.0,
+   "imm_ex_xic_mw": 2771.1,
+   "diff_ex_xic_pct": -0.13,
+   "lp_annual_max_mw": 2767.4,
+   "eia860_net_summer_ye_mw": 3238.5
+  },
+  {
+   "year": 2024,
+   "class": "wind",
+   "model_mw": 11270.6,
+   "imm_mw": 12200.7,
+   "diff_pct": -7.62,
+   "verdict": "FAIL",
+   "imm_xic_mw": 100.0,
+   "imm_ex_xic_mw": 12100.7,
+   "diff_ex_xic_pct": -6.86,
+   "lp_annual_max_mw": 11270.6,
+   "eia860_net_summer_ye_mw": null
+  },
+  {
+   "year": 2024,
+   "class": "solar",
+   "model_mw": 11053.8,
+   "imm_mw": 12043.0,
+   "diff_pct": -8.21,
+   "verdict": "FAIL",
+   "imm_xic_mw": 0.0,
+   "imm_ex_xic_mw": 12043.0,
+   "diff_ex_xic_pct": -8.21,
+   "lp_annual_max_mw": 11053.8,
+   "eia860_net_summer_ye_mw": null
+  },
+  {
+   "year": 2025,
+   "class": "coal",
+   "model_mw": 35433.7,
+   "imm_mw": 38366.4,
+   "diff_pct": -7.64,
+   "verdict": "FAIL",
+   "imm_xic_mw": 1955.0,
+   "imm_ex_xic_mw": 36411.4,
+   "diff_ex_xic_pct": -2.69,
+   "lp_annual_max_mw": 34046.7,
+   "eia860_net_summer_ye_mw": 35433.7
+  },
+  {
+   "year": 2025,
+   "class": "gas_cc",
+   "model_mw": 58959.3,
+   "imm_mw": 57047.7,
+   "diff_pct": 3.35,
+   "verdict": "FAIL",
+   "imm_xic_mw": 0.0,
+   "imm_ex_xic_mw": 57047.7,
+   "diff_ex_xic_pct": 3.35,
+   "lp_annual_max_mw": 60290.3,
+   "eia860_net_summer_ye_mw": 58959.3
+  },
+  {
+   "year": 2025,
+   "class": "gas_ct",
+   "model_mw": 26370.3,
+   "imm_mw": 25112.9,
+   "diff_pct": 5.01,
+   "verdict": "FAIL",
+   "imm_xic_mw": 670.6,
+   "imm_ex_xic_mw": 24442.3,
+   "diff_ex_xic_pct": 7.89,
+   "lp_annual_max_mw": 23312.1,
+   "eia860_net_summer_ye_mw": 26370.3
+  },
+  {
+   "year": 2025,
+   "class": "gas_st",
+   "model_mw": 9480.5,
+   "imm_mw": 7606.9,
+   "diff_pct": 24.63,
+   "verdict": "FAIL",
+   "imm_xic_mw": 0.0,
+   "imm_ex_xic_mw": 7606.9,
+   "diff_ex_xic_pct": 24.63,
+   "lp_annual_max_mw": 8701.9,
+   "eia860_net_summer_ye_mw": 9480.5
+  },
+  {
+   "year": 2025,
+   "class": "oil",
+   "model_mw": 4424.4,
+   "imm_mw": 4059.9,
+   "diff_pct": 8.98,
+   "verdict": "FAIL",
+   "imm_xic_mw": 0.0,
+   "imm_ex_xic_mw": 4059.9,
+   "diff_ex_xic_pct": 8.98,
+   "lp_annual_max_mw": 3982.0,
+   "eia860_net_summer_ye_mw": 4424.4
+  },
+  {
+   "year": 2025,
+   "class": "nuclear",
+   "model_mw": 32689.0,
+   "imm_mw": 33452.6,
+   "diff_pct": -2.28,
+   "verdict": "FAIL",
+   "imm_xic_mw": 1140.0,
+   "imm_ex_xic_mw": 32312.6,
+   "diff_ex_xic_pct": 1.16,
+   "lp_annual_max_mw": 32689.0,
+   "eia860_net_summer_ye_mw": 32689.0
+  },
+  {
+   "year": 2025,
+   "class": "hydro",
+   "model_mw": 2770.8,
+   "imm_mw": 2771.1,
+   "diff_pct": -0.01,
+   "verdict": "PASS",
+   "imm_xic_mw": 0.0,
+   "imm_ex_xic_mw": 2771.1,
+   "diff_ex_xic_pct": -0.01,
+   "lp_annual_max_mw": 2770.8,
+   "eia860_net_summer_ye_mw": 3240.1
+  },
+  {
+   "year": 2025,
+   "class": "wind",
+   "model_mw": 11280.0,
+   "imm_mw": 12512.1,
+   "diff_pct": -9.85,
+   "verdict": "FAIL",
+   "imm_xic_mw": 100.0,
+   "imm_ex_xic_mw": 12412.1,
+   "diff_ex_xic_pct": -9.12,
+   "lp_annual_max_mw": 11280.0,
+   "eia860_net_summer_ye_mw": null
+  },
+  {
+   "year": 2025,
+   "class": "solar",
+   "model_mw": 11062.8,
+   "imm_mw": 14887.5,
+   "diff_pct": -25.69,
+   "verdict": "FAIL",
+   "imm_xic_mw": 0.0,
+   "imm_ex_xic_mw": 14887.5,
+   "diff_ex_xic_pct": -25.69,
+   "lp_annual_max_mw": 11062.8,
+   "eia860_net_summer_ye_mw": null
+  }
+ ],
+ "movers": {
+  "2019": {
+   "gas_ct": [
+    {
+     "mover": "Ladysmith (7839) dual-fuel (oil secondary), typed gas by the loader -- IMM may type oil",
+     "mw": -783.0,
+     "plant_code": 7839,
+     "candidate": true
+    },
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": 134.3
+    }
+   ],
+   "gas_st": [
+    {
+     "mover": "TalenEnergy Martins Creek (3148) dual-fuel (oil secondary), typed gas by the loader -- IMM may type oil",
+     "mw": -1700.0,
+     "plant_code": 3148,
+     "candidate": true
+    },
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": 1309.5
+    }
+   ],
+   "oil": [
+    {
+     "mover": "TalenEnergy Martins Creek (3148) typed gas by EIA Energy Source 1 (oil secondary) -- IMM may type oil",
+     "mw": 1700.0,
+     "plant_code": 3148,
+     "candidate": true
+    },
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": -1083.3
+    }
+   ],
+   "nuclear": [
+    {
+     "mover": "IMM XIC (external) row -- outside the PJM BA, not in the model footprint; IMM prints no unit names",
+     "mw": 1140.0
+    },
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": -351.9
+    }
+   ],
+   "hydro": [
+    {
+     "mover": "IMM XIC (external) row -- outside the PJM BA, not in the model footprint; IMM prints no unit names",
+     "mw": 269.1
+    },
+    {
+     "mover": "Reusens (3779) EIA status OA -- installed per IMM, excluded by the OP-only loader",
+     "mw": 7.5,
+     "plant_code": 3779
+    },
+    {
+     "mover": "Philpott Lake (3834) EIA status OS -- installed per IMM, excluded by the OP-only loader",
+     "mw": 7.5,
+     "plant_code": 3834
+    },
+    {
+     "mover": "O'Shaughnessy Hydro (7279) EIA status OS -- installed per IMM, excluded by the OP-only loader",
+     "mw": 5.2,
+     "plant_code": 7279
+    },
+    {
+     "mover": "Reusens (3779) EIA status OS -- installed per IMM, excluded by the OP-only loader",
+     "mw": 2.5,
+     "plant_code": 3779
+    },
+    {
+     "mover": "Passaic Valley Water Commission (50311) EIA status OS -- installed per IMM, excluded by the OP-only loader",
+     "mw": 2.4,
+     "plant_code": 50311
+    },
+    {
+     "mover": "Coleman Falls (56313) EIA status OS -- installed per IMM, excluded by the OP-only loader",
+     "mw": 1.5,
+     "plant_code": 56313
+    },
+    {
+     "mover": "Rockton (903) OP in EIA-860 PJM but absent from the keeper LP",
+     "mw": 1.1,
+     "plant_code": 903
+    },
+    {
+     "mover": "1 further plants of the same kinds (smaller)",
+     "mw": 0.6
+    },
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": 83.6
+    }
+   ],
+   "wind": [
+    {
+     "mover": "residual: EIA-860 nameplate (model) vs IMM summer installed rating / market-registration basis; IMM publishes no unit list",
+     "mw": 596.7
+    }
+   ],
+   "solar": [
+    {
+     "mover": "4 PJM-BA OP solar plants absent from the eGRID zone lookup (dropped by the loader); largest: Jefferson Avenue (60499) 2, Gemini Technologies Services, Inc. Solar (60804) 1, Lakewood Seven Solar LLC (59369) 1, Deutsche Bank- Piscataway Solar (60803) 1",
+     "mw": 5.0
+    },
+    {
+     "mover": "residual: EIA-860 nameplate (model) vs IMM summer installed rating / market-registration basis; IMM publishes no unit list",
+     "mw": -1313.2
+    }
+   ]
+  },
+  "2020": {
+   "coal": [
+    {
+     "mover": "IMM XIC (external) row -- outside the PJM BA, not in the model footprint; IMM prints no unit names",
+     "mw": 1955.0
+    },
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": -259.1
+    }
+   ],
+   "gas_ct": [
+    {
+     "mover": "Ladysmith (7839) dual-fuel (oil secondary), typed gas by the loader -- IMM may type oil",
+     "mw": -783.0,
+     "plant_code": 7839,
+     "candidate": true
+    },
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": -175.4
+    }
+   ],
+   "gas_st": [
+    {
+     "mover": "TalenEnergy Martins Creek (3148) dual-fuel (oil secondary), typed gas by the loader -- IMM may type oil",
+     "mw": -1700.0,
+     "plant_code": 3148,
+     "candidate": true
+    },
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": -238.8
+    }
+   ],
+   "oil": [
+    {
+     "mover": "TalenEnergy Martins Creek (3148) typed gas by EIA Energy Source 1 (oil secondary) -- IMM may type oil",
+     "mw": 1700.0,
+     "plant_code": 3148,
+     "candidate": true
+    },
+    {
+     "mover": "Chalk Point LLC (1571) typed gas by EIA Energy Source 1 (oil secondary) -- IMM may type oil",
+     "mw": 1585.0,
+     "plant_code": 1571,
+     "candidate": true
+    },
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": -1155.8
+    }
+   ],
+   "nuclear": [
+    {
+     "mover": "IMM XIC (external) row -- outside the PJM BA, not in the model footprint; IMM prints no unit names",
+     "mw": 1140.0
+    },
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": -359.5
+    }
+   ],
+   "hydro": [
+    {
+     "mover": "IMM XIC (external) row -- outside the PJM BA, not in the model footprint; IMM prints no unit names",
+     "mw": 269.1
+    },
+    {
+     "mover": "Philpott Lake (3834) EIA status OS -- installed per IMM, excluded by the OP-only loader",
+     "mw": 15.6,
+     "plant_code": 3834
+    },
+    {
+     "mover": "Lockport Powerhouse (10903) EIA status OA -- installed per IMM, excluded by the OP-only loader",
+     "mw": 6.0,
+     "plant_code": 10903
+    },
+    {
+     "mover": "O'Shaughnessy Hydro (7279) EIA status OS -- installed per IMM, excluded by the OP-only loader",
+     "mw": 5.2,
+     "plant_code": 7279
+    },
+    {
+     "mover": "Reusens (3779) EIA status OA -- installed per IMM, excluded by the OP-only loader",
+     "mw": 2.5,
+     "plant_code": 3779
+    },
+    {
+     "mover": "Reusens (3779) EIA status OS -- installed per IMM, excluded by the OP-only loader",
+     "mw": 2.5,
+     "plant_code": 3779
+    },
+    {
+     "mover": "Passaic Valley Water Commission (50311) EIA status OS -- installed per IMM, excluded by the OP-only loader",
+     "mw": 2.4,
+     "plant_code": 50311
+    },
+    {
+     "mover": "Coleman Falls (56313) EIA status OS -- installed per IMM, excluded by the OP-only loader",
+     "mw": 1.5,
+     "plant_code": 56313
+    },
+    {
+     "mover": "3 further plants of the same kinds (smaller)",
+     "mw": 2.1
+    },
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": 166.4
+    }
+   ],
+   "wind": [
+    {
+     "mover": "residual: EIA-860 nameplate (model) vs IMM summer installed rating / market-registration basis; IMM publishes no unit list",
+     "mw": 764.5
+    }
+   ],
+   "solar": [
+    {
+     "mover": "5 PJM-BA OP solar plants absent from the eGRID zone lookup (dropped by the loader); largest: Mooseheart School - (IL) (64368) 2, Jefferson Avenue (60499) 2, Gemini Technologies Services, Inc. Solar (60804) 1, Lakewood Seven Solar LLC (59369) 1, Deutsche Bank- Piscataway Solar (60803) 1",
+     "mw": 7.0
+    },
+    {
+     "mover": "residual: EIA-860 nameplate (model) vs IMM summer installed rating / market-registration basis; IMM publishes no unit list",
+     "mw": -1072.7
+    }
+   ],
+   "_coal_plants_model": [
+    {
+     "plant_code": 3935,
+     "plant_name": "John E Amos",
+     "klass": "coal",
+     "mw": 2900.0
+    },
+    {
+     "plant_code": 8102,
+     "plant_name": "Gavin Power, LLC",
+     "klass": "coal",
+     "mw": 2680.0
+    },
+    {
+     "plant_code": 6166,
+     "plant_name": "Rockport",
+     "klass": "coal",
+     "mw": 2600.0
+    },
+    {
+     "plant_code": 3944,
+     "plant_name": "FirstEnergy Harrison Power Station",
+     "klass": "coal",
+     "mw": 1954.0
+    },
+    {
+     "plant_code": 3122,
+     "plant_name": "Homer City Generating Station",
+     "klass": "coal",
+     "mw": 1888.3
+    },
+    {
+     "plant_code": 2828,
+     "plant_name": "Cardinal",
+     "klass": "coal",
+     "mw": 1790.0
+    },
+    {
+     "plant_code": 3118,
+     "plant_name": "Conemaugh",
+     "klass": "coal",
+     "mw": 1700.0
+    },
+    {
+     "plant_code": 3136,
+     "plant_name": "Keystone",
+     "klass": "coal",
+     "mw": 1700.0
+    },
+    {
+     "plant_code": 3954,
+     "plant_name": "Mt Storm",
+     "klass": "coal",
+     "mw": 1629.0
+    },
+    {
+     "plant_code": 3948,
+     "plant_name": "Mitchell (WV)",
+     "klass": "coal",
+     "mw": 1560.0
+    },
+    {
+     "plant_code": 879,
+     "plant_name": "Powerton",
+     "klass": "coal",
+     "mw": 1538.0
+    },
+    {
+     "plant_code": 3149,
+     "plant_name": "TalenEnergy Montour",
+     "klass": "coal",
+     "mw": 1504.0
+    },
+    {
+     "plant_code": 2866,
+     "plant_name": "W H Sammis",
+     "klass": "coal",
+     "mw": 1490.0
+    },
+    {
+     "plant_code": 6041,
+     "plant_name": "H L Spurlock",
+     "klass": "coal",
+     "mw": 1346.0
+    },
+    {
+     "plant_code": 6019,
+     "plant_name": "W H Zimmer",
+     "klass": "coal",
+     "mw": 1305.0
+    },
+    {
+     "plant_code": 6264,
+     "plant_name": "Mountaineer",
+     "klass": "coal",
+     "mw": 1299.0
+    },
+    {
+     "plant_code": 6004,
+     "plant_name": "Pleasants Power Station",
+     "klass": "coal",
+     "mw": 1288.0
+    },
+    {
+     "plant_code": 602,
+     "plant_name": "Brandon Shores",
+     "klass": "coal",
+     "mw": 1273.0
+    },
+    {
+     "plant_code": 1573,
+     "plant_name": "Morgantown Generating Plant",
+     "klass": "coal",
+     "mw": 1205.0
+    },
+    {
+     "plant_code": 983,
+     "plant_name": "Clifty Creek",
+     "klass": "coal",
+     "mw": 1173.0
+    },
+    {
+     "plant_code": 876,
+     "plant_name": "Kincaid Generation LLC",
+     "klass": "coal",
+     "mw": 1108.0
+    },
+    {
+     "plant_code": 3943,
+     "plant_name": "FirstEnergy Fort Martin Power Station",
+     "klass": "coal",
+     "mw": 1098.0
+    },
+    {
+     "plant_code": 2832,
+     "plant_name": "Miami Fort",
+     "klass": "coal",
+     "mw": 1020.0
+    },
+    {
+     "plant_code": 3797,
+     "plant_name": "Chesterfield",
+     "klass": "coal",
+     "mw": 1006.0
+    },
+    {
+     "plant_code": 2876,
+     "plant_name": "Kyger Creek",
+     "klass": "coal",
+     "mw": 962.8
+    },
+    {
+     "plant_code": 7213,
+     "plant_name": "Clover",
+     "klass": "coal",
+     "mw": 877.0
+    },
+    {
+     "plant_code": 56671,
+     "plant_name": "Longview Power Plant",
+     "klass": "coal",
+     "mw": 710.0
+    },
+    {
+     "plant_code": 883,
+     "plant_name": "Waukegan",
+     "klass": "coal",
+     "mw": 689.0
+    },
+    {
+     "plant_code": 1571,
+     "plant_name": "Chalk Point LLC",
+     "klass": "coal",
+     "mw": 670.0
+    },
+    {
+     "plant_code": 2836,
+     "plant_name": "Avon Lake",
+     "klass": "coal",
+     "mw": 627.0
+    },
+    {
+     "plant_code": 56808,
+     "plant_name": "Virginia City Hybrid Energy Center",
+     "klass": "coal",
+     "mw": 610.0
+    },
+    {
+     "plant_code": 6018,
+     "plant_name": "East Bend",
+     "klass": "coal",
+     "mw": 600.0
+    },
+    {
+     "plant_code": 8226,
+     "plant_name": "Cheswick Power Plant",
+     "klass": "coal",
+     "mw": 565.0
+    },
+    {
+     "plant_code": 3130,
+     "plant_name": "Seward (PA)",
+     "klass": "coal",
+     "mw": 521.0
+    },
+    {
+     "plant_code": 884,
+     "plant_name": "Will County",
+     "klass": "coal",
+     "mw": 510.0
+    },
+    {
+     "plant_code": 594,
+     "plant_name": "Indian River Generating Station",
+     "klass": "coal",
+     "mw": 410.0
+    },
+    {
+     "plant_code": 1384,
+     "plant_name": "Cooper",
+     "klass": "coal",
+     "mw": 341.0
+    },
+    {
+     "plant_code": 1554,
+     "plant_name": "Herbert A Wagner",
+     "klass": "coal",
+     "mw": 305.0
+    },
+    {
+     "plant_code": 10566,
+     "plant_name": "Chambers Cogeneration LP",
+     "klass": "coal",
+     "mw": 244.0
+    },
+    {
+     "plant_code": 54304,
+     "plant_name": "Birchwood Power",
+     "klass": "coal",
+     "mw": 237.7
+    },
+    {
+     "plant_code": 10043,
+     "plant_name": "Logan Generating Plant",
+     "klass": "coal",
+     "mw": 219.0
+    },
+    {
+     "plant_code": 10678,
+     "plant_name": "AES Warrior Run Cogeneration Facility",
+     "klass": "coal",
+     "mw": 180.0
+    },
+    {
+     "plant_code": 50481,
+     "plant_name": "Tennessee Eastman Operations",
+     "klass": "coal",
+     "mw": 131.3
+    },
+    {
+     "plant_code": 50888,
+     "plant_name": "Northampton Generating Company LP",
+     "klass": "coal",
+     "mw": 112.0
+    },
+    {
+     "plant_code": 10143,
+     "plant_name": "Colver Green Energy",
+     "klass": "coal",
+     "mw": 110.0
+    },
+    {
+     "plant_code": 1040,
+     "plant_name": "Whitewater Valley",
+     "klass": "coal",
+     "mw": 99.7
+    },
+    {
+     "plant_code": 54634,
+     "plant_name": "St Nicholas Cogen Project",
+     "klass": "coal",
+     "mw": 86.0
+    },
+    {
+     "plant_code": 50974,
+     "plant_name": "Scrubgrass Generating Plant",
+     "klass": "coal",
+     "mw": 84.6
+    },
+    {
+     "plant_code": 50776,
+     "plant_name": "Panther Creek Energy Facility",
+     "klass": "coal",
+     "mw": 83.0
+    },
+    {
+     "plant_code": 10151,
+     "plant_name": "Grant Town Power Plant",
+     "klass": "coal",
+     "mw": 80.0
+    },
+    {
+     "plant_code": 10113,
+     "plant_name": "John B Rich Memorial Power Station",
+     "klass": "coal",
+     "mw": 80.0
+    },
+    {
+     "plant_code": 10603,
+     "plant_name": "Ebensburg Power",
+     "klass": "coal",
+     "mw": 50.0
+    },
+    {
+     "plant_code": 50900,
+     "plant_name": "Covington Facility",
+     "klass": "coal",
+     "mw": 43.0
+    },
+    {
+     "plant_code": 10343,
+     "plant_name": "Foster Wheeler Mt Carmel Cogen",
+     "klass": "coal",
+     "mw": 43.0
+    },
+    {
+     "plant_code": 2935,
+     "plant_name": "Orrville",
+     "klass": "coal",
+     "mw": 43.0
+    },
+    {
+     "plant_code": 54556,
+     "plant_name": "Ingredion Incorporated",
+     "klass": "coal",
+     "mw": 42.2
+    },
+    {
+     "plant_code": 50397,
+     "plant_name": "Pixelle Specialty Solutions LLC - Spring Grove Facility",
+     "klass": "coal",
+     "mw": 36.1
+    },
+    {
+     "plant_code": 2936,
+     "plant_name": "Painesville",
+     "klass": "coal",
+     "mw": 33.0
+    },
+    {
+     "plant_code": 50611,
+     "plant_name": "Westwood Generation LLC",
+     "klass": "coal",
+     "mw": 30.0
+    },
+    {
+     "plant_code": 2914,
+     "plant_name": "Dover",
+     "klass": "coal",
+     "mw": 15.2
+    }
+   ]
+  },
+  "2021": {
+   "gas_cc": [
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": -1399.4
+    }
+   ],
+   "gas_ct": [
+    {
+     "mover": "Ladysmith (7839) dual-fuel (oil secondary), typed gas by the loader -- IMM may type oil",
+     "mw": -783.0,
+     "plant_code": 7839,
+     "candidate": true
+    },
+    {
+     "mover": "Troy Energy LLC (55348) dual-fuel (oil secondary), typed gas by the loader -- IMM may type oil",
+     "mw": -688.6,
+     "plant_code": 55348,
+     "candidate": true
+    },
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": 264.4
+    }
+   ],
+   "gas_st": [
+    {
+     "mover": "Merck Rahway Power Plant (10224) EIA status OS -- installed per IMM, excluded by the OP-only loader",
+     "mw": 5.0,
+     "plant_code": 10224
+    },
+    {
+     "mover": "Akron Recycle Energy Plant (54265) EIA status OS -- installed per IMM, excluded by the OP-only loader",
+     "mw": 4.0,
+     "plant_code": 54265
+    },
+    {
+     "mover": "Virginia Tech Power Plant (56785) EIA status OA -- installed per IMM, excluded by the OP-only loader",
+     "mw": 2.5,
+     "plant_code": 56785
+    },
+    {
+     "mover": "Morton Salt Rittman (54335) OP in EIA-860 PJM but absent from the keeper LP",
+     "mw": 2.5,
+     "plant_code": 54335
+    },
+    {
+     "mover": "Bunge North America East LLC (50316) OP in EIA-860 PJM but absent from the keeper LP",
+     "mw": 2.2,
+     "plant_code": 50316
+    },
+    {
+     "mover": "Newman (PA) (54250) OP in EIA-860 PJM but absent from the keeper LP",
+     "mw": 1.8,
+     "plant_code": 54250
+    },
+    {
+     "mover": "East Campus Utility Plant (57929) EIA status SB -- installed per IMM, excluded by the OP-only loader",
+     "mw": 1.2,
+     "plant_code": 57929
+    },
+    {
+     "mover": "Cleveland Thermal (61838) OP in EIA-860 PJM but absent from the keeper LP",
+     "mw": 1.0,
+     "plant_code": 61838
+    },
+    {
+     "mover": "1 further plants of the same kinds (smaller)",
+     "mw": 0.6
+    },
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": 379.7
+    }
+   ],
+   "oil": [
+    {
+     "mover": "TalenEnergy Martins Creek (3148) typed gas by EIA Energy Source 1 (oil secondary) -- IMM may type oil",
+     "mw": 1700.0,
+     "plant_code": 3148,
+     "candidate": true
+    },
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": -1045.3
+    }
+   ],
+   "nuclear": [
+    {
+     "mover": "IMM XIC (external) row -- outside the PJM BA, not in the model footprint; IMM prints no unit names",
+     "mw": 1140.0
+    },
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": -341.5
+    }
+   ],
+   "hydro": [
+    {
+     "mover": "IMM XIC (external) row -- outside the PJM BA, not in the model footprint; IMM prints no unit names",
+     "mw": 269.1
+    },
+    {
+     "mover": "Philpott Lake (3834) EIA status OS -- installed per IMM, excluded by the OP-only loader",
+     "mw": 15.6,
+     "plant_code": 3834
+    },
+    {
+     "mover": "Lockport Powerhouse (10903) EIA status OA -- installed per IMM, excluded by the OP-only loader",
+     "mw": 6.0,
+     "plant_code": 10903
+    },
+    {
+     "mover": "O'Shaughnessy Hydro (7279) EIA status OS -- installed per IMM, excluded by the OP-only loader",
+     "mw": 5.2,
+     "plant_code": 7279
+    },
+    {
+     "mover": "Reusens (3779) EIA status OS -- installed per IMM, excluded by the OP-only loader",
+     "mw": 2.5,
+     "plant_code": 3779
+    },
+    {
+     "mover": "Passaic Valley Water Commission (50311) EIA status OS -- installed per IMM, excluded by the OP-only loader",
+     "mw": 2.4,
+     "plant_code": 50311
+    },
+    {
+     "mover": "Coleman Falls (56313) EIA status OS -- installed per IMM, excluded by the OP-only loader",
+     "mw": 1.5,
+     "plant_code": 56313
+    },
+    {
+     "mover": "Kankakee Hydro Facility (54525) EIA status OS -- installed per IMM, excluded by the OP-only loader",
+     "mw": 0.8,
+     "plant_code": 54525
+    },
+    {
+     "mover": "2 further plants of the same kinds (smaller)",
+     "mw": 1.0
+    },
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": 140.2
+    }
+   ],
+   "wind": [
+    {
+     "mover": "residual: EIA-860 nameplate (model) vs IMM summer installed rating / market-registration basis; IMM publishes no unit list",
+     "mw": 571.2
+    }
+   ],
+   "solar": [
+    {
+     "mover": "3 PJM-BA OP solar plants absent from the eGRID zone lookup (dropped by the loader); largest: Jefferson Avenue (60499) 2, Gemini Technologies Services, Inc. Solar (60804) 1, Deutsche Bank- Piscataway Solar (60803) 1",
+     "mw": 4.0
+    },
+    {
+     "mover": "residual: EIA-860 nameplate (model) vs IMM summer installed rating / market-registration basis; IMM publishes no unit list",
+     "mw": -1611.3
+    }
+   ]
+  },
+  "2022": {
+   "coal": [
+    {
+     "mover": "IMM XIC (external) row -- outside the PJM BA, not in the model footprint; IMM prints no unit names",
+     "mw": 1955.0
+    },
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": 160.0
+    }
+   ],
+   "gas_ct": [
+    {
+     "mover": "Ladysmith (7839) dual-fuel (oil secondary), typed gas by the loader -- IMM may type oil",
+     "mw": -783.0,
+     "plant_code": 7839,
+     "candidate": true
+    },
+    {
+     "mover": "Troy Energy LLC (55348) dual-fuel (oil secondary), typed gas by the loader -- IMM may type oil",
+     "mw": -675.6,
+     "plant_code": 55348,
+     "candidate": true
+    },
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": 291.8
+    }
+   ],
+   "gas_st": [
+    {
+     "mover": "TalenEnergy Martins Creek (3148) dual-fuel (oil secondary), typed gas by the loader -- IMM may type oil",
+     "mw": -1700.0,
+     "plant_code": 3148,
+     "candidate": true
+    },
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": 723.8
+    }
+   ],
+   "oil": [
+    {
+     "mover": "TalenEnergy Martins Creek (3148) typed gas by EIA Energy Source 1 (oil secondary) -- IMM may type oil",
+     "mw": 1700.0,
+     "plant_code": 3148,
+     "candidate": true
+    },
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": -1414.1
+    }
+   ],
+   "nuclear": [
+    {
+     "mover": "IMM XIC (external) row -- outside the PJM BA, not in the model footprint; IMM prints no unit names",
+     "mw": 1140.0
+    },
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": -341.5
+    }
+   ],
+   "hydro": [
+    {
+     "mover": "Philpott Lake (3834) EIA status OS -- installed per IMM, excluded by the OP-only loader",
+     "mw": 15.6,
+     "plant_code": 3834
+    },
+    {
+     "mover": "Lockport Powerhouse (10903) EIA status OA -- installed per IMM, excluded by the OP-only loader",
+     "mw": 12.0,
+     "plant_code": 10903
+    },
+    {
+     "mover": "O'Shaughnessy Hydro (7279) EIA status OS -- installed per IMM, excluded by the OP-only loader",
+     "mw": 5.2,
+     "plant_code": 7279
+    },
+    {
+     "mover": "Great Falls Hydro Project (52068) EIA status OA -- installed per IMM, excluded by the OP-only loader",
+     "mw": 3.3,
+     "plant_code": 52068
+    },
+    {
+     "mover": "Reusens (3779) EIA status OS -- installed per IMM, excluded by the OP-only loader",
+     "mw": 2.5,
+     "plant_code": 3779
+    },
+    {
+     "mover": "Passaic Valley Water Commission (50311) EIA status OS -- installed per IMM, excluded by the OP-only loader",
+     "mw": 2.4,
+     "plant_code": 50311
+    },
+    {
+     "mover": "Coleman Falls (56313) EIA status OS -- installed per IMM, excluded by the OP-only loader",
+     "mw": 1.5,
+     "plant_code": 56313
+    },
+    {
+     "mover": "Kankakee Hydro Facility (54525) EIA status OS -- installed per IMM, excluded by the OP-only loader",
+     "mw": 1.2,
+     "plant_code": 54525
+    },
+    {
+     "mover": "2 further plants of the same kinds (smaller)",
+     "mw": 1.0
+    },
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": 164.9
+    }
+   ],
+   "wind": [
+    {
+     "mover": "residual: EIA-860 nameplate (model) vs IMM summer installed rating / market-registration basis; IMM publishes no unit list",
+     "mw": 656.2
+    }
+   ],
+   "solar": [
+    {
+     "mover": "1 PJM-BA OP solar plants absent from the eGRID zone lookup (dropped by the loader); largest: Gemini Technologies Services, Inc. Solar (60804) 1",
+     "mw": 1.3
+    },
+    {
+     "mover": "residual: EIA-860 nameplate (model) vs IMM summer installed rating / market-registration basis; IMM publishes no unit list",
+     "mw": -2015.6
+    }
+   ]
+  },
+  "2023": {
+   "coal": [
+    {
+     "mover": "IMM XIC (external) row -- outside the PJM BA, not in the model footprint; IMM prints no unit names",
+     "mw": 1955.0
+    },
+    {
+     "mover": "OVEC rating basis: IMM OVEC zone 2388.8 vs EIA-860 net summer Clifty Creek 983 + Kyger Creek 2876 = 2135.8",
+     "mw": 253.0
+    },
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": 354.0
+    }
+   ],
+   "gas_cc": [
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": -3073.7
+    }
+   ],
+   "gas_ct": [
+    {
+     "mover": "Ladysmith (7839) dual-fuel (oil secondary), typed gas by the loader -- IMM may type oil",
+     "mw": -809.6,
+     "plant_code": 7839,
+     "candidate": true
+    },
+    {
+     "mover": "Troy Energy LLC (55348) dual-fuel (oil secondary), typed gas by the loader -- IMM may type oil",
+     "mw": -707.3,
+     "plant_code": 55348,
+     "candidate": true
+    },
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": 359.8
+    }
+   ],
+   "gas_st": [
+    {
+     "mover": "TalenEnergy Martins Creek (3148) dual-fuel (oil secondary), typed gas by the loader -- IMM may type oil",
+     "mw": -1700.0,
+     "plant_code": 3148,
+     "candidate": true
+    },
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": -9.2
+    }
+   ],
+   "oil": [
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": -115.4
+    }
+   ],
+   "nuclear": [
+    {
+     "mover": "IMM XIC (external) row -- outside the PJM BA, not in the model footprint; IMM prints no unit names",
+     "mw": 1140.0
+    },
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": -378.9
+    }
+   ],
+   "wind": [
+    {
+     "mover": "IMM XIC (external) row",
+     "mw": 100.0
+    },
+    {
+     "mover": "residual: EIA-860 nameplate (model) vs IMM summer installed rating / market-registration basis; IMM publishes no unit list",
+     "mw": 702.1
+    }
+   ],
+   "solar": [
+    {
+     "mover": "residual: EIA-860 nameplate (model) vs IMM summer installed rating / market-registration basis; IMM publishes no unit list",
+     "mw": -1986.4
+    }
+   ]
+  },
+  "2024": {
+   "coal": [
+    {
+     "mover": "IMM XIC (external) row -- outside the PJM BA, not in the model footprint; IMM prints no unit names",
+     "mw": 1955.0
+    },
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": 227.0
+    }
+   ],
+   "gas_cc": [
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": -3052.2
+    }
+   ],
+   "gas_ct": [
+    {
+     "mover": "Ladysmith (7839) dual-fuel (oil secondary), typed gas by the loader -- IMM may type oil",
+     "mw": -814.0,
+     "plant_code": 7839,
+     "candidate": true
+    },
+    {
+     "mover": "Troy Energy LLC (55348) dual-fuel (oil secondary), typed gas by the loader -- IMM may type oil",
+     "mw": -707.0,
+     "plant_code": 55348,
+     "candidate": true
+    },
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": 278.8
+    }
+   ],
+   "gas_st": [
+    {
+     "mover": "TalenEnergy Martins Creek (3148) dual-fuel (oil secondary), typed gas by the loader -- IMM may type oil",
+     "mw": -1700.0,
+     "plant_code": 3148,
+     "candidate": true
+    },
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": 690.8
+    }
+   ],
+   "oil": [
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": -560.4
+    }
+   ],
+   "nuclear": [
+    {
+     "mover": "IMM XIC (external) row -- outside the PJM BA, not in the model footprint; IMM prints no unit names",
+     "mw": 1140.0
+    },
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": -374.2
+    }
+   ],
+   "wind": [
+    {
+     "mover": "IMM XIC (external) row",
+     "mw": 100.0
+    },
+    {
+     "mover": "1 PJM-BA OP wind plants absent from the eGRID zone lookup (dropped by the loader); largest: Timbermill Wind, LLC (67910) 189",
+     "mw": 189.0
+    },
+    {
+     "mover": "residual: EIA-860 nameplate (model) vs IMM summer installed rating / market-registration basis; IMM publishes no unit list",
+     "mw": 641.1
+    }
+   ],
+   "solar": [
+    {
+     "mover": "129 PJM-BA OP solar plants absent from the eGRID zone lookup (dropped by the loader); largest: Mammoth North Solar (65957) 400, AEUG Union Solar, LLC (64660) 325, Hecate Energy Highland LLC (62670) 300, Madison Fields Solar Project, LLC (66198) 180, Cavalier Solar (67420) 156, Willowbrook Solar I, LLC (63877) 150, Honeysuckle Solar Farm (65936) 150, Hardin Solar Energy II LLC (63828) 150",
+     "mw": 3737.5
+    },
+    {
+     "mover": "residual: EIA-860 nameplate (model) vs IMM summer installed rating / market-registration basis; IMM publishes no unit list",
+     "mw": -2748.3
+    }
+   ]
+  },
+  "2025": {
+   "coal": [
+    {
+     "mover": "IMM XIC (external) row -- outside the PJM BA, not in the model footprint; IMM prints no unit names",
+     "mw": 1955.0
+    },
+    {
+     "mover": "OVEC rating basis: IMM OVEC zone 2388.8 vs EIA-860 net summer Clifty Creek 983 + Kyger Creek 2876 = 2135.8",
+     "mw": 253.0
+    },
+    {
+     "mover": "Morgantown Energy Facility (10743) EIA status OS -- installed per IMM, excluded by the OP-only loader",
+     "mw": 50.0,
+     "plant_code": 10743
+    },
+    {
+     "mover": "Painesville (2936) EIA status SB -- installed per IMM, excluded by the OP-only loader",
+     "mw": 14.0,
+     "plant_code": 2936
+    },
+    {
+     "mover": "Orrville (2935) EIA status OS -- installed per IMM, excluded by the OP-only loader",
+     "mw": 12.5,
+     "plant_code": 2935
+    },
+    {
+     "mover": "Dover (OH) (2914) EIA status SB -- installed per IMM, excluded by the OP-only loader",
+     "mw": 8.0,
+     "plant_code": 2914
+    },
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": 640.2
+    }
+   ],
+   "gas_cc": [
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": -1911.6
+    }
+   ],
+   "gas_ct": [
+    {
+     "mover": "Ladysmith (7839) dual-fuel (oil secondary), typed gas by the loader -- IMM may type oil",
+     "mw": -788.9,
+     "plant_code": 7839,
+     "candidate": true
+    },
+    {
+     "mover": "Troy Energy LLC (55348) dual-fuel (oil secondary), typed gas by the loader -- IMM may type oil",
+     "mw": -704.4,
+     "plant_code": 55348,
+     "candidate": true
+    },
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": 235.9
+    }
+   ],
+   "gas_st": [
+    {
+     "mover": "TalenEnergy Martins Creek (3148) dual-fuel (oil secondary), typed gas by the loader -- IMM may type oil",
+     "mw": -1700.0,
+     "plant_code": 3148,
+     "candidate": true
+    },
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": -173.6
+    }
+   ],
+   "oil": [
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": -364.5
+    }
+   ],
+   "nuclear": [
+    {
+     "mover": "IMM XIC (external) row -- outside the PJM BA, not in the model footprint; IMM prints no unit names",
+     "mw": 1140.0
+    },
+    {
+     "mover": "unattributed residual (per-unit rating basis / IMM-vs-EIA dating / unit-type labels; IMM publishes no unit list)",
+     "mw": -376.4
+    }
+   ],
+   "wind": [
+    {
+     "mover": "IMM XIC (external) row",
+     "mw": 100.0
+    },
+    {
+     "mover": "3 PJM-BA OP wind plants absent from the eGRID zone lookup (dropped by the loader); largest: Top Hat Wind (69225) 204, Timbermill Wind, LLC (67910) 189, Dans Mountain (67962) 55",
+     "mw": 447.9
+    },
+    {
+     "mover": "residual: EIA-860 nameplate (model) vs IMM summer installed rating / market-registration basis; IMM publishes no unit list",
+     "mw": 684.2
+    }
+   ],
+   "solar": [
+    {
+     "mover": "349 PJM-BA OP solar plants absent from the eGRID zone lookup (dropped by the loader); largest: Mammoth North Solar (65957) 400, AEUG Union Solar, LLC (64660) 325, Hecate Energy Highland LLC (62670) 300, Hardin Solar III (68591) 250, Madison Fields Solar Project, LLC (66198) 180, CPV Backbone Solar (67022) 175, Cavalier Solar (67420) 156, Carvers Creek Solar (67342) 154",
+     "mw": 6986.0
+    },
+    {
+     "mover": "residual: EIA-860 nameplate (model) vs IMM summer installed rating / market-registration basis; IMM publishes no unit list",
+     "mw": -3161.3
+    }
+   ]
+  }
+ },
+ "coal_2020_exit_carry_plants": [
+  {
+   "plant_code": 2840,
+   "name": "Conesville",
+   "lp_annual_max_mw": 744.9
+  },
+  {
+   "plant_code": 50879,
+   "name": "Wheelabrator Frackville Energy",
+   "lp_annual_max_mw": 40.6
+  }
+ ],
+ "gas_cc_model_yoy_2022_2023": {
+  "model_total_mw": 3442.2,
+  "imm_total_mw": -154.0,
+  "plants_ge_50mw": [
+   {
+    "plant_code": 10751,
+    "name": "Camden Plant Holdings LLC",
+    "mw": -145.0
+   },
+   {
+    "plant_code": 55939,
+    "name": "Warren County",
+    "mw": -102.2
+   },
+   {
+    "plant_code": 62926,
+    "name": "Jackson Generation, LLC",
+    "mw": -84.0
+   },
+   {
+    "plant_code": 59906,
+    "name": "Moxie Freedom Generation Plant",
+    "mw": 125.0
+   },
+   {
+    "plant_code": 10751,
+    "name": "Camden Plant Holding LLC",
+    "mw": 145.0
+   },
+   {
+    "plant_code": 55297,
+    "name": "New Covert Generating Facility",
+    "mw": 500.8
+   },
+   {
+    "plant_code": 63931,
+    "name": "CPV Three Rivers Energy Center",
+    "mw": 1161.3
+   },
+   {
+    "plant_code": 62949,
+    "name": "Guernsey Power Station",
+    "mw": 1782.0
+   }
+  ]
+ },
+ "sources": {
+  "2019": {
+   "table": "Table 12-1 Existing PJM capacity: December 31, 2019 (By zone and unit type (MW))",
+   "pdf_page": 8,
+   "printed_page": "562",
+   "as_of": "2019-12-31",
+   "url": "https://www.monitoringanalytics.com/reports/PJM_State_of_the_Market/2019/2019-som-pjm-sec12.pdf",
+   "basis": "summer installed capacity rating, all capacity in PJM regardless of RPM (Table 12-1 footnote)",
+   "total_all_types": 197574.5
+  },
+  "2020": {
+   "table": "Table 12-1 Existing capacity: December 31, 2020 (By zone and unit type (MW))",
+   "pdf_page": 8,
+   "printed_page": "576",
+   "as_of": "2020-12-31",
+   "url": "https://www.monitoringanalytics.com/reports/PJM_State_of_the_Market/2020/2020-som-pjm-sec12.pdf",
+   "basis": "summer installed capacity rating, all capacity in PJM regardless of RPM (Table 12-1 footnote)",
+   "total_all_types": 198129.0
+  },
+  "2021": {
+   "table": "Table 12-1 Existing capacity: December 31, 2021 (By zone and unit type (MW))",
+   "pdf_page": 8,
+   "printed_page": "614",
+   "as_of": "2021-12-31",
+   "url": "https://www.monitoringanalytics.com/reports/PJM_State_of_the_Market/2021/2021-som-pjm-sec12.pdf",
+   "basis": "summer installed capacity rating, all capacity in PJM regardless of RPM (Table 12-1 footnote)",
+   "total_all_types": 199195.3
+  },
+  "2022": {
+   "table": "Table 12-1 Existing capacity: December 31, 2022 (By zone and unit type (MW))",
+   "pdf_page": 8,
+   "printed_page": "676",
+   "as_of": "2022-12-31",
+   "url": "https://www.monitoringanalytics.com/reports/PJM_State_of_the_Market/2022/2022-som-pjm-sec12.pdf",
+   "basis": "summer installed capacity rating, all capacity in PJM regardless of RPM (Table 12-1 footnote)",
+   "total_all_types": 198460.2
+  },
+  "2023": {
+   "table": "Table 12-1 Existing capacity: December 31, 2023 (By zone and unit type (MW))",
+   "pdf_page": 11,
+   "printed_page": "671",
+   "as_of": "2023-12-31",
+   "url": "https://www.monitoringanalytics.com/reports/PJM_State_of_the_Market/2023/2023-som-pjm-sec12.pdf",
+   "basis": "summer installed capacity rating, all capacity in PJM regardless of RPM (Table 12-1 footnote)",
+   "total_all_types": 196380.2
+  },
+  "2024": {
+   "table": "Table 12-1 Existing capacity: December 31, 2024 (By zone and unit type (MW))",
+   "pdf_page": 13,
+   "printed_page": "661",
+   "as_of": "2024-12-31",
+   "url": "https://www.monitoringanalytics.com/reports/PJM_State_of_the_Market/2024/2024-som-pjm-sec12.pdf",
+   "basis": "summer installed capacity rating, all capacity in PJM regardless of RPM (Table 12-1 footnote)",
+   "total_all_types": 198841.1
+  },
+  "2025": {
+   "table": "Table 12-1 Existing capacity: December 31, 2025 (By zone and unit type (MW))",
+   "pdf_page": 16,
+   "printed_page": "726",
+   "as_of": "2025-12-31",
+   "url": "https://www.monitoringanalytics.com/reports/PJM_State_of_the_Market/2025/2025-som-pjm-sec12.pdf",
+   "basis": "summer installed capacity rating, all capacity in PJM regardless of RPM (Table 12-1 footnote)",
+   "total_all_types": 202424.8
+  }
+ }
+}

@@ -2,7 +2,7 @@
   "families": {
     "CAISO": {
       "coal": false,
-      "gas": false
+      "gas": true
     },
     "ERCOT": {
       "coal": true,
@@ -17,8 +17,8 @@
       "gas": false
     },
     "NWPP": {
-      "coal": false,
-      "gas": false
+      "coal": true,
+      "gas": true
     },
     "NYISO": {
       "coal": false,
@@ -29,51 +29,47 @@
       "gas": false
     },
     "SOCO": {
-      "coal": false,
+      "coal": true,
       "gas": false
     },
     "SPP": {
-      "coal": false,
-      "gas": false
+      "coal": true,
+      "gas": true
     }
   },
   "isos": {
     "CAISO": {
       "CC_CHP": {
         "class": "CC_CHP",
-        "cur_twh": 12.807,
+        "cur_twh": 12.846,
         "family": "gas",
-        "family_complete": false,
-        "gate": false,
+        "family_complete": true,
+        "gate": true,
         "last_month": 12,
-        "n_missing_plants": 3,
+        "n_missing_plants": 0,
         "n_prior_plants": 19,
-        "plant_month_frac": 0.99,
-        "plant_retention": 0.842,
+        "plant_month_frac": 0.992,
+        "plant_retention": 1.0,
         "prior_twh": 13.169,
-        "reasons": [
-          "3/19 prior plants missing (84% reporting)"
-        ],
-        "retention": 0.973,
-        "status": "incomplete"
+        "reasons": [],
+        "retention": 0.975,
+        "status": "complete"
       },
       "CC_REGULAR": {
         "class": "CC_REGULAR",
-        "cur_twh": 37.374,
+        "cur_twh": 37.401,
         "family": "gas",
-        "family_complete": false,
-        "gate": false,
+        "family_complete": true,
+        "gate": true,
         "last_month": 12,
-        "n_missing_plants": 3,
+        "n_missing_plants": 0,
         "n_prior_plants": 26,
         "plant_month_frac": 1.0,
-        "plant_retention": 0.885,
+        "plant_retention": 1.0,
         "prior_twh": 45.992,
-        "reasons": [
-          "3/26 prior plants missing (88% reporting)"
-        ],
+        "reasons": [],
         "retention": 0.813,
-        "status": "incomplete"
+        "status": "complete"
       },
       "COAL_BIT": {
         "class": "COAL_BIT",
@@ -109,61 +105,57 @@
       },
       "CT_CHP": {
         "class": "CT_CHP",
-        "cur_twh": 3.274,
+        "cur_twh": 4.046,
         "family": "gas",
-        "family_complete": false,
-        "gate": false,
+        "family_complete": true,
+        "gate": true,
         "last_month": 12,
-        "n_missing_plants": 22,
+        "n_missing_plants": 0,
         "n_prior_plants": 59,
-        "plant_month_frac": 0.998,
-        "plant_retention": 0.627,
+        "plant_month_frac": 0.99,
+        "plant_retention": 1.0,
         "prior_twh": 4.717,
-        "reasons": [
-          "22/59 prior plants missing (63% reporting)"
-        ],
-        "retention": 0.694,
-        "status": "incomplete"
+        "reasons": [],
+        "retention": 0.858,
+        "status": "complete"
       },
       "CT_PEAKER": {
         "class": "CT_PEAKER",
-        "cur_twh": 2.073,
+        "cur_twh": 2.616,
         "family": "gas",
-        "family_complete": false,
-        "gate": false,
+        "family_complete": true,
+        "gate": true,
         "last_month": 12,
-        "n_missing_plants": 23,
+        "n_missing_plants": 0,
         "n_prior_plants": 37,
         "plant_month_frac": 1.0,
-        "plant_retention": 0.378,
+        "plant_retention": 1.0,
         "prior_twh": 4.32,
-        "reasons": [
-          "23/37 prior plants missing (38% reporting)"
-        ],
-        "retention": 0.48,
-        "status": "incomplete"
+        "reasons": [],
+        "retention": 0.605,
+        "status": "complete"
       },
       "ST_CHP": {
         "class": "ST_CHP",
-        "cur_twh": 0.012,
+        "cur_twh": 0.046,
         "family": "gas",
-        "family_complete": false,
+        "family_complete": true,
         "gate": false,
         "last_month": 12,
-        "n_missing_plants": 1,
+        "n_missing_plants": 0,
         "n_prior_plants": 2,
         "plant_month_frac": 1.0,
-        "plant_retention": 0.5,
+        "plant_retention": 1.0,
         "prior_twh": 0.033,
         "reasons": [],
-        "retention": 0.371,
+        "retention": 1.376,
         "status": "immaterial"
       },
       "ST_GAS": {
         "class": "ST_GAS",
-        "cur_twh": 0.08,
+        "cur_twh": 0.084,
         "family": "gas",
-        "family_complete": false,
+        "family_complete": true,
         "gate": false,
         "last_month": 12,
         "n_missing_plants": 0,
@@ -172,46 +164,44 @@
         "plant_retention": 1.0,
         "prior_twh": 0.12,
         "reasons": [],
-        "retention": 0.666,
+        "retention": 0.7,
         "status": "immaterial"
       }
     },
     "ERCOT": {
       "CC_CHP": {
         "class": "CC_CHP",
-        "cur_twh": 52.94,
+        "cur_twh": 53.814,
         "family": "gas",
         "family_complete": false,
         "gate": false,
         "last_month": 12,
-        "n_missing_plants": 3,
+        "n_missing_plants": 1,
         "n_prior_plants": 19,
         "plant_month_frac": 1.0,
-        "plant_retention": 0.842,
+        "plant_retention": 0.947,
         "prior_twh": 55.042,
         "reasons": [
-          "3/19 prior plants missing (84% reporting)"
+          "1/19 prior plants missing (95% reporting)"
         ],
-        "retention": 0.962,
+        "retention": 0.978,
         "status": "incomplete"
       },
       "CC_REGULAR": {
         "class": "CC_REGULAR",
-        "cur_twh": 133.473,
+        "cur_twh": 148.31,
         "family": "gas",
         "family_complete": false,
         "gate": false,
         "last_month": 12,
-        "n_missing_plants": 9,
-        "n_prior_plants": 41,
+        "n_missing_plants": 0,
+        "n_prior_plants": 42,
         "plant_month_frac": 1.0,
-        "plant_retention": 0.78,
-        "prior_twh": 145.415,
-        "reasons": [
-          "9/41 prior plants missing (78% reporting)"
-        ],
-        "retention": 0.918,
-        "status": "incomplete"
+        "plant_retention": 1.0,
+        "prior_twh": 148.813,
+        "reasons": [],
+        "retention": 0.997,
+        "status": "complete"
       },
       "COAL_LIGNITE": {
         "class": "COAL_LIGNITE",
@@ -247,126 +237,118 @@
       },
       "CT_CHP": {
         "class": "CT_CHP",
-        "cur_twh": 8.018,
+        "cur_twh": 13.396,
         "family": "gas",
         "family_complete": false,
         "gate": false,
         "last_month": 12,
-        "n_missing_plants": 17,
+        "n_missing_plants": 0,
         "n_prior_plants": 22,
         "plant_month_frac": 1.0,
-        "plant_retention": 0.227,
+        "plant_retention": 1.0,
         "prior_twh": 13.234,
-        "reasons": [
-          "17/22 prior plants missing (23% reporting)"
-        ],
-        "retention": 0.606,
-        "status": "incomplete"
+        "reasons": [],
+        "retention": 1.012,
+        "status": "complete"
       },
       "CT_PEAKER": {
         "class": "CT_PEAKER",
-        "cur_twh": 4.094,
+        "cur_twh": 8.471,
         "family": "gas",
         "family_complete": false,
         "gate": false,
         "last_month": 12,
-        "n_missing_plants": 24,
+        "n_missing_plants": 0,
         "n_prior_plants": 38,
-        "plant_month_frac": 0.989,
-        "plant_retention": 0.368,
+        "plant_month_frac": 0.991,
+        "plant_retention": 1.0,
         "prior_twh": 8.116,
-        "reasons": [
-          "24/38 prior plants missing (37% reporting)"
-        ],
-        "retention": 0.504,
-        "status": "incomplete"
+        "reasons": [],
+        "retention": 1.044,
+        "status": "complete"
       },
       "ST_CHP": {
         "class": "ST_CHP",
-        "cur_twh": 0.001,
+        "cur_twh": 0.398,
         "family": "gas",
         "family_complete": false,
         "gate": false,
         "last_month": 12,
-        "n_missing_plants": 4,
+        "n_missing_plants": 0,
         "n_prior_plants": 4,
         "plant_month_frac": 1.0,
-        "plant_retention": 0.0,
+        "plant_retention": 1.0,
         "prior_twh": 0.468,
         "reasons": [],
-        "retention": 0.003,
+        "retention": 0.851,
         "status": "immaterial"
       },
       "ST_GAS": {
         "class": "ST_GAS",
-        "cur_twh": 6.456,
+        "cur_twh": 15.92,
         "family": "gas",
         "family_complete": false,
         "gate": false,
         "last_month": 12,
-        "n_missing_plants": 12,
+        "n_missing_plants": 0,
         "n_prior_plants": 22,
-        "plant_month_frac": 0.986,
-        "plant_retention": 0.455,
+        "plant_month_frac": 0.993,
+        "plant_retention": 1.0,
         "prior_twh": 18.192,
-        "reasons": [
-          "12/22 prior plants missing (45% reporting)"
-        ],
-        "retention": 0.355,
-        "status": "incomplete"
+        "reasons": [],
+        "retention": 0.875,
+        "status": "complete"
       }
     },
     "MISO": {
       "CC_CHP": {
         "class": "CC_CHP",
-        "cur_twh": 37.124,
+        "cur_twh": 44.379,
         "family": "gas",
         "family_complete": false,
         "gate": false,
         "last_month": 12,
-        "n_missing_plants": 11,
+        "n_missing_plants": 1,
         "n_prior_plants": 24,
-        "plant_month_frac": 0.988,
-        "plant_retention": 0.542,
+        "plant_month_frac": 0.997,
+        "plant_retention": 0.958,
         "prior_twh": 42.176,
         "reasons": [
-          "11/24 prior plants missing (54% reporting)"
+          "1/24 prior plants missing (96% reporting)"
         ],
-        "retention": 0.88,
+        "retention": 1.052,
         "status": "incomplete"
       },
       "CC_REGULAR": {
         "class": "CC_REGULAR",
-        "cur_twh": 128.077,
+        "cur_twh": 136.347,
         "family": "gas",
         "family_complete": false,
         "gate": false,
         "last_month": 12,
-        "n_missing_plants": 7,
+        "n_missing_plants": 0,
         "n_prior_plants": 41,
-        "plant_month_frac": 0.977,
-        "plant_retention": 0.829,
+        "plant_month_frac": 0.982,
+        "plant_retention": 1.0,
         "prior_twh": 147.244,
-        "reasons": [
-          "7/41 prior plants missing (83% reporting)"
-        ],
-        "retention": 0.87,
-        "status": "incomplete"
+        "reasons": [],
+        "retention": 0.926,
+        "status": "complete"
       },
       "COAL_BIT": {
         "class": "COAL_BIT",
-        "cur_twh": 57.452,
+        "cur_twh": 57.46,
         "family": "coal",
         "family_complete": false,
         "gate": false,
         "last_month": 12,
         "n_missing_plants": 0,
         "n_prior_plants": 18,
-        "plant_month_frac": 0.918,
+        "plant_month_frac": 0.938,
         "plant_retention": 1.0,
         "prior_twh": 53.332,
         "reasons": [
-          "plant-months 92% present"
+          "plant-months 94% present"
         ],
         "retention": 1.077,
         "status": "incomplete"
@@ -389,131 +371,118 @@
       },
       "COAL_PRB": {
         "class": "COAL_PRB",
-        "cur_twh": 139.259,
+        "cur_twh": 139.47,
         "family": "coal",
         "family_complete": false,
         "gate": false,
         "last_month": 12,
-        "n_missing_plants": 6,
+        "n_missing_plants": 1,
         "n_prior_plants": 40,
-        "plant_month_frac": 0.965,
-        "plant_retention": 0.85,
+        "plant_month_frac": 0.972,
+        "plant_retention": 0.975,
         "prior_twh": 116.463,
-        "reasons": [
-          "6/40 prior plants missing (85% reporting)",
-          "plant-months 97% present"
-        ],
-        "retention": 1.196,
-        "status": "incomplete"
+        "reasons": [],
+        "retention": 1.198,
+        "status": "complete"
       },
       "CT_CHP": {
         "class": "CT_CHP",
-        "cur_twh": 13.043,
+        "cur_twh": 18.06,
         "family": "gas",
         "family_complete": false,
         "gate": false,
         "last_month": 12,
-        "n_missing_plants": 26,
+        "n_missing_plants": 0,
         "n_prior_plants": 47,
-        "plant_month_frac": 0.991,
-        "plant_retention": 0.447,
+        "plant_month_frac": 0.999,
+        "plant_retention": 1.0,
         "prior_twh": 20.814,
-        "reasons": [
-          "26/47 prior plants missing (45% reporting)"
-        ],
-        "retention": 0.627,
-        "status": "incomplete"
+        "reasons": [],
+        "retention": 0.868,
+        "status": "complete"
       },
       "CT_PEAKER": {
         "class": "CT_PEAKER",
-        "cur_twh": 8.282,
+        "cur_twh": 19.758,
         "family": "gas",
         "family_complete": false,
         "gate": false,
         "last_month": 12,
-        "n_missing_plants": 73,
+        "n_missing_plants": 0,
         "n_prior_plants": 98,
-        "plant_month_frac": 0.996,
-        "plant_retention": 0.255,
+        "plant_month_frac": 0.992,
+        "plant_retention": 1.0,
         "prior_twh": 19.083,
-        "reasons": [
-          "73/98 prior plants missing (26% reporting)"
-        ],
-        "retention": 0.434,
-        "status": "incomplete"
+        "reasons": [],
+        "retention": 1.035,
+        "status": "complete"
       },
       "ST_CHP": {
         "class": "ST_CHP",
-        "cur_twh": 4.537,
+        "cur_twh": 6.332,
         "family": "gas",
         "family_complete": false,
         "gate": false,
         "last_month": 12,
-        "n_missing_plants": 36,
+        "n_missing_plants": 0,
         "n_prior_plants": 67,
-        "plant_month_frac": 0.994,
-        "plant_retention": 0.463,
+        "plant_month_frac": 0.998,
+        "plant_retention": 1.0,
         "prior_twh": 7.194,
-        "reasons": [
-          "36/67 prior plants missing (46% reporting)"
-        ],
-        "retention": 0.631,
-        "status": "incomplete"
+        "reasons": [],
+        "retention": 0.88,
+        "status": "complete"
       },
       "ST_GAS": {
         "class": "ST_GAS",
-        "cur_twh": 16.899,
+        "cur_twh": 18.756,
         "family": "gas",
         "family_complete": false,
         "gate": false,
         "last_month": 12,
-        "n_missing_plants": 9,
+        "n_missing_plants": 0,
         "n_prior_plants": 28,
-        "plant_month_frac": 0.987,
-        "plant_retention": 0.679,
+        "plant_month_frac": 0.991,
+        "plant_retention": 1.0,
         "prior_twh": 22.796,
-        "reasons": [
-          "9/28 prior plants missing (68% reporting)"
-        ],
-        "retention": 0.741,
-        "status": "incomplete"
+        "reasons": [],
+        "retention": 0.823,
+        "status": "complete"
       }
     },
     "NEISO": {
       "CC_CHP": {
         "class": "CC_CHP",
-        "cur_twh": 1.887,
+        "cur_twh": 2.079,
         "family": "gas",
         "family_complete": false,
         "gate": false,
         "last_month": 12,
-        "n_missing_plants": 3,
+        "n_missing_plants": 0,
         "n_prior_plants": 7,
-        "plant_month_frac": 0.979,
-        "plant_retention": 0.571,
+        "plant_month_frac": 0.988,
+        "plant_retention": 1.0,
         "prior_twh": 2.02,
-        "reasons": [
-          "3/7 prior plants missing (57% reporting)"
-        ],
-        "retention": 0.934,
-        "status": "incomplete"
+        "reasons": [],
+        "retention": 1.029,
+        "status": "complete"
       },
       "CC_REGULAR": {
         "class": "CC_REGULAR",
-        "cur_twh": 49.382,
+        "cur_twh": 56.897,
         "family": "gas",
         "family_complete": false,
         "gate": false,
         "last_month": 12,
-        "n_missing_plants": 13,
+        "n_missing_plants": 1,
         "n_prior_plants": 30,
         "plant_month_frac": 1.0,
-        "plant_retention": 0.567,
+        "plant_retention": 0.967,
         "prior_twh": 56.608,
         "reasons": [
-          "13/30 prior plants missing (57% reporting)"
+          "1/30 prior plants missing (97% reporting)"
         ],
-        "retention": 0.872,
+        "retention": 1.005,
         "status": "incomplete"
       },
       "COAL_BIT": {
@@ -525,7 +494,7 @@
         "last_month": 12,
         "n_missing_plants": 0,
         "n_prior_plants": 2,
-        "plant_month_frac": 0.694,
+        "plant_month_frac": 0.717,
         "plant_retention": 1.0,
         "prior_twh": 0.254,
         "reasons": [],
@@ -534,129 +503,123 @@
       },
       "CT_CHP": {
         "class": "CT_CHP",
-        "cur_twh": 0.43,
+        "cur_twh": 1.482,
         "family": "gas",
         "family_complete": false,
         "gate": false,
         "last_month": 12,
-        "n_missing_plants": 15,
+        "n_missing_plants": 0,
         "n_prior_plants": 24,
         "plant_month_frac": 1.0,
-        "plant_retention": 0.375,
+        "plant_retention": 1.0,
         "prior_twh": 1.559,
-        "reasons": [
-          "15/24 prior plants missing (38% reporting)"
-        ],
-        "retention": 0.276,
-        "status": "incomplete"
+        "reasons": [],
+        "retention": 0.951,
+        "status": "complete"
       },
       "CT_PEAKER": {
         "class": "CT_PEAKER",
-        "cur_twh": 0.403,
+        "cur_twh": 0.619,
         "family": "gas",
         "family_complete": false,
         "gate": false,
         "last_month": 12,
-        "n_missing_plants": 4,
+        "n_missing_plants": 0,
         "n_prior_plants": 9,
-        "plant_month_frac": 0.991,
-        "plant_retention": 0.556,
+        "plant_month_frac": 0.996,
+        "plant_retention": 1.0,
         "prior_twh": 0.639,
         "reasons": [],
-        "retention": 0.631,
+        "retention": 0.969,
         "status": "immaterial"
       },
       "ST_CHP": {
         "class": "ST_CHP",
-        "cur_twh": 0.106,
+        "cur_twh": 0.201,
         "family": "gas",
         "family_complete": false,
         "gate": false,
         "last_month": 12,
-        "n_missing_plants": 3,
+        "n_missing_plants": 0,
         "n_prior_plants": 5,
         "plant_month_frac": 1.0,
-        "plant_retention": 0.4,
+        "plant_retention": 1.0,
         "prior_twh": 0.187,
         "reasons": [],
-        "retention": 0.567,
+        "retention": 1.074,
         "status": "immaterial"
       },
       "ST_GAS": {
         "class": "ST_GAS",
-        "cur_twh": 0.162,
+        "cur_twh": 0.193,
         "family": "gas",
         "family_complete": false,
         "gate": false,
         "last_month": 12,
-        "n_missing_plants": 2,
+        "n_missing_plants": 0,
         "n_prior_plants": 4,
-        "plant_month_frac": 1.0,
-        "plant_retention": 0.5,
+        "plant_month_frac": 0.995,
+        "plant_retention": 1.0,
         "prior_twh": 0.111,
         "reasons": [],
-        "retention": 1.453,
+        "retention": 1.737,
         "status": "immaterial"
       }
     },
     "NWPP": {
       "CC_CHP": {
         "class": "CC_CHP",
-        "cur_twh": 10.321,
+        "cur_twh": 10.72,
         "family": "gas",
-        "family_complete": false,
-        "gate": false,
+        "family_complete": true,
+        "gate": true,
         "last_month": 12,
-        "n_missing_plants": 1,
+        "n_missing_plants": 0,
         "n_prior_plants": 9,
         "plant_month_frac": 1.0,
-        "plant_retention": 0.889,
+        "plant_retention": 1.0,
         "prior_twh": 12.553,
-        "reasons": [
-          "1/9 prior plants missing (89% reporting)"
-        ],
-        "retention": 0.822,
-        "status": "incomplete"
+        "reasons": [],
+        "retention": 0.854,
+        "status": "complete"
       },
       "CC_REGULAR": {
         "class": "CC_REGULAR",
-        "cur_twh": 47.8,
+        "cur_twh": 59.946,
         "family": "gas",
-        "family_complete": false,
-        "gate": false,
+        "family_complete": true,
+        "gate": true,
         "last_month": 12,
-        "n_missing_plants": 6,
+        "n_missing_plants": 0,
         "n_prior_plants": 25,
         "plant_month_frac": 0.998,
-        "plant_retention": 0.76,
+        "plant_retention": 1.0,
         "prior_twh": 62.48,
-        "reasons": [
-          "6/25 prior plants missing (76% reporting)"
-        ],
-        "retention": 0.765,
-        "status": "incomplete"
+        "reasons": [],
+        "retention": 0.959,
+        "status": "complete"
       },
       "COAL_BIT": {
         "class": "COAL_BIT",
-        "cur_twh": 14.875,
+        "cur_twh": 18.18,
         "family": "coal",
-        "family_complete": false,
-        "gate": false,
+        "family_complete": true,
+        "gate": true,
         "last_month": 12,
         "n_missing_plants": 0,
-        "n_prior_plants": 5,
+        "n_prior_plants": 6,
         "plant_month_frac": 1.0,
         "plant_retention": 1.0,
-        "prior_twh": 10.659,
+        "prior_twh": 14.065,
         "reasons": [],
-        "retention": 1.396,
+        "retention": 1.293,
         "status": "complete"
       },
       "COAL_LIGNITE": {
         "class": "COAL_LIGNITE",
         "cur_twh": 0.0,
         "family": "coal",
-        "family_complete": false,
+        "family_complete": true,
         "gate": false,
         "last_month": 0,
         "n_missing_plants": 0,
@@ -670,145 +633,135 @@
       },
       "COAL_PRB": {
         "class": "COAL_PRB",
-        "cur_twh": 26.702,
+        "cur_twh": 23.775,
         "family": "coal",
-        "family_complete": false,
-        "gate": false,
+        "family_complete": true,
+        "gate": true,
         "last_month": 12,
-        "n_missing_plants": 2,
-        "n_prior_plants": 11,
+        "n_missing_plants": 0,
+        "n_prior_plants": 9,
         "plant_month_frac": 1.0,
-        "plant_retention": 0.818,
-        "prior_twh": 26.476,
-        "reasons": [
-          "2/11 prior plants missing (82% reporting)"
-        ],
-        "retention": 1.009,
-        "status": "incomplete"
+        "plant_retention": 1.0,
+        "prior_twh": 23.07,
+        "reasons": [],
+        "retention": 1.031,
+        "status": "complete"
       },
       "COAL_WC": {
         "class": "COAL_WC",
-        "cur_twh": 0.224,
+        "cur_twh": 0.501,
         "family": "coal",
-        "family_complete": false,
+        "family_complete": true,
         "gate": false,
         "last_month": 12,
-        "n_missing_plants": 1,
+        "n_missing_plants": 0,
         "n_prior_plants": 2,
         "plant_month_frac": 1.0,
-        "plant_retention": 0.5,
+        "plant_retention": 1.0,
         "prior_twh": 0.621,
         "reasons": [],
-        "retention": 0.361,
+        "retention": 0.806,
         "status": "immaterial"
       },
       "CT_CHP": {
         "class": "CT_CHP",
-        "cur_twh": 1.578,
+        "cur_twh": 1.757,
         "family": "gas",
-        "family_complete": false,
-        "gate": false,
+        "family_complete": true,
+        "gate": true,
         "last_month": 12,
-        "n_missing_plants": 4,
+        "n_missing_plants": 0,
         "n_prior_plants": 11,
         "plant_month_frac": 1.0,
-        "plant_retention": 0.636,
+        "plant_retention": 1.0,
         "prior_twh": 1.848,
-        "reasons": [
-          "4/11 prior plants missing (64% reporting)"
-        ],
-        "retention": 0.854,
-        "status": "incomplete"
+        "reasons": [],
+        "retention": 0.951,
+        "status": "complete"
       },
       "CT_PEAKER": {
         "class": "CT_PEAKER",
-        "cur_twh": 2.28,
+        "cur_twh": 6.641,
         "family": "gas",
-        "family_complete": false,
-        "gate": false,
+        "family_complete": true,
+        "gate": true,
         "last_month": 12,
-        "n_missing_plants": 15,
+        "n_missing_plants": 0,
         "n_prior_plants": 26,
         "plant_month_frac": 1.0,
-        "plant_retention": 0.423,
+        "plant_retention": 1.0,
         "prior_twh": 8.009,
-        "reasons": [
-          "15/26 prior plants missing (42% reporting)"
-        ],
-        "retention": 0.285,
-        "status": "incomplete"
+        "reasons": [],
+        "retention": 0.829,
+        "status": "complete"
       },
       "ST_CHP": {
         "class": "ST_CHP",
-        "cur_twh": 0.243,
+        "cur_twh": 0.493,
         "family": "gas",
-        "family_complete": false,
+        "family_complete": true,
         "gate": false,
         "last_month": 12,
-        "n_missing_plants": 6,
+        "n_missing_plants": 0,
         "n_prior_plants": 10,
         "plant_month_frac": 1.0,
-        "plant_retention": 0.4,
+        "plant_retention": 1.0,
         "prior_twh": 0.549,
         "reasons": [],
-        "retention": 0.442,
+        "retention": 0.898,
         "status": "immaterial"
       },
       "ST_GAS": {
         "class": "ST_GAS",
-        "cur_twh": 4.047,
+        "cur_twh": 4.048,
         "family": "gas",
-        "family_complete": false,
-        "gate": false,
+        "family_complete": true,
+        "gate": true,
         "last_month": 12,
         "n_missing_plants": 0,
         "n_prior_plants": 5,
-        "plant_month_frac": 0.898,
+        "plant_month_frac": 1.0,
         "plant_retention": 1.0,
         "prior_twh": 5.068,
-        "reasons": [
-          "plant-months 90% present"
-        ],
-        "retention": 0.798,
-        "status": "incomplete"
+        "reasons": [],
+        "retention": 0.799,
+        "status": "complete"
       }
     },
     "NYISO": {
       "CC_CHP": {
         "class": "CC_CHP",
-        "cur_twh": 16.819,
+        "cur_twh": 19.819,
         "family": "gas",
         "family_complete": false,
         "gate": false,
         "last_month": 12,
-        "n_missing_plants": 12,
+        "n_missing_plants": 1,
         "n_prior_plants": 17,
         "plant_month_frac": 1.0,
-        "plant_retention": 0.294,
+        "plant_retention": 0.941,
         "prior_twh": 18.774,
         "reasons": [
-          "12/17 prior plants missing (29% reporting)"
+          "1/17 prior plants missing (94% reporting)"
         ],
-        "retention": 0.896,
+        "retention": 1.056,
         "status": "incomplete"
       },
       "CC_REGULAR": {
         "class": "CC_REGULAR",
-        "cur_twh": 28.562,
+        "cur_twh": 30.69,
         "family": "gas",
         "family_complete": false,
         "gate": false,
         "last_month": 12,
-        "n_missing_plants": 11,
+        "n_missing_plants": 0,
         "n_prior_plants": 20,
-        "plant_month_frac": 0.991,
-        "plant_retention": 0.45,
+        "plant_month_frac": 0.996,
+        "plant_retention": 1.0,
         "prior_twh": 34.06,
-        "reasons": [
-          "11/20 prior plants missing (45% reporting)"
-        ],
-        "retention": 0.839,
-        "status": "incomplete"
+        "reasons": [],
+        "retention": 0.901,
+        "status": "complete"
       },
       "COAL_BIT": {
         "class": "COAL_BIT",
@@ -819,7 +772,7 @@
         "last_month": 12,
         "n_missing_plants": 0,
         "n_prior_plants": 0,
-        "plant_month_frac": 1.0,
+        "plant_month_frac": 0.8,
         "plant_retention": null,
         "prior_twh": 0.0,
         "reasons": [],
@@ -832,10 +785,10 @@
         "family": "coal",
         "family_complete": false,
         "gate": false,
-        "last_month": 0,
+        "last_month": 12,
         "n_missing_plants": 0,
         "n_prior_plants": 0,
-        "plant_month_frac": 0.0,
+        "plant_month_frac": 1.0,
         "plant_retention": null,
         "prior_twh": 0.0,
         "reasons": [],
@@ -844,133 +797,123 @@
       },
       "CT_CHP": {
         "class": "CT_CHP",
-        "cur_twh": 2.164,
-        "family": "gas",
-        "family_complete": false,
-        "gate": false,
-        "last_month": 12,
-        "n_missing_plants": 10,
-        "n_prior_plants": 11,
-        "plant_month_frac": 0.875,
-        "plant_retention": 0.091,
-        "prior_twh": 2.315,
-        "reasons": [
-          "10/11 prior plants missing (9% reporting)",
-          "plant-months 88% present"
-        ],
-        "retention": 0.934,
-        "status": "incomplete"
-      },
-      "CT_PEAKER": {
-        "class": "CT_PEAKER",
-        "cur_twh": 1.189,
-        "family": "gas",
-        "family_complete": false,
-        "gate": false,
-        "last_month": 12,
-        "n_missing_plants": 17,
-        "n_prior_plants": 20,
-        "plant_month_frac": 0.889,
-        "plant_retention": 0.15,
-        "prior_twh": 1.857,
-        "reasons": [
-          "17/20 prior plants missing (15% reporting)",
-          "plant-months 89% present"
-        ],
-        "retention": 0.64,
-        "status": "incomplete"
-      },
-      "ST_CHP": {
-        "class": "ST_CHP",
-        "cur_twh": 1.064,
-        "family": "gas",
-        "family_complete": false,
-        "gate": false,
-        "last_month": 12,
-        "n_missing_plants": 2,
-        "n_prior_plants": 6,
-        "plant_month_frac": 1.0,
-        "plant_retention": 0.667,
-        "prior_twh": 1.258,
-        "reasons": [
-          "2/6 prior plants missing (67% reporting)"
-        ],
-        "retention": 0.846,
-        "status": "incomplete"
-      },
-      "ST_GAS": {
-        "class": "ST_GAS",
-        "cur_twh": 10.409,
+        "cur_twh": 2.463,
         "family": "gas",
         "family_complete": false,
         "gate": false,
         "last_month": 12,
         "n_missing_plants": 3,
+        "n_prior_plants": 11,
+        "plant_month_frac": 0.979,
+        "plant_retention": 0.727,
+        "prior_twh": 2.315,
+        "reasons": [
+          "3/11 prior plants missing (73% reporting)"
+        ],
+        "retention": 1.064,
+        "status": "incomplete"
+      },
+      "CT_PEAKER": {
+        "class": "CT_PEAKER",
+        "cur_twh": 2.599,
+        "family": "gas",
+        "family_complete": false,
+        "gate": false,
+        "last_month": 12,
+        "n_missing_plants": 0,
+        "n_prior_plants": 20,
+        "plant_month_frac": 0.983,
+        "plant_retention": 1.0,
+        "prior_twh": 1.857,
+        "reasons": [],
+        "retention": 1.4,
+        "status": "complete"
+      },
+      "ST_CHP": {
+        "class": "ST_CHP",
+        "cur_twh": 1.129,
+        "family": "gas",
+        "family_complete": false,
+        "gate": false,
+        "last_month": 12,
+        "n_missing_plants": 0,
+        "n_prior_plants": 6,
+        "plant_month_frac": 0.908,
+        "plant_retention": 1.0,
+        "prior_twh": 1.258,
+        "reasons": [
+          "plant-months 91% present"
+        ],
+        "retention": 0.897,
+        "status": "incomplete"
+      },
+      "ST_GAS": {
+        "class": "ST_GAS",
+        "cur_twh": 12.346,
+        "family": "gas",
+        "family_complete": false,
+        "gate": false,
+        "last_month": 12,
+        "n_missing_plants": 0,
         "n_prior_plants": 10,
         "plant_month_frac": 1.0,
-        "plant_retention": 0.7,
+        "plant_retention": 1.0,
         "prior_twh": 9.913,
-        "reasons": [
-          "3/10 prior plants missing (70% reporting)"
-        ],
-        "retention": 1.05,
-        "status": "incomplete"
+        "reasons": [],
+        "retention": 1.245,
+        "status": "complete"
       }
     },
     "PJM": {
       "CC_CHP": {
         "class": "CC_CHP",
-        "cur_twh": 10.744,
+        "cur_twh": 11.159,
         "family": "gas",
         "family_complete": false,
         "gate": false,
         "last_month": 12,
-        "n_missing_plants": 4,
+        "n_missing_plants": 0,
         "n_prior_plants": 14,
-        "plant_month_frac": 0.992,
-        "plant_retention": 0.714,
+        "plant_month_frac": 0.994,
+        "plant_retention": 1.0,
         "prior_twh": 12.346,
-        "reasons": [
-          "4/14 prior plants missing (71% reporting)"
-        ],
-        "retention": 0.87,
-        "status": "incomplete"
+        "reasons": [],
+        "retention": 0.904,
+        "status": "complete"
       },
       "CC_REGULAR": {
         "class": "CC_REGULAR",
-        "cur_twh": 323.299,
+        "cur_twh": 330.528,
         "family": "gas",
         "family_complete": false,
         "gate": false,
         "last_month": 12,
-        "n_missing_plants": 10,
+        "n_missing_plants": 0,
         "n_prior_plants": 70,
         "plant_month_frac": 1.0,
-        "plant_retention": 0.857,
+        "plant_retention": 1.0,
         "prior_twh": 335.12,
-        "reasons": [
-          "10/70 prior plants missing (86% reporting)"
-        ],
-        "retention": 0.965,
-        "status": "incomplete"
+        "reasons": [],
+        "retention": 0.986,
+        "status": "complete"
       },
       "COAL_BIT": {
         "class": "COAL_BIT",
-        "cur_twh": 125.786,
+        "cur_twh": 125.909,
         "family": "coal",
         "family_complete": false,
         "gate": false,
         "last_month": 12,
-        "n_missing_plants": 3,
+        "n_missing_plants": 1,
         "n_prior_plants": 33,
-        "plant_month_frac": 0.944,
-        "plant_retention": 0.909,
+        "plant_month_frac": 0.96,
+        "plant_retention": 0.97,
         "prior_twh": 105.702,
         "reasons": [
-          "3/33 prior plants missing (91% reporting)",
-          "plant-months 94% present"
+          "1/33 prior plants missing (97% reporting)",
+          "plant-months 96% present"
         ],
-        "retention": 1.19,
+        "retention": 1.191,
         "status": "incomplete"
       },
       "COAL_PRB": {
@@ -982,249 +925,229 @@
         "last_month": 12,
         "n_missing_plants": 0,
         "n_prior_plants": 2,
-        "plant_month_frac": 0.867,
+        "plant_month_frac": 0.917,
         "plant_retention": 1.0,
         "prior_twh": 4.411,
         "reasons": [
-          "plant-months 87% present"
+          "plant-months 92% present"
         ],
         "retention": 1.367,
         "status": "incomplete"
       },
       "COAL_WC": {
         "class": "COAL_WC",
-        "cur_twh": 4.307,
+        "cur_twh": 7.226,
         "family": "coal",
         "family_complete": false,
         "gate": false,
         "last_month": 12,
-        "n_missing_plants": 8,
+        "n_missing_plants": 0,
         "n_prior_plants": 11,
         "plant_month_frac": 1.0,
-        "plant_retention": 0.273,
+        "plant_retention": 1.0,
         "prior_twh": 6.141,
-        "reasons": [
-          "8/11 prior plants missing (27% reporting)"
-        ],
-        "retention": 0.701,
-        "status": "incomplete"
+        "reasons": [],
+        "retention": 1.177,
+        "status": "complete"
       },
       "CT_CHP": {
         "class": "CT_CHP",
-        "cur_twh": 1.816,
+        "cur_twh": 4.303,
         "family": "gas",
         "family_complete": false,
         "gate": false,
         "last_month": 12,
-        "n_missing_plants": 19,
+        "n_missing_plants": 2,
         "n_prior_plants": 36,
-        "plant_month_frac": 0.991,
-        "plant_retention": 0.472,
+        "plant_month_frac": 0.997,
+        "plant_retention": 0.944,
         "prior_twh": 4.131,
         "reasons": [
-          "19/36 prior plants missing (47% reporting)"
+          "2/36 prior plants missing (94% reporting)"
         ],
-        "retention": 0.44,
+        "retention": 1.042,
         "status": "incomplete"
       },
       "CT_PEAKER": {
         "class": "CT_PEAKER",
-        "cur_twh": 9.959,
+        "cur_twh": 25.124,
         "family": "gas",
         "family_complete": false,
         "gate": false,
         "last_month": 12,
-        "n_missing_plants": 55,
+        "n_missing_plants": 0,
         "n_prior_plants": 75,
-        "plant_month_frac": 0.982,
-        "plant_retention": 0.267,
+        "plant_month_frac": 0.995,
+        "plant_retention": 1.0,
         "prior_twh": 23.915,
-        "reasons": [
-          "55/75 prior plants missing (27% reporting)"
-        ],
-        "retention": 0.416,
-        "status": "incomplete"
+        "reasons": [],
+        "retention": 1.051,
+        "status": "complete"
       },
       "ST_CHP": {
         "class": "ST_CHP",
-        "cur_twh": 2.564,
+        "cur_twh": 3.292,
         "family": "gas",
         "family_complete": false,
         "gate": false,
         "last_month": 12,
-        "n_missing_plants": 14,
+        "n_missing_plants": 0,
         "n_prior_plants": 33,
-        "plant_month_frac": 0.969,
-        "plant_retention": 0.576,
+        "plant_month_frac": 0.983,
+        "plant_retention": 1.0,
         "prior_twh": 3.469,
-        "reasons": [
-          "14/33 prior plants missing (58% reporting)",
-          "plant-months 97% present"
-        ],
-        "retention": 0.739,
-        "status": "incomplete"
+        "reasons": [],
+        "retention": 0.949,
+        "status": "complete"
       },
       "ST_GAS": {
         "class": "ST_GAS",
-        "cur_twh": 12.417,
+        "cur_twh": 14.82,
         "family": "gas",
         "family_complete": false,
         "gate": false,
         "last_month": 12,
-        "n_missing_plants": 5,
+        "n_missing_plants": 0,
         "n_prior_plants": 18,
-        "plant_month_frac": 0.992,
-        "plant_retention": 0.722,
+        "plant_month_frac": 0.995,
+        "plant_retention": 1.0,
         "prior_twh": 13.091,
-        "reasons": [
-          "5/18 prior plants missing (72% reporting)"
-        ],
-        "retention": 0.949,
-        "status": "incomplete"
+        "reasons": [],
+        "retention": 1.132,
+        "status": "complete"
       }
     },
     "SOCO": {
       "CC_CHP": {
         "class": "CC_CHP",
-        "cur_twh": 0.169,
-        "family": "gas",
-        "family_complete": false,
-        "gate": false,
-        "last_month": 12,
-        "n_missing_plants": 5,
-        "n_prior_plants": 6,
-        "plant_month_frac": 1.0,
-        "plant_retention": 0.167,
-        "prior_twh": 3.461,
-        "reasons": [
-          "5/6 prior plants missing (17% reporting)"
-        ],
-        "retention": 0.049,
-        "status": "incomplete"
-      },
-      "CC_REGULAR": {
-        "class": "CC_REGULAR",
-        "cur_twh": 113.318,
+        "cur_twh": 3.254,
         "family": "gas",
         "family_complete": false,
         "gate": false,
         "last_month": 12,
         "n_missing_plants": 0,
-        "n_prior_plants": 19,
-        "plant_month_frac": 0.996,
+        "n_prior_plants": 6,
+        "plant_month_frac": 1.0,
         "plant_retention": 1.0,
-        "prior_twh": 114.264,
+        "prior_twh": 3.461,
         "reasons": [],
-        "retention": 0.992,
+        "retention": 0.94,
+        "status": "complete"
+      },
+      "CC_REGULAR": {
+        "class": "CC_REGULAR",
+        "cur_twh": 109.571,
+        "family": "gas",
+        "family_complete": false,
+        "gate": false,
+        "last_month": 12,
+        "n_missing_plants": 0,
+        "n_prior_plants": 18,
+        "plant_month_frac": 0.995,
+        "plant_retention": 1.0,
+        "prior_twh": 110.299,
+        "reasons": [],
+        "retention": 0.993,
         "status": "complete"
       },
       "COAL_BIT": {
         "class": "COAL_BIT",
-        "cur_twh": 15.024,
+        "cur_twh": 14.973,
         "family": "coal",
-        "family_complete": false,
-        "gate": false,
+        "family_complete": true,
+        "gate": true,
         "last_month": 12,
-        "n_missing_plants": 1,
-        "n_prior_plants": 6,
-        "plant_month_frac": 0.962,
-        "plant_retention": 0.833,
-        "prior_twh": 13.416,
-        "reasons": [
-          "1/6 prior plants missing (83% reporting)",
-          "plant-months 96% present"
-        ],
-        "retention": 1.12,
-        "status": "incomplete"
+        "n_missing_plants": 0,
+        "n_prior_plants": 5,
+        "plant_month_frac": 0.974,
+        "plant_retention": 1.0,
+        "prior_twh": 13.339,
+        "reasons": [],
+        "retention": 1.123,
+        "status": "complete"
       },
       "COAL_PRB": {
         "class": "COAL_PRB",
-        "cur_twh": 28.251,
+        "cur_twh": 28.333,
         "family": "coal",
-        "family_complete": false,
-        "gate": false,
+        "family_complete": true,
+        "gate": true,
         "last_month": 12,
         "n_missing_plants": 0,
         "n_prior_plants": 3,
-        "plant_month_frac": 0.979,
+        "plant_month_frac": 1.0,
         "plant_retention": 1.0,
-        "prior_twh": 26.824,
+        "prior_twh": 26.901,
         "reasons": [],
         "retention": 1.053,
         "status": "complete"
       },
       "CT_CHP": {
         "class": "CT_CHP",
-        "cur_twh": 1.776,
+        "cur_twh": 2.218,
         "family": "gas",
         "family_complete": false,
         "gate": false,
         "last_month": 12,
-        "n_missing_plants": 2,
+        "n_missing_plants": 0,
         "n_prior_plants": 7,
-        "plant_month_frac": 0.983,
-        "plant_retention": 0.714,
+        "plant_month_frac": 0.991,
+        "plant_retention": 1.0,
         "prior_twh": 2.082,
-        "reasons": [
-          "2/7 prior plants missing (71% reporting)"
-        ],
-        "retention": 0.853,
-        "status": "incomplete"
+        "reasons": [],
+        "retention": 1.065,
+        "status": "complete"
       },
       "CT_PEAKER": {
         "class": "CT_PEAKER",
-        "cur_twh": 0.681,
+        "cur_twh": 4.411,
         "family": "gas",
         "family_complete": false,
         "gate": false,
         "last_month": 12,
-        "n_missing_plants": 17,
-        "n_prior_plants": 23,
+        "n_missing_plants": 0,
+        "n_prior_plants": 21,
         "plant_month_frac": 1.0,
-        "plant_retention": 0.261,
-        "prior_twh": 5.058,
-        "reasons": [
-          "17/23 prior plants missing (26% reporting)"
-        ],
-        "retention": 0.135,
-        "status": "incomplete"
+        "plant_retention": 1.0,
+        "prior_twh": 4.218,
+        "reasons": [],
+        "retention": 1.046,
+        "status": "complete"
       },
       "ST_CHP": {
         "class": "ST_CHP",
-        "cur_twh": 0.576,
-        "family": "gas",
-        "family_complete": false,
-        "gate": false,
-        "last_month": 12,
-        "n_missing_plants": 17,
-        "n_prior_plants": 26,
-        "plant_month_frac": 0.91,
-        "plant_retention": 0.346,
-        "prior_twh": 1.868,
-        "reasons": [
-          "17/26 prior plants missing (35% reporting)",
-          "plant-months 91% present"
-        ],
-        "retention": 0.308,
-        "status": "incomplete"
-      },
-      "ST_GAS": {
-        "class": "ST_GAS",
-        "cur_twh": 7.609,
+        "cur_twh": 1.484,
         "family": "gas",
         "family_complete": false,
         "gate": false,
         "last_month": 12,
         "n_missing_plants": 1,
-        "n_prior_plants": 7,
-        "plant_month_frac": 0.986,
-        "plant_retention": 0.857,
-        "prior_twh": 9.663,
+        "n_prior_plants": 26,
+        "plant_month_frac": 0.963,
+        "plant_retention": 0.962,
+        "prior_twh": 1.868,
         "reasons": [
-          "1/7 prior plants missing (86% reporting)"
+          "1/26 prior plants missing (96% reporting)",
+          "plant-months 96% present"
         ],
-        "retention": 0.787,
+        "retention": 0.794,
         "status": "incomplete"
+      },
+      "ST_GAS": {
+        "class": "ST_GAS",
+        "cur_twh": 7.219,
+        "family": "gas",
+        "family_complete": false,
+        "gate": false,
+        "last_month": 12,
+        "n_missing_plants": 0,
+        "n_prior_plants": 6,
+        "plant_month_frac": 0.988,
+        "plant_retention": 1.0,
+        "prior_twh": 7.614,
+        "reasons": [],
+        "retention": 0.948,
+        "status": "complete"
       }
     },
     "SPP": {
@@ -1232,8 +1155,8 @@
         "class": "CC_CHP",
         "cur_twh": 2.641,
         "family": "gas",
-        "family_complete": false,
-        "gate": false,
+        "family_complete": true,
+        "gate": true,
         "last_month": 12,
         "n_missing_plants": 0,
         "n_prior_plants": 1,
@@ -1246,32 +1169,30 @@
       },
       "CC_REGULAR": {
         "class": "CC_REGULAR",
-        "cur_twh": 37.829,
+        "cur_twh": 40.175,
         "family": "gas",
-        "family_complete": false,
-        "gate": false,
+        "family_complete": true,
+        "gate": true,
         "last_month": 12,
-        "n_missing_plants": 5,
+        "n_missing_plants": 0,
         "n_prior_plants": 22,
         "plant_month_frac": 1.0,
-        "plant_retention": 0.773,
+        "plant_retention": 1.0,
         "prior_twh": 43.52,
-        "reasons": [
-          "5/22 prior plants missing (77% reporting)"
-        ],
-        "retention": 0.869,
-        "status": "incomplete"
+        "reasons": [],
+        "retention": 0.923,
+        "status": "complete"
       },
       "COAL_BIT": {
         "class": "COAL_BIT",
         "cur_twh": 0.036,
         "family": "coal",
-        "family_complete": false,
+        "family_complete": true,
         "gate": false,
         "last_month": 12,
         "n_missing_plants": 0,
         "n_prior_plants": 1,
-        "plant_month_frac": 1.0,
+        "plant_month_frac": 0.857,
         "plant_retention": 1.0,
         "prior_twh": 0.033,
         "reasons": [],
@@ -1282,8 +1203,8 @@
         "class": "COAL_LIGNITE",
         "cur_twh": 8.304,
         "family": "coal",
-        "family_complete": false,
-        "gate": false,
+        "family_complete": true,
+        "gate": true,
         "last_month": 12,
         "n_missing_plants": 0,
         "n_prior_plants": 2,
@@ -1296,92 +1217,83 @@
       },
       "COAL_PRB": {
         "class": "COAL_PRB",
-        "cur_twh": 69.121,
+        "cur_twh": 70.013,
         "family": "coal",
-        "family_complete": false,
-        "gate": false,
+        "family_complete": true,
+        "gate": true,
         "last_month": 12,
-        "n_missing_plants": 3,
+        "n_missing_plants": 0,
         "n_prior_plants": 29,
-        "plant_month_frac": 1.0,
-        "plant_retention": 0.897,
+        "plant_month_frac": 0.975,
+        "plant_retention": 1.0,
         "prior_twh": 56.838,
-        "reasons": [
-          "3/29 prior plants missing (90% reporting)"
-        ],
-        "retention": 1.216,
-        "status": "incomplete"
+        "reasons": [],
+        "retention": 1.232,
+        "status": "complete"
       },
       "CT_CHP": {
         "class": "CT_CHP",
-        "cur_twh": 1.431,
+        "cur_twh": 1.79,
         "family": "gas",
-        "family_complete": false,
-        "gate": false,
+        "family_complete": true,
+        "gate": true,
         "last_month": 12,
-        "n_missing_plants": 4,
+        "n_missing_plants": 0,
         "n_prior_plants": 7,
         "plant_month_frac": 1.0,
-        "plant_retention": 0.429,
+        "plant_retention": 1.0,
         "prior_twh": 1.864,
-        "reasons": [
-          "4/7 prior plants missing (43% reporting)"
-        ],
-        "retention": 0.768,
-        "status": "incomplete"
+        "reasons": [],
+        "retention": 0.96,
+        "status": "complete"
       },
       "CT_PEAKER": {
         "class": "CT_PEAKER",
-        "cur_twh": 3.982,
+        "cur_twh": 13.721,
         "family": "gas",
-        "family_complete": false,
-        "gate": false,
+        "family_complete": true,
+        "gate": true,
         "last_month": 12,
-        "n_missing_plants": 46,
+        "n_missing_plants": 1,
         "n_prior_plants": 62,
-        "plant_month_frac": 1.0,
-        "plant_retention": 0.258,
+        "plant_month_frac": 0.98,
+        "plant_retention": 0.984,
         "prior_twh": 15.08,
-        "reasons": [
-          "46/62 prior plants missing (26% reporting)"
-        ],
-        "retention": 0.264,
-        "status": "incomplete"
+        "reasons": [],
+        "retention": 0.91,
+        "status": "complete"
       },
       "ST_CHP": {
         "class": "ST_CHP",
-        "cur_twh": 0.586,
+        "cur_twh": 0.77,
         "family": "gas",
-        "family_complete": false,
+        "family_complete": true,
         "gate": false,
         "last_month": 12,
-        "n_missing_plants": 4,
+        "n_missing_plants": 0,
         "n_prior_plants": 11,
         "plant_month_frac": 1.0,
-        "plant_retention": 0.636,
+        "plant_retention": 1.0,
         "prior_twh": 0.8,
         "reasons": [],
-        "retention": 0.733,
+        "retention": 0.962,
         "status": "immaterial"
       },
       "ST_GAS": {
         "class": "ST_GAS",
-        "cur_twh": 11.972,
+        "cur_twh": 17.409,
         "family": "gas",
-        "family_complete": false,
-        "gate": false,
+        "family_complete": true,
+        "gate": true,
         "last_month": 12,
-        "n_missing_plants": 16,
+        "n_missing_plants": 0,
         "n_prior_plants": 36,
-        "plant_month_frac": 0.957,
-        "plant_retention": 0.556,
+        "plant_month_frac": 0.979,
+        "plant_retention": 1.0,
         "prior_twh": 19.054,
-        "reasons": [
-          "16/36 prior plants missing (56% reporting)",
-          "plant-months 96% present"
-        ],
-        "retention": 0.628,
-        "status": "incomplete"
+        "reasons": [],
+        "retention": 0.914,
+        "status": "complete"
       }
     }
   },

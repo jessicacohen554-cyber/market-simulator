@@ -1,0 +1,2599 @@
+{
+ "family_info": {
+  "CAISO|2019": {
+   "coal_net923": 0.072,
+   "coal_ss": 0.0,
+   "coal_gross_bound": 0.072,
+   "coal_930": 0.11,
+   "coal_aligned": 0.072,
+   "coal_side": "net",
+   "gas_923": 57.639,
+   "gas_chp": 11.621,
+   "gas_930_equiv": 51.117,
+   "gas_aligned": 51.117,
+   "gas_coverage_cut": 6.521,
+   "coal_cems_metered_share": 0.0,
+   "k": 0.8877
+  },
+  "CAISO|2020": {
+   "coal_net923": 0.087,
+   "coal_ss": 0.0,
+   "coal_gross_bound": 0.087,
+   "coal_930": 0.127,
+   "coal_aligned": 0.087,
+   "coal_side": "net",
+   "gas_923": 63.46,
+   "gas_chp": 10.668,
+   "gas_930_equiv": 59.296,
+   "gas_aligned": 59.296,
+   "gas_coverage_cut": 4.164,
+   "coal_cems_metered_share": 0.0,
+   "k": 0.9351
+  },
+  "CAISO|2021": {
+   "coal_net923": 0.088,
+   "coal_ss": 0.0,
+   "coal_gross_bound": 0.088,
+   "coal_930": 0.139,
+   "coal_aligned": 0.088,
+   "coal_side": "net",
+   "gas_923": 67.467,
+   "gas_chp": 10.868,
+   "gas_930_equiv": 65.387,
+   "gas_aligned": 65.387,
+   "gas_coverage_cut": 2.08,
+   "coal_cems_metered_share": 0.0,
+   "k": 0.97
+  },
+  "CAISO|2022": {
+   "coal_net923": 0.075,
+   "coal_ss": 0.0,
+   "coal_gross_bound": 0.075,
+   "coal_930": 0.075,
+   "coal_aligned": 0.075,
+   "coal_side": "net",
+   "gas_923": 68.024,
+   "gas_chp": 10.564,
+   "gas_930_equiv": 69.841,
+   "gas_aligned": 68.024,
+   "gas_coverage_cut": 0.0,
+   "coal_cems_metered_share": 0.0,
+   "k": 1.0
+  },
+  "CAISO|2023": {
+   "coal_net923": 0.063,
+   "coal_ss": 0.0,
+   "coal_gross_bound": 0.063,
+   "coal_930": 0.013,
+   "coal_aligned": 0.063,
+   "coal_side": "net",
+   "gas_923": 67.237,
+   "gas_chp": 9.92,
+   "gas_930_equiv": 75.253,
+   "gas_aligned": 67.237,
+   "gas_coverage_cut": 0.0,
+   "coal_cems_metered_share": 0.0,
+   "k": 1.0
+  },
+  "CAISO|2024": {
+   "coal_net923": 0.074,
+   "coal_ss": 0.0,
+   "coal_gross_bound": 0.074,
+   "coal_930": -0.003,
+   "coal_aligned": 0.074,
+   "coal_side": "net",
+   "gas_923": 59.268,
+   "gas_chp": 8.828,
+   "gas_930_equiv": 72.398,
+   "gas_aligned": 59.268,
+   "gas_coverage_cut": 0.0,
+   "coal_cems_metered_share": 0.0,
+   "k": 1.0
+  },
+  "CAISO|2025": {
+   "coal_net923": 0.07,
+   "coal_ss": 0.0,
+   "coal_gross_bound": 0.07,
+   "coal_930": -0.001,
+   "coal_aligned": 0.07,
+   "coal_side": "net",
+   "gas_923": 48.372,
+   "gas_chp": 8.238,
+   "gas_930_equiv": 66.015,
+   "gas_aligned": 48.372,
+   "gas_coverage_cut": 0.0,
+   "coal_cems_metered_share": 0.0,
+   "k": 0.9918
+  },
+  "ERCOT|2019": {
+   "coal_net923": 78.094,
+   "coal_ss": 6.048,
+   "coal_gross_bound": 84.141,
+   "coal_930": 78.205,
+   "coal_aligned": 78.205,
+   "coal_side": "930",
+   "gas_923": 182.337,
+   "gas_chp": 33.187,
+   "gas_930_equiv": 178.666,
+   "gas_aligned": 178.666,
+   "gas_coverage_cut": 3.672,
+   "coal_cems_metered_share": 1.0,
+   "k": 1.0
+  },
+  "ERCOT|2020": {
+   "coal_net923": 68.402,
+   "coal_ss": 6.012,
+   "coal_gross_bound": 74.414,
+   "coal_930": 68.656,
+   "coal_aligned": 68.656,
+   "coal_side": "930",
+   "gas_923": 175.959,
+   "gas_chp": 33.942,
+   "gas_930_equiv": 170.178,
+   "gas_aligned": 170.178,
+   "gas_coverage_cut": 5.78,
+   "coal_cems_metered_share": 1.0,
+   "k": 1.0
+  },
+  "ERCOT|2021": {
+   "coal_net923": 74.548,
+   "coal_ss": 6.32,
+   "coal_gross_bound": 80.868,
+   "coal_930": 75.095,
+   "coal_aligned": 75.095,
+   "coal_side": "930",
+   "gas_923": 165.62,
+   "gas_chp": 33.489,
+   "gas_930_equiv": 161.864,
+   "gas_aligned": 161.864,
+   "gas_coverage_cut": 3.756,
+   "coal_cems_metered_share": 1.0,
+   "k": 1.0
+  },
+  "ERCOT|2022": {
+   "coal_net923": 71.255,
+   "coal_ss": 6.266,
+   "coal_gross_bound": 77.52,
+   "coal_930": 71.916,
+   "coal_aligned": 71.916,
+   "coal_side": "930",
+   "gas_923": 185.07,
+   "gas_chp": 31.691,
+   "gas_930_equiv": 180.877,
+   "gas_aligned": 180.877,
+   "gas_coverage_cut": 4.193,
+   "coal_cems_metered_share": 1.0,
+   "k": 1.0
+  },
+  "ERCOT|2023": {
+   "coal_net923": 61.049,
+   "coal_ss": 6.277,
+   "coal_gross_bound": 67.326,
+   "coal_930": 62.293,
+   "coal_aligned": 62.293,
+   "coal_side": "930",
+   "gas_923": 205.413,
+   "gas_chp": 34.285,
+   "gas_930_equiv": 200.212,
+   "gas_aligned": 200.212,
+   "gas_coverage_cut": 5.201,
+   "coal_cems_metered_share": 1.0,
+   "k": 1.0
+  },
+  "ERCOT|2024": {
+   "coal_net923": 57.668,
+   "coal_ss": 5.973,
+   "coal_gross_bound": 63.641,
+   "coal_930": 58.773,
+   "coal_aligned": 58.773,
+   "coal_side": "930",
+   "gas_923": 210.75,
+   "gas_chp": 35.846,
+   "gas_930_equiv": 203.508,
+   "gas_aligned": 203.508,
+   "gas_coverage_cut": 7.242,
+   "coal_cems_metered_share": 1.0,
+   "k": 1.0
+  },
+  "ERCOT|2025": {
+   "coal_net923": 62.271,
+   "coal_ss": 6.31,
+   "coal_gross_bound": 68.581,
+   "coal_930": 63.382,
+   "coal_aligned": 63.382,
+   "coal_side": "930",
+   "gas_923": 209.22,
+   "gas_chp": 36.111,
+   "gas_930_equiv": 199.075,
+   "gas_aligned": 199.075,
+   "gas_coverage_cut": 10.145,
+   "coal_cems_metered_share": 1.0,
+   "k": 1.0
+  },
+  "MISO|2019": {
+   "coal_net923": 254.781,
+   "coal_ss": 20.898,
+   "coal_gross_bound": 275.679,
+   "coal_930": 238.927,
+   "coal_aligned": 254.781,
+   "coal_side": "net",
+   "gas_923": 176.082,
+   "gas_chp": 35.007,
+   "gas_930_equiv": 176.889,
+   "gas_aligned": 176.082,
+   "gas_coverage_cut": 0.0,
+   "coal_cems_metered_share": 0.98,
+   "k": 0.9651
+  },
+  "MISO|2020": {
+   "coal_net923": 201.607,
+   "coal_ss": 19.371,
+   "coal_gross_bound": 220.978,
+   "coal_930": 191.67,
+   "coal_aligned": 201.607,
+   "coal_side": "net",
+   "gas_923": 181.29,
+   "gas_chp": 34.505,
+   "gas_930_equiv": 184.296,
+   "gas_aligned": 181.29,
+   "gas_coverage_cut": 0.0,
+   "coal_cems_metered_share": 0.979,
+   "k": 1.0
+  },
+  "MISO|2021": {
+   "coal_net923": 249.47,
+   "coal_ss": 23.131,
+   "coal_gross_bound": 272.601,
+   "coal_930": 239.099,
+   "coal_aligned": 249.47,
+   "coal_side": "net",
+   "gas_923": 169.138,
+   "gas_chp": 30.443,
+   "gas_930_equiv": 168.437,
+   "gas_aligned": 168.437,
+   "gas_coverage_cut": 0.7,
+   "coal_cems_metered_share": 0.981,
+   "k": 1.0
+  },
+  "MISO|2022": {
+   "coal_net923": 223.413,
+   "coal_ss": 22.524,
+   "coal_gross_bound": 245.937,
+   "coal_930": 217.078,
+   "coal_aligned": 223.413,
+   "coal_side": "net",
+   "gas_923": 192.312,
+   "gas_chp": 31.459,
+   "gas_930_equiv": 195.418,
+   "gas_aligned": 192.312,
+   "gas_coverage_cut": 0.0,
+   "coal_cems_metered_share": 0.98,
+   "k": 1.0
+  },
+  "MISO|2023": {
+   "coal_net923": 186.124,
+   "coal_ss": 18.95,
+   "coal_gross_bound": 205.074,
+   "coal_930": 174.95,
+   "coal_aligned": 186.124,
+   "coal_side": "net",
+   "gas_923": 216.856,
+   "gas_chp": 34.86,
+   "gas_930_equiv": 228.113,
+   "gas_aligned": 216.856,
+   "gas_coverage_cut": 0.0,
+   "coal_cems_metered_share": 0.985,
+   "k": 1.0
+  },
+  "MISO|2024": {
+   "coal_net923": 176.921,
+   "coal_ss": 18.801,
+   "coal_gross_bound": 195.722,
+   "coal_930": 167.07,
+   "coal_aligned": 176.921,
+   "coal_side": "net",
+   "gas_923": 227.769,
+   "gas_chp": 35.344,
+   "gas_930_equiv": 240.332,
+   "gas_aligned": 227.769,
+   "gas_coverage_cut": 0.0,
+   "coal_cems_metered_share": 0.985,
+   "k": 1.0
+  },
+  "MISO|2025": {
+   "coal_net923": 203.463,
+   "coal_ss": 20.145,
+   "coal_gross_bound": 223.608,
+   "coal_930": 192.103,
+   "coal_aligned": 203.463,
+   "coal_side": "net",
+   "gas_923": 209.31,
+   "gas_chp": 32.228,
+   "gas_930_equiv": 222.272,
+   "gas_aligned": 209.31,
+   "gas_coverage_cut": 0.0,
+   "coal_cems_metered_share": 0.985,
+   "k": 1.0432
+  },
+  "NEISO|2019": {
+   "coal_net923": 0.468,
+   "coal_ss": 0.079,
+   "coal_gross_bound": 0.547,
+   "coal_930": 0.447,
+   "coal_aligned": 0.468,
+   "coal_side": "net",
+   "gas_923": 47.273,
+   "gas_chp": 2.511,
+   "gas_930_equiv": 46.553,
+   "gas_aligned": 46.553,
+   "gas_coverage_cut": 0.721,
+   "coal_cems_metered_share": 0.848,
+   "k": 1.0
+  },
+  "NEISO|2020": {
+   "coal_net923": 0.166,
+   "coal_ss": 0.038,
+   "coal_gross_bound": 0.204,
+   "coal_930": 0.148,
+   "coal_aligned": 0.166,
+   "coal_side": "net",
+   "gas_923": 49.659,
+   "gas_chp": 2.402,
+   "gas_930_equiv": 48.816,
+   "gas_aligned": 48.816,
+   "gas_coverage_cut": 0.843,
+   "coal_cems_metered_share": 0.666,
+   "k": 1.0
+  },
+  "NEISO|2021": {
+   "coal_net923": 0.58,
+   "coal_ss": 0.052,
+   "coal_gross_bound": 0.632,
+   "coal_930": 0.561,
+   "coal_aligned": 0.58,
+   "coal_side": "net",
+   "gas_923": 54.188,
+   "gas_chp": 2.327,
+   "gas_930_equiv": 53.608,
+   "gas_aligned": 53.608,
+   "gas_coverage_cut": 0.58,
+   "coal_cems_metered_share": 0.914,
+   "k": 1.0
+  },
+  "NEISO|2022": {
+   "coal_net923": 0.351,
+   "coal_ss": 0.037,
+   "coal_gross_bound": 0.388,
+   "coal_930": 0.319,
+   "coal_aligned": 0.351,
+   "coal_side": "net",
+   "gas_923": 54.674,
+   "gas_chp": 2.353,
+   "gas_930_equiv": 53.45,
+   "gas_aligned": 53.45,
+   "gas_coverage_cut": 1.224,
+   "coal_cems_metered_share": 0.879,
+   "k": 1.0
+  },
+  "NEISO|2023": {
+   "coal_net923": 0.205,
+   "coal_ss": 0.018,
+   "coal_gross_bound": 0.223,
+   "coal_930": 0.181,
+   "coal_aligned": 0.205,
+   "coal_side": "net",
+   "gas_923": 55.377,
+   "gas_chp": 1.988,
+   "gas_930_equiv": 54.335,
+   "gas_aligned": 54.335,
+   "gas_coverage_cut": 1.042,
+   "coal_cems_metered_share": 0.789,
+   "k": 1.0
+  },
+  "NEISO|2024": {
+   "coal_net923": 0.255,
+   "coal_ss": 0.014,
+   "coal_gross_bound": 0.27,
+   "coal_930": 0.238,
+   "coal_aligned": 0.255,
+   "coal_side": "net",
+   "gas_923": 59.683,
+   "gas_chp": 2.01,
+   "gas_930_equiv": 58.662,
+   "gas_aligned": 58.662,
+   "gas_coverage_cut": 1.022,
+   "coal_cems_metered_share": 0.885,
+   "k": 1.0
+  },
+  "NEISO|2025": {
+   "coal_net923": 0.272,
+   "coal_ss": 0.019,
+   "coal_gross_bound": 0.291,
+   "coal_930": 0.278,
+   "coal_aligned": 0.278,
+   "coal_side": "930",
+   "gas_923": 60.488,
+   "gas_chp": 2.08,
+   "gas_930_equiv": 59.67,
+   "gas_aligned": 59.67,
+   "gas_coverage_cut": 0.818,
+   "coal_cems_metered_share": 0.883,
+   "k": 1.0452
+  },
+  "NWPP|2019": {
+   "coal_net923": 65.054,
+   "coal_ss": 5.76,
+   "coal_gross_bound": 70.815,
+   "coal_930": 54.551,
+   "coal_aligned": 65.054,
+   "coal_side": "net",
+   "gas_923": 70.754,
+   "gas_chp": 8.506,
+   "gas_930_equiv": 63.35,
+   "gas_aligned": 63.35,
+   "gas_coverage_cut": 7.403,
+   "coal_cems_metered_share": 0.989,
+   "k": 0.8682
+  },
+  "NWPP|2020": {
+   "coal_net923": 52.422,
+   "coal_ss": 4.873,
+   "coal_gross_bound": 57.295,
+   "coal_930": 51.938,
+   "coal_aligned": 52.422,
+   "coal_side": "net",
+   "gas_923": 68.633,
+   "gas_chp": 7.761,
+   "gas_930_equiv": 58.946,
+   "gas_aligned": 60.872,
+   "gas_coverage_cut": 7.761,
+   "coal_cems_metered_share": 0.988,
+   "k": 0.916
+  },
+  "NWPP|2021": {
+   "coal_net923": 53.795,
+   "coal_ss": 5.045,
+   "coal_gross_bound": 58.84,
+   "coal_930": 50.141,
+   "coal_aligned": 53.795,
+   "coal_side": "net",
+   "gas_923": 74.71,
+   "gas_chp": 8.602,
+   "gas_930_equiv": 63.701,
+   "gas_aligned": 66.108,
+   "gas_coverage_cut": 8.602,
+   "coal_cems_metered_share": 0.986,
+   "k": 0.8859
+  },
+  "NWPP|2022": {
+   "coal_net923": 53.13,
+   "coal_ss": 4.992,
+   "coal_gross_bound": 58.122,
+   "coal_930": 49.406,
+   "coal_aligned": 53.13,
+   "coal_side": "net",
+   "gas_923": 69.611,
+   "gas_chp": 7.263,
+   "gas_930_equiv": 59.953,
+   "gas_aligned": 62.348,
+   "gas_coverage_cut": 7.263,
+   "coal_cems_metered_share": 0.986,
+   "k": 0.891
+  },
+  "NWPP|2023": {
+   "coal_net923": 44.925,
+   "coal_ss": 4.738,
+   "coal_gross_bound": 49.663,
+   "coal_930": 42.266,
+   "coal_aligned": 44.925,
+   "coal_side": "net",
+   "gas_923": 80.398,
+   "gas_chp": 8.388,
+   "gas_930_equiv": 70.425,
+   "gas_aligned": 72.01,
+   "gas_coverage_cut": 8.388,
+   "coal_cems_metered_share": 0.984,
+   "k": 0.8992
+  },
+  "NWPP|2024": {
+   "coal_net923": 37.814,
+   "coal_ss": 4.027,
+   "coal_gross_bound": 41.841,
+   "coal_930": 38.301,
+   "coal_aligned": 38.301,
+   "coal_side": "930",
+   "gas_923": 84.969,
+   "gas_chp": 9.291,
+   "gas_930_equiv": 73.514,
+   "gas_aligned": 75.678,
+   "gas_coverage_cut": 9.291,
+   "coal_cems_metered_share": 0.983,
+   "k": 0.9107
+  },
+  "NWPP|2025": {
+   "coal_net923": 42.517,
+   "coal_ss": 4.461,
+   "coal_gross_bound": 46.978,
+   "coal_930": 42.262,
+   "coal_aligned": 42.517,
+   "coal_side": "net",
+   "gas_923": 78.822,
+   "gas_chp": 8.009,
+   "gas_930_equiv": 71.725,
+   "gas_aligned": 71.725,
+   "gas_coverage_cut": 7.096,
+   "coal_cems_metered_share": 0.985,
+   "k": 1.0
+  },
+  "NYISO|2021": {
+   "coal_net923": 0.0,
+   "coal_ss": 0.0,
+   "coal_gross_bound": 0.0,
+   "coal_930": 0.0,
+   "coal_aligned": 0.0,
+   "coal_side": "net",
+   "gas_923": 60.285,
+   "gas_chp": 18.496,
+   "gas_930_equiv": 60.071,
+   "gas_aligned": 60.071,
+   "gas_coverage_cut": 0.214,
+   "coal_cems_metered_share": null,
+   "k": 1.0
+  },
+  "NYISO|2022": {
+   "coal_net923": 0.0,
+   "coal_ss": 0.0,
+   "coal_gross_bound": 0.0,
+   "coal_930": 0.0,
+   "coal_aligned": 0.0,
+   "coal_side": "net",
+   "gas_923": 65.994,
+   "gas_chp": 18.6,
+   "gas_930_equiv": 64.966,
+   "gas_aligned": 64.966,
+   "gas_coverage_cut": 1.027,
+   "coal_cems_metered_share": null,
+   "k": 1.0
+  },
+  "NYISO|2023": {
+   "coal_net923": 0.0,
+   "coal_ss": 0.0,
+   "coal_gross_bound": 0.0,
+   "coal_930": 0.0,
+   "coal_aligned": 0.0,
+   "coal_side": "net",
+   "gas_923": 61.958,
+   "gas_chp": 18.452,
+   "gas_930_equiv": 63.038,
+   "gas_aligned": 61.958,
+   "gas_coverage_cut": 0.0,
+   "coal_cems_metered_share": null,
+   "k": 1.0
+  },
+  "NYISO|2024": {
+   "coal_net923": 0.0,
+   "coal_ss": 0.0,
+   "coal_gross_bound": 0.0,
+   "coal_930": 0.0,
+   "coal_aligned": 0.0,
+   "coal_side": "net",
+   "gas_923": 66.131,
+   "gas_chp": 20.081,
+   "gas_930_equiv": 67.963,
+   "gas_aligned": 66.131,
+   "gas_coverage_cut": 0.0,
+   "coal_cems_metered_share": null,
+   "k": 1.0
+  },
+  "NYISO|2025": {
+   "coal_net923": 0.0,
+   "coal_ss": 0.0,
+   "coal_gross_bound": 0.0,
+   "coal_930": 0.0,
+   "coal_aligned": 0.0,
+   "coal_side": "net",
+   "gas_923": 68.424,
+   "gas_chp": 21.502,
+   "gas_930_equiv": 70.214,
+   "gas_aligned": 68.424,
+   "gas_coverage_cut": 0.0,
+   "coal_cems_metered_share": null,
+   "k": 1.0805
+  },
+  "PJM|2019": {
+   "coal_net923": 182.324,
+   "coal_ss": 18.234,
+   "coal_gross_bound": 200.558,
+   "coal_930": 194.84,
+   "coal_aligned": 194.84,
+   "coal_side": "930",
+   "gas_923": 300.129,
+   "gas_chp": 9.325,
+   "gas_930_equiv": 292.403,
+   "gas_aligned": 292.403,
+   "gas_coverage_cut": 7.726,
+   "coal_cems_metered_share": 0.958,
+   "k": 1.0
+  },
+  "PJM|2020": {
+   "coal_net923": 147.673,
+   "coal_ss": 16.047,
+   "coal_gross_bound": 163.719,
+   "coal_930": 150.958,
+   "coal_aligned": 150.958,
+   "coal_side": "930",
+   "gas_923": 319.741,
+   "gas_chp": 10.052,
+   "gas_930_equiv": 310.467,
+   "gas_aligned": 310.467,
+   "gas_coverage_cut": 9.274,
+   "coal_cems_metered_share": 0.955,
+   "k": 1.0
+  },
+  "PJM|2021": {
+   "coal_net923": 174.208,
+   "coal_ss": 17.918,
+   "coal_gross_bound": 192.126,
+   "coal_930": 183.545,
+   "coal_aligned": 183.545,
+   "coal_side": "930",
+   "gas_923": 313.505,
+   "gas_chp": 9.326,
+   "gas_930_equiv": 312.419,
+   "gas_aligned": 312.419,
+   "gas_coverage_cut": 1.086,
+   "coal_cems_metered_share": 0.956,
+   "k": 1.0
+  },
+  "PJM|2022": {
+   "coal_net923": 157.864,
+   "coal_ss": 18.919,
+   "coal_gross_bound": 176.783,
+   "coal_930": 167.379,
+   "coal_aligned": 167.379,
+   "coal_side": "930",
+   "gas_923": 332.58,
+   "gas_chp": 9.633,
+   "gas_930_equiv": 334.66,
+   "gas_aligned": 332.58,
+   "gas_coverage_cut": 0.0,
+   "coal_cems_metered_share": 0.95,
+   "k": 1.0
+  },
+  "PJM|2023": {
+   "coal_net923": 112.826,
+   "coal_ss": 14.844,
+   "coal_gross_bound": 127.671,
+   "coal_930": 120.959,
+   "coal_aligned": 120.959,
+   "coal_side": "930",
+   "gas_923": 366.643,
+   "gas_chp": 10.199,
+   "gas_930_equiv": 363.291,
+   "gas_aligned": 363.291,
+   "gas_coverage_cut": 3.353,
+   "coal_cems_metered_share": 0.948,
+   "k": 1.0
+  },
+  "PJM|2024": {
+   "coal_net923": 115.554,
+   "coal_ss": 17.163,
+   "coal_gross_bound": 132.716,
+   "coal_930": 122.358,
+   "coal_aligned": 122.358,
+   "coal_side": "930",
+   "gas_923": 384.459,
+   "gas_chp": 11.359,
+   "gas_930_equiv": 372.164,
+   "gas_aligned": 373.1,
+   "gas_coverage_cut": 11.359,
+   "coal_cems_metered_share": 0.947,
+   "k": 1.0
+  },
+  "PJM|2025": {
+   "coal_net923": 138.962,
+   "coal_ss": 14.844,
+   "coal_gross_bound": 153.805,
+   "coal_930": 145.886,
+   "coal_aligned": 145.886,
+   "coal_side": "930",
+   "gas_923": 382.548,
+   "gas_chp": 10.712,
+   "gas_930_equiv": 371.461,
+   "gas_aligned": 371.835,
+   "gas_coverage_cut": 10.712,
+   "coal_cems_metered_share": 0.942,
+   "k": 1.0
+  },
+  "SOCO|2019": {
+   "coal_net923": 55.516,
+   "coal_ss": 6.328,
+   "coal_gross_bound": 61.844,
+   "coal_930": 56.244,
+   "coal_aligned": 56.244,
+   "coal_side": "930",
+   "gas_923": 130.811,
+   "gas_chp": 4.319,
+   "gas_930_equiv": 125.265,
+   "gas_aligned": 126.492,
+   "gas_coverage_cut": 4.319,
+   "coal_cems_metered_share": 0.996,
+   "k": 1.0
+  },
+  "SOCO|2020": {
+   "coal_net923": 38.385,
+   "coal_ss": 4.78,
+   "coal_gross_bound": 43.164,
+   "coal_930": 39.136,
+   "coal_aligned": 39.136,
+   "coal_side": "930",
+   "gas_923": 130.647,
+   "gas_chp": 4.001,
+   "gas_930_equiv": 125.516,
+   "gas_aligned": 126.646,
+   "gas_coverage_cut": 4.001,
+   "coal_cems_metered_share": 0.995,
+   "k": 1.0
+  },
+  "SOCO|2021": {
+   "coal_net923": 48.79,
+   "coal_ss": 5.218,
+   "coal_gross_bound": 54.007,
+   "coal_930": 50.336,
+   "coal_aligned": 50.336,
+   "coal_side": "930",
+   "gas_923": 122.903,
+   "gas_chp": 4.01,
+   "gas_930_equiv": 120.966,
+   "gas_aligned": 120.966,
+   "gas_coverage_cut": 1.936,
+   "coal_cems_metered_share": 0.996,
+   "k": 1.0
+  },
+  "SOCO|2022": {
+   "coal_net923": 45.519,
+   "coal_ss": 5.66,
+   "coal_gross_bound": 51.179,
+   "coal_930": 46.87,
+   "coal_aligned": 46.87,
+   "coal_side": "930",
+   "gas_923": 132.149,
+   "gas_chp": 4.273,
+   "gas_930_equiv": 130.377,
+   "gas_aligned": 130.377,
+   "gas_coverage_cut": 1.772,
+   "coal_cems_metered_share": 0.996,
+   "k": 1.0
+  },
+  "SOCO|2023": {
+   "coal_net923": 37.454,
+   "coal_ss": 3.915,
+   "coal_gross_bound": 41.37,
+   "coal_930": 38.252,
+   "coal_aligned": 38.252,
+   "coal_side": "930",
+   "gas_923": 128.738,
+   "gas_chp": 3.849,
+   "gas_930_equiv": 129.434,
+   "gas_aligned": 128.738,
+   "gas_coverage_cut": 0.0,
+   "coal_cems_metered_share": 0.997,
+   "k": 1.0
+  },
+  "SOCO|2024": {
+   "coal_net923": 40.271,
+   "coal_ss": 4.024,
+   "coal_gross_bound": 44.295,
+   "coal_930": 40.448,
+   "coal_aligned": 40.448,
+   "coal_side": "930",
+   "gas_923": 126.821,
+   "gas_chp": 4.042,
+   "gas_930_equiv": 125.609,
+   "gas_aligned": 125.609,
+   "gas_coverage_cut": 1.212,
+   "coal_cems_metered_share": 0.997,
+   "k": 1.0
+  },
+  "SOCO|2025": {
+   "coal_net923": 43.398,
+   "coal_ss": 4.83,
+   "coal_gross_bound": 48.228,
+   "coal_930": 44.083,
+   "coal_aligned": 44.083,
+   "coal_side": "930",
+   "gas_923": 126.739,
+   "gas_chp": 4.239,
+   "gas_930_equiv": 125.23,
+   "gas_aligned": 125.23,
+   "gas_coverage_cut": 1.508,
+   "coal_cems_metered_share": 0.998,
+   "k": 1.0
+  },
+  "SPP|2019": {
+   "coal_net923": 89.734,
+   "coal_ss": 8.34,
+   "coal_gross_bound": 98.073,
+   "coal_930": 94.121,
+   "coal_aligned": 94.121,
+   "coal_side": "930",
+   "gas_923": 71.719,
+   "gas_chp": 2.985,
+   "gas_930_equiv": 67.588,
+   "gas_aligned": 68.734,
+   "gas_coverage_cut": 2.985,
+   "coal_cems_metered_share": 0.988,
+   "k": 1.0
+  },
+  "SPP|2020": {
+   "coal_net923": 76.998,
+   "coal_ss": 7.423,
+   "coal_gross_bound": 84.421,
+   "coal_930": 82.689,
+   "coal_aligned": 82.689,
+   "coal_side": "930",
+   "gas_923": 71.048,
+   "gas_chp": 3.171,
+   "gas_930_equiv": 68.509,
+   "gas_aligned": 68.509,
+   "gas_coverage_cut": 2.539,
+   "coal_cems_metered_share": 0.985,
+   "k": 1.0
+  },
+  "SPP|2021": {
+   "coal_net923": 90.87,
+   "coal_ss": 8.21,
+   "coal_gross_bound": 99.08,
+   "coal_930": 97.026,
+   "coal_aligned": 97.026,
+   "coal_side": "930",
+   "gas_923": 54.668,
+   "gas_chp": 3.006,
+   "gas_930_equiv": 52.679,
+   "gas_aligned": 52.679,
+   "gas_coverage_cut": 1.989,
+   "coal_cems_metered_share": 0.984,
+   "k": 1.0
+  },
+  "SPP|2022": {
+   "coal_net923": 90.796,
+   "coal_ss": 8.389,
+   "coal_gross_bound": 99.185,
+   "coal_930": 96.837,
+   "coal_aligned": 96.837,
+   "coal_side": "930",
+   "gas_923": 60.856,
+   "gas_chp": 3.041,
+   "gas_930_equiv": 59.082,
+   "gas_aligned": 59.082,
+   "gas_coverage_cut": 1.774,
+   "coal_cems_metered_share": 0.988,
+   "k": 1.0
+  },
+  "SPP|2023": {
+   "coal_net923": 71.987,
+   "coal_ss": 7.283,
+   "coal_gross_bound": 79.271,
+   "coal_930": 78.414,
+   "coal_aligned": 78.414,
+   "coal_side": "930",
+   "gas_923": 75.932,
+   "gas_chp": 3.369,
+   "gas_930_equiv": 75.308,
+   "gas_aligned": 75.308,
+   "gas_coverage_cut": 0.623,
+   "coal_cems_metered_share": 0.988,
+   "k": 1.0392
+  },
+  "SPP|2024": {
+   "coal_net923": 65.235,
+   "coal_ss": 7.871,
+   "coal_gross_bound": 73.106,
+   "coal_930": 72.437,
+   "coal_aligned": 72.437,
+   "coal_side": "930",
+   "gas_923": 81.232,
+   "gas_chp": 3.421,
+   "gas_930_equiv": 81.891,
+   "gas_aligned": 81.232,
+   "gas_coverage_cut": 0.0,
+   "coal_cems_metered_share": 0.985,
+   "k": 1.0536
+  },
+  "SPP|2025": {
+   "coal_net923": 78.525,
+   "coal_ss": 8.958,
+   "coal_gross_bound": 87.483,
+   "coal_930": 87.703,
+   "coal_aligned": 87.483,
+   "coal_side": "gross",
+   "gas_923": 74.879,
+   "gas_chp": 3.378,
+   "gas_930_equiv": 74.803,
+   "gas_aligned": 74.803,
+   "gas_coverage_cut": 0.076,
+   "coal_cems_metered_share": 0.99,
+   "k": 1.081
+  }
+ },
+ "hourly_fit": {
+  "CAISO|2019": {},
+  "CAISO|2020": {},
+  "CAISO|2021": {},
+  "CAISO|2022": {},
+  "CAISO|2023": {},
+  "CAISO|2024": {},
+  "CAISO|2025": {},
+  "ERCOT|2019": {
+   "n": 8760,
+   "slope": 0.961,
+   "intercept_mw": -302.0,
+   "corr": 0.999
+  },
+  "ERCOT|2020": {
+   "n": 8760,
+   "slope": 0.957,
+   "intercept_mw": -294.0,
+   "corr": 1.0
+  },
+  "ERCOT|2021": {
+   "n": 8760,
+   "slope": 0.952,
+   "intercept_mw": -212.0,
+   "corr": 1.0
+  },
+  "ERCOT|2022": {
+   "n": 8760,
+   "slope": 0.953,
+   "intercept_mw": -226.0,
+   "corr": 0.999
+  },
+  "ERCOT|2023": {
+   "n": 8760,
+   "slope": 0.953,
+   "intercept_mw": -216.0,
+   "corr": 1.0
+  },
+  "ERCOT|2024": {
+   "n": 8760,
+   "slope": 0.947,
+   "intercept_mw": -173.0,
+   "corr": 1.0
+  },
+  "ERCOT|2025": {
+   "n": 8760,
+   "slope": 0.947,
+   "intercept_mw": -176.0,
+   "corr": 1.0
+  },
+  "MISO|2019": {
+   "n": 8760,
+   "slope": 0.904,
+   "intercept_mw": -465.0,
+   "corr": 0.969
+  },
+  "MISO|2020": {
+   "n": 8760,
+   "slope": 0.939,
+   "intercept_mw": -1290.0,
+   "corr": 0.988
+  },
+  "MISO|2021": {
+   "n": 8760,
+   "slope": 0.916,
+   "intercept_mw": -638.0,
+   "corr": 0.992
+  },
+  "MISO|2022": {
+   "n": 8760,
+   "slope": 0.925,
+   "intercept_mw": -668.0,
+   "corr": 0.997
+  },
+  "MISO|2023": {
+   "n": 8760,
+   "slope": 0.928,
+   "intercept_mw": -1428.0,
+   "corr": 0.997
+  },
+  "MISO|2024": {
+   "n": 8760,
+   "slope": 0.907,
+   "intercept_mw": -918.0,
+   "corr": 0.998
+  },
+  "MISO|2025": {
+   "n": 8760,
+   "slope": 0.914,
+   "intercept_mw": -1099.0,
+   "corr": 0.997
+  },
+  "NEISO|2019": {
+   "n": 2284,
+   "slope": 0.94,
+   "intercept_mw": -5.0,
+   "corr": 0.999
+  },
+  "NEISO|2020": {},
+  "NEISO|2021": {
+   "n": 1812,
+   "slope": 0.942,
+   "intercept_mw": 1.0,
+   "corr": 0.999
+  },
+  "NEISO|2022": {
+   "n": 1514,
+   "slope": 0.936,
+   "intercept_mw": -8.0,
+   "corr": 0.999
+  },
+  "NEISO|2023": {},
+  "NEISO|2024": {},
+  "NEISO|2025": {},
+  "NWPP|2019": {
+   "n": 8760,
+   "slope": 0.685,
+   "intercept_mw": 746.0,
+   "corr": 0.966
+  },
+  "NWPP|2020": {
+   "n": 8760,
+   "slope": 0.678,
+   "intercept_mw": 1541.0,
+   "corr": 0.953
+  },
+  "NWPP|2021": {
+   "n": 8760,
+   "slope": 0.842,
+   "intercept_mw": 136.0,
+   "corr": 0.984
+  },
+  "NWPP|2022": {
+   "n": 8760,
+   "slope": 0.854,
+   "intercept_mw": 47.0,
+   "corr": 0.972
+  },
+  "NWPP|2023": {
+   "n": 8760,
+   "slope": 0.871,
+   "intercept_mw": -40.0,
+   "corr": 0.989
+  },
+  "NWPP|2024": {
+   "n": 8760,
+   "slope": 0.924,
+   "intercept_mw": 25.0,
+   "corr": 0.973
+  },
+  "NWPP|2025": {
+   "n": 8760,
+   "slope": 0.955,
+   "intercept_mw": -224.0,
+   "corr": 0.979
+  },
+  "NYISO|2021": {},
+  "NYISO|2022": {},
+  "NYISO|2023": {},
+  "NYISO|2024": {},
+  "NYISO|2025": {},
+  "PJM|2019": {
+   "n": 8760,
+   "slope": 0.927,
+   "intercept_mw": 1685.0,
+   "corr": 0.985
+  },
+  "PJM|2020": {
+   "n": 8760,
+   "slope": 0.904,
+   "intercept_mw": 888.0,
+   "corr": 0.973
+  },
+  "PJM|2021": {
+   "n": 8760,
+   "slope": 0.951,
+   "intercept_mw": 802.0,
+   "corr": 0.997
+  },
+  "PJM|2022": {
+   "n": 8760,
+   "slope": 0.959,
+   "intercept_mw": 481.0,
+   "corr": 0.995
+  },
+  "PJM|2023": {
+   "n": 8760,
+   "slope": 0.932,
+   "intercept_mw": 739.0,
+   "corr": 0.99
+  },
+  "PJM|2024": {
+   "n": 8760,
+   "slope": 0.896,
+   "intercept_mw": 908.0,
+   "corr": 0.99
+  },
+  "PJM|2025": {
+   "n": 8760,
+   "slope": 0.936,
+   "intercept_mw": 998.0,
+   "corr": 0.996
+  },
+  "SOCO|2019": {
+   "n": 8760,
+   "slope": 0.932,
+   "intercept_mw": -136.0,
+   "corr": 0.993
+  },
+  "SOCO|2020": {
+   "n": 8760,
+   "slope": 0.93,
+   "intercept_mw": -97.0,
+   "corr": 0.997
+  },
+  "SOCO|2021": {
+   "n": 8760,
+   "slope": 0.94,
+   "intercept_mw": -27.0,
+   "corr": 0.992
+  },
+  "SOCO|2022": {
+   "n": 8760,
+   "slope": 0.93,
+   "intercept_mw": -62.0,
+   "corr": 0.993
+  },
+  "SOCO|2023": {
+   "n": 8760,
+   "slope": 0.938,
+   "intercept_mw": -51.0,
+   "corr": 0.993
+  },
+  "SOCO|2024": {
+   "n": 8760,
+   "slope": 0.942,
+   "intercept_mw": -135.0,
+   "corr": 0.992
+  },
+  "SOCO|2025": {
+   "n": 8760,
+   "slope": 0.931,
+   "intercept_mw": -84.0,
+   "corr": 0.99
+  },
+  "SPP|2019": {
+   "n": 8760,
+   "slope": 0.975,
+   "intercept_mw": -47.0,
+   "corr": 0.946
+  },
+  "SPP|2020": {
+   "n": 8760,
+   "slope": 1.041,
+   "intercept_mw": -456.0,
+   "corr": 0.994
+  },
+  "SPP|2021": {
+   "n": 8760,
+   "slope": 1.01,
+   "intercept_mw": -179.0,
+   "corr": 0.992
+  },
+  "SPP|2022": {
+   "n": 8760,
+   "slope": 1.003,
+   "intercept_mw": -168.0,
+   "corr": 0.998
+  },
+  "SPP|2023": {
+   "n": 8760,
+   "slope": 1.031,
+   "intercept_mw": -272.0,
+   "corr": 0.991
+  },
+  "SPP|2024": {
+   "n": 8760,
+   "slope": 0.997,
+   "intercept_mw": 71.0,
+   "corr": 0.982
+  },
+  "SPP|2025": {
+   "n": 8760,
+   "slope": 0.974,
+   "intercept_mw": 379.0,
+   "corr": 0.958
+  }
+ },
+ "rebuild_parity_2024": {
+  "CAISO": {},
+  "ERCOT": {},
+  "MISO": {},
+  "NEISO": {
+   "CT_PEAKER": 0.066
+  },
+  "NWPP": {},
+  "NYISO": {},
+  "PJM": {},
+  "SOCO": {},
+  "SPP": {}
+ },
+ "final2025_minus_prelim_pre_reconcile": {
+  "CAISO|2025": {
+   "COAL_BIT": -0.005,
+   "CC_REGULAR": -2.905,
+   "CC_CHP": -0.491,
+   "CT_PEAKER": 0.282,
+   "CT_CHP": 0.195,
+   "ST_CHP": 0.032
+  },
+  "ERCOT|2025": {
+   "CC_REGULAR": 2.556,
+   "CC_CHP": 0.476,
+   "CT_PEAKER": 1.294,
+   "CT_CHP": 2.592,
+   "ST_GAS": 0.79,
+   "ST_CHP": 0.388
+  },
+  "MISO|2025": {
+   "COAL_PRB": 0.212,
+   "COAL_BIT": 0.007,
+   "CC_REGULAR": 0.41,
+   "CC_CHP": 3.312,
+   "CT_PEAKER": 1.166,
+   "CT_CHP": 1.895,
+   "ST_GAS": -0.096,
+   "ST_CHP": 1.524,
+   "OTHER_FOSSIL": 0.87
+  },
+  "NEISO|2025": {
+   "CC_REGULAR": 1.541,
+   "CC_CHP": 0.038,
+   "CT_PEAKER": 0.178,
+   "CT_CHP": 0.474,
+   "ST_GAS": 0.028,
+   "ST_CHP": 0.065
+  },
+  "NWPP|2025": {
+   "COAL_PRB": 0.169,
+   "COAL_WC": 0.277,
+   "CC_REGULAR": 1.644,
+   "CC_CHP": 0.26,
+   "CT_PEAKER": 1.455,
+   "CT_CHP": 0.054,
+   "ST_CHP": 0.251
+  },
+  "NYISO|2025": {
+   "CC_REGULAR": 0.259,
+   "CC_CHP": 2.749,
+   "CT_PEAKER": 0.065,
+   "CT_CHP": 0.301,
+   "ST_GAS": -0.09,
+   "ST_CHP": 0.044
+  },
+  "PJM|2025": {
+   "COAL_BIT": 0.062,
+   "COAL_WC": 1.535,
+   "CC_REGULAR": 0.19,
+   "CC_CHP": 0.149,
+   "CT_PEAKER": 1.766,
+   "CT_CHP": 0.321,
+   "ST_GAS": 0.054,
+   "ST_CHP": 0.531
+  },
+  "SOCO|2025": {
+   "COAL_BIT": 0.031,
+   "CC_CHP": 1.848,
+   "CT_PEAKER": 0.03,
+   "CT_CHP": 0.229,
+   "ST_GAS": -0.113,
+   "ST_CHP": 0.642
+  },
+  "SPP|2025": {
+   "COAL_PRB": 0.121,
+   "CC_REGULAR": 0.077,
+   "CT_PEAKER": 2.363,
+   "CT_CHP": 0.251,
+   "ST_GAS": -0.194,
+   "ST_CHP": 0.104,
+   "OTHER_FOSSIL": 0.032
+  }
+ },
+ "determinations": {
+  "committed": {
+   "CAISO": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-09-30-caiso-r20-overnight",
+      "role": null,
+      "failing": [],
+      "years": [
+       2022,
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "CALIBRATED"
+     },
+     {
+      "run": "2026-09-30-caiso-r20-overnight-touchpoints",
+      "role": null,
+      "failing": [
+       "dispatch_corr 2019/2020/2021",
+       "fuelmix 2019/2020/2021",
+       "price_mean 2021"
+      ],
+      "years": [
+       2019,
+       2020,
+       2021
+      ],
+      "determination": "NOT-YET"
+     }
+    ]
+   },
+   "ERCOT": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-10-02-r-24-ordc-published",
+      "role": "forward",
+      "failing": [
+       "price_mean 2024"
+      ],
+      "years": [
+       2024,
+       2025
+      ],
+      "determination": "NOT-YET"
+     },
+     {
+      "run": "2026-10-02-r-24-ordc-published",
+      "role": "carveout-2023",
+      "failing": [
+       "price_mean 2023",
+       "price_shape 2023"
+      ],
+      "years": [
+       2023
+      ],
+      "determination": "NOT-YET"
+     },
+     {
+      "run": "2026-10-02-r-24-ordc-published",
+      "role": "carveout-validation-2019-2022",
+      "failing": [
+       "fuelmix 2019/2020/2022",
+       "price_shape 2019/2020"
+      ],
+      "years": [
+       2019,
+       2020,
+       2021,
+       2022
+      ],
+      "determination": "NOT-YET"
+     }
+    ]
+   },
+   "MISO": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-09-28-miso-280-splitremap",
+      "role": "train-2023-2025",
+      "failing": [],
+      "years": [
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "CALIBRATED"
+     },
+     {
+      "run": "2026-09-28-miso-280-splitremap",
+      "role": "validation-2020-2022",
+      "failing": [
+       "fuelmix 2019",
+       "price_mean 2020",
+       "price_shape 2021"
+      ],
+      "years": [
+       2019,
+       2020,
+       2021,
+       2022
+      ],
+      "determination": "NOT-YET"
+     }
+    ]
+   },
+   "NEISO": {
+    "determination": "CALIBRATED",
+    "scopes": [
+     {
+      "run": "2026-09-26-neiso-119-anchor-fuelsec",
+      "role": null,
+      "failing": [],
+      "years": [
+       2019,
+       2020,
+       2021,
+       2022,
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "CALIBRATED"
+     }
+    ]
+   },
+   "NWPP": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-10-01-nwppnext16c-combined-vintage",
+      "role": null,
+      "failing": [
+       "dispatch_corr 2023"
+      ],
+      "years": [
+       2019,
+       2020,
+       2021,
+       2022,
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "NOT-YET"
+     }
+    ]
+   },
+   "NYISO": {
+    "determination": "CALIBRATED",
+    "scopes": [
+     {
+      "run": "2026-10-01-nyisonext26p-tslprint-span",
+      "role": null,
+      "failing": [],
+      "years": [
+       2022,
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "CALIBRATED"
+     },
+     {
+      "run": "2026-10-01-nyisonext26p-tslprint-2021",
+      "role": null,
+      "failing": [],
+      "years": [
+       2021
+      ],
+      "determination": "CALIBRATED"
+     }
+    ]
+   },
+   "PJM": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-09-30-pjm-next16-ovec",
+      "role": null,
+      "failing": [
+       "fuelmix 2019/2020/2021/2022/2023",
+       "price_mean 2020/2022",
+       "price_shape 2022"
+      ],
+      "years": [
+       2019,
+       2020,
+       2021,
+       2022,
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "NOT-YET"
+     }
+    ]
+   },
+   "SOCO": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-09-30-soco96-measured-oil-burn",
+      "role": null,
+      "failing": [],
+      "years": [
+       2019,
+       2020,
+       2021,
+       2022,
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "NOT-YET"
+     }
+    ]
+   },
+   "SPP": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-09-28-spp-100-chp-scope",
+      "role": "train-2023-2025",
+      "failing": [],
+      "years": [
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "CALIBRATED"
+     },
+     {
+      "run": "2026-09-28-spp-100-chp-scope",
+      "role": "validation-2019-2022",
+      "failing": [
+       "dispatch_corr 2021/2022",
+       "fuelmix 2021/2022",
+       "price_mean 2019/2020",
+       "price_shape 2020"
+      ],
+      "years": [
+       2019,
+       2020,
+       2021,
+       2022
+      ],
+      "determination": "NOT-YET"
+     }
+    ]
+   }
+  },
+  "923final": {
+   "CAISO": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-09-30-caiso-r20-overnight",
+      "role": null,
+      "failing": [],
+      "years": [
+       2022,
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "CALIBRATED"
+     },
+     {
+      "run": "2026-09-30-caiso-r20-overnight-touchpoints",
+      "role": null,
+      "failing": [
+       "dispatch_corr 2019/2020/2021",
+       "fuelmix 2019/2020/2021",
+       "price_mean 2021"
+      ],
+      "years": [
+       2019,
+       2020,
+       2021
+      ],
+      "determination": "NOT-YET"
+     }
+    ]
+   },
+   "ERCOT": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-10-02-r-24-ordc-published",
+      "role": "forward",
+      "failing": [
+       "price_mean 2024"
+      ],
+      "years": [
+       2024,
+       2025
+      ],
+      "determination": "NOT-YET"
+     },
+     {
+      "run": "2026-10-02-r-24-ordc-published",
+      "role": "carveout-2023",
+      "failing": [
+       "price_mean 2023",
+       "price_shape 2023"
+      ],
+      "years": [
+       2023
+      ],
+      "determination": "NOT-YET"
+     },
+     {
+      "run": "2026-10-02-r-24-ordc-published",
+      "role": "carveout-validation-2019-2022",
+      "failing": [
+       "fuelmix 2019/2020/2022",
+       "price_shape 2019/2020"
+      ],
+      "years": [
+       2019,
+       2020,
+       2021,
+       2022
+      ],
+      "determination": "NOT-YET"
+     }
+    ]
+   },
+   "MISO": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-09-28-miso-280-splitremap",
+      "role": "train-2023-2025",
+      "failing": [],
+      "years": [
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "CALIBRATED"
+     },
+     {
+      "run": "2026-09-28-miso-280-splitremap",
+      "role": "validation-2020-2022",
+      "failing": [
+       "fuelmix 2019",
+       "price_mean 2020",
+       "price_shape 2021"
+      ],
+      "years": [
+       2019,
+       2020,
+       2021,
+       2022
+      ],
+      "determination": "NOT-YET"
+     }
+    ]
+   },
+   "NEISO": {
+    "determination": "CALIBRATED",
+    "scopes": [
+     {
+      "run": "2026-09-26-neiso-119-anchor-fuelsec",
+      "role": null,
+      "failing": [],
+      "years": [
+       2019,
+       2020,
+       2021,
+       2022,
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "CALIBRATED"
+     }
+    ]
+   },
+   "NWPP": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-10-01-nwppnext16c-combined-vintage",
+      "role": null,
+      "failing": [
+       "dispatch_corr 2023",
+       "fuelmix 2025"
+      ],
+      "years": [
+       2019,
+       2020,
+       2021,
+       2022,
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "NOT-YET"
+     }
+    ]
+   },
+   "NYISO": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-10-01-nyisonext26p-tslprint-span",
+      "role": null,
+      "failing": [
+       "fuelmix 2025",
+       "price_tail 2023/2024/2025"
+      ],
+      "years": [
+       2022,
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "NOT-YET"
+     },
+     {
+      "run": "2026-10-01-nyisonext26p-tslprint-2021",
+      "role": null,
+      "failing": [],
+      "years": [
+       2021
+      ],
+      "determination": "CALIBRATED"
+     }
+    ]
+   },
+   "PJM": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-09-30-pjm-next16-ovec",
+      "role": null,
+      "failing": [
+       "fuelmix 2019/2020/2021/2022/2023/2025",
+       "price_mean 2020/2022",
+       "price_shape 2022"
+      ],
+      "years": [
+       2019,
+       2020,
+       2021,
+       2022,
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "NOT-YET"
+     }
+    ]
+   },
+   "SOCO": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-09-30-soco96-measured-oil-burn",
+      "role": null,
+      "failing": [],
+      "years": [
+       2019,
+       2020,
+       2021,
+       2022,
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "NOT-YET"
+     }
+    ]
+   },
+   "SPP": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-09-28-spp-100-chp-scope",
+      "role": "train-2023-2025",
+      "failing": [
+       "fuelmix 2025",
+       "price_tail 2023/2024/2025"
+      ],
+      "years": [
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "NOT-YET"
+     },
+     {
+      "run": "2026-09-28-spp-100-chp-scope",
+      "role": "validation-2019-2022",
+      "failing": [
+       "dispatch_corr 2021/2022",
+       "fuelmix 2021/2022",
+       "price_mean 2019/2020",
+       "price_shape 2020"
+      ],
+      "years": [
+       2019,
+       2020,
+       2021,
+       2022
+      ],
+      "determination": "NOT-YET"
+     }
+    ]
+   }
+  },
+  "930a": {
+   "CAISO": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-09-30-caiso-r20-overnight",
+      "role": null,
+      "failing": [],
+      "years": [
+       2022,
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "CALIBRATED"
+     },
+     {
+      "run": "2026-09-30-caiso-r20-overnight-touchpoints",
+      "role": null,
+      "failing": [
+       "dispatch_corr 2019/2020/2021",
+       "fuelmix 2019/2020/2021",
+       "price_mean 2021"
+      ],
+      "years": [
+       2019,
+       2020,
+       2021
+      ],
+      "determination": "NOT-YET"
+     }
+    ]
+   },
+   "ERCOT": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-10-02-r-24-ordc-published",
+      "role": "forward",
+      "failing": [
+       "price_mean 2024"
+      ],
+      "years": [
+       2024,
+       2025
+      ],
+      "determination": "NOT-YET"
+     },
+     {
+      "run": "2026-10-02-r-24-ordc-published",
+      "role": "carveout-2023",
+      "failing": [
+       "price_mean 2023",
+       "price_shape 2023"
+      ],
+      "years": [
+       2023
+      ],
+      "determination": "NOT-YET"
+     },
+     {
+      "run": "2026-10-02-r-24-ordc-published",
+      "role": "carveout-validation-2019-2022",
+      "failing": [
+       "fuelmix 2019/2020/2022",
+       "price_shape 2019/2020"
+      ],
+      "years": [
+       2019,
+       2020,
+       2021,
+       2022
+      ],
+      "determination": "NOT-YET"
+     }
+    ]
+   },
+   "MISO": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-09-28-miso-280-splitremap",
+      "role": "train-2023-2025",
+      "failing": [],
+      "years": [
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "CALIBRATED"
+     },
+     {
+      "run": "2026-09-28-miso-280-splitremap",
+      "role": "validation-2020-2022",
+      "failing": [
+       "fuelmix 2019",
+       "price_mean 2020",
+       "price_shape 2021"
+      ],
+      "years": [
+       2019,
+       2020,
+       2021,
+       2022
+      ],
+      "determination": "NOT-YET"
+     }
+    ]
+   },
+   "NEISO": {
+    "determination": "CALIBRATED",
+    "scopes": [
+     {
+      "run": "2026-09-26-neiso-119-anchor-fuelsec",
+      "role": null,
+      "failing": [],
+      "years": [
+       2019,
+       2020,
+       2021,
+       2022,
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "CALIBRATED"
+     }
+    ]
+   },
+   "NWPP": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-10-01-nwppnext16c-combined-vintage",
+      "role": null,
+      "failing": [
+       "dispatch_corr 2023",
+       "fuelmix 2021/2022"
+      ],
+      "years": [
+       2019,
+       2020,
+       2021,
+       2022,
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "NOT-YET"
+     }
+    ]
+   },
+   "NYISO": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-10-01-nyisonext26p-tslprint-span",
+      "role": null,
+      "failing": [
+       "fuelmix 2025",
+       "price_tail 2023/2024/2025"
+      ],
+      "years": [
+       2022,
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "NOT-YET"
+     },
+     {
+      "run": "2026-10-01-nyisonext26p-tslprint-2021",
+      "role": null,
+      "failing": [],
+      "years": [
+       2021
+      ],
+      "determination": "CALIBRATED"
+     }
+    ]
+   },
+   "PJM": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-09-30-pjm-next16-ovec",
+      "role": null,
+      "failing": [
+       "fuelmix 2020/2021/2022/2023/2025",
+       "price_mean 2020/2022",
+       "price_shape 2022"
+      ],
+      "years": [
+       2019,
+       2020,
+       2021,
+       2022,
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "NOT-YET"
+     }
+    ]
+   },
+   "SOCO": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-09-30-soco96-measured-oil-burn",
+      "role": null,
+      "failing": [],
+      "years": [
+       2019,
+       2020,
+       2021,
+       2022,
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "NOT-YET"
+     }
+    ]
+   },
+   "SPP": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-09-28-spp-100-chp-scope",
+      "role": "train-2023-2025",
+      "failing": [],
+      "years": [
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "CALIBRATED"
+     },
+     {
+      "run": "2026-09-28-spp-100-chp-scope",
+      "role": "validation-2019-2022",
+      "failing": [
+       "dispatch_corr 2021/2022",
+       "fuelmix 2021/2022",
+       "price_mean 2019/2020",
+       "price_shape 2020"
+      ],
+      "years": [
+       2019,
+       2020,
+       2021,
+       2022
+      ],
+      "determination": "NOT-YET"
+     }
+    ]
+   }
+  },
+  "930p": {
+   "CAISO": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-09-30-caiso-r20-overnight",
+      "role": null,
+      "failing": [],
+      "years": [
+       2022,
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "CALIBRATED"
+     },
+     {
+      "run": "2026-09-30-caiso-r20-overnight-touchpoints",
+      "role": null,
+      "failing": [
+       "dispatch_corr 2019/2020/2021",
+       "fuelmix 2019/2020/2021",
+       "price_mean 2021"
+      ],
+      "years": [
+       2019,
+       2020,
+       2021
+      ],
+      "determination": "NOT-YET"
+     }
+    ]
+   },
+   "ERCOT": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-10-02-r-24-ordc-published",
+      "role": "forward",
+      "failing": [
+       "price_mean 2024"
+      ],
+      "years": [
+       2024,
+       2025
+      ],
+      "determination": "NOT-YET"
+     },
+     {
+      "run": "2026-10-02-r-24-ordc-published",
+      "role": "carveout-2023",
+      "failing": [
+       "price_mean 2023",
+       "price_shape 2023"
+      ],
+      "years": [
+       2023
+      ],
+      "determination": "NOT-YET"
+     },
+     {
+      "run": "2026-10-02-r-24-ordc-published",
+      "role": "carveout-validation-2019-2022",
+      "failing": [
+       "fuelmix 2019/2020",
+       "price_shape 2019/2020"
+      ],
+      "years": [
+       2019,
+       2020,
+       2021,
+       2022
+      ],
+      "determination": "NOT-YET"
+     }
+    ]
+   },
+   "MISO": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-09-28-miso-280-splitremap",
+      "role": "train-2023-2025",
+      "failing": [],
+      "years": [
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "CALIBRATED"
+     },
+     {
+      "run": "2026-09-28-miso-280-splitremap",
+      "role": "validation-2020-2022",
+      "failing": [
+       "fuelmix 2019",
+       "price_mean 2020",
+       "price_shape 2021"
+      ],
+      "years": [
+       2019,
+       2020,
+       2021,
+       2022
+      ],
+      "determination": "NOT-YET"
+     }
+    ]
+   },
+   "NEISO": {
+    "determination": "CALIBRATED",
+    "scopes": [
+     {
+      "run": "2026-09-26-neiso-119-anchor-fuelsec",
+      "role": null,
+      "failing": [],
+      "years": [
+       2019,
+       2020,
+       2021,
+       2022,
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "CALIBRATED"
+     }
+    ]
+   },
+   "NWPP": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-10-01-nwppnext16c-combined-vintage",
+      "role": null,
+      "failing": [
+       "dispatch_corr 2023",
+       "fuelmix 2025"
+      ],
+      "years": [
+       2019,
+       2020,
+       2021,
+       2022,
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "NOT-YET"
+     }
+    ]
+   },
+   "NYISO": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-10-01-nyisonext26p-tslprint-span",
+      "role": null,
+      "failing": [
+       "fuelmix 2025",
+       "price_tail 2023/2024/2025"
+      ],
+      "years": [
+       2022,
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "NOT-YET"
+     },
+     {
+      "run": "2026-10-01-nyisonext26p-tslprint-2021",
+      "role": null,
+      "failing": [],
+      "years": [
+       2021
+      ],
+      "determination": "CALIBRATED"
+     }
+    ]
+   },
+   "PJM": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-09-30-pjm-next16-ovec",
+      "role": null,
+      "failing": [
+       "fuelmix 2019/2020/2021/2022/2023/2024",
+       "price_mean 2020/2022",
+       "price_shape 2022"
+      ],
+      "years": [
+       2019,
+       2020,
+       2021,
+       2022,
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "NOT-YET"
+     }
+    ]
+   },
+   "SOCO": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-09-30-soco96-measured-oil-burn",
+      "role": null,
+      "failing": [
+       "fuelmix 2019/2021"
+      ],
+      "years": [
+       2019,
+       2020,
+       2021,
+       2022,
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "NOT-YET"
+     }
+    ]
+   },
+   "SPP": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-09-28-spp-100-chp-scope",
+      "role": "train-2023-2025",
+      "failing": [],
+      "years": [
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "CALIBRATED"
+     },
+     {
+      "run": "2026-09-28-spp-100-chp-scope",
+      "role": "validation-2019-2022",
+      "failing": [
+       "dispatch_corr 2021/2022",
+       "fuelmix 2021/2022",
+       "price_mean 2019/2020",
+       "price_shape 2020"
+      ],
+      "years": [
+       2019,
+       2020,
+       2021,
+       2022
+      ],
+      "determination": "NOT-YET"
+     }
+    ]
+   }
+  },
+  "930c": {
+   "CAISO": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-09-30-caiso-r20-overnight",
+      "role": null,
+      "failing": [],
+      "years": [
+       2022,
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "CALIBRATED"
+     },
+     {
+      "run": "2026-09-30-caiso-r20-overnight-touchpoints",
+      "role": null,
+      "failing": [
+       "dispatch_corr 2019/2020/2021",
+       "fuelmix 2019/2020/2021",
+       "price_mean 2021"
+      ],
+      "years": [
+       2019,
+       2020,
+       2021
+      ],
+      "determination": "NOT-YET"
+     }
+    ]
+   },
+   "ERCOT": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-10-02-r-24-ordc-published",
+      "role": "forward",
+      "failing": [
+       "price_mean 2024"
+      ],
+      "years": [
+       2024,
+       2025
+      ],
+      "determination": "NOT-YET"
+     },
+     {
+      "run": "2026-10-02-r-24-ordc-published",
+      "role": "carveout-2023",
+      "failing": [
+       "price_mean 2023",
+       "price_shape 2023"
+      ],
+      "years": [
+       2023
+      ],
+      "determination": "NOT-YET"
+     },
+     {
+      "run": "2026-10-02-r-24-ordc-published",
+      "role": "carveout-validation-2019-2022",
+      "failing": [
+       "fuelmix 2019/2020/2022",
+       "price_shape 2019/2020"
+      ],
+      "years": [
+       2019,
+       2020,
+       2021,
+       2022
+      ],
+      "determination": "NOT-YET"
+     }
+    ]
+   },
+   "MISO": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-09-28-miso-280-splitremap",
+      "role": "train-2023-2025",
+      "failing": [],
+      "years": [
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "CALIBRATED"
+     },
+     {
+      "run": "2026-09-28-miso-280-splitremap",
+      "role": "validation-2020-2022",
+      "failing": [
+       "fuelmix 2019",
+       "price_mean 2020",
+       "price_shape 2021"
+      ],
+      "years": [
+       2019,
+       2020,
+       2021,
+       2022
+      ],
+      "determination": "NOT-YET"
+     }
+    ]
+   },
+   "NEISO": {
+    "determination": "CALIBRATED",
+    "scopes": [
+     {
+      "run": "2026-09-26-neiso-119-anchor-fuelsec",
+      "role": null,
+      "failing": [],
+      "years": [
+       2019,
+       2020,
+       2021,
+       2022,
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "CALIBRATED"
+     }
+    ]
+   },
+   "NWPP": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-10-01-nwppnext16c-combined-vintage",
+      "role": null,
+      "failing": [
+       "dispatch_corr 2023",
+       "fuelmix 2025"
+      ],
+      "years": [
+       2019,
+       2020,
+       2021,
+       2022,
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "NOT-YET"
+     }
+    ]
+   },
+   "NYISO": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-10-01-nyisonext26p-tslprint-span",
+      "role": null,
+      "failing": [
+       "fuelmix 2025",
+       "price_tail 2023/2024/2025"
+      ],
+      "years": [
+       2022,
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "NOT-YET"
+     },
+     {
+      "run": "2026-10-01-nyisonext26p-tslprint-2021",
+      "role": null,
+      "failing": [],
+      "years": [
+       2021
+      ],
+      "determination": "CALIBRATED"
+     }
+    ]
+   },
+   "PJM": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-09-30-pjm-next16-ovec",
+      "role": null,
+      "failing": [
+       "fuelmix 2020/2021/2022/2023/2025",
+       "price_mean 2020/2022",
+       "price_shape 2022"
+      ],
+      "years": [
+       2019,
+       2020,
+       2021,
+       2022,
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "NOT-YET"
+     }
+    ]
+   },
+   "SOCO": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-09-30-soco96-measured-oil-burn",
+      "role": null,
+      "failing": [],
+      "years": [
+       2019,
+       2020,
+       2021,
+       2022,
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "NOT-YET"
+     }
+    ]
+   },
+   "SPP": {
+    "determination": "NOT-YET",
+    "scopes": [
+     {
+      "run": "2026-09-28-spp-100-chp-scope",
+      "role": "train-2023-2025",
+      "failing": [],
+      "years": [
+       2023,
+       2024,
+       2025
+      ],
+      "determination": "CALIBRATED"
+     },
+     {
+      "run": "2026-09-28-spp-100-chp-scope",
+      "role": "validation-2019-2022",
+      "failing": [
+       "dispatch_corr 2021/2022",
+       "fuelmix 2021/2022",
+       "price_mean 2019/2020",
+       "price_shape 2020"
+      ],
+      "years": [
+       2019,
+       2020,
+       2021,
+       2022
+      ],
+      "determination": "NOT-YET"
+     }
+    ]
+   }
+  }
+ }
+}

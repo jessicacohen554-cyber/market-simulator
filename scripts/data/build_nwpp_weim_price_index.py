@@ -64,6 +64,7 @@ Usage::
     python scripts/data/build_nwpp_weim_price_index.py fetch-lmp
     python scripts/data/build_nwpp_weim_price_index.py fetch-transfer
     python scripts/data/build_nwpp_weim_price_index.py fetch-midc
+    python scripts/data/build_nwpp_weim_price_index.py fetch-counterparty
     python scripts/data/build_nwpp_weim_price_index.py transcribe-benefits
     python scripts/data/build_nwpp_weim_price_index.py reconcile-ties
     python scripts/data/build_nwpp_weim_price_index.py build
@@ -116,6 +117,14 @@ STD_TZ = "Etc/GMT+8"
 #: Prevailing Pacific time, used ONLY to locate the Mid-C on-peak block.
 PREVAILING_TZ = "America/Los_Angeles"
 YEARS: tuple[int, ...] = (2023, 2024, 2025)
+
+#: NWPP-NEXT-20 — WEIM counterparties OUTSIDE the footprint whose ELAP is a
+#: seam anchor (never a benchmark of the footprint's own price). BCHA = BC Hydro /
+#: Powerex (OASIS ATL_APNODE DEPZ list, read 2026-10-02): the all-hours Canadian
+#: price behind the WECC_CAN seam's hr_by_year
+#: (docs/records/nwpp/FINDING-nwppnext20-seam-phase0-2026-10-02.md §B).
+COUNTERPARTY_NODES: dict[str, str] = {"BCHA": "ELAP_BCHA-APND"}
+COUNTERPARTY_HOURLY: str = "weim_hourly_counterparty.parquet"
 
 #: PRECOMMIT §2 — the DEPZ node per footprint WEIM BAA (OASIS ATL_APNODE,
 #: pulled 2026-09-13; effective dates all precede the window).
@@ -1352,6 +1361,75 @@ def cmd_gate(land: bool) -> None:
         )
 
 
+def cmd_fetch_counterparty() -> None:
+    """Fetch each counterparty ELAP (RTPD LMP) and write its hourly model-clock series.
+
+    One OASIS call per prevailing-Pacific month from the first served day (the
+    ~39-month retention edge, so the first year is partial and says so in the
+    row count) to :data:`FETCH_END_UTC`. Output ``weim_hourly_counterparty.parquet``
+    ``year · hour · baa · lmp · n_intervals`` on the same fixed-PST non-leap clock
+    and the same ``MIN_INTERVALS_PER_HOUR`` rule as ``weim_hourly_by_ba.parquet``.
+    """
+    start = (
+        pd.Timestamp(f"{YEARS[0]}-06-01 00:00", tz=PREVAILING_TZ)
+        .tz_convert("UTC")
+        .tz_localize(None)
+        .to_pydatetime()
+    )
+    frames = []
+    for baa, node in COUNTERPARTY_NODES.items():
+        for a, b in _month_windows(start, FETCH_END_UTC):
+            csv, note = oasis_get(
+                {
+                    "queryname": "PRC_RTPD_LMP",
+                    "market_run_id": "RTPD",
+                    "node": node,
+                    "startdatetime": _stamp(a),
+                    "enddatetime": _stamp(b),
+                }
+            )
+            print(f"{baa} {a:%Y-%m-%d} -> {b:%Y-%m-%d}: {note}", flush=True)
+            if csv is None:
+                continue
+            df = pd.read_csv(io.StringIO(csv))
+            df = df[df["LMP_TYPE"] == "LMP"]
+            frames.append(
+                pd.DataFrame(
+                    {
+                        "interval_start_utc": pd.to_datetime(
+                            df["INTERVALSTARTTIME_GMT"], utc=True
+                        ),
+                        "baa": baa,
+                        "lmp": df["PRC"].to_numpy(float),
+                    }
+                )
+            )
+    store = pd.concat(frames, ignore_index=True).drop_duplicates(
+        ["interval_start_utc", "baa"]
+    )
+    hourly = hourly_utc_by_ba(store)
+    rows = []
+    for baa in COUNTERPARTY_NODES:
+        h = hourly[hourly["baa"] == baa]
+        for year in YEARS:
+            lmp = to_model_clock(h, "lmp", year)
+            n = to_model_clock(h, "n_intervals", year)
+            rows.append(
+                pd.DataFrame(
+                    {
+                        "year": year,
+                        "hour": np.arange(_HOURS_PER_YEAR),
+                        "baa": baa,
+                        "lmp": lmp.astype("float32"),
+                        "n_intervals": np.nan_to_num(n).astype("int16"),
+                    }
+                )
+            )
+    out = pd.concat(rows, ignore_index=True)
+    out.to_parquet(RAW_DIR / COUNTERPARTY_HOURLY, index=False)
+    print(out.groupby(["baa", "year"])["lmp"].agg(["count", "mean"]).round(2))
+
+
 def main(argv: list[str] | None = None) -> None:
     """CLI entry point."""
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
@@ -1359,6 +1437,7 @@ def main(argv: list[str] | None = None) -> None:
     sub.add_parser("fetch-lmp")
     sub.add_parser("fetch-transfer")
     sub.add_parser("fetch-midc")
+    sub.add_parser("fetch-counterparty")
     sub.add_parser("transcribe-benefits")
     sub.add_parser("reconcile-ties")
     sub.add_parser("build")
@@ -1375,6 +1454,8 @@ def main(argv: list[str] | None = None) -> None:
         cmd_fetch("transfer")
     elif a.cmd == "fetch-midc":
         cmd_fetch_midc()
+    elif a.cmd == "fetch-counterparty":
+        cmd_fetch_counterparty()
     elif a.cmd == "transcribe-benefits":
         cmd_transcribe_benefits()
     elif a.cmd == "reconcile-ties":

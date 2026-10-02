@@ -6965,3 +6965,12 @@ over-run partly an exit-cohort outage-layer construction defect (~8.3 TWh phanto
 - **Card 3:** Tait (55248 → 2847) is the only bench-relevant CAMPD/EIA-923 split (0.66–0.95 TWh/yr gross). A one-entry PJM remap would fix it; C1 is unaffected.
 - Card 4 not reached. **OPEN, not limits.**
 - **Record:** `docs/records/pjm/RESULT-pjm-next-24-2026-10-02.md`.
+
+## PJM-NEXT-25 — 2026-10-02 — the 2019–21 coal steepness is a coverage defect (18 retired coal plants without measured tranche rows); arm built, solve deferred (zero LP)
+
+- **Solves and keeper:** zero LP, zero shards (owner: the next session launches the shard chain). Keeper unchanged (`2026-09-30-pjm-next16-ovec`); 10 failing cells, NOT-YET.
+- **Card 1:** per-plant tranche shares are year-invariant. The fleet econ-share drop (0.57 → 0.40) is composition. `thermal_tranches_PJM.csv` (2024 window) has no row for 18 coal plants that retired by 2024 (16.6 / 13.6 / 14.8 / 10.6 GW in 2019–22). They carry the class default (econ ≈ 0.93, no floor) and respond 3–4× real; measured-row plants are 1.1–2.3× real every year. Most of the COAL_BIT TWh excess is still in measured-row plants (+9 to +15 TWh in 2019–21 and 2025).
+- **Card 1b:** real online coal follows net load (partial r 0.19–0.32) more than zonal-RT margin (0.06–0.16) in every year; the keeper follows its own price (0.28–0.71). The result is the same on system RT.
+- **Card 2:** zonal DA explains real CT run-hours better than system DA (r 0.13–0.51 vs 0.05–0.45), but the keeper is at 0.68–0.90. A persistent zone residual remains: AEP-Ohio and Dominion out-run their price, ComEd under-runs from 2022. This points at BOR commitment; no data on disk. **OPEN.**
+- **Card 3:** the soco-70 `--coal-unit-coverage` append (18 rows, zero DOF, prior bytes a prefix) passes the zero-LP fleet delta. Floored TWh at those plants goes 0.33 → 5.93 in 2019; confinement holds. G-DRIFT `d9668d84`..HEAD: all INERT. Solve-ready: `PRECOMMIT-pjm-next-25-2026-10-02.md`.
+- **Record:** `docs/records/pjm/RESULT-pjm-next-25-2026-10-02.md`.
