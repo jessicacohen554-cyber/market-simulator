@@ -86,7 +86,6 @@ from scripts.probes import _miso271_cc_decomp as dec  # noqa: E402
 from scripts.probes._miso296_lowload_stack import (  # noqa: E402
     COAL,
     IMM_SMP_SHARE,
-    INTERNAL,
     KEEPER,
     NON_LP,
     T,
