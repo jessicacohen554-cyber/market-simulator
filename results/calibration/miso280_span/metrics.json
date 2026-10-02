@@ -22,7 +22,7 @@
   ],
   "data_blocked_years": [],
   "price_reference_blocked_years": [],
-  "rubric_version": "3.13",
+  "rubric_version": "3.17",
   "determination": "NOT-YET",
   "reasons": [
     "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_mean, price_shape"
@@ -84,6 +84,8 @@
       "C3c price tail / scarcity (RT hourly)"
     ],
     "commercial_band": [],
+    "configuration_exception": [],
+    "reference_definition": [],
     "budget": {
       "protective_max": 0,
       "ledgered_max": 1
