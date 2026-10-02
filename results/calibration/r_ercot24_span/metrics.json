@@ -22,10 +22,11 @@
   ],
   "data_blocked_years": [],
   "price_reference_blocked_years": [],
-  "rubric_version": "3.13",
+  "rubric_version": "3.17",
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_mean, price_shape"
+    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_mean, price_shape",
+    "2 owner-signed configuration-exception caveat(s) \u2014 REPORTED AT FULL MAGNITUDE, off every caveat budget and NOT determination-downgrading under rubric v3.14 (owner ruling R-6, 2026-10-02): 2023 C3a mean LMP (-24.5%; model $49.12 vs actual $65.02 \u2014 IMM counterfactual ECRS-neutral load-weighted RT \u2248 $35 vs actual $62-65; model +40.3% against it); 2023 C3b price duration/shape (NRMSE 0.385)"
   ],
   "notes": [],
   "criteria": {
@@ -77,6 +78,8 @@
       "C3c price tail / scarcity (RT hourly)"
     ],
     "commercial_band": [],
+    "configuration_exception": [],
+    "reference_definition": [],
     "budget": {
       "protective_max": 0,
       "ledgered_max": 1

@@ -22,10 +22,12 @@
   ],
   "data_blocked_years": [],
   "price_reference_blocked_years": [],
-  "rubric_version": "3.13",
-  "determination": "NOT-YET",
+  "rubric_version": "3.17",
+  "determination": "CALIBRATED-WITH-CAVEATS",
   "reasons": [
-    "caveat budget exceeded (protective 0/0, ledgered 3/1)"
+    "rubric v3.10-v3.12 scoped ledgered caveat(s) \u2014 owner-accepted model-class limitation, REPORTED AT FULL MAGNITUDE and determination-DOWNGRADING: 2019 COAL_BIT (-10.57 TWh, share -4.0pp (volume/share out of band)); 2019 price_mean (+14.3%); 2020 price_mean (+14.5%); 2022 price_mean (-12.0%); 2022 price_shape (NRMSE 0.266)",
+    "rubric v3.15 reference-definition caveat(s) of a lambda-referenced BA (owner ruling R-8, 2026-10-02) \u2014 of the scoped rows above, these are carried OFF the single ledgered slot (still REPORTED AT FULL MAGNITUDE and determination-DOWNGRADING): 2019 price_mean (+14.3%); 2020 price_mean (+14.5%); 2022 price_mean (-12.0%); 2022 price_shape (NRMSE 0.266)",
+    "1 unscored criterion(s) \u2014 REPORTED, and NOT determination-downgrading under rubric v3.7 (an accepted model-class limitation cannot become a caveat merely because the ISO-year has no bench to score it against): C3c price tail / scarcity (RT hourly)"
   ],
   "notes": [
     "C8 2020 ST_GAS: grounded above budget \u2014 38.4% forced (2.0472 of 5.328 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.978 (\u22650.8) & off-peak CV ratio 1.444 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
@@ -87,6 +89,11 @@
       "C3b price duration/shape"
     ],
     "commercial_band": [],
+    "configuration_exception": [],
+    "reference_definition": [
+      "C3a mean LMP",
+      "C3b price duration/shape"
+    ],
     "budget": {
       "protective_max": 0,
       "ledgered_max": 1

@@ -25,16 +25,13 @@
     2019,
     2020,
     2021,
-    2022,
-    2023,
-    2024,
-    2025
+    2022
   ],
-  "rubric_version": "3.13",
+  "rubric_version": "3.17",
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: dispatch_corr",
-    "PRICE UNSCORED \u2014 no actual_lmp.json block exists for NWPP, so C3a mean LMP, C3b price duration/shape and C3c price tail / scarcity (RT hourly) are NOT SCORED in any year (2019, 2020, 2021, 2022, 2023, 2024, 2025); this determination is scored on C1/C2/C4/C6/C8 ONLY and certifies NO price level, shape or tail (owner ruling card S2, 2026-09-13; rubric v3.8). It is not a CALIBRATED reading. Model system load-weighted mean LMP, MODEL-ONLY and UNVERIFIED \u2014 no measured reference exists to compare against: 2019: $27.03/MWh, 2020: $28.27/MWh, 2021: $42.14/MWh, 2022: $54.68/MWh, 2023: $50.95/MWh, 2024: $29.39/MWh, 2025: $32.95/MWh."
+    "undocumented out-of-tolerance (FAIL) criteria: price_mean, price_shape, dispatch_corr",
+    "PRICE UNSCORED in 2019, 2020, 2021, 2022 \u2014 NWPP's labelled benchmark (CAISO WEIM ELAP 15-min imbalance price, demand-weighted over the 11 priced footprint BAs (labelled imbalance-price benchmark, 2023-06+)) begins in 2023 (owner ruling R-9, 2026-10-02); C3a/C3b/C3c are scored on the remaining years only and certify no price in these."
   ],
   "notes": [],
   "criteria": {
@@ -51,12 +48,12 @@
     "price_mean": {
       "label": "C3a mean LMP",
       "tier": "load-bearing",
-      "status": "SKIPPED"
+      "status": "FAIL"
     },
     "price_shape": {
       "label": "C3b price duration/shape",
       "tier": "load-bearing",
-      "status": "SKIPPED"
+      "status": "FAIL"
     },
     "price_tail": {
       "label": "C3c price tail / scarcity (RT hourly)",
@@ -83,17 +80,19 @@
     "protective": [],
     "ledgered": [],
     "commercial_band": [],
+    "configuration_exception": [],
+    "reference_definition": [],
     "budget": {
       "protective_max": 0,
       "ledgered_max": 1
     }
   },
   "grade_summary": {
-    "scored": 5,
+    "scored": 7,
     "target_grade": 4,
     "commercial_grade": 0,
     "ledgered": 0,
-    "fails": 1
+    "fails": 3
   },
   "reported": {
     "co2": {
@@ -145,29 +144,5 @@
       "total": 42
     },
     "headline": "C1 all 54/54 \u00b7 free 42/42"
-  },
-  "price_unscored": {
-    "basis": "no actual_lmp.json block for NWPP",
-    "criteria_unscored": [
-      "price_mean",
-      "price_shape",
-      "price_tail"
-    ],
-    "scored_on": [
-      "fuelmix",
-      "sysvol",
-      "dispatch_corr",
-      "governance",
-      "forced_share"
-    ],
-    "model_mean_lmp_by_year": {
-      "2019": 27.03,
-      "2020": 28.27,
-      "2021": 42.14,
-      "2022": 54.68,
-      "2023": 50.95,
-      "2024": 29.39,
-      "2025": 32.95
-    }
   }
 }

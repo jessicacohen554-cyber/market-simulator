@@ -16,7 +16,7 @@
   ],
   "data_blocked_years": [],
   "price_reference_blocked_years": [],
-  "rubric_version": "3.13",
+  "rubric_version": "3.17",
   "determination": "CALIBRATED",
   "reasons": [
     "1 ledgered caveat(s) (measured-input or model-class) \u2014 REPORTED, and NOT determination-downgrading under rubric v3.3: C3c price tail / scarcity (RT hourly)"
@@ -71,6 +71,8 @@
       "C3c price tail / scarcity (RT hourly)"
     ],
     "commercial_band": [],
+    "configuration_exception": [],
+    "reference_definition": [],
     "budget": {
       "protective_max": 0,
       "ledgered_max": 1
