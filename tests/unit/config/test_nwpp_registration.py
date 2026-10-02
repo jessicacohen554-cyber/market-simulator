@@ -211,9 +211,11 @@ class TestDeliberateAbsences(unittest.TestCase):
         for tech in ("wind", "solar", "gas_cc", "gas_ct", "nuclear"):
             self.assertIn(tech, QUEUE_CAP_PER_TECH_GW["NWPP"])
 
-    def test_neighbour_blocks_are_the_three_ruled_seams(self):
+    def test_neighbour_blocks_are_the_priced_seams(self):
+        """NWPP-NEXT-20: CAISO split at its two physical paths, BC priced;
+        WECC_SW (failed the SPP-51 gate) and AESO are served measured."""
         names = [n.name for n in INTERFACE_NEIGHBORS["NWPP"]]
-        self.assertEqual(names, ["CAISO", "WECC_SW", "WECC_CAN"])
+        self.assertEqual(names, ["CAISO_COI", "CAISO_NEVP", "WECC_CAN"])
         zones = set(get_iso_config("NWPP").zone_names)
         for neighbor in INTERFACE_NEIGHBORS["NWPP"]:
             self.assertTrue(set(neighbor.border_zones) <= zones, neighbor.name)

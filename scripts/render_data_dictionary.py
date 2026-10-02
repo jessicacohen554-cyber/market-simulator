@@ -98,6 +98,7 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "unit-outage-events",
     "partial-outages",
     "pjm-outages",
+    "pjm-marginal-fuel",
     "capacity-deliverability",
     "confirmed-retirements",
     "nuclear-license-status",
@@ -1214,6 +1215,19 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "Data Miner 2 seven-day outage-by-type feeds onto one tidy row "
             "per (forecast_execution_date, forecast_date, region) — "
             "Mid Atlantic–Dominion, Western, and the PJM RTO total."
+        ),
+    },
+    "pjm-marginal-fuel": {
+        "summary": (
+            "PJM real-time marginal fuel type by hour (IMM Marginal Fuel "
+            "Postings): each fuel's time-weighted share of the marginal units "
+            "across the hour's 5-minute intervals — the hourly bench for which "
+            "fuel set the real-time price."
+        ),
+        "reconciles": (
+            "Monitoring Analytics monthly postings onto one tidy row per "
+            "(hour_beginning_ept, mms_timezone, fuel_type); shares sum to 1 "
+            "per hour. Raw is gitignored pending a licence ruling."
         ),
     },
     "nuclear-license-status": {

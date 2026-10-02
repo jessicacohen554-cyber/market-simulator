@@ -38,9 +38,12 @@ from market_sim.model.interchange.spec import (
     IMPORT_TRANCHES,
     IMPORT_TRANCHES_BY_YEAR,
     IMPORT_TRANCHE_EF,
+    IMPORT_SEAM_ZONES,
     IMPORT_ZONE,
     NeighborInterface,
     import_node_links,
+    seam_priced_in_year,
+    seam_zone_links,
 )
 
 _logger = logging.getLogger(__name__)
@@ -203,6 +206,7 @@ def build_reference_price_node(
     iso: str,
     zone_overrides: dict[str, str] | None = None,
     extra_neighbors: list[NeighborInterface] | None = None,
+    year: int | None = None,
 ) -> list[Generator]:
     """Return the reference-price seam as import/export pseudo-generators.
 
@@ -252,6 +256,10 @@ def build_reference_price_node(
     import_zone = IMPORT_ZONE.get(iso)
     gens: list[Generator] = []
     for neighbor in [*INTERFACE_NEIGHBORS.get(iso, []), *(extra_neighbors or [])]:
+        # NWPP-NEXT-20: a seam priced only in its anchored years builds no band
+        # in any other year (its counterparty stays on the served schedule).
+        if not seam_priced_in_year(neighbor, year):
+            continue
         # CAISO lands each corridor's tranches in its OWN external corridor zone
         # (the neighbor name IS the per-hub zone WECC_DSW / WECC_PNW, created by
         # split_caiso_import_node_per_hub), so the corridor link and its ATC
@@ -261,6 +269,10 @@ def build_reference_price_node(
         # zone; MISO's South seam under miso_south_seam_split, hosted in
         # MISO_SOUTH_EXTERNAL_ZONE by split_miso_south_external_node).
         zone = neighbor.name if iso == "CAISO" else import_zone
+        # NWPP-NEXT-20: an ISO with per-seam external zones hosts each seam's
+        # bands in that seam's own zone (IMPORT_SEAM_ZONES), never the pooled
+        # import zone — the pooled bus was a free wheel between seams.
+        zone = IMPORT_SEAM_ZONES.get(iso, {}).get(neighbor.name, zone)
         if zone_overrides and neighbor.name in zone_overrides:
             zone = zone_overrides[neighbor.name]
         # Split each direction into SEAM_FLOW_TRANCHES bands of equal width so
@@ -727,6 +739,8 @@ def extend_with_import_node(iso_config: ISOConfig) -> ISOConfig:
     measured interchange schedule at its border zones instead).
     """
     iso = iso_config.name
+    if iso in IMPORT_SEAM_ZONES:
+        return _extend_with_seam_zones(iso_config)
     zone = IMPORT_ZONE.get(iso)
     if zone is None or zone in iso_config.zone_names:
         return iso_config
@@ -761,6 +775,38 @@ def extend_with_import_node(iso_config: ISOConfig) -> ISOConfig:
                 *iso_config.interface_limits,
                 *new_interface_limits,
             ],
+        }
+    )
+    extended.validate_topology()
+    return extended
+
+
+def _extend_with_seam_zones(iso_config: ISOConfig) -> ISOConfig:
+    """Append one zero-load external zone per priced seam, linked to its own border.
+
+    The per-seam form of :func:`extend_with_import_node` for an ISO in
+    :data:`~market_sim.config.interchange_config.IMPORT_SEAM_ZONES` (NWPP,
+    NWPP-NEXT-20): each seam's zone links only to that seam's border zones at
+    the seam's own limit (:func:`~market_sim.config.interchange_config.seam_zone_links`),
+    so two seams can trade with each other only through an internal zone and
+    its price. Idempotent: a topology already carrying any seam zone is
+    returned unchanged. No simultaneous-limit row (no such ISO publishes one).
+    """
+    iso = iso_config.name
+    seam_zones = list(dict.fromkeys(IMPORT_SEAM_ZONES[iso].values()))
+    if any(z in iso_config.zone_names for z in seam_zones):
+        return iso_config
+    links = [
+        TransferLink(from_zone=zone, to_zone=border, ttc_mw=ttc)
+        for zone, border, ttc in seam_zone_links(iso)
+    ]
+    extended = iso_config.model_copy(
+        update={
+            "zones": [
+                *iso_config.zones,
+                *(Zone(name=z, iso=iso, load_share=0.0) for z in seam_zones),
+            ],
+            "links": [*iso_config.links, *links],
         }
     )
     extended.validate_topology()
