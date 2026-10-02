@@ -211,6 +211,9 @@ fixes the readings (§0) and hands them to that lane. The owner decides whether 
 - (C) Record MISO train-tier CALIBRATED / full-span NOT-YET and move the chain to another ISO. This is not a
   frontier declaration.
 
+**Ruled 2026-10-02 (owner card), verbatim: "Fold into close-out (Recommended)".** The miso chain ends with this lane; the
+close-out lane carries R-A and R-B against §0.
+
 ## 7. Where MISO stands
 
 Keeper unchanged. Train 2023–2025 CALIBRATED (C3c ledgered). Full span NOT-YET on C1 ST_GAS 2019 (routed,

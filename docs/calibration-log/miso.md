@@ -15748,5 +15748,9 @@ frozen derive's own cross-check".
 - **Cells:** no verdict moves; evidence added to `coal_prb_proxy_own_iso` (O) and `committed_band_measured_basis` (U); §5.4 queue stamp.
 - **Owner card:** (A) fold the miso chain into the close-out lane (recommended); (B) miso-302 waits for that lane's census, then PRECOMMITs;
   (C) record train CALIBRATED / full span NOT-YET and move the chain to another ISO (not a frontier).
+- **Owner ruling (2026-10-02, miso-301 card "What should the miso chain do?"), verbatim: "Fold into close-out (Recommended)"** — described
+  in the card as: End the miso chain here. The closeout-MISO lane runs R-A and R-B against the readings fixed in ledger §0 and writes the
+  PRECOMMIT if one clears. No miso-302; the ledger link is sent to that lane. Declined: "miso-302 waits, then PRECOMMITs"; "Record, move
+  chain to another ISO". **The miso-NNN chain ends here; MISO calibration continues in the close-out lane (`claude/closeout-miso-wave1`).**
 
 Full span NOT-YET on C1 ST_GAS 2019, C3a 2020, C3b 2021. Train 2023–2025 CALIBRATED. No frontier.
