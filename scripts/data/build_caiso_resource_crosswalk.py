@@ -17,6 +17,14 @@ above ``--accept-threshold`` are auto-flagged ``accepted=1``. The output is a
 so an unreviewed or wrong guess never silently enters a solve.
 
 Output: data/raw/reference/caiso-resource-eia-crosswalk.csv
+
+``--storage`` builds the battery half instead (R-CAISO-35, link 17): each CNOG
+battery resource (the R-CAISO-32 census selector, :func:`is_battery_resource`)
+is matched to an EIA-860 energy-storage operable plant in a CAISO zone, with
+the same score, threshold and capacity sanity. It writes a SIBLING file,
+``data/raw/reference/caiso-storage-resource-eia-crosswalk.csv``, so the thermal
+overlay's reader (:func:`market_sim.data.caiso_outages.load_crosswalk`) never
+sees a battery row. It has no runtime consumer.
 """
 
 from __future__ import annotations
@@ -35,6 +43,7 @@ import pandas as pd  # noqa: E402
 from market_sim.config.paths import RAW_DATA_DIR, REFERENCE_DIR  # noqa: E402
 
 OUT_CSV = REFERENCE_DIR / "caiso-resource-eia-crosswalk.csv"
+STORAGE_OUT_CSV = REFERENCE_DIR / "caiso-storage-resource-eia-crosswalk.csv"
 # The consolidated DAM outage episodes (curate_caiso_dam_outages.py) — the
 # resource universe to crosswalk.
 DAM_OUTAGE_WINDOWS = (
@@ -109,6 +118,15 @@ _STOP = {
 }
 _TOKEN_RE = re.compile(r"[a-z0-9]+")
 
+# Battery-resource selector of the R-CAISO-32 census (Part B probe): a CAISO
+# storage id suffix, or a storage/battery/BESS name, solar-only names excluded.
+_STORAGE_ID = re.compile(r"_(?:BT|BX|ES|BE)\d")
+_STORAGE_NAME = re.compile(r"storage|batter|bess", re.I)
+_SOLAR_ONLY = re.compile(r"solar(?!.*bess)", re.I)
+# Storage-specific tokens dropped from the name score (they name the technology,
+# not the plant, and every storage target carries them).
+_STORAGE_STOP = {"storage", "battery", "batteries", "bess", "ess", "ess"}
+
 
 def _norm_tokens(name: object) -> set[str]:
     if not isinstance(name, str):
@@ -157,6 +175,45 @@ def load_targets() -> pd.DataFrame:
     )
 
 
+def is_battery_resource(resource_id: object, resource_name: object) -> bool:
+    """True when a CNOG resource is a battery under the R-CAISO-32 selector."""
+    rid, name = str(resource_id), str(resource_name)
+    return bool(
+        (_STORAGE_ID.search(rid) or _STORAGE_NAME.search(name))
+        and not _SOLAR_ONLY.search(name)
+    )
+
+
+def load_storage_targets() -> pd.DataFrame:
+    """EIA-860 operable battery plants in CAISO zones: (plant_code, name, MW).
+
+    Reads the same energy-storage operable schedule and zone lookup as
+    :func:`market_sim.model.storage.load_eia860_storage` (compressed air
+    excluded, as there), summed to plant level across COD years.
+    """
+    from market_sim.config.paths import active_eia860_dir
+    from market_sim.data.zone_assignment import build_zone_lookup
+
+    df = pd.read_parquet(active_eia860_dir() / "eia860_energy_storage_operable.parquet")
+    df = df[df["Status"].astype(str).str.strip().str.upper() == "OP"]
+    df = df[~df["Technology"].astype(str).str.contains("Compressed Air", case=False)]
+    zones = build_zone_lookup("CAISO")
+    code = pd.to_numeric(df["Plant Code"], errors="coerce")
+    df = df.assign(
+        plant_code=code,
+        mw=pd.to_numeric(df["Nameplate Capacity (MW)"], errors="coerce"),
+    )
+    df = df[df["plant_code"].notna()]
+    df = df[df["plant_code"].astype(int).isin(set(zones))]
+    out = df.groupby("plant_code", as_index=False).agg(
+        plant_name=("Plant Name", "first"), plant_pmax_mw=("mw", "sum")
+    )
+    out["plant_code"] = out["plant_code"].astype(int)
+    out["plant_group"] = "BATTERY"
+    out["plant_pmax_mw"] = out["plant_pmax_mw"].round(1)
+    return out
+
+
 def load_resources(windows_path: Path) -> pd.DataFrame:
     """Distinct CAISO resources (id, name, max reported Pmax) from the episodes."""
     df = pd.read_parquet(
@@ -173,6 +230,72 @@ def load_resources(windows_path: Path) -> pd.DataFrame:
 def _is_nonthermal(name: object) -> bool:
     s = str(name).lower()
     return any(m in s for m in _NONTHERMAL_MARKERS)
+
+
+def _score_storage(res_name: str, plant_name: str) -> float:
+    """:func:`_score` with the technology tokens also dropped."""
+    a = _norm_tokens(res_name) - _STORAGE_STOP
+    b = _norm_tokens(plant_name) - _STORAGE_STOP
+    if not a or not b:
+        return 0.0
+    jacc = len(a & b) / len(a | b)
+    seq = SequenceMatcher(None, " ".join(sorted(a)), " ".join(sorted(b))).ratio()
+    return round(0.7 * jacc + 0.3 * seq, 3)
+
+
+def build_storage(
+    windows_path: Path = DAM_OUTAGE_WINDOWS,
+    accept_threshold: float = 0.6,
+) -> pd.DataFrame:
+    """Propose the battery crosswalk; one row per CNOG battery resource.
+
+    Every census resource is emitted (unmatched ones with a blank plant), so
+    the file is the full reviewable census; ``accepted`` uses the thermal
+    builder's threshold and capacity sanity unchanged.
+    """
+    targets = load_storage_targets()
+    resources = load_resources(windows_path)
+    resources = resources[
+        [
+            is_battery_resource(i, n)
+            for i, n in zip(resources["resource_id"], resources["resource_name"])
+        ]
+    ]
+    out_rows = []
+    for _, res in resources.iterrows():
+        best_score, best = 0.0, None
+        for _, tgt in targets.iterrows():
+            sc = _score_storage(str(res["resource_name"]), str(tgt["plant_name"]))
+            if sc > best_score:
+                best_score, best = sc, tgt
+        r_pmax = (
+            float(res["resource_pmax_mw"]) if pd.notna(res["resource_pmax_mw"]) else 0.0
+        )
+        p_pmax = float(best["plant_pmax_mw"]) if best is not None else 0.0
+        cap_ok = r_pmax >= 1.0 and (p_pmax <= 0.0 or r_pmax <= 2.0 * p_pmax)
+        out_rows.append(
+            {
+                "resource_id": res["resource_id"],
+                "resource_name": res["resource_name"],
+                "resource_pmax_mw": res["resource_pmax_mw"],
+                "plant_code": int(best["plant_code"]) if best is not None else None,
+                "plant_group": "BATTERY" if best is not None else None,
+                "plant_name": best["plant_name"] if best is not None else None,
+                "plant_pmax_mw": p_pmax if best is not None else None,
+                "match_score": best_score,
+                "match_method": "name_token",
+                "accepted": int(
+                    best is not None and best_score >= accept_threshold and cap_ok
+                ),
+            }
+        )
+    out = pd.DataFrame(out_rows)
+    if not out.empty:
+        out["plant_code"] = out["plant_code"].astype("Int64")
+        out = out.sort_values(
+            ["accepted", "match_score"], ascending=[False, False]
+        ).reset_index(drop=True)
+    return out
 
 
 def build(
@@ -240,11 +363,21 @@ def build(
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--windows", default=str(DAM_OUTAGE_WINDOWS))
-    ap.add_argument("--out", default=str(OUT_CSV))
+    ap.add_argument("--out", default=None)
     ap.add_argument("--accept-threshold", type=float, default=0.6)
+    ap.add_argument(
+        "--storage",
+        action="store_true",
+        help="build the battery crosswalk (sibling file) instead of the thermal one",
+    )
     args = ap.parse_args()
 
-    out = build(Path(args.windows), args.accept_threshold)
+    if args.storage:
+        args.out = args.out or str(STORAGE_OUT_CSV)
+        out = build_storage(Path(args.windows), args.accept_threshold)
+    else:
+        args.out = args.out or str(OUT_CSV)
+        out = build(Path(args.windows), args.accept_threshold)
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
     out.to_csv(args.out, index=False)
     n_acc = int(out["accepted"].sum()) if not out.empty else 0
