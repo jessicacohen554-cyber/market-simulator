@@ -25,7 +25,7 @@ from market_sim.config.constants import (
     SUMMER_WEFOR_SHARE,
     THERMAL_AVAILABILITY,
 )
-from market_sim.config.paths import CAMPD_BINS_CSV
+from market_sim.config.paths import CAMPD_BINS_CSV, eia860_fleet_row_repairs
 from market_sim.config.plant_taxonomy import (
     COAL_ARTIFACT_FAMILY,
     COAL_CLASSES,
@@ -496,6 +496,21 @@ def _nuclear_monthly(
                 availability[g_idx, :] = 0.0
 
 
+def _seasonal_basis_pair(gen: "Generator") -> tuple[float, float] | None:
+    """``(summer_frac, winter_frac)`` of a W0 seasonal-basis unit, else ``None``.
+
+    ``ScenarioConfig.seasonal_capacity_basis`` (audit §E.1): the loader carries
+    the unit at its published seasonal envelope and records each season's
+    rating as a share of it; ``None`` on every unit off that basis, so every
+    legacy branch below is untouched for them.
+    """
+    sf = getattr(gen, "summer_capability_frac", None)
+    wf = getattr(gen, "winter_capability_frac", None)
+    if sf is None or wf is None:
+        return None
+    return (float(sf), float(wf))
+
+
 def _availability_matrix(
     generators: list[Generator],
     availability: np.ndarray,
@@ -668,6 +683,12 @@ def _availability_matrix(
             ``fleet_to_bins`` takes for the same plant, so the capacity basis
             and the availability legs can never disagree.
             """
+            # W0 E.1: a unit carried on the published seasonal basis states
+            # its own pair (any thermal class) and outranks every legacy basis
+            # flag (rule 19 [R-ONE-MECH]).
+            _own = _seasonal_basis_pair(gen)
+            if _own is not None:
+                return _own
             if not cc_winter_basis or gen.plant_group not in ("CC_REGULAR", "CC_CHP"):
                 return None
             return _pkg_ns().cc_seasonal_capability_ratios(int(gen.plant_code))
@@ -1130,7 +1151,10 @@ def _availability_matrix(
             # loop (it reproduces the same net-summer summer-mean for CC/CT, so
             # that is a reshape, not a level change).
             if not _td_covers(gen):
-                if is_cc_np:
+                if is_cc_np or _seasonal_basis_pair(gen) is not None:
+                    # W0 E.1: a seasonal-basis unit of ANY class takes the
+                    # published-pair branch (``_cc_seasonal_pair`` returns its
+                    # own pair first), in place of the flat class derate below.
                     _pair = _cc_seasonal_pair(gen)
                     if _pair is None:
                         # Reconciled basis (nyiso-212) where armed and listed,
@@ -1183,7 +1207,10 @@ def _availability_matrix(
                 # (net_summer / nameplate), the coal analogue of the CC/CT
                 # cc_nameplate_summer_derate. Multiplicative, summer-only, only
                 # reduces capacity; a plant rated at/above nameplate gets 1.0.
-                if getattr(config, "coal_nameplate_summer_derate", False):
+                if (
+                    getattr(config, "coal_nameplate_summer_derate", False)
+                    and _seasonal_basis_pair(gen) is None
+                ):
                     _ns_ratio = _pkg_ns().coal_summer_derate_ratio(_pc)
                     if _ns_ratio is not None and _ns_ratio < 1.0:
                         availability[g_idx, summer] *= _ns_ratio
@@ -1504,6 +1531,11 @@ def _apply_outage_overlays(
             getattr(config, "cc_block_summer_rating", False)
             and not is_ercot
             and _lp_bins is None
+            # W0: the reconstructed map now carries the block reconciliation
+            # itself whenever the run armed it (paths.set_eia860_fleet_row_
+            # repairs, set from this same config at the solve entry points), so
+            # the guard fires only where the two bases genuinely differ.
+            and "cc_block_summer_rating" not in eia860_fleet_row_repairs()
         ):
             raise ValueError(
                 "cc_block_summer_rating requires unit_outage_dispatched_bin_"

@@ -21,6 +21,7 @@ import pytest
 from market_sim.config.scenarios import (
     _BACKCAST_ONLY_OUTAGE_SOURCE,
     _BACKCAST_ONLY_OVERLAY_FIELDS,
+    _W0_BACKCAST_DEFAULT_FIELDS,
     _CACHE_KEY_OPTIONAL_FIELDS,
     ScenarioConfig,
 )
@@ -82,10 +83,21 @@ class TestBackcastOnlyOverlayGuard:
         ]
         assert not armed, f"listed overlays are ON by default: {armed}"
 
-    @pytest.mark.parametrize("field", sorted(_BACKCAST_ONLY_OVERLAY_FIELDS))
+    @pytest.mark.parametrize(
+        "field",
+        sorted(set(_BACKCAST_ONLY_OVERLAY_FIELDS) - set(_W0_BACKCAST_DEFAULT_FIELDS)),
+    )
     def test_forecast_refuses_each_overlay(self, field):
         with pytest.raises(ValueError, match="backcast-only measured overlays"):
             ScenarioConfig(mode="forecast", **{field: True})
+
+    @pytest.mark.parametrize(
+        "field",
+        sorted(set(_BACKCAST_ONLY_OVERLAY_FIELDS) & set(_W0_BACKCAST_DEFAULT_FIELDS)),
+    )
+    def test_w0_backcast_default_overlay_is_coerced_off_in_forecast(self, field):
+        """W0 (R-2 / Q4): a backcast-default member cannot reach a forecast."""
+        assert getattr(ScenarioConfig(mode="forecast", **{field: True}), field) is False
 
     @pytest.mark.parametrize("field", sorted(_BACKCAST_ONLY_OVERLAY_FIELDS))
     def test_backcast_accepts_each_overlay(self, field):

@@ -1,0 +1,28 @@
+2019: units 757 -> 797; LP-input arrays moved: ['availability', 'heat_rate', 'mc_base', 'min_gen', 'pmax', 'pmin', 'vom']
+MOVE -|oil: avail 42.7042 -> 44.8101 TWh, mean mc 251.2581 -> 250.6381
+MOVE CC_CHP|gas_cc: avail 4.4116 -> 4.5251 TWh, mean mc 35.8135 -> 35.8176
+MOVE CC_REGULAR|gas_cc: avail 70.6397 -> 73.4466 TWh, mean mc 33.7371 -> 33.7371
+MOVE COAL_BIT|coal: avail 4.2633 -> 3.9307 TWh, mean mc 50.6727 -> 50.6727
+MOVE COAL_PRB|coal: avail 3.0522 -> 3.0739 TWh, mean mc 38.7547 -> 38.7547
+MOVE CT_CHP|gas_ct: avail 1.2167 -> 1.3661 TWh, mean mc 29.0275 -> 29.0275
+MOVE CT_PEAKER|gas_ct: avail 9.529 -> 10.3396 TWh, mean mc 59.7109 -> 59.7109
+MOVE ST_CHP|gas_st: avail 0.1916 -> 0.205 TWh, mean mc 25.3556 -> 26.6424
+MOVE ST_GAS|gas_st: avail 8.9542 -> 8.6084 TWh, mean mc 60.2037 -> 60.2037
+TRIP 2019 watched unit CC_CHP_Boston_p1595_committed not byte-stable: {'pmax_mw': (138.71, 136.695), 'avail_by_month': ([0.9589, 0.9651, 0.9687, 0.9059, 0.5896, 0.9529, 0.7925, 0.9309, 0.95, 0.7817, 0.9717, 0.9694], [0.9619, 0.9667, 0.9684, 0.8932, 0.5688, 0.9539, 0.7979, 0.936, 0.9514, 0.7666, 0.9724, 0.9715])}
+TRIP 2019 watched unit CC_REGULAR_Boston_p1588_committed not byte-stable: {'pmax_mw': (784.98, 764.55), 'avail_by_month': ([0.1229, 0.0535, 0.0083, 0.1084, 0.0, 0.0083, 0.0698, 0.0075, 0.0, 0.0, 0.0006, 0.0328], [0.2201, 0.1444, 0.0383, 0.1701, 0.0, 0.0292, 0.1209, 0.0432, 0.0537, 0.0289, 0.0578, 0.1625])}
+TRIP 2019 watched unit CC_REGULAR_Boston_p1588_econc00 not byte-stable: {'pmax_mw': (105.245, 102.506), 'avail_by_month': ([0.1229, 0.0535, 0.0083, 0.1084, 0.0, 0.0083, 0.0698, 0.0075, 0.0, 0.0, 0.0006, 0.0328], [0.2201, 0.1444, 0.0383, 0.1701, 0.0, 0.0292, 0.1209, 0.0432, 0.0537, 0.0289, 0.0578, 0.1625])}
+TRIP 2019 watched unit CC_REGULAR_Boston_p1588_econc01 not byte-stable: {'pmax_mw': (105.245, 102.506), 'avail_by_month': ([0.1229, 0.0535, 0.0083, 0.1084, 0.0, 0.0083, 0.0698, 0.0075, 0.0, 0.0, 0.0006, 0.0328], [0.2201, 0.1444, 0.0383, 0.1701, 0.0, 0.0292, 0.1209, 0.0432, 0.0537, 0.0289, 0.0578, 0.1625])}
+TRIP 2019 watched unit CC_REGULAR_Boston_p1588_econc02 not byte-stable: {'pmax_mw': (105.245, 102.506), 'avail_by_month': ([0.1229, 0.0535, 0.0083, 0.1084, 0.0, 0.0083, 0.0698, 0.0075, 0.0, 0.0, 0.0006, 0.0328], [0.2201, 0.1444, 0.0383, 0.1701, 0.0, 0.0292, 0.1209, 0.0432, 0.0537, 0.0289, 0.0578, 0.1625])}
+TRIP 2019 watched unit CC_REGULAR_Boston_p1588_econc03 not byte-stable: {'pmax_mw': (105.245, 102.506), 'avail_by_month': ([0.1229, 0.0535, 0.0083, 0.1084, 0.0, 0.0083, 0.0698, 0.0075, 0.0, 0.0, 0.0006, 0.0328], [0.2201, 0.1444, 0.0383, 0.1701, 0.0, 0.0292, 0.1209, 0.0432, 0.0537, 0.0289, 0.0578, 0.1625])}
+TRIP 2019 watched unit CC_REGULAR_Boston_p1588_econc04 not byte-stable: {'pmax_mw': (105.245, 102.506), 'avail_by_month': ([0.1229, 0.0535, 0.0083, 0.1084, 0.0, 0.0083, 0.0698, 0.0075, 0.0, 0.0, 0.0006, 0.0328], [0.2201, 0.1444, 0.0383, 0.1701, 0.0, 0.0292, 0.1209, 0.0432, 0.0537, 0.0289, 0.0578, 0.1625])}
+TRIP 2019 watched unit CC_REGULAR_Boston_p1588_econc05 not byte-stable: {'pmax_mw': (105.245, 102.506), 'avail_by_month': ([0.1229, 0.0535, 0.0083, 0.1084, 0.0, 0.0083, 0.0698, 0.0075, 0.0, 0.0, 0.0006, 0.0328], [0.2201, 0.1444, 0.0383, 0.1701, 0.0, 0.0292, 0.1209, 0.0432, 0.0537, 0.0289, 0.0578, 0.1625])}
+TRIP 2019 watched unit CC_REGULAR_Boston_p1588_peak not byte-stable: {'pmax_mw': (327.947, 319.412), 'avail_by_month': ([0.1229, 0.0535, 0.0083, 0.1084, 0.0, 0.0083, 0.0698, 0.0075, 0.0, 0.0, 0.0006, 0.0328], [0.2201, 0.1444, 0.0383, 0.1701, 0.0, 0.0292, 0.1209, 0.0432, 0.0537, 0.0289, 0.0578, 0.1625])}
+TRIP 2019 watched unit CT_PEAKER_Central_p1599_econhi not byte-stable: {'avail_by_month': ([0.0, 0.0, 0.0, 0.0, 0.0, 0.8382, 0.7804, 0.8054, 0.8508, 0.8273, 0.8417, 0.8986], [0.0, 0.0, 0.0, 0.0, 0.0, 0.8823, 0.8465, 0.8683, 0.8859, 0.7436, 0.7621, 0.8403])}
+TRIP 2019 watched unit CT_PEAKER_Central_p1599_econlo not byte-stable: {'avail_by_month': ([0.0, 0.0, 0.0, 0.0, 0.0, 0.8382, 0.7804, 0.8054, 0.8508, 0.8273, 0.8417, 0.8986], [0.0, 0.0, 0.0, 0.0, 0.0, 0.8823, 0.8465, 0.8683, 0.8859, 0.7436, 0.7621, 0.8403])}
+TRIP 2019 watched unit CT_PEAKER_Central_p1599_peak not byte-stable: {'avail_by_month': ([0.0, 0.0, 0.0, 0.0, 0.0, 0.8382, 0.7804, 0.8054, 0.8508, 0.8273, 0.8417, 0.8986], [0.0, 0.0, 0.0, 0.0, 0.0, 0.8823, 0.8465, 0.8683, 0.8859, 0.7436, 0.7621, 0.8403])}
+TRIP 2019 class -|oil capacity 5430.2 -> 5692.1 MW (> 1%)
+TRIP 2019 class CC_REGULAR|gas_cc capacity 15454.4 -> 14974.7 MW (> 1%)
+TRIP 2019 class CT_CHP|gas_ct capacity 158.9 -> 176.8 MW (> 1%)
+TRIP 2019 class CT_PEAKER|gas_ct capacity 1482.0 -> 1587.3 MW (> 1%)
+TRIP 2019 class ST_CHP|gas_st capacity 24.6 -> 26.9 MW (> 1%)
+FAIL (17 trips)

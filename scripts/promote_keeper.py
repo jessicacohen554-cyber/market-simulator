@@ -17,6 +17,9 @@ delete):
                     for every year (rule 15, owner 2026-10-01): derived here
                     from ``unit_hourly`` when absent; a NEW keeper with
                     neither is refused
+                    — and ``fleet_census_<year>.json`` for every year (W0
+                    E.7, owner ruling R-2 / Q8): built here from the slim
+                    layer when absent; a NEW keeper with neither is refused
   1. enumerate    — the ISO's registered year set BEFORE anything is deleted;
                     refuse a promotion that would shrink it (rule 35 (b)/(c))
   2. register     — ``dashboard_add_run.py --no-prune`` for the keeper bundle
@@ -139,7 +142,56 @@ def preflight(bundle: Path) -> list[int]:
             "push its full bundle"
         )
     ensure_unit_marginal(bundle, years, new=existing_run_id(bundle) is None)
+    ensure_fleet_census(bundle, years, new=existing_run_id(bundle) is None)
     return years
+
+
+def ensure_fleet_census(bundle: Path, years: list[int], *, new: bool) -> list[int]:
+    """Step 0c: the keeper's committed fleet census, every year (W0 E.7).
+
+    Owner ruling R-2 / Q8 (2026-10-02): a keeper bundle commits
+    ``fleet_census_<year>.json`` for every year it carries — the per ISO-year
+    ledger of what the LP carried against the year's EIA-860 vintage and the
+    ISO's own report (``scripts/build_fleet_census.py``). A year missing it is
+    built here from the bundle's committed ``hourly/unit_marginal_<year>``
+    (zero LP). A NEW keeper with a year that has neither is refused; a
+    re-designated, already-registered keeper only warns (prospective rule).
+
+    Returns:
+        The years still missing the census after derivation.
+    """
+    from scripts import build_fleet_census as bfc
+
+    meta = json.loads((bundle / "meta.json").read_text())
+    iso = str(meta.get("iso", "")).upper()
+    missing: list[int] = []
+    for y in years:
+        out = bundle / f"fleet_census_{y}.json"
+        if out.exists():
+            continue
+        if not (bundle / "hourly" / f"unit_marginal_{y}.parquet").exists():
+            missing.append(y)
+            continue
+        census = bfc.build_census(
+            iso,
+            y,
+            bfc.model_from_unit_marginal(bundle, y),
+            f"unit_marginal:{bundle.name}",
+        )
+        out.write_text(json.dumps(census, indent=2) + "\n")
+        print(f"    built {out.name} ({census['verdict']}) — commit it with the bundle")
+    if missing and new:
+        raise SystemExit(
+            f"{bundle}: fleet_census_<year>.json missing for {missing} and no "
+            "unit_marginal layer to build it from — a keeper bundle commits its "
+            "fleet census for every year (W0 E.7, owner ruling R-2 / Q8)"
+        )
+    if missing:
+        print(
+            f"    WARNING: {bundle.name} lacks fleet_census for {missing} "
+            "(pre-W0 keeper; gains it at its next re-solve)"
+        )
+    return missing
 
 
 def ensure_unit_marginal(bundle: Path, years: list[int], *, new: bool) -> list[int]:

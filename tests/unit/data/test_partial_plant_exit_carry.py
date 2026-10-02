@@ -179,7 +179,12 @@ class TestExitCohortBinning(unittest.TestCase):
     def test_fleet_to_bins_pools_when_flag_off(self):
         from market_sim.data.fleet import fleet_to_bins
 
-        cfg = ScenarioConfig(mode="backcast", weather_year=2023)
+        cfg = ScenarioConfig(
+            mode="backcast",
+            weather_year=2023,
+            partial_plant_exit_carry=False,
+            mid_vintage_exit_carry=False,
+        )
         bins = fleet_to_bins(self.channel, "MISO", cfg)
         # No cohort routing: every row's retirement columns are empty even
         # though the input units carry tags + retirements (the gate is the

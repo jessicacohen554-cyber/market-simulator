@@ -194,7 +194,11 @@ def _iso_fossil_operable(df: pd.DataFrame, iso: str) -> pd.DataFrame:
     the same membership the dispatch fleet reads (``_rows_to_generators``
     keeps ``status == "OP"``; ``balancing_authority_code`` → ISO)."""
     ba_iso = df["balancing_authority_code"].astype(str).str.strip().map(BA_CODE_TO_ISO)
-    out = df[ba_iso == iso.upper()]
+    # W0 E.6: the region's NERC key applies at load time on a table derived
+    # unfiltered (``nerc_region`` present); absent, the derive applied it.
+    from market_sim.data.fleet.models import program_footprint_mask
+
+    out = df[(ba_iso == iso.upper()) & program_footprint_mask(df)]
     status = out["status"].astype(str).str.strip().str.upper()
     out = out[status == "OP"].copy()
     out["fuel_type"] = out.apply(_fuel_of, axis=1)

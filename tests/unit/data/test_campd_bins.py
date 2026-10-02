@@ -829,7 +829,7 @@ class TestCommissionYearCodFallback(unittest.TestCase):
 
     def test_armed_registry_miss_takes_cod_year(self):
         year = self._online_years(
-            ScenarioConfig(commission_year_cod_fallback=True),
+            ScenarioConfig(mode="backcast", commission_year_cod_fallback=True),
             self.MISSING_CODE,
             {self.MISSING_CODE: (1999, 7, None, None)},
         )
@@ -837,7 +837,7 @@ class TestCommissionYearCodFallback(unittest.TestCase):
 
     def test_armed_cod_miss_keeps_2010(self):
         year = self._online_years(
-            ScenarioConfig(commission_year_cod_fallback=True),
+            ScenarioConfig(mode="backcast", commission_year_cod_fallback=True),
             self.MISSING_CODE,
             {},
         )
@@ -854,7 +854,7 @@ class TestCommissionYearCodFallback(unittest.TestCase):
         row = reg.iloc[0]
         code, reg_year = int(row["plantid"]), int(row["year_built"])
         year = self._online_years(
-            ScenarioConfig(commission_year_cod_fallback=True),
+            ScenarioConfig(mode="backcast", commission_year_cod_fallback=True),
             code,
             {code: (reg_year + 5, 7, None, None)},
         )
