@@ -79,9 +79,37 @@ def replay_config_diffs(
         return {}
     recorded = json.loads(path.read_text()).get("scenario_config") or {}
     replayed = resolve(bundle, int(year))
+    deleted = _rule26_inert_recorded(bundle, recorded)
     return {
         key: (recorded.get(key), replayed.get(key))
         for key in sorted(set(recorded) | set(replayed))
         if key not in NON_RECIPE_FIELDS
+        and key not in deleted
         and _norm(recorded.get(key)) != _norm(replayed.get(key))
     }
+
+
+def _rule26_inert_recorded(bundle: Path, recorded: dict) -> set[str]:
+    """Recorded keys of rule-26-DELETED fields whose recorded value is inert.
+
+    A bundle solved before a rule-26 [R-DELETE] collapse still records the
+    deleted field in its ``run_config_<Y>.json``; the field no longer exists
+    at HEAD, so the replay side cannot carry it. ``replay_keeper``'s deletion
+    registry already decides which recordings replay faithfully (outside the
+    owning ISO, or a value in the declared inert set) — the same registry is
+    applied here, so a stale-but-inert recording is not a replay mismatch
+    while a recording of the deleted polarity still is.
+    """
+    from market_sim.config.scenarios import ScenarioConfig
+    from scripts.replay_keeper import _RULE26_DELETED_UNCONDITIONAL, _rule26_inert
+
+    live = {f.name for f in dataclasses.fields(ScenarioConfig)}
+    iso = str(json.loads((bundle / "meta.json").read_text()).get("iso", "")).upper()
+    out: set[str] = set()
+    for key, value in recorded.items():
+        if key in live or key not in _RULE26_DELETED_UNCONDITIONAL:
+            continue
+        owner, unconditional = _RULE26_DELETED_UNCONDITIONAL[key]
+        if iso != owner or value in _rule26_inert(unconditional):
+            out.add(key)
+    return out
