@@ -104,6 +104,12 @@ parsed as a fallback) it verifies:
       keeper's own stores and E12 only the shard's live pointers. The OK line
       reports the year set the keeper carries, which is what rule 35 (b)/(c)
       require a promotion to preserve.
+  E15 FLEET CENSUS (W0 E.7, owner ruling R-2 / Q8): a keeper bundle commits
+      ``fleet_census_<year>.json`` for every year it carries. FAIL for a keeper
+      solved at the W0 posture (its recorded ``seasonal_capacity_basis`` is
+      true) — the census is part of that keeper by construction; WARN for a
+      pre-W0 keeper (the rule is prospective; it gains the census at its next
+      re-solve).
   E14 SOLVE-ENVIRONMENT PIN CURRENCY: the bundle's recorded
       ``environment.packages`` match the versions ``requirements.txt`` pins.
       A keeper is the ISO's reference result, so which solver and numeric
@@ -454,6 +460,32 @@ def _bundle_flags(bundle: Path) -> dict | None:
 # because replay_keeper imports the numpy/model stack and this module is
 # stdlib-only; ``tests/scoring/test_audit_keepers_lineage.py`` pins the two
 # sets against each other so they cannot drift).
+def fleet_census_findings(bundle: Path) -> list[tuple[str, str]]:
+    """E15 findings for one keeper bundle: ``[(level, message), ...]``.
+
+    ``level`` is ``"fail"`` / ``"warn"`` / ``"ok"`` (the reporter's method
+    names). Years come from ``meta.json`` (else the dispatch / hourly layer);
+    a bundle is at the W0 posture when its recorded ``scenario_config`` arms
+    ``seasonal_capacity_basis``.
+    """
+    meta = _load_json(bundle / "meta.json") or {}
+    years = sorted(
+        int(y) for y in (meta.get("years") or meta.get("solved_years") or [])
+    )
+    if not years:
+        years = sorted(
+            int(p.stem.rsplit("_", 1)[-1])
+            for p in (bundle / "hourly").glob("unit_marginal_*.parquet")
+        )
+    cfg = (_load_json(bundle / "run_config.json") or {}).get("scenario_config") or {}
+    w0 = bool(cfg.get("seasonal_capacity_basis"))
+    missing = [y for y in years if not (bundle / f"fleet_census_{y}.json").exists()]
+    if not missing:
+        return [("ok", f"fleet census present for {len(years)} year(s)")]
+    msg = f"fleet_census_<year>.json missing for {missing} (W0 E.7)"
+    return [("fail", msg)] if w0 else [("warn", msg + "; pre-W0 keeper")]
+
+
 E11_META_PROVENANCE = {
     "timestamp",
     "note",
@@ -955,6 +987,11 @@ def audit_keeper(run_id: str, rep: Report) -> None:
                 "E14",
                 f"solve environment on-pin ({n_pkgs} recorded package(s)){note}",
             )
+
+    # E15: the committed fleet census (W0 E.7).
+    if flags is not None:
+        for level, msg in fleet_census_findings(bundle):
+            getattr(rep, level)(run_id, iso, "E15", msg)
 
     # E2 / E3: iso + years agree with the bundle the run was solved from.
     if flags is not None:

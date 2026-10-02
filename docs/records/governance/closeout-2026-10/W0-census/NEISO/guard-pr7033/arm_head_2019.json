@@ -1,0 +1,498 @@
+{
+ "year": 2019,
+ "n_units": 797,
+ "unit_ids_sha256": "96a91bc4833d17b4accbacefbd053d063f9db8b504d703497dea0b4f2c663f00",
+ "watch": [
+  {
+   "unit_id": "1588_7",
+   "plant": 1588,
+   "group": "",
+   "fuel": "oil",
+   "pmax_mw": 541.8,
+   "heat_rate": 7.5993,
+   "avail_by_month": [
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9
+   ],
+   "mc_base_mean": 143.9294
+  },
+  {
+   "unit_id": "1588_GT1",
+   "plant": 1588,
+   "group": "",
+   "fuel": "oil",
+   "pmax_mw": 9.0,
+   "heat_rate": 7.5993,
+   "avail_by_month": [
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9
+   ],
+   "mc_base_mean": 143.9294
+  },
+  {
+   "unit_id": "1595_JET1",
+   "plant": 1595,
+   "group": "",
+   "fuel": "oil",
+   "pmax_mw": 18.0,
+   "heat_rate": 5.7344,
+   "avail_by_month": [
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9
+   ],
+   "mc_base_mean": 111.1777
+  },
+  {
+   "unit_id": "1599_1",
+   "plant": 1599,
+   "group": "",
+   "fuel": "oil",
+   "pmax_mw": 560.0,
+   "heat_rate": 4.1408,
+   "avail_by_month": [
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9
+   ],
+   "mc_base_mean": 85.004
+  },
+  {
+   "unit_id": "1599_2",
+   "plant": 1599,
+   "group": "",
+   "fuel": "oil",
+   "pmax_mw": 553.0,
+   "heat_rate": 4.1408,
+   "avail_by_month": [
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9
+   ],
+   "mc_base_mean": 85.004
+  },
+  {
+   "unit_id": "1590_1",
+   "plant": 1590,
+   "group": "",
+   "fuel": "nuclear",
+   "pmax_mw": 673.6,
+   "heat_rate": 0.0,
+   "avail_by_month": [
+    1.0,
+    1.0,
+    0.99,
+    0.69,
+    0.79,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "mc_base_mean": 2.5
+  },
+  {
+   "unit_id": "CC_REGULAR_Boston_p1588_committed",
+   "plant": 1588,
+   "group": "CC_REGULAR",
+   "fuel": "gas_cc",
+   "pmax_mw": 764.55,
+   "heat_rate": 9.0136,
+   "avail_by_month": [
+    0.2201,
+    0.1444,
+    0.0383,
+    0.1701,
+    0.0,
+    0.0292,
+    0.1209,
+    0.0432,
+    0.0537,
+    0.0289,
+    0.0578,
+    0.1625
+   ],
+   "mc_base_mean": 33.0088
+  },
+  {
+   "unit_id": "CC_REGULAR_Boston_p1588_econc00",
+   "plant": 1588,
+   "group": "CC_REGULAR",
+   "fuel": "gas_cc",
+   "pmax_mw": 102.506,
+   "heat_rate": 7.1861,
+   "avail_by_month": [
+    0.2201,
+    0.1444,
+    0.0383,
+    0.1701,
+    0.0,
+    0.0292,
+    0.1209,
+    0.0432,
+    0.0537,
+    0.0289,
+    0.0578,
+    0.1625
+   ],
+   "mc_base_mean": 27.2062
+  },
+  {
+   "unit_id": "CC_REGULAR_Boston_p1588_econc01",
+   "plant": 1588,
+   "group": "CC_REGULAR",
+   "fuel": "gas_cc",
+   "pmax_mw": 102.506,
+   "heat_rate": 7.3635,
+   "avail_by_month": [
+    0.2201,
+    0.1444,
+    0.0383,
+    0.1701,
+    0.0,
+    0.0292,
+    0.1209,
+    0.0432,
+    0.0537,
+    0.0289,
+    0.0578,
+    0.1625
+   ],
+   "mc_base_mean": 27.7695
+  },
+  {
+   "unit_id": "CC_REGULAR_Boston_p1588_econc02",
+   "plant": 1588,
+   "group": "CC_REGULAR",
+   "fuel": "gas_cc",
+   "pmax_mw": 102.506,
+   "heat_rate": 7.5409,
+   "avail_by_month": [
+    0.2201,
+    0.1444,
+    0.0383,
+    0.1701,
+    0.0,
+    0.0292,
+    0.1209,
+    0.0432,
+    0.0537,
+    0.0289,
+    0.0578,
+    0.1625
+   ],
+   "mc_base_mean": 28.3329
+  },
+  {
+   "unit_id": "CC_REGULAR_Boston_p1588_econc03",
+   "plant": 1588,
+   "group": "CC_REGULAR",
+   "fuel": "gas_cc",
+   "pmax_mw": 102.506,
+   "heat_rate": 7.7184,
+   "avail_by_month": [
+    0.2201,
+    0.1444,
+    0.0383,
+    0.1701,
+    0.0,
+    0.0292,
+    0.1209,
+    0.0432,
+    0.0537,
+    0.0289,
+    0.0578,
+    0.1625
+   ],
+   "mc_base_mean": 28.8963
+  },
+  {
+   "unit_id": "CC_REGULAR_Boston_p1588_econc04",
+   "plant": 1588,
+   "group": "CC_REGULAR",
+   "fuel": "gas_cc",
+   "pmax_mw": 102.506,
+   "heat_rate": 7.8958,
+   "avail_by_month": [
+    0.2201,
+    0.1444,
+    0.0383,
+    0.1701,
+    0.0,
+    0.0292,
+    0.1209,
+    0.0432,
+    0.0537,
+    0.0289,
+    0.0578,
+    0.1625
+   ],
+   "mc_base_mean": 29.4596
+  },
+  {
+   "unit_id": "CC_REGULAR_Boston_p1588_econc05",
+   "plant": 1588,
+   "group": "CC_REGULAR",
+   "fuel": "gas_cc",
+   "pmax_mw": 102.506,
+   "heat_rate": 8.0732,
+   "avail_by_month": [
+    0.2201,
+    0.1444,
+    0.0383,
+    0.1701,
+    0.0,
+    0.0292,
+    0.1209,
+    0.0432,
+    0.0537,
+    0.0289,
+    0.0578,
+    0.1625
+   ],
+   "mc_base_mean": 30.023
+  },
+  {
+   "unit_id": "CC_REGULAR_Boston_p1588_peak",
+   "plant": 1588,
+   "group": "CC_REGULAR",
+   "fuel": "gas_cc",
+   "pmax_mw": 319.412,
+   "heat_rate": 16.7267,
+   "avail_by_month": [
+    0.2201,
+    0.1444,
+    0.0383,
+    0.1701,
+    0.0,
+    0.0292,
+    0.1209,
+    0.0432,
+    0.0537,
+    0.0289,
+    0.0578,
+    0.1625
+   ],
+   "mc_base_mean": 57.4985
+  },
+  {
+   "unit_id": "CC_CHP_Boston_p1595_committed",
+   "plant": 1595,
+   "group": "CC_CHP",
+   "fuel": "gas_cc",
+   "pmax_mw": 136.695,
+   "heat_rate": 10.4382,
+   "avail_by_month": [
+    0.9619,
+    0.9667,
+    0.9684,
+    0.8932,
+    0.5688,
+    0.9539,
+    0.7979,
+    0.936,
+    0.9514,
+    0.7666,
+    0.9724,
+    0.9715
+   ],
+   "mc_base_mean": 37.233
+  },
+  {
+   "unit_id": "CT_PEAKER_Central_p1599_econlo",
+   "plant": 1599,
+   "group": "CT_PEAKER",
+   "fuel": "gas_ct",
+   "pmax_mw": 161.429,
+   "heat_rate": 10.2714,
+   "avail_by_month": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.8823,
+    0.8465,
+    0.8683,
+    0.8859,
+    0.7436,
+    0.7621,
+    0.8403
+   ],
+   "mc_base_mean": 39.8399
+  },
+  {
+   "unit_id": "CT_PEAKER_Central_p1599_econhi",
+   "plant": 1599,
+   "group": "CT_PEAKER",
+   "fuel": "gas_ct",
+   "pmax_mw": 145.471,
+   "heat_rate": 10.2714,
+   "avail_by_month": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.8823,
+    0.8465,
+    0.8683,
+    0.8859,
+    0.7436,
+    0.7621,
+    0.8403
+   ],
+   "mc_base_mean": 39.8399
+  },
+  {
+   "unit_id": "CT_PEAKER_Central_p1599_peak",
+   "plant": 1599,
+   "group": "CT_PEAKER",
+   "fuel": "gas_ct",
+   "pmax_mw": 23.1,
+   "heat_rate": 43.0352,
+   "avail_by_month": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.8823,
+    0.8465,
+    0.8683,
+    0.8859,
+    0.7436,
+    0.7621,
+    0.8403
+   ],
+   "mc_base_mean": 143.8671
+  }
+ ],
+ "by_class": {
+  "-|nuclear": {
+   "n": 4,
+   "cap_mw": 3997.1,
+   "avail_twh": 29.6286,
+   "mc_base_mean": 2.5
+  },
+  "-|oil": {
+   "n": 178,
+   "cap_mw": 5692.1,
+   "avail_twh": 44.8101,
+   "mc_base_mean": 250.6381
+  },
+  "CC_CHP|gas_cc": {
+   "n": 28,
+   "cap_mw": 568.0,
+   "avail_twh": 4.5251,
+   "mc_base_mean": 35.8176
+  },
+  "CC_REGULAR|gas_cc": {
+   "n": 231,
+   "cap_mw": 14974.7,
+   "avail_twh": 73.4466,
+   "mc_base_mean": 33.7371
+  },
+  "COAL_BIT|coal": {
+   "n": 16,
+   "cap_mw": 535.1,
+   "avail_twh": 3.9307,
+   "mc_base_mean": 50.6727
+  },
+  "COAL_PRB|coal": {
+   "n": 8,
+   "cap_mw": 385.0,
+   "avail_twh": 3.0739,
+   "mc_base_mean": 38.7547
+  },
+  "CT_CHP|gas_ct": {
+   "n": 48,
+   "cap_mw": 176.8,
+   "avail_twh": 1.3661,
+   "mc_base_mean": 29.0275
+  },
+  "CT_PEAKER|gas_ct": {
+   "n": 65,
+   "cap_mw": 1587.3,
+   "avail_twh": 10.3396,
+   "mc_base_mean": 59.7109
+  },
+  "ST_CHP|gas_st": {
+   "n": 14,
+   "cap_mw": 26.9,
+   "avail_twh": 0.205,
+   "mc_base_mean": 26.6424
+  },
+  "ST_GAS|gas_st": {
+   "n": 32,
+   "cap_mw": 1304.6,
+   "avail_twh": 8.6084,
+   "mc_base_mean": 60.2037
+  },
+  "hydro|hydro": {
+   "n": 173,
+   "cap_mw": 1920.2,
+   "avail_twh": 13.4155,
+   "mc_base_mean": 1.4
+  }
+ },
+ "digest": {
+  "pmax": "846e9cb31930067359305f138e7527cef337a771d87b8b2c3c5d2510503073a4",
+  "pmin": "23e95c4d457beda5b6025b671269a15d6265b933edcccaf7565fafc5c6abf089",
+  "heat_rate": "78b3db016472d072fedb91b8a0b7439274f16ee2eb582af19b2419aef71974d0",
+  "vom": "f35406c2b42934fc25b37a2b118941168f9c78e9d2503c3f660f3a7cdf0cc75c",
+  "availability": "ea791ae1580ef15cd93cf680178a45ee269188345c7d7e501a29b89f13b76ede",
+  "min_gen": "a7a833f915df7c24eab89190c7aba267a3db675e0e011e1fecd2fffb8676b6b0",
+  "mc_base": "5c170f0809d4120dd8f7dc0245308a91424d805dcd4033d22520ba61da43e1cf"
+ }
+}

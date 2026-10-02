@@ -125,6 +125,30 @@
    }
   },
   "MISO": {
+   "2019": {
+    "da_coverage": 1.0,
+    "da_gt": 0,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt": 17,
+    "threshold": 200.0
+   },
+   "2020": {
+    "da_coverage": 1.0,
+    "da_gt": 0,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt": 8,
+    "threshold": 200.0
+   },
+   "2021": {
+    "da_coverage": 0.997,
+    "da_gt": 44,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt": 48,
+    "threshold": 200.0
+   },
    "2022": {
     "da_coverage": 0.94,
     "da_gt": 30,

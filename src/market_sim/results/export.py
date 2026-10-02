@@ -135,7 +135,10 @@ def _summarize_year(result, context, config=None) -> dict:
         # so counting their scarcity-hour MWh as a "demand_response" fuel class
         # would create a spurious generation-mix miss. Exclude from both the
         # generation and nameplate summaries (data.nyiso_demand_response).
-        if fuel == "demand_response":
+        # The SPP-107 MMU economic-to-emergency pool ("emergency_band") is the
+        # same kind of pseudo-generator: scarcity-hour MW of fossil units whose
+        # class is not identified, kept out of the class mix (DESIGN-spp-107).
+        if fuel in ("demand_response", "emergency_band"):
             continue
         generation_twh[fuel] = (
             generation_twh.get(fuel, 0.0) + float(gen_per_unit[g]) / _MWH_PER_TWH
@@ -178,7 +181,7 @@ def _summarize_year(result, context, config=None) -> dict:
         # Same exclusion as generation_twh above: demand-response blocks are
         # avoided load, not generation. They carry emission_rate 0 by
         # construction (FUEL_TYPE_MAP), so dropping them cannot move the sum.
-        if fuel == "demand_response":
+        if fuel in ("demand_response", "emergency_band"):
             continue
         emissions_by_fuel_t[fuel] = emissions_by_fuel_t.get(fuel, 0.0) + float(
             emis_per_unit[g]

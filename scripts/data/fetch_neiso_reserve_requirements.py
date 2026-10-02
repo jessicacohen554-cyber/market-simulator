@@ -24,13 +24,13 @@ precedent; this committed downloader regenerates them):
 
 Windowing is fixed and year-scoped so regeneration is reproducible: within
 each calendar year, consecutive 15-day windows starting Jan 1, the last
-truncated at Dec 31 (25 windows/year; 75 files for 2023-2025).
+truncated at Dec 31 (25 windows/year; 175 files for 2019-2025).
 
 The endpoint 403s without an ``isox_token`` session cookie; the script
 bootstraps one by fetching the public report page first.
 
 Usage:
-    python scripts/data/fetch_neiso_reserve_requirements.py            # 2023-2025
+    python scripts/data/fetch_neiso_reserve_requirements.py            # 2019-2025
     python scripts/data/fetch_neiso_reserve_requirements.py --years 2024
 """
 
@@ -64,7 +64,7 @@ WINDOW_DAYS = 15
 
 #: Train years only (CLAUDE.md rule 22): no out-of-training intake without
 #: explicit owner authorization.
-DEFAULT_YEARS = (2023, 2024, 2025)
+DEFAULT_YEARS = (2019, 2020, 2021, 2022, 2023, 2024, 2025)
 
 _UA = (
     "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
@@ -119,7 +119,7 @@ def main(argv: list[str] | None = None) -> int:
         nargs="*",
         type=int,
         default=list(DEFAULT_YEARS),
-        help="calendar years to download (default: 2023 2024 2025)",
+        help="calendar years to download (default: 2019-2025)",
     )
     parser.add_argument(
         "--force",

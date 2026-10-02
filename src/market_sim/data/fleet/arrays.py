@@ -25,7 +25,7 @@ from market_sim.config.constants import (
     SUMMER_WEFOR_SHARE,
     THERMAL_AVAILABILITY,
 )
-from market_sim.config.paths import CAMPD_BINS_CSV
+from market_sim.config.paths import CAMPD_BINS_CSV, eia860_fleet_row_repairs
 from market_sim.config.plant_taxonomy import (
     COAL_ARTIFACT_FAMILY,
     COAL_CLASSES,
@@ -233,12 +233,39 @@ def _mmu_fossil(gen: "Generator") -> bool:
     return gen.fuel_type in _MMU_FOSSIL_FUELS or is_coal_class(gen.plant_group)
 
 
+def _spp_mmu_repair_armed(config: "ScenarioConfig | None", iso: str | None) -> bool:
+    """True when the SPP-107 repair sub-gate (spp_mmu_offer_repair) is armed too."""
+    return _spp_mmu_armed(config, iso) and bool(
+        getattr(config, "spp_mmu_offer_repair", False)
+    )
+
+
+def _spp_mmu_cut(
+    generators: list["Generator"], pmax: np.ndarray, hours: int, year: int
+) -> tuple[np.ndarray, np.ndarray, "object"]:
+    """Fossil row indices, the hourly total band share, and the MMU shares for ``year``.
+
+    The total share is "above emergency max" + "economic to emergency max" all
+    year, plus the ambient MW-days on Jun-Sep as a share of fossil pmax.
+    """
+    from market_sim.data.spp_mmu_unavailability import mmu_shares
+
+    idx = np.array([i for i, g in enumerate(generators) if _mmu_fossil(g)], dtype=int)
+    sh = mmu_shares(year)
+    fos_mw = float(np.asarray(pmax, dtype=float)[idx].sum()) if idx.size else 0.0
+    amb = sh.ambient_mw / fos_mw if fos_mw > 0.0 else 0.0
+    cut = np.full(hours, sh.above_emer + sh.eco_to_emer)
+    cut[np.isin(_hour_to_month_index(hours), (5, 6, 7, 8))] += amb  # Jun-Sep
+    return idx, cut, sh
+
+
 def _apply_spp_mmu_bands(
     generators: list["Generator"],
     availability: np.ndarray,
     pmax: np.ndarray,
     hours: int,
     year: int,
+    multiplicative: bool = False,
 ) -> None:
     """Remove the SPP MMU offer-side bands from every fossil row, in place (SPP-106).
 
@@ -248,33 +275,99 @@ def _apply_spp_mmu_bands(
     share of fossil pmax. Clipped at 0, so a row on full outage stays at 0.
     The caller runs it after the outage overlays and before the COD ramp. The
     flat derates it replaces are skipped in ``_availability_matrix`` (rule 19).
-    """
-    from market_sim.data.spp_mmu_unavailability import mmu_shares
 
-    idx = np.array([i for i, g in enumerate(generators) if _mmu_fossil(g)], dtype=int)
+    ``multiplicative`` (ScenarioConfig.spp_mmu_offer_repair, SPP-107 repair 1):
+    the bands are shares of the row's post-outage AVAILABLE MW, ``a x (1 -
+    share)``, as the MMU measures them (report s3.1.2), not of rated pmax. The
+    economic-to-emergency slice this removes is returned to the LP as the
+    zonal scarcity pool (:func:`_apply_spp_mmu_pool`).
+    """
+    idx, cut, sh = _spp_mmu_cut(generators, pmax, hours, year)
     if not idx.size:
         return
-    sh = mmu_shares(year)
-    fos_mw = float(np.asarray(pmax, dtype=float)[idx].sum())
-    amb = sh.ambient_mw / fos_mw if fos_mw > 0.0 else 0.0
-    cut = np.full(hours, sh.above_emer + sh.eco_to_emer)
-    cut[np.isin(_hour_to_month_index(hours), (5, 6, 7, 8))] += amb  # Jun-Sep
-    availability[idx, :hours] = np.maximum(
-        0.0, availability[idx, :hours] - cut[None, :]
-    )
+    if multiplicative:
+        availability[idx, :hours] = availability[idx, :hours] * np.maximum(
+            0.0, 1.0 - cut[None, :]
+        )
+    else:
+        availability[idx, :hours] = np.maximum(
+            0.0, availability[idx, :hours] - cut[None, :]
+        )
     logger.info(
-        "SPP MMU offer-side bands (SPP %d, MMU year %d): %d fossil rows; flat "
+        "SPP MMU offer-side bands (SPP %d, MMU year %d, %s): %d fossil rows; flat "
         "perf + summer class derate replaced; above-emer %.4f + eco-to-emer "
-        "%.4f all year, ambient %.4f Jun-Sep (%.0f MW of %.0f MW fossil pmax)",
+        "%.4f all year, ambient %.4f Jun-Sep (%.0f MW)",
         year,
         sh.year_used,
+        "x available (SPP-107)" if multiplicative else "x rated",
         idx.size,
         sh.above_emer,
         sh.eco_to_emer,
-        amb,
+        float(cut.max() - cut.min()),
         sh.ambient_mw,
-        fos_mw,
     )
+
+
+def _apply_spp_mmu_pool(
+    generators: list["Generator"],
+    availability: np.ndarray,
+    pmax: np.ndarray,
+    hours: int,
+    year: int,
+) -> None:
+    """Stamp the SPP-107 economic-to-emergency pool rows' availability, in place.
+
+    ScenarioConfig.spp_mmu_offer_repair (repair 2). Each ``emergency_band`` row
+    (one per zone, :func:`market_sim.data.spp_mmu_unavailability.build_spp_mmu_pool_generators`)
+    carries, hour by hour, exactly the MW the multiplicative bands took off its
+    zone's fossil rows as the economic-to-emergency slice: ``eco x a_pre x
+    pmax`` per row, recovered from the FINAL availability as ``a x pmax x eco /
+    (1 - total share)`` so every later mask (COD ramp, BA join / exit, plant
+    entry / exit) is carried. The units' economic max plus the pool is their
+    emergency max. Runs last in ``generators_to_fleet_arrays``.
+    """
+    pool = np.array(
+        [i for i, g in enumerate(generators) if g.fuel_type == "emergency_band"],
+        dtype=int,
+    )
+    if not pool.size:
+        return
+    idx, cut, sh = _spp_mmu_cut(generators, pmax, hours, year)
+    pm = np.asarray(pmax, dtype=float)
+    keep = np.maximum(1.0 - cut, 1e-12)
+    zones = np.array([generators[i].zone for i in idx])
+    clipped = 0.0
+    for p in pool:
+        rows = idx[zones == generators[p].zone]
+        mw = (
+            (availability[rows, :hours] * pm[rows, None]).sum(axis=0)
+            * sh.eco_to_emer
+            / keep
+            if rows.size
+            else np.zeros(hours)
+        )
+        cap = float(pm[p])
+        frac = mw / cap if cap > 0.0 else np.zeros(hours)
+        clipped += float(np.maximum(0.0, mw - cap).sum())
+        availability[p, :hours] = np.clip(frac, 0.0, 1.0)
+        logger.info(
+            "SPP MMU emergency pool (SPP %d, %s): eco-to-emer %.4f of %d fossil "
+            "rows, %.0f-%.0f MW (mean %.0f), offered at the shed price - eps",
+            year,
+            generators[p].zone,
+            sh.eco_to_emer,
+            rows.size,
+            float(mw.min()),
+            float(mw.max()),
+            float(mw.mean()),
+        )
+    if clipped > 0.0:
+        logger.warning(
+            "SPP MMU emergency pool (SPP %d): %.0f MWh above the pool rows' pmax "
+            "clipped",
+            year,
+            clipped,
+        )
 
 
 # Per-plant coal sustained-output ceilings now live in
@@ -496,6 +589,21 @@ def _nuclear_monthly(
                 availability[g_idx, :] = 0.0
 
 
+def _seasonal_basis_pair(gen: "Generator") -> tuple[float, float] | None:
+    """``(summer_frac, winter_frac)`` of a W0 seasonal-basis unit, else ``None``.
+
+    ``ScenarioConfig.seasonal_capacity_basis`` (audit §E.1): the loader carries
+    the unit at its published seasonal envelope and records each season's
+    rating as a share of it; ``None`` on every unit off that basis, so every
+    legacy branch below is untouched for them.
+    """
+    sf = getattr(gen, "summer_capability_frac", None)
+    wf = getattr(gen, "winter_capability_frac", None)
+    if sf is None or wf is None:
+        return None
+    return (float(sf), float(wf))
+
+
 def _availability_matrix(
     generators: list[Generator],
     availability: np.ndarray,
@@ -668,6 +776,12 @@ def _availability_matrix(
             ``fleet_to_bins`` takes for the same plant, so the capacity basis
             and the availability legs can never disagree.
             """
+            # W0 E.1: a unit carried on the published seasonal basis states
+            # its own pair (any thermal class) and outranks every legacy basis
+            # flag (rule 19 [R-ONE-MECH]).
+            _own = _seasonal_basis_pair(gen)
+            if _own is not None:
+                return _own
             if not cc_winter_basis or gen.plant_group not in ("CC_REGULAR", "CC_CHP"):
                 return None
             return _pkg_ns().cc_seasonal_capability_ratios(int(gen.plant_code))
@@ -878,8 +992,8 @@ def _availability_matrix(
                     "wefor_residual_short_screened_coal requires "
                     "unit_outage_dispatched_bin_denominator"
                 )
-            # NWPP-NEXT-15: under the live sub-gate the screened share
-            # divides by the LIVE bin, the same roster the outage share uses.
+            # The screened share divides by the LIVE bin, the same roster the
+            # outage share uses (closeout-W0 desk ruling D-1).
             _roster = lp_bin_capacity_index(
                 generators,
                 live_year=dispatched_bin_live_year(config, int(fleet_year)),
@@ -895,9 +1009,10 @@ def _availability_matrix(
                 len(_screened_share),
                 sum(s * dict(_roster).get(k, 0.0) for k, s in _screened_share.items()),
             )
-        # NWPP-NEXT-15 (ScenarioConfig.unit_outage_dispatched_bin_live_
-        # denominator, GATED default-off): with the screened-coal relief armed,
-        # a COAL row takes the relief on its measured screened share ONLY —
+        # NWPP-NEXT-15 (folded into wefor_residual_short_screened_coal by the
+        # closeout-W0 desk ruling D-1, which deleted the live sub-gate field
+        # that used to gate it): a COAL row takes the relief on its measured
+        # screened share ONLY —
         # never the full cap — even when ``wefor_residual_groups`` (or its
         # None default, which covers all coal) names its class. The
         # ``wefor_residual_groups`` membership test then decides the full cap
@@ -906,11 +1021,10 @@ def _availability_matrix(
         # NWPP's None groups otherwise zero WEFOR on all coal AND all CC/ST
         # gas, and the screened branch below never fires). One relief
         # mechanism, re-ordered — not a second one (rule 19 [R-ONE-MECH]).
-        # False while off, so every existing config keeps the covered-first
-        # order byte-identically (MISO's keeper names no coal class).
-        _screened_coal_first = bool(_screened_share) and bool(
-            getattr(config, "unit_outage_dispatched_bin_live_denominator", False)
-        )
+        # Byte-identical where wefor_residual_groups names no coal class
+        # (MISO's keeper, the only one arming the relief): coal is then never
+        # covered and the screened branch fires either way.
+        _screened_coal_first = bool(_screened_share)
         # SPP-104 (ScenarioConfig.spp_ct_lole_efor): SPP's own LOLE-study
         # seasonal EFOR REPLACES the statistical CT_PEAKER WEFOR (rule 19) —
         # no wefor_multiplier, no SUMMER_WEFOR_SHARE redistribution, no age
@@ -1130,7 +1244,10 @@ def _availability_matrix(
             # loop (it reproduces the same net-summer summer-mean for CC/CT, so
             # that is a reshape, not a level change).
             if not _td_covers(gen):
-                if is_cc_np:
+                if is_cc_np or _seasonal_basis_pair(gen) is not None:
+                    # W0 E.1: a seasonal-basis unit of ANY class takes the
+                    # published-pair branch (``_cc_seasonal_pair`` returns its
+                    # own pair first), in place of the flat class derate below.
                     _pair = _cc_seasonal_pair(gen)
                     if _pair is None:
                         # Reconciled basis (nyiso-212) where armed and listed,
@@ -1183,7 +1300,10 @@ def _availability_matrix(
                 # (net_summer / nameplate), the coal analogue of the CC/CT
                 # cc_nameplate_summer_derate. Multiplicative, summer-only, only
                 # reduces capacity; a plant rated at/above nameplate gets 1.0.
-                if getattr(config, "coal_nameplate_summer_derate", False):
+                if (
+                    getattr(config, "coal_nameplate_summer_derate", False)
+                    and _seasonal_basis_pair(gen) is None
+                ):
                     _ns_ratio = _pkg_ns().coal_summer_derate_ratio(_pc)
                     if _ns_ratio is not None and _ns_ratio < 1.0:
                         availability[g_idx, summer] *= _ns_ratio
@@ -1479,15 +1599,16 @@ def _apply_outage_overlays(
         # because one denominator is one mechanism (rule 19 [R-ONE-MECH]).
         # ``None`` while off, so every loader takes its incumbent argument and
         # the off path is byte-inert.
-        # NWPP-NEXT-15 (ScenarioConfig.unit_outage_dispatched_bin_live_
-        # denominator, a sub-gate of the above): the same roster, restricted to
-        # rows LIVE in the solve year — a dated exit cohort retired before it is
-        # carried by the LP at zero availability and must not dilute the divide.
-        # Read (and its requirement checked) unconditionally here so an armed
-        # sub-gate without its parent fails closed. None while off.
-        _live_yr = dispatched_bin_live_year(config, _yr)
+        # closeout-W0 (desk ruling D-1): the roster is LIVE — every row divides
+        # only in the months the COD ramp below carries it online, so a dead
+        # exit cohort leaves the divide and one retiring (or a new build
+        # entering) mid-year divides month by month.
         _lp_bins = (
-            lp_bin_capacity_index(generators, pmax, live_year=_live_yr)
+            lp_bin_capacity_index(
+                generators,
+                pmax,
+                live_year=dispatched_bin_live_year(config, _yr),
+            )
             if (
                 getattr(config, "unit_outage_dispatched_bin_denominator", False)
                 and not is_ercot
@@ -1504,6 +1625,11 @@ def _apply_outage_overlays(
             getattr(config, "cc_block_summer_rating", False)
             and not is_ercot
             and _lp_bins is None
+            # W0: the reconstructed map now carries the block reconciliation
+            # itself whenever the run armed it (paths.set_eia860_fleet_row_
+            # repairs, set from this same config at the solve entry points), so
+            # the guard fires only where the two bases genuinely differ.
+            and "cc_block_summer_rating" not in eia860_fleet_row_repairs()
         ):
             raise ValueError(
                 "cc_block_summer_rating requires unit_outage_dispatched_bin_"
@@ -4508,7 +4634,14 @@ def generators_to_fleet_arrays(
     )
 
     if _spp_mmu_armed(config, _iso) and _yr is not None:
-        _apply_spp_mmu_bands(generators, availability, pmax, hours, int(_yr))
+        _apply_spp_mmu_bands(
+            generators,
+            availability,
+            pmax,
+            hours,
+            int(_yr),
+            multiplicative=_spp_mmu_repair_armed(config, _iso),
+        )
 
     if _crow_rate is not None and _crow_idx.size:
         from market_sim.data.spp_gas_outage import (
@@ -4971,6 +5104,12 @@ def generators_to_fleet_arrays(
                     float(pmax[first_in > 0].sum()),
                     int(min(first_in[first_in > 0].min(), hours)),
                 )
+
+    # SPP-107 (ScenarioConfig.spp_mmu_offer_repair): the economic-to-emergency
+    # pool rows take, hour by hour, the slice the multiplicative bands removed
+    # from their zone's fossil rows -- after every availability mask above.
+    if _spp_mmu_repair_armed(config, _iso) and _yr is not None:
+        _apply_spp_mmu_pool(generators, availability, pmax, hours, int(_yr))
 
     # Measured ramp/fast-start capability (GATED config.measured_ramp_capability,
     # default off): reconcile the class 10-minute fractions against the

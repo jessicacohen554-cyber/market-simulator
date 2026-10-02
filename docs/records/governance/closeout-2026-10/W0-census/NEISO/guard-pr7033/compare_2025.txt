@@ -1,0 +1,23 @@
+2025: units 763 -> 770; LP-input arrays moved: ['availability', 'heat_rate', 'mc_base', 'min_gen', 'pmax', 'pmin', 'vom']
+MOVE -|oil: avail 37.6163 -> 38.4978 TWh, mean mc 269.5179 -> 252.7725
+MOVE CC_CHP|gas_cc: avail 2.4876 -> 2.5117 TWh, mean mc 74.1078 -> 74.1194
+MOVE CC_REGULAR|gas_cc: avail 88.362 -> 89.3544 TWh, mean mc 68.0025 -> 67.9205
+MOVE COAL_BIT|coal: avail 1.4995 -> 0.7761 TWh, mean mc 90.1134 -> 96.3779
+MOVE CT_CHP|gas_ct: avail 0.5698 -> 0.6304 TWh, mean mc 64.0649 -> 64.7859
+MOVE CT_PEAKER|gas_ct: avail 12.0605 -> 11.9684 TWh, mean mc 110.4955 -> 109.9259
+MOVE ST_CHP|gas_st: avail 0.1158 -> 0.1163 TWh, mean mc 54.1353 -> 54.1353
+MOVE ST_GAS|gas_st: avail 0.5495 -> 0.4877 TWh, mean mc 93.0326 -> 93.0326
+TRIP 2025 watched unit CC_CHP_Boston_p1595_committed not byte-stable: {'pmax_mw': (138.71, 136.695), 'avail_by_month': ([0.9703, 0.9683, 0.9707, 0.5508, 0.9641, 0.9363, 0.9114, 0.9371, 0.7308, 0.9662, 0.972, 0.968], [0.9654, 0.9634, 0.9621, 0.5434, 0.9327, 0.9289, 0.9092, 0.9328, 0.7255, 0.9451, 0.9662, 0.9631])}
+TRIP 2025 watched unit CT_PEAKER_Central_p1599_econhi not byte-stable: {'avail_by_month': ([0.8925, 0.8946, 0.8412, 0.8179, 0.8025, 0.8225, 0.7858, 0.818, 0.8484, 0.8211, 0.8436, 0.8939], [0.8132, 0.8151, 0.7313, 0.7074, 0.6907, 0.8478, 0.8365, 0.8575, 0.8731, 0.7098, 0.7347, 0.8145])}
+TRIP 2025 watched unit CT_PEAKER_Central_p1599_econlo not byte-stable: {'avail_by_month': ([0.8925, 0.8946, 0.8412, 0.8179, 0.8025, 0.8225, 0.7858, 0.818, 0.8484, 0.8211, 0.8436, 0.8939], [0.8132, 0.8151, 0.7313, 0.7074, 0.6907, 0.8478, 0.8365, 0.8575, 0.8731, 0.7098, 0.7347, 0.8145])}
+TRIP 2025 watched unit CT_PEAKER_Central_p1599_peak not byte-stable: {'avail_by_month': ([0.8925, 0.8946, 0.8412, 0.8179, 0.8025, 0.8225, 0.7858, 0.818, 0.8484, 0.8211, 0.8436, 0.8939], [0.8132, 0.8151, 0.7313, 0.7074, 0.6907, 0.8478, 0.8365, 0.8575, 0.8731, 0.7098, 0.7347, 0.8145])}
+TRIP 2025 class -|oil capacity 4842.4 -> 4938.8 MW (> 1%)
+TRIP 2025 class CC_CHP|gas_cc capacity 320.6 -> 328.0 MW (> 1%)
+TRIP 2025 class CC_REGULAR|gas_cc capacity 14238.7 -> 13574.2 MW (> 1%)
+TRIP 2025 class COAL_BIT|coal capacity 203.4 -> 108.0 MW (> 1%)
+TRIP 2025 class CT_CHP|gas_ct capacity 81.2 -> 87.8 MW (> 1%)
+TRIP 2025 class CT_PEAKER|gas_ct capacity 1664.6 -> 1630.7 MW (> 1%)
+TRIP 2025 class ST_CHP|gas_st capacity 24.4 -> 24.7 MW (> 1%)
+TRIP 2025 class ST_GAS|gas_st capacity 104.8 -> 96.3 MW (> 1%)
+TRIP 2025 total capacity 27002.8 -> 26311.2 MW (> 0.5%)
+FAIL (13 trips)

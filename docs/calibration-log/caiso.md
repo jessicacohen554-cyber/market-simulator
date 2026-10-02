@@ -15756,3 +15756,56 @@ Record: `docs/records/caiso/r-caiso-19/`.
 - Promoted on the pre-registered structure rule: keeper `2026-09-30-caiso-r20-overnight` (+ `-touchpoints`). r18 was pruned.
 
 Record: `docs/records/caiso/r-caiso-20/`.
+
+## 2026-10-02 — closeout-B W0 phase 3: keeper 2026-10-02-w0-caiso (W0 EIA-860 settlement re-solve), NOT-YET → NOT-YET
+
+**What changed.** The r-caiso-20 recipe (`rcaiso20_A_span` for 2022–2025 and the folded `rcaiso20_A_tp_2019_2021`) was re-solved year by year (rule 36: seven shards at `306f2c00`). The only change was the W0 EIA-860 settlement backcast defaults (owner ruling R-2; PRECOMMIT `docs/records/governance/closeout-2026-10/PRECOMMIT-closeout-b-w0-phase3-2026-10-02.md`):
+- seasonal summer/winter capacity basis;
+- actual-retirement-only;
+- the five registry-read repairs;
+- standby admission.
+
+`unit_outage_dispatched_bin_denominator` yields to the keeper's armed extract-basis share. The seven years compose into ONE bundle, `w0_caiso_span`, which absorbs the touchpoint fold. Recipe equality was checked field by field by `scripts/probes/_w0_compose_span.py`. The deleted knob `cc_subfloor_eia923_heat_rates` (rule 26) was off in the keeper. Zero DOF.
+
+| | 2021 | 2022 | 2023 | 2024 | 2025 |
+|---|---|---|---|---|---|
+| C3a vs RT, before | +12.5 % | +8.6 % | +6.3 % | +4.7 % | +6.6 % |
+| C3a vs RT, after | +12.8 % | +8.2 % | +7.5 % | +5.9 % | +6.0 % |
+
+- 2019 and 2020 C3a stay unscoreable: there is no RT reference.
+- CC_REGULAR over-dispatch narrows: 2020 +17.55 → +16.28 TWh, 2021 +10.17 → +8.70 TWh.
+- No criterion record changes status.
+- Determination: NOT-YET → NOT-YET. Under rule 30 the 2019–2021 rungs already carried their C2/C3a/C4 FAILs.
+
+**Census (rated-capacity rebuild at the W0 posture, phase 2).** Total thermal reads −2.1 to −7.2 % summer against EIA-860, OUTSIDE the 0.5 % tolerance.
+- **CC** is −7.6 to −8.5 %, "rating differs": 50216 (−259 MW) and 55217 (−198 MW).
+- **CT** is −9.7 to −10.6 %, "rating differs": 50134 (−105 MW) and 10496 (−101 MW).
+- **ST_GAS:**
+  - 2019 is +41.9 %, rating: 315 (+845 MW) and 356 (+480 MW).
+  - 2023 is +28.9 %: 356 exit-channel carry (+830 MW).
+- **COAL** is −70 %: 10684 (−35 to −40 MW).
+
+These are residuals for the CAISO lane, not tuned (rule 23). Ledgers: `W0-census/CAISO/fleet_census_<Y>_w0.json`.
+
+## 2026-10-02 — closeout-CAISO wave 1 arm 3: keeper 2026-10-02-closeout-caiso-w1-arm3 (CC min-load 0.26 → measured 0.570), NOT-YET → NOT-YET
+
+The W0 keeper recipe plus one delta: `caiso_ra_min_load_frac` 0.26 → 0.570. That value is the CEMS-measured CC minimum
+stable load (caiso-119), set under owner rulings R-11 and R-14. Seven year-isolated shards ran at `eec4eb5c`, and
+`_closeout_caiso_w1_compose_span.py` checked the recipe field by field. The pre-registered rule was "promote only if
+nothing regresses", and it held. The fail set is unchanged:
+- C1 CC_REGULAR 2019/20/21: +10.19 / +16.44 / +8.69 TWh;
+- C3a 2021: +12.8 %;
+- C4 gas NRMSE 2019/20/21: 0.385 / 0.403 / 0.351.
+
+C3c 2021 (89 h vs 27 h) is a caveat and C3c 2024 (0 h vs 35 h) stays ledgered.
+
+| | 2022 | 2023 | 2024 | 2025 |
+|---|---|---|---|---|
+| C3a vs RT, before → after | +8.2 → +8.5 % | +7.5 → +7.9 % | +5.9 → +6.1 % | +6.0 → +6.3 % |
+| C1 CC_REGULAR, TWh | +1.23 → +1.02 | −0.88 → −1.16 | +0.02 → +0.03 | −0.51 → −0.59 |
+| C4 gas NRMSE | 0.248 → 0.248 | 0.244 → 0.245 | 0.247 → 0.244 | 0.291 → 0.286 |
+
+C8 CC_REGULAR forced share 2019–25 moved 7.4/5.0/5.9/7.2/7.5/9.1/12.3 → 8.6/5.9/6.1/7.0/7.0/9.6/12.4 %. The bridge level
+is capped (caiso-119), so the fraction barely moves the energy. Zero DOF was added. The unledgered 0.26 is retired, and
+`pipeline/backcast_config.py` now defaults CAISO to 0.570 (rule 26 deleted the stale 0.259 justification). Record:
+`docs/records/caiso/closeout-caiso-w1/RESULT-closeout-caiso-w1-arm3-2026-10-02.md`.

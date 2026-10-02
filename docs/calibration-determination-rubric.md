@@ -1,5 +1,8 @@
 # Calibration Determination Rubric (v2)
 
+> Scorer `RUBRIC_VERSION` is **3.17** (2026-10-02). The status paragraph below was
+> written at v3.4; every later amendment is in §9 (newest first).
+
 Status: **canonical, machine-enforced. RUBRIC VERSION 3.4** (2026-08-18 owner
 amendment, session caiso-c1-lmp-pricing. Directive verbatim: *"Ccgt is fine at
 -1.8% for passing c1 gate … I want … a shift that declares c1 for 2023
@@ -1069,6 +1072,17 @@ differently:
   surviving class is the scarcity-tail series — C3c, exactly the one slot v3.1
   keeps.
 
+**v3.14 / v3.15 (owner rulings R-6 / R-8, 2026-10-02) — two scoped caveat
+kinds outside the single slot.** (a) A **configuration exception**
+(`CONFIG_EXCEPTION_ENTRIES`: ERCOT 2023 C3a/C3b on the declared carve-out
+config) is neither ledgered nor commercial-band: it spends no budget and does
+not downgrade, and is named on the basis with the IMM counterfactual beside
+the actual. (b) On a **lambda-referenced BA** (`LAMBDA_REFERENCED_ISOS`: SOCO)
+the scoped C3a/C3b **reference-definition** rows leave the single-slot count
+but still downgrade, so the reading is `CALIBRATED-WITH-CAVEATS`, not
+`NOT-YET`. Neither widens `LEDGERABLE_CRITERIA`; both are exact-keyed tables.
+See §9.
+
 **Determination:**
 
 | Outcome | Conditions (all must hold) |
@@ -1299,6 +1313,73 @@ down to.
 > change. Ratifying this one after the fact does not license the next one.
 
 ## 9. Version history
+
+*(v3.10–v3.13 are narrated in `docs/governance/rule-history.md` §23–§26 and in
+the `RUBRIC_VERSION` genealogy of `scripts/calibration_verdict.py`; v3.14–v3.17
+below are indexed in rule-history §27. Record:
+`docs/records/governance/closeout-2026-10/RESULT-closeout-c-rubric-2026-10-02.md`.)*
+
+- **v3.17 (2026-10-02, owner ruling R-13 — backcast close-out plan §5.0,
+  verbatim: *"adopt zonal load-weighted C3a for PJM"*)** — PJM's `rt_lw`/`da_lw`
+  actual becomes **zone-resolved**, as NYISO (2026-10-01) and MISO (miso-294):
+  per model zone, the simple mean of its constituent transmission-zone LMPs
+  (PJM DataMiner2 `rt_hrl_lmps`/`da_hrl_lmps`, `type = ZONE`, 2019–2025, crosswalk
+  `eia930.zonal_shares._PJM_LOAD_ZONE_GROUPS`), weighted by measured zonal demand
+  and zone-demand-weighted across zones (`derive_actual_lmp.ZONAL_LW_SOURCES["PJM"]`;
+  archive `data/raw/_validation-source/actual_lmp_zonal_PJM.parquet`, written by
+  `scripts/data/derive_pjm_zonal_lmp.py`). A **benchmark** change: no scorer
+  constant moves. The actual rises every year (+$0.55 to +$5.30/MWh — the
+  Dominion/EMAAC premium the hub mean under-weighted). C3a 2020 +12.4 % FAIL →
+  +9.5 % PASS; 2022 −11.5 % → −17.4 % (still FAIL); 2025 −1.9 % → −9.6 % (PASS,
+  0.4 pt margin). C3b 2022 0.253 → 0.292 (FAIL). PJM stays NOT-YET (C1 coal and
+  2022 Elliott).
+- **v3.16 (2026-10-02, owner ruling R-9, verbatim: *"NWPP price reference: WEIM
+  ELAP 2023-06 onward as a labelled imbalance-price benchmark, STOP-gated like
+  SOCO's lambda; 2019–2022 stay PHYSICALLY-CALIBRATED (price unscored)"*)** —
+  NWPP gains an `actual_lmp.json` block: the CAISO WEIM 15-minute ELAP price,
+  demand-weighted over the 11 priced footprint BAs, landed by
+  `build_nwpp_weim_price_index.py land-labelled` from the committed stores on
+  the NWPP-13 gate cells **D1/D2/D4** (D3, the Mid-C-proxy test, is answered by
+  the label, not the gate). C3a/C3b score on it under the label
+  (`PRICE_BENCHMARK_LABEL["NWPP"]`); **C3c is not scored on it**
+  (`C3C_NOT_SCORED["NWPP"]`, as SOCO: an imbalance price's tail is
+  power-balance pricing on the imbalance, not footprint scarcity). Years before
+  `LABELLED_PRICE_REFERENCE_FROM["NWPP"] = 2023` take the v3.8 no-price
+  treatment **per year**; a mixed span scores price on the priced years only
+  and names the unpriced years on its own basis line. Measured: C3a 2023
+  −21.4 % / 2024 −27.7 % FAIL, 2025 +2.6 % PASS; C3b 2023 0.303 / 2024 0.676
+  FAIL, 2025 0.179 PASS. NWPP stays NOT-YET, now with a price reading; its
+  2019–2022 per-year rungs read PHYSICALLY-CALIBRATED (PRICE UNSCORED).
+- **v3.15 (2026-10-02, owner ruling R-8, verbatim: *"SOCO: scope the caveat
+  budget for a lambda-referenced BA → CALIBRATED-WITH-CAVEATS"*)** — on a BA in
+  `LAMBDA_REFERENCED_ISOS` (SOCO) the scoped C3a/C3b rows of v3.11/v3.12 — the
+  **reference-definition** rows, whose evidence is the definition of the lambda
+  itself — are carried **off** the single ledgered slot. Every v3.10 guard
+  binds; they still **downgrade**. The 2019 C1 COAL_BIT row still spends the
+  slot; `MAX_LEDGERED_CAVEATS` stays 1. SOCO NOT-YET (budget 3/1) →
+  **CALIBRATED-WITH-CAVEATS** (budget 1/1, two reference-definition criteria).
+- **v3.14 (2026-10-02, owner ruling R-6, verbatim: *"We had it set up so 2023
+  was allowed to have a different config because of the ECRS; then that got
+  eliminated. I'm comfortable with a different config for a single year we know
+  was off."*)** — the **configuration-exception** caveat kind
+  (`CONFIG_EXCEPTION_ENTRIES`, `_apply_config_exceptions`): ERCOT 2023 C3a
+  (model under actual) and C3b (NRMSE above band), only when the year's own
+  solved `run_config_2023.json` carries the declared carve-out signature
+  (`ercot_offer_swcap_clip` armed), read `CAVEAT` classified *OWNER-SIGNED
+  CONFIGURATION EXCEPTION* at full magnitude, spend **no** caveat slot and do
+  **not** downgrade — non-downgrading like a ledgered C3c under rule 22, and
+  named on the determination basis on every route. Evidence: Potomac
+  Economics, *2023 State of the Market Report for the ERCOT Electricity
+  Markets*, §II.H / Fig. 13 (ECRS sequestration and non-deployment "doubled
+  average real-time energy prices from June through December 2023"; spikes
+  "did not reflect true shortages"). The IMM counterfactual is printed beside
+  the actual: ECRS-neutral load-weighted RT ≈ $35 vs actual $62–65; model
+  $49.12 reads −24.5 % against the actual and +40.3 % against the
+  counterfactual. Guards: exact key, config-bound, direction-bound, governance
+  must pass, never a PASS, every other criterion-year still gates.
+  `LEDGERABLE_CRITERIA` and both budgets unchanged. The ERCOT carve-out-2023
+  scope NOT-YET → **CALIBRATED**; ERCOT stays NOT-YET on the forward 2024 C3a
+  (−11.4 %) and the 2019–2022 validation config.
 
 - **v3.9 (2026-09-25, owner ruling C8-SUBCLASS — "Yes" to the open question of
   `docs/records/misc/RESULT-coal-sub-2026-09-25.md` §6, "Keep family-level C8, or

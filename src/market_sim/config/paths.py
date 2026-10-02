@@ -215,6 +215,115 @@ def set_eia860_standby_admission(admit_standby_units: bool) -> frozenset[str]:
     return _ACTIVE_OPERABLE_STATUSES
 
 
+# --- EIA-860 seasonal capacity basis (W0 E.1) --------------------------------
+# ``ScenarioConfig.seasonal_capacity_basis`` (owner ruling R-2 / Q1,
+# 2026-10-02; backcast default on, plant-level fleets). While armed, every
+# fleet read path that resolves through ``eia860._rows_to_generators`` carries
+# a thermal unit at its published seasonal envelope and records the
+# summer / winter share of it (audit §E.1). Process-global exactly like the
+# standby admission above and set at the same two entry points, so the
+# snapshot, the per-year vintages and every injection channel see one basis
+# (rule 19 ``[R-ONE-MECH]``).
+_SEASONAL_CAPACITY_BASIS: bool = False
+
+
+def eia860_seasonal_capacity_basis() -> bool:
+    """Return True while the W0 seasonal capacity basis is armed."""
+    return _SEASONAL_CAPACITY_BASIS
+
+
+def set_eia860_seasonal_capacity_basis(armed: bool) -> bool:
+    """Arm (or reset) the seasonal capacity basis for the fleet loaders.
+
+    Args:
+        armed: ``ScenarioConfig.seasonal_capacity_basis and
+            ScenarioConfig.plant_level_fleet`` — the basis is defined on the
+            per-plant EIA-860 path only (ERCOT's curated bin sheet keeps its
+            own nameplate basis until the Q5 migration).
+
+    Returns:
+        The active setting.
+    """
+    global _SEASONAL_CAPACITY_BASIS
+    _SEASONAL_CAPACITY_BASIS = bool(armed)
+    return _SEASONAL_CAPACITY_BASIS
+
+
+# --- EIA-860 retirement rule (W0 E.5) ----------------------------------------
+# ``ScenarioConfig.backcast_actual_retirement_only`` (owner ruling R-2,
+# 2026-10-02; backcast default on). While armed, the OPERABLE sheet's
+# ``Planned Retirement Month / Year`` is never read: a backcast unit leaves the
+# fleet only at an ACTUAL retirement (the retired-and-canceled sheet of the
+# first vintage listing it, carried by the retiree / exit channels). Audit §C.4
+# measures the planned field at 0 MW binding in every ISO-year under
+# year-matched vintages; the rule makes that a guarantee rather than an
+# observation. Process-global like the two switches above.
+_BACKCAST_ACTUAL_RETIREMENT_ONLY: bool = False
+
+
+def eia860_actual_retirement_only() -> bool:
+    """Return True while operable-sheet planned retirements are ignored."""
+    return _BACKCAST_ACTUAL_RETIREMENT_ONLY
+
+
+def set_eia860_actual_retirement_only(armed: bool) -> bool:
+    """Arm (or reset) the W0 E.5 actual-retirement-only rule.
+
+    Args:
+        armed: ``ScenarioConfig.backcast_actual_retirement_only`` (coerced off
+            outside a backcast, so a forecast always reads planned dates).
+
+    Returns:
+        The active setting.
+    """
+    global _BACKCAST_ACTUAL_RETIREMENT_ONLY
+    _BACKCAST_ACTUAL_RETIREMENT_ONLY = bool(armed)
+    return _BACKCAST_ACTUAL_RETIREMENT_ONLY
+
+
+# --- EIA-860 row repairs on the reconstructed fleets (W0 E.3) ------------------
+# ``ScenarioConfig.cc_block_summer_rating`` / ``cc_steam_part_capacity`` (W0
+# backcast defaults) change which MW a plant's bins carry. The LP fleet reads
+# them from the config; the RECONSTRUCTED fleets the outage maps sum
+# (``outages._iso_plant_capacity`` and its per-unit companion) load the fleet
+# with no config in hand, so the two repairs reach them through this process
+# global, set at the same two entry points as the switches above — one fleet,
+# one basis, for the LP and its outage denominators (rule 19).
+_FLEET_ROW_REPAIRS: frozenset[str] = frozenset()
+
+
+def eia860_fleet_row_repairs() -> frozenset[str]:
+    """Return the armed EIA-860 row repairs the reconstructed fleets apply.
+
+    A subset of ``{"cc_block_summer_rating", "cc_steam_part_capacity"}``.
+    """
+    return _FLEET_ROW_REPAIRS
+
+
+def set_eia860_fleet_row_repairs(
+    cc_block_summer_rating: bool, cc_steam_part_capacity: bool
+) -> frozenset[str]:
+    """Arm (or reset) the row repairs for the reconstructed fleet loads.
+
+    Args:
+        cc_block_summer_rating: ``ScenarioConfig.cc_block_summer_rating``.
+        cc_steam_part_capacity: ``ScenarioConfig.cc_steam_part_capacity``.
+
+    Returns:
+        The active set.
+    """
+    global _FLEET_ROW_REPAIRS
+    _FLEET_ROW_REPAIRS = frozenset(
+        name
+        for name, on in (
+            ("cc_block_summer_rating", cc_block_summer_rating),
+            ("cc_steam_part_capacity", cc_steam_part_capacity),
+        )
+        if on
+    )
+    return _FLEET_ROW_REPAIRS
+
+
 def resolve_backcast_eia860_vintage(
     explicit_vintage: int | None,
     solve_year: int | None,

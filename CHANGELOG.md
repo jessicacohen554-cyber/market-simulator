@@ -1,5 +1,35 @@
 # Changelog
 
+## 2026-10-02 — closeout-W0 denominator fix, part 2: the live dispatched-bin roster (desk ruling D-1, zero LP)
+
+With `unit_outage_dispatched_bin_denominator` on in a COD-ramped backcast, the unit-outage denominator
+is the LIVE roster, Σ pmax × online(month), read off the COD ramp's own resolver
+(`cod_ramp.generator_online_mask`): a row offline all year (a dead exit cohort — Scherer, Centralia
+3845, Colstrip 6076, Schahfer 6085, Petersburg, Dallman) leaves the divide, and a bin held below its
+pmax in some month divides hour by hour (PR #7047's monthly mechanics and zero-month fallback kept).
+NWPP-NEXT-15's `unit_outage_dispatched_bin_live_denominator` is folded in and **deleted** (rule 26:
+field, cache-key registrations, runner kwargs, `--[no-]unit-outage-dispatched-bin-live-denominator`,
+matrix row and every shard cell); its screened-coal-first limb now belongs to
+`wefor_residual_short_screened_coal`. `SolveEpoch` 2026-10-02d re-keys backcast MISO / NWPP / PJM /
+SOCO. Record: `docs/records/governance/closeout-2026-10/RESULT-closeout-w0-denominator-fix-2-2026-10-02.md`.
+
+## 2026-10-02 — W0 EIA-860 settlement foundation (closeout-B, phases 1 + 2, zero LP)
+
+Owner ruling R-2 (Q1–Q8). Backcast-default flips with `--no-…` escapes, coerced off outside a
+backcast (F1 two-half landing; forecast/hindcast keys byte-stable; the bare backcast key moves by
+design): **new** `seasonal_capacity_basis` (E.1: published summer Jun–Sep / winter Oct–May of the
+solved vintage, flat class derate deleted on per-plant fleets), **new** `backcast_actual_retirement_only`
+(E.5), and `commission_year_cod_fallback`, `cc_block_summer_rating`, `cc_steam_part_capacity`,
+`retiree_vintage_status_scope`, `admit_standby_units`, `partial_plant_exit_carry`,
+`mid_vintage_exit_carry` (E.3/E.4) plus the companion `unit_outage_dispatched_bin_denominator` (yields to
+an explicit alternative denominator). Steam-part predicate in every ISO; block predicate includes NG
+blocks where no demonstrated-peak table exists. E.6: every `eia860_generators.parquet` regenerated
+unfiltered + `nerc_region` (zero-diff verified); membership at load time. E.7:
+`scripts/build_fleet_census.py`, `promote_keeper.py` preflight, `audit_keepers.py` E15. E.9:
+`solve_surface.json` records `eia860_vintages` sha256. Q7: PUDL subplant crosswalk intaken; every
+hand CEMS remap confirmed or a cited override. Month sentinels 88/99 → mid-year. Phase-2 census,
+NEISO tripwire and G-DRIFT under `docs/records/governance/closeout-2026-10/W0-census/`.
+
 ## 2026-10-01 — Repo cleanup: protocol condensed, records filed, dead weight pruned, clean-data profiles
 
 Orchestrated from one parent session over five shards (PRs #6968, #6973, #6974, #6979, #6982). No

@@ -1,0 +1,8 @@
+pjmnext16_A_span 2019 rows OK | d_avail_TWh by bin: {'3149/COAL': -0.0003} | total -0.0003
+pjmnext16_A_span 2020 rows OK | d_avail_TWh by bin: {'2866/COAL': -0.0956} | total -0.0956
+nwppnext16c_span 2020 rows OK | d_avail_TWh by bin: {'6076/COAL': -0.1992} | total -0.1992
+miso280_span 2020 rows OK | d_avail_TWh by bin: {'976/COAL': -0.0328} | total -0.0328
+miso280_span 2021 VIOLATIONS [('min_gen', np.str_('COAL_MISO-Indiana_p1001_committed'), 'not a monthly bin'), ('min_gen', np.str_('COAL_MISO-Indiana_p6113_econc01'), 'not a monthly bin'), ('min_gen', np.str_('COAL_MISO-Indiana_p6705_mustrun'), 'not a monthly bin')] | d_avail_TWh by bin: {'6085/COAL': -0.3472, '994/COAL': -0.1957} | total -0.5428
+miso280_span 2023 VIOLATIONS [('min_gen', np.str_('COAL_MISO-Indiana_p6113_committed'), 'not a monthly bin')] | d_avail_TWh by bin: {'994/COAL': -0.1519} | total -0.1519
+miso280_span 2024 rows OK | d_avail_TWh by bin: {'4041/COAL': -0.7566, '8056/ST_GAS': -0.507, '992/ST_GAS': -0.0006} | total -1.2642
+soco96_span 2022 rows OK | d_avail_TWh by bin: {'6257/COAL': -2.0094} | total -2.0094

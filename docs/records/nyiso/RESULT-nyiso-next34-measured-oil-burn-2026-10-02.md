@@ -10,6 +10,13 @@
   2025, #7015). The keeper was re-scored on the same parts: still CALIBRATED, C3a unchanged. Every number below,
   keeper and arm alike, is on that one basis.
 
+> **Superseded basis (added at merge, 2026-10-02).** While these shards solved, main promoted a new NYISO keeper,
+> `2026-10-02-w0-nyiso` (bundle `w0_nyiso_span`, 2021–2025 in one bundle; the W0 EIA-860 settlement re-solve). Its
+> C3a vs RT is +4.3 / −0.7 / +2.0 / −0.8 / −7.7. This arm was solved on the outgoing `nyisonext26p` recipe, so it is
+> **not promotable** (option A below is void), and every "keeper" number below means `nyisonext26p`. The mechanism
+> evidence carries forward: the off-cap half closes the object, and the cap-binding half reproduces NEXT-24. Any
+> retest re-bases on `w0_nyiso_span`.
+
 ## 1. Gates (PRECOMMIT §3)
 
 | gate | result |
@@ -71,8 +78,8 @@ scope boundary is the existing cap test (`gas > oil`, `dual_fuel_switch_mask`). 
 
 | | option | what it does |
 |---|---|---|
-| A | Promote `nyisonext34` as is; ledger the G-5 row under NEXT-31. | C3a 2025 margin 0.4 → 1.7 pt, but ~0.5 pt of it is MLK over-pricing; C3c 2025 "passes" on mistimed hours. |
-| **B (recommended)** | **Hold the keeper.** Keep this run as a probe. Next lane (NYISO-NEXT-35): an off-cap-scoped variant, measured mix only where gas ≤ oil and the parity cap untouched where it binds. PRECOMMIT + 5 shards. | Tests the half of the mechanism the evidence supports. The cell stays O. |
+| A (void: keeper superseded) | Promote `nyisonext34` as is; ledger the G-5 row under NEXT-31. | C3a 2025 margin 0.4 → 1.7 pt, but ~0.5 pt of it is MLK over-pricing; C3c 2025 "passes" on mistimed hours. |
+| **B (recommended)** | **Hold the keeper.** Keep this run as a probe. Next lane (NYISO-NEXT-35), re-based on `w0_nyiso_span`: an off-cap-scoped variant, measured mix only where gas ≤ oil and the parity cap untouched where it binds. PRECOMMIT + 5 shards. | Tests the half of the mechanism the evidence supports. The cell stays O. |
 | C | Reject `dual_fuel_measured_oil_burn` for NYISO (R on G-5). | Closes the lever, including its off-cap half. |
 
 Bundles (slim, registered) are on held PR #7053, branch `claude/nyisonext34-probe`: `results/calibration/nyisonext34_span`, `results/calibration/nyisonext34_2021`.
