@@ -53,13 +53,13 @@ stock in short tons. `scripts/data/curate_coal_stocks.py` melts it long.
 | 2018–2024 | **yes** | Final Revision vintage |
 | 2025 | **no** | see below |
 
-**DATA NEEDED: `coal_stocks_2025.csv` — awaiting the EIA-923 2025 Final
-Revision.** The 2025 release on disk at EIA (`f923_2025.zip`, workbook stamped
-`20FEB2026`) carries `Page 2 Stocks Data` and `Page 2 Oil Stocks Data` but
-**no** `Page 2 Coal Stocks Data`. Its combined sheet is *census-division /
-state aggregate in thousand tons with withheld (`W`) cells* — 67 rows, not
-plant-level — so it cannot substitute. The plant-level coal split appears only
-in the Final Revision. Re-run the fetch script once EIA publishes it.
+**DATA NEEDED: `coal_stocks_2025.csv` — not published at plant level.** Re-checked
+2026-10-02 against the EIA-923 **Final** 2025 release (`f923_2025.zip`, workbook
+`EIA923_Schedules_2_3_4_5_M_12_2025_Final.xlsx`): it still carries `Page 2 Stocks Data`
+(census-division / state aggregate in thousand tons with withheld `W` cells, 68 rows) and
+`Page 2 Oil Stocks Data`, and **no** `Page 2 Coal Stocks Data` sheet, so
+`fetch_eia923_coal_stocks.py --years 2025` skips it by design. A 2025 backcast budget
+does not need it (its opening stock is December 2024); a 2026 budget would.
 
 Two further vintage facts, both handled in the curation script:
 

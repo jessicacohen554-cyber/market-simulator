@@ -149,6 +149,25 @@ def fetch_year(year: int, out_dir: Path | None = None) -> tuple[Path, str, str]:
     return path, url, sha
 
 
+def write_sums(path: Path, sums: list[str]) -> None:
+    """Merge fresh ``SHA256SUMS`` lines into ``path``, keyed by source zip.
+
+    A partial ``--years`` run replaces only the lines for the zips it fetched
+    and keeps every other year's provenance line (a single-year refetch used
+    to overwrite the whole file and drop the other years' sha256s).
+    """
+    merged: dict[str, str] = {}
+    if path.exists():
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if line.strip():
+                merged[line.split()[1]] = line
+    for line in sums:
+        merged[line.split()[1]] = line
+    path.write_text(
+        "\n".join(merged[k] for k in sorted(merged)) + "\n", encoding="utf-8"
+    )
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--years", type=int, nargs="*", default=list(DEFAULT_YEARS))
@@ -162,7 +181,7 @@ def main() -> int:
         except Exception as exc:
             print(f"  {year}: SKIPPED — {exc}")
     if sums:
-        (out / "SHA256SUMS.txt").write_text("\n".join(sums) + "\n", encoding="utf-8")
+        write_sums(out / "SHA256SUMS.txt", sums)
     return 0
 
 
