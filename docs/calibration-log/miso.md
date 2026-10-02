@@ -15710,3 +15710,14 @@ declined: "Record; next zero-LP object (Recommended)"; "Solve the per-year table
   anyway (7 shards, field minted, miso-298 kill rules); (C) other.
 
 Full span NOT-YET on C1 ST_GAS 2019, C3a 2020, C3b 2021. Train 2023–2025 CALIBRATED. No frontier.
+
+## closeout-MISO wave 1 — 2026-10-02 — tail derive (C3c 2019–21 scored), L3/L4 and R-3 censuses both fail their zero-LP gates; FINDING only
+
+Keeper `2026-09-28-miso-280-splitremap` unchanged. No LP. Record `docs/records/miso/FINDING-closeout-miso-wave1-2026-10-02.md`.
+
+- **0a:** `derive_actual_tail.py` → MISO RT >$200 2019/20/21 = 17/8/48 h. C3c 2019 SKIP→CAVEAT, 2020 SKIP→PASS, 2021 SKIP→CAVEAT; determination NOT-YET unchanged.
+- **Step 2 (L3+L4):** MISO incremental-HR ratio pooled 0.898/0.923. No arm passes (≥ −$1.0 q1–q4 2020 with COAL_PRB in band): L3 −1.24 but PRB 2019/2021 +10.29/+8.54; in-band arms −0.44…+0.88. `coal_econ_two_sided` U→R; the two committed-band R cells stay R.
+- **R-3 ceiling:** static C3b 2021 0.201→0.189, but C3a 2019 +11.5 %, C3a 2022 −15.8 %, C3b 2022 0.220 (K3 fail). No PRECOMMIT; `coal_fuel_inventory` stays K.
+- **0b** deferred (owner, no downloads today). Keeper lacks `unit_marginal_<Y>` (next span writes it). Span held on W0.
+
+Full span NOT-YET on C1 ST_GAS 2019, C3a 2020, C3b 2021. Train 2023–2025 CALIBRATED.
