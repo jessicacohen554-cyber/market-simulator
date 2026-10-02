@@ -15038,3 +15038,36 @@ The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
 - **Result:** ORDC adder LW 2019 10.92 → 10.81 (measured 9.63), 2020 3.17 → 2.50 (2.64), 2022 6.46 → 6.11 (6.87, away — predicted), 2023 2.64 → 2.44 (1.27), 2024 0.34 → 0.32 (0.24). 2020 C3a +5.2 → +2.5 %, C3b 0.221 → 0.209; 2019 C3b 0.219 → 0.228. C1 ≤ 0.35 TWh per class, C8 ≤ 0.1 pp. Every determination unchanged.
 - **Promotion:** PRECOMMIT §6 tripped on 2022 (its own §5 prediction); put to the owner, who chose "Promote (Recommended)".
 - **Record:** `docs/records/ercot/r-ercot/RESULT-r-ercot-24-ordc-published-curve-2026-10-02.md`.
+
+## 2026-10-02 — closeout-B W0 phase 3: keeper 2026-10-02-w0-settlement (W0 EIA-860 settlement re-solve), NOT-YET → NOT-YET
+
+**What changed.** The r-24 recipe (`r_ercot24_span`, with per-year configs for the owner's forward / carve-out / validation partition) was re-solved year by year: seven shards at `306f2c00` (rule 36). The only change is the W0 EIA-860 settlement backcast defaults (owner ruling R-2; PRECOMMIT `docs/records/governance/closeout-2026-10/PRECOMMIT-closeout-b-w0-phase3-2026-10-02.md`):
+- seasonal capacity basis;
+- actual-retirement-only;
+- the five registry-read repairs;
+- standby admission;
+- the dispatched-bin outage denominator.
+
+`partial_plant_exit_carry` was already armed. `_w0_compose_span.py` checked every leg field by field against the keeper. Zero DOF.
+
+The run id is `2026-10-02-w0-settlement`; "ercot" is a stopword in the dashboard slug. The partition's three configs now point to this run, unchanged in scope.
+
+| | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 |
+|---|---|---|---|---|---|---|---|
+| C3a vs RT, before | +6.6 % | +2.5 % | +0.7 % | −9.9 % | −24.5 % | −11.4 % | −9.4 % |
+| C3a vs RT, after | +6.1 % | +2.5 % | +0.6 % | −10.0 % | −24.8 % | −11.4 % | −10.0 % |
+
+- **One record changes status:** forward-config 2025 C3a goes from −9.4 % (PASS) to −10.0 % (FAIL). The forward config's 2025 year therefore reads NOT-YET (was CALIBRATED).
+- COAL_PRB 2025 over-dispatch narrows from +5.75 to +3.53 TWh.
+- The ISO determination stays NOT-YET.
+
+**Census (rated-capacity rebuild at the W0 posture, phase 2).** Total thermal is +2.9 to +5.7 % summer against EIA-860, OUTSIDE tolerance. The cross-ISO carry audit (closeout-B W0 phase 3) splits the rows into four kinds:
+
+| Kind | Plants |
+|---|---|
+| CLASS-BOUNDARY (split codes of operating parents) | 34702 = W A Parish 3470 (+1,255 MW ST_GAS); 34693 = T H Wharton (+526 CT); 49392, 79003; Morgan Creek 3492 (+536 CT) |
+| FOOTPRINT | Jack Fusco 55357 (+676 CC; EIA-860 BA reads MISO) |
+| PHANTOM (0 available MWh) | Oklaunion 127 (2021–25); Frontera 55098 (before its 2023 entry) |
+| TRUE EXIT CARRIES | Oklaunion 2020 (23 % CF); Decker Creek 2022; Sandy Creek and V H Braunig 2025 (OS/OA) |
+
+These are residuals for the ERCOT lane, not tuned (rule 23).
