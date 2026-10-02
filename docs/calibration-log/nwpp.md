@@ -895,7 +895,7 @@ card "Keep #19; retire dup Clark field":
 **2019 re-solve.** The 2019 leg was first kept at `306f2c00` under the byte-inert proof. Preflight 0d refused it: the leg records `unit_outage_dispatched_bin_live_denominator=False`, a rule-26-deleted field that NWPP owns, so False is not an inert value and the replay cannot reproduce it. 2019 was re-solved at `25da6022`. That supersedes the NWPP row of `W0-phase3/KEPT-LEG-INERT-PROOF-2026-10-02.md`. Solve times: P0 2,622 s and P1 4,004 s, single-threaded; memory peak 6.06 GiB.
 
 **Scores.** The ISO stays NOT-YET → NOT-YET.
-- fuelmix moves FAIL → PASS: 2025 CC_REGULAR goes +9.60 → +7.79 TWh.
+- fuelmix moves FAIL → PASS: 2025 CC_REGULAR goes +9.60 → +7.91 TWh.
 - price_mean, price_shape and dispatch_corr still FAIL. price_tail is SKIPPED.
 
 | C3a vs RT | 2023 | 2024 | 2025 |
