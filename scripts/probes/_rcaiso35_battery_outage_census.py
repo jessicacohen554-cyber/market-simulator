@@ -21,10 +21,19 @@ battery fleet MW, giving ``o(t)`` and ``a(t) = 1 - o(t)``.
 - T3: within-quarter Spearman of daily mean ``o`` vs daily max measured
   discharge / fleet (descriptive).
 
+R-CAISO-38 (link 20) adds the opt-in ``--pre-cod-basis`` block (PRECOMMIT
+``docs/records/caiso/r-caiso-38/``): offline MW of resources whose plant is
+not in the denominator fleet in the hour's month, split into accepted pre-COD
+(A), accepted absent for another reason (B) and unaccepted (U), and ``o_860``
+/ T1 primary / T2 re-read with A+B, then A+B+U, removed from the numerator.
+A sensitivity beside the adjudicated reading; without the flag the output is
+unchanged.
+
 Usage::
 
     python3 scripts/probes/_rcaiso35_battery_outage_census.py \
-        --out docs/records/caiso/r-caiso-35/battery_outage_census.json
+        --out docs/records/caiso/r-caiso-35/battery_outage_census.json \
+        [--pre-cod-basis]
 """
 
 from __future__ import annotations
@@ -54,6 +63,7 @@ WINDOWS = REPO / "data/raw/caiso-dam-outages/caiso-dam-outage-windows.parquet"
 ENVELOPE = REPO / "data/raw/reference/caiso-storage-shape-envelope.csv"
 XWALK = REPO / "data/raw/reference/caiso-storage-resource-eia-crosswalk.csv"
 UNIVERSE = REPO / "data/raw/caiso-rtm-eoh-soc"
+EIA860M = REPO / "data/raw/eia-860m/august_generator2026.operating.parquet"
 TZ = "America/Los_Angeles"
 #: PRECOMMIT §4 bands on max over (year, direction) of B.
 CARRIED_MAX, MARGINAL_MAX = 0.01, 0.05
@@ -94,6 +104,185 @@ def offline_mw(win: pd.DataFrame, grid_utc: pd.DatetimeIndex) -> np.ndarray:
     return total
 
 
+def offline_by_resource(win: pd.DataFrame, grid_utc: pd.DatetimeIndex) -> dict:
+    """Per-resource hourly offline MW on ``grid_utc`` (the :func:`offline_mw` terms)."""
+    return {rid: offline_mw(g, grid_utc) for rid, g in win.groupby("resource_id")}
+
+
+def denominator_by_plant(year: int) -> tuple[dict[int, np.ndarray], set[int]]:
+    """Per-plant (12,) MW of ``monthly_battery_fleet_mw(year)``, and its plant set.
+
+    Rebuilds ``storage.load_eia860_storage``'s row filters (canonical vintage,
+    status OP, compressed air out, ``Operating Year <= year``, the COD/retirement
+    month mask, CAISO zone lookup) keyed by ``Plant Code`` instead of zone. The
+    second return is every in-zone OP plant with the COD filter ignored, so an
+    accepted plant absent from the month's fleet can be attributed to its COD.
+    """
+    from market_sim.config.paths import active_eia860_dir, set_eia860_vintage
+    from market_sim.data.zone_assignment import build_zone_lookup
+    from market_sim.model.storage import _optional_numeric, _unit_monthly_mask
+
+    set_eia860_vintage(None)
+    zl = build_zone_lookup("CAISO")
+    df = pd.read_parquet(active_eia860_dir() / "eia860_energy_storage_operable.parquet")
+    df = df[df["Status"].astype(str).str.strip().str.upper() == "OP"]
+    if "Technology" in df.columns:
+        df = df[
+            ~df["Technology"].astype(str).str.contains("Compressed Air", case=False)
+        ]
+    power = pd.to_numeric(df["Nameplate Capacity (MW)"], errors="coerce")
+    oy = pd.to_numeric(df["Operating Year"], errors="coerce")
+    om = pd.to_numeric(df["Operating Month"], errors="coerce")
+    ry = _optional_numeric(df, "Planned Retirement Year")
+    rm = _optional_numeric(df, "Planned Retirement Month")
+    by_plant: dict[int, np.ndarray] = {}
+    known: set[int] = set()
+    for code, p, y, m, r1, r2 in zip(df["Plant Code"], power, oy, om, ry, rm):
+        if p != p or p <= 0.0:
+            continue
+        try:
+            c = int(code)
+        except (TypeError, ValueError):
+            continue
+        if zl.get(c) is None:
+            continue
+        known.add(c)
+        if y == y and y > year:
+            continue
+        mask = _unit_monthly_mask(y, m, r1, r2, year)
+        if mask.any():
+            by_plant[c] = by_plant.get(c, np.zeros(12)) + float(p) * mask
+    return by_plant, known
+
+
+def cod_860m() -> dict[int, tuple[int, int]]:
+    """Earliest EIA-860M ``Batteries`` (year, month) COD per plant, operating sheet."""
+    d = pd.read_parquet(EIA860M)
+    d = d[d["Technology"].astype(str).str.strip() == "Batteries"]
+    d = d.assign(
+        pc=pd.to_numeric(d["Plant ID"], errors="coerce"),
+        y=pd.to_numeric(d["Operating Year"], errors="coerce"),
+        m=pd.to_numeric(d["Operating Month"], errors="coerce"),
+    ).dropna(subset=["pc", "y", "m"])
+    first = d.sort_values(["y", "m"]).groupby("pc").first()
+    return {int(k): (int(r.y), int(r.m)) for k, r in first.iterrows()}
+
+
+def readings(off: np.ndarray, f860: np.ndarray, e: dict, oth: np.ndarray) -> dict:
+    """``o_860`` stats, T1 primary and T2 for one numerator (PRECOMMIT R0-R2)."""
+    a = 1 - off / f860
+    meas = {
+        "chg": np.clip(-oth, 0, None) / f860,
+        "dis": np.clip(oth, 0, None) / f860,
+    }
+    return {
+        "offline_mw_mean": round(float(off.mean())),
+        "o_860_mean": round(float((1 - a).mean()), 4),
+        "o_860_p99": round(float(np.quantile(1 - a, 0.99)), 4),
+        "o_860_max": round(float((1 - a).max()), 4),
+        "T1_primary": {d: t1(v, a, f860) for d, v in e.items()},
+        "T2_measured_over_available_share": {
+            d: round(float((v > a).mean()), 5) for d, v in meas.items()
+        },
+    }
+
+
+def pre_cod_basis(
+    win: pd.DataFrame,
+    xw: pd.DataFrame,
+    envelope: pd.DataFrame,
+    month_of_row: np.ndarray,
+) -> dict:
+    """R-CAISO-38: the numerator/denominator plant-basis mismatch, A / B / U."""
+    acc = xw[xw["accepted"] == 1]
+    plant_of = dict(zip(acc["resource_id"], acc["plant_code"].astype(int)))
+    method_of = dict(zip(acc["resource_id"], acc["match_method"]))
+    m860 = cod_860m()
+    hod = np.arange(8760) % 24
+    out: dict = {"years": {}}
+    for year in YEARS:
+        rows = eia930_rows(year)
+        grid = pd.DatetimeIndex(rows["hb_utc"])
+        by_plant, known = denominator_by_plant(year)
+        f860_m = monthly_battery_fleet_mw(year)
+        gap = float(np.abs(sum(by_plant.values()) - f860_m).max())
+        if gap > 1e-6:
+            raise SystemExit(f"{year}: per-plant denominator off by {gap} MW")
+        f860 = f860_m[month_of_row]
+        per = offline_by_resource(win, grid)
+        off_all = offline_mw(win, grid)
+        cls = {k: np.zeros(8760) for k in ("A", "B", "U")}
+        res: dict = {k: {} for k in cls}
+        for rid, v in per.items():
+            if not v.any():
+                continue
+            pc = plant_of.get(rid)
+            if pc is None:
+                cls["U"] += v
+                res["U"][rid] = float(v.sum())
+                continue
+            in_fleet = by_plant.get(pc, np.zeros(12))[month_of_row] > 0
+            for m in range(12):
+                hit = (month_of_row == m) & ~in_fleet & (v > 0)
+                if not hit.any():
+                    continue
+                cod = m860.get(pc) if method_of[rid] == "reviewed_eia860m" else None
+                pre = pc in known or (cod is not None and cod > (year, m + 1))
+                k = "A" if pre else "B"
+                cls[k][hit] += v[hit]
+                res[k][rid] = res[k].get(rid, 0.0) + float(v[hit].sum())
+        ey = envelope[envelope["year"] == year].sort_values("hod")
+        e = {
+            "chg": ey["chg_frac_p95"].to_numpy()[hod],
+            "dis": ey["dis_frac_p95"].to_numpy()[hod],
+        }
+        oth = rows["oth"].to_numpy()
+        tot = float(off_all.sum())
+        yr: dict = {
+            "classes": {
+                k: {
+                    "offline_mw_mean": round(float(v.mean()), 1),
+                    "offline_mw_p99": round(float(np.quantile(v, 0.99)), 1),
+                    "offline_mwh_share": round(float(v.sum()) / tot, 4),
+                    "o_860_pp_mean": round(float((v / f860).mean()) * 100, 2),
+                    "resources": len(res[k]),
+                    "offline_mwh_share_by_method": {
+                        m: round(
+                            sum(
+                                x
+                                for r, x in res[k].items()
+                                if method_of.get(r, "unaccepted") == m
+                            )
+                            / tot,
+                            4,
+                        )
+                        for m in sorted(
+                            {method_of.get(r, "unaccepted") for r in res[k]}
+                        )
+                    },
+                    "top_resources_mwh": {
+                        r: round(x)
+                        for r, x in sorted(res[k].items(), key=lambda kv: -kv[1])[:10]
+                    },
+                }
+                for k, v in cls.items()
+            },
+            "R0_adjudicated": readings(off_all, f860, e, oth),
+            "R1_pre_cod_removed": readings(off_all - cls["A"] - cls["B"], f860, e, oth),
+            "R2_not_in_denominator_removed": readings(
+                off_all - cls["A"] - cls["B"] - cls["U"], f860, e, oth
+            ),
+        }
+        out["years"][str(year)] = yr
+    for r in ("R0_adjudicated", "R1_pre_cod_removed", "R2_not_in_denominator_removed"):
+        out[f"{r}_T1_max_bind_share"] = max(
+            out["years"][str(y)][r]["T1_primary"][d]["bind_share"]
+            for y in YEARS
+            for d in ("chg", "dis")
+        )
+    return out
+
+
 def localize(ts: pd.Series) -> pd.Series:
     """Pacific prevailing naive stamps -> UTC (DST gaps shifted forward)."""
     return (
@@ -128,6 +317,11 @@ def main() -> None:
     """CLI entry."""
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--out", type=Path, required=True)
+    ap.add_argument(
+        "--pre-cod-basis",
+        action="store_true",
+        help="add the R-CAISO-38 pre-COD basis block (default output unchanged)",
+    )
     args = ap.parse_args()
 
     win = pd.read_parquet(WINDOWS)
@@ -260,6 +454,8 @@ def main() -> None:
         "T2_max_share": t2_max,
         "T2_caveat": t2_max > 0.01,
     }
+    if args.pre_cod_basis:
+        result["pre_cod_basis"] = pre_cod_basis(win, xw, env, month_of_row)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(result, indent=2))
     print(json.dumps(result, indent=1))

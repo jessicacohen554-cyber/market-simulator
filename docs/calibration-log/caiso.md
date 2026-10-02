@@ -15884,3 +15884,22 @@ Record: `docs/records/caiso/r-caiso-36/`.
 - Owner card: **close report-only; the next link is R-CAISO-38, a pre-COD basis note.** The keeper is unchanged. Matrix: evidence only on `storage_measured_anchors` (K).
 
 Record: `docs/records/caiso/r-caiso-37/`.
+
+## R-CAISO-38 — 2026-10-02: pre-COD basis note for the battery outage census (link 20), zero LP
+
+- **Measured across the whole census:** offline MW of resources whose plant is not in the EIA-860 denominator in the
+  hour's month. Three classes:
+  - **A:** accepted, COD after the month. 3.44 / 6.69 / 4.01 pp of `o_860`.
+  - **B:** accepted, status `OA` in the annual Final (Elkhorn, Escondido, OC ES2, Silverstrand). 2.72 / 0.76 / 1.63 pp.
+  - **U:** unaccepted. 5.59 / 4.20 / 2.41 pp.
+
+  Link 19's 142 MW is only the 860M part of 2025's A.
+- **With A+B removed** (a sensitivity; the adjudicated reading is unchanged):
+  - `o_860` falls 28.4 → 22.3, 22.3 → 14.9 and 23.8 → 18.1 %.
+  - T1 primary falls 0.548 % → **0 h**, and T2 falls 0.24 % → 0.
+  - Every adjudicated binding hour is a basis artefact, so CARRIED stands with more margin.
+- **Probe:** `--pre-cod-basis` flag added. The default output is byte-identical.
+- **Owner card:** close report-only, and **end the battery chain** (no R-CAISO-39). The keeper is unchanged.
+  Matrix: evidence only on `storage_measured_anchors` (K).
+
+Record: `docs/records/caiso/r-caiso-38/`.
