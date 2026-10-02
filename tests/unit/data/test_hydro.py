@@ -365,8 +365,19 @@ class TestHydroBudgetLoader(unittest.TestCase):
         # the plants that reported in 2024 but not 2025 at their 2024 inflow.
         bare = load_hydro_budget("NEISO", 2025)
         filled = load_hydro_budget("NEISO", 2025, backfill_year=2024)
-        self.assertGreater(filled.n_hydro, bare.n_hydro)
-        self.assertGreater(filled.monthly_energy.sum(), 5.0 * bare.monthly_energy.sum())
+        self.assertGreaterEqual(filled.n_hydro, bare.n_hydro)
+        if bare.n_hydro < 20:
+            # survey-only early release: the backfill restores the fleet
+            self.assertGreater(
+                filled.monthly_energy.sum(), 5.0 * bare.monthly_energy.sum()
+            )
+        else:
+            # complete vintage (EIA-923 Final 2025, landed 2026-10-02): only the
+            # handful of 2024 filers that did not file in 2025 are carried, so
+            # the backfill moves the total by a few percent at most
+            self.assertLess(
+                filled.monthly_energy.sum(), 1.05 * bare.monthly_energy.sum()
+            )
         # The plants that DID report 2025 keep their as-reported budget — the
         # backfill only adds the missing ones, never overwrites a filer.
         for pid in bare.plant_ids:
@@ -449,13 +460,23 @@ class TestCAISOHydroBudget(unittest.TestCase):
         # (EIA-930 excl-PS). Backfilling non-reporters from 2024 recovers
         # the fleet to within 10% of the EIA-930 total.
         bare = load_hydro_budget("CAISO", 2025)
-        self.assertLess(bare.n_hydro, 50)
         filled = load_hydro_budget("CAISO", 2025, backfill_year=2024)
         self.assertGreater(filled.n_hydro, 150)
         total = filled.monthly_energy.sum() / 1e6
         self.assertLess(abs(total - 21.35) / 21.35, 0.10)
-        # Reporters keep their 2025 budgets — only non-reporters are filled.
-        self.assertGreater(filled.monthly_energy.sum(), bare.monthly_energy.sum())
+        if bare.n_hydro < 50:
+            # survey-only early release: reporters keep their 2025 budgets and
+            # only non-reporters are filled, so the total rises
+            self.assertGreater(filled.monthly_energy.sum(), bare.monthly_energy.sum())
+        else:
+            # complete vintage (EIA-923 Final 2025, landed 2026-10-02): the
+            # backfill adds only the few 2024 filers absent in 2025
+            self.assertGreaterEqual(
+                filled.monthly_energy.sum(), bare.monthly_energy.sum()
+            )
+            self.assertLess(
+                filled.monthly_energy.sum(), 1.05 * bare.monthly_energy.sum()
+            )
 
     def test_measured_monthly_hydro_repins_incomplete_2025(self):
         # measured_monthly_hydro exists to repin the incomplete 2025 EIA-923
@@ -483,7 +504,13 @@ class TestCAISOHydroBudget(unittest.TestCase):
         self.assertEqual(repinned.n_hydro, bare.n_hydro)
         total = repinned.monthly_energy.sum() / 1e6
         self.assertLess(abs(total - 21.32) / 21.32, 0.02)
-        self.assertGreater(total, bare.monthly_energy.sum() / 1e6 + 8.0)
+        if bare.n_hydro < 50:
+            # survey-only early release: the repin scales the reporters up
+            self.assertGreater(total, bare.monthly_energy.sum() / 1e6 + 8.0)
+        else:
+            # complete vintage (EIA-923 Final 2025, landed 2026-10-02): the
+            # measured total and the filed total agree to within a few percent
+            self.assertLess(abs(total - bare.monthly_energy.sum() / 1e6), 0.05 * total)
 
     def test_dispatch_respects_real_monthly_budgets(self):
         # End-to-end: the three largest CAISO hydro plants dispatched over
@@ -638,7 +665,16 @@ class TestNEISOHydroBudget(unittest.TestCase):
         # Backfilling non-reporters from 2024 recovers the fleet to the
         # 2024 level (~166 plants) and the TWh to within 5% of 2024.
         bare = load_hydro_budget("NEISO", 2025)
-        self.assertLess(bare.n_hydro, 20, msg="2025 bare should be survey-only subset")
+        if bare.n_hydro >= 20:
+            # complete vintage (EIA-923 Final 2025, landed 2026-10-02): the
+            # backfill is a near no-op and the 2025 total is its own measured
+            # inflow year, not a replay of 2024
+            filled = load_hydro_budget("NEISO", 2025, backfill_year=2024)
+            self.assertGreaterEqual(filled.n_hydro, bare.n_hydro)
+            self.assertLess(
+                filled.monthly_energy.sum(), 1.05 * bare.monthly_energy.sum()
+            )
+            return
         filled = load_hydro_budget("NEISO", 2025, backfill_year=2024)
         self.assertGreater(
             filled.n_hydro, 100, msg="backfill should recover near-full fleet"
@@ -1404,7 +1440,12 @@ class TestNYISOHydroBudget(unittest.TestCase):
         # (large) reporters — NYISO 2025 has just 3 plants (Niagara, Power
         # Dam, and one more) covering ~21 TWh (the big plants run flat).
         bare = load_hydro_budget("NYISO", 2025)
-        self.assertLess(bare.n_hydro, 10)
+        if bare.n_hydro >= 10:
+            # complete vintage (EIA-923 Final 2025, landed 2026-10-02): the
+            # full NYISO hydro census files, at a total near 2024's
+            self.assertGreater(bare.n_hydro, 100)
+            self.assertGreater(bare.monthly_energy.sum() / 1e6, 20.0)
+            return
         # The survey-only plants are the largest ones so their TWh is high.
         self.assertGreater(bare.monthly_energy.sum() / 1e6, 15.0)
 

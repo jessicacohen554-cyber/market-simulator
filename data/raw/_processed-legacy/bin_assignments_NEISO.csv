@@ -69,6 +69,7 @@ Plant_Code,Plant_Name,Plant_Group,Zone,Nameplate_MW,Plant_Avg_HR_MMBtu_MWh,Pct_M
 63438,UB Fuel Cell,CT_CHP,Connecticut,1.4,7.992,35.0,30.0,28.0,7.0,chp_sector_default,class_default,class_default,
 66018,Norton Powerhouse 2,CT_CHP,Central,3.3,10.517,70.0,30.0,0.0,0.0,chp_eia923_cf,class_default,class_default,
 68493,Central Heating Plant,CT_CHP,Central,10.0,9.563,65.0,30.0,0.0,5.0,chp_eia923_cf,class_default,class_default,CT+ST
+1599,Canal,CT_PEAKER,Central,330.0,11.704,0.0,0.0,93.0,7.0,none,class_default,class_default,
 1660,Potter Station 2,CT_PEAKER,Boston,105.2,10.045,0.0,23.8,69.2,7.0,none,campd,class_default,
 1670,High Street Station,CT_PEAKER,Boston,8.6,11.315,0.0,0.0,93.0,7.0,none,class_default,class_default,
 1678,Waters River,CT_PEAKER,Boston,46.0,13.011,0.0,22.8,70.2,7.0,none,campd,class_default,

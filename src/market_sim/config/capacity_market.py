@@ -575,6 +575,22 @@ STORAGE_TECH_AVAILABLE_YEAR: dict[str, int | None] = {
 # {U, V, TS} ("under construction" through "complete, not yet commercial"),
 # matching CAISO's "operational + under construction" definition above;
 # low = mid x 0.75 (CAISO's own low/mid ratio), rounded to the nearest 10 MW.
+# RE-VINTAGED 2026-10-02 to the EIA-860 FINAL 2025 release (owner ruling
+# "replace the early release snapshot"; data/raw/eia-860/README.md). The six
+# rows built by the documented construction above (CAISO, PJM, MISO, NYISO,
+# NEISO, SPP) were first re-run on the Early Release they cited and reproduced
+# every committed value exactly, then re-run on the Final (rule 23
+# [R-FROZEN-DERIVE]: the licence is the source release, never a residual):
+#   CAISO mid 15,519.3 -> 15_520 / high 19,400.8 -> 19_400 / low 11_640
+#   PJM   mid   508.9 ->    510 / high    969.2 ->    970 / low    380
+#   MISO  mid   801.9 ->    800 / high  2,920.2 ->  2_920 / low    600
+#   NYISO mid   254.2 ->    250 / high    375.1 ->    380 / low    190
+#   NEISO mid   768.2 ->    770 / high  1,292.9 ->  1_290 / low    580
+#   SPP   mid   450.5 ->    450 / high    570.5 ->    570 / low    340
+# The per-row comments below keep their original ER-era derivation text as
+# history. NWPP (battery-only footprint construction, PRECOMMIT-nwpp-20 §3.7)
+# and SOCO (CAES-excluded construction) are NOT re-run here -- their own lanes
+# re-derive on the Final under rule 23; ERCOT stays hand-entered (routed).
 STORAGE_BASE_FLEET_MW: dict[str, dict[str, float]] = {
     "ERCOT": {
         "low": 12_000.0,
@@ -603,29 +619,29 @@ STORAGE_BASE_FLEET_MW: dict[str, dict[str, float]] = {
     # -- rule 25 [R-ISO-SCOPE]; it is routed, not fixed, in the FFR-4D handoff.
     # See docs/records/forecast/ffr-4d-caiso-fleet-vintage-2026-08-04.md sections 3-4.
     "CAISO": {
-        "low": 11_590.0,
-        "mid": 15_450.0,
-        "high": 19_260.0,
+        "low": 11_640.0,
+        "mid": 15_520.0,
+        "high": 19_400.0,
     },
     "PJM": {
         "low": 380.0,
-        "mid": 500.0,
-        "high": 870.0,
+        "mid": 510.0,
+        "high": 970.0,
     },
     "MISO": {
         "low": 600.0,
         "mid": 800.0,
-        "high": 1_440.0,
+        "high": 2_920.0,
     },
     "NYISO": {
         "low": 190.0,
         "mid": 250.0,
-        "high": 280.0,
+        "high": 380.0,
     },
     "NEISO": {
         "low": 580.0,
         "mid": 770.0,
-        "high": 1_280.0,
+        "high": 1_290.0,
     },
     # SPP (registered 2026-09-06, lane SPP-20): the SAME documented EIA-860
     # construction as the PJM/MISO/NYISO/NEISO rows and the FFR-4D CAISO
@@ -642,7 +658,7 @@ STORAGE_BASE_FLEET_MW: dict[str, dict[str, float]] = {
     "SPP": {
         "low": 340.0,
         "mid": 450.0,
-        "high": 520.0,
+        "high": 570.0,
     },
     # NWPP (registered 2026-09-14, lane NWPP-20): the same EIA-860 2025 Early
     # Release construction, on the WECC-admitted seventeen-BA footprint
