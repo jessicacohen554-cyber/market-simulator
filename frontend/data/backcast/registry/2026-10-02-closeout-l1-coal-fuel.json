@@ -1,0 +1,19 @@
+{
+  "id": "2026-10-02-closeout-l1-coal-fuel",
+  "label": "closeout l1 coal fuel",
+  "date": "2026-10-02",
+  "shorthand": "closeout-l1-coal-fuel",
+  "definition": "closeout-L1 coal fuel ceiling on W0 keeper; 2025 partition keys pinned to w0_ercot_span/run_config_2025.json",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-10-02-closeout-l1-coal-fuel.js",
+  "bundle": "results/calibration/closeout_ercot_l1_span"
+}

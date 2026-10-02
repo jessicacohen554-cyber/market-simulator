@@ -15857,3 +15857,12 @@ The arm delivers the measured N–S gradient:
 Matrix `zonal_gas_basis` moves R → K on structure, with zero DOF. During promotion, `scripts/lib/replay_recipe.py`
 gained an exemption for fields registered after a bundle was solved (excused only at their registered default). Record:
 `docs/records/caiso/closeout-caiso-w1/RESULT-closeout-caiso-w1-arm2-2026-10-02.md`.
+
+## R-CAISO-35 — 2026-10-02: battery-outage census, rule-19 test vs the shape anchor (link 17), zero LP
+
+- Pre-registered (PRECOMMIT at `70a63570`): does the `caiso_storage_shape_anchor` p95 envelope already carry the CNOG battery MW outages? CARRIED if the envelope exceeds the outage-available fleet share in ≤ 1 % of hours.
+- **CARRIED.** CNOG battery outages average 25.8 / 16.6 / 17.4 % of EIA-860 fleet MW (2023 / 24 / 25), at most 31 % in 2024–25. The envelope peaks at 0.46–0.55 (charge) and 0.60–0.66 (discharge). It passes the available share in 4 of 26,280 hours (0.046 %, all 2023 hod 18, ≤ 1.5 pp), inside the CNOG-vs-nameplate basis error that T2 measures. Both sensitivities read 0 hours. A stacked outage consumer would double-count (rule 19), so none is proposed.
+- Battery crosswalk: `build_caiso_resource_crosswalk.py --storage` → sibling file `data/raw/reference/caiso-storage-resource-eia-crosswalk.csv`. It has no reader, and `load_crosswalk` is untouched. 64 of 176 rows are accepted, covering 19–31 % of offline MW-h.
+- Owner card: **close report-only; crosswalk review queued as R-CAISO-36.** Keeper unchanged. Matrix: evidence only on `storage_measured_anchors` (K).
+
+Record: `docs/records/caiso/r-caiso-35/`.

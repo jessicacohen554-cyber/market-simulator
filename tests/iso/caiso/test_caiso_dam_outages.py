@@ -43,6 +43,40 @@ class CrosswalkScoreTest(unittest.TestCase):
         self.assertFalse(self.builder._is_nonthermal("La Paloma Generating Plant"))
 
 
+class StorageCrosswalkTest(unittest.TestCase):
+    """The battery half of the crosswalk (R-CAISO-35, sibling file, no consumer)."""
+
+    def setUp(self):
+        self.builder = importlib.import_module(
+            "scripts.data.build_caiso_resource_crosswalk"
+        )
+
+    def test_battery_selector(self):
+        self.assertTrue(
+            self.builder.is_battery_resource("CONDOR_2_CDRBT1", "Condor BESS")
+        )
+        self.assertTrue(self.builder.is_battery_resource("KRAMER_1_BX3", "Resurgence"))
+        self.assertTrue(self.builder.is_battery_resource("X_1_A", "Daggett Solar BESS"))
+        self.assertFalse(
+            self.builder.is_battery_resource("X_1_SOLAR1", "Shafter Solar")
+        )
+
+    def test_storage_score_ignores_technology_tokens(self):
+        # "Energy Storage" alone must not make two different plants match.
+        self.assertLess(
+            self.builder._score_storage("Gateway Energy Storage", "Cascade Storage"),
+            0.3,
+        )
+        self.assertGreaterEqual(
+            self.builder._score_storage("Coso Battery Storage", "Coso Battery Storage"),
+            0.99,
+        )
+
+    def test_storage_output_is_a_separate_file(self):
+        self.assertNotEqual(self.builder.STORAGE_OUT_CSV, self.builder.OUT_CSV)
+        self.assertEqual(co.CROSSWALK_CSV.name, self.builder.OUT_CSV.name)
+
+
 class DerateFactorsTest(unittest.TestCase):
     """The measured DAM curtailment -> per-plant availability multiplier."""
 
