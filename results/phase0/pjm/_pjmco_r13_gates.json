@@ -71,5 +71,42 @@
    "import": 0.228,
    "oil": 0.002
   }
+ },
+ "2025": {
+  "shift_pred": 1.71,
+  "S3_median_gas_dmc": 0.0,
+  "S3": false,
+  "S4a_max_nongas_dmc": 6.666664123535156,
+  "S4a": false,
+  "S4b_i_pct": {
+   "nuclear": 0.0,
+   "wind": 0.0,
+   "solar": 0.0,
+   "hydro": 0.0,
+   "biomass": 0.0,
+   "OTHER": 0.0
+  },
+  "S4b_i": true,
+  "S4b_ii_d_displaced_twh": -0.371,
+  "S4b_ii_d_gas_cc_ct_twh": 0.295,
+  "S4b_ii": true,
+  "S4b_iii_flip_band_frac": 1.0,
+  "S4b_iii": true,
+  "S4b_iv_d_coal_twh": 0.285,
+  "S4b_iv_d_gas_twh": -0.36,
+  "S4b_iv": true,
+  "class_delta_twh": {
+   "CC_CHP": -0.0,
+   "CC_REGULAR": 0.027,
+   "COAL_BIT": 0.239,
+   "COAL_PRB": 0.038,
+   "COAL_WC": 0.008,
+   "CT_CHP": 0.009,
+   "CT_PEAKER": 0.259,
+   "ST_CHP": 0.001,
+   "ST_GAS": -0.656,
+   "import": 0.074,
+   "oil": 0.0
+  }
  }
 }
