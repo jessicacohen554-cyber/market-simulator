@@ -35,12 +35,35 @@
 
 - **Keeper `11b72265` → SPP-106 pin `392633a1`:** audited all INERT by SPP-104, SPP-105 and SPP-106 (their
   PRECOMMITs §3 and addenda).
-- **`392633a1` → this branch's base `a6f554f3`:** see §3.1, filled in before the pin.
+- **`392633a1` → this branch's base `a6f554f3`:** 26 commits on the rule-29(b) path set (`src/market_sim`,
+  `scripts/run_calibration*.py`, `scripts/replay_keeper.py`, `scripts/lib`, `data/raw/_validation-source`,
+  `data/raw/reference`). Every flag cited was checked in all seven keeper `run_config_<Y>.json`:
+
+| commit(s) | verdict | reason |
+|---|---|---|
+| cleanup-C `64f27f3c` (144 files) | INERT | docstring-masked ASTs identical apart from `docs/` / `results/` path strings in help text, errors and citations; the one code change (`topscoped_encode.py`) is ERCOT-only and off the solve path |
+| R-ERCOT-24 `58d9ce36`, `02f67d13`; R-ERCOT-23 `651723e3`; R-ERCOT-22 `f4d29d72` | INERT | `ercot_ordc_published_curve` / `ercot_swcap_effective_hourly` absent (default False) and ERCOT-gated; the off-path cost broadcast is numerically identical; the LOLP vintage is ERCOT-only. (`02f67d13` is labelled AST-identical but rewrites an ERCOT-only call; behaviour-preserving) |
+| NWPP-NEXT-16 `91141abf` | INERT | deleted code reachable only under `campd_per_unit_attribution` and `campd_unit_fuel_split`, both False in every SPP year |
+| `cc_mustrun_conduct_window` `082c8315`, `073e6669` | INERT | absent (default False); off path unchanged |
+| NYISO-NEXT-23 / 25 / 26 `05a136d5`, `b6e8ffe5`, `9d288842` | INERT | default-off flags inside NYISO-only blocks |
+| soco-97 / 98 `2eac46ec`, `03a1903e`, `b499b7b1`, `b01b0a9e`, `7ca4fd04` | INERT | SOCO interface entries, comments, and a FERC-714 lambda loader the solve does not call |
+| R-ERCOT-21 `8f4121a3` | INERT | one ERCOT plant (55154) in ERCOT-only reference files |
+| nyiso-next22 `5b93b84d` | INERT | `actual_lmp.json` diff touches only `/NYISO/*` keys; SPP actuals unchanged |
+| `d5e04018` (unit_marginal) | INERT | output-only sidecar written after the solve |
+| `163db323`, `908d67c1`, `d3e16f23`, `3fa42239`, `f46350d5`, `171e8ff3`, `e9b06eac` | INERT | build tooling, CAISO data-curation libraries, bench / governance metadata; none on the solve path |
+
 - **This lane:**
 
 | files | verdict | reason |
 |---|---|---|
-| `scenarios.py`, `fleet/models.py` (fuel code 17), `fleet/arrays.py`, `spp_mmu_unavailability.py`, `results/export.py`, `run_calibration.py`, `runner.py` | **LIVE only under `spp_mmu_offer_repair`** | Default off, and the field requires its parent. Unarmed, `_spp_mmu_repair_armed` is False: the bands keep the additive path (`multiplicative=False`), no pool row is built, and `_apply_spp_mmu_pool` does not run. The export exclusion matches a fuel no unarmed fleet carries. `check_cache_key_registration --base origin/main`: "1 new field(s), all registered" |
+| `scenarios.py`, `fleet/models.py` (fuel code 17), `fleet/arrays.py`, `spp_mmu_unavailability.py`, `results/export.py`, `run_calibration.py`, `run_calibration_full.py`, `runner.py` | **LIVE only under `spp_mmu_offer_repair`** | Default off, and the field requires its parent. Unarmed, `_spp_mmu_repair_armed` is False: the bands keep the additive path (`multiplicative=False`), no pool row is built, and `_apply_spp_mmu_pool` does not run. The export exclusion and the sidecar class label match a fuel no unarmed fleet carries. `check_cache_key_registration --base origin/main`: "1 new field(s), all registered" |
+
+**All drift rows are INERT for the keeper recipe, so the committed keeper is the control** and no control
+solve is spent.
+
+**Fast tier at this commit:** 11,141 passed, 2 failed, both in
+`tests/unit/data/test_gas_offer_zonal_anchor_vintage.py` (NYISO; open on `main` at lane start, other lane).
+`tests/iso/spp` passes, matrix guard and cache-key registration (`--base origin/main`) are ok.
 
 ## 4. Solve plan (rule 36)
 
