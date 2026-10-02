@@ -9,7 +9,7 @@ that its LP inputs are byte-identical at `25da6022`. This note is that proof. Th
 
 | ISO | Year | Solve SHA | Shard branch @ commit | Link 1: drift to eec4eb5c | Link 2: #7047 (eec4eb5c → 837556d2) | Link 3: fix-2 #7049 (837556d2 → 25da6022) |
 |---|---|---|---|---|---|---|
-| NWPP | 2019 | 306f2c00 | `claude/w0-nwpp-2019` @ 0b3385eb | INERT | identical | identical |
+| ~~NWPP~~ | ~~2019~~ | ~~306f2c00~~ | ~~`claude/w0-nwpp-2019` @ 0b3385eb~~ | SUPERSEDED: the leg records `unit_outage_dispatched_bin_live_denominator=False`, a rule-26-deleted field that NWPP owns, so False is not inert. Preflight 0d refused it, and 2019 was re-solved at `25da6022` (`claude/w0-nwpp-2019-fix2` @ 7a0c9242). | | |
 | SOCO | 2019 | 306f2c00 | `claude/w0-soco-2019` @ 2cde5e95 | INERT | identical | identical |
 | SOCO | 2020 | 306f2c00 | `claude/w0-soco-2020` @ cb211a43 | INERT | identical | identical |
 | SOCO | 2021 | 306f2c00 | `claude/w0-soco-2021` @ 3f5b8c1d | INERT | identical | identical |
