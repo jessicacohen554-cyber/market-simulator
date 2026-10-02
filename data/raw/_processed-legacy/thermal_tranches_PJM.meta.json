@@ -1,7 +1,7 @@
 {
   "artifact": "thermal_tranches_PJM.csv",
-  "artifact_rows": 274,
-  "artifact_sha256": "31455aaa2eda1078885db02c62bfc80c3887aad18bbfbc156396617a2a2e6f73",
+  "artifact_rows": 256,
+  "artifact_sha256": "497c4844eb0c8f057848dca082cf3d40c26212c60cac9a1364c04bbaee367cd5",
   "columns": [
     "plant_code",
     "plant_group",
@@ -31,7 +31,7 @@
       ],
       "COAL": [
         0,
-        47
+        29
       ],
       "CT_CHP": [
         3,
@@ -57,7 +57,7 @@
       ],
       "COAL": [
         0,
-        47
+        29
       ],
       "CT_CHP": [
         3,
@@ -82,8 +82,8 @@
         69
       ],
       "COAL": [
-        47,
-        47
+        29,
+        29
       ],
       "CT_CHP": [
         3,
@@ -108,8 +108,8 @@
         69
       ],
       "COAL": [
-        47,
-        47
+        29,
+        29
       ],
       "CT_CHP": [
         3,
@@ -134,8 +134,8 @@
         69
       ],
       "COAL": [
-        47,
-        47
+        29,
+        29
       ],
       "CT_CHP": [
         3,
@@ -160,8 +160,8 @@
         69
       ],
       "COAL": [
-        47,
-        47
+        29,
+        29
       ],
       "CT_CHP": [
         3,
@@ -186,8 +186,8 @@
         69
       ],
       "COAL": [
-        47,
-        47
+        29,
+        29
       ],
       "CT_CHP": [
         3,
@@ -212,8 +212,8 @@
         69
       ],
       "COAL": [
-        47,
-        47
+        29,
+        29
       ],
       "CT_CHP": [
         0,
@@ -238,8 +238,8 @@
         69
       ],
       "COAL": [
-        47,
-        47
+        29,
+        29
       ],
       "CT_CHP": [
         3,
@@ -264,8 +264,8 @@
         69
       ],
       "COAL": [
-        47,
-        47
+        29,
+        29
       ],
       "CT_CHP": [
         3,
@@ -291,7 +291,7 @@
       ],
       "COAL": [
         0,
-        47
+        29
       ],
       "CT_CHP": [
         0,
@@ -307,53 +307,19 @@
       ]
     }
   },
-  "derive_invocation": {
-    "base_derive_invocation": null,
-    "chp_floors_from": null,
-    "coal_unit_coverage": true,
-    "iso": "PJM",
-    "years": [
-      2019,
-      2020,
-      2021,
-      2022,
-      2023,
-      2024,
-      2025
-    ]
-  },
+  "derive_invocation": null,
   "deriver": "scripts/data/derive_thermal_tranches.py",
-  "provenance": "derived",
+  "provenance": "backfill-descriptive",
   "row_counts_by_status": {
     "eia923_cf": 68,
-    "ok": 206
+    "ok": 188
   },
   "sidecar_schema_version": 1,
   "vintage": {
-    "chp_groups": [
-      "CC_CHP",
-      "CT_CHP",
-      "ST_CHP"
-    ],
-    "note": "COAL-UNIT COVERAGE APPEND (soco-70): rows present before the append are byte-identical and keep their original derive window; the appended COAL rows are derived from each uncovered plant's own coal-fired CAMPD units over the years in derive_invocation (coal_unit_coverage_rows).",
-    "online_frac_groups": [
-      "CC_REGULAR",
-      "COAL",
-      "CT_PEAKER",
-      "ST_GAS"
-    ],
-    "peaking_groups": [
-      "CC_CHP",
-      "CC_REGULAR"
-    ],
-    "thermal_groups": [
-      "CC_CHP",
-      "CC_REGULAR",
-      "COAL",
-      "CT_CHP",
-      "CT_PEAKER",
-      "ST_CHP",
-      "ST_GAS"
-    ]
+    "chp_groups": null,
+    "note": "DESCRIPTIVE BACKFILL (xiso-6, 2026-08-25): this sidecar records the observed column set and per-group populated counts of the committed CSV bytes only. The deriver group sets in force when the CSV was derived are UNKNOWN \u2014 not recoverable from the file itself; see results/calibration/FINDING-xiso5-thermal-tranche-coverage-2026-08-04.md for the vintage adjudication. It makes no claim about what HEAD would emit.",
+    "online_frac_groups": null,
+    "peaking_groups": null,
+    "thermal_groups": null
   }
 }
