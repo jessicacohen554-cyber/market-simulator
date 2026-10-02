@@ -79,7 +79,11 @@ def legs(year: int) -> dict[str, np.ndarray]:
             tz = "America/Denver" if ba in MOUNTAIN else "America/Los_Angeles"
             for diba, g in d[~d.diba.isin(FOOTPRINT)].groupby("diba"):
                 seam = (
-                    "CAISO" if diba == "CISO" else "WECC_CAN" if diba in CAN else "WECC_SW"
+                    "CAISO"
+                    if diba == "CISO"
+                    else "WECC_CAN"
+                    if diba in CAN
+                    else "WECC_SW"
                 )
                 acc[seam].append(_clock(g, tz, year))
                 out[f"{ba}->{diba}"] = acc[seam][-1]
@@ -90,7 +94,10 @@ def legs(year: int) -> dict[str, np.ndarray]:
     c = c[c.diba.astype(str).isin(["BPAT", "NEVP", "PACW"])]
     out["CAISO_by_CISO"] = -np.nansum(
         np.vstack(
-            [_clock(g, "America/Los_Angeles", year) for _, g in c.groupby("diba", observed=True)]
+            [
+                _clock(g, "America/Los_Angeles", year)
+                for _, g in c.groupby("diba", observed=True)
+            ]
         ),
         axis=0,
     )
@@ -98,20 +105,36 @@ def legs(year: int) -> dict[str, np.ndarray]:
 
 
 def _weim(year: int, ba: str, bcha: pd.DataFrame) -> np.ndarray:
-    w = bcha if ba == "BCHA" else pd.read_parquet(RAW / "nwpp-weim/weim_hourly_by_ba.parquet")
+    w = (
+        bcha
+        if ba == "BCHA"
+        else pd.read_parquet(RAW / "nwpp-weim/weim_hourly_by_ba.parquet")
+    )
     return (
-        w[(w.year == year) & (w.baa == ba)].set_index("hour").lmp.reindex(range(8760)).values
+        w[(w.year == year) & (w.baa == ba)]
+        .set_index("hour")
+        .lmp.reindex(range(8760))
+        .values
     )
 
 
 def _hub(year: int, hub: str) -> np.ndarray:
-    m = pd.read_parquet(RAW / "_validation-source/wecc_intertie_lmp_hourly_CAISO.parquet")
-    return m[(m.year == year) & (m.hub == hub)].set_index("hour").price.reindex(range(8760)).values
+    m = pd.read_parquet(
+        RAW / "_validation-source/wecc_intertie_lmp_hourly_CAISO.parquet"
+    )
+    return (
+        m[(m.year == year) & (m.hub == hub)]
+        .set_index("hour")
+        .price.reindex(range(8760))
+        .values
+    )
 
 
 def p0b(bcha: pd.DataFrame) -> None:
     """A: the SPP-51 P0-b statistic per measured leg, 2023 Jun-Dec / 2024 / 2025."""
-    print("\n## A. SPP-51 P0-b on the measured record: does the measured flow follow the measured spread?")
+    print(
+        "\n## A. SPP-51 P0-b on the measured record: does the measured flow follow the measured spread?"
+    )
     rt = pd.read_parquet(RAW / "_validation-source/actual_lmp_hourly_CAISO.parquet")
     rows = []
     for y in MEAS_YEARS:
@@ -119,7 +142,13 @@ def p0b(bcha: pd.DataFrame) -> None:
         cases = [
             ("CAISO", "BPAT->CISO", _hub(y, "MALIN"), "BPAT", 3.0),
             ("CAISO", "PACW->CISO", _hub(y, "MALIN"), "PACW", 3.0),
-            ("CAISO", "NEVP->CISO", rt[rt.year == y].set_index("hour").rt.reindex(range(8760)).values, "NEVP", 3.0),
+            (
+                "CAISO",
+                "NEVP->CISO",
+                rt[rt.year == y].set_index("hour").rt.reindex(range(8760)).values,
+                "NEVP",
+                3.0,
+            ),
             ("WECC_CAN", "BPAT->BCHA", _weim(y, "BCHA", bcha), "BPAT", 2.0),
             ("WECC_SW", "NEVP->LDWP", _hub(y, "PALOVRDE"), "NEVP", 2.0),
             ("WECC_SW", "BPAT->LDWP", _hub(y, "PALOVRDE"), "BPAT", 2.0),
@@ -129,7 +158,9 @@ def p0b(bcha: pd.DataFrame) -> None:
             f = L.get(leg)
             if f is None:
                 continue
-            spread = p_nb - _weim(y, ba, bcha)  # > 0: neighbour dearer -> NWPP should export
+            spread = p_nb - _weim(
+                y, ba, bcha
+            )  # > 0: neighbour dearer -> NWPP should export
             x = pd.DataFrame({"s": spread, "f": f}).dropna()
             x = x[x.f != 0]
             nh = x[x.s.abs() > hurdle]
@@ -152,8 +183,12 @@ def p0b(bcha: pd.DataFrame) -> None:
 
 def anchor(bcha: pd.DataFrame) -> dict[int, float]:
     """B: the WECC_CAN anchor, BCHA ELAP vs the registered Mid-C Peak proxy, and the HR it implies."""
-    print("\n## B. WECC_CAN anchor: BCHA WEIM ELAP (all hours) vs registered Mid-C Peak proxy")
-    spec = SEAMS["WECC_CAN"]  # gas basis only; the anchor is recomputed here from the measured price
+    print(
+        "\n## B. WECC_CAN anchor: BCHA WEIM ELAP (all hours) vs registered Mid-C Peak proxy"
+    )
+    spec = SEAMS[
+        "WECC_CAN"
+    ]  # gas basis only; the anchor is recomputed here from the measured price
     hr = {}
     for y in MEAS_YEARS:
         b = _weim(y, "BCHA", bcha)
@@ -167,13 +202,17 @@ def anchor(bcha: pd.DataFrame) -> dict[int, float]:
             f"r {np.corrcoef(b[both], bp[both])[0, 1]:.3f}); gas (HH+basis) {gas:.3f} -> HR {hr[y]:.2f} "
             f"| registered Mid-C Peak HR {spec.hr_by_year.get(y)}"
         )
-    print(f"structural (mean) HR {np.mean(list(hr.values())):.2f} vs registered flat {spec.marginal_heat_rate}")
+    print(
+        f"structural (mean) HR {np.mean(list(hr.values())):.2f} vs registered flat {spec.marginal_heat_rate}"
+    )
     return hr
 
 
 def wheel(seams: dict) -> None:
     """C: hours where two seams landing in one internal zone can arbitrage each other through it."""
-    print("\n## C. Same-zone seam arbitrage: hours with |P_i - P_j| > h_i + h_j for seams sharing a border zone")
+    print(
+        "\n## C. Same-zone seam arbitrage: hours with |P_i - P_j| > h_i + h_j for seams sharing a border zone"
+    )
     names = list(seams)
     rows = []
     for y in YEARS:
@@ -186,8 +225,13 @@ def wheel(seams: dict) -> None:
                 d = p[a] - p[b]
                 band = seams[a].hurdle + seams[b].hurdle
                 rows.append(
-                    dict(year=y, pair=f"{a}|{b}", hours=int((np.abs(d) > band).sum()),
-                         b_dearer=int((d < -band).sum()), mean_spread_b_minus_a=round(float(-d.mean()), 1))
+                    dict(
+                        year=y,
+                        pair=f"{a}|{b}",
+                        hours=int((np.abs(d) > band).sum()),
+                        b_dearer=int((d < -band).sum()),
+                        mean_spread_b_minus_a=round(float(-d.mean()), 1),
+                    )
                 )
     print(pd.DataFrame(rows).to_string(index=False))
 
@@ -207,12 +251,18 @@ def _measured(year: int) -> dict[str, np.ndarray]:
 
 def price_taker(root: Path, seams: dict) -> None:
     """D: per-seam flow if each band clears against keeper #20's border-zone price; vs measured."""
-    print("\n## D. Price-taker seam flows vs keeper #20 price (registry at this commit), TWh export-positive")
+    print(
+        "\n## D. Price-taker seam flows vs keeper #20 price (registry at this commit), TWh export-positive"
+    )
     rows = []
     for y in YEARS:
-        s = pd.read_parquet(root / f"results/calibration/nwppnext16c_{y}/system.parquet")
+        s = pd.read_parquet(
+            root / f"results/calibration/nwppnext16c_{y}/system.parquet"
+        )
         s = s[s["pass"] == s["pass"].max()] if "pass" in s else s
-        zp = s.pivot_table(index="hour", columns="zone", values="price").reindex(range(8760))
+        zp = s.pivot_table(index="hour", columns="zone", values="price").reindex(
+            range(8760)
+        )
         meas_all = _measured(y)
         for name, spec in seams.items():
             ex, im, _ = seam_tranche_prices(spec, y, 8760)
@@ -227,11 +277,15 @@ def price_taker(root: Path, seams: dict) -> None:
                 dict(
                     year=y,
                     seam=name,
-                    ref_mean=round(float(neighbor_reference_price(spec, y, 8760)[0].mean()), 1),
+                    ref_mean=round(
+                        float(neighbor_reference_price(spec, y, 8760)[0].mean()), 1
+                    ),
                     nwpp_border_mean=round(float(np.nanmean(lo)), 1),
                     pt_net_TWh=round(net.sum() / 1e6, 2),
                     pt_export_h=int((net > 0).sum()),
-                    pt_at_export_limit_h=int((exp >= spec.interface_limit_mw - 1e-6).sum()),
+                    pt_at_export_limit_h=int(
+                        (exp >= spec.interface_limit_mw - 1e-6).sum()
+                    ),
                     meas_net_TWh=round(float(meas.sum()) / 1e6, 2),
                     meas_export_h=int((meas > 0).sum()),
                     r_hourly=round(float(pd.Series(net).corr(pd.Series(meas))), 3),
@@ -239,14 +293,22 @@ def price_taker(root: Path, seams: dict) -> None:
             )
     df = pd.DataFrame(rows)
     print(df.to_string(index=False))
-    print("\nsum of priced seams (TWh): price-taker", df.groupby("year").pt_net_TWh.sum().round(2).to_dict(),
-          "| measured", df.groupby("year").meas_net_TWh.sum().round(2).to_dict())
+    print(
+        "\nsum of priced seams (TWh): price-taker",
+        df.groupby("year").pt_net_TWh.sum().round(2).to_dict(),
+        "| measured",
+        df.groupby("year").meas_net_TWh.sum().round(2).to_dict(),
+    )
 
 
 def main() -> None:
     """Run A-D."""
     root = Path(sys.argv[1])
-    bcha_path = Path(sys.argv[2]) if len(sys.argv) > 2 else RAW / "nwpp-weim/weim_hourly_counterparty.parquet"
+    bcha_path = (
+        Path(sys.argv[2])
+        if len(sys.argv) > 2
+        else RAW / "nwpp-weim/weim_hourly_counterparty.parquet"
+    )
     bcha = pd.read_parquet(bcha_path)
     p0b(bcha)
     anchor(bcha)
