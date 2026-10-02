@@ -2188,6 +2188,7 @@ NWPP_PRICED_SEAM_LEGS: dict[str, tuple[tuple[str, tuple[str, ...], float], ...]]
     "WECC_CAN": (("BPAT", ("BCHA",), 1.0),),
 }
 
+
 def seam_zone_links(iso: str) -> list[tuple[str, str, float]]:
     """Return ``(seam_zone, border_zone, ttc_mw)`` for an ISO with per-seam zones.
 
@@ -2221,6 +2222,7 @@ def seam_zone_links(iso: str) -> list[tuple[str, str, float]]:
         for name, seam in seams.items()
         for border in seam.border_zones
     ]
+
 
 # MISO per-seam measured BA-to-BA deliverability envelope.
 MISO_SEAM_DIBA: dict[str, tuple[str, ...]] = {

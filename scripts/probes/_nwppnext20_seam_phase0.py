@@ -26,7 +26,6 @@ Usage: python scripts/probes/_nwppnext20_seam_phase0.py LEG_ROOT [BCHA_HOURLY_PA
 
 from __future__ import annotations
 
-import dataclasses
 import sys
 import warnings
 from pathlib import Path

@@ -2433,6 +2433,7 @@ def nwpp_unpriced_residual_interchange(
             )
     return position - priced
 
+
 def soco_net_interchange(year: int) -> np.ndarray | None:
     """Return SOCO's hourly net export (MW, export-positive), or ``None``.
 

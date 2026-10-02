@@ -91,7 +91,9 @@ def test_nwpp_topology_has_one_zone_per_seam_and_no_pooled_bus():
         b = seam.border_zones
         for i in range(len(b)):
             for j in range(i + 1, len(b)):
-                ttc = max(internal.get((b[i], b[j]), 0.0), internal.get((b[j], b[i]), 0.0))
+                ttc = max(
+                    internal.get((b[i], b[j]), 0.0), internal.get((b[j], b[i]), 0.0)
+                )
                 assert ttc >= seam.interface_limit_mw, (seam.name, b[i], b[j])
 
 
@@ -122,15 +124,27 @@ def test_priced_legs_cover_exactly_the_priced_seams():
     assert set(NWPP_PRICED_SEAM_LEGS) == {n.name for n in INTERFACE_NEIGHBORS["NWPP"]}
 
 
-@pytest.mark.parametrize("year,subtracted", [(2023, 3.0 + 5.0 + 7.0), (2020, 3.0 + 5.0)])
-def test_residual_is_position_minus_the_legs_priced_that_year(monkeypatch, year, subtracted):
+@pytest.mark.parametrize(
+    "year,subtracted", [(2023, 3.0 + 5.0 + 7.0), (2020, 3.0 + 5.0)]
+)
+def test_residual_is_position_minus_the_legs_priced_that_year(
+    monkeypatch, year, subtracted
+):
     hours = 8760
     utc = pd.date_range("2023-01-01 09:00", periods=hours, freq="h")
-    monkeypatch.setattr(envelopes, "nwpp_net_interchange", lambda y, **k: np.full(hours, 100.0))
     monkeypatch.setattr(
-        envelopes, "_eia_hourly_frame_filled", lambda ba, y: pd.DataFrame({"UTC time": utc})
+        envelopes, "nwpp_net_interchange", lambda y, **k: np.full(hours, 100.0)
     )
-    per_leg = {("CISO", ("BPAT", "PACW")): 3.0, ("CISO", ("NEVP",)): 5.0, ("BPAT", ("BCHA",)): 7.0}
+    monkeypatch.setattr(
+        envelopes,
+        "_eia_hourly_frame_filled",
+        lambda ba, y: pd.DataFrame({"UTC time": utc}),
+    )
+    per_leg = {
+        ("CISO", ("BPAT", "PACW")): 3.0,
+        ("CISO", ("NEVP",)): 5.0,
+        ("BPAT", ("BCHA",)): 7.0,
+    }
     monkeypatch.setattr(
         envelopes,
         "_diba_legs_export",
@@ -145,7 +159,11 @@ def test_diba_leg_is_footprint_export_positive(tmp_path, monkeypatch):
     d.mkdir()
     local = pd.date_range("2024-01-01 01:00", periods=48, freq="h")
     pd.DataFrame(
-        {"diba": pd.Categorical(["BPAT"] * 48), "mw": np.float32(-250.0), "local_time": local}
+        {
+            "diba": pd.Categorical(["BPAT"] * 48),
+            "mw": np.float32(-250.0),
+            "local_time": local,
+        }
     ).to_parquet(d / "CISO interchange hourly.parquet")
     monkeypatch.setattr(envelopes, "RAW_DIR", tmp_path)
     # Hour-ending 01:00 PST = 09:00 UTC.
@@ -154,4 +172,6 @@ def test_diba_leg_is_footprint_export_positive(tmp_path, monkeypatch):
     assert cov == 1.0
     assert np.allclose(leg, 250.0)  # CISO imports 250 from BPAT = NWPP exports 250
     with pytest.raises(ValueError, match="no row"):
-        envelopes._diba_legs_export("CISO", ("BPAT",), -1.0, utc + pd.Timedelta(days=400))
+        envelopes._diba_legs_export(
+            "CISO", ("BPAT",), -1.0, utc + pd.Timedelta(days=400)
+        )
