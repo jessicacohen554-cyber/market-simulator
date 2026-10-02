@@ -2104,7 +2104,7 @@ unchanged). Flag: TAL λ runs 25–35 % below FPC / JEA (implied HR 5.7–7.7), 
 all 11 keeper cache keys identical. Matrix cells stay `U`. Record:
 docs/records/soco/r-soco/FINDING-soco-99-fla-extract-2026-10-02.md.
 
-## 2026-10-02 — closeout-B W0 phase 3 fix-2: keeper candidate 2026-10-02-w0-soco-fix2 (HOLD), CALIBRATED-WITH-CAVEATS → NOT-YET
+## 2026-10-02 — closeout-B W0 phase 3 fix-2: keeper 2026-10-02-w0-soco-fix2, CALIBRATED-WITH-CAVEATS → NOT-YET (owner: Promote)
 
 **What changed.** The soco-96 recipe (`soco96_span`) was re-solved year by year (rule 36) with the ten W0 EIA-860 settlement backcast defaults (owner ruling R-2; PRECOMMIT `docs/records/governance/closeout-2026-10/PRECOMMIT-closeout-b-w0-phase3-2026-10-02.md`). For SOCO the dispatched-bin outage denominator is LIVE, and its live-roster form is the one fixed in #7047 and #7049. Zero DOF. This candidate supersedes #7043, which ran before those denominator fixes.
 
@@ -2126,7 +2126,7 @@ docs/records/soco/r-soco/FINDING-soco-99-fla-extract-2026-10-02.md.
 - The ST_GAS forced shares stay GROUNDED: every binding mechanism clears D-4 and the profile gates pass.
 - C2 fuelmix fails on CC_REGULAR in 2019 (+4.95 TWh, share +3.6 pp) and 2021 (+6.28 TWh, +3.6 pp).
 - The denominator fixes repair COAL_PRB 2022: it moves from FAIL (+8.01 TWh, +3.5 pp) to PASS (+6.04 TWh, +2.7 pp). That was the Scherer exit-dilution defect, D-1.
-- Determination: **CALIBRATED-WITH-CAVEATS → NOT-YET**. Per the desk's standing rule, a falling determination goes to the owner as **HOLD**.
+- Determination: **CALIBRATED-WITH-CAVEATS → NOT-YET**. Per the desk's standing rule, a falling determination goes to the owner as **HOLD**. The owner ruling 2026-10-02 (decision card, relayed by the desk): 'Promote' promotes it on structure (rules 1/14).
 - 2025 data drift: the 2025 injected must-run (biomass and OTHER) is +4.4 TWh above the incumbent's. The incumbent carried a partial 2025 EIA-923; the current data has the complete year. This component is not W0.
 
 **Census (in-bundle `fleet_census_<y>.json`).**
