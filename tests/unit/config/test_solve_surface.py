@@ -317,6 +317,22 @@ class SolveEpochScopeTest(unittest.TestCase):
             S.applicable_epochs(ScenarioConfig(iso="SOCO", mode="forecast")), []
         )
 
+    def test_the_live_roster_epoch_reaches_only_isos_with_dead_cohorts(self):
+        """2026-10-02d (closeout-W0 D-1 part 2): the ISOs the sweep moved."""
+        for iso in ("MISO", "NWPP", "PJM", "SOCO"):
+            self.assertIn(
+                "2026-10-02d",
+                S.applicable_epochs(ScenarioConfig(iso=iso, mode="backcast")),
+            )
+        for iso in ("ERCOT", "CAISO", "NYISO", "SPP", "NEISO"):
+            self.assertNotIn(
+                "2026-10-02d",
+                S.applicable_epochs(ScenarioConfig(iso=iso, mode="backcast")),
+            )
+        self.assertEqual(
+            S.applicable_epochs(ScenarioConfig(iso="NWPP", mode="forecast")), []
+        )
+
     def test_an_unscoped_epoch_reaches_every_config(self):
         S.SOLVE_EPOCHS = (S.SolveEpoch(id="e", cause="c"),)
         self.assertEqual(S.applicable_epochs(ScenarioConfig()), ["e"])

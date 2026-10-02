@@ -76,6 +76,29 @@ human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-10-02d — closeout-W0 denominator fix, part 2 (desk ruling D-1): the
+dispatched-bin outage denominator is the LIVE roster, sum pmax x online(month).
+KEY-MOVING for backcast MISO / NWPP / PJM / SOCO, through
+``solve_surface.SolveEpoch`` 2026-10-02d.** Record:
+``docs/records/governance/closeout-2026-10/RESULT-closeout-w0-denominator-fix-2-2026-10-02.md``.
+WHAT CHANGED: with ``unit_outage_dispatched_bin_denominator`` on in a COD-ramped
+backcast (``outages.dispatched_bin_live_year``), ``lp_bin_capacity_index`` reads
+every row's online mask off the COD ramp's own resolver
+(``cod_ramp.generator_online_mask``). A row offline all year (a dead exit cohort:
+Scherer 2023-25, Centralia 3845, Colstrip 6076, Schahfer 6085, Petersburg,
+Dallman) leaves the divide, where its ``pmax`` used to dilute the survivors'
+measured derate. A bin held below its ``pmax`` in some month (a partly
+in-service plant-level bin, a mid-year build) divides hour by hour, as #7047's
+in-year exits already did. The NWPP-NEXT-15 sub-gate
+``unit_outage_dispatched_bin_live_denominator`` that did part of this off by
+default is folded in and DELETED (rule 26). Its screened-coal-first limb now
+belongs to ``wefor_residual_short_screened_coal`` (inert on MISO's keeper, the
+only one arming it). WHAT IS INVALIDATED: backcast bundles of those four ISOs.
+Zero-LP on the keeper recipes, the fleet moves in MISO 2019 and 2021-25, NWPP
+2021-25, PJM 2019-23 and SOCO 2023-25 (RESULT §3). WHAT IS NOT: every forecast;
+ERCOT / CAISO / NYISO / SPP (companion off or yielded); NEISO, whose keeper fleet
+is byte-identical 2019-2025.
+
 **Epoch 2026-10-02c — closeout-W0 denominator fix (desk ruling D-1): the
 dispatched-bin outage denominator is TIME-WEIGHTED for in-year exit cohorts.
 KEY-MOVING for backcast MISO / NEISO / NWPP / PJM / SOCO, through the first

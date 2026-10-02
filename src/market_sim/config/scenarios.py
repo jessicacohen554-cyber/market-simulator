@@ -449,14 +449,6 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # byte-inert). Registered IN THE SAME COMMIT as the field (the nyiso-119 /
     # caiso-186 discipline), so the pinned default key never moves.
     "unit_outage_dispatched_bin_denominator",
-    # NWPP-NEXT-15 LIVE sub-gate of the dispatched-bin denominator (GATED
-    # default-off; every consumer reads it through
-    # ``outages.dispatched_bin_live_year`` or
-    # ``getattr(config, "unit_outage_dispatched_bin_live_denominator", False)``
-    # in data/fleet/arrays.py, so the off path is byte-inert). Registered IN THE
-    # SAME COMMIT as the field (the nyiso-119 / caiso-186 discipline), so the
-    # pinned default key never moves.
-    "unit_outage_dispatched_bin_live_denominator",
     # nyiso-229 unit-outage window at its DETECTED HOUR grain (GATED
     # default-off; selects the ``-perunitmerithour-`` extract, so the off path
     # is byte-inert -- it reads the same committed file it always did).
@@ -2568,9 +2560,6 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-266 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_dispatched_bin_denominator": "False",
-    # Added by NWPP-NEXT-15 WITH the field, in the same commit as its
-    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
-    "unit_outage_dispatched_bin_live_denominator": "False",
     # Added by nyiso-229 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_window_hour_grain": "False",
@@ -13667,7 +13656,12 @@ class ScenarioConfig:
     # own fleet (docs/records/miso/PRECOMMIT-miso273-short-screened-coal-wefor-2026-09-25.md).
     # Requires outage_source="historic", wefor_residual set,
     # unit_outage_short_windows and unit_outage_dispatched_bin_denominator
-    # (fail-closed in fleet.arrays). Non-ERCOT only.
+    # (fail-closed in fleet.arrays). Non-ERCOT only. A COAL row takes the relief
+    # on its screened share ONLY, ahead of the covered-class full cap, so
+    # wefor_residual_groups decides the full cap for non-coal classes alone
+    # (NWPP-NEXT-15's second limb, folded here when closeout-W0 desk ruling D-1
+    # deleted the live sub-gate that carried it; byte-identical wherever the
+    # groups name no coal class, MISO's keeper included).
     wefor_residual_short_screened_coal: bool = False
 
     # Legacy gas-steam (ST_GAS) summer reliability treatment. When
@@ -17276,43 +17270,18 @@ class ScenarioConfig:
     # off then, so two constructions never stack and no recipe is refused.
     unit_outage_dispatched_bin_denominator: bool = True  # W0 2026-10-02 (owner ruling R-2): backcast default; coerced off outside a backcast
 
-    # LIVE-CAPACITY SUB-GATE OF THE DISPATCHED-BIN DENOMINATOR (NWPP-NEXT-15,
-    # GATED default-off; REQUIRES unit_outage_dispatched_bin_denominator — the
-    # point-of-use accessor outages.dispatched_bin_live_year raises if armed
-    # alone). The parent reads the roster "off the year's own fleet", but a
-    # DATED EXIT COHORT (fleet/assembly.py's ``_p{plant}_r{yyyy}{mm}`` bin,
-    # miso-191) whose retirement year precedes the solve year is still CARRIED
-    # by the LP under the plant's (plant_code, plant_group) key, at zero
-    # availability every hour (cod_ramp.monthly_online_mask), so its pmax
-    # dilutes the divide. Measured on NWPP (FINDING-nwppnext13 §1.3, zero LP):
-    # Centralia 3845's dead _r202012 BW21 and Colstrip 6076's dead _r202001
-    # units 1-2 put the coal bin at 1,340 / 2,094 MW against the live 670 /
-    # 1,480 MW, and Centralia BW22's measured full outages (2021-04-03 ->
-    # 06-26, 2022-04-24 -> 07-10) leave 250-280 MW falsely available. Armed, the
-    # roster drops every dated exit-cohort row retired before the solve year (a
-    # cohort retiring IN the year is live through its month and stays) — at
-    # every consumer the parent reaches (outage/short/partial/maxgen layers,
-    # the lay-up loaders, and the miso-273 screened-coal share, which divides
-    # by the same roster).
-    #
-    # SECOND LIMB, same flag (rule 19 [R-ONE-MECH] — one relief mechanism
-    # re-ordered, not a new one): with wefor_residual_short_screened_coal armed,
-    # a COAL row takes the wefor_residual relief on its measured screened share
-    # ONLY, ahead of the covered-class full cap; wefor_residual_groups then
-    # decides the full cap for non-coal classes alone. So wefor_residual_groups
-    # naming just the coal classes scopes wefor_residual to screened coal
-    # (FINDING-nwppnext13 §1.3.3: NWPP's None groups otherwise zero WEFOR on all
-    # coal AND all CC/ST gas, and the screened branch never fires). MISO's
-    # keeper names no coal class in its groups, so the limb would be inert there
-    # even if armed.
-    #
-    # ZERO free parameters (rule 21 [R-DOF]): the exit month is the cohort's own
-    # stamped EIA-860 retirement; no per-plant list, no constant. Rule 13
-    # forward-regenerable exactly as the parent is. Chosen on construction
-    # (rule 14 [R-ACCURATE]: the denominator must be the capacity the multiplier
-    # is applied to in hours the unit can run), never on a residual.
-    # Byte-inert while off.
-    unit_outage_dispatched_bin_live_denominator: bool = False
+    # The NWPP-NEXT-15 live-capacity sub-gate that used to follow here
+    # (``unit_outage_dispatched_bin_live_denominator``) is DELETED (closeout-W0
+    # desk ruling D-1, 2026-10-02, rules 19 / 26): in a COD-ramped backcast the
+    # companion above ALWAYS divides by the LIVE roster, sum pmax x
+    # online(month) on the COD ramp's own mask, so a dated exit cohort retired
+    # before the solve year leaves the divide and every row the ramp masks for
+    # part of the year divides month by month (outages.dispatched_bin_live_year
+    # / lp_bin_capacity_index). Its second limb (screened-coal-first relief order)
+    # now belongs to wefor_residual_short_screened_coal. It was registered in
+    # _CACHE_KEY_OPTIONAL_FIELDS at its False default, so no retired-field entry
+    # is owed (see the nyiso_solar_registry_cod_dates note); the behaviour move
+    # is the results/cache.py SolveEpoch 2026-10-02d.
 
     # UNIT-OUTAGE WINDOW AT ITS DETECTED HOUR GRAIN (nyiso-229, GATED
     # default-off). The CAMPD unit-outage detector has always worked in HOURS

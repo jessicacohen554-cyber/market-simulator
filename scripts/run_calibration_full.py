@@ -4966,7 +4966,6 @@ def solve_and_persist(
     unit_outage_st_capacity_basis: bool | None = None,
     unit_outage_per_unit_clip: bool | None = None,
     unit_outage_dispatched_bin_denominator: bool | None = None,
-    unit_outage_dispatched_bin_live_denominator: bool | None = None,
     unit_outage_short_windows_gas: bool | None = None,
     unit_outage_window_hour_grain: bool | None = None,
     campd_per_unit_attribution: bool | None = None,
@@ -6483,10 +6482,6 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 unit_outage_dispatched_bin_denominator=unit_outage_dispatched_bin_denominator
             )
-        if unit_outage_dispatched_bin_live_denominator is not None:
-            recorded_cfg = recorded_cfg.with_overrides(
-                unit_outage_dispatched_bin_live_denominator=unit_outage_dispatched_bin_live_denominator
-            )
         if unit_outage_short_windows_gas is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 unit_outage_short_windows_gas=unit_outage_short_windows_gas
@@ -7047,7 +7042,6 @@ def solve_and_persist(
             unit_outage_st_capacity_basis=unit_outage_st_capacity_basis,
             unit_outage_per_unit_clip=unit_outage_per_unit_clip,
             unit_outage_dispatched_bin_denominator=unit_outage_dispatched_bin_denominator,
-            unit_outage_dispatched_bin_live_denominator=unit_outage_dispatched_bin_live_denominator,
             unit_outage_short_windows_gas=unit_outage_short_windows_gas,
             unit_outage_window_hour_grain=unit_outage_window_hour_grain,
             campd_per_unit_attribution=campd_per_unit_attribution,
@@ -8051,7 +8045,6 @@ def solve_and_persist(
         "unit_outage_st_capacity_basis": unit_outage_st_capacity_basis,
         "unit_outage_per_unit_clip": unit_outage_per_unit_clip,
         "unit_outage_dispatched_bin_denominator": unit_outage_dispatched_bin_denominator,
-        "unit_outage_dispatched_bin_live_denominator": unit_outage_dispatched_bin_live_denominator,
         "unit_outage_short_windows_gas": unit_outage_short_windows_gas,
         "unit_outage_window_hour_grain": unit_outage_window_hour_grain,
         "campd_per_unit_attribution": campd_per_unit_attribution,
@@ -10422,7 +10415,6 @@ def run_replay_bundle(
     unit_outage_st_capacity_basis: bool | None = None,
     unit_outage_per_unit_clip: bool | None = None,
     unit_outage_dispatched_bin_denominator: bool | None = None,
-    unit_outage_dispatched_bin_live_denominator: bool | None = None,
     unit_outage_short_windows_gas: bool | None = None,
     unit_outage_window_hour_grain: bool | None = None,
     campd_per_unit_attribution: bool | None = None,
@@ -10624,12 +10616,6 @@ def run_replay_bundle(
         # recipe and the delta is provably the single flag.
         kwargs["unit_outage_dispatched_bin_denominator"] = (
             unit_outage_dispatched_bin_denominator
-        )
-    if unit_outage_dispatched_bin_live_denominator is not None:
-        # NWPP-NEXT-15: arm/disarm the LIVE sub-gate over a committed keeper's
-        # recipe, so an A/B solves both legs from one recipe.
-        kwargs["unit_outage_dispatched_bin_live_denominator"] = (
-            unit_outage_dispatched_bin_live_denominator
         )
     if unit_outage_short_windows_gas is not None:
         # pjm-d4-4: arm/disarm the GAS-side sub-5-day outage scope over a
@@ -14060,23 +14046,6 @@ def main() -> None:
         "(rule 19 [R-ONE-MECH]). Zero free parameters; byte-inert while off.",
     )
     parser.add_argument(
-        "--unit-outage-dispatched-bin-live-denominator",
-        action=argparse.BooleanOptionalAction,
-        default=None,
-        help="LIVE-capacity sub-gate of --unit-outage-dispatched-bin-denominator "
-        "(ScenarioConfig.unit_outage_dispatched_bin_live_denominator, "
-        "NWPP-NEXT-15; REQUIRES the parent, raises alone). The dispatched-bin "
-        "roster drops every dated exit-cohort row (the _p{plant}_r{yyyy}{mm} "
-        "bin) retired before the solve year — carried by the LP at zero "
-        "availability all year, so its pmax diluted the divide (NWPP Centralia "
-        "3845 1,340 vs live 670 MW; Colstrip 6076 2,094 vs 1,480; "
-        "FINDING-nwppnext13 §1.3). Second limb: with "
-        "wefor_residual_short_screened_coal armed, coal takes the WEFOR residual "
-        "on its screened share only, so wefor_residual_groups naming the coal "
-        "classes scopes the relief to screened coal. Zero free parameters; "
-        "byte-inert while off.",
-    )
-    parser.add_argument(
         "--unit-outage-per-unit-clip",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -15715,12 +15684,6 @@ def main() -> None:
                 or "--no-unit-outage-dispatched-bin-denominator" in sys.argv
                 else None
             ),
-            unit_outage_dispatched_bin_live_denominator=(
-                args.unit_outage_dispatched_bin_live_denominator
-                if "--unit-outage-dispatched-bin-live-denominator" in sys.argv
-                or "--no-unit-outage-dispatched-bin-live-denominator" in sys.argv
-                else None
-            ),
             unit_outage_short_windows_gas=(
                 args.unit_outage_short_windows_gas
                 if "--unit-outage-short-windows-gas" in sys.argv
@@ -16187,7 +16150,6 @@ def main() -> None:
         unit_outage_st_capacity_basis=args.unit_outage_st_capacity_basis,
         unit_outage_per_unit_clip=args.unit_outage_per_unit_clip,
         unit_outage_dispatched_bin_denominator=args.unit_outage_dispatched_bin_denominator,
-        unit_outage_dispatched_bin_live_denominator=args.unit_outage_dispatched_bin_live_denominator,
         unit_outage_short_windows_gas=args.unit_outage_short_windows_gas,
         unit_outage_window_hour_grain=args.unit_outage_window_hour_grain,
         campd_per_unit_attribution=args.campd_per_unit_attribution,
