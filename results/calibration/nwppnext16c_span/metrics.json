@@ -30,7 +30,7 @@
   "rubric_version": "3.17",
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: price_mean, price_shape, dispatch_corr",
+    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_mean, price_shape, dispatch_corr",
     "PRICE UNSCORED in 2019, 2020, 2021, 2022 \u2014 NWPP's labelled benchmark (CAISO WEIM ELAP 15-min imbalance price, demand-weighted over the 11 priced footprint BAs (labelled imbalance-price benchmark, 2023-06+)) begins in 2023 (owner ruling R-9, 2026-10-02); C3a/C3b/C3c are scored on the remaining years only and certify no price in these."
   ],
   "notes": [],
@@ -38,7 +38,7 @@
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
       "tier": "load-bearing",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
@@ -89,10 +89,10 @@
   },
   "grade_summary": {
     "scored": 7,
-    "target_grade": 4,
+    "target_grade": 3,
     "commercial_grade": 0,
     "ledgered": 0,
-    "fails": 3
+    "fails": 4
   },
   "reported": {
     "co2": {
@@ -104,7 +104,7 @@
         "2022": "-3.5%",
         "2023": "-4.4%",
         "2024": "-10.0%",
-        "2025": "-6.5%"
+        "2025": "-9.6%"
       }
     },
     "diurnal_amplitude": {
@@ -136,13 +136,13 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 54,
-      "total": 54
+      "pass": 59,
+      "total": 60
     },
     "free": {
-      "pass": 42,
-      "total": 42
+      "pass": 46,
+      "total": 47
     },
-    "headline": "C1 all 54/54 \u00b7 free 42/42"
+    "headline": "C1 all 59/60 \u00b7 free 46/47"
   }
 }

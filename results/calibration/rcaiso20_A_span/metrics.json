@@ -92,7 +92,7 @@
         "2022": "-7.0%",
         "2023": "-5.3%",
         "2024": "-3.7%",
-        "2025": "-4.2%"
+        "2025": "+0.3%"
       }
     },
     "diurnal_amplitude": {
@@ -121,13 +121,13 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 18,
-      "total": 18
+      "pass": 21,
+      "total": 21
     },
     "free": {
-      "pass": 12,
-      "total": 12
+      "pass": 14,
+      "total": 14
     },
-    "headline": "C1 all 18/18 \u00b7 free 12/12"
+    "headline": "C1 all 21/21 \u00b7 free 14/14"
   }
 }
