@@ -15866,3 +15866,11 @@ gained an exemption for fields registered after a bundle was solved (excused onl
 - Owner card: **close report-only; crosswalk review queued as R-CAISO-36.** Keeper unchanged. Matrix: evidence only on `storage_measured_anchors` (K).
 
 Record: `docs/records/caiso/r-caiso-35/`.
+
+## R-CAISO-36 — 2026-10-02: battery crosswalk review and census selector fix (link 18), zero LP
+
+- Hand review recorded per row in `data/raw/reference/caiso-storage-crosswalk-review.csv` (`match_method = reviewed`, a `review_note` for each row). The 0.6 threshold and capacity sanity are unchanged. 168 of 233 rows are accepted (83 name-token, 85 reviewed), covering **78–85 % of offline MW-h**, up from 19–31 %. The T1 crosswalk-only sensitivity stays at 0 hours.
+- **Selector bug:** the R-CAISO-32 id pattern `_(?:BT|BX|ES|BE)\d` missed storage codes that follow a plant prefix (`ROMOLA_5_MPBBT1`). The fix adds 58 battery resources (including Menifee 680 MW, Crimson, Tahoe and Kola 1) and drops 2 pumped-hydro units. `RATSKE_2_WAVBT1` is fixed. The corrected census has outages at 28.4 / 22.3 / 23.8 % of fleet and T1 primary at 0.548 %. That is **still CARRIED**, and it is not re-opened.
+- Owner card: **close report-only; the next link is R-CAISO-37, an EIA-860M intake for the unmatched rows.** The keeper is unchanged. Matrix: evidence only on `storage_measured_anchors` (K).
+
+Record: `docs/records/caiso/r-caiso-36/`.

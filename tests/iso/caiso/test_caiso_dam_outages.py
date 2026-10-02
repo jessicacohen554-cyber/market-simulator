@@ -61,6 +61,91 @@ class StorageCrosswalkTest(unittest.TestCase):
             self.builder.is_battery_resource("X_1_SOLAR1", "Shafter Solar")
         )
 
+    def test_battery_selector_reads_code_after_plant_prefix(self):
+        # R-CAISO-36: the storage code follows a plant code in the final id
+        # segment, and the id wins over a solar project name.
+        b = self.builder.is_battery_resource
+        self.assertTrue(b("ROMOLA_5_MPBBT1", "Menifee Power Bank"))
+        self.assertTrue(b("RATSKE_2_WAVBT1", "Willy 9 Antelope Valley Complex"))
+        self.assertTrue(b("MCFLND_5_MBSBX2", "McFarland Solar B Hybrid"))
+        self.assertTrue(b("ALAMIT_7_ES1", "Alamitos Energy Storage"))
+        self.assertFalse(b("LAKHDG_6_UNIT 1", "Lake Hodges Pumped Storage-Unit1"))
+        self.assertFalse(b("ALAMIT_7_UNIT 3", "Alamitos 3"))
+
+    def test_battery_resources_keep_storage_name(self):
+        with TemporaryDirectory() as d:
+            path = Path(d) / "w.parquet"
+            pd.DataFrame(
+                {
+                    "resource_id": ["R_2_WAVBT1", "R_2_WAVBT1", "G_1_UNIT 1"],
+                    "resource_name": ["Willy 9 Complex", "AV BESS, LLC", "Gas 1"],
+                    "resource_pmax_mw": [126.0, 125.96, 50.0],
+                }
+            ).to_parquet(path)
+            res = self.builder.load_battery_resources(path)
+        self.assertEqual(list(res["resource_id"]), ["R_2_WAVBT1"])
+        self.assertEqual(res["resource_name"].iloc[0], "AV BESS, LLC")
+        self.assertEqual(res["resource_pmax_mw"].iloc[0], 126.0)
+
+    def test_review_ledger_overrides_proposal(self):
+        proposed = pd.DataFrame(
+            {
+                "resource_id": ["A_1_ABT1", "B_1_BBT1"],
+                "resource_name": ["Alpha BESS", "Beta BESS"],
+                "resource_pmax_mw": [50.0, 20.0],
+                "plant_code": pd.array([1, 2], dtype="Int64"),
+                "plant_group": ["BATTERY", "BATTERY"],
+                "plant_name": ["Wrong Plant", "Beta"],
+                "plant_pmax_mw": [10.0, 20.0],
+                "match_score": [0.4, 1.0],
+                "match_method": ["name_token", "name_token"],
+                "accepted": [0, 1],
+            }
+        )
+        targets = pd.DataFrame(
+            {
+                "plant_code": [1, 2, 3],
+                "plant_name": ["Wrong Plant", "Beta", "Alpha Storage"],
+                "plant_pmax_mw": [10.0, 20.0, 50.0],
+                "plant_group": ["BATTERY"] * 3,
+                "eia_status": ["OP", "OP", "OA"],
+            }
+        )
+        orig = self.builder.load_storage_targets
+        self.builder.load_storage_targets = lambda statuses=("OP",): targets
+        try:
+            with TemporaryDirectory() as d:
+                rev = Path(d) / "review.csv"
+                pd.DataFrame(
+                    {
+                        "resource_id": ["A_1_ABT1", "B_1_BBT1"],
+                        "plant_code": [3, None],
+                        "accepted": [1, 0],
+                        "review_note": ["exact MW", "no EIA plant"],
+                    }
+                ).to_csv(rev, index=False)
+                out = self.builder.apply_storage_review(proposed, rev)
+                # A review row outside the census is refused.
+                pd.DataFrame(
+                    {
+                        "resource_id": ["Z_1_ZBT1"],
+                        "plant_code": [3],
+                        "accepted": [1],
+                        "review_note": ["x"],
+                    }
+                ).to_csv(rev, index=False)
+                with self.assertRaises(ValueError):
+                    self.builder.apply_storage_review(proposed, rev)
+        finally:
+            self.builder.load_storage_targets = orig
+        a = out.set_index("resource_id")
+        self.assertEqual(int(a.loc["A_1_ABT1", "plant_code"]), 3)
+        self.assertEqual(a.loc["A_1_ABT1", "accepted"], 1)
+        self.assertEqual(a.loc["A_1_ABT1", "match_method"], "reviewed")
+        self.assertTrue(pd.isna(a.loc["B_1_BBT1", "plant_code"]))
+        self.assertEqual(a.loc["B_1_BBT1", "accepted"], 0)
+        self.assertEqual(a.loc["B_1_BBT1", "review_note"], "no EIA plant")
+
     def test_storage_score_ignores_technology_tokens(self):
         # "Energy Storage" alone must not make two different plants match.
         self.assertLess(

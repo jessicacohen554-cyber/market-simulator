@@ -2,6 +2,10 @@
 
 Zero LP, report-only (handoff R-CAISO-35, link 17; tests pre-registered in
 ``docs/records/caiso/r-caiso-35/PRECOMMIT-r-caiso-35-battery-outage-census-2026-10-02.md``).
+Re-run in R-CAISO-36 (link 18) after the crosswalk review and the selector fix
+in ``build_caiso_resource_crosswalk.is_battery_resource``; the census
+population follows that selector, and coverage is also split by
+``match_method``.
 
 Per hour of 2023-25 on the EIA-930 CISO row clock the envelope was derived on
 (``scripts/derive_caiso_storage_shape.py``: first 8760 rows of each year),
@@ -137,6 +141,12 @@ def main() -> None:
     win = win.dropna(subset=["start_utc", "end_utc"])
     xw = pd.read_csv(XWALK)
     accepted = set(xw.loc[xw["accepted"] == 1, "resource_id"])
+    # R-CAISO-36: the name-token-only population (the pre-registered method)
+    # beside the reviewed additions, so the coverage lift stays attributable.
+    by_method = {
+        m: set(g.loc[g["accepted"] == 1, "resource_id"])
+        for m, g in xw.groupby("match_method")
+    }
     env = pd.read_csv(ENVELOPE)
     month_of_row = np.repeat(np.arange(12), np.array(DAYS_IN_MONTH) * 24)[:8760]
     hod = np.arange(8760) % 24
@@ -149,6 +159,7 @@ def main() -> None:
             "crosswalk_accepted_plants": int(
                 xw.loc[xw["accepted"] == 1, "plant_code"].nunique()
             ),
+            "crosswalk_accepted_by_method": {m: len(v) for m, v in by_method.items()},
         },
         "years": {},
     }
@@ -179,6 +190,14 @@ def main() -> None:
             "coverage_accepted_offline_mwh_share": round(
                 float(off_acc.sum() / off_all.sum()), 4
             ),
+            "coverage_by_method_offline_mwh_share": {
+                m: round(
+                    float(offline_mw(win[win["resource_id"].isin(v)], grid).sum())
+                    / float(off_all.sum()),
+                    4,
+                )
+                for m, v in by_method.items()
+            },
             "envelope_max": {d: round(float(v.max()), 4) for d, v in e.items()},
             "min_headroom_a_minus_e": {
                 d: round(float((a860 - v).min()), 4) for d, v in e.items()
