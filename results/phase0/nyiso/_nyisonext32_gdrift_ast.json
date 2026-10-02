@@ -1,0 +1,751 @@
+{
+ "base": "fdc41f36fd4283a3310014761c575ced8f5f0ebf",
+ "head": "7a65272a29b748377526d0ae1fbdbb693d766b90",
+ "summary": {
+  "identical_ast": 121,
+  "code": 25,
+  "added": 6,
+  "strings_only": 2
+ },
+ "files": [
+  {
+   "path": "scripts/lib/bench_multiclass.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "scripts/lib/bench_stamp.py",
+   "class": "code",
+   "changed_defs": [
+    "PAYLOAD_FINGERPRINT_BY_BUILDER"
+   ]
+  },
+  {
+   "path": "scripts/lib/benchmark_corridor/aeo.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "scripts/lib/benchmark_corridor/stdscen.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "scripts/lib/benchmark_semantics.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "scripts/lib/capacity_market_auction_price/__init__.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "scripts/lib/capacity_market_elcc/__init__.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "scripts/lib/clean_io.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "scripts/lib/clean_profiles.py",
+   "class": "added"
+  },
+  {
+   "path": "scripts/lib/forecast_parity_registry.py",
+   "class": "code",
+   "changed_defs": [
+    "DECLARATIONS"
+   ]
+  },
+  {
+   "path": "scripts/lib/forecast_posture.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "scripts/lib/forecast_provenance.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "scripts/lib/gas_ofo_events/__init__.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "scripts/lib/heat_rate_years.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "scripts/lib/holdout_policy.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "scripts/lib/invariant_ledger.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "scripts/lib/key_provenance.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "scripts/lib/known_unsynced_keepers.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "scripts/lib/lmp_components/__init__.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "scripts/lib/load_forecast/nwpp.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "scripts/lib/load_forecast/pjm.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "scripts/lib/maxgen_events/__init__.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "scripts/lib/nuclear_license_status/__init__.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "scripts/lib/nuclear_license_status/nwpp.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "scripts/lib/nuclear_license_status/soco.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "scripts/lib/nuclear_license_status/spp.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "scripts/lib/outage_detect.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "scripts/lib/probe_census.py",
+   "class": "added"
+  },
+  {
+   "path": "scripts/lib/ps_water_state/__init__.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "scripts/lib/ra_import_allocations/__init__.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "scripts/lib/record_lanes.py",
+   "class": "added"
+  },
+  {
+   "path": "scripts/lib/sced_corpus_instruments.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "scripts/lib/sced_rtcb_adapter.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "scripts/lib/topscoped_encode.py",
+   "class": "code",
+   "changed_defs": [
+    "EDGE_ID_JSON"
+   ]
+  },
+  {
+   "path": "scripts/lib/transfer_interface_limits/__init__.py",
+   "class": "code",
+   "changed_defs": [
+    "IsoSpec",
+    "_ISO_MODULES",
+    "to_model_clock"
+   ]
+  },
+  {
+   "path": "scripts/lib/transfer_interface_limits/caiso.py",
+   "class": "added"
+  },
+  {
+   "path": "scripts/lib/unit_marginal.py",
+   "class": "added"
+  },
+  {
+   "path": "scripts/lib/wind_shape.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "scripts/run_calibration.py",
+   "class": "code",
+   "changed_defs": [
+    "_build_parser",
+    "run_year"
+   ]
+  },
+  {
+   "path": "scripts/run_calibration_full.py",
+   "class": "code",
+   "changed_defs": [
+    "<imports>",
+    "_system_frame",
+    "main",
+    "solve_and_persist"
+   ]
+  },
+  {
+   "path": "src/market_sim/config/capacity_market.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/config/constants.py",
+   "class": "code",
+   "changed_defs": [
+    "ERCOT_LCAP_WINDOWS_BY_YEAR",
+    "ERCOT_ORDC_PUBLISHED_ORDER_PARAMS_BY_YEAR"
+   ]
+  },
+  {
+   "path": "src/market_sim/config/entry_config.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/config/fuel_trajectories.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/config/iso_configs.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/config/paths.py",
+   "class": "code",
+   "changed_defs": [
+    "SPP_MMU_UNAVAILABLE_CSV",
+    "SPP_MMU_UNAVAILABLE_DIR"
+   ]
+  },
+  {
+   "path": "src/market_sim/config/plant_taxonomy.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/config/retirement_config.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/config/scenario_resolvers.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/config/scenarios.py",
+   "class": "code",
+   "changed_defs": [
+    "ScenarioConfig",
+    "ScenarioConfig.__post_init__",
+    "TIER_TAGS",
+    "_CACHE_KEY_OPTIONAL_FIELDS",
+    "_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS"
+   ]
+  },
+  {
+   "path": "src/market_sim/config/solve_surface.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/config/solve_surface_declared.py",
+   "class": "code",
+   "changed_defs": [
+    "DECLARED"
+   ]
+  },
+  {
+   "path": "src/market_sim/config/topology_variant.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/avoidable_cost_rate.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/build_exit_throughput.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/caiso_as_requirements.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/campd.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/chp.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/coal_fuel_inventory.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/coal_stocks.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/cod_ramp.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/curtailment_share.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/datacenter.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/disk_memo.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/egrid.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/eia923.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/eia930/demand.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/eia930/envelopes.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/eia930/frames.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/emission_rates.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/ferc714.py",
+   "class": "code",
+   "changed_defs": [
+    "<imports>",
+    "FERC714_NEIGHBOR_SYSTEM_LAMBDA_FILE",
+    "Ferc714LambdaRespondent",
+    "NEIGHBOR_SYSTEM_LAMBDA_COLUMNS",
+    "SOCO_NEIGHBOR_LAMBDA_RESPONDENTS",
+    "_CENTRAL",
+    "_CST_UTC_OFFSET_HOURS",
+    "_EASTERN",
+    "_EST_UTC_OFFSET_HOURS",
+    "load_ferc714_system_lambda"
+   ]
+  },
+  {
+   "path": "src/market_sim/data/fleet/__init__.py",
+   "class": "code",
+   "changed_defs": [
+    "<imports>"
+   ]
+  },
+  {
+   "path": "src/market_sim/data/fleet/arrays.py",
+   "class": "code",
+   "changed_defs": [
+    "_CONDUCT_CELL",
+    "_MMU_FOSSIL_FUELS",
+    "_apply_spp_mmu_bands",
+    "_availability_matrix",
+    "_compose_min_gen_floors",
+    "_mmu_fossil",
+    "_spp_mmu_armed",
+    "generators_to_fleet_arrays"
+   ]
+  },
+  {
+   "path": "src/market_sim/data/fleet/assembly.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/fleet/campd_bins.py",
+   "class": "code",
+   "changed_defs": [
+    "PER_UNIT_FUEL_SPLIT_TAG",
+    "_fuel_split_companion",
+    "campd_fuel_split_selector",
+    "cc_conduct_profile",
+    "thermal_tranche_csv_for_iso"
+   ]
+  },
+  {
+   "path": "src/market_sim/data/fleet/ct_lole_efor.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/fleet/eia860.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/fleet/floors.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/fleet/legacy_bins.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/fleet/offer_surfaces.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/floor_mechanisms.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/fuel/basis/ercot.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/fuel/basis/miso.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/fuel/basis/nyiso.py",
+   "class": "code",
+   "changed_defs": [
+    "_z6_flow_minus_trade_hourly",
+    "apply_nyiso_downstate_ct_gas_daily"
+   ]
+  },
+  {
+   "path": "src/market_sim/data/fuel/captive_coal.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/fuel/dual_fuel.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/fuel/electric_power.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/fuel/hubs.py",
+   "class": "code",
+   "changed_defs": [
+    "_nyiso_hub_daily_gas_prices",
+    "nyiso_transco_z6_flow_daily"
+   ]
+  },
+  {
+   "path": "src/market_sim/data/fuel/plant_prices.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/fuel/resolve.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/hydro.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/loss_surface.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/maxgen_events.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/miso_outages.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/neighbor_price.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/neiso_operable_capacity.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/nuclear_license.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/nyiso_demand_response.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/nyiso_market_solar.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/nyiso_seam_envelope.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/offer_curves.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/online_reserve_rho.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/outages.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/pjm_outages.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/ramp_capability.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/renewables.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/reserve_requirements.py",
+   "class": "strings_only"
+  },
+  {
+   "path": "src/market_sim/data/resolved_inputs.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/spp_gas_outage.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/spp_mmu_unavailability.py",
+   "class": "added"
+  },
+  {
+   "path": "src/market_sim/data/transfer_interface_limits.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/virtual_bids.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/wecc_west_fleet.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/data/zone_assignment.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/ensemble.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/matrix.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/model/capacity_evolution/adequacy.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/model/capacity_evolution/ccs.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/model/capacity_evolution/evolve.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/model/capacity_evolution/new_entry.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/model/capacity_evolution/retirements.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/model/interchange/caiso.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/model/interchange/import_nodes.py",
+   "class": "strings_only"
+  },
+  {
+   "path": "src/market_sim/model/interchange/miso.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/model/interchange/neiso.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/model/interchange/nyiso.py",
+   "class": "code",
+   "changed_defs": [
+    "apply_nyiso_li_tsl_import_cap"
+   ]
+  },
+  {
+   "path": "src/market_sim/model/interchange/spec.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/model/lp/__init__.py",
+   "class": "code",
+   "changed_defs": [
+    "solve_dispatch"
+   ]
+  },
+  {
+   "path": "src/market_sim/model/lp/costs.py",
+   "class": "code",
+   "changed_defs": [
+    "build_cost_vector"
+   ]
+  },
+  {
+   "path": "src/market_sim/model/lp/hydro_cascade.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/model/lp/model.py",
+   "class": "code",
+   "changed_defs": [
+    "DispatchModel",
+    "DispatchModel.__init__",
+    "DispatchModel.solve"
+   ]
+  },
+  {
+   "path": "src/market_sim/model/lp/p0_cache.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/model/lp/rows.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/model/reserves/spec.py",
+   "class": "code",
+   "changed_defs": [
+    "_ercot_design",
+    "_ercot_multiproduct_design",
+    "_ercot_ordc_curve",
+    "build_reserve_dispatch_kwargs"
+   ]
+  },
+  {
+   "path": "src/market_sim/model/storage.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/pipeline/__init__.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/pipeline/backcast_config.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/pipeline/commitment.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/pipeline/kwargs.py",
+   "class": "code",
+   "changed_defs": [
+    "apply_reserve_coopt"
+   ]
+  },
+  {
+   "path": "src/market_sim/pipeline/solve.py",
+   "class": "code",
+   "changed_defs": [
+    "_swcap_clip_level"
+   ]
+  },
+  {
+   "path": "src/market_sim/pipeline/timing.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/pipeline/year.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/policy/cap_and_trade.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/policy/carbon.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/policy/clean_tiers.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/policy/constraints.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/policy/federal_ces.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/policy/ira.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/results/cache.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/results/scarcity.py",
+   "class": "code",
+   "changed_defs": [
+    "<imports>",
+    "_ERCOT_ORDC_MU_SIGMA_SEASONAL",
+    "_lolp_half",
+    "ercot_effective_swcap_series",
+    "ercot_ordc_demand_steps",
+    "ercot_ordc_published_curve_active",
+    "ercot_published_mu_sigma_hourly",
+    "ercot_swcap_effective_active",
+    "ordc_adder",
+    "resolve_lolp_params"
+   ]
+  },
+  {
+   "path": "src/market_sim/runner.py",
+   "class": "code",
+   "changed_defs": [
+    "run_scenario_iso"
+   ]
+  },
+  {
+   "path": "src/market_sim/structural_prior.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/uncertainty.py",
+   "class": "identical_ast"
+  },
+  {
+   "path": "src/market_sim/utils/hour_calendar.py",
+   "class": "identical_ast"
+  }
+ ]
+}
