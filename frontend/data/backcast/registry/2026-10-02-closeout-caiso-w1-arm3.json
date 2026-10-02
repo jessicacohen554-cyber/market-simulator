@@ -1,0 +1,19 @@
+{
+  "id": "2026-10-02-closeout-caiso-w1-arm3",
+  "label": "closeout caiso w1 arm3",
+  "date": "2026-10-02",
+  "shorthand": "closeout-caiso-w1-arm3",
+  "definition": "closeout-caiso-w1 arm 3: measured CC min-load 0.570 (R-11/R-14)",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-10-02-closeout-caiso-w1-arm3.js",
+  "bundle": "results/calibration/closeout_caiso_w1_a3_span"
+}

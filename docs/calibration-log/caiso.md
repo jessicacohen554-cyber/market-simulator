@@ -15786,3 +15786,26 @@ Record: `docs/records/caiso/r-caiso-20/`.
 - **COAL** is −70 %: 10684 (−35 to −40 MW).
 
 These are residuals for the CAISO lane, not tuned (rule 23). Ledgers: `W0-census/CAISO/fleet_census_<Y>_w0.json`.
+
+## 2026-10-02 — closeout-CAISO wave 1 arm 3: keeper 2026-10-02-closeout-caiso-w1-arm3 (CC min-load 0.26 → measured 0.570), NOT-YET → NOT-YET
+
+The W0 keeper recipe plus one delta: `caiso_ra_min_load_frac` 0.26 → 0.570. That value is the CEMS-measured CC minimum
+stable load (caiso-119), set under owner rulings R-11 and R-14. Seven year-isolated shards ran at `eec4eb5c`, and
+`_closeout_caiso_w1_compose_span.py` checked the recipe field by field. The pre-registered rule was "promote only if
+nothing regresses", and it held. The fail set is unchanged:
+- C1 CC_REGULAR 2019/20/21: +10.19 / +16.44 / +8.69 TWh;
+- C3a 2021: +12.8 %;
+- C4 gas NRMSE 2019/20/21: 0.385 / 0.403 / 0.351.
+
+C3c 2021 (89 h vs 27 h) is a caveat and C3c 2024 (0 h vs 35 h) stays ledgered.
+
+| | 2022 | 2023 | 2024 | 2025 |
+|---|---|---|---|---|
+| C3a vs RT, before → after | +8.2 → +8.5 % | +7.5 → +7.9 % | +5.9 → +6.1 % | +6.0 → +6.3 % |
+| C1 CC_REGULAR, TWh | +1.23 → +1.02 | −0.88 → −1.16 | +0.02 → +0.03 | −0.51 → −0.59 |
+| C4 gas NRMSE | 0.248 → 0.248 | 0.244 → 0.245 | 0.247 → 0.244 | 0.291 → 0.286 |
+
+C8 CC_REGULAR forced share 2019–25 moved 7.4/5.0/5.9/7.2/7.5/9.1/12.3 → 8.6/5.9/6.1/7.0/7.0/9.6/12.4 %. The bridge level
+is capped (caiso-119), so the fraction barely moves the energy. Zero DOF was added. The unledgered 0.26 is retired, and
+`pipeline/backcast_config.py` now defaults CAISO to 0.570 (rule 26 deleted the stale 0.259 justification). Record:
+`docs/records/caiso/closeout-caiso-w1/RESULT-closeout-caiso-w1-arm3-2026-10-02.md`.
