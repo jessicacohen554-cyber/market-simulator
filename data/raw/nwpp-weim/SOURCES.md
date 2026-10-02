@@ -17,6 +17,7 @@ strict rate limit — the builder waits ≥ 6 s between calls and backs off on 4
 |---|---|---|
 | 15-minute market LMP at the default EIM load aggregation points | `queryname=PRC_RTPD_LMP&market_run_id=RTPD&version=1&node=<12 ELAP nodes, comma-separated>&startdatetime=<UTC>&enddatetime=<UTC>&resultformat=6` | one calendar month per call; 12 nodes × days × 96 intervals × 4 LMP components rows, checked per call |
 | EIM transfer MW per BAA, 15-minute | `queryname=ENE_EIM_TRANSFER&version=2&market_run_id=RTPD&baa_grp_id=ALL&…` | all 23 WEIM BAAs stored; `version=1` and `version≥3` return `ERR 1001` (measured) |
+| counterparty ELAP (NWPP-NEXT-20, fetched 2026-10-02) | `queryname=PRC_RTPD_LMP&market_run_id=RTPD&version=1&node=ELAP_BCHA-APND&…` | one month per call from 2023-06-01 prevailing Pacific; OASIS served from 2023-06-22 at fetch time. `ELAP_BCHA` is in the `ATL_APNODE` `DEPZ` list (read 2026-10-02) |
 | node catalogue (metadata, not committed) | `queryname=ATL_APNODE&APnode_type=ALL&version=1` | the `DEPZ` type is the default EIM LAP `ELAP_<BAA>-APND`; the node-set rule is PRECOMMIT §2 |
 
 Datetime literal form: `YYYYMMDDTHH:MM-0000` (UTC).

@@ -1,10 +1,10 @@
-"""NWPP-NEXT-20 phase 0 (zero LP): lever C census — Bridger 8066 2023, keeper #20 vs CEMS, level vs decommitment.
+"""closeout-NWPP wave 1 (zero LP): lever C census — Bridger 8066 2023, keeper #20 vs CEMS, level vs decommitment.
 
 Reads keeper #20's 2023 leg ``unit_hourly_2023`` (extract: ``git fetch --depth=1 origin
 a54c7b97a9c588564bab90746f2dbbc44fd56838 && git archive a54c7b97a9c588564bab90746f2dbbc44fd56838
-results/calibration/nwppnext16c_2023 | tar -x -C LEG_ROOT``) and CAMPD unit-level CEMS. Prints FINDING-nwppnext20 §2.
+results/calibration/nwppnext16c_2023 | tar -x -C LEG_ROOT``) and CAMPD unit-level CEMS. Prints FINDING-nwpp-closeout-w1-censuses §2.
 
-Usage: python scripts/probes/_nwppnext20_leverc_bridger_shape_phase0.py [LEG_ROOT]
+Usage: python scripts/probes/_nwpp_closeout_w1_leverc_bridger_shape.py [LEG_ROOT]
 """
 
 import sys

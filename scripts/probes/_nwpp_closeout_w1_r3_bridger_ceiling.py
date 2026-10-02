@@ -1,8 +1,8 @@
-"""NWPP-NEXT-20 phase 0 (zero LP): owner ruling R-3 applied to Jim Bridger (plant 8066), 2023.
+"""closeout-NWPP wave 1 (zero LP): owner ruling R-3 applied to Jim Bridger (plant 8066), 2023.
 
 The EIA-923 take-ceiling envelope (receipts + month-end stock above a declared ``stock_min``) in its
 per-month and cumulative forms, against the Page-2 stocks, the Page-5 receipts and keeper #20's Bridger
-energy. Prints the tables of FINDING-nwppnext20 §3. Run from the repo root. No LP.
+energy. Prints the tables of FINDING-nwpp-closeout-w1-censuses §3. Run from the repo root. No LP.
 """
 
 import pandas as pd
