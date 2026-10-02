@@ -125,3 +125,12 @@ Repairing either is a change to a producer SOCO-33 does not own, so both are
 files regenerate from the **complete producer listing in
 `docs/handoffs/FINDING-soco-33-2026-09-16.md` §A**, which substitutes only the
 anchor resolver and is otherwise the two producers' own arithmetic.
+
+## soco-98 update (2026-10-01)
+
+The `NO_ANCHOR` rows of `soco_seam_hr_by_year.csv` for SOCO_TVA / SOCO_DUK / SOCO_SC / SOCO_FPC / SOCO_TAL are
+**superseded**: those seams now anchor on the neighbour's own annual-mean FERC 714 Sch. 6 system lambda
+(`data/raw/ferc-714/soco_neighbor_hourly_system_lambda_2019_2025.csv`) through the repaired producer
+(`scripts/data/derive_neighbor_hr_by_year.py --iso SOCO --years 2019 2020 2021 2022 2023 2024 2025 --skip-shapeless`),
+whose output is registered verbatim as `hr_by_year` in `INTERFACE_NEIGHBORS["SOCO"]` (still default-off). This CSV is
+kept as the SOCO-33 record. Table and caveats: `docs/records/soco/r-soco/FINDING-soco-98-lambda-anchors-2026-10-01.md`.

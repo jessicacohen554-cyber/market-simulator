@@ -33,7 +33,19 @@ realized-LMP product and an optional zone filter, exactly as its ``spec.py``
 block documents; a neighbour with no anchor (no organized market — PJM's
 Carolinas/TVA/LGEE) is PRINTED as such rather than skipped, an ISO with no map
 FAILS, and a declared anchor whose file or rows are absent FAILS instead of
-being dropped. Run::
+being dropped.
+
+A SECOND ANCHOR KIND (lane soco-98, 2026-10-01, repairing FINDING-soco-33 §7
+R-2). SOCO's neighbours (TVA, the Carolinas utilities, the Florida BAs) run no
+organized market, so no ``actual_lmp`` product exists for them. Each files its
+own hourly SYSTEM LAMBDA on FERC Form 714 Part II Sch. 6 — the marginal cost of
+its own dispatch, the vertically integrated counterpart of an LMP. An anchor of
+kind ``ferc714_lambda`` reads that committed extract
+(:func:`market_sim.data.ferc714.load_ferc714_system_lambda`) and takes ONLY its
+annual mean; filed zeros are dropped as filing gaps (``data/raw/ferc-714``
+README). Rule 13 [R-MEASURED]: the hourly lambda is a measured outcome and is
+never a seam price; the annual-mean anchor of ``(HH + basis) x HR x shape`` is
+the admissible use, exactly as for an LMP anchor. Run::
 
     python scripts/data/derive_neighbor_hr_by_year.py --iso PJM
 
@@ -67,11 +79,16 @@ class Anchor:
             averaged PER ZONE and then over zones — one price per zone, never a
             hub census (FINDING-spp-33 §2).
         proxy: A declared proxy (the anchor is not the neighbour's own price).
+        kind: ``"lmp"`` (``product`` names an ``actual_lmp`` parquet) or
+            ``"ferc714_lambda"`` (``product`` is the EIA-930 BA code of a
+            :data:`~market_sim.data.ferc714.SOCO_NEIGHBOR_LAMBDA_RESPONDENTS`
+            entry whose FERC 714 Sch. 6 system lambda anchors the seam).
     """
 
     product: str
     zones: tuple[str, ...] | None = None
     proxy: bool = False
+    kind: str = "lmp"
 
 
 # ISO -> neighbour name -> the measured anchor its registry block documents.
@@ -103,17 +120,74 @@ NEIGHBOR_LMP_ANCHORS: dict[str, dict[str, Anchor]] = {
         "AECI": Anchor("SPP", proxy=True),
         "ERCOT": Anchor("ERCOT"),
     },
+    # SOCO (lane soco-98, FINDING-soco-33 §7 R-2 / FINDING-soco-97 §5 step 3).
+    # SOCO_MISO reads MISO-South's own zonal LMP (the SPP-51 construction for
+    # the same zone; rule 19, one physical seam). The five non-market seams
+    # read the neighbour's OWN FERC 714 Sch. 6 system lambda. NOT anchored,
+    # and reported as such: SOCO_SCEG (Dominion SC files 0.00 in every hour,
+    # not shipped) and SOCO_FPL (its lambda runs ~40 % below its peers on an
+    # unresolved basis, ferc-714 README "Flags"). JEA files a lambda but is
+    # not a SOCO EIA-930 counterparty, so it has no block to anchor. SOCO's
+    # own lambda never enters (G17: each anchor is the neighbour's price on
+    # the neighbour's side of the seam). Rule 25: none of these is PJM's
+    # ``TVA`` / ``Carolinas`` anchor.
+    "SOCO": {
+        "SOCO_MISO": Anchor("zonal_MISO", ("MISO-South",)),
+        "SOCO_TVA": Anchor("TVA", kind="ferc714_lambda"),
+        "SOCO_DUK": Anchor("DUK", kind="ferc714_lambda"),
+        "SOCO_SC": Anchor("SC", kind="ferc714_lambda"),
+        "SOCO_FPC": Anchor("FPC", kind="ferc714_lambda"),
+        "SOCO_TAL": Anchor("TAL", kind="ferc714_lambda"),
+    },
 }
+
+#: Anchor kinds :func:`_measured_mean_lmp` resolves.
+ANCHOR_KINDS: frozenset[str] = frozenset({"lmp", "ferc714_lambda"})
 
 _HOURS = 8760
 
 
+def _measured_mean_lambda(ba_code: str, year: int) -> float | None:
+    """Return a neighbour's annual-mean FERC 714 system lambda ($/MWh), or None.
+
+    The rows of ``report_year == year`` (the filer's own year), filed zeros
+    dropped as filing gaps (``data/raw/ferc-714`` README: Tallahassee's 79,
+    TVA's one). ``None`` when the respondent is unregistered, the extract is
+    absent or the year carries no non-zero row.
+    """
+    from market_sim.data.ferc714 import (
+        SOCO_NEIGHBOR_LAMBDA_RESPONDENTS,
+        load_ferc714_system_lambda,
+    )
+
+    respondent = SOCO_NEIGHBOR_LAMBDA_RESPONDENTS.get(ba_code)
+    if respondent is None:
+        return None
+    try:
+        df = load_ferc714_system_lambda(respondent.respondent_id)
+    except FileNotFoundError:
+        return None
+    vals = df.loc[df["report_year"] == year, "system_lambda_usd_mwh"].to_numpy(
+        dtype=float
+    )
+    vals = vals[np.isfinite(vals) & (vals != 0.0)]
+    if vals.size == 0:
+        return None
+    return float(vals.mean())
+
+
 def _measured_mean_lmp(anchor: Anchor, year: int, run: str = "rt") -> float | None:
-    """Return the anchor's realized annual-mean LMP ($/MWh), or None if absent.
+    """Return the anchor's realized annual-mean price ($/MWh), or None if absent.
 
     A zonal anchor averages per zone and then equal-weight over the listed
-    zones; a system anchor is the nan-mean of the file's rows for ``year``.
+    zones; a system anchor is the nan-mean of the file's rows for ``year``. A
+    ``ferc714_lambda`` anchor is the neighbour's annual-mean system lambda
+    (``run`` does not apply: Sch. 6 files one series).
     """
+    if anchor.kind not in ANCHOR_KINDS:
+        raise ValueError(f"unknown anchor kind {anchor.kind!r}")
+    if anchor.kind == "ferc714_lambda":
+        return _measured_mean_lambda(anchor.product, year)
     path = paths.CALIBRATION_DIR / f"actual_lmp_hourly_{anchor.product}.parquet"
     if not path.is_file():
         return None
@@ -129,8 +203,29 @@ def _measured_mean_lmp(anchor: Anchor, year: int, run: str = "rt") -> float | No
     return float(np.nanmean(rows[run].to_numpy(dtype=float)))
 
 
-def derive(iso: str, years: list[int], run: str = "rt") -> dict[str, dict[int, float]]:
+def anchor_source(anchor: Anchor) -> str:
+    """Return a human-readable name of the anchor's committed source."""
+    if anchor.kind == "ferc714_lambda":
+        return f"FERC 714 Sch. 6 system lambda of {anchor.product}"
+    return f"actual_lmp_hourly_{anchor.product}.parquet"
+
+
+def derive(
+    iso: str,
+    years: list[int],
+    run: str = "rt",
+    shapeless: dict[str, list[int]] | None = None,
+) -> dict[str, dict[int, float]]:
     """Return ``{neighbor_name: {year: hr}}`` anchored to measured neighbor LMP.
+
+    Args:
+        iso: The ISO whose registered seams are anchored.
+        years: Calendar years to anchor.
+        run: ``"rt"`` / ``"da"`` for an LMP anchor (ignored by a lambda anchor).
+        shapeless: When given, a (neighbour, year) with no EIA-930 load shape is
+            RECORDED here (``{neighbour: [years]}``) and left out of the table
+            instead of raising — an armed seam could not price that year either.
+            ``None`` (the default) keeps the fail-closed behaviour.
 
     Raises:
         KeyError: ``iso`` has no anchor map (an unregistered ISO never emits
@@ -154,11 +249,15 @@ def derive(iso: str, years: list[int], run: str = "rt") -> dict[str, dict[int, f
             if measured is None:
                 raise FileNotFoundError(
                     f"{iso}/{neighbor.name}: declared anchor "
-                    f"actual_lmp_hourly_{anchor.product}.parquet has no {run} "
+                    f"{anchor_source(anchor)} has no "
+                    f"{'non-zero' if anchor.kind == 'ferc714_lambda' else run} "
                     f"rows for {year}"
                     + (f" in zones {anchor.zones}" if anchor.zones else "")
                 )
             shaped = neighbor_load_shape(neighbor, year, _HOURS)
+            if shaped is None and shapeless is not None:
+                shapeless.setdefault(neighbor.name, []).append(year)
+                continue
             if shaped is None:
                 raise FileNotFoundError(
                     f"{iso}/{neighbor.name}: no EIA-930 load shape resolves for "
@@ -183,10 +282,16 @@ def main() -> None:
     ap.add_argument("--iso", default="PJM")
     ap.add_argument("--years", type=int, nargs="+", default=[2023, 2024, 2025])
     ap.add_argument("--run", default="rt", choices=("rt", "da"))
+    ap.add_argument(
+        "--skip-shapeless",
+        action="store_true",
+        help="report (do not fail on) a seam-year with no EIA-930 load shape",
+    )
     args = ap.parse_args()
     iso = args.iso.upper()
+    shapeless: dict[str, list[int]] | None = {} if args.skip_shapeless else None
     try:
-        table = derive(iso, args.years, args.run)
+        table = derive(iso, args.years, args.run, shapeless)
     except (KeyError, FileNotFoundError) as exc:
         sys.exit(f"derive_neighbor_hr_by_year: {exc}")
     print(f"# Derived measured-anchored neighbor heat rates for {iso} ({args.run})")
@@ -195,14 +300,18 @@ def main() -> None:
             n.marginal_heat_rate for n in INTERFACE_NEIGHBORS[iso] if n.name == name
         )
         anchor = NEIGHBOR_LMP_ANCHORS[iso][name]
-        tag = " PROXY anchor" if anchor.proxy else ""
+        tag = (" PROXY anchor" if anchor.proxy else "") + (
+            " FERC-714 lambda anchor" if anchor.kind == "ferc714_lambda" else ""
+        )
         cells = ", ".join(f"{y}: {hr}" for y, hr in sorted(per_year.items()))
         print(f'    "{name}": {{{cells}}},   # structural HR {cur}{tag}')
     for name in unanchored(iso):
         print(
             f"# {name}: no measured anchor registered — structural "
-            "marginal_heat_rate kept (no organized-market LMP)"
+            "marginal_heat_rate kept (see the ISO's NEIGHBOR_LMP_ANCHORS entry)"
         )
+    for name, gap in (shapeless or {}).items():
+        print(f"# {name}: no EIA-930 load shape for {sorted(gap)} — not anchored")
 
 
 if __name__ == "__main__":

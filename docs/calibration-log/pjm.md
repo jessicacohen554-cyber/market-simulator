@@ -6924,3 +6924,44 @@ over-run partly an exit-cohort outage-layer construction defect (~8.3 TWh phanto
 - Card 3 not reached.
 - **Record:** `docs/records/pjm/RESULT-pjm-next-20-2026-10-01.md`.
 
+
+## PJM-NEXT-21 — 2026-10-01 — C1 stays on EIA-923 (owner ruling); PJM's own coal offers are steeper than the keeper's ladder (zero LP)
+
+- **Solves and keeper:** zero LP, zero shards. Keeper unchanged (`2026-09-30-pjm-next16-ovec`); 10 failing cells, NOT-YET.
+- **Card 1 (rule-14 sizing):** C1 re-scored against `classFull` re-bounded monthly to EIA-930 by fuel fixes no failing cell. Gas re-bounding worsens CC_REGULAR (2023 +8.5 → +9.6, 2020 +9.8 → +14.2). Coal re-bounding (930 coal sits +3.4 to +12.5 TWh above 923, k ≈ 1.04–1.09, cause not established) shrinks COAL_BIT misses but fixes no cell. **Owner ruling: keep EIA-923.**
+- **Card 2 (offer slope, Jan/Apr/Jul/Oct 2019–25):** PJM's coal-like offers are steeper than the keeper's econ ladder in every year (IQR $0.7–2.2 vs $2.8–11.3). Keeper − PJM at +$5 is +0.01 to +0.03 in 2019–21 and −0.03 to −0.10 in 2022–25; 2025 reads like 2024. Refuted. **OPEN, not a limit.**
+- Card 3 not reached.
+- **Record:** `docs/records/pjm/RESULT-pjm-next-21-2026-10-01.md`.
+
+## PJM-NEXT-22 — 2026-10-01 — 2025 coal is a deep-in-money year, not a special one; the 2023/24 coal fit is a cancellation (zero LP)
+
+- **Solves and keeper:** zero LP, zero shards. Keeper unchanged (`2026-09-30-pjm-next16-ovec`); 10 failing cells, NOT-YET.
+- **Card 1 (2025 coal):** 2025 − 2024 = +14.5 TWh. Continuing western plants carry it (AEP-Ohio +7.6, West-APS +5.8; top 15 plants = 97 %). Each one's actual-RT margin rose by more than $5 (RT +$13). Deep-margin coal capacity doubles (38 → 74 TWh-cap); there the model loads coal to 0.97 and real coal to 0.88, the same as in 2021. The keeper's coal loading-vs-margin response is steeper than real coal's in **every** year. In 2023/24 an out-of-money under-run (−3.9 / −3.4) cancels the in-money over-run (+4.1 / +4.3).
+- **Refuted for 2025:** fleet change; LP coal capacity on a gross basis (the keeper max is already 0.97–0.98 × EIA-860 net summer); west congestion (the keeper reproduces the 2025 west discount within $1.1, and PJM actual RT zonal LMPs 2019–2025 were fetched for this); margin re-based on zonal RT.
+- **Card 2:** CT_PEAKER = (i) a persistent per-plant under-run (Tait, Doswell, Madison, Louisa, …) plus (ii) a ComEd/West-APS over-run stepping up at 2022/23 (CT committed band 4.4 → 8.6 TWh). 2021 fails because (i) is at its widest and (ii) has not started. The reserve vintage (+0.35–0.5 GW) does not explain (ii). `ct_peaker_committed_measured` is year-invariant with the wrong 2024/25 sign. The 2022 cluster has nothing new.
+- Card 3 not reached. **OPEN, not limits.**
+- **Record:** `docs/records/pjm/RESULT-pjm-next-22-2026-10-01.md`.
+
+## PJM-NEXT-23 — 2026-10-01 — the CT_PEAKER 2023 step is the gas price level; real CTs dispatch far flatter in cost than the LP (zero LP)
+
+- **Solves and keeper:** zero LP, zero shards. Keeper unchanged (`2026-09-30-pjm-next16-ovec`); 10 failing cells, NOT-YET.
+- **Card 1 (CT 2022 → 2023):** no CT input steps. Fleet change adds 0.67 TWh; committed capacity is flat (~3.0 GW, band already 1.05 ≈ measured 1.049); per-year heat rates move 0.00 cap-weighted. Cheap gas puts West-APS/ComEd CT offers ($27–35) at the system price for 5,000–7,000 h (Armstrong model 5,800–7,200 run-h vs real ~2,500). Continuing plants: model +6.3 TWh vs bench +2.4.
+- **Card 2 (persistent under-run):** Doswell GT7–9, Tait, West Lorain, Louisa run when actual DA is about half their modeled offer; only 0.43–0.71 of real CT energy is produced where DA or RT clears the modeled offer. Real CT dispatch is much flatter across plant cost than the LP's merit order: the CT form of NEXT-22's coal finding. Data note: Tait's CAMPD record is split across facility IDs 2847/55248, so its measured HR (13.1) covers GT1–3 only (EIA-923 12.5–12.7); ~$1–2/MWh, not the object.
+- Cards 3–4 not reached. **OPEN, not limits.**
+- **Record:** `docs/records/pjm/RESULT-pjm-next-23-2026-10-01.md`.
+
+## PJM-NEXT-24 — 2026-10-02 — coal and CT are two objects: coal within-plant (2019–21), CT across-plant (zero LP)
+
+- **Solves and keeper:** zero LP, zero shards. Keeper unchanged (`2026-09-30-pjm-next16-ovec`); 10 failing cells, NOT-YET.
+- **Card 1:** on one axis (actual RT/DA − keeper offer), real coal and CT loading respond flatly and near year-invariantly. Coal's excess is in-money (+12 to +17 TWh at margin ≥ 0 in 2019–21). CT's deficit is deep out-of-money (−3 to −8 TWh every year).
+- **Card 1b (refutes "one object"):**
+  - Coal's keeper response is steeper **within plants**: contrast 0.56–0.69 vs real 0.19–0.30 in 2019–21, the COAL_BIT fail years; 1.2–1.7× real in 2022–25.
+  - CT's keeper response is steeper **across plants**: ordering 2–3.5× real in every year; within-plant ≈ real.
+- **Card 2:**
+  - Real CTs start about twice as often (5,000–9,000 vs 2,100–3,800 blocks). Their run blocks are no longer than the keeper's, so min-run is not the object.
+  - About half the energy in cleared blocks falls in out-of-money shoulder hours (5.2–8.4 TWh; the gap is widest in 2021).
+  - Whole deep-out-of-money blocks are 1.2–2.6 TWh.
+  - BOR / reliability commitments not measured: no data on disk.
+- **Card 3:** Tait (55248 → 2847) is the only bench-relevant CAMPD/EIA-923 split (0.66–0.95 TWh/yr gross). A one-entry PJM remap would fix it; C1 is unaffected.
+- Card 4 not reached. **OPEN, not limits.**
+- **Record:** `docs/records/pjm/RESULT-pjm-next-24-2026-10-02.md`.

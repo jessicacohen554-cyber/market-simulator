@@ -1,0 +1,391 @@
+{
+ "_rule": {
+  "estimator": "frozen derive_miso_gas_variable_transport.derive(years=(Y,)) per year",
+  "bars": {
+   "MIN_MONTHS": 12,
+   "MIN_BURN_SPREAD": 2.0
+  },
+  "frozen_table_years": [
+   2023,
+   2024,
+   2025
+  ],
+  "source": "data/raw/_processed-legacy/eia923_monthly_fuel_costs.parquet"
+ },
+ "frozen_table": {
+  "plants": 102,
+  "plants_own": 98,
+  "v_cap_wtd": {
+   "CC_REGULAR": 0.2093,
+   "CT_PEAKER": 1.4406,
+   "ST_GAS": 1.288,
+   "__ALL_GAS__": 0.7438
+  }
+ },
+ "years": {
+  "2019": {
+   "year": 2019,
+   "plants_in_table": 90,
+   "plants_own": 50,
+   "plant_months": 1156,
+   "own_cap_share_of_table": 0.5159,
+   "sources": {
+    "own": 50,
+    "zone_group_pool": 40
+   },
+   "pooled_iso": 0.237178,
+   "pooled_group": {
+    "CC_REGULAR": 0.175442,
+    "CT_PEAKER": 0.340521,
+    "ST_CHP": 0.882086,
+    "ST_GAS": 0.301442
+   },
+   "v_cap_wtd": {
+    "CC_REGULAR": 0.2028,
+    "CT_PEAKER": 1.6913,
+    "ST_GAS": 0.7501,
+    "__ALL_GAS__": 0.7813
+   },
+   "v_own_cap_wtd": {
+    "CC_REGULAR": 0.2223,
+    "CT_PEAKER": 2.9401,
+    "ST_GAS": 0.7415,
+    "__ALL_GAS__": 1.2046
+   },
+   "wedge_burn_wtd": {
+    "CC_REGULAR": 0.1768,
+    "CT_PEAKER": 0.3948,
+    "ST_GAS": 0.3017,
+    "__ALL_GAS__": 0.2403
+   },
+   "v_topquartile_own_cap_wtd": {
+    "CC_REGULAR": 0.2293,
+    "CT_PEAKER": 4.2925,
+    "ST_GAS": 0.7681,
+    "__ALL_GAS__": 1.6401
+   },
+   "own_vs_frozen_own": {
+    "n_plants": 48,
+    "corr": 0.854,
+    "mean_diff_cap_wtd": 0.1506
+   },
+   "files": [
+    "data/raw/reference/miso_gas_variable_transport_vintaged/2019.csv",
+    "data/raw/reference/miso_gas_variable_transport_vintaged/2019.pool.csv"
+   ]
+  },
+  "2020": {
+   "year": 2020,
+   "plants_in_table": 92,
+   "plants_own": 51,
+   "plant_months": 1146,
+   "own_cap_share_of_table": 0.5934,
+   "sources": {
+    "own": 51,
+    "zone_group_pool": 39,
+    "group_pool": 2
+   },
+   "pooled_iso": 0.299042,
+   "pooled_group": {
+    "CC_REGULAR": 0.239248,
+    "CT_PEAKER": 0.357143,
+    "ST_CHP": 0.697504,
+    "ST_GAS": 0.370506
+   },
+   "v_cap_wtd": {
+    "CC_REGULAR": 0.0925,
+    "CT_PEAKER": 1.3454,
+    "ST_GAS": 0.2584,
+    "__ALL_GAS__": 0.5121
+   },
+   "v_own_cap_wtd": {
+    "CC_REGULAR": 0.0712,
+    "CT_PEAKER": 2.4052,
+    "ST_GAS": 0.0812,
+    "__ALL_GAS__": 0.6749
+   },
+   "wedge_burn_wtd": {
+    "CC_REGULAR": 0.255,
+    "CT_PEAKER": 0.3649,
+    "ST_GAS": 0.3707,
+    "__ALL_GAS__": 0.301
+   },
+   "v_topquartile_own_cap_wtd": {
+    "CC_REGULAR": 0.1518,
+    "CT_PEAKER": 3.0018,
+    "ST_GAS": 0.1428,
+    "__ALL_GAS__": 0.8947
+   },
+   "own_vs_frozen_own": {
+    "n_plants": 50,
+    "corr": 0.774,
+    "mean_diff_cap_wtd": -0.098
+   },
+   "files": [
+    "data/raw/reference/miso_gas_variable_transport_vintaged/2020.csv",
+    "data/raw/reference/miso_gas_variable_transport_vintaged/2020.pool.csv"
+   ]
+  },
+  "2021": {
+   "year": 2021,
+   "plants_in_table": 96,
+   "plants_own": 51,
+   "plant_months": 1169,
+   "own_cap_share_of_table": 0.5908,
+   "sources": {
+    "own": 51,
+    "zone_group_pool": 43,
+    "group_pool": 2
+   },
+   "pooled_iso": 0.129519,
+   "pooled_group": {
+    "CC_REGULAR": 0.021496,
+    "CT_PEAKER": -0.342494,
+    "ST_CHP": -1.245081,
+    "ST_GAS": 0.983408
+   },
+   "v_cap_wtd": {
+    "CC_REGULAR": 0.3413,
+    "CT_PEAKER": 0.1594,
+    "ST_GAS": -0.499,
+    "__ALL_GAS__": 0.1555
+   },
+   "v_own_cap_wtd": {
+    "CC_REGULAR": 0.5178,
+    "CT_PEAKER": 0.2867,
+    "ST_GAS": 0.2123,
+    "__ALL_GAS__": 0.4402
+   },
+   "wedge_burn_wtd": {
+    "CC_REGULAR": 0.0669,
+    "CT_PEAKER": -0.332,
+    "ST_GAS": 0.996,
+    "__ALL_GAS__": 0.1359
+   },
+   "v_topquartile_own_cap_wtd": {
+    "CC_REGULAR": 0.6148,
+    "CT_PEAKER": 0.2858,
+    "ST_GAS": 0.0209,
+    "__ALL_GAS__": 0.4874
+   },
+   "own_vs_frozen_own": {
+    "n_plants": 50,
+    "corr": 0.134,
+    "mean_diff_cap_wtd": -0.0319
+   },
+   "files": [
+    "data/raw/reference/miso_gas_variable_transport_vintaged/2021.csv",
+    "data/raw/reference/miso_gas_variable_transport_vintaged/2021.pool.csv"
+   ]
+  },
+  "2022": {
+   "year": 2022,
+   "plants_in_table": 99,
+   "plants_own": 66,
+   "plant_months": 1230,
+   "own_cap_share_of_table": 0.6842,
+   "sources": {
+    "own": 66,
+    "zone_group_pool": 33
+   },
+   "pooled_iso": 0.098557,
+   "pooled_group": {
+    "CC_REGULAR": 0.015803,
+    "CT_PEAKER": 0.120621,
+    "ST_CHP": -0.626696,
+    "ST_GAS": 0.470589
+   },
+   "v_cap_wtd": {
+    "CC_REGULAR": -0.271,
+    "CT_PEAKER": 0.8123,
+    "ST_GAS": 0.1451,
+    "__ALL_GAS__": 0.1337
+   },
+   "v_own_cap_wtd": {
+    "CC_REGULAR": -0.2874,
+    "CT_PEAKER": 1.0186,
+    "ST_GAS": 0.0257,
+    "__ALL_GAS__": 0.1319
+   },
+   "wedge_burn_wtd": {
+    "CC_REGULAR": 0.0167,
+    "CT_PEAKER": 0.1652,
+    "ST_GAS": 0.471,
+    "__ALL_GAS__": 0.1014
+   },
+   "v_topquartile_own_cap_wtd": {
+    "CC_REGULAR": -0.0182,
+    "CT_PEAKER": 1.2061,
+    "ST_GAS": 0.1192,
+    "__ALL_GAS__": 0.3418
+   },
+   "own_vs_frozen_own": {
+    "n_plants": 65,
+    "corr": 0.812,
+    "mean_diff_cap_wtd": -0.4072
+   },
+   "files": [
+    "data/raw/reference/miso_gas_variable_transport_vintaged/2022.csv",
+    "data/raw/reference/miso_gas_variable_transport_vintaged/2022.pool.csv"
+   ]
+  },
+  "2023": {
+   "year": 2023,
+   "plants_in_table": 102,
+   "plants_own": 60,
+   "plant_months": 1256,
+   "own_cap_share_of_table": 0.5918,
+   "sources": {
+    "own": 60,
+    "zone_group_pool": 41,
+    "group_pool": 1
+   },
+   "pooled_iso": 0.627356,
+   "pooled_group": {
+    "CC_REGULAR": 0.645395,
+    "CT_CHP": 0.00342,
+    "CT_PEAKER": 0.759678,
+    "ST_CHP": 2.193731,
+    "ST_GAS": 0.340789
+   },
+   "v_cap_wtd": {
+    "CC_REGULAR": 0.434,
+    "CT_PEAKER": 2.7377,
+    "ST_GAS": 0.1382,
+    "__ALL_GAS__": 1.112
+   },
+   "v_own_cap_wtd": {
+    "CC_REGULAR": 0.5295,
+    "CT_PEAKER": 3.8138,
+    "ST_GAS": -0.0343,
+    "__ALL_GAS__": 1.5394
+   },
+   "wedge_burn_wtd": {
+    "CC_REGULAR": 0.655,
+    "CT_PEAKER": 0.7834,
+    "ST_GAS": 0.3436,
+    "__ALL_GAS__": 0.6347
+   },
+   "v_topquartile_own_cap_wtd": {
+    "CC_REGULAR": 0.7868,
+    "CT_PEAKER": 3.6848,
+    "ST_GAS": 0.0401,
+    "__ALL_GAS__": 1.6542
+   },
+   "own_vs_frozen_own": {
+    "n_plants": 60,
+    "corr": 0.89,
+    "mean_diff_cap_wtd": 0.7284
+   },
+   "files": [
+    "data/raw/reference/miso_gas_variable_transport_vintaged/2023.csv",
+    "data/raw/reference/miso_gas_variable_transport_vintaged/2023.pool.csv"
+   ]
+  },
+  "2024": {
+   "year": 2024,
+   "plants_in_table": 99,
+   "plants_own": 57,
+   "plant_months": 1245,
+   "own_cap_share_of_table": 0.546,
+   "sources": {
+    "own": 57,
+    "zone_group_pool": 42
+   },
+   "pooled_iso": 0.465841,
+   "pooled_group": {
+    "CC_REGULAR": 0.213167,
+    "CT_CHP": -0.072549,
+    "CT_PEAKER": 0.450271,
+    "ST_CHP": 1.211316,
+    "ST_GAS": 0.773053
+   },
+   "v_cap_wtd": {
+    "CC_REGULAR": 0.19,
+    "CT_PEAKER": 1.4352,
+    "ST_GAS": 0.1845,
+    "__ALL_GAS__": 0.5663
+   },
+   "v_own_cap_wtd": {
+    "CC_REGULAR": 0.1237,
+    "CT_PEAKER": 1.788,
+    "ST_GAS": -0.1087,
+    "__ALL_GAS__": 0.6261
+   },
+   "wedge_burn_wtd": {
+    "CC_REGULAR": 0.3895,
+    "CT_PEAKER": 0.4521,
+    "ST_GAS": 0.7737,
+    "__ALL_GAS__": 0.4667
+   },
+   "v_topquartile_own_cap_wtd": {
+    "CC_REGULAR": 0.297,
+    "CT_PEAKER": 1.7045,
+    "ST_GAS": 0.1008,
+    "__ALL_GAS__": 0.7477
+   },
+   "own_vs_frozen_own": {
+    "n_plants": 57,
+    "corr": 0.948,
+    "mean_diff_cap_wtd": 0.006
+   },
+   "files": [
+    "data/raw/reference/miso_gas_variable_transport_vintaged/2024.csv",
+    "data/raw/reference/miso_gas_variable_transport_vintaged/2024.pool.csv"
+   ]
+  },
+  "2025": {
+   "year": 2025,
+   "plants_in_table": 98,
+   "plants_own": 61,
+   "plant_months": 1244,
+   "own_cap_share_of_table": 0.6146,
+   "sources": {
+    "own": 61,
+    "zone_group_pool": 35,
+    "miso_pool": 1,
+    "group_pool": 1
+   },
+   "pooled_iso": 0.392173,
+   "pooled_group": {
+    "CC_REGULAR": 0.318063,
+    "CT_PEAKER": 0.457442,
+    "ST_CHP": 1.551922,
+    "ST_GAS": 0.470215
+   },
+   "v_cap_wtd": {
+    "CC_REGULAR": 0.1001,
+    "CT_PEAKER": 1.9859,
+    "ST_GAS": 0.3581,
+    "__ALL_GAS__": 0.7178
+   },
+   "v_own_cap_wtd": {
+    "CC_REGULAR": 0.0102,
+    "CT_PEAKER": 2.5945,
+    "ST_GAS": 0.0297,
+    "__ALL_GAS__": 0.9108
+   },
+   "wedge_burn_wtd": {
+    "CC_REGULAR": 0.3381,
+    "CT_PEAKER": 0.5084,
+    "ST_GAS": 0.6056,
+    "__ALL_GAS__": 0.4178
+   },
+   "v_topquartile_own_cap_wtd": {
+    "CC_REGULAR": 0.2001,
+    "CT_PEAKER": 2.1779,
+    "ST_GAS": -0.3205,
+    "__ALL_GAS__": 0.8915
+   },
+   "own_vs_frozen_own": {
+    "n_plants": 61,
+    "corr": 0.972,
+    "mean_diff_cap_wtd": 0.1534
+   },
+   "files": [
+    "data/raw/reference/miso_gas_variable_transport_vintaged/2025.csv",
+    "data/raw/reference/miso_gas_variable_transport_vintaged/2025.pool.csv"
+   ]
+  }
+ }
+}

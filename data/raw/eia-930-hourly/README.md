@@ -20,7 +20,7 @@ the BA reports. Consumed by `src/market_sim/data/eia_loader.py`
 | CISO | CAISO | 2018-01-01 .. 2026-06-30 (2019-2021 backfilled 2026-07-06; 2018 + H1-2026 landed 2026-07-08; **2022 filled 2026-07-31**) |
 | MISO | MISO | 2018-01-01 .. 2026-06-30 (2019-2021 backfilled 2026-07-06; 2018 + H1-2026 landed 2026-07-08; **2022 filled 2026-07-31**) |
 | SOCO | SOCO (Southern Co balancing authority) | 2018-12-31 .. 2025-12-31 (**2019-2022 folded in 2026-09-24, I-SOCO**, from the committed BALANCE archive by `scripts/data/extend_eia930_hourly_from_balance.py --ba SOCO --year 2019 --year 2020 --year 2021 --year 2022`; see below) |
-| FLA | — (Florida, not a modeled ISO) | 2022-12-31 .. 2025-01-31 |
+| FLA | — (Florida region, not a modeled ISO) | 2019-01-01 .. 2025-12-31 (2023-01 .. 2025-01 from the API; **2019-2022 and Feb-Dec 2025 folded 2026-10-02, soco-99**, as the sum of the region's member BAs, `extend_eia930_hourly_from_balance.py --ba FLA --region`; see below) |
 | BPAT | — (NWPP, not a modeled ISO) | 2019-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11; 2019-2022 added 2026-09-24, R-NWPP) |
 | PACE | — (NWPP, not a modeled ISO) | 2019-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11; 2019-2022 added 2026-09-24, R-NWPP) |
 | PACW | — (NWPP, not a modeled ISO) | 2019-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11; 2019-2022 added 2026-09-24, R-NWPP) |
@@ -361,3 +361,36 @@ Measured defects AT SOURCE, carried unmodified (raw is immutable):
   its seam (`eia930.envelopes.soco_net_interchange`), so a 2019 SOCO solve
   would read Jan-Aug as net import — routed to the solve lane, not repaired
   here.**
+
+## FLA 2019-2022 and 2025 (soco-99, 2026-10-02)
+
+`FLA` is an EIA-930 **region** (Florida), not a balancing authority, and the
+BALANCE archive carries BA rows only. EIA defines a region series as the sum
+of its member BAs, so `build_region_rows` sums the BAs each file tags
+`Region == "FLA"`, with membership counted **per hour** (ten BAs until New
+Smyrna Beach folded into FMPP on 2020-01-08, nine after). The demand family
+reads the `(Adjusted)` columns (EIA's anomaly-screened series); an hour is NaN
+unless every member files it. Fuel columns use the BA path's mapping on the
+raw columns, summed `min_count=1`. Clock columns use `convert_eia930`'s
+US/Eastern hour-ending convention.
+
+`FLA hourly.parquet` gained 43,080 rows (local 2019-01-01 .. 2022-12-31 and
+2025-02-01 .. 2025-12-31). The 18,288 committed rows and every column dtype
+are **byte-identical** afterwards.
+
+**Same-quantity check against the committed 2023-24 API rows** (17,544 hours):
+clock columns reproduce exactly. `Demand` within 1 MW in 98.4 % of hours, max
+|d| 2.4 GW, mean +8.7 MW (+0.03 %) — the revision vintage of the two pulls.
+The raw (unadjusted) sum would carry member unit-slip spikes up to 65 GW,
+which the API region series does not.
+
+Measured gaps AT SOURCE, carried as NaN (never a partial sum):
+
+| Local year | `Demand` NaN hours | Cause |
+|---|---:|---|
+| 2019 | 947 | unfiled member-hours: GVL 736 (H1), NSB 191, SEC 26, JEA 1 |
+| 2020 | 85 | unfiled member-hours: NSB 24, TEC 24, FMPP 23, GVL 13, JEA 1, SEC 2 |
+| 2021 | 6 | |
+| 2022 | 0 | |
+| 2025 | 1 | |
+

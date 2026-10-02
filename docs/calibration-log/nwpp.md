@@ -848,3 +848,27 @@ card "Keep #19; retire dup Clark field":
 - **E (live-capacity screened-coal WEFOR):** 4 new C4 FAILs (coal 2019/2022/2025, gas 2019). R.
 - **Correction:** #19 was on pin (its run_configs record the pinned libraries); the off-pin note belonged to NEXT-15's run.
 - Record: `docs/records/nwpp/RESULT-nwppnext16-combined-captive-live-2026-10-01.md`. Next: Bridger seasonal offer (NEXT-17).
+
+## NWPP-NEXT-17 — 2026-10-01 — phase 0 only: Bridger's trough is a flat hydro-set price (no solve; lever redirected)
+
+- **Zero LP** on keeper #20's 2023 leg (`a54c7b97`). Bridger's take floor is one −$5.56/MWh dual Jan–Oct. Its effective
+  offer (~$33–36) sits $1–10 above a NWPP-EAST price that is **flat within each month** (Jul–Oct P10–P90 spread $1–4).
+- The north zones clear at one price, the **monthly hydro water value**. Within-day and between-day SD are ~1/10 of WEIM
+  PACE/IPCO/BPAT. Jul and Oct means are $15–30 low. At measured prices the keeper offer recovers July. Aug–Oct still
+  under-run by 0.4–0.8 TWh/month.
+- The Oct–Dec captive-mine spike ($3.7 → $5.3/MMBtu, Jim Bridger Mine) is real and small (~0.1 TWh).
+- Owner card: **"Redirect to hydro"**. A Bridger offer change would be fitted to a price error (rules 1, 13). Next: NWPP hydro
+  within-month freedom, phase-0 design (NEXT-18). Record:
+  `docs/records/nwpp/FINDING-nwppnext17-bridger-price-formation-phase0-2026-10-01.md`.
+
+## NWPP-NEXT-18 — 2026-10-01 — phase 0 only: hydro has no excess within-month freedom (hydro-period lever closed for NWPP)
+
+- **Zero LP** on keeper #20's 2022–2025 legs. The water value sits on the Columbia/Snake chain (99 % of interior hydro
+  hour-MW, led by Grand Coulee), not on small reservoirs.
+- Against CROHMS: the model moves **less** energy between days than measured (ratio 0.75–0.90; Grand Coulee 0.71–0.83).
+  `hydro_budget_period_by_instrument` would move NWPP further from data. Not armed, no registry entries (rule 13).
+- Within the day the model over-shapes (0.98–1.41×; Grand Coulee 1.44–1.72×). That is an hourly object, not a lever on its own.
+- The flat price is a flat monthly gas stack (+$1–5 when the envelope binds) plus a fixed interface. Measured NW prices
+  track CAISO/the West (between-day r 0.72–0.90).
+- Owner card: **"Both, one census"**. NEXT-19 runs a zero-LP split of measured price variance into gas-daily and
+  interface parts, then picks the lever. Record: `docs/records/nwpp/FINDING-nwppnext18-hydro-within-month-phase0-2026-10-01.md`.

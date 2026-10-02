@@ -75,6 +75,7 @@ ALL_DATATYPES = [
     "reserve-requirements",
     "som-competitive-conduct",
     "storage-as-awards",
+    "storage-soc-bounds",
     "capacity-market-demand-curve",
     "capacity-market-auction-price",
     # capx D31 (2026-09-02, `89415b60`) registered this in

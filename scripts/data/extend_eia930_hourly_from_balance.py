@@ -40,6 +40,8 @@ Usage:
         --ba MISO --year 2018
     python scripts/data/extend_eia930_hourly_from_balance.py --ba CISO --ba MISO \
         --year 2026
+    python scripts/data/extend_eia930_hourly_from_balance.py --ba FLA --region \
+        --year 2019 --year 2020 --year 2021 --year 2022 --year 2025
 """
 
 from __future__ import annotations
@@ -70,6 +72,14 @@ _REGION_MAP: dict[str, str] = {
     "Demand (MW)": "Demand",
     "Net Generation (MW)": "Net generation",
     "Total Interchange (MW)": "Total interchange",
+}
+# Region sums (``--region``) read EIA's anomaly-screened columns for the
+# demand family; ``Demand Forecast`` has no Adjusted variant.
+_REGION_MAP_ADJUSTED: dict[str, str] = {
+    "Demand Forecast (MW)": "Demand forecast",
+    "Demand (MW) (Adjusted)": "Demand",
+    "Net Generation (MW) (Adjusted)": "Net generation",
+    "Total Interchange (MW) (Adjusted)": "Total interchange",
 }
 
 # BALANCE bulk fuel column -> ``NG: <code>`` (legacy, pre-mid-2024 taxonomy).
@@ -187,7 +197,23 @@ def build_new_rows(
             ),
         }
     )
-    for col, name in _REGION_MAP.items():
+    values = _wide_values(raw, target_fuel_cols, _REGION_MAP)
+    out = pd.concat([out, values], axis=1)
+    return out.sort_values("UTC time").reset_index(drop=True)
+
+
+def _wide_values(
+    raw: pd.DataFrame, target_fuel_cols: list[str], region_map: dict[str, str]
+) -> pd.DataFrame:
+    """Map BALANCE rows to the extract's value columns (no clock columns).
+
+    ``region_map`` names the source column for each demand-family column
+    (:data:`_REGION_MAP` for a BA, :data:`_REGION_MAP_ADJUSTED` for a region
+    sum); the ``NG: <code>`` columns follow the taxonomy rules in the module
+    docstring.
+    """
+    out = pd.DataFrame(index=raw.index)
+    for col, name in region_map.items():
         out[name] = pd.to_numeric(raw[col], errors="coerce").astype("float32")
 
     is_new_taxonomy = any("Excluding Pumped Storage" in c for c in raw.columns)
@@ -221,18 +247,93 @@ def build_new_rows(
         code = name[len("NG: ") :]
         out[name] = fuel[code].astype("float32") if code in fuel.columns else pd.NA
 
-    return out.sort_values("UTC time").reset_index(drop=True)
+    return out
+
+
+def build_region_rows(
+    region: str,
+    target_fuel_cols: list[str],
+    years: tuple[int, ...],
+    halves: tuple[str, ...],
+) -> pd.DataFrame:
+    """Build wide rows for an EIA-930 REGION as the sum of its member BAs.
+
+    EIA defines a region's series as the sum of its member balancing
+    authorities; the BALANCE archive carries BA rows only, each tagged with
+    its ``Region``. Membership is read per hour from the files themselves
+    (FLA: ten BAs until New Smyrna Beach folded into FMPP on 2020-01-08,
+    nine after), never typed.
+
+    The demand family sums the ``(Adjusted)`` columns
+    (:data:`_REGION_MAP_ADJUSTED`): EIA's own anomaly-screened series, the
+    reconciled form of the region product (rule 14). On the committed FLA
+    2023-24 rows (17,518 complete hours) the Adjusted sum matches the API
+    region ``Demand`` within 1 MW in 98.6 % of hours (max 2.4 GW, mean
+    +8.7 MW, revision vintage), where the raw-column sum carries member
+    unit-slip spikes up to 65 GW. A demand-family hour is NaN unless every
+    member reports it: a partial sum is not the region. Fuel columns use the BA path's mapping on the raw columns and sum
+    with ``min_count=1`` (a member that does not report a fuel generates none
+    of it; NaN only where no member reports).
+
+    Clock columns follow :func:`convert_eia930._build_time_columns` on the
+    region's ``BA_TIMEZONES`` zone, the convention of the API-built extract.
+    """
+    from convert_eia930 import BA_TIMEZONES, _build_time_columns
+
+    sums = []
+    for year in years:
+        for half in halves:
+            path = BALANCE_DIR / f"EIA930_BALANCE_{year}_{half}.parquet"
+            if not path.exists():
+                print(f"  ({path.name} not on disk yet -- skipping)")
+                continue
+            df = pd.read_parquet(path)
+            raw = df[df["Region"] == region].reset_index(drop=True)
+            if raw.empty:
+                continue
+            values = _wide_values(raw, target_fuel_cols, _REGION_MAP_ADJUSTED)
+            values = values.apply(pd.to_numeric).astype("float64")
+            utc = pd.to_datetime(raw["UTC Time at End of Hour"])
+            demand_cols = list(_REGION_MAP_ADJUSTED.values())
+            grouped = values.groupby(utc.values)
+            # Membership is per HOUR (a BA is a member where it has a row):
+            # NSB files only 2020-01-01..01-08 before folding into FMPP.
+            members = grouped.size()
+            demand = grouped[demand_cols].sum()
+            demand = demand.where(grouped[demand_cols].count().eq(members, axis=0))
+            part = pd.concat(
+                [demand, grouped[target_fuel_cols].sum(min_count=1)], axis=1
+            )
+            sums.append(part)
+    if not sums:
+        raise ValueError(f"no BALANCE rows found for region {region!r}")
+    summed = pd.concat(sums).sort_index()
+    summed = summed[~summed.index.duplicated(keep="first")]
+    period = pd.Series(pd.DatetimeIndex(summed.index).tz_localize("UTC"))
+    out = _build_time_columns(period, BA_TIMEZONES[region])
+    for col in summed.columns:
+        out[col] = summed[col].to_numpy(dtype="float32")
+    return out
 
 
 def extend_ba(
-    ba: str, force: bool, years: tuple[int, ...], halves: tuple[str, ...]
+    ba: str,
+    force: bool,
+    years: tuple[int, ...],
+    halves: tuple[str, ...],
+    region: bool = False,
 ) -> Path:
-    """Fold the requested years into ``<ba> hourly.parquet``, existing rows untouched."""
+    """Fold the requested years into ``<ba> hourly.parquet``, existing rows untouched.
+
+    ``region=True`` treats ``ba`` as an EIA-930 region code and builds the rows
+    by :func:`build_region_rows` (the sum of its member BAs).
+    """
     out_path = OUT_DIR / f"{ba} hourly.parquet"
     existing = pd.read_parquet(out_path)
     fuel_cols = [c for c in existing.columns if c.startswith("NG: ")]
 
-    new_rows = build_new_rows(ba, fuel_cols, years, halves)
+    builder = build_region_rows if region else build_new_rows
+    new_rows = builder(ba, fuel_cols, years, halves)
     new_rows = new_rows[list(existing.columns)]
     # A fuel column the source taxonomy lacks arrives all-``pd.NA`` (object);
     # left as-is, the concat below upcasts that column of the COMMITTED rows
@@ -452,6 +553,12 @@ def main() -> None:
     )
     ap.add_argument("--ba", action="append", dest="bas")
     ap.add_argument(
+        "--region",
+        action="store_true",
+        help="treat each --ba as an EIA-930 region code (e.g. FLA) and fold "
+        "the sum of its member BAs (build_region_rows)",
+    )
+    ap.add_argument(
         "--year",
         action="append",
         type=int,
@@ -484,7 +591,7 @@ def main() -> None:
     years = tuple(args.years) if args.years else _DEFAULT_EXTEND_YEARS
     halves = tuple(args.halves) if args.halves else _DEFAULT_HALVES
     for ba in args.bas:
-        extend_ba(ba, args.force, years, halves)
+        extend_ba(ba, args.force, years, halves, region=args.region)
 
 
 if __name__ == "__main__":

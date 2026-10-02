@@ -1,0 +1,84 @@
+# Canonical schema: storage-soc-bounds (participant-submitted storage
+# end-of-hour state-of-charge bid bounds, per masked resource and hour).
+#
+# Source (CAISO, R-CAISO-31): OASIS Public Bid Data `PUB_RTM_GRP` columns
+# MINEOHSTATEOFCHARGE / MAXEOHSTATEOFCHARGE — the ESDER 4 end-of-hour SOC bid
+# parameter (FERC-approved May 2021), an OPTIONAL real-time-only hourly
+# [min, max] MWh range a scheduling coordinator may submit for a non-generator
+# resource (DMM 2024 Battery Special Report section 2.2). Empty in every DAM row.
+# Resource identity is masked (RESOURCEBID_SEQ, persistent across days).
+# Extracted by scripts/data/extract_caiso_rtm_eoh_soc.py into the committed
+# data/raw/caiso-rtm-eoh-soc/ (the full daily zips are gitignored).
+#
+# Rule 13 [R-MEASURED]: the bound is a CONDUCT parameter encoding each
+# participant's own price view and RA position; it has no forward driver.
+# REPORT-ONLY DIAGNOSTIC — never a solve input, never an LP bound or floor
+# (R-CAISO-28 FINDING section 1 point 4). Rows exist only where a resource
+# submitted a bound; absence means "not submitted", not "unbounded".
+datatype: storage-soc-bounds
+schema_version: 1
+title: Storage end-of-hour SOC bid bounds (per masked resource, hourly)
+description: >-
+  Per ISO, market run, masked storage resource and bid hour: the submitted
+  minimum and maximum end-of-hour state of charge (MWh), with the resource's
+  energy-bid MW range on the same trade date for scale. Diagnostic only.
+
+key_columns: [iso, market, resource_id, interval_start_utc]
+allow_additional_columns: false
+
+columns:
+  - name: interval_start_utc
+    dtype: datetime64[ns, UTC]
+    unit: utc_timestamp
+    nullable: false
+    description: UTC start of the hourly bid interval the bound applies to (end of hour = start + 1 h).
+  - name: interval_start_local
+    dtype: datetime64[ns]
+    unit: local_timestamp
+    nullable: false
+    description: Wall-clock ISO-local start of the hour (naive; CAISO Pacific prevailing time).
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: ISO/RTO code (CAISO).
+  - name: market
+    dtype: string
+    unit: none
+    nullable: false
+    description: Market run the bid was submitted to (CAISO - RTM; the parameter is RT-only).
+  - name: resource_id
+    dtype: string
+    unit: none
+    nullable: false
+    description: Masked resource id as published (CAISO RESOURCEBID_SEQ; persistent across days, no unit identity).
+  - name: sc_id
+    dtype: string
+    unit: none
+    nullable: false
+    description: Masked scheduling-coordinator id as published (CAISO SCHEDULINGCOORDINATOR_SEQ).
+  - name: min_eoh_soc_mwh
+    dtype: float64
+    unit: mwh
+    nullable: false
+    description: Submitted minimum end-of-hour state of charge (MWh).
+  - name: max_eoh_soc_mwh
+    dtype: float64
+    unit: mwh
+    nullable: false
+    description: Submitted maximum end-of-hour state of charge (MWh); its resource-level ceiling tracks energy capacity (~4 h x injection MW).
+  - name: en_min_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: Most negative MW (withdrawal) on the resource's energy bid curve that trade date; null if it bid no energy curve.
+  - name: en_max_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: Largest MW (injection) on the resource's energy bid curve that trade date; null if it bid no energy curve.
+  - name: is_storage_s1
+    dtype: bool
+    unit: flag
+    nullable: false
+    description: True when the trade date's energy bid curve spans <= -1 MW and >= +1 MW (the caiso-178 S1 storage test).

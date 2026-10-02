@@ -2086,3 +2086,20 @@ REPORTED-ONLY (9 respondents, per-respondent clock verdicts, Dominion SC not shi
 `INTERFACE_NEIGHBORS["SOCO"]` and soco-planning README §4c. Not done: the per-year `hr_by_year` anchors for the six
 λ-anchorable seams (needs SOCO-33 R-1/R-2; forecast-lane input). Matrix cells priced_interchange /
 historic_outage_overlay stay `U` with evidence. Records: docs/records/soco/r-soco/FINDING-soco-97-{peaker-outage,interchange-rule14}-phase0-2026-10-01.md.
+
+**soco-98 (2026-10-01).** Zero LP; keeper unchanged (NOT-YET 7/4/0/3/0). Owner card → **"(e) Forecast anchors only"**
+(no calibration build). SOCO-33 R-1/R-2/R-3 repaired: `derive_neighbor_hr_by_year.py` gains a `ferc714_lambda` anchor
+kind and a `SOCO` map; `derive_neighbor_hr_elasticity.py` reads the same per-ISO map and fails closed (PJM/MISO
+coefficients unchanged). `INTERFACE_NEIGHBORS["SOCO"]` `hr_by_year` registered from the neighbours' own annual-mean
+FERC-714 λ (TVA, DUK, SC 2019–25; FPC, TAL 2023–24, FLA shape gap R-4) and MISO-South LMP (2019–25). SCEG / FPL
+unanchored. Flats and limits unchanged; no elasticity registered (fits leveraged by 2022). Inert: all 11 keeper cache
+keys identical; blocks default-off. Matrix cells stay `U`. Record:
+docs/records/soco/r-soco/FINDING-soco-98-lambda-anchors-2026-10-01.md.
+
+**soco-99 (2026-10-02).** Zero LP; keeper unchanged (NOT-YET 7/4/0/3/0). Owner card → **"R-4 FLA 930 extend"**.
+`FLA hourly.parquet` extended to 2019–2025 from the BALANCE archive as the sum of the FLA region's member BAs
+(`extend_eia930_hourly_from_balance.py --region`, `(Adjusted)` demand family; committed 2023–25-01 rows byte-identical;
+2023–24 same-quantity check 98.4 % within 1 MW). `SOCO_FPC` / `SOCO_TAL` `hr_by_year` now cover 2019–25 (2023–24
+unchanged). Flag: TAL λ runs 25–35 % below FPC / JEA (implied HR 5.7–7.7), routed with the FPL basis question. Inert:
+all 11 keeper cache keys identical. Matrix cells stay `U`. Record:
+docs/records/soco/r-soco/FINDING-soco-99-fla-extract-2026-10-02.md.
