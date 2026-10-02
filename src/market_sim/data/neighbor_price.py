@@ -68,7 +68,8 @@ if TYPE_CHECKING:
 # actuals. Default ``None`` (off), so keepers (which legitimately price
 # backcast years off the measured anchor, rule #12) are byte-identical.
 #   "elastic" -> skip hr_by_year, use the gas-elastic coeffs (the forward fallback)
-#   "flat"    -> skip hr_by_year AND the elastic coeffs, use marginal_heat_rate
+#   "flat"    -> skip hr_by_year AND the elastic coeffs, use forward_heat_rate
+#                (when registered) else marginal_heat_rate
 # This NEVER reads the ISO's own interchange — it only changes which neighbor
 # price-formation formula prices the seam (rule #11 stays satisfied). Sourced
 # from ``ScenarioConfig.neighbor_hr_forward_skill`` (CLAUDE.md rule 23 — no
@@ -191,9 +192,13 @@ def neighbor_heat_rate(
        forward as the Henry Hub trajectory moves WITHOUT reading the neighbor's
        realized LMP for a future year. The coefficients are blind to the ISO's
        interchange (rule #11).
-    3. **Flat structural fallback** — ``marginal_heat_rate`` when no elasticity
-       is fit (neighbors with no organized-market LMP, e.g. the Carolinas), so
-       those forecast runs stay byte-identical.
+    3. **Flat forward fallback** — when no elasticity is fit (neighbors with no
+       organized-market LMP, e.g. the Carolinas): the seam's
+       ``forward_heat_rate`` when registered (the seam-own flat mean of its
+       ``hr_by_year`` cells, produced by
+       ``scripts/data/derive_neighbor_forward_hr.py``; the SOCO seams), else the
+       structural ``marginal_heat_rate``, so every other seam's forecast runs
+       stay byte-identical.
 
     Args:
         neighbor: The seam specification.
@@ -213,6 +218,8 @@ def neighbor_heat_rate(
         hr_phys, hr_adder = coeffs
         gas = neighbor_gas_price(neighbor, year, gas_scenario)
         return hr_phys + hr_adder / gas
+    if neighbor.forward_heat_rate is not None:
+        return neighbor.forward_heat_rate
     return neighbor.marginal_heat_rate
 
 
