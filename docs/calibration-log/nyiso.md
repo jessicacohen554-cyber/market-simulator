@@ -15194,3 +15194,22 @@ runs being pruned stopped it; steps 9–10 (prune, parity) were run by hand, the
 branches with docs kept; `nyiso_gas_flow_date` stays O. Full legs remain on the shard branches
 `claude/nyisonext26p-2021..2025`. Next lead: open item 3 (2023 winter under-pricing after
 print-level).
+
+## 2026-10-02 — NYISO-NEXT-32: open items 2 and 4 ledgered as model-class limitations (cards 5, 6)
+
+Owner delegation ("merge any relevant PRs yourself … decision cards only if unsure"); both cards
+applied per their recommendations, zero LP.
+
+- **Item 2, uncapped-hour Zone-K congestion** (NEXT-30): ledgered like CENTRAL EAST. No admissible
+  public driver; re-open only on published Zone-K shift factors or a published Y49 PAR schedule rule.
+  Evidence on `nyiso_li_tsl_all_hours`.
+- **Item 4, bridge D-4 unit-conduct rows** (NEXT-31): ledgered as a P0-anchored-detection seam
+  limitation (5.9 GWh over the span, ≤ 0.3 % of bridge-floored energy). Re-open only with an
+  admissible P1-native commitment detector or a row above materiality. Evidence on
+  `gas_commitment_bridge`.
+- Card 4 (NEXT-24 dual-fuel): option A, nothing armed; `dual_fuel_measured_oil_burn` stays U.
+- Also lands the keeper shard's promotion note, lineage (`superseded.former_keeper` =
+  nyisonext21) and rule-35/E11 declaration for nyisonext26p, which missed #7016's merge.
+
+Remaining queue: item 3 (2023 winter under-pricing after print-level) is the lead; item 5 needs
+MyNYISO access; item 6 only on the nyiso-179 re-open condition; item 1 is below zonal grain.
