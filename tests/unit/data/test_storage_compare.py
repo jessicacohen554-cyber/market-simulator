@@ -87,3 +87,52 @@ def test_std_clock_maps_utc_to_fixed_standard_hour():
     utc = pd.DatetimeIndex(["2025-07-01 07:00"], tz="UTC")
     slot = std_hour_of_year(utc, 2025, "Etc/GMT+8")[0]
     assert slot == (31 + 28 + 31 + 30 + 31 + 30) * 24 - 1
+
+
+def _write_bounds_fixture(tmp_path, monkeypatch, year=2025):
+    """Two masked resources: A bounded [20, 80] of a 100 MWh ceiling, B [0, 50] of 50."""
+    raw = tmp_path / "eoh"
+    raw.mkdir()
+    utc = pd.date_range(f"{year}-01-01 08:00", periods=24 * 10, freq="h", tz="UTC")
+    a = pd.DataFrame(
+        {
+            "interval_start_utc": utc,
+            "resourcebid_seq": 1,
+            "min_eoh_soc_mwh": 20.0,
+            "max_eoh_soc_mwh": 80.0,
+        }
+    )
+    a.loc[0, "max_eoh_soc_mwh"] = 100.0  # the ceiling = the year max of the max bound
+    b = a.assign(resourcebid_seq=2, min_eoh_soc_mwh=0.0, max_eoh_soc_mwh=50.0)
+    pd.concat([a, b]).to_parquet(raw / f"caiso_rtm_eoh_soc_{year}.parquet")
+    pd.DataFrame(
+        {
+            "resourcebid_seq": [1, 2, 3],
+            "en_max_mw": [10.0, 10.0, 80.0],
+            "is_storage_s1": [True, True, True],
+            "submits_eoh": [True, True, False],
+        }
+    ).to_parquet(raw / f"caiso_rtm_storage_universe_{year}.parquet")
+    monkeypatch.setattr(sc, "SOC_BOUNDS_DIR", raw)
+    monkeypatch.setattr(sc, "DMM_SOC_OUTAGE_JSON", tmp_path / "absent.json")
+
+
+def test_soc_bounds_envelope_on_model_clock(tmp_path, monkeypatch):
+    bdir, _ = _write_fixture(tmp_path, monkeypatch)
+    _write_bounds_fixture(tmp_path, monkeypatch)
+    blk = sc.build_storage_compare(bdir, "CAISO", 2025)["socBounds"]
+    # 08:00 UTC == 00:00 on the fixed UTC-8 clock; hour 1 avoids the ceiling row.
+    assert blk["env"]["all"]["lo"][1] == round(20 / 150, 4)
+    assert blk["env"]["all"]["hi"][1] == round(130 / 150, 4)
+    assert blk["submitters"] == 2 and blk["mwShare"] == 0.2
+    assert blk["env"]["summer"]["lo"] == [None] * 24  # January-only fixture
+    assert blk["dmm"] is None
+    # Model side: the fixture fleet's SOC over its 1e5 MWh capacity.
+    assert len(blk["model"]["all"]) == 24 and 0 < blk["model"]["all"][0] < 1
+
+
+def test_soc_bounds_absent_without_extract(tmp_path, monkeypatch):
+    bdir, _ = _write_fixture(tmp_path, monkeypatch)
+    monkeypatch.setattr(sc, "SOC_BOUNDS_DIR", tmp_path / "none")
+    assert "socBounds" not in sc.build_storage_compare(bdir, "CAISO", 2025)
+    assert sc.load_soc_bounds_envelope("ERCOT", 2025) is None

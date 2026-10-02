@@ -15824,3 +15824,12 @@ is capped (caiso-119), so the fraction barely moves the energy. Zero DOF was add
 - Recorded: at hour grain the keeper's measured gas bands sit +$3.6–6.4/MWh above the fleet's own DAM bids (pooled, every consumed class and band). Recorded: the re-fetched OASIS corpus moves the CT/ST partition (st_cut 11.74 → 11.19) with consumed bands ≤ 0.022.
 
 Record: `docs/records/caiso/r-caiso-33/`.
+
+## R-CAISO-34 — 2026-10-02: Run Explorer storage panel, SOC-bound envelope (link 16), display only
+
+- The storage panel gains, for CAISO 2023–25, the submitters' mean [min, max] end-of-hour SOC bound (share of ceiling) beside the keeper's li-ion SOC ÷ energy capacity, by hour of day, all year or Jun–Sep. It is labelled a self-selected subset (2.7 / 12.2 / 19.8 % of storage MW), never a target, and no statistic is computed against it. The R-CAISO-32 digitized DMM quarterly SOC-outage shares (2023–24) sit below it as a reference card.
+- Built in `scripts/lib/storage_compare.py::build_soc_bounds`, as an optional `storageCmp.socBounds` block that every future render carries. The block is on the model's fixed-PST clock, which removes the R-CAISO-31 probe's prevailing-time 1 h summer shift. The arm-3 keeper payload was injected in place by `scripts/probes/_rcaiso34_inject_soc_bounds.py`; the rest of the payload is byte-identical.
+- Descriptive only: the model's mean SOC share sits inside the band at all 24 hours, 2023–25. The band is wide and its submitters are a minority, so this is not a fit and not a lever.
+- Owner card: **ship as rendered.** Zero LP, keeper unchanged.
+
+Record: `docs/records/caiso/r-caiso-34/`.

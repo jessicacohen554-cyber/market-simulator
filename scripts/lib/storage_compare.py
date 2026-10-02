@@ -25,7 +25,15 @@ Wire layout (per year)::
      "soc": {"m": i16b64, "a": i16b64|None},            # % of own annual max x10
      "diur": {"m": [288], "a": [288]|None},             # month x hour mean net MW
      "socDiur": {"m": [288], "a": [288]|None},          # month x hour mean SOC %
-     "stats": {...}}
+     "stats": {...},
+     "socBounds": {...}}   # optional: submitted EOH SOC-bound envelope (below)
+
+``socBounds`` (CAISO 2023-25, the years with an RTM EOH SOC-bound extract) is
+the hour-of-day envelope of the submitted bounds as a share of each resource's
+ceiling, next to the model fleet's SOC as a share of its energy capacity, plus
+the R-CAISO-32 digitized DMM quarterly SOC-outage shares where they exist. The
+submitters are a self-selected subset (2.7-19.8 % of storage MW): a reference,
+never a target and never scored.
 
 SOC is compared as SHAPE (percent of each series' own annual max), never as
 level: the CAISO SOC actual covers stand-alone batteries only, and the ERCOT
@@ -36,6 +44,7 @@ single MWh denominator is shared by both sides.
 from __future__ import annotations
 
 import base64
+import json
 from pathlib import Path
 
 import numpy as np
@@ -43,6 +52,22 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
 ACTUALS_DIR = REPO / "data" / "raw" / "storage-dispatch-actuals"
+# Participant-submitted end-of-hour SOC bid bounds (R-CAISO-31 intake) and the
+# R-CAISO-32 digitization of the DMM's quarterly SOC-outage figure. Both are
+# display references on the storage panel only (rule 13: the bound is a conduct
+# parameter with no forward driver; nothing here is a target or a solve input).
+SOC_BOUNDS_DIR = REPO / "data" / "raw" / "caiso-rtm-eoh-soc"
+DMM_SOC_OUTAGE_JSON = (
+    REPO / "docs" / "records" / "caiso" / "r-caiso-32" / "dmm_soc_outage_digitized.json"
+)
+# The model's fixed-standard clock for the ISOs that carry a SOC-bound extract
+# (POSIX sign: Etc/GMT+8 == UTC-8), so the envelope and the model share an hour.
+SOC_BOUNDS_CLOCK: dict[str, str] = {"CAISO": "Etc/GMT+8"}
+# Summer window of the R-CAISO-31 envelope (Jun-Sep, 1-based months).
+SOC_BOUNDS_SUMMER = (6, 9)
+# A bound narrower than this share of its resource's ceiling counts as
+# "pinned" (the R-CAISO-31 descriptive threshold; report text, not a parameter).
+SOC_BOUNDS_PIN_FRAC = 0.10
 
 HOURS = 8760
 _DAYS_IN_MONTH = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
@@ -154,8 +179,122 @@ def load_model(bundle_dir: Path, iso: str, year: int) -> dict[str, np.ndarray] |
         "charge": np.nan_to_num(col("charge_mw")),
         "discharge": np.nan_to_num(col("discharge_mw")),
         "soc": col("soc_mwh", min_count=1),
+        "energy_cap": col("energy_cap_mwh", min_count=1),
         "techs": sorted(df["tech"].astype(str).unique()),
     }
+
+
+def _hod_frac(num: np.ndarray, den: np.ndarray, mask: np.ndarray) -> list[float | None]:
+    """Hour-of-day ratio sum(num)/sum(den) over ``mask`` hours (8760 model clock)."""
+    out: list[float | None] = []
+    for h in range(24):
+        sel = mask & (_HOD == h) & np.isfinite(num) & np.isfinite(den)
+        d = float(den[sel].sum())
+        out.append(round(float(num[sel].sum()) / d, 4) if d > 0 else None)
+    return out
+
+
+def load_soc_bounds_envelope(iso: str, year: int) -> dict | None:
+    """Hour-of-day envelope of the submitted EOH SOC bounds, or None.
+
+    Per resource the bound is normalised by its year ceiling (max of
+    ``max_eoh_soc_mwh``, which tracks energy capacity, R-CAISO-28 §1); the
+    envelope is sum(min)/sum(ceiling) and sum(max)/sum(ceiling) over the
+    resource-hours that carry a bound, by hour of day on the MODEL clock
+    (fixed standard time), all year and Jun-Sep. Coverage is the submitters'
+    share of the S1 storage universe's injection MW (year mean of daily sums).
+    Same method as ``scripts/probes/_rcaiso31_eoh_soc_diagnostic.py`` except
+    the clock, which there was Pacific prevailing.
+    """
+    tz = SOC_BOUNDS_CLOCK.get(iso)
+    path = SOC_BOUNDS_DIR / f"caiso_rtm_eoh_soc_{year}.parquet"
+    if tz is None or not path.is_file():
+        return None
+    e = pd.read_parquet(path)
+    cap = e.groupby("resourcebid_seq")["max_eoh_soc_mwh"].transform("max")
+    e = e[cap > 0].assign(cap=cap[cap > 0])
+    if e.empty:
+        return None
+    std = pd.to_datetime(e["interval_start_utc"], utc=True).dt.tz_convert(tz)
+    e = e.assign(
+        hod=std.dt.hour.to_numpy(),
+        summer=std.dt.month.between(*SOC_BOUNDS_SUMMER).to_numpy(),
+        pinned=(e["max_eoh_soc_mwh"] - e["min_eoh_soc_mwh"])
+        <= SOC_BOUNDS_PIN_FRAC * e["cap"],
+    )
+
+    def prof(df: pd.DataFrame) -> dict:
+        g = df.groupby("hod")[["min_eoh_soc_mwh", "max_eoh_soc_mwh", "cap"]].sum()
+        g = g.reindex(range(24))
+        lo = g["min_eoh_soc_mwh"] / g["cap"]
+        hi = g["max_eoh_soc_mwh"] / g["cap"]
+        n = df.groupby("hod").size().reindex(range(24), fill_value=0)
+        rnd = lambda v: None if not np.isfinite(v) else round(float(v), 4)  # noqa: E731
+        return {
+            "lo": [rnd(v) for v in lo],
+            "hi": [rnd(v) for v in hi],
+            "n": [int(v) for v in n],
+        }
+
+    out = {
+        "src": "CAISO OASIS PUB_RTM_GRP MIN/MAXEOHSTATEOFCHARGE (RTM bids, resource-masked)",
+        "clock": "fixed Pacific standard time (UTC-8), the model's clock",
+        "resourceHours": int(len(e)),
+        "submitters": int(e["resourcebid_seq"].nunique()),
+        "pinnedShare": round(float(e["pinned"].mean()), 4),
+        "env": {"all": prof(e), "summer": prof(e[e["summer"]])},
+        "mwShare": None,
+    }
+    upath = SOC_BOUNDS_DIR / f"caiso_rtm_storage_universe_{year}.parquet"
+    if upath.is_file():
+        u = pd.read_parquet(upath)
+        s1 = u[u["is_storage_s1"]]
+        den = float(s1["en_max_mw"].sum())
+        if den > 0:
+            num = float(s1.loc[s1["submits_eoh"], "en_max_mw"].sum())
+            out["mwShare"] = round(num / den, 4)
+        # Distinct submitters as the intake counts them (README coverage table).
+        out["submitters"] = int(u.loc[u["submits_eoh"], "resourcebid_seq"].nunique())
+    return out
+
+
+def load_dmm_soc_outage(iso: str, year: int) -> dict | None:
+    """The R-CAISO-32 digitized DMM quarterly SOC-outage shares, or None."""
+    if iso != "CAISO" or not DMM_SOC_OUTAGE_JSON.is_file():
+        return None
+    rec = json.loads(DMM_SOC_OUTAGE_JSON.read_text()).get(str(year))
+    if not rec:
+        return None
+    q = rec["quarters"]
+    return {
+        "src": f"CAISO DMM battery special report, {rec['figure']} (p. {rec['page']}), digitized",
+        "sharePct": [
+            q[k]["share_of_charge_range_pct"] for k in ("Q1", "Q2", "Q3", "Q4")
+        ],
+        "maxMwh": [q[k]["max_soc_outage_mwh"] for k in ("Q1", "Q2", "Q3", "Q4")],
+    }
+
+
+def build_soc_bounds(model: dict, iso: str, year: int) -> dict | None:
+    """The storage panel's SOC-bounds block: envelope + model SOC share, or None.
+
+    Model side: the fleet's SOC / energy capacity by hour of day (all year and
+    Jun-Sep). Present only when the ISO-year has a bound extract.
+    """
+    env = load_soc_bounds_envelope(iso, year)
+    if env is None:
+        return None
+    soc, cap = model["soc"], model["energy_cap"]
+    summer = (_MONTH_OF_HOUR >= SOC_BOUNDS_SUMMER[0] - 1) & (
+        _MONTH_OF_HOUR <= SOC_BOUNDS_SUMMER[1] - 1
+    )
+    every = np.ones(HOURS, dtype=bool)
+    env["model"] = {
+        "all": _hod_frac(soc, cap, every),
+        "summer": _hod_frac(soc, cap, summer),
+    }
+    env["dmm"] = load_dmm_soc_outage(iso, year)
+    return env
 
 
 def build_storage_compare(bundle_dir: Path, iso: str, year: int) -> dict | None:
@@ -210,7 +349,7 @@ def build_storage_compare(bundle_dir: Path, iso: str, year: int) -> dict | None:
             "No public historical fleet SOC for ERCOT — model SOC shown alone."
         )
 
-    return {
+    block = {
         "src": SOURCE_LABEL.get(iso, iso),
         "techs": model["techs"],
         "note": " ".join(notes) or None,
@@ -245,6 +384,12 @@ def build_storage_compare(bundle_dir: Path, iso: str, year: int) -> dict | None:
             "aPeakChg": round(float(np.nanmax(a_chg)), 0),
         },
     }
+    # Absent (not null) when the ISO-year has no bound extract, so a payload
+    # without it renders exactly as before.
+    bounds = build_soc_bounds(model, iso, year)
+    if bounds is not None:
+        block["socBounds"] = bounds
+    return block
 
 
 def summary_row(block: dict) -> dict:
