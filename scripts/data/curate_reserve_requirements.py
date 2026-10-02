@@ -69,7 +69,15 @@ def curate(
             )
             continue
         for year in iso_years:
-            df = spec.parse(raw_root, int(year))
+            try:
+                df = spec.parse(raw_root, int(year))
+            except ValueError as exc:
+                # A structurally defective raw year (a parser hard-error, e.g. the
+                # NEISO 2020-12 publication outage) is refused, not reconstructed,
+                # and must not block the clean years after it. No partition is
+                # written, so a consumer reading that year hard-errors at load.
+                print(f"[refuse] {iso} {year}: {exc}")
+                continue
             if df.empty:
                 print(f"[skip] {iso} {year}: no raw rows")
                 continue

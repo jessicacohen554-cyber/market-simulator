@@ -1,0 +1,142 @@
+{
+ "2019": {
+  "rt_h": 0,
+  "da_h": 0,
+  "rt_with_da_ge300": 0,
+  "rt_only": 0,
+  "rt_only_frac": null,
+  "rt_by_month": {},
+  "max_rt": null,
+  "median_da_on_rt_tail_hours": null,
+  "top_event_days": {},
+  "rt_energy_component_share": null
+ },
+ "2020": {
+  "rt_h": 0,
+  "da_h": 0,
+  "rt_with_da_ge300": 0,
+  "rt_only": 0,
+  "rt_only_frac": null,
+  "rt_by_month": {},
+  "max_rt": null,
+  "median_da_on_rt_tail_hours": null,
+  "top_event_days": {},
+  "rt_energy_component_share": null
+ },
+ "2021": {
+  "rt_h": 2,
+  "da_h": 0,
+  "rt_with_da_ge300": 0,
+  "rt_only": 2,
+  "rt_only_frac": 1.0,
+  "rt_by_month": {
+   "08": 2
+  },
+  "max_rt": 375.28,
+  "median_da_on_rt_tail_hours": 138.04,
+  "top_event_days": {
+   "2021-08-25": 2
+  },
+  "rt_energy_component_share": 1.001
+ },
+ "2022": {
+  "rt_h": 117,
+  "da_h": 27,
+  "rt_with_da_ge300": 9,
+  "rt_only": 108,
+  "rt_only_frac": 0.923,
+  "rt_by_month": {
+   "01": 11,
+   "02": 14,
+   "03": 10,
+   "05": 2,
+   "06": 1,
+   "07": 15,
+   "08": 5,
+   "11": 7,
+   "12": 52
+  },
+  "max_rt": 2254.35,
+  "median_da_on_rt_tail_hours": 209.6,
+  "top_event_days": {
+   "2022-12-24": 23,
+   "2022-03-29": 9,
+   "2022-12-23": 9,
+   "2022-12-25": 8,
+   "2022-12-26": 6,
+   "2022-02-01": 5
+  },
+  "rt_energy_component_share": 0.995
+ },
+ "2023": {
+  "rt_h": 15,
+  "da_h": 5,
+  "rt_with_da_ge300": 1,
+  "rt_only": 14,
+  "rt_only_frac": 0.933,
+  "rt_by_month": {
+   "02": 10,
+   "07": 1,
+   "09": 4
+  },
+  "max_rt": 1161.97,
+  "median_da_on_rt_tail_hours": 169.57,
+  "top_event_days": {
+   "2023-02-04": 9,
+   "2023-09-05": 2,
+   "2023-09-06": 2,
+   "2023-02-26": 1,
+   "2023-07-05": 1
+  },
+  "rt_energy_component_share": 0.996
+ },
+ "2024": {
+  "rt_h": 8,
+  "da_h": 5,
+  "rt_with_da_ge300": 0,
+  "rt_only": 8,
+  "rt_only_frac": 1.0,
+  "rt_by_month": {
+   "06": 2,
+   "07": 2,
+   "08": 3,
+   "12": 1
+  },
+  "max_rt": 2112.77,
+  "median_da_on_rt_tail_hours": 159.38,
+  "top_event_days": {
+   "2024-08-01": 3,
+   "2024-06-18": 2,
+   "2024-07-08": 2,
+   "2024-12-03": 1
+  },
+  "rt_energy_component_share": 1.0
+ },
+ "2025": {
+  "rt_h": 20,
+  "da_h": 12,
+  "rt_with_da_ge300": 6,
+  "rt_only": 14,
+  "rt_only_frac": 0.7,
+  "rt_by_month": {
+   "01": 5,
+   "02": 1,
+   "06": 8,
+   "07": 2,
+   "08": 1,
+   "11": 2,
+   "12": 1
+  },
+  "max_rt": 1110.22,
+  "median_da_on_rt_tail_hours": 242.72,
+  "top_event_days": {
+   "2025-06-24": 5,
+   "2025-01-17": 2,
+   "2025-01-22": 2,
+   "2025-06-25": 2,
+   "2025-11-23": 2,
+   "2025-01-20": 1
+  },
+  "rt_energy_component_share": 1.0
+ }
+}

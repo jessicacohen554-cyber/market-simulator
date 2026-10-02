@@ -21,6 +21,20 @@ faithful bridge), with the total filled hours per (year, location) bounded by
 :data:`MAX_GAP_HOURS` — the ``eia_loader`` hourly-frame gap-budget precedent
 — beyond which parsing hard-errors instead of silently reconstructing.
 
+Two further source defects are handled explicitly rather than absorbed
+(found when 2019-2022 were intaken, closeout-NEISO wave 1, 2026-10-02):
+
+* an exact repeat of the row just consumed (same HE label, same values) on a
+  day whose true hour sequence does not repeat that label is a duplicated
+  publication row (2020-12-16 HE 11 appears twice) and is dropped;
+* a ROS (7000) row publishing a zero Ten-Minute requirement is a publication
+  outage, not a requirement — the system ten-minute requirement is the first
+  contingency and is never zero (2020-12-10..17 publish ``0, 0, 830``, 142
+  hours, while every other ROS hour 2019-06..2025 carries 1,4xx-2,0xx MW). It
+  becomes a source hole, so it counts against :data:`MAX_GAP_HOURS` like any
+  other missing hour instead of reaching the LP as a zero requirement. The
+  local zones (7001-7003) legitimately publish zero ten-minute values.
+
 Location vocabulary (ISO-NE Web Services reserve locations): 7000=ROS (the
 system-wide requirement row the model consumes), 7001=SWCT, 7002=CT,
 7003=NEMABSTN. The three CSV value columns map to the canonical products
@@ -50,6 +64,9 @@ LOCATION_BY_ID: dict[int, str] = {
     7002: "CT",
     7003: "NEMABSTN",
 }
+
+#: The system-wide (ROS) location, whose ten-minute requirement is never zero.
+SYSTEM_LOCATION_ID = 7000
 
 #: CSV value columns (after date/HE/location) -> canonical product, in order:
 #: Ten-Minute Spinning, Ten-Minute, TOTAL.
@@ -115,6 +132,12 @@ def _align_day(
     out: list[tuple[pd.Timestamp, tuple[float, float, float] | None]] = []
     ptr = 0
     for ts_utc, exp in zip(hours_utc, expected):
+        if (
+            0 < ptr < len(rows)
+            and rows[ptr] == rows[ptr - 1]
+            and expected.count(_norm_he(rows[ptr][0])) < 2
+        ):
+            ptr += 1  # duplicated publication row (module docstring)
         if ptr < len(rows) and _norm_he(rows[ptr][0]) == exp:
             out.append((ts_utc, rows[ptr][1]))
             ptr += 1
@@ -171,6 +194,11 @@ def parse(raw_root: Path, year: int) -> pd.DataFrame:
             aligned.extend(
                 _align_day(day, by_day_loc[(day, loc_id)], f"location {loc_id}")
             )
+        if loc_id == SYSTEM_LOCATION_ID:
+            # A zero system ten-minute requirement is a publication outage.
+            aligned = [
+                (ts, None if v is not None and v[1] == 0.0 else v) for ts, v in aligned
+            ]
         vals = np.array(
             [v if v is not None else (np.nan,) * 3 for _, v in aligned], dtype=float
         )
