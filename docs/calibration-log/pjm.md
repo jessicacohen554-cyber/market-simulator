@@ -6975,6 +6975,24 @@ over-run partly an exit-cohort outage-layer construction defect (~8.3 TWh phanto
 - **Card 3:** the soco-70 `--coal-unit-coverage` append (18 rows, zero DOF, prior bytes a prefix) passes the zero-LP fleet delta. Floored TWh at those plants goes 0.33 → 5.93 in 2019; confinement holds. G-DRIFT `d9668d84`..HEAD: all INERT. Solve-ready: `PRECOMMIT-pjm-next-25-2026-10-02.md`.
 - **Record:** `docs/records/pjm/RESULT-pjm-next-25-2026-10-02.md`.
 
+## PJM-NEXT-26 — 2026-10-02 — the coal-coverage rows, solved at W0: S2 and S3 falsified, not recommended (7 shards)
+
+- **Solves and keeper:** 7 year-isolated shards pinned at `ef3aba03` (main `3ec2fd3e` + the PJM-NEXT-25 rows), replaying `pjmnext16_A_span` with the ten W0 fields. The control is the W0 PJM legs (addendum written before launch). Keeper unchanged (`2026-09-30-pjm-next16-ovec`), NOT-YET.
+- **Readings vs the W0 control:**
+  - S1 holds.
+  - P1 as predicted: COAL_BIT +2.44 / +1.04 TWh in 2019 / 2021.
+  - **S2 falsified:** the appended cohort's within-plant contrast gap widens, 0.98 vs 0.41 in 2019 and 0.42 vs 0.34 in 2021.
+  - **S3 falsified:** new D-4 coal off-window failures at Waukegan 883 (2019–20) and Montour 3149 (2019).
+  - S4 holds where testable (2023).
+  - Not recommended (PRECOMMIT §4).
+- **W0 alone** (seen against the keeper) clears C1 CC_REGULAR 2020/22/23 and pushes 2025 C3a to −11.6 % and C3b to 0.222. Lane B's W0 PJM promotion carries that.
+- **Root cause and next step:** the appended plants have no per-year `online_frac` row, so their must-run window uses a pooled fraction. Next: derive those rows (rule 14, zero DOF) and re-solve the rows and fractions together.
+- **Side card (a):**
+  - IMM balancing credits by zone weakly confirm out-of-merit CT commitment in AEP-Ohio / Dominion (3 of 4 years).
+  - The handoff's sign was inverted: the keeper over-runs ComEd CTs.
+  - The finding supports the CT_PEAKER 2021 ledger entry.
+- **Records:** `docs/records/pjm/RESULT-pjm-next-26-2026-10-02.md`, `FINDING-pjm-next-26-bor-zone-census-2026-10-02.md`.
+
 ## 2026-10-02 — closeout-B W0 phase 3 fix-2: keeper 2026-10-02-w0-pjm-fix2, NOT-YET → NOT-YET
 
 **What changed.** The pjm-next-16 A recipe (`pjmnext16_A_span`) was re-solved year by year (rule 36) with the ten W0 EIA-860 settlement backcast defaults (owner ruling R-2; PRECOMMIT `docs/records/governance/closeout-2026-10/PRECOMMIT-closeout-b-w0-phase3-2026-10-02.md`). The dispatched-bin denominator is LIVE for PJM, in its live-roster form (#7047/#7049). Zero DOF.

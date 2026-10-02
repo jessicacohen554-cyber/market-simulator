@@ -15833,3 +15833,27 @@ Record: `docs/records/caiso/r-caiso-33/`.
 - Owner card: **ship as rendered.** Zero LP, keeper unchanged.
 
 Record: `docs/records/caiso/r-caiso-34/`.
+
+## 2026-10-02 — closeout-CAISO wave 1 arm 2: keeper 2026-10-02-closeout-caiso-w1-arm2 (measured zonal citygate gas basis, rule-14 fidelity arm), NOT-YET → NOT-YET
+
+The arm-3 keeper plus `caiso_zonal_gas_basis`: the measured PG&E Citygate basis for NP15/ZP26 and SoCal Citygate for
+the south, applied as a mean-zero capacity-weighted spread so the calibrated composite level is kept. The desk ruled
+(R-14) to run it as a declared rule-14 fidelity arm with no gate claim. It ran as seven year-isolated shards at
+`566bc8fa`.
+
+- **Tripwires held:** C3a 2024 +6.1 → +6.6 % (bar +1.5 pp), C4 2025 NRMSE 0.286 → 0.283 (bar 0.30).
+- **No regressions:** no gate regressed, and 2019 is identical (no hub row).
+- **Determination unchanged at NOT-YET:**
+  - C1 CC_REGULAR 2019/20/21: +10.19 / +16.45 / +8.11 TWh (2021 eases 0.58);
+  - C3a 2021: +12.7 %;
+  - C4 NRMSE 2019/20/21: 0.385 / 0.399 / 0.348;
+  - C3c: 2021 caveat, 2024 ledgered.
+
+The arm delivers the measured N–S gradient:
+- NP15 falls and the south rises in 2021.
+- In 2024 the measured spread reverses sign, and the 2024 CT_PEAKER deficit halves (−2.07 → −1.04 TWh).
+- C4 NRMSE 2023 improves 0.245 → 0.235.
+
+Matrix `zonal_gas_basis` moves R → K on structure, with zero DOF. During promotion, `scripts/lib/replay_recipe.py`
+gained an exemption for fields registered after a bundle was solved (excused only at their registered default). Record:
+`docs/records/caiso/closeout-caiso-w1/RESULT-closeout-caiso-w1-arm2-2026-10-02.md`.
