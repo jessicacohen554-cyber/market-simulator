@@ -13,6 +13,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Callable
 
+import numpy as np
+
 
 # Canonical constants (single definition: config/fuel_trajectories.py, re-exported
 # by config/constants.py). The pre-3E module kept local duplicated copies "to
@@ -2259,6 +2261,73 @@ def seam_zone_links(iso: str) -> list[tuple[str, str, float]]:
         for name, seam in seams.items()
         for border in seam.border_zones
     ]
+
+
+def build_seam_limit_groups(
+    iso: str,
+    links: list,
+    caps: dict[str, tuple[np.ndarray, np.ndarray]],
+    year: int | None,
+) -> list[tuple]:
+    """Aggregate interface groups capping each priced seam's net flow (``nwpp_seam_measured_limits``).
+
+    One group per seam in ``caps`` whose external zone
+    (:data:`IMPORT_SEAM_ZONES`) is in the topology and which is priced in
+    ``year`` (:func:`seam_priced_in_year`). The group sums the flow of every
+    link touching that zone, oriented INTO the footprint (``+1`` on a link from
+    the seam zone, ``-1`` on a link into it). Because the seam zone connects
+    only to its border zones, that sum is the seam's net import, so::
+
+        -export_cap[t] <= sum(oriented flow out of the seam zone)[t] <= import_cap[t]
+
+    A seam bordering two zones (CAISO_COI: NW and OR) is capped on the total,
+    never per link, so a transit NW -> seam zone -> OR nets to zero against the
+    cap as it does physically. The links keep their own registered rating and
+    the bands still sum to ``interface_limit_mw``; this row binds only when the
+    measured limit is tighter. Zero fitted scalars.
+
+    Args:
+        iso: ISO identifier with an :data:`IMPORT_SEAM_ZONES` entry.
+        links: The import-node-extended topology links (matching is by zone).
+        caps: ``{seam: (import_cap, export_cap)}``, each ``(T,)`` MW >= 0, from
+            :func:`market_sim.data.transfer_interface_limits.nwpp_seam_limits_hourly`.
+        year: Solve year, for the anchored-years gate.
+
+    Returns:
+        5-tuples ``(link_idx, import_cap, False, export_cap, signs)`` for
+        :func:`market_sim.model.lp.rows._build_interface_rows`; empty when no
+        seam zone is in the topology (the LP is then byte-identical).
+    """
+    zones = IMPORT_SEAM_ZONES.get(iso, {})
+    seams = {n.name: n for n in INTERFACE_NEIGHBORS.get(iso, [])}
+    groups: list[tuple] = []
+    for name, (import_cap, export_cap) in caps.items():
+        zone = zones.get(name)
+        if zone is None or name not in seams:
+            raise ValueError(f"{iso}: {name} is not a registered per-zone seam")
+        if not seam_priced_in_year(seams[name], year):
+            continue
+        idx: list[int] = []
+        signs: list[float] = []
+        for li, link in enumerate(links):
+            if link.from_zone == zone:
+                idx.append(li)
+                signs.append(1.0)
+            elif link.to_zone == zone:
+                idx.append(li)
+                signs.append(-1.0)
+        if not idx:
+            continue
+        groups.append(
+            (
+                np.array(idx, dtype=int),
+                np.asarray(import_cap, dtype=float),
+                False,
+                np.asarray(export_cap, dtype=float),
+                np.array(signs, dtype=float),
+            )
+        )
+    return groups
 
 
 # MISO per-seam measured BA-to-BA deliverability envelope.
