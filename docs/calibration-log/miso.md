@@ -15710,3 +15710,43 @@ declined: "Record; next zero-LP object (Recommended)"; "Solve the per-year table
   anyway (7 shards, field minted, miso-298 kill rules); (C) other.
 
 Full span NOT-YET on C1 ST_GAS 2019, C3a 2020, C3b 2021. Train 2023–2025 CALIBRATED. No frontier.
+
+- **Ruling on the card above (logged by miso-301):** "Record; next zero-LP object (Recommended)". See the miso-301 entry below.
+
+## miso-301 — 2026-10-02 — lever-exhaustion ledger for the three open failures (zero LP): C1 ST_GAS 2019 is exhausted; C3a 2020 and C3b 2021 each have one sized, admissible, un-adjudicated lever, both already assigned to the parallel close-out lane
+
+Keeper `2026-09-28-miso-280-splitremap` unchanged (legs at `8f765fef`). No LP. Record `docs/records/miso/LEDGER-miso301-lever-exhaustion-2026-10-02.md`.
+
+**Owner ruling that opened this lane (2026-10-02, miso-300 decision card *"What should miso-301 do?"*; miso-300 could not log it), verbatim:**
+**"Record; next zero-LP object (Recommended)"** — described in the card as: Rule failed as written (2022 +0.065; cross-check r 0.71). Keeper
+unchanged, both R cells stay R. The chain picks the next zero-LP object among the open failures: C1 ST_GAS 2019 (routed), C3a 2020 (no
+admissible identified lever), C3b 2021 (routed). The alternatives the owner declined: "Solve the lag-aware table anyway"; "Re-read with the
+frozen derive's own cross-check".
+
+- **C1 ST_GAS 2019 (−8.003 TWh): exhausted.**
+  - Every lever is K (ST_GAS span coverage, split remap), G (`scuc_load_pocket_commitment`: pocket MW unpublished), refused under rule 13 or
+    rule 19, or reaches 0 MW of 2019 ST_GAS (`admit_standby_units`, U, parked).
+  - The owner re-affirmed the routing on 2026-10-02 (R-15: "keep C1 ST_GAS 2019 routed").
+- **C3a 2020 (+11.6 %; the gate needs −$0.35/MWh load-weighted): candidate R-A, the L3 + L4 coal offer continuum.**
+  - Vehicles: `coal_econ_two_sided` (U) for measured incremental heat rate, and a `coal_prb_committed_split` retest on the close-out §3.3
+    new evidence. It replaces the take-or-pay discount; it never stacks on it.
+  - Pre-stated reading: clears only if static q1–q4 falls ≥ $0.5 in 2020 **and** static coal ≤ +1.5 TWh in 2019 and ≤ +2.2 TWh in 2021
+    (the C1 COAL_PRB headroom). The ceiling is ≈ +7.2 %; the West/Plains share is G.
+- **C3b 2021 (0.201): candidate R-B, the owner-ruled R-3 receipts + stock take ceiling.**
+  - It replaces the B/12 limb and the yard rows under rule 19.
+  - Pre-stated reading: no binding at fleet grain in Sep–Nov. There is ~11.5 days (≈ 4.4 Mt) of pile slack above `d_min`, against a model
+    excess of 10–20 % of monthly burn.
+  - It relieves the Jul/Aug shortfall (−3.3 / −3.9 TWh), so a pass would come through summer relief, not the fall hold. 2022 is the kill guard.
+- **Sweep of every U/O cell:**
+  - Screened out on sign for C3a 2020: `committed_band_measured_basis` (raises coal committed +$18–29), `mustrun_chp_btm_holdout` and
+    `vre_curtailment_oversupply_allocation` (both raise low-load prices; they are rule-14 corrections, not levers).
+  - Probe on `coal_prb_proxy_own_iso` (zero LP): MISO's own PRB pool is 1.905/1.797/1.928/2.182/2.184/2.147/2.186 $/MMBtu against the ERCOT
+    proxy's 1.788/1.664/1.731/1.936/1.823/1.752/1.615, so arming it raises offers. Wrong sign; the cell stays O as a rule-25 repair.
+  - Everything else fails on sizing or on rule 28 / rule 19.
+- **Why no phase 0 here:** the DESK-launched close-out lane (`claude/closeout-miso-wave1`) runs exactly R-A (§3.3 step 2) and R-B
+  (R-3 conservation). The ledger fixes the readings ex ante and hands them over, rather than producing a duplicate record of one census.
+- **Cells:** no verdict moves; evidence added to `coal_prb_proxy_own_iso` (O) and `committed_band_measured_basis` (U); §5.4 queue stamp.
+- **Owner card:** (A) fold the miso chain into the close-out lane (recommended); (B) miso-302 waits for that lane's census, then PRECOMMITs;
+  (C) record train CALIBRATED / full span NOT-YET and move the chain to another ISO (not a frontier).
+
+Full span NOT-YET on C1 ST_GAS 2019, C3a 2020, C3b 2021. Train 2023–2025 CALIBRATED. No frontier.
