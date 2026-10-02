@@ -118,6 +118,7 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "coal-mining-ppi",
     "coal-stocks",
     "coal-receipts",
+    "stb-coal-loadings",
     "nyiso-reserve-requirements",
     "nyiso-operating-events",
     "nyiso-interface-flows",
@@ -958,6 +959,18 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "year Y's own receipts are an outcome, not a delivery rate."
         ),
     },
+    "stb-coal-loadings": {
+        "summary": (
+            "Weekly Class I coal unit-train loadings, the carrier's filed plan "
+            "and the realised loadings, by carrier x coal production region "
+            "(national, 2017-03 onward)."
+        ),
+        "reconciles": (
+            "STB EP 724 consolidated rail service workbook, Category 9 "
+            "(`data/raw/stb-ep724/`). A rail-service condition, never a burn "
+            "target; intake-only (SPP-108)."
+        ),
+    },
     "nyiso-reserve-requirements": {
         "summary": (
             "NYISO's published locational operating-reserve requirements by "
@@ -1282,6 +1295,7 @@ NATIONAL_SCOPE: dict[str, str] = {
     "coal-mining-ppi": "national (BLS PPI, coal)",
     "coal-stocks": "national (EIA-923 Schedule 2, by plant)",
     "coal-receipts": "national (EIA-923 Page 5, by plant)",
+    "stb-coal-loadings": "national (STB EP 724, by carrier x region)",
 }
 
 NA = "n/a"
