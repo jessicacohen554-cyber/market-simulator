@@ -3,7 +3,7 @@
   "label": "closeout caiso w1 arm3",
   "date": "2026-10-02",
   "shorthand": "closeout-caiso-w1-arm3",
-  "definition": "closeout-caiso-w1 arm 3: measured CC min-load 0.570 (R-11/R-14)",
+  "definition": "closeout-caiso-w1 arm 3: the w0 keeper with the CC min-load (caiso_ra_min_load_frac) moved from 0.26 to the measured 0.570 (R-11/R-14); gates unchanged within noise vs the outgoing w0 keeper. DETERMINATION NOT-YET (rubric v3.13, 2019-2025): undocumented FAILs are C1 fuelmix, C3a price_mean (2021 +12.8%) and C4 dispatch_corr, all in 2019-2021; C3c is a ledgered caveat (2021, 2024).",
   "years": [
     2019,
     2020,
