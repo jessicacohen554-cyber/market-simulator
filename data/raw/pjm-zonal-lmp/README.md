@@ -3,12 +3,16 @@
 PJM DataMiner2 `da_hrl_lmps` / `rt_hrl_lmps` rows filtered to `type = ZONE`:
 hourly LMP with its published `system_energy_price` (MEC), `congestion_price`
 (MCC) and `marginal_loss_price` (MLC) components, for all 21 PJM transmission
-zones plus the two rollup pnodes (`PJM-RTO`, `MID-ATL/APS`), 2023–2025.
+zones plus the two rollup pnodes (`PJM-RTO`, `MID-ATL/APS`), 2019–2025 (2019–2022 added
+2026-10-02, closeout-C, for the R-13 zonal C3a basis).
 
 **Not committed.** Same PJM DataMiner2 non-member redistribution restriction as
 `pjm-energy-offers/` and `pjm-da-virtuals/` — see `docs/data-licensing.md` §4.
 Only the small dimensionless *derivative* is committed:
 `data/raw/iso-specific-transmission/PJM_loss_surface.csv`.
+A second reduced derivative is committed since 2026-10-02: the per-MODEL-zone hourly
+LMP `data/raw/_validation-source/actual_lmp_zonal_PJM.parquet`
+(`scripts/data/derive_pjm_zonal_lmp.py`, owner ruling R-13 — the zone-resolved C3a actual).
 
 ## Refetch
 
@@ -46,5 +50,6 @@ duals are the analogue of and crosswalk 1:1 onto every model zone via
 * `scripts/data/derive_pjm_loss_surface.py` — the frozen (rule 23) derive
   producing `PJM_loss_surface.csv`, consumed by
   `ScenarioConfig.pjm_zonal_loss_surface`.
+* `scripts/data/derive_pjm_zonal_lmp.py` — the R-13 per-model-zone C3a/C3b actual.
 * `scripts/probes/_pjm136_model_vs_measured_zonal.py` — the pjm-136 M1a/M1b/M2b
   measurement of the model's zonal dual structure against PJM's own.

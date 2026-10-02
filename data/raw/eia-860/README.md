@@ -152,3 +152,36 @@ Regenerate with
 rewrites ONLY the `heat_rate` column. The same session appended the NWPP and SOCO
 balancing authorities' within-window retirees the retiree parquet predated
 (`--rescope-retired-window`, strictly additive; audit §1 D3).
+
+## W0 settlement (2026-10-02, owner ruling R-2 — closeout-B)
+
+**E.6 — membership at LOAD time.** Every `eia860_generators.parquet` (top level
+and `vintage_2018 … vintage_2025`) is **unfiltered**: it carries every US
+balancing authority plus a `nerc_region` column (the plant sheet's `NERC
+Region`). Regenerated additively from each directory's own committed sheets by
+`scripts/data/process_eia860.py --unfilter-in-place <dir> …` (rule 23 trigger
+(d), a program-scope change): every previously committed row survives
+value-for-value in place; 4,616–5,337 non-program rows were appended per
+directory. Region membership is decided by
+`market_sim.data.fleet.models.generator_footprint_mask` (BA code + NWPP's
+NERC=WECC key) and `program_footprint_mask`, so registering a BA needs no
+re-derive. Verified zero-diff: the W0 fleet census of MISO 2023, NWPP 2023,
+SOCO 2021, SPP 2019 is identical before/after, and NWPP 2023's 19 LP fleet
+arrays + `mc_base` hash identically. A fresh `--zip` build now writes the
+unfiltered table directly.
+
+**E.9 — freeze (rule 23 form).** EIA-860 inputs re-derive ONLY on (a) an EIA
+Final release (each September; an Early Release is never a vintage of record),
+(b) an 860M month in the forecast base year (forecast layer only), (c) a
+crosswalk release (EPA CAMD-EIA / PUDL), (d) a program-scope change (BA / plant
+registry). The commit cites the release. Every bundle's `solve_surface.json`
+records `eia860_vintages: {directory: sha256}` for each EIA-860 directory the
+run read (`config/solve_surface.py::eia860_vintage_digests`), so a re-keyed
+keeper is attributed to a data change, never to a residual. Next scheduled
+re-derive: the Final 2026 release (Sept 2027).
+
+**E.2 — vintage diffs.** Unit-level changes between consecutive Final releases
+(COD, ratings, status, technology) are written to
+`docs/records/governance/closeout-2026-10/W0-census/vintage_diffs/<Y>_<Y+1>.csv`
+by `scripts/data/derive_eia860_vintage_diffs.py`; the solved year's own vintage
+always wins.

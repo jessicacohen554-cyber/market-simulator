@@ -1638,7 +1638,7 @@ def backcast_config(
         #   oversupply (Lever D), not the floor. Other ISOs stay off (byte-
         #   identical). Toggle with --no-caiso-ra-mustoffer.
         # CAISO-SCOPED since 2026-08-03 (rule 25 [R-ISO-SCOPE], nyiso-114). This
-        # was assigned unconditionally, so a CAISO-fitted 0.26 rode the recorded
+        # was assigned unconditionally, so a CAISO value rode the recorded
         # recipe of ALL 119 committed bundles in all six ISOs. It is provably
         # inert outside CAISO — every reader (pipeline/commitment.py:207 and
         # :1582) sits behind `caiso_ra_mustoffer and iso == "CAISO"`, and
@@ -1647,19 +1647,18 @@ def backcast_config(
         # re-arms the moment any other ISO's lane tries the RA bridge, carrying
         # CAISO's measured CC turn-down into a fleet it was never measured on.
         # Non-CAISO now records the neutral shipped default (0.40).
-        caiso_ra_min_load_frac=(0.26 if iso.upper() == "CAISO" else 0.40),
-        #   min stable load of a committed gas unit
-        #   (fraction of available capacity) for the RA bridge above. Grounded in
-        #   the CAMPD/CEMS-measured CAISO combined-cycle minimum stable load
-        #   (P5 of net CF over online hours, scripts/data/derive_thermal_tranches.py;
-        #   data/raw/_processed-legacy/thermal_tranches_CAISO.csv committed_pct):
-        #   capacity-weighted 0.259 over the 23-plant, 12.7 GW CA CC fleet
-        #   (range 0.10-0.63, median 0.25). Supersedes the generic 0.40 NREL/
-        #   Master-File textbook turn-down (~14pp too high for this fleet) per
-        #   CLAUDE.md #11 — a measured, forward-reproducible physical limit that
-        #   responds to fleet composition, NOT a price/volume fit. The flat
-        #   fraction multiplies each tranche row's pmax, so it sums to ~0.26 of
-        #   plant pmax across a plant's tranches.
+        caiso_ra_min_load_frac=(0.570 if iso.upper() == "CAISO" else 0.40),
+        #   min stable load of a committed gas unit (fraction of available
+        #   capacity) for the RA bridge above: the CEMS-measured CAISO CC minimum
+        #   stable load, per-unit p05 of grossLoad/pmax over fully-online hours
+        #   (opTime == 1.0), cap-weighted p50 across CC units with >= 500 op
+        #   hours: 0.565 / 0.570 / 0.570 for 2023-25 (caiso-119,
+        #   docs/calibration-log/caiso.md; ERCOT's independent 60-Day-DAM
+        #   analogue 0.574). A physical turn-down limit, re-measured when the
+        #   fleet changes, not a price/volume fit. Replaced 0.26 (a committed-
+        #   tranche share, not a turn-down limit) at closeout-CAISO wave 1 arm 3,
+        #   owner rulings R-11/R-14, keeper 2026-10-02-closeout-caiso-w1-arm3
+        #   (docs/records/caiso/closeout-caiso-w1/).
         reliability_floor=(
             iso.upper() in ("ERCOT", "CAISO", "NYISO", "NEISO", "MISO")
         ),  # Registry-driven temperature/net-load reliability floor: ON for the

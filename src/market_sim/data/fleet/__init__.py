@@ -277,6 +277,12 @@ class Generator(BaseModel):
     startup_cost_per_mw: float = 0.0  # $/MW per start, for the bid markup
     must_run_pct: float = 0.0  # MR% of the bin's nameplate (CHP steam)
     bin_nameplate_mw: float = 0.0  # bin total nameplate, for MR reconstruction
+    # W0 E.1 seasonal capacity basis (ScenarioConfig.seasonal_capacity_basis):
+    # the published summer / winter capability as a share of ``pmax_mw`` (the
+    # seasonal envelope). ``None`` = not on the seasonal basis (every legacy
+    # path), and the availability builder then applies the incumbent derates.
+    summer_capability_frac: float | None = None
+    winter_capability_frac: float | None = None
     coal_supply: str = ""  # "lignite" (mine-mouth) or "prb" (rail);
     #                                 drives plant-specific coal fuel pricing
     plant_code: int = 0  # EIA plant code, when the tranche maps

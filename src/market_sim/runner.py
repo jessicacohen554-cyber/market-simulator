@@ -1511,6 +1511,9 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     # to the canonical snapshot. See config.paths.set_eia860_vintage.
     from market_sim.config.paths import (
         resolve_backcast_eia860_vintage,
+        set_eia860_actual_retirement_only,
+        set_eia860_fleet_row_repairs,
+        set_eia860_seasonal_capacity_basis,
         set_eia860_standby_admission,
         set_eia860_vintage,
     )
@@ -1518,6 +1521,22 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     # Standby (SB) generator admission for the same loaders (NWPP-NEXT-5,
     # ScenarioConfig.admit_standby_units; {"OP"} while off). Set on every run.
     set_eia860_standby_admission(config.admit_standby_units)
+    # W0 E.1 seasonal capacity basis (owner ruling R-2 / Q1), per-plant fleets
+    # only; set on every solve so a prior armed run cannot leak into this one.
+    set_eia860_seasonal_capacity_basis(
+        bool(getattr(config, "seasonal_capacity_basis", False))
+        and bool(getattr(config, "plant_level_fleet", False))
+    )
+    # W0 E.5: a backcast never reads the operable sheet's planned retirement.
+    set_eia860_actual_retirement_only(
+        bool(getattr(config, "backcast_actual_retirement_only", False))
+    )
+    # W0 E.3: the reconstructed outage-capacity fleets carry the same row
+    # repairs the LP fleet does.
+    set_eia860_fleet_row_repairs(
+        bool(getattr(config, "cc_block_summer_rating", False)),
+        bool(getattr(config, "cc_steam_part_capacity", False)),
+    )
 
     # A capacity hindcast (plan §1.3) is forecast-mode but initialises from a
     # vintage snapshot (the 2020 Final release) so the modelled start-year fleet

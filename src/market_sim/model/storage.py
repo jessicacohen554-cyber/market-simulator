@@ -1086,8 +1086,9 @@ def _caiso_storage_envelope_clock_repaired(
 
     Rule 14 source repair; zero parameters; the committed CSV is never modified
     (rule 23). Returns ``None`` unless the repair is armed and ``year``'s local
-    stamps reach the window. Raises if a non-canonical EIA-860 vintage is active
-    (the denominator would then differ from the committed derivation's).
+    stamps reach the window. The battery fleet is loaded on the committed
+    derivation's own basis — the canonical snapshot, status ``OP`` only — and
+    the solve's directory and status admission are restored afterwards.
     """
     from market_sim.data.eia930.frames import (
         _eia_hourly_path,
@@ -1101,17 +1102,13 @@ def _caiso_storage_envelope_clock_repaired(
         active_eia860_dir,
         eia860_standby_admitted,
         restore_eia860_dir,
+        set_eia860_standby_admission,
         set_eia860_vintage,
     )
     from market_sim.data.eia930.frames import ciso_generation_windows_reach
 
     if not ciso_generation_windows_reach(year):
         return None
-    if eia860_standby_admitted():
-        raise RuntimeError(
-            "caiso_eia930_clock_repair: the battery envelope is re-derived on the "
-            "committed derivation's OP-only fleet; standby admission is armed"
-        )
     raw = pd.read_parquet(
         _eia_hourly_path("CISO"), columns=["UTC time", "Local date", "Hour", "NG: OTH"]
     )
@@ -1130,12 +1127,19 @@ def _caiso_storage_envelope_clock_repaired(
     # (``set_eia860_vintage(None)``), whatever vintage this solve reads
     # (the CAISO keeper tracks the solve year). Switch for this one load and
     # restore the solve's directory, so no later loader sees a different one.
+    # Likewise the committed derivation's fleet is OP-only: under W0's
+    # backcast-default standby admission (admit_standby_units) the status set
+    # is narrowed to {OP} for this one load and restored, exactly as the
+    # directory is — the denominator stays the committed one (rule 23).
     solve_dir = active_eia860_dir()
+    solve_standby = eia860_standby_admitted()
     set_eia860_vintage(None)
+    set_eia860_standby_admission(False)
     try:
         storage_units = load_eia860_storage("CAISO", year, cfg)
     finally:
         restore_eia860_dir(solve_dir)
+        set_eia860_standby_admission(solve_standby)
     fleet = np.zeros(12)
     for u in storage_units:
         if u.tech_name == "pumped_storage":

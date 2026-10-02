@@ -252,3 +252,10 @@ backcast reads (the `nwpp_grid_carried_wind_served` Southwest-leg correction):
 --merge`, 97,921 rows added; the committed 2023-2026 rows are byte-identical after
 the merge. GRID's PNM leg is 0 in 2019 and its SRP leg starts mid-2020 (the
 Grid West wind build-out), both as EIA published them.
+
+**`BPAT interchange hourly.parquet` back-fill 2019-2022** (2026-10-02, lane NWPP-NEXT-20 —
+`docs/records/nwpp/FINDING-nwppnext20-seam-phase0-2026-10-02.md` §E). Extended with the committed
+producer, keyless: `fetch_eia930_interchange.py --ba BPAT --source bulk --years 2019 2020 2021 2022 --merge`
+— every one of the 473,472 pre-existing 2023-2025 rows kept byte-identical; file now 1,104,624 rows,
+2019-01-01 01:00 .. 2026-01-01 00:00. Read for the BPAT→BCHA leg of the priced WECC_CAN seam
+(`NWPP_PRICED_SEAM_LEGS`); the other sixteen NWPP members' files stay 2023-2025.

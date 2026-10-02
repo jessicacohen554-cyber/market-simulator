@@ -890,24 +890,26 @@ def _drag_lp_bin_capacity(
     branch caps on its own CAMPD bin sheet), which leaves the loader's
     incumbent denominator and the off path byte-inert.
 
-    ``year`` is the loader year the lay-up shares are keyed on; it feeds the
-    NWPP-NEXT-15 live sub-gate
-    (``ScenarioConfig.unit_outage_dispatched_bin_live_denominator``), which drops
-    exit cohorts retired before it — the same roster the outage share divides by.
+    ``year`` is the loader year the lay-up shares are keyed on; it makes the
+    roster LIVE (closeout-W0 desk ruling D-1,
+    :func:`~market_sim.data.outages.dispatched_bin_live_year`) — the same roster
+    the outage share divides by.
     """
     if not getattr(config, "unit_outage_dispatched_bin_denominator", False):
         return None
     if (iso or "ERCOT").upper() == "ERCOT":
         return None
     # Local import for the same fleet -> data cycle reason as the loader below.
-    from market_sim.data.outages import dispatched_bin_live_year, lp_bin_capacity_index
+    from market_sim.data.outages import (
+        dispatched_bin_live_year,
+        lp_bin_capacity_index,
+    )
 
+    _year = getattr(config, "weather_year", None) or year
     return lp_bin_capacity_index(
         generators,
         np.asarray(fleet_arrays.pmax, dtype=float),
-        live_year=dispatched_bin_live_year(
-            config, getattr(config, "weather_year", None) or year
-        ),
+        live_year=dispatched_bin_live_year(config, _year),
     )
 
 

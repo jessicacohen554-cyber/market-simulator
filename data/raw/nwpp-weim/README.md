@@ -24,6 +24,7 @@ gap is a misalignment is what the gate measures — see the FINDING.
 | `weim_transfer_15min.parquet` | 2,083,676 | **yes** | `interval_start_utc · baa · xfer_mw` — `ENE_EIM_TRANSFER` (v2, RTPD) for all 23 WEIM BAAs |
 | `weim_hourly_by_ba.parquet` | 315,360 | **yes** | `year · hour · baa · lmp` — the per-BA hourly LMP on the model's fixed-PST non-leap clock (PRECOMMIT §4). **The per-BA product**: card N5's zones are a re-group of this file |
 | `midc_peak_daily.parquet` | 698 | **yes** | the `Mid C Peak` rows of EIA's ICE workbooks 2023–2025 (`single_day` flags delivery start = end) — the anchor, never the benchmark |
+| `weim_hourly_counterparty.parquet` | 26,280 | **yes** | NWPP-NEXT-20: `year · hour · baa · lmp · n_intervals` for WEIM counterparties OUTSIDE the footprint whose ELAP anchors a seam — `BCHA` (`ELAP_BCHA-APND`, BC Hydro / Powerex), the WECC_CAN seam's all-hours anchor. Same clock and 3-interval rule as `weim_hourly_by_ba`. 2023 starts 2023-06-22 (retention edge at fetch, 2026-10-02). An anchor, never a benchmark (`fetch-counterparty`) |
 | `weim_benefits_appendix2_transfers.csv` | 4,922 | **yes** | Appendix 2 of the WEIM quarterly benefits reports, 2023-07 → 2025-12, per month × ordered BAA pair, 15-min and 5-min MWh, with `report` + `page` per row |
 | `gate.json` | — | **yes** | every measured cell of the PRECOMMIT §5 gate — **verdict `NO`** (D3: the WEIM on-peak price sits 22.6–37.5 % below the Mid-C Peak index against a 10 % bar; D1, D2, D4 pass) |
 | `d2_tie_reconciliation.json` | — | **yes** | one month (2024-07) of tie-level transfers establishing that `ENE_EIM_TRANSFER` is the BAA's NET position and Appendix 2 the pairwise GROSS (gross identity 1.046, net identity 0.985) |
@@ -73,6 +74,7 @@ refresh" the committed years — that would silently shorten them.
 - **Footprint price = demand-weighted mean** over the 11 load-carrying priced BAs,
   weights EIA-930 `Demand (MW) (Adjusted)`; an hour whose priced BAs carry < 90 % of
   the 11-BA demand is NaN.
+- **LANDED 2026-10-02 under owner ruling R-9** (*"WEIM ELAP 2023-06 onward as a labelled imbalance-price benchmark, STOP-gated like SOCO's lambda"*): `land-labelled` writes `data/raw/_validation-source/actual_lmp_hourly_NWPP.parquet` from the committed 15-minute store, gated on D1/D2/D4 (D3 — the Mid-C-proxy test that read `NO` — is answered by the label, not re-run). The text below describes the 2026-09-13 posture.
 - `da` in a landed sidecar would be **all NaN** — there was no day-ahead market.
   **No sidecar was landed** (the gate read `NO`); `gate --land` refuses unless every
   cell passes, and a desk ruling to use the series as a labelled imbalance-price

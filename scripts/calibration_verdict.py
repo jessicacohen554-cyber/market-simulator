@@ -627,9 +627,47 @@ COMPLETENESS_DIR = DATA_DIR / "completeness"
 #       against the pre-change scorer: CAISO, MISO, NYISO, SPP CALIBRATED ->
 #       NOT-YET; NEISO stays CALIBRATED; ERCOT, NWPP, PJM, SOCO were already
 #       NOT-YET. NO SOLVE RAN. Genealogy: docs/governance/rule-history.md §26.
+# v3.14 — 2026-10-02 owner ruling R-6 (backcast close-out plan §5.0, verbatim:
+#       "ERCOT 2023 keeps its own configuration ... I'm comfortable with a
+#       different config for a single year we know was off"). THE
+#       CONFIGURATION-EXCEPTION CAVEAT KIND (:data:`CONFIG_EXCEPTION_ENTRIES`,
+#       :func:`_apply_config_exceptions`): ERCOT 2023 C3a (model under actual)
+#       and C3b (NRMSE above band), and only when the year solved on the
+#       declared carve-out config (``ercot_offer_swcap_clip`` armed), read
+#       CAVEAT at full magnitude, spend NO caveat slot and do NOT downgrade —
+#       non-downgrading like a ledgered C3c under rule 22. Evidence: Potomac
+#       SOM 2023 §II.H (ECRS sequestration "doubled average real-time energy
+#       prices from June through December 2023"). The IMM counterfactual
+#       (ECRS-neutral LW ≈ $35 vs actual $62-65) is printed beside the actual.
+#       LEDGERABLE_CRITERIA and both budgets UNCHANGED. Every other ERCOT
+#       criterion-year still gates. NO SOLVE RAN. Genealogy (v3.14-v3.17):
+#       docs/governance/rule-history.md §27.
+# v3.15 — 2026-10-02 owner ruling R-8 (verbatim: "SOCO: scope the caveat
+#       budget for a lambda-referenced BA -> CALIBRATED-WITH-CAVEATS"). On an
+#       ISO in :data:`LAMBDA_REFERENCED_ISOS` the scoped C3a/C3b rows (the
+#       reference-definition rows of v3.11/v3.12) are carried OFF the single
+#       ledgered slot; they still DOWNGRADE, so the reading is
+#       CALIBRATED-WITH-CAVEATS, not NOT-YET. The 2019 C1 COAL_BIT row and any
+#       explicit-ledger C3c still spend the slot; MAX_LEDGERED_CAVEATS stays 1.
+# v3.16 — 2026-10-02 owner ruling R-9 (verbatim: "NWPP price reference: WEIM
+#       ELAP 2023-06 onward as a labelled imbalance-price benchmark, STOP-gated
+#       like SOCO's lambda; 2019-2022 stay PHYSICALLY-CALIBRATED (price
+#       unscored)"). NWPP gains a labelled actual_lmp.json block (2023-06+,
+#       landed on gate cells D1/D2/D4); C3a/C3b score on it with the label,
+#       C3c is NOT scored on it (C3C_NOT_SCORED, as SOCO). Years before
+#       :data:`LABELLED_PRICE_REFERENCE_FROM` take the v3.8 no-price treatment
+#       per year; a mixed span scores price on the priced years only and names
+#       the unpriced years on the basis. The FERC-714 pool lambda stays
+#       falsified (plan §3.9 step 1).
+# v3.17 — 2026-10-02 owner ruling R-13 (verbatim: "adopt zonal load-weighted
+#       C3a for PJM"). PJM's ``*_lw`` actual becomes zone-resolved
+#       (scripts/data/derive_actual_lmp.py ZONAL_LW_SOURCES["PJM"], from the
+#       DataMiner2 rt/da_hrl_lmps type-ZONE archive reduced to model zones by
+#       scripts/data/derive_pjm_zonal_lmp.py), as NYISO and MISO. A benchmark
+#       change only: no scorer constant moves.
 # A STRING from v3.10 on: the float 3.10 == 3.1, which would collide with the
 # v3.1 amendment. Display-only everywhere it is read.
-RUBRIC_VERSION = "3.13"
+RUBRIC_VERSION = "3.17"
 
 # Statuses (per criterion-year and aggregated).
 PASS, CAVEAT, FAIL, SKIPPED = "PASS", "CAVEAT", "FAIL", "SKIPPED"
@@ -914,7 +952,27 @@ TAIL_THRESHOLD = {
 # Display only: the numbers are scored exactly as any ``rt``/``rt_lw`` block.
 PRICE_BENCHMARK_LABEL = {
     "SOCO": "Southern Co. FERC-714 system lambda, one system-wide series",
+    # Rubric v3.16 (owner ruling R-9, 2026-10-02, verbatim: "NWPP price
+    # reference: WEIM ELAP 2023-06 onward as a labelled imbalance-price
+    # benchmark, STOP-gated like SOCO's lambda; 2019-2022 stay
+    # PHYSICALLY-CALIBRATED (price unscored)").
+    "NWPP": (
+        "CAISO WEIM ELAP 15-min imbalance price, demand-weighted over the 11 "
+        "priced footprint BAs (labelled imbalance-price benchmark, 2023-06+)"
+    ),
 }
+
+# Rubric v3.16 (owner ruling R-9): ISOs whose labelled price benchmark begins
+# part-way through the registered span. A scored year BEFORE the start year
+# carries no reference by construction (OASIS retention, not a model fact), so
+# its three price criteria take the rubric v3.8 no-price treatment PER YEAR —
+# out of the unscored-criteria downgrade, named on a PRICE UNSCORED basis line
+# at full magnitude, and a span made only of such years reads the
+# PHYSICALLY-CALIBRATED labels. Years from the start year on are scored on the
+# ordinary path (a partial first year is masked to its staged months by the
+# existing coverage mechanism). Only an ISO listed here gets this treatment:
+# every other ISO-year without a reference keeps downgrading exactly as before.
+LABELLED_PRICE_REFERENCE_FROM: dict[str, int] = {"NWPP": 2023}
 
 # ISOs for which C3c is deliberately NOT scored on the committed benchmark, with
 # the reason the SKIPPED record carries. SOCO: owner ruling 2026-09-28 "Not
@@ -928,6 +986,17 @@ C3C_NOT_SCORED = {
         "C3c NOT SCORED on the SOCO system lambda (owner ruling 2026-09-28): a "
         "lambda has no scarcity-pricing component, so its hours above a tail "
         "threshold are fuel cost, not realized scarcity"
+    ),
+    # Rubric v3.16 (owner ruling R-9, "STOP-gated like SOCO's lambda"): the
+    # WEIM ELAP is a 15-minute IMBALANCE price — it settles only the BAs'
+    # deviations from bilateral base schedules, and its excursions above a
+    # tail threshold are WEIM power-balance relaxation on that imbalance, not
+    # the realized scarcity of the footprint's energy. Mirrors SOCO.
+    "NWPP": (
+        "C3c NOT SCORED on the NWPP WEIM ELAP imbalance price (owner ruling "
+        "R-9, 2026-10-02): the ELAP settles only real-time imbalance against "
+        "bilateral base schedules, so its tail hours are imbalance "
+        "power-balance pricing, not realized footprint scarcity"
     ),
 }
 
@@ -1057,6 +1126,90 @@ SCOPED_LEDGER_ENTRIES: dict[tuple[str, int, str, str | None], dict] = {
             "passing years. Reported at full magnitude; spends the single "
             "ledgered slot; DOWNGRADES the determination."
         ),
+    },
+}
+
+# Rubric v3.15 (owner ruling R-8, 2026-10-02, backcast close-out plan §5.0,
+# verbatim: "SOCO: scope the caveat budget for a lambda-referenced BA ->
+# CALIBRATED-WITH-CAVEATS"). A BA whose price benchmark is a SYSTEM LAMBDA
+# (not an LMP) carries its REFERENCE-DEFINITION scoped rows — the C3a/C3b rows
+# whose evidence is the definition of the lambda itself (incremental-HR term,
+# replacement-fuel peak premium) — OUTSIDE the single ledgered slot. They keep
+# every v3.10 guard (exact key, direction-bound, governance must pass, never a
+# PASS, full magnitude) and they still DOWNGRADE: the run reads
+# CALIBRATED-WITH-CAVEATS, never the clean rung, and never NOT-YET on the
+# budget alone. Only the price criteria of an ISO listed here qualify; a
+# scoped row on any other criterion (SOCO's 2019 C1 COAL_BIT) still spends the
+# slot, and an explicit-ledger C3c still spends it too.
+LAMBDA_REFERENCED_ISOS: frozenset[str] = frozenset({"SOCO"})
+REFERENCE_DEFINITION_CRITERIA: frozenset[str] = frozenset({"price_mean", "price_shape"})
+
+# Rubric v3.14 (owner ruling R-6, 2026-10-02, backcast close-out plan §5.0,
+# verbatim: "We had it set up so 2023 was allowed to have a different config
+# because of the ECRS; then that got eliminated. I'm comfortable with a
+# different config for a single year we know was off."). THE CONFIGURATION-
+# EXCEPTION CAVEAT KIND: an owner-signed, exact-keyed acceptance that one year
+# ran under a market regime the model class represents only as its
+# counterfactual, so the year's price residual is reported, not gated.
+# Evidence (Potomac Economics, 2023 State of the Market Report for the ERCOT
+# Electricity Markets, §II.H and Fig. 13): ECRS sequestration and
+# non-deployment "doubled average real-time energy prices from June through
+# December 2023" and "most of the price spikes that occurred in June, August,
+# and September 2023 did not reflect true shortages" (> $12 billion through
+# November); the model is reserve-co-optimized (RTC+B-like), 2023 ERCOT was not.
+# GUARDS, every one fail-closed:
+#  (a) EXACT KEY — (iso, year, criterion, key) literal rows, nothing else;
+#  (b) CONFIG-BOUND — the year's own solved scenario_config must carry the
+#      declared carve-out signature (``config_signature``); the same year
+#      solved on any other recipe stays a FAIL;
+#  (c) DIRECTION-BOUND — only the sign the evidence explains (ECRS raised the
+#      actual: C3a model UNDER actual; C3b NRMSE above its band);
+#  (d) GOVERNANCE MUST PASS;
+#  (e) NEVER A PASS — the record reads CAVEAT at full magnitude, named on the
+#      determination basis with the IMM counterfactual beside the actual;
+#  (f) OFF-BUDGET AND NON-DOWNGRADING, like a ledgered C3c under rule 22: it
+#      is neither a ledgered nor a commercial-band caveat, so it spends no
+#      slot and leaves the rung untouched. Every other criterion of the year
+#      still gates; a second failure is still NOT-YET.
+CONFIG_EXCEPTION = "OWNER-SIGNED CONFIGURATION EXCEPTION"
+_ERCOT_2023_RULE = "ercot-2023-ecrs-configuration-exception-2026-10-02"
+_ERCOT_2023_REASON = (
+    "rubric v3.14 configuration exception (owner ruling R-6, 2026-10-02: 'I'm "
+    "comfortable with a different config for a single year we know was off'): "
+    "2023 runs the sanctioned carve-out config (ercot_offer_swcap_clip, k_peak "
+    "33) for the ECRS-era regime the IMM calls artificial shortage pricing "
+    "(Potomac SOM 2023 §II.H: ECRS 'doubled average real-time energy prices "
+    "from June through December 2023'; spikes 'did not reflect true "
+    "shortages'). The model is reserve-co-optimized, 2023 ERCOT was not. "
+    "Reported at full magnitude; spends no ledgered slot; NOT "
+    "determination-downgrading."
+)
+#: Potomac SOM 2023 §II.H counterfactual, zero-LP bound recorded in
+#: docs/records/governance/closeout-2026-10/SHARD-ERCOT-closeout-research-2026-10-02.md
+#: (">$12 billion through November" spread over Jun-Nov model load): the
+#: ECRS-neutral 2023 load-weighted RT price vs the measured actual.
+ERCOT_2023_IMM_COUNTERFACTUAL: dict = {
+    "ecrs_neutral_lw": 35.0,
+    "actual_lw_range": (62.0, 65.0),
+    "source": (
+        "Potomac Economics, 2023 State of the Market Report for the ERCOT "
+        "Electricity Markets (2024-05), §II.H / Fig. 13"
+    ),
+}
+CONFIG_EXCEPTION_ENTRIES: dict[tuple[str, int, str, str | None], dict] = {
+    ("ERCOT", 2023, "price_mean", None): {
+        "direction": "under",
+        "config_signature": {"ercot_offer_swcap_clip": True},
+        "rule": _ERCOT_2023_RULE,
+        "reason": _ERCOT_2023_REASON,
+        "counterfactual": ERCOT_2023_IMM_COUNTERFACTUAL,
+    },
+    ("ERCOT", 2023, "price_shape", None): {
+        "direction": "above_band",
+        "config_signature": {"ercot_offer_swcap_clip": True},
+        "rule": _ERCOT_2023_RULE,
+        "reason": _ERCOT_2023_REASON,
+        "counterfactual": ERCOT_2023_IMM_COUNTERFACTUAL,
     },
 }
 
@@ -1298,6 +1451,14 @@ def load_artifacts(run_id: str) -> dict:
                 else {}
             ),
             "meta": bundle_meta(bundle_dir),
+            # Rubric v3.14: a composed bundle's per-leg configs, so a
+            # configuration exception binds to the recipe the YEAR solved on.
+            "year_scenario_configs": {
+                int(f.stem.rsplit("_", 1)[1]): json.loads(f.read_text()).get(
+                    "scenario_config", {}
+                )
+                for f in sorted(bundle_dir.glob("run_config_[0-9][0-9][0-9][0-9].json"))
+            },
         }
         att = bundle_dir / "calibration_attestation.json"
         if att.exists():
@@ -1728,6 +1889,99 @@ def _apply_scoped_ledger(records: list[dict], iso: str, gov: dict) -> None:
         rec["ledger_reason"] = entry["reason"]
         rec["standing_rule"] = entry["rule"]
         rec["scoped_ledger"] = True
+        # Rubric v3.15 (owner ruling R-8): on a lambda-referenced BA a price
+        # row's evidence is the definition of the reference itself, so it is
+        # carried off the single ledgered slot (still downgrading).
+        if (
+            iso_u in LAMBDA_REFERENCED_ISOS
+            and rec.get("criterion") in REFERENCE_DEFINITION_CRITERIA
+        ):
+            rec["reference_definition"] = True
+
+
+def _scenario_config_for_year(config: dict | None, year: int) -> dict | None:
+    """The scenario_config the bundle actually solved ``year`` on, or ``None``.
+
+    A composed bundle carries one ``run_config_<year>.json`` per leg (loaded as
+    ``year_scenario_configs``); a single-leg bundle only ``run_config.json``.
+    """
+    if not config:
+        return None
+    per_year = config.get("year_scenario_configs") or {}
+    sc = per_year.get(int(year)) or per_year.get(str(int(year)))
+    if sc is None:
+        sc = config.get("scenario_config")
+    return sc if isinstance(sc, dict) else None
+
+
+def _apply_config_exceptions(
+    records: list[dict], iso: str, gov: dict, config: dict | None
+) -> None:
+    """Reclassify rubric v3.14 configuration-exception rows from FAIL to CAVEAT.
+
+    Only a record whose exact ``(iso, year, criterion, key)`` is in
+    :data:`CONFIG_EXCEPTION_ENTRIES` can move; only when governance PASSES;
+    only when the year's solved scenario_config carries the entry's declared
+    ``config_signature``; and only in the direction the entry's evidence
+    explains. The record becomes a CAVEAT classified :data:`CONFIG_EXCEPTION`,
+    keeps its magnitude, is flagged ``config_exception`` (off every caveat
+    budget, NOT determination-downgrading) and carries the entry's
+    counterfactual beside the actual. Every other record is untouched.
+
+    Args:
+        records: Scored criterion records, mutated in place.
+        iso: The run's ISO.
+        gov: The governance-gate record from :func:`score_governance`.
+        config: The loaded bundle config (``scenario_config`` and, for a
+            composed bundle, ``year_scenario_configs``).
+    """
+    if str(gov.get("status", "")).upper() != PASS:
+        return
+    iso_u = str(iso or "").upper()
+    for rec in records:
+        if rec.get("status") != FAIL:
+            continue
+        try:
+            year = int(rec.get("year"))
+        except (TypeError, ValueError):
+            continue
+        entry = CONFIG_EXCEPTION_ENTRIES.get(
+            (iso_u, year, rec.get("criterion"), rec.get("key"))
+        )
+        if entry is None:
+            continue
+        sc = _scenario_config_for_year(config, year)
+        if sc is None or any(
+            sc.get(k) != v for k, v in entry["config_signature"].items()
+        ):
+            continue  # fail-closed: only the declared carve-out config
+        d = entry["direction"]
+        try:
+            m = float(rec["model"])
+        except (KeyError, TypeError, ValueError):
+            continue
+        if d == "above_band":
+            band = _SCOPED_BAND_MAX.get(rec.get("criterion"))
+            if band is None or not m > band:
+                continue
+        else:
+            try:
+                a = float(rec["actual"])
+            except (KeyError, TypeError, ValueError):
+                continue
+            if not ((d == "under" and m < a) or (d == "over" and m > a)):
+                continue
+        cf = dict(entry["counterfactual"])
+        if rec.get("criterion") == "price_mean" and cf.get("ecrs_neutral_lw"):
+            cf["model_vs_counterfactual"] = (
+                f"{(m - cf['ecrs_neutral_lw']) / cf['ecrs_neutral_lw'] * 100:+.1f}%"
+            )
+        rec["status"] = CAVEAT
+        rec["classification"] = CONFIG_EXCEPTION
+        rec["ledger_reason"] = entry["reason"]
+        rec["standing_rule"] = entry["rule"]
+        rec["config_exception"] = True
+        rec["counterfactual"] = cf
 
 
 def _apply_ledger(rec: dict, exceptions: list[dict]) -> dict:
@@ -3975,6 +4229,11 @@ def determine_from_artifacts(
     # standing rule, so its lone-failure guard saw these rows as FAILs.
     _apply_scoped_ledger(records, iso, gov)
 
+    # Rubric v3.14 configuration exceptions (owner ruling R-6, 2026-10-02).
+    # AFTER the C3c standing rule and the scoped ledger, so neither saw these
+    # rows as anything but FAILs.
+    _apply_config_exceptions(records, iso, gov, art.get("config"))
+
     # Aggregate per criterion.
     per_criterion: dict[str, dict] = {}
     for cid, (label, tier) in CRITERIA.items():
@@ -3997,13 +4256,28 @@ def determine_from_artifacts(
             and r.get("classification") in (MEASURED_LIMIT, MODEL_LIMIT)
             for r in recs
         )
+        # Rubric v3.14: a criterion whose ONLY caveats are configuration
+        # exceptions is its own kind — neither ledgered nor commercial-band, so
+        # it spends no budget and does not downgrade.
+        band = any(
+            r["status"] == CAVEAT
+            and r.get("classification") not in (MEASURED_LIMIT, MODEL_LIMIT)
+            and not r.get("config_exception")
+            for r in recs
+        )
         per_criterion[cid] = {
             "label": label,
             "tier": tier,
             "hard": tier == TIER_PROTECT,
             "status": _agg_status(recs) if recs else SKIPPED,
             "caveat_kind": (
-                ("ledgered" if ledgered else "commercial-band")
+                (
+                    "ledgered"
+                    if ledgered
+                    else "commercial-band"
+                    if band
+                    else "configuration-exception"
+                )
                 if (_agg_status(recs) if recs else SKIPPED) == CAVEAT
                 else None
             ),
@@ -4036,6 +4310,29 @@ def determine_from_artifacts(
     # Rubric v3.10: the ledgered caveats earned by a SCOPED ledger row.
     scoped_caveats = [
         c for c in ledgered_caveats if any(r.get("scoped_ledger") for r in c["records"])
+    ]
+
+    # Rubric v3.15 (owner ruling R-8): a lambda-referenced BA's
+    # reference-definition rows sit OFF the single ledgered slot — a criterion
+    # leaves the budget count only when EVERY ledgered record it carries is one.
+    def _ref_def_only(c: dict) -> bool:
+        led = [
+            r
+            for r in c["records"]
+            if r["status"] == CAVEAT
+            and r.get("classification") in (MEASURED_LIMIT, MODEL_LIMIT)
+        ]
+        return bool(led) and all(r.get("reference_definition") for r in led)
+
+    reference_definition_caveats = [c for c in ledgered_caveats if _ref_def_only(c)]
+    budgeted_ledgered = [
+        c for c in ledgered_caveats if c not in reference_definition_caveats
+    ]
+    # Rubric v3.14: configuration-exception caveats (off-budget, non-downgrading).
+    config_exception_caveats = [
+        c
+        for cid, c in per_criterion.items()
+        if c["status"] == CAVEAT and c["caveat_kind"] == "configuration-exception"
     ]
     fails = [cid for cid, c in per_criterion.items() if c["status"] == FAIL]
     # An unscored criterion can never be a silent pass: it caps the
@@ -4101,9 +4398,20 @@ def determine_from_artifacts(
     # named TOGETHER on their own determination-basis line below, at full
     # magnitude, on every route. The clean rungs read the PHYSICALLY-CALIBRATED
     # labels, never CALIBRATED. The NOT-YET routes above are untouched.
-    price_unscored = _price_reference_absent(iso) and all(
-        per_criterion[c]["status"] == SKIPPED for c in PRICE_CRITERIA
-    )
+    # Rubric v3.16 (owner ruling R-9): a year BEFORE the ISO's labelled
+    # reference start (LABELLED_PRICE_REFERENCE_FROM) has no reference by
+    # construction. A span made only of such years takes this class; a span
+    # mixing them with priced years scores price on the priced years (a
+    # SKIPPED year record never moves the per-criterion aggregate) and names
+    # the unpriced years on their own basis line below.
+    ref_from = LABELLED_PRICE_REFERENCE_FROM.get(str(iso))
+    unpriced_years = [
+        y for y in scorable_years if ref_from is not None and int(y) < ref_from
+    ]
+    price_unscored = (
+        _price_reference_absent(iso)
+        or (bool(scorable_years) and len(unpriced_years) == len(scorable_years))
+    ) and all(per_criterion[c]["status"] == SKIPPED for c in PRICE_CRITERIA)
     if price_unscored:
         skipped_downgrading = [
             c for c in skipped_downgrading if c not in PRICE_CRITERIA
@@ -4125,13 +4433,13 @@ def determine_from_artifacts(
         )
     elif (
         len(protective_caveats) > MAX_PROTECTIVE_CAVEATS
-        or len(ledgered_caveats) > MAX_LEDGERED_CAVEATS
+        or len(budgeted_ledgered) > MAX_LEDGERED_CAVEATS
     ):
         determination = NOT_YET
         reasons.append(
             "caveat budget exceeded (protective "
             f"{len(protective_caveats)}/{MAX_PROTECTIVE_CAVEATS}, ledgered "
-            f"{len(ledgered_caveats)}/{MAX_LEDGERED_CAVEATS})"
+            f"{len(budgeted_ledgered)}/{MAX_LEDGERED_CAVEATS})"
         )
     else:
         # RUBRIC v3.3 (owner amendment 2026-08-17): a LEDGERED caveat does not
@@ -4162,6 +4470,20 @@ def determine_from_artifacts(
                         for c in scoped_caveats
                         for r in c["records"]
                         if r.get("scoped_ledger")
+                    )
+                )
+            if reference_definition_caveats:
+                reasons.append(
+                    "rubric v3.15 reference-definition caveat(s) of a "
+                    "lambda-referenced BA (owner ruling R-8, 2026-10-02) — of the "
+                    "scoped rows above, these are carried OFF the single ledgered "
+                    "slot (still REPORTED AT FULL MAGNITUDE and "
+                    "determination-DOWNGRADING): "
+                    + "; ".join(
+                        f"{r['year']} {r.get('criterion')} ({r.get('magnitude')})"
+                        for c in reference_definition_caveats
+                        for r in c["records"]
+                        if r.get("reference_definition")
                     )
                 )
             if band_caveats:
@@ -4215,6 +4537,32 @@ def determine_from_artifacts(
                 + ", ".join(per_criterion[c]["label"] for c in skipped_exempt)
             )
 
+    # Rubric v3.14: a configuration exception is NAMED on the basis, at full
+    # magnitude, with the counterfactual beside the actual — emitted on EVERY
+    # route (NOT-YET included) and after the downgrading reasons, so it never
+    # displaces :func:`headline`'s reasons[0].
+    config_exception_records = [r for r in records if r.get("config_exception")]
+    if config_exception_records:
+        parts = []
+        for r in config_exception_records:
+            cf = r.get("counterfactual") or {}
+            txt = f"{r['year']} {CRITERIA[r['criterion']][0]} ({r.get('magnitude')}"
+            if r.get("actual") is not None and cf.get("ecrs_neutral_lw"):
+                lo, hi = cf.get("actual_lw_range") or (None, None)
+                txt += (
+                    f"; model ${r['model']} vs actual ${r['actual']} — IMM "
+                    "counterfactual ECRS-neutral load-weighted RT ≈ "
+                    f"${cf['ecrs_neutral_lw']:.0f} vs actual ${lo:.0f}-{hi:.0f}; "
+                    f"model {cf.get('model_vs_counterfactual')} against it"
+                )
+            parts.append(txt + ")")
+        reasons.append(
+            f"{len(config_exception_records)} owner-signed configuration-exception "
+            "caveat(s) — REPORTED AT FULL MAGNITUDE, off every caveat budget and "
+            "NOT determination-downgrading under rubric v3.14 (owner ruling R-6, "
+            "2026-10-02): " + "; ".join(parts)
+        )
+
     # RUBRIC v3.8: the price gap on the determination basis, AT FULL MAGNITUDE,
     # on EVERY route — NOT-YET included, so a failing no-price run can never be
     # read as having failed on price. Appended LAST so it never displaces a
@@ -4234,8 +4582,18 @@ def determine_from_artifacts(
             )
             or "none"
         )
+        no_block = _price_reference_absent(iso)
+        why = (
+            f"no actual_lmp.json block exists for {iso}"
+            if no_block
+            else (
+                f"{iso}'s labelled benchmark ({PRICE_BENCHMARK_LABEL.get(iso, '')}) "
+                f"begins in {ref_from}; these years precede it (owner ruling R-9, "
+                "2026-10-02: they stay PHYSICALLY-CALIBRATED, price unscored)"
+            )
+        )
         reasons.append(
-            f"PRICE UNSCORED — no actual_lmp.json block exists for {iso}, so "
+            f"PRICE UNSCORED — {why}, so "
             f"{CRITERIA['price_mean'][0]}, {CRITERIA['price_shape'][0]} and "
             f"{CRITERIA['price_tail'][0]} are NOT SCORED in any year "
             f"({', '.join(map(str, scorable_years)) or 'none'}); this determination "
@@ -4246,7 +4604,11 @@ def determine_from_artifacts(
             f"{model_txt}."
         )
         price_unscored_block = {
-            "basis": f"no actual_lmp.json block for {iso}",
+            "basis": (
+                f"no actual_lmp.json block for {iso}"
+                if no_block
+                else f"years before the labelled {iso} reference start {ref_from}"
+            ),
             "criteria_unscored": list(PRICE_CRITERIA),
             "scored_on": [c for c in CRITERIA if c not in PRICE_CRITERIA],
             "model_mean_lmp_by_year": {
@@ -4254,6 +4616,18 @@ def determine_from_artifacts(
                 for y, m in model_by_year.items()
             },
         }
+
+    # Rubric v3.16: a span MIXING pre-reference years with priced years scores
+    # price on the priced years only; the unpriced years are named here, at
+    # full magnitude, so a priced verdict can never be read as covering them.
+    if unpriced_years and not price_unscored:
+        reasons.append(
+            "PRICE UNSCORED in "
+            + ", ".join(map(str, unpriced_years))
+            + f" — {iso}'s labelled benchmark ({PRICE_BENCHMARK_LABEL.get(iso, '')}) "
+            f"begins in {ref_from} (owner ruling R-9, 2026-10-02); C3a/C3b/C3c are "
+            "scored on the remaining years only and certify no price in these."
+        )
 
     # Report notes (not caveats): grounded-above-budget C8 passes — a class
     # forced past its cap that cleared the D-4 provenance + D-1 shape escalation
@@ -4316,6 +4690,9 @@ def determine_from_artifacts(
             "protective": [c["label"] for c in protective_caveats],
             "ledgered": [c["label"] for c in ledgered_caveats],
             "commercial_band": [c["label"] for c in band_caveats],
+            # Rubric v3.14 / v3.15 kinds (reported; neither spends the slot).
+            "configuration_exception": [c["label"] for c in config_exception_caveats],
+            "reference_definition": [c["label"] for c in reference_definition_caveats],
             "budget": {
                 "protective_max": MAX_PROTECTIVE_CAVEATS,
                 "ledgered_max": MAX_LEDGERED_CAVEATS,
