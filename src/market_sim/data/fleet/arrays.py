@@ -899,8 +899,8 @@ def _availability_matrix(
                     "wefor_residual_short_screened_coal requires "
                     "unit_outage_dispatched_bin_denominator"
                 )
-            # NWPP-NEXT-15: under the live sub-gate the screened share
-            # divides by the LIVE bin, the same roster the outage share uses.
+            # The screened share divides by the LIVE bin, the same roster the
+            # outage share uses (closeout-W0 desk ruling D-1).
             _roster = lp_bin_capacity_index(
                 generators,
                 live_year=dispatched_bin_live_year(config, int(fleet_year)),
@@ -916,9 +916,10 @@ def _availability_matrix(
                 len(_screened_share),
                 sum(s * dict(_roster).get(k, 0.0) for k, s in _screened_share.items()),
             )
-        # NWPP-NEXT-15 (ScenarioConfig.unit_outage_dispatched_bin_live_
-        # denominator, GATED default-off): with the screened-coal relief armed,
-        # a COAL row takes the relief on its measured screened share ONLY —
+        # NWPP-NEXT-15 (folded into wefor_residual_short_screened_coal by the
+        # closeout-W0 desk ruling D-1, which deleted the live sub-gate field
+        # that used to gate it): a COAL row takes the relief on its measured
+        # screened share ONLY —
         # never the full cap — even when ``wefor_residual_groups`` (or its
         # None default, which covers all coal) names its class. The
         # ``wefor_residual_groups`` membership test then decides the full cap
@@ -927,11 +928,10 @@ def _availability_matrix(
         # NWPP's None groups otherwise zero WEFOR on all coal AND all CC/ST
         # gas, and the screened branch below never fires). One relief
         # mechanism, re-ordered — not a second one (rule 19 [R-ONE-MECH]).
-        # False while off, so every existing config keeps the covered-first
-        # order byte-identically (MISO's keeper names no coal class).
-        _screened_coal_first = bool(_screened_share) and bool(
-            getattr(config, "unit_outage_dispatched_bin_live_denominator", False)
-        )
+        # Byte-identical where wefor_residual_groups names no coal class
+        # (MISO's keeper, the only one arming the relief): coal is then never
+        # covered and the screened branch fires either way.
+        _screened_coal_first = bool(_screened_share)
         # SPP-104 (ScenarioConfig.spp_ct_lole_efor): SPP's own LOLE-study
         # seasonal EFOR REPLACES the statistical CT_PEAKER WEFOR (rule 19) —
         # no wefor_multiplier, no SUMMER_WEFOR_SHARE redistribution, no age
@@ -1506,15 +1506,16 @@ def _apply_outage_overlays(
         # because one denominator is one mechanism (rule 19 [R-ONE-MECH]).
         # ``None`` while off, so every loader takes its incumbent argument and
         # the off path is byte-inert.
-        # NWPP-NEXT-15 (ScenarioConfig.unit_outage_dispatched_bin_live_
-        # denominator, a sub-gate of the above): the same roster, restricted to
-        # rows LIVE in the solve year — a dated exit cohort retired before it is
-        # carried by the LP at zero availability and must not dilute the divide.
-        # Read (and its requirement checked) unconditionally here so an armed
-        # sub-gate without its parent fails closed. None while off.
-        _live_yr = dispatched_bin_live_year(config, _yr)
+        # closeout-W0 (desk ruling D-1): the roster is LIVE — every row divides
+        # only in the months the COD ramp below carries it online, so a dead
+        # exit cohort leaves the divide and one retiring (or a new build
+        # entering) mid-year divides month by month.
         _lp_bins = (
-            lp_bin_capacity_index(generators, pmax, live_year=_live_yr)
+            lp_bin_capacity_index(
+                generators,
+                pmax,
+                live_year=dispatched_bin_live_year(config, _yr),
+            )
             if (
                 getattr(config, "unit_outage_dispatched_bin_denominator", False)
                 and not is_ercot

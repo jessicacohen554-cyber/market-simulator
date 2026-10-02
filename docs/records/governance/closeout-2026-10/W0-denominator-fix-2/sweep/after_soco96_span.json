@@ -1,0 +1,262 @@
+{
+ "2019": {
+  "avail_twh": 380.2766771061683,
+  "hashes": {
+   "availability": "151378ee451ce36b",
+   "min_gen": "92a5153e320d0e6a",
+   "pmax": "22b6836d6f9b33db",
+   "pmin": "5699f44c2eb2ccbf"
+  },
+  "n_units": 425,
+  "offline_all_year": [],
+  "overrides": null,
+  "partial": [
+   "54216|ST_CHP|ST_CHP_SOCO_AL_p54216_r201901_committed",
+   "6124|COAL_PRB|COAL_SOCO_GA_p6124_r201907_committed",
+   "6124|COAL_PRB|COAL_SOCO_GA_p6124_r201907_econhi",
+   "6124|COAL_PRB|COAL_SOCO_GA_p6124_r201907_econlo",
+   "6124|COAL_PRB|COAL_SOCO_GA_p6124_r201907_peak",
+   "6124|CT_PEAKER|CT_PEAKER_SOCO_GA_p6124_committed",
+   "6124|CT_PEAKER|CT_PEAKER_SOCO_GA_p6124_econhi",
+   "6124|CT_PEAKER|CT_PEAKER_SOCO_GA_p6124_econlo",
+   "6124|CT_PEAKER|CT_PEAKER_SOCO_GA_p6124_peak",
+   "62449|CT_CHP|CT_CHP_SOCO_AL_p62449_committed",
+   "62449|CT_CHP|CT_CHP_SOCO_AL_p62449_econhi",
+   "62449|CT_CHP|CT_CHP_SOCO_AL_p62449_econlo",
+   "708|COAL_BIT|COAL_SOCO_GA_p708_r201907_committed",
+   "708|COAL_BIT|COAL_SOCO_GA_p708_r201907_econhi",
+   "708|COAL_BIT|COAL_SOCO_GA_p708_r201907_econlo",
+   "708|COAL_BIT|COAL_SOCO_GA_p708_r201907_peak",
+   "7709|CT_PEAKER|CT_PEAKER_SOCO_GA_p7709_econhi",
+   "7709|CT_PEAKER|CT_PEAKER_SOCO_GA_p7709_econlo",
+   "7709|CT_PEAKER|CT_PEAKER_SOCO_GA_p7709_peak",
+   "8|COAL_BIT|COAL_SOCO_AL_p8_r201904_committed",
+   "8|COAL_BIT|COAL_SOCO_AL_p8_r201904_econhi",
+   "8|COAL_BIT|COAL_SOCO_AL_p8_r201904_econlo",
+   "8|COAL_BIT|COAL_SOCO_AL_p8_r201904_peak"
+  ]
+ },
+ "2020": {
+  "avail_twh": 359.81446141537486,
+  "hashes": {
+   "availability": "54df4ac9b661d2a8",
+   "min_gen": "7bc4d74fe1e41ec0",
+   "pmax": "bbe51ac348b374b4",
+   "pmin": "3c5f2841366c47b9"
+  },
+  "n_units": 418,
+  "offline_all_year": [
+   "54216|ST_CHP|ST_CHP_SOCO_AL_p54216_r201901_committed",
+   "6124|COAL_PRB|COAL_SOCO_GA_p6124_r201907_committed",
+   "6124|COAL_PRB|COAL_SOCO_GA_p6124_r201907_econhi",
+   "6124|COAL_PRB|COAL_SOCO_GA_p6124_r201907_econlo",
+   "6124|COAL_PRB|COAL_SOCO_GA_p6124_r201907_peak"
+  ],
+  "overrides": null,
+  "partial": [
+   "6124|CT_PEAKER|CT_PEAKER_SOCO_GA_p6124_committed",
+   "6124|CT_PEAKER|CT_PEAKER_SOCO_GA_p6124_econhi",
+   "6124|CT_PEAKER|CT_PEAKER_SOCO_GA_p6124_econlo",
+   "6124|CT_PEAKER|CT_PEAKER_SOCO_GA_p6124_peak",
+   "7709|CT_PEAKER|CT_PEAKER_SOCO_GA_p7709_econhi",
+   "7709|CT_PEAKER|CT_PEAKER_SOCO_GA_p7709_econlo",
+   "7709|CT_PEAKER|CT_PEAKER_SOCO_GA_p7709_peak"
+  ]
+ },
+ "2021": {
+  "avail_twh": 368.285561804062,
+  "hashes": {
+   "availability": "a06437fe3e92aed4",
+   "min_gen": "c50d99ac2847ca0c",
+   "pmax": "39554b9e6858880a",
+   "pmin": "a087678c00459657"
+  },
+  "n_units": 427,
+  "offline_all_year": [
+   "54216|ST_CHP|ST_CHP_SOCO_AL_p54216_r201901_committed",
+   "6124|COAL_PRB|COAL_SOCO_GA_p6124_r201907_committed",
+   "6124|COAL_PRB|COAL_SOCO_GA_p6124_r201907_econhi",
+   "6124|COAL_PRB|COAL_SOCO_GA_p6124_r201907_econlo",
+   "6124|COAL_PRB|COAL_SOCO_GA_p6124_r201907_peak"
+  ],
+  "overrides": null,
+  "partial": [
+   "54730|CT_PEAKER|CT_PEAKER_SOCO_AL_p54730_r202101_econhi",
+   "54730|CT_PEAKER|CT_PEAKER_SOCO_AL_p54730_r202101_econlo",
+   "6124|CT_PEAKER|CT_PEAKER_SOCO_GA_p6124_committed",
+   "6124|CT_PEAKER|CT_PEAKER_SOCO_GA_p6124_econhi",
+   "6124|CT_PEAKER|CT_PEAKER_SOCO_GA_p6124_econlo",
+   "6124|CT_PEAKER|CT_PEAKER_SOCO_GA_p6124_peak",
+   "641|CT_PEAKER|CT_PEAKER_SOCO_AL_p641_econhi",
+   "641|CT_PEAKER|CT_PEAKER_SOCO_AL_p641_econlo",
+   "641|CT_PEAKER|CT_PEAKER_SOCO_AL_p641_peak",
+   "7709|CT_PEAKER|CT_PEAKER_SOCO_GA_p7709_econhi",
+   "7709|CT_PEAKER|CT_PEAKER_SOCO_GA_p7709_econlo",
+   "7709|CT_PEAKER|CT_PEAKER_SOCO_GA_p7709_peak"
+  ]
+ },
+ "2022": {
+  "avail_twh": 373.7910425893357,
+  "hashes": {
+   "availability": "d8712a3ae5dd48d0",
+   "min_gen": "9db10630e9a8f75e",
+   "pmax": "9363f9b4d8404bb8",
+   "pmin": "1d6247bf1d9af1e1"
+  },
+  "n_units": 437,
+  "offline_all_year": [
+   "54216|ST_CHP|ST_CHP_SOCO_AL_p54216_r201901_committed",
+   "6124|COAL_PRB|COAL_SOCO_GA_p6124_r201907_committed",
+   "6124|COAL_PRB|COAL_SOCO_GA_p6124_r201907_econhi",
+   "6124|COAL_PRB|COAL_SOCO_GA_p6124_r201907_econlo",
+   "6124|COAL_PRB|COAL_SOCO_GA_p6124_r201907_peak"
+  ],
+  "overrides": null,
+  "partial": [
+   "6052|COAL_BIT|COAL_SOCO_GA_p6052_r202209_committed",
+   "6052|COAL_BIT|COAL_SOCO_GA_p6052_r202209_econhi",
+   "6052|COAL_BIT|COAL_SOCO_GA_p6052_r202209_econlo",
+   "6052|COAL_BIT|COAL_SOCO_GA_p6052_r202209_peak",
+   "6257|COAL_PRB|COAL_SOCO_GA_p6257_r202201_committed",
+   "6257|COAL_PRB|COAL_SOCO_GA_p6257_r202201_econhi",
+   "6257|COAL_PRB|COAL_SOCO_GA_p6257_r202201_econlo",
+   "6257|COAL_PRB|COAL_SOCO_GA_p6257_r202201_mustrun",
+   "6257|COAL_PRB|COAL_SOCO_GA_p6257_r202201_peak",
+   "7709|CT_PEAKER|CT_PEAKER_SOCO_GA_p7709_econhi",
+   "7709|CT_PEAKER|CT_PEAKER_SOCO_GA_p7709_econlo",
+   "7709|CT_PEAKER|CT_PEAKER_SOCO_GA_p7709_peak"
+  ]
+ },
+ "2023": {
+  "avail_twh": 364.58355113998687,
+  "hashes": {
+   "availability": "d4a93f230b286137",
+   "min_gen": "362e774bb5ad5916",
+   "pmax": "ec7eedd2d8ead4fe",
+   "pmin": "794661cd120ef176"
+  },
+  "n_units": 416,
+  "offline_all_year": [
+   "54216|ST_CHP|ST_CHP_SOCO_AL_p54216_r201901_committed",
+   "56|COAL_BIT|COAL_SOCO_AL_p56_r202010_committed",
+   "56|COAL_BIT|COAL_SOCO_AL_p56_r202010_econhi",
+   "56|COAL_BIT|COAL_SOCO_AL_p56_r202010_econlo",
+   "56|COAL_BIT|COAL_SOCO_AL_p56_r202010_peak",
+   "6124|COAL_PRB|COAL_SOCO_GA_p6124_r201907_committed",
+   "6124|COAL_PRB|COAL_SOCO_GA_p6124_r201907_econhi",
+   "6124|COAL_PRB|COAL_SOCO_GA_p6124_r201907_econlo",
+   "6124|COAL_PRB|COAL_SOCO_GA_p6124_r201907_peak",
+   "6257|COAL_PRB|COAL_SOCO_GA_p6257_r202201_committed",
+   "6257|COAL_PRB|COAL_SOCO_GA_p6257_r202201_econhi",
+   "6257|COAL_PRB|COAL_SOCO_GA_p6257_r202201_econlo",
+   "6257|COAL_PRB|COAL_SOCO_GA_p6257_r202201_mustrun",
+   "6257|COAL_PRB|COAL_SOCO_GA_p6257_r202201_peak"
+  ],
+  "overrides": null,
+  "partial": [
+   "3|CC_REGULAR|CC_REGULAR_SOCO_AL_p3_committed",
+   "3|CC_REGULAR|CC_REGULAR_SOCO_AL_p3_econhi",
+   "3|CC_REGULAR|CC_REGULAR_SOCO_AL_p3_econlo",
+   "3|CC_REGULAR|CC_REGULAR_SOCO_AL_p3_peak",
+   "55044|ST_CHP|ST_CHP_SOCO_AL_p55044_committed",
+   "56|CC_REGULAR|CC_REGULAR_SOCO_AL_p56_committed",
+   "56|CC_REGULAR|CC_REGULAR_SOCO_AL_p56_econhi",
+   "56|CC_REGULAR|CC_REGULAR_SOCO_AL_p56_econlo",
+   "56|CC_REGULAR|CC_REGULAR_SOCO_AL_p56_peak",
+   "6124|CT_PEAKER|CT_PEAKER_SOCO_GA_p6124_committed",
+   "6124|CT_PEAKER|CT_PEAKER_SOCO_GA_p6124_econhi",
+   "6124|CT_PEAKER|CT_PEAKER_SOCO_GA_p6124_econlo",
+   "6124|CT_PEAKER|CT_PEAKER_SOCO_GA_p6124_peak",
+   "753|CT_PEAKER|CT_PEAKER_SOCO_GA_p753_econhi",
+   "753|CT_PEAKER|CT_PEAKER_SOCO_GA_p753_econlo",
+   "753|CT_PEAKER|CT_PEAKER_SOCO_GA_p753_peak",
+   "7709|CT_PEAKER|CT_PEAKER_SOCO_GA_p7709_econhi",
+   "7709|CT_PEAKER|CT_PEAKER_SOCO_GA_p7709_econlo",
+   "7709|CT_PEAKER|CT_PEAKER_SOCO_GA_p7709_peak",
+   "7|ST_GAS|ST_GAS_SOCO_AL_p7_r202301_committed",
+   "7|ST_GAS|ST_GAS_SOCO_AL_p7_r202301_econhi",
+   "7|ST_GAS|ST_GAS_SOCO_AL_p7_r202301_econlo",
+   "7|ST_GAS|ST_GAS_SOCO_AL_p7_r202301_peak"
+  ]
+ },
+ "2024": {
+  "avail_twh": 376.411077295216,
+  "hashes": {
+   "availability": "30cf6403937f21c6",
+   "min_gen": "79dc01722e30f6ef",
+   "pmax": "4c2b44e1d41681ca",
+   "pmin": "224e476d68041cd1"
+  },
+  "n_units": 419,
+  "offline_all_year": [
+   "54216|ST_CHP|ST_CHP_SOCO_AL_p54216_r201901_committed",
+   "55304|CT_PEAKER|CT_PEAKER_SOCO_GA_p55304_r202301_committed",
+   "55304|CT_PEAKER|CT_PEAKER_SOCO_GA_p55304_r202301_econhi",
+   "55304|CT_PEAKER|CT_PEAKER_SOCO_GA_p55304_r202301_econlo",
+   "55304|CT_PEAKER|CT_PEAKER_SOCO_GA_p55304_r202301_peak",
+   "56|COAL_BIT|COAL_SOCO_AL_p56_r202010_committed",
+   "56|COAL_BIT|COAL_SOCO_AL_p56_r202010_econhi",
+   "56|COAL_BIT|COAL_SOCO_AL_p56_r202010_econlo",
+   "56|COAL_BIT|COAL_SOCO_AL_p56_r202010_peak",
+   "6124|COAL_PRB|COAL_SOCO_GA_p6124_r201907_committed",
+   "6124|COAL_PRB|COAL_SOCO_GA_p6124_r201907_econhi",
+   "6124|COAL_PRB|COAL_SOCO_GA_p6124_r201907_econlo",
+   "6124|COAL_PRB|COAL_SOCO_GA_p6124_r201907_peak",
+   "6257|COAL_PRB|COAL_SOCO_GA_p6257_r202201_committed",
+   "6257|COAL_PRB|COAL_SOCO_GA_p6257_r202201_econhi",
+   "6257|COAL_PRB|COAL_SOCO_GA_p6257_r202201_econlo",
+   "6257|COAL_PRB|COAL_SOCO_GA_p6257_r202201_mustrun",
+   "6257|COAL_PRB|COAL_SOCO_GA_p6257_r202201_peak"
+  ],
+  "overrides": null,
+  "partial": [
+   "6124|CT_PEAKER|CT_PEAKER_SOCO_GA_p6124_committed",
+   "6124|CT_PEAKER|CT_PEAKER_SOCO_GA_p6124_econhi",
+   "6124|CT_PEAKER|CT_PEAKER_SOCO_GA_p6124_econlo",
+   "6124|CT_PEAKER|CT_PEAKER_SOCO_GA_p6124_peak",
+   "7709|CT_PEAKER|CT_PEAKER_SOCO_GA_p7709_econhi",
+   "7709|CT_PEAKER|CT_PEAKER_SOCO_GA_p7709_econlo",
+   "7709|CT_PEAKER|CT_PEAKER_SOCO_GA_p7709_peak"
+  ]
+ },
+ "2025": {
+  "avail_twh": 374.7610951853325,
+  "hashes": {
+   "availability": "0c381cf33c7dc468",
+   "min_gen": "7d700865142d7bbc",
+   "pmax": "362ee098c21de7a7",
+   "pmin": "4ce98edc01714a2b"
+  },
+  "n_units": 407,
+  "offline_all_year": [
+   "54216|ST_CHP|ST_CHP_SOCO_AL_p54216_r201901_committed",
+   "55304|CT_PEAKER|CT_PEAKER_SOCO_GA_p55304_r202301_committed",
+   "55304|CT_PEAKER|CT_PEAKER_SOCO_GA_p55304_r202301_econhi",
+   "55304|CT_PEAKER|CT_PEAKER_SOCO_GA_p55304_r202301_econlo",
+   "55304|CT_PEAKER|CT_PEAKER_SOCO_GA_p55304_r202301_peak",
+   "56|COAL_BIT|COAL_SOCO_AL_p56_r202010_committed",
+   "56|COAL_BIT|COAL_SOCO_AL_p56_r202010_econhi",
+   "56|COAL_BIT|COAL_SOCO_AL_p56_r202010_econlo",
+   "56|COAL_BIT|COAL_SOCO_AL_p56_r202010_peak",
+   "6124|COAL_PRB|COAL_SOCO_GA_p6124_r201907_committed",
+   "6124|COAL_PRB|COAL_SOCO_GA_p6124_r201907_econhi",
+   "6124|COAL_PRB|COAL_SOCO_GA_p6124_r201907_econlo",
+   "6124|COAL_PRB|COAL_SOCO_GA_p6124_r201907_peak",
+   "6257|COAL_PRB|COAL_SOCO_GA_p6257_r202201_committed",
+   "6257|COAL_PRB|COAL_SOCO_GA_p6257_r202201_econhi",
+   "6257|COAL_PRB|COAL_SOCO_GA_p6257_r202201_econlo",
+   "6257|COAL_PRB|COAL_SOCO_GA_p6257_r202201_mustrun",
+   "6257|COAL_PRB|COAL_SOCO_GA_p6257_r202201_peak"
+  ],
+  "overrides": null,
+  "partial": [
+   "6124|CT_PEAKER|CT_PEAKER_SOCO_GA_p6124_committed",
+   "6124|CT_PEAKER|CT_PEAKER_SOCO_GA_p6124_econhi",
+   "6124|CT_PEAKER|CT_PEAKER_SOCO_GA_p6124_econlo",
+   "6124|CT_PEAKER|CT_PEAKER_SOCO_GA_p6124_peak",
+   "7709|CT_PEAKER|CT_PEAKER_SOCO_GA_p7709_econhi",
+   "7709|CT_PEAKER|CT_PEAKER_SOCO_GA_p7709_econlo",
+   "7709|CT_PEAKER|CT_PEAKER_SOCO_GA_p7709_peak"
+  ]
+ }
+}

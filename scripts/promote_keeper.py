@@ -143,7 +143,42 @@ def preflight(bundle: Path) -> list[int]:
         )
     ensure_unit_marginal(bundle, years, new=existing_run_id(bundle) is None)
     ensure_fleet_census(bundle, years, new=existing_run_id(bundle) is None)
+    ensure_replay_recipe(bundle, years)
     return years
+
+
+def ensure_replay_recipe(bundle: Path, years: list[int]) -> None:
+    """Step 0d: ``replay_keeper --years Y`` must reproduce every year's solved config.
+
+    Zero LP (``scripts/lib/replay_recipe.py``): each year carrying a
+    ``run_config_<year>.json`` is resolved the way the replay would resolve it
+    and diffed against the recorded ``scenario_config``. A keeper whose
+    ``meta.json`` base recipe or ``config_partition_overrides`` block does not
+    reproduce its own legs is refused — its replays (and every downstream
+    re-solve or forecast gate built on them) would solve a recipe that was
+    never scored (the W0 phase-3 ``w0_ercot_span`` defect).
+    """
+    from scripts.lib.replay_recipe import replay_config_diffs
+
+    bad: dict[int, dict] = {}
+    for y in years:
+        diffs = replay_config_diffs(bundle, y)
+        if diffs:
+            bad[y] = diffs
+    if bad:
+        lines = [
+            f"  {y}: "
+            + "; ".join(
+                f"{k}: recorded={r!r} replay={p!r}" for k, (r, p) in list(d.items())[:6]
+            )
+            for y, d in sorted(bad.items())
+        ]
+        raise SystemExit(
+            f"{bundle}: replay does not reproduce the solved config for "
+            f"{sorted(bad)} — fix meta.json's base recipe and stamp "
+            "config_partition_overrides (scripts/stamp_config_partition.py) "
+            "before promoting:\n" + "\n".join(lines)
+        )
 
 
 def ensure_fleet_census(bundle: Path, years: list[int], *, new: bool) -> list[int]:

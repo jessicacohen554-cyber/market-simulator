@@ -546,7 +546,7 @@ def _measured_heat_rate_flags(config: ScenarioConfig) -> dict[str, bool | str]:
 
 
 def _reliability_floor_layup_shares(
-    config, iso: str, year: int, fleet_arrays
+    config, iso: str, year: int, fleet_arrays, generators=None
 ) -> dict[tuple[int, str], np.ndarray] | None:
     """Lay-up shares for ``ScenarioConfig.reliability_floor_layup_window_mask``.
 
@@ -558,7 +558,9 @@ def _reliability_floor_layup_shares(
     ``None`` when the mask is off, the run is not a backcast (rule 13: same-year
     lay-up windows have no forward analogue), or the run carries no historic
     outage overlay for the windows to be a complement of — so the off path is
-    byte-inert.
+    byte-inert. ``generators`` are the LP rows ``fleet_arrays`` was built from,
+    in row order: the live dispatched-bin roster reads each row's COD-ramp mask
+    off them (closeout-W0 desk ruling D-1).
     """
     if not getattr(config, "reliability_floor_layup_window_mask", False):
         return None
@@ -583,15 +585,27 @@ def _reliability_floor_layup_shares(
         getattr(config, "unit_outage_dispatched_bin_denominator", False)
         and iso_u != "ERCOT"
     ):
-        # NWPP-NEXT-15: unit_id rides along so the live sub-gate can read each
-        # row's exit-cohort tag; ignored (byte-inert) while the sub-gate is off.
+        # The LP rows themselves, so the live roster (closeout-W0 desk ruling
+        # D-1) reads each row's COD-ramp mask; plant code and group from the
+        # arrays, as the overlay keys them.
+        if generators is None or len(generators) != len(fleet_arrays.unit_ids):
+            raise ValueError(
+                "reliability-floor lay-up roster needs the LP generators the "
+                "fleet_arrays rows were built from, row-aligned"
+            )
         lp_bins = lp_bin_capacity_index(
             [
-                SimpleNamespace(plant_code=int(c), plant_group=str(g), unit_id=str(u))
-                for c, g, u in zip(
-                    fleet_arrays.plant_code,
-                    fleet_arrays.plant_group,
-                    fleet_arrays.unit_ids,
+                SimpleNamespace(
+                    plant_code=int(c),
+                    plant_group=str(g),
+                    online_year=gen.online_year,
+                    online_month=gen.online_month,
+                    retirement_year=gen.retirement_year,
+                    retirement_month=gen.retirement_month,
+                    is_campd_bin=gen.is_campd_bin,
+                )
+                for gen, c, g in zip(
+                    generators, fleet_arrays.plant_code, fleet_arrays.plant_group
                 )
             ],
             np.asarray(fleet_arrays.pmax, dtype=float),
@@ -1046,7 +1060,6 @@ def run_year(
     unit_outage_st_capacity_basis: bool | None = None,
     unit_outage_per_unit_clip: bool | None = None,
     unit_outage_dispatched_bin_denominator: bool | None = None,
-    unit_outage_dispatched_bin_live_denominator: bool | None = None,
     unit_outage_short_windows_gas: bool | None = None,
     unit_outage_window_hour_grain: bool | None = None,
     campd_per_unit_attribution: bool | None = None,
@@ -2018,13 +2031,6 @@ def run_year(
         # turned out to have no run_year plumbing at all (rule 24 [R-REGISTRY]).
         config = config.with_overrides(
             unit_outage_dispatched_bin_denominator=unit_outage_dispatched_bin_denominator
-        )
-    if unit_outage_dispatched_bin_live_denominator is not None:
-        # NWPP-NEXT-15: the LIVE sub-gate of the dispatched-bin denominator.
-        # SOLVE path for the flag, for the same miso-265 reason as its parent
-        # above (rule 24 [R-REGISTRY]).
-        config = config.with_overrides(
-            unit_outage_dispatched_bin_live_denominator=unit_outage_dispatched_bin_live_denominator
         )
     if unit_outage_window_hour_grain is not None:
         # nyiso-229: the DETECTED-HOUR outage window grain. THIS is the SOLVE
@@ -4858,7 +4864,9 @@ def run_year(
         # economic-lay-up windows leave each pro_rata limb's per-unit basis.
         # None unless reliability_floor_layup_window_mask is armed in a
         # backcast, which inject_reliability_floor reads as the unmasked basis.
-        _floor_layup = _reliability_floor_layup_shares(config, iso, year, fleet_arrays)
+        _floor_layup = _reliability_floor_layup_shares(
+            config, iso, year, fleet_arrays, fleet
+        )
         if _floor_specs and inject_reliability_floor(
             fleet_arrays,
             iso,

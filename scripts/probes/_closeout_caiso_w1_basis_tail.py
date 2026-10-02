@@ -16,7 +16,9 @@ the P0 marginal set is every unit dispatched > 0.5 MW whose base-cost MC is
 within $0.05 of its zone's P0 dual; a zone's Δλ is the mean delta over the
 marginal units in its price island (zones whose P0 dual matches within
 $0.01), counting non-gas marginal units as zero. First order: no re-dispatch,
-P0 marginal set applied to the P1-scored level.
+P0 marginal set applied to the P1-scored level. A bundle with no P0 sidecars
+(post-W0 keepers) uses the committed P1 ``unit_marginal_<year>`` flags instead, with
+price islands from the P1 zonal duals.
 
 Usage::
 
@@ -119,25 +121,44 @@ def size_basis(bundle: Path, year: int, months: list[int]) -> dict:
     fa = off["fleet_arrays"]
     zi = np.asarray(fa.zone_idx)
     ids = np.array([u.unit_id for u in off["fleet"]])
-    disp = pd.read_parquet(bundle / f"hourly/p0_dispatch_{year}.parquet")
-    if len(ids) != len(disp) or not (ids == disp.unit_id.to_numpy()).all():
-        raise SystemExit(
-            f"{year}: HEAD fleet ({len(ids)} units) != keeper P0 fleet ({len(disp)}) — G-DRIFT, not sizeable"
-        )
     dfuel = on["fuel_prices"] - off["fuel_prices"]
     dmc = on["mc_base"] - off["mc_base"]
-    mc0 = off["mc_base"]
     gas = np.abs(dfuel).max(axis=1) > 1e-6
-    mw = np.vstack([np.frombuffer(b, dtype=np.float64) for b in disp.mw])
-    pp = (
-        pd.read_parquet(bundle / f"hourly/p0_prices_{year}.parquet")
-        .pivot(index="hour", columns="zone", values="price")[zones]
-        .to_numpy()
-        .T
-    )
     sy = pd.read_parquet(bundle / f"hourly/system_{year}.parquet")
     dem = _wide(sy, "demand")[zones].to_numpy().T
-    match = (mw > 0.5) & (np.abs(mc0 - pp[zi]) < 0.05)
+    p0 = bundle / f"hourly/p0_dispatch_{year}.parquet"
+    if p0.exists():
+        # P0 marginal set: dispatched units whose base-cost MC equals their zone's P0 dual.
+        disp = pd.read_parquet(p0)
+        if len(ids) != len(disp) or not (ids == disp.unit_id.to_numpy()).all():
+            raise SystemExit(
+                f"{year}: HEAD fleet ({len(ids)} units) != keeper P0 fleet ({len(disp)}) — G-DRIFT, not sizeable"
+            )
+        mw = np.vstack([np.frombuffer(b, dtype=np.float64) for b in disp.mw])
+        pp = (
+            pd.read_parquet(bundle / f"hourly/p0_prices_{year}.parquet")
+            .pivot(index="hour", columns="zone", values="price")[zones]
+            .to_numpy()
+            .T
+        )
+        match = (mw > 0.5) & (np.abs(off["mc_base"] - pp[zi]) < 0.05)
+    else:
+        # P1 marginal set from the committed slim layer (scripts/lib/unit_marginal.py):
+        # the LP's own price-setting columns; islands from the P1 zonal duals.
+        um = pd.read_parquet(
+            bundle / f"hourly/unit_marginal_{year}.parquet",
+            columns=["unit_id", "hour", "marginal"],
+            filters=[("marginal", "==", 1)],
+        )
+        row = {u: i for i, u in enumerate(ids)}
+        missing = set(um.unit_id.astype(str)) - set(row)
+        if missing:
+            raise SystemExit(
+                f"{year}: {len(missing)} marginal keeper units absent from the HEAD fleet — G-DRIFT, not sizeable"
+            )
+        pp = _wide(sy, "price")[zones].to_numpy().T
+        match = np.zeros((len(ids), pp.shape[1]), dtype=bool)
+        match[um.unit_id.astype(str).map(row).to_numpy(), um.hour.to_numpy()] = True
     n_z, n_t = pp.shape
     dl = np.zeros((n_z, n_t))
     for t in range(n_t):

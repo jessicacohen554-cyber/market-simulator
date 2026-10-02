@@ -210,6 +210,18 @@ _RULE26_DELETED_UNCONDITIONAL: dict[str, tuple[str, object]] = {
     # "flag never set", default False) — both inert. A NYISO bundle recording
     # True floored the rung and still hard-errors as historical-record-only.
     "nyiso_firm_imports": ("NYISO", (False, None)),
+    # closeout-W0 desk ruling D-1 (2026-10-02) deleted
+    # `unit_outage_dispatched_bin_live_denominator` (NWPP-NEXT-15's live
+    # sub-gate) under rule 26 [R-DELETE] by FOLDING it into
+    # unit_outage_dispatched_bin_denominator: under the companion in a COD-ramped
+    # backcast the roster is now always live, so True is the unconditional
+    # behaviour. It was registered optional at False, so no retired-field entry
+    # exists. Every keeper meta records None (the tri-state "flag never set");
+    # that replays at HEAD as the live roster, the behaviour move the
+    # results/cache.py SolveEpoch 2026-10-02d re-keys. Only NWPP ever armed it
+    # (NWPP-NEXT-16 arm E, rejected); an NWPP bundle recording an explicit False
+    # selected the diluted roster that no longer exists and hard-errors.
+    "unit_outage_dispatched_bin_live_denominator": ("NWPP", (True, None)),
 }
 
 
