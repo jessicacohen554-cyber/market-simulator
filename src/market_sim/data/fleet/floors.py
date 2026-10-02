@@ -900,14 +900,20 @@ def _drag_lp_bin_capacity(
     if (iso or "ERCOT").upper() == "ERCOT":
         return None
     # Local import for the same fleet -> data cycle reason as the loader below.
-    from market_sim.data.outages import dispatched_bin_live_year, lp_bin_capacity_index
+    from market_sim.data.outages import (
+        dispatched_bin_exit_year,
+        dispatched_bin_live_year,
+        lp_bin_capacity_index,
+    )
 
+    _year = getattr(config, "weather_year", None) or year
     return lp_bin_capacity_index(
         generators,
         np.asarray(fleet_arrays.pmax, dtype=float),
-        live_year=dispatched_bin_live_year(
-            config, getattr(config, "weather_year", None) or year
-        ),
+        live_year=dispatched_bin_live_year(config, _year),
+        # closeout-W0 (desk ruling D-1): the same time-weighted roster the
+        # outage share divides by.
+        exit_year=dispatched_bin_exit_year(config, _year),
     )
 
 

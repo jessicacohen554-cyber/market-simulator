@@ -134,7 +134,21 @@ class SolveEpoch:
 #: EMPTY AT LANDING, by owner ruling Q54 row 4. D77's ledger entry 2026-09-06b
 #: (the CCS-retrofit emission-rate seam) stays prose: back-filling it as an epoch
 #: would re-key forecast bundles that the D65-B-R batch is re-solving anyway.
-SOLVE_EPOCHS: tuple[SolveEpoch, ...] = ()
+#:
+#: 2026-10-02c is the first entry: the closeout-W0 time-weighted dispatched-bin
+#: denominator (ledger entry of that id in ``results/cache.py``), scoped to the
+#: backcast ISOs where ``unit_outage_dispatched_bin_denominator`` is live.
+SOLVE_EPOCHS: tuple[SolveEpoch, ...] = (
+    SolveEpoch(
+        id="2026-10-02c",
+        cause=(
+            "closeout-W0 D-1: the dispatched-bin outage denominator is "
+            "time-weighted for exit cohorts retiring inside the solve year"
+        ),
+        modes=("backcast",),
+        isos=("MISO", "NEISO", "NWPP", "PJM", "SOCO"),
+    ),
+)
 
 
 class Unhashable(TypeError):

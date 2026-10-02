@@ -64,6 +64,7 @@ from market_sim.data.outages import (
     shared_unit_hours,
     short_screened_coal_shares,
     unit_outage_active_units,
+    dispatched_bin_exit_year,
     dispatched_bin_live_year,
     lp_bin_capacity_index,
     unit_outage_derate_factors,
@@ -1514,7 +1515,14 @@ def _apply_outage_overlays(
         # sub-gate without its parent fails closed. None while off.
         _live_yr = dispatched_bin_live_year(config, _yr)
         _lp_bins = (
-            lp_bin_capacity_index(generators, pmax, live_year=_live_yr)
+            lp_bin_capacity_index(
+                generators,
+                pmax,
+                live_year=_live_yr,
+                # closeout-W0 (desk ruling D-1): an exit cohort retiring IN the
+                # solve year divides only in the months the LP carries it.
+                exit_year=dispatched_bin_exit_year(config, _yr),
+            )
             if (
                 getattr(config, "unit_outage_dispatched_bin_denominator", False)
                 and not is_ercot
@@ -3441,6 +3449,9 @@ def _compose_min_gen_floors(
                     generators,
                     pmax,
                     live_year=dispatched_bin_live_year(
+                        config, getattr(config, "weather_year", None) or _yr
+                    ),
+                    exit_year=dispatched_bin_exit_year(
                         config, getattr(config, "weather_year", None) or _yr
                     ),
                 )
