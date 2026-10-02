@@ -15756,3 +15756,16 @@ Record: `docs/records/caiso/r-caiso-19/`.
 - Promoted on the pre-registered structure rule: keeper `2026-09-30-caiso-r20-overnight` (+ `-touchpoints`). r18 was pruned.
 
 Record: `docs/records/caiso/r-caiso-20/`.
+
+## R-CAISO-33 — 2026-10-02: joint gas re-basis (link 15) SCOPED, zero LP; the census is not the fleet
+
+- The keeper prices gas at the flow-dated NGI CA composite + 0.46; the measured offer multipliers were divided by the composite with no adder. The denominator repair stands on its own (caiso-242/244 identity).
+- EIA N3045CA3 is a utility-only EIA-923 Schedule 2 sample: 16 plants in 2023–25, 65 % of volume outside CAISO (LADWP 32 %, SMUD 19 %, Turlock 9 %, IID 6 %). Its 1.15–1.28 over the composite is a rule-14 boundary misalignment.
+- Three gauges (probe `scripts/probes/_rcaiso33_transport_basis.py`):
+  - census: 0.65 / 0.58 / 0.79 / 0.67 / 1.20 / 1.15 / 1.28 (2019–25, medians);
+  - CISO utility plants (EIA-923): CC 1.43–2.10 in 2023–25 (4 plants, 2.1 GW);
+  - the fleet's bids: CC econ 0.12–0.45, CT econ 0.46–0.93 (19 GW). Re-based on composite + 0.46 the CC econ multipliers read 0.93–1.00 (SRMC bidding); on composite + 1.2 they read 0.82–0.91 and the `committed` tranche sits +$5–8/MWh above the measured econ bid in every year.
+- Recommendation: keep 0.46 (identification re-stated), re-derive the denominator on composite + 0.46 (exact derive needs the DAM bid zips re-fetched, ~2 h), then 7 shards. Stated risk: C4 gas NRMSE 2025 0.288 vs ≤ 0.30; the caiso-267/268 move of the same sign cost +0.010.
+- Nothing armed, no constant changed, keeper unchanged. Owner ruling: PRECOMMIT §8.
+
+Record: `docs/records/caiso/r-caiso-33/`.
