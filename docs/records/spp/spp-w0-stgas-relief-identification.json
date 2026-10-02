@@ -1,0 +1,16 @@
+{
+  "precommit": "docs/records/spp/PRECOMMIT-spp-w0-stgas-wefor-relief-2026-10-02.md",
+  "pushed_before_compute": "37af3ccf45b100a16188462922abf1028d681a91",
+  "population": "SPP ST_GAS rows, W0 SPP fleet (w0_spp_span recipe), fleet_only rebuilds, 2023-2025",
+  "readings": {
+    "W_applied_pooled": 0.1912,
+    "X_measured_pooled": 0.5339,
+    "by_year": {"2023": {"W": 0.1902, "X": 0.5443}, "2024": {"W": 0.1911, "X": 0.5044}, "2025": {"W": 0.1921, "X": 0.5518}},
+    "by_age_band": {"30-49": {"pmax_mw_3yr": 12561.2, "W": 0.1759, "X": 0.5299}, "50-59": {"pmax_mw_3yr": 12695.2, "W": 0.1947, "X": 0.5569}, ">=60": {"pmax_mw_3yr": 5709.9, "W": 0.2168, "X": 0.4915}},
+    "pmax_share_without_overlay_keys": 0.0208,
+    "loaders_called": ["unit_outage_derate_factors", "unit_outage_short_derate_factors", "unit_partial_outage_derate_factors"]
+  },
+  "gate_G1": {"rule": "pooled X >= 0.5 x pooled W", "threshold": 0.0956, "result": "PASS"},
+  "value": {"wefor_residual": 0.0, "wefor_residual_groups": ["ST_GAS"], "formula": "round(max(0, pooled W - pooled X), 4)"},
+  "note": "X does not rise with age (>=60 band lowest), so the statistical age escalation is not evidenced on SPP ST_GAS; the measured layer alone exceeds the statistical rate in every band and year."
+}
