@@ -48,6 +48,8 @@ def bundle_hourly(name: str, year: int) -> Path | None:
         "next26": CAL / f"pjm_next_26_{year}/hourly",
         "keeper": CAL / "pjmnext16_A_span/hourly",
     }[name]
+    if name == "candidate" and not (d / f"unit_marginal_{year}.parquet").is_file():
+        d = CAL / f"pjm_next_27_{year}/hourly"  # the year's leg, before composing
     return d if (d / f"unit_marginal_{year}.parquet").is_file() else None
 
 
