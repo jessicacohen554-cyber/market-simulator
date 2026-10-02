@@ -1,0 +1,19 @@
+{
+  "id": "2026-10-02-closeout-caiso-w1-arm2",
+  "label": "closeout caiso w1 arm2",
+  "date": "2026-10-02",
+  "shorthand": "closeout-caiso-w1-arm2",
+  "definition": "closeout-caiso-w1 arm 2: the arm-3 keeper with caiso_zonal_gas_basis on (measured PG&E / SoCal citygate basis as a mean-zero zonal spread; rule-14 fidelity arm, R-14). DETERMINATION NOT-YET (rubric v3.13, 2019-2025): undocumented FAILs are C1 fuelmix, C3a price_mean (2021 +12.7%) and C4 dispatch_corr, all in 2019-2021; C3c caveat 2021, ledgered 2024.",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-10-02-closeout-caiso-w1-arm2.js",
+  "bundle": "results/calibration/closeout_caiso_w1_a2_span"
+}
