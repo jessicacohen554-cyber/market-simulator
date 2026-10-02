@@ -1,0 +1,56 @@
+{
+ "arm": "B",
+ "control": {
+  "2021": "nyisonext23_2021",
+  "2022": "nyisonext23_span",
+  "2023": "nyisonext23_span",
+  "2024": "nyisonext23_span",
+  "2025": "nyisonext23_span"
+ },
+ "2021": {
+  "G3_max_zone_demand_dgwh": 0.0,
+  "G3_slack_dgwh": 0.0,
+  "G3_pass": true,
+  "G5_new_d4_fail_gwh": {},
+  "G5_blocking": {},
+  "G5_pass": true
+ },
+ "2022": {
+  "G3_max_zone_demand_dgwh": 0.0,
+  "G3_slack_dgwh": 0.0,
+  "G3_pass": true,
+  "G5_new_d4_fail_gwh": {
+   "(2022, 'unit-conduct', 'nyiso_gas_commitment_bridge \u00d7 CC_REGULAR', '54574')": 1.4
+  },
+  "G5_blocking": {},
+  "G5_pass": true
+ },
+ "2023": {
+  "G3_max_zone_demand_dgwh": 0.0,
+  "G3_slack_dgwh": 0.0,
+  "G3_pass": true,
+  "G5_new_d4_fail_gwh": {},
+  "G5_blocking": {},
+  "G5_pass": true
+ },
+ "2024": {
+  "G3_max_zone_demand_dgwh": 0.0,
+  "G3_slack_dgwh": 0.0,
+  "G3_pass": true,
+  "G5_new_d4_fail_gwh": {},
+  "G5_blocking": {},
+  "G5_pass": true
+ },
+ "2025": {
+  "G3_max_zone_demand_dgwh": 0.0,
+  "G3_slack_dgwh": 0.0,
+  "G3_pass": true,
+  "G5_new_d4_fail_gwh": {},
+  "G5_blocking": {},
+  "G5_pass": true,
+  "G2_jan_offcap_days": 24,
+  "G2_nyc_arm": 91.05,
+  "G2_nyc_control": 71.49,
+  "G2_pass": true
+ }
+}

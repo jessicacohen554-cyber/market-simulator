@@ -15159,6 +15159,22 @@ Records: `docs/records/nyiso/FINDING-nyiso-next30-zone-k-import-drivers-phase0-2
 
 Owner cards #6992 / #6987 / #6984 / NEXT-24 are unchanged; no ruling was found.
 
+## NYISO-NEXT-23 — 2026-10-01 — Transco Z6 NY on its flow day; registered, not promoted (G-5)
+
+- Phase 0 (zero LP): the 2025 C3a miss is the tail (deciles 1–8 +$3.4; hours > $150 −$8.8 of −$8.0). January sits below DA too. NYISO's daily Z6 gas was trade-dated and interpolated across weekends (the $97.90 MLK print priced Fri 1/17).
+- New flag `nyiso_gas_flow_date` (default off, zero DOF, rule 14), PR #6980. Five year-isolated shards at `f2b83ef2`.
+- G-1..G-4 PASS; G-5 FAIL (one tiny new bridge unit-conduct D-4 row per year 2021–2024). C3a 2022/2024 better, 2025 −11.6 → −12.7 %; determinations unchanged (span NOT-YET, 2021 CALIBRATED, ISO NOT-YET).
+- Runs `2026-10-01-nyisonext23-flowdate-span` / `-2021` registered; owner card open. Next: the dual-fuel parity cap. Record: `docs/records/nyiso/RESULT-nyiso-next23-z6-flow-date-2026-10-01.md`.
+- 2026-10-02 (NYISO-NEXT-32): owner ruling 'Promote arm B' declines flow-date as a standalone promotion; runs never reached `main` and their branch is gone; docs kept; `nyiso_gas_flow_date` stays O.
+
+## NYISO-NEXT-25 — 2026-10-01 — daily gas at each day's own Z6 print; arm A passes its promotion rule (owner card)
+
+- Phase 0 (zero LP): the 2025 off-cap winter NYC gap sits east of Central East (Upstate_West right; DA F−E spread is 93–96 % congestion, ledgered). Separately, `_nyiso_hub_daily_gas_prices` renormalised calendar-day factors to a trade-day monthly level: ordinary days in package-spike months are scaled by trade/calendar mean (Jan-2025 0.78 trade-dated, 0.65 flow-dated; corr with the NYC monthly gap 0.65 / 0.84).
+- New flag `nyiso_gas_daily_print_level` (default off, zero DOF, rules 14/19), PRECOMMIT #6986. Ten year-isolated shards at `f43f609b`.
+- Arm A: G-1..G-5 PASS; C3a 2025 −11.6 → −9.6 %; span and ISO NOT-YET → CALIBRATED (C3c lone, rule 22). Arm B (+ flow-date): 2025 −10.3 %, NOT-YET.
+- Four runs registered; owner card open (promote A recommended; decline #6984 standalone). Record: `docs/records/nyiso/RESULT-nyiso-next25-print-level-2026-10-01.md`.
+- 2026-10-02 (NYISO-NEXT-32): superseded by NEXT-26 arm B (print-level + all-hours TSL), promoted on the owner's ruling; NEXT-25 runs never reached `main`; docs kept.
+
 ## 2026-10-02 — NYISO-NEXT-32: keeper promoted to nyisonext26p-tslprint (print-level gas + all-hours Zone-K TSL); ISO CALIBRATED
 
 Owner ruling 'Promote arm B' (NEXT-26 RESULT §5, card 1). `promote_keeper.py` designated
