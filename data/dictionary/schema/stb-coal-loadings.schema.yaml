@@ -1,0 +1,64 @@
+# Canonical schema: weekly Class I coal unit-train loadings vs plan, by carrier and coal production region
+#
+# SOURCE. Surface Transportation Board, Docket EP 724 (Sub-No. 4) "United States Rail Service Issues -
+# Performance Data Reporting": every Class I carrier files weekly service metrics; the STB publishes them
+# consolidated in one workbook ("EP724 Consolidated Data through <date>.xlsx",
+# https://www.stb.gov/reports-data/rail-service-data/). Public domain, US Government work, keyless.
+# This datatype is Category 9 of that filing: "Coal Unit Train Loadings or Carloadings by Coal
+# Production Region (Count)", reported as the carrier's own weekly PLAN and the realised LOADINGS
+# AVERAGE, per region.
+#
+# WHY. It is the delivery-RELIABILITY series SPP-44 (2026-09-16) named as the missing instrument: EIA-923
+# Page 5 tonnage measures what arrived, not whether the railroad could deliver what was planned. Loadings
+# vs plan is a supply-side quantity, set by the carrier's crews, power and network, not by the burning
+# plant's dispatch.
+#
+# RULE 13 [R-MEASURED]. The year's own ratio is a measured rail-service condition, an input of the same
+# kind as an outage window (forward-producible as a rail-service scenario, responds to changed
+# conditions). It is never a burn target: no reader here converts it into plant generation.
+#
+# GRAIN. National, carrier x region x week. No ISO partition (rule 25): a coal ISO joins its plants to
+# a basin at read time.
+#
+# Curated by scripts/data/curate_stb_coal_loadings.py from data/raw/stb-ep724/.
+datatype: stb-coal-loadings
+schema_version: 1
+title: Weekly Class I coal unit-train loadings vs plan by production region
+description: >-
+  STB EP 724 Category 9: each Class I railroad's weekly planned and realised coal unit-train loadings
+  (or carloadings), by coal production region. Long frame, one row per carrier, region, measure and
+  reporting week.
+
+key_columns: [carrier, region, measure, week]
+allow_additional_columns: false
+
+columns:
+  - name: carrier
+    dtype: string
+    unit: none
+    nullable: false
+    description: Reporting Class I railroad as the STB labels it (BNSF, UP, CSX, NS, CN, CP, CPKC).
+  - name: region
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Coal production region, title-cased so the carriers' spelling variants join (Powder River Basin,
+      Illinois Basin, Uinta Basin, Northern / Central / Southern Appalachia, Other).
+  - name: measure
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      plan - the carrier's filed weekly loadings plan ("Loadings Plan"); actual - the carrier's
+      realised loadings for the week ("Loadings Average").
+  - name: week
+    dtype: datetime64[ns]
+    unit: date
+    nullable: false
+    description: Reporting week as dated in the STB workbook column header (week-ending Wednesday filing date).
+  - name: value
+    dtype: float64
+    unit: count
+    nullable: false
+    description: Unit trains (or carloads, as the carrier reports) for the week, as filed.

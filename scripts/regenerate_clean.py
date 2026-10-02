@@ -82,6 +82,9 @@ DATATYPES: tuple[str, ...] = (
     # _processed-legacy/eia923_monthly_fuel_costs.parquet extract for coal
     # tonnage (50/67 MISO coal plants, 17-21% understated).
     "coal-receipts",
+    # SPP-108 (2026-10-02): STB EP 724 weekly coal unit-train loadings vs plan
+    # by carrier and production region. Intake-only: no mechanism consumes it.
+    "stb-coal-loadings",
     "nyiso-reserve-requirements",
     "nyiso-interface-flows",
     "seam-neighbour-price",

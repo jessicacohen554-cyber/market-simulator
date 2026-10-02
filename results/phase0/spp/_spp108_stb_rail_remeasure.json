@@ -1,0 +1,645 @@
+{
+ "annual": {
+  "2017": {
+   "actual": 2274.8086,
+   "plan": 2380.7,
+   "ratio": 0.9555
+  },
+  "2018": {
+   "actual": 2888.5214,
+   "plan": 3191.6857,
+   "ratio": 0.905
+  },
+  "2019": {
+   "actual": 2622.9429,
+   "plan": 3172.1429,
+   "ratio": 0.8269,
+   "ref": 0.9303,
+   "anomaly": 0.8888
+  },
+  "2020": {
+   "actual": 2079.3,
+   "plan": 2264.1,
+   "ratio": 0.9184,
+   "ref": 0.8659,
+   "anomaly": 1.0606
+  },
+  "2021": {
+   "actual": 2241.7,
+   "plan": 2552.2,
+   "ratio": 0.8783,
+   "ref": 0.8726,
+   "anomaly": 1.0066
+  },
+  "2022": {
+   "actual": 2288.6,
+   "plan": 2977.1,
+   "ratio": 0.7687,
+   "ref": 0.8984,
+   "anomaly": 0.8557
+  },
+  "2023": {
+   "actual": 2227.9,
+   "plan": 2571.3,
+   "ratio": 0.8664,
+   "ref": 0.8235,
+   "anomaly": 1.0521
+  },
+  "2024": {
+   "actual": 1807.1,
+   "plan": 2021.6,
+   "ratio": 0.8939,
+   "ref": 0.8176,
+   "anomaly": 1.0933
+  },
+  "2025": {
+   "actual": 1988.8,
+   "plan": 2186.3,
+   "ratio": 0.9097,
+   "ref": 0.8802,
+   "anomaly": 1.0335
+  },
+  "2026": {
+   "actual": 1384.0,
+   "plan": 1519.4,
+   "ratio": 0.9109,
+   "ref": 0.9018,
+   "anomaly": 1.0101
+  }
+ },
+ "identification": {
+  "anomaly_by_year": {
+   "2021": 1.0066,
+   "2022": 0.8557,
+   "2023": 1.0521,
+   "2024": 1.0933,
+   "2025": 1.0335
+  },
+  "anomaly_2022": 0.8557,
+  "others_range": [
+   1.0066,
+   1.0933
+  ],
+  "outside": true,
+  "spearman_vs_mmu": -0.7
+ },
+ "inventory": {
+  "2019": {
+   "plants": 37,
+   "opening_mt": 205495.334,
+   "lagged_deliveries_mt": 57.565,
+   "tons_per_mwh_prev": NaN,
+   "model_prb_twh": 77.671,
+   "model_burn_mt": 0.0,
+   "annual_anomaly": 0.8888,
+   "min_month_anomaly": 0.723,
+   "lagged_only": {
+    "deliveries_mt": 57.565,
+    "min_stock_mt": NaN,
+    "min_stock_days": NaN,
+    "bind_months": 0,
+    "first_bind_month": null,
+    "deficit_mt": 0.0,
+    "deficit_twh": NaN
+   },
+   "stb_scaled": {
+    "deliveries_mt": 51.556,
+    "min_stock_mt": NaN,
+    "min_stock_days": NaN,
+    "bind_months": 0,
+    "first_bind_month": null,
+    "deficit_mt": 0.0,
+    "deficit_twh": NaN
+   },
+   "per_plant": null,
+   "forbidden_actual_min_stock_mt": 128545.025,
+   "forbidden_actual_dec_stock_mt": 128545.025
+  },
+  "2020": {
+   "plants": 35,
+   "opening_mt": 128545.025,
+   "lagged_deliveries_mt": 51.603,
+   "tons_per_mwh_prev": 920.3436,
+   "model_prb_twh": 63.876,
+   "model_burn_mt": 58787.533,
+   "annual_anomaly": 1.0606,
+   "min_month_anomaly": 0.9819,
+   "lagged_only": {
+    "deliveries_mt": 51.603,
+    "min_stock_mt": 69809.095,
+    "min_stock_days": 433.4,
+    "bind_months": 0,
+    "first_bind_month": null,
+    "deficit_mt": 0.0,
+    "deficit_twh": 0.0
+   },
+   "stb_scaled": {
+    "deliveries_mt": 51.519,
+    "min_stock_mt": 69809.011,
+    "min_stock_days": 433.4,
+    "bind_months": 0,
+    "first_bind_month": null,
+    "deficit_mt": 0.0,
+    "deficit_twh": 0.0
+   },
+   "per_plant": {
+    "net": {
+     "lagged_only": {
+      "plants_scored": 22,
+      "plants_binding": 0,
+      "binding_plants": {},
+      "deficit_twh": 0.0,
+      "model_coal_twh_scored": 54.797
+     },
+     "stb_scaled": {
+      "plants_scored": 22,
+      "plants_binding": 0,
+      "binding_plants": {},
+      "deficit_twh": 0.0,
+      "model_coal_twh_scored": 54.797
+     }
+    },
+    "gross": {
+     "lagged_only": {
+      "plants_scored": 24,
+      "plants_binding": 0,
+      "binding_plants": {},
+      "deficit_twh": 0.0,
+      "model_coal_twh_scored": 56.145
+     },
+     "stb_scaled": {
+      "plants_scored": 24,
+      "plants_binding": 0,
+      "binding_plants": {},
+      "deficit_twh": 0.0,
+      "model_coal_twh_scored": 56.145
+     }
+    }
+   },
+   "forbidden_actual_min_stock_mt": 137800.506,
+   "forbidden_actual_dec_stock_mt": 227268.485
+  },
+  "2021": {
+   "plants": 33,
+   "opening_mt": 227268.485,
+   "lagged_deliveries_mt": 44.613,
+   "tons_per_mwh_prev": -1332.3987,
+   "model_prb_twh": 91.716,
+   "model_burn_mt": -122202.128,
+   "annual_anomaly": 1.0066,
+   "min_month_anomaly": 0.9291,
+   "lagged_only": {
+    "deliveries_mt": 44.613,
+    "min_stock_mt": 237156.264,
+    "min_stock_days": -708.4,
+    "bind_months": 0,
+    "first_bind_month": null,
+    "deficit_mt": 0.0,
+    "deficit_twh": -0.0
+   },
+   "stb_scaled": {
+    "deliveries_mt": 43.757,
+    "min_stock_mt": 237156.264,
+    "min_stock_days": -708.4,
+    "bind_months": 0,
+    "first_bind_month": null,
+    "deficit_mt": 0.0,
+    "deficit_twh": -0.0
+   },
+   "per_plant": {
+    "net": {
+     "lagged_only": {
+      "plants_scored": 23,
+      "plants_binding": 9,
+      "binding_plants": {
+       "108": 0.25,
+       "2079": 0.103,
+       "2277": 0.041,
+       "2952": 0.58,
+       "6138": 0.326,
+       "6139": 0.504,
+       "6193": 1.028,
+       "6194": 0.274,
+       "6195": 0.037
+      },
+      "deficit_twh": 5.319,
+      "model_coal_twh_scored": 80.808
+     },
+     "stb_scaled": {
+      "plants_scored": 23,
+      "plants_binding": 9,
+      "binding_plants": {
+       "108": 0.263,
+       "2079": 0.114,
+       "2277": 0.046,
+       "2952": 0.593,
+       "6138": 0.34,
+       "6139": 0.537,
+       "6193": 1.067,
+       "6194": 0.307,
+       "6195": 0.043
+      },
+      "deficit_twh": 5.593,
+      "model_coal_twh_scored": 80.808
+     }
+    },
+    "gross": {
+     "lagged_only": {
+      "plants_scored": 24,
+      "plants_binding": 10,
+      "binding_plants": {
+       "108": 0.142,
+       "165": 0.727,
+       "2079": 0.162,
+       "2240": 0.071,
+       "2952": 1.6,
+       "2963": 1.192,
+       "6138": 0.194,
+       "6139": 0.304,
+       "6193": 0.697,
+       "6194": 0.124
+      },
+      "deficit_twh": 7.251,
+      "model_coal_twh_scored": 82.982
+     },
+     "stb_scaled": {
+      "plants_scored": 24,
+      "plants_binding": 10,
+      "binding_plants": {
+       "108": 0.155,
+       "165": 0.728,
+       "2079": 0.174,
+       "2240": 0.076,
+       "2952": 1.614,
+       "2963": 1.209,
+       "6138": 0.208,
+       "6139": 0.337,
+       "6193": 0.736,
+       "6194": 0.136
+      },
+      "deficit_twh": 7.504,
+      "model_coal_twh_scored": 82.982
+     }
+    }
+   },
+   "forbidden_actual_min_stock_mt": 101823.957,
+   "forbidden_actual_dec_stock_mt": 817622.399
+  },
+  "2022": {
+   "plants": 33,
+   "opening_mt": 817622.399,
+   "lagged_deliveries_mt": 45.432,
+   "tons_per_mwh_prev": -6803.3881,
+   "model_prb_twh": 89.06,
+   "model_burn_mt": -605909.942,
+   "annual_anomaly": 0.8557,
+   "min_month_anomaly": 0.7343,
+   "lagged_only": {
+    "deliveries_mt": 45.432,
+    "min_stock_mt": 876314.784,
+    "min_stock_days": -527.9,
+    "bind_months": 0,
+    "first_bind_month": null,
+    "deficit_mt": 0.0,
+    "deficit_twh": -0.0
+   },
+   "stb_scaled": {
+    "deliveries_mt": 38.829,
+    "min_stock_mt": 876314.327,
+    "min_stock_days": -527.9,
+    "bind_months": 0,
+    "first_bind_month": null,
+    "deficit_mt": 0.0,
+    "deficit_twh": -0.0
+   },
+   "per_plant": {
+    "net": {
+     "lagged_only": {
+      "plants_scored": 23,
+      "plants_binding": 12,
+      "binding_plants": {
+       "59": 0.039,
+       "108": 0.074,
+       "165": 0.143,
+       "2079": 0.014,
+       "2277": 0.089,
+       "2291": 0.251,
+       "6095": 0.234,
+       "6138": 0.271,
+       "6193": 0.132,
+       "6194": 0.675,
+       "6195": 0.009,
+       "6772": 0.178
+      },
+      "deficit_twh": 3.627,
+      "model_coal_twh_scored": 78.278
+     },
+     "stb_scaled": {
+      "plants_scored": 23,
+      "plants_binding": 20,
+      "binding_plants": {
+       "59": 0.076,
+       "60": 0.108,
+       "108": 0.179,
+       "165": 0.167,
+       "1250": 0.008,
+       "2079": 0.174,
+       "2240": 0.027,
+       "2277": 0.136,
+       "2291": 0.363,
+       "6064": 0.003,
+       "6068": 0.383,
+       "6077": 0.074,
+       "6095": 0.349,
+       "6096": 0.052,
+       "6138": 0.378,
+       "6193": 0.496,
+       "6194": 0.781,
+       "6195": 0.151,
+       "6772": 0.202,
+       "56564": 0.167
+      },
+      "deficit_twh": 7.289,
+      "model_coal_twh_scored": 78.278
+     }
+    },
+    "gross": {
+     "lagged_only": {
+      "plants_scored": 24,
+      "plants_binding": 11,
+      "binding_plants": {
+       "59": 0.011,
+       "165": 0.977,
+       "2079": 0.053,
+       "2240": 0.047,
+       "2277": 0.021,
+       "2291": 0.154,
+       "6095": 0.12,
+       "6138": 0.175,
+       "6193": 0.035,
+       "6194": 0.534,
+       "6772": 0.136
+      },
+      "deficit_twh": 3.564,
+      "model_coal_twh_scored": 80.808
+     },
+     "stb_scaled": {
+      "plants_scored": 24,
+      "plants_binding": 15,
+      "binding_plants": {
+       "59": 0.042,
+       "108": 0.08,
+       "165": 1.046,
+       "2079": 0.22,
+       "2240": 0.087,
+       "2277": 0.065,
+       "2291": 0.258,
+       "6064": 0.035,
+       "6095": 0.235,
+       "6138": 0.282,
+       "6193": 0.399,
+       "6194": 0.64,
+       "6195": 0.064,
+       "6772": 0.16,
+       "56564": 0.071
+      },
+      "deficit_twh": 6.084,
+      "model_coal_twh_scored": 80.808
+     }
+    }
+   },
+   "forbidden_actual_min_stock_mt": 49711.002,
+   "forbidden_actual_dec_stock_mt": 75370.142
+  },
+  "2023": {
+   "plants": 33,
+   "opening_mt": 75370.142,
+   "lagged_deliveries_mt": 49.0,
+   "tons_per_mwh_prev": 8721.5747,
+   "model_prb_twh": 66.479,
+   "model_burn_mt": 579800.99,
+   "annual_anomaly": 1.0521,
+   "min_month_anomaly": 0.8767,
+   "lagged_only": {
+    "deliveries_mt": 49.0,
+    "min_stock_mt": -504381.866,
+    "min_stock_days": -317.5,
+    "bind_months": 11,
+    "first_bind_month": 2,
+    "deficit_mt": 504381.866,
+    "deficit_twh": 57.832
+   },
+   "stb_scaled": {
+    "deliveries_mt": 48.151,
+    "min_stock_mt": -504382.715,
+    "min_stock_days": -317.5,
+    "bind_months": 11,
+    "first_bind_month": 2,
+    "deficit_mt": 504382.715,
+    "deficit_twh": 57.832
+   },
+   "per_plant": {
+    "net": {
+     "lagged_only": {
+      "plants_scored": 24,
+      "plants_binding": 2,
+      "binding_plants": {
+       "2291": 0.019,
+       "6096": 0.035
+      },
+      "deficit_twh": 0.091,
+      "model_coal_twh_scored": 58.059
+     },
+     "stb_scaled": {
+      "plants_scored": 24,
+      "plants_binding": 2,
+      "binding_plants": {
+       "2291": 0.041,
+       "6096": 0.108
+      },
+      "deficit_twh": 0.25,
+      "model_coal_twh_scored": 58.059
+     }
+    },
+    "gross": {
+     "lagged_only": {
+      "plants_scored": 25,
+      "plants_binding": 0,
+      "binding_plants": {},
+      "deficit_twh": 0.0,
+      "model_coal_twh_scored": 58.736
+     },
+     "stb_scaled": {
+      "plants_scored": 25,
+      "plants_binding": 1,
+      "binding_plants": {
+       "2291": 0.005
+      },
+      "deficit_twh": 0.008,
+      "model_coal_twh_scored": 58.736
+     }
+    }
+   },
+   "forbidden_actual_min_stock_mt": 75291.838,
+   "forbidden_actual_dec_stock_mt": 75297.047
+  },
+  "2024": {
+   "plants": 33,
+   "opening_mt": 75297.047,
+   "lagged_deliveries_mt": 47.506,
+   "tons_per_mwh_prev": 1.6936,
+   "model_prb_twh": 61.375,
+   "model_burn_mt": 103.942,
+   "annual_anomaly": 1.0933,
+   "min_month_anomaly": 1.0281,
+   "lagged_only": {
+    "deliveries_mt": 47.506,
+    "min_stock_mt": 75240.61,
+    "min_stock_days": 264212.2,
+    "bind_months": 0,
+    "first_bind_month": null,
+    "deficit_mt": 0.0,
+    "deficit_twh": 0.0
+   },
+   "stb_scaled": {
+    "deliveries_mt": 47.506,
+    "min_stock_mt": 75240.61,
+    "min_stock_days": 264212.2,
+    "bind_months": 0,
+    "first_bind_month": null,
+    "deficit_mt": 0.0,
+    "deficit_twh": 0.0
+   },
+   "per_plant": {
+    "net": {
+     "lagged_only": {
+      "plants_scored": 23,
+      "plants_binding": 0,
+      "binding_plants": {},
+      "deficit_twh": 0.0,
+      "model_coal_twh_scored": 58.235
+     },
+     "stb_scaled": {
+      "plants_scored": 23,
+      "plants_binding": 0,
+      "binding_plants": {},
+      "deficit_twh": 0.0,
+      "model_coal_twh_scored": 58.235
+     }
+    },
+    "gross": {
+     "lagged_only": {
+      "plants_scored": 26,
+      "plants_binding": 0,
+      "binding_plants": {},
+      "deficit_twh": 0.0,
+      "model_coal_twh_scored": 60.887
+     },
+     "stb_scaled": {
+      "plants_scored": 26,
+      "plants_binding": 0,
+      "binding_plants": {},
+      "deficit_twh": 0.0,
+      "model_coal_twh_scored": 60.887
+     }
+    }
+   },
+   "forbidden_actual_min_stock_mt": 54566.031,
+   "forbidden_actual_dec_stock_mt": 54567.771
+  },
+  "2025": {
+   "plants": 30,
+   "opening_mt": 54567.771,
+   "lagged_deliveries_mt": 40.295,
+   "tons_per_mwh_prev": 305.6782,
+   "model_prb_twh": 82.201,
+   "model_burn_mt": 25127.084,
+   "annual_anomaly": 1.0335,
+   "min_month_anomaly": 0.9779,
+   "lagged_only": {
+    "deliveries_mt": 40.295,
+    "min_stock_mt": 29480.983,
+    "min_stock_days": 428.2,
+    "bind_months": 0,
+    "first_bind_month": null,
+    "deficit_mt": 0.0,
+    "deficit_twh": 0.0
+   },
+   "stb_scaled": {
+    "deliveries_mt": 40.219,
+    "min_stock_mt": 29480.907,
+    "min_stock_days": 428.2,
+    "bind_months": 0,
+    "first_bind_month": null,
+    "deficit_mt": 0.0,
+    "deficit_twh": 0.0
+   },
+   "per_plant": {
+    "net": {
+     "lagged_only": {
+      "plants_scored": 21,
+      "plants_binding": 6,
+      "binding_plants": {
+       "60": 0.007,
+       "108": 0.255,
+       "2291": 0.122,
+       "6065": 0.023,
+       "6772": 0.074,
+       "10671": 0.052
+      },
+      "deficit_twh": 0.847,
+      "model_coal_twh_scored": 67.92
+     },
+     "stb_scaled": {
+      "plants_scored": 21,
+      "plants_binding": 6,
+      "binding_plants": {
+       "60": 0.009,
+       "108": 0.257,
+       "2291": 0.123,
+       "6065": 0.029,
+       "6772": 0.075,
+       "10671": 0.052
+      },
+      "deficit_twh": 0.867,
+      "model_coal_twh_scored": 67.92
+     }
+    },
+    "gross": {
+     "lagged_only": {
+      "plants_scored": 24,
+      "plants_binding": 7,
+      "binding_plants": {
+       "108": 0.102,
+       "165": 0.666,
+       "2240": 0.1,
+       "2291": 0.163,
+       "2963": 0.059,
+       "6064": 0.012,
+       "10671": 0.052
+      },
+      "deficit_twh": 1.839,
+      "model_coal_twh_scored": 74.475
+     },
+     "stb_scaled": {
+      "plants_scored": 24,
+      "plants_binding": 7,
+      "binding_plants": {
+       "108": 0.105,
+       "165": 0.667,
+       "2240": 0.101,
+       "2291": 0.164,
+       "2963": 0.061,
+       "6064": 0.012,
+       "10671": 0.052
+      },
+      "deficit_twh": 1.852,
+      "model_coal_twh_scored": 74.475
+     }
+    }
+   },
+   "forbidden_actual_min_stock_mt": null,
+   "forbidden_actual_dec_stock_mt": null
+  }
+ }
+}
