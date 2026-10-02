@@ -5,7 +5,10 @@ from __future__ import annotations
 import pandas as pd
 
 from market_sim.data.fleet import models
-from market_sim.data.fleet.models import generator_footprint_mask, program_footprint_mask
+from market_sim.data.fleet.models import (
+    generator_footprint_mask,
+    program_footprint_mask,
+)
 
 
 def _frame():

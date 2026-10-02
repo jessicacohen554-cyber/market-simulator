@@ -535,6 +535,23 @@ def ercot_csv_audit(year: int, csv_path: Path | None = None) -> dict:
     vint = fossil.groupby("plant")["nameplate"].sum()
     missing = vint[~vint.index.isin(sheet_plants)].sort_values(ascending=False)
     extra = sorted(sheet_plants - set(vint.index))
+    # A plant the sheet carries can still be SHORT of the vintage's units —
+    # Decker Creek 3548: the sheet holds its four GTs while the vintage's
+    # steam units ST1/ST2 (724 MW to 2020, 404 MW to Mar-2022) are absent
+    # (closeout-ERCOT, docs/records/ercot/closeout/
+    # FINDING-closeout-w1-zero-lp-censuses-2026-10-02.md row 6). Flag every
+    # carried plant whose vintage fossil nameplate exceeds the sheet's by more
+    # than the family tolerance.
+    sheet_np = (
+        sheet.assign(_pc=pd.to_numeric(sheet["Plant_Code"], errors="coerce"))
+        .dropna(subset=["_pc"])
+        .groupby("_pc")["Nameplate_MW"]
+        .sum()
+    )
+    sheet_np.index = sheet_np.index.astype(int)
+    both = vint[vint.index.isin(sheet_np.index)]
+    gap = both - sheet_np.reindex(both.index)
+    short = gap[gap > both * TOL_FAMILY_PCT / 100.0].sort_values(ascending=False)
     return {
         "year": int(year),
         "vintage": _vintage_dir(year).name,
@@ -547,6 +564,15 @@ def ercot_csv_audit(year: int, csv_path: Path | None = None) -> dict:
         ],
         "absent_mw": round(float(missing.sum()), 1),
         "sheet_plants_absent_from_vintage": extra,
+        "carried_plants_short_of_vintage": [
+            {
+                "plant": int(p),
+                "vintage_nameplate_mw": round(float(both[p]), 1),
+                "sheet_nameplate_mw": round(float(sheet_np[p]), 1),
+                "short_mw": round(float(mw), 1),
+            }
+            for p, mw in short.items()
+        ],
     }
 
 

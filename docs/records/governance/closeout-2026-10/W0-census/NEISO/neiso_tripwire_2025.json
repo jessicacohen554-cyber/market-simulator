@@ -1,0 +1,149 @@
+{
+  "year": 2025,
+  "bundle": "neiso119_span",
+  "watched_plants_byte_stable": {
+    "1595 Kendall": false,
+    "1599 Canal": false
+  },
+  "tripped_zero_lp": true,
+  "recorded": {
+    "units": {
+      "1595 Kendall": [
+        {
+          "unit": "1595_JET1",
+          "group": "",
+          "fuel": "oil",
+          "pmax_mw": 18.0,
+          "available_gwh": 141.912
+        },
+        {
+          "unit": "CC_CHP_Boston_p1595_committed",
+          "group": "CC_CHP",
+          "fuel": "gas_cc",
+          "pmax_mw": 138.71,
+          "available_gwh": 1099.018
+        }
+      ],
+      "1599 Canal": [
+        {
+          "unit": "1599_1",
+          "group": "",
+          "fuel": "oil",
+          "pmax_mw": 560.0,
+          "available_gwh": 4415.04
+        },
+        {
+          "unit": "1599_2",
+          "group": "",
+          "fuel": "oil",
+          "pmax_mw": 558.8,
+          "available_gwh": 4405.579
+        },
+        {
+          "unit": "CT_PEAKER_Central_p1599_econlo",
+          "group": "CT_PEAKER",
+          "fuel": "gas_ct",
+          "pmax_mw": 161.43,
+          "available_gwh": 1187.56
+        },
+        {
+          "unit": "CT_PEAKER_Central_p1599_econhi",
+          "group": "CT_PEAKER",
+          "fuel": "gas_ct",
+          "pmax_mw": 145.47,
+          "available_gwh": 1070.159
+        },
+        {
+          "unit": "CT_PEAKER_Central_p1599_peak",
+          "group": "CT_PEAKER",
+          "fuel": "gas_ct",
+          "pmax_mw": 23.1,
+          "available_gwh": 169.936
+        }
+      ]
+    },
+    "mc_by_group": {
+      "CC_CHP": 75.445,
+      "CC_REGULAR": 67.829,
+      "COAL_BIT": 86.678,
+      "COAL_PRB": 45.578,
+      "CT_CHP": 58.169,
+      "CT_PEAKER": 94.662,
+      "ST_CHP": 50.649,
+      "ST_GAS": 88.199,
+      "hydro": 1.4,
+      "nuclear": 2.5,
+      "oil": 274.547
+    }
+  },
+  "w0": {
+    "units": {
+      "1595 Kendall": [
+        {
+          "unit": "1595_JET1",
+          "group": "",
+          "fuel": "oil",
+          "pmax_mw": 18.0,
+          "available_gwh": 141.912
+        },
+        {
+          "unit": "CC_CHP_Boston_p1595_committed",
+          "group": "CC_CHP",
+          "fuel": "gas_cc",
+          "pmax_mw": 136.7,
+          "available_gwh": 1072.195
+        }
+      ],
+      "1599 Canal": [
+        {
+          "unit": "1599_1",
+          "group": "",
+          "fuel": "oil",
+          "pmax_mw": 560.0,
+          "available_gwh": 4415.04
+        },
+        {
+          "unit": "1599_2",
+          "group": "",
+          "fuel": "oil",
+          "pmax_mw": 558.8,
+          "available_gwh": 4405.579
+        },
+        {
+          "unit": "CT_PEAKER_Central_p1599_econlo",
+          "group": "CT_PEAKER",
+          "fuel": "gas_ct",
+          "pmax_mw": 161.43,
+          "available_gwh": 1111.04
+        },
+        {
+          "unit": "CT_PEAKER_Central_p1599_econhi",
+          "group": "CT_PEAKER",
+          "fuel": "gas_ct",
+          "pmax_mw": 145.47,
+          "available_gwh": 1001.203
+        },
+        {
+          "unit": "CT_PEAKER_Central_p1599_peak",
+          "group": "CT_PEAKER",
+          "fuel": "gas_ct",
+          "pmax_mw": 23.1,
+          "available_gwh": 158.986
+        }
+      ]
+    },
+    "mc_by_group": {
+      "CC_CHP": 75.615,
+      "CC_REGULAR": 67.74,
+      "COAL_BIT": 90.489,
+      "COAL_PRB": 45.578,
+      "CT_CHP": 58.182,
+      "CT_PEAKER": 94.42,
+      "ST_CHP": 50.654,
+      "ST_GAS": 88.58,
+      "hydro": 1.4,
+      "nuclear": 2.5,
+      "oil": 272.3
+    }
+  }
+}

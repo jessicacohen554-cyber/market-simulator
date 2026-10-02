@@ -23,7 +23,9 @@ import pandas as pd
 
 from market_sim.config.paths import RAW_DATA_DIR
 
-EPA_CROSSWALK_CSV = RAW_DATA_DIR / "reference" / "camd-eia-crosswalk" / "epa_eia_crosswalk.csv"
+EPA_CROSSWALK_CSV = (
+    RAW_DATA_DIR / "reference" / "camd-eia-crosswalk" / "epa_eia_crosswalk.csv"
+)
 PUDL_SUBPLANT_PARQUET = (
     RAW_DATA_DIR / "pudl" / "core_epa__assn_eia_epacamd_subplant_ids.parquet"
 )
@@ -88,7 +90,9 @@ def crosswalk_of_record() -> pd.DataFrame:
         )
     if not frames:
         return pd.DataFrame(columns=["camd_plant", "camd_unit", "eia_plant", "source"])
-    out = pd.concat(frames, ignore_index=True).dropna(subset=["camd_plant", "eia_plant"])
+    out = pd.concat(frames, ignore_index=True).dropna(
+        subset=["camd_plant", "eia_plant"]
+    )
     out["camd_plant"] = out["camd_plant"].astype(int)
     out["eia_plant"] = out["eia_plant"].astype(int)
     return out.drop_duplicates().reset_index(drop=True)
