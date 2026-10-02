@@ -68,3 +68,25 @@ def test_value_comparison_is_by_content_not_identity(tmp_path):
         resolve=lambda b, y: {"offer_curve_by_group": {"CC": {"peak": 4.576}}},
     )
     assert diffs == {}
+
+
+def test_a_stale_inert_rule26_deleted_field_is_not_a_mismatch(tmp_path):
+    """A field deleted under rule 26 after the solve, recorded at its inert value."""
+    bundle = _bundle(
+        tmp_path,
+        {"unit_outage_dispatched_bin_live_denominator": False, "voll": 5000.0},
+    )
+    diffs = replay_config_diffs(bundle, 2025, resolve=lambda b, y: {"voll": 5000.0})
+    assert diffs == {}
+
+
+def test_the_deleted_polarity_in_its_owning_iso_is_still_reported(tmp_path):
+    """NWPP recording the deleted (diluted-roster) polarity replays differently."""
+    (tmp_path / "meta.json").write_text(json.dumps({"iso": "NWPP", "years": [2025]}))
+    (tmp_path / "run_config_2025.json").write_text(
+        json.dumps(
+            {"scenario_config": {"unit_outage_dispatched_bin_live_denominator": False}}
+        )
+    )
+    diffs = replay_config_diffs(tmp_path, 2025, resolve=lambda b, y: {})
+    assert diffs == {"unit_outage_dispatched_bin_live_denominator": (False, None)}

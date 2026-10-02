@@ -651,11 +651,20 @@ def _reliability_floor_layup_shares(
 # limb, which spreads Merrimack's winter burn flat and binds in 2023/2024).
 # NWPP: NWPP-NEXT-7 (owner ruling Q1, 2026-09-27, on NWPP's own contract census
 # docs/records/nwpp/FINDING-nwppnext5-coal-take-obligation-design-2026-09-26.md).
-COAL_PLANT_GRAIN_ISOS: tuple[str, ...] = ("MISO", "NEISO", "NWPP")
+# ERCOT: closeout-L1 (owner ruling R-3; see COAL_PILE_CEILING_ISOS below).
+COAL_PLANT_GRAIN_ISOS: tuple[str, ...] = ("MISO", "NEISO", "NWPP", "ERCOT")
 
 # ISOs whose own evidence armed the per-yard coal TAKE floor
 # (coal_fuel_inventory_take_floor): NWPP-NEXT-7, owner rulings Q1-Q5.
 COAL_TAKE_FLOOR_ISOS: tuple[str, ...] = ("NWPP",)
+
+# ISOs whose own evidence armed the monthly pile CEILING-ONLY (no take floor):
+# the yard's cumulative month-end burn is capped at its December stock plus the
+# receipts delivered so far, and nothing floors it. ERCOT: closeout-L1 (owner
+# ruling R-3, 2026-10-02; zero-LP census docs/records/ercot/closeout/
+# FINDING-closeout-w1-zero-lp-censuses-2026-10-02.md §1; PRECOMMIT
+# PRECOMMIT-closeout-l1-coal-fuel-ceiling-2026-10-02.md).
+COAL_PILE_CEILING_ISOS: tuple[str, ...] = ("ERCOT",)
 
 
 def resolve_coal_take_floor(
@@ -700,14 +709,19 @@ def resolve_coal_monthly_pile(
 
     NWPP-NEXT-8 (owner decision cards 2026-09-28). Raises ``ValueError`` when
     ``coal_fuel_inventory_monthly_pile`` is armed without the take floor whose
-    identity it refines, or outside :data:`COAL_TAKE_FLOOR_ISOS` (rule 25).
+    identity it refines (except in :data:`COAL_PILE_CEILING_ISOS`, which arm
+    the pile as a ceiling only), or outside :data:`COAL_TAKE_FLOOR_ISOS` /
+    :data:`COAL_PILE_CEILING_ISOS` (rule 25).
     """
     if not bool(getattr(config, "coal_fuel_inventory_monthly_pile", False)):
         return False
     if not floor_armed:
+        if iso.upper() in COAL_PILE_CEILING_ISOS:
+            return True
         raise ValueError(
             "coal_fuel_inventory_monthly_pile refines the yard pile identity the "
-            "take floor bounds and requires coal_fuel_inventory_take_floor."
+            "take floor bounds and requires coal_fuel_inventory_take_floor "
+            f"(ceiling-only pile: {COAL_PILE_CEILING_ISOS})."
         )
     if iso.upper() not in COAL_TAKE_FLOOR_ISOS:
         raise ValueError(
@@ -725,7 +739,7 @@ def resolve_coal_measured_receipts(
     NWPP-NEXT-9 (owner decision card 2026-09-28). Raises ``ValueError`` when
     ``coal_monthly_pile_measured_receipts`` is armed without the monthly pile
     whose receipt profile it replaces, or outside :data:`COAL_TAKE_FLOOR_ISOS`
-    (rule 25).
+    / :data:`COAL_PILE_CEILING_ISOS` (rule 25).
     """
     if not bool(getattr(config, "coal_monthly_pile_measured_receipts", False)):
         return False
@@ -734,12 +748,45 @@ def resolve_coal_measured_receipts(
             "coal_monthly_pile_measured_receipts replaces the monthly pile's "
             "ratable receipts and requires coal_fuel_inventory_monthly_pile."
         )
-    if iso.upper() not in COAL_TAKE_FLOOR_ISOS:
+    if iso.upper() not in COAL_TAKE_FLOOR_ISOS + COAL_PILE_CEILING_ISOS:
         raise ValueError(
             f"coal_monthly_pile_measured_receipts is gated to "
-            f"{COAL_TAKE_FLOOR_ISOS} (rule 25 [R-ISO-SCOPE])."
+            f"{COAL_TAKE_FLOOR_ISOS + COAL_PILE_CEILING_ISOS} (rule 25 [R-ISO-SCOPE])."
         )
     return True
+
+
+def load_coal_measured_receipts(
+    fleet_arrays, year: int, yard_keys: tuple[int, ...], iso: str
+) -> tuple[np.ndarray, np.ndarray] | None:
+    """Return the year's own cumulative Page 5 receipts per yard row, or None.
+
+    NWPP-NEXT-9 (``coal_monthly_pile_measured_receipts``): the year's own
+    receipts replace the ratable ``m/12`` profile yard by yard (backcast
+    overlay, rule 13); no curated same-year file leaves every yard ratable.
+    """
+    from market_sim.data.coal_fuel_inventory import build_coal_measured_receipts
+
+    mr = build_coal_measured_receipts(fleet_arrays, year, yard_keys)
+    if mr is None:
+        logger.info(
+            "coal measured receipts (%s %d): no curated same-year receipts; "
+            "every yard stays ratable",
+            iso,
+            year,
+        )
+        return None
+    logger.info(
+        "coal measured receipts (%s %d): %d yard rows measured, %d ratable; "
+        "receipts %.2f TBtu, contract %.2f TBtu",
+        iso,
+        year,
+        mr[2].n_measured,
+        mr[2].n_ratable,
+        mr[2].receipts_mmbtu / 1e6,
+        mr[2].contract_mmbtu / 1e6,
+    )
+    return mr[0], mr[1]
 
 
 def resolve_coal_budget_arms(config: ScenarioConfig, iso: str) -> tuple[bool, bool]:
@@ -6687,7 +6734,13 @@ def run_year(
             # neiso-117: a coal floor cannot demand fuel its yard does not
             # hold (rule 19 / rule 17). Scales only rows whose floor draw
             # exceeds the budget, so every already-feasible solve is unchanged.
-            if getattr(fleet_arrays, "min_gen", None) is not None:
+            # A ceiling-only pile (COAL_PILE_CEILING_ISOS) replaces this annual
+            # budget in the LP, so its floors reconcile against the pile below.
+            _coal_ceiling_pile = _coal_pile_armed and not _coal_floor_armed
+            if (
+                getattr(fleet_arrays, "min_gen", None) is not None
+                and not _coal_ceiling_pile
+            ):
                 from market_sim.data.coal_fuel_inventory import (
                     reconcile_floors_to_yard_budget,
                 )
@@ -6771,38 +6824,16 @@ def run_year(
                     # NWPP-NEXT-8: the same rows at month-end grain. Month 12 is
                     # the annual ceiling and floor just built, clips included.
                     from market_sim.data.coal_fuel_inventory import (
-                        build_coal_measured_receipts,
                         build_coal_monthly_pile,
                     )
 
-                    _measured = None
-                    if _coal_meas_armed:
-                        # NWPP-NEXT-9: the year's own Page 5 receipts replace
-                        # the ratable m/12 profile yard by yard (backcast
-                        # overlay, rule 13); no same-year file -> all ratable.
-                        _mr = build_coal_measured_receipts(
-                            fleet_arrays, year, _cp_prov.yard_keys
+                    _measured = (
+                        load_coal_measured_receipts(
+                            fleet_arrays, year, _cp_prov.yard_keys, iso
                         )
-                        if _mr is not None:
-                            _measured = (_mr[0], _mr[1])
-                            logger.info(
-                                "coal measured receipts (%s %d): %d yard rows "
-                                "measured, %d ratable; receipts %.2f TBtu, "
-                                "contract %.2f TBtu",
-                                iso,
-                                year,
-                                _mr[2].n_measured,
-                                _mr[2].n_ratable,
-                                _mr[2].receipts_mmbtu / 1e6,
-                                _mr[2].contract_mmbtu / 1e6,
-                            )
-                        else:
-                            logger.info(
-                                "coal measured receipts (%s %d): no curated "
-                                "same-year receipts; every yard stays ratable",
-                                iso,
-                                year,
-                            )
+                        if _coal_meas_armed
+                        else None
+                    )
 
                     (
                         coal_plant_budget,
@@ -6835,6 +6866,69 @@ def run_year(
                             for v in coal_plant_floor.sum(axis=0)
                         ],
                     )
+            elif _coal_pile_armed:
+                # closeout-L1 (ERCOT, COAL_PILE_CEILING_ISOS): the same monthly
+                # pile rows as a CEILING only — cumulative month-end burn <=
+                # Dec(Y-1) stock + receipts to date; no take floor
+                # (floor_parts=None). Coal must-run floors are reconciled to
+                # the cumulative ceiling at every month-end (rule 17).
+                from market_sim.data.coal_fuel_inventory import (
+                    build_coal_monthly_pile,
+                    reconcile_floors_to_yard_budget,
+                )
+
+                _measured = (
+                    load_coal_measured_receipts(
+                        fleet_arrays, year, _cp_prov.yard_keys, iso
+                    )
+                    if _coal_meas_armed
+                    else None
+                )
+                (
+                    coal_plant_budget,
+                    _no_floor,
+                    coal_plant_month_index,
+                    _pile,
+                ) = build_coal_monthly_pile(
+                    fleet_arrays,
+                    coal_plant_gen_idx,
+                    coal_plant_group_index,
+                    coal_plant_gen_hour_coeff,
+                    coal_plant_budget,
+                    _cp_prov.stock_mmbtu,
+                    None,
+                    config.hours,
+                    measured=_measured,
+                )
+                if getattr(fleet_arrays, "min_gen", None) is not None:
+                    for _row, _draw, _scale in reconcile_floors_to_yard_budget(
+                        fleet_arrays.min_gen,
+                        coal_plant_gen_idx,
+                        coal_plant_budget,
+                        coal_plant_gen_hour_coeff,
+                        coal_plant_group_index,
+                        month_index=coal_plant_month_index,
+                    ):
+                        logger.info(
+                            "coal monthly pile (%s %d): yard row %d floors "
+                            "draw %.3f TBtu > a month-end ceiling -> floors "
+                            "scaled x%.4f",
+                            iso,
+                            year,
+                            _row,
+                            _draw / 1e6,
+                            _scale,
+                        )
+                logger.info(
+                    "coal monthly pile (%s %d): CEILING-ONLY, %d yard rows x %d "
+                    "month-ends, cumulative; year-end ceiling %.1f TWh-equiv "
+                    "@HR10.661",
+                    iso,
+                    year,
+                    _pile.n_rows,
+                    _pile.n_months,
+                    float(coal_plant_budget[:, -1].sum()) / 10.661 / 1e6,
+                )
 
     # Base dispatch kwargs + priced import-node band: the shared pipeline
     # assembly (orchestrator-unification Stage 2) — the same key set the
