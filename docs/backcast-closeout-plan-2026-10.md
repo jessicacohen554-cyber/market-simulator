@@ -319,6 +319,14 @@ Not free, do not pursue (recorded so nobody re-asks): daily NW gas hubs (Sumas/S
 | R-15 | **MISO: transcribe the Max Gen declaration history (owner downloads the OATI PDF); keep C1 ST_GAS 2019 routed.** | 0b; no lever for the 3 GWh miss. |
 | R-16 | No requester-pays AWS data (CAISO OASIS history). | The 2019–21 CAISO fold stays data-limited. |
 | R-17 | **No owner downloads today — proceed without them** (owner, 2026-10-02, desk session). | Deferred, not cancelled: STB EP 724 rail (SPP step 3), MISO Max Gen OATI PDF (0b), ERCOT account intake (R-7). Lanes proceed; each deferred object is written as a DRAFT data-limited ledger row whose route is the intake. |
+| R-18 | **ERCOT L1: override K2 and promote** (owner decision card, 2026-10-02: "Override + promote"). | Makes 2022 and 2025 CALIBRATED. W0 re-composes from the closeout-ERCOT L1 legs and promotes. |
+| R-19 | **NEISO §3b: override and promote the W0 re-solve** (owner card: "Override + promote"). | Part of the move is 2025 EIA-923 data drift. |
+| R-20 | **SOCO W0 (#7055): promote** (owner card: "Promote"). | CALIBRATED-WITH-CAVEATS → NOT-YET accepted on structure (rule 1). Next step: root-cause the CC_REGULAR over-run. |
+| R-21 | **Capacity census signed for NYISO, CAISO and ERCOT** (owner card: "Sign all three"). | Every OUTSIDE family has a named cause and none is tuned. |
+| R-22 | **R-4 coal basis: 930-aligned A** (owner card). | |
+| R-23 | **PJM Elliott counts in full and should be simulated** (owner, verbatim: "It counts but we should be able to simulate it?"). | No one-event caveat. PJM lever: model cold-correlated forced outages and gas curtailment structurally, after the W0 PJM keeper lands. |
+| R-24 | **NEISO: sign C3c, and fill the 2019–20 reserve-requirement gaps by adjacent-year carry** (owner card). | |
+| R-25 | **IMM licence: raw data stays out. ERCOT DAM-proxy census: chartered. Census gate: presence-only** (owner card: "All as recommended"). | |
 
 The queue below is retained as the record of what was asked; items ruled above are marked.
 
