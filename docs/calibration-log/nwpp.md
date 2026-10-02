@@ -908,3 +908,5 @@ card "Keep #19; retire dup Clark field":
 - **Data drift (labelled, not W0):** the 2025 injected must-run (biomass and OTHER) is +1.5 TWh above the incumbent's. The incumbent carried a partial 2025 EIA-923; the current data has the complete year.
 - **Census (in-bundle `fleet_census_<y>.json`):** total thermal summer reads −4.6 to −8.6 % against EIA-860 in every year (winter −10.0 to −20.6 %), OUTSIDE.
 - **Unserved energy:** 2019 32.1 MWh, 2024 919 MWh.
+
+**Bench parts kept at the pre-W0 render (desk ruling "Keep old figures, fix later", 2026-10-02).** The promotion re-render moved the benchmark's `classFull` actuals slightly, because the footprint follows the W0 roster: most classes move about −0.1 % in 2019, and CT_CHP goes 0.42 → 0.52 TWh. `data/raw/reference/nwpp_plant_basis_energy.csv`, the `nwpp_demand_plant_basis` anchor that this keeper solved on, is derived from those parts. The parts therefore stay at main's render, so the CSV, the keeper and `test_artifact_matches_bench_parts` stay consistent. **Follow-up (chartered):** decouple the anchor from roster-dependent parts, then re-derive it and re-solve NWPP.
