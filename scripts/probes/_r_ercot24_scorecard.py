@@ -35,9 +35,17 @@ C1_KEYS = ("CC_REGULAR", "COAL_PRB", "COAL_LIGNITE", "ST_GAS")
 def verdict(bundle: Path, year: int) -> dict:
     """Return the span-restricted machine verdict for one year of ``bundle``."""
     out = subprocess.run(
-        [sys.executable, "scripts/calibration_verdict.py", str(bundle),
-         "--years", str(year), "--json"],
-        cwd=REPO, capture_output=True, text=True,
+        [
+            sys.executable,
+            "scripts/calibration_verdict.py",
+            str(bundle),
+            "--years",
+            str(year),
+            "--json",
+        ],
+        cwd=REPO,
+        capture_output=True,
+        text=True,
         env={"PYTHONPATH": ".:src:scripts", **_env()},
     )
     return json.loads(out.stdout)
@@ -75,7 +83,9 @@ def hourly(bundle: Path, year: int) -> dict:
     w = dz.sum(1) / dz.sum()
     sysp = (pz * dz).sum(1) / dz.sum(1)
     oa = s.groupby("hour").ordc_adder.first().to_numpy()
-    m = pd.read_parquet(MEAS / f"ercot_{year}_ordc_reserves_hourly.parquet").iloc[: len(w)]
+    m = pd.read_parquet(MEAS / f"ercot_{year}_ordc_reserves_hourly.parquet").iloc[
+        : len(w)
+    ]
     f = pd.read_parquet(bundle / "hourly" / f"reserve_family_{year}.parquet")
     f = f[(f["pass"] == "P1") & (f.family == "ercot_ordc_total")].sort_values("hour")
     return {
