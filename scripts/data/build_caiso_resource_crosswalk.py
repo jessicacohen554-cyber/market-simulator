@@ -33,6 +33,15 @@ resource with the EIA-860 plant it is (or blank), an ``accepted`` flag and a
 reviewed row replaces the name-token proposal and carries
 ``match_method = reviewed``; the name-token threshold and capacity sanity are
 unchanged and still decide every unreviewed row.
+
+A ledger row may name its plant from EIA-860M instead (R-CAISO-37, link 19):
+its ``source`` column reads ``eia860m`` and the plant must be a battery in the
+EIA-860M operating inventory (``data/raw/eia-860m/``), in a CAISO zone, and
+absent from the annual storage schedule. That is a declared, separate source
+for units the annual Final release does not yet list (CODs after its cut-off);
+such a row carries ``match_method = reviewed_eia860m``, so it stays separable
+from the annual-basis review. The crosswalk is reference data with no model
+reader, so this does not make 860M a backcast input (eia-860m README).
 """
 
 from __future__ import annotations
@@ -53,6 +62,12 @@ from market_sim.config.paths import RAW_DATA_DIR, REFERENCE_DIR  # noqa: E402
 OUT_CSV = REFERENCE_DIR / "caiso-resource-eia-crosswalk.csv"
 STORAGE_OUT_CSV = REFERENCE_DIR / "caiso-storage-resource-eia-crosswalk.csv"
 STORAGE_REVIEW_CSV = REFERENCE_DIR / "caiso-storage-crosswalk-review.csv"
+# EIA-860M operating inventory, the declared second source of the storage
+# review (R-CAISO-37): August 2026 vintage, see data/raw/eia-860m/README.md.
+EIA_860M_OPERATING = (
+    RAW_DATA_DIR / "eia-860m" / "august_generator2026.operating.parquet"
+)
+REVIEW_SOURCES = ("eia860", "eia860m")
 # The consolidated DAM outage episodes (curate_caiso_dam_outages.py) — the
 # resource universe to crosswalk.
 DAM_OUTAGE_WINDOWS = (
@@ -238,6 +253,40 @@ def load_storage_targets(statuses: tuple[str, ...] = ("OP",)) -> pd.DataFrame:
     return out
 
 
+def load_storage_targets_860m(
+    path: Path = EIA_860M_OPERATING, statuses: tuple[str, ...] = ("OP", "OA", "OS")
+) -> pd.DataFrame:
+    """EIA-860M operating battery plants in CAISO zones: (plant_code, name, MW).
+
+    The review ledger's second source (``source = eia860m``): the same plant
+    level sum and zone lookup as :func:`load_storage_targets`, read from the
+    monthly inventory's ``Batteries`` rows. The ``Status`` cell reads
+    ``(OP) Operating``; the code in parentheses is matched against
+    ``statuses``, the same set the annual review accepts.
+    """
+    from market_sim.data.zone_assignment import build_zone_lookup
+
+    df = pd.read_parquet(path)
+    df = df[df["Technology"].astype(str).str.strip() == "Batteries"]
+    code = df["Status"].astype(str).str.extract(r"\((\w+)\)", expand=False)
+    df = df.assign(
+        eia_status=code,
+        plant_code=pd.to_numeric(df["Plant ID"], errors="coerce"),
+        mw=pd.to_numeric(df["Nameplate Capacity (MW)"], errors="coerce"),
+    )
+    df = df[df["eia_status"].isin(statuses) & df["plant_code"].notna()]
+    df = df[df["plant_code"].astype(int).isin(set(build_zone_lookup("CAISO")))]
+    out = df.groupby("plant_code", as_index=False).agg(
+        plant_name=("Plant Name", "first"),
+        plant_pmax_mw=("mw", "sum"),
+        eia_status=("eia_status", lambda x: "/".join(sorted(set(x)))),
+    )
+    out["plant_code"] = out["plant_code"].astype(int)
+    out["plant_group"] = "BATTERY"
+    out["plant_pmax_mw"] = out["plant_pmax_mw"].round(1)
+    return out
+
+
 def load_resources(windows_path: Path) -> pd.DataFrame:
     """Distinct CAISO resources (id, name, max reported Pmax) from the episodes."""
     df = pd.read_parquet(
@@ -353,13 +402,17 @@ def apply_storage_review(
 ) -> pd.DataFrame:
     """Overlay the hand-review ledger on the name-token proposal.
 
-    Each ledger row (``resource_id, plant_code, accepted, review_note``)
-    replaces that resource's proposal: the plant comes from the EIA-860
-    storage operable schedule in a CAISO zone (any status), ``match_score`` is
-    the name-token score against that plant (for reference only), and
-    ``match_method`` becomes ``reviewed``. A ledger row naming a resource
-    outside the census, an accepted row without a plant, or a plant outside
-    the schedule is an error, so a stale review never applies silently.
+    Each ledger row (``resource_id, plant_code, accepted, review_note,
+    source``) replaces that resource's proposal: the plant comes from the
+    EIA-860 storage operable schedule in a CAISO zone (any status), or, when
+    ``source`` is ``eia860m``, from the EIA-860M operating batteries in a
+    CAISO zone that the annual schedule lacks; ``match_score`` is the
+    name-token score against that plant (for reference only), and
+    ``match_method`` becomes ``reviewed`` (``reviewed_eia860m``). A ledger row
+    naming a resource outside the census, an accepted row without a plant, a
+    plant outside its source, an unknown source, or an ``eia860m`` row naming
+    a plant the annual schedule carries is an error, so a stale review never
+    applies silently. A missing ``source`` column reads as ``eia860``.
     """
     out = proposed.copy()
     out["review_note"] = ""
@@ -374,7 +427,17 @@ def apply_storage_review(
         raise ValueError(f"review rows outside the census: {sorted(unknown)}")
     if rev["resource_id"].duplicated().any():
         raise ValueError("duplicate resource_id in the review ledger")
-    targets = load_storage_targets(("OP", "OA", "OS")).set_index("plant_code")
+    if "source" not in rev.columns:
+        rev["source"] = "eia860"
+    rev["source"] = rev["source"].fillna("eia860").astype(str).str.strip()
+    bad = set(rev["source"]) - set(REVIEW_SOURCES)
+    if bad:
+        raise ValueError(f"unknown review source(s): {sorted(bad)}")
+    annual = load_storage_targets(("OP", "OA", "OS")).set_index("plant_code")
+    targets = {"eia860": annual}
+    if (rev["source"] == "eia860m").any():
+        m860 = load_storage_targets_860m().set_index("plant_code")
+        targets["eia860m"] = m860[~m860.index.isin(annual.index)]
     idx = out.set_index("resource_id").index
     for r in rev.itertuples(index=False):
         i = idx.get_loc(r.resource_id)
@@ -387,9 +450,12 @@ def apply_storage_review(
             out.at[i, "match_score"] = 0.0
         else:
             code = int(r.plant_code)
-            if code not in targets.index:
-                raise ValueError(f"{r.resource_id}: plant {code} not in schedule")
-            t = targets.loc[code]
+            src = targets[r.source]
+            if code not in src.index:
+                raise ValueError(
+                    f"{r.resource_id}: plant {code} not in the {r.source} source"
+                )
+            t = src.loc[code]
             out.at[i, "plant_code"] = code
             out.at[i, "plant_group"] = "BATTERY"
             out.at[i, "plant_name"] = t["plant_name"]
@@ -397,7 +463,9 @@ def apply_storage_review(
             out.at[i, "match_score"] = _score_storage(
                 str(out.at[i, "resource_name"]), str(t["plant_name"])
             )
-        out.at[i, "match_method"] = "reviewed"
+        out.at[i, "match_method"] = (
+            "reviewed_eia860m" if r.source == "eia860m" else "reviewed"
+        )
         out.at[i, "accepted"] = acc
         out.at[i, "review_note"] = str(r.review_note)
     return out
