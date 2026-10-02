@@ -145,7 +145,9 @@ def committed_hr(year: int) -> tuple[dict[int, float], dict[int, float]]:
     meas = ok[ok["year"] == 0].set_index("plant_code")["heat_rate"].to_dict()
     meas.update(ok[ok["year"] == year].set_index("plant_code")["heat_rate"].to_dict())
     fb = a[a["year"] == 0].set_index("plant_code")["model_heat_rate_egrid"].to_dict()
-    fb.update(a[a["year"] == year].set_index("plant_code")["model_heat_rate_egrid"].to_dict())
+    fb.update(
+        a[a["year"] == year].set_index("plant_code")["model_heat_rate_egrid"].to_dict()
+    )
     clean = lambda d: {int(k): float(v) for k, v in d.items() if np.isfinite(v)}  # noqa: E731
     return clean(meas), clean(fb)
 
@@ -169,7 +171,16 @@ def run_year(year: int, gas: pd.Series) -> dict:
     sysd = _parquet(f"system_{year}.parquet")
     sysd = sysd[sysd["pass"] == "P1"][["zone", "hour", "price", "demand"]].copy()
     sysd["zone"] = sysd["zone"].astype(str)
-    cols = ["unit_id", "plant_code", "plant_group", "zone", "hour", "mw", "cap_mw", "mc"]
+    cols = [
+        "unit_id",
+        "plant_code",
+        "plant_group",
+        "zone",
+        "hour",
+        "mw",
+        "cap_mw",
+        "mc",
+    ]
     m = _parquet(
         f"unit_marginal_{year}.parquet", columns=cols, filters=[("marginal", "=", 1)]
     )
@@ -191,9 +202,9 @@ def run_year(year: int, gas: pd.Series) -> dict:
     hr_c = hr_c.fillna(COMMITTED_HR_YEAR[year])
     hr_i = pc.map(inc)
     covered = is_cc_com & hr_i.notna()
-    m["drop"] = np.where(
-        covered, (m["mc"] - VOM_CC) * (1.0 - hr_i / hr_c), 0.0
-    ).astype(float)
+    m["drop"] = np.where(covered, (m["mc"] - VOM_CC) * (1.0 - hr_i / hr_c), 0.0).astype(
+        float
+    )
     m["cc_coal_com"] = (m["kind"] == "committed") & (
         m["plant_group"].isin(CC_CLASSES) | m["plant_group"].str.startswith(COAL_PREFIX)
     )
@@ -224,7 +235,9 @@ def run_year(year: int, gas: pd.Series) -> dict:
     W = w.sum()
     r1 = float(w[z["cc_coal_com"].to_numpy()].sum() / W)
     cc_com = z["cc_coal_com"] & z["plant_group"].isin(CC_CLASSES)
-    coal_com = z["cc_coal_com"] & z["plant_group"].fillna("").str.startswith(COAL_PREFIX)
+    coal_com = z["cc_coal_com"] & z["plant_group"].fillna("").str.startswith(
+        COAL_PREFIX
+    )
     zcov = z[z["dz"] != 0.0]
 
     # load-weighted system price per hour -> implied HR
@@ -243,7 +256,9 @@ def run_year(year: int, gas: pd.Series) -> dict:
     ccc = m[is_cc_com].copy()
     ccc["fuel"] = (ccc["mc"] - VOM_CC) / hr_c[is_cc_com]
     ccc["gas"] = gas.reindex(
-        (pd.Timestamp(f"{year}-01-01") + pd.to_timedelta(ccc["hour"], "h")).dt.normalize()
+        (
+            pd.Timestamp(f"{year}-01-01") + pd.to_timedelta(ccc["hour"], "h")
+        ).dt.normalize()
     ).to_numpy()
 
     # --- R3 COAL_BIT econ/peak unloading bound -----------------------------------
@@ -269,10 +284,17 @@ def run_year(year: int, gas: pd.Series) -> dict:
         "anchored_load_share": round(float(w[z["anchored"].to_numpy()].sum() / W), 4),
         "R1_cc_or_coal_committed_load_share": round(r1, 4),
         "R1_cc_committed_load_share": round(float(w[cc_com.to_numpy()].sum() / W), 4),
-        "R1_coal_committed_load_share": round(float(w[coal_com.to_numpy()].sum() / W), 4),
+        "R1_coal_committed_load_share": round(
+            float(w[coal_com.to_numpy()].sum() / W), 4
+        ),
         "R2_covered_load_share": round(float(zcov["demand"].sum() / W), 4),
         "R2_mean_drop_in_cc_coal_committed_hours": round(
-            float(np.average(z.loc[z["cc_coal_com"], "dz"], weights=z.loc[z["cc_coal_com"], "demand"]))
+            float(
+                np.average(
+                    z.loc[z["cc_coal_com"], "dz"],
+                    weights=z.loc[z["cc_coal_com"], "demand"],
+                )
+            )
             if z["cc_coal_com"].any() and z.loc[z["cc_coal_com"], "demand"].sum() > 0
             else 0.0,
             3,
@@ -294,14 +316,21 @@ def run_year(year: int, gas: pd.Series) -> dict:
         "R3_coal_bit_unload_twh": round(r3_twh, 3),
         "sens_clip_p10_shift": round(p10_old - p10_clip, 3),
         "sens_clip_R3_twh": round(r3_clip, 3),
-        "sens_clip_mean_drop_all_hours": round(float(np.average(z["dz"].clip(lower=0.0), weights=w)), 4),
+        "sens_clip_mean_drop_all_hours": round(
+            float(np.average(z["dz"].clip(lower=0.0), weights=w)), 4
+        ),
         "cc_committed_marginal_unit_hours": int(is_cc_com.sum()),
         "cc_committed_covered_unit_hours": int(covered.sum()),
         "cc_committed_hr_source_unit_hours": {
-            k: int(v) for k, v in pd.Series(src[is_cc_com.to_numpy()]).value_counts().items()
+            k: int(v)
+            for k, v in pd.Series(src[is_cc_com.to_numpy()]).value_counts().items()
         },
-        "cc_committed_mean_hr_c": round(float(hr_c[covered].mean()), 3) if covered.any() else None,
-        "cc_committed_mean_hr_incr": round(float(hr_i[covered].mean()), 3) if covered.any() else None,
+        "cc_committed_mean_hr_c": round(float(hr_c[covered].mean()), 3)
+        if covered.any()
+        else None,
+        "cc_committed_mean_hr_incr": round(float(hr_i[covered].mean()), 3)
+        if covered.any()
+        else None,
         "cc_committed_share_incr_below_committed": round(
             float((hr_i[covered] < hr_c[covered]).mean()), 3
         )
