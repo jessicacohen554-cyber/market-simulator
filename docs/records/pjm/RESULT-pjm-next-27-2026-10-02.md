@@ -110,3 +110,10 @@ rows should carry a must-run floor where the plant's own meter contradicts it.
   decision, see the PR), the probes and the records.
 - **If the owner promoted anyway:** re-compose from the leg commits, attest, and run `scripts/promote_keeper.py`.
   That needs the gitignored DataMiner2 virtual-bid parquets for preflight 0d.
+
+## 6. Owner ruling
+
+**2026-10-02, PJM-NEXT-27 card: "Hold; closeout wave 1."** Option A. The coal-rows arm is dropped: the W0 keeper
+`2026-10-02-w0-pjm-fix2` stays, the 18 appended rows and their per-year `online_frac` stay at arm commit `d3e04d9f`
+and are not re-tested without new evidence. The next PJM step is closeout wave 1 (L2 incremental HR, R-13
+anchor-vintage), owned by the closeout lane; PJM-NEXT-28 does not duplicate it.

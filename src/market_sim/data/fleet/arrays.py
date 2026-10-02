@@ -247,6 +247,13 @@ def _spp_mmu_cut(
 
     The total share is "above emergency max" + "economic to emergency max" all
     year, plus the ambient MW-days on Jun-Sep as a share of fossil pmax.
+
+    One mechanism per row (rule 19): a row carrying a published seasonal pair
+    (W0 ``seasonal_capacity_basis``) already takes its EIA-860 summer rating
+    Jun-Sep, so it skips the ambient share. Every other row keeps it, at the
+    same per-MW share. When any row is paired, the cut is ``(len(idx), hours)``,
+    one row per fossil row. When none is (every pre-W0 fleet), it is the
+    unchanged ``(hours,)`` vector.
     """
     from market_sim.data.spp_mmu_unavailability import mmu_shares
 
@@ -254,9 +261,22 @@ def _spp_mmu_cut(
     sh = mmu_shares(year)
     fos_mw = float(np.asarray(pmax, dtype=float)[idx].sum()) if idx.size else 0.0
     amb = sh.ambient_mw / fos_mw if fos_mw > 0.0 else 0.0
+    jun_sep = np.isin(_hour_to_month_index(hours), (5, 6, 7, 8))
+    rated = np.array(
+        [_seasonal_basis_pair(generators[i]) is not None for i in idx], dtype=bool
+    )
     cut = np.full(hours, sh.above_emer + sh.eco_to_emer)
-    cut[np.isin(_hour_to_month_index(hours), (5, 6, 7, 8))] += amb  # Jun-Sep
+    if not rated.any():
+        cut[jun_sep] += amb
+        return idx, cut, sh
+    cut = np.repeat(cut[None, :], idx.size, axis=0)
+    cut[np.ix_(~rated, jun_sep)] += amb
     return idx, cut, sh
+
+
+def _row_cut(cut: np.ndarray, rows: "np.ndarray | slice" = slice(None)) -> np.ndarray:
+    """The cut broadcast over fossil rows: a ``(hours,)`` vector or the selected rows."""
+    return cut[None, :] if cut.ndim == 1 else cut[rows]
 
 
 def _apply_spp_mmu_bands(
@@ -287,16 +307,16 @@ def _apply_spp_mmu_bands(
         return
     if multiplicative:
         availability[idx, :hours] = availability[idx, :hours] * np.maximum(
-            0.0, 1.0 - cut[None, :]
+            0.0, 1.0 - _row_cut(cut)
         )
     else:
         availability[idx, :hours] = np.maximum(
-            0.0, availability[idx, :hours] - cut[None, :]
+            0.0, availability[idx, :hours] - _row_cut(cut)
         )
     logger.info(
         "SPP MMU offer-side bands (SPP %d, MMU year %d, %s): %d fossil rows; flat "
         "perf + summer class derate replaced; above-emer %.4f + eco-to-emer "
-        "%.4f all year, ambient %.4f Jun-Sep (%.0f MW)",
+        "%.4f all year, ambient %.4f Jun-Sep (%.0f MW) on %d unpaired rows",
         year,
         sh.year_used,
         "x available (SPP-107)" if multiplicative else "x rated",
@@ -305,6 +325,7 @@ def _apply_spp_mmu_bands(
         sh.eco_to_emer,
         float(cut.max() - cut.min()),
         sh.ambient_mw,
+        idx.size if cut.ndim == 1 else int((cut.max(axis=1) > cut.min()).sum()),
     )
 
 
@@ -338,14 +359,22 @@ def _apply_spp_mmu_pool(
     zones = np.array([generators[i].zone for i in idx])
     clipped = 0.0
     for p in pool:
-        rows = idx[zones == generators[p].zone]
-        mw = (
-            (availability[rows, :hours] * pm[rows, None]).sum(axis=0)
-            * sh.eco_to_emer
-            / keep
-            if rows.size
-            else np.zeros(hours)
-        )
+        in_zone = zones == generators[p].zone
+        rows = idx[in_zone]
+        if not rows.size:
+            mw = np.zeros(hours)
+        elif keep.ndim == 1:
+            mw = (
+                (availability[rows, :hours] * pm[rows, None]).sum(axis=0)
+                * sh.eco_to_emer
+                / keep
+            )
+        else:
+            # Rule-19 per-row cut (seasonal-pair rows skip the ambient share):
+            # each row's pre-band MW is recovered with its own keep.
+            mw = (availability[rows, :hours] * pm[rows, None] / keep[in_zone]).sum(
+                axis=0
+            ) * sh.eco_to_emer
         cap = float(pm[p])
         frac = mw / cap if cap > 0.0 else np.zeros(hours)
         clipped += float(np.maximum(0.0, mw - cap).sum())

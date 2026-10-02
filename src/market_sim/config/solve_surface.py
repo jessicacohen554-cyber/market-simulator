@@ -140,6 +140,7 @@ class SolveEpoch:
 #: backcast ISOs where ``unit_outage_dispatched_bin_denominator`` is live.
 #: 2026-10-02d is its second part (the live roster drops dead exit cohorts),
 #: scoped to the backcast ISOs whose keeper fleet carries one (zero-LP sweep).
+#: 2026-10-02e: the SPP MMU ambient band leaves seasonal-pair rows (backcast SPP).
 SOLVE_EPOCHS: tuple[SolveEpoch, ...] = (
     SolveEpoch(
         id="2026-10-02c",
@@ -158,6 +159,15 @@ SOLVE_EPOCHS: tuple[SolveEpoch, ...] = (
         ),
         modes=("backcast",),
         isos=("MISO", "NWPP", "PJM", "SOCO"),
+    ),
+    SolveEpoch(
+        id="2026-10-02e",
+        cause=(
+            "SPP MMU ambient band skips rows on a published W0 seasonal pair "
+            "(rule 19: one summer derate per row)"
+        ),
+        modes=("backcast",),
+        isos=("SPP",),
     ),
 )
 
