@@ -1,0 +1,19 @@
+{
+  "id": "2026-10-02-w0-spp",
+  "label": "w0 spp",
+  "date": "2026-10-02",
+  "shorthand": "w0-spp",
+  "definition": "closeout-B W0 phase 3: SPP full-span re-solve at the W0 defaults (owner ruling R-2)",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SPP",
+  "file": "frontend/data/backcast/runs/2026-10-02-w0-spp.js",
+  "bundle": "results/calibration/w0_spp_span"
+}

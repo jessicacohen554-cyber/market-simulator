@@ -3955,3 +3955,33 @@ derates with the MMU above-emergency-max, economic→emergency-max and ambient b
 partially-outaged units, while the MMU measures against the derated amount. The economic→emergency band is removed in the
 reliability hours it exists for. Both repairs are definitional → SPP-107. Keeper unchanged, cell O. Record:
 `docs/records/spp/RESULT-spp-106-offer-side-unavailability-2026-10-01.md`.
+
+## 2026-10-02 — closeout-B W0 phase 3: keeper 2026-10-02-w0-spp (W0 EIA-860 settlement re-solve), NOT-YET → NOT-YET
+
+**What changed.** The spp-100 recipe (`spp100_arm_span`) was re-solved year by year (rule 36: seven shards at `306f2c00`). That is the keeper on main; PR #7025 (EXR) was still open. The only change is the W0 EIA-860 settlement backcast defaults (owner ruling R-2; PRECOMMIT `docs/records/governance/closeout-2026-10/PRECOMMIT-closeout-b-w0-phase3-2026-10-02.md`):
+- seasonal capacity basis;
+- actual-retirement-only;
+- the five registry-read repairs;
+- standby admission.
+
+`unit_outage_dispatched_bin_denominator` yields to the keeper's armed basis share. The config partition (train 2023–2025, validation 2019–2022) is re-keyed unchanged. Zero DOF.
+
+| | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 |
+|---|---|---|---|---|---|---|---|
+| C3a vs RT, before | +11.5 % | +27.5 % | +6.5 % | −5.8 % | −6.7 % | −8.6 % | −5.4 % |
+| C3a vs RT, after | +10.7 % | +26.8 % | +6.3 % | −6.9 % | −7.2 % | −9.3 % | −4.4 % |
+
+Records that change status:
+- **C1 ST_GAS 2024:** −7.65 → −8.87 TWh, PASS → FAIL.
+- **C1 ST_GAS 2025:** −7.50 → −8.87 TWh, PASS → FAIL.
+- **C4 gas 2021:** FAIL → PASS.
+
+Year 2024 reads NOT-YET (was CALIBRATED). The ISO determination stays NOT-YET (main's status already read NOT-YET on the train tier at HEAD).
+
+**Census (rated-capacity rebuild at the W0 posture, phase 2).** Total thermal is −1.1 to −3.2 % summer against EIA-860, OUTSIDE.
+- **CC:** −8.7 to −13.7 %, from rating differences: 55463 (−796 MW; −1,374 MW in 2022) and 55176 (−143 to −146 MW).
+- **CT:** 55064 (−76 to −79 MW).
+- **ST_GAS:** 2098 and 10362 (−44 to −50 MW).
+- **COAL 2020:** Oklaunion 127 (+650 MW), a true exit carry that ran in 2020 (EIA-923 1.10 TWh, model 1.01 TWh).
+
+These are residuals for the SPP lane, not tuned (rule 23).
