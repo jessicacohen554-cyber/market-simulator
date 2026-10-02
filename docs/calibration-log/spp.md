@@ -3955,3 +3955,33 @@ derates with the MMU above-emergency-max, economic→emergency-max and ambient b
 partially-outaged units, while the MMU measures against the derated amount. The economic→emergency band is removed in the
 reliability hours it exists for. Both repairs are definitional → SPP-107. Keeper unchanged, cell O. Record:
 `docs/records/spp/RESULT-spp-106-offer-side-unavailability-2026-10-01.md`.
+
+## spp-107 — 2026-10-02 — MMU carrier repaired on the MMU's own definitions: solved, PROMOTED (keeper)
+
+**Design (zero LP).** The two SPP-106 construction errors were fixed as one sub-gate, `spp_mmu_offer_repair` (default off, zero DOF):
+1. Every band now multiplies the row's post-outage availability, instead of being a share of rated pmax.
+2. The economic→emergency slice is one `emergency_band` pool per zone, offered at the shed price − ε ($1,999.999).
+
+The instrument predicted South capacity of +93 to +148 MW over the keeper in EX's short hours (EX: −471 to −599), and that
+about half of EX's C3a gain would be given back. The owner ruled **"Build + solve EXR"**.
+
+**Solved.** 7 year-isolated shards at pin `d787142d`, form 4 vs spp100 (G-DRIFT all INERT); E1–E6 PASS.
+
+| | keeper spp-100 | EXR |
+|---|---|---|
+| train C3a 2023 / 24 / 25 | −6.7 / −8.6 / −5.4 % | −5.4 / −8.2 / −2.9 % |
+| C1 COAL_PRB 2023 / 24 | +3.31 / +3.59 TWh | +1.08 / +1.35 TWh |
+| unserved 2024 / 25 | 862 / 136 MWh | 443 / 44 MWh (pool 1,334 / 725 MWh) |
+| C3a 2019 / 20 / 21 | +11.5 / +27.5 / +6.5 % | +13.1 / +29.3 / +9.6 % |
+| C4 2021 gas | FAIL | PASS |
+
+- Train tier stays CALIBRATED (lone ledgered C3c), with no new failing row in any year.
+- The upper tercile moves only +$0.14–0.68 against an $11–15 gap.
+
+**Owner: "Promote EXR (Rec.)".** Keeper → `2026-10-02-spp-107-mmu-repair` (bundle `spp107EXR_span`, 2019–2025). spp-100 was
+pruned.
+
+Tooling defect noted: `promote_keeper.py` runs the audit (step 8) before the prune (step 9), so E13 always fails on the outgoing
+keeper. The prune, re-audit and parity steps were finished by hand.
+
+Record: `docs/records/spp/RESULT-spp-107-mmu-carrier-repair-2026-10-02.md`.
