@@ -41,5 +41,5 @@ year,family,twh,source,source_sha256
 2024,SUN,17.1810,frontend/data/backcast/bench/NWPP/2024.json.gz:bench.classFull,1a7a803eea7c930116645a9ccd6cfd3277bcf019e0e4e7883ed69a2073017266
 2024,WAT,107.9002,frontend/data/backcast/bench/NWPP/2024.json.gz:bench.classFull,1a7a803eea7c930116645a9ccd6cfd3277bcf019e0e4e7883ed69a2073017266
 2024,WND,34.8200,frontend/data/backcast/bench/NWPP/2024.json.gz:bench.classFull,1a7a803eea7c930116645a9ccd6cfd3277bcf019e0e4e7883ed69a2073017266
-2025,COL,42.0700,frontend/data/backcast/bench/NWPP/2025.json.gz:bench.classFull,87666adf33369a2891010a4c02db32f7306a61c22da5d589b30ad6f14c9577bf
-2025,NG,75.1592,frontend/data/backcast/bench/NWPP/2025.json.gz:bench.classFull,87666adf33369a2891010a4c02db32f7306a61c22da5d589b30ad6f14c9577bf
+2025,COL,39.8545,frontend/data/backcast/bench/NWPP/2025.json.gz:bench.classFull,66c36ec633f911bdfe635ce3016671d08cb9f3ee22995631ba97773995af04ed
+2025,NG,74.1331,frontend/data/backcast/bench/NWPP/2025.json.gz:bench.classFull,66c36ec633f911bdfe635ce3016671d08cb9f3ee22995631ba97773995af04ed
