@@ -34,8 +34,28 @@ waits for the desk to merge phases 1+2.
    `unit_outage_coal_extract_basis_share`, `unit_outage_lp_capacity_basis`), so
    no recipe is refused. The reconstructed map also now carries the block and
    steam-part repairs (`paths.set_eia860_fleet_row_repairs`), so the miso-272
-   point-of-use guard fires only where the two bases genuinely differ. **For the
-   desk to confirm or veto before phase 3.**
+   point-of-use guard fires only where the two bases genuinely differ.
+   **DESK-CONFIRMED 2026-10-02** (session_017wUwd6…, reported to the owner as a
+   desk-confirmed addition to R-2), conditions: (a) `--no-unit-outage-dispatched-bin-denominator`
+   on `run_calibration_full.py` reaches the pre-arm posture (or `replay_keeper --set
+   unit_outage_dispatched_bin_denominator=false`); (b) the yield rule is tested
+   (`tests/unit/data/test_unit_outage_dispatched_bin_denominator.py::test_yields_to_an_explicit_alternative_denominator`)
+   and resolves per keeper as below; (c) the matrix row's definition states the
+   backcast default and every shard already carries its cell; (d) G-DRIFT
+   toggles it ALONE per ISO (`gdrift_2023.json`), attributed separately from E.1;
+   (e) the NEISO tripwire was evaluated WITH it on.
+
+   | Keeper recipe | denominator posture | resolved under W0 |
+   |---|---|---|
+   | ERCOT `r_ercot24_span` | none (ERCOT branch caps on its bin sheet) | inert (non-ERCOT construction) |
+   | CAISO `rcaiso20_A_*` | `unit_outage_extract_basis_share` | **yields → off** |
+   | PJM `pjmnext16_A_span` | none | **on** |
+   | MISO `miso280_span` | already armed | on (unchanged) |
+   | NYISO `nyisonext26p_*` | `unit_outage_extract_basis_share` | **yields → off** |
+   | NEISO `neiso119_span` | none | **on** |
+   | SPP `spp100_arm_span` | `unit_outage_coal_extract_basis_share` | **yields → off** |
+   | NWPP `nwppnext16c_span` | none | **on** |
+   | SOCO `soco96_span` | none | **on** |
 2. **E.4 benchmark parity by the ruling's "fleet admits what the benchmark
    counts" branch.** The EIA-923 benchmark is not status-filtered (an OA status
    is a year-END snapshot; the plant may have generated during Y — filtering it
