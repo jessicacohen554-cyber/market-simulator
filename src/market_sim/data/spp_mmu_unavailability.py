@@ -21,6 +21,15 @@ Every value is read from the table; there are zero fitted parameters (rule 21 [R
 2020-2024 take the nearest published year, a hold rule fixed in the DESIGN before any number was
 computed. That rule is also the forward story (rule 13 [R-MEASURED]): a forward year holds the last
 published MMU year.
+
+SPP-107 repair sub-gate ``ScenarioConfig.spp_mmu_offer_repair`` (record
+``docs/records/spp/DESIGN-spp-107-mmu-carrier-repair-2026-10-02.md``) builds the bands on the MMU's own
+definitions: every band is a share of the row's post-outage AVAILABLE MW (multiplicative), and the
+economic-to-emergency slice is not removed but pooled per zone as one ``emergency_band``
+pseudo-generator (:func:`build_spp_mmu_pool_generators`) offered at the LP's load-shed price minus the
+storage tiebreaker epsilon, so it clears only where the zone would otherwise shed load (the MMU: those MW
+"are only accessible when SPP anticipates or identifies a reliability issue"). Its hourly capacity is
+stamped by ``data.fleet.arrays._apply_spp_mmu_pool``.
 """
 
 from __future__ import annotations
@@ -30,6 +39,7 @@ from functools import lru_cache
 
 import pandas as pd
 
+from market_sim.config.constants import STORAGE_TIEBREAKER_EPSILON
 from market_sim.config.paths import SPP_MMU_UNAVAILABLE_CSV
 
 # Jun-Sep, the MMU's derate-day season (Fig 12: "most of these days occurred during the summer"),
@@ -71,3 +81,46 @@ def mmu_shares(year: int) -> MMUShares:
         * float(r.ambient_derate_days)
         / JUN_SEP_DAYS,
     )
+
+
+def build_spp_mmu_pool_generators(
+    config, iso: str, fleet: list, shed_price: float
+) -> list:
+    """The SPP-107 economic-to-emergency pool: one ``emergency_band`` row per zone with fossil rows.
+
+    Empty unless ``spp_mmu_offer_unavailability`` and ``spp_mmu_offer_repair`` are both armed for SPP.
+    ``pmax_mw`` is the eco-to-emer share of the zone's fossil pmax (an upper bound; the hourly
+    availability is stamped by ``data.fleet.arrays._apply_spp_mmu_pool``). The offer is ``vom =
+    shed_price - STORAGE_TIEBREAKER_EPSILON`` with heat rate and emissions 0, where ``shed_price`` is the
+    LP's own load-slack price (``pipeline.spec.shed_penalty_voll``): zero fitted parameters (rule 21).
+    The mapping year is ``config.weather_year``, the same year the bands use.
+    """
+    from market_sim.data.fleet import Generator
+    from market_sim.data.fleet.arrays import _mmu_fossil
+
+    if (
+        iso != "SPP"
+        or not getattr(config, "spp_mmu_offer_unavailability", False)
+        or not getattr(config, "spp_mmu_offer_repair", False)
+    ):
+        return []
+    sh = mmu_shares(int(config.weather_year))
+    by_zone: dict[str, float] = {}
+    for g in fleet:
+        if _mmu_fossil(g):
+            by_zone[g.zone] = by_zone.get(g.zone, 0.0) + float(g.pmax_mw)
+    return [
+        Generator(
+            unit_id=f"SPP_MMU_EMER_{zone}",
+            name=f"MMU economic-to-emergency pool {zone}",
+            zone=zone,
+            fuel_type="emergency_band",
+            pmax_mw=sh.eco_to_emer * mw,
+            pmin_mw=0.0,
+            heat_rate=0.0,
+            vom=float(shed_price) - STORAGE_TIEBREAKER_EPSILON,
+            eford=0.0,
+        )
+        for zone, mw in sorted(by_zone.items())
+        if mw > 0.0
+    ]
