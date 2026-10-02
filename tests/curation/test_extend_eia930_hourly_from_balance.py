@@ -76,3 +76,54 @@ def test_extend_keeps_committed_rows_and_schema_byte_identical(extract_dir):
     kept = after[after["UTC time"].isin(before["UTC time"])].reset_index(drop=True)
     assert_frame_equal(kept, before, check_exact=True)
     assert after["NG: BAT"].iloc[0] != after["NG: BAT"].iloc[0]  # NaN, not 0
+
+
+def _balance_rows(ba: str, utc: list[str], demand: list[float]) -> pd.DataFrame:
+    """Legacy-taxonomy BALANCE rows for one FLA member BA."""
+    n = len(utc)
+    frame = pd.DataFrame(
+        {
+            "Balancing Authority": [ba] * n,
+            "Region": ["FLA"] * n,
+            "UTC Time at End of Hour": utc,
+            "Demand Forecast (MW)": demand,
+            "Demand (MW)": [d * 1000 for d in demand],  # raw spike, never read
+            "Demand (MW) (Adjusted)": demand,
+            "Net Generation (MW) (Adjusted)": demand,
+            "Total Interchange (MW) (Adjusted)": [0.0] * n,
+        }
+    )
+    for col in (*ext._LEGACY_FUEL_MAP, *ext._LEGACY_OTHER_COLS):
+        frame[col] = np.nan
+    frame["Net Generation (MW) from Natural Gas"] = demand
+    return frame
+
+
+def test_region_rows_sum_members_per_hour(tmp_path, monkeypatch):
+    """A region hour is the Adjusted sum of the BAs filing that hour.
+
+    A BA absent from an hour (NSB after folding into FMPP) is not a member
+    there; a member filing NaN makes the demand family NaN (a partial sum is
+    not the region) while fuel sums stay ``min_count=1``.
+    """
+    hours = ["2020-01-01 06:00", "2020-01-01 07:00", "2020-01-01 08:00"]
+    balance = pd.concat(
+        [
+            _balance_rows("AAA", hours, [100.0, 100.0, 100.0]),
+            _balance_rows("BBB", hours, [10.0, np.nan, 10.0]),
+            _balance_rows("NSB", hours[:1], [1.0]),
+        ],
+        ignore_index=True,
+    )
+    balance.to_parquet(tmp_path / "EIA930_BALANCE_2020_Jan_Jun.parquet")
+    monkeypatch.setattr(ext, "BALANCE_DIR", tmp_path)
+
+    out = ext.build_region_rows("FLA", ["NG: NG", "NG: COL"], (2020,), ("Jan_Jun",))
+
+    assert out["Demand"].tolist()[0] == 111.0
+    assert np.isnan(out["Demand"].iloc[1])
+    assert out["Demand"].iloc[2] == 110.0
+    assert out["NG: NG"].tolist() == [111.0, 100.0, 110.0]
+    assert out["NG: COL"].isna().all()  # no member reports it: NaN, not 0
+    assert out["Local time"].iloc[0] == pd.Timestamp("2020-01-01 01:00")  # US/Eastern
+    assert out["Local date"].iloc[0] == pd.Timestamp("2020-01-01")

@@ -1,0 +1,150 @@
+{
+  "part_a_soc_range_derate_bound": {
+    "2022": {
+      "dmm_series": "2024 quarters as proxy",
+      "energy_cap_mwh": 16616,
+      "daily_max_soc_over_cap_p50": 0.612,
+      "daily_max_soc_over_cap_p95": 0.963,
+      "days_max_soc_ge_95pct": 47,
+      "days_min_soc_le_1pct": 147,
+      "bind_days": 187,
+      "lost_energy_gwh": 22.3,
+      "lost_energy_pct_of_annual_discharge": 0.88,
+      "mw_equivalent_bind_day_mean": 24,
+      "mw_equivalent_max": 147,
+      "h18_slope_usd_per_mwh_per_mw": 0.00336,
+      "lift_bind_day_mean_usd_per_mwh": 0.08,
+      "lift_max_day_usd_per_mwh": 0.49,
+      "lift_annual_mean_usd_per_mwh": 0.041
+    },
+    "2023": {
+      "dmm_series": "own",
+      "energy_cap_mwh": 27106,
+      "daily_max_soc_over_cap_p50": 0.635,
+      "daily_max_soc_over_cap_p95": 0.921,
+      "days_max_soc_ge_95pct": 9,
+      "days_min_soc_le_1pct": 151,
+      "bind_days": 156,
+      "lost_energy_gwh": 34.0,
+      "lost_energy_pct_of_annual_discharge": 0.84,
+      "mw_equivalent_bind_day_mean": 44,
+      "mw_equivalent_max": 241,
+      "h18_slope_usd_per_mwh_per_mw": 0.00336,
+      "lift_bind_day_mean_usd_per_mwh": 0.15,
+      "lift_max_day_usd_per_mwh": 0.81,
+      "lift_annual_mean_usd_per_mwh": 0.063
+    },
+    "2024": {
+      "dmm_series": "own",
+      "energy_cap_mwh": 39966,
+      "daily_max_soc_over_cap_p50": 0.73,
+      "daily_max_soc_over_cap_p95": 0.963,
+      "days_max_soc_ge_95pct": 20,
+      "days_min_soc_le_1pct": 191,
+      "bind_days": 201,
+      "lost_energy_gwh": 49.3,
+      "lost_energy_pct_of_annual_discharge": 0.67,
+      "mw_equivalent_bind_day_mean": 49,
+      "mw_equivalent_max": 323,
+      "h18_slope_usd_per_mwh_per_mw": 0.00153,
+      "lift_bind_day_mean_usd_per_mwh": 0.07,
+      "lift_max_day_usd_per_mwh": 0.49,
+      "lift_annual_mean_usd_per_mwh": 0.041
+    },
+    "2025": {
+      "dmm_series": "2024 quarters as proxy",
+      "energy_cap_mwh": 52963,
+      "daily_max_soc_over_cap_p50": 0.746,
+      "daily_max_soc_over_cap_p95": 0.955,
+      "days_max_soc_ge_95pct": 26,
+      "days_min_soc_le_1pct": 181,
+      "bind_days": 179,
+      "lost_energy_gwh": 55.9,
+      "lost_energy_pct_of_annual_discharge": 0.53,
+      "mw_equivalent_bind_day_mean": 62,
+      "mw_equivalent_max": 428,
+      "h18_slope_usd_per_mwh_per_mw": 0.00196,
+      "lift_bind_day_mean_usd_per_mwh": 0.12,
+      "lift_max_day_usd_per_mwh": 0.84,
+      "lift_annual_mean_usd_per_mwh": 0.06
+    }
+  },
+  "part_b_cnog_battery_mw_outage": {
+    "battery_resources": 177,
+    "nature_of_work_rows": {
+      "PLANT_TROUBLE": 25464,
+      "PLANT_MAINTENANCE": 4585,
+      "UNIT_TESTING": 1294,
+      "NEW_GENERATOR_TEST_ENERGY": 1088,
+      "METERING_TELEMETRY": 1001,
+      "TRANSMISSION_INDUCED": 793
+    },
+    "quarters": {
+      "2023Q1": {
+        "offline_mw_mean": 939,
+        "rtm_storage_fleet_mw_mean": 5572,
+        "share_pct": 16.9
+      },
+      "2023Q2": {
+        "offline_mw_mean": 1498,
+        "rtm_storage_fleet_mw_mean": 5887,
+        "share_pct": 25.4
+      },
+      "2023Q3": {
+        "offline_mw_mean": 1806,
+        "rtm_storage_fleet_mw_mean": 7041,
+        "share_pct": 25.6
+      },
+      "2023Q4": {
+        "offline_mw_mean": 1384,
+        "rtm_storage_fleet_mw_mean": 8083,
+        "share_pct": 17.1
+      },
+      "2024Q1": {
+        "offline_mw_mean": 1649,
+        "rtm_storage_fleet_mw_mean": 8928,
+        "share_pct": 18.5
+      },
+      "2024Q2": {
+        "offline_mw_mean": 1547,
+        "rtm_storage_fleet_mw_mean": 10294,
+        "share_pct": 15.0
+      },
+      "2024Q3": {
+        "offline_mw_mean": 1521,
+        "rtm_storage_fleet_mw_mean": 11519,
+        "share_pct": 13.2
+      },
+      "2024Q4": {
+        "offline_mw_mean": 1345,
+        "rtm_storage_fleet_mw_mean": 12315,
+        "share_pct": 10.9
+      },
+      "2025Q1": {
+        "offline_mw_mean": 2259,
+        "rtm_storage_fleet_mw_mean": 13937,
+        "share_pct": 16.2
+      },
+      "2025Q2": {
+        "offline_mw_mean": 2081,
+        "rtm_storage_fleet_mw_mean": 15208,
+        "share_pct": 13.7
+      },
+      "2025Q3": {
+        "offline_mw_mean": 2564,
+        "rtm_storage_fleet_mw_mean": 16753,
+        "share_pct": 15.3
+      },
+      "2025Q4": {
+        "offline_mw_mean": 2203,
+        "rtm_storage_fleet_mw_mean": 17474,
+        "share_pct": 12.6
+      }
+    },
+    "annual_mean_share_pct": {
+      "2023": 21.2,
+      "2024": 14.4,
+      "2025": 14.5
+    }
+  }
+}

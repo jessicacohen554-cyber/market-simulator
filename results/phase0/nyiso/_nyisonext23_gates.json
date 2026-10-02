@@ -1,0 +1,48 @@
+{
+ "2021": {
+  "G3_max_zone_demand_dgwh": 0.0,
+  "G3_slack_dgwh": 0.0,
+  "G3_pass": true,
+  "G5_new_d4_fail": [
+   "(2021, None, '57185')"
+  ],
+  "G5_pass": false
+ },
+ "2022": {
+  "G3_max_zone_demand_dgwh": 0.0,
+  "G3_slack_dgwh": 0.0,
+  "G3_pass": true,
+  "G5_new_d4_fail": [
+   "(2022, None, '2490')"
+  ],
+  "G5_pass": false
+ },
+ "2023": {
+  "G3_max_zone_demand_dgwh": 0.0,
+  "G3_slack_dgwh": 0.0,
+  "G3_pass": true,
+  "G5_new_d4_fail": [
+   "(2023, None, '8906')"
+  ],
+  "G5_pass": false
+ },
+ "2024": {
+  "G3_max_zone_demand_dgwh": 0.0,
+  "G3_slack_dgwh": 0.0,
+  "G3_pass": true,
+  "G5_new_d4_fail": [
+   "(2024, None, '55405')"
+  ],
+  "G5_pass": false
+ },
+ "2025": {
+  "G3_max_zone_demand_dgwh": 0.0,
+  "G3_slack_dgwh": 0.0,
+  "G3_pass": true,
+  "G5_new_d4_fail": [],
+  "G5_pass": true,
+  "G2_nyc_20250117_arm": 70.13,
+  "G2_nyc_20250117_keeper": 187.43,
+  "G2_pass": true
+ }
+}

@@ -159,7 +159,9 @@ class TestFootprintAdmission(unittest.TestCase):
         )
 
     def test_curated_fleet_reproduces_the_post_adjudication_census(self):
-        """939 plants / 1,930 generators / 98,238.1 MW; Pine Forest absent."""
+        """940 plants / 1,926 generators / 98,194.9 MW on the EIA-860 FINAL 2025
+        canonical snapshot (2026-10-02; was 939 / 1,930 / 98,238.1 on the 2025
+        Early Release); Pine Forest absent."""
         path = EIA_860_DIR / EIA_860_PARQUET_NAME
         if not path.exists():
             self.skipTest("eia860_generators.parquet not hydrated")
@@ -168,10 +170,10 @@ class TestFootprintAdmission(unittest.TestCase):
             columns=["plant_id", "balancing_authority_code", "nameplate_capacity_mw"],
         )
         fleet = df[df["balancing_authority_code"].isin(NWPP_BAS)]
-        self.assertEqual(fleet["plant_id"].nunique(), 939)
-        self.assertEqual(len(fleet), 1930)
+        self.assertEqual(fleet["plant_id"].nunique(), 940)
+        self.assertEqual(len(fleet), 1926)
         self.assertAlmostEqual(
-            float(fleet["nameplate_capacity_mw"].sum()), 98_238.1, places=1
+            float(fleet["nameplate_capacity_mw"].sum()), 98_194.9, places=1
         )
         self.assertFalse((df["plant_id"] == 68906).any())  # Pine Forest Solar I, TX/TRE
         self.assertFalse((df["plant_id"] == 69290).any())  # Desert Bloom, proposed only
@@ -180,9 +182,19 @@ class TestFootprintAdmission(unittest.TestCase):
 class TestDeliberateAbsences(unittest.TestCase):
     """Each absence is a ruling, not an oversight (cards N7 / N8, gates G5-G7)."""
 
-    def test_no_import_node(self):
+    def test_import_node_is_seam_only_and_default_off(self):
+        """NWPP-NEXT-19 owner card (2026-10-02) wired the external node for the
+        registered seams; there are still no static tranches, and the priced
+        seams stay default-off (the keeper serves the measured schedule)."""
+        from market_sim.config.interchange_config import (
+            PRICED_INTERCHANGE_DEFAULT_ISOS,
+            REFERENCE_PRICE_DEFAULT_ISOS,
+        )
+
         self.assertNotIn("NWPP", IMPORT_TRANCHES)
-        self.assertNotIn("NWPP", IMPORT_ZONE)
+        self.assertEqual(IMPORT_ZONE["NWPP"], "NWPP_external")
+        self.assertNotIn("NWPP", REFERENCE_PRICE_DEFAULT_ISOS)
+        self.assertNotIn("NWPP", PRICED_INTERCHANGE_DEFAULT_ISOS)
 
     def test_no_capacity_market_and_no_campd_binning(self):
         self.assertNotIn("NWPP", MARKET_DESIGN)

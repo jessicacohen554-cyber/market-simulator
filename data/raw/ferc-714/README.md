@@ -365,3 +365,70 @@ python scripts/data/fetch_ferc714_system_lambda.py --cache-dir /tmp/ferc714 --se
 `--check` (default `--set soco`) still returned `IDENTICAL` after the script
 was extended. The prints include the per-respondent-year clock table above.
 The CSV's sha256 is in `SHA256SUMS.txt`.
+
+---
+
+## NWPP-footprint hourly system lambda — RAW extract (Part II Schedule 6), 2019–2025
+
+Landed 2026-10-02 by the closeout-plan lane (`claude/backcast-calibration-plan-753xwl`;
+plan §3.9 step 1, data row ★15; owner instruction "you can get … ferc data yourself").
+**Status: REPORTED-ONLY, RAW.** Verbatim filings: local hour-ending stamps and the
+filer's own timezone codes, **no clock conversion, no respondent selection, no
+weighting** — every construction decision the STOP-gated benchmark needs (respondent
+set, demand weights, UTC conversion, coverage, Mid-C cross-check) belongs to the NWPP
+lane's PRECOMMIT and owner card N2. Feeds no gate, no scorer, no LP (rule 13).
+
+### File
+
+`nwpp_hourly_system_lambda_2019_2025_raw.parquet` — 482,130 rows, long form.
+
+| column | meaning |
+|---|---|
+| `era` | `csv` (report years 2019–2020, `ferc714.zip`) or `xbrl` (2021–2025, `ferc714-xbrl-<year>.zip`) |
+| `filer` | the filer's name as it appears in the archive (CSV era: `Respondent IDs.csv`; XBRL era: the instance filename prefix) |
+| `respondent_id` | CSV era: FERC native `respondent_id`; XBRL era: the entity CID inside the instance |
+| `report_year`, `lambda_date`, `hour_ending` | the filing's own day and hour-ending (1–24), local clock |
+| `timezone_code` | CSV era: the row's `timezone`; XBRL era: the `ferc:TimeZone` codes found in the instance, pipe-joined |
+| `lambda` | the reported $/MWh value, unchanged |
+| `filing` | archive member the row came from (latest filing per filer-year by upload epoch) |
+
+Filers covered (every XBRL instance in the archive whose name matches an NWPP member
+utility; CSV era by respondent id): Avista (119), BPA (122), Tacoma (139), EWEB (166),
+Idaho Power (180), Nevada Power (210), NorthWestern (217 / NorthWestern Corporation),
+PacifiCorp East (228) / West (229) / combined (307) and the `PacifiCorp - East BAA` /
+`- West BAA` XBRL filers, PGE (232), Chelan (237), Douglas (238), Grant (239), Puget
+(240), Seattle City Light (247), Sierra Pacific (249), Gridforce (323), Avangrid (330).
+
+### What the extract shows — read before building anything on it
+
+**Only two filers report a non-zero system lambda in any year: Nevada Power (NEVP)
+and NorthWestern (NWMT, XBRL era 2021–2025 only; its CSV-era 2019–2020 rows are
+zero).** Every other NWPP filer that carries Schedule 6 rows files **zeros for every
+hour** (Tacoma, EWEB, PGE, PacifiCorp East/West/combined, BPA, Puget, Seattle, Chelan,
+Douglas, Grant, Avista), and Avista / Chelan / Grant / Idaho Power / Puget / Seattle /
+Sierra Pacific / Gridforce / Avangrid / BPA instances in the XBRL era carry **no
+`SystemLambda` facts at all** (Idaho Power: one fact in 2022 and 2023). Per-filer
+summary of the committed rows (count / mean / max $/MWh): NEVP 61,362 / 42.3 / 1,900;
+NorthWestern Corporation 43,824 / 39.1 / 2,315; every other filer mean 0.0, max 0.0.
+
+Implication for the plan's "FERC-714 lambda as the NWPP price reference" lever: a
+demand-weighted pool lambda cannot be built from this source — the thermal-following
+respondents that would carry it (PacifiCorp, PGE, Puget, Idaho Power) file zeros or
+nothing. What survives is at most two single-BA references (NEVP, NWMT), each an edge
+member of the pool; whether either is admissible as a *labelled* NWPP reference is an
+owner question for the NWPP lane, not something this extract decides. The SOCO
+precedent (Southern files a real lambda) does not transfer.
+
+### Source and regeneration
+
+- PUDL raw FERC-714 archive, Zenodo record 21738524 (v32.0.0): `ferc714.zip`
+  (sha256 `a2797ab2…9d2d67`, member `Part 2 Schedule 6 - Balancing Authority Hourly
+  System Lambda.csv`) and `ferc714-xbrl-2021.zip` … `ferc714-xbrl-2025.zip` (sha256
+  as pinned in `scripts/data/fetch_ferc714_system_lambda.py::ZENODO_SHA256`;
+  all six verified on download).
+- XBRL parsing reuses `scripts/data/fetch_ferc714_system_lambda.py::_xbrl_lambda`
+  (instant → local hour-ending; latest filing per filer-year by upload epoch; earlier
+  filings are counted in the provenance line, not read). The one-off extraction
+  script is reproducible from this description; a lane that adopts the series should
+  add an `--set nwpp` to the fetcher so the extract regenerates from the pinned zips.
+- Identity: see `SHA256SUMS.txt`.

@@ -128,13 +128,32 @@ class TestLiveData(unittest.TestCase):
     """Behaviour against the committed EIA-923 / EIA-930 extracts."""
 
     def test_caiso_2025_wind_sourced_from_eia930(self):
+        """The per-fuel guard swaps a benchmarked renewable to EIA-930 exactly
+        when EIA-923 under-counts it (below the completeness fraction), and the
+        whole-vintage flag reflects the BA TOTAL, not one fuel. Written against
+        the 2025 early survey (wind 9 TWh of 19.8, vintage ~74 %); since the
+        EIA-923 Final 2025 landed (2026-10-02) the vintage is complete while
+        CAISO wind still reads 15.0 of 19.8 TWh (under-reported in EIA-923
+        every year, as _backfill_renewables_eia930 documents), so the
+        assertions are the guard's contract, not the vintage's numbers."""
         raw = bcr._eia923_generation_raw("CAISO", 2025)
         guarded = bcr._eia923_generation("CAISO", 2025)
         if not raw:
             self.skipTest("no CAISO 2025 EIA-923 vintage in this checkout")
-        self.assertLess(raw["wind"], 10.0)  # truncated survey
-        self.assertGreater(guarded["wind"], 15.0)  # EIA-930 grid total
-        self.assertTrue(bcr._eia923_is_incomplete("CAISO", 2025))
+        e930 = bcr._eia930_annual_by_fuel("CAISO", 2025)
+        frac = bcr._EIA923_RENEWABLE_COMPLETENESS_FRACTION
+        if raw["wind"] < frac * e930["wind"]:
+            self.assertAlmostEqual(guarded["wind"], e930["wind"], places=4)
+        else:
+            self.assertAlmostEqual(guarded["wind"], raw["wind"], places=4)
+        self.assertGreater(guarded["wind"], 15.0)  # the grid-scale CAISO wind total
+        # The whole-vintage flag keys on the BA total vs EIA-930 net_gen.
+        df = bcr._eia923_ba_frame("CAISO", 2025)
+        e923_total = float(df["net_gen"].sum()) / bcr._MWH_PER_TWH
+        expected = (
+            e923_total < bcr._EIA923_VINTAGE_COMPLETENESS_FRACTION * e930["net_gen"]
+        )
+        self.assertEqual(bcr._eia923_is_incomplete("CAISO", 2025), expected)
 
     def test_ercot_2024_complete_is_byte_identical(self):
         raw = bcr._eia923_generation_raw("ERCOT", 2024)

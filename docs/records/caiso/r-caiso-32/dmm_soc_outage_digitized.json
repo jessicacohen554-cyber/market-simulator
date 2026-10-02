@@ -1,0 +1,74 @@
+{
+  "2023": {
+    "source": "2023-special-report-on-battery-storage-jul-16-2024.pdf",
+    "figure": "Figure 2.23",
+    "page": 30,
+    "axis_offset_pt": {
+      "left": 1.01,
+      "right": 0.99
+    },
+    "quarters": {
+      "Q1": {
+        "max_soc_outage_mwh": 689,
+        "min_soc_outage_mwh": 8,
+        "share_of_charge_range_pct": 4.08,
+        "implied_charge_range_mwh": 17087
+      },
+      "Q2": {
+        "max_soc_outage_mwh": 1322,
+        "min_soc_outage_mwh": 173,
+        "share_of_charge_range_pct": 7.95,
+        "implied_charge_range_mwh": 18802
+      },
+      "Q3": {
+        "max_soc_outage_mwh": 1497,
+        "min_soc_outage_mwh": 206,
+        "share_of_charge_range_pct": 7.11,
+        "implied_charge_range_mwh": 23953
+      },
+      "Q4": {
+        "max_soc_outage_mwh": 1089,
+        "min_soc_outage_mwh": 198,
+        "share_of_charge_range_pct": 4.45,
+        "implied_charge_range_mwh": 28946
+      }
+    },
+    "mean_of_quarterly_share_pct": 5.9
+  },
+  "2024": {
+    "source": "2024-special-report-on-battery-storage-may-29-2025.pdf",
+    "figure": "Figure 2.26",
+    "page": 31,
+    "axis_offset_pt": {
+      "left": 1.01,
+      "right": 0.99
+    },
+    "quarters": {
+      "Q1": {
+        "max_soc_outage_mwh": 1515,
+        "min_soc_outage_mwh": 86,
+        "share_of_charge_range_pct": 5.43,
+        "implied_charge_range_mwh": 29486
+      },
+      "Q2": {
+        "max_soc_outage_mwh": 1707,
+        "min_soc_outage_mwh": 287,
+        "share_of_charge_range_pct": 5.69,
+        "implied_charge_range_mwh": 35051
+      },
+      "Q3": {
+        "max_soc_outage_mwh": 1817,
+        "min_soc_outage_mwh": 141,
+        "share_of_charge_range_pct": 4.89,
+        "implied_charge_range_mwh": 40065
+      },
+      "Q4": {
+        "max_soc_outage_mwh": 1653,
+        "min_soc_outage_mwh": 177,
+        "share_of_charge_range_pct": 4.04,
+        "implied_charge_range_mwh": 45333
+      }
+    },
+    "mean_of_quarterly_share_pct": 5.01
+  }
+}
