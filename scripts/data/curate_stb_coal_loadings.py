@@ -58,8 +58,14 @@ def tidy(raw: pd.DataFrame) -> pd.DataFrame:
     body.columns = _ID_COLS + header[len(_ID_COLS) :]
     body = body[body.category.astype(str).str.strip() == _CATEGORY]
     body = body[body.sub_variable.isin(_MEASURES) & body.region.notna()]
-    weeks = [c for c in body.columns[len(_ID_COLS) :] if pd.notna(pd.to_datetime(c, errors="coerce"))]
-    long = body.melt(id_vars=["carrier", "region", "sub_variable"], value_vars=weeks, var_name="week")
+    weeks = [
+        c
+        for c in body.columns[len(_ID_COLS) :]
+        if pd.notna(pd.to_datetime(c, errors="coerce"))
+    ]
+    long = body.melt(
+        id_vars=["carrier", "region", "sub_variable"], value_vars=weeks, var_name="week"
+    )
     long["value"] = pd.to_numeric(long.value, errors="coerce")
     long = long.dropna(subset=["value"])
     out = pd.DataFrame(
@@ -71,7 +77,9 @@ def tidy(raw: pd.DataFrame) -> pd.DataFrame:
             "value": long.value.astype("float64"),
         }
     )
-    return out.sort_values(["carrier", "region", "measure", "week"]).reset_index(drop=True)
+    return out.sort_values(["carrier", "region", "measure", "week"]).reset_index(
+        drop=True
+    )
 
 
 def curate(raw_root: Path | None = None) -> list[Path]:

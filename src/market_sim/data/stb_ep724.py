@@ -47,7 +47,9 @@ def annual_loadings_ratio(carriers: tuple[str, ...], region: str) -> pd.DataFram
     """
     d = load_coal_loadings()
     d = d[d.carrier.isin(carriers) & (d.region == region)]
-    w = d.pivot_table(index="week", columns="measure", values="value", aggfunc="sum").dropna()
+    w = d.pivot_table(
+        index="week", columns="measure", values="value", aggfunc="sum"
+    ).dropna()
     yr = w.groupby(w.index.year)[["plan", "actual"]].sum()
     yr["ratio"] = yr.actual / yr.plan
     yr.index.name = "year"

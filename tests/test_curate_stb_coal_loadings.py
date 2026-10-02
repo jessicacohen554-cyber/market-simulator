@@ -20,7 +20,14 @@ from market_sim.data.stb_ep724 import annual_loadings_ratio, load_coal_loadings 
 from scripts.data.curate_stb_coal_loadings import curate  # noqa: E402
 from tests.helpers.base import CleanDirTestCase  # noqa: E402
 
-_HEAD = ["Railroad/\nRegion", "Category No.", "Sub-Category", "Measure", "Variable", "Sub-Variable"]
+_HEAD = [
+    "Railroad/\nRegion",
+    "Category No.",
+    "Sub-Category",
+    "Measure",
+    "Variable",
+    "Sub-Variable",
+]
 _C9 = "Coal Unit Train Loadings or Carloadings by Coal Production Region (Count)"
 
 
