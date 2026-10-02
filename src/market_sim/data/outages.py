@@ -1646,7 +1646,7 @@ def _roster_online_masks(generators: Sequence[object], year: int) -> np.ndarray:
         year: The solve year the COD ramp masks against.
 
     Returns:
-        ``(len(generators), 12)`` float masks in ``[0, 1]``.
+        ``(len(generators), 12)`` float masks, clipped to ``[0, 1]``.
     """
     # Local import: the fleet package imports this module.
     from market_sim.data.cod_ramp import (
@@ -1672,7 +1672,11 @@ def _roster_online_masks(generators: Sequence[object], year: int) -> np.ndarray:
             unit_cod_map,
             int(year),
         )[0]
-    return out
+    # An online fraction cannot exceed 1: cod_ramp.bin_online_fraction's
+    # weighted mean of all-online constituents can land one ulp above it
+    # (NWPP 10761 CC_REGULAR, 2020), which would emit a monthly entry for a bin
+    # that is fully online and break the roster's byte-identity there.
+    return np.minimum(out, 1.0)
 
 
 def dispatched_bin_live_year(config: object, year: int | None) -> int | None:

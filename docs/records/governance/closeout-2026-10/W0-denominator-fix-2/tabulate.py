@@ -14,6 +14,8 @@ BUNDLES = [
 ]
 rows, summary = [], {}
 for iso, b in BUNDLES:
+    if not (d / f"after_{b}.json").exists():
+        continue
     legs = {
         k: json.loads((d / f"{k}_{b}.json").read_text())
         for k in ("after", "main", "pre")
@@ -38,8 +40,8 @@ for iso, b in BUNDLES:
             changed_arrays=[
                 k for k in a["hashes"] if a["hashes"][k] != m["hashes"].get(k)
             ],
-            dead_cohorts=a["dead_cohorts"],
-            in_year_cohorts=a["in_year_cohorts"],
+            offline_all_year=a["offline_all_year"],
+            partial=a["partial"],
             movers_vs_main=movers[:6],
             flag_ge_0p1=abs(a["avail_twh"] - m["avail_twh"]) >= 0.1,
         )
@@ -53,7 +55,7 @@ for r in rows:
     print(
         f"| {r['iso']} | {r['year']} | {r['d_vs_main_twh']:+.3f} | {r['d_vs_pre7047_twh']:+.3f} | "
         f"{'**yes**' if r['flag_ge_0p1'] else ''} | {'yes' if r['byte_identical_vs_main'] else 'no'} | "
-        f"{', '.join(r['changed_arrays'])} | {len(r['dead_cohorts'])} | "
+        f"{', '.join(r['changed_arrays'])} | {len(r['offline_all_year'])} | "
         + "; ".join(f"{k} {v:+.3f}" for k, v in r["movers_vs_main"][:3])
         + " |"
     )

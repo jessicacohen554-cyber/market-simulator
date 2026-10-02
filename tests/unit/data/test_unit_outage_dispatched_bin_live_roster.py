@@ -365,6 +365,19 @@ class TestCodRamp:
         f = _factor(tuple(sorted(roster.items())))
         assert f == pytest.approx(0.0)  # 300 MW out of the 300 MW online
 
+    def test_one_ulp_over_one_is_fully_online(self, monkeypatch):
+        """A weighted-mean mask a rounding step above 1 adds no monthly entry."""
+        from market_sim.data import cod_ramp
+
+        monkeypatch.setattr(
+            cod_ramp,
+            "generator_online_mask",
+            lambda *a: (np.full(12, np.nextafter(1.0, 2.0)), 1980),
+        )
+        assert lp_bin_capacity_index(
+            _survivors(), live_year=YEAR
+        ) == lp_bin_capacity_index(_survivors())
+
     def test_the_mask_is_the_cod_ramps_own(self):
         """Same resolver, same inputs as fleet.arrays' COD ramp."""
         from market_sim.data.cod_ramp import generator_online_mask
