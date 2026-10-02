@@ -134,7 +134,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
     coal_min_load_floor: { cell: "." },
     st_gas_mustrun_p25: { cell: "I", ev: "pjm-153 (docs/records/pjm/FINDING-pjm153-queue-clear-2026-08-04.md §3; probe scripts/probes/pjm153_queue_screens.py; machine record results/phase0/pjm/_pjm153_queue_screens.json) — INERT ex ante on PJM's OWN artifact, no solve spent" },
     historic_outage_overlay: { cell: "U" },
-    coal_drop_pof: { cell: "U" },
+    coal_drop_pof: { cell: "K", ev: "closeout-PJM wave 1 (2026-10-02, matrix hygiene, ZERO LP; docs/records/pjm/FINDING-pjm-closeout-wave1-censuses-2026-10-02.md §6) — REGISTRATION, NOT ADJUDICATION. Cell U -> K because the field is ARMED on the designated keeper 2026-09-30-pjm-next16-ovec in all seven years: results/calibration/pjmnext16_A_span/run_config_<2019..2025>.json scenario_config.coal_drop_pof = true and calibration_flags.coal_drop_pof = true, set by the backcast runner's flag default (src/market_sim/pipeline/flags.py FlagSpec --coal-drop-pof, default=True). The cell read U with no evidence while the keeper carried it (research shard SHARD-PJM-closeout-research-2026-10-02 §3 matrix hygiene). No solve was spent and no A/B exists for PJM; the rule-19 rationale (the CAMPD outage overlay already carries planned windows, so the statistical coal POF double-counts them) is the row note's, not a PJM measurement." },
     gas_st_startup_spread: { cell: "U" },
     cc_duct_peaking: { cell: "U" },
     cc_nameplate_summer_derate: { cell: "U" },
