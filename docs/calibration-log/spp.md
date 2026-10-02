@@ -3985,3 +3985,26 @@ Tooling defect noted: `promote_keeper.py` runs the audit (step 8) before the pru
 keeper. The prune, re-audit and parity steps were finished by hand.
 
 Record: `docs/records/spp/RESULT-spp-107-mmu-carrier-repair-2026-10-02.md`.
+
+## spp-108 — 2026-10-02 — 2021–22 PRB over / CC under: basis shadow score and STB rail retest (zero LP, no lever)
+
+**Step 0a, shadow C1 on the aligned basis.** Keeper unchanged.
+
+| row | committed | aligned (gross coal + gas coverage pro rata) |
+|---|---|---|
+| COAL_PRB 2021 / 22 | +11.37 / +10.92 | **+3.97 / +3.59** (PASS) |
+| CC_REGULAR 2021 | −8.52 | −8.03 (FAIL by 0.05; PASS only if the 0.77 TWh coverage term all goes to CC) |
+| CC_REGULAR 2022 | −9.29 | −8.72 (FAIL on every basis) |
+
+- PRB 2020 flips to FAIL. Train tier: 0 status moves; 2025 PRB +7.96 → +5.03.
+- **Owner ruling (W5 / D-P3): "Hold; measure all ISOs."** C1 stays on the committed basis.
+
+**Step 3, STB EP 724.** Fetched by this session on the owner's card and intaken as `stb-coal-loadings`.
+- PRB loadings / plan identifies 2022 (anomaly 0.856 vs 1.007–1.093) and leaves 2021 normal.
+- No zero-DOF mechanism keyed to it binds physically:
+  - fleet cumulative inventory: minimum 1.7 days, no bind;
+  - per plant: binds only through a lagged-delivery cap, but the binding plants actually received 1.17–1.34× that rate.
+- A non-zero RR502 adder would need a fitted safety stock (rules 1(c)/21). **No PRECOMMIT, no shards.**
+- `coal_fuel_inventory` stays R. C1 CC 2021/22 and C4 gas 2022 are ledgered under plan step 5.
+
+Record: `docs/records/spp/FINDING-spp-108-basis-shadow-and-stb-rail-2026-10-02.md`.
