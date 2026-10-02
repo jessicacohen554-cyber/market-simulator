@@ -4020,3 +4020,6 @@ results/calibration/nwppnext19g_span/
 results/calibration/pjm_next_26_20*/
 # NWPP-NEXT-21 shard legs + span (staged locally; never committed off a promotion)
 results/calibration/nwppnext21_*/
+
+# closeout-PJM R-13 arm legs: transport on claude/closeout-pjm-r13-<year> shard branches, never main (rule 29c)
+results/calibration/closeout_pjm_r13_*/
