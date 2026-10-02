@@ -1,23 +1,23 @@
-"""NYISO-NEXT-26: G-1 leg acceptance and span composition for both arms.
+"""NYISO-NEXT-25: G-1 leg acceptance and span composition for both arms.
 
 The arms are the NEXT-21 keeper's recipe replayed at the pin with the PRECOMMIT's delta
-(``docs/records/nyiso/PRECOMMIT-nyiso-next26-li-tsl-all-hours-2026-10-01.md``):
+(``docs/records/nyiso/PRECOMMIT-nyiso-next25-print-level-2026-10-01.md``):
 
-* arm A: ``nyiso_li_tsl_all_hours: true``;
-* arm B: ``nyiso_gas_daily_print_level: true`` and ``nyiso_li_tsl_all_hours: true``.
+* arm A: ``nyiso_gas_daily_print_level: true``;
+* arm B: ``nyiso_gas_flow_date: true`` and ``nyiso_gas_daily_print_level: true``.
 
 Per leg it checks S0 (solved at the pin), S1 (scenario_config equals the keeper's plus the
 arm's delta, keys born since at their default; offer-curve block identical), S2 (resolved
 outage / tranche / hydro inputs identical) and S3/S4 (no firm-import D-2 row; 16 NE-AC nodes).
-Adapted from ``nyisonext26_compose_span.py`` (PR #6987's branch).
+Adapted from ``nyisonext23_compose_span.py`` (PR #6984's branch).
 
 Usage::
 
-    python3 scripts/probes/nyisonext26_compose_span.py --arm A --check-only \\
-        --legs results/calibration/nyisonext26_{2021,2022,2023,2024,2025}
-    python3 scripts/probes/nyisonext26_compose_span.py --arm A \\
-        --legs results/calibration/nyisonext26_{2022,2023,2024,2025} \\
-        --out results/calibration/nyisonext26_span
+    python3 scripts/probes/nyisonext25_compose_span.py --arm A --check-only \\
+        --legs results/calibration/nyisonext25_{2021,2022,2023,2024,2025}
+    python3 scripts/probes/nyisonext25_compose_span.py --arm A \\
+        --legs results/calibration/nyisonext25_{2022,2023,2024,2025} \\
+        --out results/calibration/nyisonext25_span
 """
 
 from __future__ import annotations
@@ -36,13 +36,13 @@ from scripts.probes.rnyiso_compose_span import _offer_block  # noqa: E402
 
 sys.path.insert(0, str(_REPO / "src"))
 
-PIN = "4213945ed8b3cfb7fd2256b08a3fca7de9518f3d"
+PIN = "f43f609b443a66f126555566c911e49cff9d7155"
 CAL = _REPO / "results" / "calibration"
 DELTAS: dict = {
-    "A": {"nyiso_li_tsl_all_hours": (False, True)},
+    "A": {"nyiso_gas_daily_print_level": (False, True)},
     "B": {
+        "nyiso_gas_flow_date": (False, True),
         "nyiso_gas_daily_print_level": (False, True),
-        "nyiso_li_tsl_all_hours": (False, True),
     },
 }
 DELTA: dict = DELTAS["A"]

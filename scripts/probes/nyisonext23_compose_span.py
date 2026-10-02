@@ -1,23 +1,24 @@
-"""NYISO-NEXT-26: G-1 leg acceptance and span composition for both arms.
+"""NYISO-NEXT-23 G-1 leg acceptance + span composition (zero LP).
 
-The arms are the NEXT-21 keeper's recipe replayed at the pin with the PRECOMMIT's delta
-(``docs/records/nyiso/PRECOMMIT-nyiso-next26-li-tsl-all-hours-2026-10-01.md``):
+The arm is the NEXT-21 keeper's recipe replayed at the pin with ONE
+``ScenarioConfig`` delta, ``nyiso_gas_flow_date: true``
+(``docs/records/nyiso/PRECOMMIT-nyiso-next23-z6-flow-date-2026-10-01.md`` sec. 4 G-1). Per leg:
 
-* arm A: ``nyiso_li_tsl_all_hours: true``;
-* arm B: ``nyiso_gas_daily_print_level: true`` and ``nyiso_li_tsl_all_hours: true``.
-
-Per leg it checks S0 (solved at the pin), S1 (scenario_config equals the keeper's plus the
-arm's delta, keys born since at their default; offer-curve block identical), S2 (resolved
-outage / tranche / hydro inputs identical) and S3/S4 (no firm-import D-2 row; 16 NE-AC nodes).
-Adapted from ``nyisonext26_compose_span.py`` (PR #6987's branch).
+* S0 -- solved at the pin (``git.basis_sha``);
+* S1 -- ``scenario_config`` equals the keeper bundle's plus DELTA (keys born since the
+  keeper at their default; ``cc_subfloor_eia923_heat_rates``, deleted by
+  NWPP-NEXT-14, ignored); offer-curve block equal;
+* S2 -- ``resolved_inputs`` byte-identical to the keeper bundle's;
+* S3 -- no D-2 ``firm_import`` row in the leg's ``legitimacy_diagnostics.json``;
+* S4 -- ``dispatch/<y>_P1.parquet`` carries exactly 16 ``NYISO_NE_AC_*`` units.
 
 Usage::
 
-    python3 scripts/probes/nyisonext26_compose_span.py --arm A --check-only \\
-        --legs results/calibration/nyisonext26_{2021,2022,2023,2024,2025}
-    python3 scripts/probes/nyisonext26_compose_span.py --arm A \\
-        --legs results/calibration/nyisonext26_{2022,2023,2024,2025} \\
-        --out results/calibration/nyisonext26_span
+    python3 scripts/probes/nyisonext23_compose_span.py --check-only \\
+        --legs results/calibration/nyisonext23_{2021,2022,2023,2024,2025}
+    python3 scripts/probes/nyisonext23_compose_span.py \\
+        --legs results/calibration/nyisonext23_{2022,2023,2024,2025} \\
+        --out results/calibration/nyisonext23_span
 """
 
 from __future__ import annotations
@@ -36,16 +37,9 @@ from scripts.probes.rnyiso_compose_span import _offer_block  # noqa: E402
 
 sys.path.insert(0, str(_REPO / "src"))
 
-PIN = "4213945ed8b3cfb7fd2256b08a3fca7de9518f3d"
+PIN = "f2b83ef24bec09672f3458bc946b811adab4aca4"
 CAL = _REPO / "results" / "calibration"
-DELTAS: dict = {
-    "A": {"nyiso_li_tsl_all_hours": (False, True)},
-    "B": {
-        "nyiso_gas_daily_print_level": (False, True),
-        "nyiso_li_tsl_all_hours": (False, True),
-    },
-}
-DELTA: dict = DELTAS["A"]
+DELTA: dict = {"nyiso_gas_flow_date": (False, True)}
 #: keys the replay path translates identically for control and arm (rule 26 deletions;
 #: nyiso_firm_imports was deleted at f26384a7 -- recorded false in the keeper, hash-inert)
 IGNORED = {"retiree_cems_cap", "nyiso_firm_imports", "cc_subfloor_eia923_heat_rates"}
@@ -142,13 +136,10 @@ def check_legs(legs: list[Path]) -> None:
 def main() -> None:
     """Check every leg, then compose the span bundle."""
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--arm", choices=sorted(DELTAS), required=True)
     ap.add_argument("--legs", nargs="+", required=True)
     ap.add_argument("--out")
     ap.add_argument("--check-only", action="store_true")
     args = ap.parse_args()
-    global DELTA
-    DELTA = DELTAS[args.arm]
     legs = [Path(x) for x in args.legs]
     check_legs(legs)
     if args.check_only:
