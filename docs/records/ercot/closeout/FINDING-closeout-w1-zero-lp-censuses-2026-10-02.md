@@ -128,3 +128,17 @@ How each candidate was adjudicated, by hand against EIA-860 and the keeper fleet
 - No crosswalk re-derive. Rule 23 needs the data-change commit, and that belongs with W0's census.
 - No R-6 rubric work (lane closeout-C).
 - No 60-Day SCED intake (R-7, account-gated).
+
+## 5. DRAFT ledger row: 2019/20 coal conduct (desk update 2026-10-02)
+
+The owner deferred all data downloads today, R-7 included (deferred, not cancelled). The 2019/20 coal-conduct miss is therefore carried as a **DRAFT** ledger row, so the frontier statement is ready:
+
+| Field | Value |
+|---|---|
+| Years / gates | 2019 C1 COAL_PRB −10.48 TWh, CC_REGULAR +8.85 TWh, C3b 0.219. 2020 C1 COAL_PRB −11.83 TWh, CC_REGULAR +10.21 TWh, C3b 0.209 (keeper r-24) |
+| Object | 2019–22 coal offer conduct. The keeper prices 2019/20 coal on 2024–25 SCED conduct, which pushes coal behind gas in low-gas years. The C3b summer over-scarcity (Aug carries 73 % / 61 % of SSE) is coupled to the coal under-run (`FINDING-r-ercot-3` §2; research note §2) |
+| Status | **DATA-LIMITED**, not a model-class limit and not a tuned residual (rules 13/21: closable only by measured conduct, never by a fitted value) |
+| Route | The R-7 bounded intake (60-Day SCED NP3-965-ER + DAM 2019–22 + NP6-576-ER, free ERCOT account) **when it happens** → per-plant coal offer tables, ercot-168 construction, zero DOF, rule 23, full span. Prediction (research §6 step 4): PRB → −3..−6 TWh, CC mirror inside band, Aug over-price shrinks |
+| Not the route | `coal_offer_level_rebasis` (R, wrong sign); L1 (this lane's ceiling binds only Coleto 0.24 TWh in 2019 and nothing in 2020, so it worsens rather than closes this row) |
+| Account-free alternative (unadjudicated) | The 2019–22 60-Day DAM Gen Resource Data *with* QSE offer curves is already on disk (`data/raw/ercot-AS/`, §3 side finding). A DAM-curve proxy table needs its own charter and owner ruling (DAM ≠ SCED TPO conduct). Recorded so the frontier statement does not say "no data exists" |
+| Determination effect | 2019 and 2020 read NOT-YET on C1/C3b until the route runs. The row is DRAFT until the RESULT of the post-W0 span confirms the magnitudes |
