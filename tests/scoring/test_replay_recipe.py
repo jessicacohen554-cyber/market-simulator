@@ -112,3 +112,13 @@ def test_a_field_absent_from_the_recording_but_replayed_armed_is_reported(tmp_pa
         resolve=lambda b, y: {"voll": 5000.0, "spp_mmu_offer_repair": True},
     )
     assert diffs == {"spp_mmu_offer_repair": (None, True)}
+
+
+def test_a_set_valued_field_compares_by_members(tmp_path):
+    bundle = _bundle(tmp_path, {"temp_derate_classes": ["CT_CHP", "ST_CHP"]})
+    diffs = replay_config_diffs(
+        bundle,
+        2025,
+        resolve=lambda b, y: {"temp_derate_classes": frozenset({"ST_CHP", "CT_CHP"})},
+    )
+    assert diffs == {}

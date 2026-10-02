@@ -35,6 +35,8 @@ volume residual; the trigger is a measured window/driver mismatch.
 Usage:
     python3 scripts/data/derive_thermal_tranche_online_frac_by_year.py \
         --iso MISO --years 2023 2024 2025 [--verify-pooled] [--out PATH]
+    python3 scripts/data/derive_thermal_tranche_online_frac_by_year.py \
+        --iso PJM --years 2019 ... 2025 --coal-unit-coverage-plants 594 883 ...
 
 Output: ``data/raw/_processed-legacy/thermal_tranches_online_frac_by_year_<ISO>.csv``
 with columns ``plant_code, plant_group, year, nameplate_mw, sync_hours,
@@ -118,6 +120,130 @@ def per_year_online_frac(iso: str, years: list[int]) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def coal_unit_coverage_by_year(
+    iso: str, years: list[int], plants: list[int]
+) -> pd.DataFrame:
+    """Return per-year ``online_frac`` rows for coal-coverage-appended plants.
+
+    The per-year grain of :func:`derive_thermal_tranches.coal_unit_coverage_rows`
+    (soco-70), whose pooled ``online_frac`` the appended COAL rows carry. Same
+    series (the plant's CEMS-labelled coal units only, routed through
+    :func:`campd.plant_group_hourly_net` with the plant's parasitic factor), same
+    denominator (that year's EIA-860 vintage coal nameplate), same statistic
+    (net > ``_SYNC_MW_NAMEPLATE_FRAC`` × nameplate over the whole year), and a
+    row for exactly the plant-years that construction pools — so summing
+    ``sync_hours`` / ``total_hours`` reproduces the appended pooled fraction
+    (``verify_coal_coverage_pooled``). Only the reporting grain changes (rule 23;
+    zero free parameters, rule 21).
+    """
+    from market_sim.config.iso_configs import get_iso_config
+    from market_sim.config.paths import set_eia860_vintage
+    from market_sim.config.plant_taxonomy import is_coal_class
+    from market_sim.data.fleet import load_fleet_from_csv
+
+    want = {int(p) for p in plants}
+    states = campd.states_for_iso(iso)
+    factors = dtt._parasitic_factor_map()
+    rows: list[dict] = []
+    try:
+        for year in years:
+            set_eia860_vintage(year)
+            cap: dict[int, float] = {}
+            for gen in load_fleet_from_csv(iso, get_iso_config(iso), year=year):
+                code = int(gen.plant_code)
+                if code not in want or not is_coal_class(gen.plant_group):
+                    continue
+                cap[code] = cap.get(code, 0.0) + float(gen.pmax_mw)
+            if not cap:
+                continue
+            coal_units = dtt._coal_unit_ids_by_plant(tuple(states), year)
+            df = campd.load_campd_hourly(states, [year], prefer_unit_level=True)
+            if df.empty:
+                continue
+
+            def group_of(plant_id: int, unit_id: str, unit_type: str) -> str | None:
+                if plant_id in cap and unit_id in coal_units.get(plant_id, ()):
+                    return "COAL"
+                return None
+
+            net = campd.plant_group_hourly_net(df, factors, year, group_of)
+            for code, nameplate in sorted(cap.items()):
+                series = net.get((code, "COAL"))
+                if series is None or nameplate <= 0.0:
+                    continue
+                sync = series > dtt._SYNC_MW_NAMEPLATE_FRAC * nameplate
+                n_sync, n_tot = int(sync.sum()), int(len(series))
+                rows.append(
+                    {
+                        "plant_code": code,
+                        "plant_group": "COAL",
+                        "year": int(year),
+                        "nameplate_mw": round(float(nameplate), 1),
+                        "sync_hours": n_sync,
+                        "total_hours": n_tot,
+                        "online_frac": round(min(1.0, n_sync / n_tot), 3),
+                    }
+                )
+    finally:
+        set_eia860_vintage(None)
+    return pd.DataFrame(rows)
+
+
+def verify_coal_coverage_pooled(iso: str, by_year: pd.DataFrame) -> int:
+    """Check pooled-from-by-year against the appended COAL rows; return mismatches.
+
+    Unlike :func:`verify_against_pooled`, a plant absent from the pooled
+    artifact counts as a mismatch: every coverage plant must carry a row.
+    """
+    pooled = pd.read_csv(PROCESSED_DIR / f"thermal_tranches_{iso.upper()}.csv")
+    ref = {
+        int(r.plant_code): float(r.online_frac)
+        for r in pooled.itertuples(index=False)
+        if str(r.plant_group) == "COAL" and str(r.status) == "ok"
+    }
+    agg = by_year.groupby("plant_code")[["sync_hours", "total_hours"]].sum()
+    bad = 0
+    for code, r in agg.iterrows():
+        got = round(min(1.0, r.sync_hours / r.total_hours), 3)
+        want = ref.get(int(code))
+        if want is None or abs(got - want) > 5e-4:
+            bad += 1
+            print(f"  MISMATCH {int(code)} COAL: pooled-from-by-year {got} vs {want}")
+    print(f"  verify-coal-coverage: {len(agg) - bad} exact, {bad} mismatched")
+    return bad
+
+
+def append_coal_unit_coverage_by_year(
+    iso: str, years: list[int], plants: list[int]
+) -> pd.DataFrame:
+    """Append the coverage plants' per-year rows to the ISO's by-year artifact.
+
+    Byte-safe (the incumbent file stays an exact prefix, rule 23): refuses a
+    plant that is not a pooled COAL ``ok`` row or already has a COAL by-year row,
+    and refuses to write unless the pooled check is exact.
+    """
+    path = PROCESSED_DIR / f"thermal_tranches_online_frac_by_year_{iso.upper()}.csv"
+    inc = pd.read_csv(path)
+    have = set(inc.loc[inc.plant_group == "COAL", "plant_code"].astype(int))
+    clash = sorted(set(plants) & have)
+    if clash:
+        raise SystemExit(f"plants already carry COAL by-year rows: {clash}")
+    df = coal_unit_coverage_by_year(iso, years, plants)
+    missing = sorted(set(plants) - set(df.plant_code.astype(int)))
+    if missing:
+        raise SystemExit(f"no per-year coal series for plants {missing}")
+    if verify_coal_coverage_pooled(iso, df):
+        raise SystemExit("per-year rows do not reproduce the appended pooled fraction")
+    df = df.sort_values(["plant_code", "year"])[list(inc.columns)]
+    text = path.read_bytes()
+    if not text.endswith(b"\n"):
+        raise SystemExit(f"{path} does not end in a newline; refusing to append")
+    with path.open("ab") as fh:
+        fh.write(df.to_csv(index=False, header=False).encode())
+    print(f"Appended {len(df)} rows ({df.plant_code.nunique()} plants) to {path}")
+    return df
+
+
 def verify_against_pooled(iso: str, by_year: pd.DataFrame) -> int:
     """Check that pooling this file's counts reproduces the committed artifact.
 
@@ -181,9 +307,23 @@ def main() -> None:
         "thermal_tranches_<ISO>.csv online_frac column (grain refinement, not "
         "a value change)",
     )
+    ap.add_argument(
+        "--coal-unit-coverage-plants",
+        nargs="+",
+        type=int,
+        default=None,
+        help="append per-year rows for these coal-coverage-appended plants "
+        "(coal_unit_coverage_rows, soco-70) to the incumbent by-year artifact, "
+        "byte-safely, over --years (the coverage append's own window)",
+    )
     args = ap.parse_args()
 
     iso = args.iso.upper()
+    if args.coal_unit_coverage_plants:
+        append_coal_unit_coverage_by_year(
+            iso, sorted(args.years), args.coal_unit_coverage_plants
+        )
+        return
     print(f"Deriving per-year online_frac for {iso}, years {args.years}")
     df = per_year_online_frac(iso, sorted(args.years))
     if df.empty:

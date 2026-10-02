@@ -7031,3 +7031,37 @@ C3a vs RT by year:
 - `scripts/stamp_config_partition.py`: an inert rule-26-deleted field recorded by an older leg is not a per-year overlay.
 
 Preflight 0d also needs the gitignored PJM DataMiner2 virtual-bid parquets (`pjm_da_virtual_bids` is on), fetched locally with `scripts/data/fetch_pjm_da_virtuals.py`.
+
+## PJM close-out — 2026-10-02 — Winter Storm Elliott closed as a DATA-LIMITED residual (zero LP)
+
+- **Owner ruling:** "It counts but we should be able to simulate it?" → two ex-ante phase-0 attempts → owner card **"Accept as data-limited"** (relayed by the close-out desk).
+- **v1** (temperature-only `correlated_forced_outage` with a backcast residual form) failed E0c (no season gate) and E0d (0.64 / 0.35 of the published 24 / 25 Dec rise). Elliott was not certified (0.985 × the annual p99).
+- **v2** (Dec–Feb gate, winter certificate, warm-day-referenced CAMPD instrument, gas leg on the Transco Z6 NY − HH daily basis) failed E1b (leave-Elliott-out −38.8 %) and E1d (0.20 / 0.14).
+- **Ledger row:** C3a / C3b / C3c 2022 — Winter Storm Elliott. About 20 GW of published forced outage on 23–26 Dec 2022 does not enter the LP. **DATA-LIMITED.**
+  - Reason: CAMPD measures output, not forced unavailability.
+  - Reason: no free daily PJM-zone gas series exists.
+  - **Re-open** on GADS-grade per-unit outage data, or on a daily Transco Z5 / TETCO M3 series.
+- **Records:** `docs/records/pjm/PRECOMMIT-pjm-closeout-elliott-cold-outage{,-v2}-2026-10-02.md`, `RESULT-pjm-closeout-elliott-phase0{,-v2}-2026-10-02.md`.
+
+## PJM-NEXT-27 — 2026-10-02 — per-year online_frac for the 18 coal-coverage plants: dispatch-inert; S2/S3 falsified again; not recommended
+
+Owner ruling *"Hold; fix fractions."* carried out.
+- **Derive:** `derive_thermal_tranche_online_frac_by_year.py --coal-unit-coverage-plants` uses the coverage
+  construction's own estimator. It appended 60 rows; pooling reproduces each pooled row (18 of 18). Zero DOF.
+- **Solve:** solved with the PJM-NEXT-25 rows as one delta, at W0, in 7 shards (pin `91cd12ce`).
+  - Wave 1 was lost: full clones filled the disk, so the runner could add only 3 GiB of swap, and two shards were
+    OOM-killed.
+  - Wave 2 ran on blob-limited clones and provisioned swap before any data step. All seven passed.
+
+**Readings vs the W0 keeper (`w0_pjm_span`):**
+- S1 holds.
+- S2 falsified: the gap is narrower only in 2020.
+- S3 falsified: new D-4 coal conduct failures at Waukegan 883 (2019, 2020, 2022) and Montour 3149 (2019).
+- S4 holds (no flips).
+- P1: COAL_BIT +2.44 / +1.04 TWh.
+
+**Finding:** the per-year fractions are dispatch-inert against the rows alone (prices within 2e-8 $/MWh). The
+floors bind, but inside hours the plants run anyway. The defect sits with the appended rows' must-run membership and
+placement (already day-grain), not with window size.
+
+Keeper unchanged; data withdrawn; arm at `d3e04d9f`. Records: `PRECOMMIT-` and `RESULT-pjm-next-27-2026-10-02.md`.

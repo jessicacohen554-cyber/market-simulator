@@ -31,6 +31,13 @@ sheet to parquet with the naming above; record the sha256 of the workbook and of
 parquet in `SHA256SUMS.txt`. A later month lands as its own `<month>_generator<year>.*`
 set beside this one; nothing is overwritten.
 
-**Consumers.** None yet. The intended consumer is the forecast base-year fleet
+**Consumers.** No model consumer yet. The intended consumer is the forecast base-year fleet
 (audit E.2: "860M is layered on the latest Final in the forecast base year, tagged
 `monthly_update`, never in a backcast").
+
+**Reference-identity reader (not a model input).** `scripts/data/build_caiso_resource_crosswalk.py
+--storage` reads `august_generator2026.operating.parquet` as the declared second source of
+the CAISO battery crosswalk review (R-CAISO-37): a ledger row with `source = eia860m` may
+name a battery plant in a CAISO zone that the annual Final schedule lacks. It names which
+EIA plant a CAISO resource is; it sets no capacity, COD or status in any solve, and the
+crosswalk itself has no runtime reader.

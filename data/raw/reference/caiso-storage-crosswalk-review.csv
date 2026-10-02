@@ -1,151 +1,151 @@
-resource_id,plant_code,accepted,review_note
-SCARLT_2_SS2BT1,66951,1,"Scarlet Solar 2 BESS = EIA Scarlet II Hybrid (Fresno, NP15); 150 = 150 MW. Rejects the name-token pick Scarlet Solar (CA) 40 MW"
-GARLND_2_GARBT1,60233,1,"Garland B BESS = EIA RE Garland (Kern, SP15); 88 = 88 MW (BESS1+BESS2)"
-MSTANG_2_MTGBT1,59150,1,"Mustang 1 BESS = EIA RE Mustang (Kings, NP15); 75 = 75 MW"
-AZALEA_6_AZABT1,66890,1,"Azalea BESS = EIA SF Azalea (Kern, ZP26); 38 = 38 MW"
-VLCNTR_6_VCEBT1,66502,1,"Valley Center Energy Storage (VLCNTR node) = EIA Valley Center 54 (San Diego, SDGE); 54 = 54 MW"
-VLCNTR_6_VCEBT2,66500,1,"Valley Center Energy Storage B = EIA Valley Center 85 (San Diego, SDGE); 85 = 85 MW"
-KRAMER_1_R1BX3,64489,1,"Resurgence 1 BESS = EIA Resurgence Solar (San Bernardino, ZP26); 75 = 75 MW"
-KRAMER_1_R2BX2,66620,1,"Resurgence 2 BESS = EIA Resurgence Solar II (San Bernardino, ZP26); 40 = 40 MW"
-FIFTHS_2_FSSBT,64197,1,"Fifth Standard Battery = EIA Fifth Standard Solar PV (Hybrid) (Fresno, ZP26); 137 = 137 MW"
-PALSEL_6_PLSBT1,67092,1,"Paulsell Solar Energy Center BESS = EIA Paulsell (Stanislaus, NP15); 15 = 15 MW"
-CHINO_2_APEBT1,50300,1,"Pomona Energy Storage (CHINO node) = EIA VESI Pomona (Los Angeles, LA_BASIN) gen BESS1 20 MW; 20 = 20 MW"
-CHINO_2_PESBT1,50300,1,"Pomona Energy Storage 2 = EIA VESI Pomona gen BESS2 20 MW; 20 = 20 MW"
-CWATER_1_DS1BT1,67931,1,"Daggett Solar 1 BESS = EIA Daggett 1 (San Bernardino, SP15); 113.5 = 113.5 MW. Rejects the name-token pick Daggett 2"
-PROXSR_2_PS2BT3,66270,1,"Proxima Solar BESS 2 = EIA Proxima (Stanislaus, NP15); the three PROXSR units 90+40+32 = 162 = EIA 162 MW"
-PROXSR_2_PS1BT1,66270,1,"Proxima Solar BESS 1A = EIA Proxima; 90+40+32 = 162 = EIA 162 MW"
-PROXSR_2_PS1BT2,66270,1,"Proxima Solar BESS 1B = EIA Proxima; 90+40+32 = 162 = EIA 162 MW"
-SISPRG_2_DS3BT1,64852,1,"Daggett Solar 3 a BESS = EIA Daggett 3 (San Bernardino, SP15); the four SISPRG units 61.5+60+12.5+15 = 149 = EIA 149 MW. Rejects Daggett 2"
-SISPRG_2_DS3BT2,64852,1,"Daggett Solar 3 b BESS = EIA Daggett 3; 61.5+60+12.5+15 = 149 = EIA 149 MW. Rejects Daggett 2"
-SISPRG_2_DS3BT3,64852,1,"Daggett Solar 3 cd BESS = EIA Daggett 3; 61.5+60+12.5+15 = 149 = EIA 149 MW. Rejects Daggett 2"
-SISPRG_2_DS3BT4,64852,1,"Daggett Solar 3 e BESS = EIA Daggett 3; 61.5+60+12.5+15 = 149 = EIA 149 MW. Rejects Daggett 2"
-DSRTSN_2_DS2X2,65857,1,"Desert Sunlight PV II Storage (episodes from 2023-01) = EIA Sunlight Storage (Riverside, SP15, COD 2022); 230 = 230 MW"
-DSRTSN_2_DS2BX2,66575,1,"Desert Sunlight PV II Storage 2 (episodes from 2024-02) = EIA Sunlight Storage II (Riverside, SP15, COD 2024); 230 = 230 MW"
-GATEWY_2_GESBT1,63834,1,"Gateway Energy Storage = EIA Gateway Energy Storage System (San Diego, SDGE); 250 = 250 MW"
-OBERON_5_O1BBX2,65734,1,"Oberon 1 BESS = EIA Oberon Solar Project gen OBIBS (Riverside, SP15); 125 = 125 MW"
-OBERON_5_O2BBX2,65735,1,"Oberon 2 BESS = EIA Oberon II Solar Project gen OBIIB (Riverside, SP15); 125 = 125 MW"
-RSMNDS_2_CSRBT1,67764,1,"Cyclone Solar Rosamond South I BESS 1 = EIA Rosamond South 1 (Kern, SP15); the three RSMNDS units 92+15+10 = 117 = EIA 117 MW"
-RSMNDS_2_CSRBT2,67764,1,"Cyclone Solar Rosamond South I BESS 3 = EIA Rosamond South 1; 92+15+10 = 117 = EIA 117 MW"
-CHESTN_2_CHWBX2,63849,1,"Chestnut Westside BESS = EIA Chestnut (utility Chestnut Westside LLC; Kings, ZP26); 135 = 135 MW"
-VSTAES_6_VESBT1,61661,1,"Vista Energy Storage = EIA Vista Energy Storage System (San Diego, SDGE); 40 = 40 MW"
-CASCES_6_CESBT2,,0,"Cascade Energy Storage Expansion: EIA Cascade (61801) lists 25 MW, already held by CASCES_6_CESBT1; the 20 MW expansion has no operable EIA-860 unit"
-TWINKL_2_ASCBTA,,0,"Aratina Solar Center 1a BESS: no Aratina plant in EIA-860 storage; the name-token pick Arica Solar is a different project"
-TWINKL_2_ASCBTB,,0,"Aratina Solar Center 1b BESS: no Aratina plant in EIA-860 storage; the name-token pick Arica Solar is a different project"
-JOANEC_2_STABT1,63843,1,"Santa Ana Storage 1 (JOANEC = Johanna node) = EIA Johanna Energy Center gen SASP1 20 MW (Orange, LA_BASIN); 20 = 20 MW"
-JOANEC_2_STABT2,63843,1,"Santa Ana Storage 2 = EIA Johanna Energy Center gen SAP2 20 MW; 20 = 20 MW"
-JOANEC_2_ST3BT3,63843,1,"Santa Ana Storage 3 = EIA Johanna Energy Center gen SASP3 40 MW; 40 = 40 MW"
-JOHANN_2_JOSBT1,62889,1,"Johanna Storage 1 = EIA Hecate Energy Johanna Facility gen HEGJF 10 MW (Orange, LA_BASIN); 10 = 10 MW. Corrects the name-token pick Johanna Energy Center (its gens are the Santa Ana Storage units)"
-JOHANN_2_JOSBT2,62889,1,"Johanna Storage 2 = EIA Hecate Energy Johanna Facility gen HJFII 10 MW; 10 = 10 MW. Corrects the name-token pick Johanna Energy Center"
-JOHANN_2_OCEBT2,62497,1,"Orange County Energy Storage 2 = EIA Orange County Energy Storage 2 (Orange, LA_BASIN; status OA in the Final 2025 release); 9 = 9 MW"
-JOHANN_2_OCEBT3,62499,1,"Orange County Energy Storage 3 = EIA Orange County Energy Storage 3 (Orange, LA_BASIN; status OA); 6 = 6 MW"
-DRACKR_2_DSUBT1,,0,"Dracker Solar Unit 1 BESS: no Dracker plant in EIA-860 storage; the name-token pick Raceway is a different project"
-DRACKR_2_DSUBT2,,0,"Dracker Solar Unit 2 BESS: no Dracker plant in EIA-860 storage"
-DRACKR_2_DSUBT3,,0,"Dracker Solar Unit 3 BESS: no Dracker plant in EIA-860 storage"
-DRACKR_2_DSUBT4,,0,"Dracker Solar Unit 4 BESS: no Dracker plant in EIA-860 storage"
-FILIPPI_2_QZSBTX,59871,1,"Quartzite Solar 8 BESS = EIA Desert Quartzite (Riverside, SP15); 150 = 150 MW. Rejects the name-token pick Mesquite Solar 4 (10 MW)"
-ALAMIT_7_ES1,61204,1,"Alamitos Energy Storage = EIA AES ES Alamitos (Los Angeles, LA_BASIN); 100.45 vs 100 MW"
-ALAMIT_2_AESBT2,67579,1,"Alamitos Energy Storage 2 = EIA AES ES Alamitos 2 (Los Angeles, LA_BASIN); 82 = 82 MW"
-HIGHDS_2_H5SBT1,,0,"High 5 Solar BESS: no High 5 plant in EIA-860 storage; the name-token pick BigBeau is a different project"
-VIKING_2_VSHSB1,,0,"Vikings Solar BESS: EIA Vikings Energy Farm (150 MW) is in the IID balancing area, outside the CAISO zones; two CAISO resources of 150 MW each against one EIA 150 MW plant"
-VIKING_2_VCBBT1,,0,"Vikings co-located BESS: EIA Vikings Energy Farm is in the IID balancing area, outside the CAISO zones"
-ATLASC_5_ACBBT6,68324,1,"Atlas Complex 9 BESS = EIA Atlas IX (La Paz AZ, CISO BA, SP15); 150 = 150 MW"
-ATLASC_5_ACBBT2,68322,1,"Atlas Complex 7A BESS = EIA Atlas VII gen ALT7A 180 MW (La Paz AZ, CISO BA); 180 = 180 MW. Rejects Atlas IX"
-ATLASC_5_ACBBT3,68322,1,"Atlas Complex 7B BESS = EIA Atlas VII gen ALT7B 120 MW; 120 = 120 MW. Rejects Atlas IX"
-ATLASC_5_ACBBT4,,0,"Atlas Complex 8A BESS (210 MW): no Atlas VIII in the EIA-860 storage schedule; Atlas IX (150 MW) is a different phase"
-BLKDIA_2_BDEBT1,,0,"Black Diamond Energy Storage: no such plant in EIA-860 storage; the name-token pick Black Walnut (15 MW) is a different project"
-CAMERN_6_BSPBT1,,0,"Buckman Springs BESS (0.46 MW): no EIA-860 storage plant; the pick Chaparral Springs (88 MW) is a different project"
-SANDRN_2_SS1BT1,65664,1,"Sandrini Sol 1 BESS = EIA Sandrini Solar 100 gen GENBA (Kern, ZP26); 92 vs 95.4 MW"
-TOWNSITE_2_MEADDYN,,0,"Townsite Solar BESS (180 MW, Mead dynamic schedule): EIA Townsite Solar Project Hybrid is 90 MW in WALC (NV), outside the CAISO zones"
-ORTGA_6_MCDBT1,,0,"Merced BESS (2.93 MW): no matching EIA-860 storage plant; UC Merced Solar Hybrid is 0.5 MW"
-SANBRN_2_SS2BT3,65672,1,"Sanborn Solar 2 SBESS 3 = EIA Sanborn BESS 3 (Kern); 169 = 169 MW. Rejects Sanborn BESS 1"
-SANBRN_2_SS2BT4,65673,1,"Sanborn Solar 2 SBESS 4 = EIA Sanborn BESS 4 (Kern); 47 = 47 MW. Rejects Sanborn BESS 1"
-SANBRN_2_ES2SB3,,0,"EdSan 2 Sanborn 3 (42 MW): no Edwards Sanborn or Sanborn unit of 42 MW in EIA-860; ambiguous across the Edwards Sanborn family"
-SANBRN_2_ES1BT3,,0,"EdSan 1 Edwards 1 (50.43 MW): no Edwards Sanborn unit near 50 MW; ambiguous across the Edwards Sanborn family"
-SANBRN_2_ESABT1,,0,"EdSan 1A (100 MW): EIA Edwards Sanborn E1A is 144 MW; the family has several 100-ish MW units, ambiguous"
-SANBRN_2_ESBBT1,,0,"EdSan 1B (100 MW): EIA Edwards Sanborn E1B is 136 MW; ambiguous across the family"
-EDWARD_2_ES2BT3,,0,"EdSan 2 (151 MW): no Edwards Sanborn unit of 151 MW; ambiguous across the family"
-SUNCAT_2_A2ABT2,64481,1,"Arlington Solar Unit 2A BESS = EIA Arlington Energy Center II gen AEC2B (Riverside, SP15); 132 = 132 MW"
-SUNCAT_2_A1ABT1,64564,1,"Arlington Solar Unit 1A BESS = EIA Arlington Energy Center III gen AEC3B; units 1A+1B 47+63 = 110 = EIA 110 MW. Rejects Arlington II"
-SUNCAT_2_A1BBT1,64564,1,"Arlington Solar Unit 1B BESS = EIA Arlington Energy Center III; 47+63 = 110 = EIA 110 MW. Rejects Arlington II"
-RTEDDY_2_RWSBT1,,0,"Rosamond West Solar Central BESS A1: no Rosamond West plant in EIA-860 storage"
-RTEDDY_2_RWSBT2,,0,"Rosamond West Solar Central BESS A2: no Rosamond West plant in EIA-860 storage"
-RTEDDY_2_RWSBT3,,0,"Rosamond West Solar Central BESS A3: no Rosamond West plant in EIA-860 storage"
-RTEDDY_2_RWSBT4,,0,"Rosamond West Solar Central BESS B: no Rosamond West plant in EIA-860 storage"
-RTEDDY_2_RWSBT5,,0,"Rosamond West Solar Central BESS C: no Rosamond West plant in EIA-860 storage"
-BLKCRK_2_GMCBT1,58462,1,"Genesis McCoy BESS = EIA McCoy Solar Energy Project Hybrid gen MCST1 (Riverside, SP15); 230 = 230 MW"
-WSTWND_2_M89BT2,,0,"Mojave 89 BESS 2B (70.6 MW): EIA Mojave 16/17/18 BESS is 77 MW, a different project number"
-ESCNDO_6_EB1BT1,60570,1,"Escondido BESS 1 = EIA Escondido Energy Storage (SDG&E, San Diego, status OA); the three ESCNDO units 3x10 = 30 = EIA 30 MW. Rejects Condor"
-ESCNDO_6_EB2BT2,60570,1,"Escondido BESS 2 = EIA Escondido Energy Storage; 3x10 = 30 = EIA 30 MW"
-ESCNDO_6_EB3BT3,60570,1,"Escondido BESS 3 = EIA Escondido Energy Storage; 3x10 = 30 = EIA 30 MW"
-SNCLRA_2_SILBT1,63735,1,"Silverstrand BESS = EIA Silverstrand Grid Energy Storage System (Ventura, LA_BASIN, status OA); 11 = 11 MW. Rejects Sierra Energy Storage"
-VISTRA_5_DALBT1,260,1,"Dallas Energy Storage (VISTRA node) = Vistra/Dynegy Moss Landing storage, EIA plant 260 (Monterey, NP15): Dallas 4x100 = 400 = BAT1 300 (retired 2025, retired schedule) + BAT2 100"
-VISTRA_5_DALBT2,260,1,"Dallas Energy Storage 2 = EIA plant 260 Moss Landing (BAT1 300 + BAT2 100 = 400 = Dallas 4x100)"
-VISTRA_5_DALBT3,260,1,"Dallas Energy Storage 3 = EIA plant 260 Moss Landing (BAT1 300 + BAT2 100 = 400 = Dallas 4x100)"
-VISTRA_5_DALBT4,260,1,"Dallas Energy Storage 4 = EIA plant 260 Moss Landing (BAT1 300 + BAT2 100 = 400 = Dallas 4x100)"
-VISTRA_5_PLABT1,260,1,"Plano Storage 1 = EIA plant 260 Moss Landing gen BAT3 350 MW (COD 2023); Plano 100.4+100.4+74.6+74.6 = 350 = BAT3"
-VISTRA_5_PLABT2,260,1,"Plano Storage 2 = EIA plant 260 gen BAT3; Plano sum 350 = BAT3 350 MW"
-VISTRA_5_PLABT3,260,1,"Plano Storage 3 = EIA plant 260 gen BAT3; Plano sum 350 = BAT3 350 MW"
-VISTRA_5_PLABT4,260,1,"Plano Storage 4 = EIA plant 260 gen BAT3; Plano sum 350 = BAT3 350 MW"
-VICPAS_2_SOCBT1,,0,"Sol Catcher BESS 1: no Sol Catcher plant in EIA-860 storage"
-VICPAS_2_SOCBT2,,0,"Sol Catcher BESS 2: no Sol Catcher plant in EIA-860 storage"
-VICPAS_2_SOCSR1,,0,"Sol Catcher BESS PV1: no Sol Catcher plant in EIA-860 storage; the pick Lockhart Solar PV is a different project"
-VICPAS_2_SOCSR2,,0,"Sol Catcher BESS PV2: no Sol Catcher plant in EIA-860 storage"
-VICPAS_2_SOCSR3,,0,"Sol Catcher BESS PV3: no Sol Catcher plant in EIA-860 storage"
-VICPAS_2_SLOBT1,,0,"Sloth BESS: no Sloth plant in EIA-860 storage"
-ELCAJN_6_EB1BT1,60569,1,"Eastern BESS 1 (ELCAJN = El Cajon node) = EIA El Cajon Energy Storage (SDG&E, San Diego, SDGE); 7.5 = 7.5 MW"
-GRNITE_6_ESCBT1,,0,"EnerSmart El Cajon (3 MW): EIA EnerSmart El Cajon BESS (66754) is cancelled; the name-token pick El Cajon Energy Storage is SDG&E's 7.5 MW unit (ELCAJN_6_EB1BT1)"
-NITHWK_1_NHSBT1,,0,"Nighthawk Storage (300 MW): no Nighthawk plant in EIA-860 storage; the pick Sunlight Storage is Desert Sunlight's"
-ANGELA_1_ANGBT1,,0,"Angela BESS: no Angela plant in EIA-860 storage"
-JOHANN_2_T1BBT1,,0,"Titanium 1 BESS (1.4 MW): no Titanium plant in EIA-860 storage"
-GOLETA_2_PAIBT2,,0,"Painter BESS: no Painter plant in EIA-860 storage"
-SUNPND_5_SPSBT1,,0,"Sun Pond Storage 1: no Sun Pond plant in EIA-860 storage"
-SUNPND_5_SPSBT2,,0,"Sun Pond Storage 2: no Sun Pond plant in EIA-860 storage"
-ELKHRN_1_EESX3,62564,1,"Elkhorn Energy Storage = EIA Elkhorn Battery Energy Storage System (PG&E, Monterey, NP15, status OA after the 2025 Moss Landing fire); 182.5 = 182.5 MW. Rejects Lockhart ESS"
-SNCLRA_2_VESBT1,,0,"Ventura Energy Storage (100 MW): no plant of that name in EIA-860 storage; Saticoy (100 MW, Ventura) is plausible but unconfirmed"
-LAKEVW_6_AFTBT1,,0,"AFTW Storage (1.14 MW): no matching EIA-860 storage plant"
-SANTGO_2_MABBT1,,0,"Millikan Avenue BESS (2 MW): no matching EIA-860 storage plant"
-DTCHWD_2_BT3WND,,0,"Brookfield Tehachapi 3: no matching EIA-860 storage plant"
-DTCHWD_2_BT4WND,,0,"Brookfield Tehachapi 4: no matching EIA-860 storage plant"
-VENTSO_6_VENBT1,,0,"Ventasso Energy Storage: no matching EIA-860 storage plant"
-PRCTVY_1_MIGBT1,,0,"Miguel BESS (2 MW): no matching EIA-860 storage plant"
-ULTPCH_1_UCSBT1,,0,"Ultrapower Chinese Station BESS: no matching EIA-860 storage plant"
-YELPIN_2_YP2BT1,,0,"Yellow Pine 2 BESS: EIA Yellow Pine II is in NEVP (NV), outside the CAISO zones"
-YELPIN_2_YP2BT2,,0,"Yellow Pine 2 A BESS: EIA Yellow Pine II is in NEVP, outside the CAISO zones"
-YELPIN_2_YP2BT3,,0,"Yellow Pine 2 B BESS: EIA Yellow Pine II is in NEVP, outside the CAISO zones"
-BLCKWL_6_BTFBT1,,0,"BTF Storage DIDF (2 MW): no matching EIA-860 storage plant"
-HUMBRD_1_HMBBT1,,0,"Hummingbird Energy Storage: no matching EIA-860 storage plant"
-GWFPWR_1_LEDBT1,66662,1,"Lead BESS 2 = EIA Lead BESS 2 (Hanford BESS LLC, Kings); 32.27 vs 32 MW. Corrects the name-token pick Lead BESS 1"
-MCFLND_5_MSBBX2,66637,1,"McFarland Solar B BESS = EIA McFarland B Solar and Storage; 150 = 150 MW. Corrects the name-token pick McFarland A"
-MCFLND_5_MBSBX2,66637,1,"McFarland Solar B Hybrid (episodes from 2024-08) = EIA McFarland B Solar and Storage; CAISO Pmax 300 vs EIA 150 MW (2x, the capacity-sanity bound)"
-MCFLND_5_MSCBT1,67498,1,"McFarland Solar C = EIA McFarland C gen MCFRC; 185 = 185 MW. Corrects the name-token pick McFarland A"
-LCKHT1_2_LH1BT1,66946,1,"Lockhart Solar BESS 1 = EIA Lockhart ESS (Terra-Gen, San Bernardino); 45 = 45 MW. Corrects the name-token pick Lockhart Solar PV (69 MW)"
-LCKHT1_2_LSCBT1,10444,1,"Lockhart Solar CL ESS I = EIA Lockhart Solar PV gen LHC1 (Terra-Gen); 69 = 69 MW"
-LCKHT1_2_LSCBT2,66699,1,"Lockhart Solar CL ESS 2 = EIA Lockhart Solar PV II gen LHC2 (Terra-Gen); 59.7 = 59.7 MW"
-WSTWND_2_SBSBT1,65933,1,"Sagebrush Solar 2 (80 MW) = EIA Sagebrush ESS (Terra-Gen, Kern); 80 = 80 MW. Corrects the name-token pick Sagebrush Solar 2 ESS 40"
-RATSKE_2_WAVBT1,65591,1,"Antelope Valley BESS / Willy 9 Antelope Valley Complex = EIA AVEP BESS (Kern, SP15); 126 = 126 MW. Selector miss fixed in R-CAISO-36"
-BIGSKY_2_AS2BT1,66050,1,"Antelope Solar 2 LAB = EIA Lancaster Area Battery (AES, Los Angeles); 127 = 127 MW"
-BIGSKY_2_ASLBT2,63685,1,"Antelope Solar 2 Luna = EIA Luna Storage (AES, Los Angeles); 100 = 100 MW"
-BLM W_2_MDRBT1,67829,1,"BLM East Facility Mordor 2 = EIA Mordor ES2 (Inyo); 20 = 20 MW"
-CALFTN_2_CFSBT1,63930,1,"California Flats Solar Battery = EIA Cal Flats BESS (Monterey); 60 = 60 MW"
-BORDER_6_LTMBT1,55510,1,"Lithium (BORDER node) = EIA Border Hybrid Energy Center gen HER (CalPeak, San Diego, SDGE); 52 vs 54.1 MW"
-ETIWND_2_SEPBT1,65456,1,"Separator (ETIWND node) = EIA Separator (Etiwanda) BESS (SCE, San Bernardino); 100 vs 112.5 MW"
-OTAY_6_ECVBT2,66505,1,"Chula Vista 2 = EIA EnerSmart Chula Vista Sub Station gen CV151 3 MW; 3 = 3 MW"
-TUMBWD_2_WISBT3,66666,1,"Willow Springs Solar 3 (TUMBWD node) = EIA Tumbleweed Energy Storage gen TWES1 50 MW; 50 = 50 MW"
-TUMBWD_2_WISBT4,66666,1,"Willow Springs Solar 4 (TUMBWD node) = EIA Tumbleweed Energy Storage gen TWES2 75 MW; 75 = 75 MW"
-TAHOE_2_THOBT1,67736,1,"Tahoe 1 = EIA Silver Peak gen SP1 60 MW (Clark NV, CISO BA, ZP26); the three TAHOE units 60.04/109.06/110.1 match SP1/SP2/SP3 60/109/110 unit for unit"
-TAHOE_2_THOBT2,67736,1,"Tahoe 2 = EIA Silver Peak gen SP2 109 MW; unit-for-unit match"
-TAHOE_2_THOBT3,67736,1,"Tahoe 3 = EIA Silver Peak gen SP3 110 MW; unit-for-unit match"
-WESCAN_2_BDSBT1,65980,1,"Bateria Del Sur (WESCAN = West Side Canal node) = EIA CED West Side Canal Battery Storage (Imperial); 131 = 131 MW"
-WESCN2_2_BDSBT1,,0,"Bateria Del Sur 2A (119 MW): no operable EIA-860 unit for a second West Side Canal phase"
-WESCN2_2_BDSBT2,,0,"Bateria Del Sur 2B (100 MW): no operable EIA-860 unit for a second West Side Canal phase"
-ALMASL_2_AL6BT6,,0,"Almasol 6 BES: no Almasol plant in EIA-860 storage"
-CRELMN_6_AABBT1,,0,"Air Attack Base (0.47 MW): no matching EIA-860 storage plant"
-CHERRY_2_POMBT1,,0,"Pomegranate: no matching EIA-860 storage plant"
-MARVEL_2_MARBX2,,0,"Marvel (325 MW): no Marvel plant in EIA-860 storage; the pick AVEP BESS is Antelope Valley"
-MARVEL_2_MARBT3,,0,"Marvel 2 (75 MW): no Marvel plant in EIA-860 storage"
-HAMLIN_1_BMSBT2,,0,"Baldy Mesa SP (50 MW): EIA has Baldy Mesa Solar & Storage 75 MW and Baldy Mesa 2 Silver Peak 25 MW; neither matches 50"
-VALTNE_2_TBBBT1,,0,"Tropico Solar Big Beau: no Tropico plant in EIA-860 storage; BigBeau Solar (40 MW) does not match the Tropico units"
-VALTNE_2_TSBBT1,,0,"Tropico Solar Big Beau B: no Tropico plant in EIA-860 storage"
-VALTNE_2_TRSBT1,,0,"Tropico Solar: no Tropico plant in EIA-860 storage"
-VALTNE_2_TSBBT2,,0,"Tropico Solar B: no Tropico plant in EIA-860 storage"
-SRAPTA_5_DECBT1,,0,"Dateland Energy Complex Sierra: no Dateland plant in EIA-860 storage"
+resource_id,plant_code,accepted,review_note,source
+SCARLT_2_SS2BT1,66951,1,"Scarlet Solar 2 BESS = EIA Scarlet II Hybrid (Fresno, NP15); 150 = 150 MW. Rejects the name-token pick Scarlet Solar (CA) 40 MW",eia860
+GARLND_2_GARBT1,60233,1,"Garland B BESS = EIA RE Garland (Kern, SP15); 88 = 88 MW (BESS1+BESS2)",eia860
+MSTANG_2_MTGBT1,59150,1,"Mustang 1 BESS = EIA RE Mustang (Kings, NP15); 75 = 75 MW",eia860
+AZALEA_6_AZABT1,66890,1,"Azalea BESS = EIA SF Azalea (Kern, ZP26); 38 = 38 MW",eia860
+VLCNTR_6_VCEBT1,66502,1,"Valley Center Energy Storage (VLCNTR node) = EIA Valley Center 54 (San Diego, SDGE); 54 = 54 MW",eia860
+VLCNTR_6_VCEBT2,66500,1,"Valley Center Energy Storage B = EIA Valley Center 85 (San Diego, SDGE); 85 = 85 MW",eia860
+KRAMER_1_R1BX3,64489,1,"Resurgence 1 BESS = EIA Resurgence Solar (San Bernardino, ZP26); 75 = 75 MW",eia860
+KRAMER_1_R2BX2,66620,1,"Resurgence 2 BESS = EIA Resurgence Solar II (San Bernardino, ZP26); 40 = 40 MW",eia860
+FIFTHS_2_FSSBT,64197,1,"Fifth Standard Battery = EIA Fifth Standard Solar PV (Hybrid) (Fresno, ZP26); 137 = 137 MW",eia860
+PALSEL_6_PLSBT1,67092,1,"Paulsell Solar Energy Center BESS = EIA Paulsell (Stanislaus, NP15); 15 = 15 MW",eia860
+CHINO_2_APEBT1,50300,1,"Pomona Energy Storage (CHINO node) = EIA VESI Pomona (Los Angeles, LA_BASIN) gen BESS1 20 MW; 20 = 20 MW",eia860
+CHINO_2_PESBT1,50300,1,Pomona Energy Storage 2 = EIA VESI Pomona gen BESS2 20 MW; 20 = 20 MW,eia860
+CWATER_1_DS1BT1,67931,1,"Daggett Solar 1 BESS = EIA Daggett 1 (San Bernardino, SP15); 113.5 = 113.5 MW. Rejects the name-token pick Daggett 2",eia860
+PROXSR_2_PS2BT3,66270,1,"Proxima Solar BESS 2 = EIA Proxima (Stanislaus, NP15); the three PROXSR units 90+40+32 = 162 = EIA 162 MW",eia860
+PROXSR_2_PS1BT1,66270,1,Proxima Solar BESS 1A = EIA Proxima; 90+40+32 = 162 = EIA 162 MW,eia860
+PROXSR_2_PS1BT2,66270,1,Proxima Solar BESS 1B = EIA Proxima; 90+40+32 = 162 = EIA 162 MW,eia860
+SISPRG_2_DS3BT1,64852,1,"Daggett Solar 3 a BESS = EIA Daggett 3 (San Bernardino, SP15); the four SISPRG units 61.5+60+12.5+15 = 149 = EIA 149 MW. Rejects Daggett 2",eia860
+SISPRG_2_DS3BT2,64852,1,Daggett Solar 3 b BESS = EIA Daggett 3; 61.5+60+12.5+15 = 149 = EIA 149 MW. Rejects Daggett 2,eia860
+SISPRG_2_DS3BT3,64852,1,Daggett Solar 3 cd BESS = EIA Daggett 3; 61.5+60+12.5+15 = 149 = EIA 149 MW. Rejects Daggett 2,eia860
+SISPRG_2_DS3BT4,64852,1,Daggett Solar 3 e BESS = EIA Daggett 3; 61.5+60+12.5+15 = 149 = EIA 149 MW. Rejects Daggett 2,eia860
+DSRTSN_2_DS2X2,65857,1,"Desert Sunlight PV II Storage (episodes from 2023-01) = EIA Sunlight Storage (Riverside, SP15, COD 2022); 230 = 230 MW",eia860
+DSRTSN_2_DS2BX2,66575,1,"Desert Sunlight PV II Storage 2 (episodes from 2024-02) = EIA Sunlight Storage II (Riverside, SP15, COD 2024); 230 = 230 MW",eia860
+GATEWY_2_GESBT1,63834,1,"Gateway Energy Storage = EIA Gateway Energy Storage System (San Diego, SDGE); 250 = 250 MW",eia860
+OBERON_5_O1BBX2,65734,1,"Oberon 1 BESS = EIA Oberon Solar Project gen OBIBS (Riverside, SP15); 125 = 125 MW",eia860
+OBERON_5_O2BBX2,65735,1,"Oberon 2 BESS = EIA Oberon II Solar Project gen OBIIB (Riverside, SP15); 125 = 125 MW",eia860
+RSMNDS_2_CSRBT1,67764,1,"Cyclone Solar Rosamond South I BESS 1 = EIA Rosamond South 1 (Kern, SP15); the three RSMNDS units 92+15+10 = 117 = EIA 117 MW",eia860
+RSMNDS_2_CSRBT2,67764,1,Cyclone Solar Rosamond South I BESS 3 = EIA Rosamond South 1; 92+15+10 = 117 = EIA 117 MW,eia860
+CHESTN_2_CHWBX2,63849,1,"Chestnut Westside BESS = EIA Chestnut (utility Chestnut Westside LLC; Kings, ZP26); 135 = 135 MW",eia860
+VSTAES_6_VESBT1,61661,1,"Vista Energy Storage = EIA Vista Energy Storage System (San Diego, SDGE); 40 = 40 MW",eia860
+CASCES_6_CESBT2,,0,"Cascade Energy Storage Expansion: EIA Cascade (61801) lists 25 MW, already held by CASCES_6_CESBT1; the 20 MW expansion has no operable EIA-860 unit; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+TWINKL_2_ASCBTA,68661,1,"Aratina Solar Center 1a BESS = EIA-860M Aug 2026 Aratina Solar Center 1A (68661, gen 64BES; San Bernardino, CISO, SP15); 75 = 75 MW. EIA COD 2026-07; CNOG episode 2025-10 (pre-COD). Not in the annual Final 2025",eia860m
+TWINKL_2_ASCBTB,61167,1,"Aratina Solar Center 1b BESS = EIA-860M Aug 2026 Aratina Solar Center 1B (61167, gen BESS; San Bernardino, CISO, SP15); 50 = 50 MW. EIA COD 2026-07; CNOG episode 2025-10 (pre-COD). Not in the annual Final 2025",eia860m
+JOANEC_2_STABT1,63843,1,"Santa Ana Storage 1 (JOANEC = Johanna node) = EIA Johanna Energy Center gen SASP1 20 MW (Orange, LA_BASIN); 20 = 20 MW",eia860
+JOANEC_2_STABT2,63843,1,Santa Ana Storage 2 = EIA Johanna Energy Center gen SAP2 20 MW; 20 = 20 MW,eia860
+JOANEC_2_ST3BT3,63843,1,Santa Ana Storage 3 = EIA Johanna Energy Center gen SASP3 40 MW; 40 = 40 MW,eia860
+JOHANN_2_JOSBT1,62889,1,"Johanna Storage 1 = EIA Hecate Energy Johanna Facility gen HEGJF 10 MW (Orange, LA_BASIN); 10 = 10 MW. Corrects the name-token pick Johanna Energy Center (its gens are the Santa Ana Storage units)",eia860
+JOHANN_2_JOSBT2,62889,1,Johanna Storage 2 = EIA Hecate Energy Johanna Facility gen HJFII 10 MW; 10 = 10 MW. Corrects the name-token pick Johanna Energy Center,eia860
+JOHANN_2_OCEBT2,62497,1,"Orange County Energy Storage 2 = EIA Orange County Energy Storage 2 (Orange, LA_BASIN; status OA in the Final 2025 release); 9 = 9 MW",eia860
+JOHANN_2_OCEBT3,62499,1,"Orange County Energy Storage 3 = EIA Orange County Energy Storage 3 (Orange, LA_BASIN; status OA); 6 = 6 MW",eia860
+DRACKR_2_DSUBT1,,0,"Dracker Solar Unit 1 BESS: no Dracker plant in EIA-860 storage; the name-token pick Raceway is a different project; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+DRACKR_2_DSUBT2,,0,"Dracker Solar Unit 2 BESS: no Dracker plant in EIA-860 storage; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+DRACKR_2_DSUBT3,,0,"Dracker Solar Unit 3 BESS: no Dracker plant in EIA-860 storage; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+DRACKR_2_DSUBT4,,0,"Dracker Solar Unit 4 BESS: no Dracker plant in EIA-860 storage; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+FILIPPI_2_QZSBTX,59871,1,"Quartzite Solar 8 BESS = EIA Desert Quartzite (Riverside, SP15); 150 = 150 MW. Rejects the name-token pick Mesquite Solar 4 (10 MW)",eia860
+ALAMIT_7_ES1,61204,1,"Alamitos Energy Storage = EIA AES ES Alamitos (Los Angeles, LA_BASIN); 100.45 vs 100 MW",eia860
+ALAMIT_2_AESBT2,67579,1,"Alamitos Energy Storage 2 = EIA AES ES Alamitos 2 (Los Angeles, LA_BASIN); 82 = 82 MW",eia860
+HIGHDS_2_H5SBT1,,0,"High 5 Solar BESS: no High 5 plant in EIA-860 storage; the name-token pick BigBeau is a different project; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+VIKING_2_VSHSB1,,0,"Vikings Solar BESS: EIA Vikings Energy Farm (150 MW) is in the IID balancing area, outside the CAISO zones; two CAISO resources of 150 MW each against one EIA 150 MW plant; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+VIKING_2_VCBBT1,,0,"Vikings co-located BESS: EIA Vikings Energy Farm is in the IID balancing area, outside the CAISO zones; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+ATLASC_5_ACBBT6,68324,1,"Atlas Complex 9 BESS = EIA Atlas IX (La Paz AZ, CISO BA, SP15); 150 = 150 MW",eia860
+ATLASC_5_ACBBT2,68322,1,"Atlas Complex 7A BESS = EIA Atlas VII gen ALT7A 180 MW (La Paz AZ, CISO BA); 180 = 180 MW. Rejects Atlas IX",eia860
+ATLASC_5_ACBBT3,68322,1,Atlas Complex 7B BESS = EIA Atlas VII gen ALT7B 120 MW; 120 = 120 MW. Rejects Atlas IX,eia860
+ATLASC_5_ACBBT4,,0,"Atlas Complex 8A BESS (210 MW): EIA-860M Aug 2026 Atlas VIII (68323, gen ALT8A, 210 MW, La Paz AZ, CISO) is status V (under construction), on the planned sheet, not the operating inventory; Atlas IX (150 MW) is a different phase",eia860
+BLKDIA_2_BDEBT1,,0,"Black Diamond Energy Storage: no such plant in EIA-860 storage; the name-token pick Black Walnut (15 MW) is a different project; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+CAMERN_6_BSPBT1,,0,"Buckman Springs BESS (0.46 MW): no EIA-860 storage plant; the pick Chaparral Springs (88 MW) is a different project; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+SANDRN_2_SS1BT1,65664,1,"Sandrini Sol 1 BESS = EIA Sandrini Solar 100 gen GENBA (Kern, ZP26); 92 vs 95.4 MW",eia860
+TOWNSITE_2_MEADDYN,,0,"Townsite Solar BESS (180 MW, Mead dynamic schedule): EIA Townsite Solar Project Hybrid is 90 MW in WALC (NV), outside the CAISO zones; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+ORTGA_6_MCDBT1,,0,"Merced BESS (2.93 MW): EIA-860M Aug 2026 Merced BESS (68018, gen MRCDB, 3.0 MW, Merced) is status TS (construction complete, not in commercial operation), on the planned sheet, not the operating inventory; UC Merced Solar Hybrid is 0.5 MW",eia860
+SANBRN_2_SS2BT3,65672,1,Sanborn Solar 2 SBESS 3 = EIA Sanborn BESS 3 (Kern); 169 = 169 MW. Rejects Sanborn BESS 1,eia860
+SANBRN_2_SS2BT4,65673,1,Sanborn Solar 2 SBESS 4 = EIA Sanborn BESS 4 (Kern); 47 = 47 MW. Rejects Sanborn BESS 1,eia860
+SANBRN_2_ES2SB3,,0,"EdSan 2 Sanborn 3 (42 MW): no Edwards Sanborn or Sanborn unit of 42 MW in EIA-860; ambiguous across the Edwards Sanborn family; EIA-860M Aug 2026 carries the same Edwards Sanborn units (generator IDs BESS/ESSB1-2), so it does not disambiguate",eia860
+SANBRN_2_ES1BT3,,0,"EdSan 1 Edwards 1 (50.43 MW): no Edwards Sanborn unit near 50 MW; ambiguous across the Edwards Sanborn family; EIA-860M Aug 2026 carries the same Edwards Sanborn units (generator IDs BESS/ESSB1-2), so it does not disambiguate",eia860
+SANBRN_2_ESABT1,,0,"EdSan 1A (100 MW): EIA Edwards Sanborn E1A is 144 MW; the family has several 100-ish MW units, ambiguous; EIA-860M Aug 2026 carries the same Edwards Sanborn units (generator IDs BESS/ESSB1-2), so it does not disambiguate",eia860
+SANBRN_2_ESBBT1,,0,"EdSan 1B (100 MW): EIA Edwards Sanborn E1B is 136 MW; ambiguous across the family; EIA-860M Aug 2026 carries the same Edwards Sanborn units (generator IDs BESS/ESSB1-2), so it does not disambiguate",eia860
+EDWARD_2_ES2BT3,,0,"EdSan 2 (151 MW): no Edwards Sanborn unit of 151 MW; ambiguous across the family; EIA-860M Aug 2026 carries the same Edwards Sanborn units (generator IDs BESS/ESSB1-2), so it does not disambiguate",eia860
+SUNCAT_2_A2ABT2,64481,1,"Arlington Solar Unit 2A BESS = EIA Arlington Energy Center II gen AEC2B (Riverside, SP15); 132 = 132 MW",eia860
+SUNCAT_2_A1ABT1,64564,1,Arlington Solar Unit 1A BESS = EIA Arlington Energy Center III gen AEC3B; units 1A+1B 47+63 = 110 = EIA 110 MW. Rejects Arlington II,eia860
+SUNCAT_2_A1BBT1,64564,1,Arlington Solar Unit 1B BESS = EIA Arlington Energy Center III; 47+63 = 110 = EIA 110 MW. Rejects Arlington II,eia860
+RTEDDY_2_RWSBT1,,0,"Rosamond West Solar Central BESS A1: no Rosamond West plant in EIA-860 storage; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+RTEDDY_2_RWSBT2,,0,"Rosamond West Solar Central BESS A2: no Rosamond West plant in EIA-860 storage; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+RTEDDY_2_RWSBT3,,0,"Rosamond West Solar Central BESS A3: no Rosamond West plant in EIA-860 storage; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+RTEDDY_2_RWSBT4,,0,"Rosamond West Solar Central BESS B: no Rosamond West plant in EIA-860 storage; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+RTEDDY_2_RWSBT5,,0,"Rosamond West Solar Central BESS C: no Rosamond West plant in EIA-860 storage; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+BLKCRK_2_GMCBT1,58462,1,"Genesis McCoy BESS = EIA McCoy Solar Energy Project Hybrid gen MCST1 (Riverside, SP15); 230 = 230 MW",eia860
+WSTWND_2_M89BT2,,0,"Mojave 89 BESS 2B (70.6 MW): EIA Mojave 16/17/18 BESS is 77 MW, a different project number; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+ESCNDO_6_EB1BT1,60570,1,"Escondido BESS 1 = EIA Escondido Energy Storage (SDG&E, San Diego, status OA); the three ESCNDO units 3x10 = 30 = EIA 30 MW. Rejects Condor",eia860
+ESCNDO_6_EB2BT2,60570,1,Escondido BESS 2 = EIA Escondido Energy Storage; 3x10 = 30 = EIA 30 MW,eia860
+ESCNDO_6_EB3BT3,60570,1,Escondido BESS 3 = EIA Escondido Energy Storage; 3x10 = 30 = EIA 30 MW,eia860
+SNCLRA_2_SILBT1,63735,1,"Silverstrand BESS = EIA Silverstrand Grid Energy Storage System (Ventura, LA_BASIN, status OA); 11 = 11 MW. Rejects Sierra Energy Storage",eia860
+VISTRA_5_DALBT1,260,1,"Dallas Energy Storage (VISTRA node) = Vistra/Dynegy Moss Landing storage, EIA plant 260 (Monterey, NP15): Dallas 4x100 = 400 = BAT1 300 (retired 2025, retired schedule) + BAT2 100",eia860
+VISTRA_5_DALBT2,260,1,Dallas Energy Storage 2 = EIA plant 260 Moss Landing (BAT1 300 + BAT2 100 = 400 = Dallas 4x100),eia860
+VISTRA_5_DALBT3,260,1,Dallas Energy Storage 3 = EIA plant 260 Moss Landing (BAT1 300 + BAT2 100 = 400 = Dallas 4x100),eia860
+VISTRA_5_DALBT4,260,1,Dallas Energy Storage 4 = EIA plant 260 Moss Landing (BAT1 300 + BAT2 100 = 400 = Dallas 4x100),eia860
+VISTRA_5_PLABT1,260,1,Plano Storage 1 = EIA plant 260 Moss Landing gen BAT3 350 MW (COD 2023); Plano 100.4+100.4+74.6+74.6 = 350 = BAT3,eia860
+VISTRA_5_PLABT2,260,1,Plano Storage 2 = EIA plant 260 gen BAT3; Plano sum 350 = BAT3 350 MW,eia860
+VISTRA_5_PLABT3,260,1,Plano Storage 3 = EIA plant 260 gen BAT3; Plano sum 350 = BAT3 350 MW,eia860
+VISTRA_5_PLABT4,260,1,Plano Storage 4 = EIA plant 260 gen BAT3; Plano sum 350 = BAT3 350 MW,eia860
+VICPAS_2_SOCBT1,,0,"Sol Catcher BESS 1: no Sol Catcher plant in EIA-860 storage; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+VICPAS_2_SOCBT2,,0,"Sol Catcher BESS 2: no Sol Catcher plant in EIA-860 storage; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+VICPAS_2_SOCSR1,,0,"Sol Catcher BESS PV1: no Sol Catcher plant in EIA-860 storage; the pick Lockhart Solar PV is a different project; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+VICPAS_2_SOCSR2,,0,"Sol Catcher BESS PV2: no Sol Catcher plant in EIA-860 storage; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+VICPAS_2_SOCSR3,,0,"Sol Catcher BESS PV3: no Sol Catcher plant in EIA-860 storage; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+VICPAS_2_SLOBT1,,0,"Sloth BESS: no Sloth plant in EIA-860 storage; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+ELCAJN_6_EB1BT1,60569,1,"Eastern BESS 1 (ELCAJN = El Cajon node) = EIA El Cajon Energy Storage (SDG&E, San Diego, SDGE); 7.5 = 7.5 MW",eia860
+GRNITE_6_ESCBT1,,0,"EnerSmart El Cajon (3 MW): EIA EnerSmart El Cajon BESS (66754) is cancelled; the name-token pick El Cajon Energy Storage is SDG&E's 7.5 MW unit (ELCAJN_6_EB1BT1); EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+NITHWK_1_NHSBT1,65889,1,"Nighthawk Storage = EIA-860M Aug 2026 Nighthawk Energy Storage, LLC (65889, gen BESS; San Diego, CISO, SDGE); 300 = 300 MW; node NITHWK. EIA COD 2026-06; CNOG episodes from 2025-06 (pre-COD). Not in the annual Final 2025",eia860m
+ANGELA_1_ANGBT1,,0,"Angela BESS (20 MW): EIA-860M Aug 2026 has Angela Solar Project (68854, gen ABESS; Tulare, CISO) at 40 MW, COD 2026-05. Identity likely (node ANGELA) but MW disagrees (20 vs 40, a single pre-COD episode); not accepted",eia860
+JOHANN_2_T1BBT1,,0,"Titanium 1 BESS (1.4 MW): no Titanium plant in EIA-860 storage; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+GOLETA_2_PAIBT2,62729,1,"Painter BESS = EIA-860M Aug 2026 Painter Energy Storage (62729, gen PAIN1; Santa Barbara, CISO, SP15); 10 = 10 MW; node GOLETA (Goleta, Santa Barbara Co.). EIA COD 2026-07; CNOG episodes from 2025-12 (pre-COD). Not in the annual Final 2025",eia860m
+SUNPND_5_SPSBT1,,0,"Sun Pond Storage 1 (42.5 MW): EIA-860M Aug 2026 Sun Pond (68492, gen GEN02, 85 = 2 x 42.5 MW, Maricopa AZ) is in the SRP balancing area, outside the CAISO zones",eia860
+SUNPND_5_SPSBT2,,0,"Sun Pond Storage 2 (42.5 MW): EIA-860M Aug 2026 Sun Pond (68492, gen GEN02, 85 = 2 x 42.5 MW, Maricopa AZ) is in the SRP balancing area, outside the CAISO zones",eia860
+ELKHRN_1_EESX3,62564,1,"Elkhorn Energy Storage = EIA Elkhorn Battery Energy Storage System (PG&E, Monterey, NP15, status OA after the 2025 Moss Landing fire); 182.5 = 182.5 MW. Rejects Lockhart ESS",eia860
+SNCLRA_2_VESBT1,,0,"Ventura Energy Storage (100 MW): no plant of that name in EIA-860 storage; Saticoy (100 MW, Ventura) is plausible but unconfirmed; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+LAKEVW_6_AFTBT1,,0,"AFTW Storage (1.14 MW): no matching EIA-860 storage plant; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+SANTGO_2_MABBT1,,0,"Millikan Avenue BESS (2 MW): no matching EIA-860 storage plant; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+DTCHWD_2_BT3WND,,0,"Brookfield Tehachapi 3: no matching EIA-860 storage plant; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+DTCHWD_2_BT4WND,,0,"Brookfield Tehachapi 4: no matching EIA-860 storage plant; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+VENTSO_6_VENBT1,68509,1,"Ventasso Energy Storage = EIA-860M Aug 2026 Ventasso Energy Storage, LLC (68509, gen VNT; San Diego, CISO, SDGE); 50 = 50 MW; node VENTSO. EIA COD 2026-03; CNOG episodes from 2025-08 (pre-COD). Not in the annual Final 2025",eia860m
+PRCTVY_1_MIGBT1,,0,"Miguel BESS (2 MW): no matching EIA-860 storage plant; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+ULTPCH_1_UCSBT1,,0,"Ultrapower Chinese Station BESS: no matching EIA-860 storage plant; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+YELPIN_2_YP2BT1,,0,"Yellow Pine 2 BESS: EIA Yellow Pine II is in NEVP (NV), outside the CAISO zones; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+YELPIN_2_YP2BT2,,0,"Yellow Pine 2 A BESS: EIA Yellow Pine II is in NEVP, outside the CAISO zones; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+YELPIN_2_YP2BT3,,0,"Yellow Pine 2 B BESS: EIA Yellow Pine II is in NEVP, outside the CAISO zones; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+BLCKWL_6_BTFBT1,66648,1,"BTF Storage DIDF = EIA Blackwell's Corner Storage Facility (66648, gen BLKWL; Kern, ZP26); 2 = 2 MW; node BLCKWL names the plant. In the annual Final 2025 (OP, COD 2025-06); surfaced by the R-CAISO-37 EIA-860M scan. Supersedes the R-CAISO-36 reject",eia860
+HUMBRD_1_HMBBT1,65395,1,"Hummingbird Energy Storage = EIA-860M Aug 2026 Hummingbird Energy Storage LLC (65395, gen HUMB1; Santa Clara, CISO, NP15); 75 = 75 MW; node HUMBRD. EIA COD 2026-03; CNOG episodes from 2025-02 (pre-COD). Not in the annual Final 2025",eia860m
+GWFPWR_1_LEDBT1,66662,1,"Lead BESS 2 = EIA Lead BESS 2 (Hanford BESS LLC, Kings); 32.27 vs 32 MW. Corrects the name-token pick Lead BESS 1",eia860
+MCFLND_5_MSBBX2,66637,1,McFarland Solar B BESS = EIA McFarland B Solar and Storage; 150 = 150 MW. Corrects the name-token pick McFarland A,eia860
+MCFLND_5_MBSBX2,66637,1,"McFarland Solar B Hybrid (episodes from 2024-08) = EIA McFarland B Solar and Storage; CAISO Pmax 300 vs EIA 150 MW (2x, the capacity-sanity bound)",eia860
+MCFLND_5_MSCBT1,67498,1,McFarland Solar C = EIA McFarland C gen MCFRC; 185 = 185 MW. Corrects the name-token pick McFarland A,eia860
+LCKHT1_2_LH1BT1,66946,1,"Lockhart Solar BESS 1 = EIA Lockhart ESS (Terra-Gen, San Bernardino); 45 = 45 MW. Corrects the name-token pick Lockhart Solar PV (69 MW)",eia860
+LCKHT1_2_LSCBT1,10444,1,Lockhart Solar CL ESS I = EIA Lockhart Solar PV gen LHC1 (Terra-Gen); 69 = 69 MW,eia860
+LCKHT1_2_LSCBT2,66699,1,Lockhart Solar CL ESS 2 = EIA Lockhart Solar PV II gen LHC2 (Terra-Gen); 59.7 = 59.7 MW,eia860
+WSTWND_2_SBSBT1,65933,1,"Sagebrush Solar 2 (80 MW) = EIA Sagebrush ESS (Terra-Gen, Kern); 80 = 80 MW. Corrects the name-token pick Sagebrush Solar 2 ESS 40",eia860
+RATSKE_2_WAVBT1,65591,1,"Antelope Valley BESS / Willy 9 Antelope Valley Complex = EIA AVEP BESS (Kern, SP15); 126 = 126 MW. Selector miss fixed in R-CAISO-36",eia860
+BIGSKY_2_AS2BT1,66050,1,"Antelope Solar 2 LAB = EIA Lancaster Area Battery (AES, Los Angeles); 127 = 127 MW",eia860
+BIGSKY_2_ASLBT2,63685,1,"Antelope Solar 2 Luna = EIA Luna Storage (AES, Los Angeles); 100 = 100 MW",eia860
+BLM W_2_MDRBT1,67829,1,BLM East Facility Mordor 2 = EIA Mordor ES2 (Inyo); 20 = 20 MW,eia860
+CALFTN_2_CFSBT1,63930,1,California Flats Solar Battery = EIA Cal Flats BESS (Monterey); 60 = 60 MW,eia860
+BORDER_6_LTMBT1,55510,1,"Lithium (BORDER node) = EIA Border Hybrid Energy Center gen HER (CalPeak, San Diego, SDGE); 52 vs 54.1 MW",eia860
+ETIWND_2_SEPBT1,65456,1,"Separator (ETIWND node) = EIA Separator (Etiwanda) BESS (SCE, San Bernardino); 100 vs 112.5 MW",eia860
+OTAY_6_ECVBT2,66505,1,Chula Vista 2 = EIA EnerSmart Chula Vista Sub Station gen CV151 3 MW; 3 = 3 MW,eia860
+TUMBWD_2_WISBT3,66666,1,Willow Springs Solar 3 (TUMBWD node) = EIA Tumbleweed Energy Storage gen TWES1 50 MW; 50 = 50 MW,eia860
+TUMBWD_2_WISBT4,66666,1,Willow Springs Solar 4 (TUMBWD node) = EIA Tumbleweed Energy Storage gen TWES2 75 MW; 75 = 75 MW,eia860
+TAHOE_2_THOBT1,67736,1,"Tahoe 1 = EIA Silver Peak gen SP1 60 MW (Clark NV, CISO BA, ZP26); the three TAHOE units 60.04/109.06/110.1 match SP1/SP2/SP3 60/109/110 unit for unit",eia860
+TAHOE_2_THOBT2,67736,1,Tahoe 2 = EIA Silver Peak gen SP2 109 MW; unit-for-unit match,eia860
+TAHOE_2_THOBT3,67736,1,Tahoe 3 = EIA Silver Peak gen SP3 110 MW; unit-for-unit match,eia860
+WESCAN_2_BDSBT1,65980,1,Bateria Del Sur (WESCAN = West Side Canal node) = EIA CED West Side Canal Battery Storage (Imperial); 131 = 131 MW,eia860
+WESCN2_2_BDSBT1,,0,"Bateria Del Sur 2A (119 MW): no operable EIA-860 unit for a second West Side Canal phase; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+WESCN2_2_BDSBT2,,0,"Bateria Del Sur 2B (100 MW): no operable EIA-860 unit for a second West Side Canal phase; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+ALMASL_2_AL6BT6,,0,"Almasol 6 BES: no Almasol plant in EIA-860 storage; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+CRELMN_6_AABBT1,,0,"Air Attack Base (0.47 MW): no matching EIA-860 storage plant; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+CHERRY_2_POMBT1,63850,1,"Pomegranate = EIA-860M Aug 2026 Cherry (63850, gen BESS1; Kings, CISO, ZP26); 40 = 40 MW (operating BESS1 only; BESS2 110 MW is planned); node CHERRY names the plant. EIA COD 2026-05; CNOG episodes from 2025-11 (pre-COD). Not in the annual Final 2025",eia860m
+MARVEL_2_MARBX2,,0,"Marvel (325 MW): no Marvel plant in EIA-860 storage; the pick AVEP BESS is Antelope Valley; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+MARVEL_2_MARBT3,,0,"Marvel 2 (75 MW): no Marvel plant in EIA-860 storage; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+HAMLIN_1_BMSBT2,,0,"Baldy Mesa SP (50 MW): EIA has Baldy Mesa Solar & Storage 75 MW and Baldy Mesa 2 Silver Peak 25 MW; neither matches 50. EIA-860M Aug 2026 adds Baldy Mesa Storage (69964, 50 MW) but at status V (under construction), while CNOG episodes run from 2024-02; still ambiguous",eia860
+VALTNE_2_TBBBT1,,0,"Tropico Solar Big Beau: no Tropico plant in EIA-860 storage; BigBeau Solar (40 MW) does not match the Tropico units; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+VALTNE_2_TSBBT1,,0,"Tropico Solar Big Beau B: no Tropico plant in EIA-860 storage; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+VALTNE_2_TRSBT1,,0,"Tropico Solar: no Tropico plant in EIA-860 storage; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+VALTNE_2_TSBBT2,,0,"Tropico Solar B: no Tropico plant in EIA-860 storage; EIA-860M Aug 2026 (all four sheets): no unit beyond the annual Final 2025",eia860
+SRAPTA_5_DECBT1,,0,"Dateland Energy Complex Sierra (112.5 MW): plausibly EIA Sierra Pinta BESS (67973, gen SP01, 113 MW, Yuma AZ; node SRAPTA), but that plant is in AZPS, outside the CAISO zones",eia860
