@@ -5017,8 +5017,19 @@ STORAGE_ELCC_BY_DURATION_BY_ISO: dict[str, list[tuple[float, float]]] = {
 # dispatchable resource by demonstrated capability and not by duration at all.
 # Using the real mix in a by-duration table would have made the error WORSE,
 # which is the measurement that settles the §6.1 reconciliation question.
+# RE-VINTAGED 2026-10-02 (owner ruling "replace the early release snapshot"):
+# the denominator is the EIA-860 FINAL 2025 release's BA-CISO Status="OP"
+# storage nameplate, 15,519.3 MW (was 15,448.4 on the 2025 Early Release), the
+# SAME fleet STORAGE_BASE_FLEET_MW["CAISO"]["mid"] is now built from (rule 14:
+# numerator and denominator describe one fleet). The numerator is unchanged
+# (published September NQC, 2026 SLRA Table 1.1). 13,365 / 15,519.3 = 0.861186
+# (was 0.865138). The "15,448 MW" figures in the derivation text above are the
+# Early-Release-era measurement kept as history. This value change moves the
+# CAISO row off its frozen declaration in solve_surface_declared.py, which is
+# the designed zero-edit path: the row enters CAISO's cache key on its own
+# (rule 23 [R-FROZEN-DERIVE]: the licence is the source release).
 STORAGE_WHOLE_CLASS_ACCREDITATION_BY_ISO: dict[str, float] = {
-    "CAISO": 13_365.0 / 15_448.4,  # = 0.865138; see the derivation above.
+    "CAISO": 13_365.0 / 15_519.3,  # = 0.861186; see the derivation above.
 }
 
 # Marginal ELCC saturation. As cumulative storage power approaches the
