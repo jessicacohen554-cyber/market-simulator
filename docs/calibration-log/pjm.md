@@ -6941,3 +6941,11 @@ over-run partly an exit-cohort outage-layer construction defect (~8.3 TWh phanto
 - **Card 2:** CT_PEAKER = (i) a persistent per-plant under-run (Tait, Doswell, Madison, Louisa, …) plus (ii) a ComEd/West-APS over-run stepping up at 2022/23 (CT committed band 4.4 → 8.6 TWh). 2021 fails because (i) is at its widest and (ii) has not started. The reserve vintage (+0.35–0.5 GW) does not explain (ii). `ct_peaker_committed_measured` is year-invariant with the wrong 2024/25 sign. The 2022 cluster has nothing new.
 - Card 3 not reached. **OPEN, not limits.**
 - **Record:** `docs/records/pjm/RESULT-pjm-next-22-2026-10-01.md`.
+
+## PJM-NEXT-23 — 2026-10-01 — the CT_PEAKER 2023 step is the gas price level; real CTs dispatch far flatter in cost than the LP (zero LP)
+
+- **Solves and keeper:** zero LP, zero shards. Keeper unchanged (`2026-09-30-pjm-next16-ovec`); 10 failing cells, NOT-YET.
+- **Card 1 (CT 2022 → 2023):** no CT input steps. Fleet change adds 0.67 TWh; committed capacity is flat (~3.0 GW, band already 1.05 ≈ measured 1.049); per-year heat rates move 0.00 cap-weighted. Cheap gas puts West-APS/ComEd CT offers ($27–35) at the system price for 5,000–7,000 h (Armstrong model 5,800–7,200 run-h vs real ~2,500). Continuing plants: model +6.3 TWh vs bench +2.4.
+- **Card 2 (persistent under-run):** Doswell GT7–9, Tait, West Lorain, Louisa run when actual DA is about half their modeled offer; only 0.43–0.71 of real CT energy is produced where DA or RT clears the modeled offer. Real CT dispatch is much flatter across plant cost than the LP's merit order: the CT form of NEXT-22's coal finding. Data note: Tait's CAMPD record is split across facility IDs 2847/55248, so its measured HR (13.1) covers GT1–3 only (EIA-923 12.5–12.7); ~$1–2/MWh, not the object.
+- Cards 3–4 not reached. **OPEN, not limits.**
+- **Record:** `docs/records/pjm/RESULT-pjm-next-23-2026-10-01.md`.
