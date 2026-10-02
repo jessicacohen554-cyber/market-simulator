@@ -543,9 +543,6 @@
     "sheet_plants_absent_from_vintage": [
       127,
       10418,
-      34693,
-      34702,
-      49392,
       54330,
       55098,
       55357,
@@ -716,9 +713,75 @@
       68734,
       68735,
       68736,
-      68737,
-      79003,
-      563503
+      68737
+    ],
+    "carried_plants_short_of_vintage": [
+      {
+        "plant": 3548,
+        "vintage_nameplate_mw": 932.0,
+        "sheet_nameplate_mw": 206.0,
+        "short_mw": 726.0
+      },
+      {
+        "plant": 52120,
+        "vintage_nameplate_mw": 678.1,
+        "sheet_nameplate_mw": 419.3,
+        "short_mw": 258.8
+      },
+      {
+        "plant": 55470,
+        "vintage_nameplate_mw": 861.0,
+        "sheet_nameplate_mw": 611.0,
+        "short_mw": 250.0
+      },
+      {
+        "plant": 56611,
+        "vintage_nameplate_mw": 1008.0,
+        "sheet_nameplate_mw": 936.0,
+        "short_mw": 72.0
+      },
+      {
+        "plant": 3628,
+        "vintage_nameplate_mw": 603.6,
+        "sheet_nameplate_mw": 537.6,
+        "short_mw": 66.0
+      },
+      {
+        "plant": 58378,
+        "vintage_nameplate_mw": 102.7,
+        "sheet_nameplate_mw": 82.2,
+        "short_mw": 20.5
+      },
+      {
+        "plant": 3631,
+        "vintage_nameplate_mw": 212.0,
+        "sheet_nameplate_mw": 192.8,
+        "short_mw": 19.2
+      },
+      {
+        "plant": 50118,
+        "vintage_nameplate_mw": 152.5,
+        "sheet_nameplate_mw": 138.9,
+        "short_mw": 13.6
+      },
+      {
+        "plant": 50150,
+        "vintage_nameplate_mw": 168.0,
+        "sheet_nameplate_mw": 162.0,
+        "short_mw": 6.0
+      },
+      {
+        "plant": 58151,
+        "vintage_nameplate_mw": 50.1,
+        "sheet_nameplate_mw": 45.1,
+        "short_mw": 5.0
+      },
+      {
+        "plant": 50054,
+        "vintage_nameplate_mw": 6.9,
+        "sheet_nameplate_mw": 3.8,
+        "short_mw": 3.1
+      }
     ]
   }
 }

@@ -165,17 +165,21 @@ class TestFootprintAdmission(unittest.TestCase):
         path = EIA_860_DIR / EIA_860_PARQUET_NAME
         if not path.exists():
             self.skipTest("eia860_generators.parquet not hydrated")
-        df = pd.read_parquet(
-            path,
-            columns=["plant_id", "balancing_authority_code", "nameplate_capacity_mw"],
-        )
-        fleet = df[df["balancing_authority_code"].isin(NWPP_BAS)]
+        from market_sim.data.fleet.models import generator_footprint_mask
+
+        df = pd.read_parquet(path)
+        # W0 E.6: the table is unfiltered (every BA + nerc_region); NWPP's
+        # NERC=WECC key is applied at LOAD time, so Pine Forest (DOPD-coded,
+        # NERC TRE) is in the table but never in the NWPP footprint.
+        fleet = df[generator_footprint_mask("NWPP", df)]
+        self.assertTrue(set(fleet["balancing_authority_code"]) <= set(NWPP_BAS))
         self.assertEqual(fleet["plant_id"].nunique(), 940)
         self.assertEqual(len(fleet), 1926)
         self.assertAlmostEqual(
             float(fleet["nameplate_capacity_mw"].sum()), 98_194.9, places=1
         )
-        self.assertFalse((df["plant_id"] == 68906).any())  # Pine Forest Solar I, TX/TRE
+        self.assertFalse((fleet["plant_id"] == 68906).any())  # Pine Forest, TX/TRE
+        self.assertTrue((df["plant_id"] == 68906).any())  # ...present unfiltered
         self.assertFalse((df["plant_id"] == 69290).any())  # Desert Bloom, proposed only
 
 

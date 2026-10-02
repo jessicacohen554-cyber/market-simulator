@@ -542,9 +542,6 @@
     "absent_mw": 554.1,
     "sheet_plants_absent_from_vintage": [
       127,
-      34693,
-      34702,
-      49392,
       50137,
       55098,
       55357,
@@ -623,9 +620,45 @@
       68734,
       68735,
       68736,
-      68737,
-      79003,
-      563503
+      68737
+    ],
+    "carried_plants_short_of_vintage": [
+      {
+        "plant": 3548,
+        "vintage_nameplate_mw": 611.0,
+        "sheet_nameplate_mw": 206.0,
+        "short_mw": 405.0
+      },
+      {
+        "plant": 52120,
+        "vintage_nameplate_mw": 678.1,
+        "sheet_nameplate_mw": 419.3,
+        "short_mw": 258.8
+      },
+      {
+        "plant": 56611,
+        "vintage_nameplate_mw": 1008.0,
+        "sheet_nameplate_mw": 936.0,
+        "short_mw": 72.0
+      },
+      {
+        "plant": 50118,
+        "vintage_nameplate_mw": 152.5,
+        "sheet_nameplate_mw": 138.9,
+        "short_mw": 13.6
+      },
+      {
+        "plant": 50054,
+        "vintage_nameplate_mw": 6.9,
+        "sheet_nameplate_mw": 3.8,
+        "short_mw": 3.1
+      },
+      {
+        "plant": 54520,
+        "vintage_nameplate_mw": 12.4,
+        "sheet_nameplate_mw": 10.6,
+        "short_mw": 1.8
+      }
     ]
   }
 }

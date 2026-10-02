@@ -534,7 +534,11 @@ def ercot_csv_audit(year: int, csv_path: Path | None = None) -> dict:
     ]
     vint = fossil.groupby("plant")["nameplate"].sum()
     missing = vint[~vint.index.isin(sheet_plants)].sort_values(ascending=False)
-    extra = sorted(sheet_plants - set(vint.index))
+    extra = sorted(
+        p
+        for p in sheet_plants - set(vint.index)
+        if int(str(p)[:-1] or 0) not in set(vint.index)
+    )
     # A plant the sheet carries can still be SHORT of the vintage's units —
     # Decker Creek 3548: the sheet holds its four GTs while the vintage's
     # steam units ST1/ST2 (724 MW to 2020, 404 MW to Mar-2022) are absent
@@ -542,8 +546,21 @@ def ercot_csv_audit(year: int, csv_path: Path | None = None) -> dict:
     # FINDING-closeout-w1-zero-lp-censuses-2026-10-02.md row 6). Flag every
     # carried plant whose vintage fossil nameplate exceeds the sheet's by more
     # than the family tolerance.
+    # The sheet splits a plant on a class boundary into a CHILD code = parent
+    # code + one digit (W A Parish 3470 -> 34702 ST, Wharton 3469 -> 34693 CT,
+    # Barney Davis 4939 -> 49392 ST); a child that is not itself a vintage
+    # plant is folded back into its parent before the comparison.
+    codes = pd.to_numeric(sheet["Plant_Code"], errors="coerce")
+    vintage_plants = set(vint.index)
+
+    def _parent(code: float) -> float:
+        text = str(int(code))
+        if int(code) not in vintage_plants and int(text[:-1] or 0) in vintage_plants:
+            return float(text[:-1])
+        return code
+
     sheet_np = (
-        sheet.assign(_pc=pd.to_numeric(sheet["Plant_Code"], errors="coerce"))
+        sheet.assign(_pc=codes.map(lambda c: _parent(c) if pd.notna(c) else c))
         .dropna(subset=["_pc"])
         .groupby("_pc")["Nameplate_MW"]
         .sum()

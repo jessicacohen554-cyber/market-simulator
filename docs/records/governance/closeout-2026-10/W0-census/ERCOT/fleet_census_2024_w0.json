@@ -543,9 +543,6 @@
     "sheet_plants_absent_from_vintage": [
       127,
       3492,
-      34693,
-      34702,
-      49392,
       55357,
       64770,
       64938,
@@ -569,9 +566,33 @@
       65579,
       65580,
       65581,
-      66992,
-      79003,
-      563503
+      66992
+    ],
+    "carried_plants_short_of_vintage": [
+      {
+        "plant": 56611,
+        "vintage_nameplate_mw": 1008.0,
+        "sheet_nameplate_mw": 936.0,
+        "short_mw": 72.0
+      },
+      {
+        "plant": 50118,
+        "vintage_nameplate_mw": 144.9,
+        "sheet_nameplate_mw": 138.9,
+        "short_mw": 6.0
+      },
+      {
+        "plant": 50054,
+        "vintage_nameplate_mw": 6.9,
+        "sheet_nameplate_mw": 3.8,
+        "short_mw": 3.1
+      },
+      {
+        "plant": 54520,
+        "vintage_nameplate_mw": 12.4,
+        "sheet_nameplate_mw": 10.6,
+        "short_mw": 1.8
+      }
     ]
   }
 }
