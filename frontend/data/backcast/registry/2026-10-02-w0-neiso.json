@@ -1,0 +1,19 @@
+{
+  "id": "2026-10-02-w0-neiso",
+  "label": "w0 neiso",
+  "date": "2026-10-02",
+  "shorthand": "w0-neiso",
+  "definition": "closeout-B W0 phase 3: NEISO full-span re-solve at the W0 defaults (owner ruling R-2)",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-10-02-w0-neiso.js",
+  "bundle": "results/calibration/w0_neiso_span"
+}

@@ -57,6 +57,7 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "src"))
 
+from scripts.lib.replay_recipe import _rule26_inert_recorded  # noqa: E402
 from scripts.replay_keeper import (  # noqa: E402
     CONFIG_PARTITION_KEY,
     CONFIG_PARTITION_SCHEMA,
@@ -146,6 +147,10 @@ def build_block(
     }
     for years, filename in legs:
         overlay = derive_overlay(base, _scenario_config(bundle / filename))
+        # A leg solved before a rule-26 deletion still records the deleted
+        # field; when its value is inert there is nothing to replay.
+        inert = _rule26_inert_recorded(bundle, overlay)
+        overlay = {k: v for k, v in overlay.items() if k not in inert}
         if not overlay:
             continue  # the leg IS the base recipe; absence means exactly that
         for year in years:
