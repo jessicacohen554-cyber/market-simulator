@@ -92,23 +92,21 @@ def test_the_deleted_polarity_in_its_owning_iso_is_still_reported(tmp_path):
     assert diffs == {"unit_outage_dispatched_bin_live_denominator": (False, None)}
 
 
-def test_a_field_registered_after_the_solve_at_its_default_is_not_a_mismatch(tmp_path):
-    """A field added to ScenarioConfig after the solve is absent from the recording."""
-    bundle = _bundle(tmp_path, {"voll": 5000.0})
-    diffs = replay_config_diffs(
-        bundle,
-        2025,
-        resolve=lambda b, y: {"voll": 5000.0, "spp_mmu_offer_repair": False},
-    )
-    assert diffs == {}
+def test_a_field_registered_after_the_solve_replays_at_its_default(tmp_path):
+    import dataclasses
 
+    from market_sim.config.scenarios import ScenarioConfig
 
-def test_a_field_absent_from_the_recording_but_replayed_armed_is_reported(tmp_path):
-    """Only the registered default is excused; an armed replay of an absent field is not."""
-    bundle = _bundle(tmp_path, {"voll": 5000.0})
-    diffs = replay_config_diffs(
-        bundle,
-        2025,
-        resolve=lambda b, y: {"voll": 5000.0, "spp_mmu_offer_repair": True},
+    field = next(
+        f
+        for f in dataclasses.fields(ScenarioConfig)
+        if f.default is False and not f.name.startswith("_")
     )
-    assert diffs == {"spp_mmu_offer_repair": (None, True)}
+    bundle = _bundle(tmp_path, {"voll": 5000.0})
+    same = replay_config_diffs(
+        bundle, 2025, resolve=lambda b, y: {"voll": 5000.0, field.name: False}
+    )
+    moved = replay_config_diffs(
+        bundle, 2025, resolve=lambda b, y: {"voll": 5000.0, field.name: True}
+    )
+    assert same == {} and moved == {field.name: (None, True)}
