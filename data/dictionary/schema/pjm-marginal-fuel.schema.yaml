@@ -1,0 +1,59 @@
+datatype: pjm-marginal-fuel
+schema_version: 1
+title: PJM real-time marginal fuel shares, hourly (IMM Marginal Fuel Postings)
+description: >-
+  One tidy row per (hour_beginning_ept, mms_timezone, fuel_type) from the PJM
+  Independent Market Monitor's (Monitoring Analytics) monthly "Marginal Fuel
+  Postings" (https://www.monitoringanalytics.com/data/marginal_fuel.shtml; PJM's
+  own marg-fuel-type-data page embeds an archive that stops at 2008-12). Each
+  5-minute real-time interval gives weight 1/n to each of its n marginal
+  (LMP-setting) units; the hourly share of a fuel is the mean of those weights
+  over the hour's intervals, so the shares of one hour sum to 1 (IMM data
+  description, worked example). Rule-13 class: an observed market OUTCOME used
+  only as a diagnostic comparator for the keeper's unit_marginal layer (which
+  fuel sets price), never a model input. Fetched and derived by
+  scripts/data/fetch_pjm_marginal_fuel.py into
+  data/raw/pjm-marginal-fuel/by-year/pjm_marginal_fuel_<YEAR>.csv (gitignored:
+  Monitoring Analytics redistribution terms unverified). Not yet a data/clean
+  datatype (no curate step / clean_io registration).
+key_columns: [hour_beginning_ept, mms_timezone, fuel_type]
+allow_additional_columns: false
+columns:
+  - name: hour_beginning_ept
+    dtype: string
+    unit: datetime
+    nullable: false
+    description: >-
+      Hour-beginning local Eastern Prevailing Time, "YYYY-MM-DD HH:00" (the
+      source's HOUR column, e.g. "01JAN2020:00:00:00"). The repeated fall-back
+      hour is disambiguated by mms_timezone.
+  - name: mms_timezone
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      "EST" or "EDT" as posted; the "extra" fall DST hour is the EST row.
+  - name: fuel_type
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Primary fuel of the marginal unit(s), verbatim IMM label (2019-2025:
+      Coal, Waste Coal, Natural Gas, Uranium, Wind, Solar, Light Oil, Heavy Oil,
+      Diesel, Kerosene, Municipal Waste, Land Fill Gas, Miscellaneous, Battery,
+      Demand Response, Price Responsive Demand, Missing Data,
+      Min Gen/Dispatch Reset). Multi-fuel units carry their primary fuel.
+  - name: percent_marginal
+    dtype: float64
+    unit: fraction
+    nullable: false
+    description: >-
+      Time-weighted share of the hour in which units of this fuel were marginal
+      or jointly marginal (0..1; one hour's rows sum to 1 within 2e-4).
+  - name: source_file
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Raw monthly file the row came from (<YYYYMM>_Marginal_Fuel_Postings.csv),
+      checksummed in data/raw/pjm-marginal-fuel/SHA256SUMS.txt.

@@ -24,37 +24,39 @@ Locations (ISO-NE Web Services reserve-location vocabulary): `7000=ROS`
 
     requirements_<start:YYYYMMDD>_<end:YYYYMMDD>.csv   # 15-day windows, year-scoped
 
-The window CSVs are **gitignored** (75 files for 2023-2025 — the
+The window CSVs are **gitignored** (175 files for 2019-2025 — the
 NYISO-archive push-limit precedent). Regenerate byte-equivalent files (modulo
 the report-generated timestamp line) with the committed downloader:
 
-    python scripts/fetch_neiso_reserve_requirements.py --years 2023 2024 2025
+    python scripts/data/fetch_neiso_reserve_requirements.py --years 2019 2020 2021 2022 2023 2024 2025
 
 Then curate into `data/clean/reserve-requirements/NEISO/<year>/`:
 
-    python scripts/curate_reserve_requirements.py --isos NEISO
+    PYTHONPATH=. python scripts/data/curate_reserve_requirements.py --isos NEISO
 
-Coverage policy: **2020-2025 — the former "train years 2023-2025 only" limit is
-SPENT.** That limit cited CLAUDE.md rule 22 `[R-HOLDOUT]` ("no out-of-training
-intake without explicit owner authorization"), and **rule 22's holdout regime was
-REMOVED on 2026-09-09**: any year may now be intaken, solved, scored and
-registered with no authorization. The sentence it rested on no longer exists.
+Coverage (intaken 2026-10-02, closeout-NEISO wave 1; 175 windows 2019-2025,
+regenerate with `--years 2019 2020 2021 2022 2023 2024 2025`, the new default):
 
-Reachability **measured, not assumed** (neiso-111, 2026-09-17): the report serves
-out-of-former-intake years from a session container. Probed through the committed
-downloader, which bootstraps the `isox_token` session itself —
+| year | ROS hours published | curates? | note |
+|---|---:|---|---|
+| 2019 | 5,139 (from **2019-05-31**) | partial partition | the report **does not publish before 2019-05-31**: every Jan 1 - May 30 window returns a 256-byte header-only file. The loader refuses the partial year (< 8,760 h). |
+| 2020 | 8,778 | **refused** | **2020-12-10 .. 12-17: 142 ROS hours publish `0, 0, 830`** (zero spin and ten-minute) — a publication outage, not a requirement; plus one duplicated row (2020-12-16 HE 11). The parser drops the duplicate and treats a zero ROS ten-minute value as a source hole; 149 holes > `MAX_GAP_HOURS` 72 → the year is refused (`[refuse]`), no partition. |
+| 2021-2025 | full | yes | 2021-2025 partitions byte-identical before/after the 2026-10-02 parser change |
 
-    2022-12-16..2022-12-31  OK  54,206 bytes
-    2020-01-01..2020-01-15  OK  51,185 bytes
+Spin fraction of the ten-minute requirement: 0.31 through mid-2022, 0.25 after
+(measured, `docs/records/neiso/closeout-w1/reserve_requirement_recon.py`).
 
-A bare `curl` against the CSV endpoint returns **403**; that is the missing
-session cookie, **not** an access block, so do not read it as one.
+The ISO-NE **Morning Report** (`data/raw/neiso-operable-capacity/`) carries a daily
+`total_operating_reserve_req_mw` and `largest_first_contingency_mw` for all of
+2019, but it is a peak-hour planning quantity on a different basis (0.64-1.18x the
+hourly ROS TOTAL, median 0.80-0.94 by year) and is **not** a fill for the missing
+2019 months. How 2019 Jan-May and 2020 Dec 10-17 are represented when
+`neiso_dynamic_reserve_requirements` is armed is an owner decision recorded in
+`docs/records/neiso/closeout-w1/PRECOMMIT-closeout-neiso-scarcity-physics-2026-10-02.md`.
 
-Why the wider span matters: `load_neiso_reserve_requirements` **hard-errors** on a
-missing year rather than reverting to the statics it replaces, so under CLAUDE.md
-rule 34(c) `[R-SHARD-PROMOTABLE]` ("solve every year the ISO's keeper carries")
-`neiso_dynamic_reserve_requirements` cannot be armed on NEISO's six-year keeper
-span until 2020-2022 are intaken. Regenerate with
-`--years 2020 2021 2022 2023 2024 2025`.
+The former "train years 2023-2025 only" limit cited rule 22 `[R-HOLDOUT]`,
+removed 2026-09-09.
 
-DATA NEEDED: none (2020-2025 fully downloadable from the public report).
+DATA NEEDED: 2019-01-01..2019-05-30 and 2020-12-10..17 (ROS) are not published by
+this report; no free alternative hourly source is known (ISO-NE Web Services needs an
+account — not tried).

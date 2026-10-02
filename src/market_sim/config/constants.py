@@ -813,8 +813,13 @@ GAS_TRANCHE_SHARES_BY_GROUP: dict[str, tuple[float, float, float]] = {
 #     `FINDING-miso215-intermediate-phys-coverage-2026-09-05.md` §4. Whether the
 #     identification point should stay the ISO series is an OWNER question this
 #     lane routed; nothing here changes the value or any solve.)*
-#   NYISO: 3.9046 = mean(3.3566, 2.7969, 5.5602) — monthly actuals + zonal
-#     pipeline-hub basis + Transco Z6 daily overlay.
+#   NYISO: 3.8739 = mean(3.3370, 2.8220, 5.4627) — monthly actuals + zonal
+#     pipeline-hub basis + Transco Z6 daily overlay. RE-DERIVED 2026-10-02
+#     (rule 23, source-data update): c0a9d5ba (#6155, 2026-09-14) recomputed
+#     the NYISO rows of data/raw/gas_basis_by_iso_month.csv from the repaired
+#     Transco Z6 dailies (14 of the 36 2023-2025 months moved; 2025-12
+#     4.9105 -> 3.8214); was 3.9046 = mean(3.3566, 2.7969, 5.5602) on the
+#     pre-repair basis.
 #   NEISO: 4.0763 = mean(2.9365, 3.0304, 6.2621) — Algonquin (AGT) hub-basis
 #     delivered series.
 # ISOs absent from this registry hard-fail when the flag is armed (never a
@@ -825,7 +830,7 @@ GAS_OFFER_MARGIN_ANCHOR_BY_ISO: dict[str, float] = {
     "PJM": 3.3483,
     "CAISO": 4.7964,
     "MISO": 3.0492,
-    "NYISO": 3.9046,
+    "NYISO": 3.8739,
     "NEISO": 4.0763,
     # SPP is DELIBERATELY ABSENT at registration (2026-09-06, lane SPP-20):
     # every value above is the output of scripts/data/derive_gas_offer_margin_
@@ -975,10 +980,15 @@ ST_GAS_PEAK_MEASURED_HR_MULT_BY_ISO: dict[str, float] = {
 # (``apply_nyiso_zonal_gas_basis`` holds Capital_Hudson / Iroquois Z2 at 0 and
 # shifts every other zone DOWN), so the ISO anchor is the reference level and
 # the pre-fix defect was one-sided over-marking:
-#   Capital_Hudson / Lower_Hudson / Long_Island  3.9046 = mean(3.3566, 2.7969,
-#     5.5602) — the reference hub, identical to the ISO anchor.
-#   NYC          2.7612 = mean(2.0166, 2.0869, 4.1802) — Transco Z6 NY.
-#   Upstate_West 2.0346 = mean(1.8966, 1.7269, 2.4802) — Tenn Z4 200L.
+#   Capital_Hudson / Lower_Hudson / Long_Island  3.8739 = mean(3.3370, 2.8220,
+#     5.4627) — the reference hub, identical to the ISO anchor.
+#   NYC          2.7306 = mean(1.9970, 2.1120, 4.0827) — Transco Z6 NY.
+#   Upstate_West 2.0039 = mean(1.8770, 1.7520, 2.3827) — Tenn Z4 200L.
+#   RE-DERIVED 2026-10-02 (rule 23, source-data update): the NYISO rows of
+#   data/raw/gas_basis_by_iso_month.csv were recomputed from the repaired
+#   Transco Z6 dailies by c0a9d5ba (#6155, 2026-09-14), moving every zone by
+#   the same -0.0307 (the reference-zone offsets are unchanged). Was
+#   3.9046 / 2.7612 / 2.0346 on the pre-repair basis.
 #
 # PJM (pjm-144, derived 2026-08-02) — capacity-weighted MEAN-ZERO convention
 # (``apply_pjm_zonal_gas_basis`` -> the ``basis.meanzero`` core subtracts the
@@ -1062,11 +1072,11 @@ ST_GAS_PEAK_MEASURED_HR_MULT_BY_ISO: dict[str, float] = {
 # never crosses a boundary (rule 25).
 GAS_OFFER_MARGIN_ANCHOR_BY_ZONE: dict[str, dict[str, float]] = {
     "NYISO": {
-        "Upstate_West": 2.0346,
-        "Capital_Hudson": 3.9046,
-        "Lower_Hudson": 3.9046,
-        "NYC": 2.7612,
-        "Long_Island": 3.9046,
+        "Upstate_West": 2.0039,
+        "Capital_Hudson": 3.8739,
+        "Lower_Hudson": 3.8739,
+        "NYC": 2.7306,
+        "Long_Island": 3.8739,
     },
     "PJM": {
         "PJM_ComEd": 3.2575,

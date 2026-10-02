@@ -3991,6 +3991,8 @@ results/calibration/_rcaiso28/
 # NYISO-NEXT-26 per-year legs (rule 32 (d)); composed into nyisonext26_span (arm A) and nyisonext26p_span (arm B). Provenance (rule 33 (d)): A 2021 324c2278ebfecf59752499437af9d3ebeef9a3f9, 2022 fb5da11c7158273f200ca0a76c068135fb4bc252, 2023 398739dc77ecd7559187ec75e5755282787ddd82, 2024 5b42c21f79caf84518cda5bd4cc7d6f7978975f6, 2025 148c72168cf1a410849b278517068d954bf19ad7; B 2021 dd0b50c58c6047a960da4d762cb10a127e2f64f9, 2022 e556dcb80227ede5700fd6487a6abf012a42bbd1, 2023 d80a65c222741121211797b72adff34d3183bc30, 2024 1c75146fa9d36427c20dbb11a8cc5183788a80c2, 2025 bec68d76f2f192b381a728c84d3e45bb03db1266
 results/calibration/nyisonext26_202[2-5]/
 results/calibration/nyisonext26p_202[2-5]/
+# NYISO-NEXT-34 per-year legs (rule 32 (d)); composed into nyisonext34_span (probe). Provenance (rule 33 (d)): 2021 75a21489f3cab10935de00449f6efcdc2754918a, 2022 2d5ead7eb6216d6d4693d13f4674e396675130bf, 2023 9ec762cb83a87127b318e5e81ae2a99d26d97bc9, 2024 c2329443705e6dc2d17fc8c7ecceb56b58b1c994, 2025 e2131ec2a5bbd979cdb9e84e95a676210c85d94e
+results/calibration/nyisonext34_202[2-5]/
 # PJM-NEXT-18: year-isolated diagnostic keeper replays (never on main; rule 29(c)/32(d)).
 results/calibration/pjmnext18_rp_*/
 
@@ -4013,3 +4015,8 @@ results/calibration/miso298_span/
 # NWPP-NEXT-19 arm G shard legs (staged by the parent; transport only, rule 33/34)
 results/calibration/nwppnext19g_20*/
 results/calibration/nwppnext19g_span/
+
+# PJM-NEXT-26 shard legs (staged by the parent; transport only, rule 33/34)
+results/calibration/pjm_next_26_20*/
+# NWPP-NEXT-21 shard legs + span (staged locally; never committed off a promotion)
+results/calibration/nwppnext21_*/

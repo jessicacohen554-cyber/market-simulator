@@ -6,3 +6,4 @@
 6d41d56652dcae5267b6e5653e29c84526755ecf81f921b5baced0bd7d842d60  f923_2022.zip::Schedules_2_3_4_5  https://www.eia.gov/electricity/data/eia923/archive/xls/f923_2022.zip
 cec9a4b5c380d461026354d0dca8cc317a44231486b770cba1bb126743b7d526  f923_2023.zip::Schedules_2_3_4_5  https://www.eia.gov/electricity/data/eia923/archive/xls/f923_2023.zip
 c7c4d3d3dc79ba136920a38563ff28bad156fe35aa9d18d4a740fdf650f8e395  f923_2024.zip::Schedules_2_3_4_5  https://www.eia.gov/electricity/data/eia923/archive/xls/f923_2024.zip
+95684212d89ac688a355a5c8b51935111247e6f60716eba250464b28d14cfd2c  f923_2025.zip::Schedules_2_3_4_5  https://www.eia.gov/electricity/data/eia923/xls/f923_2025.zip

@@ -1,0 +1,2534 @@
+{
+ "run_id": "2026-10-02-spp-107-mmu-repair",
+ "gas_coverage_twh": {
+  "2019": 2.539,
+  "2020": 1.104,
+  "2021": 0.769,
+  "2022": 0.971,
+  "2023": -0.404,
+  "2024": -1.976,
+  "2025": -1.01
+ },
+ "rows": [
+  {
+   "year": 2019,
+   "criterion": "fuelmix",
+   "key": "CC_CHP",
+   "model": 1.863,
+   "committed": {
+    "actual": 1.607,
+    "miss": 0.256,
+    "share_pp": 0.09,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 1.607,
+    "miss": 0.256,
+    "share_pp": 0.11,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 1.55,
+    "miss": 0.313,
+    "share_pp": 0.13,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 1.607,
+    "miss": 0.256,
+    "share_pp": 0.11,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 0.24,
+    "miss": 1.623,
+    "share_pp": 0.6,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2019,
+   "criterion": "fuelmix",
+   "key": "CC_REGULAR",
+   "model": 46.873,
+   "committed": {
+    "actual": 43.775,
+    "miss": 3.098,
+    "share_pp": 1.15,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 43.775,
+    "miss": 3.098,
+    "share_pp": 1.63,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 42.225,
+    "miss": 4.648,
+    "share_pp": 2.05,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 41.236,
+    "miss": 5.637,
+    "share_pp": 2.41,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 43.775,
+    "miss": 3.098,
+    "share_pp": 1.49,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2019,
+   "criterion": "fuelmix",
+   "key": "COAL_BIT",
+   "model": 0.0,
+   "committed": {
+    "actual": 0.045,
+    "miss": -0.045,
+    "share_pp": -0.02,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 0.045,
+    "miss": -0.045,
+    "share_pp": -0.02,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 0.045,
+    "miss": -0.045,
+    "share_pp": -0.02,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 0.045,
+    "miss": -0.045,
+    "share_pp": -0.02,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 0.045,
+    "miss": -0.045,
+    "share_pp": -0.02,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2019,
+   "criterion": "fuelmix",
+   "key": "COAL_LIGNITE",
+   "model": 10.684,
+   "committed": {
+    "actual": 12.741,
+    "miss": -2.057,
+    "share_pp": -0.75,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 13.854,
+    "miss": -3.17,
+    "share_pp": -1.01,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 13.854,
+    "miss": -3.17,
+    "share_pp": -1.05,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 13.854,
+    "miss": -3.17,
+    "share_pp": -1.05,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 13.854,
+    "miss": -3.17,
+    "share_pp": -1.05,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2019,
+   "criterion": "fuelmix",
+   "key": "COAL_PRB",
+   "model": 77.671,
+   "committed": {
+    "actual": 76.947,
+    "miss": 0.724,
+    "share_pp": 0.28,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 84.286,
+    "miss": -6.615,
+    "share_pp": -1.48,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 84.286,
+    "miss": -6.615,
+    "share_pp": -1.75,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 84.286,
+    "miss": -6.615,
+    "share_pp": -1.75,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 84.286,
+    "miss": -6.615,
+    "share_pp": -1.75,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2019,
+   "criterion": "fuelmix",
+   "key": "CT_PEAKER",
+   "model": 13.206,
+   "committed": {
+    "actual": 11.555,
+    "miss": 1.651,
+    "share_pp": 0.61,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 11.555,
+    "miss": 1.651,
+    "share_pp": 0.74,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 11.146,
+    "miss": 2.06,
+    "share_pp": 0.85,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 11.555,
+    "miss": 1.651,
+    "share_pp": 0.7,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 11.555,
+    "miss": 1.651,
+    "share_pp": 0.7,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2019,
+   "criterion": "fuelmix",
+   "key": "ST_CHP",
+   "model": 0.169,
+   "committed": {
+    "actual": 0.344,
+    "miss": -0.175,
+    "share_pp": -0.06,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 0.344,
+    "miss": -0.175,
+    "share_pp": -0.06,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 0.331,
+    "miss": -0.162,
+    "share_pp": -0.06,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 0.344,
+    "miss": -0.175,
+    "share_pp": -0.06,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 0.051,
+    "miss": 0.118,
+    "share_pp": 0.04,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2019,
+   "criterion": "fuelmix",
+   "key": "ST_GAS",
+   "model": 5.778,
+   "committed": {
+    "actual": 11.508,
+    "miss": -5.73,
+    "share_pp": -2.11,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 11.508,
+    "miss": -5.73,
+    "share_pp": -1.98,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 11.101,
+    "miss": -5.323,
+    "share_pp": -1.87,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 11.508,
+    "miss": -5.73,
+    "share_pp": -2.02,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 11.508,
+    "miss": -5.73,
+    "share_pp": -2.02,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2019,
+   "criterion": "sysvol",
+   "key": "coal",
+   "model": 88.35,
+   "committed": {
+    "actual": 89.73,
+    "miss": -1.38,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 98.19,
+    "miss": -9.84,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 98.19,
+    "miss": -9.84,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 98.19,
+    "miss": -9.84,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 98.19,
+    "miss": -9.84,
+    "share_pp": null,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2019,
+   "criterion": "sysvol",
+   "key": "gas",
+   "model": 67.89,
+   "committed": {
+    "actual": 68.79,
+    "miss": -0.9,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 68.79,
+    "miss": -0.9,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 66.35,
+    "miss": 1.54,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 66.25,
+    "miss": 1.64,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 67.13,
+    "miss": 0.76,
+    "share_pp": null,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2020,
+   "criterion": "fuelmix",
+   "key": "CC_CHP",
+   "model": 1.813,
+   "committed": {
+    "actual": 1.593,
+    "miss": 0.22,
+    "share_pp": 0.08,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 1.594,
+    "miss": 0.219,
+    "share_pp": 0.1,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 1.569,
+    "miss": 0.244,
+    "share_pp": 0.1,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 1.594,
+    "miss": 0.219,
+    "share_pp": 0.09,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 1.039,
+    "miss": 0.774,
+    "share_pp": 0.3,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2020,
+   "criterion": "fuelmix",
+   "key": "CC_REGULAR",
+   "model": 47.818,
+   "committed": {
+    "actual": 45.108,
+    "miss": 2.71,
+    "share_pp": 0.89,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 45.108,
+    "miss": 2.71,
+    "share_pp": 1.4,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 44.407,
+    "miss": 3.411,
+    "share_pp": 1.59,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 44.004,
+    "miss": 3.814,
+    "share_pp": 1.74,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 45.108,
+    "miss": 2.71,
+    "share_pp": 1.33,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2020,
+   "criterion": "fuelmix",
+   "key": "COAL_BIT",
+   "model": 0.0,
+   "committed": {
+    "actual": 0.036,
+    "miss": -0.036,
+    "share_pp": -0.01,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 0.036,
+    "miss": -0.036,
+    "share_pp": -0.01,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 0.036,
+    "miss": -0.036,
+    "share_pp": -0.01,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 0.036,
+    "miss": -0.036,
+    "share_pp": -0.01,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 0.036,
+    "miss": -0.036,
+    "share_pp": -0.01,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2020,
+   "criterion": "fuelmix",
+   "key": "COAL_LIGNITE",
+   "model": 8.71,
+   "committed": {
+    "actual": 10.832,
+    "miss": -2.122,
+    "share_pp": -0.84,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 11.85,
+    "miss": -3.14,
+    "share_pp": -1.1,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 11.85,
+    "miss": -3.14,
+    "share_pp": -1.12,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 11.85,
+    "miss": -3.14,
+    "share_pp": -1.12,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 11.85,
+    "miss": -3.14,
+    "share_pp": -1.12,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2020,
+   "criterion": "fuelmix",
+   "key": "COAL_PRB",
+   "model": 63.876,
+   "committed": {
+    "actual": 66.131,
+    "miss": -2.255,
+    "share_pp": -1.06,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 72.959,
+    "miss": -9.083,
+    "share_pp": -2.86,
+    "status": "FAIL"
+   },
+   "aligned_prorata": {
+    "actual": 72.959,
+    "miss": -9.083,
+    "share_pp": -2.97,
+    "status": "FAIL"
+   },
+   "aligned_cc_only": {
+    "actual": 72.959,
+    "miss": -9.083,
+    "share_pp": -2.97,
+    "status": "FAIL"
+   },
+   "aligned_chp_first": {
+    "actual": 72.959,
+    "miss": -9.083,
+    "share_pp": -2.97,
+    "status": "FAIL"
+   }
+  },
+  {
+   "year": 2020,
+   "criterion": "fuelmix",
+   "key": "CT_PEAKER",
+   "model": 15.279,
+   "committed": {
+    "actual": 8.858,
+    "miss": 6.421,
+    "share_pp": 2.42,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 8.859,
+    "miss": 6.42,
+    "share_pp": 2.52,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 8.721,
+    "miss": 6.558,
+    "share_pp": 2.56,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 8.859,
+    "miss": 6.42,
+    "share_pp": 2.5,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 8.859,
+    "miss": 6.42,
+    "share_pp": 2.5,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2020,
+   "criterion": "fuelmix",
+   "key": "ST_CHP",
+   "model": 0.172,
+   "committed": {
+    "actual": 0.398,
+    "miss": -0.226,
+    "share_pp": -0.09,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 0.398,
+    "miss": -0.226,
+    "share_pp": -0.08,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 0.392,
+    "miss": -0.22,
+    "share_pp": -0.08,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 0.398,
+    "miss": -0.226,
+    "share_pp": -0.08,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 0.26,
+    "miss": -0.088,
+    "share_pp": -0.03,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2020,
+   "criterion": "fuelmix",
+   "key": "ST_GAS",
+   "model": 7.757,
+   "committed": {
+    "actual": 12.084,
+    "miss": -4.327,
+    "share_pp": -1.68,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 12.084,
+    "miss": -4.327,
+    "share_pp": -1.55,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 11.896,
+    "miss": -4.139,
+    "share_pp": -1.5,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 12.084,
+    "miss": -4.327,
+    "share_pp": -1.57,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 12.084,
+    "miss": -4.327,
+    "share_pp": -1.57,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2020,
+   "criterion": "sysvol",
+   "key": "coal",
+   "model": 72.59,
+   "committed": {
+    "actual": 77.0,
+    "miss": -4.41,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 84.85,
+    "miss": -12.26,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 84.85,
+    "miss": -12.26,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 84.85,
+    "miss": -12.26,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 84.85,
+    "miss": -12.26,
+    "share_pp": null,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2020,
+   "criterion": "sysvol",
+   "key": "gas",
+   "model": 72.84,
+   "committed": {
+    "actual": 68.04,
+    "miss": 4.8,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 68.04,
+    "miss": 4.8,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 66.98,
+    "miss": 5.86,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 66.94,
+    "miss": 5.9,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 67.35,
+    "miss": 5.49,
+    "share_pp": null,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2021,
+   "criterion": "fuelmix",
+   "key": "CC_CHP",
+   "model": 1.506,
+   "committed": {
+    "actual": 1.382,
+    "miss": 0.124,
+    "share_pp": 0.04,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 1.382,
+    "miss": 0.124,
+    "share_pp": 0.05,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 1.362,
+    "miss": 0.144,
+    "share_pp": 0.06,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 1.382,
+    "miss": 0.124,
+    "share_pp": 0.05,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 1.028,
+    "miss": 0.478,
+    "share_pp": 0.18,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2021,
+   "criterion": "fuelmix",
+   "key": "CC_REGULAR",
+   "model": 26.051,
+   "committed": {
+    "actual": 34.567,
+    "miss": -8.516,
+    "share_pp": -3.35,
+    "status": "FAIL"
+   },
+   "gross_coal": {
+    "actual": 34.567,
+    "miss": -8.516,
+    "share_pp": -2.95,
+    "status": "FAIL"
+   },
+   "aligned_prorata": {
+    "actual": 34.08,
+    "miss": -8.029,
+    "share_pp": -2.81,
+    "status": "FAIL"
+   },
+   "aligned_cc_only": {
+    "actual": 33.797,
+    "miss": -7.746,
+    "share_pp": -2.7,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 34.567,
+    "miss": -8.516,
+    "share_pp": -2.98,
+    "status": "FAIL"
+   }
+  },
+  {
+   "year": 2021,
+   "criterion": "fuelmix",
+   "key": "COAL_BIT",
+   "model": 0.0,
+   "committed": {
+    "actual": 0.035,
+    "miss": -0.035,
+    "share_pp": -0.01,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 0.035,
+    "miss": -0.035,
+    "share_pp": -0.01,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 0.035,
+    "miss": -0.035,
+    "share_pp": -0.01,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 0.035,
+    "miss": -0.035,
+    "share_pp": -0.01,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 0.035,
+    "miss": -0.035,
+    "share_pp": -0.01,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2021,
+   "criterion": "fuelmix",
+   "key": "COAL_LIGNITE",
+   "model": 9.233,
+   "committed": {
+    "actual": 10.485,
+    "miss": -1.252,
+    "share_pp": -0.52,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 11.44,
+    "miss": -2.207,
+    "share_pp": -0.75,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 11.44,
+    "miss": -2.207,
+    "share_pp": -0.76,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 11.44,
+    "miss": -2.207,
+    "share_pp": -0.76,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 11.44,
+    "miss": -2.207,
+    "share_pp": -0.76,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2021,
+   "criterion": "fuelmix",
+   "key": "COAL_PRB",
+   "model": 91.716,
+   "committed": {
+    "actual": 80.35,
+    "miss": 11.366,
+    "share_pp": 3.77,
+    "status": "FAIL"
+   },
+   "gross_coal": {
+    "actual": 87.744,
+    "miss": 3.972,
+    "share_pp": 2.0,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 87.744,
+    "miss": 3.972,
+    "share_pp": 1.91,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 87.744,
+    "miss": 3.972,
+    "share_pp": 1.91,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 87.744,
+    "miss": 3.972,
+    "share_pp": 1.91,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2021,
+   "criterion": "fuelmix",
+   "key": "CT_PEAKER",
+   "model": 9.08,
+   "committed": {
+    "actual": 7.896,
+    "miss": 1.184,
+    "share_pp": 0.4,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 7.896,
+    "miss": 1.184,
+    "share_pp": 0.49,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 7.785,
+    "miss": 1.295,
+    "share_pp": 0.52,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 7.896,
+    "miss": 1.184,
+    "share_pp": 0.48,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 7.896,
+    "miss": 1.184,
+    "share_pp": 0.48,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2021,
+   "criterion": "fuelmix",
+   "key": "ST_CHP",
+   "model": 0.243,
+   "committed": {
+    "actual": 0.459,
+    "miss": -0.216,
+    "share_pp": -0.08,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 0.459,
+    "miss": -0.216,
+    "share_pp": -0.08,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 0.453,
+    "miss": -0.21,
+    "share_pp": -0.08,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 0.459,
+    "miss": -0.216,
+    "share_pp": -0.08,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 0.342,
+    "miss": -0.099,
+    "share_pp": -0.03,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2021,
+   "criterion": "fuelmix",
+   "key": "ST_GAS",
+   "model": 3.695,
+   "committed": {
+    "actual": 6.919,
+    "miss": -3.224,
+    "share_pp": -1.23,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 6.919,
+    "miss": -3.224,
+    "share_pp": -1.15,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 6.822,
+    "miss": -3.127,
+    "share_pp": -1.13,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 6.919,
+    "miss": -3.224,
+    "share_pp": -1.16,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 6.919,
+    "miss": -3.224,
+    "share_pp": -1.16,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2021,
+   "criterion": "sysvol",
+   "key": "coal",
+   "model": 100.95,
+   "committed": {
+    "actual": 90.87,
+    "miss": 10.08,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 99.22,
+    "miss": 1.73,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 99.22,
+    "miss": 1.73,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 99.22,
+    "miss": 1.73,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 99.22,
+    "miss": 1.73,
+    "share_pp": null,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2021,
+   "criterion": "sysvol",
+   "key": "gas",
+   "model": 40.58,
+   "committed": {
+    "actual": 51.22,
+    "miss": -10.64,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 51.22,
+    "miss": -10.64,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 50.5,
+    "miss": -9.92,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 50.45,
+    "miss": -9.87,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 50.75,
+    "miss": -10.17,
+    "share_pp": null,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2022,
+   "criterion": "fuelmix",
+   "key": "CC_CHP",
+   "model": 1.66,
+   "committed": {
+    "actual": 1.444,
+    "miss": 0.216,
+    "share_pp": 0.07,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 1.444,
+    "miss": 0.216,
+    "share_pp": 0.08,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 1.421,
+    "miss": 0.239,
+    "share_pp": 0.09,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 1.444,
+    "miss": 0.216,
+    "share_pp": 0.08,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 0.983,
+    "miss": 0.677,
+    "share_pp": 0.24,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2022,
+   "criterion": "fuelmix",
+   "key": "CC_REGULAR",
+   "model": 26.501,
+   "committed": {
+    "actual": 35.791,
+    "miss": -9.29,
+    "share_pp": -3.41,
+    "status": "FAIL"
+   },
+   "gross_coal": {
+    "actual": 35.791,
+    "miss": -9.29,
+    "share_pp": -3.05,
+    "status": "FAIL"
+   },
+   "aligned_prorata": {
+    "actual": 35.22,
+    "miss": -8.719,
+    "share_pp": -2.89,
+    "status": "FAIL"
+   },
+   "aligned_cc_only": {
+    "actual": 34.82,
+    "miss": -8.319,
+    "share_pp": -2.75,
+    "status": "FAIL"
+   },
+   "aligned_chp_first": {
+    "actual": 35.791,
+    "miss": -9.29,
+    "share_pp": -3.09,
+    "status": "FAIL"
+   }
+  },
+  {
+   "year": 2022,
+   "criterion": "fuelmix",
+   "key": "COAL_BIT",
+   "model": 0.0,
+   "committed": {
+    "actual": 0.043,
+    "miss": -0.043,
+    "share_pp": -0.02,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 0.043,
+    "miss": -0.043,
+    "share_pp": -0.01,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 0.043,
+    "miss": -0.043,
+    "share_pp": -0.01,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 0.043,
+    "miss": -0.043,
+    "share_pp": -0.01,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 0.043,
+    "miss": -0.043,
+    "share_pp": -0.01,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2022,
+   "criterion": "fuelmix",
+   "key": "COAL_LIGNITE",
+   "model": 12.65,
+   "committed": {
+    "actual": 12.615,
+    "miss": 0.035,
+    "share_pp": -0.06,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 13.792,
+    "miss": -1.142,
+    "share_pp": -0.33,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 13.792,
+    "miss": -1.142,
+    "share_pp": -0.34,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 13.792,
+    "miss": -1.142,
+    "share_pp": -0.34,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 13.792,
+    "miss": -1.142,
+    "share_pp": -0.34,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2022,
+   "criterion": "fuelmix",
+   "key": "COAL_PRB",
+   "model": 89.06,
+   "committed": {
+    "actual": 78.138,
+    "miss": 10.922,
+    "share_pp": 3.37,
+    "status": "FAIL"
+   },
+   "gross_coal": {
+    "actual": 85.474,
+    "miss": 3.586,
+    "share_pp": 1.67,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 85.474,
+    "miss": 3.586,
+    "share_pp": 1.57,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 85.474,
+    "miss": 3.586,
+    "share_pp": 1.57,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 85.474,
+    "miss": 3.586,
+    "share_pp": 1.57,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2022,
+   "criterion": "fuelmix",
+   "key": "CT_PEAKER",
+   "model": 8.768,
+   "committed": {
+    "actual": 10.219,
+    "miss": -1.451,
+    "share_pp": -0.56,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 10.219,
+    "miss": -1.451,
+    "share_pp": -0.45,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 10.056,
+    "miss": -1.288,
+    "share_pp": -0.41,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 10.219,
+    "miss": -1.451,
+    "share_pp": -0.46,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 10.219,
+    "miss": -1.451,
+    "share_pp": -0.46,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2022,
+   "criterion": "fuelmix",
+   "key": "ST_CHP",
+   "model": 0.155,
+   "committed": {
+    "actual": 0.451,
+    "miss": -0.296,
+    "share_pp": -0.1,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 0.451,
+    "miss": -0.296,
+    "share_pp": -0.1,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 0.444,
+    "miss": -0.289,
+    "share_pp": -0.1,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 0.451,
+    "miss": -0.296,
+    "share_pp": -0.1,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 0.307,
+    "miss": -0.152,
+    "share_pp": -0.05,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2022,
+   "criterion": "fuelmix",
+   "key": "ST_GAS",
+   "model": 4.723,
+   "committed": {
+    "actual": 10.429,
+    "miss": -5.706,
+    "share_pp": -2.04,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 10.429,
+    "miss": -5.706,
+    "share_pp": -1.93,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 10.263,
+    "miss": -5.54,
+    "share_pp": -1.88,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 10.429,
+    "miss": -5.706,
+    "share_pp": -1.94,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 10.429,
+    "miss": -5.706,
+    "share_pp": -1.94,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2022,
+   "criterion": "sysvol",
+   "key": "coal",
+   "model": 101.71,
+   "committed": {
+    "actual": 90.8,
+    "miss": 10.91,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 99.31,
+    "miss": 2.4,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 99.31,
+    "miss": 2.4,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 99.31,
+    "miss": 2.4,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 99.31,
+    "miss": 2.4,
+    "share_pp": null,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2022,
+   "criterion": "sysvol",
+   "key": "gas",
+   "model": 41.81,
+   "committed": {
+    "actual": 58.33,
+    "miss": -16.52,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 58.33,
+    "miss": -16.52,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 57.4,
+    "miss": -15.59,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 57.36,
+    "miss": -15.55,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 57.73,
+    "miss": -15.92,
+    "share_pp": null,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2023,
+   "criterion": "fuelmix",
+   "key": "CC_CHP",
+   "model": 1.766,
+   "committed": {
+    "actual": 1.732,
+    "miss": 0.034,
+    "share_pp": 0.01,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 1.667,
+    "miss": 0.099,
+    "share_pp": 0.04,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 1.676,
+    "miss": 0.09,
+    "share_pp": 0.04,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 1.667,
+    "miss": 0.099,
+    "share_pp": 0.04,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 1.867,
+    "miss": -0.101,
+    "share_pp": -0.03,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2023,
+   "criterion": "fuelmix",
+   "key": "CC_REGULAR",
+   "model": 41.769,
+   "committed": {
+    "actual": 45.691,
+    "miss": -3.922,
+    "share_pp": -1.38,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 43.966,
+    "miss": -2.197,
+    "share_pp": -0.68,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 44.201,
+    "miss": -2.432,
+    "share_pp": -0.74,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 44.371,
+    "miss": -2.602,
+    "share_pp": -0.8,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 43.966,
+    "miss": -2.197,
+    "share_pp": -0.66,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2023,
+   "criterion": "fuelmix",
+   "key": "COAL_BIT",
+   "model": 0.0,
+   "committed": {
+    "actual": 0.035,
+    "miss": -0.035,
+    "share_pp": -0.01,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 0.033,
+    "miss": -0.033,
+    "share_pp": -0.01,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 0.033,
+    "miss": -0.033,
+    "share_pp": -0.01,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 0.033,
+    "miss": -0.033,
+    "share_pp": -0.01,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 0.033,
+    "miss": -0.033,
+    "share_pp": -0.01,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2023,
+   "criterion": "fuelmix",
+   "key": "COAL_LIGNITE",
+   "model": 7.747,
+   "committed": {
+    "actual": 9.38,
+    "miss": -1.633,
+    "share_pp": -0.57,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 9.904,
+    "miss": -2.157,
+    "share_pp": -0.74,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 9.904,
+    "miss": -2.157,
+    "share_pp": -0.73,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 9.904,
+    "miss": -2.157,
+    "share_pp": -0.73,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 9.904,
+    "miss": -2.157,
+    "share_pp": -0.73,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2023,
+   "criterion": "fuelmix",
+   "key": "COAL_PRB",
+   "model": 66.479,
+   "committed": {
+    "actual": 65.395,
+    "miss": 1.084,
+    "share_pp": 0.38,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 69.617,
+    "miss": -3.138,
+    "share_pp": -0.95,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 69.617,
+    "miss": -3.138,
+    "share_pp": -0.92,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 69.617,
+    "miss": -3.138,
+    "share_pp": -0.92,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 69.617,
+    "miss": -3.138,
+    "share_pp": -0.92,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2023,
+   "criterion": "fuelmix",
+   "key": "CT_PEAKER",
+   "model": 16.216,
+   "committed": {
+    "actual": 13.227,
+    "miss": 2.989,
+    "share_pp": 1.05,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 12.728,
+    "miss": 3.488,
+    "share_pp": 1.25,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 12.796,
+    "miss": 3.42,
+    "share_pp": 1.24,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 12.728,
+    "miss": 3.488,
+    "share_pp": 1.26,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 12.728,
+    "miss": 3.488,
+    "share_pp": 1.26,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2023,
+   "criterion": "fuelmix",
+   "key": "ST_CHP",
+   "model": 0.315,
+   "committed": {
+    "actual": 0.532,
+    "miss": -0.217,
+    "share_pp": -0.08,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 0.512,
+    "miss": -0.197,
+    "share_pp": -0.07,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 0.515,
+    "miss": -0.2,
+    "share_pp": -0.07,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 0.512,
+    "miss": -0.197,
+    "share_pp": -0.07,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 0.573,
+    "miss": -0.258,
+    "share_pp": -0.09,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2023,
+   "criterion": "fuelmix",
+   "key": "ST_GAS",
+   "model": 8.681,
+   "committed": {
+    "actual": 15.107,
+    "miss": -6.426,
+    "share_pp": -2.26,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 14.537,
+    "miss": -5.856,
+    "share_pp": -2.03,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 14.614,
+    "miss": -5.933,
+    "share_pp": -2.05,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 14.537,
+    "miss": -5.856,
+    "share_pp": -2.02,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 14.537,
+    "miss": -5.856,
+    "share_pp": -2.02,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2023,
+   "criterion": "sysvol",
+   "key": "coal",
+   "model": 74.23,
+   "committed": {
+    "actual": 74.81,
+    "miss": -0.58,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 79.55,
+    "miss": -5.32,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 79.55,
+    "miss": -5.32,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 79.55,
+    "miss": -5.32,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 79.55,
+    "miss": -5.32,
+    "share_pp": null,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2023,
+   "criterion": "sysvol",
+   "key": "gas",
+   "model": 68.75,
+   "committed": {
+    "actual": 76.29,
+    "miss": -7.54,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 73.41,
+    "miss": -4.66,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 73.8,
+    "miss": -5.05,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 73.81,
+    "miss": -5.06,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 73.67,
+    "miss": -4.92,
+    "share_pp": null,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2024,
+   "criterion": "fuelmix",
+   "key": "CC_CHP",
+   "model": 1.824,
+   "committed": {
+    "actual": 1.867,
+    "miss": -0.043,
+    "share_pp": -0.02,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 1.772,
+    "miss": 0.052,
+    "share_pp": 0.02,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 1.815,
+    "miss": 0.009,
+    "share_pp": 0.01,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 1.772,
+    "miss": 0.052,
+    "share_pp": 0.02,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 2.796,
+    "miss": -0.972,
+    "share_pp": -0.33,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2024,
+   "criterion": "fuelmix",
+   "key": "CC_REGULAR",
+   "model": 40.857,
+   "committed": {
+    "actual": 45.848,
+    "miss": -4.991,
+    "share_pp": -1.73,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 43.514,
+    "miss": -2.657,
+    "share_pp": -0.92,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 44.573,
+    "miss": -3.716,
+    "share_pp": -1.18,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 45.49,
+    "miss": -4.633,
+    "share_pp": -1.49,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 43.514,
+    "miss": -2.657,
+    "share_pp": -0.82,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2024,
+   "criterion": "fuelmix",
+   "key": "COAL_BIT",
+   "model": 0.0,
+   "committed": {
+    "actual": 0.035,
+    "miss": -0.035,
+    "share_pp": -0.01,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 0.033,
+    "miss": -0.033,
+    "share_pp": -0.01,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 0.033,
+    "miss": -0.033,
+    "share_pp": -0.01,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 0.033,
+    "miss": -0.033,
+    "share_pp": -0.01,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 0.033,
+    "miss": -0.033,
+    "share_pp": -0.01,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2024,
+   "criterion": "fuelmix",
+   "key": "COAL_LIGNITE",
+   "model": 6.451,
+   "committed": {
+    "actual": 8.674,
+    "miss": -2.223,
+    "share_pp": -0.77,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 9.042,
+    "miss": -2.591,
+    "share_pp": -0.89,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 9.042,
+    "miss": -2.591,
+    "share_pp": -0.87,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 9.042,
+    "miss": -2.591,
+    "share_pp": -0.87,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 9.042,
+    "miss": -2.591,
+    "share_pp": -0.87,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2024,
+   "criterion": "fuelmix",
+   "key": "COAL_PRB",
+   "model": 61.375,
+   "committed": {
+    "actual": 60.024,
+    "miss": 1.351,
+    "share_pp": 0.44,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 64.212,
+    "miss": -2.837,
+    "share_pp": -0.99,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 64.212,
+    "miss": -2.837,
+    "share_pp": -0.84,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 64.212,
+    "miss": -2.837,
+    "share_pp": -0.84,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 64.212,
+    "miss": -2.837,
+    "share_pp": -0.84,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2024,
+   "criterion": "fuelmix",
+   "key": "CT_PEAKER",
+   "model": 18.735,
+   "committed": {
+    "actual": 15.973,
+    "miss": 2.762,
+    "share_pp": 0.94,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 15.16,
+    "miss": 3.575,
+    "share_pp": 1.23,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 15.528,
+    "miss": 3.207,
+    "share_pp": 1.14,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 15.16,
+    "miss": 3.575,
+    "share_pp": 1.26,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 15.16,
+    "miss": 3.575,
+    "share_pp": 1.26,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2024,
+   "criterion": "fuelmix",
+   "key": "ST_CHP",
+   "model": 0.19,
+   "committed": {
+    "actual": 0.507,
+    "miss": -0.317,
+    "share_pp": -0.11,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 0.481,
+    "miss": -0.291,
+    "share_pp": -0.1,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 0.493,
+    "miss": -0.303,
+    "share_pp": -0.1,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 0.481,
+    "miss": -0.291,
+    "share_pp": -0.1,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 0.759,
+    "miss": -0.569,
+    "share_pp": -0.19,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2024,
+   "criterion": "fuelmix",
+   "key": "ST_GAS",
+   "model": 12.235,
+   "committed": {
+    "actual": 20.083,
+    "miss": -7.848,
+    "share_pp": -2.7,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 19.061,
+    "miss": -6.826,
+    "share_pp": -2.35,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 19.524,
+    "miss": -7.289,
+    "share_pp": -2.46,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 19.061,
+    "miss": -6.826,
+    "share_pp": -2.3,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 19.061,
+    "miss": -6.826,
+    "share_pp": -2.3,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2024,
+   "criterion": "sysvol",
+   "key": "coal",
+   "model": 67.83,
+   "committed": {
+    "actual": 68.73,
+    "miss": -0.9,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 73.29,
+    "miss": -5.46,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 73.29,
+    "miss": -5.46,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 73.29,
+    "miss": -5.46,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 73.29,
+    "miss": -5.46,
+    "share_pp": null,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2024,
+   "criterion": "sysvol",
+   "key": "gas",
+   "model": 73.84,
+   "committed": {
+    "actual": 84.28,
+    "miss": -10.44,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 79.99,
+    "miss": -6.15,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 81.93,
+    "miss": -8.09,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 81.96,
+    "miss": -8.12,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 81.29,
+    "miss": -7.45,
+    "share_pp": null,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2025,
+   "criterion": "fuelmix",
+   "key": "CC_CHP",
+   "model": 1.889,
+   "committed": {
+    "actual": 1.816,
+    "miss": 0.073,
+    "share_pp": 0.02,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 1.713,
+    "miss": 0.176,
+    "share_pp": 0.06,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 1.737,
+    "miss": 0.152,
+    "share_pp": 0.05,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 1.713,
+    "miss": 0.176,
+    "share_pp": 0.06,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 2.2,
+    "miss": -0.311,
+    "share_pp": -0.1,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2025,
+   "criterion": "fuelmix",
+   "key": "CC_REGULAR",
+   "model": 35.756,
+   "committed": {
+    "actual": 42.49,
+    "miss": -6.734,
+    "share_pp": -2.23,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 40.091,
+    "miss": -4.335,
+    "share_pp": -1.49,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 40.631,
+    "miss": -4.875,
+    "share_pp": -1.63,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 41.101,
+    "miss": -5.345,
+    "share_pp": -1.78,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 40.091,
+    "miss": -4.335,
+    "share_pp": -1.45,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2025,
+   "criterion": "fuelmix",
+   "key": "COAL_BIT",
+   "model": 0.0,
+   "committed": {
+    "actual": 0.038,
+    "miss": -0.038,
+    "share_pp": -0.01,
+    "status": "SKIPPED"
+   },
+   "gross_coal": {
+    "actual": 0.036,
+    "miss": -0.036,
+    "share_pp": -0.01,
+    "status": "SKIPPED"
+   },
+   "aligned_prorata": {
+    "actual": 0.036,
+    "miss": -0.036,
+    "share_pp": -0.01,
+    "status": "SKIPPED"
+   },
+   "aligned_cc_only": {
+    "actual": 0.036,
+    "miss": -0.036,
+    "share_pp": -0.01,
+    "status": "SKIPPED"
+   },
+   "aligned_chp_first": {
+    "actual": 0.036,
+    "miss": -0.036,
+    "share_pp": -0.01,
+    "status": "SKIPPED"
+   }
+  },
+  {
+   "year": 2025,
+   "criterion": "fuelmix",
+   "key": "COAL_LIGNITE",
+   "model": 6.385,
+   "committed": {
+    "actual": 8.798,
+    "miss": -2.413,
+    "share_pp": -0.8,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 9.065,
+    "miss": -2.68,
+    "share_pp": -0.9,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 9.065,
+    "miss": -2.68,
+    "share_pp": -0.89,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 9.065,
+    "miss": -2.68,
+    "share_pp": -0.89,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 9.065,
+    "miss": -2.68,
+    "share_pp": -0.89,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2025,
+   "criterion": "fuelmix",
+   "key": "COAL_PRB",
+   "model": 82.201,
+   "committed": {
+    "actual": 74.244,
+    "miss": 7.957,
+    "share_pp": 2.64,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 77.17,
+    "miss": 5.031,
+    "share_pp": 1.56,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 77.17,
+    "miss": 5.031,
+    "share_pp": 1.64,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 77.17,
+    "miss": 5.031,
+    "share_pp": 1.64,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 77.17,
+    "miss": 5.031,
+    "share_pp": 1.64,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2025,
+   "criterion": "fuelmix",
+   "key": "CT_PEAKER",
+   "model": 13.651,
+   "committed": {
+    "actual": 13.734,
+    "miss": -0.083,
+    "share_pp": -0.03,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 12.958,
+    "miss": 0.693,
+    "share_pp": 0.21,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 13.133,
+    "miss": 0.518,
+    "share_pp": 0.17,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 12.958,
+    "miss": 0.693,
+    "share_pp": 0.23,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 12.958,
+    "miss": 0.693,
+    "share_pp": 0.23,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2025,
+   "criterion": "fuelmix",
+   "key": "ST_CHP",
+   "model": 0.168,
+   "committed": {
+    "actual": 0.532,
+    "miss": -0.364,
+    "share_pp": -0.12,
+    "status": "SKIPPED"
+   },
+   "gross_coal": {
+    "actual": 0.502,
+    "miss": -0.334,
+    "share_pp": -0.11,
+    "status": "SKIPPED"
+   },
+   "aligned_prorata": {
+    "actual": 0.509,
+    "miss": -0.341,
+    "share_pp": -0.11,
+    "status": "SKIPPED"
+   },
+   "aligned_cc_only": {
+    "actual": 0.502,
+    "miss": -0.334,
+    "share_pp": -0.11,
+    "status": "SKIPPED"
+   },
+   "aligned_chp_first": {
+    "actual": 0.645,
+    "miss": -0.477,
+    "share_pp": -0.16,
+    "status": "SKIPPED"
+   }
+  },
+  {
+   "year": 2025,
+   "criterion": "fuelmix",
+   "key": "ST_GAS",
+   "model": 9.868,
+   "committed": {
+    "actual": 17.451,
+    "miss": -7.583,
+    "share_pp": -2.51,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 16.466,
+    "miss": -6.598,
+    "share_pp": -2.21,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 16.688,
+    "miss": -6.82,
+    "share_pp": -2.26,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 16.466,
+    "miss": -6.598,
+    "share_pp": -2.19,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 16.466,
+    "miss": -6.598,
+    "share_pp": -2.19,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2025,
+   "criterion": "sysvol",
+   "key": "coal",
+   "model": 88.59,
+   "committed": {
+    "actual": 83.08,
+    "miss": 5.51,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 86.27,
+    "miss": 2.32,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 86.27,
+    "miss": 2.32,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 86.27,
+    "miss": 2.32,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 86.27,
+    "miss": 2.32,
+    "share_pp": null,
+    "status": "PASS"
+   }
+  },
+  {
+   "year": 2025,
+   "criterion": "sysvol",
+   "key": "gas",
+   "model": 61.33,
+   "committed": {
+    "actual": 76.02,
+    "miss": -14.69,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "gross_coal": {
+    "actual": 71.73,
+    "miss": -10.4,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_prorata": {
+    "actual": 72.7,
+    "miss": -11.37,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_cc_only": {
+    "actual": 72.74,
+    "miss": -11.41,
+    "share_pp": null,
+    "status": "PASS"
+   },
+   "aligned_chp_first": {
+    "actual": 72.36,
+    "miss": -11.03,
+    "share_pp": null,
+    "status": "PASS"
+   }
+  }
+ ]
+}

@@ -1,0 +1,129 @@
+{
+ "2019": {
+  "avail_twh": 193.34961925708424,
+  "dead_cohorts": [],
+  "hashes": {
+   "availability": "ea791ae1580ef15c",
+   "min_gen": "a7a833f915df7c24",
+   "pmax": "846e9cb319300673",
+   "pmin": "23e95c4d457beda5"
+  },
+  "in_year_cohorts": [],
+  "n_units": 797,
+  "overrides": null
+ },
+ "2020": {
+  "avail_twh": 191.76357130117776,
+  "dead_cohorts": [],
+  "hashes": {
+   "availability": "ae84827fd66ac692",
+   "min_gen": "0fc3384135bcb698",
+   "pmax": "91c4add06c295dca",
+   "pmin": "1c5d2f68a91a8261"
+  },
+  "in_year_cohorts": [
+   "10029|ST_GAS|r202003"
+  ],
+  "n_units": 819,
+  "overrides": null
+ },
+ "2021": {
+  "avail_twh": 191.6700929127773,
+  "dead_cohorts": [
+   "10029|ST_GAS|r202003"
+  ],
+  "hashes": {
+   "availability": "77394ece8ea7c746",
+   "min_gen": "337e680301f49ab6",
+   "pmax": "551c3b1330d4383a",
+   "pmin": "f51febb273e1ed32"
+  },
+  "in_year_cohorts": [
+   "1642|ST_GAS|r202107",
+   "50498|CC_REGULAR|r202103",
+   "54056|CC_REGULAR|r202103",
+   "54907|CT_CHP|r202104",
+   "568|COAL_PRB|r202106"
+  ],
+  "n_units": 834,
+  "overrides": null
+ },
+ "2022": {
+  "avail_twh": 190.55631866129815,
+  "dead_cohorts": [
+   "10029|ST_GAS|r202003",
+   "54907|CT_CHP|r202104",
+   "568|COAL_PRB|r202106"
+  ],
+  "hashes": {
+   "availability": "5d18737fc5124486",
+   "min_gen": "732d01cc3abb1827",
+   "pmax": "3d5e1409152fd943",
+   "pmin": "6c780b09e6e2c26c"
+  },
+  "in_year_cohorts": [
+   "1642|CT_PEAKER|r202206"
+  ],
+  "n_units": 810,
+  "overrides": null
+ },
+ "2023": {
+  "avail_twh": 180.8556774292973,
+  "dead_cohorts": [
+   "10029|ST_GAS|r202003",
+   "54907|CT_CHP|r202104",
+   "568|COAL_PRB|r202106"
+  ],
+  "hashes": {
+   "availability": "816473988f21ed78",
+   "min_gen": "c03e19a49d225abe",
+   "pmax": "3c9da5f2b2924c24",
+   "pmin": "a40cbfd2bb771506"
+  },
+  "in_year_cohorts": [
+   "50955|ST_GAS|r202311",
+   "54085|ST_GAS|r202303"
+  ],
+  "n_units": 793,
+  "overrides": null
+ },
+ "2024": {
+  "avail_twh": 185.8035908796156,
+  "dead_cohorts": [
+   "10029|ST_GAS|r202003",
+   "54907|CT_CHP|r202104",
+   "568|COAL_PRB|r202106"
+  ],
+  "hashes": {
+   "availability": "16b8b452fcc9cc6c",
+   "min_gen": "d0a965ff5c5559c9",
+   "pmax": "9df833b36a8e1877",
+   "pmin": "831786bd98c5641f"
+  },
+  "in_year_cohorts": [
+   "1588|CC_REGULAR|r202406",
+   "54586|CC_REGULAR|r202410"
+  ],
+  "n_units": 794,
+  "overrides": null
+ },
+ "2025": {
+  "avail_twh": 184.19901157137573,
+  "dead_cohorts": [
+   "10029|ST_GAS|r202003",
+   "54907|CT_CHP|r202104",
+   "568|COAL_PRB|r202106"
+  ],
+  "hashes": {
+   "availability": "7143180c03767453",
+   "min_gen": "be35db54d8d65940",
+   "pmax": "83d2acda055f0c21",
+   "pmin": "c84a89e84c39021e"
+  },
+  "in_year_cohorts": [
+   "9038|CT_PEAKER|r202506"
+  ],
+  "n_units": 770,
+  "overrides": null
+ }
+}

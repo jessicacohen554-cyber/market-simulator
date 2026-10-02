@@ -1610,6 +1610,7 @@
         <div id="stoHourly"></div>
         <p style="font-weight:700;font-size:0.82rem;margin:14px 0 4px">State of charge — % of own annual max</p>
         <div id="stoSoc"></div>`;
+      if (S.socBounds) h += `<div id="stoSocBounds"></div>`;
       sec.innerHTML = h;
 
       // ---- month x hour average-day grids (Actual | Model | Delta) --------
@@ -1702,6 +1703,94 @@
         socBox.appendChild(wrap);
       }
       socBox.insertAdjacentHTML('beforeend', '<div style="display:flex;align-items:center;gap:8px;margin-top:8px"><span style="font-size:0.68rem;color:var(--text-muted)">0%</span><div class="color-ramp"></div><span style="font-size:0.68rem;color:var(--text-muted)">100% of annual max</span></div>');
+      if (S.socBounds) drawSocBounds(S.socBounds);
+    }
+
+    /* SOC vs SUBMITTED EOH SOC BOUNDS — reference only (R-CAISO-34, link 16).
+       S.socBounds (scripts/lib/storage_compare.py::build_soc_bounds) carries,
+       by hour of day on the model clock, the submitters' mean min/max end-of-
+       hour SOC bound as a share of each resource's ceiling, and the model
+       fleet's SOC as a share of its energy capacity; plus the R-CAISO-32
+       digitized DMM quarterly SOC-outage shares where they exist. The
+       submitters are a SELF-SELECTED subset of the fleet, so the band is a
+       reference and never a target: no fit statistic is computed against it. */
+    function drawSocBounds(B) {
+      const box = document.getElementById('stoSocBounds');
+      if (!box) return;
+      const pct = v => v == null ? '—' : (100 * v).toFixed(1) + '%';
+      box.innerHTML = `<p style="font-weight:700;font-size:0.82rem;margin:16px 0 2px">State of charge vs submitted end-of-hour SOC bounds — share of energy capacity, by hour of day
+          <span style="font-weight:400;color:var(--text-muted)">(reference only, not a target)</span></p>
+        <p style="font-size:0.76rem;color:var(--text-muted);margin:0 0 6px">The band is the mean submitted [min, max] end-of-hour SOC bound of the
+          <b>${B.submitters}</b> storage resources that chose to submit one (<b>${pct(B.mwShare)}</b> of storage MW, year mean;
+          ${B.resourceHours.toLocaleString()} resource-hours; ${pct(B.pinnedShare)} pinned within 10% of ceiling). They are a
+          <b>self-selected subset</b>. The bound is each participant's own conduct parameter, so it is neither the fleet's SOC
+          nor a target, and the model is not scored against it (rule 13). Source: ${esc(B.src)}. Hours on the ${esc(B.clock)}.</p>
+        <span class="seg-ctrl" id="stoSocBoundsTabs" style="margin:0 0 4px">
+          <button type="button" class="active" data-k="all">All year</button>
+          <button type="button" data-k="summer">Jun–Sep</button>
+        </span>
+        <div style="display:flex;flex-wrap:wrap;gap:4px 16px;font-size:0.72rem;color:var(--text-muted);margin:6px 0 0">
+          <span><span style="display:inline-block;width:14px;height:3px;background:#4A90D9;vertical-align:middle"></span> Model fleet SOC ÷ energy capacity (mean)</span>
+          <span><span style="display:inline-block;width:14px;height:9px;background:rgba(100,113,132,0.3);border:1px dashed #647184;vertical-align:middle"></span> Submitters' mean [min, max] bound ÷ ceiling (self-selected)</span>
+        </div>
+        <div id="stoSocBoundsChart" style="width:100%;height:260px"></div>
+        <div id="stoSocBoundsDmm"></div>`;
+      const draw = k => {
+        const c = document.getElementById('stoSocBoundsChart');
+        c.innerHTML = '';
+        const E = B.env[k], M = B.model[k];
+        const w = c.clientWidth || 600, h = 260;
+        const L = 46, R = 14, Tp = 10, Bt = 36;
+        const pw = w - L - R, ph = h - Tp - Bt;
+        const X = hr => L + pw * hr / 23;
+        const Y = v => Tp + ph * (1 - Math.min(Math.max(v, 0), 1));
+        const svg = d3.select(c).append('svg').attr('width', w).attr('height', h).attr('class', 'chart');
+        for (let i = 0; i <= 4; i++) {
+          const y = Tp + ph * i / 4;
+          svg.append('line').attr('x1', L).attr('y1', y).attr('x2', w - R).attr('y2', y).attr('stroke', '#eef1f4');
+          svg.append('text').attr('x', L - 7).attr('y', y + 4).attr('text-anchor', 'end').attr('font-size', 12).attr('fill', '#8a93a0')
+            .text((100 * (1 - i / 4)) + '%');
+        }
+        for (let hr = 0; hr < 24; hr += 3) {
+          svg.append('text').attr('x', X(hr)).attr('y', h - 16).attr('text-anchor', 'middle').attr('font-size', 12).attr('fill', '#8a93a0').text(hr);
+        }
+        svg.append('text').attr('x', L + pw / 2).attr('y', h - 2).attr('text-anchor', 'middle').attr('font-size', 11).attr('fill', '#6b7480')
+          .text('hour of day (Pacific standard time)');
+        const ok = i => E.lo[i] != null && E.hi[i] != null;
+        const idx = [...Array(24).keys()];
+        const area = d3.area().defined(ok).x(X).y0(i => Y(E.lo[i])).y1(i => Y(E.hi[i]));
+        svg.append('path').attr('d', area(idx)).attr('fill', '#647184').attr('fill-opacity', 0.18);
+        for (const key of ['lo', 'hi']) {
+          const ln = d3.line().defined(i => E[key][i] != null).x(X).y(i => Y(E[key][i]));
+          svg.append('path').attr('d', ln(idx)).attr('fill', 'none').attr('stroke', '#647184').attr('stroke-width', 1.2).attr('stroke-dasharray', '4 3');
+        }
+        const ml = d3.line().defined(i => M[i] != null).x(X).y(i => Y(M[i]));
+        svg.append('path').attr('d', ml(idx)).attr('fill', 'none').attr('stroke', '#4A90D9').attr('stroke-width', 2.2);
+        // Hover readout
+        const tip = svg.append('rect').attr('x', L).attr('y', Tp).attr('width', pw).attr('height', ph).attr('fill', 'transparent');
+        tip.on('mousemove', ev => {
+          const r = c.getBoundingClientRect();
+          const hr = Math.round((ev.clientX - r.left - L) / pw * 23);
+          if (hr < 0 || hr > 23) { hideTip(); return; }
+          showTip(`<b>${String(hr).padStart(2, '0')}:00 PST</b><br>model ${pct(M[hr])}<br>submitted bound ${pct(E.lo[hr])} – ${pct(E.hi[hr])}<br><span style="color:#8a93a0">${(E.n[hr] || 0).toLocaleString()} resource-hours</span>`, ev.clientX, ev.clientY);
+        }).on('mouseleave', hideTip);
+      };
+      const tabs = document.getElementById('stoSocBoundsTabs');
+      tabs.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+        tabs.querySelectorAll('button').forEach(x => x.classList.toggle('active', x === b));
+        draw(b.dataset.k);
+      }));
+      draw('all');
+      // DMM quarterly reference band (digitized; optional per year).
+      const D = B.dmm;
+      if (D) {
+        const cells = D.sharePct.map((v, q) => `<div class="kpi-row"><span class="k">Q${q + 1}</span><span class="v">${v.toFixed(1)}% <span style="color:var(--text-muted);font-size:0.72rem">(max ${D.maxMwh[q].toLocaleString()} MWh)</span></span></div>`).join('');
+        document.getElementById('stoSocBoundsDmm').innerHTML = `<div class="year-grid" style="margin-top:10px"><div class="year-card">
+          <div class="year-head"><span>DMM — fleet charge range lost to SOC outages, by quarter <span style="font-size:0.72rem;color:var(--text-muted)">(digitized, reference)</span></span></div>
+          ${cells}
+          <p style="font-size:0.72rem;color:var(--text-muted);margin:6px 0 0">Mean quarterly share of the fleet's charge range under SOC-limiting outages. Source: ${esc(D.src)}. Reference only: not a model input and not scored.</p>
+        </div></div>`;
+      }
     }
 
     /* drawPriceDuration() was DELETED here 2026-09-16 (session caiso-284,

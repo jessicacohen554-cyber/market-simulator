@@ -1,0 +1,791 @@
+{
+ "_provenance": {
+  "source": "CAISO OASIS Public Bid Data (PUB_DAM_GRP GroupZip, 90-day-lag masked DAM bids), dam-public-bids clean datatype, trade years [2023, 2024, 2025]",
+  "derived_utc": "2026-10-02T07:17:45+00:00",
+  "method": "see scripts/data/derive_caiso_offer_surface.py module docstring",
+  "gas_basis": "DELIVERED: CA-composite citygate daily on gas FLOW days (trade+1 staircase, caiso-90 semantics), data/raw/gas-prices/caiso_citygate_daily.csv, PLUS CAISO_CITYGATE_TRANSPORT_ADDER 0.46 $/MMBtu -- the same series the solve prices gas units at (R-CAISO-33 joint re-basis, 2026-10-02)",
+  "transport_adder_usd_per_mmbtu": 0.46,
+  "carbon_basis": {
+   "usd_per_t": {
+    "2023": 33.03,
+    "2024": 35.23,
+    "2025": 28.06
+   },
+   "co2_factor_t_per_mmbtu": 0.057,
+   "note": "CARB C&T allowance (STATE_CARBON_PRICE_BY_ISO); static mults net of carbon at band HR, ladder mults net of carbon at the measured static peak HR (the mechanism's fuel-only repricing basis)"
+  },
+  "vom_usd_per_mwh": {
+   "CC_REGULAR": 2.0,
+   "CT_PEAKER": 3.5,
+   "ST_GAS": 4.0
+  },
+  "classifier": {
+   "body_frac": 0.35,
+   "gas_slope_range": [
+    4.0,
+    18.0
+   ],
+   "min_r": 0.6,
+   "min_days": 120,
+   "min_cap_mw": 20.0,
+   "hr_cut": 8.5,
+   "st_cut": 11.19047619047619,
+   "st_cut_window": [
+    10.9,
+    12.5
+   ],
+   "st_cut_kde_bw": 0.35,
+   "classes": [
+    "CC_REGULAR",
+    "CT_PEAKER",
+    "ST_GAS"
+   ],
+   "consumed_classes": [
+    "CC_REGULAR",
+    "CT_PEAKER"
+   ],
+   "contamination_note": "CT bucket may include the 2.9 GW OTC/RMR ST_GAS steamers and priced CT_CHP; CC bucket may include CC_CHP. Same-fuel near-SRMC bidders; bounded by G1, robust via cap-weighted medians; masked ids preclude per-plant mapping."
+  },
+  "band_windows_geometry": {
+   "CC_REGULAR": {
+    "pct_committed": 27.37,
+    "pct_peaking": 3.44,
+    "econ_low_share": 0.5
+   },
+   "CT_PEAKER": {
+    "pct_committed": 10.9,
+    "pct_peaking": 7.0,
+    "econ_low_share": 0.526
+   },
+   "ST_GAS": {
+    "pct_committed": 6.62,
+    "pct_peaking": 15.0,
+    "econ_low_share": 0.5
+   }
+  },
+  "netload_pct_edges": [
+   0.8,
+   0.9,
+   0.97
+  ],
+  "peak_ladder_qs": [
+   0.1,
+   0.3,
+   0.5,
+   0.7,
+   0.9
+  ],
+  "per_year_band_mults": {
+   "CC_REGULAR": {
+    "committed": {
+     "2023": 0.974,
+     "2024": 0.929,
+     "2025": 0.983
+    },
+    "econ_low": {
+     "2023": 0.998,
+     "2024": 0.931,
+     "2025": 0.984
+    },
+    "econ_high": {
+     "2023": 0.985,
+     "2024": 0.968,
+     "2025": 1.0
+    },
+    "peak": {
+     "2023": 1.186,
+     "2024": 1.353,
+     "2025": 1.321
+    }
+   },
+   "CT_PEAKER": {
+    "committed": {
+     "2023": 1.016,
+     "2024": 1.056,
+     "2025": 0.801
+    },
+    "econ_low": {
+     "2023": 1.021,
+     "2024": 0.993,
+     "2025": 1.029
+    },
+    "econ_high": {
+     "2023": 1.041,
+     "2024": 1.091,
+     "2025": 1.07
+    },
+    "peak": {
+     "2023": 1.067,
+     "2024": 1.134,
+     "2025": 1.071
+    }
+   },
+   "ST_GAS": {
+    "committed": {
+     "2023": 1.176,
+     "2024": 0.645,
+     "2025": -0.139
+    },
+    "econ_low": {
+     "2023": 1.724,
+     "2024": 0.918,
+     "2025": 0.987
+    },
+    "econ_high": {
+     "2023": 1.396,
+     "2024": 0.937,
+     "2025": 0.99
+    },
+    "peak": {
+     "2023": 1.354,
+     "2024": 0.842,
+     "2025": 0.978
+    }
+   }
+  },
+  "gates": {
+   "G1_capacity_reconciliation": {
+    "CC_REGULAR": {
+     "bucket_mw": 12387.0,
+     "fleet_mw": 13708.0,
+     "ratio": 0.904,
+     "bounds": [
+      0.5,
+      1.3
+     ],
+     "pass": true
+    },
+    "CT_PEAKER": {
+     "bucket_mw": 5927.0,
+     "fleet_mw": 7616.0,
+     "ratio": 0.778,
+     "bounds": [
+      0.5,
+      1.6
+     ],
+     "pass": true
+    },
+    "ST_GAS": {
+     "bucket_mw": 4773.0,
+     "fleet_mw": 2859.0,
+     "ratio": 1.67,
+     "bounds": [
+      0.5,
+      1.6
+     ],
+     "pass": false
+    }
+   },
+   "G2_cut_robustness": {
+    "cut": 8.5,
+    "st_cut": 11.19047619047619,
+    "deltas": {
+     "hr_cut-0.25": {
+      "CC_REGULAR.econ_low": {
+       "alt": 0.979,
+       "dev": 0.0,
+       "tol": 0.098,
+       "pass": true
+      },
+      "CC_REGULAR.econ_high": {
+       "alt": 0.988,
+       "dev": 0.0,
+       "tol": 0.099,
+       "pass": true
+      },
+      "CC_REGULAR.peak": {
+       "alt": 1.256,
+       "dev": 0.002,
+       "tol": 0.126,
+       "pass": true
+      },
+      "CT_PEAKER.econ_low": {
+       "alt": 1.022,
+       "dev": 0.0,
+       "tol": 0.102,
+       "pass": true
+      },
+      "CT_PEAKER.econ_high": {
+       "alt": 1.058,
+       "dev": 0.003,
+       "tol": 0.105,
+       "pass": true
+      },
+      "CT_PEAKER.peak": {
+       "alt": 1.076,
+       "dev": 0.001,
+       "tol": 0.107,
+       "pass": true
+      },
+      "ST_GAS.econ_low": {
+       "alt": 1.293,
+       "dev": 0.0,
+       "tol": 0.129,
+       "pass": true
+      },
+      "ST_GAS.econ_high": {
+       "alt": 1.205,
+       "dev": 0.0,
+       "tol": 0.121,
+       "pass": true
+      },
+      "ST_GAS.peak": {
+       "alt": 0.977,
+       "dev": 0.0,
+       "tol": 0.098,
+       "pass": true
+      }
+     },
+     "hr_cut+0.25": {
+      "CC_REGULAR.econ_low": {
+       "alt": 0.983,
+       "dev": 0.004,
+       "tol": 0.098,
+       "pass": true
+      },
+      "CC_REGULAR.econ_high": {
+       "alt": 0.989,
+       "dev": 0.001,
+       "tol": 0.099,
+       "pass": true
+      },
+      "CC_REGULAR.peak": {
+       "alt": 1.268,
+       "dev": 0.01,
+       "tol": 0.126,
+       "pass": true
+      },
+      "CT_PEAKER.econ_low": {
+       "alt": 1.023,
+       "dev": 0.001,
+       "tol": 0.102,
+       "pass": true
+      },
+      "CT_PEAKER.econ_high": {
+       "alt": 1.062,
+       "dev": 0.007,
+       "tol": 0.105,
+       "pass": true
+      },
+      "CT_PEAKER.peak": {
+       "alt": 1.077,
+       "dev": 0.002,
+       "tol": 0.107,
+       "pass": true
+      },
+      "ST_GAS.econ_low": {
+       "alt": 1.293,
+       "dev": 0.0,
+       "tol": 0.129,
+       "pass": true
+      },
+      "ST_GAS.econ_high": {
+       "alt": 1.205,
+       "dev": 0.0,
+       "tol": 0.121,
+       "pass": true
+      },
+      "ST_GAS.peak": {
+       "alt": 0.977,
+       "dev": 0.0,
+       "tol": 0.098,
+       "pass": true
+      }
+     },
+     "st_cut-0.25": {
+      "CC_REGULAR.econ_low": {
+       "alt": 0.979,
+       "dev": 0.0,
+       "tol": 0.098,
+       "pass": true
+      },
+      "CC_REGULAR.econ_high": {
+       "alt": 0.988,
+       "dev": 0.0,
+       "tol": 0.099,
+       "pass": true
+      },
+      "CC_REGULAR.peak": {
+       "alt": 1.258,
+       "dev": 0.0,
+       "tol": 0.126,
+       "pass": true
+      },
+      "CT_PEAKER.econ_low": {
+       "alt": 1.02,
+       "dev": 0.002,
+       "tol": 0.102,
+       "pass": true
+      },
+      "CT_PEAKER.econ_high": {
+       "alt": 1.052,
+       "dev": 0.003,
+       "tol": 0.105,
+       "pass": true
+      },
+      "CT_PEAKER.peak": {
+       "alt": 1.075,
+       "dev": 0.0,
+       "tol": 0.107,
+       "pass": true
+      },
+      "ST_GAS.econ_low": {
+       "alt": 1.287,
+       "dev": 0.006,
+       "tol": 0.129,
+       "pass": true
+      },
+      "ST_GAS.econ_high": {
+       "alt": 1.218,
+       "dev": 0.013,
+       "tol": 0.121,
+       "pass": true
+      },
+      "ST_GAS.peak": {
+       "alt": 0.981,
+       "dev": 0.004,
+       "tol": 0.098,
+       "pass": true
+      }
+     },
+     "st_cut+0.25": {
+      "CC_REGULAR.econ_low": {
+       "alt": 0.979,
+       "dev": 0.0,
+       "tol": 0.098,
+       "pass": true
+      },
+      "CC_REGULAR.econ_high": {
+       "alt": 0.988,
+       "dev": 0.0,
+       "tol": 0.099,
+       "pass": true
+      },
+      "CC_REGULAR.peak": {
+       "alt": 1.258,
+       "dev": 0.0,
+       "tol": 0.126,
+       "pass": true
+      },
+      "CT_PEAKER.econ_low": {
+       "alt": 1.022,
+       "dev": 0.0,
+       "tol": 0.102,
+       "pass": true
+      },
+      "CT_PEAKER.econ_high": {
+       "alt": 1.059,
+       "dev": 0.004,
+       "tol": 0.105,
+       "pass": true
+      },
+      "CT_PEAKER.peak": {
+       "alt": 1.075,
+       "dev": 0.0,
+       "tol": 0.107,
+       "pass": true
+      },
+      "ST_GAS.econ_low": {
+       "alt": 1.338,
+       "dev": 0.045,
+       "tol": 0.129,
+       "pass": true
+      },
+      "ST_GAS.econ_high": {
+       "alt": 1.315,
+       "dev": 0.11,
+       "tol": 0.121,
+       "pass": true
+      },
+      "ST_GAS.peak": {
+       "alt": 0.991,
+       "dev": 0.014,
+       "tol": 0.098,
+       "pass": true
+      }
+     }
+    },
+    "pass": true
+   },
+   "G3_estimation_loyo": {
+    "CC_REGULAR": {
+     "econ_low": {
+      "pooled": 0.979,
+      "loyo": {
+       "2023": 0.968,
+       "2024": 0.984,
+       "2025": 0.96
+      },
+      "worst_dev": 0.019,
+      "tol": 0.098,
+      "pass": true
+     },
+     "econ_high": {
+      "pooled": 0.988,
+      "loyo": {
+       "2023": 0.993,
+       "2024": 0.989,
+       "2025": 0.985
+      },
+      "worst_dev": 0.005,
+      "tol": 0.099,
+      "pass": true
+     },
+     "peak": {
+      "pooled": 1.258,
+      "loyo": {
+       "2023": 1.326,
+       "2024": 1.243,
+       "2025": 1.224
+      },
+      "worst_dev": 0.068,
+      "tol": 0.126,
+      "pass": true
+     }
+    },
+    "CT_PEAKER": {
+     "econ_low": {
+      "pooled": 1.022,
+      "loyo": {
+       "2023": 1.028,
+       "2024": 1.022,
+       "2025": 1.022
+      },
+      "worst_dev": 0.006,
+      "tol": 0.102,
+      "pass": true
+     },
+     "econ_high": {
+      "pooled": 1.055,
+      "loyo": {
+       "2023": 1.077,
+       "2024": 1.051,
+       "2025": 1.051
+      },
+      "worst_dev": 0.022,
+      "tol": 0.105,
+      "pass": true
+     },
+     "peak": {
+      "pooled": 1.075,
+      "loyo": {
+       "2023": 1.087,
+       "2024": 1.07,
+       "2025": 1.076
+      },
+      "worst_dev": 0.012,
+      "tol": 0.107,
+      "pass": true
+     }
+    },
+    "ST_GAS": {
+     "econ_low": {
+      "pooled": 1.293,
+      "loyo": {
+       "2023": 0.983,
+       "2024": 1.345,
+       "2025": 1.317
+      },
+      "worst_dev": 0.31,
+      "tol": 0.129,
+      "pass": false
+     },
+     "econ_high": {
+      "pooled": 1.205,
+      "loyo": {
+       "2023": 0.979,
+       "2024": 1.326,
+       "2025": 1.289
+      },
+      "worst_dev": 0.226,
+      "tol": 0.121,
+      "pass": false
+     },
+     "peak": {
+      "pooled": 0.977,
+      "loyo": {
+       "2023": 0.895,
+       "2024": 1.102,
+       "2025": 0.979
+      },
+      "worst_dev": 0.125,
+      "tol": 0.098,
+      "pass": false
+     }
+    }
+   },
+   "G4_physical_sanity": {
+    "CC_REGULAR": {
+     "ordered": true,
+     "in_range": true,
+     "pass": true
+    },
+    "CT_PEAKER": {
+     "ordered": true,
+     "in_range": true,
+     "pass": true
+    },
+    "ST_GAS": {
+     "ordered": false,
+     "in_range": true,
+     "pass": false
+    }
+   }
+  },
+  "reported_not_consumed": {
+   "ST_GAS": {
+    "base_hr": 11.847,
+    "bands": {
+     "econ_low": 1.293,
+     "econ_high": 1.205,
+     "peak": 0.977
+    },
+    "unarmed": {
+     "committed": 1.068
+    },
+    "gates": {
+     "G1_capacity_reconciliation": {
+      "bucket_mw": 4773.0,
+      "fleet_mw": 2859.0,
+      "ratio": 1.67,
+      "bounds": [
+       0.5,
+       1.6
+      ],
+      "pass": false
+     },
+     "G3_estimation_loyo": {
+      "econ_low": {
+       "pooled": 1.293,
+       "loyo": {
+        "2023": 0.983,
+        "2024": 1.345,
+        "2025": 1.317
+       },
+       "worst_dev": 0.31,
+       "tol": 0.129,
+       "pass": false
+      },
+      "econ_high": {
+       "pooled": 1.205,
+       "loyo": {
+        "2023": 0.979,
+        "2024": 1.326,
+        "2025": 1.289
+       },
+       "worst_dev": 0.226,
+       "tol": 0.121,
+       "pass": false
+      },
+      "peak": {
+       "pooled": 0.977,
+       "loyo": {
+        "2023": 0.895,
+        "2024": 1.102,
+        "2025": 0.979
+       },
+       "worst_dev": 0.125,
+       "tol": 0.098,
+       "pass": false
+      }
+     },
+     "G4_physical_sanity": {
+      "ordered": false,
+      "in_range": true,
+      "pass": false
+     }
+    },
+    "reason": "MEASURED AND REFUSED. caiso-255, owner grant of FINDING-caiso254-partition-repair-2026-09-06.md \u00a74 option 1 (2026-09-06), pre-registered in PRECOMMIT-caiso255-ct-only-partition-adoption-2026-09-06.md BEFORE this artifact was written. The separated ST_GAS bucket FAILS G4 physical sanity -- its peak band sits below its econ_high, an inverted offer curve -- so it is not consumed. G4 is NOT relaxed and its tolerance is NOT retuned: the failure stands here at full magnitude. The three-way CLASSIFICATION is retained, which is what removes these resources from the CT_PEAKER bucket; consumers with no ST_GAS entry fall back to the (now de-contaminated) CT_PEAKER bucket exactly as a pre-repair artifact does. On CAISO this is additionally LP-inert: data.offer_curves bypasses offer_curve_by_group for every plant in ST_GAS_PEAKER_PLANTS, which is the entire CAISO ST_GAS fleet (plants 315 / 335 / 350, 2,858.8 MW), whose bands come from the caiso-239/240 per-plant measured registries instead."
+   }
+  },
+  "committed_band_unarmed_note": "measured committed-band mults reported in per_year_band_mults but NOT consumed: min-load self-commitment conduct is owned by unit commitment, not the P1 offer (Lever-A inversion lesson; rule 19)"
+ },
+ "CC_REGULAR": {
+  "base_hr": 7.442,
+  "peak_p50": 1.403,
+  "binned_ladder": [
+   [
+    [
+     0.2,
+     1.403
+    ],
+    [
+     0.2,
+     1.403
+    ],
+    [
+     0.2,
+     1.413
+    ],
+    [
+     0.2,
+     1.637
+    ],
+    [
+     0.2,
+     5.588
+    ]
+   ],
+   [
+    [
+     0.2,
+     1.403
+    ],
+    [
+     0.2,
+     1.403
+    ],
+    [
+     0.2,
+     1.403
+    ],
+    [
+     0.2,
+     1.563
+    ],
+    [
+     0.2,
+     5.105
+    ]
+   ],
+   [
+    [
+     0.2,
+     1.403
+    ],
+    [
+     0.2,
+     1.403
+    ],
+    [
+     0.2,
+     1.403
+    ],
+    [
+     0.2,
+     1.71
+    ],
+    [
+     0.2,
+     5.271
+    ]
+   ],
+   [
+    [
+     0.2,
+     1.403
+    ],
+    [
+     0.2,
+     1.403
+    ],
+    [
+     0.2,
+     1.403
+    ],
+    [
+     0.2,
+     1.551
+    ],
+    [
+     0.2,
+     5.102
+    ]
+   ]
+  ]
+ },
+ "CT_PEAKER": {
+  "base_hr": 10.862,
+  "peak_p50": 1.092,
+  "binned_ladder": [
+   [
+    [
+     0.2,
+     1.092
+    ],
+    [
+     0.2,
+     1.092
+    ],
+    [
+     0.2,
+     1.096
+    ],
+    [
+     0.2,
+     1.485
+    ],
+    [
+     0.2,
+     1.785
+    ]
+   ],
+   [
+    [
+     0.2,
+     1.092
+    ],
+    [
+     0.2,
+     1.092
+    ],
+    [
+     0.2,
+     1.092
+    ],
+    [
+     0.2,
+     1.371
+    ],
+    [
+     0.2,
+     1.953
+    ]
+   ],
+   [
+    [
+     0.2,
+     1.092
+    ],
+    [
+     0.2,
+     1.092
+    ],
+    [
+     0.2,
+     1.121
+    ],
+    [
+     0.2,
+     1.362
+    ],
+    [
+     0.2,
+     2.141
+    ]
+   ],
+   [
+    [
+     0.2,
+     1.092
+    ],
+    [
+     0.2,
+     1.092
+    ],
+    [
+     0.2,
+     1.177
+    ],
+    [
+     0.2,
+     1.398
+    ],
+    [
+     0.2,
+     2.429
+    ]
+   ]
+  ]
+ }
+}

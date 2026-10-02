@@ -329,6 +329,45 @@ def footprint_plant_mask(iso: str, ba_code, nerc_region=None):
     return mask
 
 
+def generator_footprint_mask(iso: str, df, codes=None):
+    """Footprint mask over a processed EIA-860 generator frame, at LOAD time.
+
+    W0 E.6 (owner ruling R-2 / Q6, audit §E.6): membership is decided where the
+    table is read, never where it is derived, so ``eia860_generators.parquet``
+    may carry every US balancing authority and registering a BA needs no data
+    regeneration. ``df`` carries ``balancing_authority_code`` and, on a table
+    derived since W0, ``nerc_region``; ``codes`` defaults to :func:`ba_codes`
+    (a caller adding dated joining BAs passes its own list). The NERC key of
+    :data:`ISO_NERC_REGION_ADMISSION` applies whenever the column is present —
+    on a legacy (derive-filtered) table it is absent and the derive-time filter
+    already applied it, so the mask is exact either way.
+    """
+    codes = ba_codes(iso) if codes is None else tuple(codes)
+    mask = df["balancing_authority_code"].astype(str).str.strip().isin(codes)
+    required = ISO_NERC_REGION_ADMISSION.get(iso.upper())
+    if required is not None and "nerc_region" in df.columns:
+        mask &= df["nerc_region"].astype(str).str.strip() == required
+    return mask
+
+
+def program_footprint_mask(df):
+    """Rows of a processed EIA-860 generator frame inside ANY modelled region.
+
+    The derive-time admission predicate of ``scripts/data/process_eia860.py``
+    (``_admit_footprint``: BA in :data:`BA_CODE_TO_ISO`, plus the region's NERC
+    key from :data:`ISO_NERC_REGION_ADMISSION` where the frame carries
+    ``nerc_region``), moved to load time by W0 E.6 for the readers whose
+    population was "every program plant" rather than one region's.
+    """
+    ba = df["balancing_authority_code"].astype(str).str.strip()
+    mask = ba.isin(BA_CODE_TO_ISO)
+    if "nerc_region" in df.columns:
+        required = ba.map(BA_CODE_TO_ISO).map(ISO_NERC_REGION_ADMISSION)
+        nerc = df["nerc_region"].astype(str).str.strip()
+        mask &= required.isna() | (nerc == required)
+    return mask
+
+
 # Integer codes for fuel types, used to index into fuel-keyed arrays.
 # Code 11 (previously reserved as a gap) is now oil; biomass takes the next
 # free integer (15) after the prior maximum (gas_st = 14).
@@ -355,6 +394,12 @@ FUEL_TYPE_MAP: dict[str, int] = {
     # excluded from generation-mix scoring (it is avoided load, not generation —
     # see results.export). Falls outside every reserve/AS/renewable/RPS fuel set,
     # so it is dispatch-only and never evolves. data.nyiso_demand_response.
+    "emergency_band": 17,  # SPP MMU economic-to-emergency-max slice, pooled per
+    # zone and offered at the load-shed price minus epsilon (SPP-107,
+    # ScenarioConfig.spp_mmu_offer_repair; data.spp_mmu_unavailability). Same
+    # pseudo-generator treatment as demand_response: heat_rate 0 /
+    # emission_rate 0, outside every reserve/AS/renewable/RPS fuel set,
+    # excluded from generation-mix scoring, dispatch-only, never evolves.
 }
 
 # Inverse of FUEL_TYPE_MAP: fuel type name indexed by its integer code.

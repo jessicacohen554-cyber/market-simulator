@@ -34,15 +34,15 @@ runtime one).
 Output: ``data/raw/oil-prices/ny_harbor_ulsd_daily.csv``
   columns ``date, ny_harbor_ulsd_usd_gal``, one row per EIA trading day.
 
-Holdout discipline (CLAUDE.md rule 22 [R-HOLDOUT]): the default window is the
-TRAINING span 2023-2025 only. Widening it to a validation/locked-test year is a
-data intake into an out-of-training period and needs its own explicit,
-session-logged owner authorization — which ``--start-year``/``--end-year``
-make deliberate rather than accidental.
+Coverage: 2019-2025, the span every NEISO / NYISO keeper carries. The former
+"training span 2023-2025 only" default cited rule 22's holdout regime, removed
+2026-09-09; 2019-2021 were intaken 2026-10-02 (closeout-NEISO wave 1) and the
+2022-2025 rows re-fetched byte-identical. EIA publishes the series daily back to
+1986, so the window is a choice of span, not of availability.
 
 Usage:
     uv run python scripts/data/fetch_ny_harbor_distillate_daily.py
-    uv run python scripts/data/fetch_ny_harbor_distillate_daily.py --start-year 2023 --end-year 2025
+    uv run python scripts/data/fetch_ny_harbor_distillate_daily.py --start-year 2019 --end-year 2025
 """
 
 from __future__ import annotations
@@ -64,8 +64,8 @@ from market_sim.config.paths import RAW_DATA_DIR  # noqa: E402
 SERIES_ID = "EER_EPD2DXL0_PF4_Y35NY_DPG"
 SOURCE_URL = f"https://www.eia.gov/dnav/pet/hist_xls/{SERIES_ID}d.xls"
 
-#: Default intake window — the rule-22 training span. See the module docstring.
-DEFAULT_START_YEAR = 2023
+#: Default intake window — the keeper span. See the module docstring.
+DEFAULT_START_YEAR = 2019
 DEFAULT_END_YEAR = 2025
 
 OUT_PATH: Path = RAW_DATA_DIR / "oil-prices" / "ny_harbor_ulsd_daily.csv"

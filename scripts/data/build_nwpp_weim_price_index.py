@@ -64,10 +64,16 @@ Usage::
     python scripts/data/build_nwpp_weim_price_index.py fetch-lmp
     python scripts/data/build_nwpp_weim_price_index.py fetch-transfer
     python scripts/data/build_nwpp_weim_price_index.py fetch-midc
+    python scripts/data/build_nwpp_weim_price_index.py fetch-counterparty
     python scripts/data/build_nwpp_weim_price_index.py transcribe-benefits
     python scripts/data/build_nwpp_weim_price_index.py reconcile-ties
     python scripts/data/build_nwpp_weim_price_index.py build
     python scripts/data/build_nwpp_weim_price_index.py gate [--land]
+    python scripts/data/build_nwpp_weim_price_index.py land-labelled
+
+``land-labelled`` (owner ruling R-9, 2026-10-02) writes the same sidecar as a
+LABELLED imbalance-price benchmark from the committed stores, gated on D1/D2/D4
+(the D3 Mid-C-proxy question is answered by the label, not the gate).
 
 ``gate --land`` writes ``data/raw/_validation-source/actual_lmp_hourly_NWPP.parquet``
 ONLY when every gate cell passes. Raw pulls live in ``data/raw/nwpp-weim/_pulls/``
@@ -116,6 +122,14 @@ STD_TZ = "Etc/GMT+8"
 #: Prevailing Pacific time, used ONLY to locate the Mid-C on-peak block.
 PREVAILING_TZ = "America/Los_Angeles"
 YEARS: tuple[int, ...] = (2023, 2024, 2025)
+
+#: NWPP-NEXT-20 — WEIM counterparties OUTSIDE the footprint whose ELAP is a
+#: seam anchor (never a benchmark of the footprint's own price). BCHA = BC Hydro /
+#: Powerex (OASIS ATL_APNODE DEPZ list, read 2026-10-02): the all-hours Canadian
+#: price behind the WECC_CAN seam's hr_by_year
+#: (docs/records/nwpp/FINDING-nwppnext20-seam-phase0-2026-10-02.md §B).
+COUNTERPARTY_NODES: dict[str, str] = {"BCHA": "ELAP_BCHA-APND"}
+COUNTERPARTY_HOURLY: str = "weim_hourly_counterparty.parquet"
 
 #: PRECOMMIT §2 — the DEPZ node per footprint WEIM BAA (OASIS ATL_APNODE,
 #: pulled 2026-09-13; effective dates all precede the window).
@@ -1352,6 +1366,127 @@ def cmd_gate(land: bool) -> None:
         )
 
 
+#: Owner ruling R-9 (2026-10-02, backcast close-out plan §5.0, verbatim: "NWPP
+#: price reference: WEIM ELAP 2023-06 onward as a labelled imbalance-price
+#: benchmark, STOP-gated like SOCO's lambda; 2019-2022 stay
+#: PHYSICALLY-CALIBRATED (price unscored)"). The ruling replaces the gate's
+#: D3 question (does the imbalance price track the Mid-C bilateral index within
+#: 10 %?) with a LABEL: the series is landed as what it is — an imbalance price —
+#: not as a proxy for Mid-C. The cells that test the SERIES itself stay STOP
+#: gates: D1 coverage, D2 materiality of WEIM transfers, D4 sanity range.
+LABELLED_GATE_CELLS: tuple[str, ...] = ("D1", "D2", "D4")
+
+
+def cmd_land_labelled() -> None:
+    """``land-labelled``: land the footprint series under owner ruling R-9.
+
+    Rebuilt from the COMMITTED 15-minute store (``weim_rtpd_lmp_15min.parquet``)
+    and the committed EIA-930 demand, by the exact functions the gate scored
+    (:func:`hourly_utc_by_ba`, :func:`weighted_group_price` over
+    :data:`LOAD_BAS`, :func:`to_model_clock`) — no raw pull is needed. Refuses
+    unless every cell in :data:`LABELLED_GATE_CELLS` of the committed
+    ``gate.json`` reads pass.
+    """
+    gate = json.loads((RAW_DIR / "gate.json").read_text())
+    failed = [k for k in LABELLED_GATE_CELLS if not (gate.get(k) or {}).get("pass")]
+    if failed:
+        raise SystemExit(f"STOP gate cell(s) {failed} fail — nothing written")
+    store = pd.read_parquet(RAW_DIR / "weim_rtpd_lmp_15min.parquet")
+    store["interval_start_utc"] = pd.to_datetime(store["interval_start_utc"], utc=True)
+    hourly = hourly_utc_by_ba(store)
+    demand = load_demand_hourly()
+    cand = weighted_group_price(hourly, demand, LOAD_BAS)
+    rows = []
+    for year in YEARS:
+        dense = to_model_clock(cand, "price", year)
+        rows.append(
+            pd.DataFrame(
+                {
+                    "year": np.int16(year),
+                    "hour": np.arange(_HOURS_PER_YEAR, dtype=np.int16),
+                    "rt": dense.astype("float32"),
+                    "da": np.full(_HOURS_PER_YEAR, np.nan, dtype="float32"),
+                }
+            )
+        )
+        print(f"  {year}: {int(np.isfinite(dense).sum())} priced hours")
+    out = pd.concat(rows, ignore_index=True)
+    out.to_parquet(LAND_PATH, index=False)
+    print(
+        f"landed {LAND_PATH} rows={len(out)} "
+        f"sha256={hashlib.sha256(LAND_PATH.read_bytes()).hexdigest()}"
+    )
+
+
+def cmd_fetch_counterparty() -> None:
+    """Fetch each counterparty ELAP (RTPD LMP) and write its hourly model-clock series.
+
+    One OASIS call per prevailing-Pacific month from the first served day (the
+    ~39-month retention edge, so the first year is partial and says so in the
+    row count) to :data:`FETCH_END_UTC`. Output ``weim_hourly_counterparty.parquet``
+    ``year · hour · baa · lmp · n_intervals`` on the same fixed-PST non-leap clock
+    and the same ``MIN_INTERVALS_PER_HOUR`` rule as ``weim_hourly_by_ba.parquet``.
+    """
+    start = (
+        pd.Timestamp(f"{YEARS[0]}-06-01 00:00", tz=PREVAILING_TZ)
+        .tz_convert("UTC")
+        .tz_localize(None)
+        .to_pydatetime()
+    )
+    frames = []
+    for baa, node in COUNTERPARTY_NODES.items():
+        for a, b in _month_windows(start, FETCH_END_UTC):
+            csv, note = oasis_get(
+                {
+                    "queryname": "PRC_RTPD_LMP",
+                    "market_run_id": "RTPD",
+                    "node": node,
+                    "startdatetime": _stamp(a),
+                    "enddatetime": _stamp(b),
+                }
+            )
+            print(f"{baa} {a:%Y-%m-%d} -> {b:%Y-%m-%d}: {note}", flush=True)
+            if csv is None:
+                continue
+            df = pd.read_csv(io.StringIO(csv))
+            df = df[df["LMP_TYPE"] == "LMP"]
+            frames.append(
+                pd.DataFrame(
+                    {
+                        "interval_start_utc": pd.to_datetime(
+                            df["INTERVALSTARTTIME_GMT"], utc=True
+                        ),
+                        "baa": baa,
+                        "lmp": df["PRC"].to_numpy(float),
+                    }
+                )
+            )
+    store = pd.concat(frames, ignore_index=True).drop_duplicates(
+        ["interval_start_utc", "baa"]
+    )
+    hourly = hourly_utc_by_ba(store)
+    rows = []
+    for baa in COUNTERPARTY_NODES:
+        h = hourly[hourly["baa"] == baa]
+        for year in YEARS:
+            lmp = to_model_clock(h, "lmp", year)
+            n = to_model_clock(h, "n_intervals", year)
+            rows.append(
+                pd.DataFrame(
+                    {
+                        "year": year,
+                        "hour": np.arange(_HOURS_PER_YEAR),
+                        "baa": baa,
+                        "lmp": lmp.astype("float32"),
+                        "n_intervals": np.nan_to_num(n).astype("int16"),
+                    }
+                )
+            )
+    out = pd.concat(rows, ignore_index=True)
+    out.to_parquet(RAW_DIR / COUNTERPARTY_HOURLY, index=False)
+    print(out.groupby(["baa", "year"])["lmp"].agg(["count", "mean"]).round(2))
+
+
 def main(argv: list[str] | None = None) -> None:
     """CLI entry point."""
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
@@ -1359,9 +1494,11 @@ def main(argv: list[str] | None = None) -> None:
     sub.add_parser("fetch-lmp")
     sub.add_parser("fetch-transfer")
     sub.add_parser("fetch-midc")
+    sub.add_parser("fetch-counterparty")
     sub.add_parser("transcribe-benefits")
     sub.add_parser("reconcile-ties")
     sub.add_parser("build")
+    sub.add_parser("land-labelled")
     g = sub.add_parser("gate")
     g.add_argument(
         "--land",
@@ -1375,6 +1512,8 @@ def main(argv: list[str] | None = None) -> None:
         cmd_fetch("transfer")
     elif a.cmd == "fetch-midc":
         cmd_fetch_midc()
+    elif a.cmd == "fetch-counterparty":
+        cmd_fetch_counterparty()
     elif a.cmd == "transcribe-benefits":
         cmd_transcribe_benefits()
     elif a.cmd == "reconcile-ties":
@@ -1383,6 +1522,8 @@ def main(argv: list[str] | None = None) -> None:
         cmd_build()
     elif a.cmd == "gate":
         cmd_gate(a.land)
+    elif a.cmd == "land-labelled":
+        cmd_land_labelled()
 
 
 if __name__ == "__main__":

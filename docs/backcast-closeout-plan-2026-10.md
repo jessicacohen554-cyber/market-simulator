@@ -69,7 +69,7 @@ Plus **E.6** (BA membership at load time, never at derive time — SPP-40, SOCO 
 | 4 | G-DRIFT classification per ISO (rule 29): every hunk LIVE → one full-span re-solve per ISO, promoted on structure (rule 1) with the census in the bundle; NEISO regression tripwire (C3a > 2 pp) armed first | 9 × 7 shards |
 | 5 | Freeze (E.9): the next re-derive is the Sept-2027 Final release | 0 |
 
-Side observation for the NWPP lane: EIA-930 NWPP peak demand reads 68.6/68.7 GW in 2019–20 then ~49–51 GW in 2021–25 — a series discontinuity in the pool's demand input that no record explains.
+Side observation for the NWPP lane, **resolved 2026-10-02 (closeout-NWPP, PR #7028)**: the 68.6/68.7 GW 2019–20 EIA-930 NWPP peak is an AVA raw-`Demand` artifact that is never on the solve path; the Adjusted-demand peaks are 46.5/43.3/49.7/49.4/49.3/52.6/51.0 GW (2019–2025), so there is no discontinuity in the pool's demand input.
 
 
 ---
@@ -148,11 +148,11 @@ Retests with new evidence: `spp_commitment_posture` (R) paired with the since-so
 
 | # | Step | Gate | Reading | P | LP |
 |---|---|---|---|---|---|
-| 0a | Shadow-score C1 2021/22 on the EIA-930-aligned basis with the SPP-88 gas-coverage correction | C1 2021/22 | CC 2021 ≥ −8.0; PRB 2021/22 within ±8.0 | med (PRB) / low–med (CC 2021); needs the W5 ruling | 0 |
+| 0a | Shadow-score C1 2021/22 on the EIA-930-aligned basis with the SPP-88 gas-coverage correction — **DONE 2026-10-02 (SPP-108):** PRB 2021/22 +3.97/+3.59 (PASS), CC 2021 −8.03 pro rata (FAIL by 0.05; PASS only all-on-CC), CC 2022 FAIL every basis, PRB 2020 → FAIL, train 0 moves; owner ruled W5 *hold, measure all ISOs* | C1 2021/22 | CC 2021 ≥ −8.0; PRB 2021/22 within ±8.0 | PRB met / CC not met | 0 |
 | 0b | CT pmax basis vs `SUMMER_CLASS_DERATE` audit (W0 double-count item) | hygiene | one-line fix or none | n/a | 0 |
-| 1 | SPP-107: MMU offer-side unavailability with its two definitional repairs, 7 shards | C4 gas 2021, PRB 2023/24, train C3a | unserved ≤ keeper; C4 2021 ≤ 0.30; no train flip | high (C4 2021) | 7 |
+| 1 | SPP-107: MMU offer-side unavailability with its two definitional repairs, 7 shards — **DONE 2026-10-02, PROMOTED** (keeper `2026-10-02-spp-107-mmu-repair`; unserved 862/136 → 443/44 MWh, C4 2021 PASS, PRB 2023/24 +1.08/+1.35, no train flip) | C4 gas 2021, PRB 2023/24, train C3a | unserved ≤ keeper; C4 2021 ≤ 0.30; no train flip | high (C4 2021) | 7 |
 | 2 | Pairing span: `spp_commitment_posture` + SPP-107, one PRECOMMIT | train C3a, C3b 2020 | 2024 C3a within ±10 %; 2020 C3b falls (direction) | med / low | 7 |
-| 3 | Owner downloads STB EP 724 → SPP-44 re-measure; if 2022 PRB loadings-vs-plan is anomalous, PRECOMMIT the RR502-form adder keyed to it | C1/C4 2022 | 2022 is the only anomalous year | low–med | 0 → 7 |
+| 3 | Owner downloads STB EP 724 → SPP-44 re-measure; if 2022 PRB loadings-vs-plan is anomalous, PRECOMMIT the RR502-form adder keyed to it — **DONE 2026-10-02 (SPP-108), FAILED AT ZERO LP:** series fetched + intaken (`stb-coal-loadings`); 2022 anomalous (0.856 vs 1.007–1.093), 2021 not; but no zero-DOF energy limit binds physically (fleet inventory min 1.7 d; per-plant only via a lagged-delivery cap measured deliveries exceed by 17–34 %) → adder = 0 without a fitted safety stock; no shards | C1/C4 2022 | 2022 is the only anomalous year | failed | 0 |
 | 4 | West/East partition ruling (SPP-93) | zonal spread, C3b 2020 floor half | C-3 margin repaired on measured East capability | low | owner-gated |
 | 5 | Ledger C3a 2019/20, C3b 2020 (commitment-state), C1 CC/C4 2022 if step 3 fails, C3c 2023–25 | — | — | — | 0 |
 
@@ -256,7 +256,7 @@ NOT-YET on one record (C4 coal 2023: r 0.669, NRMSE 0.313); coal 2022 and 2025 s
 | 0 | **DONE on main 2026-10-02 (NWPP-NEXT-19):** Henry Hub daily explains ~0–5 % of NW within-month between-day price variance; CAISO coupling adds R² 0.11–0.43 beyond gas; the measured price lifts the 2023 Jun–Dec coal shape (+0.10 r) but not 2024/25. The interface part dominates → lever B is next. | picks A vs B | — | done | 0 |
 | 1 | ~~FERC-714 Part II Sch. 6 hourly system lambda for NWPP respondents as the pool price reference~~ **FALSIFIED AT ZERO LP, 2026-10-02:** the raw extract (`data/raw/ferc-714/nwpp_hourly_system_lambda_2019_2025_raw.parquet`, every NWPP filer, 2019–2025) shows only Nevada Power and NorthWestern (2021+) file a non-zero lambda; PacifiCorp, PGE, Puget, BPA, Tacoma, EWEB and the PUDs file zeros every hour, and Idaho Power/Avista/Seattle/Chelan/Grant file no facts. A demand-weighted pool lambda cannot be built. Residual question for the owner: is a single-BA NEVP or NWMT lambda admissible as a *labelled* reference, or does NWPP stay price-unscored (then the WEIM ELAP 2023-06+ series is the only measured hourly price in the footprint). | C3a/C3b scoring | — | closed as a pool reference | 0 |
 | 2 | ~~Lever A `gas_daily_shape`~~ **REJECTED on main 2026-10-02 (NWPP-NEXT-19 arm G, owner card "Reject, keep #20"):** C4 coal 2023 0.669 → 0.677 (still FAIL), C4 gas r falls in every year. Cell R. | C4 coal 2023 | — | closed | 7 (spent) |
-| 3 | **Lever B priced seam — now the next NWPP lever** (wired default-off at NEXT-19: `NWPP_external` node, seam-limit links, empty-priced-build refusal; owner card "Fix both, then solve" = NEXT-20: the CAISO seam's gross-load shape → net load, and the WECC_CAN peak-only Mid-C anchor) — the CAISO `WECC_import` double-count ruling (card N4) still applies | C4 coal 2023 Jul/Oct level | r ≥ 0.70, NRMSE ≤ 0.30 with coal 2022/24/25 still passing | med (price shape) / low–med (C4) | 7 |
+| 3 | **SOLVED, HELD 2026-10-02 (NWPP-NEXT-21, `RESULT-nwppnext21-priced-interface-2026-10-02.md`; owner card "Hold #20, fix seam headroom"):** structural gate PASS; C4 coal 2023 0.669 → 0.781 and price 2023 −21.4 % → −0.3 % clear, but C4 gas fails 5 years and C1 CC 3 years because the seams export 17–37 TWh/yr vs 7–21 measured on full path ratings (CAISO MALIN500 import OTC ~2,730 MW vs 4,800 registered). **Next: seam headroom from measured OASIS OTC (NEXT-22, zero LP first), then re-solve.** Was: **Lever B priced seam — now the next NWPP lever** (wired default-off at NEXT-19: `NWPP_external` node, seam-limit links, empty-priced-build refusal; owner card "Fix both, then solve" = NEXT-20: the CAISO seam's gross-load shape → net load, and the WECC_CAN peak-only Mid-C anchor) — the CAISO `WECC_import` double-count ruling (card N4) still applies | C4 coal 2023 Jul/Oct level | r ≥ 0.70, NRMSE ≤ 0.30 with coal 2022/24/25 still passing | med (price shape) / low–med (C4) | 7 |
 | 4 | Lever C coal commitment bridge by parameters (`min_down_hours`, startup; rules 18/19 census of existing floors first) | C4 coal 2023 Aug–Oct | same | med (matches the residual shape) | 0 → 7 |
 | 5 | Retest `coal_captive_marginal_fuel_price` (R, arm D) in composition with whichever of A/B/C lands | C4 coal 2023 | same | low–med | 7 |
 | 6 | If Feb–May remains: scoped C4 ledger row (v3.10 "ledger as limitation") citing the documented delivery shortfall → PHYSICALLY-CALIBRATED-WITH-CAVEATS (PRICE UNSCORED) | determination | — | — | 0 |
@@ -318,6 +318,15 @@ Not free, do not pursue (recorded so nobody re-asks): daily NW gas hubs (Sumas/S
 | R-14 | **CAISO: `zonal_gas_basis` 2021 carve-out accepted as rule-28 new evidence; re-solve `caiso_ra_min_load_frac` at the measured 0.570.** | Two sequential full-span arms with the 2024 and C4-2025 tripwires. |
 | R-15 | **MISO: transcribe the Max Gen declaration history (owner downloads the OATI PDF); keep C1 ST_GAS 2019 routed.** | 0b; no lever for the 3 GWh miss. |
 | R-16 | No requester-pays AWS data (CAISO OASIS history). | The 2019–21 CAISO fold stays data-limited. |
+| R-17 | **No owner downloads today — proceed without them** (owner, 2026-10-02, desk session). | Deferred, not cancelled: STB EP 724 rail (SPP step 3), MISO Max Gen OATI PDF (0b), ERCOT account intake (R-7). Lanes proceed; each deferred object is written as a DRAFT data-limited ledger row whose route is the intake. |
+| R-18 | **ERCOT L1: override K2 and promote** (owner decision card, 2026-10-02: "Override + promote"). | Makes 2022 and 2025 CALIBRATED. W0 re-composes from the closeout-ERCOT L1 legs and promotes. |
+| R-19 | **NEISO §3b: override and promote the W0 re-solve** (owner card: "Override + promote"). | Part of the move is 2025 EIA-923 data drift. |
+| R-20 | **SOCO W0 (#7055): promote** (owner card: "Promote"). | CALIBRATED-WITH-CAVEATS → NOT-YET accepted on structure (rule 1). Next step: root-cause the CC_REGULAR over-run. |
+| R-21 | **Capacity census signed for NYISO, CAISO and ERCOT** (owner card: "Sign all three"). | Every OUTSIDE family has a named cause and none is tuned. |
+| R-22 | **R-4 coal basis: 930-aligned A** (owner card). | |
+| R-23 | **PJM Elliott counts in full and should be simulated** (owner, verbatim: "It counts but we should be able to simulate it?"). | No one-event caveat. PJM lever: model cold-correlated forced outages and gas curtailment structurally, after the W0 PJM keeper lands. |
+| R-24 | **NEISO: sign C3c, and fill the 2019–20 reserve-requirement gaps by adjacent-year carry** (owner card). | |
+| R-25 | **IMM licence: raw data stays out. ERCOT DAM-proxy census: chartered. Census gate: presence-only** (owner card: "All as recommended"). | |
 
 The queue below is retained as the record of what was asked; items ruled above are marked.
 
@@ -366,6 +375,26 @@ Sequencing principle: **data and rulings first, zero-LP censuses second, shards 
 | **2 — W0 foundation** (one lane, then nine re-solves) | vintages rebuilt (Final 2025, retired sheets), E.1–E.7 implemented with tests, per-ISO census ledgers, default-on flips; G-DRIFT per ISO; one full-span re-solve per ISO promoted on structure | 63 shards | every keeper carries `fleet_census_<Y>.json` inside tolerance; NEISO tripwire not tripped |
 | **3 — admissible levers, full span** (per ISO, in the order each §3 block gives) | ERCOT L1 coal ceiling → L2 West rating → (if account) 2019–22 coal offer tables · CAISO L1 printed interties → zonal gas basis 2021 → min-load 0.570 · PJM L1 reserve pool → L2 incremental HR → anchor-vintage retest → Elliott overlay · MISO L1 transport table → L3/L4 coal continuum · SPP SPP-107 → posture pairing → rail-keyed SPP-44 · NWPP FERC-714 benchmark → gas daily shape → priced seam → coal bridge · NEISO scarcity-physics arm · SOCO L1 if its phase 0 clears | ≈ 7 shards per lever | each lever promoted on structure or recorded `R` with its cell updated (rule 28) |
 | **4 — frontier statements** | for every miss left: an owner-signed ledger entry or frontier statement naming the mechanism the model class lacks (commitment state / MIP, operator conduct, sub-hourly scarcity, unpublished limits); the determination then reads honestly | 0 | no ISO carries an undocumented FAIL |
+
+### 6.1 Desk log — lanes chartered 2026-10-02 (desk session `session_017wUwd6xxLRQKAYiT8G722P`)
+
+PR #7020 (fast-tier re-vintage) merged 05:06Z; main = `4d459da3`. Desk sequencing call: wave-1 zero-LP work runs now in every lane; **every full-span solve waits for the W0 foundation lane to merge** (W0 changes every ISO-year's fleet, so a pre-W0 span would be paid twice). NYISO (PR #7022, NEXT-34) and SOCO (PR #7021, soco-100) already have live lanes and were not re-chartered.
+
+| Lane | Session | Branch | Scope (plan ref) | LP now |
+|---|---|---|---|---|
+| A 2025 re-bench | `session_01AUzPizySnt65GVypU6Ji1u` | `claude/closeout-a-rebench-2025` | W1, §4 ★2 — restore shared inputs, regenerate 2025 bench, completeness, status, rescore all nine | 0 |
+| B W0 foundation | `session_018DsgkLcN1h8NQc2yJegmdN` | `claude/closeout-b-w0-foundation` | §2.1 E.1–E.9 + census + NEISO tripwire + G-DRIFT; phase 3 (63 shards) after desk merge | 0 → 63 |
+| C rubric amendments | `session_01WkrLoQEcAbz8a6wYs7WMnd` | `claude/closeout-c-rubric` | R-6, R-8, R-9, R-13 (zonal C3a) + MISO/CAISO `authorized_price_tuning` | 0 |
+| D coal-basis study | `session_016dguTG7U2KySt1x6EhBNLk` | `claude/closeout-d-coalbasis` | R-4 dual-basis C1 table, all ISO-years, decision card | 0 |
+| ERCOT | `session_014k634JEUUTjkccEd9DZCYJ` | `claude/closeout-ercot-wave1` | §3.5 0b, 2, 6 censuses; L1/L2 PRECOMMITs | 0 (held) |
+| CAISO | `session_011DvUjyuLQciozV4yTe6nBG` | `claude/closeout-caiso-wave1` | §3.7 0b–0d; R-14 PRECOMMITs | 0 (held) |
+| PJM | `session_015n2kdnGhbpaemCCR7dGwRs` | `claude/closeout-pjm-wave1` | §3.6 0a–0e; L1/L2/R-13/L3 PRECOMMITs | 0 (held) |
+| MISO | `session_01TCpbYap2X7mfnmXQttbX13` | `claude/closeout-miso-wave1` | §3.3 0a tail derive, L3/L4 census, R-3 fall-2021 census | 0 (held) |
+| SPP | `session_019jCNcHE7XghY2vUZikt262` | `claude/closeout-spp-wave1` | §3.4 0b, C3c decomposition, R-12 PRECOMMIT | 0 (held) |
+| NEISO | `session_01JjVv2VJdW4E3o77vTSuwSS` | `claude/closeout-neiso-wave1` | §3.2 1, 2, 4 spec; scarcity-arm PRECOMMIT | 0 (held) |
+| NWPP | `session_01UT1DSG4oaBUXDxkdvQE7bM` | `claude/closeout-nwpp-wave1` | §3.9 NEXT-20 fixes, lever C + R-3 Bridger censuses, priced-seam PRECOMMIT | 0 (held) |
+
+Still owner-side (browser, free): STB EP 724 BNSF/UP rail files 2019–25; MISO Max Gen OATI PDF; ERCOT account re-open (60-Day SCED/DAM 2019–22 + NP6-576-ER). **Deferred under R-17** — lanes ERCOT, MISO, SPP were told to proceed without them and draft data-limited ledger rows.
 
 **Expected end state if every recommendation is taken** (honest, not flattering): NEISO CALIBRATED (protected); NYISO CALIBRATED; CAISO CALIBRATED if the OASIS history prints the fold (else 2022–25 CALIBRATED with a reported-only fold); MISO and SPP CALIBRATED on 2022/2023–25 with 2019–21/22 validation rows closed by rulings and ledgers, several remaining NOT-YET by the "no frontier" rule unless the commitment-state misses are ledgered; ERCOT CALIBRATED on 2019–22 and 2024–25 if the account re-opens and L1/L2 land, with 2023 held to Door D; PJM remains the hardest (coal loading response is a model-class gap); SOCO and NWPP read `…-WITH-CAVEATS` on rulings, with NWPP scored on price for the first time.
 

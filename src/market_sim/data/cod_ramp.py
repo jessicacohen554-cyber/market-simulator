@@ -130,6 +130,22 @@ _RETIRED_WINDOW_NAME = "eia860_generator_retired_within_window.parquet"
 # assumption, matching the half-year prorate the year-only ramp used to apply.
 COD_FALLBACK_MONTH = 7
 
+
+def resolve_eia860_month(values: pd.Series) -> pd.Series:
+    """Return EIA-860 ``Operating Month`` values with unknowns at the fallback.
+
+    The EIA-860 instructions code an unknown month as ``88`` or ``99`` (W0
+    audit §D, "Operating Month/Year"). Before W0 the reducers clipped every
+    value into ``[1, 12]``, so a sentinel landed in DECEMBER — a unit of
+    unknown month treated as online for one month of its COD year. Any value
+    outside ``[1, 12]`` (the sentinels, a blank, a malformed cell) is unknown
+    and takes :data:`COD_FALLBACK_MONTH`, the neutral mid-year assumption the
+    ramp uses for every other unknown month (audit §E.5, E.8).
+    """
+    month = pd.to_numeric(values, errors="coerce")
+    return month.where((month >= 1) & (month <= 12)).fillna(COD_FALLBACK_MONTH)
+
+
 # A ``Generator.online_year`` at or below this sentinel means "vintage unknown"
 # (the model default is 2000 for fleets that never set a real commissioning
 # year), so it must not drop a genuinely pre-existing unit.
@@ -278,6 +294,12 @@ def load_cod_map() -> dict[int, CodEntry]:
 
     if _use_clean():
         return _load_cod_map_clean(_clean_fleet_year(active_eia860_dir()))
+    from market_sim.config.paths import eia860_actual_retirement_only
+
+    if eia860_actual_retirement_only():
+        # W0 E.5: the operable sheet's planned retirement is never read in a
+        # backcast (separate cache arity, so the off path keys exactly as before).
+        return _load_cod_map(active_eia860_dir(), True)
     return _load_cod_map(active_eia860_dir())
 
 
@@ -346,7 +368,9 @@ def _load_cod_map_clean(partition_year: int) -> dict[int, CodEntry]:
 
 
 @lru_cache(maxsize=4)
-def _load_cod_map(eia860_dir) -> dict[int, CodEntry]:
+def _load_cod_map(
+    eia860_dir, actual_retirement_only: bool = False
+) -> dict[int, CodEntry]:
     """Build the ``{plant_code: (online_year, online_month, ret_year, ret_month)}`` map.
 
     Reduced from the month-precise EIA-860 operable generator schedule:
@@ -400,11 +424,16 @@ def _load_cod_map(eia860_dir) -> dict[int, CodEntry]:
             },
         ),
     ]
+    if actual_retirement_only and frames[0] is not None:
+        # W0 E.5 (``ScenarioConfig.backcast_actual_retirement_only``): the
+        # operable sheet's PLANNED date never retires a backcast plant; only
+        # the retiree parquet's ACTUAL dates (frame 1) do.
+        frames[0] = frames[0].assign(ry=np.nan, rm=np.nan)
     frames = [f for f in frames if f is not None]
     work = pd.concat(frames, ignore_index=True) if frames else None
 
     if work is not None and not work.empty:
-        work["om"] = work["om"].fillna(COD_FALLBACK_MONTH).clip(1, 12)
+        work["om"] = resolve_eia860_month(work["om"])
         # Positive nameplate weights the COD; fall back to equal weight when a
         # plant reports no capacity so it still gets a representative date.
         work["w"] = work["cap"].where(work["cap"] > 0.0, 0.0)
@@ -431,9 +460,11 @@ def _load_cod_map(eia860_dir) -> dict[int, CodEntry]:
 # is the one mechanism for unit-grain retirement under binning).
 CodUnit = tuple[float, int, int]
 
-# EIA-860 generator status admitted to the bin-constituent list — the same
-# filter the fleet loader applies (``eia860._rows_to_generators`` keeps status
-# ``OP`` only), so a bin and its constituents are the same population.
+# EIA-860 generator status admitted to the bin-constituent list by default —
+# the same filter the fleet loader applies. The public entry point passes the
+# loader's ACTIVE admitted set (``paths.eia860_operable_statuses``: ``{OP, SB}``
+# under ``admit_standby_units``, W0 backcast default), so a bin and its
+# constituents are the same population whatever the admission rule (E.4).
 _OPERABLE_STATUS = "OP"
 
 
@@ -455,11 +486,17 @@ def load_unit_cod_map() -> dict[tuple[int, str], tuple[CodUnit, ...]]:
 
     if _use_clean():
         return {}
-    return _load_unit_cod_map(active_eia860_dir())
+    from market_sim.config.paths import eia860_operable_statuses
+
+    return _load_unit_cod_map(
+        active_eia860_dir(), tuple(sorted(eia860_operable_statuses()))
+    )
 
 
 @lru_cache(maxsize=4)
-def _load_unit_cod_map(eia860_dir) -> dict[tuple[int, str], tuple[CodUnit, ...]]:
+def _load_unit_cod_map(
+    eia860_dir, statuses: tuple[str, ...] = (_OPERABLE_STATUS,)
+) -> dict[tuple[int, str], tuple[CodUnit, ...]]:
     """Build ``{(plant_code, fuel_type): ((nameplate_mw, online_year, online_month), ...)}``.
 
     The unit-grain companion of :func:`_load_cod_map`, read from the SAME two
@@ -514,12 +551,8 @@ def _load_unit_cod_map(eia860_dir) -> dict[tuple[int, str], tuple[CodUnit, ...]]
     work["pc"] = pd.to_numeric(work["pc"], errors="coerce")
     work["oy"] = pd.to_numeric(work["oy"], errors="coerce")
     work = work.dropna(subset=["pc", "oy"])
-    work = work[work["status"].astype(str).str.strip().str.upper() == _OPERABLE_STATUS]
-    work["om"] = (
-        pd.to_numeric(work["om"], errors="coerce")
-        .fillna(COD_FALLBACK_MONTH)
-        .clip(1, 12)
-    )
+    work = work[work["status"].astype(str).str.strip().str.upper().isin(set(statuses))]
+    work["om"] = resolve_eia860_month(work["om"])
     work["cap"] = (
         pd.to_numeric(work["cap"], errors="coerce").fillna(0.0).clip(lower=0.0)
     )

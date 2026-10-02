@@ -273,6 +273,14 @@ resolved with a direct manual check of each ISO's current terms page,
 or by contacting each ISO's stakeholder-relations channel, before this
 document can respond "yes" instead of "unclear."
 
+## 7b. PUDL (Catalyst Cooperative) — CC-BY-4.0
+
+**Applies to:** `data/raw/pudl/` (`core_epa__assn_eia_epacamd_subplant_ids`,
+W0 crosswalk of record, 2026-10-02). PUDL publishes its processed tables under
+CC-BY-4.0; attribution: Catalyst Cooperative, Public Utility Data Liberation
+project, DOI 10.5281/zenodo.4127026. The underlying EIA/EPA data is public
+domain (§1). Redistribution in this repo is permitted with that attribution.
+
 ## 8. Hand-curated / derived-from-public-filings data
 
 **Applies to:** `confirmed-retirements/`, `capacity-deliverability/`,

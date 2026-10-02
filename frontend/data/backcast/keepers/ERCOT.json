@@ -1,6 +1,6 @@
 {
   "iso": "ERCOT",
-  "keeper": "2026-10-02-r-24-ordc-published",
+  "keeper": "2026-10-02-w0-settlement",
   "standing_note": {
     "declared": "2026-08-26",
     "signature": "X-2 SIGNED (owner, by dispatch of REPORTING-TEXT-1, 2026-08-16) — card X item X-2, Door C of docs/records/ercot/ASSESSMENT-ercot209-2023-scarcity-calibration-path-2026-08-15.md §3. Reporting surface only: the determination, the rubric constants (LEDGERABLE_CRITERIA, MAX_LEDGERED_CAVEATS, the v3.0 tier guard), the C3c ledger and every scored number are UNTOUCHED, and the misses keep reporting at full magnitude. NOT a signature of R-B's rubric half; Q-B FINAL (DECISION-CARD-ercot189) and R-A (DECISION-CARD-ercot193) are cited and unchanged.",
@@ -21,54 +21,54 @@
       {
         "role": "forward",
         "label": "FORWARD KEEPER (2024-2025) - the config the model uses going forward, forecast lane included; carries the ercot-255 ercot_zonal_spread_ep_referenced repair",
-        "run_id": "2026-10-02-r-24-ordc-published",
-        "bundle": "results/calibration/r_ercot24_span",
+        "run_id": "2026-10-02-w0-settlement",
+        "bundle": "results/calibration/w0_ercot_span",
         "years": [
           2024,
           2025
         ],
-        "determination_at_declaration": "2024 NOT-YET / 2025 CALIBRATED (R-ERCOT-24 promotion 2026-10-02, calibration_verdict --years; published ORDC curve armed): 2024 C3a -11.4% FAIL, C3b 0.198; 2025 C3a -9.4%, C3b 0.126; C3c ledgered non-downgrading.",
+        "determination_at_declaration": "2024 NOT-YET / 2025 NOT-YET (closeout-B W0 phase 3 promotion 2026-10-02, calibration_verdict --years): C3a 2024 -11.4% FAIL (unchanged), 2025 -10.0% FAIL (was -9.4% PASS: the W0 fleet moves it 0.6 pp across the 10% band); C3b PASS.",
         "registered_determination_at_declaration": "NOT-YET on the registered 2019-2025 record (fuelmix, price_mean, price_shape): 2019, 2020, 2022 validation and the 2023 carve-out.",
         "note": "The immediately-prior 3-year keeper (promoted at ercot-234 under signed card Z-A): zero fitted scalars, carries the REPAIRED EASTEX crosswalk. It supersedes 2026-08-24-231-tie-zone-measured as the cross-year recipe - reverting to 231 would re-arm the geographically mis-attributed NE_LOB measured input, which rule 14 [R-ACCURATE] forbids. The ercot-235 charter and both the ercot-235/236 promotion addenda designate this run \"the cross-year recipe\" for 2024/2025.",
         "source_run_id": "2026-08-25-234-eastex-identity",
         "source_bundle": "results/calibration/ercot234_eastex_identity",
         "tier": "train",
-        "source_run_id_prior_keeper": "2026-10-01-r-23-swcap-hourly"
+        "source_run_id_prior_keeper": "2026-10-02-r-24-ordc-published"
       },
       {
         "role": "carveout-2023",
         "label": "2023 CARVE-OUT - the discrete 2023 config for the ECRS-era regime, UNCHANGED. Owner 2026-09-07: \"Leave the 2023 results be as they are under a different config … 23 was an outlier year with weird market design.\" The year block and every hourly sidecar are copied byte-for-byte from ercot248_two_config_keeper (itself ercot236_k33_clip); ercot_zonal_spread_ep_referenced is ABSENT here.",
-        "run_id": "2026-10-02-r-24-ordc-published",
-        "bundle": "results/calibration/r_ercot24_span",
+        "run_id": "2026-10-02-w0-settlement",
+        "bundle": "results/calibration/w0_ercot_span",
         "years": [
           2023
         ],
-        "determination_at_declaration": "NOT-YET on {2023} (R-ERCOT-24 promotion 2026-10-02; ercot_ordc_published_curve armed per owner card 'All years incl. 2023 (Recommended)', k=33 carve-out untouched): C3a -24.5% FAIL, C3b 0.385 FAIL; C3c PASS (138/181); C1 PASS. Owner hold of k=33 stands.",
+        "determination_at_declaration": "2023 configuration-exception caveats C3a/C3b (owner ruling R-6), unchanged; closeout-B W0 phase 3 promotion 2026-10-02 (C3a -24.8%, was -24.5%).",
         "registered_determination_at_declaration": "NOT-YET (see forward).",
         "note": "Registered and promoted at ercot-236 under the owner's 2026-08-25 rule-16 waiver (2023-discrete-config charter, ercot-235 log entry). Its two deltas over the forward recipe - ercot_offer_swcap_clip armed and k_peak 33.0 - are 2023-carve-out config ONLY and do NOT leak into forward runs: the clip is default-off in ScenarioConfig and the forward keeper's run_config carries neither.",
         "source_run_id": "2026-08-25-236-swcap-clip-k33",
         "source_bundle": "results/calibration/ercot236_k33_clip",
         "tier": "train",
-        "source_run_id_prior_keeper": "2026-10-01-r-23-swcap-hourly"
+        "source_run_id_prior_keeper": "2026-10-02-r-24-ordc-published"
       },
       {
         "role": "carveout-validation-2019-2022",
         "label": "VALIDATION RUNGS (2019-2022) - the carve-out-A recipe (swcap clip + x33 peak bands, ep_referenced=true) on the four pre-ECRS years; 2019/2020 added at R-ERCOT on structural grounds (pre-ECRS market design, PRECOMMIT-r-ercot §2). Rule 30(c): never gates the ISO headline.",
-        "run_id": "2026-10-02-r-24-ordc-published",
-        "bundle": "results/calibration/r_ercot24_span",
+        "run_id": "2026-10-02-w0-settlement",
+        "bundle": "results/calibration/w0_ercot_span",
         "years": [
           2019,
           2020,
           2021,
           2022
         ],
-        "determination_at_declaration": "2019 NOT-YET (C3a +6.6% PASS, C3b 0.228 FAIL, C3c 92/106 PASS; C1 CC_REGULAR +8.85 FAIL, COAL_PRB -10.48 FAIL); 2020 NOT-YET (C3a +2.5% PASS, C3b 0.209 FAIL, C3c 22/56 ledgered; C1 CC_REGULAR +10.21 FAIL, COAL_PRB -11.83 FAIL); 2021 CALIBRATED (C3a +0.7%, C3b 0.066; C3c 653/258 ledgered); 2022 NOT-YET (C3a -9.9%, C3b 0.181; C1 CC_REGULAR -10.07 FAIL vs +-8.00; C3c CAVEAT). All seven legs re-solved with ercot_ordc_published_curve (R-ERCOT-24).",
+        "determination_at_declaration": "2019-2022 NOT-YET as before (closeout-B W0 phase 3 promotion 2026-10-02): C1 CC_REGULAR/COAL_PRB 2019/2020 and CC_REGULAR 2022 FAIL, C3b 2019 0.216 / 2020 0.208 FAIL; C3a PASS all four (+6.1/+2.5/+0.6/-10.0).",
         "registered_determination_at_declaration": "NOT-YET (see forward).",
         "note": "ercot-255 measured the 2021 rung's C1 fuelmix flip FAIL -> PASS on this repair (CC_REGULAR's -16.02 TWh miss -> -3.95; CT_PEAKER +6.00 -> +1.40; ST_GAS +4.76 -> -1.17; CC_CHP +2.90 -> +1.65), with C3a +28.2% -> +26.2% and C3b 0.361 -> 0.333 both improving and C3c holding PASS. The cost, reported at full magnitude: C8 forced-share on ST_GAS flips PASS -> FAIL 20.8% -> 37.6% — the drag floor's MW are identical in both arms and at the MEASURED 2021 ST_GAS volume it forces 34.1% either way, so the repair REVEALED an over-budget floor rather than causing one. Unadjudicated; needs a cited D4_WINDOWS entry. Record: docs/records/ercot/RESULT-ercot255-zonal-spread-ep-reference-2026-09-07.md §4.",
         "source_run_id": "ercot-255 re-solves of the ercot253 (2021) and ercot252 (2022) rung recipes",
         "source_bundle": "results/calibration/ercot255_keeper_2021, results/calibration/ercot255_keeper_2022",
         "tier": "validation",
-        "source_run_id_prior_keeper": "2026-10-01-r-23-swcap-hourly"
+        "source_run_id_prior_keeper": "2026-10-02-r-24-ordc-published"
       }
     ],
     "consolidation": {
@@ -279,5 +279,5 @@
       "year_union_before_prune": "ERCOT registered year union read from both sidecars before the prune (rule 35(b)): {2019, 2020, 2021, 2022, 2023, 2024, 2025}; the incoming keeper covers all seven."
     }
   },
-  "note": "ERCOT keeper: published ORDC curve (OBD half-hour form + ERCOT seasonal mu/sigma), all seven years re-solved; zero DOF; every determination unchanged; ISO NOT-YET"
+  "note": "ERCOT keeper: W0 EIA-860 settlement re-solve of r-24 (keeper recipe + the ten W0 fields, 2019-2025 in one span)"
 }

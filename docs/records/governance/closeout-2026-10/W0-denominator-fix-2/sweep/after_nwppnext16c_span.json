@@ -1,0 +1,234 @@
+{
+ "2019": {
+  "avail_twh": 507.04657621092343,
+  "hashes": {
+   "availability": "0dd2232a57cf25bd",
+   "min_gen": "bc7bf9da4c687eba",
+   "pmax": "1fc374eae8fe4fa8",
+   "pmin": "0d576678556dc9df"
+  },
+  "n_units": 651,
+  "offline_all_year": [],
+  "overrides": null,
+  "partial": []
+ },
+ "2020": {
+  "avail_twh": 496.29567899031235,
+  "hashes": {
+   "availability": "bca96e38c525cd1c",
+   "min_gen": "9ea2eefc74163246",
+   "pmax": "848c49eb809fc97a",
+   "pmin": "38b47650bb6ea648"
+  },
+  "n_units": 674,
+  "offline_all_year": [],
+  "overrides": null,
+  "partial": [
+   "59281|CT_PEAKER|CT_PEAKER_NWPP-EAST_p59281_r202007_econhi",
+   "59281|CT_PEAKER|CT_PEAKER_NWPP-EAST_p59281_r202007_econlo",
+   "59281|CT_PEAKER|CT_PEAKER_NWPP-EAST_p59281_r202007_peak",
+   "6076|COAL_PRB|COAL_NWPP-INLAND_p6076_r202001_committed",
+   "6076|COAL_PRB|COAL_NWPP-INLAND_p6076_r202001_econhi",
+   "6076|COAL_PRB|COAL_NWPP-INLAND_p6076_r202001_econlo",
+   "6076|COAL_PRB|COAL_NWPP-INLAND_p6076_r202001_mustrun",
+   "6076|COAL_PRB|COAL_NWPP-INLAND_p6076_r202001_peak",
+   "6106|COAL_PRB|COAL_NWPP-OR_p6106_r202010_committed",
+   "6106|COAL_PRB|COAL_NWPP-OR_p6106_r202010_econhi",
+   "6106|COAL_PRB|COAL_NWPP-OR_p6106_r202010_econlo",
+   "6106|COAL_PRB|COAL_NWPP-OR_p6106_r202010_mustrun",
+   "6106|COAL_PRB|COAL_NWPP-OR_p6106_r202010_peak"
+  ]
+ },
+ "2021": {
+  "avail_twh": 499.39450317217666,
+  "hashes": {
+   "availability": "9c091745437011b0",
+   "min_gen": "de16be2ef5f65ad4",
+   "pmax": "931165a59abd2c40",
+   "pmin": "38b47650bb6ea648"
+  },
+  "n_units": 674,
+  "offline_all_year": [
+   "3845|COAL_BIT|COAL_NWPP-NW_p3845_r202012_committed",
+   "3845|COAL_BIT|COAL_NWPP-NW_p3845_r202012_econhi",
+   "3845|COAL_BIT|COAL_NWPP-NW_p3845_r202012_econlo",
+   "3845|COAL_BIT|COAL_NWPP-NW_p3845_r202012_mustrun",
+   "3845|COAL_BIT|COAL_NWPP-NW_p3845_r202012_peak",
+   "6076|COAL_PRB|COAL_NWPP-INLAND_p6076_r202001_committed",
+   "6076|COAL_PRB|COAL_NWPP-INLAND_p6076_r202001_econhi",
+   "6076|COAL_PRB|COAL_NWPP-INLAND_p6076_r202001_econlo",
+   "6076|COAL_PRB|COAL_NWPP-INLAND_p6076_r202001_mustrun",
+   "6076|COAL_PRB|COAL_NWPP-INLAND_p6076_r202001_peak"
+  ],
+  "overrides": null,
+  "partial": [
+   "64607|hydro|64607_hydro"
+  ]
+ },
+ "2022": {
+  "avail_twh": 495.7976347243222,
+  "hashes": {
+   "availability": "c364a61e94387abb",
+   "min_gen": "e6ec332b06425afb",
+   "pmax": "d648cfb27c64f75d",
+   "pmin": "cc51d6a422fd4a88"
+  },
+  "n_units": 677,
+  "offline_all_year": [
+   "3845|COAL_BIT|COAL_NWPP-NW_p3845_r202012_committed",
+   "3845|COAL_BIT|COAL_NWPP-NW_p3845_r202012_econhi",
+   "3845|COAL_BIT|COAL_NWPP-NW_p3845_r202012_econlo",
+   "3845|COAL_BIT|COAL_NWPP-NW_p3845_r202012_mustrun",
+   "3845|COAL_BIT|COAL_NWPP-NW_p3845_r202012_peak",
+   "6076|COAL_PRB|COAL_NWPP-INLAND_p6076_r202001_committed",
+   "6076|COAL_PRB|COAL_NWPP-INLAND_p6076_r202001_econhi",
+   "6076|COAL_PRB|COAL_NWPP-INLAND_p6076_r202001_econlo",
+   "6076|COAL_PRB|COAL_NWPP-INLAND_p6076_r202001_mustrun",
+   "6076|COAL_PRB|COAL_NWPP-INLAND_p6076_r202001_peak"
+  ],
+  "overrides": null,
+  "partial": [
+   "10215|CT_CHP|CT_CHP_NWPP-EAST_p10215_committed",
+   "54374|CT_CHP|CT_CHP_NWPP-EAST_p54374_r202204_committed",
+   "54809|ST_GAS|ST_GAS_NWPP-NW_p54809_r202209_committed",
+   "54809|ST_GAS|ST_GAS_NWPP-NW_p54809_r202209_econhi",
+   "54809|ST_GAS|ST_GAS_NWPP-NW_p54809_r202209_econlo",
+   "54809|ST_GAS|ST_GAS_NWPP-NW_p54809_r202209_peak",
+   "65380|CT_PEAKER|CT_PEAKER_NWPP-EAST_p65380_econhi",
+   "65380|CT_PEAKER|CT_PEAKER_NWPP-EAST_p65380_econlo",
+   "65380|CT_PEAKER|CT_PEAKER_NWPP-EAST_p65380_peak",
+   "7111|CT_PEAKER|CT_PEAKER_NWPP-EAST_p7111_econhi",
+   "7111|CT_PEAKER|CT_PEAKER_NWPP-EAST_p7111_econlo",
+   "7111|CT_PEAKER|CT_PEAKER_NWPP-EAST_p7111_peak"
+  ]
+ },
+ "2023": {
+  "avail_twh": 501.778074448365,
+  "hashes": {
+   "availability": "5478787e633d4eef",
+   "min_gen": "5c5b72717647acb5",
+   "pmax": "d541f1a66f969758",
+   "pmin": "2a05d9332b913235"
+  },
+  "n_units": 683,
+  "offline_all_year": [
+   "3845|COAL_BIT|COAL_NWPP-NW_p3845_r202012_committed",
+   "3845|COAL_BIT|COAL_NWPP-NW_p3845_r202012_econhi",
+   "3845|COAL_BIT|COAL_NWPP-NW_p3845_r202012_econlo",
+   "3845|COAL_BIT|COAL_NWPP-NW_p3845_r202012_mustrun",
+   "3845|COAL_BIT|COAL_NWPP-NW_p3845_r202012_peak",
+   "54374|CT_CHP|CT_CHP_NWPP-EAST_p54374_r202204_committed",
+   "6076|COAL_PRB|COAL_NWPP-INLAND_p6076_r202001_committed",
+   "6076|COAL_PRB|COAL_NWPP-INLAND_p6076_r202001_econhi",
+   "6076|COAL_PRB|COAL_NWPP-INLAND_p6076_r202001_econlo",
+   "6076|COAL_PRB|COAL_NWPP-INLAND_p6076_r202001_mustrun",
+   "6076|COAL_PRB|COAL_NWPP-INLAND_p6076_r202001_peak"
+  ],
+  "overrides": null,
+  "partial": [
+   "57914|COAL_LIGNITE|COAL_NWPP-INLAND_p57914_r202301_econhi",
+   "57914|COAL_LIGNITE|COAL_NWPP-INLAND_p57914_r202301_econlo",
+   "57914|COAL_LIGNITE|COAL_NWPP-INLAND_p57914_r202301_mustrun",
+   "7028|CT_CHP|CT_CHP_NWPP-EAST_p7028_r202305_committed",
+   "7028|CT_CHP|CT_CHP_NWPP-EAST_p7028_r202305_econhi",
+   "7028|CT_CHP|CT_CHP_NWPP-EAST_p7028_r202305_econlo",
+   "7028|CT_CHP|CT_CHP_NWPP-EAST_p7028_r202309_committed",
+   "7028|CT_CHP|CT_CHP_NWPP-EAST_p7028_r202309_econhi",
+   "7028|CT_CHP|CT_CHP_NWPP-EAST_p7028_r202309_econlo"
+  ]
+ },
+ "2024": {
+  "avail_twh": 504.61391605689715,
+  "hashes": {
+   "availability": "3e066069299f0212",
+   "min_gen": "8fc89e5ae33cfacd",
+   "pmax": "f133138d2c78bd7b",
+   "pmin": "3d85109058969805"
+  },
+  "n_units": 710,
+  "offline_all_year": [
+   "3845|COAL_BIT|COAL_NWPP-NW_p3845_r202012_committed",
+   "3845|COAL_BIT|COAL_NWPP-NW_p3845_r202012_econhi",
+   "3845|COAL_BIT|COAL_NWPP-NW_p3845_r202012_econlo",
+   "3845|COAL_BIT|COAL_NWPP-NW_p3845_r202012_mustrun",
+   "3845|COAL_BIT|COAL_NWPP-NW_p3845_r202012_peak",
+   "54374|CT_CHP|CT_CHP_NWPP-EAST_p54374_r202204_committed",
+   "6076|COAL_PRB|COAL_NWPP-INLAND_p6076_r202001_committed",
+   "6076|COAL_PRB|COAL_NWPP-INLAND_p6076_r202001_econhi",
+   "6076|COAL_PRB|COAL_NWPP-INLAND_p6076_r202001_econlo",
+   "6076|COAL_PRB|COAL_NWPP-INLAND_p6076_r202001_mustrun",
+   "6076|COAL_PRB|COAL_NWPP-INLAND_p6076_r202001_peak",
+   "7028|CT_CHP|CT_CHP_NWPP-EAST_p7028_r202305_committed",
+   "7028|CT_CHP|CT_CHP_NWPP-EAST_p7028_r202305_econhi",
+   "7028|CT_CHP|CT_CHP_NWPP-EAST_p7028_r202305_econlo",
+   "7028|CT_CHP|CT_CHP_NWPP-EAST_p7028_r202309_committed",
+   "7028|CT_CHP|CT_CHP_NWPP-EAST_p7028_r202309_econhi",
+   "7028|CT_CHP|CT_CHP_NWPP-EAST_p7028_r202309_econlo"
+  ],
+  "overrides": null,
+  "partial": [
+   "55841|CT_PEAKER|CT_PEAKER_NWPP-SNV_p55841_committed",
+   "55841|CT_PEAKER|CT_PEAKER_NWPP-SNV_p55841_econhi",
+   "55841|CT_PEAKER|CT_PEAKER_NWPP-SNV_p55841_econlo",
+   "55841|CT_PEAKER|CT_PEAKER_NWPP-SNV_p55841_peak",
+   "67766|CT_PEAKER|CT_PEAKER_NWPP-INLAND_p67766_econhi",
+   "67766|CT_PEAKER|CT_PEAKER_NWPP-INLAND_p67766_econlo",
+   "67766|CT_PEAKER|CT_PEAKER_NWPP-INLAND_p67766_peak",
+   "7028|CT_CHP|CT_CHP_NWPP-EAST_p7028_committed",
+   "7028|CT_CHP|CT_CHP_NWPP-EAST_p7028_econhi",
+   "7028|CT_CHP|CT_CHP_NWPP-EAST_p7028_econlo",
+   "7028|CT_CHP|CT_CHP_NWPP-EAST_p7028_peak",
+   "7111|CT_PEAKER|CT_PEAKER_NWPP-EAST_p7111_econhi",
+   "7111|CT_PEAKER|CT_PEAKER_NWPP-EAST_p7111_econlo",
+   "7111|CT_PEAKER|CT_PEAKER_NWPP-EAST_p7111_peak",
+   "7111|CT_PEAKER|CT_PEAKER_NWPP-EAST_p7111_r202410_econhi",
+   "7111|CT_PEAKER|CT_PEAKER_NWPP-EAST_p7111_r202410_econlo",
+   "7408|CT_PEAKER|CT_PEAKER_NWPP-EAST_p7408_r202408_econhi",
+   "7408|CT_PEAKER|CT_PEAKER_NWPP-EAST_p7408_r202408_econlo",
+   "7408|CT_PEAKER|CT_PEAKER_NWPP-EAST_p7408_r202409_econhi",
+   "7408|CT_PEAKER|CT_PEAKER_NWPP-EAST_p7408_r202409_econlo"
+  ]
+ },
+ "2025": {
+  "avail_twh": 496.0905214668501,
+  "hashes": {
+   "availability": "fd0c5f1a6ccd0efd",
+   "min_gen": "b912d971082f146a",
+   "pmax": "7c9495bc5a34af2e",
+   "pmin": "456666b43c5402ff"
+  },
+  "n_units": 699,
+  "offline_all_year": [
+   "3845|COAL_BIT|COAL_NWPP-NW_p3845_r202012_committed",
+   "3845|COAL_BIT|COAL_NWPP-NW_p3845_r202012_econhi",
+   "3845|COAL_BIT|COAL_NWPP-NW_p3845_r202012_econlo",
+   "3845|COAL_BIT|COAL_NWPP-NW_p3845_r202012_mustrun",
+   "3845|COAL_BIT|COAL_NWPP-NW_p3845_r202012_peak",
+   "54374|CT_CHP|CT_CHP_NWPP-EAST_p54374_r202204_committed",
+   "6076|COAL_PRB|COAL_NWPP-INLAND_p6076_r202001_committed",
+   "6076|COAL_PRB|COAL_NWPP-INLAND_p6076_r202001_econhi",
+   "6076|COAL_PRB|COAL_NWPP-INLAND_p6076_r202001_econlo",
+   "6076|COAL_PRB|COAL_NWPP-INLAND_p6076_r202001_mustrun",
+   "6076|COAL_PRB|COAL_NWPP-INLAND_p6076_r202001_peak",
+   "7028|CT_CHP|CT_CHP_NWPP-EAST_p7028_r202305_committed",
+   "7028|CT_CHP|CT_CHP_NWPP-EAST_p7028_r202305_econhi",
+   "7028|CT_CHP|CT_CHP_NWPP-EAST_p7028_r202305_econlo",
+   "7028|CT_CHP|CT_CHP_NWPP-EAST_p7028_r202309_committed",
+   "7028|CT_CHP|CT_CHP_NWPP-EAST_p7028_r202309_econhi",
+   "7028|CT_CHP|CT_CHP_NWPP-EAST_p7028_r202309_econlo",
+   "7111|CT_PEAKER|CT_PEAKER_NWPP-EAST_p7111_r202410_econhi",
+   "7111|CT_PEAKER|CT_PEAKER_NWPP-EAST_p7111_r202410_econlo",
+   "7408|CT_PEAKER|CT_PEAKER_NWPP-EAST_p7408_r202408_econhi",
+   "7408|CT_PEAKER|CT_PEAKER_NWPP-EAST_p7408_r202408_econlo",
+   "7408|CT_PEAKER|CT_PEAKER_NWPP-EAST_p7408_r202409_econhi",
+   "7408|CT_PEAKER|CT_PEAKER_NWPP-EAST_p7408_r202409_econlo"
+  ],
+  "overrides": null,
+  "partial": [
+   "10504|ST_CHP|ST_CHP_NWPP-INLAND_p10504_committed",
+   "69880|CT_CHP|CT_CHP_NWPP-INLAND_p69880_committed",
+   "69880|CT_CHP|CT_CHP_NWPP-INLAND_p69880_econhi",
+   "69880|CT_CHP|CT_CHP_NWPP-INLAND_p69880_econlo"
+  ]
+ }
+}

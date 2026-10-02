@@ -1,0 +1,55 @@
+{
+ "what": "PJM close-out wave 1, R-13 retest phase 0: per-year anchor delta (ZERO LP).",
+ "markup_hr": 2.804,
+ "years": {
+  "2019": {
+   "henry_hub": 2.57,
+   "resolved_anchor": 3.2046,
+   "frozen_anchor": 3.3483,
+   "anchor_delta": -0.1437,
+   "predicted_median_gas_offer_shift_usd_mwh": -0.4
+  },
+  "2020": {
+   "henry_hub": 2.03,
+   "resolved_anchor": 2.4841,
+   "frozen_anchor": 3.3483,
+   "anchor_delta": -0.8642,
+   "predicted_median_gas_offer_shift_usd_mwh": -2.42
+  },
+  "2021": {
+   "henry_hub": 3.72,
+   "resolved_anchor": 4.1094,
+   "frozen_anchor": 3.3483,
+   "anchor_delta": 0.7611,
+   "predicted_median_gas_offer_shift_usd_mwh": 2.13
+  },
+  "2022": {
+   "henry_hub": 6.45,
+   "resolved_anchor": 7.1208,
+   "frozen_anchor": 3.3483,
+   "anchor_delta": 3.7725,
+   "predicted_median_gas_offer_shift_usd_mwh": 10.58
+  },
+  "2023": {
+   "henry_hub": 2.54,
+   "resolved_anchor": 3.2551,
+   "frozen_anchor": 3.3483,
+   "anchor_delta": -0.0932,
+   "predicted_median_gas_offer_shift_usd_mwh": -0.26
+  },
+  "2024": {
+   "henry_hub": 2.19,
+   "resolved_anchor": 2.8556,
+   "frozen_anchor": 3.3483,
+   "anchor_delta": -0.4927,
+   "predicted_median_gas_offer_shift_usd_mwh": -1.38
+  },
+  "2025": {
+   "henry_hub": 3.52,
+   "resolved_anchor": 3.9567,
+   "frozen_anchor": 3.3483,
+   "anchor_delta": 0.6084,
+   "predicted_median_gas_offer_shift_usd_mwh": 1.71
+  }
+ }
+}

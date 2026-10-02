@@ -69,7 +69,9 @@ class VerdictTests(unittest.TestCase):
         (rec,) = cv.score_price_tail(2024, ypay, "SOCO")
         self.assertEqual(rec["status"], cv.SKIPPED)
         self.assertIn("NOT SCORED on the SOCO system lambda", rec["metric"] + str(rec))
-        self.assertEqual(set(cv.C3C_NOT_SCORED), {"SOCO"})
+        # NWPP joined at rubric v3.16 (owner ruling R-9: its WEIM ELAP is an
+        # imbalance price, "STOP-gated like SOCO's lambda").
+        self.assertEqual(set(cv.C3C_NOT_SCORED), {"SOCO", "NWPP"})
 
     def test_other_isos_keep_their_c3c_path(self):
         ypay = DeterminationTests()._clean_year_payload()

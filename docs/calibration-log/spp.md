@@ -3955,3 +3955,56 @@ derates with the MMU above-emergency-max, economic→emergency-max and ambient b
 partially-outaged units, while the MMU measures against the derated amount. The economic→emergency band is removed in the
 reliability hours it exists for. Both repairs are definitional → SPP-107. Keeper unchanged, cell O. Record:
 `docs/records/spp/RESULT-spp-106-offer-side-unavailability-2026-10-01.md`.
+
+## spp-107 — 2026-10-02 — MMU carrier repaired on the MMU's own definitions: solved, PROMOTED (keeper)
+
+**Design (zero LP).** The two SPP-106 construction errors were fixed as one sub-gate, `spp_mmu_offer_repair` (default off, zero DOF):
+1. Every band now multiplies the row's post-outage availability, instead of being a share of rated pmax.
+2. The economic→emergency slice is one `emergency_band` pool per zone, offered at the shed price − ε ($1,999.999).
+
+The instrument predicted South capacity of +93 to +148 MW over the keeper in EX's short hours (EX: −471 to −599), and that
+about half of EX's C3a gain would be given back. The owner ruled **"Build + solve EXR"**.
+
+**Solved.** 7 year-isolated shards at pin `d787142d`, form 4 vs spp100 (G-DRIFT all INERT); E1–E6 PASS.
+
+| | keeper spp-100 | EXR |
+|---|---|---|
+| train C3a 2023 / 24 / 25 | −6.7 / −8.6 / −5.4 % | −5.4 / −8.2 / −2.9 % |
+| C1 COAL_PRB 2023 / 24 | +3.31 / +3.59 TWh | +1.08 / +1.35 TWh |
+| unserved 2024 / 25 | 862 / 136 MWh | 443 / 44 MWh (pool 1,334 / 725 MWh) |
+| C3a 2019 / 20 / 21 | +11.5 / +27.5 / +6.5 % | +13.1 / +29.3 / +9.6 % |
+| C4 2021 gas | FAIL | PASS |
+
+- Train tier stays CALIBRATED (lone ledgered C3c), with no new failing row in any year.
+- The upper tercile moves only +$0.14–0.68 against an $11–15 gap.
+
+**Owner: "Promote EXR (Rec.)".** Keeper → `2026-10-02-spp-107-mmu-repair` (bundle `spp107EXR_span`, 2019–2025). spp-100 was
+pruned.
+
+Tooling defect noted: `promote_keeper.py` runs the audit (step 8) before the prune (step 9), so E13 always fails on the outgoing
+keeper. The prune, re-audit and parity steps were finished by hand.
+
+Record: `docs/records/spp/RESULT-spp-107-mmu-carrier-repair-2026-10-02.md`.
+
+## spp-108 — 2026-10-02 — 2021–22 PRB over / CC under: basis shadow score and STB rail retest (zero LP, no lever)
+
+**Step 0a, shadow C1 on the aligned basis.** Keeper unchanged.
+
+| row | committed | aligned (gross coal + gas coverage pro rata) |
+|---|---|---|
+| COAL_PRB 2021 / 22 | +11.37 / +10.92 | **+3.97 / +3.59** (PASS) |
+| CC_REGULAR 2021 | −8.52 | −8.03 (FAIL by 0.05; PASS only if the 0.77 TWh coverage term all goes to CC) |
+| CC_REGULAR 2022 | −9.29 | −8.72 (FAIL on every basis) |
+
+- PRB 2020 flips to FAIL. Train tier: 0 status moves; 2025 PRB +7.96 → +5.03.
+- **Owner ruling (W5 / D-P3): "Hold; measure all ISOs."** C1 stays on the committed basis.
+
+**Step 3, STB EP 724.** Fetched by this session on the owner's card and intaken as `stb-coal-loadings`.
+- PRB loadings / plan identifies 2022 (anomaly 0.856 vs 1.007–1.093) and leaves 2021 normal.
+- No zero-DOF mechanism keyed to it binds physically:
+  - fleet cumulative inventory: minimum 1.7 days, no bind;
+  - per plant: binds only through a lagged-delivery cap, but the binding plants actually received 1.17–1.34× that rate.
+- A non-zero RR502 adder would need a fitted safety stock (rules 1(c)/21). **No PRECOMMIT, no shards.**
+- `coal_fuel_inventory` stays R. C1 CC 2021/22 and C4 gas 2022 are ledgered under plan step 5.
+
+Record: `docs/records/spp/FINDING-spp-108-basis-shadow-and-stb-rail-2026-10-02.md`.

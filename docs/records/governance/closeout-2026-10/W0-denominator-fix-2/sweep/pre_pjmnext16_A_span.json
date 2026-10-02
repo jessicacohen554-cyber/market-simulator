@@ -1,0 +1,206 @@
+{
+ "2019": {
+  "avail_twh": 1180.9986016679225,
+  "dead_cohorts": [],
+  "hashes": {
+   "availability": "17556f75995476f6",
+   "min_gen": "075e12260fd8b4e3",
+   "pmax": "7ceb0c197c16694b",
+   "pmin": "2978cca1e17cef14"
+  },
+  "in_year_cohorts": [
+   "10377|COAL_BIT|r201906",
+   "10384|COAL_BIT|r201904",
+   "10641|COAL_WC|r201909",
+   "1553|ST_GAS|r201906",
+   "2378|COAL_BIT|r201904",
+   "2840|COAL_BIT|r201905",
+   "3149|COAL_BIT|r201902",
+   "3809|COAL_BIT|r201903",
+   "50282|COAL_BIT|r201905",
+   "52007|COAL_BIT|r201903",
+   "6094|COAL_BIT|r201902",
+   "6094|COAL_BIT|r201911"
+  ],
+  "n_units": 2966,
+  "overrides": {
+   "pjm_da_virtual_bids": false
+  }
+ },
+ "2020": {
+  "avail_twh": 1157.6704015937953,
+  "dead_cohorts": [
+   "3149|COAL_BIT|r201902",
+   "3809|COAL_BIT|r201903"
+  ],
+  "hashes": {
+   "availability": "fa96bb367a908c1f",
+   "min_gen": "3faa31f980a4e970",
+   "pmax": "da661426b3d2be14",
+   "pmin": "ab06be9ba8b14c72"
+  },
+  "in_year_cohorts": [
+   "1554|COAL_BIT|r202006",
+   "1555|CT_PEAKER|r202003",
+   "1555|CT_PEAKER|r202006",
+   "1560|CT_PEAKER|r202006",
+   "1572|COAL_BIT|r202008",
+   "2840|COAL_BIT|r202006",
+   "2866|COAL_BIT|r202005",
+   "50879|COAL_WC|r202002"
+  ],
+  "n_units": 2924,
+  "overrides": {
+   "pjm_da_virtual_bids": false
+  }
+ },
+ "2021": {
+  "avail_twh": 1162.0652188777274,
+  "dead_cohorts": [
+   "1554|COAL_BIT|r202006",
+   "2866|COAL_BIT|r202005",
+   "3149|COAL_BIT|r201902",
+   "3809|COAL_BIT|r201903"
+  ],
+  "hashes": {
+   "availability": "8617e12f0d40a019",
+   "min_gen": "3cd1da2fc09582dd",
+   "pmax": "42c0a3abda1e11a0",
+   "pmin": "d26c119bacac4e8a"
+  },
+  "in_year_cohorts": [
+   "50852|CC_REGULAR|r202103",
+   "54304|COAL_BIT|r202103",
+   "54693|CC_REGULAR|r202109",
+   "599|ST_GAS|r202105",
+   "65285|COAL_BIT|r202106"
+  ],
+  "n_units": 2905,
+  "overrides": {
+   "pjm_da_virtual_bids": false
+  }
+ },
+ "2022": {
+  "avail_twh": 1183.6429252929556,
+  "dead_cohorts": [
+   "1554|COAL_BIT|r202006",
+   "2866|COAL_BIT|r202005",
+   "3149|COAL_BIT|r201902",
+   "3809|COAL_BIT|r201903",
+   "65285|COAL_BIT|r202106"
+  ],
+  "hashes": {
+   "availability": "a0823f1bd1d38b3c",
+   "min_gen": "0eaa80280e8aaf7d",
+   "pmax": "fb39f4b2ccec5ef4",
+   "pmin": "5e39a28d0cd420aa"
+  },
+  "in_year_cohorts": [
+   "10043|COAL_BIT|r202205",
+   "10099|CC_REGULAR|r202205",
+   "10566|COAL_BIT|r202206",
+   "1573|COAL_BIT|r202206",
+   "2401|CT_PEAKER|r202206",
+   "2836|COAL_BIT|r202203",
+   "3148|CT_PEAKER|r202206",
+   "50385|CC_REGULAR|r202205",
+   "6019|COAL_BIT|r202205",
+   "7770|CT_PEAKER|r202203",
+   "8226|COAL_BIT|r202203",
+   "883|COAL_PRB|r202206",
+   "884|COAL_PRB|r202206"
+  ],
+  "n_units": 2912,
+  "overrides": {
+   "pjm_da_virtual_bids": false
+  }
+ },
+ "2023": {
+  "avail_twh": 1163.8151061639164,
+  "dead_cohorts": [
+   "1554|COAL_BIT|r202006",
+   "1573|COAL_BIT|r202206",
+   "3148|CT_PEAKER|r202206",
+   "3149|COAL_BIT|r201902",
+   "883|COAL_PRB|r202206"
+  ],
+  "hashes": {
+   "availability": "30a9f2c07e011869",
+   "min_gen": "d06531c2b66f6fe9",
+   "pmax": "2eb931abf75819fe",
+   "pmin": "b45c9a55ae5f0deb"
+  },
+  "in_year_cohorts": [
+   "2866|COAL_BIT|r202306",
+   "3122|COAL_BIT|r202307",
+   "3122|COAL_BIT|r202308",
+   "3148|CT_PEAKER|r202306",
+   "3797|COAL_BIT|r202305",
+   "3809|ST_GAS|r202305",
+   "384|ST_GAS|r202309",
+   "874|ST_GAS|r202306"
+  ],
+  "n_units": 2855,
+  "overrides": {
+   "pjm_da_virtual_bids": false
+  }
+ },
+ "2024": {
+  "avail_twh": 1175.859371887376,
+  "dead_cohorts": [
+   "1554|COAL_BIT|r202006",
+   "1573|COAL_BIT|r202206",
+   "3148|CT_PEAKER|r202206",
+   "3148|CT_PEAKER|r202306",
+   "3149|COAL_BIT|r201902",
+   "3797|COAL_BIT|r202305",
+   "883|COAL_PRB|r202206"
+  ],
+  "hashes": {
+   "availability": "171f65b8a4ab26d7",
+   "min_gen": "25d8869ae7730c72",
+   "pmax": "0770e3f435aca4d6",
+   "pmin": "a173e22a9f4e91be"
+  },
+  "in_year_cohorts": [
+   "10678|COAL_BIT|r202406",
+   "2379|CT_PEAKER|r202406",
+   "3122|COAL_BIT|r202404",
+   "59055|CT_PEAKER|r202403",
+   "8008|CT_PEAKER|r202406"
+  ],
+  "n_units": 2763,
+  "overrides": {
+   "pjm_da_virtual_bids": false
+  }
+ },
+ "2025": {
+  "avail_twh": 1177.5331427859655,
+  "dead_cohorts": [
+   "1554|COAL_BIT|r202006",
+   "1573|COAL_BIT|r202206",
+   "3148|CT_PEAKER|r202206",
+   "3148|CT_PEAKER|r202306",
+   "3149|COAL_BIT|r201902",
+   "3797|COAL_BIT|r202305",
+   "59055|CT_PEAKER|r202403",
+   "883|COAL_PRB|r202206"
+  ],
+  "hashes": {
+   "availability": "0eb53bf29b56a1c8",
+   "min_gen": "c38008f6fd99e532",
+   "pmax": "0a199cc7e95b92cb",
+   "pmin": "4d7810aa965af353"
+  },
+  "in_year_cohorts": [
+   "50316|ST_GAS|r202507",
+   "56038|CT_PEAKER|r202503",
+   "56038|ST_GAS|r202503",
+   "594|COAL_BIT|r202502"
+  ],
+  "n_units": 2751,
+  "overrides": {
+   "pjm_da_virtual_bids": false
+  }
+ }
+}
