@@ -302,3 +302,15 @@ direct, 12 hr via ATB's exactly-linear power/energy split),
 literature-envelope `TECH_COST_MULTIPLIERS` low/high capex ratios;
 `tests/test_cost_benchmark_envelope.py` asserts those. A future extension can
 add ATB's CF rows to also re-derive `base_cf`.
+
+## ATB 2025 (checked 2026-10-02, NOT landed)
+
+OEDI carries `ATB/electricity/csv/2025/v1.0.0/ATBe.csv`. Fetching it through
+`scripts/data/fetch_nrel_atb.py --atb-year 2025 --atb-version v1.0.0` produced an
+EMPTY extract: ATB 2025 renamed the financial cases — `core_metric_case` is now one of
+`R&D`, `R&D + TC`, `Exp`, `Exp + TC` and the `Market` case the filter keys on no longer
+exists (every (technology, techdetail) pair the filter names IS present). Landing 2025
+therefore needs a deliberate case-mapping decision (which 2025 case corresponds to the
+2024 `Market` case the constants were derived against), a schema note, and a pin
+decision — a re-derivation act under the rule above, not a data refresh. The derivation
+pin stays 2024 `v4.0.0`.
