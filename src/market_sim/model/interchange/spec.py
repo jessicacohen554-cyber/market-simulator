@@ -1930,10 +1930,15 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
     #     a seam price. FPC / TAL 2019-22 and 2025 landed with soco-99 (R-4):
     #     the FLA load-shape extract was extended from the BALANCE archive
     #     as the sum of the FLA region's member BAs; 2023-24 unchanged.
-    #     TAL's lambda sits 25-35 % below FPC / JEA every year (sub-CC
-    #     implied HR 5.7-7.7), flagged in FINDING-soco-99, not adjusted.
-    #   * NOT anchored: SOCO_SCEG (Dominion SC files 0.00 every hour) and
-    #     SOCO_FPL (lambda ~40 % below its peers, basis unresolved).
+    #     TAL's low lambda (implied HR 5.7-7.7) is confirmed by soco-100:
+    #     it matches its own CCs' measured INCREMENTAL heat rate (5.5-6.1;
+    #     the soco-99 flag compared it with their 7.8 average HR).
+    #   * SOCO_FPL (soco-100, owner ruling): same Sch. 6 definition; its
+    #     lambda is its all-CC, coal-free fleet's incremental fuel cost
+    #     (lambda / HH 6.0-6.8 vs measured CC incremental HR 6.4-6.8).
+    #     2021 is refused: FPL's 2021 filing re-files its 2019 series
+    #     (duplicate-filing guard), so 2021 keeps the structural 11.6.
+    #   * NOT anchored: SOCO_SCEG (Dominion SC files 0.00 every hour).
     # ``marginal_heat_rate`` anchors are TIER-3, labelled, default-off, and
     # UNCHANGED by soco-98 (the seam-own flat mean is a forecast-lane arming
     # choice, recorded in FINDING-soco-98):
@@ -2080,6 +2085,15 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             interface_limit_mw=1317.0,
             border_zones=("SOCO_GA", "SOCO_AL"),
             load_shape_exponent=1.0,
+            # No 2021 cell: FPL's 2021 Sch. 6 filing re-files 2019 (soco-100).
+            hr_by_year={
+                2019: 6.75,
+                2020: 6.73,
+                2022: 5.98,
+                2023: 6.06,
+                2024: 6.55,
+                2025: 5.96,
+            },
         ),
         NeighborInterface(
             # Duke Energy Florida (Progress FL, EIA-930 ``FPC``). Winter Avg

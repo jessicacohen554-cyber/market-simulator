@@ -34,7 +34,7 @@ from market_sim.data.neighbor_price import neighbor_heat_rate
 _REPO = Path(__file__).resolve().parents[3]
 _SCRIPTS = _REPO / "scripts" / "data"
 
-_LAMBDA_SEAMS = ("SOCO_TVA", "SOCO_DUK", "SOCO_SC", "SOCO_FPC", "SOCO_TAL")
+_LAMBDA_SEAMS = ("SOCO_TVA", "SOCO_DUK", "SOCO_SC", "SOCO_FPC", "SOCO_TAL", "SOCO_FPL")
 _YEARS = list(range(2019, 2026))
 
 
@@ -64,7 +64,7 @@ def test_soco_anchor_map_kinds(producer):
     for name in _LAMBDA_SEAMS:
         assert anchors[name].kind == "ferc714_lambda", name
         assert anchors[name].product == name.removeprefix("SOCO_"), name
-    assert set(producer.unanchored("SOCO")) == {"SOCO_SCEG", "SOCO_FPL"}
+    assert set(producer.unanchored("SOCO")) == {"SOCO_SCEG"}
 
 
 def test_lambda_anchor_is_the_annual_mean_without_filed_zeros(
@@ -90,6 +90,44 @@ def test_lambda_anchor_is_the_annual_mean_without_filed_zeros(
     assert producer._measured_mean_lmp(anchor, 2024) is None
 
 
+def _write_lambda(tmp_path, monkeypatch, series: dict[int, list[float]]) -> None:
+    import market_sim.data.ferc714 as ferc714
+
+    frames = [
+        pd.DataFrame(
+            {
+                "ba_code": "FPL",
+                "report_year": year,
+                "datetime_utc": pd.date_range(
+                    f"{year}-01-01", periods=len(vals), freq="h"
+                ).astype(str),
+                "system_lambda_usd_mwh": vals,
+                "respondent_id_ferc714": 171,
+                "eia_utility_id": 6452,
+                "source": "xbrl",
+            }
+        )
+        for year, vals in series.items()
+    ]
+    pd.concat(frames).to_csv(
+        tmp_path / ferc714.FERC714_NEIGHBOR_SYSTEM_LAMBDA_FILE, index=False
+    )
+    monkeypatch.setattr(ferc714, "FERC_714_DIR", tmp_path)
+
+
+def test_a_refiled_year_is_refused_and_reported(producer, tmp_path, monkeypatch):
+    """A year equal to an earlier one at whole-dollar rounding is a re-filing."""
+    first = [13.02, 16.04, 24.33, 17.6]
+    _write_lambda(
+        tmp_path,
+        monkeypatch,
+        {2019: first, 2020: [9.3, 12.4, 21.8, 14.0], 2021: [13.0, 16.0, 24.0, 18.0]},
+    )
+    assert producer.duplicate_filing_of("FPL", 2021) == 2019
+    assert producer.duplicate_filing_of("FPL", 2020) is None
+    assert producer.duplicate_filing_of("FPL", 2019) is None  # the original stands
+
+
 def test_unknown_anchor_kind_is_refused(producer):
     with pytest.raises(ValueError):
         producer._measured_mean_lmp(producer.Anchor("TVA", kind="guess"), 2023)
@@ -105,7 +143,7 @@ def test_soco_blocks_stay_default_off_and_forward_years_keep_the_flat(blocks):
     assert "SOCO" not in REFERENCE_PRICE_DEFAULT_ISOS
     assert "SOCO" not in PRICED_INTERCHANGE_DEFAULT_ISOS
     assert blocks["SOCO_SCEG"].hr_by_year is None
-    assert blocks["SOCO_FPL"].hr_by_year is None
+    assert 2021 not in blocks["SOCO_FPL"].hr_by_year  # duplicate filing refused
     for name, block in blocks.items():
         # No forecast year is tabulated: forward pricing is unchanged.
         assert neighbor_heat_rate(block, 2030) == block.marginal_heat_rate, name

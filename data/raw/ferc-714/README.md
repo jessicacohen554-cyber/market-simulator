@@ -244,9 +244,17 @@ Per-year means reproduce the soco-97 phase-0 probe to within $0.02.
   It filed no Sch. 6 for 2019. This is the largest SOCO export seam, and it
   has no usable lambda.
 - **FPL's lambda runs about 40 % below SOCO's**, for example $17.31 against
-  $25.72 in 2019. FPL files it in whole dollars from 2021. **The basis is
-  unresolved.** Do not read FPL's level as comparable to the others until
-  that is explained.
+  $25.72 in 2019. FPL files it in whole dollars from 2021. **Resolved by
+  soco-100** (`docs/records/soco/r-soco/FINDING-soco-100-fpl-tal-lambda-basis-2026-10-02.md`).
+  FPL uses the same Sch. 6 definition as the others: a Lagrange incremental
+  fuel cost. The level is real. FPL's fleet is all CC and coal-free, so its
+  λ/HH of 6.0–6.8 matches its CCs' measured incremental heat rate of 6.4–6.8.
+- **FPL 2021 is a re-filing of FPL 2019, not a measurement.** All 8,760
+  hours equal the 2019 series rounded to whole dollars. It is FPL's only
+  2021 filing. FPL's first 2022 filing carried the same copy before it was
+  resubmitted. The rows are kept as filed. The
+  `derive_neighbor_hr_by_year.py` duplicate-filing guard refuses the year as
+  an anchor.
 - **Fall-back-day sums.** Duke Carolinas and Duke Progress (2023–2025) and
   Duke Florida (every XBRL year) file the repeated 01:00–02:00 hour on the
   fall-back day as about **twice** its neighbours. That is the two
