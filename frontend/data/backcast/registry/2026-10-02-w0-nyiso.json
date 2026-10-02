@@ -1,0 +1,17 @@
+{
+  "id": "2026-10-02-w0-nyiso",
+  "label": "w0 nyiso",
+  "date": "2026-10-02",
+  "shorthand": "w0-nyiso",
+  "definition": "closeout-B W0 phase 3: NYISO full-span re-solve at the W0 defaults (owner ruling R-2)",
+  "years": [
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-10-02-w0-nyiso.js",
+  "bundle": "results/calibration/w0_nyiso_span"
+}
