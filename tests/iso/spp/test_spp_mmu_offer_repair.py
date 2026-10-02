@@ -203,3 +203,52 @@ class TestPoolClearsOnlyInScarcity(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+def _paired(gens, which):
+    """Give the rows at ``which`` a published W0 seasonal pair (summer < winter)."""
+    for i in which:
+        gens[i].summer_capability_frac = 0.9
+        gens[i].winter_capability_frac = 1.0
+    return gens
+
+
+class TestAmbientSkipsSeasonalPairRows(unittest.TestCase):
+    """Rule 19: a row on its EIA-860 summer rating does not also take the MMU ambient share."""
+
+    def test_unpaired_fleet_is_unchanged(self):
+        gens = _fossil()
+        pmax = np.array([g.pmax_mw for g in gens])
+        idx, cut, _ = arrays._spp_mmu_cut(gens, pmax, T, 2024)
+        self.assertEqual(cut.ndim, 1)
+
+    def test_paired_row_skips_only_the_ambient_share(self):
+        gens = _paired(_fossil(), [0])
+        pmax = np.array([g.pmax_mw for g in gens])
+        a = np.ones((4, T))
+        arrays._apply_spp_mmu_bands(gens, a, pmax, T, 2024, multiplicative=True)
+        sh = mmu_shares(2024)
+        flat = sh.above_emer + sh.eco_to_emer
+        amb = sh.ambient_mw / 600.0  # same per-MW share: fossil pmax 600
+        month = arrays._hour_to_month_index(T)
+        jul, jan = month == 6, month == 0
+        np.testing.assert_allclose(a[0, jul], 1.0 - flat)  # paired: no ambient
+        np.testing.assert_allclose(a[1, jul], 1.0 - flat - amb)  # unpaired keeps it
+        np.testing.assert_allclose(a[0, jan], a[1, jan])  # outside Jun-Sep, equal
+        np.testing.assert_array_equal(a[3], 1.0)  # nuclear untouched
+
+    def test_pool_recovers_each_rows_own_slice(self):
+        cfg = _cfg(spp_mmu_offer_repair=True)
+        gens = _paired(_fossil(), [0])
+        gens = gens + build_spp_mmu_pool_generators(cfg, "SPP", gens, 2000.0)
+        pmax = np.array([g.pmax_mw for g in gens])
+        pre = np.full((len(gens), T), 0.6)
+        a = pre.copy()
+        arrays._apply_spp_mmu_bands(gens, a, pmax, T, 2024, multiplicative=True)
+        arrays._apply_spp_mmu_pool(gens, a, pmax, T, 2024)
+        sh = mmu_shares(2024)
+        south = [0, 1]
+        np.testing.assert_allclose(
+            a[5] * pmax[5],
+            sh.eco_to_emer * (pre[south] * pmax[south, None]).sum(0),
+        )
