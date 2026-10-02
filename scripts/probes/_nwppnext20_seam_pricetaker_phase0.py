@@ -125,9 +125,13 @@ def main() -> None:
         meas = ""
         if y in YEARS:
             m = w[w.year == y].groupby("baa").lmp.mean()
-            meas = " | WEIM " + ", ".join(f"{b} {m[b]:.1f}" for b in ("BPAT", "PACE", "IPCO"))
+            meas = " | WEIM " + ", ".join(
+                f"{b} {m[b]:.1f}" for b in ("BPAT", "PACE", "IPCO")
+            )
         print(f"{y}: " + ", ".join(cells) + meas)
-    print("\n## C. Price-taker vs keeper #20 P1 zonal price, TWh (export / import / net export)")
+    print(
+        "\n## C. Price-taker vs keeper #20 P1 zonal price, TWh (export / import / net export)"
+    )
     rows = []
     for y in YEARS:
         zp = _zone_price(y)
