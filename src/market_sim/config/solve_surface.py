@@ -138,6 +138,8 @@ class SolveEpoch:
 #: 2026-10-02c is the first entry: the closeout-W0 time-weighted dispatched-bin
 #: denominator (ledger entry of that id in ``results/cache.py``), scoped to the
 #: backcast ISOs where ``unit_outage_dispatched_bin_denominator`` is live.
+#: 2026-10-02d is its second part (the live roster drops dead exit cohorts),
+#: scoped to the backcast ISOs whose keeper fleet carries one (zero-LP sweep).
 SOLVE_EPOCHS: tuple[SolveEpoch, ...] = (
     SolveEpoch(
         id="2026-10-02c",
@@ -147,6 +149,15 @@ SOLVE_EPOCHS: tuple[SolveEpoch, ...] = (
         ),
         modes=("backcast",),
         isos=("MISO", "NEISO", "NWPP", "PJM", "SOCO"),
+    ),
+    SolveEpoch(
+        id="2026-10-02d",
+        cause=(
+            "closeout-W0 D-1 part 2: the dispatched-bin outage denominator is "
+            "the live roster; exit cohorts retired before the solve year leave it"
+        ),
+        modes=("backcast",),
+        isos=("MISO", "NWPP", "PJM", "SOCO"),
     ),
 )
 
