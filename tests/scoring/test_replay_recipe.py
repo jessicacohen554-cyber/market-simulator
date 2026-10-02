@@ -90,3 +90,23 @@ def test_the_deleted_polarity_in_its_owning_iso_is_still_reported(tmp_path):
     )
     diffs = replay_config_diffs(tmp_path, 2025, resolve=lambda b, y: {})
     assert diffs == {"unit_outage_dispatched_bin_live_denominator": (False, None)}
+
+
+def test_a_field_registered_after_the_solve_replays_at_its_default(tmp_path):
+    import dataclasses
+
+    from market_sim.config.scenarios import ScenarioConfig
+
+    field = next(
+        f
+        for f in dataclasses.fields(ScenarioConfig)
+        if f.default is False and not f.name.startswith("_")
+    )
+    bundle = _bundle(tmp_path, {"voll": 5000.0})
+    same = replay_config_diffs(
+        bundle, 2025, resolve=lambda b, y: {"voll": 5000.0, field.name: False}
+    )
+    moved = replay_config_diffs(
+        bundle, 2025, resolve=lambda b, y: {"voll": 5000.0, field.name: True}
+    )
+    assert same == {} and moved == {field.name: (None, True)}

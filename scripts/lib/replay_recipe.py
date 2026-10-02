@@ -80,13 +80,41 @@ def replay_config_diffs(
     recorded = json.loads(path.read_text()).get("scenario_config") or {}
     replayed = resolve(bundle, int(year))
     deleted = _rule26_inert_recorded(bundle, recorded)
+    newer = _registered_after_solve(recorded, replayed)
     return {
         key: (recorded.get(key), replayed.get(key))
         for key in sorted(set(recorded) | set(replayed))
         if key not in NON_RECIPE_FIELDS
         and key not in deleted
+        and key not in newer
         and _norm(recorded.get(key)) != _norm(replayed.get(key))
     }
+
+
+def _registered_after_solve(recorded: dict, replayed: dict) -> set[str]:
+    """Replayed keys the bundle never recorded, replayed at the field default.
+
+    A field registered after the bundle was solved is absent from its
+    ``run_config_<Y>.json``; the replay resolves it to the registered default,
+    which is the solved behaviour by construction. Only the dataclass default
+    counts: an absent field the replay resolves to anything else (a mode
+    default, an ISO arm) is still a mismatch.
+    """
+    from market_sim.config.scenarios import ScenarioConfig
+
+    out: set[str] = set()
+    for field in dataclasses.fields(ScenarioConfig):
+        if field.name in recorded or field.name not in replayed:
+            continue
+        if field.default is not dataclasses.MISSING:
+            default = field.default
+        elif field.default_factory is not dataclasses.MISSING:
+            default = field.default_factory()
+        else:
+            continue
+        if _norm(replayed[field.name]) == _norm(default):
+            out.add(field.name)
+    return out
 
 
 def _rule26_inert_recorded(bundle: Path, recorded: dict) -> set[str]:
