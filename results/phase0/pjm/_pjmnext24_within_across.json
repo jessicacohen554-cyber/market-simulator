@@ -1,0 +1,371 @@
+{
+ "what": "PJM-NEXT-24 card 1b: within- vs across-plant response. ZERO LP.",
+ "COAL": {
+  "2019": {
+   "m_rt": {
+    "within": {
+     "plants": 26,
+     "real": 0.297,
+     "model": 0.663
+    },
+    "across": {
+     "plants": 60,
+     "real": 0.1985,
+     "model": 0.1711
+    }
+   },
+   "m_da": {
+    "within": {
+     "plants": 15,
+     "real": 0.273,
+     "model": 0.772
+    },
+    "across": {
+     "plants": 60,
+     "real": 0.2016,
+     "model": 0.1739
+    }
+   }
+  },
+  "2020": {
+   "m_rt": {
+    "within": {
+     "plants": 24,
+     "real": 0.254,
+     "model": 0.692
+    },
+    "across": {
+     "plants": 55,
+     "real": 0.1617,
+     "model": 0.2918
+    }
+   },
+   "m_da": {
+    "within": {
+     "plants": 22,
+     "real": 0.271,
+     "model": 0.822
+    },
+    "across": {
+     "plants": 55,
+     "real": 0.1605,
+     "model": 0.2915
+    }
+   }
+  },
+  "2021": {
+   "m_rt": {
+    "within": {
+     "plants": 25,
+     "real": 0.188,
+     "model": 0.555
+    },
+    "across": {
+     "plants": 53,
+     "real": 0.1562,
+     "model": 0.1427
+    }
+   },
+   "m_da": {
+    "within": {
+     "plants": 20,
+     "real": 0.231,
+     "model": 0.636
+    },
+    "across": {
+     "plants": 53,
+     "real": 0.1581,
+     "model": 0.1447
+    }
+   }
+  },
+  "2022": {
+   "m_rt": {
+    "within": {
+     "plants": 32,
+     "real": 0.193,
+     "model": 0.348
+    },
+    "across": {
+     "plants": 49,
+     "real": 0.059,
+     "model": 0.0515
+    }
+   },
+   "m_da": {
+    "within": {
+     "plants": 26,
+     "real": 0.167,
+     "model": 0.406
+    },
+    "across": {
+     "plants": 49,
+     "real": 0.0667,
+     "model": 0.0536
+    }
+   }
+  },
+  "2023": {
+   "m_rt": {
+    "within": {
+     "plants": 20,
+     "real": 0.244,
+     "model": 0.294
+    },
+    "across": {
+     "plants": 41,
+     "real": 0.0751,
+     "model": 0.1856
+    }
+   },
+   "m_da": {
+    "within": {
+     "plants": 17,
+     "real": 0.219,
+     "model": 0.363
+    },
+    "across": {
+     "plants": 41,
+     "real": 0.0763,
+     "model": 0.1871
+    }
+   }
+  },
+  "2024": {
+   "m_rt": {
+    "within": {
+     "plants": 27,
+     "real": 0.2,
+     "model": 0.341
+    },
+    "across": {
+     "plants": 39,
+     "real": 0.1158,
+     "model": 0.2282
+    }
+   },
+   "m_da": {
+    "within": {
+     "plants": 25,
+     "real": 0.235,
+     "model": 0.423
+    },
+    "across": {
+     "plants": 39,
+     "real": 0.1123,
+     "model": 0.2267
+    }
+   }
+  },
+  "2025": {
+   "m_rt": {
+    "within": {
+     "plants": 15,
+     "real": 0.221,
+     "model": 0.258
+    },
+    "across": {
+     "plants": 31,
+     "real": 0.0713,
+     "model": 0.1556
+    }
+   },
+   "m_da": {
+    "within": {
+     "plants": 12,
+     "real": 0.237,
+     "model": 0.299
+    },
+    "across": {
+     "plants": 31,
+     "real": 0.0677,
+     "model": 0.1516
+    }
+   }
+  }
+ },
+ "CT": {
+  "2019": {
+   "m_rt": {
+    "within": {
+     "plants": 49,
+     "real": 0.302,
+     "model": 0.354
+    },
+    "across": {
+     "plants": 76,
+     "real": 0.0041,
+     "model": 0.0138
+    }
+   },
+   "m_da": {
+    "within": {
+     "plants": 42,
+     "real": 0.529,
+     "model": 0.674
+    },
+    "across": {
+     "plants": 76,
+     "real": 0.0041,
+     "model": 0.0138
+    }
+   }
+  },
+  "2020": {
+   "m_rt": {
+    "within": {
+     "plants": 58,
+     "real": 0.34,
+     "model": 0.339
+    },
+    "across": {
+     "plants": 75,
+     "real": 0.0099,
+     "model": 0.0221
+    }
+   },
+   "m_da": {
+    "within": {
+     "plants": 30,
+     "real": 0.683,
+     "model": 0.877
+    },
+    "across": {
+     "plants": 75,
+     "real": 0.0099,
+     "model": 0.0221
+    }
+   }
+  },
+  "2021": {
+   "m_rt": {
+    "within": {
+     "plants": 58,
+     "real": 0.259,
+     "model": 0.229
+    },
+    "across": {
+     "plants": 76,
+     "real": 0.0101,
+     "model": 0.0185
+    }
+   },
+   "m_da": {
+    "within": {
+     "plants": 38,
+     "real": 0.511,
+     "model": 0.593
+    },
+    "across": {
+     "plants": 76,
+     "real": 0.0101,
+     "model": 0.0185
+    }
+   }
+  },
+  "2022": {
+   "m_rt": {
+    "within": {
+     "plants": 67,
+     "real": 0.262,
+     "model": 0.235
+    },
+    "across": {
+     "plants": 75,
+     "real": 0.0077,
+     "model": 0.015
+    }
+   },
+   "m_da": {
+    "within": {
+     "plants": 67,
+     "real": 0.331,
+     "model": 0.285
+    },
+    "across": {
+     "plants": 75,
+     "real": 0.0077,
+     "model": 0.015
+    }
+   }
+  },
+  "2023": {
+   "m_rt": {
+    "within": {
+     "plants": 62,
+     "real": 0.304,
+     "model": 0.357
+    },
+    "across": {
+     "plants": 74,
+     "real": 0.0134,
+     "model": 0.0376
+    }
+   },
+   "m_da": {
+    "within": {
+     "plants": 56,
+     "real": 0.415,
+     "model": 0.505
+    },
+    "across": {
+     "plants": 74,
+     "real": 0.0134,
+     "model": 0.0375
+    }
+   }
+  },
+  "2024": {
+   "m_rt": {
+    "within": {
+     "plants": 66,
+     "real": 0.28,
+     "model": 0.334
+    },
+    "across": {
+     "plants": 73,
+     "real": 0.0166,
+     "model": 0.0526
+    }
+   },
+   "m_da": {
+    "within": {
+     "plants": 62,
+     "real": 0.401,
+     "model": 0.474
+    },
+    "across": {
+     "plants": 73,
+     "real": 0.0166,
+     "model": 0.0526
+    }
+   }
+  },
+  "2025": {
+   "m_rt": {
+    "within": {
+     "plants": 67,
+     "real": 0.279,
+     "model": 0.322
+    },
+    "across": {
+     "plants": 73,
+     "real": 0.0209,
+     "model": 0.0487
+    }
+   },
+   "m_da": {
+    "within": {
+     "plants": 67,
+     "real": 0.35,
+     "model": 0.391
+    },
+    "across": {
+     "plants": 73,
+     "real": 0.0209,
+     "model": 0.0487
+    }
+   }
+  }
+ }
+}
