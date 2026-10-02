@@ -57,6 +57,7 @@ from market_sim.config.interchange_config import (  # noqa: E402
     apply_interchange_topology,
     build_interchange_fleet,
     get_interchange_spec,
+    require_priced_interchange_rows,
     resolve_priced_interchange,
 )
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
@@ -3338,6 +3339,9 @@ def run_year(
         interchange_spec = get_interchange_spec(config, iso, year=year)
         caiso_corridors = interchange_spec.use_corridors
         import_generators = build_interchange_fleet(interchange_spec, border_carbon)
+        # Rule 19: the priced interface replaces the measured schedule, never
+        # vanishes it — refuse a spec that builds no rows (NWPP-NEXT-19).
+        require_priced_interchange_rows(iso, year, import_generators)
         # Shared topology sequence (same order as always): external node
         # extension, the capacity-deliverability Part-A seam import cap
         # (backcast mirror of the runner hook — the published per-area MIC

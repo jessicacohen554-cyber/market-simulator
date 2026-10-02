@@ -4007,3 +4007,7 @@ results/calibration/miso_298_20*/
 #     frontend/data/backcast/registry/2026-10-01-miso-298-gas-form.json \
 #     frontend/data/backcast/runs/2026-10-01-miso-298-gas-form.js
 results/calibration/miso298_span/
+
+# NWPP-NEXT-19 arm G shard legs (staged by the parent; transport only, rule 33/34)
+results/calibration/nwppnext19g_20*/
+results/calibration/nwppnext19g_span/

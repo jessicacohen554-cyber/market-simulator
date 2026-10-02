@@ -180,9 +180,19 @@ class TestFootprintAdmission(unittest.TestCase):
 class TestDeliberateAbsences(unittest.TestCase):
     """Each absence is a ruling, not an oversight (cards N7 / N8, gates G5-G7)."""
 
-    def test_no_import_node(self):
+    def test_import_node_is_seam_only_and_default_off(self):
+        """NWPP-NEXT-19 owner card (2026-10-02) wired the external node for the
+        registered seams; there are still no static tranches, and the priced
+        seams stay default-off (the keeper serves the measured schedule)."""
+        from market_sim.config.interchange_config import (
+            PRICED_INTERCHANGE_DEFAULT_ISOS,
+            REFERENCE_PRICE_DEFAULT_ISOS,
+        )
+
         self.assertNotIn("NWPP", IMPORT_TRANCHES)
-        self.assertNotIn("NWPP", IMPORT_ZONE)
+        self.assertEqual(IMPORT_ZONE["NWPP"], "NWPP_external")
+        self.assertNotIn("NWPP", REFERENCE_PRICE_DEFAULT_ISOS)
+        self.assertNotIn("NWPP", PRICED_INTERCHANGE_DEFAULT_ISOS)
 
     def test_no_capacity_market_and_no_campd_binning(self):
         self.assertNotIn("NWPP", MARKET_DESIGN)
