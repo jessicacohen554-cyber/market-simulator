@@ -1,0 +1,44 @@
+{
+ "2019": {
+  "actual_rt_mean": 25.44,
+  "keeper": 27.72,
+  "arm": 27.7,
+  "keeper_err_pct": 8.9,
+  "arm_err_pct": 8.9
+ },
+ "2020": {
+  "actual_rt_mean": 20.24,
+  "keeper": 23.83,
+  "arm": 23.76,
+  "keeper_err_pct": 17.8,
+  "arm_err_pct": 17.4
+ },
+ "2022": {
+  "actual_rt_mean": 68.79,
+  "keeper": 65.96,
+  "arm": 66.65,
+  "keeper_err_pct": -4.1,
+  "arm_err_pct": -3.1
+ },
+ "2023": {
+  "actual_rt_mean": 28.44,
+  "keeper": 31.14,
+  "arm": 31.1,
+  "keeper_err_pct": 9.5,
+  "arm_err_pct": 9.3
+ },
+ "2024": {
+  "actual_rt_mean": 29.53,
+  "keeper": 31.48,
+  "arm": 31.33,
+  "keeper_err_pct": 6.6,
+  "arm_err_pct": 6.1
+ },
+ "2025": {
+  "actual_rt_mean": 42.89,
+  "keeper": 44.04,
+  "arm": 44.14,
+  "keeper_err_pct": 2.7,
+  "arm_err_pct": 2.9
+ }
+}
