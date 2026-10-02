@@ -7065,3 +7065,14 @@ floors bind, but inside hours the plants run anyway. The defect sits with the ap
 placement (already day-grain), not with window size.
 
 Keeper unchanged; data withdrawn; arm at `d3e04d9f`. Records: `PRECOMMIT-` and `RESULT-pjm-next-27-2026-10-02.md`.
+
+## PJM-NEXT-28 — 2026-10-02 — sunk no-load in the committed rung: not the floor lever (zero LP, NOT CHARTERED)
+
+- **Owner ruling on NEXT-27:** *"Hold; closeout wave 1"*, recorded in the NEXT-27 RESULT §6.
+- **Closeout lane outcome:** R-13 killed (desk R); L2 closed at phase 0; no promotion. Keeper stays `2026-10-02-w0-pjm-fix2`.
+- **Side card (a):** price committed CC/coal rungs at measured incremental HR, treating no-load as sunk in P1.
+  - **R2 FAIL:** p10 implied-HR shift ≤ 0.07, gate 0.5.
+  - **R3 FAIL:** COAL_BIT unload 0.33 / 0.60 TWh in 2019 / 2021, gate 3.
+  - **Why:** committed rungs set price in only 2–7 % of load-hours, and the coal committed rung is already below its incremental HR.
+  - **Status:** COAL_BIT stays OPEN.
+- **Record:** `FINDING-pjm-next-28-sunk-noload-2026-10-02.md`.
