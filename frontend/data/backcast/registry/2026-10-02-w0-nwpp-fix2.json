@@ -1,0 +1,19 @@
+{
+  "id": "2026-10-02-w0-nwpp-fix2",
+  "label": "w0 nwpp fix2",
+  "date": "2026-10-02",
+  "shorthand": "w0-nwpp-fix2",
+  "definition": "closeout-B W0 phase 3: NWPP full-span re-solve at the W0 defaults (owner ruling R-2)",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NWPP",
+  "file": "frontend/data/backcast/runs/2026-10-02-w0-nwpp-fix2.js",
+  "bundle": "results/calibration/w0_nwpp_span"
+}

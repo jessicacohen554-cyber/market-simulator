@@ -887,3 +887,26 @@ card "Keep #19; retire dup Clark field":
   priced builds (these used to zero interchange silently). Not solved. The registered CAISO seam uses a gross-load shape
   (within-day r vs CAISO RT 0.08 by 2025; net 0.62). The WECC_CAN anchor (peak-only Mid-C) sits $12–38 above BPAT,
   $170 in 2022. Owner card: **"Fix both, then solve"** (NEXT-20).
+
+## 2026-10-02 — closeout-B W0 phase 3 fix-2: keeper 2026-10-02-w0-nwpp-fix2, NOT-YET → NOT-YET
+
+**What changed.** The nwpp-next-16c combined-vintage recipe (`nwppnext16c_span`) was re-solved one year per shard (rule 36), plus the ten W0 EIA-860 settlement backcast defaults (owner ruling R-2; PRECOMMIT `docs/records/governance/closeout-2026-10/PRECOMMIT-closeout-b-w0-phase3-2026-10-02.md`). The dispatched-bin denominator is LIVE for NWPP, in its live-roster form (#7047/#7049). Zero DOF. Every leg solved at `25da6022` (fix-2) on highspy 1.14.0 (locked).
+
+**2019 re-solve.** The 2019 leg was first kept at `306f2c00` under the byte-inert proof. Preflight 0d refused it: the leg records `unit_outage_dispatched_bin_live_denominator=False`, a rule-26-deleted field that NWPP owns, so False is not an inert value and the replay cannot reproduce it. 2019 was re-solved at `25da6022`. That supersedes the NWPP row of `W0-phase3/KEPT-LEG-INERT-PROOF-2026-10-02.md`. Solve times: P0 2,622 s and P1 4,004 s, single-threaded; memory peak 6.06 GiB.
+
+**Scores.** The ISO stays NOT-YET → NOT-YET.
+- fuelmix moves FAIL → PASS: 2025 CC_REGULAR goes +9.60 → +7.91 TWh.
+- price_mean, price_shape and dispatch_corr still FAIL. price_tail is SKIPPED.
+
+| C3a vs RT | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| Before (nwpp-next-16c) | −21.4 % | −27.7 % | +2.6 % |
+| After (W0 fix-2) | −23.1 % | −30.7 % | −4.6 % |
+
+2019–2022 have no measured LMP reference on disk, so C3a is UNSCOREABLE there.
+
+- **Data drift (labelled, not W0):** the 2025 injected must-run (biomass and OTHER) is +1.5 TWh above the incumbent's. The incumbent carried a partial 2025 EIA-923; the current data has the complete year.
+- **Census (in-bundle `fleet_census_<y>.json`):** total thermal summer reads −4.6 to −8.6 % against EIA-860 in every year (winter −10.0 to −20.6 %), OUTSIDE.
+- **Unserved energy:** 2019 32.1 MWh, 2024 919 MWh.
+
+**Bench parts kept at the pre-W0 render (desk ruling "Keep old figures, fix later", 2026-10-02).** The promotion re-render moved the benchmark's `classFull` actuals slightly, because the footprint follows the W0 roster: most classes move about −0.1 % in 2019, and CT_CHP goes 0.42 → 0.52 TWh. `data/raw/reference/nwpp_plant_basis_energy.csv`, the `nwpp_demand_plant_basis` anchor that this keeper solved on, is derived from those parts. The parts therefore stay at main's render, so the CSV, the keeper and `test_artifact_matches_bench_parts` stay consistent. **Follow-up (chartered):** decouple the anchor from roster-dependent parts, then re-derive it and re-solve NWPP.
