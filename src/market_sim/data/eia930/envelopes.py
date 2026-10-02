@@ -2319,6 +2319,120 @@ def nwpp_net_interchange(
     return position - grid_sw
 
 
+def _diba_legs_export(
+    reporter: str,
+    dibas: tuple[str, ...],
+    sign: float,
+    utc_hour_ending: pd.DatetimeIndex,
+) -> tuple[np.ndarray, float]:
+    """Return one reporting BA's summed per-DIBA legs, footprint-export-positive.
+
+    Reads ``data/raw/eia-930-interchange/<reporter> interchange hourly.parquet``
+    (``mw > 0`` = the reporter exports to the DIBA; ``local_time`` hour-ENDING on
+    the reporter's Pacific clock — every reporter named in
+    :data:`~market_sim.config.interchange_config.NWPP_PRICED_SEAM_LEGS` is a
+    Pacific BA), localizes each leg exactly as :func:`_nwpp_grid_external_legs`
+    does, and joins on the pool frame's hour-ending ``UTC time``. Returns the
+    ``sign``-scaled sum and the share of hours every leg covers.
+
+    Raises:
+        ValueError: When the file is absent or carries no row of the year
+            (fail closed: a missing leg would silently serve the whole seam as
+            schedule while also pricing it — rule 19).
+    """
+    path = RAW_DIR / "eia-930-interchange" / f"{reporter} interchange hourly.parquet"
+    if not path.exists():
+        raise ValueError(f"NWPP priced-seam leg file missing: {path}")
+    frame = pd.read_parquet(path)
+    frame = frame[frame["diba"].astype(str).isin(dibas)]
+    total = np.zeros(len(utc_hour_ending), dtype=float)
+    covered = np.ones(len(utc_hour_ending), dtype=bool)
+    for diba in dibas:
+        leg = frame[frame["diba"].astype(str) == diba]
+        stamps = pd.DatetimeIndex(leg["local_time"])
+        try:
+            utc = stamps.tz_localize(
+                "America/Los_Angeles", ambiguous="infer", nonexistent="shift_forward"
+            )
+        except Exception:  # a leg whose repeated hour is not in file order
+            utc = stamps.tz_localize(
+                "America/Los_Angeles", ambiguous=False, nonexistent="shift_forward"
+            )
+        series = pd.Series(
+            leg["mw"].to_numpy(dtype=float),
+            index=utc.tz_convert("UTC").tz_localize(None),
+        )
+        series = series[~series.index.duplicated()].reindex(utc_hour_ending)
+        if series.notna().sum() == 0:
+            raise ValueError(
+                f"NWPP priced-seam leg {reporter}->{diba} has no row in the "
+                f"solve year ({path.name})"
+            )
+        covered &= series.notna().to_numpy()
+        total += series.fillna(0.0).to_numpy(dtype=float)
+    return sign * total, float(covered.mean())
+
+
+def nwpp_unpriced_residual_interchange(
+    year: int,
+    *,
+    grid_carried_wind_served: bool = False,
+    plant_basis: bool = False,
+) -> np.ndarray | None:
+    """Return the NWPP served schedule when its priced seams are armed (MW, export-positive).
+
+    NWPP-NEXT-20 (owner card 2026-10-02, "Schedule as residual"): under
+    ``reference_price_interface`` the seams in
+    :data:`~market_sim.config.interchange_config.NWPP_PRICED_SEAM_LEGS` clear
+    against their reference prices, and every OTHER counterparty (the
+    Desert-Southwest / LDWP / WACM set that fails the SPP-51 flow-follows-spread
+    test, and AESO) is served at its measured flow — rule 19: each counterparty
+    priced or scheduled, never both. The served part is the footprint's
+    measured net position :func:`nwpp_net_interchange` (the same flags) minus
+    the priced seams' measured legs, so the keeper's energy-balance closure is
+    kept and BPAT's reporting non-closure (NWPP-11 §4.3) stays in the scheduled
+    part rather than in a priced seam. A seam not priced in ``year``
+    (``seam_priced_in_year``: WECC_CAN before its 2023 anchor) keeps its legs
+    in the served part. Zero free parameters.
+
+    ``None`` when the pool frame for ``year`` is unavailable (a forecast year).
+    """
+    from market_sim.config.interchange_config import (
+        INTERFACE_NEIGHBORS,
+        NWPP_PRICED_SEAM_LEGS,
+        seam_priced_in_year,
+    )
+
+    position = nwpp_net_interchange(
+        year,
+        grid_carried_wind_served=grid_carried_wind_served,
+        plant_basis=plant_basis,
+    )
+    if position is None:
+        return None
+    frame = _eia_hourly_frame_filled("NWPP", year)
+    utc = pd.DatetimeIndex(frame["UTC time"])
+    priced = np.zeros(HOURS_PER_YEAR, dtype=float)
+    seams = {n.name: n for n in INTERFACE_NEIGHBORS["NWPP"]}
+    for seam, legs in NWPP_PRICED_SEAM_LEGS.items():
+        if not seam_priced_in_year(seams[seam], year):
+            continue  # not priced this year: its legs stay in the served schedule
+        for reporter, dibas, sign in legs:
+            leg, coverage = _diba_legs_export(reporter, dibas, sign, utc)
+            priced += leg
+            logger.info(
+                "NWPP %d priced seam %s: measured leg %s->%s %+.3f TWh "
+                "(hour coverage %.4f) moved from the served schedule to the "
+                "priced seam",
+                year,
+                seam,
+                reporter,
+                "/".join(dibas),
+                leg.sum() / 1e6,
+                coverage,
+            )
+    return position - priced
+
 def soco_net_interchange(year: int) -> np.ndarray | None:
     """Return SOCO's hourly net export (MW, export-positive), or ``None``.
 

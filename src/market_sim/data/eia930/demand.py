@@ -22,6 +22,7 @@ from market_sim.config.iso_configs import ISOConfig, SUPPORTED_ISOS, get_iso_con
 
 from .envelopes import (
     _SCALAR_INTERCHANGE_ISOS,
+    nwpp_unpriced_residual_interchange,
     pjm_net_interchange,
     pjm_zonal_interchange,
 )
@@ -1424,6 +1425,29 @@ def load_demand(
                 year,
                 float(measured_ix.mean()),
             )
+    elif iso == "NWPP" and not include_interchange:
+        # NWPP-NEXT-20 (rule 19): with the priced seams armed, every
+        # counterparty the seams do not price is still served at its measured
+        # flow — the footprint's net position minus the priced seams' measured
+        # legs (envelopes.nwpp_unpriced_residual_interchange). Never zero:
+        # a missing residual would silently drop the unpriced counterparties.
+        residual = nwpp_unpriced_residual_interchange(
+            year,
+            grid_carried_wind_served=nwpp_grid_carried_wind_served,
+            plant_basis=nwpp_demand_plant_basis,
+        )
+        if residual is None:
+            raise ValueError(
+                f"NWPP {year}: priced seams armed but the unpriced residual "
+                "schedule has no measured pool frame (forecast years have none)"
+            )
+        interchange = residual
+        logger.info(
+            "NWPP unpriced residual interchange applied for %d: %+.0f MW avg "
+            "(export-positive, measured EIA-930 net of the priced seams)",
+            year,
+            float(residual.mean()),
+        )
 
     # PJM, ERCOT, CAISO, NYISO, NEISO and MISO allocate demand by each zone's
     # own measured hourly shape (from the PJM metered-load / ERCOT native-load /
