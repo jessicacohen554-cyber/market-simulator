@@ -86,6 +86,16 @@ waits for the desk to merge phases 1+2.
   E.6 regeneration, E.9 stamp, census/promote/audit tooling) are classified
   from their own measurements in the RESULT.
 
+## 3b. NEISO — HARD KILL RULE for phase 3 (desk ruling 2026-10-02, option (a) conditional)
+
+The PR #7033 fleet guard trips (T1 Kendall 1595 / Mystic 1588 / Canal 1599; T3/T4
+class and total capacity; T2 holds) — the intended consequence of E.1 plus the
+desk-confirmed denominator companion. NEISO stays in the W0 defaults: no carve-out,
+no veto of the companion. **NEISO's phase-3 re-solve is promotable ONLY IF every
+NEISO year's C3a moves ≤ 2 pp against keeper `neiso119_span` AND the determination
+stays CALIBRATED.** Otherwise it is not promoted; the per-year deltas are reported
+and the desk escalates to the owner. Written ex ante; not reweighed after the solve.
+
 ## 4. Gates
 
 No tuning to a residual (rule 23); tolerances (1 % family / 0.5 % total vs
