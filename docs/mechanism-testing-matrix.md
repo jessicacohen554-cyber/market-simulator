@@ -19432,6 +19432,14 @@ that must come from NWPP's own data first.
    `DSW_solar_PV`), so registering NWPP represents the same energy twice — and
    rule 25 routes that question to the CAISO lane, which must rule before this
    lever may touch it.
+   **Status NWPP-NEXT-19 (2026-10-02):** the `NWPP_external` node and
+   seam-derived border links are wired, default-off; an empty priced build is
+   now refused (it used to zero interchange silently). Census
+   (`docs/records/nwpp/FINDING-nwppnext19-price-census-phase0-2026-10-02.md`):
+   CAISO coupling is the larger missing variance component. NOT solved: owner
+   card "Fix both, then solve" — CAISO seam gross → net load shape, WECC_CAN
+   anchor (peak-only Mid-C, $12–38 above BPAT) re-derived or scheduled — then
+   7 shards. `gas_daily_shape` is `R` for NWPP (HH is not the NW gas signal).
 3. **NWPP-57 — WRAP adequacy.** `[FABLE]`. Card **N7**: the footprint has no
    capacity market (the six capacity-auction rows are `.` in both lanes in the
    seed), and the live forward construct is the Western Resource Adequacy
