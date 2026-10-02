@@ -295,10 +295,27 @@ class SolveEpochScopeTest(unittest.TestCase):
     def tearDown(self):
         S.SOLVE_EPOCHS = self.saved
 
-    def test_the_ledger_is_empty_at_landing(self):
-        """Owner ruling Q54 row 4 — the D65-B-R batch is D77's re-solve."""
-        self.assertEqual(self.saved, ())
+    def test_the_default_config_carries_no_epoch(self):
+        """Every declared epoch is scoped; none reaches the pinned default key."""
         self.assertEqual(S.applicable_epochs(ScenarioConfig()), [])
+        ids = [e.id for e in self.saved]
+        self.assertEqual(len(ids), len(set(ids)))
+
+    def test_the_w0_denominator_epoch_reaches_only_its_backcast_isos(self):
+        """2026-10-02c (closeout-W0 D-1): the ISOs where the companion is live."""
+        for iso in ("MISO", "NEISO", "NWPP", "PJM", "SOCO"):
+            self.assertIn(
+                "2026-10-02c",
+                S.applicable_epochs(ScenarioConfig(iso=iso, mode="backcast")),
+            )
+        for iso in ("ERCOT", "CAISO", "NYISO", "SPP"):
+            self.assertNotIn(
+                "2026-10-02c",
+                S.applicable_epochs(ScenarioConfig(iso=iso, mode="backcast")),
+            )
+        self.assertEqual(
+            S.applicable_epochs(ScenarioConfig(iso="SOCO", mode="forecast")), []
+        )
 
     def test_an_unscoped_epoch_reaches_every_config(self):
         S.SOLVE_EPOCHS = (S.SolveEpoch(id="e", cause="c"),)

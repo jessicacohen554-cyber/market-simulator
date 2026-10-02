@@ -570,6 +570,7 @@ def _reliability_floor_layup_shares(
 
     from market_sim.data.outages import (
         BINS_CSV_DEFAULT,
+        dispatched_bin_exit_year,
         dispatched_bin_live_year,
         lp_bin_capacity_index,
         unit_layup_removed_fractions,
@@ -596,6 +597,11 @@ def _reliability_floor_layup_shares(
             ],
             np.asarray(fleet_arrays.pmax, dtype=float),
             live_year=dispatched_bin_live_year(
+                config, getattr(config, "weather_year", None) or year
+            ),
+            # closeout-W0 (desk ruling D-1): the same time-weighted roster the
+            # outage share divides by.
+            exit_year=dispatched_bin_exit_year(
                 config, getattr(config, "weather_year", None) or year
             ),
         )

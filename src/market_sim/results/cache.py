@@ -76,6 +76,27 @@ human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-10-02c — closeout-W0 denominator fix (desk ruling D-1): the
+dispatched-bin outage denominator is TIME-WEIGHTED for in-year exit cohorts.
+KEY-MOVING for backcast MISO / NEISO / NWPP / PJM / SOCO, through the first
+``solve_surface.SolveEpoch``.** Record:
+``docs/records/governance/closeout-2026-10/RESULT-closeout-w0-denominator-fix-2026-10-02.md``.
+WHAT CHANGED (code, no field): with ``unit_outage_dispatched_bin_denominator``
+on, ``outages.lp_bin_capacity_index(exit_year=)`` adds a monthly entry for any
+bin holding an exit cohort that retires inside the solve year before December,
+and the outage accumulators (std / short / partial / lay-up / maxgen) divide
+that bin hour by hour by the capacity the COD ramp keeps online. Before, the
+cohort's ``pmax`` sat in the denominator all year and diluted the survivors'
+measured derate after its exit month (SOCO 2022 Scherer 6257: units 1-3
+Feb-Dec availability 0.616 -> 0.519, -2.01 TWh available energy). WHAT IS
+INVALIDATED: backcast bundles of those five ISOs (the ISOs where the
+companion is live, W0 RESULT §4); zero-LP on the keeper recipes the fleet moves
+in PJM 2019-2020, NWPP 2020, MISO 2020-2021 and 2023-2024, SOCO 2022. WHAT
+IS NOT: every forecast; ERCOT (never armed), CAISO / NYISO / SPP (the companion
+yields to their alternative denominator); NEISO is re-keyed conservatively but
+its keeper recipe is byte-identical in all seven years, as is every ISO-year
+with no in-year partial exit.
+
 **Epoch 2026-10-02 (b) — closeout NYISO anchor re-derive: NYISO's
 ``GAS_OFFER_MARGIN_ANCHOR_BY_ISO`` / ``GAS_OFFER_MARGIN_ANCHOR_BY_ZONE`` rows
 re-derived. KEY-MOVING for NYISO only; not a same-key invalidation.** Rule 23
