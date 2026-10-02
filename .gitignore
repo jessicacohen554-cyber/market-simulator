@@ -3990,3 +3990,6 @@ results/calibration/_rcaiso28/
 
 # PJM-NEXT-18: year-isolated diagnostic keeper replays (never on main; rule 29(c)/32(d)).
 results/calibration/pjmnext18_rp_*/
+
+# R-ERCOT-24 per-year legs (rule 29(c)/32(d)); composed into r_ercot24_span. Provenance (rule 33(d)): see keepers/ERCOT.json r_ercot24_extension.
+results/calibration/r_ercot_24_20*/
