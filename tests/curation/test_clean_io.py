@@ -74,6 +74,7 @@ ALL_DATATYPES = [
     "nyiso-som-hub-fuel-annual",
     "reserve-requirements",
     "som-competitive-conduct",
+    "stb-coal-loadings",
     "storage-as-awards",
     "storage-soc-bounds",
     "capacity-market-demand-curve",

@@ -1,0 +1,168 @@
+{
+ "arm": {
+  "2021": "nyisonext34_2021",
+  "2022": "nyisonext34_span",
+  "2023": "nyisonext34_span",
+  "2024": "nyisonext34_span",
+  "2025": "nyisonext34_span"
+ },
+ "keeper": {
+  "2021": "nyisonext26p_2021",
+  "2022": "nyisonext26p_span",
+  "2023": "nyisonext26p_span",
+  "2024": "nyisonext26p_span",
+  "2025": "nyisonext26p_span"
+ },
+ "years": {
+  "2021": {
+   "G2_generator_hours": 901176,
+   "G2_pass": true,
+   "G3_max_zone_demand_dgwh": 0.0,
+   "G3_slack_dgwh": 0.0,
+   "G3_pass": true,
+   "G5_new_d4_fail_gwh": {},
+   "G5_pass": true,
+   "G6b_offcap_high_oil_days": 10,
+   "G6b_sum_abs_err_vs_rt": {
+    "keeper": 246.7,
+    "arm": 231.6
+   },
+   "reported_cap_binding_high_oil_sum_abs_err_vs_rt": {
+    "keeper": 64.4,
+    "arm": 68.8
+   },
+   "G7_c3a": {
+    "keeper": 3.4,
+    "arm": 4.4
+   },
+   "G7_c3b": {
+    "keeper": 0.118,
+    "arm": 0.118
+   },
+   "G7_downgraded": [],
+   "G7_pass": true
+  },
+  "2022": {
+   "G2_generator_hours": 938592,
+   "G2_pass": true,
+   "G3_max_zone_demand_dgwh": 0.0,
+   "G3_slack_dgwh": 0.0,
+   "G3_pass": true,
+   "G5_new_d4_fail_gwh": {},
+   "G5_pass": true,
+   "G6b_offcap_high_oil_days": 17,
+   "G6b_sum_abs_err_vs_rt": {
+    "keeper": 748.3,
+    "arm": 625.5
+   },
+   "reported_cap_binding_high_oil_sum_abs_err_vs_rt": {
+    "keeper": 1240.7,
+    "arm": 1215.6
+   },
+   "G7_c3a": {
+    "keeper": -2.1,
+    "arm": -0.6
+   },
+   "G7_c3b": {
+    "keeper": 0.146,
+    "arm": 0.131
+   },
+   "G7_downgraded": [],
+   "G7_pass": true
+  },
+  "2023": {
+   "G2_generator_hours": 870936,
+   "G2_pass": true,
+   "G3_max_zone_demand_dgwh": 0.0,
+   "G3_slack_dgwh": 0.0,
+   "G3_pass": true,
+   "G5_new_d4_fail_gwh": {},
+   "G5_pass": true,
+   "G6b_offcap_high_oil_days": 8,
+   "G6b_sum_abs_err_vs_rt": {
+    "keeper": 218.7,
+    "arm": 193.1
+   },
+   "reported_cap_binding_high_oil_sum_abs_err_vs_rt": {
+    "keeper": 0.0,
+    "arm": 0.0
+   },
+   "G7_c3a": {
+    "keeper": 0.4,
+    "arm": 1.2
+   },
+   "G7_c3b": {
+    "keeper": 0.13,
+    "arm": 0.123
+   },
+   "G7_downgraded": [],
+   "G7_pass": true,
+   "G6a_feb2023_pct_vs_rt": {
+    "keeper": -9.69,
+    "arm": -5.62
+   }
+  },
+  "2024": {
+   "G2_generator_hours": 896232,
+   "G2_pass": true,
+   "G3_max_zone_demand_dgwh": 0.0,
+   "G3_slack_dgwh": 0.0,
+   "G3_pass": true,
+   "G5_new_d4_fail_gwh": {},
+   "G5_pass": true,
+   "G6b_offcap_high_oil_days": 4,
+   "G6b_sum_abs_err_vs_rt": {
+    "keeper": 167.0,
+    "arm": 167.5
+   },
+   "reported_cap_binding_high_oil_sum_abs_err_vs_rt": {
+    "keeper": 39.9,
+    "arm": 51.7
+   },
+   "G7_c3a": {
+    "keeper": -2.6,
+    "arm": -2.0
+   },
+   "G7_c3b": {
+    "keeper": 0.126,
+    "arm": 0.13
+   },
+   "G7_downgraded": [],
+   "G7_pass": true
+  },
+  "2025": {
+   "G2_generator_hours": 848064,
+   "G2_pass": true,
+   "G3_max_zone_demand_dgwh": 0.0,
+   "G3_slack_dgwh": 0.0,
+   "G3_pass": true,
+   "G5_new_d4_fail_gwh": {
+    "(2025, 'unit-conduct', 'nyiso_gas_commitment_bridge \u00d7 CC_REGULAR', '55405')": 5.6
+   },
+   "G5_pass": false,
+   "G6b_offcap_high_oil_days": 12,
+   "G6b_sum_abs_err_vs_rt": {
+    "keeper": 336.2,
+    "arm": 294.9
+   },
+   "reported_cap_binding_high_oil_sum_abs_err_vs_rt": {
+    "keeper": 316.8,
+    "arm": 379.1
+   },
+   "G7_c3a": {
+    "keeper": -9.6,
+    "arm": -8.3
+   },
+   "G7_c3b": {
+    "keeper": 0.161,
+    "arm": 0.154
+   },
+   "G7_downgraded": [],
+   "G7_pass": true
+  }
+ },
+ "G6a_pass": true,
+ "G6b_years_improved": 4,
+ "G6b_pass": true,
+ "all_pass": false
+}

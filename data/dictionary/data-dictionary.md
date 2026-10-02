@@ -125,6 +125,7 @@ snapshot).
 | coal-mining-ppi | national (BLS PPI, coal) | n/a |
 | coal-stocks | national (EIA-923 Schedule 2, by plant) | n/a |
 | coal-receipts | national (EIA-923 Page 5, by plant) | n/a |
+| stb-coal-loadings | national (STB EP 724, by carrier x region) | n/a |
 | carbon-auction-results | — | n/a |
 | eia-aeo-fuel-prices | — | n/a |
 | ira-credit-parameters | — | n/a |
@@ -1386,6 +1387,26 @@ plant x rank x month x purchase type (national). Schema:
 | `plant_name` | `string` | `none` | yes | EIA plant name, carried for traceability only. |
 | `plant_state` | `string` | `none` | yes | Two-letter state postal code of the plant. |
 | `balancing_authority_code` | `string` | `none` | yes | EIA-reported balancing authority (e.g. MISO, PJM). Provenance only - ISO membership is resolved from the plant registry, not from this column, because BA code and modelled ISO zone disagree at several seams. Absent in vintages before 2020. |
+
+## stb-coal-loadings
+
+Weekly Class I coal unit-train loadings, the carrier's filed plan and the
+realised loadings, by carrier x coal production region (national, 2017-03
+onward). Schema:
+[`schema/stb-coal-loadings.schema.yaml`](schema/stb-coal-loadings.schema.yaml).
+
+- **Keys:** `carrier`, `region`, `measure`, `week`
+- **Reconciles:** STB EP 724 consolidated rail service workbook, Category 9
+  (`data/raw/stb-ep724/`). A rail-service condition, never a burn target;
+  intake-only (SPP-108).
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `carrier` | `string` | `none` | no | Reporting Class I railroad as the STB labels it (BNSF, UP, CSX, NS, CN, CP, CPKC). |
+| `region` | `string` | `none` | no | Coal production region, title-cased so the carriers' spelling variants join (Powder River Basin, Illinois Basin, Uinta Basin, Northern / Central / Southern Appalachia, Other). |
+| `measure` | `string` | `none` | no | plan - the carrier's filed weekly loadings plan ("Loadings Plan"); actual - the carrier's realised loadings for the week ("Loadings Average"). |
+| `week` | `datetime64[ns]` | `date` | no | Reporting week as dated in the STB workbook column header (week-ending Wednesday filing date). |
+| `value` | `float64` | `count` | no | Unit trains (or carloads, as the carrier reports) for the week, as filed. |
 
 ## nyiso-reserve-requirements
 
