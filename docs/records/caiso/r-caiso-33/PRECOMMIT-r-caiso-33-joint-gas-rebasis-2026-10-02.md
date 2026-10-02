@@ -192,3 +192,52 @@ is AST-identical; `legitimacy_diagnostics.py` only adds the PJM bridge mechanism
 One additive output: every solve now also writes `hourly/unit_marginal_<year>.parquet` (rule 15). CAISO's cache
 key does not move (the 10 CAISO solve-surface rows hash identically); only the informational `solve_surface.json`
 fingerprint changes. **No control solve is earned; the committed keeper is the control.**
+
+## 10. Stage 1 result: G-RT (§4.1) FAILED; owner ruling; AMENDMENT A (hour-grain gate), pre-registered
+
+**Stage 1 ran.** DAM bids 2023–25 re-fetched (1,095 of 1,096 days; 2023-06-01 is the known archive hole), reduced
+store rebuilt, derive re-run on composite + 0.46 (`stage1/rebased/`) and, as a same-corpus control, on the bare
+composite (`stage1/control/`). Both pass G1–G4 on the consumed classes.
+
+**G-RT, as pre-registered, FAILED** (`roundtrip_gate.json` against the keeper artifact; `roundtrip_gate_vs_control.json`
+against the control). Against the control: 3 of 18 per-year cells outside ±$0.75/MWh (CC peak 2023 −1.32; CT econ_low
+2024 −1.10; CT peak 2023 −0.90); all 6 pooled cells pass (max 0.66). Per §4.1 the solve did **not** proceed.
+
+**Corpus drift, found by the control, independent of the re-basis.** The re-fetched OASIS corpus does not reproduce
+the keeper's class partition: `st_cut` 11.738 → 11.190, buckets CC 11.94 → 12.39 GW, CT 7.39 → 5.93 GW, ST_GAS
+2.56 → 4.77 GW (ST_GAS G1 1.67, FAIL; report-only, not consumed). Consumed bands on the bare composite move
+≤ 0.022 (CC 1.066/1.072/1.386 → 1.067/1.071/1.364; CT 1.103/1.146/1.154 → 1.098/1.134/1.160). Cause not identified
+(OASIS re-publication, retention, or a parser change since 2026-09-06); disclosed, not adjudicated here.
+
+**Owner ruling** (decision card, 2026-10-02): **"Re-gate at hour grain, then solve."** Not selected: owner override on
+the pooled pass; resolve the corpus drift first; close link 15.
+
+### Amendment A — G-RT-H, written and pushed BEFORE any of its numbers were computed
+
+Why the §4.1 gate is the wrong instrument (stated as the reason for the amendment, not as its verdict): it evaluated
+a per-hour MEDIAN of ratios at an ANNUAL-MEAN gas price, so its error grows with within-year gas variance, which is
+where all three misses sit. The derive's own estimation unit is the resource-hour. The question link 15 asks is:
+*does the re-based surface, applied the way the solve applies it, price the measured bids at least as faithfully as
+the keeper's surface applied the way the keeper's solve applies it?*
+
+For each consumed class (CC_REGULAR, CT_PEAKER), band (econ_low, econ_high, peak) and year (2023–25), on the
+re-fetched corpus with the re-fetched classification (the control's partition, identical in both arms because the
+classifier is shift-invariant):
+
+- per resource-hour, model offer = `m · HR · (g_h + a + 0.057·P_y) + VOM`, with `g_h` the flow-day composite and
+  `a = 0.46` — exactly the solve's pricing;
+- residual `r = model offer − band price` (the derive's `_band_price`);
+- statistic = cap-weighted median over resources of the resource-year median `r` (the derive's own aggregation).
+
+Two arms: **K** = keeper pooled multiplier (from `cd589798`), **R** = re-based pooled multiplier (`stage1/rebased/`).
+
+**PASS iff both:**
+1. `|stat_R| ≤ 0.75 $/MWh` in every class × band, pooled over 2023–25 (the surface the solve consumes);
+2. `|stat_R| ≤ |stat_K| + 0.25` in every class × band × year (the re-basis is never materially worse than the
+   keeper in any year; 0.25 is a third of the original tolerance, fixed here).
+
+Reported, not gated: the same table on the control's pooled multiplier (bare composite, i.e. the pre-repair
+convention on today's corpus). **FAIL ⇒ link 15 closes with the keeper unchanged; no re-grain, no further gate.**
+PASS ⇒ the next session commits `stage1/rebased/` into `data/raw/_validation-source/`, re-syncs
+`ST_GAS_PEAK_MEASURED_HR_MULT_BY_ISO["CAISO"]` to the re-based `CT_PEAKER.bands.peak` (its stated identity), and
+launches the seven solve shards (§5 stage 2; promotion rule §4.1).

@@ -44,13 +44,19 @@ def main() -> int:
     """Compare keeper vs re-based multipliers in $/MWh; write the gate table; exit 1 on FAIL."""
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--keeper-sha", default="cd5897987106193b34b84c5f4bb4a7c9bb1e4760")
+    ap.add_argument("--baseline-json", default=None)
+    ap.add_argument("--new-json", default=str(REPO / ARTIFACT))
+    ap.add_argument("--out", default=str(OUT))
     args = ap.parse_args()
-    old = json.loads(
-        subprocess.check_output(
-            ["git", "show", f"{args.keeper_sha}:{ARTIFACT}"], cwd=REPO
+    if args.baseline_json:
+        old = json.loads(Path(args.baseline_json).read_text())
+    else:
+        old = json.loads(
+            subprocess.check_output(
+                ["git", "show", f"{args.keeper_sha}:{ARTIFACT}"], cwd=REPO
+            )
         )
-    )
-    new = json.loads((REPO / ARTIFACT).read_text())
+    new = json.loads(Path(args.new_json).read_text())
     basis = json.loads(
         (REPO / "docs/records/caiso/r-caiso-33/transport_basis.json").read_text()
     )
@@ -111,12 +117,12 @@ def main() -> int:
         "pass": bool(ok),
         "rows": rows,
     }
-    OUT.write_text(json.dumps(doc, indent=1) + "\n")
+    Path(args.out).write_text(json.dumps(doc, indent=1) + "\n")
     for r in rows:
         print(
             f"{r['class']:11s} {r['band']:9s} {str(r['year']):6s} keeper {r['keeper_usd_mwh']:7.2f}  rebased {r['rebased_usd_mwh']:7.2f}  d {r['delta']:+5.2f}  {'ok' if r['pass'] else 'FAIL'}"
         )
-    print("G-RT", "PASS" if ok else "FAIL", "->", OUT)
+    print("G-RT", "PASS" if ok else "FAIL", "->", args.out)
     return 0 if ok else 1
 
 
