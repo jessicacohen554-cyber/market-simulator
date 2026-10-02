@@ -3614,3 +3614,44 @@ units CEMS shows offline over its own window (rule 17). Owner rulings: arm `gas_
 shards, one launch. Result: C3a 2019 +10.03 % → +7.9 % FAIL → PASS; no status regresses; **full span NOT-YET →
 CALIBRATED** (C3c ledgered); train tier CALIBRATED. `neiso-118-canal-ct` pruned (rule 35). Record:
 `docs/records/neiso/neiso119/RESULT-neiso119-2026-09-26.md`. **Next shorthand: `neiso-120`.**
+
+## 2026-10-02 — closeout-B W0 phase 3: keeper 2026-10-02-w0-neiso (W0 EIA-860 settlement re-solve), CALIBRATED → CALIBRATED, owner "Override + promote"
+
+**What changed.** The neiso119 recipe (`neiso119_span`) was re-solved year by year (rule 36) with the ten W0 EIA-860 settlement backcast defaults (owner ruling R-2; PRECOMMIT `docs/records/governance/closeout-2026-10/PRECOMMIT-closeout-b-w0-phase3-2026-10-02.md`).
+- All seven legs are at `306f2c00`. Their LP inputs are byte-identical through #7047 and #7049; the proof is `docs/records/governance/closeout-2026-10/W0-phase3/KEPT-LEG-INERT-PROOF-2026-10-02.md`.
+- Zero DOF.
+- `config_partition_overrides` pins only the per-year derived `gas_offer_margin_anchor` (`--check` OK).
+
+**The §3b kill and the owner ruling.** The PRECOMMIT §3b kill (do not promote if any year's C3a moves more than 2 pp against neiso119_span) tripped on 2025: +6.6 → +3.8 %, −2.8 pp.
+- Zero-LP split (`W0-phase3` denominator census, NEISO 2025):
+  - **E.1 seasonal ratings:** +2.12 TWh of available CT/CC (down).
+  - **Denominator companion:** +1.64 TWh of CC_REGULAR (down). Exit-cohort dilution is exactly 0.
+  - **Status scope and exit carries:** −1.45 TWh, which drops the carried Schiller and Androscoggin EC cohorts (up).
+  - **COD fallback:** −1.22 TWh (up).
+  - **Standby oil:** +0.91 TWh.
+  - **Data drift, not W0:** a LIVE +1.16 TWh rise in 2025 injected must-run (complete 2025 EIA-923).
+- **Owner ruling (decision card 2026-10-02, relayed by the desk): "Override + promote".**
+
+**Scores.**
+
+| Year | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 |
+|---|---|---|---|---|---|---|---|
+| C3a vs RT, before | +7.9 % | −0.2 % | +4.0 % | +3.5 % | −1.9 % | +1.0 % | +6.6 % |
+| C3a vs RT, after | +6.8 % | −1.2 % | +2.8 % | +2.5 % | −3.0 % | +0.5 % | +3.8 % |
+
+- Every C3a stays PASS.
+- No criterion changes status; C3c stays a ledgered caveat.
+- The carried exceptions ledger drops `price_tail:2024`, because C3c 2024 now re-measures PASS (model 0 h vs RT 8 h above $300; small-count |Δ| ≤ 10 h).
+- Determination: **CALIBRATED → CALIBRATED**.
+
+**Census (in-bundle `fleet_census_<y>.json`).** Total thermal summer is −6.4 to −10.7 % vs EIA-860 in every year, OUTSIDE. The deficit is mostly "rating differs":
+- CC: 568 (−527 MW, 2019) and 60903 (−386 MW, 2025).
+- OIL: 1599 and 1507.
+- ST_GAS: a small base (10883, 54236).
+
+**Owner rulings recorded here, 2026-10-02.**
+- **C3c, 2019–20 reserve-requirement gaps:** "Sign + adjacent-year carry". If carrying them changes the solve surface, it is a separate arm, not part of this promotion.
+
+**Open NEISO-lane items.**
+- The 2019 oil heat-rate share is 0.
+- Impossible oil heat rates remain in the keeper.
