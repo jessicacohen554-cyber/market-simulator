@@ -394,6 +394,12 @@ FUEL_TYPE_MAP: dict[str, int] = {
     # excluded from generation-mix scoring (it is avoided load, not generation —
     # see results.export). Falls outside every reserve/AS/renewable/RPS fuel set,
     # so it is dispatch-only and never evolves. data.nyiso_demand_response.
+    "emergency_band": 17,  # SPP MMU economic-to-emergency-max slice, pooled per
+    # zone and offered at the load-shed price minus epsilon (SPP-107,
+    # ScenarioConfig.spp_mmu_offer_repair; data.spp_mmu_unavailability). Same
+    # pseudo-generator treatment as demand_response: heat_rate 0 /
+    # emission_rate 0, outside every reserve/AS/renewable/RPS fuel set,
+    # excluded from generation-mix scoring, dispatch-only, never evolves.
 }
 
 # Inverse of FUEL_TYPE_MAP: fuel type name indexed by its integer code.

@@ -15239,3 +15239,16 @@ MyNYISO access; item 6 only on the nyiso-179 re-open condition; item 1 is below 
 **Census (rated-capacity rebuild at the W0 posture, phase 2).** Total thermal is −5.1 to −5.8 % summer against EIA-860, OUTSIDE the 0.5 % tolerance. CC is −12.6 to −13.9 %, wholly "rating differs". The two named plants are Selkirk Cogen 10725 (−431 MW) and Linden Cogen 50006 (−211 MW): CHP / CAMPD-guard ratings. Winter OIL −8 to −9 % is the E.1 cap (non-CC winter ≤ max(nameplate, summer)). NUCLEAR winter +30.4 % in 2021 is the Indian Point 3 carry. These are residuals for the NYISO lane, not tuned (rule 23). Ledgers: `W0-census/NYISO/fleet_census_<Y>_w0.json`.
 
 The bundle's own `fleet_census_<Y>.json` (read from `unit_marginal`) reports availability-scaled July/January maxima; that reading understates rated capacity for units on a month-long derate.
+
+## 2026-10-02 — NYISO-NEXT-34: open item 3 is Feb 3–4 2023 oil burn; measured-mix arm solved, held
+
+- **Phase 0** (zero LP): the 2023 winter miss is February only, and February is Feb 3–4. CAMPD shows a fleet oil share
+  of 0.43/0.49 while the keeper prices the $3.52 Z6 weekend print. The parity cap can only lower fuel cost. Off-cap
+  high-oil days under-price in all five years. Record: `docs/records/nyiso/FINDING-nyiso-next34-feb2023-oilburn-phase0-2026-10-02.md`.
+- **Arm:** `dual_fuel_measured_oil_burn=true` (the soco-96 mechanism; zero DOF). PRECOMMIT #7022, five shards at `00648e6e`.
+- **Result:** G-5 FAIL (2025 bridge D-4 row 5.6 GWh). C3a 2021..2025 +4.4 / −0.6 / +1.2 / −2.0 / −8.3; Feb 2023 −9.7 → −5.6 %.
+  The cap-binding half over-prices MLK 2025 (Jan 17–19). That carries 0.49 pt of the 2025 gain and all 28 new C3c hours
+  (a mistimed count match). Registered as probes `2026-10-02-nyisonext34-oilburn-probe` / `-2021-probe` on held draft PR #7053 (not on main, E13).
+- **Card:** recommend HOLD (B) and test an off-cap-scoped variant next (NEXT-35). The arm was solved on the `nyisonext26p` recipe, which the W0 keeper `2026-10-02-w0-nyiso` superseded mid-lane, so it is not promotable; NEXT-35 re-bases on `w0_nyiso_span`.
+- **Benchmark:** registration re-based the NYISO `bench/` parts on EIA-923 Final 2025 (#7015; the parts ride #7053). Keeper re-scored: CALIBRATED, C3a unchanged.
+Record: `docs/records/nyiso/RESULT-nyiso-next34-measured-oil-burn-2026-10-02.md`.

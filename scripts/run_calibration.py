@@ -4488,6 +4488,20 @@ def run_year(
         # Row-parallel with the fleet list; DR blocks carry heat_rate 0 so their
         # fuel frac is inert (frac 1.0, matching the virtual-unit convention).
         fuel_fracs = fuel_fracs + [1.0] * len(dr_units)
+    # SPP-107 economic-to-emergency pool (config.spp_mmu_offer_repair, SPP-only,
+    # default off): one scarcity-priced block per zone at the LP's own shed
+    # price minus epsilon, appended like the DR blocks above; its hourly MW is
+    # stamped inside generators_to_fleet_arrays (_apply_spp_mmu_pool).
+    if getattr(config, "spp_mmu_offer_repair", False) and iso == "SPP":
+        from market_sim.data.spp_mmu_unavailability import (
+            build_spp_mmu_pool_generators,
+        )
+
+        pool_units = build_spp_mmu_pool_generators(
+            config, iso, fleet, shed_penalty_voll(config, iso_config)
+        )
+        fleet = fleet + pool_units
+        fuel_fracs = fuel_fracs + [1.0] * len(pool_units)
     # CT_PEAKER reliability must-run floor: pass the peakers' CAMPD/CEMS hourly
     # on/off shape so the floor starts/stops with the real unit (zero in every
     # hour the plant did not report load), instead of being smeared flat. The

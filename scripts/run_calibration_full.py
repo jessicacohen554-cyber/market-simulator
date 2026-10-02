@@ -284,6 +284,10 @@ def _model_class_for_unit(unit_id: str, fuel: str, eff_bin: str) -> str:
         return "oil"
     if fuel == "biomass":
         return "biomass"
+    if fuel == "emergency_band":
+        # SPP-107 MMU economic-to-emergency pool (spp_mmu_offer_repair): its own
+        # class, so its scarcity-hour MWh never mixes into a scored class.
+        return "emergency_band"
     return "OTHER"
 
 

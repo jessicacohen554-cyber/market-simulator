@@ -148,11 +148,11 @@ Retests with new evidence: `spp_commitment_posture` (R) paired with the since-so
 
 | # | Step | Gate | Reading | P | LP |
 |---|---|---|---|---|---|
-| 0a | Shadow-score C1 2021/22 on the EIA-930-aligned basis with the SPP-88 gas-coverage correction | C1 2021/22 | CC 2021 ≥ −8.0; PRB 2021/22 within ±8.0 | med (PRB) / low–med (CC 2021); needs the W5 ruling | 0 |
+| 0a | Shadow-score C1 2021/22 on the EIA-930-aligned basis with the SPP-88 gas-coverage correction — **DONE 2026-10-02 (SPP-108):** PRB 2021/22 +3.97/+3.59 (PASS), CC 2021 −8.03 pro rata (FAIL by 0.05; PASS only all-on-CC), CC 2022 FAIL every basis, PRB 2020 → FAIL, train 0 moves; owner ruled W5 *hold, measure all ISOs* | C1 2021/22 | CC 2021 ≥ −8.0; PRB 2021/22 within ±8.0 | PRB met / CC not met | 0 |
 | 0b | CT pmax basis vs `SUMMER_CLASS_DERATE` audit (W0 double-count item) | hygiene | one-line fix or none | n/a | 0 |
-| 1 | SPP-107: MMU offer-side unavailability with its two definitional repairs, 7 shards | C4 gas 2021, PRB 2023/24, train C3a | unserved ≤ keeper; C4 2021 ≤ 0.30; no train flip | high (C4 2021) | 7 |
+| 1 | SPP-107: MMU offer-side unavailability with its two definitional repairs, 7 shards — **DONE 2026-10-02, PROMOTED** (keeper `2026-10-02-spp-107-mmu-repair`; unserved 862/136 → 443/44 MWh, C4 2021 PASS, PRB 2023/24 +1.08/+1.35, no train flip) | C4 gas 2021, PRB 2023/24, train C3a | unserved ≤ keeper; C4 2021 ≤ 0.30; no train flip | high (C4 2021) | 7 |
 | 2 | Pairing span: `spp_commitment_posture` + SPP-107, one PRECOMMIT | train C3a, C3b 2020 | 2024 C3a within ±10 %; 2020 C3b falls (direction) | med / low | 7 |
-| 3 | Owner downloads STB EP 724 → SPP-44 re-measure; if 2022 PRB loadings-vs-plan is anomalous, PRECOMMIT the RR502-form adder keyed to it | C1/C4 2022 | 2022 is the only anomalous year | low–med | 0 → 7 |
+| 3 | Owner downloads STB EP 724 → SPP-44 re-measure; if 2022 PRB loadings-vs-plan is anomalous, PRECOMMIT the RR502-form adder keyed to it — **DONE 2026-10-02 (SPP-108), FAILED AT ZERO LP:** series fetched + intaken (`stb-coal-loadings`); 2022 anomalous (0.856 vs 1.007–1.093), 2021 not; but no zero-DOF energy limit binds physically (fleet inventory min 1.7 d; per-plant only via a lagged-delivery cap measured deliveries exceed by 17–34 %) → adder = 0 without a fitted safety stock; no shards | C1/C4 2022 | 2022 is the only anomalous year | failed | 0 |
 | 4 | West/East partition ruling (SPP-93) | zonal spread, C3b 2020 floor half | C-3 margin repaired on measured East capability | low | owner-gated |
 | 5 | Ledger C3a 2019/20, C3b 2020 (commitment-state), C1 CC/C4 2022 if step 3 fails, C3c 2023–25 | — | — | — | 0 |
 
@@ -319,6 +319,14 @@ Not free, do not pursue (recorded so nobody re-asks): daily NW gas hubs (Sumas/S
 | R-15 | **MISO: transcribe the Max Gen declaration history (owner downloads the OATI PDF); keep C1 ST_GAS 2019 routed.** | 0b; no lever for the 3 GWh miss. |
 | R-16 | No requester-pays AWS data (CAISO OASIS history). | The 2019–21 CAISO fold stays data-limited. |
 | R-17 | **No owner downloads today — proceed without them** (owner, 2026-10-02, desk session). | Deferred, not cancelled: STB EP 724 rail (SPP step 3), MISO Max Gen OATI PDF (0b), ERCOT account intake (R-7). Lanes proceed; each deferred object is written as a DRAFT data-limited ledger row whose route is the intake. |
+| R-18 | **ERCOT L1: override K2 and promote** (owner decision card, 2026-10-02: "Override + promote"). | Makes 2022 and 2025 CALIBRATED. W0 re-composes from the closeout-ERCOT L1 legs and promotes. |
+| R-19 | **NEISO §3b: override and promote the W0 re-solve** (owner card: "Override + promote"). | Part of the move is 2025 EIA-923 data drift. |
+| R-20 | **SOCO W0 (#7055): promote** (owner card: "Promote"). | CALIBRATED-WITH-CAVEATS → NOT-YET accepted on structure (rule 1). Next step: root-cause the CC_REGULAR over-run. |
+| R-21 | **Capacity census signed for NYISO, CAISO and ERCOT** (owner card: "Sign all three"). | Every OUTSIDE family has a named cause and none is tuned. |
+| R-22 | **R-4 coal basis: 930-aligned A** (owner card). | |
+| R-23 | **PJM Elliott counts in full and should be simulated** (owner, verbatim: "It counts but we should be able to simulate it?"). | No one-event caveat. PJM lever: model cold-correlated forced outages and gas curtailment structurally, after the W0 PJM keeper lands. |
+| R-24 | **NEISO: sign C3c, and fill the 2019–20 reserve-requirement gaps by adjacent-year carry** (owner card). | |
+| R-25 | **IMM licence: raw data stays out. ERCOT DAM-proxy census: chartered. Census gate: presence-only** (owner card: "All as recommended"). | |
 
 The queue below is retained as the record of what was asked; items ruled above are marked.
 

@@ -1,0 +1,828 @@
+{
+ "probe": "scripts/probes/_rcaiso33_transport_basis.py",
+ "keeper": "2026-09-30-caiso-r20-overnight (rcaiso20_A_span)",
+ "keeper_adder": 0.46,
+ "keeper_composite_annual_mean": {
+  "2019": 3.281,
+  "2020": 2.552,
+  "2021": 4.918,
+  "2022": 8.958,
+  "2023": 5.2,
+  "2024": 2.491,
+  "2025": 2.986
+ },
+ "A_census_gauge": {
+  "by_year": {
+   "2018": {
+    "n3045": 4.172,
+    "composite": 3.055,
+    "n3050": 3.129,
+    "n3045_minus_composite_mean": 1.192,
+    "n3045_minus_composite_median": 0.789,
+    "n3045_minus_n3050_mean": 1.002,
+    "n3050_minus_composite_mean": 0.074
+   },
+   "2019": {
+    "n3045": 3.474,
+    "composite": 3.315,
+    "n3050": 2.804,
+    "n3045_minus_composite_mean": 0.617,
+    "n3045_minus_composite_median": 0.65,
+    "n3045_minus_n3050_mean": 0.741,
+    "n3050_minus_composite_mean": -0.511
+   },
+   "2020": {
+    "n3045": 3.196,
+    "composite": 2.548,
+    "n3050": 2.817,
+    "n3045_minus_composite_mean": 0.585,
+    "n3045_minus_composite_median": 0.582,
+    "n3045_minus_n3050_mean": 0.356,
+    "n3050_minus_composite_mean": 0.269
+   },
+   "2021": {
+    "n3045": 5.352,
+    "composite": 4.961,
+    "n3050": 4.419,
+    "n3045_minus_composite_mean": 0.23,
+    "n3045_minus_composite_median": 0.785,
+    "n3045_minus_n3050_mean": 0.875,
+    "n3050_minus_composite_mean": -0.542
+   },
+   "2022": {
+    "n3045": 9.518,
+    "composite": 8.913,
+    "n3050": 7.703,
+    "n3045_minus_composite_mean": 0.605,
+    "n3045_minus_composite_median": 0.672,
+    "n3045_minus_n3050_mean": 1.815,
+    "n3050_minus_composite_mean": -1.21
+   },
+   "2023": {
+    "n3045": 7.027,
+    "composite": 5.198,
+    "n3050": 6.951,
+    "n3045_minus_composite_mean": 1.83,
+    "n3045_minus_composite_median": 1.199,
+    "n3045_minus_n3050_mean": 0.076,
+    "n3050_minus_composite_mean": 1.753
+   },
+   "2024": {
+    "n3045": 3.615,
+    "composite": 2.483,
+    "n3050": 3.378,
+    "n3045_minus_composite_mean": 1.132,
+    "n3045_minus_composite_median": 1.149,
+    "n3045_minus_n3050_mean": 0.237,
+    "n3050_minus_composite_mean": 0.895
+   },
+   "2025": {
+    "n3045": 4.284,
+    "composite": 2.989,
+    "n3050": 3.96,
+    "n3045_minus_composite_mean": 1.295,
+    "n3045_minus_composite_median": 1.28,
+    "n3045_minus_n3050_mean": 0.411,
+    "n3050_minus_composite_mean": 0.998
+   }
+  },
+  "pooled": {
+   "2023-25_median": 1.219,
+   "2023-25_mean": 1.419,
+   "2019-22_median": 0.65
+  }
+ },
+ "A_census_composition_2023_25": {
+  "n_plants": 16,
+  "share_by_ba": {
+   "BANC": 0.187,
+   "CISO": 0.355,
+   "IID": 0.058,
+   "LDWP": 0.317,
+   "TIDC": 0.085
+  },
+  "share_in_CISO": 0.355,
+  "plants": [
+   {
+    "plant_id": 55970,
+    "share": 0.187,
+    "name": "Cosumnes",
+    "utility": "Sacramento Municipal Util Dist",
+    "ba": "BANC"
+   },
+   {
+    "plant_id": 56476,
+    "share": 0.13,
+    "name": "Gateway Generating Station",
+    "utility": "Pacific Gas & Electric Co.",
+    "ba": "CISO"
+   },
+   {
+    "plant_id": 56532,
+    "share": 0.125,
+    "name": "Colusa Generating Station",
+    "utility": "Pacific Gas & Electric Co.",
+    "ba": "CISO"
+   },
+   {
+    "plant_id": 400,
+    "share": 0.109,
+    "name": "Haynes",
+    "utility": "Los Angeles Department of Water & Power",
+    "ba": "LDWP"
+   },
+   {
+    "plant_id": 56078,
+    "share": 0.074,
+    "name": "Walnut Energy Center",
+    "utility": "Turlock Irrigation District",
+    "ba": "TIDC"
+   },
+   {
+    "plant_id": 56046,
+    "share": 0.067,
+    "name": "Magnolia Power Project",
+    "utility": "City of Burbank Water and Power",
+    "ba": "LDWP"
+   },
+   {
+    "plant_id": 404,
+    "share": 0.066,
+    "name": "Scattergood",
+    "utility": "Los Angeles Department of Water & Power",
+    "ba": "LDWP"
+   },
+   {
+    "plant_id": 408,
+    "share": 0.062,
+    "name": "Valley (CA)",
+    "utility": "Los Angeles Department of Water & Power",
+    "ba": "LDWP"
+   },
+   {
+    "plant_id": 389,
+    "share": 0.058,
+    "name": "El Centro Hybrid",
+    "utility": "Imperial Irrigation District",
+    "ba": "IID"
+   },
+   {
+    "plant_id": 55985,
+    "share": 0.054,
+    "name": "Palomar Energy",
+    "utility": "San Diego Gas & Electric Co",
+    "ba": "CISO"
+   },
+   {
+    "plant_id": 57978,
+    "share": 0.036,
+    "name": "Lodi Energy Center",
+    "utility": "Northern California Power Agny",
+    "ba": "CISO"
+   },
+   {
+    "plant_id": 7315,
+    "share": 0.011,
+    "name": "Almond Power Plant",
+    "utility": "Turlock Irrigation District",
+    "ba": "TIDC"
+   },
+   {
+    "plant_id": 399,
+    "share": 0.011,
+    "name": "Harbor",
+    "utility": "Los Angeles Department of Water & Power",
+    "ba": "LDWP"
+   },
+   {
+    "plant_id": 422,
+    "share": 0.006,
+    "name": "Glenarm",
+    "utility": "City of Pasadena - (CA)",
+    "ba": "CISO"
+   },
+   {
+    "plant_id": 57027,
+    "share": 0.004,
+    "name": "Canyon Power Plant",
+    "utility": "City of Anaheim - (CA)",
+    "ba": "CISO"
+   },
+   {
+    "plant_id": 377,
+    "share": 0.002,
+    "name": "Grayson",
+    "utility": "City of Glendale - (CA)",
+    "ba": "LDWP"
+   }
+  ]
+ },
+ "B_plant_gauge": {
+  "spans": {
+   "2023-25": {
+    "CC_REGULAR": {
+     "n_plants": 4,
+     "mw": 2057,
+     "cap_w_median": 1.47,
+     "burn_w_median": 1.47,
+     "burn_w_mean": 1.68,
+     "p10_p50_p90": [
+      1.47,
+      1.6,
+      2.37
+     ]
+    },
+    "CT_PEAKER": {
+     "n_plants": 2,
+     "mw": 367,
+     "cap_w_median": 3.0,
+     "burn_w_median": 3.0,
+     "burn_w_mean": 1.89,
+     "p10_p50_p90": [
+      0.59,
+      1.66,
+      2.73
+     ]
+    },
+    "ALL_BINNED": {
+     "n_plants": 6,
+     "mw": 2425,
+     "cap_w_median": 1.47,
+     "burn_w_median": 1.47,
+     "burn_w_mean": 1.69,
+     "p10_p50_p90": [
+      0.89,
+      1.6,
+      2.82
+     ]
+    }
+   },
+   "2019-22": {
+    "CC_REGULAR": {
+     "n_plants": 4,
+     "mw": 2057,
+     "cap_w_median": 1.0,
+     "burn_w_median": 1.0,
+     "burn_w_mean": 1.09,
+     "p10_p50_p90": [
+      0.9,
+      0.97,
+      1.4
+     ]
+    },
+    "CT_PEAKER": {
+     "n_plants": 2,
+     "mw": 367,
+     "cap_w_median": 1.94,
+     "burn_w_median": 0.36,
+     "burn_w_mean": 0.84,
+     "p10_p50_p90": [
+      0.52,
+      1.15,
+      1.78
+     ]
+    },
+    "ALL_BINNED": {
+     "n_plants": 6,
+     "mw": 2425,
+     "cap_w_median": 1.0,
+     "burn_w_median": 1.0,
+     "burn_w_mean": 1.09,
+     "p10_p50_p90": [
+      0.62,
+      0.97,
+      1.76
+     ]
+    }
+   }
+  },
+  "by_year_class_burn_w_median": {
+   "CC_REGULAR": {
+    "2019": 0.73,
+    "2020": 0.9,
+    "2021": 1.17,
+    "2022": 1.35,
+    "2023": 2.1,
+    "2024": 1.43,
+    "2025": 1.47
+   },
+   "CT_PEAKER": {
+    "2019": 0.6,
+    "2020": 0.26,
+    "2021": 0.5,
+    "2022": 0.15,
+    "2023": 1.42,
+    "2024": -0.04,
+    "2025": 2.46
+   }
+  },
+  "plants_2023_25": [
+   {
+    "plant_id": 422,
+    "name": "Glenarm",
+    "cls": "CT_PEAKER",
+    "mw": 222.4,
+    "gap_median": 3.0,
+    "months": 36
+   },
+   {
+    "plant_id": 55985,
+    "name": "Palomar Energy",
+    "cls": "CC_REGULAR",
+    "mw": 581.4,
+    "gap_median": 2.64,
+    "months": 26
+   },
+   {
+    "plant_id": 56476,
+    "name": "Gateway Generating Station",
+    "cls": "CC_REGULAR",
+    "mw": 563.4,
+    "gap_median": 1.47,
+    "months": 32
+   },
+   {
+    "plant_id": 56532,
+    "name": "Colusa Generating Station",
+    "cls": "CC_REGULAR",
+    "mw": 640.0,
+    "gap_median": 1.47,
+    "months": 31
+   },
+   {
+    "plant_id": 57027,
+    "name": "Canyon Power Plant",
+    "cls": "CT_PEAKER",
+    "mw": 145.4,
+    "gap_median": 0.32,
+    "months": 26
+   },
+   {
+    "plant_id": 57978,
+    "name": "Lodi Energy Center",
+    "cls": "CC_REGULAR",
+    "mw": 273.0,
+    "gap_median": 1.72,
+    "months": 24
+   }
+  ]
+ },
+ "C_bid_implied_adder": {
+  "CC_REGULAR": {
+   "committed": {
+    "2023": {
+     "mult": 1.042,
+     "a_at_base_hr": 0.3,
+     "a_at_0.95_base_hr": 0.69
+    },
+    "2024": {
+     "mult": 1.022,
+     "a_at_base_hr": 0.1,
+     "a_at_0.95_base_hr": 0.34
+    },
+    "2025": {
+     "mult": 1.071,
+     "a_at_base_hr": 0.33,
+     "a_at_0.95_base_hr": 0.58
+    }
+   },
+   "econ_low": {
+    "2023": {
+     "mult": 1.063,
+     "a_at_base_hr": 0.45,
+     "a_at_0.95_base_hr": 0.84
+    },
+    "2024": {
+     "mult": 1.027,
+     "a_at_base_hr": 0.12,
+     "a_at_0.95_base_hr": 0.36
+    },
+    "2025": {
+     "mult": 1.085,
+     "a_at_base_hr": 0.39,
+     "a_at_0.95_base_hr": 0.65
+    }
+   },
+   "econ_high": {
+    "2023": {
+     "mult": 1.06,
+     "a_at_base_hr": 0.42,
+     "a_at_0.95_base_hr": 0.82
+    },
+    "2024": {
+     "mult": 1.099,
+     "a_at_base_hr": 0.45,
+     "a_at_0.95_base_hr": 0.71
+    },
+    "2025": {
+     "mult": 1.098,
+     "a_at_base_hr": 0.45,
+     "a_at_0.95_base_hr": 0.71
+    }
+   },
+   "peak": {
+    "2023": {
+     "mult": 1.306,
+     "a_at_base_hr": 2.17,
+     "a_at_0.95_base_hr": 2.65
+    },
+    "2024": {
+     "mult": 1.503,
+     "a_at_base_hr": 2.26,
+     "a_at_0.95_base_hr": 2.62
+    },
+    "2025": {
+     "mult": 1.457,
+     "a_at_base_hr": 2.1,
+     "a_at_0.95_base_hr": 2.45
+    }
+   }
+  },
+  "CT_PEAKER": {
+   "committed": {
+    "2023": {
+     "mult": 1.231,
+     "a_at_base_hr": 1.64,
+     "a_at_0.95_base_hr": 2.09
+    },
+    "2024": {
+     "mult": 1.173,
+     "a_at_base_hr": 0.78,
+     "a_at_0.95_base_hr": 1.06
+    },
+    "2025": {
+     "mult": 1.079,
+     "a_at_base_hr": 0.36,
+     "a_at_0.95_base_hr": 0.62
+    }
+   },
+   "econ_low": {
+    "2023": {
+     "mult": 1.1,
+     "a_at_base_hr": 0.71,
+     "a_at_0.95_base_hr": 1.12
+    },
+    "2024": {
+     "mult": 1.102,
+     "a_at_base_hr": 0.46,
+     "a_at_0.95_base_hr": 0.72
+    },
+    "2025": {
+     "mult": 1.14,
+     "a_at_base_hr": 0.64,
+     "a_at_0.95_base_hr": 0.92
+    }
+   },
+   "econ_high": {
+    "2023": {
+     "mult": 1.132,
+     "a_at_base_hr": 0.93,
+     "a_at_0.95_base_hr": 1.36
+    },
+    "2024": {
+     "mult": 1.184,
+     "a_at_base_hr": 0.83,
+     "a_at_0.95_base_hr": 1.11
+    },
+    "2025": {
+     "mult": 1.167,
+     "a_at_base_hr": 0.77,
+     "a_at_0.95_base_hr": 1.05
+    }
+   },
+   "peak": {
+    "2023": {
+     "mult": 1.149,
+     "a_at_base_hr": 1.06,
+     "a_at_0.95_base_hr": 1.48
+    },
+    "2024": {
+     "mult": 1.183,
+     "a_at_base_hr": 0.82,
+     "a_at_0.95_base_hr": 1.1
+    },
+    "2025": {
+     "mult": 1.167,
+     "a_at_base_hr": 0.77,
+     "a_at_0.95_base_hr": 1.05
+    }
+   }
+  }
+ },
+ "D_consequences": {
+  "a=0.46 (keeper)": {
+   "CC_REGULAR": {
+    "bands": {
+     "econ_low": {
+      "keeper_pooled": 1.066,
+      "rebased_per_year_approx": {
+       "2023": 0.998,
+       "2024": 0.932,
+       "2025": 0.986
+      }
+     },
+     "econ_high": {
+      "keeper_pooled": 1.072,
+      "rebased_per_year_approx": {
+       "2023": 0.995,
+       "2024": 0.997,
+       "2025": 0.998
+      }
+     },
+     "peak": {
+      "keeper_pooled": 1.386,
+      "rebased_per_year_approx": {
+       "2023": 1.226,
+       "2024": 1.364,
+       "2025": 1.324
+      }
+     }
+    },
+    "committed_minus_econ_low_usd_mwh": {
+     "2023": 0.1,
+     "2024": 2.5,
+     "2025": 0.5
+    }
+   },
+   "CT_PEAKER": {
+    "bands": {
+     "econ_low": {
+      "keeper_pooled": 1.103,
+      "rebased_per_year_approx": {
+       "2023": 1.033,
+       "2024": 1.0,
+       "2025": 1.036
+      }
+     },
+     "econ_high": {
+      "keeper_pooled": 1.146,
+      "rebased_per_year_approx": {
+       "2023": 1.063,
+       "2024": 1.074,
+       "2025": 1.061
+      }
+     },
+     "peak": {
+      "keeper_pooled": 1.154,
+      "rebased_per_year_approx": {
+       "2023": 1.079,
+       "2024": 1.073,
+       "2025": 1.061
+      }
+     }
+    },
+    "committed_minus_econ_low_usd_mwh": {
+     "2023": -2.7,
+     "2024": 0.0,
+     "2025": -2.0
+    }
+   }
+  },
+  "a=census per-year median": {
+   "CC_REGULAR": {
+    "bands": {
+     "econ_low": {
+      "keeper_pooled": 1.066,
+      "rebased_per_year_approx": {
+       "2023": 0.909,
+       "2024": 0.818,
+       "2025": 0.848
+      }
+     },
+     "econ_high": {
+      "keeper_pooled": 1.072,
+      "rebased_per_year_approx": {
+       "2023": 0.906,
+       "2024": 0.875,
+       "2025": 0.858
+      }
+     },
+     "peak": {
+      "keeper_pooled": 1.386,
+      "rebased_per_year_approx": {
+       "2023": 1.117,
+       "2024": 1.197,
+       "2025": 1.139
+      }
+     }
+    },
+    "committed_minus_econ_low_usd_mwh": {
+     "2023": 5.6,
+     "2024": 7.7,
+     "2025": 6.6
+    }
+   },
+   "CT_PEAKER": {
+    "bands": {
+     "econ_low": {
+      "keeper_pooled": 1.103,
+      "rebased_per_year_approx": {
+       "2023": 0.941,
+       "2024": 0.878,
+       "2025": 0.891
+      }
+     },
+     "econ_high": {
+      "keeper_pooled": 1.146,
+      "rebased_per_year_approx": {
+       "2023": 0.968,
+       "2024": 0.943,
+       "2025": 0.912
+      }
+     },
+     "peak": {
+      "keeper_pooled": 1.154,
+      "rebased_per_year_approx": {
+       "2023": 0.983,
+       "2024": 0.942,
+       "2025": 0.912
+      }
+     }
+    },
+    "committed_minus_econ_low_usd_mwh": {
+     "2023": 5.3,
+     "2024": 7.5,
+     "2025": 6.9
+    }
+   }
+  },
+  "a=census pooled 2023-25": {
+   "CC_REGULAR": {
+    "bands": {
+     "econ_low": {
+      "keeper_pooled": 1.066,
+      "rebased_per_year_approx": {
+       "2023": 0.907,
+       "2024": 0.808,
+       "2025": 0.857
+      }
+     },
+     "econ_high": {
+      "keeper_pooled": 1.072,
+      "rebased_per_year_approx": {
+       "2023": 0.904,
+       "2024": 0.865,
+       "2025": 0.867
+      }
+     },
+     "peak": {
+      "keeper_pooled": 1.386,
+      "rebased_per_year_approx": {
+       "2023": 1.114,
+       "2024": 1.182,
+       "2025": 1.151
+      }
+     }
+    },
+    "committed_minus_econ_low_usd_mwh": {
+     "2023": 5.8,
+     "2024": 8.2,
+     "2025": 6.2
+    }
+   },
+   "CT_PEAKER": {
+    "bands": {
+     "econ_low": {
+      "keeper_pooled": 1.103,
+      "rebased_per_year_approx": {
+       "2023": 0.938,
+       "2024": 0.867,
+       "2025": 0.9
+      }
+     },
+     "econ_high": {
+      "keeper_pooled": 1.146,
+      "rebased_per_year_approx": {
+       "2023": 0.966,
+       "2024": 0.931,
+       "2025": 0.922
+      }
+     },
+     "peak": {
+      "keeper_pooled": 1.154,
+      "rebased_per_year_approx": {
+       "2023": 0.98,
+       "2024": 0.931,
+       "2025": 0.922
+      }
+     }
+    },
+    "committed_minus_econ_low_usd_mwh": {
+     "2023": 5.6,
+     "2024": 8.3,
+     "2025": 6.3
+    }
+   }
+  }
+ },
+ "E_keeper_p1_twh_by_class_band": {
+  "2022": {
+   "CC_CHP": {
+    "committed": 1.04,
+    "econ": 8.14,
+    "peak": 0.05
+   },
+   "CC_REGULAR": {
+    "committed": 21.38,
+    "econ": 32.75,
+    "peak": 0.03
+   },
+   "CT_CHP": {
+    "committed": 0.04,
+    "econ": 1.24,
+    "peak": 0.01
+   },
+   "CT_PEAKER": {
+    "committed": 0.55,
+    "econ": 2.73,
+    "peak": 0.06
+   },
+   "ST_GAS": {
+    "committed": 0.04,
+    "econ": 0.29,
+    "peak": 0.02
+   }
+  },
+  "2023": {
+   "CC_CHP": {
+    "committed": 0.72,
+    "econ": 7.59,
+    "peak": 0.07
+   },
+   "CC_REGULAR": {
+    "committed": 20.09,
+    "econ": 31.95,
+    "peak": 0.04
+   },
+   "CT_CHP": {
+    "committed": 0.02,
+    "econ": 1.24,
+    "peak": 0.01
+   },
+   "CT_PEAKER": {
+    "committed": 0.42,
+    "econ": 2.09,
+    "peak": 0.04
+   },
+   "ST_GAS": {
+    "committed": 0.0,
+    "econ": 0.08,
+    "peak": 0.0
+   }
+  },
+  "2024": {
+   "CC_CHP": {
+    "committed": 0.62,
+    "econ": 6.72,
+    "peak": 0.09
+   },
+   "CC_REGULAR": {
+    "committed": 16.97,
+    "econ": 29.83,
+    "peak": 0.07
+   },
+   "CT_CHP": {
+    "committed": 0.04,
+    "econ": 1.31,
+    "peak": 0.02
+   },
+   "CT_PEAKER": {
+    "committed": 0.2,
+    "econ": 1.7,
+    "peak": 0.03
+   },
+   "ST_GAS": {
+    "committed": 0.0,
+    "econ": 0.06,
+    "peak": 0.0
+   }
+  },
+  "2025": {
+   "CC_CHP": {
+    "committed": 0.63,
+    "econ": 6.77,
+    "peak": 0.03
+   },
+   "CC_REGULAR": {
+    "committed": 15.65,
+    "econ": 24.32,
+    "peak": 0.01
+   },
+   "CT_CHP": {
+    "committed": 0.01,
+    "econ": 1.25,
+    "peak": 0.01
+   },
+   "CT_PEAKER": {
+    "committed": 0.14,
+    "econ": 0.95,
+    "peak": 0.01
+   },
+   "ST_GAS": {
+    "committed": 0.0,
+    "econ": 0.01,
+    "peak": 0.0
+   }
+  }
+ }
+}

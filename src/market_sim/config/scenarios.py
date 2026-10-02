@@ -2379,6 +2379,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # data/raw/spp-mmu-unavailable-capacity CSV; no sub-fields. Registered IN
     # THE SAME COMMIT as the field (the nyiso-119 discipline).
     "spp_mmu_offer_unavailability",
+    # SPP-107 repair sub-gate of the MMU bands (default off): dropped from the
+    # hash at its default so every pre-existing run (EX included) keeps its
+    # key. Byte-identical off by construction (the additive band path and no
+    # emergency-pool row). No input of its own. Registered IN THE SAME COMMIT
+    # as the field (the nyiso-119 discipline).
+    "spp_mmu_offer_repair",
     # EIA-923 CC-family heat rates (NWPP-NEXT-14, default off): dropped from
     # the hash at its default so every pre-existing run -- every ISO's keepers
     # included -- keeps its key. Byte-identical off by construction (the seam
@@ -3274,6 +3280,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "spp_gas_crow_residual_outage": "False",
     # Added by SPP-106 WITH the field (the nyiso-119 discipline).
     "spp_mmu_offer_unavailability": "False",
+    # Added by SPP-107 WITH the field (the nyiso-119 discipline).
+    "spp_mmu_offer_repair": "False",
     # Added by NWPP-NEXT-14 WITH the field (the nyiso-119 discipline).
     "eia923_cc_family_heat_rates": "False",
     # Added by soco-96 WITH the field (the nyiso-119 discipline).
@@ -19058,6 +19066,30 @@ class ScenarioConfig:
     # docs/records/spp/DESIGN-spp-106-offer-side-unavailability-2026-10-01.md.
     spp_mmu_offer_unavailability: bool = False
 
+    # SPP-107 repair sub-gate of spp_mmu_offer_unavailability (2026-10-02; owner
+    # card "Build + solve EXR"). Requires spp_mmu_offer_unavailability; SPP-only.
+    #
+    # WHEN TRUE, the MMU bands are built on the MMU's own definitions (report
+    # s3.1.2 and the economic-to-emergency definition), fixing two construction
+    # errors in carrier EX (SPP-106 RESULT s7):
+    # (1) every band is MULTIPLICATIVE on the row's post-outage availability
+    #     (a -> a x (1 - share)): the MMU measures against the derated amount,
+    #     so a partly outaged unit loses the share of the MW it still has;
+    # (2) the "between economic and emergency maximum" slice is not removed but
+    #     pooled per zone (one "emergency_band" pseudo-generator per zone,
+    #     capacity = eco share x the zone's fossil post-outage available MW)
+    #     and offered at the LP's own load-shed price minus the storage
+    #     tiebreaker epsilon (shed_penalty_voll - STORAGE_TIEBREAKER_EPSILON):
+    #     the MMU's "only accessible when SPP anticipates or identifies a
+    #     reliability issue", i.e. it clears only where the zone would
+    #     otherwise shed load.
+    # Rule 19: a sub-gate of the one mechanism (no second carrier). Rule 21:
+    # zero free parameters (the price is the registered VOLL and rule 9's
+    # epsilon). Rule 13: the pool is endogenous; forward story unchanged.
+    # Default off; byte-identical off.
+    # docs/records/spp/DESIGN-spp-107-mmu-carrier-repair-2026-10-02.md.
+    spp_mmu_offer_repair: bool = False
+
     # Measured ERCOT GTC transfer limits (backcast/calibration overlay). When
     # True in backcast mode, the export-direction capability of the transfer
     # links that carry ERCOT's published Generic Transmission Constraints
@@ -23827,6 +23859,11 @@ class ScenarioConfig:
                 "spp_mmu_offer_unavailability is SPP-only (SPP-106: the SPP MMU's "
                 "own measured unavailability classes, rule 25)."
             )
+        if self.spp_mmu_offer_repair and not self.spp_mmu_offer_unavailability:
+            raise ValueError(
+                "spp_mmu_offer_repair is a sub-gate of spp_mmu_offer_unavailability "
+                "(SPP-107, rule 19): arm both or neither."
+            )
         if self.spp_gas_crow_residual_outage and self.spp_ct_lole_efor:
             raise ValueError(
                 "spp_gas_crow_residual_outage and spp_ct_lole_efor are mutually "
@@ -25348,6 +25385,10 @@ TIER_TAGS: dict[str, int] = {
     # derates with the SPP MMU's measured offer-side and unreported-derate
     # bands; no free number of its own (rule 21).
     "spp_mmu_offer_unavailability": 1,
+    # Structural gate (1): builds the MMU bands on the MMU's own definitions
+    # (multiplicative; economic-to-emergency slice as a scarcity-priced zonal
+    # pool at VOLL - epsilon); no free number of its own (rule 21).
+    "spp_mmu_offer_repair": 1,
     # Structural gate (1): the plant-day measured gas/oil mix (CAMPD CO2 /
     # heat-input identity on Part 75 factors); no free number of its own
     # (rule 21). Backcast-only (rule 13).

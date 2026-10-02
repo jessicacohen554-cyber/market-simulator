@@ -15809,3 +15809,27 @@ C8 CC_REGULAR forced share 2019–25 moved 7.4/5.0/5.9/7.2/7.5/9.1/12.3 → 8.6/
 is capped (caiso-119), so the fraction barely moves the energy. Zero DOF was added. The unledgered 0.26 is retired, and
 `pipeline/backcast_config.py` now defaults CAISO to 0.570 (rule 26 deleted the stale 0.259 justification). Record:
 `docs/records/caiso/closeout-caiso-w1/RESULT-closeout-caiso-w1-arm3-2026-10-02.md`.
+
+## R-CAISO-33 — 2026-10-02: joint gas re-basis (link 15) SCOPED, zero LP; the census is not the fleet
+
+- The keeper prices gas at the flow-dated NGI CA composite + 0.46; the measured offer multipliers were divided by the composite with no adder. The denominator repair stands on its own (caiso-242/244 identity).
+- EIA N3045CA3 is a utility-only EIA-923 Schedule 2 sample: 16 plants in 2023–25, 65 % of volume outside CAISO (LADWP 32 %, SMUD 19 %, Turlock 9 %, IID 6 %). Its 1.15–1.28 over the composite is a rule-14 boundary misalignment.
+- Three gauges (probe `scripts/probes/_rcaiso33_transport_basis.py`):
+  - census: 0.65 / 0.58 / 0.79 / 0.67 / 1.20 / 1.15 / 1.28 (2019–25, medians);
+  - CISO utility plants (EIA-923): CC 1.43–2.10 in 2023–25 (4 plants, 2.1 GW);
+  - the fleet's bids: CC econ 0.12–0.45, CT econ 0.46–0.93 (19 GW). Re-based on composite + 0.46 the CC econ multipliers read 0.93–1.00 (SRMC bidding); on composite + 1.2 they read 0.82–0.91 and the `committed` tranche sits +$5–8/MWh above the measured econ bid in every year.
+- Recommendation: keep 0.46 (identification re-stated), re-derive the denominator on composite + 0.46 (exact derive needs the DAM bid zips re-fetched, ~2 h), then 7 shards. Stated risk: C4 gas NRMSE 2025 0.288 vs ≤ 0.30; the caiso-267/268 move of the same sign cost +0.010.
+- Owner card: keep 0.46, repair the denominator, solve. Stage 1 (DAM bids re-fetched, re-derived on composite + 0.46) passed G1–G4; the pre-registered round-trip gate FAILED (3 per-year cells; pooled pass). Owner: re-gate at hour grain (Amendment A, pushed before computing).
+- G-RT-H FAILED on 2 of 18 per-year cells (CC and CT peak 2024); all pooled cells pass at ≤ $0.03/MWh. Owner card: **close link 15 as pre-registered.** Keeper unchanged; the derive edit is reverted.
+- Recorded: at hour grain the keeper's measured gas bands sit +$3.6–6.4/MWh above the fleet's own DAM bids (pooled, every consumed class and band). Recorded: the re-fetched OASIS corpus moves the CT/ST partition (st_cut 11.74 → 11.19) with consumed bands ≤ 0.022.
+
+Record: `docs/records/caiso/r-caiso-33/`.
+
+## R-CAISO-34 — 2026-10-02: Run Explorer storage panel, SOC-bound envelope (link 16), display only
+
+- The storage panel gains, for CAISO 2023–25, the submitters' mean [min, max] end-of-hour SOC bound (share of ceiling) beside the keeper's li-ion SOC ÷ energy capacity, by hour of day, all year or Jun–Sep. It is labelled a self-selected subset (2.7 / 12.2 / 19.8 % of storage MW), never a target, and no statistic is computed against it. The R-CAISO-32 digitized DMM quarterly SOC-outage shares (2023–24) sit below it as a reference card.
+- Built in `scripts/lib/storage_compare.py::build_soc_bounds`, as an optional `storageCmp.socBounds` block that every future render carries. The block is on the model's fixed-PST clock, which removes the R-CAISO-31 probe's prevailing-time 1 h summer shift. The arm-3 keeper payload was injected in place by `scripts/probes/_rcaiso34_inject_soc_bounds.py`; the rest of the payload is byte-identical.
+- Descriptive only: the model's mean SOC share sits inside the band at all 24 hours, 2023–25. The band is wide and its submitters are a minority, so this is not a fit and not a lever.
+- Owner card: **ship as rendered.** Zero LP, keeper unchanged.
+
+Record: `docs/records/caiso/r-caiso-34/`.
