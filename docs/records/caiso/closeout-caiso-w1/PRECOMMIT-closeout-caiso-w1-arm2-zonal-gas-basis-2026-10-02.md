@@ -96,3 +96,34 @@ python3 scripts/shard_prompt.py --iso CAISO --all-years --sha $SHA --lane closeo
   a card; it is not a kill.
 - The fold's determination is reported. No C3a/C1/C4 improvement is claimed or credited.
 - Rule 21: zero free parameters added; the DOF ledger is unchanged.
+
+## Addendum A: post-W0 preflight (2026-10-02, zero LP; written before any arm-2 shard)
+
+Control: the W0 keeper `2026-10-02-w0-caiso` (bundle `w0_caiso_span`, promoted at `eec4eb5c`). Probe
+`_closeout_caiso_w1_basis_tail.py basis`. The bundle carries no P0 sidecars, so the probe uses the committed **P1**
+`unit_marginal_<year>` price-setting flags, which are the LP's own marginal columns.
+
+| | 2021 (gated May–Jul, Sep–Dec) | 2024 (all months) |
+|---|--:|--:|
+| applied spread, north / south ($/MMBtu) | −0.525 / +0.377 | +0.300 / −0.239 |
+| load-weighted Δλ ($/MWh) | +0.36 | −0.04 |
+| C3a projection | +0.71 pp (report only) | **−0.13 pp** (tripwire +1.5 pp: clear) |
+
+The arm clears its preflight. If arm 3 promotes, this preflight is re-run on arm 3's keeper before arm 2 launches.
+
+
+## Addendum B: preflight re-run on arm 3's keeper (2026-10-02, zero LP; written before any arm-2 shard)
+
+Arm 3 promoted, so the control is now **`2026-10-02-closeout-caiso-w1-arm3`** (bundle `closeout_caiso_w1_a3_span`). Same
+probe, same P1 `unit_marginal` path:
+
+| | 2021 (gated May–Jul, Sep–Dec) | 2024 (all months) |
+|---|--:|--:|
+| applied spread, north / south ($/MMBtu) | −0.525 / +0.377 | +0.300 / −0.239 |
+| load-weighted Δλ ($/MWh) | +0.36 | −0.05 |
+| C3a projection | +0.70 pp (report only) | **−0.13 pp** (tripwire +1.5 pp: clear) |
+
+Shards: seven year-isolated legs, pinned to the full SHA of the commit that carries this addendum and the arm-3 keeper
+bundle (`claude/closeout-caiso-w1-arms`), and replayed from `results/calibration/closeout_caiso_w1_a3_span` with
+`--set caiso_zonal_gas_basis=true`. Hard stop per shard: the solve log prints `CAISO zonal gas basis (<year>)` for
+2020–2025, and prints nothing for 2019 (no hub-table row).
