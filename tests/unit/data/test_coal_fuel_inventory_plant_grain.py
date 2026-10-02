@@ -184,3 +184,42 @@ def test_floor_scale_caps_draw_at_budget():
     )
     assert out[0][2] == 0.5
     assert float((10.0 * min_gen).sum()) == 40.0
+
+
+def test_month_grain_floor_scale_fits_every_month_end():
+    """closeout-L1: 1 yard, 2 gens, 4 h in 2 months; month 1's ceiling binds."""
+    from market_sim.data.coal_fuel_inventory import reconcile_floors_to_yard_budget
+
+    min_gen = np.array([[1.0, 1.0, 1.0, 1.0], [1.0, 1.0, 1.0, 1.0]])
+    month_index = np.array([0, 0, 1, 1])
+    coeff = np.array([10.0, 10.0])
+    # cumulative draw: 40 by end of month 1, 80 by end of month 2
+    budget = np.array([[20.0, 100.0]])
+    out = reconcile_floors_to_yard_budget(
+        min_gen,
+        np.array([0, 1]),
+        budget,
+        coeff,
+        np.array([0, 0]),
+        month_index=month_index,
+    )
+    assert [(r, e, s) for r, e, s in out] == [(0, 40.0, 0.5)]
+    cum = np.cumsum([(10.0 * min_gen[:, month_index == m]).sum() for m in (0, 1)])
+    assert (cum <= budget[0] + 1e-12).all()
+
+
+def test_month_grain_fitting_yard_untouched():
+    from market_sim.data.coal_fuel_inventory import reconcile_floors_to_yard_budget
+
+    min_gen = np.array([[1.0, 1.0, 1.0, 1.0]])
+    before = min_gen.copy()
+    out = reconcile_floors_to_yard_budget(
+        min_gen,
+        np.array([0]),
+        np.array([[20.0, 40.0]]),
+        np.array([10.0]),
+        np.array([0]),
+        month_index=np.array([0, 0, 1, 1]),
+    )
+    assert out == []
+    assert (min_gen == before).all()

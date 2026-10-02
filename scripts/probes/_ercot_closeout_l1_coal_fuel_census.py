@@ -44,7 +44,7 @@ import pandas as pd
 
 RAW = Path("data/raw")
 COAL_CODES = ("SUB", "LIG", "BIT", "RC", "WC", "SC", "ANT")
-YEARS = tuple(range(2019, 2025))
+YEARS = tuple(range(2019, 2026))
 
 
 def load_receipts(year: int) -> pd.DataFrame:
@@ -119,7 +119,7 @@ def census(bundle: Path) -> pd.DataFrame:
             )
             tons_y = r["tons"].sum()
             hc = r["mmbtu"].sum() / tons_y if tons_y > 0 else np.nan
-            s_y = stocks[y].loc[pid] if pid in stocks[y].index else None
+            s_y = stocks[y].loc[pid] if y in stocks and pid in stocks[y].index else None
             s_prev = stocks.get(y - 1)
             s_dec = (
                 float(s_prev.loc[pid, 12])
