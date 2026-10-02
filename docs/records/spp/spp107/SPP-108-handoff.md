@@ -18,6 +18,7 @@ STATE (verify against origin/main)
   | 2022 | +10.92 TWh | −9.29 TWh | 0.326 (FAIL) |
 
   SPP-107 already cut PRB by ~1.8–2.3 TWh/yr. Do not re-attribute that to a new lever.
+- Train-tier coal is at the band edge on the EIA-923 Final 2025 bench (closeout-A): keeper COAL_PRB 2025 +7.96 TWh vs ±8.00 (spp-100 was +10.32, FAIL). A lever that raises 2025 PRB flips the train tier; report 2025 PRB in every PRECOMMIT expectation.
 - Close-out plan §3.4 diagnosis:
   * DA commitment of CCs (all of 2021, ~60 % of 2022).
   * A 2022 coal rail / markup object (~40 %; SPP-89; the 2022 ASOM names rail supply-chain problems and RR502 opportunity-cost offers).

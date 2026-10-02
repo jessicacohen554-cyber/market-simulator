@@ -1,0 +1,362 @@
+{
+  "schema": 1,
+  "iso": "NWPP",
+  "year": 2019,
+  "eia860_vintage": "vintage_2019",
+  "model_source": "rebuild:nwppnext16c_span:w0",
+  "tolerances_pct": {
+    "family_vs_860": 1.0,
+    "total_thermal_vs_860": 0.5,
+    "total_vs_iso_report": 3.0
+  },
+  "families": [
+    {
+      "family": "COAL",
+      "eia860_nameplate_mw": 13289.4,
+      "eia860_summer_mw": 11653.4,
+      "eia860_winter_mw": 11669.7,
+      "model_pmax_mw": 11668.3,
+      "model_summer_mw": 11652.0,
+      "model_winter_mw": 11668.3,
+      "model_available_jul_mw": 10353.3,
+      "model_available_jan_mw": 9532.5,
+      "delta_summer_pct": -0.012,
+      "delta_winter_pct": -0.012,
+      "within_tolerance": true,
+      "scored": true,
+      "explained_residual_rows": []
+    },
+    {
+      "family": "CC",
+      "eia860_nameplate_mw": 15216.1,
+      "eia860_summer_mw": 12765.3,
+      "eia860_winter_mw": 13780.2,
+      "model_pmax_mw": 12998.4,
+      "model_summer_mw": 12088.9,
+      "model_winter_mw": 12984.3,
+      "model_available_jul_mw": 11649.9,
+      "model_available_jan_mw": 10380.9,
+      "delta_summer_pct": -5.299,
+      "delta_winter_pct": -5.776,
+      "within_tolerance": false,
+      "scored": true,
+      "explained_residual_rows": [
+        {
+          "plant": 55103,
+          "eia860_summer_mw": 490.0,
+          "model_summer_mw": 318.5,
+          "delta_mw": -171.5,
+          "reason": "rating differs (block / guard clip / steam part / COD fraction)"
+        },
+        {
+          "plant": 54761,
+          "eia860_summer_mw": 464.0,
+          "model_summer_mw": 301.6,
+          "delta_mw": -162.4,
+          "reason": "rating differs (block / guard clip / steam part / COD fraction)"
+        },
+        {
+          "plant": 54537,
+          "eia860_summer_mw": 270.0,
+          "model_summer_mw": 175.5,
+          "delta_mw": -94.5,
+          "reason": "rating differs (block / guard clip / steam part / COD fraction)"
+        },
+        {
+          "plant": 7350,
+          "eia860_summer_mw": 221.0,
+          "model_summer_mw": 143.6,
+          "delta_mw": -77.4,
+          "reason": "rating differs (block / guard clip / steam part / COD fraction)"
+        },
+        {
+          "plant": 54476,
+          "eia860_summer_mw": 125.5,
+          "model_summer_mw": 81.6,
+          "delta_mw": -43.9,
+          "reason": "rating differs (block / guard clip / steam part / COD fraction)"
+        },
+        {
+          "plant": 54271,
+          "eia860_summer_mw": 101.0,
+          "model_summer_mw": 65.7,
+          "delta_mw": -35.3,
+          "reason": "rating differs (block / guard clip / steam part / COD fraction)"
+        },
+        {
+          "plant": 54349,
+          "eia860_summer_mw": 93.1,
+          "model_summer_mw": 60.5,
+          "delta_mw": -32.6,
+          "reason": "rating differs (block / guard clip / steam part / COD fraction)"
+        },
+        {
+          "plant": 54350,
+          "eia860_summer_mw": 85.5,
+          "model_summer_mw": 55.6,
+          "delta_mw": -29.9,
+          "reason": "rating differs (block / guard clip / steam part / COD fraction)"
+        },
+        {
+          "plant": 7931,
+          "eia860_summer_mw": 290.0,
+          "model_summer_mw": 276.6,
+          "delta_mw": -13.4,
+          "reason": "rating differs (block / guard clip / steam part / COD fraction)"
+        },
+        {
+          "plant": 55482,
+          "eia860_summer_mw": 263.7,
+          "model_summer_mw": 256.3,
+          "delta_mw": -7.4,
+          "reason": "rating differs (block / guard clip / steam part / COD fraction)"
+        },
+        {
+          "plant": 54950,
+          "eia860_summer_mw": 9.0,
+          "model_summer_mw": 5.7,
+          "delta_mw": -3.3,
+          "reason": "rating differs (block / guard clip / steam part / COD fraction)"
+        },
+        {
+          "plant": 57653,
+          "eia860_summer_mw": 5.7,
+          "model_summer_mw": 3.3,
+          "delta_mw": -2.4,
+          "reason": "rating differs (block / guard clip / steam part / COD fraction)"
+        }
+      ]
+    },
+    {
+      "family": "CT",
+      "eia860_nameplate_mw": 4488.5,
+      "eia860_summer_mw": 3735.8,
+      "eia860_winter_mw": 4193.1,
+      "model_pmax_mw": 3956.9,
+      "model_summer_mw": 3588.6,
+      "model_winter_mw": 3956.9,
+      "model_available_jul_mw": 3313.7,
+      "model_available_jan_mw": 3487.7,
+      "delta_summer_pct": -3.939,
+      "delta_winter_pct": -5.634,
+      "within_tolerance": false,
+      "scored": true,
+      "explained_residual_rows": [
+        {
+          "plant": 54268,
+          "eia860_summer_mw": 120.0,
+          "model_summer_mw": 36.0,
+          "delta_mw": -84.0,
+          "reason": "rating differs (block / guard clip / steam part / COD fraction)"
+        },
+        {
+          "plant": 58191,
+          "eia860_summer_mw": 33.0,
+          "model_summer_mw": 9.9,
+          "delta_mw": -23.1,
+          "reason": "rating differs (block / guard clip / steam part / COD fraction)"
+        },
+        {
+          "plant": 56509,
+          "eia860_summer_mw": 22.0,
+          "model_summer_mw": 6.6,
+          "delta_mw": -15.4,
+          "reason": "rating differs (block / guard clip / steam part / COD fraction)"
+        },
+        {
+          "plant": 59281,
+          "eia860_summer_mw": 0.0,
+          "model_summer_mw": 9.8,
+          "delta_mw": 9.8,
+          "reason": "carried, not OP/SB in this family of the vintage (exit channel, class boundary)"
+        },
+        {
+          "plant": 7028,
+          "eia860_summer_mw": 26.8,
+          "model_summer_mw": 17.4,
+          "delta_mw": -9.4,
+          "reason": "rating differs (block / guard clip / steam part / COD fraction)"
+        },
+        {
+          "plant": 57348,
+          "eia860_summer_mw": 8.0,
+          "model_summer_mw": 1.7,
+          "delta_mw": -6.3,
+          "reason": "rating differs (block / guard clip / steam part / COD fraction)"
+        },
+        {
+          "plant": 58597,
+          "eia860_summer_mw": 5.6,
+          "model_summer_mw": 1.4,
+          "delta_mw": -4.2,
+          "reason": "rating differs (block / guard clip / steam part / COD fraction)"
+        },
+        {
+          "plant": 56163,
+          "eia860_summer_mw": 5.9,
+          "model_summer_mw": 1.8,
+          "delta_mw": -4.1,
+          "reason": "rating differs (block / guard clip / steam part / COD fraction)"
+        },
+        {
+          "plant": 59496,
+          "eia860_summer_mw": 4.6,
+          "model_summer_mw": 1.0,
+          "delta_mw": -3.6,
+          "reason": "rating differs (block / guard clip / steam part / COD fraction)"
+        },
+        {
+          "plant": 54374,
+          "eia860_summer_mw": 3.9,
+          "model_summer_mw": 1.2,
+          "delta_mw": -2.7,
+          "reason": "rating differs (block / guard clip / steam part / COD fraction)"
+        },
+        {
+          "plant": 10215,
+          "eia860_summer_mw": 1.8,
+          "model_summer_mw": 0.0,
+          "delta_mw": -1.8,
+          "reason": "not carried in this family (status / class / footprint / exit)"
+        },
+        {
+          "plant": 50942,
+          "eia860_summer_mw": 1.5,
+          "model_summer_mw": 0.0,
+          "delta_mw": -1.5,
+          "reason": "not carried in this family (status / class / footprint / exit)"
+        }
+      ]
+    },
+    {
+      "family": "ST_GAS",
+      "eia860_nameplate_mw": 642.1,
+      "eia860_summer_mw": 584.7,
+      "eia860_winter_mw": 584.7,
+      "model_pmax_mw": 573.9,
+      "model_summer_mw": 573.9,
+      "model_winter_mw": 573.9,
+      "model_available_jul_mw": 504.9,
+      "model_available_jan_mw": 168.1,
+      "delta_summer_pct": -1.841,
+      "delta_winter_pct": -1.841,
+      "within_tolerance": false,
+      "scored": true,
+      "explained_residual_rows": [
+        {
+          "plant": 54690,
+          "eia860_summer_mw": 8.2,
+          "model_summer_mw": 2.4,
+          "delta_mw": -5.8,
+          "reason": "rating differs (block / guard clip / steam part / COD fraction)"
+        },
+        {
+          "plant": 54809,
+          "eia860_summer_mw": 5.0,
+          "model_summer_mw": 0.0,
+          "delta_mw": -5.0,
+          "reason": "not carried in this family (status / class / footprint / exit)"
+        }
+      ]
+    },
+    {
+      "family": "NUCLEAR",
+      "eia860_nameplate_mw": 1200.0,
+      "eia860_summer_mw": 1163.0,
+      "eia860_winter_mw": 1163.0,
+      "model_pmax_mw": 1163.0,
+      "model_summer_mw": 1163.0,
+      "model_winter_mw": 1163.0,
+      "model_available_jul_mw": 1094.3,
+      "model_available_jan_mw": 1116.8,
+      "delta_summer_pct": 0.0,
+      "delta_winter_pct": 0.0,
+      "within_tolerance": true,
+      "scored": true,
+      "explained_residual_rows": []
+    },
+    {
+      "family": "OIL",
+      "eia860_nameplate_mw": 70.6,
+      "eia860_summer_mw": 66.2,
+      "eia860_winter_mw": 66.2,
+      "model_pmax_mw": 118.2,
+      "model_summer_mw": 118.2,
+      "model_winter_mw": 118.2,
+      "model_available_jul_mw": 106.4,
+      "model_available_jan_mw": 106.4,
+      "delta_summer_pct": 78.55,
+      "delta_winter_pct": 78.55,
+      "within_tolerance": false,
+      "scored": true,
+      "explained_residual_rows": [
+        {
+          "plant": 50931,
+          "eia860_summer_mw": 0.0,
+          "model_summer_mw": 52.0,
+          "delta_mw": 52.0,
+          "reason": "carried, not OP/SB in this family of the vintage (exit channel, class boundary)"
+        }
+      ]
+    },
+    {
+      "family": "BIOMASS",
+      "eia860_nameplate_mw": 869.0,
+      "eia860_summer_mw": 744.2,
+      "eia860_winter_mw": 754.6,
+      "model_pmax_mw": 0.0,
+      "model_summer_mw": 0.0,
+      "model_winter_mw": 0.0,
+      "model_available_jul_mw": 0.0,
+      "model_available_jan_mw": 0.0,
+      "delta_summer_pct": -100.0,
+      "delta_winter_pct": -100.0,
+      "within_tolerance": true,
+      "scored": false,
+      "explained_residual_rows": []
+    },
+    {
+      "family": "OTHER",
+      "eia860_nameplate_mw": 301.7,
+      "eia860_summer_mw": 236.8,
+      "eia860_winter_mw": 252.1,
+      "model_pmax_mw": 0.0,
+      "model_summer_mw": 0.0,
+      "model_winter_mw": 0.0,
+      "model_available_jul_mw": 0.0,
+      "model_available_jan_mw": 0.0,
+      "delta_summer_pct": -100.0,
+      "delta_winter_pct": -100.0,
+      "within_tolerance": true,
+      "scored": false,
+      "explained_residual_rows": []
+    }
+  ],
+  "total_thermal": {
+    "eia860_nameplate_mw": 34906.7,
+    "eia860_summer_mw": 29968.4,
+    "eia860_winter_mw": 31456.9,
+    "model_pmax_mw": 30478.6,
+    "model_summer_mw": 29184.6,
+    "model_winter_mw": 30464.6,
+    "model_available_jul_mw": 27022.5,
+    "model_available_jan_mw": 24792.5,
+    "delta_summer_pct": -2.615,
+    "delta_winter_pct": -3.155,
+    "within_tolerance": false
+  },
+  "iso_report": {
+    "mw": null,
+    "basis": null,
+    "source": null,
+    "delta_pct": null,
+    "within_tolerance": null,
+    "status": "UNAVAILABLE (report not on disk)"
+  },
+  "out_of_service_envelope": {
+    "plants": 8,
+    "nameplate_mw": 66.1
+  },
+  "planned_retirement_binding_mw": 0.0,
+  "verdict": "OUTSIDE"
+}

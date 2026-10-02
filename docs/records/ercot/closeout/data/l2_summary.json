@@ -1,0 +1,422 @@
+[
+ {
+  "year": 2019,
+  "premium_hours": 1912,
+  "premium_mean": 54.62,
+  "hb_west_premium_mean_in_premium_hours": 1.41,
+  "share_of_lz_premium_at_hb_west": 0.026,
+  "seam_cover": 0.017,
+  "seam_base": 0.049,
+  "intra_west_cover": 0.673,
+  "intra_west_base": 0.366,
+  "west_unknown_cover": 0.578,
+  "west_unknown_base": 0.334,
+  "gtc_westex_cover": 0.0,
+  "gtc_westex_base": 0.0,
+  "any_west_cover": 0.949,
+  "premium_mass_in_seam_hours": 0.017,
+  "premium_mass_in_intra_only_hours": 0.807,
+  "top_intra_west": [
+   [
+    "6100__F",
+    509,
+    168.0
+   ],
+   [
+    "RIOPEC_WOODW21_1",
+    476,
+    141.4
+   ],
+   [
+    "SONR_69-1",
+    301,
+    43.4
+   ],
+   [
+    "6437__F",
+    156,
+    217.3
+   ],
+   [
+    "FTST_SOLSTI1_1",
+    52,
+    199.6
+   ],
+   [
+    "TRDWEL",
+    45,
+    91.2
+   ],
+   [
+    "ABNTHW_CALLAH1_1",
+    35,
+    122.2
+   ],
+   [
+    "FTST_69T1",
+    32,
+    66.8
+   ]
+  ]
+ },
+ {
+  "year": 2020,
+  "premium_hours": 1389,
+  "premium_mean": 72.13,
+  "hb_west_premium_mean_in_premium_hours": 1.28,
+  "share_of_lz_premium_at_hb_west": 0.018,
+  "seam_cover": 0.077,
+  "seam_base": 0.067,
+  "intra_west_cover": 0.718,
+  "intra_west_base": 0.349,
+  "west_unknown_cover": 0.449,
+  "west_unknown_base": 0.165,
+  "gtc_westex_cover": 0.005,
+  "gtc_westex_base": 0.005,
+  "any_west_cover": 0.845,
+  "premium_mass_in_seam_hours": 0.058,
+  "premium_mass_in_intra_only_hours": 0.747,
+  "top_intra_west": [
+   [
+    "6100__F",
+    489,
+    167.5
+   ],
+   [
+    "ESKSW_TRNT1_1",
+    142,
+    34.2
+   ],
+   [
+    "6437__F",
+    125,
+    220.4
+   ],
+   [
+    "ALPINE_BRONCO1_1",
+    83,
+    54.8
+   ],
+   [
+    "LYNX_RIOPEC1_1",
+    81,
+    196.8
+   ],
+   [
+    "TREADW_YELWJC1_1",
+    70,
+    196.0
+   ],
+   [
+    "FTST_SOLSTI1_1",
+    62,
+    221.5
+   ],
+   [
+    "CRTVLE_EINSTEN_1",
+    59,
+    260.9
+   ]
+  ]
+ },
+ {
+  "year": 2021,
+  "premium_hours": 713,
+  "premium_mean": 37.35,
+  "hb_west_premium_mean_in_premium_hours": 9.89,
+  "share_of_lz_premium_at_hb_west": 0.265,
+  "seam_cover": 0.008,
+  "seam_base": 0.03,
+  "intra_west_cover": 0.683,
+  "intra_west_base": 0.27,
+  "west_unknown_cover": 0.174,
+  "west_unknown_base": 0.088,
+  "gtc_westex_cover": 0.001,
+  "gtc_westex_base": 0.092,
+  "any_west_cover": 0.738,
+  "premium_mass_in_seam_hours": 0.005,
+  "premium_mass_in_intra_only_hours": 0.732,
+  "top_intra_west": [
+   [
+    "TALLCITY_TELPR_1",
+    243,
+    233.0
+   ],
+   [
+    "MDSSW_MR1H",
+    57,
+    524.6
+   ],
+   [
+    "SPUR_69_1",
+    32,
+    60.0
+   ],
+   [
+    "6437__F",
+    27,
+    214.0
+   ],
+   [
+    "ANSN_RADIUM1_1",
+    20,
+    36.7
+   ],
+   [
+    "9025_A_1",
+    17,
+    217.9
+   ],
+   [
+    "6036__A",
+    16,
+    1294.7
+   ],
+   [
+    "ABNTHW_MULBER1_1",
+    16,
+    203.9
+   ]
+  ]
+ },
+ {
+  "year": 2022,
+  "premium_hours": 1380,
+  "premium_mean": 38.49,
+  "hb_west_premium_mean_in_premium_hours": 8.73,
+  "share_of_lz_premium_at_hb_west": 0.227,
+  "seam_cover": 0.028,
+  "seam_base": 0.025,
+  "intra_west_cover": 0.712,
+  "intra_west_base": 0.296,
+  "west_unknown_cover": 0.254,
+  "west_unknown_base": 0.128,
+  "gtc_westex_cover": 0.022,
+  "gtc_westex_base": 0.156,
+  "any_west_cover": 0.791,
+  "premium_mass_in_seam_hours": 0.028,
+  "premium_mass_in_intra_only_hours": 0.835,
+  "top_intra_west": [
+   [
+    "LPLMK_LPLNE_1",
+    250,
+    216.1
+   ],
+   [
+    "6462__C",
+    187,
+    223.8
+   ],
+   [
+    "ARAGORN_TIE_1",
+    116,
+    183.8
+   ],
+   [
+    "6471__A",
+    110,
+    226.9
+   ],
+   [
+    "LUTHER_VEALMOR_1",
+    79,
+    252.5
+   ],
+   [
+    "ATSO_SONR1_1",
+    77,
+    36.1
+   ],
+   [
+    "TRDWEL",
+    55,
+    63.8
+   ],
+   [
+    "6437__F",
+    54,
+    214.3
+   ]
+  ]
+ },
+ {
+  "year": 2023,
+  "premium_hours": 2419,
+  "premium_mean": 46.44,
+  "hb_west_premium_mean_in_premium_hours": 11.23,
+  "share_of_lz_premium_at_hb_west": 0.242,
+  "seam_cover": 0.007,
+  "seam_base": 0.005,
+  "intra_west_cover": 0.798,
+  "intra_west_base": 0.398,
+  "west_unknown_cover": 0.322,
+  "west_unknown_base": 0.198,
+  "gtc_westex_cover": 0.026,
+  "gtc_westex_base": 0.122,
+  "any_west_cover": 0.889,
+  "premium_mass_in_seam_hours": 0.007,
+  "premium_mass_in_intra_only_hours": 0.844,
+  "top_intra_west": [
+   [
+    "6036__A",
+    557,
+    1278.3
+   ],
+   [
+    "MDSSW_MR1L",
+    375,
+    521.7
+   ],
+   [
+    "LPLMK_LPLNE_1",
+    345,
+    215.9
+   ],
+   [
+    "HARGRO_TWINBU1_1",
+    219,
+    149.3
+   ],
+   [
+    "15081__Z",
+    186,
+    194.4
+   ],
+   [
+    "6437__F",
+    159,
+    205.1
+   ],
+   [
+    "ATSO_SONR1_1",
+    131,
+    37.6
+   ],
+   [
+    "15080__Z",
+    118,
+    262.0
+   ]
+  ]
+ },
+ {
+  "year": 2024,
+  "premium_hours": 2847,
+  "premium_mean": 31.97,
+  "hb_west_premium_mean_in_premium_hours": 8.02,
+  "share_of_lz_premium_at_hb_west": 0.251,
+  "seam_cover": 0.142,
+  "seam_base": 0.102,
+  "intra_west_cover": 0.761,
+  "intra_west_base": 0.492,
+  "west_unknown_cover": 0.251,
+  "west_unknown_base": 0.227,
+  "gtc_westex_cover": 0.099,
+  "gtc_westex_base": 0.148,
+  "any_west_cover": 0.835,
+  "premium_mass_in_seam_hours": 0.13,
+  "premium_mass_in_intra_only_hours": 0.672,
+  "top_intra_west": [
+   [
+    "6520__E",
+    515,
+    219.3
+   ],
+   [
+    "6471__C",
+    447,
+    212.7
+   ],
+   [
+    "HARGRO_TWINBU1_1",
+    440,
+    149.1
+   ],
+   [
+    "14040__I",
+    247,
+    227.8
+   ],
+   [
+    "6036__A",
+    239,
+    1307.0
+   ],
+   [
+    "6056__A",
+    163,
+    1303.7
+   ],
+   [
+    "LPLNW_LPLMD_1",
+    152,
+    216.1
+   ],
+   [
+    "LPLMK_LPLNE_1",
+    149,
+    216.0
+   ]
+  ]
+ },
+ {
+  "year": 2025,
+  "premium_hours": 3734,
+  "premium_mean": 26.1,
+  "hb_west_premium_mean_in_premium_hours": 5.95,
+  "share_of_lz_premium_at_hb_west": 0.228,
+  "seam_cover": 0.1,
+  "seam_base": 0.066,
+  "intra_west_cover": 0.855,
+  "intra_west_base": 0.576,
+  "west_unknown_cover": 0.48,
+  "west_unknown_base": 0.249,
+  "gtc_westex_cover": 0.062,
+  "gtc_westex_base": 0.107,
+  "any_west_cover": 0.934,
+  "premium_mass_in_seam_hours": 0.138,
+  "premium_mass_in_intra_only_hours": 0.768,
+  "top_intra_west": [
+   [
+    "HARGRO_TWINBU1_1",
+    1013,
+    149.3
+   ],
+   [
+    "6437__F",
+    883,
+    212.8
+   ],
+   [
+    "6056__A",
+    525,
+    1247.4
+   ],
+   [
+    "LPLMK_LPLNE_1",
+    501,
+    215.8
+   ],
+   [
+    "6520__E",
+    318,
+    225.5
+   ],
+   [
+    "6240__C",
+    211,
+    200.3
+   ],
+   [
+    "ATSO_SONR1_1",
+    190,
+    37.0
+   ],
+   [
+    "TREADW_YELWJC1_1",
+    168,
+    194.7
+   ]
+  ]
+ }
+]

@@ -37,6 +37,7 @@ from market_sim.data.fleet.models import (
     FleetArrays,
     Generator,
     ba_codes,
+    generator_footprint_mask,
 )
 from market_sim.data.fleet.eia860 import (
     BIN_GROUP_HR_DEFAULT,
@@ -168,10 +169,14 @@ def oil_primary_ct_plants_from_eia860(iso: str) -> frozenset[int]:
             "Status",
         ],
     )
-    ba_map = pd.read_parquet(
-        _pkg_ns().EIA_860_DIR / "eia860_generators.parquet",
-        columns=["plant_id", "balancing_authority_code"],
-    ).drop_duplicates("plant_id")
+    ba_map = pd.read_parquet(_pkg_ns().EIA_860_DIR / "eia860_generators.parquet")
+    ba_map = ba_map[
+        [
+            c
+            for c in ("plant_id", "balancing_authority_code", "nerc_region")
+            if c in ba_map
+        ]
+    ].drop_duplicates("plant_id")
     codes = ba_codes(iso)
     if codes:
         # Membership over every BA the region comprises: the scalar-inverse
@@ -179,7 +184,7 @@ def oil_primary_ct_plants_from_eia860(iso: str) -> frozenset[int]:
         # from "no oil-primary plants" (NWPP-10 §3).
         keep = set(
             ba_map.loc[
-                ba_map["balancing_authority_code"].astype(str).str.strip().isin(codes),
+                generator_footprint_mask(iso, ba_map, codes),
                 "plant_id",
             ].astype(int)
         )
@@ -3215,10 +3220,22 @@ def fleet_to_bins(
                 "zone": g.zone,
                 "ry": _ry,
                 "rm": _rm,
+                "summer_cap": 0.0,
+                "winter_cap": 0.0,
+                "seasonal": False,
             },
         )
         a["cap"] += float(g.pmax_mw)
         a["hr_cap"] += float(g.pmax_mw) * float(g.heat_rate)
+        # W0 E.1: the bin's seasonal shares are the capacity-weighted shares of
+        # its rows (a row not on the seasonal basis counts at 1.0 — its pmax IS
+        # its year-round rating).
+        _sf = getattr(g, "summer_capability_frac", None)
+        _wf = getattr(g, "winter_capability_frac", None)
+        if _sf is not None:
+            a["seasonal"] = True
+        a["summer_cap"] += float(g.pmax_mw) * (1.0 if _sf is None else float(_sf))
+        a["winter_cap"] += float(g.pmax_mw) * (1.0 if _wf is None else float(_wf))
 
     rows: list[dict] = []
     for key, a in agg.items():
@@ -3241,8 +3258,14 @@ def fleet_to_bins(
         # nameplate)); the availability builder reapplies the per-plant summer
         # derate seasonally. Robust to fleet-vs-EIA membership differences (uses
         # the ratio, not the absolute nameplate). ERCOT/other groups unchanged.
-        if group in ("CC_REGULAR", "CC_CHP") and getattr(
-            config, "cc_nameplate_summer_derate", False
+        # W0 E.1: a bin on the seasonal basis is ALREADY carried at its
+        # published envelope with each season's share recorded, so the
+        # nameplate / caiso-186 rescale below would re-basis it a second time
+        # (rule 19 [R-ONE-MECH]); it applies to legacy-basis bins only.
+        if (
+            group in ("CC_REGULAR", "CC_CHP")
+            and not a["seasonal"]
+            and getattr(config, "cc_nameplate_summer_derate", False)
         ):
             # config.cc_winter_capability_basis (caiso-186) replaces the
             # nameplate target with the PUBLISHED seasonal envelope
@@ -3413,6 +3436,13 @@ def fleet_to_bins(
                 # ramp's per-unit retirement preference applies.
                 "Retirement_Year": a["ry"],
                 "Retirement_Month": a["rm"],
+                # W0 E.1 seasonal shares (None off the seasonal basis).
+                "Summer_Capability_Frac": (
+                    a["summer_cap"] / a["cap"] if a["seasonal"] else None
+                ),
+                "Winter_Capability_Frac": (
+                    a["winter_cap"] / a["cap"] if a["seasonal"] else None
+                ),
             }
         )
     bins = pd.DataFrame(
@@ -3442,6 +3472,8 @@ def fleet_to_bins(
             "fuel",
             "Retirement_Year",
             "Retirement_Month",
+            "Summer_Capability_Frac",
+            "Winter_Capability_Frac",
         ],
     )
     # Per-plant CC capacity reconciliation (ScenarioConfig.cc_capacity_reconcile)

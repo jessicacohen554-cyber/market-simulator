@@ -1,0 +1,425 @@
+{
+ "census": "pjmco-0b Elliott unavailable-MW gap (zero-LP)",
+ "bundle": "results/calibration/pjmnext16_A_span",
+ "window": "2022-12-20 HE01 .. 2022-12-28 HE24 EPT (216 h)",
+ "clock": "EIA-930 local prevailing Eastern year, UTC-ordered, hour-ending; row=(doy0)*24+HE-1 (DST nets to 0 by Dec)",
+ "published_basis": "gen_outages_by_type PJM RTO lead_days==0, 06:00 EPT daily snapshot broadcast flat over 24 h",
+ "model_basis": "sum over units of (max_2022 cap_mw - cap_mw); cap_mw=pmax*availability; max-cap is the installed proxy (pmax not in sidecar; fleet rebuild blocked: data/clean absent)",
+ "prefixed_reading": "CONFIRMED iff gap >= 15000 MW in >= 18 h",
+ "headline": "published FORCED - model unavailable THERMAL",
+ "hours_ge_15gw": 0,
+ "verdict": "NOT CONFIRMED",
+ "variant_hours_ge_15gw": {
+  "forced_vs_all": 0,
+  "total_vs_thermal": 0,
+  "total_vs_all": 0,
+  "forced_vs_thermal_ex_exit": 0,
+  "total_vs_thermal_ex_exit": 24,
+  "event_increment_forced_vs_thermal": 48
+ },
+ "variant_verdicts": {
+  "forced_vs_all": "NOT CONFIRMED",
+  "total_vs_thermal": "NOT CONFIRMED",
+  "total_vs_all": "NOT CONFIRMED",
+  "forced_vs_thermal_ex_exit": "NOT CONFIRMED",
+  "total_vs_thermal_ex_exit": "CONFIRMED",
+  "event_increment_forced_vs_thermal": "CONFIRMED"
+ },
+ "verdict_flips_under_variant": [
+  "event_increment_forced_vs_thermal",
+  "total_vs_thermal_ex_exit"
+ ],
+ "daily": [
+  {
+   "day": 20,
+   "pub_forced": 10396.0,
+   "pub_total": 20450.0,
+   "model_thermal": 34850.8984375,
+   "model_all": 34974.5,
+   "model_thermal_ex_exit": 26212.80078125,
+   "gap": -24454.9,
+   "gap_max": -24454.9,
+   "hours_ge15": 0,
+   "price_max": 93.0,
+   "reserve_dual_max": 0.0,
+   "reserve_shortfall_max": 0.0,
+   "slack_max": 0.0
+  },
+  {
+   "day": 21,
+   "pub_forced": 11585.0,
+   "pub_total": 21529.0,
+   "model_thermal": 26248.900390625,
+   "model_all": 26372.5,
+   "model_thermal_ex_exit": 17610.80078125,
+   "gap": -14663.9,
+   "gap_max": -14663.9,
+   "hours_ge15": 0,
+   "price_max": 93.5,
+   "reserve_dual_max": 0.0,
+   "reserve_shortfall_max": 0.0,
+   "slack_max": 0.0
+  },
+  {
+   "day": 22,
+   "pub_forced": 10433.0,
+   "pub_total": 18375.0,
+   "model_thermal": 26096.19921875,
+   "model_all": 26219.80078125,
+   "model_thermal_ex_exit": 17458.19921875,
+   "gap": -15663.2,
+   "gap_max": -15663.2,
+   "hours_ge15": 0,
+   "price_max": 86.5,
+   "reserve_dual_max": 0.0,
+   "reserve_shortfall_max": 0.0,
+   "slack_max": 0.0
+  },
+  {
+   "day": 23,
+   "pub_forced": 11914.0,
+   "pub_total": 17330.0,
+   "model_thermal": 30192.19921875,
+   "model_all": 30315.80078125,
+   "model_thermal_ex_exit": 21554.19921875,
+   "gap": -18278.2,
+   "gap_max": -18278.2,
+   "hours_ge15": 0,
+   "price_max": 136.4,
+   "reserve_dual_max": 0.0,
+   "reserve_shortfall_max": 0.0,
+   "slack_max": 0.0
+  },
+  {
+   "day": 24,
+   "pub_forced": 31078.0,
+   "pub_total": 35641.0,
+   "model_thermal": 33838.5,
+   "model_all": 33962.1015625,
+   "model_thermal_ex_exit": 25200.5,
+   "gap": -2760.5,
+   "gap_max": -2760.5,
+   "hours_ge15": 0,
+   "price_max": 135.6,
+   "reserve_dual_max": 0.0,
+   "reserve_shortfall_max": 0.0,
+   "slack_max": 0.0
+  },
+  {
+   "day": 25,
+   "pub_forced": 35844.0,
+   "pub_total": 40723.0,
+   "model_thermal": 33295.30078125,
+   "model_all": 33418.8984375,
+   "model_thermal_ex_exit": 24657.19921875,
+   "gap": 2548.7,
+   "gap_max": 2548.7,
+   "hours_ge15": 0,
+   "price_max": 123.1,
+   "reserve_dual_max": 0.0,
+   "reserve_shortfall_max": 0.0,
+   "slack_max": 0.0
+  },
+  {
+   "day": 26,
+   "pub_forced": 27058.0,
+   "pub_total": 32410.0,
+   "model_thermal": 34012.1015625,
+   "model_all": 34135.69921875,
+   "model_thermal_ex_exit": 25374.099609375,
+   "gap": -6954.1,
+   "gap_max": -6954.1,
+   "hours_ge15": 0,
+   "price_max": 115.2,
+   "reserve_dual_max": 0.0,
+   "reserve_shortfall_max": 0.0,
+   "slack_max": 0.0
+  },
+  {
+   "day": 27,
+   "pub_forced": 24052.0,
+   "pub_total": 31062.0,
+   "model_thermal": 31614.0,
+   "model_all": 31737.599609375,
+   "model_thermal_ex_exit": 22975.900390625,
+   "gap": -7562.0,
+   "gap_max": -7562.0,
+   "hours_ge15": 0,
+   "price_max": 79.1,
+   "reserve_dual_max": 0.0,
+   "reserve_shortfall_max": 0.0,
+   "slack_max": 0.0
+  },
+  {
+   "day": 28,
+   "pub_forced": 17957.0,
+   "pub_total": 25796.0,
+   "model_thermal": 27605.400390625,
+   "model_all": 27729.0,
+   "model_thermal_ex_exit": 18967.30078125,
+   "gap": -9648.4,
+   "gap_max": -9648.4,
+   "hours_ge15": 0,
+   "price_max": 62.4,
+   "reserve_dual_max": 0.0,
+   "reserve_shortfall_max": 0.0,
+   "slack_max": 0.0
+  }
+ ],
+ "window_model_unavail_by_class_daily_mean_mw": {
+  "CC_CHP": {
+   "20": 285.0,
+   "21": 322.0,
+   "22": 246.0,
+   "23": 246.0,
+   "24": 142.0,
+   "25": 433.0,
+   "26": 433.0,
+   "27": 502.0,
+   "28": 425.0
+  },
+  "CC_REGULAR": {
+   "20": 13452.0,
+   "21": 7813.0,
+   "22": 8619.0,
+   "23": 13551.0,
+   "24": 17509.0,
+   "25": 18257.0,
+   "26": 19099.0,
+   "27": 16224.0,
+   "28": 12326.0
+  },
+  "COAL_BIT": {
+   "20": 13639.0,
+   "21": 10593.0,
+   "22": 9711.0,
+   "23": 9464.0,
+   "24": 9027.0,
+   "25": 8101.0,
+   "26": 6827.0,
+   "27": 7306.0,
+   "28": 7306.0
+  },
+  "COAL_PRB": {
+   "20": 527.0,
+   "21": 527.0,
+   "22": 527.0,
+   "23": 527.0,
+   "24": 1234.0,
+   "25": 1825.0,
+   "26": 1825.0,
+   "27": 1755.0,
+   "28": 1755.0
+  },
+  "COAL_WC": {
+   "20": 316.0,
+   "21": 361.0,
+   "22": 361.0,
+   "23": 361.0,
+   "24": 361.0,
+   "25": 550.0,
+   "26": 596.0,
+   "27": 596.0,
+   "28": 562.0
+  },
+  "CT_CHP": {
+   "20": 0.0,
+   "21": 0.0,
+   "22": 0.0,
+   "23": 0.0,
+   "24": 0.0,
+   "25": 0.0,
+   "26": 0.0,
+   "27": 0.0,
+   "28": 0.0
+  },
+  "CT_PEAKER": {
+   "20": 74.0,
+   "21": 74.0,
+   "22": 74.0,
+   "23": 74.0,
+   "24": 74.0,
+   "25": 74.0,
+   "26": 74.0,
+   "27": 74.0,
+   "28": 74.0
+  },
+  "ST_CHP": {
+   "20": 31.0,
+   "21": 31.0,
+   "22": 31.0,
+   "23": 31.0,
+   "24": 31.0,
+   "25": 31.0,
+   "26": 31.0,
+   "27": 31.0,
+   "28": 31.0
+  },
+  "ST_GAS": {
+   "20": 6260.0,
+   "21": 6260.0,
+   "22": 6260.0,
+   "23": 5672.0,
+   "24": 5193.0,
+   "25": 3758.0,
+   "26": 4860.0,
+   "27": 4860.0,
+   "28": 4860.0
+  },
+  "hydro": {
+   "20": 124.0,
+   "21": 124.0,
+   "22": 124.0,
+   "23": 124.0,
+   "24": 124.0,
+   "25": 124.0,
+   "26": 124.0,
+   "27": 124.0,
+   "28": 124.0
+  },
+  "nuclear": {
+   "20": 0.0,
+   "21": 0.0,
+   "22": 0.0,
+   "23": 0.0,
+   "24": 0.0,
+   "25": 0.0,
+   "26": 0.0,
+   "27": 0.0,
+   "28": 0.0
+  },
+  "oil": {
+   "20": 267.0,
+   "21": 267.0,
+   "22": 267.0,
+   "23": 267.0,
+   "24": 267.0,
+   "25": 267.0,
+   "26": 267.0,
+   "27": 267.0,
+   "28": 267.0
+  }
+ },
+ "exit_bucket_mw": 8681.267578125,
+ "exit_bucket_by_class_mw": {
+  "CC_REGULAR": 2564.0,
+  "COAL_BIT": 3293.0,
+  "COAL_PRB": 495.0,
+  "COAL_WC": 8.0,
+  "CT_CHP": 3.0,
+  "CT_PEAKER": 77.0,
+  "ST_CHP": 21.0,
+  "ST_GAS": 1922.0,
+  "hydro": 6.0,
+  "oil": 292.0
+ },
+ "secondary_annual_means": {
+  "2022": {
+   "pub_total_mean": 35134.64657534246,
+   "pub_forced_mean": 9332.260273972603,
+   "pub_planned_plus_maint_mean": 25802.386301369865,
+   "model_thermal_mean_proxy": 42063.75390625,
+   "model_all_mean_proxy": 42248.3515625,
+   "model_installed_proxy_gen": 171578.46875,
+   "pub_total_fleet_rate_on_proxy": 0.2047730512535097
+  },
+  "2023": {
+   "pub_total_mean": 33297.93406593407,
+   "pub_forced_mean": 7653.024725274725,
+   "pub_planned_plus_maint_mean": 25644.909340659342,
+   "model_thermal_mean_proxy": 43631.7734375,
+   "model_all_mean_proxy": 44045.68359375,
+   "model_installed_proxy_gen": 170770.40625
+  },
+  "2024": {
+   "pub_total_mean": 32972.79452054795,
+   "pub_forced_mean": 7698.123287671233,
+   "pub_planned_plus_maint_mean": 25274.671232876713,
+   "model_thermal_mean_proxy": 38602.19921875,
+   "model_all_mean_proxy": 39054.48046875,
+   "model_installed_proxy_gen": 168262.671875
+  },
+  "2025": {
+   "pub_total_mean": 35870.271232876716,
+   "pub_forced_mean": 10531.298630136986,
+   "pub_planned_plus_maint_mean": 25338.972602739726,
+   "model_thermal_mean_proxy": 35906.3046875,
+   "model_all_mean_proxy": 36360.79296875,
+   "model_installed_proxy_gen": 165792.796875
+  }
+ },
+ "secondary_2022_by_class": {
+  "CC_CHP": {
+   "installed_proxy_mw": 1501.6689453125,
+   "unavail_mean_mw": 384.0140075683594,
+   "unavail_frac": 0.25600001215934753,
+   "excess_vs_pub_fleet_rate_mw": 76.51300048828125
+  },
+  "CC_REGULAR": {
+   "installed_proxy_mw": 56117.57421875,
+   "unavail_mean_mw": 13379.455078125,
+   "unavail_frac": 0.23800000548362732,
+   "excess_vs_pub_fleet_rate_mw": 1888.0880126953125
+  },
+  "COAL_BIT": {
+   "installed_proxy_mw": 39334.62890625,
+   "unavail_mean_mw": 18146.083984375,
+   "unavail_frac": 0.460999995470047,
+   "excess_vs_pub_fleet_rate_mw": 10091.412109375
+  },
+  "COAL_PRB": {
+   "installed_proxy_mw": 3076.373046875,
+   "unavail_mean_mw": 1504.904052734375,
+   "unavail_frac": 0.48899999260902405,
+   "excess_vs_pub_fleet_rate_mw": 874.9450073242188
+  },
+  "COAL_WC": {
+   "installed_proxy_mw": 1171.0360107421875,
+   "unavail_mean_mw": 271.15301513671875,
+   "unavail_frac": 0.23199999332427979,
+   "excess_vs_pub_fleet_rate_mw": 31.356000900268555
+  },
+  "CT_CHP": {
+   "installed_proxy_mw": 326.6520080566406,
+   "unavail_mean_mw": 18.39900016784668,
+   "unavail_frac": 0.0560000017285347,
+   "excess_vs_pub_fleet_rate_mw": -48.49100112915039
+  },
+  "CT_PEAKER": {
+   "installed_proxy_mw": 22495.1953125,
+   "unavail_mean_mw": 1324.322021484375,
+   "unavail_frac": 0.05900000035762787,
+   "excess_vs_pub_fleet_rate_mw": -3282.0869140625
+  },
+  "ST_CHP": {
+   "installed_proxy_mw": 169.91799926757812,
+   "unavail_mean_mw": 32.29199981689453,
+   "unavail_frac": 0.1899999976158142,
+   "excess_vs_pub_fleet_rate_mw": -2.503000020980835
+  },
+  "ST_GAS": {
+   "installed_proxy_mw": 8408.828125,
+   "unavail_mean_mw": 6206.671875,
+   "unavail_frac": 0.7379999756813049,
+   "excess_vs_pub_fleet_rate_mw": 4484.77099609375
+  },
+  "hydro": {
+   "installed_proxy_mw": 2561.549072265625,
+   "unavail_mean_mw": 184.593994140625,
+   "unavail_frac": 0.07199999690055847,
+   "excess_vs_pub_fleet_rate_mw": -339.9419860839844
+  },
+  "nuclear": {
+   "installed_proxy_mw": 31674.478515625,
+   "unavail_mean_mw": 636.0910034179688,
+   "unavail_frac": 0.019999999552965164,
+   "excess_vs_pub_fleet_rate_mw": -5849.98779296875
+  },
+  "oil": {
+   "installed_proxy_mw": 4740.56982421875,
+   "unavail_mean_mw": 160.7239990234375,
+   "unavail_frac": 0.03400000184774399,
+   "excess_vs_pub_fleet_rate_mw": -810.0170288085938
+  }
+ }
+}

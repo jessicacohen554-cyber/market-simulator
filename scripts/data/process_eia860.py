@@ -258,7 +258,12 @@ def build_generator_table(zip_path: Path, egrid_vintage: int) -> pd.DataFrame:
     df["balancing_authority_code"] = (
         df["plant_id"].map(ba_by_plant).astype("string").str.strip()
     )
-    df = _admit_footprint(df, plant)
+    # W0 E.6 (owner ruling R-2 / Q6): NO derive-time footprint filter. Every US
+    # balancing authority is kept and each row carries its plant's NERC region,
+    # so membership (incl. NWPP's NERC key) is decided at LOAD time by
+    # fleet.models.generator_footprint_mask / program_footprint_mask, and a BA
+    # joining the program needs no re-derive.
+    df["nerc_region"] = _nerc_by_plant(df["plant_id"], plant)
 
     df["plant_id"] = df["plant_id"].astype("int64")
     df["generator_id"] = df["generator_id"].map(_stringify)
@@ -274,7 +279,129 @@ def build_generator_table(zip_path: Path, egrid_vintage: int) -> pd.DataFrame:
 
     _join_egrid_heat_rate(df, egrid_vintage)
 
-    return df[EIA_860_CSV_COLUMNS].reset_index(drop=True)
+    return df[EIA_860_GENERATOR_TABLE_COLUMNS].reset_index(drop=True)
+
+
+#: The processed generator table's columns since W0 E.6: the canonical schema
+#: plus the plant's ``NERC Region`` (the load-time footprint key).
+EIA_860_GENERATOR_TABLE_COLUMNS: list[str] = EIA_860_CSV_COLUMNS + ["nerc_region"]
+
+
+def _nerc_by_plant(plant_ids: pd.Series, plant: pd.DataFrame) -> pd.Series:
+    """Each row's plant ``NERC Region`` from the vintage's plant sheet (or NA)."""
+    if "NERC Region" not in plant.columns:
+        return pd.Series(pd.NA, index=plant_ids.index, dtype="string")
+    codes = pd.to_numeric(plant["Plant Code"], errors="coerce")
+    nerc = (
+        plant.assign(_pc=codes)
+        .dropna(subset=["_pc"])
+        .drop_duplicates("_pc")
+        .set_index("_pc")["NERC Region"]
+        .astype("string")
+        .str.strip()
+    )
+    return pd.to_numeric(plant_ids, errors="coerce").map(nerc).astype("string")
+
+
+def unfilter_generator_table_in_place(vintage_dir: Path) -> tuple[int, int, int]:
+    """W0 E.6: make a committed ``eia860_generators.parquet`` UNFILTERED, additively.
+
+    Rule 23 trigger (d), a program-scope change: membership moves from derive
+    time to load time (owner ruling R-2 / Q6, 2026-10-02). From the vintage's
+    OWN committed sheets (no re-fetch), exactly as
+    :func:`rescope_generator_table_from_parquet` does:
+
+    * every committed row survives with every committed value, in place;
+    * a ``nerc_region`` column is added for every row (the plant sheet's
+      ``NERC Region``) — the load-time NWPP key;
+    * the operable rows of every balancing authority the derive filter dropped
+      are appended, heat-rate-joined the way the canonical build joins them
+      when the committed file carries ``heat_rate``.
+
+    Idempotent: a table that already carries ``nerc_region`` is left alone.
+
+    Returns:
+        ``(rows_before, rows_after, rows_appended)``.
+
+    Raises:
+        FileNotFoundError: A required committed sheet is absent.
+    """
+    out = vintage_dir / "eia860_generators.parquet"
+    gen_path = vintage_dir / "eia860_generator_operable.parquet"
+    plant_path = vintage_dir / "eia860_plant.parquet"
+    for path in (out, gen_path, plant_path):
+        if not path.exists():
+            raise FileNotFoundError(f"{vintage_dir.name}: missing {path.name}")
+    committed = pd.read_parquet(out)
+    if "nerc_region" in committed.columns:
+        return len(committed), len(committed), 0
+    plant = pd.read_parquet(plant_path)
+    generator = pd.read_parquet(gen_path)
+    plant = plant[pd.to_numeric(plant["Plant Code"], errors="coerce").notna()]
+    generator = generator[
+        pd.to_numeric(generator["Plant Code"], errors="coerce").notna()
+    ]
+    ba_by_plant = plant.drop_duplicates("Plant Code").set_index("Plant Code")[
+        "Balancing Authority Code"
+    ]
+    df = generator[list(_GENERATOR_COLUMN_MAP)].rename(columns=_GENERATOR_COLUMN_MAP)
+    df["balancing_authority_code"] = (
+        df["plant_id"].map(ba_by_plant).astype("string").str.strip()
+    )
+    df["plant_id"] = df["plant_id"].astype("int64")
+    df["generator_id"] = df["generator_id"].map(_stringify)
+    for col in (
+        "operating_year",
+        "planned_retirement_year",
+        "planned_retirement_month",
+    ):
+        if col in df.columns:
+            df[col] = pd.to_numeric(df[col], errors="coerce").astype("Int64")
+    for col in ("nameplate_capacity_mw", "net_summer_capacity_mw"):
+        df[col] = pd.to_numeric(df[col], errors="coerce")
+    df["status"] = df["status"].astype("string").str.strip()
+
+    have = set(
+        zip(
+            committed["plant_id"].astype("int64"), committed["generator_id"].astype(str)
+        )
+    )
+    keys = list(zip(df["plant_id"].astype("int64"), df["generator_id"].astype(str)))
+    new_rows = df[[k not in have for k in keys]].copy()
+    # Only rows OUTSIDE the program footprint are appended: a program-BA row
+    # the committed build did not carry (a later sheet correction) is not a
+    # scope change and stays out (the NWPP-20 discipline).
+    from market_sim.data.fleet.models import program_footprint_mask
+
+    new_rows["nerc_region"] = _nerc_by_plant(new_rows["plant_id"], plant)
+    new_rows = new_rows[~program_footprint_mask(new_rows)]
+    if "heat_rate" in committed.columns and not new_rows.empty:
+        _join_egrid_heat_rate(new_rows, egrid_vintage_for_eia860_dir(vintage_dir))
+
+    import pyarrow as pa
+    import pyarrow.parquet as pq
+
+    committed_table = pq.read_table(out)
+    nerc_committed = _nerc_by_plant(committed["plant_id"], plant)
+    committed_table = committed_table.append_column(
+        "nerc_region", pa.array(nerc_committed.astype(object), type=pa.string())
+    )
+    schema = committed_table.schema
+    new_rows = new_rows.reindex(columns=[f.name for f in schema])
+    new_table = pa.Table.from_pandas(new_rows, preserve_index=False)
+    columns = []
+    for field in schema:
+        column = new_table.column(field.name)
+        if pa.types.is_null(field.type):
+            column = pa.nulls(new_table.num_rows, type=field.type)
+        elif not column.type.equals(field.type):
+            column = column.cast(field.type)
+        columns.append(column)
+    merged = pa.concat_tables(
+        [committed_table, pa.Table.from_arrays(columns, schema=schema)]
+    )
+    pq.write_table(merged, out)
+    return len(committed), merged.num_rows, len(new_rows)
 
 
 def rescope_generator_table_from_parquet(
@@ -939,6 +1066,15 @@ def main() -> None:
         "other column and row byte-identical. Runs this mode alone and exits.",
     )
     parser.add_argument(
+        "--unfilter-in-place",
+        type=Path,
+        nargs="+",
+        default=None,
+        help="W0 E.6: make each vintage directory's committed "
+        "eia860_generators.parquet unfiltered, additively (nerc_region column + "
+        "every non-program BA's operable rows), from its own committed sheets.",
+    )
+    parser.add_argument(
         "--rescope-retired-window",
         type=Path,
         nargs="+",
@@ -955,6 +1091,17 @@ def main() -> None:
             print(rejoin_heat_rate_in_place(path))
         return
 
+    if args.unfilter_in_place:
+        for vintage_dir in args.unfilter_in_place:
+            before, after, added = unfilter_generator_table_in_place(vintage_dir)
+            logger.info(
+                "%s: unfiltered generator table %d -> %d rows (+%d)",
+                vintage_dir.name,
+                before,
+                after,
+                added,
+            )
+        return
     if args.rescope_retired_window:
         before, after, added = rescope_retired_window(
             args.rescope_retired_window, args.out_dir

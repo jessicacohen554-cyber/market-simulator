@@ -134,7 +134,32 @@ class SolveEpoch:
 #: EMPTY AT LANDING, by owner ruling Q54 row 4. D77's ledger entry 2026-09-06b
 #: (the CCS-retrofit emission-rate seam) stays prose: back-filling it as an epoch
 #: would re-key forecast bundles that the D65-B-R batch is re-solving anyway.
-SOLVE_EPOCHS: tuple[SolveEpoch, ...] = ()
+#:
+#: 2026-10-02c is the first entry: the closeout-W0 time-weighted dispatched-bin
+#: denominator (ledger entry of that id in ``results/cache.py``), scoped to the
+#: backcast ISOs where ``unit_outage_dispatched_bin_denominator`` is live.
+#: 2026-10-02d is its second part (the live roster drops dead exit cohorts),
+#: scoped to the backcast ISOs whose keeper fleet carries one (zero-LP sweep).
+SOLVE_EPOCHS: tuple[SolveEpoch, ...] = (
+    SolveEpoch(
+        id="2026-10-02c",
+        cause=(
+            "closeout-W0 D-1: the dispatched-bin outage denominator is "
+            "time-weighted for exit cohorts retiring inside the solve year"
+        ),
+        modes=("backcast",),
+        isos=("MISO", "NEISO", "NWPP", "PJM", "SOCO"),
+    ),
+    SolveEpoch(
+        id="2026-10-02d",
+        cause=(
+            "closeout-W0 D-1 part 2: the dispatched-bin outage denominator is "
+            "the live roster; exit cohorts retired before the solve year leave it"
+        ),
+        modes=("backcast",),
+        isos=("MISO", "NWPP", "PJM", "SOCO"),
+    ),
+)
 
 
 class Unhashable(TypeError):
@@ -388,6 +413,73 @@ def _git_sha() -> str:
         return ""
 
 
+@lru_cache(maxsize=32)
+def _dir_sha256(directory: str) -> str:
+    """sha256 over a directory's files (name + content digest), sorted by name.
+
+    W0 E.9: the digest of an EIA-860 vintage directory a bundle read. Only the
+    files directly in the directory are hashed (the vintage layout is flat), so
+    the value moves exactly when a vintage file is added, removed or re-derived.
+    ``""`` when the directory is absent.
+    """
+    path = Path(directory)
+    if not path.is_dir():
+        return ""
+    outer = hashlib.sha256()
+    for child in sorted(p for p in path.iterdir() if p.is_file()):
+        inner = hashlib.sha256()
+        with child.open("rb") as fh:
+            for chunk in iter(lambda: fh.read(1 << 20), b""):
+                inner.update(chunk)
+        outer.update(f"{child.name}\0{inner.hexdigest()}\n".encode())
+    return outer.hexdigest()
+
+
+def eia860_vintage_digests(config) -> dict[str, str]:
+    """``{directory name: sha256}`` of every EIA-860 vintage dir a run reads.
+
+    W0 E.9 (audit §E.9, rule 23 form): a backcast reads ``vintage_<Y>/`` for
+    each solved year under ``eia860_vintage_tracks_solve_year`` (or its explicit
+    ``eia860_vintage_year`` pin), falling back to the canonical directory for a
+    year with no vintage; every other run reads the canonical directory (and a
+    pinned vintage when set). Recording the digest attributes a re-keyed keeper
+    to a data change, never to a residual.
+
+    Args:
+        config: A ``ScenarioConfig`` (duck-typed).
+
+    Returns:
+        Directory name (``"eia-860"`` for the canonical top level) to its
+        sha256; empty when no EIA-860 directory exists.
+    """
+    from market_sim.config.paths import (
+        EIA_860_DIR,
+        resolve_backcast_eia860_vintage,
+    )
+
+    explicit = getattr(config, "eia860_vintage_year", None)
+    tracks = bool(getattr(config, "eia860_vintage_tracks_solve_year", False))
+    start = getattr(config, "start_year", None)
+    end = getattr(config, "end_year", None)
+    if getattr(config, "mode", None) == "backcast" and start is not None:
+        years = range(int(start), int(end if end is not None else start) + 1)
+        vintages = {resolve_backcast_eia860_vintage(explicit, y, tracks) for y in years}
+    else:
+        vintages = {explicit}
+    dirs: set[Path] = set()
+    for v in vintages:
+        candidate = EIA_860_DIR / f"vintage_{int(v)}" if v is not None else None
+        dirs.add(
+            candidate if candidate is not None and candidate.is_dir() else EIA_860_DIR
+        )
+    out = {}
+    for d in sorted(dirs):
+        digest = _dir_sha256(str(d))
+        if digest:
+            out[d.name] = digest
+    return out
+
+
 def surface_stamp(iso: str | None, config) -> dict:
     """Return the ``solve_surface`` block a bundle records beside its cache key.
 
@@ -401,7 +493,8 @@ def surface_stamp(iso: str | None, config) -> dict:
         config: The run's ``ScenarioConfig``.
 
     Returns:
-        ``{schema, iso, fingerprint, rows, moved, epochs, git_sha}``, where
+        ``{schema, iso, fingerprint, rows, moved, epochs, git_sha,
+        eia860_vintages}``, where
         ``fingerprint`` hashes the ISO's WHOLE projected row set, so two runs on
         two surfaces are distinguishable even where neither row has moved off
         its declaration.
@@ -418,6 +511,8 @@ def surface_stamp(iso: str | None, config) -> dict:
         "moved": moved_rows(iso),
         "epochs": applicable_epochs(config),
         "git_sha": _git_sha(),
+        # W0 E.9: the sha256 of each EIA-860 vintage directory the run read.
+        "eia860_vintages": eia860_vintage_digests(config),
     }
 
 
@@ -426,3 +521,4 @@ def reset_caches() -> None:
     surface_fingerprint.cache_clear()
     surface_rows.cache_clear()
     moved_rows.cache_clear()
+    _dir_sha256.cache_clear()

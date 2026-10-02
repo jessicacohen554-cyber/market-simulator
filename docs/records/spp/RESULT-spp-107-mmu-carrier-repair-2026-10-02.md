@@ -103,3 +103,19 @@ came in at +1.1 / +1.35 TWh.
 - **25:** SPP-only.
 - **29(b):** the keeper is the control.
 - **31–36:** the parent solved nothing; bytes were in hand before archive; one year per shard.
+
+## Addendum A (2026-10-02, after promotion): re-scored on the EIA-923 Final 2025 bench
+
+`main` re-benched 2025 on EIA-923 Final (closeout-A, `65ada533`), so the 2025 C1 rows now gate. Merging it into this PR
+re-scored the new keeper on the Final 2025 bench:
+
+| 2025 C1 row | spp-100 (closeout-A record) | EXR keeper |
+|---|---|---|
+| COAL_PRB | +10.32 TWh, **FAIL** | +7.96 TWh, PASS (band ±8.00, at the edge) |
+| CC_REGULAR | — | −6.73 TWh, PASS |
+| ST_GAS | — | −7.58 TWh, PASS |
+
+- **Train tier 2023–25 stays CALIBRATED** (lone ledgered C3c). On the Final bench the outgoing keeper would have
+  failed it.
+- Both numbers are at the edge of the band. The coal over-count remains SPP's leading C1 object, and it is
+  SPP-108's lane.

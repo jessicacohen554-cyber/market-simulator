@@ -546,7 +546,7 @@ def _measured_heat_rate_flags(config: ScenarioConfig) -> dict[str, bool | str]:
 
 
 def _reliability_floor_layup_shares(
-    config, iso: str, year: int, fleet_arrays
+    config, iso: str, year: int, fleet_arrays, generators=None
 ) -> dict[tuple[int, str], np.ndarray] | None:
     """Lay-up shares for ``ScenarioConfig.reliability_floor_layup_window_mask``.
 
@@ -558,7 +558,9 @@ def _reliability_floor_layup_shares(
     ``None`` when the mask is off, the run is not a backcast (rule 13: same-year
     lay-up windows have no forward analogue), or the run carries no historic
     outage overlay for the windows to be a complement of — so the off path is
-    byte-inert.
+    byte-inert. ``generators`` are the LP rows ``fleet_arrays`` was built from,
+    in row order: the live dispatched-bin roster reads each row's COD-ramp mask
+    off them (closeout-W0 desk ruling D-1).
     """
     if not getattr(config, "reliability_floor_layup_window_mask", False):
         return None
@@ -583,15 +585,27 @@ def _reliability_floor_layup_shares(
         getattr(config, "unit_outage_dispatched_bin_denominator", False)
         and iso_u != "ERCOT"
     ):
-        # NWPP-NEXT-15: unit_id rides along so the live sub-gate can read each
-        # row's exit-cohort tag; ignored (byte-inert) while the sub-gate is off.
+        # The LP rows themselves, so the live roster (closeout-W0 desk ruling
+        # D-1) reads each row's COD-ramp mask; plant code and group from the
+        # arrays, as the overlay keys them.
+        if generators is None or len(generators) != len(fleet_arrays.unit_ids):
+            raise ValueError(
+                "reliability-floor lay-up roster needs the LP generators the "
+                "fleet_arrays rows were built from, row-aligned"
+            )
         lp_bins = lp_bin_capacity_index(
             [
-                SimpleNamespace(plant_code=int(c), plant_group=str(g), unit_id=str(u))
-                for c, g, u in zip(
-                    fleet_arrays.plant_code,
-                    fleet_arrays.plant_group,
-                    fleet_arrays.unit_ids,
+                SimpleNamespace(
+                    plant_code=int(c),
+                    plant_group=str(g),
+                    online_year=gen.online_year,
+                    online_month=gen.online_month,
+                    retirement_year=gen.retirement_year,
+                    retirement_month=gen.retirement_month,
+                    is_campd_bin=gen.is_campd_bin,
+                )
+                for gen, c, g in zip(
+                    generators, fleet_arrays.plant_code, fleet_arrays.plant_group
                 )
             ],
             np.asarray(fleet_arrays.pmax, dtype=float),
@@ -637,11 +651,20 @@ def _reliability_floor_layup_shares(
 # limb, which spreads Merrimack's winter burn flat and binds in 2023/2024).
 # NWPP: NWPP-NEXT-7 (owner ruling Q1, 2026-09-27, on NWPP's own contract census
 # docs/records/nwpp/FINDING-nwppnext5-coal-take-obligation-design-2026-09-26.md).
-COAL_PLANT_GRAIN_ISOS: tuple[str, ...] = ("MISO", "NEISO", "NWPP")
+# ERCOT: closeout-L1 (owner ruling R-3; see COAL_PILE_CEILING_ISOS below).
+COAL_PLANT_GRAIN_ISOS: tuple[str, ...] = ("MISO", "NEISO", "NWPP", "ERCOT")
 
 # ISOs whose own evidence armed the per-yard coal TAKE floor
 # (coal_fuel_inventory_take_floor): NWPP-NEXT-7, owner rulings Q1-Q5.
 COAL_TAKE_FLOOR_ISOS: tuple[str, ...] = ("NWPP",)
+
+# ISOs whose own evidence armed the monthly pile CEILING-ONLY (no take floor):
+# the yard's cumulative month-end burn is capped at its December stock plus the
+# receipts delivered so far, and nothing floors it. ERCOT: closeout-L1 (owner
+# ruling R-3, 2026-10-02; zero-LP census docs/records/ercot/closeout/
+# FINDING-closeout-w1-zero-lp-censuses-2026-10-02.md §1; PRECOMMIT
+# PRECOMMIT-closeout-l1-coal-fuel-ceiling-2026-10-02.md).
+COAL_PILE_CEILING_ISOS: tuple[str, ...] = ("ERCOT",)
 
 
 def resolve_coal_take_floor(
@@ -686,14 +709,19 @@ def resolve_coal_monthly_pile(
 
     NWPP-NEXT-8 (owner decision cards 2026-09-28). Raises ``ValueError`` when
     ``coal_fuel_inventory_monthly_pile`` is armed without the take floor whose
-    identity it refines, or outside :data:`COAL_TAKE_FLOOR_ISOS` (rule 25).
+    identity it refines (except in :data:`COAL_PILE_CEILING_ISOS`, which arm
+    the pile as a ceiling only), or outside :data:`COAL_TAKE_FLOOR_ISOS` /
+    :data:`COAL_PILE_CEILING_ISOS` (rule 25).
     """
     if not bool(getattr(config, "coal_fuel_inventory_monthly_pile", False)):
         return False
     if not floor_armed:
+        if iso.upper() in COAL_PILE_CEILING_ISOS:
+            return True
         raise ValueError(
             "coal_fuel_inventory_monthly_pile refines the yard pile identity the "
-            "take floor bounds and requires coal_fuel_inventory_take_floor."
+            "take floor bounds and requires coal_fuel_inventory_take_floor "
+            f"(ceiling-only pile: {COAL_PILE_CEILING_ISOS})."
         )
     if iso.upper() not in COAL_TAKE_FLOOR_ISOS:
         raise ValueError(
@@ -711,7 +739,7 @@ def resolve_coal_measured_receipts(
     NWPP-NEXT-9 (owner decision card 2026-09-28). Raises ``ValueError`` when
     ``coal_monthly_pile_measured_receipts`` is armed without the monthly pile
     whose receipt profile it replaces, or outside :data:`COAL_TAKE_FLOOR_ISOS`
-    (rule 25).
+    / :data:`COAL_PILE_CEILING_ISOS` (rule 25).
     """
     if not bool(getattr(config, "coal_monthly_pile_measured_receipts", False)):
         return False
@@ -720,12 +748,45 @@ def resolve_coal_measured_receipts(
             "coal_monthly_pile_measured_receipts replaces the monthly pile's "
             "ratable receipts and requires coal_fuel_inventory_monthly_pile."
         )
-    if iso.upper() not in COAL_TAKE_FLOOR_ISOS:
+    if iso.upper() not in COAL_TAKE_FLOOR_ISOS + COAL_PILE_CEILING_ISOS:
         raise ValueError(
             f"coal_monthly_pile_measured_receipts is gated to "
-            f"{COAL_TAKE_FLOOR_ISOS} (rule 25 [R-ISO-SCOPE])."
+            f"{COAL_TAKE_FLOOR_ISOS + COAL_PILE_CEILING_ISOS} (rule 25 [R-ISO-SCOPE])."
         )
     return True
+
+
+def load_coal_measured_receipts(
+    fleet_arrays, year: int, yard_keys: tuple[int, ...], iso: str
+) -> tuple[np.ndarray, np.ndarray] | None:
+    """Return the year's own cumulative Page 5 receipts per yard row, or None.
+
+    NWPP-NEXT-9 (``coal_monthly_pile_measured_receipts``): the year's own
+    receipts replace the ratable ``m/12`` profile yard by yard (backcast
+    overlay, rule 13); no curated same-year file leaves every yard ratable.
+    """
+    from market_sim.data.coal_fuel_inventory import build_coal_measured_receipts
+
+    mr = build_coal_measured_receipts(fleet_arrays, year, yard_keys)
+    if mr is None:
+        logger.info(
+            "coal measured receipts (%s %d): no curated same-year receipts; "
+            "every yard stays ratable",
+            iso,
+            year,
+        )
+        return None
+    logger.info(
+        "coal measured receipts (%s %d): %d yard rows measured, %d ratable; "
+        "receipts %.2f TBtu, contract %.2f TBtu",
+        iso,
+        year,
+        mr[2].n_measured,
+        mr[2].n_ratable,
+        mr[2].receipts_mmbtu / 1e6,
+        mr[2].contract_mmbtu / 1e6,
+    )
+    return mr[0], mr[1]
 
 
 def resolve_coal_budget_arms(config: ScenarioConfig, iso: str) -> tuple[bool, bool]:
@@ -999,7 +1060,6 @@ def run_year(
     unit_outage_st_capacity_basis: bool | None = None,
     unit_outage_per_unit_clip: bool | None = None,
     unit_outage_dispatched_bin_denominator: bool | None = None,
-    unit_outage_dispatched_bin_live_denominator: bool | None = None,
     unit_outage_short_windows_gas: bool | None = None,
     unit_outage_window_hour_grain: bool | None = None,
     campd_per_unit_attribution: bool | None = None,
@@ -1971,13 +2031,6 @@ def run_year(
         # turned out to have no run_year plumbing at all (rule 24 [R-REGISTRY]).
         config = config.with_overrides(
             unit_outage_dispatched_bin_denominator=unit_outage_dispatched_bin_denominator
-        )
-    if unit_outage_dispatched_bin_live_denominator is not None:
-        # NWPP-NEXT-15: the LIVE sub-gate of the dispatched-bin denominator.
-        # SOLVE path for the flag, for the same miso-265 reason as its parent
-        # above (rule 24 [R-REGISTRY]).
-        config = config.with_overrides(
-            unit_outage_dispatched_bin_live_denominator=unit_outage_dispatched_bin_live_denominator
         )
     if unit_outage_window_hour_grain is not None:
         # nyiso-229: the DETECTED-HOUR outage window grain. THIS is the SOLVE
@@ -3193,6 +3246,9 @@ def run_year(
     # renewable / COD-map load below so they all read the same vintage.
     from market_sim.config.paths import (
         resolve_backcast_eia860_vintage,
+        set_eia860_actual_retirement_only,
+        set_eia860_fleet_row_repairs,
+        set_eia860_seasonal_capacity_basis,
         set_eia860_standby_admission,
         set_eia860_vintage,
     )
@@ -3209,6 +3265,22 @@ def run_year(
     # Standby (SB) admission for the same loaders, set every solve so a prior
     # armed run in this process can never leak into this one (NWPP-NEXT-5).
     set_eia860_standby_admission(config.admit_standby_units)
+    # W0 E.1 seasonal capacity basis (owner ruling R-2 / Q1), per-plant fleets
+    # only; set on every solve so a prior armed run cannot leak into this one.
+    set_eia860_seasonal_capacity_basis(
+        bool(getattr(config, "seasonal_capacity_basis", False))
+        and bool(getattr(config, "plant_level_fleet", False))
+    )
+    # W0 E.5: a backcast never reads the operable sheet's planned retirement.
+    set_eia860_actual_retirement_only(
+        bool(getattr(config, "backcast_actual_retirement_only", False))
+    )
+    # W0 E.3: the reconstructed outage-capacity fleets carry the same row
+    # repairs the LP fleet does.
+    set_eia860_fleet_row_repairs(
+        bool(getattr(config, "cc_block_summer_rating", False)),
+        bool(getattr(config, "cc_steam_part_capacity", False)),
+    )
     # Arm/disarm the CAISO FSNO sub-zonal partition for this solve BEFORE the
     # first get_iso_config / zone-lookup call, so the LP and every bare
     # get_iso_config() consumer (renewables shares, hydro budgets, storage
@@ -4806,7 +4878,9 @@ def run_year(
         # economic-lay-up windows leave each pro_rata limb's per-unit basis.
         # None unless reliability_floor_layup_window_mask is armed in a
         # backcast, which inject_reliability_floor reads as the unmasked basis.
-        _floor_layup = _reliability_floor_layup_shares(config, iso, year, fleet_arrays)
+        _floor_layup = _reliability_floor_layup_shares(
+            config, iso, year, fleet_arrays, fleet
+        )
         if _floor_specs and inject_reliability_floor(
             fleet_arrays,
             iso,
@@ -6674,7 +6748,13 @@ def run_year(
             # neiso-117: a coal floor cannot demand fuel its yard does not
             # hold (rule 19 / rule 17). Scales only rows whose floor draw
             # exceeds the budget, so every already-feasible solve is unchanged.
-            if getattr(fleet_arrays, "min_gen", None) is not None:
+            # A ceiling-only pile (COAL_PILE_CEILING_ISOS) replaces this annual
+            # budget in the LP, so its floors reconcile against the pile below.
+            _coal_ceiling_pile = _coal_pile_armed and not _coal_floor_armed
+            if (
+                getattr(fleet_arrays, "min_gen", None) is not None
+                and not _coal_ceiling_pile
+            ):
                 from market_sim.data.coal_fuel_inventory import (
                     reconcile_floors_to_yard_budget,
                 )
@@ -6758,38 +6838,16 @@ def run_year(
                     # NWPP-NEXT-8: the same rows at month-end grain. Month 12 is
                     # the annual ceiling and floor just built, clips included.
                     from market_sim.data.coal_fuel_inventory import (
-                        build_coal_measured_receipts,
                         build_coal_monthly_pile,
                     )
 
-                    _measured = None
-                    if _coal_meas_armed:
-                        # NWPP-NEXT-9: the year's own Page 5 receipts replace
-                        # the ratable m/12 profile yard by yard (backcast
-                        # overlay, rule 13); no same-year file -> all ratable.
-                        _mr = build_coal_measured_receipts(
-                            fleet_arrays, year, _cp_prov.yard_keys
+                    _measured = (
+                        load_coal_measured_receipts(
+                            fleet_arrays, year, _cp_prov.yard_keys, iso
                         )
-                        if _mr is not None:
-                            _measured = (_mr[0], _mr[1])
-                            logger.info(
-                                "coal measured receipts (%s %d): %d yard rows "
-                                "measured, %d ratable; receipts %.2f TBtu, "
-                                "contract %.2f TBtu",
-                                iso,
-                                year,
-                                _mr[2].n_measured,
-                                _mr[2].n_ratable,
-                                _mr[2].receipts_mmbtu / 1e6,
-                                _mr[2].contract_mmbtu / 1e6,
-                            )
-                        else:
-                            logger.info(
-                                "coal measured receipts (%s %d): no curated "
-                                "same-year receipts; every yard stays ratable",
-                                iso,
-                                year,
-                            )
+                        if _coal_meas_armed
+                        else None
+                    )
 
                     (
                         coal_plant_budget,
@@ -6822,6 +6880,69 @@ def run_year(
                             for v in coal_plant_floor.sum(axis=0)
                         ],
                     )
+            elif _coal_pile_armed:
+                # closeout-L1 (ERCOT, COAL_PILE_CEILING_ISOS): the same monthly
+                # pile rows as a CEILING only — cumulative month-end burn <=
+                # Dec(Y-1) stock + receipts to date; no take floor
+                # (floor_parts=None). Coal must-run floors are reconciled to
+                # the cumulative ceiling at every month-end (rule 17).
+                from market_sim.data.coal_fuel_inventory import (
+                    build_coal_monthly_pile,
+                    reconcile_floors_to_yard_budget,
+                )
+
+                _measured = (
+                    load_coal_measured_receipts(
+                        fleet_arrays, year, _cp_prov.yard_keys, iso
+                    )
+                    if _coal_meas_armed
+                    else None
+                )
+                (
+                    coal_plant_budget,
+                    _no_floor,
+                    coal_plant_month_index,
+                    _pile,
+                ) = build_coal_monthly_pile(
+                    fleet_arrays,
+                    coal_plant_gen_idx,
+                    coal_plant_group_index,
+                    coal_plant_gen_hour_coeff,
+                    coal_plant_budget,
+                    _cp_prov.stock_mmbtu,
+                    None,
+                    config.hours,
+                    measured=_measured,
+                )
+                if getattr(fleet_arrays, "min_gen", None) is not None:
+                    for _row, _draw, _scale in reconcile_floors_to_yard_budget(
+                        fleet_arrays.min_gen,
+                        coal_plant_gen_idx,
+                        coal_plant_budget,
+                        coal_plant_gen_hour_coeff,
+                        coal_plant_group_index,
+                        month_index=coal_plant_month_index,
+                    ):
+                        logger.info(
+                            "coal monthly pile (%s %d): yard row %d floors "
+                            "draw %.3f TBtu > a month-end ceiling -> floors "
+                            "scaled x%.4f",
+                            iso,
+                            year,
+                            _row,
+                            _draw / 1e6,
+                            _scale,
+                        )
+                logger.info(
+                    "coal monthly pile (%s %d): CEILING-ONLY, %d yard rows x %d "
+                    "month-ends, cumulative; year-end ceiling %.1f TWh-equiv "
+                    "@HR10.661",
+                    iso,
+                    year,
+                    _pile.n_rows,
+                    _pile.n_months,
+                    float(coal_plant_budget[:, -1].sum()) / 10.661 / 1e6,
+                )
 
     # Base dispatch kwargs + priced import-node band: the shared pipeline
     # assembly (orchestrator-unification Stage 2) — the same key set the

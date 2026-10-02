@@ -1,0 +1,4357 @@
+plant,gen,field,old,new
+145,HM4,Operating Year,1972.0,1927.0
+56985,SMKII,Operating Year,2008.0,2009.0
+57858,1,Operating Year,2011.0,2012.0
+59292,RCWP,Operating Year,2019.0,2018.0
+61269,WT1,Operating Year,2018.0,2017.0
+61270,RDDRT,Operating Year,2018.0,2017.0
+61735,WT1,Operating Year,2019.0,2018.0
+61789,DV,Operating Year,2019.0,2018.0
+62562,HILO,Operating Year,2021.0,2023.0
+62562,HILO2,Operating Year,2021.0,2023.0
+64074,3,Operating Year,2021.0,2020.0
+65103,JICS2,Operating Year,2022.0,2023.0
+56488,1,Operating Month,1.0,12.0
+56985,SMKII,Operating Month,11.0,1.0
+57858,1,Operating Month,11.0,1.0
+58078,GE 1.,Operating Month,6.0,8.0
+59292,RCWP,Operating Month,1.0,12.0
+61269,WT1,Operating Month,1.0,12.0
+61270,RDDRT,Operating Month,1.0,12.0
+61735,WT1,Operating Month,1.0,12.0
+61789,DV,Operating Month,1.0,12.0
+62460,DESI2,Operating Month,12.0,10.0
+63892,LILY,Operating Month,9.0,10.0
+63892,LILYB,Operating Month,9.0,10.0
+64074,3,Operating Month,1.0,12.0
+65228,RP21,Operating Month,10.0,8.0
+116,GT3,Nameplate Capacity (MW),140.0,104.0
+116,GT4,Nameplate Capacity (MW),140.0,104.0
+116,GT5,Nameplate Capacity (MW),140.0,104.0
+116,GT6,Nameplate Capacity (MW),140.0,104.0
+116,GT7,Nameplate Capacity (MW),140.0,104.0
+117,C5-1,Nameplate Capacity (MW),184.5,184.0
+117,C5-2,Nameplate Capacity (MW),184.5,184.0
+117,C5-3,Nameplate Capacity (MW),200.6,201.0
+120,GT1,Nameplate Capacity (MW),23.6,19.6
+120,GT2,Nameplate Capacity (MW),23.6,19.6
+210,1,Nameplate Capacity (MW),1267.7,1296.3
+299,1,Nameplate Capacity (MW),30.7,26.1
+299,2,Nameplate Capacity (MW),14.1,12.0
+566,3,Nameplate Capacity (MW),1253.0,1350.0
+819,1,Nameplate Capacity (MW),12.5,13.6
+819,2,Nameplate Capacity (MW),12.5,13.6
+943,8,Nameplate Capacity (MW),1.7,1.8
+1004,CT1,Nameplate Capacity (MW),236.5,240.6
+1004,CT2,Nameplate Capacity (MW),236.5,240.6
+1248,GT1,Nameplate Capacity (MW),71.0,71.2
+1248,GT2,Nameplate Capacity (MW),71.0,71.2
+1248,GT3,Nameplate Capacity (MW),71.0,71.2
+1248,GT4,Nameplate Capacity (MW),70.0,129.0
+1786,3,Nameplate Capacity (MW),3.0,2.0
+2081,11,Nameplate Capacity (MW),50.0,55.4
+2081,12,Nameplate Capacity (MW),50.0,55.4
+2081,13,Nameplate Capacity (MW),64.7,71.2
+2081,14,Nameplate Capacity (MW),64.7,71.2
+2081,15,Nameplate Capacity (MW),64.7,71.2
+2081,16,Nameplate Capacity (MW),64.7,71.2
+2081,17,Nameplate Capacity (MW),64.7,71.2
+2081,18,Nameplate Capacity (MW),64.7,71.2
+2090,1,Nameplate Capacity (MW),22.0,21.6
+2092,3,Nameplate Capacity (MW),85.0,88.9
+2186,HOL1,Nameplate Capacity (MW),9.6,17.6
+2186,HOL2,Nameplate Capacity (MW),9.6,17.6
+3013,3,Nameplate Capacity (MW),130.5,150.1
+3648,3,Nameplate Capacity (MW),133.6,113.6
+3648,4,Nameplate Capacity (MW),71.0,60.4
+3648,5,Nameplate Capacity (MW),71.0,60.4
+3648,6,Nameplate Capacity (MW),71.0,60.4
+3887,2,Nameplate Capacity (MW),97.8,95.0
+3887,9,Nameplate Capacity (MW),97.8,95.0
+3971,4,Nameplate Capacity (MW),0.4,0.5
+3971,5,Nameplate Capacity (MW),0.4,0.5
+3971,6,Nameplate Capacity (MW),0.4,0.5
+3971,7,Nameplate Capacity (MW),0.4,0.5
+3971,9,Nameplate Capacity (MW),0.8,0.6
+3974,1,Nameplate Capacity (MW),2.3,1.8
+3974,10,Nameplate Capacity (MW),0.6,0.3
+3974,2,Nameplate Capacity (MW),2.3,1.8
+3974,8,Nameplate Capacity (MW),0.3,0.6
+3974,9,Nameplate Capacity (MW),0.6,0.9
+4040,1CT1,Nameplate Capacity (MW),167.9,173.1
+4040,1CT2,Nameplate Capacity (MW),167.9,173.1
+4040,2CT1,Nameplate Capacity (MW),167.9,173.1
+4040,2CT2,Nameplate Capacity (MW),167.9,173.1
+4045,1,Nameplate Capacity (MW),1.6,1.8
+4045,2,Nameplate Capacity (MW),1.6,1.8
+4139,3,Nameplate Capacity (MW),1.8,1.0
+4158,1,Nameplate Capacity (MW),133.6,113.6
+4158,2,Nameplate Capacity (MW),133.6,113.6
+4158,3,Nameplate Capacity (MW),255.0,229.5
+4158,4,Nameplate Capacity (MW),400.0,360.0
+4162,1,Nameplate Capacity (MW),192.0,163.2
+4162,2,Nameplate Capacity (MW),256.0,217.6
+4162,3,Nameplate Capacity (MW),384.0,326.4
+6065,1,Nameplate Capacity (MW),726.0,754.9
+6074,1,Nameplate Capacity (MW),64.7,71.2
+6074,2,Nameplate Capacity (MW),64.7,71.2
+6074,3,Nameplate Capacity (MW),64.7,71.2
+6074,4,Nameplate Capacity (MW),64.7,71.2
+6101,1,Nameplate Capacity (MW),402.3,362.1
+6165,1,Nameplate Capacity (MW),525.0,488.3
+6165,2,Nameplate Capacity (MW),525.0,488.3
+6165,3,Nameplate Capacity (MW),527.2,495.6
+6400,1,Nameplate Capacity (MW),16.6,19.2
+6513,1,Nameplate Capacity (MW),2.0,2.5
+7125,3,Nameplate Capacity (MW),324.0,420.0
+7314,NA1,Nameplate Capacity (MW),110.0,170.0
+7314,NA2,Nameplate Capacity (MW),60.0,0.0
+7873,1A,Nameplate Capacity (MW),189.9,211.0
+7873,1B,Nameplate Capacity (MW),189.9,211.0
+7873,1C,Nameplate Capacity (MW),189.9,211.0
+7873,1ST,Nameplate Capacity (MW),239.4,281.0
+8005,GEN1,Nameplate Capacity (MW),300.0,333.0
+8005,GEN2,Nameplate Capacity (MW),300.0,333.0
+8066,1,Nameplate Capacity (MW),608.3,577.9
+8066,2,Nameplate Capacity (MW),617.0,586.2
+8066,3,Nameplate Capacity (MW),608.3,577.9
+8066,4,Nameplate Capacity (MW),608.3,584.0
+8069,1,Nameplate Capacity (MW),541.3,498.0
+8069,2,Nameplate Capacity (MW),496.0,517.5
+10029,PV,Nameplate Capacity (MW),2.1,1.5
+50240,GEN2,Nameplate Capacity (MW),10.6,10.7
+50360,GEN1,Nameplate Capacity (MW),1.8,1.0
+50361,GEN1,Nameplate Capacity (MW),4.3,5.0
+50362,GEN1,Nameplate Capacity (MW),7.0,8.5
+50465,GEN1,Nameplate Capacity (MW),46.6,42.0
+50465,GEN2,Nameplate Capacity (MW),38.5,35.0
+50622,GEN1,Nameplate Capacity (MW),8.8,9.0
+50622,GEN2,Nameplate Capacity (MW),8.8,9.0
+50627,GTG1,Nameplate Capacity (MW),22.0,25.7
+50896,GEN1,Nameplate Capacity (MW),2.8,2.9
+50896,GEN2,Nameplate Capacity (MW),2.8,2.9
+50896,GEN3,Nameplate Capacity (MW),2.8,2.9
+54365,APC1,Nameplate Capacity (MW),54.0,60.0
+54365,APC2,Nameplate Capacity (MW),54.0,60.0
+54365,APC3,Nameplate Capacity (MW),28.6,37.2
+54426,ST1,Nameplate Capacity (MW),43.3,45.7
+55048,UNT1,Nameplate Capacity (MW),179.3,196.9
+55084,GE1,Nameplate Capacity (MW),247.4,247.0
+55518,CTG1,Nameplate Capacity (MW),173.0,209.0
+55518,CTG2,Nameplate Capacity (MW),173.0,209.0
+55518,CTG3,Nameplate Capacity (MW),173.0,209.0
+55651,CT01,Nameplate Capacity (MW),84.5,86.5
+55651,CT02,Nameplate Capacity (MW),84.5,86.5
+55651,CT03,Nameplate Capacity (MW),84.5,86.5
+55651,CT04,Nameplate Capacity (MW),84.5,86.5
+55662,CA,Nameplate Capacity (MW),230.0,195.5
+55662,CT1,Nameplate Capacity (MW),234.0,198.9
+55662,CT2,Nameplate Capacity (MW),234.0,198.9
+56102,CT1A,Nameplate Capacity (MW),172.0,146.2
+56102,CT1B,Nameplate Capacity (MW),172.0,146.2
+56102,ST1,Nameplate Capacity (MW),305.0,274.5
+56111,GEN1,Nameplate Capacity (MW),160.0,182.4
+56192,1,Nameplate Capacity (MW),39.8,30.0
+56237,CT01,Nameplate Capacity (MW),203.0,182.7
+56237,CT02,Nameplate Capacity (MW),203.0,182.7
+56237,CT21,Nameplate Capacity (MW),206.0,185.4
+56237,CT22,Nameplate Capacity (MW),206.0,185.4
+56237,ST01,Nameplate Capacity (MW),251.0,225.9
+56237,ST2,Nameplate Capacity (MW),316.0,284.4
+56309,CT-1,Nameplate Capacity (MW),7.8,5.9
+56309,CT-2,Nameplate Capacity (MW),7.8,5.9
+56651,1,Nameplate Capacity (MW),70.0,75.0
+56777,FIA,Nameplate Capacity (MW),201.3,101.3
+56938,NCP1,Nameplate Capacity (MW),1.2,1.0
+57324,PV1,Nameplate Capacity (MW),15.0,11.2
+57562,PV1,Nameplate Capacity (MW),17.6,17.0
+57673,1,Nameplate Capacity (MW),3.5,3.1
+57682,1,Nameplate Capacity (MW),1.2,1.0
+57875,MLWF,Nameplate Capacity (MW),101.2,110.9
+57977,ENG1,Nameplate Capacity (MW),3.0,3.1
+57977,ENG2,Nameplate Capacity (MW),3.0,3.1
+58052,1TG,Nameplate Capacity (MW),2.0,1.0
+58184,TG-1,Nameplate Capacity (MW),14.6,16.5
+58204,INV3,Nameplate Capacity (MW),2.5,2.0
+58217,INV4,Nameplate Capacity (MW),2.5,2.0
+58270,1,Nameplate Capacity (MW),4.1,3.5
+58515,GEN1,Nameplate Capacity (MW),1.0,0.9
+58515,GEN2,Nameplate Capacity (MW),1.1,1.0
+59057,GEN 1,Nameplate Capacity (MW),2.7,1.6
+59116,V1021,Nameplate Capacity (MW),3.2,1.1
+59233,CT2,Nameplate Capacity (MW),6.0,5.5
+59858,JSI01,Nameplate Capacity (MW),1.5,1.4
+59906,GEN1,Nameplate Capacity (MW),529.0,552.5
+59906,GEN2,Nameplate Capacity (MW),529.0,552.5
+60006,1,Nameplate Capacity (MW),1.6,1.2
+60447,PSLS,Nameplate Capacity (MW),1.2,1.0
+62176,21Z,Nameplate Capacity (MW),4.8,5.7
+62176,PF,Nameplate Capacity (MW),4.8,5.7
+62715,WCCWF,Nameplate Capacity (MW),180.1,175.3
+62806,SCC01,Nameplate Capacity (MW),2.5,1.9
+63189,BIORD,Nameplate Capacity (MW),2.5,2.3
+63328,IPJNO,Nameplate Capacity (MW),141.0,143.5
+63728,BESS,Nameplate Capacity (MW),12.0,12.5
+64169,BEACH,Nameplate Capacity (MW),80.0,130.2
+64993,BB1BA,Nameplate Capacity (MW),40.0,22.0
+64993,BB1PV,Nameplate Capacity (MW),128.0,70.0
+65358,PATUX,Nameplate Capacity (MW),2.8,2.0
+65466,KINS2,Nameplate Capacity (MW),2.0,3.8
+65497,GRDS1,Nameplate Capacity (MW),1.1,0.9
+65617,P3998,Nameplate Capacity (MW),1.3,0.7
+66799,4087,Nameplate Capacity (MW),1.1,0.7
+54,GT10,Summer Capacity (MW),74,88
+54,GT4,Summer Capacity (MW),73,74
+54,GT5,Summer Capacity (MW),73,74
+54,GT6,Summer Capacity (MW),73,74
+54,GT7,Summer Capacity (MW),73,74
+54,GT9,Summer Capacity (MW),75,88
+88,1,Summer Capacity (MW),2.3,1.8
+88,2,Summer Capacity (MW),2.3,1.8
+108,1,Summer Capacity (MW),359.1,358.9
+113,1,Summer Capacity (MW),116,112
+116,GT3,Summer Capacity (MW),104.7,101
+116,GT4,Summer Capacity (MW),104.7,101
+116,GT5,Summer Capacity (MW),104.7,101
+116,GT6,Summer Capacity (MW),104.7,101
+116,GT7,Summer Capacity (MW),104.7,101
+117,C4-2,Summer Capacity (MW),39,34
+117,C5-1,Summer Capacity (MW),155,145
+117,C5-2,Summer Capacity (MW),153,145
+117,C5-3,Summer Capacity (MW),150,162
+118,GT1,Summer Capacity (MW),50,53.1
+120,GT5,Summer Capacity (MW),47,47.7
+120,GT6,Summer Capacity (MW),47,47.7
+130,3,Summer Capacity (MW),610,580
+130,4,Summer Capacity (MW),615,605
+141,AF7,Summer Capacity (MW),49.5,45
+141,AF8,Summer Capacity (MW),49.5,45
+145,HM3,Summer Capacity (MW),10,11
+149,ROOS,Summer Capacity (MW),34.8,36
+165,3CT,Summer Capacity (MW),310.3,310.2
+165,3ST,Summer Capacity (MW),166.7,170.5
+210,1,Summer Capacity (MW),1225,1176.7
+217,1,Summer Capacity (MW),34,31
+261,1,Summer Capacity (MW),1.7,1.3
+298,1,Summer Capacity (MW),831,824
+298,2,Summer Capacity (MW),858,836
+389,BESS,Summer Capacity (MW),18.9,30
+467,B,Summer Capacity (MW),162,171.6
+564,1,Summer Capacity (MW),453,453.4
+564,2,Summer Capacity (MW),469,469.3
+564,B1,Summer Capacity (MW),167,164
+566,2,Summer Capacity (MW),863.8,857.2
+566,3,Summer Capacity (MW),1244.2,1224
+568,501,Summer Capacity (MW),342,337
+568,502,Summer Capacity (MW),154.6,145.8
+593,10,Summer Capacity (MW),15,12
+593,4,Summer Capacity (MW),174,171
+593,5,Summer Capacity (MW),450,438
+627,P2,Summer Capacity (MW),41,20.5
+628,2GTA,Summer Capacity (MW),241,245
+628,2GTB,Summer Capacity (MW),242,245
+683,A,Summer Capacity (MW),37,32.8
+683,B,Summer Capacity (MW),37,32.8
+683,C,Summer Capacity (MW),108,105.1
+683,D,Summer Capacity (MW),108,105.1
+809,1,Summer Capacity (MW),34.4,33.5
+809,2,Summer Capacity (MW),35.3,33.5
+809,3,Summer Capacity (MW),35.3,33.5
+811,1,Summer Capacity (MW),115.1,119.9
+811,2,Summer Capacity (MW),117.9,120.3
+811,3,Summer Capacity (MW),118.5,120.2
+811,4,Summer Capacity (MW),117.6,120.8
+813,1,Summer Capacity (MW),6.5,6.7
+813,2,Summer Capacity (MW),6.6,6.3
+815,1,Summer Capacity (MW),14.8,15.5
+816,1,Summer Capacity (MW),17.9,17.2
+816,2,Summer Capacity (MW),19.1,13.8
+816,3,Summer Capacity (MW),11.8,
+816,4,Summer Capacity (MW),20.3,16.1
+818,3,Summer Capacity (MW),12.2,12.6
+819,1,Summer Capacity (MW),15.1,15
+819,2,Summer Capacity (MW),14.5,14.4
+820,3,Summer Capacity (MW),6.8,6.6
+821,1,Summer Capacity (MW),10,9.9
+821,2,Summer Capacity (MW),39.9,34.5
+822,1,Summer Capacity (MW),9.6,9.3
+822,2,Summer Capacity (MW),8.5,8.2
+876,1,Summer Capacity (MW),554,556
+876,2,Summer Capacity (MW),554,556
+963,4,Summer Capacity (MW),208.7,204.7
+965,1,Summer Capacity (MW),12,14.7
+969,10,Summer Capacity (MW),2.2,2.4
+969,11,Summer Capacity (MW),2,2.4
+969,12,Summer Capacity (MW),1,1.1
+969,3,Summer Capacity (MW),1.3,1.5
+969,9,Summer Capacity (MW),2.2,2.4
+991,GT1,Summer Capacity (MW),207,205
+991,GT2,Summer Capacity (MW),207,205
+991,STG1,Summer Capacity (MW),230,263
+1004,ST,Summer Capacity (MW),595,555
+1068,1,Summer Capacity (MW),48.6,26.9
+1068,2,Summer Capacity (MW),55.9,51.3
+1068,3,Summer Capacity (MW),59.8,26.6
+1073,1,Summer Capacity (MW),5.3,3.6
+1073,3,Summer Capacity (MW),31,26.3
+1073,4,Summer Capacity (MW),113.8,126.4
+1082,3,Summer Capacity (MW),702,705.9
+1091,3,Summer Capacity (MW),503.9,510
+1097,1,Summer Capacity (MW),16.4,16.2
+1097,2,Summer Capacity (MW),16.4,16.3
+1104,1,Summer Capacity (MW),158.4,131.1
+1104,GT1,Summer Capacity (MW),5.9,9.6
+1104,GT2,Summer Capacity (MW),12.6,9.7
+1104,GT3,Summer Capacity (MW),13.3,12.1
+1122,7,Summer Capacity (MW),38.6,37.7
+1122,8,Summer Capacity (MW),66.9,67
+1167,8,Summer Capacity (MW),25.1,68
+1235,3,Summer Capacity (MW),99.7,99.8
+1239,12,Summer Capacity (MW),149,141
+1239,12-2,Summer Capacity (MW),117,106
+1240,GT1,Summer Capacity (MW),71.6,72.2
+1240,GT2,Summer Capacity (MW),71.7,73.3
+1240,GT3,Summer Capacity (MW),150.4,154.6
+1248,GT2,Summer Capacity (MW),53.9,55.9
+1305,GT2,Summer Capacity (MW),51.8,51.7
+1305,GT3,Summer Capacity (MW),51.7,52.1
+1336,S2,Summer Capacity (MW),97.6,97.3
+1356,1,Summer Capacity (MW),474,475
+1356,2,Summer Capacity (MW),495,485
+1356,3,Summer Capacity (MW),485,481
+1356,4,Summer Capacity (MW),465,478
+1363,7A,Summer Capacity (MW),213,226
+1363,7B,Summer Capacity (MW),213,226
+1393,6,Summer Capacity (MW),517.5,513.5
+1396,6,Summer Capacity (MW),104.4,105.8
+1396,7,Summer Capacity (MW),184,182.4
+1396,U6CT,Summer Capacity (MW),150.2,144.8
+1396,U72,Summer Capacity (MW),150,147.1
+1396,U7CT,Summer Capacity (MW),150.6,149.2
+1400,3,Summer Capacity (MW),260,250
+1400,4,Summer Capacity (MW),34,34.8
+1402,2,Summer Capacity (MW),365.9,412
+1402,3,Summer Capacity (MW),501.1,496.1
+1403,5,Summer Capacity (MW),740.9,721.5
+1403,6(4),Summer Capacity (MW),741,731.9
+1403,6C,Summer Capacity (MW),554.9,560
+1464,1,Summer Capacity (MW),85.6,82.5
+1464,2,Summer Capacity (MW),89.6,89.4
+1464,3,Summer Capacity (MW),97.1,95.9
+1464,4,Summer Capacity (MW),97.7,97.1
+1557,GT2,Summer Capacity (MW),16,14.8
+1571,GT2,Summer Capacity (MW),24,26
+1572,GT3,Summer Capacity (MW),147,152
+1574,1,Summer Capacity (MW),48,41
+1574,10,Summer Capacity (MW),65,56.1
+1574,11,Summer Capacity (MW),65,52
+1574,2,Summer Capacity (MW),36,32.7
+1574,3,Summer Capacity (MW),48,41.9
+1574,4,Summer Capacity (MW),48,41.9
+1574,5,Summer Capacity (MW),36,32.7
+1574,6,Summer Capacity (MW),48,42.3
+1574,7,Summer Capacity (MW),48,42.3
+1574,8,Summer Capacity (MW),65,56.7
+1574,9,Summer Capacity (MW),65,57.3
+1586,GT3,Summer Capacity (MW),10.7,11.3
+1592,GT1,Summer Capacity (MW),42,41.3
+1694,1,Summer Capacity (MW),0.3,0.2
+1694,2,Summer Capacity (MW),0.5,0.4
+1700,1,Summer Capacity (MW),1.6,1.5
+1700,3,Summer Capacity (MW),2.8,2.7
+1701,1,Summer Capacity (MW),1.2,1.1
+1701,2,Summer Capacity (MW),1.2,1.1
+1704,1,Summer Capacity (MW),3,3.2
+1704,2,Summer Capacity (MW),2.9,3.1
+1712,1,Summer Capacity (MW),2.4,2.5
+1712,2,Summer Capacity (MW),2.4,2.5
+1714,1,Summer Capacity (MW),0.8,0.7
+1714,2,Summer Capacity (MW),0.8,0.7
+1722,1,Summer Capacity (MW),0.9,0.8
+1979,3,Summer Capacity (MW),10,11.6
+1993,6,Summer Capacity (MW),15.7,14.5
+2079,6,Summer Capacity (MW),125.3,131.6
+2079,7,Summer Capacity (MW),76.2,78.3
+2079,8,Summer Capacity (MW),77.2,79.1
+2079,9,Summer Capacity (MW),109.4,110.2
+2081,11,Summer Capacity (MW),46.6,48
+2081,12,Summer Capacity (MW),46,49
+2081,14,Summer Capacity (MW),47.5,51
+2081,15,Summer Capacity (MW),47.5,48
+2081,16,Summer Capacity (MW),46,48
+2081,18,Summer Capacity (MW),47,49
+2167,1,Summer Capacity (MW),575,600
+2167,2,Summer Capacity (MW),566,600
+2168,1,Summer Capacity (MW),165,164
+2168,2,Summer Capacity (MW),268,263
+2168,3,Summer Capacity (MW),698,703
+2181,BLA3,Summer Capacity (MW),7,8.5
+2265,1,Summer Capacity (MW),41.9,42.9
+2266,1,Summer Capacity (MW),41.9,42
+2271,1,Summer Capacity (MW),39.7,40.9
+2277,2,Summer Capacity (MW),113,112
+2291,5,Summer Capacity (MW),216.2,206.2
+2292,1,Summer Capacity (MW),55.4,54.9
+2292,2,Summer Capacity (MW),55.9,57.1
+2444,7,Summer Capacity (MW),47,46
+2483,H1,Summer Capacity (MW),25,22
+2490,2,Summer Capacity (MW),346.3,362.2
+2490,3,Summer Capacity (MW),519,522.7
+2493,1,Summer Capacity (MW),155.1,151.5
+2493,2,Summer Capacity (MW),155.8,155
+2493,7,Summer Capacity (MW),184.2,182.4
+2500,2,Summer Capacity (MW),373,374.5
+2500,3,Summer Capacity (MW),988.7,987.3
+2500,4,Summer Capacity (MW),161.8,150.4
+2500,4S,Summer Capacity (MW),78.3,72.8
+2503,GT1,Summer Capacity (MW),13.1,13.9
+2594,ST5,Summer Capacity (MW),797,807
+2594,ST6,Summer Capacity (MW),816,808.2
+2627,GRHM,Summer Capacity (MW),18,16.3
+2691,1,Summer Capacity (MW),292.2,290.7
+2691,2,Summer Capacity (MW),291.1,291.2
+2691,3,Summer Capacity (MW),292.6,291.7
+2691,4,Summer Capacity (MW),292.9,291.5
+2718,1,Summer Capacity (MW),162,120
+2728,1,Summer Capacity (MW),14,17
+2801,1,Summer Capacity (MW),20.9,20.2
+2801,2,Summer Capacity (MW),21.6,20.4
+2817,1,Summer Capacity (MW),221,220
+2817,2,Summer Capacity (MW),445,440
+2878,1,Summer Capacity (MW),138.3,139.5
+2878,CT,Summer Capacity (MW),14.5,14.2
+2951,6,Summer Capacity (MW),168,170
+2951,8,Summer Capacity (MW),377,375
+2952,4,Summer Capacity (MW),487,489
+2952,6,Summer Capacity (MW),503,521
+2953,GT2,Summer Capacity (MW),57,56
+2953,GT4,Summer Capacity (MW),58,57
+2953,GT6,Summer Capacity (MW),57,58
+2956,2,Summer Capacity (MW),510,513
+2956,3,Summer Capacity (MW),498,508.5
+2980,1,Summer Capacity (MW),32,31
+2980,2,Summer Capacity (MW),32,31.6
+2980,3,Summer Capacity (MW),32,31.3
+2980,4,Summer Capacity (MW),32,31
+3013,1,Summer Capacity (MW),141.4,147.2
+3013,2,Summer Capacity (MW),151.1,149.2
+3013,3,Summer Capacity (MW),150.9,144.9
+3014,1,Summer Capacity (MW),57,52.4
+3014,2,Summer Capacity (MW),57,52.3
+3014,3,Summer Capacity (MW),53.3,52.2
+3014,4,Summer Capacity (MW),57,51.7
+3164,2,Summer Capacity (MW),133,131.7
+3164,5,Summer Capacity (MW),134,128.6
+3164,6,Summer Capacity (MW),133,127.7
+3270,5,Summer Capacity (MW),17,6
+3320,5,Summer Capacity (MW),21,19
+3352,1A,Summer Capacity (MW),19.7,18.9
+3453,7,Summer Capacity (MW),122,118
+3453,8,Summer Capacity (MW),582,568
+3457,2,Summer Capacity (MW),250,249.7
+3459,1,Summer Capacity (MW),211.6,201.1
+3459,3,Summer Capacity (MW),369.8,374.9
+3459,4,Summer Capacity (MW),488.8,490.8
+3459,5,Summer Capacity (MW),400.2,441.3
+3460,1,Summer Capacity (MW),746,745
+3464,81,Summer Capacity (MW),54,53
+3469,3,Summer Capacity (MW),104,110
+3469,31,Summer Capacity (MW),57,54
+3469,32,Summer Capacity (MW),57,54
+3469,33,Summer Capacity (MW),57,54
+3469,34,Summer Capacity (MW),57,54
+3469,4,Summer Capacity (MW),104,110
+3469,41,Summer Capacity (MW),57,54
+3469,42,Summer Capacity (MW),57,54
+3469,43,Summer Capacity (MW),57,54
+3469,44,Summer Capacity (MW),57,54
+3469,51,Summer Capacity (MW),55,56
+3469,52,Summer Capacity (MW),55,56
+3469,53,Summer Capacity (MW),55,56
+3469,54,Summer Capacity (MW),55,56
+3469,55,Summer Capacity (MW),55,56
+3469,56,Summer Capacity (MW),55,56
+3469,GT1,Summer Capacity (MW),11,14
+3470,3,Summer Capacity (MW),273,240
+3491,3,Summer Capacity (MW),395,375
+3797,CT7,Summer Capacity (MW),142,135.6
+3797,CT8,Summer Capacity (MW),140,136.4
+3797,CW7,Summer Capacity (MW),55,51.1
+3797,CW8,Summer Capacity (MW),55,58.4
+3800,GT2,Summer Capacity (MW),11,12
+3800,GT4,Summer Capacity (MW),12,11
+3803,GT1,Summer Capacity (MW),15,14.9
+3804,6A,Summer Capacity (MW),170,162.9
+3804,6B,Summer Capacity (MW),170,159.8
+3804,6ST,Summer Capacity (MW),233,250.3
+3804,GT2,Summer Capacity (MW),12,11.9
+3804,GT3,Summer Capacity (MW),12,11.9
+3804,GT4,Summer Capacity (MW),12,11.9
+3804,GT5,Summer Capacity (MW),12,11.9
+3804,GT6,Summer Capacity (MW),12,11.9
+3886,U-5,Summer Capacity (MW),84,89.6
+3913,11,Summer Capacity (MW),25.2,25.8
+3925,3,Summer Capacity (MW),76,90
+3927,5,Summer Capacity (MW),115,135
+3954,1,Summer Capacity (MW),554,541.9
+3954,2,Summer Capacity (MW),555,551.5
+3971,4,Summer Capacity (MW),0.4,0.5
+3971,5,Summer Capacity (MW),0.4,0.5
+3971,6,Summer Capacity (MW),0.4,0.5
+3971,7,Summer Capacity (MW),0.4,0.5
+3971,9,Summer Capacity (MW),0.8,0.6
+3974,1,Summer Capacity (MW),2.3,1.8
+3974,10,Summer Capacity (MW),0.6,0.3
+3974,2,Summer Capacity (MW),2.3,1.8
+3974,8,Summer Capacity (MW),0.3,0.6
+3974,9,Summer Capacity (MW),0.6,0.9
+3975,3,Summer Capacity (MW),0.5,1.8
+3975,4,Summer Capacity (MW),0.5,1.8
+3975,5,Summer Capacity (MW),0.5,1.8
+3991,1,Summer Capacity (MW),15.3,15.1
+3991,2,Summer Capacity (MW),15.8,16.3
+3992,6,Summer Capacity (MW),47.2,46.7
+3992,7,Summer Capacity (MW),47.9,47.8
+3993,1,Summer Capacity (MW),12.2,12.1
+3993,2,Summer Capacity (MW),17.4,17.7
+4041,5,Summer Capacity (MW),239.9,242.2
+4041,6,Summer Capacity (MW),253,253.8
+4041,7,Summer Capacity (MW),304.1,306.5
+4041,8,Summer Capacity (MW),311.4,309.5
+4045,1,Summer Capacity (MW),1.6,1.8
+4045,2,Summer Capacity (MW),1.6,1.8
+4046,1,Summer Capacity (MW),595.4,589.5
+4046,2,Summer Capacity (MW),600.6,597.1
+4050,5,Summer Capacity (MW),409.1,406.1
+4076,31,Summer Capacity (MW),36.8,38.1
+4076,32,Summer Capacity (MW),35.6,36.7
+4270,3,Summer Capacity (MW),1164.5,1164.6
+5083,CUMB2,Summer Capacity (MW),96.5,100
+6009,1,Summer Capacity (MW),817.4,425.3
+6009,2,Summer Capacity (MW),820.6,818.3
+6011,1,Summer Capacity (MW),866,884.2
+6011,2,Summer Capacity (MW),841.8,861
+6036,1,Summer Capacity (MW),1160.1,1160
+6063,1,Summer Capacity (MW),54.5,56.7
+6063,2,Summer Capacity (MW),63.1,68.1
+6063,3,Summer Capacity (MW),60.7,65.2
+6068,1,Summer Capacity (MW),670.6,674.1
+6071,1,Summer Capacity (MW),511,493
+6072,1,Summer Capacity (MW),1400.5,1383
+6074,4,Summer Capacity (MW),61.4,61.8
+6095,1,Summer Capacity (MW),516,519
+6095,2,Summer Capacity (MW),515,519
+6096,2,Summer Capacity (MW),691,687.2
+6115,1,Summer Capacity (MW),1248.1,1245.7
+6167,1,Summer Capacity (MW),500,502
+6167,2,Summer Capacity (MW),500,502
+6167,3,Summer Capacity (MW),502,502.3
+6167,4,Summer Capacity (MW),500,502.2
+6167,5,Summer Capacity (MW),501,502.8
+6167,6,Summer Capacity (MW),500,503.8
+6190,1,Summer Capacity (MW),421.6,416.8
+6190,2,Summer Capacity (MW),496.6,496
+6190,3,Summer Capacity (MW),627.9,637.2
+6213,1,Summer Capacity (MW),488,489
+6254,1,Summer Capacity (MW),729.3,705.2
+6433,51,Summer Capacity (MW),158.4,180.5
+6433,54,Summer Capacity (MW),161.5,180.5
+6462,1,Summer Capacity (MW),967.5,972.3
+6463,GT1,Summer Capacity (MW),16.1,16
+6463,GT2,Summer Capacity (MW),22.2,25.7
+6522,1,Summer Capacity (MW),140,138.1
+6522,2,Summer Capacity (MW),140,139
+6522,3,Summer Capacity (MW),140,138.3
+6641,1,Summer Capacity (MW),820.9,824.4
+6641,2,Summer Capacity (MW),825.8,842
+6664,1,Summer Capacity (MW),746.9,745.6
+6705,1,Summer Capacity (MW),154.9,155.4
+6705,2,Summer Capacity (MW),153.5,126.4
+6705,3,Summer Capacity (MW),149.8,141.6
+6705,4,Summer Capacity (MW),301,296.9
+7079,1,Summer Capacity (MW),9.2,9.1
+7125,3,Summer Capacity (MW),340,420
+7145,1,Summer Capacity (MW),36.7,37.9
+7145,2,Summer Capacity (MW),37.3,37.8
+7145,3,Summer Capacity (MW),80.8,78.5
+7153,HR1,Summer Capacity (MW),126,124
+7153,HR2,Summer Capacity (MW),126,124
+7153,HR3,Summer Capacity (MW),126,124
+7153,HR4,Summer Capacity (MW),187,192
+7153,HR5,Summer Capacity (MW),128,124
+7153,HR6,Summer Capacity (MW),128,124
+7153,HR7,Summer Capacity (MW),128,124
+7153,HR8,Summer Capacity (MW),187,192
+7155,1,Summer Capacity (MW),31.9,35
+7155,2,Summer Capacity (MW),34.1,35.3
+7190,1,Summer Capacity (MW),45.2,34.8
+7190,2,Summer Capacity (MW),11.4,
+7203,CT1,Summer Capacity (MW),80.8,82
+7203,CT2,Summer Capacity (MW),81.3,80.2
+7203,CT3,Summer Capacity (MW),83.1,82.4
+7203,CT4,Summer Capacity (MW),83,82.9
+7212,1,Summer Capacity (MW),84,85
+7212,2,Summer Capacity (MW),84,85
+7212,3,Summer Capacity (MW),84,85
+7212,4,Summer Capacity (MW),84,85
+7213,2,Summer Capacity (MW),437,437.1
+7281,CT1,Summer Capacity (MW),13,12.5
+7281,CT2,Summer Capacity (MW),13,12.5
+7296,1,Summer Capacity (MW),94,90
+7296,2-1,Summer Capacity (MW),175,170
+7296,2-2,Summer Capacity (MW),175,172
+7296,2-3,Summer Capacity (MW),186,189
+7314,NA1,Summer Capacity (MW),87.5,135.5
+7314,NA2,Summer Capacity (MW),49.4,
+7343,4,Summer Capacity (MW),640.6,647.1
+7368,1,Summer Capacity (MW),25,30
+7368,2,Summer Capacity (MW),26,30
+7380,GT8,Summer Capacity (MW),54,27
+7398,GEN2,Summer Capacity (MW),6.5,6.7
+7425,1,Summer Capacity (MW),89.6,114.3
+7604,1,Summer Capacity (MW),241,223
+7604,2,Summer Capacity (MW),209,211
+7749,1,Summer Capacity (MW),95,94
+7754,1,Summer Capacity (MW),90,87
+7754,2,Summer Capacity (MW),88,84
+7757,1,Summer Capacity (MW),145,139
+7757,2,Summer Capacity (MW),147,142
+7757,3,Summer Capacity (MW),152,151
+7757,4,Summer Capacity (MW),159,143
+7757,5,Summer Capacity (MW),150,146
+7799,34,Summer Capacity (MW),70.2,68.5
+7805,001,Summer Capacity (MW),157,165
+7805,002,Summer Capacity (MW),156,164
+7805,003,Summer Capacity (MW),155,160
+7805,6,Summer Capacity (MW),145,152
+7835,2,Summer Capacity (MW),166.5,164.1
+7835,4,Summer Capacity (MW),169,166.3
+7838,1,Summer Capacity (MW),153,149.7
+7838,3,Summer Capacity (MW),152,152.3
+7838,4,Summer Capacity (MW),152,151
+7839,1,Summer Capacity (MW),151,162
+7839,2,Summer Capacity (MW),151,162
+7839,3,Summer Capacity (MW),161,160
+7839,4,Summer Capacity (MW),160,165
+7839,5,Summer Capacity (MW),160,160.6
+7848,11,Summer Capacity (MW),90,84
+7848,12,Summer Capacity (MW),89,83
+7848,13,Summer Capacity (MW),88,83
+7872,1,Summer Capacity (MW),145,147
+7872,2,Summer Capacity (MW),145,147
+7872,3,Summer Capacity (MW),145,147
+7873,1A,Summer Capacity (MW),156,168
+7873,1B,Summer Capacity (MW),156,168
+7873,1C,Summer Capacity (MW),156,168
+7873,1ST,Summer Capacity (MW),233,245
+7912,1,Summer Capacity (MW),45,45.5
+7915,N01,Summer Capacity (MW),46,45.8
+7916,3,Summer Capacity (MW),96.2,93.1
+7928,1,Summer Capacity (MW),75.4,76.6
+7929,1,Summer Capacity (MW),77.4,77.9
+7929,2,Summer Capacity (MW),77.5,79.2
+7929,3,Summer Capacity (MW),75,78.5
+7946,CT1,Summer Capacity (MW),137.2,136.9
+7946,CT2,Summer Capacity (MW),140.3,135
+7946,ST1,Summer Capacity (MW),197.3,196.7
+7947,1,Summer Capacity (MW),43.1,42.3
+7948,1,Summer Capacity (MW),43.8,44.8
+7948,2,Summer Capacity (MW),43.8,44.8
+7948,3,Summer Capacity (MW),43.8,42
+7948,4,Summer Capacity (MW),43.8,44.8
+7948,5,Summer Capacity (MW),43.8,44.3
+7948,6,Summer Capacity (MW),43.8,43.4
+7953,1,Summer Capacity (MW),189.2,202.5
+7953,2,Summer Capacity (MW),49.1,42.1
+7953,3,Summer Capacity (MW),48.9,42.9
+7964,GT1,Summer Capacity (MW),42,43
+7964,GT2,Summer Capacity (MW),42,43
+7964,GT3,Summer Capacity (MW),42,43
+7964,GT4,Summer Capacity (MW),42,43
+7985,GT1,Summer Capacity (MW),163.4,164.3
+7985,GT2,Summer Capacity (MW),164.2,163.7
+7991,1,Summer Capacity (MW),30.9,30
+7991,CT2,Summer Capacity (MW),32.6,31.5
+7991,STG1,Summer Capacity (MW),66.1,65.4
+8005,GEN1,Summer Capacity (MW),300,333
+8006,1,Summer Capacity (MW),599,614.8
+8006,2,Summer Capacity (MW),605.7,607.7
+8016,1,Summer Capacity (MW),14.8,14.2
+8023,1,Summer Capacity (MW),579.3,556.2
+8023,2,Summer Capacity (MW),568.8,561.8
+8027,1,Summer Capacity (MW),39,36
+8027,2,Summer Capacity (MW),39,36
+8029,1,Summer Capacity (MW),75,73.4
+8029,2,Summer Capacity (MW),73.9,71.7
+8031,11,Summer Capacity (MW),144.1,145.7
+8031,12,Summer Capacity (MW),146.5,148.2
+8031,ST1,Summer Capacity (MW),239.9,237.2
+8036,1,Summer Capacity (MW),770,768.5
+8037,1,Summer Capacity (MW),75.6,76.2
+8053,N01,Summer Capacity (MW),45.2,45.1
+8055,2,Summer Capacity (MW),989,992
+8056,2,Summer Capacity (MW),417,416.8
+8068,ST5A,Summer Capacity (MW),151,141
+8068,ST5B,Summer Capacity (MW),151,141
+8068,ST6A,Summer Capacity (MW),151,171
+8068,ST6S,Summer Capacity (MW),126,131
+8223,SGSS1,Summer Capacity (MW),1.4,1.6
+8223,WMS,Summer Capacity (MW),8.3,8.5
+8225,1,Summer Capacity (MW),229.6,225.4
+8225,2,Summer Capacity (MW),214.8,208.1
+8225,3,Summer Capacity (MW),30,29.9
+9674,GT1,Summer Capacity (MW),12.6,11.5
+10029,PV,Summer Capacity (MW),2.1,1.5
+10034,GEN1,Summer Capacity (MW),85,72
+10034,GEN2,Summer Capacity (MW),30,29
+10196,GEN1,Summer Capacity (MW),12.3,12.1
+10197,GEN1,Summer Capacity (MW),,3.2
+10238,GEN1,Summer Capacity (MW),5,5.2
+10275,CE50,Summer Capacity (MW),3.4,2.2
+10275,TA70,Summer Capacity (MW),5.9,5.3
+10294,GTG,Summer Capacity (MW),77,80
+10294,STG,Summer Capacity (MW),38,35
+10334,PV1,Summer Capacity (MW),3.6,2.7
+10617,GEN1,Summer Capacity (MW),49.7,47.5
+10621,GEN1,Summer Capacity (MW),58.3,54.4
+10671,GEN1,Summer Capacity (MW),161,160.6
+10671,GEN2,Summer Capacity (MW),157,160.4
+10690,CTG1,Summer Capacity (MW),73.7,67.8
+50006,GTG6,Summer Capacity (MW),162.6,164.8
+50061,GEN2,Summer Capacity (MW),4.6,4.5
+50061,GEN3,Summer Capacity (MW),4.6,4.5
+50061,GEN4,Summer Capacity (MW),4.1,2.1
+50094,7214,Summer Capacity (MW),5.8,2
+50109,GEN1,Summer Capacity (MW),78,76
+50109,GEN2,Summer Capacity (MW),80,76
+50109,GEN3,Summer Capacity (MW),78,87
+50360,GEN1,Summer Capacity (MW),1.8,1
+50361,GEN1,Summer Capacity (MW),2.9,5
+50362,GEN1,Summer Capacity (MW),6.7,8.5
+50450,GEN1,Summer Capacity (MW),52.7,51.8
+50451,GEN1,Summer Capacity (MW),45.8,43.8
+50458,GEN1,Summer Capacity (MW),72.7,74.8
+50458,GEN2,Summer Capacity (MW),54.5,54.2
+50465,GEN1,Summer Capacity (MW),46.6,42
+50465,GEN2,Summer Capacity (MW),30.5,35
+50530,GEN1,Summer Capacity (MW),18.5,25.5
+50530,GEN2,Summer Capacity (MW),20,25.7
+50530,GEN3,Summer Capacity (MW),5.8,11.5
+50555,GEN1,Summer Capacity (MW),75,72.7
+50555,GEN2,Summer Capacity (MW),36,31.4
+50555,GEN3,Summer Capacity (MW),54,50.5
+50558,ST01,Summer Capacity (MW),120,126
+50626,GEN1,Summer Capacity (MW),0.8,1.7
+50748,GEN1,Summer Capacity (MW),24.4,21
+50748,GEN2,Summer Capacity (MW),7.3,7
+50770,GEN1,Summer Capacity (MW),16.3,18
+50815,GEN1,Summer Capacity (MW),80,64.4
+50815,GEN2,Summer Capacity (MW),80,66.6
+50815,GEN3,Summer Capacity (MW),80,66.2
+50815,GEN4,Summer Capacity (MW),80,68.2
+50815,GEN5,Summer Capacity (MW),80,65.9
+50815,GEN6,Summer Capacity (MW),127,85.5
+50815,GEN7,Summer Capacity (MW),80,65.1
+50896,GEN1,Summer Capacity (MW),2.8,2.9
+50896,GEN2,Summer Capacity (MW),2.8,2.9
+50896,GEN3,Summer Capacity (MW),2.8,2.9
+50974,GEN1,Summer Capacity (MW),82.8,82.5
+52019,GEN1,Summer Capacity (MW),104.7,112.5
+52019,GEN2,Summer Capacity (MW),104.7,112.5
+52019,GEN4,Summer Capacity (MW),104.7,112.5
+52019,GEN5,Summer Capacity (MW),104.7,112.5
+52019,GEN8,Summer Capacity (MW),165,161.5
+52019,GEN9,Summer Capacity (MW),165,161.5
+52033,1,Summer Capacity (MW),0.3,1.2
+52087,GEN1,Summer Capacity (MW),116,109
+52087,GEN2,Summer Capacity (MW),116,107
+52087,GEN3,Summer Capacity (MW),116,109
+52088,GEN1,Summer Capacity (MW),139,142
+52088,GEN2,Summer Capacity (MW),104,92
+52088,GEN3,Summer Capacity (MW),104,92
+52088,GEN4,Summer Capacity (MW),104,92
+52122,GEN1,Summer Capacity (MW),16.9,17
+52168,GEN2,Summer Capacity (MW),13.8,16
+52175,GEN2,Summer Capacity (MW),9.5,10
+52175,GEN3,Summer Capacity (MW),19.6,24
+54034,GEN2,Summer Capacity (MW),33.4,32.4
+54041,GEN1,Summer Capacity (MW),42,43.3
+54041,GEN2,Summer Capacity (MW),42,43.3
+54041,GEN3,Summer Capacity (MW),42,43.3
+54114,GEN1,Summer Capacity (MW),49.9,49
+54114,GEN2,Summer Capacity (MW),50.8,51.7
+54131,GEN1,Summer Capacity (MW),37.3,37.4
+54321,N802,Summer Capacity (MW),4,4.5
+54321,N803,Summer Capacity (MW),4,4.5
+54321,N804,Summer Capacity (MW),4,4.5
+54464,0001,Summer Capacity (MW),7.5,12.8
+54547,1,Summer Capacity (MW),159.2,155.7
+54547,2,Summer Capacity (MW),159.2,155.7
+54547,3,Summer Capacity (MW),159.2,155.7
+54547,4,Summer Capacity (MW),159.2,155.7
+54547,5,Summer Capacity (MW),171.7,167.9
+54547,6,Summer Capacity (MW),171.7,167.9
+54574,GEN1,Summer Capacity (MW),70.7,79.4
+54574,GEN2,Summer Capacity (MW),79.9,73.5
+54574,GEN3,Summer Capacity (MW),85,85.9
+54640,GEN1,Summer Capacity (MW),84.6,89.5
+54640,GEN2,Summer Capacity (MW),83.6,90.5
+54640,GEN3,Summer Capacity (MW),79.7,85
+54789,2TG,Summer Capacity (MW),8.2,9.5
+54789,3TG,Summer Capacity (MW),10.8,9.6
+54789,4TG,Summer Capacity (MW),47.8,54.9
+54844,GOR1,Summer Capacity (MW),68.4,64.1
+54844,GOR2,Summer Capacity (MW),68.4,63.5
+54844,GOR3,Summer Capacity (MW),40.6,44.9
+54844,GOR4,Summer Capacity (MW),40.6,45.5
+54914,01,Summer Capacity (MW),90,95
+54914,02,Summer Capacity (MW),90,95
+55026,UNT1,Summer Capacity (MW),164.9,165.6
+55047,CTG1,Summer Capacity (MW),165,167
+55047,CTG2,Summer Capacity (MW),165,171
+55047,CTG3,Summer Capacity (MW),165,171
+55047,STG1,Summer Capacity (MW),60,71
+55047,STG2,Summer Capacity (MW),165,166
+55054,1,Summer Capacity (MW),3.6,3.4
+55054,3,Summer Capacity (MW),3.6,3.4
+55054,GEN2,Summer Capacity (MW),3.6,3.4
+55064,UNT1,Summer Capacity (MW),107.5,109.2
+55064,UNT2B,Summer Capacity (MW),112.7,109.1
+55065,GEN1,Summer Capacity (MW),154.6,155.2
+55065,GEN2,Summer Capacity (MW),150.9,151.7
+55065,GEN3,Summer Capacity (MW),157.6,157.9
+55068,GEN1,Summer Capacity (MW),156.7,163.2
+55068,GEN2,Summer Capacity (MW),157.7,160.7
+55068,GEN3,Summer Capacity (MW),179.6,175.6
+55075,CT01,Summer Capacity (MW),145,141
+55075,ST01,Summer Capacity (MW),42,38
+55079,CT01,Summer Capacity (MW),211.8,212.1
+55079,ST01,Summer Capacity (MW),118.5,118
+55084,GE1,Summer Capacity (MW),247.4,247
+55100,UNT1,Summer Capacity (MW),165,165.9
+55109,T4,Summer Capacity (MW),104.9,104
+55109,TG1,Summer Capacity (MW),101.4,101
+55109,TG2,Summer Capacity (MW),103.6,101.9
+55112,CT01,Summer Capacity (MW),175,168
+55112,CT02,Summer Capacity (MW),175,168
+55112,ST01,Summer Capacity (MW),180,192
+55123,CTG1,Summer Capacity (MW),221,215
+55123,CTG2,Summer Capacity (MW),221,215
+55123,STG,Summer Capacity (MW),240,237
+55135,CT01,Summer Capacity (MW),150.6,143.5
+55135,CT02,Summer Capacity (MW),153.9,148.6
+55137,CTG1,Summer Capacity (MW),158,165.5
+55144,U1,Summer Capacity (MW),210,228
+55144,U2,Summer Capacity (MW),211,229
+55144,U4,Summer Capacity (MW),213,231
+55148,1,Summer Capacity (MW),41.5,40.8
+55148,2,Summer Capacity (MW),41.5,41.1
+55148,3,Summer Capacity (MW),41.5,41.6
+55148,4,Summer Capacity (MW),41.5,41.3
+55153,CTG1,Summer Capacity (MW),154.4,153
+55153,CTG2,Summer Capacity (MW),154.4,153
+55153,CTG3,Summer Capacity (MW),154.4,153
+55153,CTG4,Summer Capacity (MW),154.4,153
+55153,STG1,Summer Capacity (MW),197,196
+55165,G101,Summer Capacity (MW),142.8,141.7
+55165,G102,Summer Capacity (MW),157,155.7
+55166,CT01,Summer Capacity (MW),175.5,176.5
+55166,CT02,Summer Capacity (MW),168.2,168.1
+55166,CT03,Summer Capacity (MW),167.4,169.9
+55166,CT04,Summer Capacity (MW),172.6,173.8
+55166,CT05,Summer Capacity (MW),173.2,174.3
+55170,CT11,Summer Capacity (MW),222,218
+55170,CT12,Summer Capacity (MW),222,218
+55170,STG,Summer Capacity (MW),234,232
+55172,GT-1,Summer Capacity (MW),159,158
+55172,GT-2,Summer Capacity (MW),159,158
+55172,GT-3,Summer Capacity (MW),159,157
+55172,ST-4,Summer Capacity (MW),86,82
+55172,ST-5,Summer Capacity (MW),200,208
+55173,CT11,Summer Capacity (MW),166.6,170.8
+55173,CT12,Summer Capacity (MW),160.3,167.1
+55173,CT24,Summer Capacity (MW),144,144.6
+55173,CT25,Summer Capacity (MW),142.1,143.5
+55173,ST13,Summer Capacity (MW),209.2,196.6
+55173,ST26,Summer Capacity (MW),240.1,242.3
+55177,A,Summer Capacity (MW),180,160
+55177,B,Summer Capacity (MW),180,160
+55177,ST1,Summer Capacity (MW),190,156
+55187,GT1,Summer Capacity (MW),159,160
+55187,GT2,Summer Capacity (MW),161,163
+55187,GT3,Summer Capacity (MW),160,163
+55187,ST1,Summer Capacity (MW),136,126
+55193,CTG1,Summer Capacity (MW),184.4,181.1
+55193,CTG2,Summer Capacity (MW),181.9,179.9
+55193,STG,Summer Capacity (MW),186.5,187
+55206,CT1,Summer Capacity (MW),156,173
+55206,CT2,Summer Capacity (MW),156,173
+55206,ST1,Summer Capacity (MW),165,160
+55211,U1,Summer Capacity (MW),270.3,262.2
+55211,U2,Summer Capacity (MW),271.4,262
+55217,CTG1,Summer Capacity (MW),165,170
+55217,CTG2,Summer Capacity (MW),165,170
+55217,STG3,Summer Capacity (MW),237,219
+55218,H03,Summer Capacity (MW),454.6,452.1
+55220,A03,Summer Capacity (MW),456,455.4
+55234,GT1,Summer Capacity (MW),75,76
+55234,GT2,Summer Capacity (MW),75,76
+55234,GT3,Summer Capacity (MW),75,76
+55234,GT5,Summer Capacity (MW),75,76
+55234,GT6,Summer Capacity (MW),75,76
+55234,GT7,Summer Capacity (MW),75,76
+55234,GT8,Summer Capacity (MW),75,76
+55238,0001,Summer Capacity (MW),184.3,184.2
+55238,0002,Summer Capacity (MW),181.6,182.4
+55244,CTG2,Summer Capacity (MW),58,56.7
+55244,CTG3,Summer Capacity (MW),58,56.7
+55244,CTG4,Summer Capacity (MW),75,71.4
+55244,CTG5,Summer Capacity (MW),75,71.3
+55279,CTG1,Summer Capacity (MW),171.4,167.6
+55279,CTG10,Summer Capacity (MW),49.8,51
+55279,CTG2,Summer Capacity (MW),168.3,164.5
+55279,CTG3,Summer Capacity (MW),165,167
+55279,CTG4,Summer Capacity (MW),164.3,164.2
+55279,CTG5,Summer Capacity (MW),48,51.1
+55279,CTG6,Summer Capacity (MW),49.6,51.6
+55279,CTG7,Summer Capacity (MW),50.1,51.8
+55279,CTG8,Summer Capacity (MW),50.2,51.6
+55279,CTG9,Summer Capacity (MW),50.7,51.5
+55293,CTG1,Summer Capacity (MW),161,163
+55293,CTG2,Summer Capacity (MW),161,163
+55293,CTG3,Summer Capacity (MW),161,163
+55293,STG1,Summer Capacity (MW),266,293
+55294,GTG1,Summer Capacity (MW),171.2,176.4
+55294,GTG2,Summer Capacity (MW),174.6,175.6
+55294,STG3,Summer Capacity (MW),188.9,182.3
+55297,1,Summer Capacity (MW),226.2,366.6
+55297,1A,Summer Capacity (MW),136,361
+55297,2,Summer Capacity (MW),225.5,360.9
+55299,CTG1,Summer Capacity (MW),185,173
+55299,CTG2,Summer Capacity (MW),185,173
+55299,CTG3,Summer Capacity (MW),183,173
+55299,ST-1,Summer Capacity (MW),215,241
+55317,GT11,Summer Capacity (MW),228.8,231
+55317,GT12,Summer Capacity (MW),228.1,231
+55317,ST15,Summer Capacity (MW),269.1,262
+55327,CTG1,Summer Capacity (MW),175,198
+55327,CTG2,Summer Capacity (MW),175,198
+55327,CTG3,Summer Capacity (MW),175,198
+55327,STG1,Summer Capacity (MW),275,258
+55328,CTG1,Summer Capacity (MW),184,197
+55328,CTG2,Summer Capacity (MW),184,197
+55328,STG1,Summer Capacity (MW),247,235
+55333,CTG1,Summer Capacity (MW),193,184
+55333,CTG2,Summer Capacity (MW),182,171
+55333,CTG3,Summer Capacity (MW),182,171
+55333,STG1,Summer Capacity (MW),287,292
+55334,CTG1,Summer Capacity (MW),150.9,141.8
+55334,CTG2,Summer Capacity (MW),145.5,138
+55334,STG1,Summer Capacity (MW),320.1,310.1
+55337,CT1,Summer Capacity (MW),239.4,261.6
+55337,CT2,Summer Capacity (MW),239.4,261.6
+55337,ST4,Summer Capacity (MW),233.2,236.8
+55340,CTG1,Summer Capacity (MW),148,153
+55340,CTG2,Summer Capacity (MW),149,152
+55340,STG,Summer Capacity (MW),173,176
+55345,1-01,Summer Capacity (MW),152.8,159
+55345,1-02,Summer Capacity (MW),152.8,159
+55345,1-03,Summer Capacity (MW),265.4,258
+55348,1,Summer Capacity (MW),170,176.2
+55348,2,Summer Capacity (MW),169,175.3
+55348,3,Summer Capacity (MW),168.5,177
+55348,4,Summer Capacity (MW),168.1,178.8
+55357,CTG1,Summer Capacity (MW),166,167
+55357,CTG2,Summer Capacity (MW),166,167
+55357,STG1,Summer Capacity (MW),193,204
+55364,CT02,Summer Capacity (MW),166.6,162.2
+55380,STG1,Summer Capacity (MW),506.2,506
+55380,STG2,Summer Capacity (MW),496,504
+55380,STG3,Summer Capacity (MW),507,511
+55380,STG4,Summer Capacity (MW),503.1,510
+55381,UNT1,Summer Capacity (MW),45.9,45.1
+55381,UNT2,Summer Capacity (MW),44.6,43.7
+55381,UNT3,Summer Capacity (MW),45.3,45.4
+55381,UNT4,Summer Capacity (MW),44.6,44
+55381,UNT5,Summer Capacity (MW),46,45.4
+55381,UNT6,Summer Capacity (MW),45.8,45.1
+55381,UNT7,Summer Capacity (MW),44.3,45.2
+55386,CT1,Summer Capacity (MW),166.7,166.5
+55386,CT2,Summer Capacity (MW),151.5,166.5
+55392,CTG1,Summer Capacity (MW),152,161
+55392,CTG2,Summer Capacity (MW),152,162
+55392,CTG3,Summer Capacity (MW),152,155
+55393,CTG1,Summer Capacity (MW),172,170
+55393,CTG2,Summer Capacity (MW),172,170
+55393,STG1,Summer Capacity (MW),202.1,217
+55401,CT1,Summer Capacity (MW),182,185
+55401,CT2,Summer Capacity (MW),166.9,185
+55401,CT3,Summer Capacity (MW),181.6,185
+55401,CT4,Summer Capacity (MW),165.7,185
+55401,CT5,Summer Capacity (MW),182,185
+55405,CT1,Summer Capacity (MW),220.9,218.7
+55405,CT2,Summer Capacity (MW),220.4,221.5
+55405,CT3,Summer Capacity (MW),222.9,222.1
+55405,ST1,Summer Capacity (MW),108.7,110.7
+55405,ST2,Summer Capacity (MW),109.2,111.8
+55405,ST3,Summer Capacity (MW),108.4,109
+55409,CAL1,Summer Capacity (MW),158,176
+55409,CAL2,Summer Capacity (MW),158,176
+55409,CAL3,Summer Capacity (MW),158,176
+55409,CAL4,Summer Capacity (MW),158,176
+55412,OEC1,Summer Capacity (MW),173,182
+55412,OEC2,Summer Capacity (MW),173,182
+55412,OECS,Summer Capacity (MW),230,236
+55417,CT01,Summer Capacity (MW),75,76
+55417,CT02,Summer Capacity (MW),75,76
+55417,CT03,Summer Capacity (MW),75,76
+55417,CT04,Summer Capacity (MW),75,76
+55418,ST1,Summer Capacity (MW),592.5,562.7
+55433,0001,Summer Capacity (MW),73.2,74.3
+55433,0002,Summer Capacity (MW),73.4,73.6
+55433,0003,Summer Capacity (MW),72.7,73.5
+55433,0004,Summer Capacity (MW),69.7,73.6
+55438,CT01,Summer Capacity (MW),121.1,122.3
+55438,CT02,Summer Capacity (MW),121.5,123.3
+55438,CT03,Summer Capacity (MW),121.5,120.8
+55438,CT04,Summer Capacity (MW),123.3,122.9
+55439,CTG1,Summer Capacity (MW),171.4,169.4
+55439,CTG2,Summer Capacity (MW),173.5,176.3
+55439,CTG3,Summer Capacity (MW),182.7,182.4
+55439,STG1,Summer Capacity (MW),402.2,402
+55455,CT1A,Summer Capacity (MW),148,163
+55455,CT1B,Summer Capacity (MW),148,163
+55455,CT2A,Summer Capacity (MW),148,163
+55455,CT2B,Summer Capacity (MW),148,163
+55455,ST1,Summer Capacity (MW),171,175
+55455,ST2,Summer Capacity (MW),171,175
+55457,CT1,Summer Capacity (MW),159,157.3
+55457,CT2,Summer Capacity (MW),160.8,157.3
+55457,ST1,Summer Capacity (MW),171.2,170.5
+55463,CT01,Summer Capacity (MW),390,
+55463,CT02,Summer Capacity (MW),390,
+55463,CT03,Summer Capacity (MW),390,
+55463,CT04,Summer Capacity (MW),390,
+55463,ST01,Summer Capacity (MW),312,307
+55463,ST02,Summer Capacity (MW),312,300.9
+55463,ST03,Summer Capacity (MW),312,301
+55463,ST04,Summer Capacity (MW),312,300
+55464,CTG1,Summer Capacity (MW),186.8,182
+55464,CTG2,Summer Capacity (MW),186.8,182
+55464,CTG3,Summer Capacity (MW),186.8,182
+55464,CTG4,Summer Capacity (MW),186.8,182
+55464,CTG6,Summer Capacity (MW),186.8,182
+55467,STG1,Summer Capacity (MW),242.5,236.1
+55467,STG2,Summer Capacity (MW),236.5,245
+55467,STG3,Summer Capacity (MW),248.6,242.6
+55486,CTG01,Summer Capacity (MW),184.4,183.1
+55486,CTG02,Summer Capacity (MW),185.6,183.8
+55496,CT01,Summer Capacity (MW),72,73
+55496,CT02,Summer Capacity (MW),72,73
+55496,CT03,Summer Capacity (MW),72,73
+55496,CT04,Summer Capacity (MW),72,73
+55496,CT05,Summer Capacity (MW),72,73
+55496,CT06,Summer Capacity (MW),72,73
+55517,CTG1,Summer Capacity (MW),46.5,46.7
+55517,CTG2,Summer Capacity (MW),45.3,44
+55517,CTG3,Summer Capacity (MW),46.1,45.6
+55517,CTG4,Summer Capacity (MW),45.7,45.6
+55517,CTG5,Summer Capacity (MW),46.1,45.2
+55517,CTG6,Summer Capacity (MW),47.4,46.4
+55517,CTG7,Summer Capacity (MW),46.2,46.4
+55518,CTG1,Summer Capacity (MW),162.3,182
+55518,CTG2,Summer Capacity (MW),161.1,182
+55518,CTG3,Summer Capacity (MW),162.2,182
+55518,STG1,Summer Capacity (MW),305.3,314
+55524,CTG1,Summer Capacity (MW),113,125
+55524,CTG2,Summer Capacity (MW),122,125
+55524,CTG3,Summer Capacity (MW),122,125
+55524,CTG5,Summer Capacity (MW),216.3,214
+55524,CTG6,Summer Capacity (MW),216.3,214
+55524,STG1,Summer Capacity (MW),188,194
+55524,STG2,Summer Capacity (MW),395.1,407
+55545,CTG1,Summer Capacity (MW),159,157
+55545,CTG2,Summer Capacity (MW),149,159
+55545,STG1,Summer Capacity (MW),172,177
+55620,2-CT,Summer Capacity (MW),151.1,148.5
+55620,ST-1,Summer Capacity (MW),578.5,576.8
+55626,CT1,Summer Capacity (MW),45,46
+55627,CT1,Summer Capacity (MW),45,48
+55641,CTG1,Summer Capacity (MW),155.2,144.2
+55641,CTG2,Summer Capacity (MW),153.3,141.6
+55641,STG1,Summer Capacity (MW),251.9,250.1
+55651,CT01,Summer Capacity (MW),71.5,72.5
+55651,CT02,Summer Capacity (MW),69.4,70.8
+55651,CT03,Summer Capacity (MW),70.4,72.6
+55651,CT04,Summer Capacity (MW),69.8,72.4
+55656,CT01,Summer Capacity (MW),175,173
+55656,CT04,Summer Capacity (MW),171,170
+55656,ST03,Summer Capacity (MW),174,179
+55690,CTG1,Summer Capacity (MW),118,125
+55690,CTG2,Summer Capacity (MW),127,125
+55690,CTG3,Summer Capacity (MW),127,125
+55690,CTG5,Summer Capacity (MW),118,125
+55690,CTG6,Summer Capacity (MW),127,125
+55690,CTG7,Summer Capacity (MW),127,125
+55690,STG4,Summer Capacity (MW),195,193
+55690,STG8,Summer Capacity (MW),195,193
+55699,1,Summer Capacity (MW),52.8,55.8
+55733,1,Summer Capacity (MW),203.9,195.1
+55748,CAG5,Summer Capacity (MW),126.1,108
+55748,CTG1,Summer Capacity (MW),45,49
+55748,CTG2,Summer Capacity (MW),45,47
+55748,CTG3,Summer Capacity (MW),45,49
+55748,CTG4,Summer Capacity (MW),45,47
+55810,S3,Summer Capacity (MW),45,38
+55810,S4,Summer Capacity (MW),45,38
+55810,S5,Summer Capacity (MW),45,38
+55813,CTG1,Summer Capacity (MW),45,47
+55836,FT81,Summer Capacity (MW),52.4,52.8
+55847,CTG1,Summer Capacity (MW),45,48
+55936,GT3,Summer Capacity (MW),179.1,180.9
+55939,CT01,Summer Capacity (MW),297.5,265.9
+55939,CT02,Summer Capacity (MW),297.5,266.8
+55939,CT03,Summer Capacity (MW),297.5,265.6
+55939,ST01,Summer Capacity (MW),579.7,571.7
+55963,CTG1,Summer Capacity (MW),46.1,47
+55969,U-01,Summer Capacity (MW),53.7,53.4
+55976,101,Summer Capacity (MW),165,165.6
+55976,201,Summer Capacity (MW),165,164.4
+55976,301,Summer Capacity (MW),165,163.2
+55976,401,Summer Capacity (MW),315,317.3
+56047,CTG1,Summer Capacity (MW),248,262
+56047,CTG2,Summer Capacity (MW),248,258.3
+56047,STG,Summer Capacity (MW),273.9,267
+56070,1,Summer Capacity (MW),53.8,54.1
+56111,GEN1,Summer Capacity (MW),160,182.4
+56151,GT1,Summer Capacity (MW),104.6,105.8
+56151,GT2,Summer Capacity (MW),104.6,107.6
+56151,GT3,Summer Capacity (MW),103.6,107.8
+56166,1,Summer Capacity (MW),151.9,151.2
+56166,2,Summer Capacity (MW),149.2,148.2
+56196,CA01,Summer Capacity (MW),168.7,
+56196,CT01,Summer Capacity (MW),153.3,238
+56196,CT02,Summer Capacity (MW),153.3,238
+56309,CT-1,Summer Capacity (MW),5,5.5
+56309,CT-2,Summer Capacity (MW),5,5.5
+56309,IC-1,Summer Capacity (MW),1,1.2
+56309,ST-3,Summer Capacity (MW),18,18.2
+56322,WHS1,Summer Capacity (MW),0.5,0.4
+56467,CTG1,Summer Capacity (MW),182,181
+56467,CTG2,Summer Capacity (MW),182,181
+56467,STG1,Summer Capacity (MW),248,241
+56500,A101,Summer Capacity (MW),7.9,8.8
+56500,D101,Summer Capacity (MW),7.9,8.8
+56500,E202,Summer Capacity (MW),7.9,8.8
+56502,3,Summer Capacity (MW),43.8,44.3
+56516,2G01,Summer Capacity (MW),8.3,7.4
+56516,2G02,Summer Capacity (MW),8.3,7.4
+56516,2G03,Summer Capacity (MW),8.3,7.4
+56516,2G04,Summer Capacity (MW),8.3,7.4
+56516,2G05,Summer Capacity (MW),8.3,7.4
+56516,2G06,Summer Capacity (MW),8.3,7.4
+56516,2G07,Summer Capacity (MW),8.3,7.4
+56516,2G08,Summer Capacity (MW),8.3,7.4
+56516,2G09,Summer Capacity (MW),8.3,7.4
+56516,2G10,Summer Capacity (MW),8.3,7.4
+56516,2G11,Summer Capacity (MW),8.3,7.4
+56516,2G12,Summer Capacity (MW),8.3,7.4
+56516,2G13,Summer Capacity (MW),8.3,7.4
+56516,2G14,Summer Capacity (MW),8.3,7.4
+56651,1,Summer Capacity (MW),70,75
+56777,FIA,Summer Capacity (MW),201.3,101.3
+56786,1,Summer Capacity (MW),92.9,97.1
+56806,4,Summer Capacity (MW),172,178
+56806,41,Summer Capacity (MW),165,163
+56806,42,Summer Capacity (MW),165,163
+56807,1A,Summer Capacity (MW),190,184.9
+56807,1B,Summer Capacity (MW),190,184
+56807,1C,Summer Capacity (MW),242,253
+56846,GTG1,Summer Capacity (MW),215,216.3
+56846,GTG2,Summer Capacity (MW),214.6,217
+56846,STGEN,Summer Capacity (MW),303.6,303.7
+56938,NCP1,Summer Capacity (MW),1.2,1
+56940,CTG1,Summer Capacity (MW),180.6,188.7
+56940,CTG2,Summer Capacity (MW),180.6,188.7
+56940,STG,Summer Capacity (MW),290.5,297
+56963,E101,Summer Capacity (MW),210.9,208.7
+56963,E102,Summer Capacity (MW),211.8,210.6
+56963,STG1,Summer Capacity (MW),312.6,312.4
+56964,GT1,Summer Capacity (MW),61.1,61.9
+56964,GT10,Summer Capacity (MW),62.6,61.4
+56964,GT2,Summer Capacity (MW),60,57.5
+56964,GT3,Summer Capacity (MW),59.2,58
+56964,GT4,Summer Capacity (MW),61.8,61.1
+56964,GT5,Summer Capacity (MW),60.7,58.5
+56964,GT6,Summer Capacity (MW),59.5,59
+56964,GT7,Summer Capacity (MW),60.6,59.6
+56964,GT8,Summer Capacity (MW),61,60
+57028,GTG,Summer Capacity (MW),221,226
+57028,STG,Summer Capacity (MW),126,127
+57037,1A,Summer Capacity (MW),675.6,661.7
+57204,1,Summer Capacity (MW),2.2,2
+57265,1,Summer Capacity (MW),1.3,1
+57269,1,Summer Capacity (MW),0.8,0.9
+57270,1,Summer Capacity (MW),0.8,0.9
+57313,1,Summer Capacity (MW),1.2,1.1
+57324,PV1,Summer Capacity (MW),12.8,11.2
+57330,1,Summer Capacity (MW),1.2,1.1
+57481,01,Summer Capacity (MW),2.2,2.1
+57562,PV1,Summer Capacity (MW),17.6,17
+57580,PV1,Summer Capacity (MW),0.5,0.3
+57673,1,Summer Capacity (MW),3.5,3.1
+57794,CT1,Summer Capacity (MW),240,245
+57794,CT2,Summer Capacity (MW),240,245
+57794,ST1,Summer Capacity (MW),235,225
+57839,CT001,Summer Capacity (MW),206.8,209
+57839,CT002,Summer Capacity (MW),203.6,204.7
+57839,ST001,Summer Capacity (MW),314.8,313.3
+57865,E01,Summer Capacity (MW),8.9,9
+57865,E02,Summer Capacity (MW),8.9,9.1
+57865,E03,Summer Capacity (MW),8.9,9
+57865,E04,Summer Capacity (MW),8.8,9
+57865,E05,Summer Capacity (MW),8.9,9
+57865,E06,Summer Capacity (MW),8.9,9.1
+57865,E07,Summer Capacity (MW),8.5,8.7
+57865,E08,Summer Capacity (MW),8.9,9.1
+57865,E09,Summer Capacity (MW),9,9.2
+57865,E10,Summer Capacity (MW),8.9,9.1
+57865,E11,Summer Capacity (MW),8.9,9.1
+57865,E12,Summer Capacity (MW),8.7,8.9
+57865,E13,Summer Capacity (MW),8.9,9.1
+57865,E14,Summer Capacity (MW),8.9,9
+57865,E15,Summer Capacity (MW),8.9,9.1
+57865,E16,Summer Capacity (MW),8.3,8.4
+57865,E17,Summer Capacity (MW),8.9,9.1
+57865,E18,Summer Capacity (MW),8.8,9
+57875,MLWF,Summer Capacity (MW),100,100.9
+57971,COGEN,Summer Capacity (MW),1.9,2.1
+57977,ENG1,Summer Capacity (MW),2.5,2.8
+57977,ENG2,Summer Capacity (MW),2.5,2.8
+57986,1,Summer Capacity (MW),11.3,10
+58001,CTG-3,Summer Capacity (MW),211,232
+58001,CTG-4,Summer Capacity (MW),211,232
+58001,STG-2,Summer Capacity (MW),312,326
+58021,1,Summer Capacity (MW),91.2,92.3
+58052,1TG,Summer Capacity (MW),0.8,1
+58119,DPSS,Summer Capacity (MW),3,2.7
+58152,GEN1,Summer Capacity (MW),3.8,3.6
+58184,TG-1,Summer Capacity (MW),14.6,16.5
+58236,CTG1,Summer Capacity (MW),208.2,205.3
+58236,CTG2,Summer Capacity (MW),207.1,204.1
+58236,STG1,Summer Capacity (MW),247.9,242.2
+58260,CT01,Summer Capacity (MW),263.9,265.2
+58260,CT02,Summer Capacity (MW),263.9,267.9
+58260,CT03,Summer Capacity (MW),263.9,268.1
+58260,ST01,Summer Capacity (MW),579.4,574.8
+58270,1,Summer Capacity (MW),4.7,3.5
+58420,GEN1,Summer Capacity (MW),382.5,385
+58420,GEN2,Summer Capacity (MW),382.5,380
+58426,GEN1,Summer Capacity (MW),412.5,390
+58426,GEN2,Summer Capacity (MW),382.5,375
+58485,PV1,Summer Capacity (MW),1,0.8
+58835,ELK1,Summer Capacity (MW),195.1,195.8
+58835,ELK2,Summer Capacity (MW),195.1,196.4
+58872,BISO4,Summer Capacity (MW),205,201.8
+59046,PV1,Summer Capacity (MW),3.4,2.5
+59057,GEN 1,Summer Capacity (MW),2.7,1.4
+59116,V1021,Summer Capacity (MW),2.1,1
+59128,57449,Summer Capacity (MW),3.2,2.8
+59129,57449,Summer Capacity (MW),1.1,0.9
+59131,57449,Summer Capacity (MW),1.3,1.1
+59132,57449,Summer Capacity (MW),1.1,1
+59133,57449,Summer Capacity (MW),1.1,1
+59134,57449,Summer Capacity (MW),1.9,1.6
+59135,57449,Summer Capacity (MW),2.6,2.3
+59136,57449,Summer Capacity (MW),1.3,1.1
+59138,57449,Summer Capacity (MW),1.1,1
+59139,57449,Summer Capacity (MW),1.1,1
+59370,PV1,Summer Capacity (MW),1.8,1.4
+59371,PV1,Summer Capacity (MW),1.9,1.5
+59477,CSF1,Summer Capacity (MW),2.2,2.1
+59544,PV1,Summer Capacity (MW),1.3,1.2
+59632,1036,Summer Capacity (MW),1.2,0.9
+59685,01,Summer Capacity (MW),8,20
+59812,STG6,Summer Capacity (MW),458.3,446.3
+59858,JSI01,Summer Capacity (MW),1.5,1.4
+59882,4,Summer Capacity (MW),95.3,82.8
+59882,5,Summer Capacity (MW),95.5,98
+59904,1,Summer Capacity (MW),0.4,1
+59905,1,Summer Capacity (MW),0.8,2.1
+59906,GEN1,Summer Capacity (MW),490,552.5
+59906,GEN2,Summer Capacity (MW),490,552.5
+59911,1,Summer Capacity (MW),0.8,2
+59913,CT01,Summer Capacity (MW),324.4,326.5
+59913,CT02,Summer Capacity (MW),324.4,322.9
+59913,CT03,Summer Capacity (MW),324.4,328.7
+59913,ST01,Summer Capacity (MW),611.8,609.9
+60302,10,Summer Capacity (MW),325,763
+60302,11,Summer Capacity (MW),231,
+60302,12,Summer Capacity (MW),231,
+60318,1,Summer Capacity (MW),7.6,19
+60319,1,Summer Capacity (MW),8,20
+60368,CTG1,Summer Capacity (MW),223.8,230.2
+60368,CTG2,Summer Capacity (MW),219.9,218.6
+60368,CTG3,Summer Capacity (MW),209.6,225.3
+60368,STG,Summer Capacity (MW),419.5,410.2
+60376,CTG1,Summer Capacity (MW),267.3,271.9
+60376,CTG2,Summer Capacity (MW),267.7,270.7
+60376,STG1,Summer Capacity (MW),321.6,321.4
+60418,CC6MW,Summer Capacity (MW),6,7
+60517,HY1,Summer Capacity (MW),6,7
+60584,01,Summer Capacity (MW),7,17.6
+60589,GEN1,Summer Capacity (MW),341.8,337.3
+60589,GEN2,Summer Capacity (MW),342.9,337.3
+60589,GEN3,Summer Capacity (MW),387.2,390.7
+60610,1,Summer Capacity (MW),41.3,43.4
+60746,08502,Summer Capacity (MW),3,2.5
+60810,SABER,Summer Capacity (MW),2.1,1
+61023,1,Summer Capacity (MW),6.8,17
+61144,1,Summer Capacity (MW),244.2,242.7
+61359,EWR5,Summer Capacity (MW),2.9,1.9
+61380,JOHN5,Summer Capacity (MW),1,0.7
+62176,21Z,Summer Capacity (MW),5.7,5
+62176,PF,Summer Capacity (MW),5.7,5
+62468,MCS01,Summer Capacity (MW),1.5,1.4
+62565,GEN1,Summer Capacity (MW),621.3,622.5
+62715,WCCWF,Summer Capacity (MW),180.1,175.3
+62926,01,Summer Capacity (MW),600,558
+62926,02,Summer Capacity (MW),600,558
+63253,FSK,Summer Capacity (MW),2.1,1.6
+63257,SHM,Summer Capacity (MW),3.5,2.7
+63291,GPS,Summer Capacity (MW),1.9,1.6
+63292,BHD,Summer Capacity (MW),1.5,1.9
+63328,IPJNO,Summer Capacity (MW),141,143.5
+63535,SOLAR,Summer Capacity (MW),1.1,1.4
+63686,GFWP,Summer Capacity (MW),150,151
+63728,BESS,Summer Capacity (MW),12,12.5
+64020,CTG3,Summer Capacity (MW),226.1,217.7
+64020,CTG4,Summer Capacity (MW),224.8,213.8
+64020,STG2,Summer Capacity (MW),255.1,252.8
+64591,EEA,Summer Capacity (MW),194,200.2
+64993,BB1BA,Summer Capacity (MW),40,22
+64993,BB1PV,Summer Capacity (MW),128,70
+65466,KINS2,Summer Capacity (MW),2,3.8
+65497,GRDS1,Summer Capacity (MW),1.1,0.9
+65617,P3998,Summer Capacity (MW),1.3,0.7
+65637,2481,Summer Capacity (MW),1.2,1.1
+66799,4087,Summer Capacity (MW),1.1,0.7
+88,1,Winter Capacity (MW),2.3,1.8
+88,2,Winter Capacity (MW),2.3,1.8
+108,1,Winter Capacity (MW),359.1,358.9
+113,1,Winter Capacity (MW),116,112
+116,GT3,Winter Capacity (MW),105.8,103
+116,GT4,Winter Capacity (MW),105.8,103
+116,GT5,Winter Capacity (MW),105.8,103
+116,GT6,Winter Capacity (MW),105.8,103
+116,GT7,Winter Capacity (MW),105.8,103
+117,C4-1,Winter Capacity (MW),80,78
+117,C4-2,Winter Capacity (MW),40,34
+117,C5-1,Winter Capacity (MW),160,153
+117,C5-2,Winter Capacity (MW),160,153
+117,C5-3,Winter Capacity (MW),166,162
+118,GT1,Winter Capacity (MW),62,50
+120,GT5,Winter Capacity (MW),49,49.3
+120,GT6,Winter Capacity (MW),49,49.3
+145,HM3,Winter Capacity (MW),10,11
+149,ROOS,Winter Capacity (MW),34.8,36
+165,3CT,Winter Capacity (MW),327.3,350.7
+165,3ST,Winter Capacity (MW),175.7,152.2
+217,1,Winter Capacity (MW),34,31
+298,1,Winter Capacity (MW),831,824
+298,2,Winter Capacity (MW),858,836
+389,BESS,Winter Capacity (MW),29,30
+467,B,Winter Capacity (MW),162,171.6
+564,1,Winter Capacity (MW),453,453.4
+564,2,Winter Capacity (MW),469,469.3
+564,B1,Winter Capacity (MW),170,177
+566,3,Winter Capacity (MW),1250.9,1251.3
+568,501,Winter Capacity (MW),364,359
+568,502,Winter Capacity (MW),150.8,149.6
+593,4,Winter Capacity (MW),174,172
+593,5,Winter Capacity (MW),450,438
+627,P2,Winter Capacity (MW),55,27.5
+683,A,Winter Capacity (MW),48,36.9
+683,B,Winter Capacity (MW),48,36.9
+683,C,Winter Capacity (MW),127,111.4
+683,D,Winter Capacity (MW),127,111.4
+809,1,Winter Capacity (MW),30.8,22.1
+809,2,Winter Capacity (MW),30.8,21.8
+809,3,Winter Capacity (MW),30.8,22.1
+810,1,Winter Capacity (MW),25,22
+810,2,Winter Capacity (MW),25,22.8
+810,3,Winter Capacity (MW),25,12.6
+811,1,Winter Capacity (MW),112.5,120.4
+811,2,Winter Capacity (MW),112.5,121.3
+811,3,Winter Capacity (MW),112.5,121.5
+811,4,Winter Capacity (MW),112.5,122.4
+812,1,Winter Capacity (MW),27.6,30.1
+812,2,Winter Capacity (MW),27.6,29.9
+812,3,Winter Capacity (MW),27.6,30.9
+813,1,Winter Capacity (MW),6.2,0.7
+813,2,Winter Capacity (MW),6.2,0.9
+814,1,Winter Capacity (MW),2.5,2.2
+815,1,Winter Capacity (MW),13.5,14
+816,1,Winter Capacity (MW),15,10
+816,2,Winter Capacity (MW),15,5.7
+816,3,Winter Capacity (MW),15,18.5
+816,4,Winter Capacity (MW),15,19.2
+817,1,Winter Capacity (MW),2.5,2.7
+817,2,Winter Capacity (MW),2.5,2.7
+818,3,Winter Capacity (MW),11.5,8.7
+818,4,Winter Capacity (MW),3.2,3
+819,1,Winter Capacity (MW),12.5,15.1
+819,2,Winter Capacity (MW),12.5,14.3
+820,3,Winter Capacity (MW),6.8,6.6
+821,1,Winter Capacity (MW),8.4,5.6
+821,2,Winter Capacity (MW),44.3,
+822,1,Winter Capacity (MW),9,9.5
+822,2,Winter Capacity (MW),9,8.2
+823,1,Winter Capacity (MW),8.3,7.6
+869,2,Winter Capacity (MW),943.9,943.8
+869,3,Winter Capacity (MW),938.1,935.3
+876,1,Winter Capacity (MW),554,556
+876,2,Winter Capacity (MW),554,556
+880,1,Winter Capacity (MW),941.8,941.9
+880,2,Winter Capacity (MW),941.6,932.1
+963,4,Winter Capacity (MW),208.7,204.7
+965,1,Winter Capacity (MW),17.5,14.7
+969,11,Winter Capacity (MW),2,2.4
+969,12,Winter Capacity (MW),1,1.1
+991,GT1,Winter Capacity (MW),207,230
+991,GT2,Winter Capacity (MW),207,230
+991,STG1,Winter Capacity (MW),230,263
+1004,ST,Winter Capacity (MW),618,578
+1068,1,Winter Capacity (MW),61.2,35.5
+1068,2,Winter Capacity (MW),69.4,67
+1068,3,Winter Capacity (MW),69.6,32.2
+1073,1,Winter Capacity (MW),5.3,3.6
+1073,3,Winter Capacity (MW),34.1,30.5
+1073,4,Winter Capacity (MW),118.9,130.9
+1082,3,Winter Capacity (MW),702,705.9
+1091,3,Winter Capacity (MW),503.9,514
+1104,1,Winter Capacity (MW),163.9,138.3
+1104,GT1,Winter Capacity (MW),9.1,13.1
+1104,GT2,Winter Capacity (MW),15.7,15.9
+1104,GT3,Winter Capacity (MW),16.4,15.5
+1122,7,Winter Capacity (MW),38.6,37.7
+1122,8,Winter Capacity (MW),66.9,67
+1167,8,Winter Capacity (MW),25.1,68
+1235,3,Winter Capacity (MW),99.7,99.8
+1239,12,Winter Capacity (MW),180,181
+1239,12-2,Winter Capacity (MW),117,106
+1240,GT1,Winter Capacity (MW),71.6,72.2
+1240,GT2,Winter Capacity (MW),71.7,73.3
+1240,GT3,Winter Capacity (MW),150.4,154.6
+1248,GT2,Winter Capacity (MW),53.9,55.9
+1336,S2,Winter Capacity (MW),97.6,97.3
+1356,1,Winter Capacity (MW),476,479
+1356,2,Winter Capacity (MW),477,486
+1356,3,Winter Capacity (MW),478,476
+1356,4,Winter Capacity (MW),487,478
+1363,7S,Winter Capacity (MW),231,237
+1393,6,Winter Capacity (MW),536.9,533
+1400,3,Winter Capacity (MW),328,250
+1400,4,Winter Capacity (MW),34,34.8
+1402,2,Winter Capacity (MW),373.9,420.1
+1402,3,Winter Capacity (MW),514,509
+1403,5,Winter Capacity (MW),745.8,731
+1403,6(4),Winter Capacity (MW),752.2,758.5
+1403,6C,Winter Capacity (MW),597.3,620
+1464,1,Winter Capacity (MW),85.6,83.2
+1464,2,Winter Capacity (MW),89.6,90.2
+1464,3,Winter Capacity (MW),97.1,110
+1464,4,Winter Capacity (MW),97.7,110
+1556,GT1,Winter Capacity (MW),52,64.8
+1556,GT3,Winter Capacity (MW),51,63.6
+1556,GT4,Winter Capacity (MW),52,64.8
+1556,GT5,Winter Capacity (MW),149,172.9
+1556,GT6,Winter Capacity (MW),120,128.7
+1557,GT1,Winter Capacity (MW),16,16.4
+1588,GT93,Winter Capacity (MW),275.8,278.7
+1588,GT94,Winter Capacity (MW),275.4,280.3
+1588,ST96,Winter Capacity (MW),300.8,288
+1592,GT1,Winter Capacity (MW),64,58.8
+1700,2,Winter Capacity (MW),3,2.9
+1700,3,Winter Capacity (MW),2.9,2.7
+1702,3,Winter Capacity (MW),617.3,613
+1702,4,Winter Capacity (MW),629.5,627
+1704,1,Winter Capacity (MW),3.1,3.2
+1704,2,Winter Capacity (MW),3,3.1
+1707,1,Winter Capacity (MW),10.4,10.5
+1707,2,Winter Capacity (MW),10.4,10.6
+1707,3,Winter Capacity (MW),11.9,12.1
+1710,2,Winter Capacity (MW),359.9,365.9
+1710,3,Winter Capacity (MW),785.3,784.7
+1713,1,Winter Capacity (MW),346.2,365.8
+1713,2,Winter Capacity (MW),346.1,366.2
+1713,3,Winter Capacity (MW),348,366.6
+1713,4,Winter Capacity (MW),345.6,372.1
+1713,5,Winter Capacity (MW),346.2,365.9
+1713,6,Winter Capacity (MW),346.2,366.4
+1722,1,Winter Capacity (MW),1.3,1.2
+1979,3,Winter Capacity (MW),10,11.6
+1993,6,Winter Capacity (MW),20.5,19.6
+2079,7,Winter Capacity (MW),76.2,78.3
+2079,8,Winter Capacity (MW),,79.1
+2081,11,Winter Capacity (MW),46.6,48
+2081,12,Winter Capacity (MW),46,49
+2081,14,Winter Capacity (MW),47.5,51
+2081,15,Winter Capacity (MW),47.5,48
+2081,16,Winter Capacity (MW),46,48
+2081,18,Winter Capacity (MW),47,49
+2092,3,Winter Capacity (MW),10,69.4
+2167,1,Winter Capacity (MW),599,615
+2167,2,Winter Capacity (MW),586,615
+2168,1,Winter Capacity (MW),166,167
+2168,2,Winter Capacity (MW),276,272
+2168,3,Winter Capacity (MW),716,714
+2181,BLA3,Winter Capacity (MW),7,8.5
+2265,1,Winter Capacity (MW),41.9,42.9
+2266,1,Winter Capacity (MW),41.9,42
+2271,1,Winter Capacity (MW),39.7,40.9
+2277,2,Winter Capacity (MW),113,112
+2291,3,Winter Capacity (MW),42.6,55.6
+2292,1,Winter Capacity (MW),55.4,54.9
+2292,2,Winter Capacity (MW),55.9,57.1
+2483,H1,Winter Capacity (MW),25,22
+2490,2,Winter Capacity (MW),362.1,361
+2490,3,Winter Capacity (MW),523.4,530
+2490,GT1,Winter Capacity (MW),15.8,15.9
+2493,1,Winter Capacity (MW),201.6,197.8
+2493,2,Winter Capacity (MW),198.5,199.1
+2493,6,Winter Capacity (MW),146.6,140.5
+2493,7,Winter Capacity (MW),188.1,186.7
+2503,GT1,Winter Capacity (MW),16.1,17.4
+2594,ST5,Winter Capacity (MW),822,812
+2594,ST6,Winter Capacity (MW),818.5,808.7
+2627,GRHM,Winter Capacity (MW),18,16.3
+2691,1,Winter Capacity (MW),291.7,290.7
+2691,2,Winter Capacity (MW),293.5,291.2
+2691,3,Winter Capacity (MW),293.3,291.7
+2691,4,Winter Capacity (MW),292.4,291.5
+2694,17,Winter Capacity (MW),50.6,53.5
+2694,18,Winter Capacity (MW),50.6,53.5
+2694,19,Winter Capacity (MW),50.6,53.5
+2694,20,Winter Capacity (MW),50.6,53.5
+2694,21,Winter Capacity (MW),50.6,53.5
+2694,22,Winter Capacity (MW),50.6,53.5
+2694,23,Winter Capacity (MW),50.6,53.5
+2694,24,Winter Capacity (MW),50.6,53.5
+2694,25,Winter Capacity (MW),50.6,53.5
+2694,26,Winter Capacity (MW),50.6,53.5
+2694,27,Winter Capacity (MW),50.6,53.5
+2694,28,Winter Capacity (MW),50.6,53.5
+2694,29,Winter Capacity (MW),50.6,53.5
+2694,30,Winter Capacity (MW),50.6,53.5
+2694,31,Winter Capacity (MW),50.6,53.5
+2694,32,Winter Capacity (MW),50.6,53.5
+2718,1,Winter Capacity (MW),167,125
+2728,1,Winter Capacity (MW),14,17
+2801,1,Winter Capacity (MW),25.7,28
+2801,2,Winter Capacity (MW),26.6,25.9
+2817,1,Winter Capacity (MW),221,220
+2817,2,Winter Capacity (MW),445,440
+2878,1,Winter Capacity (MW),136.9,137
+2951,6,Winter Capacity (MW),168,170
+2951,8,Winter Capacity (MW),377,375
+2952,4,Winter Capacity (MW),487,489
+2952,6,Winter Capacity (MW),503,521
+2953,GT2,Winter Capacity (MW),57,56
+2953,GT4,Winter Capacity (MW),58,57
+2953,GT6,Winter Capacity (MW),57,58
+2956,2,Winter Capacity (MW),510,513
+2956,3,Winter Capacity (MW),498,508.5
+2981,1,Winter Capacity (MW),21,19.9
+2981,2,Winter Capacity (MW),21,20
+2981,3,Winter Capacity (MW),21,19.6
+2981,4,Winter Capacity (MW),21,20.1
+2981,5,Winter Capacity (MW),21,19.9
+2981,6,Winter Capacity (MW),21,19.9
+3013,1,Winter Capacity (MW),130.5,144.8
+3013,2,Winter Capacity (MW),130.5,
+3013,3,Winter Capacity (MW),130.5,144.3
+3014,1,Winter Capacity (MW),47.5,53.2
+3014,2,Winter Capacity (MW),47.5,54.5
+3014,3,Winter Capacity (MW),47.5,53.9
+3014,4,Winter Capacity (MW),47.5,53.7
+3157,7,Winter Capacity (MW),18,19.1
+3157,8,Winter Capacity (MW),18,18.5
+3157,9,Winter Capacity (MW),18,18.6
+3160,10,Winter Capacity (MW),18,19.1
+3160,11,Winter Capacity (MW),18,19.6
+3160,12,Winter Capacity (MW),18,18.7
+3160,9,Winter Capacity (MW),20,20.6
+3161,10,Winter Capacity (MW),18,18.7
+3161,20,Winter Capacity (MW),18,18.9
+3161,30,Winter Capacity (MW),20,20.5
+3161,40,Winter Capacity (MW),20,20.1
+3162,1,Winter Capacity (MW),20,20.4
+3162,2,Winter Capacity (MW),20,20.8
+3162,3,Winter Capacity (MW),20,20.9
+3163,1,Winter Capacity (MW),20,20.5
+3163,2,Winter Capacity (MW),20,20.4
+3163,3,Winter Capacity (MW),20,20.4
+3166,2,Winter Capacity (MW),1345.1,1339.4
+3166,3,Winter Capacity (MW),1349.7,1345.2
+3168,91,Winter Capacity (MW),66,66.4
+3168,92,Winter Capacity (MW),66,66.9
+3169,10,Winter Capacity (MW),18,19.3
+3169,11,Winter Capacity (MW),20,21
+3170,3,Winter Capacity (MW),18,18.2
+3170,4,Winter Capacity (MW),18,18.2
+3170,5,Winter Capacity (MW),18,18.7
+3170,6,Winter Capacity (MW),18,18.9
+3270,5,Winter Capacity (MW),17,6
+3352,1A,Winter Capacity (MW),23.8,24.4
+3453,7,Winter Capacity (MW),122,118
+3453,8,Winter Capacity (MW),582,568
+3457,1,Winter Capacity (MW),252.4,254.3
+3457,2,Winter Capacity (MW),252.3,252.1
+3459,1,Winter Capacity (MW),206.6,202.2
+3459,3,Winter Capacity (MW),375.6,380.2
+3459,4,Winter Capacity (MW),493.9,496.7
+3459,5,Winter Capacity (MW),406.3,445.7
+3460,1,Winter Capacity (MW),746,745
+3469,3,Winter Capacity (MW),104,110
+3469,4,Winter Capacity (MW),104,110
+3469,51,Winter Capacity (MW),74,65
+3469,52,Winter Capacity (MW),74,65
+3469,53,Winter Capacity (MW),74,65
+3469,54,Winter Capacity (MW),74,65
+3469,55,Winter Capacity (MW),74,65
+3469,56,Winter Capacity (MW),74,65
+3469,GT1,Winter Capacity (MW),15,16
+3470,3,Winter Capacity (MW),273,258
+3491,3,Winter Capacity (MW),395,375
+3797,CT7,Winter Capacity (MW),166,173.2
+3797,CT8,Winter Capacity (MW),175,174.2
+3797,CW7,Winter Capacity (MW),60,58.8
+3797,CW8,Winter Capacity (MW),61,60.8
+3799,GT1,Winter Capacity (MW),17,16.3
+3799,GT2,Winter Capacity (MW),16,15.9
+3799,GT3,Winter Capacity (MW),15,16.5
+3799,GT4,Winter Capacity (MW),17,16.3
+3800,GT1,Winter Capacity (MW),18,16.8
+3800,GT2,Winter Capacity (MW),17,17.1
+3800,GT3,Winter Capacity (MW),17,16.3
+3800,GT4,Winter Capacity (MW),18,15.2
+3803,6,Winter Capacity (MW),16,17.4
+3803,GT1,Winter Capacity (MW),20,20.1
+3803,GT4,Winter Capacity (MW),16,17
+3804,6A,Winter Capacity (MW),176.5,201.7
+3804,6B,Winter Capacity (MW),176.5,199.8
+3804,6ST,Winter Capacity (MW),262,266.5
+3804,GT1,Winter Capacity (MW),19,15.5
+3804,GT2,Winter Capacity (MW),17,15.5
+3804,GT3,Winter Capacity (MW),16,15.3
+3804,GT4,Winter Capacity (MW),18,15.4
+3804,GT5,Winter Capacity (MW),17,15.3
+3804,GT6,Winter Capacity (MW),19,16
+3886,U-5,Winter Capacity (MW),84,89.6
+3925,3,Winter Capacity (MW),76,90
+3927,5,Winter Capacity (MW),115,135
+3954,1,Winter Capacity (MW),569,551.7
+3954,2,Winter Capacity (MW),570,560.4
+3954,3,Winter Capacity (MW),537,527
+3954,JF1,Winter Capacity (MW),15,16
+3971,4,Winter Capacity (MW),0.4,0.5
+3971,5,Winter Capacity (MW),0.4,0.5
+3971,6,Winter Capacity (MW),0.4,0.5
+3971,7,Winter Capacity (MW),0.4,0.5
+3971,9,Winter Capacity (MW),0.8,0.6
+3974,1,Winter Capacity (MW),2.3,1.8
+3974,10,Winter Capacity (MW),0.6,0.3
+3974,2,Winter Capacity (MW),2.3,1.8
+3974,8,Winter Capacity (MW),0.3,0.6
+3974,9,Winter Capacity (MW),0.6,0.9
+3975,3,Winter Capacity (MW),0.5,1.8
+3975,4,Winter Capacity (MW),0.5,1.8
+3975,5,Winter Capacity (MW),0.5,1.8
+3991,1,Winter Capacity (MW),15.3,24.1
+3991,2,Winter Capacity (MW),15.8,25.3
+3992,6,Winter Capacity (MW),47.2,48.5
+3992,7,Winter Capacity (MW),47.9,49.6
+3993,1,Winter Capacity (MW),12.2,16.8
+3993,2,Winter Capacity (MW),17.4,23.9
+4041,5,Winter Capacity (MW),242.1,242.2
+4041,6,Winter Capacity (MW),256.7,253.8
+4041,7,Winter Capacity (MW),308,309.3
+4041,8,Winter Capacity (MW),315.4,312.7
+4045,1,Winter Capacity (MW),1.6,1.8
+4045,2,Winter Capacity (MW),1.6,1.8
+4046,1,Winter Capacity (MW),599.6,599.1
+4046,2,Winter Capacity (MW),606.2,606.1
+4050,5,Winter Capacity (MW),409.3,407.4
+4076,31,Winter Capacity (MW),47.9,49.8
+4076,32,Winter Capacity (MW),46.3,47.9
+4079,1,Winter Capacity (MW),2.8,3
+4079,2,Winter Capacity (MW),2.8,3
+4079,3,Winter Capacity (MW),2.8,3
+4079,4,Winter Capacity (MW),2.8,3
+4079,5,Winter Capacity (MW),2.8,3
+4270,3,Winter Capacity (MW),1173.5,1172.1
+5083,CUMB,Winter Capacity (MW),104.1,99
+6009,1,Winter Capacity (MW),823.4,425.3
+6009,2,Winter Capacity (MW),826.6,832
+6011,1,Winter Capacity (MW),920.6,914.9
+6011,2,Winter Capacity (MW),895.1,894.6
+6022,1,Winter Capacity (MW),1218.6,1221.1
+6022,2,Winter Capacity (MW),1182.5,1180.1
+6023,1,Winter Capacity (MW),1211.7,1203.7
+6023,2,Winter Capacity (MW),1174,1175.2
+6026,1,Winter Capacity (MW),1171.9,1175.8
+6026,2,Winter Capacity (MW),1174,1170.5
+6055,1,Winter Capacity (MW),520,530
+6055,2,Winter Capacity (MW),550,560
+6055,3,Winter Capacity (MW),540,550
+6068,1,Winter Capacity (MW),670.6,674.1
+6071,1,Winter Capacity (MW),511,493
+6072,1,Winter Capacity (MW),1448.1,1399.5
+6073,3,Winter Capacity (MW),587,587.5
+6074,4,Winter Capacity (MW),61.4,61.8
+6088,1,Winter Capacity (MW),26.8,21.5
+6088,2,Winter Capacity (MW),26.8,21.5
+6088,3,Winter Capacity (MW),26.8,21.5
+6095,1,Winter Capacity (MW),516,519
+6095,2,Winter Capacity (MW),515,519
+6096,2,Winter Capacity (MW),691,687.2
+6105,1,Winter Capacity (MW),1180.1,1177.9
+6105,2,Winter Capacity (MW),1188.1,1170.3
+6115,1,Winter Capacity (MW),1251.4,1247.4
+6127,1,Winter Capacity (MW),994.1,999.3
+6167,1,Winter Capacity (MW),500,502
+6167,2,Winter Capacity (MW),500,502
+6167,3,Winter Capacity (MW),502,502.3
+6167,4,Winter Capacity (MW),500,502.2
+6167,5,Winter Capacity (MW),501,502.8
+6167,6,Winter Capacity (MW),500,503.8
+6213,1,Winter Capacity (MW),495,494
+6213,2,Winter Capacity (MW),494,496
+6254,1,Winter Capacity (MW),740.7,719.7
+6433,51,Winter Capacity (MW),158.4,180.5
+6433,54,Winter Capacity (MW),161.5,180.5
+6462,1,Winter Capacity (MW),967,989.7
+6463,GT1,Winter Capacity (MW),23.9,22.1
+6522,1,Winter Capacity (MW),140,138.1
+6522,2,Winter Capacity (MW),140,139
+6522,3,Winter Capacity (MW),140,138.3
+6664,1,Winter Capacity (MW),746.9,755
+6705,1,Winter Capacity (MW),157.9,153.2
+6705,2,Winter Capacity (MW),125.7,157.5
+6705,3,Winter Capacity (MW),153.1,151.6
+6705,4,Winter Capacity (MW),309.9,310.7
+7032,1,Winter Capacity (MW),15,17.6
+7032,2,Winter Capacity (MW),23,25.8
+7032,3,Winter Capacity (MW),98,92
+7032,4,Winter Capacity (MW),97,92
+7032,5,Winter Capacity (MW),98,92
+7032,6,Winter Capacity (MW),97,92
+7079,1,Winter Capacity (MW),8.2,9.3
+7079,2,Winter Capacity (MW),8.3,9.3
+7125,3,Winter Capacity (MW),340,420
+7153,HR1,Winter Capacity (MW),126,124
+7153,HR2,Winter Capacity (MW),126,124
+7153,HR3,Winter Capacity (MW),126,124
+7153,HR4,Winter Capacity (MW),187,192
+7153,HR5,Winter Capacity (MW),128,124
+7153,HR6,Winter Capacity (MW),128,124
+7153,HR7,Winter Capacity (MW),128,124
+7153,HR8,Winter Capacity (MW),187,192
+7155,1,Winter Capacity (MW),39,49
+7155,2,Winter Capacity (MW),41.6,49.4
+7190,1,Winter Capacity (MW),46.6,
+7190,2,Winter Capacity (MW),12.1,
+7203,CT1,Winter Capacity (MW),90.8,101.5
+7203,CT2,Winter Capacity (MW),91.5,99.2
+7203,CT3,Winter Capacity (MW),93.5,101.9
+7203,CT4,Winter Capacity (MW),93.3,102.6
+7212,1,Winter Capacity (MW),98,92
+7212,2,Winter Capacity (MW),97,92
+7212,3,Winter Capacity (MW),95,92
+7212,4,Winter Capacity (MW),97,92
+7213,1,Winter Capacity (MW),443,442.9
+7213,2,Winter Capacity (MW),438,439
+7281,CT1,Winter Capacity (MW),14,13.5
+7281,CT2,Winter Capacity (MW),14,13.5
+7314,NA1,Winter Capacity (MW),104,160
+7314,NA2,Winter Capacity (MW),58.7,
+7343,4,Winter Capacity (MW),640.6,651
+7368,1,Winter Capacity (MW),26,32
+7368,2,Winter Capacity (MW),27,32
+7380,GT8,Winter Capacity (MW),62,31
+7398,GEN2,Winter Capacity (MW),6.5,6.7
+7425,1,Winter Capacity (MW),123.6,114.6
+7604,2,Winter Capacity (MW),221,216
+7749,1,Winter Capacity (MW),114,122
+7754,1,Winter Capacity (MW),107,114
+7757,2,Winter Capacity (MW),153,152
+7757,3,Winter Capacity (MW),150,152
+7757,4,Winter Capacity (MW),154,161
+7757,5,Winter Capacity (MW),156,161
+7757,6,Winter Capacity (MW),154,161
+7799,34,Winter Capacity (MW),70.2,93.1
+7834,ST1S,Winter Capacity (MW),190,180
+7835,2,Winter Capacity (MW),166.5,164.1
+7835,4,Winter Capacity (MW),169,166.3
+7838,1,Winter Capacity (MW),187,181.1
+7838,2,Winter Capacity (MW),187,179.8
+7838,3,Winter Capacity (MW),187,190
+7838,4,Winter Capacity (MW),188,176.3
+7839,1,Winter Capacity (MW),183,180.8
+7839,2,Winter Capacity (MW),183,183.5
+7839,3,Winter Capacity (MW),183,190
+7839,4,Winter Capacity (MW),183,190
+7839,5,Winter Capacity (MW),183,188.3
+7848,11,Winter Capacity (MW),113,101
+7848,12,Winter Capacity (MW),107,96
+7848,13,Winter Capacity (MW),115,97
+7873,1A,Winter Capacity (MW),183,196
+7873,1B,Winter Capacity (MW),183,196
+7873,1C,Winter Capacity (MW),183,196
+7873,1ST,Winter Capacity (MW),243,259
+7916,3,Winter Capacity (MW),114,110.9
+7928,1,Winter Capacity (MW),,76.6
+7929,1,Winter Capacity (MW),,77.9
+7929,2,Winter Capacity (MW),,79.2
+7929,3,Winter Capacity (MW),,78.5
+7929,4,Winter Capacity (MW),,79.2
+7946,CT1,Winter Capacity (MW),161.6,165.6
+7946,CT2,Winter Capacity (MW),164.7,164.9
+7946,ST1,Winter Capacity (MW),212.6,207.4
+7947,1,Winter Capacity (MW),47,50
+7948,1,Winter Capacity (MW),50,48.3
+7948,2,Winter Capacity (MW),50,48.3
+7948,3,Winter Capacity (MW),50,46.5
+7948,4,Winter Capacity (MW),50,48.3
+7948,5,Winter Capacity (MW),50,47.8
+7948,6,Winter Capacity (MW),50,46.9
+7953,1,Winter Capacity (MW),187.1,225
+7953,2,Winter Capacity (MW),49,48.8
+7953,3,Winter Capacity (MW),48.3,49.2
+7984,001,Winter Capacity (MW),60.5,57.9
+7991,1,Winter Capacity (MW),30.9,39
+7991,CT2,Winter Capacity (MW),32.6,40.5
+7991,STG1,Winter Capacity (MW),66.1,48.2
+8005,GEN1,Winter Capacity (MW),300,333
+8006,1,Winter Capacity (MW),602.8,594.2
+8012,11,Winter Capacity (MW),64,65.7
+8012,12,Winter Capacity (MW),64,65.4
+8012,21,Winter Capacity (MW),64,67
+8012,22,Winter Capacity (MW),64,65.9
+8012,31,Winter Capacity (MW),64,65.5
+8012,32,Winter Capacity (MW),64,64.2
+8012,41,Winter Capacity (MW),64,64.2
+8012,42,Winter Capacity (MW),64,65.6
+8016,1,Winter Capacity (MW),25.1,24.6
+8023,1,Winter Capacity (MW),582.3,583.1
+8023,2,Winter Capacity (MW),578.8,581.5
+8027,1,Winter Capacity (MW),50,46
+8027,2,Winter Capacity (MW),50,46
+8027,4,Winter Capacity (MW),48,54
+8031,11,Winter Capacity (MW),171.5,177
+8031,12,Winter Capacity (MW),174.3,180.6
+8031,ST1,Winter Capacity (MW),256.1,245.1
+8036,1,Winter Capacity (MW),770,768.5
+8037,1,Winter Capacity (MW),75.6,76.2
+8053,N01,Winter Capacity (MW),45.6,46
+8054,1,Winter Capacity (MW),727.7,731.7
+8055,2,Winter Capacity (MW),1004.7,1010.7
+8056,2,Winter Capacity (MW),417.2,417
+8068,ST5A,Winter Capacity (MW),203,150
+8068,ST5B,Winter Capacity (MW),203,150
+8068,ST6A,Winter Capacity (MW),195,186
+8068,ST6S,Winter Capacity (MW),135,140
+8223,SGSS1,Winter Capacity (MW),1.4,1.6
+8223,WMS,Winter Capacity (MW),8.3,8.5
+8225,1,Winter Capacity (MW),229.6,225.4
+8225,2,Winter Capacity (MW),214.8,208.1
+8225,3,Winter Capacity (MW),30,29.9
+9674,GT1,Winter Capacity (MW),12.6,18.5
+10029,PV,Winter Capacity (MW),2.1,1.5
+10034,GEN1,Winter Capacity (MW),85,81
+10034,GEN2,Winter Capacity (MW),35,29
+10196,GEN1,Winter Capacity (MW),12.3,11.8
+10197,GEN1,Winter Capacity (MW),2.5,3.2
+10237,GEN1,Winter Capacity (MW),1.7,1.8
+10238,GEN1,Winter Capacity (MW),5,5.2
+10275,CE50,Winter Capacity (MW),2,3.7
+10275,TA70,Winter Capacity (MW),5.8,5.7
+10294,GTG,Winter Capacity (MW),80,82
+10294,STG,Winter Capacity (MW),38,36
+10334,PV1,Winter Capacity (MW),3.3,2.5
+10438,SUN3,Winter Capacity (MW),13,13.8
+10617,GEN1,Winter Capacity (MW),59.7,59.4
+10621,GEN1,Winter Capacity (MW),73.7,74
+10671,GEN1,Winter Capacity (MW),161,160.6
+10671,GEN2,Winter Capacity (MW),157,160.4
+10690,CTG1,Winter Capacity (MW),82.5,81.8
+10771,1,Winter Capacity (MW),51,53.7
+10773,1,Winter Capacity (MW),51,53.7
+10774,1,Winter Capacity (MW),51,53.7
+50006,GTG1,Winter Capacity (MW),99.8,100.8
+50006,GTG2,Winter Capacity (MW),99.8,100.8
+50006,GTG3,Winter Capacity (MW),99.8,100.8
+50006,GTG4,Winter Capacity (MW),99.8,100.8
+50006,GTG5,Winter Capacity (MW),99.8,100.8
+50006,GTG6,Winter Capacity (MW),192.5,202.9
+50006,STG1,Winter Capacity (MW),99.7,100.8
+50006,STG2,Winter Capacity (MW),99.7,100.8
+50006,STG3,Winter Capacity (MW),99.6,101.2
+50061,GEN2,Winter Capacity (MW),4.8,4.9
+50061,GEN3,Winter Capacity (MW),4.8,4.9
+50061,GEN4,Winter Capacity (MW),4.1,1.1
+50094,7214,Winter Capacity (MW),5.8,5
+50109,GEN1,Winter Capacity (MW),91,87
+50109,GEN2,Winter Capacity (MW),94,87
+50109,GEN3,Winter Capacity (MW),90,89
+50360,GEN1,Winter Capacity (MW),1.8,1
+50361,GEN1,Winter Capacity (MW),2.9,5
+50362,GEN1,Winter Capacity (MW),6.4,8.5
+50450,GEN1,Winter Capacity (MW),59.9,60.6
+50451,GEN1,Winter Capacity (MW),57.3,56.5
+50458,GEN1,Winter Capacity (MW),91.5,91.2
+50458,GEN2,Winter Capacity (MW),42,44
+50465,GEN1,Winter Capacity (MW),46.6,42
+50465,GEN2,Winter Capacity (MW),30.5,35
+50530,GEN1,Winter Capacity (MW),22.2,25.6
+50530,GEN2,Winter Capacity (MW),23.6,25.8
+50530,GEN3,Winter Capacity (MW),8.4,11.8
+50555,GEN1,Winter Capacity (MW),88,91.3
+50555,GEN2,Winter Capacity (MW),44,40.6
+50555,GEN3,Winter Capacity (MW),54,53
+50558,ST01,Winter Capacity (MW),120,126
+50622,GEN1,Winter Capacity (MW),9,8.9
+50622,GEN2,Winter Capacity (MW),9,8.9
+50626,GEN1,Winter Capacity (MW),0.8,1.4
+50748,GEN1,Winter Capacity (MW),24.4,21
+50748,GEN2,Winter Capacity (MW),7.4,7
+50815,GEN1,Winter Capacity (MW),68,61.2
+50815,GEN2,Winter Capacity (MW),68,63.7
+50815,GEN3,Winter Capacity (MW),70,64.8
+50815,GEN4,Winter Capacity (MW),70,63.7
+50815,GEN5,Winter Capacity (MW),70,62.1
+50815,GEN6,Winter Capacity (MW),127,65.8
+50815,GEN7,Winter Capacity (MW),69,62.9
+50882,GEN1,Winter Capacity (MW),53,53.7
+50896,GEN1,Winter Capacity (MW),2.8,2.9
+50896,GEN2,Winter Capacity (MW),2.8,2.9
+50896,GEN3,Winter Capacity (MW),2.8,2.9
+52033,1,Winter Capacity (MW),0.1,1.2
+52087,GEN1,Winter Capacity (MW),121,125
+52087,GEN2,Winter Capacity (MW),120,125
+52087,GEN3,Winter Capacity (MW),124,125
+52088,GEN1,Winter Capacity (MW),139,141
+52088,GEN2,Winter Capacity (MW),115,98
+52088,GEN3,Winter Capacity (MW),115,98
+52088,GEN4,Winter Capacity (MW),115,98
+52122,GEN1,Winter Capacity (MW),16.6,17.4
+52168,GEN2,Winter Capacity (MW),15,16
+54034,GEN1,Winter Capacity (MW),58,57
+54034,GEN2,Winter Capacity (MW),30,27
+54041,GEN1,Winter Capacity (MW),49.3,48.3
+54041,GEN2,Winter Capacity (MW),49.3,48.3
+54041,GEN3,Winter Capacity (MW),49.3,48.3
+54114,GEN1,Winter Capacity (MW),48.9,51.1
+54114,GEN2,Winter Capacity (MW),47.9,50
+54114,GEN3,Winter Capacity (MW),27.4,24.9
+54321,N802,Winter Capacity (MW),4.5,4.7
+54321,N803,Winter Capacity (MW),4.5,4.7
+54321,N804,Winter Capacity (MW),4.5,4.7
+54464,0001,Winter Capacity (MW),7.5,12.8
+54547,1,Winter Capacity (MW),194.1,194.4
+54547,2,Winter Capacity (MW),194.1,194.4
+54547,3,Winter Capacity (MW),194.1,194.4
+54547,4,Winter Capacity (MW),194.1,194.4
+54547,5,Winter Capacity (MW),209.3,209.7
+54547,6,Winter Capacity (MW),209.3,209.7
+54574,GEN1,Winter Capacity (MW),81.8,92
+54574,GEN2,Winter Capacity (MW),93,92
+54574,GEN3,Winter Capacity (MW),81.3,86.5
+54640,GEN1,Winter Capacity (MW),84.9,90.5
+54640,GEN2,Winter Capacity (MW),83.9,91.5
+54640,GEN3,Winter Capacity (MW),82.2,85
+54789,2TG,Winter Capacity (MW),8.7,10
+54789,3TG,Winter Capacity (MW),10.9,10.2
+54789,4TG,Winter Capacity (MW),52.5,56.5
+54832,3,Winter Capacity (MW),230,254
+54844,GOR1,Winter Capacity (MW),84.3,85.3
+54844,GOR2,Winter Capacity (MW),82.3,85.7
+54844,GOR3,Winter Capacity (MW),50.7,48.8
+54844,GOR4,Winter Capacity (MW),50.7,50.4
+55026,UNT1,Winter Capacity (MW),187.7,189.5
+55047,CTG2,Winter Capacity (MW),185,180
+55047,CTG3,Winter Capacity (MW),185,180
+55047,STG1,Winter Capacity (MW),85,72
+55047,STG2,Winter Capacity (MW),185,169
+55048,UNT1,Winter Capacity (MW),208.7,196.9
+55054,1,Winter Capacity (MW),3.8,3.4
+55054,3,Winter Capacity (MW),3.8,3.4
+55054,GEN2,Winter Capacity (MW),3.8,3.4
+55065,GEN1,Winter Capacity (MW),154,165
+55065,GEN2,Winter Capacity (MW),153,159.8
+55065,GEN3,Winter Capacity (MW),157,142.2
+55068,GEN1,Winter Capacity (MW),173.5,179.1
+55068,GEN2,Winter Capacity (MW),175.1,181.7
+55068,GEN3,Winter Capacity (MW),191.4,180.4
+55075,CT01,Winter Capacity (MW),180,160
+55075,ST01,Winter Capacity (MW),47,42
+55084,GE1,Winter Capacity (MW),247.4,247
+55087,1A,Winter Capacity (MW),180,179.5
+55087,1B,Winter Capacity (MW),177.6,178.8
+55087,2A,Winter Capacity (MW),178.2,175.3
+55087,2C,Winter Capacity (MW),215,225.1
+55100,UNT1,Winter Capacity (MW),183.9,190.6
+55109,T4,Winter Capacity (MW),126.8,123.6
+55109,TG1,Winter Capacity (MW),116.9,119
+55109,TG2,Winter Capacity (MW),118.4,119
+55112,CT01,Winter Capacity (MW),185,170
+55112,CT02,Winter Capacity (MW),185,170
+55112,ST01,Winter Capacity (MW),185,207
+55123,CTG1,Winter Capacity (MW),232,227
+55123,CTG2,Winter Capacity (MW),232,227
+55123,STG,Winter Capacity (MW),253,243
+55135,CT01,Winter Capacity (MW),171.2,176.3
+55135,CT02,Winter Capacity (MW),175.1,182.5
+55137,CTG1,Winter Capacity (MW),193,203
+55144,U1,Winter Capacity (MW),239,257
+55144,U2,Winter Capacity (MW),240,258
+55144,U4,Winter Capacity (MW),243,261
+55148,1,Winter Capacity (MW),50,46.8
+55148,2,Winter Capacity (MW),50,47.1
+55148,3,Winter Capacity (MW),50,47.6
+55148,4,Winter Capacity (MW),50,47.3
+55153,CTG1,Winter Capacity (MW),173.4,161
+55153,CTG2,Winter Capacity (MW),173.4,161
+55153,CTG3,Winter Capacity (MW),173.4,160
+55153,CTG4,Winter Capacity (MW),173.4,160
+55153,STG1,Winter Capacity (MW),203,200
+55153,STG2,Winter Capacity (MW),203,200
+55165,G101,Winter Capacity (MW),174,171.6
+55165,G102,Winter Capacity (MW),186.7,184.1
+55170,CT11,Winter Capacity (MW),263,243
+55170,CT12,Winter Capacity (MW),263,243
+55170,STG,Winter Capacity (MW),271,243
+55172,GT-1,Winter Capacity (MW),173,167
+55172,GT-2,Winter Capacity (MW),173,167
+55172,GT-3,Winter Capacity (MW),173,166
+55172,ST-4,Winter Capacity (MW),88,84
+55172,ST-5,Winter Capacity (MW),220,217
+55173,CT24,Winter Capacity (MW),156.2,154.2
+55173,CT25,Winter Capacity (MW),154.1,153
+55173,ST26,Winter Capacity (MW),240.3,242.5
+55177,A,Winter Capacity (MW),193,163
+55177,B,Winter Capacity (MW),193,163
+55177,ST1,Winter Capacity (MW),200,156
+55187,GT1,Winter Capacity (MW),166,182
+55187,GT2,Winter Capacity (MW),168,179
+55187,GT3,Winter Capacity (MW),167,179
+55187,GT4,Winter Capacity (MW),163,178
+55187,ST1,Winter Capacity (MW),126,134
+55193,CTG1,Winter Capacity (MW),201.3,200.5
+55193,CTG2,Winter Capacity (MW),203.5,200.7
+55193,STG,Winter Capacity (MW),217.7,223.3
+55202,1,Winter Capacity (MW),46,45
+55202,2,Winter Capacity (MW),46,45
+55202,3,Winter Capacity (MW),46,45
+55202,4,Winter Capacity (MW),46,45
+55206,CT1,Winter Capacity (MW),163,179
+55206,CT2,Winter Capacity (MW),163,179
+55206,ST1,Winter Capacity (MW),165,160
+55211,U1,Winter Capacity (MW),300.5,294.9
+55211,U2,Winter Capacity (MW),301.6,301
+55217,STG3,Winter Capacity (MW),244,221
+55220,A03,Winter Capacity (MW),518,513
+55226,ST6,Winter Capacity (MW),189,189.6
+55237,CTG1,Winter Capacity (MW),42,48.5
+55237,CTG2,Winter Capacity (MW),42,48.5
+55237,CTG3,Winter Capacity (MW),42,48.5
+55237,CTG4,Winter Capacity (MW),42,48.5
+55237,CTG5,Winter Capacity (MW),42,48.5
+55237,CTG6,Winter Capacity (MW),42,48.5
+55237,CTG7,Winter Capacity (MW),42,48.5
+55237,CTG8,Winter Capacity (MW),42,48.5
+55244,CTG2,Winter Capacity (MW),60,59.7
+55244,CTG3,Winter Capacity (MW),60,59.7
+55244,CTG4,Winter Capacity (MW),90,84.6
+55244,CTG5,Winter Capacity (MW),90,85
+55270,7EA,Winter Capacity (MW),75.5,75.6
+55270,LM1,Winter Capacity (MW),48.1,48.2
+55270,LM5,Winter Capacity (MW),44.6,44.7
+55279,CTG1,Winter Capacity (MW),197,198
+55279,CTG10,Winter Capacity (MW),51.5,52.3
+55279,CTG2,Winter Capacity (MW),192,195.5
+55279,CTG3,Winter Capacity (MW),192,198.3
+55279,CTG4,Winter Capacity (MW),192,195
+55279,CTG5,Winter Capacity (MW),51.5,52.8
+55279,CTG6,Winter Capacity (MW),51.5,52.8
+55279,CTG7,Winter Capacity (MW),51.5,53.5
+55279,CTG8,Winter Capacity (MW),51.5,53.5
+55279,CTG9,Winter Capacity (MW),51.5,53.8
+55293,CTG1,Winter Capacity (MW),181,174
+55293,CTG2,Winter Capacity (MW),181,174
+55293,CTG3,Winter Capacity (MW),181,174
+55293,STG1,Winter Capacity (MW),266,293
+55294,GTG1,Winter Capacity (MW),190.9,196
+55294,GTG2,Winter Capacity (MW),192.2,196.8
+55294,STG3,Winter Capacity (MW),192.7,192.6
+55297,1,Winter Capacity (MW),235.7,400
+55297,1A,Winter Capacity (MW),139,400
+55297,2,Winter Capacity (MW),264.9,400
+55299,CTG1,Winter Capacity (MW),210,183
+55299,CTG2,Winter Capacity (MW),210,183
+55299,CTG3,Winter Capacity (MW),189,183
+55299,ST-1,Winter Capacity (MW),215,241
+55317,GT11,Winter Capacity (MW),265.7,255
+55317,GT12,Winter Capacity (MW),264.9,255
+55317,ST15,Winter Capacity (MW),312.4,280
+55327,CTG1,Winter Capacity (MW),190,187
+55327,CTG2,Winter Capacity (MW),190,187
+55327,CTG3,Winter Capacity (MW),190,187
+55327,STG1,Winter Capacity (MW),275,258
+55328,CTG1,Winter Capacity (MW),195,206
+55328,CTG2,Winter Capacity (MW),195,206
+55328,STG1,Winter Capacity (MW),258,246
+55333,CTG1,Winter Capacity (MW),197,184
+55333,CTG2,Winter Capacity (MW),185,172
+55333,CTG3,Winter Capacity (MW),185,172
+55333,STG1,Winter Capacity (MW),291,330
+55337,CT1,Winter Capacity (MW),259.7,261.6
+55337,CT2,Winter Capacity (MW),259.7,261.6
+55337,ST4,Winter Capacity (MW),249.8,236.8
+55340,CTG1,Winter Capacity (MW),165,180
+55340,CTG2,Winter Capacity (MW),166,168
+55340,STG,Winter Capacity (MW),180,184
+55345,1-01,Winter Capacity (MW),165.9,166
+55345,1-02,Winter Capacity (MW),165.9,166
+55345,1-03,Winter Capacity (MW),274,261
+55348,1,Winter Capacity (MW),196.6,196.4
+55348,2,Winter Capacity (MW),196.5,196.6
+55348,4,Winter Capacity (MW),196,196.5
+55357,CTG1,Winter Capacity (MW),182,161
+55357,CTG2,Winter Capacity (MW),182,161
+55357,STG1,Winter Capacity (MW),230,228
+55364,CT02,Winter Capacity (MW),173.1,210.3
+55380,STG1,Winter Capacity (MW),582.8,574
+55380,STG2,Winter Capacity (MW),571.3,570
+55380,STG3,Winter Capacity (MW),580.3,570
+55380,STG4,Winter Capacity (MW),578,580
+55381,UNT1,Winter Capacity (MW),47.2,49
+55381,UNT2,Winter Capacity (MW),47.7,47.8
+55381,UNT3,Winter Capacity (MW),46.9,46.3
+55381,UNT4,Winter Capacity (MW),45.5,45.6
+55381,UNT5,Winter Capacity (MW),47.1,47.2
+55381,UNT6,Winter Capacity (MW),45.9,46
+55381,UNT7,Winter Capacity (MW),46.7,45.5
+55386,CT1,Winter Capacity (MW),197.8,197.1
+55386,CT2,Winter Capacity (MW),180.1,197.1
+55392,CTG1,Winter Capacity (MW),181,178
+55392,CTG2,Winter Capacity (MW),181,178
+55392,CTG3,Winter Capacity (MW),181,176
+55393,CTG1,Winter Capacity (MW),188,180
+55393,CTG2,Winter Capacity (MW),188,180
+55393,STG1,Winter Capacity (MW),220.9,232
+55401,CT2,Winter Capacity (MW),197.5,209
+55401,CT4,Winter Capacity (MW),197.8,209
+55405,CT1,Winter Capacity (MW),269.4,272.8
+55405,CT2,Winter Capacity (MW),263.2,273.6
+55405,CT3,Winter Capacity (MW),272.1,286.5
+55405,ST1,Winter Capacity (MW),136.9,139
+55405,ST2,Winter Capacity (MW),133.8,136.4
+55405,ST3,Winter Capacity (MW),136,121.4
+55409,CAL1,Winter Capacity (MW),188,195
+55409,CAL2,Winter Capacity (MW),188,195
+55409,CAL3,Winter Capacity (MW),188,195
+55409,CAL4,Winter Capacity (MW),188,195
+55418,ST1,Winter Capacity (MW),639.6,636.2
+55433,0001,Winter Capacity (MW),73.2,80
+55433,0002,Winter Capacity (MW),73.4,80
+55433,0003,Winter Capacity (MW),72.7,80
+55433,0004,Winter Capacity (MW),69.7,80
+55438,CT02,Winter Capacity (MW),125.1,125
+55438,CT04,Winter Capacity (MW),123.3,125
+55439,CTG1,Winter Capacity (MW),203.4,204
+55439,CTG2,Winter Capacity (MW),204.7,206.1
+55439,CTG3,Winter Capacity (MW),203.4,204.9
+55439,STG1,Winter Capacity (MW),400.4,402.6
+55455,CT1A,Winter Capacity (MW),166,179
+55455,CT1B,Winter Capacity (MW),166,179
+55455,CT2A,Winter Capacity (MW),166,179
+55455,CT2B,Winter Capacity (MW),161,179
+55455,ST1,Winter Capacity (MW),174,192
+55455,ST2,Winter Capacity (MW),174,192
+55457,CT1,Winter Capacity (MW),159,157.3
+55457,CT2,Winter Capacity (MW),160.8,157.3
+55457,ST1,Winter Capacity (MW),171.2,170.5
+55463,CT01,Winter Capacity (MW),390,
+55463,CT02,Winter Capacity (MW),390,
+55463,CT03,Winter Capacity (MW),390,
+55463,CT04,Winter Capacity (MW),390,
+55463,ST01,Winter Capacity (MW),312,307
+55463,ST02,Winter Capacity (MW),312,300.9
+55463,ST03,Winter Capacity (MW),312,301
+55463,ST04,Winter Capacity (MW),312,300
+55464,CTG1,Winter Capacity (MW),201.2,191
+55464,CTG2,Winter Capacity (MW),201.2,191
+55464,CTG3,Winter Capacity (MW),201.2,191
+55464,CTG4,Winter Capacity (MW),201.2,191
+55464,CTG6,Winter Capacity (MW),201.2,191
+55467,STG1,Winter Capacity (MW),278,274.5
+55467,STG2,Winter Capacity (MW),270.8,281.6
+55467,STG3,Winter Capacity (MW),284.9,279.2
+55486,CTG01,Winter Capacity (MW),207.2,206.9
+55486,CTG02,Winter Capacity (MW),208.2,207.8
+55518,CTG1,Winter Capacity (MW),174.8,194
+55518,CTG2,Winter Capacity (MW),172.6,193
+55518,CTG3,Winter Capacity (MW),177.4,194
+55518,STG1,Winter Capacity (MW),310,312
+55524,CTG1,Winter Capacity (MW),113,125
+55524,CTG2,Winter Capacity (MW),122,125
+55524,CTG3,Winter Capacity (MW),122,125
+55524,CTG5,Winter Capacity (MW),231,228
+55524,CTG6,Winter Capacity (MW),231,228
+55524,STG1,Winter Capacity (MW),188,194
+55524,STG2,Winter Capacity (MW),396.9,408
+55545,CTG1,Winter Capacity (MW),178,165
+55545,CTG2,Winter Capacity (MW),168,178
+55545,STG1,Winter Capacity (MW),182,187
+55620,2-CT,Winter Capacity (MW),186.6,183.4
+55626,CT1,Winter Capacity (MW),45,46
+55627,CT1,Winter Capacity (MW),45,48
+55641,CTG1,Winter Capacity (MW),166.7,181.2
+55641,CTG2,Winter Capacity (MW),164.6,177.8
+55641,STG1,Winter Capacity (MW),257.3,251.1
+55651,CT01,Winter Capacity (MW),,72.5
+55651,CT02,Winter Capacity (MW),,70.8
+55651,CT03,Winter Capacity (MW),,72.6
+55651,CT04,Winter Capacity (MW),,72.4
+55656,CT01,Winter Capacity (MW),185,178
+55656,CT04,Winter Capacity (MW),181,175
+55656,ST03,Winter Capacity (MW),184,182
+55690,CTG1,Winter Capacity (MW),118,125
+55690,CTG2,Winter Capacity (MW),127,125
+55690,CTG3,Winter Capacity (MW),127,125
+55690,CTG5,Winter Capacity (MW),118,125
+55690,CTG6,Winter Capacity (MW),127,125
+55690,CTG7,Winter Capacity (MW),127,125
+55690,STG4,Winter Capacity (MW),195,193
+55690,STG8,Winter Capacity (MW),195,193
+55699,1,Winter Capacity (MW),58,50
+55733,1,Winter Capacity (MW),170.4,215.2
+55748,CAG5,Winter Capacity (MW),126.1,108
+55748,CTG1,Winter Capacity (MW),45,49
+55748,CTG2,Winter Capacity (MW),45,47
+55748,CTG3,Winter Capacity (MW),45,49
+55748,CTG4,Winter Capacity (MW),45,47
+55810,S3,Winter Capacity (MW),45,38
+55810,S4,Winter Capacity (MW),45,38
+55810,S5,Winter Capacity (MW),45,38
+55813,CTG1,Winter Capacity (MW),45,48
+55847,CTG1,Winter Capacity (MW),45,48
+55939,CT01,Winter Capacity (MW),297.5,302.8
+55939,CT02,Winter Capacity (MW),297.5,298.2
+55939,CT03,Winter Capacity (MW),297.5,298.2
+55939,ST01,Winter Capacity (MW),579.7,590.2
+55963,CTG1,Winter Capacity (MW),46.1,47
+55972,CT-1,Winter Capacity (MW),117,111.5
+55972,CT-2,Winter Capacity (MW),121.7,112
+55976,101,Winter Capacity (MW),205,205.9
+55976,201,Winter Capacity (MW),205,205.3
+55976,301,Winter Capacity (MW),205,204
+55976,401,Winter Capacity (MW),315,322.9
+56032,0001,Winter Capacity (MW),47.7,47.1
+56070,1,Winter Capacity (MW),53.8,53.1
+56111,GEN1,Winter Capacity (MW),160,182.4
+56141,2,Winter Capacity (MW),60.5,60
+56151,GT1,Winter Capacity (MW),104.6,105.8
+56151,GT2,Winter Capacity (MW),104.6,107.6
+56151,GT3,Winter Capacity (MW),103.6,107.8
+56166,1,Winter Capacity (MW),172.6,186
+56166,2,Winter Capacity (MW),169.5,182.1
+56196,CA01,Winter Capacity (MW),195.6,
+56196,CT01,Winter Capacity (MW),192.7,270.2
+56196,CT02,Winter Capacity (MW),192.7,270.2
+56309,CT-1,Winter Capacity (MW),7.8,6.2
+56309,CT-2,Winter Capacity (MW),7.8,6.2
+56309,IC-1,Winter Capacity (MW),1,1.2
+56309,ST-3,Winter Capacity (MW),18,18.2
+56322,WHS1,Winter Capacity (MW),0.5,0.3
+56326,GEN1,Winter Capacity (MW),161.5,163
+56326,GEN2,Winter Capacity (MW),171.1,161
+56326,GEN3,Winter Capacity (MW),165.5,163
+56467,CTG1,Winter Capacity (MW),192,188
+56467,CTG2,Winter Capacity (MW),192,188
+56467,STG1,Winter Capacity (MW),248,238
+56500,A101,Winter Capacity (MW),8.4,9.3
+56500,D101,Winter Capacity (MW),8.4,9.3
+56500,E202,Winter Capacity (MW),8.4,9.3
+56502,3,Winter Capacity (MW),43.8,44.3
+56502,5,Winter Capacity (MW),,161.4
+56502,6,Winter Capacity (MW),,155.1
+56502,7,Winter Capacity (MW),,159.8
+56651,1,Winter Capacity (MW),70,75
+56777,FIA,Winter Capacity (MW),201.3,101.3
+56786,1,Winter Capacity (MW),92.9,97.1
+56806,4,Winter Capacity (MW),185,186
+56806,41,Winter Capacity (MW),207,173
+56806,42,Winter Capacity (MW),207,173
+56807,1A,Winter Capacity (MW),205,196
+56807,1B,Winter Capacity (MW),205,195
+56807,1C,Winter Capacity (MW),244,251.4
+56808,1,Winter Capacity (MW),624,626
+56846,GTG1,Winter Capacity (MW),228,225.9
+56846,GTG2,Winter Capacity (MW),227.6,225.7
+56846,STGEN,Winter Capacity (MW),324.1,319.5
+56938,NCP1,Winter Capacity (MW),1.2,1
+56940,CTG1,Winter Capacity (MW),216.8,219
+56940,CTG2,Winter Capacity (MW),216.8,219
+56940,STG,Winter Capacity (MW),305.2,302.3
+56963,E101,Winter Capacity (MW),239.7,232.6
+56963,E102,Winter Capacity (MW),239.8,233.6
+56963,STG1,Winter Capacity (MW),325.1,302
+56964,GT1,Winter Capacity (MW),63,62.6
+56964,GT10,Winter Capacity (MW),65.2,64.9
+56964,GT2,Winter Capacity (MW),63,62.5
+56964,GT3,Winter Capacity (MW),63,62.5
+56964,GT4,Winter Capacity (MW),62.9,62.8
+56964,GT5,Winter Capacity (MW),63.1,62.4
+56964,GT6,Winter Capacity (MW),61.9,62.9
+56964,GT7,Winter Capacity (MW),63.1,62.5
+56964,GT8,Winter Capacity (MW),62.9,63
+56964,GT9,Winter Capacity (MW),65.2,65
+57028,GTG,Winter Capacity (MW),199.9,252
+57028,STG,Winter Capacity (MW),99,122
+57037,1A,Winter Capacity (MW),734.2,721
+57204,1,Winter Capacity (MW),2.2,2
+57265,1,Winter Capacity (MW),1.3,1
+57269,1,Winter Capacity (MW),0.5,0.9
+57270,1,Winter Capacity (MW),0.5,0.9
+57313,1,Winter Capacity (MW),1.2,1.1
+57324,PV1,Winter Capacity (MW),14,11.2
+57330,1,Winter Capacity (MW),1.2,1.1
+57481,01,Winter Capacity (MW),2.2,2.1
+57562,PV1,Winter Capacity (MW),17.6,17
+57579,1,Winter Capacity (MW),0.9,0.4
+57579,2,Winter Capacity (MW),0.4,0.2
+57580,PV1,Winter Capacity (MW),0.5,0.2
+57580,PV2,Winter Capacity (MW),0.5,0.3
+57668,CASDE,Winter Capacity (MW),0.9,0.8
+57673,1,Winter Capacity (MW),3.5,3.1
+57794,CT1,Winter Capacity (MW),260,265
+57794,CT2,Winter Capacity (MW),260,265
+57794,ST1,Winter Capacity (MW),235,230
+57839,CT001,Winter Capacity (MW),231.4,219.6
+57839,CT002,Winter Capacity (MW),230.9,216.2
+57839,ST001,Winter Capacity (MW),309.4,298.7
+57875,MLWF,Winter Capacity (MW),100,100.9
+57971,COGEN,Winter Capacity (MW),1.9,2.1
+57977,ENG1,Winter Capacity (MW),2.8,3
+57977,ENG2,Winter Capacity (MW),2.8,3
+57986,1,Winter Capacity (MW),11.3,10
+58001,CTG-3,Winter Capacity (MW),230,232
+58001,CTG-4,Winter Capacity (MW),230,232
+58021,1,Winter Capacity (MW),91.2,92.3
+58052,1TG,Winter Capacity (MW),1.2,1
+58052,2TG,Winter Capacity (MW),1.2,1
+58119,DPSS,Winter Capacity (MW),3,1
+58152,GEN1,Winter Capacity (MW),3.8,3.5
+58165,COGEN,Winter Capacity (MW),5.6,5.2
+58184,TG-1,Winter Capacity (MW),14.6,16.5
+58236,CTG1,Winter Capacity (MW),225.8,226.3
+58236,CTG2,Winter Capacity (MW),225.8,226.4
+58236,PV1,Winter Capacity (MW),2.6,2.1
+58236,STG1,Winter Capacity (MW),244.4,238
+58260,CT01,Winter Capacity (MW),283.3,297.1
+58260,CT02,Winter Capacity (MW),283.3,298.2
+58260,CT03,Winter Capacity (MW),283.3,299.3
+58260,ST01,Winter Capacity (MW),616.3,616.9
+58270,1,Winter Capacity (MW),4.7,3.5
+58485,PV1,Winter Capacity (MW),1,0.8
+58557,ST1,Winter Capacity (MW),300,320
+58832,CTEP,Winter Capacity (MW),0.7,1
+58872,BISO4,Winter Capacity (MW),205,201.8
+59057,GEN 1,Winter Capacity (MW),2.5,1.4
+59116,V1021,Winter Capacity (MW),2.1,1
+59128,57449,Winter Capacity (MW),3.2,2.8
+59129,57449,Winter Capacity (MW),1.1,0.9
+59131,57449,Winter Capacity (MW),1.3,1.1
+59132,57449,Winter Capacity (MW),1.1,1
+59133,57449,Winter Capacity (MW),1.1,1
+59134,57449,Winter Capacity (MW),1.9,1.6
+59135,57449,Winter Capacity (MW),2.6,2.3
+59136,57449,Winter Capacity (MW),1.3,1.1
+59138,57449,Winter Capacity (MW),1.1,1
+59139,57449,Winter Capacity (MW),1.1,1
+59370,PV1,Winter Capacity (MW),1.8,1.4
+59371,PV1,Winter Capacity (MW),1.9,1.5
+59544,PV1,Winter Capacity (MW),1.3,1
+59545,PV1,Winter Capacity (MW),1.5,1.1
+59546,PV1,Winter Capacity (MW),1.3,1.2
+59632,1036,Winter Capacity (MW),1.2,0.9
+59685,01,Winter Capacity (MW),,20
+59715,PV1,Winter Capacity (MW),1.2,1
+59812,STG6,Winter Capacity (MW),485.1,473.1
+59858,JSI01,Winter Capacity (MW),1.5,1.4
+59904,1,Winter Capacity (MW),0.4,1
+59905,1,Winter Capacity (MW),,2.1
+59906,GEN1,Winter Capacity (MW),525,552.5
+59906,GEN2,Winter Capacity (MW),525,552.5
+59911,1,Winter Capacity (MW),0.8,2
+59913,CT01,Winter Capacity (MW),353.8,345.1
+59913,CT02,Winter Capacity (MW),353.8,338.9
+59913,CT03,Winter Capacity (MW),353.8,345.9
+59913,ST01,Winter Capacity (MW),648.6,651.1
+60302,10,Winter Capacity (MW),299,799
+60302,11,Winter Capacity (MW),231,
+60302,12,Winter Capacity (MW),231,
+60318,1,Winter Capacity (MW),,19
+60319,1,Winter Capacity (MW),,20
+60368,CTG1,Winter Capacity (MW),243.1,239.7
+60368,CTG2,Winter Capacity (MW),231.6,229.6
+60368,CTG3,Winter Capacity (MW),232,230
+60368,STG,Winter Capacity (MW),402.8,397.7
+60376,CTG1,Winter Capacity (MW),308.1,308.3
+60376,CTG2,Winter Capacity (MW),308.3,308.5
+60376,STG1,Winter Capacity (MW),328.5,328.6
+60418,CC6MW,Winter Capacity (MW),6,7
+60517,HY1,Winter Capacity (MW),6,7
+60584,01,Winter Capacity (MW),,17.6
+60589,GEN1,Winter Capacity (MW),348.7,347
+60589,GEN2,Winter Capacity (MW),346.6,344.7
+60589,GEN3,Winter Capacity (MW),398.9,401.1
+60610,1,Winter Capacity (MW),48.6,43.4
+60810,SABER,Winter Capacity (MW),0.3,0.6
+61023,1,Winter Capacity (MW),,17
+61144,1,Winter Capacity (MW),284.5,288.8
+61359,EWR5,Winter Capacity (MW),1.2,1.9
+61380,JOHN5,Winter Capacity (MW),1,0.7
+62176,21Z,Winter Capacity (MW),5,5.2
+62176,PF,Winter Capacity (MW),5,5.2
+62468,MCS01,Winter Capacity (MW),1.5,1.4
+62565,GEN1,Winter Capacity (MW),624.6,622.8
+62715,WCCWF,Winter Capacity (MW),180.1,175.3
+62959,WHIT1,Winter Capacity (MW),30.3,50
+63253,FSK,Winter Capacity (MW),2.1,1.6
+63257,SHM,Winter Capacity (MW),3.5,2.7
+63291,GPS,Winter Capacity (MW),1.9,1.6
+63292,BHD,Winter Capacity (MW),1.5,1.9
+63328,IPJNO,Winter Capacity (MW),141,143.5
+63535,SOLAR,Winter Capacity (MW),1.1,1
+63686,GFWP,Winter Capacity (MW),150,151
+63728,BESS,Winter Capacity (MW),12,12.5
+64020,CTG3,Winter Capacity (MW),234.9,242.3
+64020,CTG4,Winter Capacity (MW),232.7,238.4
+64020,PV1,Winter Capacity (MW),4.4,3.6
+64020,STG2,Winter Capacity (MW),258.3,245.1
+64591,EEA,Winter Capacity (MW),194,200.2
+64993,BB1BA,Winter Capacity (MW),40,22
+64993,BB1PV,Winter Capacity (MW),128,70
+65011,PV1,Winter Capacity (MW),110.6,95.3
+65400,PUCHP,Winter Capacity (MW),17.2,16.2
+65409,GFCS2,Winter Capacity (MW),,0.1
+65466,KINS2,Winter Capacity (MW),2,3.8
+65497,GRDS1,Winter Capacity (MW),1.1,0.9
+65617,P3998,Winter Capacity (MW),1.3,0.7
+65680,PV1,Winter Capacity (MW),1,0.8
+66799,4087,Winter Capacity (MW),1.1,0.7
+104,1,Status,OS,OA
+141,PV-3,Status,OS,OP
+182,1,Status,OA,OP
+182,2,Status,OS,OA
+196,1,Status,OP,OA
+196,2,Status,OP,OA
+219,1,Status,OP,OA
+223,5,Status,OP,OA
+238,2,Status,OA,OP
+241,1,Status,OP,OA
+282,1,Status,OP,OA
+319,2,Status,OP,OA
+319,3,Status,OA,OP
+337,1,Status,OP,OS
+344,2,Status,OP,OA
+378,1,Status,OS,OP
+466,1A,Status,OP,OA
+626,1,Status,OP,OS
+673,MU1,Status,OP,SB
+673,MU4,Status,OP,SB
+673,MU5,Status,OP,SB
+789,5,Status,OP,OA
+791,1,Status,OP,OA
+791,2,Status,OP,OA
+792,15,Status,OA,SB
+792,BAT1,Status,OP,OS
+809,2,Status,OP,OA
+809,3,Status,OP,OA
+816,1,Status,OA,OP
+943,1,Status,SB,OS
+943,2,Status,SB,OS
+943,3,Status,SB,OS
+943,4,Status,SB,OS
+943,7,Status,SB,OS
+969,1,Status,SB,OP
+1104,GT1,Status,OP,OA
+1162,1A,Status,SB,OP
+1162,2A,Status,SB,OP
+1162,3,Status,SB,OP
+1162,4A,Status,SB,OP
+1162,6,Status,SB,OP
+1162,7,Status,SB,OP
+1162,8,Status,SB,OP
+1162,9,Status,SB,OP
+1239,10,Status,OS,OA
+1239,11,Status,OP,OS
+1272,5,Status,OP,OS
+1272,6,Status,OA,OP
+1299,CAT,Status,OP,OS
+1392,10,Status,OS,SB
+1392,11,Status,OS,SB
+1392,12,Status,OS,SB
+1439,14,Status,OP,OS
+1439,15,Status,OP,OS
+1439,16,Status,OP,OS
+1599,3,Status,OP,OA
+1638,RB3,Status,OP,OS
+1638,RB4,Status,OP,OS
+1775,3,Status,OP,OS
+1787,3,Status,OP,OS
+1866,7,Status,OP,SB
+1977,HC3,Status,OS,OP
+2166,3,Status,OP,OA
+2181,BLA3,Status,OA,OP
+2186,HOL1,Status,OA,OP
+2186,HOL2,Status,OP,OA
+2233,6,Status,OP,OA
+2641,HY1,Status,OP,OS
+2692,5,Status,OA,OP
+2692,6,Status,OP,OA
+2693,6,Status,OP,OA
+2694,26,Status,OP,OA
+2975,2,Status,OP,OS
+2975,7,Status,OA,OP
+2975,8,Status,OA,OP
+2991,4,Status,OP,OS
+2991,5,Status,OP,OS
+3067,3,Status,OA,OP
+3075,11,Status,OA,OP
+3075,13,Status,OA,OP
+3075,3,Status,OP,OA
+3075,4,Status,OP,OA
+3075,F1,Status,OA,OP
+3075,F2,Status,OP,OA
+3076,1,Status,OA,OP
+3077,1,Status,OA,OP
+3080,1,Status,OP,OA
+3080,2,Status,OP,OA
+3082,10,Status,OA,OP
+3082,13,Status,OA,OP
+3082,4,Status,OP,OA
+3082,5,Status,OA,OP
+3082,8,Status,OA,OP
+3083,2,Status,OA,OP
+3084,10,Status,OP,OA
+3084,11,Status,OP,OA
+3118,A,Status,OP,SB
+3136,3,Status,OP,SB
+3136,4,Status,OP,SB
+3136,5,Status,OP,SB
+3136,6,Status,OP,SB
+3290,3,Status,OA,OP
+3305,1,Status,OA,OP
+3581,1,Status,OP,OS
+3581,2,Status,OP,OS
+3582,1,Status,OS,OP
+3582,2,Status,OS,OP
+3585,1,Status,OP,OS
+3585,2,Status,OP,OS
+3883,C-10,Status,OP,OS
+3883,C-11,Status,OS,OA
+3883,C-5,Status,OA,OP
+3886,U-5,Status,OA,OP
+3886,U-6,Status,OP,OA
+3895,11,Status,OP,OA
+3895,12,Status,OA,OP
+3895,18,Status,OA,OP
+3895,21,Status,OA,OP
+3895,4,Status,OP,OA
+3895,8,Status,OP,OA
+3895,F1,Status,OP,OA
+3895,F2,Status,OP,OA
+3925,1,Status,OP,OS
+3925,3,Status,OA,OP
+3926,6,Status,OA,OP
+3927,1,Status,OA,OP
+4065,4,Status,OP,OS
+6100,1,Status,OS,OP
+6132,8,Status,OP,OA
+6142,4,Status,OS,OA
+6175,1,Status,OP,OA
+6175,2,Status,OP,OA
+6175,3,Status,OP,OA
+6200,U-5,Status,OP,OA
+6430,5,Status,OP,OA
+6430,6,Status,OP,OA
+6433,51,Status,OP,OA
+6486,2,Status,OA,OP
+6526,1,Status,OP,OS
+6563,1,Status,OS,OP
+6563,2,Status,OS,OP
+6566,6,Status,OP,OS
+6702,IC8,Status,OA,OS
+7200,1,Status,OP,OS
+7279,1,Status,OS,OA
+7279,2,Status,OS,OA
+7392,4,Status,OA,OP
+7398,GEN2,Status,OA,OP
+10175,5083,Status,OP,SB
+10175,5084,Status,OP,SB
+10175,5085,Status,OP,SB
+10234,GEN1,Status,OP,OA
+10252,NO.1,Status,OA,OP
+10262,GEN6,Status,OP,OA
+10262,GEN7,Status,OP,OA
+10417,TG,Status,OP,OA
+10423,GEN1,Status,OA,OP
+10464,GEN1,Status,OP,OS
+10504,2500,Status,OA,OP
+10523,GEN1,Status,OP,OA
+10700,TG4,Status,OP,OS
+10700,TG6,Status,OP,OS
+10884,CTC1,Status,OP,OS
+10884,CTC2,Status,OP,OS
+50127,STD,Status,OP,OS
+50137,GEN1,Status,OA,OP
+50150,GEN7,Status,OA,OS
+50362,GEN1,Status,SB,OP
+50368,TG1,Status,OA,SB
+50447,GEN3,Status,OA,OP
+50539,2,Status,OS,OP
+50544,HDRO,Status,OS,OP
+50626,GEN1,Status,OP,OS
+50636,3,Status,OP,OA
+50636,4,Status,OP,OS
+50804,GEN5,Status,OP,OA
+52006,GEN1,Status,OP,OS
+52021,GEN1,Status,OS,SB
+52021,GEN2,Status,OS,SB
+52033,1,Status,OS,OP
+52120,G-66,Status,OP,OS
+52127,GEN1,Status,OP,OA
+52130,32TG,Status,OP,OA
+52130,33TG,Status,OP,OA
+54103,HG3,Status,OA,OP
+54103,JHG3,Status,OA,OP
+54464,0003,Status,OP,OS
+54512,TG2,Status,OA,OS
+54567,3,Status,OA,OP
+54677,TG-2,Status,OP,OA
+54677,TG-3,Status,SB,OS
+54850,02,Status,OA,OP
+54965,ACTG,Status,OS,OA
+54965,EACTG,Status,OS,OA
+55031,CT01,Status,OP,OS
+55031,CT02,Status,OP,OS
+55031,CT03,Status,OP,OS
+55109,TG3,Status,OP,OS
+55192,CTG1,Status,OS,OA
+55192,CTG3,Status,OS,OA
+55278,STG-1,Status,OS,OP
+55741,A1,Status,OP,OA
+55864,KAH1,Status,OP,OS
+55864,KAH2,Status,OP,OS
+55864,KAH3,Status,OP,OS
+56039,G1,Status,OS,OP
+56134,0301,Status,OP,OA
+56461,DC1,Status,OA,OP
+56461,DC2,Status,OA,OP
+56706,AMPC,Status,OP,OS
+56707,AMPC,Status,OP,OS
+56785,WG01,Status,OP,OA
+56951,1,Status,OP,OS
+56981,1,Status,OP,OA
+57665,10,Status,OA,OS
+57665,4,Status,OA,OS
+57665,5,Status,OA,OP
+57689,NORD1,Status,OP,OS
+57689,NORD2,Status,OP,OS
+57689,NORD3,Status,OP,OS
+57729,1,Status,OP,OS
+57729,2,Status,OP,OS
+57804,2,Status,OA,OS
+57915,2,Status,OP,OA
+58052,1TG,Status,OP,OS
+58052,2TG,Status,OS,OP
+58130,BMB N,Status,OP,OS
+58130,BMB S,Status,OP,OS
+58156,GE,Status,OA,OS
+58192,ST961,Status,OP,OA
+58197,1,Status,SB,OP
+58197,2,Status,OA,OP
+58330,9611,Status,OA,OP
+58747,GEN1,Status,OP,OA
+59026,CHP 1,Status,OP,OS
+59026,CHP 2,Status,OP,OS
+59058,GEN 1,Status,OP,OS
+59379,1,Status,OP,SB
+59457,Q-TG1,Status,OP,SB
+59639,LIGHT,Status,OA,OS
+59735,KCC01,Status,OP,OS
+59763,GEN01,Status,OA,OS
+59772,1,Status,OA,OS
+59810,GEN1,Status,OA,OS
+59810,GEN2,Status,OA,OS
+60016,A,Status,OA,OS
+60016,B,Status,OA,OS
+60567,SES2,Status,OA,OS
+61362,ECBS,Status,OP,OS
+61861,SRP,Status,OP,OS
+62373,I25BA,Status,OP,OA
+62622,CHPS3,Status,OP,SB
+63673,EU-12,Status,OP,OA
+64351,JFK8,Status,OA,OP
+64592,GEN1,Status,OP,OS
+64592,GEN2,Status,OP,OS
+64592,GEN3,Status,OP,OS
+64610,MDW6,Status,OA,OP
+64980,020G,Status,SB,OP
+64980,030G,Status,SB,OP
+64980,050G,Status,SB,OP
+64980,060G,Status,SB,OP
+64980,080D1,Status,SB,OP
+64980,080D2,Status,SB,OP
+64980,080G,Status,SB,OP
+64980,090G,Status,SB,OP
+64980,110G,Status,SB,OP
+64980,120G,Status,SB,OP
+64980,160G,Status,SB,OP
+64980,200G,Status,SB,OP
+64980,RHG,Status,SB,OP
+64980,WG,Status,SB,OP
+65773,STEAM,Status,OP,SB
+464,CT1,Technology,Natural Gas Fired Combustion Turbine,Petroleum Liquids
+464,CT2,Technology,Natural Gas Fired Combustion Turbine,Petroleum Liquids
+665,13,Technology,Petroleum Liquids,Natural Gas Internal Combustion Engine
+665,14,Technology,Petroleum Liquids,Natural Gas Internal Combustion Engine
+665,15,Technology,Petroleum Liquids,Natural Gas Internal Combustion Engine
+665,16,Technology,Petroleum Liquids,Natural Gas Internal Combustion Engine
+665,17,Technology,Petroleum Liquids,Natural Gas Internal Combustion Engine
+665,19,Technology,Petroleum Liquids,Natural Gas Internal Combustion Engine
+665,2,Technology,Petroleum Liquids,Natural Gas Internal Combustion Engine
+665,20,Technology,Petroleum Liquids,Natural Gas Internal Combustion Engine
+665,21,Technology,Petroleum Liquids,Natural Gas Internal Combustion Engine
+710,3A,Technology,Natural Gas Fired Combustion Turbine,Petroleum Liquids
+710,3B,Technology,Natural Gas Fired Combustion Turbine,Petroleum Liquids
+1188,2,Technology,Petroleum Liquids,Natural Gas Internal Combustion Engine
+1329,1,Technology,Petroleum Liquids,Natural Gas Internal Combustion Engine
+1329,2,Technology,Petroleum Liquids,Natural Gas Internal Combustion Engine
+1329,3,Technology,Petroleum Liquids,Natural Gas Internal Combustion Engine
+1329,6,Technology,Petroleum Liquids,Natural Gas Internal Combustion Engine
+1554,3,Technology,Conventional Steam Coal,Petroleum Liquids
+1599,3,Technology,Natural Gas Fired Combustion Turbine,Petroleum Liquids
+1969,2,Technology,Natural Gas Internal Combustion Engine,Petroleum Liquids
+1969,3,Technology,Natural Gas Internal Combustion Engine,Petroleum Liquids
+1998,4,Technology,Natural Gas Internal Combustion Engine,Petroleum Liquids
+2122,GT1,Technology,Natural Gas Fired Combustion Turbine,Petroleum Liquids
+2122,GT2,Technology,Natural Gas Fired Combustion Turbine,Petroleum Liquids
+2975,1,Technology,Petroleum Liquids,Natural Gas Internal Combustion Engine
+2975,10,Technology,Petroleum Liquids,Natural Gas Internal Combustion Engine
+2975,11,Technology,Petroleum Liquids,Natural Gas Internal Combustion Engine
+2975,2,Technology,Petroleum Liquids,Natural Gas Internal Combustion Engine
+2975,3,Technology,Petroleum Liquids,Natural Gas Internal Combustion Engine
+2975,4,Technology,Petroleum Liquids,Natural Gas Internal Combustion Engine
+2975,5,Technology,Petroleum Liquids,Natural Gas Internal Combustion Engine
+2975,6,Technology,Petroleum Liquids,Natural Gas Internal Combustion Engine
+2975,7,Technology,Petroleum Liquids,Natural Gas Internal Combustion Engine
+2975,8,Technology,Petroleum Liquids,Natural Gas Internal Combustion Engine
+2975,9,Technology,Petroleum Liquids,Natural Gas Internal Combustion Engine
+2986,3,Technology,Natural Gas Internal Combustion Engine,Petroleum Liquids
+2986,4,Technology,Natural Gas Internal Combustion Engine,Petroleum Liquids
+2986,5,Technology,Natural Gas Internal Combustion Engine,Petroleum Liquids
+2986,IC1,Technology,Natural Gas Internal Combustion Engine,Petroleum Liquids
+2986,IC2,Technology,Natural Gas Internal Combustion Engine,Petroleum Liquids
+3149,2,Technology,Conventional Steam Coal,Natural Gas Steam Turbine
+3281,1,Technology,Petroleum Liquids,Natural Gas Fired Combustion Turbine
+3281,2,Technology,Petroleum Liquids,Natural Gas Fired Combustion Turbine
+4195,ST2,Technology,Natural Gas Steam Turbine,Petroleum Liquids
+4195,ST3,Technology,Natural Gas Steam Turbine,Petroleum Liquids
+6081,CT1,Technology,Natural Gas Fired Combined Cycle,Petroleum Liquids
+6081,CT2,Technology,Natural Gas Fired Combined Cycle,Petroleum Liquids
+6081,CT3,Technology,Natural Gas Fired Combined Cycle,Petroleum Liquids
+6124,CT1,Technology,Petroleum Liquids,Natural Gas Fired Combustion Turbine
+6124,CT2,Technology,Petroleum Liquids,Natural Gas Fired Combustion Turbine
+6124,CT3,Technology,Petroleum Liquids,Natural Gas Fired Combustion Turbine
+6124,CT4,Technology,Petroleum Liquids,Natural Gas Fired Combustion Turbine
+6124,CT5,Technology,Petroleum Liquids,Natural Gas Fired Combustion Turbine
+6124,CT6,Technology,Petroleum Liquids,Natural Gas Fired Combustion Turbine
+6124,CT7,Technology,Petroleum Liquids,Natural Gas Fired Combustion Turbine
+6124,CT8,Technology,Petroleum Liquids,Natural Gas Fired Combustion Turbine
+7348,1,Technology,Natural Gas Fired Combustion Turbine,Petroleum Liquids
+7348,2,Technology,Natural Gas Fired Combustion Turbine,Petroleum Liquids
+7392,3,Technology,Petroleum Liquids,Natural Gas Internal Combustion Engine
+7398,GEN1,Technology,Natural Gas Internal Combustion Engine,Petroleum Liquids
+7398,GEN2,Technology,Natural Gas Internal Combustion Engine,Petroleum Liquids
+7399,GEN3,Technology,Natural Gas Internal Combustion Engine,Petroleum Liquids
+7399,GEN4,Technology,Natural Gas Internal Combustion Engine,Petroleum Liquids
+7469,FM1,Technology,Natural Gas Internal Combustion Engine,Petroleum Liquids
+7469,FM2,Technology,Natural Gas Internal Combustion Engine,Petroleum Liquids
+7469,FM3,Technology,Natural Gas Internal Combustion Engine,Petroleum Liquids
+7469,FM5,Technology,Natural Gas Internal Combustion Engine,Petroleum Liquids
+8006,1,Technology,Petroleum Liquids,Natural Gas Steam Turbine
+10156,GEN4,Technology,Natural Gas Fired Combined Cycle,Natural Gas Fired Combustion Turbine
+10339,GEN4,Technology,Other Waste Biomass,Natural Gas Internal Combustion Engine
+10426,GEN2,Technology,Petroleum Liquids,Wood/Wood Waste Biomass
+10426,GEN3,Technology,Petroleum Liquids,Wood/Wood Waste Biomass
+10426,GEN4,Technology,Petroleum Liquids,Wood/Wood Waste Biomass
+10426,GEN5,Technology,Petroleum Liquids,Wood/Wood Waste Biomass
+50067,GEN1,Technology,Natural Gas Steam Turbine,Other Gases
+50088,GEN1,Technology,Petroleum Coke,Natural Gas Steam Turbine
+50279,GEN1,Technology,Landfill Gas,Natural Gas Steam Turbine
+50476,GEN1,Technology,Wood/Wood Waste Biomass,Natural Gas Steam Turbine
+50476,GEN2,Technology,Wood/Wood Waste Biomass,Natural Gas Steam Turbine
+50973,GN31,Technology,Natural Gas Fired Combined Cycle,Other Gases
+50973,GN32,Technology,Natural Gas Fired Combined Cycle,Other Gases
+50973,GN33,Technology,Natural Gas Fired Combined Cycle,Other Gases
+52133,GEN3,Technology,Other Waste Biomass,Other Gases
+52151,GEN1,Technology,Natural Gas Steam Turbine,Wood/Wood Waste Biomass
+52151,GEN2,Technology,Natural Gas Steam Turbine,Wood/Wood Waste Biomass
+54098,GEN4,Technology,Conventional Steam Coal,Natural Gas Steam Turbine
+54925,I-1,Technology,Landfill Gas,Natural Gas Internal Combustion Engine
+54925,I-2,Technology,Landfill Gas,Natural Gas Internal Combustion Engine
+54925,I-3,Technology,Landfill Gas,Natural Gas Internal Combustion Engine
+54925,I-4,Technology,Landfill Gas,Natural Gas Internal Combustion Engine
+54925,II-1,Technology,Landfill Gas,Natural Gas Internal Combustion Engine
+54925,II-2,Technology,Landfill Gas,Natural Gas Internal Combustion Engine
+54925,II-3,Technology,Landfill Gas,Natural Gas Internal Combustion Engine
+54925,II-4,Technology,Landfill Gas,Natural Gas Internal Combustion Engine
+54925,III-1,Technology,Landfill Gas,Natural Gas Internal Combustion Engine
+54925,III-2,Technology,Landfill Gas,Natural Gas Internal Combustion Engine
+54925,III-3,Technology,Landfill Gas,Natural Gas Internal Combustion Engine
+54925,III-4,Technology,Landfill Gas,Natural Gas Internal Combustion Engine
+54926,I-1,Technology,Landfill Gas,Natural Gas Internal Combustion Engine
+54926,I-2,Technology,Landfill Gas,Natural Gas Internal Combustion Engine
+54926,I-3,Technology,Landfill Gas,Natural Gas Internal Combustion Engine
+54926,I-4,Technology,Landfill Gas,Natural Gas Internal Combustion Engine
+54926,II-1,Technology,Landfill Gas,Natural Gas Internal Combustion Engine
+54926,II-2,Technology,Landfill Gas,Natural Gas Internal Combustion Engine
+54926,II-3,Technology,Landfill Gas,Natural Gas Internal Combustion Engine
+54926,II-4,Technology,Landfill Gas,Natural Gas Internal Combustion Engine
+55088,GT 1,Technology,Natural Gas Fired Combustion Turbine,Natural Gas Fired Combined Cycle
+55088,GT2,Technology,Natural Gas Fired Combustion Turbine,Natural Gas Fired Combined Cycle
+55309,GEN3,Technology,Natural Gas Steam Turbine,Other Gases
+55309,GEN4,Technology,Natural Gas Fired Combustion Turbine,Other Gases
+56013,U1,Technology,Petroleum Liquids,Natural Gas Fired Combustion Turbine
+56013,U2,Technology,Petroleum Liquids,Natural Gas Fired Combustion Turbine
+56013,U3,Technology,Petroleum Liquids,Natural Gas Fired Combustion Turbine
+56076,1,Technology,Other Gases,Natural Gas Steam Turbine
+56309,IC-1,Technology,Petroleum Liquids,Natural Gas Internal Combustion Engine
+56465,1,Technology,Landfill Gas,Natural Gas Internal Combustion Engine
+56465,1-II,Technology,Landfill Gas,Natural Gas Internal Combustion Engine
+56465,2,Technology,Landfill Gas,Natural Gas Internal Combustion Engine
+56465,2-II,Technology,Landfill Gas,Natural Gas Internal Combustion Engine
+56465,3,Technology,Landfill Gas,Natural Gas Internal Combustion Engine
+56465,3-II,Technology,Landfill Gas,Natural Gas Internal Combustion Engine
+56465,4,Technology,Landfill Gas,Natural Gas Internal Combustion Engine
+56465,4-II,Technology,Landfill Gas,Natural Gas Internal Combustion Engine
+56786,1,Technology,Conventional Steam Coal,Natural Gas Steam Turbine
+66764,3954B,Technology,Solar Photovoltaic,Batteries
+1,5,side,only_vintage_2022,
+7,1,side,only_vintage_2022,
+7,2,side,only_vintage_2022,
+91,3,side,only_vintage_2022,
+136,1,side,only_vintage_2022,
+295,1,side,only_vintage_2022,
+295,2,side,only_vintage_2022,
+356,5,side,only_vintage_2022,
+356,6,side,only_vintage_2022,
+356,8,side,only_vintage_2022,
+377,1,side,only_vintage_2022,
+377,2,side,only_vintage_2022,
+377,3,side,only_vintage_2022,
+377,4,side,only_vintage_2022,
+377,5,side,only_vintage_2022,
+377,8A,side,only_vintage_2022,
+377,8BC,side,only_vintage_2022,
+384,7,side,only_vintage_2022,
+384,8,side,only_vintage_2022,
+563,11,side,only_vintage_2022,
+563,12,side,only_vintage_2022,
+563,13,side,only_vintage_2022,
+563,14,side,only_vintage_2022,
+581,5,side,only_vintage_2022,
+645,ST3,side,only_vintage_2022,
+789,6,side,only_vintage_2022,
+874,6,side,only_vintage_2022,
+946,IC5,side,only_vintage_2022,
+946,IC6,side,only_vintage_2022,
+969,4,side,only_vintage_2022,
+969,6,side,only_vintage_2022,
+994,ST2,side,only_vintage_2022,
+1024,4,side,only_vintage_2022,
+1047,4,side,only_vintage_2022,
+1272,9,side,only_vintage_2022,
+1702,1A,side,only_vintage_2022,
+1702,1B,side,only_vintage_2022,
+1702,2A,side,only_vintage_2022,
+1702,2B,side,only_vintage_2022,
+1741,1,side,only_vintage_2022,
+1741,2,side,only_vintage_2022,
+1741,3,side,only_vintage_2022,
+1741,4,side,only_vintage_2022,
+1741,5,side,only_vintage_2022,
+1846,1,side,only_vintage_2022,
+1846,2,side,only_vintage_2022,
+1846,4,side,only_vintage_2022,
+2018,5,side,only_vintage_2022,
+2018,6,side,only_vintage_2022,
+2050,1,side,only_vintage_2022,
+2185,HAU1,side,only_vintage_2022,
+2248,1,side,only_vintage_2022,
+2248,2,side,only_vintage_2022,
+2248,5,side,only_vintage_2022,
+2297,1,side,only_vintage_2022,
+2297,3,side,only_vintage_2022,
+2297,4,side,only_vintage_2022,
+2297,5,side,only_vintage_2022,
+2305,2,side,only_vintage_2022,
+2305,3,side,only_vintage_2022,
+2500,GT1,side,only_vintage_2022,
+2500,GT10,side,only_vintage_2022,
+2500,GT11,side,only_vintage_2022,
+2866,5,side,only_vintage_2022,
+2866,6,side,only_vintage_2022,
+2866,7,side,only_vintage_2022,
+2866,A1,side,only_vintage_2022,
+2866,B1,side,only_vintage_2022,
+2866,B2,side,only_vintage_2022,
+2866,B3,side,only_vintage_2022,
+2866,B4,side,only_vintage_2022,
+3068,1,side,only_vintage_2022,
+3068,2,side,only_vintage_2022,
+3122,2,side,only_vintage_2022,
+3122,3,side,only_vintage_2022,
+3148,CTG1,side,only_vintage_2022,
+3148,CTG2,side,only_vintage_2022,
+3148,CTG4,side,only_vintage_2022,
+3291,GT1,side,only_vintage_2022,
+3291,GT2,side,only_vintage_2022,
+3291,GT3,side,only_vintage_2022,
+3291,GT4,side,only_vintage_2022,
+3396,1,side,only_vintage_2022,
+3797,5,side,only_vintage_2022,
+3797,6,side,only_vintage_2022,
+3809,3,side,only_vintage_2022,
+4078,2,side,only_vintage_2022,
+4078,31,side,only_vintage_2022,
+4078,32,side,only_vintage_2022,
+6090,2,side,only_vintage_2022,
+6137,1,side,only_vintage_2022,
+6137,2,side,only_vintage_2022,
+6181,1,side,only_vintage_2022,
+6181,2,side,only_vintage_2022,
+6293,1,side,only_vintage_2022,
+6329,3B,side,only_vintage_2022,
+6356,1,side,only_vintage_2022,
+7028,K3,side,only_vintage_2022,
+7028,K4,side,only_vintage_2022,
+7112,IC6,side,only_vintage_2022,
+7182,1,side,only_vintage_2022,
+7526,1,side,only_vintage_2022,
+7737,1,side,only_vintage_2022,
+7781,1,side,only_vintage_2022,
+7902,1,side,only_vintage_2022,
+7974,WTC1,side,only_vintage_2022,
+7974,WTC2,side,only_vintage_2022,
+10051,GEN1,side,only_vintage_2022,
+10051,GEN2,side,only_vintage_2022,
+10059,1575,side,only_vintage_2022,
+10059,500,side,only_vintage_2022,
+10062,GEN1,side,only_vintage_2022,
+10062,GEN2,side,only_vintage_2022,
+10075,GEN1,side,only_vintage_2022,
+10075,GEN2,side,only_vintage_2022,
+10120,GEN5,side,only_vintage_2022,
+10156,GEN2,side,only_vintage_2022,
+10398,GEN3,side,only_vintage_2022,
+10398,GEN5,side,only_vintage_2022,
+10398,GENA,side,only_vintage_2022,
+10623,GEN1,side,only_vintage_2022,
+10623,GEN2,side,only_vintage_2022,
+50041,GEN1,side,only_vintage_2022,
+50041,GEN2,side,only_vintage_2022,
+50244,GEN8,side,only_vintage_2022,
+50244,GEN9,side,only_vintage_2022,
+50244,GN10,side,only_vintage_2022,
+50244,GN11,side,only_vintage_2022,
+50244,GN12,side,only_vintage_2022,
+50244,GN13,side,only_vintage_2022,
+50388,GEN1,side,only_vintage_2022,
+50466,GEN2,side,only_vintage_2022,
+50466,GEN3,side,only_vintage_2022,
+50466,GEN4,side,only_vintage_2022,
+50466,GEN5,side,only_vintage_2022,
+50466,GEN6,side,only_vintage_2022,
+50722,GEN1,side,only_vintage_2022,
+50807,GEN3,side,only_vintage_2022,
+50807,GEN4,side,only_vintage_2022,
+50807,GEN6,side,only_vintage_2022,
+50942,1,side,only_vintage_2022,
+50942,2,side,only_vintage_2022,
+50942,3,side,only_vintage_2022,
+50955,GEN1,side,only_vintage_2022,
+50955,GEN2,side,only_vintage_2022,
+50955,GEN3,side,only_vintage_2022,
+50969,GEN1,side,only_vintage_2022,
+50969,GEN6,side,only_vintage_2022,
+52120,G-37,side,only_vintage_2022,
+52148,GEN4,side,only_vintage_2022,
+54085,GEN1,side,only_vintage_2022,
+54085,GEN2,side,only_vintage_2022,
+54085,GEN3,side,only_vintage_2022,
+54207,GEN2,side,only_vintage_2022,
+54689,1,side,only_vintage_2022,
+54689,2,side,only_vintage_2022,
+54748,G1,side,only_vintage_2022,
+54757,CIB,side,only_vintage_2022,
+55156,UNT1,side,only_vintage_2022,
+55156,UNT2,side,only_vintage_2022,
+55156,UNT3,side,only_vintage_2022,
+55156,UNT4,side,only_vintage_2022,
+55156,UNT5,side,only_vintage_2022,
+55243,2-1,side,only_vintage_2022,
+55243,2-2,side,only_vintage_2022,
+55243,2-3,side,only_vintage_2022,
+55243,2-4,side,only_vintage_2022,
+55243,3-1,side,only_vintage_2022,
+55243,3-2,side,only_vintage_2022,
+55243,3-3,side,only_vintage_2022,
+55243,3-4,side,only_vintage_2022,
+55243,4-1,side,only_vintage_2022,
+55243,4-2,side,only_vintage_2022,
+55243,4-3,side,only_vintage_2022,
+55243,4-4,side,only_vintage_2022,
+55396,WGNS,side,only_vintage_2022,
+55488,BB1,side,only_vintage_2022,
+55488,BB2,side,only_vintage_2022,
+55488,BB3,side,only_vintage_2022,
+55589,3,side,only_vintage_2022,
+55602,UNT1,side,only_vintage_2022,
+55602,UNT2,side,only_vintage_2022,
+55602,UNT3,side,only_vintage_2022,
+55602,UNT4,side,only_vintage_2022,
+55740,GEN1,side,only_vintage_2022,
+55944,BAY,side,only_vintage_2022,
+55998,GT1,side,only_vintage_2022,
+55998,IC1,side,only_vintage_2022,
+55998,IC2,side,only_vintage_2022,
+56121,A2,side,only_vintage_2022,
+56121,A3,side,only_vintage_2022,
+56126,1,side,only_vintage_2022,
+56126,2,side,only_vintage_2022,
+56128,1,side,only_vintage_2022,
+56128,2,side,only_vintage_2022,
+56128,3,side,only_vintage_2022,
+56128,4,side,only_vintage_2022,
+56279,1,side,only_vintage_2022,
+56279,2,side,only_vintage_2022,
+56279,3,side,only_vintage_2022,
+56279,4,side,only_vintage_2022,
+56279,5,side,only_vintage_2022,
+56511,GEN2,side,only_vintage_2022,
+56513,CGE,side,only_vintage_2022,
+56692,1G,side,only_vintage_2022,
+56692,1H,side,only_vintage_2022,
+56692,1I,side,only_vintage_2022,
+56692,1J,side,only_vintage_2022,
+56692,1K,side,only_vintage_2022,
+56692,1L,side,only_vintage_2022,
+56692,1M,side,only_vintage_2022,
+56692,1N,side,only_vintage_2022,
+56692,1O,side,only_vintage_2022,
+56692,2A,side,only_vintage_2022,
+56692,2B,side,only_vintage_2022,
+56692,2C,side,only_vintage_2022,
+56692,2D,side,only_vintage_2022,
+56692,2E,side,only_vintage_2022,
+56692,2F,side,only_vintage_2022,
+56692,2G,side,only_vintage_2022,
+56692,2H,side,only_vintage_2022,
+56692,2I,side,only_vintage_2022,
+56692,2J,side,only_vintage_2022,
+56692,2K,side,only_vintage_2022,
+56692,2L,side,only_vintage_2022,
+56692,2M,side,only_vintage_2022,
+56692,2N,side,only_vintage_2022,
+56692,2O,side,only_vintage_2022,
+56692,2P,side,only_vintage_2022,
+56692,2Q,side,only_vintage_2022,
+56692,2R,side,only_vintage_2022,
+56692,2S,side,only_vintage_2022,
+56692,2T,side,only_vintage_2022,
+56692,2U,side,only_vintage_2022,
+56863,1,side,only_vintage_2022,
+56863,2,side,only_vintage_2022,
+56864,1,side,only_vintage_2022,
+56864,2,side,only_vintage_2022,
+56864,3,side,only_vintage_2022,
+56864,4,side,only_vintage_2022,
+56864,5,side,only_vintage_2022,
+56864,6,side,only_vintage_2022,
+56869,1,side,only_vintage_2022,
+56869,10,side,only_vintage_2022,
+56869,11,side,only_vintage_2022,
+56869,12,side,only_vintage_2022,
+56869,13,side,only_vintage_2022,
+56869,14,side,only_vintage_2022,
+56869,15,side,only_vintage_2022,
+56869,16,side,only_vintage_2022,
+56869,17,side,only_vintage_2022,
+56869,18,side,only_vintage_2022,
+56869,2,side,only_vintage_2022,
+56869,3,side,only_vintage_2022,
+56869,4,side,only_vintage_2022,
+56869,5,side,only_vintage_2022,
+56869,6,side,only_vintage_2022,
+56869,7,side,only_vintage_2022,
+56869,8,side,only_vintage_2022,
+56869,9,side,only_vintage_2022,
+56891,GEN 2,side,only_vintage_2022,
+56911,GEN1,side,only_vintage_2022,
+56911,GEN2,side,only_vintage_2022,
+56996,S1A,side,only_vintage_2022,
+56996,S1B,side,only_vintage_2022,
+57025,GEN2,side,only_vintage_2022,
+57025,GEN3,side,only_vintage_2022,
+57025,GEN4,side,only_vintage_2022,
+57025,GEN5,side,only_vintage_2022,
+57057,UNIT1,side,only_vintage_2022,
+57065,UNIT4,side,only_vintage_2022,
+57076,GEN1,side,only_vintage_2022,
+57076,GEN2,side,only_vintage_2022,
+57099,STG1,side,only_vintage_2022,
+57217,S003A,side,only_vintage_2022,
+57217,S003B,side,only_vintage_2022,
+57219,S005A,side,only_vintage_2022,
+57219,S005B,side,only_vintage_2022,
+57219,S005C,side,only_vintage_2022,
+57219,S005D,side,only_vintage_2022,
+57219,S005E,side,only_vintage_2022,
+57220,S006A,side,only_vintage_2022,
+57220,S006B,side,only_vintage_2022,
+57220,S006C,side,only_vintage_2022,
+57220,S006D,side,only_vintage_2022,
+57221,S007A,side,only_vintage_2022,
+57221,S007B,side,only_vintage_2022,
+57221,S007C,side,only_vintage_2022,
+57221,S007D,side,only_vintage_2022,
+57221,S007E,side,only_vintage_2022,
+57222,S008A,side,only_vintage_2022,
+57222,S008B,side,only_vintage_2022,
+57222,S008C,side,only_vintage_2022,
+57222,S008D,side,only_vintage_2022,
+57223,S009A,side,only_vintage_2022,
+57223,S009B,side,only_vintage_2022,
+57224,S010A,side,only_vintage_2022,
+57224,S010B,side,only_vintage_2022,
+57224,S010C,side,only_vintage_2022,
+57225,S011A,side,only_vintage_2022,
+57225,S011B,side,only_vintage_2022,
+57225,S011C,side,only_vintage_2022,
+57225,S011D,side,only_vintage_2022,
+57225,S011E,side,only_vintage_2022,
+57225,S011F,side,only_vintage_2022,
+57225,S011G,side,only_vintage_2022,
+57226,S012A,side,only_vintage_2022,
+57227,S013A,side,only_vintage_2022,
+57227,S013B,side,only_vintage_2022,
+57227,S013C,side,only_vintage_2022,
+57227,S013D,side,only_vintage_2022,
+57227,S013E,side,only_vintage_2022,
+57227,S013F,side,only_vintage_2022,
+57227,S013G,side,only_vintage_2022,
+57229,S015A,side,only_vintage_2022,
+57229,S015B,side,only_vintage_2022,
+57229,S015C,side,only_vintage_2022,
+57229,S015D,side,only_vintage_2022,
+57229,S015E,side,only_vintage_2022,
+57229,S015F,side,only_vintage_2022,
+57229,S015G,side,only_vintage_2022,
+57230,S016A,side,only_vintage_2022,
+57230,S016B,side,only_vintage_2022,
+57230,S016C,side,only_vintage_2022,
+57231,S017A,side,only_vintage_2022,
+57231,S017B,side,only_vintage_2022,
+57231,S017C,side,only_vintage_2022,
+57231,S017D,side,only_vintage_2022,
+57231,S017E,side,only_vintage_2022,
+57231,S017F,side,only_vintage_2022,
+57231,S017G,side,only_vintage_2022,
+57232,S018A,side,only_vintage_2022,
+57232,S018B,side,only_vintage_2022,
+57232,S018C,side,only_vintage_2022,
+57236,S023A,side,only_vintage_2022,
+57236,S023B,side,only_vintage_2022,
+57236,S023C,side,only_vintage_2022,
+57236,S023D,side,only_vintage_2022,
+57236,S023E,side,only_vintage_2022,
+57237,S022A,side,only_vintage_2022,
+57237,S022B,side,only_vintage_2022,
+57237,S022C,side,only_vintage_2022,
+57237,S022D,side,only_vintage_2022,
+57245,S026A,side,only_vintage_2022,
+57245,S026B,side,only_vintage_2022,
+57245,S026C,side,only_vintage_2022,
+57245,S026D,side,only_vintage_2022,
+57245,S026E,side,only_vintage_2022,
+57245,S026F,side,only_vintage_2022,
+57245,S026G,side,only_vintage_2022,
+57245,S026H,side,only_vintage_2022,
+57245,S026I,side,only_vintage_2022,
+57245,S026J,side,only_vintage_2022,
+57245,SO26K,side,only_vintage_2022,
+57245,SO26L,side,only_vintage_2022,
+57246,S027A,side,only_vintage_2022,
+57246,S027B,side,only_vintage_2022,
+57246,S027C,side,only_vintage_2022,
+57246,S027D,side,only_vintage_2022,
+57247,S028A,side,only_vintage_2022,
+57247,S028B,side,only_vintage_2022,
+57247,S028C,side,only_vintage_2022,
+57247,S028D,side,only_vintage_2022,
+57247,S028E,side,only_vintage_2022,
+57247,S028F,side,only_vintage_2022,
+57247,S028G,side,only_vintage_2022,
+57258,1,side,only_vintage_2022,
+57258,2,side,only_vintage_2022,
+57258,3,side,only_vintage_2022,
+57446,OEC23,side,only_vintage_2022,
+57467,TG1,side,only_vintage_2022,
+57519,GEN1,side,only_vintage_2022,
+57534,S32A,side,only_vintage_2022,
+57534,S32B,side,only_vintage_2022,
+57534,S32C,side,only_vintage_2022,
+57535,S33A,side,only_vintage_2022,
+57535,S33B,side,only_vintage_2022,
+57544,FC01,side,only_vintage_2022,
+57637,1,side,only_vintage_2022,
+57638,1,side,only_vintage_2022,
+57900,S48A,side,only_vintage_2022,
+57900,S48B,side,only_vintage_2022,
+57900,S48C,side,only_vintage_2022,
+57900,S48D,side,only_vintage_2022,
+57900,S48E,side,only_vintage_2022,
+57900,S48F,side,only_vintage_2022,
+57900,S48G,side,only_vintage_2022,
+57900,S48H,side,only_vintage_2022,
+57900,S48I,side,only_vintage_2022,
+57900,S48J,side,only_vintage_2022,
+57914,1,side,only_vintage_2022,
+57914,2,side,only_vintage_2022,
+57937,SCBF,side,only_vintage_2022,
+57952,GEN1,side,only_vintage_2022,
+57952,GEN2,side,only_vintage_2022,
+57952,GEN3,side,only_vintage_2022,
+58170,GEN1,side,only_vintage_2022,
+58265,EP-6,side,only_vintage_2022,
+58365,UNIT7,side,only_vintage_2022,
+58440,9560,side,only_vintage_2022,
+58440,9580,side,only_vintage_2022,
+58440,9581,side,only_vintage_2022,
+58440,9583,side,only_vintage_2022,
+58440,9585,side,only_vintage_2022,
+58440,9587,side,only_vintage_2022,
+58475,BOU,side,only_vintage_2022,
+58625,SRJBA,side,only_vintage_2022,
+58815,1,side,only_vintage_2022,
+59456,P-TG5,side,only_vintage_2022,
+59717,TOW1,side,only_vintage_2022,
+59931,GEN2,side,only_vintage_2022,
+60245,2,side,only_vintage_2022,
+60506,BOB,side,only_vintage_2022,
+60804,DBGAT,side,only_vintage_2022,
+60928,1,side,only_vintage_2022,
+61160,MILL1,side,only_vintage_2022,
+61378,4,side,only_vintage_2022,
+61378,5,side,only_vintage_2022,
+61647,NOSPB,side,only_vintage_2022,
+61679,1,side,only_vintage_2022,
+61737,GEN5,side,only_vintage_2022,
+61848,WT1,side,only_vintage_2022,
+62636,NVSS2,side,only_vintage_2022,
+63091,18027,side,only_vintage_2022,
+63091,246,side,only_vintage_2022,
+63136,64605,side,only_vintage_2022,
+63550,SC-67,side,only_vintage_2022,
+63553,CU750,side,only_vintage_2022,
+63580,CM175,side,only_vintage_2022,
+63630,AVHS,side,only_vintage_2022,
+63669,CHP,side,only_vintage_2022,
+64440,ENG1A,side,only_vintage_2022,
+64892,ERATH,side,only_vintage_2022,
+65285,GT1,side,only_vintage_2022,
+65494,HER1,side,only_vintage_2022,
+1,5.1,side,only_vintage_2023,
+3,A3C1,side,only_vintage_2023,
+3,A3ST,side,only_vintage_2023,
+47,GT10,side,only_vintage_2023,
+47,GT11,side,only_vintage_2023,
+47,GT9,side,only_vintage_2023,
+56,LEC1,side,only_vintage_2023,
+56,LEC2,side,only_vintage_2023,
+91,4,side,only_vintage_2023,
+95,1-N,side,only_vintage_2023,
+136,CT1,side,only_vintage_2023,
+136,CT2,side,only_vintage_2023,
+136,ST,side,only_vintage_2023,
+260,BAT3,side,only_vintage_2023,
+406,10,side,only_vintage_2023,
+492,A1,side,only_vintage_2023,
+492,A2,side,only_vintage_2023,
+492,A3,side,only_vintage_2023,
+492,A4,side,only_vintage_2023,
+492,A5,side,only_vintage_2023,
+492,A6,side,only_vintage_2023,
+649,3,side,only_vintage_2023,
+753,GT2,side,only_vintage_2023,
+789,6A,side,only_vintage_2023,
+1272,3A,side,only_vintage_2023,
+1286,9,side,only_vintage_2023,
+1322,6,side,only_vintage_2023,
+1325,6,side,only_vintage_2023,
+1325,7,side,only_vintage_2023,
+1378,CT5,side,only_vintage_2023,
+1378,CT6,side,only_vintage_2023,
+1378,CT7,side,only_vintage_2023,
+1482,BES1,side,only_vintage_2023,
+1571,GT1,side,only_vintage_2023,
+1966,8,side,only_vintage_2023,
+2324,RGES1,side,only_vintage_2023,
+2351,GEN5,side,only_vintage_2023,
+3045,7,side,only_vintage_2023,
+3045,8,side,only_vintage_2023,
+3456,6,side,only_vintage_2023,
+6061,MOR1,side,only_vintage_2023,
+6061,MOR2,side,only_vintage_2023,
+6304,PV10,side,only_vintage_2023,
+6304,PV11,side,only_vintage_2023,
+6304,PV12,side,only_vintage_2023,
+6304,PV13,side,only_vintage_2023,
+6304,PV14,side,only_vintage_2023,
+6304,PV15,side,only_vintage_2023,
+6304,PV16,side,only_vintage_2023,
+6304,PV17,side,only_vintage_2023,
+6304,PV9,side,only_vintage_2023,
+7111,15,side,only_vintage_2023,
+7112,IC7,side,only_vintage_2023,
+7790,4,side,only_vintage_2023,
+10156,BESS1,side,only_vintage_2023,
+10444,LOC1,side,only_vintage_2023,
+10493,BES1,side,only_vintage_2023,
+10554,3ST1,side,only_vintage_2023,
+10554,3TBG1,side,only_vintage_2023,
+10554,3TBG2,side,only_vintage_2023,
+50064,004,side,only_vintage_2023,
+50064,18027,side,only_vintage_2023,
+50064,246,side,only_vintage_2023,
+50300,BESS2,side,only_vintage_2023,
+52120,G-64,side,only_vintage_2023,
+54296,EG-1H,side,only_vintage_2023,
+54639,BESS1,side,only_vintage_2023,
+54665,SB2SL,side,only_vintage_2023,
+54666,SB3SL,side,only_vintage_2023,
+54689,OEC1,side,only_vintage_2023,
+54689,OEC11,side,only_vintage_2023,
+54689,OEC2,side,only_vintage_2023,
+54809,TG3,side,only_vintage_2023,
+55044,STG2,side,only_vintage_2023,
+55098,GEN1,side,only_vintage_2023,
+55098,GEN2,side,only_vintage_2023,
+55098,GEN3,side,only_vintage_2023,
+55278,STG-2,side,only_vintage_2023,
+55339,GEN1,side,only_vintage_2023,
+55608,GEN1,side,only_vintage_2023,
+55609,GEN1,side,only_vintage_2023,
+55610,GEN1,side,only_vintage_2023,
+55719,MVWR,side,only_vintage_2023,
+55991,BRSOL,side,only_vintage_2023,
+56146,4,side,only_vintage_2023,
+56350,CT4A,side,only_vintage_2023,
+56350,CT4B,side,only_vintage_2023,
+56510,GEN1,side,only_vintage_2023,
+56777,FIC,side,only_vintage_2023,
+57057,1B,side,only_vintage_2023,
+57065,4A,side,only_vintage_2023,
+57446,OE23R,side,only_vintage_2023,
+57561,CC17M,side,only_vintage_2023,
+57562,PA17M,side,only_vintage_2023,
+57563,H116M,side,only_vintage_2023,
+57937,SCB-2,side,only_vintage_2023,
+57997,FH38M,side,only_vintage_2023,
+58383,H214M,side,only_vintage_2023,
+59020,GB36M,side,only_vintage_2023,
+59444,DS10M,side,only_vintage_2023,
+59966,ES1,side,only_vintage_2023,
+60020,PV1,side,only_vintage_2023,
+60028,PV1,side,only_vintage_2023,
+60095,BLST4,side,only_vintage_2023,
+60245,2A,side,only_vintage_2023,
+60316,SCBS,side,only_vintage_2023,
+60387,GEN3,side,only_vintage_2023,
+60387,GEN4,side,only_vintage_2023,
+60596,1,side,only_vintage_2023,
+60785,TMSL2,side,only_vintage_2023,
+60791,BA1&2,side,only_vintage_2023,
+60791,BA3,side,only_vintage_2023,
+60850,PV1,side,only_vintage_2023,
+60928,RICE1,side,only_vintage_2023,
+60928,RICE2,side,only_vintage_2023,
+60928,RICE3,side,only_vintage_2023,
+60928,RICE4,side,only_vintage_2023,
+60928,RICE5,side,only_vintage_2023,
+60928,RICE6,side,only_vintage_2023,
+60928,RICE7,side,only_vintage_2023,
+60971,PV4,side,only_vintage_2023,
+61186,BATT,side,only_vintage_2023,
+61365,FBES,side,only_vintage_2023,
+61446,PV2,side,only_vintage_2023,
+61447,PV3,side,only_vintage_2023,
+61448,PV4,side,only_vintage_2023,
+61449,PV5,side,only_vintage_2023,
+61653,PV1,side,only_vintage_2023,
+61852,ESMSF,side,only_vintage_2023,
+62113,ST-CA,side,only_vintage_2023,
+62248,1,side,only_vintage_2023,
+62248,2,side,only_vintage_2023,
+62342,87,side,only_vintage_2023,
+62541,ES1,side,only_vintage_2023,
+62546,ALMND,side,only_vintage_2023,
+62561,BA,side,only_vintage_2023,
+62562,BA,side,only_vintage_2023,
+62676,G304,side,only_vintage_2023,
+62703,EQX05,side,only_vintage_2023,
+62768,PCSOL,side,only_vintage_2023,
+62771,DBS1,side,only_vintage_2023,
+62771,DBS2,side,only_vintage_2023,
+62771,DBS3,side,only_vintage_2023,
+62771,DBS4,side,only_vintage_2023,
+62783,BLKJK,side,only_vintage_2023,
+62854,SJS,side,only_vintage_2023,
+62949,GPS1,side,only_vintage_2023,
+62949,GPS2,side,only_vintage_2023,
+62949,GPS3,side,only_vintage_2023,
+62964,EL50M,side,only_vintage_2023,
+62971,SYWEB,side,only_vintage_2023,
+62974,SYMIB,side,only_vintage_2023,
+63003,1,side,only_vintage_2023,
+63172,ARESS,side,only_vintage_2023,
+63173,P1,side,only_vintage_2023,
+63173,P2,side,only_vintage_2023,
+63173,P3,side,only_vintage_2023,
+63173,P4,side,only_vintage_2023,
+63173,P5,side,only_vintage_2023,
+63195,ACP3,side,only_vintage_2023,
+63233,UNIT1,side,only_vintage_2023,
+63238,WB1,side,only_vintage_2023,
+63343,GS2SF,side,only_vintage_2023,
+63441,S1,side,only_vintage_2023,
+63491,OEC1,side,only_vintage_2023,
+63550,NT-01,side,only_vintage_2023,
+63550,NT-02,side,only_vintage_2023,
+63551,PGR21,side,only_vintage_2023,
+63553,CT365,side,only_vintage_2023,
+63553,CT750,side,only_vintage_2023,
+63553,KT750,side,only_vintage_2023,
+63731,NT125,side,only_vintage_2023,
+63731,NT325,side,only_vintage_2023,
+63755,E1,side,only_vintage_2023,
+63757,MAD01,side,only_vintage_2023,
+63765,ALBB1,side,only_vintage_2023,
+63766,ARHA1,side,only_vintage_2023,
+63776,TW100,side,only_vintage_2023,
+63776,TW300,side,only_vintage_2023,
+63789,ENSH2,side,only_vintage_2023,
+63797,GER01,side,only_vintage_2023,
+63808,PGR30,side,only_vintage_2023,
+63827,95,side,only_vintage_2023,
+63838,HPS,side,only_vintage_2023,
+63845,DEPUE,side,only_vintage_2023,
+63848,BESS1,side,only_vintage_2023,
+63848,SBLUE,side,only_vintage_2023,
+63849,BESS1,side,only_vintage_2023,
+63849,CHNUT,side,only_vintage_2023,
+63875,KRNVL,side,only_vintage_2023,
+63900,KLOAB,side,only_vintage_2023,
+63900,YKLOA,side,only_vintage_2023,
+63909,OTTER,side,only_vintage_2023,
+63931,GEN1,side,only_vintage_2023,
+63931,GEN2,side,only_vintage_2023,
+63985,FBS,side,only_vintage_2023,
+64005,MMR-1,side,only_vintage_2023,
+64032,MTSUN,side,only_vintage_2023,
+64050,CMABS,side,only_vintage_2023,
+64050,CMAPV,side,only_vintage_2023,
+64075,TAYG2,side,only_vintage_2023,
+64086,NORG,side,only_vintage_2023,
+64088,WT2,side,only_vintage_2023,
+64089,IGN01,side,only_vintage_2023,
+64136,SYSO,side,only_vintage_2023,
+64155,2001,side,only_vintage_2023,
+64164,ASWBE,side,only_vintage_2023,
+64189,RSNAK,side,only_vintage_2023,
+64197,FTHSB,side,only_vintage_2023,
+64197,FTHSS,side,only_vintage_2023,
+64212,CO465,side,only_vintage_2023,
+64252,RICH6,side,only_vintage_2023,
+64340,WRW,side,only_vintage_2023,
+64393,GEN2,side,only_vintage_2023,
+64429,19001,side,only_vintage_2023,
+64469,OEALD,side,only_vintage_2023,
+64481,AEC2,side,only_vintage_2023,
+64484,SCRDR,side,only_vintage_2023,
+64485,CRLNE,side,only_vintage_2023,
+64489,GEN1,side,only_vintage_2023,
+64489,GEN2,side,only_vintage_2023,
+64505,LFGE2,side,only_vintage_2023,
+64507,OETN1,side,only_vintage_2023,
+64509,BAT1,side,only_vintage_2023,
+64509,SOL1,side,only_vintage_2023,
+64510,BAT1,side,only_vintage_2023,
+64510,SOL1,side,only_vintage_2023,
+64511,BAT1,side,only_vintage_2023,
+64511,SOL1,side,only_vintage_2023,
+64512,BAT1,side,only_vintage_2023,
+64512,SOL1,side,only_vintage_2023,
+64513,BAT1,side,only_vintage_2023,
+64513,SOL1,side,only_vintage_2023,
+64515,FC,side,only_vintage_2023,
+64532,NORTN,side,only_vintage_2023,
+64545,BA,side,only_vintage_2023,
+64567,CMCTY,side,only_vintage_2023,
+64619,FUU,side,only_vintage_2023,
+64619,UUBAT,side,only_vintage_2023,
+64635,GEN01,side,only_vintage_2023,
+64672,BLUEJ,side,only_vintage_2023,
+64683,GEN01,side,only_vintage_2023,
+64695,BESS,side,only_vintage_2023,
+64695,TMEF1,side,only_vintage_2023,
+64706,ACNT1,side,only_vintage_2023,
+64709,GSF01,side,only_vintage_2023,
+64711,GSF01,side,only_vintage_2023,
+64752,ES1,side,only_vintage_2023,
+64752,PV1,side,only_vintage_2023,
+64759,OLD,side,only_vintage_2023,
+64759,OLDBA,side,only_vintage_2023,
+64811,UPT1,side,only_vintage_2023,
+64832,YELLO,side,only_vintage_2023,
+64851,DAGGB,side,only_vintage_2023,
+64851,DAGGP,side,only_vintage_2023,
+64852,DAGGB,side,only_vintage_2023,
+64852,DAGGP,side,only_vintage_2023,
+64853,NMS1,side,only_vintage_2023,
+64859,IPRAD,side,only_vintage_2023,
+64914,71466,side,only_vintage_2023,
+64927,AKS01,side,only_vintage_2023,
+64968,452,side,only_vintage_2023,
+64993,BB2BA,side,only_vintage_2023,
+64993,BB2PV,side,only_vintage_2023,
+64995,PV1,side,only_vintage_2023,
+64996,PV1,side,only_vintage_2023,
+64997,PV1,side,only_vintage_2023,
+64998,PV1,side,only_vintage_2023,
+65000,PV1,side,only_vintage_2023,
+65001,PV1,side,only_vintage_2023,
+65008,PV1,side,only_vintage_2023,
+65012,PV1,side,only_vintage_2023,
+65014,COT1,side,only_vintage_2023,
+65027,PV1,side,only_vintage_2023,
+65028,ROSEB,side,only_vintage_2023,
+65031,INBF1,side,only_vintage_2023,
+65034,CSBS1,side,only_vintage_2023,
+65035,ESSFH,side,only_vintage_2023,
+65044,DBES,side,only_vintage_2023,
+65058,WAIBA,side,only_vintage_2023,
+65058,WAIPV,side,only_vintage_2023,
+65066,1,side,only_vintage_2023,
+65070,C02,side,only_vintage_2023,
+65073,PV1,side,only_vintage_2023,
+65090,CORT3,side,only_vintage_2023,
+65106,PGR33,side,only_vintage_2023,
+65107,PGR34,side,only_vintage_2023,
+65121,GEN1,side,only_vintage_2023,
+65123,GEN1,side,only_vintage_2023,
+65151,ENX13,side,only_vintage_2023,
+65155,DEK2,side,only_vintage_2023,
+65156,DEK1,side,only_vintage_2023,
+65159,VOL1,side,only_vintage_2023,
+65160,CSG,side,only_vintage_2023,
+65165,ONSUN,side,only_vintage_2023,
+65170,PV1,side,only_vintage_2023,
+65171,PV1,side,only_vintage_2023,
+65172,PV1,side,only_vintage_2023,
+65173,PV1,side,only_vintage_2023,
+65214,GCHOS,side,only_vintage_2023,
+65215,NSTLW,side,only_vintage_2023,
+65219,ENX16,side,only_vintage_2023,
+65220,PHSPV,side,only_vintage_2023,
+65221,WSPV,side,only_vintage_2023,
+65223,CGS,side,only_vintage_2023,
+65224,ENX15,side,only_vintage_2023,
+65225,ENX17,side,only_vintage_2023,
+65231,HCO,side,only_vintage_2023,
+65282,WT,side,only_vintage_2023,
+65296,HAW10,side,only_vintage_2023,
+65302,SOLAR,side,only_vintage_2023,
+65305,SOLAR,side,only_vintage_2023,
+65308,HRZNS,side,only_vintage_2023,
+65309,532,side,only_vintage_2023,
+65315,GASC2,side,only_vintage_2023,
+65316,65011,side,only_vintage_2023,
+65328,1,side,only_vintage_2023,
+65332,MH1,side,only_vintage_2023,
+65337,MAYBK,side,only_vintage_2023,
+65342,GS1,side,only_vintage_2023,
+65348,OLIVE,side,only_vintage_2023,
+65362,UXBRD,side,only_vintage_2023,
+65365,17024,side,only_vintage_2023,
+65373,CTG-1,side,only_vintage_2023,
+65373,CTG-2,side,only_vintage_2023,
+65373,CTG-3,side,only_vintage_2023,
+65373,CTG-4,side,only_vintage_2023,
+65373,CTG-5,side,only_vintage_2023,
+65373,CTG-6,side,only_vintage_2023,
+65374,GEN1,side,only_vintage_2023,
+65374,GEN2,side,only_vintage_2023,
+65386,HOWRD,side,only_vintage_2023,
+65405,SOLAR,side,only_vintage_2023,
+65410,SPUT,side,only_vintage_2023,
+65420,1,side,only_vintage_2023,
+65421,1,side,only_vintage_2023,
+65422,1,side,only_vintage_2023,
+65423,1,side,only_vintage_2023,
+65424,1,side,only_vintage_2023,
+65427,1,side,only_vintage_2023,
+65428,1,side,only_vintage_2023,
+65429,1,side,only_vintage_2023,
+65430,1,side,only_vintage_2023,
+65431,1,side,only_vintage_2023,
+65432,1,side,only_vintage_2023,
+65433,1,side,only_vintage_2023,
+65438,1,side,only_vintage_2023,
+65439,USSFS,side,only_vintage_2023,
+65440,USSCF,side,only_vintage_2023,
+65442,USSMS,side,only_vintage_2023,
+65443,USSWC,side,only_vintage_2023,
+65483,BIGC1,side,only_vintage_2023,
+65494,HER2,side,only_vintage_2023,
+65495,BALLH,side,only_vintage_2023,
+65496,BLUES,side,only_vintage_2023,
+65511,44444,side,only_vintage_2023,
+65514,13260,side,only_vintage_2023,
+65519,BRS,side,only_vintage_2023,
+65522,65013,side,only_vintage_2023,
+65523,14057,side,only_vintage_2023,
+65525,14068,side,only_vintage_2023,
+65531,BESS1,side,only_vintage_2023,
+65546,WINER,side,only_vintage_2023,
+65592,1,side,only_vintage_2023,
+65593,1,side,only_vintage_2023,
+65594,1,side,only_vintage_2023,
+65615,19009,side,only_vintage_2023,
+65617,3998G,side,only_vintage_2023,
+65629,SRMCK,side,only_vintage_2023,
+65630,SRBEL,side,only_vintage_2023,
+65633,BESS1,side,only_vintage_2023,
+65654,TSN1,side,only_vintage_2023,
+65672,BESS,side,only_vintage_2023,
+65673,BESS,side,only_vintage_2023,
+65674,BESS,side,only_vintage_2023,
+65675,BESS,side,only_vintage_2023,
+65676,BESS,side,only_vintage_2023,
+65677,BESS,side,only_vintage_2023,
+65683,1,side,only_vintage_2023,
+65692,NY6,side,only_vintage_2023,
+65697,1A,side,only_vintage_2023,
+65697,1B,side,only_vintage_2023,
+65699,TX19,side,only_vintage_2023,
+65700,TX21,side,only_vintage_2023,
+65702,GEN01,side,only_vintage_2023,
+65705,CANOE,side,only_vintage_2023,
+65714,32004,side,only_vintage_2023,
+65715,GPFWF,side,only_vintage_2023,
+65729,GABR,side,only_vintage_2023,
+65734,OBIBS,side,only_vintage_2023,
+65734,OBIPV,side,only_vintage_2023,
+65735,OBIIB,side,only_vintage_2023,
+65735,OBIIP,side,only_vintage_2023,
+65738,1111,side,only_vintage_2023,
+65741,SRW2,side,only_vintage_2023,
+65742,DWF02,side,only_vintage_2023,
+65758,AHERN,side,only_vintage_2023,
+65782,MAG,side,only_vintage_2023,
+65790,CGWIN,side,only_vintage_2023,
+65793,CVS,side,only_vintage_2023,
+65796,BAIL1,side,only_vintage_2023,
+65797,ELBA,side,only_vintage_2023,
+65799,DKLB1,side,only_vintage_2023,
+65800,DKLB2,side,only_vintage_2023,
+65803,BARAS,side,only_vintage_2023,
+65806,528,side,only_vintage_2023,
+65814,GOMEZ,side,only_vintage_2023,
+65820,OWS,side,only_vintage_2023,
+65829,HOLCO,side,only_vintage_2023,
+65830,JUNCT,side,only_vintage_2023,
+65832,OLNEY,side,only_vintage_2023,
+65835,SCRWB,side,only_vintage_2023,
+65839,GEN1,side,only_vintage_2023,
+65841,GEN1,side,only_vintage_2023,
+65890,BAIL2,side,only_vintage_2023,
+65933,1,side,only_vintage_2023,
+65945,GEN2,side,only_vintage_2023,
+65945,GEN3,side,only_vintage_2023,
+65945,GENS,side,only_vintage_2023,
+65949,SMITH,side,only_vintage_2023,
+65950,SOBAT,side,only_vintage_2023,
+65950,SOH,side,only_vintage_2023,
+65951,BG1,side,only_vintage_2023,
+65952,AD1,side,only_vintage_2023,
+65953,HW1,side,only_vintage_2023,
+65955,LANDR,side,only_vintage_2023,
+65956,STOBA,side,only_vintage_2023,
+65956,STORY,side,only_vintage_2023,
+65958,GEN1,side,only_vintage_2023,
+65960,GEN1,side,only_vintage_2023,
+65961,GEN1,side,only_vintage_2023,
+65963,MS5,side,only_vintage_2023,
+65963,MS5B,side,only_vintage_2023,
+65970,1,side,only_vintage_2023,
+65971,WT1,side,only_vintage_2023,
+65980,WCBS,side,only_vintage_2023,
+65985,461,side,only_vintage_2023,
+65986,USSGG,side,only_vintage_2023,
+65987,DP1,side,only_vintage_2023,
+65988,DP2,side,only_vintage_2023,
+65989,MNC01,side,only_vintage_2023,
+65990,USSGB,side,only_vintage_2023,
+65991,USSDF,side,only_vintage_2023,
+65992,USWOF,side,only_vintage_2023,
+65993,USWON,side,only_vintage_2023,
+65994,20066,side,only_vintage_2023,
+65995,20052,side,only_vintage_2023,
+65999,GC1,side,only_vintage_2023,
+66001,CHVB,side,only_vintage_2023,
+66004,TTLOW,side,only_vintage_2023,
+66006,BA,side,only_vintage_2023,
+66010,460,side,only_vintage_2023,
+66014,WBOPT,side,only_vintage_2023,
+66015,PLAT,side,only_vintage_2023,
+66017,ANDR,side,only_vintage_2023,
+66019,PA01,side,only_vintage_2023,
+66024,GA-01,side,only_vintage_2023,
+66026,GA-03,side,only_vintage_2023,
+66029,CLCSG,side,only_vintage_2023,
+66030,JOHN2,side,only_vintage_2023,
+66035,457,side,only_vintage_2023,
+66039,457,side,only_vintage_2023,
+66040,23204,side,only_vintage_2023,
+66043,63233,side,only_vintage_2023,
+66052,EPW01,side,only_vintage_2023,
+66055,CATHC,side,only_vintage_2023,
+66059,W11,side,only_vintage_2023,
+66059,W12,side,only_vintage_2023,
+66059,W13,side,only_vintage_2023,
+66059,W14,side,only_vintage_2023,
+66059,W15,side,only_vintage_2023,
+66059,W16,side,only_vintage_2023,
+66059,W17,side,only_vintage_2023,
+66067,KES1,side,only_vintage_2023,
+66069,462,side,only_vintage_2023,
+66084,14508,side,only_vintage_2023,
+66089,CANAL,side,only_vintage_2023,
+66093,MSWP1,side,only_vintage_2023,
+66094,561,side,only_vintage_2023,
+66097,371,side,only_vintage_2023,
+66098,573,side,only_vintage_2023,
+66099,459,side,only_vintage_2023,
+66102,BEIV,side,only_vintage_2023,
+66103,BEIII,side,only_vintage_2023,
+66104,BEVII,side,only_vintage_2023,
+66108,MCS,side,only_vintage_2023,
+66109,GRSS,side,only_vintage_2023,
+66112,U1,side,only_vintage_2023,
+66115,AML1,side,only_vintage_2023,
+66116,AML2,side,only_vintage_2023,
+66119,POW,side,only_vintage_2023,
+66128,1,side,only_vintage_2023,
+66129,1,side,only_vintage_2023,
+66135,PELLR,side,only_vintage_2023,
+66136,DGLE,side,only_vintage_2023,
+66141,711,side,only_vintage_2023,
+66147,801,side,only_vintage_2023,
+66156,WT,side,only_vintage_2023,
+66160,569,side,only_vintage_2023,
+66162,570,side,only_vintage_2023,
+66163,JICB1,side,only_vintage_2023,
+66163,JICS1,side,only_vintage_2023,
+66165,379,side,only_vintage_2023,
+66166,291,side,only_vintage_2023,
+66169,710,side,only_vintage_2023,
+66170,1,side,only_vintage_2023,
+66171,SNIP3,side,only_vintage_2023,
+66172,SOTO2,side,only_vintage_2023,
+66174,TREAS,side,only_vintage_2023,
+66175,GEN1,side,only_vintage_2023,
+66184,CW2,side,only_vintage_2023,
+66193,OAKRG,side,only_vintage_2023,
+66203,RIPLY,side,only_vintage_2023,
+66208,NCV,side,only_vintage_2023,
+66219,11008,side,only_vintage_2023,
+66249,GEN01,side,only_vintage_2023,
+66250,GEN01,side,only_vintage_2023,
+66256,P4726,side,only_vintage_2023,
+66258,P5569,side,only_vintage_2023,
+66261,WTG01,side,only_vintage_2023,
+66261,WTG02,side,only_vintage_2023,
+66261,WTG03,side,only_vintage_2023,
+66271,HCEBA,side,only_vintage_2023,
+66271,HCEPV,side,only_vintage_2023,
+66272,GEN1,side,only_vintage_2023,
+66274,GEN1,side,only_vintage_2023,
+66275,GEN1,side,only_vintage_2023,
+66287,NMRD3,side,only_vintage_2023,
+66320,3COLT,side,only_vintage_2023,
+66322,GEN1,side,only_vintage_2023,
+66324,FILES,side,only_vintage_2023,
+66344,PV1,side,only_vintage_2023,
+66346,PV1,side,only_vintage_2023,
+66350,PV1,side,only_vintage_2023,
+66353,PV1,side,only_vintage_2023,
+66357,YPES,side,only_vintage_2023,
+66357,YPS1,side,only_vintage_2023,
+66358,VAL,side,only_vintage_2023,
+66360,RUSP1,side,only_vintage_2023,
+66361,ROSP1,side,only_vintage_2023,
+66366,MIDDL,side,only_vintage_2023,
+66367,RICH7,side,only_vintage_2023,
+66370,BENTN,side,only_vintage_2023,
+66387,NECA,side,only_vintage_2023,
+66388,NECA,side,only_vintage_2023,
+66389,CCSPV,side,only_vintage_2023,
+66392,1150,side,only_vintage_2023,
+66394,GOLET,side,only_vintage_2023,
+66395,PV1,side,only_vintage_2023,
+66402,CRBOU,side,only_vintage_2023,
+66403,LRING,side,only_vintage_2023,
+66404,PV,side,only_vintage_2023,
+66405,CCS2,side,only_vintage_2023,
+66408,BESS1,side,only_vintage_2023,
+66408,BVEC1,side,only_vintage_2023,
+66410,375,side,only_vintage_2023,
+66412,HHNM,side,only_vintage_2023,
+66415,KNIGH,side,only_vintage_2023,
+66416,WASH2,side,only_vintage_2023,
+66418,PGR36,side,only_vintage_2023,
+66419,DANE,side,only_vintage_2023,
+66420,FWSOL,side,only_vintage_2023,
+66423,BESS1,side,only_vintage_2023,
+66424,LIV,side,only_vintage_2023,
+66425,CLAV,side,only_vintage_2023,
+66433,USFPS,side,only_vintage_2023,
+66435,USCOS,side,only_vintage_2023,
+66443,PB1,side,only_vintage_2023,
+66443,PB2,side,only_vintage_2023,
+66450,PB1,side,only_vintage_2023,
+66450,PB2,side,only_vintage_2023,
+66450,PB3,side,only_vintage_2023,
+66450,PB4,side,only_vintage_2023,
+66451,PB1,side,only_vintage_2023,
+66451,PB2,side,only_vintage_2023,
+66453,PB1,side,only_vintage_2023,
+66453,PB2,side,only_vintage_2023,
+66453,PB3,side,only_vintage_2023,
+66453,PB4,side,only_vintage_2023,
+66471,EIFEL,side,only_vintage_2023,
+66479,PEM10,side,only_vintage_2023,
+66480,PEMS1,side,only_vintage_2023,
+66488,10958,side,only_vintage_2023,
+66488,BAT,side,only_vintage_2023,
+66490,10998,side,only_vintage_2023,
+66496,SLW,side,only_vintage_2023,
+66504,SS1,side,only_vintage_2023,
+66507,BR1A,side,only_vintage_2023,
+66508,BR2A,side,only_vintage_2023,
+66522,18208,side,only_vintage_2023,
+66532,BCE21,side,only_vintage_2023,
+66532,BCE22,side,only_vintage_2023,
+66533,BCE11,side,only_vintage_2023,
+66533,BCE12,side,only_vintage_2023,
+66540,WSHAM,side,only_vintage_2023,
+66541,CHSP,side,only_vintage_2023,
+66542,PGR37,side,only_vintage_2023,
+66554,22222,side,only_vintage_2023,
+66568,SHO02,side,only_vintage_2023,
+66569,BMSA,side,only_vintage_2023,
+66573,MNC04,side,only_vintage_2023,
+66577,MNC02,side,only_vintage_2023,
+66579,MNC05,side,only_vintage_2023,
+66580,MNC06,side,only_vintage_2023,
+66605,ARTH2,side,only_vintage_2023,
+66616,1,side,only_vintage_2023,
+66620,GEN1,side,only_vintage_2023,
+66620,GEN2,side,only_vintage_2023,
+66627,SON12,side,only_vintage_2023,
+66627,SON13,side,only_vintage_2023,
+66634,ENX20,side,only_vintage_2023,
+66635,ENX20,side,only_vintage_2023,
+66636,BESS,side,only_vintage_2023,
+66636,MCFRA,side,only_vintage_2023,
+66643,DBSC1,side,only_vintage_2023,
+66645,KIPP,side,only_vintage_2023,
+66652,CVAO,side,only_vintage_2023,
+66653,CVCL,side,only_vintage_2023,
+66654,CVRT,side,only_vintage_2023,
+66655,CVAC,side,only_vintage_2023,
+66656,CVOD,side,only_vintage_2023,
+66667,ROSA,side,only_vintage_2023,
+66668,CKWF,side,only_vintage_2023,
+66683,SYV,side,only_vintage_2023,
+66699,LOC2,side,only_vintage_2023,
+66713,WHRPV,side,only_vintage_2023,
+66714,CRYPV,side,only_vintage_2023,
+66716,SB123,side,only_vintage_2023,
+66717,ESTOR,side,only_vintage_2023,
+66717,STOR,side,only_vintage_2023,
+66727,GBBES,side,only_vintage_2023,
+66728,SFBES,side,only_vintage_2023,
+66741,575,side,only_vintage_2023,
+66751,GEN1,side,only_vintage_2023,
+66752,NGVB2,side,only_vintage_2023,
+66753,714,side,only_vintage_2023,
+66759,DELTA,side,only_vintage_2023,
+66760,713,side,only_vintage_2023,
+66772,ESPV,side,only_vintage_2023,
+66772,ESTRB,side,only_vintage_2023,
+66796,P5324,side,only_vintage_2023,
+66798,P5316,side,only_vintage_2023,
+66799,4087G,side,only_vintage_2023,
+66799,4087R,side,only_vintage_2023,
+66802,BEMSE,side,only_vintage_2023,
+66803,BEMSW,side,only_vintage_2023,
+66806,15612,side,only_vintage_2023,
+66807,CUYA1,side,only_vintage_2023,
+66807,CUYA2,side,only_vintage_2023,
+66812,P5570,side,only_vintage_2023,
+66816,GLEN,side,only_vintage_2023,
+66819,HOLLY,side,only_vintage_2023,
+66820,RVFRY,side,only_vintage_2023,
+66825,SOTO3,side,only_vintage_2023,
+66826,PC923,side,only_vintage_2023,
+66834,FRONT,side,only_vintage_2023,
+66836,P5567,side,only_vintage_2023,
+66839,CRYH1,side,only_vintage_2023,
+66845,OBGLD,side,only_vintage_2023,
+66855,RSH40,side,only_vintage_2023,
+66873,GRAY,side,only_vintage_2023,
+66875,RIC,side,only_vintage_2023,
+66876,WAT,side,only_vintage_2023,
+66877,KIG,side,only_vintage_2023,
+66878,WIS,side,only_vintage_2023,
+66882,FKS1,side,only_vintage_2023,
+66883,FCS1,side,only_vintage_2023,
+66884,FSS1,side,only_vintage_2023,
+66887,HOU,side,only_vintage_2023,
+66889,CANOP,side,only_vintage_2023,
+66889,ROOF,side,only_vintage_2023,
+66925,MCBA,side,only_vintage_2023,
+66925,MCNEA,side,only_vintage_2023,
+66926,SMTNM,side,only_vintage_2023,
+66927,SMTMB,side,only_vintage_2023,
+66928,SMTSR,side,only_vintage_2023,
+66929,SMTAL,side,only_vintage_2023,
+66930,SMTBC,side,only_vintage_2023,
+66931,SMTEL,side,only_vintage_2023,
+66932,SMTLF,side,only_vintage_2023,
+66933,SMTH2,side,only_vintage_2023,
+66934,SMTR1,side,only_vintage_2023,
+66935,SMTR2,side,only_vintage_2023,
+66936,FLOYD,side,only_vintage_2023,
+66940,HAL20,side,only_vintage_2023,
+66942,SKY01,side,only_vintage_2023,
+66943,2-114,side,only_vintage_2023,
+66944,2-115,side,only_vintage_2023,
+66945,YVEA,side,only_vintage_2023,
+66954,23001,side,only_vintage_2023,
+66956,74474,side,only_vintage_2023,
+66963,FRAN1,side,only_vintage_2023,
+66964,FRAN2,side,only_vintage_2023,
+66965,MAYHI,side,only_vintage_2023,
+66966,ABRSD,side,only_vintage_2023,
+66967,S049,side,only_vintage_2023,
+66969,USJAY,side,only_vintage_2023,
+66970,USMAV,side,only_vintage_2023,
+66971,USRIL,side,only_vintage_2023,
+66974,MNBL1,side,only_vintage_2023,
+66975,MNBL2,side,only_vintage_2023,
+66977,65872,side,only_vintage_2023,
+66983,822,side,only_vintage_2023,
+66985,722,side,only_vintage_2023,
+66986,27504,side,only_vintage_2023,
+66987,718,side,only_vintage_2023,
+66988,27534,side,only_vintage_2023,
+66989,28472,side,only_vintage_2023,
+66991,HOUST,side,only_vintage_2023,
+66992,VWWTP,side,only_vintage_2023,
+66996,METER,side,only_vintage_2023,
+66997,METER,side,only_vintage_2023,
+66999,SLDO,side,only_vintage_2023,
+67000,15612,side,only_vintage_2023,
+67001,93311,side,only_vintage_2023,
+67002,NBEND,side,only_vintage_2023,
+67023,DILEO,side,only_vintage_2023,
+67024,PTSDK,side,only_vintage_2023,
+67026,RHII,side,only_vintage_2023,
+67027,GEN1,side,only_vintage_2023,
+67027,GEN2,side,only_vintage_2023,
+67027,GEN3,side,only_vintage_2023,
+67027,GEN4,side,only_vintage_2023,
+67030,ELKHO,side,only_vintage_2023,
+67050,NJ701,side,only_vintage_2023,
+67060,PV1,side,only_vintage_2023,
+67061,FTFAI,side,only_vintage_2023,
+67062,CJ210,side,only_vintage_2023,
+67063,NJ201,side,only_vintage_2023,
+67064,NJ001,side,only_vintage_2023,
+67065,NJ401,side,only_vintage_2023,
+67066,NJ205,side,only_vintage_2023,
+67067,CJ308,side,only_vintage_2023,
+67068,NJ008,side,only_vintage_2023,
+67070,CJ903,side,only_vintage_2023,
+67073,CEYK,side,only_vintage_2023,
+67077,S-1,side,only_vintage_2023,
+67079,CLRK1,side,only_vintage_2023,
+67080,CLRK2,side,only_vintage_2023,
+67081,BYHAL,side,only_vintage_2023,
+67082,FRANK,side,only_vintage_2023,
+67084,P4389,side,only_vintage_2023,
+67086,P6132,side,only_vintage_2023,
+67087,P4256,side,only_vintage_2023,
+67093,GEN 1,side,only_vintage_2023,
+67100,BYR05,side,only_vintage_2023,
+67101,LTF10,side,only_vintage_2023,
+67102,SHP20,side,only_vintage_2023,
+67103,WIL20,side,only_vintage_2023,
+67110,BRDWY,side,only_vintage_2023,
+67111,CORK,side,only_vintage_2023,
+67116,NORTH,side,only_vintage_2023,
+67116,SOUTH,side,only_vintage_2023,
+67117,EAST,side,only_vintage_2023,
+67117,WEST,side,only_vintage_2023,
+67121,BAYCS,side,only_vintage_2023,
+67122,1,side,only_vintage_2023,
+67137,GC2,side,only_vintage_2023,
+67142,MCLF,side,only_vintage_2023,
+67143,TF4,side,only_vintage_2023,
+67145,PV1,side,only_vintage_2023,
+67146,PV1,side,only_vintage_2023,
+67149,PV1,side,only_vintage_2023,
+67150,PV1,side,only_vintage_2023,
+67151,PV1,side,only_vintage_2023,
+67160,T1S,side,only_vintage_2023,
+67161,OAK,side,only_vintage_2023,
+67163,AUBRN,side,only_vintage_2023,
+67172,COLIC,side,only_vintage_2023,
+67175,RODE1,side,only_vintage_2023,
+67178,MEBA,side,only_vintage_2023,
+67178,MEPV,side,only_vintage_2023,
+67179,19038,side,only_vintage_2023,
+67181,HUN21,side,only_vintage_2023,
+67188,1,side,only_vintage_2023,
+67192,WPINE,side,only_vintage_2023,
+67194,BRIST,side,only_vintage_2023,
+67202,AVON2,side,only_vintage_2023,
+67210,LIL18,side,only_vintage_2023,
+67212,SWED1,side,only_vintage_2023,
+67213,HAM1,side,only_vintage_2023,
+67225,1,side,only_vintage_2023,
+67227,NYRWY,side,only_vintage_2023,
+67228,BROAD,side,only_vintage_2023,
+67235,11111,side,only_vintage_2023,
+67238,SFAT1,side,only_vintage_2023,
+67239,FOX01,side,only_vintage_2023,
+67240,LCPV1,side,only_vintage_2023,
+67241,401SB,side,only_vintage_2023,
+67241,4SPV1,side,only_vintage_2023,
+67242,5BES1,side,only_vintage_2023,
+67242,5BPV1,side,only_vintage_2023,
+67243,TRPV1,side,only_vintage_2023,
+67244,MN3PV,side,only_vintage_2023,
+67245,TFPV1,side,only_vintage_2023,
+67246,TBPV1,side,only_vintage_2023,
+67266,NAT21,side,only_vintage_2023,
+67268,P5648,side,only_vintage_2023,
+67269,P4665,side,only_vintage_2023,
+67270,P3887,side,only_vintage_2023,
+67271,P3879,side,only_vintage_2023,
+67272,P5412,side,only_vintage_2023,
+67273,4328C,side,only_vintage_2023,
+67273,4328R,side,only_vintage_2023,
+67274,4329C,side,only_vintage_2023,
+67274,4329R,side,only_vintage_2023,
+67275,4072B,side,only_vintage_2023,
+67275,4072C,side,only_vintage_2023,
+67275,4072G,side,only_vintage_2023,
+67284,GS1,side,only_vintage_2023,
+67286,SC,side,only_vintage_2023,
+67290,EAST,side,only_vintage_2023,
+67290,WEST,side,only_vintage_2023,
+67292,P6301,side,only_vintage_2023,
+67293,71334,side,only_vintage_2023,
+67293,71335,side,only_vintage_2023,
+67294,P5294,side,only_vintage_2023,
+67295,P5564,side,only_vintage_2023,
+67296,3658,side,only_vintage_2023,
+67296,3658B,side,only_vintage_2023,
+67297,P5658,side,only_vintage_2023,
+67308,AB1,side,only_vintage_2023,
+67308,AB10,side,only_vintage_2023,
+67308,AB11,side,only_vintage_2023,
+67308,AB12,side,only_vintage_2023,
+67308,AB13,side,only_vintage_2023,
+67308,AB14,side,only_vintage_2023,
+67308,AB2,side,only_vintage_2023,
+67308,AB3,side,only_vintage_2023,
+67308,AB4,side,only_vintage_2023,
+67308,AB5,side,only_vintage_2023,
+67308,AB6,side,only_vintage_2023,
+67308,AB7,side,only_vintage_2023,
+67308,AB8,side,only_vintage_2023,
+67308,AB9,side,only_vintage_2023,
+67309,BEK1,side,only_vintage_2023,
+67309,BEK2,side,only_vintage_2023,
+67309,BEK3,side,only_vintage_2023,
+67309,BEK4,side,only_vintage_2023,
+67310,H0551,side,only_vintage_2023,
+67310,H0552,side,only_vintage_2023,
+67310,H0553,side,only_vintage_2023,
+67311,H7601,side,only_vintage_2023,
+67311,H7602,side,only_vintage_2023,
+67311,H7603,side,only_vintage_2023,
+67312,H7761,side,only_vintage_2023,
+67312,H7762,side,only_vintage_2023,
+67312,H7763,side,only_vintage_2023,
+67313,H7891,side,only_vintage_2023,
+67313,H7892,side,only_vintage_2023,
+67313,H7893,side,only_vintage_2023,
+67314,H7901,side,only_vintage_2023,
+67314,H7902,side,only_vintage_2023,
+67314,H7903,side,only_vintage_2023,
+67315,H7961,side,only_vintage_2023,
+67315,H7962,side,only_vintage_2023,
+67315,H7963,side,only_vintage_2023,
+67316,NFB1,side,only_vintage_2023,
+67316,NFB2,side,only_vintage_2023,
+67316,NFB3,side,only_vintage_2023,
+67316,NFB4,side,only_vintage_2023,
+67316,NFB5,side,only_vintage_2023,
+67316,NFB6,side,only_vintage_2023,
+67317,HTE10,side,only_vintage_2023,
+67317,HTE11,side,only_vintage_2023,
+67317,HTE12,side,only_vintage_2023,
+67317,HTEM1,side,only_vintage_2023,
+67317,HTEM2,side,only_vintage_2023,
+67317,HTEM3,side,only_vintage_2023,
+67317,HTEM4,side,only_vintage_2023,
+67317,HTEM5,side,only_vintage_2023,
+67317,HTEM6,side,only_vintage_2023,
+67317,HTEM7,side,only_vintage_2023,
+67317,HTEM8,side,only_vintage_2023,
+67317,HTEM9,side,only_vintage_2023,
+67318,TAM10,side,only_vintage_2023,
+67318,TAM11,side,only_vintage_2023,
+67318,TAM12,side,only_vintage_2023,
+67318,TAM13,side,only_vintage_2023,
+67318,TAM14,side,only_vintage_2023,
+67318,TAM15,side,only_vintage_2023,
+67318,TAM16,side,only_vintage_2023,
+67318,TAM17,side,only_vintage_2023,
+67318,TAM18,side,only_vintage_2023,
+67318,TAM19,side,only_vintage_2023,
+67318,TAM20,side,only_vintage_2023,
+67318,TAM21,side,only_vintage_2023,
+67318,TAM22,side,only_vintage_2023,
+67318,TAM23,side,only_vintage_2023,
+67318,TAM24,side,only_vintage_2023,
+67318,TAMU1,side,only_vintage_2023,
+67318,TAMU2,side,only_vintage_2023,
+67318,TAMU3,side,only_vintage_2023,
+67318,TAMU4,side,only_vintage_2023,
+67318,TAMU5,side,only_vintage_2023,
+67318,TAMU6,side,only_vintage_2023,
+67318,TAMU7,side,only_vintage_2023,
+67318,TAMU8,side,only_vintage_2023,
+67318,TAMU9,side,only_vintage_2023,
+67319,H7691,side,only_vintage_2023,
+67319,H7692,side,only_vintage_2023,
+67319,H7693,side,only_vintage_2023,
+67326,NOS17,side,only_vintage_2023,
+67327,NON17,side,only_vintage_2023,
+67330,SC,side,only_vintage_2023,
+67331,SC,side,only_vintage_2023,
+67333,SC,side,only_vintage_2023,
+67335,SC,side,only_vintage_2023,
+67336,SC,side,only_vintage_2023,
+67339,SC,side,only_vintage_2023,
+67340,SC,side,only_vintage_2023,
+67345,SMI21,side,only_vintage_2023,
+67349,WLWCH,side,only_vintage_2023,
+67350,EMBDN,side,only_vintage_2023,
+67351,PARK,side,only_vintage_2023,
+67366,CATER,side,only_vintage_2023,
+67367,FREET,side,only_vintage_2023,
+67368,MIDDL,side,only_vintage_2023,
+67369,OSGSO,side,only_vintage_2023,
+67370,CHARL,side,only_vintage_2023,
+67371,OXFOR,side,only_vintage_2023,
+67372,SEASH,side,only_vintage_2023,
+67373,IRISH,side,only_vintage_2023,
+67374,WHITM,side,only_vintage_2023,
+67375,SCARB,side,only_vintage_2023,
+67376,BEVER,side,only_vintage_2023,
+67377,DOUGP,side,only_vintage_2023,
+67381,CLFK1,side,only_vintage_2023,
+67381,CLFK2,side,only_vintage_2023,
+67381,CLFK3,side,only_vintage_2023,
+67382,1,side,only_vintage_2023,
+67383,1,side,only_vintage_2023,
+67384,1,side,only_vintage_2023,
+67385,1,side,only_vintage_2023,
+67386,1,side,only_vintage_2023,
+67387,1,side,only_vintage_2023,
+67388,SC,side,only_vintage_2023,
+67389,SC,side,only_vintage_2023,
+67394,1,side,only_vintage_2023,
+67395,1,side,only_vintage_2023,
+67397,SC,side,only_vintage_2023,
+67400,SC,side,only_vintage_2023,
+67401,P5292,side,only_vintage_2023,
+67402,P5815,side,only_vintage_2023,
+67404,SC,side,only_vintage_2023,
+67419,PV1,side,only_vintage_2023,
+67422,POW20,side,only_vintage_2023,
+67423,PLA22,side,only_vintage_2023,
+67430,1,side,only_vintage_2023,
+67432,DBL-J,side,only_vintage_2023,
+67433,H7941,side,only_vintage_2023,
+67433,H7942,side,only_vintage_2023,
+67433,H7943,side,only_vintage_2023,
+67434,H7671,side,only_vintage_2023,
+67434,H7672,side,only_vintage_2023,
+67434,H7673,side,only_vintage_2023,
+67438,SC,side,only_vintage_2023,
+67448,SC,side,only_vintage_2023,
+67449,SC,side,only_vintage_2023,
+67450,SC,side,only_vintage_2023,
+67451,SC,side,only_vintage_2023,
+67453,SC,side,only_vintage_2023,
+67456,7BPV1,side,only_vintage_2023,
+67457,SHBE1,side,only_vintage_2023,
+67457,SHPV1,side,only_vintage_2023,
+67458,LHAPV,side,only_vintage_2023,
+67459,SYCPV,side,only_vintage_2023,
+67460,HLPV1,side,only_vintage_2023,
+67461,LHAPV,side,only_vintage_2023,
+67462,FMPV1,side,only_vintage_2023,
+67463,MGPV1,side,only_vintage_2023,
+67464,CM1BS,side,only_vintage_2023,
+67464,CM1PV,side,only_vintage_2023,
+67465,CBEP1,side,only_vintage_2023,
+67466,CBEP4,side,only_vintage_2023,
+67467,CBEP5,side,only_vintage_2023,
+67468,FOX,side,only_vintage_2023,
+67469,NESV,side,only_vintage_2023,
+67470,TWEL,side,only_vintage_2023,
+67471,LBN,side,only_vintage_2023,
+67472,LBS,side,only_vintage_2023,
+67475,SARA3,side,only_vintage_2023,
+67476,SARA4,side,only_vintage_2023,
+67477,PUL19,side,only_vintage_2023,
+67478,SAN21,side,only_vintage_2023,
+67479,PORT1,side,only_vintage_2023,
+67481,LWRD2,side,only_vintage_2023,
+67482,LWRD3,side,only_vintage_2023,
+67485,CG101,side,only_vintage_2023,
+67485,CG102,side,only_vintage_2023,
+67487,1,side,only_vintage_2023,
+67490,1,side,only_vintage_2023,
+67490,2,side,only_vintage_2023,
+67491,DORAF,side,only_vintage_2023,
+67492,DORAW,side,only_vintage_2023,
+67505,STB18,side,only_vintage_2023,
+67506,BUN23,side,only_vintage_2023,
+67507,62289,side,only_vintage_2023,
+67509,19064,side,only_vintage_2023,
+67512,LNOAK,side,only_vintage_2023,
+67514,56757,side,only_vintage_2023,
+67515,60845,side,only_vintage_2023,
+67516,59211,side,only_vintage_2023,
+67518,63583,side,only_vintage_2023,
+67519,63617,side,only_vintage_2023,
+67520,63617,side,only_vintage_2023,
+67521,60336,side,only_vintage_2023,
+67522,69620,side,only_vintage_2023,
+67523,52418,side,only_vintage_2023,
+67524,60334,side,only_vintage_2023,
+67526,62293,side,only_vintage_2023,
+67527,63613,side,only_vintage_2023,
+67550,SR5,side,only_vintage_2023,
+67574,SS2,side,only_vintage_2023,
+67577,MON22,side,only_vintage_2023,
+67577,MONBA,side,only_vintage_2023,
+67578,SWABA,side,only_vintage_2023,
+67578,SWI23,side,only_vintage_2023,
+67596,AD329,side,only_vintage_2023,
+67597,PG329,side,only_vintage_2023,
+67604,TRY03,side,only_vintage_2023,
+67605,TRY02,side,only_vintage_2023,
+67606,TRY01,side,only_vintage_2023,
+67611,10993,side,only_vintage_2023,
+67612,10994,side,only_vintage_2023,
+67618,11054,side,only_vintage_2023,
+67619,10898,side,only_vintage_2023,
+67620,11018,side,only_vintage_2023,
+67621,11012,side,only_vintage_2023,
+67726,20233,side,only_vintage_2023,
+67729,20234,side,only_vintage_2023,
+67732,20232,side,only_vintage_2023,
+67733,20231,side,only_vintage_2023,
+67743,4057B,side,only_vintage_2023,
+67743,4057C,side,only_vintage_2023,
+67743,4057R,side,only_vintage_2023,
+67744,P5876,side,only_vintage_2023,
+67745,4075,side,only_vintage_2023,
+67745,4075B,side,only_vintage_2023,
+67760,AWM,side,only_vintage_2023,
+67790,PV1,side,only_vintage_2023,
+67791,PV1,side,only_vintage_2023,
+67792,PV1,side,only_vintage_2023,
+67795,PV1,side,only_vintage_2023,
+67796,PV1,side,only_vintage_2023,
+67801,PV1,side,only_vintage_2023,
+67803,PV1,side,only_vintage_2023,
+67808,PV1,side,only_vintage_2023,
+67809,PV1,side,only_vintage_2023,
+67810,PV1,side,only_vintage_2023,
+67811,PV1,side,only_vintage_2023,
+67813,PV1,side,only_vintage_2023,
+67814,PV1,side,only_vintage_2023,
+67815,PV1,side,only_vintage_2023,
+67821,PV1,side,only_vintage_2023,
+67824,PV1,side,only_vintage_2023,
+67825,PV1,side,only_vintage_2023,
+67853,PV1,side,only_vintage_2023,
+67853,PV4,side,only_vintage_2023,
+67856,1157,side,only_vintage_2023,
+67856,1158,side,only_vintage_2023,
+67856,1159,side,only_vintage_2023,
+67856,826,side,only_vintage_2023,
+67886,ND001,side,only_vintage_2023,
+67886,ND002,side,only_vintage_2023,
+67899,GEN5,side,only_vintage_2023,
+67908,RICH1,side,only_vintage_2023,

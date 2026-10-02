@@ -15,7 +15,9 @@ These tests pin that nothing else moves:
   v3.10 row plus the three v3.11 SOCO C3a rows (owner ruling 2026-09-30,
   soco-94: exact rows, direction-bound, spend the slot, downgrade) plus the
   v3.12 SOCO C3b 2022 row (owner ruling 2026-09-30, soco-95: "Scoped ledger
-  row", budget "Keep budget at 1"), bound to an NRMSE above the C3b band.
+  row", budget "Keep budget at 1"), bound to an NRMSE above the C3b band;
+* rubric v3.15 (owner ruling R-8, 2026-10-02): on the lambda-referenced BA the
+  C3a/C3b rows are carried OFF the single slot and still downgrade.
 """
 
 import unittest
@@ -238,14 +240,19 @@ class ScopedLedgerC3aTests(unittest.TestCase):
         self.assertEqual(_c3a(v, 2019)["status"], cv.FAIL)
         self.assertEqual(v["determination"], cv.NOT_YET)
 
-    def test_c1_and_c3a_together_exceed_the_single_slot(self):
+    def test_c1_and_c3a_together_fit_the_single_slot_under_v315(self):
+        # Rubric v3.15 (owner ruling R-8, 2026-10-02): on a lambda-referenced
+        # BA the C3a row is a reference-definition row carried OFF the slot,
+        # so C1 COAL_BIT alone spends it — CALIBRATED-WITH-CAVEATS, not NOT-YET.
         art = _art(year=2019)
         art["bench"] = _c3a_art(2019, 25.0)["bench"]
         v = cv.determine_from_artifacts("t", art)
         self.assertEqual(_c3a(v, 2019)["status"], cv.CAVEAT)
+        self.assertTrue(_c3a(v, 2019)["reference_definition"])
         self.assertEqual(_rec(v, 2019, "COAL_BIT")["status"], cv.CAVEAT)
-        self.assertEqual(v["determination"], cv.NOT_YET)
-        self.assertIn("caveat budget exceeded", v["reasons"][0])
+        self.assertNotIn("reference_definition", _rec(v, 2019, "COAL_BIT"))
+        self.assertEqual(v["caveats"]["reference_definition"], ["C3a mean LMP"])
+        self.assertEqual(v["determination"], cv.CALIBRATED_CAVEATS)
 
 
 # Monthly actuals with the fixture's ~$29 annual mean (so C3a stays clean):
@@ -324,8 +331,11 @@ class ScopedLedgerC3bTests(unittest.TestCase):
         self.assertEqual(_c3b(v, 2022)["status"], cv.FAIL)
         self.assertEqual(v["determination"], cv.NOT_YET)
 
-    def test_c3a_and_c3b_together_exceed_the_kept_budget_of_one(self):
-        # Owner "Keep budget at 1": two scoped criteria in one run are NOT-YET.
+    def test_c3a_and_c3b_together_read_the_caveats_rung_under_v315(self):
+        # Owner "Keep budget at 1" (soco-95) stands — MAX_LEDGERED_CAVEATS is
+        # still 1 — but rubric v3.15 (owner ruling R-8, 2026-10-02) carries a
+        # lambda-referenced BA's C3a/C3b reference-definition rows OFF that
+        # slot: they still downgrade, to CALIBRATED-WITH-CAVEATS, not NOT-YET.
         art = _c3b_art(2022, _SHAPE_FAIL)
         art["bench"] = _c3a_art(2022, 34.0)["bench"]
         art["bench"][2022]["avgLMP"]["rt_mon"] = list(_SHAPE_FAIL)
@@ -333,8 +343,15 @@ class ScopedLedgerC3bTests(unittest.TestCase):
         self.assertEqual(_c3a(v, 2022)["status"], cv.CAVEAT)
         self.assertEqual(_c3b(v, 2022)["status"], cv.CAVEAT)
         self.assertEqual(cv.MAX_LEDGERED_CAVEATS, 1)
-        self.assertEqual(v["determination"], cv.NOT_YET)
-        self.assertIn("caveat budget exceeded", v["reasons"][0])
+        self.assertEqual(v["determination"], cv.CALIBRATED_CAVEATS)
+        self.assertTrue(any("rubric v3.15" in r for r in v["reasons"]))
+
+    def test_reference_definition_is_soco_only(self):
+        # The same two rows on a non-lambda ISO are not scoped at all (FAIL).
+        self.assertEqual(cv.LAMBDA_REFERENCED_ISOS, frozenset({"SOCO"}))
+        self.assertEqual(
+            cv.REFERENCE_DEFINITION_CRITERIA, frozenset({"price_mean", "price_shape"})
+        )
 
 
 if __name__ == "__main__":

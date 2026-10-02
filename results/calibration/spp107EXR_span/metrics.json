@@ -22,7 +22,7 @@
   ],
   "data_blocked_years": [],
   "price_reference_blocked_years": [],
-  "rubric_version": "3.13",
+  "rubric_version": "3.17",
   "determination": "NOT-YET",
   "reasons": [
     "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_mean, price_shape, price_tail, dispatch_corr"
@@ -76,6 +76,8 @@
     "protective": [],
     "ledgered": [],
     "commercial_band": [],
+    "configuration_exception": [],
+    "reference_definition": [],
     "budget": {
       "protective_max": 0,
       "ledgered_max": 1
@@ -98,7 +100,7 @@
         "2022": "+1.2%",
         "2023": "-0.6%",
         "2024": "-1.1%",
-        "2025": "+4.1%"
+        "2025": "+3.0%"
       }
     },
     "diurnal_amplitude": {
@@ -130,13 +132,13 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 44,
-      "total": 48
+      "pass": 50,
+      "total": 54
     },
     "free": {
-      "pass": 32,
-      "total": 36
+      "pass": 37,
+      "total": 41
     },
-    "headline": "C1 all 44/48 \u00b7 free 32/36"
+    "headline": "C1 all 50/54 \u00b7 free 37/41"
   }
 }

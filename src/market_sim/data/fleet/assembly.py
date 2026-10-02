@@ -763,6 +763,18 @@ def bins_to_fleet(
         )
         if cohort_ry is not None:
             bin_id = f"{bin_id}_r{cohort_ry}{(cohort_rm or 12):02d}"
+        # W0 E.1 seasonal capability shares (fleet_to_bins; None/NaN on every
+        # bin off the seasonal basis and on the ERCOT curated-CSV path), stamped
+        # on every tranche so each tranche is the same slice of the plant's
+        # published seasonal envelope.
+        _b_sf = b.get("Summer_Capability_Frac")
+        _b_wf = b.get("Winter_Capability_Frac")
+        bin_summer_frac: float | None = (
+            float(_b_sf) if _b_sf is not None and not pd.isna(_b_sf) else None
+        )
+        bin_winter_frac: float | None = (
+            float(_b_wf) if _b_wf is not None and not pd.isna(_b_wf) else None
+        )
 
         coal_supply = ""
         if fuel == "coal":
@@ -1585,6 +1597,8 @@ def bins_to_fleet(
                     # effective_cod prefers over the plant-collapsed date.
                     retirement_year=cohort_ry,
                     retirement_month=cohort_rm,
+                    summer_capability_frac=bin_summer_frac,
+                    winter_capability_frac=bin_winter_frac,
                     is_campd_bin=True,
                     plant_group=group,
                     bin_label=label,

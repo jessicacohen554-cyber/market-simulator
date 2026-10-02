@@ -228,13 +228,17 @@ class TestFlag(unittest.TestCase):
         self.assertIs(ScenarioConfig(iso="MISO").cc_block_summer_rating, False)
 
     def test_default_key_unmoved_armed_key_moves(self) -> None:
-        base = ScenarioConfig(iso="MISO")
-        armed = ScenarioConfig(iso="MISO", cc_block_summer_rating=True)
-        self.assertNotEqual(base.cache_key(), armed.cache_key())
+        # W0 (owner ruling R-2 / Q4): backcast default ON; outside a backcast
+        # it is coerced to its frozen False, so the forecast key never moves.
+        fore = ScenarioConfig(iso="MISO")
         self.assertEqual(
-            base.cache_key(),
-            ScenarioConfig(iso="MISO", cc_block_summer_rating=False).cache_key(),
+            fore.cache_key(),
+            ScenarioConfig(iso="MISO", cc_block_summer_rating=True).cache_key(),
         )
+        back = ScenarioConfig(iso="MISO", mode="backcast")
+        self.assertTrue(back.cc_block_summer_rating)
+        off = ScenarioConfig(iso="MISO", mode="backcast", cc_block_summer_rating=False)
+        self.assertNotEqual(back.cache_key(), off.cache_key())
 
 
 if __name__ == "__main__":
