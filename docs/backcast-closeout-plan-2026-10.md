@@ -17,7 +17,7 @@ Rule 30: every registered year gates the ISO. A cell lists only the failing crit
 | ISO | Keeper (bundle) | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 | ISO | Residual DOF in attestation |
 |---|---|---|---|---|---|---|---|---|---|---|
 | **NEISO** | `2026-09-26-neiso-119-anchor-fuelsec` (`neiso119_span`) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (C1/C2 unscored, prelim 923) | **CALIBRATED** | 6 of 9 |
-| **NYISO** | `2026-10-01-nyisonext21-astoria-hr-span` (`nyisonext21_span` + 2021 tp) | — | — | ✓ | ✓ | C3c unledgered | C3c unledgered | **C3a −11.6 %**, C3c | NOT-YET | 6 of 22 |
+| **NYISO** | `2026-10-01-nyisonext26p-tslprint-span` (promoted 2026-10-02 on main, NEXT-32) | — | — | ✓ | ✓ | ✓ (C3c lone-ledgered) | ✓ | ✓ (C3a −9.6 %) | **CALIBRATED** | 6 of 22 |
 | **MISO** | `2026-09-28-miso-280-splitremap` (`miso280_span`) | **C1 ST_GAS −8.0** | **C3a +11.6 %** | **C3b 0.201** | ✓ | ✓ | ✓ | ✓ (prelim) | NOT-YET | 2 of 44 |
 | **SPP** | `2026-09-28-spp-100-chp-scope` (`spp100_arm_span`) | **C3a +11.5 %** | **C3a +27.5 %, C3b 0.343** | **C1 CC −9.7 / PRB +13.2, C4 gas 0.307** | **C1 CC −10.8 / PRB +13.2, C4 gas 0.356** | C3c | C3c | C3c (prelim) | NOT-YET | 3 of 5 |
 | **ERCOT** | `2026-10-01-r-23-swcap-hourly` (`r_ercot23_span`; 3-config partition) | **C1 CC +8.9 / PRB −10.5, C3b 0.219** | **C1 CC +10.4 / PRB −11.8, C3b 0.221** | ✓ | **C1 CC −9.9** | **C3a −24.2 %, C3b 0.380** (2023 carve-out, owner hold) | **C3a −11.1 %** | ✓ | NOT-YET | 7 of 12 |
@@ -28,7 +28,7 @@ Rule 30: every registered year gates the ISO. A cell lists only the failing crit
 
 Units: C1 in TWh against a ±8 TWh / ±3 pp band (CAISO ±4.6–5.3 TWh); C3a % vs RT load-weighted mean; C3b NRMSE ≤ 0.20; C4 r ≥ 0.70 and NRMSE ≤ 0.30. "Residual DOF" counts attestation entries identified on a residual rather than a measurement (rule 21); the offer-band surface and `wefor_multiplier` 0.7 are the recurring ones.
 
-**Read of the board.** Three ISOs are one decision away from a determination change (NYISO: one owner ruling on a solved, gate-passing arm; SOCO: a budget ruling; NWPP: a price-reference ruling). Three are blocked mainly by missing free data the owner can fetch (CAISO 2019–21 OASIS prints; ERCOT 2019–22 60-Day disclosures; SPP rail-service series). Two carry misses that the records say are commitment-state or operator-conduct phenomena the energy-only LP cannot express (PJM coal loading, SPP 2019–20 body, ERCOT 2023 ECRS era, MISO 2020 low-load margin) and need either a structural lever named below or an honest frontier statement. NEISO is closed and needs a regression guard.
+**Read of the board (updated 2026-10-02 after main moved).** NYISO is now CALIBRATED (PR #6992 arm B promoted as NEXT-32). Two ISOs are one ruling away from a determination change (SOCO: a budget ruling; NWPP: a price-reference ruling). Three are blocked mainly by missing free data the owner can fetch (CAISO 2019–21 OASIS prints; ERCOT 2019–22 60-Day disclosures; SPP rail-service series). Two carry misses that the records say are commitment-state or operator-conduct phenomena the energy-only LP cannot express (PJM coal loading, SPP 2019–20 body, ERCOT 2023 ECRS era, MISO 2020 low-load margin) and need either a structural lever named below or an honest frontier statement. NEISO is closed and needs a regression guard.
 
 ---
 
@@ -78,7 +78,7 @@ Side observation for the NWPP lane: EIA-930 NWPP peak demand reads 68.6/68.7 GW 
 
 Each block: the failing gates → the diagnosis the records settle → retests with their new evidence (rule 28) → new levers (rule 13 story stated) → the ordered sequence with the pre-fixed reading and an honest probability → what to ledger. "P" is the shard's probability that the step closes its gate, not that it improves fidelity. Full detail and citations: the ISO's `SHARD-*` report.
 
-### 3.1 NYISO — one ruling from CALIBRATED
+### 3.1 NYISO — CALIBRATED since 2026-10-02 (NEXT-32 promoted arm B); protect it and close the C3c classification
 
 | Gate | Diagnosis (record) | Route |
 |---|---|---|
@@ -90,7 +90,7 @@ Retests with new evidence: `nyiso_spin_reserve_online` (I) — its inertness con
 
 | # | Step | Gate | Pre-fixed reading | P | LP |
 |---|---|---|---|---|---|
-| 0 | Owner rules on #6992 option 1 (promote NEXT-26 arm B; close #6987; decline #6984 standalone); `promote_keeper.py` | C3a 2025, ISO | span/2021/ISO CALIBRATED, C3c lone → rule-22 auto-ledger (0.4 pt margin) | high | 0 |
+| 0 | **DONE on main 2026-10-02 (NYISO-NEXT-32):** keeper `2026-10-01-nyisonext26p-tslprint-span`, ISO CALIBRATED, C3c lone-ledgered (0.4 pt C3a-2025 margin). | C3a 2025, ISO | — | done | 0 |
 | 1 | Tail decomposition on disk (RT zonal components, `rtasp`, TSA hours, DA LBMP) + free MIS intake of RT limiting constraints | C3c 2023–25 class | ≥ 80 % of 2023/24 missed hours RT-only with a reserve/congestion component → ledger | n/a | 0 |
 | 2 | Jun 23–25 2025 availability audit on the keeper sidecars vs CAMPD capability | C3c 2025 | model available thermal − CAMPD max ≥ 2 GW → owner card on admissibility | low–med | 0 |
 | 3 | Neighbour-emergency import curtailment phase 0 (P-32 vs ISO-NE OP-4 window) | C3c 2025 | ≥ 500 MW modelled import in cut hours → build event rule, 5 shards | low–med | 0 → 5 |
@@ -119,7 +119,7 @@ Retests with new evidence: `dynamic_reserve_requirements` (R) — 2019–22 data
 |---|---|---|
 | C1 ST_GAS 2019 −8.003 TWh (band 8.00) | ~7.6 TWh of out-of-merit MISO-South steam on MTEP15 VLR-eligible plants (Ninemile, Sabine, Lewis Creek, Little Gypsy, Waterford); level unpublished → `scuc_load_pocket_commitment` G | do not build for a 3 GWh miss; closes only on an incidental rule-14 move or a published pocket limit |
 | C3a 2020 +11.6 % | all-years low-load level shift: model low-load margin is gas CC 65 % + seam 28 % + coal 7 % vs IMM coal ~40 % off-peak; coal curve has a hole between the ~$9 committed band and the ~$30 econ band where the real margin (~$15) sits; ~4.4 pts is West/Plains congestion (G) | L3/L4 committed-band continuum; honest ceiling ≈ +7 % |
-| C3b 2021 0.201 | Feb Uri 24 % (routed) + Sep–Nov fall coal conservation 60 % (IMM: reference-level adders on 18→8 GW of coal) | L1 per-year gas transport table; conservation needs an owner rule-13 ruling on measured stocks |
+| C3b 2021 0.201 | Feb Uri 24 % (routed) + Sep–Nov fall coal conservation 60 % (IMM: reference-level adders on 18→8 GW of coal) | per-year transport closed (miso-299); conservation is now admissible under ruling D-P7 (measured receipts/stocks as a fuel-availability overlay) — the next MISO lever |
 | C3c 2019–21 SKIP | no committed RT tail; `derive_actual_tail.py` ungated since 2026-09-09 and the hub series is on disk; zero-LP pre-read: 17/8/48 h | **derive now** → 2019 CAVEAT, 2020 PASS, 2021 CAVEAT |
 
 Retests with new evidence: `coal_prb_committed_dispatchable` (R 07-31) and `coal_prb_committed_split` (R 08-01) — adjudicated for the retired C7 amplitude criterion on a 2023–25 keeper before measured coal HR, the yard-grain budget, the dispatched-bin denominator and the zone-resolved basis; miso-296/297's census (7 % vs 40 % low-load coal margin, "shape not level") is new evidence on exactly the committed-band question. `miso_coal_night_floor` stays I.
@@ -130,7 +130,7 @@ New levers: L1 per-year variable gas transport from own-year EIA-923 receipts (t
 |---|---|---|---|---|---|
 | 0a | `derive_actual_tail.py`, commit the 2019–21 rows | C3c SKIP | three SKIPs scored; determination unchanged | high | 0 |
 | 0b | Max Gen registry transcription (owner browser download) + floor vintage with a constants citation | inputs | windows priced only where slack binds | high (hygiene) | 0 |
-| 1 | L1 census (CC fuel ≤ keeper in 2019–22; no static C1 flip) → 7 shards | C3b 2021 | ≤ 0.20 (ceiling 0.192); COAL_PRB 2019 must not flip | med | 7 |
+| 1 | ~~L1 per-year transport table~~ **CLOSED on main 2026-10-02 (miso-299):** the pre-stated rule failed on the training tier (2023–25 CC fuel moves +0.25/−0.07/−0.12 $/MMBtu vs the frozen table; 2023 static error worsens); FINDING only, both R cells stay R. A per-year re-fit is a lag correction, not a transport measurement. | C3b 2021 | — | closed | 0 |
 | 2 | L3 + L4 census: MISO incremental-HR ratio; low-load coal marginal share and q1–q4 price at the keeper quantity | C3a 2020 | ≥ −$1.0/MWh at q1–q4 with COAL_PRB 2019/21/22 in band | low–med | 0 → 7 |
 | 3 | One full span carrying 0b + whatever passed; writes `unit_marginal_<y>` (rule 15, required for any promotion) | all | kill rules ex ante (PRECOMMIT-miso298 §5 pattern) | — | 7 |
 
@@ -186,7 +186,7 @@ Ledger: 2023 C3a/C3b at the actual-RT target (operator-conduct regime); C3c 2021
 
 | Gate | Diagnosis (record, NEXT-10..23) | Route |
 |---|---|---|
-| C1 COAL_BIT 2019/20/21 (+18.7/+11.9/+17.1; 2025 +11.3 latent) | the LP's in-merit loading response is steeper than real coal in every year (in-money loading 0.97 vs real 0.88); 2023/24 fit is a cancellation; ~15 levers measured and falsified (EcoMax, self-schedule, availability, stocks, offers, replacement fuel, slope, capacity basis, west congestion) | L1 coal in the per-generator reserve pool (bound 3–6 TWh/yr); otherwise frontier |
+| C1 COAL_BIT 2019/20/21 (+18.7/+11.9/+17.1; 2025 +11.3 latent) | the LP's in-merit loading response is steeper than real coal in every year (in-money loading 0.97 vs real 0.88); PJM-NEXT-24 (2026-10-02, main): the excess is **within-plant** loading (keeper contrast 0.56–0.69 vs real 0.19–0.30 in 2019–21), while the CT deficit is **across-plant** ordering (2–3.5× real; real CTs start about twice as often, half their energy in out-of-money shoulder hours); ~15 levers falsified | L1 coal in the per-generator reserve pool (bound 3–6 TWh/yr); otherwise frontier. Hygiene: Tait 55248→2847 one-entry CAMPD remap (NEXT-24 card 3) |
 | C1 CC 2020/22/23 (+9.8/+10.9/+8.5) | 2023 = Dominion −12.7 / EMAAC +9.0 zonal offset from the unposted Peach Bottom–Conastone corridor (G) + Dominion EIA-923 gas +1.63 over eastern spot + ~10 TWh benchmark (923 vs 930) drift; 2020/22 loading-when-on, same north-over/south-under signature | W5 basis ruling; L4 only if a weekly Z5/M3 series is ruled admissible |
 | C1 CT 2021 −9.6 | dear CTs (Doswell, Tait, Louisa, West Lorain) run at half their modeled offer; IMM 2021: CTs took 85.7 % of balancing credits (out-of-merit commitment) | ledger (inadmissible as a lever) |
 | C3a 2020 +12.4 % | all-year bulk price floor too high (implied HR p10 6.9–8.4 vs 4.8–5.5), unmasked in 2020 with no peak-leg offset | L2 incremental-HR pricing of the price-setting CC tranche (≈ −$1/MWh; helps, does not close) |
@@ -253,10 +253,10 @@ NOT-YET on one record (C4 coal 2023: r 0.669, NRMSE 0.313); coal 2022 and 2025 s
 
 | # | Step | Gate | Reading | P | LP |
 |---|---|---|---|---|---|
-| 0 | NEXT-19 census (chartered, unrun): split measured 2023–25 NW price variance into gas-daily vs interface parts; price-taker bound on C4 coal 2023 at measured prices | picks A vs B | the lever with the larger explained variance | n/a | 0 |
+| 0 | **DONE on main 2026-10-02 (NWPP-NEXT-19):** Henry Hub daily explains ~0–5 % of NW within-month between-day price variance; CAISO coupling adds R² 0.11–0.43 beyond gas; the measured price lifts the 2023 Jun–Dec coal shape (+0.10 r) but not 2024/25. The interface part dominates → lever B is next. | picks A vs B | — | done | 0 |
 | 1 | ~~FERC-714 Part II Sch. 6 hourly system lambda for NWPP respondents as the pool price reference~~ **FALSIFIED AT ZERO LP, 2026-10-02:** the raw extract (`data/raw/ferc-714/nwpp_hourly_system_lambda_2019_2025_raw.parquet`, every NWPP filer, 2019–2025) shows only Nevada Power and NorthWestern (2021+) file a non-zero lambda; PacifiCorp, PGE, Puget, BPA, Tacoma, EWEB and the PUDs file zeros every hour, and Idaho Power/Avista/Seattle/Chelan/Grant file no facts. A demand-weighted pool lambda cannot be built. Residual question for the owner: is a single-BA NEVP or NWMT lambda admissible as a *labelled* reference, or does NWPP stay price-unscored (then the WEIM ELAP 2023-06+ series is the only measured hourly price in the footprint). | C3a/C3b scoring | — | closed as a pool reference | 0 |
-| 2 | Lever A `gas_daily_shape` (U; K in PJM; only Henry Hub daily is free), 7 shards | C4 coal 2023 | r ≥ 0.70, NRMSE ≤ 0.30 with coal 2022/24/25 still passing | low–med | 7 |
-| 3 | Lever B priced seam (three default-off `NeighborInterface` blocks registered) — only after the CAISO lane rules on the `WECC_import` double count (card N4) | C4 coal 2023 Jul/Oct level | same | med (price shape) / low–med (C4) | 7 |
+| 2 | ~~Lever A `gas_daily_shape`~~ **REJECTED on main 2026-10-02 (NWPP-NEXT-19 arm G, owner card "Reject, keep #20"):** C4 coal 2023 0.669 → 0.677 (still FAIL), C4 gas r falls in every year. Cell R. | C4 coal 2023 | — | closed | 7 (spent) |
+| 3 | **Lever B priced seam — now the next NWPP lever** (wired default-off at NEXT-19: `NWPP_external` node, seam-limit links, empty-priced-build refusal; owner card "Fix both, then solve" = NEXT-20: the CAISO seam's gross-load shape → net load, and the WECC_CAN peak-only Mid-C anchor) — the CAISO `WECC_import` double-count ruling (card N4) still applies | C4 coal 2023 Jul/Oct level | r ≥ 0.70, NRMSE ≤ 0.30 with coal 2022/24/25 still passing | med (price shape) / low–med (C4) | 7 |
 | 4 | Lever C coal commitment bridge by parameters (`min_down_hours`, startup; rules 18/19 census of existing floors first) | C4 coal 2023 Aug–Oct | same | med (matches the residual shape) | 0 → 7 |
 | 5 | Retest `coal_captive_marginal_fuel_price` (R, arm D) in composition with whichever of A/B/C lands | C4 coal 2023 | same | low–med | 7 |
 | 6 | If Feb–May remains: scoped C4 ledger row (v3.10 "ledger as limitation") citing the documented delivery shortfall → PHYSICALLY-CALIBRATED-WITH-CAVEATS (PRICE UNSCORED) | determination | — | — | 0 |
@@ -297,6 +297,30 @@ Not free, do not pursue (recorded so nobody re-asks): daily NW gas hubs (Sumas/S
 ---
 
 ## 5. Owner decision queue
+
+### 5.0 RULED 2026-10-02 (decision cards presented in the planning session; verbatim choices)
+
+| # | Ruling | What it unblocks / what it requires |
+|---|---|---|
+| R-1 | **Merge PR #7015 now.** | Lanes clone the plan from `main`; every 2025 backcast and every forecast reads EIA-860 Final 2025 from the next launch. |
+| R-2 | **W0 EIA-860 settlement: approve all eight (Q1–Q8).** | One foundation lane: seasonal capacity basis, SB admitted with benchmark parity, registry-read repairs default-on in backcast, load-time BA filtering, EPA/PUDL crosswalk, per-keeper `fleet_census_<Y>.json` with 1 % / 0.5 % / 3 % tolerances, tests, freeze; then one full-span re-solve per ISO promoted on structure. |
+| R-3 | **EIA-923 monthly coal receipts and month-end stocks are admissible as a backcast fuel-availability overlay (rule 13)** — a per-plant monthly take ceiling (receipts + stock envelope with a declared `stock_min`), never the burn; forward analogue = contract delivery rate. | ERCOT 2022 L1 (first), MISO fall-2021 conservation, SPP/PJM 2022, NWPP Bridger 2023. |
+| R-4 | **Coal benchmark basis (EIA-923 vs EIA-930): study across all nine ISOs first.** | One zero-LP lane produces the dual-basis C1 table for every ISO-year before any rubric ruling; SPP 0a and PJM C1 wait on it. |
+| R-5 | NYISO: already promoted (NEXT-32 on main). | — |
+| R-6 | **ERCOT 2023 keeps its own configuration.** Owner: *"We had it set up so 2023 was allowed to have a different config because of the ECRS; then that got eliminated. I'm comfortable with a different config for a single year we know was off."* | The 2023 carve-out config is the sanctioned 2023 recipe. Implementation needed: an owner-signed, 2023-only *configuration-exception* caveat kind in `calibration_verdict.py` / rubric §3 (non-downgrading, like C3c; cites the IMM SOM 2023 §II.H finding and this ruling), so the ECRS-era C3a/C3b residual stops gating the ISO; report the IMM counterfactual beside the actual. Rubric version bump; ERCOT lane owns it. |
+| R-7 | **Re-open the free ERCOT Data Portal / Public API account for one bounded intake** (60-Day SCED/DAM 2019–22, NP6-576-ER). | ERCOT 2019/20 C1 and C3b route (per-plant coal offer tables, zero DOF). |
+| R-8 | **SOCO: scope the caveat budget for a lambda-referenced BA → CALIBRATED-WITH-CAVEATS.** | Rubric amendment (§2 budgets: a BA scored on a system lambda carries its reference-definition ledger rows at full reported magnitude, determination-downgrading to WITH-CAVEATS, not NOT-YET); SOCO L1 zero-LP hour still runs for structure. |
+| R-9 | **NWPP price reference: WEIM ELAP 2023-06 onward as a labelled imbalance-price benchmark**, STOP-gated like SOCO's lambda; 2019–2022 stay PHYSICALLY-CALIBRATED (price unscored). | N2 amendment card; the FERC-714 pool lambda stays falsified. |
+| R-10 | **C3c: sign one owner model-class classification per ISO after each lane's zero-LP decomposition.** | W3; lanes run the decomposition first. |
+| R-11 | **Retire the residual free parameters** (`wefor_multiplier` 0.7 → measured wind availability or deleted; CAISO min-load 0.26 → 0.570; battery adders and fitted import tranches ledgered or replaced), one lane per ISO, promoted only if nothing regresses. | W2. |
+| R-12 | **SPP: one PRECOMMIT for SPP-107 + the commitment-posture pairing.** | 7 shards once. |
+| R-13 | **PJM: re-charter the `gas_offer_margin_anchor_vintage` retest with a displacement-aware S4 written ex ante; adopt zonal load-weighted C3a for PJM.** | Every registered PJM year re-bases on the zonal basis (as NYISO/MISO). |
+| R-14 | **CAISO: `zonal_gas_basis` 2021 carve-out accepted as rule-28 new evidence; re-solve `caiso_ra_min_load_frac` at the measured 0.570.** | Two sequential full-span arms with the 2024 and C4-2025 tripwires. |
+| R-15 | **MISO: transcribe the Max Gen declaration history (owner downloads the OATI PDF); keep C1 ST_GAS 2019 routed.** | 0b; no lever for the 3 GWh miss. |
+| R-16 | No requester-pays AWS data (CAISO OASIS history). | The 2019–21 CAISO fold stays data-limited. |
+
+The queue below is retained as the record of what was asked; items ruled above are marked.
+
 
 Each decision is phrased so a one-word answer unblocks a lane. Recommendation in bold where the shards converge.
 
