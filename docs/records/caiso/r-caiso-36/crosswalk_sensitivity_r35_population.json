@@ -1,0 +1,180 @@
+{
+ "census_resources": 177,
+ "2023": {
+  "r35_crosswalk": {
+   "coverage": 0.1858,
+   "T1": {
+    "chg": {
+     "bind_share": 0.0,
+     "bind_hours": 0,
+     "excess_mwh_share_of_envelope": 0.0
+    },
+    "dis": {
+     "bind_share": 0.0,
+     "bind_hours": 0,
+     "excess_mwh_share_of_envelope": 0.0
+    }
+   },
+   "min_headroom": {
+    "chg": 0.451,
+    "dis": 0.3061
+   }
+  },
+  "r36_all_accepted": {
+   "coverage": 0.8032,
+   "T1": {
+    "chg": {
+     "bind_share": 0.0,
+     "bind_hours": 0,
+     "excess_mwh_share_of_envelope": 0.0
+    },
+    "dis": {
+     "bind_share": 0.0,
+     "bind_hours": 0,
+     "excess_mwh_share_of_envelope": 0.0
+    }
+   },
+   "min_headroom": {
+    "chg": 0.1368,
+    "dis": 0.0355
+   }
+  },
+  "r36_name_token_only": {
+   "coverage": 0.1812,
+   "T1": {
+    "chg": {
+     "bind_share": 0.0,
+     "bind_hours": 0,
+     "excess_mwh_share_of_envelope": 0.0
+    },
+    "dis": {
+     "bind_share": 0.0,
+     "bind_hours": 0,
+     "excess_mwh_share_of_envelope": 0.0
+    }
+   },
+   "min_headroom": {
+    "chg": 0.4512,
+    "dis": 0.3062
+   }
+  }
+ },
+ "2024": {
+  "r35_crosswalk": {
+   "coverage": 0.3102,
+   "T1": {
+    "chg": {
+     "bind_share": 0.0,
+     "bind_hours": 0,
+     "excess_mwh_share_of_envelope": 0.0
+    },
+    "dis": {
+     "bind_share": 0.0,
+     "bind_hours": 0,
+     "excess_mwh_share_of_envelope": 0.0
+    }
+   },
+   "min_headroom": {
+    "chg": 0.3226,
+    "dis": 0.233
+   }
+  },
+  "r36_all_accepted": {
+   "coverage": 0.7764,
+   "T1": {
+    "chg": {
+     "bind_share": 0.0,
+     "bind_hours": 0,
+     "excess_mwh_share_of_envelope": 0.0
+    },
+    "dis": {
+     "bind_share": 0.0,
+     "bind_hours": 0,
+     "excess_mwh_share_of_envelope": 0.0
+    }
+   },
+   "min_headroom": {
+    "chg": 0.1905,
+    "dis": 0.0954
+   }
+  },
+  "r36_name_token_only": {
+   "coverage": 0.2338,
+   "T1": {
+    "chg": {
+     "bind_share": 0.0,
+     "bind_hours": 0,
+     "excess_mwh_share_of_envelope": 0.0
+    },
+    "dis": {
+     "bind_share": 0.0,
+     "bind_hours": 0,
+     "excess_mwh_share_of_envelope": 0.0
+    }
+   },
+   "min_headroom": {
+    "chg": 0.3449,
+    "dis": 0.2502
+   }
+  }
+ },
+ "2025": {
+  "r35_crosswalk": {
+   "coverage": 0.1865,
+   "T1": {
+    "chg": {
+     "bind_share": 0.0,
+     "bind_hours": 0,
+     "excess_mwh_share_of_envelope": 0.0
+    },
+    "dis": {
+     "bind_share": 0.0,
+     "bind_hours": 0,
+     "excess_mwh_share_of_envelope": 0.0
+    }
+   },
+   "min_headroom": {
+    "chg": 0.3725,
+    "dis": 0.2669
+   }
+  },
+  "r36_all_accepted": {
+   "coverage": 0.8467,
+   "T1": {
+    "chg": {
+     "bind_share": 0.0,
+     "bind_hours": 0,
+     "excess_mwh_share_of_envelope": 0.0
+    },
+    "dis": {
+     "bind_share": 0.0,
+     "bind_hours": 0,
+     "excess_mwh_share_of_envelope": 0.0
+    }
+   },
+   "min_headroom": {
+    "chg": 0.236,
+    "dis": 0.1304
+   }
+  },
+  "r36_name_token_only": {
+   "coverage": 0.1851,
+   "T1": {
+    "chg": {
+     "bind_share": 0.0,
+     "bind_hours": 0,
+     "excess_mwh_share_of_envelope": 0.0
+    },
+    "dis": {
+     "bind_share": 0.0,
+     "bind_hours": 0,
+     "excess_mwh_share_of_envelope": 0.0
+    }
+   },
+   "min_headroom": {
+    "chg": 0.3742,
+    "dis": 0.2687
+   }
+  }
+ }
+}

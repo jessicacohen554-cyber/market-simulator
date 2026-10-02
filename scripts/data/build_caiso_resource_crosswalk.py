@@ -25,6 +25,14 @@ the same score, threshold and capacity sanity. It writes a SIBLING file,
 ``data/raw/reference/caiso-storage-resource-eia-crosswalk.csv``, so the thermal
 overlay's reader (:func:`market_sim.data.caiso_outages.load_crosswalk`) never
 sees a battery row. It has no runtime consumer.
+
+The battery half also applies a hand-review ledger (R-CAISO-36, link 18),
+``data/raw/reference/caiso-storage-crosswalk-review.csv``: one row per reviewed
+resource with the EIA-860 plant it is (or blank), an ``accepted`` flag and a
+``review_note`` stating the evidence (plant name/ID, MW agreement, zone). A
+reviewed row replaces the name-token proposal and carries
+``match_method = reviewed``; the name-token threshold and capacity sanity are
+unchanged and still decide every unreviewed row.
 """
 
 from __future__ import annotations
@@ -44,6 +52,7 @@ from market_sim.config.paths import RAW_DATA_DIR, REFERENCE_DIR  # noqa: E402
 
 OUT_CSV = REFERENCE_DIR / "caiso-resource-eia-crosswalk.csv"
 STORAGE_OUT_CSV = REFERENCE_DIR / "caiso-storage-resource-eia-crosswalk.csv"
+STORAGE_REVIEW_CSV = REFERENCE_DIR / "caiso-storage-crosswalk-review.csv"
 # The consolidated DAM outage episodes (curate_caiso_dam_outages.py) — the
 # resource universe to crosswalk.
 DAM_OUTAGE_WINDOWS = (
@@ -119,10 +128,17 @@ _STOP = {
 _TOKEN_RE = re.compile(r"[a-z0-9]+")
 
 # Battery-resource selector of the R-CAISO-32 census (Part B probe): a CAISO
-# storage id suffix, or a storage/battery/BESS name, solar-only names excluded.
-_STORAGE_ID = re.compile(r"_(?:BT|BX|ES|BE)\d")
+# storage code in the id's final segment, or a storage/battery/BESS name with
+# solar-only and pumped-hydro names excluded. The storage code follows the
+# plant code inside the segment (``ROMOLA_5_MPBBT1``, ``RATSKE_2_WAVBT1``), so
+# the id pattern searches the whole segment (R-CAISO-36: the earlier
+# ``_(?:BT|BX|ES|BE)\d`` only matched a code right after the underscore). An id
+# match is authoritative: a hybrid's battery resource often carries the solar
+# project's name ("McFarland Solar B Hybrid", ``MCFLND_5_MBSBX2``).
+_STORAGE_ID = re.compile(r"_(?:[A-Z0-9 ]*B[TX]|ES\d|BE\d)[A-Z0-9 ]*$")
 _STORAGE_NAME = re.compile(r"storage|batter|bess", re.I)
 _SOLAR_ONLY = re.compile(r"solar(?!.*bess)", re.I)
+_PUMPED = re.compile(r"pumped", re.I)
 # Storage-specific tokens dropped from the name score (they name the technology,
 # not the plant, and every storage target carries them).
 _STORAGE_STOP = {"storage", "battery", "batteries", "bess", "ess", "ess"}
@@ -178,24 +194,30 @@ def load_targets() -> pd.DataFrame:
 def is_battery_resource(resource_id: object, resource_name: object) -> bool:
     """True when a CNOG resource is a battery under the R-CAISO-32 selector."""
     rid, name = str(resource_id), str(resource_name)
+    if _STORAGE_ID.search(rid):
+        return True
     return bool(
-        (_STORAGE_ID.search(rid) or _STORAGE_NAME.search(name))
+        _STORAGE_NAME.search(name)
         and not _SOLAR_ONLY.search(name)
+        and not _PUMPED.search(name)
     )
 
 
-def load_storage_targets() -> pd.DataFrame:
+def load_storage_targets(statuses: tuple[str, ...] = ("OP",)) -> pd.DataFrame:
     """EIA-860 operable battery plants in CAISO zones: (plant_code, name, MW).
 
     Reads the same energy-storage operable schedule and zone lookup as
     :func:`market_sim.model.storage.load_eia860_storage` (compressed air
-    excluded, as there), summed to plant level across COD years.
+    excluded, as there), summed to plant level across COD years. The name-token
+    pass uses ``OP`` only; the review ledger may also name a plant the schedule
+    lists as ``OA``/``OS`` (out of service in the release year, e.g. Elkhorn
+    after the 2025 Moss Landing fire), so it reads every status in the schedule.
     """
     from market_sim.config.paths import active_eia860_dir
     from market_sim.data.zone_assignment import build_zone_lookup
 
     df = pd.read_parquet(active_eia860_dir() / "eia860_energy_storage_operable.parquet")
-    df = df[df["Status"].astype(str).str.strip().str.upper() == "OP"]
+    df = df[df["Status"].astype(str).str.strip().str.upper().isin(statuses)]
     df = df[~df["Technology"].astype(str).str.contains("Compressed Air", case=False)]
     zones = build_zone_lookup("CAISO")
     code = pd.to_numeric(df["Plant Code"], errors="coerce")
@@ -206,7 +228,9 @@ def load_storage_targets() -> pd.DataFrame:
     df = df[df["plant_code"].notna()]
     df = df[df["plant_code"].astype(int).isin(set(zones))]
     out = df.groupby("plant_code", as_index=False).agg(
-        plant_name=("Plant Name", "first"), plant_pmax_mw=("mw", "sum")
+        plant_name=("Plant Name", "first"),
+        plant_pmax_mw=("mw", "sum"),
+        eia_status=("Status", lambda x: "/".join(sorted(set(map(str, x))))),
     )
     out["plant_code"] = out["plant_code"].astype(int)
     out["plant_group"] = "BATTERY"
@@ -246,21 +270,17 @@ def _score_storage(res_name: str, plant_name: str) -> float:
 def build_storage(
     windows_path: Path = DAM_OUTAGE_WINDOWS,
     accept_threshold: float = 0.6,
+    review_path: Path = STORAGE_REVIEW_CSV,
 ) -> pd.DataFrame:
     """Propose the battery crosswalk; one row per CNOG battery resource.
 
     Every census resource is emitted (unmatched ones with a blank plant), so
     the file is the full reviewable census; ``accepted`` uses the thermal
-    builder's threshold and capacity sanity unchanged.
+    builder's threshold and capacity sanity unchanged, except on rows the
+    review ledger covers (:func:`apply_storage_review`).
     """
-    targets = load_storage_targets()
-    resources = load_resources(windows_path)
-    resources = resources[
-        [
-            is_battery_resource(i, n)
-            for i, n in zip(resources["resource_id"], resources["resource_name"])
-        ]
-    ]
+    targets = load_storage_targets().drop(columns="eia_status")
+    resources = load_battery_resources(windows_path)
     out_rows = []
     for _, res in resources.iterrows():
         best_score, best = 0.0, None
@@ -292,9 +312,94 @@ def build_storage(
     out = pd.DataFrame(out_rows)
     if not out.empty:
         out["plant_code"] = out["plant_code"].astype("Int64")
+        out = apply_storage_review(out, review_path)
         out = out.sort_values(
-            ["accepted", "match_score"], ascending=[False, False]
+            ["accepted", "match_method", "match_score"],
+            ascending=[False, True, False],
         ).reset_index(drop=True)
+    return out
+
+
+def load_battery_resources(windows_path: Path) -> pd.DataFrame:
+    """Distinct CNOG battery resources (id, name, max Pmax) from the episodes.
+
+    A resource is a battery when any of its episodes passes
+    :func:`is_battery_resource`; one id can carry two names across episodes
+    (``RATSKE_2_WAVBT1``: "Willy 9 Antelope Valley Complex" and "Antelope
+    Valley BESS, LLC"), so the selector runs per episode, and the name kept
+    for scoring prefers one with a storage token.
+    """
+    df = pd.read_parquet(
+        windows_path, columns=["resource_id", "resource_name", "resource_pmax_mw"]
+    )
+    df = df[df["resource_id"].notna()]
+    df = df[
+        [
+            is_battery_resource(i, n)
+            for i, n in zip(df["resource_id"], df["resource_name"])
+        ]
+    ]
+    df = df.assign(
+        _named=~df["resource_name"].astype(str).str.contains(_STORAGE_NAME)
+    ).sort_values(["resource_id", "_named"], kind="stable")
+    return df.groupby("resource_id", as_index=False).agg(
+        resource_name=("resource_name", "first"),
+        resource_pmax_mw=("resource_pmax_mw", "max"),
+    )
+
+
+def apply_storage_review(
+    proposed: pd.DataFrame, review_path: Path = STORAGE_REVIEW_CSV
+) -> pd.DataFrame:
+    """Overlay the hand-review ledger on the name-token proposal.
+
+    Each ledger row (``resource_id, plant_code, accepted, review_note``)
+    replaces that resource's proposal: the plant comes from the EIA-860
+    storage operable schedule in a CAISO zone (any status), ``match_score`` is
+    the name-token score against that plant (for reference only), and
+    ``match_method`` becomes ``reviewed``. A ledger row naming a resource
+    outside the census, an accepted row without a plant, or a plant outside
+    the schedule is an error, so a stale review never applies silently.
+    """
+    out = proposed.copy()
+    out["review_note"] = ""
+    if not Path(review_path).exists():
+        return out
+    rev = pd.read_csv(review_path, dtype={"resource_id": str})
+    rev["plant_code"] = pd.to_numeric(rev["plant_code"], errors="coerce").astype(
+        "Int64"
+    )
+    unknown = set(rev["resource_id"]) - set(out["resource_id"])
+    if unknown:
+        raise ValueError(f"review rows outside the census: {sorted(unknown)}")
+    if rev["resource_id"].duplicated().any():
+        raise ValueError("duplicate resource_id in the review ledger")
+    targets = load_storage_targets(("OP", "OA", "OS")).set_index("plant_code")
+    idx = out.set_index("resource_id").index
+    for r in rev.itertuples(index=False):
+        i = idx.get_loc(r.resource_id)
+        acc = int(r.accepted)
+        if pd.isna(r.plant_code):
+            if acc:
+                raise ValueError(f"{r.resource_id}: accepted without a plant")
+            for c in ("plant_code", "plant_group", "plant_name", "plant_pmax_mw"):
+                out.at[i, c] = pd.NA if c == "plant_code" else None
+            out.at[i, "match_score"] = 0.0
+        else:
+            code = int(r.plant_code)
+            if code not in targets.index:
+                raise ValueError(f"{r.resource_id}: plant {code} not in schedule")
+            t = targets.loc[code]
+            out.at[i, "plant_code"] = code
+            out.at[i, "plant_group"] = "BATTERY"
+            out.at[i, "plant_name"] = t["plant_name"]
+            out.at[i, "plant_pmax_mw"] = float(t["plant_pmax_mw"])
+            out.at[i, "match_score"] = _score_storage(
+                str(out.at[i, "resource_name"]), str(t["plant_name"])
+            )
+        out.at[i, "match_method"] = "reviewed"
+        out.at[i, "accepted"] = acc
+        out.at[i, "review_note"] = str(r.review_note)
     return out
 
 
@@ -385,6 +490,7 @@ def main() -> None:
     if not out.empty:
         acc = out[out["accepted"] == 1]
         print(f"  accepted plants: {acc['plant_code'].nunique()} distinct")
+        print(f"  accepted by method: {acc['match_method'].value_counts().to_dict()}")
 
 
 if __name__ == "__main__":
