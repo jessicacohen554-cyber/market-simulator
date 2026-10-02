@@ -318,6 +318,7 @@ Not free, do not pursue (recorded so nobody re-asks): daily NW gas hubs (Sumas/S
 | R-14 | **CAISO: `zonal_gas_basis` 2021 carve-out accepted as rule-28 new evidence; re-solve `caiso_ra_min_load_frac` at the measured 0.570.** | Two sequential full-span arms with the 2024 and C4-2025 tripwires. |
 | R-15 | **MISO: transcribe the Max Gen declaration history (owner downloads the OATI PDF); keep C1 ST_GAS 2019 routed.** | 0b; no lever for the 3 GWh miss. |
 | R-16 | No requester-pays AWS data (CAISO OASIS history). | The 2019–21 CAISO fold stays data-limited. |
+| R-17 | **No owner downloads today — proceed without them** (owner, 2026-10-02, desk session). | Deferred, not cancelled: STB EP 724 rail (SPP step 3), MISO Max Gen OATI PDF (0b), ERCOT account intake (R-7). Lanes proceed; each deferred object is written as a DRAFT data-limited ledger row whose route is the intake. |
 
 The queue below is retained as the record of what was asked; items ruled above are marked.
 
@@ -385,7 +386,7 @@ PR #7020 (fast-tier re-vintage) merged 05:06Z; main = `4d459da3`. Desk sequencin
 | NEISO | `session_01JjVv2VJdW4E3o77vTSuwSS` | `claude/closeout-neiso-wave1` | §3.2 1, 2, 4 spec; scarcity-arm PRECOMMIT | 0 (held) |
 | NWPP | `session_01UT1DSG4oaBUXDxkdvQE7bM` | `claude/closeout-nwpp-wave1` | §3.9 NEXT-20 fixes, lever C + R-3 Bridger censuses, priced-seam PRECOMMIT | 0 (held) |
 
-Still owner-side (browser, free): STB EP 724 BNSF/UP rail files 2019–25; MISO Max Gen OATI PDF; ERCOT account re-open (60-Day SCED/DAM 2019–22 + NP6-576-ER).
+Still owner-side (browser, free): STB EP 724 BNSF/UP rail files 2019–25; MISO Max Gen OATI PDF; ERCOT account re-open (60-Day SCED/DAM 2019–22 + NP6-576-ER). **Deferred under R-17** — lanes ERCOT, MISO, SPP were told to proceed without them and draft data-limited ledger rows.
 
 **Expected end state if every recommendation is taken** (honest, not flattering): NEISO CALIBRATED (protected); NYISO CALIBRATED; CAISO CALIBRATED if the OASIS history prints the fold (else 2022–25 CALIBRATED with a reported-only fold); MISO and SPP CALIBRATED on 2022/2023–25 with 2019–21/22 validation rows closed by rulings and ledgers, several remaining NOT-YET by the "no frontier" rule unless the commitment-state misses are ledgered; ERCOT CALIBRATED on 2019–22 and 2024–25 if the account re-opens and L1/L2 land, with 2023 held to Door D; PJM remains the hardest (coal loading response is a model-class gap); SOCO and NWPP read `…-WITH-CAVEATS` on rulings, with NWPP scored on price for the first time.
 
