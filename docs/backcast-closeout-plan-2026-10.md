@@ -367,6 +367,26 @@ Sequencing principle: **data and rulings first, zero-LP censuses second, shards 
 | **3 — admissible levers, full span** (per ISO, in the order each §3 block gives) | ERCOT L1 coal ceiling → L2 West rating → (if account) 2019–22 coal offer tables · CAISO L1 printed interties → zonal gas basis 2021 → min-load 0.570 · PJM L1 reserve pool → L2 incremental HR → anchor-vintage retest → Elliott overlay · MISO L1 transport table → L3/L4 coal continuum · SPP SPP-107 → posture pairing → rail-keyed SPP-44 · NWPP FERC-714 benchmark → gas daily shape → priced seam → coal bridge · NEISO scarcity-physics arm · SOCO L1 if its phase 0 clears | ≈ 7 shards per lever | each lever promoted on structure or recorded `R` with its cell updated (rule 28) |
 | **4 — frontier statements** | for every miss left: an owner-signed ledger entry or frontier statement naming the mechanism the model class lacks (commitment state / MIP, operator conduct, sub-hourly scarcity, unpublished limits); the determination then reads honestly | 0 | no ISO carries an undocumented FAIL |
 
+### 6.1 Desk log — lanes chartered 2026-10-02 (desk session `session_017wUwd6xxLRQKAYiT8G722P`)
+
+PR #7020 (fast-tier re-vintage) merged 05:06Z; main = `4d459da3`. Desk sequencing call: wave-1 zero-LP work runs now in every lane; **every full-span solve waits for the W0 foundation lane to merge** (W0 changes every ISO-year's fleet, so a pre-W0 span would be paid twice). NYISO (PR #7022, NEXT-34) and SOCO (PR #7021, soco-100) already have live lanes and were not re-chartered.
+
+| Lane | Session | Branch | Scope (plan ref) | LP now |
+|---|---|---|---|---|
+| A 2025 re-bench | `session_01AUzPizySnt65GVypU6Ji1u` | `claude/closeout-a-rebench-2025` | W1, §4 ★2 — restore shared inputs, regenerate 2025 bench, completeness, status, rescore all nine | 0 |
+| B W0 foundation | `session_018DsgkLcN1h8NQc2yJegmdN` | `claude/closeout-b-w0-foundation` | §2.1 E.1–E.9 + census + NEISO tripwire + G-DRIFT; phase 3 (63 shards) after desk merge | 0 → 63 |
+| C rubric amendments | `session_01WkrLoQEcAbz8a6wYs7WMnd` | `claude/closeout-c-rubric` | R-6, R-8, R-9, R-13 (zonal C3a) + MISO/CAISO `authorized_price_tuning` | 0 |
+| D coal-basis study | `session_016dguTG7U2KySt1x6EhBNLk` | `claude/closeout-d-coalbasis` | R-4 dual-basis C1 table, all ISO-years, decision card | 0 |
+| ERCOT | `session_014k634JEUUTjkccEd9DZCYJ` | `claude/closeout-ercot-wave1` | §3.5 0b, 2, 6 censuses; L1/L2 PRECOMMITs | 0 (held) |
+| CAISO | `session_011DvUjyuLQciozV4yTe6nBG` | `claude/closeout-caiso-wave1` | §3.7 0b–0d; R-14 PRECOMMITs | 0 (held) |
+| PJM | `session_015n2kdnGhbpaemCCR7dGwRs` | `claude/closeout-pjm-wave1` | §3.6 0a–0e; L1/L2/R-13/L3 PRECOMMITs | 0 (held) |
+| MISO | `session_01TCpbYap2X7mfnmXQttbX13` | `claude/closeout-miso-wave1` | §3.3 0a tail derive, L3/L4 census, R-3 fall-2021 census | 0 (held) |
+| SPP | `session_019jCNcHE7XghY2vUZikt262` | `claude/closeout-spp-wave1` | §3.4 0b, C3c decomposition, R-12 PRECOMMIT | 0 (held) |
+| NEISO | `session_01JjVv2VJdW4E3o77vTSuwSS` | `claude/closeout-neiso-wave1` | §3.2 1, 2, 4 spec; scarcity-arm PRECOMMIT | 0 (held) |
+| NWPP | `session_01UT1DSG4oaBUXDxkdvQE7bM` | `claude/closeout-nwpp-wave1` | §3.9 NEXT-20 fixes, lever C + R-3 Bridger censuses, priced-seam PRECOMMIT | 0 (held) |
+
+Still owner-side (browser, free): STB EP 724 BNSF/UP rail files 2019–25; MISO Max Gen OATI PDF; ERCOT account re-open (60-Day SCED/DAM 2019–22 + NP6-576-ER).
+
 **Expected end state if every recommendation is taken** (honest, not flattering): NEISO CALIBRATED (protected); NYISO CALIBRATED; CAISO CALIBRATED if the OASIS history prints the fold (else 2022–25 CALIBRATED with a reported-only fold); MISO and SPP CALIBRATED on 2022/2023–25 with 2019–21/22 validation rows closed by rulings and ledgers, several remaining NOT-YET by the "no frontier" rule unless the commitment-state misses are ledgered; ERCOT CALIBRATED on 2019–22 and 2024–25 if the account re-opens and L1/L2 land, with 2023 held to Door D; PJM remains the hardest (coal loading response is a model-class gap); SOCO and NWPP read `…-WITH-CAVEATS` on rulings, with NWPP scored on price for the first time.
 
 ---
