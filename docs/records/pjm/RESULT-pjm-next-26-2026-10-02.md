@@ -105,3 +105,10 @@ the "discovered bug elsewhere" rule 14 points at; it is not a reason to drop the
   - Run `scripts/promote_keeper.py` after the W0 PJM keeper lands (unit_marginal is present for every year;
     `fleet_census_<Y>.json` is built by the promote preflight).
 - **Not on `main`:** nothing from this solve is on `main`.
+
+## 7. Owner ruling (2026-10-02, decision card)
+
+**"Hold; fix fractions."**
+- Do not promote.
+- The next lane derives per-year `online_frac` rows for the 18 appended plants (rule 14, zero DOF).
+- It re-solves the rows and the fractions together as one data delta, after the W0 PJM keeper lands.
