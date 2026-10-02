@@ -19487,6 +19487,15 @@ that must come from NWPP's own data first.
    card "Fix both, then solve" — CAISO seam gross → net load shape, WECC_CAN
    anchor (peak-only Mid-C, $12–38 above BPAT) re-derived or scheduled — then
    7 shards. `gas_daily_shape` is `R` for NWPP (HH is not the NW gas signal).
+   **Status NWPP-NEXT-20 (2026-10-02, zero LP):** re-registered and solve-ready,
+   NOT solved (owner: hand off, no shard). SPP-51's flow-follows-spread gate run
+   on NWPP's measured record: CAISO (COI, NEVP) and BC pass, WECC_SW FAILS on its
+   two largest legs and is served measured with AESO as the residual (rule 19).
+   WECC_CAN anchored on BC Hydro's own WEIM price (`ELAP_BCHA`), priced only in
+   anchored years 2023–25; CAISO on net load; the pooled bus (a free wheel) is
+   replaced by one zone per seam, CAISO split COI 4,800 / NEVP 1,933.
+   `docs/records/nwpp/FINDING-nwppnext20-seam-phase0-2026-10-02.md`. The 7
+   shards are NWPP-NEXT-21's.
 3. **NWPP-57 — WRAP adequacy.** `[FABLE]`. Card **N7**: the footprint has no
    capacity market (the six capacity-auction rows are `.` in both lanes in the
    seed), and the live forward construct is the Western Resource Adequacy

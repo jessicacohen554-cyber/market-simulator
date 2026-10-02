@@ -2142,11 +2142,15 @@ def _nwpp_config() -> ISOConfig:
       a leaf whose 2024 peak is ~9.9 GW). Pre-declared as lever NWPP-55; never
       tuned to a residual (rules 1 / 13 / 14).
 
-    No import node (G7): the seams are the served measured schedule
-    (``eia930.envelopes.nwpp_net_interchange``, ``_SCALAR_INTERCHANGE_ISOS``,
-    owner ruling N4 — the PJM/NYISO/NEISO/SPP precedent) plus three
-    DEFAULT-OFF ``NeighborInterface`` blocks (CAISO / WECC_SW / WECC_CAN) in
-    ``model/interchange/spec.INTERFACE_NEIGHBORS["NWPP"]``. The served
+    No import node in the base topology (G7): the seams are the served measured
+    schedule (``eia930.envelopes.nwpp_net_interchange``,
+    ``_SCALAR_INTERCHANGE_ISOS``, owner ruling N4 — the PJM/NYISO/NEISO/SPP
+    precedent) plus three DEFAULT-OFF ``NeighborInterface`` blocks (CAISO_COI /
+    CAISO_NEVP / WECC_CAN, NWPP-NEXT-20) in
+    ``model/interchange/spec.INTERFACE_NEIGHBORS["NWPP"]``; arming
+    ``reference_price_interface`` appends one external zone per seam
+    (``IMPORT_SEAM_ZONES``) and serves the unpriced counterparties as the
+    measured residual. The served
     construction and the BPAT/GRID source conflict it works around are stated
     on that function, not repeated here.
 
