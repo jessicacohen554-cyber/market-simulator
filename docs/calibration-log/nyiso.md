@@ -15158,3 +15158,23 @@ The question was whether any public posting gives a forward-reproducible driver 
 Records: `docs/records/nyiso/FINDING-nyiso-next30-zone-k-import-drivers-phase0-2026-10-01.md`, `results/phase0/nyiso/_nyisonext30_zone_k_import_drivers.json`, `scripts/probes/nyisonext30_zone_k_import_drivers.py`.
 
 Owner cards #6992 / #6987 / #6984 / NEXT-24 are unchanged; no ruling was found.
+
+## 2026-10-02 — NYISO-NEXT-32: keeper promoted to nyisonext26p-tslprint (print-level gas + all-hours Zone-K TSL); ISO CALIBRATED
+
+Owner ruling 'Promote arm B' (NEXT-26 RESULT §5, card 1). `promote_keeper.py` designated
+`2026-10-01-nyisonext26p-tslprint-span` (2022-2025) with `-2021` folded. Recipe: the
+nyisonext21 keeper + `nyiso_gas_daily_print_level` + `nyiso_li_tsl_all_hours`; zero new DOF.
+
+| C3a vs RT | 2021 | 2022 | 2023 | 2024 | 2025 |
+|---|---|---|---|---|---|
+| outgoing nyisonext21 | +2.9 | −2.4 | +1.2 | −4.0 | −11.6 FAIL |
+| **nyisonext26p** | +3.4 | −2.1 | +0.4 | −2.6 | −9.6 |
+
+Determination: span CALIBRATED (lone C3c, rule 22), ISO NOT-YET → **CALIBRATED** (2025 margin
+0.4 pt). Cells `nyiso_gas_daily_print_level`, `nyiso_li_tsl_all_hours` O → K. Pruned (rule 35):
+nyisonext21 span/2021 and NEXT-26 arm A. The tool's audit runs before its prune, so E13 on the
+runs being pruned stopped it; steps 9–10 (prune, parity) were run by hand, then the audit passed
+(E11 warning pre-existing). NEXT-25 (#6987) and NEXT-23 (#6984) runs pruned on their own
+branches with docs kept; `nyiso_gas_flow_date` stays O. Full legs remain on the shard branches
+`claude/nyisonext26p-2021..2025`. Next lead: open item 3 (2023 winter under-pricing after
+print-level).

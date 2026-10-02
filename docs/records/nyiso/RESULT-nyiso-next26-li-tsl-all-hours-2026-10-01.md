@@ -108,3 +108,7 @@ The gain is structural (rules 17 and 14) and small outside 2021. The span stays 
 | 4 | Decline everything. | Prune NEXT-25 and NEXT-26 runs; both cells → R. |
 
 **Cost of option 1:** one `promote_keeper.py` run on #6987's or this PR's branch. The bundles are already slim-committed on this PR's branch (`results/calibration/nyisonext26p_span`, `_2021`). Full legs live on the shard branches `claude/nyisonext26p-2021..2025` until the lane's PR merges.
+
+## Ruling (2026-10-02)
+
+Owner ruled option 1, **Promote arm B**. Promoted by NYISO-NEXT-32 as `2026-10-01-nyisonext26p-tslprint-span` (+ folded `-2021`); arm A and the outgoing nyisonext21 keeper pruned (rule 35). Note: §3's explanation of the small K gain ("LI units priced close to J") is superseded by the NEXT-29 FINDING (the capped-hour spread is already at DA in 2021/22/24); the gates and promotion rule are unaffected.
