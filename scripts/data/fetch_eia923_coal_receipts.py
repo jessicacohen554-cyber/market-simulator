@@ -55,6 +55,7 @@ from scripts.data.fetch_eia923_coal_stocks import (  # noqa: E402
     DEFAULT_YEARS,
     _download,
     _extract_sheet,
+    write_sums,
 )
 
 #: The worksheet carrying plant-level monthly fuel receipts (all fuels).
@@ -128,7 +129,7 @@ def main() -> int:
         except Exception as exc:
             print(f"  {year}: SKIPPED — {exc}")
     if sums:
-        (out / "SHA256SUMS.txt").write_text("\n".join(sums) + "\n", encoding="utf-8")
+        write_sums(out / "SHA256SUMS.txt", sums)
     return 0
 
 
