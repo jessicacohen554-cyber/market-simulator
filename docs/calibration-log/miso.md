@@ -15641,3 +15641,37 @@ The alternatives the owner declined: re-identify the coal econ multiplier at the
   year's own EIA-923 receipts (rule 23).
 
 Full span NOT-YET on C1 ST_GAS 2019, C3a 2020, C3b 2021. Train 2023–2025 CALIBRATED. No frontier.
+
+## miso-299 — 2026-10-02 — per-year (vintaged) gas variable transport from each year's own EIA-923 receipts (zero LP): the pre-stated rule fails on the training tier; FINDING only, both R cells stay R
+
+Keeper unchanged (`2026-09-28-miso-280-splitremap`). No LP. Record: `docs/records/miso/FINDING-miso299-peryear-transport-2026-10-02.md`
+(§0 pre-stated at `a5fb67f4` before any number); derive `scripts/data/derive_miso_gas_variable_transport_vintaged.py` →
+`data/raw/reference/miso_gas_variable_transport_vintaged/<Y>.csv` (+ `.pool.csv`; the frozen table untouched; rule 23 re-derive on new
+source years, commit `5c0491ec`), `results/phase0/miso/_miso299_vintaged_tables.json`; census `scripts/probes/_miso299_vintaged_census.py`
+→ `results/phase0/miso/_miso299_vintaged_census.json`.
+
+**Owner ruling that opened this lane (2026-10-01, miso-298 decision card *"What should miso-299 do?"*; miso-298 could not log it), verbatim:**
+**"Per-year transport phase 0 (Recommended)"** — described in the card as: Zero LP: derive 2019–2022 variable-transport rows from each
+year's own EIA-923 receipts (rule 23: new source years), measure the static CC fuel move and census per year; PRECOMMIT shards only if
+2019–2022 CC fuel moves down. The one admissible successor the kill points at. The alternatives the owner declined: "Record the kill;
+pick another lane"; "Promote the killed arm anyway".
+
+- **Pre-stated rule (§0, before any number):** proceed to a PRECOMMIT + 7 shards only if (a) the per-year table moves static cap-weighted
+  CC_REGULAR fuel DOWN in each of 2019–2022 against the keeper print AND (b) 2023–2025 stay within ±$0.05/MMBtu of the frozen table.
+- **Tables:** same estimator, bars and ladder as the frozen derive, each receipt year alone (2019–2022 receipts: 90–99 plants, ~1,050
+  plant-months each, never in the frozen fit). A single year carries only 50–66 plants on the own rung (frozen: 98 of 102); CC_REGULAR
+  `v` reads 0.20 / 0.09 / 0.34 / **−0.27** / **0.43** / 0.19 / 0.10 (2019–2025) against the frozen 0.21. The single-year intercept tracks
+  the year's hub trajectory through the print's lag (monthly CC wedge vs the month's hub change r = −0.54 to −0.85 in six of seven
+  years): negative where the hub rose through the year (2022), large where it fell from a January spike (2023/2024).
+- **Census (fleet cap-weighted, keeper P1 quantity):** CC_REGULAR fuel per-year − print: **−0.01 / −0.16 / −0.16 / −0.34** (2019–2022)
+  → (a) holds; per-year − frozen: **+0.25 / −0.07 / −0.12** (2023–2025) → (b) FAILS in all three. 2023 returns to the print level
+  (q1–q2 static error +4.06 → +5.34, worse than the keeper's +4.82), erasing miso-298's K-4 gain. Static CC_REGULAR +0.45 / +0.63 /
+  −0.09 / +0.56 GW in 2019–2022; all-hours price error 2021/2022 deeper by $1.4 / $1.2.
+- **Verdict:** FINDING only; no PRECOMMIT, no shard, no field. `gas_marginal_commodity_pricing` R, `gas_variable_transport` R — stay R
+  (evidence added). Structural reading: one `v` per plant is the right object; a per-year re-fit is a lag correction, not a transport
+  measurement. The open question the kill left — why the measured marginal fuel pushes CC_REGULAR 2021 out of band — is not a
+  transport-table question (rule 14) and stays open.
+- **Owner card:** (A) record, keeper unchanged, next zero-LP object (recommended); (B) phase 0 on a lag-aware pooled estimator (an
+  estimator change on a frozen derive — needs a ruling); (C) solve the per-year table anyway (not recommended); (D) other.
+
+Full span NOT-YET on C1 ST_GAS 2019, C3a 2020, C3b 2021. Train 2023–2025 CALIBRATED. No frontier.
