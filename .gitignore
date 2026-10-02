@@ -4024,3 +4024,4 @@ results/calibration/nwppnext21_*/
 
 # closeout-PJM R-13 arm legs: transport on claude/closeout-pjm-r13-<year> shard branches, never main (rule 29c)
 results/calibration/closeout_pjm_r13_*/
+results/calibration/nwppnext22_*/
