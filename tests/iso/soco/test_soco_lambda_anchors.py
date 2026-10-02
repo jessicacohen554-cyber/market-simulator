@@ -139,16 +139,58 @@ def test_elasticity_fit_fails_closed_without_an_anchor_map():
         elastic.derive("NWPP", [2023, 2024])
 
 
-def test_soco_blocks_stay_default_off_and_forward_years_keep_the_flat(blocks):
+def test_soco_blocks_stay_default_off_and_backcast_years_keep_their_cells(blocks):
     assert "SOCO" not in REFERENCE_PRICE_DEFAULT_ISOS
     assert "SOCO" not in PRICED_INTERCHANGE_DEFAULT_ISOS
     assert blocks["SOCO_SCEG"].hr_by_year is None
     assert 2021 not in blocks["SOCO_FPL"].hr_by_year  # duplicate filing refused
     for name, block in blocks.items():
-        # No forecast year is tabulated: forward pricing is unchanged.
-        assert neighbor_heat_rate(block, 2030) == block.marginal_heat_rate, name
+        # Every backcast year is tabulated: the forward value never reaches it.
         for year, hr in (block.hr_by_year or {}).items():
             assert neighbor_heat_rate(block, year) == hr, (name, year)
+
+
+def test_forward_years_price_off_the_seam_own_flat_mean(blocks):
+    """Owner ruling 2026-10-02 (FINDING-soco-100 §7), lane soco-101."""
+    for name, block in blocks.items():
+        forward = neighbor_heat_rate(block, 2030)
+        if block.hr_by_year:
+            assert forward == block.forward_heat_rate, name
+            assert block.forward_heat_rate != block.marginal_heat_rate, name
+        else:
+            assert block.forward_heat_rate is None, name
+            assert forward == block.marginal_heat_rate, name
+        # The forward-skill "flat" path reprices a backcast year off the same value.
+        assert neighbor_heat_rate(block, 2024, forward_skill="flat") == forward, name
+    # 2021 is untabulated for FPL (refused re-filing): it falls to the forward mean.
+    fpl = blocks["SOCO_FPL"]
+    assert neighbor_heat_rate(fpl, 2021) == fpl.forward_heat_rate
+
+
+def test_registry_forward_heat_rate_is_the_producer_output(blocks):
+    """forward_heat_rate IS the producer's output (rule 23: re-derivable, not typed)."""
+    forward = _load("derive_neighbor_forward_hr")
+    table = forward.derive("SOCO")
+    assert set(table) == set(blocks)
+    for name, value in table.items():
+        assert blocks[name].forward_heat_rate == value, name
+    with pytest.raises(KeyError):
+        forward.derive("PJM")  # no ruling outside SOCO
+
+
+def test_seam_own_flat_mean_is_equal_weight_over_present_cells():
+    forward = _load("derive_neighbor_forward_hr")
+    assert forward.seam_own_flat_mean(None) is None
+    assert forward.seam_own_flat_mean({}) is None
+    assert forward.seam_own_flat_mean({2019: 6.0, 2022: 7.0, 2025: 8.5}) == 7.17
+
+
+def test_no_other_iso_registers_a_forward_heat_rate():
+    for iso, neighbors in INTERFACE_NEIGHBORS.items():
+        if iso == "SOCO":
+            continue
+        for block in neighbors:
+            assert block.forward_heat_rate is None, (iso, block.name)
 
 
 _DATA = (

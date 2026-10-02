@@ -229,7 +229,12 @@ of NWPP, a net importer over 2023–2024). Its eight `INTERFACE_NEIGHBORS["SOCO"
 blocks — `SOCO_TVA`, `SOCO_MISO`, `SOCO_DUK`, `SOCO_SCEG`, `SOCO_SC`, `SOCO_FPL`,
 `SOCO_FPC`, `SOCO_TAL` — are registered **default-off** for lever **SOCO-56**;
 `SOCO_TVA` is the one genuinely two-way seam (−3,150 .. +3,007 MW, exporting in
-27 / 18 / 28 % of hours).
+27 / 18 / 28 % of hours). Seven of them carry measured `hr_by_year` cells
+(2019–2025; FPL without 2021) and a `forward_heat_rate` — the seam-own flat
+mean of those cells, produced by `scripts/data/derive_neighbor_forward_hr.py`
+(lane soco-101, owner ruling 2026-10-02) — which `neighbor_heat_rate` uses for
+every untabulated (forecast) year in place of `marginal_heat_rate`; `SOCO_SCEG`
+has no cells and keeps the 11.6 flat.
 
 ## 8.2 ISO topology (`iso_configs.py`)
 
