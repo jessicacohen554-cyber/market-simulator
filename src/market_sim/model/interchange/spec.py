@@ -1919,8 +1919,11 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
     #     (data/raw/ferc-714/soco_neighbor_hourly_system_lambda_2019_2025.csv,
     #     REPORTED-ONLY), annual mean only, filed zeros dropped as filing
     #     gaps. Rule 13: the hourly lambda is a measured outcome and is never
-    #     a seam price. FPC / TAL carry 2023-24 only: their FLA load-shape
-    #     extract covers 2023-01..2025-01 (R-4, a data-lane fetch).
+    #     a seam price. FPC / TAL 2019-22 and 2025 landed with soco-99 (R-4):
+    #     the FLA load-shape extract was extended from the BALANCE archive
+    #     as the sum of the FLA region's member BAs; 2023-24 unchanged.
+    #     TAL's lambda sits 25-35 % below FPC / JEA every year (sub-CC
+    #     implied HR 5.7-7.7), flagged in FINDING-soco-99, not adjusted.
     #   * NOT anchored: SOCO_SCEG (Dominion SC files 0.00 every hour) and
     #     SOCO_FPL (lambda ~40 % below its peers, basis unresolved).
     # ``marginal_heat_rate`` anchors are TIER-3, labelled, default-off, and
@@ -2083,7 +2086,15 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             interface_limit_mw=50.0,
             border_zones=("SOCO_GA",),
             load_shape_exponent=1.0,
-            hr_by_year={2023: 8.66, 2024: 9.69},
+            hr_by_year={
+                2019: 8.37,
+                2020: 8.03,
+                2021: 8.08,
+                2022: 9.42,
+                2023: 8.66,
+                2024: 9.69,
+                2025: 8.69,
+            },
         ),
         NeighborInterface(
             # City of Tallahassee. Winter Avg TC 20 (summer 12); measured
@@ -2098,7 +2109,15 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             interface_limit_mw=20.0,
             border_zones=("SOCO_GA",),
             load_shape_exponent=1.0,
-            hr_by_year={2023: 7.6, 2024: 7.69},
+            hr_by_year={
+                2019: 5.68,
+                2020: 5.78,
+                2021: 5.97,
+                2022: 6.93,
+                2023: 7.6,
+                2024: 7.69,
+                2025: 7.22,
+            },
         ),
     ],
 }
