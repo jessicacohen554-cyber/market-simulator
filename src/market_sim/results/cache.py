@@ -76,6 +76,18 @@ human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-10-03a — NWPP plant-basis anchor decoupled from the keeper roster
+(owner ruling R-28 "Keep old figures, fix later", PR #7076; lane
+closeout-nwpp-anchor). KEY-MOVING for backcast NWPP, through
+``solve_surface.SolveEpoch`` 2026-10-03a.** WHAT CHANGED:
+``data/raw/reference/nwpp_plant_basis_energy.csv`` (read by
+``nwpp_demand_plant_basis``, not part of any key) is re-derived by
+``scripts/data/derive_nwpp_plant_basis_energy.py`` from the sources on a
+roster-free plant -> class map (EIA-860 footprint, each plant's dominant EIA-923
+class) instead of the rendered bench part's fleet map: COL / NG / OTH move by
+0.002-0.126 TWh per year, 2019-2025. WHAT IS NOT INVALIDATED: every other ISO
+and every forecast run. Record: ``docs/records/nwpp/FINDING-closeout-nwpp-anchor-2026-10-03.md``.
+
 **Epoch 2026-10-02e — SPP MMU ambient band x W0 seasonal basis (rule 19; desk
 owner card "Drop band on rated rows", 2026-10-02). KEY-MOVING for backcast SPP,
 through ``solve_surface.SolveEpoch`` 2026-10-02e.** WHAT CHANGED: with

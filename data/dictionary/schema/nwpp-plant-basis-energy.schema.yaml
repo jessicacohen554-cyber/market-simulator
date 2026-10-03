@@ -1,0 +1,60 @@
+# Canonical schema: nwpp-plant-basis-energy (NWPP demand plant-basis anchor)
+#
+# Per (year, EIA-930 fuel family) annual grid-delivered EIA-923 plant energy of
+# the NWPP footprint's plants — the energy ScenarioConfig.nwpp_demand_plant_basis
+# lands each EIA-930 family's served-schedule series on (owner ruling on
+# FINDING-nwpp-45 §8 = framing 2: EIA-930 hourly shape, EIA-923 plant energy).
+#
+# Derived by scripts/data/derive_nwpp_plant_basis_energy.py directly from the
+# sources (EIA-923 Page 1 + CAMPD backfill + EIA-930 VRE + the combined fossil
+# reconcile) on a roster-independent plant -> class map: the footprint is the
+# EIA-860 BA membership at load time and each plant takes its dominant EIA-923
+# class, so a keeper's fleet roster never moves the anchor
+# (closeout-nwpp-anchor, owner ruling R-28). Committed reference artifact at
+# data/raw/reference/nwpp_plant_basis_energy.csv (the solve reads it; it is
+# validated against this schema at every write). Frozen against residuals
+# (rule 23): re-derived only when the EIA-923 vintage, the footprint list or the
+# class crosswalk changes.
+datatype: nwpp-plant-basis-energy
+schema_version: 1
+title: NWPP plant-basis annual energy per EIA-930 fuel family
+description: >-
+  Annual grid-delivered EIA-923 plant energy (TWh) of the NWPP footprint's
+  plants per EIA-930 fuel family (COL, NG, NUC, WAT, SUN, WND, OTH), the
+  nwpp_demand_plant_basis anchor. On a preliminary EIA-923 vintage only COL and
+  NG are written.
+
+key_columns: [year, family]
+allow_additional_columns: false
+
+columns:
+  - name: year
+    dtype: int64
+    unit: year
+    nullable: false
+    description: Backcast calendar year.
+  - name: family
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      EIA-930 fuel family code (COL, NG, NUC, WAT, SUN, WND, OTH; OTH is
+      NG: OTH + NG: OIL).
+  - name: twh
+    dtype: float64
+    unit: twh
+    nullable: false
+    description: Annual grid-delivered plant-basis energy of the family, TWh (4 dp).
+  - name: source
+    dtype: string
+    unit: none
+    nullable: false
+    description: Construction provenance (sources and the membership rule).
+  - name: eia923_sha256
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      sha256 of the EIA-923 monthly-generation artifact the row was derived
+      from, so a vintage change (the only re-derive trigger besides the
+      footprint and the crosswalk) is visible.
