@@ -2172,3 +2172,21 @@ left nuclear short by 2.5 / 2.2 / 3.4 / 1.5 TWh.
 - The cross-ISO nuclear-fallback table and the exit-carry R-3 census are in FINDING
   §d/§e. Their routing belongs to the desk; the PJM/NWPP/SPP nuclear rows go to lane
   closeout-nuclear-rows under ruling R-35.
+
+**Promoted 2026-10-03 (owner ruling R-41 "Promote on structure").** The desk ran
+`promote_keeper.py` at commit `4b75a6577a3211ac5827f43c5acca157a9a05420`: the outgoing
+ledger was empty, the DOF ledger was written, `w0_soco_span` was pruned, and audit and
+parity are clean.
+
+**The keeper is `2026-10-03-closeout-soco-2-nuclear`.** The determination is NOT-YET
+(7 scored / 4 target / 2 ledgered / 1 fail).
+
+| Year | C1 | C2 | C3a | C3b | C4 | C8 |
+|---|---|---|---|---|---|---|
+| 2019 | **FAIL** CC_REGULAR +3.4 pp; COAL_BIT ledgered | PASS | ledgered +10.9 % | PASS 0.137 | PASS | PASS |
+| 2020 | PASS | PASS | ledgered +11.0 % | PASS 0.140 | PASS | PASS |
+| 2021 | PASS (CC 2.7 pp, was FAIL) | PASS | PASS −5.8 % | PASS 0.125 | PASS | PASS |
+| 2022 | PASS | PASS | ledgered −14.8 % | ledgered 0.281 | PASS | PASS |
+| 2023 | PASS | PASS | PASS +1.0 % | PASS | PASS | PASS |
+| 2024 | PASS | PASS | PASS −4.8 % | PASS | PASS | PASS |
+| 2025 | PASS (CC SKIPPED, preliminary EIA-923) | PASS | PASS −4.7 % | PASS | PASS | PASS |

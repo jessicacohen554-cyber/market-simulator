@@ -198,3 +198,31 @@ of this promotion.
 - **No new matrix row:** a `constants.py` table is not a `ScenarioConfig` field.
 - **Cross-ISO:** the PJM/NWPP/SPP nuclear rows go to lane closeout-nuclear-rows
   (owner ruling R-35). This PR stays SOCO-only.
+
+## 7. Promotion (done)
+
+**Ruling.** Owner ruling **R-41, "Promote on structure"** (2026-10-03), relayed by the
+desk.
+
+**Who ran it and why.** This session's `promote_keeper.py` run was refused by the
+auto-mode permission check ("Modify Shared Resources"). The `--dry-run` with the same
+arguments passed every step, so the desk ran the real command on this branch. That is
+commit `4b75a6577a3211ac5827f43c5acca157a9a05420`.
+
+**What the promotion did:**
+- registered the run;
+- attested it, with an empty outgoing exceptions ledger and the DOF ledger written;
+- designated `2026-10-03-closeout-soco-2-nuclear`;
+- rebuilt the status;
+- audited (E13 tolerated, then clean);
+- pruned `w0_soco_span` (registry, run payload and bundle; own ISO only);
+- ran the parity check (OK).
+
+**Attested determination: NOT-YET.** The only FAIL row is C1 CC_REGULAR 2019. C3a and
+C3b are the ledgered reference-definition rows (R-8). Grade: 7 scored, 4 target, 2
+ledgered, 1 fail. The per-year ladder is in `docs/calibration-log/soco.md`.
+
+**Probe inputs no longer on `main`.** The zero-LP probes `scripts/probes/_closeout_soco2_*.py`
+read the W0 keeper `w0_soco_span` as it stood at `7ac5034b`, and that bundle is now
+pruned. Their outputs are committed under `docs/records/soco/r-soco/closeout-soco-2/`,
+and the inputs are recoverable from git history.
