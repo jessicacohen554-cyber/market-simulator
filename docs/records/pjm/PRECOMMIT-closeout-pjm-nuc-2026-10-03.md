@@ -141,3 +141,48 @@ results/calibration/w0_pjm_span --note "closeout-pjm-nuc: nuclear CF rows 2019-2
 | 2023 | session_011ydS3yQrKgPgK7F51G2mZu | `claude/closeout-pjm-nuc-2023` |
 | 2024 | session_01VAmkXbcQZVuKEmnb3v5dRE | `claude/closeout-pjm-nuc-2024` |
 | 2025 | launched when a slot frees (≤ 6 alive) | `claude/closeout-pjm-nuc-2025` |
+
+## Addendum A — the 2021 leg at the R-50 pin (committed before the 2021 solve)
+
+**Owner ruling R-50** (2026-10-03): *"Infra fix then one more 2021 attempt"*. The infra fix is PR #7141, merged at
+`e2e296a43a86f70da5babc7f386d1bbc71e0874d`. That is the 2021 pin. The other six legs stay at `8c3ea461`.
+
+### G-DRIFT `8c3ea461` → `e2e296a4` on the PJM backcast path (zero LP)
+
+| Hunk | Verdict | Reason |
+|---|---|---|
+| `scripts/lib/solve_container.py`, `scripts/prepare_solve_container.py`, `scripts/shard_prompt.py` (#7141) | INERT | Container setup and prompt text only. Swap is provisioned before the data steps and a stale swapfile is reclaimed. No LP input, field, constant or solve path changes. |
+| `constants.NUCLEAR_MONTHLY_CF_BY_YEAR` MISO / SOCO 2019–22 rows | INERT | Other ISOs' rows. The PJM projection is unchanged: fingerprint below. |
+| SolveEpochs `2026-10-03c` (SOCO) and `2026-10-03d` (MISO) | INERT | `isos` excludes PJM. PJM's epochs stay `[2026-10-02c, 2026-10-02d, 2026-10-03b]`. |
+| `scripts/run_calibration.py`: COAL_PLANT_GRAIN / COAL_TAKE_FLOOR gain SOCO; measured-only guard | INERT | SOCO-scoped tuples. PJM is in neither tuple and does not arm the take floor. |
+| `data/raw/coal-stocks/coal_stocks_2015–2017.csv` | INERT | Read only under the coal pile / take floor, which PJM does not arm. |
+| `data/raw/nuclear-availability-MISO.csv`, `caiso_as_requirements.py` | INERT | MISO / CAISO only. |
+| `data/egrid.py`: `engine="calamine"`; `uv.lock` / `pyproject.toml` add `python-calamine==0.8.2` | INERT | eGRID is a benchmark read and the frame is identical. The numeric stack is unchanged (no `highspy` / `numpy` / `scipy` / `pandas` / `pyarrow` change). |
+| `pipeline/persist.py`: `env_solve_choices` recorded in `run_config` | INERT | Provenance record only. It is not part of `scenario_config` and is not read by the solve. |
+| `scripts/calibration_verdict.py`, `check_rubric_freeze.py`, `lib/attestation_schema.py`, `promote_keeper.py` | INERT for the solve | Scoring, attestation schema and governance. These apply at scoring or promotion, equally to every leg. |
+| `scripts/probes/*`, `derive_nuclear_availability.py`, `curate_hydro_plant_modes.py`, `gen_closeout_nwpp_anchor_attestation.py` | INERT | Off the solve path, or other-ISO derives. |
+
+**Measured, not argued.** `solve_surface.surface_rows("PJM")` is `d8230f36c0059245` (233 rows) at **both**
+`8c3ea461` and `e2e296a4`. It equals the six solved legs' recorded fingerprint.
+
+**Composer.**
+- `_pjmnext26_compose_span.py` requires one shared fingerprint, which holds.
+- A per-year `--pinned-sha` is accepted with `--inert-proof` naming this addendum.
+- **Expected: accepts** a 2021 leg at `e2e296a4` beside six at `8c3ea461`.
+- If it refuses, the lane stops and reports. It does not re-solve six legs without a desk ruling.
+
+### 2021 readings (fixed now)
+- **Nuclear.** The predicted Δ vs keeper is −1.91 TWh (FINDING §2: derived 270.28 vs fallback 272.19). Pass
+  band: ±0.6 TWh.
+- **Displacement.** Thermal moves up by Σ ≈ +1.9 TWh (±0.5).
+- **COAL_BIT 2021.** It is already FAIL at +16.58 and may worsen by ≤ ~1 TWh. That is not a flip.
+- **CT_PEAKER 2021.** It is already FAIL at −8.07; it is expected to improve or hold.
+- **C3a / C3b 2021.** Each moves by ≤ 1.5 pp / ≤ 0.02. A PASS→FAIL anywhere in 2021 is a new HOLD item and is
+  reported.
+
+### Shard prompt
+- **Base:** `scripts/shard_prompt.py` at `e2e296a4`. It already carries: `prepare_solve_container` as hard stop 2
+  before the data steps, the DA-virtuals fetch, and the `--emit-exports` eval before `replay_keeper`.
+- **Added line (a):** a pre-solve hard stop if provisioned swap < 9 GiB or ceiling+swap < 22 GiB. The shard prints
+  the preflight lines and does not run `replay_keeper`.
+- **Added line (b):** run the solve ONCE, stop on the first failure, never resume in this container.
