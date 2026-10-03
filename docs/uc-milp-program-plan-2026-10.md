@@ -178,4 +178,4 @@ Wall above the ceiling for PJM/MISO (E10 is an owner decision); a passing contro
 
 | Lane | Session | Branch (issued stem → realised) | Scope (plan ref) | LP | State |
 |---|---|---|---|---|---|
-| UC-0 benefit screen | `<UC0_SESSION>` | `claude/ucmilp-0-benefit-screen-tx8t` → *(unrealised; dispatch unconfirmed until a branch exists)* | §3 UC-0; GATESPEC §1–2; HANDOFF B | 0 | chartered 2026-10-03 (Fable) |
+| UC-0 benefit screen | `session_013gHAT8qbNZwry6tA92gYNq` | `claude/ucmilp-0-benefit-screen-tx8t` → *(unrealised; dispatch unconfirmed until a branch exists)* | §3 UC-0; GATESPEC §1–2; HANDOFF B | 0 | chartered 2026-10-03 (Fable) |
