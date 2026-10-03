@@ -104,3 +104,30 @@ the owner's ruling.
   is a data delta, so it does not trip 0d. It does mean a replay at HEAD would not reproduce this bundle
   byte-for-byte. That is the same class as the anchor CSV the anchor lane promoted across, and it is named here so the
   next NWPP solve re-solves against it.
+
+## §Promotion (2026-10-03)
+
+The owner card was "Promote after anchor lane". The desk handed over the NWPP slot after #7139, the anchor keeper
+`2026-10-03-closeout-nwpp-anchor-roster`.
+
+**Merge.** Main is merged into `claude/nwppnext23` as a merge commit.
+
+**G-DRIFT** (pin `33dc5647` → HEAD):
+
+- **LIVE (data):**
+  - #7134 coal stocks 2015–17 (`9f2fe6df`);
+  - SolveEpoch 2026-10-03b, NWPP 2019–22 `NUCLEAR_MONTHLY_CF_BY_YEAR` rows (owner ruling R-35).
+
+  Both postdate the legs and the anchor keeper's legs alike. Both are routed to NEXT-24's re-solve.
+- **INERT, everything else:** the SOCO take-floor / hydro-mode scope, CAISO AS requirements, PJM/SPP/MISO/SOCO nuclear
+  rows, the eGRID reader engine (identical frame), the env-knob provenance record, and scoring and audit scripts.
+
+**Promotion run.** `promote_keeper.py --iso NWPP --bundle results/calibration/nwppnext23_span`:
+
+- preflight 0d clean;
+- outgoing exceptions ledger empty;
+- pre-audit with only E13 tolerated, then the strict audit clean;
+- parity OK;
+- pruned `2026-10-03-closeout-nwpp-anchor-roster` / `closeout_nwpp_anchor_span`.
+
+`attestation_schema.py --check` reads valid (calibration-attestation/v1). The bench parts stay at main's render (R-28).

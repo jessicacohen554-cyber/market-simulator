@@ -1,5 +1,5 @@
 {
  "iso": "NWPP",
- "keeper": "2026-10-03-closeout-nwpp-anchor-roster",
- "note": "NWPP keeper: NEXT-22b recipe re-solved on the roster-free nwpp_plant_basis anchor (R-28/R-48); NOT-YET -> NOT-YET, 0 record flips"
+ "keeper": "2026-10-03-nwpp-next-23-coi",
+ "note": "NWPP keeper: NEXT-22b recipe on the roster-free plant-basis anchor + COI export leg on CAISO's PNW delivered-cost basis (nwpp_coi_pnw_delivery_basis); legs at 33dc5647; NOT-YET -> NOT-YET, 0 record flips"
 }

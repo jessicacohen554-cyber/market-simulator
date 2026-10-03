@@ -1002,3 +1002,44 @@ Records:
 - `docs/records/nwpp/FINDING-closeout-nwpp-anchor-2026-10-03.md`
 - `PRECOMMIT-closeout-nwpp-anchor-2026-10-03.md`
 - `RESULT-closeout-nwpp-anchor-2026-10-03.md`
+
+## NWPP-NEXT-23 — 2026-10-03 — COI export leg on CAISO's PNW delivered-cost basis → KEEPER `2026-10-03-nwpp-next-23-coi`
+
+**What changed.** The anchor keeper's recipe plus one new key, `nwpp_coi_pnw_delivery_basis`. The priced COI seam's
+NW→CA export bands now pay CAISO's registered PNW delivered-cost basis, `CAISO_IMPORT_DELIVERY_BASIS["PNW_midC"]`: 5 %
+loss and a $5 wheel, applied as `(band − 5) / 1.05`. That replaces the symmetric 3.0 hurdle. Zero DOF. Seven
+year-isolated shards at `33dc5647`.
+
+**Why.** Phase 0 was zero LP (`FINDING-nwppnext23-price-level-phase0-2026-10-03.md`). In the keeper's COI export
+hours, 60–75 % of the anchor-minus-NW gap is the **measured** MALIN − NW spread (+$9–12), so it is not a model price
+error. The NWPP side had taken 3.0 from CAISO's inactive `WECC_PNW` interface, while CAISO's active ladder prices the
+same corridor on hub + loss + wheel. Rule 19 calls for one physical path with one basis. Owner cards: "Solve H2 PNW
+basis", then "Promote after anchor lane".
+
+**Scores against the NEXT-22b / anchor keeper.** NOT-YET → NOT-YET, 10 → 10 FAIL records, zero flips.
+
+| reading | keeper | this keeper |
+|---|---|---|
+| COI net export 2019 / 2023 / 2024 / 2025 (measured 7.03 / 1.13 / 2.15 / 3.03) | 13.56 / 6.57 / 12.42 / 9.03 TWh | 11.75 / 4.95 / 10.46 / 6.91 |
+| C1 CC_REGULAR 2019 / 2024 / 2025 | +12.65 / +15.39 / +8.86 TWh | +11.94 / +14.80 / +8.02 |
+| C3a 2023 / 2024 / 2025 | −10.4 / −27.1 / −0.4 % | −11.6 / −27.9 / −1.6 % (regression 0.8–1.2 pp) |
+| C3b 2023 | 0.216 | 0.225 |
+| C4 gas 2019 / 2023 / 2024 r | 0.661 / 0.538 / 0.796 | 0.657 / 0.533 / 0.791 (NRMSE better) |
+| C4 coal | PASS all years | PASS all years |
+| BC export 2024 / 2025 | 12.90 / 4.37 TWh | 13.27 / 4.90 |
+
+**Open object.** The residual over-export is the economic **depth** of COI, not the hurdle. Measured CISO-leg flow
+saturates at about 600–800 MW at any spread, while the measured caps are 2,800–5,100 MW (FINDING §E).
+
+**LIVE data drift after the legs, routed to NEXT-24:**
+
+- #7134 coal stocks 2015–17 (`9f2fe6df`);
+- SolveEpoch 2026-10-03b, NWPP 2019–22 nuclear monthly CF rows.
+
+**Prune:** `2026-10-03-closeout-nwpp-anchor-roster` / `closeout_nwpp_anchor_span`.
+
+Records:
+
+- `docs/records/nwpp/FINDING-nwppnext23-price-level-phase0-2026-10-03.md`
+- `PRECOMMIT-nwppnext23-coi-pnw-basis-2019-2025-2026-10-03.md`
+- `RESULT-nwppnext23-coi-pnw-basis-2026-10-03.md`
