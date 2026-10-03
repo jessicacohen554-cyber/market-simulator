@@ -123,3 +123,9 @@ Prior R named for the card: `coal_offer_level_rebasis` (R, ERCOT-132/135/143) an
 ## 4. Matrix
 
 `coal_perplant_offer_level` (ERCOT shard) stays **K**. A census note is appended: DAM-proxy P1 FAIL, G1 is the only admissible 2019–22 source.
+
+## 5. Owner ruling (R-32, 2026-10-03, relayed by the desk)
+
+Verbatim: *"Both rows data-limited"* (option 1, as recommended). Desk relay: "Ledger 2019/20 coal conduct (C1 PRB/CC, C3b) and the 2024 intra-zone West LZ basis (C3a) as DATA-LIMITED rows with their named re-opens; narrow R-7 to G1 (NP3-965 SCED coal TPO, 2019-01→2022-12) + G3 (NP6-576-ER LOLP); still deferred under R-17, no download today; ERCOT stays NOT-YET."
+
+Implemented: both rows are written to `docs/calibration-log/ercot.md` ("ERCOT close-out — 2026-10-03"), in the form of the PJM Elliott R-26 precedent. A data-limited row is not a rubric caveat kind, so the keeper attestation's `exceptions`, the status part and the determination are unchanged and nothing is re-scored. Matrix evidence is prepended on `coal_offer_level_rebasis` (R) and `internal_congestion_split` (G); no verdict moves.
