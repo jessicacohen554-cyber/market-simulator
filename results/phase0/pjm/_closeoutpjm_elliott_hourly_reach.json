@@ -1,0 +1,67 @@
+{
+ "probe": "closeout-PJM-elliott hourly measured outage overlay reach (zero LP)",
+ "keeper": "2026-10-03-closeout-pjm-nuc-keeper",
+ "measured": "data/raw/pjm-elliott-forced-outages/figure30_digitised.csv",
+ "event_hours": [
+  8544,
+  8615
+ ],
+ "voll": 2000.0,
+ "c3a_c3b_2022_keeper": [
+  -17.16,
+  0.298
+ ],
+ "variants": {
+  "A_desk_edart_20_22": {
+   "baseline_pub_mw": 10805.0,
+   "baseline_model_unav_mw": 30540.0,
+   "increment_max_mw": 31036.0,
+   "increment_mean_23_24_mw": 18906.0,
+   "hours_resid_lt_0": 20,
+   "hours_resid_lt_req": 28,
+   "hours_resid_lt_req_plus_190": 28,
+   "min_resid_headroom_mw": -6512.0,
+   "dec23_24_mean_est_price": 1200.6,
+   "dec23_24_mean_actual": 1010.37,
+   "c3a_c3b_2022_est": [
+    -7.21,
+    0.181
+   ],
+   "est_unserved_mwh_upper": 62146.0
+  },
+  "B_same_source_23dec_00_04": {
+   "baseline_pub_mw": 12500.0,
+   "baseline_model_unav_mw": 31313.0,
+   "increment_max_mw": 30114.0,
+   "increment_mean_23_24_mw": 18002.0,
+   "hours_resid_lt_0": 18,
+   "hours_resid_lt_req": 26,
+   "hours_resid_lt_req_plus_190": 26,
+   "min_resid_headroom_mw": -5589.0,
+   "dec23_24_mean_est_price": 1113.55,
+   "dec23_24_mean_actual": 1010.37,
+   "c3a_c3b_2022_est": [
+    -8.01,
+    0.172
+   ],
+   "est_unserved_mwh_upper": 44129.0
+  },
+  "C_fuel_grain_same_source": {
+   "baseline_pub_mw": 12500.0,
+   "baseline_model_unav_mw": 31313.0,
+   "increment_max_mw": 30145.0,
+   "increment_mean_23_24_mw": 18033.0,
+   "hours_resid_lt_0": 18,
+   "hours_resid_lt_req": 26,
+   "hours_resid_lt_req_plus_190": 26,
+   "min_resid_headroom_mw": -5621.0,
+   "dec23_24_mean_est_price": 1113.04,
+   "dec23_24_mean_actual": 1010.37,
+   "c3a_c3b_2022_est": [
+    -8.01,
+    0.172
+   ],
+   "est_unserved_mwh_upper": 44655.0
+  }
+ }
+}
