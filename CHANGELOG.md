@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-10-03 — capx D106: NYISO T1-F re-solve on keeper 2026-10-02-w0-nyiso (one LP, gate (d))
+
+The headline `nyiso-t1f` recipe (plan §2.1a owner posture, `--golden-posture`, no `--set`) re-solved on the W0 keeper under owner ruling Q76: cache key `374fa81075c95ff8` (pre-declared, matched; the move from D60's `19a9690bb12c8459` is the two Q47 CCS default moves plus the eleven moved NYISO solve-surface rows), 14/14 invariants PASS, 17.5 min / 3.1 GB (above the pre-declared 15-min band, inside the 45-min budget), **PROMOTE → PROMOTE** with every FC status unchanged; the prior is preserved at `nyiso-t1f-pre-d106`. Trajectory moved unscored (2028–2030 CO2 −27 to −45 % from `gas_cc_ccs` dispatch at the 2.95 $/MWh adder; import capacity 6,470 → 5,500 MW), recorded unattributed. Bundle `results/ff-t1f-d106/nyiso` (slim), sidecar `nyiso-2026-2030-d106-w0nyiso`. Record: `docs/records/forecast/FINDING-capx-d106-2026-10-03.md`.
+
 ## 2026-10-03 — Solve-container swap is provisioned before data steps; stale inactive swapfile reclaimed (R-50, zero LP)
 
 `scripts/shard_prompt.py` runs `prepare_solve_container.py` first (before hydrate / regenerate / any fetch), keeps the env-pin `eval` at the solve, and emits the gitignored PJM DA-virtuals fetch when the recipe arms `pjm_da_virtual_bids`; `scripts/lib/solve_container.py::provision_swap` counts an inactive swapfile at its path as reclaimable disk and reuses or re-makes it, and the below-target WARNING names the fix and the free disk.
