@@ -1,0 +1,19 @@
+{
+  "id": "2026-10-03-nwpp-next-22b-w0",
+  "label": "nwpp next 22b w0",
+  "date": "2026-10-03",
+  "shorthand": "nwpp-next-22b-w0",
+  "definition": "NWPP-NEXT-22b: W0 fix-2 keeper + priced interface + measured seam headroom",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NWPP",
+  "file": "frontend/data/backcast/runs/2026-10-03-nwpp-next-22b-w0.js",
+  "bundle": "results/calibration/nwppnext22b_span"
+}

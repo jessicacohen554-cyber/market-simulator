@@ -132,3 +132,58 @@ and NW gas follows the CAISO net-load price shape on the seam.
 W0-basis re-solve.
 
 `reference_price_interface` / `priced_interchange`: unchanged **O**.
+
+## §W0 — NEXT-22b: the same arm on the W0 fix-2 keeper, promoted (2026-10-03)
+
+The owner card "Re-solve on W0 basis" came after #7076 merged. Seven shards replayed `results/calibration/w0_nwpp_span`
+with `--years Y` and all three keys, at pin `2b8da72a979f5e5f1a29a82ffc752bee65677c02`. That pin is main `d7ff7c20`
+(W0 keeper included) plus this lane's code. Before launch, a zero-LP check confirmed the W0 keeper replays with zero
+diffs at this pin.
+
+| year | leg SHA |
+|---|---|
+| 2019 | `68cb702ecddb4999cdc35dab6a739a80c51673c0` |
+| 2020 | `4dd7ad6f2ba619be8e6cb94d6edcacf9d30bada2` |
+| 2021 | `e7f3a12163528b4025eb6a4ecd7719ff4024d401` |
+| 2022 | `5a00ddf33fdc429a7e611e777eb1a85fd9c45ac4` |
+| 2023 | `27547f7c23536967640662ab607806a72e23f131` |
+| 2024 | `f6b13df06ccfc925234ada04b8bbc4d574a1827a` |
+| 2025 | `41a7bfb0887b02216df50f3d80667c9deaa99f30` |
+
+**Hard stop (a) amended mid-run.** Every leg's `scenario_config` diff also carried `('spp_mmu_offer_repair', None, False)`.
+That is an SPP-only field, registered after the W0 solve and sitting at its default, so it is inert for NWPP: the
+registered-after-solve class (W0 phase-3 RESULT §5, preflight 0d). The parent accepted it, and preflight 0d passed it at
+promotion.
+
+The parent re-verified every leg:
+
+- caps respected (COI 0.0 MW excess, all years; BC 2023–25 ≤ 0);
+- demand frames exact (2025: 284.089 = W0 frame 299.290 − legs 15.201);
+- the dangling 2019–22 BC zone carries 0.
+
+**Gate (a): PASS.**
+
+| | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 |
+|---|---|---|---|---|---|---|---|
+| COI, TWh (r) | 13.56 (0.749) | 17.13 (0.604) | 16.58 (0.605) | 17.85 (0.632) | 6.57 (0.384) | 12.42 (0.538) | 9.03 (0.586) |
+| NEVP, TWh (r) | 9.36 † (0.092) | 10.69 (0.077) | 11.06 (0.411) | 8.69 (0.417) | 4.02 (0.153) | 9.05 (0.281) | 5.56 (0.416) |
+| BC, TWh (r) | | | | | 17.59 (0.377) | 12.90 (0.224) | 4.37 (0.357) |
+| priced-seam sum, TWh | 22.9 | 27.8 | 27.6 | 26.5 | 28.2 | 34.4 | 19.0 |
+
+† NEVP 2019 is the exempted near-zero leg.
+
+The wheel is 2.85 TWh (2023), 1.74 (2024) and 2.15 (2025).
+
+**Gate (b): verdict diff against the W0 keeper `2026-10-02-w0-nwpp-fix2`.** Both NOT-YET; FAIL records 5 → 10. The
+per-record table is in `docs/calibration-log/nwpp.md` (NWPP-NEXT-22 entry) and in the matrix gates stamp.
+
+- Regressions: fuelmix PASS → FAIL (CC_REGULAR 2019 / 2024 / 2025), and C4 gas 2019 / 2023 / 2024.
+- Gains: C4 coal 2023, C3a 2023–25 closer, C3b 2023 and 2025 closer.
+
+**Gate (c): PASS.** D-2 and C6 pass; D-1 20 → 14.
+
+**Promoted** on the owner's standing ruling: `promote_keeper.py` with an attested governance block, prune
+`2026-10-02-w0-nwpp-fix2`, strict audit clean, parity OK. The bench parts are kept at main's render (R-28).
+
+Neither run's span (pin basis or W0) was committed beyond the keeper bundle. Leg bundles are on
+`claude/nwppnext22-<Y>` and `claude/nwppnext22b-<Y>`, by the SHAs above.
