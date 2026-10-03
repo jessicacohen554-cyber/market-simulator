@@ -3,7 +3,7 @@
   "label": "closeout spp nuc keeper",
   "date": "2026-10-03",
   "shorthand": "closeout-spp-nuc-keeper",
-  "definition": "closeout-B W0 phase 3: SPP spp-107 + W0 + #7081 (MMU ambient skips seasonal-pair rows) + ST_GAS WEFOR residual relief 0.0 (PRECOMMIT-spp-w0-stgas-wefor-relief; desk 22:48)",
+  "definition": "closeout-SPP-nuc: the w0-spp107r keeper recipe (spp-107 + W0 + #7081 MMU ambient skips seasonal-pair rows + ST_GAS WEFOR residual relief 0.0) replayed with 0 differing fields and no --set, re-solved on the measured EIA-923 2019-22 SPP nuclear monthly CF rows (#7109, NUCLEAR_MONTHLY_CF_BY_YEAR); 2023-25 are bit-identical to the prior keeper. Nuclear moves +0.38 / +1.04 / -0.12 / -0.96 TWh in 2019-22, closing the model-vs-EIA-923 gap from up to 1.2 TWh to at most 0.26 TWh, with 0 criterion status flips and no free parameter added. Determination NOT-YET (unchanged), deciding criteria: C3a/C3b 2024 and C3c 2023-25 on the train tier; C1 fuel-mix 2021-22, C3a 2019-20, C3b 2020 and C4 2022 on the validation years (owner R-44, Promote on structure).",
   "years": [
     2019,
     2020,
