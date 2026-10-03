@@ -102,7 +102,9 @@ def mustrun(bundle: Path) -> np.ndarray:
 
 def unit_marginal(bundle: Path) -> pd.DataFrame:
     """The committed per-unit P1 layer, interchange pseudo-units dropped."""
-    u = pd.read_parquet(bundle / f"hourly/unit_marginal_{YEAR}.parquet", columns=UM_COLS)
+    u = pd.read_parquet(
+        bundle / f"hourly/unit_marginal_{YEAR}.parquet", columns=UM_COLS
+    )
     for c in ("unit_id", "fuel", "zone"):
         u[c] = u[c].astype(str)
     return u[u.fuel != "import"]
@@ -126,7 +128,9 @@ def fleet_toggles(inc: Path, hours: list[int]) -> dict:
 
     def one(posture: str, over: dict, prefix: bool = False) -> dict:
         ren._renewable_zone_lookup = prefix_lookup if prefix else orig
-        o = {"pjm_da_virtual_bids": False}  # the census convention (input not in checkout)
+        o = {
+            "pjm_da_virtual_bids": False
+        }  # the census convention (input not in checkout)
         o.update(over)
         r = rebuild_fleet(inc, YEAR, posture, o)
         fa = r["fleet_arrays"]
@@ -138,8 +142,12 @@ def fleet_toggles(inc: Path, hours: list[int]) -> dict:
         return {
             "zone_avail": av[np.asarray(fa.zone_idx) == z][:, hours].sum(0).tolist(),
             "zone_solar": (r["solar_cf"][z, hours] * r["solar_cap"][z]).tolist(),
-            "solar_cap_by_zone": dict(zip(zn, np.round(np.asarray(r["solar_cap"]), 1).tolist())),
-            "avail_twh_by_group": {g: float(av[pg == g].sum() / 1e6) for g in sorted(set(pg))},
+            "solar_cap_by_zone": dict(
+                zip(zn, np.round(np.asarray(r["solar_cap"]), 1).tolist())
+            ),
+            "avail_twh_by_group": {
+                g: float(av[pg == g].sum() / 1e6) for g in sorted(set(pg))
+            },
         }
 
     fields = list(_w0_fields())
@@ -175,9 +183,16 @@ def walk(u: pd.DataFrame, p: np.ndarray, delta: np.ndarray, up: bool) -> np.ndar
     return out
 
 
-def fleet_inmerit(uw: pd.DataFrame, ui: pd.DataFrame, p: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+def fleet_inmerit(
+    uw: pd.DataFrame, ui: pd.DataFrame, p: np.ndarray
+) -> tuple[np.ndarray, np.ndarray]:
     """Per hour: W0-minus-incumbent cap_mw on units at/below the setter, and its price effect."""
-    m = uw.merge(ui[["hour", "unit_id", "cap_mw", "mc"]], on=["hour", "unit_id"], how="outer", suffixes=("", "_i"))
+    m = uw.merge(
+        ui[["hour", "unit_id", "cap_mw", "mc"]],
+        on=["hour", "unit_id"],
+        how="outer",
+        suffixes=("", "_i"),
+    )
     m[["cap_mw", "cap_mw_i", "mw"]] = m[["cap_mw", "cap_mw_i", "mw"]].fillna(0.0)
     m["mc"] = m.mc.fillna(m.mc_i)
     m["marginal"] = m.marginal.fillna(0)
@@ -207,12 +222,17 @@ def rescore(s: pd.DataFrame, act_mon: list, act: float) -> dict:
     """C3a (load-weighted mean vs RT lw) and C3b (monthly lw NRMSE) on a zone-hour frame."""
     import scripts.calibration_verdict as cv
 
-    mon = (pd.Timestamp(f"{YEAR}-01-01") + pd.to_timedelta(np.arange(8760), "h")).month.values
+    mon = (
+        pd.Timestamp(f"{YEAR}-01-01") + pd.to_timedelta(np.arange(8760), "h")
+    ).month.values
     s = s.assign(m=mon[s.hour.values], x=s.price * s.demand)
     mean = s.x.sum() / s.demand.sum()
     mm = s.groupby("m").x.sum() / s.groupby("m").demand.sum()
-    return {"mean": round(float(mean), 2), "c3a_pct": round(100 * (mean / act - 1), 2),
-            "c3b": round(float(cv._nrmse(list(mm.values), act_mon)), 3)}
+    return {
+        "mean": round(float(mean), 2),
+        "c3a_pct": round(100 * (mean / act - 1), 2),
+        "c3b": round(float(cv._nrmse(list(mm.values), act_mon)), 3),
+    }
 
 
 def main() -> int:
@@ -235,14 +255,35 @@ def main() -> int:
     ui, uw = unit_marginal(inc), unit_marginal(W0_DIR)
     zi = ui[(ui.zone == ZONE) & ui.hour.isin(slack_hours)].groupby("hour")
     zw = uw[(uw.zone == ZONE) & uw.hour.isin(slack_hours)].groupby("hour")
-    zsys = lambda s, col: s[s.zone == ZONE].set_index("hour")[col].reindex(slack_hours).values  # noqa: E731
+
+    def zsys(s: pd.DataFrame, col: str) -> np.ndarray:
+        return s[s.zone == ZONE].set_index("hour")[col].reindex(slack_hours).values
+
     tog = fleet_toggles(inc, slack_hours)
     F = np.array(tog["w0"]["zone_avail"]) - np.array(tog["recorded"]["zone_avail"])
-    R = np.array(tog["w0"]["zone_solar"]) - np.array(tog["w0_prefix_renewables"]["zone_solar"])
+    R = np.array(tog["w0"]["zone_solar"]) - np.array(
+        tog["w0_prefix_renewables"]["zone_solar"]
+    )
     M = dmr[slack_hours] * zshare
-    resid = lambda s, z, mr: zsys(s, "demand") - z.mw.sum().reindex(slack_hours).values - mr - zsys(s, "slack")  # noqa: E731
-    N = (resid(sw, zw, mustrun(W0_DIR)[slack_hours] * zshare) - resid(si, zi, mustrun(inc)[slack_hours] * zshare)) - R
-    buckets = {"W0_fleet": F, "mustrun_drift": M, "renewables_fix": R, "net_import_residual": N}
+
+    def resid(s: pd.DataFrame, z, mr: np.ndarray) -> np.ndarray:
+        return (
+            zsys(s, "demand")
+            - z.mw.sum().reindex(slack_hours).values
+            - mr
+            - zsys(s, "slack")
+        )
+
+    N = (
+        resid(sw, zw, mustrun(W0_DIR)[slack_hours] * zshare)
+        - resid(si, zi, mustrun(inc)[slack_hours] * zshare)
+    ) - R
+    buckets = {
+        "W0_fleet": F,
+        "mustrun_drift": M,
+        "renewables_fix": R,
+        "net_import_residual": N,
+    }
     sa = zsys(si, "slack")
     ph_i, ph_w, dh = pi[slack_hours], pw[slack_hours], dem[slack_hours]
 
@@ -256,16 +297,36 @@ def main() -> int:
     for k in keys:
         rest = [x for x in keys if x != k]
         shapley[k] = sum(
-            math.factorial(len(c)) * math.factorial(len(keys) - len(c) - 1) / math.factorial(len(keys))
+            math.factorial(len(c))
+            * math.factorial(len(keys) - len(c) - 1)
+            / math.factorial(len(keys))
             * (value(set(c) | {k}) - value(set(c)))
-            for n in range(len(rest) + 1) for c in itertools.combinations(rest, n)
+            for n in range(len(rest) + 1)
+            for c in itertools.combinations(rest, n)
         )
     field_zone_mw = {
         f.split(":", 1)[1]: {
-            "alone": round(float(np.mean(np.array(tog[f]["zone_avail"]) - np.array(tog["recorded"]["zone_avail"]))), 1),
-            "loo": round(float(np.mean(np.array(tog["w0"]["zone_avail"]) - np.array(tog["loo:" + f.split(":", 1)[1]]["zone_avail"]))), 1),
+            "alone": round(
+                float(
+                    np.mean(
+                        np.array(tog[f]["zone_avail"])
+                        - np.array(tog["recorded"]["zone_avail"])
+                    )
+                ),
+                1,
+            ),
+            "loo": round(
+                float(
+                    np.mean(
+                        np.array(tog["w0"]["zone_avail"])
+                        - np.array(tog["loo:" + f.split(":", 1)[1]]["zone_avail"])
+                    )
+                ),
+                1,
+            ),
         }
-        for f in tog if f.startswith("alone:")
+        for f in tog
+        if f.startswith("alone:")
     }
     field_avail_twh = {
         f.split(":", 1)[1]: {
@@ -273,7 +334,8 @@ def main() -> int:
             for g, v in tog[f]["avail_twh_by_group"].items()
             if abs(v - tog["recorded"]["avail_twh_by_group"].get(g, 0.0)) > 0.05
         }
-        for f in tog if f.startswith("alone:")
+        for f in tog
+        if f.startswith("alone:")
     }
 
     # Step 3: off-slack-hour greedy re-clears.
@@ -283,16 +345,27 @@ def main() -> int:
     w = lambda x: float((x * dem)[~scar].sum() / dt)  # noqa: E731
 
     # Step 4: re-score counterfactual price series.
-    bench = ba.load_bench_part(REPO / f"frontend/data/backcast/bench/PJM/{YEAR}.json.gz")["bench"]["avgLMP"]
+    bench = ba.load_bench_part(
+        REPO / f"frontend/data/backcast/bench/PJM/{YEAR}.json.gz"
+    )["bench"]["avgLMP"]
     act, act_mon = bench["rt_lw"], bench["rt_lw_mon"]
-    x = si.merge(sw[["zone", "hour", "price"]], on=["zone", "hour"], suffixes=("", "_w"))
+    x = si.merge(
+        sw[["zone", "hour", "price"]], on=["zone", "hour"], suffixes=("", "_w")
+    )
     hs = set(slack_hours)
     swap = x.assign(price=np.where(x.hour.isin(hs), x.price_w, x.price))
     keep = x.assign(price=np.where(x.hour.isin(hs), x.price, x.price_w))
 
-    real = pd.read_parquet(REPO / "data/raw/_validation-source/actual_lmp_zonal_PJM.parquet")
-    real = real[real.year == YEAR].merge(si[["zone", "hour", "demand"]], on=["zone", "hour"])
-    real_sys = (real.assign(x=real.rt * real.demand).groupby("hour").x.sum() / real.groupby("hour").demand.sum())
+    real = pd.read_parquet(
+        REPO / "data/raw/_validation-source/actual_lmp_zonal_PJM.parquet"
+    )
+    real = real[real.year == YEAR].merge(
+        si[["zone", "hour", "demand"]], on=["zone", "hour"]
+    )
+    real_sys = (
+        real.assign(x=real.rt * real.demand).groupby("hour").x.sum()
+        / real.groupby("hour").demand.sum()
+    )
 
     rec = {
         "year": YEAR,
@@ -327,7 +400,9 @@ def main() -> int:
             }
             for i, h in enumerate(slack_hours)
         ],
-        "slack_hours_bucket_mean_mw": {k: round(float(v.mean()), 1) for k, v in buckets.items()},
+        "slack_hours_bucket_mean_mw": {
+            k: round(float(v.mean()), 1) for k, v in buckets.items()
+        },
         "slack_hours_price_shapley_lw": {k: round(v, 4) for k, v in shapley.items()},
         "slack_hours_all_buckets_lw": round(value(set(keys)), 4),
         "slack_hours_real_vs_model_lw": {
@@ -341,18 +416,39 @@ def main() -> int:
         },
         "w0_field_zone_avail_mw_slack_hours": field_zone_mw,
         "w0_field_avail_twh_alone": field_avail_twh,
-        "solar_cap_by_zone": {"w0": tog["w0"]["solar_cap_by_zone"], "prefix": tog["w0_prefix_renewables"]["solar_cap_by_zone"]},
+        "solar_cap_by_zone": {
+            "w0": tog["w0"]["solar_cap_by_zone"],
+            "prefix": tog["w0_prefix_renewables"]["solar_cap_by_zone"],
+        },
         "other_hours": {
             "mustrun_drift_effect_lw_bracket": [w(-d_up), w(d_dn)],
             "w0_fleet_inmerit_mean_mw": float(ds[~scar].mean()),
             "w0_fleet_inmerit_effect_lw": w(feff),
         },
-        "solver_stack": {"incumbent_highspy": "1.15.1", "w0_highspy": "1.14.0", "separated": False},
+        "solver_stack": {
+            "incumbent_highspy": "1.15.1",
+            "w0_highspy": "1.14.0",
+            "separated": False,
+        },
     }
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(rec, indent=1) + "\n")
-    print(json.dumps({k: rec[k] for k in ("score", "move_total_lw", "move_slack_hours_lw", "move_other_hours_lw",
-                                          "slack_hours_price_shapley_lw", "other_hours")}, indent=1))
+    print(
+        json.dumps(
+            {
+                k: rec[k]
+                for k in (
+                    "score",
+                    "move_total_lw",
+                    "move_slack_hours_lw",
+                    "move_other_hours_lw",
+                    "slack_hours_price_shapley_lw",
+                    "other_hours",
+                )
+            },
+            indent=1,
+        )
+    )
     return 0
 
 
