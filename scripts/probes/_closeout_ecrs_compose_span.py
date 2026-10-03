@@ -61,10 +61,13 @@ def check_leg(year: int) -> Path:
     """K1 at compose time: the leg differs from the keeper only in band keys."""
     leg = CAL / f"closeout_ercot_ecrs_{year}"
     a = _flat(json.loads((leg / "run_config.json").read_text())["scenario_config"])
-    k = _flat(json.loads((KEEPER / f"run_config_{year}.json").read_text())["scenario_config"])
+    k = _flat(
+        json.loads((KEEPER / f"run_config_{year}.json").read_text())["scenario_config"]
+    )
     diff = sorted(x for x in set(a) | set(k) if a.get(x) != k.get(x))
     bad = [
-        x for x in diff
+        x
+        for x in diff
         if not (x.startswith("offer_curve_by_group.") and x.split(".")[-1] in BAND_KEYS)
     ]
     if bad or len(diff) != 17:
@@ -116,7 +119,10 @@ def compose(out: Path) -> None:
     for y, name in KEPT_LEGS.items():
         src = CAL / name
         for stem in stems:
-            a, b = src / "hourly" / f"{stem}_{y}.parquet", out / "hourly" / f"{stem}_{y}.parquet"
+            a, b = (
+                src / "hourly" / f"{stem}_{y}.parquet",
+                out / "hourly" / f"{stem}_{y}.parquet",
+            )
             if a.is_file() and _sha(a) != _sha(b):
                 raise SystemExit(f"ABORT: kept leg {y} {stem} differs from keeper")
         # dispatch AND floors: the diagnostics rebuild the bridge floors from
@@ -140,12 +146,25 @@ def compose(out: Path) -> None:
     (out / "meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
     legspec = [f"--leg={y}=run_config_{y}.json" for y in range(2019, 2026)]
     subprocess.run(
-        [sys.executable, str(REPO / "scripts" / "stamp_config_partition.py"), str(out), *legspec],
-        cwd=REPO, check=True,
+        [
+            sys.executable,
+            str(REPO / "scripts" / "stamp_config_partition.py"),
+            str(out),
+            *legspec,
+        ],
+        cwd=REPO,
+        check=True,
     )
     subprocess.run(
-        [sys.executable, str(REPO / "scripts" / "stamp_config_partition.py"), str(out), *legspec, "--check"],
-        cwd=REPO, check=True,
+        [
+            sys.executable,
+            str(REPO / "scripts" / "stamp_config_partition.py"),
+            str(out),
+            *legspec,
+            "--check",
+        ],
+        cwd=REPO,
+        check=True,
     )
 
 
@@ -153,8 +172,18 @@ def regenerate_diagnostics(out: Path) -> int:
     """Rebuild ``legitimacy_diagnostics.json`` over all seven years (zero LP)."""
     years = [str(y) for y in range(2019, 2026)]
     rc = subprocess.run(
-        [sys.executable, str(REPO / "scripts" / "legitimacy_diagnostics.py"), "--bundle", str(out),
-         "--iso", "ERCOT", "--years", *years, "--json-out", str(out / "legitimacy_diagnostics.json")],
+        [
+            sys.executable,
+            str(REPO / "scripts" / "legitimacy_diagnostics.py"),
+            "--bundle",
+            str(out),
+            "--iso",
+            "ERCOT",
+            "--years",
+            *years,
+            "--json-out",
+            str(out / "legitimacy_diagnostics.json"),
+        ],
         cwd=REPO,
     ).returncode
     got = json.loads((out / "legitimacy_diagnostics.json").read_text()).get("years")

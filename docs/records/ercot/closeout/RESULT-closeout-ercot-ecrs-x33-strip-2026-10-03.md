@@ -4,7 +4,8 @@ Lane `closeout-ERCOT-ecrs`, branch `claude/closeout-ercot-ecrs`.
 
 - Owner rulings: **R-39** (design a 2023 config that reflects ECRS), **R-42** (*"A: Remove ×33 from 2023"*), **R-46** (*"Strip the ×33 bands from 2019–22 after the 2023 result"*).
 - Records: `FINDING-closeout-ercot-ecrs-phase0-2026-10-03.md` and `PRECOMMIT-closeout-ercot-ecrs-2023-structural-2026-10-03.md`, with Addenda 1–2 pushed before each launch.
-- Registered as a probe: **`2026-10-02-closeout-ecrs-x33-strip`**, bundle `results/calibration/closeout_ercot_ecrs_span`, years 2019–2025. The incumbent keeper is unchanged: `2026-10-02-closeout-l1-coal-fuel`.
+- **NOT PROMOTED — owner ruling R-51 (2026-10-03, relayed by the desk): option B, "Keep the ×33 keeper".** The incumbent keeper `2026-10-02-closeout-l1-coal-fuel` and its CALIBRATED 2023 scope are unchanged.
+- The span was registered in session as probe `2026-10-02-closeout-ecrs-x33-strip` (bundle `results/calibration/closeout_ercot_ecrs_span`, 2019–2025). That registration is **kept off main**: `audit_keepers --iso ERCOT --check` E13 refuses a non-keeper run stamped to no keeper (the SOCO-3 precedent). The evidence lives on the five leg branches and in this record, and the composite re-builds at zero LP (§1).
 
 ## 0. Answer
 
@@ -20,7 +21,9 @@ The ×33 `peak` / `phys_peak` / `peak_ladder` multipliers are gone from every ca
 
 **2023 against the IMM benchmark:** the model now prints $36.95. That is +5.6 % against the IMM's ECRS-neutral counterfactual (≈ $35), against +39.9 % for the keeper. The 2023 tail the model no longer prints is the ECRS artificial-shortage premium, which the energy-only LP does not represent (Door D). The ×33 band had been standing in for it.
 
-**Recommendation (rule fixed in PRECOMMIT §5 before any solve):** K1–K3 pass in every year, so **promote on structure** (rule 1), whatever the direction of the fit. The owner decides, and the desk grants the slot.
+**Recommendation (rule fixed in PRECOMMIT §5 before any solve):** K1–K3 pass in every year, so **promote on structure** (rule 1), whatever the direction of the fit.
+
+**Ruling: not promoted (R-51, option B).** The keeper keeps the ×33 carve-out.
 
 ## 1. Legs (rule 34/36: one shard per year, each pinned at its own leg commit; parent `106d6bb7` for all)
 
@@ -86,7 +89,7 @@ C6 governance passes on the composite. The D-4 FAIL set equals the keeper's in e
 
 Why the 2023 scope flips: in `calibration_verdict.py`, `_apply_c3c_standing_rule` (rule 22, lone-C3c auto-ledger) runs at line 4272, *before* `_apply_config_exceptions` (R-6) at line 4281. When the lone-failure test runs, 2023 C3a and C3b still read FAIL, so the C3c failure is not "lone" and stays a FAIL. Whether rule 22 should see through the R-6 caveats is a **rubric-order question for the owner** (closeout-C lane). It is not changed here.
 
-## 4. What a promotion costs and carries
+## 4. What a promotion would have cost and carried (not executed — R-51)
 
 - `promote_keeper.py` registers, attests, designates, folds and re-keys, then prunes the outgoing keeper's three stores (own ISO only).
 - The ERCOT config partition is re-keyed by hand (W0 RESULT §5 item 5):
@@ -94,7 +97,7 @@ Why the 2023 scope flips: in `calibration_verdict.py`, `_apply_c3c_standing_rule
   - the forward 2024–25 scope is unchanged
 - The attestation gains an explicit `authorized_price_tuning` block reading **"none under the channel"** (W4). The ×33 bands were the only two-valued band set, and they are gone. ERCOT's `offer_curve_by_group` is now single-valued across the span except for `swcap_clip` and `ep_referenced`.
 - The DOF ledger loses the 17 × 5 residual-identified ×33 band values.
-- Keeper-only retention applies (rule 15): the probe stays registered until the ruling.
+- Retention under R-51: the probe registration is off main (E13). The leg branches stay alive until the owner's branch-cleanup pass.
 - The new keeper commits `hourly/unit_marginal_<Y>.parquet` for every year. `unit_hourly` stays off main.
 - Where things live today:
   - the composite is in this container only (`results/calibration/closeout_ercot_ecrs_span`, gitignored by local exclude)
@@ -106,4 +109,5 @@ Why the 2023 scope flips: in `calibration_verdict.py`, `_apply_c3c_standing_rule
 
 - The ercot-255 `ercot_zonal_spread_ep_referenced` repair on 2023 is not folded in. It remains a separate item.
 - The rule-22 / R-6 ordering question (§3) is left to the owner.
-- No promotion has run. That waits for the ruling and the desk's slot.
+- No promotion has run (R-51).
+- The rule-22 / R-6 ordering question goes to a separate rubric card (rule 37, its own PR).

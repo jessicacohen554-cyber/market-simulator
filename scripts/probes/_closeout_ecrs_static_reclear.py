@@ -51,10 +51,16 @@ def published_adder(r_full, r_online, lam, cfg) -> np.ndarray:
     mu_s, sigma = sc.ercot_published_mu_sigma_hourly(YEAR, T)
     s = float(cfg["ordc_lolp_shift_sigma"])
     return sc.ordc_adder(
-        r_full, lam, voll=float(cfg["ordc_voll"]), mcl_mw=float(cfg["ordc_mcl_mw"]),
-        mu_mw=mu_s - s * sigma, sigma_mw=sigma, shift_sigma=s,
+        r_full,
+        lam,
+        voll=float(cfg["ordc_voll"]),
+        mcl_mw=float(cfg["ordc_mcl_mw"]),
+        mu_mw=mu_s - s * sigma,
+        sigma_mw=sigma,
+        shift_sigma=s,
         multistep_floor=bool(cfg["ordc_multistep_floor"]),
-        floor_active=sc.floor_active_mask(YEAR, T), reserves_online_mw=r_online,
+        floor_active=sc.floor_active_mask(YEAR, T),
+        reserves_online_mw=r_online,
         obd_half_shift=True,
     )
 
@@ -82,15 +88,21 @@ def score(sys_df: pd.DataFrame) -> dict:
 
 def main() -> int:
     """Compute the static re-clear and write the phase-0 JSON."""
-    cfg = json.loads((BUNDLE / f"run_config_{YEAR}.json").read_text())["scenario_config"]
+    cfg = json.loads((BUNDLE / f"run_config_{YEAR}.json").read_text())[
+        "scenario_config"
+    ]
     sys_all = pd.read_parquet(BUNDLE / "hourly" / f"system_{YEAR}.parquet")
     sys_p1 = sys_all[sys_all["pass"] == "P1"].copy()
     hours = sys_p1["hour"].to_numpy()
     ecrs = sc.ercot_ecrs_requirement_mw(YEAR, T)  # measured ASPLANNP433 ECRS plan
-    meas = pd.read_parquet(_ROOT / f"data/raw/ercot/ercot_{YEAR}_ordc_reserves_hourly.parquet")
+    meas = pd.read_parquet(
+        _ROOT / f"data/raw/ercot/ercot_{YEAR}_ordc_reserves_hourly.parquet"
+    )
     meas = meas.set_index("hour").reindex(range(T))
     rf = pd.read_parquet(BUNDLE / "hourly" / f"reserve_family_{YEAR}.parquet")
-    tot = rf[(rf["pass"] == "P1") & (rf["family"] == "ercot_ordc_total")].set_index("hour")
+    tot = rf[(rf["pass"] == "P1") & (rf["family"] == "ercot_ordc_total")].set_index(
+        "hour"
+    )
     tot = tot.reindex(range(T))
     # Model energy price net of its own adder (system-hour, max over zones of
     # price - adder is the zone-independent lambda proxy; use the North zone).
@@ -101,23 +113,30 @@ def main() -> int:
         # Reality's own telemetry: RTOLCAP (online) + RTOFFCAP, measured lambda.
         "measured_rtolcap": (
             (meas["rtolcap"] + meas["rtoffcap"]).to_numpy(float),
-            meas["rtolcap"].to_numpy(float), meas["system_lambda"].to_numpy(float),
+            meas["rtolcap"].to_numpy(float),
+            meas["system_lambda"].to_numpy(float),
         ),
         # The keeper's own cleared ORDC-total reserve, model lambda.
         "model_ordc_total": (
-            tot["held_mw"].to_numpy(float), tot["held_mw"].to_numpy(float), lam_model,
+            tot["held_mw"].to_numpy(float),
+            tot["held_mw"].to_numpy(float),
+            lam_model,
         ),
     }
-    res: dict = {"bar": {"C3a_model_min_usd": 57.00, "C3a_min_pct": -12.35, "C3b_max": 0.30},
-                 "ecrs_plan_mean_mw_jun_dec": float(ecrs[3839:].mean()),
-                 "keeper": score(sys_all)}
+    res: dict = {
+        "bar": {"C3a_model_min_usd": 57.00, "C3a_min_pct": -12.35, "C3b_max": 0.30},
+        "ecrs_plan_mean_mw_jun_dec": float(ecrs[3839:].mean()),
+        "keeper": score(sys_all),
+    }
     for name, (r_full, r_on, lam) in bases.items():
         a0 = published_adder(r_full, r_on, lam, cfg)
         a1 = published_adder(r_full - ecrs, r_on - ecrs, lam, cfg)
         d = np.nan_to_num(a1 - a0)
         pert = sys_all.copy()
         m = pert["pass"] == "P1"
-        pert.loc[m, "price"] = pert.loc[m, "price"].to_numpy() + d[pert.loc[m, "hour"].to_numpy()]
+        pert.loc[m, "price"] = (
+            pert.loc[m, "price"].to_numpy() + d[pert.loc[m, "hour"].to_numpy()]
+        )
         res[name] = {
             "delta_adder_mean_usd": float(d.mean()),
             "delta_adder_mean_jun_dec_usd": float(d[3839:].mean()),
@@ -143,8 +162,11 @@ def main() -> int:
     gross = published_adder(r_full, r_on, lam, cfg)
     net = published_adder(r_full - ecrs, r_on - ecrs, lam, cfg)
     ident = {}
-    for lab, sl in (("year", slice(0, T)), ("ecrs_live_h3839_on", slice(3839, T)),
-                    ("pre_ecrs", slice(0, 3839))):
+    for lab, sl in (
+        ("year", slice(0, T)),
+        ("ecrs_live_h3839_on", slice(3839, T)),
+        ("pre_ecrs", slice(0, 3839)),
+    ):
         ident[lab] = {
             "published_rtorpa_mean": float(np.nanmean(pub[sl])),
             "gross_mean": float(np.nanmean(gross[sl])),
