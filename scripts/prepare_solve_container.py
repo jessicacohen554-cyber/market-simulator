@@ -31,6 +31,9 @@ Env pins cannot be exported into a parent shell from a child process, so this
 prints them and, with ``--emit-exports``, prints ONLY the ``export`` lines for
 ``eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"``.
 
+**Run it first** — before ``hydrate_data`` / ``regenerate_clean`` / any fetch
+(R-50): swap is bounded by free disk, and the data steps consume it.
+
 Usage::
 
     python3 scripts/prepare_solve_container.py            # provision + report
@@ -56,6 +59,8 @@ from scripts.lib.solve_container import (  # noqa: E402
     GIB,
     SOLVE_ENV_PINS,
     SWAPFILE,
+    below_target_warning,
+    free_disk_gib,
     memory_ceiling,
     provision_swap,
     swap_total_bytes,
@@ -118,6 +123,12 @@ def main() -> None:
             ceiling.gib,
             swap_gib,
             args.target_gb,
+        )
+    if not args.check and ceiling.gib + swap_gib + 0.5 < args.target_gb:
+        logger.warning(
+            below_target_warning(
+                ceiling.gib + swap_gib, args.target_gb, free_disk_gib()
+            )
         )
     logger.info("env pins for every solve (they do NOT change the LP optimum):")
     for key, value in SOLVE_ENV_PINS.items():

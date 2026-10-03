@@ -5,7 +5,9 @@ Every backcast year is solved in its own shard container (CLAUDE.md rule 36
 shard prompt has eight things it must get right or the solve is wasted
 (rule 32 (c)): the pinned SHA, the recipe signature, its own out-dir and
 branch, the bundle push with ``dispatch/<year>_P1.parquet``, the forbidden
-commands, the memory preflight, what to report, and "stop, don't repair".
+commands, the memory preflight (``prepare_solve_container.py`` FIRST, before any data
+step — R-50), what to report, and "stop, don't repair". A PJM recipe that
+arms ``pjm_da_virtual_bids`` also gets the gitignored DA-virtuals fetch.
 This script emits all eight from four arguments so the orchestrator never
 re-derives them by hand.
 
@@ -37,11 +39,13 @@ DATA PROFILE: {profile}
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
 1. `git rev-parse HEAD` == {sha}  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
-2. `python3 scripts/hydrate_data.py --profile {profile}` then `python3 scripts/regenerate_clean.py --solve-profile {iso}` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
-3. the recipe you will solve: `{bundle}` replayed{set_clause}; confirm by reading `{bundle}/run_config.json` and `meta.json` — the config signature the parent expects: {signature}
-4. memory: the runner calls `scripts/lib/solve_container.ensure_solve_container` itself; never pass `--no-container-preflight`, never read `free` — report the `container preflight:` and `memory peak:` log lines
+2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
+3. `python3 scripts/hydrate_data.py --profile {profile}` then `python3 scripts/regenerate_clean.py --solve-profile {iso}` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0{fetch_step}
+4. the recipe you will solve: `{bundle}` replayed{set_clause}; confirm by reading `{bundle}/run_config.json` and `meta.json` — the config signature the parent expects: {signature}
+5. memory: the runner calls `scripts/lib/solve_container.ensure_solve_container` itself; never pass `--no-container-preflight`, never read `free` — report the `container preflight:` and `memory peak:` log lines
 
 SOLVE (sequential, this year only):
+  eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"
   python3 scripts/replay_keeper.py {bundle} --years {year} --out-dir {out_dir}{set_args}{note_arg}
 Budget: {budget} minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
 
@@ -87,6 +91,46 @@ def _signature(bundle: Path, sets: list[str]) -> str:
     return "; ".join(parts) + (f" | bundle note: {note!r}" if note else "")
 
 
+#: The recipe field whose arming needs the gitignored PJM DA virtual-bid
+#: parquets on disk (``data.virtual_bids`` hard-fails without them).
+DA_VIRTUALS_FIELD = "pjm_da_virtual_bids"
+
+DA_VIRTUALS_FETCH = (
+    "\n   then `uv run python scripts/data/fetch_pjm_da_virtuals.py --years {year} "
+    "--feeds hrl_da_incs_decs` (the recipe arms `pjm_da_virtual_bids`; the parquets "
+    "under data/raw/pjm-da-virtuals/ are gitignored — never commit them); exits 0"
+)
+
+
+def arms_da_virtuals(iso: str, bundle: Path, sets: list[str]) -> bool:
+    """Does this shard's recipe arm ``pjm_da_virtual_bids``?
+
+    PJM only (the mechanism is PJM-gated). The bundle's
+    ``run_config.json`` ``scenario_config`` value is the recipe; a
+    ``--set pjm_da_virtual_bids=<json>`` overrides it (last one wins), as it
+    does in ``replay_keeper``. Recipe-gated rather than ISO-gated because the
+    field is default off, so a PJM recipe without it needs no fetch.
+    """
+    if iso.upper() != "PJM":
+        return False
+    armed = False
+    rc = bundle / "run_config.json"
+    if rc.exists():
+        try:
+            cfg = json.loads(rc.read_text())
+        except json.JSONDecodeError:
+            cfg = {}
+        armed = bool((cfg.get("scenario_config") or {}).get(DA_VIRTUALS_FIELD, False))
+    for spec in sets:
+        key, _, value = spec.partition("=")
+        if key.strip() == DA_VIRTUALS_FIELD:
+            try:
+                armed = bool(json.loads(value))
+            except json.JSONDecodeError:
+                armed = value.strip().lower() == "true"
+    return armed
+
+
 def render(
     iso: str,
     year: int,
@@ -97,6 +141,7 @@ def render(
     note: str | None,
     budget: int,
 ) -> str:
+    """Fill :data:`TEMPLATE` for one ISO-year shard."""
     iso = iso.upper()
     b = REPO / bundle
     out_dir = f"results/calibration/{lane.replace('-', '_')}_{year}"
@@ -114,10 +159,16 @@ def render(
         note_arg=f" --note {json.dumps(note)}" if note else "",
         signature=_signature(b, sets),
         budget=budget,
+        fetch_step=(
+            DA_VIRTUALS_FETCH.format(year=year)
+            if arms_da_virtuals(iso, b, sets)
+            else ""
+        ),
     )
 
 
 def main() -> None:
+    """CLI entry point: print one shard prompt per requested year."""
     ap = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
