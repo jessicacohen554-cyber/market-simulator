@@ -970,8 +970,8 @@ def _plant_gas_co2_per_mmbtu(path: str, iso: str) -> dict[int, float]:
     g = df.groupby("plant_id")[["co2_kg", "heat_mmbtu"]].sum()
     g = g[(g["heat_mmbtu"] > 0.0) & (g["co2_kg"] > 0.0)]
     return {
-        int(pid): float(row.co2_kg) / float(row.heat_mmbtu) / _KG_PER_TONNE
-        for pid, row in g.iterrows()
+        int(pid): float(co2) / float(heat) / _KG_PER_TONNE
+        for pid, co2, heat in zip(g.index, g["co2_kg"], g["heat_mmbtu"])
     }
 
 

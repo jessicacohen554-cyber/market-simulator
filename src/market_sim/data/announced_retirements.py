@@ -201,7 +201,18 @@ def _iso_fossil_operable(df: pd.DataFrame, iso: str) -> pd.DataFrame:
     out = df[(ba_iso == iso.upper()) & program_footprint_mask(df)]
     status = out["status"].astype(str).str.strip().str.upper()
     out = out[status == "OP"].copy()
-    out["fuel_type"] = out.apply(_fuel_of, axis=1)
+    # Local import: fleet.eia860 imports config/paths at module load; the
+    # fuel mapper is the ONE taxonomy the dispatch fleet is classed on.
+    from market_sim.data.fleet.eia860 import _map_fuel_type
+
+    # Column-wise zip over the three code columns (an absent column reads as
+    # ``None``, as ``row.get`` did), rather than a Series per row.
+    n = len(out)
+    codes = [
+        out[c].to_numpy(dtype=object) if c in out.columns else [None] * n
+        for c in ("technology", "energy_source", "prime_mover")
+    ]
+    out["fuel_type"] = [_map_fuel_type(t, s, m) for t, s, m in zip(*codes)]
     return out[out["fuel_type"].isin(FOSSIL_FUELS)]
 
 

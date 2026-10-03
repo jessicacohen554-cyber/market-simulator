@@ -150,8 +150,17 @@ def corridor_context(
     if missing_sources is None:
         missing_sources = sorted(set(EXPECTED_SOURCES) - set(present))
     rows = []
-    for _, r in frame.iterrows():
-        rows.append({k: (None if pd.isna(r[k]) else r[k]) for k in _CONTEXT_FIELDS})
+    if not frame.empty:
+        # Row-wise over the interleaved value matrix (what ``iterrows`` reads),
+        # without building a Series per row.
+        col_pos = [frame.columns.get_loc(k) for k in _CONTEXT_FIELDS]
+        for v in frame.to_numpy():
+            rows.append(
+                {
+                    k: (None if pd.isna(v[i]) else v[i])
+                    for k, i in zip(_CONTEXT_FIELDS, col_pos)
+                }
+            )
     return {
         "datatype": DATATYPE,
         "context_only": True,

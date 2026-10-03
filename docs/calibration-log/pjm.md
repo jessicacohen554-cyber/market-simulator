@@ -7076,3 +7076,17 @@ Keeper unchanged; data withdrawn; arm at `d3e04d9f`. Records: `PRECOMMIT-` and `
   - **Why:** committed rungs set price in only 2–7 % of load-hours, and the coal committed rung is already below its incremental HR.
   - **Status:** COAL_BIT stays OPEN.
 - **Record:** `FINDING-pjm-next-28-sunk-noload-2026-10-02.md`.
+
+## PJM-NEXT-29 — 2026-10-03 — low-hour price-setters located; floor is not the COAL_BIT operand (zero LP, NOT CHARTERED)
+
+- **Readings fixed ex ante** (`19135a11`). R1 concentrated: `T*` = COAL_BIT econc + CC_REGULAR econc. R2: coal
+  mis-assigned (model 34–48 % vs IMM 19–24 % in real low hours). R4: the stranded band is CC_REGULAR committed/econc.
+  R5: quantity-short (ΔQ 34 / 45 GW, a population bound).
+- **Decision:** the lever candidate is the CC_REGULAR econ/committed level. Every channel that sets it is adjudicated,
+  and no new evidence was found. NOT CHARTERED.
+- **Post hoc (S1/S2):**
+  - The COAL_BIT 2019–21 excess sits in every real-price bin, and only 14–25 % of it is in the low hours. It is ~0 in
+    2023/24 at the same price ratios, so the floor is not the C1 operand.
+  - In-the-money loading is 0.95–0.99 in the model vs 0.88–0.91 in CAMPD in the fail years.
+- **COAL_BIT:** stays OPEN, re-pointed to in-the-money loading.
+- **Record:** `FINDING-pjm-next-29-lowhour-price-setters-2026-10-02.md`.

@@ -16,7 +16,7 @@
     "ruling_source": "Owner, program-director sitting 2026-08-26 (verbatim). Executed by the governance-records session the same day; record: docs/records/ercot/FINDING-ercot-two-config-keeper-2026-08-26.md.",
     "iso_determination": "NOT-YET",
     "iso_determination_ruling": "The ISO-LEVEL determination of the partitioned keeper is the WORST config determination over the DESIGNATED spans. Owner ruling 2026-08-31 (session ercot-246), verbatim question: 'Ok why is it not yet? The keeper is supposed to be a combined bundle of 2023 config that performs best with 2024-2025 config that performs best... pretty sure it's calibrated based on those params' \u2014 ruled CALIBRATED at the recommended option: both configs read CALIBRATED on their designated spans (2023 carve-out zero caveats; forward 2024-2025 with the lone ledgered C3c x2, non-downgrading under rubric v3.3), so ERCOT reads CALIBRATED. This moves the HEADLINE only: the forward keeper's registered 3-year NOT-YET (C3a-2023 -39.7%, C3b-2023 0.730) stays published at full magnitude in registered_determination and per config, every criterion record keeps its own number, and no registered artifact is modified. It supersedes the ercot-238 'primary verdict stays the forward keeper's registered full-span determination' status-part convention; the conservative worst-over-spans ordering is the same one the status page's partition accent already used. At the time of THIS ruling it was not a marker declaration; LATER THE SAME DAY the owner separately declared complete/frontier ('I think you can declare it complete / frontier', ercot-247) \u2014 see calibration-complete.json ERCOT entry and the frontier block above.",
-    "coverage_invariant": "Every year of the 2023-2025 TRAINING window is covered by EXACTLY ONE designated config: 2023 by the carve-out, 2024/2025 by the forward config. Since 2026-09-25 (R-ERCOT promotion, carried by the R-ERCOT-3 re-key) the same run carries FOUR validation-tier years 2019-2022 on the carve-out-A recipe. The ISO determination is the TRAIN-TIER verdict only (rule 30(c)).",
+    "coverage_invariant": "Every year of the 2023-2025 TRAINING window is covered by EXACTLY ONE designated config: 2023 by the carve-out, 2024/2025 by the forward config. Since 2026-09-25 (R-ERCOT promotion, carried by the R-ERCOT-3 re-key) the same run carries FOUR validation-tier years 2019-2022 on the carve-out-A recipe. Since rubric v3.13 (rule 30(c) as amended 2026-09-30) the ISO determination is the worst over every designated scope, validation tier included.",
     "configs": [
       {
         "role": "forward",
@@ -53,7 +53,7 @@
       },
       {
         "role": "carveout-validation-2019-2022",
-        "label": "VALIDATION RUNGS (2019-2022) - the carve-out-A recipe (swcap clip + x33 peak bands, ep_referenced=true) on the four pre-ECRS years; 2019/2020 added at R-ERCOT on structural grounds (pre-ECRS market design, PRECOMMIT-r-ercot \u00a72). Rule 30(c): never gates the ISO headline.",
+        "label": "VALIDATION RUNGS (2019-2022) - the carve-out-A recipe (swcap clip + x33 peak bands, ep_referenced=true) on the four pre-ECRS years; 2019/2020 added at R-ERCOT on structural grounds (pre-ECRS market design, PRECOMMIT-r-ercot \u00a72). Rubric v3.13 (rule 30(c) as amended 2026-09-30): gates the ISO headline like every scope.",
         "run_id": "2026-10-02-closeout-l1-coal-fuel",
         "bundle": "results/calibration/closeout_ercot_l1_span",
         "years": [
@@ -279,5 +279,6 @@
       "year_union_before_prune": "ERCOT registered year union read from both sidecars before the prune (rule 35(b)): {2019, 2020, 2021, 2022, 2023, 2024, 2025}; the incoming keeper covers all seven."
     }
   },
-  "note": "ERCOT keeper: W0 keeper recipe + ceiling-only plant-grain monthly coal pile on measured EIA-923 receipts (closeout-L1)"
+  "note": "ERCOT keeper: W0 keeper recipe + ceiling-only plant-grain monthly coal pile on measured EIA-923 receipts (closeout-L1)",
+  "determination_at_head": "NOT-YET at v3.13 (worst-of over every registered year, scripts/calibration_verdict.py::iso_determination), recomputed 2026-10-03 at d7ff7c20: fuelmix 2019-2020; price_shape 2019-2020; price_mean 2024. The standing_note and config_partition.iso_determination_ruling blocks above are owner-signed records as declared (2026-08-26 / 2026-08-31) and their rule-30(c) train-tier-only rationale is superseded by v3.13; build_status.py overwrites the published value from the live scorer."
 }

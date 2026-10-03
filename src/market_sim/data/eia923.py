@@ -117,10 +117,12 @@ def plant_month_price_grid(
         return grid
     for plant_id, group in subset.groupby("plant_id", sort=False):
         prices = np.full(_MONTHS_PER_YEAR, np.nan, dtype=float)
-        for _, row in group.iterrows():
-            month_idx = int(row["month"]) - 1
+        for month, price_m in zip(
+            group["month"].to_numpy(), group["price_per_mmbtu"].to_numpy()
+        ):
+            month_idx = int(month) - 1
             if 0 <= month_idx < _MONTHS_PER_YEAR:
-                prices[month_idx] = float(row["price_per_mmbtu"])
+                prices[month_idx] = float(price_m)
         grid[int(plant_id)] = prices
     return grid
 
@@ -169,12 +171,16 @@ def state_month_price_grid(
         wsum = np.zeros(_MONTHS_PER_YEAR, dtype=float)
         qsum = np.zeros(_MONTHS_PER_YEAR, dtype=float)
         cnt = np.zeros(_MONTHS_PER_YEAR, dtype=float)
-        for _, row in grp.iterrows():
-            m = int(row["month"]) - 1
+        for month, price_m, quantity in zip(
+            grp["month"].to_numpy(),
+            grp["price_per_mmbtu"].to_numpy(),
+            grp["quantity"].to_numpy(),
+        ):
+            m = int(month) - 1
             if not 0 <= m < _MONTHS_PER_YEAR:
                 continue
-            q = float(row["quantity"])
-            wsum[m] += float(row["price_per_mmbtu"]) * q
+            q = float(quantity)
+            wsum[m] += float(price_m) * q
             qsum[m] += q
             cnt[m] += 1.0
         with np.errstate(invalid="ignore", divide="ignore"):

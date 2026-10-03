@@ -181,10 +181,12 @@ def nyiso_reconciled_reference_monthly(
         return None
     agt_rows = bframe[(bframe["iso"] == "NEISO") & (bframe["year"] == year)]
     agt = np.full(12, np.nan)
-    for _, row in agt_rows.iterrows():
-        m = int(row["month"]) - 1
+    for month, basis in zip(
+        agt_rows["month"].to_numpy(), agt_rows["basis_usd_mmbtu"].to_numpy()
+    ):
+        m = int(month) - 1
         if 0 <= m < 12:
-            agt[m] = float(row["basis_usd_mmbtu"])
+            agt[m] = float(basis)
     if np.isnan(agt).any():
         return None
     w = np.clip(agt, 0.0, None)
@@ -763,8 +765,10 @@ def eia860_plant_gas_ldc(plant_codes: "np.ndarray | list[int]") -> dict[int, str
         subset=[EIA860_LDC_NAME_COLUMN]
     )
     return {
-        int(r["Plant Code"]): str(r[EIA860_LDC_NAME_COLUMN]).strip().upper()
-        for _, r in frame.iterrows()
+        int(code): str(name).strip().upper()
+        for code, name in zip(
+            frame["Plant Code"].to_numpy(), frame[EIA860_LDC_NAME_COLUMN].to_numpy()
+        )
     }
 
 

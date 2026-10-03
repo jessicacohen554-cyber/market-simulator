@@ -315,7 +315,7 @@ def measured_plant_rates(
     """
     mass_col = _POLLUTANT_MASS_COL[str(pollutant).lower()]
     window = constants.CO2_RATE_TRAILING_WINDOW_YEARS if window is None else window
-    df = v2[v2["iso"].astype(str) == str(iso)].copy()
+    df = v2[v2["iso"].astype(str) == str(iso)]
     if df.empty or mass_col not in df.columns:
         return {}
     if str(mode).lower() == "backcast":
@@ -344,15 +344,19 @@ def measured_plant_rates(
         df = df[df["year"].isin(years)]
     if df.empty:
         return {}
-    df["fuel_class"] = df["primary_fuel"].map(fuel_class)
+    # Group on an aligned key Series instead of writing a column onto a copy
+    # of the frame; the summed (plant_id, fuel_class) table is identical.
+    fuel_key = df["primary_fuel"].map(fuel_class).rename("fuel_class")
     out: dict[tuple[int, str], float] = {}
-    grouped = df.groupby(["plant_id", "fuel_class"], observed=True)[
+    summed = df.groupby([df["plant_id"], fuel_key], observed=True)[
         [mass_col, "net_mwh"]
-    ]
-    for (plant_id, fc), agg in grouped.sum().iterrows():
-        net = float(agg["net_mwh"])
+    ].sum()
+    for (plant_id, fc), mass, net in zip(
+        summed.index, summed[mass_col], summed["net_mwh"]
+    ):
+        net = float(net)
         if net > 0:
-            out[(int(plant_id), str(fc))] = float(agg[mass_col]) / net / 1000.0
+            out[(int(plant_id), str(fc))] = float(mass) / net / 1000.0
     return out
 
 
@@ -554,19 +558,19 @@ def load_announced_controls(
     # positionally, so read the three fields we need as aligned Series.
     etypes = df.loc[keep, "Equipment Type"].astype(str).str.strip().str.upper()
     out: list[AnnouncedControl] = []
-    for idx in etypes.index:
-        mapped = type_map.get(etypes.at[idx])
+    for etype, plant_code, inservice in zip(etypes, plant[keep], iy[keep]):
+        mapped = type_map.get(etype)
         if mapped is None:
             continue
         pollutant, removal = mapped
         out.append(
             AnnouncedControl(
-                plant_id=int(plant.at[idx]),
+                plant_id=int(plant_code),
                 pollutant=pollutant,
-                install_year=int(iy.at[idx]),
+                install_year=int(inservice),
                 removal_fraction=float(removal),
                 fuel_class=None,
-                equipment_type=etypes.at[idx],
+                equipment_type=etype,
             )
         )
     return out
