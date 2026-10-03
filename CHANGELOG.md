@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-10-03 — capx D102: forecast-verdict staleness census against the 2026-10-02 W0 keepers (zero LP)
+
+All 111 `ff-verdicts.json` keys read STALE-SURFACE against the W0 keepers (0 CURRENT, 0 STALE-POSTURE; no forecast-scoped `SOLVE_EPOCH`, two registry rows moved after the newest verdict); parity SUMMARY 9 postures / 0 unaccounted / 26 filed gaps — `docs/records/forecast/FINDING-capx-d102-2026-10-03.md`.
+
 ## 2026-10-02 — closeout-W0 denominator fix, part 2: the live dispatched-bin roster (desk ruling D-1, zero LP)
 
 With `unit_outage_dispatched_bin_denominator` on in a COD-ramped backcast, the unit-outage denominator
