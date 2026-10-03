@@ -69,6 +69,9 @@ DATATYPES: tuple[str, ...] = (
     "carb-cap-schedule",
     "chp-btm-share",
     "ramp-capability",
+    # UC-1 (2026-10-03): measured per-plant commitment physics for the MILP
+    # unit-commitment stage (unit_commitment_milp).
+    "uc-params",
     "nyiso-downstate-gas",
     "ercot-wtx-congestion",
     "nyiso-renewable-curtailment",

@@ -106,6 +106,7 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "transfer-interface-limits",
     "transmission-expansion",
     "ramp-capability",
+    "uc-params",
     "winter-fuel-inventory",
     "rggi-co2-budgets",
     "carb-cap-schedule",
@@ -680,6 +681,25 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "spec in `scripts/lib/ramp_capability/<iso>.py` (PJM, MISO, CAISO). "
             "Consumed as the measured ceiling on the class-rate estimate feeding "
             "`FleetArrays.ramp10`, the 10-minute reserve-deliverability bound."
+        ),
+    },
+    "uc-params": {
+        "summary": (
+            "Measured per-plant commitment physics (unit count, HSL/LSL, "
+            "min-up/min-down, no-load heat input) for the MILP unit-commitment "
+            "stage."
+        ),
+        "reconciles": (
+            "EPA CAMPD CEMS hourly unit gross load and heat input "
+            "(`data/raw/campd-unit-level`), the facility's units of one CAMPD "
+            "unit-type family summed to one plant series (plant basis), pooled "
+            "2023-2025: `hsl_mw` (p99.5), `lsl_mw`/`mlf` (p5 of online-hour "
+            "load), `ut_h`/`dt_h` (p25 of on-runs/off-gaps), `noload_mmbtu_h` "
+            "(sum of per-unit OLS intercepts of heatInput on grossLoad) and a "
+            "class-fallback row per family (`plant_code = 0`). Per-ISO scoping "
+            "is the CAMPD state footprint in `scripts/lib/uc_params/<iso>.py` "
+            "(every ISO). Read by `market_sim.model.uc.params` only when "
+            "`unit_commitment_milp` is armed."
         ),
     },
     "energy-offers": {

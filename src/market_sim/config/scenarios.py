@@ -22833,7 +22833,6 @@ class ScenarioConfig:
     # arms (DESIGN section 2.3).
     uc_prefixing: bool = False
 
-
     def __post_init__(self) -> None:
         # YAML round-trip type repair: YAML has no tuple type, so a config
         # loaded back from a sidecar (``from_yaml`` over a ``to_yaml_full``

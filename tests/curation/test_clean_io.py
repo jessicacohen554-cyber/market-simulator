@@ -63,6 +63,7 @@ ALL_DATATYPES = [
     "carb-cap-schedule",
     "chp-btm-share",
     "ramp-capability",
+    "uc-params",
     "nyiso-downstate-gas",
     "ercot-wtx-congestion",
     "nyiso-renewable-curtailment",
