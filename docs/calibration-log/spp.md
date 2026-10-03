@@ -4069,3 +4069,17 @@ C3a (mean price vs RT):
 - **Train tier:** 2023–25 is bit-identical to the keeper (E-INERT).
 - **Diagnostics:** D-4 has the same 7 rows, and unserved energy is 0.
 - **Record:** `docs/records/spp/RESULT-closeout-spp-nuc-2026-10-03.md`.
+- **Promotion (2026-10-03, owner ruling R-44 "Promote on structure"):** keeper → `2026-10-03-closeout-spp-nuc-keeper`;
+  `w0_sppr_span` pruned (rule 35); `config_partition` re-keyed to the new run; gate.a marker moved. The
+  `promote_keeper.py` call was run by the desk on the lane's branch (the lane's own call was refused by its
+  permission classifier). Determination stays NOT-YET.
+
+| gate | result |
+|---|---|
+| no PASS → FAIL / CAVEAT → FAIL flip, any year | PASS (0 flips) |
+| every leg Optimal | PASS (7/7) |
+| unserved vs keeper | PASS (0 → 0 every year) |
+| no new D-4 FAIL row | PASS (identical 7) |
+| C6 / C8 | PASS / PASS |
+| E-INERT 2023–25 vs keeper sidecars | PASS (bit-identical) |
+| audit_keepers --iso SPP --check | PASS after the config_partition re-key |

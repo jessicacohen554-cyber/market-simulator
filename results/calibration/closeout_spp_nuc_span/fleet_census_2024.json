@@ -3,7 +3,7 @@
   "iso": "SPP",
   "year": 2024,
   "eia860_vintage": "vintage_2024",
-  "model_source": "unit_marginal:w0_sppr_span",
+  "model_source": "unit_marginal:closeout_spp_nuc_span",
   "tolerances_pct": {
     "family_vs_860": 1.0,
     "total_thermal_vs_860": 0.5,

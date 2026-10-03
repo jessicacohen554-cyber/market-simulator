@@ -3,7 +3,7 @@
   "iso": "SPP",
   "year": 2021,
   "eia860_vintage": "vintage_2021",
-  "model_source": "unit_marginal:w0_sppr_span",
+  "model_source": "unit_marginal:closeout_spp_nuc_span",
   "tolerances_pct": {
     "family_vs_860": 1.0,
     "total_thermal_vs_860": 0.5,
@@ -419,31 +419,16 @@
       "eia860_nameplate_mw": 2068.7,
       "eia860_summer_mw": 1995.0,
       "eia860_winter_mw": 2025.0,
-      "model_pmax_mw": 1935.2,
-      "model_summer_mw": 1935.2,
-      "model_winter_mw": 1935.2,
-      "model_available_jul_mw": 1935.2,
-      "model_available_jan_mw": 1935.2,
-      "delta_summer_pct": -3.0,
-      "delta_winter_pct": -4.437,
+      "model_pmax_mw": 1995.0,
+      "model_summer_mw": 1995.0,
+      "model_winter_mw": 1995.0,
+      "model_available_jul_mw": 1995.0,
+      "model_available_jan_mw": 1995.0,
+      "delta_summer_pct": 0.0,
+      "delta_winter_pct": -1.481,
       "within_tolerance": false,
       "scored": true,
-      "explained_residual_rows": [
-        {
-          "plant": 210,
-          "eia860_summer_mw": 1225.0,
-          "model_summer_mw": 1188.2,
-          "delta_mw": -36.8,
-          "reason": "rating differs (block / guard clip / steam part / COD fraction)"
-        },
-        {
-          "plant": 8036,
-          "eia860_summer_mw": 770.0,
-          "model_summer_mw": 746.9,
-          "delta_mw": -23.1,
-          "reason": "rating differs (block / guard clip / steam part / COD fraction)"
-        }
-      ]
+      "explained_residual_rows": []
     },
     {
       "family": "OIL",
@@ -583,13 +568,13 @@
     "eia860_nameplate_mw": 61985.6,
     "eia860_summer_mw": 56944.5,
     "eia860_winter_mw": 57795.6,
-    "model_pmax_mw": 52519.0,
-    "model_summer_mw": 51190.3,
-    "model_winter_mw": 41836.8,
-    "model_available_jul_mw": 45998.4,
-    "model_available_jan_mw": 37540.9,
-    "delta_summer_pct": -10.105,
-    "delta_winter_pct": -27.613,
+    "model_pmax_mw": 52578.8,
+    "model_summer_mw": 51250.2,
+    "model_winter_mw": 41896.6,
+    "model_available_jul_mw": 46058.3,
+    "model_available_jan_mw": 37600.7,
+    "delta_summer_pct": -10.0,
+    "delta_winter_pct": -27.509,
     "within_tolerance": false
   },
   "iso_report": {

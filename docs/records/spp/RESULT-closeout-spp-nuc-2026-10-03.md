@@ -133,3 +133,17 @@
 - The train tier 2023–25 is bit-identical, and the determination is unchanged.
 - Promotion happens only on the owner ruling relayed by the desk, in the desk's slot (rule 31).
 - Nothing was deleted, and every leg is on its shard branch until this PR merges.
+
+## 5. Promotion (desk, 2026-10-03)
+
+Owner ruling **R-44 "Promote on structure"** (card answered 2026-10-03, relayed by the desk; recorded in
+`docs/backcast-closeout-plan-2026-10.md` §5.0). The lane's own `promote_keeper.py` call was refused by its
+permission classifier ("Modify Shared Resources"), so the desk ran the identical command on this branch:
+register → attest (outgoing exceptions ledger `[]`; DOF ledger written) → designate keeper
+`2026-10-03-closeout-spp-nuc-keeper` → gate.a marker `w0-spp107r` → new keeper → status rebuild (SPP NOT-YET)
+→ audit (E13 tolerated, then the strict audit stopped on E12: `config_partition.configs[].run_id` named the
+pruned `w0-spp107r`; re-keyed by hand to the new run and bundle, the W0 RESULT §5 item 5 precedent, after
+which the audit is clean) → prune `w0_sppr_span` (own ISO) → parity OK. The dispatch legs were copied from
+the seven shard branches into the span's gitignored `dispatch/` for the preflight only; the keeper bundle on
+`main` is the slim layer plus `fleet_census_<y>.json` built by the preflight.
+
