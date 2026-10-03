@@ -119,6 +119,7 @@ main + R-33 + R-34:
 
 - Only `rubric_version` moves, in every run.
 - The DA diagnostic rows print the same model count as the gated row, so they move with it by construction.
+- The v3.6 holdout-year limb still classifies CAISO 2021 as CAVEAT, now carrying the R-34 reading.
 - Every determination is unchanged: CAISO, ERCOT, MISO, NWPP, PJM, SOCO and SPP read NOT-YET; NEISO and NYISO read
   CALIBRATED.
 - The status parts for every ISO were rebuilt. For the other eight ISOs only `generated` and `rubric_version` moved.
@@ -129,7 +130,7 @@ main + R-33 + R-34:
   reads 0 → 0, SPP 2019–25 read identically, and every other ISO-year has full RT coverage.
 - Their verdicts carry the old "lower bound" note until their next render.
 
-## 5. Bench-part builder stamp (54 other-ISO parts re-stamped)
+## 5. Cross-ISO bench-stamp side effect (54 other-ISO parts re-stamped; desk-accepted 2026-10-03)
 
 `render_calibration_html.py` is a `PAYLOAD_SOURCES` member of `scripts/lib/bench_stamp.py`, so the R-34 render edit
 moved the payload fingerprint (`29bf6a6f5186` → `92dfc33f7e7b`; aggregate `026141c892ee` → `9ebd23f9ea8f`). That
@@ -148,6 +149,15 @@ made 54 of 61 committed bench parts read STALE. `check_bench_freshness.py` went 
 - Each part's own gzip round-trip was verified exact first, with the writer's format: level 9, mtime 0.
 - `bench` and every other `meta` field are verified unchanged on all 54.
 - After: `check_bench_freshness.py`: **0 STALE** of 61. The stamp tests pass.
+
+**The 54 parts.** Each part is `frontend/data/backcast/bench/<ISO>/<year>.json.gz`; every one is rewritten to
+aggregate `9ebd23f9ea8f` / payload `92dfc33f7e7b`.
+- from `026141c892ee` (48): ERCOT 2019, 2020, 2021, 2022, 2023, 2024, 2025; MISO 2019, 2020, 2021, 2022, 2023, 2024, 2025; NEISO 2019, 2020, 2021, 2022, 2023, 2024, 2025; NWPP 2025; NYISO 2021, 2022, 2023, 2024, 2025; PJM 2019, 2020, 2021, 2022, 2023, 2024, 2025; SOCO 2019, 2020, 2021, 2022, 2023, 2024, 2025; SPP 2019, 2020, 2021, 2022, 2023, 2024, 2025
+- from `f979bd82fd43` (6): NWPP 2019, 2020, 2021, 2022, 2023, 2024
+
+**For other lanes.** NYISO has no 2019–2020 parts, and the 7 CAISO parts were re-rendered in full. Any lane that
+re-renders its ISO's parts at promotion simply writes the new stamp again; NWPP-anchor and SOCO-2 are the two
+pending. The desk accepted this re-stamp as bench-inert on the evidence above.
 - **One knock-on, NWPP provenance only, dissolved by main.** On the lane base,
   `tests/unit/data/test_nwpp_demand_plant_basis.py::test_artifact_matches_bench_parts` failed, because
   `data/raw/reference/nwpp_plant_basis_energy.csv` recorded the sha256 of each NWPP bench part and the stamp rewrite
