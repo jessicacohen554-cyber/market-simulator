@@ -1043,3 +1043,46 @@ Records:
 - `docs/records/nwpp/FINDING-nwppnext23-price-level-phase0-2026-10-03.md`
 - `PRECOMMIT-nwppnext23-coi-pnw-basis-2019-2025-2026-10-03.md`
 - `RESULT-nwppnext23-coi-pnw-basis-2026-10-03.md`
+
+## NWPP-NEXT-24 — 2026-10-03 — HEAD data re-solve (coal stocks 2015–17 + NWPP nuclear rows) → KEEPER `2026-10-03-nwpp-next-24-head`
+
+**What changed.** Keeper NEXT-23's recipe was replayed unchanged at main HEAD (pin `23beba2a`; `scenario_config` diff
+empty in all seven years) on two measured inputs that landed after its legs:
+
+- #7134 EIA-923 coal stocks 2015–17 (yard maxima for the take floor and monthly pile);
+- SolveEpoch 2026-10-03b, NWPP 2019–22 `NUCLEAR_MONTHLY_CF_BY_YEAR` (Columbia; owner ruling R-35).
+
+It is a rule-14 data re-solve. The close-out desk granted the slot ("rule-14 data re-solve of the R-48 structure").
+
+**Phase 0 (zero LP).**
+
+- **COI economic depth: CLOSED with no admissible driver.** CAISO's own DAM schedule on Malin+Cascade saturates at
+  about 1,000–1,100 MW of a ~2,750 MW OTC. The ETC/TOR set-aside leaves twice the saturation as headroom and is
+  behavioural hourly. The depth is NW supply surplus.
+- **C3a decomposed.** The 2024 −27.8 % is 80 % the Jan 12–17 arctic event; without the top 10 days 2023 reads
+  −6.0 % and 2024 −7.0 %. Dispatch during the event matches EIA-930. The gap is scarcity pricing, not fuel
+  (January delivered gas $4–6.4) and not the water value.
+
+**Scores against keeper NEXT-23 (same HEAD bench render).** NOT-YET → NOT-YET, 9 → 9 FAIL records, zero flips.
+
+| reading | keeper | this keeper |
+|---|---|---|
+| C1 CC_REGULAR 2019 / 2020 / 2024 / 2025 | +11.97 / +5.65 / +14.80 / +7.90 TWh | +12.17 / +6.74 / +14.90 / +7.99 |
+| C4 gas 2019 / 2023 / 2024 r | 0.657 / 0.533 / 0.791 | 0.651 / 0.534 / 0.789 |
+| C4 coal 2019 / 2022 / 2025 r | 0.801 / 0.747 / 0.816 | 0.791 / 0.758 / 0.821 |
+| C3a 2023 / 2024 / 2025 | −11.6 / −27.9 / −1.6 % | −11.6 / −27.8 / −1.6 % |
+| nuclear 2019 / 2020 / 2022 | — | +0.40 / +0.95 / +1.39 TWh |
+| COAL_BIT 2019 / 2020 | — | −1.06 / −1.96 TWh |
+| D-1 failures | 14 | 13 |
+
+**Bench re-render disclosure.** The HEAD bench (CHP/BTM reattribution on main) moves measured CC_REGULAR 2025 by
++0.12 TWh. That flips the outgoing keeper's CC 2025 record FAIL (+8.02) → PASS (+7.90). It is not this run: on the
+old render this run reads +8.11 FAIL.
+
+**Prune:** `2026-10-03-nwpp-next-23-coi` / `nwppnext23_span`.
+
+Records:
+
+- `docs/records/nwpp/FINDING-nwppnext24-coi-depth-phase0-2026-10-03.md`
+- `PRECOMMIT-nwppnext24-data-resolve-2019-2025-2026-10-03.md`
+- `RESULT-nwppnext24-data-resolve-2026-10-03.md`
