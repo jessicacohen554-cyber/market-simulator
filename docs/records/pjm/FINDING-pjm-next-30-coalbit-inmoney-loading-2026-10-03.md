@@ -59,4 +59,84 @@ and carries the Tait 55248→2847 remap as the rule-14 rider (closeout census §
 
 ## §2 Result
 
-_(pending — written after the probe runs)_
+Probe `scripts/probes/_pjmnext30_coalbit_loading.py` → `results/phase0/pjm/_pjmnext30_coalbit_loading.json`.
+The S2 totals reproduce NEXT-29 exactly (2021: M 21,684 / K 21,981 / A 20,074 MW). Clock check: CAMPD unit-level
+gross against the bench, 2021, mean plant correlation peaks at lag 0 (0.986; ±1 h 0.975). Every plant matches a
+CAMPD facility; none are unmatched.
+
+**Pieces, `H_y`-mean MW** (model-based; the dispatch-independent `K` twin in brackets):
+
+| year | H | gap | basis | derate | offline | loading | unit-dark share (2 + 3) | top-10 share |
+|---|---|---|---|---|---|---|---|---|
+| 2019 | 1368 | 2201 | 1084 (1200) | 470 (500) | 309 (326) | 338 (678) | 0.80 | 0.80 |
+| 2020 | 976 | 1987 | 898 (1287) | 157 (205) | 368 (445) | 565 (1352) | 0.89 | 0.67 |
+| 2021 | 1741 | 1611 | 280 (342) | 513 (574) | 236 (246) | 582 (747) | 0.72 | 0.80 |
+| 2022 | 2852 | 2122 | 613 (874) | 539 (738) | 235 (274) | 735 (2099) | 0.79 | 0.95 |
+| 2023 | 2658 | 557 | 238 (853) | 577 (888) | 82 (108) | **−340** (2103) | 0.79 | — |
+| 2024 | 3721 | −84 | 122 (346) | 266 (688) | 45 (109) | **−517** (2180) | 0.62 | — |
+| 2025 | 3288 | 946 | 26 (48) | 249 (368) | 148 (191) | 522 (1493) | 0.80 | — |
+
+(The top-10 share is undefined when the year's gap is ≈ 0.)
+
+### Readings, applied as fixed
+
+| reading | result | verdict |
+|---|---|---|
+| R1 | Pooled 2019–21 shares: basis 0.367, loading 0.261, derate 0.218, offline 0.154 | **Mixed (basis, loading)** |
+| R2 | Fail − pass, per MW of `K` (model-based / twin): basis +0.012 / −0.005; derate −0.008 / −0.025; offline +0.007 / +0.006; loading **+0.049 / −0.069** | Only **loading** is year-discriminating. By the rule's letter it is **level**: \|twin\| ≥ 0.03. But the twin's sign is opposite (see below). |
+| R3 | Top-10 plants carry 0.756 of the 2019–21 gap. Their lead piece is loading; the fleet's is basis. | **Not concentrated** (the lead piece differs) |
+| R4 | Reserve bound ÷ loading piece: 2.18 / 2.15 / 0.70 (2019 / 20 / 21) | **Cannot exclude** reserves |
+| R5 | The larger R1 piece (basis) is not year-discriminating. The year-discriminating piece (loading) maps to the offer family. | **NOT CHARTERED.** No admissible availability arm. |
+
+### What the numbers say (beyond the readings, labelled as interpretation)
+
+- **The capability overstatement is present in every year. It is not what separates the years.**
+  - basis + derate + offline per MW of `K` is 0.066 / 0.053 / 0.047 / 0.059 / 0.023 in the fail years and
+    0.051 / 0.026 in 2023 / 24.
+  - So the model's `cap_mw` sits about 0.5–1.9 GW above what the plants revealed they could deliver that year or
+    that week. This holds in 2023/24 as well.
+  - 62–89 % of the derate and offline MW falls in hours when at least one CAMPD unit of the plant is dark. These
+    are whole-unit outages the keeper's windows do not carry, rather than partial derates. `unit_partial_outage_windows`
+    is therefore not the arm.
+- **The year-discriminator is the model's own loading, and it cancels the overstatement in 2023/24.**
+  - In the fail years the model runs at weekly capability, so its loading piece is positive (+338…+735 MW).
+  - In 2023/24 the model backs coal off *below* the real output in the same S2 hours (−340 / −517 MW).
+  - That exactly offsets the overstatement, so the 2023/24 gap of ≈ 0 is a cancellation, not a match.
+  - The real fleet's own below-capability loading (the twin) is *larger* in 2023/24 (2.1 / 2.2 GW) than in 2019–21
+    (0.7–1.4 GW). Real coal is less deep in the money in those years at the same gas-implied HR, because of higher
+    coal prices.
+- **Consequence for any availability arm:** a rule-14 repair of the overstatement (outage-window coverage for the
+  unit-dark hours, or a capacity rating basis) would cut the fail-year gap by roughly the basis + derate + offline
+  share (≈ 0.75 of it in 2019–21). It would also push 2023/24 S2 energy below CAMPD by about the same per-MW-of-cap
+  amount, because there the model's loading already sits below real. The two passing years would regress with the
+  fail years. The arm is real structure (rule 1 would keep it in on structure), but it is not the year-discriminating
+  operand. That operand is the model's merit position of coal against the price: it runs at cap in 2019–22/25 and
+  backs off in 2023/24. Real coal does neither.
+- **Reserves:** the IMM coal-held reserve MW (Tier-1 + Tier-2 + regulation) is as large as the 2019/20 loading piece.
+  This is incidental headroom on economically loaded units (closeout 0c), and making coal hold reserve is a no-op
+  or R (`pjm_reserve_pergen_sync`). It explains some of the real fleet's shortfall from capability. It is not an
+  arm.
+- **Basis piece by plant (2019–21 top-10):** the largest are 3140 (216 MW in 2019) and 3797 (194 MW in 2020). The
+  small plants 54304, 10566 and 10043 (≈ 210–235 MW of `cap_mw` each) carry 30–90 MW each. At those plants `cap_mw`
+  exceeds the annual p99 of net output. That is a rating-basis question for `coal_nameplate_summer_derate` (U;
+  NEXT-22 sized the fleet max at 0.97–0.98 × net summer). It is evidence for the cell, not a verdict.
+
+## §3 Consequence
+
+- COAL_BIT C1 2019–21 side card (a) stays **OPEN, not a model-class limit**, and is now narrower:
+  - The availability family is **not** the year-discriminating operand. NEXT-13's monthly-max verdict is extended
+    to typical in-money loading, with the same conclusion.
+  - A real ~0.5–1.9 GW `cap_mw` overstatement exists in every year. It is mostly whole-unit dark hours outside the
+    keeper's windows, plus a rating basis at small plants.
+  - Repairing it is rule-14 structure. It is expected to move every year, and to regress 2023/24 C1 unless the
+    loading operand also moves.
+- **The operand that separates the years** is the model's coal loading against the price: at cap in the fail
+  years, below real in 2023/24. Every channel that sets the coal offer level and shape is adjudicated:
+  - `offer_curve_by_group` K (including the `peak` band);
+  - `coal_drop_pof` K;
+  - NEXT-11/17 coal offer audit: real coal is price-flat.
+- This lane adds no new evidence to those cells. **NOT CHARTERED**, and no solve.
+- **Tait 55248→2847 remap (b):** no lever solve exists to carry it, so it stays parked as the rule-14 rider for the
+  next PJM solve (owner card in the session report).
+- **Matrix:** `coal_nameplate_summer_derate` stays U, and the basis-piece sizing is appended as evidence. No other
+  cell moves.
