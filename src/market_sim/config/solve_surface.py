@@ -145,6 +145,12 @@ class SolveEpoch:
 #: 2026-10-03b: PJM/NWPP/SPP 2019-2022 measured nuclear monthly CF rows (backcast;
 #: NWPP and SPP rows of NUCLEAR_MONTHLY_CF_BY_YEAR are undeclared, so only an epoch
 #: re-keys them; PJM's declared row also moves on its own).
+#: 2026-10-03c: SOCO's 2019-2022 measured nuclear monthly CF rows (backcast SOCO;
+#: the SOCO row of NUCLEAR_MONTHLY_CF_BY_YEAR is undeclared, so only an epoch
+#: re-keys it).
+#: 2026-10-03d: MISO's 2019-2022 NRC daily nuclear extract plus Duane Arnold /
+#: Palisades pass-through rows (backcast MISO; the CSV is in no key; the MISO
+#: NUCLEAR_MONTHLY_CF_BY_YEAR row is declared and moves MISO keys on its own).
 SOLVE_EPOCHS: tuple[SolveEpoch, ...] = (
     SolveEpoch(
         id="2026-10-02c",
@@ -191,6 +197,26 @@ SOLVE_EPOCHS: tuple[SolveEpoch, ...] = (
         ),
         modes=("backcast",),
         isos=("NWPP", "PJM", "SPP"),
+    ),
+    SolveEpoch(
+        id="2026-10-03c",
+        cause=(
+            "SOCO 2019-2022 nuclear availability reads the measured EIA-923 "
+            "monthly CF rows instead of the forecast fallback pattern"
+        ),
+        modes=("backcast",),
+        isos=("SOCO",),
+    ),
+    SolveEpoch(
+        id="2026-10-03d",
+        cause=(
+            "MISO nuclear-availability extract re-derived over 2019-2025: NRC "
+            "daily rows for 2019-2022 on the new measured EIA-923 anchor rows, "
+            "Duane Arnold and Palisades as uncovered pass-through rows through "
+            "their EIA-860 retirement years (owner ruling R-43)"
+        ),
+        modes=("backcast",),
+        isos=("MISO",),
     ),
 )
 

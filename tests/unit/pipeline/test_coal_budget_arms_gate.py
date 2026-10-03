@@ -77,6 +77,19 @@ def test_pile_without_take_floor_refused_outside_ceiling_isos(iso):
         resolve_coal_monthly_pile(cfg, iso, floor_armed=False)
 
 
+def test_soco_arms_yard_rows_pile_and_measured_receipts():
+    """closeout-SOCO-3 (R-49): SOCO arms the yard rows + take-floor pile + receipts."""
+    cfg = _cfg(
+        coal_fuel_inventory_plant_grain=True,
+        coal_fuel_inventory_take_floor=True,
+        coal_fuel_inventory_monthly_pile=True,
+        coal_monthly_pile_measured_receipts=True,
+    )
+    assert resolve_coal_budget_arms(cfg, "SOCO") == (False, True)
+    assert resolve_coal_monthly_pile(cfg, "SOCO", floor_armed=True) is True
+    assert resolve_coal_measured_receipts(cfg, "SOCO", pile_armed=True) is True
+
+
 def test_ercot_pile_with_take_floor_still_refused():
     """The take floor stays NWPP's own evidence; ERCOT arms the ceiling only."""
     cfg = _cfg(coal_fuel_inventory_monthly_pile=True)

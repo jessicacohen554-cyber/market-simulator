@@ -4024,6 +4024,10 @@ results/calibration/nwppnext21_*/
 
 # closeout-PJM R-13 arm legs: transport on claude/closeout-pjm-r13-<year> shard branches, never main (rule 29c)
 results/calibration/closeout_pjm_r13_*/
+
+# closeout-SOCO-2: per-year shard legs, checked out for verify/compose only; bytes live on their shard commits
+# (claude/closeout-soco-2-<Y>); the composed bundle carries its own negation. Never rm (rule 31).
+results/calibration/closeout_soco_2_20[12][0-9]/
 results/calibration/nwppnext22_*/
 results/calibration/nwppnext22b_*/
 !results/calibration/nwppnext22b_span/
@@ -4042,3 +4046,12 @@ results/calibration/nwppnext22b_*/
 /results/ff-t1f-d105/*/*/*/hourly/
 /results/ff-t1f-d105/*/*/*/year_*_floor_retentions.json
 /results/ff-t1f-d105/*.log
+# closeout-nwpp-anchor (owner ruling R-48): per-year shard legs, checked out for verify/compose only; bytes live on
+# their shard commits (claude/closeout-nwpp-anchor-<Y>); the composed keeper bundle carries its own negation. Never rm (rule 31).
+results/calibration/closeout_nwpp_anchor_20[12][0-9]/
+results/calibration/closeout_nwpp_anchor_*/
+!results/calibration/closeout_nwpp_anchor_span/
+# closeout-spp-nuc probe scratch (copies committed under docs/records/spp/closeout-spp-nuc/)
+results/calibration/_closeoutsppnuc/
+# closeout-spp-nuc per-year legs (transport on claude/closeout-spp-nuc-<Y>; composed into closeout_spp_nuc_span)
+results/calibration/closeout_spp_nuc_20[0-9][0-9]/

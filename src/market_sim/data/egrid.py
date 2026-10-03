@@ -296,7 +296,13 @@ def _load_egrid_plant_co2_raw(vintage: int) -> pd.DataFrame:
     """Parse the eGRID workbook's plant sheet for a vintage (the raw path)."""
     sheet = f"PLNT{vintage % 100:02d}"
     raw = pd.read_excel(
-        _egrid_path(vintage), sheet_name=sheet, skiprows=1, usecols=list(_EGRID_COLS)
+        _egrid_path(vintage),
+        sheet_name=sheet,
+        skiprows=1,
+        usecols=list(_EGRID_COLS),
+        # calamine (Rust) reads the 11-21 MB plant sheet ~5x faster than openpyxl
+        # and returns the identical frame (checked exact, every vintage, 2026-10).
+        engine="calamine",
     )
     return pd.DataFrame(
         {
