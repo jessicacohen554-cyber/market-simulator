@@ -75,3 +75,91 @@ Owner ruling **R-42** (2026-10-03, relayed by the desk, verbatim): *"A: Remove �
 Shard `session_016m22us1qUxP2JmFqPEg9ob`, environment `env_016R8xUY4maDbppZ6TEns5V8`, auto mode, pin `2e5d93a24222e75b04b802ddff85b945de1699ca`, out-dir `results/calibration/closeout_ercot_ecrs_2023`, branch `claude/closeout-ercot-ecrs-2023`.
 
 Launch note: the session was first created with a one-word placeholder prompt by mistake. It was interrupted at once and given the full shard_prompt.py text, with step-0 checkout, prepare_solve_container exports, the K1 recipe-diff check and the single-quote `--set` instruction. No solve ran under the placeholder.
+
+## Addendum 2 — owner ruling R-46: strip ×33 from 2019–22 (2026-10-03)
+
+Owner ruling **R-46** (2026-10-03, relayed by the desk, verbatim): *"Strip the ×33 bands from 2019–22 after the 2023 result"*. The reasoning is the same as R-42 under rule 1. The ×33 bands are a residual-swept value, not a market mechanism, and 2019–22 has no ECRS at all.
+
+The 2023 K1–K3 reading that this addendum waits on is in §A2.0. This addendum is pushed before any 2019–22 launch.
+
+
+### A2.0 The 2023 reading this addendum waits on (leg `3783ae77`, pin `2e5d93a2`; bundle fetched and verified)
+
+**K1 PASS.** The `run_config` diff from the keeper's `run_config_2023.json` is exactly the 17 band keys.
+
+**K2 PASS.** 0.0 MWh unserved in 2023, matching the keeper's 0.
+
+**K3 PASS on the D-2 governance read.** Every 2023 C8 class passes:
+
+| class | forced share |
+|---|---|
+| CC_REGULAR | 0.0107 |
+| COAL_LIGNITE | 0.0642 |
+| COAL_PRB | 0.0831 |
+| CT_PEAKER | 0.1499 (keeper 0.1448; peaker budget 0.15, a thin margin) |
+| ST_GAS | 0.1888 |
+
+C6 is confirmed formally on the composed span.
+
+The 2023 D-4 FAIL set equals the keeper's plus one new row: `gas_commitment_bridge × CC_REGULAR`, plant 55223, h0-23, 0.0037 TWh, 23 binding hours.
+
+**2023 readings, reported at full size:**
+- C3a −43.2 % (model $36.95 vs actual $65.02; IMM ECRS-neutral counterfactual ≈ $35) FAIL
+- C3b 0.790 FAIL
+- Both are inside the pre-fixed ranges (−45 % to −30 %; 0.5 to 0.9).
+- Mean ORDC adder $2.55. The 2023 shard was archived after verification.
+
+### A2.1 Config delta (per year, the same 17 keys as 2023)
+
+In each year's partition entry, `offer_curve_by_group.<G>.{peak, phys_peak, peak_ladder}` return to the forward (2024–25) values. These are the keys for CC_CHP, CC_INTERMEDIATE, CC_REGULAR, CT_CHP, CT_INTERMEDIATE, CT_PEAKER, ST_GAS and ST_GAS_INTERMEDIATE, all ÷33.
+
+Every other key of the year's recipe is unchanged. That includes `ercot_offer_swcap_clip=true` and `ercot_zonal_spread_ep_referenced=true`, which is the validation partition's existing value. There is no new field and no code change.
+
+### A2.2 Recipe proof (zero LP, solve-stubbed `replay_keeper` at each leg's own code)
+
+For every year:
+- the control's `prb_overrides.offer_curve_by_group` equals the keeper's `run_config_<Y>.json` exactly
+- there are no top-level kwarg differences
+- `prb_overrides` differs only in `offer_curve_by_group`, in exactly 17 band keys
+
+| Year | Pin (leg commit; parent `106d6bb7`, zero code drift) | Leg bundle replayed | Proof |
+|---|---|---|---|
+| 2019 | `f4e5be977e248eee26a2f513dec73ce3b0eac3c9` | `closeout_ercot_l1_2019` | control = keeper; 17 keys only |
+| 2020 | `199c5d82784732339ddb82edb0e5ef9067c1097a` | `closeout_ercot_l1b_2020` | control = keeper; 17 keys only |
+| 2021 | `211c34cb8319e41f54d6400a2ea2af38474eae48` | `closeout_ercot_l1b_2021` | control = keeper; 17 keys only |
+| 2022 | `cacafbfd6bb4bd4bbcfac793708e30d078ee351e` | `closeout_ercot_l1b_2022` | control = keeper; 17 keys only |
+
+Each shard writes to its own out-dir, `results/calibration/closeout_ercot_ecrs_<Y>`, on branch `claude/closeout-ercot-ecrs-<Y>`.
+
+### A2.3 Pre-fixed readings (measured, reported at full magnitude; not fit bars)
+
+The keeper's values come from the repo scorers on the committed hourlies. Removing a price-raising band lowers peak-hour prices, so C3a is expected to fall in every year.
+
+| Year | C3a keeper | C3b keeper | Expected direction |
+|---|---|---|---|
+| 2019 | +6.2 % PASS ($49.41 vs $46.55) | 0.216 FAIL | C3a down, likely below actual; C3b may move either way |
+| 2020 | +2.5 % PASS ($26.03 vs $25.40) | 0.208 FAIL | C3a down; C3b either way |
+| 2021 | +0.8 % PASS ($167.19 vs $165.95) | 0.066 PASS | C3a down (Winter Storm Uri peak hours); largest $ move |
+| 2022 | −8.4 % PASS ($68.76 vs $75.08) | 0.178 PASS | C3a down, likely to FAIL (< −10 %) |
+
+The validation scope (2019–22) is NOT-YET today on C1/C3b, and it is expected to stay NOT-YET or worsen. The ISO determination is expected to stay NOT-YET.
+
+### A2.4 Kills, per year
+
+- **K1 recipe.** The new `run_config` diff from the keeper's is only the 17 band keys.
+- **K2 shed.** No new unserved energy versus the keeper year: 0 MWh in 2019, 2020 and 2022. In 2021 it must stay ≤ 3,012.6 MWh, with the shed hours a subset of the keeper's 6.
+- **K3 governance.** C6 and C8 must pass.
+
+If K1–K3 pass in every year, the recommendation is promotion on structure (rule 1), whatever the direction of C3a or C3b.
+
+### A2.5 Shard protocol
+
+- Four shards, one per year, at most 6 alive at once.
+- Environment `env_016R8xUY4maDbppZ6TEns5V8`, auto mode, prompts from `scripts/shard_prompt.py`.
+- Step 0: `git fetch origin <sha> && git checkout --detach <sha>`.
+- Then `eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"`.
+- Run the solve ONCE and stop on the first failure. A shard that stops before the LP is relaunched fresh.
+
+### A2.6 Compose
+
+The 7-year span is the 2019–22 strip legs, the 2023 strip leg, and the 2024 and 2025 keeper legs byte-identical. The ercot-255 `ep_referenced` repair on 2023 stays a separate item and is not folded in.
