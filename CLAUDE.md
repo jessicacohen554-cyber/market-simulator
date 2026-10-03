@@ -60,7 +60,7 @@ Stable IDs; ordinals never renumber. Full text and genealogy of every
 amendment: `docs/governance/rule-history.md`.
 
 1. `[R-STRUCT]` **Right market structure first, offer-curve tuning second; backcast fit is not the objective.** A structurally real mechanism stays in even if the fit worsens (then fix the root cause). Never reach a number through a mechanism that is not real (a fitted adder, a load proxy, a haircut tuned to the residual). A keeper is the most structurally faithful run, not the lowest MAE. **One authorized price-tuning channel** (owner, 2026-09-05): the registered `offer_curve_by_group` band multipliers (`committed` / `econ_low` / `econ_high` / `peak`) may be tuned on price, provided (a) only those bands — never `phys_*`, the structural shares, or any new adder/offset/haircut; (b) one value across every scored year; (c) set ex ante in the PRECOMMIT and never swept against the gates; (d) merit-order effects are intended; (e) declared in the attestation's `authorized_price_tuning` block and ledgered as a free parameter (rule 21).
-2. `[R-VECTOR]` **No Python loops over hours in LP construction.** np.tile / np.repeat / sparse.kron / block_diag.
+2. `[R-VECTOR]` **No Python loops over hours in LP construction.** np.tile / np.repeat / `lp/layout.kron_hours` (the `sparse.kron(eye(T), block)` equivalent, tiled directly in CSR) / sparse.kron / block_diag.
 3. `[R-RENEW-VAR]` **Renewables are decision variables** (MC = 0, upper bound CF × capacity), never netted from demand.
 4. `[R-DUALS]` **Prices are the LP duals** on the energy-balance rows. No separate pricing model.
 5. `[R-NO-MAGIC]` **No magic numbers.** Every value comes from ScenarioConfig or constants.py with a citation.

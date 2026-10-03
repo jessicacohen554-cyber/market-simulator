@@ -580,9 +580,11 @@ governance**, not implementation advice — they are CLAUDE.md non-negotiables a
 a change that breaks either is a defect regardless of what it does to runtime.
 
 1. **No Python loops over hours in LP construction** — rule 2 `[R-VECTOR]`. The
-   builder assembles with `np.tile`, `np.repeat`, `scipy.sparse.kron` and
-   `scipy.sparse.block_diag`. `for t in range(8760):` does not appear in the
-   matrix builder.
+   builder assembles with `np.tile`, `np.repeat`, `lp/layout.kron_hours` (the
+   per-hour block tiled directly in CSR along the hour diagonal — the same
+   matrix as `scipy.sparse.kron(eye(T), block)`, which remains the fallback and
+   the tool for non-identity left factors) and `scipy.sparse.block_diag`.
+   `for t in range(8760):` does not appear in the matrix builder.
 2. **Struct-of-arrays before LP construction** — rule 6 `[R-SOA]`. Pydantic
    `Generator` objects are converted to `FleetArrays` (§3.1) — parallel numpy
    arrays — before the builder is entered. The builder's only inputs from the
