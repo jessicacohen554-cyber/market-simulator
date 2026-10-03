@@ -7076,3 +7076,107 @@ Keeper unchanged; data withdrawn; arm at `d3e04d9f`. Records: `PRECOMMIT-` and `
   - **Why:** committed rungs set price in only 2–7 % of load-hours, and the coal committed rung is already below its incremental HR.
   - **Status:** COAL_BIT stays OPEN.
 - **Record:** `FINDING-pjm-next-28-sunk-noload-2026-10-02.md`.
+
+## PJM-NEXT-29 — 2026-10-03 — low-hour price-setters located; floor is not the COAL_BIT operand (zero LP, NOT CHARTERED)
+
+- **Readings fixed ex ante** (`19135a11`). R1 concentrated: `T*` = COAL_BIT econc + CC_REGULAR econc. R2: coal
+  mis-assigned (model 34–48 % vs IMM 19–24 % in real low hours). R4: the stranded band is CC_REGULAR committed/econc.
+  R5: quantity-short (ΔQ 34 / 45 GW, a population bound).
+- **Decision:** the lever candidate is the CC_REGULAR econ/committed level. Every channel that sets it is adjudicated,
+  and no new evidence was found. NOT CHARTERED.
+- **Post hoc (S1/S2):**
+  - The COAL_BIT 2019–21 excess sits in every real-price bin, and only 14–25 % of it is in the low hours. It is ~0 in
+    2023/24 at the same price ratios, so the floor is not the C1 operand.
+  - In-the-money loading is 0.95–0.99 in the model vs 0.88–0.91 in CAMPD in the fail years.
+- **COAL_BIT:** stays OPEN, re-pointed to in-the-money loading.
+- **Record:** `FINDING-pjm-next-29-lowhour-price-setters-2026-10-02.md`.
+
+## PJM-NEXT-30 — 2026-10-03 — COAL_BIT in-money loading decomposed; availability is not the year-discriminator (zero LP, NOT CHARTERED)
+
+- **Readings fixed ex ante** (`ec250a98`). The S2 gap is split per plant into four pieces:
+  - basis: above the annual p99 of CAMPD net;
+  - derate: above the weekly max;
+  - offline: CAMPD dark;
+  - loading: running below the weekly max.
+- **Readings:**
+  - R1 is mixed: basis 0.37, loading 0.26, derate 0.22, offline 0.15.
+  - R2: only loading is year-discriminating (+0.049 per MW cap). Its dispatch-independent twin has the opposite
+    sign: real below-capability loading is larger in 2023/24.
+  - R3 is not concentrated.
+  - R4 cannot exclude reserves: the IMM coal-held reserve is 0.7–2.2× the loading piece.
+  - R5: NOT CHARTERED.
+- **Cap overstatement:** the `cap_mw` overstatement (0.5–1.9 GW, mostly whole-unit dark hours outside the windows)
+  exists in every year, 2023/24 included.
+- **Why 2023/24 match:** the model loads coal below real in those years, which cancels the overstatement. So a
+  rule-14 availability repair would regress 2023/24 together with the fail years.
+- **The year-discriminator** is the model's coal merit position against the price. Every channel that sets it is
+  adjudicated.
+- **Tait remap:** stays parked as the rider for the next PJM solve.
+- **Record:** `FINDING-pjm-next-30-coalbit-inmoney-loading-2026-10-03.md`.
+
+## closeout-PJM-2 — 2026-10-03 — 2025 C3a/C3b PASS→FAIL attributed to W0 fleet in 24 EMAAC VOLL hours (zero LP); frontier text drafted
+
+The 2025 C3a/C3b regression (−9.6 → −11.6 %, 0.182 → 0.222) is entirely the 24 incumbent EMAAC VOLL hours in the
+June–July 2025 heat waves. Swapping only those hours flips both gates; outside them the move is +$0.21.
+- **W0 fleet (Shapley 97 % of the crossing).** It adds +901 MW of real EMAAC capacity:
+  - `seasonal_capacity_basis` ~+580 MW;
+  - `admit_standby_units` ~+405 MW: NAEA Lakewood, which ran 239 GWh in 2025, and DE oil GTs that also ran.
+- **2025 EIA-923 must-run drift: 6 %** of the crossing. Its −$0.9 to −1.3 outside those hours is latent and offset.
+- **Renewables fix #7040** opposes the move. The solver stack is documented only.
+- **A W0 structural effect, not a data-drift artefact.** The incumbent's PASS was the right level ($456 vs real $470
+  in those hours) for the wrong reason: a single-zone energy shortfall that existed only because real capacity was
+  missing.
+- **Routed:** a zero-LP heat-wave reserve-scarcity census. The 2025 reserve dual is 0 in every hour.
+
+The COAL_BIT 2019–21 and CT 2021 frontier text is drafted for the desk, not signed. Records:
+`docs/records/pjm/FINDING-closeout-pjm-2-2025-regression-attribution-2026-10-03.md`,
+`docs/records/pjm/DRAFT-closeout-pjm-2-frontier-text-2026-10-03.md`.
+
+## 2026-10-03 — PJM-NEXT-31: COAL_BIT unit-dark census (zero LP) — NOT CHARTERED, no solve
+
+Keeper unchanged (`2026-10-02-w0-pjm-fix2`, NOT-YET). Owner ruling from NEXT-30: build the outage repair.
+The census was fixed ex ante and run first. Its premise did not hold:
+- The three committed CAMPD extracts carry about 95 % of COAL_BIT unit-dark MWh.
+- The uncovered remainder is depleted in tight-net-load hours (C3, the 1–5 d stops the filter drops: 0.026 vs base
+  0.135) and in S2 hours (0.17–0.24 vs base 0.27). That is the economic reserve-shutdown signature. A window for it
+  is rule-13 pinning.
+- NEXT-30's 0.62–0.89 "unit-dark share" counted gas CTs at coal facilities.
+
+No field built, no matrix verdict moved, the Tait remap stays parked. The availability family is exhausted for
+COAL_BIT 2019–21. The remaining candidate is coal commitment economics over slack periods. Record:
+`docs/records/pjm/FINDING-pjm-next-31-coalbit-dark-census-2026-10-03.md`.
+
+## closeout-PJM-impl — 2026-10-03 — owner rulings R-36 / R-37 applied to the keeper ledger (zero LP, determination unchanged NOT-YET)
+
+- **R-36** (*"Sign CT 2021 now; hold COAL_BIT 1b for NEXT-31"*): C1 CT_PEAKER 2021 (−8.07 TWh) enters
+  `results/calibration/w0_pjm_span/calibration_attestation.json` as a signed `"kind": "model-class"` frontier:
+  out-of-merit CT commitment conduct (IMM 2021: CTs took 92.8 % of balancing credits), every CT lever adjudicated,
+  re-open trigger a measured commitment-state input. COAL_BIT 1a/1b stays a DRAFT, held for PJM-NEXT-31.
+- **R-37** (*"Documented FAIL; no re-open"*): 2025 C3a −11.6 % and C3b 0.222 are ledgered as documented FAILs
+  (classification `MODEL MISS — DOCUMENTED FAIL`, no `kind`, matching the NEISO/MISO record-only precedent), with the
+  online-gated reserve pool as the frontier candidate. `pjm_reserve_pergen_sync` stays R; the heat-wave census is
+  appended to the `reserve_pergen` row's evidence (family cell stays K).
+- **Effect:** all three entries are record-only under rubric v3.1 (C3c is the only ledgerable criterion). They
+  document the FAILs and reclassify nothing. The only move in `frontend/data/backcast/status/PJM.js` is
+  `ledger_entries` 0 → 3. `audit_keepers --iso PJM --check` PASS, registry parity OK, mechanism-matrix check OK.
+- **Record:** `docs/records/pjm/RESULT-closeout-pjm-impl-2026-10-03.md`.
+
+## 2026-10-03 — PJM-NEXT-32: coal commitment census (zero LP) — NOT CHARTERED, no solve
+
+Keeper unchanged (`2026-10-02-w0-pjm-fix2`, NOT-YET). The readings were fixed ex ante (`89d77dfe`). The keeper
+runs 3.5–5.3 TWh/yr (2019–21) in uncovered real-dark coal capacity, 0.27–0.28 of the C1 COAL_BIT overage (Q1
+PARTIAL). Only 0.095 of it sits in floor tranches, and in 0.92 of it the keeper's own zone price clears the plant's
+top dispatched tranche (Q2 PRICE-CLEARED). At real prices about half of the multi-day dark MWh is uneconomic net of
+a start; at keeper prices only 0.17–0.33 is (Q3 0.496). The object is the keeper's price level in those spells, not
+a missing commitment state, so the commitment family has no operand. Real coal stops 11–15 times per unit-year
+(median 79–101 h). Record: `docs/records/pjm/FINDING-pjm-next-32-coal-commitment-census-2026-10-03.md`.
+
+## 2026-10-03 — PJM-NEXT-33: slack-hour price census (zero LP) — NOT CHARTERED, no solve
+
+Keeper unchanged (`2026-10-02-w0-pjm-fix2`, NOT-YET). The readings were fixed ex ante (`8d8b8bff`) against the real
+**zonal** DA. In the NEXT-32 dark-coal spells the keeper zone price is only +0.3 / +1.9 / +1.2 $/MWh above real
+(2019–21), and +0.2…+1.0 in the controls. The real low-hour level gap (+4.4…+7.4) is larger in 2023–25 (+7.4…+12.2).
+Q5 is NOT DISCRIMINATING in both populations, so nothing is chartered. Setters are CC_REGULAR econc and COAL_BIT econc
+(the NEXT-29 cells). Post-hoc: real coal sat dark at prices that clear the keeper's own COAL_BIT offer. 0.47–0.65 of
+the dark MW is in the money at the real zonal DA, so the margin is the keeper's coal offer level, not its price.
+Record: `docs/records/pjm/FINDING-pjm-next-33-slack-hour-price-census-2026-10-03.md`.

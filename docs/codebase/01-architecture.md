@@ -186,6 +186,8 @@ reading the subsystem pages:
 1. **Prices are LP duals** on the energy-balance rows. There is no separate
    pricing model. (`model/dispatch.py`)
 2. **No Python loops over hours in LP construction.** Hour replication is
+   `lp/layout.kron_hours(T, per_hour_block)` — direct CSR tiling of the
+   per-hour block along the hour diagonal, the same matrix as
    `scipy.sparse.kron(eye(T), per_hour_block)`; indices are built with
    `np.arange`/`np.tile`/`np.repeat` and raveled.
 3. **Renewables are decision variables** (`W[z,t]`, `S[z,t]`) on the LHS of the

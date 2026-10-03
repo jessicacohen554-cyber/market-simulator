@@ -257,5 +257,8 @@ def build_hydro_cascade_rows(
     # by tocsr(); the physical formulation never produces duplicates for a
     # well-formed chain, but summing is the correct semantics regardless.
     block.sum_duplicates()
+    # ``rhs`` is already this function's own fresh copy, so its ravel is handed
+    # out directly; the second bound gets the one copy that keeps the two
+    # arrays distinct.
     rhs_flat = rhs.ravel()
-    return block, rhs_flat.copy(), rhs_flat.copy()
+    return block, rhs_flat, rhs_flat.copy()

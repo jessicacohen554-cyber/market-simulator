@@ -15903,3 +15903,26 @@ Record: `docs/records/caiso/r-caiso-37/`.
   Matrix: evidence only on `storage_measured_anchors` (K).
 
 Record: `docs/records/caiso/r-caiso-38/`.
+
+## 2026-10-03 — closeout-CAISO-r40: rubric v3.19 reference-coverage caveat for C3a/C3b 2019–2021 (owner ruling R-40), NOT-YET → NOT-YET, zero LP
+
+- **Ruling** (plan §5.0 row R-40, verbatim): *"Caiso mean LMP for 2021 should be an accepted caveat or only compared
+  where data is actually available for that year for calibration rubric. 2019 and 2020 should have that be accepted
+  caveat for c3a."* Extended the same day: *"I want c3b treated the same."*
+- **Scorer:** the new caveat kind `reference-coverage` (`REFERENCE_COVERAGE_ENTRIES`, six rows). It is off-budget and
+  non-downgrading.
+- **Keeper:** `2026-10-02-closeout-caiso-w1-arm2` is unchanged, except that its attestation gains six owner-signed
+  `kind: "reference-coverage"` entries.
+
+| record | before | after |
+|---|---|---|
+| C3a 2019 / 2020 | SKIPPED (no reference) | CAVEAT, reference absent |
+| C3a 2021 | FAIL +12.7 % ($57.30 vs $50.87, covered months 5–7, 9–12) | CAVEAT +12.7 %, window_status FAIL, coverage 0.652 |
+| C3b 2019 / 2020 | SKIPPED | CAVEAT, reference absent |
+| C3b 2021 | PASS NRMSE 0.148 | CAVEAT NRMSE 0.148, window_status PASS |
+
+- **Determination: NOT-YET, unchanged.** The fail set is now C1 CC_REGULAR 2019–2021 and C4 gas 2019–2021;
+  `price_mean` has left it.
+- **July's uncovered hour is de minimis** (rt_cov 0.9987, about one hour), so the render payload is unchanged.
+
+Record: `docs/records/caiso/closeout-caiso-2/RESULT-closeout-caiso-r40-2026-10-03.md`.

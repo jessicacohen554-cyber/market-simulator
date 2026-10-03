@@ -3117,7 +3117,19 @@ NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
     # of calibration runs 1-19.
     # Source: EIA-923 Page 1 monthly net generation, 2023-2025.
     # Derivation/verify: scripts/data/derive_nuclear_monthly_cf.py --isos PJM.
+    # 2019-2022 rows added 2026-10-03 (lane closeout-nuclear-rows, owner ruling
+    # R-35) by the same frozen script from the same EIA-923 Page 1 source: an
+    # initial derivation for years the table never carried, not a re-derivation
+    # (rule 23; `--years 2023 2024 2025 --check` passed in the same session, so
+    # every 2023-2025 value is byte-unchanged). Before them a 2019-2022 backcast
+    # fell back to the static NUCLEAR_MONTHLY_CF pattern x (1 - EFORD), a
+    # year-invariant fleet CF (rule 14 [R-ACCURATE]);
+    # docs/records/governance/closeout-2026-10/FINDING-closeout-nuclear-rows-2026-10-03.md.
     "PJM": {
+        2019: [1.00, 0.99, 0.87, 0.87, 0.96, 0.98, 0.99, 0.98, 0.95, 0.88, 0.93, 1.00],
+        2020: [1.00, 0.97, 0.90, 0.88, 0.93, 1.00, 0.99, 0.99, 0.96, 0.90, 0.96, 1.00],
+        2021: [1.00, 1.00, 0.87, 0.83, 0.89, 0.99, 0.97, 1.00, 0.97, 0.88, 0.93, 1.00],
+        2022: [1.00, 0.99, 0.92, 0.82, 0.93, 0.98, 0.99, 0.97, 0.94, 0.84, 0.94, 1.00],
         2023: [1.00, 0.97, 0.90, 0.85, 0.91, 0.99, 0.99, 0.98, 0.96, 0.89, 0.96, 1.00],
         2024: [1.00, 0.98, 0.90, 0.81, 0.91, 0.99, 0.97, 0.99, 0.96, 0.90, 0.93, 1.00],
         2025: [1.00, 0.99, 0.88, 0.86, 0.91, 0.99, 0.98, 0.98, 0.94, 0.83, 0.93, 1.00],
@@ -3326,7 +3338,19 @@ NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
     # the final file lands.
     # Source: EIA-923 Page 1 monthly net generation, 2023-2025.
     # Derivation/verify: scripts/data/derive_nuclear_monthly_cf.py --isos SPP.
+    # 2019-2022 rows added 2026-10-03 (lane closeout-nuclear-rows, owner ruling
+    # R-35) by the same frozen script from the same EIA-923 Page 1 source: an
+    # initial derivation for years the table never carried, not a re-derivation
+    # (rule 23; `--years 2023 2024 2025 --check` passed in the same session, so
+    # every 2023-2025 value is byte-unchanged). Before them a 2019-2022 backcast
+    # fell back to the static NUCLEAR_MONTHLY_CF pattern x (1 - EFORD), a
+    # year-invariant fleet CF (rule 14 [R-ACCURATE]);
+    # docs/records/governance/closeout-2026-10/FINDING-closeout-nuclear-rows-2026-10-03.md.
     "SPP": {
+        2019: [1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 0.81, 0.41, 0.90, 1.00],
+        2020: [1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 0.92, 0.68, 0.97, 1.00],
+        2021: [1.00, 1.00, 0.88, 0.41, 0.70, 0.86, 1.00, 0.93, 1.00, 1.00, 1.00, 0.99],
+        2022: [1.00, 1.00, 1.00, 0.99, 1.00, 1.00, 0.90, 0.94, 0.91, 0.10, 0.38, 0.98],
         2023: [1.00, 0.99, 1.00, 0.97, 1.00, 1.00, 1.00, 1.00, 1.00, 0.96, 1.00, 1.00],
         2024: [1.00, 1.00, 0.95, 0.41, 0.80, 1.00, 1.00, 0.88, 0.95, 0.61, 0.98, 1.00],
         2025: [1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 0.42, 0.70, 1.00],
@@ -3341,7 +3365,19 @@ NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
     # re-derive when the final file lands.
     # Source: EIA-923 Page 1 monthly net generation, 2023-2025.
     # Derivation/verify: scripts/data/derive_nuclear_monthly_cf.py --isos NWPP.
+    # 2019-2022 rows added 2026-10-03 (lane closeout-nuclear-rows, owner ruling
+    # R-35) by the same frozen script from the same EIA-923 Page 1 source: an
+    # initial derivation for years the table never carried, not a re-derivation
+    # (rule 23; `--years 2023 2024 2025 --check` passed in the same session, so
+    # every 2023-2025 value is byte-unchanged). Before them a 2019-2022 backcast
+    # fell back to the static NUCLEAR_MONTHLY_CF pattern x (1 - EFORD), a
+    # year-invariant fleet CF (rule 14 [R-ACCURATE]);
+    # docs/records/governance/closeout-2026-10/FINDING-closeout-nuclear-rows-2026-10-03.md.
     "NWPP": {
+        2019: [0.99, 1.00, 1.00, 0.99, 0.28, 0.30, 0.98, 0.99, 0.99, 1.00, 1.00, 1.00],
+        2020: [1.00, 0.90, 1.00, 1.00, 0.92, 0.51, 0.89, 0.99, 0.99, 1.00, 0.96, 1.00],
+        2021: [1.00, 0.99, 0.99, 0.90, 0.18, 0.37, 0.99, 0.99, 0.98, 0.99, 1.00, 0.74],
+        2022: [1.00, 0.98, 1.00, 1.00, 0.99, 0.78, 0.98, 0.98, 0.99, 1.00, 1.00, 1.00],
         2023: [0.97, 1.00, 0.98, 0.83, 0.11, 0.32, 0.97, 0.98, 0.99, 0.96, 0.98, 0.95],
         2024: [1.00, 1.00, 0.98, 1.00, 0.99, 0.97, 0.97, 0.98, 0.96, 1.00, 0.99, 0.98],
         2025: [0.99, 0.99, 0.89, 0.28, 0.00, 0.12, 0.98, 0.98, 0.99, 1.00, 1.00, 0.98],
@@ -5626,6 +5662,56 @@ PJM_INTERFACE_LINK_MAP: dict[tuple[str, str], tuple[str, ...]] = {
     ("PJM_ATSI", "PJM_Central_PA"): ("Average Central",),
     ("PJM_Central_PA", "PJM_EMAAC"): ("Average Eastern",),
 }
+
+# NWPP-NEXT-22 (owner card 2026-10-02, "CAISO share + BPA BC"): the measured
+# hourly operating limits that bound each priced NWPP seam under
+# ScenarioConfig.nwpp_seam_measured_limits, keyed by seam name
+# (INTERFACE_NEIGHBORS["NWPP"]) and footprint direction ("export" = NWPP ->
+# counterparty, "import" = counterparty -> NWPP). Each entry is
+# ``(partition, (series, ...), published_sign)``: the hour's cap is the SUM of
+# the series, times the published sign, clamped at 0. A series published
+# negative (BPA's S-N COI limit, its N-S BC limit) carries sign -1.
+# - CAISO_COI: the CAISO-owned share of Path 66, which is the physical path
+#   of the measured CISO<->BPAT+PACW leg the seam prices (NWPP_PRICED_SEAM_LEGS).
+#   CAISO OASIS TRNS_USAGE hourly OTC on MALIN500_ISL + CASCADE_ITC (I = into
+#   CAISO = NWPP export). Where OASIS retains no hour (before 2023-06-19), the
+#   cap is NWPP_COI_CAISO_SHARE x BPA's whole-path COI operating limit.
+# - WECC_CAN: BPA's BC Intertie (Path 3, West + East) operating limit. The
+#   BPAT->BCHA leg the seam prices is this path (2023 mean actual loading
+#   1,087 MW against the EIA-930 leg's 1,082 MW).
+# - CAISO_NEVP has no published limit on its boundary (its measured leg
+#   correlates with no CAISO ITC above 0.55; FINDING-nwppnext22 §B) and keeps
+#   its registered interface_limit_mw.
+# Source: data/raw/nwpp-intertie-otc (BPA OPI) and data/raw/caiso-trns-usage
+# via the transfer-interface-limits clean datatype; consumed by
+# market_sim.data.transfer_interface_limits.nwpp_seam_limits_hourly.
+NWPP_SEAM_LIMIT_SERIES: dict[str, dict[str, tuple[str, tuple[str, ...], float]]] = {
+    "CAISO_COI": {
+        "export": ("CAISO", ("MALIN500_ISL|I|OTC", "CASCADE_ITC|I|OTC"), 1.0),
+        "import": ("CAISO", ("MALIN500_ISL|E|OTC", "CASCADE_ITC|E|OTC"), 1.0),
+    },
+    "WECC_CAN": {
+        "export": ("NWPP", ("BC|SN|OTC",), 1.0),
+        "import": ("NWPP", ("BC|NS|OTC",), -1.0),
+    },
+}
+
+# The whole-path BPA series the CAISO_COI cap falls back on, per direction, as
+# ``(series, published_sign)``: N-S (toward California) is NWPP's export.
+NWPP_COI_PATH_SERIES: dict[str, tuple[str, float]] = {
+    "export": ("COI|NS|OTC", 1.0),
+    "import": ("COI|SN|OTC", -1.0),
+}
+
+# CAISO's share of the California-Oregon Intertie (Path 66, 4,800 MW N-S):
+# the two PG&E-owned Malin-Round Mountain 500 kV lines that CAISO schedules as
+# MALIN500_ISL carry 3,200 MW, and the TANC-owned California-Oregon
+# Transmission Project carries the other 1,600 MW (WECC Path Rating Catalog,
+# Path 66; COTP 1,600 MW per TANC). 3,200 / 4,800 = 2/3. Measured check:
+# CAISO's hourly MALIN500_ISL + CASCADE_ITC OTC over BPA's whole-path COI
+# operating limit has median 0.667 in 2023, 2024 and 2025, and p10 0.667
+# (FINDING-nwppnext22 §A). An ownership allocation, never fitted to a flow.
+NWPP_COI_CAISO_SHARE: float = 2.0 / 3.0
 
 # Year-varying NYISO interface transfer limits that change with the AC
 # Transmission build-out. The static limits in iso_configs._nyiso_config are

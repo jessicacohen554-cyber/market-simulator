@@ -665,9 +665,47 @@ COMPLETENESS_DIR = DATA_DIR / "completeness"
 #       DataMiner2 rt/da_hrl_lmps type-ZONE archive reduced to model zones by
 #       scripts/data/derive_pjm_zonal_lmp.py), as NYISO and MISO. A benchmark
 #       change only: no scorer constant moves.
+# v3.18 — 2026-10-03 owner ruling R-34 (backcast close-out plan §5.0,
+#       verbatim card choice: "Mask to RT-covered hours"). The C3c MODEL tail
+#       count is masked to the hours the actual RT series covers — the window
+#       the actual count already lives on, and the same isfinite(RT) mask C3a's
+#       demand-weighted monthly MAE (_monthly_mae) applies. The mask is applied
+#       by the render (scripts/render_calibration_html.py ``_tail_hours`` /
+#       ``_gt_count`` ``mask=``), which stamps ``hoursGt200.window = "rt"``;
+#       this scorer is stdlib-only and never sees hourly prices. The coverage
+#       note on a stamped payload states both counts are on the RT-covered
+#       hours instead of "count is a lower bound" (:func:`score_price_tail`).
+#       Live only on CAISO 2021 (RT coverage 0.652: all 88 model tail hours
+#       were Winter Storm Uri, before OASIS RT coverage starts; masked 0 vs 27)
+#       and CAISO 2023 (0.995; 67 -> 51 vs 47, PASS -> PASS); every other
+#       partially covered ISO-year (MISO 2022, SPP 2019-25) reads the same
+#       count masked or not (docs/records/caiso/closeout-caiso-2/
+#       FINDING-closeout-caiso-2-cc-object-2026-10-03.md §3). CAISO 2021 is
+#       relabelled (:data:`C3C_READING_LABELS`). No band, tier, ledger or
+#       budget moves; no determination moves. NO SOLVE RAN. Genealogy:
+#       docs/governance/rule-history.md §28.
+# v3.19 — 2026-10-03 owner ruling R-40 (backcast close-out plan §5.0 row R-40,
+#       verbatim: "Caiso mean LMP for 2021 should be an accepted caveat or only
+#       compared where data is actually available for that year for
+#       calibration rubric. 2019 and 2020 should have that be accepted caveat
+#       for c3a."; extended the same day: "I want c3b treated the same.").
+#       THE REFERENCE-COVERAGE CAVEAT KIND (:data:`REFERENCE_COVERAGE_ENTRIES`,
+#       :func:`_apply_reference_coverage`): a price criterion whose measured
+#       reference is ABSENT (CAISO 2019/2020: no free hourly LMP, R-16) or
+#       PARTIAL (CAISO 2021: OASIS RT from 2021-04-26, annual rt_cov 0.652) in
+#       a scored year reads CAVEAT, classified :data:`REFERENCE_COVERAGE`.
+#       Absent -> "reference absent"; partial -> the magnitude on the covered
+#       window the existing month mask already scores, with the in-window band
+#       verdict beside it as ``window_status`` (never a PASS: no full-year
+#       price claim is certified). Fail-closed: exact registry key, governance
+#       PASS, an owner-signed ``kind: "reference-coverage"`` entry in the
+#       bundle attestation, and the record's state matching the registry. Off
+#       every caveat budget, NOT determination-downgrading, named on the basis.
+#       Every band, tier, ledger row and budget is unchanged. NO SOLVE RAN.
+#       Genealogy: docs/governance/rule-history.md §29.
 # A STRING from v3.10 on: the float 3.10 == 3.1, which would collide with the
 # v3.1 amendment. Display-only everywhere it is read.
-RUBRIC_VERSION = "3.17"
+RUBRIC_VERSION = "3.19"
 
 # Statuses (per criterion-year and aggregated).
 PASS, CAVEAT, FAIL, SKIPPED = "PASS", "CAVEAT", "FAIL", "SKIPPED"
@@ -974,6 +1012,21 @@ PRICE_BENCHMARK_LABEL = {
 # every other ISO-year without a reference keeps downgrading exactly as before.
 LABELLED_PRICE_REFERENCE_FROM: dict[str, int] = {"NWPP": 2023}
 
+# Rubric v3.18 (owner ruling R-34, 2026-10-03): the reading a C3c record carries
+# where the pre-mask count mis-stated it. CAISO 2021: the unmasked model count
+# (88 h, all on Winter Storm Uri) fell outside the RT reference window; on
+# like-for-like hours the model under-fires the summer/autumn evening events, the
+# same model class as the ledgered C3c 2024 (import-parity scarcity the LP does
+# not price). Applied only to an RT-window payload (``hoursGt200.window ==
+# "rt"``) with the model UNDER the actual — the direction the ruling reads;
+# fail-closed otherwise. The counts in the text are the record's own.
+C3C_READING_LABELS: dict[tuple[str, int], str] = {
+    ("CAISO", 2021): (
+        "reference-window mismatch; like-for-like under-fire {model:.0f} vs "
+        "{actual:.0f}, C3c-2024 class (owner ruling R-34, 2026-10-03)"
+    ),
+}
+
 # ISOs for which C3c is deliberately NOT scored on the committed benchmark, with
 # the reason the SKIPPED record carries. SOCO: owner ruling 2026-09-28 "Not
 # scored on lambda" (lane soco-84) — a system lambda has no administrative
@@ -1211,6 +1264,54 @@ CONFIG_EXCEPTION_ENTRIES: dict[tuple[str, int, str, str | None], dict] = {
         "reason": _ERCOT_2023_REASON,
         "counterfactual": ERCOT_2023_IMM_COUNTERFACTUAL,
     },
+}
+
+# Rubric v3.19 (owner ruling R-40, 2026-10-03): the REFERENCE-COVERAGE caveat
+# kind. A price criterion whose measured reference is ABSENT or PARTIAL in a
+# scored year is an owner-signed caveat rather than a SKIPPED row or a
+# calendar-mismatched FAIL. Guards (fail-closed, all must hold):
+#  (a) the exact (ISO, year, criterion, key) is in REFERENCE_COVERAGE_ENTRIES;
+#  (b) governance PASSES;
+#  (c) the bundle attestation carries the owner-signed twin — an ``exceptions``
+#      entry with ``kind: "reference-coverage"`` for the same criterion-year
+#      (:func:`_apply_ledger` ignores it: price_mean/price_shape are not
+#      ledgerable; promote_keeper carries it forward verbatim);
+#  (d) the record's state matches the registry: "absent" needs a SKIPPED record
+#      with no actual, no bench avgLMP block and no actual_lmp.json year block;
+#      "partial" needs a scored record whose annual coverage is < 1.
+# NEVER A PASS; OFF EVERY CAVEAT BUDGET (neither ledgered nor commercial-band,
+# so it never fills the single ledgered slot) and NOT determination-
+# downgrading; named on the determination basis on every route.
+REFERENCE_COVERAGE = "OWNER-SIGNED REFERENCE-COVERAGE CAVEAT"
+_CAISO_R40_RULE = "caiso-2019-2021-reference-coverage-r40-2026-10-03"
+_CAISO_R40_CITE = (
+    "owner ruling R-40 (backcast close-out plan §5.0, 2026-10-03, verbatim: "
+    "'Caiso mean LMP for 2021 should be an accepted caveat or only compared "
+    "where data is actually available for that year for calibration rubric. "
+    "2019 and 2020 should have that be accepted caveat for c3a.'; extended the "
+    "same day: 'I want c3b treated the same.')"
+)
+_CAISO_R40_ABSENT_REASON = (
+    f"rubric v3.19 reference-coverage caveat, {_CAISO_R40_CITE}: no measured "
+    "hourly CAISO LMP reference exists for this year (no free OASIS hourly "
+    "archive, ruling R-16). Accepted caveat; certifies no price; off every "
+    "caveat budget; NOT determination-downgrading."
+)
+_CAISO_R40_PARTIAL_REASON = (
+    f"rubric v3.19 reference-coverage caveat, {_CAISO_R40_CITE}: the CAISO 2021 "
+    "RT reference starts 2021-04-26 (annual rt_cov 0.652), so the criterion is "
+    "scored only on the covered months; the in-window band verdict is reported "
+    "beside it as window_status. No full-year price claim is certified; off "
+    "every caveat budget; NOT determination-downgrading."
+)
+REFERENCE_COVERAGE_ENTRIES: dict[tuple[str, int, str, str | None], dict] = {
+    ("CAISO", y, c, None): {
+        "coverage": "absent" if y < 2021 else "partial",
+        "rule": _CAISO_R40_RULE,
+        "reason": _CAISO_R40_ABSENT_REASON if y < 2021 else _CAISO_R40_PARTIAL_REASON,
+    }
+    for y in (2019, 2020, 2021)
+    for c in ("price_mean", "price_shape")
 }
 
 # C8 materiality floor (rubric v2.1, owner amendment 2026-07-06; scoped to C8
@@ -1982,6 +2083,95 @@ def _apply_config_exceptions(
         rec["standing_rule"] = entry["rule"]
         rec["config_exception"] = True
         rec["counterfactual"] = cf
+
+
+def _actual_lmp_annual_coverage(iso: str | None, year: int, market: str):
+    """Annual staging coverage of an ISO-year's committed series, or ``None``."""
+    if iso is None:
+        return None
+    rec = ((_actual_lmp_reference() or {}).get(str(iso)) or {}).get(
+        str(int(year))
+    ) or {}
+    cov = rec.get(f"{market}_cov")
+    a = cov.get("annual") if isinstance(cov, dict) else None
+    return float(a) if a is not None else None
+
+
+def _apply_reference_coverage(
+    records: list[dict], iso: str, gov: dict, bench: dict, exceptions: list[dict]
+) -> None:
+    """Reclassify rubric v3.19 reference-coverage rows to an owner-signed CAVEAT.
+
+    Only a record whose exact ``(iso, year, criterion, key)`` is in
+    :data:`REFERENCE_COVERAGE_ENTRIES` can move, and only when every guard of
+    that table holds (governance PASS; the attestation's ``kind:
+    "reference-coverage"`` twin; the record's state matching the registry's
+    ``coverage``). A record another route already reclassified is left alone.
+    The record becomes a CAVEAT classified :data:`REFERENCE_COVERAGE`, flagged
+    ``reference_coverage`` with the coverage state (off every caveat budget,
+    NOT determination-downgrading). A partial record keeps its on-window
+    magnitude and carries its band verdict as ``window_status``.
+
+    Args:
+        records: Scored criterion records, mutated in place.
+        iso: The run's ISO.
+        gov: The governance-gate record from :func:`score_governance`.
+        bench: ``{year: bench part}`` of the run.
+        exceptions: The bundle attestation's ``exceptions`` list.
+    """
+    if str(gov.get("status", "")).upper() != PASS:
+        return
+    iso_u = str(iso or "").upper()
+    for rec in records:
+        try:
+            year = int(rec.get("year"))
+        except (TypeError, ValueError):
+            continue
+        entry = REFERENCE_COVERAGE_ENTRIES.get(
+            (iso_u, year, rec.get("criterion"), rec.get("key"))
+        )
+        if entry is None or rec.get("classification") in (
+            MEASURED_LIMIT,
+            MODEL_LIMIT,
+            CONFIG_EXCEPTION,
+        ):
+            continue
+        signed = any(
+            e.get("kind") == "reference-coverage"
+            and e.get("criterion") == rec.get("criterion")
+            and str(e.get("year")) == str(year)
+            for e in exceptions or []
+        )
+        if not signed:
+            continue  # fail-closed: the owner-signed attestation twin is required
+        avg = (bench.get(year) or {}).get("avgLMP") or {}
+        if entry["coverage"] == "absent":
+            ref = _actual_lmp_reference()
+            if (
+                rec.get("status") != SKIPPED
+                or rec.get("actual") is not None
+                or avg
+                or ref is None
+                or str(year) in (ref.get(iso_u) or {})
+            ):
+                continue  # fail-closed: a reference exists or is unreadable
+            rec["status"] = CAVEAT
+            rec["magnitude"] = "reference absent — accepted caveat (R-40)"
+        else:
+            if rec.get("status") not in (PASS, CAVEAT, FAIL):
+                continue
+            market = "rt" if any(str(k).startswith("rt") for k in avg) else "da"
+            cov = _actual_lmp_annual_coverage(iso_u, year, market)
+            if cov is None or not cov < 1.0:
+                continue  # fail-closed: only a measured partial reference
+            rec["window_status"] = rec["status"]
+            rec["window_classification"] = rec.get("classification")
+            rec["coverage_annual"] = cov
+            rec["status"] = CAVEAT
+        rec["classification"] = REFERENCE_COVERAGE
+        rec["reference_coverage"] = entry["coverage"]
+        rec["ledger_reason"] = entry["reason"]
+        rec["standing_rule"] = entry["rule"]
 
 
 def _apply_ledger(rec: dict, exceptions: list[dict]) -> dict:
@@ -2920,8 +3110,17 @@ def score_price_tail(year: int, ypay: dict, iso: str) -> list[dict]:
         # zero-decimal format printed the self-contradicting "RT coverage 100% —
         # count is a lower bound" for every partial year in the 99.5–99.9 band
         # (CAISO 2023, 0.995; SPP every year, 0.999). caiso-284.
+        # Rubric v3.18 (R-34): a payload stamped ``window == "rt"`` counts the
+        # model on the RT-covered hours, so both counts are like-for-like; an
+        # unstamped (pre-v3.18) payload keeps the old lower-bound note.
+        rt_window = h.get("window") == "rt"
         cov_note = (
-            f"; {gate_lbl} coverage {cov:.1%} — count is a lower bound"
+            (
+                f"; {gate_lbl} coverage {cov:.1%} — model and actual both "
+                f"counted on the {gate_lbl}-covered hours"
+                if rt_window
+                else f"; {gate_lbl} coverage {cov:.1%} — count is a lower bound"
+            )
             if cov < 0.999
             else ""
         )
@@ -2946,26 +3145,29 @@ def score_price_tail(year: int, ypay: dict, iso: str) -> list[dict]:
                 f"model {model:.0f}h [{basis}] vs {gate_lbl} actual {actual:.0f}h "
                 f"({ratio:.2f}×, >${thr:.0f}){settle_note}{cov_note}"
             )
-        out.append(
-            {
-                "criterion": "price_tail",
-                "key": None,
-                "year": year,
-                "status": PASS if ok else FAIL,
-                "classification": None if ok else MODEL_MISS,
-                "metric": (
-                    f"hours {gate_lbl}-expressible "
-                    f"{'settlement price' if settled else 'LMP'} > ${thr:.0f}/MWh"
-                ),
-                "model": model,
-                "actual": actual,
-                "tol": (
-                    f"[{TAIL_LO:g}×, {TAIL_HI:g}×] of {gate_lbl} actual "
-                    f"(|Δ|≤{TAIL_SMALL_COUNT}h when actual <{TAIL_SMALL_COUNT}h)"
-                ),
-                "magnitude": mag,
-            }
-        )
+        rec = {
+            "criterion": "price_tail",
+            "key": None,
+            "year": year,
+            "status": PASS if ok else FAIL,
+            "classification": None if ok else MODEL_MISS,
+            "metric": (
+                f"hours {gate_lbl}-expressible "
+                f"{'settlement price' if settled else 'LMP'} > ${thr:.0f}/MWh"
+            ),
+            "model": model,
+            "actual": actual,
+            "tol": (
+                f"[{TAIL_LO:g}×, {TAIL_HI:g}×] of {gate_lbl} actual "
+                f"(|Δ|≤{TAIL_SMALL_COUNT}h when actual <{TAIL_SMALL_COUNT}h)"
+            ),
+            "magnitude": mag,
+        }
+        label = C3C_READING_LABELS.get((str(iso or "").upper(), int(year)))
+        if label is not None and rt_window and model < actual:
+            rec["reading"] = label.format(model=model, actual=actual)
+            rec["magnitude"] = f"{mag}; reading: {rec['reading']}"
+        out.append(rec)
     # Companion DA basis — reported, never gated (v2.7): the DA count embeds
     # the day-ahead forecast-risk premium a realized-weather backcast is out
     # of scope to price.
@@ -4234,6 +4436,11 @@ def determine_from_artifacts(
     # rows as anything but FAILs.
     _apply_config_exceptions(records, iso, gov, art.get("config"))
 
+    # Rubric v3.19 reference-coverage caveats (owner ruling R-40, 2026-10-03).
+    # LAST, so the C3c lone-failure guard, the scoped ledger and the
+    # configuration exceptions all saw these rows exactly as scored.
+    _apply_reference_coverage(records, iso, gov, bench, exceptions)
+
     # Aggregate per criterion.
     per_criterion: dict[str, dict] = {}
     for cid, (label, tier) in CRITERIA.items():
@@ -4263,8 +4470,12 @@ def determine_from_artifacts(
             r["status"] == CAVEAT
             and r.get("classification") not in (MEASURED_LIMIT, MODEL_LIMIT)
             and not r.get("config_exception")
+            and not r.get("reference_coverage")
             for r in recs
         )
+        # Rubric v3.19: likewise a criterion whose only caveats are
+        # reference-coverage rows (configuration exceptions outrank them).
+        config_exc = any(r.get("config_exception") for r in recs)
         per_criterion[cid] = {
             "label": label,
             "tier": tier,
@@ -4277,6 +4488,8 @@ def determine_from_artifacts(
                     else "commercial-band"
                     if band
                     else "configuration-exception"
+                    if config_exc
+                    else "reference-coverage"
                 )
                 if (_agg_status(recs) if recs else SKIPPED) == CAVEAT
                 else None
@@ -4333,6 +4546,12 @@ def determine_from_artifacts(
         c
         for cid, c in per_criterion.items()
         if c["status"] == CAVEAT and c["caveat_kind"] == "configuration-exception"
+    ]
+    # Rubric v3.19: reference-coverage caveats (off-budget, non-downgrading).
+    reference_coverage_caveats = [
+        c
+        for cid, c in per_criterion.items()
+        if c["status"] == CAVEAT and c["caveat_kind"] == "reference-coverage"
     ]
     fails = [cid for cid, c in per_criterion.items() if c["status"] == FAIL]
     # An unscored criterion can never be a silent pass: it caps the
@@ -4563,6 +4782,30 @@ def determine_from_artifacts(
             "2026-10-02): " + "; ".join(parts)
         )
 
+    # Rubric v3.19: reference-coverage caveats are NAMED on the basis on every
+    # route, after the downgrading reasons, with the in-window verdict beside
+    # a partial row.
+    reference_coverage_records = [r for r in records if r.get("reference_coverage")]
+    if reference_coverage_records:
+        parts = []
+        for r in reference_coverage_records:
+            txt = f"{r['year']} {CRITERIA[r['criterion']][0]} ("
+            if r["reference_coverage"] == "absent":
+                txt += "reference absent)"
+            else:
+                txt += (
+                    f"reference partial, annual coverage {r['coverage_annual']:.3f}; "
+                    f"covered window {r.get('magnitude')}, in-window band "
+                    f"{r.get('window_status')})"
+                )
+            parts.append(txt)
+        reasons.append(
+            f"{len(reference_coverage_records)} owner-signed reference-coverage "
+            "caveat(s) — off every caveat budget and NOT determination-"
+            "downgrading under rubric v3.19 (owner ruling R-40, 2026-10-03); no "
+            "full-year price claim is certified for these years: " + "; ".join(parts)
+        )
+
     # RUBRIC v3.8: the price gap on the determination basis, AT FULL MAGNITUDE,
     # on EVERY route — NOT-YET included, so a failing no-price run can never be
     # read as having failed on price. Appended LAST so it never displaces a
@@ -4711,6 +4954,12 @@ def determine_from_artifacts(
     # price benchmark re-scores byte-identically.
     if price_unscored_block is not None:
         out["price_unscored"] = price_unscored_block
+    # Rubric v3.19: present ONLY when non-empty, so every run without a
+    # reference-coverage caveat keeps its payload shape.
+    if reference_coverage_caveats:
+        out["caveats"]["reference_coverage"] = [
+            c["label"] for c in reference_coverage_caveats
+        ]
     return out
 
 

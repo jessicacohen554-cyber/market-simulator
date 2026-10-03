@@ -100,6 +100,9 @@ class CleanSource:
         only_for: Model ISOs whose solve reads it (``None`` = any ISO).
         reads_partition_of: Model ISO -> the partition its loader reads when
             that is another ISO's (NYISO's Roseton seam price is NEISO's).
+        also_reads: Model ISO -> further partitions its loader reads IN
+            ADDITION to its own (NWPP's seam headroom reads CAISO's MALIN
+            limits beside its own BPA partition).
         raw_inputs: Repo-relative raw paths it reads, for the manifest key.
             The default (all of ``data/raw``) is the conservative choice; a
             narrower list is declared only where the script reads only it.
@@ -113,6 +116,7 @@ class CleanSource:
     years_flag: str | None = None
     only_for: tuple[str, ...] | None = None
     reads_partition_of: dict[str, str] = field(default_factory=dict)
+    also_reads: dict[str, tuple[str, ...]] = field(default_factory=dict)
     raw_inputs: tuple[str, ...] = ("data/raw",)
 
     @property
@@ -158,12 +162,19 @@ SOLVE_SOURCES: tuple[CleanSource, ...] = (
         iso_flag=None,
         raw_inputs=("data/raw/coal-receipts",),
     ),
-    # data/transfer_interface_limits.py — PJM interface limits (run_calibration).
+    # data/transfer_interface_limits.py — PJM interface limits and the NWPP
+    # seam headroom (run_calibration). NWPP reads its own BPA partition plus
+    # CAISO's MALIN/CASCADE limits (nwpp_seam_limits_hourly).
     CleanSource(
         "transfer-interface-limits",
         "market_sim.data.transfer_interface_limits",
         partitions="scripts.lib.transfer_interface_limits:load_specs",
-        raw_inputs=("data/raw/iso-specific-transmission",),
+        also_reads={"NWPP": ("CAISO",)},
+        raw_inputs=(
+            "data/raw/iso-specific-transmission",
+            "data/raw/caiso-trns-usage",
+            "data/raw/nwpp-intertie-otc",
+        ),
     ),
     # data/ramp_capability.py — measured ramp caps (fleet/arrays, withholding).
     CleanSource(
@@ -327,6 +338,8 @@ def plan_profile(
             parts: tuple[str, ...] | None = None
         else:
             found = {_partition_for(source, iso) for iso in isos} - {None}
+            for iso in isos:
+                found |= set(source.also_reads.get(iso.upper(), ()))
             if not found:
                 continue
             parts = tuple(sorted(found))

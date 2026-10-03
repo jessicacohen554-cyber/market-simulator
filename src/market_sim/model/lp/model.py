@@ -46,6 +46,12 @@ _BASIS_BASIC = int(highspy.HighsBasisStatus.kBasic)
 # (measured 14.9x: 13.4s -> 0.9s on an ERCOT-2023-sized vector, element-wise
 # identical).
 _BASIS_STATUS_OBJS = [highspy.HighsBasisStatus(i) for i in range(5)]
+#: The same five status objects as an object-dtype array, so an int8 status
+#: vector maps to its ``HighsBasisStatus`` list by one fancy index +
+#: ``tolist()`` instead of a Python loop over every column (the same object
+#: references, in the same order — byte-identical to the comprehension).
+_BASIS_STATUS_ARR = np.empty(len(_BASIS_STATUS_OBJS), dtype=object)
+_BASIS_STATUS_ARR[:] = _BASIS_STATUS_OBJS
 
 
 def _log_rss(label: str) -> None:
@@ -939,19 +945,19 @@ class DispatchModel:
         self._flow_cap_up: np.ndarray | None = None
         self._flow_cap_dn: np.ndarray | None = None
         if n_links:
-            self._flow_cap_up = (
+            # One C-contiguous float32 copy straight from the transposed view
+            # (the former ``.T.copy().astype`` made a float64 intermediate).
+            self._flow_cap_up = np.ascontiguousarray(
                 col_upper.reshape(T, layout.vars_per_hour)[
                     :, layout._flow_off : layout._slack_off
-                ]
-                .T.copy()
-                .astype(np.float32)
+                ].T,
+                dtype=np.float32,
             )
-            self._flow_cap_dn = (
+            self._flow_cap_dn = np.ascontiguousarray(
                 col_lower.reshape(T, layout.vars_per_hour)[
                     :, layout._flow_off : layout._slack_off
-                ]
-                .T.copy()
-                .astype(np.float32)
+                ].T,
+                dtype=np.float32,
             )
         # Emissions mass-cap rows: k inequality rows appended after import-node
         # rows and before RPS (plan §4). Their duals (negated) are the endogenous
@@ -1320,12 +1326,8 @@ class DispatchModel:
             # ``alien`` stays False: this basis is not a remap of a different
             # LP, it is this LP's own answer.
             basis = highspy.HighsBasis()
-            basis.col_status = [
-                _BASIS_STATUS_OBJS[s] for s in _cached.col_status.tolist()
-            ]
-            basis.row_status = [
-                _BASIS_STATUS_OBJS[s] for s in _cached.row_status.tolist()
-            ]
+            basis.col_status = _BASIS_STATUS_ARR[_cached.col_status].tolist()
+            basis.row_status = _BASIS_STATUS_ARR[_cached.row_status].tolist()
             h.setBasis(basis)
             del basis
             self.p0_cache_hit = True
@@ -1456,10 +1458,11 @@ class DispatchModel:
             if n_links:
                 flow_dual = _cd_block[:, layout._flow_off : layout._slack_off].T.copy()
             if layout.n_gen:
-                gen_reduced_cost = (
-                    _cd_block[:, layout._p_off : layout._w_off]
-                    .T.copy()
-                    .astype(np.float32)
+                # One float32 copy from the transposed view: no (n_gen, T)
+                # float64 intermediate at the post-solve peak.
+                gen_reduced_cost = np.ascontiguousarray(
+                    _cd_block[:, layout._p_off : layout._w_off].T,
+                    dtype=np.float32,
                 )
             del col_dual, _cd_block
             _log_rss("post col_dual extraction")
@@ -2114,8 +2117,8 @@ class DispatchModel:
                 ]
 
         basis = highspy.HighsBasis()
-        basis.col_status = [_BASIS_STATUS_OBJS[s] for s in col_status]
-        basis.row_status = [_BASIS_STATUS_OBJS[s] for s in row_status]
+        basis.col_status = _BASIS_STATUS_ARR[col_status].tolist()
+        basis.row_status = _BASIS_STATUS_ARR[row_status].tolist()
         basis.alien = True
         self._h.setBasis(basis)
         # This model's first solve now starts from a caller-chosen point, which

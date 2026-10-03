@@ -176,6 +176,43 @@ def _cod_work_frame(path, columns: dict[str, str]) -> "pd.DataFrame | None":
     return frame.dropna(subset=["pc", "oy"])
 
 
+def _plant_segments(pc: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Return ``(order, starts, counts)`` grouping a float plant-code array.
+
+    ``order`` is the stable ascending argsort of ``pc`` (NaN-free), so each
+    plant's rows form one contiguous slice in their original frame order —
+    the same key-sorted, within-group stable iteration ``groupby("pc")``
+    produced; ``starts`` / ``counts`` delimit those slices in the sorted array.
+    """
+    order = np.argsort(pc, kind="stable")
+    sorted_pc = pc[order]
+    starts = np.flatnonzero(np.concatenate(([True], sorted_pc[1:] != sorted_pc[:-1])))
+    ends = np.concatenate((starts[1:], [sorted_pc.size]))
+    return order, starts, ends - starts
+
+
+def _segment_sums(
+    starts: np.ndarray, counts: np.ndarray, *arrays: np.ndarray
+) -> "list[np.ndarray]":
+    """Per-plant sums, bit-identical to a contiguous per-plant ``.sum()``.
+
+    ``np.average`` summed each plant's slice with numpy's own *pairwise*
+    algorithm, whose block structure depends on the slice length — so
+    ``np.add.reduceat`` (sequential) is NOT a drop-in: it lands on the other
+    side of the ``round`` boundary for the handful of plants whose exact
+    mean is a half-integer (measured: 15 of 14,334 on the live vintage).
+    Reducing a ``(n_plants_of_that_size, size)`` gather along its contiguous
+    axis runs the identical inner loop, so the bits match exactly.
+    """
+    outs = [np.empty(starts.size, dtype="float64") for _ in arrays]
+    for size in np.unique(counts):
+        sel = np.flatnonzero(counts == size)
+        rows = starts[sel][:, None] + np.arange(size)
+        for arr, out in zip(arrays, outs):
+            out[sel] = arr[rows].sum(axis=1)
+    return outs
+
+
 def _reduce_cod_groups(work: "pd.DataFrame") -> dict[int, CodEntry]:
     """Reduce the prepared COD work frame to ``{plant_code: CodEntry}``.
 
@@ -208,37 +245,15 @@ def _reduce_cod_groups(work: "pd.DataFrame") -> dict[int, CodEntry]:
     # Stable sort on the plant code, so each plant's rows are one contiguous
     # slice in their original frame order — the same key-sorted, within-group
     # stable iteration groupby("pc") produced.
-    order = np.argsort(pc, kind="stable")
+    order, starts, counts = _plant_segments(pc)
     pc, oy, om, ry, rm, w = (a[order] for a in (pc, oy, om, ry, rm, w))
-
-    starts = np.flatnonzero(np.concatenate(([True], pc[1:] != pc[:-1])))
-    ends = np.concatenate((starts[1:], [pc.size]))
-    counts = ends - starts
-
-    def _segment_sums(*arrays: np.ndarray) -> "list[np.ndarray]":
-        """Per-plant sums, bit-identical to a contiguous per-plant ``.sum()``.
-
-        ``np.average`` summed each plant's slice with numpy's own *pairwise*
-        algorithm, whose block structure depends on the slice length — so
-        ``np.add.reduceat`` (sequential) is NOT a drop-in: it lands on the other
-        side of the ``round`` boundary for the handful of plants whose exact
-        mean is a half-integer (measured: 15 of 14,334 on the live vintage).
-        Reducing a ``(n_plants_of_that_size, size)`` gather along its contiguous
-        axis runs the identical inner loop, so the bits match exactly.
-        """
-        outs = [np.empty(starts.size, dtype="float64") for _ in arrays]
-        for size in np.unique(counts):
-            sel = np.flatnonzero(counts == size)
-            rows = starts[sel][:, None] + np.arange(size)
-            for arr, out in zip(arrays, outs):
-                out[sel] = arr[rows].sum(axis=1)
-        return outs
+    ends = starts + counts
 
     # Continuous COD (year + (month-1)/12), capacity-weighted per plant. Every
     # weight is >= 0 (``cap.where(cap > 0, 0)``), so a segment sums to exactly
     # 0.0 iff every unit reports no capacity — the equal-weight fallback branch.
     cont = oy + (om - 1.0) / 12.0
-    wsum, weighted, plain = _segment_sums(w, cont * w, cont)
+    wsum, weighted, plain = _segment_sums(starts, counts, w, cont * w, cont)
     has_w = wsum > 0.0
     mean = np.where(has_w, weighted / np.where(has_w, wsum, 1.0), plain / counts)
 
@@ -345,14 +360,26 @@ def _load_cod_map_clean(partition_year: int) -> dict[int, CodEntry]:
         # Positive nameplate weights the COD; equal-weight a plant that reports
         # no capacity so it still gets a representative year.
         work["w"] = work["cap"].where(work["cap"] > 0.0, 0.0)
-        for code, grp in work.groupby("pc"):
-            code = int(code)
-            weights = grp["w"].to_numpy()
-            if weights.sum() <= 0.0:
-                weights = np.ones(len(grp))
-            online_year = int(
-                round(float(np.average(grp["oy"].to_numpy(), weights=weights)))
-            )
+        # Same segment reduction as :func:`_reduce_cod_groups` (the former
+        # ``groupby("pc")`` loop paid a frame slice per plant): a stable sort on
+        # ``pc`` and per-plant pairwise sums, so ``np.average``'s bits and the
+        # half-to-even ``round`` land exactly where the loop's did. Every weight
+        # is >= 0, so a segment's weight sum is 0.0 iff every unit reports no
+        # capacity — the equal-weight fallback branch.
+        pc = work["pc"].to_numpy(dtype="float64", na_value=np.nan)
+        oy = work["oy"].to_numpy(dtype="float64", na_value=np.nan)
+        w = work["w"].to_numpy(dtype="float64", na_value=np.nan)
+        order, starts, counts = _plant_segments(pc)
+        pc, oy, w = pc[order], oy[order], w[order]
+        wsum, weighted, plain = _segment_sums(starts, counts, w, oy * w, oy)
+        has_w = wsum > 0.0
+        mean = np.where(has_w, weighted / np.where(has_w, wsum, 1.0), plain / counts)
+        # Built in ascending ``pc`` order, so two distinct float plant codes
+        # truncating to one int resolve to the later one, as before.
+        for code, online_year in zip(
+            pc[starts].astype(np.int64).tolist(),
+            np.rint(mean).astype(np.int64).tolist(),
+        ):
             # Month unknown in the clean schema -> mid-year default; no retirement.
             cod[code] = (online_year, COD_FALLBACK_MONTH, None, None)
 
