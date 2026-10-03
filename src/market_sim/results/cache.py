@@ -76,6 +76,19 @@ human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-10-03a — SOCO 2019-2022 measured nuclear monthly CF (rule 14;
+lane closeout-SOCO-2). KEY-MOVING for backcast SOCO, through
+``solve_surface.SolveEpoch`` 2026-10-03a.** WHAT CHANGED:
+``constants.NUCLEAR_MONTHLY_CF_BY_YEAR["SOCO"]`` gains its 2019-2022 rows
+(``scripts/data/derive_nuclear_monthly_cf.py --isos SOCO``, the frozen derive;
+2023-2025 reproduce byte-for-byte). A 2019-2022 SOCO backcast previously read the
+static ``NUCLEAR_MONTHLY_CF`` pattern x (1 - EFORD), a flat ~0.889 fleet CF; the
+measured rows average 0.919-0.950. The SOCO row of that table is undeclared in
+``solve_surface_declared.DECLARED``, so its value hash never entered the key; the
+epoch re-keys every backcast SOCO bundle (2023-2025 solves are byte-identical in
+substance). WHAT IS NOT INVALIDATED: every other ISO and every forecast. Record:
+``docs/records/soco/FINDING-closeout-soco-2-2026-10-03.md``.
+
 **Epoch 2026-10-02e — SPP MMU ambient band x W0 seasonal basis (rule 19; desk
 owner card "Drop band on rated rows", 2026-10-02). KEY-MOVING for backcast SPP,
 through ``solve_surface.SolveEpoch`` 2026-10-02e.** WHAT CHANGED: with
