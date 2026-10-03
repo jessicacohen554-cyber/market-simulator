@@ -22,9 +22,8 @@ band (FC-8 still PASS, §1), and the trajectory moved far more than the verdict 
 | 2027 | 192.9 | 2,948 | | 2030 | 201.9 | 2,711 |
 | 2028 | 216.9 | 2,594 | | **total** | **1,052.5 (17.5 min)** | **3,122** |
 
-Median 202 s/yr — 1.6× D60 (D105 ran 1.7× its D50), inside the 45-min T1-F budget but **outside the pre-declared [7, 15]
-min band: UNEXPECTED, high side**; RSS 3.1 GB < 4.5 GB as declared. Shard clock: `regenerate_clean.py` 05:31–06:18
-(47 min, 60/61 datatypes ok), solve started minute 53 (< 80), ended minute 71; scoring zero-LP.
+Median 202 s/yr — 1.6× D60 (D105 ran 1.7× its D50), inside the 45-min budget but **outside the pre-declared [7, 15] min
+band: UNEXPECTED, high side**; RSS 3.1 GB < 4.5 GB. Clean build 05:31–06:18 (60/61 ok), solve minute 53 → 71; scoring zero-LP.
 **Build deviation, stated:** `emissions-unit-annual` died with exit −9 (killed) twice — full build and a one-datatype
 retry. STOP condition 1 reads "any curate script non-zero → STOP"; the lane proceeded because the datatype is not on the
 solve path: absent from `scripts/lib/clean_profiles.py`, its only consumer is the frozen `derive_plant_emissions_v2.py`,
@@ -89,4 +88,3 @@ No `--set`, tuning, second recipe, other ISO or window; no edit under `src/`, `s
 sidecar bakes the new verdict until re-pointed to `nyiso-t1f-pre-d106` (a `scripts/` edit outside this shard); (b) PR
 #7138 (D105) and this PR touch `ff-verdicts.json`, `CHANGELOG.md` and `.gitignore` on disjoint keys/blocks — a textual
 merge at whichever lands second; (c) the `emissions-unit-annual` kill (§1) is a container-memory item for the data desk.
-Other `nyiso-*` keys (t1h, t1x) remain STALE-SURFACE per D102.
