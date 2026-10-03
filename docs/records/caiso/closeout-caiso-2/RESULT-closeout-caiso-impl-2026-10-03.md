@@ -148,13 +148,13 @@ made 54 of 61 committed bench parts read STALE. `check_bench_freshness.py` went 
 - Each part's own gzip round-trip was verified exact first, with the writer's format: level 9, mtime 0.
 - `bench` and every other `meta` field are verified unchanged on all 54.
 - After: `check_bench_freshness.py`: **0 STALE** of 61. The stamp tests pass.
-- **One knock-on, NWPP provenance only.** `data/raw/reference/nwpp_plant_basis_energy.csv` records the sha256 of
-  each NWPP bench part it is derived from (`tests/unit/data/test_nwpp_demand_plant_basis.py::test_artifact_matches_bench_parts`
-  pins that). The stamp rewrite changed those bytes, so the CSV was re-derived
-  (`scripts/data/derive_nwpp_plant_basis_energy.py`; rule 23: its source bytes changed).
-  - Only the `source_sha256` column moves. Every `year` / `family` / `twh` / `source` value is identical on all 44
-    rows.
-  - The file is not on the solve surface, and `twh` is the only column any solve reads.
+- **One knock-on, NWPP provenance only, dissolved by main.** On the lane base,
+  `tests/unit/data/test_nwpp_demand_plant_basis.py::test_artifact_matches_bench_parts` failed, because
+  `data/raw/reference/nwpp_plant_basis_energy.csv` recorded the sha256 of each NWPP bench part and the stamp rewrite
+  changed those bytes.
+  - Main then landed closeout-nwpp-anchor (#7103), which derives that CSV from source data and no longer reads a
+    bench part.
+  - At the merge this lane keeps main's CSV unchanged, and the test passes.
 
 ## 6. Gates (step 4)
 
@@ -164,7 +164,7 @@ made 54 of 61 committed bench parts read STALE. `check_bench_freshness.py` went 
 | `check_registry_payload_parity.py` | OK, 9 runs, 9 bundle dirs |
 | `check_mechanism_matrix.py --base origin/main` | exit 0 |
 | `check_bench_freshness.py` | 0 STALE / 61 |
-| fast lane `pytest -n auto -m "not slow and not integration and not fulldata"` | 11,373 passed, 66 skipped, 3 xfailed; 1 failed (`test_nwpp_demand_plant_basis::test_artifact_matches_bench_parts`, caused by the re-stamp and repaired above; it then passes). The two failures the charter lists as pre-existing on main did not fail here. |
+| fast lane `pytest -n auto -m "not slow and not integration and not fulldata"` | 11,373 passed, 66 skipped, 3 xfailed; 1 failed on the pre-merge base (`test_nwpp_demand_plant_basis::test_artifact_matches_bench_parts`, the re-stamp knock-on in §5; it passes after merging #7103). The two failures the charter lists as pre-existing on main did not fail here. |
 
 ## 7. Matrix
 
