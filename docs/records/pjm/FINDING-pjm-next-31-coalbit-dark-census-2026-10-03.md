@@ -162,3 +162,9 @@ slack-concentrated. So the filter is doing its job there, not missing outages.
 - **COAL_BIT C1 2019–21 side card (a)** stays open. The availability family is now exhausted on two independent
   censuses (NEXT-13 monthly max, NEXT-30/31 hourly unit status). The remaining structural candidate is coal
   commitment economics over multi-day slack periods. The frontier text is closeout-PJM-2's.
+
+## §4 Owner ruling (2026-10-03, decision card)
+
+- **NEXT-32 = commitment census.** A zero-LP census of real vs keeper coal multi-day slack decommitment, testing whether
+  the real fleet shuts coal across slack weeks that the pure LP keeps at cap. Candidate U cells:
+  `coal_committed_nested_on_mustrun`, `commitment_floor_window_netload`. The Tait remap rides any resulting solve.
