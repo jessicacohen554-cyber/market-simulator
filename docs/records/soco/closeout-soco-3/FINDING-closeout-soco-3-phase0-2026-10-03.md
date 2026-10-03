@@ -10,6 +10,37 @@ Probes (all zero LP, all reading committed files):
 - `scripts/probes/_closeout_soco3_budget_reach.py`, `_closeout_soco3_c1_reach.py` — the owner's offer form at full magnitude → `budget_reach.csv`, `c1_reach.csv`
 - `scripts/probes/_closeout_soco3_pile_reach.py [prior|all]` — the existing take-or-pay pile family on SOCO → `pile_reach_plant_year{,_smax_all}.csv`, `pile_c1_reach{,_smax_all}.csv`
 
+## 0. Prior adjudication (rule 28): the owner's words alone are not new evidence
+
+**Sequencing.** The desk's addendum asked for this section *before* the census. It reached the lane only after
+steps 1–4 had been reported, so it is recorded here, ahead of the findings.
+
+**What already closes take-or-pay for SOCO:**
+- **The DO-NOT-REDO list.** `docs/mechanism-testing-matrix.md` §5.8 header: *"DO-NOT-REDO: take-or-pay, CT start,
+  gas bridge, CC incremental HR, gas level."*
+- **`coal_takeorpay_committed` G (soco-74, Page 5 corpus 2017–24).** *"Purchase Type C/NC is a >=1-yr price term
+  with an expiration date; no minimum-quantity field exists, QUANTITY is ex-post delivery … contracted coal was
+  AVOIDED in the C4-failing year … a contract-tonnage floor would be same-year burn (rule-13 answer key). Reopens
+  only on a plant-grain contractual minimum-quantity source."*
+- **`coal_fuel_inventory_take_floor` G (soco-80).** It refused the annual Y−1 contract-tons floor: *"the
+  renewal-at-Y-1-volume premise is FALSE for SOCO"*.
+
+**Is each part of the owner's hypothesis new?**
+
+| Element of R-45 | New against the closure? |
+|---|---|
+| vertically integrated / cost-of-service ownership | **No.** soco-74 tested the `_regulated` variant; every SOCO coal plant is regulated |
+| EIA-923 contract-type receipts as the measured basis | **No.** It is the same Page 5 corpus, still with no quantity term; §1 re-reads it monthly, adds 2025, and refutes again |
+| a sunk-fuel energy budget rather than an offer haircut | **No**, against soco-74 §4 and soco-80. The contract-MMBtu budget (§3a) is the named answer key |
+
+**What survives.** The price form and the annual floor stay closed; neither was re-tested by solve. The one live
+object is the **untested** SOCO cell `coal_monthly_pile_measured_receipts` (U), sized in §3b.
+
+**What arming it would involve.** The chain needs `coal_fuel_inventory_take_floor` (G) as a prerequisite. The
+measured arm removes soco-80's Y−1 premise but **not** soco-74's objection that same-year contract tonnage ≈ burn.
+Option 1 below therefore needs an explicit owner ruling that the same-year measured overlay (admitted for NWPP at
+NEXT-9) answers that objection for SOCO. Options 2 and 3 are the choices consistent with DO-NOT-REDO.
+
 ## Verdict in one paragraph
 
 **As asked ("price contracted coal as sunk"), the hypothesis is REFUTED on SOCO's own data.** Night coal shortfall
@@ -183,7 +214,8 @@ What the CC 2019 bar needs:
 
 **SOCO coal: is take-or-pay the fix for the last FAIL (CC_REGULAR 2019)?**
 
-1. **(Recommended) Charter the existing take-or-pay pile for SOCO, data first.** Intake the free EIA-923 coal stocks
+1. **(Recommended, if the owner rules that the same-year measured overlay answers soco-74's answer-key objection;
+   see §0) Charter the existing take-or-pay pile for SOCO, data first.** Intake the free EIA-923 coal stocks
    for 2015–2017, then re-run this zero-LP reach with the bars pre-registered:
    - CC 2019 clears at ≤ 50 % CC displacement;
    - no plant-year floor above actual burn by > 0.5 TWh;
