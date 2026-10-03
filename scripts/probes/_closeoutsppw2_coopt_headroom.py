@@ -29,13 +29,24 @@ BIND_BAR_HOURS = 88
 
 def main() -> None:
     """Per year: eligible headroom vs measured cleared up-reserve, bind hours and margins."""
-    orc = pd.read_parquet(REPO / "data/raw/_validation-source/spp_rtbm_or_cleared_hourly.parquet")
+    orc = pd.read_parquet(
+        REPO / "data/raw/_validation-source/spp_rtbm_or_cleared_hourly.parquet"
+    )
     out = {}
     for year in range(2019, 2026):
-        um = pd.read_parquet(BUNDLE / f"hourly/unit_marginal_{year}.parquet",
-                             columns=["fuel", "hour", "mw", "cap_mw"])
+        um = pd.read_parquet(
+            BUNDLE / f"hourly/unit_marginal_{year}.parquet",
+            columns=["fuel", "hour", "mw", "cap_mw"],
+        )
         um = um[um["fuel"].astype(str).isin(RESERVE_FUEL_TYPES)]
-        h = (um["cap_mw"] - um["mw"]).groupby(um["hour"]).sum().reindex(range(8760)).fillna(0.0).values
+        h = (
+            (um["cap_mw"] - um["mw"])
+            .groupby(um["hour"])
+            .sum()
+            .reindex(range(8760))
+            .fillna(0.0)
+            .values
+        )
         o = orc[orc.year == year].set_index("hour").reindex(range(8760))
         req = o[list(UP_PRODUCTS)].fillna(0.0).sum(axis=1).values
         has = o["regup"].notna().values
@@ -52,8 +63,12 @@ def main() -> None:
             "max_shortfall_mw": round(float((req - h)[has].max()), 1),
         }
         print(year, out[year], flush=True)
-    rec = {"bundle": BUNDLE.name, "bar_bind_hours": BIND_BAR_HOURS, "years": out,
-           "clears_bar": any(v["bind_hours"] >= BIND_BAR_HOURS for v in out.values())}
+    rec = {
+        "bundle": BUNDLE.name,
+        "bar_bind_hours": BIND_BAR_HOURS,
+        "years": out,
+        "clears_bar": any(v["bind_hours"] >= BIND_BAR_HOURS for v in out.values()),
+    }
     p = REPO / "results/phase0/spp/_closeoutsppw2_coopt_headroom.json"
     p.write_text(json.dumps(rec, indent=1))
     print("clears_bar:", rec["clears_bar"])

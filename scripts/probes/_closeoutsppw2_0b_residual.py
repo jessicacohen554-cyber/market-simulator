@@ -26,7 +26,12 @@ def main() -> None:
     for year in range(2019, 2026):
         set_eia860_vintage(year)
         gens = load_fleet_from_csv("SPP", year=year)
-        row = {"derate_classes_mw": 0.0, "non_mmu_mw": 0.0, "non_mmu_derate_mw": 0.0, "non_mmu_fuels": {}}
+        row = {
+            "derate_classes_mw": 0.0,
+            "non_mmu_mw": 0.0,
+            "non_mmu_derate_mw": 0.0,
+            "non_mmu_fuels": {},
+        }
         for g in gens:
             d = SUMMER_CLASS_DERATE.get(g.plant_group)
             if not d:
@@ -35,8 +40,17 @@ def main() -> None:
             if not _mmu_fossil(g):
                 row["non_mmu_mw"] += g.pmax_mw
                 row["non_mmu_derate_mw"] += g.pmax_mw * d
-                row["non_mmu_fuels"][g.fuel_type] = row["non_mmu_fuels"].get(g.fuel_type, 0.0) + g.pmax_mw
-        out[year] = {k: (round(v, 1) if isinstance(v, float) else {f: round(m, 1) for f, m in v.items()}) for k, v in row.items()}
+                row["non_mmu_fuels"][g.fuel_type] = (
+                    row["non_mmu_fuels"].get(g.fuel_type, 0.0) + g.pmax_mw
+                )
+        out[year] = {
+            k: (
+                round(v, 1)
+                if isinstance(v, float)
+                else {f: round(m, 1) for f, m in v.items()}
+            )
+            for k, v in row.items()
+        }
         print(year, out[year])
     p = Path("results/phase0/spp/_closeoutsppw2_0b_residual.json")
     p.parent.mkdir(parents=True, exist_ok=True)
