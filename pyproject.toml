@@ -16,6 +16,11 @@ dependencies = [
     "pydantic==2.13.4",
     "pyyaml>=6.0",
     "openpyxl>=3.1",
+    # Rust xlsx reader behind `pd.read_excel(engine="calamine")` for the eGRID
+    # plant sheet (data/egrid.py): ~5x faster than openpyxl, output verified
+    # byte-identical across every committed vintage. Pinned exactly because
+    # the parity was checked against this version.
+    "python-calamine==0.8.2",
     "requests>=2.31.0",
 ]
 

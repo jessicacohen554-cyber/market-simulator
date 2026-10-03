@@ -1,0 +1,96 @@
+      iso  year  plant                    name      fam      mw  mo     e923  e923_prev_same   yoy  last3_first3_Y  last3_first3_Yprev    model    avail  receipts_gwh  stock0_gwh  r3_ceiling_gwh     hr
+0   CAISO  2023    356   AES Redondo Beach LLC   ST_GAS   830.0  12   256.22          219.17  1.17            2.50                5.19     0.00  5808.53           NaN         NaN             NaN    NaN
+1   ERCOT  2020    127               Oklaunion     COAL   720.0   9  1100.66         2424.74  0.45       828286.91                0.99  1035.53  2229.64        752.05      413.09         1165.14  10.71
+2   ERCOT  2022   3548            Decker Creek   ST_GAS   206.0   3    73.21          138.42  0.53            1.00                1.00   194.50  1599.67           NaN         NaN             NaN    NaN
+3   ERCOT  2025  56611  Sandy Creek Energy Sta     COAL   936.0  12   718.68         3037.25  0.24            0.00                1.79   612.05  1147.22          0.00     1440.93         1440.93   9.81
+4   ERCOT  2025   3612             V H Braunig   ST_GAS  1138.0  12   387.17         1855.40  0.21           -0.01                4.92   413.77   950.20           NaN         NaN             NaN    NaN
+5    MISO  2019    861                 Coffeen     COAL   895.0  11  2676.92         4826.14  0.55            0.40                0.93  3696.71  6412.64       2434.55      348.29         2782.84  11.41
+6    MISO  2019    891                  Havana     COAL   411.0  11  1468.97         2307.68  0.64            0.56                1.11  1697.99  2944.80       1293.28      183.93         1477.20  12.63
+7    MISO  2019   6016              Duck Creek     COAL   410.0  12  2236.95         2423.36  0.92            0.87                0.88  1941.15  3378.86       1639.03      222.38         1861.41  11.89
+8    MISO  2019    892  Hennepin Power Station     COAL   286.0  11   920.67         1579.36  0.58            0.55                0.94  1181.54  2049.18        705.54      113.09          818.62  11.85
+9    MISO  2020  55099   NRG Sterlington Power       CT   113.0  12     2.01            2.57  0.78            1.02                1.01    39.64   858.65           NaN         NaN             NaN    NaN
+10   MISO  2020   1060  Duane Arnold Energy Ce  NUCLEAR   601.4  11  2904.86         4779.92  0.61            0.00                1.01  4135.35  4135.35           NaN         NaN             NaN    NaN
+11   MISO  2021     51             Dolet Hills     COAL   634.8  12   942.86          639.12  1.48            9.02            96367.54      NaN      NaN        421.14      595.76         1016.91  12.84
+12   MISO  2022   1743                St Clair     COAL  1065.0  12  1601.68         3166.55  0.51            0.00                0.96  4278.02  7670.39          0.00      106.51          106.51  11.18
+13   MISO  2022    856             E D Edwards     COAL   560.0  12  2695.38         2709.51  0.99            1.07                1.09  2992.61  4592.74       2455.00      174.19         2629.20  10.99
+14   MISO  2022   2104                 Meramec     COAL   510.0  12    85.80          484.47  0.18            0.58                0.62   464.96  6629.28         87.39      160.01          247.40  13.36
+15   MISO  2022   1745         Trenton Channel     COAL   495.0  12   571.13         1097.87  0.52           -0.01                1.14  1185.66  3859.69         98.71      407.95          506.65  11.49
+16   MISO  2022   1832        Erickson Station     COAL   154.5  11   782.64          698.64  1.12            1.03                0.56   630.29  1179.74        541.20      230.47          771.67  11.33
+17   MISO  2022   2104                 Meramec   ST_GAS   226.0  12   128.45           60.37  2.13            1.38             8805.14   464.96  6629.28           NaN         NaN             NaN    NaN
+18   MISO  2023   6137               A B Brown     COAL   485.0  10  1719.06         2423.14  0.71            0.80                1.25  2156.43  4412.03       1564.83      420.69         1985.52  11.02
+19   MISO  2024   6155             Rush Island     COAL  1178.0  10   508.30          685.54  0.74            0.43                0.42   612.50   685.68          0.00      864.95          864.95  11.74
+20   MISO  2024  52006      LaO Energy Systems       CC   275.0  12  1441.32         1802.00  0.80            0.61                1.06  2179.74  2437.28           NaN         NaN             NaN    NaN
+21   NWPP  2020   6106                Boardman     COAL   585.0  10  1630.14         1981.48  0.82            1.28                1.07  1909.33  1909.33        886.40      702.75         1589.15  10.22
+22    PJM  2019   6094  FirstEnergy Bruce Mans     COAL   830.0  11   647.09         2683.78  0.24            0.31                0.44   942.11  1265.72        353.86      357.34          711.20  13.38
+23    PJM  2019   8011       Three Mile Island  NUCLEAR   802.8   9  5214.20         5468.63  0.95            0.85                0.99  5005.34  5005.34           NaN         NaN             NaN    NaN
+24    PJM  2020   1572               Dickerson     COAL   519.0   8   178.96           55.25  3.24            6.83                1.48   169.41  2861.38          0.00      170.61          170.61  15.18
+25    PJM  2023    384               Joliet 29   ST_GAS  1036.0   9   707.79          479.79  1.48           11.25                2.54      NaN      NaN           NaN         NaN             NaN    NaN
+26   SOCO  2019    708                 Hammond     COAL   840.0   7   111.24          104.82  1.06           -0.02               -0.05   573.22  2927.57          0.00       83.17           83.17  13.87
+27   SOCO  2019   6124                McIntosh     COAL   142.5   7    16.10           14.91  1.08           -0.12               -0.15   140.18  6142.11          0.00        0.00            0.00  16.24
+28   SOCO  2022   6052                 Wansley     COAL  1744.0   9   883.91         1139.58  0.78            1.79                1.68  1250.16  1677.97        284.64      862.46         1147.10  10.55
+29    SPP  2020    127               Oklaunion     COAL   650.0   9  1100.66         2424.74  0.45       828286.91                0.99  1006.99  1970.55        752.05      413.09         1165.14  10.71
+      iso  year                    name                                          monthly
+0   CAISO  2023   AES Redondo Beach LLC                  4 10 4 3 1 11 122 47 12 15 20 8
+1   ERCOT  2020               Oklaunion                       0 0 0 0 76 196 264 302 263
+2   ERCOT  2022            Decker Creek                                         32 27 15
+3   ERCOT  2025  Sandy Creek Energy Sta                      342 371 0 6 0 0 0 0 0 0 0 0
+4   ERCOT  2025             V H Braunig            167 131 96 -1 -1 -1 -1 -1 -1 -1 -1 -1
+5    MISO  2019                 Coffeen        437 271 268 213 226 254 343 278 239 148 0
+6    MISO  2019                  Havana         144 201 183 106 92 106 187 155 152 144 0
+7    MISO  2019              Duck Creek  239 199 135 200 204 170 201 190 198 159 238 103
+8    MISO  2019  Hennepin Power Station              108 99 110 75 77 58 121 100 86 88 0
+9    MISO  2020   NRG Sterlington Power                          0 0 0 0 0 0 0 0 0 0 0 0
+10   MISO  2020  Duane Arnold Energy Ce            456 425 453 420 393 289 359 110 0 0 0
+11   MISO  2021             Dolet Hills              0 26 0 0 0 128 200 199 155 166 70 0
+12   MISO  2022                St Clair                295 286 237 358 426 0 0 0 0 0 0 0
+13   MISO  2022             E D Edwards  190 247 250 217 184 239 227 219 185 226 264 247
+14   MISO  2022                 Meramec                       17 10 0 3 0 9 26 5 0 0 9 7
+15   MISO  2022         Trenton Channel           29 19 125 85 211 107 -1 -1 -1 -0 -0 -0
+16   MISO  2022        Erickson Station               0 78 108 107 111 49 68 68 66 68 58
+17   MISO  2022                 Meramec                      3 2 0 0 12 30 52 16 7 0 2 5
+18   MISO  2023               A B Brown           250 183 112 138 186 182 230 197 187 53
+19   MISO  2024             Rush Island                       217 49 6 3 0 99 18 71 45 0
+20   MISO  2024      LaO Energy Systems    120 148 153 121 135 115 135 134 122 134 67 57
+21   NWPP  2020                Boardman                354 140 134 0 0 0 195 348 348 111
+22    PJM  2019  FirstEnergy Bruce Mans                 286 22 81 0 -2 -9 33 117 120 0 0
+23    PJM  2019       Three Mile Island              632 571 629 605 618 595 609 606 351
+24    PJM  2020               Dickerson                          14 12 -3 -2 -2 73 88 -1
+25    PJM  2023               Joliet 29                         21 32 0 9 5 41 296 303 0
+26   SOCO  2019                 Hammond                              4 99 12 -1 -1 -1 -1
+27   SOCO  2019                McIntosh                             -1 21 -1 -1 -1 -1 -1
+28   SOCO  2022                 Wansley                     160 25 37 -5 0 270 245 153 0
+29    SPP  2020               Oklaunion                       0 0 0 0 76 196 264 302 263
+--- control
+      iso  year                    name      fam   yoy  ctl_yoy   rel  dark_tail_months  mo     e923    model       r3
+0   CAISO  2023   AES Redondo Beach LLC   ST_GAS  1.17     0.99  1.18                 0  12   256.22     0.00      NaN
+1   ERCOT  2020               Oklaunion     COAL  0.45     0.85  0.53                 0   9  1100.66  1035.53  1165.14
+2   ERCOT  2022            Decker Creek   ST_GAS  0.53     0.84  0.63                 0   3    73.21   194.50      NaN
+3   ERCOT  2025  Sandy Creek Energy Sta     COAL  0.24     1.13  0.21                 8  12   718.68   612.05  1440.93
+4   ERCOT  2025             V H Braunig   ST_GAS  0.21     0.95  0.22                 9  12   387.17   413.77      NaN
+5    MISO  2019                 Coffeen     COAL  0.55     0.81  0.68                 1  11  2676.92  3696.71  2782.84
+6    MISO  2019                  Havana     COAL  0.64     0.81  0.78                 1  11  1468.97  1697.99  1477.20
+7    MISO  2019              Duck Creek     COAL  0.92     0.81  1.15                 0  12  2236.95  1941.15  1861.41
+8    MISO  2019  Hennepin Power Station     COAL  0.58     0.81  0.72                 1  11   920.67  1181.54   818.62
+9    MISO  2020   NRG Sterlington Power       CT  0.78     1.06  0.74                12  12     2.01    39.64      NaN
+10   MISO  2020  Duane Arnold Energy Ce  NUCLEAR  0.61     0.96  0.63                 3  11  2904.86  4135.35      NaN
+11   MISO  2021             Dolet Hills     COAL  1.48     1.22  1.21                 1  12   942.86      NaN  1016.91
+12   MISO  2022                St Clair     COAL  0.51     0.91  0.55                 7  12  1601.68  4278.02   106.51
+13   MISO  2022             E D Edwards     COAL  0.99     0.91  1.09                 0  12  2695.38  2992.61  2629.20
+14   MISO  2022                 Meramec     COAL  0.18     0.91  0.19                 0  12    85.80   464.96   247.40
+15   MISO  2022         Trenton Channel     COAL  0.52     0.91  0.57                 6  12   571.13  1185.66   506.65
+16   MISO  2022        Erickson Station     COAL  1.12     0.89  1.26                 0  11   782.64   630.29   771.67
+17   MISO  2022                 Meramec   ST_GAS  2.13     1.05  2.04                 0  12   128.45   464.96      NaN
+18   MISO  2023               A B Brown     COAL  0.71     0.86  0.83                 0  10  1719.06  2156.43  1985.52
+19   MISO  2024             Rush Island     COAL  0.74     0.95  0.78                 1  10   508.30   612.50   864.95
+20   MISO  2024      LaO Energy Systems       CC  0.80     1.00  0.80                 0  12  1441.32  2179.74      NaN
+21   NWPP  2020                Boardman     COAL  0.82     0.80  1.03                 0  10  1630.14  1909.33  1589.15
+22    PJM  2019  FirstEnergy Bruce Mans     COAL  0.24     0.82  0.30                 2  11   647.09   942.11   711.20
+23    PJM  2019       Three Mile Island  NUCLEAR  0.95     0.98  0.97                 0   9  5214.20  5005.34      NaN
+24    PJM  2020               Dickerson     COAL  3.24     0.77  4.22                 1   8   178.96   169.41   170.61
+25    PJM  2023               Joliet 29   ST_GAS  1.48     1.28  1.15                 1   9   707.79      NaN      NaN
+26   SOCO  2019                 Hammond     COAL  1.06     0.86  1.24                 4   7   111.24   573.22    83.17
+27   SOCO  2019                McIntosh     COAL  1.08     0.86  1.26                 5   7    16.10   140.18     0.00
+28   SOCO  2022                 Wansley     COAL  0.78     0.87  0.89                 1   9   883.91  1250.16  1147.10
+29    SPP  2020               Oklaunion     COAL  0.45     0.81  0.56                 0   9  1100.66  1006.99  1165.14
+rows with model: 28  model>e923: 20  excess TWh 10.04
+dark tail>=1: 17  rel<0.8: 16

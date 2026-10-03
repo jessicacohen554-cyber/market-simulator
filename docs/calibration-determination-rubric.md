@@ -1,6 +1,6 @@
 # Calibration Determination Rubric (v2)
 
-> Scorer `RUBRIC_VERSION` is **3.17** (2026-10-02). The status paragraph below was
+> Scorer `RUBRIC_VERSION` is **3.19** (2026-10-03). The status paragraph below was
 > written at v3.4; every later amendment is in §9 (newest first).
 
 Status: **canonical, machine-enforced. RUBRIC VERSION 3.4** (2026-08-18 owner
@@ -610,6 +610,13 @@ way FAILs C6 regardless.
   - *Actual:* the committed `tail/actual_tail.json` part
     (`scripts/data/derive_actual_tail.py`, from the hub RT/DA hourly series;
     coverage-annotated, 2023–2025 only).
+  - *Window (v3.18, owner ruling R-34):* the model count is taken on the
+    **RT-covered hours only** — the hours where the actual RT series is
+    finite, the same window the actual is counted on — so a partially covered
+    year compares like for like instead of the model's full year against the
+    actual's covered part (CAISO 2021: RT coverage starts 2021-04-26, after
+    Winter Storm Uri). A payload rendered so carries
+    `hoursGt200.window = "rt"`.
   - *Tolerance:* model tail hours within **[0.5×, 2.0×]** of the RT actual —
     a **collapsed tail (0 hours where the RT market had scarcity) FAILs**, and
     an **invented tail (> 2× actual) FAILs**; bounded both ways on purpose.
@@ -1083,6 +1090,19 @@ but still downgrade, so the reading is `CALIBRATED-WITH-CAVEATS`, not
 `NOT-YET`. Neither widens `LEDGERABLE_CRITERIA`; both are exact-keyed tables.
 See §9.
 
+**v3.19 (owner ruling R-40, 2026-10-03) — the reference-coverage caveat kind,
+also outside the single slot.** A price criterion (C3a/C3b) whose measured
+reference is **absent** or **partial** in a scored year, exact-keyed in
+`REFERENCE_COVERAGE_ENTRIES` (CAISO 2019/2020 absent, 2021 partial), reads
+`CAVEAT` classified `OWNER-SIGNED REFERENCE-COVERAGE CAVEAT` instead of
+`SKIPPED` or a calendar-mismatched verdict. It needs governance `PASS`, an
+owner-signed `kind: "reference-coverage"` entry in the bundle attestation, and
+the record's state to match the registry (absent: `SKIPPED` with no reference
+block; partial: scored, annual coverage < 1). A partial row is scored on the
+covered months only and carries its band verdict as `window_status`; it is
+never a `PASS`. It spends no budget and does not downgrade, and is named on
+the basis. See §9.
+
 **Determination:**
 
 | Outcome | Conditions (all must hold) |
@@ -1317,7 +1337,66 @@ down to.
 *(v3.10–v3.13 are narrated in `docs/governance/rule-history.md` §23–§26 and in
 the `RUBRIC_VERSION` genealogy of `scripts/calibration_verdict.py`; v3.14–v3.17
 below are indexed in rule-history §27. Record:
-`docs/records/governance/closeout-2026-10/RESULT-closeout-c-rubric-2026-10-02.md`.)*
+`docs/records/governance/closeout-2026-10/RESULT-closeout-c-rubric-2026-10-02.md`.
+v3.18 is indexed in rule-history §28; v3.19 in §29.)*
+
+**Amendment procedure (rule 37 `[R-RUBRIC-FREEZE]`, owner ruling 2026-10-03,
+rule-history §30).** This rubric is frozen between promotions. An amendment —
+to this document, to `RUBRIC_VERSION`, to any threshold or band, to a caveat
+budget (`MAX_LEDGERED_CAVEATS`, `MAX_PROTECTIVE_CAVEATS`) or to ledger
+admissibility (`LEDGERABLE_CRITERIA`, the scoped / configuration-exception /
+reference-coverage entry tables) — is a promotion decision: it is proposed in
+a PRECOMMIT that computes its effect on every registered ISO zero-LP
+(`scripts/calibration_verdict.py` over the committed bundles, the determination
+table before and after), lands only on the owner's ruling cited in the commit,
+and lands in a PR that changes no keeper designation, keeper shard, status part
+or `calibration-complete.json`. The promotion that an amendment enables follows
+in its own PR under rule 35. CI enforces the separation
+(`scripts/check_rubric_freeze.py`); the owner's promotion-with-amendment ruling
+is the one override, passed by the CI step as `RUBRIC_FREEZE_OVERRIDE`.
+
+- **v3.19 (2026-10-03, owner ruling R-40 — backcast close-out plan §5.0 row
+  R-40, verbatim: *"Caiso mean LMP for 2021 should be an accepted caveat or
+  only compared where data is actually available for that year for
+  calibration rubric. 2019 and 2020 should have that be accepted caveat for
+  c3a."*; extended the same day: *"I want c3b treated the same."*)** — the
+  **reference-coverage** caveat kind (`REFERENCE_COVERAGE_ENTRIES`,
+  `_apply_reference_coverage`). Six exact-keyed rows: CAISO {2019, 2020,
+  2021} × {C3a, C3b}. 2019/2020 have no measured hourly LMP (R-16) and read
+  `CAVEAT` *"reference absent — accepted caveat (R-40)"* instead of `SKIPPED`.
+  2021's RT reference starts 2021-04-26 (annual coverage 0.652); both price
+  criteria are scored on the covered months the existing mask already uses
+  (5, 6, 7, 9, 10, 11, 12) and read `CAVEAT` at that magnitude, with the band
+  verdict beside it as `window_status` — C3a +12.7 % (window FAIL), C3b NRMSE
+  0.148 (window PASS; a `CAVEAT`, never a `PASS`, because no full-year price
+  is certified). Fail-closed on governance, on the bundle attestation's
+  owner-signed `kind: "reference-coverage"` twin, and on the record's state.
+  Off every caveat budget (neither ledgered nor commercial-band, never the C3c
+  slot), not determination-downgrading, named on the basis; applied after
+  the C3c standing rule, scoped ledger and configuration exceptions, so none
+  of them saw these rows other than as scored. `caveats.reference_coverage` is
+  emitted only when non-empty. No band, tier, ledger row or budget moves; no
+  determination moves (CAISO stays NOT-YET on C1 and C4 2019–2021). Record:
+  `docs/records/caiso/closeout-caiso-2/RESULT-closeout-caiso-r40-2026-10-03.md`.
+
+- **v3.18 (2026-10-03, owner ruling R-34 — backcast close-out plan §5.0,
+  verbatim card choice: *"Mask to RT-covered hours"*)** — the C3c **model**
+  tail count is masked to the hours the actual RT series covers, so model and
+  actual are counted on the same window (the `isfinite(RT)` mask C3a's
+  `_monthly_mae` already applies). The render applies it
+  (`render_calibration_html._tail_hours` / `_gt_count` `mask=`) and stamps
+  `hoursGt200.window = "rt"`; on a stamped payload the coverage note reads
+  "model and actual both counted on the RT-covered hours" instead of "count is
+  a lower bound". Live on CAISO only: **2021** (RT coverage 65.2 %; all 88
+  unmasked model hours fell on Winter Storm Uri, before OASIS RT coverage
+  starts) reads **0 vs 27 h**, still CAVEAT under the v3.6 limb, relabelled
+  *"reference-window mismatch; like-for-like under-fire 0 vs 27, C3c-2024
+  class"* (`C3C_READING_LABELS`, RT-window payload and under-fire only);
+  **2023** (99.5 %) reads 67 → **51** vs 47 h, PASS → PASS. MISO 2022 and SPP
+  2019–2025 (the other partially covered ISO-years) read the same count masked
+  or not, so their committed (unstamped) payloads keep the pre-mask count and
+  the old note. No band, tier, ledger or budget moves; no determination moves.
+  Record: `docs/records/caiso/closeout-caiso-2/RESULT-closeout-caiso-impl-2026-10-03.md`.
 
 - **v3.17 (2026-10-02, owner ruling R-13 — backcast close-out plan §5.0,
   verbatim: *"adopt zonal load-weighted C3a for PJM"*)** — PJM's `rt_lw`/`da_lw`

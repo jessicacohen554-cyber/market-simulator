@@ -83,6 +83,18 @@ audit SHA. Recomputed with `iso_determination`: still NOT-YET, now also
 failing price_mean 2024 and price_shape 2024 beside the gates listed in §1.4.
 The site page carries the updated row; the lane reports stand at `d7ff7c20`.
 
+**Addendum 2 (2026-10-03, rulings).** Recomputed on `main` after the merge of
+rubric v3.18/v3.19 (owner rulings R-34, R-40) and the NWPP re-promotion to
+`2026-10-03-nwpp-next-22b-w0`: NEISO and NYISO CALIBRATED, seven NOT-YET.
+CAISO's price_mean 2021 fail is now a v3.19 reference-coverage caveat; its
+dispatch_corr and fuelmix 2019–2021 rungs still fail. NWPP's new keeper
+fails dispatch_corr 2019/2023/2024, fuelmix 2019/2024/2025 and price 2023–2024.
+Owner rulings on this audit: holdout stays removed (claims are in-sample);
+rule 37 `[R-RUBRIC-FREEZE]` freezes the rubric between promotions; the
+posture family is documented in spec §1.6 and CLAUDE.md; the attestation
+schema, env-knob recording, forecast-board rows and completeness rows are
+delivered (`docs/audit/2026-10/G1`–`G6`).
+
 ## 2. Lane findings (ranked)
 
 ### 2.1 LP, dispatch and commitment (lane A)

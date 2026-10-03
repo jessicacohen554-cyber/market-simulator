@@ -1,0 +1,118 @@
+# Canonical document schema: calibration_attestation.json (one per keeper
+# bundle, results/calibration/<bundle>/calibration_attestation.json).
+#
+# Owner ruling 2026-10-03: ONE fixed schema for the attestation, validated at
+# promotion (scripts/promote_keeper.py step 3) and on every audit
+# (scripts/audit_keepers.py E16). Audit finding
+# docs/audit/2026-10/C-data-calibration-governance.md #4: bundles carried
+# lane-named blocks (miso267, neiso109, spp85, r_spp, hydro5, ...) that no reader
+# could tell from drift, `authorized_price_tuning` appeared at top level in one
+# bundle only, and the rule-21 DOF ledger's shape was read by E8 alone.
+#
+# This is a DOCUMENT contract, not a tabular datatype: it is deliberately
+# named `*.document.yaml` so `clean_io.load_schema` / the data-dictionary
+# renderer (which enumerate `*.schema.yaml` as Parquet column contracts) never
+# pick it up. Loader + validator + migrator: scripts/lib/attestation_schema.py.
+#
+# Design rule: ADDITIVE ONLY. Every current keeper satisfies it after
+# `attestation_schema.py --migrate`, which adds missing keys and never deletes,
+# renames or rewrites a lane block, a free_parameters entry or an exception.
+#
+# Top-level keys fall in three classes:
+#   * required  — must be present with the declared shape;
+#   * optional  — known provenance keys a lane may add (listed below; any key
+#                 starting with `rubric` is accepted as a rubric stamp);
+#   * lane blocks — anything else, PROVIDED the key is listed under
+#                 `lane_blocks` (so a deliberate extra is distinguishable from
+#                 drift). An unlisted key is a schema violation.
+datatype: calibration-attestation
+schema_version: 1
+schema_tag: calibration-attestation/v1
+title: Keeper calibration attestation (governance, DOF ledger, exceptions, disclosures)
+description: >-
+  The governance attestation a keeper bundle carries: the four rule-13/14
+  assertions signed by a lane (`governance`), the rule-21 DOF ledger
+  (`free_parameters`, written by scripts/build_dof_ledger.py), the C3c
+  exceptions ledger carried forward at promotion (`exceptions`), the rule-1
+  authorized price-tuning declaration (`authorized_price_tuning`, explicit even
+  when not declared), the lane's prose disclosures (`disclosures`) and the
+  manifest of lane-named extra blocks (`lane_blocks`).
+  `authorized_price_tuning.declared` means exactly: `governance.authorized_price_tuning`
+  is a well-formed rule-1 declaration (channel / ruling / bands). It does NOT
+  mean the keeper's `offer_curve_by_group` bands are neutral — every keeper's
+  rule-21 ledger marks them residual-identified — so `declared: false` reads
+  "band tuning used without the rule-1(e) declaration", an open governance
+  item for that keeper's lane, surfaced rather than hidden.
+
+required_keys:
+  - schema
+  - governance
+  - free_parameters
+  - exceptions
+  - authorized_price_tuning
+  - disclosures
+  - lane_blocks
+
+optional_keys:
+  - lane
+  - bundle
+  - switches
+  - exceptions_note
+  - exceptions_dropped
+  - delta_vs_incumbent
+  - rubric
+  - rubric_version
+  - rubric_stamp
+optional_key_prefixes:
+  - rubric
+
+keys:
+  schema:
+    type: string
+    description: Version tag; must equal `schema_tag` (calibration-attestation/v1).
+  governance:
+    type: object
+    required:
+      - levers_trace_to_measured_input   # bool
+      - no_fit_to_price_residuals        # bool
+      - no_pinning_to_actuals            # bool
+      - outage_filter_exogenous_net_load # bool
+      - attested_by                      # non-empty string (lane; ruling; date)
+    optional_object: authorized_price_tuning
+    description: >-
+      The four assertions are booleans (a signed claim, never a coercion).
+      `governance.authorized_price_tuning` is the rule-1 declaration
+      calibration_verdict reads; when present as an object it carries
+      channel, ruling, value, years_held, set_ex_ante, not_swept.
+  free_parameters:
+    type: object
+    required: [schema, entries]
+    entry_required: [name, where, identification, source]
+    entry_value_keys: [value, n_scalars]   # documentary: build_dof_ledger emits either, or neither for a curated table
+    entry_residual_requires: root_cause
+    description: >-
+      The rule-21 DOF ledger exactly as scripts/build_dof_ledger.py emits it
+      (`schema: dof-ledger/v1`). Each entry names the parameter, where it lives,
+      its identification class and its source (a `value` or an `n_scalars`
+      count where the generator has one); a residual-identified entry names its open root
+      cause (E8).
+  exceptions:
+    type: array
+    entry_required: [criterion]            # `year` is absent on a span-wide (governance) entry
+    description: C3c exceptions ledger; [] when nothing is ledgered.
+  authorized_price_tuning:
+    type: object
+    required: [declared]
+    description: >-
+      Explicit top-level declaration. `{"declared": false}` when the keeper
+      uses no rule-1 band tuning; `{"declared": true}` iff
+      `governance.authorized_price_tuning` is a well-formed declaration object
+      (the two must agree).
+  disclosures:
+    type: object_or_array
+    description: Lane prose disclosures; {} or [] when there are none.
+  lane_blocks:
+    type: array_of_strings
+    description: >-
+      Names of every top-level key that is neither required nor optional. Every
+      name listed must exist; every unlisted extra key fails validation.
