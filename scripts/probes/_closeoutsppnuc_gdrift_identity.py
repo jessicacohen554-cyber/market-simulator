@@ -50,9 +50,7 @@ import tempfile
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
-BUNDLE = (
-    REPO / "results/calibration/w0_sppr_span"
-)
+BUNDLE = REPO / "results/calibration/w0_sppr_span"
 DEFAULT_OUT = REPO / "results/calibration/_closeoutsppnuc/gdrift_input_identity.json"
 YEARS = (2019, 2020, 2021, 2022, 2023, 2024, 2025)
 T = 8760

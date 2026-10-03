@@ -125,18 +125,27 @@ def check_legs(
         if not got or not pin.startswith(got):
             raise SystemExit(f"ABORT {leg.name}: source sha {got!r} != pinned {pin}")
         surfaces[year] = _fingerprint(cfg)
-        report.append(f"  {year} {leg.name}: recipe = {keeper.name} (0 differing fields), sha {got}")
+        report.append(
+            f"  {year} {leg.name}: recipe = {keeper.name} (0 differing fields), sha {got}"
+        )
     kmeta = _json(keeper / "meta.json")
     for year in kept:
         kcfg = _keeper_config(keeper, year)
-        for need in (f"hourly/unit_marginal_{year}.parquet", f"hourly/system_{year}.parquet"):
+        for need in (
+            f"hourly/unit_marginal_{year}.parquet",
+            f"hourly/system_{year}.parquet",
+        ):
             if not (keeper / need).is_file():
                 raise SystemExit(f"ABORT kept {year}: {keeper.name}/{need} missing")
         surfaces[year] = _fingerprint(kcfg)
         report.append(f"  {year} KEPT from {keeper.name} at {kmeta.get('git_sha')}")
     if len(set(surfaces.values())) != 1 or None in surfaces.values():
-        raise SystemExit(f"ABORT: legs disagree on solve_surface fingerprint: {surfaces}")
-    report.append(f"  solve_surface fingerprint shared: {next(iter(surfaces.values()))}")
+        raise SystemExit(
+            f"ABORT: legs disagree on solve_surface fingerprint: {surfaces}"
+        )
+    report.append(
+        f"  solve_surface fingerprint shared: {next(iter(surfaces.values()))}"
+    )
     return report
 
 
@@ -171,7 +180,9 @@ def compose(legs: dict[int, Path], kept: list[int], out: Path, keeper: Path) -> 
         else:
             shutil.copy2(_keeper_path(keeper, year), out / f"run_config_{year}.json")
         if (src / f"fleet_census_{year}.json").is_file():
-            shutil.copy2(src / f"fleet_census_{year}.json", out / f"fleet_census_{year}.json")
+            shutil.copy2(
+                src / f"fleet_census_{year}.json", out / f"fleet_census_{year}.json"
+            )
     for fname, parts in frames.items():
         if parts:
             pd.concat(parts, ignore_index=True).to_parquet(out / fname, index=False)
@@ -277,8 +288,12 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--keeper", required=True, help="incumbent bundle")
     ap.add_argument("--leg", action="append", required=True, metavar="YEAR=BUNDLE")
     ap.add_argument("--kept", default="", help="comma list of years kept from --keeper")
-    ap.add_argument("--pinned-sha", required=True, help="40-char sha of every re-solved leg")
-    ap.add_argument("--inert-proof", help="zero-LP byte-inert proof (required with --kept)")
+    ap.add_argument(
+        "--pinned-sha", required=True, help="40-char sha of every re-solved leg"
+    )
+    ap.add_argument(
+        "--inert-proof", help="zero-LP byte-inert proof (required with --kept)"
+    )
     ap.add_argument("--out")
     ap.add_argument("--check-only", action="store_true")
     args = ap.parse_args(argv)
@@ -305,7 +320,9 @@ def main(argv: list[str] | None = None) -> int:
             str(y): str(kmeta.get("git_sha")) for y in kept
         }
         (out / "mixed_solve_sha.json").write_text(
-            json.dumps({"per_year": per_year, "inert_proof": args.inert_proof}, indent=2)
+            json.dumps(
+                {"per_year": per_year, "inert_proof": args.inert_proof}, indent=2
+            )
             + "\n"
         )
     years = sorted(set(legs) | set(kept))
