@@ -1098,6 +1098,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # cached run keeps its key; an armed run splits the four internal chain
     # links into lossy one-way pairs and so gets a distinct key.
     "nyiso_zonal_loss_surface",
+    # closeout-PJM-lossdemand demand-basis reconciliation for an armed zonal
+    # loss surface (default off): registered at introduction, so it never
+    # moves the pinned default key. Dropped from the hash at its default; an
+    # armed run nets the surface's P0 dissipation out of the P1 demand and so
+    # gets a distinct key.
+    "zonal_loss_demand_reconciliation",
     # nyiso-100 mis-attributed simultaneous-import retire (default off): the
     # same one-line remedy as pjm_apsouth_interface_cut / pjm_zonal_loss_surface
     # above -- the field landed on main (2cc1179) unregistered and so entered
@@ -2840,6 +2846,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "pjm_zonal_loss_surface": "False",
     "caiso_zonal_loss_surface": "False",
     "nyiso_zonal_loss_surface": "False",
+    "zonal_loss_demand_reconciliation": "False",
     "nyiso_import_sil_retire": "False",
     "nyiso_seam_deliverability_envelope": "False",
     "nyiso_seam_par_attribution": "False",
@@ -19418,6 +19425,29 @@ class ScenarioConfig:
     # by default; byte-identical off.
     nyiso_zonal_loss_surface: bool = False
 
+    # Demand-basis reconciliation for an ARMED zonal loss surface
+    # (closeout-PJM-lossdemand; owner ruling R-59 2026-10-03; FINDING
+    # docs/records/pjm/closeout-pjm-balance/). Generic: keyed to whichever of
+    # miso_/pjm_/caiso_/nyiso_zonal_loss_surface put a ``link_loss`` into the
+    # dispatch kwargs; a no-op when none is armed.
+    #
+    # WHY: the measured demand row (EIA-930 BA demand, D = NG - TI) is
+    # generator-side energy that ALREADY contains every T&D loss, while the
+    # loss surface dissipates sum(eps * F) MWh on the internal one-way links on
+    # top of it — the LP generates the network's losses a second time (PJM
+    # +2.2..4.0 TWh/yr, closing the keeper's generation residual to 0.002 TWh).
+    #
+    # WHAT: at the P0->P1 seam (pipeline/solve.py::run_energy_solve, the seam
+    # the P1 commitment bridges use; rule 10 [R-ONE-PASS]) each zone's P1
+    # demand becomes D minus the dissipation on the lossy links it RECEIVES at
+    # the P0 flows (model/loss_demand.py). The (1 - eps) flow coefficient is
+    # untouched, so the zonal duals keep the measured delivery-factor
+    # separation (rule 4). Rule 14 [R-ACCURATE] reconciled form of measured
+    # demand (a loss-inclusive measurement against a loss-dissipating network);
+    # rule 13 forward-reproducible (the solve's own flows x the measured
+    # surface); no free scalar (rule 21). Off by default; byte-identical off.
+    zonal_loss_demand_reconciliation: bool = False
+
     # ERCOT West Texas Export corridor VRE curtailment-share driver
     # (backcast/calibration overlay; docs/handoffs/ercot-vre-curtailment-topology-
     # scope-2026-07.md, WP-B). When True in backcast mode for ERCOT, the West and
@@ -25124,6 +25154,7 @@ TIER_TAGS: dict[str, int] = {
     "pjm_zonal_loss_surface": 3,
     "caiso_zonal_loss_surface": 3,
     "nyiso_zonal_loss_surface": 3,
+    "zonal_loss_demand_reconciliation": 3,
     "caiso_commitment_posture": 1,
     "caiso_reserve_online_scoped": 1,
     "ercot_load_resource_reserve": 1,
