@@ -146,6 +146,16 @@ Turns measured outage records into hourly availability masks
 - `ct_deployment_floor_for_year` / `reliability_deployment_floor_for_year` —
   measured out-of-merit CT/thermal deployment floors as sparse `min_gen` bounds.
 
+Every window lands on the model's fixed no-leap clock through
+`outage_hour_mask(start, stop, year)` — an `(hours,)` boolean clipped to the
+calendar year — or, in this module's row-wise loaders (`partial_outage_derate_factors`,
+the unit-outage event loaders behind `unit_outage_derate_factors`,
+`ercot_noncampd_availability_caps`, the active-unit maps), through
+`_outage_hour_bounds`, which returns the clipped half-open hour range `(lo, hi)`
+that mask would set True; the loader slices `arr[lo:hi]` instead of allocating
+and boolean-indexing a full-year mask (`hi <= lo` means the window misses the
+year). `maxgen_events.py` and `caiso_outages.py` still take the mask form.
+
 Forecast mode uses the statistical WEFOR/POF availability model instead.
 
 ## 4.5 Hydro (`hydro.py`)
@@ -182,7 +192,7 @@ identifiable.
 
 | Module | Provides |
 |--------|----------|
-| `eia_loader.py` | EIA-930 zonal demand, per-fuel generation, interchange envelopes, load-weighted temperatures (drive reliability floors), import-hub prices |
+| `eia_loader.py` (facade over the `eia930/` package: frames / demand / zonal_shares / envelopes / weather / actuals) | EIA-930 zonal demand, per-fuel generation, interchange envelopes, load-weighted temperatures (drive reliability floors), import-hub prices. The (month × hour-of-day) percentile envelopes (`eia930/envelopes.py::_month_hod_percentile_table`; the same reduction in `nyiso_seam_envelope.py` and `nyiso_par_attribution.py`) reduce a month whose source rows are aligned whole days in one `np.percentile(..., axis=0)` over its `(days, 24)` view and fall back to per-bucket reduction for a month with a DST gap/repeat or, where non-finite samples are dropped, a NaN sample — the floats are identical either way |
 | `campd.py` | EPA CAMPD hourly CEMS → annual plant totals, parasitic (net/gross) factors, per-plant marginal/no-load emission rates + startup adders, per-plant 8760-hour net-generation benchmark |
 | `egrid.py` | `fossil_co2_rate_map(year)` = per-plant CO2 rate (eGRID base + CAMPD override); net-gen-weighted class intensity |
 | `zone_assignment.py` | eGRID lat/lon/FIPS → model zone (`build_zone_lookup(iso)`), per-ISO geographic rules |

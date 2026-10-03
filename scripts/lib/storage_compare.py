@@ -73,6 +73,9 @@ HOURS = 8760
 _DAYS_IN_MONTH = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 _MONTH_OF_HOUR = np.repeat(np.arange(12), np.asarray(_DAYS_IN_MONTH) * 24)
 _HOD = np.tile(np.arange(24), 365)
+# Month x hour-of-day cell of each model hour, flattened m*24+h (the
+# ``_diurnal`` output order), so one masked select replaces 288 mask products.
+_MONTH_HOD = _MONTH_OF_HOUR * 24 + _HOD
 
 # Model storage techs that the ISO's actual series measures (see module doc).
 ACTUAL_TECHS: dict[str, tuple[str, ...]] = {
@@ -104,11 +107,12 @@ def _i16(a: np.ndarray, scale: float = 1.0) -> str:
 
 def _diurnal(a: np.ndarray, mask: np.ndarray) -> list[float | None]:
     """Month x hour-of-day mean of ``a`` over ``mask`` hours, flattened m*24+h."""
+    a_m = a[mask]
+    key_m = _MONTH_HOD[mask]
     out: list[float | None] = []
-    for m in range(12):
-        for h in range(24):
-            sel = mask & (_MONTH_OF_HOUR == m) & (_HOD == h)
-            out.append(round(float(a[sel].mean()), 1) if sel.any() else None)
+    for cell in range(12 * 24):
+        sel = key_m == cell
+        out.append(round(float(a_m[sel].mean()), 1) if sel.any() else None)
     return out
 
 
@@ -186,11 +190,13 @@ def load_model(bundle_dir: Path, iso: str, year: int) -> dict[str, np.ndarray] |
 
 def _hod_frac(num: np.ndarray, den: np.ndarray, mask: np.ndarray) -> list[float | None]:
     """Hour-of-day ratio sum(num)/sum(den) over ``mask`` hours (8760 model clock)."""
+    ok = mask & np.isfinite(num) & np.isfinite(den)
+    num_ok, den_ok, hod_ok = num[ok], den[ok], _HOD[ok]
     out: list[float | None] = []
     for h in range(24):
-        sel = mask & (_HOD == h) & np.isfinite(num) & np.isfinite(den)
-        d = float(den[sel].sum())
-        out.append(round(float(num[sel].sum()) / d, 4) if d > 0 else None)
+        sel = hod_ok == h
+        d = float(den_ok[sel].sum())
+        out.append(round(float(num_ok[sel].sum()) / d, 4) if d > 0 else None)
     return out
 
 
