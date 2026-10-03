@@ -161,6 +161,7 @@ L3 is the bulk of `docs/` and is **not** individually indexed here. Reach it by:
 | Root-level dated findings | `docs/FINDING-*.md` (**171**) | — (filename = ISO-topic-date) |
 | Per-ISO dated investigation notes | `docs/{ercot,caiso,pjm,miso,nyiso,neiso}-*-2026-*.md` | — |
 | Audits / peer reviews / prompt packs | `docs/*-audit-*.md`, `docs/*peer-review*.md`, `docs/*-prompt-pack-*.md` | — |
+| Third-party audits | [`audit/third-party-audit-2026-10.md`](audit/third-party-audit-2026-10.md) (module pages A–F under [`audit/2026-10/`](audit/2026-10/)); prior [`audit/third-party-audit-2026-08.md`](audit/third-party-audit-2026-08.md) | — |
 
 Most root-level `docs/*.md` files carry a date suffix and are L3 records of this
 kind — **419 of the 466** top-level files at 2026-09-05. When in doubt, open the

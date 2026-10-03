@@ -3,7 +3,8 @@
 Status: **authoritative prose reference** (created 2026-07 documentation
 refresh, `docs/codebase-site/UPDATE-PLAN-2026-07.md` D1). This is the single
 narrative definition of how the model is calibrated, scored, ablated,
-holdout-tested, and — where applicable — declared at its calibration frontier.
+determined over every registered year (there is no holdout regime — rule 22
+`[R-C3C]`), and — where applicable — declared at its calibration frontier.
 Every claim below was verified against source at writing time; each section
 carries a `Source:` note so the next reviewer can re-verify. **Code is the
 source of truth** — when this document and code disagree, fix this document.
@@ -281,7 +282,18 @@ check, schema tag); `scripts/audit_keepers.py:47-48, 449-491` (E8).
 
 ## 3. The holdout / validity-testing program
 
-### 3.1 Three tiers (CLAUDE.md rule 22, as amended 2026-07-07)
+> **Current regime (rule 22 `[R-C3C]`, rule 30 `[R-TOUCHPOINT-FOLD]`;
+> genealogy `docs/governance/rule-history.md` §18).** The holdout year
+> machinery described below was REMOVED (owner, 2026-09-09). There is no holdout
+> regime: any year may be solved, scored and registered, and no year is a
+> certified out-of-sample number. The ISO determination covers every registered
+> year — keeper scopes plus every folded touchpoint, worst-of, per-run caveat
+> budgets — computed once by `scripts/calibration_verdict.py:4027`
+> `iso_determination` (rubric v3.13). `calibration-complete.json` survives only
+> as the keeper designation and the forecast program's gate-(a) input. §§3.1–3.2
+> are retained as the historical record of the removed tiers and gates.
+
+### 3.1 Three tiers (HISTORICAL — removed by rule 22 `[R-C3C]`; rule-history §18)
 
 | Tier | Years | Discipline |
 |---|---|---|
@@ -330,11 +342,10 @@ validation/locked *distinction* is **discipline, not machine-enforced**: the
 CI gate is deliberately tier-agnostic, so a locked-test year re-solved after
 its one-shot would be a governance breach, not a CI failure.
 
-**Current state:** only **NEISO** carries a complete marker (declared
-2026-07-07). Its 2019 + H1-2026 locked-test one-shot was scored **once** with
-the then-frozen `neiso-53` config and **stands** — it was deliberately not
-re-scored when the train-tier keeper was later promoted (see §5's naming
-caution). The other five ISOs remain fully quarantined for holdout solving.
+**Current state:** no ISO is quarantined from solving any year (rule 22
+`[R-C3C]`); the former NEISO 2019 + H1-2026 "locked-test" scores are historical
+records, not certified out-of-sample numbers. Every registered year of an ISO
+enters its determination, worst-of (rule 30; `calibration_verdict.py:4027`).
 
 **Data intake is deliberately ungated:** raw data is on disk 2018 → H1-2026.
 Intake for any out-of-training year is allowed under explicit, session-logged
@@ -434,7 +445,7 @@ conflated and must not be:
 
 | | `calibration-complete.json` `complete` marker | `keepers.json` `frontier` map |
 |---|---|---|
-| Purpose | **Gating** — authorizes the rule-22 holdout solves (2022 validation, then the locked-test one-shot) | **Declarative label only** — "the admissible mechanism space for the residual is exhausted" |
+| Purpose | **Keeper designation and the forecast program's gate-(a) input only** (rule 22 `[R-C3C]`; it no longer gates any solve — rule-history §18) | **Declarative label only** — "the admissible mechanism space for the residual is exhausted" |
 | Enforced by | CI `quarantine-gates` + `run_calibration_full.py` hard-fail | Nothing (pure rendering; never feeds the verdict) |
 | Current holders | NEISO only | NEISO + NYISO |
 
