@@ -195,7 +195,7 @@ def capture_year(
 # --------------------------------------------------------------------------- #
 # Rungs                                                                        #
 # --------------------------------------------------------------------------- #
-def _stage(cap: YearCapture, config, r0, mc_bid, artifact_root: Path):
+def _stage(cap: YearCapture, config, r0, mc_bid, checkpoint_root: Path):
     """A :class:`UcStage` over a capture (P1 bid = the captured bid, or the base cost)."""
     from market_sim.pipeline.uc import UcStage
 
@@ -209,7 +209,7 @@ def _stage(cap: YearCapture, config, r0, mc_bid, artifact_root: Path):
         r0,
         None,
         lambda: bid,
-        artifact_root=artifact_root,
+        checkpoint_root=checkpoint_root,
     )
 
 
@@ -482,9 +482,7 @@ def rung_l3(
         raise RuntimeError(
             f"replay_keeper exited {proc.returncode}; see {out_dir / 'l3_stderr.txt'}"
         )
-    log_path = (
-        REPO / "results" / "uc" / iso.upper() / str(year) / f"uc_solve_log_{year}.json"
-    )
+    log_path = run_dir / f"uc_solve_log_{year}.json"
     log = json.loads(log_path.read_text()) if log_path.is_file() else {}
     summ = log.get("summary", {})
     row = {

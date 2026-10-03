@@ -21,6 +21,8 @@ import pytest
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.floor_mechanisms import MECH_UC_SCHEDULE
 from market_sim.pipeline.solve import run_energy_solve
+from market_sim.pipeline.uc import take_uc_artifacts as puc_take
+from market_sim.pipeline.uc import write_uc_artifacts
 
 from .conftest import toy_inputs, toy_uc_params
 
@@ -74,7 +76,7 @@ def test_gate_on_with_empty_integer_set_equals_gate_off(
     assert on.p1_fleet_arrays is fa
     assert _same(off.markup, on.markup) and _same(off.mc_bid, on.mc_bid)
     assert _same(off.p1.dispatch, on.p1.dispatch) and _same(off.p1.prices, on.p1.prices)
-    assert not list(uc_results_root.glob("uc/**/*.parquet"))
+    assert puc_take() == []
 
 
 def test_gate_on_injects_ceiling_floor_and_zeroes_markup(
@@ -105,10 +107,16 @@ def test_gate_on_injects_ceiling_floor_and_zeroes_markup(
     # the scored P1 respects the bounds
     assert (res.p1.dispatch[0] <= fa.pmax[0] * p1f.availability[0] + 1e-6).all()
     assert (res.p1.dispatch[0] >= p1f.min_gen[0] - 1e-6).all()
-    # artifacts
-    out = stage.artifact_dir
-    assert out.is_relative_to(uc_results_root / "uc" / "NEISO")
-    sched = pd.read_parquet(out / f"uc_schedule_{stage.year}.parquet")
+    # artifacts: drained by the orchestrator and written INTO the bundle
+    arts = [stage.artifacts(res.p1)]
+    bundle = uc_results_root / "bundle"
+    paths = write_uc_artifacts(bundle, stage.year, arts)
+    assert {p.name for p in paths} == {
+        f"uc_schedule_{stage.year}.parquet",
+        f"uc_uplift_{stage.year}.parquet",
+        f"uc_solve_log_{stage.year}.json",
+    }
+    sched = pd.read_parquet(bundle / "hourly" / f"uc_schedule_{stage.year}.parquet")
     assert len(sched) == T and set(sched.columns) >= {
         "u",
         "v",
@@ -116,9 +124,37 @@ def test_gate_on_injects_ceiling_floor_and_zeroes_markup(
         "online_mw",
         "floor_mw",
     }
-    log = json.loads((out / f"uc_solve_log_{stage.year}.json").read_text())
+    up = pd.read_parquet(bundle / "hourly" / f"uc_uplift_{stage.year}.parquet")
+    assert len(up) == 2 and (up["uplift_usd"] >= 0).all()
+    log = json.loads((bundle / f"uc_solve_log_{stage.year}.json").read_text())
     assert log["summary"]["n_windows"] == 2 and log["engine"]["integer_set_size"] == 1
     assert all(w["status"] == "Optimal" for w in log["windows"])
+    # no artifact anywhere outside the bundle (the old results/uc path is gone)
+    assert (
+        not list((uc_results_root / "uc").glob("**/*"))
+        if (uc_results_root / "uc").exists()
+        else True
+    )
+
+
+def test_min_up_carries_across_the_window_boundary(uc_params_frame, uc_results_root):
+    """UC-DESK review point 1: a start at hour 22 of window 0 (ut = 8) stays on
+    through hour 5 of window 1 even though the no-load would stop it at hour 24."""
+    from .conftest import toy_uc_params
+
+    uc_params_frame(toy_uc_params(ut_h=8, dt_h=4, noload_mmbtu_h=100.0))
+    gens, fa, demand, mc, dk = toy_inputs(T, night_mw=40.0, day_mw=40.0)
+    demand[0, 22:24] = 300.0  # baseload 60 + CT 150 < 300: the CC must start at 22
+    cfg = _cfg(unit_commitment_milp=True, uc_window_hours=24, uc_lookahead_hours=12)
+    run_energy_solve(gens, fa, demand, mc, dk, cfg)
+    import market_sim.pipeline.uc as puc
+
+    stage = puc.take_uc_stages()[-1]
+    u = stage.schedule.u[0]
+    assert (u[22:24] >= 1).all(), u
+    assert (u[24:30] >= 1).all(), u  # hours 0..5 of window 1: the carried start holds
+    assert u[30:].max() == 0, u  # free to stop once the min-up is served
+    assert stage.schedule.v[0, 22] >= 1
 
 
 def test_stack_refused_at_validation():
@@ -128,10 +164,7 @@ def test_stack_refused_at_validation():
         ScenarioConfig(
             iso="SPP", hours=T, unit_commitment_milp=True, spp_commitment_posture=True
         )
-    with pytest.raises(ValueError, match="REPLACES"):
-        ScenarioConfig(
-            iso="PJM",
-            mode="backcast",
-            unit_commitment_milp=True,
-            cc_mustrun_per_plant=True,
-        )
+    # D-5 hard cases and "replace" recommendations are NOT refused by the engine.
+    ScenarioConfig(
+        iso="PJM", mode="backcast", unit_commitment_milp=True, cc_mustrun_per_plant=True
+    )

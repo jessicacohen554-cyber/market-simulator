@@ -26,7 +26,7 @@
         model/uc/schedule.py  keep the first W hours of u -> u[c,t] for all 8760 h; per-month checkpoint (E9)
         pipeline/uc.py        ceiling = avail·u/n, floor = mlf·p̄·u  ──► pipeline.commitment._bridge_floored_fleet(MECH 28)
    P1 ── annual LP, bid cost ──► THE scored run (prices = duals, rule 4) — unchanged builder, unchanged outputs
-   sidecars (results/uc/<ISO>/<year>/): uc_schedule_<y>.parquet, uc_solve_log_<y>.json, uc_uplift_<y>.parquet (post-P1, zero-LP)
+   sidecars IN THE BUNDLE via the orchestrators' drain: hourly/uc_schedule_<y>.parquet, hourly/uc_uplift_<y>.parquet (post-P1), uc_solve_log_<y>.json
 ```
 
 The MILP never prices (rule 4). P1 is the same LP it is today with per-unit-hour bounds added through the same injector the three commitment bridges use.
@@ -73,7 +73,7 @@ min  Σ_t [ Σ_g mc_g,t·P_g,t + ε·(Chg+Dis) + dis_cost·Dis + VOLL·Slack + d
 s.t. energy balance, flows, storage SOC, renewables, reserve rows, ramp envelopes, LCR, interfaces            existing, sliced
      mlf_c·p̄_c·a_c,t·u_c,t ≤ Σ_{g∈c} P_g,t ≤ p̄_c·a_c,t·u_c,t                                               NEW coupling (2 rows per c,t)
      u_c,t − u_c,t−1 − v_c,t + w_c,t = 0            (t−1 = window state for t = t0)                          NEW logic
-     Σ_{k=t−ut_c+1}^{t} v_c,k ≤ u_c,t ;   Σ_{k=t−dt_c+1}^{t} w_c,k ≤ n_c − u_c,t     (Rajan–Takriti, sums clipped to the window)  NEW
+     Σ_{k=t−ut_c+1}^{t} v_c,k ≤ u_c,t ;   Σ_{k=t−dt_c+1}^{t} w_c,k ≤ n_c − u_c,t     (Rajan–Takriti; the pre-window part of each sum is the CARRIED history, entering as u bounds — §2.2)  NEW
      0 ≤ u_c,t ≤ n_c integer ;  0 ≤ v, w ≤ n_c                                                              NEW, integer set = E1
 mc:  integer clusters at mc_base (start and no-load are explicit above); every other row at the final P1 bid mc_bid
 keep u[c, t0 : t0+W]; advance W
@@ -99,7 +99,7 @@ The window `DispatchModel` is built from these slices (`model/lp/model.py`, the 
 | hydraulic cascade pond volume `V[c,t]` (`hydro_cascade`) | same cyclic shape | same treatment; init from w−1 / P0, terminal lower bound at P0's level |
 | ramp envelopes (`ramp_limits`) | rows for transitions 1..T−1, no wrap | sliced rows cover transitions inside the window; **one added row block for the t0 transition** with the previous hour's group dispatch in the RHS (`−RD_eff − P_prev ≤ Σ P[g,t0] ≤ RU_eff + P_prev`), `P_prev` = window w−1's kept dispatch at hour W−1, first window: P0's `P[g, T−1]` |
 | commitment state `u` | — | `u_c,t0−1` = window w−1's kept `u` at hour W−1 (RHS of the t0 logic row); **first window:** `ceil(Σ_{g∈c} P0[g,T−1] / p̄_c)` clipped to `[0, n_c]` |
-| min-up / min-down carry | — | from the kept `v`/`w` history: for the first `ut_c−1` hours `u_c,τ ≥ Σ_{k=1}^{ut_c−1−τ} v_c,t0−k` and for the first `dt_c−1` hours `u_c,τ ≤ n_c − Σ_{k=1}^{dt_c−1−τ} w_c,t0−k` — **column bounds**, no rows; first window: empty history |
+| min-up / min-down carry (**mandatory, rule 18 — UC-DESK review point 1; a start at hour 23 of window w can never be undone at hour 0 of w+1**; tested by `test_min_up_carries_across_the_window_boundary`) | — | from the kept `v`/`w` history of the last max(UT, DT)−1 committed hours: for the first `ut_c−1` hours `u_c,τ ≥ Σ_{k=1}^{ut_c−1−τ} v_c,t0−k` and for the first `dt_c−1` hours `u_c,τ ≤ n_c − Σ_{k=1}^{dt_c−1−τ} w_c,t0−k` — **column bounds**, no rows; first window: empty history |
 | structural floors on members (`min_gen` from nuclear/CHP/coal must-run/reliability floors, all upstream of the hook) | column lower bounds, unchanged | kept as member lower bounds AND `u_c,t ≥ ceil(Σ_{g∈c} min_gen[g,t] / p̄_c)` as a column lower bound — a floor is an input the UC respects, never a decision it re-takes |
 
 ### 2.3 Warm start (E3) and pre-fixing (E5)
@@ -143,7 +143,7 @@ Every field: `_CACHE_KEY_OPTIONAL_FIELDS` + `_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS`
 
 ## 4. Sidecar schemas
 
-All three are written by the engine to `results/uc/<ISO>/<weather_year>/` (the artifact root the stage can name without an orchestrator edit — see §8 R1); `scripts/probes/_ucmilp_compose_span.py` folds them into the composed bundle's `hourly/` and bundle root; `bench_uc_ladder.py --rung L3` writes them into its `--out`.
+**Amended 2026-10-03 on the UC-DESK review (point 3; the desk granted two regions).** The engine hands its artifacts to the persisting orchestrator through `pipeline.uc.take_uc_artifacts(p1_result)` and the orchestrator writes them INTO THE BUNDLE with `pipeline.uc.write_uc_artifacts` — the two-line drain in `scripts/run_calibration_full.py` (the hourly-sidecar block, after `hydro_cascade`) and `src/market_sim/runner.py` (after `save_result`, flat cache layout), both under `if config.unit_commitment_milp` (G-DRIFT: INERT off, no statement runs). Paths: `<bundle>/hourly/uc_schedule_<y>.parquet`, `<bundle>/hourly/uc_uplift_<y>.parquet`, `<bundle>/uc_solve_log_<y>.json` (per year, so a composed span carries one per leg). Nothing is written under `results/uc/` any more; the monthly checkpoints (plan E9) are scratch under `results/uc-checkpoints/<ISO>/<year>/`, never a sidecar, never pushed. `scripts/probes/_ucmilp_compose_span.py` carries the hourly files with every other year-stamped sidecar, copies the log and computes the make-whole frame only for a leg that lacks it.
 
 | File | Grain | Columns |
 |---|---|---|
@@ -155,14 +155,11 @@ Nothing here enters a price, a score or the rubric; the schedule enters P1 only 
 
 ## 5. Validators (`ScenarioConfig.__post_init__`, rule 19 by refusal)
 
-With `unit_commitment_milp=True`, a `ValueError` names the stack when any of these is also armed:
+**Amended 2026-10-03 on the UC-DESK review (point 2).** The refusal set is DATA: two declared tuples at module level in `config/scenarios.py`, `UC_REFUSED_ALWAYS` and `UC_REFUSED_BY_RULING`; `__post_init__` refuses any armed member of either when `unit_commitment_milp=True`.
 
-* the commitment bridges — `caiso_ra_mustoffer` (and with it `caiso_ra_startup_bridge`, `caiso_ra_bridge_decommit`), `ercot_gas_commitment_bridge`, `nyiso_gas_commitment_bridge`, `spp_gas_commitment_bridge`, `pjm_gas_commitment_bridge`, `miso_gas_ecomin_online_floor` (the MISO leg of the same detector), `soco_gas_st_campaign_commitment` (UC-0 §4: "replace");
-* the posture family — `ercot_commitment_posture`, `miso_commitment_posture`, `spp_commitment_posture`;
-* `cc_mustrun_per_plant` (UC-0 §4 PJM: a measured per-plant online floor on merchant CC — the commitment state itself);
-* the archived P2 (`enable_legacy_p2`): one commitment mechanism per year.
-
-**Not refused** (owner card D-5, UC-0 §4 "hard case" / "stays"): `st_gas_mustrun_per_plant`, `coal_mustrun` and its tranches, `ercot_coal_min_config_floor`, `miso_coal_night_floor`, the net-load drags, `reliability_floor`, `winter_fuelsec`, every physical floor (nuclear, CHP, hydro, imports). These compose by maximum through `_bridge_floored_fleet`; D-2 attributes each under its own id; the UC respects them as inputs (§2.2 last row). Every substitution UC-0 names is expressible by these validators, so the charter's STOP condition does not fire.
+* `UC_REFUSED_ALWAYS` (the plan §6 set): every `*_gas_commitment_bridge` (ERCOT, NYISO, SPP, PJM) and `miso_gas_ecomin_online_floor` (the same P0-detector object, so bridge class); `caiso_ra_mustoffer` with every `caiso_ra_*` leg that rides it (`caiso_ra_startup_bridge`, `caiso_ra_bridge_decommit`, `caiso_ra_mustoffer_quantity_gate`, `caiso_ra_bridge_startup_aware`, `caiso_ra_bridge_curtailment_release`, `caiso_ra_startup_trajectory`); the posture family (`ercot_commitment_posture`, `miso_commitment_posture`, `spp_commitment_posture`). The archived P2 is not a `ScenarioConfig` field (`commitment` is a `solve_and_persist` kwarg behind `--enable-legacy-p2`), so it is refused where it lives, by `run_calibration_full.enforce_legacy_p2_kwargs`, not here.
+* `UC_REFUSED_BY_RULING`: **empty at birth**. Extended only by a commit citing an owner D-5 ruling for the ISO. Until then the A/B lane disarms the D-5 fields in its config delta.
+* **Not refused by the engine** (owner card D-5, per ISO): UC-0 §4's "replace" recommendations `cc_mustrun_per_plant` and `soco_gas_st_campaign_commitment` and its hard cases (`st_gas_mustrun_per_plant`, `coal_mustrun` and its tranches, `ercot_coal_min_config_floor`, `miso_coal_night_floor`, the net-load drags); the physical floors (nuclear, CHP, hydro, imports, `reliability_floor`, `winter_fuelsec`). They compose by maximum through `_bridge_floored_fleet`; D-2 attributes each under its own id; the UC respects them as inputs (§2.2 last row).
 
 ## 6. Tests (docs/testing.md; trivial first) and benches
 
@@ -178,7 +175,7 @@ With `unit_commitment_milp=True`, a `ValueError` names the stack when any of the
 | captured window (`slow`) | `tests/unit/model/uc/test_window_captured.py` | NEISO 2023 hours 0–35 from the `bench_cold_solve.py` capture seam: the window builds, the MILP solves to the declared gap, the schedule injects, `requires_raw` |
 | registry | `tests/unit/config/test_uc_fields.py` | armed key ≠ default key; every refusal above raises; defaults registered |
 
-Benches (`scripts/lib/uc_bench.py`, `scripts/diagnostics/bench_uc_ladder.py --iso --year --rung L1|L2|L3 --bundle --out [--arms warm,prefix,threads]`): L1 one window with (a) MILP, (b) LP-relaxed, (c) the P1 slice; L2 Jan + Jul rolling with arms and schedule hashes; L3 the full stage through `run_energy_solve` on the keeper recipe with the GATESPEC §6.1 wall-table printer. This lane runs L0 (the toys) only; every rung is a shard.
+Benches (`scripts/lib/uc_bench.py`, `scripts/diagnostics/bench_uc_ladder.py --iso --year --rung L1|L2|L3 --bundle --out [--arms warm,prefix,threads]`): L1 one window with (a) MILP, (b) LP-relaxed, (c) the P1 slice; L2 Jan + Jul rolling with arms and schedule hashes; L3 the full stage through `run_energy_solve` on the keeper recipe with the GATESPEC §6.1 wall-table printer. This lane runs L0 (the toys) only; every rung is a shard. Bench order after merge (desk): SPP 2020, PJM 2022, SPP 2019; controls NEISO 2023 and NYISO 2024.
 
 ## 7. G-DRIFT classification claimed (rule 29; GATESPEC §4)
 
@@ -193,10 +190,10 @@ Proof: nine golden shards (HANDOFF block E) at this branch's SHA with the gate o
 
 ## 8. Routed to UC-DESK (named gaps, not hidden)
 
-* **R1 — sidecar landing in a production bundle.** The orchestrators (`scripts/run_calibration_full.py` hourly-sidecar block, `runner.py` for the forecast) are outside this lane's files, so the engine writes its three sidecars and checkpoints to `results/uc/<ISO>/<year>/` (`config.paths.RESULTS_ROOT`) and the compose script folds them. The UC-2 shard prompt (block F) must negate `results/uc/<iso>/<y>/**` in `.gitignore` beside the bundle, and a two-line drain in the orchestrator (`pipeline.uc.take_uc_artifacts()` → `_write_hourly_sidecar`) is the clean follow-up; proposed text in the PR body.
+* **R1 — CLOSED by the desk's grant (review point 3):** the sidecars land in the bundle through the two orchestrator drains (§4). No `.gitignore` negation outside the bundle; `results/uc/` is gone.
 * **R2 — the look-ahead and coal UT (UC-0 F6).** With `ut_coal = 36 h > W + L = 36 h`, a coal start never sees its full min-up inside one window; the rolling scheme re-decides it next window (the DA-SCUC behaviour), and the UT rows clip to the window. Whether UC-2 declares a longer `uc_lookahead_hours` for coal ISOs is a PRECOMMIT choice; the engine accepts any `W + L <= hours`.
-* **R3 — `uc_window_time_limit_s = 600`** is a declared placeholder for D-2.
-* **R4 — emission-cap / RPS duals** do not reach the window (slim P0 extract); stated in §2.1.
+* **R3 — `uc_window_time_limit_s = 600`** is a declared placeholder for D-2 (accepted by the desk, review point 4).
+* **R4 — emission-cap / RPS duals** do not reach the window (slim P0 extract); stated in §2.1 (accepted by the desk as a known limitation, review point 4).
 * **R5 — hydraulic cascade (`hydro_cascade`, NWPP) is refused by the window builder:** its lagged upstream terms wrap cyclically at the window edge and the slim P0 extract carries no pond levels to pin them to. An NWPP A/B needs either the P0 cascade extract (`hydro_cascade_storage`) or the pin-to-P0 treatment of the budget families extended to the cascade plants; neither is this PR.
 
 ## 9. What UC-0's FINDING changed here
@@ -206,3 +203,4 @@ Read from its branch (`a0558224`): the per-ISO substitution sets became the refu
 ## 10. Log entry
 
 - 2026-10-03 · UC-1 `session_01TaYG9p5stirhcFVYgK3r6j` (Fable) · branch `claude/ucmilp-1-engine-mcst` off main `fc83487f` · DESIGN pushed before code · UC-0 FINDING read from `a0558224` (not on main) · formulation: plant×family clusters, E1 = posture gate inverted, 24+12 rolling, Rajan–Takriti clustered counts, P0-target boundaries with one-sided SOC terminal, state carried from w−1, warm start from w−1 + P0, pre-fixing default off · nine `uc_*` fields · MECH 28 · refusals = bridges + posture + `cc_mustrun_per_plant` + P2 · routed R1–R4.
+- 2026-10-03 · UC-1 · desk review of DESIGN b974d2c9 folded: §2.2 carry stated as mandatory + fast test; §5 refusal set = two declared tuples (`cc_mustrun_per_plant` / SOCO campaign moved out, `caiso_ra_*` legs + `miso_gas_ecomin_online_floor` in); §4 sidecars into the bundle through the two granted orchestrator drains (R1 closed); §2.4 E6 as built; §1.2 min-down from the class table; R5 hydro_cascade refused. Golden shards relaunched at the SHA carrying the drains.
