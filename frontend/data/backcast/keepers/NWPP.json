@@ -1,7 +1,7 @@
 {
  "iso": "NWPP",
- "keeper": "2026-10-03-nwpp-next-24-head",
- "note": "Keeper 2026-10-03-nwpp-next-23-coi recipe replayed unchanged at main HEAD (pin 23beba2a): #7134 EIA-923 coal stocks 2015-17 + SolveEpoch 2026-10-03b NWPP 2019-22 nuclear CF rows. Verdict NOT-YET->NOT-YET, FAIL 9->9, zero flips on the HEAD bench render. Regressions: CC_REGULAR 2019 +11.97->+12.17, 2020 +5.65->+6.74, 2024 +14.80->+14.90, 2025 +7.90->+7.99 TWh; C4 gas 2019 r 0.657->0.651. DISCLOSURE: the HEAD bench re-render (CHP/BTM reattribution on main) flips the outgoing keeper's CC 2025 FAIL(+8.02)->PASS(+7.90); not this run (on the old render this run reads +8.11 FAIL).",
+ "keeper": "2026-10-03-nwpp-next-25-served",
+ "note": "Owner card 2026-10-03 'Promote': keeper NEXT-24 + nwpp_served_schedule_zonal_attribution (RESULT-nwppnext25-served-schedule-2019-2025-2026-10-03.md)",
  "superseded": {
   "date": "2026-10-03",
   "former_keeper": "2026-10-03-nwpp-next-23-coi",
