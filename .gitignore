@@ -4027,3 +4027,6 @@ results/calibration/closeout_pjm_r13_*/
 results/calibration/nwppnext22_*/
 results/calibration/nwppnext22b_*/
 !results/calibration/nwppnext22b_span/
+
+# closeout-spp-nuc probe scratch (copies committed under docs/records/spp/closeout-spp-nuc/)
+results/calibration/_closeoutsppnuc/
