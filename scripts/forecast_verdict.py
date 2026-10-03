@@ -1,6 +1,6 @@
 """Reproducible forecast determination for a forecast bundle, per tier.
 
-Implements ``docs/forecast-determination-rubric.md`` (RUBRIC v1.0, FF-0A): reads a
+Implements ``docs/forecast-determination-rubric.md`` (RUBRIC v1.2; v1.0 FF-0A): reads a
 forecast bundle's **committed artifacts only** — the full-horizon summary, the
 standalone/embedded forecast-invariant output (I1-I14, paired P1-P3), the
 committed capacity-hindcast score, the crossover score, the driver-battery
@@ -10,6 +10,13 @@ output, the external-corridor table, ``run_config.json`` / ``dof_ledger.json`` /
 in ``{PROMOTE, PROMOTE-WITH-CAVEATS, HOLD}``. **No LP is ever solved inside the
 scorer**, and it never reads gitignored dispatch parquets, so re-running it on
 the same artifacts always yields the same verdict.
+
+When the verdict supersedes a preserved prior (``--prior-summary``, the prior
+bundle's ``full_horizon_summary.json`` — the ``<key>-pre-<lane>`` entry's
+bundle in ``ff-verdicts.json``), the verdict also carries a REPORT-ONLY
+``supersession_delta`` block (rubric §3, v1.2): per-year trajectory deltas and
+window totals, status ``rpt`` at every tier, never a status, determination,
+reason or caveat. Absent prior ⇒ no block.
 
 Precedent: ``scripts/calibration_verdict.py`` (the backcast C1-C8 scorer). This
 scorer is its forecast-side sibling and inherits its governance posture: a bundle
@@ -50,6 +57,12 @@ Usage (rubric §8)::
         --summary <t2 summary> --hindcast-score <t1h score> \
         --crossover-score <t1x score> --driver-battery <battery json> \
         --corridor <corridor table> --dof-ledger <dof> --json-out <sidecar>
+
+    # Re-solve superseding a preserved prior (adds the report-only §3 delta block):
+    python scripts/forecast_verdict.py --tier t1f \
+        --summary results/ff-t1f-d105/neiso/full_horizon_summary.json \
+        --prior-summary results/ff-t1f-d50/neiso/full_horizon_summary.json \
+        --run-config results/ff-t1f-d105/neiso/run_config.json
 """
 
 from __future__ import annotations
@@ -80,7 +93,13 @@ from scripts.lib import forecast_provenance as _fp  # noqa: E402  (after sys.pat
 # attestation row only, artifact-only re-score). Text-only amendment: no
 # threshold, row or category logic in this scorer changed; records scored
 # under "1.0" stand as scored.
-RUBRIC_VERSION = "1.1"
+# v1.2 (2026-10-03, owner ruling D108 "Report-only delta row", capx D111) = §3's
+# supersession-delta annotation: when a verdict supersedes a preserved prior
+# (``--prior-summary``), the verdict carries a REPORT-ONLY ``supersession_delta``
+# block (per-year trajectory deltas + window totals, status "rpt" at every
+# tier). No threshold, row, category or determination logic changed; records
+# scored under "1.0"/"1.1" stand as scored.
+RUBRIC_VERSION = "1.2"
 
 # --- statuses (per row / per category) --------------------------------------
 PASS, CAVEAT, FAIL, SKIPPED = "PASS", "CAVEAT", "FAIL", "SKIPPED"
@@ -365,6 +384,9 @@ def load_artifacts(args: argparse.Namespace) -> dict:
         "dof_ledger": _load_json(args.dof_ledger),
         "attestation": _load_json(args.attestation),
         "position": _load_json(getattr(args, "position", None)),
+        # The superseded prior's full_horizon_summary.json (rubric §3 v1.2
+        # supersession delta, report-only). Un-supplied ⇒ no delta block.
+        "prior_summary": _load_json(getattr(args, "prior_summary", None)),
     }
 
 
@@ -565,6 +587,150 @@ def _trajectory(art: dict) -> list[dict]:
     if isinstance(summ, dict) and isinstance(summ.get("trajectory"), list):
         return [r for r in summ["trajectory"] if isinstance(r, dict)]
     return []
+
+
+# ===========================================================================
+# Supersession delta (rubric §3, v1.2 — owner ruling D108, 2026-10-03).
+# REPORT-ONLY at every tier: the block carries status "rpt", never a category
+# status, and never enters _determine(). It exists so a verdict that supersedes
+# a preserved prior (the ``<key>-pre-<lane>`` entry in ff-verdicts.json) states
+# how the trajectory moved, instead of recording a PROMOTE→PROMOTE with the
+# move unattributed (the D105/D106 pattern). Why report-only: a trajectory delta
+# has no external reference, so a gating stability row would penalize a real
+# fix exactly as readily as a regression (rule 1).
+# ===========================================================================
+SUPERSESSION_STATUS = "rpt"
+# Per-year trajectory metrics compared current − prior (owner ruling D108).
+SUPERSESSION_METRICS = (
+    "co2_mt",
+    "lw_price",
+    "max_hourly_price",
+    "hours_ge_100",
+    "reserve_margin",
+)
+# Generation share compared alongside: generation_by_fuel_mwh[<fuel>]/total_gen_mwh.
+SUPERSESSION_SHARE_FUEL = "gas_cc_ccs"
+SUPERSESSION_SHARE_KEY = "gas_cc_ccs_gen_share"
+# Window totals over the paired years: cumulative CO2 and mean load-weighted price.
+SUPERSESSION_WINDOW_KEYS = ("co2_mt_cumulative", "lw_price_mean")
+_DELTA_NDIGITS = 6
+
+
+def _num(x: object) -> float | None:
+    """Return ``x`` as a float when it is a real number, else ``None``."""
+    if isinstance(x, bool) or not isinstance(x, (int, float)):
+        return None
+    return float(x)
+
+
+def _gen_share(row: dict, fuel: str) -> float | None:
+    """Fuel generation share of a trajectory row (absent fuel ⇒ 0.0 share).
+
+    A fuel key missing from ``generation_by_fuel_mwh`` means the fleet carried no
+    such unit that year (the summary writes only fuels present), so its share is
+    zero — not unmeasured. A missing or zero ``total_gen_mwh`` is unmeasured.
+    """
+    total = _num(row.get("total_gen_mwh"))
+    by_fuel = row.get("generation_by_fuel_mwh")
+    if total is None or total <= 0 or not isinstance(by_fuel, dict):
+        return None
+    gen = _num(by_fuel.get(fuel, 0.0))
+    return None if gen is None else gen / total
+
+
+def _delta(prior: float | None, current: float | None) -> dict:
+    """One ``{prior, current, delta}`` cell; ``delta`` is None unless both exist."""
+    d = (
+        round(current - prior, _DELTA_NDIGITS)
+        if prior is not None and current is not None
+        else None
+    )
+    return {"prior": prior, "current": current, "delta": d}
+
+
+def _bundle_ref(summary: dict) -> dict:
+    """The provenance a delta block records for each side (never a path it reads)."""
+    return {
+        "iso": summary.get("iso"),
+        "run_dir": summary.get("run_dir"),
+        "cache_key": summary.get("cache_key"),
+        "solved_years": summary.get("solved_years"),
+    }
+
+
+def supersession_delta(summary: object, prior_summary: object) -> dict | None:
+    """Report-only per-year trajectory deltas of ``summary`` against its prior.
+
+    Returns ``None`` when either summary is absent — the verdict then carries
+    no block at all (not SKIPPED, not a caveat: an un-superseded verdict has
+    nothing to report). Otherwise pairs the two ``trajectory[]`` lists by year
+    and emits, per paired year, ``current − prior`` for every metric in
+    :data:`SUPERSESSION_METRICS` plus the :data:`SUPERSESSION_SHARE_FUEL`
+    generation share, and two window totals over the paired years (cumulative
+    CO2, mean load-weighted price). Years present on one side only are listed
+    under ``unpaired_years`` and excluded from the window totals so the totals
+    compare like with like. The block's status is always ``"rpt"`` and
+    ``gating`` is always False; nothing in it reaches :func:`_determine`.
+    """
+    if not isinstance(summary, dict) or not isinstance(prior_summary, dict):
+        return None
+    cur = {
+        r["year"]: r
+        for r in _trajectory({"summary": summary})
+        if isinstance(r.get("year"), int)
+    }
+    pri = {
+        r["year"]: r
+        for r in _trajectory({"summary": prior_summary})
+        if isinstance(r.get("year"), int)
+    }
+    paired = sorted(set(cur) & set(pri))
+    unpaired = {
+        "prior_only": sorted(set(pri) - set(cur)),
+        "current_only": sorted(set(cur) - set(pri)),
+    }
+    years: list[dict] = []
+    for y in paired:
+        cell: dict = {"year": y}
+        for m in SUPERSESSION_METRICS:
+            cell[m] = _delta(_num(pri[y].get(m)), _num(cur[y].get(m)))
+        cell[SUPERSESSION_SHARE_KEY] = _delta(
+            _gen_share(pri[y], SUPERSESSION_SHARE_FUEL),
+            _gen_share(cur[y], SUPERSESSION_SHARE_FUEL),
+        )
+        years.append(cell)
+
+    def _total(rows: dict, key: str, mean: bool) -> float | None:
+        vals = [_num(rows[y].get(key)) for y in paired]
+        if not vals or any(v is None for v in vals):
+            return None
+        s = sum(vals)
+        return s / len(vals) if mean else s
+
+    window = {
+        "years": paired,
+        "co2_mt_cumulative": _delta(
+            _total(pri, "co2_mt", False), _total(cur, "co2_mt", False)
+        ),
+        "lw_price_mean": _delta(
+            _total(pri, "lw_price", True), _total(cur, "lw_price", True)
+        ),
+    }
+    return {
+        "status": SUPERSESSION_STATUS,
+        "gating": False,
+        "rubric": "§3 supersession delta (v1.2, owner ruling D108 2026-10-03)",
+        "note": (
+            "report-only: never changes a category status, a determination, a "
+            "reason or a caveat; a trajectory delta has no external reference"
+        ),
+        "prior": _bundle_ref(prior_summary),
+        "current": _bundle_ref(summary),
+        "metrics": list(SUPERSESSION_METRICS) + [SUPERSESSION_SHARE_KEY],
+        "years": years,
+        "unpaired_years": unpaired,
+        "window": window,
+    }
 
 
 # ===========================================================================
@@ -1846,7 +2012,7 @@ def determine_from_artifacts(art: dict, tier: str) -> dict:
 
     determination, reasons, caveats = _determine(categories, tier)
     notes = _report_notes(categories)
-    return {
+    verdict = {
         "rubric_version": RUBRIC_VERSION,
         "schema": "forecast-verdict/v1",
         # FR-21 staleness machinery: the HEAD sha + UTC time this verdict was
@@ -1863,6 +2029,13 @@ def determine_from_artifacts(art: dict, tier: str) -> dict:
         "notes": notes,
         "categories": categories,
     }
+    # Rubric §3 supersession delta (v1.2): REPORT-ONLY, attached after the
+    # determination is final so it can never feed back into it. Absent prior ⇒
+    # the key is absent (not SKIPPED, not a caveat).
+    delta = supersession_delta(art.get("summary"), art.get("prior_summary"))
+    if delta is not None:
+        verdict["supersession_delta"] = delta
+    return verdict
 
 
 def _report_notes(categories: dict[str, dict]) -> list[str]:
@@ -1925,8 +2098,51 @@ def render_text(v: dict) -> str:
         lines.append("notes:")
         for n in v["notes"]:
             lines.append(f"  - {n}")
+    if v.get("supersession_delta"):
+        lines.extend(_render_delta(v["supersession_delta"]))
     lines.append("=" * 72)
     return "\n".join(lines)
+
+
+def _fmt(x: float | None) -> str:
+    """Compact numeric cell for the delta table (``None`` ⇒ ``-``)."""
+    if x is None:
+        return "-"
+    return f"{x:.4g}" if abs(x) < 1.0 or abs(x) >= 1e6 else f"{x:,.2f}"
+
+
+def _render_delta(d: dict) -> list[str]:
+    """Render the report-only supersession-delta block (rubric §3 v1.2)."""
+    out = ["-" * 72]
+    pri, cur = d.get("prior") or {}, d.get("current") or {}
+    out.append(
+        f"supersession delta (rpt, report-only): prior {pri.get('cache_key')} "
+        f"-> current {cur.get('cache_key')}"
+    )
+    out.append("  year  metric                 prior        current      delta")
+    for cell in d.get("years", []):
+        for m in d.get("metrics", []):
+            c = cell.get(m) or {}
+            out.append(
+                f"  {cell['year']}  {m:22s} {_fmt(c.get('prior')):>12s} "
+                f"{_fmt(c.get('current')):>12s} {_fmt(c.get('delta')):>12s}"
+            )
+    w = d.get("window") or {}
+    ys = w.get("years") or []
+    span = f"{ys[0]}-{ys[-1]}" if ys else "-"
+    for k in SUPERSESSION_WINDOW_KEYS:
+        c = w.get(k) or {}
+        out.append(
+            f"  {span:9s} {k:22s} {_fmt(c.get('prior')):>12s} "
+            f"{_fmt(c.get('current')):>12s} {_fmt(c.get('delta')):>12s}"
+        )
+    unp = d.get("unpaired_years") or {}
+    if unp.get("prior_only") or unp.get("current_only"):
+        out.append(
+            f"  unpaired years: prior-only {unp.get('prior_only')}, "
+            f"current-only {unp.get('current_only')}"
+        )
+    return out
 
 
 def headline(v: dict) -> str:
@@ -1948,7 +2164,7 @@ def condensed_sidecar(v: dict) -> dict:
     per-row status/detail (dropping the bulky ``values`` blocks the dashboard
     re-derives from the source artifacts).
     """
-    return {
+    out = {
         "schema": v["schema"],
         "rubric_version": v["rubric_version"],
         # Carried through to ff-verdicts.json — the board's staleness evidence
@@ -1978,6 +2194,11 @@ def condensed_sidecar(v: dict) -> dict:
             for cid, c in v["categories"].items()
         },
     }
+    if v.get("supersession_delta"):
+        # Rubric §3 v1.2: the report-only block rides into the sidecar whole
+        # (it is already compact: per-year cells + window totals).
+        out["supersession_delta"] = v["supersession_delta"]
+    return out
 
 
 # ===========================================================================
@@ -2017,6 +2238,13 @@ def _build_parser() -> argparse.ArgumentParser:
         "ONLY, never scored as a miss (rule 13)",
     )
     ap.add_argument("--position", help="curve-ON position-validation artifact (FC-2.5)")
+    ap.add_argument(
+        "--prior-summary",
+        dest="prior_summary",
+        help="the superseded prior bundle's full_horizon_summary.json (rubric §3 "
+        "v1.2 supersession delta: REPORT-ONLY per-year trajectory deltas; never "
+        "changes a status, determination, reason or caveat)",
+    )
     ap.add_argument("--run-config", dest="run_config", help="run_config.json (FC-7)")
     ap.add_argument("--dof-ledger", dest="dof_ledger", help="dof_ledger.json (FC-7)")
     ap.add_argument("--attestation", help="forecast_attestation.json (FC-7 / §5, T3)")
