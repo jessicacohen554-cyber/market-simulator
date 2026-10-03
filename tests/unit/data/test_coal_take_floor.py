@@ -177,6 +177,24 @@ def test_gate_refuses_other_isos():
         resolve_coal_take_floor(_cfg(coal_fuel_inventory_take_floor=True), "MISO", True)
 
 
+def test_gate_arms_soco_only_in_the_measured_monthly_pile_form():
+    """R-49: SOCO's take floor rides only with the same-year measured pile."""
+    armed = _cfg(
+        coal_fuel_inventory_take_floor=True,
+        coal_fuel_inventory_monthly_pile=True,
+        coal_monthly_pile_measured_receipts=True,
+    )
+    assert resolve_coal_take_floor(armed, "SOCO", True)
+    for partial in (
+        _cfg(coal_fuel_inventory_take_floor=True),
+        _cfg(
+            coal_fuel_inventory_take_floor=True, coal_fuel_inventory_monthly_pile=True
+        ),
+    ):
+        with pytest.raises(ValueError, match="R-49"):
+            resolve_coal_take_floor(partial, "SOCO", True)
+
+
 def test_gate_refuses_stacking_on_the_take_or_pay_discounts():
     cfg = _cfg(coal_fuel_inventory_take_floor=True, coal_takeorpay_from_data=True)
     with pytest.raises(ValueError, match="REPLACES"):

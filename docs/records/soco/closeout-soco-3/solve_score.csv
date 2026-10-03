@@ -1,0 +1,142 @@
+crit,year,key,status_keeper,magnitude_keeper,status_arm,magnitude_arm
+dispatch_corr,2019.0,coal,PASS,"r=0.916, NRMSE=0.235",PASS,"r=0.923, NRMSE=0.203"
+dispatch_corr,2019.0,gas,PASS,"r=0.955, NRMSE=0.142",PASS,"r=0.948, NRMSE=0.134"
+dispatch_corr,2020.0,coal,PASS,"r=0.94, NRMSE=0.271",PASS,"r=0.932, NRMSE=0.224"
+dispatch_corr,2020.0,gas,PASS,"r=0.953, NRMSE=0.113",PASS,"r=0.944, NRMSE=0.102"
+dispatch_corr,2021.0,coal,PASS,"r=0.921, NRMSE=0.193",PASS,"r=0.924, NRMSE=0.177"
+dispatch_corr,2021.0,gas,PASS,"r=0.92, NRMSE=0.123",PASS,"r=0.92, NRMSE=0.117"
+dispatch_corr,2022.0,coal,PASS,"r=0.788, NRMSE=0.261",PASS,"r=0.753, NRMSE=0.244"
+dispatch_corr,2022.0,gas,PASS,"r=0.938, NRMSE=0.114",PASS,"r=0.915, NRMSE=0.123"
+dispatch_corr,2023.0,coal,PASS,"r=0.912, NRMSE=0.261",PASS,"r=0.928, NRMSE=0.197"
+dispatch_corr,2023.0,gas,PASS,"r=0.953, NRMSE=0.105",PASS,"r=0.94, NRMSE=0.1"
+dispatch_corr,2024.0,coal,PASS,"r=0.832, NRMSE=0.266",PASS,"r=0.86, NRMSE=0.218"
+dispatch_corr,2024.0,gas,PASS,"r=0.947, NRMSE=0.119",PASS,"r=0.949, NRMSE=0.108"
+dispatch_corr,2025.0,coal,PASS,"r=0.892, NRMSE=0.158",PASS,"r=0.894, NRMSE=0.156"
+dispatch_corr,2025.0,gas,PASS,"r=0.943, NRMSE=0.09",PASS,"r=0.943, NRMSE=0.089"
+forced_share,2019.0,CC_REGULAR,PASS,0.0% forced (0.0 of 109.9644 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,0.0% forced (0.0 of 109.3966 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2019.0,COAL_BIT,PASS,0.0% forced (0.0 of 17.8315 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,0.0% forced (0.0 of 21.0739 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2019.0,COAL_PRB,PASS,0.0% forced (0.0 of 31.3359 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,0.0% forced (0.0 of 30.1206 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2019.0,CT_PEAKER,PASS,0.0% forced (0.0 of 8.5639 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,0.0% forced (0.0 of 7.1409 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2019.0,ST_GAS,PASS,34.5% forced (1.926 of 5.5811 TWh) — above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.968 (≥0.8) & off-peak CV ratio 1.426 (≥0.5) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,36.0% forced (1.9973 of 5.5459 TWh) — above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.961 (≥0.8) & off-peak CV ratio 1.351 (≥0.5) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2019.0,hydro,PASS,0.0% forced (0.0 of 8.8431 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,0.0% forced (0.0 of 8.8431 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2020.0,CC_REGULAR,PASS,0.0% forced (0.0 of 109.907 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,0.0% forced (0.0 of 108.9349 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2020.0,COAL_BIT,PASS,0.0% forced (0.0 of 13.844 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,0.0% forced (0.0 of 16.5531 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2020.0,COAL_PRB,PASS,0.0% forced (0.0 of 21.5568 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,0.0% forced (0.0 of 21.6088 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2020.0,CT_PEAKER,PASS,0.0% forced (0.0 of 6.0216 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,0.0% forced (0.0 of 4.4401 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2020.0,ST_GAS,PASS,43.9% forced (2.1243 of 4.8417 TWh) — above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.971 (≥0.8) & off-peak CV ratio 1.302 (≥0.5) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,46.8% forced (2.1661 of 4.6296 TWh) — above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.974 (≥0.8) & off-peak CV ratio 1.229 (≥0.5) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2020.0,hydro,PASS,0.0% forced (0.0 of 10.2028 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,0.0% forced (0.0 of 10.2028 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2021.0,CC_REGULAR,PASS,0.0% forced (0.0 of 107.5796 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,0.0% forced (0.0 of 106.6409 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2021.0,COAL_BIT,PASS,0.0% forced (0.0 of 17.7362 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,0.0% forced (0.0 of 19.249 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2021.0,COAL_PRB,PASS,0.0% forced (0.0 of 30.0492 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,0.0% forced (0.0 of 29.8782 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2021.0,CT_PEAKER,SKIPPED,"CT_PEAKER immaterial (1.6% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-2 reads 0.0% forced",SKIPPED,"CT_PEAKER immaterial (1.6% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-2 reads 0.0% forced"
+forced_share,2021.0,ST_GAS,PASS,47.6% forced (2.1904 of 4.5966 TWh) — above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.966 (≥0.8) & off-peak CV ratio 1.489 (≥0.5) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,48.1% forced (2.1924 of 4.5617 TWh) — above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.96 (≥0.8) & off-peak CV ratio 1.438 (≥0.5) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2021.0,hydro,PASS,0.0% forced (0.0 of 9.1405 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,0.0% forced (0.0 of 9.1405 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2022.0,CC_REGULAR,PASS,0.0% forced (0.0 of 104.8045 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,0.0% forced (0.0 of 107.3287 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2022.0,COAL_BIT,PASS,0.0% forced (0.0 of 21.2075 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,0.0% forced (0.0 of 20.9343 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2022.0,COAL_PRB,PASS,0.0% forced (0.0 of 33.0012 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,0.0% forced (0.0 of 30.5684 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2022.0,CT_PEAKER,PASS,0.0% forced (0.0 of 3.3948 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,0.0% forced (0.0 of 3.7164 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2022.0,ST_GAS,PASS,34.5% forced (2.0832 of 6.0378 TWh) — above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.971 (≥0.8) & off-peak CV ratio 1.929 (≥0.5) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,34.9% forced (2.0637 of 5.9189 TWh) — above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.969 (≥0.8) & off-peak CV ratio 1.876 (≥0.5) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2022.0,hydro,PASS,0.0% forced (0.0 of 8.0296 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,0.0% forced (0.0 of 8.0296 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2023.0,CC_REGULAR,PASS,0.0% forced (0.0 of 117.1639 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,0.0% forced (0.0 of 118.348 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2023.0,COAL_BIT,PASS,0.0% forced (0.0 of 7.7386 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,0.0% forced (0.0 of 8.1759 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2023.0,COAL_PRB,PASS,0.0% forced (0.0 of 21.2149 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,0.0% forced (0.0 of 21.662 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2023.0,CT_PEAKER,PASS,0.0% forced (0.0 of 8.7065 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,0.0% forced (0.0 of 6.9778 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2023.0,ST_GAS,PASS,37.9% forced (2.0688 of 5.4571 TWh) — above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.977 (≥0.8) & off-peak CV ratio 1.747 (≥0.5) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,42.5% forced (2.1771 of 5.1204 TWh) — above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.973 (≥0.8) & off-peak CV ratio 1.624 (≥0.5) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2023.0,hydro,PASS,0.0% forced (0.0 of 6.8148 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,0.0% forced (0.0 of 6.8148 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2024.0,CC_REGULAR,PASS,0.0% forced (0.0 of 116.0262 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,0.0% forced (0.0 of 114.8632 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2024.0,COAL_BIT,PASS,0.0% forced (0.0 of 7.6766 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,0.0% forced (0.0 of 8.0439 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2024.0,COAL_PRB,PASS,0.0% forced (0.0 of 22.3518 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,0.0% forced (0.0 of 23.9774 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2024.0,CT_PEAKER,PASS,0.0% forced (0.0 of 7.0622 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,0.0% forced (0.0 of 6.2865 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2024.0,ST_GAS,PASS,48.1% forced (2.1457 of 4.4635 TWh) — above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.964 (≥0.8) & off-peak CV ratio 1.334 (≥0.5) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,48.7% forced (2.153 of 4.4246 TWh) — above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.963 (≥0.8) & off-peak CV ratio 1.352 (≥0.5) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2024.0,hydro,PASS,0.0% forced (0.0 of 6.3014 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,0.0% forced (0.0 of 6.3014 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2025.0,CC_REGULAR,PASS,0.0% forced (0.0 of 113.9501 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,0.0% forced (0.0 of 113.9335 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2025.0,COAL_BIT,PASS,0.0% forced (0.0 of 9.7614 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,0.0% forced (0.0 of 9.7607 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2025.0,COAL_PRB,PASS,0.0% forced (0.0 of 29.1273 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,0.0% forced (0.0 of 29.1314 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2025.0,CT_PEAKER,SKIPPED,"CT_PEAKER immaterial (1.9% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-2 reads 0.0% forced",SKIPPED,"CT_PEAKER immaterial (1.9% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-2 reads 0.0% forced"
+forced_share,2025.0,ST_GAS,PASS,53.9% forced (2.512 of 4.6628 TWh) — above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.919 (≥0.8) & off-peak CV ratio 1.437 (≥0.5) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,53.8% forced (2.5112 of 4.6648 TWh) — above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.919 (≥0.8) & off-peak CV ratio 1.438 (≥0.5) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+forced_share,2025.0,hydro,PASS,0.0% forced (0.0 of 5.9255 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound),PASS,0.0% forced (0.0 of 5.9255 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)
+fuelmix,2019.0,CC_CHP,PASS,"+0.11 TWh, share +0.1pp",PASS,"+0.08 TWh, share +0.1pp"
+fuelmix,2019.0,CC_REGULAR,FAIL,"+4.43 TWh, share +3.4pp (share out of band)",FAIL,"+3.97 TWh, share +3.2pp (share out of band)"
+fuelmix,2019.0,COAL_BIT,CAVEAT,"-11.27 TWh, share -4.3pp (volume/share out of band)",FAIL,"-7.82 TWh, share -2.8pp (volume out of band)"
+fuelmix,2019.0,COAL_PRB,PASS,"+1.00 TWh, share +0.9pp",PASS,"-0.40 TWh, share +0.3pp"
+fuelmix,2019.0,CT_PEAKER,PASS,"+2.02 TWh, share +0.9pp",PASS,"+0.77 TWh, share +0.4pp"
+fuelmix,2019.0,ST_CHP,PASS,"-0.83 TWh, share -0.3pp",PASS,"-0.83 TWh, share -0.3pp"
+fuelmix,2019.0,ST_GAS,PASS,"-4.91 TWh, share -1.9pp",PASS,"-5.25 TWh, share -2.0pp"
+fuelmix,2020.0,CC_CHP,PASS,"+0.23 TWh, share +0.1pp",PASS,"+0.20 TWh, share +0.1pp"
+fuelmix,2020.0,CC_REGULAR,PASS,"+1.03 TWh, share +2.3pp",PASS,"-0.04 TWh, share +1.8pp"
+fuelmix,2020.0,COAL_BIT,PASS,"-6.26 TWh, share -2.5pp",PASS,"-3.54 TWh, share -1.3pp"
+fuelmix,2020.0,COAL_PRB,PASS,"-0.89 TWh, share +0.0pp",PASS,"-0.75 TWh, share +0.1pp"
+fuelmix,2020.0,CT_PEAKER,PASS,"+1.28 TWh, share +0.6pp",PASS,"-0.19 TWh, share -0.0pp"
+fuelmix,2020.0,ST_CHP,PASS,"-0.73 TWh, share -0.3pp",PASS,"-0.73 TWh, share -0.3pp"
+fuelmix,2020.0,ST_GAS,PASS,"-3.74 TWh, share -1.5pp",PASS,"-4.07 TWh, share -1.6pp"
+fuelmix,2021.0,CC_CHP,PASS,"+0.27 TWh, share +0.1pp",PASS,"+0.26 TWh, share +0.1pp"
+fuelmix,2021.0,CC_REGULAR,PASS,"+4.24 TWh, share +2.7pp",PASS,"+3.35 TWh, share +2.4pp"
+fuelmix,2021.0,COAL_BIT,PASS,"-5.12 TWh, share -2.0pp",PASS,"-3.59 TWh, share -1.3pp"
+fuelmix,2021.0,COAL_PRB,PASS,"+1.42 TWh, share +0.9pp",PASS,"+1.19 TWh, share +0.8pp"
+fuelmix,2021.0,CT_PEAKER,PASS,"-0.96 TWh, share -0.4pp",PASS,"-1.32 TWh, share -0.5pp"
+fuelmix,2021.0,ST_CHP,PASS,"-0.72 TWh, share -0.3pp",PASS,"-0.72 TWh, share -0.3pp"
+fuelmix,2021.0,ST_GAS,PASS,"-4.39 TWh, share -1.8pp",PASS,"-4.46 TWh, share -1.8pp"
+fuelmix,2022.0,CC_CHP,PASS,"+0.24 TWh, share +0.1pp",PASS,"+0.25 TWh, share +0.1pp"
+fuelmix,2022.0,CC_REGULAR,PASS,"-4.15 TWh, share -0.8pp",PASS,"-0.37 TWh, share +0.7pp"
+fuelmix,2022.0,COAL_BIT,PASS,"+1.97 TWh, share +0.9pp",PASS,"+1.23 TWh, share +0.6pp"
+fuelmix,2022.0,COAL_PRB,PASS,"+6.04 TWh, share +2.7pp",PASS,"+2.64 TWh, share +1.3pp"
+fuelmix,2022.0,CT_PEAKER,PASS,"-4.16 TWh, share -1.6pp",PASS,"-3.87 TWh, share -1.5pp"
+fuelmix,2022.0,ST_CHP,PASS,"-0.67 TWh, share -0.3pp",PASS,"-0.67 TWh, share -0.3pp"
+fuelmix,2022.0,ST_GAS,PASS,"-4.68 TWh, share -1.8pp",PASS,"-4.61 TWh, share -1.8pp"
+fuelmix,2023.0,CC_CHP,PASS,"+0.28 TWh, share +0.1pp",PASS,"+0.27 TWh, share +0.1pp"
+fuelmix,2023.0,CC_REGULAR,PASS,"+5.30 TWh, share +2.5pp",PASS,"+5.04 TWh, share +2.4pp"
+fuelmix,2023.0,COAL_BIT,PASS,"-5.07 TWh, share -2.1pp",PASS,"-3.16 TWh, share -1.3pp"
+fuelmix,2023.0,COAL_PRB,PASS,"-1.48 TWh, share -0.5pp",PASS,"-1.07 TWh, share -0.4pp"
+fuelmix,2023.0,CT_PEAKER,PASS,"+3.75 TWh, share +1.6pp",PASS,"+2.10 TWh, share +0.9pp"
+fuelmix,2023.0,ST_CHP,PASS,"-0.57 TWh, share -0.2pp",PASS,"-0.57 TWh, share -0.2pp"
+fuelmix,2023.0,ST_GAS,PASS,"-4.19 TWh, share -1.7pp",PASS,"-4.60 TWh, share -1.9pp"
+fuelmix,2024.0,CC_CHP,PASS,"+0.27 TWh, share +0.1pp",PASS,"+0.26 TWh, share +0.1pp"
+fuelmix,2024.0,CC_REGULAR,PASS,"+3.92 TWh, share +2.5pp",PASS,"+2.71 TWh, share +2.0pp"
+fuelmix,2024.0,COAL_BIT,PASS,"-3.94 TWh, share -1.5pp",PASS,"-3.51 TWh, share -1.3pp"
+fuelmix,2024.0,COAL_PRB,PASS,"-3.50 TWh, share -1.2pp",PASS,"-1.88 TWh, share -0.5pp"
+fuelmix,2024.0,CT_PEAKER,PASS,"+2.24 TWh, share +0.9pp",PASS,"+1.49 TWh, share +0.6pp"
+fuelmix,2024.0,ST_CHP,PASS,"-0.83 TWh, share -0.3pp",PASS,"-0.83 TWh, share -0.3pp"
+fuelmix,2024.0,ST_GAS,PASS,"-3.74 TWh, share -1.4pp",PASS,"-3.80 TWh, share -1.5pp"
+fuelmix,2025.0,CC_CHP,SKIPPED,preliminary EIA-923 vintage: complete plant data (no per-class actual); not gated — C2 family grid reconcile covers this class,SKIPPED,preliminary EIA-923 vintage: complete plant data (no per-class actual); not gated — C2 family grid reconcile covers this class
+fuelmix,2025.0,CC_REGULAR,SKIPPED,preliminary EIA-923 vintage: complete plant data (no per-class actual); not gated — C2 family grid reconcile covers this class,SKIPPED,preliminary EIA-923 vintage: complete plant data (no per-class actual); not gated — C2 family grid reconcile covers this class
+fuelmix,2025.0,COAL_BIT,PASS,"-0.78 TWh, share -0.2pp",PASS,"-0.89 TWh, share -0.2pp"
+fuelmix,2025.0,COAL_PRB,PASS,"+2.75 TWh, share +1.3pp",PASS,"+2.76 TWh, share +1.3pp"
+fuelmix,2025.0,CT_PEAKER,SKIPPED,preliminary EIA-923 vintage: complete plant data (no per-class actual); not gated — C2 family grid reconcile covers this class,SKIPPED,preliminary EIA-923 vintage: complete plant data (no per-class actual); not gated — C2 family grid reconcile covers this class
+fuelmix,2025.0,ST_CHP,SKIPPED,preliminary EIA-923 vintage: incomplete plant data (1/26 prior plants missing (96% reporting); plant-months 96% present); not gated — C2 family grid reconcile covers this class,SKIPPED,preliminary EIA-923 vintage: incomplete plant data (1/26 prior plants missing (96% reporting); plant-months 96% present); not gated — C2 family grid reconcile covers this class
+fuelmix,2025.0,ST_GAS,SKIPPED,preliminary EIA-923 vintage: complete plant data (no per-class actual); not gated — C2 family grid reconcile covers this class,SKIPPED,preliminary EIA-923 vintage: complete plant data (no per-class actual); not gated — C2 family grid reconcile covers this class
+governance,,every lever measured; no residual fit / pinning; exogenous outages,PASS,closeout-SOCO-2; owner ruling R-41 Promote on structure; 2026-10-03,UNATTESTED,no governance attestation in bundle
+price_mean,2019.0,"system load-weighted mean LMP $/MWh (vs Southern Co. FERC-714 system lambda, one system-wide series (load-weighted))",CAVEAT,+10.9%,PASS,+8.7%
+price_mean,2020.0,"system load-weighted mean LMP $/MWh (vs Southern Co. FERC-714 system lambda, one system-wide series (load-weighted))",CAVEAT,+11.0%,PASS,+8.4%
+price_mean,2021.0,"system load-weighted mean LMP $/MWh (vs Southern Co. FERC-714 system lambda, one system-wide series (load-weighted))",PASS,-5.8%,PASS,-6.7%
+price_mean,2022.0,"system load-weighted mean LMP $/MWh (vs Southern Co. FERC-714 system lambda, one system-wide series (load-weighted))",CAVEAT,-14.8%,FAIL,-13.7%
+price_mean,2023.0,"system load-weighted mean LMP $/MWh (vs Southern Co. FERC-714 system lambda, one system-wide series (load-weighted))",PASS,+1.0%,PASS,-0.4%
+price_mean,2024.0,"system load-weighted mean LMP $/MWh (vs Southern Co. FERC-714 system lambda, one system-wide series (load-weighted))",PASS,-4.8%,PASS,-6.0%
+price_mean,2025.0,"system load-weighted mean LMP $/MWh (vs Southern Co. FERC-714 system lambda, one system-wide series (load-weighted))",PASS,-4.7%,PASS,-4.7%
+price_shape,2019.0,"monthly load-weighted price NRMSE (load-weighted actual; Southern Co. FERC-714 system lambda, one system-wide series)",PASS,NRMSE 0.137,PASS,NRMSE 0.112
+price_shape,2020.0,"monthly load-weighted price NRMSE (load-weighted actual; Southern Co. FERC-714 system lambda, one system-wide series)",PASS,NRMSE 0.140,PASS,NRMSE 0.113
+price_shape,2021.0,"monthly load-weighted price NRMSE (load-weighted actual; Southern Co. FERC-714 system lambda, one system-wide series)",PASS,NRMSE 0.125,PASS,NRMSE 0.125
+price_shape,2022.0,"monthly load-weighted price NRMSE (load-weighted actual; Southern Co. FERC-714 system lambda, one system-wide series)",CAVEAT,NRMSE 0.281,FAIL,NRMSE 0.282
+price_shape,2023.0,"monthly load-weighted price NRMSE (load-weighted actual; Southern Co. FERC-714 system lambda, one system-wide series)",PASS,NRMSE 0.087,PASS,NRMSE 0.091
+price_shape,2024.0,"monthly load-weighted price NRMSE (load-weighted actual; Southern Co. FERC-714 system lambda, one system-wide series)",PASS,NRMSE 0.175,PASS,NRMSE 0.184
+price_shape,2025.0,"monthly load-weighted price NRMSE (load-weighted actual; Southern Co. FERC-714 system lambda, one system-wide series)",PASS,NRMSE 0.184,PASS,NRMSE 0.184
+price_tail,2019.0,C3c price tail / scarcity (RT hourly),SKIPPED,"C3c NOT SCORED on the SOCO system lambda (owner ruling 2026-09-28): a lambda has no scarcity-pricing component, so its hours above a tail threshold are fuel cost, not realized scarcity",SKIPPED,"C3c NOT SCORED on the SOCO system lambda (owner ruling 2026-09-28): a lambda has no scarcity-pricing component, so its hours above a tail threshold are fuel cost, not realized scarcity"
+price_tail,2020.0,C3c price tail / scarcity (RT hourly),SKIPPED,"C3c NOT SCORED on the SOCO system lambda (owner ruling 2026-09-28): a lambda has no scarcity-pricing component, so its hours above a tail threshold are fuel cost, not realized scarcity",SKIPPED,"C3c NOT SCORED on the SOCO system lambda (owner ruling 2026-09-28): a lambda has no scarcity-pricing component, so its hours above a tail threshold are fuel cost, not realized scarcity"
+price_tail,2021.0,C3c price tail / scarcity (RT hourly),SKIPPED,"C3c NOT SCORED on the SOCO system lambda (owner ruling 2026-09-28): a lambda has no scarcity-pricing component, so its hours above a tail threshold are fuel cost, not realized scarcity",SKIPPED,"C3c NOT SCORED on the SOCO system lambda (owner ruling 2026-09-28): a lambda has no scarcity-pricing component, so its hours above a tail threshold are fuel cost, not realized scarcity"
+price_tail,2022.0,C3c price tail / scarcity (RT hourly),SKIPPED,"C3c NOT SCORED on the SOCO system lambda (owner ruling 2026-09-28): a lambda has no scarcity-pricing component, so its hours above a tail threshold are fuel cost, not realized scarcity",SKIPPED,"C3c NOT SCORED on the SOCO system lambda (owner ruling 2026-09-28): a lambda has no scarcity-pricing component, so its hours above a tail threshold are fuel cost, not realized scarcity"
+price_tail,2023.0,C3c price tail / scarcity (RT hourly),SKIPPED,"C3c NOT SCORED on the SOCO system lambda (owner ruling 2026-09-28): a lambda has no scarcity-pricing component, so its hours above a tail threshold are fuel cost, not realized scarcity",SKIPPED,"C3c NOT SCORED on the SOCO system lambda (owner ruling 2026-09-28): a lambda has no scarcity-pricing component, so its hours above a tail threshold are fuel cost, not realized scarcity"
+price_tail,2024.0,C3c price tail / scarcity (RT hourly),SKIPPED,"C3c NOT SCORED on the SOCO system lambda (owner ruling 2026-09-28): a lambda has no scarcity-pricing component, so its hours above a tail threshold are fuel cost, not realized scarcity",SKIPPED,"C3c NOT SCORED on the SOCO system lambda (owner ruling 2026-09-28): a lambda has no scarcity-pricing component, so its hours above a tail threshold are fuel cost, not realized scarcity"
+price_tail,2025.0,C3c price tail / scarcity (RT hourly),SKIPPED,"C3c NOT SCORED on the SOCO system lambda (owner ruling 2026-09-28): a lambda has no scarcity-pricing component, so its hours above a tail threshold are fuel cost, not realized scarcity",SKIPPED,"C3c NOT SCORED on the SOCO system lambda (owner ruling 2026-09-28): a lambda has no scarcity-pricing component, so its hours above a tail threshold are fuel cost, not realized scarcity"
+sysvol,2019.0,coal,PASS,C1 flags: COAL_BIT,PASS,C1 flags: COAL_BIT
+sysvol,2019.0,gas,PASS,C1 flags: CC_REGULAR,PASS,C1 flags: CC_REGULAR
+sysvol,2020.0,coal,PASS,all classes in band (C1),PASS,all classes in band (C1)
+sysvol,2020.0,gas,PASS,all classes in band (C1),PASS,all classes in band (C1)
+sysvol,2021.0,coal,PASS,all classes in band (C1),PASS,all classes in band (C1)
+sysvol,2021.0,gas,PASS,all classes in band (C1),PASS,all classes in band (C1)
+sysvol,2022.0,coal,PASS,all classes in band (C1),PASS,all classes in band (C1)
+sysvol,2022.0,gas,PASS,all classes in band (C1),PASS,all classes in band (C1)
+sysvol,2023.0,coal,PASS,all classes in band (C1),PASS,all classes in band (C1)
+sysvol,2023.0,gas,PASS,all classes in band (C1),PASS,all classes in band (C1)
+sysvol,2024.0,coal,PASS,all classes in band (C1),PASS,all classes in band (C1)
+sysvol,2024.0,gas,PASS,all classes in band (C1),PASS,all classes in band (C1)
+sysvol,2025.0,coal,PASS,all classes in band (C1),PASS,all classes in band (C1)
+sysvol,2025.0,gas,SKIPPED,-5.2%,SKIPPED,-5.2%

@@ -24,7 +24,9 @@ entry points (``run_calibration_full.solve_and_persist``, which
    capped by ``MemTotal`` — never ``free``;
 2. provisions a swapfile when ceiling + swap is below the target (24 GiB, the
    ``prepare_solve_container`` default), bounded by free disk, idempotently
-   (an already-active swapfile is kept, never re-created);
+   (an already-active swapfile is kept, never re-created; an INACTIVE one left
+   by an earlier preflight in the same container counts as reclaimable disk and
+   is reused or re-made — owner ruling R-50, 2026-10-03);
 3. applies the single-thread / arena-pinned solve profile every golden and
    wallclock capture already uses (``run_isos_concurrent._CHILD_ENV_PINS``)
    as *defaults* — an explicit operator value always wins.
@@ -41,6 +43,14 @@ own high-water marks (RSS, and RSS+swap where the kernel exposes it). A
 process the OOM killer stopped always reports ~the limit as its RSS, so only
 a run that FINISHED with swap available can say how far over the ceiling the
 LP really is; the runners log it at the end of every invocation.
+
+**Order matters (R-50, closeout-PJM-nuc 2026-10-03).** Swap is bounded by free
+disk, so it must be provisioned BEFORE the data steps (``hydrate_data``,
+``regenerate_clean``, any fetch) consume the disk allowance: three identical
+PJM 2021 containers that ran those first drew 9 / 3 / 4 GiB of swap and the
+two short ones were OOM-killed in the LP build. ``scripts/shard_prompt.py``
+therefore runs ``prepare_solve_container.py`` as the first step after the
+checkout; the in-runner call here then finds the swap already active.
 """
 
 from __future__ import annotations
@@ -248,6 +258,41 @@ def _swapfile_active(swapfile: Path, proc: Path = _PROC) -> bool:
     return any(line.split()[:1] == [str(swapfile)] for line in lines)
 
 
+def _stale_swapfile_bytes(swapfile: Path) -> int:
+    """Allocated bytes of an existing swapfile (0 when absent or unreadable).
+
+    Only called for a file NOT in ``/proc/swaps``: a swapfile left by an
+    earlier preflight after a pre-LP stop (R-50) — its blocks are disk the
+    next preflight can reclaim. ``st_blocks`` (not ``st_size``) so a sparse
+    file, which ``swapon`` refuses anyway, is not counted as reusable.
+    """
+    try:
+        return swapfile.stat().st_blocks * 512
+    except OSError:
+        return 0
+
+
+def below_target_warning(
+    total_gib: float, target_gib: float, free_disk_gib: float
+) -> str:
+    """The WARNING text for ceiling + swap still short of the target, naming the fix."""
+    return (
+        f"ceiling+swap {total_gib:.1f} GiB is below the {target_gib:g} GiB target; "
+        "a per-plant ISO-year LP (MISO, PJM) may be OOM-killed here. Fix: provision "
+        "swap before data steps (`python3 scripts/prepare_solve_container.py` "
+        "before hydrate_data / regenerate_clean / any fetch); free disk "
+        f"{free_disk_gib:.1f} GiB"
+    )
+
+
+def free_disk_gib(path: Path = SWAPFILE.parent) -> float:
+    """Free disk at ``path`` in GiB (0.0 when unreadable)."""
+    try:
+        return shutil.disk_usage(str(path)).free / GIB
+    except OSError:
+        return 0.0
+
+
 def provision_swap(
     target_gib: float,
     *,
@@ -260,9 +305,13 @@ def provision_swap(
     """Add a swapfile so ceiling + swap reaches ``target_gib``.
 
     Returns ``(gib_added, warnings)``. Idempotent: an active swapfile at
-    ``swapfile`` is kept as it is (sized when it was made). Never raises —
-    a box that cannot swap (not root, no ``fallocate``/``swapon``, no disk)
-    gets a warning naming why, and the caller proceeds on RAM alone.
+    ``swapfile`` is kept as it is (sized when it was made). An INACTIVE file
+    at ``swapfile`` (left by an earlier preflight after a pre-LP stop) is
+    stale: its allocated bytes count as free disk when sizing, and it is
+    reused (``mkswap`` + ``swapon``) when already large enough, else removed
+    and re-made at the needed size (R-50). Never raises — a box that cannot
+    swap (not root, no ``fallocate``/``swapon``, no disk) gets a warning
+    naming why, and the caller proceeds on RAM alone.
     """
     warnings: list[str] = []
     ceiling = ceiling_bytes if ceiling_bytes is not None else memory_ceiling(proc).bytes
@@ -279,20 +328,33 @@ def provision_swap(
         return 0, warnings
 
     try:
-        free_gib = shutil.disk_usage(str(swapfile.parent)).free / GIB
+        disk_free_gib = shutil.disk_usage(str(swapfile.parent)).free / GIB
     except OSError as exc:
         warnings.append(f"swap: cannot read free disk for {swapfile.parent}: {exc}")
         return 0, warnings
+    stale_bytes = _stale_swapfile_bytes(swapfile) if swapfile.exists() else 0
+    free_gib = disk_free_gib + stale_bytes / GIB
     add_gib = int(min(deficit_gib, max(0.0, free_gib - disk_reserve_gib)))
     if add_gib < 1:
+        reclaim = (
+            f" (incl. {stale_bytes / GIB:.1f} GiB reclaimable from inactive {swapfile})"
+            if stale_bytes
+            else ""
+        )
         warnings.append(
             f"swap: CANNOT provision — need {deficit_gib:.1f} GiB but only "
-            f"{free_gib:.1f} GiB free disk (reserving {disk_reserve_gib:g} GiB "
-            "for solve output). A per-plant ISO-year LP may be OOM-killed."
+            f"{free_gib:.1f} GiB free disk{reclaim} (reserving {disk_reserve_gib:g} "
+            "GiB for solve output). A per-plant ISO-year LP may be OOM-killed. "
+            "Provision swap before data steps."
         )
         return 0, warnings
+    reuse = stale_bytes >= add_gib * GIB
+    if reuse:
+        # Never shrink a reusable file: what swapon adds is its whole size.
+        add_gib = int(stale_bytes // GIB)
     if dry_run:
-        logger.info("swap: WOULD add %d GiB at %s (--check)", add_gib, swapfile)
+        verb = "reuse inactive" if reuse else "add"
+        logger.info("swap: WOULD %s %d GiB at %s (--check)", verb, add_gib, swapfile)
         return add_gib, warnings
     if os.geteuid() != 0:
         warnings.append(
@@ -302,19 +364,29 @@ def provision_swap(
         return 0, warnings
 
     try:
-        if swapfile.exists():
-            # Stale file from an earlier container life — not active, so
-            # re-create it at the size this box needs.
-            subprocess.run(["swapoff", str(swapfile)], check=False, capture_output=True)
+        # Only reached for a file NOT in /proc/swaps (the active case returned
+        # above): an active swapfile is never swapped off, unlinked or re-made.
+        if swapfile.exists() and not reuse:
+            # Stale file from an earlier preflight, not active and too small:
+            # remove it (its blocks were counted as free above) and re-make it.
             swapfile.unlink()
-        subprocess.run(
-            ["fallocate", "-l", f"{add_gib}G", str(swapfile)],
-            check=True,
-            capture_output=True,
-        )
+            logger.info(
+                "swap: unlinked stale inactive %s (%.1f GiB) to re-create it at %d GiB",
+                swapfile,
+                stale_bytes / GIB,
+                add_gib,
+            )
+        if not reuse:
+            subprocess.run(
+                ["fallocate", "-l", f"{add_gib}G", str(swapfile)],
+                check=True,
+                capture_output=True,
+            )
         swapfile.chmod(0o600)
         subprocess.run(["mkswap", str(swapfile)], check=True, capture_output=True)
         subprocess.run(["swapon", str(swapfile)], check=True, capture_output=True)
+        if reuse:
+            logger.info("swap: reused stale inactive %s (%d GiB)", swapfile, add_gib)
     except (OSError, subprocess.CalledProcessError) as exc:
         detail = ""
         if isinstance(exc, subprocess.CalledProcessError) and exc.stderr:
@@ -418,10 +490,8 @@ def ensure_solve_container(
     )
     if record.total_gib + 0.5 < target_gib:
         out.warning(
-            "container preflight: ceiling+swap %.1f GiB is below the %g GiB target; "
-            "a per-plant ISO-year LP (MISO, PJM) may be OOM-killed here",
-            record.total_gib,
-            target_gib,
+            "container preflight: %s",
+            below_target_warning(record.total_gib, target_gib, free_disk_gib()),
         )
     _PREFLIGHT_RECORD = record
     return record
