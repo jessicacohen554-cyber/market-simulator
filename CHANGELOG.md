@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-10-03 — capx D100: `__solve_epochs__` modelled in the key-provenance census (zero LP)
+
+`scripts/check_key_provenance.py` exits 0 again: `key_provenance.py` applies the live `SOLVE_EPOCHS` scope rule (`solve_surface.applicable_epochs`) to every recorded payload, hashes a stamped record under the `epochs` list its own `solve_surface.json` recorded, and reports a recorded set that is no longer the covering set as the new `solve-epoch-moved` class (never `unclassified`); the D98 `assert not SOLVE_EPOCHS` is deleted. Record: `docs/records/forecast/FINDING-capx-d100-2026-10-03.md`.
+
 ## 2026-10-02 — closeout-W0 denominator fix, part 2: the live dispatched-bin roster (desk ruling D-1, zero LP)
 
 With `unit_outage_dispatched_bin_denominator` on in a COD-ramped backcast, the unit-outage denominator
