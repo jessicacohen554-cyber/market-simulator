@@ -561,8 +561,10 @@ COMPLETENESS_DIR = DATA_DIR / "completeness"
 #       (f) IT DOWNGRADES — unlike a v3.3 ledgered C3c it is not
 #           determination-neutral: a run whose only blemish it is reads the
 #           caveat rung, never the clean rung.
-#       Applied AFTER the explicit ledger, governance and the C3c standing
-#       rule, so v3.10 can never make a C3c failure "lone".
+#       Applied AFTER the explicit ledger and governance. (Until v3.20 also
+#       after the C3c standing rule; since v3.20, R-58, the standing rule runs
+#       LAST, so an owner-signed scoped row no longer counts against "lone" —
+#       the slot it spends still budgets the C3c caveat it sits beside.)
 #       NO SOLVE RAN — scorer-side only. Genealogy:
 #       docs/governance/rule-history.md §23.
 # v3.11 — 2026-09-30 owner ruling, soco-94 decision cards (verbatim): "Rubric:
@@ -703,9 +705,27 @@ COMPLETENESS_DIR = DATA_DIR / "completeness"
 #       every caveat budget, NOT determination-downgrading, named on the basis.
 #       Every band, tier, ledger row and budget is unchanged. NO SOLVE RAN.
 #       Genealogy: docs/governance/rule-history.md §29.
+# v3.20 — 2026-10-03 owner ruling R-58 (decision card, verbatim: "Adopt v3.20
+#       (Recommended)"), approving the R-57 PRECOMMIT
+#       (docs/records/governance/closeout-2026-10/
+#       PRECOMMIT-rubric-c3c-order-2026-10-03.md). THE RULE-22 LONE-C3c TEST
+#       RUNS LAST: :func:`_apply_c3c_standing_rule` moves from directly after
+#       :func:`score_governance` to after :func:`_apply_reference_coverage`, so
+#       "lone" is measured over the criterion-years still failing once the
+#       owner-signed scoped-ledger (v3.10/R-8), configuration-exception
+#       (v3.14/R-6) and reference-coverage (v3.19/R-40) caveats are applied. A
+#       pure reorder: the function body, and so every rule-22 guard (lone
+#       failure only on 2023-2025, the v3.6 holdout limb, governance PASS,
+#       supporting tier only, spends the single ledgered slot, never a PASS),
+#       is unchanged; the three tables carry no ``price_tail`` key, so the
+#       routes write disjoint rows. Monotone: it can only turn a C3c FAIL into a
+#       CAVEAT where every other failure was already owner-excused. Measured
+#       zero-LP (scripts/probes/rubric_c3c_order_probe.py): 0 of 9 ISO
+#       determinations, 0 of 13 keeper scopes, 0 of 61 per-year ladder rows
+#       move. NO SOLVE RAN. Genealogy: docs/governance/rule-history.md §31.
 # A STRING from v3.10 on: the float 3.10 == 3.1, which would collide with the
 # v3.1 amendment. Display-only everywhere it is read.
-RUBRIC_VERSION = "3.19"
+RUBRIC_VERSION = "3.20"
 
 # Statuses (per criterion-year and aggregated).
 PASS, CAVEAT, FAIL, SKIPPED = "PASS", "CAVEAT", "FAIL", "SKIPPED"
@@ -1796,7 +1816,9 @@ C3C_STANDING_RULE_REASON = (
     'forward as a rule"; EXTENDED TO EVERY YEAR 2026-08-09 (session '
     'neiso-keeper-87-control), verbatim: "make sure c3c is an acceptable caveat for any '
     'holdout or training year". Auto-applied: C3c (price tail / scarcity) is the ONLY '
-    "failing criterion and the governance gate passes. Classified ACCEPTED MODEL-CLASS "
+    "failing criterion once the owner-signed scoped-ledger, configuration-exception "
+    "and reference-coverage caveats are applied (rubric v3.20, R-57/R-58), and the "
+    "governance gate passes. Classified ACCEPTED MODEL-CLASS "
     "LIMITATION -- admissible because C3c is SUPPORTING tier; the v3.0 fail-closed guard "
     "still refuses model-class on load-bearing and protective criteria, so this rule can "
     "never wave through C1/C2/C3a/C3b or C6/C8. IT IS NOT A PASS: C3c reads CAVEAT, "
@@ -1807,7 +1829,9 @@ C3C_STANDING_RULE_REASON = (
     "known, ledgered model-class limitation is not a caveat on the calibration. "
     "THE LONE-FAILURE CONDITION IS WHAT KEEPS IT FROM BEING AN ESCAPE HATCH: "
     "it fires only when the model is otherwise clean on every criterion, so it can never "
-    "mask a second defect, and the caveat still consumes the single ledgerable slot."
+    "mask a second defect -- every row it does not count is one the owner signed by its "
+    "exact (iso, year, criterion, key), none of them unexplained -- and the caveat still "
+    "consumes the single ledgerable slot."
 )
 
 # The OUT-OF-TRAINING path (rubric v3.6). Kept as its own string because the
@@ -4422,24 +4446,32 @@ def determine_from_artifacts(
     # failure mode the rule exists to catch. The fix is here, in the caller.
     gov = score_governance(art["config"], art["attestation"], run_scorable_years)
 
-    # Owner STANDING RULE (2026-08-06) — auto-ledger a LONE C3c failure on an
-    # out-of-training year. Runs AFTER the explicit ledger and AFTER governance,
-    # because it is conditioned on both.
-    _apply_c3c_standing_rule(records, gov)
+    # The automatic routes, in rubric v3.20 order (owner ruling R-58,
+    # 2026-10-03): the three owner-signed, exact-keyed routes first, the rule-22
+    # C3c standing rule LAST. Every route is governance-gated the same way, and
+    # none of the three tables carries a ``price_tail`` key (pinned in
+    # tests/scoring/test_calibration_verdict_closeout_c.py), so the four routes
+    # write to disjoint rows and the order changes only what the lone test sees.
 
-    # Rubric v3.10 scoped ledger (owner ruling 2026-09-27). AFTER the C3c
-    # standing rule, so its lone-failure guard saw these rows as FAILs.
+    # Rubric v3.10 scoped ledger (owner ruling 2026-09-27).
     _apply_scoped_ledger(records, iso, gov)
 
     # Rubric v3.14 configuration exceptions (owner ruling R-6, 2026-10-02).
-    # AFTER the C3c standing rule and the scoped ledger, so neither saw these
-    # rows as anything but FAILs.
+    # AFTER the scoped ledger, so it sees these rows exactly as scored.
     _apply_config_exceptions(records, iso, gov, art.get("config"))
 
     # Rubric v3.19 reference-coverage caveats (owner ruling R-40, 2026-10-03).
-    # LAST, so the C3c lone-failure guard, the scoped ledger and the
-    # configuration exceptions all saw these rows exactly as scored.
+    # AFTER the scoped ledger and the configuration exceptions, so both saw
+    # these rows exactly as scored.
     _apply_reference_coverage(records, iso, gov, bench, exceptions)
+
+    # Owner STANDING RULE (2026-08-06; rule 22) — auto-ledger a LONE C3c
+    # failure. Runs AFTER the explicit ledger and governance, because it is
+    # conditioned on both, and (v3.20, R-58) AFTER the three owner-signed
+    # routes above, so "lone" is measured over the criterion-years still
+    # failing once every owner-signed caveat is applied: a row the owner
+    # excused by its exact (iso, year, criterion, key) is not a second failure.
+    _apply_c3c_standing_rule(records, gov)
 
     # Aggregate per criterion.
     per_criterion: dict[str, dict] = {}

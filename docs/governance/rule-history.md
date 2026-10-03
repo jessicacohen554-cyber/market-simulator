@@ -1767,10 +1767,34 @@ the pattern the rule freezes, demonstrated on the real history; run with `--base
 
 > 37. `[R-RUBRIC-FREEZE]` **The determination rubric is frozen between promotions: a rubric amendment is a promotion decision, proposed in a PRECOMMIT and ruled on by the owner, never landed in the same PR as a keeper.** The rubric (`docs/calibration-determination-rubric.md`, `RUBRIC_VERSION`, every threshold, caveat budget and ledger-admissibility set in `scripts/calibration_verdict.py`) changes only in a PR that changes no keeper designation, keeper shard, status part or `calibration-complete.json`; the PRECOMMIT computes the amendment's effect on every registered ISO zero-LP (`calibration_verdict.py` over the committed bundles) before and after, and the amendment lands only on the owner's ruling, cited in the commit. Enforced by `scripts/check_rubric_freeze.py` in CI (`RUBRIC_FREEZE_OVERRIDE` carries the owner's promotion-with-amendment ruling).
 
-## 31. Changes to this file
+## 31. Rubric v3.20 — the rule-22 lone test sees owner-signed caveats (owner, R-57/R-58, 2026-10-03)
+
+**Owner ruling R-58, verbatim** (decision card, approving the R-57 PRECOMMIT): *"Adopt v3.20 (Recommended)"*.
+R-57 (same day, verbatim: *"Open the amendment lane"*) opened the question that R-51 surfaced.
+
+**What changed.** In `scripts/calibration_verdict.py::determine_from_artifacts`, `_apply_c3c_standing_rule` (rule 22
+`[R-C3C]`) moves from directly after `score_governance` to LAST, after `_apply_scoped_ledger` (v3.10/R-8),
+`_apply_config_exceptions` (v3.14/R-6) and `_apply_reference_coverage` (v3.19/R-40). "Lone" is now measured over the
+criterion-years still failing once every owner-signed caveat is applied; a row the owner excused by its exact
+(ISO, year, criterion, key) is not a second failure. The function body is unchanged, so every rule-22 guard carries
+over (lone failure only on 2023–2025, the v3.6 holdout limb, governance PASS, supporting tier only, spends the single
+ledgered slot, never a PASS). `C3C_STANDING_RULE_REASON` states the new measure. The three tables carry no
+`price_tail` key, so the routes write disjoint rows; a test pins that (fail-closed against a future table row that
+would reach C3c before rule 22). The order was a code choice ("so its lone-failure guard saw these rows as FAILs")
+never put to the owner; R-51's ERCOT 2023 ×33-strip leg showed a scope reading NOT-YET only because of it.
+
+**ISO determinations moved:** none. Measured zero-LP by `scripts/probes/rubric_c3c_order_probe.py` over the committed
+keeper bundles: 0 of 9 ISO determinations, 0 of 13 keeper scopes, 0 of 61 per-year ladder rows. The amendment acts
+only on the R-51 shape (ERCOT carve-out 2023, C3c 44 h vs 181 h beside R-6-excused C3a/C3b: NOT-YET → CALIBRATED).
+Code-only PR under rule 37: no keeper, status part, `calibration-complete.json` or bundle changed. Record:
+`docs/records/governance/closeout-2026-10/PRECOMMIT-rubric-c3c-order-2026-10-03.md`. Tests:
+`tests/scoring/test_calibration_verdict_closeout_c.py`.
+
+## 32. Changes to this file
 
 | date | change |
 |---|---|
+| 2026-10-03 | Added §31: **rubric v3.20** (owner rulings R-57/R-58, verbatim in §31): the rule-22 lone-C3c standing rule runs after the owner-signed scoped-ledger, configuration-exception and reference-coverage routes. No determination moves. "Changes to this file" renumbered §31 → §32 (the only external citation of §31 is the new one in `calibration_verdict.py`). |
 | 2026-10-03 | Added §30: **rule 37 `[R-RUBRIC-FREEZE]` is NEW** (owner instruction verbatim in §30) — the determination rubric is frozen between promotions; an amendment is a promotion decision proposed in a PRECOMMIT with its zero-LP effect on every registered ISO, ruled on by the owner, and never landed in the same PR as a keeper designation, status part, `calibration-complete.json` or bundle. Prompted by audit `docs/audit/2026-10/C-data-calibration-governance.md` §5 finding 3 on the v3.10 → v3.19 run (§23–§29). Enforced by `scripts/check_rubric_freeze.py` in CI (`RUBRIC_FREEZE_OVERRIDE` is the owner's promotion-with-amendment override). No rubric content, band, budget or determination moves. "Changes to this file" renumbered §30 → §31 (no external reference cited §30). |
 | 2026-10-03 | Added §29: **rubric v3.19** (owner ruling R-40 and its C3b extension, verbatim in §29): the reference-coverage caveat kind for CAISO C3a/C3b 2019–2021. No determination moves. "Changes to this file" renumbered §29 → §30 (the only external citation of §29 is the new one in `calibration_verdict.py`). |
 | 2026-10-03 | Added §28: **rubric v3.18** (owner ruling R-34: the C3c model tail masked to the RT-covered hours, CAISO 2021 relabelled) and the R-33 CAISO gas-fold refutation (benchmark-only), rulings verbatim in §28. No determination moves. "Changes to this file" renumbered §28 → §29 (the only external citation of §28 is the new one in `calibration_verdict.py`). |
