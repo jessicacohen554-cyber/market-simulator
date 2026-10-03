@@ -4027,3 +4027,18 @@ results/calibration/closeout_pjm_r13_*/
 results/calibration/nwppnext22_*/
 results/calibration/nwppnext22b_*/
 !results/calibration/nwppnext22b_span/
+
+# capx D105 (2026-10-03): the NEISO T1-F re-solve on keeper 2026-10-02-w0-neiso
+# (ff-t1f-d105/neiso, the headline neiso-t1f key 66fb439918cbefd6; owner ruling
+# Q76, plan §2.1b gate (d)). Same class and same slim-vs-heavy split as
+# /results/ff-t1f-d50/ and /results/ff-t1f-d60/ above: the committed record is
+# full_horizon_summary.json + run_config.json + forecast_verdict.json +
+# dof_ledger.json + the invariants output + the resolved config.yaml,
+# solve_surface.json and evolution_<year>.json ledgers; the per-year dispatch
+# parquet, npz, hourly sidecars and floor-retention dumps are heavy and
+# regenerable from the config.
+/results/ff-t1f-d105/*/*/*/*.parquet
+/results/ff-t1f-d105/*/*/*/*.npz
+/results/ff-t1f-d105/*/*/*/hourly/
+/results/ff-t1f-d105/*/*/*/year_*_floor_retentions.json
+/results/ff-t1f-d105/*.log
