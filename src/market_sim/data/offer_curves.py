@@ -273,12 +273,15 @@ def committed_measured_basis(iso: str) -> dict[str, float]:
     if not path.exists():
         return {}
     df = pd.read_csv(path)
-    if _COMMITTED_MEASURED_COLUMN not in df.columns:
+    if _COMMITTED_MEASURED_COLUMN not in df.columns or df.empty:
         return {}
     by_row = {
-        str(r["class"]).upper(): float(r[_COMMITTED_MEASURED_COLUMN])
-        for _, r in df.iterrows()
-        if not pd.isna(r[_COMMITTED_MEASURED_COLUMN])
+        str(cls).upper(): float(val)
+        for cls, val in zip(
+            df["class"].to_numpy(dtype=object),
+            df[_COMMITTED_MEASURED_COLUMN].to_numpy(dtype=object),
+        )
+        if not pd.isna(val)
     }
     return {
         cls: by_row[row]

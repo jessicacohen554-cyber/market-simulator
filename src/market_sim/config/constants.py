@@ -5639,6 +5639,56 @@ PJM_INTERFACE_LINK_MAP: dict[tuple[str, str], tuple[str, ...]] = {
     ("PJM_Central_PA", "PJM_EMAAC"): ("Average Eastern",),
 }
 
+# NWPP-NEXT-22 (owner card 2026-10-02, "CAISO share + BPA BC"): the measured
+# hourly operating limits that bound each priced NWPP seam under
+# ScenarioConfig.nwpp_seam_measured_limits, keyed by seam name
+# (INTERFACE_NEIGHBORS["NWPP"]) and footprint direction ("export" = NWPP ->
+# counterparty, "import" = counterparty -> NWPP). Each entry is
+# ``(partition, (series, ...), published_sign)``: the hour's cap is the SUM of
+# the series, times the published sign, clamped at 0. A series published
+# negative (BPA's S-N COI limit, its N-S BC limit) carries sign -1.
+# - CAISO_COI: the CAISO-owned share of Path 66, which is the physical path
+#   of the measured CISO<->BPAT+PACW leg the seam prices (NWPP_PRICED_SEAM_LEGS).
+#   CAISO OASIS TRNS_USAGE hourly OTC on MALIN500_ISL + CASCADE_ITC (I = into
+#   CAISO = NWPP export). Where OASIS retains no hour (before 2023-06-19), the
+#   cap is NWPP_COI_CAISO_SHARE x BPA's whole-path COI operating limit.
+# - WECC_CAN: BPA's BC Intertie (Path 3, West + East) operating limit. The
+#   BPAT->BCHA leg the seam prices is this path (2023 mean actual loading
+#   1,087 MW against the EIA-930 leg's 1,082 MW).
+# - CAISO_NEVP has no published limit on its boundary (its measured leg
+#   correlates with no CAISO ITC above 0.55; FINDING-nwppnext22 §B) and keeps
+#   its registered interface_limit_mw.
+# Source: data/raw/nwpp-intertie-otc (BPA OPI) and data/raw/caiso-trns-usage
+# via the transfer-interface-limits clean datatype; consumed by
+# market_sim.data.transfer_interface_limits.nwpp_seam_limits_hourly.
+NWPP_SEAM_LIMIT_SERIES: dict[str, dict[str, tuple[str, tuple[str, ...], float]]] = {
+    "CAISO_COI": {
+        "export": ("CAISO", ("MALIN500_ISL|I|OTC", "CASCADE_ITC|I|OTC"), 1.0),
+        "import": ("CAISO", ("MALIN500_ISL|E|OTC", "CASCADE_ITC|E|OTC"), 1.0),
+    },
+    "WECC_CAN": {
+        "export": ("NWPP", ("BC|SN|OTC",), 1.0),
+        "import": ("NWPP", ("BC|NS|OTC",), -1.0),
+    },
+}
+
+# The whole-path BPA series the CAISO_COI cap falls back on, per direction, as
+# ``(series, published_sign)``: N-S (toward California) is NWPP's export.
+NWPP_COI_PATH_SERIES: dict[str, tuple[str, float]] = {
+    "export": ("COI|NS|OTC", 1.0),
+    "import": ("COI|SN|OTC", -1.0),
+}
+
+# CAISO's share of the California-Oregon Intertie (Path 66, 4,800 MW N-S):
+# the two PG&E-owned Malin-Round Mountain 500 kV lines that CAISO schedules as
+# MALIN500_ISL carry 3,200 MW, and the TANC-owned California-Oregon
+# Transmission Project carries the other 1,600 MW (WECC Path Rating Catalog,
+# Path 66; COTP 1,600 MW per TANC). 3,200 / 4,800 = 2/3. Measured check:
+# CAISO's hourly MALIN500_ISL + CASCADE_ITC OTC over BPA's whole-path COI
+# operating limit has median 0.667 in 2023, 2024 and 2025, and p10 0.667
+# (FINDING-nwppnext22 §A). An ownership allocation, never fitted to a flow.
+NWPP_COI_CAISO_SHARE: float = 2.0 / 3.0
+
 # Year-varying NYISO interface transfer limits that change with the AC
 # Transmission build-out. The static limits in iso_configs._nyiso_config are
 # nominal; an (iso, year) entry here overrides the matching link's TTC for that

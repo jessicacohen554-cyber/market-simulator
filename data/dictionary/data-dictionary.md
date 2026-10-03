@@ -85,7 +85,7 @@ for the market split.
 | transfer-constraint-binding | — | — | — | — | — | — | — | — |
 | maxgen-events | — | — | — | — | — | — | — | — |
 | storage-as-awards | — | — | — | — | — | — | — | — |
-| storage-soc-bounds | — | 2023–2025 | — | — | — | — | — | — |
+| storage-soc-bounds | — | — | — | — | — | — | — | — |
 | capacity-market-avoidable-cost-rate | — | — | — | — | — | — | — | — |
 | benchmark-corridor | — | — | — | — | — | — | — | — |
 | hydro-plant-modes | — | — | — | — | — | — | — | — |
@@ -123,9 +123,10 @@ snapshot).
 | carb-cap-schedule | — | n/a |
 | coal-basin-price | national/regional (EIA Annual Coal Report, by producing region) | n/a |
 | coal-mining-ppi | national (BLS PPI, coal) | n/a |
-| coal-stocks | national (EIA-923 Schedule 2, by plant) | n/a |
-| coal-receipts | national (EIA-923 Page 5, by plant) | n/a |
+| coal-stocks | national (EIA-923 Schedule 2, by plant) | 2018–2024 |
+| coal-receipts | national (EIA-923 Page 5, by plant) | 2017–2025 |
 | stb-coal-loadings | national (STB EP 724, by carrier x region) | n/a |
+| nwpp-plant-basis-energy | NWPP only (one committed CSV, year x family) | n/a |
 | carbon-auction-results | — | n/a |
 | eia-aeo-fuel-prices | — | n/a |
 | ira-credit-parameters | — | n/a |
@@ -1407,6 +1408,28 @@ onward). Schema:
 | `measure` | `string` | `none` | no | plan - the carrier's filed weekly loadings plan ("Loadings Plan"); actual - the carrier's realised loadings for the week ("Loadings Average"). |
 | `week` | `datetime64[ns]` | `date` | no | Reporting week as dated in the STB workbook column header (week-ending Wednesday filing date). |
 | `value` | `float64` | `count` | no | Unit trains (or carloads, as the carrier reports) for the week, as filed. |
+
+## nwpp-plant-basis-energy
+
+NWPP annual grid-delivered EIA-923 plant energy per EIA-930 fuel family,
+2019-2025: the nwpp_demand_plant_basis anchor. Schema:
+[`schema/nwpp-plant-basis-energy.schema.yaml`](schema/nwpp-plant-basis-energy.schema.yaml).
+
+- **Keys:** `year`, `family`
+- **Reconciles:** Derived from EIA-923 Page 1 + CAMPD + EIA-930 by
+  `scripts/data/derive_nwpp_plant_basis_energy.py` on a roster-free plant ->
+  class map (EIA-860 footprint, dominant EIA-923 class); a committed reference
+  artifact (`data/raw/reference/nwpp_plant_basis_energy.csv`) validated against
+  this schema at write. Rule 23: re-derived only on an EIA-923 vintage,
+  footprint or crosswalk change.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `year` | `int64` | `year` | no | Backcast calendar year. |
+| `family` | `string` | `none` | no | EIA-930 fuel family code (COL, NG, NUC, WAT, SUN, WND, OTH; OTH is NG: OTH + NG: OIL). |
+| `twh` | `float64` | `twh` | no | Annual grid-delivered plant-basis energy of the family, TWh (4 dp). |
+| `source` | `string` | `none` | no | Construction provenance (sources and the membership rule). |
+| `eia923_sha256` | `string` | `none` | no | sha256 of the EIA-923 monthly-generation artifact the row was derived from, so a vintage change (the only re-derive trigger besides the footprint and the crosswalk) is visible. |
 
 ## nyiso-reserve-requirements
 

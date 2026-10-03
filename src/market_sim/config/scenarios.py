@@ -1363,6 +1363,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # serves a different demand array and hashes distinctly. Registered IN
     # THE SAME COMMIT as the field.
     "nwpp_demand_plant_basis",
+    # NWPP-NEXT-22 measured seam headroom (GATED default off): dropped from
+    # the hash at its default so every pre-existing cache key stays
+    # byte-stable (the off path adds no interface row); an armed run caps the
+    # priced seams at their measured hourly operating limits, a different LP,
+    # and hashes distinctly. Registered IN THE SAME COMMIT as the field.
+    "nwpp_seam_measured_limits",
     # pjm-h19 EIA-930 balance-identity demand screen (GATED default off):
     # dropped from the hash at its default so every pre-existing cache key
     # stays byte-stable (the off path never calls the screen); an armed run
@@ -2873,6 +2879,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "nwpp_grid_carried_wind_served": "False",
     # Added by NWPP-NEXT-3 WITH the field (the nyiso-119 discipline).
     "nwpp_demand_plant_basis": "False",
+    # Added by NWPP-NEXT-22 WITH the field (the nyiso-119 discipline).
+    "nwpp_seam_measured_limits": "False",
     # Added by pjm-h19 WITH the field (the nyiso-119 discipline).
     "demand_balance_screen": "False",
     # Added by ercot-236 WITH the field, in the same commit as its
@@ -21639,14 +21647,33 @@ class ScenarioConfig:
     # plant basis C1 scores on — EIA-930 hourly shape, EIA-923 plant energy.
     # Per EIA-930 fuel family the served schedule's footprint series is
     # rescaled additively to its annual grid-delivered EIA-923 plant total
-    # (data/raw/reference/nwpp_plant_basis_energy.csv, derived from the
-    # committed bench parts by scripts/data/derive_nwpp_plant_basis_energy.py)
-    # on its own EIA-930 hourly shape. Closes EIA-930's under-book of the
+    # (data/raw/reference/nwpp_plant_basis_energy.csv, derived from the source
+    # data by scripts/data/derive_nwpp_plant_basis_energy.py on a roster-free
+    # plant -> class map: EIA-860 footprint, each plant's dominant EIA-923
+    # class; closeout-nwpp-anchor, owner ruling R-28) on its own EIA-930
+    # hourly shape. Closes EIA-930's under-book of the
     # footprint's own fossil plants (FINDING-nwpp-47 §3). Rule 14 misalignment
     # reconciliation of a measured input; requires
     # nwpp_grid_carried_wind_served. A year the artifact lacks FAILS rather
     # than falling back. envelopes.nwpp_plant_basis_correction.
     nwpp_demand_plant_basis: bool = False
+    # NWPP-NEXT-22 measured seam headroom (GATED default off, NWPP-only,
+    # backcast overlay, ZERO fitted scalars; owner card 2026-10-02 "CAISO share
+    # + BPA BC"). Read only when reference_price_interface prices NWPP's seams.
+    # Replaces each priced seam's full path rating with its measured hourly
+    # operating limit, one aggregate interface row per seam on the net flow out
+    # of the seam's external zone, both directions:
+    # CAISO_COI = CAISO's own MALIN500_ISL + CASCADE_ITC hourly OTC (OASIS
+    # TRNS_USAGE, 2023-06-19 on), else NWPP_COI_CAISO_SHARE (2/3, Path 66
+    # ownership) x BPA's whole-path COI operating limit; WECC_CAN = BPA's BC
+    # Intertie operating limit; CAISO_NEVP has no published limit on its
+    # boundary and keeps 1,933 MW. Rule 13: an operating limit is a physical
+    # operating condition (the outage-window kind), never a flow or a
+    # schedule; its forward analogue is the seasonal path rating. Rule 14:
+    # the measured operating limit over the nameplate path rating. A missing
+    # partition RAISES (pjm-119). data.transfer_interface_limits.
+    # nwpp_seam_limits_hourly; FINDING-nwppnext22-seam-headroom-2026-10-02.md.
+    nwpp_seam_measured_limits: bool = False
     # pjm-h19 EIA-930 balance-identity demand repair (GATED default off,
     # ISO-agnostic, ZERO fitted scalars). Repairs an hour whose metered
     # Demand makes an isolated reversal larger than the BA-year's own Tukey
@@ -25087,6 +25114,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_tie_zonal_interchange": 1,
     "nwpp_grid_carried_wind_served": 1,
     "nwpp_demand_plant_basis": 1,
+    "nwpp_seam_measured_limits": 3,
     "demand_balance_screen": 1,
     "ercot_offer_swcap_clip": 1,
     "ercot_swcap_vintage": 1,

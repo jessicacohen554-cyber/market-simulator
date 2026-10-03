@@ -8,8 +8,9 @@ is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction onl
 
 **CROSS-DESK NOTICE (SPP-21, 2026-09-06, branch `claude/spp-21-matrix-shard-ti2gy3`):** SPP shard exists from this commit — **seven** shards; every rule-28(c) cell line now includes SPP. *(A self-referential sha cannot be written inside its own single commit — G2 requires one — so the lane and branch are the citation; `git log --grep=SPP-21` resolves the sha.)*
 
-**Charter date:** 2026-08-23 · **Last refresh:** 2026-09-26 (refresh #68) ·
-**r#68 (HEAD `9149be2c`):** D98 (key provenance EXIT 0) and D99 (neiso-t3 FC-6 CAVEAT→PASS, HOLD) LANDED · desk re-keyed MISO → gate (a) EXIT 0 · queue EMPTY · NEXT FREE LABEL: D100 ·
+**Charter date:** 2026-08-23 · **Last refresh:** 2026-10-03 (refresh #69) ·
+**r#69 (HEAD `d7ff7c20`, addendum r#69a at `792e55ad`):** every keeper moved (closeout-W0) · board CALIBRATED ×2 (NEISO, NYISO; the ×4 read at `d7ff7c20` was stale) vs `complete` ×2 · D100/D101/D102 all LANDED (PRs #7089, #7091, #7094) · 111 forecast verdicts STALE-SURFACE · `check_key_provenance` RED (SOLVE_EPOCHS) → D100 · gate-(a) re-key D101 · staleness census D102 · §0bn.2 is the standing `complete`/frontier plan · Q73–Q76 open · NEXT FREE LABEL: D103 ·
+*(previous)* **r#68 (HEAD `9149be2c`):** D98 (key provenance EXIT 0) and D99 (neiso-t3 FC-6 CAVEAT→PASS, HOLD) LANDED · desk re-keyed MISO → gate (a) EXIT 0 · queue EMPTY · NEXT FREE LABEL: D100 ·
 *(previous)* **r#67 (HEAD `cf0950dc`):** all four r#66 lanes LANDED on relaunch (re-key · D95 surface re-key · D96 HOLD→HOLD one vintage · D97 T1.6 design) · desk re-keyed MISO → gate (a) EXIT 0 · Q71 (surface construction) / Q72 (T1.6 re-point, 2041–2050 mean) RULED · D98, D99 dispatched · D96 shard PRs closed · NEXT FREE LABEL: D100 ·
 *(previous)* **r#66 (HEAD `a1b8ebd9`):** all three r#65 lanes LANDED (re-key · D93 · D94 HOLD→HOLD) · gate (a) red again on FIVE ISOs (R-* promotions) · D94's two legs are the new key-provenance UNKNOWNs · Q69 (re-solve neiso-t3 post-F1) / Q70 (T1.6 design lane first) RULED · re-key r#66, D95, D96, D97 dispatched · NEXT FREE LABEL: D98 ·
 *(previous)* **r#65 (HEAD `40f4ed7a`):** fourteen days without a sitting; both r#64 lanes LANDED (re-key partial: 3 of 4) and nothing capx has merged since · gate (a) RED on SIX ISOs + SPP's marker claim · Q66 (class rule) / Q67 (charter D94) / Q68 (NWPP+SOCO board rows after `complete`) RULED live · GATE-(a) RE-KEY r#65, D93, D94 issued and dispatched · NEXT FREE LABEL: D95 ·
@@ -72,6 +73,104 @@ is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction onl
 *(previous)* **Last refresh #26:**
 **HEAD at refresh:** `8462da22` — the nine-writer wave lands 7-of-9 with two clean mid-lane checkpoints (§0w.1); **D27 vindicates D17's arithmetic and refutes it as a remedy — coal ate all 14.7 GW** (§0w.1); CAISO promotes caiso-231 (§0w.5); the Q22/R-H duplication recorded AGAINST INTEREST (§0w.2); Q24 funds the MISO PRA/RBDC intake; D26-S/D31/D33 issued (§0w.4) · **Owner cards A/B/C SIGNED 2026-08-25; Q20–Q23 r#25; Q24 r#26** (§3)
 **Handoff prompt for a successor director session:** `docs/records/forecast/capx-director-handoff-2026-08-30.md` (rewritten whole at r#36; the ledger wins where they diverge)
+
+---
+
+## 0bn. Refresh #69 (2026-10-03, main HEAD `d7ff7c20`) — the backcast close-out moved every keeper in one day; four ISOs read CALIBRATED on the board while the `complete` block still names two; the D98 census gate is RED on a cause the desk did not foresee; this refresh writes the standing plan for what this desk does when an ISO reaches `complete` or a frontier statement, and dispatches three zero-LP lanes
+
+### 1. WHAT MOVED SINCE r#68 (zero LP read at `d7ff7c20`)
+
+> **Addendum r#69a (2026-10-03, after the three lanes landed; read at `792e55ad`/`31f6af11` by D101/D102).**
+> *Board correction:* the "CALIBRATED ×4" below was read at `d7ff7c20`; at the newer main D101 found **MISO and
+> SPP read NOT-YET** (rubric 3.17 worst-of over every registered year; SPP's keeper moved again to
+> `2026-10-02-w0-spp107r`, PR #7083). **CALIBRATED = NEISO, NYISO only.** Q74 therefore asks about NYISO alone;
+> MISO and SPP return to the close-out lanes. §2c's MISO/SPP rows read NOT-YET / "rung 0–1 now, no card".
+> *D100 LANDED* (PR #7089): `check_key_provenance` EXIT 1 → 0, new `solve-epoch-moved` class, 4 tests; census
+> 224 run configs / 171 reproduce / 0 UNKNOWN. *D101 LANDED* (PR #7091): seven keeper rows re-keyed with a
+> Supersedes chain, per-row `gate_a` reading (MET for NEISO only), CAISO/SPP `marker_complete` → false, stamp
+> at `792e55ad`; NWPP/SOCO recorded inside `gate_a_provenance` per owner ruling Q68 (no board row before a
+> `complete` declaration). *D102 LANDED* (PR #7094): **111 verdict keys, 0 CURRENT, 0 STALE-POSTURE, 111
+> STALE-SURFACE** — `moved_rows(iso)` is mode-agnostic and two registry rows (`CC_STEAM_PART_REPAIR_ISOS` in
+> every ISO, `STORAGE_BASE_FLEET_MW` in five) moved after the newest verdict (2026-09-26); no `SOLVE_EPOCH` is
+> forecast-scoped, so the staleness is value-level and each row is a zero-LP G-DRIFT question before any
+> re-solve (rule 29). Re-opening gates (b)/(c) needs the headline `<iso>-t1f` / `-t1h` / `-t1x` keys re-solved
+> on the W0 keepers in seven ISOs; §2.4 anchors only, no anchor for MISO/NYISO/SPP. The first D102 container
+> died in its environment setup script before any command ran and was relaunched (recorded against interest:
+> a pinned `source_revision` that origin had already advanced past; every lane reported the pin absent and
+> branched from `origin/main`). Rung 1 of §2a now has its reading for every ISO: STALE-SURFACE everywhere,
+> so rung 3 is a compute decision (Q76), not a question of whether anything moved.
+
+* **Every designated keeper is new** (closeout-W0 phase 3, `docs/backcast-closeout-plan-2026-10.md` §6 wave 2): CAISO `2026-10-02-closeout-caiso-w1-arm2` · ERCOT `2026-10-02-closeout-l1-coal-fuel` · MISO `2026-10-02-w0-miso-fix2` · NEISO `2026-10-02-w0-neiso` · NWPP `2026-10-02-w0-nwpp-fix2` · NYISO `2026-10-02-w0-nyiso` · PJM `2026-10-02-w0-pjm-fix2` · SOCO `2026-10-02-w0-soco-fix2` · SPP `2026-10-02-spp-107-mmu-repair` (PR #7083 would move SPP again to `2026-10-02-w0-spp107r`; open, not this desk's).
+* **Board** (`frontend/data/backcast/status/<ISO>.js`, rule 30 worst-of): **CALIBRATED — NEISO, NYISO, MISO, SPP**; NOT-YET — CAISO, ERCOT, PJM, SOCO, NWPP.
+* **`complete` block** (`calibration-complete.json`): **NEISO, PJM only**; NYISO/ERCOT/CAISO/SPP sit in `withdrawn`. So gate (a) (§2.1b(2)(a)) reads MET for exactly one ISO, NEISO. PJM is `complete` and NOT-YET at once — a marker/board disagreement the owner must rule on (Q73). MISO and SPP have never been declared; NYISO's declaration was withdrawn at Y-31.
+* **Gates at `d7ff7c20`:** `audit_keepers` EXIT 0 (the r#68 MISO E13 is gone) · `check_registry_payload_parity` EXIT 0 (9 runs) · `check_forecast_parity` EXIT 0 (9 postures, 26 filed gaps) · **`check_key_provenance` EXIT 1** — `AssertionError: SOLVE_EPOCHS is non-empty: model __solve_epochs__`. D98 asserted on an empty `SOLVE_EPOCHS`; W0 registered three backcast epochs (`2026-10-02c/d/e`). Recorded against interest: the desk's own gate was built on a HEAD-state assumption and the first lane to touch the surface tripped it. → D100.
+* **`program-status.json`** carries seven September keeper ids and a gate-(a) stamp at `c64e69eb` (2026-09-25); no SOCO/NWPP row. → D101 (Q34, the twenty-third firing).
+* **Every forecast verdict** in `ff-verdicts.json` was solved on a pre-W0 keeper. Whether that moves the forecast key is a zero-LP question (all three epochs are backcast-mode) → D102.
+
+### 2. THE PLAN — what this desk does when an ISO is `complete` or on the frontier (standing, supersedes nothing; owner may amend)
+
+The close-out program ends each ISO in one of three states (close-out plan §6 wave 4): **CALIBRATED → owner declares `complete`**; **CALIBRATED-WITH-CAVEATS → `complete` with the caveat ledger**; **frontier statement** (an owner-signed entry naming the mechanism the model class lacks; the determination stays NOT-YET honestly). This desk's response is fixed per state so no sitting re-derives it.
+
+**2a. The `complete` ladder (per ISO, in order; each rung is a lane; rungs 0–2 are zero LP).**
+
+| rung | act | LP | gate it serves | exit criterion |
+|---|---|---|---|---|
+| **0 re-key** | gate-(a) row + `gate_a_provenance` stamp re-keyed to the new keeper **in the session that reads the promotion** (Q34 pattern; D101 is the template). Never edits `complete`. | 0 | (a) | `program-status.json` names the designated keeper; stamp sha = read sha |
+| **1 surface census** | G-DRIFT for the forecast: `moved_rows(iso)` + `SOLVE_EPOCHS` scope in `mode=forecast`; every registered verdict classified CURRENT / STALE-POSTURE / STALE-SURFACE (D102 template). STALE-SURFACE alone forces rung 3; STALE-POSTURE is reported, and rung 3 is the owner's compute call. | 0 | (b)(c) read | one table, every verdict classified |
+| **2 ledger carry** | the keeper's DOF ledger + `authorized_price_tuning` block carried into the forecast DOF ledger (`build_forecast_dof_ledger.py`); every residual-identified parameter (close-out W2 list) appears in the forecast attestation as a *carried residual*, never silently | 0 | rubric attestation | forecast DOF ledger lists the keeper's entries by id |
+| **3 T1-F re-solve** | `run_full_horizon` 2026–2030 on the new keeper posture, FF-2D battery re-scored; prior verdict preserved as `<iso>-t1f-pre-<lane>` | ≲ 45 min + `data/clean` build (§2.4) | (b) | FC-1 PASS, FC-2 no-FAIL, FC-3/4 in-band, FC-6 green — or the failing row named |
+| **4 T1-X crossover + FF-3E** | the worth-the-compute pair: crossover gap (FC-4) + readiness battery + wall/RSS table at the new posture | ≲ 45 min | (c) | both committed |
+| **5 owner card** | gate (d): the explicit authorization — ISO, window, compute budget — presented as one decision card with rungs 0–4 attached | 0 | (d) | signed or declined |
+| **6 golden T3** | Phase B (§0): 2026–2050 BAU at the frozen config, forecast rubric, DOF attestation, registered on the forecast dashboard. Prompts re-authored at gate-open (§6 wave 4 was withdrawn), never before rung 5 | hours (§2.4 anchors) | done | rubric no FAIL; attestation committed |
+
+Rules binding every rung: §2.1b window cap (no rung-3/4 instrument spans more than five solve-years; a T3 opens only through rung 5); rule 32 (every solve in a shard; a forecast window runs sequentially inside ONE shard because year N's builds set year N+1's fleet — rule 36 — so the shard budget is the window, not the year; a shard nearing its budget with no artifact stops and reports); rule 12 (≤ 2 concurrent solving shards per box); rule 15 (forecast runs register on the forecast dashboard only). A re-promotion in the backcast lane re-fires rung 0 and re-reads rung 1; rungs 3–6 do not restart unless rung 1 reads STALE-SURFACE.
+
+**2b. The frontier response (per ISO carrying a signed frontier statement).**
+
+1. **Carry the statement** into `program-status.json::readiness_limits` / `honest_unfit` verbatim with its record path, as ercot-190 did for the scarcity tail. The forecast board must say the same thing the backcast board says.
+2. **Name the forward implication** of the missing mechanism in one zero-LP paragraph per frontier ISO (what the forecast systematically mis-states because the backcast could not express it): PJM coal loading response → the coal retirement screen's inframarginal margin is biased in the direction the backcast residual shows; ERCOT 2023 ECRS-era tail → the scarcity-overlay band, not the LP dual, carries the forecast price tail; SPP 2019–20 body / MISO 2020 low-load margin → commitment-state effects on the forward low-load years; SOCO reference error → a price gate that scores against a reference the ISO does not publish; NWPP → no price reference, so forecast price rows for NWPP read unscored, not green.
+3. **Posture: indicative tier only.** A frontier ISO may run rungs 0–4 (T0/T1 POC, quarantine-legal) and registers them with the frontier statement attached to every verdict card; **rung 6 is closed** for a frontier ISO until the owner rules otherwise (Q75). Gate (a) stays NOT MET — the plan does not invent a `complete-with-frontier` marker; that is an owner construct if it is anything.
+4. **A frontier is a lever queue, not a grave.** Each frontier mechanism goes into the mechanism matrix (rule 28) as a forecast-side `U` row with the backcast record as evidence, so a future MIP/commitment or sub-hourly instrument re-tests it with new evidence rather than by memory.
+
+**2c. Readings at `d7ff7c20` (the table rung 0 keeps current).**
+
+| ISO | board | `complete` | gate (a) | next rung |
+|---|---|---|---|---|
+| NEISO | CALIBRATED | yes (`2026-10-02-w0-neiso`) | **MET** | 1 (D102) → 2 → 3 on the W0 keeper; `neiso-t3` HOLD (FC-1/2/3/4/7) is Phase-B work and waits on rung 5 |
+| NYISO | CALIBRATED | withdrawn (Y-31) | NOT MET | owner card Q74; rung 0/1 run now regardless |
+| MISO | CALIBRATED | never declared | NOT MET | Q74; rung 0/1 now |
+| SPP | CALIBRATED | withdrawn | NOT MET | Q74; rung 0/1 now; no forecast presence yet (first T1-F would be its rung 3) |
+| PJM | NOT-YET | **yes** (`2026-10-02-w0-pjm-fix2`) | contradictory | **Q73**; rung 0/1 now; close-out §3.6 says coal loading is a model-class gap → likely frontier |
+| CAISO · ERCOT | NOT-YET | withdrawn | NOT MET | rung 0/1 now; close-out §3.5/§3.7 levers pending data; frontier for ERCOT 2023 (Door D) |
+| SOCO · NWPP | NOT-YET | never | NOT MET | rung 0 adds their rows; both are one ruling from `…-WITH-CAVEATS` (close-out §3.8/§3.9) |
+
+**2d. Sequencing and compute.** One ISO at a time on rungs 3–4 (rule 12 and the `data/clean` build dominate: ≈ 55 min one-time per container, §2.4). Order: NEISO first (gate (a) already MET; the only ISO whose rung 3 can be authorized today), then whichever of NYISO/MISO/SPP the owner declares at Q74, then PJM on Q73. Nothing on rungs 3–6 is dispatched this sitting: rung 1's reading (D102) decides whether a re-solve buys anything, and the user's compute window is the binding constraint today.
+
+### 3. RECORDED AGAINST INTEREST
+
+* The desk's own census gate (D98) was asserted against a HEAD state and failed on the first legitimate change to it. The fix (D100) models the mechanism instead of asserting its absence; the doctrine entry is: *never assert a registry empty — model it.*
+* r#68 called the queue EMPTY while all nine keepers were about to move. The gate-(a) stamp was stale within six days again; rung 0 is now written as a duty of the promotion-reading session, not a periodic sweep.
+
+### 4. THE QUEUE — issued and DISPATCHED this sitting (user standing preference: launch without asking)
+
+| lane | act | model | profile | writes |
+|---|---|---|---|---|
+| **D100** | model `__solve_epochs__` in the key-provenance census; `check_key_provenance` EXIT 1 → 0; tests both directions; FINDING | Fable | code | `scripts/lib/key_provenance.py`, `scripts/check_key_provenance.py`, tests, record, CHANGELOG |
+| **D101** (Q34) | gate-(a) re-key to the nine 2026-10-02 keepers; stamp at `d7ff7c20`; SOCO/NWPP rows if the renderer tolerates them; two owner cards (Q73, Q74) | Fable | code | `frontend/data/forecast/program-status.json`, record, CHANGELOG |
+| **D102** | forecast-verdict staleness census vs the W0 keepers (CURRENT / STALE-POSTURE / STALE-SURFACE), parity gap ids naming W0 mechanisms, §2.4-cited re-solve cost | Fable | code | record, CHANGELOG only |
+
+Disjoint by file. Sessions: D100 `session_01NmQW2pVXkMkRQr3kkbAhWw` · D101 `session_01PWK6kTivLnkLAvzouTdQVn` · D102 `session_01PpWYBZaDJ2MACVLHh16yjC`; branches `claude/capx-d100-solve-epochs`, `claude/capx-d101-gate-a-rekey`, `claude/capx-d102-staleness-census`. Each is a ≤ 20-minute zero-LP shard pinned to `d7ff7c20`; the parent merges and archives (rule 33).
+
+**Proposed, NOT dispatched (next sitting, in order):** D103 rung-2 ledger carry for NEISO (zero LP) · D104 `shard_prompt.py --mode forecast` so a T1 window gets the same eight guarantees a backcast year gets (code lane) · D105 NEISO rung-3 T1-F on `2026-10-02-w0-neiso` (LP; needs D102's reading and the owner's compute nod) · D106 frontier carry into `readiness_limits` for every ISO the close-out signs at wave 4 (zero LP, waits on the statements).
+
+### 5. OWNER CARDS (open on this desk)
+
+* **Q73** — PJM reads `complete` (2026-07-31 declaration, keeper re-keyed to `2026-10-02-w0-pjm-fix2`) and NOT-YET on the board. Withdraw the entry, or stand on the declaration? Until ruled, this desk reads PJM's gate (a) as NOT MET (the board is the newer evidence) and says so on the forecast board.
+* **Q74** — NYISO, MISO, SPP read CALIBRATED and are not in `complete`. Declare them (one entry each, keeper id as designated today)? Each declaration opens rungs 2–5 for that ISO.
+* **Q75** — frontier posture: is "indicative tier only, rung 6 closed" (§2b.3) the owner's rule for a frontier ISO, or may a frontier ISO's golden run proceed with the statement attached?
+* **Q76** — compute: one T1-F re-solve per `complete` ISO on its W0 keeper (≈ 45 min + 55 min clean build each, §2.4) — authorize for NEISO now, or hold until D102 reads STALE-SURFACE somewhere?
+
+**NEXT FREE LABEL: D103.**
 
 ---
 

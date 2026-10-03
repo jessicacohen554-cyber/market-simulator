@@ -429,6 +429,17 @@ def coal_chp_overrides(iso: str, year: int) -> dict[int, tuple[float, str]]:
     monthly = coal_rows.groupby(["plant_id", "year"])[mcols].sum()
     hours_per_month = np.array(_DAYS_IN_MONTH_NONLEAP, dtype=float) * 24.0
 
+    # Minimum monthly average MW across the pooled window, per plant (months
+    # with no reported class generation are skipped -- the host stood down,
+    # not a binding floor). Computed once over the (plant, year) rows rather
+    # than re-scanning the table for every plant.
+    monthly_avg = monthly.to_numpy(dtype=float) / hours_per_month
+    row_min = np.where(monthly_avg > 0.0, monthly_avg, np.inf).min(axis=1)
+    min_avg_by_pid: dict[int, float] = {}
+    for mpid, m in zip(monthly.index.get_level_values(0), row_min):
+        k = int(mpid)
+        min_avg_by_pid[k] = min(min_avg_by_pid.get(k, np.inf), float(m))
+
     out: dict[int, tuple[float, str]] = {}
     for pid in coal.index:
         pid = int(pid)
@@ -438,17 +449,7 @@ def coal_chp_overrides(iso: str, year: int) -> dict[int, tuple[float, str]]:
         sector_class = _EIA860_CHP_SECTORS.get(int(sec)) if sec is not None else None
         if sector_class is None:
             continue
-        # Minimum monthly average MW across the pooled window (months with no
-        # reported class generation are skipped -- the host stood down, not a
-        # binding floor).
-        min_avg_mw = np.inf
-        for (mpid, _y), row in monthly.iterrows():
-            if int(mpid) != pid:
-                continue
-            avg = row.to_numpy(dtype=float) / hours_per_month
-            avg = avg[avg > 0.0]
-            if avg.size:
-                min_avg_mw = min(min_avg_mw, float(avg.min()))
+        min_avg_mw = min_avg_by_pid.get(pid, np.inf)
         if not np.isfinite(min_avg_mw):
             min_avg_mw = 0.0
         out[pid] = (min_avg_mw, sector_class)

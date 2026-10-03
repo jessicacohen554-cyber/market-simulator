@@ -1,0 +1,1083 @@
+{
+  "probe": "PJM-NEXT-30 COAL_BIT in-money loading decomposition (zero LP)",
+  "keeper_bundle": "results/calibration/w0_pjm_span",
+  "block_hours": 168,
+  "q_year": 0.99,
+  "hi_hr": 10.0,
+  "method": "PJM-NEXT-30 (ZERO LP): COAL_BIT in-money loading gap, decomposed per plant.\n\nReadings fixed ex ante in\n``docs/records/pjm/FINDING-pjm-next-30-coalbit-inmoney-loading-2026-10-03.md`` \u00a71.\nHours ``H_y`` are the NEXT-29 S2 hours (real implied HR >= ``HI_HR``); plants are the\nNEXT-29 S2 set (keeper COAL_BIT plants with a bench CAMPD record). Per plant-hour the\ngap ``D = M - A`` (model P1 MW minus bench CAMPD net MW) splits into four ordered pieces:\n\n1. basis   = M - min(M, Y)           (Y = annual p99 of A)\n2. derate  = min(M, Y) - min(M, W)   (W = max of A over the 168-h block)\n3. offline = min(M, W) - A, A == 0\n4. loading = min(M, W) - A, A > 0\n\nplus the same pieces with ``K`` (available cap_mw) in place of ``M`` (dispatch-independent\ntwin), the unit-dark share of pieces 2 + 3 (CAMPD unit-level ``opTime == 0`` on any unit of\nthe plant), per-plant concentration, and the IMM reserve bound (2019-21).\n\nWrites ``results/phase0/pjm/_pjmnext30_coalbit_loading.json``.\n",
+  "years": [
+    {
+      "year": 2019,
+      "hours": 1368,
+      "plants": 43,
+      "unmatched_unit_level": [],
+      "model_mw": 27744,
+      "cap_mw": 28247,
+      "campd_mw": 25543,
+      "gap_mw": 2201,
+      "pieces_mw": {
+        "basis": 1084,
+        "derate": 470,
+        "offline": 309,
+        "loading": 338
+      },
+      "pieces_per_cap": {
+        "basis": 0.0384,
+        "derate": 0.0167,
+        "offline": 0.0109,
+        "loading": 0.012
+      },
+      "twin_pieces_mw": {
+        "basis": 1200,
+        "derate": 500,
+        "offline": 326,
+        "loading": 678
+      },
+      "twin_per_cap": {
+        "basis": 0.0425,
+        "derate": 0.0177,
+        "offline": 0.0115,
+        "loading": 0.024
+      },
+      "unit_dark_share_of_derate_offline": 0.8,
+      "top10": [
+        {
+          "plant": 8102,
+          "gap_mw": 311.1,
+          "cap_mw": 2085.6,
+          "unit_matched": true,
+          "basis": 0.0,
+          "derate": 86.5,
+          "offline": 11.9,
+          "loading": 212.7
+        },
+        {
+          "plant": 3122,
+          "gap_mw": 196.5,
+          "cap_mw": 1297.3,
+          "unit_matched": true,
+          "basis": 0.1,
+          "derate": 27.8,
+          "offline": 2.2,
+          "loading": 166.3
+        },
+        {
+          "plant": 54304,
+          "gap_mw": 195.6,
+          "cap_mw": 230.2,
+          "unit_matched": true,
+          "basis": 90.1,
+          "derate": 76.9,
+          "offline": 20.0,
+          "loading": 8.6
+        },
+        {
+          "plant": 6019,
+          "gap_mw": 174.3,
+          "cap_mw": 662.3,
+          "unit_matched": true,
+          "basis": 84.3,
+          "derate": 16.0,
+          "offline": 46.0,
+          "loading": 27.9
+        },
+        {
+          "plant": 3140,
+          "gap_mw": 174.1,
+          "cap_mw": 377.1,
+          "unit_matched": true,
+          "basis": 216.0,
+          "derate": 24.4,
+          "offline": 1.9,
+          "loading": -68.1
+        },
+        {
+          "plant": 3935,
+          "gap_mw": 160.3,
+          "cap_mw": 1684.6,
+          "unit_matched": true,
+          "basis": 45.3,
+          "derate": 0.1,
+          "offline": 0.5,
+          "loading": 114.4
+        },
+        {
+          "plant": 10566,
+          "gap_mw": 158.5,
+          "cap_mw": 233.8,
+          "unit_matched": true,
+          "basis": 64.7,
+          "derate": 56.3,
+          "offline": 0.0,
+          "loading": 37.4
+        },
+        {
+          "plant": 10043,
+          "gap_mw": 140.8,
+          "cap_mw": 210.7,
+          "unit_matched": true,
+          "basis": 30.0,
+          "derate": 61.8,
+          "offline": 0.6,
+          "loading": 48.5
+        },
+        {
+          "plant": 602,
+          "gap_mw": 129.8,
+          "cap_mw": 676.8,
+          "unit_matched": true,
+          "basis": 13.0,
+          "derate": 10.9,
+          "offline": 23.3,
+          "loading": 82.6
+        },
+        {
+          "plant": 6166,
+          "gap_mw": 118.0,
+          "cap_mw": 1582.7,
+          "unit_matched": true,
+          "basis": 34.4,
+          "derate": -0.8,
+          "offline": 0.0,
+          "loading": 84.4
+        }
+      ],
+      "top10_gap_share": 0.799,
+      "top10_pieces_mw": {
+        "basis": 578,
+        "derate": 360,
+        "offline": 106,
+        "loading": 715
+      },
+      "reserve_bound_mw": 737
+    },
+    {
+      "year": 2020,
+      "hours": 976,
+      "plants": 42,
+      "unmatched_unit_level": [],
+      "model_mw": 25746,
+      "cap_mw": 27048,
+      "campd_mw": 23758,
+      "gap_mw": 1987,
+      "pieces_mw": {
+        "basis": 898,
+        "derate": 157,
+        "offline": 368,
+        "loading": 565
+      },
+      "pieces_per_cap": {
+        "basis": 0.0332,
+        "derate": 0.0058,
+        "offline": 0.0136,
+        "loading": 0.0209
+      },
+      "twin_pieces_mw": {
+        "basis": 1287,
+        "derate": 205,
+        "offline": 445,
+        "loading": 1352
+      },
+      "twin_per_cap": {
+        "basis": 0.0476,
+        "derate": 0.0076,
+        "offline": 0.0165,
+        "loading": 0.05
+      },
+      "unit_dark_share_of_derate_offline": 0.893,
+      "top10": [
+        {
+          "plant": 983,
+          "gap_mw": 164.8,
+          "cap_mw": 932.5,
+          "unit_matched": true,
+          "basis": 0.0,
+          "derate": 12.2,
+          "offline": 0.0,
+          "loading": 152.6
+        },
+        {
+          "plant": 3797,
+          "gap_mw": 147.0,
+          "cap_mw": 513.4,
+          "unit_matched": true,
+          "basis": 193.7,
+          "derate": 0.5,
+          "offline": 6.9,
+          "loading": -54.1
+        },
+        {
+          "plant": 54304,
+          "gap_mw": 146.6,
+          "cap_mw": 185.6,
+          "unit_matched": true,
+          "basis": 51.5,
+          "derate": 40.0,
+          "offline": 47.7,
+          "loading": 7.4
+        },
+        {
+          "plant": 3122,
+          "gap_mw": 144.9,
+          "cap_mw": 659.0,
+          "unit_matched": true,
+          "basis": 54.6,
+          "derate": -6.7,
+          "offline": 0.0,
+          "loading": 97.0
+        },
+        {
+          "plant": 2866,
+          "gap_mw": 140.3,
+          "cap_mw": 879.4,
+          "unit_matched": true,
+          "basis": 32.3,
+          "derate": 56.0,
+          "offline": 10.9,
+          "loading": 41.1
+        },
+        {
+          "plant": 3935,
+          "gap_mw": 128.2,
+          "cap_mw": 1733.4,
+          "unit_matched": true,
+          "basis": 0.0,
+          "derate": 24.4,
+          "offline": 4.5,
+          "loading": 99.2
+        },
+        {
+          "plant": 3948,
+          "gap_mw": 123.7,
+          "cap_mw": 764.8,
+          "unit_matched": true,
+          "basis": 45.7,
+          "derate": -14.2,
+          "offline": 0.0,
+          "loading": 92.2
+        },
+        {
+          "plant": 8102,
+          "gap_mw": 120.6,
+          "cap_mw": 2359.8,
+          "unit_matched": true,
+          "basis": 0.0,
+          "derate": 36.8,
+          "offline": 1.4,
+          "loading": 82.4
+        },
+        {
+          "plant": 10566,
+          "gap_mw": 114.0,
+          "cap_mw": 234.9,
+          "unit_matched": true,
+          "basis": 81.7,
+          "derate": 12.4,
+          "offline": 0.0,
+          "loading": 20.0
+        },
+        {
+          "plant": 6019,
+          "gap_mw": 103.4,
+          "cap_mw": 1096.2,
+          "unit_matched": true,
+          "basis": 0.0,
+          "derate": 0.5,
+          "offline": 101.1,
+          "loading": 1.7
+        }
+      ],
+      "top10_gap_share": 0.671,
+      "top10_pieces_mw": {
+        "basis": 459,
+        "derate": 162,
+        "offline": 172,
+        "loading": 540
+      },
+      "reserve_bound_mw": 1216
+    },
+    {
+      "year": 2021,
+      "hours": 1741,
+      "plants": 39,
+      "unmatched_unit_level": [],
+      "model_mw": 21684,
+      "cap_mw": 21981,
+      "campd_mw": 20074,
+      "gap_mw": 1611,
+      "pieces_mw": {
+        "basis": 280,
+        "derate": 513,
+        "offline": 236,
+        "loading": 582
+      },
+      "pieces_per_cap": {
+        "basis": 0.0127,
+        "derate": 0.0233,
+        "offline": 0.0107,
+        "loading": 0.0265
+      },
+      "twin_pieces_mw": {
+        "basis": 342,
+        "derate": 574,
+        "offline": 246,
+        "loading": 747
+      },
+      "twin_per_cap": {
+        "basis": 0.0155,
+        "derate": 0.0261,
+        "offline": 0.0112,
+        "loading": 0.034
+      },
+      "unit_dark_share_of_derate_offline": 0.722,
+      "top10": [
+        {
+          "plant": 6166,
+          "gap_mw": 259.6,
+          "cap_mw": 990.3,
+          "unit_matched": true,
+          "basis": 28.5,
+          "derate": 62.0,
+          "offline": 0.0,
+          "loading": 169.0
+        },
+        {
+          "plant": 3136,
+          "gap_mw": 159.7,
+          "cap_mw": 1077.3,
+          "unit_matched": true,
+          "basis": 0.0,
+          "derate": 18.3,
+          "offline": 3.7,
+          "loading": 137.7
+        },
+        {
+          "plant": 10566,
+          "gap_mw": 155.0,
+          "cap_mw": 233.2,
+          "unit_matched": true,
+          "basis": 41.3,
+          "derate": 77.8,
+          "offline": 2.2,
+          "loading": 33.6
+        },
+        {
+          "plant": 8102,
+          "gap_mw": 139.7,
+          "cap_mw": 1845.4,
+          "unit_matched": true,
+          "basis": 0.0,
+          "derate": 48.4,
+          "offline": 14.9,
+          "loading": 76.4
+        },
+        {
+          "plant": 3118,
+          "gap_mw": 123.1,
+          "cap_mw": 943.1,
+          "unit_matched": true,
+          "basis": 0.0,
+          "derate": 14.1,
+          "offline": 2.4,
+          "loading": 106.6
+        },
+        {
+          "plant": 10043,
+          "gap_mw": 104.2,
+          "cap_mw": 210.4,
+          "unit_matched": true,
+          "basis": 10.3,
+          "derate": 35.4,
+          "offline": 17.8,
+          "loading": 40.8
+        },
+        {
+          "plant": 602,
+          "gap_mw": 99.6,
+          "cap_mw": 606.5,
+          "unit_matched": true,
+          "basis": 10.4,
+          "derate": 11.9,
+          "offline": 19.7,
+          "loading": 57.6
+        },
+        {
+          "plant": 6019,
+          "gap_mw": 86.8,
+          "cap_mw": 819.0,
+          "unit_matched": true,
+          "basis": 0.0,
+          "derate": 42.9,
+          "offline": 22.9,
+          "loading": 21.0
+        },
+        {
+          "plant": 3943,
+          "gap_mw": 79.2,
+          "cap_mw": 780.0,
+          "unit_matched": true,
+          "basis": 0.0,
+          "derate": 21.8,
+          "offline": 2.0,
+          "loading": 55.4
+        },
+        {
+          "plant": 3140,
+          "gap_mw": 78.0,
+          "cap_mw": 493.7,
+          "unit_matched": true,
+          "basis": 0.0,
+          "derate": 15.1,
+          "offline": 16.7,
+          "loading": 46.1
+        }
+      ],
+      "top10_gap_share": 0.798,
+      "top10_pieces_mw": {
+        "basis": 91,
+        "derate": 348,
+        "offline": 102,
+        "loading": 744
+      },
+      "reserve_bound_mw": 407
+    },
+    {
+      "year": 2022,
+      "hours": 2852,
+      "plants": 37,
+      "unmatched_unit_level": [],
+      "model_mw": 21685,
+      "cap_mw": 23549,
+      "campd_mw": 19563,
+      "gap_mw": 2122,
+      "pieces_mw": {
+        "basis": 613,
+        "derate": 539,
+        "offline": 235,
+        "loading": 735
+      },
+      "pieces_per_cap": {
+        "basis": 0.026,
+        "derate": 0.0229,
+        "offline": 0.01,
+        "loading": 0.0312
+      },
+      "twin_pieces_mw": {
+        "basis": 874,
+        "derate": 738,
+        "offline": 274,
+        "loading": 2099
+      },
+      "twin_per_cap": {
+        "basis": 0.0371,
+        "derate": 0.0313,
+        "offline": 0.0117,
+        "loading": 0.0891
+      },
+      "unit_dark_share_of_derate_offline": 0.788,
+      "top10": [
+        {
+          "plant": 6166,
+          "gap_mw": 458.7,
+          "cap_mw": 1346.5,
+          "unit_matched": true,
+          "basis": 171.7,
+          "derate": 114.1,
+          "offline": 0.0,
+          "loading": 172.9
+        },
+        {
+          "plant": 3935,
+          "gap_mw": 429.9,
+          "cap_mw": 1713.8,
+          "unit_matched": true,
+          "basis": 17.5,
+          "derate": 47.8,
+          "offline": 0.7,
+          "loading": 363.9
+        },
+        {
+          "plant": 602,
+          "gap_mw": 206.1,
+          "cap_mw": 728.7,
+          "unit_matched": true,
+          "basis": 12.2,
+          "derate": 17.0,
+          "offline": 9.0,
+          "loading": 167.9
+        },
+        {
+          "plant": 3948,
+          "gap_mw": 176.4,
+          "cap_mw": 818.1,
+          "unit_matched": true,
+          "basis": 19.6,
+          "derate": 36.9,
+          "offline": 0.0,
+          "loading": 119.9
+        },
+        {
+          "plant": 3943,
+          "gap_mw": 173.6,
+          "cap_mw": 899.3,
+          "unit_matched": true,
+          "basis": 0.0,
+          "derate": 52.6,
+          "offline": 5.5,
+          "loading": 115.5
+        },
+        {
+          "plant": 3122,
+          "gap_mw": 132.5,
+          "cap_mw": 598.1,
+          "unit_matched": true,
+          "basis": 30.6,
+          "derate": 32.5,
+          "offline": 9.2,
+          "loading": 60.2
+        },
+        {
+          "plant": 1554,
+          "gap_mw": 126.8,
+          "cap_mw": 198.8,
+          "unit_matched": true,
+          "basis": 10.9,
+          "derate": 90.1,
+          "offline": 24.2,
+          "loading": 1.6
+        },
+        {
+          "plant": 3797,
+          "gap_mw": 115.2,
+          "cap_mw": 386.1,
+          "unit_matched": true,
+          "basis": 136.3,
+          "derate": -0.0,
+          "offline": 13.6,
+          "loading": -34.7
+        },
+        {
+          "plant": 6264,
+          "gap_mw": 109.4,
+          "cap_mw": 926.0,
+          "unit_matched": true,
+          "basis": 0.0,
+          "derate": 19.1,
+          "offline": 15.8,
+          "loading": 74.5
+        },
+        {
+          "plant": 594,
+          "gap_mw": 93.0,
+          "cap_mw": 133.5,
+          "unit_matched": true,
+          "basis": 62.8,
+          "derate": 26.4,
+          "offline": 7.3,
+          "loading": -3.5
+        }
+      ],
+      "top10_gap_share": 0.953,
+      "top10_pieces_mw": {
+        "basis": 462,
+        "derate": 437,
+        "offline": 85,
+        "loading": 1038
+      },
+      "reserve_bound_mw": null
+    },
+    {
+      "year": 2023,
+      "hours": 2658,
+      "plants": 31,
+      "unmatched_unit_level": [],
+      "model_mw": 14228,
+      "cap_mw": 17623,
+      "campd_mw": 13671,
+      "gap_mw": 557,
+      "pieces_mw": {
+        "basis": 238,
+        "derate": 577,
+        "offline": 82,
+        "loading": -340
+      },
+      "pieces_per_cap": {
+        "basis": 0.0135,
+        "derate": 0.0327,
+        "offline": 0.0046,
+        "loading": -0.0193
+      },
+      "twin_pieces_mw": {
+        "basis": 853,
+        "derate": 888,
+        "offline": 108,
+        "loading": 2103
+      },
+      "twin_per_cap": {
+        "basis": 0.0484,
+        "derate": 0.0504,
+        "offline": 0.0061,
+        "loading": 0.1194
+      },
+      "unit_dark_share_of_derate_offline": 0.787,
+      "top10": [
+        {
+          "plant": 3122,
+          "gap_mw": 553.1,
+          "cap_mw": 869.1,
+          "unit_matched": true,
+          "basis": 144.2,
+          "derate": 359.3,
+          "offline": 12.8,
+          "loading": 36.8
+        },
+        {
+          "plant": 3935,
+          "gap_mw": 293.4,
+          "cap_mw": 1757.8,
+          "unit_matched": true,
+          "basis": 23.3,
+          "derate": 36.4,
+          "offline": 0.0,
+          "loading": 233.7
+        },
+        {
+          "plant": 6264,
+          "gap_mw": 157.8,
+          "cap_mw": 844.5,
+          "unit_matched": true,
+          "basis": 0.0,
+          "derate": 27.7,
+          "offline": 0.8,
+          "loading": 129.3
+        },
+        {
+          "plant": 983,
+          "gap_mw": 153.0,
+          "cap_mw": 866.9,
+          "unit_matched": true,
+          "basis": 1.1,
+          "derate": 28.9,
+          "offline": 0.0,
+          "loading": 123.0
+        },
+        {
+          "plant": 6018,
+          "gap_mw": 83.8,
+          "cap_mw": 406.5,
+          "unit_matched": true,
+          "basis": 0.0,
+          "derate": 24.5,
+          "offline": 11.5,
+          "loading": 47.8
+        },
+        {
+          "plant": 3118,
+          "gap_mw": 60.8,
+          "cap_mw": 540.9,
+          "unit_matched": true,
+          "basis": 27.0,
+          "derate": -20.0,
+          "offline": 0.2,
+          "loading": 53.6
+        },
+        {
+          "plant": 6041,
+          "gap_mw": 49.9,
+          "cap_mw": 1008.5,
+          "unit_matched": true,
+          "basis": 0.2,
+          "derate": 17.5,
+          "offline": 0.0,
+          "loading": 32.2
+        },
+        {
+          "plant": 2876,
+          "gap_mw": 48.5,
+          "cap_mw": 716.2,
+          "unit_matched": true,
+          "basis": 0.0,
+          "derate": 6.3,
+          "offline": 0.0,
+          "loading": 42.2
+        },
+        {
+          "plant": 56671,
+          "gap_mw": 42.4,
+          "cap_mw": 559.6,
+          "unit_matched": true,
+          "basis": 0.0,
+          "derate": 12.8,
+          "offline": 12.4,
+          "loading": 17.2
+        },
+        {
+          "plant": 6004,
+          "gap_mw": 34.9,
+          "cap_mw": 645.4,
+          "unit_matched": true,
+          "basis": 0.0,
+          "derate": 11.4,
+          "offline": 13.4,
+          "loading": 10.1
+        }
+      ],
+      "top10_gap_share": 2.652,
+      "top10_pieces_mw": {
+        "basis": 196,
+        "derate": 505,
+        "offline": 51,
+        "loading": 726
+      },
+      "reserve_bound_mw": null
+    },
+    {
+      "year": 2024,
+      "hours": 3721,
+      "plants": 28,
+      "unmatched_unit_level": [],
+      "model_mw": 13439,
+      "cap_mw": 16846,
+      "campd_mw": 13523,
+      "gap_mw": -84,
+      "pieces_mw": {
+        "basis": 122,
+        "derate": 266,
+        "offline": 45,
+        "loading": -517
+      },
+      "pieces_per_cap": {
+        "basis": 0.0072,
+        "derate": 0.0158,
+        "offline": 0.0027,
+        "loading": -0.0307
+      },
+      "twin_pieces_mw": {
+        "basis": 346,
+        "derate": 688,
+        "offline": 109,
+        "loading": 2180
+      },
+      "twin_per_cap": {
+        "basis": 0.0206,
+        "derate": 0.0408,
+        "offline": 0.0065,
+        "loading": 0.1294
+      },
+      "unit_dark_share_of_derate_offline": 0.617,
+      "top10": [
+        {
+          "plant": 3935,
+          "gap_mw": 300.6,
+          "cap_mw": 1974.1,
+          "unit_matched": true,
+          "basis": 0.0,
+          "derate": 43.6,
+          "offline": 0.0,
+          "loading": 257.0
+        },
+        {
+          "plant": 3149,
+          "gap_mw": 190.3,
+          "cap_mw": 267.0,
+          "unit_matched": true,
+          "basis": 89.3,
+          "derate": 135.2,
+          "offline": 0.6,
+          "loading": -34.8
+        },
+        {
+          "plant": 3948,
+          "gap_mw": 181.4,
+          "cap_mw": 923.7,
+          "unit_matched": true,
+          "basis": 9.6,
+          "derate": 21.7,
+          "offline": 10.7,
+          "loading": 139.4
+        },
+        {
+          "plant": 6264,
+          "gap_mw": 156.8,
+          "cap_mw": 803.2,
+          "unit_matched": true,
+          "basis": 0.0,
+          "derate": 14.5,
+          "offline": 0.0,
+          "loading": 142.4
+        },
+        {
+          "plant": 6018,
+          "gap_mw": 95.3,
+          "cap_mw": 383.9,
+          "unit_matched": true,
+          "basis": 0.0,
+          "derate": 8.6,
+          "offline": 0.1,
+          "loading": 86.5
+        },
+        {
+          "plant": 3118,
+          "gap_mw": 41.6,
+          "cap_mw": 581.9,
+          "unit_matched": true,
+          "basis": 0.0,
+          "derate": 1.2,
+          "offline": 0.7,
+          "loading": 39.6
+        },
+        {
+          "plant": 2876,
+          "gap_mw": 41.0,
+          "cap_mw": 681.4,
+          "unit_matched": true,
+          "basis": 0.0,
+          "derate": 1.8,
+          "offline": 0.0,
+          "loading": 39.2
+        },
+        {
+          "plant": 6004,
+          "gap_mw": 16.9,
+          "cap_mw": 190.2,
+          "unit_matched": true,
+          "basis": 11.6,
+          "derate": 4.4,
+          "offline": 0.0,
+          "loading": 0.9
+        },
+        {
+          "plant": 1040,
+          "gap_mw": 2.1,
+          "cap_mw": 14.4,
+          "unit_matched": true,
+          "basis": 0.2,
+          "derate": 1.4,
+          "offline": 1.9,
+          "loading": -1.4
+        },
+        {
+          "plant": 56671,
+          "gap_mw": 0.8,
+          "cap_mw": 588.5,
+          "unit_matched": true,
+          "basis": 0.0,
+          "derate": 0.0,
+          "offline": 0.4,
+          "loading": 0.4
+        }
+      ],
+      "top10_gap_share": -12.237,
+      "top10_pieces_mw": {
+        "basis": 111,
+        "derate": 232,
+        "offline": 14,
+        "loading": 669
+      },
+      "reserve_bound_mw": null
+    },
+    {
+      "year": 2025,
+      "hours": 3288,
+      "plants": 26,
+      "unmatched_unit_level": [],
+      "model_mw": 17671,
+      "cap_mw": 18826,
+      "campd_mw": 16726,
+      "gap_mw": 946,
+      "pieces_mw": {
+        "basis": 26,
+        "derate": 249,
+        "offline": 148,
+        "loading": 522
+      },
+      "pieces_per_cap": {
+        "basis": 0.0014,
+        "derate": 0.0132,
+        "offline": 0.0079,
+        "loading": 0.0277
+      },
+      "twin_pieces_mw": {
+        "basis": 48,
+        "derate": 368,
+        "offline": 191,
+        "loading": 1493
+      },
+      "twin_per_cap": {
+        "basis": 0.0026,
+        "derate": 0.0195,
+        "offline": 0.0101,
+        "loading": 0.0793
+      },
+      "unit_dark_share_of_derate_offline": 0.795,
+      "top10": [
+        {
+          "plant": 3948,
+          "gap_mw": 227.8,
+          "cap_mw": 894.5,
+          "unit_matched": true,
+          "basis": 9.7,
+          "derate": 43.0,
+          "offline": 0.0,
+          "loading": 175.1
+        },
+        {
+          "plant": 3935,
+          "gap_mw": 226.0,
+          "cap_mw": 1635.1,
+          "unit_matched": true,
+          "basis": 0.0,
+          "derate": 18.6,
+          "offline": 0.0,
+          "loading": 207.5
+        },
+        {
+          "plant": 8102,
+          "gap_mw": 199.2,
+          "cap_mw": 1767.8,
+          "unit_matched": true,
+          "basis": 0.0,
+          "derate": 28.6,
+          "offline": 20.8,
+          "loading": 149.9
+        },
+        {
+          "plant": 6264,
+          "gap_mw": 132.5,
+          "cap_mw": 1073.8,
+          "unit_matched": true,
+          "basis": 0.0,
+          "derate": 16.3,
+          "offline": 13.8,
+          "loading": 102.4
+        },
+        {
+          "plant": 6166,
+          "gap_mw": 116.0,
+          "cap_mw": 1470.4,
+          "unit_matched": true,
+          "basis": 0.0,
+          "derate": 59.2,
+          "offline": 0.0,
+          "loading": 56.7
+        },
+        {
+          "plant": 3944,
+          "gap_mw": 110.1,
+          "cap_mw": 1481.5,
+          "unit_matched": true,
+          "basis": 0.0,
+          "derate": 1.6,
+          "offline": 10.3,
+          "loading": 98.3
+        },
+        {
+          "plant": 3943,
+          "gap_mw": 76.1,
+          "cap_mw": 901.5,
+          "unit_matched": true,
+          "basis": 0.0,
+          "derate": 5.7,
+          "offline": 0.7,
+          "loading": 69.7
+        },
+        {
+          "plant": 6018,
+          "gap_mw": 74.1,
+          "cap_mw": 413.6,
+          "unit_matched": true,
+          "basis": 0.0,
+          "derate": 18.1,
+          "offline": 8.0,
+          "loading": 48.0
+        },
+        {
+          "plant": 3118,
+          "gap_mw": 71.2,
+          "cap_mw": 730.9,
+          "unit_matched": true,
+          "basis": 0.0,
+          "derate": 6.4,
+          "offline": 23.7,
+          "loading": 41.0
+        },
+        {
+          "plant": 6004,
+          "gap_mw": 57.4,
+          "cap_mw": 126.9,
+          "unit_matched": true,
+          "basis": 5.9,
+          "derate": 31.5,
+          "offline": 23.8,
+          "loading": -3.8
+        }
+      ],
+      "top10_gap_share": 1.364,
+      "top10_pieces_mw": {
+        "basis": 16,
+        "derate": 229,
+        "offline": 101,
+        "loading": 945
+      },
+      "reserve_bound_mw": null
+    }
+  ],
+  "readings": {
+    "R1": {
+      "pooled_share_2019_21": {
+        "basis": 0.367,
+        "derate": 0.218,
+        "offline": 0.154,
+        "loading": 0.261
+      },
+      "verdict": "mixed (basis, loading)"
+    },
+    "R2": {
+      "basis": {
+        "M_fail_minus_pass": 0.012,
+        "K_fail_minus_pass": -0.0054,
+        "verdict": "not discriminating"
+      },
+      "derate": {
+        "M_fail_minus_pass": -0.0079,
+        "K_fail_minus_pass": -0.0252,
+        "verdict": "not discriminating"
+      },
+      "offline": {
+        "M_fail_minus_pass": 0.007,
+        "K_fail_minus_pass": 0.0059,
+        "verdict": "not discriminating"
+      },
+      "loading": {
+        "M_fail_minus_pass": 0.0487,
+        "K_fail_minus_pass": -0.0691,
+        "verdict": "level"
+      }
+    },
+    "R3": {
+      "top10_gap_share_mean_2019_21": 0.756,
+      "top10_lead_piece": "loading",
+      "verdict": "not concentrated"
+    },
+    "R4": {
+      "by_year": {
+        "2019": {
+          "reserve_bound_mw": 737,
+          "loading_mw": 338,
+          "ratio": 2.18
+        },
+        "2020": {
+          "reserve_bound_mw": 1216,
+          "loading_mw": 565,
+          "ratio": 2.152
+        },
+        "2021": {
+          "reserve_bound_mw": 407,
+          "loading_mw": 582,
+          "ratio": 0.699
+        }
+      },
+      "verdict": "cannot exclude"
+    }
+  }
+}

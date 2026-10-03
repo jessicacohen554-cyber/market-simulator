@@ -19,6 +19,7 @@ from market_sim.model.lp.layout import (
     _build_zone_gen_map,
     _build_zone_storage_map,
     _vstack_csr_free,
+    kron_hours,
 )
 
 if TYPE_CHECKING:  # quoted annotation only; the row builder imports lazily
@@ -822,7 +823,7 @@ def _build_storage_alloc_rows(
     day_block = sp.coo_matrix(
         (data.ravel(), (rows, cols)), shape=(act.size, 24 * vph)
     ).tocsr()
-    block = sp.kron(sp.eye(n_days, format="csr"), day_block, format="csr")
+    block = kron_hours(n_days, day_block)
     if block.shape[1] < layout.total_columns:
         # Horizon tail shorter than a whole day (never in the 8760 frame):
         # pad zero columns so the block conforms.
@@ -985,7 +986,7 @@ def _build_interface_rows(
     per_hour = sp.coo_matrix((data, (rows, cols)), shape=(n_groups, vph)).tocsr()
     # kron(eye(T), per_hour) tiles the per-hour coefficient block across all
     # hours; column hour-stride vph lands each link's flow in its own hour.
-    block = sp.kron(sp.eye(T, format="csr"), per_hour, format="csr")
+    block = kron_hours(T, per_hour)
     return block, lower_2d.ravel(), upper_2d.ravel()
 
 
@@ -1144,7 +1145,7 @@ def _build_local_capacity_rows(
         (np.concatenate(data), (np.concatenate(rows), np.concatenate(cols))),
         shape=(n_areas, vph),
     ).tocsr()
-    block = sp.kron(sp.eye(T, format="csr"), per_hour, format="csr")
+    block = kron_hours(T, per_hour)
     return block, rhs_2d.ravel(), np.full(n_areas * T, np.inf)
 
 
@@ -1205,7 +1206,7 @@ def _build_gen_group_cap_rows(
         (data_all, (np.zeros(cols_all.size, dtype=int), cols_all)),
         shape=(1, layout.vars_per_hour),
     ).tocsr()
-    block = sp.kron(sp.eye(T, format="csr"), per_hour, format="csr")
+    block = kron_hours(T, per_hour)
     upper = np.asarray(cap_t, dtype=float)[:T]
     return block, np.full(T, -np.inf), upper
 
@@ -1285,7 +1286,7 @@ def _build_posture_energy_rows(
         ),
         shape=(q, vph),
     ).tocsr()
-    blocks.append(sp.kron(sp.eye(T, format="csr"), hr_per_hour, format="csr"))
+    blocks.append(kron_hours(T, hr_per_hour))
     lowers.append(np.full(q * T, -np.inf))
     uppers.append(np.zeros(q * T))
 
@@ -1312,7 +1313,7 @@ def _build_posture_energy_rows(
             ),
             shape=(m_sel.size, vph),
         ).tocsr()
-        blocks.append(sp.kron(sp.eye(T, format="csr"), ml_per_hour, format="csr"))
+        blocks.append(kron_hours(T, ml_per_hour))
         lowers.append(np.zeros(m_sel.size * T))
         uppers.append(np.full(m_sel.size * T, np.inf))
 
@@ -1337,10 +1338,7 @@ def _build_posture_energy_rows(
         (np.ones(T), (np.arange(T), (np.arange(T) - 1) % T)),
         shape=(T, T),
     )
-    blocks.append(
-        sp.kron(sp.eye(T, format="csr"), d0, format="csr")
-        + sp.kron(shift_prev, d_prev, format="csr")
-    )
+    blocks.append(kron_hours(T, d0) + sp.kron(shift_prev, d_prev, format="csr"))
     lowers.append(np.full(q * T, -np.inf))
     uppers.append(np.zeros(q * T))
 
@@ -1396,11 +1394,7 @@ def _build_posture_energy_rows(
                 if kind == "up":
                     mat = sp.kron(
                         _window_sum(int(width)), su_sel, format="csr"
-                    ) + sp.kron(
-                        sp.eye(T, format="csr"),
-                        _selector(pools, u_off, -1.0),
-                        format="csr",
-                    )
+                    ) + kron_hours(T, _selector(pools, u_off, -1.0))
                     rhs = _window_max(cap[pools], int(width) - 1) - cap[pools]
                 else:
                     shift = sp.csr_matrix(
@@ -1702,7 +1696,7 @@ def build_constraints(
     )
 
     # Replicate the per-hour block across all hours without a Python loop.
-    energy_balance = sp.kron(sp.eye(T, format="csr"), per_hour, format="csr")
+    energy_balance = kron_hours(T, per_hour)
 
     # Marginal transmission losses (miso_zonal_loss_surface): scale the
     # RECEIVING-end incidence entry of each lossy one-way link from +1 to

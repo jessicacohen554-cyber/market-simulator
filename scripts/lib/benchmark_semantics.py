@@ -130,7 +130,17 @@ EIA930_NG_CELL_CORRUPT: frozenset[str] = frozenset({"CAISO"})
 # deflation fired the combined reconcile at x0.956 (2024) on every SOCO fossil
 # class — coal included, where 930 and 923 agree to 0.7 %. Benchmark-only:
 # no solve reads this.
-EIA930_GAS_FOLD_REFUTED: frozenset[str] = frozenset({"SOCO"})
+#
+# CAISO (owner ruling R-33 "Refute the gas fold for CAISO", 2026-10-03; evidence
+# docs/records/caiso/closeout-caiso-2/FINDING-closeout-caiso-2-cc-object-2026-10-03.md
+# §1, probe scripts/probes/_closeout_caiso_2_cc_object.py): on SOCO-60's own test,
+# CISO 930 gas minus the 923 gas classes FULL (CHP host incl.) is -3.71 / -0.45 /
+# +1.05 TWh in 2019 / 2020 / 2021 against a fold F of 14.76 / 15.07 / 14.48 TWh,
+# and EIA-923 grid gas and CEMS agree within 2.5 % while the deflated target sat
+# 11-13 % below both (2019). The CEMS cap (EIA930_NG_CORRUPT_ONSET) is kept.
+# Benchmark-only: the CAISO demand derive reads the geo/biomass term through
+# :func:`geo_biomass_outside_930_other`, which this set does not gate.
+EIA930_GAS_FOLD_REFUTED: frozenset[str] = frozenset({"SOCO", "CAISO"})
 
 # First VINTAGE year the corruption contaminates: the hourly gas actual
 # (fuelRows / C4) switches to the CEMS+cogen basis from this vintage; earlier
@@ -152,6 +162,24 @@ EIA930_GAS_FOLD_REFUTED: frozenset[str] = frozenset({"SOCO"})
 EIA930_NG_CORRUPT_ONSET: dict[str, int] = {"CAISO": 2023}
 
 
+def geo_biomass_outside_930_other(classfull: dict, e930: dict) -> float:
+    """TWh of EIA-923 geothermal (OTHER) + biomass absent from EIA-930 "Other".
+
+    ``max(0, OTHER + biomass - e930["other"])``, or 0 when the bundle carries no
+    EIA-930 ``other`` series. This is a measured quantity, independent of where
+    (if anywhere) the BA put that energy in its 930 report: the CAISO
+    supply-consistent demand derive adds it back as its own term after removing
+    the whole NG cell (caiso-80 Option A), so it must not be zeroed by the
+    benchmark-side :data:`EIA930_GAS_FOLD_REFUTED` ruling (R-33).
+    """
+    if "other" not in e930:
+        return 0.0
+    model_other_bio = float(classfull.get("OTHER", 0.0)) + float(
+        classfull.get("biomass", 0.0)
+    )
+    return max(0.0, model_other_bio - float(e930.get("other", 0.0)))
+
+
 def gas_foldin_deflation(classfull: dict, e930: dict, iso: str) -> float:
     """TWh of geothermal+biomass a BA folded into its EIA-930 "Natural Gas" cell.
 
@@ -167,13 +195,13 @@ def gas_foldin_deflation(classfull: dict, e930: dict, iso: str) -> float:
       :data:`EIA930_GAS_FOLDS_GEO_BIOMASS` allowlist. Coal never folds.
 
     A BA in :data:`EIA930_GAS_FOLD_REFUTED` returns 0: its gas cell is measured
-    not to carry the fold (SOCO-60).
+    not to carry the fold (SOCO-60; CAISO R-33).
     """
     if iso in EIA930_GAS_FOLD_REFUTED:
         return 0.0
+    if "other" in e930:
+        return geo_biomass_outside_930_other(classfull, e930)
     model_other_bio = float(classfull.get("OTHER", 0.0)) + float(
         classfull.get("biomass", 0.0)
     )
-    if "other" in e930:
-        return max(0.0, model_other_bio - float(e930.get("other", 0.0)))
     return model_other_bio if iso in EIA930_GAS_FOLDS_GEO_BIOMASS else 0.0

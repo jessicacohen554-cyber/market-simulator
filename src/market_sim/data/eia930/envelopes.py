@@ -349,6 +349,70 @@ def measured_hydro_min_flow_level(
     return np.clip(level, 0.0, None)
 
 
+def _month_hod_buckets(
+    month: np.ndarray, hod: np.ndarray
+) -> list[tuple[np.ndarray, bool]]:
+    """Return, per calendar month, the source rows and whether they tile 24 hods.
+
+    One entry per month 1..12: ``(row_index, aligned)`` where ``row_index`` is
+    the source positions whose month matches and ``aligned`` is true when
+    those rows are whole days on a plain hourly clock (the hour-of-day cycles
+    exactly ``0..23``), so a ``(days, 24)`` view puts hour ``h`` in column ``h``.
+    Shared by every (month × hour-of-day) percentile table below so a
+    per-zone loop partitions the clock once.
+    """
+    hod = np.asarray(hod)
+    pattern = np.arange(24)
+    out: list[tuple[np.ndarray, bool]] = []
+    for m in range(1, 13):
+        idx = np.flatnonzero(month == m)
+        aligned = (
+            idx.size > 0
+            and idx.size % 24 == 0
+            and np.array_equal(
+                hod[idx].reshape(-1, 24), np.broadcast_to(pattern, (idx.size // 24, 24))
+            )
+        )
+        out.append((idx, bool(aligned)))
+    return out
+
+
+def _month_hod_percentile_table(
+    values: np.ndarray,
+    hod: np.ndarray,
+    percentile: float,
+    buckets: list[tuple[np.ndarray, bool]],
+    drop_nonfinite: bool,
+) -> np.ndarray:
+    """Return the ``(12, 24)`` per-(month, hour-of-day) ``percentile`` of ``values``.
+
+    Buckets with no sample stay 0. With ``drop_nonfinite`` the non-finite
+    samples leave their bucket first (a bucket of only NaN stays 0); without it
+    the bucket is reduced as-is. A month whose rows are aligned whole days
+    (:func:`_month_hod_buckets`) and, when dropping, has no non-finite sample
+    is reduced in one ``np.percentile(..., axis=0)`` call on its ``(days, 24)``
+    view — elementwise the same reduction as the per-bucket call, so the
+    floats are identical; any other month takes the per-bucket path.
+    """
+    hod = np.asarray(hod)
+    table = np.zeros((12, 24))
+    for mi, (idx, aligned) in enumerate(buckets):
+        if idx.size == 0:
+            continue
+        v = values[idx]
+        if aligned and (not drop_nonfinite or np.isfinite(v).all()):
+            table[mi] = np.percentile(v.reshape(-1, 24), percentile, axis=0)
+            continue
+        hh = hod[idx]
+        for h in range(24):
+            b = v[hh == h]
+            if drop_nonfinite:
+                b = b[np.isfinite(b)]
+            if b.size:
+                table[mi, h] = np.percentile(b, percentile)
+    return table
+
+
 def measured_interchange_envelope(
     iso: str, year: int, hours: int, percentile: float = 90.0
 ) -> tuple[np.ndarray, np.ndarray] | None:
@@ -392,21 +456,9 @@ def measured_interchange_envelope(
     exp = np.where(np.isfinite(ti), np.clip(ti, 0.0, None), np.nan)
 
     # Per (month, hour-of-day) bucket percentile. Empty buckets stay 0.
-    imp_tab = np.zeros((12, 24))
-    exp_tab = np.zeros((12, 24))
-    for m in range(1, 13):
-        for h in range(24):
-            sel = (month == m) & (hod == h)
-            if not sel.any():
-                continue
-            ii = imp[sel]
-            ee = exp[sel]
-            ii = ii[np.isfinite(ii)]
-            ee = ee[np.isfinite(ee)]
-            if ii.size:
-                imp_tab[m - 1, h] = np.percentile(ii, percentile)
-            if ee.size:
-                exp_tab[m - 1, h] = np.percentile(ee, percentile)
+    buckets = _month_hod_buckets(month, hod)
+    imp_tab = _month_hod_percentile_table(imp, hod, percentile, buckets, True)
+    exp_tab = _month_hod_percentile_table(exp, hod, percentile, buckets, True)
 
     # Map the (month, hod) tables onto the run horizon. Row 0 of the dispatch
     # is the first local hour of the year (see _eia_hourly_frame), so a plain
@@ -462,14 +514,9 @@ def measured_gas_floor_profile(
     hod = local.hour.to_numpy(dtype=float)
     ng = pd.to_numeric(frame["NG: NG"], errors="coerce").to_numpy()
 
-    tab = np.zeros((12, 24))
-    for m in range(1, 13):
-        for h in range(24):
-            sel = (month == m) & (hod == h)
-            v = ng[sel]
-            v = v[np.isfinite(v)]
-            if v.size:
-                tab[m - 1, h] = np.percentile(v, percentile)
+    tab = _month_hod_percentile_table(
+        ng, hod, percentile, _month_hod_buckets(month, hod), True
+    )
 
     clock = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
     rm = clock.month.to_numpy() - 1
@@ -1688,17 +1735,17 @@ def pjm_zonal_interchange_envelope(
     n = len(zone_names)
     imp_tab = np.zeros((n, 12, 24))
     exp_tab = np.zeros((n, 12, 24))
+    buckets = _month_hod_buckets(s_month, s_hod)
     for zi in range(n):
         e = zonal[zi]
         imp = np.clip(-e, 0.0, None)  # import into PJM at this border
         exp = np.clip(e, 0.0, None)  # export out of PJM at this border
-        for m in range(1, 13):
-            for h in range(24):
-                sel = (s_month == m) & (s_hod == h)
-                if not sel.any():
-                    continue
-                imp_tab[zi, m - 1, h] = np.percentile(imp[sel], percentile)
-                exp_tab[zi, m - 1, h] = np.percentile(exp[sel], percentile)
+        imp_tab[zi] = _month_hod_percentile_table(
+            imp, s_hod, percentile, buckets, False
+        )
+        exp_tab[zi] = _month_hod_percentile_table(
+            exp, s_hod, percentile, buckets, False
+        )
     # Map the (month, hod) tables onto the run horizon (row 0 = first local hour).
     clock = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
     rm = clock.month.to_numpy() - 1
@@ -1777,17 +1824,17 @@ def pjm_neighbor_interchange_envelope(
     n = len(neighbor_names)
     imp_tab = np.zeros((n, 12, 24))
     exp_tab = np.zeros((n, 12, 24))
+    buckets = _month_hod_buckets(s_month, s_hod)
     for ni in range(n):
         e = series[ni]
         imp = np.clip(-e, 0.0, None)  # import into PJM across this seam
         exp = np.clip(e, 0.0, None)  # export out of PJM across this seam
-        for m in range(1, 13):
-            for h in range(24):
-                sel = (s_month == m) & (s_hod == h)
-                if not sel.any():
-                    continue
-                imp_tab[ni, m - 1, h] = np.percentile(imp[sel], percentile)
-                exp_tab[ni, m - 1, h] = np.percentile(exp[sel], percentile)
+        imp_tab[ni] = _month_hod_percentile_table(
+            imp, s_hod, percentile, buckets, False
+        )
+        exp_tab[ni] = _month_hod_percentile_table(
+            exp, s_hod, percentile, buckets, False
+        )
     clock = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
     rm = clock.month.to_numpy() - 1
     rh = clock.hour.to_numpy()
@@ -1835,12 +1882,9 @@ def pjm_net_interchange_envelope(
     src_clock = pd.date_range(f"{year}-01-01", periods=src_hours, freq="h")
     s_month = src_clock.month.to_numpy()
     s_hod = src_clock.hour.to_numpy()
-    table = np.zeros((12, 24))
-    for m in range(1, 13):
-        for h in range(24):
-            sel = (s_month == m) & (s_hod == h)
-            if sel.any():
-                table[m - 1, h] = np.percentile(net_import[sel], percentile)
+    table = _month_hod_percentile_table(
+        net_import, s_hod, percentile, _month_hod_buckets(s_month, s_hod), False
+    )
     clock = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
     return table[clock.month.to_numpy() - 1, clock.hour.to_numpy()]
 
@@ -2082,12 +2126,15 @@ def _nwpp_grid_pool_carried_wind(year: int) -> np.ndarray:
 
 # NWPP-NEXT-3 plant-basis anchor (``ScenarioConfig.nwpp_demand_plant_basis``).
 # Committed artifact: per (year, EIA-930 fuel family) annual grid-delivered
-# EIA-923 plant energy of the footprint's plants, derived from the NWPP bench
-# parts' ``classFull`` by scripts/data/derive_nwpp_plant_basis_energy.py.
+# EIA-923 plant energy of the footprint's plants, derived from the source data
+# by scripts/data/derive_nwpp_plant_basis_energy.py with the bench part's
+# ``classFull`` construction on a roster-free plant -> class map (EIA-860
+# footprint, each plant's dominant EIA-923 class), so a keeper's fleet roster
+# never moves it (closeout-nwpp-anchor, owner ruling R-28).
 NWPP_PLANT_BASIS_ENERGY_PATH: Path = REFERENCE_DIR / "nwpp_plant_basis_energy.csv"
 
 # Benchmark class -> the EIA-930 ``NG: <family>`` fuel family that books it.
-# Every classFull class must appear; the derive script fails on an unmapped
+# Every benchmark class must appear; the derive script fails on an unmapped
 # one. ``OTH`` is EIA-930's ``NG: OTH`` + ``NG: OIL`` (the benchmark books
 # NWPP's oil-fired MWh in the dual-fuel host's own class, so the two EIA-930
 # cells are one family here).

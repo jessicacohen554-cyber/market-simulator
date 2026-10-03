@@ -13,7 +13,7 @@ against:
     demand(t) = [930 NetGen(t) − NG_cell(t)
                  + CEMS bench-gas grid(t)          (committed bench hourly)
                  + gas_cogen_grid / 8760           (committed anchor, flat)
-                 + geo/biomass fold-in / 8760      (render's own fold-in)]
+                 + geo/biomass fold-in / 8760      (geo_biomass_outside_930_other)]
                 − TI(t)
 
 Every term is a measured input (rule 14): the 930 cells from the committed
@@ -62,6 +62,7 @@ from market_sim.config.paths import (  # noqa: E402
 from market_sim.data.eia_loader import _eia_hourly_frame_filled  # noqa: E402
 
 import scripts.legitimacy_diagnostics as L  # noqa: E402
+from scripts.lib import benchmark_semantics as bs  # noqa: E402
 
 ISO = "CAISO"
 # 2022 ADDED 2026-09-07 (caiso-262, the rule-22 validation touchpoint): the
@@ -138,6 +139,17 @@ def _year_frame(year: int) -> pd.DataFrame:
     return frame
 
 
+def geo_biomass_term_twh(classfull: dict, e930: dict) -> float:
+    """The derive's geo/biomass add-back (TWh): 923 OTHER + biomass - 930 Other.
+
+    The measured term, NOT the benchmark fold deflation: R-33 refutes the fold
+    for CAISO's gas cell (``gas_foldin_deflation`` -> 0), but this derive removes
+    the whole NG cell and adds the energy back as its own term, so the value is
+    the same one the derive carried before the ruling.
+    """
+    return bs.geo_biomass_outside_930_other(classfull, e930)
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--years", nargs="+", type=int, required=True, choices=YEARS)
@@ -196,7 +208,7 @@ def main(argv: list[str] | None = None) -> int:
             )
 
         cogen_flat = float(e930["gas_cogen_grid"]) * 1e6 / HOURS
-        foldin_twh = rch._gas_foldin_deflation(bench["classFull"], e930, ISO)
+        foldin_twh = geo_biomass_term_twh(bench["classFull"], e930)
         foldin_flat = foldin_twh * 1e6 / HOURS
 
         frame = _year_frame(year)

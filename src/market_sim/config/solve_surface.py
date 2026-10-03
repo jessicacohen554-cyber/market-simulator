@@ -141,7 +141,8 @@ class SolveEpoch:
 #: 2026-10-02d is its second part (the live roster drops dead exit cohorts),
 #: scoped to the backcast ISOs whose keeper fleet carries one (zero-LP sweep).
 #: 2026-10-02e: the SPP MMU ambient band leaves seasonal-pair rows (backcast SPP).
-#: 2026-10-03a: SOCO's 2019-2022 measured nuclear monthly CF rows (backcast SOCO;
+#: 2026-10-03a: the NWPP plant-basis anchor CSV is re-derived roster-free (backcast NWPP).
+#: 2026-10-03b: SOCO's 2019-2022 measured nuclear monthly CF rows (backcast SOCO;
 #: the SOCO row of NUCLEAR_MONTHLY_CF_BY_YEAR is undeclared, so only an epoch
 #: re-keys it).
 SOLVE_EPOCHS: tuple[SolveEpoch, ...] = (
@@ -174,6 +175,15 @@ SOLVE_EPOCHS: tuple[SolveEpoch, ...] = (
     ),
     SolveEpoch(
         id="2026-10-03a",
+        cause=(
+            "nwpp_demand_plant_basis anchor re-derived from source data on a "
+            "roster-independent plant -> class map (owner ruling R-28)"
+        ),
+        modes=("backcast",),
+        isos=("NWPP",),
+    ),
+    SolveEpoch(
+        id="2026-10-03b",
         cause=(
             "SOCO 2019-2022 nuclear availability reads the measured EIA-923 "
             "monthly CF rows instead of the forecast fallback pattern"

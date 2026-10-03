@@ -86,6 +86,7 @@ data/raw/caiso-public-bids/*
 # parquets + README + SHA256SUMS next to it ARE committed: OASIS retention
 # rolls (~39 months), so the fold is the only surviving copy of aged-out months.
 data/raw/caiso-trns-usage/windows/
+data/raw/nwpp-intertie-otc/windows/
 
 # MISO annual bc_HIST source mirrors (~20-70 MB raw each; validation layer
 # only, rule 13): refetch with scripts/data/fetch_miso_bc_hist.py (see
@@ -4027,3 +4028,6 @@ results/calibration/closeout_pjm_r13_*/
 # closeout-SOCO-2: per-year shard legs, checked out for verify/compose only; bytes live on their shard commits
 # (claude/closeout-soco-2-<Y>); the composed bundle carries its own negation. Never rm (rule 31).
 results/calibration/closeout_soco_2_20[12][0-9]/
+results/calibration/nwppnext22_*/
+results/calibration/nwppnext22b_*/
+!results/calibration/nwppnext22b_span/
