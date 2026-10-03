@@ -50,3 +50,17 @@ alive at a time.
   moves by more than 2 pp. A move that large is not explained by the input change, so it would be
   investigated as a solver-path or replay difference before any promotion.
 - 2025 carries the EIA-923 data-drift label on every before/after card.
+
+## 4. Addendum: desk HOLD (2026-10-03 01:31Z)
+
+The desk ruled on sequencing at 01:31:00Z. It crossed with the shard launch at 01:31:02Z.
+
+- **Ruling:** hold the shards and the merge of the re-key (the anchor CSV and SolveEpoch 2026-10-03a) until
+  NWPP-NEXT-22 promotes or stands down.
+- **Done:** all six launched shards were interrupted and archived while still PENDING. No work had started, no
+  bundle existed and no branch was pushed. 2025 was never launched.
+- **If NEXT-22 promotes:** merge main, re-pin on its keeper, re-run the G-DRIFT and append an addendum here
+  before 7 new shards.
+- **If NEXT-22 stands down:** launch on `w0_nwpp_span` at the pin, as §2 states.
+- **To fold in if it lands first:** the desk's cross-ISO `NUCLEAR_MONTHLY_CF_BY_YEAR[NWPP]` 2019–22 repair goes
+  into the same pin.
