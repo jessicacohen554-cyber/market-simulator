@@ -16,7 +16,7 @@ Lane `claude/closeout-soco-2`, 2026-10-03.
 **Recipe.** The keeper `2026-10-02-w0-soco-fix2` (`w0_soco_span`) replayed with no
 `--set`, at lane SHA `826333c41a896ab09e10292b8d580807fef2a015`. The only
 solve-affecting difference is `NUCLEAR_MONTHLY_CF_BY_YEAR["SOCO"]` 2019–2022, taken
-from the frozen derive. SolveEpoch `2026-10-03a` re-keys backcast SOCO.
+from the frozen derive. SolveEpoch `2026-10-03b` (stamped `2026-10-03a` in the legs, renamed at merge after NWPP took that id) re-keys backcast SOCO.
 
 **Shards.** Seven, one year each (rule 36), all at the one SHA. Each was verified
 before it was archived: 18 files per leg, with `dispatch/<Y>_P1.parquet` and

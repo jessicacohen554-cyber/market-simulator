@@ -228,7 +228,7 @@ The CC_REGULAR over-run has four parts:
 
 **Lever:** the nuclear 2019–2022 coverage repair. It is not a new field, and there
 is no new matrix row (it is a `constants.py` table, not a `ScenarioConfig` field).
-SolveEpoch 2026-10-03a re-keys backcast SOCO.
+SolveEpoch 2026-10-03b (legs stamped 2026-10-03a; renamed at merge) re-keys backcast SOCO.
 
 ## (d) Cross-ISO: years that read the nuclear forecast fallback (desk item 1, zero LP)
 
