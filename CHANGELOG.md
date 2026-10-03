@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-10-03 — capx D101: forecast gate-(a) re-key to the 2026-10-02 W0 keepers (zero LP)
+
+`frontend/data/forecast/program-status.json`: all seven `isos.<ISO>.keeper` fields re-keyed from their
+September ids to the 2026-10-02 closeout-W0 keepers (prior id kept in a `keeper_corrected_by` chain), a
+per-row `gate_a` reading added (MET for NEISO only), CAISO/SPP `marker_complete` re-keyed to the live
+`complete` block, `gate_a_provenance` re-stamped at `792e55ad`. No verdict, tier or `complete` entry
+moves; two owner cards (PJM marker/board disagreement; NYISO CALIBRATED-but-withdrawn). Record:
+`docs/records/forecast/FINDING-capx-d101-2026-10-03.md`.
+
 ## 2026-10-02 — closeout-W0 denominator fix, part 2: the live dispatched-bin roster (desk ruling D-1, zero LP)
 
 With `unit_outage_dispatched_bin_denominator` on in a COD-ramped backcast, the unit-outage denominator
