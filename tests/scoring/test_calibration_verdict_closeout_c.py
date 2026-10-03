@@ -1,4 +1,4 @@
-"""Rubric v3.14 / v3.16 — the close-out-C amendments (2026-10-02).
+"""Rubric v3.14 / v3.16 / v3.20 — the close-out-C amendments (2026-10-02/03).
 
 * v3.14 (owner ruling R-6): the ERCOT 2023 CONFIGURATION-EXCEPTION caveat kind.
   Exact-keyed, bound to the declared carve-out config the year solved on,
@@ -9,17 +9,24 @@
   of pre-2023 years reads PHYSICALLY-CALIBRATED (price unscored) and a mixed
   span scores price on the priced years only, naming the rest.
 
+* v3.20 (owner ruling R-58, approving the R-57 PRECOMMIT): the rule-22 lone-C3c
+  standing rule runs LAST, so "lone" is measured after the owner-signed
+  scoped-ledger, configuration-exception and reference-coverage caveats.
+
 (v3.15, the SOCO reference-definition budget, is pinned in
 ``test_calibration_verdict_scoped_ledger.py``.)
 """
 
 import unittest
+from unittest import mock
 
 from tests.scoring.test_calibration_verdict import (
     DeterminationTests,
     _artifacts,
     _clean_attestation,
     _legit_artifact,
+    _reset_tail,
+    _tail,
     cv,
 )
 
@@ -175,6 +182,119 @@ class ConfigExceptionTests(unittest.TestCase):
         self.assertIn("fuelmix", v["reasons"][0])
         # ... and the exception is still named on the NOT-YET basis.
         self.assertTrue(any("configuration-exception" in x for x in v["reasons"]))
+
+
+def _with_c3c_miss(art, year=2023, iso="ERCOT"):
+    """Add a C3c miss (the R-51 shape: model 44 h vs actual 181 h) to ``art``."""
+    art["payload"]["years"][str(year)]["ordc"] = {
+        "hoursGt200": {"actual": 181, "model": 44}
+    }
+    _tail({iso: {str(year): {"da_gt": 150, "rt_gt": 181, "rt_coverage": 1.0}}})
+    return art
+
+
+class C3cStandingRuleOrderTests(unittest.TestCase):
+    """Rubric v3.20 (R-58): the lone-C3c test runs after the owner-signed routes."""
+
+    def tearDown(self):
+        _reset_tail()
+
+    def test_lone_c3c_beside_config_exceptions_is_a_ledgered_caveat(self):
+        # (a) The R-51 shape: ERCOT 2023 on the carve-out config, C3a/C3b R-6
+        # excused, C3c failing. v3.19 kept C3c a FAIL (NOT-YET); v3.20 reads it
+        # as the rule-22 caveat and the scope CALIBRATED.
+        art = _with_c3c_miss(_art(actual_rt=40.0, mon=_SHAPE_FAIL))
+        v = cv.determine_from_artifacts("t", art)
+        for c in ("price_mean", "price_shape"):
+            self.assertEqual(_rec(v, c, 2023)["classification"], cv.CONFIG_EXCEPTION)
+        tail = _rec(v, "price_tail", 2023)
+        self.assertEqual(tail["status"], cv.CAVEAT)  # never PASS
+        self.assertEqual(tail["classification"], cv.MODEL_LIMIT)
+        self.assertEqual(tail["standing_rule"], "c3c-any-year-2026-08-09")
+        self.assertIn("owner-signed", tail["ledger_reason"])
+        self.assertEqual(v["determination"], cv.CALIBRATED)
+
+    def test_an_unexcused_failure_keeps_c3c_failing(self):
+        # (b) The same plus an unexcused C1 FAIL: C3c is not lone, stays FAIL.
+        art = _with_c3c_miss(_art(actual_rt=40.0, mon=_SHAPE_FAIL, fuel_fail=True))
+        v = cv.determine_from_artifacts("t", art)
+        self.assertEqual(_rec(v, "price_mean", 2023)["status"], cv.CAVEAT)
+        tail = _rec(v, "price_tail", 2023)
+        self.assertEqual(tail["status"], cv.FAIL)
+        self.assertNotIn("standing_rule", tail)
+        self.assertEqual(v["determination"], cv.NOT_YET)
+
+    def test_lone_c3c_beside_reference_coverage_caveats(self):
+        # (c) Partial-reference C3a/C3b FAILs with their signed twins (the CAISO
+        # 2021 shape), keyed on a TRAINING year so the v3.6 holdout limb cannot
+        # be what fires, plus a lone C3c.
+        year = 2024
+        crit = ("price_mean", "price_shape")
+        entries = {
+            ("CAISO", year, c, None): dict(
+                cv.REFERENCE_COVERAGE_ENTRIES[("CAISO", 2021, c, None)]
+            )
+            for c in crit
+        }
+        twins = [
+            {
+                "criterion": c,
+                "year": year,
+                "kind": "reference-coverage",
+                "magnitude": "test",
+                "reason": "owner ruling R-40 (test)",
+            }
+            for c in crit
+        ]
+        d = DeterminationTests()
+        kw = d._clean_bench_args()
+        kw["avg_lmp"] = {"rt": 40.0, "rt_mon": [40.0] * 12}
+        art = _artifacts(
+            d._clean_year_payload(),
+            iso="CAISO",
+            year=year,
+            attestation=_clean_attestation(twins),
+            **kw,
+        )
+        art["legitimacy"] = _legit_artifact(year=year, r=0.9, cv_ratio=0.02, share=0.05)
+        _with_c3c_miss(art, year=year, iso="CAISO")
+        ref = {"CAISO": {str(year): {"rt_cov": {"annual": 0.70, "mon": [1.0] * 12}}}}
+        with (
+            mock.patch.dict(cv.REFERENCE_COVERAGE_ENTRIES, entries),
+            mock.patch.object(cv, "_actual_lmp_reference", return_value=ref),
+        ):
+            v = cv.determine_from_artifacts("t", art)
+        for c in crit:
+            r = _rec(v, c, year)
+            self.assertEqual(r["classification"], cv.REFERENCE_COVERAGE)
+            self.assertEqual(r["window_status"], cv.FAIL)
+        tail = _rec(v, "price_tail", year)
+        self.assertEqual(tail["status"], cv.CAVEAT)
+        self.assertEqual(tail["standing_rule"], "c3c-any-year-2026-08-09")
+        self.assertEqual(v["determination"], cv.CALIBRATED)
+
+    def test_failing_governance_reclassifies_nothing(self):
+        # (d) Governance FAIL: no route moves any row, C3c included.
+        art = _with_c3c_miss(_art(actual_rt=40.0, mon=_SHAPE_FAIL, attestation=False))
+        v = cv.determine_from_artifacts("t", art)
+        for c in ("price_mean", "price_shape", "price_tail"):
+            r = _rec(v, c, 2023)
+            self.assertEqual(r["status"], cv.FAIL)
+            self.assertNotIn("standing_rule", r)
+        self.assertEqual(v["determination"], cv.NOT_YET)
+
+    def test_no_owner_signed_table_carries_a_price_tail_key(self):
+        # (e) Fail-closed for the reorder: if any of the three routes that now
+        # run BEFORE rule 22 could take a price_tail row, it would reach C3c
+        # first. The four routes must write disjoint rows.
+        for table in (
+            cv.SCOPED_LEDGER_ENTRIES,
+            cv.CONFIG_EXCEPTION_ENTRIES,
+            cv.REFERENCE_COVERAGE_ENTRIES,
+        ):
+            for key in table:
+                self.assertNotEqual(key[2], "price_tail", key)
+        self.assertEqual(cv.RUBRIC_VERSION, "3.20")
 
 
 class LabelledReferenceStartTests(unittest.TestCase):
