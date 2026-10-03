@@ -389,7 +389,102 @@
   "disclosures": {
     "note": "(a) Rule-14 data repair only (R-43): nuclear 2019-22 within +0.8% of EIA-923 plant-matched (was -4.6..+2.6%). (b) Moves at full magnitude in docs/records/miso/closeout-miso-nuc/RESULT-closeout-miso-nuc-2026-10-03.md; PASS->FAIL C1 CC_REGULAR 2021 (-8.15 TWh) and C3a 2020 (+10.2%) are MISO's new baseline (R-43/R-53). (c) Dispatch legs 2019, 2021-25 are zstd-9 re-encodings of the SNAPPY originals, table-equal (transport only). (d) INHERITED UNCHANGED from the outgoing keeper's disclosures: (a) Scored on the committed bench; registering this run left all 44 bench parts sha256-identical.\n(b) Moves reported at full magnitude in docs/records/miso/RESULT-miso268-coal-yard-grain-2026-09-24.md; gates decide nothing (PRECOMMIT section 5).\n(c) NOT FIXED, routed: the C3a overnight price body, the coal trough surplus, C3b 2021 (February gas level) -- docs/records/miso/FINDING-miso268-coal-yard-grain-and-the-open-objects-2026-09-24.md.\n(d) INHERITED UNCHANGED: D-2 CT_PEAKER forced share over its 15 % cap every year; C8 through rule 18's grounded route."
   },
-  "exceptions": [],
+  "exceptions": [
+    {
+      "criterion": "storage",
+      "year": 2025,
+      "metric": "C5b storage discharge throughput TWh",
+      "magnitude": "+1515.4% (model 2025 BAT+PS discharge 3.95 TWh vs EIA-930 battery-only actual 0.245 TWh; 2023/2024 un-benchmarked - EIA-930 reports no PS breakout)",
+      "classification": "ACCEPTED MEASURED-INPUT LIMITATION (benchmark basis mismatch - not a model miss)",
+      "reason": "Carried unchanged from miso-48 through miso-54: EIA-930 MISO reports NO pumped-storage series; the battery-only actual excludes the 2,417 MW EIA-860 PS fleet (Ludington + Taum Sauk) the model correctly dispatches. Full adjudication: docs/records/miso/FINDING-miso-c5b-storage-benchmark-2026-07.md.",
+      "carried_forward": {
+        "source_run": "2026-10-02-w0-miso-fix2",
+        "date": "2026-10-03",
+        "remeasured": false,
+        "why": "carried verbatim, NOT re-measured: storage is not ledgerable under rubric v3.1, so the scorer never applies this entry (record only)"
+      }
+    },
+    {
+      "criterion": "storage_shape",
+      "year": 2025,
+      "metric": "C5c monthly storage dispatch shape (pearson r)",
+      "magnitude": "r=0.461 (2025 monthly BAT+PS pearson vs EIA-930 battery-only; the actual excludes the ~2,417 MW PS fleet the model dispatches - benchmark-basis mismatch, not a model miss)",
+      "classification": "ACCEPTED MEASURED-INPUT LIMITATION (benchmark basis mismatch - not a model miss)",
+      "reason": "The 2025 EIA-930 battery-only monthly vector's 'shape' is the fleet's COD ramp (r=0.934 against cumulative in-service battery MW) while the model side pools BAT + the ~2,417 MW pumped-storage fleet that EIA-930 MISO does not report. Normalized per in-service MW the actual's residual shape is degenerate by the scorer's own CV floor (CV 0.175 < STORAGE_SHAPE_MIN_CV 0.25), so no dispatch-shape skill is measurable on this basis. Full adjudication: docs/records/miso/FINDING-miso-c5c-storage-shape-basis-2026-07.md (scorer-side BAT-vs-BAT + per-MW fix flagged to the rubric-infrastructure lane).",
+      "carried_forward": {
+        "source_run": "2026-10-02-w0-miso-fix2",
+        "date": "2026-10-03",
+        "remeasured": false,
+        "why": "carried verbatim, NOT re-measured: storage_shape is not ledgerable under rubric v3.1, so the scorer never applies this entry (record only)"
+      }
+    },
+    {
+      "criterion": "price_tail",
+      "year": 2023,
+      "metric": "hours RT-expressible LMP > $200/MWh (C3c scarcity tail, actual RT hourly gate; Indiana Hub)",
+      "magnitude": "model 0h [energy-only LMP] vs RT actual 30h (0.00\u00d7, >$200) (RE-MEASURED on closeout_miso_nuc_span by promote_keeper.py 2026-10-03; carried from 2026-10-02-w0-miso-fix2)",
+      "classification": "MODEL MISS (structural - MISO administrative ORDC/RCPF scarcity tail, not an emergent marginal-cost outcome even in MISO's own SCED; representation-frontier caveat, every admissible mechanism tried on record per rule #1)",
+      "reason": "MISO's real scarcity tail is an administrative stepped ORDC/RCPF curve DERIVED FROM a Monte-Carlo LOLP simulation over 10-30 min net-load/outage uncertainty (MISO Scarcity Pricing White Paper Mar-2024 \u00a73.2.1; energy steps $1,100/$2,100 anchored to $3,500 VOLL, per-product reserve curves, BPM-002 Att.B \u00a75.4; Potomac Economics IMM 2024 MISO SOM; OSTI 2424806). It prices probabilistic short-term risk a deterministic perfect-foresight hourly LP does not contain; the generic PCM literature confirms deterministic LPs systematically under-produce the spike tail (arXiv 2101.02303, 23/23-model survey; PyPSA-Eur arXiv 2606.16486). Empirical confirmation on the miso-81 keeper's OWN hourly output: in the 88 actual 2025 Indiana-Hub RT>$200 hours the model prices ~$50 median / $157 max, the reserve adder fires 2/88, energy+reserve>$200 in 1/88, zero load-shed; those hours are mostly low in the DA market (e.g. RT $1,598 / DA $99), and a deterministic LP ~= the DA market, so it cannot manufacture them. Reaching the tail would require MANUFACTURING the uncertainty (rules #1/#10 forbid the fitted path); layering an ORDC/RCPF adder would fire ~2 hours, not the actual count. Frontier designation 2026-07-20: every named admissible mechanism tried on record and adopted (reserve deliverability / 10-min ramp caps miso-39; Midwest sub-regional reserves miso-71; measured reserve requirements miso-56); further work needs a NEW admissible measured identification, its own charter. NEVER an offer adder tuned to the tail. See docs/multi-iso/miso-scarcity-tail-external-validation-2026-07.md + docs/multi-iso/miso-scarcity-tail-diagnosis.md.",
+      "magnitude_basis": "this run's own scored value (miso-268); the classification and reason are the standing MISO adjudication carried forward",
+      "carried_forward": {
+        "source_run": "2026-10-02-w0-miso-fix2",
+        "date": "2026-10-03",
+        "remeasured": true,
+        "model": 0.0,
+        "actual": 30.0,
+        "magnitude_outgoing": "model 3h [energy-only LMP] vs RT actual 30h (0.10\u00d7, >$200)"
+      }
+    },
+    {
+      "criterion": "price_tail",
+      "year": 2024,
+      "metric": "hours RT-expressible LMP > $200/MWh (C3c scarcity tail, actual RT hourly gate; Indiana Hub)",
+      "magnitude": "model 7h [energy-only LMP] vs RT actual 37h (0.19\u00d7, >$200) (RE-MEASURED on closeout_miso_nuc_span by promote_keeper.py 2026-10-03; carried from 2026-10-02-w0-miso-fix2)",
+      "classification": "MODEL MISS (structural - MISO administrative ORDC/RCPF scarcity tail, not an emergent marginal-cost outcome even in MISO's own SCED; representation-frontier caveat, every admissible mechanism tried on record per rule #1)",
+      "reason": "MISO's real scarcity tail is an administrative stepped ORDC/RCPF curve DERIVED FROM a Monte-Carlo LOLP simulation over 10-30 min net-load/outage uncertainty (MISO Scarcity Pricing White Paper Mar-2024 \u00a73.2.1; energy steps $1,100/$2,100 anchored to $3,500 VOLL, per-product reserve curves, BPM-002 Att.B \u00a75.4; Potomac Economics IMM 2024 MISO SOM; OSTI 2424806). It prices probabilistic short-term risk a deterministic perfect-foresight hourly LP does not contain; the generic PCM literature confirms deterministic LPs systematically under-produce the spike tail (arXiv 2101.02303, 23/23-model survey; PyPSA-Eur arXiv 2606.16486). Empirical confirmation on the miso-81 keeper's OWN hourly output: in the 88 actual 2025 Indiana-Hub RT>$200 hours the model prices ~$50 median / $157 max, the reserve adder fires 2/88, energy+reserve>$200 in 1/88, zero load-shed; those hours are mostly low in the DA market (e.g. RT $1,598 / DA $99), and a deterministic LP ~= the DA market, so it cannot manufacture them. Reaching the tail would require MANUFACTURING the uncertainty (rules #1/#10 forbid the fitted path); layering an ORDC/RCPF adder would fire ~2 hours, not the actual count. Frontier designation 2026-07-20: every named admissible mechanism tried on record and adopted (reserve deliverability / 10-min ramp caps miso-39; Midwest sub-regional reserves miso-71; measured reserve requirements miso-56); further work needs a NEW admissible measured identification, its own charter. NEVER an offer adder tuned to the tail. See docs/multi-iso/miso-scarcity-tail-external-validation-2026-07.md + docs/multi-iso/miso-scarcity-tail-diagnosis.md.",
+      "magnitude_basis": "this run's own scored value (miso-268); the classification and reason are the standing MISO adjudication carried forward",
+      "carried_forward": {
+        "source_run": "2026-10-02-w0-miso-fix2",
+        "date": "2026-10-03",
+        "remeasured": true,
+        "model": 7.0,
+        "actual": 37.0,
+        "magnitude_outgoing": "model 7h [energy-only LMP] vs RT actual 37h (0.19\u00d7, >$200)"
+      }
+    },
+    {
+      "criterion": "price_tail",
+      "year": 2025,
+      "metric": "hours RT-expressible LMP > $200/MWh (C3c scarcity tail, actual RT hourly gate; Indiana Hub)",
+      "magnitude": "model 9h [energy-only LMP] vs RT actual 88h (0.10\u00d7, >$200) (RE-MEASURED on closeout_miso_nuc_span by promote_keeper.py 2026-10-03; carried from 2026-10-02-w0-miso-fix2)",
+      "classification": "MODEL MISS (structural - MISO administrative ORDC/RCPF scarcity tail, not an emergent marginal-cost outcome even in MISO's own SCED; representation-frontier caveat, every admissible mechanism tried on record per rule #1)",
+      "reason": "MISO's real scarcity tail is an administrative stepped ORDC/RCPF curve DERIVED FROM a Monte-Carlo LOLP simulation over 10-30 min net-load/outage uncertainty (MISO Scarcity Pricing White Paper Mar-2024 \u00a73.2.1; energy steps $1,100/$2,100 anchored to $3,500 VOLL, per-product reserve curves, BPM-002 Att.B \u00a75.4; Potomac Economics IMM 2024 MISO SOM; OSTI 2424806). It prices probabilistic short-term risk a deterministic perfect-foresight hourly LP does not contain; the generic PCM literature confirms deterministic LPs systematically under-produce the spike tail (arXiv 2101.02303, 23/23-model survey; PyPSA-Eur arXiv 2606.16486). Empirical confirmation on the miso-81 keeper's OWN hourly output: in the 88 actual 2025 Indiana-Hub RT>$200 hours the model prices ~$50 median / $157 max, the reserve adder fires 2/88, energy+reserve>$200 in 1/88, zero load-shed; those hours are mostly low in the DA market (e.g. RT $1,598 / DA $99), and a deterministic LP ~= the DA market, so it cannot manufacture them. Reaching the tail would require MANUFACTURING the uncertainty (rules #1/#10 forbid the fitted path); layering an ORDC/RCPF adder would fire ~2 hours, not the actual count. Frontier designation 2026-07-20: every named admissible mechanism tried on record and adopted (reserve deliverability / 10-min ramp caps miso-39; Midwest sub-regional reserves miso-71; measured reserve requirements miso-56); further work needs a NEW admissible measured identification, its own charter. NEVER an offer adder tuned to the tail. See docs/multi-iso/miso-scarcity-tail-external-validation-2026-07.md + docs/multi-iso/miso-scarcity-tail-diagnosis.md.",
+      "magnitude_basis": "this run's own scored value (miso-268); the classification and reason are the standing MISO adjudication carried forward",
+      "carried_forward": {
+        "source_run": "2026-10-02-w0-miso-fix2",
+        "date": "2026-10-03",
+        "remeasured": true,
+        "model": 9.0,
+        "actual": 88.0,
+        "magnitude_outgoing": "model 12h [energy-only LMP] vs RT actual 88h (0.14\u00d7, >$200)"
+      }
+    },
+    {
+      "criterion": "price_mean",
+      "year": 2025,
+      "metric": "system load-weighted mean LMP $/MWh (vs RT load-weighted; Indiana Hub)",
+      "magnitude": "-0.6%",
+      "classification": "WITHIN BAND, DOWNSTREAM OF C3c (the residual is the unrepresentable administrative scarcity tail; magnitude no longer fails price_mean at this keeper's HEAD)",
+      "reason": "CORRECTED 2026-09-09 (miso-250 keeper-text audit): this entry's 2023/2024 comparator values and its 2025 model/actual dollar figures were stale, carried unchanged since an earlier keeper generation that predates this run and predates the miso-248 incumbent it was inherited from; price_mean now PASSES all three years at the \u00b110% band and no year fails. The 2025 mean-LMP gap (model $42.64 vs actual $45.46 load-weighted, -6.2%) remains the arithmetic tail of the C3c residual, NOT an independent level error: 2023 (+4.9%) and 2024 (+1.8%) also PASS, and 2025 carries the largest actual RT>$200 count (88 hrs). Those 88 Indiana-Hub spike hours (actual up to $1,783; model ~$50 median) contribute materially to the remaining $2.82/MWh gap between the actual and model load-weighted means. Closes only DOWNSTREAM of C3c (never via an offer/level adder tuned to the mean) - the same administrative Monte-Carlo-LOLP ORDC/RCPF tail a deterministic perfect-foresight LP cannot form (rules #1/#10). Frontier designation 2026-07-20; see the C3c ledger entries above + docs/multi-iso/miso-scarcity-tail-external-validation-2026-07.md. miso-88 note: the widening is the expected cost of a structurally-correct input and is KEPT per rule 1 -- the accurate heat rate stays in even though it worsened this crossing at the time it was written. Per rule 11 a worse fit is a discovered-bug signal to root-cause separately (the 2025 summer-body price formation lane, FINDING-miso87-c3b-summer-2025-body-2026-07.md), never to be offset with a tuned adder.",
+      "magnitude_basis": "this run's own scored value (miso-268); the classification and reason are the standing MISO adjudication carried forward",
+      "carried_forward": {
+        "source_run": "2026-10-02-w0-miso-fix2",
+        "date": "2026-10-03",
+        "remeasured": false,
+        "why": "carried verbatim, NOT re-measured: price_mean is not ledgerable under rubric v3.1, so the scorer never applies this entry (record only)"
+      }
+    }
+  ],
   "authorized_price_tuning": {
     "declared": true
   },

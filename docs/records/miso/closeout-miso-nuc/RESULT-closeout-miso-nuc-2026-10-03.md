@@ -198,3 +198,31 @@ On K5, one diagnostic note. The regenerated `legitimacy_diagnostics.json` reads 
 - prune the outgoing `w0_miso_span` stores (MISO only).
 
 Promotion slot: requested from the desk. Promotions are serialised, and nothing has been run here.
+
+## 6. Promotion
+
+Owner ruling **R-53** (2026-10-03): "Promote on structure". `promote_keeper.py` ran in the desk-granted MISO slot, after PJM's #7152, on lane branch `claude/closeout-miso-nuc-b` merged with `origin/main` (no `--attested-by`):
+
+- **Register.** The keeper bundle was already registered.
+- **Attest.**
+  - Governance was pre-written with the outgoing keeper's rule-1 booleans carried, two of them `False`.
+  - The DOF ledger was refreshed.
+  - The outgoing exceptions ledger was **carried, 6 entries with 0 dropped**: storage 2025 and storage_shape 2025 verbatim; price_tail 2023/2024/2025 re-measured (0 h vs 30, 7 h vs 37, 9 h vs 88); price_mean 2025 verbatim.
+- **Designate.** `keepers/MISO.json` now names `2026-10-03-closeout-miso-nuc-r`.
+- **Re-key.** `program-status.json` gate.a was re-keyed. There is no `complete` entry.
+- **Status rebuild.**
+- **Audit.** E13 was tolerated.
+- **Prune.** `w0_miso_span` was pruned (MISO only).
+
+The strict audit then **stopped on 3 FAILs**: E12 ×2 and S1. These were dangling links to the pruned run in `keepers/MISO.json` `config_partition.configs[*].run_id`.
+- The lane re-keyed both partition entries to the new keeper and bundle, with a `rekeyed_at_closeout_miso_nuc` note. The partition itself is unchanged.
+- It then rebuilt the status part.
+- `audit_keepers.py --iso MISO` now reports **PASS, 0 failures**.
+
+**The keeper is `2026-10-03-closeout-miso-nuc-r`.**
+- Determination: **NOT-YET** (8 scored / 4 target / 1 ledgered [C3c] / 3 fail: fuelmix, price_mean, price_shape).
+- Governance: PASS.
+- The year set 2019–2025 is unchanged.
+
+**Next MISO levers (R-53):** C1 CC_REGULAR 2021, C3a 2020.
+
