@@ -7145,3 +7145,18 @@ The census was fixed ex ante and run first. Its premise did not hold:
 No field built, no matrix verdict moved, the Tait remap stays parked. The availability family is exhausted for
 COAL_BIT 2019–21. The remaining candidate is coal commitment economics over slack periods. Record:
 `docs/records/pjm/FINDING-pjm-next-31-coalbit-dark-census-2026-10-03.md`.
+
+## closeout-PJM-impl — 2026-10-03 — owner rulings R-36 / R-37 applied to the keeper ledger (zero LP, determination unchanged NOT-YET)
+
+- **R-36** (*"Sign CT 2021 now; hold COAL_BIT 1b for NEXT-31"*): C1 CT_PEAKER 2021 (−8.07 TWh) enters
+  `results/calibration/w0_pjm_span/calibration_attestation.json` as a signed `"kind": "model-class"` frontier:
+  out-of-merit CT commitment conduct (IMM 2021: CTs took 92.8 % of balancing credits), every CT lever adjudicated,
+  re-open trigger a measured commitment-state input. COAL_BIT 1a/1b stays a DRAFT, held for PJM-NEXT-31.
+- **R-37** (*"Documented FAIL; no re-open"*): 2025 C3a −11.6 % and C3b 0.222 are ledgered as documented FAILs
+  (classification `MODEL MISS — DOCUMENTED FAIL`, no `kind`, matching the NEISO/MISO record-only precedent), with the
+  online-gated reserve pool as the frontier candidate. `pjm_reserve_pergen_sync` stays R; the heat-wave census is
+  appended to the `reserve_pergen` row's evidence (family cell stays K).
+- **Effect:** all three entries are record-only under rubric v3.1 (C3c is the only ledgerable criterion). They
+  document the FAILs and reclassify nothing. The only move in `frontend/data/backcast/status/PJM.js` is
+  `ledger_entries` 0 → 3. `audit_keepers --iso PJM --check` PASS, registry parity OK, mechanism-matrix check OK.
+- **Record:** `docs/records/pjm/RESULT-closeout-pjm-impl-2026-10-03.md`.
