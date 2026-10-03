@@ -1,0 +1,143 @@
+{
+ "2019": {
+  "unprinted_hours": 8760,
+  "measured_p95_depth_mw": {
+   "daytime": 7348.35009765625,
+   "lateevening": 6922.0
+  },
+  "windows": {
+   "daytime": {
+    "hours": 5840,
+    "eia930_gap_twh": -8.099295616149902,
+    "static": {
+     "depth_mw": 5733.0,
+     "capability_twh": 20.12811851501465,
+     "first_order_added_twh": 10.57519817352295,
+     "displaced_fossil_twh": 7.3422417640686035
+    },
+    "p95": {
+     "depth_mw": 7348.35009765625,
+     "capability_twh": 29.5617618560791,
+     "first_order_added_twh": 17.282194137573242,
+     "displaced_fossil_twh": 8.126757621765137
+    }
+   },
+   "lateevening": {
+    "hours": 730,
+    "eia930_gap_twh": -1.299048662185669,
+    "static": {
+     "depth_mw": 6415.0,
+     "capability_twh": 2.6802589893341064,
+     "first_order_added_twh": 1.5568363666534424,
+     "displaced_fossil_twh": 0.9916046261787415
+    },
+    "p95": {
+     "depth_mw": 6922.0,
+     "capability_twh": 3.0503690242767334,
+     "first_order_added_twh": 1.8369375467300415,
+     "displaced_fossil_twh": 1.0197584629058838
+    }
+   }
+  },
+  "first_order_added_total_twh": {
+   "static": 12.132034540176392,
+   "p95": 19.119131684303284
+  },
+  "cc_regular_needed_twh": 0.79,
+  "dsw_gap_whole_year_twh": -9.02156925201416
+ },
+ "2020": {
+  "unprinted_hours": 8760,
+  "measured_p95_depth_mw": {
+   "daytime": 7122.0,
+   "lateevening": 7281.39990234375
+  },
+  "windows": {
+   "daytime": {
+    "hours": 5840,
+    "eia930_gap_twh": -10.55831241607666,
+    "static": {
+     "depth_mw": 5733.0,
+     "capability_twh": 20.793359756469727,
+     "first_order_added_twh": 13.861823081970215,
+     "displaced_fossil_twh": 3.246079444885254
+    },
+    "p95": {
+     "depth_mw": 7122.0,
+     "capability_twh": 28.905120849609375,
+     "first_order_added_twh": 20.22944450378418,
+     "displaced_fossil_twh": 3.265542984008789
+    }
+   },
+   "lateevening": {
+    "hours": 730,
+    "eia930_gap_twh": -2.3536369800567627,
+    "static": {
+     "depth_mw": 6415.0,
+     "capability_twh": 2.527550458908081,
+     "first_order_added_twh": 1.8421005010604858,
+     "displaced_fossil_twh": 0.2917626202106476
+    },
+    "p95": {
+     "depth_mw": 7281.39990234375,
+     "capability_twh": 3.160022497177124,
+     "first_order_added_twh": 2.3673317432403564,
+     "displaced_fossil_twh": 0.2934742271900177
+    }
+   }
+  },
+  "first_order_added_total_twh": {
+   "static": 15.7039235830307,
+   "p95": 22.596776247024536
+  },
+  "cc_regular_needed_twh": 8.860000000000001,
+  "dsw_gap_whole_year_twh": -14.567572593688965
+ },
+ "2021": {
+  "unprinted_hours": 2784,
+  "measured_p95_depth_mw": {
+   "daytime": 7351.25,
+   "lateevening": 7024.60009765625
+  },
+  "windows": {
+   "daytime": {
+    "hours": 1856,
+    "eia930_gap_twh": -4.790172100067139,
+    "static": {
+     "depth_mw": 5733.0,
+     "capability_twh": 8.305370330810547,
+     "first_order_added_twh": 4.1501851081848145,
+     "displaced_fossil_twh": 0.8848982453346252
+    },
+    "p95": {
+     "depth_mw": 7351.25,
+     "capability_twh": 11.308842658996582,
+     "first_order_added_twh": 5.789134979248047,
+     "displaced_fossil_twh": 0.9290329813957214
+    }
+   },
+   "lateevening": {
+    "hours": 232,
+    "eia930_gap_twh": -0.8417242765426636,
+    "static": {
+     "depth_mw": 6415.0,
+     "capability_twh": 1.073683738708496,
+     "first_order_added_twh": 0.6245951056480408,
+     "displaced_fossil_twh": 0.04767981916666031
+    },
+    "p95": {
+     "depth_mw": 7024.60009765625,
+     "capability_twh": 1.2151110172271729,
+     "first_order_added_twh": 0.7056719660758972,
+     "displaced_fossil_twh": 0.04935457557439804
+    }
+   }
+  },
+  "first_order_added_total_twh": {
+   "static": 4.774780213832855,
+   "p95": 6.494806945323944
+  },
+  "cc_regular_needed_twh": 1.7599999999999998,
+  "dsw_gap_whole_year_twh": -9.48624038696289
+ }
+}
