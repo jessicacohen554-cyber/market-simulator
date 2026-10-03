@@ -527,5 +527,20 @@
     ],
     "data_change": "NUCLEAR_MONTHLY_CF_BY_YEAR SPP 2019-2022 rows (#7109, SolveEpoch 2026-10-03b)",
     "arm": {}
-  }
+  },
+  "authorized_price_tuning": {
+    "declared": true
+  },
+  "lane_blocks": [
+    "r_spp",
+    "spp85",
+    "spp86",
+    "spp94",
+    "spp98",
+    "spp99",
+    "spp100",
+    "spp107EXR",
+    "w0_spp107r",
+    "closeout_spp_nuc"
+  ]
 }
