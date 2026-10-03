@@ -110,6 +110,11 @@ parsed as a fallback) it verifies:
       true) — the census is part of that keeper by construction; WARN for a
       pre-W0 keeper (the rule is prospective; it gains the census at its next
       re-solve).
+  E16 FIXED ATTESTATION SCHEMA (owner ruling 2026-10-03): the attestation
+      validates against data/dictionary/schema/calibration_attestation.document.yaml
+      via scripts/lib/attestation_schema.py — required keys, DOF-entry and
+      exception shapes, an explicit ``authorized_price_tuning`` declaration
+      and a ``lane_blocks`` manifest naming every lane-named extra block. FAIL.
   E14 SOLVE-ENVIRONMENT PIN CURRENCY: the bundle's recorded
       ``environment.packages`` match the versions ``requirements.txt`` pins.
       A keeper is the ISO's reference result, so which solver and numeric
@@ -162,6 +167,7 @@ from scripts import calibration_verdict as cv  # noqa: E402  (after sys.path ins
 from scripts.lib import holdout_policy  # noqa: E402  (after sys.path insert)
 from scripts.lib import keeper_store  # noqa: E402  (after sys.path insert)
 from scripts.lib.known_unsynced_keepers import UNSYNCED_KEEPERS  # noqa: E402
+from scripts.lib import attestation_schema  # noqa: E402
 
 # A sidecar whose definition still reads like this never described the run.
 _PLACEHOLDER_RE = re.compile(r"^\s*calibration run from bundle\b", re.IGNORECASE)
@@ -1124,6 +1130,32 @@ def audit_keeper(run_id: str, rep: Report) -> None:
         {"OK": rep.ok, "WARN": rep.warn, "FAIL": rep.fail}[level](
             run_id, iso, "E10", msg
         )
+
+        # E16: the FIXED attestation schema (owner ruling 2026-10-03;
+        # data/dictionary/schema/calibration_attestation.document.yaml). E10
+        # grades what moves a determination; E16 grades the whole document —
+        # required keys, DOF-entry and exception shapes, the explicit
+        # authorized_price_tuning declaration and the lane_blocks manifest that
+        # tells a deliberate lane-named block from drift. Migrate with
+        # scripts/lib/attestation_schema.py --migrate.
+        problems = attestation_schema.validate(att)
+        if problems:
+            rep.fail(
+                run_id,
+                iso,
+                "E16",
+                "attestation violates calibration-attestation/v1: "
+                + "; ".join(problems)
+                + " — run scripts/lib/attestation_schema.py --migrate <file>",
+            )
+        else:
+            rep.ok(
+                run_id,
+                iso,
+                "E16",
+                "attestation conforms to calibration-attestation/v1 "
+                f"({len((att or {}).get('lane_blocks') or [])} lane block(s))",
+            )
 
     # E9: ablation-twin link integrity (CLAUDE.md rule 20, owner amendment
     # 2026-07-14). The twin itself is optional — absence is OK; only a DECLARED

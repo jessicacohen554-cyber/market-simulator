@@ -183,12 +183,12 @@ NRC_TO_EIA: dict[str, dict[str, tuple[int, int]]] = {
     # 5,258.9 MW) = Waterford 3, Grand Gulf, River Bend, Arkansas Nuclear
     # One 1+2; Midwest (8 reactors, 6,261.4 MW) = Clinton (Illinois),
     # Fermi 2 + Point Beach 1+2 (East), Monticello + Prairie Island 1+2
-    # (West), Callaway (Plains). Palisades reports to NRC (Holtec
-    # restart era) but carries NO model fleet unit — its EIA-860 status is
-    # non-OP in the operable vintages the fleet loader keeps, so it is
-    # deliberately absent here (the Crane/TMI-1 comment discipline above);
-    # Duane Arnold (retired 2020) carries neither NRC 2023-2025 rows nor a
-    # fleet unit.
+    # (West), Callaway (Plains). Duane Arnold (1060) and Palisades (1715)
+    # are NOT mapped here: reconcile_monthly fits every mapped reactor to the
+    # 13-unit anchor, so their dark days (the 2020-08-10 derecho, the
+    # 2022-05-20 shutdown) would inflate the other 13 reactors' pool scale.
+    # They enter the extract as uncovered pass-through rows instead
+    # (NRC_PASS_THROUGH below).
     "MISO": {
         "Arkansas Nuclear 1": (8055, 1),
         "Arkansas Nuclear 2": (8055, 2),
@@ -205,6 +205,32 @@ NRC_TO_EIA: dict[str, dict[str, tuple[int, int]]] = {
         "Waterford 3": (4270, 3),
     },
 }
+
+
+# Reactors the model fleet carries only in the years before their EIA-860
+# retirement (R-MISO's ``mid_vintage_exit_carry`` injects them into 2019-2022
+# MISO legs), keyed NRC unit name -> (EIA plant code, model unit number, last
+# year). They are kept OUT of the anchor reconciliation — not in
+# ``covered_keys`` or ``n_units`` — and emitted as ``avail = avail_raw`` (the
+# measured NRC power fraction), only through their EIA-860 retirement year:
+# Duane Arnold RE 11/2020 (EIA-860 vintage_2020 retired sheet), Palisades RE
+# 6/2022 (vintage_2022 retired sheet). The loader's retirement mask still ends
+# each unit at its exit month. Identifier crosswalk plus measured dates, not a
+# tunable (closeout-MISO-2 FINDING §2, owner ruling R-43).
+NRC_PASS_THROUGH: dict[str, dict[str, tuple[int, int, int]]] = {
+    "MISO": {
+        "Duane Arnold": (1060, 1, 2020),
+        "Palisades": (1715, 1, 2022),
+    },
+}
+
+
+# NRC unit-name changes inside the report series -> the name the crosswalks
+# use. River Bend reports as "River Bend 1" through 2019-03-22 and "River Bend
+# Station 1" after; without the alias 2019 Jan-Mar miss a reactor and the
+# months fall to raw-only (partial coverage). Identifier crosswalk, not a
+# tunable.
+NRC_UNIT_RENAMES: dict[str, str] = {"River Bend 1": "River Bend Station 1"}
 
 
 def fleet_caps(
@@ -235,7 +261,8 @@ def fleet_caps(
 
 def load_daily_raw(iso: str, years: tuple[int, ...] = YEARS) -> pd.DataFrame:
     """Per (reactor, date) raw daily availability from the NRC reports."""
-    xwalk = NRC_TO_EIA[iso]
+    passthru = NRC_PASS_THROUGH.get(iso, {})
+    xwalk = {**NRC_TO_EIA[iso], **{u: v[:2] for u, v in passthru.items()}}
     frames = []
     for yr in years:
         path = NRC_DIR / f"{yr}PowerStatus.txt"
@@ -245,7 +272,9 @@ def load_daily_raw(iso: str, years: tuple[int, ...] = YEARS) -> pd.DataFrame:
             )
         df = pd.read_csv(path, sep="|", encoding="utf-8-sig")
         df["date"] = pd.to_datetime(df["ReportDt"]).dt.normalize()
-        df = df[(df.date.dt.year == yr) & df["Unit"].isin(xwalk)]
+        df["Unit"] = df["Unit"].replace(NRC_UNIT_RENAMES)
+        units = [u for u in xwalk if u not in passthru or yr <= passthru[u][2]]
+        df = df[(df.date.dt.year == yr) & df["Unit"].isin(units)]
         frames.append(df[["date", "Unit", "Power"]])
     day = pd.concat(frames, ignore_index=True)
     # One report per reactor-day; keep the last if NRC ever republishes.
@@ -270,9 +299,18 @@ def reconcile_monthly(
     exactly as measured; the pool takes one per-month factor (per-day cap 1.0)
     so the fleet-month availability energy reproduces
     ``NUCLEAR_MONTHLY_CF_BY_YEAR[iso]`` exactly. The anchor's fleet pmax
-    excludes dormant units (they have no NRC rows here either).
+    excludes dormant units (they have no NRC rows here either). Rows of an
+    :data:`NRC_PASS_THROUGH` reactor are set aside before the fit and returned
+    with ``avail = avail_raw``, so they never enter the pool or the unit count.
     """
     cf_by_year = NUCLEAR_MONTHLY_CF_BY_YEAR[iso]
+    passthru_keys = {v[:2] for v in NRC_PASS_THROUGH.get(iso, {}).values()}
+    is_passthru = pd.Series(
+        [(p, u) in passthru_keys for p, u in zip(day.plant_code, day.unit_no)],
+        index=day.index,
+    )
+    passthru = day[is_passthru].assign(avail=lambda d: d.avail_raw)
+    day = day[~is_passthru]
     caps = fleet_caps(iso, years)
     covered_keys = {
         k for k in caps if any((day.plant_code == k[0]) & (day.unit_no == k[1]))
@@ -355,7 +393,10 @@ def reconcile_monthly(
     dropped = day["avail"].isna()
     if dropped.any():
         day = day[~dropped]
-    return day.drop(columns=["capw"])
+    day = day.drop(columns=["capw"])
+    if passthru.empty:
+        return day
+    return pd.concat([day, passthru]).sort_values(["plant_code", "unit_no", "date"])
 
 
 def main() -> int:

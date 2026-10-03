@@ -1,0 +1,45 @@
+2019 {'key': 'CC_REGULAR', 'status': 'FAIL', 'model': 115.597, 'actual': 110.645, 'share_pp': 3.64, 'tol': '±min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = ±7.64 TWh & ±3pp share'}
+2019 {'key': 'CT_PEAKER', 'status': 'PASS', 'model': 8.761, 'actual': 6.098, 'share_pp': 1.17, 'tol': '±min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = ±7.64 TWh & ±3pp share'}
+2019 {'key': 'ST_GAS', 'status': 'PASS', 'model': 5.021, 'actual': 9.75, 'share_pp': -1.78, 'tol': '±min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = ±7.64 TWh & ±3pp share'}
+2019 {'key': 'COAL_PRB', 'status': 'PASS', 'model': 33.807, 'actual': 32.397, 'share_pp': 1.05, 'tol': '±min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = ±7.64 TWh & ±3pp share'}
+2019 {'key': 'COAL_BIT', 'status': 'FAIL', 'model': 12.011, 'actual': 23.122, 'share_pp': -4.18, 'tol': '±min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = ±7.64 TWh & ±3pp share'}
+2020 {'key': 'CC_REGULAR', 'status': 'PASS', 'model': 115.656, 'actual': 113.978, 'share_pp': 2.57, 'tol': '±min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = ±7.24 TWh & ±3pp share'}
+2020 {'key': 'CT_PEAKER', 'status': 'PASS', 'model': 6.689, 'actual': 4.699, 'share_pp': 0.93, 'tol': '±min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = ±7.24 TWh & ±3pp share'}
+2020 {'key': 'ST_GAS', 'status': 'PASS', 'model': 4.079, 'actual': 7.692, 'share_pp': -1.43, 'tol': '±min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = ±7.24 TWh & ±3pp share'}
+2020 {'key': 'COAL_PRB', 'status': 'PASS', 'model': 23.538, 'actual': 24.152, 'share_pp': 0.13, 'tol': '±min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = ±7.24 TWh & ±3pp share'}
+2020 {'key': 'COAL_BIT', 'status': 'PASS', 'model': 8.003, 'actual': 14.233, 'share_pp': -2.45, 'tol': '±min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = ±7.24 TWh & ±3pp share'}
+2021 {'key': 'CC_REGULAR', 'status': 'FAIL', 'model': 113.458, 'actual': 107.183, 'share_pp': 3.58, 'tol': '±min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = ±7.36 TWh & ±3pp share'}
+2021 {'key': 'CT_PEAKER', 'status': 'PASS', 'model': 3.355, 'actual': 3.736, 'share_pp': -0.13, 'tol': '±min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = ±7.36 TWh & ±3pp share'}
+2021 {'key': 'ST_GAS', 'status': 'PASS', 'model': 3.202, 'actual': 7.499, 'share_pp': -1.72, 'tol': '±min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = ±7.36 TWh & ±3pp share'}
+2021 {'key': 'COAL_PRB', 'status': 'PASS', 'model': 33.081, 'actual': 31.371, 'share_pp': 0.99, 'tol': '±min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = ±7.36 TWh & ±3pp share'}
+2021 {'key': 'COAL_BIT', 'status': 'PASS', 'model': 12.434, 'actual': 17.419, 'share_pp': -1.92, 'tol': '±min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = ±7.36 TWh & ±3pp share'}
+2022 {'key': 'CC_REGULAR', 'status': 'PASS', 'model': 108.36, 'actual': 111.56, 'share_pp': -0.43, 'tol': '±min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = ±7.50 TWh & ±3pp share'}
+2022 {'key': 'CT_PEAKER', 'status': 'PASS', 'model': 4.014, 'actual': 7.743, 'share_pp': -1.46, 'tol': '±min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = ±7.50 TWh & ±3pp share'}
+2022 {'key': 'ST_GAS', 'status': 'PASS', 'model': 4.054, 'actual': 8.611, 'share_pp': -1.79, 'tol': '±min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = ±7.50 TWh & ±3pp share'}
+2022 {'key': 'COAL_PRB', 'status': 'PASS', 'model': 36.969, 'actual': 30.932, 'share_pp': 2.7, 'tol': '±min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = ±7.50 TWh & ±3pp share'}
+2022 {'key': 'COAL_BIT', 'status': 'PASS', 'model': 16.574, 'actual': 14.587, 'share_pp': 0.92, 'tol': '±min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = ±7.50 TWh & ±3pp share'}
+2023 {'key': 'CC_REGULAR', 'status': 'PASS', 'model': 116.197, 'actual': 110.894, 'share_pp': 2.55, 'tol': '±min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = ±7.26 TWh & ±3pp share'}
+2023 {'key': 'CT_PEAKER', 'status': 'PASS', 'model': 8.077, 'actual': 4.33, 'share_pp': 1.57, 'tol': '±min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = ±7.26 TWh & ±3pp share'}
+2023 {'key': 'ST_GAS', 'status': 'PASS', 'model': 5.106, 'actual': 9.293, 'share_pp': -1.72, 'tol': '±min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = ±7.26 TWh & ±3pp share'}
+2023 {'key': 'COAL_PRB', 'status': 'PASS', 'model': 22.182, 'actual': 23.663, 'share_pp': -0.54, 'tol': '±min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = ±7.26 TWh & ±3pp share'}
+2023 {'key': 'COAL_BIT', 'status': 'PASS', 'model': 8.72, 'actual': 13.792, 'share_pp': -2.07, 'tol': '±min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = ±7.26 TWh & ±3pp share'}
+2024 {'key': 'CC_REGULAR', 'status': 'PASS', 'model': 114.224, 'actual': 110.305, 'share_pp': 2.49, 'tol': '±min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = ±7.66 TWh & ±3pp share'}
+2024 {'key': 'CT_PEAKER', 'status': 'PASS', 'model': 6.644, 'actual': 4.407, 'share_pp': 0.93, 'tol': '±min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = ±7.66 TWh & ±3pp share'}
+2024 {'key': 'ST_GAS', 'status': 'PASS', 'model': 3.878, 'actual': 7.615, 'share_pp': -1.43, 'tol': '±min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = ±7.66 TWh & ±3pp share'}
+2024 {'key': 'COAL_PRB', 'status': 'PASS', 'model': 23.413, 'actual': 26.914, 'share_pp': -1.17, 'tol': '±min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = ±7.66 TWh & ±3pp share'}
+2024 {'key': 'COAL_BIT', 'status': 'PASS', 'model': 9.421, 'actual': 13.357, 'share_pp': -1.46, 'tol': '±min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = ±7.66 TWh & ±3pp share'}
+2025 {'key': 'CC_REGULAR', 'status': 'SKIPPED', 'model': 108.831, 'actual': 110.514, 'share_pp': 0.26, 'tol': None}
+2025 {'key': 'CC_CHP', 'status': 'SKIPPED', 'model': 1.963, 'actual': 1.669, 'share_pp': 0.13, 'tol': None}
+2025 {'key': 'CT_PEAKER', 'status': 'SKIPPED', 'model': 3.508, 'actual': 4.735, 'share_pp': -0.45, 'tol': None}
+2025 {'key': 'ST_GAS', 'status': 'SKIPPED', 'model': 3.782, 'actual': 7.251, 'share_pp': -1.31, 'tol': None}
+2025 {'key': 'ST_CHP', 'status': 'SKIPPED', 'model': 0.198, 'actual': 1.02, 'share_pp': -0.32, 'tol': None}
+2025 {'key': 'COAL_PRB', 'status': 'PASS', 'model': 31.101, 'actual': 28.352, 'share_pp': 1.32, 'tol': '±min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = ±7.76 TWh & ±3pp share'}
+2025 {'key': 'COAL_BIT', 'status': 'PASS', 'model': 14.264, 'actual': 15.046, 'share_pp': -0.18, 'tol': '±min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = ±7.76 TWh & ±3pp share'}
+---- denominators
+2019 m_gen 245.6 a_gen 254.8 gap 9.2 | CC share pp 3.64 ; at actual denom 1.94 ; denom part 1.70 ; CC TWh to clear 3.0pp: 1.58
+2020 m_gen 232.1 a_gen 241.2 gap 9.1 | CC share pp 2.57 ; at actual denom 0.70 ; denom part 1.87 ; CC TWh to clear 3.0pp: -1.00
+2021 m_gen 240.0 a_gen 245.2 gap 5.3 | CC share pp 3.58 ; at actual denom 2.56 ; denom part 1.02 ; CC TWh to clear 3.0pp: 1.38
+2022 m_gen 245.4 a_gen 250.2 gap 4.8 | CC share pp -0.43 ; at actual denom -1.28 ; denom part 0.85 ; CC TWh to clear 3.0pp: -8.43
+2023 m_gen 240.2 a_gen 242.0 gap 1.8 | CC share pp 2.55 ; at actual denom 2.19 ; denom part 0.36 ; CC TWh to clear 3.0pp: -1.08
+2024 m_gen 250.1 a_gen 255.5 gap 5.4 | CC share pp 2.49 ; at actual denom 1.53 ; denom part 0.96 ; CC TWh to clear 3.0pp: -1.27
+2025 m_gen 253.2 a_gen 258.7 gap 5.5 | CC share pp 0.26 ; at actual denom -0.65 ; denom part 0.91 ; CC TWh to clear 3.0pp: -6.94

@@ -408,6 +408,10 @@ def test_aggregate_np6_hourly_end_to_end(tmp_path, monkeypatch):
             }
         ).to_csv(tmp_path / f"{fuel}_{year}.csv", index=False)
     monkeypatch.setattr(hsl_script, "NP6_DIR", tmp_path)
+    # Pin the zonal-only extra roots to the fixture too: the real
+    # ``unused-redundant/`` drop zone must not be walked (hundreds of nested
+    # zips), and ``zonal is None`` must follow from the fixture uploads alone.
+    monkeypatch.setattr(hsl_script, "_ZONAL_EXTRA_DIRS", (tmp_path / "absent",))
 
     df, zonal = hsl_script.aggregate_np6_hourly(year)
     assert df is not None
@@ -426,6 +430,10 @@ def test_aggregate_np6_hourly_missing_uploads_returns_none(
 ):
     """No uploads -> None with a data-needed message, never fabricated."""
     monkeypatch.setattr(hsl_script, "NP6_DIR", tmp_path / "absent")
+    # The zonal-only extra roots never feed the system-wide series, so the
+    # None must come from the absent primary uploads; pin them to the fixture
+    # so the real ``unused-redundant/`` drop zone is not walked either.
+    monkeypatch.setattr(hsl_script, "_ZONAL_EXTRA_DIRS", (tmp_path / "absent",))
     assert hsl_script.aggregate_np6_hourly(2024) == (None, None)
     out = capsys.readouterr().out
     assert "no NP6" in out

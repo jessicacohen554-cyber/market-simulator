@@ -198,16 +198,24 @@ at the P0→P1 seam, each ISO-exclusive and sharing
 default on), `ercot_gas_commitment_bridge` (merchant gas-CC) and
 `nyiso_gas_commitment_bridge` (slow-start gas by unit physics plus a min-run leg).
 
-A default-off fourth family is the in-LP commitment **posture** relaxation
-(`ercot_commitment_posture` / `miso_commitment_posture` /
-`spp_commitment_posture`, `scenarios.py:14773` / `:11008` / `:9457`, all
-`False`): a pooled linear commitment state `U` per plant group with headroom
-`Σ P ≤ U`, measured min-load `Σ P ≥ mlf·U` and a startup charge on `ΔU⁺` in the
-objective, plus (SPP) min-up / min-down time rows, built by
-`model/lp/rows.py::_build_posture_energy_rows` (`rows.py:1214`). It is not a
-floor (forces no exogenous energy) and is mutually exclusive with the ISO's
-bridge (rule 19 `[R-ONE-MECH]`); mechanism-matrix row `spp_commitment_posture`
-(`docs/codebase-site/data/mechanism-matrix.js:1759`).
+A default-off fourth family is the in-LP commitment **posture**
+(`model-methodology-spec.md` §"Posture commitment family (default off)"):
+`ercot_commitment_posture` / `miso_commitment_posture` / `spp_commitment_posture`
+(`scenarios.py:14773` / `:11008` / `:9457`, all `False`; PJM/CAISO siblings also
+`False`) — a clustered-UC LP relaxation, not a floor. Per postured merchant-gas
+pool (fast-start pools exempt by physics, rule 18) the LP gains continuous online
+`U[p,t]` and start-up `SU[p,t]` columns with headroom `Σ P ≤ U`, measured min-load
+`Σ P ≥ mlf·U` and a start-up charge on `SU`; the ERCOT/SPP standalone rows (plus
+SPP's min-up / min-down) are built by `model/lp/rows.py::_build_posture_energy_rows`
+(`rows.py:1214`) from `pipeline/kwargs.py::apply_{ercot,spp}_commitment_posture`,
+while the MISO/PJM/CAISO variant re-anchors the pergen reserve pool in
+`model/lp/reserve_rows.py::_build_reserve_rows_pergen`. It forces no exogenous
+energy (no D-2 id), its parameters are measured/published (mlf 0.574 ERCOT, 0.209
+SPP; UT 15 h, DT 8 h SPP), it is never stacked on the ISO's gas bridge (rule 19
+`[R-ONE-MECH]`; `pipeline/solve.py::zero_posture_markup` drops the double start
+charge), and no keeper arms it. Matrix rows `spp_commitment_posture`
+(`docs/codebase-site/data/mechanism-matrix.js:1759`) and `online_capacity_envelope`
+(`:1642`, the ERCOT/MISO/PJM legs).
 
 Additional adequacy helpers: `reserve_adequacy_commit` (NYISO downstate spinning
 reserve), `as_adequacy_commit` (ERCOT multi-product AS), and
