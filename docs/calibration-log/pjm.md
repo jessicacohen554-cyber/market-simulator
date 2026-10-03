@@ -7090,3 +7090,21 @@ Keeper unchanged; data withdrawn; arm at `d3e04d9f`. Records: `PRECOMMIT-` and `
   - In-the-money loading is 0.95–0.99 in the model vs 0.88–0.91 in CAMPD in the fail years.
 - **COAL_BIT:** stays OPEN, re-pointed to in-the-money loading.
 - **Record:** `FINDING-pjm-next-29-lowhour-price-setters-2026-10-02.md`.
+
+## closeout-PJM-2 — 2026-10-03 — 2025 C3a/C3b PASS→FAIL attributed to W0 fleet in 24 EMAAC VOLL hours (zero LP); frontier text drafted
+
+The 2025 C3a/C3b regression (−9.6 → −11.6 %, 0.182 → 0.222) is entirely the 24 incumbent EMAAC VOLL hours in the
+June–July 2025 heat waves. Swapping only those hours flips both gates; outside them the move is +$0.21.
+- **W0 fleet (Shapley 97 % of the crossing).** It adds +901 MW of real EMAAC capacity:
+  - `seasonal_capacity_basis` ~+580 MW;
+  - `admit_standby_units` ~+405 MW: NAEA Lakewood, which ran 239 GWh in 2025, and DE oil GTs that also ran.
+- **2025 EIA-923 must-run drift: 6 %** of the crossing. Its −$0.9 to −1.3 outside those hours is latent and offset.
+- **Renewables fix #7040** opposes the move. The solver stack is documented only.
+- **A W0 structural effect, not a data-drift artefact.** The incumbent's PASS was the right level ($456 vs real $470
+  in those hours) for the wrong reason: a single-zone energy shortfall that existed only because real capacity was
+  missing.
+- **Routed:** a zero-LP heat-wave reserve-scarcity census. The 2025 reserve dual is 0 in every hour.
+
+The COAL_BIT 2019–21 and CT 2021 frontier text is drafted for the desk, not signed. Records:
+`docs/records/pjm/FINDING-closeout-pjm-2-2025-regression-attribution-2026-10-03.md`,
+`docs/records/pjm/DRAFT-closeout-pjm-2-frontier-text-2026-10-03.md`.
