@@ -385,7 +385,8 @@
     "no_pinning_to_actuals": true,
     "outage_filter_exogenous_net_load": true,
     "authorized_price_tuning": null,
-    "notes": "Keeper 2026-10-03-nwpp-next-23-coi recipe replayed unchanged at main HEAD (close-out desk ruling '7-shard replay at HEAD'). Rule-14 data re-solve; offer-curve multipliers unchanged; nothing swept, nothing selected on a gate."
+    "notes": "Keeper 2026-10-03-nwpp-next-23-coi recipe replayed unchanged at main HEAD (close-out desk ruling '7-shard replay at HEAD'). Rule-14 data re-solve; offer-curve multipliers unchanged; nothing swept, nothing selected on a gate.",
+    "attested_by": "NWPP-NEXT-24; desk ruling (rule-14 data re-solve of R-48 structure); 2026-10-03"
   },
   "exceptions": [],
   "disclosures": {
@@ -395,5 +396,9 @@
     "psei_2021_august_defect": "REPAIRED: the 336 non-balance hours are filled from FERC 714 (+0.570 TWh PSEI demand, matching export change; system requirement unchanged).",
     "path76_overflow": "The LP arbitrages the link to its 300 MW rating, while the measured BPAT->NEVP seam averages 20-28 MW. This is stated before the solve (PRECOMMIT s1.3) and is never re-rated to a residual.",
     "take_floor_capacity_clip": "The floor is clipped to what the yard's rowed units can burn. In 2020 this binds at Colstrip (5.86 vs 13.26 TWh), whose model available energy is below its measured 2020 generation (7.94 TWh): an availability-input question, routed, not absorbed."
-  }
+  },
+  "authorized_price_tuning": {
+    "declared": false
+  },
+  "lane_blocks": []
 }

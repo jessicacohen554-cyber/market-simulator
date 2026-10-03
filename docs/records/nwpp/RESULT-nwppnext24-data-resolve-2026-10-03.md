@@ -105,3 +105,23 @@ regresses), this is a promotion candidate: the keeper would otherwise carry inpu
 - The composed span carries the `hourly/` sidecars, including `unit_marginal_<Y>` for every year.
 - A promotion is one `promote_keeper.py` run once the desk hands over the NWPP slot. It prunes the
   `2026-10-03-nwpp-next-23-coi` stores.
+
+## §Promotion (2026-10-03)
+
+The close-out desk (session_01ALecU5Wjde4tkbLrnMExT9) granted the NWPP slot. The desk ruling was "rule-14 data
+re-solve of the R-48 structure, recipe diff empty, zero flips", recorded in plan §5.0.
+
+- **Merge.** `origin/main` was merged into `claude/nwppnext24`. Main was still at `b54e1d84`, the pin's base, so
+  **G-DRIFT is empty**.
+- **Promotion run.** `promote_keeper.py --iso NWPP --bundle results/calibration/nwppnext24_span`:
+  - preflight clean;
+  - outgoing exceptions ledger empty;
+  - registration, attestation and DOF ledger;
+  - `keepers/NWPP.json` and the `program-status.json` gate-(a) marker re-keyed to `2026-10-03-nwpp-next-24-head`;
+  - status rebuilt (NWPP NOT-YET);
+  - pre-audit with only E13 tolerated, then the outgoing three stores pruned (`2026-10-03-nwpp-next-23-coi`,
+    `nwppnext23_span`);
+  - strict audit clean;
+  - parity OK (9 runs, 9 bundle dirs).
+- **Not deleted.** `scripts/gen_nwppnext23_attestation.py` is kept: it is the base `gen_nwppnext24_attestation.py`
+  imports.
