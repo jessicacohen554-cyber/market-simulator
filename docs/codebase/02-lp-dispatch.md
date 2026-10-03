@@ -1,6 +1,8 @@
 # 2. The LP Dispatch Core
 
-Source: `src/market_sim/model/dispatch.py` (~2,400 lines). This is the heart of
+Source: `src/market_sim/model/lp/` — `model.py` (2,240 lines; `DispatchModel`
+at `lp/model.py:68`) and `rows.py` (the row families). `src/market_sim/model/dispatch.py`
+is a 34-line facade kept for import/pickle identity. This is the heart of
 the model — a single annual 8760-hour economic-dispatch linear program, assembled
 once as a sparse CSC matrix and solved by HiGHS. Energy prices are recovered as
 the duals on the energy-balance constraint rows.
@@ -191,13 +193,14 @@ The LP is loaded into HiGHS via `addCols()` (bounds + objective + matrix) and
 - Post-solve the primal status is checked; anything other than optimal fails the
   solve.
 
-### `DispatchModel` — re-costable LP (lines 1653–2149)
+### `DispatchModel` — re-costable LP (`model/lp/model.py:68`)
 
 `DispatchModel` builds the constraint matrix and bounds **once**, then lets the
 objective be re-costed in place via `changeColsCost()`. This is what makes the
-P0→P1→P2 sequence cheap: P1 warm-starts from P0's basis with only the cost vector
-changed (startup markup added), converging in a handful of simplex iterations
-instead of a cold solve. `solve_dispatch(...)` (line 2243) is the one-shot wrapper
+P0→P1 sequence cheap (P0 base-cost → P1 bid-cost are the only two production
+passes; P2 is archived behind `--enable-legacy-p2` and no keeper uses it): P1
+warm-starts from P0's basis with only the cost vector changed (startup markup
+added), converging in a handful of simplex iterations instead of a cold solve. `solve_dispatch(...)` (line 2243) is the one-shot wrapper
 that builds a `DispatchModel` and calls `.solve()`.
 
 ### Cross-year warm-start
