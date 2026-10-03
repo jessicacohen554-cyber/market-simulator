@@ -41,8 +41,12 @@ When reserve co-optimization is off (the default for most ISOs), `n_reserve` and
 
 The cardinal rule (no Python loop over hours) is implemented through one pattern:
 build a single per-hour sparse block, then replicate it across time with
-`scipy.sparse.kron(sp.eye(T), per_hour)`. The `eye(T)` Kronecker factor places
-each hour's block at column offset `t × vars_per_hour`. For unit-major blocks
+`layout.kron_hours(T, per_hour)` — `T` copies of the block laid along the hour
+diagonal, written directly in CSR (the per-hour `data`/`indices` tile, column
+indices shift by `t × vars_per_hour`, row pointers by `t × nnz`). It is the
+same matrix `scipy.sparse.kron(sp.eye(T), per_hour)` returns, byte for byte
+(values and index dtype), without `kron`'s `T × nnz` COO transient; a
+non-canonical or empty block falls through to `sp.kron` itself. For unit-major blocks
 (storage dynamics), the row/column indices are built with `np.arange`/broadcast
 and handed to a single `coo_matrix` constructor.
 
@@ -60,7 +64,7 @@ Per zone `z`, hour `t`:
    + Slack[z,t] − Dump[z,t]  =  Demand[z,t]
 ```
 
-Built as `sp.kron(sp.eye(T), per_hour)` where the per-hour block horizontally
+Built as `kron_hours(T, per_hour)` where the per-hour block horizontally
 stacks `[zone_gen | I | I | −zone_storage | zone_storage | 0 | flow_block | I | −I | 0 | 0]`.
 `zone_gen` is an `(n_zones, n_gen)` membership incidence (`_build_zone_gen_map`),
 `zone_storage` an `(n_zones, n_storage)` membership map. The SOC columns get a
