@@ -21,6 +21,7 @@ The solve SHA recorded below is the one each leg actually solved at, read from t
 | MISO | `2026-10-02-w0-miso-fix2` | #7074 (merged) | 25da6022 (all seven legs) | NOT-YET → NOT-YET | price_mean moves FAIL → PASS (2020 C3a +11.6 → +9.6 %). fuelmix and price_shape still FAIL. Train 2023–25 stays CALIBRATED. |
 | NWPP | `2026-10-02-w0-nwpp-fix2` | #7076 (merged) | 25da6022 (all seven legs; 2019 re-solved because the kept 306f2c00 leg recorded the NWPP-owned rule-26 field at a non-inert value) | NOT-YET → NOT-YET | fuelmix moves FAIL → PASS (2025 CC_REGULAR +9.60 → +7.91 TWh, on the kept bench parts). price_mean, price_shape and dispatch_corr still FAIL. C3a 2023–25: −23.1 / −30.7 / −4.6 %. |
 | SPP | `2026-10-02-w0-spp107` (HELD; not promoted). Successor: the relief re-solve `w0-spp107r` | none (owner: "Hold, fix derate first") | b27b19c4 (all seven legs) | NOT-YET → NOT-YET; **train 2023–25 CALIBRATED → NOT-YET** | C1 ST_GAS crosses its volume band in 2024 (−7.85 → −8.16 TWh) and 2025 (−7.61 → −8.26 TWh). C3c 2025 is then no longer the lone failure, so price_tail goes CAVEAT → FAIL. Owner: "Hold, fix derate first". spp-107 stays the keeper, and the bundle is kept locally (rule 31). #7046 (spp-100) was superseded by the owner's merge of #7025. |
+| SPP (relief) | `2026-10-02-w0-spp107r` | this PR | 15a351a1 (all seven legs) | NOT-YET → NOT-YET; **train 2023–25 CALIBRATED → NOT-YET** | spp-107 + W0 + #7081 + ST_GAS `wefor_residual` 0.0. Owner: *"Promote on structure"*, confirmed *"Still promote"* with SPP-105's R on the table. C1 ST_GAS 2024/25 −7.85/−7.61 → −6.31/−6.91 TWh (inside band). The train tier falls on C3a 2024 −11.2 % and C3b 2024 0.216, with C3c then not lone. |
 
 PJM card, verbatim per the desk: **before→after mixes W0, the renewables fix (#7040), and the incumbent's off-lockfile solver stack (highspy 1.15.1 vs locked 1.14.0); not separated, by design.**
 
@@ -40,7 +41,12 @@ PJM card, verbatim per the desk: **before→after mixes W0, the renewables fix (
    - `docs/records/spp/PRECOMMIT-spp-w0-stgas-wefor-relief-2026-10-02.md` was pushed at 37af3ccf, before any compute.
    - G1 PASSES: pooled 2023–25, the measured overlay X is 0.534 against the applied statistical W of 0.191.
    - Hence `wefor_residual = 0.0` on `["ST_GAS"]`, frozen in `spp-w0-stgas-relief-identification.json`.
-   - Seven shards (`w0-spp107r-*`) were launched at main 15a351a1, carrying #7081 and the relief. The promotion question follows in its own PR.
+   - Seven shards (`w0-spp107r-*`) were launched at main 15a351a1, carrying #7081 and the relief. The train tier fell, so the run was HELD to the desk.
+12. **SPP relief promotion:** owner card *"Promote on structure"*.
+   - After promote_keeper ran locally, the lane found its PRECOMMIT's DO-NOT-REDO entry was wrong: the cell was R, not U. SPP-105 had already solved and rejected `wefor_residual` 0.0 on CC/ST, because the statistical WEFOR stands in for sub-5-day gas outages.
+   - The lane stopped before committing and the desk re-asked the owner with the full record. The answer, verbatim: *"Still promote"*.
+   - That supersedes SPP-105's R on the new W0 age-escalation evidence. SPP-105's sub-5-day objection is not rebutted and becomes the next SPP queue item, ahead of the SPP-81b RT price level.
+   - The correction is recorded in the PRECOMMIT itself.
 
 ## 3. Data drift (labelled on every card, not W0)
 
@@ -119,6 +125,7 @@ The 2025-only injected must-run (biomass + OTHER) rose between each incumbent an
 - **Chunked transport:** MISO dispatch above 100 MiB went as `split -b 90M` chunks plus a `.sha256`, reassembled and checked at verify.
 - **Shard branches:** several were deleted from origin before compose (PJM 2019/2020/2024/2025 and MISO 2021/2025, among others). Their verified bytes were held locally until promotion (rule 34).
 - **NWPP 2019 fix-2 solve:** P0 2,622 s (406k simplex iterations, cold) and P1 4,004 s (warm), single-threaded, peak 6.06 GiB. Solver output is off (`model.py:672`), so a long silent solve looks stalled; a py-spy dump showed it inside `h.run()`.
+- **SPP lane FINDING (process):** a PRECOMMIT's DO-NOT-REDO section must be checked against the ISO's matrix shard cell, not reasoned from the lever's name. Here the cell read R and the PRECOMMIT said U. The owner's first ruling was given on that error, and the lane caught it before merging.
 - **Follow-ups:**
   - SOCO solve-profile `hydro_plant_modes`.
   - The environment setup script's `freshen` fetch fails intermittently.

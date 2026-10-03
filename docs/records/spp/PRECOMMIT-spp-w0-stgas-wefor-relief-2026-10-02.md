@@ -60,3 +60,13 @@ For each row `r` and year `y`:
   - Train tier 2023–25 holds CALIBRATED → promote (on structure, rule 1).
   - It falls → HOLD to the desk.
 - **Reporting:** C1 ST_GAS 2024/2025 and C3a are REPORTED, never targeted (rule 1). They are not the promotion basis.
+
+## Correction (2026-10-03, after the solve; recorded, not re-pre-registered)
+
+The DO-NOT-REDO entry above was wrong. It said the SPP `wefor_residual` cell was untested (U). It was **R**.
+
+- **The prior test:** SPP-105 (2026-09-30, `RESULT-spp-105-gas-family-outage-2026-09-30.md`) solved `wefor_residual = 0.0` on {CC_REGULAR, CC_CHP, ST_GAS, ST_CHP}, seven shards.
+- **Its result:** the owner card was "Don't promote (Rec.)". It was rejected because the CC/ST statistical WEFOR stands in for the sub-5-day outages that the ≥5-day CAMPD windows miss, so it is not a pure double count.
+- **What this pre-check does and does not show:** G1 shows the measured layer is large. It does **not** rebut that objection, because the gas short windows are unarmed on SPP and so X carries no sub-5-day gas outages.
+- **The new evidence:** W0's true commission years make the age escalation live. That evidence, and the scope narrowed to ST_GAS, were put to the owner with the full SPP-105 record. The owner confirmed *"Still promote"*.
+- **Still open:** the sub-5-day gas gap is now the next SPP queue item.
