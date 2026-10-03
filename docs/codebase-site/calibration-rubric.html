@@ -320,7 +320,7 @@
               <tr>
                 <td><code>scripts/calibration_verdict.py</code></td>
                 <td><span class="role-pill gates">Gates</span></td>
-                <td><code>RUBRIC_VERSION = 3.4</code>. Scores the criterion set per year, applies tiers, two-band tolerances and caveat budgets, and emits one of <code>CALIBRATED</code>, <code>CALIBRATED-WITH-CAVEATS</code>, or <code>NOT-YET</code>. Stdlib-only; reads <strong>committed artifacts only</strong> and never re-solves the LP.</td>
+                <td><code>RUBRIC_VERSION = "3.17"</code> (2026-10-02). Scores the criterion set per year, applies tiers, two-band tolerances and caveat budgets, and emits one of <code>CALIBRATED</code>, <code>CALIBRATED-WITH-CAVEATS</code>, or <code>NOT-YET</code>. Stdlib-only; reads <strong>committed artifacts only</strong> and never re-solves the LP.</td>
               </tr>
             </tbody>
           </table>
@@ -370,7 +370,7 @@
         <div id="rubric-scorecard" aria-label="Interactive C1–C8 rubric scorecard"></div>
 
         <p class="src-cap">
-          <code>scripts/calibration_verdict.py:121–357</code> (tolerance constants + the <code>CRITERIA</code> map at 344–357) · data: <code>docs/codebase-site/data/rubric-scorecard-v2.json</code> (illustrative) · <code>docs/calibration-and-validation-methodology.md</code> §1.2
+          <code>scripts/calibration_verdict.py:121–357</code> (tolerance constants + the <code>CRITERIA</code> map at 344–357) · data: <code>docs/codebase-site/data/rubric-scorecard-v2.json</code> (illustrative, frozen at <code>rubric_version</code> 2.4 — the live scorer is 3.17; the criterion set and tiers are unchanged since) · <code>docs/calibration-and-validation-methodology.md</code> §1.2
         </p>
       </div>
     </section>
@@ -547,14 +547,66 @@
             <div class="ver-head"><span class="ver-tag">v3.3</span><span class="ver-date">2026-08-17</span></div>
             <p><strong>A ledgered caveat is REPORTED, not downgrading.</strong> Since v3.1 the ledgerable set is <code>{C3c}</code>, so this says exactly one thing: an accepted, ledgered scarcity-tail limitation is no longer what turns <code>CALIBRATED</code> into <code>CALIBRATED-WITH-CAVEATS</code>. It withdraws the v3.0–v3.2 <em>"never <code>CALIBRATED</code>"</em> clause, left verbatim in those entries as genealogy. <strong>A reporting change, not a band change</strong> — the C3c band, tier and measured magnitude are untouched, the criterion still reads <span class="rs-badge st-caveat">CAVEAT</span> and never PASS, and the miss is still printed in full, still listed in <code>caveats.ledgered</code>, and still named on the determination basis of a <code>CALIBRATED</code> run.</p>
           </li>
-          <li class="ver-item is-current">
-            <div class="ver-head"><span class="ver-tag">v3.4</span><span class="ver-date">2026-08-18</span><span class="rs-badge st-grounded">current</span></div>
+          <li class="ver-item">
+            <div class="ver-head"><span class="ver-tag">v3.4</span><span class="ver-date">2026-08-18</span></div>
             <p><strong>The C1 volume band is floored at the share leg's own materiality scale</strong>: <code>vol_band = min(max(2% of ISO load, 3% of actual total generation), 8 TWh)</code>. <strong>No new constant</strong> — the floor is <code>FUELMIX_SHARE_PP</code> applied to the actual-side generation total, reconciling C1's two legs rather than adding a tolerance. Before it, on a deep net-importing ISO the 2%-of-load term could bind <em>tighter</em> than the rubric's own declared mix-materiality on the same class. It is measured on actual generation, not <code>share_pp</code>, because a system-total shrink flatters the share difference; gating on raw <code>|model − actual|</code> over the actual total is un-flatterable, and therefore strictly harder than the share leg it mirrors. The 8 TWh cap still tops the band, so large-ISO bands are bit-identical.</p>
+          </li>
+          <li class="ver-item">
+            <div class="ver-head"><span class="ver-tag">v3.5</span><span class="ver-date">2026-08-25</span></div>
+            <p><strong>D-A, the band-free reported-only diurnal price-amplitude measurement</strong> (<code>score_diurnal_amplitude</code>), and the reported-only block that had been computed and silently dropped since v2.9 is surfaced. No criterion added, budgets unchanged, no determination moves.</p>
+          </li>
+          <li class="ver-item">
+            <div class="ver-head"><span class="ver-tag">v3.6</span><span class="ver-date">2026-09-05</span></div>
+            <p><strong>C3c on an out-of-training year is ledgered whatever else that year does</strong> — the lone-failure condition is dropped outside 2023–2025 (<code>_apply_c3c_standing_rule</code>, token <code>c3c-holdout-year-2026-09-05</code>). Owner: "c3c should be an accepted caveat on all holdout years".</p>
+          </li>
+          <li class="ver-item">
+            <div class="ver-head"><span class="ver-tag">v3.7</span><span class="ver-date">2026-09-10</span></div>
+            <p><strong>An unscored (<code>SKIPPED</code>) C3c does not downgrade</strong> and a run whose only caveat is C3c reads <code>CALIBRATED</code>, not with-caveats (owner, session miso-251).</p>
+          </li>
+          <li class="ver-item">
+            <div class="ver-head"><span class="ver-tag">v3.8</span><span class="ver-date">2026-09-13</span></div>
+            <p><strong>The no-price determination class.</strong> A region with no <code>actual_lmp.json</code> block (SOCO; NWPP before 2023) scores C1/C2/C4/C6/C8 only and reads a determination that names its own basis (<em>PHYSICALLY-CALIBRATED — price unscored</em>), never <code>CALIBRATED</code>.</p>
+          </li>
+          <li class="ver-item">
+            <div class="ver-head"><span class="ver-tag">v3.9</span><span class="ver-date">2026-09-25</span></div>
+            <p><strong>C8 scores each coal subclass as its own class</strong> (<code>COAL_BIT</code> / <code>COAL_PRB</code> / <code>COAL_LIGNITE</code> / <code>COAL_WC</code>): own D-2 forced share, materiality and cap. No constant moved; every registered <code>legitimacy_diagnostics.json</code> re-split in place (zero LP); no determination changed.</p>
+          </li>
+          <li class="ver-item">
+            <div class="ver-head"><span class="ver-tag">v3.10</span><span class="ver-date">2026-09-27</span></div>
+            <p><strong>One scoped ledger row past the C3c-only guard</strong>: (SOCO, 2019, C1, <code>COAL_BIT</code>, under-run only) via <code>SCOPED_LEDGER_ENTRIES</code> / <code>_apply_scoped_ledger</code> — exact key, governance must pass, never a PASS, spends the single slot and still downgrades. <code>LEDGERABLE_CRITERIA</code> unchanged.</p>
+          </li>
+          <li class="ver-item">
+            <div class="ver-head"><span class="ver-tag">v3.11</span><span class="ver-date">2026-09-30</span></div>
+            <p>Three more scoped rows on the v3.10 machinery: SOCO C3a 2019 (over), 2020 (over), 2022 (under) vs the FERC-714 system lambda — direction-bound, downgrading, budget still 1.</p>
+          </li>
+          <li class="ver-item">
+            <div class="ver-head"><span class="ver-tag">v3.12</span><span class="ver-date">2026-09-30</span></div>
+            <p>One more scoped row: SOCO C3b 2022 vs the lambda, new direction <code>above_band</code> (the miss sits in the lambda's top-20 % hours, Winter Storm Elliott 67.5 % of the squared error). Budget kept at 1.</p>
+          </li>
+          <li class="ver-item">
+            <div class="ver-head"><span class="ver-tag">v3.13</span><span class="ver-date">2026-09-30</span></div>
+            <p><strong>Rule 30 (c) reversed</strong>: the ISO determination (<code>iso_determination</code>) covers every registered year — keeper scopes plus every folded touchpoint, per-run worst-of; a held-out year reading <code>NOT-YET</code> makes the ISO <code>NOT-YET</code>. Owner: "Shouldn't be considered calibrated if holdout years miss."</p>
+          </li>
+          <li class="ver-item">
+            <div class="ver-head"><span class="ver-tag">v3.14</span><span class="ver-date">2026-10-02</span></div>
+            <p><strong>Configuration-exception caveat kind</strong> (<code>CONFIG_EXCEPTION_ENTRIES</code>): ERCOT 2023 C3a/C3b, only when the year's own <code>run_config_2023.json</code> carries the declared ECRS carve-out (<code>ercot_offer_swcap_clip</code>), read <em>OWNER-SIGNED CONFIGURATION EXCEPTION</em> at full magnitude — no slot, no downgrade, named on the basis (Potomac Economics 2023 SOM §II.H). ERCOT carve-out scope → <code>CALIBRATED</code>; forward scope stays <code>NOT-YET</code>.</p>
+          </li>
+          <li class="ver-item">
+            <div class="ver-head"><span class="ver-tag">v3.15</span><span class="ver-date">2026-10-02</span></div>
+            <p>On a lambda-referenced BA (<code>LAMBDA_REFERENCED_ISOS</code>, SOCO) the v3.11/v3.12 <em>reference-definition</em> C3a/C3b rows come off the single ledgered slot; still downgrading. SOCO <code>NOT-YET</code> (3/1) → <code>CALIBRATED-WITH-CAVEATS</code> (1/1).</p>
+          </li>
+          <li class="ver-item">
+            <div class="ver-head"><span class="ver-tag">v3.16</span><span class="ver-date">2026-10-02</span></div>
+            <p>NWPP gains a labelled price reference: CAISO WEIM 15-minute ELAP from 2023 (<code>LABELLED_PRICE_REFERENCE_FROM["NWPP"] = 2023</code>, <code>PRICE_BENCHMARK_LABEL</code>); C3a/C3b score on it, C3c is not scored (<code>C3C_NOT_SCORED</code>); 2019–2022 keep the v3.8 no-price treatment per year.</p>
+          </li>
+          <li class="ver-item is-current">
+            <div class="ver-head"><span class="ver-tag">v3.17</span><span class="ver-date">2026-10-02</span><span class="rs-badge st-grounded">current</span></div>
+            <p><strong>PJM C3a/C3b actual becomes zone-resolved load-weighted</strong> (DataMiner2 zonal LMPs, <code>derive_actual_lmp.ZONAL_LW_SOURCES["PJM"]</code>), as NYISO and MISO already were. A benchmark change — no scorer constant moves. PJM stays <code>NOT-YET</code>.</p>
           </li>
         </ol>
 
         <p class="src-cap">
-          <code>scripts/calibration_verdict.py:61–82</code> (version comment + constant) · <code>docs/calibration-and-validation-methodology.md</code> §1.5 · <code>docs/calibration-determination-rubric.md</code> §9
+          <code>scripts/calibration_verdict.py:162–670</code> (per-version genealogy comments; <code>RUBRIC_VERSION = "3.17"</code> at :670) · <code>docs/calibration-and-validation-methodology.md</code> §1.5 · <code>docs/calibration-determination-rubric.md</code> §9
         </p>
       </div>
     </section>
