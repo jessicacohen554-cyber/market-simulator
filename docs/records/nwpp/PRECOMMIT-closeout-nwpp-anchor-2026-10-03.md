@@ -64,3 +64,38 @@ The desk ruled on sequencing at 01:31:00Z. It crossed with the shard launch at 0
 - **If NEXT-22 stands down:** launch on `w0_nwpp_span` at the pin, as §2 states.
 - **To fold in if it lands first:** the desk's cross-ISO `NUCLEAR_MONTHLY_CF_BY_YEAR[NWPP]` 2019–22 repair goes
   into the same pin.
+
+## 5. Addendum: re-pin onto the NEXT-22 keeper (desk "GO", 2026-10-03 01:57Z)
+
+NWPP-NEXT-22 promoted: PR #7105, merged at `469ddcd7`.
+
+- **Incumbent keeper:** `2026-10-03-nwpp-next-22b-w0` (`results/calibration/nwppnext22b_span`). Its legs sit at
+  `2b8da72a`, replaying `w0_nwpp_span` with the priced interface, priced interchange and seam measured limits
+  armed.
+- **This lane:** main is merged into `claude/closeout-nwpp-anchor` (`675a707c`).
+
+**Anchor at the merged HEAD.** I re-ran `regenerate_clean --solve-profile NWPP` and then the derive. The output is
+byte-identical to the committed CSV (`diff` rc 0), so main's changes to eia923 / campd / coal / bench_multiclass
+do not move it.
+
+**G-DRIFT vs 2b8da72a** (90 commits, 45 files on the solve and scoring path; every hunk classified against code):
+
+- **LIVE (solve):** `nwpp_plant_basis_energy.csv`.
+- **LIVE (cache key only):** SolveEpoch 2026-10-03a and its ledger entry.
+- **INERT, everything else.** Most of it comes from two refactor commits: e86fc2c5 "Vectorize inert hot paths" and
+  b767e519 "Trim LP handoff copies, memoize".
+  - `kron_hours` builds the same matrix as `sp.kron`, byte for byte; 200 randomized equivalence trials, no LP.
+  - The outage-window slice selects exactly the old mask's elements.
+  - Month×hour-of-day percentile tables give the same order statistics.
+  - The rest is iterrows→zip and memo changes with identical values, or hunks scoped to other ISOs (CAISO, SOCO,
+    ERCOT, NYISO, SPP; the SPP split-remap file needs `campd_split_remap_companions`, which is false in the NWPP
+    recipe).
+
+**Solve.** 7 shards, one per year 2019–2025, replaying `nwppnext22b_span` (`replay_keeper --years Y`, no `--set`)
+at the post-merge `main` SHA. The budget is 120 minutes per shard, with at most 6 alive at a time.
+
+**Readings.** The §3 readings and decision rule are unchanged. The control is now `nwppnext22b_span`: C1 in band
+where that keeper is; C3a 2023–25 against WEIM ELAP at full magnitude; C4 coal 2023 reported.
+
+**Not in this pin:** the cross-ISO `NUCLEAR_MONTHLY_CF_BY_YEAR[NWPP]` repair. It is not on main, so it rides the
+next NWPP solve.
