@@ -4032,6 +4032,9 @@ results/calibration/nwppnext22_*/
 results/calibration/nwppnext22b_*/
 !results/calibration/nwppnext22b_span/
 
+# closeout-miso-nuc: per-year shard legs, checked out for verify/compose only; bytes live on their shard commits
+# (claude/closeout-miso-nuc-<Y>); the composed bundle carries its own negation. Never rm (rule 31).
+results/calibration/closeout_miso_nuc_20[12][0-9]/
 # capx D105 (2026-10-03): the NEISO T1-F re-solve on keeper 2026-10-02-w0-neiso
 # (ff-t1f-d105/neiso, the headline neiso-t1f key 66fb439918cbefd6; owner ruling
 # Q76, plan §2.1b gate (d)). Same class and same slim-vs-heavy split as
