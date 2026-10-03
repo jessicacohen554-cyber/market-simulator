@@ -100,3 +100,17 @@ The run itself:
 - **Pruned:** the outgoing keeper `2026-10-03-nwpp-next-22b-w0` (`nwppnext22b_span`).
 - **Bench parts:** stay at main's render (R-28). Registration re-renders them, so they were restored and the status
   part was rebuilt on the kept parts.
+
+**Known LIVE data hunk for the NEXT NWPP solve (desk, 2026-10-03; rule 29 G-DRIFT):**
+- **What landed after the legs:** PR #7134 (`9f2fe6dfb284ba21e1daf20cb61917522813bc33`) merges EIA-923 Page 2 coal stocks
+  for 2015–2017 into the `coal-stocks` datatype.
+- **Why it is LIVE for NWPP:** the keeper arms the take floor and the monthly pile, and `build_coal_take_floor` reads
+  S_max over every curated year ≤ Y−1.
+- **Effect at the next clean regenerate:** NWPP yard maxima rise in 65 plant-years over 2019–25. For 2019:
+  - Boardman 6106: 400 → 999 kt
+  - Bonanza 7790: 511 → 1,013 kt
+  - 8224: 456 → 765 kt
+  - 3845: 1,014 → 1,396 kt
+- **This keeper is unaffected:** its legs at `dad1205a` predate the merge, and the promotion stands as solved.
+  `data/clean` was not regenerated on this branch after #7134.
+- **For the next NWPP lane:** classify the hunk LIVE, and either re-solve against it or carry a control.
