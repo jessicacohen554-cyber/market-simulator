@@ -37,7 +37,16 @@ _SOURCES = {
 }
 
 
-def build(bundle: Path) -> dict:
+#: The replayed keeper, per solve basis: ``pin`` = keeper #20 at NEXT-21's pin
+#: (the first, held run); ``w0`` = the W0 fix-2 keeper at main HEAD (the
+#: owner's "re-solve on W0 basis" card, run NEXT-22b).
+BASES: dict[str, str] = {
+    "pin": "keeper #20 (2026-10-01-nwppnext16c-combined-vintage) at NEXT-21's pin 86b73d6f + the CAISO TRNS_USAGE intake + the NEXT-22 code",
+    "w0": "the W0 fix-2 keeper (2026-10-02-w0-nwpp-fix2) at main HEAD + the NEXT-22 code",
+}
+
+
+def build(bundle: Path, pin: str = PIN, basis: str = "pin") -> dict:
     """Return the NWPP-NEXT-22 attestation built on NEXT-21's generator."""
     for key, src in _SOURCES.items():
         if key not in base._ARMED:
@@ -50,7 +59,7 @@ def build(bundle: Path) -> dict:
         raise SystemExit(
             "run_config nwpp_seam_measured_limits is not True -- not the NEXT-22 arm"
         )
-    att["lane"] = "NWPP-NEXT-22"
+    att["lane"] = "NWPP-NEXT-22" if basis == "pin" else "NWPP-NEXT-22b"
     att["governance"]["notes"] = (
         "Keeper #20 recipe with the priced interface and the measured seam headroom armed "
         "(owner cards 2026-10-02: NEXT-21 'Hold #20, fix seam headroom'; NEXT-22 'CAISO share + "
@@ -59,12 +68,12 @@ def build(bundle: Path) -> dict:
     disc = att["disclosures"]
     years = json.loads((bundle / "meta.json").read_text())["years"]
     disc["years"] = (
-        f"Solved {years}, one isolated shard per year (rule 36), pinned {PIN[:8]} "
-        "(NEXT-21's pin 86b73d6f + the CAISO TRNS_USAGE intake + the NEXT-22 code, INERT for "
-        "the keeper; PRECOMMIT s2), on the requirements.txt library pins."
+        f"Solved {years}, one isolated shard per year (rule 36), pinned {pin[:8]}: "
+        f"{BASES[basis]} (code INERT for the keeper; PRECOMMIT s2), on the "
+        "requirements.txt library pins."
     )
     disc["not_a_pure_ab_against_the_keeper"] = (
-        "Config keys moved against keeper #20: reference_price_interface -> True, "
+        f"Config keys moved against {BASES[basis].split(' at ')[0]}: reference_price_interface -> True, "
         "priced_interchange -> True, nwpp_seam_measured_limits -> True. Same libraries; code "
         "drift classified INERT (PRECOMMIT s2)."
     )
@@ -76,9 +85,11 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--bundle", required=True)
     ap.add_argument("--write", action="store_true")
+    ap.add_argument("--pin", default=PIN, help="full 40-char solve pin")
+    ap.add_argument("--basis", choices=sorted(BASES), default="pin")
     args = ap.parse_args()
     bundle = Path(args.bundle)
-    att = build(bundle)
+    att = build(bundle, args.pin, args.basis)
     out = bundle / "calibration_attestation.json"
     if args.write:
         out.write_text(json.dumps(att, indent=2) + "\n", encoding="utf-8")
