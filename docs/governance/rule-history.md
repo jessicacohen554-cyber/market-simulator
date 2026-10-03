@@ -1644,10 +1644,33 @@ carve-out-2023 scope NOT-YET → CALIBRATED; PJM C3a 2020 FAIL → PASS; NWPP no
 `tests/scoring/test_calibration_verdict_closeout_c.py`, `tests/scoring/test_calibration_verdict_scoped_ledger.py`,
 `tests/curation/test_lw_zonal_registry.py`.
 
-## 28. Changes to this file
+## 28. Rubric v3.18 — the C3c model tail masked to the RT-covered hours; CAISO's EIA-930 gas fold refuted (owner, 2026-10-03)
+
+**Owner rulings, verbatim card choices** (backcast close-out plan `docs/backcast-closeout-plan-2026-10.md` §5.0, desk relay of 2026-10-03):
+
+> R-33 (CAISO): "Refute the gas fold for CAISO" — CAISO joins `EIA930_GAS_FOLD_REFUTED`, CEMS cap kept, benchmark-only.
+> R-34 (all ISOs, live on CAISO): "Mask to RT-covered hours" — the C3c scarcity-tail model count is masked to the RT-covered hours; CAISO 2021 relabelled "reference-window mismatch; like-for-like under-fire 0 vs 27, C3c-2024 class"; rubric version bump.
+
+**What changed.** v3.18: the render counts the C3c model (and overlay) tail only on hours where the actual RT series is
+finite — the window the actual count already lives on, and the mask C3a's `_monthly_mae` applies — and stamps
+`hoursGt200.window = "rt"`; the scorer's coverage note on a stamped payload says both counts are on the RT-covered hours.
+`C3C_READING_LABELS` carries the CAISO 2021 reading (RT-window payload, under-fire only, fail-closed). R-33 is a
+benchmark change with no version of its own: `scripts/lib/benchmark_semantics.EIA930_GAS_FOLD_REFUTED` gains CAISO, and
+the CAISO supply-consistent demand derive is first decoupled onto `geo_biomass_outside_930_other` (same value; a
+re-derive is byte-identical). No band, tier, ledger row or budget moves. No solve ran.
+
+**ISO determinations moved:** none. CAISO stays NOT-YET: C1 CC_REGULAR 2019/20/21 +10.19/+16.45/+8.11 → +5.63/+13.46/+6.59
+TWh (still FAIL); C3c 2021 88 → 0 vs 27 h (CAVEAT, relabelled); C3c 2023 67 → 51 vs 47 h (PASS → PASS). Every other
+ISO's verdict is unchanged. Record:
+`docs/records/caiso/closeout-caiso-2/RESULT-closeout-caiso-impl-2026-10-03.md`. Tests:
+`tests/scoring/test_tail_metric_payload.py`, `tests/scoring/test_benchmark_semantics.py`,
+`tests/scoring/test_vintage_reconcile_foldin.py`.
+
+## 29. Changes to this file
 
 | date | change |
 |---|---|
+| 2026-10-03 | Added §28: **rubric v3.18** (owner ruling R-34: the C3c model tail masked to the RT-covered hours, CAISO 2021 relabelled) and the R-33 CAISO gas-fold refutation (benchmark-only), rulings verbatim in §28. No determination moves. "Changes to this file" renumbered §28 → §29 (the only external citation of §28 is the new one in `calibration_verdict.py`). |
 | 2026-10-02 | Rule 35 `[R-PROMOTE]` order text corrected to match `scripts/promote_keeper.py` (lane closeout-promote-tooling; reported by NYISO #7041, SPP-107 #7025, closeout-CAISO #7050): the audit ran before the prune, so E13 failed on the outgoing keeper in every promotion. Now a pre-prune audit (every check but E13; E11 still sees the former bundle) and a strict post-prune audit that refuses to finish. Attest now carries the outgoing keeper's `exceptions` ledger forward (C3c entries re-measured on the incoming bundle; an entry whose year left the span, or whose C3c no longer fails, is refused unless `--drop-exception` records a reason under `exceptions_dropped`). No norm loosened. |
 | 2026-10-02 | Added §27: **rubric v3.14–v3.17** (owner rulings R-6, R-8, R-9, R-13 verbatim in §27): ERCOT 2023 configuration-exception caveat kind, SOCO lambda-referenced reference-definition rows off the single slot, NWPP labelled WEIM ELAP benchmark 2023-06+, PJM zone-resolved C3a actual. SOCO NOT-YET → CALIBRATED-WITH-CAVEATS; no other ISO headline moves. "Changes to this file" renumbered §27 → §28 (no external reference cited §27). |
 | 2026-09-30 | Added §26: **rule 30 `[R-TOUCHPOINT-FOLD]` (c) reversed, rubric v3.13** — the ISO determination covers every registered year, held-out and folded runs included (owner instruction and decision cards verbatim in §26). 0 run-level moves; CAISO, MISO, NYISO, SPP headlines CALIBRATED → NOT-YET; CAISO/SPP `complete` and CAISO/NYISO `frontier` withdrawn. "Changes to this file" renumbered §26 → §27 (the only external citation of §26 is the new one in `calibration_verdict.py`). |
