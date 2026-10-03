@@ -1,0 +1,19 @@
+{
+  "id": "2026-10-03-nwpp-next-23-coi",
+  "label": "nwpp next 23 coi",
+  "date": "2026-10-03",
+  "shorthand": "nwpp-next-23-coi",
+  "definition": "NWPP-NEXT-23: NEXT-22b keeper + COI export leg on the CAISO PNW delivered-cost basis",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NWPP",
+  "file": "frontend/data/backcast/runs/2026-10-03-nwpp-next-23-coi.js",
+  "bundle": "results/calibration/nwppnext23_span"
+}
