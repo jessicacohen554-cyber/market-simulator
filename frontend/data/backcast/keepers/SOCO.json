@@ -1,7 +1,7 @@
 {
  "iso": "SOCO",
- "keeper": "2026-10-03-closeout-soco-2-nuclear",
- "note": "SOCO nuclear 2019-22 at measured monthly CF (NUCLEAR_MONTHLY_CF_BY_YEAR rows); CC_REGULAR over-run root-caused, structural promotion under R-41",
+ "keeper": "2026-10-03-closeout-soco-3-coalpile",
+ "note": "SOCO measured take-or-pay coal pile (R-49/R-54); CC_REGULAR 2019 remains the open residual",
  "keeper_at_promotion_soco53": "2026-09-16-soco-1-baseline",
  "superseded": {
   "date": "2026-10-03",
