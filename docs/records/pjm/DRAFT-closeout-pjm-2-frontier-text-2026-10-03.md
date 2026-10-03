@@ -14,6 +14,11 @@ CALIBRATED keeper. The text below would replace it.
 
 ## Statement 1 — C1 COAL_BIT 2019 / 2020 / 2021 (+19.81 / +13.18 / +16.58 TWh, band ≈ ±8 TWh)
 
+> **HELD FOR NEXT-31 (R-36), 2026-10-03.** Owner ruling R-36, verbatim: *"Sign CT 2021 now; hold COAL_BIT 1b for
+> NEXT-31"*. Statement 1 (1a and 1b) stays a DRAFT and enters no ledger. 1b is re-measured on the keeper PJM-NEXT-31
+> leaves before it can be signed. Statement 2 (CT 2021) was signed and ledgered by closeout-PJM-impl
+> (`docs/records/pjm/RESULT-closeout-pjm-impl-2026-10-03.md`).
+
 **Status: a draft pending PJM-NEXT-31, not a frontier to sign.**
 - PJM-NEXT-30 (`docs/records/pjm/FINDING-pjm-next-30-coalbit-inmoney-loading-2026-10-03.md`) decomposed the
   in-money loading object, and its §4 owner ruling charters PJM-NEXT-31: an outage-extract repair, solved on all
