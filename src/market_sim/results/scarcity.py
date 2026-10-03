@@ -355,11 +355,7 @@ def ercot_adaptive_expectation_daily(
     w = 0.5 ** (np.arange(1, trail_days + 1, dtype=float) / float(half_life_days))
     pad = np.concatenate([np.zeros(trail_days), s])
     # pad index of s[t] is trail_days + t; lag j of day d reads s[d-1-j].
-    idx = (
-        trail_days - 1
-        + np.arange(n)[:, None]
-        - np.arange(trail_days)[None, :]
-    )
+    idx = trail_days - 1 + np.arange(n)[:, None] - np.arange(trail_days)[None, :]
     num = (pad[idx] * w[None, :]).sum(axis=1)
     denom = np.cumsum(w)[np.clip(np.arange(n), 1, trail_days) - 1]
     return np.clip(float(beta) * num / denom, 0.0, 1.0)
@@ -401,9 +397,19 @@ def lolp(
 def _lolp_half(r, mu, sigma, mcl_mw, shift_sigma, obd_half_shift):
     """First-half (spinning-only) LOLP term; see :func:`ordc_adder`."""
     if obd_half_shift:
-        mu_s = np.asarray(mu, dtype=float) + shift_sigma * np.asarray(sigma, dtype=float)
-        return lolp(r, 0.5 * mu_s, np.asarray(sigma, dtype=float) / np.sqrt(2.0), mcl_mw)
-    return lolp(r, np.asarray(mu, dtype=float) / 2.0, np.asarray(sigma, dtype=float) / np.sqrt(2.0), mcl_mw, shift_sigma)
+        mu_s = np.asarray(mu, dtype=float) + shift_sigma * np.asarray(
+            sigma, dtype=float
+        )
+        return lolp(
+            r, 0.5 * mu_s, np.asarray(sigma, dtype=float) / np.sqrt(2.0), mcl_mw
+        )
+    return lolp(
+        r,
+        np.asarray(mu, dtype=float) / 2.0,
+        np.asarray(sigma, dtype=float) / np.sqrt(2.0),
+        mcl_mw,
+        shift_sigma,
+    )
 
 
 def ordc_adder(
@@ -633,7 +639,9 @@ def reserve_headroom(
     return r_online, r_offline
 
 
-_ERCOT_ORDC_MU_SIGMA_SEASONAL = RAW_DATA_DIR / "ercot" / "ercot_ordc_mu_sigma_seasonal.csv"
+_ERCOT_ORDC_MU_SIGMA_SEASONAL = (
+    RAW_DATA_DIR / "ercot" / "ercot_ordc_mu_sigma_seasonal.csv"
+)
 
 
 def ercot_ordc_published_curve_active(config) -> bool:
@@ -1360,18 +1368,27 @@ def ercot_as_plan_requirement_mw(year: int, hours: int, as_type: str) -> np.ndar
         df.loc[ok, "Quantity"]
         .groupby([ts[ok].dt.month, ts[ok].dt.day, ts[ok].dt.hour])
         .mean()
-        .to_dict()
     )
     out = np.zeros(int(hours), dtype=float)
-    i = 0
-    for day in pd.date_range(f"{year}-01-01", f"{year}-12-31", freq="D"):
-        if day.month == 2 and day.day == 29:
-            continue  # fleet clock is non-leap
-        for h in range(24):
-            if i >= hours:
-                break
-            out[i] = float(key.get((day.month, day.day, h), 0.0))
-            i += 1
+    # Scatter the (month, day, hour) means onto the non-leap clock: day position
+    # from the year's own calendar with Feb-29 dropped (fleet clock is non-leap),
+    # hour-of-year = 24 × day position + hour; keys off the clock (Feb-29) or
+    # past ``hours`` are never placed, unlisted hours stay zero.
+    days = pd.date_range(f"{year}-01-01", f"{year}-12-31", freq="D")
+    days = days[~((days.month == 2) & (days.day == 29))]
+    day_pos = np.full(
+        (int(days.month.max()) + 1, int(days.day.max()) + 1), -1, dtype=np.intp
+    )
+    day_pos[days.month.to_numpy(), days.day.to_numpy()] = np.arange(
+        len(days), dtype=np.intp
+    )
+    km = key.index.get_level_values(0).to_numpy(dtype=np.intp)
+    kd = key.index.get_level_values(1).to_numpy(dtype=np.intp)
+    kh = key.index.get_level_values(2).to_numpy(dtype=np.intp)
+    pos = day_pos[km, kd]
+    idx = pos * 24 + kh
+    place = (pos >= 0) & (idx < int(hours))
+    out[idx[place]] = key.to_numpy(dtype=float)[place]
     return out
 
 

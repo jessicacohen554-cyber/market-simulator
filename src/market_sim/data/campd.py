@@ -1101,18 +1101,30 @@ def compute_parasitic_factors(
             "flag": flag,
         }
 
-    for _, r in merged.iterrows():
-        rec = {"plant_id": int(r["plant_id"]), "year": int(r["year"])}
-        rec.update(_resolve(r["plant_id"], r["gross_mwh"], r.get("net_mwh", np.nan)))
+    # Column-wise zip (Python scalars) rather than iterrows: iterrows builds a
+    # dtype-upcast Series per row; every value is re-cast via int()/float()
+    # in ``_resolve`` anyway, so the records are identical.
+    net_col = (
+        merged["net_mwh"]
+        if "net_mwh" in merged.columns
+        else pd.Series(np.nan, index=merged.index)
+    )
+    for pid, yr, gross, net in zip(
+        merged["plant_id"], merged["year"], merged["gross_mwh"], net_col
+    ):
+        rec = {"plant_id": int(pid), "year": int(yr)}
+        rec.update(_resolve(pid, gross, net))
         rows.append(rec)
 
     # Pooled per-plant factor (year == 0): sum net and gross across years.
     pooled = merged.groupby("plant_id", observed=True).agg(
         gross_mwh=("gross_mwh", "sum"), net_mwh=("net_mwh", "sum")
     )
-    for plant_id, p in pooled.iterrows():
+    for plant_id, gross, net in zip(
+        pooled.index, pooled["gross_mwh"], pooled["net_mwh"]
+    ):
         rec = {"plant_id": int(plant_id), "year": 0}
-        rec.update(_resolve(plant_id, p["gross_mwh"], p["net_mwh"]))
+        rec.update(_resolve(plant_id, gross, net))
         rows.append(rec)
 
     cols = [
@@ -1521,7 +1533,13 @@ def coal_share_by_plant(
         .reindex(total.index)
         .fillna(0.0)
     )
-    return {int(p): float(coal[p] / total[p]) for p in total.index if total[p] > 0}
+    # ``total`` is a groupby result (unique index) and ``coal`` is reindexed to
+    # it, so positional zip over the aligned arrays equals the label lookups.
+    return {
+        int(p): float(c / t)
+        for p, c, t in zip(total.index, coal.to_numpy(), total.to_numpy())
+        if t > 0
+    }
 
 
 def eia923_combustion_net(generation: pd.DataFrame) -> pd.DataFrame:

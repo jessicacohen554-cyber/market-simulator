@@ -15092,3 +15092,20 @@ The legs are the canonical ones named by closeout-ERCOT: 2019 is `claude/closeou
 - **2023:** keeps its configuration-exception caveats (R-6).
 - **2019–2022:** stay NOT-YET (C1 CC_REGULAR/COAL_PRB in 2019/2020, C3b in 2019/2020).
 - **Census:** total thermal summer reads −3.2 to −6.8 % against EIA-860, OUTSIDE. The capacity census for ERCOT is owner-signed ("Sign all three", 2026-10-02).
+
+## ERCOT close-out — 2026-10-03 — 2019/2020 coal offer conduct and the 2024 intra-zone LZ basis closed as DATA-LIMITED residuals (zero LP)
+
+- **Owner ruling R-32 (2026-10-03), relayed by the close-out desk:** *"Both rows data-limited"* (option 1, as recommended). R-7 is narrowed to G1 (NP3-965 60-Day SCED coal TPO, 2019-01 → 2022-12) + G3 (NP6-576-ER LOLP), still deferred under R-17. ERCOT stays NOT-YET.
+- **Census behind it:** the R-25 DAM-proxy census FAILED P1 (60-Day DAM coal curves cover 9.4–11.0 % of ON HSL-hours 2022–25; W A Parish never offers; bias +$8.08 / −$10.35 against the SCED basis) and read P2 INDETERMINATE (window slope vs HH t = −0.45). The DAM disclosure cannot stand in for the SCED construction.
+- **Ledger row A:** C1 COAL_PRB / CC_REGULAR 2019, 2020 (−10.79 / −11.85 and +9.21 / +10.17 TWh) and C3b 2019, 2020 (0.216 / 0.208) — coal offer conduct. **DATA-LIMITED.**
+  - Reason: the keeper prices 2019–22 coal committed/econ tranches at the 2024–25 ERCOT-144 SCED curves because no 2019–22 SCED TPO disclosure is on disk (R-ERCOT-3 §2). At 2020's HH $2.03 that puts 4.6 GW of coal above the CC p75.
+  - Reason: the licence-free DAM proxy (NP3-966) cannot stand in (census above), and the on-disk window shows no fuel-indexed conduct, so the 2019/20 sign is unidentified.
+  - Reason: re-coupling offers to fuel is `coal_offer_level_rebasis` (R, wrong sign); reusing the 2023 curves is per-year fitting (rule 1(b)).
+  - **Re-open** on the R-7 intake as narrowed (NP3-965 2019-01 → 2022-12, the 10 coal resources' TPO columns), fed to `coal_perplant_offer_curves_yearly` by the frozen ercot-168 derive (rule 23), zero DOF. Bar (static lower bound from the keeper's P1 `unit_marginal`): ≥ $0.50 / $1.13 lower conduct enters the C1 band; ≥ $3.13 / $3.78 closes it.
+- **Ledger row B:** C3a 2024 (−11.3 %) — intra-zone load-zone basis. **DATA-LIMITED.**
+  - Reason: the actual LZ_WEST premium over the hub is +$1.30/MWh system-LW in 2024 (2,847 h > $5). The model prints West ≡ North because it has no sub-zonal West topology.
+  - Reason: the L2 census (closeout W1 FINDING §2) shows the premium is a Permian load pocket. Seam binds show no lift, 67–85 % of the premium mass sits in intra-West-only hours, and HB_WEST carries 2–27 % of it. A zonal import rating cannot reproduce it, and the sub-zonal split is ERCOT-117 (G).
+  - Reason: the remainder of the gap is the ECRS deployment cost the IMM puts at "almost $1 billion" in 2024 (≈ $2.16/MWh). 2024 carries no configuration exception.
+  - **Re-open** on a public sub-zonal (Permian) driver that ERCOT-117 would admit, or on a rubric ruling extending R-6's configuration-exception logic to the 2024 ECRS-deployment months.
+- **Scoring:** none changes. A data-limited row is a calibration-log record, not a rubric caveat kind (the PJM Elliott R-26 precedent), so the keeper attestation, status part and determination are untouched.
+- **Records:** `docs/records/ercot/closeout/FINDING-closeout-ercot2-hygiene-dam-proxy-frontier-2026-10-03.md`, `PRECOMMIT-closeout-ercot2-dam-proxy-census-2026-10-03.md`, `FINDING-closeout-w1-zero-lp-censuses-2026-10-02.md` §2, `docs/records/ercot/FINDING-r-ercot-3-coal-2019-2020-2026-09-25.md`.

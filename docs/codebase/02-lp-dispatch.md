@@ -1,6 +1,8 @@
 # 2. The LP Dispatch Core
 
-Source: `src/market_sim/model/dispatch.py` (~2,400 lines). This is the heart of
+Source: `src/market_sim/model/lp/` — `model.py` (2,240 lines; `DispatchModel`
+at `lp/model.py:68`) and `rows.py` (the row families). `src/market_sim/model/dispatch.py`
+is a 34-line facade kept for import/pickle identity. This is the heart of
 the model — a single annual 8760-hour economic-dispatch linear program, assembled
 once as a sparse CSC matrix and solved by HiGHS. Energy prices are recovered as
 the duals on the energy-balance constraint rows.
@@ -39,8 +41,12 @@ When reserve co-optimization is off (the default for most ISOs), `n_reserve` and
 
 The cardinal rule (no Python loop over hours) is implemented through one pattern:
 build a single per-hour sparse block, then replicate it across time with
-`scipy.sparse.kron(sp.eye(T), per_hour)`. The `eye(T)` Kronecker factor places
-each hour's block at column offset `t × vars_per_hour`. For unit-major blocks
+`layout.kron_hours(T, per_hour)` — `T` copies of the block laid along the hour
+diagonal, written directly in CSR (the per-hour `data`/`indices` tile, column
+indices shift by `t × vars_per_hour`, row pointers by `t × nnz`). It is the
+same matrix `scipy.sparse.kron(sp.eye(T), per_hour)` returns, byte for byte
+(values and index dtype), without `kron`'s `T × nnz` COO transient; a
+non-canonical or empty block falls through to `sp.kron` itself. For unit-major blocks
 (storage dynamics), the row/column indices are built with `np.arange`/broadcast
 and handed to a single `coo_matrix` constructor.
 
@@ -58,7 +64,7 @@ Per zone `z`, hour `t`:
    + Slack[z,t] − Dump[z,t]  =  Demand[z,t]
 ```
 
-Built as `sp.kron(sp.eye(T), per_hour)` where the per-hour block horizontally
+Built as `kron_hours(T, per_hour)` where the per-hour block horizontally
 stacks `[zone_gen | I | I | −zone_storage | zone_storage | 0 | flow_block | I | −I | 0 | 0]`.
 `zone_gen` is an `(n_zones, n_gen)` membership incidence (`_build_zone_gen_map`),
 `zone_storage` an `(n_zones, n_storage)` membership map. The SOC columns get a
@@ -191,13 +197,14 @@ The LP is loaded into HiGHS via `addCols()` (bounds + objective + matrix) and
 - Post-solve the primal status is checked; anything other than optimal fails the
   solve.
 
-### `DispatchModel` — re-costable LP (lines 1653–2149)
+### `DispatchModel` — re-costable LP (`model/lp/model.py:68`)
 
 `DispatchModel` builds the constraint matrix and bounds **once**, then lets the
 objective be re-costed in place via `changeColsCost()`. This is what makes the
-P0→P1→P2 sequence cheap: P1 warm-starts from P0's basis with only the cost vector
-changed (startup markup added), converging in a handful of simplex iterations
-instead of a cold solve. `solve_dispatch(...)` (line 2243) is the one-shot wrapper
+P0→P1 sequence cheap (P0 base-cost → P1 bid-cost are the only two production
+passes; P2 is archived behind `--enable-legacy-p2` and no keeper uses it): P1
+warm-starts from P0's basis with only the cost vector changed (startup markup
+added), converging in a handful of simplex iterations instead of a cold solve. `solve_dispatch(...)` (line 2243) is the one-shot wrapper
 that builds a `DispatchModel` and calls `.solve()`.
 
 ### Cross-year warm-start

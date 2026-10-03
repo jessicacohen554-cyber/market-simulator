@@ -435,7 +435,13 @@ def _report_timestamps(name: str, df: pd.DataFrame) -> pd.Series:
     if "DELIVERY_DATE" in columns and "HOUR_ENDING" in columns:
         date = pd.to_datetime(df["DELIVERY_DATE"])
         # HOUR_ENDING is 1-24 (sometimes "HH:00"); hour-beginning = HE - 1.
-        he = df["HOUR_ENDING"].astype(str).str.split(":").str[0].astype(int)
+        he_raw = df["HOUR_ENDING"]
+        if he_raw.dtype.kind == "i":
+            # An integer column round-trips through str/split unchanged;
+            # skip the string detour (same int64 result).
+            he = he_raw.astype(int)
+        else:
+            he = he_raw.astype(str).str.split(":").str[0].astype(int)
         return _prevailing_to_standard(
             date + pd.to_timedelta(he - 1, unit="h"), dst_flag
         )
@@ -535,6 +541,7 @@ def _parse_report_regions(name: str, df: pd.DataFrame) -> pd.DataFrame | None:
     if not regions:
         return None
     ts = _report_timestamps(name, df)
+    ts_ok = ts.notna().to_numpy()
     parts: list[pd.DataFrame] = []
     for region in regions:
         gen_col = next(
@@ -543,19 +550,23 @@ def _parse_report_regions(name: str, df: pd.DataFrame) -> pd.DataFrame | None:
         )
         if gen_col is None:
             continue
-        part = pd.DataFrame(
-            {
-                "ts": ts,
-                "region": region.lower(),
-                "gen_mw": pd.to_numeric(df[gen_col], errors="coerce"),
-                "hsl_mw": pd.to_numeric(
-                    df[f"{_GEO_REGION_HSL_PREFIX}{region}"], errors="coerce"
-                ),
-            }
-        )
+        gen = pd.to_numeric(df[gen_col], errors="coerce")
+        hsl = pd.to_numeric(df[f"{_GEO_REGION_HSL_PREFIX}{region}"], errors="coerce")
         # Same drop rules as _parse_report: forecast-only rows and
-        # unplaceable CPT stamps carry no telemetry.
-        parts.append(part.dropna(subset=["ts", "gen_mw", "hsl_mw"]))
+        # unplaceable CPT stamps carry no telemetry. The row mask is applied
+        # to the three series before the frame is built (the same rows
+        # ``dropna(subset=["ts", "gen_mw", "hsl_mw"])`` would keep).
+        keep = ts_ok & gen.notna().to_numpy() & hsl.notna().to_numpy()
+        parts.append(
+            pd.DataFrame(
+                {
+                    "ts": ts[keep],
+                    "region": region.lower(),
+                    "gen_mw": gen[keep],
+                    "hsl_mw": hsl[keep],
+                }
+            )
+        )
     if not parts:
         return None
     return pd.concat(parts, ignore_index=True)

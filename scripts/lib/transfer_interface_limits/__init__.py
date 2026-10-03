@@ -89,7 +89,7 @@ class IsoSpec:
 REGISTRY: dict[str, IsoSpec] = {}
 
 # Sibling modules auto-imported by load_specs(); each registers its spec.
-_ISO_MODULES: tuple[str, ...] = ("pjm", "caiso")
+_ISO_MODULES: tuple[str, ...] = ("pjm", "caiso", "nwpp")
 
 
 def register(spec: IsoSpec) -> IsoSpec:

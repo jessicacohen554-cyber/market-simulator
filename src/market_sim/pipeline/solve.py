@@ -57,7 +57,9 @@ Cross-year cache policy (plan §8): the backcast front-end threads its
 ``xyear_cache`` through (preserving today's behavior — the basis is exported
 even when the flag is off, so a downstream A/B does not depend on call
 ordering) and leaves ``xyear_warmstart=None``, so its gate stays the
-``MARKET_SIM_WARMSTART_XYEAR`` env var the calibration CLIs default ON.
+``MARKET_SIM_WARMSTART_XYEAR`` env var, which the calibration CLIs default OFF
+(owner ruling 2026-09-19, miso-262; rule 36 [R-YEAR-ISOLATION] — setting it is
+a declared solve-affecting choice).
 
 The forecast front-end (``runner.run_scenario_iso``) threads a cache only when
 ``ScenarioConfig.forecast_xyear_warmstart`` is armed, and passes that same flag

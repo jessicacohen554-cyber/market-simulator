@@ -1156,14 +1156,15 @@ def _caiso_storage_envelope_clock_repaired(
     fleet_h = fleet[month_of_hour]
     chg_rate = np.clip(-net, 0.0, None) / fleet_h
     dis_rate = np.clip(net, 0.0, None) / fleet_h
-    hod = np.arange(hours) % 24
+    # Hour-of-day quantile: the series is exactly ``hours`` (= HOURS_PER_YEAR,
+    # a whole number of days) long and hour-0 aligned, so column ``h`` of the
+    # ``(days, 24)`` reshape is the hour-of-day ``h`` sample set; one
+    # ``np.quantile`` along axis 0 gives the same floats as 24 per-hour calls.
     q = _STORAGE_ENVELOPE_QUANTILE
-    chg = np.array(
-        [round(float(np.quantile(chg_rate[hod == h], q)), 4) for h in range(24)]
-    )
-    dis = np.array(
-        [round(float(np.quantile(dis_rate[hod == h], q)), 4) for h in range(24)]
-    )
+    chg_q = np.quantile(chg_rate.reshape(-1, 24), q, axis=0)
+    dis_q = np.quantile(dis_rate.reshape(-1, 24), q, axis=0)
+    chg = np.array([round(float(v), 4) for v in chg_q])
+    dis = np.array([round(float(v), 4) for v in dis_q])
     return chg, dis
 
 

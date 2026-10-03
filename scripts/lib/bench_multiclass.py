@@ -320,8 +320,12 @@ def unit_class_hourly(
         per_class: dict[str, np.ndarray] = {k: np.zeros(_T) for k in classes}
         unit_meta = g.groupby("unitId")[["unitType", "primaryFuelInfo"]].first()
         unit_cls: dict[str, str] = {}
-        for uid, row in unit_meta.iterrows():
-            fam = unit_family(row["unitType"], row["primaryFuelInfo"])
+        for uid, u_type, u_fuel in zip(
+            unit_meta.index,
+            unit_meta["unitType"].to_numpy(),
+            unit_meta["primaryFuelInfo"].to_numpy(),
+        ):
+            fam = unit_family(u_type, u_fuel)
             k = fam_to_class.get(fam)
             if k is None:
                 ambiguous = f"unit {uid} family {fam} matches no scored class {classes}"

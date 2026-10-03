@@ -382,11 +382,23 @@ def load_hydro_cascade(
     pos = {int(c): i for i, c in enumerate(codes)}
     month_of_hour = np.asarray(_hour_to_month_index(hours), dtype=int)  # (T,)
 
+    # Memoized per ``(plant, column)``: the same plant's η / inflow / spill
+    # series is requested several times below (eligibility check, the row
+    # stack, each link it appears on). ``monthly`` is never mutated and no
+    # caller writes into the returned array, so the cached value is identical
+    # to a fresh filter.
+    by_month_cache: dict[tuple[int, str], np.ndarray | None] = {}
+
     def _by_month(pid: int, col: str) -> np.ndarray | None:
+        key = (int(pid), col)
+        if key in by_month_cache:
+            return by_month_cache[key]
         rows = monthly[monthly["plant_id"] == int(pid)].sort_values("month")
         if len(rows) != _MONTHS_PER_YEAR:
-            return None
-        vals = rows[col].to_numpy(dtype=float)
+            vals = None
+        else:
+            vals = rows[col].to_numpy(dtype=float)
+        by_month_cache[key] = vals
         return vals
 
     def _hourly(vec12: np.ndarray) -> np.ndarray:

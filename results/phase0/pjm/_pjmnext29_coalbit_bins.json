@@ -1,0 +1,408 @@
+{
+  "probe": "PJM-NEXT-29 supplementary (post hoc): COAL_BIT gap by real-price bin",
+  "keeper_bundle": "results/calibration/w0_pjm_span",
+  "edges": [
+    "0.0",
+    "6.5",
+    "8.0",
+    "10.0",
+    "13.0",
+    "inf"
+  ],
+  "hi_hr": 10.0,
+  "method": "PJM-NEXT-29 supplementary (ZERO LP, POST HOC): where in the hour set the COAL_BIT gap sits.\n\nNot a pre-registered reading (the FINDING \u00a71 readings are in ``_pjmnext29_lowhour_setters``);\nlabelled post hoc in the FINDING \u00a72. Three checks on keeper ``w0_pjm_span``:\n\n* S1 \u2014 COAL_BIT model \u2212 CAMPD (TWh) by real implied-HR bin (real DA LMP / delivered gas, the\n  NEXT-11 series), with the bin's mean model/real price ratio and hour share.\n* S2 \u2014 hours with real implied HR >= :data:`HI_HR` (every coal unit in the money in both): model\n  COAL_BIT MW, available ``cap_mw`` and CAMPD MW (bench plants with data), and the per-plant gap.\n* S3 \u2014 accounting: model COAL_BIT TWh at plants the bench carries no COAL_BIT CAMPD record for.\n\nModel: P1 ``class_hourly`` / ``unit_marginal`` sidecars (tree, else the ``origin/main`` blob).\nCAMPD: ``frontend/data/backcast/bench/PJM/<y>.json.gz`` (``_pjmnext16_cc_loading._dec``).\nWrites ``results/phase0/pjm/_pjmnext29_coalbit_bins.json``.\n",
+  "years": [
+    {
+      "year": 2019,
+      "model_twh": 189.29,
+      "campd_twh": 170.01,
+      "S1_bins": [
+        {
+          "bin": "0-6.5",
+          "hour_share": 0.299,
+          "gap_twh": 4.54,
+          "model_over_real_price": 1.274
+        },
+        {
+          "bin": "6.5-8",
+          "hour_share": 0.32,
+          "gap_twh": 6.8,
+          "model_over_real_price": 1.12
+        },
+        {
+          "bin": "8-10",
+          "hour_share": 0.225,
+          "gap_twh": 4.54,
+          "model_over_real_price": 1.02
+        },
+        {
+          "bin": "10-13",
+          "hour_share": 0.116,
+          "gap_twh": 2.51,
+          "model_over_real_price": 0.905
+        },
+        {
+          "bin": "13-inf",
+          "hour_share": 0.041,
+          "gap_twh": 0.89,
+          "model_over_real_price": 0.725
+        }
+      ],
+      "S2_hi_hours": 1368,
+      "S2_model_mw": 27744,
+      "S2_model_cap_mw": 28247,
+      "S2_campd_mw": 25543,
+      "S2_model_mw_over_cap": 0.982,
+      "S2_campd_over_model_cap": 0.904,
+      "S2_top10_gap_plants_mw": {
+        "8102": 311,
+        "3122": 196,
+        "54304": 196,
+        "6019": 174,
+        "3140": 174,
+        "3935": 160,
+        "10566": 158,
+        "10043": 141,
+        "602": 130,
+        "6166": 118
+      },
+      "S3_model_twh_at_plants_without_campd": 2.15
+    },
+    {
+      "year": 2020,
+      "model_twh": 152.9,
+      "campd_twh": 140.1,
+      "S1_bins": [
+        {
+          "bin": "0-6.5",
+          "hour_share": 0.374,
+          "gap_twh": 1.78,
+          "model_over_real_price": 1.39
+        },
+        {
+          "bin": "6.5-8",
+          "hour_share": 0.31,
+          "gap_twh": 5.16,
+          "model_over_real_price": 1.191
+        },
+        {
+          "bin": "8-10",
+          "hour_share": 0.205,
+          "gap_twh": 3.85,
+          "model_over_real_price": 1.087
+        },
+        {
+          "bin": "10-13",
+          "hour_share": 0.077,
+          "gap_twh": 1.38,
+          "model_over_real_price": 0.948
+        },
+        {
+          "bin": "13-inf",
+          "hour_share": 0.035,
+          "gap_twh": 0.63,
+          "model_over_real_price": 0.745
+        }
+      ],
+      "S2_hi_hours": 976,
+      "S2_model_mw": 25746,
+      "S2_model_cap_mw": 27048,
+      "S2_campd_mw": 23758,
+      "S2_model_mw_over_cap": 0.952,
+      "S2_campd_over_model_cap": 0.878,
+      "S2_top10_gap_plants_mw": {
+        "983": 165,
+        "3797": 147,
+        "54304": 147,
+        "3122": 145,
+        "2866": 140,
+        "3935": 128,
+        "3948": 124,
+        "8102": 121,
+        "10566": 114,
+        "6019": 103
+      },
+      "S3_model_twh_at_plants_without_campd": 0.31
+    },
+    {
+      "year": 2021,
+      "model_twh": 175.58,
+      "campd_twh": 160.22,
+      "S1_bins": [
+        {
+          "bin": "0-6.5",
+          "hour_share": 0.319,
+          "gap_twh": 3.85,
+          "model_over_real_price": 1.312
+        },
+        {
+          "bin": "6.5-8",
+          "hour_share": 0.264,
+          "gap_twh": 4.4,
+          "model_over_real_price": 1.135
+        },
+        {
+          "bin": "8-10",
+          "hour_share": 0.218,
+          "gap_twh": 3.9,
+          "model_over_real_price": 1.005
+        },
+        {
+          "bin": "10-13",
+          "hour_share": 0.153,
+          "gap_twh": 2.59,
+          "model_over_real_price": 0.887
+        },
+        {
+          "bin": "13-inf",
+          "hour_share": 0.046,
+          "gap_twh": 0.62,
+          "model_over_real_price": 0.746
+        }
+      ],
+      "S2_hi_hours": 1741,
+      "S2_model_mw": 21684,
+      "S2_model_cap_mw": 21981,
+      "S2_campd_mw": 20074,
+      "S2_model_mw_over_cap": 0.986,
+      "S2_campd_over_model_cap": 0.913,
+      "S2_top10_gap_plants_mw": {
+        "6166": 260,
+        "3136": 160,
+        "10566": 155,
+        "8102": 140,
+        "3118": 123,
+        "10043": 104,
+        "602": 100,
+        "6019": 87,
+        "3943": 79,
+        "3140": 78
+      },
+      "S3_model_twh_at_plants_without_campd": 1.49
+    },
+    {
+      "year": 2022,
+      "model_twh": 147.56,
+      "campd_twh": 140.03,
+      "S1_bins": [
+        {
+          "bin": "0-6.5",
+          "hour_share": 0.191,
+          "gap_twh": -0.48,
+          "model_over_real_price": 1.342
+        },
+        {
+          "bin": "6.5-8",
+          "hour_share": 0.238,
+          "gap_twh": -0.12,
+          "model_over_real_price": 1.147
+        },
+        {
+          "bin": "8-10",
+          "hour_share": 0.245,
+          "gap_twh": 1.84,
+          "model_over_real_price": 1.022
+        },
+        {
+          "bin": "10-13",
+          "hour_share": 0.199,
+          "gap_twh": 3.33,
+          "model_over_real_price": 0.878
+        },
+        {
+          "bin": "13-inf",
+          "hour_share": 0.127,
+          "gap_twh": 2.96,
+          "model_over_real_price": 0.635
+        }
+      ],
+      "S2_hi_hours": 2852,
+      "S2_model_mw": 21685,
+      "S2_model_cap_mw": 23549,
+      "S2_campd_mw": 19563,
+      "S2_model_mw_over_cap": 0.921,
+      "S2_campd_over_model_cap": 0.831,
+      "S2_top10_gap_plants_mw": {
+        "6166": 459,
+        "3935": 430,
+        "602": 206,
+        "3948": 176,
+        "3943": 174,
+        "3122": 132,
+        "1554": 127,
+        "3797": 115,
+        "6264": 109,
+        "594": 93
+      },
+      "S3_model_twh_at_plants_without_campd": 0.53
+    },
+    {
+      "year": 2023,
+      "model_twh": 106.42,
+      "campd_twh": 103.63,
+      "S1_bins": [
+        {
+          "bin": "0-6.5",
+          "hour_share": 0.204,
+          "gap_twh": 0.28,
+          "model_over_real_price": 1.462
+        },
+        {
+          "bin": "6.5-8",
+          "hour_share": 0.22,
+          "gap_twh": 0.02,
+          "model_over_real_price": 1.253
+        },
+        {
+          "bin": "8-10",
+          "hour_share": 0.273,
+          "gap_twh": 0.94,
+          "model_over_real_price": 1.117
+        },
+        {
+          "bin": "10-13",
+          "hour_share": 0.201,
+          "gap_twh": 1.25,
+          "model_over_real_price": 0.942
+        },
+        {
+          "bin": "13-inf",
+          "hour_share": 0.102,
+          "gap_twh": 0.3,
+          "model_over_real_price": 0.631
+        }
+      ],
+      "S2_hi_hours": 2658,
+      "S2_model_mw": 14228,
+      "S2_model_cap_mw": 17623,
+      "S2_campd_mw": 13671,
+      "S2_model_mw_over_cap": 0.807,
+      "S2_campd_over_model_cap": 0.776,
+      "S2_top10_gap_plants_mw": {
+        "3122": 553,
+        "3935": 293,
+        "6264": 158,
+        "983": 153,
+        "6018": 84,
+        "3118": 61,
+        "6041": 50,
+        "2876": 49,
+        "56671": 42,
+        "6004": 35
+      },
+      "S3_model_twh_at_plants_without_campd": 0.14
+    },
+    {
+      "year": 2024,
+      "model_twh": 106.03,
+      "campd_twh": 105.29,
+      "S1_bins": [
+        {
+          "bin": "0-6.5",
+          "hour_share": 0.177,
+          "gap_twh": 0.09,
+          "model_over_real_price": 1.76
+        },
+        {
+          "bin": "6.5-8",
+          "hour_share": 0.163,
+          "gap_twh": 0.1,
+          "model_over_real_price": 1.338
+        },
+        {
+          "bin": "8-10",
+          "hour_share": 0.235,
+          "gap_twh": 0.25,
+          "model_over_real_price": 1.156
+        },
+        {
+          "bin": "10-13",
+          "hour_share": 0.221,
+          "gap_twh": 0.54,
+          "model_over_real_price": 0.968
+        },
+        {
+          "bin": "13-inf",
+          "hour_share": 0.203,
+          "gap_twh": -0.23,
+          "model_over_real_price": 0.676
+        }
+      ],
+      "S2_hi_hours": 3721,
+      "S2_model_mw": 13439,
+      "S2_model_cap_mw": 16846,
+      "S2_campd_mw": 13523,
+      "S2_model_mw_over_cap": 0.798,
+      "S2_campd_over_model_cap": 0.803,
+      "S2_top10_gap_plants_mw": {
+        "3935": 301,
+        "3149": 190,
+        "3948": 181,
+        "6264": 157,
+        "6018": 95,
+        "3118": 42,
+        "2876": 41,
+        "6004": 17,
+        "1040": 2,
+        "56671": 1
+      },
+      "S3_model_twh_at_plants_without_campd": 1.21
+    },
+    {
+      "year": 2025,
+      "model_twh": 135.35,
+      "campd_twh": 124.28,
+      "S1_bins": [
+        {
+          "bin": "0-6.5",
+          "hour_share": 0.192,
+          "gap_twh": 2.46,
+          "model_over_real_price": 1.529
+        },
+        {
+          "bin": "6.5-8",
+          "hour_share": 0.198,
+          "gap_twh": 2.53,
+          "model_over_real_price": 1.269
+        },
+        {
+          "bin": "8-10",
+          "hour_share": 0.235,
+          "gap_twh": 2.87,
+          "model_over_real_price": 1.121
+        },
+        {
+          "bin": "10-13",
+          "hour_share": 0.182,
+          "gap_twh": 1.77,
+          "model_over_real_price": 0.943
+        },
+        {
+          "bin": "13-inf",
+          "hour_share": 0.194,
+          "gap_twh": 1.43,
+          "model_over_real_price": 0.636
+        }
+      ],
+      "S2_hi_hours": 3288,
+      "S2_model_mw": 17671,
+      "S2_model_cap_mw": 18826,
+      "S2_campd_mw": 16726,
+      "S2_model_mw_over_cap": 0.939,
+      "S2_campd_over_model_cap": 0.888,
+      "S2_top10_gap_plants_mw": {
+        "3948": 228,
+        "3935": 226,
+        "8102": 199,
+        "6264": 133,
+        "6166": 116,
+        "3944": 110,
+        "3943": 76,
+        "6018": 74,
+        "3118": 71,
+        "6004": 57
+      },
+      "S3_model_twh_at_plants_without_campd": 0.2
+    }
+  ]
+}

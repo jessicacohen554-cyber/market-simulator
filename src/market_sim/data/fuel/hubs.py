@@ -362,10 +362,10 @@ def load_winter_gas_basis(
     if sub.empty:
         return None
     monthly = np.full(12, np.nan)
-    for _, row in sub.iterrows():
-        m = int(row["month"]) - 1
+    for month, basis in zip(sub["month"].to_numpy(), sub["basis_usd_mmbtu"].to_numpy()):
+        m = int(month) - 1
         if 0 <= m < 12:
-            monthly[m] = float(row["basis_usd_mmbtu"])
+            monthly[m] = float(basis)
     return monthly
 
 

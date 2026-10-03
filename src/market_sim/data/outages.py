@@ -227,6 +227,28 @@ def _hour_of_year(month: int, day: int, hour: int) -> int:
     return (_DAYS_BEFORE_MONTH[month] + (day - 1)) * 24 + hour
 
 
+def _outage_hour_bounds(
+    start: object, stop: object, year: int, hours: int = HOURS_PER_YEAR
+) -> tuple[int, int]:
+    """Return the clipped half-open hour range ``(lo, hi)`` of ``[start, stop)``.
+
+    The exact run :func:`outage_hour_mask` sets ``True`` (same clipping to
+    calendar ``year`` on the model's fixed clock); ``hi <= lo`` means the
+    window does not overlap ``year`` (an all-False mask). Callers that only
+    need the covered range use the bounds as a slice instead of allocating and
+    boolean-indexing a full-year mask — the same elements, in the same order.
+    """
+    start = pd.Timestamp(start)
+    stop = pd.Timestamp(stop)
+    if stop <= start or start.year > year or stop.year < year:
+        return 0, 0
+    lo = 0 if start.year < year else _hour_of_year(start.month, start.day, start.hour)
+    hi = hours if stop.year > year else _hour_of_year(stop.month, stop.day, stop.hour)
+    lo = max(0, min(lo, hours))
+    hi = max(0, min(hi, hours))
+    return lo, hi
+
+
 def outage_hour_mask(
     start: object, stop: object, year: int, hours: int = HOURS_PER_YEAR
 ) -> np.ndarray:
@@ -242,14 +264,7 @@ def outage_hour_mask(
     all-False mask when the window does not overlap ``year``.
     """
     mask = np.zeros(hours, dtype=bool)
-    start = pd.Timestamp(start)
-    stop = pd.Timestamp(stop)
-    if stop <= start or start.year > year or stop.year < year:
-        return mask
-    lo = 0 if start.year < year else _hour_of_year(start.month, start.day, start.hour)
-    hi = hours if stop.year > year else _hour_of_year(stop.month, stop.day, stop.hour)
-    lo = max(0, min(lo, hours))
-    hi = max(0, min(hi, hours))
+    lo, hi = _outage_hour_bounds(start, stop, year, hours)
     if hi > lo:
         mask[lo:hi] = True
     return mask
@@ -2100,7 +2115,8 @@ def routable_dated_shares(
         if _parse_exit_ym(getattr(r, "exit_ym", None)) is None:
             continue
         w_start, w_stop = unit_outage_event_window(r, has_hours)
-        if outage_hour_mask(w_start, w_stop, year, hours).any():
+        lo, hi = _outage_hour_bounds(w_start, w_stop, year, hours)
+        if hi > lo:
             live.add(int(r.facility_id))
     out = tuple(e for e in dated_bin_shares if int(e[0][0]) in live)
     if out:
@@ -2496,8 +2512,8 @@ def _unit_outage_factors_from_events(
             if removed_frac <= 0.0:
                 continue
         w_start, w_stop = unit_outage_event_window(r, has_hours)
-        mask = outage_hour_mask(w_start, w_stop, year, hours)
-        if not mask.any():
+        lo, hi = _outage_hour_bounds(w_start, w_stop, year, hours)
+        if hi <= lo:
             continue
         # Denominator of the removed share: the fleet bin by default; under
         # ``extract_basis`` a COMBINED-CYCLE bin's capacity on the extract's
@@ -2550,7 +2566,7 @@ def _unit_outage_factors_from_events(
             slot = per_unit.setdefault(
                 (key, str(r.unit_id)), [np.zeros(hours), 0.0, denom]
             )
-            slot[0][mask] += removed_frac * float(ucap)
+            slot[0][lo:hi] += removed_frac * float(ucap)
             # A unit is at most fully out. Rows for one unit can differ in
             # ``ucap`` (a partial plateau carries the same unit capacity but a
             # fractional ``removed_frac``; an extract spanning a re-rating can
@@ -2563,9 +2579,9 @@ def _unit_outage_factors_from_events(
             continue
         arr = sums.setdefault(key, np.zeros(hours))
         if hourly is not None:
-            arr[mask] += removed_frac * float(ucap) / denom[mask]
+            arr[lo:hi] += removed_frac * float(ucap) / denom[lo:hi]
             continue
-        arr[mask] += removed_frac * float(ucap) / denom
+        arr[lo:hi] += removed_frac * float(ucap) / denom
     for (tgt, _uid), (removed_mw, unit_cap, denom) in per_unit.items():
         if unit_cap <= 0.0:
             continue
@@ -3144,14 +3160,14 @@ def unit_outage_maxgen_derate_factors(
         # Hour-granular, half-open: window_end is the return-to-normal hour
         # (the deriver ceils the declared end to the next hour boundary), so
         # no +1-day inflation like the date-grain std extract.
-        mask = outage_hour_mask(r.window_start, r.window_end, year, hours)
-        if not mask.any():
+        lo, hi = _outage_hour_bounds(r.window_start, r.window_end, year, hours)
+        if hi <= lo:
             continue
         arr = sums.setdefault(tgt, np.zeros(hours))
         if tgt in cap_hourly:
-            arr[mask] += removed / cap_hourly[tgt][mask]
+            arr[lo:hi] += removed / cap_hourly[tgt][lo:hi]
             continue
-        arr[mask] += removed / cap[tgt]
+        arr[lo:hi] += removed / cap[tgt]
     return {k: np.clip(1.0 - v, 0.0, 1.0) for k, v in sums.items()}
 
 
@@ -3261,14 +3277,14 @@ def partial_outage_derate_factors(
     df = df[df["year"] == year]
     out: dict = {}
     for r in df.itertuples(index=False):
-        mask = outage_hour_mask(r.outage_start, r.outage_stop, year, hours)
-        if not mask.any():
+        lo, hi = _outage_hour_bounds(r.outage_start, r.outage_stop, year, hours)
+        if hi <= lo:
             continue
         key: int | tuple[int, str] = int(r.oris_code)
         if class_grain:
             key = (int(r.oris_code), str(r.plant_group))
         arr = out.setdefault(key, np.ones(hours))
-        arr[mask] = np.minimum(arr[mask], float(r.derate_factor))
+        arr[lo:hi] = np.minimum(arr[lo:hi], float(r.derate_factor))
     return out
 
 
@@ -3313,12 +3329,12 @@ def partial_outage_active_units(
         tgt = _unit_outage_target(int(r.oris_code), uid, r.plant_group)
         if tgt is None:
             continue
-        mask = outage_hour_mask(r.outage_start, r.outage_stop, year, hours)
-        if not mask.any():
+        lo, hi = _outage_hour_bounds(r.outage_start, r.outage_stop, year, hours)
+        if hi <= lo:
             continue
         per_unit = out.setdefault(tgt, {})
         arr = per_unit.setdefault(uid, np.zeros(hours, dtype=bool))
-        arr |= mask
+        arr[lo:hi] = True
     return out
 
 
@@ -3365,12 +3381,12 @@ def unit_outage_active_units(
         if tgt is None or not uid:
             continue
         w_start, w_stop = unit_outage_event_window(r, has_hours)
-        mask = outage_hour_mask(w_start, w_stop, year, hours)
-        if not mask.any():
+        lo, hi = _outage_hour_bounds(w_start, w_stop, year, hours)
+        if hi <= lo:
             continue
         per_unit = out.setdefault(tgt, {})
         arr = per_unit.setdefault(uid, np.zeros(hours, dtype=bool))
-        arr |= mask
+        arr[lo:hi] = True
     return out
 
 
@@ -3419,11 +3435,11 @@ def unit_outage_short_active_units(
         if tgt is None or not uid:
             continue
         w_start, w_stop = unit_outage_event_window(r, has_hours)
-        mask = outage_hour_mask(w_start, w_stop, year, hours)
-        if not mask.any():
+        lo, hi = _outage_hour_bounds(w_start, w_stop, year, hours)
+        if hi <= lo:
             continue
         arr = out.setdefault(tgt, {}).setdefault(uid, np.zeros(hours, dtype=bool))
-        arr |= mask
+        arr[lo:hi] = True
     return out
 
 
@@ -3474,11 +3490,11 @@ def partial_outage_unit_deficits(
         )
         if deficit <= 0.0:
             continue
-        mask = outage_hour_mask(r.outage_start, r.outage_stop, year, hours)
-        if not mask.any():
+        lo, hi = _outage_hour_bounds(r.outage_start, r.outage_stop, year, hours)
+        if hi <= lo:
             continue
         arr = out.setdefault(tgt, {}).setdefault(uid, np.zeros(hours))
-        arr[mask] = np.maximum(arr[mask], deficit)
+        arr[lo:hi] = np.maximum(arr[lo:hi], deficit)
     return out
 
 
@@ -3805,16 +3821,16 @@ def ercot_thermal_dam_availability_hourly_series(
     if df.empty:
         return {}
     he_cols = [f"he{h:02d}" for h in range(1, 25)]
+    he_vals = df[he_cols].to_numpy(dtype=float)
     out: dict[str, np.ndarray] = {}
-    for r in df.itertuples(index=False):
+    for i, r in enumerate(df.itertuples(index=False)):
         mo, dy = int(r.date.month), int(r.date.day)
         if mo == 2 and dy == 29:
             continue  # non-leap model clock (ERCOT-54 convention)
         lo = _hour_of_year(mo, dy, 0)
         hi = min(lo + 24, hours)
         arr = out.setdefault(str(r.klass), np.full(hours, np.nan))
-        vals = np.array([getattr(r, c) for c in he_cols], dtype=float)
-        arr[lo:hi] = vals[: hi - lo]
+        arr[lo:hi] = he_vals[i, : hi - lo]
     return out
 
 
@@ -3979,13 +3995,13 @@ def ercot_noncampd_availability_caps(
         return {}
     caps: dict[int, np.ndarray] = {}
     for r in df.itertuples(index=False):
-        mask = outage_hour_mask(r.outage_start, r.outage_end, int(year), hours)
-        if not mask.any():
+        lo, hi = _outage_hour_bounds(r.outage_start, r.outage_end, int(year), hours)
+        if hi <= lo:
             continue
         cap = caps.setdefault(int(r.plant_code), np.ones(hours))
         # MIN-combine so the most-conservative measured availability wins where
         # windows overlap (a daily DAM row and an EIA-923 zero-month backstop).
-        cap[mask] = np.minimum(cap[mask], float(r.avail))
+        cap[lo:hi] = np.minimum(cap[lo:hi], float(r.avail))
     return caps
 
 

@@ -215,7 +215,7 @@
       <span class="header__eyebrow">Evolution &amp; Policy</span>
       <h1 class="header__title">Capacity Evolution</h1>
       <p class="header__subtitle">
-        How the fleet changes year over year — a six-step loop of retirements,
+        How the fleet changes year over year — an eight-step (0–7) one-pass loop of retirements,
         additions, retrofits, and new builds, driven by economics and policy,
         repeated from 2026 to 2050.
       </p>
@@ -267,8 +267,9 @@
             <div class="narrative-card__body">
               Confirmed exits (step 0, instrument-bound) and announced retirements (step 1, owner-filed EIA-860 dates under <code>fossil_announced_exits_enabled</code>, default on) are deterministic; the CCS retrofit screen (step 2) runs jointly with retirement. Economic
               retirements screen inframarginal margin against FOM — with
-              per-fuel hurdle thresholds and a reliability floor that prevents
-              thermal capacity from falling below (peak − firm clean) × 1.15.
+              per-fuel loss-year thresholds and a reliability floor that un-retires
+              units until accredited firm capacity clears firm peak × (1 + PRM<sub>ISO</sub>),
+              the ISO's published planning reserve margin (<code>PLANNING_RESERVE_MARGIN_BY_ISO</code>: 13.75 % ERCOT … 26 % SOCO).
             </div>
           </div>
           <div class="narrative-card">
@@ -306,7 +307,7 @@
           <div class="section-number">§ 2</div>
           <h2>Capacity Over Time</h2>
           <p>
-            The cumulative effect of the six-step loop: a 25-year trajectory
+            The cumulative effect of the 0–7 loop: a 25-year trajectory
             of installed capacity by fuel type, showing the transition from
             coal to renewables and storage.
           </p>
@@ -390,8 +391,11 @@
 
             <div class="insight-box warn" style="margin-top: 16px;">
               <div class="insight-title">⚠ Reliability floor</div>
-              Even when economics say "retire", the model won't let firm thermal
-              capacity fall below (peak demand − firm clean capacity) × 1.15.
+              Even when economics say "retire", the model un-retires units in
+              $/firm-MW-yr merit until accredited firm capacity (thermal, ELCC-accredited
+              wind/solar/storage) clears firm peak × (1 + PRM<sub>ISO</sub>) — the ISO's
+              published planning reserve margin (13.75 % ERCOT, 15 % CAISO, 17.8 % PJM,
+              15.7 % MISO, 24.4 % NYISO, 16 % SPP, 14.4 % NWPP, 26 % SOCO).
               This prevents the model from retiring into a reliability crisis.
             </div>
           </div>
@@ -443,8 +447,8 @@
                 <div class="stat-card__label">Coal retirement 2026–2050</div>
               </div>
               <div class="stat-card">
-                <div class="stat-card__value" style="color:#22C55E;">1.15×</div>
-                <div class="stat-card__label">Reliability floor (peak margin)</div>
+                <div class="stat-card__value" style="color:#22C55E;">1 + PRM<sub>ISO</sub></div>
+                <div class="stat-card__label">Reliability floor (13.75–26 % by ISO)</div>
               </div>
             </div>
           </div>

@@ -241,6 +241,16 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
         "the static link ratings + transmission-expansion registry",
         evidence=(_BACKCAST_ORCH, "src/market_sim/config/constants.py"),
     ),
+    ParityDeclaration(
+        fields=("nwpp_seam_measured_limits",),
+        disposition=BACKCAST_ONLY,
+        why="measured hourly operating limits on the priced NWPP seams (CAISO "
+        "OASIS MALIN500_ISL + CASCADE_ITC OTC, BPA OPI COI / BC Intertie) "
+        "applied as a backcast overlay (NWPP-NEXT-22); the forward channel is "
+        "the seasonal path rating each seam already registers "
+        "(NeighborInterface.interface_limit_mw), the PJM interface-cut posture",
+        evidence=(_BACKCAST_ORCH, "src/market_sim/config/constants.py"),
+    ),
     # -- (b) the declared measured-interchange overlay block -----------------
     # scripts/run_calibration.py carries an explicit banner: "BACKCAST MEASURED
     # INTERCHANGE OVERLAYS … backcast-only by design (plan §3.1). None is

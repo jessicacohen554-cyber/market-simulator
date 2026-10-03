@@ -71,12 +71,15 @@ def load_crosswalk() -> dict[str, tuple[int, str]]:
         acc = df["accepted"].astype(str).str.strip().str.lower()
         df = df[acc.isin({"1", "true", "yes", "y"})]
     out: dict[str, tuple[int, str]] = {}
-    for _, r in df.iterrows():
-        code, group, rid = (
-            r.get("plant_code"),
-            r.get("plant_group"),
-            r.get("resource_id"),
-        )
+    needed = ("plant_code", "plant_group", "resource_id")
+    if any(c not in df.columns for c in needed):
+        # A missing column reads as NA on every row: nothing is mapped.
+        return out
+    for code, group, rid in zip(
+        df["plant_code"].to_numpy(dtype=object),
+        df["plant_group"].to_numpy(dtype=object),
+        df["resource_id"].to_numpy(dtype=object),
+    ):
         if pd.isna(code) or pd.isna(group) or pd.isna(rid):
             continue
         out[str(rid).strip()] = (int(code), str(group).strip())
