@@ -4803,8 +4803,7 @@ def determine_from_artifacts(
             f"{len(reference_coverage_records)} owner-signed reference-coverage "
             "caveat(s) — off every caveat budget and NOT determination-"
             "downgrading under rubric v3.19 (owner ruling R-40, 2026-10-03); no "
-            "full-year price claim is certified for these years: "
-            + "; ".join(parts)
+            "full-year price claim is certified for these years: " + "; ".join(parts)
         )
 
     # RUBRIC v3.8: the price gap on the determination basis, AT FULL MAGNITUDE,
