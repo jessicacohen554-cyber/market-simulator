@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-10-03 — capx D103: forecast DOF-ledger carry census for NEISO and NYISO (zero LP, no code change)
+
+`docs/records/forecast/FINDING-capx-d103-2026-10-03.md`: the two W0 keepers' rule-21 ledgers (NEISO 6 entries / 4
+residual, NYISO 8 / 6) against `scripts/build_forecast_dof_ledger.py`, which carries none of them as entries (one
+`registry_identification` pointer only); the offer bands and `wefor_multiplier` 0.7 are not live on the forecast path
+(`offer_curve_by_group` resolves to `{}`, wind EFOR runs 1.0), while NYISO's fitted tranches and
+`NYISO_LOCAL_SELFSUPPLY_FRAC` 0.45 are live and uncarried; neither attestation declares `authorized_price_tuning`.
+Proposed `keeper_carry` block in the record; the code change is chartered separately.
+
 ## 2026-10-03 — Inert vectorization pass across data loaders, LP build and scoring (PR #7087, zero LP)
 
 Rule 2 [R-VECTOR] hygiene with no model change. The pass is mathematically inert: byte-identical
