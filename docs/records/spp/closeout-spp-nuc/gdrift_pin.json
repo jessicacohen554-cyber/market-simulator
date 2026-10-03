@@ -1,0 +1,508 @@
+{
+ "constants": {
+  "added": [
+   "NWPP_COI_CAISO_SHARE",
+   "NWPP_COI_PATH_SERIES",
+   "NWPP_SEAM_LIMIT_SERIES"
+  ],
+  "changed": [
+   "CAMPD_BINNING_ISOS",
+   "EIA930_PS_FOLDED_INTO_WAT",
+   "NUCLEAR_MONTHLY_CF_BY_YEAR",
+   "RGGI_MEMBER_STATES_BY_YEAR"
+  ],
+  "note": "315 -> 318 top-level constants compared by value",
+  "removed": []
+ },
+ "demand": {
+  "head": {
+   "2019": {
+    "sha": "ea513ba8f32300b13fc88c57",
+    "shape": [
+     2,
+     8760
+    ],
+    "state_arrays": {
+     "fuel_prices": "e09af2c378dced86411e9838",
+     "solar_cap": "9dc5468ebcab51bffdc4877c",
+     "solar_cf": "d2850b74a7622fa002fe3139",
+     "storage_power_cap": "2ec7f24dd8a0a0c2a0ef68bf",
+     "wind_cap": "a08af5054a8dca872d2404e8",
+     "wind_cf": "1462c8aa8565e637e1a19797"
+    }
+   },
+   "2020": {
+    "sha": "57cdecccd9e8d83c41790418",
+    "shape": [
+     2,
+     8760
+    ],
+    "state_arrays": {
+     "fuel_prices": "0d02f7d42a5494f629e96ba1",
+     "solar_cap": "3184303cbb1934d726e3634c",
+     "solar_cf": "a89df99d853ac4b3697907e2",
+     "storage_power_cap": "d53eeae249381cc6c38e050a",
+     "wind_cap": "f5d294ee713d2980da39f4ac",
+     "wind_cf": "946a993b9380f8aeba5f08ea"
+    }
+   },
+   "2021": {
+    "sha": "ad4034d1c52f035d92dd6a36",
+    "shape": [
+     2,
+     8760
+    ],
+    "state_arrays": {
+     "fuel_prices": "6ff98796227e8b2d008478af",
+     "solar_cap": "54978a68cbbb3bea7fb762cc",
+     "solar_cf": "7bc36c41db4993b2c43c517d",
+     "storage_power_cap": "3818984d5916fe59145dbd53",
+     "wind_cap": "977b53b978b08ecc34041175",
+     "wind_cf": "05a05c452899461b96863fcb"
+    }
+   },
+   "2022": {
+    "sha": "b9997161a24f21847fec0780",
+    "shape": [
+     2,
+     8760
+    ],
+    "state_arrays": {
+     "fuel_prices": "2c56a0218fdda47d190aa86b",
+     "solar_cap": "be04a6dbf6fe30d721359244",
+     "solar_cf": "c8002225f21cf1e938a7bfeb",
+     "storage_power_cap": "3818984d5916fe59145dbd53",
+     "wind_cap": "818b5f993fb5cdffe31973a3",
+     "wind_cf": "de6766cc92e4f23caabbe018"
+    }
+   },
+   "2023": {
+    "sha": "c6a747655d2ae384d96063be",
+    "shape": [
+     2,
+     8760
+    ],
+    "state_arrays": {
+     "fuel_prices": "a0b03798fee3949744853df4",
+     "solar_cap": "5c4681bf88c5b9c596000e62",
+     "solar_cf": "9b6eb7c1dfc2eab0cedbe012",
+     "storage_power_cap": "b3df90f39168f2411f253f47",
+     "wind_cap": "6872ed3ec35c399e5f812897",
+     "wind_cf": "1edabe2032dd6498609a8ff0"
+    }
+   },
+   "2024": {
+    "sha": "d6eb51e7817922eca4993bc2",
+    "shape": [
+     2,
+     8760
+    ],
+    "state_arrays": {
+     "fuel_prices": "5f297ac1f73e6622138d6828",
+     "solar_cap": "64f02572145b6a6be61348be",
+     "solar_cf": "e90a65e1a0a319e67295fa0b",
+     "storage_power_cap": "41dbd2fd6636cbf04894369a",
+     "wind_cap": "440141b7ac1f4bce5941b1d1",
+     "wind_cf": "f33ef88a4656b05b4193a48e"
+    }
+   },
+   "2025": {
+    "sha": "6d914558fa462db172c56145",
+    "shape": [
+     2,
+     8760
+    ],
+    "state_arrays": {
+     "fuel_prices": "a0d4e7dcbacc13dc0f9e9dab",
+     "solar_cap": "ad54a92e694ca9ab4cd159ff",
+     "solar_cf": "65818f1a7838214fe4630cac",
+     "storage_power_cap": "428789c5ab214f03adb968cf",
+     "wind_cap": "6bc7188a732e676c0297ac29",
+     "wind_cf": "79f3ccf7edcfe7a7a892a275"
+    }
+   }
+  },
+  "keeper": {
+   "2019": {
+    "sha": "ea513ba8f32300b13fc88c57",
+    "shape": [
+     2,
+     8760
+    ],
+    "state_arrays": {
+     "fuel_prices": "e09af2c378dced86411e9838",
+     "solar_cap": "9dc5468ebcab51bffdc4877c",
+     "solar_cf": "d2850b74a7622fa002fe3139",
+     "storage_power_cap": "2ec7f24dd8a0a0c2a0ef68bf",
+     "wind_cap": "a08af5054a8dca872d2404e8",
+     "wind_cf": "1462c8aa8565e637e1a19797"
+    }
+   },
+   "2020": {
+    "sha": "57cdecccd9e8d83c41790418",
+    "shape": [
+     2,
+     8760
+    ],
+    "state_arrays": {
+     "fuel_prices": "0d02f7d42a5494f629e96ba1",
+     "solar_cap": "3184303cbb1934d726e3634c",
+     "solar_cf": "a89df99d853ac4b3697907e2",
+     "storage_power_cap": "d53eeae249381cc6c38e050a",
+     "wind_cap": "f5d294ee713d2980da39f4ac",
+     "wind_cf": "946a993b9380f8aeba5f08ea"
+    }
+   },
+   "2021": {
+    "sha": "ad4034d1c52f035d92dd6a36",
+    "shape": [
+     2,
+     8760
+    ],
+    "state_arrays": {
+     "fuel_prices": "6ff98796227e8b2d008478af",
+     "solar_cap": "54978a68cbbb3bea7fb762cc",
+     "solar_cf": "7bc36c41db4993b2c43c517d",
+     "storage_power_cap": "3818984d5916fe59145dbd53",
+     "wind_cap": "977b53b978b08ecc34041175",
+     "wind_cf": "05a05c452899461b96863fcb"
+    }
+   },
+   "2022": {
+    "sha": "b9997161a24f21847fec0780",
+    "shape": [
+     2,
+     8760
+    ],
+    "state_arrays": {
+     "fuel_prices": "2c56a0218fdda47d190aa86b",
+     "solar_cap": "be04a6dbf6fe30d721359244",
+     "solar_cf": "c8002225f21cf1e938a7bfeb",
+     "storage_power_cap": "3818984d5916fe59145dbd53",
+     "wind_cap": "818b5f993fb5cdffe31973a3",
+     "wind_cf": "de6766cc92e4f23caabbe018"
+    }
+   },
+   "2023": {
+    "sha": "c6a747655d2ae384d96063be",
+    "shape": [
+     2,
+     8760
+    ],
+    "state_arrays": {
+     "fuel_prices": "a0b03798fee3949744853df4",
+     "solar_cap": "5c4681bf88c5b9c596000e62",
+     "solar_cf": "9b6eb7c1dfc2eab0cedbe012",
+     "storage_power_cap": "b3df90f39168f2411f253f47",
+     "wind_cap": "6872ed3ec35c399e5f812897",
+     "wind_cf": "1edabe2032dd6498609a8ff0"
+    }
+   },
+   "2024": {
+    "sha": "d6eb51e7817922eca4993bc2",
+    "shape": [
+     2,
+     8760
+    ],
+    "state_arrays": {
+     "fuel_prices": "5f297ac1f73e6622138d6828",
+     "solar_cap": "64f02572145b6a6be61348be",
+     "solar_cf": "e90a65e1a0a319e67295fa0b",
+     "storage_power_cap": "41dbd2fd6636cbf04894369a",
+     "wind_cap": "440141b7ac1f4bce5941b1d1",
+     "wind_cf": "f33ef88a4656b05b4193a48e"
+    }
+   },
+   "2025": {
+    "sha": "6d914558fa462db172c56145",
+    "shape": [
+     2,
+     8760
+    ],
+    "state_arrays": {
+     "fuel_prices": "a0d4e7dcbacc13dc0f9e9dab",
+     "solar_cap": "ad54a92e694ca9ab4cd159ff",
+     "solar_cf": "65818f1a7838214fe4630cac",
+     "storage_power_cap": "428789c5ab214f03adb968cf",
+     "wind_cap": "6bc7188a732e676c0297ac29",
+     "wind_cf": "79f3ccf7edcfe7a7a892a275"
+    }
+   }
+  }
+ },
+ "fleet_arrays": {
+  "head": {
+   "2019": {
+    "availability_sha": "909a66c21397eae0b2b7ce98",
+    "emission_rate_sha": "9400bab3007fcf0265e18b8b",
+    "fuel_type_idx_sha": "e0f503174147935fc68105ff",
+    "heat_rate_sha": "9ac1eb9be3a3f1f57652e69b",
+    "mc_base_sha": "6962cd5dd7e3aed1e0867082",
+    "min_gen_sha": "9ea5603cc2a515fbe54e3d5c",
+    "n_units": 1294,
+    "nox_rate_sha": "79a02ff5d6ba115a8e219f47",
+    "plant_code_sha": "9fb8079f39e8736f38a50af1",
+    "plant_group_sha": "0327f0405b37a175165a77a0",
+    "pmax_sha": "7dd88073531e91f178ea443a",
+    "pmin_sha": "a3f046dc3d9ae964859baf2f",
+    "unit_ids_sha": "a0629448e5bb45f6632f60a3",
+    "vom_sha": "dc7d15bbdcacd795ce5363b3",
+    "zone_idx_sha": "f10effea96e8c96a89002d8c"
+   },
+   "2020": {
+    "availability_sha": "ed47abdfbd75472f7a5590a5",
+    "emission_rate_sha": "f2ba38d1df0bbeb6a01043a4",
+    "fuel_type_idx_sha": "aac4fd4be12acdae843c8ea2",
+    "heat_rate_sha": "2943b178db654bf540ab1526",
+    "mc_base_sha": "30162dbe0f2d08acf99550cc",
+    "min_gen_sha": "9fabc0d201fabb2ebfea99bc",
+    "n_units": 1300,
+    "nox_rate_sha": "75a746e49d79f4f1a74c0518",
+    "plant_code_sha": "5c48f2c6ddffcdfdc302e38d",
+    "plant_group_sha": "69dca25e302b2b21345c0a84",
+    "pmax_sha": "e30d41ca30f7e2205394fe6d",
+    "pmin_sha": "9a1b4959fb0e1cbef5280a20",
+    "unit_ids_sha": "eeb77ceb21d9e2edbf59df81",
+    "vom_sha": "c278197874e62924559692cc",
+    "zone_idx_sha": "8d9e7d4c43dcdfeb14773e10"
+   },
+   "2021": {
+    "availability_sha": "74df23b5835fb30364a3a25b",
+    "emission_rate_sha": "a1ab4c9279adf69373a08691",
+    "fuel_type_idx_sha": "73e9ec4ae1f6b20bb94e29fb",
+    "heat_rate_sha": "a2a9f508d8a9671c0f4fbbeb",
+    "mc_base_sha": "5c0257f31f48eec472a36d8e",
+    "min_gen_sha": "34701b9f7573865c277d87a1",
+    "n_units": 1291,
+    "nox_rate_sha": "31cc13bbd0b36444317d6d51",
+    "plant_code_sha": "16a80d9e2ee2a9498e5b44ab",
+    "plant_group_sha": "7ab055e60a7553ad8952bb42",
+    "pmax_sha": "66e491a10b5799fc94720e5c",
+    "pmin_sha": "76cad15ef4274aafa8b7ba0b",
+    "unit_ids_sha": "a1aeae6fc1ce4f28a6854fca",
+    "vom_sha": "7f15852476e76c9c94959274",
+    "zone_idx_sha": "425e2d47f8821b87a00462c5"
+   },
+   "2022": {
+    "availability_sha": "60bf22b83242effb012b43a2",
+    "emission_rate_sha": "5b3c1e913a617fddc8a4aab9",
+    "fuel_type_idx_sha": "0fa545abcf6ca66531443060",
+    "heat_rate_sha": "d68132efd2e1e7cd9820e676",
+    "mc_base_sha": "ffcdddeaacb329a2d3535528",
+    "min_gen_sha": "2185c4df7f4584c327911296",
+    "n_units": 1281,
+    "nox_rate_sha": "e83605a189c46d275b5cbf8f",
+    "plant_code_sha": "829284c5f45071ec0e09e8ca",
+    "plant_group_sha": "4d6567700af83ca0f9b0543a",
+    "pmax_sha": "443e4a615d965d6267eaa980",
+    "pmin_sha": "fb873216ef5ed5cc7b2c5843",
+    "unit_ids_sha": "07b386a1d683dde16290d30f",
+    "vom_sha": "acffde35c92e01729281269f",
+    "zone_idx_sha": "3b1d4bd9333ea0790fd18964"
+   },
+   "2023": {
+    "availability_sha": "a5dbfb6438a3b61f42413209",
+    "emission_rate_sha": "4638b5f961b96618c4c5d990",
+    "fuel_type_idx_sha": "1ef018ffbc1fff8e8cbc4739",
+    "heat_rate_sha": "04c99950340a6373ffd184b9",
+    "mc_base_sha": "798e1f3e51163a9bef1e9041",
+    "min_gen_sha": "88289d100b1b50396d101291",
+    "n_units": 1271,
+    "nox_rate_sha": "76a3960befceb868c88ba7d3",
+    "plant_code_sha": "b96615b4e48dff3e7a72967b",
+    "plant_group_sha": "01d9054c803b070e34682e8d",
+    "pmax_sha": "54ee73ecc6a2bdc401a1d345",
+    "pmin_sha": "4266aff814c5f761beaa34cc",
+    "unit_ids_sha": "736359bf47b06b17a9f4ef33",
+    "vom_sha": "f5e4fd9d13cd301f9d349172",
+    "zone_idx_sha": "a2d795eb0a0f30916fdbe77f"
+   },
+   "2024": {
+    "availability_sha": "f01d55dd913213cdf95f4f22",
+    "emission_rate_sha": "2a74924e4a2e575242c7514f",
+    "fuel_type_idx_sha": "c2c0d9fd40e8ad5bc07c2cfe",
+    "heat_rate_sha": "155da2b33a0badf2cb92cfb0",
+    "mc_base_sha": "33e8199c157f1f4e06b5479e",
+    "min_gen_sha": "e2e952b62a97fa79fe1db3f5",
+    "n_units": 1281,
+    "nox_rate_sha": "ad54a78d0a23c980596ee367",
+    "plant_code_sha": "d4adb7386fa82cdcd54759aa",
+    "plant_group_sha": "f996528a6f8293dc4bfbf151",
+    "pmax_sha": "706dd135ebe3377fb3649105",
+    "pmin_sha": "7ef19169984feb83ec3812e2",
+    "unit_ids_sha": "d345c27bc006403df02d1430",
+    "vom_sha": "cdec0322867e4c6466fd82e2",
+    "zone_idx_sha": "c839fc0785145a75ee2427f2"
+   },
+   "2025": {
+    "availability_sha": "87c0731ad0c0e00e33a6a48c",
+    "emission_rate_sha": "c32a4906686346143b7a3288",
+    "fuel_type_idx_sha": "03958d083c1d3555409e2799",
+    "heat_rate_sha": "be5d8ee3bd15ec585a5b72aa",
+    "mc_base_sha": "a31b36cb1e7d01c8a0395bb6",
+    "min_gen_sha": "0fe76c9a49127ec3de10c77d",
+    "n_units": 1282,
+    "nox_rate_sha": "3a41ad4c8d27dbaf7139d75b",
+    "plant_code_sha": "9e61a8181f9e7e7e48555652",
+    "plant_group_sha": "3378e46c8c735ce90c3ab409",
+    "pmax_sha": "db10daa13dd5d1d6a15f9410",
+    "pmin_sha": "719d8d642a0b729311bc532d",
+    "unit_ids_sha": "a6f071322ec4fe1c074e4181",
+    "vom_sha": "92feb264de0c6d9562dcb499",
+    "zone_idx_sha": "08ebf4d693d4ea7d684bdabd"
+   }
+  },
+  "keeper": {
+   "2019": {
+    "availability_sha": "436769962530775f228aed4e",
+    "emission_rate_sha": "9400bab3007fcf0265e18b8b",
+    "fuel_type_idx_sha": "e0f503174147935fc68105ff",
+    "heat_rate_sha": "9ac1eb9be3a3f1f57652e69b",
+    "mc_base_sha": "6962cd5dd7e3aed1e0867082",
+    "min_gen_sha": "9bb29b93e62b266f404a0de3",
+    "n_units": 1294,
+    "nox_rate_sha": "79a02ff5d6ba115a8e219f47",
+    "plant_code_sha": "9fb8079f39e8736f38a50af1",
+    "plant_group_sha": "0327f0405b37a175165a77a0",
+    "pmax_sha": "7dd88073531e91f178ea443a",
+    "pmin_sha": "a3f046dc3d9ae964859baf2f",
+    "unit_ids_sha": "a0629448e5bb45f6632f60a3",
+    "vom_sha": "dc7d15bbdcacd795ce5363b3",
+    "zone_idx_sha": "f10effea96e8c96a89002d8c"
+   },
+   "2020": {
+    "availability_sha": "035e79f06e9888288f8dcedb",
+    "emission_rate_sha": "f2ba38d1df0bbeb6a01043a4",
+    "fuel_type_idx_sha": "aac4fd4be12acdae843c8ea2",
+    "heat_rate_sha": "2943b178db654bf540ab1526",
+    "mc_base_sha": "30162dbe0f2d08acf99550cc",
+    "min_gen_sha": "f53d6f1b5ea5198d4d81ba44",
+    "n_units": 1300,
+    "nox_rate_sha": "75a746e49d79f4f1a74c0518",
+    "plant_code_sha": "5c48f2c6ddffcdfdc302e38d",
+    "plant_group_sha": "69dca25e302b2b21345c0a84",
+    "pmax_sha": "e30d41ca30f7e2205394fe6d",
+    "pmin_sha": "9a1b4959fb0e1cbef5280a20",
+    "unit_ids_sha": "eeb77ceb21d9e2edbf59df81",
+    "vom_sha": "c278197874e62924559692cc",
+    "zone_idx_sha": "8d9e7d4c43dcdfeb14773e10"
+   },
+   "2021": {
+    "availability_sha": "3b6746740100551743dc4645",
+    "emission_rate_sha": "a1ab4c9279adf69373a08691",
+    "fuel_type_idx_sha": "73e9ec4ae1f6b20bb94e29fb",
+    "heat_rate_sha": "a2a9f508d8a9671c0f4fbbeb",
+    "mc_base_sha": "5c0257f31f48eec472a36d8e",
+    "min_gen_sha": "ff53e23e8a381f747f752b65",
+    "n_units": 1291,
+    "nox_rate_sha": "31cc13bbd0b36444317d6d51",
+    "plant_code_sha": "16a80d9e2ee2a9498e5b44ab",
+    "plant_group_sha": "7ab055e60a7553ad8952bb42",
+    "pmax_sha": "66e491a10b5799fc94720e5c",
+    "pmin_sha": "76cad15ef4274aafa8b7ba0b",
+    "unit_ids_sha": "a1aeae6fc1ce4f28a6854fca",
+    "vom_sha": "7f15852476e76c9c94959274",
+    "zone_idx_sha": "425e2d47f8821b87a00462c5"
+   },
+   "2022": {
+    "availability_sha": "57a19fdcdf0a3604f5d76970",
+    "emission_rate_sha": "5b3c1e913a617fddc8a4aab9",
+    "fuel_type_idx_sha": "0fa545abcf6ca66531443060",
+    "heat_rate_sha": "d68132efd2e1e7cd9820e676",
+    "mc_base_sha": "ffcdddeaacb329a2d3535528",
+    "min_gen_sha": "090a8d3d8f1e47e791e2c2eb",
+    "n_units": 1281,
+    "nox_rate_sha": "e83605a189c46d275b5cbf8f",
+    "plant_code_sha": "829284c5f45071ec0e09e8ca",
+    "plant_group_sha": "4d6567700af83ca0f9b0543a",
+    "pmax_sha": "443e4a615d965d6267eaa980",
+    "pmin_sha": "fb873216ef5ed5cc7b2c5843",
+    "unit_ids_sha": "07b386a1d683dde16290d30f",
+    "vom_sha": "acffde35c92e01729281269f",
+    "zone_idx_sha": "3b1d4bd9333ea0790fd18964"
+   },
+   "2023": {
+    "availability_sha": "a5dbfb6438a3b61f42413209",
+    "emission_rate_sha": "4638b5f961b96618c4c5d990",
+    "fuel_type_idx_sha": "1ef018ffbc1fff8e8cbc4739",
+    "heat_rate_sha": "04c99950340a6373ffd184b9",
+    "mc_base_sha": "798e1f3e51163a9bef1e9041",
+    "min_gen_sha": "88289d100b1b50396d101291",
+    "n_units": 1271,
+    "nox_rate_sha": "76a3960befceb868c88ba7d3",
+    "plant_code_sha": "b96615b4e48dff3e7a72967b",
+    "plant_group_sha": "01d9054c803b070e34682e8d",
+    "pmax_sha": "54ee73ecc6a2bdc401a1d345",
+    "pmin_sha": "4266aff814c5f761beaa34cc",
+    "unit_ids_sha": "736359bf47b06b17a9f4ef33",
+    "vom_sha": "f5e4fd9d13cd301f9d349172",
+    "zone_idx_sha": "a2d795eb0a0f30916fdbe77f"
+   },
+   "2024": {
+    "availability_sha": "f01d55dd913213cdf95f4f22",
+    "emission_rate_sha": "2a74924e4a2e575242c7514f",
+    "fuel_type_idx_sha": "c2c0d9fd40e8ad5bc07c2cfe",
+    "heat_rate_sha": "155da2b33a0badf2cb92cfb0",
+    "mc_base_sha": "33e8199c157f1f4e06b5479e",
+    "min_gen_sha": "e2e952b62a97fa79fe1db3f5",
+    "n_units": 1281,
+    "nox_rate_sha": "ad54a78d0a23c980596ee367",
+    "plant_code_sha": "d4adb7386fa82cdcd54759aa",
+    "plant_group_sha": "f996528a6f8293dc4bfbf151",
+    "pmax_sha": "706dd135ebe3377fb3649105",
+    "pmin_sha": "7ef19169984feb83ec3812e2",
+    "unit_ids_sha": "d345c27bc006403df02d1430",
+    "vom_sha": "cdec0322867e4c6466fd82e2",
+    "zone_idx_sha": "c839fc0785145a75ee2427f2"
+   },
+   "2025": {
+    "availability_sha": "87c0731ad0c0e00e33a6a48c",
+    "emission_rate_sha": "c32a4906686346143b7a3288",
+    "fuel_type_idx_sha": "03958d083c1d3555409e2799",
+    "heat_rate_sha": "be5d8ee3bd15ec585a5b72aa",
+    "mc_base_sha": "a31b36cb1e7d01c8a0395bb6",
+    "min_gen_sha": "0fe76c9a49127ec3de10c77d",
+    "n_units": 1282,
+    "nox_rate_sha": "3a41ad4c8d27dbaf7139d75b",
+    "plant_code_sha": "9e61a8181f9e7e7e48555652",
+    "plant_group_sha": "3378e46c8c735ce90c3ab409",
+    "pmax_sha": "db10daa13dd5d1d6a15f9410",
+    "pmin_sha": "719d8d642a0b729311bc532d",
+    "unit_ids_sha": "a6f071322ec4fe1c074e4181",
+    "vom_sha": "92feb264de0c6d9562dcb499",
+    "zone_idx_sha": "08ebf4d693d4ea7d684bdabd"
+   }
+  }
+ },
+ "head_sha": "8c3ea46192074cfd422fff6532acc035d37297bb",
+ "keeper_sha": "15a351a1",
+ "method": "two fleet_only rebuilds per year on the keeper's OWN recipe (bundle w0_sppr_span meta + derived_run_year_inputs), market_sim imported from a sparse worktree at the keeper sha in one arm and from HEAD in the other, differenced by sha256 over the raw bytes of every LP-visible array. Data dir shared by symlink so both arms read identical bytes on disk.",
+ "mismatches": [
+  "2019.min_gen_sha",
+  "2019.availability_sha",
+  "2020.min_gen_sha",
+  "2020.availability_sha",
+  "2021.min_gen_sha",
+  "2021.availability_sha",
+  "2022.min_gen_sha",
+  "2022.availability_sha"
+ ],
+ "not_covered": "LP CONSTRUCTION and SOLVE, and anything applied after the fleet_only exit (the P1-only conditional offer markup is the CAISO case). Those are closed on the keeper's own committed flags, not by this probe.",
+ "scenarioconfig_defaults": {
+  "existing_fields_changed": [
+   "campd_bins_path",
+   "control_retrofit_path",
+   "plant_emission_rates_path",
+   "plant_emission_rates_v2_path",
+   "plant_registry_path"
+  ],
+  "fields_added": [
+   "nwpp_seam_measured_limits"
+  ],
+  "fields_removed": [],
+  "note": "948 -> 949 fields compared by value"
+ },
+ "session": "closeout-spp-nuc",
+ "verdict": "INPUTS DIFFER",
+ "what": "G-DRIFT under rule 29(b): every LP INPUT the keeper's recipe builds, measured at the keeper sha and at HEAD, on one shared data tree"
+}
