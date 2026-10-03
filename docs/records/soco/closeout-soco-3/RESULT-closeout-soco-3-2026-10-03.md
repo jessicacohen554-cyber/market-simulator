@@ -176,3 +176,13 @@ this evidence.
   forward and prunes `closeout_soco_2_span`. No re-solve is needed.
 - **Rule 31.** Nothing has been deleted. The bundles will not survive this container, and the composed bundle is pushed on
   `claude/closeout-soco-3-reg`.
+
+## 7. Promotion
+
+- **Ruling.** Owner ruling **R-54** (2026-10-03): "Promote on structure". `2026-10-03-closeout-soco-3-coalpile` is the SOCO keeper; CC_REGULAR 2019
+  stays the open SOCO residual.
+- **Command.** `promote_keeper.py` ran at commit `cbb5d427552a704014b69779d9d0994e2c1dfd35`. It registered the run, attested it, designated it, rebuilt
+  status, audited, pruned `closeout_soco_2_span` (SOCO only) and checked parity.
+- **Ledger.** The outgoing exceptions ledger was empty. C3a 2019 and 2020 now read PASS. COAL_BIT 2019, C3a 2022 and
+  C3b 2022 remain the rubric's scoped caveats.
+- **Matrix.** `coal_monthly_pile_measured_receipts` (SOCO) moves O → K.

@@ -2190,3 +2190,26 @@ parity are clean.
 | 2023 | PASS | PASS | PASS +1.0 % | PASS | PASS | PASS |
 | 2024 | PASS | PASS | PASS −4.8 % | PASS | PASS | PASS |
 | 2025 | PASS (CC SKIPPED, preliminary EIA-923) | PASS | PASS −4.7 % | PASS | PASS | PASS |
+
+## closeout-SOCO-3 — the measured take-or-pay coal pile (2026-10-03)
+
+**Promoted 2026-10-03 (owner ruling R-54 "Promote on structure").** `promote_keeper.py` ran at commit `cbb5d427552a704014b69779d9d0994e2c1dfd35`:
+the outgoing ledger was empty, the DOF ledger was written, `closeout_soco_2_span` was pruned, and audit and parity
+are clean.
+
+**The keeper is `2026-10-03-closeout-soco-3-coalpile`.** It is the closeout-SOCO-2 recipe plus the four flags of NWPP's coal-yard family in its
+same-year measured form (owner R-49). Zero fitted parameters. The determination is NOT-YET, on CC_REGULAR 2019 alone.
+
+| Year | C1 | C2 | C3a | C3b | C4 coal NRMSE | C8 |
+|---|---|---|---|---|---|---|
+| 2019 | **FAIL** CC_REGULAR +3.2 pp; COAL_BIT ledgered (−2.8 pp, volume −7.82 TWh) | PASS | PASS +8.7 % (was ledgered) | PASS 0.112 | PASS 0.203 | PASS |
+| 2020 | PASS | PASS | PASS +8.4 % (was ledgered) | PASS 0.113 | PASS 0.224 | PASS |
+| 2021 | PASS | PASS | PASS −6.7 % | PASS 0.125 | PASS 0.177 | PASS |
+| 2022 | PASS | PASS | ledgered −13.7 % | ledgered 0.282 | PASS 0.244 | PASS |
+| 2023 | PASS | PASS | PASS −0.4 % | PASS 0.091 | PASS 0.197 | PASS |
+| 2024 | PASS | PASS | PASS −6.0 % | PASS 0.184 | PASS 0.218 | PASS |
+| 2025 | PASS (CC SKIPPED, preliminary EIA-923) | PASS | PASS −4.7 % | PASS 0.184 | PASS 0.156 | PASS |
+
+**Open residual:** CC_REGULAR 2019. The take floor fixes how much coal Barry and Crist burn. It does not fix when: the
+perfect-foresight LP burns the obligated coal against CT and PRB coal rather than night-time CC. Records are in
+`docs/records/soco/closeout-soco-3/`.
