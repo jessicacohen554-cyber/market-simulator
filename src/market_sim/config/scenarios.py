@@ -1369,6 +1369,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # priced seams at their measured hourly operating limits, a different LP,
     # and hashes distinctly. Registered IN THE SAME COMMIT as the field.
     "nwpp_seam_measured_limits",
+    # NWPP-NEXT-23 COI PNW delivery basis (GATED default off): dropped from
+    # the hash at its default so every pre-existing cache key stays
+    # byte-stable (the off path prices COI exactly as before); an armed run
+    # prices COI's export leg on a different basis and hashes distinctly.
+    # Registered IN THE SAME COMMIT as the field.
+    "nwpp_coi_pnw_delivery_basis",
     # pjm-h19 EIA-930 balance-identity demand screen (GATED default off):
     # dropped from the hash at its default so every pre-existing cache key
     # stays byte-stable (the off path never calls the screen); an armed run
@@ -2881,6 +2887,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "nwpp_demand_plant_basis": "False",
     # Added by NWPP-NEXT-22 WITH the field (the nyiso-119 discipline).
     "nwpp_seam_measured_limits": "False",
+    # Added by NWPP-NEXT-23 WITH the field (the nyiso-119 discipline).
+    "nwpp_coi_pnw_delivery_basis": "False",
     # Added by pjm-h19 WITH the field (the nyiso-119 discipline).
     "demand_balance_screen": "False",
     # Added by ercot-236 WITH the field, in the same commit as its
@@ -21674,6 +21682,20 @@ class ScenarioConfig:
     # partition RAISES (pjm-119). data.transfer_interface_limits.
     # nwpp_seam_limits_hourly; FINDING-nwppnext22-seam-headroom-2026-10-02.md.
     nwpp_seam_measured_limits: bool = False
+    # NWPP-NEXT-23 COI delivered-cost basis (GATED default off, NWPP-only,
+    # ZERO fitted scalars; owner card 2026-10-03 "Solve H2 PNW basis"). Read
+    # only when reference_price_interface prices NWPP's seams (raises
+    # otherwise). The NW->CA export leg of the CAISO_COI seam is priced on the
+    # delivered-cost basis CAISO registers for the same Malin corridor's
+    # imports, CAISO_IMPORT_DELIVERY_BASIS["PNW_midC"] (loss 0.05, wheel $5;
+    # spec.NWPP_SEAM_EXPORT_DELIVERY_TRANCHE), instead of the symmetric 3.0
+    # hurdle: the band's willingness-to-pay per NW MWh is
+    # (band - wheel) / (1 + loss). Rule 19: one physical path, one basis on
+    # both sides. Rule 13: a tariff wheel and loss factor, forward-reproducible
+    # for any year. The import leg, NEVP and BC are unchanged.
+    # model.interchange.import_nodes.inject_reference_price_mc;
+    # FINDING-nwppnext23-price-level-phase0-2026-10-03.md.
+    nwpp_coi_pnw_delivery_basis: bool = False
     # pjm-h19 EIA-930 balance-identity demand repair (GATED default off,
     # ISO-agnostic, ZERO fitted scalars). Repairs an hour whose metered
     # Demand makes an isolated reversal larger than the BA-year's own Tukey
@@ -25115,6 +25137,7 @@ TIER_TAGS: dict[str, int] = {
     "nwpp_grid_carried_wind_served": 1,
     "nwpp_demand_plant_basis": 1,
     "nwpp_seam_measured_limits": 3,
+    "nwpp_coi_pnw_delivery_basis": 1,
     "demand_balance_screen": 1,
     "ercot_offer_swcap_clip": 1,
     "ercot_swcap_vintage": 1,
