@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-10-03 — Inert vectorization pass across data loaders, LP build and scoring (PR #7087, zero LP)
+
+Rule 2 [R-VECTOR] hygiene with no model change. The pass is mathematically inert: byte-identical
+outputs (constraint-matrix `data`/`indices`/`indptr` values and index dtype, envelope floats, derate
+arrays), no cache-key or solve-surface change, no keeper re-key. `lp/layout.kron_hours(T, block)`
+replaces every `sp.kron(sp.eye(T), block)` in `lp/rows.py` / `lp/reserve_rows.py`: the canonical
+per-hour CSR block is tiled directly along the hour diagonal (column indices shift by `t × n_cols`, row
+pointers by `t × nnz`) without `kron`'s `T × nnz` COO transient; non-canonical or empty input falls
+through to `sp.kron`. `outages._outage_hour_bounds` hands the row-wise outage loaders the clipped
+`(lo, hi)` hour range `outage_hour_mask` would set True, applied by slice instead of a full-year boolean
+mask. The (month × hour-of-day) percentile envelopes (`eia930/envelopes.py`, `nyiso_seam_envelope.py`,
+`nyiso_par_attribution.py`) and the CAISO storage-envelope hour-of-day quantile reduce an aligned
+`(days, 24)` view in one `axis=0` call, with a per-bucket fallback for DST-irregular or NaN-bearing
+months. Row-wise `iterrows` / `apply(axis=1)` loops in the loaders and scoring (`campd`, `eia923`,
+`coal`, `emission_rates`, `fleet/eia860`, `fleet/campd_bins`, `fuel/*`, `offer_curves`,
+`announced_retirements`, `benchmark_corridor`, `caiso_outages`, `results/emissions`, `matrix`) became
+column-array iteration with the same per-row arithmetic. Docs realigned: `docs/codebase/01-architecture.md`
+§1.6, `02-lp-dispatch.md` §2.2, `04-data-layer.md` §4.4 / §4.6.
+
 ## 2026-10-03 — capx D102: forecast-verdict staleness census against the 2026-10-02 W0 keepers (zero LP)
 
 All 111 `ff-verdicts.json` keys read STALE-SURFACE against the W0 keepers (0 CURRENT, 0 STALE-POSTURE; no forecast-scoped `SOLVE_EPOCH`, two registry rows moved after the newest verdict); parity SUMMARY 9 postures / 0 unaccounted / 26 filed gaps — `docs/records/forecast/FINDING-capx-d102-2026-10-03.md`.

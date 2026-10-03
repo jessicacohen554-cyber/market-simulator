@@ -747,13 +747,18 @@ def capability_census(
         g = df.groupby(["train", "state"], observed=True)[
             ["HSL", "HASL", "Base Point"]
         ].sum()
-        for (tr, st), row in g.iterrows():
+        for (tr, st), hsl, hasl, bp in zip(
+            g.index,
+            g["HSL"].to_numpy(),
+            g["HASL"].to_numpy(),
+            g["Base Point"].to_numpy(),
+        ):
             b = acc.setdefault(str(tr), {}).setdefault(
                 str(st), {"hsl": 0.0, "hasl": 0.0, "bp": 0.0}
             )
-            b["hsl"] += float(row["HSL"])
-            b["hasl"] += float(row["HASL"])
-            b["bp"] += float(row["Base Point"])
+            b["hsl"] += float(hsl)
+            b["hasl"] += float(hasl)
+            b["bp"] += float(bp)
 
     n_iv = max(len(seen_iv), 1)
     trains: dict[str, dict] = {}

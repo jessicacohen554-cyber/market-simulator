@@ -174,9 +174,17 @@ def test_largest_retained_frames_identifies_the_holding_site():
     frame = pd.DataFrame(
         {"unit_id": np.zeros(1_500_000), "gross_load_mw": np.zeros(1_500_000)}
     )
-    rows = cache_control.largest_retained_frames(5, frame)
+    rows = cache_control.largest_retained_frames(20, frame)
     assert rows, "a 24 MB rooted frame must be reported"
-    mb, nrows, ncols, cols = rows[0]
+    # The reporter enumerates EVERY live frame in the process (pinned below),
+    # so a legitimately memoized loader frame can outrank this one — the
+    # ``lru_cache``d EIA-923 plant table (137,578 x 20 as of 2026-10, and
+    # growing with each release) did exactly that once it passed 24 MB. The
+    # contract under test is identification, so find our frame by its shape
+    # fingerprint instead of assuming it is the top row.
+    mine = [row for row in rows if (row[1], row[2]) == (1_500_000, 2)]
+    assert mine, f"the 24 MB rooted frame is missing from the reported rows: {rows}"
+    mb, nrows, ncols, cols = mine[0]
     assert mb > 20.0, f"payload under-reported ({mb:.1f} MB)"
     assert (nrows, ncols) == (1_500_000, 2)
     assert cols == ["unit_id", "gross_load_mw"]
