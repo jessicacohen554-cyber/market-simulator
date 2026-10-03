@@ -222,6 +222,17 @@ def apply_nwpp_path76_link(iso_config, iso: str, config=None):
     any other ISO or when the flag is off, so the default path is
     byte-identical.
     """
+    if (
+        iso == "NWPP"
+        and getattr(config, "nwpp_path76_alturas_link", False)
+        and getattr(config, "nwpp_path76_served_schedule", False)
+    ):
+        # NWPP-NEXT-27 (rule 19): the served Path 76 leg replaces the priced
+        # link; arming both would serve and price the same exchange.
+        raise ValueError(
+            "nwpp_path76_served_schedule serves the NEVP<->BPAT leg in place of "
+            "the priced Path 76 link: disarm nwpp_path76_alturas_link"
+        )
     if iso != "NWPP" or not getattr(config, "nwpp_path76_alturas_link", False):
         return iso_config
     from market_sim.config.iso_configs import nwpp_path76_alturas_links

@@ -6706,6 +6706,8 @@ def solve_and_persist(
         )
         # NWPP-NEXT-26: the seam in-service vintage is the same class.
         _nwpp_seam_vintage = _caiso_demand_flag("nwpp_seam_in_service_vintage")
+        # NWPP-NEXT-27: the Path 76 served leg is the same class.
+        _nwpp_path76_served = _caiso_demand_flag("nwpp_path76_served_schedule")
         # pjm-h19: the balance-identity demand screen is the same class.
         _demand_balance = _caiso_demand_flag("demand_balance_screen")
         # R-CAISO-11: the TAC-share clock flag is the same class.
@@ -6754,6 +6756,7 @@ def solve_and_persist(
             caiso_tac_shares_standard_time=_tac_std,
             nwpp_served_schedule_zonal_attribution=_nwpp_zonal_schedule,
             nwpp_seam_in_service_vintage=_nwpp_seam_vintage,
+            nwpp_path76_served_schedule=_nwpp_path76_served,
         )
         # Must-run residual classes (biomass / other-gas / ...) are netted out
         # of demand for the LP and re-added as pseudo-units in the dispatch
