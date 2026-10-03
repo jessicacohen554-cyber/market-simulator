@@ -7076,3 +7076,40 @@ Keeper unchanged; data withdrawn; arm at `d3e04d9f`. Records: `PRECOMMIT-` and `
   - **Why:** committed rungs set price in only 2–7 % of load-hours, and the coal committed rung is already below its incremental HR.
   - **Status:** COAL_BIT stays OPEN.
 - **Record:** `FINDING-pjm-next-28-sunk-noload-2026-10-02.md`.
+
+## PJM-NEXT-29 — 2026-10-03 — low-hour price-setters located; floor is not the COAL_BIT operand (zero LP, NOT CHARTERED)
+
+- **Readings fixed ex ante** (`19135a11`). R1 concentrated: `T*` = COAL_BIT econc + CC_REGULAR econc. R2: coal
+  mis-assigned (model 34–48 % vs IMM 19–24 % in real low hours). R4: the stranded band is CC_REGULAR committed/econc.
+  R5: quantity-short (ΔQ 34 / 45 GW, a population bound).
+- **Decision:** the lever candidate is the CC_REGULAR econ/committed level. Every channel that sets it is adjudicated,
+  and no new evidence was found. NOT CHARTERED.
+- **Post hoc (S1/S2):**
+  - The COAL_BIT 2019–21 excess sits in every real-price bin, and only 14–25 % of it is in the low hours. It is ~0 in
+    2023/24 at the same price ratios, so the floor is not the C1 operand.
+  - In-the-money loading is 0.95–0.99 in the model vs 0.88–0.91 in CAMPD in the fail years.
+- **COAL_BIT:** stays OPEN, re-pointed to in-the-money loading.
+- **Record:** `FINDING-pjm-next-29-lowhour-price-setters-2026-10-02.md`.
+
+## PJM-NEXT-30 — 2026-10-03 — COAL_BIT in-money loading decomposed; availability is not the year-discriminator (zero LP, NOT CHARTERED)
+
+- **Readings fixed ex ante** (`ec250a98`). The S2 gap is split per plant into four pieces:
+  - basis: above the annual p99 of CAMPD net;
+  - derate: above the weekly max;
+  - offline: CAMPD dark;
+  - loading: running below the weekly max.
+- **Readings:**
+  - R1 is mixed: basis 0.37, loading 0.26, derate 0.22, offline 0.15.
+  - R2: only loading is year-discriminating (+0.049 per MW cap). Its dispatch-independent twin has the opposite
+    sign: real below-capability loading is larger in 2023/24.
+  - R3 is not concentrated.
+  - R4 cannot exclude reserves: the IMM coal-held reserve is 0.7–2.2× the loading piece.
+  - R5: NOT CHARTERED.
+- **Cap overstatement:** the `cap_mw` overstatement (0.5–1.9 GW, mostly whole-unit dark hours outside the windows)
+  exists in every year, 2023/24 included.
+- **Why 2023/24 match:** the model loads coal below real in those years, which cancels the overstatement. So a
+  rule-14 availability repair would regress 2023/24 together with the fail years.
+- **The year-discriminator** is the model's coal merit position against the price. Every channel that sets it is
+  adjudicated.
+- **Tait remap:** stays parked as the rider for the next PJM solve.
+- **Record:** `FINDING-pjm-next-30-coalbit-inmoney-loading-2026-10-03.md`.
