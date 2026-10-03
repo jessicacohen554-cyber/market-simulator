@@ -176,5 +176,9 @@
         "note": "p25_cf re-derives from multi-year CAMPD exactly like committed_pct/online_frac when the record extends (rule 23); the level stays BELOW available capacity so the floor never pins the plant and dispatch above it is free (rule 13 \u2014 no outcome pinning); a retired/deregulated plant exits the artifact"
       }
     ]
-  }
+  },
+  "authorized_price_tuning": {
+    "declared": false
+  },
+  "lane_blocks": []
 }

@@ -699,5 +699,23 @@
     "control": "keeper bundle miso279_span (G-DRIFT 47d3f872..pin: all non-delta hunks INERT; rule 29(b) form 4)",
     "dof_added": 0,
     "measured_inputs": "CAMPD unit-level identity (CT-03/CT-04 gross vs EIA-923 64020 net within 2% 2020-2025), EIA-860 generator ids; frozen derive estimators (outage, maxgen, CC heat rate, unit-routed tranche)"
-  }
+  },
+  "authorized_price_tuning": {
+    "declared": true
+  },
+  "lane_blocks": [
+    "hydro5",
+    "miso267",
+    "miso268",
+    "rmiso",
+    "rmiso_arm_b",
+    "miso271",
+    "miso272",
+    "miso273",
+    "miso275",
+    "miso277",
+    "miso278",
+    "miso279",
+    "miso280"
+  ]
 }
