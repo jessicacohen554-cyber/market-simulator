@@ -1,0 +1,19 @@
+{
+  "id": "2026-10-03-closeout-soco-3-coalpile",
+  "label": "closeout soco 3 coalpile",
+  "date": "2026-10-03",
+  "shorthand": "closeout-soco-3-coalpile",
+  "definition": "closeout-SOCO-3 R-49: take-or-pay coal pile (measured receipts) on the closeout-SOCO-2 keeper",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SOCO",
+  "file": "frontend/data/backcast/runs/2026-10-03-closeout-soco-3-coalpile.js",
+  "bundle": "results/calibration/closeout_soco_3_span"
+}
