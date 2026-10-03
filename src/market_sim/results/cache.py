@@ -76,11 +76,11 @@ human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
-**Epoch 2026-10-03b — SOCO 2019-2022 measured nuclear monthly CF (rule 14;
+**Epoch 2026-10-03c — SOCO 2019-2022 measured nuclear monthly CF (rule 14;
 lane closeout-SOCO-2). KEY-MOVING for backcast SOCO, through
-``solve_surface.SolveEpoch`` 2026-10-03b (solved as 2026-10-03a at
-826333c4, before the NWPP lane took that id on ``main``; renamed at merge, rule 26
-append-only).** WHAT CHANGED:
+``solve_surface.SolveEpoch`` 2026-10-03c (solved as 2026-10-03a at
+826333c4; renamed at merge because NWPP-anchor holds 03a on ``main`` and the
+nuclear-rows lane reserved 03b; rule 26 append-only; the epoch is key-only).** WHAT CHANGED:
 ``constants.NUCLEAR_MONTHLY_CF_BY_YEAR["SOCO"]`` gains its 2019-2022 rows
 (``scripts/data/derive_nuclear_monthly_cf.py --isos SOCO``, the frozen derive;
 2023-2025 reproduce byte-for-byte). A 2019-2022 SOCO backcast previously read the

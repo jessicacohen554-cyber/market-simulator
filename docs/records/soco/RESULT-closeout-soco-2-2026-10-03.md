@@ -16,7 +16,7 @@ Lane `claude/closeout-soco-2`, 2026-10-03.
 **Recipe.** The keeper `2026-10-02-w0-soco-fix2` (`w0_soco_span`) replayed with no
 `--set`, at lane SHA `826333c41a896ab09e10292b8d580807fef2a015`. The only
 solve-affecting difference is `NUCLEAR_MONTHLY_CF_BY_YEAR["SOCO"]` 2019–2022, taken
-from the frozen derive. SolveEpoch `2026-10-03b` (stamped `2026-10-03a` in the legs, renamed at merge after NWPP took that id) re-keys backcast SOCO.
+from the frozen derive. SolveEpoch `2026-10-03c` (key-only; the legs are stamped `2026-10-03a`, renamed at merge because NWPP-anchor holds 03a on main and the nuclear-rows lane reserved 03b) re-keys backcast SOCO.
 
 **Shards.** Seven, one year each (rule 36), all at the one SHA. Each was verified
 before it was archived: 18 files per leg, with `dispatch/<Y>_P1.parquet` and
@@ -38,6 +38,19 @@ over the composite.
 | 2025 | `claude/closeout-soco-2-2025` @ `83ffe40f683159b395ff0d3ae0b4fddf70fd577e` | 84.1 s | — |
 
 **Unserved energy** was 0 MWh in every year.
+
+**Epoch rename (key-only).** The seven legs were solved with SOCO's epoch named
+`2026-10-03a`. On merge it is `2026-10-03c`: NWPP-anchor (PR #7103) holds `03a` on
+`main`, and the nuclear-rows lane reserved `03b` (desk coordination). A SolveEpoch
+id enters only the cache key, never the LP, so the solved bytes are unaffected. On
+the merged tree, `scripts/check_key_provenance.py` reports every mismatch as a
+known or reported class (zero unknown), and `scripts/check_cache_key_registration.py`
+passes.
+
+**Pending-rows test.** When the nuclear-rows lane's
+`tests/unit/config/test_nuclear_cf_coverage.py` lands on `main`, the four SOCO
+2019–22 entries in its `_PENDING_ROWS` are deleted at the merge that brings it in.
+Its companion test fails once these rows exist, which is the designed hand-off.
 
 **Infrastructure stall, resolved in-lane.** Every shard first stopped on
 `DegradedInputError` (SOCO `hydro_ror_split`). The cause was that
