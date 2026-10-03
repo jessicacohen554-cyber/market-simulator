@@ -1,5 +1,37 @@
 # Changelog
 
+## 2026-10-03 — Inert performance workstream closed: LP handoff, loader memoization, CAISO-AS prune, calamine (PRs #7098, #7123, #7125, zero LP)
+
+Close-out of the mathematically inert optimization workstream opened by PR #7087 (entry below).
+Every change keeps outputs byte-identical — no `ScenarioConfig` / `constants.py` / formula change,
+no cache-key or solve-surface move, no keeper re-key — and each non-trivial rewrite carried an
+OLD-vs-NEW equivalence harness before it landed. **#7098:** `lp/model.py` casts the flow-cap
+retention and reduced-cost extraction straight from the transposed view to float32 (no `(n, T)`
+float64 intermediate at the post-solve peak) and installs a P0-cache / cross-year basis by one
+object-array fancy index over the int8 status vector instead of a Python loop over every column;
+`cod_ramp._load_cod_map_clean` reuses the stable-sort segment reducer (equal-length gathers reduced
+along the contiguous axis, so `np.average`'s pairwise bits and the half-to-even round are
+unchanged; 1.15 s → 0.02 s); `ferc714.load_ferc714_system_lambda` memoizes its parsed extract per
+`(path, mtime_ns, size, respondent)` and returns a copy (reported-only data; the SOCO neighbour
+derivation re-parsed one 550k-row CSV 83 times); the ERCOT HSL NP6 parser masks before building
+each region frame (byte-identical over all 721 committed reports); remaining `iterrows` sites in
+`scripts/lib` became column zips; the order-dependent frame-reporter test now finds its frame by
+fingerprint. **#7123:** `caiso_as_requirements` reads only the drops whose filename window — widened
+one day each side because the names carry Pacific trade dates while the rows run `start` 08:00Z ..
+`end` 07:00Z — can hold a row of the requested GMT year, with the unpruned read as the fallback
+that keeps the `FileNotFoundError` / `{}` choice unchanged (parity probe 2017–2027: exact for every
+year with data, identical error text for the partial 2026; ~4.5 s → ~0.6 s per call); the two
+ERCOT HSL tests pin `_ZONAL_EXTRA_DIRS` alongside `NP6_DIR` (17.7 s → 0.8 s); the spec §LP
+assembly and rule 2 `[R-VECTOR]` name `lp/layout.kron_hours` (owner decision). **#7125:**
+`egrid._load_egrid_plant_co2_raw` reads the PLNT sheet with `engine="calamine"`
+(`python-calamine==0.8.2` pinned, `uv.lock` regenerated; identical frame at three levels for every
+committed vintage 2018–2024; 8.1 s → 1.45 s). A no-solve harness (T=8760, 300 units, 8 zones,
+storage, links, reserves) puts the whole LP build at ~0.3 s after #7087, so the solver is the only
+remaining per-year cost. **Deferred, not taken (no bit-identity proof in budget):** the ramp-row
+COO→CSR direct build (~0.1 s/build, index-dtype proof unfinished), the CAMPD oil-share threshold
+reduction (Kahan vs pairwise sum on a threshold), and calamine for the same PLNT read in
+`egrid_sheets.py` / `scripts/data/curate_egrid.py` (parquet-mirrored; first-read gain only).
+
 ## 2026-10-03 — capx D112: gate-(a) rung-0 re-key MISO/SOCO (R-53/R-54, zero LP)
 
 `frontend/data/forecast/program-status.json` only: the two `isos.<ISO>.keeper` ids D110 §1.1 deferred are re-keyed to the shards at origin/main `32afdd87` with the prior id nested in each `keeper_corrected_by` Supersedes chain (MISO `2026-10-02-w0-miso-fix2` → `2026-10-03-closeout-miso-nuc-r`, R-53, PR #7153; SOCO `2026-10-03-closeout-soco-2-nuclear` → `2026-10-03-closeout-soco-3-coalpile`, R-54, PR #7154); the other seven rows match their `keepers/<ISO>.json`. MISO's `gate_a` re-derived live (NOT MET, unchanged); SOCO and NWPP stay inside `gate_a_provenance` per Q68; **no gate-(a) reading moved** (MET for NEISO and NYISO only). The stale G5 `note` prose on the NWPP and SOCO rows gets an appended dated correction (G5 text kept). New `gate_a_provenance.d112_rekey` stamp nesting D110's as `prior_stamp`. R-55 read as a lever ruling, not a promotion; nothing deferred. `audit_keepers`, `check_forecast_parity`, `check_registry_payload_parity` EXIT 0 before and after; `test_promote_keeper.py` 13 passed. Record: `docs/records/forecast/FINDING-capx-d112-2026-10-03.md`.
