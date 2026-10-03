@@ -4,7 +4,9 @@ Lane closeout-SOCO-3, 2026-10-03. Everything below was scored against the rules 
 `PRECOMMIT-solve-closeout-soco-3-2026-10-03.md`, which was pushed at `f613f353` before any shard launched.
 
 **Run.** `2026-10-03-closeout-soco-3-coalpile`, bundle `results/calibration/closeout_soco_3_span`, years 2019–2025.
-It is registered as a probe (rule 15) and is **not promoted**.
+It is registered as a probe (rule 15) and is **not promoted**. The registration (sidecar, payload) and the slim bundle are held on
+`claude/closeout-soco-3-reg` @ `22230331` and land on main only with the promotion: audit invariant E13 (rule 35) refuses an
+unpromoted SOCO run on main.
 
 **Recipe.** The keeper `2026-10-03-closeout-soco-2-nuclear` (`closeout_soco_2_span`), replayed with exactly four
 flags set:
@@ -166,11 +168,11 @@ this evidence.
 
 ## 6. Retrievability and promotion cost
 
-- **Composed bundle.** On main with this records PR, slim: 53 files, 18 MB, including `unit_marginal_<Y>` for every
-  year.
+- **Composed bundle.** Slim (53 files, 18 MB, `unit_marginal_<Y>` for every year), with the registration, on
+  `claude/closeout-soco-3-reg` @ `22230331`. It reaches main in the promoting PR (E13 forbids an unpromoted run on main).
 - **Per-year legs.** Their `dispatch/` and `unit_hourly` files live only on the seven shard branches above. Those
   branches are transport, cut when the lane PR merges; they are listed here as provenance.
 - **Promotion cost.** One `promote_keeper.py --iso SOCO` run, zero LP. It writes the attestation, carries the ledger
   forward and prunes `closeout_soco_2_span`. No re-solve is needed.
-- **Rule 31.** Nothing has been deleted. The bundles will not survive this container, but the composed bundle is
-  on main.
+- **Rule 31.** Nothing has been deleted. The bundles will not survive this container, and the composed bundle is pushed on
+  `claude/closeout-soco-3-reg`.
