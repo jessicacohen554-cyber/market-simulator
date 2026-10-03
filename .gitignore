@@ -4041,3 +4041,9 @@ results/calibration/closeout_nwpp_anchor_*/
 results/calibration/_closeoutsppnuc/
 # closeout-spp-nuc per-year legs (transport on claude/closeout-spp-nuc-<Y>; composed into closeout_spp_nuc_span)
 results/calibration/closeout_spp_nuc_20[0-9][0-9]/
+
+# closeout-pjm-nuc 6-year probe (desk ruling (b), 2026-10-03): composite + registration live on
+# claude/closeout-pjm-nuc-probe until the 7-leg recompose; kept off main (rule 29(c) / rule 31: ignore, never rm).
+results/calibration/closeout_pjm_nuc_span/
+frontend/data/backcast/registry/2026-10-03-closeout-pjm-nuc-6yr.json
+frontend/data/backcast/runs/2026-10-03-closeout-pjm-nuc-6yr.js
