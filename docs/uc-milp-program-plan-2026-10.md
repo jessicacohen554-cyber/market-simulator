@@ -173,9 +173,11 @@ Wall above the ceiling for PJM/MISO (E10 is an owner decision); a passing contro
 
 - 2026-10-03 · planning session `session_01A2fEZSxeS8xbpDUPLQhDHD` · main `dd28b645` · plan, assessment, gate spec, charter and handoff written; no lane chartered; awaiting D-0/D-1.
 - 2026-10-03 · UC-DESK r01 `session_01WX9W5tgYMre3Z134LZoGF6` (Opus by owner instruction) · branch `claude/ucmilp-desk-r01` · main `8e4b87ab` · gates: audit_keepers PASS (0 fail, 4 warn), registry/payload parity OK (9 runs), mechanism matrix ratchets OK, cache-key registration OK (409/409), rubric freeze OK (diff modes not run: no base) · **ruled D-0 = charter (R1), D-1 = sign §7 (R2)** · chartered UC-0 (benefit screen, zero LP) · amendment lane UC-AM (D-1 PR) named for next sitting · no shards.
+- 2026-10-03 · UC-DESK r02 (same session, owner: "Go until it's done") · main `1e3e4177` · desk PR #7174 merged (`c06edbb5`) · UC-0 branch realised · chartered UC-AM (`session_015zNTcCH8aUeDdczv1rAH3f`, Opus) in parallel with UC-0 (disjoint files; no open PRs on main at launch).
 
 ## 12. Lane register (desk-maintained; one row per chartered lane, newest last)
 
 | Lane | Session | Branch (issued stem → realised) | Scope (plan ref) | LP | State |
 |---|---|---|---|---|---|
-| UC-0 benefit screen | `session_013gHAT8qbNZwry6tA92gYNq` | `claude/ucmilp-0-benefit-screen-tx8t` → *(unrealised; dispatch unconfirmed until a branch exists)* | §3 UC-0; GATESPEC §1–2; HANDOFF B | 0 | chartered 2026-10-03 (Fable) |
+| UC-0 benefit screen | `session_013gHAT8qbNZwry6tA92gYNq` | `claude/ucmilp-0-benefit-screen-tx8t` → `claude/ucmilp-0-benefit-screen-tx8t` (realised; tip `15df17f0` at 21:20Z) | §3 UC-0; GATESPEC §1–2; HANDOFF B | 0 | chartered 2026-10-03 (Fable) |
+| UC-AM D-1 amendment | `session_015zNTcCH8aUeDdczv1rAH3f` | `claude/ucmilp-am-amendment-k3qz` → *(unrealised; dispatch unconfirmed until a branch exists)* | §7 text into `CLAUDE.md`, spec §1.6/§1.9, rule-history (R2) | 0 | chartered 2026-10-03 (Opus) |
