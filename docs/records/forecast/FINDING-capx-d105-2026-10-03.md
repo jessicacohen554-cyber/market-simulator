@@ -32,9 +32,7 @@ build 58 min (57 datatypes ok), solve started minute 59 (< 80) and ended minute 
 |---|---|---|
 | D50 recorded | `18515067bf4d2fbe` | reproduced by `head_key(D50 payload)` under the live drop rules |
 | + Q47 CCS moves (`ccs_retrofit_vom_adder` 8.0→2.95; `ccs_retrofit_fixed_cost_co2_scaling` →True) | `c3519b861f920bbe` | = `head_key(new payload, surface=False)` exactly; 166 added fields are schema growth at drop value, 2 retired (`nyiso_firm_imports`, `retiree_cems_cap`) |
-| + 9 moved surface rows (fp `b514541af339c180`, epochs `[]`) | **`66fb439918cbefd6`** | = the solved `run_config.json` / `solve_surface.json`; `git.sha 246438aa`, `dirty false`, 949 fields, `mode=forecast`, `outage_source=statistical` |
-
-The D102 movers `CC_STEAM_PART_REPAIR_ISOS` and `STORAGE_BASE_FLEET_MW` are two of the nine rows.
+| + 9 moved surface rows (fp `b514541af339c180`, epochs `[]`; the D102 movers are two of them) | **`66fb439918cbefd6`** | = the solved `run_config.json` / `solve_surface.json`; `git.sha 246438aa`, `dirty false`, 949 fields, `mode=forecast`, `outage_source=statistical` |
 
 ## 3. FC-1..FC-8 before (`neiso-t1f-pre-d105`, D50 `9e48ff6`) vs after (`neiso-t1f`, this run)
 
@@ -72,11 +70,10 @@ share is a controlled-swap question this one-instrument charter does not answer;
 * `frontend/data/forecast/ff-verdicts.json`: prior `neiso-t1f` preserved byte-equal at **`neiso-t1f-pre-d105`**;
   new condensed verdict at `neiso-t1f`, `provenance` = {`scored_at_sha 246438aa743a`, `cache_epoch 66fb439918cbefd6`,
   `solve_surface` (fp, 9 moved rows), `run_id neiso-2026-2030-d105-w0neiso`, `session capx-D105`}. Writer reproduces
-  the committed formatting (`indent=1`, `ensure_ascii`, trailing newline), round-trip verified.
+  the committed formatting, round-trip verified.
 * `register_forecast_run.py --summary … --kind t1f --label d105-w0neiso --extra-meta {verdict_key: neiso-t1f, …}`
-  → sidecar `frontend/data/hindcast/neiso-2026-2030-d105-w0neiso.json`; namespace regenerated (192 runs; the
-  generated registry/runs/manifest/program-status.js are gitignored). `program-status.json` untouched by hand
-  and unchanged by the script.
+  → sidecar `frontend/data/hindcast/neiso-2026-2030-d105-w0neiso.json`; generated namespace (gitignored) rebuilt,
+  192 runs. `program-status.json` untouched by hand and unchanged by the script.
 * Bundle on `main` (this PR): `results/ff-t1f-d105/neiso/{run_config,full_horizon_summary,forecast_verdict,
   dof_ledger,invariants}.json`, `invariants.txt`, `NEISO/66fb439918cbefd6/{config.yaml,solve_surface.json,
   evolution_2026..2030.json}` — the ff-t1f-d50/d60 slim convention; `year_*.parquet`, floor-retention dumps and the
