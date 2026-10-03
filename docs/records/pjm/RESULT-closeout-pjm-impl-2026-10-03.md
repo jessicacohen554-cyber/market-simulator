@@ -85,7 +85,7 @@ The C3c 2019/2021/2022 CAVEATs are unchanged.
 | `audit_keepers.py --iso PJM --check` | PASS, 0 failures and 0 warnings |
 | `check_registry_payload_parity.py` | OK: 9 runs, 9 bundle dirs |
 | `check_mechanism_matrix.py --base origin/main` | OK |
-| fast lane | see the PR description |
+| fast lane | 11378 passed, 66 skipped, 3 xfailed, 0 failed (the two known main failures did not reproduce) |
 
 ## Notes for the desk
 
