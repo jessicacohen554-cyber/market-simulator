@@ -1,0 +1,19 @@
+{
+  "id": "2026-10-03-closeout-pjm-lossdemand-probe",
+  "label": "closeout pjm lossdemand probe",
+  "date": "2026-10-03",
+  "shorthand": "closeout-pjm-lossdemand-probe",
+  "definition": "closeout-PJM-lossdemand probe: zonal_loss_demand_reconciliation on the PJM keeper recipe (R-59)",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-10-03-closeout-pjm-lossdemand-probe.js",
+  "bundle": "results/calibration/closeout_pjm_lossdemand_span"
+}
