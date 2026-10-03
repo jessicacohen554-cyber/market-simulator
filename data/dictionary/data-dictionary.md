@@ -120,6 +120,7 @@ snapshot).
 | egrid | national (EPA eGRID, by vintage year) | n/a |
 | pjm-outages | — | n/a |
 | pjm-marginal-fuel | — | n/a |
+| uc-params | — | n/a |
 | rggi-co2-budgets | — | n/a |
 | carb-cap-schedule | — | n/a |
 | coal-basin-price | national/regional (EIA Annual Coal Report, by producing region) | n/a |
@@ -1062,6 +1063,41 @@ per-generator reserve co-optimization. Schema:
 | `hours_observed` | `int64` | `hours` | no | Count of plant-hours with CEMS coverage pooled over vintage_span (0 for an EIA-860-only row). The model-side loader requires a minimum (market_sim.data.ramp_capability.MIN_OBSERVED_HOURS) before the envelope is trusted. |
 | `vintage_span` | `string` | `none` | no | CAMPD vintages pooled for the envelope, e.g. "2023-2025". Holdout periods (2022, 2026) are excluded by construction (CLAUDE.md rule 22). |
 | `source_doc` | `string` | `none` | yes | Authoritative source citation for the row's inputs. |
+
+## uc-params
+
+Measured per-plant commitment physics (unit count, HSL/LSL, min-up/min-down,
+no-load heat input) for the MILP unit-commitment stage. Schema:
+[`schema/uc-params.schema.yaml`](schema/uc-params.schema.yaml).
+
+- **Keys:** `plant_code`, `uc_class`
+- **Reconciles:** EPA CAMPD CEMS hourly unit gross load and heat input
+  (`data/raw/campd-unit-level`), the facility's units of one CAMPD unit-type
+  family summed to one plant series (plant basis), pooled 2023-2025: `hsl_mw`
+  (p99.5), `lsl_mw`/`mlf` (p5 of online-hour load), `ut_h`/`dt_h` (p25 of
+  on-runs/off-gaps), `noload_mmbtu_h` (sum of per-unit OLS intercepts of
+  heatInput on grossLoad) and a class-fallback row per family (`plant_code =
+  0`). Per-ISO scoping is the CAMPD state footprint in
+  `scripts/lib/uc_params/<iso>.py` (every ISO). Read by
+  `market_sim.model.uc.params` only when `unit_commitment_milp` is armed.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `plant_code` | `int64` | `none` | no | EIA plant code (ORISPL; CAMPD facilityId). 0 marks the family's class-fallback row (the ISO's fitted plants pooled). |
+| `uc_class` | `string` | `none` | no | CAMPD unit-type family token: cc, ct, coal or st_gas (see header). |
+| `n_units` | `int64` | `none` | no | Units of the family at the plant with at least one online hour in the pooled span (the integer range of the cluster). Fallback rows: plants pooled. |
+| `hsl_mw` | `float64` | `mw` | no | Plant high sustainable limit: p99.5 of the summed hourly gross load. Fallback rows: the sum over the fitted plants of the family. |
+| `lsl_mw` | `float64` | `mw` | no | Plant low sustainable limit: p5 of the summed gross load over online plant-hours (load >= max(1 MW, 0.05 x HSL)). |
+| `mlf` | `float64` | `fraction` | no | Minimum stable fraction when online, lsl_mw / hsl_mw, in [0, 1]. |
+| `ut_h` | `int64` | `hours` | no | Minimum up time: p25 of the measured on-run lengths of the plant series (hours), at least 1. |
+| `dt_h` | `int64` | `hours` | no | Minimum down time: p25 of the measured off-gap lengths between on-runs (hours), at least 1. |
+| `noload_mmbtu_h` | `float64` | `mmbtu_per_hour` | yes | Plant no-load heat input: the sum over fitted units of the OLS intercept of heatInput on grossLoad over online hours (opTime >= 1, grossLoad > 0, heatInput > 0; >= 200 points spanning >= 10 % of the unit peak; intercept floored at 0). Null when no unit of the plant fits. |
+| `noload_units_fitted` | `int64` | `none` | no | Units whose intercept regression met the fit screen. |
+| `noload_r2_median` | `float64` | `fraction` | yes | Median R^2 across the plant's fitted units; null when none fit. |
+| `online_frac` | `float64` | `fraction` | no | Share of pooled plant-hours with the plant online. |
+| `n_runs` | `int64` | `none` | no | Number of on-runs of the plant series in the pooled span. |
+| `years` | `string` | `none` | no | Pooled vintage span, e.g. "2023-2025". |
+| `source` | `string` | `none` | no | Construction provenance (source files and the measurement rules). |
 
 ## winter-fuel-inventory
 
