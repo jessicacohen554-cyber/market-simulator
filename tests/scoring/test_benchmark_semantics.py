@@ -53,18 +53,48 @@ def test_gas_foldin_deflation_reextracted_regime():
     )
 
 
-def test_gas_foldin_deflation_legacy_regime():
+def test_gas_foldin_deflation_legacy_regime(monkeypatch):
     # No ``other`` series -> full model other+biomass for an allowlist BA, else 0.
-    assert bs.gas_foldin_deflation({"OTHER": 5.0, "biomass": 2.0}, {}, "CAISO") == 7.0
+    # The allowlist's only member (CAISO) is refuted since R-33, so the regime is
+    # exercised on a stand-in allowlist BA.
+    monkeypatch.setattr(bs, "EIA930_GAS_FOLDS_GEO_BIOMASS", frozenset({"X"}))
+    assert bs.gas_foldin_deflation({"OTHER": 5.0, "biomass": 2.0}, {}, "X") == 7.0
     assert bs.gas_foldin_deflation({"OTHER": 5.0, "biomass": 2.0}, {}, "PJM") == 0.0
 
 
 def test_gas_foldin_deflation_refuted_ba_is_zero():
-    # SOCO-60: SOCO's EIA-930 gas cell is measured NOT to carry the fold (930 gas
-    # <= 923 gas classes in every year 2019-2024), so the deflation is 0 in both
-    # regimes; every other BA is unchanged.
-    assert bs.EIA930_GAS_FOLD_REFUTED == frozenset({"SOCO"})
+    # SOCO-60 / R-33: SOCO's and CAISO's EIA-930 gas cells are measured NOT to
+    # carry the fold (930 gas at or below the 923 gas classes FULL), so the
+    # deflation is 0 in both regimes; every other BA is unchanged.
+    assert bs.EIA930_GAS_FOLD_REFUTED == frozenset({"SOCO", "CAISO"})
     cf, e930 = {"OTHER": -0.478, "biomass": 9.315}, {"other": 2.469}
-    assert bs.gas_foldin_deflation(cf, e930, "SOCO") == 0.0
-    assert bs.gas_foldin_deflation(cf, {}, "SOCO") == 0.0
+    for iso in ("SOCO", "CAISO"):
+        assert bs.gas_foldin_deflation(cf, e930, iso) == 0.0
+        assert bs.gas_foldin_deflation(cf, {}, iso) == 0.0
     assert abs(bs.gas_foldin_deflation(cf, e930, "MISO") - 6.368) < 1e-9
+
+
+def test_geo_biomass_outside_930_other_is_not_gated_by_the_refuted_set():
+    # The CAISO demand derive's geo/biomass term (caiso-80 Option A) is a measured
+    # quantity: refuting the benchmark fold (R-33) must not zero it. CAISO 2019
+    # bench values: 923 OTHER + biomass less 930 Other = the 14.76 TWh term the
+    # derive has always added, equal to the pre-R-33 deflation.
+    cf, e930 = {"OTHER": 11.5, "biomass": 5.3}, {"other": 2.04}
+    term = bs.geo_biomass_outside_930_other(cf, e930)
+    assert abs(term - 14.76) < 1e-9
+    assert bs.gas_foldin_deflation(cf, e930, "CAISO") == 0.0
+    # Equal to the deflation for any BA outside the refuted set.
+    assert bs.gas_foldin_deflation(cf, e930, "MISO") == term
+    # Floored at 0; 0 without an ``other`` series.
+    assert bs.geo_biomass_outside_930_other({"OTHER": 1.0}, {"other": 3.0}) == 0.0
+    assert bs.geo_biomass_outside_930_other(cf, {}) == 0.0
+
+
+def test_caiso_demand_derive_term_survives_the_refuted_fold():
+    # The derive's add-back is unchanged by CAISO's membership of the refuted set
+    # (else a re-derive would drop ~14 TWh/yr of CAISO demand).
+    from scripts.data import derive_caiso_supply_consistent_demand as d
+
+    cf, e930 = {"OTHER": 11.5, "biomass": 5.3}, {"other": 2.04}
+    assert "CAISO" in bs.EIA930_GAS_FOLD_REFUTED
+    assert abs(d.geo_biomass_term_twh(cf, e930) - 14.76) < 1e-9
