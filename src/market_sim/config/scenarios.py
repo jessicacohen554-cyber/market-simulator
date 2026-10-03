@@ -21647,9 +21647,11 @@ class ScenarioConfig:
     # plant basis C1 scores on — EIA-930 hourly shape, EIA-923 plant energy.
     # Per EIA-930 fuel family the served schedule's footprint series is
     # rescaled additively to its annual grid-delivered EIA-923 plant total
-    # (data/raw/reference/nwpp_plant_basis_energy.csv, derived from the
-    # committed bench parts by scripts/data/derive_nwpp_plant_basis_energy.py)
-    # on its own EIA-930 hourly shape. Closes EIA-930's under-book of the
+    # (data/raw/reference/nwpp_plant_basis_energy.csv, derived from the source
+    # data by scripts/data/derive_nwpp_plant_basis_energy.py on a roster-free
+    # plant -> class map: EIA-860 footprint, each plant's dominant EIA-923
+    # class; closeout-nwpp-anchor, owner ruling R-28) on its own EIA-930
+    # hourly shape. Closes EIA-930's under-book of the
     # footprint's own fossil plants (FINDING-nwpp-47 §3). Rule 14 misalignment
     # reconciliation of a measured input; requires
     # nwpp_grid_carried_wind_served. A year the artifact lacks FAILS rather
