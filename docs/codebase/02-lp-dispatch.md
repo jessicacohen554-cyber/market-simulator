@@ -189,7 +189,9 @@ The LP is loaded into HiGHS via `addCols()` (bounds + objective + matrix) and
 - **Presolve off** — the 8760-hour LP is already tight; presolve added ~17 s for
   negligible reduction.
 - **Dual simplex** default, so re-solves warm-start from the prior basis.
-- Thread count via env var `MARKET_SIM_HIGHS_THREADS`.
+- Thread count via env var `MARKET_SIM_HIGHS_THREADS`; `MARKET_SIM_HIGHS_LEAN=1`
+  sets `simplex_scale_strategy=0`. Both are recorded at their effective option
+  value in the bundle's `environment.env_solve_choices` block (§8.4a).
 - Post-solve the primal status is checked; anything other than optimal fails the
   solve.
 

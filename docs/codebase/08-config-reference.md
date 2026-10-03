@@ -336,6 +336,36 @@ vintage-keyed caches auto-pick up the switch. `CLEAN_DIR` / `DICTIONARY_DIR` and
 `clean_path(...)` are the forward (W3) curated-Parquet layout, gated by
 `MARKET_SIM_USE_CLEAN`.
 
+## 8.4a Environment-variable solve knobs
+
+Rule 24 [R-REGISTRY] admits no env-var tuning channel. The `MARKET_SIM_*`
+variables the solve path still reads were classified by a zero-LP audit
+(owner ruling 2026-10-03, `docs/audit/2026-10/G4-env-knobs.md`): every LIVE one
+is recorded at its **effective** value in the `environment.env_solve_choices`
+block of `run_config.json` and `meta.json` (`pipeline/persist.py::env_solve_choices`),
+never fingerprinted into `cache_key` (that would re-key and orphan every committed
+keeper's `solve_surface.json`). LIVE means the value can move which degenerate
+vertex (and dual) HiGHS returns, never the optimum.
+
+| Variable | Effect | Class | Where recorded |
+|---|---|---|---|
+| `MARKET_SIM_WARMSTART` (default `1`) | Persistent P0 `DispatchModel`; P1 warm-starts from its basis (`pipeline/solve.py`) | live | `env_solve_choices.warmstart` |
+| `MARKET_SIM_WARMSTART_XYEAR` (default `0`, rule 36) | Cross-year basis carry; `run_calibration.py::resolve_xyear_warmstart_default` | live | `env_solve_choices.warmstart_xyear` |
+| `MARKET_SIM_P1_BASIS_SEED` (default `0`) | Same-year P0→P1 basis seed; `resolve_p1_basis_seed_default` | live | `env_solve_choices.p1_basis_seed` |
+| `MARKET_SIM_P1_FLOOR_INPLACE` (default `0`) | In-place P1 refloor (warm) instead of a cold rebuild | live | `env_solve_choices.p1_floor_inplace` |
+| `MARKET_SIM_P0_CACHE` (default off) | Reuse a stored P0 solution; effective only with the single-thread pin (`model/lp/p0_cache.py`) | live | `env_solve_choices.p0_cache` (effective bool) |
+| `MARKET_SIM_HIGHS_THREADS` (unset = HiGHS automatic) | HiGHS `threads` option; multi-threaded dual simplex is not bit-reproducible | live | `env_solve_choices.highs_threads` (option value) |
+| `MARKET_SIM_HIGHS_LEAN` (`1` = on) | HiGHS `simplex_scale_strategy=0` | live | `env_solve_choices.highs_simplex_scale_strategy` (option value) + `highs_lean` |
+| `MARKET_SIM_USE_CLEAN` | Curated-Parquet read path instead of raw (`data/clean_access.py`) | live (input routing) | `env_solve_choices.use_clean` |
+| `MARKET_SIM_DATA_ROOT` | Relocates `DATA_ROOT` (`config/paths.py`); folded to a sentinel by `cache_key` | inert | `environment.market_sim_data_root`, `cache_key_path_roots` |
+| `MARKET_SIM_MEM_DEBUG` | VmRSS/VmHWM log lines (`model/lp/model.py`) | inert | not recorded |
+| `MARKET_SIM_RESERVE_DUAL_DUMP` | Writes a `reserve_diag/` sidecar; no scored output touched | inert | not recorded |
+| `MARKET_SIM_NEIGHBOR_HR_FORWARD_SKILL` | Removed; now `ScenarioConfig.neighbor_hr_forward_skill` | — | `scenario_config` |
+
+The `ERCOT_*` diagnostic flags read by `pipeline/backcast_config.py` (zonal gas
+basis family) resolve into `ScenarioConfig` fields, so they are already recorded
+in `scenario_config` and enter `cache_key`; they remain default-off probes.
+
 ## 8.5 Plant taxonomy (`plant_taxonomy.py`)
 
 The single source of truth for fuel/class buckets — no scattered hardcoded fuel
