@@ -1,0 +1,19 @@
+{
+  "id": "2026-10-03-closeout-soco-2-nuclear",
+  "label": "closeout soco 2 nuclear",
+  "date": "2026-10-03",
+  "shorthand": "closeout-soco-2-nuclear",
+  "definition": "closeout-soco-2: SOCO 2019-2022 measured nuclear monthly CF (SolveEpoch 2026-10-03a)",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SOCO",
+  "file": "frontend/data/backcast/runs/2026-10-03-closeout-soco-2-nuclear.js",
+  "bundle": "results/calibration/closeout_soco_2_span"
+}

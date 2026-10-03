@@ -214,6 +214,11 @@ jobs:
       # registered field's live default must match its declaration.
       - name: check_cache_key_registration
         run: python3 scripts/check_cache_key_registration.py --base ${{ github.event.pull_request.base.sha }}
+      # Rule 37: the rubric surface and the keeper surface never change in one
+      # PR. RUBRIC_FREEZE_OVERRIDE=<owner ruling citation> is the owner's
+      # promotion-with-amendment override, set on this step only for that PR.
+      - name: check_rubric_freeze
+        run: python3 scripts/check_rubric_freeze.py --base ${{ github.event.pull_request.base.sha }}
       - name: check_cache_key_declared_defaults (HEAD-only invariant)
         if: always()
         run: python3 scripts/check_cache_key_registration.py

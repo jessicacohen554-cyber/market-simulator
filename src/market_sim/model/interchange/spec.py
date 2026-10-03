@@ -131,6 +131,20 @@ CAISO_IMPORT_DELIVERY_BASIS: dict[str, tuple[float, float]] = {
     "DSW_lateevening_clean": (0.0, 0.0),
 }
 
+# NWPP-NEXT-23 (owner card 2026-10-03, "Solve H2 PNW basis";
+# ``ScenarioConfig.nwpp_coi_pnw_delivery_basis``, default off): the NWPP->CAISO
+# export leg of each priced NWPP seam named here is priced on the SAME physical
+# delivered-cost basis CAISO registers for that corridor's imports
+# (CAISO_IMPORT_DELIVERY_BASIS above), instead of the symmetric seam hurdle —
+# rule 19: one physical path, one delivery basis on both sides of it. A NW
+# seller buys (1 + loss) MWh at the NW price and pays the wheel to land 1 MWh
+# at Malin, so the export band's willingness-to-pay per NW MWh is
+# ``(band - wheel) / (1 + loss)``. COI (Path 66, the Malin corridor) maps to
+# CAISO's PNW_midC rung. NEVP is NOT mapped: phase 0 measured its leg
+# under-exporting already (FINDING-nwppnext23-price-level-phase0-2026-10-03.md
+# §D), and BC is not a CAISO corridor. The import leg keeps the seam hurdle.
+NWPP_SEAM_EXPORT_DELIVERY_TRANCHE: dict[str, str] = {"CAISO_COI": "PNW_midC"}
+
 # ---------------------------------------------------------------------------
 # CAISO south-corridor surplus-clean import depth (caiso-87,
 # ``ScenarioConfig.caiso_dsw_surplus_clean``, default off; FINDING-caiso86b /

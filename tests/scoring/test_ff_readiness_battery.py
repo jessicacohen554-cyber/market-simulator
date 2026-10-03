@@ -356,8 +356,15 @@ def test_marker_state_reflects_committed_markers():
     # move this assertion lagged). CAISO and SPP OUT (WITHDRAWN 2026-09-30,
     # session soco-96: rubric v3.13 makes every registered year gate -- owner,
     # "Shouldn't be considered calibrated if holdout years miss." -- so both
-    # keepers read NOT-YET and Q5 takes the markers down).
-    complete = {"NEISO", "PJM"}
+    # keepers read NOT-YET and Q5 takes the markers down). PJM OUT and NYISO
+    # IN (2026-10-03, owner rulings Q73 / Q74 served as decision cards in the
+    # capx desk session, ledger refresh #69 addendum r#69b: PJM's entry stood on
+    # a NOT-YET keeper and is withdrawn under Q5 with the prior entry nested as
+    # `withdrawn.PJM.prior_complete_entry`; NYISO is declared on
+    # 2026-10-02-w0-nyiso, whose board determination reads CALIBRATED -- its
+    # fifth declaration, the prior withdrawn entry nested as
+    # `complete.NYISO.prior_withdrawn_entry`). Moved in the ruling lane's own PR.
+    complete = {"NEISO", "NYISO"}
     marker_doc = json.loads(B._MARKER_PATH.read_text())
     assert set(marker_doc["complete"]) == complete
     keepers_dir = B._MARKER_PATH.parent / "keepers"
@@ -366,12 +373,13 @@ def test_marker_state_reflects_committed_markers():
         assert state["marker"] == "complete", iso
         shard = json.loads((keepers_dir / f"{iso}.json").read_text())
         assert state["keeper"] == shard["keeper"], iso
+    assert B._marker_state("NYISO")["declared"] == "2026-10-03"
     assert B._marker_state("MISO")["marker"] == "none"
-    nyiso = B._marker_state("NYISO")
-    assert nyiso["marker"] == "withdrawn"
-    assert nyiso["withdrawn"] == "2026-09-25"
-    assert nyiso["keeper"] == "2026-09-06-nyiso-202-startup-aware"
-    for iso in ("CAISO", "SPP"):
+    pjm = B._marker_state("PJM")
+    assert pjm["marker"] == "withdrawn"
+    assert pjm["withdrawn"] == "2026-10-03"
+    assert pjm["keeper"] == "2026-07-30-pjm-140-rampenv"
+    for iso in ("CAISO", "SPP", "ERCOT"):
         assert B._marker_state(iso)["marker"] == "withdrawn", iso
 
 

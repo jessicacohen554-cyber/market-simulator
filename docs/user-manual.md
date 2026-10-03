@@ -524,12 +524,14 @@ python scripts/run_calibration.py --iso ERCOT --year 2024 --hours 168
 | `--reference-price-interface` | off | Serve the priced seam through the forecast-grade reference-price interface. Implies `--priced-interchange`; gated to ISOs in `INTERFACE_NEIGHBORS` (PJM). |
 | `--negative-renewable-offers` / `--no-…` | per-ISO base value (on for CAISO) | Floor curtailable wind/solar offers at the negative keep-running value so oversupply sets sub-$0 prices. |
 | `--mass-cap-enabled`, `--mass-cap-tons`, `--mass-cap-program` | off / none / none | Thread the carbon resolver's power-sector mass-cap row instead of the measured price adder. **Diagnostic-only; never a keeper default.** |
-| `--no-xyear-warmstart` | off (warm-start **ON**) | As in §4.6. |
+| `--no-xyear-warmstart` | off (cross-year warm-start already **OFF** by default; the flag forces it off) | As in §4.6. |
 | `--enable-legacy-p2` | off | Unlocks the archived P2 pass. |
 <!-- scripts/run_calibration.py argparse block; re-verified 2026-09-05 against the rendered --help (which still renders), reporting "Default per ISO: on for CAISO" -->
 
 Warm-start precedence, highest first: `--no-xyear-warmstart` → an explicitly-set
-`MARKET_SIM_WARMSTART_XYEAR` env var → default **ON**.
+`MARKET_SIM_WARMSTART_XYEAR` env var → default **OFF** (owner ruling 2026-09-19,
+rule 36). The effective value is recorded in the bundle's
+`environment.env_solve_choices` block (`docs/codebase/08-config-reference.md` §8.4a).
 <!-- run_calibration.py::resolve_xyear_warmstart_default -->
 
 ---

@@ -1666,10 +1666,113 @@ ISO's verdict is unchanged. Record:
 `tests/scoring/test_tail_metric_payload.py`, `tests/scoring/test_benchmark_semantics.py`,
 `tests/scoring/test_vintage_reconcile_foldin.py`.
 
-## 29. Changes to this file
+## 29. Rubric v3.19 — the reference-coverage caveat kind: CAISO C3a/C3b 2019–2021 (owner, 2026-10-03)
+
+**Owner ruling R-40, verbatim** (backcast close-out plan `docs/backcast-closeout-plan-2026-10.md` §5.0 row R-40, recorded by PR #7111):
+
+> "Caiso mean LMP for 2021 should be an accepted caveat or only compared where data is actually available for that year for calibration rubric. 2019 and 2020 should have that be accepted caveat for c3a."
+>
+> Same-day extension: "I want c3b treated the same."
+
+**What changed.** v3.19 adds the owner-signed **reference-coverage** caveat kind (`scripts/calibration_verdict.py`
+`REFERENCE_COVERAGE_ENTRIES` / `_apply_reference_coverage`), on the precedent of the R-6 configuration-exception kind
+(§27). It has six exact-keyed rows: CAISO 2019/2020/2021 × C3a/C3b. 2019/2020 have no reference and read `CAVEAT`
+"reference absent". In 2021 the reference is partial: both criteria are scored on the covered months and read `CAVEAT`,
+with the band verdict kept as `window_status`. The kind is fail-closed on governance, on an owner-signed
+`kind: "reference-coverage"` entry in the bundle attestation (six entries added to
+`closeout_caiso_w1_a2_span/calibration_attestation.json`), and on the record's state. It is off every caveat budget and
+does not downgrade. No band, tier, ledger row or budget moves. No solve ran.
+
+**ISO determinations moved:** none. CAISO stays NOT-YET on C1 CC_REGULAR and C4 gas 2019–2021; `price_mean` leaves
+its fail set. Every other ISO's verdict is unchanged except `rubric_version`. Record:
+`docs/records/caiso/closeout-caiso-2/RESULT-closeout-caiso-r40-2026-10-03.md`. Tests:
+`tests/scoring/test_calibration_verdict_reference_coverage.py`.
+
+## 30. Rule 37 `[R-RUBRIC-FREEZE]` — the rubric is FROZEN between promotions; an amendment is a promotion decision (owner, 2026-10-03)
+
+**Owner instruction, verbatim:** *"Freeze the rubric between promotions: a rubric amendment is a
+promotion decision, proposed in a PRECOMMIT and ruled on by the owner, never landed in the same PR as
+a keeper."*
+
+**Scope.** NEW rule, ordinal 37, ID `[R-RUBRIC-FREEZE]`. It governs the determination rubric — the
+document `docs/calibration-determination-rubric.md` and the scorer surface it describes in
+`scripts/calibration_verdict.py`: `RUBRIC_VERSION`, every criterion band and threshold
+(`FUELMIX_*`, `SYSVOL_*`, `PRICE_*`, `TAIL_*`, `DISP_*`, `CO2_*`, `CRITERIA`), the caveat budgets
+(`MAX_LEDGERED_CAVEATS`, `MAX_PROTECTIVE_CAVEATS`), the forced-energy budget shares, and ledger
+admissibility (`LEDGERABLE_CRITERIA`, `SCOPED_LEDGER_ENTRIES`, `CONFIG_EXCEPTION_ENTRIES`,
+`REFERENCE_COVERAGE_ENTRIES`, `C3C_NOT_SCORED`, `LAMBDA_REFERENCED_ISOS`). It does not touch what the
+rubric says; it fixes WHEN and HOW the rubric may change.
+
+**What prompted it.** Audit `docs/audit/2026-10/C-data-calibration-governance.md` §5 finding 3
+(self-certification): *"Four rubric amendments in five days, each widening what counts as passing for
+a named failing cell, is the pattern an external reviewer must flag regardless of the merits of each
+ruling"*, and its risk (ii): *"Rubric amendments continuing to track residuals (rule 23's spirit,
+applied to the rubric itself)"*. The measured run, every entry owner-ruled and recorded here:
+
+| version | date | section | admitted |
+|---|---|---|---|
+| v3.10 | 2026-09-27 | §23 | SOCO 2019 COAL_BIT scoped ledger row |
+| v3.11 | 2026-09-30 | §24 | SOCO C3a 2019 / 2020 / 2022 scoped rows |
+| v3.12 | 2026-09-30 | §25 | SOCO C3b 2022 scoped row |
+| v3.13 | 2026-09-30 | §26 | rule 30 (c) reversed (tightening) |
+| v3.14–v3.17 | 2026-10-02 | §27 | ERCOT 2023 configuration exception, SOCO λ budget, NWPP ELAP, PJM zonal C3a |
+| v3.18 | 2026-10-03 | §28 | C3c tail masked to RT-covered hours; CAISO 2021 relabelled |
+| v3.19 | 2026-10-03 | §29 | reference-coverage caveat kind: CAISO C3a/C3b 2019–2021 |
+
+Ten versions in six days, v3.18 and v3.19 the latest instances of the pattern on the day of this
+ruling. Each is defensible on its own record; what none of them had was a procedural seam between
+"the scorer moved" and "the keeper passed". A rubric amendment and the keeper it rescues could land
+in one PR, so the committed status parts and `calibration-complete.json` changed in the same commit
+as the constants that produced them, and a reader of the diff could not separate the two.
+
+**What the rule requires.** (a) The rubric changes only in a PR that changes no keeper designation
+(`frontend/data/backcast/keepers/<ISO>.json`), no status part (`frontend/data/backcast/status/*.js`),
+no `calibration-complete.json` and no bundle under `results/calibration/`. (b) An amendment is
+proposed in a PRECOMMIT that computes its effect on every registered ISO zero-LP —
+`calibration_verdict.py` over the committed bundles, the determination table before and after — so
+the owner rules on a known delta, never on a prose promise. (c) It lands only on the owner's ruling,
+cited in the commit message. (d) The status parts and `calibration-complete.json` are re-keyed to
+the new rubric in the promotion PR that follows, under rule 35's order, never in the amendment's.
+
+**Relationship to the neighbouring rules, stated so none is read as loosened:**
+
+* **Rule 23 `[R-FROZEN-DERIVE]`** is the same discipline one level down: derive scripts re-derive
+  only when their source data changes, never against a residual. Rule 37 applies it to the scorer.
+* **Rule 35 `[R-PROMOTE]`** is untouched. A promotion still rebuilds status and re-keys
+  `calibration-complete.json`; it simply does so under the rubric that was already frozen when the
+  PRECOMMIT was written. The promotion-with-amendment case — an amendment the owner rules may carry
+  its promotion — is the ONE override, declared by the CI step as `RUBRIC_FREEZE_OVERRIDE=<ruling
+  citation>`, never set by default and never by a session on its own reading.
+* **Rule 22 `[R-C3C]`** and the caveat kinds of §27 / §29 are unchanged in content; an edit to any
+  of their budgets or entry tables is a rubric amendment under this rule.
+* **Rule 21 `[R-DOF]`** — unchanged; a rubric amendment is not a free parameter of the model, but
+  it is a free parameter of the DETERMINATION, which is why it carries the same PRECOMMIT-and-ruling
+  discipline a solve-affecting choice does.
+
+**Enforcement — `scripts/check_rubric_freeze.py`, CI step `check_rubric_freeze`.** Over
+`git diff --name-only <base>...HEAD` it builds set A (the rubric document, plus any `scripts/` or
+`src/` file whose added/removed lines name a rubric constant) and set B (the four keeper-surface
+paths above) and FAILS when both are non-empty, naming both lists and this rule. Without `--base` it
+prints `diff gate NOT RUN` and exits 0, like `check_mechanism_matrix.py`. `scripts/probes/` and
+`scripts/archive/` (the frozen record) are exempt from A, and a file other than the scorer enters A
+only on a definition or mutation line, never on a read. Measured at introduction: run with
+`--base 94c1be04` (the v3.13 commit) it FAILS — A = the rubric document and
+`scripts/calibration_verdict.py` (`RUBRIC_VERSION`, `MAX_LEDGERED_CAVEATS`, `LEDGERABLE_CRITERIA`,
+`CONFIG_EXCEPTION_ENTRIES`, `C3C_NOT_SCORED`, `LAMBDA_REFERENCED_ISOS`, `REFERENCE_DEFINITION_CRITERIA`,
+`CRITERIA`), B = 1922 keeper-surface files — the v3.14 → v3.17 amendments beside the keeper re-keys,
+the pattern the rule freezes, demonstrated on the real history; run with `--base b32201af`
+(keeper surface only) it passes. Record: `docs/audit/2026-10/G1-rubric-freeze.md`.
+
+**CLAUDE.md text:**
+
+> 37. `[R-RUBRIC-FREEZE]` **The determination rubric is frozen between promotions: a rubric amendment is a promotion decision, proposed in a PRECOMMIT and ruled on by the owner, never landed in the same PR as a keeper.** The rubric (`docs/calibration-determination-rubric.md`, `RUBRIC_VERSION`, every threshold, caveat budget and ledger-admissibility set in `scripts/calibration_verdict.py`) changes only in a PR that changes no keeper designation, keeper shard, status part or `calibration-complete.json`; the PRECOMMIT computes the amendment's effect on every registered ISO zero-LP (`calibration_verdict.py` over the committed bundles) before and after, and the amendment lands only on the owner's ruling, cited in the commit. Enforced by `scripts/check_rubric_freeze.py` in CI (`RUBRIC_FREEZE_OVERRIDE` carries the owner's promotion-with-amendment ruling).
+
+## 31. Changes to this file
 
 | date | change |
 |---|---|
+| 2026-10-03 | Added §30: **rule 37 `[R-RUBRIC-FREEZE]` is NEW** (owner instruction verbatim in §30) — the determination rubric is frozen between promotions; an amendment is a promotion decision proposed in a PRECOMMIT with its zero-LP effect on every registered ISO, ruled on by the owner, and never landed in the same PR as a keeper designation, status part, `calibration-complete.json` or bundle. Prompted by audit `docs/audit/2026-10/C-data-calibration-governance.md` §5 finding 3 on the v3.10 → v3.19 run (§23–§29). Enforced by `scripts/check_rubric_freeze.py` in CI (`RUBRIC_FREEZE_OVERRIDE` is the owner's promotion-with-amendment override). No rubric content, band, budget or determination moves. "Changes to this file" renumbered §30 → §31 (no external reference cited §30). |
+| 2026-10-03 | Added §29: **rubric v3.19** (owner ruling R-40 and its C3b extension, verbatim in §29): the reference-coverage caveat kind for CAISO C3a/C3b 2019–2021. No determination moves. "Changes to this file" renumbered §29 → §30 (the only external citation of §29 is the new one in `calibration_verdict.py`). |
 | 2026-10-03 | Added §28: **rubric v3.18** (owner ruling R-34: the C3c model tail masked to the RT-covered hours, CAISO 2021 relabelled) and the R-33 CAISO gas-fold refutation (benchmark-only), rulings verbatim in §28. No determination moves. "Changes to this file" renumbered §28 → §29 (the only external citation of §28 is the new one in `calibration_verdict.py`). |
 | 2026-10-02 | Rule 35 `[R-PROMOTE]` order text corrected to match `scripts/promote_keeper.py` (lane closeout-promote-tooling; reported by NYISO #7041, SPP-107 #7025, closeout-CAISO #7050): the audit ran before the prune, so E13 failed on the outgoing keeper in every promotion. Now a pre-prune audit (every check but E13; E11 still sees the former bundle) and a strict post-prune audit that refuses to finish. Attest now carries the outgoing keeper's `exceptions` ledger forward (C3c entries re-measured on the incoming bundle; an entry whose year left the span, or whose C3c no longer fails, is refused unless `--drop-exception` records a reason under `exceptions_dropped`). No norm loosened. |
 | 2026-10-02 | Added §27: **rubric v3.14–v3.17** (owner rulings R-6, R-8, R-9, R-13 verbatim in §27): ERCOT 2023 configuration-exception caveat kind, SOCO lambda-referenced reference-definition rows off the single slot, NWPP labelled WEIM ELAP benchmark 2023-06+, PJM zone-resolved C3a actual. SOCO NOT-YET → CALIBRATED-WITH-CAVEATS; no other ISO headline moves. "Changes to this file" renumbered §27 → §28 (no external reference cited §27). |
