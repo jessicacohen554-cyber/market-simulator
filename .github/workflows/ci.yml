@@ -218,8 +218,6 @@ jobs:
       # PR. RUBRIC_FREEZE_OVERRIDE=<owner ruling citation> is the owner's
       # promotion-with-amendment override, set on this step only for that PR.
       - name: check_rubric_freeze
-        env:
-          RUBRIC_FREEZE_OVERRIDE: "owner ruling R-58/R-58a, 2026-10-03, PRECOMMIT docs/records/governance/closeout-2026-10/PRECOMMIT-rubric-c3c-order-2026-10-03.md"
         run: python3 scripts/check_rubric_freeze.py --base ${{ github.event.pull_request.base.sha }}
       - name: check_cache_key_declared_defaults (HEAD-only invariant)
         if: always()
