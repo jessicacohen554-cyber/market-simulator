@@ -2138,3 +2138,37 @@ docs/records/soco/r-soco/FINDING-soco-99-fla-extract-2026-10-02.md.
   - ST_GAS: 641 (−924 MW).
 - Exit-channel carries: 6052 (+798 MW, 2022) and 10361 (+75 MW).
 - The over-dispatch on CC_REGULAR in 2019 and 2021 is the SOCO lane's next root-cause item. Rule 14: a worse fit after measured capacity enters is a discovered bug elsewhere.
+
+## closeout-SOCO-2 — 2026-10-03 — root cause of the W0 CC_REGULAR over-run; nuclear 2019–22 repair
+
+Records: `docs/records/soco/{FINDING,PRECOMMIT,RESULT}-closeout-soco-2-2026-10-03.md`.
+Run `2026-10-03-closeout-soco-2-nuclear` is registered as a probe, awaiting the
+owner's promotion ruling.
+
+**FINDING (zero LP).** The CC_REGULAR over-run is concentrated at night: +1.3 to
++1.9 GW in the lowest-load decile and about 0 at peak. It mirrors a flat coal BIT
+deficit in every decile. It is not E.1 availability: model CC available energy sits
+about 20 % below CAMPD-demonstrated capability. The model's offers equal F923 fuel
+at measured heat rate. At SOCO's BIT plants spot coal is not cheaper than blended,
+so replacement-cost coal (§3.8 row 2) cannot move CC. About half the 2019 share miss
+is the bench-scope denominator.
+
+**The admissible piece.** `NUCLEAR_MONTHLY_CF_BY_YEAR["SOCO"]` carried only 2023–25,
+so every 2019–22 leg read the forecast fallback, a flat fleet CF of about 0.889. That
+left nuclear short by 2.5 / 2.2 / 3.4 / 1.5 TWh.
+
+**Solved: 7 shards at 826333c4.**
+- Nuclear is within 1.1 % of EIA-923.
+- C1 CC_REGULAR 2021: FAIL → PASS (3.6 → 2.7 pp).
+- C1 CC_REGULAR 2019: 3.6 → 3.4 pp, still FAIL.
+- C3a: 2019 and 2020 each 1.0 pp better; 2021 1.5 pp worse, still PASS.
+- 2023–25 are byte-identical to the keeper.
+- PRECOMMIT S1–S4 pass. The desk's bar misses on B1 (2019 CC) and B4 (2021 C3a), as
+  pre-registered.
+
+**Also done in this lane:**
+- SOCO is registered in `curate_hydro_plant_modes.DEFAULT_ISOS`, which closes the W0
+  RESULT §7 follow-up.
+- The cross-ISO nuclear-fallback table and the exit-carry R-3 census are in FINDING
+  §d/§e. Their routing belongs to the desk; the PJM/NWPP/SPP nuclear rows go to lane
+  closeout-nuclear-rows under ruling R-35.
