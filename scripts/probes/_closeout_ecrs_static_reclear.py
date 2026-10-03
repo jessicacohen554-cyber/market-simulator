@@ -64,7 +64,15 @@ def score(sys_df: pd.DataFrame) -> dict:
     tmp = Path(tempfile.mkdtemp())
     (tmp / "hourly").mkdir()
     sys_df.to_parquet(tmp / "hourly" / f"system_{YEAR}.parquet")
-    ypay = {"lmp": sbp.zone_lmp_block(tmp, YEAR)}
+    lmp = sbp.zone_lmp_block(tmp, YEAR)
+    p1 = sys_df[sys_df["pass"] == "P1"]
+    for zone, zg in p1.groupby("zone", observed=True):
+        dd = float(zg["demand"].sum())
+        if dd <= 0:  # load-less zone (Panhandle): zero weight in the lw mean
+            continue
+        lmp[str(zone)]["p"] = round(float((zg["price"] * zg["demand"]).sum()) / dd, 2)
+        lmp[str(zone)]["d"] = round(dd / 1e6, 4)
+    ypay = {"lmp": lmp}
     bench = sbp.bench_year("ERCOT", YEAR)
     a = cv.score_price_mean(YEAR, ypay, bench, "ERCOT")
     b = cv.score_price_shape(YEAR, ypay, bench, "ERCOT")
@@ -118,7 +126,36 @@ def main() -> int:
             "baseline_adder_mean_usd": float(np.nan_to_num(a0).mean()),
             "scored_on_x33_keeper_upper_bound": score(pert),
         }
+    # A basis is admissible only if its BASELINE adder reproduces the keeper's
+    # realized in-LP adder (system ordc_adder column) to within $1/MWh.
+    realized = float(sys_p1["ordc_adder"].mean())
+    res["keeper_realized_ordc_adder_mean_usd"] = realized
+    for name in bases:
+        res[name]["baseline_reproduces_keeper"] = bool(
+            abs(res[name]["baseline_adder_mean_usd"] - realized) <= 1.0
+        )
     del hours
+    # IDENTIFICATION TEST (rule 14): which reserve basis did ERCOT's own 2023
+    # RTORPA form on? The published curve on GROSS RTOLCAP (ECRS counted) vs on
+    # RTOLCAP net of the ECRS plan, each against the published RTORPA.
+    r_full, r_on, lam = bases["measured_rtolcap"]
+    pub = meas["rtorpa"].to_numpy(float)
+    gross = published_adder(r_full, r_on, lam, cfg)
+    net = published_adder(r_full - ecrs, r_on - ecrs, lam, cfg)
+    ident = {}
+    for lab, sl in (("year", slice(0, T)), ("ecrs_live_h3839_on", slice(3839, T)),
+                    ("pre_ecrs", slice(0, 3839))):
+        ident[lab] = {
+            "published_rtorpa_mean": float(np.nanmean(pub[sl])),
+            "gross_mean": float(np.nanmean(gross[sl])),
+            "gross_rmse": float(np.sqrt(np.nanmean((gross[sl] - pub[sl]) ** 2))),
+            "net_mean": float(np.nanmean(net[sl])),
+            "net_rmse": float(np.sqrt(np.nanmean((net[sl] - pub[sl]) ** 2))),
+            "hours_gt_100_published": int((pub[sl] > 100).sum()),
+            "hours_gt_100_gross": int((gross[sl] > 100).sum()),
+            "hours_gt_100_net": int((net[sl] > 100).sum()),
+        }
+    res["identification_rtorpa_basis"] = ident
     OUT.write_text(json.dumps(res, indent=1, default=str))
     print(json.dumps(res, indent=1, default=str)[:6000])
     return 0
