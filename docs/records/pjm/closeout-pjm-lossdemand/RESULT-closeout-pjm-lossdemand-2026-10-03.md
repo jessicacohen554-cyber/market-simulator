@@ -75,10 +75,15 @@ will set their residual the same way).
 
 ## 5. Bundles and promotion cost (rule 34)
 
-- `results/calibration/closeout_pjm_lossdemand_span` lands on `main` in the registration commit with its hourly
-  sidecars (`unit_marginal` included), JSON and payload `frontend/data/backcast/runs/2026-10-03-closeout-pjm-lossdemand-probe.js`.
-  `dispatch/` and `unit_hourly` are gitignored, as for every keeper.
-- The full per-leg bundles, including `dispatch/<y>_P1.parquet` and `flows.parquet`, are on the seven
-  `claude/closeout-pjm-lossdemand-<year>` branches at the SHAs above. Those branches are transport and are cut when
-  this lane's PR merges. A promotion is **not** recommended (K1/K2), so nothing further needs to be kept.
+- **The dashboard registration is NOT on `main`.** `dashboard_add_run.py` registered the probe as
+  `2026-10-03-closeout-pjm-lossdemand-probe`, but `audit_keepers.py` E13 (rule 35 (f), keeper-only retention) refuses
+  any PJM run that is neither the keeper nor stamped to it. Stamping a probe as a keeper touchpoint would misuse rule
+  30. The registration commit is therefore reverted inside the lane PR, and nothing is destroyed:
+  - The complete registration lives in commit `8c368d00` on `claude/closeout-pjm-lossdemand`: sidecar,
+    `runs/<id>.js` payload, and the span's hourly sidecars including `unit_marginal` and JSON. Every gate number in
+    §3 is reproducible from it with `calibration_verdict.py`.
+  - The full per-leg bundles, including `dispatch/<y>_P1.parquet` and `flows.parquet`, are on the seven
+    `claude/closeout-pjm-lossdemand-<year>` branches at the SHAs in §1.
+- All of these are on branches the owner cuts. Per rule 31 nothing should be cut before the owner rules on this
+  result. A promotion is **not** recommended (K1/K2), so after the ruling nothing needs to be kept.
 - Re-solve cost if a successor construction is chartered: 7 shards, about 30 minutes each.
