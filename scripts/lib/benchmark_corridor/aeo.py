@@ -432,43 +432,64 @@ def parse(raw_dir: Path) -> pd.DataFrame:
         return pd.DataFrame(columns=list(bc.CANONICAL_COLUMNS))
 
     out: list[dict] = []
-    for _, r in raw.iterrows():
-        name = str(r["series_name"]).strip()
+    # Row-order zip over the column arrays (every column is str under
+    # ``dtype=str``), the same rows in the same order as a row iterator.
+    r_cols = (
+        "series_name",
+        "unit",
+        "series_id",
+        "region_id",
+        "scenario",
+        "region_name",
+        "period",
+        "value",
+        "table_id",
+    )
+    for (
+        r_series_name,
+        r_unit,
+        r_series_id,
+        r_region_id,
+        r_scenario,
+        r_region_name,
+        r_period,
+        r_value,
+        r_table_id,
+    ) in zip(*(raw[c].to_numpy() for c in r_cols)):
+        name = str(r_series_name).strip()
         mapped = AEO_SERIESNAME_MAP.get(name)
         if mapped is None:
             continue  # a series outside the corridor subset
         quantity, tech, unit, expected_api_unit = mapped
-        api_unit = str(r["unit"]).strip()
+        api_unit = str(r_unit).strip()
         if api_unit != expected_api_unit:
             raise ValueError(
                 f"AEO unit drift for {name!r}: expected API unit {expected_api_unit!r}, "
-                f"got {api_unit!r} (series {r['series_id']}) — refusing to guess"
+                f"got {api_unit!r} (series {r_series_id}) — refusing to guess"
             )
-        region_id = str(r["region_id"]).strip()
+        region_id = str(r_region_id).strip()
         if region_id not in AEO_EMM_TO_ISO:
             continue  # a region outside our ISO crosswalk
         iso, _region_name = AEO_EMM_TO_ISO[region_id]
-        scenario = AEO_SCENARIOS.get(
-            str(r["scenario"]).strip(), str(r["scenario"]).strip()
-        )
+        scenario = AEO_SCENARIOS.get(str(r_scenario).strip(), str(r_scenario).strip())
         out.append(
             {
                 "source": SOURCE,
                 "iso": iso,
-                "region": str(r["region_name"]).strip(),
+                "region": str(r_region_name).strip(),
                 "vintage": VINTAGE,
                 "scenario": scenario,
-                "target_year": int(r["period"]),
+                "target_year": int(r_period),
                 "quantity": quantity,
                 "tech": tech,
-                "value": float(r["value"]),
+                "value": float(r_value),
                 "unit": unit,
                 "source_doc": (
                     "EIA Annual Energy Outlook 2025, Open Data API v2 aeo route "
                     "(Table 54 Electric Power Projections by EMM Region; "
                     "Table 56 Renewable Energy Generation by Fuel)"
                 ),
-                "source_page": f"seriesId={r['series_id']} (tableId={r['table_id']}, regionId={region_id})",
+                "source_page": f"seriesId={r_series_id} (tableId={r_table_id}, regionId={region_id})",
                 "note": _BOUNDARY_NOTE,
             }
         )

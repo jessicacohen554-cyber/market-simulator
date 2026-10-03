@@ -1,8 +1,36 @@
 # Changelog
 
+## 2026-10-03 — Inert vectorization pass across data loaders, LP build and scoring (PR #7087, zero LP)
+
+Rule 2 [R-VECTOR] hygiene with no model change. The pass is mathematically inert: byte-identical
+outputs (constraint-matrix `data`/`indices`/`indptr` values and index dtype, envelope floats, derate
+arrays), no cache-key or solve-surface change, no keeper re-key. `lp/layout.kron_hours(T, block)`
+replaces every `sp.kron(sp.eye(T), block)` in `lp/rows.py` / `lp/reserve_rows.py`: the canonical
+per-hour CSR block is tiled directly along the hour diagonal (column indices shift by `t × n_cols`, row
+pointers by `t × nnz`) without `kron`'s `T × nnz` COO transient; non-canonical or empty input falls
+through to `sp.kron`. `outages._outage_hour_bounds` hands the row-wise outage loaders the clipped
+`(lo, hi)` hour range `outage_hour_mask` would set True, applied by slice instead of a full-year boolean
+mask. The (month × hour-of-day) percentile envelopes (`eia930/envelopes.py`, `nyiso_seam_envelope.py`,
+`nyiso_par_attribution.py`) and the CAISO storage-envelope hour-of-day quantile reduce an aligned
+`(days, 24)` view in one `axis=0` call, with a per-bucket fallback for DST-irregular or NaN-bearing
+months. Row-wise `iterrows` / `apply(axis=1)` loops in the loaders and scoring (`campd`, `eia923`,
+`coal`, `emission_rates`, `fleet/eia860`, `fleet/campd_bins`, `fuel/*`, `offer_curves`,
+`announced_retirements`, `benchmark_corridor`, `caiso_outages`, `results/emissions`, `matrix`) became
+column-array iteration with the same per-row arithmetic. Docs realigned: `docs/codebase/01-architecture.md`
+§1.6, `02-lp-dispatch.md` §2.2, `04-data-layer.md` §4.4 / §4.6.
+
 ## 2026-10-03 — capx D102: forecast-verdict staleness census against the 2026-10-02 W0 keepers (zero LP)
 
 All 111 `ff-verdicts.json` keys read STALE-SURFACE against the W0 keepers (0 CURRENT, 0 STALE-POSTURE; no forecast-scoped `SOLVE_EPOCH`, two registry rows moved after the newest verdict); parity SUMMARY 9 postures / 0 unaccounted / 26 filed gaps — `docs/records/forecast/FINDING-capx-d102-2026-10-03.md`.
+
+## 2026-10-03 — capx D101: forecast gate-(a) re-key to the 2026-10-02 W0 keepers (zero LP)
+
+`frontend/data/forecast/program-status.json`: all seven `isos.<ISO>.keeper` fields re-keyed from their
+September ids to the 2026-10-02 closeout-W0 keepers (prior id kept in a `keeper_corrected_by` chain), a
+per-row `gate_a` reading added (MET for NEISO only), CAISO/SPP `marker_complete` re-keyed to the live
+`complete` block, `gate_a_provenance` re-stamped at `792e55ad`. No verdict, tier or `complete` entry
+moves; two owner cards (PJM marker/board disagreement; NYISO CALIBRATED-but-withdrawn). Record:
+`docs/records/forecast/FINDING-capx-d101-2026-10-03.md`.
 
 ## 2026-10-03 — capx D100: `__solve_epochs__` modelled in the key-provenance census (zero LP)
 
@@ -259,6 +287,7 @@ registry; every existing keeper's cache key untouched by construction.
   SOCO's does not; SPP's template has none either, because SOCO's hydro is ~2.5-3.5% of energy against
   NWPP's hydro-dominated footprint. Recorded DO-NOT-REDO, with the NWPP/SOCO lane-numbering offset named
   so a charter is never copied across by number.
+
 ## 2026-09-16 — NWPP r#7: one routed item had a fix and one did not, and the desk says which
 
 Desk refresh r#7 (`docs/records/nwpp/nwpp-desk-ledger-2026-09.md`). Docs only — no code, no data, no
@@ -344,6 +373,7 @@ registry; every existing keeper's cache key untouched by construction.
 - **Stated rather than implied:** this container has neither `pydantic` nor `numpy`, so the
   registration could not be import-verified here. The gate-G8 cache-key proof and the fleet census are
   recorded as the lane's measurement plus CI, **UNREAD by the desk** — not as a desk verification.
+
 ## 2026-09-14 — SOCO registered as the ninth region; desk sitting r#6
 
 - **SOCO-20 landed and graded PASS** (PR #6152). `_ISO_BUILDERS` is nine keys; gate G8 holds with
@@ -405,6 +435,7 @@ and findings are already on `main` (PRs #6126, #6127, #6129, #6135 and the SOCO-
   were charters the desk drafted rather than copied from the committed prompt pack — a 100 %
   correlation on a population of five. `docs/calibration-log/soco.md` carries the three that exist
   verbatim plus two clearly-labelled desk-authored stubs; the desk did not fabricate lane words.
+
 ## 2026-09-14 — NWPP r#4: every issued lane has landed, four cards ruled, W2 issued
 
 Desk refresh r#4 (`docs/records/nwpp/nwpp-desk-ledger-2026-09.md`). Docs only — no code, no data, no
@@ -459,6 +490,7 @@ Desk refresh r#4 (`docs/records/soco/soco-desk-ledger-2026-09.md`). Docs only.
   Auditor's public monthly price series, 2022-11 → 2026-07.
 - Base-branch CI debt unchanged: `audit_keepers`, `check_registry_payload_parity` and
   `check_gate_a_provenance` all RED at `33a7c961`, none of it this program's.
+
 ## 2026-09-13 — NWPP r#3: the price gate read NO, so the scorer branch became the program
 
 Desk refresh r#3 (`docs/records/nwpp/nwpp-desk-ledger-2026-09.md`). Docs only — no code, no data, no
@@ -540,6 +572,7 @@ PASS by content. Docs only in this commit — the lanes' own data and findings a
   fossil MW before SOCO-11's eight files landed; SOCO's **1,306.6 MW of pumped storage unobservable in
   EIA-930** for 2023 and most of 2024, a hard constraint on the C1 benchmark; and no wind anywhere in the
   fleet.
+
 ## 2026-09-13 — NWPP r#2: W1 issued, and two gates this program was chartered without
 
 Desk refresh r#2 (`docs/records/nwpp/nwpp-desk-ledger-2026-09.md`). Docs only — no code, no data, no
@@ -612,6 +645,7 @@ registry; every existing keeper's cache key untouched by construction.
   deferred: `check_registry_payload_parity` is RED on a dead CAISO bundle dir (G13's failure mode) and
   `check_gate_a_provenance` is RED because NYISO's promotion did not sweep its superseded keeper
   (G21's). Both routed, neither this desk's to fix.
+
 ## 2026-09-13 — NWPP addition program chartered: the first region that is a POOL of balancing authorities
 
 A chartering session for adding the **Northwest Power Pool / Western Power Pool footprint** as a registered
@@ -1129,6 +1163,7 @@ shard / registry / workflow edit, nothing registered.** Wallclock desk item A-3
   `regression_gate.py --mode byte` check [1] PASS at atol=rtol=0 (check [4] pre-existing
   by control); fast tier 8,104 passed. Record:
   `docs/records/misc/wallclock-baseline-2026-07.md` §WALLCLOCK A-3.
+
 ## 2026-09-05 — wallclock B-0: owner decision memo for seeding the cold-rebuilt P1 from the same year's P0 basis, with the ERCOT bench the assessment doc was missing
 
 Docs only. **No `src/` file, no `ScenarioConfig` default, no keeper shard / marker / matrix shard /
@@ -1173,6 +1208,7 @@ per `docs/records/governance/FINDING-y14-ercot-golden-forward-2026-09-05.md`:
   new semantics (retired-record provenance chain; forward config on its designated span) plus
   eleven new tests; 57 passed. Fast tier 8114 passed, exit 0.
 - The R-AI re-capture (ERCOT clock 2026-09-07 19:02Z) is NOT run; its command is in the finding §7.
+
 ## 2026-09-06 — wallclock A-2: the eGRID xlsx comes off the solve path (27.80 s → 0.219 s per process; `data_prep` y1 36.7 → 10.8 s on top of A-1), byte-identical on a NEISO merge-base control
 
 Wall-clock only. **No `ScenarioConfig` field, no default, no constant, no keeper shard,
@@ -1222,6 +1258,7 @@ projection, then UNT23). openpyxl's read-only parser is ~10 µs/cell; the three 
   drift audit since the gated base, and the not-widened follow-up (`data/egrid.py`, a
   fourth read of the same workbook family, deliberately left alone as out of scope):
   `docs/records/misc/wallclock-baseline-2026-07.md` §WALLCLOCK A-2.
+
 ## 2026-09-06 — wallclock A-6: `malloc_trim` at the cold-P1 seam is MEASURED-NEGATIVE; the seam's RSS step is live payload, not allocator retention
 
 Docs + the AFTER golden manifest. **No file under `src/` changes in this entry.**
@@ -1368,6 +1405,7 @@ mechanism, no determination change anywhere.
   shows only the failures already red on main (ERCOT golden partition ×3, the
   miso intermediate cache-key pin, the PJM override test) plus the pre-existing
   forecast-invariant undeclared-FAIL rows.
+
 ## 2026-09-05 — DOCS-B (model-audit WS4): methodology spec FINALIZED, user manual FINAL, CHANGELOG catch-up, index refresh
 
 Docs-only. **No file under `src/`, `scripts/`, `frontend/`, `results/` or
@@ -3398,6 +3436,7 @@ Completes the two deferred follow-ons from `docs/records/misc/emissions-mass-cap
   its own independent dispatch pipeline that never threads `get_active_policy_constraints`, so
   `mass_cap_enabled` is inert there today — a scoped follow-on, documented in the plan doc rather
   than half-wired in this pass.
+
 ## 2026-07-05 (W2-P3 Stage 2 — capacity-screen revenue fix, reversal supersession, FOM re-verification)
 
 **Revenue-side fix (capacity-economics plan §5 step 2).** The retirement screen's
@@ -3592,6 +3631,7 @@ are exogenous; **announced** EIA-860 dates stay with the economic screen.
   un-aggregated coal tranches (attempted here via a `keep_plant_codes`
   pass-through, reverted because it desynced the economic screen's dispatch
   mapping) — deferred.
+
 ## 2026-07-05 (PB-3 follow-up — emissions-basis staleness handling + committed prior artifact)
 
 **Post-processing only — no solves.** Extends the landed PB-3 structural prior
@@ -4299,6 +4339,7 @@ peak protection, spring/autumn reshape, and the backcast no-op; the legacy
 sanity run (real ERCOT fleet, 2024, full 8760): dispatch solves Optimal, budget
 conserved to ~7e-4 capacity-weighted. Spec §1.7 and `docs/forecast-methodology-
 gaps-2026-06.md` G12 updated (DESIGN-ONLY → BUILT).
+
 ## 2026-06-25 (CAISO forward WECC-tie seam — reference-price import + ATC corridor cap, G8)
 
 **Built the forecast-native replacement for CAISO's two MEASURED WECC-tie levers**
@@ -4390,6 +4431,7 @@ C6 PASS, determination NOT-YET (caveat budget). Docs: new handoff
 `docs/records/nyiso/nyiso-synchronised-reserve-probe-2026-06.md`; dashboard top-15-per-ISO
 retention pruned the oldest NYISO (`nyiso-15-transco-z6`). No methodology-spec
 change (no code landed).
+
 ## 2026-06-25 (NYISO synchronised-reserve — path-A scaffold KEPT default-off + path-B core helper)
 
 **Follow-on to the rejected `nyiso 29` probe above.** Rather than leaving the
@@ -4770,6 +4812,7 @@ them at generic full fuel cost instead of PJM's bituminous passthrough.
   units that retired Jul/Aug through year-end; a cross-ISO fix deferred) and the
   dominant economic over-dispatch of cheap uneconomic retirees the energy-only
   LP runs as baseload (needs CAMPD unit-level availability, not a fit).
+
 ## 2026-06-19 (scripts/ — one-off investigation probes corralled into scripts/probes/)
 
 Pure move + import/path fix, no behaviour change. The ~20 manual probe scripts
@@ -4919,6 +4962,7 @@ Two follow-on fixes landed from the audit:
   fitted constant; 2024/25 neutral. The residual magnitude gap is left for AS/
   reserve co-optimization (the bang-bang LP doesn't part-load to carry reserve),
   not chased with an offset (Rule #1). See `docs/ordc-overlay.md`.
+
 ## 2026-06-17 (ALL ISOs — commercial-operation-date (COD) vintage ramp for the whole fleet, default-on for backcasts)
 
 The backcast fleet snapshot (the curated ERCOT CAMPD bins / the EIA-860 generator
@@ -5751,6 +5795,7 @@ and commits all reconciliation work only.
   Seabrook 2019–2023), `coal_price_base.NEISO` (EIA AEO 2024 NE bituminous,
   Tier-3 placeholder), `import_eford.NEISO` (scheduled NEPOOL/ISO-NE interties,
   0% EFORd per NERC GADS).
+
 ## 2026-06-12 (NYISO Stage H — P14 documentation sign-off)
 
 NYISO 2023 backcast reaches Stage H. All packs P0–P13 were merged in earlier
@@ -6243,6 +6288,7 @@ CAISO prompt-pack P8 (doc 06 §P8): system demand and zonal load split.
 - Tests: CAISO hourly shares sum to 1.0 each hour, measured window moves
   while the fallback stays static, missing-file year falls back, and
   zonal demand reconciles to the CISO system series within rounding.
+
 ## 2026-06-11 (PJM J1 — generalized priced import/export node)
 
 Closes backlog item J1 (doc 06 §6). The +40 TWh PJM net-export structural
@@ -6295,6 +6341,7 @@ untouched (no import node; full suite green minus the known-stale
   interfaces; all zones land at one price vs the baseline's ~$5 spread) and
   caps scarcity at the $46 import tranche (baseline max $695) — two more
   reasons backcasts keep the measured schedule.
+
 ## 2026-06-11 (PJM J3 — hourly LMP overlay + scarcity-residual localization)
 
 - **J3a — true duration-curve overlay.** `scripts/derive_actual_lmp.py` now
@@ -6381,6 +6428,7 @@ existing forecasts are byte-identical.
 - **Tests.** `test_fuel.py`: switch above parity / no switch below / off
   by default (ERCOT unchanged) / per-hour cap granularity. `test_fleet.py`:
   real-parquet capability extract and missing-parquet fallback.
+
 ## 2026-06-11 (CAISO hydro energy budgets + pumped storage — multi-iso P4)
 
 Verifies the CAISO hydro/PS data through the generic PJM-built machinery
@@ -6412,6 +6460,7 @@ rotate**: `ScenarioConfig.pumped_storage_dispatch_adder` default changed
 - Parameter registry regenerated; `validate_parameters.py` passes again
   (the new constants plus three previously missing scenario fields are
   registered).
+
 ## 2026-06-11 (CAISO pack P2 — per-plant offer-curve tranches & bin assignments)
 
 CAISO backcast, 2024-first. ERCOT/PJM committed artifacts are untouched
@@ -6919,6 +6968,7 @@ missing marginal gas to coal. ERCOT and other ISOs are unaffected.
   file (forward years) PJM falls back to zero interchange. Border-zone
   attribution of the export (vs the current system-net allocation) is the
   natural next refinement now that the 8-zone topology exists.
+
 ## 2026-06-05 (ERCOT per-zone hourly load shapes)
 
 Gives each of ERCOT's six model transmission zones its **own measured hourly

@@ -276,6 +276,11 @@ FERC714_NEIGHBOR_SYSTEM_LAMBDA_FILE: str = (
 #: the EIA-930 ``ba_code``).
 NEIGHBOR_SYSTEM_LAMBDA_COLUMNS: tuple[str, ...] = ("ba_code", *SYSTEM_LAMBDA_COLUMNS)
 
+#: Process-local memo of :func:`load_ferc714_system_lambda` results keyed by
+#: ``(resolved path, mtime_ns, size, respondent_id)``; values are never handed
+#: out directly (the loader returns a copy).
+_SYSTEM_LAMBDA_CACHE: dict[tuple[str, int, int, int], pd.DataFrame] = {}
+
 
 def load_ferc714_system_lambda(
     respondent_id: int = SOCO_FERC714_RESPONDENT_ID,
@@ -325,6 +330,15 @@ def load_ferc714_system_lambda(
     path = base / name
     if not path.exists():
         raise FileNotFoundError(path)
+    # Same bytes in, same frame out: the parsed extract is memoised on the
+    # file's identity (path, mtime, size) and respondent, and a fresh copy is
+    # handed back, so a caller that reads every neighbour never re-parses the
+    # one long-form CSV. A rewritten file (new mtime/size) is re-read.
+    stat = path.stat()
+    key = (str(path.resolve()), stat.st_mtime_ns, stat.st_size, int(respondent_id))
+    cached = _SYSTEM_LAMBDA_CACHE.get(key)
+    if cached is not None:
+        return cached.copy()
     df = pd.read_csv(path, usecols=list(SYSTEM_LAMBDA_COLUMNS))
     if respondent_id in neighbor_ids:
         df = df[df["respondent_id_ferc714"] == respondent_id]
@@ -344,4 +358,6 @@ def load_ferc714_system_lambda(
         },
         index=idx,
     )
-    return out.sort_index()
+    out = out.sort_index()
+    _SYSTEM_LAMBDA_CACHE[key] = out.copy()
+    return out
