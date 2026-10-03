@@ -121,3 +121,20 @@ at the margin. Readings, computed on the composed bundle vs `w0_sppr_span`:
 ## 5. DO NOT REDO
 
 Everything in §5.7's DO-NOT-REDO; SPP-109 rows 1b/1c (both R cells stay R); offer-band retunes; any `--set`.
+
+## Addendum A (03:20Z, before any 2019–22 number was read): 2023–25 re-solve instead of kept legs
+
+The kept-leg compose is refused. The composer requires one `solve_surface` fingerprint across all legs, and the
+fingerprint includes the epoch list. The 2019–22 legs record `epochs ['2026-10-02e', '2026-10-03b']`, fingerprint
+`4187973695945d73`. The keeper's 2023–25 legs record `['2026-10-02e']`, fingerprint `bd0152f15df36c7f`. Every
+surface `rows` / `moved` entry is identical; only the epoch and the git sha differ. So SolveEpoch 2026-10-03b
+*does* move the fingerprint (§1 said it did not; corrected here), and the epoch carries no year scope.
+
+The check is not weakened. 2023, 2024 and 2025 are re-solved at the same pin, one shard each, with the same
+prompt form, so all seven legs share one fingerprint. §1's inert proof becomes a testable prediction:
+
+- **E-INERT:** each re-solved 2023–25 leg reproduces the keeper's committed `hourly/system_<y>`,
+  `class_hourly_<y>` and `unit_marginal_<y>` (identical values; float tolerance 1e-6 relative). A miss is
+  reported as a G-DRIFT failure and the regression rule in §3 still applies to those years.
+
+§3 is unchanged. The composer is called without `--kept`.
