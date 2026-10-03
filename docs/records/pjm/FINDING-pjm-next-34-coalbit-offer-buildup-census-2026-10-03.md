@@ -99,4 +99,101 @@ Otherwise **NOT CHARTERED**: the component and year profile are recorded and the
 
 ## §2 Result
 
-*(computed after this section's readings were committed)*
+Probe output: `results/phase0/pjm/_pjmnext34_coal_offer_buildup.json`. Readings were committed in `cd775b97` before
+any number was computed. All seven years ran, one `fleet_only` rebuild per year, one process per year: the 13.3 GiB
+cgroup cannot hold two rebuilds.
+
+**Gates.**
+- R0 passes in every year: unit-id cover 1.000, identity 0.999–1.000, `R ≥ vom` 1.000.
+- `HR_m` is own-year on all of the weight it covers. It is absent (eGRID fallback, row excluded) on 0.006 / 0.000 /
+  0.118 / 0.019 / 0.000 / 0.015 / 0.000 of `D_y`, 2019–25.
+- Cross-check: the census `K` reproduces the NEXT-33 dark-MW-weighted keeper offer (21.85 vs 21.8 in 2019, 37.46
+  vs 37.3 in 2024).
+
+**Q1/Q2: the build-up** ($/MWh, `D_y`-weighted; `G` = measured HR × own delivered coal + VOM/adders):
+
+| year | dark TWh | K | G | K − G | share K < G | B (band) | S (sigmoid) | m (floor) | s (seam) | b | π | HR_m | F $/MMBtu |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 2019 | 8.6 | 21.85 | 29.24 | **−7.39** | 0.89 | −3.70 | −5.43 | +1.67 | +0.07 | 0.82 | 0.76 | 10.67 | 2.26 |
+| 2020 | 6.4 | 20.91 | 29.50 | **−8.58** | 0.93 | −3.45 | −7.03 | +1.70 | +0.19 | 0.82 | 0.68 | 10.79 | 2.20 |
+| 2021 | 7.2 | 28.53 | 31.58 | **−3.05** | 0.70 | −4.67 | −0.65 | +2.13 | +0.14 | 0.80 | 0.97 | 10.74 | 2.21 |
+| 2022 | 8.1 | 51.27 | 40.27 | +11.00 | 0.32 | −5.49 | +8.09 | +8.33 | +0.07 | 0.83 | 1.32 | 11.26 | 2.49 |
+| 2023 | 3.1 | 26.68 | 37.82 | **−11.14** | 0.84 | −7.20 | −7.06 | +2.71 | +0.41 | 0.74 | 0.75 | 10.91 | 2.97 |
+| 2024 | 3.6 | 37.46 | 46.21 | **−8.75** | 0.90 | −5.71 | −6.12 | +1.14 | +1.95 | 0.80 | 0.77 | 11.02 | 2.78 |
+| 2025 | 4.2 | 34.72 | 39.73 | −5.00 | 0.72 | −8.35 | +1.48 | +1.37 | +0.49 | 0.75 | 1.04 | 10.71 | 3.07 |
+
+- **Q1: BELOW in all three fail years** (and in 2023/24/25). The keeper's coal offer sits 3.0–8.6 $/MWh below the
+  plant's measured going cost in the hours real coal sat dark.
+- **Q2: NOT DISCRIMINATING.** `G − K` is 7.4 / 8.6 / 3.0 in 2019–21 against 11.1 / 8.7 in 2023/24. The controls sit
+  **further** below cost than the fail years (fail-year minimum 3.0 vs control maximum 8.7 + 2).
+
+**Q3: carrier.** Pooled 2019–21 shares of `G − K`: sigmoid `S` 0.69, band `B` 0.62, floor `m` −0.29, seam `s`
+−0.02. Carrier `S`, with `B` a close second.
+- The sigmoid term is gas-driven: π = 0.76 / 0.68 at 2019/20 gas, 0.97 in 2021, 0.75–0.77 again in 2023/24.
+- The band term is `b` = 0.80–0.82 cap-weighted. By tranche, `committed` rows run at `b` = 0.548 (K 14.4 vs G 27.1
+  in 2019), `econ*` at 0.92 and `peak` at 1.04.
+- Fail-minus-control split of `G − K` (total −3.5: the fail years are *less* below cost):
+  B −2.5, S −2.2, m +0.04, s +1.1. No component carries a fail-year excess.
+
+**Q4: PJM's own offers** (`econ*`/`peak` rows, 0.51–0.76 of the weight):
+
+| year | floor binds | P_off | K | G | share P_off < G |
+|---|---|---|---|---|---|
+| 2019 | 0.60 | 23.4 | 24.7 | 30.1 | 0.88 |
+| 2020 | 0.54 | 21.1 | 23.2 | 30.0 | 0.91 |
+| 2021 | 0.45 | 29.1 | 33.4 | 32.9 | 0.69 |
+| 2023 | 0.67 | 31.3 | 34.4 | 39.4 | 0.72 |
+| 2024 | 0.17 | 27.8 | 41.6 | 48.8 | 0.95 |
+
+- **FALSIFIED** as worded in all seven years (`P_off ≤ K` on 0.66–0.91 of the weight).
+- **Disclosure: as worded, the reading holds by construction on these rows.** The floor sets
+  `K = max(mc_base, P_off) + s`, so `P_off ≤ K` wherever the surface prices the row. This was missed when the
+  reading was fixed.
+- The informative, non-tautological numbers are the two beside it:
+  - **PJM's own LONG_RUN offers sit below the plant's measured going cost on 0.69–0.91 of the 2019–21 weight**
+    (mean 21–29 vs 30–33 $/MWh).
+  - The keeper's own construction (`mc_base`, before the floor) sits below those offers on only 0.45–0.60 of it.
+- So the keeper floors coal **up** to PJM's offers, and those offers are themselves below cost. The NEXT-13 and
+  midmerit-level statement (real coal offered below its replacement or full cost) holds on the dark-spell population.
+- A raise toward `G` contradicts the measured offers in the fail years. That conclusion does not depend on the
+  tautological reading.
+
+**Q5: cost-consistent darkness.** Real zonal DA sat below `G` in 0.73 / 0.86 / 0.54 of the 2019–21 dark weight,
+against 0.35 / 0.53 / 0.39 below the keeper offer `K` (NEXT-33). In the controls the share is 0.75 / 0.90.
+- At the plant's measured going cost, most real darkness is price-consistent.
+- It is equally price-consistent in the controls, so it does not separate the years.
+
+### Readings
+
+| reading | result |
+|---|---|
+| R0 / R0b | PASS (cover 1.000, identity ≥ 0.999; HR_m absent ≤ 0.12) |
+| Q1 | **BELOW** in 2019, 2020 and 2021 (and 2023–25) |
+| Q2 | **NOT DISCRIMINATING** (controls 8.7–11.1 below cost vs 3.0–8.6) |
+| Q3 | carrier **S** (sigmoid) 0.69, **B** (band) 0.62; no fail-year excess in any component |
+| Q4 | **FALSIFIED** (as worded, holds by construction; see the disclosure); PJM's own offers below `G` on 0.69–0.91 |
+| Q5 | real DA < `G` on 0.54–0.86 of dark weight; not year-discriminating |
+
+**Decision rule, applied:** Q2 fails and Q4 is FALSIFIED, so the decision rule cannot charter. **NOT CHARTERED.**
+Nothing was built, solved or registered, and no matrix cell moves.
+
+## §3 Consequence
+
+- **The keeper's COAL_BIT offer is below the plant's measured going cost in the dark spells.** The sigmoid's
+  cheap-gas discount and the `committed`/`econ_low` bands carry it. This is not what separates 2019–21 from 2023/24:
+  the controls sit further below cost.
+- **PJM's own coal offers are below measured going cost in the same hours.** The keeper floors its coal up to them
+  in 0.45–0.60 of the fail-year econ weight. A below-cost coal offer is measured conduct, not a keeper defect.
+  Raising the offer toward `G` is refuted on this population, as it was on the full fleet (FINDING-pjm-midmerit-level
+  §3, NEXT-13).
+- **Real darkness is cost-consistent at `G`** (0.54–0.86) and equally so in the controls. Real coal sitting out when
+  the price is below its going cost, while still offering below cost, is commitment and availability conduct. The
+  price-formation side cannot represent that difference by year.
+- With NEXT-13/30/31 (availability), NEXT-32 (commitment), NEXT-33 (price) and NEXT-34 (offer level), every
+  channel on COAL_BIT 2019–21 is now censused at zero LP and none charters.
+  - COAL_BIT 2019–21 is a **frontier candidate on every channel**.
+  - The frontier text and the frontier card belong to the desk lane (closeout-PJM-2), which holds the card until
+    PJM-nuc promotes.
+- The rule-1 band channel (`offer_curve_by_group`) is the only price channel. The census gives it no year-uniform
+  operand: one value across years cannot close 2019–21 without moving 2023/24, which already sit further below cost.
+- The Tait remap stays parked for the next PJM solve with a real lever.
