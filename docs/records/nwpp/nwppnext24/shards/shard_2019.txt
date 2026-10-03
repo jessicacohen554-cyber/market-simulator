@@ -7,7 +7,7 @@ Push without asking: you cannot be messaged, and a shard that stops to ask stran
 legitimacy_diagnostics.py or any scorer yourself (replay_keeper's own post-step is fine); a legitimacy FAIL is never a hard stop.
 
 PIN: @PIN@ (branch claude/nwppnext24-pin) = main b54e1d84 (keeper 2026-10-03-nwpp-next-23-coi + #7134 EIA-923 coal stocks 2015-17 + SolveEpoch 2026-10-03b NWPP 2019-22 nuclear CF rows) + NEXT-24 records only (no src change).
-The replay source is the keeper bundle results/calibration/nwppnext24_span, committed AT THE PIN (no fetch needed).
+The replay source is the keeper bundle results/calibration/nwppnext23_span, committed AT THE PIN (no fetch needed).
 
 STEP 0 — setup
 - FIRST: `git fetch origin @PIN@ && git checkout --detach @PIN@` (if HEAD is not already the PIN), then `python3 scripts/prepare_solve_container.py` BEFORE any data step.
@@ -58,7 +58,7 @@ After STEP 2's curate_coal_stocks.py: `python3 -c "import sys;sys.path.insert(0,
 STEP 2 — the solve (run the runner UNMODIFIED; never pass --no-container-preflight)
 python3 scripts/data/curate_hydro_plant_modes.py --iso NWPP
 python3 scripts/data/curate_coal_receipts.py && python3 scripts/data/curate_coal_stocks.py
-nohup python3 scripts/replay_keeper.py results/calibration/nwppnext24_span \
+nohup python3 scripts/replay_keeper.py results/calibration/nwppnext23_span \
   --out-dir results/calibration/nwppnext24_2019 --years 2019 \
   --note "NWPP-NEXT-24: keeper nwppnext23 recipe replayed unchanged at main HEAD (coal stocks 2015-17 + NWPP nuclear rows)" \
   > /tmp/solve_2019.log 2>&1 &
@@ -71,7 +71,7 @@ BUDGET: 150 minutes of solve (2019 has taken ~70-80 min). NEVER end your turn wh
 the budget with no bundle, STOP and report (never push a half-written bundle).
 
 STEP 3 — hard stops on the result (any miss = STOP, report, no push)
-B=results/calibration/nwppnext24_2019; L=results/calibration/nwppnext24_span
+B=results/calibration/nwppnext24_2019; L=results/calibration/nwppnext23_span
 a) scenario_config diff vs the keeper's year config:
    python3 -c "import json;a=json.load(open('$B/run_config.json'));b=json.load(open('$L/run_config_2019.json'));A=a.get('scenario_config',a);B=b.get('scenario_config',b);print(sorted((k,B.get(k),A.get(k)) for k in set(A)|set(B) if A.get(k)!=B.get(k)))"
    Allowed: exactly [] (an EMPTY diff), optionally only ('spp_mmu_offer_repair', None, False) or its reverse (SPP-only, inert). Provenance-only keys outside scenario_config are fine. Anything else = STOP.
