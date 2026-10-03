@@ -9,7 +9,7 @@ is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction onl
 **CROSS-DESK NOTICE (SPP-21, 2026-09-06, branch `claude/spp-21-matrix-shard-ti2gy3`):** SPP shard exists from this commit — **seven** shards; every rule-28(c) cell line now includes SPP. *(A self-referential sha cannot be written inside its own single commit — G2 requires one — so the lane and branch are the citation; `git log --grep=SPP-21` resolves the sha.)*
 
 **Charter date:** 2026-08-23 · **Last refresh:** 2026-10-03 (refresh #69) ·
-**r#69 (HEAD `d7ff7c20`):** every keeper moved (closeout-W0) · board CALIBRATED ×4 vs `complete` ×2 · `check_key_provenance` RED (SOLVE_EPOCHS) → D100 · gate-(a) re-key D101 · staleness census D102 · §0bn.2 is the standing `complete`/frontier plan · Q73–Q76 open · NEXT FREE LABEL: D103 ·
+**r#69 (HEAD `d7ff7c20`, addendum r#69a at `792e55ad`):** every keeper moved (closeout-W0) · board CALIBRATED ×2 (NEISO, NYISO; the ×4 read at `d7ff7c20` was stale) vs `complete` ×2 · D100/D101/D102 all LANDED (PRs #7089, #7091, #7094) · 111 forecast verdicts STALE-SURFACE · `check_key_provenance` RED (SOLVE_EPOCHS) → D100 · gate-(a) re-key D101 · staleness census D102 · §0bn.2 is the standing `complete`/frontier plan · Q73–Q76 open · NEXT FREE LABEL: D103 ·
 *(previous)* **r#68 (HEAD `9149be2c`):** D98 (key provenance EXIT 0) and D99 (neiso-t3 FC-6 CAVEAT→PASS, HOLD) LANDED · desk re-keyed MISO → gate (a) EXIT 0 · queue EMPTY · NEXT FREE LABEL: D100 ·
 *(previous)* **r#67 (HEAD `cf0950dc`):** all four r#66 lanes LANDED on relaunch (re-key · D95 surface re-key · D96 HOLD→HOLD one vintage · D97 T1.6 design) · desk re-keyed MISO → gate (a) EXIT 0 · Q71 (surface construction) / Q72 (T1.6 re-point, 2041–2050 mean) RULED · D98, D99 dispatched · D96 shard PRs closed · NEXT FREE LABEL: D100 ·
 *(previous)* **r#66 (HEAD `a1b8ebd9`):** all three r#65 lanes LANDED (re-key · D93 · D94 HOLD→HOLD) · gate (a) red again on FIVE ISOs (R-* promotions) · D94's two legs are the new key-provenance UNKNOWNs · Q69 (re-solve neiso-t3 post-F1) / Q70 (T1.6 design lane first) RULED · re-key r#66, D95, D96, D97 dispatched · NEXT FREE LABEL: D98 ·
@@ -79,6 +79,26 @@ is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction onl
 ## 0bn. Refresh #69 (2026-10-03, main HEAD `d7ff7c20`) — the backcast close-out moved every keeper in one day; four ISOs read CALIBRATED on the board while the `complete` block still names two; the D98 census gate is RED on a cause the desk did not foresee; this refresh writes the standing plan for what this desk does when an ISO reaches `complete` or a frontier statement, and dispatches three zero-LP lanes
 
 ### 1. WHAT MOVED SINCE r#68 (zero LP read at `d7ff7c20`)
+
+> **Addendum r#69a (2026-10-03, after the three lanes landed; read at `792e55ad`/`31f6af11` by D101/D102).**
+> *Board correction:* the "CALIBRATED ×4" below was read at `d7ff7c20`; at the newer main D101 found **MISO and
+> SPP read NOT-YET** (rubric 3.17 worst-of over every registered year; SPP's keeper moved again to
+> `2026-10-02-w0-spp107r`, PR #7083). **CALIBRATED = NEISO, NYISO only.** Q74 therefore asks about NYISO alone;
+> MISO and SPP return to the close-out lanes. §2c's MISO/SPP rows read NOT-YET / "rung 0–1 now, no card".
+> *D100 LANDED* (PR #7089): `check_key_provenance` EXIT 1 → 0, new `solve-epoch-moved` class, 4 tests; census
+> 224 run configs / 171 reproduce / 0 UNKNOWN. *D101 LANDED* (PR #7091): seven keeper rows re-keyed with a
+> Supersedes chain, per-row `gate_a` reading (MET for NEISO only), CAISO/SPP `marker_complete` → false, stamp
+> at `792e55ad`; NWPP/SOCO recorded inside `gate_a_provenance` per owner ruling Q68 (no board row before a
+> `complete` declaration). *D102 LANDED* (PR #7094): **111 verdict keys, 0 CURRENT, 0 STALE-POSTURE, 111
+> STALE-SURFACE** — `moved_rows(iso)` is mode-agnostic and two registry rows (`CC_STEAM_PART_REPAIR_ISOS` in
+> every ISO, `STORAGE_BASE_FLEET_MW` in five) moved after the newest verdict (2026-09-26); no `SOLVE_EPOCH` is
+> forecast-scoped, so the staleness is value-level and each row is a zero-LP G-DRIFT question before any
+> re-solve (rule 29). Re-opening gates (b)/(c) needs the headline `<iso>-t1f` / `-t1h` / `-t1x` keys re-solved
+> on the W0 keepers in seven ISOs; §2.4 anchors only, no anchor for MISO/NYISO/SPP. The first D102 container
+> died in its environment setup script before any command ran and was relaunched (recorded against interest:
+> a pinned `source_revision` that origin had already advanced past; every lane reported the pin absent and
+> branched from `origin/main`). Rung 1 of §2a now has its reading for every ISO: STALE-SURFACE everywhere,
+> so rung 3 is a compute decision (Q76), not a question of whether anything moved.
 
 * **Every designated keeper is new** (closeout-W0 phase 3, `docs/backcast-closeout-plan-2026-10.md` §6 wave 2): CAISO `2026-10-02-closeout-caiso-w1-arm2` · ERCOT `2026-10-02-closeout-l1-coal-fuel` · MISO `2026-10-02-w0-miso-fix2` · NEISO `2026-10-02-w0-neiso` · NWPP `2026-10-02-w0-nwpp-fix2` · NYISO `2026-10-02-w0-nyiso` · PJM `2026-10-02-w0-pjm-fix2` · SOCO `2026-10-02-w0-soco-fix2` · SPP `2026-10-02-spp-107-mmu-repair` (PR #7083 would move SPP again to `2026-10-02-w0-spp107r`; open, not this desk's).
 * **Board** (`frontend/data/backcast/status/<ISO>.js`, rule 30 worst-of): **CALIBRATED — NEISO, NYISO, MISO, SPP**; NOT-YET — CAISO, ERCOT, PJM, SOCO, NWPP.
