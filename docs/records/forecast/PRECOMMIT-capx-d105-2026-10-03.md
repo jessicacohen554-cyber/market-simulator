@@ -105,7 +105,7 @@ against interest, never repaired.
 
 `check_forecast_invariants.py --run-dir results/ff-t1f-d105/neiso/NEISO/<key>` (the cache dir; output kept
 beside the bundle as `invariants.txt` / `invariants.json`) → `build_forecast_dof_ledger.py results/ff-t1f-d105/neiso`
-→ `forecast_verdict.py --tier t1f --summary … --run-config … --dof-ledger … --invariants … --json-out
+→ `forecast_verdict.py --tier t1f --summary … --run-config … --dof-ledger … --json-out
 results/ff-t1f-d105/neiso/forecast_verdict.json` → `register_forecast_run.py --summary
 results/ff-t1f-d105/neiso/full_horizon_summary.json --kind t1f --label d105-w0neiso --extra-meta
 '{"verdict_key": "neiso-t1f", "charter_label": "capx D105 NEISO T1-F on 2026-10-02-w0-neiso"}'` (a T1-F
