@@ -40,6 +40,7 @@ KEEPER = CAL / "closeout_ercot_l1_span"
 STRIP_YEARS = (2019, 2020, 2021, 2022, 2023)
 KEPT_LEGS = {2024: "closeout_ercot_l1b_2024", 2025: "closeout_ercot_l1b_2025"}
 BAND_KEYS = ("peak", "phys_peak", "peak_ladder")
+ROOT_FRAMES = ("system.parquet", "btm.parquet", "flows.parquet", "storage.parquet")
 
 
 def _sha(path: Path) -> str:
@@ -73,6 +74,25 @@ def check_leg(year: int) -> Path:
     return leg
 
 
+def concat_root_frames(out: Path, legs: dict[int, Path]) -> None:
+    """Concatenate the per-leg root frames (the registration renderer reads them).
+
+    The slim keeper bundle no longer carries them, so every year comes from its
+    leg: 2019–2023 from the strip legs, 2024/2025 from the l1b legs.
+    """
+    import pandas as pd
+
+    for fname in ROOT_FRAMES:
+        parts = []
+        for y, leg in sorted(legs.items()):
+            path = leg / fname
+            if not path.is_file():
+                raise SystemExit(f"ABORT: {path} missing")
+            df = pd.read_parquet(path)
+            parts.append(df if "year" in df.columns else df.assign(year=y))
+        pd.concat(parts, ignore_index=True).to_parquet(out / fname, index=False)
+
+
 def compose(out: Path) -> None:
     """Build the composed bundle at ``out`` (see module docstring)."""
     legs = {y: check_leg(y) for y in STRIP_YEARS}
@@ -99,9 +119,13 @@ def compose(out: Path) -> None:
             a, b = src / "hourly" / f"{stem}_{y}.parquet", out / "hourly" / f"{stem}_{y}.parquet"
             if a.is_file() and _sha(a) != _sha(b):
                 raise SystemExit(f"ABORT: kept leg {y} {stem} differs from keeper")
-        (out / "dispatch").mkdir(exist_ok=True)
-        for p in (src / "dispatch").glob(f"{y}_*"):
-            shutil.copy2(p, out / "dispatch" / p.name)
+        # dispatch AND floors: the diagnostics rebuild the bridge floors from
+        # floors/<Y>_P1.npz, so a kept year without it reads 0 % forced.
+        for sub in ("dispatch", "floors"):
+            (out / sub).mkdir(exist_ok=True)
+            for p in (src / sub).glob(f"{y}_*"):
+                shutil.copy2(p, out / sub / p.name)
+    concat_root_frames(out, {**legs, **{y: CAL / n for y, n in KEPT_LEGS.items()}})
     meta = json.loads((out / "meta.json").read_text())
     meta["composed_from"] = {
         **{f"closeout_ercot_ecrs_{y}": [y] for y in STRIP_YEARS},
