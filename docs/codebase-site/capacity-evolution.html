@@ -235,10 +235,11 @@
 
         <div class="section-header">
           <div class="section-number">§ 1</div>
-          <h2>The Six Steps</h2>
+          <h2>The Evolution Steps (0–7)</h2>
           <p>
-            Every simulated year, the fleet passes through six sequential
-            capacity-evolution steps before the next year's dispatch LP runs.
+            Every simulated year, the fleet passes through the one-pass sequence
+            0 confirmed exits → 1 announced retirements → 2 CCS retrofit screen (joint with retirement) → 3 economic retirement → 4 known additions → 5 economic entry → 6 reserve-margin backstop (default off) → 7 dispatch with RPS as an LP constraint,
+            before the next year's dispatch LP runs.
             The loop is <strong>one-pass</strong> — no within-year convergence
             iteration — and the output of each step feeds the next.
           </p>
@@ -262,19 +263,18 @@
         <!-- Summary cards -->
         <div class="grid-3col" style="margin-top: 32px;">
           <div class="narrative-card">
-            <div class="narrative-card__eyebrow">🔻 Steps 1–2: Exits</div>
+            <div class="narrative-card__eyebrow">🔻 Steps 0–3: Exits</div>
             <div class="narrative-card__body">
-              Known retirements are deterministic (filed closures). Economic
+              Confirmed exits (step 0, instrument-bound) and announced retirements (step 1, owner-filed EIA-860 dates under <code>fossil_announced_exits_enabled</code>, default on) are deterministic; the CCS retrofit screen (step 2) runs jointly with retirement. Economic
               retirements screen inframarginal margin against FOM — with
               per-fuel hurdle thresholds and a reliability floor that prevents
               thermal capacity from falling below (peak − firm clean) × 1.15.
             </div>
           </div>
           <div class="narrative-card">
-            <div class="narrative-card__eyebrow">🏗️ Steps 3–5: Entry</div>
+            <div class="narrative-card__eyebrow">🏗️ Steps 4–5: Entry</div>
             <div class="narrative-card__body">
-              Known additions come from the EIA-860 pipeline. CCS retrofits
-              target gas-CCs with ≥15yr remaining life. Economic new entry
+              Known additions (step 4) come from the EIA-860 pipeline. Economic new entry (step 5)
               compares Wright's-Law LCOE against expected revenue, respecting
               per-tech annual queue caps.
             </div>

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Model Validity — Codebase Explorer</title>
-  <meta name="description" content="The model-validity program: the three-tier train/validation/locked-test holdout ladder, touch-once discipline, quarantine gates, capacity hindcast, forecast invariants, and the backcast vs forecast year spans.">
+  <meta name="description" content="The model-validity program after the 2026-09-09 removal of the holdout regime (rule 22 [R-C3C]): any year may be solved, scored and registered, no year is a certified out-of-sample number, touchpoints fold into the keeper (rule 30), plus the capacity hindcast, forecast invariants, and the backcast vs forecast year spans.">
 
   <!-- Stylesheets -->
   <link rel="stylesheet" href="css/shared.css">
@@ -310,9 +310,9 @@
     <header class="header" data-header-variant="pulse">
       <div class="header__inner">
         <span class="header__eyebrow">Backcast</span>
-        <h1 class="header__title">Model Validity &amp; Holdouts</h1>
+        <h1 class="header__title">Model Validity &amp; Year Spans</h1>
         <p class="header__subtitle">
-          How the model earns trust out-of-sample. The three-tier train / validation / locked-test holdout program, the touch-once discipline and its quarantine gates, the forecast-side hindcast, and the backcast-data vs scored vs forecast year spans.
+          How the model earns trust across years. <strong>Status 2026-09-09 (rule 22 <code>[R-C3C]</code>, rule-history §18):</strong> the three-tier train / validation / locked-test holdout regime and every gate that enforced it were removed by owner instruction. Any year may be solved, scored and registered; no year is a certified out-of-sample number; <code>calibration-complete.json</code> survives only as the keeper designation and the forecast program's gate-(a) input; registered out-of-training years fold into the keeper and the ISO determination covers every registered year (rule 30). The tier vocabulary below survives as a pure classifier (<code>holdout_policy.tier_for_year</code>, no permission meaning) for the C3c out-of-training limb and dashboard labels. The sections describing the former gates are kept as the historical record, marked as such. Also here: the forecast-side hindcast, and the backcast-data vs scored vs forecast year spans.
         </p>
         <div class="header-accent" aria-hidden="true"></div>
       </div>
@@ -334,7 +334,7 @@
           </p>
           <ul style="margin-bottom: var(--space-lg); padding-left: var(--space-xl);">
             <li style="margin-bottom: var(--space-sm);"><strong>Intake — ungated, and needing no authorization at all.</strong> Data for any out-of-training year may be prepared at any time, for any ISO, with no per-ISO or per-window grant and no marker. A measured input is either the best representation of a physical or market quantity or it is not; if it is, it belongs in <em>every</em> year, and it is applied consistently across the whole span rather than year by year. Intake is validated <strong>no-LP only</strong> — byte-identity checks and loader-resolvability, <em>never a dispatch solve</em> — and each one is recorded in the <code>intake_log</code> of <code>calibration-complete.json</code>. <em>(Rule 22 as amended 2026-08-06: what is held out is the</em> score<em>, never the data or the architecture. This replaced an earlier per-window authorization regime, which the owner's amendment records as having had it backwards.)</em></li>
-            <li><strong>Solve · Score · Register — quarantined.</strong> Solving a year, scoring its dispatch against actuals, or registering it on the dashboard is the <em>spend</em>, because it consumes the year's power to surprise you. It stays under full quarantine until that ISO carries <strong>the marker for that year's tier</strong> — <code>complete</code> for a validation year, <code>final</code> for a locked-test year. The two are separate precisely so one declaration can never spend both. A validation year is then <em>iterable</em>, not a one-shot; only the locked test is touch-once.</li>
+            <li><em>[Historical — this gate was removed 2026-09-09 by owner instruction; see rule 22 <code>[R-C3C]</code> and <code>docs/governance/rule-history.md</code> §18. Kept as the record of what was removed.]</em> <strong>Solve · Score · Register — quarantined.</strong> Solving a year, scoring its dispatch against actuals, or registering it on the dashboard is the <em>spend</em>, because it consumes the year's power to surprise you. It stays under full quarantine until that ISO carries <strong>the marker for that year's tier</strong> — <code>complete</code> for a validation year, <code>final</code> for a locked-test year. The two are separate precisely so one declaration can never spend both. A validation year is then <em>iterable</em>, not a one-shot; only the locked test is touch-once.</li>
           </ul>
         </div>
 
@@ -454,7 +454,7 @@
             <div id="holdout-tiers-viz"></div>
           </div>
           <div class="fig__caption">
-            <strong>Figure MV2:</strong> The 2018–2030 tier ladder from <code>data/holdout-tiers.json</code>. Tier assignments are the program's real design; the <em>scored</em> flags are program-level illustration and <strong>not</strong> a record of what has been spent. As of 2026-08-19 three ISOs hold a <code>complete</code> marker (NEISO, NYISO, PJM — validation tier only), the <code>final</code> block is empty, and <strong>no locked-test year has ever been solved, scored or registered for any ISO</strong>. The ◇ marks on 2024/2025 flag the roadmap crossover overlap (§6), not current behaviour.
+            <strong>Figure MV2:</strong> The 2018–2030 tier ladder from <code>data/holdout-tiers.json</code>. Tier assignments are the program's real design; the <em>scored</em> flags are program-level illustration and <strong>not</strong> a record of what has been spent. Since 2026-09-09 the tiers carry <strong>no permission meaning</strong> (rule 22 <code>[R-C3C]</code>): <code>calibration-complete.json</code> records only each ISO's designated keeper (all nine ISOs re-promoted 2026-10-02 under the W0 EIA-860 settlement, <code>frontend/data/backcast/keepers/&lt;ISO&gt;.json</code>) and feeds forecast gate (a); out-of-training years (2019–2022) are solved and registered as touchpoints folded into the keeper (rule 30). The ◇ marks on 2024/2025 flag the roadmap crossover overlap (§6), not current behaviour.
           </div>
         </div>
 
@@ -486,7 +486,7 @@
             <div class="flow-step__body">
               <h4>Declare the ISO calibration-complete</h4>
               <p>
-                Add the ISO's marker to <code>frontend/data/backcast/calibration-complete.json</code>. This is the gate: it unlocks the rule-22 holdout solves for that ISO and nothing else. No marker → every out-of-training year stays quarantined.
+                Add the ISO's marker to <code>frontend/data/backcast/calibration-complete.json</code>. Since 2026-09-09 this is <strong>not a gate</strong>: the file names the ISO's designated keeper (<code>audit_keepers</code> M1) and feeds forecast gate (a); it authorizes nothing, and every year may be solved without it (rule 22 <code>[R-C3C]</code>, rule-history §18).
               </p>
             </div>
           </div>
@@ -559,7 +559,7 @@
         </div>
 
         <div class="story-section">
-          <p><strong>Solve gate (CLI).</strong> <code>enforce_holdout_year_gate</code> hard-fails any <code>--year</code> outside the window unless <em>both</em> conditions hold:</p>
+          <p><em>[Historical — this gate was removed 2026-09-09 by owner instruction; see rule 22 <code>[R-C3C]</code> and <code>docs/governance/rule-history.md</code> §18. Kept as the record of what was removed.]</em> <strong>Solve gate (CLI).</strong> <code>enforce_holdout_year_gate</code> hard-fails any <code>--year</code> outside the window unless <em>both</em> conditions hold:</p>
         </div>
 
         <div class="gate-flow">
@@ -584,18 +584,18 @@
 
         <div class="story-section">
           <p style="margin-bottom:0;">
-            The <strong>marker for that year's own tier</strong>, not the flag alone, is what authorizes a holdout year. <strong>Score / registration gate (CI):</strong> the <code>quarantine-gates</code> job in <code>.github/workflows/ci.yml</code> runs <code>audit_keepers.py --check</code> (E1–E9 plus the H1 holdout-quarantine check) and <code>legitimacy_diagnostics.py --keepers</code> (D-6 + D-9 + the D-2 recompute-vs-committed staleness check), failing any registered bundle whose solve years breach the window for an ISO without a marker.
+            <em>[Historical — this gate was removed 2026-09-09 by owner instruction; see rule 22 <code>[R-C3C]</code> and <code>docs/governance/rule-history.md</code> §18. Kept as the record of what was removed.]</em> The <strong>marker for that year's own tier</strong>, not the flag alone, is what authorized a holdout year. <strong>Score / registration gate (CI):</strong> the <code>quarantine-gates</code> job in <code>.github/workflows/ci.yml</code> runs <code>audit_keepers.py --check</code> (E1–E9 plus the H1 holdout-quarantine check) and <code>legitimacy_diagnostics.py --keepers</code> (D-6 + D-9 + the D-2 recompute-vs-committed staleness check), failing any registered bundle whose solve years breach the window for an ISO without a marker.
           </p>
         </div>
 
         <div class="insight-box warn">
-          <strong>The gates are tier-aware; what stays discipline is the spend history.</strong> Since 2026-07-31 every gate resolves the year's tier through <code>scripts/lib/holdout_policy.py</code> and demands <em>that tier's</em> marker — <code>complete</code> for a validation year, <code>final</code> for a locked-test year (<code>TIER_MARKER_BLOCK</code>). The map <strong>fails closed</strong>: a year in none of the enumerated sets, 2018 included, is treated as locked-test, the strictest tier. What is still <em>not</em> machine-enforced is whether an already-spent one-shot is being re-solved — CI checks the grant, not the spend history — so re-solving a locked-test year after its one-shot remains a <strong>governance breach, not a CI failure</strong>. The touch-once rule lives there, in the operator's discipline.
+          <em>[Historical — this gate was removed 2026-09-09 by owner instruction; see rule 22 <code>[R-C3C]</code> and <code>docs/governance/rule-history.md</code> §18. Kept as the record of what was removed.]</em> <strong>The gates were tier-aware; what stayed discipline was the spend history.</strong> Since 2026-07-31 every gate resolves the year's tier through <code>scripts/lib/holdout_policy.py</code> and demands <em>that tier's</em> marker — <code>complete</code> for a validation year, <code>final</code> for a locked-test year (<code>TIER_MARKER_BLOCK</code>). The map <strong>fails closed</strong>: a year in none of the enumerated sets, 2018 included, is treated as locked-test, the strictest tier. What is still <em>not</em> machine-enforced is whether an already-spent one-shot is being re-solved — CI checks the grant, not the spend history — so re-solving a locked-test year after its one-shot remains a <strong>governance breach, not a CI failure</strong>. The touch-once rule lives there, in the operator's discipline.
         </div>
 
         <div class="story-section">
           <p><strong>Current state (2026-08-19).</strong> Three ISOs carry a <code>complete</code> marker: <strong>NEISO</strong> (declared 2026-07-07), <strong>NYISO</strong> and <strong>PJM</strong> (both 2026-07-31). CAISO's was withdrawn 2026-08-06. That marker authorizes the <em>validation</em> tier and nothing else — the <code>final</code> block is empty, so <strong>no ISO is authorized for a locked-test year</strong>.</p>
           <p><strong>No locked-test year has ever been solved, scored or registered, for any ISO.</strong> This page previously stated that NEISO's 2019 + H1-2026 one-shot had been scored on a frozen <code>neiso-53</code> config and stood. That was false, and was corrected on the record by owner decision D-23 (2026-08-06): the artifact record carries no NEISO 2019 or H1-2026 solve of any kind, every NEISO registry sidecar ever committed declares years drawn only from 2022–2025, and the config named as the frozen one-shot is a train-tier 2023–2025 config. NEISO's locked test is <strong>never granted</strong>, not spent.</p>
-          <p style="margin-bottom:0;"><strong>A freeze outranks every marker above.</strong> The holdout spend freeze (<code>frontend/data/backcast/holdout-freeze.json</code>, <code>active: true</code>) is checked <em>before</em> the marker and fails closed, so while it stands no out-of-training year may be solved, scored or registered for any ISO — validation tier included, marker or not. Data intake is not frozen.</p>
+          <p style="margin-bottom:0;"><em>[Historical — this gate was removed 2026-09-09 by owner instruction; see rule 22 <code>[R-C3C]</code> and <code>docs/governance/rule-history.md</code> §18. Kept as the record of what was removed.]</em> <strong>A freeze outranked every marker above.</strong> (<code>holdout-freeze.json</code> is deleted from the repo.) The holdout spend freeze (<code>frontend/data/backcast/holdout-freeze.json</code>, <code>active: true</code>) is checked <em>before</em> the marker and fails closed, so while it stands no out-of-training year may be solved, scored or registered for any ISO — validation tier included, marker or not. Data intake is not frozen.</p>
           <div class="status-row" aria-label="Per-ISO calibration-complete status">
             <span class="iso-pill complete">NEISO ✓ complete</span>
             <span class="iso-pill complete">NYISO ✓ complete</span>
@@ -611,7 +611,7 @@
         </div>
 
         <div class="source-cite">
-          <strong>Source:</strong> <code>scripts/run_calibration_full.py:7969</code> (<code>HOLDOUT_CALIBRATION_YEARS</code>), <code>:7981-8071</code> (<code>enforce_holdout_year_gate</code>); <code>scripts/lib/holdout_policy.py:98</code> (<code>VALIDATION_YEARS</code>), <code>:101-104</code> (<code>TIER_MARKER_BLOCK</code>), <code>:164-183</code> (<code>tier_for_year</code>, fail-closed); <code>scripts/audit_keepers.py:112-118</code>; <code>scripts/legitimacy_diagnostics.py:2003</code> (<code>run_d6_quarantine</code>); <code>.github/workflows/ci.yml:74</code> (<code>quarantine-gates</code>); <code>frontend/data/backcast/calibration-complete.json</code>; <code>frontend/data/backcast/holdout-freeze.json</code>; <code>scripts/run_calibration.py</code> (no gate); methodology §3.2.
+          <strong>Source (at HEAD, 2026-10-03):</strong> what survives is <code>scripts/run_calibration_full.py:10297</code> (<code>HOLDOUT_CALIBRATION_YEARS</code> = {2023, 2024, 2025}, the in-sample window literal) and <code>scripts/lib/holdout_policy.py</code> (<code>tier_for_year</code>, a pure classifier whose docstring states it authorizes nothing). Removed 2026-09-09: <code>enforce_holdout_year_gate</code>, <code>--holdout-authorized</code>, <code>TIER_MARKER_BLOCK</code>, <code>run_d6_quarantine</code>, the <code>audit_keepers</code> H1 sweep, <code>holdout-freeze.json</code>, and the CI job (retitled <em>Keeper-integrity gates</em>, holdout legs gone). Genealogy: <code>docs/governance/rule-history.md</code> §18; CLAUDE.md rule 22 <code>[R-C3C]</code>.
         </div>
       </div>
     </section>
@@ -723,7 +723,7 @@
             </svg>
           </div>
           <div class="fig__caption">
-            <strong>Figure MV3 — implemented today.</strong> Data spans 2018→H1-2026; scored backcast dispatch is confined to 2023–2025 (dashed indigo marks = the single authorized NEISO 2019 + H1-2026 locked-test one-shot); forecast runs 2026→2050 per <code>constants.py START_YEAR / END_YEAR</code>.
+            <strong>Figure MV3 — implemented today.</strong> Data spans 2018→H1-2026; scored backcast dispatch centres on the 2023–2025 training window, with 2019–2022 touchpoints solved and folded into keepers where an ISO carries them (dashed indigo marks = out-of-training years, freely solvable since 2026-09-09 under rule 22 <code>[R-C3C]</code>; no year is a certified out-of-sample number); forecast runs 2026→2050 per <code>constants.py START_YEAR / END_YEAR</code>.
           </div>
         </div>
 
@@ -771,7 +771,7 @@
     <section class="section-light">
       <div class="content-section">
         <div class="insight-box success">
-          <strong>🎯 Key takeaway:</strong> Data intake is open; solving is governed. Train (2023–2025) is tuned, validation (2022) is iterable selection evidence, and the locked test (2019 + H1-2026) is the touch-once honest number. The code enforces a single binary — in-window or not — and the tier discipline rides on top of it. Forecast-side skill is validated separately and reported as honest misses, and the 2024–2025 dual-mode crossover remains a labelled roadmap item.
+          <strong>🎯 Key takeaway:</strong> Data intake is open; so is solving. Since 2026-09-09 (rule 22 <code>[R-C3C]</code>) any year may be solved, scored and registered, no year is a certified out-of-sample number, and the ISO determination covers every registered year worst-of (rule 30, <code>calibration_verdict.py::iso_determination</code>). The train/validation/locked-test labels survive only as a classifier. Forecast-side skill is validated separately and reported as honest misses, and the 2024–2025 dual-mode crossover remains a labelled roadmap item.
         </div>
 
         <div style="display:flex; flex-wrap:wrap; gap:12px; margin-top:16px;">

@@ -671,7 +671,7 @@ classify_plant(                  # Canonical classifier — used identically
         "type": "str",
         "default": "\"ERCOT\"",
         "tier": 0,
-        "description": "Target ISO: ERCOT, CAISO, PJM, MISO, NYISO, or NEISO."
+        "description": "Target region: ERCOT, CAISO, PJM, MISO, NYISO, NEISO, SPP, NWPP or SOCO (the nine entries of iso_configs.py::ISO_CONFIGS)."
       },
       {
         "name": "weather_year",
@@ -720,7 +720,7 @@ classify_plant(                  # Canonical classifier — used identically
         "type": "bool",
         "default": "True",
         "tier": 1,
-        "description": "Apply CA cap-and-trade (CAISO) or RGGI measured prices when carbon_price == 0. Only CAISO 2023-2025 is registered; forward years fall through to carbon_price_path."
+        "description": "Apply CA cap-and-trade (CAISO) or RGGI measured prices when carbon_price == 0. CAISO (CARB), NYISO and NEISO (RGGI) 2023-2025 are registered; PJM's partial-footprint RGGI series is registered but ships with price_key=None unless pjm_rggi_allowance_pricing arms it; forward years fall through to carbon_price_path."
       },
       {
         "name": "nox_price",
