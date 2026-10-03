@@ -56,6 +56,7 @@ window.MECH_MATRIX_SHARDS.NYISO = {
     nwpp_grid_carried_wind_served: { cell: "." },
     nwpp_demand_plant_basis: { cell: "." },
     nwpp_seam_measured_limits: { cell: "." },
+    nwpp_coi_pnw_delivery_basis: { cell: "." },
     ercot_tie_zonal_interchange: { cell: "." },
     ercot_offer_swcap_clip: { cell: "." },
     ercot_swcap_vintage: { cell: "." },
