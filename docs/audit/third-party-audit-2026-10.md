@@ -77,6 +77,12 @@ The public summary is the site page `docs/codebase-site/model-audit.html`.
    distinguishing gaps are nodal transmission, MIP commitment, intertemporal
    capacity optimisation and transmission expansion.
 
+**Addendum 2026-10-03 (post-SHA).** `main` re-keyed the SPP keeper to
+`2026-10-02-w0-spp107r` (identity re-key by `promote_keeper.py`) after the
+audit SHA. Recomputed with `iso_determination`: still NOT-YET, now also
+failing price_mean 2024 and price_shape 2024 beside the gates listed in §1.4.
+The site page carries the updated row; the lane reports stand at `d7ff7c20`.
+
 ## 2. Lane findings (ranked)
 
 ### 2.1 LP, dispatch and commitment (lane A)
