@@ -5739,6 +5739,19 @@ NWPP_COI_PATH_SERIES: dict[str, tuple[str, float]] = {
 # (FINDING-nwppnext22 §A). An ownership allocation, never fitted to a flow.
 NWPP_COI_CAISO_SHARE: float = 2.0 / 3.0
 
+# NWPP-NEXT-25 (ScenarioConfig.nwpp_served_schedule_zonal_attribution): the
+# local clock each NWPP member's EIA-930 per-DIBA file (data/raw/
+# eia-930-interchange/<BA> interchange hourly.parquet, bulk "Local Time at End
+# of Hour") is stamped on. EIA-930 files fourteen members on Pacific time and
+# three on Mountain (data.eia930.frames, card N6). Measured on the files
+# themselves: PACE->NEVP mirrors -(NEVP->PACE) to 0.0 MW mean |error| at a +1 h
+# offset (43.8-45.3 MW at 0 h), 2020 and 2024. A member absent here is Pacific.
+NWPP_MEMBER_LOCAL_TZ: dict[str, str] = {
+    "NWMT": "America/Denver",
+    "PACE": "America/Denver",
+    "WAUW": "America/Denver",
+}
+
 # Year-varying NYISO interface transfer limits that change with the AC
 # Transmission build-out. The static limits in iso_configs._nyiso_config are
 # nominal; an (iso, year) entry here overrides the matching link's TTC for that

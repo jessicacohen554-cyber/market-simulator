@@ -1086,3 +1086,51 @@ Records:
 - `docs/records/nwpp/FINDING-nwppnext24-coi-depth-phase0-2026-10-03.md`
 - `PRECOMMIT-nwppnext24-data-resolve-2019-2025-2026-10-03.md`
 - `RESULT-nwppnext24-data-resolve-2026-10-03.md`
+
+## NWPP-NEXT-25 — 2026-10-03 — served schedule placed at reporting members' zones → KEEPER `2026-10-03-nwpp-next-25-served`
+
+**What changed.** Keeper NEXT-24 plus `nwpp_served_schedule_zonal_attribution`, owner card "Build and solve".
+Promoted on owner card "Promote".
+
+- The schedule served for every unpriced counterparty (LDWP, WALC, AZPS, WACM, PNM, SRP, BANC, AESO, …) had been
+  spread over the five zones by load share.
+- Each measured EIA-930 per-DIBA leg now lands at its reporting member's zone: NEVP → SNV, PACE → EAST,
+  BPAT → NW, GRID → OR.
+- System demand is unchanged; zero free parameters.
+- The 2019–22 per-DIBA legs of NEVP, PACE, NWMT and WAUW were back-filled through the keyless EIA bulk route.
+- Seven shards ran at pin `d3965589`.
+
+**Phase 0 (zero LP).**
+
+- **C3a tail days: no admissible lever.** Jan 2024 NW ELAP = WEIM-wide MCE $204–426 plus NW congestion MCC $352–608,
+  confirmed by Mid-C bilateral trades at $800–930. The model's quantities match.
+  - RSE failures are an outcome, not an instrument.
+  - A BAL-002-WECC-3 contingency reserve is inert: seam headroom at measured limits leaves ≥ 3.1 GW in every 2024 hour.
+  - Hydro is already at its measured envelope.
+- **CC over-run.**
+  - Keeper SNV gas was 31–32 TWh against NEVP EIA-930's 22 TWh.
+  - COI and BC exports ran 8 and 6 TWh over measured (2024).
+  - Cause: the load-share spread of the served schedule.
+
+**Scores against keeper NEXT-24 (same bench render).** NOT-YET → NOT-YET, FAIL records 9 → 8.
+
+| reading | keeper | this keeper |
+|---|---|---|
+| C3a 2023 / 2024 / 2025 | −11.6 / −27.8 / −1.6 % | **−3.2 (PASS)** / −25.3 / +0.3 % |
+| C3b 2023 / 2024 / 2025 | 0.225 / 0.791 / 0.127 | 0.209 / 0.772 / 0.118 |
+| C1 CC_REGULAR 2019 / 2020 / 2024 / 2025 | +12.17 / +6.74 / +14.90 / +7.99 TWh | **+12.73 / +7.51** / +12.77 / +6.82 |
+| C4 gas 2019 / 2023 / 2024 r | 0.651 / 0.534 / 0.789 | **0.649 / 0.533** / 0.797 |
+| C4 coal 2023 / 2024 r | 0.766 / 0.796 | **0.756 / 0.783** |
+| SNV gas 2024 (NEVP EIA-930 21.7) | 32.26 TWh | 28.11 |
+| D-1 failures | 13 | **16** |
+
+Regressions are in bold. D-2 is 0 in every class-year.
+
+**Prune:** `2026-10-03-nwpp-next-24-head` / `nwppnext24_span`.
+
+Records:
+
+- `docs/records/nwpp/FINDING-nwppnext25-scarcity-phase0-2026-10-03.md`
+- `FINDING-nwppnext25-cc-served-schedule-phase0-2026-10-03.md`
+- `PRECOMMIT-nwppnext25-served-schedule-2019-2025-2026-10-03.md`
+- `RESULT-nwppnext25-served-schedule-2019-2025-2026-10-03.md`

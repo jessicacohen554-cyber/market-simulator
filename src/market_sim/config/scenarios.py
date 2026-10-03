@@ -1375,6 +1375,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # prices COI's export leg on a different basis and hashes distinctly.
     # Registered IN THE SAME COMMIT as the field.
     "nwpp_coi_pnw_delivery_basis",
+    # NWPP-NEXT-25 served-schedule zonal attribution (GATED default off):
+    # dropped from the hash at its default so every pre-existing cache key
+    # stays byte-stable (the off path never reads the per-DIBA legs); an
+    # armed run places the served schedule at its reporting members' zones, a
+    # different demand array, and hashes distinctly. Registered IN THE SAME
+    # COMMIT as the field.
+    "nwpp_served_schedule_zonal_attribution",
     # pjm-h19 EIA-930 balance-identity demand screen (GATED default off):
     # dropped from the hash at its default so every pre-existing cache key
     # stays byte-stable (the off path never calls the screen); an armed run
@@ -2889,6 +2896,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "nwpp_seam_measured_limits": "False",
     # Added by NWPP-NEXT-23 WITH the field (the nyiso-119 discipline).
     "nwpp_coi_pnw_delivery_basis": "False",
+    # Added by NWPP-NEXT-25 WITH the field (the nyiso-119 discipline).
+    "nwpp_served_schedule_zonal_attribution": "False",
     # Added by pjm-h19 WITH the field (the nyiso-119 discipline).
     "demand_balance_screen": "False",
     # Added by ercot-236 WITH the field, in the same commit as its
@@ -21696,6 +21705,24 @@ class ScenarioConfig:
     # model.interchange.import_nodes.inject_reference_price_mc;
     # FINDING-nwppnext23-price-level-phase0-2026-10-03.md.
     nwpp_coi_pnw_delivery_basis: bool = False
+    # NWPP-NEXT-25 served-schedule zonal attribution (GATED default off,
+    # NWPP-only, backcast-measured, ZERO fitted scalars; owner card
+    # 2026-10-03 "Build and solve"). Read only under the priced seams (the
+    # served schedule of envelopes.nwpp_unpriced_residual_interchange; raises
+    # otherwise). Each measured leg of that schedule (the unpriced
+    # counterparties: LDWP, WALC, AZPS, WACM, PNM, SRP, BANC, AESO, ...) is
+    # placed at the zone of the member BA that reports it on its own EIA-930
+    # per-DIBA file (NEVP -> SNV, PACE -> EAST, BPAT -> NW, GRID -> OR, NWMT /
+    # WAUW -> INLAND) instead of the load-share spread; the remainder the legs
+    # do not cover keeps the spread, so the system total is unchanged by
+    # construction. Rule 14: the measured per-counterparty legs over a spread
+    # that ignores where the ties land (the ERCOT tie-zone / PJM border-zone
+    # precedent). Rule 13: a placement of a measured served schedule the keeper
+    # already serves, never a new pinned flow; forward story is the priced
+    # seams' own (a forecast year has no served schedule).
+    # envelopes.nwpp_served_schedule_zone_interchange;
+    # FINDING-nwppnext25-cc-served-schedule-phase0-2026-10-03.md.
+    nwpp_served_schedule_zonal_attribution: bool = False
     # pjm-h19 EIA-930 balance-identity demand repair (GATED default off,
     # ISO-agnostic, ZERO fitted scalars). Repairs an hour whose metered
     # Demand makes an isolated reversal larger than the BA-year's own Tukey
@@ -25138,6 +25165,7 @@ TIER_TAGS: dict[str, int] = {
     "nwpp_demand_plant_basis": 1,
     "nwpp_seam_measured_limits": 3,
     "nwpp_coi_pnw_delivery_basis": 1,
+    "nwpp_served_schedule_zonal_attribution": 1,
     "demand_balance_screen": 1,
     "ercot_offer_swcap_clip": 1,
     "ercot_swcap_vintage": 1,

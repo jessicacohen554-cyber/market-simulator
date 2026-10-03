@@ -22,6 +22,7 @@ from market_sim.config.iso_configs import ISOConfig, SUPPORTED_ISOS, get_iso_con
 
 from .envelopes import (
     _SCALAR_INTERCHANGE_ISOS,
+    nwpp_served_schedule_zone_interchange,
     nwpp_unpriced_residual_interchange,
     pjm_net_interchange,
     pjm_zonal_interchange,
@@ -1213,6 +1214,7 @@ def load_demand(
     nwpp_demand_plant_basis: bool = False,
     demand_balance_screen: bool = False,
     caiso_tac_shares_standard_time: bool = False,
+    nwpp_served_schedule_zonal_attribution: bool = False,
 ) -> np.ndarray:
     """Load hourly ISO demand and allocate it across zones.
 
@@ -1308,6 +1310,14 @@ def load_demand(
             nwpp_plant_basis_correction`). Requires
             ``nwpp_grid_carried_wind_served``. Default ``False`` is
             byte-identical.
+        nwpp_served_schedule_zonal_attribution: NWPP only, priced seams
+            only (``include_interchange=False``) — place each measured leg
+            of the served schedule at its reporting member's zone instead of
+            the load-share spread (NWPP-NEXT-25; see
+            :func:`~market_sim.data.eia930.envelopes.
+            nwpp_served_schedule_zone_interchange`). Column sums are
+            unchanged. Raises when armed outside that path. Default
+            ``False`` is byte-identical.
         demand_balance_screen: repair isolated demand readings that break the
             EIA-930 balance identity (pjm-h19; see
             :func:`_screen_demand_balance`). Applied to the frame-sourced
@@ -1505,6 +1515,25 @@ def load_demand(
                 year,
                 float(zone_interchange.sum(axis=0).mean()),
             )
+    if nwpp_served_schedule_zonal_attribution:
+        # NWPP-NEXT-25: the served schedule's measured legs at their
+        # reporting member's zone; the remainder keeps the load-share spread,
+        # so column sums equal the served total exactly.
+        if iso != "NWPP" or include_interchange:
+            raise ValueError(
+                "nwpp_served_schedule_zonal_attribution places the NWPP served "
+                "schedule of the priced seams (iso NWPP, include_interchange="
+                f"False); got iso={iso!r}, include_interchange={include_interchange}"
+            )
+        zone_interchange = nwpp_served_schedule_zone_interchange(
+            year, iso_config.zone_names, interchange, np.asarray(weights)
+        )
+        logger.info(
+            "NWPP served schedule placed by reporting member for %d: %+.0f MW "
+            "avg (export-positive)",
+            year,
+            float(zone_interchange.sum(axis=0).mean()),
+        )
     if zone_interchange is not None:
         demand += zone_interchange
     else:

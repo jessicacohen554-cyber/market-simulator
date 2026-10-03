@@ -2371,6 +2371,7 @@ def _diba_legs_export(
     dibas: tuple[str, ...],
     sign: float,
     utc_hour_ending: pd.DatetimeIndex,
+    tz: str = "America/Los_Angeles",
 ) -> tuple[np.ndarray, float]:
     """Return one reporting BA's summed per-DIBA legs, footprint-export-positive.
 
@@ -2380,7 +2381,10 @@ def _diba_legs_export(
     :data:`~market_sim.config.interchange_config.NWPP_PRICED_SEAM_LEGS` is a
     Pacific BA), localizes each leg exactly as :func:`_nwpp_grid_external_legs`
     does, and joins on the pool frame's hour-ending ``UTC time``. Returns the
-    ``sign``-scaled sum and the share of hours every leg covers.
+    ``sign``-scaled sum and the share of hours every leg covers. ``tz`` is the
+    reporter's local clock (default Pacific;
+    :data:`~market_sim.config.constants.NWPP_MEMBER_LOCAL_TZ` for a Mountain
+    member).
 
     Raises:
         ValueError: When the file is absent or carries no row of the year
@@ -2398,13 +2402,9 @@ def _diba_legs_export(
         leg = frame[frame["diba"].astype(str) == diba]
         stamps = pd.DatetimeIndex(leg["local_time"])
         try:
-            utc = stamps.tz_localize(
-                "America/Los_Angeles", ambiguous="infer", nonexistent="shift_forward"
-            )
+            utc = stamps.tz_localize(tz, ambiguous="infer", nonexistent="shift_forward")
         except Exception:  # a leg whose repeated hour is not in file order
-            utc = stamps.tz_localize(
-                "America/Los_Angeles", ambiguous=False, nonexistent="shift_forward"
-            )
+            utc = stamps.tz_localize(tz, ambiguous=False, nonexistent="shift_forward")
         series = pd.Series(
             leg["mw"].to_numpy(dtype=float),
             index=utc.tz_convert("UTC").tz_localize(None),
@@ -2479,6 +2479,112 @@ def nwpp_unpriced_residual_interchange(
                 coverage,
             )
     return position - priced
+
+
+def nwpp_served_schedule_zone_interchange(
+    year: int,
+    zone_names: list[str],
+    residual: np.ndarray,
+    weights: np.ndarray,
+) -> np.ndarray:
+    """Place the NWPP served schedule's measured legs at their reporting member's zone (MW, export-positive).
+
+    NWPP-NEXT-25 (``ScenarioConfig.nwpp_served_schedule_zonal_attribution``,
+    GATED default off). :func:`nwpp_unpriced_residual_interchange` serves every
+    counterparty the priced seams do not price (LDWP, WALC, AZPS, WACM, PNM,
+    SRP, BANC, AESO, ...) at its measured flow, and ``load_demand`` spread that
+    scalar over the five zones by load share. Physically each leg lands on the
+    member BA that reports it: NEVP's LDWP/WALC imports in SNV, PACE's
+    WACM/AZPS imports in EAST, BPAT's PDCI and BANC exports in NW. This is the
+    ERCOT tie-zone / PJM border-zone attribution
+    (:func:`~market_sim.data.eia930.demand.ercot_tie_zone_interchange`)
+    applied to NWPP. Zero free parameters.
+
+    For every member in :data:`~market_sim.data.zone_assignment._NWPP_BA_ZONES`
+    the legs to each out-of-footprint DIBA on its own EIA-930 per-DIBA file
+    (local clock :data:`~market_sim.config.constants.NWPP_MEMBER_LOCAL_TZ`) are
+    placed at the member's zone. A priced seam's legs
+    (:data:`~market_sim.config.interchange_config.NWPP_PRICED_SEAM_LEGS`) are
+    skipped in a year the seam is priced, since the seam clears them (rule 19).
+    Whatever the attributed legs do not cover (the plant-basis and
+    grid-carried-wind corrections, BPAT's reporting non-closure, a member with
+    no per-DIBA rows in the year) is spread by ``weights`` as before, so each
+    column sums to ``residual`` exactly and the system energy balance is
+    unchanged by construction; only the zonal placement moves.
+
+    Args:
+        year: Backcast year.
+        zone_names: Model zone names, the row order of the output.
+        residual: The served schedule (``nwpp_unpriced_residual_interchange``),
+            length ``HOURS_PER_YEAR``, export-positive: the conserved total.
+        weights: ``(n_zones, HOURS_PER_YEAR)`` demand weights for the remainder.
+
+    Returns:
+        ``(n_zones, HOURS_PER_YEAR)`` signed MW matrix to ADD to zonal demand.
+
+    Raises:
+        ValueError: When a member's zone is not a model zone (fail closed).
+    """
+    from market_sim.config.constants import NWPP_MEMBER_LOCAL_TZ
+    from market_sim.config.interchange_config import (
+        INTERFACE_NEIGHBORS,
+        NWPP_PRICED_SEAM_LEGS,
+        seam_priced_in_year,
+    )
+    from market_sim.data.zone_assignment import _NWPP_BA_ZONES
+
+    utc = pd.DatetimeIndex(_eia_hourly_frame_filled("NWPP", year)["UTC time"])
+    members = set(_NWPP_BA_ZONES)
+    seams = {n.name: n for n in INTERFACE_NEIGHBORS["NWPP"]}
+    priced_pairs: set[tuple[str, str]] = set()
+    for seam, legs in NWPP_PRICED_SEAM_LEGS.items():
+        if not seam_priced_in_year(seams[seam], year):
+            continue  # an unpriced seam's legs are served, so they are attributed
+        for reporter, dibas, _sign in legs:
+            for diba in dibas:
+                priced_pairs.add(
+                    (reporter, diba) if reporter in members else (diba, reporter)
+                )
+    zone_idx = {z: i for i, z in enumerate(zone_names)}
+    matrix = np.zeros((len(zone_names), HOURS_PER_YEAR), dtype=float)
+    lo = pd.Timestamp(f"{year}-01-01 01:00:00")
+    hi = pd.Timestamp(f"{year + 1}-01-01 00:00:00")
+    for member, zone in sorted(_NWPP_BA_ZONES.items()):
+        if zone not in zone_idx:
+            raise ValueError(f"NWPP member {member} zone {zone} is not a model zone")
+        path = RAW_DIR / "eia-930-interchange" / f"{member} interchange hourly.parquet"
+        if not path.exists():
+            continue
+        rows = pd.read_parquet(path, columns=["diba", "mw", "local_time"])
+        rows = rows[
+            (rows["local_time"] >= lo) & (rows["local_time"] <= hi) & rows["mw"].notna()
+        ]
+        dibas = sorted(
+            d
+            for d in set(rows["diba"].astype(str))
+            if d not in members and (member, d) not in priced_pairs
+        )
+        tz = NWPP_MEMBER_LOCAL_TZ.get(member, "America/Los_Angeles")
+        for diba in dibas:
+            try:
+                leg, coverage = _diba_legs_export(member, (diba,), 1.0, utc, tz=tz)
+            except ValueError:
+                # Rows only at the local year edge, none on the model clock:
+                # the leg carries nothing this year and stays in the remainder.
+                continue
+            matrix[zone_idx[zone]] += leg[:HOURS_PER_YEAR]
+            logger.info(
+                "NWPP %d served schedule: %s -> %s %+.3f TWh placed at %s "
+                "(hour coverage %.4f)",
+                year,
+                member,
+                diba,
+                leg.sum() / 1e6,
+                zone,
+                coverage,
+            )
+    remainder = np.asarray(residual, dtype=float) - matrix.sum(axis=0)
+    return matrix + np.asarray(weights, dtype=float) * remainder[None, :]
 
 
 def soco_net_interchange(year: int) -> np.ndarray | None:
