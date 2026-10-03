@@ -1964,19 +1964,23 @@ def _cc_steam_part_generators(eia860_dir: Path) -> frozenset[tuple[int, str]]:
 
     cand = raw[(pm == CC_STEAM_PART_PRIME_MOVER) & (es != "NG") & has_uc]
     out: set[tuple[int, str]] = set()
-    for idx, row in cand.iterrows():
-        key = (row["Plant Code"], uc.at[idx])
+    for pc_v, uc_v, ca_year, gid_v in zip(
+        cand["Plant Code"].to_numpy(),
+        uc.loc[cand.index].to_numpy(),
+        year.loc[cand.index].to_numpy(),
+        cand["Generator ID"].to_numpy(),
+    ):
+        key = (pc_v, uc_v)
         first_turbine = sib_year.get(key)
         if first_turbine is None or pd.isna(first_turbine):
             continue  # no NG CT sibling in this block
-        ca_year = year.at[idx]
         if pd.isna(ca_year) or float(ca_year) < float(first_turbine):
             continue  # predates its own turbines — a steam header, not a block
         try:
-            plant_code = int(row["Plant Code"])
+            plant_code = int(pc_v)
         except (TypeError, ValueError):
             continue
-        out.add((plant_code, str(row["Generator ID"]).strip()))
+        out.add((plant_code, str(gid_v).strip()))
     logger.info(
         "EIA-860: %d combined-cycle steam part(s) resolved for the "
         "cc_steam_part_capacity repair",
@@ -2123,9 +2127,9 @@ def _cc_block_summer_ratings(
             continue
         total = float(ca["su"].sum())
         n_blocks += 1
-        for _, row in grp.iterrows():
-            share = float(row["np"]) / np_sum if pd.notna(row["np"]) else 0.0
-            out[(int(plant), str(row["gen"]))] = total * share
+        for np_v, gen_v in zip(grp["np"].to_numpy(), grp["gen"].to_numpy()):
+            share = float(np_v) / np_sum if pd.notna(np_v) else 0.0
+            out[(int(plant), str(gen_v))] = total * share
     logger.info(
         "EIA-860: %d combined-cycle block(s) rated on one row resolved for the "
         "cc_block_summer_rating reconciliation (%s)",
@@ -2183,15 +2187,17 @@ def _apply_cc_block_summer_rating(
         .groupby("plant")[["before", "after"]]
         .sum()
     )
-    for plant, row in moved.iterrows():
+    for plant, before_v, after_v in zip(
+        moved.index, moved["before"].to_numpy(), moved["after"].to_numpy()
+    ):
         logger.info(
             "%s: CC block summer rating (plant %d): %.1f MW carried -> %.1f MW "
             "reported block rating (%.1f MW nameplate-fill phantom removed)",
             iso,
             int(plant),
-            float(row["before"]),
-            float(row["after"]),
-            float(row["before"] - row["after"]),
+            float(before_v),
+            float(after_v),
+            float(before_v - after_v),
         )
     return df
 
@@ -4559,7 +4565,8 @@ def ct_mustrun_floor_mwh_by_plant(year: int) -> dict[int, np.ndarray]:
         return {}
     cols = monthly_netgen_columns()
     grouped = sub.groupby("plant_id")[cols].sum()
-    return {int(pid): row.to_numpy(dtype=float) for pid, row in grouped.iterrows()}
+    values = grouped.to_numpy(dtype=float)
+    return {int(pid): values[i].copy() for i, pid in enumerate(grouped.index)}
 
 
 # ERCOT coal-unit commission year by EIA plant code — the in-service year

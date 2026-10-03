@@ -15,6 +15,7 @@ from market_sim.model.lp.layout import (
     VariableLayout,
     _build_zone_storage_map,
     _vstack_csr_free,
+    kron_hours,
 )
 
 
@@ -323,7 +324,7 @@ def _build_reserve_rows(
         (np.concatenate(vals), (np.concatenate(rows), np.concatenate(cols))),
         shape=(n_hr * n_zones, layout.vars_per_hour),
     ).tocsr()
-    headroom = sp.kron(sp.eye(T, format="csr"), headroom_per_hour, format="csr")
+    headroom = kron_hours(T, headroom_per_hour)
     # RHS: headroom-row-zone-summed eligible capacity per hour, hour-major
     # (row t*(n_hr*n_zones) + h*n_zones + z).
     hr_upper = zone_cap.T.ravel()
@@ -388,7 +389,7 @@ def _build_reserve_rows(
         (np.concatenate(bvals), (np.concatenate(brows), np.concatenate(bcols))),
         shape=(n_fam, layout.vars_per_hour),
     ).tocsr()
-    balance = sp.kron(sp.eye(T, format="csr"), bal_per_hour, format="csr")
+    balance = kron_hours(T, bal_per_hour)
     # Hour-major RHS (row t*n_fam + f): req2d is (n_fam, T) -> transpose -> ravel.
     bal_lower = req2d.T.ravel()
     bal_upper = np.full(n_fam * T, np.inf)
@@ -428,7 +429,7 @@ def _build_reserve_rows(
             (np.concatenate(cvals), (np.concatenate(crows), np.concatenate(ccols))),
             shape=(n_hr, layout.vars_per_hour),
         ).tocsr()
-        cap_block = sp.kron(sp.eye(T, format="csr"), cap_per_hour, format="csr")
+        cap_block = kron_hours(T, cap_per_hour)
         # Hour-major RHS (row t*n_hr + h): cap is (n_hr, T) -> transpose -> ravel.
         blocks.append(cap_block)
         lowers.append(np.full(n_hr * T, -np.inf))
@@ -472,7 +473,7 @@ def _build_reserve_rows(
             (np.concatenate(evals), (np.concatenate(erows), np.concatenate(ecols))),
             shape=(n_hr, layout.vars_per_hour),
         ).tocsr()
-        env_block = sp.kron(sp.eye(T, format="csr"), env_per_hour, format="csr")
+        env_block = kron_hours(T, env_per_hour)
         blocks.append(env_block)
         lowers.append(np.full(n_hr * T, -np.inf))
         uppers.append(oc.T.ravel())
@@ -511,7 +512,7 @@ def _build_reserve_rows(
             ),
             shape=(n_zones, layout.vars_per_hour),
         ).tocsr()
-        pw_block = sp.kron(sp.eye(T, format="csr"), pw_per_hour, format="csr")
+        pw_block = kron_hours(T, pw_per_hour)
         # RHS: zone-summed storage power cap, (n_zones, T) hour-major.
         if spc.ndim == 2:
             zcap = zone_storage @ spc  # (n_zones, T)
@@ -539,7 +540,7 @@ def _build_reserve_rows(
             ),
             shape=(n_zones, layout.vars_per_hour),
         ).tocsr()
-        du_block = sp.kron(sp.eye(T, format="csr"), du_per_hour, format="csr")
+        du_block = kron_hours(T, du_per_hour)
         blocks.append(du_block)
         lowers.append(np.full(n_zones * T, -np.inf))
         uppers.append(np.zeros(n_zones * T))
@@ -824,7 +825,7 @@ def _build_reserve_rows_pergen(
         ),
         shape=(n_pools, layout.vars_per_hour),
     ).tocsr()
-    joint = sp.kron(sp.eye(T, format="csr"), joint_per_hour, format="csr")
+    joint = kron_hours(T, joint_per_hour)
     # RHS hour-major (row t*n_pools + p): member caps summed per pool,
     # (n_pools, T); 0 for postured pools (the capacity bound lives on U).
     joint_upper = joint_rhs.T.ravel()
@@ -864,9 +865,7 @@ def _build_reserve_rows_pergen(
                 ),
                 shape=(m_sel.size, layout.vars_per_hour),
             ).tocsr()
-            posture_blocks.append(
-                sp.kron(sp.eye(T, format="csr"), ml_per_hour, format="csr")
-            )
+            posture_blocks.append(kron_hours(T, ml_per_hour))
             posture_lower.append(np.zeros(m_sel.size * T))
             posture_upper.append(np.full(m_sel.size * T, np.inf))
 
@@ -900,8 +899,7 @@ def _build_reserve_rows_pergen(
             shape=(T, T),
         )
         posture_blocks.append(
-            sp.kron(sp.eye(T, format="csr"), d0, format="csr")
-            + sp.kron(shift_prev, d_prev, format="csr")
+            kron_hours(T, d0) + sp.kron(shift_prev, d_prev, format="csr")
         )
         posture_lower.append(np.full(q * T, -np.inf))
         posture_upper.append(np.zeros(q * T))
@@ -991,7 +989,7 @@ def _build_reserve_rows_pergen(
         (np.concatenate(bvals), (np.concatenate(brows), np.concatenate(bcols))),
         shape=(n_fam, layout.vars_per_hour),
     ).tocsr()
-    balance = sp.kron(sp.eye(T, format="csr"), bal_per_hour, format="csr")
+    balance = kron_hours(T, bal_per_hour)
     bal_lower = req2d.T.ravel()
     bal_upper = np.full(n_fam * T, np.inf)
 
@@ -1027,7 +1025,7 @@ def _build_reserve_rows_pergen(
             ),
             shape=(n_zones, layout.vars_per_hour),
         ).tocsr()
-        gate_blocks.append(sp.kron(sp.eye(T, format="csr"), pw_per_hour, format="csr"))
+        gate_blocks.append(kron_hours(T, pw_per_hour))
         # RHS: zone-summed storage power cap, (n_zones, T) hour-major.
         if spc.ndim == 2:
             zcap = zone_storage @ spc  # (n_zones, T)
@@ -1053,7 +1051,7 @@ def _build_reserve_rows_pergen(
             ),
             shape=(n_zones, layout.vars_per_hour),
         ).tocsr()
-        gate_blocks.append(sp.kron(sp.eye(T, format="csr"), du_per_hour, format="csr"))
+        gate_blocks.append(kron_hours(T, du_per_hour))
         gate_lower.append(np.full(n_zones * T, -np.inf))
         gate_upper.append(np.zeros(n_zones * T))
 
@@ -1089,9 +1087,7 @@ def _build_reserve_rows_pergen(
                 ),
                 shape=(gcols.size, layout.vars_per_hour),
             ).tocsr()
-            gated_blocks.append(
-                sp.kron(sp.eye(T, format="csr"), og_per_hour, format="csr")
-            )
+            gated_blocks.append(kron_hours(T, og_per_hour))
             gated_lower.append(np.full(gcols.size * T, -np.inf))
             gated_upper.append(np.zeros(gcols.size * T))
     if pool_ramp10_shared is not None:
@@ -1105,7 +1101,7 @@ def _build_reserve_rows_pergen(
             ),
             shape=(n_pools, layout.vars_per_hour),
         ).tocsr()
-        gated_blocks.append(sp.kron(sp.eye(T, format="csr"), sr_per_hour, format="csr"))
+        gated_blocks.append(kron_hours(T, sr_per_hour))
         gated_lower.append(np.full(n_pools * T, -np.inf))
         gated_upper.append(np.ascontiguousarray(pr).T.ravel())
 

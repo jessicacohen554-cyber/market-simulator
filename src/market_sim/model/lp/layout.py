@@ -424,3 +424,52 @@ def _vstack_csr_free(
         npos += bn
         blocks[k] = None  # release this block before copying the next
     return sp.csr_matrix((data, indices, indptr), shape=(total_rows, total_cols))
+
+
+def kron_hours(T: int, block: sp.spmatrix) -> sp.csr_matrix:
+    """Replicate a per-hour CSR ``block`` block-diagonally over ``T`` hours.
+
+    Drop-in for ``sp.kron(sp.eye(T, format="csr"), block, format="csr")``
+    with a byte-identical result (``data`` / ``indices`` / ``indptr`` values
+    and index dtype): scipy's ``kron`` materialises a COO of ``T * nnz``
+    (row, col, data) triplets and then runs ``coo_tocsr`` plus a
+    ``sum_duplicates`` pass, ~3x the transient of the CSR it returns. For an
+    identity left factor the result is simply ``T`` copies of ``block`` laid
+    along the diagonal, so it is written directly: the per-hour ``data`` and
+    ``indices`` tile, column indices shift by ``t * n_cols``, and the row
+    pointers shift by ``t * nnz``. No Python loop over hours (rule #2).
+
+    Equivalence holds when ``block`` is canonical CSR (sorted, duplicate-free
+    column indices — what every ``coo.tocsr()`` / ``csr_matrix((d, (r, c)))``
+    / ``sp.hstack(format="csr")`` construction returns), because ``kron``'s
+    canonicalisation is then a no-op; any other input, and the empty cases,
+    fall through to ``sp.kron`` itself.
+
+    Args:
+        T: Number of hours (diagonal block count).
+        block: Per-hour constraint block, shape ``(n_rows, n_cols)``.
+
+    Returns:
+        CSR matrix of shape ``(T * n_rows, T * n_cols)``.
+    """
+    from scipy.sparse._sputils import get_index_dtype
+
+    B = sp.csr_matrix(block)
+    nnz = B.nnz
+    n_rows, n_cols = B.shape
+    if T <= 0 or nnz == 0 or not B.has_canonical_format:
+        return sp.kron(sp.eye(T, format="csr"), B, format="csr")
+    # scipy's coo->csr picks the index dtype from the largest of nnz and the
+    # output dimensions; mirror it so the buffers match byte for byte.
+    idx_dtype = get_index_dtype(maxval=max(T * nnz, T * n_rows, T * n_cols))
+    hours = np.arange(T, dtype=idx_dtype)
+    indices = np.tile(B.indices.astype(idx_dtype, copy=False), T)
+    indices += np.repeat(hours * n_cols, nnz)
+    indptr = np.empty(T * n_rows + 1, dtype=idx_dtype)
+    indptr[0] = 0
+    indptr[1:] = (
+        B.indptr[1:].astype(idx_dtype, copy=False)[np.newaxis, :]
+        + (hours * nnz)[:, np.newaxis]
+    ).ravel()
+    data = np.tile(B.data.astype(np.float64, copy=False), T)
+    return sp.csr_matrix((data, indices, indptr), shape=(T * n_rows, T * n_cols))
