@@ -630,7 +630,10 @@ def ercot_gas_spot_share_by_zone(
                         agg = merged.groupby("ERCOT_Zone")[["_w", "_sw"]].sum()
                         agg = agg[agg["_w"] > 0]
                         result_clean = {
-                            str(z): float(r._sw / r._w) for z, r in agg.iterrows()
+                            str(z): float(sw / w_z)
+                            for z, sw, w_z in zip(
+                                agg.index, agg["_sw"].to_numpy(), agg["_w"].to_numpy()
+                            )
                         } or None
                 _ERCOT_GAS_SPOT_ZONE_CLEAN_CACHE[cache_key] = result_clean
             return _ERCOT_GAS_SPOT_ZONE_CLEAN_CACHE[cache_key]
@@ -656,7 +659,10 @@ def ercot_gas_spot_share_by_zone(
                 agg = merged.groupby("ERCOT_Zone")[["_w", "_sw"]].sum()
                 agg = agg[agg["_w"] > 0]
                 result = {
-                    str(z): float(r._sw / r._w) for z, r in agg.iterrows()
+                    str(z): float(sw / w_z)
+                    for z, sw, w_z in zip(
+                        agg.index, agg["_sw"].to_numpy(), agg["_w"].to_numpy()
+                    )
                 } or None
     _ERCOT_GAS_SPOT_CACHE[key] = result
     return result

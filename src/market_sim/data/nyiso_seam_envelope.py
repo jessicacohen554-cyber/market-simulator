@@ -112,6 +112,38 @@ def _model_clock(hours: int) -> tuple[np.ndarray, np.ndarray]:
     return cal.month.to_numpy(), cal.hour.to_numpy()
 
 
+def _month_hod_percentile_table(
+    values: np.ndarray, src_mo: np.ndarray, src_hr: np.ndarray, percentile: float
+) -> np.ndarray:
+    """Return the ``(12, 24)`` per-(month, hour-of-day) ``percentile`` of ``values``.
+
+    Bins with no source row stay 0. A month whose rows are whole days on a
+    plain hourly clock (the hour-of-day cycles exactly ``0..23``) is reduced in
+    one ``np.percentile(..., axis=0)`` call on its ``(days, 24)`` view — the
+    same elementwise reduction as the per-bin call, so the floats are
+    identical; a month with a gap or a repeated hour (DST) takes the per-bin
+    path.
+    """
+    table = np.zeros((12, 24))
+    pattern = np.arange(24)
+    for m in range(1, 13):
+        idx = np.flatnonzero(src_mo == m)
+        if idx.size == 0:
+            continue
+        v = values[idx]
+        hh = src_hr[idx]
+        if idx.size % 24 == 0 and np.array_equal(
+            hh.reshape(-1, 24), np.broadcast_to(pattern, (idx.size // 24, 24))
+        ):
+            table[m - 1] = np.percentile(v.reshape(-1, 24), percentile, axis=0)
+            continue
+        for h in range(24):
+            b = v[hh == h]
+            if b.size:
+                table[m - 1, h] = np.percentile(b, percentile)
+    return table
+
+
 def seam_envelope_by_zone(
     frame: pd.DataFrame, hours: int, percentile: float
 ) -> dict[str, tuple[np.ndarray, np.ndarray]]:
@@ -142,9 +174,9 @@ def seam_envelope_by_zone(
     src["_hr"] = ts.loc[keep].dt.hour.to_numpy()
 
     month_of_hour, hour_of_day = _model_clock(hours)
+    present = set(src["interface"].unique())
     out: dict[str, tuple[np.ndarray, np.ndarray]] = {}
     for zone, ties in NYISO_SEAM_TIE_LANDING.items():
-        present = set(src["interface"].unique())
         missing = [t for t in ties if t not in present]
         if missing:
             logger.warning(
@@ -167,18 +199,12 @@ def seam_envelope_by_zone(
         exp = np.clip(-net["net_mw"].to_numpy(), 0.0, None)
         src_mo, src_hr = net["_mo"].to_numpy(), net["_hr"].to_numpy()
 
-        import_cap = np.zeros(hours, dtype=float)
-        export_cap = np.zeros(hours, dtype=float)
-        for m in range(1, 13):
-            for h in range(24):
-                bin_src = (src_mo == m) & (src_hr == h)
-                if not bin_src.any():
-                    continue
-                bin_dst = (month_of_hour == m) & (hour_of_day == h)
-                if not bin_dst.any():
-                    continue
-                import_cap[bin_dst] = np.percentile(imp[bin_src], percentile)
-                export_cap[bin_dst] = np.percentile(exp[bin_src], percentile)
+        # (month, hod) tables mapped onto the model clock; an empty source bin
+        # leaves its model hours at 0, exactly as the per-bin fill did.
+        imp_tab = _month_hod_percentile_table(imp, src_mo, src_hr, percentile)
+        exp_tab = _month_hod_percentile_table(exp, src_mo, src_hr, percentile)
+        import_cap = imp_tab[month_of_hour - 1, hour_of_day]
+        export_cap = exp_tab[month_of_hour - 1, hour_of_day]
         out[zone] = (import_cap, export_cap)
     return out
 
