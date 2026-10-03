@@ -629,7 +629,7 @@
       "gate": {
         "a_keeper_marker": {
           "status": "fail",
-          "detail": "RE-KEYED 2026-10-03 by G5 snippet (identity only): 2026-10-02-w0-nwpp-fix2 -> 2026-10-03-nwpp-next-22b-w0; leg verdict unchanged. keeper 2026-10-03-nwpp-next-22b-w0 (registry years [2019, 2020, 2021, 2022, 2023, 2024, 2025], full span, rule 16 [R-ALLYEARS]; frontend/data/backcast/keepers/NWPP.json); ISO determination NOT-YET under rubric v3.13, read from the committed status sidecar frontend/data/backcast/status/NWPP.js (not re-scored); marker complete=False final=False. FAIL ON THE ABSENT MARKER: gate (a) needs the designated full-span keeper AND a `complete` entry; calibration-complete.json carries no `complete` and no `withdrawn` entry for NWPP (never declared; rule 22 [R-C3C]: `calibration-complete.json` survives only as the keeper designation and the forecast program's gate-(a) input, and the standing Q5 rule - a marker cannot stand on a NOT-YET keeper - applies). Row added 2026-10-03 by audit lane G5 (owner ruling 2026-10-03: add NWPP and SOCO to the board) on the 2026-10-02 keeper.",
+          "detail": "RE-KEYED 2026-10-03 by promote_keeper.py (identity only): 2026-10-03-nwpp-next-22b-w0 -> 2026-10-03-closeout-nwpp-anchor-roster; leg verdict unchanged. RE-KEYED 2026-10-03 by G5 snippet (identity only): 2026-10-02-w0-nwpp-fix2 -> 2026-10-03-nwpp-next-22b-w0; leg verdict unchanged. keeper 2026-10-03-closeout-nwpp-anchor-roster (registry years [2019, 2020, 2021, 2022, 2023, 2024, 2025], full span, rule 16 [R-ALLYEARS]; frontend/data/backcast/keepers/NWPP.json); ISO determination NOT-YET under rubric v3.13, read from the committed status sidecar frontend/data/backcast/status/NWPP.js (not re-scored); marker complete=False final=False. FAIL ON THE ABSENT MARKER: gate (a) needs the designated full-span keeper AND a `complete` entry; calibration-complete.json carries no `complete` and no `withdrawn` entry for NWPP (never declared; rule 22 [R-C3C]: `calibration-complete.json` survives only as the keeper designation and the forecast program's gate-(a) input, and the standing Q5 rule - a marker cannot stand on a NOT-YET keeper - applies). Row added 2026-10-03 by audit lane G5 (owner ruling 2026-10-03: add NWPP and SOCO to the board) on the 2026-10-02 keeper.",
           "read_live_at": "audit lane G5 2026-10-03, zero-LP: keepers/NWPP.json + calibration-complete.json (both blocks) + status/NWPP.js read from the checkout; nothing solved or re-scored",
           "corrected_by": "audit lane G5 (2026-10-03): row created; no prior row existed (F4-forecast-gate-a.md s5.2)."
         },
@@ -665,10 +665,10 @@
       },
       "golden": "deferred (s2.1b); not a GOLDEN_ISOS member.",
       "candidate": null,
-      "keeper": "2026-10-03-nwpp-next-22b-w0",
+      "keeper": "2026-10-03-closeout-nwpp-anchor-roster",
       "marker_complete": false,
       "marker_final": false,
-      "note": "[G5, 2026-10-03] Board row added by owner ruling; no forecast tier has been run for NWPP. Keeper 2026-10-02-w0-nwpp-fix2 per keepers/NWPP.json; determination NOT-YET per status/NWPP.js."
+      "note": "[G5, 2026-10-03] Board row added by owner ruling; no forecast tier has been run for NWPP. Keeper 2026-10-03-closeout-nwpp-anchor-roster per keepers/NWPP.json (re-keyed by closeout-nwpp-anchor, identity only); determination NOT-YET per status/NWPP.js."
     },
     "SOCO": {
       "tier_reached": "none -- NOT RUN (no forecast tier, T0 included, has ever been solved for SOCO)",

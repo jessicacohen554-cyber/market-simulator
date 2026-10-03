@@ -83,3 +83,20 @@ between the COL, NG and OTH shapes of the same requirement.
 | `claude/closeout-nwpp-anchor` | PR #7103, merged (`dad1205a`); deletable |
 | `claude/closeout-nwpp-anchor-2019` … `-2025` | the seven held result legs; **not deletable** until promotion lands or the owner declines |
 | `claude/closeout-nwpp-anchor-result` | this RESULT + the attestation generator + the matrix cell |
+
+## Promotion (owner ruling R-48, 2026-10-03: "Promote on structure")
+
+The desk relayed the ruling and assigned the NWPP promotion slot at 04:46Z. `scripts/promote_keeper.py --iso NWPP
+--bundle results/calibration/closeout_nwpp_anchor_span` designates `2026-10-03-closeout-nwpp-anchor-roster`.
+
+Before the run:
+
+- The attestation was rebuilt on main's G3 schema (`authorized_price_tuning`, `lane_blocks`), with
+  `governance.attested_by` set to R-48. `attestation_schema.py --check` reports it valid.
+- The span is committed slim, per the repo's gitignore rules. The per-year dispatch stays on the leg branches above.
+
+The run itself:
+
+- **Pruned:** the outgoing keeper `2026-10-03-nwpp-next-22b-w0` (`nwppnext22b_span`).
+- **Bench parts:** stay at main's render (R-28). Registration re-renders them, so they were restored and the status
+  part was rebuilt on the kept parts.

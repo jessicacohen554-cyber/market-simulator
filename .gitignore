@@ -4031,3 +4031,9 @@ results/calibration/closeout_soco_2_20[12][0-9]/
 results/calibration/nwppnext22_*/
 results/calibration/nwppnext22b_*/
 !results/calibration/nwppnext22b_span/
+
+# closeout-nwpp-anchor (owner ruling R-48): per-year shard legs, checked out for verify/compose only; bytes live on
+# their shard commits (claude/closeout-nwpp-anchor-<Y>); the composed keeper bundle carries its own negation. Never rm (rule 31).
+results/calibration/closeout_nwpp_anchor_20[12][0-9]/
+results/calibration/closeout_nwpp_anchor_*/
+!results/calibration/closeout_nwpp_anchor_span/
