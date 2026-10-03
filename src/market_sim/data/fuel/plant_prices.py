@@ -102,9 +102,11 @@ def _iso_monthly_fuel_prices(
     monthly = np.full(12, np.nan)
     spend = sub["price_per_mmbtu"] * sub["quantity"]
     by_month = sub.assign(spend=spend).groupby("month")[["spend", "quantity"]].sum()
-    for m, row in by_month.iterrows():
-        if row["quantity"] > 0:
-            monthly[int(m) - 1] = row["spend"] / row["quantity"]
+    for m, spend_m, qty_m in zip(
+        by_month.index, by_month["spend"].to_numpy(), by_month["quantity"].to_numpy()
+    ):
+        if qty_m > 0:
+            monthly[int(m) - 1] = spend_m / qty_m
     return monthly
 
 
@@ -885,12 +887,17 @@ class _NearbyFuelPrices:
                 # Distinct reporting plants per zone-month (caiso-243): the
                 # zone-tier analogue of ``state_month_price_grid``'s count.
                 reporters: list[set[int]] = [set() for _ in range(12)]
-                for _, row in grp.iterrows():
-                    m = int(row["month"]) - 1
+                for month, weighted, quantity, plant_id in zip(
+                    grp["month"].to_numpy(),
+                    grp["weighted"].to_numpy(),
+                    grp["quantity"].to_numpy(),
+                    grp["plant_id"].to_numpy(),
+                ):
+                    m = int(month) - 1
                     if 0 <= m < 12:
-                        wsum[m] += float(row["weighted"])
-                        qsum[m] += float(row["quantity"])
-                        reporters[m].add(int(row["plant_id"]))
+                        wsum[m] += float(weighted)
+                        qsum[m] += float(quantity)
+                        reporters[m].add(int(plant_id))
                 with np.errstate(invalid="ignore", divide="ignore"):
                     zone_price[int(zone)] = np.where(qsum > 0.0, wsum / qsum, np.nan)
                 zone_count[int(zone)] = np.array(

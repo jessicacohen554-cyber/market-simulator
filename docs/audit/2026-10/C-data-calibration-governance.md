@@ -1,0 +1,115 @@
+# Third-Party Audit 2026-10 — Part C: Data, Calibration Evidence, Governance
+
+Auditor: independent (read-only session, no solve, no test run). Repo: `/home/user/market-simulator`, branch `claude/third-party-audit-2026-10`, HEAD `d7ff7c20113fc724f7b681b7b4f0ffa774d775ef` (2026-10-02). Budget: 11 minutes wall clock, so every claim below is a file-level verification of committed artifacts, not a re-score; where I could not verify within budget I say so.
+
+## 1. Scope and method
+
+- Scope: (a) data layer and contract; (b) calibration/validation methodology and the evidence at HEAD for nine ISOs; (c) governance (36 rules, rule genealogy, mechanism matrix, DOF ledger, shards, promotion chain, CI, tests).
+- Method: read `CLAUDE.md` in full; parsed every `frontend/data/backcast/keepers/<ISO>.json`, every `frontend/data/backcast/status/<ISO>.js` (`window.BC.statusParts[...]`, the scorer-generated ladder), `frontend/data/backcast/calibration-complete.json`, and the nine keeper bundles' `calibration_attestation.json` / `meta.json` under `results/calibration/`; read the heads of the rubric, methodology, closeout plan, testing doc, `scripts/audit_keepers.py`, and `docs/governance/rule-history.md` §§13–27; compared to `docs/audit/third-party-audit-2026-08.md` §1 and §8.
+- Not done: no parquet loaded, no pytest, no `calibration_verdict.py` re-score. The determinations quoted are the committed scorer output (`status/<ISO>.js`, generated 2026-10-02), cross-checked against `keeper.registered_determination` in the same file (they agree for all nine ISOs).
+- Comparator claims (§4) are from public documentation of other models and are flagged as such; I did not re-read them this session.
+
+## 2. Data layer verified
+
+- **Contract.** 78 schema files under `data/dictionary/schema/*.schema.yaml` (counted at HEAD) back a generated `data-dictionary.md`; `tests/curation/` covers the raw→clean pipeline per `docs/testing.md:1-12`. Every path resolves through `config/paths.py` (`CLAUDE.md` Architecture block). Clean data is derived and gitignored (`scripts/regenerate_clean.py --solve-profile <ISO>`), raw is a blobless partial clone hydrated per profile (`CLAUDE.md` "Data: partial clone").
+- **Sources (named in schemas and bundle meta).** EIA-930 hourly (demand/generation/interchange), CAMPD unit-level CEMS (emissions, outage windows, binning), EIA-860/923 (fleet, delivered fuel), eGRID (CO2 reference), ISO LMP/AS/offer feeds (`lmp.schema.yaml`, `energy-offers.schema.yaml`, `dam-public-bids.schema.yaml`), capacity-market auction series, coal basin/receipts/stocks, CARB/RGGI carbon series. `meta.json` of every keeper records `outage_source: "historic"` and a shared gas-price vector (2019 2.57 … 2025 3.52 $/MMBtu) identical across all nine bundles — a single Henry-Hub-style vector with ISO basis layered elsewhere (CAISO keeper note: "measured zonal citygate gas basis", `keepers/CAISO.json` `note`).
+- **Admissibility (rules 13/14).** `CLAUDE.md` rule 13 is the crispest admissibility test I have seen in a market model: a measured input is admissible iff it could be produced for a forward year from forward drivers and responds to changed conditions; pinning to observed generation, residual-tuned adders, or input rescaling are named and forbidden; the only exception is rule 1's `offer_curve_by_group` band channel. Rule 14 forbids reverting to an estimate because it fits better. Both are enforced socially (PRECOMMIT/attestation) and partly mechanically (rule 24 `[R-REGISTRY]`: no env-var knobs or `getattr` fallbacks in the offer path; `config/solve_surface.py` fingerprint in `cache_key()`).
+- **Measured vs estimated at HEAD.** Measured: load, outages (CAMPD windows), delivered fuel (F923), CEMS rates, min-load fractions (ERCOT CC 0.574, NYISO CC 0.523 / ST 0.239, CAISO CC 0.570 — `CLAUDE.md` Dispatch section; `keepers/CAISO.json` `disposition_note`). Estimated/derived: heat-rate bins outside ERCOT (legacy bins; only ERCOT uses CAMPD per-plant binning, `CLAUDE.md` Fleet), AS reservation shares, storage throughput adders, the rule-1 band multipliers (free parameters by construction).
+- **Known data seams carried explicitly.** CAMPD outage over-count (14.2–36.7 % CC capacity-weighted, 17/18 ISO-years above norm) is carried as a "definitional seam" rather than closed (`docs/audit/third-party-audit-2026-08.md:591`, O4). MISO C5b storage benchmark mismatch (EIA-930 has no pumped-storage series) is an accepted measured-input limitation (`results/calibration/w0_miso_span/calibration_attestation.json` `exceptions[0]`). NWPP has no labelled price benchmark before 2023-06 (WEIM ELAP), so 2019–2022 are "PHYSICALLY-CALIBRATED (PRICE UNSCORED)" (`status/NWPP.js`). SOCO scores against system lambda, not an LMP (`status/SOCO.js` `system_lambda`).
+- **Licensing.** Not auditable in budget. EIA/EPA/eGRID are public domain; ISO LMP/offer/bid feeds and CAISO OASIS bulk (`.github/workflows/fetch-caiso-oasis-bulk.yml`) carry ISO terms of use that I did not find summarized in `data/dictionary/`. Flag: no per-source licence field was seen in the schema listing. Owner should confirm redistribution terms before any public release of `data/raw` subtrees.
+
+## 3. Current calibration evidence (committed artifacts, rubric v3.17, scorer output 2026-10-02)
+
+All nine keepers were promoted on 2026-10-02 (the "w0"/"closeout" wave). Determination is worst-of across every registered year (rule 30, reversed 2026-09-30 so a missing held-out year downgrades: `rule-history.md:1577`). Caveat budget everywhere: `ledgered_max 1, protective_max 0`.
+
+| ISO | Keeper id (bundle) | Years | ISO determination | Per-year ladder (2019→2025) | Ledgered caveat(s) | Failing criteria (worst-of) / notable scores |
+|---|---|---|---|---|---|---|
+| ERCOT | `2026-10-02-closeout-l1-coal-fuel` (`closeout_ercot_l1_span`) | 2019–2025, 3-config partition (2019–22 carve-out validation / 2023 ECRS carve-out / 2024–25 forward) | **NOT-YET** | NY NY C C C NY C | C3c (model 22 h vs 53 h >$200, 2024) | price_mean 2024 (forward partition); fuelmix + price_shape 2019/2020 (carve-out). C1 free 28/32 |
+| CAISO | `2026-10-02-closeout-caiso-w1-arm2` (`closeout_caiso_w1_a2_span`) | 2019–2025 one span | **NOT-YET** | NY NY NY C C C C | C3c (0 h vs 35 h >$200, 2024) | dispatch_corr gas 2019–21 (r 0.86–0.89 but NRMSE 0.385–0.40 > 0.30), fuelmix 2019–21, price_mean 2021. C1 free 23/26 |
+| PJM | `2026-10-02-w0-pjm-fix2` (`w0_pjm_span`) | 2019–2025 | **NOT-YET** | NY NY NY NY C C NY | C3c | fuelmix 2019–21, price_mean 2022/2025, price_shape 2022/2025. C1 free 33/37. Frontier declared 2026-07-31 (`keepers/PJM.json` `frontier`) |
+| MISO | `2026-10-02-w0-miso-fix2` (`w0_miso_span`) | 2019–2025, 2 partitions (train 2023–25 CALIBRATED; validation 2019–22 NOT-YET) | **NOT-YET** | NY C NY C C C CwC | C3c; plus accepted C5b storage-basis exception | fuelmix 2019, price_shape 2021. C1 free 35/36 |
+| NYISO | `2026-10-02-w0-nyiso` (`w0_nyiso_span`) | **2021–2025 only** (5 yrs) | **CALIBRATED** | — — C C C C CwC | C3c lone-ledgered | 0 fails; C1 free 20/20; `authorized_price_tuning: null` |
+| NEISO | `2026-10-02-w0-neiso` (`w0_neiso_span`) | 2019–2025 | **CALIBRATED** | C C C C C C CwC | C3c (0 h vs 15 h >$300, 2023; MODEL MISS, carried) | 0 fails; C1 free 27/27; frontier re-established 2026-08-17 |
+| SPP | `2026-10-02-spp-107-mmu-repair` (`spp107EXR_span`) | 2019–2025, partitions (train 2023–25 CALIBRATED; validation 2019–22 NOT-YET) | **NOT-YET** | NY NY NY NY C C C | none (exceptions `[]`) | 5 fails: dispatch_corr 2022, fuelmix 2021/22, price_mean 2019/20, price_shape 2020. C1 free 37/41 |
+| NWPP | `2026-10-02-w0-nwpp-fix2` (`w0_nwpp_span`) | 2019–2025 | **NOT-YET** | P P P P NY NY C | none | price_mean + price_shape 2023/24, dispatch_corr 2023; 2019–22 price unscored (benchmark starts 2023-06). C1 free 47/47 |
+| SOCO | `2026-10-02-w0-soco-fix2` (`w0_soco_span`) | 2019–2025 | **NOT-YET** | NY CwC NY CwC C C C | C3a, C3b (scoped ledger rows, rubric v3.10–3.12, system-lambda reference) | fuelmix 2019/2021. C1 free 29/32 |
+
+Legend: C = CALIBRATED, CwC = CALIBRATED-WITH-CAVEATS, NY = NOT-YET, P = PHYSICALLY-CALIBRATED (PRICE UNSCORED). Sources: `frontend/data/backcast/status/<ISO>.js` `keeper.{determination, registered_determination, years[], determination_scopes, free_class_score, grade_summary}`; `results/calibration/<bundle>/calibration_attestation.json` `exceptions`; `results/calibration/<bundle>/meta.json` `years`.
+
+Headline: **2 of 9 ISOs CALIBRATED (NEISO, NYISO); 7 NOT-YET.** Every NOT-YET ISO is CALIBRATED on 2023–2025 (ERCOT excepting 2024 price_mean; NWPP 2023/24 price). The misses are concentrated in 2019–2022 fuel-mix (C1) and price level/shape (C3a/C3b). C3c scarcity tail remains the program-wide weakest criterion (6 of 9 keepers spend their single ledgerable caveat on it; NWPP/SPP have none to spend because they have 3–5 hard fails instead).
+
+Attestation observations:
+- Every bundle has `calibration_attestation.json`, `legitimacy_diagnostics.json`, `metrics.json`, per-year `run_config_<year>.json`, and a `hourly/` sidecar directory (rule 15 slim layer); `spp107EXR_span` lacks `fleet_census_<year>.json` files the others carry — not a gate, but an inconsistency in the bundle contract.
+- Attestations are schema-loose: keys vary per ISO (`w0_miso_span` carries 13 lane-named blocks `hydro5`, `miso267` … `miso280`; `w0_nwpp_span` carries `lane`, `bundle`, `switches`; only NYISO carries `authorized_price_tuning`). The rule-1 declaration block is therefore absent, not "null", in 8 of 9 attestations — a scorer can't distinguish "no tuning" from "not declared".
+- DOF ledger: `scripts/build_dof_ledger.py` exists and attestations carry `free_parameters`, but I found no `dof_ledger.json` inside any of the nine keeper bundles (only under `results/run-config-debt/*`). Rule 21 says "every keeper carries a DOF ledger"; if the `free_parameters` block is the ledger, the rule text and the artifact name should agree. The closeout board reports "Residual DOF in attestation" as 2 of 44 (MISO) to 6 of 22 (NYISO) (`docs/backcast-closeout-plan-2026-10.md:19-29`).
+- ERCOT runs a three-config partition (2019–22 / 2023 / 2024–25) inside one keeper (`status/ERCOT.js` `config_partition`, `rule-history.md:1624` "ERCOT 2023 configuration exception"). A per-regime config is defensible (ECRS introduction) but it is three fits, not one, and the determination text should say so wherever "ERCOT keeper" is quoted.
+
+## 4. Methodology vs. comparators (comparator rows are from public documentation, not re-verified here)
+
+| Dimension | This model (verified at HEAD) | NREL ReEDS/Cambium | EPA IPM | EIA NEMS/AEO | PLEXOS/Aurora vendors | PyPSA/GenX | ISO MMU SOM reports |
+|---|---|---|---|---|---|---|---|
+| Hindcast practice | Full-8760 hourly backcast, 7 years × 9 ISOs, machine-scored on 8 criteria (`rubric.md:333-843`) | Periodic model-vs-history comparisons in documentation; not annual hourly scoring | Base-year calibration to EIA/EPA data; no published per-criterion gates | AEO Retrospective Review: published annual error tables vs realized values | Vendor "benchmark" studies, typically client-specific and unpublished | Reproducible open examples; validation left to users | Benchmarks of realized prices/costs, not model outputs |
+| Out-of-sample discipline | **None now.** Holdout tiers removed 2026-09-09 (`rule-history.md:1174`); rule 22 states "no year is a certified out-of-sample number" | Not formalized | Not formalized | Retrospective is inherently out-of-sample (forecasts published before realization) | Not public | Not formalized | n/a |
+| Pre-registration | PRECOMMIT records per lane (`docs/records/<lane>/`), direction-blind promotion rules, rule 1(c) ex-ante bands | None public | None public | None public | None public | None public | n/a |
+| Free-parameter accounting | Rule 21 DOF ledger; `free_parameters` block in each attestation; rule-1 bands ledgered as free | Documented assumptions, no ledger | Documented assumptions | Documented assumptions | Not public | Config-as-code, implicit | n/a |
+| Reproducibility | Pinned numeric stack (`uv sync`), solve-surface fingerprint in cache key, `run_config_<year>.json` per bundle, byte-identity golden tests | Open source, public inputs | Model public, inputs partly public | Model public, inputs partly public | Closed | Fully open, CI-tested | n/a |
+| Public rejected-run registry | Yes historically (probes registered); **since rule 15/35 retention is keeper-only** — rejected runs are pruned, surviving in git history and `keepers/<ISO>.json` prose notes | No | No | No | No | No | n/a |
+| Governance of rubric changes | 28 owner-ruled amendments, rubric v2→v3.17 in ~3 months, each with verbatim owner directive | Version releases, changelog | Version docs | Annual docs | Release notes | Git history | n/a |
+
+Reading: the apparatus still exceeds every public comparator in pre-registration, free-parameter accounting and machine-scored determination. It is now *below* the strongest comparator (EIA's AEO Retrospective) on the one dimension that makes a calibration claim quotable — out-of-sample evidence — because the holdout regime was abolished rather than spent.
+
+## 5. Governance findings
+
+**Strengths (verified).**
+- 36 stable-ID rules with full genealogy (`docs/governance/rule-history.md`, 1680 lines, 28 amendment sections, verbatim owner directives). Rule changes are owner acts, dated, and reversible on record (e.g., rule 30(c) reversed 2026-09-30, `rule-history.md:1577`).
+- Promotion is one command with an enforced order and an invariant audit (`scripts/promote_keeper.py`, `scripts/audit_keepers.py` E13, M1; docstring `audit_keepers.py:1-25` names exactly which dashboard surface can "silently lie" — the human-written registry `definition` — and audits it).
+- The status page is regenerated from the same scorer the gate uses (`audit_keepers.py:6-10`), so "determination" and "registered_determination" cannot drift silently; I confirmed they agree for all nine ISOs.
+- Shard regime (rules 32–34, 36): the orchestrating session never runs an LP; every year solves alone from one invocation; bundles land on `main` via `.gitignore` negation, never `-f`. This is a genuine reproducibility and provenance control.
+- CI: `ci.yml`, `file-integrity-guard.yml` (rule 27 bulk-rewrite guard), `deploy-pages.yml`, one parameterized fetch — no solve offloaded to CI (`.github/workflows/`). 755 test files (`find tests -name 'test_*.py'`); tests assert behaviour, never a registered number (`docs/testing.md`).
+- Rule 31 retention and rule 26 "deleted means deleted" are in tension but reconciled: superseded keepers are pruned at promotion, yet `keepers/<ISO>.json` keeps the prose trail (MISO.json carries 20+ `superseded_promotion_note_*` keys; SOCO.json 30+).
+
+**Weaknesses.**
+1. **The holdout regime is gone and nothing replaced it.** Rule 22 now reads "There is no holdout regime … no year is a certified out-of-sample number" (`CLAUDE.md` rule 22; `rule-history.md:1174-1232`, owner verbatim "Remove the holdout year rule", 2026-09-09). Zero locked-test years were ever spent (`calibration-complete.json` `note`: "no locked-test year was ever spent by any ISO"). Consequence: every CALIBRATED determination (NEISO, NYISO) is an in-sample fit statement over years the lanes iterated on. The repo is honest about this in the rule text, but `docs/calibration-and-validation-methodology.md:1-8` still describes the model as "holdout-tested" — doc drift on the central claim.
+2. **Self-certification.** Determinations, rubric amendments, caveat budgets and exceptions are all owner-ruled and session-scored; the "scoped ledger rows" of rubric v3.10–3.12 (`rule-history.md:1492-1576`) and v3.14–3.17 (`:1624`) each admitted a specific ISO-year miss (SOCO C3a 2019/2020/2022, SOCO C3b 2022, ERCOT 2023 configuration exception, PJM zonal C3a) into the caveat ledger by owner directive. Four rubric amendments in five days, each widening what counts as passing for a named failing cell, is the pattern an external reviewer must flag regardless of the merits of each ruling.
+3. **Rule-1 price-tuning channel.** The authorized band channel is a declared free parameter, which is better than a hidden one, but it is a fit-to-price channel inside a regime whose own rule 1 says "backcast fit is not the objective". Only NYISO's attestation carries the `authorized_price_tuning` key (null). Without a mandatory key in every attestation, a scorer cannot assert the channel is unused elsewhere.
+4. **Keeper-only retention weakens the rejected-run registry.** The 2026-08 audit praised "a public dashboard that registers rejected probes alongside keepers" (`third-party-audit-2026-08.md:39-42`). Rule 15's keeper-only retention and rule 35's prune step mean rejected arms now survive only as git history and prose; the comparator table's "public rejected-run registry" row has weakened since August.
+5. **Process weight vs evidence.** `keepers/MISO.json` and `keepers/SOCO.json` are promotion-note archives, not keeper records; `calibration-complete.json` opens with a 1,000-character note explaining it "AUTHORIZES NOTHING". The governance text is now large enough that drift is likely (see 1) and that a new reader cannot find the current determination without the scorer. Partitioned keepers (ERCOT 3 configs, MISO/SPP 2 partitions) further complicate "the keeper is one config".
+6. **Attestation schema is not fixed.** Lane-named blocks and absent-vs-null keys (§3) make the attestation un-validatable by schema; `data/dictionary/schema/` has 78 data schemas but I found none for the attestation itself.
+7. **NYISO covers five years, not seven.** Its CALIBRATED spans 2021–2025 (`w0_nyiso_span/meta.json`). Rule 16 "every year the ISO carries" is satisfied by definition, but the ISO-to-ISO comparison in §3 is not like-for-like and the board should footnote it.
+
+**Risks.** (i) A forward program reading `calibration-complete.json` gate (a) as validation. (ii) Rubric amendments continuing to track residuals (rule 23's spirit, applied to the rubric itself). (iii) Doc drift between `CLAUDE.md`, the methodology doc and the status artifacts.
+
+## 6. Delta since the 2026-08-15 audit
+
+Then (verified from `third-party-audit-2026-08.md:30-60`): six ISOs; PJM sole CALIBRATED, NYISO/NEISO CALIBRATED-WITH-CAVEATS, ERCOT/CAISO/MISO NOT-YET; three-tier holdout with active freeze; keeper scoring on 2023–2025; `~206` PRECOMMIT records.
+
+Now: nine ISOs (SPP, NWPP, SOCO added; all with 2019–2025 keepers); every ISO scored on 7 years (NYISO 5) under worst-of; **NEISO and NYISO CALIBRATED, PJM demoted to NOT-YET** (fails on 2019–22 fuelmix and 2022/2025 price — i.e., the extension to earlier years, not a regression on 2023–24); holdout regime abolished (rule 22 re-purposed to `[R-C3C]`); screen-year regime removed (rule 29, `rule-history.md:1356`); shard regime added (rules 32–34, 36); promotion made a single enforced command (rule 35); rubric v3.4 → v3.17.
+
+Gap register status (rows from `third-party-audit-2026-08.md:588-595`):
+- O1 PJM pjm-162 promotion — RESOLVED 2026-08-16 (row text). Superseded: PJM keeper is now `w0-pjm-fix2`.
+- O2 PJM C6 attestation discrepancy — RESOLVED 2026-08-16 (row text).
+- O3 PJM ≤2022 fueltype clock — RESOLVED 2026-08-16 (row text).
+- O4 CAMPD outage envelope / freeze premise — RESOLVED 2026-08-26 by option (A), "seam question stays open by design"; the freeze it re-scoped was then abolished entirely on 2026-09-09. **The underlying 14–37 % envelope seam remains open and now has no freeze attached to it.**
+- O5 NEISO legacy-P2 — CLOSED 2026-08-18 (re-solve, gates + tests added).
+- O6 Locked tests unspent — **OVERTAKEN, not resolved**: the 2026-08-26 standing policy ("locked test is scheduled only after …") was voided by the 2026-09-09 removal; no one-shot was ever run. This is the largest open item for any external accuracy claim.
+- O7 ERCOT P0 bit-identity — CLOSED 2026-08-30 (attribution harness; forfeiture carried as a named limitation).
+- O8 NEISO SMD DST-naive workbook — RESOLVED 2026-08-17.
+New since August (not in the register): N1 holdout abolition (§5.1); N2 keeper-only retention (§5.4); N3 attestation schema looseness (§5.6); N4 rapid rubric amendments admitting named cells (§5.2); N5 methodology doc drift on "holdout-tested".
+
+## 7. Recommendations
+
+**Owner.**
+- R-O1. Decide, on record, what external claim the program makes without out-of-sample evidence. Either (a) re-institute one untouched year per ISO (H1-2026 is the natural candidate; the data intake already exists per `calibration-complete.json` `intake_log`) scored once and never iterated, or (b) relabel every determination "in-sample CALIBRATED" in `CLAUDE.md`, the status page and the forecast gate (a). Option (b) is honest and cheap; option (a) is what every comparator with a quotable accuracy claim does (AEO Retrospective, public documentation).
+- R-O2. Freeze the rubric at v3.17 for a stated period (e.g., until the next promotion wave) and require any further scoped ledger row to be proposed by a lane and ruled on separately from the promotion that benefits from it.
+- R-O3. Rule on the CAMPD outage-envelope seam (O4 carry-over): accept as a documented limitation in every keeper's attestation `disclosures`, or charter the detector replacement. Do not let it sit without a rule now that the freeze is gone.
+- R-O4. Confirm licence/redistribution terms for ISO-sourced feeds before any public release of `data/raw`.
+
+**Engineering.**
+- R-E1. Fix `docs/calibration-and-validation-methodology.md` head (and any other "holdout-tested" prose) to match rule 22 as it reads today; run `/sync-docs` on the determination chapter.
+- R-E2. Add an attestation JSON schema to `data/dictionary/schema/` (or `scripts/lib/`) with required keys `schema, governance, exceptions, free_parameters, authorized_price_tuning (nullable), disclosures`; make `promote_keeper.py` preflight validate it; forbid lane-named top-level blocks (move them under `history`).
+- R-E3. Make rule 21 and the artifact agree: either write `dof_ledger.json` into every keeper bundle at promotion or rename the rule's artifact to the attestation's `free_parameters` block.
+- R-E4. Footnote NYISO's 5-year span and the ERCOT/MISO/SPP partitions on the Calibration Status page and in the closeout board header, so cross-ISO rows read like-for-like.
+- R-E5. Restore a minimal rejected-run register (id, lane, years, determination, failing criteria, SHA) appended at prune time, so the comparator advantage the August audit cited survives keeper-only retention without keeping bundles.
+- R-E6. Add `fleet_census_<year>.json` to the SPP bundle (or drop it from the bundle contract) so every keeper carries the same files.
+
+Determination one-liner for the record: **NEISO CALIBRATED (2019–25), NYISO CALIBRATED (2021–25); ERCOT, CAISO, PJM, MISO, SPP, NWPP, SOCO NOT-YET — all seven CALIBRATED on 2023–25 except ERCOT 2024 price and NWPP 2023–24 price; no ISO has out-of-sample evidence.**

@@ -4008,3 +4008,49 @@ Record: `docs/records/spp/RESULT-spp-107-mmu-carrier-repair-2026-10-02.md`.
 - `coal_fuel_inventory` stays R. C1 CC 2021/22 and C4 gas 2022 are ledgered under plan step 5.
 
 Record: `docs/records/spp/FINDING-spp-108-basis-shadow-and-stb-rail-2026-10-02.md`.
+
+## 2026-10-03 — closeout-B W0 phase 3: keeper 2026-10-02-w0-spp107r (SPP relief), train CALIBRATED → NOT-YET
+
+**Owner ruling.**
+- The first card, verbatim: *"Promote on structure"*.
+- The ruling was then re-asked with SPP-105's R verdict on `wefor_residual` back on the table. The owner confirmed, verbatim: *"Still promote"*.
+- Both were relayed by the close-out desk, 2026-10-03.
+
+**What changed.** The spp-107 recipe was re-solved one year per shard (rule 36), each leg at `15a351a1`, with:
+- the ten W0 EIA-860 settlement backcast defaults;
+- #7081: a fossil row on a published seasonal pair keeps its EIA-860 summer rating and skips the MMU ambient Jun–Sep share (rule 19);
+- `wefor_residual = 0.0` on `wefor_residual_groups = ["ST_GAS"]`, identified ex ante by `docs/records/spp/PRECOMMIT-spp-w0-stgas-wefor-relief-2026-10-02.md`.
+  - G1 passed: pooled 2023–25 measured overlay X 0.534 against applied statistical W 0.191.
+  - The value was frozen at 848bb0b2 before any shard launched.
+
+**Why.** `docs/records/governance/closeout-2026-10/W0-phase3/FINDING-spp-w0-stgas-availability-2026-10-02.md` measured this at zero LP:
+- W0's `commission_year_cod_fallback` gives SPP ST_GAS rows their true commission years (1962–89), so the age-escalated statistical WEFOR becomes live (0.147 → 0.214).
+- That costs −166 MW of 2024 annual mean availability, on top of the measured CAMPD layer.
+
+**Scores.**
+
+C1 ST_GAS (TWh):
+
+| | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| spp-107 | −6.43 | −7.85 | −7.61 |
+| W0 only | −6.55 | −8.16 FAIL | −8.26 FAIL |
+| this keeper | −5.55 | −6.31 | −6.91 |
+
+C3a (mean price vs RT):
+
+| | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| spp-107 | −5.4 % | −8.2 % | −2.9 % |
+| this keeper | −6.4 % | −11.2 % FAIL | −4.3 % |
+
+- C3b 2024: 0.184 → 0.216 FAIL.
+- C3c 2023–25: 0 model hours above $200 against 42/59/68 actual. With other failures present it is no longer the lone failure, so it reads FAIL.
+- The **train tier falls CALIBRATED → NOT-YET**. That is the same price signature SPP-105 measured.
+- The full span stays NOT-YET → NOT-YET.
+- Census, against EIA-860: summer −9.4 to −12.5 %, winter −15.9 to −27.6 %, OUTSIDE.
+- Data drift: +0.3 TWh 2025 must-run (complete EIA-923), not W0.
+
+**What stays open (SPP queue, in order).**
+1. **The sub-5-day gas outage gap.** SPP-105's objection is not rebutted: the statistical WEFOR also stood in for sub-5-day gas outages that the ≥5-day CAMPD windows miss, and gas short windows are unarmed on SPP.
+2. **The SPP-81b RT price-level residual.** This is the gas-independent RT level the offered stack does not explain. It is now uncovered by the reconciled outage stack.

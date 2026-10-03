@@ -122,3 +122,76 @@ def test_a_set_valued_field_compares_by_members(tmp_path):
         resolve=lambda b, y: {"temp_derate_classes": frozenset({"ST_CHP", "CT_CHP"})},
     )
     assert diffs == {}
+
+
+def test_a_default_on_field_absent_before_its_flip_replayed_armed_is_reported(tmp_path):
+    # seasonal_capacity_basis was registered at False and flipped ON (W0): a
+    # pre-W0 recording lacks it, so a replay at today's True arms W0.
+    bundle = _bundle(tmp_path, {"voll": 5000.0})
+    diffs = replay_config_diffs(
+        bundle,
+        2025,
+        resolve=lambda b, y: {"voll": 5000.0, "seasonal_capacity_basis": True},
+    )
+    assert diffs == {"seasonal_capacity_basis": (None, True)}
+
+
+def test_a_default_on_field_absent_before_its_flip_replayed_off_is_faithful(tmp_path):
+    bundle = _bundle(tmp_path, {"voll": 5000.0})
+    diffs = replay_config_diffs(
+        bundle,
+        2025,
+        resolve=lambda b, y: {"voll": 5000.0, "seasonal_capacity_basis": False},
+    )
+    assert diffs == {}
+
+
+def test_flipped_default_overlay_pins_absent_flipped_fields_off(tmp_path):
+    from scripts.replay_keeper import flipped_default_overlay
+
+    bundle = _bundle(tmp_path, {"voll": 5000.0})
+    overlay = flipped_default_overlay(bundle, [2025])
+    assert overlay["seasonal_capacity_basis"] is False
+    assert overlay["backcast_actual_retirement_only"] is False
+
+
+def test_flipped_default_overlay_pins_a_recorded_pre_flip_value(tmp_path):
+    # spp-107 records cc_steam_part_capacity=False in run_config, but meta omits
+    # it: the replay must carry the recorded False, not today's True.
+    from scripts.replay_keeper import flipped_default_overlay
+
+    bundle = _bundle(tmp_path, {"cc_steam_part_capacity": False})
+    assert flipped_default_overlay(bundle, [2025])["cc_steam_part_capacity"] is False
+
+
+def test_flipped_default_overlay_defers_to_meta(tmp_path):
+    from scripts.replay_keeper import flipped_default_overlay
+
+    bundle = _bundle(tmp_path, {"voll": 5000.0})
+    overlay = flipped_default_overlay(bundle, [2025], {"seasonal_capacity_basis": True})
+    assert "seasonal_capacity_basis" not in overlay
+
+
+def test_flipped_default_overlay_leaves_a_recorded_field_alone(tmp_path):
+    from scripts.replay_keeper import flipped_default_overlay
+
+    bundle = _bundle(
+        tmp_path,
+        {"seasonal_capacity_basis": True, "backcast_actual_retirement_only": True},
+    )
+    overlay = flipped_default_overlay(bundle, [2025])
+    assert "seasonal_capacity_basis" not in overlay
+    assert "backcast_actual_retirement_only" not in overlay
+
+
+def test_flipped_default_overlay_refuses_a_mixed_span(tmp_path):
+    import pytest
+
+    from scripts.replay_keeper import flipped_default_overlay
+
+    bundle = _bundle(tmp_path, {"seasonal_capacity_basis": True})
+    (tmp_path / "run_config_2024.json").write_text(
+        json.dumps({"scenario_config": {"voll": 5000.0}})
+    )
+    with pytest.raises(SystemExit, match="seasonal_capacity_basis differs"):
+        flipped_default_overlay(bundle, [2024, 2025])

@@ -47,15 +47,18 @@ def resolve_replay_config(bundle: Path, year: int) -> dict:
     from scripts.replay_keeper import (
         RUN_YEAR_NON_RECIPE,
         RUN_YEAR_REMAP,
+        apply_config_overlay,
         build_kwargs,
         derived_run_year_inputs,
         enforce_single_recipe_partition,
+        flipped_default_overlay,
     )
     from scripts.run_calibration import run_year
 
     meta = json.loads((bundle / "meta.json").read_text())
     kwargs = build_kwargs(meta)
     enforce_single_recipe_partition(meta, [int(year)], kwargs)
+    apply_config_overlay(kwargs, flipped_default_overlay(bundle, [int(year)], meta))
     params = set(inspect.signature(run_year).parameters)
     run_kwargs = {}
     for key, value in kwargs.items():
@@ -99,29 +102,30 @@ def replay_config_diffs(
 
 
 def _registered_after_solve(recorded: dict, replayed: dict) -> set[str]:
-    """Replayed fields absent from the recording that resolve to their registered default.
+    """Replayed fields absent from the recording that resolve to their absent-equivalent value.
 
     The mirror of :func:`_rule26_inert_recorded`. A field ADDED to
     ``ScenarioConfig`` after the bundle was solved is absent from its
     ``run_config_<Y>.json``; the replay resolves it to the registered default,
     which is the solved behaviour by construction (a new field ships default-off
-    and byte-identical, the nyiso-119 registration discipline). Only the default
-    is excused: an absent field the replay resolves to anything else is still a
+    and byte-identical, the nyiso-119 registration discipline). The comparison
+    value is :func:`~market_sim.config.scenarios.registration_time_default`, NOT
+    today's default: a field whose default was flipped ON after the solve (the
+    W0 ``seasonal_capacity_basis``) is absent-equivalent only at its pre-flip
+    value. An absent field the replay resolves to anything else is still a
     mismatch, because then the replay arms something the solve never had.
     """
-    from market_sim.config.scenarios import ScenarioConfig
+    from market_sim.config.scenarios import ScenarioConfig, registration_time_default
 
     out: set[str] = set()
     for f in dataclasses.fields(ScenarioConfig):
         if f.name in recorded or f.name not in replayed:
             continue
-        if f.default is not dataclasses.MISSING:
-            default = f.default
-        elif f.default_factory is not dataclasses.MISSING:
-            default = f.default_factory()
-        else:
+        try:
+            absent_equivalent = registration_time_default(f.name)
+        except KeyError:
             continue
-        if _norm(replayed[f.name]) == _norm(default):
+        if _norm(replayed[f.name]) == _norm(absent_equivalent):
             out.add(f.name)
     return out
 
