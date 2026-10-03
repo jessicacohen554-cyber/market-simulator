@@ -2420,11 +2420,72 @@ def _diba_legs_export(
     return sign * total, float(covered.mean())
 
 
+def nwpp_seam_priced_hours(
+    seam: str,
+    year: int,
+    utc_hour_ending: pd.DatetimeIndex,
+    *,
+    in_service_vintage: bool = False,
+) -> np.ndarray:
+    """Return the hours in which an NWPP priced seam clears at its reference price.
+
+    ``False`` everywhere when the seam is not priced in ``year``
+    (:func:`~market_sim.config.interchange_config.seam_priced_in_year`).
+    Otherwise ``True`` everywhere, unless ``in_service_vintage``
+    (NWPP-NEXT-26, ``ScenarioConfig.nwpp_seam_in_service_vintage``) and the
+    seam has an entry in
+    :data:`~market_sim.config.constants.NWPP_SEAM_IN_SERVICE_UTC`: then only
+    the hours ENDING after that instant are priced, since before it the
+    physical path the seam's rating describes did not exist. In every other
+    hour the seam's measured legs stay in the served schedule (rule 19:
+    priced or served, never both). Zero free parameters.
+
+    Args:
+        seam: Registered NWPP seam name (``NWPP_PRICED_SEAM_LEGS`` key).
+        year: Solve year.
+        utc_hour_ending: The pool frame's hour-ending ``UTC time`` (naive UTC).
+        in_service_vintage: Arm the in-service gate.
+
+    Returns:
+        Boolean ``(len(utc_hour_ending),)`` mask of priced hours.
+    """
+    from market_sim.config.constants import NWPP_SEAM_IN_SERVICE_UTC
+    from market_sim.config.interchange_config import (
+        INTERFACE_NEIGHBORS,
+        seam_priced_in_year,
+    )
+
+    seams = {n.name: n for n in INTERFACE_NEIGHBORS["NWPP"]}
+    hours = len(utc_hour_ending)
+    if not seam_priced_in_year(seams[seam], year):
+        return np.zeros(hours, dtype=bool)
+    if not in_service_vintage or seam not in NWPP_SEAM_IN_SERVICE_UTC:
+        return np.ones(hours, dtype=bool)
+    start = pd.Timestamp(NWPP_SEAM_IN_SERVICE_UTC[seam])
+    return np.asarray(pd.DatetimeIndex(utc_hour_ending) > start, dtype=bool)
+
+
+def nwpp_seam_priced_hours_model(
+    seam: str, year: int, *, in_service_vintage: bool = False
+) -> np.ndarray:
+    """:func:`nwpp_seam_priced_hours` on the NWPP pool frame's own model clock.
+
+    The ``(HOURS_PER_YEAR,)`` mask the LP's seam caps use, built from the same
+    ``UTC time`` column the served schedule is joined on, so the priced and
+    served hours partition the year exactly.
+    """
+    utc = pd.DatetimeIndex(_eia_hourly_frame_filled("NWPP", year)["UTC time"])
+    return nwpp_seam_priced_hours(
+        seam, year, utc, in_service_vintage=in_service_vintage
+    )[:HOURS_PER_YEAR]
+
+
 def nwpp_unpriced_residual_interchange(
     year: int,
     *,
     grid_carried_wind_served: bool = False,
     plant_basis: bool = False,
+    seam_in_service_vintage: bool = False,
 ) -> np.ndarray | None:
     """Return the NWPP served schedule when its priced seams are armed (MW, export-positive).
 
@@ -2442,13 +2503,13 @@ def nwpp_unpriced_residual_interchange(
     (``seam_priced_in_year``: WECC_CAN before its 2023 anchor) keeps its legs
     in the served part. Zero free parameters.
 
+    ``seam_in_service_vintage`` (NWPP-NEXT-26) applies the same rule by the
+    hour: a seam's legs move to the priced side only in the hours
+    :func:`nwpp_seam_priced_hours` prices it (after its path entered service).
+
     ``None`` when the pool frame for ``year`` is unavailable (a forecast year).
     """
-    from market_sim.config.interchange_config import (
-        INTERFACE_NEIGHBORS,
-        NWPP_PRICED_SEAM_LEGS,
-        seam_priced_in_year,
-    )
+    from market_sim.config.interchange_config import NWPP_PRICED_SEAM_LEGS
 
     position = nwpp_net_interchange(
         year,
@@ -2460,23 +2521,27 @@ def nwpp_unpriced_residual_interchange(
     frame = _eia_hourly_frame_filled("NWPP", year)
     utc = pd.DatetimeIndex(frame["UTC time"])
     priced = np.zeros(HOURS_PER_YEAR, dtype=float)
-    seams = {n.name: n for n in INTERFACE_NEIGHBORS["NWPP"]}
     for seam, legs in NWPP_PRICED_SEAM_LEGS.items():
-        if not seam_priced_in_year(seams[seam], year):
+        mask = nwpp_seam_priced_hours(
+            seam, year, utc, in_service_vintage=seam_in_service_vintage
+        )
+        if not mask.any():
             continue  # not priced this year: its legs stay in the served schedule
         for reporter, dibas, sign in legs:
             leg, coverage = _diba_legs_export(reporter, dibas, sign, utc)
+            leg = np.where(mask, leg, 0.0)
             priced += leg
             logger.info(
                 "NWPP %d priced seam %s: measured leg %s->%s %+.3f TWh "
-                "(hour coverage %.4f) moved from the served schedule to the "
-                "priced seam",
+                "(hour coverage %.4f, %d priced hours) moved from the served "
+                "schedule to the priced seam",
                 year,
                 seam,
                 reporter,
                 "/".join(dibas),
                 leg.sum() / 1e6,
                 coverage,
+                int(mask.sum()),
             )
     return position - priced
 
@@ -2486,6 +2551,8 @@ def nwpp_served_schedule_zone_interchange(
     zone_names: list[str],
     residual: np.ndarray,
     weights: np.ndarray,
+    *,
+    seam_in_service_vintage: bool = False,
 ) -> np.ndarray:
     """Place the NWPP served schedule's measured legs at their reporting member's zone (MW, export-positive).
 
@@ -2505,7 +2572,10 @@ def nwpp_served_schedule_zone_interchange(
     (local clock :data:`~market_sim.config.constants.NWPP_MEMBER_LOCAL_TZ`) are
     placed at the member's zone. A priced seam's legs
     (:data:`~market_sim.config.interchange_config.NWPP_PRICED_SEAM_LEGS`) are
-    skipped in a year the seam is priced, since the seam clears them (rule 19).
+    skipped in the hours the seam is priced (:func:`nwpp_seam_priced_hours`;
+    every hour of a priced year unless ``seam_in_service_vintage`` gates it),
+    since the seam clears them (rule 19); in its unpriced hours the leg is
+    served and placed like any other.
     Whatever the attributed legs do not cover (the plant-basis and
     grid-carried-wind corrections, BPAT's reporting non-closure, a member with
     no per-DIBA rows in the year) is spread by ``weights`` as before, so each
@@ -2518,6 +2588,8 @@ def nwpp_served_schedule_zone_interchange(
         residual: The served schedule (``nwpp_unpriced_residual_interchange``),
             length ``HOURS_PER_YEAR``, export-positive: the conserved total.
         weights: ``(n_zones, HOURS_PER_YEAR)`` demand weights for the remainder.
+        seam_in_service_vintage: NWPP-NEXT-26 in-service gate, the same flag
+            :func:`nwpp_unpriced_residual_interchange` received.
 
     Returns:
         ``(n_zones, HOURS_PER_YEAR)`` signed MW matrix to ADD to zonal demand.
@@ -2526,25 +2598,26 @@ def nwpp_served_schedule_zone_interchange(
         ValueError: When a member's zone is not a model zone (fail closed).
     """
     from market_sim.config.constants import NWPP_MEMBER_LOCAL_TZ
-    from market_sim.config.interchange_config import (
-        INTERFACE_NEIGHBORS,
-        NWPP_PRICED_SEAM_LEGS,
-        seam_priced_in_year,
-    )
+    from market_sim.config.interchange_config import NWPP_PRICED_SEAM_LEGS
     from market_sim.data.zone_assignment import _NWPP_BA_ZONES
 
     utc = pd.DatetimeIndex(_eia_hourly_frame_filled("NWPP", year)["UTC time"])
     members = set(_NWPP_BA_ZONES)
-    seams = {n.name: n for n in INTERFACE_NEIGHBORS["NWPP"]}
-    priced_pairs: set[tuple[str, str]] = set()
+    # (member, diba) -> the hours its priced seam clears it. A pair priced in
+    # every hour is skipped; a pair priced in none is absent (attributed like
+    # any served leg); a partly priced pair is attributed in its served hours.
+    priced_pairs: dict[tuple[str, str], np.ndarray] = {}
     for seam, legs in NWPP_PRICED_SEAM_LEGS.items():
-        if not seam_priced_in_year(seams[seam], year):
+        mask = nwpp_seam_priced_hours(
+            seam, year, utc, in_service_vintage=seam_in_service_vintage
+        )
+        if not mask.any():
             continue  # an unpriced seam's legs are served, so they are attributed
         for reporter, dibas, _sign in legs:
             for diba in dibas:
-                priced_pairs.add(
+                priced_pairs[
                     (reporter, diba) if reporter in members else (diba, reporter)
-                )
+                ] = mask
     zone_idx = {z: i for i, z in enumerate(zone_names)}
     matrix = np.zeros((len(zone_names), HOURS_PER_YEAR), dtype=float)
     lo = pd.Timestamp(f"{year}-01-01 01:00:00")
@@ -2562,7 +2635,8 @@ def nwpp_served_schedule_zone_interchange(
         dibas = sorted(
             d
             for d in set(rows["diba"].astype(str))
-            if d not in members and (member, d) not in priced_pairs
+            if d not in members
+            and not ((member, d) in priced_pairs and priced_pairs[(member, d)].all())
         )
         tz = NWPP_MEMBER_LOCAL_TZ.get(member, "America/Los_Angeles")
         for diba in dibas:
@@ -2572,6 +2646,8 @@ def nwpp_served_schedule_zone_interchange(
                 # Rows only at the local year edge, none on the model clock:
                 # the leg carries nothing this year and stays in the remainder.
                 continue
+            if (member, diba) in priced_pairs:
+                leg = np.where(priced_pairs[(member, diba)], 0.0, leg)
             matrix[zone_idx[zone]] += leg[:HOURS_PER_YEAR]
             logger.info(
                 "NWPP %d served schedule: %s -> %s %+.3f TWh placed at %s "

@@ -1,7 +1,7 @@
 {
  "iso": "NWPP",
- "keeper": "2026-10-03-nwpp-next-25-served",
- "note": "Owner card 2026-10-03 'Promote': keeper NEXT-24 + nwpp_served_schedule_zonal_attribution (RESULT-nwppnext25-served-schedule-2019-2025-2026-10-03.md)",
+ "keeper": "2026-10-03-nwpp-next-26-nevp",
+ "note": "keeper NEXT-25 + nwpp_seam_in_service_vintage: CAISO_NEVP priced only after Harry Allen-Eldorado (2020-08-12); CC 2019 FAIL->PASS",
  "superseded": {
   "date": "2026-10-03",
   "former_keeper": "2026-10-03-nwpp-next-23-coi",

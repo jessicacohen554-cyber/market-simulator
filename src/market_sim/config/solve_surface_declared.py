@@ -630,4 +630,5 @@ DECLARED: dict[str, str | dict[str, str]] = {
     "NWPP_COI_PATH_SERIES": "5e0fd92f218f2828",
     "NWPP_SEAM_LIMIT_SERIES": "d6e48af9300e5697",
     "NWPP_MEMBER_LOCAL_TZ": "ec3a6413bab8bdaa",
+    "NWPP_SEAM_IN_SERVICE_UTC": "5a8de0687a0d0c32",
 }

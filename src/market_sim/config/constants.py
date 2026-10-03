@@ -5752,6 +5752,25 @@ NWPP_MEMBER_LOCAL_TZ: dict[str, str] = {
     "WAUW": "America/Denver",
 }
 
+# NWPP-NEXT-26 (ScenarioConfig.nwpp_seam_in_service_vintage): the instant a
+# priced NWPP seam's physical counterparty path entered service, as a UTC
+# hour-ending boundary (naive UTC; an hour ENDING after it is priced). Before
+# it the seam's measured legs stay in the served schedule, exactly as a seam
+# outside its anchored years does (rule 19: priced or served, never both).
+# CAISO_NEVP: its 1,933 MW rating is NEVP->CISO's measured hourly maximum over
+# the DesertLink Harry Allen-Eldorado 500 kV line, which FERC ER20-1514 (CAISO-
+# NEVP Adjacent Balancing Authority Operating Agreement, Amendment No. 5, filed
+# 2020-04-08) adds as a NEW intertie between the two balancing areas (the nine
+# pre-existing interties are local-supply ties: Mohave-Laughlin 500 kV, the
+# Eldorado 220 kV positions, Amargosa-Sandy Valley 138 kV, ...). The measured
+# leg (data/raw/eia-930-interchange/NEVP interchange hourly.parquet, diba CISO)
+# shows the step on 2020-08-12: -510..+366 MW from 2019-01 through 2020-08-11,
+# 1,029 MW that day and 1,234 the next (FINDING-nwppnext26-nevp-hae-phase0).
+# Local midnight 2020-08-12 PDT = 07:00 UTC. A date, never a fitted number.
+NWPP_SEAM_IN_SERVICE_UTC: dict[str, str] = {
+    "CAISO_NEVP": "2020-08-12 07:00:00",
+}
+
 # Year-varying NYISO interface transfer limits that change with the AC
 # Transmission build-out. The static limits in iso_configs._nyiso_config are
 # nominal; an (iso, year) entry here overrides the matching link's TTC for that

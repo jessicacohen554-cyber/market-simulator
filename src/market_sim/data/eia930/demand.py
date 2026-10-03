@@ -1215,6 +1215,7 @@ def load_demand(
     demand_balance_screen: bool = False,
     caiso_tac_shares_standard_time: bool = False,
     nwpp_served_schedule_zonal_attribution: bool = False,
+    nwpp_seam_in_service_vintage: bool = False,
 ) -> np.ndarray:
     """Load hourly ISO demand and allocate it across zones.
 
@@ -1318,6 +1319,12 @@ def load_demand(
             nwpp_served_schedule_zone_interchange`). Column sums are
             unchanged. Raises when armed outside that path. Default
             ``False`` is byte-identical.
+        nwpp_seam_in_service_vintage: NWPP only, priced seams only — a
+            priced seam's measured legs stay in the served schedule in the
+            hours before its physical path entered service (NWPP-NEXT-26;
+            see :func:`~market_sim.data.eia930.envelopes.
+            nwpp_seam_priced_hours`). Raises when armed outside that path.
+            Default ``False`` is byte-identical.
         demand_balance_screen: repair isolated demand readings that break the
             EIA-930 balance identity (pjm-h19; see
             :func:`_screen_demand_balance`). Applied to the frame-sourced
@@ -1397,6 +1404,12 @@ def load_demand(
     # attribution (export drawn from the zone that carries the tie) over a
     # system-wide spread, falling back to the scalar; NYISO/NEISO use the
     # scalar spread by load share.
+    if nwpp_seam_in_service_vintage and (iso != "NWPP" or include_interchange):
+        raise ValueError(
+            "nwpp_seam_in_service_vintage gates the PRICED NWPP seams (iso NWPP, "
+            f"include_interchange=False); got iso={iso!r}, "
+            f"include_interchange={include_interchange}"
+        )
     zone_interchange = None
     if iso == "PJM" and include_interchange:
         zone_interchange = pjm_zonal_interchange(year, iso_config.zone_names)
@@ -1445,6 +1458,7 @@ def load_demand(
             year,
             grid_carried_wind_served=nwpp_grid_carried_wind_served,
             plant_basis=nwpp_demand_plant_basis,
+            seam_in_service_vintage=nwpp_seam_in_service_vintage,
         )
         if residual is None:
             raise ValueError(
@@ -1526,7 +1540,11 @@ def load_demand(
                 f"False); got iso={iso!r}, include_interchange={include_interchange}"
             )
         zone_interchange = nwpp_served_schedule_zone_interchange(
-            year, iso_config.zone_names, interchange, np.asarray(weights)
+            year,
+            iso_config.zone_names,
+            interchange,
+            np.asarray(weights),
+            seam_in_service_vintage=nwpp_seam_in_service_vintage,
         )
         logger.info(
             "NWPP served schedule placed by reporting member for %d: %+.0f MW "

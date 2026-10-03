@@ -1388,6 +1388,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # different demand array, and hashes distinctly. Registered IN THE SAME
     # COMMIT as the field.
     "nwpp_served_schedule_zonal_attribution",
+    # NWPP-NEXT-26 seam in-service vintage (GATED default off): dropped from
+    # the hash at its default so every pre-existing cache key stays
+    # byte-stable (the off path never reads the in-service table); an armed
+    # run serves a seam's legs before its path existed, a different demand
+    # array and seam cap, and hashes distinctly. Registered IN THE SAME COMMIT
+    # as the field.
+    "nwpp_seam_in_service_vintage",
     # pjm-h19 EIA-930 balance-identity demand screen (GATED default off):
     # dropped from the hash at its default so every pre-existing cache key
     # stays byte-stable (the off path never calls the screen); an armed run
@@ -2905,6 +2912,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "nwpp_coi_pnw_delivery_basis": "False",
     # Added by NWPP-NEXT-25 WITH the field (the nyiso-119 discipline).
     "nwpp_served_schedule_zonal_attribution": "False",
+    # Added by NWPP-NEXT-26 WITH the field (the nyiso-119 discipline).
+    "nwpp_seam_in_service_vintage": "False",
     # Added by pjm-h19 WITH the field (the nyiso-119 discipline).
     "demand_balance_screen": "False",
     # Added by ercot-236 WITH the field, in the same commit as its
@@ -21753,6 +21762,23 @@ class ScenarioConfig:
     # envelopes.nwpp_served_schedule_zone_interchange;
     # FINDING-nwppnext25-cc-served-schedule-phase0-2026-10-03.md.
     nwpp_served_schedule_zonal_attribution: bool = False
+    # NWPP-NEXT-26 seam in-service vintage (GATED default off, NWPP-only,
+    # backcast-measured, ZERO fitted scalars; owner card 2026-10-03 "Serve
+    # pre-HAE"). Read only under the priced seams (raises otherwise). A priced
+    # seam listed in constants.NWPP_SEAM_IN_SERVICE_UTC is priced only in the
+    # hours after its physical path entered service; before it the seam's
+    # measured legs stay in the served schedule (placed at the reporting
+    # member's zone under nwpp_served_schedule_zonal_attribution) and its
+    # bands are capped at zero by an aggregate interface group. CAISO_NEVP's
+    # 1,933 MW rating is the DesertLink Harry Allen-Eldorado intertie's (FERC
+    # ER20-1514), in service 2020-08-12; before it the NEVP->CISO leg was a
+    # -510..+366 MW local-supply schedule and the LP exported 10.5 TWh (2019)
+    # through a path that did not exist. Rule 19: priced or served, never
+    # both (the anchored-years construction, by the hour). Rule 14: the
+    # physical in-service date. Forward story: every forecast hour is after
+    # it. envelopes.nwpp_seam_priced_hours;
+    # FINDING-nwppnext26-nevp-hae-phase0-2026-10-03.md.
+    nwpp_seam_in_service_vintage: bool = False
     # pjm-h19 EIA-930 balance-identity demand repair (GATED default off,
     # ISO-agnostic, ZERO fitted scalars). Repairs an hour whose metered
     # Demand makes an isolated reversal larger than the BA-year's own Tukey
@@ -25197,6 +25223,7 @@ TIER_TAGS: dict[str, int] = {
     "nwpp_seam_measured_limits": 3,
     "nwpp_coi_pnw_delivery_basis": 1,
     "nwpp_served_schedule_zonal_attribution": 1,
+    "nwpp_seam_in_service_vintage": 1,
     "demand_balance_screen": 1,
     "ercot_offer_swcap_clip": 1,
     "ercot_swcap_vintage": 1,

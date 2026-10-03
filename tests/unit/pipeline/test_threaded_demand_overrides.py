@@ -43,6 +43,7 @@ _DEMAND_AFFECTING_FIELDS: tuple[str, ...] = (
     "nwpp_demand_plant_basis",
     "demand_balance_screen",
     "nwpp_served_schedule_zonal_attribution",
+    "nwpp_seam_in_service_vintage",
 )
 
 _THREADING_SITE = "scripts/run_calibration_full.py"

@@ -3482,6 +3482,7 @@ def run_year(
             nwpp_served_schedule_zonal_attribution=(
                 config.nwpp_served_schedule_zonal_attribution
             ),
+            nwpp_seam_in_service_vintage=config.nwpp_seam_in_service_vintage,
         )
     wind_cf, wind_cap, solar_cf, solar_cap = load_renewable_profiles(
         iso, year, iso_config, config
@@ -4321,6 +4322,55 @@ def run_year(
                 for k, v in seam_caps.items()
             ),
         )
+
+    # NWPP seam in-service vintage (nwpp_seam_in_service_vintage, backcast,
+    # default off — NWPP-NEXT-26): a priced seam whose physical path entered
+    # service inside the year (constants.NWPP_SEAM_IN_SERVICE_UTC: CAISO_NEVP,
+    # the Harry Allen-Eldorado intertie, 2020-08-12) is capped at zero net
+    # flow in the hours before it, while load_demand serves its measured legs
+    # in those same hours (envelopes.nwpp_seam_priced_hours: one mask, so the
+    # priced and served hours partition the year — rule 19). After it the cap
+    # is the seam's registered rating, which its bands already sum to.
+    if getattr(config, "nwpp_seam_in_service_vintage", False) and iso == "NWPP":
+        if not (
+            priced_interchange and getattr(config, "reference_price_interface", False)
+        ):
+            raise ValueError(
+                "nwpp_seam_in_service_vintage gates the PRICED NWPP seams: arm "
+                "reference_price_interface and priced_interchange with it"
+            )
+        from market_sim.config.constants import NWPP_SEAM_IN_SERVICE_UTC
+        from market_sim.data.eia930.envelopes import nwpp_seam_priced_hours_model
+        from market_sim.model.interchange.spec import build_seam_limit_groups
+
+        _seams = {n.name: n for n in INTERFACE_NEIGHBORS["NWPP"]}
+        _vintage_caps: dict[str, tuple[np.ndarray, np.ndarray]] = {}
+        for _seam in NWPP_SEAM_IN_SERVICE_UTC:
+            _mask = nwpp_seam_priced_hours_model(_seam, year, in_service_vintage=True)
+            _mask = _mask[: demand.shape[1]]
+            if _mask.all():
+                continue  # in service all year: nothing to gate
+            _cap = np.where(_mask, _seams[_seam].interface_limit_mw, 0.0)
+            _vintage_caps[_seam] = (_cap, _cap.copy())
+            logger.info(
+                "NWPP %d seam in-service vintage: %s priced in %d of %d hours "
+                "(served before %s UTC)",
+                year,
+                _seam,
+                int(_mask.sum()),
+                len(_mask),
+                NWPP_SEAM_IN_SERVICE_UTC[_seam],
+            )
+        if _vintage_caps:
+            _vintage_groups = build_seam_limit_groups(
+                iso, iso_config.links, _vintage_caps, year
+            )
+            if len(_vintage_groups) != len(_vintage_caps):
+                raise ValueError(
+                    f"nwpp_seam_in_service_vintage {year}: a gated seam has no "
+                    "zone in the topology — the mechanism never silently no-ops"
+                )
+            interface_groups = interface_groups + _vintage_groups
 
     # Commercial-operation-date (COD) vintage ramp: in a backcast the fleet
     # snapshot is a recent vintage that includes units built after the solved
