@@ -513,6 +513,15 @@ def _hindcast_measured_demand(
         The ``(n_zones, hours)`` measured demand array, truncated to
         ``config.hours``.
     """
+    if config.nwpp_seam_in_service_vintage:
+        # NWPP-NEXT-26: the in-service gate serves a seam's legs in demand AND
+        # caps its bands in the LP; only scripts/run_calibration.run_year
+        # builds the cap, so arming it here would price and serve the same
+        # leg (rule 19). Fail closed rather than silently half-apply it.
+        raise ValueError(
+            "nwpp_seam_in_service_vintage is a backcast calibration key "
+            "(scripts/run_calibration.py); the runner does not build its seam cap"
+        )
     demand = load_demand(
         iso,
         year,
