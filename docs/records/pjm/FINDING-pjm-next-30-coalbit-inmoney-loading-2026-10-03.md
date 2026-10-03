@@ -140,3 +140,12 @@ CAMPD facility; none are unmatched.
   next PJM solve (owner card in the session report).
 - **Matrix:** `coal_nameplate_summer_derate` stays U, and the basis-piece sizing is appended as evidence. No other
   cell moves.
+
+## §4 Owner rulings (2026-10-03, decision cards)
+
+- **Tait remap:** keep it parked. It rides the next PJM solve that carries a real lever.
+- **NEXT-31:** build the outage repair, kept on structure even if 2023/24 regress (rule 1):
+  1. Run a zero-LP census of the CAMPD whole-unit dark hours in COAL_BIT S2 (derate + offline pieces, unit-dark
+     share 0.62–0.89) that the keeper's outage windows do not carry, and name why the committed extract misses them.
+  2. Build the extract repair.
+  3. Solve all 7 years, one shard per year, with the Tait remap as the rule-14 rider.
