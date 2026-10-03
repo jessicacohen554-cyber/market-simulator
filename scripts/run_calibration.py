@@ -652,11 +652,21 @@ def _reliability_floor_layup_shares(
 # NWPP: NWPP-NEXT-7 (owner ruling Q1, 2026-09-27, on NWPP's own contract census
 # docs/records/nwpp/FINDING-nwppnext5-coal-take-obligation-design-2026-09-26.md).
 # ERCOT: closeout-L1 (owner ruling R-3; see COAL_PILE_CEILING_ISOS below).
-COAL_PLANT_GRAIN_ISOS: tuple[str, ...] = ("MISO", "NEISO", "NWPP", "ERCOT")
+# SOCO: closeout-SOCO-3 (owner ruling R-49, 2026-10-03, on SOCO's own contract /
+# stock census docs/records/soco/closeout-soco-3/FINDING-closeout-soco-3-phase0-
+# 2026-10-03.md and RESULT-phase1-closeout-soco-3-2026-10-03.md; see below).
+COAL_PLANT_GRAIN_ISOS: tuple[str, ...] = ("MISO", "NEISO", "NWPP", "ERCOT", "SOCO")
 
 # ISOs whose own evidence armed the per-yard coal TAKE floor
-# (coal_fuel_inventory_take_floor): NWPP-NEXT-7, owner rulings Q1-Q5.
-COAL_TAKE_FLOOR_ISOS: tuple[str, ...] = ("NWPP",)
+# (coal_fuel_inventory_take_floor): NWPP-NEXT-7, owner rulings Q1-Q5. SOCO:
+# owner ruling R-49 admits ONLY the same-year measured monthly pile form
+# (take floor + coal_fuel_inventory_monthly_pile + coal_monthly_pile_measured_
+# receipts); the annual Y-1 floor alone stays refused for SOCO (soco-80, G).
+COAL_TAKE_FLOOR_ISOS: tuple[str, ...] = ("NWPP", "SOCO")
+
+# Subset of COAL_TAKE_FLOOR_ISOS whose ruling admits the take floor ONLY with the
+# same-year measured monthly pile (resolve_coal_take_floor enforces it).
+COAL_TAKE_FLOOR_MEASURED_ONLY_ISOS: tuple[str, ...] = ("SOCO",)
 
 # ISOs whose own evidence armed the monthly pile CEILING-ONLY (no take floor):
 # the yard's cumulative month-end burn is capped at its December stock plus the
@@ -698,6 +708,17 @@ def resolve_coal_take_floor(
         raise ValueError(
             "coal_fuel_inventory_take_floor REPLACES the per-hour take-or-pay "
             f"discounts (rule 19, owner ruling Q5); disarm {stacked}."
+        )
+    if iso.upper() in COAL_TAKE_FLOOR_MEASURED_ONLY_ISOS and not (
+        bool(getattr(config, "coal_fuel_inventory_monthly_pile", False))
+        and bool(getattr(config, "coal_monthly_pile_measured_receipts", False))
+    ):
+        raise ValueError(
+            f"coal_fuel_inventory_take_floor for {iso} is admitted ONLY in the "
+            "same-year measured monthly pile form (owner ruling R-49): arm "
+            "coal_fuel_inventory_monthly_pile and "
+            "coal_monthly_pile_measured_receipts with it. The annual Y-1 "
+            "estimator-B floor stays refused (soco-80)."
         )
     return True
 
