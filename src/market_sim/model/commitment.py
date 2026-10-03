@@ -1507,9 +1507,8 @@ def as_adequacy_commit(
         if target.max() <= 0.0:
             continue
         cum = (cap * (out & elig_row)).sum(axis=0)  # (T,) committed eligible cap
-        for g in order:
-            if not he[h, g]:
-                continue
+        # Only this row's eligible units, in the global cheapest-startup order.
+        for g in order[he[h][order]]:
             short = cum < target
             if not short.any():
                 break

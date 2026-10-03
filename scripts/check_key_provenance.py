@@ -53,7 +53,10 @@ registration in ``docs/governance/key-provenance-lag-registrations.json``,
 each such record printed as a REPORTED ``LAG`` line, never silently), or a
 Q71 ``surface-recorded`` record (capx D98: its literal is reproduced by the
 ``moved`` block of its OWN committed ``solve_surface.json``, printed as a
-REPORTED ``SURFACE-RECORDED`` line). ``--no-fetch`` downgrades an unreachable ``vintage`` blob (and a class-rule
+REPORTED ``SURFACE-RECORDED`` line), or its ``solve-epoch-moved`` form (capx
+D100: the stamp's block AND its recorded ``epochs`` list reproduce the literal,
+but the live ``SOLVE_EPOCHS`` covering set has since moved — a designed re-key,
+printed as a REPORTED ``SOLVE-EPOCH-MOVED`` line). ``--no-fetch`` downgrades an unreachable ``vintage`` blob (and a class-rule
 ancestry this clone cannot decide) from a failure to a warning (the clone is ``blob:none`` and shallow, so one
 recipe needs a depth-1 fetch); every other gate still binds.
 """
@@ -69,6 +72,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from scripts.lib.key_provenance import (  # noqa: E402
     EXCEPTIONS_PATH,
+    SOLVE_EPOCH_MOVED_CLASS,
     SURFACE_RECORDED_CLASS,
     census,
     check_exceptions,
@@ -113,7 +117,12 @@ def main(argv: list[str] | None = None) -> int:
         for p, v in surface.items()
         if v["status"] == SURFACE_RECORDED_CLASS and p not in listed
     }
-    unknown = sorted(mismatch - listed - classed - recorded_surface)
+    epoch_moved = {
+        p
+        for p, v in surface.items()
+        if v["status"] == SOLVE_EPOCH_MOVED_CLASS and p not in listed
+    }
+    unknown = sorted(mismatch - listed - classed - recorded_surface - epoch_moved)
 
     print(
         f"{record['configs_checked']} committed run configs at {record['head']}: "
@@ -125,6 +134,7 @@ def main(argv: list[str] | None = None) -> int:
         f"  {len(mismatch & listed)} KNOWN (listed exceptions), "
         f"{len(classed)} LAG (Q66 class rule), "
         f"{len(recorded_surface)} SURFACE-RECORDED (Q71 construction), "
+        f"{len(epoch_moved)} SOLVE-EPOCH-MOVED (capx D100), "
         f"{len(unknown)} UNKNOWN"
     )
     # Q66: a class-rule `lag` is REPORTED, never silent (capx D93).
@@ -143,6 +153,25 @@ def main(argv: list[str] | None = None) -> int:
             f"    SURFACE-RECORDED (Q71 construction): {path} <- moved "
             f"{v['moved']} from {v['solve_surface_json']}; reproduces {v['key']}"
         )
+    # capx D100: a record derived by its own stamp whose recorded epochs are no
+    # longer the live covering set is REPORTED, never silent.
+    for path in sorted(epoch_moved):
+        v = surface[path]
+        print(
+            f"    SOLVE-EPOCH-MOVED (capx D100): {path} <- epochs {v['epochs']} "
+            f"recorded, {v['covering_epochs']} covering now; moved {v['moved']} "
+            f"from {v['solve_surface_json']}; reproduces {v['key']}"
+        )
+    ep = record["solve_epochs"]
+    print(
+        f"  epochs: {ep['records_in_an_epoch_scope']} record(s) fall in a live "
+        f"SOLVE_EPOCHS scope, {ep['records_whose_stamp_records_epochs']} carry "
+        f"epochs in their committed stamp; of the in-scope records "
+        f"{ep['in_scope_reproduce_live_surface']} reproduce under the live key "
+        f"and {ep['in_scope_reproduce_recorded_stamp']} under their recorded "
+        f"stamp once epochs are modelled; {ep['solve_epoch_moved']} "
+        f"solve-epoch-moved"
+    )
     print(
         f"  keys: {record['validated_under_both_constructions']} reproduce under "
         f"BOTH constructions, {record['validated_at_declaration_only']} only with "
@@ -204,8 +233,8 @@ def main(argv: list[str] | None = None) -> int:
         return 1
     print(
         "\nok: every mismatch is a known, cited, recipe-verified exception, a "
-        "reported Q66 class-rule lag, or a reported Q71 recorded-surface "
-        "record, and "
+        "reported Q66 class-rule lag, a reported Q71 recorded-surface record "
+        "or a reported solve-epoch-moved record, and "
         "no unregistered ScenarioConfig field is off the G6 ratchet"
     )
     return 0

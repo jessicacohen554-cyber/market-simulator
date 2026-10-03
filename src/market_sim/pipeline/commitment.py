@@ -2722,13 +2722,15 @@ def _soco_gas_st_campaign_floor(
     # each plant's own measured synchronized share, which is the window
     # declaration's evidence (rule 17 [R-FLOOR-WINDOW]).
     T = floor.shape[1]
+    # One pass over the fleet (ascending g) instead of one scan per plant.
+    rows_by_code: dict[int, list[int]] = {}
+    for g, gen in enumerate(fleet):
+        if gen.fuel_type == "gas_st":
+            rows_by_code.setdefault(int(getattr(gen, "plant_code", 0) or 0), []).append(
+                g
+            )
     for code, entry in sorted(params.items()):
-        rows = [
-            g
-            for g, gen in enumerate(fleet)
-            if int(getattr(gen, "plant_code", 0) or 0) == code
-            and gen.fuel_type == "gas_st"
-        ]
+        rows = rows_by_code.get(code)
         if not rows:
             continue
         plant_floor = floor[rows, :].sum(axis=0)

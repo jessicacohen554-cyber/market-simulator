@@ -281,10 +281,16 @@ def _write_summary_md(
         lines.append("_No cached years yet._")
     else:
         lines += ["| Year | Min Mt (case) | Max Mt (case) |", "|---|---|---|"]
-        for _, row in envelope_df.iterrows():
+        for year, min_mt, min_case, max_mt, max_case in zip(
+            envelope_df["year"].to_numpy(dtype=object),
+            envelope_df["min_mt"].to_numpy(dtype=object),
+            envelope_df["min_case"].to_numpy(dtype=object),
+            envelope_df["max_mt"].to_numpy(dtype=object),
+            envelope_df["max_case"].to_numpy(dtype=object),
+        ):
             lines.append(
-                f"| {int(row['year'])} | {row['min_mt']:.2f} ({row['min_case']}) "
-                f"| {row['max_mt']:.2f} ({row['max_case']}) |"
+                f"| {int(year)} | {min_mt:.2f} ({min_case}) "
+                f"| {max_mt:.2f} ({max_case}) |"
             )
 
     path.write_text("\n".join(lines) + "\n")

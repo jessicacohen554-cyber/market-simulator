@@ -1,25 +1,28 @@
 # 3. Capacity Evolution, Commitment, Storage & Transmission
 
-This page covers the year-over-year fleet evolution (`model/capacity.py`), the
-P0→P1→P2 commitment screen (`model/commitment.py`), and the supporting LP
+This page covers the year-over-year fleet evolution (`model/capacity_evolution/`;
+`model/capacity.py` is a 32-line shim), the P0→P1 commitment sequence
+(`model/commitment.py`; P2 archived), and the supporting LP
 components: transmission (`model/transmission.py`), storage (`model/storage.py`),
 and ancillary-service revenue (`model/ancillary.py`).
 
-## 3.1 Capacity evolution — one pass, six steps
+## 3.1 Capacity evolution — one pass, steps 0–7
 
-`evolve_fleet(...)` (`capacity.py:1412`) advances the fleet by exactly one year in
+`evolve_fleet(...)` (`capacity_evolution/evolve.py:129`) advances the fleet by exactly one year in
 a single pass — **no within-year convergence iteration**. It returns the mutated
 fleet, an updated economic-loss tracker, renewable additions, and a CCS-retrofit
 log. The steps run in this fixed order:
 
 ```
 0. Confirmed exits            apply_confirmed_exits()  (GATED confirmed_exits_enabled)
-1. Announced retirements      apply_announced_retirements()
-2. Economic retirements       apply_economic_retirements()
-3. Known additions            (planned EIA-860 pipeline; online_year == year)
-4. CCS retrofit screen        apply_ccs_retrofit()
+1. Announced retirements      apply_announced_retirements() + limb 1b fossil filed
+                              dates (GATED fossil_announced_exits_enabled, default on)
+2. CCS retrofit screen        apply_ccs_retrofit()        (joint retrofit-or-retire)
+3. Economic retirements       apply_economic_retirements()
+4. Known additions            (planned EIA-860 pipeline; online_year == year)
 5. Economic new entry         apply_economic_new_entry()
-6. Reserve-margin backstop    apply_reserve_margin_build()
+6. Reserve-margin backstop    apply_reserve_margin_build() (GATED, default off)
+7. Dispatch with RPS as an LP constraint (its dual is the REC price)
         │
         ▼
 re-aggregate into efficiency bins (aggregate_fleet, n_bins=heat_rate_bin_count)
@@ -36,16 +39,23 @@ acceptance, regulatory order, RMR end — via
 date, force-retires a unit-grain unit or **derates** a plant-binned tranche by the
 exiting unit's MW, any fuel, **bypassing the reliability floor**. It runs before
 the economic screen, so scarcity from a confirmed exit feeds next year's entry
-signal, and it composes as `min(economic_exit, confirmed_date)`. This is the ONLY
-exogenous fossil exit channel; superseded registry rows (a counter-instrument
+signal, and it composes as `min(economic_exit, confirmed_date)`. It is one of two
+exogenous fossil exit channels (the other is step 1's limb 1b, owner-filed
+EIA-860 dates); superseded registry rows (a counter-instrument
 suspends the exit) are dropped by the loader and revert to the economic screen.
 
 ### Step 1 — Announced retirements (`apply_announced_retirements`)
 
 Honors an EIA-860 announced `retirement_year ≤ year`. In forecast mode with
-`fossil_economic=True` (the default), fossil units (coal/gas_cc/gas_ct/gas_st/oil/
-gas_cc_ccs) **ignore** their announced dates — for the whole fossil fleet this
-step is a **default no-op** and the economic screen governs them. Non-fossil
+`fossil_economic=True` (the default), the `apply_announced_retirements` route
+itself skips fossil units (coal/gas_cc/gas_ct/gas_st/oil/gas_cc_ccs); their
+owner-filed EIA-860 dates enter through **limb 1b** of the same step
+(`fossil_announced_exits_enabled`, default **on**, `scenarios.py:5303`;
+`evolve.py:541-556`): vintage-gated on `instrument_date`, reversal-registry
+checked, riding step 0's matcher/derate machinery and bypassing the reliability
+floor. Dated fossil plants are exempt from the economic screen, which runs on
+the residual (undated) fleet (rule 19 `[R-ONE-MECH]`). An explicit `False`
+restores the pre-ruling posture where the economic screen governs all fossil. Non-fossil
 (nuclear, hydro, renewables, storage) dates are honored only within the EIA-860
 data horizon (`EIA860_OPERABLE_VINTAGE + NONFOSSIL_ANNOUNCED_HORIZON_YEARS`,
 default 5); beyond it a non-fossil date is honored only if the unit is in the
@@ -53,7 +63,7 @@ confirmed registry (the horizon gate activates with the confirmed channel — of
 honor all non-fossil dates). Renamed from the old `apply_known_retirements`
 (RC-3; no alias).
 
-### Step 2 — Economic retirements (`apply_economic_retirements`, line 279)
+### Step 3 — Economic retirements (`apply_economic_retirements`, `retirements.py:3158`; runs AFTER the CCS screen)
 
 For each thermal unit, computes a going-forward economic test:
 
@@ -89,7 +99,7 @@ For each thermal unit, computes a going-forward economic test:
   `floor_retention_log`. (`retirement_reserve_margin` was **deleted** with the
   floor-accreditation rebuild — rule 26 `[R-DELETE]`.)
 
-### Step 4 — CCS retrofit (`apply_ccs_retrofit`, line 1257)
+### Step 2 — CCS retrofit (`apply_ccs_retrofit`, `ccs.py:180`; joint with retirement, runs BEFORE the economic screen)
 
 Screens existing `gas_cc` units to retrofit into `gas_cc_ccs`. Annual net savings
 per MW = carbon avoided (`(old−new co2 rate)·carbon_price·cf·8760`) + 45Q/EAC
@@ -101,7 +111,7 @@ payback (most efficient hosts first), capped at `ccs_retrofit_max_gw_per_year`
 updated in place: `heat_rate ·= (1+penalty)`, `vom += adder`,
 `co2_rate ·= (1−capture_rate)`, `fuel_type → "gas_cc_ccs"`.
 
-### Step 5 — Economic new entry (`apply_economic_new_entry`, line 928)
+### Step 5 — Economic new entry (`apply_economic_new_entry`, `new_entry.py:832`)
 
 Candidate techs are screened by margin and built highest-margin first, subject to
 per-tech and ISO-level annual queue caps:
@@ -120,7 +130,7 @@ LCOE is `compute_lcoe(...)` (line 734): capital annualized by a capital recovery
 factor from the discount rate and tech lifetime, capex optionally Wright-adjusted,
 IRA ITC/PTC applied, FOM added, spread over annual generation at base CF.
 
-### Step 6 — Reserve-margin backstop (`apply_reserve_margin_build`, line 1176)
+### Step 6 — Reserve-margin backstop (`apply_reserve_margin_build`, `adequacy.py:866`)
 
 An adequacy guarantee: if accredited firm capacity falls below
 `peak_demand · (1 + planning_reserve_margin)`, force-build the cheapest firm
@@ -138,16 +148,18 @@ tech, seeded from `WRIGHT_REFERENCE_GW` and advanced each year by
 `GLOBAL_ANNUAL_DEPLOYMENT_GW` plus local builds. Wright's-Law capex reductions are
 a function of cumulative deployment, feeding next year's `compute_lcoe`.
 
-## 3.2 The P0→P1→P2 commitment sequence
+## 3.2 The P0→P1 commitment sequence (P2 archived)
 
-Three LP solves per year reconcile clearing prices with start-up economics while
-staying pure LP (`commitment.py` + `runner.py`):
+Two LP solves per year — P0 base-cost → P1 bid-cost — reconcile clearing prices
+with start-up economics while staying pure LP (`commitment.py` +
+`pipeline/`); P1 is the run everything is scored on. P2 is archived behind
+`--enable-legacy-p2` and no keeper uses it:
 
 | Pass | Cost vector | Purpose |
 |------|-------------|---------|
 | **P0** | base MC | discover run lengths from the resulting dispatch |
 | **P1** | base + amortized startup markup | **sets clearing prices** (cycling reflected) |
-| **P2** | bid MC on a committed fleet | optional commitment screen (default off) |
+| **P2** | bid MC on a committed fleet | ARCHIVED legacy commitment screen (`--enable-legacy-p2` only) |
 
 ### P1 — startup-amortization markup
 
@@ -158,7 +170,7 @@ warm-boiler coal with a must-run floor and steam-host CHP are exempt when the
 corresponding config flags are set. `mc_bid = mc_base + markup`. P1 warm-starts
 from P0's basis.
 
-### P2 — economic commitment screen (`commitment_enabled`, default off)
+### P2 — economic commitment screen (ARCHIVED; `commitment_enabled` behind `--enable-legacy-p2`)
 
 `compute_commitment(...)` (line 307) decides which CC/CT units stay committed:
 
@@ -177,6 +189,25 @@ P1 dispatch (no part-loading) when unscreened; an adequacy backstop restores
 decommitted units if committed capacity would fall below P1 thermal dispatch in
 any zone-hour (never create unserved demand). P2 re-solves on this fleet; both P1
 and P2 are cached (P1 as `year_<year>_p1.parquet`, P2 primary).
+
+### P1-native commitment mechanisms
+
+Three P1-native commitment **bridges** inject a `min_gen` floor detected from P0
+at the P0→P1 seam, each ISO-exclusive and sharing
+`model/commitment.py::caiso_ra_mustoffer_min_gen`: `caiso_ra_mustoffer` (CAISO,
+default on), `ercot_gas_commitment_bridge` (merchant gas-CC) and
+`nyiso_gas_commitment_bridge` (slow-start gas by unit physics plus a min-run leg).
+
+A default-off fourth family is the in-LP commitment **posture** relaxation
+(`ercot_commitment_posture` / `miso_commitment_posture` /
+`spp_commitment_posture`, `scenarios.py:14773` / `:11008` / `:9457`, all
+`False`): a pooled linear commitment state `U` per plant group with headroom
+`Σ P ≤ U`, measured min-load `Σ P ≥ mlf·U` and a startup charge on `ΔU⁺` in the
+objective, plus (SPP) min-up / min-down time rows, built by
+`model/lp/rows.py::_build_posture_energy_rows` (`rows.py:1214`). It is not a
+floor (forces no exogenous energy) and is mutually exclusive with the ISO's
+bridge (rule 19 `[R-ONE-MECH]`); mechanism-matrix row `spp_commitment_posture`
+(`docs/codebase-site/data/mechanism-matrix.js:1759`).
 
 Additional adequacy helpers: `reserve_adequacy_commit` (NYISO downstate spinning
 reserve), `as_adequacy_commit` (ERCOT multi-product AS), and
