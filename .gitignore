@@ -4031,3 +4031,7 @@ results/calibration/closeout_soco_2_20[12][0-9]/
 results/calibration/nwppnext22_*/
 results/calibration/nwppnext22b_*/
 !results/calibration/nwppnext22b_span/
+
+# closeout-miso-nuc: per-year shard legs, checked out for verify/compose only; bytes live on their shard commits
+# (claude/closeout-miso-nuc-<Y>); the composed bundle carries its own negation. Never rm (rule 31).
+results/calibration/closeout_miso_nuc_20[12][0-9]/
