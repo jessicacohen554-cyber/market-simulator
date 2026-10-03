@@ -106,3 +106,22 @@ Under the owner's standing ruling (promote if structural integrity improves, eve
 - The composed span carries every `hourly/` sidecar, including `unit_marginal_<Y>` for all seven years.
 - A promotion is one `promote_keeper.py --iso NWPP --bundle results/calibration/nwppnext25_span`, which prunes the
   `2026-10-03-nwpp-next-24-head` stores. The bundles do not survive this container unless promoted or pushed.
+
+## §Promotion (2026-10-03)
+
+The owner card "Promote" ruled the promotion. The close-out desk session was archived before this lane reached the
+slot.
+
+- **Merge.** `origin/main` (4fcad76b) was merged into `claude/nwppnext25`. No `src/` or `scripts/run_*` change came in,
+  so G-DRIFT is empty.
+- **Staged legs.** They were moved out of `results/calibration` before the run.
+- **Promotion run.** `promote_keeper.py --iso NWPP --bundle results/calibration/nwppnext25_span`:
+  - preflight built `fleet_census_<Y>`;
+  - outgoing exceptions ledger empty;
+  - attestation and DOF ledger written;
+  - `keepers/NWPP.json` and the `program-status.json` gate-(a) marker re-keyed to `2026-10-03-nwpp-next-25-served`;
+  - status rebuilt (NOT-YET);
+  - audit with only E13 tolerated, then `2026-10-03-nwpp-next-24-head` / `nwppnext24_span` pruned;
+  - strict audit clean;
+  - parity OK (9 runs, 9 bundle dirs).
+- **Not deleted.** `scripts/gen_nwppnext24_attestation.py` is kept: `gen_nwppnext25_attestation.py` imports it.
