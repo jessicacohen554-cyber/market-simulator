@@ -7090,3 +7090,26 @@ Keeper unchanged; data withdrawn; arm at `d3e04d9f`. Records: `PRECOMMIT-` and `
   - In-the-money loading is 0.95–0.99 in the model vs 0.88–0.91 in CAMPD in the fail years.
 - **COAL_BIT:** stays OPEN, re-pointed to in-the-money loading.
 - **Record:** `FINDING-pjm-next-29-lowhour-price-setters-2026-10-02.md`.
+
+## PJM-NEXT-30 — 2026-10-03 — COAL_BIT in-money loading decomposed; availability is not the year-discriminator (zero LP, NOT CHARTERED)
+
+- **Readings fixed ex ante** (`ec250a98`). The S2 gap is split per plant into four pieces:
+  - basis: above the annual p99 of CAMPD net;
+  - derate: above the weekly max;
+  - offline: CAMPD dark;
+  - loading: running below the weekly max.
+- **Readings:**
+  - R1 is mixed: basis 0.37, loading 0.26, derate 0.22, offline 0.15.
+  - R2: only loading is year-discriminating (+0.049 per MW cap). Its dispatch-independent twin has the opposite
+    sign: real below-capability loading is larger in 2023/24.
+  - R3 is not concentrated.
+  - R4 cannot exclude reserves: the IMM coal-held reserve is 0.7–2.2× the loading piece.
+  - R5: NOT CHARTERED.
+- **Cap overstatement:** the `cap_mw` overstatement (0.5–1.9 GW, mostly whole-unit dark hours outside the windows)
+  exists in every year, 2023/24 included.
+- **Why 2023/24 match:** the model loads coal below real in those years, which cancels the overstatement. So a
+  rule-14 availability repair would regress 2023/24 together with the fail years.
+- **The year-discriminator** is the model's coal merit position against the price. Every channel that sets it is
+  adjudicated.
+- **Tait remap:** stays parked as the rider for the next PJM solve.
+- **Record:** `FINDING-pjm-next-30-coalbit-inmoney-loading-2026-10-03.md`.
