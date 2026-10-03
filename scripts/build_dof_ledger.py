@@ -177,8 +177,7 @@ def _entry(
         e["value"] = value
     if n_scalars is not None:
         e["n_scalars"] = n_scalars
-    if source:
-        e["source"] = source
+    e["source"] = source  # always present: calibration_attestation.document.yaml
     if identification == "residual":
         if not root_cause:
             raise ValueError(f"residual entry {name!r} needs a root_cause")

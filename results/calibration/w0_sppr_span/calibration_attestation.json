@@ -513,5 +513,19 @@
     "supersedes": "SPP-105's R on wefor_residual (2026-09-30; carrier A = 0.0 on CC/ST, rejected because the statistical WEFOR stands in for sub-5-day gas outages the >=5-day CAMPD windows miss). New evidence: W0's commission_year_cod_fallback gives SPP ST_GAS rows their true commission years, making the age-escalated statistical WEFOR live (0.147 -> 0.214); scope narrowed to ST_GAS. The sub-5-day gas outage gap (gas short windows unarmed on SPP) stays OPEN and is the next SPP queue item.",
     "determination": "Train 2023-25 CALIBRATED -> NOT-YET on C3a 2024 (-11.2 %) and C3b 2024 (NRMSE 0.216); C3c 2023-25 then not lone. C1 ST_GAS 2023/24/25 -5.55/-6.31/-6.91 TWh (spp-107 -6.43/-7.85/-7.61). Full span NOT-YET -> NOT-YET.",
     "free_parameters": "none added: wefor_residual 0.0 is the PRECOMMIT formula max(0, W - X) on SPP's own fleet; no tuned value."
-  }
+  },
+  "authorized_price_tuning": {
+    "declared": true
+  },
+  "lane_blocks": [
+    "r_spp",
+    "spp85",
+    "spp86",
+    "spp94",
+    "spp98",
+    "spp99",
+    "spp100",
+    "spp107EXR",
+    "w0_spp107r"
+  ]
 }

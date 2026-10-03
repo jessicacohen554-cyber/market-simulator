@@ -558,5 +558,19 @@
         "by": "promote_keeper.py --drop-exception"
       }
     }
+  ],
+  "authorized_price_tuning": {
+    "declared": true
+  },
+  "lane_blocks": [
+    "neiso109",
+    "neiso110",
+    "neiso112",
+    "hydro5",
+    "r_neiso",
+    "neiso114",
+    "neiso117",
+    "neiso118",
+    "neiso119"
   ]
 }
