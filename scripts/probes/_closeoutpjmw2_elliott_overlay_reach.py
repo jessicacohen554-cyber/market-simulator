@@ -41,7 +41,16 @@ def main() -> int:
     """Write the reach JSON and print the day table."""
     u = pd.read_parquet(
         BUNDLE / "unit_marginal_2022.parquet",
-        columns=["unit_id", "plant_group", "fuel", "zone", "hour", "mw", "cap_mw", "mc"],
+        columns=[
+            "unit_id",
+            "plant_group",
+            "fuel",
+            "zone",
+            "hour",
+            "mw",
+            "cap_mw",
+            "mc",
+        ],
     )
     u = u[
         u.fuel.astype(str).isin(THERMAL)
@@ -53,7 +62,9 @@ def main() -> int:
     w = u[(u.hour >= h0) & (u.hour < h1)].copy()
     w["unav"] = w.unit_id.map(inst).astype(float) - w.cap_mw
     w["hr"] = w.cap_mw - w.mw
-    g = w.groupby("hour").agg(cap=("cap_mw", "sum"), gen=("mw", "sum"), unav=("unav", "sum"))
+    g = w.groupby("hour").agg(
+        cap=("cap_mw", "sum"), gen=("mw", "sum"), unav=("unav", "sum")
+    )
     g["headroom"] = g.cap - g.gen
     t = pd.Timestamp("2022-01-01") + pd.to_timedelta(g.index, unit="h")
     g["day"] = t.day
@@ -64,7 +75,9 @@ def main() -> int:
     pub = pub[~pub.index.duplicated()]
     g["pub_forced"] = g.day.map(pub).astype(float)
     base = g[(g.day >= BASE_DAYS[0]) & (g.day <= BASE_DAYS[1])]
-    g["increment"] = (g.pub_forced - base.pub_forced.mean()) - (g.unav - base.unav.mean())
+    g["increment"] = (g.pub_forced - base.pub_forced.mean()) - (
+        g.unav - base.unav.mean()
+    )
     g["inc_pos"] = g.increment.clip(lower=0.0)
     g["resid_headroom"] = g.headroom - g.inc_pos
 
@@ -74,14 +87,20 @@ def main() -> int:
     g["price"] = (lw.x / lw.demand).reindex(g.index)
     g["demand"] = lw.demand.reindex(g.index)
     r = pd.read_parquet(BUNDLE / "reserve_family_2022.parquet")
-    r = r[(r["pass"] == "P1") & (r.family == "pjm_primary")].groupby("hour").requirement_mw.sum()
+    r = (
+        r[(r["pass"] == "P1") & (r.family == "pjm_primary")]
+        .groupby("hour")
+        .requirement_mw.sum()
+    )
     g["req"] = r.reindex(g.index)
 
     real = pd.read_parquet(REAL)
     real = real[real.year == 2022]
     sz = s.assign(zone=s.zone.astype(str))[["zone", "hour", "demand"]]
     real = real.merge(sz, on=["zone", "hour"])
-    act = (real.rt * real.demand).groupby(real.hour).sum() / real.groupby("hour").demand.sum()
+    act = (real.rt * real.demand).groupby(real.hour).sum() / real.groupby(
+        "hour"
+    ).demand.sum()
     g["actual"] = act.reindex(g.index)
 
     # Merit-order walk: units with headroom above the hour's cleared price, by mc.
@@ -95,7 +114,11 @@ def main() -> int:
         above = d[d.mc >= g.at[h, "price"] - 1e-6]
         c = np.cumsum(above.hr.to_numpy(float))
         k = int(np.searchsorted(c, inc))
-        walk[h] = float(above.mc.to_numpy(float)[min(k, len(above) - 1)]) if len(above) else np.nan
+        walk[h] = (
+            float(above.mc.to_numpy(float)[min(k, len(above) - 1)])
+            if len(above)
+            else np.nan
+        )
     g["walk_price"] = pd.Series(walk)
 
     ev = g[(g.day >= EVENT_DAYS[0]) & (g.day <= EVENT_DAYS[1])]
@@ -125,13 +148,21 @@ def main() -> int:
         "event_mean_actual_zonal_rt": round(float(ev.actual.mean()), 2),
         "event_hours_actual_ge_800": int((ev.actual >= 800).sum()),
         "verdict": None,
-        "by_day": {int(k): {c: round(float(v), 1) for c, v in row.items()} for k, row in day.iterrows()},
+        "by_day": {
+            int(k): {c: round(float(v), 1) for c, v in row.items()}
+            for k, row in day.iterrows()
+        },
     }
     # Ceiling: C3a/C3b 2022 on the zonal load-weighted basis with Elliott (23-26 Dec) removed.
     full = s.assign(zone=s.zone.astype(str)).merge(
-        pd.read_parquet(REAL).query("year == 2022")[["zone", "hour", "rt"]], on=["zone", "hour"]
+        pd.read_parquet(REAL).query("year == 2022")[["zone", "hour", "rt"]],
+        on=["zone", "hour"],
     )
-    yr = full.assign(x=full.price * full.demand, a=full.rt * full.demand).groupby("hour")[["x", "a", "demand"]].sum()
+    yr = (
+        full.assign(x=full.price * full.demand, a=full.rt * full.demand)
+        .groupby("hour")[["x", "a", "demand"]]
+        .sum()
+    )
     ty = pd.Timestamp("2022-01-01") + pd.to_timedelta(yr.index, unit="h")
     yr["m"], yr["doy"] = ty.month, ty.dayofyear
 
@@ -147,7 +178,9 @@ def main() -> int:
     rec["c3a_c3b_2022_all"] = c3(yr)
     rec["c3a_c3b_2022_ex_elliott"] = c3(yr[~ell])
     rec["verdict"] = (
-        "CLEARS" if rec["event_mean_walk_price_upper_bound"] >= 800 or rec["hours_resid_below_primary_req"] > 0
+        "CLEARS"
+        if rec["event_mean_walk_price_upper_bound"] >= 800
+        or rec["hours_resid_below_primary_req"] > 0
         else "NOT CHARTERED (no shortage hour; merit-order upper bound below the $800 bar)"
     )
     OUT.write_text(json.dumps(rec, indent=1) + "\n")
