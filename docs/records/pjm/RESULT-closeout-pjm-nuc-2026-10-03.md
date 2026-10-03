@@ -289,3 +289,36 @@ with this attribution.
   - 2024 @ 998b3905
   - 2025 @ 57bdb18b
 - The desk keeps these alive until the promotion merges. This container's copies will not survive it.
+
+## Addendum C — promotion (owner ruling R-52, 2026-10-03)
+
+**R-52: "Promote on structure".** `2026-10-03-closeout-pjm-nuc-keeper` (`closeout_pjm_nuc_full_span`) replaces
+`2026-10-02-w0-pjm-fix2`.
+
+**Run.** One `scripts/promote_keeper.py` run, in the PJM slot the desk granted.
+- **Preflight.** It built `fleet_census_<Y>.json` for all seven years. All seven `unit_marginal` layers were already
+  present. The replay recipe check passed once `mixed_solve_sha` moved from `meta.json` into
+  `mixed_solve_sha.json` (desk commit a4181127). It needed PJM `data/clean` and the DA-virtuals feeds for 2019–25 in
+  this container.
+- **Steps:** register → attest → designate → status → pre-audit → prune → strict audit. All clean.
+- **Pruned:** the outgoing keeper's three stores (`w0_pjm_span`, its sidecar and its payload), PJM only.
+- **Parity:** OK once the local per-year leg copies were removed. Those copies are not in git; the full legs stay on
+  the shard branches until this merges.
+
+**Exceptions ledger.** Carried forward verbatim, not re-measured:
+- R-36: C1 CT_PEAKER 2021. Moot now: the cell PASSes at −7.92.
+- R-37: C3a and C3b 2025.
+
+**Governance.**
+- `authorized_price_tuning`: `declared: false`, note "none under the channel". The bands are the incumbent's,
+  unchanged.
+- DOF ledger: rebuilt by `build_dof_ledger.py`.
+
+**Audit.** `audit_keepers --iso PJM` reports 0 failures and 1 warning. The warning is E11: the former bundle is
+pruned, so the lineage diff has no baseline. NYISO and SOCO carry the same expected post-prune warning.
+
+**Next.**
+- The 2022 C1 CC_REGULAR over-dispatch is the next PJM lever.
+- The COAL_BIT frontier card follows (R-47).
+- Once this merges, the shard branches and `claude/closeout-pjm-nuc-probe` are deletable by the owner:
+  959cae91, df0a3478, 61afd4f9, 47a9db84, fbc78864, 998b3905, 57bdb18b.

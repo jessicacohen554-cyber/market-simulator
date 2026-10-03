@@ -4064,6 +4064,21 @@ results/calibration/closeout_spp_nuc_20[0-9][0-9]/
 results/calibration/closeout_pjm_nuc_span/
 frontend/data/backcast/registry/2026-10-03-closeout-pjm-nuc-6yr.json
 frontend/data/backcast/runs/2026-10-03-closeout-pjm-nuc-6yr.js
+
+# capx D106 (2026-10-03): the NYISO T1-F re-solve on keeper 2026-10-02-w0-nyiso
+# (ff-t1f-d106/nyiso, the headline nyiso-t1f key 374fa81075c95ff8; owner ruling
+# Q76, plan §2.1b gate (d)). Same class and same slim-vs-heavy split as
+# /results/ff-t1f-d60/ and /results/ff-t1f-d105/: the committed record is
+# full_horizon_summary.json + run_config.json + forecast_verdict.json +
+# dof_ledger.json + the invariants output + the phase-0 probe_result.json + the
+# resolved config.yaml, solve_surface.json and evolution_<year>.json ledgers;
+# the per-year dispatch parquet, npz, hourly sidecars and floor-retention dumps
+# are heavy and regenerable from the config.
+/results/ff-t1f-d106/*/*/*/*.parquet
+/results/ff-t1f-d106/*/*/*/*.npz
+/results/ff-t1f-d106/*/*/*/hourly/
+/results/ff-t1f-d106/*/*/*/year_*_floor_retentions.json
+/results/ff-t1f-d106/*.log
 results/calibration/closeout_pjm_nuc_full_span/
 frontend/data/backcast/registry/2026-10-03-closeout-pjm-nuc-7yr.json
 frontend/data/backcast/runs/2026-10-03-closeout-pjm-nuc-7yr.js

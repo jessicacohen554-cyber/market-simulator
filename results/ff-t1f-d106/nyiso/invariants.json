@@ -1,0 +1,86 @@
+[
+  {
+    "ident": "I1",
+    "name": "energy balance",
+    "status": "PASS",
+    "detail": "max |supply\u2212demand| = 1.099e-09 MW (year 2026); tol 1.0"
+  },
+  {
+    "ident": "I2",
+    "name": "no NaN/inf",
+    "status": "PASS",
+    "detail": "clean"
+  },
+  {
+    "ident": "I3",
+    "name": "unserved/dump",
+    "status": "PASS",
+    "detail": "ok"
+  },
+  {
+    "ident": "I4",
+    "name": "capacity accounting",
+    "status": "PASS",
+    "detail": "closes"
+  },
+  {
+    "ident": "I5",
+    "name": "no retire-and-reenter",
+    "status": "PASS",
+    "detail": "ok"
+  },
+  {
+    "ident": "I6",
+    "name": "econ-retirement sanity",
+    "status": "PASS",
+    "detail": "ok"
+  },
+  {
+    "ident": "I7",
+    "name": "reliability floor",
+    "status": "PASS",
+    "detail": "held"
+  },
+  {
+    "ident": "I8",
+    "name": "planned-additions gating",
+    "status": "PASS",
+    "detail": "ok"
+  },
+  {
+    "ident": "I9",
+    "name": "storage integrity",
+    "status": "PASS",
+    "detail": "ok"
+  },
+  {
+    "ident": "I10",
+    "name": "RPS dual sign+stability",
+    "status": "PASS",
+    "detail": "\u22650, stable"
+  },
+  {
+    "ident": "I11",
+    "name": "one-pass",
+    "status": "PASS",
+    "detail": "single pass"
+  },
+  {
+    "ident": "I12",
+    "name": "reserve-margin band",
+    "status": "PASS",
+    "detail": "requirement-implied floor [8.2%, 23.2%]; all in-band"
+  },
+  {
+    "ident": "I13",
+    "name": "cobweb detector",
+    "status": "PASS",
+    "detail": "smooth"
+  },
+  {
+    "ident": "I14",
+    "name": "price sanity",
+    "status": "PASS",
+    "detail": "in band"
+  }
+]
