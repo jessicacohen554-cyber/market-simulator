@@ -59,3 +59,32 @@ NW price and energy formation (C3a 2024, hydro water value), not the seam.
 - Owner card: close the seam-depth lane and pivot to C3a 2024, or solve the ETC/TOR arm as a partial.
 - The data drift (#7134 coal stocks; SolveEpoch 2026-10-03b NWPP nuclear rows) needs a 7-shard replay of the keeper
   recipe at main HEAD regardless of the card. That replay is a rule-14 data re-solve and is promotable on structure.
+
+## §D. C3a pivot (zero LP, desk ruling "pivot C3a"): the price-mean miss is in the tail days, not the water value
+
+Inputs: keeper `nwppnext23_span` `hourly/system_<Y>` (demand-weighted P1 price over the five `NWPP-*` zones) and
+`class_hourly_<Y>`; the WEIM benchmark `actual_lmp_hourly_NWPP` rt (the C3a reference); EIA-930 NWPP footprint
+frame; EIA-923 Schedule 2 zone-month delivered gas (`derive_nwpp_zonal_gas_hub.load_zone_months`); and
+`gas-prices/sumas_weekly.csv`.
+
+| year | C3a (bench hours) | share of the gap in the top 10 days | C3a without them | the days |
+|---|---:|---:|---:|---|
+| 2023 (Jun–Dec) | −11.1 % | 0.52 (top 20: 0.79) | **−6.0 %** | Oct 25–31 (cold, Sumas print 6.04 on 10-25), Jul 25–26 and Aug 16 (heat) |
+| 2024 | −26.2 % | **0.80** | **−7.0 %** (no January: −6.9 %) | **Jan 12–17**, the MLK arctic event: bench daily $236 / 709 / 782 / 634 / 478 / 185, model $48–54 |
+
+- **Physics matches during the event (Jan 12–17, 2024).** Model vs EIA-930, mean MW: hydro 14,789 / 13,997;
+  gas 10,644 / 10,114; coal 6,322 / 6,043. Slack is 0. The model dispatches the cold snap correctly and prices it at
+  the marginal offer ($50), while the WEIM benchmark priced scarcity ($700–1,270 peaks).
+- **Not fuel.** EIA-923 January 2024 zone delivered gas is $3.98–6.42/MMBtu, against Henry Hub at about $3.2. The
+  weekly Sumas prints are 6.46 (01-10) and 3.99 (01-17). A monthly zonal basis, which `gas_electric_power_monthly_level`
+  would need an NWPP state-weight row to supply (none exists, so that key is inert for NWPP), moves January by only
+  $1–2/MMBtu. It would matter for January 2023 (zone deliveries $15–40), but that month is outside the benchmark.
+- **Not the water value.** Outside the tail days, both years sit inside the ±10 % band. The hydro-marginal price
+  level (FINDING-nwppnext23 §C) is not the binding error.
+
+**Routed (not solved; a lever arm needs a desk slot).** The open C3a records are a **scarcity-pricing** gap. In NWPP's
+model, nothing prices a tight-but-served hour above the marginal offer. In the real market, WEIM's
+resource-sufficiency failures and power-balance penalty pricing did. A structural candidate needs a measured,
+forward-reproducible driver (rule 13), for example WEIM RSE-failure intervals or a reserve requirement with a
+demand curve, plus a rule-19 census of what already prices NWPP's tail. Free daily NW gas hubs do not exist
+(plan §4), so a daily-fuel route is closed. C3b 2023/24 (shape) shares the same days.
