@@ -76,6 +76,24 @@ human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-10-03d — MISO 2019-2022 measured nuclear: anchor rows plus the
+NRC daily extract (rule 14; lane closeout-miso-nuc, owner ruling R-43).
+KEY-MOVING for backcast MISO, through ``solve_surface.SolveEpoch`` 2026-10-03d.**
+WHAT CHANGED: ``constants.NUCLEAR_MONTHLY_CF_BY_YEAR["MISO"]`` gains 2019-2022
+rows (``scripts/data/derive_nuclear_monthly_cf.py --isos MISO``, the frozen
+derive; 2023-2024 reproduce under ``--check``, 2025 Oct/Nov preliminary-vintage
+drift not re-derived, rule 23), and ``data/raw/nuclear-availability-MISO.csv``
+is re-derived over 2019-2025 by ``scripts/data/derive_nuclear_availability.py``:
+2019-2022 NRC daily rows reconciled to the new anchor (the River Bend 2019 NRC
+rename aliased), Duane Arnold (1060) through 2020 and Palisades (1715) through
+2022 as uncovered pass-through rows (``avail = avail_raw``), every 2023-2025 row
+byte-identical. A 2019-2022 MISO backcast previously read the static
+``NUCLEAR_MONTHLY_CF`` pattern x (1 - EFORD) and no daily overlay. The MISO
+table row is declared in ``solve_surface_declared.DECLARED`` and moves MISO keys
+(forecast included, where the 2019-2022 rows are never read) on its own; the
+CSV is in no key, so the epoch covers it. WHAT IS NOT INVALIDATED: every other
+ISO. Record: ``docs/records/miso/FINDING-closeout-miso-2-nuclear-2019-2022-2026-10-03.md``.
+
 **Epoch 2026-10-03c — SOCO 2019-2022 measured nuclear monthly CF (rule 14;
 lane closeout-SOCO-2). KEY-MOVING for backcast SOCO, through
 ``solve_surface.SolveEpoch`` 2026-10-03c (solved as 2026-10-03a at
