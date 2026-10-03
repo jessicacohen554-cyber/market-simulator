@@ -1,7 +1,7 @@
 {
  "iso": "SOCO",
- "keeper": "2026-10-02-w0-soco-fix2",
- "note": "SOCO keeper: W0 EIA-860 settlement re-solve of soco96 (keeper recipe + the ten W0 fields) after the denominator fixes #7047/#7049; mixed-SHA legs with zero-LP inert proof",
+ "keeper": "2026-10-03-closeout-soco-2-nuclear",
+ "note": "SOCO nuclear 2019-22 at measured monthly CF (NUCLEAR_MONTHLY_CF_BY_YEAR rows); CC_REGULAR over-run root-caused, structural promotion under R-41",
  "keeper_at_promotion_soco53": "2026-09-16-soco-1-baseline",
  "superseded": {
   "date": "2026-09-30",

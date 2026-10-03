@@ -31,12 +31,9 @@ _OVERLAY_FIELDS = ("nuclear_unit_availability", "ercot_nuclear_unit_availability
 
 #: ISO-years whose rows are derived in an open lane that has not reached main.
 #: Each entry must still be uncovered at HEAD (see the test below), so the
-#: allowance cannot outlive the merge that fills it. SOCO 2019-2022: lane
-#: claude/closeout-soco-2 (PRECOMMIT-closeout-soco-2-2026-10-03.md) — delete these
-#: entries when that lane merges main.
-_PENDING_ROWS: frozenset[tuple[str, int]] = frozenset(
-    ("SOCO", y) for y in (2019, 2020, 2021, 2022)
-)
+#: allowance cannot outlive the merge that fills it. Empty: the SOCO 2019-2022
+#: rows landed with lane closeout-SOCO-2 (RESULT-closeout-soco-2-2026-10-03.md).
+_PENDING_ROWS: frozenset[tuple[str, int]] = frozenset()
 
 
 def _registered_years() -> dict[str, set[int]]:

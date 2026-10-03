@@ -4024,6 +4024,10 @@ results/calibration/nwppnext21_*/
 
 # closeout-PJM R-13 arm legs: transport on claude/closeout-pjm-r13-<year> shard branches, never main (rule 29c)
 results/calibration/closeout_pjm_r13_*/
+
+# closeout-SOCO-2: per-year shard legs, checked out for verify/compose only; bytes live on their shard commits
+# (claude/closeout-soco-2-<Y>); the composed bundle carries its own negation. Never rm (rule 31).
+results/calibration/closeout_soco_2_20[12][0-9]/
 results/calibration/nwppnext22_*/
 results/calibration/nwppnext22b_*/
 !results/calibration/nwppnext22b_span/

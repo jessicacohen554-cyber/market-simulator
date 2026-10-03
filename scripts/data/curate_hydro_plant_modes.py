@@ -59,8 +59,9 @@ ISO's registered regulated-chain table (``data/raw/<iso>-hydro/<iso>_hydro_chain
 NWPP only today): shapeable, because its inflow is an upstream release and its
 hydraulics belong to the cascade formulation. See ``CHAIN_REGISTRY``.
 
-Scope: DEFAULT_ISOS registers CAISO, PJM, NYISO, SPP, NEISO, MISO and NWPP
-(NEISO/MISO/SPP reviewed by hydro-5, NWPP by NWPP-49 — see the constant). Another ISO's lane must
+Scope: DEFAULT_ISOS registers CAISO, PJM, NYISO, SPP, NEISO, MISO, NWPP and SOCO
+(NEISO/MISO/SPP reviewed by hydro-5, NWPP by NWPP-49, SOCO by closeout-SOCO-2 —
+see the constant). Another ISO's lane must
 run and review the same validation for its BA before adding itself — the
 printed ``completion validation`` line IS that review, scored on the target
 BA's own labeled subset and never transferred (rule 25 ``[R-ISO-SCOPE]``).
@@ -117,6 +118,18 @@ DATATYPE = "hydro-plant-modes"
 # would call RoR). The completion's one large flat verdict is Chief Joseph
 # (2,456 MW, a Corps dam with no HILARRI reservoir), which rule 0 below
 # assigns to the cascade anyway; off-chain completion-flat is ~0.13 GW.
+#
+# SOCO (lane closeout-SOCO-2, 2026-10-03, desk ruling): reviewed on SOCO's own
+# labeled subset — 30/40 plants, 71.3 % of labeled MW reproduced (45 plants,
+# 3,320 MW EHA CH; 40 take their EHA label directly, 5 fall to HILARRI). The
+# errors are ONE-SIDED in the same direction as NEISO/MISO/SPP/NWPP: 878.6 MW /
+# 10 EHA-Run-of-river plants the completion would call shapeable, 0 MW of
+# EHA-peaking it would call RoR. Until this entry SOCO's partition was built
+# only by an explicit `--iso SOCO`, so `regenerate_clean.py` (which calls
+# curate() on these defaults) left SOCO solves without it — the W0 lane's open
+# follow-up (RESULT-closeout-b-w0-phase3-2026-10-02.md §7). The partition is
+# the one SOCO keepers already solved on: the closeout-SOCO-2 2023 leg
+# reproduces the keeper's class totals exactly.
 DEFAULT_ISOS: tuple[str, ...] = (
     "CAISO",
     "PJM",
@@ -125,6 +138,7 @@ DEFAULT_ISOS: tuple[str, ...] = (
     "NEISO",
     "MISO",
     "NWPP",
+    "SOCO",
 )
 
 # Rule 0 (NWPP-49): a plant on a REGISTERED REGULATED CHAIN is shapeable,
