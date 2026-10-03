@@ -50,6 +50,7 @@ stock in short tons. `scripts/data/curate_coal_stocks.py` melts it long.
 
 | year | plant-level coal stocks | note |
 |---|---|---|
+| 2015–2017 | **yes** | Final Revision vintage; added 2026-10-03 (closeout-SOCO-3, owner ruling R-49) so a 2019 yard's `S_max` (largest month-end stock through Y−1) has multi-year history |
 | 2018–2024 | **yes** | Final Revision vintage |
 | 2025 | **no** | see below |
 
@@ -93,6 +94,14 @@ delivery rate either. `market_sim.data.coal_stocks.opening_stock_tons` exists
 to make the admissible read the easy one.
 
 ## Consumers
+
+**Cross-ISO note (2026-10-03).** `coal_fuel_inventory.build_coal_take_floor` reads
+`S_max` over *every curated year ≤ Y−1*, so adding 2015–2017 raises yard maxima
+wherever a yard held more coal in 2015–17 than in 2018+ (NWPP: 65 plant-years
+across 2019–2025; the four largest moves: Boardman 6106 400 → 999 kt, Bonanza 7790 511 → 1,013 kt, plant 8224 456 → 765 kt, plant 3845 1,014 → 1,396 kt (2019)).
+That loosens any armed take floor (NWPP keeper) at its next clean regenerate,
+which makes it a LIVE input hunk for that lane's G-DRIFT
+(`docs/records/soco/closeout-soco-3/`).
 
 **None in the LP.** Intake-only as of miso-258 — there is no `ScenarioConfig`
 flag and no mechanism. The read seam is

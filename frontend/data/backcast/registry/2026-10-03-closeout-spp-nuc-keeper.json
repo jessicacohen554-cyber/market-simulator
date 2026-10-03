@@ -1,0 +1,19 @@
+{
+  "id": "2026-10-03-closeout-spp-nuc-keeper",
+  "label": "closeout spp nuc keeper",
+  "date": "2026-10-03",
+  "shorthand": "closeout-spp-nuc-keeper",
+  "definition": "closeout-B W0 phase 3: SPP spp-107 + W0 + #7081 (MMU ambient skips seasonal-pair rows) + ST_GAS WEFOR residual relief 0.0 (PRECOMMIT-spp-w0-stgas-wefor-relief; desk 22:48)",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SPP",
+  "file": "frontend/data/backcast/runs/2026-10-03-closeout-spp-nuc-keeper.js",
+  "bundle": "results/calibration/closeout_spp_nuc_span"
+}
