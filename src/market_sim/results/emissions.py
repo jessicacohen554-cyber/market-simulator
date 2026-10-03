@@ -322,15 +322,29 @@ def compute_must_run_emissions(
 
     measured = measured_rate_by_plant or {}
 
-    def _co2_rate(r: pd.Series) -> float:
+    def _co2_rate(plant_code, fuel, hr_weighted) -> float:
         # A covered plant books its measured (v2) rate — the identical rate its
         # grid tranches use — so BTM and grid CO2 intensity agree (plan §5 R5).
-        m = measured.get(int(r["Plant_Code"]))
+        m = measured.get(int(plant_code))
         if m is not None and m > 0.0:
             return float(m)
-        return get_emission_rate(r["fuel"], r["hr_weighted"])
+        return get_emission_rate(fuel, hr_weighted)
 
-    mr["mr_co2_tons"] = mr.apply(lambda r: r["mr_gen_mwh"] * _co2_rate(r), axis=1)
+    # Row-wise over native Python scalars (``tolist``), the same element types a
+    # ``DataFrame.apply(axis=1)`` row carries, without materializing a Series
+    # per plant; the per-row arithmetic is unchanged.
+    mr["mr_co2_tons"] = np.array(
+        [
+            gen * _co2_rate(code, fuel, hr)
+            for gen, code, fuel, hr in zip(
+                mr["mr_gen_mwh"].tolist(),
+                mr["Plant_Code"].tolist(),
+                mr["fuel"].tolist(),
+                mr["hr_weighted"].tolist(),
+            )
+        ],
+        dtype=float,
+    )
     return mr
 
 

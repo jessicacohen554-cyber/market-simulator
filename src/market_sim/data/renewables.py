@@ -2218,12 +2218,14 @@ def _eia860_zone_solar_geometry(
     plants = pd.read_parquet(plant_path)[
         ["Plant Code", "Latitude", "Longitude"]
     ].drop_duplicates("Plant Code")
+    # Index the plant table once; both coordinate lookups map through it.
+    plants_by_code = plants.set_index("Plant Code")
     lat = pd.to_numeric(
-        df["Plant Code"].map(plants.set_index("Plant Code")["Latitude"]),
+        df["Plant Code"].map(plants_by_code["Latitude"]),
         errors="coerce",
     )
     lon = pd.to_numeric(
-        df["Plant Code"].map(plants.set_index("Plant Code")["Longitude"]),
+        df["Plant Code"].map(plants_by_code["Longitude"]),
         errors="coerce",
     )
     zone = df["Plant Code"].map(
@@ -2247,18 +2249,24 @@ def _eia860_zone_solar_geometry(
     )
     flag_cols = np.column_stack([flags[f].to_numpy() for f in _SOLAR_TRACKING_FLAGS])
 
+    # Plant-level NaN handling hoisted out of the zone loop: an elementwise
+    # ``where``/``isnan`` commutes with the per-zone boolean selection, so
+    # indexing these once-computed arrays is identical to recomputing them on
+    # each ``sel`` subset.
+    cap_filled = np.where(np.isnan(cap_arr), 0.0, cap_arr)
+    coords_ok = ~np.isnan(lat_arr) & ~np.isnan(lon_arr) & ~np.isnan(cap_arr)
     geo_weight = np.zeros(n_zones, dtype=float)  # capacity with valid lat/lon
     for z in range(n_zones):
         sel = zone_idx == z
         if not sel.any():
             continue
-        zc = np.where(np.isnan(cap_arr[sel]), 0.0, cap_arr[sel])
+        zc = cap_filled[sel]
         # Tracking mix: attribute each plant's capacity to the first flag set.
         for k in range(len(_SOLAR_TRACKING_FLAGS)):
             mix[z, k] = (zc * flag_cols[sel, k]).sum()
         # Capacity-weighted centroid over plants with coordinates.
-        ll_ok = sel & ~np.isnan(lat_arr) & ~np.isnan(lon_arr) & ~np.isnan(cap_arr)
-        w = np.where(np.isnan(cap_arr[ll_ok]), 0.0, cap_arr[ll_ok])
+        ll_ok = sel & coords_ok
+        w = cap_filled[ll_ok]
         if w.sum() > 0.0:
             centroid[z, 0] = np.average(lat_arr[ll_ok], weights=w)
             centroid[z, 1] = np.average(lon_arr[ll_ok], weights=w)

@@ -77,6 +77,12 @@ The public summary is the site page `docs/codebase-site/model-audit.html`.
    distinguishing gaps are nodal transmission, MIP commitment, intertemporal
    capacity optimisation and transmission expansion.
 
+**Addendum 2026-10-03 (post-SHA).** `main` re-keyed the SPP keeper to
+`2026-10-02-w0-spp107r` (identity re-key by `promote_keeper.py`) after the
+audit SHA. Recomputed with `iso_determination`: still NOT-YET, now also
+failing price_mean 2024 and price_shape 2024 beside the gates listed in §1.4.
+The site page carries the updated row; the lane reports stand at `d7ff7c20`.
+
 ## 2. Lane findings (ranked)
 
 ### 2.1 LP, dispatch and commitment (lane A)
@@ -85,9 +91,11 @@ The public summary is the site page `docs/codebase-site/model-audit.html`.
   adds continuous commitment-state and start-up pool columns with min-load,
   start-counting and min-up/down rows, a clustered-UC LP relaxation gated by
   `ScenarioConfig.spp_commitment_posture` (`config/scenarios.py:9457`, default
-  off). It appears in neither the spec, `CLAUDE.md` nor `docs/codebase/`.
-  Rule 19 (one mechanism per phenomenon) asks that it be enumerated beside the
-  three bridges; rule 28 asks for its mechanism-matrix row. Engineering.
+  off). It carries its mechanism-matrix row (`mechanism-matrix.js` id
+  `spp_commitment_posture`, rule 28 satisfied; the lane's "zero mentions"
+  reading was corrected at composition) but appears in neither the spec,
+  `CLAUDE.md` nor `docs/codebase/`, which present the three bridges as the
+  complete set. Rule 19 asks that it be enumerated beside them. Engineering.
 - **A2 — Relaxed-LP price formation is the largest structural divergence from
   production-cost and ISO practice.** No binaries, no uplift, no convex-hull
   pricing; the rule-1 band multipliers partly absorb the gap. This is a known,
@@ -202,7 +210,7 @@ SOCO, the pre-v3.13 prose in the SPP and ERCOT keeper shards, and
 in-sample, on the status page and in forecast gate (a). (2) Freeze the rubric
 between promotions; an amendment that admits a failing cell is a promotion
 decision, not a scoring fix. (3) Rule on the fourth commitment mechanism
-(A1): ledger it or delete it. (4) Rule on whether any 2026–2050 number may be
+(A1): document it in the spec beside the bridges or delete it (rule 26). (4) Rule on whether any 2026–2050 number may be
 quoted before the forecast program leaves T1 and the uncertainty band exists.
 
 **Engineering.** (1) Rewrite every keeper shard's determination prose to the
