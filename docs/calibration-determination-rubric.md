@@ -1340,6 +1340,21 @@ below are indexed in rule-history §27. Record:
 `docs/records/governance/closeout-2026-10/RESULT-closeout-c-rubric-2026-10-02.md`.
 v3.18 is indexed in rule-history §28; v3.19 in §29.)*
 
+**Amendment procedure (rule 37 `[R-RUBRIC-FREEZE]`, owner ruling 2026-10-03,
+rule-history §30).** This rubric is frozen between promotions. An amendment —
+to this document, to `RUBRIC_VERSION`, to any threshold or band, to a caveat
+budget (`MAX_LEDGERED_CAVEATS`, `MAX_PROTECTIVE_CAVEATS`) or to ledger
+admissibility (`LEDGERABLE_CRITERIA`, the scoped / configuration-exception /
+reference-coverage entry tables) — is a promotion decision: it is proposed in
+a PRECOMMIT that computes its effect on every registered ISO zero-LP
+(`scripts/calibration_verdict.py` over the committed bundles, the determination
+table before and after), lands only on the owner's ruling cited in the commit,
+and lands in a PR that changes no keeper designation, keeper shard, status part
+or `calibration-complete.json`. The promotion that an amendment enables follows
+in its own PR under rule 35. CI enforces the separation
+(`scripts/check_rubric_freeze.py`); the owner's promotion-with-amendment ruling
+is the one override, passed by the CI step as `RUBRIC_FREEZE_OVERRIDE`.
+
 - **v3.19 (2026-10-03, owner ruling R-40 — backcast close-out plan §5.0 row
   R-40, verbatim: *"Caiso mean LMP for 2021 should be an accepted caveat or
   only compared where data is actually available for that year for

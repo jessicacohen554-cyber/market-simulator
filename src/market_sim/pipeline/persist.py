@@ -43,6 +43,9 @@ __all__ = [
     "ENVIRONMENT_PACKAGES",
     "GIT_STATE_EXCLUDE",
     "highspy_version",
+    "ENV_SOLVE_KNOBS",
+    "HIGHS_OPTION_DEFAULTS",
+    "env_solve_choices",
     "environment_block",
     "json_default",
     "git_sha",
@@ -127,6 +130,131 @@ def environment_block() -> dict:
         # The raw environment variable behind it, "" when unset, so the record
         # says WHY the roots are what they are and not merely what they are.
         "market_sim_data_root": os.environ.get("MARKET_SIM_DATA_ROOT", ""),
+        # The LIVE environment-variable solve knobs at their EFFECTIVE value
+        # (owner ruling 2026-10-03; docs/audit/2026-10/G4-env-knobs.md).
+        "env_solve_choices": env_solve_choices(),
+    }
+
+
+#: HiGHS option defaults the two HiGHS env knobs fall back to when unset, so a
+#: record always states the option VALUE the solver ran with, not the env
+#: string. ``threads=0`` is HiGHS "automatic"; ``simplex_scale_strategy=2`` is
+#: what the pinned ``highspy==1.14.0`` (pyproject.toml) reports from a fresh
+#: ``Highs().getOptionValue`` (queried 2026-10-03). Read live from a fresh
+#: ``Highs()`` when highspy is importable so a solver upgrade that moves a
+#: default is recorded as what actually ran; these are only the fallback for a
+#: checkout without the solver (docs/governance sessions).
+HIGHS_OPTION_DEFAULTS: dict[str, int] = {"threads": 0, "simplex_scale_strategy": 2}
+
+#: The environment variables :func:`env_solve_choices` records, with the
+#: default the solve path substitutes when each is unset. One row per LIVE knob
+#: of the 2026-10-03 zero-LP audit (``docs/audit/2026-10/G4-env-knobs.md``);
+#: the inert ones (``MARKET_SIM_MEM_DEBUG``, ``MARKET_SIM_RESERVE_DUAL_DUMP``,
+#: ``MARKET_SIM_DATA_ROOT`` — the last recorded above on its own) are not here.
+ENV_SOLVE_KNOBS: dict[str, str] = {
+    "MARKET_SIM_WARMSTART": "1",
+    "MARKET_SIM_WARMSTART_XYEAR": "0",
+    "MARKET_SIM_P1_BASIS_SEED": "0",
+    "MARKET_SIM_P1_FLOOR_INPLACE": "0",
+    "MARKET_SIM_P0_CACHE": "",
+    "MARKET_SIM_HIGHS_THREADS": "",
+    "MARKET_SIM_HIGHS_LEAN": "",
+    "MARKET_SIM_USE_CLEAN": "",
+}
+
+
+def _highs_option_defaults() -> dict[str, int]:
+    """Return the installed HiGHS build's defaults for the two recorded options.
+
+    Falls back to :data:`HIGHS_OPTION_DEFAULTS` when highspy is not importable
+    (a docs/governance checkout) or the query fails, so the record is never the
+    reason a bundle write raises.
+    """
+    defaults = dict(HIGHS_OPTION_DEFAULTS)
+    try:
+        import highspy
+
+        h = highspy.Highs()
+        h.setOptionValue("output_flag", False)
+        for name in defaults:
+            status, value = h.getOptionValue(name)
+            if status == highspy.HighsStatus.kOk:
+                defaults[name] = int(value)
+    except Exception:  # pragma: no cover - highspy absent or API drift
+        pass
+    return defaults
+
+
+def env_solve_choices() -> dict:
+    """Record every LIVE environment-variable solve knob at its effective value.
+
+    Rule 24 [R-REGISTRY] forbids off-registry tuning channels; the owner ruling
+    of 2026-10-03 (audit finding A5, ``docs/audit/2026-10/G4-env-knobs.md``)
+    settles the remaining ``MARKET_SIM_*`` env reads on the solve path by
+    RECORDING them — a declared solve-affecting choice, exactly how rule 36
+    [R-YEAR-ISOLATION] already treats ``MARKET_SIM_WARMSTART_XYEAR`` — rather
+    than fingerprinting them into ``cache_key``, which would re-key and orphan
+    every committed keeper's ``solve_surface.json``.
+
+    Each entry is the value the solve path DERIVES from the variable, using the
+    same parse the reader uses (``!= "0"`` for the warm-start family, ``== "1"``
+    for ``MARKET_SIM_HIGHS_LEAN``, ``int(...)`` for the thread count, the truthy
+    token set for ``MARKET_SIM_USE_CLEAN`` / ``MARKET_SIM_P0_CACHE``), so an
+    unset variable records its default and a set one records what it did:
+
+    * ``warmstart`` — ``pipeline.solve`` builds a persistent P0
+      ``DispatchModel`` and warm-starts P1 from its basis (``solve.py``);
+    * ``warmstart_xyear`` — cross-year basis carry (rule 36; default off);
+    * ``p1_basis_seed`` — same-year P0→P1 basis seed (``solve.py``);
+    * ``p1_floor_inplace`` — in-place P1 refloor instead of a cold rebuild;
+    * ``p0_cache`` — ``model.lp.p0_cache.p0_cache_enabled()``, i.e. the switch
+      AND the single-thread determinism pin both hold;
+    * ``highs_threads`` / ``highs_simplex_scale_strategy`` / ``highs_presolve``
+      — the HiGHS option values ``DispatchModel.__init__`` installs
+      (``model.py``): the thread option, ``simplex_scale_strategy`` (0 under
+      ``MARKET_SIM_HIGHS_LEAN=1``, else the solver default) and the hard-coded
+      ``presolve="off"``, recorded so the triple is complete;
+    * ``use_clean`` — the curated-Parquet read path (``data.clean_access``).
+
+    Warm starts and scaling never move the LP optimum but can move which
+    degenerate vertex (and dual) HiGHS returns; multi-threaded dual simplex is
+    not bit-reproducible (``docs/cross-year-warmstart.md``). Additive and inert
+    by construction, like the enclosing environment block: no key reads it,
+    ``--reuse-solved`` diffs only ``scenario_config``, and
+    ``replay_keeper._warn_on_environment_mismatch`` compares only the three
+    version fields.
+    """
+    import os
+
+    from market_sim.data.clean_access import use_clean
+    from market_sim.model.lp.p0_cache import p0_cache_enabled
+
+    def _on(name: str) -> bool:
+        return os.environ.get(name, ENV_SOLVE_KNOBS[name]) != "0"
+
+    highs_defaults = _highs_option_defaults()
+    threads_raw = os.environ.get("MARKET_SIM_HIGHS_THREADS", "").strip()
+    # Mirrors ``model.py``: ``if _threads: setOptionValue("threads", int(...))``
+    # — any non-empty string is installed, so a non-integer would raise THERE,
+    # before any bundle is written; here it degrades to the solver default.
+    try:
+        threads = int(threads_raw) if threads_raw else highs_defaults["threads"]
+    except ValueError:
+        threads = highs_defaults["threads"]
+    lean = os.environ.get("MARKET_SIM_HIGHS_LEAN") == "1"
+    return {
+        "warmstart": _on("MARKET_SIM_WARMSTART"),
+        "warmstart_xyear": _on("MARKET_SIM_WARMSTART_XYEAR"),
+        "p1_basis_seed": _on("MARKET_SIM_P1_BASIS_SEED"),
+        "p1_floor_inplace": _on("MARKET_SIM_P1_FLOOR_INPLACE"),
+        "p0_cache": bool(p0_cache_enabled()),
+        "highs_threads": threads,
+        "highs_lean": lean,
+        "highs_simplex_scale_strategy": (
+            0 if lean else highs_defaults["simplex_scale_strategy"]
+        ),
+        "highs_presolve": "off",
+        "use_clean": bool(use_clean()),
     }
 
 

@@ -32,6 +32,8 @@ local-capacity) is later grounded.
 
 from __future__ import annotations
 
+import datetime as dt
+import re
 from pathlib import Path
 
 import numpy as np
@@ -41,6 +43,29 @@ from market_sim.config.paths import RAW_DATA_DIR
 
 #: Immutable raw drop (scripts/data/fetch_caiso_oasis.py --datasets asreq).
 CAISO_AS_REQ_DIR: Path = RAW_DATA_DIR / "CAISO-AS"
+
+#: One raw drop is ``asreq_ALL_<start>_<end>.csv`` with ``start`` the inclusive
+#: and ``end`` the exclusive OPR_DT (Pacific trade date) of the fetch window
+#: (``scripts/data/fetch_caiso_oasis.py::fetch_dataset``).
+_WINDOW_RE = re.compile(r"asreq_ALL_(\d{8})_(\d{8})\.csv$")
+
+#: Days the filename window is widened on EACH side before a drop is skipped
+#: for a requested GMT year. Filenames carry Pacific trade dates while the rows
+#: are GMT-stamped: every drop's rows run from ``start`` 08:00Z through ``end``
+#: 07:00Z (the fetch stamps ``T08:00-0000``; measured over all 126 drops,
+#: 2026-10-03), so a drop named to end on Dec 31 of Y holds Jan-1 Y+1 GMT rows
+#: and one starting Jan 1 of Y+1 cannot hold Dec Y rows — one day covers the
+#: 8-hour offset three times over.
+_WINDOW_SLACK_DAYS: int = 1
+
+#: Columns the loader reads from a drop (the rest are never used).
+_USECOLS: tuple[str, ...] = (
+    "ANC_REGION",
+    "ANC_TYPE",
+    "XML_DATA_ITEM",
+    "MW",
+    "INTERVALSTARTTIME_GMT",
+)
 
 #: AS region -> the model zones that must serve its regional minimum. Path 26
 #: is the regional boundary (data/raw/CAISO-AS/README.md); the WECC_import node
@@ -74,6 +99,40 @@ PRODUCT: dict[str, str] = {"SR": "spin", "NR": "nonspin"}
 _MAX_BOUNDARY_FILL_HOURS: int = 48
 
 
+def _window_candidates(files: list[Path], year: int) -> list[Path]:
+    """Drops whose filename window could hold a row GMT-stamped in ``year``.
+
+    The exact overlap test is ``start <= Dec-31 Y and end >= Jan-1 Y`` (rows
+    span ``start`` 08:00Z .. ``end`` 07:00Z); it is widened by
+    :data:`_WINDOW_SLACK_DAYS` on each side so the prune can only
+    over-include, never drop a contributor. A filename that does not parse is
+    kept (the prune never silently discards a drop it cannot date).
+    """
+    lo = dt.date(year, 1, 1) - dt.timedelta(days=_WINDOW_SLACK_DAYS)
+    hi = dt.date(year, 12, 31) + dt.timedelta(days=_WINDOW_SLACK_DAYS)
+    keep: list[Path] = []
+    for f in files:
+        m = _WINDOW_RE.search(f.name)
+        if m is None:
+            keep.append(f)
+            continue
+        try:
+            start = dt.datetime.strptime(m.group(1), "%Y%m%d").date()
+            end = dt.datetime.strptime(m.group(2), "%Y%m%d").date()
+        except ValueError:
+            keep.append(f)
+            continue
+        if start <= hi and end >= lo:
+            keep.append(f)
+    return keep
+
+
+def _read_matching(path: Path, items: set[str]) -> pd.DataFrame:
+    """Read one drop and keep its SP26/NP26 rows for the requested data items."""
+    df = pd.read_csv(path, usecols=list(_USECOLS))
+    return df[df["ANC_REGION"].isin(REGION_ZONES) & df["XML_DATA_ITEM"].isin(items)]
+
+
 def load_caiso_as_requirements(
     year: int,
     hours: int,
@@ -100,6 +159,14 @@ def load_caiso_as_requirements(
         (region, product) covered, where ``region_key`` is ``sp26`` / ``np26``.
         E.g. ``{"sp26_spin", "sp26_nonspin", "np26_spin", "np26_nonspin"}``.
 
+    Only the drops whose filename window — widened by
+    :data:`_WINDOW_SLACK_DAYS` on each side, because the names carry Pacific
+    trade dates while the rows are GMT-stamped (``start`` 08:00Z .. ``end``
+    07:00Z) — can hold a row of the requested GMT year are read; the rest
+    would be discarded by the year filter, so the prune is output-identical
+    (parity probe 2026-10-03, every year 2017-2027 incl. the empty-year and
+    partial-year paths) and cuts a call from ~4.5 s to ~0.6 s.
+
     Raises:
         FileNotFoundError: no AS_REQ CSVs present — the
             ``caiso_locational_as_families`` flag hard-errors rather than
@@ -118,21 +185,29 @@ def load_caiso_as_requirements(
         )
 
     items = {_ITEM[(t, bound)] for t in PRODUCT}
+    # Read only the drops whose filename window (widened by _WINDOW_SLACK_DAYS
+    # on each side) can hold a row of this GMT year — every other drop's rows
+    # would be discarded by the year filter below anyway (parity probe
+    # 2026-10-03: identical output for every year with data, 2018-2026).
+    candidates = _window_candidates(files, int(year))
     frames = []
-    for f in files:
-        df = pd.read_csv(
-            f,
-            usecols=[
-                "ANC_REGION",
-                "ANC_TYPE",
-                "XML_DATA_ITEM",
-                "MW",
-                "INTERVALSTARTTIME_GMT",
-            ],
-        )
-        df = df[df["ANC_REGION"].isin(REGION_ZONES) & df["XML_DATA_ITEM"].isin(items)]
+    for f in candidates:
+        df = _read_matching(f, items)
         if len(df):
             frames.append(df)
+    if not frames:
+        # Degenerate path (a year outside the drops, or candidates without
+        # SP26/NP26 rows): the unpruned loader decided between "no rows in any
+        # drop" (FileNotFoundError) and "rows exist, none in this year" (an
+        # empty dict) by reading every drop — do the same here so the prune
+        # never changes which path is taken.
+        skipped = set(candidates)
+        for f in files:
+            if f in skipped:
+                continue
+            df = _read_matching(f, items)
+            if len(df):
+                frames.append(df)
     if not frames:
         raise FileNotFoundError(
             f"AS_REQ CSVs in {src} carry no SP26/NP26 spin/non-spin {bound} rows."

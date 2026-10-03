@@ -145,6 +145,9 @@ class SolveEpoch:
 #: 2026-10-03b: PJM/NWPP/SPP 2019-2022 measured nuclear monthly CF rows (backcast;
 #: NWPP and SPP rows of NUCLEAR_MONTHLY_CF_BY_YEAR are undeclared, so only an epoch
 #: re-keys them; PJM's declared row also moves on its own).
+#: 2026-10-03c: SOCO's 2019-2022 measured nuclear monthly CF rows (backcast SOCO;
+#: the SOCO row of NUCLEAR_MONTHLY_CF_BY_YEAR is undeclared, so only an epoch
+#: re-keys it).
 SOLVE_EPOCHS: tuple[SolveEpoch, ...] = (
     SolveEpoch(
         id="2026-10-02c",
@@ -191,6 +194,15 @@ SOLVE_EPOCHS: tuple[SolveEpoch, ...] = (
         ),
         modes=("backcast",),
         isos=("NWPP", "PJM", "SPP"),
+    ),
+    SolveEpoch(
+        id="2026-10-03c",
+        cause=(
+            "SOCO 2019-2022 nuclear availability reads the measured EIA-923 "
+            "monthly CF rows instead of the forecast fallback pattern"
+        ),
+        modes=("backcast",),
+        isos=("SOCO",),
     ),
 )
 
