@@ -367,17 +367,17 @@
       },
       "golden": "deferred (§2.1b).",
       "candidate": null,
-      "keeper": "2026-10-02-w0-miso-fix2",
-      "keeper_corrected_by": "capx gate-(a) re-key lane D101 r#69 (2026-10-03) at origin/main 792e55ad: identity re-key 2026-09-28-miso-280-splitremap -> 2026-10-02-w0-miso-fix2 (the 2026-10-02 closeout-W0 phase-3 promotion; promote_keeper.py re-keyed gate.a_keeper_marker.detail but not this field). Supersedes: 2026-09-28-miso-280-splitremap (set by capx gate-(a) re-key lane r#66 / the promoting lanes after c64e69eb; chain in gate_a_provenance.derived_by).",
+      "keeper": "2026-10-03-closeout-miso-nuc-r",
+      "keeper_corrected_by": "capx D112 (2026-10-03) at origin/main 32afdd87 (charter pin e7aa5d27 superseded by the newer main): identity re-key 2026-10-02-w0-miso-fix2 -> 2026-10-03-closeout-miso-nuc-r (the 2026-10-03 closeout-MISO-nuc-b promotion, owner ruling R-53 \"Promote on structure\" (PR #7153 -> 410f2900); promote_keeper.py re-keyed gate.a_keeper_marker.detail but not this field). Supersedes: 2026-10-02-w0-miso-fix2 (set by: capx gate-(a) re-key lane D101 r#69 (2026-10-03) at origin/main 792e55ad: identity re-key 2026-09-28-miso-280-splitremap -> 2026-10-02-w0-miso-fix2 (the 2026-10-02 closeout-W0 phase-3 promotion; promote_keeper.py re-keyed gate.a_keeper_marker.detail but not this field). Supersedes: 2026-09-28-miso-280-splitremap (set by capx gate-(a) re-key lane r#66 / the promoting lanes after c64e69eb; chain in gate_a_provenance.derived_by)..)",
       "gate_a": {
         "reading": "NOT MET",
         "literal_test_s2_1b_2_a": "NOT MET",
         "keeper_present": true,
         "complete_member": false,
         "board_determination": "NOT-YET",
-        "reason": "RE-DERIVED LIVE 2026-10-03 by capx D110 r#70 (2026-10-03) at origin/main 6277de60: keeper 2026-10-02-w0-miso-fix2 present (keepers/MISO.json); never held a `complete` entry; board determination NOT-YET (status/MISO.js keeper.determination, rubric 3.17); gate (a) NOT MET — reading unchanged from the prior derivation. PRIOR: keeper present; MISO has never held a `complete` entry (owner declined at Q49); board determination NOT-YET (rubric 3.17; the charter premise CALIBRATED is stale)",
-        "read_live_at": "6277de60",
-        "derived_by": "capx D110 r#70 (2026-10-03); prior derivation: capx gate-(a) re-key lane D101 r#69 (2026-10-03)"
+        "reason": "RE-DERIVED LIVE 2026-10-03 by capx D112 (2026-10-03) at origin/main 32afdd87: keeper 2026-10-03-closeout-miso-nuc-r present (keepers/MISO.json, R-53 promotion PR #7153); never held a `complete` entry (calibration-complete.json: not in `complete`, not in `withdrawn`); board determination NOT-YET (status/MISO.js keeper.determination, rubric 3.17); gate (a) NOT MET — reading unchanged from the prior derivation; only the keeper id moved. PRIOR: RE-DERIVED LIVE 2026-10-03 by capx D110 r#70 (2026-10-03) at origin/main 6277de60: keeper 2026-10-02-w0-miso-fix2 present (keepers/MISO.json); never held a `complete` entry; board determination NOT-YET (status/MISO.js keeper.determination, rubric 3.17); gate (a) NOT MET — reading unchanged from the prior derivation. PRIOR: keeper present; MISO has never held a `complete` entry (owner declined at Q49); board determination NOT-YET (rubric 3.17; the charter premise CALIBRATED is stale)",
+        "read_live_at": "32afdd87",
+        "derived_by": "capx D112 (2026-10-03); prior derivation: capx D110 r#70 (2026-10-03)"
       },
       "marker_complete": false,
       "marker_final": false,
@@ -669,7 +669,7 @@
       "keeper_corrected_by": "capx D110 r#70 (2026-10-03) at origin/main 6277de60 (charter pin 51422d1b superseded by the newer main): identity re-key 2026-10-03-closeout-nwpp-anchor-roster -> 2026-10-03-nwpp-next-24-head (the 2026-10-03 NWPP-NEXT-24 HEAD replay promotion (desk ruling, PR #7148), via 2026-10-03-nwpp-next-23-coi; the closeout-nwpp-anchor-roster id was itself the R-48 promotion; promote_keeper.py re-keyed gate.a_keeper_marker.detail but not this field). Supersedes: 2026-10-03-closeout-nwpp-anchor-roster (set by the G5 forecast-board snippet / the promoting lanes; first Supersedes entry for this row)",
       "marker_complete": false,
       "marker_final": false,
-      "note": "[G5, 2026-10-03] Board row added by owner ruling; no forecast tier has been run for NWPP. Keeper 2026-10-03-closeout-nwpp-anchor-roster per keepers/NWPP.json (re-keyed by closeout-nwpp-anchor, identity only); determination NOT-YET per status/NWPP.js."
+      "note": "[G5, 2026-10-03] Board row added by owner ruling; no forecast tier has been run for NWPP. Keeper 2026-10-03-closeout-nwpp-anchor-roster per keepers/NWPP.json (re-keyed by closeout-nwpp-anchor, identity only); determination NOT-YET per status/NWPP.js. [CORRECTION capx D112 (2026-10-03) at origin/main 32afdd87: the keeper named above is stale prose from the G5 snippet, kept as written; keepers/NWPP.json carries 2026-10-03-nwpp-next-24-head (desk ruling NWPP-NEXT-24, PR #7148, via 2026-10-03-nwpp-next-23-coi; the isos.NWPP.keeper field was re-keyed by capx D110); determination NOT-YET per status/NWPP.js, unchanged; gate (a) NOT MET, recorded in gate_a_provenance.d112_rekey per owner ruling Q68.]"
     },
     "SOCO": {
       "tier_reached": "none -- NOT RUN (no forecast tier, T0 included, has ever been solved for SOCO)",
@@ -719,11 +719,11 @@
       },
       "golden": "deferred (s2.1b); not a GOLDEN_ISOS member.",
       "candidate": null,
-      "keeper": "2026-10-03-closeout-soco-2-nuclear",
-      "keeper_corrected_by": "capx D110 r#70 (2026-10-03) at origin/main 6277de60 (charter pin 51422d1b superseded by the newer main): identity re-key 2026-10-02-w0-soco-fix2 -> 2026-10-03-closeout-soco-2-nuclear (the 2026-10-03 closeout-SOCO-2 promotion, owner ruling R-41 \"Promote on structure\" (PR #7112); promote_keeper.py re-keyed gate.a_keeper_marker.detail but not this field). Supersedes: 2026-10-02-w0-soco-fix2 (set by the G5 forecast-board snippet / the promoting lanes; first Supersedes entry for this row)",
+      "keeper": "2026-10-03-closeout-soco-3-coalpile",
+      "keeper_corrected_by": "capx D112 (2026-10-03) at origin/main 32afdd87 (charter pin e7aa5d27 superseded by the newer main): identity re-key 2026-10-03-closeout-soco-2-nuclear -> 2026-10-03-closeout-soco-3-coalpile (the 2026-10-03 closeout-SOCO-3 promotion, owner ruling R-54 \"Promote on structure\" (PR #7154 -> 4c6f3ab3); promote_keeper.py re-keyed gate.a_keeper_marker.detail but not this field). Supersedes: 2026-10-03-closeout-soco-2-nuclear (set by: capx D110 r#70 (2026-10-03) at origin/main 6277de60 (charter pin 51422d1b superseded by the newer main): identity re-key 2026-10-02-w0-soco-fix2 -> 2026-10-03-closeout-soco-2-nuclear (the 2026-10-03 closeout-SOCO-2 promotion, owner ruling R-41 \"Promote on structure\" (PR #7112); promote_keeper.py re-keyed gate.a_keeper_marker.detail but not this field). Supersedes: 2026-10-02-w0-soco-fix2 (set by the G5 forecast-board snippet / the promoting lanes; first Supersedes entry for this row).)",
       "marker_complete": false,
       "marker_final": false,
-      "note": "[G5, 2026-10-03] Board row added by owner ruling; no forecast tier has been run for SOCO. Keeper 2026-10-02-w0-soco-fix2 per keepers/SOCO.json; determination NOT-YET per status/SOCO.js."
+      "note": "[G5, 2026-10-03] Board row added by owner ruling; no forecast tier has been run for SOCO. Keeper 2026-10-02-w0-soco-fix2 per keepers/SOCO.json; determination NOT-YET per status/SOCO.js. [CORRECTION capx D112 (2026-10-03) at origin/main 32afdd87: the keeper named above is stale prose from the G5 snippet, kept as written; keepers/SOCO.json now carries 2026-10-03-closeout-soco-3-coalpile (R-54, PR #7154 -> 4c6f3ab3), which succeeded 2026-10-03-closeout-soco-2-nuclear (R-41, PR #7112, re-keyed by capx D110); determination NOT-YET per status/SOCO.js, unchanged; gate (a) NOT MET, recorded in gate_a_provenance.d112_rekey per owner ruling Q68.]"
     }
   },
   "honest_unfit": [
@@ -910,9 +910,19 @@
   },
   "gate_a_provenance": {
     "note": "Gate (a) DERIVATION stamp — records the sha the keeper/marker read was taken at. This is NOT a scoring stamp: no forecast run was solved or re-scored to produce it, and it deliberately avoids the forecast-provenance/v1 field names so scripts/check_forecast_staleness.py can never read it as evidence of a re-score. Gates (b) and (c) still carry their FF-2D verdicts, unmoved.",
-    "derived_at_sha": "6277de60",
+    "derived_at_sha": "32afdd87",
     "derived_at_date": "2026-10-03",
-    "derived_by": "capx D110 r#70 rung-0 re-key (2026-10-03) after the nuclear-row promotions: PJM/SPP/NWPP/SOCO re-keyed, PJM CT-2021 frontier carried; see d110_rekey",
+    "derived_by": "capx D112 rung-0 re-key (2026-10-03) after the R-53/R-54 promotions landed: MISO/SOCO re-keyed, no gate-(a) reading moved; see d112_rekey (prior stamp nested there)",
+    "d112_rekey": {
+      "derived_at_sha": "32afdd87",
+      "derived_at_date": "2026-10-03",
+      "derived_by": "capx D112 (2026-10-03) at origin/main 32afdd8754dbeb80a5c7a65f9619809ba24936ca (charter pinned e7aa5d27cb587ba07b9ec38d91d2d2e8f79581e4, the D110 merge #7155; origin/main had moved past it by three merges — #7153 R-53, #7154 R-54, #7157 R-55 — so the branch was cut from the newer main and every keeper/status/marker file was read at 32afdd87), the TWENTY-FIFTH firing of the Q34 standing duty (ledger §0bn.2a rung 0) and the firing that reads the two promotions D110 §1.1 named but could not follow. TWO of nine isos.<ISO>.keeper fields were stale and are re-keyed old -> new: MISO 2026-10-02-w0-miso-fix2 -> 2026-10-03-closeout-miso-nuc-r (R-53 \"Promote on structure\", PR #7153 -> 410f2900); SOCO 2026-10-03-closeout-soco-2-nuclear -> 2026-10-03-closeout-soco-3-coalpile (R-54 \"Promote on structure\", PR #7154 -> 4c6f3ab3). ERCOT (2026-10-02-closeout-l1-coal-fuel), CAISO (2026-10-02-closeout-caiso-w1-arm2), PJM (2026-10-03-closeout-pjm-nuc-keeper), NYISO (2026-10-02-w0-nyiso), NEISO (2026-10-02-w0-neiso), SPP (2026-10-03-closeout-spp-nuc-keeper) and NWPP (2026-10-03-nwpp-next-24-head) match keepers/<ISO>.json at this sha and are untouched. Each re-keyed row carries the prior id in its keeper_corrected_by Supersedes chain (the prior chain text nested whole). The gate.a_keeper_marker.detail leaves had already been re-keyed by promote_keeper.py and are byte-unchanged. MISO gate_a re-derived LIVE at 32afdd87: keeper present, never in `complete` (calibration-complete.json `complete` holds NEISO 2026-10-02-w0-neiso and NYISO 2026-10-02-w0-nyiso; `withdrawn` holds ERCOT, CAISO, SPP, PJM; MISO in neither), board determination NOT-YET (status/MISO.js keeper.determination, rubric 3.17): gate (a) NOT MET — NO READING MOVED. The other six board rows' gate_a objects are untouched (their keeper ids did not move; readings MET for NEISO and NYISO, NOT MET elsewhere, exactly as D110 left them). SOCO (keeper 2026-10-03-closeout-soco-3-coalpile, board NOT-YET per status/SOCO.js, never in `complete`) reads gate (a) NOT MET and stays recorded here per owner ruling Q68 (no gate_a object on its row before a `complete` declaration); NWPP (keeper 2026-10-03-nwpp-next-24-head, board NOT-YET, never in `complete`) likewise NOT MET, unchanged. The stale G5 `note` prose on the NWPP and SOCO rows (naming their pre-D110 keepers) receives an appended dated correction; the G5 text is kept. R-55 (PJM COAL_BIT decommitment lane chartered, #7157) is a lever ruling, not a promotion: no keeper moved under it and the promotion slot is free (close-out plan desk notes, third batch). No FC verdict, tier, provenance, scoring field, keeper shard, calibration-complete.json byte, status sidecar or ff-verdicts.json byte touched; nothing solved, scored or registered. Targeted string edits at uniquely-anchored positions, never a json.dumps round-trip. Record: docs/records/forecast/FINDING-capx-d112-2026-10-03.md.",
+      "prior_stamp": {
+        "derived_at_sha": "6277de60",
+        "derived_at_date": "2026-10-03",
+        "derived_by": "capx D110 r#70 rung-0 re-key (2026-10-03) after the nuclear-row promotions: PJM/SPP/NWPP/SOCO re-keyed, PJM CT-2021 frontier carried; see d110_rekey"
+      }
+    },
     "d110_rekey": {
       "derived_at_sha": "6277de60",
       "derived_at_date": "2026-10-03",
