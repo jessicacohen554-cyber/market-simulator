@@ -176,6 +176,8 @@ pending. The desk accepted this re-stamp as bench-inert on the evidence above.
 | `check_bench_freshness.py` | 0 STALE / 61 |
 | fast lane `pytest -n auto -m "not slow and not integration and not fulldata"` | 11,373 passed, 66 skipped, 3 xfailed; 1 failed on the pre-merge base (`test_nwpp_demand_plant_basis::test_artifact_matches_bench_parts`, the re-stamp knock-on in §5; it passes after merging #7103). The two failures the charter lists as pre-existing on main did not fail here. |
 
+pre-merge fast lane failed test_artifact_matches_bench_parts on base 469ddcd7 because the stamp rewrite moved the NWPP part bytes the old CSV hashed; dissolved by #7103 on the merged head.
+
 ## 7. Matrix
 
 - No cell verdict moves; no mechanism was tested.
