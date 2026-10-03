@@ -21,7 +21,7 @@
       "CC_REGULAR:committed",
       "CC_REGULAR:econc"
     ],
-    "R5_quantity_short": null
+    "R5_quantity_short": true
   },
   "years": [
     {
@@ -120,7 +120,14 @@
         "COAL_BIT:peak": 0.126,
         "COAL_BIT:sync": 0.268
       },
-      "R5": null
+      "R5": {
+        "hours": 2616,
+        "median_pjm_offered_gw": 89.13,
+        "median_model_cap_gw": 50.45,
+        "median_dq_gw": 33.96,
+        "p25_dq_gw": 27.75,
+        "p75_dq_gw": 42.84
+      }
     },
     {
       "year": 2020,
@@ -316,7 +323,14 @@
         "COAL_BIT:peak": 0.403,
         "COAL_BIT:sync": 0.594
       },
-      "R5": null
+      "R5": {
+        "hours": 2792,
+        "median_pjm_offered_gw": 97.72,
+        "median_model_cap_gw": 50.26,
+        "median_dq_gw": 45.46,
+        "p25_dq_gw": 40.3,
+        "p75_dq_gw": 49.47
+      }
     },
     {
       "year": 2022,
