@@ -1,0 +1,68 @@
+{
+ "bundle": "results/calibration/closeout_pjm_lossdemand_span",
+ "years": {
+  "2019": {
+   "residual_twh": -0.0665,
+   "loss_p1_twh": 2.1451,
+   "netted_p0_twh": 2.2116,
+   "slack_twh": 0.0005,
+   "dump_twh": 0.0,
+   "demand_twh": 800.258,
+   "k1_pass": false
+  },
+  "2020": {
+   "residual_twh": -0.1086,
+   "loss_p1_twh": 2.1215,
+   "netted_p0_twh": 2.2302,
+   "slack_twh": 0.0,
+   "dump_twh": 0.0,
+   "demand_twh": 767.832,
+   "k1_pass": false
+  },
+  "2021": {
+   "residual_twh": -0.0961,
+   "loss_p1_twh": 2.5104,
+   "netted_p0_twh": 2.6065,
+   "slack_twh": 0.0,
+   "dump_twh": 0.0,
+   "demand_twh": 796.174,
+   "k1_pass": false
+  },
+  "2022": {
+   "residual_twh": -0.2831,
+   "loss_p1_twh": 3.0821,
+   "netted_p0_twh": 3.3652,
+   "slack_twh": 0.0,
+   "dump_twh": 0.0,
+   "demand_twh": 810.188,
+   "k1_pass": false
+  },
+  "2023": {
+   "residual_twh": -0.1035,
+   "loss_p1_twh": 2.4765,
+   "netted_p0_twh": 2.5801,
+   "slack_twh": 0.0,
+   "dump_twh": 0.0,
+   "demand_twh": 784.823,
+   "k1_pass": false
+  },
+  "2024": {
+   "residual_twh": -0.3269,
+   "loss_p1_twh": 3.3193,
+   "netted_p0_twh": 3.6462,
+   "slack_twh": 0.0005,
+   "dump_twh": 0.0,
+   "demand_twh": 812.78,
+   "k1_pass": false
+  },
+  "2025": {
+   "residual_twh": -0.0553,
+   "loss_p1_twh": 3.8939,
+   "netted_p0_twh": 3.9492,
+   "slack_twh": 0.0003,
+   "dump_twh": 0.0,
+   "demand_twh": 843.188,
+   "k1_pass": false
+  }
+ }
+}
