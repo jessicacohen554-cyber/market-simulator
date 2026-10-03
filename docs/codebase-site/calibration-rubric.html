@@ -581,7 +581,7 @@
             <h3>Calibration-complete <span class="complete-badge-demo">GATING</span></h3>
             <p class="contrast-card__file"><code>calibration-complete.json</code> · <code>complete</code> marker</p>
             <dl>
-              <dt>Purpose</dt><dd><strong>Gating</strong> — authorizes the rule-22 <em>validation</em> holdout solves (2022, extensible back to 2020), and those only. Since 2026-07-31 the locked test carries its own separate <code>final</code> marker, so one declaration can never spend both tiers.</dd>
+              <dt>Purpose</dt><dd><strong>Keeper designation</strong> — names each ISO's current designated keeper (<code>audit_keepers</code> M1) and feeds the forecast program's gate (a). It authorizes nothing: its former job of gating rule-22 holdout solves was removed 2026-09-09 (rule 22 <code>[R-C3C]</code>, rule-history §18); any year may be solved, scored and registered.</dd>
               <dt>Enforced by</dt><dd>CI <code>quarantine-gates</code> + <code>run_calibration_full.py</code> hard-fail.</dd>
               <dt>Holders</dt><dd><strong>NEISO</strong> (declared 2026-07-07), <strong>NYISO</strong> and <strong>PJM</strong> (both 2026-07-31). CAISO's was withdrawn 2026-08-06. Validation tier only — no ISO appears in <code>final</code>, so no locked-test year is authorized anywhere.</dd>
             </dl>
@@ -599,7 +599,7 @@
 
         <div class="story-section" style="margin-top: 22px;">
           <p>
-            The two designations are independent: frontier does <em>not</em> imply holdout authorization, and complete does <em>not</em> imply frontier. NYISO is the live illustration — it holds a <code>complete</code> marker but <strong>no</strong> frontier designation, its own having been withdrawn on 2026-07-19. The two current holders reached the label by different routes, which is the point: what "frontier" records is that an ISO's <em>named admissible lever queue</em> is exhausted, not that it has a particular residual left.
+            The two designations are independent: frontier does <em>not</em> imply a keeper designation, and a keeper designation does <em>not</em> imply frontier. As of 2026-10-03 <strong>no ISO holds a live frontier declaration</strong>: all were withdrawn 2026-09-30 by owner decision (<em>"Shouldn't be considered calibrated if holdout years miss"</em>; rule 30(c), rule-history §26; recorded in each <code>keepers/&lt;ISO&gt;.json</code>), and re-declaration is a new explicit owner act. The former holders reached the label by different routes, which is the point: what "frontier" records is that an ISO's <em>named admissible lever queue</em> is exhausted, not that it has a particular residual left.
           </p>
           <ul style="margin: 0 0 var(--space-lg); padding-left: var(--space-xl);">
             <li style="margin-bottom: var(--space-sm);"><strong>NEISO</strong> — four named mechanisms tried on record (winter fuel-security stack, in-LP reserve co-optimization, measured dynamic reserve requirements, the measured fast-start DA offer surface). The real tail forms while the model still carries several GW of cheaper non-fast-start headroom, so no repricing of the fast-start band reaches it. Further C3c work needs a new measured identification — its own charter.</li>

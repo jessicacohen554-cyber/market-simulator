@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Third-Party Audit — Codebase Explorer</title>
+  <meta name="description" content="Independent third-party audit of the market simulator at HEAD (2026-10-03): what the model is, how it compares with PLEXOS, Aurora, GenX, PyPSA, ReEDS, IPM and NEMS, the per-ISO calibration state computed from committed artifacts, and the ranked findings.">
+  <link rel="stylesheet" href="css/shared.css">
+  <link rel="stylesheet" href="css/site.css">
+  <link rel="stylesheet" href="css/bc-pages.css">
+  <style>
+    .au-scope { max-width: 1100px; margin: 0 auto; }
+    .au-scope h2 { margin-top: var(--space-xl); }
+    .au-scope h3 { margin-top: var(--space-lg); font-size: 1.05rem; }
+    .au-scope p, .au-scope li { line-height: 1.6; }
+    .au-scope table { width: 100%; border-collapse: collapse; font-size: 0.86rem; margin: var(--space-md) 0; }
+    .au-scope th, .au-scope td { text-align: left; vertical-align: top; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+    .au-scope th { color: var(--text-secondary); font-weight: 600; }
+    .au-scope .tbl-scroll { overflow-x: auto; }
+    .au-scope code { font-size: 0.9em; overflow-wrap: anywhere; }
+    .au-det { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 0.78rem; font-weight: 700; }
+    .au-det.cal { background: rgba(22,163,74,0.14); color: #166534; }
+    .au-det.not { background: rgba(220,38,38,0.12); color: #991b1b; }
+    .au-callout { border-left: 4px solid var(--amber-text, #b45309); padding: 8px 14px; background: rgba(245,158,11,0.08); margin: var(--space-md) 0; }
+    .au-finding { margin-bottom: var(--space-md); }
+    .au-finding b { color: var(--navy); }
+    .source-cite { margin-top: var(--space-md); padding-top: var(--space-sm); border-top: 1px dashed var(--border); font-size: 0.78rem; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+  <nav id="topNav" aria-label="Site navigation"></nav>
+
+  <div class="content-section au-scope" style="padding: var(--space-lg);">
+    <div class="bc-page-header">
+      <h1>Third-Party Audit</h1>
+    </div>
+    <p class="bc-page-sub">Independent assessment at <code>origin/main</code> @ <code>d7ff7c20</code>, 2026-10-03. Scorer-only: no LP was solved; every per-ISO determination below is computed by <code>scripts/calibration_verdict.py::iso_determination</code> from the committed keeper bundles. Full record: <code>docs/audit/third-party-audit-2026-10.md</code> and the five lane reports under <code>docs/audit/2026-10/</code>. Prior audit: <code>docs/audit/third-party-audit-2026-08.md</code>.</p>
+
+    <h2>1. What the model is</h2>
+    <p>A nine-region, full-8760, zonal, pure-LP electricity-market dispatch simulator (HiGHS via <code>highspy</code>, direct CSC matrix, no algebraic modelling layer) whose prices are the LP duals on the energy-balance rows. Two passes per year (P0 base-cost, P1 bid-cost; P1 is what is scored), three ISO-exclusive P1-native commitment bridges in place of MIP unit commitment, renewables as bounded decision variables, in-LP reserves with scarcity (ORDC/RCPF) structure, and a deliberately myopic one-pass annual capacity-evolution wrapper over 2026–2050. A backcast mode with a written admissibility rule for measured inputs (rules 13/14) is used to calibrate 2019–2025 against actuals.</p>
+    <div class="tbl-scroll"><table>
+      <tr><th>Fact at HEAD</th><th>Value</th><th>Source</th></tr>
+      <tr><td>Regions</td><td>9: ERCOT, CAISO, PJM, MISO, NYISO, NEISO, SPP, NWPP, SOCO</td><td><code>src/market_sim/config/iso_configs.py</code></td></tr>
+      <tr><td>Source size</td><td>224 modules, ≈198k lines (wc -l) under <code>src/market_sim/</code></td><td><code>find src/market_sim -name '*.py'</code></td></tr>
+      <tr><td>Governance rules</td><td>36 stable-ID rules (R-STRUCT … R-YEAR-ISOLATION)</td><td><code>CLAUDE.md</code>, <code>docs/governance/rule-history.md</code></td></tr>
+      <tr><td>Holdout regime</td><td>Removed 2026-09-09 (rule 22): no year is a certified out-of-sample number</td><td><code>frontend/data/backcast/calibration-complete.json</code> note; rule-history §18</td></tr>
+      <tr><td>ISO determination rule</td><td>v3.13: worst-of over every registered year and folded run; a NOT-YET held-out year makes the ISO NOT-YET</td><td><code>scripts/calibration_verdict.py:4027</code></td></tr>
+      <tr><td>Solve regime</td><td>One year per shard container, no cross-year warm start by default; parent composes legs</td><td>rules 32–36</td></tr>
+    </table></div>
+
+    <h2>2. Calibration state, computed from committed artifacts</h2>
+    <div class="au-callout">Every ISO's keeper was re-promoted on 2026-10-02 under the W0 EIA-860 settlement. Under the v3.13 all-years rule that the dashboard itself applies, <strong>two of nine ISOs read CALIBRATED</strong>. Prose in several keeper shards still describes the pre-v3.13 posture (a designated 2023–2025 span reading CALIBRATED with earlier years "reported, not gating"); the computed value below is the one the Calibration Status page shows.</div>
+    <div class="tbl-scroll"><table>
+      <tr><th>ISO</th><th>Keeper</th><th>Registered years</th><th>Determination</th><th>Failing gates (year)</th></tr>
+      <tr><td>NEISO</td><td><code>2026-10-02-w0-neiso</code></td><td>2019–2025</td><td><span class="au-det cal">CALIBRATED</span></td><td>none</td></tr>
+      <tr><td>NYISO</td><td><code>2026-10-02-w0-nyiso</code></td><td>2021–2025</td><td><span class="au-det cal">CALIBRATED</span></td><td>none</td></tr>
+      <tr><td>MISO</td><td><code>2026-10-02-w0-miso-fix2</code></td><td>2019–2025</td><td><span class="au-det not">NOT-YET</span></td><td>fuelmix 2019; price_shape 2021</td></tr>
+      <tr><td>SOCO</td><td><code>2026-10-02-w0-soco-fix2</code></td><td>2019–2025</td><td><span class="au-det not">NOT-YET</span></td><td>fuelmix 2019, 2021</td></tr>
+      <tr><td>ERCOT</td><td><code>2026-10-02-closeout-l1-coal-fuel</code></td><td>2019–2025</td><td><span class="au-det not">NOT-YET</span></td><td>fuelmix 2019–2020; price_shape 2019–2020; price_mean 2024</td></tr>
+      <tr><td>CAISO</td><td><code>2026-10-02-closeout-caiso-w1-arm2</code></td><td>2019–2025</td><td><span class="au-det not">NOT-YET</span></td><td>dispatch_corr 2019–2021; fuelmix 2019–2021; price_mean 2021</td></tr>
+      <tr><td>PJM</td><td><code>2026-10-02-w0-pjm-fix2</code></td><td>2019–2025</td><td><span class="au-det not">NOT-YET</span></td><td>fuelmix 2019–2021; price_mean 2022, 2025; price_shape 2022, 2025</td></tr>
+      <tr><td>NWPP</td><td><code>2026-10-02-w0-nwpp-fix2</code></td><td>2019–2025</td><td><span class="au-det not">NOT-YET</span></td><td>dispatch_corr 2023; price_mean 2023–2024; price_shape 2023–2024</td></tr>
+      <tr><td>SPP</td><td><code>2026-10-02-spp-107-mmu-repair</code></td><td>2019–2025</td><td><span class="au-det not">NOT-YET</span></td><td>price_mean 2019–2020; price_shape 2020; fuelmix 2021–2022; dispatch_corr 2022; price_tail 2023–2025</td></tr>
+    </table></div>
+    <p>Reading across the failures: the 2019–2021 rungs carry most of the fuel-mix and dispatch-correlation misses (the pre-2022 gas regime and the COVID-year load shape), while the 2022–2025 misses are price-level and price-shape in the gas-price-shock years. No ISO fails a 2023–2025 rung on fuel mix. The pattern is consistent with a model whose merit order is right and whose price formation in the tails is the open front, which is also what the 2026-08 audit found.</p>
+
+    <h2>3. How it compares with existing energy-systems models</h2>
+    <p>Condensed from the refreshed positioning matrix (<code>docs/audit/2026-10/E-model-positioning-matrix.md</code>, twelve comparators). Comparator cells draw on public documentation and are marked unverified there where a current detail could not be confirmed.</p>
+    <div class="tbl-scroll"><table>
+      <tr><th>Tool</th><th>Class</th><th>Network</th><th>Commitment</th><th>Chronology</th><th>Price formation</th><th>Expansion</th><th>Published validation</th></tr>
+      <tr><td><b>This model</b></td><td>Production-cost model with a one-pass evolution wrapper</td><td>Zonal, 2–8 zones × 9 regions</td><td>Pure LP; P0→P1 plus physics-gated bridges</td><td>Full 8760, one year per container</td><td>LP duals, in-LP reserves/ORDC, published scarcity overlays, one declared band channel</td><td>Myopic annual screens, no transmission build</td><td>Machine-scored rubric, pre-registered PRECOMMITs, public NOT-YET labels; in-sample, no holdout</td></tr>
+      <tr><td>PLEXOS</td><td>PCM + CEM</td><td>Zonal and nodal</td><td>MILP SCUC, co-optimised reserves</td><td>8760 to 5-min</td><td>Duals, administrative scarcity, VoLL</td><td>LT Plan</td><td>Regulator-driven backcast series (SEM)</td></tr>
+      <tr><td>Aurora / EnCompass</td><td>PCM + LTCE</td><td>Zonal; nodal offered</td><td>Vendor UC, not fully public</td><td>Hourly to sub-hourly</td><td>Marginal unit sets zonal price; LMP in EnCompass</td><td>Iterative / integrated</td><td>Docket benchmarking, no rubric</td></tr>
+      <tr><td>GenX / Switch</td><td>Capacity-expansion</td><td>Zonal transport</td><td>LP, clustered or MILP UC</td><td>8760 or sampled periods</td><td>LP duals, VoLL</td><td>Single joint optimisation</td><td>Per-study, peer-reviewed</td></tr>
+      <tr><td>PyPSA-USA / Sienna</td><td>CEM + PCM frameworks</td><td>Nodal DC-OPF or zonal</td><td>LP; MILP UC optional</td><td>Flexible, sub-hourly in Sienna</td><td>Nodal duals</td><td>Yes incl. transmission (PyPSA)</td><td>Per-study; PyPSA-Eur price retrospective</td></tr>
+      <tr><td>ReEDS / IPM / NEMS</td><td>National capacity-expansion</td><td>134 BAs / ~65 regions / 25 regions, transport</td><td>None (load segments or timeslices)</td><td>Representative slices, 2-yr or annual steps</td><td>Planning duals, no market emulation</td><td>Inter-temporal, incl. retirements</td><td>Standard Scenarios, EPA docket docs, AEO retrospectives</td></tr>
+      <tr><td>E3 RESOLVE / Dispa-SET</td><td>IRP CEM / EU unit-commitment PCM</td><td>Few zones / NTC</td><td>LP sampled days / MILP UC rolling horizon</td><td>Representative days / 8760</td><td>Duals</td><td>Yes / no</td><td>CPUC docket / per-study</td></tr>
+    </table></div>
+    <h3>Where it sits</h3>
+    <p>Closest in class to a zonal production-cost model with a light long-term wrapper. It is unusual in three ways: in-LP ORDC and reserve co-optimisation at zonal grain with published scarcity overlays; a reproducibility contract (solve-surface-keyed cache, per-run config, DOF ledger, per-year isolated containers) that no surveyed comparator documents; and a public, machine-scored hindcast that names its own failures. It is not a nodal tool (no PTDF, congestion, basis or FTRs), not a co-optimised capacity-expansion model (no joint investment or transmission build), not an adequacy Monte-Carlo engine, and not a validated forecaster (no golden 2026–2050 solve; the forecast program is at proof-of-concept for every ISO).</p>
+    <h3>Validation norms</h3>
+    <p>In August 2026 the regime rested on a machine-scored rubric, a three-tier fail-closed holdout and pre-registration, and exceeded every surveyed comparator. On 2026-09-09 the holdout machinery was removed by owner instruction (rule 22; rule-history §18). The record states the cost itself: there is no longer a certified out-of-sample number anywhere in the program. On hindcast transparency the model still leads; on out-of-sample it is now at parity with comparators, none of which publish one; pre-registration without a protected year constrains process, not information. Honest placement: in-sample calibration with transparent, pre-registered accounting.</p>
+
+    <h2>4. Ranked findings</h2>
+    <p>Each item is cited to file and line in the lane report named in brackets. Ranked by consequence for anyone relying on a number from this model.</p>
+    <div class="au-finding"><b>F1 · No certified out-of-sample number exists.</b> The holdout regime was removed on 2026-09-09 (rule 22). Pre-registration survives, but every year 2019–2025 is iterated against. Any claim of the form "held-out year X scored Y" is no longer permitted by the repo's own record. [C, E]</div>
+    <div class="au-finding"><b>F2 · Two of nine ISOs are CALIBRATED under the rule the dashboard applies.</b> NEISO and NYISO pass every registered year. The other seven fail on 2019–2021 fuel-mix or dispatch-correlation rungs and/or 2022–2025 price rungs (§2). Keeper-shard prose that still reads "CALIBRATED on the designated 2023–2025 span" describes a superseded rule. [C]</div>
+    <div class="au-finding"><b>F3 · Relaxed-LP price formation is the largest structural divergence from production-cost and ISO practice.</b> No binaries, no uplift, no convex-hull pricing. The three P1-native bridges and the rule-1 band channel partly absorb the gap; the price-shape failures in the gas-shock years are its footprint. Owner-ruled design choice, unchanged since August. [A]</div>
+    <div class="au-finding"><b>F4 · An undocumented fourth commitment mechanism.</b> <code>model/lp/rows.py::_build_posture_energy_rows</code> builds a clustered-UC LP relaxation (continuous commitment and start-up columns, min-load, min-up/down rows) behind <code>spp_commitment_posture</code> (default off). It is absent from the spec, CLAUDE.md, the codebase reference and the mechanism matrix. Rules 19 and 28 apply. [A]</div>
+    <div class="au-finding"><b>F5 · Investment is myopic one-pass on prior-year prices with no transmission expansion.</b> Structurally below every capacity-expansion comparator; the spec calls it a screening model. Forward numbers are equilibrium-free and must be labelled so. The forecast program is at proof-of-concept for every ISO and no forward number is quotable. [B]</div>
+    <div class="au-finding"><b>F6 · The W0 EIA-860 settlement is the right structural move and the proximate cause of the 2019–2021 regressions.</b> Replacing per-lane fleet censuses with owner-filed vintages is what rules 13/14 require. The merit order no longer absorbs the fleet difference, so the early-year fuel-mix rungs now show the real residual. [C]</div>
+    <div class="au-finding"><b>F7 · Code-reference docs lag the code.</b> <code>docs/codebase/02</code> and <code>03</code> cite a ~2,400-line <code>dispatch.py</code> (now a 34-line facade), a three-pass P0→P1→P2 sequence, the retire-before-CCS order and a no-op fossil filed-date channel; the code does the opposite in each case. Spec §1.9 says there are no ramp constraints; a default-off ramp builder exists. [A, B]</div>
+    <div class="au-finding"><b>F8 · Environment-variable solve knobs.</b> <code>MARKET_SIM_HIGHS_LEAN</code> and <code>MARKET_SIM_WARMSTART</code> can change which degenerate dual the solver returns and are not in the solve-surface fingerprint as far as verified. Rule 24 tension. [A]</div>
+    <div class="au-finding"><b>F9 · Rubric amendments v3.10 → v3.17 landed in five days, each admitting a named failing cell to the caveat ledger.</b> Scores did not move; what is ledgerable did. This is the self-certification pattern the August audit flagged (gap O5), now the main threat to the rubric's credibility. [C]</div>
+    <div class="au-finding"><b>F10 · The attestation schema is not fixed.</b> Keeper bundles carry lane-named blocks and the rule-21 free-parameter ledger (<code>calibration_attestation.json::free_parameters</code>) differs in shape by lane; <code>authorized_price_tuning</code> appears only in NYISO's. One schema, validated at promotion, is the fix. [C]</div>
+    <div class="au-finding"><b>F11 · Keeper-only retention erased the public rejected-run registry</b> that the August audit called unmatched by any comparator; rejections now survive only as records and mechanism-matrix cells. The CAMPD outage seam (gap O4) remains open. [C]</div>
+
+    <h2>5. Documentation drift corrected in this audit</h2>
+    <p>Two drift lanes repaired the site in this PR; every change is logged as "was → now (source file:line)" in <code>docs/audit/2026-10/D1-site-drift-concept-pages.md</code> and <code>D2-site-drift-calibration-pages.md</code>.</p>
+    <ul>
+      <li><b>index.html, config-reference.html:</b> six ISOs → nine regions; state carbon pricing scope now CAISO/NYISO/NEISO plus the gated PJM series.</li>
+      <li><b>lp-core.html:</b> cross-year warm start "default-on in the calibration CLIs" → off by default on both paths (rule 36); every year solves cold.</li>
+      <li><b>capacity-evolution.html:</b> "the six steps" → the 0–7 order (confirmed exits, announced retirements, CCS screen, economic retirement, known additions, economic entry, backstop, dispatch).</li>
+      <li><b>model-validity.html:</b> meta, title and status paragraph no longer advertise the three-tier holdout ladder; the former gates are marked historical and the page cites rule 22, rule 30 and rule-history §18. The body sections narrating the old regime are flagged at the head and remain to be rewritten.</li>
+      <li><b>results-calibration.html, calibration-rubric.html, mechanism-matrix.html:</b> rubric version 2.4 → 3.17; calibration-complete.json described as the keeper designation and forecast gate-(a) input only; frontier holders marked withdrawn 2026-09-30; "Holdout tiers" glossary row rewritten.</li>
+    </ul>
+    <p><b>Found, not resolved here:</b> the animated capacity flowchart still steps through the old six-step sequence; the calibration-rubric version history stops before 3.17; data-completeness still says SPP, NWPP and SOCO have no audited rows (the generated completeness data is not in the clone); keeper shards for SPP and ERCOT carry pre-v3.13 determination prose; <code>docs/codebase/02</code> and <code>03</code> need a <code>/sync-docs</code> pass (F7).</p>
+
+    <h2>6. Recommendations</h2>
+    <h3>Owner decisions</h3>
+    <ol>
+      <li>Decide whether to restore a protected year. Without one, label every calibration claim "in-sample" on the status page and in the forecast program's gate (a).</li>
+      <li>Rule on the fourth commitment mechanism (F4): document and ledger it in the mechanism matrix, or delete it under rule 26.</li>
+      <li>Rule on whether forward (2026–2050) numbers may be quoted at all before the forecast program leaves proof-of-concept and the uncertainty band exists.</li>
+    </ol>
+    <h3>Engineering</h3>
+    <ol>
+      <li>Rewrite the keeper-shard determination prose for every ISO to the v3.13 all-years reading, or have the dashboard render the computed value only and drop the prose.</li>
+      <li>Run <code>/sync-docs</code> on <code>docs/codebase/02</code>, <code>03</code> and spec §1.9; fix the capacity flowchart step data; extend the rubric version history to 3.17.</li>
+      <li>Fingerprint or prove inert the environment-variable solve knobs (F8).</li>
+      <li>Refresh the forecast gate-(a) board against the 2026-10-02 keepers.</li>
+    </ol>
+
+    <p class="source-cite"><strong>Method.</strong> Five parallel audit lanes (LP/dispatch/commitment; capacity/policy/forecast; data/calibration/governance; site drift ×2) plus a positioning-matrix refresh, each read-only against code and committed artifacts. Comparator claims draw on public documentation of the named tools and are marked unverified where the auditor could not confirm a current detail. A flattering audit is a failed audit.</p>
+  </div>
+
+  <script src="js/nav.js"></script>
+  <script src="js/shared.js"></script>
+</body>
+</html>
