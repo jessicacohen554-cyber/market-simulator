@@ -91,6 +91,20 @@ epoch re-keys every backcast SOCO bundle (2023-2025 solves are byte-identical in
 substance). WHAT IS NOT INVALIDATED: every other ISO and every forecast. Record:
 ``docs/records/soco/FINDING-closeout-soco-2-2026-10-03.md``.
 
+**Epoch 2026-10-03b — PJM / NWPP / SPP 2019-2022 measured nuclear monthly CF
+(rule 14; lane closeout-nuclear-rows, owner ruling R-35). KEY-MOVING for backcast
+PJM, NWPP and SPP, through ``solve_surface.SolveEpoch`` 2026-10-03b.** WHAT
+CHANGED: ``constants.NUCLEAR_MONTHLY_CF_BY_YEAR`` gains 2019-2022 rows for PJM,
+NWPP and SPP (``scripts/data/derive_nuclear_monthly_cf.py``, the frozen derive;
+2023-2025 reproduce byte-for-byte under ``--check``). A 2019-2022 backcast in those
+ISOs previously read the static ``NUCLEAR_MONTHLY_CF`` pattern x (1 - EFORD), a
+year-invariant fleet CF (PJM 0.951, NWPP 0.837, SPP 0.904) against measured
+0.943-0.957 / 0.842-0.975 / 0.849-0.964. NWPP's and SPP's rows are undeclared in
+``solve_surface_declared.DECLARED``, so only the epoch re-keys them; PJM's row is
+declared and moves PJM keys (forecast included, where the 2019-2022 rows are never
+read) on its own. WHAT IS NOT INVALIDATED: every other ISO, and forecast NWPP/SPP.
+Record: ``docs/records/governance/closeout-2026-10/FINDING-closeout-nuclear-rows-2026-10-03.md``.
+
 **Epoch 2026-10-03a — NWPP plant-basis anchor decoupled from the keeper roster
 (owner ruling R-28 "Keep old figures, fix later", PR #7076; lane
 closeout-nwpp-anchor). KEY-MOVING for backcast NWPP, through
