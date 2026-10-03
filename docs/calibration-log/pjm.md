@@ -7132,6 +7132,20 @@ The COAL_BIT 2019–21 and CT 2021 frontier text is drafted for the desk, not si
 `docs/records/pjm/FINDING-closeout-pjm-2-2025-regression-attribution-2026-10-03.md`,
 `docs/records/pjm/DRAFT-closeout-pjm-2-frontier-text-2026-10-03.md`.
 
+## 2026-10-03 — PJM-NEXT-31: COAL_BIT unit-dark census (zero LP) — NOT CHARTERED, no solve
+
+Keeper unchanged (`2026-10-02-w0-pjm-fix2`, NOT-YET). Owner ruling from NEXT-30: build the outage repair.
+The census was fixed ex ante and run first. Its premise did not hold:
+- The three committed CAMPD extracts carry about 95 % of COAL_BIT unit-dark MWh.
+- The uncovered remainder is depleted in tight-net-load hours (C3, the 1–5 d stops the filter drops: 0.026 vs base
+  0.135) and in S2 hours (0.17–0.24 vs base 0.27). That is the economic reserve-shutdown signature. A window for it
+  is rule-13 pinning.
+- NEXT-30's 0.62–0.89 "unit-dark share" counted gas CTs at coal facilities.
+
+No field built, no matrix verdict moved, the Tait remap stays parked. The availability family is exhausted for
+COAL_BIT 2019–21. The remaining candidate is coal commitment economics over slack periods. Record:
+`docs/records/pjm/FINDING-pjm-next-31-coalbit-dark-census-2026-10-03.md`.
+
 ## closeout-PJM-impl — 2026-10-03 — owner rulings R-36 / R-37 applied to the keeper ledger (zero LP, determination unchanged NOT-YET)
 
 - **R-36** (*"Sign CT 2021 now; hold COAL_BIT 1b for NEXT-31"*): C1 CT_PEAKER 2021 (−8.07 TWh) enters
