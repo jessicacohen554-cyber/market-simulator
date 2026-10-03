@@ -106,16 +106,47 @@ The remaining PJM residual is (a) the clip and (b) the keeper dispatching
 0.3–0.9 TWh below its fallback availability, which is a dispatch matter and not
 a data one.
 
-**Side finding (not in scope, for the PJM lane).** PJM 2019's bench includes
-Three Mile Island-1 (EIA 8011) at 5.21 TWh. It ran Jan–Sep 2019 and retired
-2019-09. `NUCLEAR_DORMANT_UNTIL[8011] = 2027` excludes it from the derive's fleet
-and numerator in every year before 2027. The keeper's 2019 nuclear
-(276.99 TWh ≈ fallback fleet 272.19 + ~4.8) suggests the retiree injection
-carries TMI-1 into the 2019 LP anyway. Fleet/arrays applies the table's CF to
-every nuclear row uniformly, so TMI-1 2019 gets the operable fleet's measured CF
-rather than its own. This is the NYISO Indian Point caveat in another ISO, and a
-derive fleet-definition question (not a rule-23 data refresh). It is routed to
-PJM's next lane.
+**TMI-1 / Crane (EIA 8011), desk addition, measured; stopped before repair.**
+
+What the registry says: `NUCLEAR_DORMANT_UNTIL[8011] = 2027`, the first year the
+unit is expected to generate. Both consumers drop the unit in every backcast year
+before 2027:
+- the derive excludes it from fleet and numerator;
+- `fleet.arrays._nuclear_monthly` zeroes its availability.
+
+What actually happened: EIA-923 Page 1 shows 8011 at about 0.57–0.63 TWh a month
+from January to August 2019. September 2019 is 0.351 TWh, a partial month. The
+first zero-generation month is **October 2019**, giving **5.21 TWh** for 2019. The
+NRC status row (`data/raw/nuclear-license-status/pjm.csv`) records "permanently
+shut **2019-09-26**".
+
+What the keeper leg loses: about **nothing**. The PJM keeper arms
+`nuclear_dormancy_defers_to_vintage_exit` and `mid_vintage_exit_carry` (both
+`True` in `w0_pjm_span/run_config_2019.json`). Under them, a unit the 2019 EIA-860
+vintage records as a mid-year exit is not zeroed, and its retirement mask removes
+it after the exit month (PJM-NEXT-2 card 3, rule 19). That is why the keeper's 2019
+nuclear is 276.99 TWh, about 4.8 TWh above the 272.19 TWh the derive-fleet
+fallback implies.
+
+With the new measured row, the LP applies the row's CF to TMI-1 too, since the CF
+is applied uniformly to every nuclear row. At the 2019 row's CF, TMI-1 has about
+5.02 TWh of Jan–Sep availability against the 5.21 TWh measured. The §2 PJM 2019
+implied gap (−1.12 TWh) is already computed keeper-to-bench with TMI-1 on both
+sides.
+
+Carrying TMI-1 in the derive's 2019 fleet as well (through September) would move
+the 2019 row by only two cells: Mar 0.87 → 0.88 and Sep 0.95 → 0.94.
+
+Why the requested one-date repair was not made: one `until` year cannot express
+"ran January–September 2019, dormant October 2019 through 2026".
+- Setting it to 2019 would re-admit TMI-1 at full availability for 2020–2026.
+  That is the ~6.5 TWh/yr phantom this entry was created to remove.
+- The LP already carries the 2019 operation through the vintage-exit deferral.
+  A second mechanism for it would stack (rule 19).
+- Teaching the derive the operating window means changing its fleet definition,
+  for example reading the mid-vintage-exit units. That is a code change beyond the
+  one registry date the desk authorised, so this step stopped and was reported. No
+  registry value changed.
 
 ## 3. Cache-key / SolveEpoch consequence
 
