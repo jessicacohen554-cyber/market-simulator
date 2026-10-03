@@ -43,7 +43,7 @@ Lane closeout-CAISO-impl (desk `session_01ALecU5Wjde4tkbLrnMExT9`), from the spe
 **Refute.** `EIA930_GAS_FOLD_REFUTED = {"SOCO", "CAISO"}`, with the SOCO-60 test numbers cited in the comment.
 
 **Bench regen.**
-- Only the CAISO 2019/2020/2021 parts change in content. 2022–2025 and the run payload were byte-identical after
+- Only the CAISO 2019/2020/2021 parts change in content (desk ack 2026-10-03: the 0.03 TWh deviation below is accepted as measured). 2022–2025 and the run payload were byte-identical after
   R-33. In 2022–25 only the R-34 builder stamp moves; see §5.
 - Completeness (`eia923_2025.json`) is unchanged.
 
@@ -148,6 +148,13 @@ made 54 of 61 committed bench parts read STALE. `check_bench_freshness.py` went 
 - Each part's own gzip round-trip was verified exact first, with the writer's format: level 9, mtime 0.
 - `bench` and every other `meta` field are verified unchanged on all 54.
 - After: `check_bench_freshness.py`: **0 STALE** of 61. The stamp tests pass.
+- **One knock-on, NWPP provenance only.** `data/raw/reference/nwpp_plant_basis_energy.csv` records the sha256 of
+  each NWPP bench part it is derived from (`tests/unit/data/test_nwpp_demand_plant_basis.py::test_artifact_matches_bench_parts`
+  pins that). The stamp rewrite changed those bytes, so the CSV was re-derived
+  (`scripts/data/derive_nwpp_plant_basis_energy.py`; rule 23: its source bytes changed).
+  - Only the `source_sha256` column moves. Every `year` / `family` / `twh` / `source` value is identical on all 44
+    rows.
+  - The file is not on the solve surface, and `twh` is the only column any solve reads.
 
 ## 6. Gates (step 4)
 
@@ -157,7 +164,7 @@ made 54 of 61 committed bench parts read STALE. `check_bench_freshness.py` went 
 | `check_registry_payload_parity.py` | OK, 9 runs, 9 bundle dirs |
 | `check_mechanism_matrix.py --base origin/main` | exit 0 |
 | `check_bench_freshness.py` | 0 STALE / 61 |
-| fast lane `pytest -n auto -m "not slow and not integration and not fulldata"` | see the PR body |
+| fast lane `pytest -n auto -m "not slow and not integration and not fulldata"` | 11,373 passed, 66 skipped, 3 xfailed; 1 failed (`test_nwpp_demand_plant_basis::test_artifact_matches_bench_parts`, caused by the re-stamp and repaired above; it then passes). The two failures the charter lists as pre-existing on main did not fail here. |
 
 ## 7. Matrix
 
