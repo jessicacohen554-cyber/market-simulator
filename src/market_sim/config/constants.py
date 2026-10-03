@@ -3314,7 +3314,21 @@ NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
     # / Callaway / River Bend Oct dips).
     # Source: EIA-923 Page 1 monthly net generation, 2023-2025.
     # Derivation/verify: scripts/data/derive_nuclear_monthly_cf.py --isos MISO.
+    # 2019-2022 rows added 2026-10-03 (lane closeout-miso-nuc, owner ruling
+    # R-43) by the same frozen script from the same EIA-923 Page 1 source: an
+    # initial derivation for years the table never carried, not a re-derivation
+    # (rule 23; `--years 2023 2024 --check` passes, so 2023-2024 are
+    # byte-unchanged; 2025 Oct/Nov now derive 0.86/0.87 from the preliminary
+    # EIA-923 vintage and are NOT re-derived here — they re-derive when the
+    # final 2025 file lands, citing that change). Before them a 2019-2022
+    # backcast fell back to the static NUCLEAR_MONTHLY_CF pattern x (1 - EFORD),
+    # a year-invariant fleet CF (rule 14 [R-ACCURATE]);
+    # docs/records/miso/FINDING-closeout-miso-2-nuclear-2019-2022-2026-10-03.md.
     "MISO": {
+        2019: [0.91, 0.88, 0.90, 0.75, 0.76, 0.90, 0.93, 0.97, 0.95, 0.85, 0.92, 1.00],
+        2020: [1.00, 1.00, 0.78, 0.71, 0.80, 0.88, 0.89, 0.87, 0.93, 0.72, 0.75, 0.87],
+        2021: [0.91, 0.89, 0.83, 0.76, 0.81, 0.91, 0.89, 0.97, 0.91, 0.75, 0.93, 0.99],
+        2022: [0.94, 0.93, 0.79, 0.57, 0.74, 0.91, 0.90, 0.96, 1.00, 0.93, 0.93, 0.93],
         2023: [1.00, 0.94, 0.87, 0.83, 0.76, 0.93, 1.00, 0.96, 0.90, 0.68, 0.75, 0.75],
         2024: [0.78, 0.91, 0.80, 0.81, 0.83, 0.96, 1.00, 0.99, 0.97, 0.85, 0.90, 0.93],
         2025: [1.00, 0.92, 0.89, 0.82, 0.75, 0.84, 0.95, 0.98, 0.91, 0.85, 0.86, 1.00],
