@@ -4260,6 +4260,44 @@ def run_year(
                     float(np.mean(net_lim)),
                 )
 
+    # NWPP measured seam headroom (nwpp_seam_measured_limits, backcast
+    # overlay, default off — NWPP-NEXT-22): one aggregate interface group per
+    # priced seam capping its net flow at the measured hourly operating limit
+    # in each direction (CAISO's MALIN share of COI, BPA's BC Intertie)
+    # instead of the full path rating its bands sum to. Only meaningful when
+    # the seams are priced; requested without them it raises rather than
+    # silently no-oping (pjm-119), as does a missing clean partition.
+    if getattr(config, "nwpp_seam_measured_limits", False) and iso == "NWPP":
+        if not (
+            priced_interchange and getattr(config, "reference_price_interface", False)
+        ):
+            raise ValueError(
+                "nwpp_seam_measured_limits caps the PRICED NWPP seams: arm "
+                "reference_price_interface and priced_interchange with it"
+            )
+        from market_sim.data.transfer_interface_limits import (
+            nwpp_seam_limits_hourly,
+        )
+        from market_sim.model.interchange.spec import build_seam_limit_groups
+
+        seam_caps = nwpp_seam_limits_hourly(year, demand.shape[1])
+        seam_groups = build_seam_limit_groups(iso, iso_config.links, seam_caps, year)
+        if not seam_groups:
+            raise ValueError(
+                f"nwpp_seam_measured_limits {year}: no priced seam zone in the "
+                "topology — the mechanism never silently no-ops"
+            )
+        interface_groups = interface_groups + seam_groups
+        logger.info(
+            "NWPP %d: measured seam headroom on %d seam(s) (%s)",
+            year,
+            len(seam_groups),
+            ", ".join(
+                f"{k} import {v[0].mean():0.0f} / export {v[1].mean():0.0f} MW"
+                for k, v in seam_caps.items()
+            ),
+        )
+
     # Commercial-operation-date (COD) vintage ramp: in a backcast the fleet
     # snapshot is a recent vintage that includes units built after the solved
     # year. The ramp is now applied uniformly inside generators_to_fleet_arrays

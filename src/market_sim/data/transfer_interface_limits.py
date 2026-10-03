@@ -482,3 +482,152 @@ def pjm_interface_ttc_hourly(
             "(the mechanism never silently no-ops)"
         )
     return ttc_hourly, ttc
+
+
+def _fixed_pst_hour(local: pd.Series, year: int) -> np.ndarray:
+    """Prevailing-Pacific naive hour starts -> index on NWPP's fixed-PST 8760 clock.
+
+    The CAISO partition sits on CAISO's prevailing-time clock; NWPP's LP runs
+    on fixed PST with Feb 29 dropped (``market_sim.data.eia930.demand``). A
+    DST hour moves back one hour; the merged fall-back row is read as its
+    daylight occurrence and the filled spring-forward row shifts forward. Rows
+    landing outside ``year`` (or on Feb 29) return ``-1``.
+    """
+    aware = pd.DatetimeIndex(local).tz_localize(
+        "America/Los_Angeles", ambiguous=True, nonexistent="shift_forward"
+    )
+    pst = aware.tz_convert("Etc/GMT+8").tz_localize(None)
+    hrs = ((pst - pd.Timestamp(year, 1, 1)) // pd.Timedelta(hours=1)).to_numpy()
+    leap = pd.Timestamp(year, 12, 31).dayofyear == 366
+    if leap:
+        feb29 = (pst.month == 2) & (pst.day == 29)
+        hrs = np.where(feb29, -1, np.where(pst.month > 2, hrs - 24, hrs))
+    hrs = np.where(pst.year == year, hrs, -1)
+    return np.asarray(hrs, dtype=int)
+
+
+def _nwpp_cap_series(
+    frame: pd.DataFrame,
+    names: tuple[str, ...],
+    sign: float,
+    year: int,
+    hours: int,
+    fixed_clock: bool,
+) -> np.ndarray:
+    """Sum of ``names`` x ``sign`` per model hour, clamped at 0; NaN where any is absent.
+
+    ``fixed_clock`` True reads ``hour`` directly (the NWPP partition is
+    curated on fixed PST); False remaps the prevailing-time ``interval_start_local``
+    (the CAISO partition). Vectorized: no loop over hours.
+    """
+    total = np.zeros(hours, dtype=float)
+    for name in names:
+        sub = frame[frame["interface"] == name]
+        out = np.full(hours, np.nan, dtype=float)
+        if not sub.empty:
+            if fixed_clock:
+                idx = sub["hour"].to_numpy(dtype=int)
+                vals = sub["limit_mw"].to_numpy(dtype=float)
+            else:
+                idx = _fixed_pst_hour(sub["interval_start_local"], year)
+                vals = sub["limit_mw"].to_numpy(dtype=float)
+                keep = (idx >= 0) & (idx < hours)
+                s = pd.Series(vals[keep]).groupby(idx[keep]).mean()
+                idx, vals = s.index.to_numpy(dtype=int), s.to_numpy(dtype=float)
+            keep = (idx >= 0) & (idx < hours)
+            out[idx[keep]] = vals[keep]
+            if not fixed_clock:
+                # The prevailing->fixed remap leaves the fall-back standard
+                # hour empty (its row merged into the daylight one): fill an
+                # ISOLATED one-hour interior gap from its neighbours (the CAISO
+                # spec's own max_fill_hours = 1); longer gaps stay NaN.
+                gap = np.isnan(out)
+                lone = gap.copy()
+                lone[1:] &= ~gap[:-1]
+                lone[:-1] &= ~gap[1:]
+                lone[[0, -1]] = False
+                out[lone] = 0.5 * (
+                    out[np.flatnonzero(lone) - 1] + out[np.flatnonzero(lone) + 1]
+                )
+        total = total + out
+    return np.maximum(sign * total, 0.0)
+
+
+def nwpp_seam_limits_hourly(
+    year: int, hours: int
+) -> dict[str, tuple[np.ndarray, np.ndarray]]:
+    """Measured hourly caps on NWPP's priced seams (``nwpp_seam_measured_limits``).
+
+    Returns ``{seam: (import_cap, export_cap)}``, each ``(hours,)`` MW >= 0 on
+    NWPP's fixed-PST clock, for every seam in
+    ``constants.NWPP_SEAM_LIMIT_SERIES`` (``CAISO_NEVP`` is absent and keeps
+    its registered rating). ``import`` = counterparty -> NWPP.
+
+    * ``WECC_CAN``: BPA's BC Intertie operating limit (NWPP partition).
+    * ``CAISO_COI``: CAISO's hourly OTC on MALIN500_ISL + CASCADE_ITC where
+      OASIS has the hour (CAISO partition, 2023-06-19 on); every other hour
+      ``NWPP_COI_CAISO_SHARE`` x BPA's whole-path COI operating limit.
+
+    A measured operating limit is a physical operating condition (rule 13,
+    the outage-window kind of input); nothing here reads a flow, a schedule
+    or a model output. An hour neither source covers raises: the NWPP
+    partition is dense over 2019-2025, so a gap means a broken curation, not
+    a modelling choice.
+
+    Raises:
+        FileNotFoundError: The NWPP partition for ``year`` is absent, or a
+            year from 2023 lacks the CAISO partition, or a cap has an
+            uncovered hour (the mechanism never silently no-ops, pjm-119).
+    """
+    from market_sim.config.constants import (
+        NWPP_COI_CAISO_SHARE,
+        NWPP_COI_PATH_SERIES,
+        NWPP_SEAM_LIMIT_SERIES,
+    )
+
+    frames = {"NWPP": load_interface_hourly("NWPP", year)}
+    if frames["NWPP"] is None or frames["NWPP"].empty:
+        raise FileNotFoundError(
+            f"nwpp_seam_measured_limits {year}: no NWPP transfer-interface-limits "
+            "clean partition — run scripts/regenerate_clean.py --solve-profile NWPP"
+        )
+    frames["CAISO"] = load_interface_hourly("CAISO", year)
+    if frames["CAISO"] is None and year >= 2023:
+        raise FileNotFoundError(
+            f"nwpp_seam_measured_limits {year}: no CAISO transfer-interface-limits "
+            "clean partition (MALIN500_ISL OTC) — run scripts/regenerate_clean.py "
+            "--solve-profile NWPP"
+        )
+    out: dict[str, tuple[np.ndarray, np.ndarray]] = {}
+    for seam, dirs in NWPP_SEAM_LIMIT_SERIES.items():
+        caps: dict[str, np.ndarray] = {}
+        for direction, (part, names, sign) in dirs.items():
+            frame = frames[part]
+            cap = (
+                _nwpp_cap_series(frame, names, sign, year, hours, part == "NWPP")
+                if frame is not None
+                else np.full(hours, np.nan)
+            )
+            if seam == "CAISO_COI":
+                path_name, path_sign = NWPP_COI_PATH_SERIES[direction]
+                path = _nwpp_cap_series(
+                    frames["NWPP"], (path_name,), path_sign, year, hours, True
+                )
+                cap = np.where(np.isnan(cap), NWPP_COI_CAISO_SHARE * path, cap)
+            if np.isnan(cap).any():
+                raise FileNotFoundError(
+                    f"nwpp_seam_measured_limits {year}: {seam} {direction} cap has "
+                    f"{int(np.isnan(cap).sum())} uncovered hour(s) — re-curate "
+                    "transfer-interface-limits"
+                )
+            caps[direction] = cap
+        out[seam] = (caps["import"], caps["export"])
+        logger.info(
+            "nwpp_seam_measured_limits %d: %s import cap mean %0.0f MW, "
+            "export cap mean %0.0f MW",
+            year,
+            seam,
+            float(caps["import"].mean()),
+            float(caps["export"].mean()),
+        )
+    return out

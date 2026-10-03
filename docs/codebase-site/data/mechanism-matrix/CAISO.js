@@ -55,6 +55,7 @@ window.MECH_MATRIX_SHARDS.CAISO = {
     demand_balance_screen: { cell: "U", ev: "pjm-h19 phase 0 (zero LP): the screen flags CAISO 2019 (17 h), 2020 h6730 and TRAINING-YEAR 2025 h5076 (D 11.8 GW vs 29.9 GW neighbours and NG-TI 28.0 GW). Untested in any CAISO solve; the CAISO lane owns whether it applies under supply-consistent demand (rule 25)." },
     nwpp_grid_carried_wind_served: { cell: "." },
     nwpp_demand_plant_basis: { cell: "." },
+    nwpp_seam_measured_limits: { cell: "." },
     ercot_tie_zonal_interchange: { cell: "." },
     ercot_offer_swcap_clip: { cell: "." },
     ercot_swcap_vintage: { cell: "." },

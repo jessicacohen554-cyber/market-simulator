@@ -55,6 +55,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
     demand_balance_screen: { cell: "K", ev: "K 2026-09-24 (pjm-h19) — PROMOTED to the PJM keeper 2026-09-23-pjm-h19-dbs-span on the owner ruling (\"Promote\"). Tested 2026-09-23 by solve on all six years (one shard per year at 2d57aa20, control = committed hydro-2 keeper): every PRECOMMIT prediction held — 2020 C3b FAIL->PASS 0.212->0.155; 2020 C3a +19.0% -> +14.5% (still FAIL); VOLL shed 41,679 MWh -> 0; 2021/22/23/25 bit-identical (G0); zero status changes; D-diagnostic fail sets unchanged. Against: 2020 C3c tail count 2 -> 0 vs 2 actual. docs/records/pjm/RESULT-pjm-h19-demand-balance-screen-2026-09-23.md." },
     nwpp_grid_carried_wind_served: { cell: "." },
     nwpp_demand_plant_basis: { cell: "." },
+    nwpp_seam_measured_limits: { cell: "." },
     ercot_tie_zonal_interchange: { cell: "." },
     ercot_offer_swcap_clip: { cell: "." },
     ercot_swcap_vintage: { cell: "." },
