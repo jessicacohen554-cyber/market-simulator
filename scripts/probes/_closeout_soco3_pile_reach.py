@@ -44,8 +44,8 @@ SMAX = sys.argv[1] if len(sys.argv) > 1 else "prior"
 TAG = "" if SMAX == "prior" else f"_smax_{SMAX}"
 
 
-def main() -> None:
-    """Compute floor/ceiling reach per plant-year, write it, and re-score C1."""
+def reach_table(smax_mode: str = "prior") -> pd.DataFrame:
+    """Return the per plant-year floor/ceiling reach table (S_max through Y-1, or the whole corpus for "all")."""
     pm = pd.read_csv(OUT / "census_plant_month.csv")
     plants = sorted(int(p) for p in pm.plant.unique())
     r = pd.concat(
@@ -102,7 +102,7 @@ def main() -> None:
             prev = st[(st.plant == p) & (st.year == y - 1) & (st.month == 12)].stock
             # field construction: max month-end stock through Y-1; sensitivity SMAX=all: max over the whole corpus
             smax = st[
-                (st.plant == p) & ((st.year <= y - 1) | (SMAX == "all"))
+                (st.plant == p) & ((st.year <= y - 1) | (smax_mode == "all"))
             ].stock.max()
             hc = hc_y.get((p, y - 1), hc_y.get((p, y), np.nan))
             hr = (
@@ -147,10 +147,16 @@ def main() -> None:
                 )
             )
     d = pd.DataFrame(rows)
+    d["net_gwh"] = d.add_gwh.fillna(0) - d.cut_gwh.fillna(0)
+    return d
+
+
+def main() -> None:
+    """Compute floor/ceiling reach per plant-year, write it, and re-score C1."""
+    d = reach_table(SMAX)
     d.to_csv(OUT / f"pile_reach_plant_year{TAG}.csv", index=False)
     pd.set_option("display.width", 250)
     print(d.round(2).to_string(index=False))
-    d["net_gwh"] = d.add_gwh.fillna(0) - d.cut_gwh.fillna(0)
     print(
         d.groupby("year")[
             [
