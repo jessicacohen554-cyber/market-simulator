@@ -76,4 +76,89 @@ Every Q4 branch is a routing statement. A solve follows only through a PRECOMMIT
 
 ## §2 Result
 
-*(written after the probe runs)*
+Probe `scripts/probes/_pjmnext31_coalbit_dark_census.py` →
+`results/phase0/pjm/_pjmnext31_coalbit_dark_census.json` (the fixed population). A post-hoc sensitivity,
+`--coal-only` → `_coalonly.json`, restricts units to CAMPD `primaryFuelInfo` containing "Coal". It is labelled
+post-hoc because §1's population takes every CAMPD unit of the facility, and gas CTs at coal facilities are dark most
+of the year. The S2 hours reproduce NEXT-29/30 (`H_y` = 1368 / 976 / 1741 / 2852 / 2658 / 3721 / 3288). Of the
+keeper's COAL_BIT plants, 23–39 per year carry CAMPD units with output. The rest have zero `cap_mw` all year
+(retired) or are small non-CAMPD units.
+
+**Unit-dark MWh by class, all hours, pooled 2019–25** (fixed population; coal-only in brackets):
+
+| class | MWh | S2 fraction (base 0.271) | tight fraction (base 0.135) |
+|---|---|---|---|
+| C0 covered by a committed window | 945 M (960 M) | 0.236 | 0.117 |
+| C1 run < 24 h | 2.7 M (2.5 M) | 0.228 | 0.094 |
+| C2 1–5 d, unit below `SHORT_BASELOAD_CF` | 10.1 M (10.0 M) | 0.201 | 0.067 |
+| C3 1–5 d, eligible, filter drops | 21.6 M (21.4 M) | 0.166 | 0.026 |
+| C4 ≥ 5 d, filter drops | 0 (0) | — | — |
+| C5 residue | 20.3 M (8.9 M) | 0.192 | 0.103 |
+
+**Unreflected dark MW, `H_y`-mean** (fixed population; the part on uncovered units in brackets, information only):
+1126 (781) / 1255 (941) / 557 (434) / 1051 (686) / 917 (268) / 502 (324) / 429 (357) for 2019–25, against `K` of
+28.6 / 27.2 / 22.3 / 23.7 / 17.7 / 17.2 / 18.9 GW.
+
+### Readings, applied as fixed
+
+| reading | result | verdict |
+|---|---|---|
+| Q1 | 1.49 pooled (2019 1126 vs 661; 2020 1255 vs 580; 2021 557 vs 592). Coal-only 1.26. | **Accounts** |
+| Q2 | `H_y` shares of uncovered MWh 2019–25: C5 0.385, C3 0.354, C2 0.200, C1 0.061, C4 0. In 2019–21: C5 0.472, C3 0.259. | **Mixed (C5, C3)**. Coal-only: C3 0.431, C5 0.256. |
+| Q3 | Lead class C5: tight share 0.119. (C3 0.026, C2 0.067, C1 0.094.) | **NOT ADMISSIBLE** |
+| Q4 | The lead class is C5, which is not a detector gate, and Q3 fails | **NOT CHARTERED** |
+| Q5 | Lead-class `H_y` MW per MW of `K`: 0.023 / 0.021 / 0.011 / 0.015 / 0.004 / 0.008 / 0.005 | information |
+
+### The Q3 threshold, and why the verdict does not hinge on it (interpretation)
+
+Q3's 0.5 bar was set without the mask's base rate. `high_load_mask` flags 13–14 % of hours by construction, and even
+the committed windows (C0) sit at 0.117, so no outage class could reach 0.5. The verdict holds under a
+base-rate-relative reading as well:
+- every uncovered class is *depleted* in tight hours against the 0.135 base rate, C3 most of all (0.026, a fifth of
+  base);
+- every uncovered class is also depleted in the S2 hours, the price-side view where coal is deepest in the money
+  (0.17–0.24 against base 0.27).
+
+Both exogenous signals, net load and price, say the same thing. The dark hours the extracts miss are where the system
+does *not* need coal: slack nights, weekends and shoulder weeks. That is the economic reserve-shutdown signature, the
+case the committed revealed-availability filter exists to exclude. A window built on them would remove capacity that
+was economically idle, which rule 13 forbids as pinning a unit to observed operation. C3 (1–5 d stops of
+`SHORT_BASELOAD_CF`-eligible units that the filter drops) is the largest coal-only class, and it is the most
+slack-concentrated. So the filter is doing its job there, not missing outages.
+
+### What the numbers say (interpretation)
+
+- **The committed windows already carry the overwhelming majority of COAL_BIT unit-dark time.** C0 is about 95 % of
+  all unit-dark MWh. The keeper's `cap_mw` already removes most of it (for example, Keystone 3136 in 2023 ran in
+  about 25 % of hours, and its `cap_mw` is zero in about half of them).
+- **The NEXT-30 "unit-dark share" (0.62–0.89) is not a missed-outage share.**
+  - It flagged a plant-hour when *any* CAMPD unit at the facility was dark, gas CTs included. The coal-only
+    sensitivity cuts C5 by 56 %.
+  - The derate + offline pieces it marked are mostly ordinary partial-plant economics on top of correctly windowed
+    outages.
+- **Unreflected MW splits two ways.**
+  - The uncovered-unit part is 270–940 MW. It is economic, per the above.
+  - The covered-but-unreflected part is 120–650 MW, largest in 2023 (649 MW). That part has a window, but the model
+    removes less than the unit's peak-gross share of the plant. Part of it is basis: the extract shares capacity by
+    EIA-860 nameplate over the dispatched bin denominator, while this census shares it by observed peak gross. It is
+    largest in a passing year, so a repair would regress 2023. It is not chartered here.
+- **Where the year-discriminating operand sits.** The real fleet decommits coal across multi-day slack periods and
+  the pure-LP keeper does not. That fits NEXT-30's finding that model loading sits at cap in the fail years. It is a
+  commitment-economics question (rule 18: start cost and min-down by parameters), not an availability one. The
+  closest adjudicated cells are `coal_sync_window_commitment_grain` (K) and `tranche_startup_amortization` (K);
+  `coal_committed_nested_on_mustrun` and `commitment_floor_window_netload` are U. This lane tests none of them.
+
+## §3 Consequence
+
+- **NOT CHARTERED. No extract repair is built and no solve runs.** The owner's NEXT-31 ruling assumed the census
+  would find forced outages the extracts miss. It finds instead that:
+  - the extracts already carry about 95 % of COAL_BIT unit-dark MWh;
+  - the uncovered remainder is concentrated in slack hours on both exogenous signals.
+
+  Building a window for that remainder would admit economic shutdowns as outages (rule 13).
+- **Tait 55248→2847 remap** stays parked as the rule-14 rider for the next PJM solve with a real lever.
+- **Matrix:** no cell is tested and no verdict moves. The `unit_outage_*` U cells stay U: this census measures
+  coverage, not those mechanisms. This lane edits no `PJM.js` cell.
+- **COAL_BIT C1 2019–21 side card (a)** stays open. The availability family is now exhausted on two independent
+  censuses (NEXT-13 monthly max, NEXT-30/31 hourly unit status). The remaining structural candidate is coal
+  commitment economics over multi-day slack periods. The frontier text is closeout-PJM-2's.
