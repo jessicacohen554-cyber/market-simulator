@@ -9,7 +9,8 @@ is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction onl
 **CROSS-DESK NOTICE (SPP-21, 2026-09-06, branch `claude/spp-21-matrix-shard-ti2gy3`):** SPP shard exists from this commit — **seven** shards; every rule-28(c) cell line now includes SPP. *(A self-referential sha cannot be written inside its own single commit — G2 requires one — so the lane and branch are the citation; `git log --grep=SPP-21` resolves the sha.)*
 
 **Charter date:** 2026-08-23 · **Last refresh:** 2026-10-03 (refresh #69) ·
-**r#69 (HEAD `d7ff7c20`, addendum r#69a at `792e55ad`):** every keeper moved (closeout-W0) · board CALIBRATED ×2 (NEISO, NYISO; the ×4 read at `d7ff7c20` was stale) vs `complete` ×2 · D100/D101/D102 all LANDED (PRs #7089, #7091, #7094) · 111 forecast verdicts STALE-SURFACE · `check_key_provenance` RED (SOLVE_EPOCHS) → D100 · gate-(a) re-key D101 · staleness census D102 · §0bn.2 is the standing `complete`/frontier plan · Q73–Q76 open · NEXT FREE LABEL: D103 ·
+**r#69b (HEAD `07f5b88e`):** Q73 PJM WITHDRAWN · Q74 NYISO DECLARED (gate (a) MET ×2) · Q75 frontier = no forecast work · Q76 T1-F for NEISO+NYISO authorized · D105 (NEISO T1-F) + D103 dispatched · D106 (NYISO T1-F) queued · NEXT FREE LABEL: D107 ·
+*(previous)* **r#69 (HEAD `d7ff7c20`, addendum r#69a at `792e55ad`):** every keeper moved (closeout-W0) · board CALIBRATED ×2 (NEISO, NYISO; the ×4 read at `d7ff7c20` was stale) vs `complete` ×2 · D100/D101/D102 all LANDED (PRs #7089, #7091, #7094) · 111 forecast verdicts STALE-SURFACE · `check_key_provenance` RED (SOLVE_EPOCHS) → D100 · gate-(a) re-key D101 · staleness census D102 · §0bn.2 is the standing `complete`/frontier plan · Q73–Q76 open · NEXT FREE LABEL: D103 ·
 *(previous)* **r#68 (HEAD `9149be2c`):** D98 (key provenance EXIT 0) and D99 (neiso-t3 FC-6 CAVEAT→PASS, HOLD) LANDED · desk re-keyed MISO → gate (a) EXIT 0 · queue EMPTY · NEXT FREE LABEL: D100 ·
 *(previous)* **r#67 (HEAD `cf0950dc`):** all four r#66 lanes LANDED on relaunch (re-key · D95 surface re-key · D96 HOLD→HOLD one vintage · D97 T1.6 design) · desk re-keyed MISO → gate (a) EXIT 0 · Q71 (surface construction) / Q72 (T1.6 re-point, 2041–2050 mean) RULED · D98, D99 dispatched · D96 shard PRs closed · NEXT FREE LABEL: D100 ·
 *(previous)* **r#66 (HEAD `a1b8ebd9`):** all three r#65 lanes LANDED (re-key · D93 · D94 HOLD→HOLD) · gate (a) red again on FIVE ISOs (R-* promotions) · D94's two legs are the new key-provenance UNKNOWNs · Q69 (re-solve neiso-t3 post-F1) / Q70 (T1.6 design lane first) RULED · re-key r#66, D95, D96, D97 dispatched · NEXT FREE LABEL: D98 ·
@@ -163,7 +164,20 @@ Disjoint by file. Sessions: D100 `session_01NmQW2pVXkMkRQr3kkbAhWw` · D101 `ses
 
 **Proposed, NOT dispatched (next sitting, in order):** D103 rung-2 ledger carry for NEISO (zero LP) · D104 `shard_prompt.py --mode forecast` so a T1 window gets the same eight guarantees a backcast year gets (code lane) · D105 NEISO rung-3 T1-F on `2026-10-02-w0-neiso` (LP; needs D102's reading and the owner's compute nod) · D106 frontier carry into `readiness_limits` for every ISO the close-out signs at wave 4 (zero LP, waits on the statements).
 
-### 5. OWNER CARDS (open on this desk)
+### 4a. RULINGS r#69b (owner, 2026-10-03, decision cards served in this desk session) — all four cards RULED
+
+| card | ruling (verbatim choice) | effect |
+|---|---|---|
+| **Q73** PJM marker/board | **"Withdraw the entry"** | `complete.PJM` → `withdrawn.PJM` (prior entry carried inside); forecast board PJM `marker_complete` false, gate (a) NOT MET. Keeper designation untouched. |
+| **Q74** NYISO declaration | **"Declare now"** | `complete.NYISO` = `2026-10-02-w0-nyiso` (fifth NYISO declaration; the prior withdrawn entry carried inside); forecast board NYISO gate (a) **MET**. Gate (a) now MET for **NEISO and NYISO**. |
+| **Q75** frontier posture | **"No forecast work at all"** | §0bn.2b.3 is AMENDED: a frontier ISO runs nothing on the forecast side — no T0/T1 POC, no indicative tier — until its determination changes. Rungs 0–1 (re-key, census) still run because they are reads, not forecast work. |
+| **Q76** compute | **"NEISO plus every ISO declared at Q74"** | T1-F 2026–2030 re-solves authorized for NEISO and NYISO, one ISO at a time, on their 2026-10-02 keepers. This is the §2.1b gate-(d) authorization for exactly those two instruments; nothing else. |
+
+Executed this sitting (zero LP): the two marker moves and the two board flips in one commit, so the surfaces cannot disagree (`audit_keepers` EXIT 0 incl. M1a/M1b on the new NYISO entry; `check_registry_payload_parity` EXIT 0; `check_forecast_parity` EXIT 0).
+
+**Dispatched under the rulings:** **D105** — NEISO T1-F on `2026-10-02-w0-neiso` (`--golden-posture`, no `--set`, 2026–2030; PRECOMMIT written in-lane from a zero-LP config probe against `neiso-t1f`'s committed `run_config.json`; prior verdict preserved as `neiso-t1f-pre-d105`; session `session_01JzQPuokURZXBLn8zHqdwyy`, branch `claude/capx-d105-neiso-t1f`) · **D103** — rung-2 forecast DOF-ledger carry census for NEISO and NYISO, proposed builder diff only (session `session_01Gm8yNmZjG3NwvY2aUCx2yv`, branch `claude/capx-d103-dof-carry`). **Queued, not dispatched:** **D106** — NYISO T1-F on `2026-10-02-w0-nyiso`, launched when D105 lands (Q76: one ISO at a time). **NEXT FREE LABEL: D107.**
+
+### 5. OWNER CARDS — ALL RULED at r#69b (§4a above); kept for the record
 
 * **Q73** — PJM reads `complete` (2026-07-31 declaration, keeper re-keyed to `2026-10-02-w0-pjm-fix2`) and NOT-YET on the board. Withdraw the entry, or stand on the declaration? Until ruled, this desk reads PJM's gate (a) as NOT MET (the board is the newer evidence) and says so on the forecast board.
 * **Q74** — NYISO, MISO, SPP read CALIBRATED and are not in `complete`. Declare them (one entry each, keeper id as designated today)? Each declaration opens rungs 2–5 for that ISO.
