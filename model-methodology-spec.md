@@ -443,10 +443,13 @@ production-cost practice — not implementation preferences.
 
 **Stated limitations**, each a known omission rather than an unexamined gap:
 
-- **No inter-hour generator ramp-rate constraints.** Online/offline reserve
-  *classes* and a co-optimized reserve requirement do exist (§1.6, §5.5), but
-  true MW/min ramp limits between adjacent hours do not. Flagged as a future
-  enhancement.
+- **Inter-hour generator ramp-rate constraints are built but default off.**
+  A two-sided plant-group hourly ramp-envelope row family exists
+  (`model/lp/rows.py::_build_ramp_rows`, envelopes from measured CAMPD 1-h
+  deltas) behind the `ScenarioConfig.ramp_limits` gate (default `False`,
+  `pipeline/year.py:207`); no keeper arms it. Online/offline reserve *classes*
+  and a co-optimized reserve requirement do exist (§1.6, §5.5), but unless
+  `ramp_limits` is armed no MW/h limit binds between adjacent hours.
 - **Perfect storage foresight.** The horizon is one LP, so storage sees the
   whole year's prices at once; the model is an upper bound on realized
   arbitrage. Bounded today by the `storage_daily_cycling` flag and analysed in

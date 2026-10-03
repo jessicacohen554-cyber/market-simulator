@@ -367,7 +367,12 @@
     const ISOS = ['all','ERCOT','CAISO','PJM','MISO','NYISO','NEISO','SPP','NWPP','SOCO'];
     // THREE regions registered AFTER this page's 2026-07-10 census -- SPP on
     // 2026-09-06 (lane SPP-20), NWPP and SOCO both on 2026-09-14 (NWPP-20,
-    // SOCO-20) -- so none of them has an audited row yet. config/iso_configs.
+    // SOCO-20) -- so none of them has an audited row yet. The rows are the
+    // static #dcData JSON in this page (hand-censused, NOT deploy-generated:
+    // build_manifest.py's completeness.js is the EIA-923 vintage flag for the
+    // backcast-runs page, not this census). Their Phase-0 data censuses exist
+    // as docs/multi-iso/{spp,nwpp,soco}-data-audit.md (SPP-10 2026-09-06,
+    // NWPP-10 and SOCO-10 2026-09-13) and have not been transcribed here. config/iso_configs.
     // _ISO_BUILDERS carries NINE regions and all nine are filterable here since
     // lane SOCO-34 added SOCO (2026-09-16). Selecting any of the three shows an
     // empty table until a census covers it: that is the honest state, not a
@@ -440,9 +445,11 @@
       });
       if(h.indexOf('<tr class="sec">') === -1){
         h += '<tr><td class="note" colspan="'+(NY+2)+'" style="text-align:left">No audited rows for '+
-             esc(isoFilter)+'. This census was taken 2026-07-10; SPP was registered 2026-09-06 '+
-             '(lane SPP-20) and its data coverage has not been audited into this page yet '+
-             '(the SPP census lives in <code>docs/multi-iso/spp-data-audit.md</code>).</td></tr>';
+             esc(isoFilter)+'. This census was taken 2026-07-10, before SPP (registered 2026-09-06, '+
+             'lane SPP-20), NWPP and SOCO (both 2026-09-14) joined; their data coverage has not been '+
+             'transcribed into this page. Each has its own Phase-0 census: '+
+             '<code>docs/multi-iso/spp-data-audit.md</code>, <code>docs/multi-iso/nwpp-data-audit.md</code>, '+
+             '<code>docs/multi-iso/soco-data-audit.md</code>.</td></tr>';
       }
       h += '</tbody>';
       document.getElementById('grid').innerHTML = h;

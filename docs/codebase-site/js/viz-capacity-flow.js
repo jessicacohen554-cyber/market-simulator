@@ -1,9 +1,12 @@
 /**
- * viz-capacity-flow.js — V16 animated 6-step capacity evolution flowchart
+ * viz-capacity-flow.js — V16 animated capacity evolution flowchart (steps 0–7)
  * Used on: capacity-evolution.html
  *
- * Animated flowchart: six connected boxes representing the annual capacity
- * evolution loop. Play/step controls advance through steps one at a time.
+ * Animated flowchart: eight connected boxes representing the one-pass annual
+ * capacity evolution loop, in the order src/market_sim/model/capacity_evolution/
+ * __init__.py (evolve.py chains steps 0→7 exactly as spec §5.1). Step numbers
+ * are the array index (0-based, matching the spec). Play/step controls advance
+ * through steps one at a time.
  */
 
 import {
@@ -16,20 +19,36 @@ document.addEventListener('DOMContentLoaded', initCapacityFlow);
 
 const STEPS = [
   {
-    id: 'known-ret',
-    label: 'Known\nRetirements',
-    short: 'Known Ret.',
+    id: 'confirmed-exits',
+    label: 'Confirmed\nExits',
+    short: 'Confirmed Exits',
+    color: '#DC2626',
+    icon: '🔒',
+    description: 'Instrument-bound closures (a filed deactivation notice, a consent decree, a signed sale) leave the fleet first. Gated by <code>confirmed_exits_enabled</code>, vintage-gated on the instrument date, and the one exit route that bypasses the reliability floor.',
+  },
+  {
+    id: 'announced-ret',
+    label: 'Announced\nRetirements',
+    short: 'Announced Ret.',
     color: '#EF4444',
     icon: '🔻',
-    description: 'Drop units past their scheduled retirement date. These are firm closures announced to the ISO — regulatory deadlines, fuel-supply expirations, or owner decisions already filed.',
+    description: 'Owner-filed EIA-860 retirement dates. Non-fossil units are honored within <code>NONFOSSIL_ANNOUNCED_HORIZON_YEARS</code>; fossil dates are honored under <code>fossil_announced_exits_enabled</code> (default on), vintage-gated, with a reversal registry for withdrawn filings. A dated plant is exempt from the economic screen.',
+  },
+  {
+    id: 'ccs-retro',
+    label: 'CCS Retrofit\nScreen',
+    short: 'CCS Screen',
+    color: '#0EA5E9',
+    icon: '🔄',
+    description: 'Joint retrofit-or-retire choice for gas-CCs, run before the economic screen so a distressed CCGT whose retrofit clears converts instead of exiting. Only units with ≥ 15 years remaining life (<code>ccs_retrofit_min_remaining_life</code>) and simple payback shorter than that life; capex scaled to the host\'s CO₂ flow (<code>ccs_retrofit_capex_co2_scaling</code>, default on); capped at 3 GW/yr/ISO; gated on <code>ccs_retrofit_available_year</code> (2028).',
   },
   {
     id: 'econ-ret',
-    label: 'Economic\nRetirements',
+    label: 'Economic\nRetirement',
     short: 'Econ. Ret.',
     color: '#F97316',
     icon: '📉',
-    description: 'Screen each thermal unit\'s inframarginal energy margin against its going-forward FOM cost. If margin < FOM for N consecutive years (coal: 1yr, gas-CT: 2yr, gas-CC: 3yr), the unit retires — subject to a reliability floor.',
+    description: 'Screen each thermal unit\'s attainable inframarginal margin against its FOM-only going-forward cost. A losing year increments the unit\'s loss counter; it exits when the counter reaches the per-fuel threshold (coal 3, gas-CC 3, nuclear 3, gas-CT / gas-ST / oil 2). The reliability floor then un-retires units in $/firm-MW-yr merit until accredited firm capacity clears firm peak × (1 + PRM<sub>ISO</sub>).',
   },
   {
     id: 'known-add',
@@ -40,20 +59,12 @@ const STEPS = [
     description: 'Add units from the EIA-860 proposed pipeline that are construction-committed. These are real projects with signed interconnection agreements and financing — not speculative filings.',
   },
   {
-    id: 'ccs-retro',
-    label: 'CCS\nRetrofits',
-    short: 'CCS Retro.',
-    color: '#0EA5E9',
-    icon: '🔄',
-    description: 'Screen existing gas-CC units with ≥15 years remaining life for CCS retrofit. If simple payback < remaining life, retrofit proceeds — capped at 3 GW/yr/ISO, gated on ccs_retrofit_available_year.',
-  },
-  {
     id: 'econ-entry',
     label: 'Economic\nNew Entry',
     short: 'New Entry',
     color: '#6366F1',
     icon: '⚡',
-    description: 'Compare each technology\'s LCOE (with Wright\'s-Law learning) against expected revenue from the prior year\'s price distribution. Technologies that clear the hurdle enter a per-tech queue with annual build caps.',
+    description: 'Compare each technology\'s LCOE (with Wright\'s-Law learning) against expected revenue from the prior year\'s price distribution. Technologies that clear the hurdle enter a per-tech queue with annual build caps. Storage enters on a value stack (arbitrage net of degradation plus RA value where a capacity market exists), never compound growth.',
   },
   {
     id: 'reserve-margin',
@@ -61,7 +72,15 @@ const STEPS = [
     short: 'Backstop',
     color: '#F59E0B',
     icon: '🛡️',
-    description: 'After all market-driven changes, check whether firm capacity meets the planning reserve margin (peak × 1.15). If short, force-build gas-CT units to close the gap — the reliability floor.',
+    description: 'Default off (<code>reserve_margin_build_enabled</code>). When armed, the same accredited-firm-capacity ledger the floor uses is tested against firm peak × (1 + PRM<sub>ISO</sub>) — the ISO\'s published planning reserve margin (13.75 % ERCOT, 15 % CAISO, 17.8 % PJM, 15.7 % MISO, 24.4 % NYISO, 16 % SPP, 14.4 % NWPP, 26 % SOCO) — and any gap is force-built as gas-CT.',
+  },
+  {
+    id: 'dispatch-rps',
+    label: 'Dispatch with\nRPS Constraint',
+    short: 'Dispatch + RPS',
+    color: '#A855F7',
+    icon: '📊',
+    description: 'The evolved fleet is dispatched in the full-8760 LP with the RPS target as an explicit constraint; its dual is the REC price. The solved year\'s prices and margins become the prior for next year\'s screens.',
   },
 ];
 
@@ -84,7 +103,7 @@ async function initCapacityFlow() {
       .attr('width', width)
       .attr('height', height)
       .attr('role', 'img')
-      .attr('aria-label', 'Six-step capacity evolution flowchart');
+      .attr('aria-label', 'Eight-step (0–7) capacity evolution flowchart');
 
     const g = svg.append('g')
       .attr('transform', `translate(${m.left},${m.top})`);
@@ -114,7 +133,7 @@ async function initCapacityFlow() {
         y: i * (boxH + Math.max(gap, 12)),
       }));
     } else {
-      const cols = 3;
+      const cols = Math.ceil(n / 2);
       const rows = 2;
       boxW = Math.min((w - 80) / cols, 190);
       boxH = 60;
@@ -143,7 +162,7 @@ async function initCapacityFlow() {
       if (isMobile) {
         x1 = fromCx; y1 = from.y + boxH;
         x2 = toCx; y2 = to.y;
-      } else if (i === 2) {
+      } else if (i === cols - 1) {
         x1 = from.x + boxW; y1 = fromCy;
         x2 = to.x + boxW; y2 = toCy;
       } else if (Math.abs(fromCy - toCy) < 5) {
@@ -170,7 +189,7 @@ async function initCapacityFlow() {
       }
     }
 
-    // Loop-back arrow (step 6 -> step 1 for next year)
+    // Loop-back arrow (step 7 -> step 0 for next year)
     if (!isMobile) {
       const last = positions[n - 1];
       const first = positions[0];
@@ -232,7 +251,7 @@ async function initCapacityFlow() {
         .attr('font-weight', '700')
         .attr('fill', isActive ? '#fff' : (isPast ? '#fff' : 'rgba(255,255,255,0.7)'))
         .attr('font-family', "'DM Sans', sans-serif")
-        .text(i + 1);
+        .text(i);
 
       // Label
       const lines = step.short.split('\n');
@@ -261,7 +280,7 @@ async function initCapacityFlow() {
     if (!panel) return;
 
     if (stepIdx < 0 || stepIdx >= STEPS.length) {
-      panel.innerHTML = '<p class="step-prompt">Click a step or press Play to walk through the six-step annual capacity evolution loop.</p>';
+      panel.innerHTML = '<p class="step-prompt">Click a step or press Play to walk through the eight-step (0–7) one-pass annual capacity evolution loop.</p>';
       return;
     }
 
@@ -270,7 +289,7 @@ async function initCapacityFlow() {
       <div class="step-detail" style="border-left: 3px solid ${step.color}; padding-left: 16px;">
         <div class="step-detail__header">
           <span class="step-detail__icon">${step.icon}</span>
-          <strong>Step ${stepIdx + 1}: ${step.label.replace('\n', ' ')}</strong>
+          <strong>Step ${stepIdx}: ${step.label.replace('\n', ' ')}</strong>
         </div>
         <p>${step.description}</p>
       </div>
