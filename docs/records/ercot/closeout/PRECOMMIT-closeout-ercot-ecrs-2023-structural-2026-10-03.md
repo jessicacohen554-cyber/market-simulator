@@ -67,3 +67,11 @@ Promotion follows the relayed ruling and the desk's slot grant. At promotion:
 - The 2019–22 validation legs carry the same ×33 bands, and that period has no ECRS. If the bands are not an ECRS object in 2023, they are not one in 2019–22 either. Stripping them is four shards and would be a separate ruling.
 - 2023 lacks the ercot-255 `ercot_zonal_spread_ep_referenced` repair that the forward config carries.
 - The composed bundle includes 2025, so the card carries the **2025 EIA-923 data-drift label**.
+
+## Addendum 1 — owner ruling R-42 and launch (2026-10-03)
+
+Owner ruling **R-42** (2026-10-03, relayed by the desk, verbatim): *"A: Remove ×33 from 2023"*. Option A is executed exactly as written above. K1–K3 are the only kills. The recommendation is promotion whatever the direction of C3a, reported at full size beside the IMM ECRS-neutral ≈ $35. The 2019–22 ×33 strip is a separate ruling and is not launched. Promotion runs only after the desk grants the ERCOT slot.
+
+Shard `session_016m22us1qUxP2JmFqPEg9ob`, environment `env_016R8xUY4maDbppZ6TEns5V8`, auto mode, pin `2e5d93a24222e75b04b802ddff85b945de1699ca`, out-dir `results/calibration/closeout_ercot_ecrs_2023`, branch `claude/closeout-ercot-ecrs-2023`.
+
+Launch note: the session was first created with a one-word placeholder prompt by mistake. It was interrupted at once and given the full shard_prompt.py text, with step-0 checkout, prepare_solve_container exports, the K1 recipe-diff check and the single-quote `--set` instruction. No solve ran under the placeholder.
