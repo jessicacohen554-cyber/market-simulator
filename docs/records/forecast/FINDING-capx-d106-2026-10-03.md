@@ -8,12 +8,11 @@ R-49 `scripts/run_calibration.py`; none on the forecast path; PRECOMMIT header h
 ledger §0bn.2a rung 3; plan §2.1b gate (d), T1-F NYISO 2026–2030 only) · **sibling** D105 (NEISO, PR #7138; same chain).
 
 **Headline.** The headline `nyiso-t1f` recipe re-solved on the W0 keeper resolves to cache key **`374fa81075c95ff8`**
-— pre-declared and matched. **PROMOTE → PROMOTE**, 0 reasons, 0 caveats, every FC status unchanged; all 14 invariants
-PASS. The key move from D60's `19a9690bb12c8459` is exactly the two owner-ruled CCS default moves (Q47) plus the
-eleven moved NYISO solve-surface rows; nothing keeper-driven enters through a config field. **Two misses, reported
-against interest:** the wall clock (17.5 min) landed ABOVE the pre-declared [7, 15] min band (FC-8 still PASS, §1), and
-the trajectory moved far more than the verdict — 2028–2030 CO2 falls 27–45 % as the converted `gas_cc_ccs` fleet
-dispatches at the 2.95 $/MWh adder, and import capacity reads 5,500 MW in every year against D60's 6,470 (§3).
+— pre-declared and matched. **PROMOTE → PROMOTE**, 0 reasons, 0 caveats, every FC status unchanged; 14/14 invariants
+PASS. The key move from D60's `19a9690bb12c8459` is exactly the two owner-ruled CCS default moves (Q47) plus the eleven
+moved NYISO solve-surface rows. **Against interest:** the wall clock (17.5 min) landed ABOVE the pre-declared [7, 15] min
+band (FC-8 still PASS, §1), and the trajectory moved far more than the verdict — 2028–2030 CO2 −27 to −45 % from
+`gas_cc_ccs` dispatch at the 2.95 $/MWh adder, and import capacity 5,500 MW every year against D60's 6,470 (§3).
 
 ## 1. Wall / RSS (§2.4 carries NO NYISO anchor; D60's measured NYISO wall: 656 s = 10.9 min, 189/130/112/115/110 s)
 
@@ -38,7 +37,7 @@ whose committed output `plant_emission_rates_v2.parquet` is what `runner.py` rea
 |---|---|---|
 | D60 recorded | `19a9690bb12c8459` | reproduced by `head_key(D60 payload)` under the live drop rules |
 | + Q47 CCS moves (`ccs_retrofit_vom_adder` 8.0→2.95; `ccs_retrofit_fixed_cost_co2_scaling` →True) | `f62431376dd9df03` | = `head_key(new payload, surface=False)` exactly (`1da87a9755382292` after the adder alone); 156 added fields are schema growth at drop value, 2 retired (`nyiso_firm_imports`, `retiree_cems_cap`) |
-| + 11 moved surface rows (fp `1bde698e1ca4ad89`, 228 rows, epochs `[]`; the D102 movers are two of them) | **`374fa81075c95ff8`** | = the solved `run_config.json` / `solve_surface.json`; `git.sha f30c3003` (basis `e2e296a4`), `dirty false`, 949 fields, `mode=forecast`, `outage_source=statistical`, NYISO curve-OFF |
+| + 11 moved surface rows (fp `1bde698e1ca4ad89`, epochs `[]`; the D102 movers are two of them) | **`374fa81075c95ff8`** | = the solved `run_config.json` / `solve_surface.json`; `git.sha f30c3003`, `dirty false`, 949 fields, `mode=forecast`, `outage_source=statistical`, NYISO curve-OFF |
 
 ## 3. FC-1..FC-8 before (`nyiso-t1f-pre-d106`, D60-R3 `7ed062ba`) vs after (`nyiso-t1f`, this run)
 
@@ -47,11 +46,10 @@ whose committed output `plant_emission_rates_v2.parquet` is what `runner.py` rea
 | FC-1 invariants | PASS (14) | PASS (14; I12 band [8.2 %, 23.2 %] all in-band) | expected |
 | FC-2 row1 / row3 | PASS / PASS | PASS / PASS | expected |
 | FC-2 row4 backstop share | PASS 0.0 % | PASS 0.0 % | expected ("may move, ≤ 10 %") — did not move |
-| FC-3/FC-4 n/a; FC-5/FC-6 | SKIPPED | SKIPPED | expected |
+| FC-3/FC-4 n/a; FC-5/FC-6 | SKIPPED | SKIPPED | expected (rubric 1.1 both sides) |
 | FC-7 run_config | PASS 794 keys, gates `['capacity_market_clearing']` | PASS **949 keys**, same gates | expected (exact) |
 | FC-7 overlay-off / dof ledger | PASS / PASS 3 entries | PASS / PASS **3 entries, 0 UNIDENTIFIED** (same three) | expected (exact) |
 | FC-8 runtime | PASS 10.9 min | PASS **17.5 min** | **UNEXPECTED** — band [7, 15] missed high; budget 45 min holds |
-| rubric version | 1.1 | 1.1 | expected (D60-R3 was already scored on 1.1) |
 | **determination** | **PROMOTE** | **PROMOTE** | expected |
 
 **Trajectory, D60 → D106 (read off the two committed `full_horizon_summary.json`; the verdict does not score it):**
