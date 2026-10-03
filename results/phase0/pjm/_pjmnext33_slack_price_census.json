@@ -1,0 +1,1399 @@
+{
+ "years": {
+  "2019": {
+   "q1": {
+    "D": {
+     "weight_twh": 8.65172712396557,
+     "d": 0.30041603640533876,
+     "d_lvl": 1.4016544082376665,
+     "d_spr": -1.1012383718323273,
+     "p_keeper": 25.54901215641818,
+     "p_real": 25.24859612001284
+    },
+    "L": {
+     "weight_twh": 204.722096,
+     "d": 4.442313474469195,
+     "d_lvl": 4.442313474469196,
+     "d_spr": 1.8196815933644574e-17,
+     "p_keeper": 23.09698513711209,
+     "p_real": 18.654671662642894
+    },
+    "A": {
+     "weight_twh": 800.258384,
+     "d": 0.47596437159410104,
+     "d_lvl": 0.47596437159410104,
+     "d_spr": 7.448174985367054e-17,
+     "p_keeper": 27.718211246942662,
+     "p_real": 27.24224687534856
+    },
+    "D_by_zone": {
+     "PJM_AEP_Ohio": {
+      "wD_share": 0.34,
+      "d": 0.754,
+      "d_spr": -0.964
+     },
+     "PJM_ATSI": {
+      "wD_share": 0.005,
+      "d": 1.147,
+      "d_spr": -1.166
+     },
+     "PJM_Central_PA": {
+      "wD_share": 0.007,
+      "d": 0.703,
+      "d_spr": 0.554
+     },
+     "PJM_ComEd": {
+      "wD_share": 0.0,
+      "d": null,
+      "d_spr": null
+     },
+     "PJM_Dominion": {
+      "wD_share": 0.22,
+      "d": 0.164,
+      "d_spr": -1.154
+     },
+     "PJM_EMAAC": {
+      "wD_share": 0.0,
+      "d": null,
+      "d_spr": null
+     },
+     "PJM_SWMAAC": {
+      "wD_share": 0.1,
+      "d": -1.665,
+      "d_spr": -2.487
+     },
+     "PJM_West_APS": {
+      "wD_share": 0.328,
+      "d": 0.5,
+      "d_spr": -0.819
+     }
+    }
+   },
+   "q2": {
+    "D": {
+     "sum_wd": 2599117.570642299,
+     "anchored_weight_share": 0.7706503606422204,
+     "cells": {
+      "CC_REGULAR:econc": 0.9229,
+      "COAL_BIT:econc": 0.5136,
+      "CC_REGULAR:committed": 0.3804,
+      "import": 0.0761,
+      "COAL_PRB:econc": 0.0649,
+      "ST_GAS:econhi": 0.0533,
+      "ST_GAS:econlo": 0.0331,
+      "COAL_BIT:peak": 0.029,
+      "CT_CHP:peak": 0.0032,
+      "COAL_BIT:sync": 0.002,
+      "COAL_WC:peak": 0.0015,
+      ":other": 0.0003
+     },
+     "anchored_sum_wd": 2693061.614912315,
+     "cell_mean_d": {
+      "CC_REGULAR:econc": 1.2827770581689444,
+      "COAL_BIT:econc": 0.6065878652070946,
+      "CC_REGULAR:committed": 1.9716907851281185,
+      "import": 1.0242810047215127,
+      "COAL_PRB:econc": 1.7393130877755367,
+      "ST_GAS:econhi": 1.2247279903868717
+     }
+    },
+    "L": {
+     "sum_wd": 909439725.582376,
+     "anchored_weight_share": 0.7308443423713349,
+     "cells": {
+      "unanchored": 0.2981,
+      "COAL_BIT:econc": 0.2517,
+      "CC_REGULAR:econc": 0.2145,
+      "CC_REGULAR:committed": 0.0811,
+      "import": 0.0387,
+      "COAL_WC:econc": 0.0351,
+      "ST_CHP:committed": 0.0293,
+      "COAL_PRB:econc": 0.0193,
+      "ST_GAS:econlo": 0.0093,
+      "ST_GAS:econhi": 0.0076,
+      "COAL_BIT:peak": 0.0071,
+      "COAL_PRB:committed": 0.0024
+     },
+     "anchored_sum_wd": 638343720.9268701,
+     "cell_mean_d": {
+      "unanchored": 4.919884243742323,
+      "COAL_BIT:econc": 4.208558171442635,
+      "CC_REGULAR:econc": 4.493438322295933,
+      "CC_REGULAR:committed": 4.226266066842529,
+      "import": 4.863556429269071,
+      "COAL_WC:econc": 4.090583508181692
+     }
+    }
+   },
+   "q3": {
+    "D": {
+     "bucket_share_wd": {
+      "gas": 1.1774822346405045,
+      "coal": 0.12166841287933983,
+      "mixed": -0.29915064751984466
+     },
+     "bucket_weight_share": {
+      "gas": 0.817738224956205,
+      "coal": 0.08247447578174752,
+      "mixed": 0.09978729926204752
+     },
+     "bucket_mean_d": {
+      "gas": 0.43257675264886447,
+      "coal": 0.4431812631300014,
+      "mixed": -0.9006121267998167
+     },
+     "coal_for_gas_share_wd": 0.5478326087684352,
+     "imm_gas_mean": 0.6421001760734486
+    },
+    "L": {
+     "bucket_share_wd": {
+      "gas": 0.8442251930465939,
+      "coal": 0.07706378281495663,
+      "mixed": 0.07871102413844952
+     },
+     "bucket_weight_share": {
+      "gas": 0.836533399892506,
+      "coal": 0.07701015331535097,
+      "mixed": 0.08645644679214304
+     },
+     "bucket_mean_d": {
+      "gas": 4.483159848774902,
+      "coal": 4.445407080162352,
+      "mixed": 4.044337421825211
+     },
+     "coal_for_gas_share_wd": 0.2679699926043729,
+     "imm_gas_mean": 0.6951725037779805
+    }
+   },
+   "q4": {
+    "D": {
+     "cc_wd_share": 0.9280926978414945,
+     "cc_measured_cov": 0.9816911211618738,
+     "cc_mean_d": 1.3140804813480764,
+     "cc_offer_minus_meas": 0.8023471632297825,
+     "cc_meas_minus_real": 0.5849196865836007,
+     "cc_median_mc_over_gas": 7.7726256279718315,
+     "cc_median_meas_hr": 7.165400413768388,
+     "cc_median_real_over_gas": 7.368236422875594,
+     "coalbit_median_mc_over_gas": 7.63687485823828,
+     "coalbit_median_real_over_gas": 7.43135626598071
+    },
+    "L": {
+     "cc_wd_share": 0.2097254387783397,
+     "cc_measured_cov": 0.9784145739055408,
+     "cc_mean_d": 4.491348641553014,
+     "cc_offer_minus_meas": -1.500060728660592,
+     "cc_meas_minus_real": 6.086008129260435,
+     "cc_median_mc_over_gas": 7.203576405843099,
+     "cc_median_meas_hr": 7.071629651919874,
+     "cc_median_real_over_gas": 5.919575964346977,
+     "coalbit_median_mc_over_gas": 7.175916455167554,
+     "coalbit_median_real_over_gas": 6.003233149081845
+    }
+   }
+  },
+  "2020": {
+   "q1": {
+    "D": {
+     "weight_twh": 6.3702153333720934,
+     "d": 1.876407912697841,
+     "d_lvl": 2.7777595481205823,
+     "d_spr": -0.9013516354227409,
+     "p_keeper": 23.01022156509748,
+     "p_real": 21.13381365239964
+    },
+    "L": {
+     "weight_twh": 251.0201855078125,
+     "d": 5.460779779115162,
+     "d_lvl": 5.460779779115164,
+     "d_spr": -4.452180159446944e-17,
+     "p_keeper": 20.94363661304208,
+     "p_real": 15.482856833926917
+    },
+    "A": {
+     "weight_twh": 767.8317425,
+     "d": 2.419315368138855,
+     "d_lvl": 2.419315368138855,
+     "d_spr": 0.0,
+     "p_keeper": 23.833697437555557,
+     "p_real": 21.414382069416703
+    },
+    "D_by_zone": {
+     "PJM_AEP_Ohio": {
+      "wD_share": 0.351,
+      "d": 2.584,
+      "d_spr": -0.911
+     },
+     "PJM_ATSI": {
+      "wD_share": 0.019,
+      "d": -0.436,
+      "d_spr": -0.102
+     },
+     "PJM_Central_PA": {
+      "wD_share": 0.0,
+      "d": null,
+      "d_spr": null
+     },
+     "PJM_ComEd": {
+      "wD_share": 0.0,
+      "d": null,
+      "d_spr": null
+     },
+     "PJM_Dominion": {
+      "wD_share": 0.215,
+      "d": 1.922,
+      "d_spr": -0.554
+     },
+     "PJM_EMAAC": {
+      "wD_share": 0.019,
+      "d": 5.281,
+      "d_spr": 3.341
+     },
+     "PJM_SWMAAC": {
+      "wD_share": 0.139,
+      "d": -1.376,
+      "d_spr": -2.842
+     },
+     "PJM_West_APS": {
+      "wD_share": 0.257,
+      "d": 2.558,
+      "d_spr": -0.498
+     }
+    }
+   },
+   "q2": {
+    "D": {
+     "sum_wd": 11953122.457128514,
+     "anchored_weight_share": 0.7590041061835477,
+     "cells": {
+      "CC_REGULAR:econc": 0.3328,
+      "COAL_BIT:econc": 0.2812,
+      "unanchored": 0.2579,
+      "ST_CHP:committed": 0.095,
+      "CC_REGULAR:committed": 0.087,
+      "COAL_WC:econc": 0.0221,
+      "import": 0.0216,
+      "COAL_BIT:peak": 0.0169,
+      "ST_GAS:econhi": 0.0144,
+      "CT_CHP:committed": 0.0066,
+      "COAL_BIT:committed": 0.0054,
+      "COAL_PRB:econc": 0.0045
+     },
+     "anchored_sum_wd": 8870050.063645793,
+     "cell_mean_d": {
+      "CC_REGULAR:econc": 2.789657331675432,
+      "COAL_BIT:econc": 2.5076779928898385,
+      "unanchored": 2.0082601306333183,
+      "ST_CHP:committed": 2.995100116814027,
+      "CC_REGULAR:committed": 3.065869214161328,
+      "COAL_WC:econc": 1.8456963592486963
+     }
+    },
+    "L": {
+     "sum_wd": 1370765953.1707995,
+     "anchored_weight_share": 0.7301732212194534,
+     "cells": {
+      "unanchored": 0.2872,
+      "COAL_BIT:econc": 0.2414,
+      "CC_REGULAR:econc": 0.2186,
+      "CC_REGULAR:committed": 0.0724,
+      "ST_CHP:committed": 0.0588,
+      "CT_PEAKER:econc": 0.0292,
+      "COAL_WC:econc": 0.0214,
+      "import": 0.0132,
+      "ST_GAS:econhi": 0.0099,
+      "CT_PEAKER:committed": 0.009,
+      "COAL_PRB:econc": 0.0079,
+      "CC_CHP:committed": 0.006
+     },
+     "anchored_sum_wd": 977047100.5571524,
+     "cell_mean_d": {
+      "unanchored": 5.812895503625401,
+      "COAL_BIT:econc": 5.51983470504233,
+      "CC_REGULAR:econc": 5.242684469742502,
+      "CC_REGULAR:committed": 5.092368441733042,
+      "ST_CHP:committed": 4.927645908132825,
+      "CT_PEAKER:econc": 5.957902255422326
+     }
+    }
+   },
+   "q3": {
+    "D": {
+     "bucket_share_wd": {
+      "gas": 0.9077671591873012,
+      "coal": 0.022059111659215078,
+      "mixed": 0.07017372915348367
+     },
+     "bucket_weight_share": {
+      "gas": 0.8380635839094674,
+      "coal": 0.04841879968409711,
+      "mixed": 0.1135176164064353
+     },
+     "bucket_mean_d": {
+      "gas": 2.0324728494231983,
+      "coal": 0.8548723209681572,
+      "mixed": 1.1599480751574989
+     },
+     "coal_for_gas_share_wd": 0.2917178138148032,
+     "imm_gas_mean": 0.6778847142799946
+    },
+    "L": {
+     "bucket_share_wd": {
+      "gas": 0.8397052875062125,
+      "coal": 0.03185101672379184,
+      "mixed": 0.1284436957699954
+     },
+     "bucket_weight_share": {
+      "gas": 0.8462602737253817,
+      "coal": 0.030797877805565532,
+      "mixed": 0.12294184846905276
+     },
+     "bucket_mean_d": {
+      "gas": 5.418481520164119,
+      "coal": 5.647512116504013,
+      "mixed": 5.705158539178541
+     },
+     "coal_for_gas_share_wd": 0.23798729934899476,
+     "imm_gas_mean": 0.715383222270204
+    }
+   },
+   "q4": {
+    "D": {
+     "cc_wd_share": 0.32432990104700565,
+     "cc_measured_cov": 0.9735497367521366,
+     "cc_mean_d": 2.792857842185438,
+     "cc_offer_minus_meas": 1.3181065540255832,
+     "cc_meas_minus_real": 1.5186957175889708,
+     "cc_median_mc_over_gas": 8.271870029626516,
+     "cc_median_meas_hr": 7.089353606195301,
+     "cc_median_real_over_gas": 7.064888495525331,
+     "coalbit_median_mc_over_gas": 8.127916897975558,
+     "coalbit_median_real_over_gas": 7.2984643075980395
+    },
+    "L": {
+     "cc_wd_share": 0.21434445582185616,
+     "cc_measured_cov": 0.9828425048521828,
+     "cc_mean_d": 5.230398597022859,
+     "cc_offer_minus_meas": -0.6091242690078682,
+     "cc_meas_minus_real": 5.930144208278139,
+     "cc_median_mc_over_gas": 7.516633029795286,
+     "cc_median_meas_hr": 6.826518790623695,
+     "cc_median_real_over_gas": 5.641595522562662,
+     "coalbit_median_mc_over_gas": 7.849375158548355,
+     "coalbit_median_real_over_gas": 5.960006593708531
+    }
+   }
+  },
+  "2021": {
+   "q1": {
+    "D": {
+     "weight_twh": 7.283344723412602,
+     "d": 1.2301179277079566,
+     "d_lvl": 1.9908448641784022,
+     "d_spr": -0.7607269364704459,
+     "p_keeper": 34.83366243600345,
+     "p_real": 33.60354450829549
+    },
+    "L": {
+     "weight_twh": 225.244848,
+     "d": 7.366056222776198,
+     "d_lvl": 7.366056222776198,
+     "d_spr": -4.961654392816897e-17,
+     "p_keeper": 33.04251753119695,
+     "p_real": 25.67646130842075
+    },
+    "A": {
+     "weight_twh": 796.174091,
+     "d": 0.1400081022247975,
+     "d_lvl": 0.14000810222479781,
+     "d_spr": -2.43307459649575e-16,
+     "p_keeper": 39.564104122641645,
+     "p_real": 39.42409602041685
+    },
+    "D_by_zone": {
+     "PJM_AEP_Ohio": {
+      "wD_share": 0.332,
+      "d": 1.552,
+      "d_spr": -0.88
+     },
+     "PJM_ATSI": {
+      "wD_share": 0.023,
+      "d": 3.941,
+      "d_spr": 0.096
+     },
+     "PJM_Central_PA": {
+      "wD_share": 0.117,
+      "d": 1.682,
+      "d_spr": 0.509
+     },
+     "PJM_ComEd": {
+      "wD_share": 0.0,
+      "d": null,
+      "d_spr": null
+     },
+     "PJM_Dominion": {
+      "wD_share": 0.011,
+      "d": 4.525,
+      "d_spr": -0.522
+     },
+     "PJM_EMAAC": {
+      "wD_share": 0.025,
+      "d": 3.925,
+      "d_spr": 1.564
+     },
+     "PJM_SWMAAC": {
+      "wD_share": 0.23,
+      "d": 0.042,
+      "d_spr": -2.005
+     },
+     "PJM_West_APS": {
+      "wD_share": 0.263,
+      "d": 1.04,
+      "d_spr": -0.385
+     }
+    }
+   },
+   "q2": {
+    "D": {
+     "sum_wd": 8959372.917946989,
+     "anchored_weight_share": 0.7468915624664112,
+     "cells": {
+      "COAL_BIT:econc": 0.2942,
+      "unanchored": 0.2627,
+      "CC_REGULAR:econc": 0.205,
+      "CC_REGULAR:committed": 0.1843,
+      "ST_CHP:committed": 0.0792,
+      "CC_CHP:committed": 0.0355,
+      "COAL_PRB:econc": 0.0231,
+      "ST_GAS:econhi": 0.0176,
+      "COAL_BIT:peak": 0.0165,
+      "import": 0.0153,
+      "ST_GAS:econlo": 0.0069,
+      "COAL_WC:econc": 0.0066
+     },
+     "anchored_sum_wd": 6606134.789253522,
+     "cell_mean_d": {
+      "COAL_BIT:econc": 2.0085265924429923,
+      "unanchored": 1.2765222465131532,
+      "CC_REGULAR:econc": 0.9070884572177594,
+      "CC_REGULAR:committed": 3.2686810638141153,
+      "ST_CHP:committed": 1.365141095735447,
+      "CC_CHP:committed": 3.6466863262000935
+     }
+    },
+    "L": {
+     "sum_wd": 1659166214.2586792,
+     "anchored_weight_share": 0.7049631717931109,
+     "cells": {
+      "unanchored": 0.2985,
+      "CC_REGULAR:econc": 0.2412,
+      "COAL_BIT:econc": 0.1962,
+      "CC_REGULAR:committed": 0.0805,
+      "ST_CHP:committed": 0.0681,
+      "CT_PEAKER:econc": 0.0196,
+      "CC_CHP:committed": 0.0149,
+      "COAL_BIT:peak": 0.0148,
+      "COAL_PRB:econc": 0.0135,
+      "CT_PEAKER:committed": 0.0105,
+      "ST_GAS:econhi": 0.0094,
+      "COAL_WC:econc": 0.0071
+     },
+     "anchored_sum_wd": 1163887381.9571447,
+     "cell_mean_d": {
+      "unanchored": 7.4527863318707706,
+      "CC_REGULAR:econc": 7.014916319592479,
+      "COAL_BIT:econc": 7.3519126539161475,
+      "CC_REGULAR:committed": 7.013364656160385,
+      "ST_CHP:committed": 6.834002400952038,
+      "CT_PEAKER:econc": 26.3799497693722
+     }
+    }
+   },
+   "q3": {
+    "D": {
+     "bucket_share_wd": {
+      "gas": 0.9464279787293856,
+      "coal": 0.0977222891849895,
+      "mixed": -0.04415026791437506
+     },
+     "bucket_weight_share": {
+      "gas": 0.8397680487689423,
+      "coal": 0.03842157008749336,
+      "mixed": 0.12181038114356432
+     },
+     "bucket_mean_d": {
+      "gas": 1.3863566560148444,
+      "coal": 3.1287097218925615,
+      "mixed": -0.4458572049829886
+     },
+     "coal_for_gas_share_wd": 0.3161470029939011,
+     "imm_gas_mean": 0.7064977173473718
+    },
+    "L": {
+     "bucket_share_wd": {
+      "gas": 0.857728461101866,
+      "coal": 0.04071629408302284,
+      "mixed": 0.10155524481511119
+     },
+     "bucket_weight_share": {
+      "gas": 0.841973784013031,
+      "coal": 0.04619857054399753,
+      "mixed": 0.11182764544297147
+     },
+     "bucket_mean_d": {
+      "gas": 7.503886924172772,
+      "coal": 6.491943535634001,
+      "mixed": 6.689416021080384
+     },
+     "coal_for_gas_share_wd": 0.20716959527926515,
+     "imm_gas_mean": 0.7119320661483195
+    }
+   },
+   "q4": {
+    "D": {
+     "cc_wd_share": 0.2060866610832976,
+     "cc_measured_cov": 0.9864428167980294,
+     "cc_mean_d": 0.9243388487841585,
+     "cc_offer_minus_meas": 2.496838045153804,
+     "cc_meas_minus_real": -1.5203247976485554,
+     "cc_median_mc_over_gas": 7.81916334214112,
+     "cc_median_meas_hr": 6.943063551129304,
+     "cc_median_real_over_gas": 7.320158909528683,
+     "coalbit_median_mc_over_gas": 7.642499820606129,
+     "coalbit_median_real_over_gas": 6.962227386308698
+    },
+    "L": {
+     "cc_wd_share": 0.2370530200341503,
+     "cc_measured_cov": 0.9877723582427571,
+     "cc_mean_d": 6.978991581065628,
+     "cc_offer_minus_meas": -0.005835716192872183,
+     "cc_meas_minus_real": 7.07482333981504,
+     "cc_median_mc_over_gas": 7.316850012657182,
+     "cc_median_meas_hr": 7.101113185367724,
+     "cc_median_real_over_gas": 5.8386484781901045,
+     "coalbit_median_mc_over_gas": 7.420506402460068,
+     "coalbit_median_real_over_gas": 5.863525942185099
+    }
+   }
+  },
+  "2022": {
+   "q1": {
+    "D": {
+     "weight_twh": 8.100919196191454,
+     "d": -3.950691927706332,
+     "d_lvl": -3.0607918420327773,
+     "d_spr": -0.8899000856735552,
+     "p_keeper": 60.65542052159267,
+     "p_real": 64.606112449299
+    },
+    "L": {
+     "weight_twh": 129.0923875,
+     "d": 12.65286828586343,
+     "d_lvl": 12.652868285863432,
+     "d_spr": -5.77151042072394e-17,
+     "p_keeper": 56.748478799263836,
+     "p_real": 44.095610513400395
+    },
+    "A": {
+     "weight_twh": 810.1880575,
+     "d": -9.388523702635194,
+     "d_lvl": -9.388523702635194,
+     "d_spr": 1.4713780146133696e-16,
+     "p_keeper": 65.9617771159679,
+     "p_real": 75.35030081860309
+    },
+    "D_by_zone": {
+     "PJM_AEP_Ohio": {
+      "wD_share": 0.268,
+      "d": -1.994,
+      "d_spr": 0.132
+     },
+     "PJM_ATSI": {
+      "wD_share": 0.031,
+      "d": 4.218,
+      "d_spr": 2.949
+     },
+     "PJM_Central_PA": {
+      "wD_share": 0.019,
+      "d": -0.32,
+      "d_spr": -1.131
+     },
+     "PJM_ComEd": {
+      "wD_share": 0.0,
+      "d": null,
+      "d_spr": null
+     },
+     "PJM_Dominion": {
+      "wD_share": 0.05,
+      "d": -13.019,
+      "d_spr": -7.681
+     },
+     "PJM_EMAAC": {
+      "wD_share": 0.132,
+      "d": 7.159,
+      "d_spr": 8.753
+     },
+     "PJM_SWMAAC": {
+      "wD_share": 0.253,
+      "d": -14.056,
+      "d_spr": -7.406
+     },
+     "PJM_West_APS": {
+      "wD_share": 0.248,
+      "d": -1.153,
+      "d_spr": 0.411
+     }
+    }
+   },
+   "q2": {
+    "D": {
+     "sum_wd": -32004236.075394843,
+     "anchored_weight_share": 0.7875301903703561,
+     "cells": {
+      "unanchored": 0.4369,
+      "CT_PEAKER:econc": 0.2655,
+      "COAL_BIT:econc": 0.1439,
+      "CT_PEAKER:committed": 0.0711,
+      "ST_CHP:committed": 0.051,
+      "CC_REGULAR:econc": 0.0378,
+      "ST_GAS:econ": 0.0332,
+      "CC_CHP:econc": 0.0088,
+      "ST_GAS:committed": 0.0077,
+      "COAL_BIT:peak": 0.0057,
+      "COAL_WC:econc": 0.0019,
+      "ST_GAS:peak": 0.0012
+     },
+     "anchored_sum_wd": -18021983.9934361,
+     "cell_mean_d": {
+      "unanchored": -8.123545150252275,
+      "CT_PEAKER:econc": -27.12477728712812,
+      "COAL_BIT:econc": -3.1887974395826313,
+      "CT_PEAKER:committed": -20.163679834870123,
+      "ST_CHP:committed": -2.8840052602070885,
+      "CC_REGULAR:econc": -0.546406166537904
+     }
+    },
+    "L": {
+     "sum_wd": 1633388975.745143,
+     "anchored_weight_share": 0.719346585524248,
+     "cells": {
+      "unanchored": 0.3054,
+      "CC_REGULAR:econc": 0.2763,
+      "CC_REGULAR:committed": 0.1328,
+      "COAL_BIT:econc": 0.0777,
+      "ST_CHP:committed": 0.0549,
+      "ST_GAS:econlo": 0.0496,
+      "ST_GAS:econhi": 0.0272,
+      "CC_CHP:committed": 0.0271,
+      "import": 0.0191,
+      "COAL_PRB:econc": 0.0065,
+      "COAL_WC:econc": 0.0064,
+      "CT_CHP:committed": 0.0047
+     },
+     "anchored_sum_wd": 1134500868.6021416,
+     "cell_mean_d": {
+      "unanchored": 13.769944436001744,
+      "CC_REGULAR:econc": 12.436033264115851,
+      "CC_REGULAR:committed": 12.129776189346314,
+      "COAL_BIT:econc": 12.749389550794826,
+      "ST_CHP:committed": 11.217680024340584,
+      "ST_GAS:econlo": 11.824859464967947
+     }
+    }
+   },
+   "q3": {
+    "D": {
+     "bucket_share_wd": {
+      "gas": 0.7025120478239941,
+      "coal": 0.0027723846818384513,
+      "mixed": 0.2947155674941675
+     },
+     "bucket_weight_share": {
+      "gas": 0.8208349434505311,
+      "coal": 0.005887654323402055,
+      "mixed": 0.17327740222606702
+     },
+     "bucket_mean_d": {
+      "gas": -3.381201907399015,
+      "coal": -1.8603058504132752,
+      "mixed": -6.719459078394713
+     },
+     "coal_for_gas_share_wd": 0.10007778560332553,
+     "imm_gas_mean": 0.7214668243035312
+    },
+    "L": {
+     "bucket_share_wd": {
+      "gas": 0.8911290457585405,
+      "coal": 0.0026874059144984643,
+      "mixed": 0.10618354832696081
+     },
+     "bucket_weight_share": {
+      "gas": 0.886698090543875,
+      "coal": 0.003193999336328023,
+      "mixed": 0.11010791011979695
+     },
+     "bucket_mean_d": {
+      "gas": 12.716096450341979,
+      "coal": 10.646023836026023,
+      "mixed": 12.201906744437327
+     },
+     "coal_for_gas_share_wd": 0.07408253601789694,
+     "imm_gas_mean": 0.7824784498789875
+    }
+   },
+   "q4": {
+    "D": {
+     "cc_wd_share": 0.029101378750290424,
+     "cc_measured_cov": 0.990578022837136,
+     "cc_mean_d": -0.42446360358144974,
+     "cc_offer_minus_meas": 10.635435741988799,
+     "cc_meas_minus_real": -11.084759817290815,
+     "cc_median_mc_over_gas": 8.535325184040042,
+     "cc_median_meas_hr": 6.813412971626597,
+     "cc_median_real_over_gas": 8.11659700146549,
+     "coalbit_median_mc_over_gas": 8.914333231788827,
+     "coalbit_median_real_over_gas": 8.940186975645563
+    },
+    "L": {
+     "cc_wd_share": 0.274820441709592,
+     "cc_measured_cov": 0.9962020573719957,
+     "cc_mean_d": 12.418639454577457,
+     "cc_offer_minus_meas": 5.195812169083159,
+     "cc_meas_minus_real": 7.635916655872216,
+     "cc_median_mc_over_gas": 7.612678739759657,
+     "cc_median_meas_hr": 6.670569803485965,
+     "cc_median_real_over_gas": 6.088064279174693,
+     "coalbit_median_mc_over_gas": 8.066250260468502,
+     "coalbit_median_real_over_gas": 6.2814619934674605
+    }
+   }
+  },
+  "2023": {
+   "q1": {
+    "D": {
+     "weight_twh": 3.145481995071026,
+     "d": 0.22780566267721689,
+     "d_lvl": 1.29493295696103,
+     "d_spr": -1.0671272942838128,
+     "p_keeper": 29.431304578324678,
+     "p_real": 29.203498915647465
+    },
+    "L": {
+     "weight_twh": 139.0290696171875,
+     "d": 7.415135540671417,
+     "d_lvl": 7.415135540671418,
+     "d_spr": 1.33975229378985e-16,
+     "p_keeper": 25.830993941321534,
+     "p_real": 18.41585840065012
+    },
+    "A": {
+     "weight_twh": 784.8228524999998,
+     "d": -0.8090030873919108,
+     "d_lvl": -0.8090030873919112,
+     "d_spr": -1.7087990024427701e-16,
+     "p_keeper": 31.14182886925984,
+     "p_real": 31.95083195665175
+    },
+    "D_by_zone": {
+     "PJM_AEP_Ohio": {
+      "wD_share": 0.495,
+      "d": 0.106,
+      "d_spr": -0.752
+     },
+     "PJM_ATSI": {
+      "wD_share": 0.0,
+      "d": null,
+      "d_spr": null
+     },
+     "PJM_Central_PA": {
+      "wD_share": 0.01,
+      "d": 3.571,
+      "d_spr": 4.5
+     },
+     "PJM_ComEd": {
+      "wD_share": 0.0,
+      "d": null,
+      "d_spr": null
+     },
+     "PJM_Dominion": {
+      "wD_share": 0.015,
+      "d": 9.689,
+      "d_spr": -1.444
+     },
+     "PJM_EMAAC": {
+      "wD_share": 0.0,
+      "d": null,
+      "d_spr": null
+     },
+     "PJM_SWMAAC": {
+      "wD_share": 0.033,
+      "d": -3.065,
+      "d_spr": -3.506
+     },
+     "PJM_West_APS": {
+      "wD_share": 0.446,
+      "d": 0.209,
+      "d_spr": -1.347
+     }
+    }
+   },
+   "q2": {
+    "D": {
+     "sum_wd": 716558.61032641,
+     "anchored_weight_share": 0.711903769014988,
+     "cells": {
+      "CC_REGULAR:econc": 2.3693,
+      "unanchored": 0.7884,
+      "CC_REGULAR:committed": 0.646,
+      "COAL_BIT:econc": 0.208,
+      "import": 0.191,
+      "ST_GAS:econ": 0.1434,
+      "COAL_BIT:committed": 0.0897,
+      "ST_GAS:committed": 0.0683,
+      "CC_CHP:econc": 0.0565,
+      "COAL_BIT:peak": 0.0117,
+      "CC_CHP:peak": 0.0022,
+      "COAL_WC:sync": 0.0016
+     },
+     "anchored_sum_wd": 151593.59126772732,
+     "cell_mean_d": {
+      "CC_REGULAR:econc": 2.933165874817531,
+      "unanchored": 0.6234430360557061,
+      "CC_REGULAR:committed": 4.418449454520906,
+      "COAL_BIT:econc": 0.35814434363566977,
+      "import": 1.3998114504735497,
+      "ST_GAS:econ": 1.3011692642556023
+     }
+    },
+    "L": {
+     "sum_wd": 1030919395.304888,
+     "anchored_weight_share": 0.5355436335133281,
+     "cells": {
+      "unanchored": 0.4804,
+      "CC_REGULAR:econc": 0.2025,
+      "CC_REGULAR:committed": 0.0514,
+      "ST_CHP:committed": 0.0495,
+      "COAL_BIT:econc": 0.0478,
+      "ST_GAS:econ": 0.0408,
+      "import": 0.0319,
+      "CT_PEAKER:econc": 0.0268,
+      "CT_PEAKER:committed": 0.0158,
+      "COAL_WC:econc": 0.0132,
+      "ST_GAS:committed": 0.0093,
+      "COAL_BIT:committed": 0.008
+     },
+     "anchored_sum_wd": 535709889.3418491,
+     "cell_mean_d": {
+      "unanchored": 7.668994670594186,
+      "CC_REGULAR:econc": 7.170568495556159,
+      "CC_REGULAR:committed": 7.838221721146973,
+      "ST_CHP:committed": 5.816502060568296,
+      "COAL_BIT:econc": 9.211082023497,
+      "ST_GAS:econ": 6.564086999999431
+     }
+    }
+   },
+   "q3": {
+    "D": {
+     "bucket_share_wd": {
+      "gas": 1.3868791224069514,
+      "coal": 0.134627694862381,
+      "mixed": -0.521506817269333
+     },
+     "bucket_weight_share": {
+      "gas": 0.9115130314630798,
+      "coal": 0.015544173549285225,
+      "mixed": 0.0729427949876349
+     },
+     "bucket_mean_d": {
+      "gas": 0.34660932606305783,
+      "coal": 1.973019095906913,
+      "mixed": -1.6287037824485044
+     },
+     "coal_for_gas_share_wd": 0.20807463037830598,
+     "imm_gas_mean": 0.7671360029532439
+    },
+    "L": {
+     "bucket_share_wd": {
+      "gas": 0.9571100796919912,
+      "coal": 0.0011770440087889133,
+      "mixed": 0.04171287629921982
+     },
+     "bucket_weight_share": {
+      "gas": 0.9545107847527763,
+      "coal": 0.0010331912425438688,
+      "mixed": 0.0444560240046799
+     },
+     "bucket_mean_d": {
+      "gas": 7.435328213810731,
+      "coal": 8.447555982971322,
+      "mixed": 6.957586479560444
+     },
+     "coal_for_gas_share_wd": 0.06858002403662906,
+     "imm_gas_mean": 0.852634703969509
+    }
+   },
+   "q4": {
+    "D": {
+     "cc_wd_share": 2.364428844294223,
+     "cc_measured_cov": 0.9737005640083425,
+     "cc_mean_d": 3.0062323075084865,
+     "cc_offer_minus_meas": 3.6937323275558205,
+     "cc_meas_minus_real": -0.6271153344561939,
+     "cc_median_mc_over_gas": 8.653688430786133,
+     "cc_median_meas_hr": 6.742858661524943,
+     "cc_median_real_over_gas": 7.7746421098709115,
+     "coalbit_median_mc_over_gas": 9.70250015035053,
+     "coalbit_median_real_over_gas": 9.431042796687075
+    },
+    "L": {
+     "cc_wd_share": 0.19793678156746194,
+     "cc_measured_cov": 0.9810075106641369,
+     "cc_mean_d": 7.1444181331643515,
+     "cc_offer_minus_meas": 0.5883068418544644,
+     "cc_meas_minus_real": 6.583249060326665,
+     "cc_median_mc_over_gas": 7.708242245685266,
+     "cc_median_meas_hr": 6.742858661524943,
+     "cc_median_real_over_gas": 5.622880684855517,
+     "coalbit_median_mc_over_gas": 8.916944696121856,
+     "coalbit_median_real_over_gas": 6.30721260178931
+    }
+   }
+  },
+  "2024": {
+   "q1": {
+    "D": {
+     "weight_twh": 3.6557707735352807,
+     "d": 0.8068615880297536,
+     "d_lvl": 0.5872369946713873,
+     "d_spr": 0.21962459335836593,
+     "p_keeper": 29.098017221267835,
+     "p_real": 28.29115563323808
+    },
+    "L": {
+     "weight_twh": 125.796242,
+     "d": 12.152849495139902,
+     "d_lvl": 12.152849495139902,
+     "d_spr": 8.884105532648378e-17,
+     "p_keeper": 29.767780390338146,
+     "p_real": 17.614930895198242
+    },
+    "A": {
+     "weight_twh": 812.780443,
+     "d": -2.355795675409651,
+     "d_lvl": -2.355795675409651,
+     "d_spr": -7.333425070537853e-17,
+     "p_keeper": 31.483105193053593,
+     "p_real": 33.83890086846324
+    },
+    "D_by_zone": {
+     "PJM_AEP_Ohio": {
+      "wD_share": 0.315,
+      "d": 2.572,
+      "d_spr": -0.385
+     },
+     "PJM_ATSI": {
+      "wD_share": 0.0,
+      "d": null,
+      "d_spr": null
+     },
+     "PJM_Central_PA": {
+      "wD_share": 0.029,
+      "d": 2.495,
+      "d_spr": 3.156
+     },
+     "PJM_ComEd": {
+      "wD_share": 0.0,
+      "d": null,
+      "d_spr": null
+     },
+     "PJM_Dominion": {
+      "wD_share": 0.018,
+      "d": -5.743,
+      "d_spr": -2.984
+     },
+     "PJM_EMAAC": {
+      "wD_share": 0.334,
+      "d": 3.122,
+      "d_spr": 4.082
+     },
+     "PJM_SWMAAC": {
+      "wD_share": 0.112,
+      "d": -9.447,
+      "d_spr": -8.68
+     },
+     "PJM_West_APS": {
+      "wD_share": 0.191,
+      "d": 0.247,
+      "d_spr": -0.45
+     }
+    }
+   },
+   "q2": {
+    "D": {
+     "sum_wd": 2949701.0118074366,
+     "anchored_weight_share": 0.737753486778215,
+     "cells": {
+      "CC_REGULAR:econc": 0.5889,
+      "ST_CHP:committed": 0.3606,
+      "COAL_BIT:econc": 0.2667,
+      "COAL_BIT:committed": 0.209,
+      "ST_GAS:econ": 0.2067,
+      "CC_REGULAR:committed": 0.13,
+      "CC_CHP:committed": 0.1278,
+      "CT_PEAKER:committed": 0.0365,
+      "ST_GAS:committed": 0.034,
+      "import": 0.0279,
+      "COAL_WC:econc": 0.02,
+      "ST_CHP:peak": 0.0132
+     },
+     "anchored_sum_wd": 4646628.222849868,
+     "cell_mean_d": {
+      "CC_REGULAR:econc": 2.4239507033535097,
+      "ST_CHP:committed": 6.9722445727588775,
+      "COAL_BIT:econc": 2.35120874827126,
+      "COAL_BIT:committed": 6.261416906798551,
+      "ST_GAS:econ": 5.7333369050488985,
+      "CC_REGULAR:committed": 4.045122902283045
+     }
+    },
+    "L": {
+     "sum_wd": 1528782796.0801969,
+     "anchored_weight_share": 0.5839155652835555,
+     "cells": {
+      "unanchored": 0.3454,
+      "CC_REGULAR:econc": 0.203,
+      "COAL_BIT:econc": 0.1254,
+      "ST_CHP:committed": 0.103,
+      "ST_GAS:econ": 0.0567,
+      "CC_CHP:committed": 0.0339,
+      "CC_REGULAR:committed": 0.0336,
+      "COAL_BIT:committed": 0.0202,
+      "import": 0.0159,
+      "COAL_WC:econc": 0.0158,
+      "CT_PEAKER:econc": 0.0144,
+      "ST_GAS:committed": 0.0092
+     },
+     "anchored_sum_wd": 1000804873.831792,
+     "cell_mean_d": {
+      "unanchored": 10.087106953809178,
+      "CC_REGULAR:econc": 15.970405018085682,
+      "COAL_BIT:econc": 24.953554839379766,
+      "ST_CHP:committed": 12.347690973707255,
+      "ST_GAS:econ": 13.51171352803304,
+      "CC_CHP:committed": 14.487066853811545
+     }
+    }
+   },
+   "q3": {
+    "D": {
+     "bucket_share_wd": {
+      "gas": 1.0311866772714469,
+      "coal": 0.060706114075264515,
+      "mixed": -0.09189279134671144
+     },
+     "bucket_weight_share": {
+      "gas": 0.8340924839130395,
+      "coal": 0.005858207989978303,
+      "mixed": 0.1600493080969822
+     },
+     "bucket_mean_d": {
+      "gas": 0.9975211814342514,
+      "coal": 8.361162951140747,
+      "mixed": -0.46326200616603863
+     },
+     "coal_for_gas_share_wd": 0.3824640242111294,
+     "imm_gas_mean": 0.707797988872402
+    },
+    "L": {
+     "bucket_share_wd": {
+      "gas": 0.7542198668811555,
+      "coal": 0.03729431463405666,
+      "mixed": 0.208485818484788
+     },
+     "bucket_weight_share": {
+      "gas": 0.8758112583363182,
+      "coal": 0.006537603881680344,
+      "mixed": 0.11765113778200147
+     },
+     "bucket_mean_d": {
+      "gas": 10.465634508812572,
+      "coal": 69.32695846594962,
+      "mixed": 21.535675911706274
+     },
+     "coal_for_gas_share_wd": 0.11111252603750177,
+     "imm_gas_mean": 0.7462742899167396
+    }
+   },
+   "q4": {
+    "D": {
+     "cc_wd_share": 0.5915952015572644,
+     "cc_measured_cov": 0.9974940509329975,
+     "cc_mean_d": 2.4411639251375328,
+     "cc_offer_minus_meas": 7.032930962271047,
+     "cc_meas_minus_real": -4.490525923940666,
+     "cc_median_mc_over_gas": 9.935506673959585,
+     "cc_median_meas_hr": 6.906677690974618,
+     "cc_median_real_over_gas": 8.814637072674639,
+     "coalbit_median_mc_over_gas": 9.946060180664062,
+     "coalbit_median_real_over_gas": 8.918181416306082
+    },
+    "L": {
+     "cc_wd_share": 0.2028579249705101,
+     "cc_measured_cov": 0.9976905195872162,
+     "cc_mean_d": 15.995471191952793,
+     "cc_offer_minus_meas": 5.688314812935315,
+     "cc_meas_minus_real": 10.47327246336107,
+     "cc_median_mc_over_gas": 8.737962072788005,
+     "cc_median_meas_hr": 6.654822580075684,
+     "cc_median_real_over_gas": 5.753598221581194,
+     "coalbit_median_mc_over_gas": 9.367791103451166,
+     "coalbit_median_real_over_gas": 5.971031293072475
+    }
+   }
+  },
+  "2025": {
+   "q1": {
+    "D": {
+     "weight_twh": 4.1875640479875464,
+     "d": 1.046070562630704,
+     "d_lvl": 1.550219609327116,
+     "d_spr": -0.5041490466964116,
+     "p_keeper": 41.730064650992404,
+     "p_real": 40.68399408836169
+    },
+    "L": {
+     "weight_twh": 138.838537,
+     "d": 11.19946040052656,
+     "d_lvl": 11.19946040052656,
+     "d_spr": -1.0732727033739672e-16,
+     "p_keeper": 36.43608248993995,
+     "p_real": 25.236622089413387
+    },
+    "A": {
+     "weight_twh": 843.188327,
+     "d": -6.762255888747813,
+     "d_lvl": -6.762255888747813,
+     "d_spr": -2.8275839627647326e-16,
+     "p_keeper": 44.04405650130778,
+     "p_real": 50.806312390055595
+    },
+    "D_by_zone": {
+     "PJM_AEP_Ohio": {
+      "wD_share": 0.265,
+      "d": 0.513,
+      "d_spr": -0.003
+     },
+     "PJM_ATSI": {
+      "wD_share": 0.0,
+      "d": null,
+      "d_spr": null
+     },
+     "PJM_Central_PA": {
+      "wD_share": 0.0,
+      "d": null,
+      "d_spr": null
+     },
+     "PJM_ComEd": {
+      "wD_share": 0.0,
+      "d": null,
+      "d_spr": null
+     },
+     "PJM_Dominion": {
+      "wD_share": 0.058,
+      "d": -2.57,
+      "d_spr": -5.062
+     },
+     "PJM_EMAAC": {
+      "wD_share": 0.0,
+      "d": null,
+      "d_spr": null
+     },
+     "PJM_SWMAAC": {
+      "wD_share": 0.085,
+      "d": -5.679,
+      "d_spr": -4.974
+     },
+     "PJM_West_APS": {
+      "wD_share": 0.593,
+      "d": 2.594,
+      "d_spr": 0.351
+     }
+    }
+   },
+   "q2": {
+    "D": {
+     "sum_wd": 4380487.479730445,
+     "anchored_weight_share": 0.6948214655933226,
+     "cells": {
+      "COAL_BIT:econc": 0.2713,
+      "ST_CHP:committed": 0.266,
+      "CC_REGULAR:econc": 0.2364,
+      "ST_GAS:econlo": 0.2156,
+      "unanchored": 0.1174,
+      "ST_GAS:econhi": 0.1079,
+      "CC_REGULAR:committed": 0.0951,
+      "ST_CHP:peak": 0.0514,
+      "ST_GAS:committed": 0.0512,
+      "COAL_BIT:committed": 0.0512,
+      "CC_CHP:committed": 0.0391,
+      "CT_PEAKER:committed": 0.0301
+     },
+     "anchored_sum_wd": 3866090.418726273,
+     "cell_mean_d": {
+      "COAL_BIT:econc": 2.6719284217417285,
+      "ST_CHP:committed": 6.7892325022244675,
+      "CC_REGULAR:econc": 1.2290330025784055,
+      "ST_GAS:econlo": 5.360831525352926,
+      "unanchored": 0.40251589320654774,
+      "ST_GAS:econhi": 2.325553546772055
+     }
+    },
+    "L": {
+     "sum_wd": 1554916697.1985416,
+     "anchored_weight_share": 0.5458277508775007,
+     "cells": {
+      "unanchored": 0.4919,
+      "CC_REGULAR:econc": 0.1479,
+      "COAL_BIT:econc": 0.0888,
+      "ST_CHP:committed": 0.057,
+      "ST_GAS:econhi": 0.0366,
+      "ST_GAS:econlo": 0.0309,
+      "CT_PEAKER:econc": 0.0273,
+      "CC_REGULAR:committed": 0.0264,
+      "import": 0.0195,
+      "ST_GAS:econ": 0.0175,
+      "CT_PEAKER:committed": 0.0161,
+      "ST_GAS:committed": 0.0098
+     },
+     "anchored_sum_wd": 790079796.0492783,
+     "cell_mean_d": {
+      "unanchored": 12.129369049490627,
+      "CC_REGULAR:econc": 11.612359070929244,
+      "COAL_BIT:econc": 9.3265799483789,
+      "ST_CHP:committed": 20.511915382471354,
+      "ST_GAS:econhi": 8.31831048780087,
+      "ST_GAS:econlo": 10.322859842238703
+     }
+    }
+   },
+   "q3": {
+    "D": {
+     "bucket_share_wd": {
+      "gas": 0.652117068104156,
+      "coal": 0.014588206952510825,
+      "mixed": 0.3332947249433332
+     },
+     "bucket_weight_share": {
+      "gas": 0.8380190171874049,
+      "coal": 0.0013158994658070925,
+      "mixed": 0.16066508334678808
+     },
+     "bucket_mean_d": {
+      "gas": 0.8140154988633744,
+      "coal": 11.59685390192512,
+      "mixed": 2.1700408899099393
+     },
+     "coal_for_gas_share_wd": 0.3306250491767529,
+     "imm_gas_mean": 0.6975110649865139
+    },
+    "L": {
+     "bucket_share_wd": {
+      "gas": 0.7238897365536371,
+      "coal": 0.0003460365125300584,
+      "mixed": 0.2757642269338329
+     },
+     "bucket_weight_share": {
+      "gas": 0.7885543838595764,
+      "coal": 0.0005318119997187814,
+      "mixed": 0.21091380414070482
+     },
+     "bucket_mean_d": {
+      "gas": 10.28105937246779,
+      "coal": 7.287203412608214,
+      "mixed": 14.642998603196881
+     },
+     "coal_for_gas_share_wd": 0.08425207157034403,
+     "imm_gas_mean": 0.7049719787975212
+    }
+   },
+   "q4": {
+    "D": {
+     "cc_wd_share": 0.23010233737770258,
+     "cc_measured_cov": 0.9955574263288023,
+     "cc_mean_d": 1.201675711647338,
+     "cc_offer_minus_meas": 11.920616312331406,
+     "cc_meas_minus_real": -10.430880241604568,
+     "cc_median_mc_over_gas": 9.7374794467426,
+     "cc_median_meas_hr": 6.836432564103903,
+     "cc_median_real_over_gas": 9.069264467443428,
+     "coalbit_median_mc_over_gas": 8.737589876416704,
+     "coalbit_median_real_over_gas": 8.42127972338573
+    },
+    "L": {
+     "cc_wd_share": 0.14578333664710652,
+     "cc_measured_cov": 0.983343362297698,
+     "cc_mean_d": 11.636735803540079,
+     "cc_offer_minus_meas": 4.777730273646751,
+     "cc_meas_minus_real": 6.913927349048591,
+     "cc_median_mc_over_gas": 7.972774774255887,
+     "cc_median_meas_hr": 7.091925698145799,
+     "cc_median_real_over_gas": 6.061246680127602,
+     "coalbit_median_mc_over_gas": 7.928750383482277,
+     "coalbit_median_real_over_gas": 6.044871958392454
+    }
+   }
+  }
+ },
+ "readings": {
+  "Q1": "LEVEL",
+  "Q2": {
+   "carrier": "CC_REGULAR:econc",
+   "top_cells_anchored_share": [
+    [
+     "CC_REGULAR:econc",
+     0.452
+    ],
+    [
+     "COAL_BIT:econc",
+     0.4035
+    ],
+    [
+     "CC_REGULAR:committed",
+     0.2025
+    ],
+    [
+     "ST_CHP:committed",
+     0.1016
+    ],
+    [
+     "import",
+     0.0326
+    ],
+    [
+     "ST_GAS:econhi",
+     0.0258
+    ]
+   ],
+   "top2": 0.8556,
+   "reading": "CONCENTRATED"
+  },
+  "Q3": {
+   "coal_for_gas_pooled": 0.3293,
+   "reading": "COAL-FOR-GAS"
+  },
+  "Q4": "OFFER-SIDE",
+  "Q5": {
+   "D": {
+    "fail_min": 0.30041603640533876,
+    "ctrl_max": 0.8068615880297536,
+    "reading": "NOT DISCRIMINATING"
+   },
+   "L": {
+    "fail_min": 4.442313474469195,
+    "ctrl_max": 12.152849495139902,
+    "reading": "NOT DISCRIMINATING"
+   }
+  }
+ }
+}
