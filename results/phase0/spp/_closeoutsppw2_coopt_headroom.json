@@ -1,0 +1,133 @@
+{
+ "bundle": "closeout_spp_nuc_span",
+ "bar_bind_hours": 88,
+ "years": {
+  "2019": {
+   "eligible_fuels": [
+    "coal",
+    "gas_cc",
+    "gas_ct",
+    "gas_st",
+    "nuclear",
+    "oil"
+   ],
+   "req_hours": 8760,
+   "req_median_mw": 1834,
+   "headroom_min_mw": 2872,
+   "headroom_p1_mw": 7537,
+   "headroom_median_mw": 17191,
+   "bind_hours": 0,
+   "hours_headroom_under_2x_req": 3,
+   "max_shortfall_mw": -942.7
+  },
+  "2020": {
+   "eligible_fuels": [
+    "coal",
+    "gas_cc",
+    "gas_ct",
+    "gas_st",
+    "nuclear",
+    "oil"
+   ],
+   "req_hours": 8760,
+   "req_median_mw": 1884,
+   "headroom_min_mw": 4849,
+   "headroom_p1_mw": 8513,
+   "headroom_median_mw": 17438,
+   "bind_hours": 0,
+   "hours_headroom_under_2x_req": 0,
+   "max_shortfall_mw": -2919.5
+  },
+  "2021": {
+   "eligible_fuels": [
+    "coal",
+    "gas_cc",
+    "gas_ct",
+    "gas_st",
+    "nuclear",
+    "oil"
+   ],
+   "req_hours": 8760,
+   "req_median_mw": 1898,
+   "headroom_min_mw": 6378,
+   "headroom_p1_mw": 8476,
+   "headroom_median_mw": 17931,
+   "bind_hours": 0,
+   "hours_headroom_under_2x_req": 0,
+   "max_shortfall_mw": -4397.5
+  },
+  "2022": {
+   "eligible_fuels": [
+    "coal",
+    "gas_cc",
+    "gas_ct",
+    "gas_st",
+    "nuclear",
+    "oil"
+   ],
+   "req_hours": 8759,
+   "req_median_mw": 2216,
+   "headroom_min_mw": 3415,
+   "headroom_p1_mw": 8046,
+   "headroom_median_mw": 18970,
+   "bind_hours": 0,
+   "hours_headroom_under_2x_req": 3,
+   "max_shortfall_mw": -1290.6
+  },
+  "2023": {
+   "eligible_fuels": [
+    "coal",
+    "gas_cc",
+    "gas_ct",
+    "gas_st",
+    "nuclear",
+    "oil"
+   ],
+   "req_hours": 8724,
+   "req_median_mw": 2419,
+   "headroom_min_mw": 3988,
+   "headroom_p1_mw": 7003,
+   "headroom_median_mw": 17805,
+   "bind_hours": 0,
+   "hours_headroom_under_2x_req": 7,
+   "max_shortfall_mw": -1781.0
+  },
+  "2024": {
+   "eligible_fuels": [
+    "coal",
+    "gas_cc",
+    "gas_ct",
+    "gas_st",
+    "nuclear",
+    "oil"
+   ],
+   "req_hours": 8752,
+   "req_median_mw": 2511,
+   "headroom_min_mw": 2360,
+   "headroom_p1_mw": 6566,
+   "headroom_median_mw": 18227,
+   "bind_hours": 0,
+   "hours_headroom_under_2x_req": 30,
+   "max_shortfall_mw": -251.7
+  },
+  "2025": {
+   "eligible_fuels": [
+    "coal",
+    "gas_cc",
+    "gas_ct",
+    "gas_st",
+    "nuclear",
+    "oil"
+   ],
+   "req_hours": 8711,
+   "req_median_mw": 3016,
+   "headroom_min_mw": 3357,
+   "headroom_p1_mw": 7887,
+   "headroom_median_mw": 18144,
+   "bind_hours": 0,
+   "hours_headroom_under_2x_req": 33,
+   "max_shortfall_mw": -999.2
+  }
+ },
+ "clears_bar": false
+}
