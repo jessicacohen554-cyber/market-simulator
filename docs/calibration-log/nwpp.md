@@ -910,3 +910,55 @@ card "Keep #19; retire dup Clark field":
 - **Unserved energy:** 2019 32.1 MWh, 2024 919 MWh.
 
 **Bench parts kept at the pre-W0 render (desk ruling "Keep old figures, fix later", 2026-10-02).** The promotion re-render moved the benchmark's `classFull` actuals slightly, because the footprint follows the W0 roster: most classes move about −0.1 % in 2019, and CT_CHP goes 0.42 → 0.52 TWh. `data/raw/reference/nwpp_plant_basis_energy.csv`, the `nwpp_demand_plant_basis` anchor that this keeper solved on, is derived from those parts. The parts therefore stay at main's render, so the CSV, the keeper and `test_artifact_matches_bench_parts` stay consistent. **Follow-up (chartered):** decouple the anchor from roster-dependent parts, then re-derive it and re-solve NWPP.
+
+## NWPP-NEXT-22 — 2026-10-03 — measured seam headroom; keeper 2026-10-03-nwpp-next-22b-w0 (priced interface promoted), NOT-YET → NOT-YET
+
+**What changed.** The priced interface is promoted:
+
+- `reference_price_interface` + `priced_interchange`: the NEXT-20/21 seams.
+- `nwpp_seam_measured_limits` (new, default off): each priced seam is capped at its measured hourly operating limit.
+  - CAISO_COI: CAISO's MALIN500_ISL + CASCADE_ITC OTC, or 2/3 × BPA's COI limit before 2023-06-19.
+  - WECC_CAN: BPA's BC Intertie limit, from the new intake `data/raw/nwpp-intertie-otc`.
+  - CAISO_NEVP keeps its registered 1,933 MW.
+
+It was solved on the W0 fix-2 keeper's recipe, seven shards at `2b8da72a` (rule 36). Zero new DOF.
+
+**Owner cards:**
+
+- "CAISO share + BPA BC" (phase 0).
+- "Promote as keeper #21". The first run, on keeper #20 at NEXT-21's pin `a5a72ec0`, was refused by `promote_keeper.py` preflight 0d: its recipe does not replay at HEAD.
+- "Re-solve on W0 basis".
+
+**Structure.** Every priced seam has the measured sign and r > 0 (NEVP 2019, the near-zero leg, is exempt). The caps hold to 0.0 MW. D-2 and C6 PASS. D-1 failures fall 20 → 14.
+
+Summed priced-seam export, TWh, 2019 … 2025:
+
+| | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| this keeper | 22.9 | 27.8 | 27.6 | 26.5 | 28.2 | 34.4 | 19.0 |
+| NEXT-21, uncapped | 27.7 | 33.3 | 35.2 | 32.7 | 30.2 | 36.8 | 17.1 |
+| measured | 6.7 | 18.4 | 20.7 | 21.1 | 18.2 | 18.7 | 15.2 |
+
+**Scores against the W0 keeper.** NOT-YET → NOT-YET, and failing records go from 5 to 10.
+
+Regressions, at full magnitude:
+
+- **fuelmix PASS → FAIL.** CC_REGULAR 2019 +1.73 → +12.69 TWh; 2024 +7.83 → +15.39; 2025 +7.79 → +8.74.
+- **C4 gas PASS → FAIL.** 2019 r 0.753 → 0.661; 2023 0.787 → 0.538; 2024 0.900 → 0.796.
+- **C3b 2024.** 0.718 → 0.789.
+
+Gains:
+
+- **C4 coal 2023 FAIL → PASS** (0.638 → 0.770). Coal r rises in every year.
+- **C3a.** 2023 −23.1 → −10.4 %; 2024 −30.7 → −27.1 %; 2025 −4.6 → −0.4 %.
+- **C3b.** 2023 0.318 → 0.216; 2025 0.180 → 0.127.
+
+**Root cause of the regressions.** COI still exports 2.6–5.8× measured in 2023–25. Gas fills the excess, and NW gas follows CAISO's net-load shape. This is the price-level gap FINDING-nwppnext22 §D routed: the NW price sits below the MALIN anchor. **That is NEXT-23's lever.**
+
+**Bench parts** stay at main's render under R-28, as #7076 did. **Prune:** `2026-10-02-w0-nwpp-fix2` / `w0_nwpp_span`.
+
+Records:
+
+- `docs/records/nwpp/FINDING-nwppnext22-seam-headroom-2026-10-02.md`
+- `PRECOMMIT-nwppnext22-seam-headroom-2019-2025-2026-10-02.md`
+- `RESULT-nwppnext22-seam-headroom-2026-10-02.md`

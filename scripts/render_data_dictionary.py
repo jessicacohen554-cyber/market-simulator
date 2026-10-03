@@ -119,6 +119,7 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "coal-stocks",
     "coal-receipts",
     "stb-coal-loadings",
+    "nwpp-plant-basis-energy",
     "nyiso-reserve-requirements",
     "nyiso-operating-events",
     "nyiso-interface-flows",
@@ -971,6 +972,21 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "target; intake-only (SPP-108)."
         ),
     },
+    "nwpp-plant-basis-energy": {
+        "summary": (
+            "NWPP annual grid-delivered EIA-923 plant energy per EIA-930 fuel "
+            "family, 2019-2025: the nwpp_demand_plant_basis anchor."
+        ),
+        "reconciles": (
+            "Derived from EIA-923 Page 1 + CAMPD + EIA-930 by "
+            "`scripts/data/derive_nwpp_plant_basis_energy.py` on a roster-free "
+            "plant -> class map (EIA-860 footprint, dominant EIA-923 class); a "
+            "committed reference artifact "
+            "(`data/raw/reference/nwpp_plant_basis_energy.csv`) validated "
+            "against this schema at write. Rule 23: re-derived only on an "
+            "EIA-923 vintage, footprint or crosswalk change."
+        ),
+    },
     "nyiso-reserve-requirements": {
         "summary": (
             "NYISO's published locational operating-reserve requirements by "
@@ -1296,6 +1312,7 @@ NATIONAL_SCOPE: dict[str, str] = {
     "coal-stocks": "national (EIA-923 Schedule 2, by plant)",
     "coal-receipts": "national (EIA-923 Page 5, by plant)",
     "stb-coal-loadings": "national (STB EP 724, by carrier x region)",
+    "nwpp-plant-basis-energy": "NWPP only (one committed CSV, year x family)",
 }
 
 NA = "n/a"

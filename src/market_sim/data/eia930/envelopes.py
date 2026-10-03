@@ -2126,12 +2126,15 @@ def _nwpp_grid_pool_carried_wind(year: int) -> np.ndarray:
 
 # NWPP-NEXT-3 plant-basis anchor (``ScenarioConfig.nwpp_demand_plant_basis``).
 # Committed artifact: per (year, EIA-930 fuel family) annual grid-delivered
-# EIA-923 plant energy of the footprint's plants, derived from the NWPP bench
-# parts' ``classFull`` by scripts/data/derive_nwpp_plant_basis_energy.py.
+# EIA-923 plant energy of the footprint's plants, derived from the source data
+# by scripts/data/derive_nwpp_plant_basis_energy.py with the bench part's
+# ``classFull`` construction on a roster-free plant -> class map (EIA-860
+# footprint, each plant's dominant EIA-923 class), so a keeper's fleet roster
+# never moves it (closeout-nwpp-anchor, owner ruling R-28).
 NWPP_PLANT_BASIS_ENERGY_PATH: Path = REFERENCE_DIR / "nwpp_plant_basis_energy.csv"
 
 # Benchmark class -> the EIA-930 ``NG: <family>`` fuel family that books it.
-# Every classFull class must appear; the derive script fails on an unmapped
+# Every benchmark class must appear; the derive script fails on an unmapped
 # one. ``OTH`` is EIA-930's ``NG: OTH`` + ``NG: OIL`` (the benchmark books
 # NWPP's oil-fired MWh in the dual-fuel host's own class, so the two EIA-930
 # cells are one family here).

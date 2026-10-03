@@ -8,7 +8,10 @@ schedule. This file pins: (1) the default is off and the off path is
 byte-identical; (2) the correction moves each non-native family's annual energy
 exactly onto its plant-basis total on the family's own non-negative EIA-930
 shape; (3) wind / solar are never touched; (4) an armed run fails closed on a
-missing year and refuses to run without the carried-wind leg served.
+missing year and refuses to run without the carried-wind leg served; (5) the
+committed artifact conforms to its schema and year set, and its construction
+(closeout-nwpp-anchor) maps plants by their own EIA-923 class inside the
+EIA-860 footprint without ever reading the keeper's fleet roster.
 """
 
 from __future__ import annotations
@@ -99,28 +102,118 @@ class TestGateAndArtifact(unittest.TestCase):
         with self.assertRaises(NwppPlantBasisUnavailableError):
             _nwpp_plant_basis_energy(1990)
 
-    def test_artifact_matches_bench_parts(self):
-        """The committed CSV re-derives byte-for-byte from the bench parts."""
-        import importlib.util
-
+    def test_artifact_conforms_to_its_schema_and_year_set(self):
+        """The committed CSV validates and carries every keeper year once per family."""
+        mod = _derive_module()
         from market_sim.data.eia930.envelopes import NWPP_PLANT_BASIS_ENERGY_PATH
-        from tests.helpers import REPO_ROOT
 
-        spec = importlib.util.spec_from_file_location(
-            "derive_nwpp_plant_basis_energy",
-            REPO_ROOT / "scripts" / "data" / "derive_nwpp_plant_basis_energy.py",
-        )
-        mod = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(mod)
-        rows = mod.derive()
         table = pd.read_csv(NWPP_PLANT_BASIS_ENERGY_PATH)
-        self.assertEqual(len(rows), len(table))
-        for r, (_, t) in zip(rows, table.iterrows()):
+        mod.validate_rows(table.to_dict("records"))
+        self.assertEqual(sorted(set(table["year"])), list(mod.YEARS))
+        self.assertFalse(table.duplicated(["year", "family"]).any())
+        for year, sub in table.groupby("year"):
+            fams = set(sub["family"])
+            if mod.is_preliminary(int(year)):
+                self.assertEqual(fams, set(mod.PRELIMINARY_VINTAGE_FAMILIES))
+            else:
+                self.assertTrue({"COL", "NG", "NUC", "WAT", "OTH"} <= fams)
+
+
+def _derive_module():
+    """Import the derive script as a module."""
+    import importlib.util
+
+    from tests.helpers import REPO_ROOT
+
+    spec = importlib.util.spec_from_file_location(
+        "derive_nwpp_plant_basis_energy",
+        REPO_ROOT / "scripts" / "data" / "derive_nwpp_plant_basis_energy.py",
+    )
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def _generation(rows) -> pd.DataFrame:
+    """A tiny EIA-923 Page-1 frame: (year, plant_id, fuel, prime mover, chp, MWh)."""
+    return pd.DataFrame(
+        rows,
+        columns=[
+            "year",
+            "plant_id",
+            "fuel_type",
+            "prime_mover",
+            "chp",
+            "netgen_annual_mwh",
+        ],
+    )
+
+
+class TestRosterIndependentConstruction(unittest.TestCase):
+    """closeout-nwpp-anchor: the anchor never reads the keeper's fleet roster."""
+
+    def _class_map(self, generation, year, footprint):
+        from scripts import run_calibration_full as rcf
+
+        mod = _derive_module()
+        boom = mock.Mock(side_effect=AssertionError("fleet roster read"))
+        with (
+            mock.patch.object(rcf, "_iso_plant_ids", return_value=frozenset(footprint)),
+            mock.patch.object(rcf, "_fleet_group_by_code", boom),
+            mock.patch("market_sim.data.fleet.load_fleet_from_csv", boom),
+        ):
+            return mod.plant_class_map(year, generation)
+
+    def test_dominant_eia923_class_within_the_footprint(self):
+        gen = _generation(
+            [
+                # A coal plant with a little gas co-firing: coal, whatever a
+                # fleet's current gas-conversion designation says.
+                (2019, 1, "SUB", "ST", "N", 2_800_000.0),
+                (2019, 1, "NG", "ST", "N", 27_000.0),
+                # A biomass host with a small gas turbine: biomass.
+                (2019, 2, "WDS", "ST", "N", 300_000.0),
+                (2019, 2, "NG", "GT", "N", 18_000.0),
+                # Outside the footprint: never mapped.
+                (2019, 9, "NG", "CT", "N", 1e6),
+            ]
+        )
+        out = self._class_map(gen, 2019, {1, 2})
+        self.assertEqual(set(out), {1, 2})
+        self.assertTrue(out[1].startswith("COAL"))
+        self.assertEqual(out[2], "biomass")
+
+    def test_silent_year_takes_the_latest_prior_reporting_year(self):
+        from scripts import run_calibration_full as rcf
+
+        gen = _generation(
+            [
+                (2020, 1, "SUB", "ST", "N", 2_000_000.0),  # older year: coal
+                (2021, 1, "SUB", "ST", "N", 10.0),
+                (2021, 1, "WDS", "ST", "N", 900_000.0),  # latest reporting year
+                (2023, 1, "WDS", "ST", "N", 0.0),  # silent in the solve year
+            ]
+        )
+        self.assertEqual(self._class_map(gen, 2023, {1}), {1: "biomass"})
+        old = 2023 - rcf._CLASS_SHARE_MAX_PRIOR_YEARS - 1
+        gen_old = _generation([(old, 1, "NG", "CT", "N", 1.0)])
+        self.assertEqual(self._class_map(gen_old, 2023, {1}), {})
+
+    def test_family_sum_fails_on_an_unmapped_class(self):
+        mod = _derive_module()
+        with self.assertRaises(ValueError):
+            mod.family_energy({"NOT_A_CLASS": 1.0}, 2019)
+
+    def test_preliminary_vintage_keeps_only_the_repaired_fossil_families(self):
+        mod = _derive_module()
+        cls = {"COAL_PRB": 1.0, "CC_REGULAR": 2.0, "hydro": 3.0, "biomass": 0.5}
+        with mock.patch.object(mod, "is_preliminary", return_value=True):
+            self.assertEqual(mod.family_energy(cls, 2025), {"COL": 1.0, "NG": 2.0})
+        with mock.patch.object(mod, "is_preliminary", return_value=False):
             self.assertEqual(
-                (int(r["year"]), r["family"]), (int(t["year"]), t["family"])
+                mod.family_energy(cls, 2023),
+                {"COL": 1.0, "NG": 2.0, "WAT": 3.0, "OTH": 0.5},
             )
-            self.assertAlmostEqual(float(r["twh"]), float(t["twh"]), places=4)
-            self.assertEqual(r["source_sha256"], t["source_sha256"])
 
 
 def _hydrated() -> bool:
