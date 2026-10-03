@@ -66,21 +66,53 @@ C1_COAL = {
 }
 #: Keeper C1 other classes (model, actual) TWh for the B2 re-clear check.
 C1_OTHER = {
-    "CC_REGULAR": {2019: (272.46, 268.842), 2020: (289.5, 283.501), 2021: (280.209, 279.443),
-                   2022: (306.921, 297.965), 2023: (329.116, 325.718), 2024: (330.675, 335.623)},
-    "CT_PEAKER": {2019: (10.386, 15.871), 2020: (13.777, 18.814), 2021: (12.851, 20.769),
-                  2022: (13.64, 19.024), 2023: (20.546, 21.741), 2024: (28.133, 24.161)},
+    "CC_REGULAR": {
+        2019: (272.46, 268.842),
+        2020: (289.5, 283.501),
+        2021: (280.209, 279.443),
+        2022: (306.921, 297.965),
+        2023: (329.116, 325.718),
+        2024: (330.675, 335.623),
+    },
+    "CT_PEAKER": {
+        2019: (10.386, 15.871),
+        2020: (13.777, 18.814),
+        2021: (12.851, 20.769),
+        2022: (13.64, 19.024),
+        2023: (20.546, 21.741),
+        2024: (28.133, 24.161),
+    },
 }
 BAND = 8.0
 #: Keeper C3a (model, actual) mean $/MWh and C3b monthly NRMSE, calibration_verdict.
-C3A = {2019: (27.69, 27.21), 2020: (23.7, 21.75), 2021: (39.63, 39.75), 2022: (66.13, 79.37),
-       2023: (31.14, 30.82), 2024: (31.48, 33.29), 2025: (44.04, 49.83)}
-C3B = {2019: 0.082, 2020: 0.138, 2021: 0.094, 2022: 0.293, 2023: 0.151, 2024: 0.175, 2025: 0.222}
+C3A = {
+    2019: (27.69, 27.21),
+    2020: (23.7, 21.75),
+    2021: (39.63, 39.75),
+    2022: (66.13, 79.37),
+    2023: (31.14, 30.82),
+    2024: (31.48, 33.29),
+    2025: (44.04, 49.83),
+}
+C3B = {
+    2019: 0.082,
+    2020: 0.138,
+    2021: 0.094,
+    2022: 0.293,
+    2023: 0.151,
+    2024: 0.175,
+    2025: 0.222,
+}
 
 
 def _kind(uid: pd.Series) -> pd.Series:
     """Tranche kind from the unit-id suffix (``econc07`` -> ``econc``)."""
-    return uid.astype(str).str.rsplit("_", n=1).str[-1].str.replace(r"\d+$", "", regex=True)
+    return (
+        uid.astype(str)
+        .str.rsplit("_", n=1)
+        .str[-1]
+        .str.replace(r"\d+$", "", regex=True)
+    )
 
 
 def _runs(mask: np.ndarray):
@@ -95,17 +127,33 @@ def load_units(y: int) -> pd.DataFrame:
     """All P1 unit-hours of the keeper year."""
     u = pd.read_parquet(
         BUNDLE / f"unit_marginal_{y}.parquet",
-        columns=["unit_id", "plant_code", "plant_group", "zone", "hour", "mw", "cap_mw", "mc"],
+        columns=[
+            "unit_id",
+            "plant_code",
+            "plant_group",
+            "zone",
+            "hour",
+            "mw",
+            "cap_mw",
+            "mc",
+        ],
     )
     u["plant_group"] = u["plant_group"].astype(str)
     return u
 
 
-def zone_prices(y: int) -> tuple[dict[str, np.ndarray], np.ndarray, np.ndarray, pd.DataFrame]:
+def zone_prices(
+    y: int,
+) -> tuple[dict[str, np.ndarray], np.ndarray, np.ndarray, pd.DataFrame]:
     """Keeper P1 zone price, demand-weighted system price, total demand, and the frame."""
-    s = pd.read_parquet(BUNDLE / f"system_{y}.parquet", columns=["zone", "hour", "price", "demand"])
+    s = pd.read_parquet(
+        BUNDLE / f"system_{y}.parquet", columns=["zone", "hour", "price", "demand"]
+    )
     s = s[s["zone"] != "PJM_external"]
-    zp = {z: g.set_index("hour")["price"].reindex(range(T)).to_numpy(float) for z, g in s.groupby("zone")}
+    zp = {
+        z: g.set_index("hour")["price"].reindex(range(T)).to_numpy(float)
+        for z, g in s.groupby("zone")
+    }
     pv = s.pivot(index="hour", columns="zone", values="price").reindex(range(T))
     dv = s.pivot(index="hour", columns="zone", values="demand").reindex(range(T))
     psys = (pv * dv).sum(axis=1).to_numpy() / dv.sum(axis=1).to_numpy()
@@ -116,13 +164,25 @@ def real_zone_prices(y: int) -> dict[str, np.ndarray]:
     """Real zonal DA by hour."""
     a = pd.read_parquet(ACT_ZONE)
     a = a[a["year"] == y]
-    return {z: g.set_index("hour")["da"].reindex(range(T)).to_numpy(float) for z, g in a.groupby("zone")}
+    return {
+        z: g.set_index("hour")["da"].reindex(range(T)).to_numpy(float)
+        for z, g in a.groupby("zone")
+    }
 
 
 def campd(y: int, plants: set[int]) -> pd.DataFrame:
     """CAMPD coal-fuel unit-hours (with heat input) for ``plants``."""
     fr = []
-    cols = ["facilityId", "unitId", "date", "hour", "opTime", "grossLoad", "heatInput", "primaryFuelInfo"]
+    cols = [
+        "facilityId",
+        "unitId",
+        "date",
+        "hour",
+        "opTime",
+        "grossLoad",
+        "heatInput",
+        "primaryFuelInfo",
+    ]
     for f in sorted(UNIT_DIR.glob(f"*_{y}.parquet")):
         x = ds.dataset(str(f), format="parquet").to_table(columns=cols).to_pandas()
         x["facilityId"] = pd.to_numeric(x["facilityId"], errors="coerce")
@@ -134,7 +194,9 @@ def campd(y: int, plants: set[int]) -> pd.DataFrame:
     )
     keep = set(coal[coal].index)
     d = d[[k in keep for k in zip(d["facilityId"], d["unitId"])]].copy()
-    d["hoy"] = (pd.to_datetime(d["date"]) - pd.Timestamp(f"{y}-01-01")).dt.days * 24 + d["hour"].astype(int)
+    d["hoy"] = (
+        pd.to_datetime(d["date"]) - pd.Timestamp(f"{y}-01-01")
+    ).dt.days * 24 + d["hour"].astype(int)
     return d[(d["hoy"] >= 0) & (d["hoy"] < T)]
 
 
@@ -144,14 +206,27 @@ def noload(d: pd.DataFrame) -> tuple[dict[int, float], list[dict]]:
     for (pc, uid), g in d.groupby(["facilityId", "unitId"]):
         peak = float(np.nan_to_num(g["grossLoad"].max()))
         m = (g["opTime"] >= 1.0) & (g["grossLoad"] > 0) & (g["heatInput"] > 0)
-        x, h = g.loc[m, "grossLoad"].to_numpy(float), g.loc[m, "heatInput"].to_numpy(float)
+        x, h = (
+            g.loc[m, "grossLoad"].to_numpy(float),
+            g.loc[m, "heatInput"].to_numpy(float),
+        )
         if peak <= 0 or len(x) < 200 or np.ptp(x) < 0.1 * peak:
             fits.append({"plant": int(pc), "unit": uid, "peak": peak, "ok": False})
             continue
         b, a = np.polyfit(x, h, 1)
         r2 = 1.0 - np.sum((h - (a + b * x)) ** 2) / np.sum((h - h.mean()) ** 2)
-        fits.append({"plant": int(pc), "unit": uid, "peak": peak, "ok": True, "a": float(a),
-                     "b": float(b), "r2": float(r2), "avg_hr_full": float((a + b * peak) / peak)})
+        fits.append(
+            {
+                "plant": int(pc),
+                "unit": uid,
+                "peak": peak,
+                "ok": True,
+                "a": float(a),
+                "b": float(b),
+                "r2": float(r2),
+                "avg_hr_full": float((a + b * peak) / peak),
+            }
+        )
     nl: dict[int, float] = {}
     inc: dict[int, float] = {}
     by = pd.DataFrame(fits)
@@ -168,24 +243,40 @@ def coal_price(y: int, plants: dict[int, str]) -> dict[int, np.ndarray]:
     """Plant hourly delivered coal $/MMBtu: own month -> own-year mean -> PJM state-month mean."""
     f = load_monthly_fuel_costs(EIA923_MONTHLY_COSTS_PATH)
     f = f[(f["year"] == y) & (f["fuel_group"] == "Coal")]
-    month = (pd.Timestamp(f"{y}-01-01") + pd.to_timedelta(np.arange(T), "h")).month.to_numpy()
+    month = (
+        pd.Timestamp(f"{y}-01-01") + pd.to_timedelta(np.arange(T), "h")
+    ).month.to_numpy()
     own = f[f["plant_id"].isin(list(plants))]
     states = set(own["state"])
-    st = f[f["state"].isin(states)].groupby("month").apply(
-        lambda g: np.average(g["price_per_mmbtu"], weights=g["quantity"].clip(lower=1)),
-        include_groups=False,
+    st = (
+        f[f["state"].isin(states)]
+        .groupby("month")
+        .apply(
+            lambda g: np.average(
+                g["price_per_mmbtu"], weights=g["quantity"].clip(lower=1)
+            ),
+            include_groups=False,
+        )
     )
     out = {}
     for pc in plants:
         g = own[own["plant_id"] == pc]
         mon = g.groupby("month").apply(
-            lambda r: np.average(r["price_per_mmbtu"], weights=r["quantity"].clip(lower=1)),
+            lambda r: np.average(
+                r["price_per_mmbtu"], weights=r["quantity"].clip(lower=1)
+            ),
             include_groups=False,
         )
-        yr = float(np.average(g["price_per_mmbtu"], weights=g["quantity"].clip(lower=1))) if len(g) else np.nan
+        yr = (
+            float(np.average(g["price_per_mmbtu"], weights=g["quantity"].clip(lower=1)))
+            if len(g)
+            else np.nan
+        )
         mp = np.array([mon.get(m, np.nan) for m in range(1, 13)])
         mp = np.where(np.isnan(mp), yr, mp)
-        mp = np.where(np.isnan(mp), np.array([st.get(m, np.nan) for m in range(1, 13)]), mp)
+        mp = np.where(
+            np.isnan(mp), np.array([st.get(m, np.nan) for m in range(1, 13)]), mp
+        )
         out[pc] = mp[month - 1]
     return out
 
@@ -206,7 +297,9 @@ def plant_block(um: pd.DataFrame) -> dict[int, dict]:
     return out
 
 
-def onhour(P: dict, price: np.ndarray, mlf: float, cost_floor: np.ndarray | None = None):
+def onhour(
+    P: dict, price: np.ndarray, mlf: float, cost_floor: np.ndarray | None = None
+):
     """On-state dispatch and margin per hour (PRECOMMIT §2).
 
     Non-floor tranches keep the keeper's own P1 dispatch; floor MW are priced at the plant's
@@ -222,7 +315,9 @@ def onhour(P: dict, price: np.ndarray, mlf: float, cost_floor: np.ndarray | None
     ref = MC[com].min(0) if com.any() else np.where(fl[:, None], 1e6, MC).min(0)
     MCp = np.where(fl[:, None], ref[None, :], MC)
     X = np.where(fl[:, None], np.where(price[None, :] >= ref[None, :], CAP, 0.0), MW)
-    if cost_floor is not None:  # post-hoc G variant: offers raised to measured incremental cost
+    if (
+        cost_floor is not None
+    ):  # post-hoc G variant: offers raised to measured incremental cost
         MCp = np.maximum(MCp, cost_floor[None, :])
         X = np.where(price[None, :] >= MCp, np.where(fl[:, None], CAP, MW), 0.0)
     A = CAP.sum(0)
@@ -253,7 +348,7 @@ def dp(r_on: np.ndarray, s_cost: np.ndarray) -> np.ndarray:
         nvon = np.where(fs, start, stay) + r_on[:, t]
         nvoff = np.empty_like(voff)
         nvoff[:, 0] = von
-        nvoff[:, 1:K - 1] = voff[:, 0:K - 2]
+        nvoff[:, 1 : K - 1] = voff[:, 0 : K - 2]
         kk = voff[:, K - 1] >= voff[:, K - 2]
         nvoff[:, K - 1] = np.where(kk, voff[:, K - 1], voff[:, K - 2])
         from_start[:, t], k_from_k[:, t] = fs, kk
@@ -276,7 +371,9 @@ def dp(r_on: np.ndarray, s_cost: np.ndarray) -> np.ndarray:
     return on
 
 
-def real_dark(d: pd.DataFrame, plants: list[int], kstar: dict[int, float]) -> dict[int, np.ndarray]:
+def real_dark(
+    d: pd.DataFrame, plants: list[int], kstar: dict[int, float]
+) -> dict[int, np.ndarray]:
     """Real dark MW per plant-hour: K*·Σ_u w_u·1{opTime_u = 0}."""
     out = {}
     for pc in plants:
@@ -295,7 +392,9 @@ def real_dark(d: pd.DataFrame, plants: list[int], kstar: dict[int, float]) -> di
     return out
 
 
-def reclear(um: pd.DataFrame, dsum: np.ndarray, psys: np.ndarray) -> tuple[dict, np.ndarray]:
+def reclear(
+    um: pd.DataFrame, dsum: np.ndarray, psys: np.ndarray
+) -> tuple[dict, np.ndarray]:
     """Static re-clear of the hourly net coal change against non-COAL_BIT headroom."""
     o = um[(um["plant_group"] != GROUP) & ~um["plant_group"].str.startswith("VIRTUAL")]
     o = o[["plant_group", "hour", "mw", "cap_mw", "mc"]].copy()
@@ -304,7 +403,12 @@ def reclear(um: pd.DataFrame, dsum: np.ndarray, psys: np.ndarray) -> tuple[dict,
     o = o.sort_values(["hour", "mc"])
     hours = o["hour"].to_numpy()
     starts = np.searchsorted(hours, np.arange(T + 1))
-    mc, spare, mw, grp = o["mc"].to_numpy(), o["spare"].to_numpy(), o["mw"].to_numpy(), o["grp"].to_numpy()
+    mc, spare, mw, grp = (
+        o["mc"].to_numpy(),
+        o["spare"].to_numpy(),
+        o["mw"].to_numpy(),
+        o["grp"].to_numpy(),
+    )
     alloc: dict[str, float] = {}
     dp_ = np.zeros(T)
     for h in range(T):
@@ -317,7 +421,10 @@ def reclear(um: pd.DataFrame, dsum: np.ndarray, psys: np.ndarray) -> tuple[dict,
             idx = np.flatnonzero(sel & (spare[s:e] > 0)) + s
             cum = np.cumsum(spare[idx])
             k = int(np.searchsorted(cum, need))
-            take = np.minimum(spare[idx[: k + 1]], np.maximum(0.0, need - (cum[: k + 1] - spare[idx[: k + 1]])))
+            take = np.minimum(
+                spare[idx[: k + 1]],
+                np.maximum(0.0, need - (cum[: k + 1] - spare[idx[: k + 1]])),
+            )
             for gname, v in zip(grp[idx[: k + 1]], take):
                 alloc[gname] = alloc.get(gname, 0.0) + float(v)
             last = mc[idx[min(k, len(idx) - 1)]] if len(idx) else psys[h]
@@ -326,7 +433,10 @@ def reclear(um: pd.DataFrame, dsum: np.ndarray, psys: np.ndarray) -> tuple[dict,
             idx = np.flatnonzero(mw[s:e] > 0)[::-1] + s
             cum = np.cumsum(mw[idx])
             k = int(np.searchsorted(cum, -need))
-            take = np.minimum(mw[idx[: k + 1]], np.maximum(0.0, -need - (cum[: k + 1] - mw[idx[: k + 1]])))
+            take = np.minimum(
+                mw[idx[: k + 1]],
+                np.maximum(0.0, -need - (cum[: k + 1] - mw[idx[: k + 1]])),
+            )
             for gname, v in zip(grp[idx[: k + 1]], take):
                 alloc[gname] = alloc.get(gname, 0.0) - float(v)
             nxt = mc[idx[min(k + 1, len(idx) - 1)]] if len(idx) else psys[h]
@@ -334,10 +444,19 @@ def reclear(um: pd.DataFrame, dsum: np.ndarray, psys: np.ndarray) -> tuple[dict,
     return {k: v / 1e6 for k, v in alloc.items()}, dp_
 
 
-def monthly_nrmse(price: np.ndarray, dem: np.ndarray, actual: np.ndarray, y: int) -> float:
+def monthly_nrmse(
+    price: np.ndarray, dem: np.ndarray, actual: np.ndarray, y: int
+) -> float:
     """C3b-like monthly demand-weighted NRMSE vs the hourly RT reference."""
-    m = (pd.Timestamp(f"{y}-01-01") + pd.to_timedelta(np.arange(T), "h")).month.to_numpy()
-    mm = np.array([np.sum(price[m == k] * dem[m == k]) / np.sum(dem[m == k]) for k in range(1, 13)])
+    m = (
+        pd.Timestamp(f"{y}-01-01") + pd.to_timedelta(np.arange(T), "h")
+    ).month.to_numpy()
+    mm = np.array(
+        [
+            np.sum(price[m == k] * dem[m == k]) / np.sum(dem[m == k])
+            for k in range(1, 13)
+        ]
+    )
     am = np.array([np.nanmean(actual[m == k]) for k in range(1, 13)])
     return float(np.sqrt(np.mean((mm - am) ** 2)) / am.mean())
 
@@ -360,15 +479,37 @@ def run_year(y: int) -> dict:
     res["fits"] = {
         "units": len(fits),
         "ok_cap_share": float(sum(f["peak"] for f in okf) / max(wpk.sum(), 1e-9)),
-        "pos_intercept_cap_share": float(sum(f["peak"] for f in okf if f["a"] > 0) / max(wpk.sum(), 1e-9)),
-        "r2_wmedian": float(np.median(np.repeat([f["r2"] for f in okf], [max(1, int(f["peak"] / 10)) for f in okf]))) if okf else None,
-        "avg_hr_full_wmean": float(np.average([f["avg_hr_full"] for f in okf], weights=[f["peak"] for f in okf])) if okf else None,
-        "inc_hr_wmean": float(np.average([f["b"] for f in okf], weights=[f["peak"] for f in okf])) if okf else None,
+        "pos_intercept_cap_share": float(
+            sum(f["peak"] for f in okf if f["a"] > 0) / max(wpk.sum(), 1e-9)
+        ),
+        "r2_wmedian": float(
+            np.median(
+                np.repeat(
+                    [f["r2"] for f in okf], [max(1, int(f["peak"] / 10)) for f in okf]
+                )
+            )
+        )
+        if okf
+        else None,
+        "avg_hr_full_wmean": float(
+            np.average(
+                [f["avg_hr_full"] for f in okf], weights=[f["peak"] for f in okf]
+            )
+        )
+        if okf
+        else None,
+        "inc_hr_wmean": float(
+            np.average([f["b"] for f in okf], weights=[f["peak"] for f in okf])
+        )
+        if okf
+        else None,
         "nl_mmbtu_per_mw_wmean": float(np.mean(list(nl.values()))) if nl else None,
         "plants_with_nl": len(nl),
         "plants": len(plants),
     }
-    kstar = {pc: float(np.vstack([t[2] for t in kp[pc]["tr"]]).sum(0).max()) for pc in plants}
+    kstar = {
+        pc: float(np.vstack([t[2] for t in kp[pc]["tr"]]).sum(0).max()) for pc in plants
+    }
     dark = real_dark(d, plants, kstar)
 
     def variant(name: str, with_nl: bool, real: bool, gcost: bool = False) -> dict:
@@ -388,7 +529,10 @@ def run_year(y: int) -> dict:
                 CAP = np.vstack([t[2] for t in P["tr"]])
                 sel = np.isin(kinds, FLOOR + ("committed",))
                 mlf = float(CAP[sel].sum() / max(CAP.sum(), 1e-9))
-            fz = np.nan_to_num(fuel[pc], nan=np.nanmean(fuel[pc]) if np.isfinite(fuel[pc]).any() else 2.3)
+            fz = np.nan_to_num(
+                fuel[pc],
+                nan=np.nanmean(fuel[pc]) if np.isfinite(fuel[pc]).any() else 2.3,
+            )
             cf = inc.get(pc, 0.0) * fz if gcost else None
             x_on, margin, A, mwk, flk = onhour(P, price, mlf, cf)
             nlc = nl.get(pc, 0.0) * fz if with_nl else 0.0
@@ -422,7 +566,12 @@ def run_year(y: int) -> dict:
             mod, act = C3A[y]
             out["c3a_pct_new"] = 100.0 * (mod + dmean - act) / act
             a = pd.read_parquet(ACT_SYS)
-            rt = a[a["year"] == y].set_index("hour")["rt"].reindex(range(T)).to_numpy(float)
+            rt = (
+                a[a["year"] == y]
+                .set_index("hour")["rt"]
+                .reindex(range(T))
+                .to_numpy(float)
+            )
             n0 = monthly_nrmse(psys, dem, rt, y)
             n1 = monthly_nrmse(psys + dph, dem, rt, y)
             out["c3b_probe_keeper"] = n0
@@ -467,9 +616,16 @@ def run_year(y: int) -> dict:
     a = pd.read_parquet(ACT_SYS)
     rt = a[a["year"] == y].set_index("hour")["rt"].reindex(range(T)).to_numpy(float)
     mod, act = C3A[y]
-    res["b1"] = {"dec_twh": b1 / 1e6, "dark_share": b1d / max(b1, 1e-9), "reclear_alloc_twh": alloc,
-                 "dp_mean": dmean, "c3a_pct_new": 100.0 * (mod + dmean - act) / act,
-                 "c3b_new": C3B[y] + monthly_nrmse(psys + dph, dem, rt, y) - monthly_nrmse(psys, dem, rt, y)}
+    res["b1"] = {
+        "dec_twh": b1 / 1e6,
+        "dark_share": b1d / max(b1, 1e-9),
+        "reclear_alloc_twh": alloc,
+        "dp_mean": dmean,
+        "c3a_pct_new": 100.0 * (mod + dmean - act) / act,
+        "c3b_new": C3B[y]
+        + monthly_nrmse(psys + dph, dem, rt, y)
+        - monthly_nrmse(psys, dem, rt, y),
+    }
     res["b2"] = {"sync_mwh_in_real_dark_twh": floor_dark / 1e6}
     return res
 
@@ -503,7 +659,8 @@ def readings(res: dict) -> dict:
     need = {y: 0.5 * (C1_COAL[y][0] - C1_COAL[y][1] - BAND) for y in pool}
     fits = [res[y]["fits"] for y in res]
     b0 = all(
-        f["pos_intercept_cap_share"] >= 0.8 and (f["r2_wmedian"] or 0) >= 0.9
+        f["pos_intercept_cap_share"] >= 0.8
+        and (f["r2_wmedian"] or 0) >= 0.9
         and 8.0 <= (f["avg_hr_full_wmean"] or 0) <= 14.0
         for f in fits
     )
@@ -512,20 +669,35 @@ def readings(res: dict) -> dict:
         b1 = all(res[y]["variants"][v]["dec_pos_twh"] >= need[y] for y in pool)
         tot = sum(res[y]["variants"][v]["dec_pos_twh"] for y in pool)
         ds_pool = (
-            sum(res[y]["variants"][v]["dec_pos_twh"] * res[y]["variants"][v]["dark_share"] for y in pool) / tot
-            if tot else 0.0
+            sum(
+                res[y]["variants"][v]["dec_pos_twh"]
+                * res[y]["variants"][v]["dark_share"]
+                for y in pool
+            )
+            / tot
+            if tot
+            else 0.0
         )
-        b4 = ds_pool >= 0.6 and all(res[y]["variants"][v]["dark_share"] >= 0.6 for y in pool)
+        b4 = ds_pool >= 0.6 and all(
+            res[y]["variants"][v]["dark_share"] >= 0.6 for y in pool
+        )
         r = {"B1": b1, "B4": b4, "dark_share_pool": ds_pool}
         if v != "a1_real":
-            flips = [f for y in res for f in _flips(y, res[y]["variants"][v], res[y]["variants"][v]["net_twh"])]
+            flips = [
+                f
+                for y in res
+                for f in _flips(
+                    y, res[y]["variants"][v], res[y]["variants"][v]["net_twh"]
+                )
+            ]
             r["B2_B3_flips"] = flips
             r["B2_B3"] = not flips
             r["CHARTERED"] = b1 and b4 and not flips and (b0 if v == "a1" else True)
         out[v] = r
     b1fl = [f for y in res for f in _flips(y, res[y]["b1"], res[y]["b1"]["dec_twh"])]
-    b1ds = sum(res[y]["b1"]["dec_twh"] * res[y]["b1"]["dark_share"] for y in pool) / max(
-        sum(res[y]["b1"]["dec_twh"] for y in pool), 1e-9)
+    b1ds = sum(
+        res[y]["b1"]["dec_twh"] * res[y]["b1"]["dark_share"] for y in pool
+    ) / max(sum(res[y]["b1"]["dec_twh"] for y in pool), 1e-9)
     out["b1"] = {
         "B2_B3_flips": b1fl,
         "B4": b1ds >= 0.6 and all(res[y]["b1"]["dark_share"] >= 0.6 for y in pool),
@@ -534,7 +706,9 @@ def readings(res: dict) -> dict:
         "dec_twh": {y: res[y]["b1"]["dec_twh"] for y in res},
     }
     out["b2"] = {
-        "B1_ceiling": all(res[y]["b2"]["sync_mwh_in_real_dark_twh"] >= need[y] for y in pool),
+        "B1_ceiling": all(
+            res[y]["b2"]["sync_mwh_in_real_dark_twh"] >= need[y] for y in pool
+        ),
         "ceiling_twh": {y: res[y]["b2"]["sync_mwh_in_real_dark_twh"] for y in res},
     }
     return out
@@ -544,10 +718,16 @@ def main(years: list[int]) -> None:
     """Run every year and write the JSON."""
     res = {}
     if OUT.exists():
-        res = {int(k): v for k, v in json.loads(OUT.read_text()).get("years", {}).items()}
+        res = {
+            int(k): v for k, v in json.loads(OUT.read_text()).get("years", {}).items()
+        }
     for y in years:
         res[y] = run_year(y)
-        print(y, json.dumps({k: v for k, v in res[y].items()}, default=str)[:3000], flush=True)
+        print(
+            y,
+            json.dumps({k: v for k, v in res[y].items()}, default=str)[:3000],
+            flush=True,
+        )
         OUT.parent.mkdir(parents=True, exist_ok=True)
         OUT.write_text(json.dumps({"years": res}, indent=2, default=str))
     out = {"years": res}
