@@ -561,3 +561,140 @@ def test_q71_listed_entry_the_construction_derives_is_stale(tmp_path):
     entry = {"run_config": _SURF_RC, "recorded_cache_key": row["recorded_cache_key"]}
     _, gates = _surface_gates(row, tmp_path, committed, entries=[entry])
     assert gates == ["G2_STALE"], gates
+
+
+# --------------------------------------------------------------------------- #
+# ``__solve_epochs__`` modelled (capx D100) — scope rule, both directions, offline
+# --------------------------------------------------------------------------- #
+# ``cache_key`` appends the ``SOLVE_EPOCHS`` ids whose scope (mode + ISO) covers
+# the config. The census applies the SAME rule to the recorded payload for the
+# live key, and hashes a stamped record under the ``epochs`` list its OWN
+# committed ``solve_surface.json`` recorded. These tests pin a synthetic epoch
+# ledger onto ``solve_surface.SOLVE_EPOCHS`` (the public ``applicable_epochs``
+# reads it) so they hold whatever the live ledger carries.
+_EPOCH_ID = "9999-01-01z"
+
+
+def _pin_epochs(monkeypatch, *, isos: tuple[str, ...], modes=("forecast",)):
+    from market_sim.config import solve_surface as S
+
+    monkeypatch.setattr(
+        S,
+        "SOLVE_EPOCHS",
+        (S.SolveEpoch(id=_EPOCH_ID, cause="synthetic", modes=modes, isos=isos),),
+    )
+
+
+def _epoch_row(tmp_path, *, recorded_epochs, key_epochs) -> tuple[dict, set]:
+    """A stamped record hashed with ``key_epochs``, whose stamp says ``recorded_epochs``."""
+    from dataclasses import asdict
+
+    payload = K._jsonable(asdict(K.ScenarioConfig()))
+    iso = str(payload["iso"]).upper()
+    recorded = K.head_key(payload, surface_block=_SURF_BLOCK, epochs=key_epochs)
+    row = {
+        "run_config": _SURF_RC,
+        "iso": iso,
+        "reproduces_recorded_key": False,
+        "recorded_cache_key": recorded,
+        "scenario_config": payload,
+    }
+    rel = f"results/_synthetic_surface/{iso}/{recorded}/{K.SURFACE_STAMP_NAME}"
+    path = tmp_path / rel
+    path.parent.mkdir(parents=True)
+    path.write_text(
+        json.dumps(
+            {"schema": 1, "iso": iso, "moved": _SURF_BLOCK, "epochs": recorded_epochs}
+        )
+    )
+    return row, {rel}
+
+
+def test_d100_record_in_scope_reproduces_only_with_the_epoch_id(tmp_path, monkeypatch):
+    """(a) In an epoch's scope: the live key carries the id; the stamp must too."""
+    from dataclasses import asdict
+
+    payload = K._jsonable(asdict(K.ScenarioConfig()))
+    iso = str(payload["iso"]).upper()
+    _pin_epochs(monkeypatch, isos=(iso,), modes=(payload["mode"],))
+    assert K.live_epochs(payload) == [_EPOCH_ID]
+    live = K.head_key(payload, surface=True)
+    assert live == K.head_key(
+        payload, surface_block=K.moved_rows(iso), epochs=[_EPOCH_ID]
+    )
+    assert live != K.head_key(payload, surface_block=K.moved_rows(iso))
+    # The recorded stamp: hashed with the id and recording it -> surface-recorded.
+    row, committed = _epoch_row(
+        tmp_path, recorded_epochs=[_EPOCH_ID], key_epochs=[_EPOCH_ID]
+    )
+    surface, gates = _surface_gates(row, tmp_path, committed)
+    assert surface[_SURF_RC]["status"] == K.SURFACE_RECORDED_CLASS, surface
+    assert surface[_SURF_RC]["covering_epochs"] == [_EPOCH_ID]
+    assert gates == []
+    # Same literal, but the stamp omits the id: the block alone does not
+    # reproduce -> a failure, never a pass-through.
+    row, committed = _epoch_row(
+        tmp_path / "omit", recorded_epochs=[], key_epochs=[_EPOCH_ID]
+    )
+    surface, gates = _surface_gates(row, tmp_path / "omit", committed)
+    assert surface[_SURF_RC]["status"] == "no_reproduce", surface
+    assert gates == ["G1_UNKNOWN"], gates
+
+
+def test_d100_record_outside_every_scope_reproduces_with_no_epochs(
+    tmp_path, monkeypatch
+):
+    """(b) Scoped to another ISO: the covering set is empty and nothing re-keys."""
+    from dataclasses import asdict
+
+    payload = K._jsonable(asdict(K.ScenarioConfig()))
+    iso = str(payload["iso"]).upper()
+    other = next(i for i in ("ERCOT", "PJM", "MISO") if i != iso)
+    _pin_epochs(monkeypatch, isos=(other,), modes=(payload["mode"],))
+    assert K.live_epochs(payload) == []
+    assert K.head_key(payload, surface=True) == K.head_key(
+        payload, surface_block=K.moved_rows(iso)
+    )
+    row, committed = _epoch_row(tmp_path, recorded_epochs=[], key_epochs=[])
+    surface, gates = _surface_gates(row, tmp_path, committed)
+    assert surface[_SURF_RC]["status"] == K.SURFACE_RECORDED_CLASS, surface
+    assert surface[_SURF_RC]["covering_epochs"] == []
+    assert gates == []
+
+
+def test_d100_stale_recorded_epoch_set_is_classified_not_unclassified(
+    tmp_path, monkeypatch
+):
+    """(c) The stamp's epochs reproduce the literal but are not the covering set."""
+    from dataclasses import asdict
+
+    payload = K._jsonable(asdict(K.ScenarioConfig()))
+    iso = str(payload["iso"]).upper()
+    # Solved under a block but BEFORE the epoch covering it was registered.
+    _pin_epochs(monkeypatch, isos=(iso,), modes=(payload["mode"],))
+    row, committed = _epoch_row(tmp_path, recorded_epochs=[], key_epochs=[])
+    surface, gates = _surface_gates(row, tmp_path, committed)
+    verdict = surface[_SURF_RC]
+    assert verdict["status"] == K.SOLVE_EPOCH_MOVED_CLASS, verdict
+    assert verdict["epochs"] == [] and verdict["covering_epochs"] == [_EPOCH_ID]
+    assert gates == [], f"a classified epoch move failed a gate: {gates}"
+    # The reverse drift: stamped under an id whose scope no longer covers it.
+    other = next(i for i in ("ERCOT", "PJM", "MISO") if i != iso)
+    _pin_epochs(monkeypatch, isos=(other,), modes=(payload["mode"],))
+    row, committed = _epoch_row(
+        tmp_path / "rev", recorded_epochs=[_EPOCH_ID], key_epochs=[_EPOCH_ID]
+    )
+    surface, gates = _surface_gates(row, tmp_path / "rev", committed)
+    assert surface[_SURF_RC]["status"] == K.SOLVE_EPOCH_MOVED_CLASS, surface
+    assert gates == []
+    # A listed entry the epoch-moved construction derives is dead scaffolding.
+    entry = {"run_config": _SURF_RC, "recorded_cache_key": row["recorded_cache_key"]}
+    _, gates = _surface_gates(row, tmp_path / "rev", committed, entries=[entry])
+    assert gates == ["G2_STALE"], gates
+
+
+def test_d100_malformed_stamp_epochs_cannot_be_used(tmp_path):
+    """An ``epochs`` field that is not a list of ids is not evidence."""
+    row, committed = _epoch_row(tmp_path, recorded_epochs="2026-10-02c", key_epochs=[])
+    surface, gates = _surface_gates(row, tmp_path, committed)
+    assert not surface and gates == ["G1_UNKNOWN"], (surface, gates)

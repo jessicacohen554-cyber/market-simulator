@@ -116,13 +116,14 @@ import subprocess
 import sys
 from dataclasses import fields
 from pathlib import Path
+from types import SimpleNamespace
 
 _REPO = Path(__file__).resolve().parents[2]
 for _p in (_REPO, _REPO / "src"):
     if str(_p) not in sys.path:
         sys.path.insert(0, str(_p))
 
-from market_sim.config.solve_surface import SOLVE_EPOCHS, moved_rows  # noqa: E402
+from market_sim.config.solve_surface import applicable_epochs, moved_rows  # noqa: E402
 from market_sim.config.scenarios import (  # noqa: E402
     _CACHE_KEY_OPTIONAL_FIELDS,
     _CACHE_KEY_REGISTRATION_TIME_DEFAULTS,
@@ -156,6 +157,26 @@ def _hash(payload: dict) -> str:
 # --------------------------------------------------------------------------- #
 # HEAD rules
 # --------------------------------------------------------------------------- #
+def live_epochs(payload: dict) -> list[str]:
+    """The ``SOLVE_EPOCHS`` ids whose declared scope covers a recorded payload.
+
+    The SAME selection rule ``ScenarioConfig.cache_key`` applies
+    (``solve_surface.applicable_epochs``: mode, ISO and reach year), run over
+    the committed payload's ``mode`` / ``iso`` / ``end_year`` literals rather
+    than a re-hydrated config, so a payload older than the live schema is
+    scoped exactly as the config it recorded would be (capx D100).
+    """
+    return list(
+        applicable_epochs(
+            SimpleNamespace(
+                mode=payload.get("mode"),
+                iso=payload.get("iso"),
+                end_year=payload.get("end_year"),
+            )
+        )
+    )
+
+
 def head_key(
     payload: dict,
     *,
@@ -164,6 +185,7 @@ def head_key(
     roots=None,
     surface=False,
     surface_block: dict | None = None,
+    epochs: list[str] | tuple[str, ...] | None = None,
 ) -> str:
     """Hash under the live rules (the D76-ARM construction), with recipe knobs.
 
@@ -178,17 +200,28 @@ def head_key(
     sits at its frozen declaration. ``surface=True`` appends the LIVE
     ``moved_rows(iso)`` block exactly as ``cache_key`` does today, so the two
     keys differ iff the ISO's surface has moved off its declaration since the
-    bundle solved (capx D79's designed re-key). ``__solve_epochs__`` is not
-    modelled: ``SOLVE_EPOCHS`` is empty at HEAD, asserted below.
+    bundle solved (capx D79's designed re-key). ``surface=True`` ALSO appends
+    the live ``__solve_epochs__`` list — the ``SOLVE_EPOCHS`` ids whose scope
+    (mode + ISO + reach year, :func:`live_epochs`) covers the payload — exactly
+    as ``cache_key`` does, so the live key tracks every epoch registered since
+    the bundle solved (capx D100).
 
     ``surface_block`` is the THIRD construction (capx D98, owner ruling Q71):
     append the given ``moved`` block — read by :func:`recorded_surface_stamp`
     from the record's OWN committed ``solve_surface.json``, never synthesized —
     in place of the live one. An empty block collapses to the declaration key,
     exactly as ``cache_key`` omits an empty block. Exclusive with ``surface``.
+
+    ``epochs`` is the RECORDED epoch id list to hash under (capx D100): the
+    ``epochs`` field of the record's own committed ``solve_surface.json``, read
+    by :func:`recorded_surface_stamp`, never the live set. An empty list
+    collapses to no ``__solve_epochs__`` key, as ``cache_key`` omits an empty
+    list. Exclusive with ``surface`` (which supplies the live set itself).
     """
     if surface and surface_block is not None:
         raise ValueError("surface=True and surface_block are exclusive")
+    if surface and epochs:
+        raise ValueError("surface=True and epochs are exclusive")
     drop_at = {n: _jsonable(v) for n, v in cache_key_drop_defaults().items()}
     out = dict(payload)
     for name in _CACHE_KEY_OPTIONAL_FIELDS:
@@ -204,8 +237,13 @@ def head_key(
         moved = moved_rows(str(payload.get("iso") or "").upper() or None)
         if moved:
             out["__solve_surface__"] = moved
+        live = live_epochs(payload)
+        if live:
+            out["__solve_epochs__"] = live
     elif surface_block:
         out["__solve_surface__"] = dict(sorted(surface_block.items()))
+    if epochs and not surface:
+        out["__solve_epochs__"] = [str(e) for e in epochs]
     out = _normalize_cache_key_paths(
         out, roots if roots is not None else _cache_key_path_roots()
     )
@@ -933,11 +971,12 @@ def check_exceptions(
         ancestry is ``G1_LAG_UNVERIFIED`` (the ``G3_UNVERIFIED`` analogue).
         ``lag`` pre-computes :func:`lag_classifications`; ``None`` computes it.
 
-    ``surface-recorded`` (capx D98, owner ruling Q71)
+    ``surface-recorded`` (capx D98, owner ruling Q71) / ``solve-epoch-moved``
+    (capx D100)
         an UNLISTED mismatch whose recorded literal is reproduced by the
-        ``moved`` block of its OWN committed ``solve_surface.json``
-        (:func:`surface_recorded_verdict`) is exempt from ``G1_UNKNOWN`` and
-        REPORTED by the caller. A stamp that does not reproduce leaves the row
+        ``moved`` block and ``epochs`` list of its OWN committed
+        ``solve_surface.json`` (:func:`surface_recorded_verdict`) is exempt
+        from ``G1_UNKNOWN`` and REPORTED by the caller. A stamp that does not reproduce leaves the row
         ``G1_UNKNOWN``; a LISTED entry the construction derives is
         ``G2_STALE``. ``surface`` pre-computes
         :func:`surface_recorded_classifications`; ``None`` computes it.
@@ -960,8 +999,10 @@ def check_exceptions(
     for path, row in rows.items():
         if row["reproduces_recorded_key"] is False and path not in listed:
             sv = surface.get(path) or {}
-            if sv.get("status") == SURFACE_RECORDED_CLASS:
-                continue  # Q71 construction: REPORTED by the caller (capx D98)
+            if sv.get("status") in REPORTED_SURFACE_CLASSES:
+                # Q71 construction (capx D98) or its epoch-moved form (capx
+                # D100): REPORTED by the caller, not a failure.
+                continue
             verdict = lag.get(path) or {}
             if verdict.get("status") == "lag":
                 continue  # Q66 class rule: REPORTED by the caller, not a failure
@@ -1050,7 +1091,7 @@ def check_exceptions(
                 }
             )
             continue
-        if (surface.get(path) or {}).get("status") == SURFACE_RECORDED_CLASS:
+        if (surface.get(path) or {}).get("status") in REPORTED_SURFACE_CLASSES:
             failures.append(
                 {
                     "gate": "G2_STALE",
@@ -1121,6 +1162,17 @@ SURFACE_STAMP_NAME = "solve_surface.json"
 #: as — a REPORTED line like a Q66 ``LAG`` row, never silent and never a pass.
 SURFACE_RECORDED_CLASS = "surface-recorded"
 
+#: The class a record reproducing under its recorded surface AND a recorded
+#: ``epochs`` list that is no longer the live covering set is reported as (capx
+#: D100): the bundle solved before (or outside) an epoch whose scope now covers
+#: it — a designed re-key, REPORTED like ``surface-recorded``, never a pass and
+#: never ``unclassified``.
+SOLVE_EPOCH_MOVED_CLASS = "solve-epoch-moved"
+
+#: The statuses :func:`surface_recorded_verdict` reports as DERIVED mismatches
+#: (exempt from ``G1_UNKNOWN``, stale when listed).
+REPORTED_SURFACE_CLASSES = (SURFACE_RECORDED_CLASS, SOLVE_EPOCH_MOVED_CLASS)
+
 
 def committed_surface_stamps() -> frozenset[str]:
     """Repo-relative paths of every COMMITTED ``solve_surface.json``."""
@@ -1156,8 +1208,10 @@ def recorded_surface_stamp(
     Every leg, in order: a recorded key; a path in ``committed`` (the
     ``git ls-files`` set by default — an uncommitted stamp is not evidence);
     a JSON object with ``schema == 1``; the stamp's ``iso`` equal to the
-    record's; ``moved`` a ``{str: str}`` object; and ``epochs`` empty, because
-    ``__solve_epochs__`` is not modelled (``SOLVE_EPOCHS`` is empty at HEAD).
+    record's; ``moved`` a ``{str: str}`` object; and ``epochs`` a list of
+    epoch-id strings (absent reads as empty) — the ids the stamp recorded,
+    which :func:`surface_recorded_verdict` compares with the live covering set
+    (capx D100).
     """
     if not isinstance(recorded, str) or not recorded:
         return None, "no recorded cache_key"
@@ -1182,9 +1236,14 @@ def recorded_surface_stamp(
         isinstance(k, str) and isinstance(v, str) for k, v in moved.items()
     ):
         return None, f"{rel} carries no moved block"
-    if stamp.get("epochs"):
-        return None, f"{rel} carries solve epochs, which are not modelled"
-    return {"solve_surface_json": rel, "moved": dict(sorted(moved.items()))}, "ok"
+    epochs = stamp.get("epochs", [])
+    if not isinstance(epochs, list) or not all(isinstance(e, str) for e in epochs):
+        return None, f"{rel} carries a malformed epochs field"
+    return {
+        "solve_surface_json": rel,
+        "moved": dict(sorted(moved.items())),
+        "epochs": list(epochs),
+    }, "ok"
 
 
 def surface_recorded_verdict(
@@ -1196,10 +1255,14 @@ def surface_recorded_verdict(
     """Hash one census row under its recorded surface (the Q71 construction).
 
     Returns ``None`` when :func:`recorded_surface_stamp` says the construction
-    cannot apply, else ``{solve_surface_json, moved, key, status}`` where
-    ``status`` is ``surface-recorded`` iff the key is the row's recorded
-    literal and ``no_reproduce`` otherwise — a tampered block or a perturbed
-    literal lands there and stays a failure (it is never a pass-through).
+    cannot apply, else ``{solve_surface_json, moved, epochs, covering_epochs,
+    key, status}``. The key is hashed under the stamp's ``moved`` block AND its
+    recorded ``epochs`` list. ``status`` is ``no_reproduce`` unless that key is
+    the row's recorded literal — a tampered block or a perturbed literal lands
+    there and stays a failure (never a pass-through); ``surface-recorded`` when
+    it reproduces and the recorded epochs ARE the live covering set
+    (:func:`live_epochs`); ``solve-epoch-moved`` when it reproduces but the
+    recorded epochs differ from the covering set (capx D100).
     """
     payload = row.get("scenario_config")
     if not isinstance(payload, dict):
@@ -1213,13 +1276,15 @@ def surface_recorded_verdict(
     )
     if stamp is None:
         return None
-    key = head_key(payload, surface_block=stamp["moved"])
-    status = (
-        SURFACE_RECORDED_CLASS
-        if key == row.get("recorded_cache_key")
-        else "no_reproduce"
-    )
-    return {**stamp, "key": key, "status": status}
+    covering = live_epochs(payload)
+    key = head_key(payload, surface_block=stamp["moved"], epochs=stamp["epochs"])
+    if key != row.get("recorded_cache_key"):
+        status = "no_reproduce"
+    elif stamp["epochs"] == covering:
+        status = SURFACE_RECORDED_CLASS
+    else:
+        status = SOLVE_EPOCH_MOVED_CLASS
+    return {**stamp, "covering_epochs": covering, "key": key, "status": status}
 
 
 def surface_recorded_classifications(
@@ -1326,13 +1391,22 @@ def census(*, keep_payloads: bool = True, fetch_vintages: bool = True) -> dict:
             else None
         )
         row["recorded_surface"] = sv
-        if sv is not None and sv["status"] == SURFACE_RECORDED_CLASS:
+        # The epoch census (capx D100): the live covering set for every row,
+        # and the recorded set wherever the row's own stamp is committed.
+        row["covering_epochs"] = live_epochs(payload)
+        stamp, _why = recorded_surface_stamp(
+            row["run_config"], row["iso"], recorded, committed=stamps
+        )
+        row["recorded_epochs"] = stamp["epochs"] if stamp is not None else None
+        if sv is not None and sv["status"] in REPORTED_SURFACE_CLASSES:
             row["classification"] = {
-                "class": SURFACE_RECORDED_CLASS,
+                "class": sv["status"],
                 "recipe": {
                     "surface": "recorded",
                     "solve_surface_json": sv["solve_surface_json"],
                     "moved": sv["moved"],
+                    "epochs": sv["epochs"],
+                    "covering_epochs": sv["covering_epochs"],
                 },
                 "reproduced": True,
             }
@@ -1385,10 +1459,31 @@ def census(*, keep_payloads: bool = True, fetch_vintages: bool = True) -> dict:
         for m in mismatches
         if m["classification"]["class"] == "unclassified-unreachable-commit"
     ]
-    assert not SOLVE_EPOCHS, (
-        "SOLVE_EPOCHS is non-empty: model __solve_epochs__ before trusting "
-        "key_live_surface"
-    )
+    # The epoch census (capx D100): ``key_live_surface`` carries the live
+    # covering set, so a record is "reproduced once epochs are modelled" when
+    # its covering set is non-empty and it reproduces under EITHER the live key
+    # or its own recorded stamp.
+    epochs_covered = [r for r in rows if r["covering_epochs"]]
+    epochs_summary = {
+        "records_in_an_epoch_scope": len(epochs_covered),
+        "records_whose_stamp_records_epochs": sum(
+            1 for r in rows if r["recorded_epochs"]
+        ),
+        "in_scope_reproduce_live_surface": sum(
+            1 for r in epochs_covered if r["reproduces_live_surface"]
+        ),
+        "in_scope_reproduce_recorded_stamp": sum(
+            1
+            for r in epochs_covered
+            if (r.get("recorded_surface") or {}).get("status")
+            in REPORTED_SURFACE_CLASSES
+        ),
+        "solve_epoch_moved": sum(
+            1
+            for r in rows
+            if (r.get("classification") or {}).get("class") == SOLVE_EPOCH_MOVED_CLASS
+        ),
+    }
     surface_moved = {
         iso: moved_rows(iso)
         for iso in sorted({str(r["iso"]).upper() for r in rows if r["iso"]})
@@ -1437,6 +1532,9 @@ def census(*, keep_payloads: bool = True, fetch_vintages: bool = True) -> dict:
             for m in mismatches
             if m["classification"]["class"] == SURFACE_RECORDED_CLASS
         ),
+        # capx D100: ``__solve_epochs__`` modelled — the per-record covering
+        # set versus what each committed stamp recorded.
+        "solve_epochs": epochs_summary,
         "unclassified": len(unclassified),
         "unclassified_unreachable_commit": len(unreachable),
         # Class (c): the surface rows currently off their declaration, and the
