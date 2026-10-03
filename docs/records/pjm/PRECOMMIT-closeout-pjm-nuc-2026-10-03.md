@@ -126,3 +126,18 @@ cell only if one exists.
 Recorded at launch: the pin SHA, one shard per year 2019–2025 (≤ 6 alive), env `env_016R8xUY4maDbppZ6TEns5V8`, and
 prompts from `scripts/shard_prompt.py --iso PJM --all-years --sha <pin> --lane closeout-pjm-nuc --bundle
 results/calibration/w0_pjm_span --note "closeout-pjm-nuc: nuclear CF rows 2019-22 (R-35/R-38)"`.
+
+### Launch record (2026-10-03 02:58Z)
+
+- **Pin:** `8c3ea46192074cfd422fff6532acc035d37297bb`, the merge of #7109. Its only other new commits are desk-record
+  docs (#7111), which are INERT.
+
+| Year | Shard session | Branch |
+|---|---|---|
+| 2019 | session_01XzUjXbXdF6mtvcjZdTRtuY | `claude/closeout-pjm-nuc-2019` |
+| 2020 | session_01CsWJeQqDBibZhr3tepXCiM | `claude/closeout-pjm-nuc-2020` |
+| 2021 | session_01KGxdVVGLWU6hp7qoGNPqBt | `claude/closeout-pjm-nuc-2021` |
+| 2022 | session_01KZGW4sZqKnu8gkshHoPYBm | `claude/closeout-pjm-nuc-2022` |
+| 2023 | session_011ydS3yQrKgPgK7F51G2mZu | `claude/closeout-pjm-nuc-2023` |
+| 2024 | session_01VAmkXbcQZVuKEmnb3v5dRE | `claude/closeout-pjm-nuc-2024` |
+| 2025 | launched when a slot frees (≤ 6 alive) | `claude/closeout-pjm-nuc-2025` |
