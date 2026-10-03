@@ -89,6 +89,7 @@ import numpy as np
 from market_sim.config.constants import ERCOT_SWCAP_SHED_TIEBREAK_EPS
 from market_sim.model.commitment import compute_monthly_markup
 from market_sim.model.dispatch import DispatchModel, solve_dispatch
+from market_sim.model.loss_demand import reconcile_loss_demand
 from market_sim.model.lp import p0_cache
 from market_sim.model.lp.inplace_floor import (
     availability_feeds_rows,
@@ -232,6 +233,11 @@ class EnergySolveResult:
             to hand this result to a later adaptive pass as ``reuse_p0_from``,
             whose P1 is the identical floored LP under a different storage
             discharge cost and is seeded from it. ``None`` otherwise.
+        loss_demand_netted: ``(n_zones, T)`` MW the P1 demand was reduced by
+            under ``zonal_loss_demand_reconciliation`` — the armed loss
+            surface's dissipation on each zone's received lossy links at the
+            P0 flows (:mod:`market_sim.model.loss_demand`). ``None`` whenever
+            the flag is off or no loss surface is armed.
     """
 
     r0: "DispatchResult"
@@ -249,6 +255,7 @@ class EnergySolveResult:
     p1_seed_fallback: Optional[str] = None
     p0_cache: Optional[dict] = None
     p1_basis: Optional[object] = None
+    loss_demand_netted: Optional[np.ndarray] = None
 
 
 def apply_bid_max_target(mc_bid: np.ndarray, target: np.ndarray) -> np.ndarray:
@@ -738,10 +745,38 @@ def run_energy_solve(
         overrides = p1_kwargs_prep(r0, p1_fleet_arrays)
         if overrides:
             p1_dispatch_kwargs = {**dispatch_kwargs, **overrides}
+    # Demand-basis reconciliation for an armed zonal loss surface
+    # (zonal_loss_demand_reconciliation, closeout-PJM-lossdemand): the
+    # measured demand already contains every T&D loss, so the network's own
+    # dissipation sum(eps * F) at the P0 flows is netted out of each
+    # receiving zone's P1 demand — one pass (rule 10), the (1 - eps) flow
+    # coefficient untouched so the duals keep the measured loss separation.
+    # A changed RHS cannot ride the live P0 model's cost-only re-solve, so an
+    # armed pass always takes the cold P1 route. Off (or no loss surface in
+    # the kwargs): ``p1_demand is demand`` — byte-identical.
+    p1_demand = demand
+    loss_demand_netted = None
+    _link_loss = dispatch_kwargs.get("link_loss")
+    if (
+        getattr(config, "zonal_loss_demand_reconciliation", False)
+        and _link_loss is not None
+        and dispatch_kwargs.get("incidence") is not None
+        and getattr(r0, "flows", None) is not None
+    ):
+        p1_demand, loss_demand_netted = reconcile_loss_demand(
+            demand, r0.flows, dispatch_kwargs["incidence"], _link_loss
+        )
+        logger.info(
+            "zonal_loss_demand_reconciliation: P1 demand netted by %.4f TWh "
+            "(the loss surface's P0 dissipation, sum eps*F; peak %.1f MW)",
+            float(loss_demand_netted.sum()) / 1e6,
+            float(loss_demand_netted.sum(axis=0).max(initial=0.0)),
+        )
     _warm_p1 = (
         _warm
         and p1_fleet_arrays is fleet_arrays
         and p1_dispatch_kwargs is dispatch_kwargs
+        and p1_demand is demand
     )
     # In-place floor re-solve: applies only when the P1 change is a pure
     # floored-fleet swap (a live warm model, a replaced fleet, no kwargs
@@ -755,6 +790,7 @@ def run_energy_solve(
         and not _warm_p1
         and p1_fleet_arrays is not fleet_arrays
         and p1_dispatch_kwargs is dispatch_kwargs
+        and p1_demand is demand
         and os.environ.get("MARKET_SIM_P1_FLOOR_INPLACE", "0") != "0"
     ):
         _rgi = dispatch_kwargs.get("ramp_gen_idx")
@@ -799,6 +835,9 @@ def run_energy_solve(
                 _diag_route, _diag_why = "COLD REBUILD", "MARKET_SIM_WARMSTART=0"
             elif p1_dispatch_kwargs is not dispatch_kwargs:
                 _diag_route, _diag_why = "COLD REBUILD", "P1 kwargs overridden"
+            elif p1_demand is not demand:
+                _diag_route = "COLD REBUILD"
+                _diag_why = "P1 demand reconciled (zonal_loss_demand_reconciliation)"
             elif _diag_toggle == "0":
                 _diag_route = "COLD REBUILD"
                 _diag_why = (
@@ -914,7 +953,7 @@ def run_energy_solve(
             # basis-independent (warm-start class: marginal-tie reshuffle
             # only). The apply and the optional P1 export land in
             # ``p1_post`` of the markup attribution below.
-            _p1_model = DispatchModel(p1_fleet_arrays, demand, **p1_dispatch_kwargs)
+            _p1_model = DispatchModel(p1_fleet_arrays, p1_demand, **p1_dispatch_kwargs)
             _apply = getattr(_p1_model, "apply_cross_year_basis", None)
             _p1_seeded = bool(_apply(_seed_basis)) if _apply is not None else False
             # --- OPTIMALITY GUARD on the seeded solve (PERF-C S1) ----------
@@ -958,7 +997,7 @@ def run_energy_solve(
                 _p1_seeded = False
                 _p1_model = None
                 p1 = solve_dispatch(
-                    p1_fleet_arrays, demand, mc=mc_bid, **p1_dispatch_kwargs
+                    p1_fleet_arrays, p1_demand, mc=mc_bid, **p1_dispatch_kwargs
                 )
             if export_p1_basis and _p1_seeded:
                 _export = getattr(_p1_model, "export_cross_year_basis", None)
@@ -975,7 +1014,7 @@ def run_energy_solve(
             )
         else:
             p1 = solve_dispatch(
-                p1_fleet_arrays, demand, mc=mc_bid, **p1_dispatch_kwargs
+                p1_fleet_arrays, p1_demand, mc=mc_bid, **p1_dispatch_kwargs
             )
     _t5 = time.perf_counter()
 
@@ -1103,6 +1142,7 @@ def run_energy_solve(
         p1_seed_fallback=_p1_seed_fallback,
         p0_cache=_p0_cache_provenance,
         p1_basis=_p1_basis,
+        loss_demand_netted=loss_demand_netted,
     )
 
 
