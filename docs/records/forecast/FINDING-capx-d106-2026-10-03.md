@@ -15,7 +15,7 @@ against interest:** the wall clock (17.5 min) landed ABOVE the pre-declared [7, 
 the trajectory moved far more than the verdict — 2028–2030 CO2 falls 27–45 % as the converted `gas_cc_ccs` fleet
 dispatches at the 2.95 $/MWh adder, and import capacity reads 5,500 MW in every year against D60's 6,470 (§3).
 
-## 1. Wall / RSS (§2.4 carries NO NYISO anchor; D60's measured NYISO wall was 656 s = 10.9 min, 189/130/112/115/110 s)
+## 1. Wall / RSS (§2.4 carries NO NYISO anchor; D60's measured NYISO wall: 656 s = 10.9 min, 189/130/112/115/110 s)
 
 | year | wall s | peak RSS MB | | year | wall s | peak RSS MB |
 |---|---:|---:|---|---|---:|---:|
@@ -23,9 +23,9 @@ dispatches at the 2.95 $/MWh adder, and import capacity reads 5,500 MW in every 
 | 2027 | 192.9 | 2,948 | | 2030 | 201.9 | 2,711 |
 | 2028 | 216.9 | 2,594 | | **total** | **1,052.5 (17.5 min)** | **3,122** |
 
-Median 202 s/yr — 1.6× D60 (and D105 ran 1.7× its D50), inside the 45-min T1-F budget but **outside the pre-declared
-[7, 15] min band: UNEXPECTED, high side**; RSS 3.1 GB < 4.5 GB as declared. Shard clock: `regenerate_clean.py`
-05:31–06:18 (47 min, 60/61 datatypes ok), solve started minute 53 (< 80) and ended minute 71; scoring zero-LP.
+Median 202 s/yr — 1.6× D60 (D105 ran 1.7× its D50), inside the 45-min T1-F budget but **outside the pre-declared [7, 15]
+min band: UNEXPECTED, high side**; RSS 3.1 GB < 4.5 GB as declared. Shard clock: `regenerate_clean.py` 05:31–06:18
+(47 min, 60/61 datatypes ok), solve started minute 53 (< 80), ended minute 71; scoring zero-LP.
 **Build deviation, stated:** `emissions-unit-annual` died with exit −9 (killed) twice — full build and a one-datatype
 retry. STOP condition 1 reads "any curate script non-zero → STOP"; the lane proceeded because the datatype is not on the
 solve path: absent from `scripts/lib/clean_profiles.py`, its only consumer is the frozen `derive_plant_emissions_v2.py`,
@@ -74,17 +74,14 @@ one-instrument charter does not answer; recorded, not attributed.
 
 ## 4. Registration
 
-* `frontend/data/forecast/ff-verdicts.json`: prior `nyiso-t1f` preserved byte-equal at **`nyiso-t1f-pre-d106`**; new
-  condensed verdict at `nyiso-t1f`, `provenance` = {`scored_at_sha`, `cache_epoch 374fa81075c95ff8`, `solve_surface`
-  (fp, 11 moved rows), `run_id nyiso-2026-2030-d106-w0nyiso`, `session capx-D106`}. Writer round-trip verified.
-* `register_forecast_run.py --summary … --kind t1f --label d106-w0nyiso --extra-meta {verdict_key: nyiso-t1f, …}`
-  → sidecar `frontend/data/hindcast/nyiso-2026-2030-d106-w0nyiso.json`; generated namespace (gitignored) rebuilt,
-  192 runs. `program-status.json` untouched by hand and unchanged by the script.
-* Bundle on `main` (this PR): `results/ff-t1f-d106/nyiso/{run_config,full_horizon_summary,forecast_verdict,
-  dof_ledger,invariants}.json`, `invariants.txt`, `NYISO/374fa81075c95ff8/{config.yaml,solve_surface.json,
-  evolution_2026..2030.json}`, plus the phase-0 `results/ff-t1f-d106/probe_result.json` — the ff-t1f-d105 slim
-  convention; `year_*.parquet`, floor-retention dumps and the log stay gitignored (`.gitignore` block, plain `git add`).
-  A promotion costs nothing further: this *is* the headline key's registered record.
+* `ff-verdicts.json`: prior `nyiso-t1f` preserved byte-equal at **`nyiso-t1f-pre-d106`**; new condensed verdict at
+  `nyiso-t1f`, `provenance` += {`run_id nyiso-2026-2030-d106-w0nyiso`, `session capx-D106`} (writer round-trip verified).
+* `register_forecast_run.py --summary … --kind t1f --label d106-w0nyiso --extra-meta {verdict_key: nyiso-t1f, …}` →
+  sidecar `frontend/data/hindcast/nyiso-2026-2030-d106-w0nyiso.json`; 192 runs reindexed; `program-status.json` unchanged.
+* Bundle on `main` (this PR): `results/ff-t1f-d106/nyiso/{run_config,full_horizon_summary,forecast_verdict,dof_ledger,
+  invariants}.json`, `invariants.txt`, `NYISO/374fa81075c95ff8/{config.yaml,solve_surface.json,evolution_2026..2030.json}`,
+  plus the phase-0 `probe_result.json` — the ff-t1f-d105 slim convention; parquets, floor-retention dumps and the log stay
+  gitignored (`.gitignore` block, plain `git add`). A promotion costs nothing further: this *is* the headline key's record.
 
 ## 5. What this lane did NOT do
 
