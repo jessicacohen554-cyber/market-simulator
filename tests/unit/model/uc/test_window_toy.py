@@ -57,7 +57,9 @@ def test_cluster_params_from_toy(uc_params_frame):
     assert list(p.family) == ["cc", "ct"]
     assert p.integer.tolist() == [True, False]
     assert p.n_units[0] == 2 and p.pbar_mw[0] == 100.0 and p.mlf[0] == 0.5
-    assert p.ut_h[0] == 6 and p.dt_h[0] == 4
+    assert (
+        p.ut_h[0] == 6 and p.dt_h[0] == 6
+    )  # ut measured; dt = NREL f-class (hr 7.0 < 7.5)
     assert p.noload_mmbtu_h[0] == 50.0  # 100 MMBtu/h plant / 2 units
     assert p.src_noload[0] == "uc-params" and p.src_mlf[1].startswith("MIN_STABLE")
 
@@ -100,7 +102,8 @@ def test_min_down_holds_after_a_stop(uc_params_frame):
     _, fa, demand, mc, dk = toy_inputs(T, night_mw=250.0, day_mw=250.0)
     p = build_uc_cluster_params(fa, "NEISO")
     n_int = 1
-    w_hist = np.zeros((n_int, 3))
+    dt = int(p.dt_h[0])
+    w_hist = np.zeros((n_int, dt - 1))
     w_hist[0, -1] = 2.0  # both units stopped in hour t0-1
     w = _window(
         fa,
@@ -110,15 +113,15 @@ def test_min_down_holds_after_a_stop(uc_params_frame):
         p,
         u_prev=0,
         noload_usd_h=10.0,
-        v_hist=np.zeros((n_int, 3)),
+        v_hist=np.zeros((n_int, dt - 1)),
         w_hist=w_hist,
     )
     res = solve_window(w, OPTS)
-    # hours 0..2 (dt - 1 = 3 hours after the stop) cannot carry a unit...
-    assert (res.u[0, :3] == 0).all(), res.u
+    # hours 0..dt-2 (dt - 1 hours after the stop) cannot carry a unit...
+    assert (res.u[0, : dt - 1] == 0).all(), res.u
     # ...and the demand there is served by the CT + baseload, with slack only
     # if physically needed (250 - 60 - 150 = 40 MW of slack: priced at VOLL).
-    assert res.u[0, 3:].max() >= 1
+    assert res.u[0, dt - 1 :].max() >= 1
 
 
 def test_warm_start_from_own_solution_is_accepted_at_the_root(uc_params_frame):
@@ -164,3 +167,38 @@ def test_units_online_profile_rounds_up(uc_params_frame):
     d[0, :] = [0.0, 1.0, 100.0, 150.0]
     u = units_online_profile(p, d)
     assert u[0].tolist() == [0, 1, 1, 2]
+
+
+def test_storage_boundary_init_carried_and_terminal_one_sided(uc_params_frame):
+    """A storage unit: the cyclic SOC row becomes ``SOC[0] = SOC_init + ...`` and the
+    last hour's SOC is bounded below by the P0 terminal level (DESIGN section 2.2)."""
+    _, fa, demand, mc, dk = toy_inputs(T, day_mw=190.0)
+    dk = dict(
+        dk,
+        storage_power_cap=np.array([50.0]),
+        storage_energy_cap=np.array([200.0]),
+        storage_zone_idx=np.array([0]),
+        eta_chg=np.array([0.95]),
+        eta_dis=np.array([0.95]),
+    )
+    p = build_uc_cluster_params(fa, "NEISO")
+    inputs = slice_window_inputs(fa, demand, dk, 0, T)
+    n_int = 1
+    state = WindowState(
+        u_prev=np.zeros(n_int),
+        v_hist=np.zeros((n_int, 0)),
+        w_hist=np.zeros((n_int, 0)),
+        soc_prev=np.array([120.0]),
+        p_prev=None,
+        avail_prev=None,
+    )
+    w = UcWindowModel(
+        inputs, p, mc, np.full((n_int, T), 200.0), state, soc_terminal=np.array([150.0])
+    )
+    res = solve_window(w, OPTS)
+    soc = res.storage_soc[0]
+    chg = res.col_value[w.layout.chg_col(0, 0)]
+    dis = res.col_value[w.layout.dis_col(0, 0)]
+    # hour-0 balance from the carried level, not from hour T-1
+    assert abs(soc[0] - (120.0 + 0.95 * chg - dis / 0.95)) < 1e-6
+    assert soc[T - 1] >= 150.0 - 1e-6

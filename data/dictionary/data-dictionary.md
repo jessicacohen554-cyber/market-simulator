@@ -125,8 +125,8 @@ snapshot).
 | carb-cap-schedule | — | n/a |
 | coal-basin-price | national/regional (EIA Annual Coal Report, by producing region) | n/a |
 | coal-mining-ppi | national (BLS PPI, coal) | n/a |
-| coal-stocks | national (EIA-923 Schedule 2, by plant) | n/a |
-| coal-receipts | national (EIA-923 Page 5, by plant) | n/a |
+| coal-stocks | national (EIA-923 Schedule 2, by plant) | 2015–2024 |
+| coal-receipts | national (EIA-923 Page 5, by plant) | 2017–2025 |
 | stb-coal-loadings | national (STB EP 724, by carrier x region) | n/a |
 | nwpp-plant-basis-energy | NWPP only (one committed CSV, year x family) | n/a |
 | carbon-auction-results | — | n/a |
@@ -1090,7 +1090,7 @@ no-load heat input) for the MILP unit-commitment stage. Schema:
 | `lsl_mw` | `float64` | `mw` | no | Plant low sustainable limit: p5 of the summed gross load over online plant-hours (load >= max(1 MW, 0.05 x HSL)). |
 | `mlf` | `float64` | `fraction` | no | Minimum stable fraction when online, lsl_mw / hsl_mw, in [0, 1]. |
 | `ut_h` | `int64` | `hours` | no | Minimum up time: p25 of the measured on-run lengths of the plant series (hours), at least 1. |
-| `dt_h` | `int64` | `hours` | no | Minimum down time: p25 of the measured off-gap lengths between on-runs (hours), at least 1. |
+| `dt_h` | `int64` | `hours` | no | Measured off-gap p25 between on-runs (hours), at least 1. DIAGNOSTIC: the engine's minimum down time is the published class value (an observed idle gap is usage, not the physical restart bar). |
 | `noload_mmbtu_h` | `float64` | `mmbtu_per_hour` | yes | Plant no-load heat input: the sum over fitted units of the OLS intercept of heatInput on grossLoad over online hours (opTime >= 1, grossLoad > 0, heatInput > 0; >= 200 points spanning >= 10 % of the unit peak; intercept floored at 0). Null when no unit of the plant fits. |
 | `noload_units_fitted` | `int64` | `none` | no | Units whose intercept regression met the fit screen. |
 | `noload_r2_median` | `float64` | `fraction` | yes | Median R^2 across the plant's fitted units; null when none fit. |

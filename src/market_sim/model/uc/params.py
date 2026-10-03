@@ -98,7 +98,8 @@ class UcClusterParams:
         pbar_mw: ``(n_c,)`` MW per unit, fleet capacity / ``n_units``.
         mlf: ``(n_c,)`` minimum stable fraction when online.
         su_per_mw: ``(n_c,)`` start cost $/MW (capacity-weighted members).
-        ut_h / dt_h: ``(n_c,)`` minimum up / down hours.
+        ut_h / dt_h: ``(n_c,)`` minimum up / down hours (``dt_h`` always the
+            published class value; ``ut_h`` measured where a plant row exists).
         noload_mmbtu_h: ``(n_c,)`` plant no-load heat input per UNIT (MMBtu/h).
         anchor_gen: ``(n_c,)`` the largest member — its implied $/MMBtu prices
             the no-load fuel.
@@ -367,9 +368,16 @@ def build_uc_cluster_params(
             src_n[c] = "uc-params"
             mlf[c] = float(np.clip(float(row.mlf), 0.0, 1.0))
             src_mlf[c] = "uc-params"
+            # Measured minimum RUN (p25 of the plant's on-runs: an observed run
+            # bounds a min-run constraint from above, the nyiso-90 / SPP-44
+            # convention). The minimum DOWN time stays the PUBLISHED class
+            # value: a measured off-gap is how long a unit chose to stay off
+            # (a peaker's idle week), not the physical restart bar, and the E1
+            # gate reads the physical bar (rule 18) — the posture family's own
+            # source. ``uc-params.dt_h`` is kept as a diagnostic column.
             ut_h[c] = max(int(row.ut_h), 1)
-            dt_h[c] = max(int(row.dt_h), 1)
-            src_utdt[c] = "uc-params"
+            dt_h[c] = max(int(round(dt_tab[c])), 1)
+            src_utdt[c] = "uc-params(ut)/class-table(dt)"
         else:
             src_n[c] = "fleet-row" if pc <= 0 else "none->1"
             mlf[c] = float(MIN_STABLE_PCT_PHYSICAL.get(group, 0.0))
