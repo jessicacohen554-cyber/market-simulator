@@ -14,38 +14,58 @@ CALIBRATED keeper. The text below would replace it.
 
 ## Statement 1 — C1 COAL_BIT 2019 / 2020 / 2021 (+19.81 / +13.18 / +16.58 TWh, band ≈ ±8 TWh)
 
-> **What the model lacks.** Real bituminous coal in PJM 2019–21 does not load to its available capacity when it
-> is in the money. In hours where coal clears in both the model and reality (real implied HR ≥ 10), the LP runs
-> COAL_BIT at 0.98 / 0.95 / 0.99 of its available `cap_mw`. CAMPD shows 0.90 / 0.88 / 0.91 against the same
-> capacity, about 2–3 GW of in-money headroom that real units held back (NEXT-29 S2).
+**Status: a draft pending PJM-NEXT-31, not a frontier to sign.**
+- PJM-NEXT-30 (`docs/records/pjm/FINDING-pjm-next-30-coalbit-inmoney-loading-2026-10-03.md`) decomposed the
+  in-money loading object, and its §4 owner ruling charters PJM-NEXT-31: an outage-extract repair, solved on all
+  seven years.
+- This statement is signable only for the residual left after that repair.
+
+The COAL_BIT gap has two separate parts.
+
+### 1a. Capability overstatement: a rule-14 object, ROUTED (not frontier)
+
+- **The size.** The keeper's `cap_mw` sits about 0.5–1.9 GW above what COAL_BIT plants revealed they could deliver
+  that year or week (NEXT-30 §2, pieces basis + derate + offline).
+- **What it is.** 62–89 % of it falls in CAMPD whole-unit dark hours that the keeper's outage windows do not carry.
+  The rest is a rating basis at small plants (evidence appended to `coal_nameplate_summer_derate`, still U).
+- **It is present in every year, 2023/24 included.** It is a measured-input defect (rule 14), not a model-class
+  limit. It is routed to NEXT-31 (owner ruling: build the extract repair and keep it on structure even if 2023/24
+  regress, rule 1).
+
+### 1b. Merit-position residual: the CANDIDATE frontier (after NEXT-31)
+
+> **The cancellation.** The 2023/24 COAL_BIT pass is a cancellation, not a match. In NEXT-29's S2 hours (real
+> implied HR ≥ 10), the model loads in-money coal below real in 2023/24 (loading piece −340 / −517 MW), and that
+> offsets the same capability overstatement that adds to the gap in the fail years (NEXT-30 §2).
 >
-> **Why it is within-plant.** The excess is within-plant loading, not across-plant ordering. The keeper's
-> within-plant loading contrast is 0.66 / 0.69 / 0.56 against real 0.30 / 0.25 / 0.19, while the across-plant
-> order is close to real (NEXT-24 §1–2).
+> **What separates the years.** Only the model's own coal merit position against the price. The model runs COAL_BIT
+> at 0.98 / 0.95 / 0.99 of available `cap_mw` in 2019–21, against CAMPD 0.90 / 0.88 / 0.91
+> (`docs/records/pjm/FINDING-pjm-next-29-lowhour-price-setters-2026-10-02.md` S2). It backs off below real in
+> 2023/24. Real coal does neither.
 >
-> **Why it is not the price floor.** It shows in every real-price bin. The low-price hours carry only 14–25 % of
-> the gap (NEXT-29 S1).
+> **Where it is not.** It is not the low-price floor: it appears in every real-price bin, and the low hours carry
+> 14–25 % (NEXT-29 S1). It is within-plant (keeper loading contrast 0.66 / 0.69 / 0.56 vs real 0.30 / 0.25 / 0.19,
+> NEXT-24).
 >
-> **Why it is year-specific.** It is ~0 in 2023/24, where the in-money loading matches (0.80 / 0.80).
->
-> **What the LP cannot express.** A cost-based, hourly-independent LP dispatches every in-money MW of an available
-> unit. The real fleet's behaviour cannot be written as a measured, forward-reproducible input under rules 13 and 24.
-> That behaviour is partial loading of in-money coal: reserve and regulation holding (real coal carried
-> 26 / 47 / 17 % of synchronized reserve in 2019–21, census 0c), fuel and contract conduct, and offer conduct
-> above cost.
+> **Why the model cannot express it.** A cost-based, hourly-independent LP dispatches every in-money MW at its
+> offer. The real fleet's price-flat loading cannot be written as a measured, forward-reproducible input under rules
+> 13 and 24. That loading reflects reserve holding (the IMM coal-held reserve is 0.7–2.2× the NEXT-30 loading
+> piece), fuel and contract conduct, and offer conduct above cost. Every channel that sets the coal offer level and
+> shape is adjudicated.
 
 **Evidence chain.**
 
 | record | what it established |
 |---|---|
-| NEXT-17 | LOAD carries 80–100 % of the gap. Coal's own offers do not discriminate the years (RoR 1.07 / 1.24 / 1.05). |
+| NEXT-17 | LOAD carries 80–100 % of the gap. Own offers do not discriminate the years. |
 | NEXT-24 | The excess is within-plant and year-specific. |
-| NEXT-27 | Per-year online_frac is dispatch-inert (Δprice ≤ 2e-8). The over-run is economic, not floor-forced. |
-| NEXT-28 | The no-load committed-rung floor is 10–50× too small (unload 0.31–0.60 TWh against a 3 TWh bar). Route closed, R-30. |
-| NEXT-29 | The low-hour floor is not the C1 operand. The operand is in-money loading. |
-| closeout L2 | Incremental HR collapses to committed-rung pricing. Closed at phase 0. |
-| R-13 | `gas_offer_margin_anchor_vintage` stays R: S4a/S3 fail, near-inert on price. |
-| wave-1 0c | Coal already sits in the per-generator reserve pool, so L1 as written is a no-op. The model reserve dual is ≈ $0. |
+| NEXT-27 | Per-year online_frac is dispatch-inert. The over-run is economic. |
+| NEXT-28 | The no-load committed-rung floor is 10–50× too small. Route closed, R-30. |
+| NEXT-29 | The floor is not the operand. In-money loading is. |
+| NEXT-30 | Overstatement vs merit position, and the 2023/24 cancellation. |
+| closeout L2 | Collapses to committed-rung pricing. |
+| R-13 | `gas_offer_margin_anchor_vintage` R. |
+| wave-1 0c | L1 reserve-pool membership is a no-op, since coal is already a member. |
 | Elliott v2 | 2022 is data-limited (R-26). |
 
 **Levers falsified** (PJM shard `mechanism-matrix/PJM.js`):
@@ -68,21 +88,17 @@ CALIBRATED keeper. The text below would replace it.
 | K, falsified as COAL_BIT levers | per-year online_frac | NEXT-27 |
 | K, falsified as COAL_BIT levers | the `pjm_midcurve_belt` L2 form | |
 | K, falsified as COAL_BIT levers | the coal self-schedule floor | NEXT-12/24/26 |
+| K, falsified as COAL_BIT levers | `coal_drop_pof` | NEXT-30 |
 | U, unreachable or double-counting | `coal_fuel_inventory` | |
-| U, unreachable or double-counting | `coal_nameplate_summer_derate` | |
 | U, unreachable or double-counting | `coal_offer_net_revenue_margin`, `coal_peak_offer_margin`, `coal_perplant_offer_level` | offers corpus unit-masked |
 
-**What would re-open it.**
-- **NEXT-30 per-unit decomposition (zero LP).** This is the open item. CAMPD unit-hourly output against the model's
-  per-unit `cap_mw` in S2 hours, split into:
-  - derates and outages outside the keeper's windows;
-  - reserve and regulation headroom;
-  - the net-vs-gross / nameplate basis of `cap_mw`;
-  - plant concentration (the top 10 plants carry 65–73 %).
-
-  Any measured, forward-admissible part of that decomposition is an input repair, not a frontier.
-- Unit-identified PJM offers (the DataMiner corpus is masked).
+**What would re-open 1b.**
+- NEXT-31's all-years result. If the repair moves the fail years and 2023/24 differently from NEXT-30's
+  per-MW-of-cap prediction, 1b is re-measured on the repaired keeper.
+- Unit-identified PJM offers.
 - An online-gated synchronized-reserve mechanism that clears rule 19.
+
+**Recommended card.** Sign 1b only after NEXT-31 reports, and re-measure it on whatever keeper NEXT-31 leaves.
 
 ---
 
@@ -134,5 +150,5 @@ CALIBRATED keeper. The text below would replace it.
 2. **L1 no-op not recorded.** Wave-1 0c found L1 ("coal in the per-generator reserve pool") a no-op, because coal is
    already a member. The `reserve_pergen` cell's evidence does not record that, and plan §3.6 still names L1 as the
    COAL_BIT route.
-3. **COAL_BIT conflict.** NEXT-29 §3 calls COAL_BIT card (a) **"OPEN, not a model-class limit"** and proposes
-   NEXT-30. A model-class frontier signed now would contradict the latest record.
+3. **COAL_BIT status.** NEXT-29 and NEXT-30 both keep card (a) "OPEN, not a model-class limit". This draft is
+   therefore split: 1a is routed to NEXT-31 (rule 14), and 1b is the candidate frontier, pending NEXT-31.
