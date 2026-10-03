@@ -170,6 +170,7 @@ def slice_window_inputs(
     t0: int,
     t1: int,
     p0_dispatch: np.ndarray | None = None,
+    free_budget_units: bool = False,
 ) -> WindowInputs:
     """Build the window inputs from the year's (DESIGN section 2.1).
 
@@ -180,6 +181,9 @@ def slice_window_inputs(
         t0, t1: The window's hour range.
         p0_dispatch: ``(n_gen, T)`` P0 dispatch; the budget-governed rows are
             pinned to it (``None`` only in tests that pass no budget family).
+        free_budget_units: Leave the budget-governed rows free within their
+            availability instead of pinning them — the ladder's P0 stand-in
+            (``uc_bench._relaxation_as_p0``) only; never the production hook.
 
     Raises:
         ValueError: A refused kwarg is present (:data:`REFUSED_KWARGS`).
@@ -205,7 +209,7 @@ def slice_window_inputs(
         if k not in BUDGET_KWARGS and k != "T"
     }
     fleet_w = _slice_obj(fleet, t0, t1, T)
-    if pinned_gens.size:
+    if pinned_gens.size and not free_budget_units:
         if p0_dispatch is None:
             raise ValueError(
                 "budget-governed generators need the P0 dispatch to pin to"
@@ -281,28 +285,36 @@ class WindowResult:
     warm_accepted: bool = False
 
 
-def _state_cyclic_rows(
-    h: highspy.Highs, first_cols: np.ndarray, last_cols: np.ndarray
-) -> np.ndarray:
-    """The cyclic balance row of each state column pair ``(first, last)``.
-
-    The production builders write the hour-0 balance with ``+1`` on the
-    state's hour-0 column and ``-1`` on its hour-``T-1`` column (the SOC block
-    of ``rows.build_constraints``). The row is located on the LP HiGHS holds,
-    so no builder internals are assumed beyond those two coefficients.
-    """
+def _lp_matrix_csc(h: highspy.Highs) -> sp.csc_matrix:
+    """The constraint matrix HiGHS holds, as scipy CSC (whichever format HiGHS stores)."""
     lp = h.getLp()
     a = lp.a_matrix_
     start = np.asarray(a.start_, dtype=np.int64)
     index = np.asarray(a.index_, dtype=np.int64)
     value = np.asarray(a.value_, dtype=float)
+    n_row, n_col = int(lp.num_row_), int(lp.num_col_)
+    if a.format_ == highspy.MatrixFormat.kRowwise:
+        return sp.csr_matrix((value, index, start), shape=(n_row, n_col)).tocsc()
+    return sp.csc_matrix((value, index, start), shape=(n_row, n_col))
+
+
+def _state_cyclic_rows(
+    A: sp.csc_matrix, first_cols: np.ndarray, last_cols: np.ndarray
+) -> np.ndarray:
+    """The cyclic balance row of each state column pair ``(first, last)``.
+
+    The production builders write the hour-0 balance with ``+1`` on the
+    state's hour-0 column and ``-1`` on its hour-``T-1`` column (the SOC block
+    of ``rows.build_constraints``). The row is located on the LP HiGHS holds
+    (``A``), so no builder internals are assumed beyond those two coefficients.
+    """
     out = np.full(first_cols.size, -1, dtype=np.int64)
     for i, (c0, c1) in enumerate(zip(first_cols, last_cols)):
-        rows1 = index[start[c1] : start[c1 + 1]]
-        vals1 = value[start[c1] : start[c1 + 1]]
-        rows0 = index[start[c0] : start[c0 + 1]]
-        vals0 = value[start[c0] : start[c0 + 1]]
-        cand = set(rows1[vals1 < 0.0].tolist()) & set(rows0[vals0 > 0.0].tolist())
+        col1 = A.getcol(int(c1))
+        col0 = A.getcol(int(c0))
+        rows1 = col1.indices[col1.data < 0.0]
+        rows0 = col0.indices[col0.data > 0.0]
+        cand = set(rows1.tolist()) & set(rows0.tolist())
         if len(cand) != 1:
             raise RuntimeError(
                 f"could not locate the cyclic state row for columns ({c0}, {c1}): "
@@ -674,16 +686,11 @@ class UcWindowModel:
             [lay.soc_col(s, self.T_w - 1) for s in range(n_s)], dtype=np.int64
         )
         if state.soc_prev is not None:
-            rows = _state_cyclic_rows(self.h, first, last)
-            lp = self.h.getLp()
-            a = lp.a_matrix_
-            start = np.asarray(a.start_, dtype=np.int64)
-            index = np.asarray(a.index_, dtype=np.int64)
-            value = np.asarray(a.value_, dtype=float)
+            A = _lp_matrix_csc(self.h)
+            rows = _state_cyclic_rows(A, first, last)
             for s in range(n_s):
                 r = int(rows[s])
-                sel = index[start[last[s]] : start[last[s] + 1]] == r
-                coef = float(value[start[last[s]] : start[last[s] + 1]][sel][0])
+                coef = float(A[r, int(last[s])])
                 self.h.changeCoeff(r, int(last[s]), 0.0)
                 rhs = -coef * float(state.soc_prev[s])
                 self.h.changeRowsBounds(

@@ -14,12 +14,13 @@ from __future__ import annotations
 
 import pytest
 
+from market_sim.config import paths
 from tests.helpers import requires_raw
 
 pytestmark = pytest.mark.slow
 
 
-@requires_raw
+@requires_raw(paths.RAW_DIR / "campd-unit-level", paths.RAW_DIR / "ISNE_region.parquet")
 def test_neiso_2023_first_window_builds_and_solves(tmp_path):
     from scripts.lib import uc_bench
     from scripts.lib.clean_io import clean_exists
@@ -53,3 +54,4 @@ def test_neiso_2023_first_window_builds_and_solves(tmp_path):
     params = build_uc_cluster_params(cap.fleet_arrays, "NEISO")
     assert params.n_clusters > n_int
     assert set(params.family[params.integer]) <= {"cc", "st_gas", "coal"}
+    assert "ct" in set(params.family)  # CTs are candidates that fail the gate

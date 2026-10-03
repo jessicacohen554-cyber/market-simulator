@@ -94,8 +94,9 @@ columns:
     unit: hours
     nullable: false
     description: >-
-      Minimum down time: p25 of the measured off-gap lengths between on-runs
-      (hours), at least 1.
+      Measured off-gap p25 between on-runs (hours), at least 1. DIAGNOSTIC:
+      the engine's minimum down time is the published class value (an
+      observed idle gap is usage, not the physical restart bar).
   - name: noload_mmbtu_h
     dtype: float64
     unit: mmbtu_per_hour

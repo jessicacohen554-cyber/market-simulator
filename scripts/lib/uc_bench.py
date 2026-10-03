@@ -224,7 +224,13 @@ def _relaxation_as_p0(cap: YearCapture, t0: int, t1: int):
     from market_sim.model.uc.window import slice_window_inputs
 
     inputs = slice_window_inputs(
-        cap.fleet_arrays, cap.demand, cap.dispatch_kwargs, t0, t1, None
+        cap.fleet_arrays,
+        cap.demand,
+        cap.dispatch_kwargs,
+        t0,
+        t1,
+        None,
+        free_budget_units=True,
     )
     model = DispatchModel(inputs.fleet, inputs.demand, **inputs.kwargs)
     res = model.solve(mc=cap.mc_base[:, t0:t1], full_extract=False)
