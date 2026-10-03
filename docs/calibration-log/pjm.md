@@ -7180,3 +7180,19 @@ Q5 is NOT DISCRIMINATING in both populations, so nothing is chartered. Setters a
 (the NEXT-29 cells). Post-hoc: real coal sat dark at prices that clear the keeper's own COAL_BIT offer. 0.47–0.65 of
 the dark MW is in the money at the real zonal DA, so the margin is the keeper's coal offer level, not its price.
 Record: `docs/records/pjm/FINDING-pjm-next-33-slack-hour-price-census-2026-10-03.md`.
+
+## 2026-10-03 — PJM-NEXT-34: COAL_BIT offer build-up census (zero LP) — NOT CHARTERED, no solve
+
+Keeper unchanged (`2026-10-02-w0-pjm-fix2`, NOT-YET). The readings were fixed ex ante (`cd775b97`). On the NEXT-33
+dark-spell plant-hours the keeper COAL_BIT offer sits **below** the plant's measured going cost (own CAMPD operating
+HR × own EIA-923 delivered coal + VOM/adders): −7.4 / −8.6 / −3.0 $/MWh in 2019–21. The carriers are the bituminous
+sigmoid's cheap-gas discount (π 0.68–0.76 in 2019/20) and the bands (b ≈ 0.80; `committed` 0.548).
+- **NOT DISCRIMINATING:** the controls sit further below cost (−11.1 / −8.7, 2023/24).
+- PJM's own LONG_RUN offers in the same hours are also below measured going cost (0.69–0.91 of the weight), and the
+  keeper already floors coal up to them. A raise is refuted on this population, as it was on the full fleet.
+- The Q4 reading as worded holds by construction (the floor makes `P_off ≤ K`); the FINDING discloses this and
+  rests the falsifier on `P_off < G`.
+- Every channel on COAL_BIT 2019–21 (availability, commitment, price, offer level) is now censused without a
+  charter. The frontier text stays with the desk lane.
+
+Record: `docs/records/pjm/FINDING-pjm-next-34-coalbit-offer-buildup-census-2026-10-03.md`.
