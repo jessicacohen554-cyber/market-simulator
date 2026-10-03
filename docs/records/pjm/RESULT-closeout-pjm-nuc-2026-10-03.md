@@ -197,3 +197,95 @@ disk after `hydrate_data` + `regenerate_clean` + the virtuals fetch.
   keeps them alive until the 7-leg promotion merges, because the composer needs every leg's dispatch.
 - **Local copies:** this container's copies will not survive it.
 - **Retention (rule 31):** no solved bundle was deleted, and the incumbent keeper is untouched.
+
+## Addendum B — the 2021 leg (R-50) and the 7-year span
+
+**2021 leg.**
+- **Shard:** session_01Rgo8GrZSHyHBSTc8tnhgJZ (archived), pinned at `e2e296a43a86f70da5babc7f386d1bbc71e0874d`.
+  Branch `claude/closeout-pjm-nuc-2021` @ `61afd4f9`.
+- **Bundle:** 18 files, including `dispatch/2021_P1.parquet` and `hourly/unit_marginal_2021.parquet`; verified
+  with the bytes in hand.
+- **Run:** the R-50 preflight drew 9 GiB of swap (13.36 + 9.0 = 22.4 GiB) and peaked at 13.36 GiB RSS / 17.85 GiB
+  with swap.
+- **Solve:** P0 351.6 s, P1 373.5 s, P1 objective 11,519,999,408.22, unserved energy 0 MWh.
+
+**Composite.** `results/calibration/closeout_pjm_nuc_full_span`, 7 legs. `_pjmnext26_compose_span.py` returned:
+- the recipe equals `w0_pjm_span` on every leg;
+- one shared fingerprint, `d8230f36c0059245`;
+- source SHAs `8c3ea461` (6 legs) and `e2e296a4` (2021), with `--inert-proof` pointing at PRECOMMIT Addendum A.
+
+**The composer accepted the mixed pin.** It is registered as probe `2026-10-03-closeout-pjm-nuc-7yr` (kept off
+`main`).
+
+**2021 readings (Addendum A bands): all PASS.**
+
+| Reading | Predicted | Result |
+|---|---|---|
+| Nuclear Δ | −1.91 ± 0.6 TWh | **−1.904** |
+| Displacement | +1.9 ± 0.5 TWh | **+1.77** thermal, plus net-import +0.12 |
+| C3a 2021 | — | −0.5 % → −0.3 % |
+| C3b 2021 | — | 0.101 → 0.094 |
+
+Displacement by class (TWh): CC_REGULAR +1.37, CT_PEAKER +0.15, COAL_BIT +0.14, CC_CHP +0.03, CT_CHP +0.03,
+ST_GAS +0.02, COAL_WC +0.01.
+
+**Per-(criterion, year) changes vs `w0_pjm_span` across the 7-year span.**
+
+| Year | Criterion | Keeper | 7-year span |
+|---|---|---|---|
+| 2021 | **C1 CT_PEAKER** | **FAIL −8.07** | **PASS −7.92** (FAIL→PASS) |
+| 2021 | C1 COAL_BIT | FAIL +16.58 | FAIL +16.72 |
+| 2021 | C1 CC_REGULAR | PASS −0.60 | PASS +0.77 |
+| 2021 | C2 sysvol gas | PASS (flags CT) | PASS (all in band) |
+| 2021 | C3a / C3b | −0.5 % / 0.101 | −0.3 % / 0.094 |
+| 2021 | C4 gas / coal r | 0.942 / 0.965 | 0.950 / 0.962 |
+| **2022** | **C1 CC_REGULAR** | **PASS +7.95** | **FAIL +8.96** (PASS→FAIL, §3) |
+| 2019 / 2021 / 2022 | C3c | CAVEAT | FAIL* (artefact: no attestation, as in §3) |
+
+The 2019, 2020 and 2022 rows are as §3; 2023–25 are identical.
+
+**Net effect on the undocumented-FAIL set (with an attestation):**
+- **Removed:** C1 CT_PEAKER 2021.
+- **Added:** C1 CC_REGULAR 2022.
+- **Unchanged:** C1 COAL_BIT 2019–21, and C3a / C3b 2022 and 2025.
+
+The determination stays NOT-YET, with one failing cell swapped for another.
+
+### Promotion card (for the owner, via the desk)
+
+**Question.** Promote `2026-10-03-closeout-pjm-nuc-7yr` (the 7-year span on the measured 2019–22 nuclear rows) to
+the PJM keeper, replacing `2026-10-02-w0-pjm-fix2`?
+
+**For (rule 14).**
+- It is the measured input replacing a year-invariant estimate.
+- Nuclear lands within 0.02 TWh of the measured-row prediction in every year.
+- 2023–25 reproduce to the MWh.
+- Zero free parameters are added and no offer bands change.
+- It is one cell better (2021 CT_PEAKER).
+
+**Against / the pre-fixed rule.**
+- 2022 C1 CC_REGULAR flips PASS→FAIL (+7.95 → +8.96 against ±8). The PRECOMMIT rule says HOLD on any flip.
+- The flip is the measured −2.09 TWh nuclear exposing a CC over-dispatch that was already at the band edge.
+
+**Recommendation.** Promote on structure. Record 2022 CC_REGULAR as the NOT-YET criterion and the next PJM lever,
+with this attribution.
+
+**Cost, once ruled.** Zero LP. One `promote_keeper.py` run in the desk's slot. It carries:
+- `unit_marginal` for all 7 years (present in every leg);
+- `fleet_census_<Y>.json`, which the legs do not write (build, or carry over the keeper's — the fleet is unchanged
+  except nuclear availability);
+- the R-36 / R-37 exceptions ledger, carried forward verbatim;
+- an `authorized_price_tuning` block stating "none under the channel";
+- the C3c auto-ledger, which returns once C6 is attested.
+
+**Where things are (rule 34).**
+- The composite and registration go on `claude/closeout-pjm-nuc-probe`, off `main`.
+- The 7 full legs stay on their shard branches:
+  - 2019 @ 959cae91
+  - 2020 @ df0a3478
+  - 2021 @ 61afd4f9
+  - 2022 @ 47a9db84
+  - 2023 @ fbc78864
+  - 2024 @ 998b3905
+  - 2025 @ 57bdb18b
+- The desk keeps these alive until the promotion merges. This container's copies will not survive it.

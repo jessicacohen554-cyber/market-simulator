@@ -1,0 +1,17 @@
+Forecast invariants:
+  [PASS] I1   energy balance             max |supply−demand| = 1.455e-11 MW (year 2027); tol 1.0
+  [PASS] I2   no NaN/inf                 clean
+  [PASS] I3   unserved/dump              ok
+  [PASS] I4   capacity accounting        closes
+  [PASS] I5   no retire-and-reenter      ok
+  [PASS] I6   econ-retirement sanity     ok
+  [PASS] I7   reliability floor          held
+  [PASS] I8   planned-additions gating   ok
+  [PASS] I9   storage integrity          ok
+  [PASS] I10  RPS dual sign+stability    ≥0, stable
+  [PASS] I11  one-pass                   single pass
+  [PASS] I12  reserve-margin band        requirement-implied floor [2.9%, 17.9%]; all in-band
+  [PASS] I13  cobweb detector            smooth
+  [PASS] I14  price sanity               in band
+
+0 FAIL, 0 WARN, 14 checks

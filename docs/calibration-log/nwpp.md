@@ -1002,3 +1002,87 @@ Records:
 - `docs/records/nwpp/FINDING-closeout-nwpp-anchor-2026-10-03.md`
 - `PRECOMMIT-closeout-nwpp-anchor-2026-10-03.md`
 - `RESULT-closeout-nwpp-anchor-2026-10-03.md`
+
+## NWPP-NEXT-23 — 2026-10-03 — COI export leg on CAISO's PNW delivered-cost basis → KEEPER `2026-10-03-nwpp-next-23-coi`
+
+**What changed.** The anchor keeper's recipe plus one new key, `nwpp_coi_pnw_delivery_basis`. The priced COI seam's
+NW→CA export bands now pay CAISO's registered PNW delivered-cost basis, `CAISO_IMPORT_DELIVERY_BASIS["PNW_midC"]`: 5 %
+loss and a $5 wheel, applied as `(band − 5) / 1.05`. That replaces the symmetric 3.0 hurdle. Zero DOF. Seven
+year-isolated shards at `33dc5647`.
+
+**Why.** Phase 0 was zero LP (`FINDING-nwppnext23-price-level-phase0-2026-10-03.md`). In the keeper's COI export
+hours, 60–75 % of the anchor-minus-NW gap is the **measured** MALIN − NW spread (+$9–12), so it is not a model price
+error. The NWPP side had taken 3.0 from CAISO's inactive `WECC_PNW` interface, while CAISO's active ladder prices the
+same corridor on hub + loss + wheel. Rule 19 calls for one physical path with one basis. Owner cards: "Solve H2 PNW
+basis", then "Promote after anchor lane".
+
+**Scores against the NEXT-22b / anchor keeper.** NOT-YET → NOT-YET, 10 → 10 FAIL records, zero flips.
+
+| reading | keeper | this keeper |
+|---|---|---|
+| COI net export 2019 / 2023 / 2024 / 2025 (measured 7.03 / 1.13 / 2.15 / 3.03) | 13.56 / 6.57 / 12.42 / 9.03 TWh | 11.75 / 4.95 / 10.46 / 6.91 |
+| C1 CC_REGULAR 2019 / 2024 / 2025 | +12.65 / +15.39 / +8.86 TWh | +11.94 / +14.80 / +8.02 |
+| C3a 2023 / 2024 / 2025 | −10.4 / −27.1 / −0.4 % | −11.6 / −27.9 / −1.6 % (regression 0.8–1.2 pp) |
+| C3b 2023 | 0.216 | 0.225 |
+| C4 gas 2019 / 2023 / 2024 r | 0.661 / 0.538 / 0.796 | 0.657 / 0.533 / 0.791 (NRMSE better) |
+| C4 coal | PASS all years | PASS all years |
+| BC export 2024 / 2025 | 12.90 / 4.37 TWh | 13.27 / 4.90 |
+
+**Open object.** The residual over-export is the economic **depth** of COI, not the hurdle. Measured CISO-leg flow
+saturates at about 600–800 MW at any spread, while the measured caps are 2,800–5,100 MW (FINDING §E).
+
+**LIVE data drift after the legs, routed to NEXT-24:**
+
+- #7134 coal stocks 2015–17 (`9f2fe6df`);
+- SolveEpoch 2026-10-03b, NWPP 2019–22 nuclear monthly CF rows.
+
+**Prune:** `2026-10-03-closeout-nwpp-anchor-roster` / `closeout_nwpp_anchor_span`.
+
+Records:
+
+- `docs/records/nwpp/FINDING-nwppnext23-price-level-phase0-2026-10-03.md`
+- `PRECOMMIT-nwppnext23-coi-pnw-basis-2019-2025-2026-10-03.md`
+- `RESULT-nwppnext23-coi-pnw-basis-2026-10-03.md`
+
+## NWPP-NEXT-24 — 2026-10-03 — HEAD data re-solve (coal stocks 2015–17 + NWPP nuclear rows) → KEEPER `2026-10-03-nwpp-next-24-head`
+
+**What changed.** Keeper NEXT-23's recipe was replayed unchanged at main HEAD (pin `23beba2a`; `scenario_config` diff
+empty in all seven years) on two measured inputs that landed after its legs:
+
+- #7134 EIA-923 coal stocks 2015–17 (yard maxima for the take floor and monthly pile);
+- SolveEpoch 2026-10-03b, NWPP 2019–22 `NUCLEAR_MONTHLY_CF_BY_YEAR` (Columbia; owner ruling R-35).
+
+It is a rule-14 data re-solve. The close-out desk granted the slot ("rule-14 data re-solve of the R-48 structure").
+
+**Phase 0 (zero LP).**
+
+- **COI economic depth: CLOSED with no admissible driver.** CAISO's own DAM schedule on Malin+Cascade saturates at
+  about 1,000–1,100 MW of a ~2,750 MW OTC. The ETC/TOR set-aside leaves twice the saturation as headroom and is
+  behavioural hourly. The depth is NW supply surplus.
+- **C3a decomposed.** The 2024 −27.8 % is 80 % the Jan 12–17 arctic event; without the top 10 days 2023 reads
+  −6.0 % and 2024 −7.0 %. Dispatch during the event matches EIA-930. The gap is scarcity pricing, not fuel
+  (January delivered gas $4–6.4) and not the water value.
+
+**Scores against keeper NEXT-23 (same HEAD bench render).** NOT-YET → NOT-YET, 9 → 9 FAIL records, zero flips.
+
+| reading | keeper | this keeper |
+|---|---|---|
+| C1 CC_REGULAR 2019 / 2020 / 2024 / 2025 | +11.97 / +5.65 / +14.80 / +7.90 TWh | +12.17 / +6.74 / +14.90 / +7.99 |
+| C4 gas 2019 / 2023 / 2024 r | 0.657 / 0.533 / 0.791 | 0.651 / 0.534 / 0.789 |
+| C4 coal 2019 / 2022 / 2025 r | 0.801 / 0.747 / 0.816 | 0.791 / 0.758 / 0.821 |
+| C3a 2023 / 2024 / 2025 | −11.6 / −27.9 / −1.6 % | −11.6 / −27.8 / −1.6 % |
+| nuclear 2019 / 2020 / 2022 | — | +0.40 / +0.95 / +1.39 TWh |
+| COAL_BIT 2019 / 2020 | — | −1.06 / −1.96 TWh |
+| D-1 failures | 14 | 13 |
+
+**Bench re-render disclosure.** The HEAD bench (CHP/BTM reattribution on main) moves measured CC_REGULAR 2025 by
++0.12 TWh. That flips the outgoing keeper's CC 2025 record FAIL (+8.02) → PASS (+7.90). It is not this run: on the
+old render this run reads +8.11 FAIL.
+
+**Prune:** `2026-10-03-nwpp-next-23-coi` / `nwppnext23_span`.
+
+Records:
+
+- `docs/records/nwpp/FINDING-nwppnext24-coi-depth-phase0-2026-10-03.md`
+- `PRECOMMIT-nwppnext24-data-resolve-2019-2025-2026-10-03.md`
+- `RESULT-nwppnext24-data-resolve-2026-10-03.md`

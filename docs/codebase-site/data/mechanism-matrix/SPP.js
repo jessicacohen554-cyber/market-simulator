@@ -102,6 +102,7 @@ window.MECH_MATRIX_SHARDS.SPP = {
     nwpp_grid_carried_wind_served: { cell: "." },
     nwpp_demand_plant_basis: { cell: "." },
     nwpp_seam_measured_limits: { cell: "." },
+    nwpp_coi_pnw_delivery_basis: { cell: "." },
     ercot_tie_zonal_interchange: { cell: ".", ev: "SPP-21 (2026-09-06) shard seed, no verdict minted (docs/multi-iso/spp-addition-plan-2026-09.md §4 W5 queue / §5 row SPP-21) — n/a: the mechanism's object is ERCOT's own market/registry object and no non-owner ISO has entered this cell at HEAD, so there is no SPP object to arm. Not a verdict; a later lane that identifies an SPP analogue re-opens it as U." },
     ercot_offer_swcap_clip: { cell: ".", ev: "SPP-21 (2026-09-06) shard seed, no verdict minted (docs/multi-iso/spp-addition-plan-2026-09.md §4 W5 queue / §5 row SPP-21) — n/a: the mechanism's object is ERCOT's own market/registry object and no non-owner ISO has entered this cell at HEAD, so there is no SPP object to arm. Not a verdict; a later lane that identifies an SPP analogue re-opens it as U." },
     ercot_swcap_vintage: { cell: "." },

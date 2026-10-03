@@ -1,5 +1,28 @@
 {
  "iso": "NWPP",
- "keeper": "2026-10-03-closeout-nwpp-anchor-roster",
- "note": "NWPP keeper: NEXT-22b recipe re-solved on the roster-free nwpp_plant_basis anchor (R-28/R-48); NOT-YET -> NOT-YET, 0 record flips"
+ "keeper": "2026-10-03-nwpp-next-24-head",
+ "note": "Keeper 2026-10-03-nwpp-next-23-coi recipe replayed unchanged at main HEAD (pin 23beba2a): #7134 EIA-923 coal stocks 2015-17 + SolveEpoch 2026-10-03b NWPP 2019-22 nuclear CF rows. Verdict NOT-YET->NOT-YET, FAIL 9->9, zero flips on the HEAD bench render. Regressions: CC_REGULAR 2019 +11.97->+12.17, 2020 +5.65->+6.74, 2024 +14.80->+14.90, 2025 +7.90->+7.99 TWh; C4 gas 2019 r 0.657->0.651. DISCLOSURE: the HEAD bench re-render (CHP/BTM reattribution on main) flips the outgoing keeper's CC 2025 FAIL(+8.02)->PASS(+7.90); not this run (on the old render this run reads +8.11 FAIL).",
+ "superseded": {
+  "date": "2026-10-03",
+  "former_keeper": "2026-10-03-nwpp-next-23-coi",
+  "reason": "NWPP-NEXT-24 PROMOTION under the close-out desk ruling (rule-14 data re-solve of the R-48 structure; desk session_01ALecU5Wjde4tkbLrnMExT9). Incoming = the former keeper's recipe replayed unchanged at main HEAD (pin 23beba2a; scenario_config diff empty in all 7 years) on two measured inputs: #7134 EIA-923 coal stocks 2015-17 and SolveEpoch 2026-10-03b NWPP 2019-22 NUCLEAR_MONTHLY_CF_BY_YEAR rows. Zero new free parameters. FAIL 9 -> 9, zero flips on the HEAD bench render. Three stores of the former keeper pruned in the promoting session (rule 35(a)); its recipe is in git history (results/calibration/nwppnext23_span at b54e1d84).",
+  "year_set_before_prune": [
+   2019,
+   2020,
+   2021,
+   2022,
+   2023,
+   2024,
+   2025
+  ],
+  "year_set_after": [
+   2019,
+   2020,
+   2021,
+   2022,
+   2023,
+   2024,
+   2025
+  ]
+ }
 }

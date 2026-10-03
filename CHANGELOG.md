@@ -4,6 +4,10 @@
 
 The headline `nyiso-t1f` recipe (plan §2.1a owner posture, `--golden-posture`, no `--set`) re-solved on the W0 keeper under owner ruling Q76: cache key `374fa81075c95ff8` (pre-declared, matched; the move from D60's `19a9690bb12c8459` is the two Q47 CCS default moves plus the eleven moved NYISO solve-surface rows), 14/14 invariants PASS, 17.5 min / 3.1 GB (above the pre-declared 15-min band, inside the 45-min budget), **PROMOTE → PROMOTE** with every FC status unchanged; the prior is preserved at `nyiso-t1f-pre-d106`. Trajectory moved unscored (2028–2030 CO2 −27 to −45 % from `gas_cc_ccs` dispatch at the 2.95 $/MWh adder; import capacity 6,470 → 5,500 MW), recorded unattributed. Bundle `results/ff-t1f-d106/nyiso` (slim), sidecar `nyiso-2026-2030-d106-w0nyiso`. Record: `docs/records/forecast/FINDING-capx-d106-2026-10-03.md`.
 
+## 2026-10-03 — capx D105: NEISO T1-F re-solve on keeper 2026-10-02-w0-neiso (one LP, gate (d))
+
+The headline `neiso-t1f` recipe (plan §2.1a owner posture, `--golden-posture`, no `--set`) re-solved on the W0 keeper under owner ruling Q76: cache key `66fb439918cbefd6` (pre-declared, matched; the move from D50's `18515067bf4d2fbe` is the two Q47 CCS default moves plus the nine moved NEISO solve-surface rows), 14/14 invariants PASS, 11.4 min / 3.2 GB, **PROMOTE → PROMOTE** with every FC status unchanged; the prior is preserved at `neiso-t1f-pre-d105`. Trajectory moved materially (2028–2030 CO2 −41 to −69 %, dispatch of the converted `gas_cc_ccs` fleet at the 2.95 $/MWh adder), recorded unattributed. Bundle `results/ff-t1f-d105/neiso` (slim), sidecar `neiso-2026-2030-d105-w0neiso`. Record: `docs/records/forecast/FINDING-capx-d105-2026-10-03.md`.
+
 ## 2026-10-03 — Solve-container swap is provisioned before data steps; stale inactive swapfile reclaimed (R-50, zero LP)
 
 `scripts/shard_prompt.py` runs `prepare_solve_container.py` first (before hydrate / regenerate / any fetch), keeps the env-pin `eval` at the solve, and emits the gitignored PJM DA-virtuals fetch when the recipe arms `pjm_da_virtual_bids`; `scripts/lib/solve_container.py::provision_swap` counts an inactive swapfile at its path as reclaimable disk and reuses or re-makes it, and the below-target WARNING names the fix and the free disk.
@@ -3300,7 +3304,6 @@ keeper reruns that follow.
   legitimacy-audit C-6 row annotated (NEISO portion resolved), raw-data READMEs,
   border-lmp schema, parameter registry regenerated, calibration-log entry.
 
-
 ## 2026-07-06 (Lane L-5 — doc/code drift sync, gap register G-53–G-58/G-08/G-56)
 
 Prose/comment-only sweep, no behavior changes. Executes `docs/gap-register-2026-07.md`
@@ -4121,7 +4124,6 @@ model-updates, results-calibration, launcher) point at the codebase-site
 pages. Docs realigned: calibration-report skill, CLAUDE.md #13 + Git
 section, README, .gitignore, DESIGN_SYSTEM, codebase doc 06.
 
-
 ## 2026-07-02 (MISO zonal refinement — phase 1: 6-zone topology)
 
 MISO's Midwest is split from the 3-zone copperplate to the **six measured
@@ -4149,7 +4151,6 @@ tail awaits phase-2 reserve co-opt). Docs realigned: methodology spec §1.3
 (transmission/interface groups + MISO topology), CLAUDE.md,
 `docs/multi-iso/04-transmission-zones-and-congestion.md`, MISO data audit
 (superseded banner), parameter citations, zonal-refinement scope status.
-
 
 ## 2026-07-01 (Capacity-deliverability — docs reconciliation, Wave 3)
 

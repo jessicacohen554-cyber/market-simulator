@@ -319,6 +319,7 @@ def inject_reference_price_mc(
     carbon_price: float = 0.0,
     border_anchor: bool = False,
     forward_skill: str | None = None,
+    export_delivery_basis: dict[str, tuple[float, float]] | None = None,
 ) -> bool:
     """Overwrite the reference-price seam rows of ``mc`` with hourly prices.
 
@@ -359,6 +360,12 @@ def inject_reference_price_mc(
     ``interface_reference_prices`` / ``seam_tranche_prices``) — sourced from
     ``ScenarioConfig.neighbor_hr_forward_skill``, default ``None`` (off,
     byte-identical). See that field's docstring.
+
+    ``export_delivery_basis`` maps a seam name to the ``(loss, wheel)``
+    delivered-cost basis its EXPORT leg pays instead of the hurdle (NWPP's COI
+    under ``ScenarioConfig.nwpp_coi_pnw_delivery_basis``; ``None``, the default,
+    is byte-identical): the band's willingness-to-pay per MWh withdrawn at home
+    becomes ``(band - wheel) / (1 + loss)``. Import legs keep the hurdle.
 
     Returns ``True`` when at least one seam row was priced, ``False`` when the
     fleet has no reference-price node (so a non-reference run is untouched).
@@ -444,15 +451,18 @@ def inject_reference_price_mc(
         if priced is not None:
             export_p, import_p, _ = priced
             band = export_p[k] if is_export else import_p[k]
-            mc[row, :] = band - hurdle if is_export else band + hurdle + carbon_adder
         elif aggregate is not None:
             # No load shape: flat aggregate, same for every band (no slope).
-            mc[row, :] = (
-                aggregate - hurdle if is_export else aggregate + hurdle + carbon_adder
-            )
+            band = aggregate
         else:
             unpriced_rows.setdefault(name, []).append(row)
             continue
+        basis = (export_delivery_basis or {}).get(name) if is_export else None
+        if basis is not None:
+            loss, wheel = basis
+            mc[row, :] = (band - wheel) / (1.0 + loss)
+        else:
+            mc[row, :] = band - hurdle if is_export else band + hurdle + carbon_adder
         applied = True
     if unpriced_rows:
         # FAIL CLOSED (S-123 finding §5, director mechanism decision capx-D16):
@@ -1057,6 +1067,16 @@ def apply_reference_price_seam_injections(
     from market_sim.config.interchange_config import INTERFACE_NEIGHBORS
 
     _forward_skill = forward_skill
+    if (
+        config.nwpp_coi_pnw_delivery_basis
+        and iso == "NWPP"
+        and not config.reference_price_interface
+    ):
+        # pjm-119: a mechanism armed where it cannot act raises, never no-ops.
+        raise ValueError(
+            "nwpp_coi_pnw_delivery_basis prices the PRICED COI seam's export "
+            "leg: arm reference_price_interface and priced_interchange with it"
+        )
     # --- 1. Generic reference-price seam (non-CAISO; CAISO uses its dedicated
     #     caiso_reference_price_seam block below, which adds the CARB border
     #     carbon — the generic single-node path never applies to CAISO). ---
@@ -1066,6 +1086,27 @@ def apply_reference_price_seam_injections(
         and iso != "CAISO"
     ):
         _border_anchor = getattr(config, "miso_pjm_border_anchor", False)
+        _export_basis = None
+        if config.nwpp_coi_pnw_delivery_basis and iso == "NWPP":
+            # NWPP-NEXT-23: COI's NW->CA export leg on CAISO's own registered
+            # delivered-cost basis for the same corridor (rule 19).
+            from market_sim.model.interchange.spec import (
+                CAISO_IMPORT_DELIVERY_BASIS,
+                NWPP_SEAM_EXPORT_DELIVERY_TRANCHE,
+            )
+
+            _export_basis = {
+                seam: CAISO_IMPORT_DELIVERY_BASIS[tranche]
+                for seam, tranche in NWPP_SEAM_EXPORT_DELIVERY_TRANCHE.items()
+            }
+            _logger.info(
+                "NWPP %d: seam export delivery basis %s",
+                year,
+                ", ".join(
+                    f"{s} loss {lw[0]:.2f} wheel {lw[1]:.1f}"
+                    for s, lw in _export_basis.items()
+                ),
+            )
         if inject_reference_price_mc(
             fleet_arrays,
             mc,
@@ -1074,6 +1115,7 @@ def apply_reference_price_seam_injections(
             gas_scenario,
             border_anchor=_border_anchor,
             forward_skill=_forward_skill,
+            export_delivery_basis=_export_basis,
         ):
             _logger.info(
                 "%s %d: reference-price interface — %d neighbor seams priced "
