@@ -665,9 +665,28 @@ COMPLETENESS_DIR = DATA_DIR / "completeness"
 #       DataMiner2 rt/da_hrl_lmps type-ZONE archive reduced to model zones by
 #       scripts/data/derive_pjm_zonal_lmp.py), as NYISO and MISO. A benchmark
 #       change only: no scorer constant moves.
+# v3.18 — 2026-10-03 owner ruling R-34 (backcast close-out plan §5.0,
+#       verbatim card choice: "Mask to RT-covered hours"). The C3c MODEL tail
+#       count is masked to the hours the actual RT series covers — the window
+#       the actual count already lives on, and the same isfinite(RT) mask C3a's
+#       demand-weighted monthly MAE (_monthly_mae) applies. The mask is applied
+#       by the render (scripts/render_calibration_html.py ``_tail_hours`` /
+#       ``_gt_count`` ``mask=``), which stamps ``hoursGt200.window = "rt"``;
+#       this scorer is stdlib-only and never sees hourly prices. The coverage
+#       note on a stamped payload states both counts are on the RT-covered
+#       hours instead of "count is a lower bound" (:func:`score_price_tail`).
+#       Live only on CAISO 2021 (RT coverage 0.652: all 88 model tail hours
+#       were Winter Storm Uri, before OASIS RT coverage starts; masked 0 vs 27)
+#       and CAISO 2023 (0.995; 67 -> 51 vs 47, PASS -> PASS); every other
+#       partially covered ISO-year (MISO 2022, SPP 2019-25) reads the same
+#       count masked or not (docs/records/caiso/closeout-caiso-2/
+#       FINDING-closeout-caiso-2-cc-object-2026-10-03.md §3). CAISO 2021 is
+#       relabelled (:data:`C3C_READING_LABELS`). No band, tier, ledger or
+#       budget moves; no determination moves. NO SOLVE RAN. Genealogy:
+#       docs/governance/rule-history.md §28.
 # A STRING from v3.10 on: the float 3.10 == 3.1, which would collide with the
 # v3.1 amendment. Display-only everywhere it is read.
-RUBRIC_VERSION = "3.17"
+RUBRIC_VERSION = "3.18"
 
 # Statuses (per criterion-year and aggregated).
 PASS, CAVEAT, FAIL, SKIPPED = "PASS", "CAVEAT", "FAIL", "SKIPPED"
@@ -973,6 +992,21 @@ PRICE_BENCHMARK_LABEL = {
 # existing coverage mechanism). Only an ISO listed here gets this treatment:
 # every other ISO-year without a reference keeps downgrading exactly as before.
 LABELLED_PRICE_REFERENCE_FROM: dict[str, int] = {"NWPP": 2023}
+
+# Rubric v3.18 (owner ruling R-34, 2026-10-03): the reading a C3c record carries
+# where the pre-mask count mis-stated it. CAISO 2021: the unmasked model count
+# (88 h, all on Winter Storm Uri) fell outside the RT reference window; on
+# like-for-like hours the model under-fires the summer/autumn evening events, the
+# same model class as the ledgered C3c 2024 (import-parity scarcity the LP does
+# not price). Applied only to an RT-window payload (``hoursGt200.window ==
+# "rt"``) with the model UNDER the actual — the direction the ruling reads;
+# fail-closed otherwise. The counts in the text are the record's own.
+C3C_READING_LABELS: dict[tuple[str, int], str] = {
+    ("CAISO", 2021): (
+        "reference-window mismatch; like-for-like under-fire {model:.0f} vs "
+        "{actual:.0f}, C3c-2024 class (owner ruling R-34, 2026-10-03)"
+    ),
+}
 
 # ISOs for which C3c is deliberately NOT scored on the committed benchmark, with
 # the reason the SKIPPED record carries. SOCO: owner ruling 2026-09-28 "Not
@@ -2920,8 +2954,17 @@ def score_price_tail(year: int, ypay: dict, iso: str) -> list[dict]:
         # zero-decimal format printed the self-contradicting "RT coverage 100% —
         # count is a lower bound" for every partial year in the 99.5–99.9 band
         # (CAISO 2023, 0.995; SPP every year, 0.999). caiso-284.
+        # Rubric v3.18 (R-34): a payload stamped ``window == "rt"`` counts the
+        # model on the RT-covered hours, so both counts are like-for-like; an
+        # unstamped (pre-v3.18) payload keeps the old lower-bound note.
+        rt_window = h.get("window") == "rt"
         cov_note = (
-            f"; {gate_lbl} coverage {cov:.1%} — count is a lower bound"
+            (
+                f"; {gate_lbl} coverage {cov:.1%} — model and actual both "
+                f"counted on the {gate_lbl}-covered hours"
+                if rt_window
+                else f"; {gate_lbl} coverage {cov:.1%} — count is a lower bound"
+            )
             if cov < 0.999
             else ""
         )
@@ -2946,26 +2989,29 @@ def score_price_tail(year: int, ypay: dict, iso: str) -> list[dict]:
                 f"model {model:.0f}h [{basis}] vs {gate_lbl} actual {actual:.0f}h "
                 f"({ratio:.2f}×, >${thr:.0f}){settle_note}{cov_note}"
             )
-        out.append(
-            {
-                "criterion": "price_tail",
-                "key": None,
-                "year": year,
-                "status": PASS if ok else FAIL,
-                "classification": None if ok else MODEL_MISS,
-                "metric": (
-                    f"hours {gate_lbl}-expressible "
-                    f"{'settlement price' if settled else 'LMP'} > ${thr:.0f}/MWh"
-                ),
-                "model": model,
-                "actual": actual,
-                "tol": (
-                    f"[{TAIL_LO:g}×, {TAIL_HI:g}×] of {gate_lbl} actual "
-                    f"(|Δ|≤{TAIL_SMALL_COUNT}h when actual <{TAIL_SMALL_COUNT}h)"
-                ),
-                "magnitude": mag,
-            }
-        )
+        rec = {
+            "criterion": "price_tail",
+            "key": None,
+            "year": year,
+            "status": PASS if ok else FAIL,
+            "classification": None if ok else MODEL_MISS,
+            "metric": (
+                f"hours {gate_lbl}-expressible "
+                f"{'settlement price' if settled else 'LMP'} > ${thr:.0f}/MWh"
+            ),
+            "model": model,
+            "actual": actual,
+            "tol": (
+                f"[{TAIL_LO:g}×, {TAIL_HI:g}×] of {gate_lbl} actual "
+                f"(|Δ|≤{TAIL_SMALL_COUNT}h when actual <{TAIL_SMALL_COUNT}h)"
+            ),
+            "magnitude": mag,
+        }
+        label = C3C_READING_LABELS.get((str(iso or "").upper(), int(year)))
+        if label is not None and rt_window and model < actual:
+            rec["reading"] = label.format(model=model, actual=actual)
+            rec["magnitude"] = f"{mag}; reading: {rec['reading']}"
+        out.append(rec)
     # Companion DA basis — reported, never gated (v2.7): the DA count embeds
     # the day-ahead forecast-risk premium a realized-weather backcast is out
     # of scope to price.

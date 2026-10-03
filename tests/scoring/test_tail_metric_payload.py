@@ -30,6 +30,42 @@ _spec.loader.exec_module(rch)
 from scripts import calibration_verdict as cv  # noqa: E402
 
 
+class RtWindowMaskTests(unittest.TestCase):
+    """Rubric v3.18 (owner ruling R-34): the model tail counts only RT-covered hours.
+
+    1 zone, 24 h. The actual RT is NaN for hours 0-11 and finite for 12-23;
+    the model exceeds the threshold at hours 2, 3 and 14. Only hour 14 is on
+    the reference window, so the masked model count is 1 (unmasked 3), and the
+    actual count can only ever see hours 12-23.
+    """
+
+    def setUp(self):
+        self.rt = np.full(24, 50.0)
+        self.rt[:12] = np.nan
+        self.rt[[13, 20]] = 300.0  # two actual tail hours, both covered
+        self.model = np.full(24, 40.0)
+        self.model[[2, 3, 14]] = 500.0
+        self.mask = np.isfinite(self.rt)
+
+    def test_tail_hours_masked_to_rt_window(self):
+        z = {"Z": self.model}
+        self.assertEqual(rch._tail_hours(z, 200.0), 3)
+        self.assertEqual(rch._tail_hours(z, 200.0, mask=self.mask), 1)
+
+    def test_gt_count_masked_to_rt_window(self):
+        self.assertEqual(rch._gt_count(self.model, 200.0), 3)
+        self.assertEqual(rch._gt_count(self.model, 200.0, mask=self.mask), 1)
+
+    def test_actual_counts_only_covered_hours(self):
+        self.assertEqual(rch._gt_count(self.rt, 200.0), 2)
+        self.assertEqual(rch._tail_hours({"hub": self.rt}, 200.0), 2)
+
+    def test_mask_none_is_the_unmasked_count(self):
+        z = {"Z": self.model}
+        self.assertEqual(rch._tail_hours(z, 200.0, mask=None), 3)
+        self.assertIsNone(rch._gt_count(None, 200.0, mask=self.mask))
+
+
 class TailHoursTests(unittest.TestCase):
     def test_empty_is_zero(self):
         self.assertEqual(rch._tail_hours({}, 200.0), 0)
@@ -189,6 +225,53 @@ class TailVerdictWiringTests(unittest.TestCase):
         # No actual file for the ISO-year -> ordc unset -> SKIPPED, never a pass.
         rows = cv.score_price_tail(2024, {"lmp": {}}, "CAISO")
         self.assertEqual(rows[0]["status"], cv.SKIPPED)
+
+
+class RtWindowVerdictTests(unittest.TestCase):
+    """Rubric v3.18 (R-34): the scorer reads the RT-window stamp and the reading."""
+
+    def _with_tail(self, iso, year, rt_gt, cov):
+        cv._TAIL_CACHE = {
+            iso: {str(year): {"da_gt": None, "rt_gt": rt_gt, "rt_coverage": cov}}
+        }
+        self.addCleanup(setattr, cv, "_TAIL_CACHE", None)
+
+    def test_rt_window_payload_states_like_for_like(self):
+        self._with_tail("MISO", 2022, rt_gt=40, cov=0.86)
+        ypay = {"ordc": {"hoursGt200": {"model": 30, "actual": 40, "window": "rt"}}}
+        mag = cv.score_price_tail(2022, ypay, "MISO")[0]["magnitude"]
+        self.assertIn("both counted on the RT-covered hours", mag)
+        self.assertNotIn("lower bound", mag)
+
+    def test_unstamped_payload_keeps_lower_bound_note(self):
+        self._with_tail("MISO", 2022, rt_gt=40, cov=0.86)
+        ypay = {"ordc": {"hoursGt200": {"model": 30, "actual": 40}}}
+        mag = cv.score_price_tail(2022, ypay, "MISO")[0]["magnitude"]
+        self.assertIn("count is a lower bound", mag)
+
+    def test_caiso_2021_reading_on_rt_window_under_fire(self):
+        self._with_tail("CAISO", 2021, rt_gt=27, cov=0.652)
+        ypay = {"ordc": {"hoursGt200": {"model": 0, "actual": 27, "window": "rt"}}}
+        rec = cv.score_price_tail(2021, ypay, "CAISO")[0]
+        self.assertEqual(rec["status"], cv.FAIL)  # the standing rule ledgers it
+        self.assertTrue(
+            rec["reading"].startswith(
+                "reference-window mismatch; like-for-like under-fire 0 vs 27, "
+                "C3c-2024 class"
+            )
+        )
+
+    def test_reading_fails_closed(self):
+        # Not on an unmasked payload, and not on an over-fire.
+        self._with_tail("CAISO", 2021, rt_gt=27, cov=0.652)
+        unmasked = {"ordc": {"hoursGt200": {"model": 0, "actual": 27}}}
+        self.assertNotIn("reading", cv.score_price_tail(2021, unmasked, "CAISO")[0])
+        over = {"ordc": {"hoursGt200": {"model": 88, "actual": 27, "window": "rt"}}}
+        self.assertNotIn("reading", cv.score_price_tail(2021, over, "CAISO")[0])
+        # Another ISO-year never carries it.
+        self._with_tail("CAISO", 2023, rt_gt=47, cov=0.995)
+        y23 = {"ordc": {"hoursGt200": {"model": 0, "actual": 47, "window": "rt"}}}
+        self.assertNotIn("reading", cv.score_price_tail(2023, y23, "CAISO")[0])
 
 
 class SettlementScoringTests(unittest.TestCase):

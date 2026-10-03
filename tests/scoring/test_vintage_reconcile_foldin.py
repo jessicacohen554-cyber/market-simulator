@@ -19,6 +19,8 @@ the offsetting-in-band case the combined reconcile now correctly leaves alone.
 
 import importlib.util
 import unittest
+from unittest import mock
+
 from tests.helpers import REPO_ROOT
 
 REPO = REPO_ROOT
@@ -29,7 +31,20 @@ rch = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(rch)
 
 
+# CAISO, the documented fold BA these cases were written on, is in
+# EIA930_GAS_FOLD_REFUTED since owner ruling R-33 (2026-10-03), so the fold
+# mechanics are pinned on a stand-in BA on the legacy allowlist.
+FOLD_BA = "FOLDBA"
+
+
 class TestVintageReconcileFoldIn(unittest.TestCase):
+    def setUp(self):
+        patcher = mock.patch.object(
+            rch.bs, "EIA930_GAS_FOLDS_GEO_BIOMASS", frozenset({FOLD_BA})
+        )
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
     def _gas_sum(self, cf):
         return round(sum(cf[g] for g in rch._GAS_GROUPS if g in cf), 4)
 
@@ -49,7 +64,7 @@ class TestVintageReconcileFoldIn(unittest.TestCase):
             "biomass": 4.41,
         }
         e930 = {"gas": 85.37, "coal": 0.0}
-        rch.reconcile_vintage_classes(cf, e930, "CAISO")
+        rch.reconcile_vintage_classes(cf, e930, FOLD_BA)
         deflated = 85.37 - 8.08 - 4.41  # 72.88
         self.assertAlmostEqual(self._gas_sum(cf), round(deflated, 4), places=2)
         # The bug was scaling to the full inflated cell — guard against regress.
@@ -112,7 +127,7 @@ class TestVintageReconcileFoldIn(unittest.TestCase):
             "biomass": 4.48,
         }
         before = dict(cf)
-        rch.reconcile_vintage_classes(cf, {"gas": 88.02}, "CAISO")
+        rch.reconcile_vintage_classes(cf, {"gas": 88.02}, FOLD_BA)
         self.assertEqual(cf, before)
 
     def _coal_sum(self, cf):
@@ -128,7 +143,7 @@ class TestVintageReconcileFoldIn(unittest.TestCase):
         below the deflated target so it scales UP, preserving the coal/gas split.
         """
         cf = {"CC_REGULAR": 60.0, "OTHER": 8.0, "biomass": 4.0, "COAL_BIT": 9.0}
-        rch.reconcile_vintage_classes(cf, {"gas": 85.0, "coal": 10.0}, "CAISO")
+        rch.reconcile_vintage_classes(cf, {"gas": 85.0, "coal": 10.0}, FOLD_BA)
         # combined target = (85 + 10) - foldin(8+4) = 83; cur = 60+9 = 69 -> x1.203
         target = 85.0 + 10.0 - (8.0 + 4.0)
         self.assertAlmostEqual(self._gas_sum(cf) + self._coal_sum(cf), target, 1)
@@ -234,8 +249,25 @@ class TestVintageReconcileFoldIn(unittest.TestCase):
             "biomass": 4.41,
         }
         e930 = {"gas": 85.37, "coal": 0.0, "other": 0.0}
-        rch.reconcile_vintage_classes(cf, e930, "CAISO")
+        rch.reconcile_vintage_classes(cf, e930, FOLD_BA)
         self.assertAlmostEqual(self._gas_sum(cf), round(85.37 - 8.08 - 4.41, 4), 2)
+
+    def test_caiso_fold_refuted_scales_to_full_930_gas(self):
+        """R-33: CAISO's 930 gas cell is measured not to carry the fold.
+
+        The same inputs as the total-fold case above scale CAISO gas to the full
+        930 cell (no geo/biomass deflation), as for any clean BA.
+        """
+        cf = {
+            "CC_REGULAR": 60.0,
+            "CT_PEAKER": 5.0,
+            "ST_GAS": 2.68,
+            "OTHER": 8.08,
+            "biomass": 4.41,
+        }
+        e930 = {"gas": 85.37, "coal": 0.0, "other": 0.0}
+        rch.reconcile_vintage_classes(cf, e930, "CAISO")
+        self.assertAlmostEqual(self._gas_sum(cf), 85.37, 2)
 
 
 class TestCemsAnchorCap(unittest.TestCase):

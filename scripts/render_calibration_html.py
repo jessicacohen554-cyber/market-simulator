@@ -857,7 +857,11 @@ def _actual_storage_monthly(e930_year: pd.DataFrame) -> list[float | None] | Non
     return out
 
 
-def _tail_hours(price_by_zone_hourly: dict[str, np.ndarray], threshold: float) -> int:
+def _tail_hours(
+    price_by_zone_hourly: dict[str, np.ndarray],
+    threshold: float,
+    mask: np.ndarray | None = None,
+) -> int:
     """Count hours whose max zonal LMP across the ISO's zones exceeds ``threshold``.
 
     The C3c scarcity-tail proxy (rubric §5) is "hours with zonal LMP > threshold".
@@ -867,6 +871,11 @@ def _tail_hours(price_by_zone_hourly: dict[str, np.ndarray], threshold: float) -
     the hour (a system-wide proxy would dilute it). NaNs (unpadded/missing hours)
     are mapped to -inf so they never count. The actual hub series enters as a
     single "zone", so the same max-across-zones rule reduces to the series itself.
+
+    ``mask`` (rubric v3.18, owner ruling R-34): a boolean per-hour array; when
+    given, only hours where it is True count. The C3c model count passes
+    ``isfinite(actual RT)`` so model and actual are counted on the same
+    RT-covered hours — the mask C3a's ``_monthly_mae`` already applies.
     """
     if not price_by_zone_hourly:
         return 0
@@ -876,7 +885,10 @@ def _tail_hours(price_by_zone_hourly: dict[str, np.ndarray], threshold: float) -
     # NaN = an unpadded/missing hour; map to -inf so an all-missing hour never
     # registers as scarcity (and ``max`` raises no all-NaN-slice warning).
     stack = np.nan_to_num(stack, nan=-np.inf)
-    return int((stack.max(axis=0) > threshold).sum())
+    hit = stack.max(axis=0) > threshold
+    if mask is not None:
+        hit &= np.asarray(mask, dtype=bool)
+    return int(hit.sum())
 
 
 @lru_cache(maxsize=None)
@@ -969,11 +981,20 @@ def _actual_rt_padded(iso: str, year: int, hours: int) -> np.ndarray | None:
     return out
 
 
-def _gt_count(series: np.ndarray | None, cut: float) -> int | None:
-    """Count finite entries of ``series`` strictly above ``cut`` (``None`` -> ``None``)."""
+def _gt_count(
+    series: np.ndarray | None, cut: float, mask: np.ndarray | None = None
+) -> int | None:
+    """Count finite entries of ``series`` strictly above ``cut`` (``None`` -> ``None``).
+
+    ``mask`` restricts the count to hours where it is True (the C3c RT window,
+    rubric v3.18 — see :func:`_tail_hours`).
+    """
     if series is None:
         return None
-    return int(np.nansum(np.asarray(series, dtype=float) > cut))
+    hit = np.asarray(series, dtype=float) > cut
+    if mask is not None:
+        hit &= np.asarray(mask, dtype=bool)
+    return int(np.nansum(hit))
 
 
 @lru_cache(maxsize=1)
@@ -2516,6 +2537,7 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
             thr = TAIL_THRESHOLD.get(iso, 200.0)
             if scar is not None and lmp_scar:
                 rt = _actual_rt_padded(iso, int(year), hours)
+                rt_win = np.isfinite(rt) if rt is not None else None
                 w = ordc._demand_weights(bdir, int(year), hours)
                 lam, lam_s = scar["lmp"], scar["lmp_scarcity"]
                 run_years[int(year)]["lmpScar"] = lmp_scar
@@ -2530,10 +2552,14 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                         if rt is not None
                         else None
                     ),
+                    # Rubric v3.18 (R-34): the model and overlay counts run on
+                    # the RT-covered hours only, the window the actual is
+                    # counted on; ``window`` marks a payload rendered so.
                     "hoursGt200": {
                         "actual": _gt_count(rt, thr),
-                        "model": _gt_count(lam, thr),
-                        "overlay": _gt_count(lam_s, thr),
+                        "model": _gt_count(lam, thr, mask=rt_win),
+                        "overlay": _gt_count(lam_s, thr, mask=rt_win),
+                        "window": "rt",
                     },
                     "hoursGt500": {
                         "actual": _gt_count(rt, 500),
@@ -2556,10 +2582,22 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                 thr = TAIL_THRESHOLD.get(iso, 200.0)
                 actual_hourly = _actual_lmp_hourly(iso, int(year))
                 if actual_hourly is not None and model_price_by_zone:
+                    # Rubric v3.18 (R-34): count the model on the RT-covered
+                    # hours only — an hour with no measured RT price has no
+                    # reference to be scarce against (CAISO 2021: all 88 model
+                    # tail hours fell on Uri, before OASIS RT coverage begins).
+                    rt_pad = _actual_rt_padded(iso, int(year), hours)
                     run_years[int(year)]["ordc"] = {
                         "hoursGt200": {
-                            "model": _tail_hours(model_price_by_zone, thr),
+                            "model": _tail_hours(
+                                model_price_by_zone,
+                                thr,
+                                mask=np.isfinite(rt_pad)
+                                if rt_pad is not None
+                                else None,
+                            ),
                             "actual": _tail_hours({"hub": actual_hourly}, thr),
+                            "window": "rt",
                         }
                     }
         model_runs.append({"label": label, "years": run_years})
