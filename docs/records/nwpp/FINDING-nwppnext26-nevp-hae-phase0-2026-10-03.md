@@ -117,4 +117,13 @@ The keeper's P1 flows are from the NEXT-25 leg branches.
   7.51. Remaining questions: the COI/BC level, CC availability (CAMPD outages), heat rates and per-plant delivered gas
   basis. The CLOSED list in the HANDOFFs applies. In particular, `wefor_residual` is O, and no CC-specific availability
   lever has been adjudicated.
-- **D-1 13 → 16** (2019 COAL_BIT, 2022 CT_PEAKER, 2022 ST_GAS). Not read this session.
+- **D-1 13 → 16** (2019 COAL_BIT, 2022 CT_PEAKER, 2022 ST_GAS). The keeper's `legitimacy_diagnostics.json` lists 17
+  D-1 failure lines, and 14 of them are coal.
+  - **COAL_WC** fails every year (profile r −0.52 to 0.70).
+  - **COAL_PRB** fails 2019, 2021 and 2022 (r 0.64–0.72).
+  - **COAL_BIT** fails 2019 (r 0.798), 2020, 2021 and 2022, on profile r or on off-peak CV, where the model runs
+    flatter than actual (0.017–0.021 against 0.065–0.070).
+  - **The new gas lines** are both 2022: CT_PEAKER off-peak CV 0.441 and ST_GAS r 0.735.
+  - The new 2019 COAL_BIT line sits 0.002 under the 0.8 floor.
+  - D-1 is a diagnostic, not a gate. Its coal-shape content belongs to the coal commitment question (matrix §5.9, "not
+    closable in class").
