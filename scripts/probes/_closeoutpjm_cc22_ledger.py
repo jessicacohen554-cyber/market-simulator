@@ -38,7 +38,10 @@ def _payload() -> dict:
 
 def _e930(year: int) -> dict:
     """Annual PJM BA totals (TWh) from EIA-930 BALANCE, Adjusted columns."""
-    d = pd.concat(pd.read_parquet(f) for f in sorted(E930.glob(f"EIA930_BALANCE_{year}_*.parquet")))
+    d = pd.concat(
+        pd.read_parquet(f)
+        for f in sorted(E930.glob(f"EIA930_BALANCE_{year}_*.parquet"))
+    )
     d = d[d["Balancing Authority"] == "PJM"]
     col = {
         "demand": "Demand" + A,
@@ -50,7 +53,10 @@ def _e930(year: int) -> dict:
         "other": "Net Generation (MW) from Other Fuel Sources (Adjusted)",
         "unknown": "Net Generation (MW) from Unknown Fuel Sources (Adjusted)",
     }
-    return {k: float(pd.to_numeric(d[c], errors="coerce").sum() / 1e6) for k, c in col.items()}
+    return {
+        k: float(pd.to_numeric(d[c], errors="coerce").sum() / 1e6)
+        for k, c in col.items()
+    }
 
 
 def main() -> None:
@@ -67,7 +73,9 @@ def main() -> None:
         imp = float(ch.loc[ch.klass == "import", "mw"].sum() / 1e6)
         e = _e930(y)
         r = {
-            "model_demand": float(sysd.loc[~sysd.zone.str.contains("external"), "demand"].sum() / 1e6),
+            "model_demand": float(
+                sysd.loc[~sysd.zone.str.contains("external"), "demand"].sum() / 1e6
+            ),
             "model_net_import": imp,
             "model_gas": sum(gm.get(k, 0) for k in GAS),
             "model_coal": sum(gm.get(k, 0) for k in COAL),

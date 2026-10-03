@@ -32,7 +32,9 @@ import pandas as pd
 REPO = Path(__file__).resolve().parents[2]
 HOURLY = REPO / "results/calibration/closeout_pjm_nuc_full_span/hourly"
 POOL = REPO / "data/raw/_processed-legacy/thermal_tranches_PJM.csv"
-BYYEAR = REPO / "data/raw/_processed-legacy/thermal_tranches_online_frac_by_year_PJM.csv"
+BYYEAR = (
+    REPO / "data/raw/_processed-legacy/thermal_tranches_online_frac_by_year_PJM.csv"
+)
 BENCH = REPO / "frontend/data/backcast/bench/PJM"
 OUT = REPO / "results/phase0/pjm/_closeoutpjm_cc22_window_reach.json"
 YEARS = (2019, 2020, 2021, 2022, 2023, 2024, 2025)
@@ -58,14 +60,30 @@ def run_year(y: int, pool: pd.DataFrame, byy: pd.DataFrame) -> dict:
     price = sysd.pivot(index="hour", columns="zone", values="price")
     u = pd.read_parquet(
         HOURLY / f"unit_marginal_{y}.parquet",
-        columns=["unit_id", "plant_code", "plant_group", "zone", "hour", "mw", "cap_mw", "mc"],
+        columns=[
+            "unit_id",
+            "plant_code",
+            "plant_group",
+            "zone",
+            "hour",
+            "mw",
+            "cap_mw",
+            "mc",
+        ],
     )
-    u = u[(u.plant_group.astype(str) == "CC_REGULAR") & u.unit_id.astype(str).str.endswith("_committed")]
+    u = u[
+        (u.plant_group.astype(str) == "CC_REGULAR")
+        & u.unit_id.astype(str).str.endswith("_committed")
+    ]
     bench = json.load(gzip.open(BENCH / f"{y}.json.gz"))["bench"]
     own = byy[byy.year == y].set_index("plant_code").online_frac
     rows = []
     for (uid, pc), d in u.groupby([u.unit_id.astype(str), "plant_code"], observed=True):
-        if pc not in pool.index or pd.isna(pool.at[pc, "online_frac"]) or pc not in own.index:
+        if (
+            pc not in pool.index
+            or pd.isna(pool.at[pc, "online_frac"])
+            or pc not in own.index
+        ):
             continue
         fp, fy = float(pool.at[pc, "online_frac"]), float(own.at[pc])
         d = d.sort_values("hour")
@@ -82,9 +100,21 @@ def run_year(y: int, pool: pd.DataFrame, byy: pd.DataFrame) -> dict:
         released = float(np.where(rem & oom, mw, 0.0).sum())
         forced = float(np.where(add & oom, np.clip(cap - mw, 0, None), 0.0).sum())
         on = _campd_on(bench, pc)
-        dark_rel = float(np.where(rem & oom & ~on, mw, 0.0).sum()) if on is not None else np.nan
-        rows.append({"pc": int(pc), "pool": fp, "own": fy, "released": released, "forced": forced,
-                     "released_dark": dark_rel})
+        dark_rel = (
+            float(np.where(rem & oom & ~on, mw, 0.0).sum())
+            if on is not None
+            else np.nan
+        )
+        rows.append(
+            {
+                "pc": int(pc),
+                "pool": fp,
+                "own": fy,
+                "released": released,
+                "forced": forced,
+                "released_dark": dark_rel,
+            }
+        )
     df = pd.DataFrame(rows)
     rel, frc = df.released.sum() / 1e6, df.forced.sum() / 1e6
     return {
@@ -94,7 +124,9 @@ def run_year(y: int, pool: pd.DataFrame, byy: pd.DataFrame) -> dict:
         "d_forced_twh": round(frc - rel, 3),
         "cc_d_s035": round((frc - rel) * 0.65, 3),
         "cc_d_s050": round((frc - rel) * 0.50, 3),
-        "released_dark_share": round(float(df.released_dark.sum() / max(df.released.sum(), 1e-9)), 3),
+        "released_dark_share": round(
+            float(df.released_dark.sum() / max(df.released.sum(), 1e-9)), 3
+        ),
         "top_released": df.sort_values("released", ascending=False)
         .head(6)[["pc", "pool", "own", "released"]]
         .assign(released=lambda x: (x.released / 1e6).round(3))
@@ -105,12 +137,18 @@ def run_year(y: int, pool: pd.DataFrame, byy: pd.DataFrame) -> dict:
 def main() -> None:
     """Every year; print and write."""
     pool = pd.read_csv(POOL)
-    pool = pool[(pool.plant_group == "CC_REGULAR") & (pool.status == "ok")].set_index("plant_code")
+    pool = pool[(pool.plant_group == "CC_REGULAR") & (pool.status == "ok")].set_index(
+        "plant_code"
+    )
     byy = pd.read_csv(BYYEAR)
     byy = byy[byy.plant_group == "CC_REGULAR"]
     res = {}
     for y in YEARS:
-        res[y] = run_year(y, pool, byy) if y in set(byy.year) else {"n": 0, "note": "no own-year rows: pooled kept"}
+        res[y] = (
+            run_year(y, pool, byy)
+            if y in set(byy.year)
+            else {"n": 0, "note": "no own-year rows: pooled kept"}
+        )
         print(y, {k: v for k, v in res[y].items() if k != "top_released"}, flush=True)
     OUT.write_text(json.dumps(res, indent=1))
 

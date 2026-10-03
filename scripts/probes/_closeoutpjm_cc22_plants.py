@@ -39,7 +39,10 @@ def main() -> None:
             if b.get("group") != KLASS:
                 continue
             m = mod.get(pid, {})
-            r = rows.setdefault(pid, {"name": b["name"], "zone": b["zone"], "npl": b.get("npl"), "y": {}})
+            r = rows.setdefault(
+                pid,
+                {"name": b["name"], "zone": b["zone"], "npl": b.get("npl"), "y": {}},
+            )
             r["y"][y] = {
                 "m": float(m.get("m_ann") or 0.0),
                 "a": float(b.get("e_ann") or 0.0),
@@ -58,8 +61,10 @@ def main() -> None:
     for pid, r in ranked[:30]:
         ds = " ".join(f"{r['d'].get(y, float('nan')):+5.2f}" for y in YEARS)
         y22 = r["y"].get(2022, {})
-        print(f"{pid:>6} {r['name'][:22]:22} {r['zone'][4:]:11} {r['npl']} | {ds} | {r['anom22']:+5.2f} | "
-              f"{y22.get('a', 0):5.2f} {y22.get('m', 0):5.2f}")
+        print(
+            f"{pid:>6} {r['name'][:22]:22} {r['zone'][4:]:11} {r['npl']} | {ds} | {r['anom22']:+5.2f} | "
+            f"{y22.get('a', 0):5.2f} {y22.get('m', 0):5.2f}"
+        )
     for y in YEARS:
         print(y, "sum d", round(sum(r["d"].get(y, 0) for r in rows.values()), 2))
 
