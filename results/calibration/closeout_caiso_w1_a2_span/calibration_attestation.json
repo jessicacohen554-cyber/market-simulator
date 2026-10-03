@@ -21,6 +21,90 @@
         "actual": 35.0,
         "magnitude_outgoing": "model 0 h vs actual RT 35 h > $200/MWh (RE-MEASURED on this bundle's own committed sidecars: calibration_verdict reads 0 h vs 35 h)"
       }
+    },
+    {
+      "criterion": "price_mean",
+      "year": 2019,
+      "kind": "reference-coverage",
+      "magnitude": "reference absent (no measured CAISO LMP reference for 2019)",
+      "reason": "Owner ruling R-40 (docs/backcast-closeout-plan-2026-10.md \u00a75.0 row R-40, recorded by PR #7111 at 0b647b40), verbatim: \"Caiso mean LMP for 2021 should be an accepted caveat or only compared where data is actually available for that year for calibration rubric. 2019 and 2020 should have that be accepted caveat for c3a.\"; extended the same day, verbatim: \"I want c3b treated the same.\" OWNER-SIGNED REFERENCE-COVERAGE CAVEAT (rubric v3.19, scripts/calibration_verdict.py REFERENCE_COVERAGE_ENTRIES): off every caveat budget, NOT determination-downgrading, never a PASS. No measured hourly CAISO LMP reference exists for 2019 (actual_lmp.json carries no CAISO 2019 block; no free OASIS hourly archive, ruling R-16), so C3a reads CAVEAT 'reference absent' instead of SKIPPED; it certifies no price for 2019.",
+      "signed": {
+        "by": "owner",
+        "ruling": "R-40",
+        "date": "2026-10-03",
+        "recorded": "docs/backcast-closeout-plan-2026-10.md \u00a75.0 row R-40 (PR #7111)",
+        "entered_by": "closeout-CAISO-r40b (desk session_01ALecU5Wjde4tkbLrnMExT9)"
+      }
+    },
+    {
+      "criterion": "price_shape",
+      "year": 2019,
+      "kind": "reference-coverage",
+      "magnitude": "reference absent (no measured CAISO LMP reference for 2019)",
+      "reason": "Owner ruling R-40 (docs/backcast-closeout-plan-2026-10.md \u00a75.0 row R-40, recorded by PR #7111 at 0b647b40), verbatim: \"Caiso mean LMP for 2021 should be an accepted caveat or only compared where data is actually available for that year for calibration rubric. 2019 and 2020 should have that be accepted caveat for c3a.\"; extended the same day, verbatim: \"I want c3b treated the same.\" OWNER-SIGNED REFERENCE-COVERAGE CAVEAT (rubric v3.19, scripts/calibration_verdict.py REFERENCE_COVERAGE_ENTRIES): off every caveat budget, NOT determination-downgrading, never a PASS. No measured hourly CAISO LMP reference exists for 2019 (actual_lmp.json carries no CAISO 2019 block; no free OASIS hourly archive, ruling R-16), so C3b reads CAVEAT 'reference absent' instead of SKIPPED; it certifies no price for 2019.",
+      "signed": {
+        "by": "owner",
+        "ruling": "R-40",
+        "date": "2026-10-03",
+        "recorded": "docs/backcast-closeout-plan-2026-10.md \u00a75.0 row R-40 (PR #7111)",
+        "entered_by": "closeout-CAISO-r40b (desk session_01ALecU5Wjde4tkbLrnMExT9)"
+      }
+    },
+    {
+      "criterion": "price_mean",
+      "year": 2020,
+      "kind": "reference-coverage",
+      "magnitude": "reference absent (no measured CAISO LMP reference for 2020)",
+      "reason": "Owner ruling R-40 (docs/backcast-closeout-plan-2026-10.md \u00a75.0 row R-40, recorded by PR #7111 at 0b647b40), verbatim: \"Caiso mean LMP for 2021 should be an accepted caveat or only compared where data is actually available for that year for calibration rubric. 2019 and 2020 should have that be accepted caveat for c3a.\"; extended the same day, verbatim: \"I want c3b treated the same.\" OWNER-SIGNED REFERENCE-COVERAGE CAVEAT (rubric v3.19, scripts/calibration_verdict.py REFERENCE_COVERAGE_ENTRIES): off every caveat budget, NOT determination-downgrading, never a PASS. No measured hourly CAISO LMP reference exists for 2020 (actual_lmp.json carries no CAISO 2020 block; no free OASIS hourly archive, ruling R-16), so C3a reads CAVEAT 'reference absent' instead of SKIPPED; it certifies no price for 2020.",
+      "signed": {
+        "by": "owner",
+        "ruling": "R-40",
+        "date": "2026-10-03",
+        "recorded": "docs/backcast-closeout-plan-2026-10.md \u00a75.0 row R-40 (PR #7111)",
+        "entered_by": "closeout-CAISO-r40b (desk session_01ALecU5Wjde4tkbLrnMExT9)"
+      }
+    },
+    {
+      "criterion": "price_shape",
+      "year": 2020,
+      "kind": "reference-coverage",
+      "magnitude": "reference absent (no measured CAISO LMP reference for 2020)",
+      "reason": "Owner ruling R-40 (docs/backcast-closeout-plan-2026-10.md \u00a75.0 row R-40, recorded by PR #7111 at 0b647b40), verbatim: \"Caiso mean LMP for 2021 should be an accepted caveat or only compared where data is actually available for that year for calibration rubric. 2019 and 2020 should have that be accepted caveat for c3a.\"; extended the same day, verbatim: \"I want c3b treated the same.\" OWNER-SIGNED REFERENCE-COVERAGE CAVEAT (rubric v3.19, scripts/calibration_verdict.py REFERENCE_COVERAGE_ENTRIES): off every caveat budget, NOT determination-downgrading, never a PASS. No measured hourly CAISO LMP reference exists for 2020 (actual_lmp.json carries no CAISO 2020 block; no free OASIS hourly archive, ruling R-16), so C3b reads CAVEAT 'reference absent' instead of SKIPPED; it certifies no price for 2020.",
+      "signed": {
+        "by": "owner",
+        "ruling": "R-40",
+        "date": "2026-10-03",
+        "recorded": "docs/backcast-closeout-plan-2026-10.md \u00a75.0 row R-40 (PR #7111)",
+        "entered_by": "closeout-CAISO-r40b (desk session_01ALecU5Wjde4tkbLrnMExT9)"
+      }
+    },
+    {
+      "criterion": "price_mean",
+      "year": 2021,
+      "kind": "reference-coverage",
+      "magnitude": "model $57.30 vs RT load-weighted $50.87 on the covered window, +12.7% (in-window FAIL)",
+      "reason": "Owner ruling R-40 (docs/backcast-closeout-plan-2026-10.md \u00a75.0 row R-40, recorded by PR #7111 at 0b647b40), verbatim: \"Caiso mean LMP for 2021 should be an accepted caveat or only compared where data is actually available for that year for calibration rubric. 2019 and 2020 should have that be accepted caveat for c3a.\"; extended the same day, verbatim: \"I want c3b treated the same.\" OWNER-SIGNED REFERENCE-COVERAGE CAVEAT (rubric v3.19, scripts/calibration_verdict.py REFERENCE_COVERAGE_ENTRIES): off every caveat budget, NOT determination-downgrading, never a PASS. The CAISO 2021 RT reference starts 2021-04-26 (annual rt_cov 0.6522; months 5,6,7,9,10,11,12 are covered at >= 0.90), so C3a is scored only on the covered window; the in-window band verdict (FAIL +12.7%) is reported beside the caveat as window_status and no full-year 2021 price claim is certified.",
+      "signed": {
+        "by": "owner",
+        "ruling": "R-40",
+        "date": "2026-10-03",
+        "recorded": "docs/backcast-closeout-plan-2026-10.md \u00a75.0 row R-40 (PR #7111)",
+        "entered_by": "closeout-CAISO-r40b (desk session_01ALecU5Wjde4tkbLrnMExT9)"
+      }
+    },
+    {
+      "criterion": "price_shape",
+      "year": 2021,
+      "kind": "reference-coverage",
+      "magnitude": "monthly NRMSE 0.148 on the covered window (in-window PASS)",
+      "reason": "Owner ruling R-40 (docs/backcast-closeout-plan-2026-10.md \u00a75.0 row R-40, recorded by PR #7111 at 0b647b40), verbatim: \"Caiso mean LMP for 2021 should be an accepted caveat or only compared where data is actually available for that year for calibration rubric. 2019 and 2020 should have that be accepted caveat for c3a.\"; extended the same day, verbatim: \"I want c3b treated the same.\" OWNER-SIGNED REFERENCE-COVERAGE CAVEAT (rubric v3.19, scripts/calibration_verdict.py REFERENCE_COVERAGE_ENTRIES): off every caveat budget, NOT determination-downgrading, never a PASS. The CAISO 2021 RT reference starts 2021-04-26 (annual rt_cov 0.6522; months 5,6,7,9,10,11,12 are covered at >= 0.90), so C3b is scored only on the covered window; the in-window band verdict (PASS NRMSE 0.148) is reported beside the caveat as window_status and no full-year 2021 price claim is certified.",
+      "signed": {
+        "by": "owner",
+        "ruling": "R-40",
+        "date": "2026-10-03",
+        "recorded": "docs/backcast-closeout-plan-2026-10.md \u00a75.0 row R-40 (PR #7111)",
+        "entered_by": "closeout-CAISO-r40b (desk session_01ALecU5Wjde4tkbLrnMExT9)"
+      }
     }
   ],
   "disclosures": {},

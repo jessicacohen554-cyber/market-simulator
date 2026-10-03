@@ -1666,10 +1666,33 @@ ISO's verdict is unchanged. Record:
 `tests/scoring/test_tail_metric_payload.py`, `tests/scoring/test_benchmark_semantics.py`,
 `tests/scoring/test_vintage_reconcile_foldin.py`.
 
-## 29. Changes to this file
+## 29. Rubric v3.19 — the reference-coverage caveat kind: CAISO C3a/C3b 2019–2021 (owner, 2026-10-03)
+
+**Owner ruling R-40, verbatim** (backcast close-out plan `docs/backcast-closeout-plan-2026-10.md` §5.0 row R-40, recorded by PR #7111):
+
+> "Caiso mean LMP for 2021 should be an accepted caveat or only compared where data is actually available for that year for calibration rubric. 2019 and 2020 should have that be accepted caveat for c3a."
+>
+> Same-day extension: "I want c3b treated the same."
+
+**What changed.** v3.19 adds the owner-signed **reference-coverage** caveat kind (`scripts/calibration_verdict.py`
+`REFERENCE_COVERAGE_ENTRIES` / `_apply_reference_coverage`), on the precedent of the R-6 configuration-exception kind
+(§27). It has six exact-keyed rows: CAISO 2019/2020/2021 × C3a/C3b. 2019/2020 have no reference and read `CAVEAT`
+"reference absent". In 2021 the reference is partial: both criteria are scored on the covered months and read `CAVEAT`,
+with the band verdict kept as `window_status`. The kind is fail-closed on governance, on an owner-signed
+`kind: "reference-coverage"` entry in the bundle attestation (six entries added to
+`closeout_caiso_w1_a2_span/calibration_attestation.json`), and on the record's state. It is off every caveat budget and
+does not downgrade. No band, tier, ledger row or budget moves. No solve ran.
+
+**ISO determinations moved:** none. CAISO stays NOT-YET on C1 CC_REGULAR and C4 gas 2019–2021; `price_mean` leaves
+its fail set. Every other ISO's verdict is unchanged except `rubric_version`. Record:
+`docs/records/caiso/closeout-caiso-2/RESULT-closeout-caiso-r40-2026-10-03.md`. Tests:
+`tests/scoring/test_calibration_verdict_reference_coverage.py`.
+
+## 30. Changes to this file
 
 | date | change |
 |---|---|
+| 2026-10-03 | Added §29: **rubric v3.19** (owner ruling R-40 and its C3b extension, verbatim in §29): the reference-coverage caveat kind for CAISO C3a/C3b 2019–2021. No determination moves. "Changes to this file" renumbered §29 → §30 (the only external citation of §29 is the new one in `calibration_verdict.py`). |
 | 2026-10-03 | Added §28: **rubric v3.18** (owner ruling R-34: the C3c model tail masked to the RT-covered hours, CAISO 2021 relabelled) and the R-33 CAISO gas-fold refutation (benchmark-only), rulings verbatim in §28. No determination moves. "Changes to this file" renumbered §28 → §29 (the only external citation of §28 is the new one in `calibration_verdict.py`). |
 | 2026-10-02 | Rule 35 `[R-PROMOTE]` order text corrected to match `scripts/promote_keeper.py` (lane closeout-promote-tooling; reported by NYISO #7041, SPP-107 #7025, closeout-CAISO #7050): the audit ran before the prune, so E13 failed on the outgoing keeper in every promotion. Now a pre-prune audit (every check but E13; E11 still sees the former bundle) and a strict post-prune audit that refuses to finish. Attest now carries the outgoing keeper's `exceptions` ledger forward (C3c entries re-measured on the incoming bundle; an entry whose year left the span, or whose C3c no longer fails, is refused unless `--drop-exception` records a reason under `exceptions_dropped`). No norm loosened. |
 | 2026-10-02 | Added §27: **rubric v3.14–v3.17** (owner rulings R-6, R-8, R-9, R-13 verbatim in §27): ERCOT 2023 configuration-exception caveat kind, SOCO lambda-referenced reference-definition rows off the single slot, NWPP labelled WEIM ELAP benchmark 2023-06+, PJM zone-resolved C3a actual. SOCO NOT-YET → CALIBRATED-WITH-CAVEATS; no other ISO headline moves. "Changes to this file" renumbered §27 → §28 (no external reference cited §27). |
