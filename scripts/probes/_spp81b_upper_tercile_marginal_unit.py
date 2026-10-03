@@ -196,8 +196,18 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--cache", required=True, type=Path)
     ap.add_argument("--years", nargs="+", type=int, default=[2019, 2020, 2023, 2024])
+    ap.add_argument(
+        "--bundle",
+        type=Path,
+        default=BUNDLE,
+        help="Keeper bundle (default: SPP-81b's rspp_span; SPP-109 re-ran it on w0_sppr_span).",
+    )
     a = ap.parse_args()
     a.cache.mkdir(parents=True, exist_ok=True)
+    globals()["BUNDLE"] = a.bundle
+    import scripts.probes._spp81_residual_upper_tercile as _spp81
+
+    _spp81.BUNDLE = a.bundle / "hourly"  # frame() reads the same bundle's P1 system sidecar
     lmp = pd.read_parquet(RAW_DATA_DIR / "_validation-source/actual_lmp_hourly_SPP.parquet")
     comp = pd.read_parquet(RAW_DATA_DIR / "_validation-source/actual_lmp_components_hourly_zonal_SPP.parquet")
     ids, pm = swpp_gas_units()
@@ -271,6 +281,16 @@ def main() -> None:
             if y >= 2023:
                 d = M[M.year == y]
                 print(f"{y}: intercept at the base slope {(d.mec - b0 * d.gas).mean():.2f} vs base {a0:.2f}")
+        # SPP-109: the same read on the keeper's own price (its level at the RT base slope).
+        mb = M[M.year.isin(base_years)]
+        for y in a.years:
+            if y >= 2023:
+                d = M[M.year == y]
+                print(
+                    f"{y}: model intercept at the RT base slope {(d.model - b0 * d.gas).mean():.2f}"
+                    f" vs model base {(mb.model - b0 * mb.gas).mean():.2f}"
+                    f" | RT - model level gap {(d.mec - d.model).mean():.2f}"
+                )
 
 
 if __name__ == "__main__":
