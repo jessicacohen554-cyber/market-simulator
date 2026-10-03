@@ -1,0 +1,19 @@
+{
+  "id": "2026-10-03-closeout-pjm-nuc-keeper",
+  "label": "closeout pjm nuc keeper",
+  "date": "2026-10-03",
+  "shorthand": "closeout-pjm-nuc-keeper",
+  "definition": "closeout-pjm-nuc: nuclear CF rows 2019-22 (R-35/R-38)",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-10-03-closeout-pjm-nuc-keeper.js",
+  "bundle": "results/calibration/closeout_pjm_nuc_full_span"
+}

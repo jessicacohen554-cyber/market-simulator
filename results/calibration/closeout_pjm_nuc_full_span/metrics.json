@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-10-03-closeout-pjm-nuc-7yr",
+  "run_id": "2026-10-03-closeout-pjm-nuc-keeper",
   "iso": "PJM",
-  "label": "closeout pjm nuc 7yr",
+  "label": "closeout pjm nuc keeper",
   "target_years": [
     2019,
     2020,
