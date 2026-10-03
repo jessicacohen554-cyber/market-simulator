@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-10-03 — Solve-container swap is provisioned before data steps; stale inactive swapfile reclaimed (R-50, zero LP)
+
+`scripts/shard_prompt.py` runs `prepare_solve_container.py` first (before hydrate / regenerate / any fetch), keeps the env-pin `eval` at the solve, and emits the gitignored PJM DA-virtuals fetch when the recipe arms `pjm_da_virtual_bids`; `scripts/lib/solve_container.py::provision_swap` counts an inactive swapfile at its path as reclaimable disk and reuses or re-makes it, and the below-target WARNING names the fix and the free disk.
+
 ## 2026-10-03 — capx D103: forecast DOF-ledger carry census for NEISO and NYISO (zero LP, no code change)
 
 `docs/records/forecast/FINDING-capx-d103-2026-10-03.md`: the two W0 keepers' rule-21 ledgers (NEISO 6 entries / 4
