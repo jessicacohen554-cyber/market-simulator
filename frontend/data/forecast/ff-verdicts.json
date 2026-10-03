@@ -11531,7 +11531,7 @@
    }
   }
  },
- "neiso-t1f": {
+ "neiso-t1f-pre-d105": {
   "schema": "forecast-verdict/v1",
   "rubric_version": "1.0",
   "provenance": {
@@ -11661,6 +11661,164 @@
       "row": "runtime",
       "status": "PASS",
       "detail": "wall 6.7 min within budget",
+      "gating": true
+     }
+    ]
+   }
+  }
+ },
+ "neiso-t1f": {
+  "schema": "forecast-verdict/v1",
+  "rubric_version": "1.1",
+  "provenance": {
+   "schema": "forecast-provenance/v1",
+   "solve_surface": {
+    "schema": 1,
+    "iso": "NEISO",
+    "fingerprint": "b514541af339c180",
+    "rows": 213,
+    "moved": {
+     "CC_STEAM_PART_REPAIR_ISOS": "30824893196aaa12",
+     "GENERIC_BASE_OFFER_CURVE": "bdc2b348ec6144d1",
+     "LABELS": "600aeac5bbcd256c",
+     "MAINTENANCE_MONTHLY_SHAPE": "b4da945d5a2e8f77",
+     "MIN_STABLE_PCT_PHYSICAL": "262e67a17cf047e0",
+     "PLANT_CLASSES": "3c91d80e901b878c",
+     "RGGI_MEMBER_STATES_BY_YEAR": "e432156b179ff182",
+     "STORAGE_BASE_FLEET_MW": "50b5239e785ffb4f",
+     "THERMAL_AVAILABILITY": "34ff308290e18439"
+    },
+    "epochs": [],
+    "git_sha": "246438aa",
+    "eia860_vintages": {
+     "eia-860": "92179caf8dc3091311afbc70107198a9d1b9755a292b7117e035bb76b8626a98"
+    }
+   },
+   "scored_at_sha": "246438aa743a",
+   "scored_at_date": "2026-10-03T04:54:45Z",
+   "cache_epoch": "66fb439918cbefd6",
+   "run_id": "neiso-2026-2030-d105-w0neiso",
+   "session": "capx-D105"
+  },
+  "tier": "t1f",
+  "iso": "NEISO",
+  "determination": "PROMOTE",
+  "reasons": [],
+  "caveats": [],
+  "notes": [
+   "capx-D105 (2026-10-03): the headline T1-F recipe (plan 2.1a owner posture, --golden-posture, no --set) re-solved on the W0 keeper 2026-10-02-w0-neiso under owner ruling Q76 (plan 2.1b gate (d), one instrument). Cache key 66fb439918cbefd6, pre-declared in PRECOMMIT-capx-d105-2026-10-03.md and matched; the move from the D50 key 18515067bf4d2fbe is exactly the two Q47 CCS default moves (ccs_retrofit_vom_adder 8.0 -> 2.95, ccs_retrofit_fixed_cost_co2_scaling True) plus the nine moved NEISO solve-surface rows (fingerprint b514541af339c180, epochs []); 166 further fields are schema growth at drop value, 2 retired. 11.4 min / 3.2 GB, five years sequential. All 14 invariants PASS; every FC status unchanged (FC-2 row4 backstop share 1.2% -> 0.0%; FC-7 949 config keys, 7-entry ledger all identified; FC-8 wall 11.4 min). PROMOTE -> PROMOTE. Prior preserved byte-equal at neiso-t1f-pre-d105. Record: FINDING-capx-d105-2026-10-03.md."
+  ],
+  "categories": {
+   "FC-1": {
+    "label": "FC-1 structural integrity (I1-I14)",
+    "applicability": "required",
+    "status": "PASS",
+    "rows": [
+     {
+      "row": "invariants I1-I14",
+      "status": "PASS",
+      "detail": "all 14 invariants PASS",
+      "gating": true
+     }
+    ]
+   },
+   "FC-2": {
+    "label": "FC-2 adequacy & equilibrium behavior",
+    "applicability": "required",
+    "status": "PASS",
+    "rows": [
+     {
+      "row": "row1",
+      "status": "PASS",
+      "detail": "reserve-margin band (I12 PASS)",
+      "gating": true
+     },
+     {
+      "row": "row3",
+      "status": "PASS",
+      "detail": "no cobweb (I13 PASS)",
+      "gating": true
+     },
+     {
+      "row": "row4",
+      "status": "PASS",
+      "detail": "backstop share 0.0% \u2264 10%",
+      "gating": true
+     }
+    ]
+   },
+   "FC-3": {
+    "label": "FC-3 capacity-evolution skill (T1-H hindcast)",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-4": {
+    "label": "FC-4 crossover dispatch skill (T1-X)",
+    "applicability": "n/a",
+    "status": "n/a",
+    "rows": []
+   },
+   "FC-5": {
+    "label": "FC-5 external corridor",
+    "applicability": "report",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "corridor",
+      "status": "SKIPPED",
+      "detail": "no committed benchmark-corridor table (FF-0D/FF-0F intake; rubric \u00a76 list pending)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-6": {
+    "label": "FC-6 driver response",
+    "applicability": "optional",
+    "status": "SKIPPED",
+    "rows": [
+     {
+      "row": "driver response",
+      "status": "SKIPPED",
+      "detail": "no committed driver-battery or paired-invariant output",
+      "gating": true
+     }
+    ]
+   },
+   "FC-7": {
+    "label": "FC-7 provenance & DOF",
+    "applicability": "required",
+    "status": "PASS",
+    "rows": [
+     {
+      "row": "run_config",
+      "status": "PASS",
+      "detail": "mode=forecast; 949 config keys; gates ['capacity_market_clearing']",
+      "gating": true
+     },
+     {
+      "row": "overlay-off",
+      "status": "PASS",
+      "detail": "no backcast overlay armed (outage_source='statistical')",
+      "gating": true
+     },
+     {
+      "row": "dof ledger",
+      "status": "PASS",
+      "detail": "7 entries well-formed (0 open residual DOF listed)",
+      "gating": true
+     }
+    ]
+   },
+   "FC-8": {
+    "label": "FC-8 runtime feasibility",
+    "applicability": "runtime",
+    "status": "PASS",
+    "rows": [
+     {
+      "row": "runtime",
+      "status": "PASS",
+      "detail": "wall 11.4 min within budget",
       "gating": true
      }
     ]

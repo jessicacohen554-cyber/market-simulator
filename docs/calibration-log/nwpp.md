@@ -962,3 +962,43 @@ Records:
 - `docs/records/nwpp/FINDING-nwppnext22-seam-headroom-2026-10-02.md`
 - `PRECOMMIT-nwppnext22-seam-headroom-2019-2025-2026-10-02.md`
 - `RESULT-nwppnext22-seam-headroom-2026-10-02.md`
+
+## closeout-nwpp-anchor — 2026-10-03 — roster-free plant-basis anchor → KEEPER `2026-10-03-closeout-nwpp-anchor-roster`
+
+**Owner ruling R-48: "Promote on structure."** Bundle `results/calibration/closeout_nwpp_anchor_span`, 2019–2025.
+It is the NEXT-22b keeper's recipe replayed unchanged, with all seven legs solved at `dad1205a` (main after PR #7103).
+
+**What changed.** The `nwpp_demand_plant_basis` anchor (`data/raw/reference/nwpp_plant_basis_energy.csv`) is now
+derived from EIA-923, CAMPD and EIA-930 directly. It uses the bench's own `classFull` construction, but on a
+roster-free plant → class map: the EIA-860 footprint, with each plant taking its dominant EIA-923 class.
+
+**Why.** The old derive read the rendered bench part. That part's class map is the keeper's fleet, so the W0
+roster moved the anchor at promotion (R-28). Rebuilding with the fleet map reproduces the W0 parts exactly.
+
+**Size of the change.** COL, NG and OTH move 0.002–0.126 TWh per year. The largest move is 2019 COL +0.126, from
+Naughton 4162: the fleet types it ST_GAS, while its EIA-923 filing records coal. The net anchored requirement
+moves by at most 0.0054 TWh per year. No config key moved. SolveEpoch 2026-10-03a re-keys backcast NWPP.
+
+**Scores against the NEXT-22b keeper.** NOT-YET → NOT-YET, with zero record flips. The largest move on any record
+is 0.010 TWh.
+
+| reading | NEXT-22b | this keeper |
+|---|---|---|
+| failing criteria | fuelmix, price_mean, price_shape, dispatch_corr | same |
+| FAIL records | 10 | 10 |
+| C1 CC_REGULAR 2019 / 2024 / 2025 | +12.65 / +15.39 / +8.86 TWh | +12.66 / +15.39 / +8.86 |
+| C3a 2023 / 2024 / 2025 (vs WEIM ELAP) | −10.4 / −27.1 / −0.4 % | identical |
+| C4 coal 2023 | r 0.770 PASS | r 0.771 PASS |
+
+2025 carries the EIA-923 data-drift label: the bench is on the Final vintage, while the completeness part still
+marks it preliminary, so the anchor writes COL and NG only.
+
+**Bench parts** stay at main's render (R-28). The anchor no longer reads them.
+
+**Prune:** `2026-10-03-nwpp-next-22b-w0` / `nwppnext22b_span`.
+
+Records:
+
+- `docs/records/nwpp/FINDING-closeout-nwpp-anchor-2026-10-03.md`
+- `PRECOMMIT-closeout-nwpp-anchor-2026-10-03.md`
+- `RESULT-closeout-nwpp-anchor-2026-10-03.md`

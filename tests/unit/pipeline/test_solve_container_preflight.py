@@ -218,3 +218,127 @@ def test_ensure_solve_container_no_provision_never_writes(
     assert record.ceiling_gib > 0
     # Second call is the cached record, not a re-run.
     assert sc.ensure_solve_container(provision=True) is record
+
+
+def _stale_swapfile(path: Path) -> None:
+    """A small inactive file at the swapfile path (not in the fake /proc/swaps).
+
+    Its allocated size is faked through ``_stale_swapfile_bytes`` so a test can
+    stand in for a multi-GiB stale swapfile without writing one.
+    """
+    path.write_bytes(b"\0" * 4096)
+
+
+def test_inactive_stale_swapfile_counts_as_reclaimable_disk(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """R-50: a 9 GiB inactive file + 6.7 GiB free disk must not read as 'CANNOT'."""
+    proc = _fake_proc(tmp_path, _v1_lines())
+    swapfile = tmp_path / "swapfile"
+    _stale_swapfile(swapfile)
+    monkeypatch.setattr(sc, "_stale_swapfile_bytes", lambda _p: 9 * GIB)
+    monkeypatch.setattr(
+        sc.shutil, "disk_usage", lambda _p: type("du", (), {"free": int(6.7 * GIB)})()
+    )
+
+    added, warnings = sc.provision_swap(
+        24, ceiling_bytes=int(13.36 * GIB), swapfile=swapfile, dry_run=True, proc=proc
+    )
+
+    # 6.7 free + 9 reclaimable - 6 reserve = 9.7 -> 9 GiB, which the stale
+    # file already covers, so it is reused at its own size.
+    assert warnings == []
+    assert added == 9
+    assert swapfile.exists()  # dry run touches nothing
+
+
+def test_inactive_stale_swapfile_is_reused_when_large_enough(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
+    caplog.set_level("INFO", logger="solve_container")
+    proc = _fake_proc(tmp_path, _v1_lines())
+    swapfile = tmp_path / "swapfile"
+    _stale_swapfile(swapfile)
+    monkeypatch.setattr(sc, "_stale_swapfile_bytes", lambda _p: 12 * GIB)
+    monkeypatch.setattr(
+        sc.shutil, "disk_usage", lambda _p: type("du", (), {"free": 50 * GIB})()
+    )
+    monkeypatch.setattr(sc.os, "geteuid", lambda: 0)
+    calls: list[list[str]] = []
+    monkeypatch.setattr(sc.subprocess, "run", lambda cmd, **_k: calls.append(cmd))
+
+    added, warnings = sc.provision_swap(
+        24, ceiling_bytes=int(13.34 * GIB), swapfile=swapfile, proc=proc
+    )
+
+    assert warnings == []
+    assert added == 12
+    assert [c[0] for c in calls] == ["mkswap", "swapon"]  # no fallocate, no unlink
+    assert swapfile.exists()
+    assert f"reused stale inactive {swapfile} (12 GiB)" in caplog.text
+
+
+def test_inactive_stale_swapfile_too_small_is_removed_and_remade(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
+    caplog.set_level("INFO", logger="solve_container")
+    proc = _fake_proc(tmp_path, _v1_lines())
+    swapfile = tmp_path / "swapfile"
+    _stale_swapfile(swapfile)
+    monkeypatch.setattr(sc, "_stale_swapfile_bytes", lambda _p: 3 * GIB)
+    monkeypatch.setattr(
+        sc.shutil, "disk_usage", lambda _p: type("du", (), {"free": 50 * GIB})()
+    )
+    monkeypatch.setattr(sc.os, "geteuid", lambda: 0)
+    calls: list[list[str]] = []
+
+    def fake_run(cmd, **_k):
+        calls.append(cmd)
+        if cmd[0] == "fallocate":
+            Path(cmd[-1]).write_bytes(b"")
+
+    monkeypatch.setattr(sc.subprocess, "run", fake_run)
+
+    added, warnings = sc.provision_swap(
+        24, ceiling_bytes=int(13.34 * GIB), swapfile=swapfile, proc=proc
+    )
+
+    assert warnings == []
+    assert added == 10
+    assert [c[0] for c in calls] == ["fallocate", "mkswap", "swapon"]
+    assert calls[0][2] == "10G"
+    assert swapfile.read_bytes() == b""  # the stale file was replaced
+    assert f"unlinked stale inactive {swapfile} (3.0 GiB)" in caplog.text
+    assert "re-create it at 10 GiB" in caplog.text
+
+
+def test_below_target_warning_names_the_fix_and_free_disk() -> None:
+    text = sc.below_target_warning(16.4, 24, 6.7)
+    assert "provision swap before data steps" in text
+    assert "free disk 6.7 GiB" in text
+
+
+def test_active_swapfile_is_never_unlinked_even_when_disk_is_ample(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Desk constraint (R-50): reclaim touches only a file NOT in /proc/swaps."""
+    proc = _fake_proc(tmp_path, _v1_lines())
+    swapfile = tmp_path / "swapfile"
+    _stale_swapfile(swapfile)
+    _write(
+        proc / "swaps",
+        "Filename\tType\tSize\tUsed\tPriority\n"
+        f"{swapfile}\tfile\t{3 * 1024 * 1024}\t0\t-2\n",
+    )
+    monkeypatch.setattr(
+        sc.shutil, "disk_usage", lambda _p: type("du", (), {"free": 50 * GIB})()
+    )
+    monkeypatch.setattr(sc.os, "geteuid", lambda: 0)
+    calls: list[list[str]] = []
+    monkeypatch.setattr(sc.subprocess, "run", lambda cmd, **_k: calls.append(cmd))
+
+    added, _warnings = sc.provision_swap(
+        24, ceiling_bytes=int(13.34 * GIB), swapfile=swapfile, proc=proc
+    )
+
+    assert added == 0 and calls == [] and swapfile.exists()

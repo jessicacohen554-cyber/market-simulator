@@ -1,5 +1,5 @@
 {
  "iso": "NWPP",
- "keeper": "2026-10-03-nwpp-next-22b-w0",
- "note": "NWPP keeper: W0 fix-2 recipe + priced interface (reference_price_interface, priced_interchange) + measured seam headroom (nwpp_seam_measured_limits); seven legs at 2b8da72a"
+ "keeper": "2026-10-03-closeout-nwpp-anchor-roster",
+ "note": "NWPP keeper: NEXT-22b recipe re-solved on the roster-free nwpp_plant_basis anchor (R-28/R-48); NOT-YET -> NOT-YET, 0 record flips"
 }
