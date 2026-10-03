@@ -322,7 +322,7 @@ Three long-duration storage technologies — 12-hour lithium-ion, vanadium-redox
 
 ### 1.6 Unit Commitment — LP Screen Heuristic (P0/P1 production; P2 archived)
 
-Pure merit-order LP left fast-cycling units (notably ERCOT gas CT) badly under-dispatched, because a single LP solve has no notion of start-up cost or minimum run length. The model therefore carries a **commitment layer** (`model/commitment.py`). It stays **pure LP — there is no MIP and no binary variables**; commitment is a heuristic screen applied *between* LP solves by zeroing a unit's availability in hours it is decommitted, then re-solving. **Two passes are the production path — P0 and P1** (see below); a third, P2, is an archived opt-in artifact (`ScenarioConfig.commitment_enabled`, default `False`). The three passes, as built:
+Pure merit-order LP left fast-cycling units (notably ERCOT gas CT) badly under-dispatched, because a single LP solve has no notion of start-up cost or minimum run length. The model therefore carries a **commitment layer** (`model/commitment.py`). The scored pass stays **pure LP — P1 is a pure LP and prices are its duals (rule 4)**; outside the optional UC stage, commitment is a heuristic screen applied *between* LP solves by zeroing a unit's availability in hours it is decommitted, then re-solving. **Two passes are the production path — P0 and P1** (see below), shaped **P0 base-cost → [UC] → P1 bid-cost**. The optional UC stage (`unit_commitment_milp`, default off, ISO-armed) is a rolling-horizon MILP over the year that chooses the commitment of slow-start clusters (rule 18 physics) and enters P1 only as per-unit-hour bounds (MECH 28); it replaces the commitment bridges and the posture family wherever it is armed (rule 19), pays start and no-load cost once (markup zeroed on its clusters), and reports uplift as a sidecar, never in the LMP. No other pass is a MIP. A third, P2, is an archived opt-in artifact (`ScenarioConfig.commitment_enabled`, default `False`). The three passes, as built:
 
 - **P0 (base):** solve with base marginal cost `mc_base = fuel + VOM + carbon + NOx + SO2` (the SO2 term defaults to 0; no start-up markup). Measure each unit's realized run lengths by month.
 - **P1 (bid):** solve with `mc_bid = mc_base + start-up markup`, where the per-unit monthly markup amortizes `start_up_cost / avg_run_length` (ST_GAS spreads its start-ups across May–Sep). Clearing prices now embed cycling cost.
@@ -425,11 +425,16 @@ Five commitments define the model's class. They are load-bearing methodology —
 an audit-relevant statement of where this model sits relative to commercial
 production-cost practice — not implementation preferences.
 
-- **Pure LP. No MIP, no binary variables.** The commitment layer (§1.6) is a
-  *heuristic screen between LP solves*, never a mixed-integer program.
-  Fractional dispatch within a committed unit is accepted. This is the model's
-  sharpest deliberate divergence from commercial UC practice, and it is what
-  makes duals available everywhere (below).
+- **Pure-LP pricing; one optional MILP commitment stage.** P1, the pass
+  everything is scored on, is a pure LP. The commitment layer (§1.6) is a
+  *heuristic screen between LP solves*, plus the optional UC stage
+  (`unit_commitment_milp`, default off, ISO-armed): a rolling-horizon MILP that
+  enters P1 only as per-unit-hour bounds. The UC stage is the only
+  mixed-integer program in the model; it never prices. Fractional dispatch
+  within a committed unit is accepted. Where the stage is off (every keeper),
+  heuristic commitment is the model's sharpest deliberate divergence from
+  commercial UC practice; either way, pricing on the P1 LP is what makes duals
+  available everywhere (below).
 - **Prices are LP duals.** Rule 4 `[R-DUALS]`. The dual on the zonal energy
   balance *is* the zonal price (§1.3); the dual on the RPS row is the REC price;
   the dual on a mass-cap row is the allowance price. There is no separate
