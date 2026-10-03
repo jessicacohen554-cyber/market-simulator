@@ -80,7 +80,7 @@ spread), not the hurdle.
 ## G-DRIFT between the pin and main (at RESULT time)
 
 - **LIVE (data), not in this run.** closeout-SOCO-3 merged EIA-923 coal stocks for 2015–17 into the coal-stocks
-  datatype (#7132). NWPP's take floor and monthly pile read S_max over curated years ≤ Y−1, so yard maxima rise in 65
+  datatype (PR #7134, on main at `9f2fe6dfb284ba21e1daf20cb61917522813bc33`). NWPP's take floor and monthly pile read S_max over curated years ≤ Y−1, so yard maxima rise in 65
   NWPP plant-years 2019–25. Examples: Boardman 400→999 kt, Bonanza 511→1,013, Valmy (8224) 456→765, plant 3845
   1,014→1,396. This run predates it, and its scoring stands at the pin. **The next NWPP solve must re-solve against
   it.**
