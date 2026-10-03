@@ -3117,7 +3117,19 @@ NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
     # of calibration runs 1-19.
     # Source: EIA-923 Page 1 monthly net generation, 2023-2025.
     # Derivation/verify: scripts/data/derive_nuclear_monthly_cf.py --isos PJM.
+    # 2019-2022 rows added 2026-10-03 (lane closeout-nuclear-rows, owner ruling
+    # R-35) by the same frozen script from the same EIA-923 Page 1 source: an
+    # initial derivation for years the table never carried, not a re-derivation
+    # (rule 23; `--years 2023 2024 2025 --check` passed in the same session, so
+    # every 2023-2025 value is byte-unchanged). Before them a 2019-2022 backcast
+    # fell back to the static NUCLEAR_MONTHLY_CF pattern x (1 - EFORD), a
+    # year-invariant fleet CF (rule 14 [R-ACCURATE]);
+    # docs/records/governance/closeout-2026-10/FINDING-closeout-nuclear-rows-2026-10-03.md.
     "PJM": {
+        2019: [1.00, 0.99, 0.87, 0.87, 0.96, 0.98, 0.99, 0.98, 0.95, 0.88, 0.93, 1.00],
+        2020: [1.00, 0.97, 0.90, 0.88, 0.93, 1.00, 0.99, 0.99, 0.96, 0.90, 0.96, 1.00],
+        2021: [1.00, 1.00, 0.87, 0.83, 0.89, 0.99, 0.97, 1.00, 0.97, 0.88, 0.93, 1.00],
+        2022: [1.00, 0.99, 0.92, 0.82, 0.93, 0.98, 0.99, 0.97, 0.94, 0.84, 0.94, 1.00],
         2023: [1.00, 0.97, 0.90, 0.85, 0.91, 0.99, 0.99, 0.98, 0.96, 0.89, 0.96, 1.00],
         2024: [1.00, 0.98, 0.90, 0.81, 0.91, 0.99, 0.97, 0.99, 0.96, 0.90, 0.93, 1.00],
         2025: [1.00, 0.99, 0.88, 0.86, 0.91, 0.99, 0.98, 0.98, 0.94, 0.83, 0.93, 1.00],
@@ -3326,7 +3338,19 @@ NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
     # the final file lands.
     # Source: EIA-923 Page 1 monthly net generation, 2023-2025.
     # Derivation/verify: scripts/data/derive_nuclear_monthly_cf.py --isos SPP.
+    # 2019-2022 rows added 2026-10-03 (lane closeout-nuclear-rows, owner ruling
+    # R-35) by the same frozen script from the same EIA-923 Page 1 source: an
+    # initial derivation for years the table never carried, not a re-derivation
+    # (rule 23; `--years 2023 2024 2025 --check` passed in the same session, so
+    # every 2023-2025 value is byte-unchanged). Before them a 2019-2022 backcast
+    # fell back to the static NUCLEAR_MONTHLY_CF pattern x (1 - EFORD), a
+    # year-invariant fleet CF (rule 14 [R-ACCURATE]);
+    # docs/records/governance/closeout-2026-10/FINDING-closeout-nuclear-rows-2026-10-03.md.
     "SPP": {
+        2019: [1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 0.81, 0.41, 0.90, 1.00],
+        2020: [1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 0.92, 0.68, 0.97, 1.00],
+        2021: [1.00, 1.00, 0.88, 0.41, 0.70, 0.86, 1.00, 0.93, 1.00, 1.00, 1.00, 0.99],
+        2022: [1.00, 1.00, 1.00, 0.99, 1.00, 1.00, 0.90, 0.94, 0.91, 0.10, 0.38, 0.98],
         2023: [1.00, 0.99, 1.00, 0.97, 1.00, 1.00, 1.00, 1.00, 1.00, 0.96, 1.00, 1.00],
         2024: [1.00, 1.00, 0.95, 0.41, 0.80, 1.00, 1.00, 0.88, 0.95, 0.61, 0.98, 1.00],
         2025: [1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 0.42, 0.70, 1.00],
@@ -3341,7 +3365,19 @@ NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
     # re-derive when the final file lands.
     # Source: EIA-923 Page 1 monthly net generation, 2023-2025.
     # Derivation/verify: scripts/data/derive_nuclear_monthly_cf.py --isos NWPP.
+    # 2019-2022 rows added 2026-10-03 (lane closeout-nuclear-rows, owner ruling
+    # R-35) by the same frozen script from the same EIA-923 Page 1 source: an
+    # initial derivation for years the table never carried, not a re-derivation
+    # (rule 23; `--years 2023 2024 2025 --check` passed in the same session, so
+    # every 2023-2025 value is byte-unchanged). Before them a 2019-2022 backcast
+    # fell back to the static NUCLEAR_MONTHLY_CF pattern x (1 - EFORD), a
+    # year-invariant fleet CF (rule 14 [R-ACCURATE]);
+    # docs/records/governance/closeout-2026-10/FINDING-closeout-nuclear-rows-2026-10-03.md.
     "NWPP": {
+        2019: [0.99, 1.00, 1.00, 0.99, 0.28, 0.30, 0.98, 0.99, 0.99, 1.00, 1.00, 1.00],
+        2020: [1.00, 0.90, 1.00, 1.00, 0.92, 0.51, 0.89, 0.99, 0.99, 1.00, 0.96, 1.00],
+        2021: [1.00, 0.99, 0.99, 0.90, 0.18, 0.37, 0.99, 0.99, 0.98, 0.99, 1.00, 0.74],
+        2022: [1.00, 0.98, 1.00, 1.00, 0.99, 0.78, 0.98, 0.98, 0.99, 1.00, 1.00, 1.00],
         2023: [0.97, 1.00, 0.98, 0.83, 0.11, 0.32, 0.97, 0.98, 0.99, 0.96, 0.98, 0.95],
         2024: [1.00, 1.00, 0.98, 1.00, 0.99, 0.97, 0.97, 0.98, 0.96, 1.00, 0.99, 0.98],
         2025: [0.99, 0.99, 0.89, 0.28, 0.00, 0.12, 0.98, 0.98, 0.99, 1.00, 1.00, 0.98],
