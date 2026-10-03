@@ -1142,7 +1142,149 @@ def _epoch_field_gaps(sc: dict, defaults: dict | None) -> dict:
     return out
 
 
-def _registry_identification(iso: str | None) -> dict | None:
+#: capx D107 (2026-10-03), implementing FINDING-capx-d103-2026-10-03.md §3: the
+#: forecast posture of each rule-21 entry the ISO's designated backcast keeper
+#: carries in its ``calibration_attestation.json`` ``free_parameters``. Keyed
+#: ``(iso, keeper entry name)``; ``"*"`` matches every ISO. ``live=False`` rows
+#: (and entries with no curated row at all) report as
+#: ``not_applicable_in_forecast``. The block this table feeds is REPORT-ONLY:
+#: it never becomes a scored entry, never moves ``n_entries`` /
+#: ``n_unidentified`` and FC-7 never reads it (D103 §3: the treatment of a
+#: carried residual under FC-7 is unchartered). Curation cites the forecast
+#: field that carries the keeper value and why it is (or is not) live.
+KEEPER_CARRY: dict[tuple[str, str], dict] = {
+    ("*", "offer_curve_by_group"): {
+        "live": False,
+        "field": "offer_curve_by_group",
+        "why": "forecast run carries {} -> neutral bands (data/offer_curves.py)",
+    },
+    ("*", "offer_curve_smoothing"): {
+        "live": True,
+        "field": "offer_curve_smoothing_n/_exp",
+        "why": "shipped default equals keeper value",
+    },
+    ("*", "wefor_multiplier"): {
+        "live": False,
+        "field": "wefor_multiplier",
+        "why": ("0.7 set only by pipeline/backcast_config.py; forecast default 1.0"),
+    },
+    ("*", "reliability_floor coefficients"): {
+        "live": False,
+        "field": "reliability_floor",
+        "why": "boolean off in forecast runs",
+    },
+    ("NEISO", "IMPORT_TRANCHES/EXPORT_TRANCHES[NEISO]"): {
+        "live": True,
+        "field": "interchange_config.IMPORT_TRANCHES",
+        "why": "static ladder in every forecast year",
+    },
+    ("NYISO", "IMPORT_TRANCHES/EXPORT_TRANCHES[NYISO]"): {
+        "live": True,
+        "field": "interchange_config.IMPORT_TRANCHES",
+        "why": "static fitted ladder in every forecast year",
+    },
+    ("NYISO", "NYISO_LOCAL_SELFSUPPLY_FRAC['Long_Island']"): {
+        "live": True,
+        "field": "constants.NYISO_LOCAL_SELFSUPPLY_FRAC",
+        "why": "ISO-gated, not mode-gated",
+    },
+}
+
+
+def _keeper_bundle(keeper: str, *, repo: Path = REPO) -> Path | None:
+    """Resolve a keeper id to its bundle directory through the backcast registry.
+
+    The only admissible map is the registered sidecar
+    ``frontend/data/backcast/registry/<keeper>.json`` and its ``bundle`` field
+    (the same field ``promote_keeper.py`` / ``audit_keepers.py`` read); a
+    keeper id never implies a directory name (D103 §3: ``2026-10-02-w0-neiso``
+    lives at ``results/calibration/w0_neiso_span/``). ``None`` when the sidecar
+    is absent, unreadable or carries no bundle.
+    """
+    sidecar = repo / "frontend" / "data" / "backcast" / "registry" / f"{keeper}.json"
+    try:
+        rec = json.loads(sidecar.read_text())
+    except Exception:  # noqa: BLE001 — absent/unreadable sidecar
+        return None
+    rel = rec.get("bundle") if isinstance(rec, dict) else None
+    if not rel or not isinstance(rel, str):
+        return None
+    return repo / rel
+
+
+def _keeper_carry(
+    iso: str | None, keeper: str | None, *, repo: Path = REPO
+) -> dict | None:
+    """Report each keeper rule-21 entry's forecast posture; never scores.
+
+    Reads the designated keeper's ``calibration_attestation.json``
+    ``free_parameters.entries`` (the bundle resolved by :func:`_keeper_bundle`)
+    and sorts every entry into one of three report-only lists by the curated
+    :data:`KEEPER_CARRY` row: ``carried_residual`` (live in the forecast and
+    identified ``residual`` in the keeper — the entry's identification is
+    unchanged from the backcast keeper, rule 21), ``carried_measured`` (live,
+    any other identification) and ``not_applicable_in_forecast`` (not live, or
+    no curated row). ``None`` when the ISO has no resolvable keeper bundle or
+    the attestation carries no ledger — the block is then simply absent.
+    """
+    if not iso or not keeper:
+        return None
+    bundle = _keeper_bundle(keeper, repo=repo)
+    if bundle is None:
+        return None
+    att = bundle / "calibration_attestation.json"
+    try:
+        entries = (json.loads(att.read_text()).get("free_parameters") or {}).get(
+            "entries"
+        ) or []
+    except Exception:  # noqa: BLE001 — absent/unreadable attestation
+        return None
+    if not entries:
+        return None
+    out: dict = {
+        "note": (
+            "REPORT-ONLY (capx D107, FINDING-capx-d103-2026-10-03.md §3): the "
+            "forecast posture of each rule-21 free parameter the designated "
+            "backcast keeper carries. Nothing here is a scored entry — "
+            "`entries`, `n_entries`, `n_unidentified` and FC-7 are untouched "
+            "by this block; FC-7's treatment of a carried residual is "
+            "unchartered."
+        ),
+        "keeper": keeper,
+        "keeper_bundle": str(bundle.relative_to(repo)),
+        "carried_residual": [],
+        "carried_measured": [],
+        "not_applicable_in_forecast": [],
+    }
+    for e in entries:
+        name = e.get("name")
+        row = KEEPER_CARRY.get((iso, name)) or KEEPER_CARRY.get(("*", name))
+        rec = {
+            "name": name,
+            "identification": e.get("identification"),
+            "keeper": keeper,
+            "forecast_field": row and row["field"],
+            "why": row and row["why"],
+            "root_cause": e.get("root_cause"),
+        }
+        if row is None or not row["live"]:
+            out["not_applicable_in_forecast"].append(rec)
+        elif e.get("identification") == "residual":
+            rec["source"] = (
+                f"carried residual — {keeper} free_parameters[{name}]; "
+                "identification unchanged from the backcast keeper (rule 21); "
+                f"live in forecast via {row['field']}"
+            )
+            out["carried_residual"].append(rec)
+        else:
+            out["carried_measured"].append(rec)
+    out["n_carried_residual"] = len(out["carried_residual"])
+    out["n_carried_measured"] = len(out["carried_measured"])
+    out["n_not_applicable_in_forecast"] = len(out["not_applicable_in_forecast"])
+    return out
+
+
+def _registry_identification(iso: str | None, *, repo: Path = REPO) -> dict | None:
     """Name where the registry defaults' own identification burden lives.
 
     The entries above cover the run's deviations; the shipped registry values
@@ -1154,7 +1296,7 @@ def _registry_identification(iso: str | None) -> dict | None:
     """
     if not iso:
         return None
-    shard = REPO / "frontend" / "data" / "backcast" / "keepers" / f"{iso}.json"
+    shard = repo / "frontend" / "data" / "backcast" / "keepers" / f"{iso}.json"
     keeper = None
     try:
         data = json.loads(shard.read_text())
@@ -1179,7 +1321,7 @@ def _registry_identification(iso: str | None) -> dict | None:
             "dispatch_mechanism group's guidance records."
         ),
         "backcast_keeper_at_build": keeper,
-        "keeper_shard": str(shard.relative_to(REPO)),
+        "keeper_shard": str(shard.relative_to(repo)),
     }
 
 
@@ -1188,8 +1330,14 @@ def build_ledger(
     *,
     run_id: str | None = None,
     use_git: bool = True,
+    repo: Path = REPO,
 ) -> dict:
-    """Assemble the forecast DOF ledger from a run_config artifact."""
+    """Assemble the forecast DOF ledger from a run_config artifact.
+
+    ``repo`` is the checkout the keeper designation (``registry_identification``)
+    and the report-only ``keeper_carry`` block are read from; tests point it at
+    a synthetic tree. Neither block touches the scored ``entries``.
+    """
     sc = _scenario_config(run_config)
     iso = sc.get("iso") if isinstance(sc.get("iso"), str) else None
     defaults = _defaults()
@@ -1286,9 +1434,15 @@ def build_ledger(
     gaps = _epoch_field_gaps(sc, defaults)
     if gaps:
         ledger["epoch_field_gaps"] = gaps
-    reg = _registry_identification(iso)
+    reg = _registry_identification(iso, repo=repo)
     if reg:
         ledger["registry_identification"] = reg
+        # Report-only (capx D107, D103 §3): the keeper's rule-21 entries by
+        # forecast posture. Appended AFTER every scored field is final and
+        # never read back into them.
+        carry = _keeper_carry(iso, reg.get("backcast_keeper_at_build"), repo=repo)
+        if carry:
+            ledger["keeper_carry"] = carry
     return ledger
 
 

@@ -1,9 +1,10 @@
-# Forecast Determination Rubric (v1.1)
+# Forecast Determination Rubric (v1.2)
 
-Status: **canonical for the Forecast Finalization Program. RUBRIC VERSION 1.1**
+Status: **canonical for the Forecast Finalization Program. RUBRIC VERSION 1.2**
 (v1.0 2026-07-17, FF-0A — authored per `docs/forecast-development-plan-2026-07.md`
 §3; v1.1 2026-09-04, owner ruling Q37 — the §5 follow-up-attestation limb;
-changes are owner-signed amendments, mirroring the backcast rubric's version
+v1.2 2026-10-03, owner ruling D108 — the §3 report-only supersession-delta
+annotation; changes are owner-signed amendments, mirroring the backcast rubric's version
 discipline). This document is the single auditable definition of how a
 **forecast bundle** is judged at each tier of the test ladder (plan §2.1) and
 what "promoted" means at each gate. The machine scorer is
@@ -406,6 +407,37 @@ applicable. FC-8 is required-but-never-blocking (its `SKIPPED` does not
 | FC-6 driver response | O | — | — | **R** | **R** |
 | FC-7 provenance/DOF | **R** | **R** | **R** | **R** | **R** (+ attestation) |
 | FC-8 runtime | R* | R* | R* | R* | R* |
+| §3 supersession delta (v1.2) | rpt | rpt | rpt | rpt | rpt |
+
+*Table note (v1.2, owner ruling D108, 2026-10-03).* The last row is an
+**annotation, not a category**: it carries status `rpt` at every tier, has no
+`PASS`/`CAVEAT`/`FAIL` form, and never enters the determination. It is present
+only when the verdict being written **supersedes a preserved prior** — the
+`<key>-pre-<lane>` entry in `frontend/data/forecast/ff-verdicts.json`, whose
+bundle the scorer is handed as `--prior-summary <prior full_horizon_summary.json>`
+(the narrowest interface the artifact-only scorer admits: one more committed
+file, never a board lookup). Absent prior ⇒ the block is absent (not
+`SKIPPED`, not a caveat).
+
+**Supersession delta — what it reports and why it is report-only.** From the two
+bundles' `full_horizon_summary.json` `trajectory[]`, paired by year, the scorer
+emits `current − prior` for `co2_mt`, `lw_price`, `max_hourly_price`,
+`hours_ge_100`, `reserve_margin` and the `gas_cc_ccs` generation share
+(`generation_by_fuel_mwh.gas_cc_ccs / total_gen_mwh`; a fuel absent from a
+year's fleet is a 0.0 share), plus two window totals over the paired years
+(cumulative CO2, mean `lw_price`). Years present on one side only are listed
+and excluded from the totals. The block exists so a re-solve that reads
+`PROMOTE → PROMOTE` can no longer leave a material trajectory move unrecorded
+(the D105/D106 pattern: 2028–2030 CO2 −27 to −69 % with every FC status
+unchanged). It is report-only because **a trajectory delta has no external
+reference**: nothing in §1 or §6 says how much a five-year CO2 or price path
+may move between two defensible configurations, so a gating "stability" row
+would penalize a real fix (a corrected default, a repaired input) exactly as
+readily as a regression — the structurally faithful run must stay promotable
+even when its numbers move (rule 1). Attribution of a reported delta remains
+the lane's job in its FINDING; the scorer states the move, never its cause.
+The block never changes a category status, a determination, a reason or a
+caveat list; the scorer attaches it after the determination is final.
 
 Promotion gates (restating plan §2.1 in category terms — this table is the
 executable form):
@@ -590,6 +622,11 @@ Until (1)–(8) land, FC-5 scores `SKIPPED` with this list attached — which by
   here may quote them.
 - Locational siting and forward-auction timing remain un-certified until the
   honest-unfit list says otherwise (plan §0.3).
+- The t1f battery scores **admissibility** only (invariants, adequacy rows,
+  provenance, runtime): a `PROMOTE → PROMOTE` across a re-solve says both
+  bundles are admissible, not that the trajectory held — the §3 supersession
+  delta reports how much it moved and certifies nothing about which side is
+  right (v1.2).
 
 ## 8. Usage
 
@@ -609,6 +646,12 @@ python scripts/forecast_verdict.py --tier t2 \
     --summary <t2 summary> --hindcast-score <t1h score> \
     --crossover-score <t1x score> --driver-battery <battery json> \
     --corridor <corridor table> --dof-ledger <dof> --json-out <sidecar>
+
+# A re-solve superseding a preserved prior (adds the §3 report-only delta block):
+python scripts/forecast_verdict.py --tier t1f \
+    --summary results/ff-t1f-d105/neiso/full_horizon_summary.json \
+    --prior-summary results/ff-t1f-d50/neiso/full_horizon_summary.json \
+    --run-config results/ff-t1f-d105/neiso/run_config.json --json-out <sidecar>
 ```
 
 The JSON sidecar (`forecast-verdict/v1` schema) is the future forecast
@@ -616,6 +659,20 @@ dashboard's per-run rubric block (plan §8 / FF-5A).
 
 ## 9. Version history
 
+- **v1.2 (2026-10-03, owner ruling D108 "Report-only delta row" — capx desk
+  session, recorded `FINDING-capx-d108-2026-10-03.md`; implemented by capx
+  D111, `FINDING-capx-d111-2026-10-03.md`)** — §3 gains the report-only
+  **supersession delta** annotation: when a verdict supersedes a preserved
+  prior (`<key>-pre-<lane>` on the board; `--prior-summary` to the scorer) it
+  carries per-year `current − prior` for `co2_mt`, `lw_price`,
+  `max_hourly_price`, `hours_ge_100`, `reserve_margin` and the `gas_cc_ccs`
+  generation share, plus cumulative CO2 and mean `lw_price` over the paired
+  years, status `rpt` at every tier. It never changes a category status, a
+  determination, a reason or a caveat; absent prior ⇒ absent block. §7 gains
+  the admissibility-only limit of the t1f battery. No threshold, row, category,
+  tier rule or verdict changes; no bundle re-scored; every committed
+  `rubric_version: "1.0"`/`"1.1"` record stands as scored. The scorer's
+  `RUBRIC_VERSION` stamp moves with it.
 - **v1.1 (2026-09-04, owner ruling Q37 — director sitting r#34, card C-8;
   recorded by the capx D51 records rider, item (e))** — §5 gains its second
   attestation-authorship limb: a follow-up lane may author a forecast

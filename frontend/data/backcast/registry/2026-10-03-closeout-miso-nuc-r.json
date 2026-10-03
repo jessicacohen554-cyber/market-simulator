@@ -1,0 +1,19 @@
+{
+  "id": "2026-10-03-closeout-miso-nuc-r",
+  "label": "closeout miso nuc r",
+  "date": "2026-10-03",
+  "shorthand": "closeout-miso-nuc-r",
+  "definition": "closeout-miso-nuc R-43 MISO nuclear 2019-22 measured repair",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-10-03-closeout-miso-nuc-r.js",
+  "bundle": "results/calibration/closeout_miso_nuc_span"
+}

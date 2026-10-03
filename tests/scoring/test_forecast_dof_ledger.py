@@ -404,3 +404,215 @@ class D63CuratedRowTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+def _carry_repo(
+    tmp: Path, *, keeper: str | None, entries, bundle_rel="results/calibration/x_span"
+):
+    """A synthetic checkout: keeper shard -> registry sidecar -> bundle attestation.
+
+    ``keeper=None`` writes no shard at all; ``entries=None`` writes the shard and
+    the registry sidecar but no attestation (an unresolvable bundle).
+    """
+    if keeper is None:
+        return tmp
+    shard_dir = tmp / "frontend" / "data" / "backcast" / "keepers"
+    shard_dir.mkdir(parents=True)
+    (shard_dir / "NEISO.json").write_text(
+        json.dumps({"iso": "NEISO", "keeper": keeper})
+    )
+    reg_dir = tmp / "frontend" / "data" / "backcast" / "registry"
+    reg_dir.mkdir(parents=True)
+    (reg_dir / f"{keeper}.json").write_text(
+        json.dumps({"id": keeper, "iso": "NEISO", "bundle": bundle_rel})
+    )
+    if entries is not None:
+        bundle = tmp / bundle_rel
+        bundle.mkdir(parents=True)
+        (bundle / "calibration_attestation.json").write_text(
+            json.dumps({"free_parameters": {"entries": entries}})
+        )
+    return tmp
+
+
+#: A keeper ledger shaped like the W0 NEISO one: four residual rows (two curated
+#: not-live, one curated live, one uncurated) and two measured rows (one curated
+#: not-live, one curated live for NEISO only).
+_KEEPER_ENTRIES = [
+    {
+        "name": "offer_curve_by_group",
+        "identification": "residual",
+        "root_cause": "open: D-6",
+    },
+    {
+        "name": "offer_curve_committed_below_floor[NEISO]",
+        "identification": "residual",
+        "root_cause": "open",
+    },
+    {
+        "name": "offer_curve_smoothing",
+        "identification": "residual",
+        "root_cause": "open",
+    },
+    {"name": "wefor_multiplier", "identification": "residual", "root_cause": "open"},
+    {"name": "reliability_floor coefficients", "identification": "measured-physical"},
+    {
+        "name": "IMPORT_TRANCHES/EXPORT_TRANCHES[NEISO]",
+        "identification": "measured-physical",
+    },
+]
+
+_SCORED_FIELDS = (
+    "status",
+    "n_entries",
+    "n_identified",
+    "n_unidentified",
+    "n_unattested",
+    "n_by_group",
+    "entries",
+)
+
+
+class KeeperCarryIsReportOnlyTests(unittest.TestCase):
+    """capx D107 (D103 §3): the keeper_carry block reports, never scores."""
+
+    SC = {"iso": "NEISO", "entry_rate_limits": False}
+
+    def _with_and_without(self):
+        with tempfile.TemporaryDirectory() as a, tempfile.TemporaryDirectory() as b:
+            with_repo = _carry_repo(Path(a), keeper="k-1", entries=_KEEPER_ENTRIES)
+            without_repo = _carry_repo(Path(b), keeper=None, entries=None)
+            return (
+                _ledger(self.SC, repo=with_repo),
+                _ledger(self.SC, repo=without_repo),
+            )
+
+    def test_block_present_for_an_iso_with_a_keeper_and_curated_rows(self):
+        led, _ = self._with_and_without()
+        carry = led["keeper_carry"]
+        self.assertEqual(carry["keeper"], "k-1")
+        self.assertEqual(carry["keeper_bundle"], "results/calibration/x_span")
+        names = lambda k: [r["name"] for r in carry[k]]  # noqa: E731
+        self.assertEqual(names("carried_residual"), ["offer_curve_smoothing"])
+        self.assertEqual(
+            names("carried_measured"), ["IMPORT_TRANCHES/EXPORT_TRANCHES[NEISO]"]
+        )
+        self.assertEqual(
+            names("not_applicable_in_forecast"),
+            [
+                "offer_curve_by_group",
+                "offer_curve_committed_below_floor[NEISO]",
+                "wefor_multiplier",
+                "reliability_floor coefficients",
+            ],
+        )
+        # Every row keeps the keeper's own identification; a carried residual
+        # names its source in rule-21 wording and its forecast field.
+        self.assertTrue(
+            all(
+                r["keeper"] == "k-1"
+                for k in (
+                    "carried_residual",
+                    "carried_measured",
+                    "not_applicable_in_forecast",
+                )
+                for r in carry[k]
+            )
+        )
+        res = carry["carried_residual"][0]
+        self.assertEqual(res["identification"], "residual")
+        self.assertIn(
+            "carried residual — k-1 free_parameters[offer_curve_smoothing]",
+            res["source"],
+        )
+        self.assertIn(
+            "identification unchanged from the backcast keeper (rule 21)", res["source"]
+        )
+        self.assertEqual(res["forecast_field"], "offer_curve_smoothing_n/_exp")
+        self.assertEqual(res["root_cause"], "open")
+        # The uncurated row reports no field and no why — it is not claimed live.
+        uncurated = next(
+            r
+            for r in carry["not_applicable_in_forecast"]
+            if r["name"] == "offer_curve_committed_below_floor[NEISO]"
+        )
+        self.assertIsNone(uncurated["forecast_field"])
+        self.assertIsNone(uncurated["why"])
+        self.assertEqual(carry["n_carried_residual"], 1)
+        self.assertEqual(carry["n_carried_measured"], 1)
+        self.assertEqual(carry["n_not_applicable_in_forecast"], 4)
+        # The block never masquerades as a scored entry.
+        for key in (
+            "carried_residual",
+            "carried_measured",
+            "not_applicable_in_forecast",
+        ):
+            for r in carry[key]:
+                self.assertNotIn("status", r)
+                self.assertNotIn("group", r)
+
+    def test_block_absent_without_a_keeper(self):
+        _, led = self._with_and_without()
+        self.assertNotIn("keeper_carry", led)
+        self.assertNotIn("registry_identification", led)
+
+    def test_block_absent_when_the_keeper_bundle_does_not_resolve(self):
+        with tempfile.TemporaryDirectory() as d:
+            repo = _carry_repo(Path(d), keeper="k-1", entries=None)
+            led = _ledger(self.SC, repo=repo)
+        # The designation is still reported; the carry is not invented.
+        self.assertEqual(
+            led["registry_identification"]["backcast_keeper_at_build"], "k-1"
+        )
+        self.assertNotIn("keeper_carry", led)
+        self.assertIsNone(bl._keeper_bundle("absent-keeper", repo=Path(d)))
+
+    def test_block_absent_when_the_attestation_carries_no_ledger(self):
+        with tempfile.TemporaryDirectory() as d:
+            repo = _carry_repo(Path(d), keeper="k-1", entries=[])
+            self.assertIsNone(bl._keeper_carry("NEISO", "k-1", repo=repo))
+            self.assertIsNone(bl._keeper_carry(None, "k-1", repo=repo))
+            self.assertIsNone(bl._keeper_carry("NEISO", None, repo=repo))
+
+    def test_bundle_resolves_only_through_the_registry_sidecar(self):
+        with tempfile.TemporaryDirectory() as d:
+            repo = _carry_repo(
+                Path(d),
+                keeper="2026-10-02-w0-x",
+                entries=_KEEPER_ENTRIES,
+                bundle_rel="results/calibration/w0_x_span",
+            )
+            # The id implies nothing; the sidecar's `bundle` field is the map.
+            self.assertEqual(
+                bl._keeper_bundle("2026-10-02-w0-x", repo=repo),
+                repo / "results" / "calibration" / "w0_x_span",
+            )
+            (repo / "frontend/data/backcast/registry/2026-10-02-w0-x.json").write_text(
+                json.dumps({"id": "2026-10-02-w0-x"})
+            )
+            self.assertIsNone(bl._keeper_bundle("2026-10-02-w0-x", repo=repo))
+
+    def test_scored_entries_and_fc7_are_byte_identical_with_and_without_the_block(self):
+        with_block, without_block = self._with_and_without()
+        self.assertIn("keeper_carry", with_block)
+        self.assertNotIn("keeper_carry", without_block)
+        self.assertTrue(with_block["entries"], "instrument produced no entries")
+        for key in _SCORED_FIELDS:
+            with self.subTest(field=key):
+                self.assertEqual(
+                    json.dumps(with_block[key], sort_keys=True),
+                    json.dumps(without_block[key], sort_keys=True),
+                )
+        for tier in ("t1", "t2", "t3"):
+            with self.subTest(tier=tier):
+                a = fv._score_dof_ledger({"dof_ledger": with_block}, tier)
+                b = fv._score_dof_ledger({"dof_ledger": without_block}, tier)
+                self.assertEqual(a, b)
+
+    def test_a_carried_residual_never_identifies_a_scored_entry(self):
+        # The same armed field stays UNIDENTIFIED whether or not the keeper
+        # carries a residual for a neighbouring parameter: the block supplies
+        # no identification.
+        with_block, _ = self._with_and_without()
+        self.assertEqual(with_block["n_unidentified"], with_block["n_entries"])
+        self.assertEqual(with_block["keeper_carry"]["n_carried_residual"], 1)

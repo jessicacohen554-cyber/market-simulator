@@ -12,6 +12,7 @@ tests/scoring/test_calibration_verdict.py.
 """
 
 import importlib.util
+import json
 import unittest
 from tests.helpers import REPO_ROOT
 
@@ -1273,3 +1274,186 @@ class ArchivedCarbon25ReclassificationTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+# ---------------------------------------------------------------------------
+# Rubric §3 supersession delta (v1.2, owner ruling D108 2026-10-03): REPORT-ONLY
+# ---------------------------------------------------------------------------
+def _delta_traj(co2, lw, pmax, h100, rm, ccs_mwh, total=100.0):
+    """Two-year trajectory with the §3 delta metrics and a gas_cc_ccs share.
+
+    ``ccs_mwh`` may be ``None`` to leave the fuel key absent (a fleet with no
+    CCS unit that year — the summary writes only fuels present ⇒ share 0.0).
+    """
+    rows = []
+    for i, y in enumerate((2026, 2027)):
+        by_fuel = {"gas_cc": total - (ccs_mwh[i] or 0.0)}
+        if ccs_mwh[i] is not None:
+            by_fuel["gas_cc_ccs"] = ccs_mwh[i]
+        rows.append(
+            {
+                "year": y,
+                "co2_mt": co2[i],
+                "lw_price": lw[i],
+                "max_hourly_price": pmax[i],
+                "hours_ge_100": h100[i],
+                "hours_ge_500": 30,
+                "reserve_margin": rm[i],
+                "builds_thermal_mw": 100.0,
+                "builds_renew_mw": 500.0,
+                "builds_storage_mw": 50.0,
+                "retire_mw": 0.0,
+                "generation_by_fuel_mwh": by_fuel,
+                "total_gen_mwh": total,
+            }
+        )
+    return rows
+
+
+def _prior_summary():
+    return _summary(
+        trajectory=_delta_traj(
+            co2=(10.0, 12.0),
+            lw=(50.0, 60.0),
+            pmax=(200.0, 300.0),
+            h100=(5, 7),
+            rm=(0.15, 0.16),
+            ccs_mwh=(None, 10.0),
+        ),
+        cache_key="prior-key",
+        run_dir="results/prior",
+    )
+
+
+def _current_summary():
+    return _summary(
+        trajectory=_delta_traj(
+            co2=(9.0, 6.0),
+            lw=(48.0, 54.0),
+            pmax=(190.0, 100.0),
+            h100=(4, 1),
+            rm=(0.16, 0.18),
+            ccs_mwh=(None, 25.0),
+        ),
+        cache_key="current-key",
+        run_dir="results/current",
+    )
+
+
+class SupersessionDeltaTests(unittest.TestCase):
+    def test_version_is_1_2(self):
+        self.assertEqual(fv.RUBRIC_VERSION, "1.2")
+
+    def test_absent_prior_means_absent_block(self):
+        art = _passing_t1f()
+        v = fv.determine_from_artifacts(art, "t1f")
+        self.assertNotIn("supersession_delta", v)
+        self.assertNotIn("supersession_delta", fv.condensed_sidecar(v))
+        # Not a caveat, not a note, not a SKIPPED anywhere.
+        self.assertEqual(v["caveats"], [])
+        self.assertFalse(any("supersession" in n for n in v["notes"]))
+        self.assertIsNone(fv.supersession_delta(_current_summary(), None))
+
+    def test_block_present_and_numerically_right(self):
+        art = _passing_t1f()
+        art["summary"] = _current_summary()
+        art["prior_summary"] = _prior_summary()
+        v = fv.determine_from_artifacts(art, "t1f")
+        d = v["supersession_delta"]
+        self.assertEqual(d["status"], fv.SUPERSESSION_STATUS)
+        self.assertEqual(d["status"], "rpt")
+        self.assertFalse(d["gating"])
+        self.assertEqual(d["prior"]["cache_key"], "prior-key")
+        self.assertEqual(d["current"]["cache_key"], "current-key")
+        self.assertEqual([c["year"] for c in d["years"]], [2026, 2027])
+        y27 = d["years"][1]
+        self.assertAlmostEqual(y27["co2_mt"]["delta"], -6.0)
+        self.assertAlmostEqual(y27["lw_price"]["delta"], -6.0)
+        self.assertAlmostEqual(y27["max_hourly_price"]["delta"], -200.0)
+        self.assertAlmostEqual(y27["hours_ge_100"]["delta"], -6.0)
+        self.assertAlmostEqual(y27["reserve_margin"]["delta"], 0.02)
+        # gas_cc_ccs share: 10/100 -> 25/100.
+        self.assertAlmostEqual(y27["gas_cc_ccs_gen_share"]["prior"], 0.10)
+        self.assertAlmostEqual(y27["gas_cc_ccs_gen_share"]["current"], 0.25)
+        self.assertAlmostEqual(y27["gas_cc_ccs_gen_share"]["delta"], 0.15)
+        # Absent fuel key in 2026 on both sides ⇒ share 0.0, delta 0.0 (not None).
+        y26 = d["years"][0]
+        self.assertEqual(y26["gas_cc_ccs_gen_share"]["prior"], 0.0)
+        self.assertEqual(y26["gas_cc_ccs_gen_share"]["delta"], 0.0)
+        # Window totals over the paired years: cumulative CO2 and mean lw_price.
+        w = d["window"]
+        self.assertEqual(w["years"], [2026, 2027])
+        self.assertAlmostEqual(w["co2_mt_cumulative"]["prior"], 22.0)
+        self.assertAlmostEqual(w["co2_mt_cumulative"]["current"], 15.0)
+        self.assertAlmostEqual(w["co2_mt_cumulative"]["delta"], -7.0)
+        self.assertAlmostEqual(w["lw_price_mean"]["prior"], 55.0)
+        self.assertAlmostEqual(w["lw_price_mean"]["current"], 51.0)
+        self.assertAlmostEqual(w["lw_price_mean"]["delta"], -4.0)
+        self.assertEqual(d["unpaired_years"], {"prior_only": [], "current_only": []})
+        # The block rides into the sidecar whole and renders in the text block.
+        self.assertEqual(fv.condensed_sidecar(v)["supersession_delta"], d)
+        self.assertIn("supersession delta (rpt, report-only)", fv.render_text(v))
+
+    def test_unpaired_years_listed_and_excluded_from_window(self):
+        prior = _prior_summary()
+        prior["trajectory"] = prior["trajectory"][:1]  # prior carries 2026 only
+        d = fv.supersession_delta(_current_summary(), prior)
+        self.assertEqual([c["year"] for c in d["years"]], [2026])
+        self.assertEqual(d["unpaired_years"]["current_only"], [2027])
+        self.assertEqual(d["window"]["years"], [2026])
+        self.assertAlmostEqual(d["window"]["co2_mt_cumulative"]["delta"], -1.0)
+
+    def test_statuses_identical_with_and_without_prior(self):
+        """The block never changes a status, determination, reason or caveat."""
+        for tier in fv.TIERS:
+            for make in (_passing_t1f, lambda: _art(summary=_current_summary())):
+                without = make()
+                without["summary"] = _current_summary()
+                with_prior = make()
+                with_prior["summary"] = _current_summary()
+                with_prior["prior_summary"] = _prior_summary()
+                a = fv.determine_from_artifacts(without, tier)
+                b = fv.determine_from_artifacts(with_prior, tier)
+                self.assertNotIn("supersession_delta", a)
+                self.assertIn("supersession_delta", b)
+                b.pop("supersession_delta")
+                for k in ("determination", "reasons", "caveats", "notes", "categories"):
+                    self.assertEqual(
+                        json.dumps(a[k], sort_keys=True),
+                        json.dumps(b[k], sort_keys=True),
+                        f"{tier}: {k} moved with the prior present",
+                    )
+
+
+def test_cli_prior_summary_round_trip(tmp_path):
+    """Two tiny synthetic summaries on disk, scored through the CLI (zero LP)."""
+    cur = tmp_path / "current" / "full_horizon_summary.json"
+    pri = tmp_path / "prior" / "full_horizon_summary.json"
+    cur.parent.mkdir()
+    pri.parent.mkdir()
+    cur.write_text(json.dumps(_current_summary()))
+    pri.write_text(json.dumps(_prior_summary()))
+    out = tmp_path / "verdict.json"
+    rc = fv.main(
+        [
+            "--tier",
+            "t1f",
+            "--summary",
+            str(cur),
+            "--prior-summary",
+            str(pri),
+            "--json-out",
+            str(out),
+        ]
+    )
+    assert rc in (0, 1)  # FC-7 SKIPs without a run_config; the exit code is the gate's
+    side = json.loads(out.read_text())
+    assert side["rubric_version"] == "1.2"
+    d = side["supersession_delta"]
+    assert d["status"] == "rpt" and d["gating"] is False
+    assert d["years"][1]["co2_mt"] == {"prior": 12.0, "current": 6.0, "delta": -6.0}
+    assert d["window"]["co2_mt_cumulative"]["delta"] == -7.0
+    # Without --prior-summary the block is absent from the sidecar.
+    out2 = tmp_path / "verdict2.json"
+    fv.main(["--tier", "t1f", "--summary", str(cur), "--json-out", str(out2)])
+    assert "supersession_delta" not in json.loads(out2.read_text())

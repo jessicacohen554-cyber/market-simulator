@@ -7,6 +7,28 @@ per-ISO calibration sessions never conflict (the per-ISO lane convention,
 2026-07-19; see `frontend/data/backcast/keepers/README.md`).
 
 
+## closeout-PJM-nuc — 2026-10-03 — PROMOTED `2026-10-03-closeout-pjm-nuc-keeper`: measured 2019–22 nuclear CF rows (R-52)
+
+Keeper `2026-10-02-w0-pjm-fix2` (`w0_pjm_span`) → `2026-10-03-closeout-pjm-nuc-keeper` (`closeout_pjm_nuc_full_span`). Owner ruling R-52, "Promote on structure".
+
+- **What changed:** the same recipe. 2019–22 nuclear availability now reads the EIA-923 monthly CF rows (#7109, R-35/R-38) instead of the year-invariant 0.951 fallback (rule 14). Zero free parameters.
+- **Legs:** seven year-isolated legs. 2021 is at the R-50 infra pin `e2e296a4` after three container-envelope failures; addendum A of the PRECOMMIT proves it inert, and the surface fingerprint `d8230f36c0059245` is unchanged.
+
+| Year | Nuclear Δ solved (TWh) | Predicted |
+|---|---|---|
+| 2019 | −0.17 | −0.19 |
+| 2020 | +1.75 | +1.75 |
+| 2021 | −1.90 | −1.91 |
+| 2022 | −2.09 | −2.10 |
+| 2023–25 | reproduced to the MWh | 0 |
+
+- **Gates:**
+  - C1 CT_PEAKER 2021 goes FAIL → PASS (−8.07 → −7.92).
+  - C1 CC_REGULAR 2022 goes PASS → FAIL (+7.95 → +8.96, band ±8). The measured nuclear exposes a pre-existing CC over-dispatch; this is the next PJM lever.
+  - NOT-YET is unchanged: C1 COAL_BIT 2019–21, C3a/C3b 2022 & 2025.
+- **Ledger:** R-36 and R-37 carried forward verbatim. The R-36 CT_PEAKER 2021 entry is now moot, because that cell passes.
+- **Records:** `docs/records/pjm/PRECOMMIT-closeout-pjm-nuc-2026-10-03.md` and `RESULT-closeout-pjm-nuc-2026-10-03.md`.
+
 ## PJM-NEXT-5 — 2026-09-27 — PROMOTED `2026-09-27-pjm-next-5-shape`: 2023–2025 alone CALIBRATED
 
 Owner rulings (cards): shape form "Build + solve"; `retiree_cems_cap` "Delete"; F2 re-derive YES (earlier).

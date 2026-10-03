@@ -8,8 +8,11 @@ is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction onl
 
 **CROSS-DESK NOTICE (SPP-21, 2026-09-06, branch `claude/spp-21-matrix-shard-ti2gy3`):** SPP shard exists from this commit — **seven** shards; every rule-28(c) cell line now includes SPP. *(A self-referential sha cannot be written inside its own single commit — G2 requires one — so the lane and branch are the citation; `git log --grep=SPP-21` resolves the sha.)*
 
-**Charter date:** 2026-08-23 · **Last refresh:** 2026-10-03 (refresh #69) ·
-**r#69b (HEAD `07f5b88e`):** Q73 PJM WITHDRAWN · Q74 NYISO DECLARED (gate (a) MET ×2) · Q75 frontier = no forecast work · Q76 T1-F for NEISO+NYISO authorized · D105 (NEISO T1-F) + D103 dispatched · D106 (NYISO T1-F) queued · NEXT FREE LABEL: D107 ·
+**Charter date:** 2026-08-23 · **Last refresh:** 2026-10-03 (refresh #70) ·
+**r#70 (HEAD `ad6f9e74`):** gates green open and close · D108 RULED "report-only delta row" → D111 FF rubric v1.2 · D107 landed (third launch) · D110 + D112 rung-0 re-keys (PJM/SPP/NWPP/SOCO, then MISO/SOCO; no gate-(a) reading moved) · PJM CT-2021 frontier (R-36) carried · rung 4 still unauthorized · every shard archived · NEXT FREE LABEL: D115 ·
+*(previous)* **r#69d (HEAD `65bdb647`):** D106 LANDED (NYISO T1-F: PROMOTE → PROMOTE, key `374fa81075c95ff8`, 17.5 min, above band) · rung 3 complete for NEISO + NYISO · D107 killed by the account limit, re-charter · every shard archived · NEXT FREE LABEL: D108 ·
+*(previous)* **r#69c (HEAD `21b1ee26`):** D105 LANDED (NEISO T1-F on the W0 keeper: PROMOTE → PROMOTE, key `66fb439918cbefd6`, 11.4 min) · D106 (NYISO T1-F) running · D107 (VERDICT_MAP re-point + keeper_carry) dispatched · NEXT FREE LABEL: D108 ·
+*(previous)* **r#69b (HEAD `07f5b88e`):** Q73 PJM WITHDRAWN · Q74 NYISO DECLARED (gate (a) MET ×2) · Q75 frontier = no forecast work · Q76 T1-F for NEISO+NYISO authorized · D105 (NEISO T1-F) + D103 dispatched · D106 (NYISO T1-F) queued · NEXT FREE LABEL: D107 ·
 *(previous)* **r#69 (HEAD `d7ff7c20`, addendum r#69a at `792e55ad`):** every keeper moved (closeout-W0) · board CALIBRATED ×2 (NEISO, NYISO; the ×4 read at `d7ff7c20` was stale) vs `complete` ×2 · D100/D101/D102 all LANDED (PRs #7089, #7091, #7094) · 111 forecast verdicts STALE-SURFACE · `check_key_provenance` RED (SOLVE_EPOCHS) → D100 · gate-(a) re-key D101 · staleness census D102 · §0bn.2 is the standing `complete`/frontier plan · Q73–Q76 open · NEXT FREE LABEL: D103 ·
 *(previous)* **r#68 (HEAD `9149be2c`):** D98 (key provenance EXIT 0) and D99 (neiso-t3 FC-6 CAVEAT→PASS, HOLD) LANDED · desk re-keyed MISO → gate (a) EXIT 0 · queue EMPTY · NEXT FREE LABEL: D100 ·
 *(previous)* **r#67 (HEAD `cf0950dc`):** all four r#66 lanes LANDED on relaunch (re-key · D95 surface re-key · D96 HOLD→HOLD one vintage · D97 T1.6 design) · desk re-keyed MISO → gate (a) EXIT 0 · Q71 (surface construction) / Q72 (T1.6 re-point, 2041–2050 mean) RULED · D98, D99 dispatched · D96 shard PRs closed · NEXT FREE LABEL: D100 ·
@@ -76,6 +79,61 @@ is the owner's own CAISO/ERCOT/MISO sessions, watched here for deconfliction onl
 **Handoff prompt for a successor director session:** `docs/records/forecast/capx-director-handoff-2026-08-30.md` (rewritten whole at r#36; the ledger wins where they diverge)
 
 ---
+
+## 0bo. Refresh #70 (2026-10-03, main HEAD `51422d1b` → `ad6f9e74` at close) — gates green; D108 served and RULED (report-only delta row) and implemented the same sitting (D111, rubric v1.2); rung 0 fired twice for six keeper moves (D110, D112) and carried the first signed frontier (PJM CT 2021); D107 landed on its third launch
+
+### 1. GATES AT HEAD (zero LP, re-run first at `51422d1b`)
+
+`check_key_provenance` EXIT 0 (G6 0 fields off the ratchet) · `audit_keepers` EXIT 0 (0 failures, 3 warnings) ·
+`check_registry_payload_parity` EXIT 0 (9 runs) · `check_forecast_parity` EXIT 0 (9 postures, 0 unaccounted, 26 filed
+gaps). No red gate, so no gate charter this sitting. **Re-run at close (`ad6f9e74`): all four EXIT 0.**
+
+### 2. LANES GRADED BY CONTENT
+
+| lane | PR | grade | content read |
+|---|---|---|---|
+| **D110** rung-0 re-key + frontier carry (Fable, zero LP; session `session_015mo9W8sLaRVBWqBwvec9aY`, archived) | #7155 merged `e7aa5d27` | **A** | Read at `6277de60` (pin behind, recorded). **Four** of nine `isos.<ISO>.keeper` ids were stale, not the three chartered — PJM had moved under R-52 by the read: PJM `w0-pjm-fix2` → `2026-10-03-closeout-pjm-nuc-keeper`, SPP `w0-spp107r` → `2026-10-03-closeout-spp-nuc-keeper` (R-44), NWPP `closeout-nwpp-anchor-roster` → `2026-10-03-nwpp-next-24-head`, SOCO `w0-soco-fix2` → `2026-10-03-closeout-soco-2-nuclear` (R-41). Supersedes chains kept; **no gate-(a) reading moved** (MET = NEISO, NYISO). R-36 (PJM C1 CT_PEAKER 2021, owner-signed model-class frontier) carried verbatim into `honest_unfit` with record paths, a §0bn.2b.2 forward-implication paragraph and the Q75 no-forecast-work posture; R-37 (unsigned candidate) and R-47 (held) watched, not carried; R-26/R-32 correctly classed data-limited, not frontier. Rung-1 re-run: SPP 1 key, PJM 21 keys STALE-SURFACE (new PJM mover `NUCLEAR_MONTHLY_CF_BY_YEAR`); NWPP/SOCO carry no verdict. Three items handed back to the desk (§5). |
+| **D111** FF rubric v1.2 (Fable, zero LP; session `session_015b9q2DY6jofuRBXnRh7Z9s`) | #7156 merged `e5b36c81` | **A** | Implements ruling D108 exactly: `forecast_verdict.py --prior-summary` → `supersession_delta` block, `status: rpt`, `gating: false`, attached after `_determine()` returns; absent prior ⇒ absent key. Rubric header/§3/§7/§8/§9. Test proves determination/categories/reasons/caveats/notes byte-identical with vs without the prior at **every** tier. Real-bundle check hit the card's numbers (NEISO 2030 CO2 14.98 → 5.97, max price 282.8 → 84.3; NYISO 2030 CO2 20.98 → 11.49), both PROMOTE. `ff-verdicts.json` left untouched; the lane listed exactly what a re-registration would change (rubric stamp, provenance stamp, the block). The desk merged `origin/main` into the branch to clear a CHANGELOG conflict (both entries kept). |
+| **D107** VERDICT_MAP re-point + `keeper_carry` (Fable, zero LP; third launch, session `session_011N8piUA5o72EMJSQUX7D3V`, archived) | #7158 merged `25e5fec7` | **A** | `neiso-2026-2030-d50-ccscapex` → `neiso-t1f-pre-d105`, `nyiso-2026-2030-d60-arm` → `nyiso-t1f-pre-d106`, plus explicit D105/D106 run-id → live-key rows; all four keys verified in `ff-verdicts.json`, no value edited. D103 §3's `keeper_carry` block implemented as written, keeper → bundle through the registry sidecar's `bundle` field only; a test proves the scored surface and the FC-7 row byte-identical with and without it at t1/t2/t3. Rebuilt on the D105/D106 bundles it reproduces D103 §2's census to the row (NEISO 1 carried residual `offer_curve_smoothing`; NYISO 3). Reported, not fixed: four PJM VERDICT_MAP values with no key in `ff-verdicts.json` (`pjm-t1h-d74-nodefaultcap`, `-d78r-sectorgate`, `-pre-d67`, `-pre-d75rarm`) — render score-only today. Desk merged `origin/main` into the branch (D111's CHANGELOG entry). |
+| **D112** rung-0 re-key MISO/SOCO (Fable, zero LP; session `session_01DZzDcVgD1ioRDw94cUXerZ`) | #7160 merged | **A** | Read at `32afdd87` (three merges past the pin). Exactly the two rows D110 §1.1 deferred: MISO `w0-miso-fix2` → `2026-10-03-closeout-miso-nuc-r` (R-53), SOCO `closeout-soco-2-nuclear` → `2026-10-03-closeout-soco-3-coalpile` (R-54); Supersedes chains nested; MISO `gate_a` re-derived live, **no reading moved**; SOCO kept in `gate_a_provenance` (Q68); stale NWPP/SOCO `note` prose corrected by appended dated sentences (G5 text kept). PR opened with **no check suite** (third time this program); the desk merged `origin/main` into the branch to trigger CI and resolved the CHANGELOG conflict. |
+
+### 3. RECORDED AGAINST INTEREST
+
+* **Rung 0 was late again.** The r#69d close named PJM's keeper `w0-pjm-fix2` and listed no SPP/NWPP/SOCO moves; four promotions (R-41, R-44, R-52, NWPP-NEXT-24) landed during the day without this desk re-keying in the session that read them. The duty is written correctly (§0bn.2a); the desk did not read the promotions as they landed. D110 found the fourth one only because the charter told it to check.
+* **D107's first r#70 container hung** in its environment setup script for 40 min (the same failure as D102's first container at r#69); the desk's branch watcher, not a status check, surfaced it. Archived and relaunched. Standing practice: a child still `PENDING` 10 min after launch is checked by `list_events`, not waited on.
+* **The desk's own merge attempt in a fresh `git worktree`** began lazily fetching every blob in the partial clone; killed and redone in the primary checkout. Never `git worktree add` in this repo without a sparse profile.
+* **The D108 card's attribution** (Q47 re-pricing vs W0 surface rows) remains unmeasured; the ruling makes the move visible, not explained.
+
+### 4. RULINGS SERVED THIS SITTING
+
+| card | ruling | effect |
+|---|---|---|
+| **D108** T1-F battery insensitive to the W0 keeper / Q47 re-pricing while the trajectory is not (`FINDING-capx-d108-2026-10-03.md`) | **"Report-only delta row"** | FF rubric v1.2: report-only supersession-delta annotation, every tier, never gates; zero verdicts move. Implemented by D111 the same sitting. |
+
+No other card is open. Rung 4 (D109) and rung 5 remain unauthorized for every ISO; no LP was launched.
+
+### 5. QUEUE (next sitting; none dispatched)
+
+| label | act | LP | status |
+|---|---|---|---|
+| **D109** | T1-X crossover + FF-3E readiness, NEISO then NYISO (rung 4) | yes | **needs an owner ruling** — not authorized |
+| **D113** | re-register `neiso-t1f` / `nyiso-t1f` in `ff-verdicts.json` with the v1.2 `supersession_delta` block (`--prior-summary` = the D50 / D60 bundles); only the rubric stamp, provenance stamp and the block move (D111 §3) | 0 | proposed, Fable code shard |
+| **D114** | §0bn.2b.4: forecast-side `U` row in the PJM mechanism-matrix shard for the R-36 CT commitment-conduct frontier, backcast record as evidence | 0 | proposed |
+| **rung 0 (Q34)** | the next keeper move in any ISO, in the session that reads it (MISO R-53 / SOCO R-54 landed mid-sitting and were re-keyed by D112) | 0 | standing |
+| **PJM VERDICT_MAP orphans** | four PJM t1h map values with no `ff-verdicts.json` key (D107 §2) — PJM is a Q75 frontier ISO, so the fix is a two-line map deletion or re-point, not a re-score | 0 | proposed, fold into D113 |
+| **desk question** | NWPP/SOCO `isos` rows exist on the forecast board (G5 snippet) although Q68 admits a board row only after `complete`; D110 left them and asked the desk | 0 | carry to the owner if it recurs; no card this sitting |
+| **watch** | R-47 PJM COAL_BIT 2019–21 frontier card is now due (PJM-nuc promoted); when signed, carry it like R-36 | 0 | backcast desk's |
+
+### 6. SWEEP (rule 33)
+
+Every capx session of this sitting is archived: D107 (first r#70 container `session_01Fj2XgnsAfd5LhUBDuhywBD`, hung in setup; relaunch `session_011N8piUA5o72EMJSQUX7D3V`), D110 `session_015mo9W8sLaRVBWqBwvec9aY`, D111 `session_015b9q2DY6jofuRBXnRh7Z9s`, D112 `session_01DZzDcVgD1ioRDw94cUXerZ`. Each was archived only after its PR merged (rule 33). Nothing is left alive.
+
+Owner-side leftovers (403 for a session): delete transport branches `claude/capx-d100-solve-epochs`, `claude/capx-d101-gate-a-rekey`, `claude/capx-d102-staleness-census`, `claude/capx-d103-dof-carry`, `claude/capx-d105-neiso-t1f`, `claude/capx-d106-nyiso-t1f`, `claude/capx-director-ledger-r69`, `-r69b`, `claude/capx-r69b-rulings`, `claude/capx-ledger-r69c`, `claude/capx-ledger-r69d`, and from this sitting `claude/capx-d110-rekey-frontier`, `claude/capx-d111-ff-rubric-delta`, `claude/capx-d107-verdictmap-carry`, `claude/capx-d112-rekey-miso-soco`, `claude/capx-director-refresh-70-9yv10d`.
+
+**NEXT FREE LABEL: D115** (D109 reserved for rung 4; D113/D114 proposed above).
+
+---
+
 
 ## 0bn. Refresh #69 (2026-10-03, main HEAD `d7ff7c20`) — the backcast close-out moved every keeper in one day; four ISOs read CALIBRATED on the board while the `complete` block still names two; the D98 census gate is RED on a cause the desk did not foresee; this refresh writes the standing plan for what this desk does when an ISO reaches `complete` or a frontier statement, and dispatches three zero-LP lanes
 
@@ -176,6 +234,23 @@ Disjoint by file. Sessions: D100 `session_01NmQW2pVXkMkRQr3kkbAhWw` · D101 `ses
 Executed this sitting (zero LP): the two marker moves and the two board flips in one commit, so the surfaces cannot disagree (`audit_keepers` EXIT 0 incl. M1a/M1b on the new NYISO entry; `check_registry_payload_parity` EXIT 0; `check_forecast_parity` EXIT 0).
 
 **Dispatched under the rulings:** **D105** — NEISO T1-F on `2026-10-02-w0-neiso` (`--golden-posture`, no `--set`, 2026–2030; PRECOMMIT written in-lane from a zero-LP config probe against `neiso-t1f`'s committed `run_config.json`; prior verdict preserved as `neiso-t1f-pre-d105`; session `session_01JzQPuokURZXBLn8zHqdwyy`, branch `claude/capx-d105-neiso-t1f`) · **D103** — rung-2 forecast DOF-ledger carry census for NEISO and NYISO, proposed builder diff only (session `session_01Gm8yNmZjG3NwvY2aUCx2yv`, branch `claude/capx-d103-dof-carry`). **Queued, not dispatched:** **D106** — NYISO T1-F on `2026-10-02-w0-nyiso`, launched when D105 lands (Q76: one ISO at a time). **NEXT FREE LABEL: D107.**
+
+### 4b. ADDENDUM r#69c (2026-10-03, after D105 landed) — rung 3 for NEISO: PROMOTE → PROMOTE on the W0 keeper
+
+* **D105 LANDED** (PR #7138; session `session_01JzQPuokURZXBLn8zHqdwyy`, archived). NEISO T1-F 2026–2030 on `2026-10-02-w0-neiso`, `--golden-posture`, no `--set`. Resolved key `66fb439918cbefd6` pre-declared in the PRECOMMIT and hit; the step table from D50's `18515067bf4d2fbe` runs through the two Q47 CCS default moves to the nine moved NEISO surface rows (the D102 movers among them). Wall 11.4 min for five years (167/123/123/128/143 s), peak RSS 3.2 GB, against the §2.4 anchor of ~85 s/yr. **FC-1 PASS (14) · FC-2 PASS (backstop share 1.2 → 0.0 %) · FC-7 PASS (949 keys, 7 DOF entries, 0 UNIDENTIFIED) · FC-8 PASS · determination PROMOTE before and after**, every moved row pre-declared; the only unpre-declared change is the scorer's rubric stamp 1.0 → 1.1. Prior preserved byte-equal as `neiso-t1f-pre-d105`; sidecar `frontend/data/hindcast/neiso-2026-2030-d105-w0neiso.json`.
+* **Against interest (D105's own):** the trajectory moved far more than the verdict — 2028–2030 CO2 −41 to −69 %, 2030 max hourly price 283 → 84 $/MWh — as the converted `gas_cc_ccs` fleet dispatches ahead of unabated CC at the Q47 adder (2.95 $/MWh). One instrument, no control: the desk does not attribute this between the Q47 re-pricing and the keeper's surface rows. Rung 1's STALE-SURFACE reading was therefore right in substance even though the verdict row did not move: gates (b)/(c) now stand on a run whose trajectory is a different object from the one D50 scored.
+* **Desk procedure found wanting (recorded against interest):** the shard's push never triggered Actions (zero check runs 20 min after the PR opened); a merge of `origin/main` into the branch did. Two further CHANGELOG conflicts came from the day's merge rate before the PR landed. The parent resolved all three; a shard PR that opens with no check suite is now a known failure mode — the parent's first act on any shard PR is to confirm a check suite exists.
+* **D106 DISPATCHED** — NYISO T1-F on `2026-10-02-w0-nyiso`, same recipe (`session_01RnRf7MAbrFiwDoB8vxSezf`, branch `claude/capx-d106-nyiso-t1f`), prior to be preserved as `nyiso-t1f-pre-d106`.
+* **D107 DISPATCHED** (code lane, Fable, zero LP): (a) `register_forecast_run.py::VERDICT_MAP` re-point `neiso-2026-2030-d50-ccscapex` → `neiso-t1f-pre-d105` (D105's leftover: the D50 registry sidecar bakes the new verdict until re-pointed), and the same for `nyiso-2026-2030-d60-arm` → `nyiso-t1f-pre-d106` once that key exists; (b) D103's proposed `keeper_carry` block in `build_forecast_dof_ledger.py` (report-only `carried_residual` / `carried_measured` / `not_applicable_in_forecast`, keeper bundle resolved from the registry, tests both directions). **NEXT FREE LABEL: D108.**
+
+### 4c. ADDENDUM r#69d (2026-10-03, close of the sitting) — rung 3 for NYISO: PROMOTE → PROMOTE; D107 killed by the account limit; the sitting closes
+
+* **D106 LANDED** (PR #7145; session `session_01RnRf7MAbrFiwDoB8vxSezf`, archived). NYISO T1-F 2026–2030 on `2026-10-02-w0-nyiso`, `--golden-posture`, no `--set`, curve-OFF. Resolved key `374fa81075c95ff8` pre-declared and hit (from D60's `19a9690bb12c8459` via the two Q47 CCS moves to the eleven moved NYISO surface rows). Wall 17.5 min (242/193/217/199/202 s), peak RSS 3.1 GB — **above the pre-declared [7, 15] min band, reported UNEXPECTED**; FC-8 still PASS against the 45-min budget. **FC-1 PASS (14) · FC-2 PASS · FC-7 PASS (949 keys, 3 DOF entries, 0 UNIDENTIFIED) · determination PROMOTE before and after.** Prior preserved byte-equal as `nyiso-t1f-pre-d106`; sidecar `frontend/data/hindcast/nyiso-2026-2030-d106-w0nyiso.json`. Deviation the lane stated for the desk: the clean build's `emissions-unit-annual` datatype was killed (exit −9) twice; it is not on the forecast solve path, and the lane proceeded past STOP 1 on that ground — the desk accepts the deviation (the datatype is backcast-side) and records it.
+* **Against interest (D106's own):** as for NEISO, the trajectory moved far more than the verdict — 2028–2030 CO2 −27 to −45 % as converted `gas_cc_ccs` dispatches ahead of unabated CC at the Q47 adder; import capacity reads 5,500 MW every year against D60's 6,470 and peak demand drifts up to +387 MW by 2030. Not attributed (one instrument, no control). **Standing read for both ISOs:** the T1-F verdict rows are insensitive to the W0 keeper and the Q47 re-pricing; the trajectories are not. Gate (b) therefore stands on PROMOTE for NEISO and NYISO, but the FC battery is not measuring what moved — a rubric question for the forecast desk (FF rubric §3), not a solve question.
+* **Rung 3 complete for both `complete` ISOs under Q76**; rung 4 (T1-X + FF-3E readiness) and rung 5 (the gate-(d) card for a golden run) are the next steps and are NOT authorized by Q76.
+* **D107 NOT RUN.** The code lane (VERDICT_MAP re-point for `neiso-2026-2030-d50-ccscapex` → `neiso-t1f-pre-d105` and `nyiso-2026-2030-d60-arm` → `nyiso-t1f-pre-d106`; D103's report-only `keeper_carry` block) was killed at launch by the account's 5-hour session limit (05:45Z, "resets 6am UTC"), nothing pushed; archived. Until it lands, the D50 and D60 generated registry sidecars bake the new verdicts (the committed `ff-verdicts.json` is correct; only the generated sidecars read the live key). **Re-charter as D107 when the owner has usage headroom; one Fable code shard, ≤ 25 min, zero LP.**
+* **Shard-PR failure mode, confirmed twice:** both solve shards' PRs opened with no check suite; a merge of `origin/main` into the branch by the parent triggered CI each time. Standing desk practice from this sitting: the parent's first act on a shard PR is to confirm a check suite exists.
+* **Sweep (rule 33):** every capx session of this sitting is archived — D100, D101, D102 (both containers), D103, D105, D106, D107. Transport branches left on origin for owner deletion (403): `claude/capx-d100-solve-epochs`, `claude/capx-d101-gate-a-rekey`, `claude/capx-d102-staleness-census`, `claude/capx-d103-dof-carry`, `claude/capx-d105-neiso-t1f`, `claude/capx-d106-nyiso-t1f`, plus the desk's own `claude/capx-director-ledger-r69`, `-r69b`, `claude/capx-r69b-rulings`, `claude/capx-ledger-r69c`, `claude/capx-ledger-r69d`. Nothing left alive. **NEXT FREE LABEL: D108.**
 
 ### 5. OWNER CARDS — ALL RULED at r#69b (§4a above); kept for the record
 
