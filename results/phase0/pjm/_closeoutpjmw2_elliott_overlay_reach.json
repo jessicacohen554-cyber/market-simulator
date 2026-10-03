@@ -1,0 +1,127 @@
+{
+ "probe": "closeout-PJM-w2 L3 Elliott overlay reach (zero LP)",
+ "keeper": "2026-10-03-closeout-pjm-nuc-keeper",
+ "bundle": "results/calibration/closeout_pjm_nuc_full_span/hourly",
+ "overlay_form": "event increment: (pub forced - mean(20-22 Dec)) - (model unav - mean(20-22 Dec)), clipped >= 0, removed from in-LP thermal headroom",
+ "bar_plan_step4": "Dec 23-24 mean price >= $800/MWh; C3b <= 0.20",
+ "hours_window": 240,
+ "hours_resid_below_primary_req": 0,
+ "hours_resid_below_req_plus_190": 0,
+ "hours_resid_below_zero": 0,
+ "min_resid_headroom_mw": 5840.0,
+ "event_mean_model_price": 110.91,
+ "event_mean_walk_price_upper_bound": 168.72,
+ "event_mean_actual_zonal_rt": 948.38,
+ "event_hours_actual_ge_800": 18,
+ "verdict": "NOT CHARTERED (no shortage hour; merit-order upper bound below the $800 bar)",
+ "by_day": {
+  "20": {
+   "pub_forced": 10396.0,
+   "model_unav_mean": 36488.6,
+   "increment_mean": -6357.5,
+   "headroom_min": 27751.0,
+   "resid_headroom_min": 27751.0,
+   "price_max": 89.4,
+   "walk_price_max": 89.4,
+   "actual_max": 136.9
+  },
+  "21": {
+   "pub_forced": 11585.0,
+   "model_unav_mean": 27700.2,
+   "increment_mean": 3619.9,
+   "headroom_min": 38068.8,
+   "resid_headroom_min": 34448.9,
+   "price_max": 90.7,
+   "walk_price_max": 95.6,
+   "actual_max": 100.1
+  },
+  "22": {
+   "pub_forced": 10433.0,
+   "model_unav_mean": 27430.6,
+   "increment_mean": 2737.5,
+   "headroom_min": 45376.6,
+   "resid_headroom_min": 42639.0,
+   "price_max": 84.2,
+   "walk_price_max": 88.8,
+   "actual_max": 56.8
+  },
+  "23": {
+   "pub_forced": 11914.0,
+   "model_unav_mean": 31312.7,
+   "increment_mean": 336.4,
+   "headroom_min": 20754.0,
+   "resid_headroom_min": 20417.6,
+   "price_max": 127.8,
+   "walk_price_max": 129.9,
+   "actual_max": 3719.8
+  },
+  "24": {
+   "pub_forced": 31078.0,
+   "model_unav_mean": 34948.8,
+   "increment_mean": 15864.3,
+   "headroom_min": 21704.3,
+   "resid_headroom_min": 5840.0,
+   "price_max": 126.7,
+   "walk_price_max": 264.7,
+   "actual_max": 3615.2
+  },
+  "25": {
+   "pub_forced": 35844.0,
+   "model_unav_mean": 34662.2,
+   "increment_mean": 20916.9,
+   "headroom_min": 31220.2,
+   "resid_headroom_min": 10303.2,
+   "price_max": 117.2,
+   "walk_price_max": 233.0,
+   "actual_max": 239.3
+  },
+  "26": {
+   "pub_forced": 27058.0,
+   "model_unav_mean": 35376.2,
+   "increment_mean": 11417.0,
+   "headroom_min": 27217.6,
+   "resid_headroom_min": 15800.6,
+   "price_max": 111.5,
+   "walk_price_max": 152.4,
+   "actual_max": 549.4
+  },
+  "27": {
+   "pub_forced": 24052.0,
+   "model_unav_mean": 33277.7,
+   "increment_mean": 10509.4,
+   "headroom_min": 33157.7,
+   "resid_headroom_min": 22648.3,
+   "price_max": 77.3,
+   "walk_price_max": 92.8,
+   "actual_max": 137.7
+  },
+  "28": {
+   "pub_forced": 17957.0,
+   "model_unav_mean": 29437.0,
+   "increment_mean": 8255.2,
+   "headroom_min": 40243.7,
+   "resid_headroom_min": 31988.5,
+   "price_max": 60.3,
+   "walk_price_max": 68.5,
+   "actual_max": 115.3
+  },
+  "29": {
+   "pub_forced": 20193.0,
+   "model_unav_mean": 25235.6,
+   "increment_mean": 14692.5,
+   "headroom_min": 52115.7,
+   "resid_headroom_min": 37423.2,
+   "price_max": 49.1,
+   "walk_price_max": 61.2,
+   "actual_max": 51.9
+  }
+ },
+ "c3a_c3b_2022_all": [
+  -17.16,
+  0.298
+ ],
+ "c3a_c3b_2022_ex_elliott": [
+  -9.87,
+  0.182
+ ]
+}
