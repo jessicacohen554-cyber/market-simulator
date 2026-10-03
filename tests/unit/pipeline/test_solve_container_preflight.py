@@ -253,8 +253,9 @@ def test_inactive_stale_swapfile_counts_as_reclaimable_disk(
 
 
 def test_inactive_stale_swapfile_is_reused_when_large_enough(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
 ) -> None:
+    caplog.set_level("INFO", logger="solve_container")
     proc = _fake_proc(tmp_path, _v1_lines())
     swapfile = tmp_path / "swapfile"
     _stale_swapfile(swapfile)
@@ -274,11 +275,13 @@ def test_inactive_stale_swapfile_is_reused_when_large_enough(
     assert added == 12
     assert [c[0] for c in calls] == ["mkswap", "swapon"]  # no fallocate, no unlink
     assert swapfile.exists()
+    assert f"reused stale inactive {swapfile} (12 GiB)" in caplog.text
 
 
 def test_inactive_stale_swapfile_too_small_is_removed_and_remade(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
 ) -> None:
+    caplog.set_level("INFO", logger="solve_container")
     proc = _fake_proc(tmp_path, _v1_lines())
     swapfile = tmp_path / "swapfile"
     _stale_swapfile(swapfile)
@@ -305,9 +308,37 @@ def test_inactive_stale_swapfile_too_small_is_removed_and_remade(
     assert [c[0] for c in calls] == ["fallocate", "mkswap", "swapon"]
     assert calls[0][2] == "10G"
     assert swapfile.read_bytes() == b""  # the stale file was replaced
+    assert f"unlinked stale inactive {swapfile} (3.0 GiB)" in caplog.text
+    assert "re-create it at 10 GiB" in caplog.text
 
 
 def test_below_target_warning_names_the_fix_and_free_disk() -> None:
     text = sc.below_target_warning(16.4, 24, 6.7)
     assert "provision swap before data steps" in text
     assert "free disk 6.7 GiB" in text
+
+
+def test_active_swapfile_is_never_unlinked_even_when_disk_is_ample(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Desk constraint (R-50): reclaim touches only a file NOT in /proc/swaps."""
+    proc = _fake_proc(tmp_path, _v1_lines())
+    swapfile = tmp_path / "swapfile"
+    _stale_swapfile(swapfile)
+    _write(
+        proc / "swaps",
+        "Filename\tType\tSize\tUsed\tPriority\n"
+        f"{swapfile}\tfile\t{3 * 1024 * 1024}\t0\t-2\n",
+    )
+    monkeypatch.setattr(
+        sc.shutil, "disk_usage", lambda _p: type("du", (), {"free": 50 * GIB})()
+    )
+    monkeypatch.setattr(sc.os, "geteuid", lambda: 0)
+    calls: list[list[str]] = []
+    monkeypatch.setattr(sc.subprocess, "run", lambda cmd, **_k: calls.append(cmd))
+
+    added, _warnings = sc.provision_swap(
+        24, ceiling_bytes=int(13.34 * GIB), swapfile=swapfile, proc=proc
+    )
+
+    assert added == 0 and calls == [] and swapfile.exists()

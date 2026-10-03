@@ -57,3 +57,13 @@ def test_da_virtuals_fetch_line_follows_the_recipe(
     assert (line in text) is expected
     if expected:
         assert "gitignored" in text and "never commit" in text
+
+
+def test_unreadable_pjm_recipe_fetches_unconditionally(tmp_path: Path) -> None:
+    """Desk constraint (R-50): never skip silently when the recipe cannot be read."""
+    missing = str(tmp_path / "no_such_bundle")
+    text = _render("PJM", missing)
+    assert "fetch_pjm_da_virtuals.py --years 2021" in text
+    assert "fetch unconditionally; recipe unreadable" in text
+    # A non-PJM unreadable recipe still gets no PJM fetch.
+    assert "fetch_pjm_da_virtuals" not in _render("MISO", missing)

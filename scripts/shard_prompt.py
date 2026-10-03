@@ -7,7 +7,8 @@ shard prompt has eight things it must get right or the solve is wasted
 branch, the bundle push with ``dispatch/<year>_P1.parquet``, the forbidden
 commands, the memory preflight (``prepare_solve_container.py`` FIRST, before any data
 step — R-50), what to report, and "stop, don't repair". A PJM recipe that
-arms ``pjm_da_virtual_bids`` also gets the gitignored DA-virtuals fetch.
+arms ``pjm_da_virtual_bids`` (or cannot be read) also gets the gitignored
+DA-virtuals fetch.
 This script emits all eight from four arguments so the orchestrator never
 re-derives them by hand.
 
@@ -97,30 +98,33 @@ DA_VIRTUALS_FIELD = "pjm_da_virtual_bids"
 
 DA_VIRTUALS_FETCH = (
     "\n   then `uv run python scripts/data/fetch_pjm_da_virtuals.py --years {year} "
-    "--feeds hrl_da_incs_decs` (the recipe arms `pjm_da_virtual_bids`; the parquets "
-    "under data/raw/pjm-da-virtuals/ are gitignored — never commit them); exits 0"
+    "--feeds hrl_da_incs_decs` ({why}; the parquets under data/raw/pjm-da-virtuals/ "
+    "are gitignored — never commit them); exits 0"
 )
 
+#: Why the fetch is emitted, by :func:`da_virtuals_fetch_reason`'s outcome.
+_ARMED = "the recipe arms `pjm_da_virtual_bids`"
+_UNREADABLE = "fetch unconditionally; recipe unreadable"
 
-def arms_da_virtuals(iso: str, bundle: Path, sets: list[str]) -> bool:
-    """Does this shard's recipe arm ``pjm_da_virtual_bids``?
 
-    PJM only (the mechanism is PJM-gated). The bundle's
-    ``run_config.json`` ``scenario_config`` value is the recipe; a
-    ``--set pjm_da_virtual_bids=<json>`` overrides it (last one wins), as it
-    does in ``replay_keeper``. Recipe-gated rather than ISO-gated because the
-    field is default off, so a PJM recipe without it needs no fetch.
+def da_virtuals_fetch_reason(iso: str, bundle: Path, sets: list[str]) -> str | None:
+    """Why this shard needs the PJM DA-virtuals fetch, or ``None`` if it does not.
+
+    PJM only (the mechanism is PJM-gated). The bundle's ``run_config.json``
+    ``scenario_config`` value is the recipe; a ``--set
+    pjm_da_virtual_bids=<json>`` overrides it (last one wins), as it does in
+    ``replay_keeper``. Recipe-gated rather than ISO-gated because the field is
+    default off, so a PJM recipe without it needs no fetch — but a PJM recipe
+    that cannot be read fetches unconditionally rather than silently skipping.
     """
     if iso.upper() != "PJM":
-        return False
-    armed = False
-    rc = bundle / "run_config.json"
-    if rc.exists():
-        try:
-            cfg = json.loads(rc.read_text())
-        except json.JSONDecodeError:
-            cfg = {}
+        return None
+    armed: bool | None = None
+    try:
+        cfg = json.loads((bundle / "run_config.json").read_text())
         armed = bool((cfg.get("scenario_config") or {}).get(DA_VIRTUALS_FIELD, False))
+    except (OSError, json.JSONDecodeError, AttributeError):
+        armed = None
     for spec in sets:
         key, _, value = spec.partition("=")
         if key.strip() == DA_VIRTUALS_FIELD:
@@ -128,7 +132,9 @@ def arms_da_virtuals(iso: str, bundle: Path, sets: list[str]) -> bool:
                 armed = bool(json.loads(value))
             except json.JSONDecodeError:
                 armed = value.strip().lower() == "true"
-    return armed
+    if armed is None:
+        return _UNREADABLE
+    return _ARMED if armed else None
 
 
 def render(
@@ -160,8 +166,8 @@ def render(
         signature=_signature(b, sets),
         budget=budget,
         fetch_step=(
-            DA_VIRTUALS_FETCH.format(year=year)
-            if arms_da_virtuals(iso, b, sets)
+            DA_VIRTUALS_FETCH.format(year=year, why=why)
+            if (why := da_virtuals_fetch_reason(iso, b, sets))
             else ""
         ),
     )

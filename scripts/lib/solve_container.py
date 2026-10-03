@@ -364,10 +364,18 @@ def provision_swap(
         return 0, warnings
 
     try:
+        # Only reached for a file NOT in /proc/swaps (the active case returned
+        # above): an active swapfile is never swapped off, unlinked or re-made.
         if swapfile.exists() and not reuse:
             # Stale file from an earlier preflight, not active and too small:
             # remove it (its blocks were counted as free above) and re-make it.
             swapfile.unlink()
+            logger.info(
+                "swap: unlinked stale inactive %s (%.1f GiB) to re-create it at %d GiB",
+                swapfile,
+                stale_bytes / GIB,
+                add_gib,
+            )
         if not reuse:
             subprocess.run(
                 ["fallocate", "-l", f"{add_gib}G", str(swapfile)],
@@ -377,6 +385,8 @@ def provision_swap(
         swapfile.chmod(0o600)
         subprocess.run(["mkswap", str(swapfile)], check=True, capture_output=True)
         subprocess.run(["swapon", str(swapfile)], check=True, capture_output=True)
+        if reuse:
+            logger.info("swap: reused stale inactive %s (%d GiB)", swapfile, add_gib)
     except (OSError, subprocess.CalledProcessError) as exc:
         detail = ""
         if isinstance(exc, subprocess.CalledProcessError) and exc.stderr:
