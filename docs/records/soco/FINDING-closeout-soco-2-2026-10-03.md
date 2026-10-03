@@ -229,3 +229,139 @@ The CC_REGULAR over-run has four parts:
 **Lever:** the nuclear 2019–2022 coverage repair. It is not a new field, and there
 is no new matrix row (it is a `constants.py` table, not a `ScenarioConfig` field).
 SolveEpoch 2026-10-03a re-keys backcast SOCO.
+
+## (d) Cross-ISO: years that read the nuclear forecast fallback (desk item 1, zero LP)
+
+Probe: `scripts/probes/_closeout_soco2_nuc_coverage.py`; output in
+`r-soco/closeout-soco-2/nuc_coverage.csv`.
+
+**How the table is built.**
+- One row per (ISO, year) of each current keeper with **no**
+  `NUCLEAR_MONTHLY_CF_BY_YEAR` row at the keeper's SHA. Those years read
+  `NUCLEAR_MONTHLY_CF[ISO]` (× 1 − EFORD) as the base table.
+- Model nuclear is the keeper payload's `gmModel` value; EIA-923 is the bench part's
+  `classFull`.
+- The NRC column records whether the keeper arms the daily `nuclear_unit_availability`
+  overlay, read from the keeper `run_config.json`.
+
+**How to read the NRC column.** Where it reads "yes", the overlay replaces the
+fallback on every NRC-covered date, so the fallback reaches only uncovered dates
+(for example the uprate-season months the deriver drops). Those gaps are not purely
+the fallback's.
+
+Every year not listed has a table row: CAISO, NEISO and NYISO in full, plus
+ERCOT 2021–25, MISO/NWPP/PJM/SPP 2023–25 and SOCO 2023–25.
+
+| ISO | Year | NRC overlay | Model nuclear TWh | EIA-923 TWh | Gap TWh |
+|---|---|---|---|---|---|
+| ERCOT | 2019 | yes | 40.56 | 41.30 | −0.74 |
+| ERCOT | 2020 | yes | 40.75 | 41.44 | −0.69 |
+| MISO | 2019 | yes | 97.58 | 97.03 | +0.55 |
+| MISO | 2020 | yes | 97.57 | 92.20 | +5.37 |
+| MISO | 2021 | yes | 93.61 | 95.69 | −2.09 |
+| MISO | 2022 | yes | 89.94 | 91.35 | −1.41 |
+| NWPP | 2019 | no | 8.53 | 8.87 | −0.34 |
+| NWPP | 2020 | no | 8.44 | 9.43 | −0.99 |
+| NWPP | 2021 | no | 8.44 | 8.51 | −0.07 |
+| NWPP | 2022 | no | 8.44 | 9.85 | −1.41 |
+| PJM | 2019 | no | 276.99 | 277.92 | −0.93 |
+| PJM | 2020 | no | 272.05 | 275.75 | −3.70 |
+| PJM | 2021 | no | 271.90 | 271.69 | +0.20 |
+| PJM | 2022 | no | 271.90 | 270.59 | +1.31 |
+| SOCO | 2019 | no | 45.25 | 47.73 | −2.48 |
+| SOCO | 2020 | no | 45.40 | 47.60 | −2.20 |
+| SOCO | 2021 | no | 45.56 | 48.93 | −3.37 |
+| SOCO | 2022 | no | 45.56 | 47.06 | −1.50 |
+| SPP | 2019 | no | 15.80 | 16.20 | −0.40 |
+| SPP | 2020 | no | 15.80 | 16.77 | −0.97 |
+| SPP | 2021 | no | 15.80 | 15.46 | +0.35 |
+| SPP | 2022 | no | 15.80 | 14.60 | +1.20 |
+
+**The signature of the fallback** is model nuclear that is *identical across years*:
+- NWPP 8.44 in 2020–22;
+- PJM 271.90 in 2021–22;
+- SPP 15.80 in all four years;
+- SOCO 45.56 in 2021–22.
+
+The gaps run both ways (−3.70 to +1.31 TWh), because a fixed seasonal pattern misses
+each year's real refuelling cadence. The lanes that most need the same rule-14 repair
+(rows from `derive_nuclear_monthly_cf.py --isos <ISO> --years 2019 … 2022`, existing
+rows reproduced under `--check`) are:
+- **PJM 2020** (−3.70);
+- **SOCO 2019–22**, done in this lane;
+- **NWPP 2020/2022**;
+- **SPP 2020/2022**.
+
+**MISO 2020 (+5.37) and the ERCOT gaps** sit under an armed NRC overlay. They are the
+overlay's question (for example Duane Arnold's derecho-damaged months), not the base
+table's. For reference, the rows that do have a table show the same pattern under a
+measured base: NEISO 2019 +1.99 and NYISO 2021 +2.94 (NRC armed) are those lanes'
+questions too. Each lane measures its own (rule 25).
+
+## (e) Cross-ISO: exit-carry R-3 envelope, per row (desk item 2, zero LP)
+
+Probe: `scripts/probes/_closeout_soco2_c_exit.py`; outputs `c_exit.csv` and
+`c_exit_ctl.csv`.
+
+**Envelope definition.** The loosest R-3 form: Page-5 receipts over the online months,
+plus the December Y−1 stock, at S_min = 0. MMBtu is converted to MWh at the plant's
+Y−1 coal heat rate (EIA-923 annual fuel / net generation).
+
+**The other columns:**
+- **Model GWh** is the W0 leg's per-plant MWh from `carry_audit_w0_2026-10-02.csv`.
+- **Dark tail** is the number of terminal online months with ≤ 0.5 GWh of EIA-923
+  generation.
+- **Rel. CF** is the plant's EIA-923 change versus a year earlier over its online
+  months, divided by the same ratio for its ISO's non-exit fleet of the same family.
+- **Capped** is min(model, envelope).
+- **Residual** is capped minus EIA-923.
+
+| ISO | Year | Plant | Family | Dark tail (mo) | Rel. CF | EIA-923 GWh | Model GWh | R-3 envelope GWh | Capped GWh | Residual GWh |
+|---|---|---|---|---|---|---|---|---|---|---|
+| CAISO | 2023 | AES Redondo Beach | ST_GAS | 0 | 1.18 | 256 | 0 | — | — | — |
+| ERCOT | 2020 | Oklaunion | COAL | 0 | 0.53 | 1,101 | 1,036 | 1,165 | 1,036 | −65 |
+| ERCOT | 2022 | Decker Creek | ST_GAS | 0 | 0.63 | 73 | 195 | — | — | — |
+| ERCOT | 2025 | Sandy Creek | COAL | 8 | 0.21 | 719 | 612 | 1,441 | 612 | −107 |
+| ERCOT | 2025 | V H Braunig | ST_GAS | 9 | 0.22 | 387 | 414 | — | — | — |
+| MISO | 2019 | Coffeen | COAL | 1 | 0.68 | 2,677 | 3,697 | 2,783 | 2,783 | +106 |
+| MISO | 2019 | Havana | COAL | 1 | 0.78 | 1,469 | 1,698 | 1,477 | 1,477 | +8 |
+| MISO | 2019 | Duck Creek | COAL | 0 | 1.15 | 2,237 | 1,941 | 1,861 | 1,861 | −376 |
+| MISO | 2019 | Hennepin | COAL | 1 | 0.72 | 921 | 1,182 | 819 | 819 | −102 |
+| MISO | 2020 | NRG Sterlington | CT | 12 | 0.74 | 2 | 40 | — | — | — |
+| MISO | 2020 | Duane Arnold | NUCLEAR | 3 | 0.63 | 2,905 | 4,135 | — | — | — |
+| MISO | 2021 | Dolet Hills | COAL | 1 | 1.21 | 943 | — | 1,017 | — | — |
+| MISO | 2022 | St Clair | COAL | 7 | 0.55 | 1,602 | 4,278 | 107 | 107 | −1,495 |
+| MISO | 2022 | E D Edwards | COAL | 0 | 1.09 | 2,695 | 2,993 | 2,629 | 2,629 | −66 |
+| MISO | 2022 | Meramec | COAL | 0 | 0.19 | 86 | 465 | 247 | 247 | +162 |
+| MISO | 2022 | Trenton Channel | COAL | 6 | 0.57 | 571 | 1,186 | 507 | 507 | −64 |
+| MISO | 2022 | Erickson | COAL | 0 | 1.26 | 783 | 630 | 772 | 630 | −152 |
+| MISO | 2022 | Meramec | ST_GAS | 0 | 2.04 | 128 | 465 | — | — | — |
+| MISO | 2023 | A B Brown | COAL | 0 | 0.83 | 1,719 | 2,156 | 1,986 | 1,986 | +266 |
+| MISO | 2024 | Rush Island | COAL | 1 | 0.78 | 508 | 612 | 865 | 612 | +104 |
+| MISO | 2024 | LaO Energy Systems | CC | 0 | 0.80 | 1,441 | 2,180 | — | — | — |
+| NWPP | 2020 | Boardman | COAL | 0 | 1.03 | 1,630 | 1,909 | 1,589 | 1,589 | −41 |
+| PJM | 2019 | Bruce Mansfield | COAL | 2 | 0.30 | 647 | 942 | 711 | 711 | +64 |
+| PJM | 2019 | Three Mile Island | NUCLEAR | 0 | 0.97 | 5,214 | 5,005 | — | — | — |
+| PJM | 2020 | Dickerson | COAL | 1 | 4.22 | 179 | 169 | 171 | 169 | −10 |
+| PJM | 2023 | Joliet 29 | ST_GAS | 1 | 1.15 | 708 | — | — | — | — |
+| SOCO | 2019 | Hammond | COAL | 4 | 1.24 | 111 | 573 | 83 | 83 | −28 |
+| SOCO | 2019 | McIntosh-1 | COAL | 5 | 1.26 | 16 | 140 | 0 | 0 | −16 |
+| SOCO | 2022 | Wansley | COAL | 1 | 0.89 | 884 | 1,250 | 1,147 | 1,147 | +263 |
+| SPP | 2020 | Oklaunion | COAL | 0 | 0.56 | 1,101 | 1,007 | 1,165 | 1,007 | −94 |
+
+**Totals over the 20 coal rows with a leg.** The over-run falls from **+7.54 to +0.97
+TWh**, and the capped rows under-run by **−2.62 TWh**. Of that under-run, −1.50 is St
+Clair (MISO 2022): its receipts are recorded on its shared-yard sibling Belle River,
+so a per-plant envelope reads 107 GWh against 1,602 burned. A yard-grain join (the
+MISO construction) removes it, leaving about −1.1 TWh, mostly Duck Creek's
+envelope-below-burn.
+
+**Non-coal rows** (+2.49 TWh over: Duane Arnold, LaO, Meramec ST, Decker Creek,
+Sterlington) are outside any fuel ceiling. They are outage or conduct questions.
+
+**Routing.** This is the existing `coal_fuel_inventory` family (rule 19: no new
+mechanism). Cell states: MISO K (its ceiling census is in
+FINDING-closeout-miso-wave1), SOCO / PJM / NWPP / ERCOT U, SPP R (SPP-44). Each lane
+arms it on its own footprint (rule 25). The dark-tail and wind-down profiles
+themselves are same-year generation, the answer key under rule 13, and are not
+admissible as an input.
