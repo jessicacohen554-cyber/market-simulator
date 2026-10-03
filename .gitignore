@@ -4031,3 +4031,8 @@ results/calibration/closeout_soco_2_20[12][0-9]/
 results/calibration/nwppnext22_*/
 results/calibration/nwppnext22b_*/
 !results/calibration/nwppnext22b_span/
+
+# closeout-spp-nuc probe scratch (copies committed under docs/records/spp/closeout-spp-nuc/)
+results/calibration/_closeoutsppnuc/
+# closeout-spp-nuc per-year legs (transport on claude/closeout-spp-nuc-<Y>; composed into closeout_spp_nuc_span)
+results/calibration/closeout_spp_nuc_20[0-9][0-9]/
