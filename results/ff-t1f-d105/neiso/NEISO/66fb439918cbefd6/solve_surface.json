@@ -1,0 +1,22 @@
+{
+  "eia860_vintages": {
+    "eia-860": "92179caf8dc3091311afbc70107198a9d1b9755a292b7117e035bb76b8626a98"
+  },
+  "epochs": [],
+  "fingerprint": "b514541af339c180",
+  "git_sha": "246438aa",
+  "iso": "NEISO",
+  "moved": {
+    "CC_STEAM_PART_REPAIR_ISOS": "30824893196aaa12",
+    "GENERIC_BASE_OFFER_CURVE": "bdc2b348ec6144d1",
+    "LABELS": "600aeac5bbcd256c",
+    "MAINTENANCE_MONTHLY_SHAPE": "b4da945d5a2e8f77",
+    "MIN_STABLE_PCT_PHYSICAL": "262e67a17cf047e0",
+    "PLANT_CLASSES": "3c91d80e901b878c",
+    "RGGI_MEMBER_STATES_BY_YEAR": "e432156b179ff182",
+    "STORAGE_BASE_FLEET_MW": "50b5239e785ffb4f",
+    "THERMAL_AVAILABILITY": "34ff308290e18439"
+  },
+  "rows": 213,
+  "schema": 1
+}
