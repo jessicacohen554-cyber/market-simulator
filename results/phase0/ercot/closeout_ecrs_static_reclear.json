@@ -1,0 +1,138 @@
+{
+ "bar": {
+  "C3a_model_min_usd": 57.0,
+  "C3a_min_pct": -12.35,
+  "C3b_max": 0.3
+ },
+ "ecrs_plan_mean_mw_jun_dec": 1925.409469619996,
+ "keeper": {
+  "C3a": {
+   "criterion": "price_mean",
+   "key": null,
+   "year": 2023,
+   "status": "FAIL",
+   "classification": "MODEL MISS",
+   "metric": "system load-weighted mean LMP $/MWh (vs RT (load-weighted))",
+   "benchmark": "RT",
+   "model": 48.98,
+   "actual": 65.02,
+   "tol": "\u00b110% target / \u00b110% commercial",
+   "magnitude": "-24.7%"
+  },
+  "C3b": {
+   "criterion": "price_shape",
+   "key": null,
+   "year": 2023,
+   "status": "FAIL",
+   "classification": "MODEL MISS",
+   "metric": "monthly load-weighted price NRMSE (load-weighted actual)",
+   "model": 0.393,
+   "actual": null,
+   "tol": "\u22640.20 target / \u22640.20 commercial",
+   "magnitude": "NRMSE 0.393"
+  }
+ },
+ "measured_rtolcap": {
+  "delta_adder_mean_usd": 13.412939551988112,
+  "delta_adder_mean_jun_dec_usd": 23.876722307542348,
+  "delta_adder_p99_usd": 397.0277614039799,
+  "hours_delta_gt_100": 173,
+  "baseline_adder_mean_usd": 0.8052985038089079,
+  "scored_on_x33_keeper_upper_bound": {
+   "C3a": {
+    "criterion": "price_mean",
+    "key": null,
+    "year": 2023,
+    "status": "PASS",
+    "classification": null,
+    "metric": "system load-weighted mean LMP $/MWh (vs RT (load-weighted))",
+    "benchmark": "RT",
+    "model": 69.09,
+    "actual": 65.02,
+    "tol": "\u00b110% target / \u00b110% commercial",
+    "magnitude": "+6.3%"
+   },
+   "C3b": {
+    "criterion": "price_shape",
+    "key": null,
+    "year": 2023,
+    "status": "FAIL",
+    "classification": "MODEL MISS",
+    "metric": "monthly load-weighted price NRMSE (load-weighted actual)",
+    "model": 0.273,
+    "actual": null,
+    "tol": "\u22640.20 target / \u22640.20 commercial",
+    "magnitude": "NRMSE 0.273"
+   }
+  },
+  "baseline_reproduces_keeper": true
+ },
+ "model_ordc_total": {
+  "delta_adder_mean_usd": 174.69199611525352,
+  "delta_adder_mean_jun_dec_usd": 310.9737626436946,
+  "delta_adder_p99_usd": 3039.4419327205783,
+  "hours_delta_gt_100": 2220,
+  "baseline_adder_mean_usd": 24.05119251750832,
+  "scored_on_x33_keeper_upper_bound": {
+   "C3a": {
+    "criterion": "price_mean",
+    "key": null,
+    "year": 2023,
+    "status": "FAIL",
+    "classification": "MODEL MISS",
+    "metric": "system load-weighted mean LMP $/MWh (vs RT (load-weighted))",
+    "benchmark": "RT",
+    "model": 282.31,
+    "actual": 65.02,
+    "tol": "\u00b110% target / \u00b110% commercial",
+    "magnitude": "+334.2%"
+   },
+   "C3b": {
+    "criterion": "price_shape",
+    "key": null,
+    "year": 2023,
+    "status": "FAIL",
+    "classification": "MODEL MISS",
+    "metric": "monthly load-weighted price NRMSE (load-weighted actual)",
+    "model": 5.156,
+    "actual": null,
+    "tol": "\u22640.20 target / \u22640.20 commercial",
+    "magnitude": "NRMSE 5.156"
+   }
+  },
+  "baseline_reproduces_keeper": false
+ },
+ "keeper_realized_ordc_adder_mean_usd": 1.6395704966828597,
+ "identification_rtorpa_basis": {
+  "year": {
+   "published_rtorpa_mean": 0.9453064718843239,
+   "gross_mean": 0.8052985038089079,
+   "gross_rmse": 4.918948509816319,
+   "net_mean": 14.218238055797023,
+   "net_rmse": 126.43260049097547,
+   "hours_gt_100_published": 17,
+   "hours_gt_100_gross": 17,
+   "hours_gt_100_net": 179
+  },
+  "ecrs_live_h3839_on": {
+   "published_rtorpa_mean": 1.1841306467542214,
+   "gross_mean": 1.1341999495082504,
+   "gross_rmse": 6.220099262357479,
+   "net_mean": 25.01092225705059,
+   "net_rmse": 168.67510778605327,
+   "hours_gt_100_published": 12,
+   "hours_gt_100_gross": 14,
+   "hours_gt_100_net": 176
+  },
+  "pre_ecrs": {
+   "published_rtorpa_mean": 0.639171081278758,
+   "gross_mean": 0.38369808331230354,
+   "gross_rmse": 2.370135447951214,
+   "net_mean": 0.38369808331230354,
+   "net_rmse": 2.370135447951214,
+   "hours_gt_100_published": 5,
+   "hours_gt_100_gross": 3,
+   "hours_gt_100_net": 3
+  }
+ }
+}

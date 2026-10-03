@@ -15794,3 +15794,38 @@ Full span NOT-YET on C1 ST_GAS 2019, C3a 2020, C3b 2021. Train 2023–2025 CALIB
 - 2023 needs about 17.4 GiB. It was OOM-killed once at 13.36 GiB RAM + 2 GiB swap, then solved swap-first with a 17.44 GiB peak against an 18.4 GiB ceiling (RAM + a 5 GiB swapfile on about 11.7 GiB free disk).
 
 **Infrastructure.** `scripts/lib/replay_recipe.py` now compares a set-valued `ScenarioConfig` field by its members (the resolved config holds a frozenset; `run_config` records a sorted list), which was a false preflight-0d mismatch on `temp_derate_classes`. The partition configs in `keepers/MISO.json` were re-keyed by hand after `promote_keeper`'s audit (E12/S1), as for ERCOT.
+
+## closeout-miso-nuc — 2026-10-03 — MISO nuclear 2019–2022 at measured data (R-43), PROMOTED (R-53)
+
+**Change.** The rule-14 data repair only, landed as PR #7129 (merge `f98c4564`):
+- `NUCLEAR_MONTHLY_CF_BY_YEAR["MISO"]` 2019–2022 rows from the frozen derive;
+- the NRC daily extract re-derived 2019–2025, with Duane Arnold and Palisades as pass-through rows;
+- SolveEpoch 2026-10-03d.
+
+**Solve.** Seven year-isolated shards at the pin, composed with `_w0_compose_span.py`. Dispatch legs 2019 and 2021–25 are zstd-9 re-encodings (GH001 transport, table-equal).
+
+**Nuclear vs EIA-923 (plant-matched):** +0.3 / +0.1 / +0.8 / +0.4 % (was −4.6 / +2.6 / −2.2 / −1.5). 2023–25 are byte-identical to the outgoing keeper.
+
+**Promoted 2026-10-03 (owner ruling R-53 "Promote on structure").** `promote_keeper.py` ran in the desk-granted MISO slot:
+- the outgoing ledger carried 6 entries, 0 dropped, with C3c 2023/2024/2025 re-measured;
+- the DOF ledger was refreshed and `w0_miso_span` was pruned;
+- `keepers/MISO.json` `config_partition` was re-keyed by hand (the strict audit had stopped on E12/S1 dangling run links);
+- `audit_keepers.py` and `check_registry_payload_parity.py` are clean.
+
+**The keeper is `2026-10-03-closeout-miso-nuc-r`.** Determination NOT-YET (8 scored / 4 target / 1 ledgered / 3 fail: fuelmix, price_mean, price_shape).
+
+| Year | C1 | C2 | C3a | C3b | C4 | C8 |
+|---|---|---|---|---|---|---|
+| 2019 | **FAIL** ST_GAS −8.71 | PASS | PASS +6.2 % | PASS 0.091 | PASS | PASS |
+| 2020 | PASS | PASS | **FAIL** +10.2 % | PASS 0.147 | PASS | PASS |
+| 2021 | **FAIL** CC_REGULAR −8.15 | PASS | PASS −8.4 % | **FAIL** 0.219 | PASS | PASS |
+| 2022 | PASS | PASS | PASS −6.9 % | PASS 0.127 | PASS | PASS |
+| 2023 | unchanged (byte-identical) | PASS | PASS +4.8 % | PASS | — | PASS |
+| 2024 | unchanged (byte-identical) | PASS | PASS +2.5 % | PASS | — | PASS |
+| 2025 | unchanged (byte-identical) | PASS | −3.7 % (price_mean 2025 ledgered) | PASS | — | PASS |
+
+C3c is a ledgered CAVEAT in every year.
+
+**Next levers (R-53):** C1 CC_REGULAR 2021, C3a 2020.
+
+Records: `docs/records/miso/closeout-miso-nuc/`.

@@ -1,0 +1,12 @@
+{
+  "per_year": {
+    "2019": "8c3ea46192074cfd422fff6532acc035d37297bb",
+    "2020": "8c3ea46192074cfd422fff6532acc035d37297bb",
+    "2021": "e2e296a43a86f70da5babc7f386d1bbc71e0874d",
+    "2022": "8c3ea46192074cfd422fff6532acc035d37297bb",
+    "2023": "8c3ea46192074cfd422fff6532acc035d37297bb",
+    "2024": "8c3ea46192074cfd422fff6532acc035d37297bb",
+    "2025": "8c3ea46192074cfd422fff6532acc035d37297bb"
+  },
+  "inert_proof": "docs/records/pjm/PRECOMMIT-closeout-pjm-nuc-2026-10-03.md (Addendum A: G-DRIFT 8c3ea461->e2e296a4, PJM surface fingerprint d8230f36c0059245 at both pins)"
+}
