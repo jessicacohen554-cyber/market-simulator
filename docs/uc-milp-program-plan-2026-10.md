@@ -1,4 +1,4 @@
-> Status: PROPOSED (2026-10-03) — the MILP unit-commitment program: feasibility verdict, architecture, phases, testing protocol, desk charter and owner decision queue. Owner: jessicacohen554. **Nothing here is executed**: zero LP, no `src/`, spec, `CLAUDE.md`, keeper, matrix or rubric change. Evidence under `docs/records/governance/uc-milp-2026-10/`. The program starts only on owner ruling D-1 (§8).
+> Status: CHARTERED (2026-10-03) — the MILP unit-commitment program: feasibility verdict, architecture, phases, testing protocol, desk charter and owner decision queue. Owner: jessicacohen554. **Chartered 2026-10-03** (R1, R2 in §8.1): D-0 charter, D-1 signed. Zero LP so far; no `src/`, spec, `CLAUDE.md`, keeper, matrix or rubric change yet. Evidence under `docs/records/governance/uc-milp-2026-10/`.
 
 # MILP unit-commitment program — plan (October 2026)
 
@@ -147,6 +147,13 @@ Why this is safe to sign: the stack rule is untouched (direct CSC → HiGHS); no
 | **D-5** | Rule-19 census outcomes per ISO | which existing floors the UC replaces beyond the bridges and posture (coal conduct floors are the hard case) | per ISO, before its PRECOMMIT |
 | **D-6** | Promotion per ISO | promote on structure · record `R`/`I` with evidence · hold | after each UC-2 RESULT |
 
+### 8.1 Rulings (verbatim, numbered; desk-recorded, never re-litigated)
+
+| # | Card | Date | Ruling (owner's words / selected option, verbatim) | Recorded by |
+|---|---|---|---|---|
+| R1 | D-0 | 2026-10-03 | "Charter (Recommended)" — program and desk chartered as written | UC-DESK r01 `session_01WX9W5tgYMre3Z134LZoGF6` (decision card) |
+| R2 | D-1 | 2026-10-03 | "Sign §7 text (Recommended)" — the §7 amendment, as written, lands in its own PR (a lane owning `CLAUDE.md`, spec, rule-history; not the desk) | UC-DESK r01 `session_01WX9W5tgYMre3Z134LZoGF6` (decision card) |
+
 ## 9. Roadmap and cost
 
 | Wave | Content | Shards | Wall (container-hours, order) | Exit |
@@ -165,9 +172,10 @@ Wall above the ceiling for PJM/MISO (E10 is an owner decision); a passing contro
 ## 11. Desk log (append-only; one line per sitting: date · desk session · main HEAD · what was chartered or ruled)
 
 - 2026-10-03 · planning session `session_01A2fEZSxeS8xbpDUPLQhDHD` · main `dd28b645` · plan, assessment, gate spec, charter and handoff written; no lane chartered; awaiting D-0/D-1.
+- 2026-10-03 · UC-DESK r01 `session_01WX9W5tgYMre3Z134LZoGF6` (Opus by owner instruction) · branch `claude/ucmilp-desk-r01` · main `8e4b87ab` · gates: audit_keepers PASS (0 fail, 4 warn), registry/payload parity OK (9 runs), mechanism matrix ratchets OK, cache-key registration OK (409/409), rubric freeze OK (diff modes not run: no base) · **ruled D-0 = charter (R1), D-1 = sign §7 (R2)** · chartered UC-0 (benefit screen, zero LP) · amendment lane UC-AM (D-1 PR) named for next sitting · no shards.
 
 ## 12. Lane register (desk-maintained; one row per chartered lane, newest last)
 
 | Lane | Session | Branch (issued stem → realised) | Scope (plan ref) | LP | State |
 |---|---|---|---|---|---|
-| — | — | — | — | — | none chartered |
+| UC-0 benefit screen | `<UC0_SESSION>` | `claude/ucmilp-0-benefit-screen-tx8t` → *(unrealised; dispatch unconfirmed until a branch exists)* | §3 UC-0; GATESPEC §1–2; HANDOFF B | 0 | chartered 2026-10-03 (Fable) |
