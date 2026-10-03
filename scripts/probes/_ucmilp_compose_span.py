@@ -8,16 +8,14 @@ must agree across the legs (the only allowed per-year differences are the
 fields the keeper itself records per year, ``config_partition`` aside).
 
 What it adds for the MILP UC stage (``unit_commitment_milp``): each leg's
-stage artifacts — written by the engine to ``results/uc/<ISO>/<year>/``
-because the persisting orchestrators are outside lane UC-1's files (DESIGN
-section 8 R1) — are folded into the composite's ``hourly/`` as
-``uc_schedule_<y>.parquet`` and the bundle root as ``uc_solve_log_<y>.json``,
-and the post-P1 make-whole sidecar ``hourly/uc_uplift_<y>.parquet`` is
+stage sidecars — ``hourly/uc_schedule_<y>.parquet``, ``hourly/uc_uplift_<y>.parquet``
+and the bundle-root ``uc_solve_log_<y>.json`` the orchestrator's drain
+writes — ride along (the hourly files with every other year-stamped sidecar,
+the log copied explicitly); a leg that lacks the make-whole frame gets it
 computed from the composite's own committed per-unit layer
-(:func:`market_sim.model.uc.uplift.uplift_from_bundle`, zero LP). A shard may
-instead carry the artifacts under ``<leg>/uc/<year>/``; both locations are
-searched. A leg whose recipe arms the gate but carries no artifacts is an
-ABORT: the schedule is the evidence the A/B is scored against.
+(:func:`market_sim.model.uc.uplift.uplift_from_bundle`, zero LP). A leg whose
+recipe arms the gate but carries no schedule is an ABORT: the schedule is the
+evidence the A/B is scored against.
 
 The composition itself is mechanical and lossless (per-year files copy,
 bundle-root frames concatenate, ``run_config_<y>.json`` kept per year) and
@@ -27,7 +25,7 @@ copied from a leg (the C8-SKIPPED trap the MISO composer documents).
 Usage:
     python scripts/probes/_ucmilp_compose_span.py --iso NEISO \\
         --leg 2023=ucmilp_neiso_2023 --leg 2024=ucmilp_neiso_2024 \\
-        --out results/calibration/ucmilp_neiso_span [--uc-root results/uc]
+        --out results/calibration/ucmilp_neiso_span
 """
 
 from __future__ import annotations
@@ -104,14 +102,14 @@ def check_recipes(legs: dict[str, int], iso: str) -> bool:
     return gate
 
 
-def _find_uc_dir(leg: Path, iso: str, year: int, uc_root: Path) -> Path | None:
-    for cand in (uc_root / iso.upper() / str(year), leg / "uc" / str(year)):
-        if (cand / f"uc_schedule_{year}.parquet").is_file():
-            return cand
-    return None
+def _leg_has_uc_artifacts(leg: Path, year: int) -> bool:
+    """Whether a leg carries the stage's bundle sidecars (hourly/uc_schedule + root log)."""
+    return (leg / "hourly" / f"uc_schedule_{year}.parquet").is_file() and (
+        leg / f"uc_solve_log_{year}.json"
+    ).is_file()
 
 
-def compose(legs: dict[str, int], iso: str, out: Path, uc_root: Path) -> None:
+def compose(legs: dict[str, int], iso: str, out: Path) -> None:
     """Copy / concatenate the legs into ``out`` and fold the UC artifacts."""
     armed = check_recipes(legs, iso)
     if out.exists():
@@ -145,20 +143,18 @@ def compose(legs: dict[str, int], iso: str, out: Path, uc_root: Path) -> None:
             out / f"run_config_{year}.json",
         )
         if armed:
-            uc_dir = _find_uc_dir(src, iso, year, uc_root)
-            if uc_dir is None:
+            if not _leg_has_uc_artifacts(src, year):
                 raise SystemExit(
-                    f"ABORT: {name} arms unit_commitment_milp but carries no uc_schedule_{year}.parquet "
-                    f"(looked under {uc_root / iso.upper() / str(year)} and {src / 'uc' / str(year)})"
+                    f"ABORT: {name} arms unit_commitment_milp but carries no "
+                    f"hourly/uc_schedule_{year}.parquet + uc_solve_log_{year}.json "
+                    "(the orchestrator's drain writes both into the bundle)"
                 )
             shutil.copy2(
-                uc_dir / f"uc_schedule_{year}.parquet",
-                out / "hourly" / f"uc_schedule_{year}.parquet",
+                src / f"uc_solve_log_{year}.json", out / f"uc_solve_log_{year}.json"
             )
-            log = uc_dir / f"uc_solve_log_{year}.json"
-            if log.is_file():
-                shutil.copy2(log, out / f"uc_solve_log_{year}.json")
-            print(f"  {name}: UC artifacts folded from {uc_dir}")
+            print(
+                f"  {name}: UC artifacts present (schedule copied with hourly/, log copied)"
+            )
     for fname, parts in frames.items():
         if parts:
             pd.concat(parts, ignore_index=True).to_parquet(out / fname, index=False)
@@ -182,6 +178,9 @@ def write_uplift(out: Path, years: list[int]) -> None:
 
     for y in years:
         um = out / "hourly" / f"unit_marginal_{y}.parquet"
+        if (out / "hourly" / f"uc_uplift_{y}.parquet").is_file():
+            print(f"  uplift {y}: carried by the leg")
+            continue
         if not um.is_file() or not (out / f"uc_solve_log_{y}.json").is_file():
             print(f"  uplift {y}: unit_marginal or uc_solve_log absent — not written")
             continue
@@ -244,8 +243,7 @@ def main(argv: list[str] | None = None) -> int:
     out = Path(args.out)
     if not out.is_absolute():
         out = REPO / out
-    uc_root = Path(args.uc_root) if args.uc_root else REPO / "results" / "uc"
-    compose(legs, args.iso, out, uc_root)
+    compose(legs, args.iso, out)
     if args.skip_diagnostics:
         return 0
     return regenerate_diagnostics(out, args.iso, sorted(legs.values()))

@@ -85,11 +85,14 @@ window, `state_for` hands the next window its state, `checkpoint` writes
 rung); `floor_and_ceiling` turns the schedule into P1 bounds — ceiling
 `availability·u/n` on every member, floor `mlf·p̄·u` split by available
 capacity — and `inject` composes the floor through
-`pipeline.commitment._bridge_floored_fleet(…, MECH_UC_SCHEDULE)`. Artifacts
-land in `results/uc/<ISO>/<year>/` (`uc_schedule_<y>.parquet`,
-`uc_solve_log_<y>.json`); `take_uc_stages()` hands the stage objects to a
-harness. `model/uc/uplift.py` computes the make-whole sidecar post-P1 from the
-bundle's own per-unit layer (`uplift_from_bundle`), never into a price.
+`pipeline.commitment._bridge_floored_fleet(…, MECH_UC_SCHEDULE)`. The
+artifacts reach the bundle through the orchestrators' two-line drain
+(`take_uc_artifacts(p1_result)` → `write_uc_artifacts(run_dir, year, …)` in
+`scripts/run_calibration_full.py` and `runner.py`, gated on the field):
+`hourly/uc_schedule_<y>.parquet`, `hourly/uc_uplift_<y>.parquet` (the make-whole
+frame, `model/uc/uplift.py`, priced from the P1 result and never into a price)
+and `uc_solve_log_<y>.json`. Monthly checkpoints are scratch under
+`results/uc-checkpoints/`.
 
 ## 9.4 Registry, refusals, tooling
 
@@ -97,8 +100,10 @@ Nine fields (`unit_commitment_milp`, `uc_window_hours` 24,
 `uc_lookahead_hours` 12, `uc_mip_rel_gap` 1e-3, `uc_window_time_limit_s` 600,
 `uc_integer_scope` `physics`, `uc_noload_source` `campd_regression`,
 `uc_boundary_mode` `p0_targets`, `uc_prefixing` False), cache-key registered at
-their defaults (TIER_TAGS 1). `__post_init__` refuses the gate beside every
-commitment bridge, the posture family and `cc_mustrun_per_plant` (rule 19).
+their defaults (TIER_TAGS 1). `__post_init__` refuses the gate beside any
+armed member of the two declared tuples `UC_REFUSED_ALWAYS` (every commitment
+bridge and its legs, the posture family) and `UC_REFUSED_BY_RULING` (empty
+until an owner D-5 ruling extends it) — rule 19 as data.
 `data/floor_mechanisms.py::MECH_UC_SCHEDULE = 28` carries the D-2 attribution
 with an ablation entry. Tooling: `scripts/diagnostics/bench_uc_ladder.py` +
 `scripts/lib/uc_bench.py` (GATESPEC §3 rungs, the §6.1 wall table),

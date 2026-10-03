@@ -30,7 +30,7 @@ T = 48
 
 
 def _leg(
-    cal: Path, name: str, year: int, armed: bool, uc_root: Path | None = None
+    cal: Path, name: str, year: int, armed: bool, with_uplift: bool = False
 ) -> Path:
     leg = cal / name
     (leg / "hourly").mkdir(parents=True)
@@ -82,8 +82,6 @@ def _leg(
     )
     (leg / "dispatch" / f"{year}_P1.parquet").write_bytes(b"")
     if armed:
-        uc = (uc_root or leg / "uc") / ("NEISO" if uc_root else "") / str(year)
-        uc.mkdir(parents=True, exist_ok=True)
         u = np.where(hours % 24 >= 7, 2, 0).astype(np.int16)
         v = np.where(hours % 24 == 7, 2, 0).astype(np.int16)
         pd.DataFrame(
@@ -101,8 +99,8 @@ def _leg(
                 "floor_mw": u * 50.0,
                 "noload_usd_per_unit_h": 100.0,
             }
-        ).to_parquet(uc / f"uc_schedule_{year}.parquet", index=False)
-        (uc / f"uc_solve_log_{year}.json").write_text(
+        ).to_parquet(leg / "hourly" / f"uc_schedule_{year}.parquet", index=False)
+        (leg / f"uc_solve_log_{year}.json").write_text(
             json.dumps(
                 {
                     "clusters": [{"cluster": 0, "su_per_mw": 50.0, "pbar_mw": 100.0}],
@@ -111,6 +109,10 @@ def _leg(
                 }
             )
         )
+        if with_uplift:
+            pd.DataFrame({"year": [year], "day": [0], "uplift_usd": [-1.0]}).to_parquet(
+                leg / "hourly" / f"uc_uplift_{year}.parquet", index=False
+            )
     return leg
 
 
@@ -120,9 +122,7 @@ def test_compose_two_legs_gate_off(tmp_path, monkeypatch):
     _leg(cal, "leg_2023", 2023, armed=False)
     _leg(cal, "leg_2024", 2024, armed=False)
     out = tmp_path / "span"
-    compose_mod.compose(
-        {"leg_2023": 2023, "leg_2024": 2024}, "NEISO", out, tmp_path / "results" / "uc"
-    )
+    compose_mod.compose({"leg_2023": 2023, "leg_2024": 2024}, "NEISO", out)
     assert (out / "hourly" / "system_2023.parquet").is_file()
     assert (out / "hourly" / "system_2024.parquet").is_file()
     assert (out / "run_config_2023.json").is_file() and (
@@ -137,15 +137,20 @@ def test_compose_two_legs_gate_off(tmp_path, monkeypatch):
 
 def test_compose_folds_uc_artifacts_and_writes_uplift(tmp_path, monkeypatch):
     cal = tmp_path / "results" / "calibration"
-    uc_root = tmp_path / "results" / "uc"
     monkeypatch.setattr(compose_mod, "CAL", cal)
-    _leg(cal, "leg_2023", 2023, armed=True, uc_root=uc_root)
-    _leg(cal, "leg_2024", 2024, armed=True)  # artifacts carried inside the leg
+    _leg(cal, "leg_2023", 2023, armed=True)
+    _leg(
+        cal, "leg_2024", 2024, armed=True, with_uplift=True
+    )  # a leg that already carries the frame
     out = tmp_path / "span"
-    compose_mod.compose({"leg_2023": 2023, "leg_2024": 2024}, "NEISO", out, uc_root)
+    compose_mod.compose({"leg_2023": 2023, "leg_2024": 2024}, "NEISO", out)
     for y in (2023, 2024):
         assert (out / "hourly" / f"uc_schedule_{y}.parquet").is_file()
         assert (out / f"uc_solve_log_{y}.json").is_file()
+    assert pd.read_parquet(out / "hourly" / "uc_uplift_2024.parquet")[
+        "uplift_usd"
+    ].tolist() == [-1.0]
+    for y in (2023,):
         up = pd.read_parquet(out / "hourly" / f"uc_uplift_{y}.parquet")
         assert len(up) == 2  # one cluster, two days
         # day: 17 h x 150 MW at $25 cost, revenue at $50 -> no energy shortfall;
@@ -158,17 +163,12 @@ def test_compose_folds_uc_artifacts_and_writes_uplift(tmp_path, monkeypatch):
 def test_compose_refuses_a_leg_without_artifacts(tmp_path, monkeypatch):
     cal = tmp_path / "results" / "calibration"
     monkeypatch.setattr(compose_mod, "CAL", cal)
-    _leg(cal, "leg_2023", 2023, armed=True, uc_root=tmp_path / "results" / "uc")
+    _leg(cal, "leg_2023", 2023, armed=True)
     leg = _leg(cal, "leg_2024", 2024, armed=True)
-    import shutil
-
-    shutil.rmtree(leg / "uc")
-    with pytest.raises(SystemExit, match="carries no uc_schedule"):
+    (leg / "hourly" / "uc_schedule_2024.parquet").unlink()
+    with pytest.raises(SystemExit, match="carries no"):
         compose_mod.compose(
-            {"leg_2023": 2023, "leg_2024": 2024},
-            "NEISO",
-            tmp_path / "span",
-            tmp_path / "results" / "uc",
+            {"leg_2023": 2023, "leg_2024": 2024}, "NEISO", tmp_path / "span"
         )
 
 
@@ -179,8 +179,5 @@ def test_compose_refuses_disagreeing_recipes(tmp_path, monkeypatch):
     _leg(cal, "leg_2024", 2024, armed=True)
     with pytest.raises(SystemExit, match="disagree"):
         compose_mod.compose(
-            {"leg_2023": 2023, "leg_2024": 2024},
-            "NEISO",
-            tmp_path / "span",
-            tmp_path / "results" / "uc",
+            {"leg_2023": 2023, "leg_2024": 2024}, "NEISO", tmp_path / "span"
         )

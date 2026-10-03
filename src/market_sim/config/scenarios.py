@@ -4319,6 +4319,40 @@ def crossover_unbridges_year(
     return year >= crossover_forward_year and year >= CROSSOVER_FORWARD_BOUNDARY_YEAR
 
 
+#: The MILP UC stage's rule-19 refusal set, part 1 (plan section 6; UC-DESK
+#: ruling on DESIGN b974d2c9 point 2): every P1-native commitment bridge (the
+#: shared P0 detector, ``model.commitment.caiso_ra_mustoffer_min_gen``,
+#: whichever ISO leg routes it), the CAISO RA must-offer gate with every
+#: ``caiso_ra_*`` leg that rides it, and the posture family. The UC CHOOSES the
+#: commitment state these detect or relax, so none may be armed beside it.
+#: ``(field, what it is)`` pairs; ``__post_init__`` refuses any armed member.
+UC_REFUSED_ALWAYS: tuple[tuple[str, str], ...] = (
+    ("caiso_ra_mustoffer", "the CAISO RA must-offer bridge"),
+    ("caiso_ra_startup_bridge", "the CAISO RA bridge startup-cost leg"),
+    ("caiso_ra_bridge_decommit", "the CAISO RA bridge decommit leg"),
+    ("caiso_ra_mustoffer_quantity_gate", "the CAISO RA must-offer quantity gate"),
+    ("caiso_ra_bridge_startup_aware", "the CAISO RA bridge startup-aware screen"),
+    ("caiso_ra_bridge_curtailment_release", "the CAISO RA bridge curtailment release"),
+    ("caiso_ra_startup_trajectory", "the CAISO RA bridge startup trajectory"),
+    ("ercot_gas_commitment_bridge", "the ERCOT gas commitment bridge"),
+    ("nyiso_gas_commitment_bridge", "the NYISO gas commitment bridge"),
+    ("spp_gas_commitment_bridge", "the SPP gas commitment bridge"),
+    ("pjm_gas_commitment_bridge", "the PJM gas commitment bridge"),
+    ("miso_gas_ecomin_online_floor", "the MISO CC EcoMin online floor (bridge class)"),
+    ("ercot_commitment_posture", "the ERCOT commitment posture"),
+    ("miso_commitment_posture", "the MISO commitment posture"),
+    ("spp_commitment_posture", "the SPP commitment posture"),
+)
+
+#: Part 2: the per-ISO owner rulings (card D-5). EMPTY AT BIRTH. Extended only
+#: by a commit that cites the ruling; until then an A/B lane disarms the
+#: D-5 fields in its own config delta (UC-0 FINDING section 4: the "replace"
+#: recommendations cc_mustrun_per_plant / soco_gas_st_campaign_commitment and
+#: the hard cases st_gas_mustrun_per_plant / coal_mustrun /
+#: ercot_coal_min_config_floor / gas_st_netload_drag).
+UC_REFUSED_BY_RULING: tuple[tuple[str, str], ...] = ()
+
+
 @dataclass
 class ScenarioConfig:
     """Full configuration for a single simulation scenario.
@@ -24305,37 +24339,29 @@ class ScenarioConfig:
         # gate did not apply, and it drops from the hash on the frozen
         # ``"False"`` drop value -- which keeps those bundles on keys that move
         # only by Act B, exactly like every other config.
-        # MILP unit-commitment stage (lane UC-1; DESIGN section 5). Rule 19 by
-        # refusal: the UC CHOOSES the commitment state the bridges detect, the
-        # posture relaxes and the per-plant CC online floor pins, so none of
-        # them may be armed beside it. The hard cases UC-0 section 4 names
-        # (st_gas_mustrun_per_plant, the coal floors, the drags) compose by
-        # maximum and are an owner ruling (card D-5), not a refusal here.
+        # MILP unit-commitment stage (lane UC-1; DESIGN section 5; UC-DESK
+        # review of DESIGN b974d2c9, point 2). Rule 19 by refusal, DATA-DRIVEN:
+        # the two tuples UC_REFUSED_ALWAYS / UC_REFUSED_BY_RULING at module
+        # level are the whole refusal set. The hard cases UC-0 section 4 names
+        # (st_gas_mustrun_per_plant, the coal floors, the drags) and its two
+        # "replace" recommendations (cc_mustrun_per_plant,
+        # soco_gas_st_campaign_commitment) are owner card D-5 per ISO: an A/B
+        # lane disarms them in its config delta until a ruling commit extends
+        # UC_REFUSED_BY_RULING. The archived P2 is a solve_and_persist kwarg
+        # (``commitment`` / ``--enable-legacy-p2``), not a field, so it is
+        # refused where it lives (run_calibration_full.enforce_legacy_p2_kwargs).
         if self.unit_commitment_milp:
-            _uc_stack = {
-                "caiso_ra_mustoffer": "the CAISO RA must-offer bridge",
-                "ercot_gas_commitment_bridge": "the ERCOT gas commitment bridge",
-                "nyiso_gas_commitment_bridge": "the NYISO gas commitment bridge",
-                "spp_gas_commitment_bridge": "the SPP gas commitment bridge",
-                "pjm_gas_commitment_bridge": "the PJM gas commitment bridge",
-                "miso_gas_ecomin_online_floor": "the MISO CC EcoMin online floor",
-                "soco_gas_st_campaign_commitment": "the SOCO gas-steam campaign floor",
-                "ercot_commitment_posture": "the ERCOT commitment posture",
-                "miso_commitment_posture": "the MISO commitment posture",
-                "spp_commitment_posture": "the SPP commitment posture",
-                "cc_mustrun_per_plant": "the per-plant CC committed online floor",
-            }
             _armed = [
                 f"{name} ({what})"
-                for name, what in _uc_stack.items()
+                for name, what in (*UC_REFUSED_ALWAYS, *UC_REFUSED_BY_RULING)
                 if getattr(self, name, False)
             ]
             if _armed:
                 raise ValueError(
-                    "unit_commitment_milp REPLACES every commitment bridge, the "
-                    "posture family and the per-plant CC online floor (rule 19: "
-                    "one mechanism for commitment state; CLAUDE.md 'Dispatch and "
-                    "commitment'); disarm: " + ", ".join(_armed)
+                    "unit_commitment_milp REPLACES every commitment bridge and "
+                    "the posture family (rule 19: one mechanism for commitment "
+                    "state; CLAUDE.md 'Dispatch and commitment'); disarm: "
+                    + ", ".join(_armed)
                 )
             if self.uc_window_hours < 1 or self.uc_window_hours > self.hours:
                 raise ValueError(

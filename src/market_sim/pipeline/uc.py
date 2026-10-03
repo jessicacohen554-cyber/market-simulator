@@ -20,13 +20,16 @@ schedule as per-unit-hour bounds (DESIGN section 2.5):
 An empty integer set (G-EMPTY) runs no MILP: the markup is returned as the
 same object and the hook returns the upstream hook's result unchanged.
 
-Artifacts land in ``results/uc/<ISO>/<year>/`` (``config.paths.RESULTS_ROOT``)
-— ``uc_schedule_<y>.parquet``, ``uc_solve_log_<y>.json`` and the monthly
-checkpoints — because the orchestrators that persist a bundle are outside
-this lane's files (DESIGN section 8 R1); the compose script and the bench
-harness fold them into a bundle. The stage object stays reachable through
-:func:`take_uc_stages` (the pass-timing-log pattern) so a harness can compute
-the post-P1 uplift sidecar from the same ``params`` / ``schedule``.
+Artifacts are handed to the persisting orchestrators through
+:func:`take_uc_artifacts` (the pass-timing-log drain pattern) and written by
+:func:`write_uc_artifacts` INTO THE BUNDLE — ``hourly/uc_schedule_<y>.parquet``,
+``hourly/uc_uplift_<y>.parquet`` (post-P1, from the P1 result the orchestrator
+holds) and ``uc_solve_log_<y>.json`` at the bundle root — by the two-line
+drain in ``scripts/run_calibration_full.py`` (backcast) and
+``src/market_sim/runner.py`` (forecast), both under
+``if config.unit_commitment_milp`` (UC-DESK review of DESIGN b974d2c9, point
+3: a sidecar outside the bundle breaks rule 34). Monthly checkpoints (plan
+E9) are scratch, never a sidecar: ``results/uc-checkpoints/<ISO>/<year>/``.
 """
 
 from __future__ import annotations
@@ -40,6 +43,7 @@ from pathlib import Path
 from typing import Callable, Optional
 
 import numpy as np
+import pandas as pd  # noqa: F401  (type annotations of UcArtifacts)
 
 from market_sim.config.paths import RESULTS_ROOT
 from market_sim.data.fleet import FleetArrays
@@ -82,9 +86,74 @@ def take_uc_stages() -> list["UcStage"]:
     return out
 
 
-def uc_artifact_dir(iso: str, year: int, root: Path | None = None) -> Path:
-    """``results/uc/<ISO>/<year>/`` — where the stage writes its artifacts."""
-    return Path(root or RESULTS_ROOT) / "uc" / str(iso).upper() / str(int(year))
+def uc_checkpoint_dir(iso: str, year: int, root: Path | None = None) -> Path:
+    """``results/uc-checkpoints/<ISO>/<year>/`` — scratch for the monthly checkpoints (E9)."""
+    return (
+        Path(root or RESULTS_ROOT)
+        / "uc-checkpoints"
+        / str(iso).upper()
+        / str(int(year))
+    )
+
+
+@dataclasses.dataclass(frozen=True)
+class UcArtifacts:
+    """One year's UC artifacts as the orchestrator receives them.
+
+    Attributes:
+        year: The solve year.
+        schedule: The ``uc_schedule`` frame (cluster x hour, long).
+        uplift: The ``uc_uplift`` frame (cluster x day) or ``None`` when no P1
+            result was handed to :func:`take_uc_artifacts`.
+        log: The ``uc_solve_log`` dict.
+    """
+
+    year: int
+    schedule: "pd.DataFrame"
+    uplift: "pd.DataFrame | None"
+    log: dict
+
+
+def take_uc_artifacts(p1_result=None) -> list[UcArtifacts]:
+    """Drain the stages run since the last call into :class:`UcArtifacts`.
+
+    ``p1_result`` (the scored P1 :class:`DispatchResult`, when the caller has
+    it) prices the make-whole frame; without it ``uplift`` is ``None``.
+    """
+    out = []
+    for stage in take_uc_stages():
+        out.append(stage.artifacts(p1_result))
+    return out
+
+
+def write_uc_artifacts(
+    run_dir: Path,
+    year: int,
+    artifacts: list[UcArtifacts],
+    hourly_subdir: str | None = "hourly",
+) -> list[Path]:
+    """Write the artifacts of ``year`` into a bundle (the two-line drain's second line).
+
+    ``hourly/uc_schedule_<y>.parquet`` and ``hourly/uc_uplift_<y>.parquet``
+    (``hourly_subdir=None`` writes them beside the result parquet, the
+    forecast cache layout) and ``uc_solve_log_<y>.json`` at ``run_dir``.
+    """
+    run_dir = Path(run_dir)
+    paths: list[Path] = []
+    for art in artifacts:
+        if int(art.year) != int(year):
+            continue
+        hourly = run_dir / hourly_subdir if hourly_subdir else run_dir
+        hourly.mkdir(parents=True, exist_ok=True)
+        paths.append(
+            write_schedule_parquet(art.schedule, hourly / f"uc_schedule_{year}.parquet")
+        )
+        if art.uplift is not None:
+            up = hourly / f"uc_uplift_{year}.parquet"
+            art.uplift.to_parquet(up, index=False)
+            paths.append(up)
+        paths.append(write_solve_log(art.log, run_dir / f"uc_solve_log_{year}.json"))
+    return paths
 
 
 def _peak_rss_gb() -> float:
@@ -108,7 +177,7 @@ class UcStage:
         bid_getter: Callable returning the FINAL P1 bid ``(n_gen, T)`` when the
             hook fires (late-bound: the bid is assembled after the stage is
             prepared).
-        artifact_root: Override of ``RESULTS_ROOT`` (tests).
+        checkpoint_root: Override of ``RESULTS_ROOT`` for the scratch checkpoints (tests).
     """
 
     def __init__(
@@ -121,7 +190,7 @@ class UcStage:
         r0,
         upstream_prep: Optional[Callable],
         bid_getter: Callable[[], np.ndarray],
-        artifact_root: Path | None = None,
+        checkpoint_root: Path | None = None,
     ) -> None:
         self.config = config
         self.iso = str(getattr(config, "iso", ""))
@@ -134,7 +203,7 @@ class UcStage:
         self.r0 = r0
         self.upstream_prep = upstream_prep
         self.bid_getter = bid_getter
-        self.artifact_dir = uc_artifact_dir(self.iso, self.year, artifact_root)
+        self.checkpoint_dir = uc_checkpoint_dir(self.iso, self.year, checkpoint_root)
         self.params: UcClusterParams = build_uc_cluster_params(fleet_arrays, self.iso)
         self.int_idx = self.params.integer_clusters
         self.schedule: UcSchedule | None = None
@@ -194,7 +263,7 @@ class UcStage:
 
         The production hook covers the whole year (``0 .. T``); the ladder's
         L2 rung solves one month at a time (``bench_uc_ladder.py``) and passes
-        ``write=False``. The first window's state comes from P0 at
+        ``write=False`` (no checkpoint files). The first window's state comes from P0 at
         ``t_start - 1`` (cyclic for ``t_start == 0``, DESIGN section 2.2).
         """
         t_end = self.T if t_end is None else min(int(t_end), self.T)
@@ -300,8 +369,7 @@ class UcStage:
         self.log["summary"]["uc_total_s"] = round(time.perf_counter() - t_stage, 3)
         self.log["summary"]["peak_rss_gb"] = round(_peak_rss_gb(), 3)
         self.ran = True
-        if write:
-            self.write_artifacts(fleet_in)
+        self.fleet_in = fleet_in
         _STAGES.append(self)
         logger.info(
             "UC stage done: %d windows, %.1f s, MILP mean %.2f s, nodes p50 %s, %d time-limit hits",
@@ -411,22 +479,31 @@ class UcStage:
         return _bridge_floored_fleet(capped, floor, MECH_UC_SCHEDULE)
 
     # ---------------------------------------------------------- artifacts
-    def write_artifacts(self, fleet_in: FleetArrays) -> dict[str, Path]:
-        """Write ``uc_schedule_<y>.parquet`` and ``uc_solve_log_<y>.json``."""
+    def artifacts(self, p1_result=None) -> UcArtifacts:
+        """The year's :class:`UcArtifacts` (uplift priced when ``p1_result`` is given)."""
         if self.schedule is None:
             raise RuntimeError("the UC stage has not run")
-        out = Path(self.artifact_dir)
-        out.mkdir(parents=True, exist_ok=True)
-        paths = {
-            "schedule": write_schedule_parquet(
-                self.schedule.frame(
-                    fleet_in, self.year, getattr(self, "noload_full", None)
-                ),
-                out / f"uc_schedule_{self.year}.parquet",
-            ),
-            "log": write_solve_log(self.log, out / f"uc_solve_log_{self.year}.json"),
-        }
-        return paths
+        fleet_in = getattr(self, "fleet_in", self.fleet_arrays)
+        noload = getattr(self, "noload_full", None)
+        schedule = self.schedule.frame(fleet_in, self.year, noload)
+        uplift = None
+        if p1_result is not None and self.int_idx.size:
+            from market_sim.model.uc.uplift import compute_uplift
+
+            uplift = compute_uplift(
+                self.params,
+                self.schedule.u,
+                self.schedule.v,
+                np.asarray(p1_result.dispatch, dtype=float),
+                np.asarray(p1_result.prices, dtype=float),
+                np.asarray(fleet_in.zone_idx, dtype=int),
+                self.mc_base,
+                noload,
+                self.year,
+            )
+        return UcArtifacts(
+            year=self.year, schedule=schedule, uplift=uplift, log=self.log
+        )
 
 
 def prepare_uc_stage(

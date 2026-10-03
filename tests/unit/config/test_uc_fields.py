@@ -52,11 +52,9 @@ def test_explicit_default_hashes_like_absent_and_armed_moves():
         dict(spp_gas_commitment_bridge=True, iso="SPP"),
         dict(pjm_gas_commitment_bridge=True, iso="PJM"),
         dict(miso_gas_ecomin_online_floor=True, iso="MISO"),
-        dict(soco_gas_st_campaign_commitment=True, iso="SOCO"),
         dict(ercot_commitment_posture=True, iso="ERCOT"),
         dict(miso_commitment_posture=True, iso="MISO"),
         dict(spp_commitment_posture=True, iso="SPP"),
-        dict(cc_mustrun_per_plant=True, iso="PJM", mode="backcast"),
     ],
 )
 def test_rule_19_stacks_are_refused(stack):
@@ -85,3 +83,36 @@ def test_declared_value_sets_are_enforced(bad):
 
 def test_values_are_not_checked_when_the_gate_is_off():
     ScenarioConfig(iso="NEISO", uc_integer_scope="whatever")
+
+
+def test_refusal_tuples_are_the_whole_set():
+    """Every UC_REFUSED_ALWAYS member is a real field and is refused; the ruling
+    tuple is empty at birth; the D-5 cases are not refused (owner card)."""
+    import dataclasses
+
+    names = {f.name for f in dataclasses.fields(ScenarioConfig)}
+    assert len(sc.UC_REFUSED_ALWAYS) >= 15
+    for name, _what in sc.UC_REFUSED_ALWAYS:
+        assert name in names
+        iso = {
+            "caiso": "CAISO",
+            "ercot": "ERCOT",
+            "nyiso": "NYISO",
+            "spp": "SPP",
+            "pjm": "PJM",
+            "miso": "MISO",
+        }[name.split("_")[0]]
+        with pytest.raises(ValueError, match="REPLACES"):
+            ScenarioConfig(
+                iso=iso, mode="backcast", unit_commitment_milp=True, **{name: True}
+            )
+    assert sc.UC_REFUSED_BY_RULING == ()
+    ScenarioConfig(
+        iso="PJM", mode="backcast", unit_commitment_milp=True, cc_mustrun_per_plant=True
+    )
+    ScenarioConfig(
+        iso="SOCO",
+        mode="backcast",
+        unit_commitment_milp=True,
+        soco_gas_st_campaign_commitment=True,
+    )

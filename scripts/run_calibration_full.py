@@ -7452,6 +7452,20 @@ def solve_and_persist(
         _write_hourly_sidecar(run_dir, year, "network", network_frames)
         _write_hourly_sidecar(run_dir, year, "reserve_family", reserve_family_frames)
         _write_hourly_sidecar(run_dir, year, "hydro_cascade", hydro_cascade_frames)
+        # MILP unit-commitment stage sidecars (unit_commitment_milp; lane UC-1,
+        # the region UC-DESK granted on DESIGN b974d2c9 point 3): the schedule
+        # the stage solved, its solve log and the post-P1 make-whole frame land
+        # IN THE BUNDLE (hourly/uc_schedule_<y>, hourly/uc_uplift_<y>,
+        # uc_solve_log_<y>.json), so a shard's full-bundle push carries them
+        # (rule 34). Gate off: the block does not run — byte-identical.
+        if getattr(p2_state.get("config"), "unit_commitment_milp", False):
+            from market_sim.pipeline.uc import take_uc_artifacts, write_uc_artifacts
+
+            write_uc_artifacts(
+                run_dir,
+                year,
+                take_uc_artifacts(result_p1 if result_p1 is not None else result),
+            )
         # ercot-219 stage-2 exhaustion series (ercot_exhaustion_expectation):
         # H margin / sequestered AS / LOLP(H) / within-day P_exhaust — the
         # committed audit trail for G-EXH and the stage-3 offer (PRECOMMIT-
