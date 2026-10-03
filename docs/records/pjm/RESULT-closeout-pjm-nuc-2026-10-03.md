@@ -140,8 +140,14 @@ disk after `hydrate_data` + `regenerate_clean` + the virtuals fetch.
 
 **This is a container-envelope limit, not recipe growth.** The same recipe solved for six years.
 
-**Unblock.** A container with ≥ 19 GiB free disk at preflight, or swap provisioned before hydration (an
-infra/owner change, not patched here). Then one 2021 shard, recompose with seven legs, and re-score.
+**Owner ruling R-50 (2026-10-03): "Infra fix then one more 2021 attempt".**
+- A separate Full-access lane changes `prepare_solve_container.py` so swap is provisioned before hydrate,
+  regenerate and the virtuals fetch.
+- When that is on `main`, this lane runs one fresh 2021 shard at the new pin, carrying a PRECOMMIT addendum with
+  a G-DRIFT of the infra change. It touches no LP input, so it is expected INERT.
+- The 2021 leg is then composed with the six legs at `8c3ea461`. If the composer's one-fingerprint or pin check
+  refuses the mixed pin, the lane stops and reports.
+- Promotion happens only once 2021 lands.
 
 ## 5. Recommendation to the desk / owner
 
