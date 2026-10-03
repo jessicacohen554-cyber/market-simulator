@@ -59,8 +59,14 @@ Readings:
   930 gas exceed the 923 gas classes by ~F", with the 923 side FULL (CHP host included). CAISO's 930 gas sits at or
   below 923 FULL in 2019–20 and +1.05 TWh above it in 2021, against an F of about 15 TWh.
 - On the grid basis the room is 7.6–11.8 TWh. That is still short of F, and the CEMS anchor rules on level.
-- The model's demand input (caiso-80 Option A) adds the fold-in back as its own term. It is therefore unaffected by
-  whether the fold sits in the NG cell, and this card does not touch it.
+- The model's demand input (caiso-80 Option A) removes the whole NG cell and then adds the geo/biomass energy
+  back as its own term, so physically it does not depend on where 930 put that energy.
+  - **Correction (implementation check):** that term is computed by calling the same
+    `gas_foldin_deflation`. Adding CAISO to `EIA930_GAS_FOLD_REFUTED` alone would zero the term on any re-derive of
+    `derive_caiso_supply_consistent_demand.py`, which would drop about 14 TWh of demand.
+  - The committed demand artifacts do not move (rule 23).
+  - The derive must first be decoupled to compute `max(0, 923 OTHER + biomass − 930 Other)` directly, which is the
+    same value. That is part of the implementation, not a separate ruling.
 
 **What-if, zero LP** (bench parts patched in the working tree, verdict re-run, `git checkout` restored them; this is
 `EIA930_GAS_FOLD_REFUTED` ∪ {CAISO}, with the CEMS cap still in force):
