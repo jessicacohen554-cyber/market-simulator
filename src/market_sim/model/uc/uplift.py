@@ -135,14 +135,28 @@ def uplift_from_bundle(bundle: str, uc_dir: str, year: int) -> pd.DataFrame:
     offer ``mc`` — which IS ``mc_base`` on the integer clusters, whose markup
     the stage zeroes), ``hourly/system_<y>.parquet`` (zonal P1 prices) and the
     stage's ``uc_schedule_<y>.parquet`` / ``uc_solve_log_<y>.json`` (``u``,
-    ``v``, the no-load $/h per unit, ``su_per_mw`` x ``pbar_mw``). Members are
-    the unit rows whose ``plant_code`` and plant-group family match the
+    ``v``, the no-load $/h per unit, ``su_per_mw`` x ``pbar_mw``), found under
+    ``uc_dir`` directly or under its ``hourly/`` (a composed bundle). Members
+    are the unit rows whose ``plant_code`` and plant-group family match the
     cluster's. Per cluster-day, as :func:`compute_uplift`.
     """
     import json
     from pathlib import Path
 
     bundle_p, uc_p = Path(bundle), Path(uc_dir)
+    sched_path = next(
+        (
+            c
+            for c in (
+                uc_p / f"uc_schedule_{year}.parquet",
+                uc_p / "hourly" / f"uc_schedule_{year}.parquet",
+            )
+            if c.is_file()
+        ),
+        None,
+    )
+    if sched_path is None:
+        raise FileNotFoundError(f"no uc_schedule_{year}.parquet under {uc_p}")
     um = pd.read_parquet(
         bundle_p / "hourly" / f"unit_marginal_{year}.parquet",
         columns=["pass", "plant_code", "plant_group", "zone", "hour", "mw", "mc"],
@@ -152,23 +166,20 @@ def uplift_from_bundle(bundle: str, uc_dir: str, year: int) -> pd.DataFrame:
         bundle_p / "hourly" / f"system_{year}.parquet",
         columns=["pass", "zone", "hour", "price"],
     )
-    sysf = sysf[sysf["pass"] == "P1"]
-    price = sysf.pivot_table(index="hour", columns="zone", values="price")
-    sched = pd.read_parquet(uc_p / f"uc_schedule_{year}.parquet")
+    sysf = sysf[sysf["pass"] == "P1"][["zone", "hour", "price"]]
+    sched = pd.read_parquet(sched_path)
     log = json.loads((uc_p / f"uc_solve_log_{year}.json").read_text())
     start_cost = {
         int(c["cluster"]): float(c["su_per_mw"]) * float(c["pbar_mw"])
         for c in log["clusters"]
     }
-    um = um.assign(family=um["plant_group"].map(_family_of_group))
-    um["lam"] = (
-        price.lookup(um["hour"].to_numpy(), um["zone"].to_numpy())
-        if hasattr(price, "lookup")
-        else [
-            price.at[h, z] for h, z in zip(um["hour"].to_numpy(), um["zone"].to_numpy())
-        ]
+    um = um.assign(family=um["plant_group"].map(_family_of_group)).dropna(
+        subset=["family"]
     )
-    um["rev"] = um["mw"] * um["lam"]
+    um = um.merge(sysf, on=["zone", "hour"], how="left").rename(
+        columns={"price": "lam"}
+    )
+    um["rev"] = um["mw"] * um["lam"].fillna(0.0)
     um["cost"] = um["mw"] * um["mc"]
     um["day"] = (um["hour"] // _DAY_HOURS).astype(int)
     agg = (

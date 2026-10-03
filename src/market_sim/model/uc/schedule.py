@@ -92,7 +92,7 @@ class UcSchedule:
         ``t0 == 0`` takes ``u_init`` / ``p0`` / ``soc0`` (the P0-derived first
         state, DESIGN section 2.2); later windows take the kept schedule.
         """
-        if t0 == 0 or self.kept_until == 0:
+        if self.kept_until == 0 or t0 <= 0:
             return WindowState(
                 u_prev=np.asarray(u_init, dtype=float)
                 if u_init is not None
