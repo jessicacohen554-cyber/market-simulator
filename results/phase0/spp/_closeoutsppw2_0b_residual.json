@@ -1,0 +1,44 @@
+{
+ "2019": {
+  "derate_classes_mw": 20931.9,
+  "non_mmu_mw": 0.0,
+  "non_mmu_derate_mw": 0.0,
+  "non_mmu_fuels": {}
+ },
+ "2020": {
+  "derate_classes_mw": 20969.5,
+  "non_mmu_mw": 0.0,
+  "non_mmu_derate_mw": 0.0,
+  "non_mmu_fuels": {}
+ },
+ "2021": {
+  "derate_classes_mw": 20937.7,
+  "non_mmu_mw": 0.0,
+  "non_mmu_derate_mw": 0.0,
+  "non_mmu_fuels": {}
+ },
+ "2022": {
+  "derate_classes_mw": 21226.7,
+  "non_mmu_mw": 0.0,
+  "non_mmu_derate_mw": 0.0,
+  "non_mmu_fuels": {}
+ },
+ "2023": {
+  "derate_classes_mw": 21318.5,
+  "non_mmu_mw": 0.0,
+  "non_mmu_derate_mw": 0.0,
+  "non_mmu_fuels": {}
+ },
+ "2024": {
+  "derate_classes_mw": 21288.2,
+  "non_mmu_mw": 0.0,
+  "non_mmu_derate_mw": 0.0,
+  "non_mmu_fuels": {}
+ },
+ "2025": {
+  "derate_classes_mw": 22410.0,
+  "non_mmu_mw": 0.0,
+  "non_mmu_derate_mw": 0.0,
+  "non_mmu_fuels": {}
+ }
+}
