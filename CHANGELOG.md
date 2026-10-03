@@ -4,6 +4,10 @@
 
 The headline `neiso-t1f` recipe (plan §2.1a owner posture, `--golden-posture`, no `--set`) re-solved on the W0 keeper under owner ruling Q76: cache key `66fb439918cbefd6` (pre-declared, matched; the move from D50's `18515067bf4d2fbe` is the two Q47 CCS default moves plus the nine moved NEISO solve-surface rows), 14/14 invariants PASS, 11.4 min / 3.2 GB, **PROMOTE → PROMOTE** with every FC status unchanged; the prior is preserved at `neiso-t1f-pre-d105`. Trajectory moved materially (2028–2030 CO2 −41 to −69 %, dispatch of the converted `gas_cc_ccs` fleet at the 2.95 $/MWh adder), recorded unattributed. Bundle `results/ff-t1f-d105/neiso` (slim), sidecar `neiso-2026-2030-d105-w0neiso`. Record: `docs/records/forecast/FINDING-capx-d105-2026-10-03.md`.
 
+## 2026-10-03 — Solve-container swap is provisioned before data steps; stale inactive swapfile reclaimed (R-50, zero LP)
+
+`scripts/shard_prompt.py` runs `prepare_solve_container.py` first (before hydrate / regenerate / any fetch), keeps the env-pin `eval` at the solve, and emits the gitignored PJM DA-virtuals fetch when the recipe arms `pjm_da_virtual_bids`; `scripts/lib/solve_container.py::provision_swap` counts an inactive swapfile at its path as reclaimable disk and reuses or re-makes it, and the below-target WARNING names the fix and the free disk.
+
 ## 2026-10-03 — capx D103: forecast DOF-ledger carry census for NEISO and NYISO (zero LP, no code change)
 
 `docs/records/forecast/FINDING-capx-d103-2026-10-03.md`: the two W0 keepers' rule-21 ledgers (NEISO 6 entries / 4
