@@ -3479,6 +3479,9 @@ def run_year(
             caiso_tac_shares_standard_time=getattr(
                 config, "caiso_tac_shares_standard_time", False
             ),
+            nwpp_served_schedule_zonal_attribution=(
+                config.nwpp_served_schedule_zonal_attribution
+            ),
         )
     wind_cf, wind_cap, solar_cf, solar_cap = load_renewable_profiles(
         iso, year, iso_config, config

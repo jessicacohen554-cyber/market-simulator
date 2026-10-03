@@ -57,3 +57,37 @@ BALANCE does not carry.
 
 2019-2022 and H1-2026 are not fetched by this lane (plan §6 row 13 puts the
 back years after W4); the same keyless command lands them when they are wanted.
+
+## 2019-2022 back-fill for NEVP, PACE, NWMT, WAUW (NWPP-NEXT-25, 2026-10-03)
+
+`ScenarioConfig.nwpp_served_schedule_zonal_attribution` places the served
+schedule's measured legs at each reporting member's zone. That needs per-DIBA
+legs for every solve year. The four members whose 2023-2025 files carry an
+out-of-footprint counterparty that is not a priced seam leg were back-filled
+with the same keyless command, under `--merge`:
+
+    python scripts/data/fetch_eia930_interchange.py --ba NEVP --source bulk --years 2019 2020 2021 2022 --merge
+    python scripts/data/fetch_eia930_interchange.py --ba PACE --source bulk --years 2019 2020 2021 2022 --merge
+    python scripts/data/fetch_eia930_interchange.py --ba NWMT --source bulk --years 2019 2020 2021 2022 --merge
+    python scripts/data/fetch_eia930_interchange.py --ba WAUW --source bulk --years 2019 2020 2021 2022 --merge
+
+The two members holding such legs were already covered from 2019: BPAT (LDWP,
+BANC, BCHA) and GRID (PNM, SRP, WALC). `--merge` keeps every pre-existing row
+byte-identical; the files now span 2019-01-01 01:00 to 2026-01-01 00:00. Rows:
+
+| BA | rows | DIBAs |
+|---|---:|---|
+| NEVP | 368,208 | BPAT, CISO, IPCO, LDWP, PACE, WALC |
+| PACE | 398,975 | AZPS, IPCO, LDWP, NEVP, NWMT, PACW, WACM |
+| NWMT | 488,759 | AESO, AVA, BPAT, GWA, IPCO, PACE, WAUW, WWA |
+| WAUW | 184,104 | NWMT, SWPP, WACM |
+
+**Clock.** PACE, NWMT and WAUW are stamped on Mountain local time
+(`constants.NWPP_MEMBER_LOCAL_TZ`). Measured: PACE->NEVP mirrors
+-(NEVP->PACE) with mean |error| 0.0 MW at +1 h, against 43.8-45.3 MW at 0 h
+(2020, 2024).
+
+**Not back-filled.** The other eleven members show no out-of-footprint
+counterparty in 2023-2025 beyond a priced seam leg. Their 2019-2022
+per-DIBA legs are absent, and the attribution spreads whatever the
+attributed legs do not cover.

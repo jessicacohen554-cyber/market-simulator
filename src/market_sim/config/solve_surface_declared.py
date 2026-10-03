@@ -629,4 +629,5 @@ DECLARED: dict[str, str | dict[str, str]] = {
     "NWPP_COI_CAISO_SHARE": "83a9883a937c96c1",
     "NWPP_COI_PATH_SERIES": "5e0fd92f218f2828",
     "NWPP_SEAM_LIMIT_SERIES": "d6e48af9300e5697",
+    "NWPP_MEMBER_LOCAL_TZ": "ec3a6413bab8bdaa",
 }

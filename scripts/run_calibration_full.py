@@ -6700,6 +6700,10 @@ def solve_and_persist(
         _nwpp_grid_wind = _caiso_demand_flag("nwpp_grid_carried_wind_served")
         # NWPP-NEXT-3: the plant-basis anchor is the same class.
         _nwpp_plant_basis = _caiso_demand_flag("nwpp_demand_plant_basis")
+        # NWPP-NEXT-25: the served-schedule zonal attribution is the same class.
+        _nwpp_zonal_schedule = _caiso_demand_flag(
+            "nwpp_served_schedule_zonal_attribution"
+        )
         # pjm-h19: the balance-identity demand screen is the same class.
         _demand_balance = _caiso_demand_flag("demand_balance_screen")
         # R-CAISO-11: the TAC-share clock flag is the same class.
@@ -6746,6 +6750,7 @@ def solve_and_persist(
             nwpp_demand_plant_basis=_nwpp_plant_basis,
             demand_balance_screen=_demand_balance,
             caiso_tac_shares_standard_time=_tac_std,
+            nwpp_served_schedule_zonal_attribution=_nwpp_zonal_schedule,
         )
         # Must-run residual classes (biomass / other-gas / ...) are netted out
         # of demand for the LP and re-added as pseudo-units in the dispatch

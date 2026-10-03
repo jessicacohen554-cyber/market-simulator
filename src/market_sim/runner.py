@@ -524,6 +524,9 @@ def _hindcast_measured_demand(
         nwpp_grid_carried_wind_served=config.nwpp_grid_carried_wind_served,
         nwpp_demand_plant_basis=config.nwpp_demand_plant_basis,
         demand_balance_screen=config.demand_balance_screen,
+        nwpp_served_schedule_zonal_attribution=(
+            config.nwpp_served_schedule_zonal_attribution
+        ),
     )
     if config.hours < demand.shape[1]:
         demand = demand[:, : config.hours]
