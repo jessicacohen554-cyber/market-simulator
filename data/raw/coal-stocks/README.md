@@ -98,7 +98,7 @@ to make the admissible read the easy one.
 **Cross-ISO note (2026-10-03).** `coal_fuel_inventory.build_coal_take_floor` reads
 `S_max` over *every curated year ≤ Y−1*, so adding 2015–2017 raises yard maxima
 wherever a yard held more coal in 2015–17 than in 2018+ (NWPP: 65 plant-years
-across 2019–2025, e.g. Boardman 6106 400 → 999 kt, Bonanza 7790 511 → 1,013 kt).
+across 2019–2025; the four largest moves: Boardman 6106 400 → 999 kt, Bonanza 7790 511 → 1,013 kt, plant 8224 456 → 765 kt, plant 3845 1,014 → 1,396 kt (2019)).
 That loosens any armed take floor (NWPP keeper) at its next clean regenerate,
 which makes it a LIVE input hunk for that lane's G-DRIFT
 (`docs/records/soco/closeout-soco-3/`).
