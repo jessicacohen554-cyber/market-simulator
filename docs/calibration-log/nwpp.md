@@ -1134,3 +1134,41 @@ Records:
 - `FINDING-nwppnext25-cc-served-schedule-phase0-2026-10-03.md`
 - `PRECOMMIT-nwppnext25-served-schedule-2019-2025-2026-10-03.md`
 - `RESULT-nwppnext25-served-schedule-2019-2025-2026-10-03.md`
+
+## NWPP-NEXT-26 — 2026-10-03 — CAISO_NEVP priced only after Harry Allen–Eldorado → KEEPER `2026-10-03-nwpp-next-26-nevp`
+
+**What changed.** Keeper NEXT-25 plus `nwpp_seam_in_service_vintage`, owner card "Serve pre-HAE". Promoted on owner
+card "Promote".
+
+- CAISO_NEVP's 1,933 MW rating is the DesertLink Harry Allen–Eldorado intertie's. FERC ER20-1514 adds it as a new
+  CAISO–NEVP intertie, and the measured EIA-930 step dates it to 2020-08-12.
+- Before that date, measured NEVP→CISO ran between −510 and +366 MW, yet the keeper exported 10.47 TWh (2019) through
+  the seam.
+- The seam is now priced only after 2020-08-12. Before it, the measured leg is served at SNV and the seam's net flow is
+  capped at zero, with one hourly mask (rule 19).
+- Zero free parameters; seven shards ran at pin `30c0e017`. In 2021–2025 the legs equal the keeper exactly.
+
+**Scores against keeper NEXT-25 (same bench render).** NOT-YET → NOT-YET, FAIL records 8 → 7.
+
+| reading | keeper | this keeper |
+|---|---|---|
+| C1 CC_REGULAR 2019 / 2020 | +12.73 / +7.51 TWh | **+7.61 (PASS)** / +2.39 |
+| C4 gas 2019 / 2020 r | 0.649 / 0.752 | 0.669 / 0.822 |
+| C4 coal 2019 / 2020 r | 0.799 / 0.781 | **0.754 / 0.762** |
+| C1 COAL_BIT 2019 | −1.38 TWh | **−2.76** |
+| C1 CT_PEAKER 2019 / 2020 | +0.52 / +0.48 | **−1.75 / −0.82** |
+| C1 ST_GAS 2019 · CC_CHP 2020 | −0.82 · −0.67 | **−1.14 · −1.10** |
+| SNV gas 2019 / 2020 (NEVP EIA-930 22.2 / 22.8) | 29.58 / 27.74 TWh | 24.17 / 22.84 |
+| NEVP seam export 2019 / 2020 (measured −0.30 / 3.11) | 10.47 / 11.98 | 0.00 / 4.85 |
+| COI export 2019 (measured 7.03) | 11.13 | **12.06** |
+| D-1 failures (class-years) | 16 | **17** |
+
+Regressions are in bold, and every one still passes. D-2 is 0 in every class-year.
+
+**Prune:** `2026-10-03-nwpp-next-25-served` / `nwppnext25_span`.
+
+Records:
+
+- `docs/records/nwpp/FINDING-nwppnext26-nevp-hae-phase0-2026-10-03.md`
+- `PRECOMMIT-nwppnext26-nevp-hae-2019-2025-2026-10-03.md`
+- `RESULT-nwppnext26-nevp-hae-2019-2025-2026-10-03.md`

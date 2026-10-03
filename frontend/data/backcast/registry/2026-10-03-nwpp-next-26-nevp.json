@@ -1,0 +1,19 @@
+{
+  "id": "2026-10-03-nwpp-next-26-nevp",
+  "label": "nwpp next 26 nevp",
+  "date": "2026-10-03",
+  "shorthand": "nwpp-next-26-nevp",
+  "definition": "NWPP-NEXT-26: keeper nwppnext25 + CAISO_NEVP priced only after Harry Allen-Eldorado (2020-08-12)",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NWPP",
+  "file": "frontend/data/backcast/runs/2026-10-03-nwpp-next-26-nevp.js",
+  "bundle": "results/calibration/nwppnext26_span"
+}
