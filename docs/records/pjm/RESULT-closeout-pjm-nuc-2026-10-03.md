@@ -187,9 +187,13 @@ disk after `hydrate_data` + `regenerate_clean` + the virtuals fetch.
 
 ## 7. Where things are (rule 34)
 
-- **Composite:** `results/calibration/closeout_pjm_nuc_span` on `claude/closeout-pjm-nuc`. It is slim, by the
-  keeper convention (`hourly/` sidecars including `unit_marginal_<Y>`; the `dispatch/` and `unit_hourly` files
-  stay gitignored).
-- **Full legs:** including `dispatch/<Y>_P1.parquet`, on the six shard branches above, recorded here by SHA as
-  provenance (rule 33). The local copies will not survive this container.
-- **Retention (rule 31):** no solved bundle was deleted. The incumbent keeper is untouched.
+**Desk ruling (b), 2026-10-03.** PR #7140 carries the records only. The probe is not on `main`.
+
+- **Composite and probe registration:** `results/calibration/closeout_pjm_nuc_span` plus
+  `2026-10-03-closeout-pjm-nuc-6yr` (sidecar and run payload), on **`claude/closeout-pjm-nuc-probe` @ 1c6e4a15**.
+  They are kept there for the 7-leg recompose and are gitignored on the lane branch (rule 29(c); rule 31: ignore,
+  never `rm`).
+- **Full legs:** including `dispatch/<Y>_P1.parquet`, on the six shard branches in §1, recorded by SHA. The desk
+  keeps them alive until the 7-leg promotion merges, because the composer needs every leg's dispatch.
+- **Local copies:** this container's copies will not survive it.
+- **Retention (rule 31):** no solved bundle was deleted, and the incumbent keeper is untouched.
