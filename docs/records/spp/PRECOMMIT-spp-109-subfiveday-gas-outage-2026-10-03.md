@@ -107,3 +107,16 @@ and does a measured, forward-reproducible driver own it. No lever without a name
 SPP-105 carrier A as solved (G+ differs: the measured family replaces what A removed); offer-band retunes;
 curtailment ceiling; gas bridge; `spp_commitment_posture` alone; `coal_fuel_inventory` (SPP-108). Owner downloads
 (STB EP 724, SPP portal) deferred under R-17.
+
+## Owner ruling R-31 (relayed by the desk, 2026-10-03 00:52Z; recorded verbatim)
+
+> "Allow if B1 clears"
+
+The desk's reading: the re-test of the two SPP R cells (`unit_outage_short_windows_gas`, from SPP-32; SPP-105 carrier A)
+goes to 7 shards only if B1 **and** all three zero-LP kills (Z1, Z2, Z3) pass. If any one fails, SPP-109 is a FINDING,
+both cells stay R with the evidence prepended, no shards are launched, and the lane goes to step 3.
+
+The ruling arrived after this PRECOMMIT was pushed at 723f79ee. It matches §3 as already written, so nothing in §3
+was changed.
+
+**Outcome:** Z1 and Z2 fired, so no shards were launched. See `FINDING-spp-109-subfiveday-gas-outage-2026-10-03.md`.
