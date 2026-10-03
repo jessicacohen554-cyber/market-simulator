@@ -91,7 +91,7 @@ class RegistryTests(unittest.TestCase):
         # Budgets and the ledgerable set are untouched.
         self.assertEqual(cv.LEDGERABLE_CRITERIA, frozenset({"price_tail"}))
         self.assertEqual(cv.MAX_LEDGERED_CAVEATS, 1)
-        self.assertEqual(cv.RUBRIC_VERSION, "3.19")
+        self.assertEqual(cv.RUBRIC_VERSION, "3.20")
 
 
 class AbsentReferenceTests(unittest.TestCase):

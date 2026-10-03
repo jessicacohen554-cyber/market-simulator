@@ -13856,6 +13856,22 @@ def main() -> None:
         "CAISO-only. Default (unset) keeps the base config value (off).",
     )
     parser.add_argument(
+        "--zonal-loss-demand-reconciliation",
+        dest="zonal_loss_demand_reconciliation",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Net the armed zonal loss surface's own dissipation (sum eps*F at "
+        "the P0 flows, on each zone's received lossy links) out of the P1 "
+        "demand (ScenarioConfig.zonal_loss_demand_reconciliation, "
+        "closeout-PJM-lossdemand). The measured EIA-930 demand already "
+        "contains every T&D loss, so without it the LP generates the "
+        "network's losses a second time. The (1 - eps) flow coefficient and "
+        "with it the zonal loss price separation are untouched. A no-op when "
+        "no *_zonal_loss_surface is armed. Rides the generic prb_overrides "
+        "channel; --no-zonal-loss-demand-reconciliation reaches the pre-arm "
+        "posture. Default (unset) keeps the base config value (off).",
+    )
+    parser.add_argument(
         "--capacity-deliverability-limits",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -15830,6 +15846,9 @@ def main() -> None:
             # (rule 24 [R-REGISTRY]) because prb_overrides is applied to
             # recorded_cfg. None keeps the config/recipe value untouched.
             "mustrun_chp_btm_holdout": args.mustrun_chp_btm_holdout,
+            # closeout-PJM-lossdemand: generic channel, so run_config.json
+            # records it (prb_overrides is applied to recorded_cfg).
+            "zonal_loss_demand_reconciliation": (args.zonal_loss_demand_reconciliation),
             # spp-49: the benchmark's vintage-aware membership union rides the
             # same generic channel for the same reasons -- ONE read path for a
             # fresh solve, a replay override and a recipe, and

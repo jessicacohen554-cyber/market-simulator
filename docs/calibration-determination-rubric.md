@@ -1,6 +1,6 @@
 # Calibration Determination Rubric (v2)
 
-> Scorer `RUBRIC_VERSION` is **3.19** (2026-10-03). The status paragraph below was
+> Scorer `RUBRIC_VERSION` is **3.20** (2026-10-03). The status paragraph below was
 > written at v3.4; every later amendment is in §9 (newest first).
 
 Status: **canonical, machine-enforced. RUBRIC VERSION 3.4** (2026-08-18 owner
@@ -1198,6 +1198,19 @@ owner-signed `ACCEPTED MODEL-CLASS LIMITATION` of v3.0 once the within-class
 mechanism space is exhaustion-cited (C3c is supporting-tier, so the v3.0
 tier guard admits it).
 
+**Order of the automatic routes (v3.20, owner ruling R-57/R-58).** The rule-22
+lone-C3c standing rule is applied **last**, after the explicit exceptions
+ledger, the governance gate, the scoped ledger (v3.10/R-8), the configuration
+exceptions (v3.14/R-6) and the reference-coverage caveats (v3.19/R-40). "Lone"
+is therefore measured over the criterion-years still failing once every
+owner-signed caveat has been applied: a row the owner has excused by its exact
+(ISO, year, criterion, key) is not a second failure. Every other guard of rule
+22 is unchanged — lone failure only (on 2023–2025; dropped for out-of-training
+years, v3.6), governance (C6) must pass, supporting tier only, the caveat
+spends the single ledgered slot and never reads PASS. None of the three
+owner-signed tables may carry a `price_tail` key (pinned by test), so the
+routes write disjoint rows and the order changes only what the lone test sees.
+
 **Everything else is `MODEL MISS` and must be fixed, not excused** — a coal/gas
 split error, a fleet-correlation floor breach, an over-cycling storage fleet, a
 preliminary-vintage system-volume residual, and **C3a mean LMP above all**. C3a
@@ -1338,7 +1351,7 @@ down to.
 the `RUBRIC_VERSION` genealogy of `scripts/calibration_verdict.py`; v3.14–v3.17
 below are indexed in rule-history §27. Record:
 `docs/records/governance/closeout-2026-10/RESULT-closeout-c-rubric-2026-10-02.md`.
-v3.18 is indexed in rule-history §28; v3.19 in §29.)*
+v3.18 is indexed in rule-history §28; v3.19 in §29; v3.20 in §31.)*
 
 **Amendment procedure (rule 37 `[R-RUBRIC-FREEZE]`, owner ruling 2026-10-03,
 rule-history §30).** This rubric is frozen between promotions. An amendment —
@@ -1355,6 +1368,22 @@ in its own PR under rule 35. CI enforces the separation
 (`scripts/check_rubric_freeze.py`); the owner's promotion-with-amendment ruling
 is the one override, passed by the CI step as `RUBRIC_FREEZE_OVERRIDE`.
 
+- **v3.20 (2026-10-03, owner ruling R-58, verbatim: *"Adopt v3.20
+  (Recommended)"*, approving the R-57 PRECOMMIT)** — the rule-22 lone-C3c
+  standing rule (`_apply_c3c_standing_rule`) now runs **last** in
+  `determine_from_artifacts`, after the scoped ledger, the configuration
+  exceptions and the reference-coverage caveats (§3, "Order of the automatic
+  routes"). A pure reorder: the function body and every rule-22 guard are
+  unchanged; `C3C_STANDING_RULE_REASON` now states that "lone" is measured
+  once the owner-signed caveats are applied. Monotone — it can only turn a
+  C3c `FAIL` into a `CAVEAT` where every other failure is already
+  owner-excused. Measured zero-LP over the committed keeper bundles
+  (`scripts/probes/rubric_c3c_order_probe.py`): **0 of 9 ISO
+  determinations, 0 of 13 keeper scopes, 0 of 61 per-year ladder rows
+  move**; it acts only on the R-51 shape (ERCOT carve-out 2023 with an
+  R-6-excused C3a/C3b beside a C3c miss: NOT-YET under v3.19, CALIBRATED
+  under v3.20). Record:
+  `docs/records/governance/closeout-2026-10/PRECOMMIT-rubric-c3c-order-2026-10-03.md`.
 - **v3.19 (2026-10-03, owner ruling R-40 — backcast close-out plan §5.0 row
   R-40, verbatim: *"Caiso mean LMP for 2021 should be an accepted caveat or
   only compared where data is actually available for that year for
@@ -1373,8 +1402,8 @@ is the one override, passed by the CI step as `RUBRIC_FREEZE_OVERRIDE`.
   owner-signed `kind: "reference-coverage"` twin, and on the record's state.
   Off every caveat budget (neither ledgered nor commercial-band, never the C3c
   slot), not determination-downgrading, named on the basis; applied after
-  the C3c standing rule, scoped ledger and configuration exceptions, so none
-  of them saw these rows other than as scored. `caveats.reference_coverage` is
+  the scoped ledger and configuration exceptions, so neither saw these rows
+  other than as scored (and, until v3.20, after the C3c standing rule). `caveats.reference_coverage` is
   emitted only when non-empty. No band, tier, ledger row or budget moves; no
   determination moves (CAISO stays NOT-YET on C1 and C4 2019–2021). Record:
   `docs/records/caiso/closeout-caiso-2/RESULT-closeout-caiso-r40-2026-10-03.md`.

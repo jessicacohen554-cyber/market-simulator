@@ -348,6 +348,7 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
     pjm_apsouth_cut: { cell: "." },
     pjm_external_net_position_cut: { cell: "." },
     zonal_loss_surface: { cell: "." },
+    zonal_loss_demand_reconciliation: { cell: "." },
     rdt_tcdc: { cell: "." },
     seam_flow_envelopes: { cell: "." },
     miso_import_sil_measured_envelope: { cell: ".", ev: "MISO-only by construction: the estimator gates on MISO_SEAM_DIBA and returns None for every other ISO, and the injector then returns its input groups unchanged, so this ISO is byte-identical armed or not (test_non_miso_iso_is_a_noop). Minted with the field by miso-255 (rule 28(c)); a verdict here would transfer nothing (rule 28(d), rule 25 [R-ISO-SCOPE])." },
