@@ -182,8 +182,23 @@ class UcStage:
         return self.inject(fleet_in)
 
     # ---------------------------------------------------------------- run
-    def run(self, fleet_in: FleetArrays, mc_bid: np.ndarray) -> UcSchedule:
-        """Solve the rolling windows over the year and stitch the schedule."""
+    def run(
+        self,
+        fleet_in: FleetArrays,
+        mc_bid: np.ndarray,
+        t_start: int = 0,
+        t_end: int | None = None,
+        write: bool = True,
+    ) -> UcSchedule:
+        """Solve the rolling windows over ``[t_start, t_end)`` and stitch the schedule.
+
+        The production hook covers the whole year (``0 .. T``); the ladder's
+        L2 rung solves one month at a time (``bench_uc_ladder.py``) and passes
+        ``write=False``. The first window's state comes from P0 at
+        ``t_start - 1`` (cyclic for ``t_start == 0``, DESIGN section 2.2).
+        """
+        t_end = self.T if t_end is None else min(int(t_end), self.T)
+        t_init = (int(t_start) - 1) % self.T
         p = self.params
         k = self.int_idx
         T, W, L = self.T, self.W, self.L
@@ -197,15 +212,15 @@ class UcStage:
         p0_dispatch = np.asarray(r0.dispatch, dtype=float)
         p0_soc = getattr(r0, "storage_soc", None)
         p0_prices = np.asarray(r0.prices, dtype=float)
-        u_init = units_online_from_dispatch(p, p0_dispatch[:, T - 1])[k]
+        u_init = units_online_from_dispatch(p, p0_dispatch[:, t_init])[k]
         hist = int(max(int(p.ut_h[k].max()), int(p.dt_h[k].max())) - 1) if k.size else 0
         sched = UcSchedule(p, T, hist)
         month_ends = month_boundaries(T)
-        next_month = 0
+        next_month = int(np.searchsorted(month_ends, t_start, side="right"))
         windows: list[dict] = []
         prev = None
-        t0 = 0
-        while t0 < T:
+        t0 = int(t_start)
+        while t0 < t_end:
             t1 = min(t0 + W + L, T)
             inputs = slice_window_inputs(
                 fleet_in, self.demand, self.dispatch_kwargs, t0, t1, p0_dispatch
@@ -214,8 +229,8 @@ class UcStage:
                 t0,
                 fleet_in,
                 u_init,
-                p0_dispatch[:, T - 1],
-                None if p0_soc is None else np.asarray(p0_soc, dtype=float)[:, T - 1],
+                p0_dispatch[:, t_init],
+                None if p0_soc is None else np.asarray(p0_soc, dtype=float)[:, t_init],
             )
             soc_terminal = (
                 None if p0_soc is None else np.asarray(p0_soc, dtype=float)[:, t1 - 1]
@@ -274,7 +289,7 @@ class UcStage:
             t0 = kept_to
             while next_month < len(month_ends) and kept_to >= month_ends[next_month]:
                 next_month += 1
-                if kept_to < T:
+                if write and kept_to < T:
                     sched.checkpoint(
                         self.artifact_dir,
                         next_month,
@@ -285,7 +300,8 @@ class UcStage:
         self.log["summary"]["uc_total_s"] = round(time.perf_counter() - t_stage, 3)
         self.log["summary"]["peak_rss_gb"] = round(_peak_rss_gb(), 3)
         self.ran = True
-        self.write_artifacts(fleet_in)
+        if write:
+            self.write_artifacts(fleet_in)
         _STAGES.append(self)
         logger.info(
             "UC stage done: %d windows, %.1f s, MILP mean %.2f s, nodes p50 %s, %d time-limit hits",
