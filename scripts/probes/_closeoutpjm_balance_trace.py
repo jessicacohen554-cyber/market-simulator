@@ -63,7 +63,9 @@ TWH = 1e6
 
 def _internal(a: str, b: str) -> bool:
     """Mirror of ``model.interchange.pjm._pjm_internal`` (the external star is lossless)."""
-    return a.startswith("PJM_") and b.startswith("PJM_") and "PJM_external" not in (a, b)
+    return (
+        a.startswith("PJM_") and b.startswith("PJM_") and "PJM_external" not in (a, b)
+    )
 
 
 def balance(bundle: Path, year: int) -> dict:
@@ -115,23 +117,31 @@ def attribute(year: int, loss_hour: np.ndarray) -> dict:
         KEEPER / f"hourly/unit_marginal_{year}.parquet",
         columns=["pass", "fuel", "plant_group", "hour", "mw", "mc", "marginal"],
     )
-    um = um[(um["pass"] == "P1") & (um.mw > 0.0) & ~um.fuel.astype(str).isin(NOT_PEELABLE)]
+    um = um[
+        (um["pass"] == "P1") & (um.mw > 0.0) & ~um.fuel.astype(str).isin(NOT_PEELABLE)
+    ]
     um = um[~um.plant_group.astype(str).str.startswith("VIRTUAL")]
     um = um.assign(grp=um.plant_group.astype(str).replace("", "oil"))
     um = um.sort_values(["hour", "mc"], ascending=[True, False])
     cum = um.groupby("hour").mw.cumsum().to_numpy()
     need = loss_hour[um.hour.to_numpy()]
     take = np.clip(need - (cum - um.mw.to_numpy()), 0.0, um.mw.to_numpy())
-    peel = (pd.Series(take).groupby(um.grp.to_numpy()).sum() / TWH).sort_values(ascending=False)
+    peel = (pd.Series(take).groupby(um.grp.to_numpy()).sum() / TWH).sort_values(
+        ascending=False
+    )
     mg = um[um.marginal == 1]
     n = mg.groupby("hour").mw.transform("size").to_numpy()
     share = loss_hour[mg.hour.to_numpy()] / n
-    split = (pd.Series(share).groupby(mg.grp.to_numpy()).sum() / TWH).sort_values(ascending=False)
+    split = (pd.Series(share).groupby(mg.grp.to_numpy()).sum() / TWH).sort_values(
+        ascending=False
+    )
     covered = float(take.sum() / TWH)
     return {
         "peel_twh": {k: round(float(v), 3) for k, v in peel.items() if v > 0.005},
         "peel_covered_twh": round(covered, 3),
-        "marginal_split_twh": {k: round(float(v), 3) for k, v in split.items() if v > 0.005},
+        "marginal_split_twh": {
+            k: round(float(v), 3) for k, v in split.items() if v > 0.005
+        },
         "marginal_split_covered_twh": round(float(share.sum() / TWH), 3),
     }
 
@@ -139,21 +149,40 @@ def attribute(year: int, loss_hour: np.ndarray) -> dict:
 def c1_deltas(year: int, model_class: dict) -> dict:
     """Model - bench classFull (TWh) for the two C1 over-run classes."""
     cf = json.load(gzip.open(BENCH / f"{year}.json.gz"))["bench"]["classFull"]
-    return {k: round(model_class.get(k, 0.0) - cf.get(k, 0.0), 2) for k in ("CC_REGULAR", "COAL_BIT")}
+    return {
+        k: round(model_class.get(k, 0.0) - cf.get(k, 0.0), 2)
+        for k in ("CC_REGULAR", "COAL_BIT")
+    }
 
 
 def main() -> None:
     """Run the trace over 2019-2025 and write the JSON payload."""
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--legs", type=Path, required=True, help="dir holding <year>/flows.parquet per leg")
+    ap.add_argument(
+        "--legs",
+        type=Path,
+        required=True,
+        help="dir holding <year>/flows.parquet per leg",
+    )
     args = ap.parse_args()
-    out: dict = {"keeper": str(KEEPER.relative_to(REPO)), "leg_sha": LEG_SHA, "years": {}}
+    out: dict = {
+        "keeper": str(KEEPER.relative_to(REPO)),
+        "leg_sha": LEG_SHA,
+        "years": {},
+    }
     for y in YEARS:
         b = balance(KEEPER, y)
         fl = link_losses(pd.read_parquet(args.legs / str(y) / "flows.parquet"), y)
-        loss_hour = fl.groupby("hour").loss_mw.sum().reindex(range(8760), fill_value=0.0).to_numpy()
+        loss_hour = (
+            fl.groupby("hour")
+            .loss_mw.sum()
+            .reindex(range(8760), fill_value=0.0)
+            .to_numpy()
+        )
         gap_hour = b["_resid_hour"] - loss_hour
-        by_link = (fl.groupby(["from_zone", "to_zone"]).loss_mw.sum() / TWH).sort_values(ascending=False)
+        by_link = (
+            fl.groupby(["from_zone", "to_zone"]).loss_mw.sum() / TWH
+        ).sort_values(ascending=False)
         by_month = (fl.groupby("month").loss_mw.sum() / TWH).round(3)
         hod = (pd.Series(loss_hour).groupby(np.arange(8760) % 24).mean()).round(0)
         lossy_flow = fl[fl.eps > 0].mw.sum() / TWH
@@ -164,8 +193,14 @@ def main() -> None:
                 "residual_minus_loss_twh": round(float(gap_hour.sum() / TWH), 4),
                 "max_abs_hourly_gap_mw": round(float(np.abs(gap_hour).max()), 3),
                 "flow_on_lossy_links_twh": round(float(lossy_flow), 2),
-                "flow_weighted_eps_pct": round(float(100 * loss_hour.sum() / TWH / lossy_flow), 3),
-                "loss_by_link_twh": {f"{a}>{c}": round(float(v), 3) for (a, c), v in by_link.items() if v > 0.01},
+                "flow_weighted_eps_pct": round(
+                    float(100 * loss_hour.sum() / TWH / lossy_flow), 3
+                ),
+                "loss_by_link_twh": {
+                    f"{a}>{c}": round(float(v), 3)
+                    for (a, c), v in by_link.items()
+                    if v > 0.01
+                },
                 "loss_by_month_twh": {int(k): float(v) for k, v in by_month.items()},
                 "loss_mean_mw_by_hour_of_day": [float(x) for x in hod],
                 "loss_peak_hour_mw": round(float(loss_hour.max()), 1),
@@ -174,14 +209,22 @@ def main() -> None:
             }
         )
         out["years"][str(y)] = row
-        print(y, row["residual"], row["loss_twh"], row["residual_minus_loss_twh"], row["c1_model_minus_bench_twh"])
+        print(
+            y,
+            row["residual"],
+            row["loss_twh"],
+            row["residual_minus_loss_twh"],
+            row["c1_model_minus_bench_twh"],
+        )
     out["miso_control"] = {}
     for y in YEARS:
         try:
             b = balance(MISO, y)
         except FileNotFoundError:
             continue
-        out["miso_control"][str(y)] = {k: round(v, 3) for k, v in b.items() if not k.startswith("_")}
+        out["miso_control"][str(y)] = {
+            k: round(v, 3) for k, v in b.items() if not k.startswith("_")
+        }
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(out, indent=1) + "\n")
     print("wrote", OUT.relative_to(REPO))
