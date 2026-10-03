@@ -478,7 +478,14 @@ VERDICT_MAP = {
     # Each supersedes the row above/below it, whose record is preserved at
     # `<iso>-t1f-pre-d60` in the same commit.
     "miso-2026-2030-d60-arm": "miso-t1f",
-    "nyiso-2026-2030-d60-arm": "nyiso-t1f",
+    # RE-POINTED by capx D107 (2026-10-03) to `nyiso-t1f-pre-d106`: capx D106
+    # re-solved the bare `nyiso-t1f` recipe on the W0 keeper 2026-10-02-w0-nyiso
+    # (cache key 374fa81075c95ff8) and the bare key moved on to that run; this
+    # D60-R3 record keeps its own verdict, preserved byte-equal under the
+    # `-pre-d106` key in the same commit (FINDING-capx-d106-2026-10-03.md §4).
+    # The same preserve-then-overwrite the `-pre-d31` / `-pre-d33` / `-pre-d46`
+    # chain uses — a run never renders a verdict its own score contradicts.
+    "nyiso-2026-2030-d60-arm": "nyiso-t1f-pre-d106",
     # PJM is NOT re-pointed: capx D60 pre-declared this rename (the D50 arm was
     # solved AT what would become the post-flip bare key, 167e65187f32056b) and
     # then REVERSED it before pushing when capx D57 merged and armed three PJM
@@ -556,7 +563,13 @@ VERDICT_MAP = {
     # flip — so each is a key-EQUALITY rename with nothing to re-solve, and each
     # ISO's D46 control is preserved at `<iso>-t1f-pre-d60`.
     "ercot-2026-2030-d50-ccscapex": "ercot-t1f",
-    "neiso-2026-2030-d50-ccscapex": "neiso-t1f",
+    # RE-POINTED by capx D107 (2026-10-03) to `neiso-t1f-pre-d105`: capx D105
+    # re-solved the bare `neiso-t1f` recipe on the W0 keeper 2026-10-02-w0-neiso
+    # (cache key 66fb439918cbefd6) and the bare key moved on to that run; this
+    # D50 arm keeps its own verdict, preserved byte-equal under the `-pre-d105`
+    # key in the same commit (FINDING-capx-d105-2026-10-03.md §4). ERCOT's row
+    # above is untouched: no re-solve has moved `ercot-t1f` off the D50 arm.
+    "neiso-2026-2030-d50-ccscapex": "neiso-t1f-pre-d105",
     # PJM STAYS SUFFIXED: the identical rename was pre-declared for it and then
     # REVERSED before pushing (see the `pjm-2026-2030-d45r-remeasure` row above)
     # — capx D57 merged mid-lane and armed three PJM gates, so the bare
@@ -571,6 +584,16 @@ VERDICT_MAP = {
     # harness invocation at HEAD, key e586d7cae19eab13 pre-declared in
     # docs/records/spp/PRECOMMIT-spp-60-2026-09-07.md §2.1.
     "spp-2021-2025-realized-t1h-spp60": "spp-t1h",
+    # capx D105 / D106 (2026-10-03, owner ruling Q76; plan §2.1b gate (d)): the
+    # headline NEISO and NYISO T1-F recipes re-solved on the W0 keepers
+    # (2026-10-02-w0-neiso / 2026-10-02-w0-nyiso). Each takes its ISO's bare
+    # key under the LIVE-vintage convention; the superseded D50 / D60-R3 rows
+    # above are re-pointed to the preserved `-pre-d105` / `-pre-d106` keys.
+    # The sidecars already carry `verdict_key` in their meta (which
+    # `_verdict_key` prefers); these rows make the map self-consistent and are
+    # pinned by tests/scoring/test_register_forecast_verdict_map.py.
+    "neiso-2026-2030-d105-w0neiso": "neiso-t1f",
+    "nyiso-2026-2030-d106-w0nyiso": "nyiso-t1f",
 }
 
 
