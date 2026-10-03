@@ -83,6 +83,7 @@ sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "src"))
 
 from scripts.lib import keeper_store  # noqa: E402
+from scripts.lib import attestation_schema  # noqa: E402
 from scripts.lib.unit_marginal import write_unit_marginal  # noqa: E402
 
 DATA = REPO / "frontend" / "data" / "backcast"
@@ -365,6 +366,17 @@ def attest(bundle: Path, iso: str, attested_by: str | None, *, dry: bool) -> Non
         ],
         dry=dry,
     )
+    # Fixed schema (owner ruling 2026-10-03; audit E16): migrate additively,
+    # then refuse an attestation the schema rejects.
+    if not dry:
+        for change in attestation_schema.migrate(path):
+            print(f"    attestation schema: {change}")
+        problems = attestation_schema.validate(json.loads(path.read_text()))
+        if problems:
+            raise SystemExit(
+                f"{path.name} violates calibration-attestation/v1: "
+                + "; ".join(problems)
+            )
 
 
 # ---------------------------------------------------------------------------

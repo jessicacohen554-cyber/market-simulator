@@ -331,5 +331,9 @@
         "root_cause": "audit C-6/#1350, NARROWED by caiso-188 to the two live limbs. No published object maps onto either: MIC is an annual RA-showing allocation already spent twice in this model (firm split + seam limit), so a third use would be a rule 19 [R-ONE-MECH] double-count on a category error; the path ratings map only to the ceiling role the measured envelope already owns. The measured route is a Q-Q revealed supply curve, whose PRICE side failed its pre-registered LOYO gate at 30.5 % against a 25 % bar (derive_caiso_import_tranches.py, caiso-83/86/86b, DO-NOT-REDO) \u2014 and the CAPACITY side is the same estimator with the axes swapped, so it must be derived and gated on its own before anything is armed. Open root-cause issue, never a value to re-fit (rule 20 [R-DOF]); identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
       }
     ]
-  }
+  },
+  "authorized_price_tuning": {
+    "declared": false
+  },
+  "lane_blocks": []
 }
