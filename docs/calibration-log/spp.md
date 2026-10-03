@@ -4054,3 +4054,18 @@ C3a (mean price vs RT):
 **What stays open (SPP queue, in order).**
 1. **The sub-5-day gas outage gap.** SPP-105's objection is not rebutted: the statistical WEFOR also stood in for sub-5-day gas outages that the ≥5-day CAMPD windows miss, and gas short windows are unarmed on SPP.
 2. **The SPP-81b RT price-level residual.** This is the gas-independent RT level the offered stack does not explain. It is now uncovered by the reconciled outage stack.
+
+## closeout-SPP-nuc (2026-10-03): measured 2019–22 nuclear CF rows, full-span re-solve — RECOMMEND PROMOTE (owner pending)
+
+- **What changed:** the keeper's recipe was replayed unchanged at 8c3ea461 (#7109). SPP 2019–22 nuclear now
+  reads the measured EIA-923 monthly CF rows instead of the flat fallback.
+- **Run:** `2026-10-03-closeout-spp-nuc-keeper`, bundle `closeout_spp_nuc_span`.
+- **Nuclear:** Δ +0.38 / +1.04 / −0.12 / −0.96 TWh in 2019–22. The model − EIA gap goes from −0.40 / −0.97 /
+  +0.34 / +1.20 to −0.03 / +0.05 / +0.23 / +0.26 TWh.
+- **Scores:** 0 status flips.
+  - C3a 2020 moves +28.5 → +27.7 % and C3b 2020 moves 0.356 → 0.345.
+  - C4 gas 2022 moves 0.320 → 0.313.
+  - COAL_PRB 2021/22 is +0.03 / +0.16 TWh (FAIL both).
+- **Train tier:** 2023–25 is bit-identical to the keeper (E-INERT).
+- **Diagnostics:** D-4 has the same 7 rows, and unserved energy is 0.
+- **Record:** `docs/records/spp/RESULT-closeout-spp-nuc-2026-10-03.md`.
