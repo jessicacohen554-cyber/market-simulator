@@ -661,6 +661,33 @@ def run_energy_solve(
         run_ratio_t=startup_run_ratio_t,
     )
     markup = zero_posture_markup(markup, config, dispatch_kwargs)
+    # MILP unit-commitment stage (``unit_commitment_milp``; CLAUDE.md "Dispatch
+    # and commitment", owner ruling R2; DESIGN-uc-milp-engine-2026-10-03 §0).
+    # THE ONE GATED HUNK: at the default ``False`` no statement below runs and
+    # ``markup`` / ``p1_fleet_prep`` are the same objects — byte-identical.
+    # Armed: the stage is prepared here (cluster parameters, the integer set),
+    # the amortized start markup is zeroed on the integer clusters (their
+    # start and no-load are paid once, in the UC objective — rule 19), and the
+    # stage's hook REPLACES the ``p1_fleet_prep`` chain (it calls the upstream
+    # hook first and composes its schedule on the result). The hook reads the
+    # FINAL ``mc_bid`` when it fires below, after every P1-only adjustment is
+    # applied — the lambda is late-bound to this function's local on purpose.
+    if getattr(config, "unit_commitment_milp", False):
+        from market_sim.pipeline.uc import prepare_uc_stage
+
+        _uc_stage = prepare_uc_stage(
+            config,
+            fleet,
+            fleet_arrays,
+            demand,
+            dispatch_kwargs,
+            mc_base,
+            r0,
+            upstream_prep=p1_fleet_prep,
+            bid_getter=lambda: mc_bid,  # read at hook time, after assembly
+        )
+        markup = _uc_stage.zero_markup(markup)
+        p1_fleet_prep = _uc_stage.p1_fleet_prep
     _t3 = time.perf_counter()
     mc_bid = mc_base + markup
     # P1-only bid adjustment (ERCOT condition-responsive offer surface): an additive

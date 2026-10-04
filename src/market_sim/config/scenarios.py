@@ -856,6 +856,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # scenario.
     "coal_perplant_offer_yearly",
     "coal_perplant_offer_curves_yearly",
+    # closeout-ERCOT-w3 cliff split of the per-plant coal econ tranche, default
+    # off: dropped from the hash at its False default so every pre-existing
+    # ERCOT key (the designated keeper's included) stays byte-stable — the off
+    # path builds the identical single econ tranche. An armed run carries two
+    # econ rows per split plant and hashes distinctly. Registered IN THE SAME
+    # COMMIT as the field (the nyiso-119 discipline).
+    "coal_perplant_cliff_split",
     # Conventional-hydro minimum-flow floor (caiso-124): default-off gate for
     # the lower half of the measured hydro capability envelope. Dropped from the
     # hash at its default so every pre-existing cache key (and the pinned
@@ -1544,6 +1551,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # 16 band rows HOURLY and hashes distinctly. Registered WITH the field, per
     # the nyiso-119 discipline.
     "miso_seam_neighbour_hourly_spp",
+    # closeout-MISO-w3: byte-identical OFF (the 2019-2022 offset tables are
+    # read only inside the armed branch, and the flag is REFUSED without
+    # miso_seam_neighbour_hourly_ladder); an armed run reprices the PJM / SPP
+    # seam band rows HOURLY in 2019-2022 and hashes distinctly. Registered WITH
+    # the field, per the nyiso-119 discipline.
+    "miso_seam_neighbour_hourly_full_span",
     # caiso-243: both F923 fallback guards are byte-identical OFF (the zone
     # tier is unguarded and the CAMPD-bin fleet carries no state exactly as
     # before); an armed run re-tiers gap-fill months and hashes distinctly.
@@ -2450,6 +2463,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # paths.measured_oil_burn_days_path; no sub-fields. Registered IN THE SAME
     # COMMIT as the field (the nyiso-119 discipline).
     "dual_fuel_measured_oil_burn",
+    # closeout-SOCO-w3: DIAGNOSTIC metered coal online floor, default off,
+    # dropped from the hash at False. Registered IN THE SAME COMMIT as the
+    # field (the nyiso-119 discipline).
+    "diagnostic_coal_metered_online_floor",
     # PJM-NEXT-17: plant-conduct placement of the cc_mustrun_per_plant window
     # (default off). Dropped from the hash at its default so every pre-existing
     # run -- every ISO's keepers included -- keeps its key; an armed run places
@@ -2467,6 +2484,21 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # backcast. Registered at False and flipped default-on in backcast in the
     # same commit. SHARED field -- very end, per HOUSE-3.
     "backcast_actual_retirement_only",
+    # MILP unit-commitment stage (lane UC-1, 2026-10-03, default off, shared):
+    # the gate and every uc_* sub-field it reads, dropped from the hash at their
+    # declared defaults so every pre-existing run -- every ISO's keepers
+    # included -- keeps its key (G-KEYS). Byte-identical off by construction
+    # (the one gated hunk in pipeline/solve.py). Registered IN THE SAME COMMIT
+    # as the fields (the nyiso-119 discipline). SHARED fields -- very end.
+    "unit_commitment_milp",
+    "uc_window_hours",
+    "uc_lookahead_hours",
+    "uc_mip_rel_gap",
+    "uc_window_time_limit_s",
+    "uc_integer_scope",
+    "uc_noload_source",
+    "uc_boundary_mode",
+    "uc_prefixing",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2814,6 +2846,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "coal_perplant_offer_curves": "None",
     "coal_perplant_offer_yearly": "False",
     "coal_perplant_offer_curves_yearly": "None",
+    # Added by closeout-ERCOT-w3 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "coal_perplant_cliff_split": "False",
     "hydro_min_flow_floor": "False",
     "hydro_ror_split": "False",
     "hydro_budget_nameplate_aware": "False",
@@ -2998,6 +3033,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-233 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "miso_seam_neighbour_hourly_spp": "False",
+    # Added by closeout-MISO-w3 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "miso_seam_neighbour_hourly_full_span": "False",
     # Added by caiso-243 WITH the fields, in the same commit as their
     # _CACHE_KEY_OPTIONAL_FIELDS entries (the nyiso-119 discipline).
     "nearby_fuel_price_zone_donor_guard": "False",
@@ -3353,12 +3391,24 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "eia923_cc_family_heat_rates": "False",
     # Added by soco-96 WITH the field (the nyiso-119 discipline).
     "dual_fuel_measured_oil_burn": "False",
+    # Added by closeout-SOCO-w3 WITH the field (the nyiso-119 discipline).
+    "diagnostic_coal_metered_online_floor": "False",
     # Added by PJM-NEXT-17 WITH the field (the nyiso-119 discipline).
     "cc_mustrun_conduct_window": "False",
     # Added by W0 (closeout-B) WITH the field (the nyiso-119 discipline).
     "seasonal_capacity_basis": "False",
     # Added by W0 (closeout-B) WITH the field (the nyiso-119 discipline).
     "backcast_actual_retirement_only": "False",
+    # Added by lane UC-1 WITH the fields (the nyiso-119 discipline).
+    "unit_commitment_milp": "False",
+    "uc_window_hours": "24",
+    "uc_lookahead_hours": "12",
+    "uc_mip_rel_gap": "1e-3",
+    "uc_window_time_limit_s": "600.0",
+    "uc_integer_scope": "'physics'",
+    "uc_noload_source": "'campd_regression'",
+    "uc_boundary_mode": "'p0_targets'",
+    "uc_prefixing": "False",
 }
 
 
@@ -4006,6 +4056,7 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "caiso_citygate_blackout_bridge": "measured Henry Hub daily spot + the two bracketing measured citygate prints, across EIA's publication blackouts",
     "dual_fuel_oil_daily_parity": "measured daily oil prints for the parity cap",
     "dual_fuel_measured_oil_burn": "measured CAMPD plant-day oil burn (soco-96)",
+    "diagnostic_coal_metered_online_floor": "measured CEMS coal online state (closeout-SOCO-w3 DIAGNOSTIC, never promotable)",
     # --- measured availability / outage records ---
     "caiso_dam_outages": "CAISO's published DAM outage record for the year",
     "miso_native_outage_source": "MISO's published outage record for the year",
@@ -4313,6 +4364,40 @@ def crossover_unbridges_year(
     if start_year is not None and crossover_forward_year <= start_year:
         return False
     return year >= crossover_forward_year and year >= CROSSOVER_FORWARD_BOUNDARY_YEAR
+
+
+#: The MILP UC stage's rule-19 refusal set, part 1 (plan section 6; UC-DESK
+#: ruling on DESIGN b974d2c9 point 2): every P1-native commitment bridge (the
+#: shared P0 detector, ``model.commitment.caiso_ra_mustoffer_min_gen``,
+#: whichever ISO leg routes it), the CAISO RA must-offer gate with every
+#: ``caiso_ra_*`` leg that rides it, and the posture family. The UC CHOOSES the
+#: commitment state these detect or relax, so none may be armed beside it.
+#: ``(field, what it is)`` pairs; ``__post_init__`` refuses any armed member.
+UC_REFUSED_ALWAYS: tuple[tuple[str, str], ...] = (
+    ("caiso_ra_mustoffer", "the CAISO RA must-offer bridge"),
+    ("caiso_ra_startup_bridge", "the CAISO RA bridge startup-cost leg"),
+    ("caiso_ra_bridge_decommit", "the CAISO RA bridge decommit leg"),
+    ("caiso_ra_mustoffer_quantity_gate", "the CAISO RA must-offer quantity gate"),
+    ("caiso_ra_bridge_startup_aware", "the CAISO RA bridge startup-aware screen"),
+    ("caiso_ra_bridge_curtailment_release", "the CAISO RA bridge curtailment release"),
+    ("caiso_ra_startup_trajectory", "the CAISO RA bridge startup trajectory"),
+    ("ercot_gas_commitment_bridge", "the ERCOT gas commitment bridge"),
+    ("nyiso_gas_commitment_bridge", "the NYISO gas commitment bridge"),
+    ("spp_gas_commitment_bridge", "the SPP gas commitment bridge"),
+    ("pjm_gas_commitment_bridge", "the PJM gas commitment bridge"),
+    ("miso_gas_ecomin_online_floor", "the MISO CC EcoMin online floor (bridge class)"),
+    ("ercot_commitment_posture", "the ERCOT commitment posture"),
+    ("miso_commitment_posture", "the MISO commitment posture"),
+    ("spp_commitment_posture", "the SPP commitment posture"),
+)
+
+#: Part 2: the per-ISO owner rulings (card D-5). EMPTY AT BIRTH. Extended only
+#: by a commit that cites the ruling; until then an A/B lane disarms the
+#: D-5 fields in its own config delta (UC-0 FINDING section 4: the "replace"
+#: recommendations cc_mustrun_per_plant / soco_gas_st_campaign_commitment and
+#: the hard cases st_gas_mustrun_per_plant / coal_mustrun /
+#: ercot_coal_min_config_floor / gas_st_netload_drag).
+UC_REFUSED_BY_RULING: tuple[tuple[str, str], ...] = ()
 
 
 @dataclass
@@ -18926,6 +19011,27 @@ class ScenarioConfig:
         | None
     ) = None
 
+    # Tier 3 (calibration) — CLIFF SPLIT of the per-plant coal econ tranche
+    # (closeout-ERCOT-w3, docs/records/ercot/closeout-ercot-w3/). Refines
+    # coal_perplant_offer_level (REQUIRED armed, with its resolved curves; the
+    # assembly raises otherwise, rule 24). ERCOT-144 prices each CAMPD coal
+    # committed/econ tranche at the capacity-weighted mean of the plant's own
+    # measured SCED TPO curve over the tranche's capacity window, and declared
+    # the tranche grain a bound (PRECOMMIT-ercot144 §5 item 3: "Fayette's econ
+    # window straddles $16->$150 and prices at its weighted $80.13"). A mean
+    # across a measured price cliff offers the cheap side at a price nobody
+    # submitted. Armed, the econ tranche of every curve-registry plant is split
+    # into ``_econlo`` / ``_econhi`` rows at the largest measured price step
+    # inside its window (legacy_bins.coal_curve_cliff_boundary), and the
+    # unchanged window construction prices each side on its own side of the
+    # step. ZERO parameters (the largest step is always taken, no threshold),
+    # no new data, no level moves: the same measured curve, represented at the
+    # grain it was measured. Default OFF; ERCOT-only (rule 25, raises
+    # elsewhere); every other ISO and every config that does not arm it is
+    # byte-identical. --no-coal-perplant-cliff-split reaches the pre-arm
+    # posture.
+    coal_perplant_cliff_split: bool = False
+
     # N-slice smoothing of the economic offer curve. When
     # offer_curve_smoothing_n > 0, each plant's flat econ blocks (econ-low /
     # econ-high) are replaced by N equal-capacity sub-tranches whose heat-rate
@@ -20621,6 +20727,25 @@ class ScenarioConfig:
     # PRECOMMIT-miso233-spp-hourly-seam-2026-09-07.md.
     miso_seam_neighbour_hourly_spp: bool = False
 
+    # The hourly neighbour anchor above (PJM, and SPP when its sub-gate is
+    # armed) extended from 2023-2025 to 2019-2022 (closeout-MISO-w3). The keeper
+    # arms the family in every leg, but its offset tables carry 2023-2025 only,
+    # so the 2019-2022 legs degrade to the flat annual MISO-hub ladder: every
+    # PJM / SPP band is ONE price all year, the defect miso-226 named, on four
+    # of seven years. miso-252 / miso-261 recorded those years as blocked on
+    # data ("PJM border LMP and the SPP hub both start 2023"); that boundary
+    # has moved (PJM Data Miner hub CSVs 2019-2022 and the SPPNORTH_HUB series
+    # 2019-2025 are under data/raw), so rule 14 [R-ACCURATE] applies. Armed,
+    # the frozen derive's 2019-2022 offsets
+    # (interchange spec MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_FULL_SPAN_BY_YEAR and
+    # its SPP twin; derive_miso_seam_ladders.py, rule 23, reproducing every
+    # committed 2023-2025 offset exactly) are read under the 2023-2025 tables.
+    # Adds years, never a mechanism (rule 19): same construction, anchors and
+    # sub-gate predicate. Zero fitted parameters. REFUSED without
+    # miso_seam_neighbour_hourly_ladder. Off by default; byte-identical off and
+    # inert for 2023-2025. See docs/records/miso/closeout-miso-w3/.
+    miso_seam_neighbour_hourly_full_span: bool = False
+
     # CAISO per-zone citygate-hub gas basis spread. CAISO's zones buy from two
     # separately traded LDC citygate hubs — NP15/ZP26 on PG&E Citygate, SP15 on
     # SoCal Citygate — but the model prices every zone off the single blended
@@ -21362,6 +21487,22 @@ class ScenarioConfig:
     #
     # Default off; byte-identical off.
     dual_fuel_measured_oil_burn: bool = False
+
+    # DIAGNOSTIC — NEVER PROMOTABLE (closeout-SOCO-w3, desk direction
+    # 2026-10-04). Rule 13 [R-MEASURED] lists pinning a unit to its observed
+    # operation as forbidden in a keeper; this flag does exactly that for coal
+    # COMMITMENT: it holds each coal plant at the P5 of its own online net MW in
+    # every hour its own CEMS meter shows it online (artifact
+    # coal_metered_online_floor_<ISO>.parquet, scripts/data/
+    # derive_coal_metered_online_floor.py; consumer pipeline.commitment.
+    # wrap_coal_metered_online_diagnostic_prep; D-2 id
+    # MECH_DIAG_COAL_METERED_ONLINE). It exists only as the default-off,
+    # labelled diagnostic probe rule 13 allows, to answer one question: if
+    # Southern's metered coal commitment practice is imposed, how much of that
+    # coal displaces CC (frontier row SOCO-F1)? Backcast-only
+    # (_BACKCAST_ONLY_OVERLAY_FIELDS); inert in any ISO without its own artifact
+    # (rule 25). Default off; byte-identical off.
+    diagnostic_coal_metered_online_floor: bool = False
 
     # Tier 3 (calibration) — thermal availability source. "statistical"
     # (default) builds coal/CC availability from the seasonal WEFOR/POF model;
@@ -22848,6 +22989,61 @@ class ScenarioConfig:
     # EIA's own published per-vintage BA codes, with no threshold, no
     # tolerance and nothing selected against a residual.
     benchmark_membership_vintage_union: bool = False
+    # ---------------------------------------------------------------------
+    # MILP UNIT-COMMITMENT STAGE (lane UC-1, default off, shared, ISO-armed later;
+    # docs/records/governance/uc-milp-2026-10/DESIGN-uc-milp-engine-2026-10-03.md;
+    # CLAUDE.md "Dispatch and commitment", owner ruling R2 2026-10-03).
+    # P0 -> [UC] -> P1: a rolling-horizon MILP over the year that CHOOSES the
+    # commitment of the slow-start clusters (rule 18 physics gate: min-down >
+    # POSTURE_FAST_START_MIN_DOWN_H or start >= POSTURE_FAST_START_STARTUP_PER_MW,
+    # the posture exemption inverted) and enters the scored P1 LP only as
+    # per-unit-hour bounds (ceiling = availability*u/n, floor = mlf*pbar*u,
+    # D-2 id MECH_UC_SCHEDULE = 28). The MILP never prices (rule 4): P1's duals
+    # stay THE prices. It pays start and no-load cost once, in its own
+    # objective, so the amortized P1 start markup is zeroed on its integer
+    # clusters (rule 19); every fast-start class keeps today's markup. It
+    # REPLACES the commitment bridges, the posture family, cc_mustrun_per_plant
+    # and the archived P2 wherever armed -- __post_init__ refuses the stack.
+    # Byte-identical off: the one gated hunk in pipeline/solve.py runs no
+    # statement at False. Every uc_* field is declared here once and never
+    # swept against a gate (GATESPEC section 7 clause 1). GATED CHANGE.
+    unit_commitment_milp: bool = False
+    # DA commitment horizon W (hours kept per window) -- the one-operating-day
+    # horizon every US ISO's DAM commits (constants.DA_COMMITMENT_HORIZON_HOURS,
+    # CAISO tariff section 31.3). Plan section 4 E2.
+    uc_window_hours: int = 24
+    # Look-ahead L beyond W (hours solved, not kept) so a start near the end of
+    # the day sees its payback. Plan section 4 E2 declared value; UC-0 F6 notes
+    # coal UT (36 h) exceeds W + L = 36 h, so a coal ISO's PRECOMMIT may declare
+    # a longer L (DESIGN section 8 R2). W + L <= hours.
+    uc_lookahead_hours: int = 12
+    # HiGHS mip_rel_gap per window: a window stopping on the gap is optimal to
+    # this tolerance. Plan section 4 E4 declared value; numerical, never a fit.
+    uc_mip_rel_gap: float = 1e-3
+    # HiGHS time_limit per window (s). On hit: the incumbent is accepted and
+    # the gap logged; a window with NO incumbent is a hard stop (GATESPEC
+    # section 5 kill). PLACEHOLDER until the ladder prints the wall table --
+    # owner card D-2 re-declares it (DESIGN section 8 R3).
+    uc_window_time_limit_s: float = 600.0
+    # Which clusters carry an integer: "physics" = the rule-18 gate above, the
+    # only admissible value (a second scope is a new PRECOMMIT).
+    uc_integer_scope: str = "physics"
+    # No-load cost identification: "campd_regression" = per-unit OLS intercept
+    # of CAMPD heatInput on grossLoad over online hours (closeout-PJM-decommit
+    # B0; UC-0 F7 R^2 median 0.96-0.99), class-fallback rows where no unit
+    # fits (data/clean/uc-params/<ISO>, derive_uc_cluster_params.py, rule 23).
+    uc_noload_source: str = "campd_regression"
+    # Window boundary treatment: "p0_targets" = storage SOC / cascade pond
+    # levels pinned to the P0 plan (one-sided terminal, state carried from the
+    # previous window), budget-governed units (hydro, oil, coal budgets,
+    # import bands) pinned to their P0 dispatch. DESIGN section 2.2.
+    uc_boundary_mode: str = "p0_targets"
+    # Reachability pre-fixing (plan E5): clusters P0 ran at full output with a
+    # rent margin >= start + window no-load are fixed on; clusters priced above
+    # the window's max P0 dual by a declared margin and idle in P0 are fixed
+    # off. Default OFF until ladder rung L2 proves schedule equality across
+    # arms (DESIGN section 2.3).
+    uc_prefixing: bool = False
 
     def __post_init__(self) -> None:
         # YAML round-trip type repair: YAML has no tuple type, so a config
@@ -24330,6 +24526,68 @@ class ScenarioConfig:
         # gate did not apply, and it drops from the hash on the frozen
         # ``"False"`` drop value -- which keeps those bundles on keys that move
         # only by Act B, exactly like every other config.
+        # MILP unit-commitment stage (lane UC-1; DESIGN section 5; UC-DESK
+        # review of DESIGN b974d2c9, point 2). Rule 19 by refusal, DATA-DRIVEN:
+        # the two tuples UC_REFUSED_ALWAYS / UC_REFUSED_BY_RULING at module
+        # level are the whole refusal set. The hard cases UC-0 section 4 names
+        # (st_gas_mustrun_per_plant, the coal floors, the drags) and its two
+        # "replace" recommendations (cc_mustrun_per_plant,
+        # soco_gas_st_campaign_commitment) are owner card D-5 per ISO: an A/B
+        # lane disarms them in its config delta until a ruling commit extends
+        # UC_REFUSED_BY_RULING. The archived P2 is a solve_and_persist kwarg
+        # (``commitment`` / ``--enable-legacy-p2``), not a field, so it is
+        # refused where it lives (run_calibration_full.enforce_legacy_p2_kwargs).
+        if self.unit_commitment_milp:
+            _armed = [
+                f"{name} ({what})"
+                for name, what in (*UC_REFUSED_ALWAYS, *UC_REFUSED_BY_RULING)
+                if getattr(self, name, False)
+            ]
+            if _armed:
+                raise ValueError(
+                    "unit_commitment_milp REPLACES every commitment bridge and "
+                    "the posture family (rule 19: one mechanism for commitment "
+                    "state; CLAUDE.md 'Dispatch and commitment'); disarm: "
+                    + ", ".join(_armed)
+                )
+            if self.uc_window_hours < 1 or self.uc_window_hours > self.hours:
+                raise ValueError(
+                    "uc_window_hours must be in [1, hours] "
+                    f"(got {self.uc_window_hours}, hours={self.hours})."
+                )
+            if (
+                self.uc_lookahead_hours < 0
+                or self.uc_window_hours + self.uc_lookahead_hours > self.hours
+            ):
+                raise ValueError(
+                    "uc_lookahead_hours must be >= 0 with uc_window_hours + "
+                    f"uc_lookahead_hours <= hours (got {self.uc_lookahead_hours})."
+                )
+            if not (0.0 < self.uc_mip_rel_gap < 1.0):
+                raise ValueError(
+                    f"uc_mip_rel_gap must lie in (0, 1) (got {self.uc_mip_rel_gap})."
+                )
+            if self.uc_window_time_limit_s <= 0.0:
+                raise ValueError(
+                    "uc_window_time_limit_s must be positive "
+                    f"(got {self.uc_window_time_limit_s})."
+                )
+            if self.uc_integer_scope != "physics":
+                raise ValueError(
+                    "uc_integer_scope: 'physics' is the only admissible scope "
+                    f"(got {self.uc_integer_scope!r}); a second scope is a new "
+                    "PRECOMMIT."
+                )
+            if self.uc_noload_source != "campd_regression":
+                raise ValueError(
+                    "uc_noload_source: 'campd_regression' is the only admissible "
+                    f"source (got {self.uc_noload_source!r})."
+                )
+            if self.uc_boundary_mode != "p0_targets":
+                raise ValueError(
+                    "uc_boundary_mode: 'p0_targets' is the only admissible mode "
+                    f"(got {self.uc_boundary_mode!r})."
+                )
 
     @property
     def real_discount_rate(self) -> float:
@@ -24996,6 +25254,7 @@ COAL_SIGMOID_DEFAULTS: dict[tuple[str, str], dict[str, float]] = {
 
 
 TIER_TAGS: dict[str, int] = {
+    "coal_perplant_cliff_split": 3,
     "weather_year": 0,
     "mode": 0,
     "iso": 0,
@@ -25595,6 +25854,7 @@ TIER_TAGS: dict[str, int] = {
     "miso_seam_neighbour_anchored_ladder": 3,
     "miso_seam_neighbour_hourly_ladder": 3,
     "miso_seam_neighbour_hourly_spp": 3,
+    "miso_seam_neighbour_hourly_full_span": 3,
     "pjm_congestion": 3,
     "ercot_zonal_gas_basis": 3,
     "ercot_ep_gas_basis_monthly": 3,
@@ -25663,6 +25923,21 @@ TIER_TAGS: dict[str, int] = {
     # heat-input identity on Part 75 factors); no free number of its own
     # (rule 21). Backcast-only (rule 13).
     "dual_fuel_measured_oil_burn": 1,
+    # MILP unit-commitment stage (lane UC-1): structural gate and its declared
+    # solver / horizon settings (1); no free number of its own (rule 21) --
+    # every cluster parameter is measured (data/clean/uc-params) or published
+    # (the NREL class tables), never fitted.
+    "unit_commitment_milp": 1,
+    "uc_window_hours": 1,
+    "uc_lookahead_hours": 1,
+    "uc_mip_rel_gap": 1,
+    "uc_window_time_limit_s": 1,
+    "uc_integer_scope": 1,
+    "uc_noload_source": 1,
+    "uc_boundary_mode": 1,
+    "uc_prefixing": 1,
+    # closeout-SOCO-w3 DIAGNOSTIC (rule 13: never a keeper input).
+    "diagnostic_coal_metered_online_floor": 1,
 }
 
 # SweepDefinition (the sweep / named-case-matrix expansion engine) moved

@@ -3993,6 +3993,16 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             soco_campaign_prep = build_soco_gas_st_campaign_p1_prep(
                 config, iso, dispatch_fleet, fleet_arrays
             )
+            # DIAGNOSTIC metered coal online floor (closeout-SOCO-w3; rule 13: never
+            # promotable, backcast-only, default off): composes after the incumbent
+            # P1 fleet prep. Returns it unchanged when off (byte-identical).
+            from market_sim.pipeline.commitment import (
+                wrap_coal_metered_online_diagnostic_prep,
+            )
+
+            soco_campaign_prep = wrap_coal_metered_online_diagnostic_prep(
+                config, iso, year, fleet_arrays, soco_campaign_prep
+            )
             # P1-native MISO regulated-coal night floor (miso-113):
             # committed-state floor on the regulated PRB/subbituminous fleet
             # at each plant's OWN measured within-run night level, net of its
@@ -4157,6 +4167,20 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # results_write exactly.
             _t_pre_save = time.perf_counter()
             save_result(result, config, iso, year, context=context, demand=year_demand)
+            # MILP unit-commitment stage sidecars (unit_commitment_milp; lane
+            # UC-1, the region UC-DESK granted on DESIGN b974d2c9 point 3):
+            # the year's schedule, solve log and post-P1 make-whole frame are
+            # written beside the cached result (the forecast cache is flat, so
+            # no hourly/ subdir). Gate off: the block does not run.
+            if getattr(config, "unit_commitment_milp", False):
+                from market_sim.pipeline.uc import take_uc_artifacts, write_uc_artifacts
+
+                write_uc_artifacts(
+                    get_cache_path(iso, config.cache_key(), year).parent,
+                    year,
+                    take_uc_artifacts(result),
+                    hourly_subdir=None,
+                )
             _t_end = time.perf_counter()
             # The three subtrahends are the pass's OWN totals (PERF-B session 3,
             # charter C-2): ``build_s`` is EVERY matrix build run_energy_solve

@@ -182,6 +182,14 @@ SOLVE_SOURCES: tuple[CleanSource, ...] = (
         "market_sim.data.ramp_capability",
         partitions="scripts.lib.ramp_capability:load_registry",
     ),
+    # model/uc/params.py — the MILP UC stage's cluster physics (read only when
+    # unit_commitment_milp is armed; no raw fallback, it fails loudly).
+    CleanSource(
+        "uc-params",
+        "market_sim.model.uc.params",
+        partitions="scripts.lib.uc_params:load_registry",
+        raw_inputs=("data/raw/campd-unit-level",),
+    ),
     # data/gtc.py — ERCOT generic transmission constraints (run_calibration).
     # The curate CLI takes no ISO flag; the product is ERCOT-only.
     CleanSource(

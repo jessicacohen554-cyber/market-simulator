@@ -6040,6 +6040,18 @@ def run_year(
                 "other keeps a frozen annual anchor is the half-armed state "
                 "rule 19 [R-ONE-MECH] exists to prevent"
             )
+        # closeout-MISO-w3: the 2019-2022 extension adds YEARS to the hourly
+        # family, so it is refused without the family it extends (rule 19).
+        if getattr(
+            config, "miso_seam_neighbour_hourly_full_span", False
+        ) and not getattr(config, "miso_seam_neighbour_hourly_ladder", False):
+            raise ValueError(
+                "miso_seam_neighbour_hourly_full_span requires "
+                "miso_seam_neighbour_hourly_ladder: the 2019-2022 offsets "
+                "extend the hourly neighbour-anchored family's years, and there "
+                "is no hourly family to extend when it is off (rule 19 "
+                "[R-ONE-MECH])"
+            )
         if (
             getattr(config, "reference_price_interface", False)
             and iso in INTERFACE_NEIGHBORS
@@ -6059,6 +6071,9 @@ def run_year(
             neighbour_hourly_spp = bool(
                 getattr(config, "miso_seam_neighbour_hourly_spp", False)
             )
+            neighbour_hourly_full_span = bool(
+                getattr(config, "miso_seam_neighbour_hourly_full_span", False)
+            )
             if inject_miso_seam_ladder_prices(
                 fleet_arrays,
                 mc_base,
@@ -6067,6 +6082,7 @@ def run_year(
                 neighbour_anchored=neighbour,
                 neighbour_hourly=neighbour_hourly,
                 neighbour_hourly_spp=neighbour_hourly_spp,
+                neighbour_hourly_full_span=neighbour_hourly_full_span,
             ):
                 logger.info(
                     "%s %d: seam bands repriced to the MEASURED per-seam Q-Q "
@@ -7523,6 +7539,16 @@ def run_year(
     # (byte-identical).
     soco_campaign_prep = build_soco_gas_st_campaign_p1_prep(
         config, iso, fleet, fleet_arrays
+    )
+    # DIAGNOSTIC metered coal online floor (closeout-SOCO-w3; rule 13: never
+    # promotable, backcast-only, default off): composes after the incumbent
+    # P1 fleet prep. Returns it unchanged when off (byte-identical).
+    from market_sim.pipeline.commitment import (
+        wrap_coal_metered_online_diagnostic_prep,
+    )
+
+    soco_campaign_prep = wrap_coal_metered_online_diagnostic_prep(
+        config, iso, year, fleet_arrays, soco_campaign_prep
     )
     # P1-native MISO regulated-coal night floor (miso-113): the committed-state
     # floor on the regulated PRB/subbituminous fleet at each plant's OWN

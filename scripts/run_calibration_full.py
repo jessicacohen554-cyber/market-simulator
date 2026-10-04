@@ -7455,6 +7455,20 @@ def solve_and_persist(
         _write_hourly_sidecar(run_dir, year, "network", network_frames)
         _write_hourly_sidecar(run_dir, year, "reserve_family", reserve_family_frames)
         _write_hourly_sidecar(run_dir, year, "hydro_cascade", hydro_cascade_frames)
+        # MILP unit-commitment stage sidecars (unit_commitment_milp; lane UC-1,
+        # the region UC-DESK granted on DESIGN b974d2c9 point 3): the schedule
+        # the stage solved, its solve log and the post-P1 make-whole frame land
+        # IN THE BUNDLE (hourly/uc_schedule_<y>, hourly/uc_uplift_<y>,
+        # uc_solve_log_<y>.json), so a shard's full-bundle push carries them
+        # (rule 34). Gate off: the block does not run — byte-identical.
+        if getattr(p2_state.get("config"), "unit_commitment_milp", False):
+            from market_sim.pipeline.uc import take_uc_artifacts, write_uc_artifacts
+
+            write_uc_artifacts(
+                run_dir,
+                year,
+                take_uc_artifacts(result_p1 if result_p1 is not None else result),
+            )
         # ercot-219 stage-2 exhaustion series (ercot_exhaustion_expectation):
         # H margin / sequestered AS / LOLP(H) / within-day P_exhaust — the
         # committed audit trail for G-EXH and the stage-3 offer (PRECOMMIT-
@@ -9983,6 +9997,25 @@ def _bundle_caiso_clock_repair(bundle: Path) -> bool:
     return False
 
 
+def _run_config_mustrun_chp_btm(cfg: dict) -> bool:
+    """Whether a bundle's ``run_config.json`` records ``mustrun_chp_btm_holdout`` armed.
+
+    Reads the top level, ``calibration_flags`` and the resolved
+    ``scenario_config``: a ``replay_keeper --set`` lands the flag only in the
+    last (closeout-SOCO-w3; the PJM-NEXT defect on its sibling
+    ``benchmark_membership_vintage_union``), and reading the top two blocks
+    alone rebuilt an armed bundle on the un-partitioned benchmark.
+    """
+    for blk in (
+        cfg,
+        cfg.get("calibration_flags") or {},
+        cfg.get("scenario_config") or {},
+    ):
+        if isinstance(blk, dict) and blk.get("mustrun_chp_btm_holdout"):
+            return True
+    return False
+
+
 def build_benchmark_frames(bundle: Path) -> tuple[str, dict[str, "pd.DataFrame"]]:
     """Rebuild a bundle's benchmark frames with the bundle's own EIA-930 clock.
 
@@ -10088,10 +10121,7 @@ def _build_benchmark_frames(bundle: Path) -> tuple[str, dict[str, "pd.DataFrame"
     _rc = bundle / "run_config.json"
     if _rc.exists():
         _cfg = json.loads(_rc.read_text())
-        for _blk in (_cfg, _cfg.get("calibration_flags") or {}):
-            if isinstance(_blk, dict) and _blk.get("mustrun_chp_btm_holdout"):
-                _mustrun_chp_btm = True
-                break
+        _mustrun_chp_btm = _run_config_mustrun_chp_btm(_cfg)
         if not _bench_vintage_union:
             # PJM-NEXT: a replay_keeper ``--set`` lands the flag in the generic
             # override bag and the resolved ``scenario_config``, never at the
@@ -13149,6 +13179,19 @@ def main() -> None:
         "with a byte-identical LP and a warning. Tri-state.",
     )
     parser.add_argument(
+        "--coal-perplant-cliff-split",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Arm ScenarioConfig.coal_perplant_cliff_split (closeout-ERCOT-w3, "
+        "ERCOT only, requires the ERCOT-144 per-plant coal offer level): split "
+        "each curve-registry coal plant's econ tranche at the largest measured "
+        "price step inside its capacity window, so each side is priced on its "
+        "own side of the step instead of one capacity-weighted mean across it. "
+        "Zero parameters. Tri-state: unset keeps the recipe value, "
+        "--no-coal-perplant-cliff-split forces it off. Rides the generic "
+        "prb_overrides ScenarioConfig channel (rule 24).",
+    )
+    parser.add_argument(
         "--hydro-pondage-bound",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -15992,6 +16035,9 @@ def main() -> None:
             # tri-state channel and same replayability contract as the
             # cascade flag above (rule 24).
             "hydro_pondage_bound": args.hydro_pondage_bound,
+            # closeout-ERCOT-w3 coal econ cliff split. Same tri-state channel:
+            # None keeps the recipe value (rule 24).
+            "coal_perplant_cliff_split": args.coal_perplant_cliff_split,
             # The three pre-existing hydro gates, given a CLI surface by
             # hydro-1 (rule 24 gap — see the parser block). Same tri-state
             # channel: None keeps the recipe / per-ISO value untouched.

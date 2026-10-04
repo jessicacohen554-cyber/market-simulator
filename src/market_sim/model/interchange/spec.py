@@ -3115,6 +3115,103 @@ MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_SPP_POOLED: dict[
 }
 
 
+# MISO PJM + SPP seams — the HOURLY neighbour-anchored offsets for 2019-2022
+# (closeout-MISO-w3, 2026-10-04).  Same construction, same applied price and
+# same consumers as MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_BY_YEAR /
+# MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_SPP_BY_YEAR above: pi_k(t) = anchor(t) +
+# delta_k against the measured PJM western-border DA / SPP NORTH hub DA.  Kept in
+# their OWN tables, read only under ScenarioConfig.miso_seam_neighbour_hourly_full_span
+# (default off), so every committed MISO leg replays byte-identical without it.
+#
+# THE DEFECT.  The keeper arms the hourly family in all seven legs, but the
+# tables above carry 2023-2025 only, so the 2019-2022 legs fall back to the flat
+# annual MISO-hub ladder: every PJM / SPP band is ONE price all year (keeper
+# unit_marginal: seam-band mc std 0.00 in 2019-2022 vs 12.9-25.8 in 2023-2024).
+# The fallback is the defect miso-226 named — a fixed ladder cleared against the
+# model's OWN price leaves merit when MISO's price falls — on four of seven years.
+#
+# WHY NOW.  miso-252 / miso-261 recorded the 2019-2022 overlays as "blocked on
+# data (PJM border LMP and the SPP hub both start 2023; an intake charter, not a
+# lever)".  That boundary has moved: data/raw/lmp-data/PJM_{2019..2022}_rt_da_
+# monthly_lmps.csv carry the three border generator hubs hourly (PJM Data Miner 2
+# da_hrl_lmps), and actual_lmp_hourly_zonal_SPP.parquet carries SPPNORTH_HUB DA
+# for 2019-2025.  Rule 23 [R-FROZEN-DERIVE] trigger = that SOURCE-DATA extension:
+# build_pjm_border_lmp_miso.py --years 2019..2025 adds the 2019-2022 border rows
+# (2023-2025 byte-identical, max |diff| 0.0) and derive_miso_seam_ladders.py
+# --years 2019..2025 prints the rows below while reproducing every committed
+# 2023-2025 PJM / SPP offset and every committed 2019-2022 base row exactly.
+# Rule 14 [R-ACCURATE]: the flat MISO-hub anchor is an estimate standing in for
+# a neighbour price that is measured.  Zero fitted parameters (rule 21).
+MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_FULL_SPAN_BY_YEAR: dict[
+    int, dict[str, dict[str, tuple[float, ...]]]
+] = {
+    2019: {
+        "PJM": {
+            "import": (-25.55, -11.82, -5.10, -0.76, 1.65, 3.55, 6.54, 14.69),
+            "export": (-31.59,) * 8,
+        },
+    },
+    2020: {
+        "PJM": {
+            "import": (-12.33, -12.33, -7.26, -1.47, 0.90, 2.74, 5.12, 9.27),
+            "export": (-14.41,) * 8,
+        },
+    },
+    2021: {
+        "PJM": {
+            "import": (-18.93, -14.28, -6.21, -0.93, 2.47, 7.07, 13.36, 19.15),
+            "export": (-46.19,) * 8,
+        },
+    },
+    2022: {
+        "PJM": {
+            "import": (-34.11, -13.62, -4.61, 2.17, 7.40, 14.20, 23.50, 39.30),
+            "export": (-63.95,) * 8,
+        },
+    },
+}
+
+#: SPP rows of the same 2019-2022 extension (derive_spp_neighbour_hourly on the
+#: SPPNORTH_HUB DA, the anchor hub named on topology at miso-233).
+MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_SPP_FULL_SPAN_BY_YEAR: dict[
+    int, dict[str, dict[str, tuple[float, ...]]]
+] = {
+    2019: {
+        "SPP": {
+            "import": (-1.00, 6.30, 14.30, 24.27, 74.33, 151.78, 151.78, 151.78),
+            "export": (-11.78, -36.00, -49.35, -67.92, -67.92, -67.92, -67.92, -67.92),
+        },
+    },
+    2020: {
+        "SPP": {
+            "import": (2.73, 8.56, 19.28, 32.87, 42.04, 56.14, 56.14, 56.14),
+            "export": (-4.80, -16.91, -31.76, -38.67, -38.67, -38.67, -38.67, -38.67),
+        },
+    },
+    2021: {
+        "SPP": {
+            "import": (8.69, 31.26, 59.14, 80.03, 117.33, 117.33, 117.33, 117.33),
+            "export": (
+                -2.21,
+                -12.66,
+                -36.57,
+                -61.67,
+                -927.56,
+                -1818.19,
+                -2879.68,
+                -3194.88,
+            ),
+        },
+    },
+    2022: {
+        "SPP": {
+            "import": (26.16, 43.22, 58.22, 70.29, 84.31, 127.95, 208.74, 319.00),
+            "export": (8.55, -5.68, -22.74, -46.70, -97.28, -97.28, -97.28, -97.28),
+        },
+    },
+}
+
+
 #: The pooled 2023-2025 neighbour-anchored PJM ladder — the FORWARD story
 #: (rule 13): the multi-year revealed neighbour-priced seam structure a forecast
 #: year regenerates from, the same two-track design the incumbent ladder uses.

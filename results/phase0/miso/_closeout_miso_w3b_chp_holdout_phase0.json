@@ -1,0 +1,107 @@
+{
+ "2019": {
+  "drop_twh": 14.52,
+  "dP_lw_static": 1.08,
+  "p0_lw": 27.31,
+  "pickup_twh": {
+   "COAL_PRB": 5.07,
+   "CC_REGULAR": 4.33,
+   "COAL_BIT": 2.81,
+   "CC_CHP": 0.93,
+   "ST_GAS": 0.72,
+   "CT_CHP": 0.27,
+   "ST_CHP": 0.15,
+   "COAL_LIGNITE": 0.13
+  }
+ },
+ "2020": {
+  "drop_twh": 13.11,
+  "dP_lw_static": 1.205,
+  "p0_lw": 24.23,
+  "pickup_twh": {
+   "CC_REGULAR": 4.78,
+   "COAL_PRB": 3.39,
+   "ST_GAS": 1.32,
+   "CC_CHP": 1.24,
+   "COAL_BIT": 1.15,
+   "CT_PEAKER": 0.61,
+   "CT_CHP": 0.3,
+   "ST_CHP": 0.2
+  }
+ },
+ "2021": {
+  "drop_twh": 13.31,
+  "dP_lw_static": 2.281,
+  "p0_lw": 37.3,
+  "pickup_twh": {
+   "CC_REGULAR": 4.5,
+   "COAL_PRB": 3.55,
+   "COAL_BIT": 1.95,
+   "CC_CHP": 1.06,
+   "ST_GAS": 0.89,
+   "CT_PEAKER": 0.76,
+   "CT_CHP": 0.26,
+   "COAL_LIGNITE": 0.17
+  }
+ },
+ "2022": {
+  "drop_twh": 13.77,
+  "dP_lw_static": 4.821,
+  "p0_lw": 59.24,
+  "pickup_twh": {
+   "CC_REGULAR": 6.44,
+   "CC_CHP": 1.91,
+   "CT_PEAKER": 1.57,
+   "ST_GAS": 1.37,
+   "COAL_BIT": 0.89,
+   "COAL_PRB": 0.86,
+   "CT_CHP": 0.5,
+   "ST_CHP": 0.2
+  }
+ },
+ "2023": {
+  "drop_twh": 12.51,
+  "dP_lw_static": 1.36,
+  "p0_lw": 31.63,
+  "pickup_twh": {
+   "CC_REGULAR": 3.97,
+   "COAL_PRB": 3.17,
+   "ST_GAS": 1.74,
+   "CT_PEAKER": 1.39,
+   "CC_CHP": 1.26,
+   "COAL_BIT": 0.56,
+   "ST_CHP": 0.15,
+   "COAL_LIGNITE": 0.15
+  }
+ },
+ "2024": {
+  "drop_twh": 10.5,
+  "dP_lw_static": 1.375,
+  "p0_lw": 30.02,
+  "pickup_twh": {
+   "CC_REGULAR": 2.92,
+   "COAL_PRB": 2.12,
+   "ST_GAS": 1.85,
+   "CT_PEAKER": 1.83,
+   "CC_CHP": 1.07,
+   "COAL_BIT": 0.45,
+   "ST_CHP": 0.12,
+   "CT_CHP": 0.09
+  }
+ },
+ "2025": {
+  "drop_twh": 9.73,
+  "dP_lw_static": 1.901,
+  "p0_lw": 40.54,
+  "pickup_twh": {
+   "COAL_PRB": 2.51,
+   "CC_REGULAR": 2.48,
+   "CT_PEAKER": 1.52,
+   "ST_GAS": 1.28,
+   "COAL_BIT": 0.91,
+   "CC_CHP": 0.78,
+   "ST_CHP": 0.08,
+   "CT_CHP": 0.08
+  }
+ }
+}

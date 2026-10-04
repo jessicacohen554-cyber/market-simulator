@@ -42,6 +42,7 @@ SOLVE_PATH_CLEAN_ONLY: frozenset[str] = frozenset(
         "coal-receipts",
         "transfer-interface-limits",
         "ramp-capability",
+        "uc-params",
         "gtc-limits",
         "reserve-requirements",
         "storage-as-awards",
@@ -64,6 +65,17 @@ def _fake_partitions(source: cp.CleanSource) -> tuple[str, ...] | None:
         "hydro-plant-modes": ("CAISO", "MISO", "NEISO", "NWPP", "NYISO", "PJM", "SPP"),
         "transfer-interface-limits": ("PJM",),
         "ramp-capability": ("CAISO", "MISO", "PJM"),
+        "uc-params": (
+            "CAISO",
+            "ERCOT",
+            "MISO",
+            "NEISO",
+            "NWPP",
+            "NYISO",
+            "PJM",
+            "SOCO",
+            "SPP",
+        ),
         "reserve-requirements": ("NEISO",),
         "storage-as-awards": ("CAISO",),
         "maxgen-events": ("MISO",),
@@ -181,6 +193,7 @@ def test_iso_without_a_partition_is_dropped(fake_registries):
         "coal-stocks",
         "coal-receipts",
         "chp-btm-share",
+        "uc-params",
     }
 
 

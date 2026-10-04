@@ -1,0 +1,78 @@
+year,crit,key,keeper,keeper_mag,arm,arm_mag
+2019,C1,CC_REGULAR,FAIL,"+3.97 TWh, share +3.2pp (share out of band)",PASS,"+4.84 TWh, share +2.0pp"
+2019,C1,CC_CHP,PASS,"+0.08 TWh, share +0.1pp",PASS,"+0.24 TWh, share +0.1pp"
+2019,C1,CT_PEAKER,PASS,"+0.77 TWh, share +0.4pp",PASS,"+4.91 TWh, share +2.0pp"
+2019,C1,ST_GAS,PASS,"-5.25 TWh, share -2.0pp",PASS,"-4.56 TWh, share -1.8pp"
+2019,C1,ST_CHP,PASS,"-0.83 TWh, share -0.3pp",PASS,"-0.83 TWh, share -0.3pp"
+2019,C1,COAL_PRB,PASS,"-0.40 TWh, share +0.3pp",PASS,"+1.34 TWh, share +0.6pp"
+2019,C1,COAL_BIT,FAIL,"-7.82 TWh, share -2.8pp (volume out of band)",PASS,"-6.63 TWh, share -2.7pp"
+2019,C3a,,PASS,+8.7%,FAIL,+15.9%
+2019,C3b,,PASS,NRMSE 0.112,PASS,NRMSE 0.182
+2019,dE_TWh,"{""CC_CHP"": 0.156, ""CC_REGULAR"": 0.873, ""COAL_BIT"": 1.186, ""COAL_PRB"": 1.736, ""CT_CHP"": 0.005, ""CT_PEAKER"": 4.145, ""ST_CHP"": 0.0, ""ST_GAS"": 0.689}",,,,
+2019,dE_night_TWh,"{""CC_CHP"": 0.095, ""CC_REGULAR"": 0.731, ""COAL_BIT"": 0.312, ""COAL_PRB"": 0.598, ""CT_CHP"": 0.003, ""CT_PEAKER"": 1.178, ""ST_CHP"": 0.0, ""ST_GAS"": 0.014}",,,,
+2020,C1,CC_REGULAR,PASS,"-0.04 TWh, share +1.8pp",PASS,"+1.00 TWh, share +0.5pp"
+2020,C1,CC_CHP,PASS,"+0.20 TWh, share +0.1pp",PASS,"+0.39 TWh, share +0.2pp"
+2020,C1,CT_PEAKER,PASS,"-0.19 TWh, share -0.0pp",PASS,"+5.22 TWh, share +2.3pp"
+2020,C1,ST_GAS,PASS,"-4.07 TWh, share -1.6pp",PASS,"-3.65 TWh, share -1.6pp"
+2020,C1,ST_CHP,PASS,"-0.73 TWh, share -0.3pp",PASS,"-0.73 TWh, share -0.3pp"
+2020,C1,COAL_PRB,PASS,"-0.75 TWh, share +0.1pp",PASS,"+0.35 TWh, share +0.2pp"
+2020,C1,COAL_BIT,PASS,"-3.54 TWh, share -1.3pp",PASS,"-3.01 TWh, share -1.3pp"
+2020,C3a,,PASS,+8.4%,FAIL,+19.1%
+2020,C3b,,PASS,NRMSE 0.113,FAIL,NRMSE 0.218
+2020,dE_TWh,"{""CC_CHP"": 0.186, ""CC_REGULAR"": 1.042, ""COAL_BIT"": 0.532, ""COAL_PRB"": 1.095, ""CT_CHP"": 0.008, ""CT_PEAKER"": 5.412, ""ST_CHP"": 0.0, ""ST_GAS"": 0.42}",,,,
+2020,dE_night_TWh,"{""CC_CHP"": 0.111, ""CC_REGULAR"": 0.829, ""COAL_BIT"": 0.191, ""COAL_PRB"": 0.429, ""CT_CHP"": 0.006, ""CT_PEAKER"": 1.326, ""ST_CHP"": 0.0, ""ST_GAS"": 0.006}",,,,
+2021,C1,CC_REGULAR,PASS,"+3.35 TWh, share +2.4pp",PASS,"+3.35 TWh, share +2.5pp"
+2021,C1,CC_CHP,PASS,"+0.26 TWh, share +0.1pp",PASS,"+0.26 TWh, share +0.1pp"
+2021,C1,CT_PEAKER,PASS,"-1.32 TWh, share -0.5pp",PASS,"-1.32 TWh, share -0.5pp"
+2021,C1,ST_GAS,PASS,"-4.46 TWh, share -1.8pp",PASS,"-4.46 TWh, share -1.9pp"
+2021,C1,ST_CHP,PASS,"-0.72 TWh, share -0.3pp",PASS,"-0.72 TWh, share -0.3pp"
+2021,C1,COAL_PRB,PASS,"+1.19 TWh, share +0.8pp",PASS,"+1.19 TWh, share +0.8pp"
+2021,C1,COAL_BIT,PASS,"-3.59 TWh, share -1.3pp",PASS,"-3.59 TWh, share -1.4pp"
+2021,C3a,,PASS,-6.7%,PASS,+1.7%
+2021,C3b,,PASS,NRMSE 0.125,PASS,NRMSE 0.115
+2021,dE_TWh,"{""CC_CHP"": 0.396, ""CC_REGULAR"": 1.961, ""COAL_BIT"": 0.633, ""COAL_PRB"": 1.078, ""CT_CHP"": 0.002, ""CT_PEAKER"": 4.151, ""ST_CHP"": 0.0, ""ST_GAS"": 0.306}",,,,
+2021,dE_night_TWh,"{""CC_CHP"": 0.162, ""CC_REGULAR"": 1.331, ""COAL_BIT"": 0.191, ""COAL_PRB"": 0.429, ""CT_CHP"": 0.0, ""CT_PEAKER"": 0.72, ""ST_CHP"": 0.0, ""ST_GAS"": 0.009}",,,,
+2022,C1,CC_REGULAR,PASS,"-0.37 TWh, share +0.7pp",PASS,"+3.02 TWh, share +0.6pp"
+2022,C1,CC_CHP,PASS,"+0.25 TWh, share +0.1pp",PASS,"+0.45 TWh, share +0.2pp"
+2022,C1,CT_PEAKER,PASS,"-3.87 TWh, share -1.5pp",PASS,"-1.00 TWh, share -0.5pp"
+2022,C1,ST_GAS,PASS,"-4.61 TWh, share -1.8pp",PASS,"-3.61 TWh, share -1.5pp"
+2022,C1,ST_CHP,PASS,"-0.67 TWh, share -0.3pp",PASS,"-0.67 TWh, share -0.3pp"
+2022,C1,COAL_PRB,PASS,"+2.64 TWh, share +1.3pp",PASS,"+2.80 TWh, share +1.0pp"
+2022,C1,COAL_BIT,PASS,"+1.23 TWh, share +0.6pp",PASS,"+1.89 TWh, share +0.7pp"
+2022,C3a,,FAIL,-13.7%,PASS,-6.5%
+2022,C3b,,FAIL,NRMSE 0.282,FAIL,NRMSE 0.247
+2022,dE_TWh,"{""CC_CHP"": 0.198, ""CC_REGULAR"": 3.386, ""COAL_BIT"": 0.665, ""COAL_PRB"": 0.153, ""CT_CHP"": 0.001, ""CT_PEAKER"": 2.871, ""ST_CHP"": 0.0, ""ST_GAS"": 0.995}",,,,
+2022,dE_night_TWh,"{""CC_CHP"": 0.058, ""CC_REGULAR"": 1.968, ""COAL_BIT"": 0.218, ""COAL_PRB"": 0.061, ""CT_CHP"": 0.0, ""CT_PEAKER"": 0.348, ""ST_CHP"": 0.0, ""ST_GAS"": 0.104}",,,,
+2023,C1,CC_REGULAR,PASS,"+5.04 TWh, share +2.4pp",PASS,"+6.16 TWh, share +1.5pp"
+2023,C1,CC_CHP,PASS,"+0.27 TWh, share +0.1pp",PASS,"+0.62 TWh, share +0.2pp"
+2023,C1,CT_PEAKER,PASS,"+2.10 TWh, share +0.9pp",PASS,"+6.77 TWh, share +2.8pp"
+2023,C1,ST_GAS,PASS,"-4.60 TWh, share -1.9pp",PASS,"-4.01 TWh, share -1.8pp"
+2023,C1,ST_CHP,PASS,"-0.57 TWh, share -0.2pp",PASS,"-0.57 TWh, share -0.2pp"
+2023,C1,COAL_PRB,PASS,"-1.07 TWh, share -0.4pp",PASS,"-0.43 TWh, share -0.4pp"
+2023,C1,COAL_BIT,PASS,"-3.16 TWh, share -1.3pp",PASS,"-3.16 TWh, share -1.5pp"
+2023,C3a,,PASS,-0.4%,PASS,+7.9%
+2023,C3b,,PASS,NRMSE 0.091,PASS,NRMSE 0.133
+2023,dE_TWh,"{""CC_CHP"": 0.348, ""CC_REGULAR"": 1.112, ""COAL_BIT"": 0.0, ""COAL_PRB"": 0.631, ""CT_CHP"": 0.016, ""CT_PEAKER"": 4.678, ""ST_CHP"": 0.0, ""ST_GAS"": 0.592}",,,,
+2023,dE_night_TWh,"{""CC_CHP"": 0.196, ""CC_REGULAR"": 0.754, ""COAL_BIT"": 0.0, ""COAL_PRB"": 0.333, ""CT_CHP"": 0.007, ""CT_PEAKER"": 1.127, ""ST_CHP"": 0.0, ""ST_GAS"": 0.043}",,,,
+2024,C1,CC_REGULAR,PASS,"+2.71 TWh, share +2.0pp",PASS,"+2.71 TWh, share +2.1pp"
+2024,C1,CC_CHP,PASS,"+0.26 TWh, share +0.1pp",PASS,"+0.26 TWh, share +0.1pp"
+2024,C1,CT_PEAKER,PASS,"+1.49 TWh, share +0.6pp",PASS,"+1.49 TWh, share +0.7pp"
+2024,C1,ST_GAS,PASS,"-3.80 TWh, share -1.5pp",PASS,"-3.80 TWh, share -1.5pp"
+2024,C1,ST_CHP,PASS,"-0.83 TWh, share -0.3pp",PASS,"-0.83 TWh, share -0.3pp"
+2024,C1,COAL_PRB,PASS,"-1.88 TWh, share -0.5pp",PASS,"-1.88 TWh, share -0.5pp"
+2024,C1,COAL_BIT,PASS,"-3.51 TWh, share -1.3pp",PASS,"-3.51 TWh, share -1.3pp"
+2024,C3a,,PASS,-6.0%,PASS,+1.8%
+2024,C3b,,PASS,NRMSE 0.184,PASS,NRMSE 0.181
+2024,dE_TWh,"{""CC_CHP"": 0.25, ""CC_REGULAR"": 1.432, ""COAL_BIT"": 0.297, ""COAL_PRB"": 0.598, ""CT_CHP"": 0.026, ""CT_PEAKER"": 4.911, ""ST_CHP"": 0.0, ""ST_GAS"": 0.484}",,,,
+2024,dE_night_TWh,"{""CC_CHP"": 0.126, ""CC_REGULAR"": 0.914, ""COAL_BIT"": 0.132, ""COAL_PRB"": 0.238, ""CT_CHP"": 0.013, ""CT_PEAKER"": 1.207, ""ST_CHP"": 0.0, ""ST_GAS"": 0.036}",,,,
+2025,C1,CC_REGULAR,SKIPPED,preliminary EIA-923 vintage: complete plant data (no per-class actual); not gated — C2 family grid reconcile covers this class,SKIPPED,preliminary EIA-923 vintage: complete plant data (no per-class actual); not gated — C2 family grid reconcile covers this class
+2025,C1,CC_CHP,SKIPPED,preliminary EIA-923 vintage: complete plant data (no per-class actual); not gated — C2 family grid reconcile covers this class,SKIPPED,preliminary EIA-923 vintage: complete plant data (no per-class actual); not gated — C2 family grid reconcile covers this class
+2025,C1,CT_PEAKER,SKIPPED,preliminary EIA-923 vintage: complete plant data (no per-class actual); not gated — C2 family grid reconcile covers this class,SKIPPED,preliminary EIA-923 vintage: complete plant data (no per-class actual); not gated — C2 family grid reconcile covers this class
+2025,C1,ST_GAS,SKIPPED,preliminary EIA-923 vintage: complete plant data (no per-class actual); not gated — C2 family grid reconcile covers this class,SKIPPED,preliminary EIA-923 vintage: complete plant data (no per-class actual); not gated — C2 family grid reconcile covers this class
+2025,C1,ST_CHP,SKIPPED,preliminary EIA-923 vintage: incomplete plant data (1/26 prior plants missing (96% reporting); plant-months 96% present); not gated — C2 family grid reconcile covers this class,SKIPPED,preliminary EIA-923 vintage: incomplete plant data (1/26 prior plants missing (96% reporting); plant-months 96% present); not gated — C2 family grid reconcile covers this class
+2025,C1,COAL_PRB,PASS,"+2.76 TWh, share +1.3pp",PASS,"+2.76 TWh, share +1.4pp"
+2025,C1,COAL_BIT,PASS,"-0.89 TWh, share -0.2pp",PASS,"-0.89 TWh, share -0.2pp"
+2025,C3a,,PASS,-4.7%,PASS,+3.1%
+2025,C3b,,PASS,NRMSE 0.184,PASS,NRMSE 0.183
+2025,dE_TWh,"{""CC_CHP"": 0.248, ""CC_REGULAR"": 2.012, ""COAL_BIT"": 0.186, ""COAL_PRB"": 0.864, ""CT_CHP"": 0.019, ""CT_PEAKER"": 3.365, ""ST_CHP"": 0.0, ""ST_GAS"": 0.405}",,,,
+2025,dE_night_TWh,"{""CC_CHP"": 0.109, ""CC_REGULAR"": 1.143, ""COAL_BIT"": 0.101, ""COAL_PRB"": 0.327, ""CT_CHP"": 0.009, ""CT_PEAKER"": 0.631, ""ST_CHP"": 0.0, ""ST_GAS"": 0.046}",,,,
