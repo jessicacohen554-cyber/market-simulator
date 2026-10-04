@@ -102,9 +102,18 @@ def expected_w0(keeper_sc: dict) -> dict[str, bool]:
 
 
 def check_legs(
-    keeper: Path, legs: dict[int, Path], pinned_sha: dict[int, str]
+    keeper: Path,
+    legs: dict[int, Path],
+    pinned_sha: dict[int, str],
+    declared: dict[str, object] | None = None,
 ) -> list[str]:
-    """Assert each leg is the keeper's recipe plus W0; return the report lines."""
+    """Assert each leg is the keeper's recipe plus W0 (plus ``declared``); return the report lines.
+
+    ``declared`` maps a field to the value every leg must record: the run's one
+    declared solve-affecting delta against the keeper (e.g. a newly armed field).
+    A leg recording any other value aborts; any undeclared difference still aborts.
+    """
+    declared = declared or {}
     report: list[str] = []
     w0 = set(_w0_fields())
     surfaces: set = set()
@@ -123,9 +132,16 @@ def check_legs(
         # recorded config; the replay resolves it to the registered default,
         # which is the keeper's behaviour by construction (no difference).
         defaults = _registered_defaults()
+        for field, value in declared.items():
+            if json.dumps(sc.get(field), sort_keys=True) != json.dumps(
+                value, sort_keys=True
+            ):
+                raise SystemExit(
+                    f"ABORT {leg.name}: declared delta {field}={sc.get(field)!r}, wants {value!r}"
+                )
         diffs = sorted(
             k
-            for k in (set(sc) | set(ksc)) - w0 - PROVENANCE
+            for k in (set(sc) | set(ksc)) - w0 - PROVENANCE - set(declared)
             if json.dumps(sc.get(k), sort_keys=True)
             != json.dumps(ksc[k] if k in ksc else defaults.get(k), sort_keys=True)
         )
@@ -349,6 +365,13 @@ def main(argv: list[str] | None = None) -> int:
         "--inert-proof",
         help="zero-LP byte-inert proof; required when legs pin to more than one sha",
     )
+    ap.add_argument(
+        "--declared-delta",
+        action="append",
+        default=[],
+        metavar="FIELD=JSON",
+        help="the run's declared recipe delta vs the keeper; every leg must record it",
+    )
     ap.add_argument("--out")
     ap.add_argument("--check-only", action="store_true")
     args = ap.parse_args(argv)
@@ -373,9 +396,16 @@ def main(argv: list[str] | None = None) -> int:
                 keepers[int(y)] = _resolve(b)
         else:
             keepers.update({y: _resolve(ys) for y in legs if y not in keepers})
+    declared = {
+        f: json.loads(v) for f, _, v in (s.partition("=") for s in args.declared_delta)
+    }
     lines: list[str] = []
+    if declared:
+        lines.append(f"  declared delta vs keeper: {declared}")
     for kb in sorted(set(keepers.values())):
-        lines += check_legs(kb, {y: legs[y] for y in legs if keepers[y] == kb}, pins)
+        lines += check_legs(
+            kb, {y: legs[y] for y in legs if keepers[y] == kb}, pins, declared
+        )
     print("recipe check:\n" + "\n".join(lines))
     if args.check_only:
         return 0
