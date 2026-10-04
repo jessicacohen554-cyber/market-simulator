@@ -1,0 +1,71 @@
+{
+ "2021": {
+  "days": 249,
+  "citygate_w3": {
+   "r": 0.8069,
+   "rmse": 18.926
+  },
+  "ice": {
+   "r": 0.6917,
+   "rmse": 45.882
+  },
+  "ice_wins": false
+ },
+ "2022": {
+  "days": 365,
+  "citygate_w3": {
+   "r": 0.9409,
+   "rmse": 36.254
+  },
+  "ice": {
+   "r": 0.7857,
+   "rmse": 67.155
+  },
+  "ice_wins": false
+ },
+ "2023": {
+  "days": 280,
+  "citygate_w3": {
+   "r": 0.7606,
+   "rmse": 17.642
+  },
+  "ice": {
+   "r": 0.7721,
+   "rmse": 25.505
+  },
+  "ice_wins": false
+ },
+ "2024": {
+  "days": 365,
+  "citygate_w3": {
+   "r": 0.8743,
+   "rmse": 11.419
+  },
+  "ice": {
+   "r": 0.8402,
+   "rmse": 12.327
+  },
+  "ice_wins": false
+ },
+ "2025": {
+  "days": 365,
+  "citygate_w3": {
+   "r": 0.6442,
+   "rmse": 12.269
+  },
+  "ice": {
+   "r": 0.6845,
+   "rmse": 13.836
+  },
+  "ice_wins": false
+ },
+ "gate": {
+  "ice_wins_2022_2025": 0,
+  "pass": false
+ },
+ "ice_priced_days": {
+  "2019": 308,
+  "2020": 307,
+  "2021": 308
+ }
+}

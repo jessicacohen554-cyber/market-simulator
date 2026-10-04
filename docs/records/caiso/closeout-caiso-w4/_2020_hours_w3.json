@@ -1,0 +1,195 @@
+{
+ "by_month": {
+  "1": {
+   "cc_d": 0.029,
+   "dsw_d": -0.067,
+   "pnw_d": 0.456,
+   "other_gas_d": -0.643,
+   "cc_floor_twh": 0.382,
+   "lambda_sp15": 33.56,
+   "rung_mc_mean": 29.65,
+   "cc_marginal_mc_median": 33.57
+  },
+  "2": {
+   "cc_d": -0.087,
+   "dsw_d": -0.128,
+   "pnw_d": 0.393,
+   "other_gas_d": -0.609,
+   "cc_floor_twh": 0.34,
+   "lambda_sp15": 28.35,
+   "rung_mc_mean": 26.37,
+   "cc_marginal_mc_median": 28.26
+  },
+  "3": {
+   "cc_d": -0.524,
+   "dsw_d": 0.587,
+   "pnw_d": 0.411,
+   "other_gas_d": -0.86,
+   "cc_floor_twh": 0.409,
+   "lambda_sp15": 25.28,
+   "rung_mc_mean": 19.25,
+   "cc_marginal_mc_median": 27.8
+  },
+  "4": {
+   "cc_d": -0.277,
+   "dsw_d": 0.72,
+   "pnw_d": 0.444,
+   "other_gas_d": -0.752,
+   "cc_floor_twh": 0.355,
+   "lambda_sp15": 20.45,
+   "rung_mc_mean": 16.16,
+   "cc_marginal_mc_median": 26.07
+  },
+  "5": {
+   "cc_d": 0.47,
+   "dsw_d": 0.204,
+   "pnw_d": -0.076,
+   "other_gas_d": -0.635,
+   "cc_floor_twh": 0.31,
+   "lambda_sp15": 24.06,
+   "rung_mc_mean": 23.32,
+   "cc_marginal_mc_median": 27.36
+  },
+  "6": {
+   "cc_d": 1.214,
+   "dsw_d": -0.685,
+   "pnw_d": -0.168,
+   "other_gas_d": -0.539,
+   "cc_floor_twh": 0.346,
+   "lambda_sp15": 24.65,
+   "rung_mc_mean": 26.73,
+   "cc_marginal_mc_median": 26.63
+  },
+  "7": {
+   "cc_d": 1.193,
+   "dsw_d": -0.354,
+   "pnw_d": -0.348,
+   "other_gas_d": -0.785,
+   "cc_floor_twh": 0.412,
+   "lambda_sp15": 29.37,
+   "rung_mc_mean": 28.97,
+   "cc_marginal_mc_median": 27.34
+  },
+  "8": {
+   "cc_d": 1.203,
+   "dsw_d": -0.558,
+   "pnw_d": -0.031,
+   "other_gas_d": -1.043,
+   "cc_floor_twh": 0.42,
+   "lambda_sp15": 39.52,
+   "rung_mc_mean": 39.5,
+   "cc_marginal_mc_median": 31.95
+  },
+  "9": {
+   "cc_d": 1.0,
+   "dsw_d": -1.428,
+   "pnw_d": 0.586,
+   "other_gas_d": -0.745,
+   "cc_floor_twh": 0.401,
+   "lambda_sp15": 40.54,
+   "rung_mc_mean": 42.49,
+   "cc_marginal_mc_median": 34.86
+  },
+  "10": {
+   "cc_d": -0.324,
+   "dsw_d": 0.612,
+   "pnw_d": 0.306,
+   "other_gas_d": -1.042,
+   "cc_floor_twh": 0.491,
+   "lambda_sp15": 39.07,
+   "rung_mc_mean": 30.96,
+   "cc_marginal_mc_median": 39.16
+  },
+  "11": {
+   "cc_d": 0.178,
+   "dsw_d": -0.162,
+   "pnw_d": 0.284,
+   "other_gas_d": -0.69,
+   "cc_floor_twh": 0.407,
+   "lambda_sp15": 38.05,
+   "rung_mc_mean": 35.49,
+   "cc_marginal_mc_median": 36.75
+  },
+  "12": {
+   "cc_d": 0.967,
+   "dsw_d": -1.584,
+   "pnw_d": 0.653,
+   "other_gas_d": -0.408,
+   "cc_floor_twh": 0.371,
+   "lambda_sp15": 43.89,
+   "rung_mc_mean": 44.12,
+   "cc_marginal_mc_median": 40.37
+  }
+ },
+ "object_by_band": {
+  "00-05": {
+   "cc_d": 2.404,
+   "dsw_d": -2.066,
+   "pnw_d": 0.233,
+   "other_gas_d": -1.048
+  },
+  "06-16": {
+   "cc_d": 1.234,
+   "dsw_d": -0.103,
+   "pnw_d": 0.196,
+   "other_gas_d": -1.932
+  },
+  "17-21": {
+   "cc_d": 1.155,
+   "dsw_d": -1.643,
+   "pnw_d": 0.142,
+   "other_gas_d": -0.232
+  },
+  "22-23": {
+   "cc_d": 0.785,
+   "dsw_d": -0.797,
+   "pnw_d": 0.119,
+   "other_gas_d": -0.308
+  }
+ },
+ "object_short_hours": {
+  "object_months": {
+   "hours": 2166,
+   "shortfall_twh": 5.882,
+   "corridor_binding_twh": 0.0,
+   "no_rung_armed_twh": 0.0,
+   "rung_at_cap_twh": 0.137,
+   "rung_priced_twh": 5.745,
+   "priced_gap_p25_p50_p75": [
+    0.0,
+    1.04,
+    3.78
+   ],
+   "priced_by_rung_twh": {
+    "DSW_surplus_clean": 0.0,
+    "DSW_overnight_clean": 1.974,
+    "DSW_daytime_clean": 2.969,
+    "DSW_lateevening_clean": 0.803
+   },
+   "cc_floor_twh_in_these_hours": 0.464
+  },
+  "all_year": {
+   "hours": 3293,
+   "shortfall_twh": 7.627,
+   "corridor_binding_twh": 0.0,
+   "no_rung_armed_twh": 0.0,
+   "rung_at_cap_twh": 0.411,
+   "rung_priced_twh": 7.216,
+   "priced_gap_p25_p50_p75": [
+    -0.0,
+    0.0,
+    2.78
+   ],
+   "priced_by_rung_twh": {
+    "DSW_surplus_clean": 0.0,
+    "DSW_overnight_clean": 2.206,
+    "DSW_daytime_clean": 4.053,
+    "DSW_lateevening_clean": 0.957
+   },
+   "cc_floor_twh_in_these_hours": 0.772
+  }
+ },
+ "cc_floor_by_mechanism_twh": {
+  "7": 4.644
+ }
+}
