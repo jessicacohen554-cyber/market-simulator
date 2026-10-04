@@ -1,9 +1,10 @@
-"""closeout-PJM-w3 phase 0 — reach of the LEVEL-form Elliott overlay on the keeper. ZERO LP.
+"""closeout-PJM-w3 phase 0 — reach of the LEVEL-form Elliott overlay, alone and with measured interchange. ZERO LP.
 
 Per event hour, fleet thermal unavailable MW is set to the measured total (GADS Figure-30 forced+derate plus
 eDART planned+maintenance); the change against the keeper's own unavailable MW is withdrawn (or restored) from
-in-LP headroom and priced with the w2 merit-walk / ORDC / VOLL estimator. Record:
-``docs/records/pjm/closeout-pjm-w3/FINDING-closeout-pjm-w3-elliott-identity-2026-10-04.md`` §5.
+in-LP headroom and priced with the w2 merit-walk / ORDC / VOLL estimator. The second reading also withdraws the
+measured extra export (PJM Data Miner ``act_sch_interchange`` actual tie flows, EPT, minus the model's export).
+Record: ``docs/records/pjm/closeout-pjm-w3/FINDING-closeout-pjm-w3-elliott-identity-2026-10-04.md`` §5-§6.
 """
 
 import numpy as np
@@ -97,4 +98,35 @@ print(
     round(est[ix].mean(), 1),
     " keeper $",
     round(p[ix].mean(), 1),
+)
+# --- add measured interchange (PJM Data Miner act_sch_interchange, export-positive)
+a = pd.read_csv(
+    "data/raw/pjm-elliott-interchange/act_sch_interchange_2022-12-20_28.csv",
+    encoding="utf-8-sig",
+)
+a["t"] = pd.to_datetime(a.datetime_beginning_ept, format="%m/%d/%Y %I:%M:%S %p")
+pj = -a.groupby("t").actual_flow.sum()
+pj.index = ((pj.index - pd.Timestamp("2022-01-01")) / pd.Timedelta("1h")).astype(int)
+nb = "results/calibration/closeout_pjm_elliott_2022/hourly/network_2022.parquet"
+n = pd.read_parquet(nb)
+n = n[(n["pass"] == "P1") & (n.kind == "link")]
+n["name"] = n.name.astype(str)
+mexp = (
+    -n[n.name.str.startswith("PJM_external>")].groupby("hour").mw.sum()
+)  # model export-positive (probe leg; keeper interchange assumed same outside window)
+extra = pj.reindex(H).values - mexp.reindex(H).values
+resid2 = resid - np.clip(extra, 0, None)
+print(
+    "extra export needed GW min/mean/max",
+    round(np.nanmin(extra) / 1e3, 1),
+    round(np.nanmean(extra) / 1e3, 1),
+    round(np.nanmax(extra) / 1e3, 1),
+)
+print(
+    "LEVEL+EXPORTS: hours resid<0",
+    int((resid2 < 0).sum()),
+    " <req",
+    int((resid2 < req).sum()),
+    " min resid GW",
+    round(np.nanmin(resid2) / 1e3, 1),
 )

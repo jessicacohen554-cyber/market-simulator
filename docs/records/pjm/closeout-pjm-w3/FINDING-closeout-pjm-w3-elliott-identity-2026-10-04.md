@@ -1,4 +1,4 @@
-# FINDING — closeout-PJM-w3 phase 0: the Elliott probe's load shed comes from a double-counted baseline, not missing DR or imports (ZERO LP)
+# FINDING — closeout-PJM-w3 phase 0 (§1 export figures CORRECTED in §6): the Elliott probe's load shed comes from a double-counted baseline, not missing DR or imports (ZERO LP)
 
 Lane `closeout-PJM-w3` (branch `claude/closeout-pjm-w3`, from `90cea720`), desk lever (4). Probe
 `scripts/probes/_closeoutpjmw3_elliott_supply_identity.py`. It reads the Elliott probe's 2022 leg
@@ -88,3 +88,31 @@ the measured total in each of the 72 event hours.
 The measured-outage half is admissible and measured. The export half has no admissible measured driver on disk.
 The owner should weigh this before ruling on the Elliott promotion card. Under rule 1, a keeper is the most
 structurally faithful run, and the probe's fit relies on a known baseline over-assertion.
+
+## 6. Correction and the level form with measured interchange (zero LP)
+
+**§1's export figures were wrong.** The EIA-930 per-DIBA file's `local_time` is not EPT for PJM. Against PJM's own
+EPT tie flows (Data Miner `act_sch_interchange`, fetched into `data/raw/pjm-elliott-interchange/`), it fits best
+at a −5 h shift (corr 0.92 vs 0.65). On PJM's own clock:
+- **23 Dec 17:00–21:00 (the shed hours):** PJM's net export was **1.4–3.3 GW**, not 5.6–10.7 GW.
+- **24 Dec:** PJM was a net importer from 06:00 to 08:00 (up to 3.2 GW). It exported 0.1–3.9 GW in the other shed
+  hours.
+
+The conclusion that DR and emergency imports are not the missing supply still holds. DR is netted in the metered
+demand, and real imports were small and brief.
+
+**Level form plus measured exports.** Withdraw the measured extra export (real minus model, −2.7 to +9.5 GW, mean
++3.1 GW) on top of the level form:
+- 0 hours below zero headroom and 0 below the primary requirement;
+- **minimum residual headroom 7.2 GW**.
+
+The structurally faithful measured inputs therefore leave the model about 7 GW long, while real PJM was in reserve
+shortage. PJM's report names unavailability outside both GADS forced and eDART: about 6 GW of steam units "called
+but not online", reserve units that missed start times, and pumped storage that could not refill ("missing
+approximately 47,000 MW … by the morning peak" against about 41,000 MW of outages). Those are single quoted
+figures, not hourly series.
+
+**Reading.** On measured inputs, Elliott 2022 stays data-limited (R-26). The Elliott probe's price fit comes from
+the ~13.5 GW baseline excess (§2), not from a faithful structure. Recommendation: **do not promote the Elliott
+probe**. Keep the field as built (default off), with the level form as its documented re-open route. It re-opens
+only on an hourly measured series for the start-failure and called-not-online MW (GADS event-level data).
