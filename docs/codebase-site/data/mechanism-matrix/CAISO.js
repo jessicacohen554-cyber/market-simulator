@@ -285,6 +285,7 @@ window.MECH_MATRIX_SHARDS.CAISO = {
     outage_artifact_provenance: { cell: "I", ev: "xiso-2 §4 + §6 (byte-identical; crosswalk inert)" },
     dam_availability_rebasis: { cell: "U", ev: "R-CAISO (2026-09-24, run 2026-09-24-caiso-r-inputs-vintage, bundle rcaiso_inputs_span, 2022-2025 one shard per year at pin 18bb99b1; docs/records/caiso/r-caiso/PRECOMMIT-r-caiso-2026-09-24.md + RESULT-r-caiso-2026-09-24.md): caiso_dam_outages measured and NOT armed: crosswalked-resource episodes begin 2022-11-22 (per-plant whole-year merge would zero 43 plants' CAMPD windows for most of 2022), and the loader sums every nature of work (AMBIENT_DUE_TO_TEMP 16.2 % of MW-h double-counts temp_dependent_derate; ENVIRONMENTAL_RESTRICTIONS 26.4 %). Needs a nature-of-work filter + per-date coverage merge under its own charter. " },
     pjm_measured_outage_event_cap: { cell: "." },
+    pjm_elliott_measured_outage_overlay: { cell: "." },
     ercot_dam_availability_coal_event_cap: { cell: "." },
     ercot_dam_availability_gas_event_cap: { cell: "." },
     ercot_dam_availability_event_cap_reconciliation: { cell: "." },

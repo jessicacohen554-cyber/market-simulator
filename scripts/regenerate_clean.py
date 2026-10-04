@@ -131,6 +131,10 @@ DATATYPES: tuple[str, ...] = (
     # R-CAISO-31: participant-submitted storage end-of-hour SOC bid bounds
     # (OASIS PUB_RTM_GRP). REPORT-ONLY diagnostic -- never a solve input (rule 13).
     "storage-soc-bounds",
+    # closeout-PJM-elliott (owner ruling R-64, 2026-10-04): PJM Winter Storm
+    # Elliott hourly GADS forced outage by fuel (Event Analysis Figure 30). The
+    # solve falls back to the committed raw CSV, so it is not a solve-profile input.
+    "pjm-elliott-forced-outages",
 )
 
 SCRIPTS_DIR = Path(__file__).resolve().parent

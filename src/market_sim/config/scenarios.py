@@ -923,6 +923,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "neiso_coldsnap_derate_dualfuel_unswitched",
     "pjm_dam_availability",
     "pjm_measured_outage_event_cap",
+    # closeout-PJM-elliott hourly measured Elliott forced-outage overlay (owner
+    # ruling R-64, default off): registered at introduction, so it never moves
+    # a pinned default key; an armed run derates 72 measured 2022 hours and
+    # keys distinctly.
+    "pjm_elliott_measured_outage_overlay",
     # PJM mid-curve LEVEL-form scope (pjm-121 §5, default None = floor-only).
     # Default-off and byte-identical for every config that does not arm it (the
     # level branch is unreachable with an empty scope), so it is dropped from
@@ -2812,6 +2817,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "neiso_coldsnap_derate_dualfuel_unswitched": "False",
     "pjm_dam_availability": "False",
     "pjm_measured_outage_event_cap": "False",
+    "pjm_elliott_measured_outage_overlay": "False",
     "pjm_offer_midcurve_level_segments": "None",
     "pjm_offer_midcurve_shape_segments": "None",
     "pjm_offer_midcurve_peak_segments": "None",
@@ -4049,6 +4055,7 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "ercot_partial_outage_day_guard": "measured day-shaped partial-outage derate, same-day CEMS guard",
     "pjm_dam_availability": "measured PJM DAM availability record",
     "pjm_measured_outage_event_cap": "measured PJM published-outage event cap (remove-only)",
+    "pjm_elliott_measured_outage_overlay": "measured PJM Winter Storm Elliott hourly GADS forced outage (23-25 Dec 2022)",
     "ercot_noncampd_plant_availability": "measured availability for non-CAMPD plants",
     # --- measured per-plant operating conduct ---
     "coal_mustrun_per_plant": "measured per-plant coal operating floors",
@@ -15112,6 +15119,38 @@ class ScenarioConfig:
     # results/phase0/pjm/_pjm161_removeonly_exante.json.
     pjm_measured_outage_event_cap: bool = False
 
+    # PJM Winter Storm Elliott hourly MEASURED forced-outage overlay (default
+    # off; backcast-only; closeout-PJM-elliott, owner ruling R-64 2026-10-04,
+    # verbatim "Admissible — digitise & test (Recommended)";
+    # docs/records/pjm/closeout-pjm-elliott/PRECOMMIT-closeout-pjm-elliott-2026-10-04.md).
+    #
+    # WHY: ~20-30 GW of the published Elliott forced outage never entered the
+    # LP — the CAMPD unit windows infer outage from zero output and see only
+    # 5-7 GW of the event rise, and PJM's daily eDART snapshot (06:00) both
+    # under-reads and mis-times it — so the keeper priced 23-24 Dec at $111
+    # against a real $1,010 and 2022 C3a/C3b fail on those 48 hours alone.
+    #
+    # WHAT (data/fleet/arrays.py::_apply_outage_overlays, after every other
+    # PJM availability overlay): for each covered fuel f (gas / coal / oil /
+    # nuclear) and each of the 72 event hours (23 Dec 00:00 - 25 Dec 23:00 EPT
+    # 2022, rows 8544-8615), the measured GADS rise over Figure 30's own
+    # pre-front bars (23 Dec 00:00-04:00) NET of the model's own rise in that
+    # fuel's unavailable MW over the same baseline is withdrawn pro rata from
+    # the fuel's available units: mu_f(h) = (A_f(h) - inc_f(h)) / A_f(h). Every
+    # unit's relative availability and every zero are preserved; remove-only.
+    # Source: data.pjm_elliott_outages (PJM Event Analysis report Figure 30,
+    # digitised, +-104 MW per bar).
+    #
+    # Rule 13: a measured outage window, backcast-only (the forecast analogue is
+    # the correlated-forced-outage class). Rule 17: window = the 72 published
+    # hours, driver = measured forced outage, forward story = none needed
+    # (backcast overlay); not a floor (no C8 energy). Rule 19: composes after
+    # the CAMPD unit windows and adds only the rise they do not carry; refused
+    # together with pjm_measured_outage_event_cap (same phenomenon, two owners).
+    # Rule 21: zero free parameters. Byte-identical off, and byte-identical in
+    # every year but 2022 armed (the loader returns None).
+    pjm_elliott_measured_outage_overlay: bool = False
+
     # ERCOT measured class-HOUR thermal availability (default off, ERCOT
     # backcast-gated — ERCOT-96, 2026-07-22). The GRAIN switch of the mechanism
     # above, not a second overlay (rule 19): when armed on top of
@@ -23116,6 +23155,15 @@ class ScenarioConfig:
         # phenomenon through two owners — the exact composition failure
         # pjm-145 refused `pjm_dam_availability` for. Refused, not silently
         # ordered.
+        if (
+            self.pjm_elliott_measured_outage_overlay
+            and self.pjm_measured_outage_event_cap
+        ):
+            raise ValueError(
+                "pjm_elliott_measured_outage_overlay and "
+                "pjm_measured_outage_event_cap both add measured outage depth "
+                "beyond the CAMPD unit windows (rule 19): arm exactly one."
+            )
         if self.pjm_dam_availability and self.pjm_measured_outage_event_cap:
             raise ValueError(
                 "pjm_dam_availability and pjm_measured_outage_event_cap are "

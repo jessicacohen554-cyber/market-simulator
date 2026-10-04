@@ -123,8 +123,8 @@ snapshot).
 | carb-cap-schedule | — | n/a |
 | coal-basin-price | national/regional (EIA Annual Coal Report, by producing region) | n/a |
 | coal-mining-ppi | national (BLS PPI, coal) | n/a |
-| coal-stocks | national (EIA-923 Schedule 2, by plant) | 2018–2024 |
-| coal-receipts | national (EIA-923 Page 5, by plant) | 2017–2025 |
+| coal-stocks | national (EIA-923 Schedule 2, by plant) | n/a |
+| coal-receipts | national (EIA-923 Page 5, by plant) | n/a |
 | stb-coal-loadings | national (STB EP 724, by carrier x region) | n/a |
 | nwpp-plant-basis-energy | NWPP only (one committed CSV, year x family) | n/a |
 | carbon-auction-results | — | n/a |

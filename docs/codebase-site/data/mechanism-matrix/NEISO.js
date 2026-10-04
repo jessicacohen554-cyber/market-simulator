@@ -285,6 +285,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     outage_artifact_provenance: { cell: "I", ev: "xiso-2 §4 (byte-identical)" },
     dam_availability_rebasis: { cell: "R", ev: "neiso-62" },
     pjm_measured_outage_event_cap: { cell: "." },
+    pjm_elliott_measured_outage_overlay: { cell: "." },
     ercot_dam_availability_coal_event_cap: { cell: "." },
     ercot_dam_availability_gas_event_cap: { cell: "." },
     ercot_dam_availability_event_cap_reconciliation: { cell: "." },
