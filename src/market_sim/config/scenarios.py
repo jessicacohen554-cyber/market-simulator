@@ -856,6 +856,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # scenario.
     "coal_perplant_offer_yearly",
     "coal_perplant_offer_curves_yearly",
+    # closeout-ERCOT-w3 cliff split of the per-plant coal econ tranche, default
+    # off: dropped from the hash at its False default so every pre-existing
+    # ERCOT key (the designated keeper's included) stays byte-stable — the off
+    # path builds the identical single econ tranche. An armed run carries two
+    # econ rows per split plant and hashes distinctly. Registered IN THE SAME
+    # COMMIT as the field (the nyiso-119 discipline).
+    "coal_perplant_cliff_split",
     # Conventional-hydro minimum-flow floor (caiso-124): default-off gate for
     # the lower half of the measured hydro capability envelope. Dropped from the
     # hash at its default so every pre-existing cache key (and the pinned
@@ -2810,6 +2817,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "coal_perplant_offer_curves": "None",
     "coal_perplant_offer_yearly": "False",
     "coal_perplant_offer_curves_yearly": "None",
+    # Added by closeout-ERCOT-w3 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "coal_perplant_cliff_split": "False",
     "hydro_min_flow_floor": "False",
     "hydro_ror_split": "False",
     "hydro_budget_nameplate_aware": "False",
@@ -18896,6 +18906,27 @@ class ScenarioConfig:
         | None
     ) = None
 
+    # Tier 3 (calibration) — CLIFF SPLIT of the per-plant coal econ tranche
+    # (closeout-ERCOT-w3, docs/records/ercot/closeout-ercot-w3/). Refines
+    # coal_perplant_offer_level (REQUIRED armed, with its resolved curves; the
+    # assembly raises otherwise, rule 24). ERCOT-144 prices each CAMPD coal
+    # committed/econ tranche at the capacity-weighted mean of the plant's own
+    # measured SCED TPO curve over the tranche's capacity window, and declared
+    # the tranche grain a bound (PRECOMMIT-ercot144 §5 item 3: "Fayette's econ
+    # window straddles $16->$150 and prices at its weighted $80.13"). A mean
+    # across a measured price cliff offers the cheap side at a price nobody
+    # submitted. Armed, the econ tranche of every curve-registry plant is split
+    # into ``_econlo`` / ``_econhi`` rows at the largest measured price step
+    # inside its window (legacy_bins.coal_curve_cliff_boundary), and the
+    # unchanged window construction prices each side on its own side of the
+    # step. ZERO parameters (the largest step is always taken, no threshold),
+    # no new data, no level moves: the same measured curve, represented at the
+    # grain it was measured. Default OFF; ERCOT-only (rule 25, raises
+    # elsewhere); every other ISO and every config that does not arm it is
+    # byte-identical. --no-coal-perplant-cliff-split reaches the pre-arm
+    # posture.
+    coal_perplant_cliff_split: bool = False
+
     # N-slice smoothing of the economic offer curve. When
     # offer_curve_smoothing_n > 0, each plant's flat econ blocks (econ-low /
     # econ-high) are replaced by N equal-capacity sub-tranches whose heat-rate
@@ -24966,6 +24997,7 @@ COAL_SIGMOID_DEFAULTS: dict[tuple[str, str], dict[str, float]] = {
 
 
 TIER_TAGS: dict[str, int] = {
+    "coal_perplant_cliff_split": 3,
     "weather_year": 0,
     "mode": 0,
     "iso": 0,
