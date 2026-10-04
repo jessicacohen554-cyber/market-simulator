@@ -1,0 +1,70 @@
+{
+ "year": 2020,
+ "control": "results/calibration/closeout_soco_w3_span",
+ "vom_implied_median": {
+  "CC": 2.0,
+  "COAL": 4.5
+ },
+ "fuel_vs_f923": {
+  "CC": {
+   "robust_gap_usd_mmbtu": 0.04,
+   "robust_gap_usd_mwh": 0.28,
+   "plants": 10,
+   "outliers": [
+    {
+     "plant_code": 7917,
+     "month": 10,
+     "model_fuel": 2.76,
+     "price_per_mmbtu": 1.39
+    },
+    {
+     "plant_code": 7917,
+     "month": 11,
+     "model_fuel": 3.02,
+     "price_per_mmbtu": 1.95
+    },
+    {
+     "plant_code": 55382,
+     "month": 10,
+     "model_fuel": 2.76,
+     "price_per_mmbtu": 1.33
+    },
+    {
+     "plant_code": 55382,
+     "month": 11,
+     "model_fuel": 3.02,
+     "price_per_mmbtu": 1.92
+    }
+   ]
+  },
+  "COAL": {
+   "robust_gap_usd_mmbtu": -0.0,
+   "robust_gap_usd_mwh": -0.0,
+   "plants": 7,
+   "outliers": []
+  }
+ },
+ "parasitic": {
+  "COAL": {
+   "measured_pf": 0.9126,
+   "default_pf": 0.93,
+   "offer_change_usd_mwh": 0.62
+  },
+  "CC": {
+   "measured_pf": 0.9646,
+   "default_pf": 0.975,
+   "offer_change_usd_mwh": 0.2
+  }
+ },
+ "reach": {
+  "idle_coal_twh_within_usd": {
+   "1": 1.61,
+   "2": 2.86,
+   "3": 4.23,
+   "4": 5.56,
+   "6": 7.94
+  },
+  "night_lmp": 21.2,
+  "cc_night_offer_median": 17.84
+ }
+}
