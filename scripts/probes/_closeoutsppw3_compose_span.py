@@ -74,7 +74,11 @@ def _fingerprint(cfg: dict) -> str | None:
 
 
 def check_legs(
-    keeper: Path, legs: dict[int, Path], kept: list[int], pin: str, arm: dict | None = None
+    keeper: Path,
+    legs: dict[int, Path],
+    kept: list[int],
+    pin: str,
+    arm: dict | None = None,
 ) -> list[str]:
     """Assert each leg is the keeper's recipe plus exactly the declared arm; return report lines."""
     arm = arm or {}
@@ -86,8 +90,12 @@ def check_legs(
         sc = cfg.get("scenario_config", {})
         ksc = _keeper_config(keeper, year).get("scenario_config", {})
         for field, value in arm.items():
-            if json.dumps(sc.get(field), sort_keys=True) != json.dumps(value, sort_keys=True):
-                raise SystemExit(f"ABORT {leg.name}: arm {field}={sc.get(field)!r}, want {value!r}")
+            if json.dumps(sc.get(field), sort_keys=True) != json.dumps(
+                value, sort_keys=True
+            ):
+                raise SystemExit(
+                    f"ABORT {leg.name}: arm {field}={sc.get(field)!r}, want {value!r}"
+                )
         diffs = sorted(
             k
             for k in (set(sc) | set(ksc)) - PROVENANCE - set(arm)
@@ -282,8 +290,13 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument(
         "--inert-proof", help="zero-LP byte-inert proof (required with --kept)"
     )
-    ap.add_argument("--arm", action="append", default=[], metavar="FIELD=JSON",
-                    help="declared arm field; the only allowed recipe difference")
+    ap.add_argument(
+        "--arm",
+        action="append",
+        default=[],
+        metavar="FIELD=JSON",
+        help="declared arm field; the only allowed recipe difference",
+    )
     ap.add_argument("--out")
     ap.add_argument("--check-only", action="store_true")
     args = ap.parse_args(argv)
