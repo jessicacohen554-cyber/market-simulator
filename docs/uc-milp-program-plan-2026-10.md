@@ -153,6 +153,12 @@ Why this is safe to sign: the stack rule is untouched (direct CSC → HiGHS); no
 |---|---|---|---|---|
 | R1 | D-0 | 2026-10-03 | "Charter (Recommended)" — program and desk chartered as written | UC-DESK r01 `session_01WX9W5tgYMre3Z134LZoGF6` (decision card) |
 | R2 | D-1 | 2026-10-03 | "Sign §7 text (Recommended)" — the §7 amendment, as written, lands in its own PR (a lane owning `CLAUDE.md`, spec, rule-history; not the desk) | UC-DESK r01 `session_01WX9W5tgYMre3Z134LZoGF6` (decision card) |
+| R3 | D-3 | 2026-10-04 | "Zero markup + uplift sidecar (Recommended)" | UC-DESK r03 (decision card) |
+| R4 | D-4 | 2026-10-04 | "Report only, MECH 28 (Recommended)" | UC-DESK r03 (decision card) |
+| R5 | D-5 SPP | 2026-10-04 | "Keep both floors (Recommended)" — SPP arm = `unit_commitment_milp=true` only; `coal_mustrun`, `st_gas_mustrun_per_plant` stay | UC-DESK r03 (decision card) |
+| R6 | run order | 2026-10-04 | "Yes: SPP A/B now (Recommended)" — SPP A/B at engine SHA `6d47c762` before the engine PR merges; no separate ladder; each shard reports its wall row; D-2 stays unruled (ratios reported, not judged) | UC-DESK r03 (decision card) |
+| R7 | UC-1 model | 2026-10-04 | owner: "You should be able to proceed on fable" — UC-1 finishes on Fable (new session) | UC-DESK r03 |
+| — | NYISO golden | 2026-10-04 | desk ruling (A): G-OFF NYISO engine-inert; 2021 diff = pre-existing main drift pinned to `59490433`; routed to owner (CALIBRATED keeper no longer reproduces 2021 at HEAD) | UC-DESK |
 
 ## 9. Roadmap and cost
 
@@ -176,6 +182,7 @@ Wall above the ceiling for PJM/MISO (E10 is an owner decision); a passing contro
 - 2026-10-03 · UC-DESK r02 (same session, owner: "Go until it's done") · main `1e3e4177` · desk PR #7174 merged (`c06edbb5`) · UC-0 branch realised · chartered UC-AM (`session_015zNTcCH8aUeDdczv1rAH3f`, Opus) in parallel with UC-0 (disjoint files; no open PRs on main at launch).
 - 2026-10-03 · UC-DESK r02 · main `b2b4771d` · UC-AM PR #7178 merged (amendment live; R2 discharged) · **sequencing deviation, desk call:** UC-1 engine chartered before UC-0 landed (state machine says after) because the engine design is ranking-independent; UC-1 must read UC-0's census (M6, rule-19 substitution sets) and cover its refusals before opening its PR; benches still wait on the board.
 - 2026-10-03 · UC-DESK r02 · main `f329f6a1` · **UC-0 landed** (PR #7185): selection by the declared rule = targets **SPP 2020, PJM 2022, SPP 2019**; controls **NEISO 2023, NYISO 2024**; GATESPEC §2 fallback not triggered. Desk notes carried to the A/B PRECOMMITs (not re-litigating the rule): F1 lower-tercile excess is model-wide (controls +$7–10/MWh; NEISO C3a headroom −3.0 %, so the no-flip bar is tight); F2 PJM 2022 C3a is model-low (−16.7 %) → its target reading is C3b / ≤ $15-hour ratio, C3a expected to move away; F6 the M5 removal bound is a fixed-price artifact. Relayed to UC-1: look-ahead < coal UT (declare once), refusal set = plan's set only (D-5 extends it), cluster definition stated. UC-0 Log entry: "board 9 × 7 published (61 cells, 55 scoreable, 15 rankable, 14 eligible) · selection SPP 2020, PJM 2022, SPP 2019 + NEISO 2023, NYISO 2024".
+- 2026-10-04 · UC-DESK r03 · main `90cea720` · goldens @ec758d64: PASS NEISO/SPP/ERCOT/SOCO/CAISO; NYISO engine-inert (main drift `59490433`); **MISO FAIL 2023–25** (unpinned); NWPP incomplete (1/7, PASS); PJM unproven (OOM ×2) · UC-1 Fable session went inactive · owner: "I want tests on backcast years to see if it improves calibration" → ruled D-3, D-4, D-5 SPP, run order (R3–R6) · chartered UC-2-SPP (A/B now at engine SHA) and UC-1-FINISH (Fable).
 
 ## 12. Lane register (desk-maintained; one row per chartered lane, newest last)
 
@@ -183,4 +190,6 @@ Wall above the ceiling for PJM/MISO (E10 is an owner decision); a passing contro
 |---|---|---|---|---|---|
 | UC-0 benefit screen | `session_013gHAT8qbNZwry6tA92gYNq` | `claude/ucmilp-0-benefit-screen-tx8t` → `claude/ucmilp-0-benefit-screen-tx8t` (realised) | §3 UC-0; GATESPEC §1–2; HANDOFF B | 0 | **DONE** — PR #7185 merged `f329f6a1`; graded by content (PREDECL `15df17f0` 21:11Z before numbers 21:48Z; board, census, DOF draft present); session archived |
 | UC-AM D-1 amendment | `session_015zNTcCH8aUeDdczv1rAH3f` | `claude/ucmilp-am-amendment-k3qz` → `claude/ucmilp-am-amendment-k3qz` | §7 text into `CLAUDE.md`, spec §1.6/§1.9, rule-history (R2) | 0 | **DONE** — PR #7178 merged `b2b4771d` (graded by content: §7 verbatim in CLAUDE.md; spec minimal edits; rule-history §32; CI 4/4 green); session archived |
-| UC-1 engine | `session_01TaYG9p5stirhcFVYgK3r6j` | `claude/ucmilp-1-engine-mcst` → *(unrealised; dispatch unconfirmed until a branch exists)* | §2, §4–§6; GATESPEC §3–§4; HANDOFF C (+ 9 golden shards, block E, launched by the lane) | 0 (goldens: 9 shards) | chartered 2026-10-03 (Fable), in parallel with UC-0 — see §11 |
+| UC-1 engine | `session_01TaYG9p5stirhcFVYgK3r6j` (inactive: Fable limit) | `claude/ucmilp-1-engine-mcst` → `claude/ucmilp-1-engine-mcst` (tip `6d47c762`) | §2, §4–§6; GATESPEC §3–§4; HANDOFF C (+ 9 golden shards, block E, launched by the lane) | 0 (goldens: 9 shards) | chartered 2026-10-03 (Fable), in parallel with UC-0 — see §11 |
+| UC-1-FINISH | `session_01CghV9pMqkD5TDmYicDuMCx` | continues `claude/ucmilp-1-engine-mcst` | close G-OFF (MISO FAIL 2023–25 pin; NWPP, PJM zero-LP), rebase, PR | 0 | chartered 2026-10-04 (Fable) |
+| UC-2-SPP A/B | `session_01QBeFQCYTmVafRpi7Ujb9gs` | `claude/ucmilp-2-spp-ab-r7qd` → *(unrealised; dispatch unconfirmed until a branch exists)* | GATESPEC §5 A/B, all SPP years, at engine SHA `6d47c762` (R6) | 7 shards | chartered 2026-10-04 (Fable) |
