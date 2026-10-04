@@ -59,6 +59,7 @@ window.MECH_MATRIX_SHARDS.CAISO = {
     nwpp_coi_pnw_delivery_basis: { cell: "." },
     nwpp_served_schedule_zonal_attribution: { cell: "." },
     nwpp_seam_in_service_vintage: { cell: "." },
+    nwpp_path76_served_schedule: { cell: "." },
     ercot_tie_zonal_interchange: { cell: "." },
     ercot_offer_swcap_clip: { cell: "." },
     ercot_swcap_vintage: { cell: "." },

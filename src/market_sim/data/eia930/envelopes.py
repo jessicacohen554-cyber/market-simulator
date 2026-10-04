@@ -2553,6 +2553,7 @@ def nwpp_served_schedule_zone_interchange(
     weights: np.ndarray,
     *,
     seam_in_service_vintage: bool = False,
+    path76_served: bool = False,
 ) -> np.ndarray:
     """Place the NWPP served schedule's measured legs at their reporting member's zone (MW, export-positive).
 
@@ -2590,6 +2591,16 @@ def nwpp_served_schedule_zone_interchange(
         weights: ``(n_zones, HOURS_PER_YEAR)`` demand weights for the remainder.
         seam_in_service_vintage: NWPP-NEXT-26 in-service gate, the same flag
             :func:`nwpp_unpriced_residual_interchange` received.
+        path76_served: NWPP-NEXT-27 (``ScenarioConfig.nwpp_path76_served_schedule``):
+            also serve the one INTERNAL member pair carried on WECC Path 76,
+            NEVP<->BPAT, at its measured leg — NEVP's own per-DIBA BPAT row,
+            export-positive, added at NEVP's zone and subtracted at BPAT's.
+            The pair clears no WEIM transfer (zero in every month of the
+            benefits reports' Appendix 2, 2023-07..2025-12; BPAT entered the
+            WEIM only 2022-05), so its flow is a bilateral schedule, never a
+            priced transfer; the caller removes the priced Path 76 link (rule
+            19). The two placements cancel in every column, so the served
+            total and the remainder are unchanged.
 
     Returns:
         ``(n_zones, HOURS_PER_YEAR)`` signed MW matrix to ADD to zonal demand.
@@ -2660,7 +2671,56 @@ def nwpp_served_schedule_zone_interchange(
                 coverage,
             )
     remainder = np.asarray(residual, dtype=float) - matrix.sum(axis=0)
+    if path76_served:
+        matrix += nwpp_path76_served_zone_legs(year, zone_names, utc)
     return matrix + np.asarray(weights, dtype=float) * remainder[None, :]
+
+
+def nwpp_path76_served_zone_legs(
+    year: int, zone_names: list[str], utc: pd.DatetimeIndex
+) -> np.ndarray:
+    """Return the measured NEVP<->BPAT leg placed at both ends (MW, export-positive from NEVP).
+
+    NWPP-NEXT-27 (``ScenarioConfig.nwpp_path76_served_schedule``). NEVP's own
+    EIA-930 per-DIBA ``BPAT`` row (``mw > 0`` = NEVP exports) is added to the
+    demand of NEVP's zone and subtracted from BPAT's, so every column sums to
+    zero. Zero free parameters: the members' zones are
+    :data:`~market_sim.data.zone_assignment._NWPP_BA_ZONES`, the leg and its
+    clock are measured.
+
+    Raises:
+        ValueError: When the leg carries no row of the year, or a member's
+            zone is not a model zone (fail closed: dropping the link without
+            serving the leg would silently zero a measured exchange).
+    """
+    from market_sim.config.constants import NWPP_MEMBER_LOCAL_TZ
+    from market_sim.data.zone_assignment import _NWPP_BA_ZONES
+
+    zone_idx = {z: i for i, z in enumerate(zone_names)}
+    src, dst = _NWPP_BA_ZONES["NEVP"], _NWPP_BA_ZONES["BPAT"]
+    if src not in zone_idx or dst not in zone_idx:
+        raise ValueError(f"NWPP Path 76 zones {src}/{dst} are not model zones")
+    leg, coverage = _diba_legs_export(
+        "NEVP",
+        ("BPAT",),
+        1.0,
+        utc,
+        tz=NWPP_MEMBER_LOCAL_TZ.get("NEVP", "America/Los_Angeles"),
+    )
+    leg = leg[:HOURS_PER_YEAR]
+    out = np.zeros((len(zone_names), HOURS_PER_YEAR), dtype=float)
+    out[zone_idx[src]] += leg
+    out[zone_idx[dst]] -= leg
+    logger.info(
+        "NWPP %d Path 76 served: NEVP -> BPAT %+.3f TWh (%s +, %s -; hour "
+        "coverage %.4f)",
+        year,
+        leg.sum() / 1e6,
+        src,
+        dst,
+        coverage,
+    )
+    return out
 
 
 def soco_net_interchange(year: int) -> np.ndarray | None:

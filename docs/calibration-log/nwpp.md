@@ -1172,3 +1172,39 @@ Records:
 - `docs/records/nwpp/FINDING-nwppnext26-nevp-hae-phase0-2026-10-03.md`
 - `PRECOMMIT-nwppnext26-nevp-hae-2019-2025-2026-10-03.md`
 - `RESULT-nwppnext26-nevp-hae-2019-2025-2026-10-03.md`
+
+## NWPP-NEXT-27 — 2026-10-04 — WECC Path 76 served at its measured bilateral leg → KEEPER `2026-10-03-nwpp-next-27-path76`
+
+**What changed.** Keeper NEXT-26 with `nwpp_path76_served_schedule` replacing `nwpp_path76_alturas_link`, owner card
+"Path 76 served". Promoted on owner card "Promote (Recommended)".
+
+- WECC Path 76 (Alturas) joins NEVP and BPAT. The pair clears zero WEIM transfers in every month 2023-07..2025-12, and
+  BPAT entered the WEIM only 2022-05, so the exchange is a bilateral schedule. Measured net NEVP→BPAT is −0.18 to
+  −0.61 TWh/yr, while the priced link exported 1.6–2.2 TWh/yr of SNV CC energy north (2019, 2023–2025).
+- The leg is now served at SNV (+) and NW (−); the link is priced in no hour (rule 19). Zero free parameters; seven
+  shards at pin `440ad144`.
+
+**Scores against keeper NEXT-26 (same bench render).** NOT-YET → NOT-YET, FAIL records 7 → 7, zero flips.
+
+| reading | keeper | this keeper |
+|---|---|---|
+| C1 CC_REGULAR 2024 / 2023 / 2025 / 2019 | +12.77 / +1.31 / +6.82 / +7.61 TWh | +12.15 / +0.66 / +6.60 / +7.50 |
+| C3a 2024 / 2023 | −10.30 / −1.46 $/MWh | −9.96 / −0.52 |
+| C3b 2023 / 2024 | 0.209 / 0.772 | 0.202 / 0.767 |
+| C4 gas r 2019 / 2024 / 2023 | 0.669 / 0.797 / 0.533 | 0.679 / 0.803 / **0.530** |
+| C1 CC_REGULAR 2020 / 2021 | +2.39 / +2.99 | **+2.48 / +3.15** |
+| C1 CT_PEAKER 2023 / 2024 | +0.02 / +1.47 | **+0.33 / +1.56** |
+| C1 CC_CHP 2019 / 2021 / 2022 | −0.35 / −0.82 / −0.04 | **−0.44 / −0.90 / −0.17** |
+| C1 ST_GAS 2024 · C2 gas 2023 | −2.90 · −0.13 | **−3.02 · −0.53** |
+| SNV unserved 2023 | 1.26 GWh | **1.62** |
+| D-1 failure lines | 18 | 18 |
+
+Regressions are in bold; every one still passes. D-2 is 0 in every class-year.
+
+**Prune:** `2026-10-03-nwpp-next-26-nevp` / `nwppnext26_span`.
+
+Records:
+
+- `docs/records/nwpp/FINDING-nwppnext27-cc-conduct-path76-phase0-2026-10-03.md`
+- `PRECOMMIT-nwppnext27-path76-served-2019-2025-2026-10-03.md`
+- `RESULT-nwppnext27-path76-served-2019-2025-2026-10-04.md`

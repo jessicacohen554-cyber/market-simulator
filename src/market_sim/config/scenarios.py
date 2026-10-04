@@ -1400,6 +1400,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # array and seam cap, and hashes distinctly. Registered IN THE SAME COMMIT
     # as the field.
     "nwpp_seam_in_service_vintage",
+    # NWPP-NEXT-27 Path 76 served schedule (GATED default off): dropped from
+    # the hash at its default so every pre-existing cache key stays
+    # byte-stable; an armed run serves the NEVP<->BPAT leg in demand (a
+    # different demand array) and hashes distinctly. Registered IN THE SAME
+    # COMMIT as the field.
+    "nwpp_path76_served_schedule",
     # pjm-h19 EIA-930 balance-identity demand screen (GATED default off):
     # dropped from the hash at its default so every pre-existing cache key
     # stays byte-stable (the off path never calls the screen); an armed run
@@ -2925,6 +2931,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "nwpp_served_schedule_zonal_attribution": "False",
     # Added by NWPP-NEXT-26 WITH the field (the nyiso-119 discipline).
     "nwpp_seam_in_service_vintage": "False",
+    # Added by NWPP-NEXT-27 WITH the field (the nyiso-119 discipline).
+    "nwpp_path76_served_schedule": "False",
     # Added by pjm-h19 WITH the field (the nyiso-119 discipline).
     "demand_balance_screen": "False",
     # Added by ercot-236 WITH the field, in the same commit as its
@@ -21845,6 +21853,25 @@ class ScenarioConfig:
     # it. envelopes.nwpp_seam_priced_hours;
     # FINDING-nwppnext26-nevp-hae-phase0-2026-10-03.md.
     nwpp_seam_in_service_vintage: bool = False
+    # NWPP-NEXT-27 Path 76 served schedule (GATED default off, NWPP-only,
+    # backcast-measured, ZERO fitted scalars; owner card 2026-10-03 "Path 76
+    # served"). WECC Path 76 (Alturas, NW<->SNV, nwpp_path76_alturas_link)
+    # joins two footprint members, NEVP and BPAT, that clear NO WEIM transfer
+    # with each other: zero MWh in every month of the WEIM benefits reports'
+    # Appendix 2 (2023-07..2025-12, data/raw/nwpp-weim/
+    # weim_benefits_appendix2_transfers.csv), and BPAT entered the WEIM only
+    # 2022-05. The measured NEVP->BPAT leg is a small bilateral exchange
+    # (-0.5..-0.2 TWh/yr net, +-200 MW), while the priced link ran at its
+    # 300 MW rating 7,000+ h/yr exporting SNV CC energy north (2.2 TWh 2024).
+    # Armed, the link is not priced in any hour and the measured leg is
+    # served at SNV (+) and NW (-) through the zonal served schedule (requires
+    # nwpp_served_schedule_zonal_attribution; refuses nwpp_path76_alturas_link
+    # — rule 19, priced or served, never both). Rules 13/14: a measured
+    # interchange schedule, the keeper's served-schedule construction; no
+    # number added. Forward story: a forecast year has no served schedule;
+    # the runner refuses the key. envelopes.nwpp_path76_served_zone_legs;
+    # FINDING-nwppnext27-cc-conduct-path76-phase0-2026-10-03.md.
+    nwpp_path76_served_schedule: bool = False
     # pjm-h19 EIA-930 balance-identity demand repair (GATED default off,
     # ISO-agnostic, ZERO fitted scalars). Repairs an hour whose metered
     # Demand makes an isolated reversal larger than the BA-year's own Tukey
@@ -25299,6 +25326,7 @@ TIER_TAGS: dict[str, int] = {
     "nwpp_coi_pnw_delivery_basis": 1,
     "nwpp_served_schedule_zonal_attribution": 1,
     "nwpp_seam_in_service_vintage": 1,
+    "nwpp_path76_served_schedule": 1,
     "demand_balance_screen": 1,
     "ercot_offer_swcap_clip": 1,
     "ercot_swcap_vintage": 1,

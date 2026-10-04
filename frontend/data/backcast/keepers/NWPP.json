@@ -1,11 +1,11 @@
 {
  "iso": "NWPP",
- "keeper": "2026-10-03-nwpp-next-26-nevp",
- "note": "keeper NEXT-25 + nwpp_seam_in_service_vintage: CAISO_NEVP priced only after Harry Allen-Eldorado (2020-08-12); CC 2019 FAIL->PASS",
+ "keeper": "2026-10-03-nwpp-next-27-path76",
+ "note": "keeper NEXT-26 + nwpp_path76_served_schedule: WECC Path 76 (NEVP<->BPAT) served at its measured bilateral EIA-930 leg instead of a priced link (zero WEIM transfers on the pair); zero flips, FAIL 7->7",
  "superseded": {
-  "date": "2026-10-03",
-  "former_keeper": "2026-10-03-nwpp-next-23-coi",
-  "reason": "NWPP-NEXT-24 PROMOTION under the close-out desk ruling (rule-14 data re-solve of the R-48 structure; desk session_01ALecU5Wjde4tkbLrnMExT9). Incoming = the former keeper's recipe replayed unchanged at main HEAD (pin 23beba2a; scenario_config diff empty in all 7 years) on two measured inputs: #7134 EIA-923 coal stocks 2015-17 and SolveEpoch 2026-10-03b NWPP 2019-22 NUCLEAR_MONTHLY_CF_BY_YEAR rows. Zero new free parameters. FAIL 9 -> 9, zero flips on the HEAD bench render. Three stores of the former keeper pruned in the promoting session (rule 35(a)); its recipe is in git history (results/calibration/nwppnext23_span at b54e1d84).",
+  "date": "2026-10-04",
+  "former_keeper": "2026-10-03-nwpp-next-26-nevp",
+  "reason": "NWPP-NEXT-27 PROMOTION on owner card 'Promote (Recommended)' (close-out desk session_01ERkBTm23ZAP4CTZnJVD9Ss holds the NWPP slot). Incoming 2026-10-03-nwpp-next-27-path76 = the former keeper's recipe with WECC Path 76 (NEVP<->BPAT) served at its measured EIA-930 leg instead of priced (nwpp_path76_served_schedule replaces nwpp_path76_alturas_link, rule 19; zero WEIM transfers on the pair 2023-07..2025-12); 7 year-isolated legs at pin 440ad144. Zero new free parameters. FAIL 7 -> 7, zero flips; CC_REGULAR 2024 +12.77 -> +12.15. Three stores of the former keeper pruned in the promoting session (rule 35(a)); its bundle is in git history (results/calibration/nwppnext26_span at d61c4f54).",
   "year_set_before_prune": [
    2019,
    2020,
@@ -24,5 +24,6 @@
    2024,
    2025
   ]
- }
+ },
+ "promotion_note": "Promoted 2026-10-04 (lane NWPP-NEXT-27) from 2026-10-03-nwpp-next-26-nevp on owner card 'Promote (Recommended)'. Path 76 served at its measured bilateral leg; zero DOF; zero flips. Records: docs/records/nwpp/RESULT-nwppnext27-path76-served-2019-2025-2026-10-04.md. PRIOR: Promoted 2026-10-03 (lane NWPP-NEXT-26, owner ruling 'Promote', #7175 -> d61c4f54) from 2026-10-03-nwpp-next-25-served: CAISO_NEVP priced only after Harry Allen-Eldorado (2020-08-12); FAIL 8 -> 7. PRIOR: NWPP-NEXT-24 PROMOTION under the close-out desk ruling (rule-14 data re-solve of the R-48 structure; desk session_01ALecU5Wjde4tkbLrnMExT9). Incoming = the former keeper's recipe replayed unchanged at main HEAD (pin 23beba2a; scenario_config diff empty in all 7 years) on two measured inputs: #7134 EIA-923 coal stocks 2015-17 and SolveEpoch 2026-10-03b NWPP 2019-22 NUCLEAR_MONTHLY_CF_BY_YEAR rows. Zero new free parameters. FAIL 9 -> 9, zero flips on the HEAD bench render. Three stores of the former keeper pruned in the promoting session (rule 35(a)); its recipe is in git history (results/calibration/nwppnext23_span at b54e1d84)."
 }
