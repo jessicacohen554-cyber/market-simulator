@@ -1,0 +1,19 @@
+{
+  "id": "2026-10-03-nwpp-next-27-path76",
+  "label": "nwpp next 27 path76",
+  "date": "2026-10-03",
+  "shorthand": "nwpp-next-27-path76",
+  "definition": "NWPP-NEXT-27: keeper nwppnext26 + Path 76 served at the measured NEVP-BPAT leg (link unpriced)",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NWPP",
+  "file": "frontend/data/backcast/runs/2026-10-03-nwpp-next-27-path76.js",
+  "bundle": "results/calibration/nwppnext27_span"
+}
