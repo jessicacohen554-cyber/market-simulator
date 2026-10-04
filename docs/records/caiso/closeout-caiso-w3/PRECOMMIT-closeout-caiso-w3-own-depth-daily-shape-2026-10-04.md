@@ -68,3 +68,27 @@ Zero fitted parameters:
 - the L1 rows are the rungs' existing statistic;
 - the L2 shape is a measured series with no scalar;
 - the L2 validation used a pre-fixed bar on out-of-fold printed years.
+
+## Addendum A: G-DRIFT and launch (2026-10-04, before any result)
+
+- **Drift `e8570532` → `90cea720`.** The hunks touch PJM (`pjm_elliott_outages`, `fleet/arrays.py` gated
+  `_iso == "PJM"`) and NWPP (`nwpp_path76_*` in `pipeline/ttc.py`, `eia930/envelopes.py` / `demand.py`, and
+  `scripts/run_calibration*.py`, all gated `iso == "NWPP"` plus default-off flags). **INERT** for CAISO.
+- **`90cea720` → `519dbd84`.** The only hunks are this lane's two flags, byte-identical off (fast-lane tests, and the
+  full fast lane: 11,514 passed).
+- **Arm scope.** The fleet-only fingerprint of the w2 recipe at the build SHA, w3 flags off vs on
+  (`_closeout_caiso_w2_gdrift_fingerprint.py`):
+  - 2019 and 2020: only `mc_base` moves, on the 10 WECC_DSW hub-priced tranches;
+  - 2021: `mc_base` moves, and pmax/availability move on the four DSW clean rungs only;
+  - **2022–2025: identical on every component.**
+- **Shards.** Pinned to `519dbd84dc2805193a1182d0101f67acb8ac231b`, environment `env_016R8xUY4maDbppZ6TEns5V8`:
+
+  | Year | Shard session |
+  |---|---|
+  | 2019 | `session_01PVaEyu1SJPCSA7DJbBUZBF` |
+  | 2020 | `session_01UEwKZ5fabprSPDQ4bpmXTq` |
+  | 2021 | `session_012QA3JMykHh9QZstdYbyXRZ` |
+  | 2022 | `session_01CpgWgYe6MQQWSoTsf9hS2B` |
+  | 2023 | `session_01FVNTgZb1fKruTRHmPVnFyA` |
+  | 2024 | `session_01LMFQFv6QYdbDWBooWKfkMk` |
+  | 2025 | queued (6-alive cap) |
