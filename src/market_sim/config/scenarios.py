@@ -2469,6 +2469,21 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # backcast. Registered at False and flipped default-on in backcast in the
     # same commit. SHARED field -- very end, per HOUSE-3.
     "backcast_actual_retirement_only",
+    # MILP unit-commitment stage (lane UC-1, 2026-10-03, default off, shared):
+    # the gate and every uc_* sub-field it reads, dropped from the hash at their
+    # declared defaults so every pre-existing run -- every ISO's keepers
+    # included -- keeps its key (G-KEYS). Byte-identical off by construction
+    # (the one gated hunk in pipeline/solve.py). Registered IN THE SAME COMMIT
+    # as the fields (the nyiso-119 discipline). SHARED fields -- very end.
+    "unit_commitment_milp",
+    "uc_window_hours",
+    "uc_lookahead_hours",
+    "uc_mip_rel_gap",
+    "uc_window_time_limit_s",
+    "uc_integer_scope",
+    "uc_noload_source",
+    "uc_boundary_mode",
+    "uc_prefixing",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -3363,6 +3378,16 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "seasonal_capacity_basis": "False",
     # Added by W0 (closeout-B) WITH the field (the nyiso-119 discipline).
     "backcast_actual_retirement_only": "False",
+    # Added by lane UC-1 WITH the fields (the nyiso-119 discipline).
+    "unit_commitment_milp": "False",
+    "uc_window_hours": "24",
+    "uc_lookahead_hours": "12",
+    "uc_mip_rel_gap": "1e-3",
+    "uc_window_time_limit_s": "600.0",
+    "uc_integer_scope": "'physics'",
+    "uc_noload_source": "'campd_regression'",
+    "uc_boundary_mode": "'p0_targets'",
+    "uc_prefixing": "False",
 }
 
 
@@ -4316,6 +4341,40 @@ def crossover_unbridges_year(
     if start_year is not None and crossover_forward_year <= start_year:
         return False
     return year >= crossover_forward_year and year >= CROSSOVER_FORWARD_BOUNDARY_YEAR
+
+
+#: The MILP UC stage's rule-19 refusal set, part 1 (plan section 6; UC-DESK
+#: ruling on DESIGN b974d2c9 point 2): every P1-native commitment bridge (the
+#: shared P0 detector, ``model.commitment.caiso_ra_mustoffer_min_gen``,
+#: whichever ISO leg routes it), the CAISO RA must-offer gate with every
+#: ``caiso_ra_*`` leg that rides it, and the posture family. The UC CHOOSES the
+#: commitment state these detect or relax, so none may be armed beside it.
+#: ``(field, what it is)`` pairs; ``__post_init__`` refuses any armed member.
+UC_REFUSED_ALWAYS: tuple[tuple[str, str], ...] = (
+    ("caiso_ra_mustoffer", "the CAISO RA must-offer bridge"),
+    ("caiso_ra_startup_bridge", "the CAISO RA bridge startup-cost leg"),
+    ("caiso_ra_bridge_decommit", "the CAISO RA bridge decommit leg"),
+    ("caiso_ra_mustoffer_quantity_gate", "the CAISO RA must-offer quantity gate"),
+    ("caiso_ra_bridge_startup_aware", "the CAISO RA bridge startup-aware screen"),
+    ("caiso_ra_bridge_curtailment_release", "the CAISO RA bridge curtailment release"),
+    ("caiso_ra_startup_trajectory", "the CAISO RA bridge startup trajectory"),
+    ("ercot_gas_commitment_bridge", "the ERCOT gas commitment bridge"),
+    ("nyiso_gas_commitment_bridge", "the NYISO gas commitment bridge"),
+    ("spp_gas_commitment_bridge", "the SPP gas commitment bridge"),
+    ("pjm_gas_commitment_bridge", "the PJM gas commitment bridge"),
+    ("miso_gas_ecomin_online_floor", "the MISO CC EcoMin online floor (bridge class)"),
+    ("ercot_commitment_posture", "the ERCOT commitment posture"),
+    ("miso_commitment_posture", "the MISO commitment posture"),
+    ("spp_commitment_posture", "the SPP commitment posture"),
+)
+
+#: Part 2: the per-ISO owner rulings (card D-5). EMPTY AT BIRTH. Extended only
+#: by a commit that cites the ruling; until then an A/B lane disarms the
+#: D-5 fields in its own config delta (UC-0 FINDING section 4: the "replace"
+#: recommendations cc_mustrun_per_plant / soco_gas_st_campaign_commitment and
+#: the hard cases st_gas_mustrun_per_plant / coal_mustrun /
+#: ercot_coal_min_config_floor / gas_st_netload_drag).
+UC_REFUSED_BY_RULING: tuple[tuple[str, str], ...] = ()
 
 
 @dataclass
@@ -22846,6 +22905,61 @@ class ScenarioConfig:
     # EIA's own published per-vintage BA codes, with no threshold, no
     # tolerance and nothing selected against a residual.
     benchmark_membership_vintage_union: bool = False
+    # ---------------------------------------------------------------------
+    # MILP UNIT-COMMITMENT STAGE (lane UC-1, default off, shared, ISO-armed later;
+    # docs/records/governance/uc-milp-2026-10/DESIGN-uc-milp-engine-2026-10-03.md;
+    # CLAUDE.md "Dispatch and commitment", owner ruling R2 2026-10-03).
+    # P0 -> [UC] -> P1: a rolling-horizon MILP over the year that CHOOSES the
+    # commitment of the slow-start clusters (rule 18 physics gate: min-down >
+    # POSTURE_FAST_START_MIN_DOWN_H or start >= POSTURE_FAST_START_STARTUP_PER_MW,
+    # the posture exemption inverted) and enters the scored P1 LP only as
+    # per-unit-hour bounds (ceiling = availability*u/n, floor = mlf*pbar*u,
+    # D-2 id MECH_UC_SCHEDULE = 28). The MILP never prices (rule 4): P1's duals
+    # stay THE prices. It pays start and no-load cost once, in its own
+    # objective, so the amortized P1 start markup is zeroed on its integer
+    # clusters (rule 19); every fast-start class keeps today's markup. It
+    # REPLACES the commitment bridges, the posture family, cc_mustrun_per_plant
+    # and the archived P2 wherever armed -- __post_init__ refuses the stack.
+    # Byte-identical off: the one gated hunk in pipeline/solve.py runs no
+    # statement at False. Every uc_* field is declared here once and never
+    # swept against a gate (GATESPEC section 7 clause 1). GATED CHANGE.
+    unit_commitment_milp: bool = False
+    # DA commitment horizon W (hours kept per window) -- the one-operating-day
+    # horizon every US ISO's DAM commits (constants.DA_COMMITMENT_HORIZON_HOURS,
+    # CAISO tariff section 31.3). Plan section 4 E2.
+    uc_window_hours: int = 24
+    # Look-ahead L beyond W (hours solved, not kept) so a start near the end of
+    # the day sees its payback. Plan section 4 E2 declared value; UC-0 F6 notes
+    # coal UT (36 h) exceeds W + L = 36 h, so a coal ISO's PRECOMMIT may declare
+    # a longer L (DESIGN section 8 R2). W + L <= hours.
+    uc_lookahead_hours: int = 12
+    # HiGHS mip_rel_gap per window: a window stopping on the gap is optimal to
+    # this tolerance. Plan section 4 E4 declared value; numerical, never a fit.
+    uc_mip_rel_gap: float = 1e-3
+    # HiGHS time_limit per window (s). On hit: the incumbent is accepted and
+    # the gap logged; a window with NO incumbent is a hard stop (GATESPEC
+    # section 5 kill). PLACEHOLDER until the ladder prints the wall table --
+    # owner card D-2 re-declares it (DESIGN section 8 R3).
+    uc_window_time_limit_s: float = 600.0
+    # Which clusters carry an integer: "physics" = the rule-18 gate above, the
+    # only admissible value (a second scope is a new PRECOMMIT).
+    uc_integer_scope: str = "physics"
+    # No-load cost identification: "campd_regression" = per-unit OLS intercept
+    # of CAMPD heatInput on grossLoad over online hours (closeout-PJM-decommit
+    # B0; UC-0 F7 R^2 median 0.96-0.99), class-fallback rows where no unit
+    # fits (data/clean/uc-params/<ISO>, derive_uc_cluster_params.py, rule 23).
+    uc_noload_source: str = "campd_regression"
+    # Window boundary treatment: "p0_targets" = storage SOC / cascade pond
+    # levels pinned to the P0 plan (one-sided terminal, state carried from the
+    # previous window), budget-governed units (hydro, oil, coal budgets,
+    # import bands) pinned to their P0 dispatch. DESIGN section 2.2.
+    uc_boundary_mode: str = "p0_targets"
+    # Reachability pre-fixing (plan E5): clusters P0 ran at full output with a
+    # rent margin >= start + window no-load are fixed on; clusters priced above
+    # the window's max P0 dual by a declared margin and idle in P0 are fixed
+    # off. Default OFF until ladder rung L2 proves schedule equality across
+    # arms (DESIGN section 2.3).
+    uc_prefixing: bool = False
 
     def __post_init__(self) -> None:
         # YAML round-trip type repair: YAML has no tuple type, so a config
@@ -24328,6 +24442,68 @@ class ScenarioConfig:
         # gate did not apply, and it drops from the hash on the frozen
         # ``"False"`` drop value -- which keeps those bundles on keys that move
         # only by Act B, exactly like every other config.
+        # MILP unit-commitment stage (lane UC-1; DESIGN section 5; UC-DESK
+        # review of DESIGN b974d2c9, point 2). Rule 19 by refusal, DATA-DRIVEN:
+        # the two tuples UC_REFUSED_ALWAYS / UC_REFUSED_BY_RULING at module
+        # level are the whole refusal set. The hard cases UC-0 section 4 names
+        # (st_gas_mustrun_per_plant, the coal floors, the drags) and its two
+        # "replace" recommendations (cc_mustrun_per_plant,
+        # soco_gas_st_campaign_commitment) are owner card D-5 per ISO: an A/B
+        # lane disarms them in its config delta until a ruling commit extends
+        # UC_REFUSED_BY_RULING. The archived P2 is a solve_and_persist kwarg
+        # (``commitment`` / ``--enable-legacy-p2``), not a field, so it is
+        # refused where it lives (run_calibration_full.enforce_legacy_p2_kwargs).
+        if self.unit_commitment_milp:
+            _armed = [
+                f"{name} ({what})"
+                for name, what in (*UC_REFUSED_ALWAYS, *UC_REFUSED_BY_RULING)
+                if getattr(self, name, False)
+            ]
+            if _armed:
+                raise ValueError(
+                    "unit_commitment_milp REPLACES every commitment bridge and "
+                    "the posture family (rule 19: one mechanism for commitment "
+                    "state; CLAUDE.md 'Dispatch and commitment'); disarm: "
+                    + ", ".join(_armed)
+                )
+            if self.uc_window_hours < 1 or self.uc_window_hours > self.hours:
+                raise ValueError(
+                    "uc_window_hours must be in [1, hours] "
+                    f"(got {self.uc_window_hours}, hours={self.hours})."
+                )
+            if (
+                self.uc_lookahead_hours < 0
+                or self.uc_window_hours + self.uc_lookahead_hours > self.hours
+            ):
+                raise ValueError(
+                    "uc_lookahead_hours must be >= 0 with uc_window_hours + "
+                    f"uc_lookahead_hours <= hours (got {self.uc_lookahead_hours})."
+                )
+            if not (0.0 < self.uc_mip_rel_gap < 1.0):
+                raise ValueError(
+                    f"uc_mip_rel_gap must lie in (0, 1) (got {self.uc_mip_rel_gap})."
+                )
+            if self.uc_window_time_limit_s <= 0.0:
+                raise ValueError(
+                    "uc_window_time_limit_s must be positive "
+                    f"(got {self.uc_window_time_limit_s})."
+                )
+            if self.uc_integer_scope != "physics":
+                raise ValueError(
+                    "uc_integer_scope: 'physics' is the only admissible scope "
+                    f"(got {self.uc_integer_scope!r}); a second scope is a new "
+                    "PRECOMMIT."
+                )
+            if self.uc_noload_source != "campd_regression":
+                raise ValueError(
+                    "uc_noload_source: 'campd_regression' is the only admissible "
+                    f"source (got {self.uc_noload_source!r})."
+                )
+            if self.uc_boundary_mode != "p0_targets":
+                raise ValueError(
+                    "uc_boundary_mode: 'p0_targets' is the only admissible mode "
+                    f"(got {self.uc_boundary_mode!r})."
+                )
 
     @property
     def real_discount_rate(self) -> float:
@@ -25662,6 +25838,19 @@ TIER_TAGS: dict[str, int] = {
     # heat-input identity on Part 75 factors); no free number of its own
     # (rule 21). Backcast-only (rule 13).
     "dual_fuel_measured_oil_burn": 1,
+    # MILP unit-commitment stage (lane UC-1): structural gate and its declared
+    # solver / horizon settings (1); no free number of its own (rule 21) --
+    # every cluster parameter is measured (data/clean/uc-params) or published
+    # (the NREL class tables), never fitted.
+    "unit_commitment_milp": 1,
+    "uc_window_hours": 1,
+    "uc_lookahead_hours": 1,
+    "uc_mip_rel_gap": 1,
+    "uc_window_time_limit_s": 1,
+    "uc_integer_scope": 1,
+    "uc_noload_source": 1,
+    "uc_boundary_mode": 1,
+    "uc_prefixing": 1,
 }
 
 # SweepDefinition (the sweep / named-case-matrix expansion engine) moved

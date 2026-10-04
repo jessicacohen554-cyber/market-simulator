@@ -14,7 +14,7 @@ code diverge, **this set follows the code.**
 
 ## What the simulator is
 
-A pure-LP (no MIP) hourly economic-dispatch and capacity-expansion model for U.S.
+An hourly LP (the only mixed-integer program is the optional, default-off unit-commitment stage of page 9, which never prices) economic-dispatch and capacity-expansion model for U.S.
 ISOs, run forward 2026→2050 with a historical-backcast mode (2021–2025 for
 ERCOT; 2023–2025 for the other multi-year ISOs) for
 calibration. The solver is HiGHS via `highspy`; **prices are recovered as the LP
@@ -37,6 +37,7 @@ authorities and **SOCO** is a single balancing authority. Both registered
 | 6 | [`06-results-and-calibration.md`](06-results-and-calibration.md) | Parquet caching, result serialization, emissions, plant financials, calibration diagnostics |
 | 7 | [`07-runner-and-cli.md`](07-runner-and-cli.md) | Orchestration, CLI subcommands, sweeps, weather ensembles, calibration scripts |
 | 8 | [`08-config-reference.md`](08-config-reference.md) | `ScenarioConfig` field reference, per-ISO topology, the constants catalogue, path resolution |
+| 9 | [`09-unit-commitment.md`](09-unit-commitment.md) | The optional MILP unit-commitment stage (`unit_commitment_milp`, default off): clusters, the rolling window MILP, boundaries, injection as P1 bounds, sidecars, the ladder |
 
 ## The one-paragraph mental model
 
