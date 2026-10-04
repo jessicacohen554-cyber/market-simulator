@@ -16,9 +16,21 @@ import pytest
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data import pjm_elliott_outages as peo
 from market_sim.data.fleet.arrays import _apply_outage_overlays
+from tests.helpers.base import requires_raw
+from tests.helpers.pjm_elliott_fixture import write_fixture_csv
 
 HOURS = 8760
 T0 = 356 * 24  # 23 Dec 2022 00:00 EPT, hour-beginning
+REAL_CSV = peo.RAW_CSV
+
+
+@pytest.fixture(autouse=True)
+def fixture_source(tmp_path, monkeypatch):
+    """Point the loader at the synthetic CSV (no data/raw, no data/clean dependency)."""
+    csv = write_fixture_csv(tmp_path / "figure30_digitised.csv")
+    monkeypatch.setattr(peo, "RAW_CSV", csv)
+    monkeypatch.setattr(peo, "_frame", lambda: peo.build_hourly_frame(csv))
+    return csv
 
 
 def _gen(fuel: str, group: str) -> SimpleNamespace:
@@ -58,8 +70,9 @@ class TestLoader:
         assert g[T0 + 1] == pytest.approx(0.5 * (g[T0] + g[T0 + 2]))
         assert g[T0 + 71] == g[T0 + 70]
 
+    @requires_raw(REAL_CSV)
     def test_peak_matches_the_figure_label(self):
-        f = peo.build_hourly_frame()
+        f = peo.build_hourly_frame(REAL_CSV)
         peak = f[f.hour_of_year == T0 + 24 + 7].forced_outage_mw.sum()
         # labelled 46,124 MW; digitisation tolerance +-1 px per segment (README)
         assert abs(peak - 46_124.0) < 500.0
@@ -91,7 +104,7 @@ class TestApplier:
             want = np.clip(mf - mf[: peo.BASELINE_HOURS].mean(), 0.0, pmax[i])
             got = pmax[i] * (1.0 - a[i, T0 : T0 + 72])
             np.testing.assert_allclose(got, want, atol=1e-6)
-        assert a[0, T0 + 31] < 0.5  # 24 Dec 07:00: ~28 GW of 40 GW gas withdrawn
+        assert a[0, T0 + 31] < 1.0  # 24 Dec 07:00: the fixture's rise is withdrawn
 
     def test_nets_against_the_models_own_rise(self):
         # If the model already carries the whole rise in a fuel, nothing is added.

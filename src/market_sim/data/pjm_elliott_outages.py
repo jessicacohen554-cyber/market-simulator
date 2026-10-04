@@ -58,13 +58,13 @@ def _event_start_row() -> int:
     return int((EVENT_START - pd.Timestamp(f"{EVENT_YEAR}-01-01")) / pd.Timedelta("1h"))
 
 
-def build_hourly_frame(raw_csv: Path = RAW_CSV) -> pd.DataFrame:
+def build_hourly_frame(raw_csv: Path | None = None) -> pd.DataFrame:
     """Return the tidy hourly frame (one row per event hour x fuel) from the raw CSV.
 
     Columns: ``iso``, ``year``, ``hour_of_year``, ``hour_beginning_ept``, ``fuel``,
     ``forced_outage_mw``, ``digitised`` (False for an interpolated or held hour).
     """
-    raw = pd.read_csv(raw_csv)
+    raw = pd.read_csv(RAW_CSV if raw_csv is None else raw_csv)
     t0 = _event_start_row()
     hours = pd.date_range(EVENT_START, periods=EVENT_HOURS, freq="h")
     frames = []
