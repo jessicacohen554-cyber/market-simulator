@@ -1,0 +1,19 @@
+{
+  "id": "2026-10-04-closeout-pjm-elliott",
+  "label": "closeout pjm elliott",
+  "date": "2026-10-04",
+  "shorthand": "closeout-pjm-elliott",
+  "definition": "closeout-PJM-elliott R-64 arm (hourly measured Elliott forced-outage overlay)",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-10-04-closeout-pjm-elliott.js",
+  "bundle": "results/calibration/closeout_pjm_elliott_span"
+}
