@@ -205,6 +205,20 @@ _FAMILY_SETS: dict[str, dict] = {
         "steam": False,
         "eligible": "reserve",
     },
+    # nwpp_ba_contingency_reserve (NWPP-NEXT-28) -> the per-zone BAL-002-WECC
+    # spinning families, drawing gated reserve in EVERY NWPP zone (one family
+    # per zone; the union is all zones). Eligible set = the pergen thermal
+    # members (RESERVE_FUEL_TYPES ∩ ramp10 > 0), the MISO "reserve" bucket
+    # model. Hydro is a gated member in the LP too but carries no CEMS, so
+    # the statistic is measured on the thermal members only (declared in
+    # reserves/spec._nwpp_design).
+    "nwpp_spin": {
+        "iso": "NWPP",
+        "mechanism": "nwpp_ba_contingency_reserve",
+        "zones": None,  # all model zones (one family per zone)
+        "steam": False,
+        "eligible": "reserve",
+    },
 }
 
 # Model fuel types making up the quick-start (10-minute-capable) eligible set —

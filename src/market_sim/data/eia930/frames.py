@@ -949,6 +949,63 @@ def _pool_member_demand(
     return _screen_demand_dropouts(d, ba_code=member, year=year)
 
 
+def _pool_member_net_generation(
+    df: pd.DataFrame, *, pool: str, member: str, year: int
+) -> np.ndarray | None:
+    """Return ONE pool member's hourly net generation exactly as the pool sums it.
+
+    ``Net generation (Adjusted)``; a hole longer than
+    :data:`_HOURLY_FRAME_MAX_GAP` is filled from the member's own fuel columns
+    (:func:`_measured_member_net_generation`) or the pool is refused
+    (``None``, logged at ERROR); shorter holes are interpolated. Shared by
+    :func:`_pool_hourly_frame` and :func:`pool_member_balance_series` so the
+    pool total and its per-member parts cannot drift apart (rule 19).
+    """
+    ng_raw = df["Net generation (Adjusted)"].to_numpy(dtype=float)
+    if _longest_nan_run(ng_raw) > _HOURLY_FRAME_MAX_GAP:
+        ng_raw = _measured_member_net_generation(ng_raw, df, member=member, year=year)
+        if _longest_nan_run(ng_raw) > _HOURLY_FRAME_MAX_GAP:
+            logger.error(
+                "%s pool %d: member %s net generation has a %d h gap "
+                "(> %d h) its fuel columns do not cover -- refusing the pool",
+                pool,
+                year,
+                member,
+                _longest_nan_run(ng_raw),
+                _HOURLY_FRAME_MAX_GAP,
+            )
+            return None
+    ng = pd.Series(ng_raw)
+    return ng.interpolate().bfill().ffill().fillna(0.0).to_numpy(dtype=float)
+
+
+def pool_member_balance_series(
+    pool: str, year: int
+) -> dict[str, tuple[np.ndarray, np.ndarray]] | None:
+    """Return ``{member: (demand, net_generation)}`` on the pool clock, MW.
+
+    The per-member terms :func:`_pool_hourly_frame` sums, built by the same
+    two helpers (:func:`_pool_member_demand`, :func:`_pool_member_net_generation`),
+    so ``sum(demand)`` over the members IS the pool's ``Demand (Adjusted)``.
+    Consumer: the NWPP per-BA BAL-002-WECC contingency requirement
+    (``envelopes.nwpp_ba_contingency_basis``), an obligation each member BA
+    carries on its OWN load and generation. ``None`` when the pool cannot be
+    assembled (the pool frame's own refusal).
+    """
+    members = _pool_member_frames(pool, year)
+    if members is None:
+        return None
+    utc = pd.DatetimeIndex(members[_POOL_CLOCK_BA[pool]]["UTC time"])
+    out: dict[str, tuple[np.ndarray, np.ndarray]] = {}
+    for member, df in members.items():
+        d = _pool_member_demand(df, utc, pool=pool, member=member, year=year)
+        ng = _pool_member_net_generation(df, pool=pool, member=member, year=year)
+        if d is None or ng is None:
+            return None
+        out[member] = (d, ng)
+    return out
+
+
 @lru_cache(maxsize=8)
 def _pool_hourly_frame(pool: str, year: int) -> pd.DataFrame | None:
     """Return a pool region's hourly frame: the UTC-joined sum of its members.
@@ -1022,24 +1079,10 @@ def _pool_hourly_frame(pool: str, year: int) -> pd.DataFrame | None:
         if d is None:
             return None
         demand += d
-        ng_raw = df["Net generation (Adjusted)"].to_numpy(dtype=float)
-        if _longest_nan_run(ng_raw) > _HOURLY_FRAME_MAX_GAP:
-            ng_raw = _measured_member_net_generation(
-                ng_raw, df, member=member, year=year
-            )
-            if _longest_nan_run(ng_raw) > _HOURLY_FRAME_MAX_GAP:
-                logger.error(
-                    "%s pool %d: member %s net generation has a %d h gap "
-                    "(> %d h) its fuel columns do not cover -- refusing the pool",
-                    pool,
-                    year,
-                    member,
-                    _longest_nan_run(ng_raw),
-                    _HOURLY_FRAME_MAX_GAP,
-                )
-                return None
-        ng = pd.Series(ng_raw)
-        net_gen += ng.interpolate().bfill().ffill().fillna(0.0).to_numpy(dtype=float)
+        ng = _pool_member_net_generation(df, pool=pool, member=member, year=year)
+        if ng is None:
+            return None
+        net_gen += ng
     out["Demand forecast"] = sum(
         df["Demand forecast"].to_numpy(dtype=float) for df in members.values()
     )

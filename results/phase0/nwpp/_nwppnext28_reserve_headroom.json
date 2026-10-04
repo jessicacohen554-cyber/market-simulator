@@ -1,0 +1,370 @@
+{
+ "NWPP-NW|2019": {
+  "bas": [
+   "BPAT",
+   "PSEI",
+   "SCL",
+   "TPWR",
+   "CHPD",
+   "DOPD",
+   "GCPD",
+   "AVRN"
+  ],
+  "req_mean_mw": 832.2,
+  "req_p95_mw": 1026.6,
+  "spin_mean_mw": 416.1,
+  "model_online_headroom_mean_mw": 17991.9,
+  "hours_headroom_below_spin": 0,
+  "hours_headroom_below_full": 0,
+  "displaced_twh_spin": 0.0,
+  "displaced_twh_full": 0.0,
+  "cc_loading_excess_twh": 0.029,
+  "campd_cc_online_headroom_mean_mw": 164.9,
+  "campd_headroom_over_req": 0.2
+ },
+ "NWPP-OR|2019": {
+  "bas": [
+   "PGE",
+   "PACW",
+   "GRID"
+  ],
+  "req_mean_mw": 220.6,
+  "req_p95_mw": 279.1,
+  "spin_mean_mw": 110.3,
+  "model_online_headroom_mean_mw": 614.2,
+  "hours_headroom_below_spin": 46,
+  "hours_headroom_below_full": 328,
+  "displaced_twh_spin": 0.001,
+  "displaced_twh_full": 0.022,
+  "cc_loading_excess_twh": -0.111,
+  "campd_cc_online_headroom_mean_mw": 25.2,
+  "campd_headroom_over_req": 0.11
+ },
+ "NWPP-INLAND|2019": {
+  "bas": [
+   "IPCO",
+   "AVA",
+   "NWMT",
+   "WAUW"
+  ],
+  "req_mean_mw": 294.7,
+  "req_p95_mw": 361.0,
+  "spin_mean_mw": 147.3,
+  "model_online_headroom_mean_mw": 2109.9,
+  "hours_headroom_below_spin": 8,
+  "hours_headroom_below_full": 20,
+  "displaced_twh_spin": 0.001,
+  "displaced_twh_full": 0.003,
+  "cc_loading_excess_twh": 0.152,
+  "campd_cc_online_headroom_mean_mw": 24.1,
+  "campd_headroom_over_req": 0.08
+ },
+ "NWPP-EAST|2019": {
+  "bas": [
+   "PACE"
+  ],
+  "req_mean_mw": 329.2,
+  "req_p95_mw": 415.8,
+  "spin_mean_mw": 164.6,
+  "model_online_headroom_mean_mw": 220.3,
+  "hours_headroom_below_spin": 4789,
+  "hours_headroom_below_full": 6651,
+  "displaced_twh_spin": 0.435,
+  "displaced_twh_full": 1.405,
+  "cc_loading_excess_twh": 2.902,
+  "campd_cc_online_headroom_mean_mw": 573.7,
+  "campd_headroom_over_req": 1.74
+ },
+ "NWPP-SNV|2019": {
+  "bas": [
+   "NEVP"
+  ],
+  "req_mean_mw": 236.5,
+  "req_p95_mw": 369.3,
+  "spin_mean_mw": 118.2,
+  "model_online_headroom_mean_mw": 44.4,
+  "hours_headroom_below_spin": 7417,
+  "hours_headroom_below_full": 8386,
+  "displaced_twh_spin": 0.749,
+  "displaced_twh_full": 1.709,
+  "cc_loading_excess_twh": 1.974,
+  "campd_cc_online_headroom_mean_mw": 637.4,
+  "campd_headroom_over_req": 2.7
+ },
+ "NWPP-NW|2023": {
+  "bas": [
+   "BPAT",
+   "PSEI",
+   "SCL",
+   "TPWR",
+   "CHPD",
+   "DOPD",
+   "GCPD",
+   "AVRN"
+  ],
+  "req_mean_mw": 782.3,
+  "req_p95_mw": 985.4,
+  "spin_mean_mw": 391.1,
+  "model_online_headroom_mean_mw": 18844.9,
+  "hours_headroom_below_spin": 0,
+  "hours_headroom_below_full": 0,
+  "displaced_twh_spin": 0.0,
+  "displaced_twh_full": 0.0,
+  "cc_loading_excess_twh": 0.592,
+  "campd_cc_online_headroom_mean_mw": 215.1,
+  "campd_headroom_over_req": 0.27
+ },
+ "NWPP-OR|2023": {
+  "bas": [
+   "PGE",
+   "PACW",
+   "GRID"
+  ],
+  "req_mean_mw": 251.0,
+  "req_p95_mw": 308.3,
+  "spin_mean_mw": 125.5,
+  "model_online_headroom_mean_mw": 630.7,
+  "hours_headroom_below_spin": 66,
+  "hours_headroom_below_full": 368,
+  "displaced_twh_spin": 0.003,
+  "displaced_twh_full": 0.03,
+  "cc_loading_excess_twh": 0.136,
+  "campd_cc_online_headroom_mean_mw": 49.0,
+  "campd_headroom_over_req": 0.2
+ },
+ "NWPP-INLAND|2023": {
+  "bas": [
+   "IPCO",
+   "AVA",
+   "NWMT",
+   "WAUW"
+  ],
+  "req_mean_mw": 292.5,
+  "req_p95_mw": 361.0,
+  "spin_mean_mw": 146.2,
+  "model_online_headroom_mean_mw": 2293.1,
+  "hours_headroom_below_spin": 6,
+  "hours_headroom_below_full": 26,
+  "displaced_twh_spin": 0.001,
+  "displaced_twh_full": 0.003,
+  "cc_loading_excess_twh": 0.214,
+  "campd_cc_online_headroom_mean_mw": 35.8,
+  "campd_headroom_over_req": 0.12
+ },
+ "NWPP-EAST|2023": {
+  "bas": [
+   "PACE"
+  ],
+  "req_mean_mw": 352.7,
+  "req_p95_mw": 447.8,
+  "spin_mean_mw": 176.4,
+  "model_online_headroom_mean_mw": 206.4,
+  "hours_headroom_below_spin": 5148,
+  "hours_headroom_below_full": 6974,
+  "displaced_twh_spin": 0.523,
+  "displaced_twh_full": 1.608,
+  "cc_loading_excess_twh": 0.886,
+  "campd_cc_online_headroom_mean_mw": 459.3,
+  "campd_headroom_over_req": 1.3
+ },
+ "NWPP-SNV|2023": {
+  "bas": [
+   "NEVP"
+  ],
+  "req_mean_mw": 245.4,
+  "req_p95_mw": 362.6,
+  "spin_mean_mw": 122.7,
+  "model_online_headroom_mean_mw": 36.2,
+  "hours_headroom_below_spin": 7783,
+  "hours_headroom_below_full": 8556,
+  "displaced_twh_spin": 0.83,
+  "displaced_twh_full": 1.848,
+  "cc_loading_excess_twh": 2.952,
+  "campd_cc_online_headroom_mean_mw": 803.4,
+  "campd_headroom_over_req": 3.27
+ },
+ "NWPP-NW|2024": {
+  "bas": [
+   "BPAT",
+   "PSEI",
+   "SCL",
+   "TPWR",
+   "CHPD",
+   "DOPD",
+   "GCPD",
+   "AVRN"
+  ],
+  "req_mean_mw": 791.2,
+  "req_p95_mw": 987.5,
+  "spin_mean_mw": 395.6,
+  "model_online_headroom_mean_mw": 18811.9,
+  "hours_headroom_below_spin": 0,
+  "hours_headroom_below_full": 0,
+  "displaced_twh_spin": 0.0,
+  "displaced_twh_full": 0.0,
+  "cc_loading_excess_twh": 0.606,
+  "campd_cc_online_headroom_mean_mw": 228.4,
+  "campd_headroom_over_req": 0.29
+ },
+ "NWPP-OR|2024": {
+  "bas": [
+   "PGE",
+   "PACW",
+   "GRID"
+  ],
+  "req_mean_mw": 257.9,
+  "req_p95_mw": 319.9,
+  "spin_mean_mw": 128.9,
+  "model_online_headroom_mean_mw": 563.6,
+  "hours_headroom_below_spin": 136,
+  "hours_headroom_below_full": 539,
+  "displaced_twh_spin": 0.006,
+  "displaced_twh_full": 0.054,
+  "cc_loading_excess_twh": 0.169,
+  "campd_cc_online_headroom_mean_mw": 54.3,
+  "campd_headroom_over_req": 0.21
+ },
+ "NWPP-INLAND|2024": {
+  "bas": [
+   "IPCO",
+   "AVA",
+   "NWMT",
+   "WAUW"
+  ],
+  "req_mean_mw": 297.7,
+  "req_p95_mw": 369.1,
+  "spin_mean_mw": 148.9,
+  "model_online_headroom_mean_mw": 2251.3,
+  "hours_headroom_below_spin": 14,
+  "hours_headroom_below_full": 27,
+  "displaced_twh_spin": 0.001,
+  "displaced_twh_full": 0.005,
+  "cc_loading_excess_twh": 0.053,
+  "campd_cc_online_headroom_mean_mw": 20.3,
+  "campd_headroom_over_req": 0.07
+ },
+ "NWPP-EAST|2024": {
+  "bas": [
+   "PACE"
+  ],
+  "req_mean_mw": 363.9,
+  "req_p95_mw": 466.6,
+  "spin_mean_mw": 182.0,
+  "model_online_headroom_mean_mw": 101.3,
+  "hours_headroom_below_spin": 7415,
+  "hours_headroom_below_full": 8420,
+  "displaced_twh_spin": 0.861,
+  "displaced_twh_full": 2.321,
+  "cc_loading_excess_twh": 3.301,
+  "campd_cc_online_headroom_mean_mw": 517.3,
+  "campd_headroom_over_req": 1.42
+ },
+ "NWPP-SNV|2024": {
+  "bas": [
+   "NEVP"
+  ],
+  "req_mean_mw": 268.3,
+  "req_p95_mw": 418.7,
+  "spin_mean_mw": 134.2,
+  "model_online_headroom_mean_mw": 29.1,
+  "hours_headroom_below_spin": 8069,
+  "hours_headroom_below_full": 8651,
+  "displaced_twh_spin": 0.964,
+  "displaced_twh_full": 2.101,
+  "cc_loading_excess_twh": 3.336,
+  "campd_cc_online_headroom_mean_mw": 618.8,
+  "campd_headroom_over_req": 2.31
+ },
+ "NWPP-NW|2025": {
+  "bas": [
+   "BPAT",
+   "PSEI",
+   "SCL",
+   "TPWR",
+   "CHPD",
+   "DOPD",
+   "GCPD",
+   "AVRN"
+  ],
+  "req_mean_mw": 805.2,
+  "req_p95_mw": 1021.7,
+  "spin_mean_mw": 402.6,
+  "model_online_headroom_mean_mw": 18226.4,
+  "hours_headroom_below_spin": 0,
+  "hours_headroom_below_full": 0,
+  "displaced_twh_spin": 0.0,
+  "displaced_twh_full": 0.0,
+  "cc_loading_excess_twh": 0.02,
+  "campd_cc_online_headroom_mean_mw": 185.3,
+  "campd_headroom_over_req": 0.23
+ },
+ "NWPP-OR|2025": {
+  "bas": [
+   "PGE",
+   "PACW",
+   "GRID"
+  ],
+  "req_mean_mw": 262.1,
+  "req_p95_mw": 329.2,
+  "spin_mean_mw": 131.1,
+  "model_online_headroom_mean_mw": 485.9,
+  "hours_headroom_below_spin": 306,
+  "hours_headroom_below_full": 1056,
+  "displaced_twh_spin": 0.016,
+  "displaced_twh_full": 0.108,
+  "cc_loading_excess_twh": -0.437,
+  "campd_cc_online_headroom_mean_mw": 75.9,
+  "campd_headroom_over_req": 0.29
+ },
+ "NWPP-INLAND|2025": {
+  "bas": [
+   "IPCO",
+   "AVA",
+   "NWMT",
+   "WAUW"
+  ],
+  "req_mean_mw": 301.5,
+  "req_p95_mw": 379.3,
+  "spin_mean_mw": 150.7,
+  "model_online_headroom_mean_mw": 2272.8,
+  "hours_headroom_below_spin": 18,
+  "hours_headroom_below_full": 39,
+  "displaced_twh_spin": 0.002,
+  "displaced_twh_full": 0.006,
+  "cc_loading_excess_twh": 0.075,
+  "campd_cc_online_headroom_mean_mw": 22.5,
+  "campd_headroom_over_req": 0.07
+ },
+ "NWPP-EAST|2025": {
+  "bas": [
+   "PACE"
+  ],
+  "req_mean_mw": 393.3,
+  "req_p95_mw": 497.9,
+  "spin_mean_mw": 196.7,
+  "model_online_headroom_mean_mw": 97.4,
+  "hours_headroom_below_spin": 7546,
+  "hours_headroom_below_full": 8575,
+  "displaced_twh_spin": 0.998,
+  "displaced_twh_full": 2.601,
+  "cc_loading_excess_twh": 2.996,
+  "campd_cc_online_headroom_mean_mw": 480.7,
+  "campd_headroom_over_req": 1.22
+ },
+ "NWPP-SNV|2025": {
+  "bas": [
+   "NEVP"
+  ],
+  "req_mean_mw": 266.1,
+  "req_p95_mw": 393.8,
+  "spin_mean_mw": 133.0,
+  "model_online_headroom_mean_mw": 30.8,
+  "hours_headroom_below_spin": 7975,
+  "hours_headroom_below_full": 8637,
+  "displaced_twh_spin": 0.948,
+  "displaced_twh_full": 2.069,
+  "cc_loading_excess_twh": 2.268,
+  "campd_cc_online_headroom_mean_mw": 629.2,
+  "campd_headroom_over_req": 2.36
+ }
+}

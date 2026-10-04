@@ -1401,6 +1401,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # different demand array) and hashes distinctly. Registered IN THE SAME
     # COMMIT as the field.
     "nwpp_path76_served_schedule",
+    # NWPP-NEXT-28 per-BA BAL-002-WECC contingency reserve (GATED default
+    # off, NWPP-only, backcast-measured requirement basis): dropped from the
+    # hash at its default so every pre-existing cache key stays byte-stable
+    # (the off path builds no NWPP design); an armed run adds reserve rows, a
+    # different scenario, and hashes distinctly. Registered IN THE SAME
+    # COMMIT as the field.
+    "nwpp_ba_contingency_reserve",
     # pjm-h19 EIA-930 balance-identity demand screen (GATED default off):
     # dropped from the hash at its default so every pre-existing cache key
     # stays byte-stable (the off path never calls the screen); an armed run
@@ -2927,6 +2934,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "nwpp_seam_in_service_vintage": "False",
     # Added by NWPP-NEXT-27 WITH the field (the nyiso-119 discipline).
     "nwpp_path76_served_schedule": "False",
+    # Added by NWPP-NEXT-28 WITH the field (the nyiso-119 discipline).
+    "nwpp_ba_contingency_reserve": "False",
     # Added by pjm-h19 WITH the field (the nyiso-119 discipline).
     "demand_balance_screen": "False",
     # Added by ercot-236 WITH the field, in the same commit as its
@@ -3978,6 +3987,8 @@ def registration_time_default(name: str):
 # us to PREFER, and the offer-curve tuning knobs, which are contained by rule 25
 # and the run_config registry rather than by mode.
 _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
+    # --- measured requirement bases ---
+    "nwpp_ba_contingency_reserve": "measured member-BA EIA-930 load + net generation (BAL-002-WECC requirement basis)",
     # --- measured delivered-fuel prints (that year's receipts/spot series) ---
     "gas_monthly_actuals": "measured EIA-923 ISO-month delivered gas",
     "gas_daily_shape": "measured daily Henry Hub prints",
@@ -21833,6 +21844,22 @@ class ScenarioConfig:
     # the runner refuses the key. envelopes.nwpp_path76_served_zone_legs;
     # FINDING-nwppnext27-cc-conduct-path76-phase0-2026-10-03.md.
     nwpp_path76_served_schedule: bool = False
+    # NWPP-NEXT-28 per-BA contingency reserve (GATED default off, NWPP-only,
+    # backcast-measured requirement, ZERO fitted scalars; owner card
+    # 2026-10-04 "Build reserve, solve"). NWPP clears no AS market; every
+    # member BA holds WECC BAL-002-WECC-2a Contingency Reserve (3 % load + 3 %
+    # net generation, at least half spinning) through the NWPP Reserve
+    # Sharing Group on its own resources. Armed (with energy_reserve_coopt),
+    # reserves/spec._nwpp_design builds per zone a contingency family and a
+    # spinning family over (zone, fuel-class) thermal + hydro pools; spinning
+    # columns are online-gated (CAMPD-measured rho, family set nwpp_spin), so
+    # a zone's online fleet opens headroom for its own obligation instead of
+    # loading every in-the-money CC to its cap (FINDING-nwppnext27 §C).
+    # Shortfall priced at the region's voll (no demand curve exists). Rule 19:
+    # NWPP arms no other reserve, floor or bridge. Forward story: 3 % of
+    # forecast load + 3 % of model generation; not wired, so the runner
+    # refuses the key. FINDING-nwppnext28-ba-reserve-phase0-2026-10-04.md.
+    nwpp_ba_contingency_reserve: bool = False
     # pjm-h19 EIA-930 balance-identity demand repair (GATED default off,
     # ISO-agnostic, ZERO fitted scalars). Repairs an hour whose metered
     # Demand makes an isolated reversal larger than the BA-year's own Tukey
@@ -25279,6 +25306,7 @@ TIER_TAGS: dict[str, int] = {
     "nwpp_served_schedule_zonal_attribution": 1,
     "nwpp_seam_in_service_vintage": 1,
     "nwpp_path76_served_schedule": 1,
+    "nwpp_ba_contingency_reserve": 1,
     "demand_balance_screen": 1,
     "ercot_offer_swcap_clip": 1,
     "ercot_swcap_vintage": 1,

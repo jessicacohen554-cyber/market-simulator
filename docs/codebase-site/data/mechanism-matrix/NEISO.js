@@ -60,6 +60,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     nwpp_served_schedule_zonal_attribution: { cell: "." },
     nwpp_seam_in_service_vintage: { cell: "." },
     nwpp_path76_served_schedule: { cell: "." },
+    nwpp_ba_contingency_reserve: { cell: "." },
     ercot_tie_zonal_interchange: { cell: "." },
     ercot_offer_swcap_clip: { cell: "." },
     ercot_swcap_vintage: { cell: "." },

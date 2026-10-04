@@ -407,6 +407,30 @@ CAISO_AS_SUSTAIN_DURATION_H: float = 0.5
 # (fleet.RAMP10_FRAC_* stay thermal-only for every other ISO).
 CAISO_HYDRO_RAMP10_FRAC: float = 1.0
 
+# --- NWPP per-BA contingency reserve (nwpp_ba_contingency_reserve) ---------
+# WECC Regional Reliability Standard BAL-002-WECC-2a ("Contingency Reserve",
+# NERC standards library): each Reserve Sharing Group or Source Balancing
+# Authority maintains Contingency Reserve of at least the greater of its most
+# severe single contingency or "the sum of three percent of hourly integrated
+# Load plus three percent of hourly integrated generation" (R1), at least
+# half of it as Operating Reserve - Spinning (R2). Published fractions, never
+# fitted (rule 5). The obligation is the NWPP Reserve Sharing Group's; the
+# 3 % + 3 % term (~2.0 GW over the footprint) exceeds any single footprint
+# contingency, so it is the binding branch, and the RSG allocates it to its
+# members, each carrying its share on its own resources. The model holds each
+# member BA's 3 % + 3 % in the member's zone (envelopes.
+# nwpp_ba_contingency_basis). Record: FINDING-nwppnext28-*.md.
+BAL002_WECC_LOAD_FRAC: float = 0.03
+BAL002_WECC_GEN_FRAC: float = 0.03
+BAL002_WECC_SPIN_SHARE: float = 0.5
+# NWPP hydro 10-minute deliverable-ramp fraction of nameplate: the same hydro
+# governor class physics as CAISO_HYDRO_RAMP10_FRAC above (NREL WWSIS-2,
+# NREL/TP-5500-55588 App. H — full nameplate reachable inside the 10-minute
+# window). A separate name because rule 25 keeps every ISO's reserve seam
+# local; the value is class physics, not a tuned number. BPA, Grant, Chelan
+# and Douglas PUD hydro carry the bulk of the NWPP RSG's spinning reserve.
+NWPP_HYDRO_RAMP10_FRAC: float = 1.0
+
 # --- NYISO RCPF products ---------------------------------------------------
 NYISO_RCPF_PRODUCTS: tuple[tuple[str, float, float, float], ...] = (
     ("nyca_30min_total", 2620.0, 1965.0, 750.0),
@@ -997,6 +1021,13 @@ def get_reserve_design(
         )
     if iso == "SPP":
         return _spp_design(config, fleet_arrays, hours, zone_names, sim_year=sim_year)
+    if iso == "NWPP":
+        if not getattr(config, "nwpp_ba_contingency_reserve", False):
+            raise ValueError(
+                "NWPP has no reserve design unless nwpp_ba_contingency_reserve "
+                "is armed (no NWPP AS market; iso_configs._nwpp_config)"
+            )
+        return _nwpp_design(config, fleet_arrays, hours, zone_names, sim_year=sim_year)
     if iso == "SOCO":
         # The Southern Company balancing authority clears NO ancillary-service
         # market: no reserve demand curve, no reserve clearing price, no offer
@@ -4076,23 +4107,43 @@ def caiso_pergen_structure(
     ramp-capability row exists, and the shared thermal ``RAMP10_FRAC``
     tables stay hydro-free for every other ISO).
     """
-    eligible = _caiso_reserve_eligible(fleet_arrays)
+    return _hydro_backfilled_pergen_structure(
+        fleet_arrays,
+        _caiso_reserve_eligible(fleet_arrays),
+        CAISO_HYDRO_RAMP10_FRAC,
+        "caiso_reserve_coopt",
+    )
+
+
+def _hydro_backfilled_pergen_structure(
+    fleet_arrays: FleetArrays,
+    eligible: np.ndarray,
+    hydro_ramp10_frac: float,
+    flag: str,
+) -> tuple[np.ndarray, np.ndarray, int, np.ndarray]:
+    """(zone, fuel-class) pergen pooling with an ISO-local hydro ramp backfill.
+
+    Shared body of :func:`caiso_pergen_structure` and
+    :func:`nwpp_pergen_structure`: hydro carries no entry in the thermal
+    ``fleet.RAMP10_FRAC_BY_*`` tables (and no CEMS ramp record), so a design
+    that admits hydro backfills its 10-minute deliverable ramp as
+    ``hydro_ramp10_frac x pmax`` on the hydro rows its own ``eligible`` mask
+    admits. Members are the eligible rows with a nonzero ramp; ``col`` maps
+    each to its (zone, fuel-class) pool. Returns ``(gen_idx, col, n_r,
+    ramp10)`` with ``ramp10`` the backfilled full-fleet array.
+    """
     ramp10 = getattr(fleet_arrays, "ramp10", None)
     if ramp10 is None:
         raise ValueError(
-            "caiso_reserve_coopt requires FleetArrays.ramp10 (the 10-min "
+            f"{flag} requires FleetArrays.ramp10 (the 10-min "
             "deliverable ramp, fleet._ramp10_capability)"
         )
     ramp10 = np.asarray(ramp10, dtype=float)
-    # Hydro 10-minute deliverable ramp, backfilled ISO-locally: full nameplate
-    # inside the 10-minute window is hydro governor class physics (the
-    # CAISO_HYDRO_RAMP10_FRAC citation block). Only rows the CAISO-local
-    # eligibility mask admits are touched; other ISOs never reach this.
     fuel_names_all = np.array([FUEL_TYPE_NAMES[i] for i in fleet_arrays.fuel_type_idx])
     is_hydro = fuel_names_all == "hydro"
     ramp10 = np.where(
         is_hydro & (ramp10 <= 0.0),
-        CAISO_HYDRO_RAMP10_FRAC * np.asarray(fleet_arrays.pmax, dtype=float),
+        hydro_ramp10_frac * np.asarray(fleet_arrays.pmax, dtype=float),
         ramp10,
     )
     pergen_gen_idx = np.flatnonzero(eligible & (ramp10 > 0.0))
@@ -4688,4 +4739,193 @@ def _spp_design(
         families=families,
         eligible=eligible.reshape(1, -1),
         storage_eligible=False,
+    )
+
+
+# ---- NWPP ------------------------------------------------------------------
+
+
+def _nwpp_reserve_eligible(fleet_arrays: FleetArrays) -> np.ndarray:
+    """NWPP-local reserve-eligibility mask ``(n_gen,)``: thermal plus hydro.
+
+    The shared thermal mask (:data:`RESERVE_FUEL_TYPES`) plus hydro, the
+    :func:`_caiso_reserve_eligible` seam kept ISO-local (rule 25): the NWPP
+    Reserve Sharing Group's spinning reserve is carried mostly on federal and
+    PUD hydro, so a thermal-only set would force the NW zone's obligation onto
+    its few CCs. Held (undeployed) reserve spends no water, so the hydro energy
+    budget and the reserve headroom compose.
+    """
+    fuel_names = np.array([FUEL_TYPE_NAMES[i] for i in fleet_arrays.fuel_type_idx])
+    return _reserve_eligible(fleet_arrays) | (fuel_names == "hydro")
+
+
+def nwpp_pergen_structure(
+    fleet_arrays: FleetArrays,
+) -> tuple[np.ndarray, np.ndarray, int, np.ndarray]:
+    """NWPP pergen reserve-pool structure ``(gen_idx, col, n_r, ramp10)``.
+
+    (zone, fuel-class) pools over :func:`_nwpp_reserve_eligible` with the hydro
+    ramp backfilled from :data:`NWPP_HYDRO_RAMP10_FRAC`
+    (:func:`_hydro_backfilled_pergen_structure`).
+    """
+    return _hydro_backfilled_pergen_structure(
+        fleet_arrays,
+        _nwpp_reserve_eligible(fleet_arrays),
+        NWPP_HYDRO_RAMP10_FRAC,
+        "nwpp_ba_contingency_reserve",
+    )
+
+
+def _nwpp_design(
+    config,
+    fleet_arrays: FleetArrays,
+    hours: int,
+    zone_names: list[str],
+    *,
+    sim_year: int | None = None,
+    basis_mw: tuple[np.ndarray, np.ndarray] | None = None,
+) -> ReserveDesign:
+    """NWPP per-BA BAL-002-WECC contingency reserve (``nwpp_ba_contingency_reserve``).
+
+    NWPP clears no ancillary-service market: each member BA (through the NWPP
+    Reserve Sharing Group) holds BAL-002-WECC-2a Contingency Reserve on its own
+    resources. Per model zone ``z`` two families, both requirements measured
+    per member BA and summed over the zone's members:
+
+    * ``nwpp_<z>_contingency`` — ``3 % load + 3 % net generation``
+      (:data:`BAL002_WECC_LOAD_FRAC`, :data:`BAL002_WECC_GEN_FRAC`), drawing
+      the zone's SPINNING columns plus the OFFLINE-capable columns of its
+      quick-start (gas CT, oil) and hydro pools;
+    * ``nwpp_<z>_spin`` — :data:`BAL002_WECC_SPIN_SHARE` of it, drawing the
+      zone's spinning columns only.
+
+    Layout (the MISO ``miso_reserve_online_gated`` pergen product split): one
+    (zone, fuel-class) pool per thermal/hydro class (:func:`nwpp_pergen_structure`),
+    each with a GATED spinning column and an UNGATED offline column sharing
+    the pool's joint ``ΣP + R <= Σcap`` row and its 10-minute deliverable
+    ramp. The gated column also carries ``R − rho·ΣP <= 0``: idle capacity
+    backs no spinning reserve, so an energy-loaded CC fleet must open
+    headroom (or other online units must) to carry the spinning half. That is
+    the mechanism: the zone's own fleet holds its own obligation instead of
+    loading every in-the-money CC to its cap (FINDING-nwppnext27 §C).
+    ``rho`` is the CAMPD-measured as-operated statistic of the NWPP thermal
+    members (``data.online_reserve_rho``, family set ``nwpp_spin``); hydro has
+    no CEMS record and shares it (conservative: hydro's synchronised headroom
+    per MW online is larger).
+
+    No demand curve exists (no NWPP AS market, no published ORDC): a shortfall
+    is priced at the region's registered ``voll`` in one step as wide as the
+    family's peak requirement — the requirement is a hard compliance
+    obligation, priced like unserved energy, adding no number (rule 5).
+    Storage is not eligible (declared). Rule 19: NWPP arms no other reserve,
+    floor or commitment bridge, so this family replaces and stacks on nothing.
+
+    Backcast only (rule 13 test passes — the requirement is a function of load
+    and generation, forward-producible — but the forward generation term is not
+    wired; a forecast run refuses the key rather than reading a measured year).
+
+    Args:
+        config: ScenarioConfig-like (``iso == "NWPP"``, ``voll``, ``mode``).
+        fleet_arrays: The vectorized fleet.
+        hours: LP horizon ``T``.
+        zone_names: Zone names in ``zone_idx`` order.
+        sim_year: The solve year.
+        basis_mw: Optional ``(load, net_generation)`` pair of ``(n_zones, >=T)``
+            MW arrays for tests; ``None`` reads
+            :func:`~market_sim.data.eia930.envelopes.nwpp_ba_contingency_basis`.
+    """
+    _require_backcast_measured(
+        config,
+        "nwpp_ba_contingency_reserve",
+        "the member BAs' EIA-930 load + net generation (BAL-002-WECC basis)",
+    )
+    T = int(hours)
+    year = _reserve_solve_year(config, sim_year)
+    n_zones = len(zone_names)
+    if basis_mw is None:
+        from market_sim.data.eia930.envelopes import nwpp_ba_contingency_basis
+
+        basis_mw = nwpp_ba_contingency_basis(year, list(zone_names))
+    load, gen = (np.asarray(a, dtype=float)[:, :T] for a in basis_mw)
+    req = BAL002_WECC_LOAD_FRAC * load + BAL002_WECC_GEN_FRAC * gen  # (n_zones, T)
+
+    gen_idx, col, n_r, ramp10 = nwpp_pergen_structure(fleet_arrays)
+    eligible = _nwpp_reserve_eligible(fleet_arrays)
+    if n_r == 0:
+        raise ValueError("nwpp_ba_contingency_reserve: no reserve-eligible pool")
+    avail = np.asarray(fleet_arrays.availability, dtype=float)[gen_idx]
+    if avail.ndim == 1:
+        avail = np.repeat(avail[:, None], T, axis=1)
+    member_ramp_t = ramp10[gen_idx][:, np.newaxis] * avail[:, :T]
+    col_ramp10 = np.zeros((n_r, T), dtype=float)
+    np.add.at(col_ramp10, col, member_ramp_t)
+    del member_ramp_t
+
+    pool_zone = np.zeros(n_r, dtype=int)
+    pool_zone[col] = np.asarray(fleet_arrays.zone_idx, dtype=int)[gen_idx]
+    pool_fuel = np.full(n_r, "", dtype=object)
+    pool_fuel[col] = np.array([FUEL_TYPE_NAMES[i] for i in fleet_arrays.fuel_type_idx])[
+        gen_idx
+    ]
+    offline_ok = np.isin(pool_fuel.astype(str), sorted(QUICK_START_FUEL_TYPES | {"hydro"}))
+
+    voll = float(config.voll)
+    families: list[ReserveFamily] = []
+    masks: list[np.ndarray] = []
+    for z, zone in enumerate(zone_names):
+        if not req[z].any():
+            continue  # no member BA (an external seam node)
+        in_zone = pool_zone == z
+        if not in_zone.any():
+            raise ValueError(
+                f"nwpp_ba_contingency_reserve: zone {zone} carries a requirement "
+                "but no reserve-eligible pool"
+            )
+        zone_mask = np.zeros(n_zones, dtype=bool)
+        zone_mask[z] = True
+        for name, r, cmask in (
+            ("contingency", req[z], np.concatenate([in_zone, in_zone & offline_ok])),
+            (
+                "spin",
+                BAL002_WECC_SPIN_SHARE * req[z],
+                np.concatenate([in_zone, np.zeros(n_r, dtype=bool)]),
+            ),
+        ):
+            families.append(
+                ReserveFamily(
+                    name=f"nwpp_{zone}_{name}",
+                    requirement=r.astype(float),
+                    zone_mask=zone_mask,
+                    ordc_penalties=np.array([voll]),
+                    ordc_step_widths=np.array([float(r.max())]),
+                    reserve_class=0,
+                )
+            )
+            masks.append(cmask)
+    online_rho = _identified_online_rho(
+        fleet_arrays, gen_idx, iso="NWPP", family_set="nwpp_spin"
+    )
+    logger.info(
+        "NWPP %d BAL-002-WECC contingency reserve: %d families over %d pools, "
+        "rho %.4f, requirement mean MW %s",
+        year,
+        len(families),
+        n_r,
+        online_rho,
+        {zone_names[z]: round(float(req[z].mean()), 1) for z in range(n_zones) if req[z].any()},
+    )
+    return ReserveDesign(
+        families=families,
+        eligible=eligible.reshape(1, -1),
+        storage_eligible=False,
+        pergen_gen_idx=gen_idx,
+        pergen_col=col.astype(int),
+        pergen_ramp10=np.vstack([col_ramp10, col_ramp10]),
+        pergen_col_pool=np.tile(np.arange(n_r, dtype=int), 2),
+        balance_col_mask=np.stack(masks, axis=0),
+        pergen_online_gated_cols=np.concatenate(
+            [np.ones(n_r, dtype=bool), np.zeros(n_r, dtype=bool)]
+        ),
+        online_rho=online_rho,
+        pergen_pool_ramp10=col_ramp10,
     )

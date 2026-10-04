@@ -522,6 +522,14 @@ def _hindcast_measured_demand(
             "nwpp_seam_in_service_vintage is a backcast calibration key "
             "(scripts/run_calibration.py); the runner does not build its seam cap"
         )
+    if getattr(config, "nwpp_ba_contingency_reserve", False):
+        # NWPP-NEXT-28: the BAL-002-WECC requirement reads the member BAs'
+        # measured EIA-930 load + net generation; the forward generation term
+        # is not wired (reserves/spec._nwpp_design).
+        raise ValueError(
+            "nwpp_ba_contingency_reserve is a backcast calibration key "
+            "(scripts/run_calibration.py); its forward requirement basis is not wired"
+        )
     if getattr(config, "nwpp_path76_served_schedule", False):
         # NWPP-NEXT-27: the Path 76 served leg rides the priced-seam served
         # schedule, which only scripts/run_calibration.run_year builds.

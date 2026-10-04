@@ -2723,6 +2723,58 @@ def nwpp_path76_served_zone_legs(
     return out
 
 
+def nwpp_ba_contingency_basis(
+    year: int, zone_names: list[str]
+) -> tuple[np.ndarray, np.ndarray]:
+    """Return each zone's BAL-002-WECC basis ``(load, net_generation)``, ``(n_zones, 8760)`` MW each.
+
+    NWPP-NEXT-28 (``ScenarioConfig.nwpp_ba_contingency_reserve``). WECC
+    Regional Reliability Standard BAL-002-WECC-2a R1 sets each balancing
+    authority's (or reserve-sharing group member's) Contingency Reserve at no
+    less than 3 % of its hourly integrated load plus 3 % of its hourly
+    integrated net generation; this returns the two terms per model zone,
+    ``Σ_{member BA b in z} max(D_b, 0)`` and ``Σ_b max(NG_b, 0)``, from the
+    members' own EIA-930
+    ``Demand (Adjusted)`` / ``Net generation (Adjusted)`` exactly as the pool
+    sums them (:func:`~market_sim.data.eia930.frames.pool_member_balance_series`).
+    The caller applies the published fractions. Zero free parameters: the
+    member-to-zone map is :data:`~market_sim.data.zone_assignment._NWPP_BA_ZONES`
+    and the series are measured. Generation-only members (AVRN, GRID) carry
+    their generation term (each is a BA with its own obligation).
+
+    Raises:
+        ValueError: When the pool cannot be assembled for the year, or a
+            member's zone is not a model zone (fail closed: a zone silently
+            missing its members' requirement would under-hold reserve).
+    """
+    from market_sim.data.zone_assignment import _NWPP_BA_ZONES
+
+    from .frames import pool_member_balance_series
+
+    series = pool_member_balance_series("NWPP", year)
+    if series is None:
+        raise ValueError(f"NWPP {year}: member balance series cannot be assembled")
+    zone_idx = {z: i for i, z in enumerate(zone_names)}
+    load = np.zeros((len(zone_names), HOURS_PER_YEAR), dtype=float)
+    gen = np.zeros_like(load)
+    for member, (d, ng) in series.items():
+        zone = _NWPP_BA_ZONES[member]
+        if zone not in zone_idx:
+            raise ValueError(f"NWPP member {member} zone {zone} is not a model zone")
+        load[zone_idx[zone]] += np.clip(d[:HOURS_PER_YEAR], 0.0, None)
+        gen[zone_idx[zone]] += np.clip(ng[:HOURS_PER_YEAR], 0.0, None)
+    logger.info(
+        "NWPP %d BAL-002-WECC basis (GW mean load / net generation): %s",
+        year,
+        {
+            z: (round(float(load[i].mean()) / 1e3, 2), round(float(gen[i].mean()) / 1e3, 2))
+            for z, i in zone_idx.items()
+            if load[i].any() or gen[i].any()
+        },
+    )
+    return load, gen
+
+
 def soco_net_interchange(year: int) -> np.ndarray | None:
     """Return SOCO's hourly net export (MW, export-positive), or ``None``.
 

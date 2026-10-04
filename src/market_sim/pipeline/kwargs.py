@@ -335,6 +335,15 @@ def apply_reserve_coopt(
         The ``ReserveDesign`` merged in, or ``None`` when gated off.
     """
     iso = str(config.iso)
+    if getattr(config, "nwpp_ba_contingency_reserve", False):
+        # NWPP-NEXT-28: the key builds its design through this seam only;
+        # armed without the co-opt gate it would be silently inert.
+        if iso != "NWPP":
+            raise ValueError("nwpp_ba_contingency_reserve is NWPP-only")
+        if not getattr(config, "energy_reserve_coopt", False):
+            raise ValueError(
+                "nwpp_ba_contingency_reserve requires energy_reserve_coopt=True"
+            )
     if not getattr(config, "energy_reserve_coopt", False):
         return None
     # CAISO's reserve design (reserve_config._caiso_design) is gated behind its
