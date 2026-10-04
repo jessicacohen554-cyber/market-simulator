@@ -522,6 +522,13 @@ def _hindcast_measured_demand(
             "nwpp_seam_in_service_vintage is a backcast calibration key "
             "(scripts/run_calibration.py); the runner does not build its seam cap"
         )
+    if getattr(config, "nwpp_path76_served_schedule", False):
+        # NWPP-NEXT-27: the Path 76 served leg rides the priced-seam served
+        # schedule, which only scripts/run_calibration.run_year builds.
+        raise ValueError(
+            "nwpp_path76_served_schedule is a backcast calibration key "
+            "(scripts/run_calibration.py); the runner has no served schedule"
+        )
     demand = load_demand(
         iso,
         year,

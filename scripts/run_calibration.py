@@ -3483,6 +3483,7 @@ def run_year(
                 config.nwpp_served_schedule_zonal_attribution
             ),
             nwpp_seam_in_service_vintage=config.nwpp_seam_in_service_vintage,
+            nwpp_path76_served_schedule=config.nwpp_path76_served_schedule,
         )
     wind_cf, wind_cap, solar_cf, solar_cap = load_renewable_profiles(
         iso, year, iso_config, config

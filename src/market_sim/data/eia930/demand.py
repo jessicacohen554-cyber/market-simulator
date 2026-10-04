@@ -1216,6 +1216,7 @@ def load_demand(
     caiso_tac_shares_standard_time: bool = False,
     nwpp_served_schedule_zonal_attribution: bool = False,
     nwpp_seam_in_service_vintage: bool = False,
+    nwpp_path76_served_schedule: bool = False,
 ) -> np.ndarray:
     """Load hourly ISO demand and allocate it across zones.
 
@@ -1325,6 +1326,12 @@ def load_demand(
             see :func:`~market_sim.data.eia930.envelopes.
             nwpp_seam_priced_hours`). Raises when armed outside that path.
             Default ``False`` is byte-identical.
+        nwpp_path76_served_schedule: NWPP only, under
+            ``nwpp_served_schedule_zonal_attribution`` — serve the measured
+            NEVP<->BPAT leg (WECC Path 76) at SNV and NW instead of pricing the
+            link (NWPP-NEXT-27; see :func:`~market_sim.data.eia930.envelopes.
+            nwpp_path76_served_zone_legs`). Column sums are unchanged. Raises
+            when armed outside that path. Default ``False`` is byte-identical.
         demand_balance_screen: repair isolated demand readings that break the
             EIA-930 balance identity (pjm-h19; see
             :func:`_screen_demand_balance`). Applied to the frame-sourced
@@ -1529,6 +1536,11 @@ def load_demand(
                 year,
                 float(zone_interchange.sum(axis=0).mean()),
             )
+    if nwpp_path76_served_schedule and not nwpp_served_schedule_zonal_attribution:
+        raise ValueError(
+            "nwpp_path76_served_schedule places the NEVP<->BPAT leg through the "
+            "zonal served schedule: arm nwpp_served_schedule_zonal_attribution"
+        )
     if nwpp_served_schedule_zonal_attribution:
         # NWPP-NEXT-25: the served schedule's measured legs at their
         # reporting member's zone; the remainder keeps the load-share spread,
@@ -1545,6 +1557,7 @@ def load_demand(
             interchange,
             np.asarray(weights),
             seam_in_service_vintage=nwpp_seam_in_service_vintage,
+            path76_served=nwpp_path76_served_schedule,
         )
         logger.info(
             "NWPP served schedule placed by reporting member for %d: %+.0f MW "
