@@ -41,6 +41,19 @@
       return !!(keeper.frontier && keeper.frontier.declared && !keeper.frontier.withdrawn);
     }
 
+    /** Is the live frontier block a set of owner-signed ROWS (scope "rows",
+        owner ruling R-66, 2026-10-04) rather than an ISO-level "frontier
+        achieved" declaration? Signed rows document scored FAILs and never
+        change the headline: no CALIBRATED upgrade, a distinct badge. */
+    function frontierRowsOnly(keeper) {
+      return frontierActive(keeper) && keeper.frontier.scope === 'rows';
+    }
+
+    /** Badge label for a live frontier block. */
+    function frontierBadge(keeper) {
+      return frontierRowsOnly(keeper) ? 'FRONTIER ROWS' : 'FRONTIER';
+    }
+
     /** Determination as displayed. When frontier is live, a CALIBRATED-WITH-
         CAVEATS keeper is shown as the clean "CALIBRATED" headline — the
         remaining misses are the owner-declared, research-backed representation-
@@ -50,7 +63,7 @@
         caveat, so an ISO with any undocumented FAIL still reads NOT YET. */
     function effectiveDet(keeper) {
       const det = keeper.determination;
-      if (frontierActive(keeper) && det && det.toUpperCase().includes('CAVEAT')) {
+      if (frontierActive(keeper) && !frontierRowsOnly(keeper) && det && det.toUpperCase().includes('CAVEAT')) {
         return 'CALIBRATED';
       }
       return det;
@@ -184,7 +197,7 @@
           <div class="cs-card-header">
             <span class="cs-iso-name" style="color: var(${colorVar})">${esc(keeper.iso)}</span>
             <span class="cs-badges">
-              ${frontierActive(keeper) ? `<span class="cs-badge det-frontier" title="Frontier achieved ${esc(keeper.frontier.declared || '')}">FRONTIER</span>` : ''}
+              ${frontierActive(keeper) ? `<span class="cs-badge det-frontier" title="${frontierRowsOnly(keeper) ? 'Frontier rows signed' : 'Frontier achieved'} ${esc(keeper.frontier.declared || '')}">${frontierBadge(keeper)}</span>` : ''}
               <span class="cs-badge ${dc}">${detLabel(effectiveDet(keeper))}</span>
             </span>
           </div>`;
@@ -290,7 +303,7 @@
         <div class="cs-results-header">
           <span class="cs-iso-name" style="color: var(${colorVar})">${esc(keeper.iso)}</span>
           <span class="cs-badges">
-            ${frontierActive(keeper) ? `<span class="cs-badge det-frontier">FRONTIER${keeper.frontier.declared ? ' ' + esc(keeper.frontier.declared) : ''}</span>` : ''}
+            ${frontierActive(keeper) ? `<span class="cs-badge det-frontier">${frontierBadge(keeper)}${keeper.frontier.declared ? ' ' + esc(keeper.frontier.declared) : ''}</span>` : ''}
             <span class="cs-badge ${dc}">${detLabel(effectiveDet(keeper))}</span>
           </span>
         </div>`;
@@ -402,6 +415,12 @@
       }
       if (frontierActive(keeper) && keeper.frontier.note) {
         notes.push(`<p><strong>Frontier ${esc(keeper.frontier.declared || '')}.</strong> ${esc(keeper.frontier.note)}</p>`);
+      }
+      if (frontierRowsOnly(keeper) && (keeper.frontier.rows || []).length) {
+        const rows = keeper.frontier.rows.map((r) => `<li><strong>${esc(r.id || '')} ${esc(r.criterion || '')} ${esc((r.years || []).join(', '))}
+          &mdash; ${esc(r.class || '')}.</strong> ${esc(r.magnitude || '')}. ${esc(r.object || '')}
+          <em>Re-opens on:</em> ${esc(r.reopen || '')}</li>`).join('');
+        notes.push(`<ul style="margin:4px 0 0 18px">${rows}</ul>`);
       }
       if (keeper.frontier_touchpoint && keeper.frontier_touchpoint.note) {
         const ft = keeper.frontier_touchpoint;

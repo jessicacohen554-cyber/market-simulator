@@ -2213,3 +2213,12 @@ same-year measured form (owner R-49). Zero fitted parameters. The determination 
 **Open residual:** CC_REGULAR 2019. The take floor fixes how much coal Barry and Crist burn. It does not fix when: the
 perfect-foresight LP burns the obligated coal against CT and PRB coal rather than night-time CC. Records are in
 `docs/records/soco/closeout-soco-3/`.
+
+## closeout-frontier-sign — 2026-10-04 — SOCO C1 CC_REGULAR 2019 signed DATA-LIMITED (zero LP, determination unchanged NOT-YET)
+
+- **Ruling.** Owner ruling R-66 (2026-10-04, decision card), verbatim: "Sign as frontier rows (Recommended)". Card text: "One desk lane writes the frontier text per ISO from the lanes' findings into each keeper's frontier/ledger record. No determination changes; re-opens only on new evidence." With R-65 (downloads), verbatim: "None right now": every row that waits on an owner download is signed DATA-LIMITED with its named re-open source.
+- **Where.** `frontend/data/backcast/keepers/SOCO.json` `frontier` (scope `rows`, declared 2026-10-04) on keeper `2026-10-03-closeout-soco-3-coalpile`. Nothing is written to the keeper attestation; the status part changes only by the embedded frontier block.
+- **Effect.** Record only: rubric v3.20 ledgers C3c alone, so each row documents its FAIL and reclassifies nothing. Every criterion keeps its scored magnitude. The Calibration Status page shows a FRONTIER ROWS badge and never upgrades the headline.
+- **Rows:**
+  - **SOCO-F1 — C1 2019, DATA-LIMITED.** CC_REGULAR +3.97 TWh, share +3.2 pp (share out of band), FAIL. When the obligated coal burns. The measured take-or-pay coal pile (R-49, promoted R-54) fixes how much coal Barry and Crist burn but not when: the perfect-foresight LP burns the obligated coal against CT and PRB coal rather than night-time CC. *Levers:* SOCO shard: coal_monthly_pile_measured_receipts K (the R-49 measured pile); coal_plant_monthly_pricing U and coal_marginal_replacement_pricing not built (K3); coal_captive_marginal_fuel_price U (near-inert: one plant-year mixes captive receipts); tranche_startup_amortization G. *Re-opens on:* Georgia PSC fuel cost recovery (FCR) or Alabama PSC energy cost recovery (ECR) fuel testimony (plan §4 item 17).
+- **Record:** `docs/records/governance/closeout-2026-10/RESULT-closeout-frontier-sign-2026-10-04.md`.

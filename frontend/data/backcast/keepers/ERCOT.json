@@ -1,6 +1,43 @@
 {
   "iso": "ERCOT",
   "keeper": "2026-10-02-closeout-l1-coal-fuel",
+  "frontier": {
+    "declared": "2026-10-04",
+    "scope": "rows",
+    "ruling": "Owner ruling R-66 (2026-10-04, decision card), verbatim: \"Sign as frontier rows (Recommended)\". Card text: \"One desk lane writes the frontier text per ISO from the lanes' findings into each keeper's frontier/ledger record. No determination changes; re-opens only on new evidence.\" With R-65 (downloads), verbatim: \"None right now\": every row that waits on an owner download is signed DATA-LIMITED with its named re-open source.",
+    "note": "SIGNED FRONTIER ROWS, not an ISO-level 'frontier achieved' declaration. Each row documents a scored FAIL on keeper 2026-10-02-closeout-l1-coal-fuel; it reclassifies nothing. Rubric v3.20 ledgers C3c alone (calibration_verdict.LEDGERABLE_CRITERIA), so a signed C1/C3a/C3b/C4 row is record only, every criterion keeps reporting its own magnitude, and ERCOT stays NOT-YET. Nothing here is written to the keeper's calibration_attestation.json. A row re-opens only on the new evidence it names; a later keeper that PASSes the row makes it inert. Signed by lane closeout-frontier-sign (zero LP).",
+    "rows": [
+      {
+        "id": "ERCOT-F1",
+        "criterion": "C1 + C3b",
+        "years": [
+          2019,
+          2020
+        ],
+        "magnitude": "C1 CC_REGULAR +9.21 / +10.17 TWh, COAL_PRB -10.79 / -11.85 TWh; C3b NRMSE 0.216 / 0.208; all FAIL",
+        "class": "DATA-LIMITED",
+        "object": "2019/20 coal offer conduct: the keeper under-runs PRB/lignite coal and over-runs CC because the coal offer level of those years cannot be identified per plant from free data.",
+        "evidence": "R-32 ('Both rows data-limited', closeout-ERCOT-2, PR #7093): the R-25 DAM-proxy census failed its adequacy bar (coal DAM curves cover 9-11 % of online hours; Parish, Limestone, Oak Grove and Major Oak never offer in DAM; bias +$8.08 / -$10.35). closeout-ERCOT-w2 FINDING \u00a71 (queue exhausted) and \u00a7\u00a72-3 (the 1.0 GW Decker Creek ST1/ST2 + DeCordova CT1-4 membership gap; its static reach worsens 2019 C3a and 2024 C3b, which points to a compensating error in 2019/20/22 summer price formation).",
+        "levers": "ERCOT shard: coal_offer_level_rebasis R; coal_monthly_pile_measured_receipts K (the L1 coal fuel ceiling, in the keeper); coal_plant_monthly_pricing K; coal_passthrough_sigmoids K.",
+        "why": "The per-plant coal offer tables that would size the conduct are behind the R-7 account intake, deferred under R-17 / R-65; the free proxy is inadequate.",
+        "reopen": "R-7 intake: G1 NP3-965 SCED coal TPO 2019-01 to 2022-12 and G3 NP6-576-ER (60-day SCED/DAM); or the Q5 ERCOT-CSV migration (D-P2) paired with a compensating-error lane."
+      },
+      {
+        "id": "ERCOT-F2",
+        "criterion": "C3a",
+        "years": [
+          2024
+        ],
+        "magnitude": "-11.3 %, FAIL",
+        "class": "DATA-LIMITED",
+        "object": "Intra-zone West LZ basis: the 2024 premium is an intra-West Permian load pocket, not the West seam.",
+        "evidence": "R-32; closeout-ERCOT-w2 FINDING \u00a71 (step 2 L2 census FAILED: NP6-86 seam-bind cover 0.7-14.2 % of the > $5 premium hours against a >= 70 % bar; step 3 asymmetric West import link NOT CHARTERED).",
+        "levers": "ERCOT shard: internal_congestion_split G (the sub-zonal split is refused; a West import link would be it under another name).",
+        "why": "The pocket cannot be identified from the zonal data on disk; the SCED/DAM records that would locate it are behind R-7.",
+        "reopen": "R-7 intake (G1 + G3); or the Q5 ERCOT-CSV migration paired with a compensating-error lane."
+      }
+    ]
+  },
   "standing_note": {
     "declared": "2026-08-26",
     "signature": "X-2 SIGNED (owner, by dispatch of REPORTING-TEXT-1, 2026-08-16) \u2014 card X item X-2, Door C of docs/records/ercot/ASSESSMENT-ercot209-2023-scarcity-calibration-path-2026-08-15.md \u00a73. Reporting surface only: the determination, the rubric constants (LEDGERABLE_CRITERIA, MAX_LEDGERED_CAVEATS, the v3.0 tier guard), the C3c ledger and every scored number are UNTOUCHED, and the misses keep reporting at full magnitude. NOT a signature of R-B's rubric half; Q-B FINAL (DECISION-CARD-ercot189) and R-A (DECISION-CARD-ercot193) are cited and unchanged.",

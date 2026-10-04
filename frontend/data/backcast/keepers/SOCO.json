@@ -1,6 +1,28 @@
 {
  "iso": "SOCO",
  "keeper": "2026-10-03-closeout-soco-3-coalpile",
+ "frontier": {
+  "declared": "2026-10-04",
+  "scope": "rows",
+  "ruling": "Owner ruling R-66 (2026-10-04, decision card), verbatim: \"Sign as frontier rows (Recommended)\". Card text: \"One desk lane writes the frontier text per ISO from the lanes' findings into each keeper's frontier/ledger record. No determination changes; re-opens only on new evidence.\" With R-65 (downloads), verbatim: \"None right now\": every row that waits on an owner download is signed DATA-LIMITED with its named re-open source.",
+  "note": "SIGNED FRONTIER ROWS, not an ISO-level 'frontier achieved' declaration. Each row documents a scored FAIL on keeper 2026-10-03-closeout-soco-3-coalpile; it reclassifies nothing. Rubric v3.20 ledgers C3c alone (calibration_verdict.LEDGERABLE_CRITERIA), so a signed C1/C3a/C3b/C4 row is record only, every criterion keeps reporting its own magnitude, and SOCO stays NOT-YET. Nothing here is written to the keeper's calibration_attestation.json. A row re-opens only on the new evidence it names; a later keeper that PASSes the row makes it inert. Signed by lane closeout-frontier-sign (zero LP).",
+  "rows": [
+   {
+    "id": "SOCO-F1",
+    "criterion": "C1",
+    "years": [
+     2019
+    ],
+    "magnitude": "CC_REGULAR +3.97 TWh, share +3.2 pp (share out of band), FAIL",
+    "class": "DATA-LIMITED",
+    "object": "When the obligated coal burns. The measured take-or-pay coal pile (R-49, promoted R-54) fixes how much coal Barry and Crist burn but not when: the perfect-foresight LP burns the obligated coal against CT and PRB coal rather than night-time CC.",
+    "evidence": "closeout-SOCO-3 (R-45 'fix the coal offer ... take or pay contracts', R-49, R-54); closeout-SOCO-w2 FINDING (L1 coal at same-month Page-5 spot NOT CHARTERED: K3 trips, CC_REGULAR 2019 stays +3.2 pp on both forms; spot lots are a minority of receipts; the captive sibling is near-inert in SOCO).",
+    "levers": "SOCO shard: coal_monthly_pile_measured_receipts K (the R-49 measured pile); coal_plant_monthly_pricing U and coal_marginal_replacement_pricing not built (K3); coal_captive_marginal_fuel_price U (near-inert: one plant-year mixes captive receipts); tranche_startup_amortization G.",
+    "why": "The dispatch order of contract coal under vertically integrated ownership is set by the utilities' fuel procurement and burn plans, which are not in any public series on disk.",
+    "reopen": "Georgia PSC fuel cost recovery (FCR) or Alabama PSC energy cost recovery (ECR) fuel testimony (plan \u00a74 item 17)."
+   }
+  ]
+ },
  "note": "SOCO measured take-or-pay coal pile (R-49/R-54); CC_REGULAR 2019 remains the open residual",
  "keeper_at_promotion_soco53": "2026-09-16-soco-1-baseline",
  "superseded": {
