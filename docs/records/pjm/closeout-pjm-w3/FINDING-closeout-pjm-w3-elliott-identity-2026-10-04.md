@@ -68,3 +68,23 @@ so in the hours that set price.
 2. **Data (owner download).** A measured export-schedule driver would make the export half simulable: PJM tagged
    firm interchange schedules or OASIS reservations for 23–24 Dec 2022 (PJM Data Miner "Scheduled interchange" /
    `rt_scheduled_interchange`, if public).
+
+## 5. Addendum: the level-form reach, measured (zero LP)
+
+Probe `scripts/probes/_closeoutpjmw3_elliott_level_form_reach.py`. On the keeper, fleet thermal outage is set to
+the measured total in each of the 72 event hours.
+
+- **Hourly change:** −14.0 to +15.9 GW, mean +5.2 GW. The keeper's baseline excess is restored before the event
+  and withdrawn at the peak.
+- **No shortage:** 0 hours below zero headroom and 0 below the primary requirement. Minimum residual headroom is
+  8.7 GW.
+- **Prices:** the Dec 23–24 mean estimate is about $154, against $111 on the keeper and $1,010 real. The C3a/C3b
+  2022 gain would be lost (back to about −16 %).
+
+**Conclusion.** The Elliott probe gets its 2022 price right through two compensating errors:
+- about 13.5 GW of model baseline outage above what PJM publishes, which the increment form preserves;
+- 5–10 GW of firm exports (23 Dec) that the model does not carry.
+
+The measured-outage half is admissible and measured. The export half has no admissible measured driver on disk.
+The owner should weigh this before ruling on the Elliott promotion card. Under rule 1, a keeper is the most
+structurally faithful run, and the probe's fit relies on a known baseline over-assertion.
