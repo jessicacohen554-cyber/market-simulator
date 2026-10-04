@@ -170,3 +170,34 @@ budget with no artifact stops and reports.
 Everything in `docs/mechanism-testing-matrix.md` §5.7's DO-NOT-REDO (curtailment ceiling, gas bridge, offer-band
 retunes); `spp_commitment_posture` (R) is not re-run in any form; no `uc_*` value other than the declared defaults;
 no second `--set`; no control solve; no NEISO/NYISO span (those belong to the UC-2 control lanes, not this one).
+
+## Addendum A (2026-10-04 21:55Z, before any number exists) — STOP on an engine defect at the pin; relaunch rule
+
+All seven shards (launched 21:29Z at `6d47c762`; sessions `session_01Y27spXDj2YyEtEGwPS4M7e` 2019,
+`session_01LNdYgisFGFddimKkCtgUm6` 2020, `session_014vfQ7ZmDu8GBDghRDCZniH` 2021, `session_01XtGth8hnAAQSu32eoHtqHX` 2022,
+`session_01HHz1ioHN63RzNcKxegtdK8` 2023, `session_01EU1SBoX87EWLiiaaCfYbYM` 2024, `session_01UT7Fiv8NtLUGvbCK4eLhoF` 2025)
+crashed identically 4–5 min into the solve, after P0 (82–231 s) and the January UC windows:
+
+```
+src/market_sim/pipeline/uc.py:363, in UcStage.run
+    sched.checkpoint(self.artifact_dir, next_month, self._log(windows, sched, partial=True))
+AttributeError: 'UcStage' object has no attribute 'artifact_dir'
+```
+
+Verified against the source at the pin: `UcStage.__init__` sets `self.checkpoint_dir` (uc.py:206) and nothing assigns
+`artifact_dir`; line 363 is its only reference; it fires on the first month-end checkpoint with `write=True` (the default),
+so every ISO-year with the gate on dies there. The gate-off goldens cannot see it. UC stage census before the crash:
+218–226 clusters, 83–86 integer, 384 fleet rows (2023: 218/86; 2024: 221/83; 2019: 226). The 2024 shard's container
+preflight warning (13.36 GiB + 5 GiB swap = 18.4 GiB < 24 GiB target, naming MISO/PJM) is a warning only, not the cause.
+
+- **Classification:** GATESPEC §5 engine-defect route (not an infeasible window, not non-determinism, not a control flip).
+  No kill fired; no number exists; nothing is tuned. Routed 21:55Z to UC-1-FINISH (`session_01CghV9pMqkD5TDmYicDuMCx`,
+  owner of `claude/ucmilp-1-engine-mcst`) and to UC-DESK. This lane does not edit `src/`.
+- **Shards:** each stopped per its hard stops and pushed nothing (no `claude/ucmilp-spp-*` branch exists); all seven
+  archived 21:55Z (rule 33: nothing to fetch).
+- **Relaunch rule (fixed now):** when the engine branch carries the fix, the pin moves to that full SHA and NOTHING else
+  changes — same recipe, same single `--set`, same `uc_*` defaults, same readings, bars, kills and budget as §§1–7; the
+  new pin and the `grep -c unit_commitment_milp` / tooling-unchanged checks are recorded in Addendum B before the
+  relaunch. Arm-vs-control deltas remain UC-only only if the SPP golden still reproduces at the new pin; if the fix
+  commit touches anything outside the UC stage (`model/uc/`, `pipeline/uc.py`, their tests), the addendum says so and
+  the desk decides whether a golden re-check is needed before the A/B is scored.
