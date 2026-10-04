@@ -4013,3 +4013,5 @@ results/calibration/miso298_span/
 # NWPP-NEXT-19 arm G shard legs (staged by the parent; transport only, rule 33/34)
 results/calibration/nwppnext19g_20*/
 results/calibration/nwppnext19g_span/
+
+!results/calibration/closeout_ercot_w4_2021/**
