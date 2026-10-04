@@ -1,0 +1,19 @@
+{
+  "id": "2026-10-04-closeout-miso-w3-seam",
+  "label": "closeout miso w3 seam",
+  "date": "2026-10-04",
+  "shorthand": "closeout-miso-w3-seam",
+  "definition": "closeout-MISO-w3 seam full span",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-10-04-closeout-miso-w3-seam.js",
+  "bundle": "results/calibration/closeout_miso_w3_span"
+}
