@@ -719,3 +719,200 @@ class TestHourlySppOverlay(unittest.TestCase):
         self.assertFalse(base.miso_seam_neighbour_hourly_spp)
         armed = base.with_overrides(miso_seam_neighbour_hourly_spp=True)
         self.assertNotEqual(base.cache_key(), armed.cache_key())
+
+
+class TestHourlyOverlayFullSpan(unittest.TestCase):
+    """closeout-MISO-w3: the hourly neighbour family's offsets for 2019-2022.
+
+    The keeper arms the hourly family in every leg, but its tables carry
+    2023-2025 only, so 2019-2022 degrade to the flat annual MISO-hub ladder.
+    ``neighbour_hourly_full_span`` merges the 2019-2022 rows UNDER the
+    2023-2025 tables: it adds years, never a mechanism, and is inert off.
+    """
+
+    def _fleet_and_mc(self):
+        node = build_reference_price_node("MISO")
+        zone_names = sorted({g.zone for g in node})
+        fleet = generators_to_fleet_arrays(node, zone_names, hours=T)
+        return fleet, np.full((len(node), T), -123.0)
+
+    def _keeper_kwargs(self):
+        return dict(
+            neighbour_anchored=True, neighbour_hourly=True, neighbour_hourly_spp=True
+        )
+
+    def test_tables_cover_2019_2022_only_with_rising_import_offsets(self):
+        from market_sim.model.interchange.spec import (
+            MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_BY_YEAR,
+            MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_FULL_SPAN_BY_YEAR,
+            MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_SPP_FULL_SPAN_BY_YEAR,
+        )
+
+        for table, seam in (
+            (MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_FULL_SPAN_BY_YEAR, "PJM"),
+            (MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_SPP_FULL_SPAN_BY_YEAR, "SPP"),
+        ):
+            self.assertEqual(sorted(table), [2019, 2020, 2021, 2022])
+            self.assertFalse(
+                set(table) & set(MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_BY_YEAR)
+            )
+            for year, overlay in table.items():
+                self.assertEqual(set(overlay), {seam})
+                imp, exp = overlay[seam]["import"], overlay[seam]["export"]
+                self.assertEqual(len(imp), SEAM_FLOW_TRANCHES)
+                self.assertEqual(len(exp), SEAM_FLOW_TRANCHES)
+                self.assertEqual(
+                    list(imp), sorted(imp), msg=f"{year} import not rising"
+                )
+                self.assertLess(
+                    max(exp), min(imp), msg=f"{year} wash ordering violated"
+                )
+
+    def test_off_is_byte_identical_in_a_backfill_year(self):
+        fleet, a = self._fleet_and_mc()
+        _f, b = self._fleet_and_mc()
+        inject_miso_seam_ladder_prices(fleet, a, "MISO", 2020, **self._keeper_kwargs())
+        inject_miso_seam_ladder_prices(
+            fleet,
+            b,
+            "MISO",
+            2020,
+            neighbour_hourly_full_span=False,
+            **self._keeper_kwargs(),
+        )
+        np.testing.assert_array_equal(a, b)
+
+    def test_inert_in_a_year_the_base_tables_already_cover(self):
+        fleet, a = self._fleet_and_mc()
+        _f, b = self._fleet_and_mc()
+        inject_miso_seam_ladder_prices(fleet, a, "MISO", 2024, **self._keeper_kwargs())
+        inject_miso_seam_ladder_prices(
+            fleet,
+            b,
+            "MISO",
+            2024,
+            neighbour_hourly_full_span=True,
+            **self._keeper_kwargs(),
+        )
+        np.testing.assert_array_equal(a, b)
+
+    def test_armed_2020_pjm_and_spp_bands_equal_anchor_plus_offset(self):
+        from market_sim.data.eia_loader import (
+            measured_miso_pjm_border_prices,
+            measured_miso_spp_hub_prices,
+        )
+        from market_sim.model.interchange.spec import (
+            MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_FULL_SPAN_BY_YEAR,
+            MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_SPP_FULL_SPAN_BY_YEAR,
+        )
+
+        anchors = {
+            "PJM": measured_miso_pjm_border_prices("MISO", 2020, T),
+            "SPP": measured_miso_spp_hub_prices("MISO", 2020, T),
+        }
+        if any(v is None for v in anchors.values()):
+            self.skipTest("no measured 2020 border / hub series under data/raw")
+        offsets = {
+            "PJM": MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_FULL_SPAN_BY_YEAR[2020]["PJM"],
+            "SPP": MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_SPP_FULL_SPAN_BY_YEAR[2020]["SPP"],
+        }
+        fleet, off = self._fleet_and_mc()
+        inject_miso_seam_ladder_prices(
+            fleet, off, "MISO", 2020, **self._keeper_kwargs()
+        )
+        _f, mc = self._fleet_and_mc()
+        self.assertTrue(
+            inject_miso_seam_ladder_prices(
+                fleet,
+                mc,
+                "MISO",
+                2020,
+                neighbour_hourly_full_span=True,
+                **self._keeper_kwargs(),
+            )
+        )
+        moved = set()
+        for row, uid in enumerate(fleet.unit_ids):
+            if _REF_IMPORT_MARK in uid:
+                tag, side = uid.rsplit(_REF_IMPORT_MARK, 1)[1], "import"
+            elif _REF_EXPORT_MARK in uid:
+                tag, side = uid.rsplit(_REF_EXPORT_MARK, 1)[1], "export"
+            else:
+                np.testing.assert_array_equal(mc[row, :], off[row, :])
+                continue
+            name, _, k = tag.partition("#")
+            if name in offsets:
+                np.testing.assert_allclose(
+                    mc[row, :], anchors[name] + offsets[name][side][int(k) - 1]
+                )
+                # the keeper's fallback is ONE price all year; armed it is hourly
+                self.assertLess(float(off[row, :].std()), 1e-9)
+                moved.add(name)
+            else:
+                np.testing.assert_array_equal(mc[row, :], off[row, :])
+        self.assertEqual(moved, {"PJM", "SPP"})
+
+    def test_spp_rows_respect_the_sub_gate(self):
+        """Without neighbour_hourly_spp only the PJM rows of 2020 move."""
+        fleet, base = self._fleet_and_mc()
+        kw = dict(neighbour_anchored=True, neighbour_hourly=True)
+        inject_miso_seam_ladder_prices(fleet, base, "MISO", 2020, **kw)
+        _f, arm = self._fleet_and_mc()
+        inject_miso_seam_ladder_prices(
+            fleet, arm, "MISO", 2020, neighbour_hourly_full_span=True, **kw
+        )
+        moved = set()
+        for row, uid in enumerate(fleet.unit_ids):
+            for mark in (_REF_IMPORT_MARK, _REF_EXPORT_MARK):
+                if mark in uid and not np.array_equal(arm[row, :], base[row, :]):
+                    moved.add(uid.rsplit(mark, 1)[1].partition("#")[0])
+        if moved:  # skipped silently only when the border series is absent
+            self.assertEqual(moved, {"PJM"})
+
+    def test_registry_reproduces_the_frozen_derivation(self):
+        """Rule 23: both 2019-2022 tables ARE the derive's output."""
+        import importlib.util
+
+        from market_sim.model.interchange.spec import (
+            MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_FULL_SPAN_BY_YEAR,
+            MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_SPP_FULL_SPAN_BY_YEAR,
+        )
+
+        repo = Path(__file__).resolve().parents[3]
+        script = repo / "scripts/data/derive_miso_seam_ladders.py"
+        spec = importlib.util.spec_from_file_location("_derive_miso_seam_fs", script)
+        dm = importlib.util.module_from_spec(spec)
+        try:
+            spec.loader.exec_module(dm)
+            joined = dm.load_joined()
+        except Exception:  # pragma: no cover - source data not hydrated
+            self.skipTest("measured seam/LMP series not available")
+        for year in (2019, 2020, 2021, 2022):
+            sample = joined.loc[[year]]
+            pjm, _ = dm.derive_pjm_neighbour_hourly(sample)
+            spp, _ = dm.derive_spp_neighbour_hourly(sample)
+            for table, seam, derived in (
+                (MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_FULL_SPAN_BY_YEAR, "PJM", pjm),
+                (MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_SPP_FULL_SPAN_BY_YEAR, "SPP", spp),
+            ):
+                for side in ("import", "export"):
+                    np.testing.assert_allclose(
+                        np.asarray(table[year][seam][side], dtype=float),
+                        np.asarray(derived[side], dtype=float),
+                        atol=0.005,
+                        err_msg=f"{year} {seam} {side} drifted from the derivation",
+                    )
+
+    def test_the_solve_path_refuses_it_without_the_hourly_family(self):
+        source = (
+            Path(__file__).resolve().parents[3] / "scripts/run_calibration.py"
+        ).read_text()
+        self.assertIn('"miso_seam_neighbour_hourly_full_span requires "', source)
+
+    def test_field_is_registered_and_off_by_default(self):
+        from market_sim.config.scenarios import ScenarioConfig
+
+        base = ScenarioConfig(iso="MISO", mode="backcast")
+        self.assertFalse(base.miso_seam_neighbour_hourly_full_span)
+        armed = base.with_overrides(miso_seam_neighbour_hourly_full_span=True)
+        self.assertNotEqual(base.cache_key(), armed.cache_key())
