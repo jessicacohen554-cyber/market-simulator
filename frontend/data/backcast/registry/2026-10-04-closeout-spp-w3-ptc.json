@@ -1,0 +1,19 @@
+{
+  "id": "2026-10-04-closeout-spp-w3-ptc",
+  "label": "closeout spp w3 ptc",
+  "date": "2026-10-04",
+  "shorthand": "closeout-spp-w3-ptc",
+  "definition": "closeout-B W0 phase 3: SPP spp-107 + W0 + #7081 (MMU ambient skips seasonal-pair rows) + ST_GAS WEFOR residual relief 0.0 (PRECOMMIT-spp-w0-stgas-wefor-relief; desk 22:48)",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SPP",
+  "file": "frontend/data/backcast/runs/2026-10-04-closeout-spp-w3-ptc.js",
+  "bundle": "results/calibration/closeout_spp_w3_span"
+}
