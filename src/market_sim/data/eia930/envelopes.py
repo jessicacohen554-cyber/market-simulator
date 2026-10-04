@@ -2767,7 +2767,10 @@ def nwpp_ba_contingency_basis(
         "NWPP %d BAL-002-WECC basis (GW mean load / net generation): %s",
         year,
         {
-            z: (round(float(load[i].mean()) / 1e3, 2), round(float(gen[i].mean()) / 1e3, 2))
+            z: (
+                round(float(load[i].mean()) / 1e3, 2),
+                round(float(gen[i].mean()) / 1e3, 2),
+            )
             for z, i in zone_idx.items()
             if load[i].any() or gen[i].any()
         },

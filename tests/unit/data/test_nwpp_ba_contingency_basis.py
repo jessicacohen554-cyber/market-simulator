@@ -29,7 +29,10 @@ def _fake_series():
     from market_sim.data.zone_assignment import _NWPP_BA_ZONES
 
     return {
-        m: (np.full(HOURS_PER_YEAR, 100.0 + i), np.full(HOURS_PER_YEAR, -5.0 if i == 0 else 50.0))
+        m: (
+            np.full(HOURS_PER_YEAR, 100.0 + i),
+            np.full(HOURS_PER_YEAR, -5.0 if i == 0 else 50.0),
+        )
         for i, m in enumerate(_NWPP_BA_ZONES)
     }
 
@@ -47,7 +50,9 @@ def test_members_land_in_their_zones():
         members = [m for m, mz in _NWPP_BA_ZONES.items() if mz == zone]
         assert load[z, 0] == pytest.approx(sum(series[m][0][0] for m in members))
         # Negative net generation (a pumping / station-service hour) counts 0.
-        assert gen[z, 0] == pytest.approx(sum(max(series[m][1][0], 0.0) for m in members))
+        assert gen[z, 0] == pytest.approx(
+            sum(max(series[m][1][0], 0.0) for m in members)
+        )
 
 
 def test_unknown_zone_refused():
@@ -63,7 +68,10 @@ def test_unknown_zone_refused():
 
 @pytest.mark.fulldata
 def test_member_demand_sums_to_pool_frame():
-    from market_sim.data.eia930.frames import _pool_hourly_frame, pool_member_balance_series
+    from market_sim.data.eia930.frames import (
+        _pool_hourly_frame,
+        pool_member_balance_series,
+    )
 
     series = pool_member_balance_series("NWPP", 2024)
     pool = _pool_hourly_frame("NWPP", 2024)

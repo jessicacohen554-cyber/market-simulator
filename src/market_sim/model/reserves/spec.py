@@ -4867,7 +4867,9 @@ def _nwpp_design(
     pool_fuel[col] = np.array([FUEL_TYPE_NAMES[i] for i in fleet_arrays.fuel_type_idx])[
         gen_idx
     ]
-    offline_ok = np.isin(pool_fuel.astype(str), sorted(QUICK_START_FUEL_TYPES | {"hydro"}))
+    offline_ok = np.isin(
+        pool_fuel.astype(str), sorted(QUICK_START_FUEL_TYPES | {"hydro"})
+    )
 
     voll = float(config.voll)
     families: list[ReserveFamily] = []
@@ -4912,7 +4914,11 @@ def _nwpp_design(
         len(families),
         n_r,
         online_rho,
-        {zone_names[z]: round(float(req[z].mean()), 1) for z in range(n_zones) if req[z].any()},
+        {
+            zone_names[z]: round(float(req[z].mean()), 1)
+            for z in range(n_zones)
+            if req[z].any()
+        },
     )
     return ReserveDesign(
         families=families,
