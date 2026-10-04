@@ -52,7 +52,7 @@ the model already has it online.
 | 2024 | 0.88 | 0.54 | +6.48 (PASS) |
 | 2025 | 0.83 | 0.59 | (skipped, preliminary vintage) |
 
-**Bar (fixed before computing):** charter only if the upper bound can return both undeclared flips (CC 2021 and
+**Bar (stated with the reading, not pushed ahead of it: the desk's target is the two undeclared flips):** charter only if the upper bound can return both undeclared flips (CC 2021 and
 2023) to PASS at full displacement from CC. **2021 fails at 100 % displacement** (0.96 < 1.53 TWh). 2023 would need
 ≥ 53 % of the held coal to displace CC, with no margin left for the CT daytime over-run. **NOT CHARTERED.**
 
