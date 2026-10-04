@@ -104,7 +104,7 @@ Class energy, probe − keeper (TWh):
 |---|---|
 | 1 `mustrun_chp_btm_holdout` | solved; structure-vs-gates card (above); `SOCO.js` cell U → O |
 | 2 EIA-930-reconciled partial holdout (inject the telemetered "Other"; ~1 TWh/yr more than candidate 1) | not built: it restores ≤ 1.2 TWh/yr of the 7–9 TWh, so it cannot undo the CC 2021/2023 flips (+5.3 / +2.5 TWh moved) or bring C3a 2019/2020 back inside ±10 %; it would refine the input, not change the card |
-| 3 coal night commitment (energy-path posture port) | not new evidence against the G/R cells; this solve strengthens the case that it is the binding object, which is the owner's frontier row |
+| 3 coal commitment state (energy-path posture port), stacked on this probe | phase 0b, `FINDING-closeout-soco-w3-cc-overrun-2026-10-04.md`: upper bound 0.75–1.66 TWh/yr of held coal, cannot clear CC 2021 (+8.63 vs band 7.10) even at full displacement; the dominant gap is Bowen/Gaston loading at $34–47 offers, a price question whose routes are G/R. Not chartered |
 | 4 Wansley 2019 floor hole, spot coal, membership union | closed in earlier records; no new evidence |
 
 The queue is exhausted for this lane with reasons. The structural finding (SOCO's must-run residual is 85–90 %
