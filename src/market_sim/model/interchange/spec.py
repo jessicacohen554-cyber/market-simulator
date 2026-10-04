@@ -358,6 +358,20 @@ CAISO_DSW_DAYTIME_CLEAN_DEPTH_BY_YEAR: dict[int, float] = {
     2025: 5998.0,
 }
 CAISO_DSW_DAYTIME_CLEAN_DEPTH_STATIC: float = 5733.0  # pooled 2023-2025 mean
+# closeout-CAISO-w2 (ScenarioConfig.caiso_dsw_daytime_lateevening_unprinted_arm,
+# an OWNER-GATED transfer of the R-CAISO-20 pattern): the depth the daytime rung
+# carries in the UNPRINTED-year hours, where no raw print exists so the caiso-87
+# trigger is undefined and the rung arms every hod 6-21 hour. Window-match rule:
+# p95 of the measured EIA-930 WECC_DSW corridor net import over EXACTLY those
+# hours (all hod 6-21 hours of the year), the sibling derives' statistic, never
+# re-sized (rule 1). 2021 has no entry: its printed May-Dec hours already ride
+# the static depth and one year carries one depth (the R-CAISO-20 rule).
+# Probe: scripts/probes/_closeout_caiso_w2_unprinted_rungs.py
+# (docs/records/caiso/closeout-caiso-w2/_unprinted_rungs.json).
+CAISO_DSW_DAYTIME_CLEAN_UNPRINTED_DEPTH_BY_YEAR: dict[int, float] = {
+    2019: 7348.0,
+    2020: 7122.0,
+}
 # Daytime window hod bounds (inclusive) — hod 6-21, the FINDING-caiso94
 # daytime band (morning ramp through evening peak; set before the depth was
 # measured). Complements the caiso-93 overnight window (hod 0-5).
@@ -464,6 +478,15 @@ CAISO_DSW_LATEEVENING_CLEAN_DEPTH_BY_YEAR: dict[int, float] = {
     2025: 6697.0,
 }
 CAISO_DSW_LATEEVENING_CLEAN_DEPTH_STATIC: float = 6415.0  # pooled 2023-2025 mean
+# closeout-CAISO-w2: the late-evening twin of
+# CAISO_DSW_DAYTIME_CLEAN_UNPRINTED_DEPTH_BY_YEAR — p95 of the measured WECC_DSW
+# corridor net import over every hod 22-23 hour of the unprinted year (no raw
+# print, so no DA-hub spread admissibility cell can be formed there). 2021 keeps
+# the static entry (one year, one depth).
+CAISO_DSW_LATEEVENING_CLEAN_UNPRINTED_DEPTH_BY_YEAR: dict[int, float] = {
+    2019: 6922.0,
+    2020: 7281.0,
+}
 # Window hod bounds (inclusive) -- the complement caiso-93 (0-5) and caiso-94
 # (6-21) leave, closed by caiso-253's G-WINDOW finding.
 CAISO_LATEEVENING_CLEAN_HOD_MIN: int = 22

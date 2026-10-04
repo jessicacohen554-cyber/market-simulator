@@ -2334,6 +2334,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # construction: inject_caiso_dsw_overnight_clean reads the unprinted-year
     # mask only when handed unprinted_year_arm=True from the flag.
     "caiso_dsw_overnight_clean_unprinted_arm",
+    # closeout-CAISO-w2 (2026-10-03), default off, registered IN THE SAME
+    # COMMIT as the field (the nyiso-119 discipline). Byte-identical off by
+    # construction: the daytime / late-evening injectors read the
+    # unprinted-year mask only when handed unprinted_year_arm=True from it.
+    "caiso_dsw_daytime_lateevening_unprinted_arm",
     # NWPP-NEXT-6 (2026-09-26): WECC Path 76 "Alturas" link NWPP-NW <->
     # NWPP-SNV (default off). Byte-identical off by construction: its one
     # applier, pipeline.ttc.apply_nwpp_path76_link, returns the SAME ISOConfig
@@ -3304,6 +3309,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "caiso_intertie_unprinted_year_measured_gas": "False",
     # Added by R-CAISO-20 WITH the field (the nyiso-119 discipline).
     "caiso_dsw_overnight_clean_unprinted_arm": "False",
+    # Added by closeout-CAISO-w2 WITH the field (the nyiso-119 discipline).
+    "caiso_dsw_daytime_lateevening_unprinted_arm": "False",
     # Added by NWPP-NEXT-6 WITH the field (the nyiso-119 discipline).
     "nwpp_path76_alturas_link": "False",
     # Added by NWPP-NEXT-7 WITH the field (the nyiso-119 discipline).
@@ -10646,6 +10653,26 @@ class ScenarioConfig:
     # caiso_intertie_unprinted_year_measured_gas (the pricing; without it the
     # arm is a no-op). Default off; CAISO-only; backcast-only.
     # docs/records/caiso/r-caiso-20/PRECOMMIT-r-caiso-20-2026-09-30.md.
+    caiso_dsw_daytime_lateevening_unprinted_arm: bool = False  # closeout-CAISO-w2
+    # (2026-10-03), OWNER-GATED TRANSFER of the R-CAISO-20 pattern — to be armed
+    # only on an owner ruling, NOT a measured admission (R-CAISO-19 FINDING §3:
+    # with no raw Palo Verde print the caiso-87 surplus trigger and the caiso-269
+    # DA-hub spread band cannot be formed). Extends the caiso-94 DAYTIME (hod
+    # 6-21) and caiso-269 LATE-EVENING (hod 22-23) evidence gates to the hours the
+    # R-CAISO-18 unprinted-year branch prices (all of 2019-2020; the unprinted
+    # Jan-Apr 2021). There the surplus rung stays 0 MW (no trigger) and the
+    # daytime rung carries the whole hod window. Depth: the window-matched p95 of
+    # the measured EIA-930 WECC_DSW corridor net import over every hod 6-21 /
+    # 22-23 hour of the year (2019 7,348 / 6,922; 2020 7,122 / 7,281 MW;
+    # interchange spec *_UNPRINTED_DEPTH_BY_YEAR), the percentile NOT re-sized
+    # (rule 1); 2021 keeps its ordinary depth (one year, one depth). Headroom
+    # stays net of the firm block and every sibling clean rung (rule 19).
+    # Pricing: the formula hub + EF 0 + ε, no wheel (the R-CAISO-20 basis).
+    # Printed hours are untouched, so 2022-2025 are inert by construction.
+    # Requires caiso_dsw_daytime_clean / caiso_dsw_lateevening_clean AND
+    # caiso_intertie_unprinted_year_measured_gas (the pricing; without it the
+    # arm is a no-op). Default off; CAISO-only; backcast-only.
+    # docs/records/caiso/closeout-caiso-w2/PRECOMMIT-closeout-caiso-w2-unprinted-rungs-2026-10-03.md.
     caiso_dsw_daytime_clean: bool = False  # Carry the MEASURED DAYTIME
     # trigger-OFF (hod 6-21) WEIM clean import depth on the south (Palo Verde /
     # Path-46) corridor (caiso-94; FINDING-caiso94-daytime-wedge-2026-07-17,

@@ -1790,10 +1790,42 @@ Code-only PR under rule 37: no keeper, status part, `calibration-complete.json` 
 `docs/records/governance/closeout-2026-10/PRECOMMIT-rubric-c3c-order-2026-10-03.md`. Tests:
 `tests/scoring/test_calibration_verdict_closeout_c.py`.
 
-## 32. Changes to this file
+## 32. Dispatch and commitment — the MILP UC stage (owner, 2026-10-03)
+
+**Owner ruling R2, verbatim** (UC-DESK r01 `session_01WX9W5tgYMre3Z134LZoGF6`, decision card D-1):
+*"Sign §7 text (Recommended)"* — the amendment text of `docs/uc-milp-program-plan-2026-10.md` §7, as written,
+landed in its own PR by lane UC-AM.
+
+**Scope.** No rule ordinal or ID is added or changed. The amended text is CLAUDE.md's "Dispatch and commitment
+(per year)" opening sentence and its two spec counterparts (`model-methodology-spec.md` §1.6 first paragraph,
+§1.9 first bullet).
+
+**What it said before.** CLAUDE.md: *"**P0 base-cost → P1 bid-cost** are the only two passes; P1 is the run
+everything is scored on. Pure LP, no MIP."* Spec §1.6: *"It stays **pure LP — there is no MIP and no binary
+variables**"*; spec §1.9: *"**Pure LP. No MIP, no binary variables.** The commitment layer (§1.6) is a heuristic
+screen between LP solves, never a mixed-integer program."*
+
+**What it says now.** *"**P0 base-cost → [UC] → P1 bid-cost**; P1 is the run everything is scored on and is a pure
+LP (prices are its duals, rule 4). The optional UC stage (`unit_commitment_milp`, default off, ISO-armed) is a
+rolling-horizon MILP over the year that chooses the commitment of slow-start clusters (rule 18 physics) and enters
+P1 only as per-unit-hour bounds (MECH 28); it replaces the commitment bridges and the posture family wherever it is
+armed (rule 19), pays start and no-load cost once (markup zeroed on its clusters), and reports uplift as a sidecar,
+never in the LMP. No other pass is a MIP."* The spec carries the same text in §1.6; §1.9 keeps "Prices are LP
+duals" unchanged and adds *"The UC stage is the only mixed-integer program in the model; it never prices."*
+
+**What was deliberately KEPT.** Rule 4 `[R-DUALS]` (P1 is the only pricer; the MILP never prices); the Stack rule
+(direct CSC → HiGHS; Pyomo, PuLP, scipy.optimize and Numba stay forbidden); the P0/P1 two-pass shape; every keeper
+unchanged (none arms the stage). The stage is default-off and does not yet exist in code: lane UC-1 builds it.
+
+**Enforcement** lands with UC-1, not here: the stage's config validators (default off, ISO-armed, refused when
+stacked on a commitment bridge or posture arm), its mechanism-matrix row and a cell in every shard (rule 28), and
+the CI tests (byte-identical off). This entry is text only; nothing scored moves.
+
+## 33. Changes to this file
 
 | date | change |
 |---|---|
+| 2026-10-03 | Added §32: **the MILP UC stage** in "Dispatch and commitment (per year)" (owner ruling R2, verbatim in §32): P0 → [UC] → P1, P1 stays the pure-LP pricer, the optional default-off UC stage is the only MIP and never prices. Spec §1.6/§1.9 carry the same substitution. No rule ordinal, keeper or determination moves. "Changes to this file" renumbered §32 → §33 (no external reference cited §32). |
 | 2026-10-03 | Added §31: **rubric v3.20** (owner rulings R-57/R-58, verbatim in §31): the rule-22 lone-C3c standing rule runs after the owner-signed scoped-ledger, configuration-exception and reference-coverage routes. No determination moves. "Changes to this file" renumbered §31 → §32 (the only external citation of §31 is the new one in `calibration_verdict.py`). |
 | 2026-10-03 | Added §30: **rule 37 `[R-RUBRIC-FREEZE]` is NEW** (owner instruction verbatim in §30) — the determination rubric is frozen between promotions; an amendment is a promotion decision proposed in a PRECOMMIT with its zero-LP effect on every registered ISO, ruled on by the owner, and never landed in the same PR as a keeper designation, status part, `calibration-complete.json` or bundle. Prompted by audit `docs/audit/2026-10/C-data-calibration-governance.md` §5 finding 3 on the v3.10 → v3.19 run (§23–§29). Enforced by `scripts/check_rubric_freeze.py` in CI (`RUBRIC_FREEZE_OVERRIDE` is the owner's promotion-with-amendment override). No rubric content, band, budget or determination moves. "Changes to this file" renumbered §30 → §31 (no external reference cited §30). |
 | 2026-10-03 | Added §29: **rubric v3.19** (owner ruling R-40 and its C3b extension, verbatim in §29): the reference-coverage caveat kind for CAISO C3a/C3b 2019–2021. No determination moves. "Changes to this file" renumbered §29 → §30 (the only external citation of §29 is the new one in `calibration_verdict.py`). |

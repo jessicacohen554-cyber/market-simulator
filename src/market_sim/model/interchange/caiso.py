@@ -46,6 +46,7 @@ from market_sim.model.interchange.spec import (
     CAISO_DSW_DAYTIME_CLEAN_NAME,
     CAISO_DSW_DAYTIME_CLEAN_TRIM_DEPTH_BY_YEAR,
     CAISO_DSW_DAYTIME_CLEAN_TRIM_DEPTH_STATIC,
+    CAISO_DSW_DAYTIME_CLEAN_UNPRINTED_DEPTH_BY_YEAR,
     CAISO_DSW_OVERNIGHT_CLEAN_DEPTH_BY_YEAR,
     CAISO_DSW_OVERNIGHT_CLEAN_DEPTH_STATIC,
     CAISO_DSW_OVERNIGHT_CLEAN_NAME,
@@ -53,6 +54,7 @@ from market_sim.model.interchange.spec import (
     CAISO_DSW_LATEEVENING_CLEAN_DEPTH_BY_YEAR,
     CAISO_DSW_LATEEVENING_CLEAN_DEPTH_STATIC,
     CAISO_DSW_LATEEVENING_CLEAN_NAME,
+    CAISO_DSW_LATEEVENING_CLEAN_UNPRINTED_DEPTH_BY_YEAR,
     CAISO_DSW_SURPLUS_CLEAN_DEPTH_STATIC,
     CAISO_DSW_SURPLUS_CLEAN_NAME,
     CAISO_DSW_SURPLUS_REMOTE_VOM,
@@ -1049,6 +1051,7 @@ def inject_caiso_dsw_daytime_clean(
     year: int,
     evening_trim: bool = False,
     gap_fill_measured_dam: bool = False,
+    unprinted_year_arm: bool = False,
 ) -> bool:
     """Arm the south-corridor DAYTIME trigger-OFF clean import depth (caiso-94).
 
@@ -1101,6 +1104,19 @@ def inject_caiso_dsw_daytime_clean(
     injector, :func:`inject_caiso_dsw_surplus_clean`, and
     :func:`inject_caiso_dsw_overnight_clean`.
 
+    With ``unprinted_year_arm`` (closeout-CAISO-w2,
+    ``ScenarioConfig.caiso_dsw_daytime_lateevening_unprinted_arm``; handed in
+    only together with ``caiso_intertie_unprinted_year_measured_gas``) the
+    evidence gate ALSO admits the hours the R-CAISO-18 unprinted-year branch
+    prices on the measured-gas formula (:func:`_caiso_dsw_unprinted_hours`:
+    all of 2019-2020, the unprinted Jan-Apr 2021). There is no raw print in
+    those hours, so the caiso-87 trigger is undefined there and the surplus
+    rung stays 0 MW: the daytime rung carries the whole hod window, at the
+    window-matched depth :data:`CAISO_DSW_DAYTIME_CLEAN_UNPRINTED_DEPTH_BY_YEAR`
+    (a year with no entry keeps its ordinary depth). This is an OWNER-GATED
+    TRANSFER of the R-CAISO-20 overnight ruling's pattern, NOT a measured
+    admission (R-CAISO-19 FINDING §3). Printed hours are untouched.
+
     Modifies ``fleet_arrays`` in place (eford availability preserved
     multiplicatively). Returns ``True`` when the tranche was armed, ``False``
     (byte-identical: the row stays 0 MW) when the fleet has no daytime row or a
@@ -1128,8 +1144,21 @@ def inject_caiso_dsw_daytime_clean(
         gap_fill_measured_dam=gap_fill_measured_dam,
     )
     gas = socal_citygate_weekly_hourly(year, hours)
-    if hub is None or gas is None:
+    unprinted = (
+        _caiso_dsw_unprinted_hours(
+            iso,
+            year,
+            hours,
+            CAISO_IMPORT_TRANCHE_HUB[CAISO_DSW_DAYTIME_CLEAN_NAME],
+            gap_fill_measured_dam,
+        )
+        if unprinted_year_arm
+        else None
+    )
+    if unprinted is None and (hub is None or gas is None):
         return False
+    if hub is None:
+        hub = np.full(hours, np.nan)
     # t = hour index on the model clock; hod = t mod 24 (local calendar).
     # Window and depth MOVE TOGETHER under the trim (caiso-97): the depth is
     # the p95 over exactly the window hours the capability arms.
@@ -1144,15 +1173,31 @@ def inject_caiso_dsw_daytime_clean(
     # trigger construction to inject_caiso_dsw_surplus_clean (read-only reuse —
     # the daytime leg never re-evaluates or widens caiso-87's own trigger).
     hr = _CAISO_IMPORT_COUPLE_HR["DSW_CCGT"]  # 0.37/0.0531 ≈ 6.97
-    floor = hr * gas + CAISO_DSW_SURPLUS_REMOTE_VOM
+    floor = (
+        hr * gas + CAISO_DSW_SURPLUS_REMOTE_VOM
+        if gas is not None
+        else np.full(hours, np.nan)
+    )
     surplus = np.isfinite(hub) & np.isfinite(floor) & (hub < floor)
-    daytime = daytime_hod & np.isfinite(hub) & ~surplus
+    # A printed hour arms exactly as before; with no gas series (reachable only
+    # under the unprinted arm) no printed hour can be trigger-tested, so none arms.
+    evidence = np.isfinite(hub) if gas is not None else np.zeros(hours, dtype=bool)
+    if unprinted is not None:
+        # closeout-CAISO-w2 owner-gated transfer: the formula-priced
+        # unprinted hours arm too (no raw print -> the trigger is undefined).
+        evidence = evidence | unprinted
+    daytime = daytime_hod & evidence & ~surplus
     if not daytime.any():
         return False
     if evening_trim:
         depth = CAISO_DSW_DAYTIME_CLEAN_TRIM_DEPTH_BY_YEAR.get(
             year, CAISO_DSW_DAYTIME_CLEAN_TRIM_DEPTH_STATIC
         )
+    elif (
+        unprinted is not None
+        and year in CAISO_DSW_DAYTIME_CLEAN_UNPRINTED_DEPTH_BY_YEAR
+    ):
+        depth = CAISO_DSW_DAYTIME_CLEAN_UNPRINTED_DEPTH_BY_YEAR[year]
     else:
         depth = CAISO_DSW_DAYTIME_CLEAN_DEPTH_BY_YEAR.get(
             year, CAISO_DSW_DAYTIME_CLEAN_DEPTH_STATIC
@@ -1179,7 +1224,11 @@ def inject_caiso_dsw_daytime_clean(
 
 
 def inject_caiso_dsw_lateevening_clean(
-    fleet_arrays, iso: str, year: int, gap_fill_measured_dam: bool = False
+    fleet_arrays,
+    iso: str,
+    year: int,
+    gap_fill_measured_dam: bool = False,
+    unprinted_year_arm: bool = False,
 ) -> bool:
     """Arm the south-corridor LATE-EVENING clean import depth (caiso-269).
 
@@ -1224,6 +1273,17 @@ def inject_caiso_dsw_lateevening_clean(
       ``[R-ONE-MECH]``). In practice the sibling windows are disjoint from this
       one, but the per-hour netting guarantees it regardless.
 
+    With ``unprinted_year_arm`` (closeout-CAISO-w2,
+    ``ScenarioConfig.caiso_dsw_daytime_lateevening_unprinted_arm``; handed in
+    only together with ``caiso_intertie_unprinted_year_measured_gas``) the
+    hod 22-23 hours the R-CAISO-18 branch prices on the formula
+    (:func:`_caiso_dsw_unprinted_hours`) are admissible too: no raw print means
+    no DA-hub spread cell can be formed there, so the band test cannot run and
+    the ruling (not a measurement) admits them, at
+    :data:`CAISO_DSW_LATEEVENING_CLEAN_UNPRINTED_DEPTH_BY_YEAR` (a year with no
+    entry keeps its ordinary depth). An OWNER-GATED TRANSFER of the R-CAISO-20
+    pattern; printed hours keep the band test unchanged.
+
     A capability, not a floor (``pmin`` stays 0); the corridor ATC envelope
     still caps delivered flow; the fossil rungs are unchanged and price the
     flow beyond the clean depth. Pricing (RAW measured hub + EF 0 x border +
@@ -1254,38 +1314,54 @@ def inject_caiso_dsw_lateevening_clean(
     hub = measured_intertie_hub_price_raw(
         iso, year, hours, hub_name, gap_fill_measured_dam=gap_fill_measured_dam
     )
-    if hub is None:
-        return False
-    spread = _caiso_measured_da_hub_spread(iso, year, hours, hub_name, hub)
-    if spread is None:
+    unprinted = (
+        _caiso_dsw_unprinted_hours(iso, year, hours, hub_name, gap_fill_measured_dam)
+        if unprinted_year_arm
+        else None
+    )
+    spread = (
+        _caiso_measured_da_hub_spread(iso, year, hours, hub_name, hub)
+        if hub is not None
+        else None
+    )
+    if spread is None and unprinted is None:
         return False
     # t = hour index on the model clock; hod = t mod 24 (local calendar).
     hod = np.arange(hours) % 24
     month = _hour_to_month_index(hours) + 1
-    window = (
-        (hod >= CAISO_LATEEVENING_CLEAN_HOD_MIN)
-        & (hod <= CAISO_LATEEVENING_CLEAN_HOD_MAX)
-        & np.isfinite(hub)
+    window_hod = (hod >= CAISO_LATEEVENING_CLEAN_HOD_MIN) & (
+        hod <= CAISO_LATEEVENING_CLEAN_HOD_MAX
     )
     lo, hi = CAISO_LATEEVENING_SPREAD_BAND
     admissible = np.zeros(hours, dtype=bool)
-    for m in range(1, 13):
-        for h in range(
-            CAISO_LATEEVENING_CLEAN_HOD_MIN, CAISO_LATEEVENING_CLEAN_HOD_MAX + 1
-        ):
-            cell = window & (month == m) & (hod == h)
-            vals = spread[cell]
-            vals = vals[np.isfinite(vals)]
-            if vals.size == 0:
-                continue
-            med = float(np.median(vals))
-            if lo <= med <= hi:
-                admissible |= cell
+    if spread is not None:
+        window = window_hod & np.isfinite(hub)
+        for m in range(1, 13):
+            for h in range(
+                CAISO_LATEEVENING_CLEAN_HOD_MIN, CAISO_LATEEVENING_CLEAN_HOD_MAX + 1
+            ):
+                cell = window & (month == m) & (hod == h)
+                vals = spread[cell]
+                vals = vals[np.isfinite(vals)]
+                if vals.size == 0:
+                    continue
+                med = float(np.median(vals))
+                if lo <= med <= hi:
+                    admissible |= cell
+    if unprinted is not None:
+        # closeout-CAISO-w2 owner-gated transfer: no print, no spread cell.
+        admissible |= window_hod & unprinted
     if not admissible.any():
         return False
-    depth = CAISO_DSW_LATEEVENING_CLEAN_DEPTH_BY_YEAR.get(
-        year, CAISO_DSW_LATEEVENING_CLEAN_DEPTH_STATIC
-    )
+    if (
+        unprinted is not None
+        and year in CAISO_DSW_LATEEVENING_CLEAN_UNPRINTED_DEPTH_BY_YEAR
+    ):
+        depth = CAISO_DSW_LATEEVENING_CLEAN_UNPRINTED_DEPTH_BY_YEAR[year]
+    else:
+        depth = CAISO_DSW_LATEEVENING_CLEAN_DEPTH_BY_YEAR.get(
+            year, CAISO_DSW_LATEEVENING_CLEAN_DEPTH_STATIC
+        )
     # Net of the shaped south firm block AND all three sibling clean tranches
     # (all post-injection: this runs last).
     firm_cap = np.zeros(hours)
@@ -1305,6 +1381,30 @@ def inject_caiso_dsw_lateevening_clean(
     fleet_arrays.availability[row, :] *= cap / depth
     fleet_arrays.pmax[row] = depth
     return True
+
+
+def _caiso_dsw_unprinted_hours(
+    iso: str, year: int, hours: int, hub_name: str, gap_fill_measured_dam: bool
+) -> np.ndarray | None:
+    """Hours the R-CAISO-18 unprinted-year branch prices for one hub, or ``None``.
+
+    Thin wrapper over
+    :func:`~market_sim.data.eia930.envelopes.measured_intertie_hub_unprinted_year_mask`
+    (the same mask the R-CAISO-20 overnight arm reads), so the daytime and
+    late-evening unprinted arms (closeout-CAISO-w2) can never arm an hour the
+    per-hub price injector does not price. ``None`` when the year carries no
+    such hour (every printed year, and the <=25 % 2023 gap by construction).
+    """
+    from market_sim.data.eia930.envelopes import (
+        measured_intertie_hub_unprinted_year_mask,
+    )
+
+    mask = measured_intertie_hub_unprinted_year_mask(
+        iso, year, hours, hub_name, gap_fill_measured_dam=gap_fill_measured_dam
+    )
+    if mask is None or not mask.any():
+        return None
+    return mask
 
 
 def _caiso_measured_da_hub_spread(
@@ -2683,6 +2783,12 @@ def apply_caiso_seam_injections(
     # Under the caiso-97 evening trim the window is hod 6-17 with the depth
     # re-derived over that window (FINDING-caiso94 §7 pre-registered fix).
     # Must run LAST of the clean-depth injectors (its headroom nets all three).
+    # closeout-CAISO-w2 (owner-gated transfer of the R-CAISO-20 pattern): the
+    # daytime and late-evening rungs arm the unprinted-year hours only where
+    # the R-CAISO-18 loader prices them (never on the $180 placeholder).
+    _day_eve_unprinted = bool(
+        getattr(config, "caiso_dsw_daytime_lateevening_unprinted_arm", False)
+    ) and bool(getattr(config, "caiso_intertie_unprinted_year_measured_gas", False))
     if per_hub_intertie and getattr(config, "caiso_dsw_daytime_clean", False):
         _day_trim = bool(getattr(config, "caiso_dsw_daytime_evening_trim", False))
         if inject_caiso_dsw_daytime_clean(
@@ -2691,6 +2797,7 @@ def apply_caiso_seam_injections(
             year,
             evening_trim=_day_trim,
             gap_fill_measured_dam=_dam_fill,
+            unprinted_year_arm=_day_eve_unprinted,
         ):
             _logger.info(
                 "%s %d: south-corridor DAYTIME trigger-OFF clean import depth "
@@ -2715,7 +2822,11 @@ def apply_caiso_seam_injections(
             )
     if per_hub_intertie and getattr(config, "caiso_dsw_lateevening_clean", False):
         if inject_caiso_dsw_lateevening_clean(
-            fleet_arrays, iso, year, gap_fill_measured_dam=_dam_fill
+            fleet_arrays,
+            iso,
+            year,
+            gap_fill_measured_dam=_dam_fill,
+            unprinted_year_arm=_day_eve_unprinted,
         ):
             _logger.info(
                 "%s %d: south-corridor LATE-EVENING clean import depth armed "

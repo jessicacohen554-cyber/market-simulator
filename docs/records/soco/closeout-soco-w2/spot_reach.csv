@@ -1,0 +1,141 @@
+year,form,crit,key,keeper,keeper_mag,arm,arm_mag
+2019,F1,C1,CC_REGULAR,FAIL,"+3.97 TWh, share +3.2pp (share out of band)",FAIL,"+3.97 TWh, share +3.2pp (share out of band)"
+2019,F1,C1,CC_CHP,PASS,"+0.08 TWh, share +0.1pp",PASS,"+0.08 TWh, share +0.1pp"
+2019,F1,C1,CT_PEAKER,PASS,"+0.77 TWh, share +0.4pp",PASS,"+0.79 TWh, share +0.4pp"
+2019,F1,C1,ST_GAS,PASS,"-5.25 TWh, share -2.0pp",PASS,"-5.24 TWh, share -2.0pp"
+2019,F1,C1,ST_CHP,PASS,"-0.83 TWh, share -0.3pp",PASS,"-0.83 TWh, share -0.3pp"
+2019,F1,C1,COAL_PRB,PASS,"-0.40 TWh, share +0.3pp",PASS,"-0.42 TWh, share +0.3pp"
+2019,F1,C1,COAL_BIT,FAIL,"-7.82 TWh, share -2.8pp (volume out of band)",FAIL,"-7.83 TWh, share -2.8pp (volume out of band)"
+2019,F1,C3a,,PASS,+8.7%,PASS,+8.8%
+2019,F1,C3b,,PASS,NRMSE 0.112,PASS,NRMSE 0.113
+2019,F1,dE_TWh,"{""COAL_BIT"": -0.007, ""ST_CHP"": 0.0, ""CC_CHP"": 0.0, ""CT_PEAKER"": 0.024, ""ST_GAS"": 0.005, ""CC_REGULAR"": 0.001, ""COAL_PRB"": -0.023, ""CT_CHP"": 0.0}",,,11,1.06
+2019,F2,C1,CC_REGULAR,FAIL,"+3.97 TWh, share +3.2pp (share out of band)",FAIL,"+3.97 TWh, share +3.2pp (share out of band)"
+2019,F2,C1,CC_CHP,PASS,"+0.08 TWh, share +0.1pp",PASS,"+0.08 TWh, share +0.1pp"
+2019,F2,C1,CT_PEAKER,PASS,"+0.77 TWh, share +0.4pp",PASS,"+0.83 TWh, share +0.4pp"
+2019,F2,C1,ST_GAS,PASS,"-5.25 TWh, share -2.0pp",PASS,"-5.22 TWh, share -2.0pp"
+2019,F2,C1,ST_CHP,PASS,"-0.83 TWh, share -0.3pp",PASS,"-0.83 TWh, share -0.3pp"
+2019,F2,C1,COAL_PRB,PASS,"-0.40 TWh, share +0.3pp",PASS,"-0.51 TWh, share +0.3pp"
+2019,F2,C1,COAL_BIT,FAIL,"-7.82 TWh, share -2.8pp (volume out of band)",FAIL,"-7.79 TWh, share -2.8pp (volume out of band)"
+2019,F2,C3a,,PASS,+8.7%,PASS,+8.8%
+2019,F2,C3b,,PASS,NRMSE 0.112,PASS,NRMSE 0.113
+2019,F2,dE_TWh,"{""COAL_BIT"": 0.026, ""ST_CHP"": 0.0, ""CC_CHP"": 0.001, ""CT_PEAKER"": 0.061, ""ST_GAS"": 0.024, ""CC_REGULAR"": 0.001, ""COAL_PRB"": -0.113, ""CT_CHP"": 0.0}",,,11,1.68
+2020,F1,C1,CC_REGULAR,PASS,"-0.04 TWh, share +1.8pp",PASS,"-0.04 TWh, share +1.8pp"
+2020,F1,C1,CC_CHP,PASS,"+0.20 TWh, share +0.1pp",PASS,"+0.20 TWh, share +0.1pp"
+2020,F1,C1,CT_PEAKER,PASS,"-0.19 TWh, share -0.0pp",PASS,"-0.19 TWh, share -0.0pp"
+2020,F1,C1,ST_GAS,PASS,"-4.07 TWh, share -1.6pp",PASS,"-4.07 TWh, share -1.6pp"
+2020,F1,C1,ST_CHP,PASS,"-0.73 TWh, share -0.3pp",PASS,"-0.73 TWh, share -0.3pp"
+2020,F1,C1,COAL_PRB,PASS,"-0.75 TWh, share +0.1pp",PASS,"-0.76 TWh, share +0.1pp"
+2020,F1,C1,COAL_BIT,PASS,"-3.54 TWh, share -1.3pp",PASS,"-3.52 TWh, share -1.3pp"
+2020,F1,C3a,,PASS,+8.4%,PASS,+8.4%
+2020,F1,C3b,,PASS,NRMSE 0.113,PASS,NRMSE 0.113
+2020,F1,dE_TWh,"{""COAL_BIT"": 0.016, ""ST_CHP"": 0.0, ""CC_CHP"": -0.001, ""CT_PEAKER"": -0.002, ""ST_GAS"": 0.0, ""CC_REGULAR"": -0.0, ""COAL_PRB"": -0.014, ""CT_CHP"": 0.0}",,,2,0.11
+2020,F2,C1,CC_REGULAR,PASS,"-0.04 TWh, share +1.8pp",PASS,"-0.04 TWh, share +1.8pp"
+2020,F2,C1,CC_CHP,PASS,"+0.20 TWh, share +0.1pp",PASS,"+0.20 TWh, share +0.1pp"
+2020,F2,C1,CT_PEAKER,PASS,"-0.19 TWh, share -0.0pp",PASS,"-0.19 TWh, share -0.0pp"
+2020,F2,C1,ST_GAS,PASS,"-4.07 TWh, share -1.6pp",PASS,"-4.07 TWh, share -1.6pp"
+2020,F2,C1,ST_CHP,PASS,"-0.73 TWh, share -0.3pp",PASS,"-0.73 TWh, share -0.3pp"
+2020,F2,C1,COAL_PRB,PASS,"-0.75 TWh, share +0.1pp",PASS,"-0.76 TWh, share +0.1pp"
+2020,F2,C1,COAL_BIT,PASS,"-3.54 TWh, share -1.3pp",PASS,"-3.52 TWh, share -1.3pp"
+2020,F2,C3a,,PASS,+8.4%,PASS,+8.4%
+2020,F2,C3b,,PASS,NRMSE 0.113,PASS,NRMSE 0.113
+2020,F2,dE_TWh,"{""COAL_BIT"": 0.016, ""ST_CHP"": 0.0, ""CC_CHP"": -0.001, ""CT_PEAKER"": -0.002, ""ST_GAS"": 0.0, ""CC_REGULAR"": -0.0, ""COAL_PRB"": -0.014, ""CT_CHP"": 0.0}",,,2,-1.18
+2021,F1,C1,CC_REGULAR,PASS,"+3.35 TWh, share +2.4pp",PASS,"+3.35 TWh, share +2.4pp"
+2021,F1,C1,CC_CHP,PASS,"+0.26 TWh, share +0.1pp",PASS,"+0.26 TWh, share +0.1pp"
+2021,F1,C1,CT_PEAKER,PASS,"-1.32 TWh, share -0.5pp",PASS,"-1.32 TWh, share -0.5pp"
+2021,F1,C1,ST_GAS,PASS,"-4.46 TWh, share -1.8pp",PASS,"-4.46 TWh, share -1.8pp"
+2021,F1,C1,ST_CHP,PASS,"-0.72 TWh, share -0.3pp",PASS,"-0.72 TWh, share -0.3pp"
+2021,F1,C1,COAL_PRB,PASS,"+1.19 TWh, share +0.8pp",PASS,"+1.19 TWh, share +0.8pp"
+2021,F1,C1,COAL_BIT,PASS,"-3.59 TWh, share -1.3pp",PASS,"-3.59 TWh, share -1.3pp"
+2021,F1,C3a,,PASS,-6.7%,PASS,-6.7%
+2021,F1,C3b,,PASS,NRMSE 0.125,PASS,NRMSE 0.125
+2021,F1,dE_TWh,"{""COAL_BIT"": 0.002, ""ST_CHP"": 0.0, ""CC_CHP"": 0.002, ""CT_PEAKER"": 0.001, ""ST_GAS"": 0.0, ""CC_REGULAR"": 0.009, ""COAL_PRB"": -0.013, ""CT_CHP"": 0.0}",,,11,0.13
+2021,F2,C1,CC_REGULAR,PASS,"+3.35 TWh, share +2.4pp",PASS,"+3.35 TWh, share +2.4pp"
+2021,F2,C1,CC_CHP,PASS,"+0.26 TWh, share +0.1pp",PASS,"+0.26 TWh, share +0.1pp"
+2021,F2,C1,CT_PEAKER,PASS,"-1.32 TWh, share -0.5pp",PASS,"-1.32 TWh, share -0.5pp"
+2021,F2,C1,ST_GAS,PASS,"-4.46 TWh, share -1.8pp",PASS,"-4.46 TWh, share -1.8pp"
+2021,F2,C1,ST_CHP,PASS,"-0.72 TWh, share -0.3pp",PASS,"-0.72 TWh, share -0.3pp"
+2021,F2,C1,COAL_PRB,PASS,"+1.19 TWh, share +0.8pp",PASS,"+1.19 TWh, share +0.8pp"
+2021,F2,C1,COAL_BIT,PASS,"-3.59 TWh, share -1.3pp",PASS,"-3.59 TWh, share -1.3pp"
+2021,F2,C3a,,PASS,-6.7%,PASS,-6.8%
+2021,F2,C3b,,PASS,NRMSE 0.125,PASS,NRMSE 0.126
+2021,F2,dE_TWh,"{""COAL_BIT"": 0.098, ""ST_CHP"": 0.0, ""CC_CHP"": 0.017, ""CT_PEAKER"": 0.035, ""ST_GAS"": 0.0, ""CC_REGULAR"": -0.018, ""COAL_PRB"": -0.132, ""CT_CHP"": 0.0}",,,11,0.09
+2022,F1,C1,CC_REGULAR,PASS,"-0.37 TWh, share +0.7pp",PASS,"-0.28 TWh, share +0.8pp"
+2022,F1,C1,CC_CHP,PASS,"+0.25 TWh, share +0.1pp",PASS,"+0.25 TWh, share +0.1pp"
+2022,F1,C1,CT_PEAKER,PASS,"-3.87 TWh, share -1.5pp",PASS,"-3.81 TWh, share -1.5pp"
+2022,F1,C1,ST_GAS,PASS,"-4.61 TWh, share -1.8pp",PASS,"-4.59 TWh, share -1.8pp"
+2022,F1,C1,ST_CHP,PASS,"-0.67 TWh, share -0.3pp",PASS,"-0.67 TWh, share -0.3pp"
+2022,F1,C1,COAL_PRB,PASS,"+2.64 TWh, share +1.3pp",PASS,"+2.48 TWh, share +1.3pp"
+2022,F1,C1,COAL_BIT,PASS,"+1.23 TWh, share +0.6pp",PASS,"+1.22 TWh, share +0.6pp"
+2022,F1,C3a,,FAIL,-13.7%,FAIL,-13.3%
+2022,F1,C3b,,FAIL,NRMSE 0.282,FAIL,NRMSE 0.276
+2022,F1,dE_TWh,"{""COAL_BIT"": -0.008, ""ST_CHP"": 0.0, ""CC_CHP"": 0.005, ""CT_PEAKER"": 0.057, ""ST_GAS"": 0.02, ""CC_REGULAR"": 0.087, ""COAL_PRB"": -0.161, ""CT_CHP"": 0.0}",,,8,16.17
+2022,F2,C1,CC_REGULAR,PASS,"-0.37 TWh, share +0.7pp",PASS,"+0.19 TWh, share +0.9pp"
+2022,F2,C1,CC_CHP,PASS,"+0.25 TWh, share +0.1pp",PASS,"+0.27 TWh, share +0.1pp"
+2022,F2,C1,CT_PEAKER,PASS,"-3.87 TWh, share -1.5pp",PASS,"-3.73 TWh, share -1.5pp"
+2022,F2,C1,ST_GAS,PASS,"-4.61 TWh, share -1.8pp",PASS,"-4.55 TWh, share -1.8pp"
+2022,F2,C1,ST_CHP,PASS,"-0.67 TWh, share -0.3pp",PASS,"-0.67 TWh, share -0.3pp"
+2022,F2,C1,COAL_PRB,PASS,"+2.64 TWh, share +1.3pp",PASS,"+1.89 TWh, share +1.0pp"
+2022,F2,C1,COAL_BIT,PASS,"+1.23 TWh, share +0.6pp",PASS,"+1.22 TWh, share +0.6pp"
+2022,F2,C3a,,FAIL,-13.7%,FAIL,-12.7%
+2022,F2,C3b,,FAIL,NRMSE 0.282,FAIL,NRMSE 0.274
+2022,F2,dE_TWh,"{""COAL_BIT"": -0.011, ""ST_CHP"": 0.0, ""CC_CHP"": 0.026, ""CT_PEAKER"": 0.138, ""ST_GAS"": 0.052, ""CC_REGULAR"": 0.555, ""COAL_PRB"": -0.759, ""CT_CHP"": 0.0}",,,8,22.61
+2023,F1,C1,CC_REGULAR,PASS,"+5.04 TWh, share +2.4pp",PASS,"+5.04 TWh, share +2.4pp"
+2023,F1,C1,CC_CHP,PASS,"+0.27 TWh, share +0.1pp",PASS,"+0.27 TWh, share +0.1pp"
+2023,F1,C1,CT_PEAKER,PASS,"+2.10 TWh, share +0.9pp",PASS,"+2.09 TWh, share +0.9pp"
+2023,F1,C1,ST_GAS,PASS,"-4.60 TWh, share -1.9pp",PASS,"-4.60 TWh, share -1.9pp"
+2023,F1,C1,ST_CHP,PASS,"-0.57 TWh, share -0.2pp",PASS,"-0.57 TWh, share -0.2pp"
+2023,F1,C1,COAL_PRB,PASS,"-1.07 TWh, share -0.4pp",PASS,"-1.06 TWh, share -0.4pp"
+2023,F1,C1,COAL_BIT,PASS,"-3.16 TWh, share -1.3pp",PASS,"-3.16 TWh, share -1.3pp"
+2023,F1,C3a,,PASS,-0.4%,PASS,-0.5%
+2023,F1,C3b,,PASS,NRMSE 0.091,PASS,NRMSE 0.091
+2023,F1,dE_TWh,"{""COAL_BIT"": 0.0, ""ST_CHP"": 0.0, ""CC_CHP"": -0.003, ""CT_PEAKER"": -0.002, ""ST_GAS"": 0.0, ""CC_REGULAR"": -0.006, ""COAL_PRB"": 0.01, ""CT_CHP"": 0.0}",,,8,43.69
+2023,F2,C1,CC_REGULAR,PASS,"+5.04 TWh, share +2.4pp",PASS,"+5.08 TWh, share +2.5pp"
+2023,F2,C1,CC_CHP,PASS,"+0.27 TWh, share +0.1pp",PASS,"+0.28 TWh, share +0.1pp"
+2023,F2,C1,CT_PEAKER,PASS,"+2.10 TWh, share +0.9pp",PASS,"+2.12 TWh, share +0.9pp"
+2023,F2,C1,ST_GAS,PASS,"-4.60 TWh, share -1.9pp",PASS,"-4.60 TWh, share -1.9pp"
+2023,F2,C1,ST_CHP,PASS,"-0.57 TWh, share -0.2pp",PASS,"-0.57 TWh, share -0.2pp"
+2023,F2,C1,COAL_PRB,PASS,"-1.07 TWh, share -0.4pp",PASS,"-1.14 TWh, share -0.4pp"
+2023,F2,C1,COAL_BIT,PASS,"-3.16 TWh, share -1.3pp",PASS,"-3.16 TWh, share -1.3pp"
+2023,F2,C3a,,PASS,-0.4%,PASS,-0.3%
+2023,F2,C3b,,PASS,NRMSE 0.091,PASS,NRMSE 0.092
+2023,F2,dE_TWh,"{""COAL_BIT"": 0.0, ""ST_CHP"": 0.0, ""CC_CHP"": 0.008, ""CT_PEAKER"": 0.023, ""ST_GAS"": 0.005, ""CC_REGULAR"": 0.041, ""COAL_PRB"": -0.078, ""CT_CHP"": 0.0}",,,8,41.71
+2024,F1,C1,CC_REGULAR,PASS,"+2.71 TWh, share +2.0pp",PASS,"+2.71 TWh, share +2.0pp"
+2024,F1,C1,CC_CHP,PASS,"+0.26 TWh, share +0.1pp",PASS,"+0.26 TWh, share +0.1pp"
+2024,F1,C1,CT_PEAKER,PASS,"+1.49 TWh, share +0.6pp",PASS,"+1.49 TWh, share +0.6pp"
+2024,F1,C1,ST_GAS,PASS,"-3.80 TWh, share -1.5pp",PASS,"-3.80 TWh, share -1.5pp"
+2024,F1,C1,ST_CHP,PASS,"-0.83 TWh, share -0.3pp",PASS,"-0.83 TWh, share -0.3pp"
+2024,F1,C1,COAL_PRB,PASS,"-1.88 TWh, share -0.5pp",PASS,"-1.88 TWh, share -0.5pp"
+2024,F1,C1,COAL_BIT,PASS,"-3.51 TWh, share -1.3pp",PASS,"-3.51 TWh, share -1.3pp"
+2024,F1,C3a,,PASS,-6.0%,PASS,-6.0%
+2024,F1,C3b,,PASS,NRMSE 0.184,PASS,NRMSE 0.184
+2024,F1,dE_TWh,"{""COAL_BIT"": 0.0, ""ST_CHP"": 0.0, ""CC_CHP"": 0.0, ""CT_PEAKER"": 0.0, ""ST_GAS"": 0.0, ""CC_REGULAR"": 0.0, ""COAL_PRB"": 0.0, ""CT_CHP"": 0.0}",,,4,21.9
+2024,F2,C1,CC_REGULAR,PASS,"+2.71 TWh, share +2.0pp",PASS,"+2.71 TWh, share +2.0pp"
+2024,F2,C1,CC_CHP,PASS,"+0.26 TWh, share +0.1pp",PASS,"+0.26 TWh, share +0.1pp"
+2024,F2,C1,CT_PEAKER,PASS,"+1.49 TWh, share +0.6pp",PASS,"+1.49 TWh, share +0.6pp"
+2024,F2,C1,ST_GAS,PASS,"-3.80 TWh, share -1.5pp",PASS,"-3.80 TWh, share -1.5pp"
+2024,F2,C1,ST_CHP,PASS,"-0.83 TWh, share -0.3pp",PASS,"-0.83 TWh, share -0.3pp"
+2024,F2,C1,COAL_PRB,PASS,"-1.88 TWh, share -0.5pp",PASS,"-1.88 TWh, share -0.5pp"
+2024,F2,C1,COAL_BIT,PASS,"-3.51 TWh, share -1.3pp",PASS,"-3.51 TWh, share -1.3pp"
+2024,F2,C3a,,PASS,-6.0%,PASS,-6.0%
+2024,F2,C3b,,PASS,NRMSE 0.184,PASS,NRMSE 0.184
+2024,F2,dE_TWh,"{""COAL_BIT"": 0.0, ""ST_CHP"": 0.0, ""CC_CHP"": 0.004, ""CT_PEAKER"": 0.031, ""ST_GAS"": 0.005, ""CC_REGULAR"": 0.001, ""COAL_PRB"": -0.041, ""CT_CHP"": 0.0}",,,4,35.5
+2025,F1,C1,CC_REGULAR,SKIPPED,preliminary EIA-923 vintage: complete plant data (no per-class actual); not gated — C2 family grid reconcile covers this class,SKIPPED,preliminary EIA-923 vintage: complete plant data (no per-class actual); not gated — C2 family grid reconcile covers this class
+2025,F1,C1,CC_CHP,SKIPPED,preliminary EIA-923 vintage: complete plant data (no per-class actual); not gated — C2 family grid reconcile covers this class,SKIPPED,preliminary EIA-923 vintage: complete plant data (no per-class actual); not gated — C2 family grid reconcile covers this class
+2025,F1,C1,CT_PEAKER,SKIPPED,preliminary EIA-923 vintage: complete plant data (no per-class actual); not gated — C2 family grid reconcile covers this class,SKIPPED,preliminary EIA-923 vintage: complete plant data (no per-class actual); not gated — C2 family grid reconcile covers this class
+2025,F1,C1,ST_GAS,SKIPPED,preliminary EIA-923 vintage: complete plant data (no per-class actual); not gated — C2 family grid reconcile covers this class,SKIPPED,preliminary EIA-923 vintage: complete plant data (no per-class actual); not gated — C2 family grid reconcile covers this class
+2025,F1,C1,ST_CHP,SKIPPED,preliminary EIA-923 vintage: incomplete plant data (1/26 prior plants missing (96% reporting); plant-months 96% present); not gated — C2 family grid reconcile covers this class,SKIPPED,preliminary EIA-923 vintage: incomplete plant data (1/26 prior plants missing (96% reporting); plant-months 96% present); not gated — C2 family grid reconcile covers this class
+2025,F1,C1,COAL_PRB,PASS,"+2.76 TWh, share +1.3pp",PASS,"+2.76 TWh, share +1.3pp"
+2025,F1,C1,COAL_BIT,PASS,"-0.89 TWh, share -0.2pp",PASS,"-0.89 TWh, share -0.2pp"
+2025,F1,C3a,,PASS,-4.7%,PASS,-4.7%
+2025,F1,C3b,,PASS,NRMSE 0.184,PASS,NRMSE 0.184
+2025,F1,dE_TWh,"{""COAL_BIT"": 0.006, ""ST_CHP"": 0.0, ""CC_CHP"": -0.002, ""CT_PEAKER"": 0.002, ""ST_GAS"": 0.002, ""CC_REGULAR"": -0.003, ""COAL_PRB"": -0.005, ""CT_CHP"": 0.0}",,,4,7.39
+2025,F2,C1,CC_REGULAR,SKIPPED,preliminary EIA-923 vintage: complete plant data (no per-class actual); not gated — C2 family grid reconcile covers this class,SKIPPED,preliminary EIA-923 vintage: complete plant data (no per-class actual); not gated — C2 family grid reconcile covers this class
+2025,F2,C1,CC_CHP,SKIPPED,preliminary EIA-923 vintage: complete plant data (no per-class actual); not gated — C2 family grid reconcile covers this class,SKIPPED,preliminary EIA-923 vintage: complete plant data (no per-class actual); not gated — C2 family grid reconcile covers this class
+2025,F2,C1,CT_PEAKER,SKIPPED,preliminary EIA-923 vintage: complete plant data (no per-class actual); not gated — C2 family grid reconcile covers this class,SKIPPED,preliminary EIA-923 vintage: complete plant data (no per-class actual); not gated — C2 family grid reconcile covers this class
+2025,F2,C1,ST_GAS,SKIPPED,preliminary EIA-923 vintage: complete plant data (no per-class actual); not gated — C2 family grid reconcile covers this class,SKIPPED,preliminary EIA-923 vintage: complete plant data (no per-class actual); not gated — C2 family grid reconcile covers this class
+2025,F2,C1,ST_CHP,SKIPPED,preliminary EIA-923 vintage: incomplete plant data (1/26 prior plants missing (96% reporting); plant-months 96% present); not gated — C2 family grid reconcile covers this class,SKIPPED,preliminary EIA-923 vintage: incomplete plant data (1/26 prior plants missing (96% reporting); plant-months 96% present); not gated — C2 family grid reconcile covers this class
+2025,F2,C1,COAL_PRB,PASS,"+2.76 TWh, share +1.3pp",PASS,"+2.76 TWh, share +1.3pp"
+2025,F2,C1,COAL_BIT,PASS,"-0.89 TWh, share -0.2pp",PASS,"-0.89 TWh, share -0.2pp"
+2025,F2,C3a,,PASS,-4.7%,PASS,-4.7%
+2025,F2,C3b,,PASS,NRMSE 0.184,PASS,NRMSE 0.184
+2025,F2,dE_TWh,"{""COAL_BIT"": 0.043, ""ST_CHP"": 0.0, ""CC_CHP"": 0.014, ""CT_PEAKER"": 0.232, ""ST_GAS"": 0.038, ""CC_REGULAR"": 0.045, ""COAL_PRB"": -0.373, ""CT_CHP"": 0.0}",,,4,21.96
