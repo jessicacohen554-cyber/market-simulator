@@ -2344,6 +2344,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # construction: the daytime / late-evening injectors read the
     # unprinted-year mask only when handed unprinted_year_arm=True from it.
     "caiso_dsw_daytime_lateevening_unprinted_arm",
+    # closeout-CAISO-w3 (2026-10-04), default off, registered IN THE SAME
+    # COMMIT as the fields (the nyiso-119 discipline). Byte-identical off by
+    # construction: the injectors / formula read them only when handed True.
+    "caiso_dsw_clean_depth_own_year",
+    "caiso_intertie_unprinted_daily_gas_shape",
     # NWPP-NEXT-6 (2026-09-26): WECC Path 76 "Alturas" link NWPP-NW <->
     # NWPP-SNV (default off). Byte-identical off by construction: its one
     # applier, pipeline.ttc.apply_nwpp_path76_link, returns the SAME ISOConfig
@@ -3317,6 +3322,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "caiso_dsw_overnight_clean_unprinted_arm": "False",
     # Added by closeout-CAISO-w2 WITH the field (the nyiso-119 discipline).
     "caiso_dsw_daytime_lateevening_unprinted_arm": "False",
+    # Added by closeout-CAISO-w3 WITH the fields (the nyiso-119 discipline).
+    "caiso_dsw_clean_depth_own_year": "False",
+    "caiso_intertie_unprinted_daily_gas_shape": "False",
     # Added by NWPP-NEXT-6 WITH the field (the nyiso-119 discipline).
     "nwpp_path76_alturas_link": "False",
     # Added by NWPP-NEXT-7 WITH the field (the nyiso-119 discipline).
@@ -10680,6 +10688,32 @@ class ScenarioConfig:
     # caiso_intertie_unprinted_year_measured_gas (the pricing; without it the
     # arm is a no-op). Default off; CAISO-only; backcast-only.
     # docs/records/caiso/closeout-caiso-w2/PRECOMMIT-closeout-caiso-w2-unprinted-rungs-2026-10-03.md.
+    caiso_dsw_clean_depth_own_year: bool = False  # closeout-CAISO-w3
+    # (2026-10-04). Each DSW clean rung (caiso-87 surplus, caiso-93 overnight,
+    # caiso-94 daytime, caiso-269 late-evening) carries its OWN measured depth in
+    # a scored year the BY_YEAR tables leave on the pooled 2023-25 static -- only
+    # 2021 (interchange spec CAISO_DSW_CLEAN_OWN_YEAR_DEPTH: surplus 6,644 /
+    # overnight 6,892 / daytime 7,426 / late-evening 7,288 MW vs static 5,192 /
+    # 6,187 / 5,733 / 6,415). Values are each rung's own derive with
+    # --extra-years 2021: the identical statistic, window and trigger, never
+    # re-sized (rule 1); a measured year over a pooled estimate (rule 14). Inert
+    # in every year without a row (2019-20, 2022-25). Default off; CAISO-only;
+    # backcast-only. docs/records/caiso/closeout-caiso-w3/.
+    caiso_intertie_unprinted_daily_gas_shape: bool = False  # closeout-CAISO-w3
+    # (2026-10-04). The R-CAISO-18 unprinted-hour WECC hub formula (all of
+    # 2019-2020, the unprinted Jan-Apr 2021) prices each hub on its host state's
+    # MONTHLY delivered-to-power gas; this multiplies that monthly level by the
+    # measured CA citygate within-month daily shape
+    # (data.fuel.hubs.caiso_citygate_daily_shape_factors, flow-date staircase,
+    # month-mean preserving), so a multi-day spike (Uri: AZ Feb-2021
+    # $10.28/MMBtu) lands on the days it printed instead of every hour of the
+    # month. Validated on PRINTED hours before adoption: daily-shaped vs flat
+    # formula against the measured Palo Verde and Malin daily means wins on r AND
+    # RMSE in 4/4 years 2022-25 at each hub (pre-fixed bar >= 3/4;
+    # scripts/probes/_closeout_caiso_w3_l2_validation.py). Only the >25 %-gap
+    # branch reads it (the <=25 % 2023 gap fill is untouched), so 2022-2025 are
+    # inert by construction. Requires caiso_intertie_unprinted_year_measured_gas.
+    # Default off; CAISO-only; backcast-only. docs/records/caiso/closeout-caiso-w3/.
     caiso_dsw_daytime_clean: bool = False  # Carry the MEASURED DAYTIME
     # trigger-OFF (hod 6-21) WEIM clean import depth on the south (Palo Verde /
     # Path-46) corridor (caiso-94; FINDING-caiso94-daytime-wedge-2026-07-17,

@@ -761,6 +761,52 @@ def gas_daily_shape_factors(
     return factors
 
 
+def caiso_citygate_daily_shape_factors(
+    year: int, hours: int, path: Path | None = None
+) -> np.ndarray:
+    """Return ``(hours,)`` within-month daily shape factors from the CA citygate daily spot.
+
+    The western sibling of :func:`gas_daily_shape_factors`. The source is the
+    measured California Composite citygate daily spot
+    (:data:`CAISO_CITYGATE_DAILY_PATH`), placed on its FLOW days by
+    :func:`_flow_date_staircase`, the keeper's own CA gas construction
+    (``caiso_citygate_flow_date``). Each calendar day's factor is the staircase
+    value divided by that month's own calendar-day mean, so the factors average
+    to exactly 1.0 in every month: a monthly level multiplied by them keeps its
+    measured monthly mean and gains the measured intra-month swing. A month with
+    no print resolves to all-ones.
+
+    Consumer: the R-CAISO-18 unprinted-hour WECC hub formula
+    (``ScenarioConfig.caiso_intertie_unprinted_daily_gas_shape``, closeout-CAISO-w3).
+    Its gas operand is the hub host state's MONTHLY delivered-to-power price, which
+    spreads a multi-day spike (Winter Storm Uri: AZ Feb-2021 $10.28/MMBtu) over the
+    whole month. Validated on printed hours before adoption: against the measured
+    Palo Verde and Malin daily means, the daily-shaped formula beats the flat
+    formula on both r and RMSE in 4 of 4 years 2022-2025 at each hub
+    (``scripts/probes/_closeout_caiso_w3_l2_validation.py``).
+    """
+    factors = np.ones(hours, dtype=float)
+    dated = _pkg_ns()._caiso_citygate_daily_dated(path).get(year)
+    if not dated:
+        return factors
+    daily = _flow_date_staircase(dated, year)
+    if daily is None:
+        return factors
+    hour = 0
+    day0 = 0
+    for month_idx, n_days in enumerate(_DAYS_IN_MONTH):
+        month_hours = n_days * 24
+        if dated.get(month_idx + 1) and hour < hours:
+            seg = np.asarray(daily[day0 : day0 + n_days], dtype=float)
+            mean = float(np.nanmean(seg)) if seg.size else 0.0
+            if np.isfinite(mean) and mean > 0 and np.all(np.isfinite(seg)):
+                shaped = np.repeat(seg / mean, 24)[: max(0, hours - hour)]
+                factors[hour : hour + len(shaped)] = shaped
+        hour += month_hours
+        day0 += n_days
+    return factors
+
+
 def iso_hub_monthly_gas_prices(
     config: ScenarioConfig,
     year: int,

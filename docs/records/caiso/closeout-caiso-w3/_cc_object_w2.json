@@ -1,0 +1,950 @@
+{
+ "2019": {
+  "scored_miss_twh": -1.702,
+  "model_cc_twh": 38.928,
+  "raw923_miss_twh": -1.733,
+  "bench": {
+   "cc_classfull_twh": 40.63,
+   "cc_eia923_plant_twh": 40.66,
+   "reconcile_scale": 0.9993,
+   "bench_component_twh": 0.03,
+   "gas_family_scored_twh": 57.64,
+   "gas_family_923_grid_twh": 57.68,
+   "gas_family_923_full_twh": 68.96,
+   "e930_gas_twh": 65.25,
+   "cems_anchor_fossil_grid_twh": 59.117,
+   "fold_deflation_F_twh": 14.76,
+   "e930_gas_minus_923_grid_twh": 7.57
+  },
+  "plant_month": {
+   "positive_sum_twh": 5.38,
+   "negative_sum_twh": -7.11,
+   "by_month_delta_twh": {
+    "1": 0.48,
+    "2": -0.98,
+    "3": -0.99,
+    "4": -0.21,
+    "5": -0.17,
+    "6": -0.15,
+    "7": -0.27,
+    "8": 0.54,
+    "9": 0.38,
+    "10": -0.35,
+    "11": -0.27,
+    "12": 0.26
+   },
+   "top10_plants": [
+    {
+     "plant": 55853,
+     "model_twh": 1.3,
+     "e923_twh": 0.0,
+     "d_twh": 1.3
+    },
+    {
+     "plant": 55985,
+     "model_twh": 1.8,
+     "e923_twh": 1.18,
+     "d_twh": 0.61
+    },
+    {
+     "plant": 56467,
+     "model_twh": 1.34,
+     "e923_twh": 0.88,
+     "d_twh": 0.46
+    },
+    {
+     "plant": 55345,
+     "model_twh": 1.18,
+     "e923_twh": 0.75,
+     "d_twh": 0.43
+    },
+    {
+     "plant": 260,
+     "model_twh": 5.56,
+     "e923_twh": 5.22,
+     "d_twh": 0.34
+    },
+    {
+     "plant": 55333,
+     "model_twh": 3.84,
+     "e923_twh": 3.53,
+     "d_twh": 0.31
+    },
+    {
+     "plant": 56532,
+     "model_twh": 3.19,
+     "e923_twh": 3.03,
+     "d_twh": 0.16
+    },
+    {
+     "plant": 57564,
+     "model_twh": 0.17,
+     "e923_twh": 0.07,
+     "d_twh": 0.1
+    },
+    {
+     "plant": 55182,
+     "model_twh": 2.24,
+     "e923_twh": 2.19,
+     "d_twh": 0.05
+    },
+    {
+     "plant": 10350,
+     "model_twh": 0.04,
+     "e923_twh": 0.0,
+     "d_twh": 0.04
+    }
+   ],
+   "bottom5_plants": [
+    {
+     "plant": 57978,
+     "model_twh": 0.75,
+     "e923_twh": 1.19,
+     "d_twh": -0.44
+    },
+    {
+     "plant": 55518,
+     "model_twh": 2.73,
+     "e923_twh": 3.34,
+     "d_twh": -0.61
+    },
+    {
+     "plant": 55295,
+     "model_twh": 0.86,
+     "e923_twh": 1.47,
+     "d_twh": -0.61
+    },
+    {
+     "plant": 56476,
+     "model_twh": 2.02,
+     "e923_twh": 2.87,
+     "d_twh": -0.85
+    },
+    {
+     "plant": 55656,
+     "model_twh": 2.91,
+     "e923_twh": 4.06,
+     "d_twh": -1.15
+    }
+   ],
+   "plants_absent_from_model_e923_twh": 0.0
+  },
+  "a1_above_seasonal_capability_twh": 1.536,
+  "a2_above_monthly_demonstrated_twh": 1.716,
+  "balance": {
+   "CC_REGULAR": {
+    "model_twh": 38.928,
+    "actual_twh": 40.66,
+    "delta_twh": -1.733,
+    "delta_overrun_h_twh": 4.061
+   },
+   "net_imports": {
+    "model_twh": 62.052,
+    "actual_twh": 53.827,
+    "delta_twh": 8.225,
+    "delta_overrun_h_twh": -0.983
+   },
+   "hydro": {
+    "model_twh": 29.189,
+    "actual_twh": 28.99,
+    "delta_twh": 0.198,
+    "delta_overrun_h_twh": 0.381
+   },
+   "nuclear": {
+    "model_twh": 16.079,
+    "actual_twh": 16.194,
+    "delta_twh": -0.115,
+    "delta_overrun_h_twh": -0.059
+   },
+   "solar": {
+    "model_twh": 28.542,
+    "actual_twh": 27.648,
+    "delta_twh": 0.894,
+    "delta_overrun_h_twh": 0.339
+   },
+   "wind": {
+    "model_twh": 15.923,
+    "actual_twh": 15.881,
+    "delta_twh": 0.042,
+    "delta_overrun_h_twh": 0.016
+   },
+   "geo_biomass": {
+    "model_twh": 14.974,
+    "actual_twh": 14.773,
+    "delta_twh": 0.201,
+    "delta_overrun_h_twh": 0.083
+   },
+   "storage_net": {
+    "model_twh": -0.4869999885559082,
+    "actual_twh": 0.0,
+    "delta_twh": -0.487,
+    "delta_overrun_h_twh": -0.338
+   },
+   "coal_oil": {
+    "model_twh": 0.093,
+    "actual_twh": 0.276,
+    "delta_twh": -0.183,
+    "delta_overrun_h_twh": -0.074
+   },
+   "CC_CHP": {
+    "model_twh": 8.442,
+    "actual_twh": 8.034,
+    "delta_twh": 0.408,
+    "delta_overrun_h_twh": 0.178
+   },
+   "CT_CHP": {
+    "model_twh": 1.232,
+    "actual_twh": 3.545,
+    "delta_twh": -2.313,
+    "delta_overrun_h_twh": -1.088
+   },
+   "CT_PEAKER": {
+    "model_twh": 2.642,
+    "actual_twh": 4.086,
+    "delta_twh": -1.444,
+    "delta_overrun_h_twh": -0.057
+   },
+   "ST_GAS": {
+    "model_twh": 0.053,
+    "actual_twh": 1.237,
+    "delta_twh": -1.184,
+    "delta_overrun_h_twh": -0.808
+   },
+   "ST_CHP": {
+    "model_twh": 0.0,
+    "actual_twh": 0.05,
+    "delta_twh": -0.05,
+    "delta_overrun_h_twh": -0.023
+   },
+   "OTHER_FOSSIL": {
+    "model_twh": 0.0,
+    "actual_twh": 0.0,
+    "delta_twh": 0.0,
+    "delta_overrun_h_twh": 0.0
+   },
+   "demand": {
+    "model_twh": 217.285,
+    "actual_twh": 214.156,
+    "delta_twh": 3.128,
+    "delta_overrun_h_twh": -0.355
+   },
+   "_model_supply_minus_demand_twh": 0.377,
+   "_actual_supply_minus_930demand_twh": 1.045,
+   "_actual_supply_minus_930demand_overrun_h_twh": -1.816,
+   "_overrun_hours": 4048
+  },
+  "c_bridge_forced_twh": 4.399,
+  "cc_hourly_r_vs_levelled_cems": 0.891
+ },
+ "2020": {
+  "scored_miss_twh": 5.464,
+  "model_cc_twh": 51.596,
+  "raw923_miss_twh": 5.43,
+  "bench": {
+   "cc_classfull_twh": 46.132,
+   "cc_eia923_plant_twh": 46.166,
+   "reconcile_scale": 0.9993,
+   "bench_component_twh": 0.034,
+   "gas_family_scored_twh": 63.46,
+   "gas_family_923_grid_twh": 63.51,
+   "gas_family_923_full_twh": 74.19,
+   "e930_gas_twh": 73.74,
+   "cems_anchor_fossil_grid_twh": 64.78,
+   "fold_deflation_F_twh": 15.07,
+   "e930_gas_minus_923_grid_twh": 10.23
+  },
+  "plant_month": {
+   "positive_sum_twh": 9.85,
+   "negative_sum_twh": -4.42,
+   "by_month_delta_twh": {
+    "1": -0.03,
+    "2": -0.12,
+    "3": -0.51,
+    "4": -0.26,
+    "5": 0.45,
+    "6": 1.24,
+    "7": 1.13,
+    "8": 1.28,
+    "9": 1.4,
+    "10": -0.35,
+    "11": 0.17,
+    "12": 1.04
+   },
+   "top10_plants": [
+    {
+     "plant": 260,
+     "model_twh": 6.54,
+     "e923_twh": 5.22,
+     "d_twh": 1.32
+    },
+    {
+     "plant": 62115,
+     "model_twh": 2.09,
+     "e923_twh": 1.23,
+     "d_twh": 0.86
+    },
+    {
+     "plant": 56532,
+     "model_twh": 3.82,
+     "e923_twh": 3.04,
+     "d_twh": 0.78
+    },
+    {
+     "plant": 55333,
+     "model_twh": 4.61,
+     "e923_twh": 3.86,
+     "d_twh": 0.75
+    },
+    {
+     "plant": 56467,
+     "model_twh": 1.78,
+     "e923_twh": 1.09,
+     "d_twh": 0.69
+    },
+    {
+     "plant": 55151,
+     "model_twh": 2.25,
+     "e923_twh": 1.61,
+     "d_twh": 0.64
+    },
+    {
+     "plant": 62116,
+     "model_twh": 1.9,
+     "e923_twh": 1.29,
+     "d_twh": 0.61
+    },
+    {
+     "plant": 55393,
+     "model_twh": 2.89,
+     "e923_twh": 2.38,
+     "d_twh": 0.51
+    },
+    {
+     "plant": 55985,
+     "model_twh": 2.46,
+     "e923_twh": 2.03,
+     "d_twh": 0.44
+    },
+    {
+     "plant": 55345,
+     "model_twh": 2.4,
+     "e923_twh": 2.11,
+     "d_twh": 0.3
+    }
+   ],
+   "bottom5_plants": [
+    {
+     "plant": 358,
+     "model_twh": 2.75,
+     "e923_twh": 2.87,
+     "d_twh": -0.12
+    },
+    {
+     "plant": 56041,
+     "model_twh": 0.34,
+     "e923_twh": 0.61,
+     "d_twh": -0.27
+    },
+    {
+     "plant": 55518,
+     "model_twh": 2.67,
+     "e923_twh": 3.06,
+     "d_twh": -0.38
+    },
+    {
+     "plant": 55656,
+     "model_twh": 3.93,
+     "e923_twh": 4.34,
+     "d_twh": -0.41
+    },
+    {
+     "plant": 55295,
+     "model_twh": 1.19,
+     "e923_twh": 1.88,
+     "d_twh": -0.7
+    }
+   ],
+   "plants_absent_from_model_e923_twh": 0.0
+  },
+  "a1_above_seasonal_capability_twh": 0.52,
+  "a2_above_monthly_demonstrated_twh": 0.834,
+  "balance": {
+   "CC_REGULAR": {
+    "model_twh": 51.596,
+    "actual_twh": 46.166,
+    "delta_twh": 5.43,
+    "delta_overrun_h_twh": 9.144
+   },
+   "net_imports": {
+    "model_twh": 59.208,
+    "actual_twh": 59.214,
+    "delta_twh": -0.006,
+    "delta_overrun_h_twh": -5.508
+   },
+   "hydro": {
+    "model_twh": 16.157,
+    "actual_twh": 15.05,
+    "delta_twh": 1.107,
+    "delta_overrun_h_twh": 0.922
+   },
+   "nuclear": {
+    "model_twh": 16.118,
+    "actual_twh": 16.274,
+    "delta_twh": -0.157,
+    "delta_overrun_h_twh": -0.122
+   },
+   "solar": {
+    "model_twh": 29.893,
+    "actual_twh": 28.59,
+    "delta_twh": 1.303,
+    "delta_overrun_h_twh": 0.615
+   },
+   "wind": {
+    "model_twh": 14.968,
+    "actual_twh": 14.878,
+    "delta_twh": 0.089,
+    "delta_overrun_h_twh": 0.04
+   },
+   "geo_biomass": {
+    "model_twh": 15.35,
+    "actual_twh": 15.057,
+    "delta_twh": 0.293,
+    "delta_overrun_h_twh": 0.134
+   },
+   "storage_net": {
+    "model_twh": -0.38100001215934753,
+    "actual_twh": 0.0,
+    "delta_twh": -0.381,
+    "delta_overrun_h_twh": 0.076
+   },
+   "coal_oil": {
+    "model_twh": 0.086,
+    "actual_twh": 0.324,
+    "delta_twh": -0.238,
+    "delta_overrun_h_twh": -0.146
+   },
+   "CC_CHP": {
+    "model_twh": 8.589,
+    "actual_twh": 7.534,
+    "delta_twh": 1.055,
+    "delta_overrun_h_twh": 0.682
+   },
+   "CT_CHP": {
+    "model_twh": 1.231,
+    "actual_twh": 3.084,
+    "delta_twh": -1.853,
+    "delta_overrun_h_twh": -1.196
+   },
+   "CT_PEAKER": {
+    "model_twh": 2.797,
+    "actual_twh": 4.841,
+    "delta_twh": -2.044,
+    "delta_overrun_h_twh": -0.839
+   },
+   "ST_GAS": {
+    "model_twh": 0.409,
+    "actual_twh": 1.76,
+    "delta_twh": -1.351,
+    "delta_overrun_h_twh": -1.088
+   },
+   "ST_CHP": {
+    "model_twh": 0.0,
+    "actual_twh": 0.058,
+    "delta_twh": -0.058,
+    "delta_overrun_h_twh": -0.035
+   },
+   "OTHER_FOSSIL": {
+    "model_twh": 0.0,
+    "actual_twh": 0.0,
+    "delta_twh": 0.0,
+    "delta_overrun_h_twh": 0.0
+   },
+   "demand": {
+    "model_twh": 215.623,
+    "actual_twh": 217.479,
+    "delta_twh": -1.856,
+    "delta_overrun_h_twh": -1.406
+   },
+   "_model_supply_minus_demand_twh": 0.398,
+   "_actual_supply_minus_930demand_twh": -4.65,
+   "_actual_supply_minus_930demand_overrun_h_twh": -3.85,
+   "_overrun_hours": 5541
+  },
+  "c_bridge_forced_twh": 4.4166,
+  "cc_hourly_r_vs_levelled_cems": 0.856
+ },
+ "2021": {
+  "scored_miss_twh": 4.983,
+  "model_cc_twh": 55.668,
+  "raw923_miss_twh": 4.974,
+  "bench": {
+   "cc_classfull_twh": 50.685,
+   "cc_eia923_plant_twh": 50.694,
+   "reconcile_scale": 0.9998,
+   "bench_component_twh": 0.009,
+   "gas_family_scored_twh": 67.47,
+   "gas_family_923_grid_twh": 67.48,
+   "gas_family_923_full_twh": 78.24,
+   "e930_gas_twh": 79.29,
+   "cems_anchor_fossil_grid_twh": 68.716,
+   "fold_deflation_F_twh": 14.48,
+   "e930_gas_minus_923_grid_twh": 11.81
+  },
+  "plant_month": {
+   "positive_sum_twh": 9.4,
+   "negative_sum_twh": -4.43,
+   "by_month_delta_twh": {
+    "1": 1.5,
+    "2": 0.83,
+    "3": 0.53,
+    "4": -0.17,
+    "5": -0.11,
+    "6": 0.48,
+    "7": 0.62,
+    "8": 0.51,
+    "9": 0.42,
+    "10": -0.22,
+    "11": 0.04,
+    "12": 0.52
+   },
+   "top10_plants": [
+    {
+     "plant": 260,
+     "model_twh": 6.81,
+     "e923_twh": 5.35,
+     "d_twh": 1.46
+    },
+    {
+     "plant": 55151,
+     "model_twh": 2.6,
+     "e923_twh": 1.24,
+     "d_twh": 1.36
+    },
+    {
+     "plant": 55393,
+     "model_twh": 3.16,
+     "e923_twh": 2.34,
+     "d_twh": 0.83
+    },
+    {
+     "plant": 56532,
+     "model_twh": 2.94,
+     "e923_twh": 2.19,
+     "d_twh": 0.74
+    },
+    {
+     "plant": 55333,
+     "model_twh": 5.16,
+     "e923_twh": 4.47,
+     "d_twh": 0.69
+    },
+    {
+     "plant": 358,
+     "model_twh": 2.56,
+     "e923_twh": 2.03,
+     "d_twh": 0.53
+    },
+    {
+     "plant": 55933,
+     "model_twh": 1.18,
+     "e923_twh": 0.8,
+     "d_twh": 0.38
+    },
+    {
+     "plant": 55985,
+     "model_twh": 2.16,
+     "e923_twh": 1.84,
+     "d_twh": 0.33
+    },
+    {
+     "plant": 55182,
+     "model_twh": 3.03,
+     "e923_twh": 2.71,
+     "d_twh": 0.32
+    },
+    {
+     "plant": 55345,
+     "model_twh": 2.45,
+     "e923_twh": 2.13,
+     "d_twh": 0.32
+    }
+   ],
+   "bottom5_plants": [
+    {
+     "plant": 62116,
+     "model_twh": 3.64,
+     "e923_twh": 3.84,
+     "d_twh": -0.2
+    },
+    {
+     "plant": 56041,
+     "model_twh": 0.35,
+     "e923_twh": 0.59,
+     "d_twh": -0.24
+    },
+    {
+     "plant": 55656,
+     "model_twh": 3.6,
+     "e923_twh": 4.26,
+     "d_twh": -0.66
+    },
+    {
+     "plant": 55518,
+     "model_twh": 3.12,
+     "e923_twh": 3.8,
+     "d_twh": -0.69
+    },
+    {
+     "plant": 55295,
+     "model_twh": 1.18,
+     "e923_twh": 2.15,
+     "d_twh": -0.98
+    }
+   ],
+   "plants_absent_from_model_e923_twh": 0.0
+  },
+  "a1_above_seasonal_capability_twh": 0.486,
+  "a2_above_monthly_demonstrated_twh": 0.889,
+  "balance": {
+   "CC_REGULAR": {
+    "model_twh": 55.668,
+    "actual_twh": 50.694,
+    "delta_twh": 4.974,
+    "delta_overrun_h_twh": 8.228
+   },
+   "net_imports": {
+    "model_twh": 49.493,
+    "actual_twh": 54.557,
+    "delta_twh": -5.065,
+    "delta_overrun_h_twh": -10.4
+   },
+   "hydro": {
+    "model_twh": 11.373,
+    "actual_twh": 11.393,
+    "delta_twh": -0.02,
+    "delta_overrun_h_twh": 0.179
+   },
+   "nuclear": {
+    "model_twh": 16.35,
+    "actual_twh": 16.577,
+    "delta_twh": -0.227,
+    "delta_overrun_h_twh": -0.156
+   },
+   "solar": {
+    "model_twh": 34.16,
+    "actual_twh": 32.759,
+    "delta_twh": 1.402,
+    "delta_overrun_h_twh": 0.623
+   },
+   "wind": {
+    "model_twh": 18.379,
+    "actual_twh": 18.301,
+    "delta_twh": 0.079,
+    "delta_overrun_h_twh": 0.037
+   },
+   "geo_biomass": {
+    "model_twh": 14.85,
+    "actual_twh": 14.429,
+    "delta_twh": 0.421,
+    "delta_overrun_h_twh": 0.246
+   },
+   "storage_net": {
+    "model_twh": -0.5640000104904175,
+    "actual_twh": 0.0,
+    "delta_twh": -0.564,
+    "delta_overrun_h_twh": 0.794
+   },
+   "coal_oil": {
+    "model_twh": 0.139,
+    "actual_twh": 0.332,
+    "delta_twh": -0.194,
+    "delta_overrun_h_twh": -0.133
+   },
+   "CC_CHP": {
+    "model_twh": 9.337,
+    "actual_twh": 8.001,
+    "delta_twh": 1.336,
+    "delta_overrun_h_twh": 1.03
+   },
+   "CT_CHP": {
+    "model_twh": 1.858,
+    "actual_twh": 2.825,
+    "delta_twh": -0.967,
+    "delta_overrun_h_twh": -0.466
+   },
+   "CT_PEAKER": {
+    "model_twh": 6.641,
+    "actual_twh": 4.561,
+    "delta_twh": 2.08,
+    "delta_overrun_h_twh": 3.046
+   },
+   "ST_GAS": {
+    "model_twh": 0.159,
+    "actual_twh": 1.328,
+    "delta_twh": -1.169,
+    "delta_overrun_h_twh": -0.979
+   },
+   "ST_CHP": {
+    "model_twh": 0.0,
+    "actual_twh": 0.043,
+    "delta_twh": -0.043,
+    "delta_overrun_h_twh": -0.029
+   },
+   "OTHER_FOSSIL": {
+    "model_twh": 0.0,
+    "actual_twh": 0.0,
+    "delta_twh": 0.0,
+    "delta_overrun_h_twh": 0.0
+   },
+   "demand": {
+    "model_twh": 217.385,
+    "actual_twh": 219.187,
+    "delta_twh": -1.802,
+    "delta_overrun_h_twh": -1.391
+   },
+   "_model_supply_minus_demand_twh": 0.458,
+   "_actual_supply_minus_930demand_twh": -3.387,
+   "_actual_supply_minus_930demand_overrun_h_twh": -3.142,
+   "_overrun_hours": 5657
+  },
+  "c_bridge_forced_twh": 4.0848,
+  "cc_hourly_r_vs_levelled_cems": 0.89
+ },
+ "2022": {
+  "scored_miss_twh": 1.023,
+  "model_cc_twh": 52.632,
+  "raw923_miss_twh": 0.992,
+  "bench": {
+   "cc_classfull_twh": 51.609,
+   "cc_eia923_plant_twh": 51.64,
+   "reconcile_scale": 0.9994,
+   "bench_component_twh": 0.031,
+   "gas_family_scored_twh": 68.02,
+   "gas_family_923_grid_twh": 68.06,
+   "gas_family_923_full_twh": 78.25,
+   "e930_gas_twh": 82.79,
+   "cems_anchor_fossil_grid_twh": 69.945,
+   "fold_deflation_F_twh": 13.39,
+   "e930_gas_minus_923_grid_twh": 14.73
+  },
+  "plant_month": {
+   "positive_sum_twh": 5.84,
+   "negative_sum_twh": -4.85,
+   "by_month_delta_twh": {
+    "1": 0.16,
+    "2": 0.3,
+    "3": 0.16,
+    "4": -0.07,
+    "5": 0.07,
+    "6": 0.15,
+    "7": 0.05,
+    "8": 0.13,
+    "9": 0.33,
+    "10": 0.42,
+    "11": -0.1,
+    "12": -0.6
+   },
+   "top10_plants": [
+    {
+     "plant": 62115,
+     "model_twh": 4.22,
+     "e923_twh": 3.45,
+     "d_twh": 0.77
+    },
+    {
+     "plant": 55985,
+     "model_twh": 3.05,
+     "e923_twh": 2.38,
+     "d_twh": 0.66
+    },
+    {
+     "plant": 57978,
+     "model_twh": 1.39,
+     "e923_twh": 0.84,
+     "d_twh": 0.55
+    },
+    {
+     "plant": 62116,
+     "model_twh": 4.41,
+     "e923_twh": 3.91,
+     "d_twh": 0.49
+    },
+    {
+     "plant": 55345,
+     "model_twh": 3.01,
+     "e923_twh": 2.59,
+     "d_twh": 0.42
+    },
+    {
+     "plant": 56467,
+     "model_twh": 1.44,
+     "e923_twh": 1.04,
+     "d_twh": 0.4
+    },
+    {
+     "plant": 358,
+     "model_twh": 4.15,
+     "e923_twh": 3.76,
+     "d_twh": 0.4
+    },
+    {
+     "plant": 55151,
+     "model_twh": 2.01,
+     "e923_twh": 1.67,
+     "d_twh": 0.34
+    },
+    {
+     "plant": 55333,
+     "model_twh": 4.24,
+     "e923_twh": 3.97,
+     "d_twh": 0.27
+    },
+    {
+     "plant": 57901,
+     "model_twh": 0.53,
+     "e923_twh": 0.27,
+     "d_twh": 0.26
+    }
+   ],
+   "bottom5_plants": [
+    {
+     "plant": 55393,
+     "model_twh": 1.95,
+     "e923_twh": 2.32,
+     "d_twh": -0.36
+    },
+    {
+     "plant": 55077,
+     "model_twh": 1.16,
+     "e923_twh": 1.52,
+     "d_twh": -0.36
+    },
+    {
+     "plant": 56476,
+     "model_twh": 1.93,
+     "e923_twh": 2.44,
+     "d_twh": -0.51
+    },
+    {
+     "plant": 260,
+     "model_twh": 4.44,
+     "e923_twh": 5.17,
+     "d_twh": -0.73
+    },
+    {
+     "plant": 55518,
+     "model_twh": 2.92,
+     "e923_twh": 4.05,
+     "d_twh": -1.13
+    }
+   ],
+   "plants_absent_from_model_e923_twh": 0.0
+  },
+  "a1_above_seasonal_capability_twh": 0.286,
+  "a2_above_monthly_demonstrated_twh": 0.912,
+  "balance": {
+   "CC_REGULAR": {
+    "model_twh": 52.632,
+    "actual_twh": 51.64,
+    "delta_twh": 0.992,
+    "delta_overrun_h_twh": 5.815
+   },
+   "net_imports": {
+    "model_twh": 52.964,
+    "actual_twh": 48.672,
+    "delta_twh": 4.293,
+    "delta_overrun_h_twh": -3.568
+   },
+   "hydro": {
+    "model_twh": 14.831,
+    "actual_twh": 13.457,
+    "delta_twh": 1.374,
+    "delta_overrun_h_twh": 0.956
+   },
+   "nuclear": {
+    "model_twh": 17.506,
+    "actual_twh": 17.668,
+    "delta_twh": -0.162,
+    "delta_overrun_h_twh": -0.09
+   },
+   "solar": {
+    "model_twh": 37.957,
+    "actual_twh": 35.829,
+    "delta_twh": 2.128,
+    "delta_overrun_h_twh": 0.691
+   },
+   "wind": {
+    "model_twh": 17.513,
+    "actual_twh": 17.384,
+    "delta_twh": 0.129,
+    "delta_overrun_h_twh": 0.047
+   },
+   "geo_biomass": {
+    "model_twh": 14.718,
+    "actual_twh": 14.438,
+    "delta_twh": 0.28,
+    "delta_overrun_h_twh": 0.133
+   },
+   "storage_net": {
+    "model_twh": -0.8999999761581421,
+    "actual_twh": 0.0,
+    "delta_twh": -0.9,
+    "delta_overrun_h_twh": 1.52
+   },
+   "coal_oil": {
+    "model_twh": 0.235,
+    "actual_twh": 0.318,
+    "delta_twh": -0.083,
+    "delta_overrun_h_twh": -0.046
+   },
+   "CC_CHP": {
+    "model_twh": 9.004,
+    "actual_twh": 8.133,
+    "delta_twh": 0.871,
+    "delta_overrun_h_twh": 0.498
+   },
+   "CT_CHP": {
+    "model_twh": 1.311,
+    "actual_twh": 2.387,
+    "delta_twh": -1.076,
+    "delta_overrun_h_twh": -0.585
+   },
+   "CT_PEAKER": {
+    "model_twh": 3.894,
+    "actual_twh": 4.484,
+    "delta_twh": -0.589,
+    "delta_overrun_h_twh": 0.508
+   },
+   "ST_GAS": {
+    "model_twh": 0.291,
+    "actual_twh": 1.29,
+    "delta_twh": -0.999,
+    "delta_overrun_h_twh": -0.743
+   },
+   "ST_CHP": {
+    "model_twh": 0.0,
+    "actual_twh": 0.05,
+    "delta_twh": -0.05,
+    "delta_overrun_h_twh": -0.027
+   },
+   "OTHER_FOSSIL": {
+    "model_twh": 0.0,
+    "actual_twh": 0.0,
+    "delta_twh": 0.0,
+    "delta_overrun_h_twh": 0.0
+   },
+   "demand": {
+    "model_twh": 219.537,
+    "actual_twh": 223.667,
+    "delta_twh": -4.13,
+    "delta_overrun_h_twh": -2.988
+   },
+   "_model_supply_minus_demand_twh": 2.42,
+   "_actual_supply_minus_930demand_twh": -7.917,
+   "_actual_supply_minus_930demand_overrun_h_twh": -6.821,
+   "_overrun_hours": 4873
+  },
+  "c_bridge_forced_twh": 3.7365,
+  "cc_hourly_r_vs_levelled_cems": 0.918
+ }
+}

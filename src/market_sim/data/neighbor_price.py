@@ -636,6 +636,7 @@ def caiso_hub_measured_gas_reference_price(
     year: int,
     hours: int,
     eia923_fallback: bool = False,
+    daily_gas_shape: bool = False,
 ) -> np.ndarray | None:
     """Return a CAISO corridor's reference price on MEASURED regional gas ($/MWh).
 
@@ -655,6 +656,14 @@ def caiso_hub_measured_gas_reference_price(
     quantity rebuilt from the state's own EIA-923 receipts
     (:func:`~market_sim.data.fuel.electric_power.state_electric_power_monthly_gas_eia923`).
     A printed N3045 month is never replaced.
+
+    ``daily_gas_shape`` (closeout-CAISO-w3,
+    ``ScenarioConfig.caiso_intertie_unprinted_daily_gas_shape``; default off =
+    byte-identical) multiplies the monthly gas operand by the measured CA
+    citygate within-month daily shape
+    (:func:`~market_sim.data.fuel.hubs.caiso_citygate_daily_shape_factors`,
+    month-mean preserving), so a multi-day spike lands on the days it printed
+    instead of pricing the whole month.
     """
     from market_sim.data.fuel.electric_power import (
         state_electric_power_monthly_gas,
@@ -676,7 +685,12 @@ def caiso_hub_measured_gas_reference_price(
     if shape is None:
         return None
     month = pd.date_range(f"{year}-01-01", periods=hours, freq="h").month.to_numpy()
-    return gas[month - 1] * spec.marginal_heat_rate * shape
+    gas_hourly = gas[month - 1]
+    if daily_gas_shape:
+        from market_sim.data.fuel.hubs import caiso_citygate_daily_shape_factors
+
+        gas_hourly = gas_hourly * caiso_citygate_daily_shape_factors(year, hours)
+    return gas_hourly * spec.marginal_heat_rate * shape
 
 
 @dataclass

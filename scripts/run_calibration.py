@@ -6172,6 +6172,9 @@ def run_year(
                 unprinted_year_measured_gas=getattr(
                     config, "caiso_intertie_unprinted_year_measured_gas", False
                 ),
+                unprinted_daily_gas_shape=getattr(
+                    config, "caiso_intertie_unprinted_daily_gas_shape", False
+                ),
             ):
                 logger.info(
                     "%s %d: per-hub WECC intertie — two signed corridors (Malin/COI "

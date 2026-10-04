@@ -591,6 +591,7 @@ def measured_import_hub_prices(
     gap_fill_measured_dam: bool = False,
     partial_year_measured: bool = False,
     unprinted_year_measured_gas: bool = False,
+    unprinted_daily_gas_shape: bool = False,
 ) -> dict[str, np.ndarray] | None:
     """Return each CAISO import tranche's measured hourly neighbor-hub price.
 
@@ -649,6 +650,12 @@ def measured_import_hub_prices(
     ``partial_year_measured``, else the hub is dropped as before). The <=25 %
     path is not consulted, so a year it governs is byte-identical.
 
+    ``unprinted_daily_gas_shape``
+    (``ScenarioConfig.caiso_intertie_unprinted_daily_gas_shape``,
+    closeout-CAISO-w3, default off = byte-identical) gives that unprinted-year
+    formula fill the measured CA citygate within-month daily gas shape. Only the
+    >25 %-gap branch reads it; the <=25 % gap fill is untouched.
+
     Returns ``{tranche_name: (hours,) $/MWh}`` for every tranche whose hub has a
     measured series, or ``None`` when the ISO is not CAISO, the parquet is
     absent (forecast years / before the OASIS fetch lands), or the year is
@@ -705,7 +712,12 @@ def measured_import_hub_prices(
             if gap.mean() > 0.25:
                 if unprinted_year_measured_gas:
                     price = _fill_unprinted_measured_gas(
-                        price, gap, str(hub), year, hours
+                        price,
+                        gap,
+                        str(hub),
+                        year,
+                        hours,
+                        daily_gas_shape=unprinted_daily_gas_shape,
                     )
                     gap = ~np.isfinite(price)
                     if not gap.any():
@@ -756,7 +768,12 @@ def measured_import_hub_prices(
 
 
 def _fill_unprinted_measured_gas(
-    price: np.ndarray, gap: np.ndarray, hub: str, year: int, hours: int
+    price: np.ndarray,
+    gap: np.ndarray,
+    hub: str,
+    year: int,
+    hours: int,
+    daily_gas_shape: bool = False,
 ) -> np.ndarray:
     """Fill a >25 %-gap hub's unprinted hours on the measured-gas formula (R-CAISO-18).
 
@@ -772,7 +789,7 @@ def _fill_unprinted_measured_gas(
     if spec is None:
         return out
     ref = caiso_hub_measured_gas_reference_price(
-        spec, year, hours, eia923_fallback=True
+        spec, year, hours, eia923_fallback=True, daily_gas_shape=daily_gas_shape
     )
     if ref is None:
         return out

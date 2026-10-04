@@ -487,6 +487,22 @@ CAISO_DSW_LATEEVENING_CLEAN_UNPRINTED_DEPTH_BY_YEAR: dict[int, float] = {
     2019: 6922.0,
     2020: 7281.0,
 }
+# closeout-CAISO-w3 (ScenarioConfig.caiso_dsw_clean_depth_own_year): each DSW
+# clean rung's OWN measured depth for a scored year that the BY_YEAR tables leave
+# on the pooled 2023-25 static. 2021 is the only such year (2019-20 carry no raw
+# print; 2022-25 carry rows). Values are the rungs' own derives run with
+# ``--extra-years 2021`` -- the identical statistic, window and trigger, the
+# percentile NOT re-sized (rule 1): derive_caiso_dsw_surplus_depth.py,
+# derive_caiso_overnight_clean_depth.py, derive_caiso_daytime_clean_depth.py,
+# derive_caiso_lateevening_clean_depth.py. They stay out of the committed pooled
+# sample and its gates (report-only there), so the static entries are unchanged.
+# Record: docs/records/caiso/closeout-caiso-w3/.
+CAISO_DSW_CLEAN_OWN_YEAR_DEPTH: dict[str, dict[int, float]] = {
+    "DSW_surplus_clean": {2021: 6644.0},
+    "DSW_overnight_clean": {2021: 6892.0},
+    "DSW_daytime_clean": {2021: 7426.0},
+    "DSW_lateevening_clean": {2021: 7288.0},
+}
 # Window hod bounds (inclusive) -- the complement caiso-93 (0-5) and caiso-94
 # (6-21) leave, closed by caiso-253's G-WINDOW finding.
 CAISO_LATEEVENING_CLEAN_HOD_MIN: int = 22

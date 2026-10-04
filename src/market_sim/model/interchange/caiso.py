@@ -55,6 +55,7 @@ from market_sim.model.interchange.spec import (
     CAISO_DSW_LATEEVENING_CLEAN_DEPTH_STATIC,
     CAISO_DSW_LATEEVENING_CLEAN_NAME,
     CAISO_DSW_LATEEVENING_CLEAN_UNPRINTED_DEPTH_BY_YEAR,
+    CAISO_DSW_CLEAN_OWN_YEAR_DEPTH,
     CAISO_DSW_SURPLUS_CLEAN_DEPTH_STATIC,
     CAISO_DSW_SURPLUS_CLEAN_NAME,
     CAISO_DSW_SURPLUS_REMOTE_VOM,
@@ -458,6 +459,7 @@ def inject_caiso_per_hub_intertie_prices(
     gap_fill_measured_dam: bool = False,
     partial_year_measured: bool = False,
     unprinted_year_measured_gas: bool = False,
+    unprinted_daily_gas_shape: bool = False,
 ) -> bool:
     """Price each CAISO per-hub corridor at its OWN measured intertie hub.
 
@@ -503,6 +505,11 @@ def inject_caiso_per_hub_intertie_prices(
     is handed to the loader: a >25 %-gap hub's unprinted hours (all of 2019-2020,
     Jan-Apr 2021) are priced on the measured-gas reference formula.
 
+    ``unprinted_daily_gas_shape``
+    (``ScenarioConfig.caiso_intertie_unprinted_daily_gas_shape``,
+    closeout-CAISO-w3) is handed to the loader: that formula's monthly gas
+    operand takes the measured CA citygate within-month daily shape.
+
     Returns ``True`` when the tie was repriced, ``False`` (byte-identical) when
     CAISO has no measured hub series for the year (e.g. 2023's OASIS gap), so the
     per-hub legs keep their static-ladder placeholder prices.
@@ -517,6 +524,7 @@ def inject_caiso_per_hub_intertie_prices(
         gap_fill_measured_dam=gap_fill_measured_dam,
         partial_year_measured=partial_year_measured,
         unprinted_year_measured_gas=unprinted_year_measured_gas,
+        unprinted_daily_gas_shape=unprinted_daily_gas_shape,
     )
     if not prices:
         return False
@@ -822,7 +830,11 @@ def inject_caiso_firm_import_selfschedule(
 
 
 def inject_caiso_dsw_surplus_clean(
-    fleet_arrays, iso: str, year: int, gap_fill_measured_dam: bool = False
+    fleet_arrays,
+    iso: str,
+    year: int,
+    gap_fill_measured_dam: bool = False,
+    own_year_depth: bool = False,
 ) -> bool:
     """Arm the south-corridor surplus-clean import depth (caiso-87).
 
@@ -892,8 +904,13 @@ def inject_caiso_dsw_surplus_clean(
     surplus = np.isfinite(hub) & np.isfinite(floor) & (hub < floor)
     if not surplus.any():
         return False
-    depth = CAISO_DSW_SURPLUS_CLEAN_DEPTH_BY_YEAR.get(
-        year, CAISO_DSW_SURPLUS_CLEAN_DEPTH_STATIC
+    depth = _dsw_clean_depth(
+        CAISO_DSW_SURPLUS_CLEAN_NAME,
+        year,
+        CAISO_DSW_SURPLUS_CLEAN_DEPTH_BY_YEAR.get(
+            year, CAISO_DSW_SURPLUS_CLEAN_DEPTH_STATIC
+        ),
+        own_year_depth,
     )
     # Net of the shaped south firm block (post inject_caiso_firm_import_shape).
     firm_cap = np.zeros(hours)
@@ -919,6 +936,7 @@ def inject_caiso_dsw_overnight_clean(
     year: int,
     gap_fill_measured_dam: bool = False,
     unprinted_year_arm: bool = False,
+    own_year_depth: bool = False,
 ) -> bool:
     """Arm the south-corridor OVERNIGHT clean import depth (caiso-93).
 
@@ -1025,8 +1043,13 @@ def inject_caiso_dsw_overnight_clean(
     overnight = (np.arange(hours) % 24 <= CAISO_OVERNIGHT_CLEAN_HOD_MAX) & evidence
     if not overnight.any():
         return False
-    depth = CAISO_DSW_OVERNIGHT_CLEAN_DEPTH_BY_YEAR.get(
-        year, CAISO_DSW_OVERNIGHT_CLEAN_DEPTH_STATIC
+    depth = _dsw_clean_depth(
+        CAISO_DSW_OVERNIGHT_CLEAN_NAME,
+        year,
+        CAISO_DSW_OVERNIGHT_CLEAN_DEPTH_BY_YEAR.get(
+            year, CAISO_DSW_OVERNIGHT_CLEAN_DEPTH_STATIC
+        ),
+        own_year_depth,
     )
     # Net of the shaped south firm block AND the caiso-87 surplus tranche
     # (both post-injection: this runs after their injectors).
@@ -1052,6 +1075,7 @@ def inject_caiso_dsw_daytime_clean(
     evening_trim: bool = False,
     gap_fill_measured_dam: bool = False,
     unprinted_year_arm: bool = False,
+    own_year_depth: bool = False,
 ) -> bool:
     """Arm the south-corridor DAYTIME trigger-OFF clean import depth (caiso-94).
 
@@ -1199,8 +1223,13 @@ def inject_caiso_dsw_daytime_clean(
     ):
         depth = CAISO_DSW_DAYTIME_CLEAN_UNPRINTED_DEPTH_BY_YEAR[year]
     else:
-        depth = CAISO_DSW_DAYTIME_CLEAN_DEPTH_BY_YEAR.get(
-            year, CAISO_DSW_DAYTIME_CLEAN_DEPTH_STATIC
+        depth = _dsw_clean_depth(
+            CAISO_DSW_DAYTIME_CLEAN_NAME,
+            year,
+            CAISO_DSW_DAYTIME_CLEAN_DEPTH_BY_YEAR.get(
+                year, CAISO_DSW_DAYTIME_CLEAN_DEPTH_STATIC
+            ),
+            own_year_depth,
         )
     # Net of the shaped south firm block AND the caiso-87 surplus tranche AND
     # the caiso-93 overnight tranche (all post-injection: this runs last).
@@ -1229,6 +1258,7 @@ def inject_caiso_dsw_lateevening_clean(
     year: int,
     gap_fill_measured_dam: bool = False,
     unprinted_year_arm: bool = False,
+    own_year_depth: bool = False,
 ) -> bool:
     """Arm the south-corridor LATE-EVENING clean import depth (caiso-269).
 
@@ -1359,8 +1389,13 @@ def inject_caiso_dsw_lateevening_clean(
     ):
         depth = CAISO_DSW_LATEEVENING_CLEAN_UNPRINTED_DEPTH_BY_YEAR[year]
     else:
-        depth = CAISO_DSW_LATEEVENING_CLEAN_DEPTH_BY_YEAR.get(
-            year, CAISO_DSW_LATEEVENING_CLEAN_DEPTH_STATIC
+        depth = _dsw_clean_depth(
+            CAISO_DSW_LATEEVENING_CLEAN_NAME,
+            year,
+            CAISO_DSW_LATEEVENING_CLEAN_DEPTH_BY_YEAR.get(
+                year, CAISO_DSW_LATEEVENING_CLEAN_DEPTH_STATIC
+            ),
+            own_year_depth,
         )
     # Net of the shaped south firm block AND all three sibling clean tranches
     # (all post-injection: this runs last).
@@ -1381,6 +1416,20 @@ def inject_caiso_dsw_lateevening_clean(
     fleet_arrays.availability[row, :] *= cap / depth
     fleet_arrays.pmax[row] = depth
     return True
+
+
+def _dsw_clean_depth(
+    name: str, year: int, default: float, own_year_depth: bool
+) -> float:
+    """Return a DSW clean rung's depth: its own measured year row when armed, else ``default``.
+
+    ``own_year_depth`` is ``ScenarioConfig.caiso_dsw_clean_depth_own_year``
+    (closeout-CAISO-w3); the rows are
+    :data:`~market_sim.model.interchange.spec.CAISO_DSW_CLEAN_OWN_YEAR_DEPTH`.
+    """
+    if own_year_depth:
+        return CAISO_DSW_CLEAN_OWN_YEAR_DEPTH.get(name, {}).get(year, default)
+    return default
 
 
 def _caiso_dsw_unprinted_hours(
@@ -2725,6 +2774,9 @@ def apply_caiso_seam_injections(
     # under caiso_intertie_gap_fill_measured_dam a gap hour the DAM aggregate
     # prints is evidence too (a formula-filled hour still is not).
     _dam_fill = bool(getattr(config, "caiso_intertie_gap_fill_measured_dam", False))
+    # closeout-CAISO-w3: each DSW clean rung's own measured depth for a year the
+    # BY_YEAR tables leave on the pooled static (2021).
+    _own_depth = bool(getattr(config, "caiso_dsw_clean_depth_own_year", False))
     # CAISO south-corridor surplus-clean depth (caiso_dsw_surplus_clean,
     # caiso-87): the WEIM clean-transfer capability in surplus-West hours —
     # measured depth-in-surplus net of the shaped firm block, EF 0 (no border
@@ -2732,7 +2784,11 @@ def apply_caiso_seam_injections(
     # Must run AFTER the firm-shape block (its headroom is net-of-firm).
     if per_hub_intertie and getattr(config, "caiso_dsw_surplus_clean", False):
         if inject_caiso_dsw_surplus_clean(
-            fleet_arrays, iso, year, gap_fill_measured_dam=_dam_fill
+            fleet_arrays,
+            iso,
+            year,
+            gap_fill_measured_dam=_dam_fill,
+            own_year_depth=_own_depth,
         ):
             _logger.info(
                 "%s %d: south-corridor surplus-clean import depth armed "
@@ -2762,6 +2818,7 @@ def apply_caiso_seam_injections(
             year,
             gap_fill_measured_dam=_dam_fill,
             unprinted_year_arm=_unprinted_arm,
+            own_year_depth=_own_depth,
         ):
             _logger.info(
                 "%s %d: south-corridor OVERNIGHT clean import depth armed "
@@ -2798,6 +2855,7 @@ def apply_caiso_seam_injections(
             evening_trim=_day_trim,
             gap_fill_measured_dam=_dam_fill,
             unprinted_year_arm=_day_eve_unprinted,
+            own_year_depth=_own_depth,
         ):
             _logger.info(
                 "%s %d: south-corridor DAYTIME trigger-OFF clean import depth "
@@ -2827,6 +2885,7 @@ def apply_caiso_seam_injections(
             year,
             gap_fill_measured_dam=_dam_fill,
             unprinted_year_arm=_day_eve_unprinted,
+            own_year_depth=_own_depth,
         ):
             _logger.info(
                 "%s %d: south-corridor LATE-EVENING clean import depth armed "
