@@ -122,7 +122,122 @@ includes `59490433`.
 * Golden report + unit list: branch `claude/ucmilp-golden-nyiso` @ `1d3f2799`
   (`results/bench/uc/golden_nyiso/report.md`, `diff_2021_units.csv`); the
   shard is archived (rule 33); its golden bundle did not outlive the container.
-* The capture spy and the three `.npz` / `.pkl` captures are session scratch
-  (not committed); the spy is `scripts/lib/uc_bench.capture_year(solve=False)`
-  re-stated as a standalone script so it runs on a tree that predates
-  `uc_bench.py` — identical mechanism, `solve=False`.
+* The three `.npz` / `.pkl` captures are session scratch (not committed). The
+  capture spy is `scripts/lib/uc_bench.capture_year(solve=False)` re-stated as
+  a standalone script so it runs on a tree that predates `uc_bench.py`
+  (identical mechanism, `solve=False`); its text and the exact commands are in
+  Appendix A so the reproduction can be re-run from this record alone.
+
+## Appendix A — reproduction commands and the capture script
+
+Prerequisites (one container, the engine SHA checked out at
+`/home/user/market-simulator`): `uv sync`;
+`python3 scripts/hydrate_data.py --profile nyiso`;
+`uv run python scripts/regenerate_clean.py --solve-profile NYISO` (one
+`data/clean`, shared by every tree below through a symlink).
+
+```bash
+# sparse worktrees (code only; data/ results/ .venv symlinked to the main checkout)
+for pair in "ms-basis 306f2c00b6268b791fb77c392c8d69a756959e76" "ms-main e857053252d65b893bb171422002b5d75428cc36"; do
+  set -- $pair; W=/home/user/$1
+  git worktree add --no-checkout $W $2
+  git -C $W sparse-checkout init --cone && git -C $W sparse-checkout set src scripts configs tests/helpers
+  (cd $W && git checkout)
+  ln -s /home/user/market-simulator/data $W/data; ln -s /home/user/market-simulator/results $W/results; ln -s /home/user/market-simulator/.venv $W/.venv
+done
+PY=/home/user/market-simulator/.venv/bin/python; B=/home/user/market-simulator/results/calibration/w0_nyiso_span
+(cd /home/user/market-simulator && $PY capture_mc.py /home/user/market-simulator 2021 mc/head_2021.npz $B)
+(cd /home/user/ms-main  && $PY capture_mc.py /home/user/ms-main  2021 mc/main_2021.npz  $B)
+(cd /home/user/ms-basis && $PY capture_mc.py /home/user/ms-basis 2021 mc/basis_2021.npz $B)
+# bisection: overlay ONLY 59490433's two files on the basis tree, recapture, restore
+cd /home/user/ms-basis
+git -C /home/user/market-simulator show 59490433:src/market_sim/data/renewables.py      > src/market_sim/data/renewables.py
+git -C /home/user/market-simulator show 59490433:src/market_sim/data/zone_assignment.py > src/market_sim/data/zone_assignment.py
+$PY capture_mc.py /home/user/ms-basis 2021 mc/basis_59490433_2021.npz $B
+git checkout -- src/market_sim/data/renewables.py src/market_sim/data/zone_assignment.py
+```
+
+Comparison: `np.array_equal` on `mc` and on every array under `dk` /
+`kw` of the `.kw.pkl` (sparse operands via `(A != B).nnz`), walking dicts,
+lists and tuples; shapes and dtypes compared first.
+
+`capture_mc.py` (the spy; nothing here is committed to `scripts/`):
+
+```python
+"""Zero-LP capture of NYISO <year> mc_base from the keeper recipe at the tree given as argv[1].
+
+usage: python capture_mc.py <repo_root> <year> <out.npz> [bundle]
+Mirrors scripts.lib.uc_bench.capture_year(solve=False) without depending on it.
+"""
+import json, sys, os
+from pathlib import Path
+import numpy as np
+
+ROOT = Path(sys.argv[1]).resolve()
+YEAR = int(sys.argv[2])
+OUT = Path(sys.argv[3])
+BUNDLE = Path(sys.argv[4]) if len(sys.argv) > 4 else ROOT / "results/calibration/w0_nyiso_span"
+os.chdir(ROOT)
+sys.path.insert(0, str(ROOT)); sys.path.insert(0, str(ROOT / "src"))
+from scripts import replay_keeper as rk
+from scripts import run_calibration as rc
+from scripts import run_calibration_full as rcf
+
+class CaptureAbort(Exception):
+    pass
+
+rk.pin_determinism_env()
+meta = json.loads((BUNDLE / "meta.json").read_text())
+kwargs = rk.build_kwargs(meta)
+kwargs["years"] = [YEAR]; kwargs["iso"] = meta["iso"]; kwargs["hours"] = int(meta.get("hours", 8760))
+kwargs["reference"] = rcf._load_reference()
+kwargs["run_dir"] = OUT.parent / f"replay_{ROOT.name}"
+if hasattr(rk, "enforce_single_recipe_partition"):
+    rk.enforce_single_recipe_partition(meta, kwargs["years"], kwargs)
+if hasattr(rk, "flipped_default_overlay"):
+    rk.apply_config_overlay(kwargs, rk.flipped_default_overlay(BUNDLE, kwargs["years"], meta))
+else:
+    print("NOTE: no flipped_default_overlay at this tree")
+rcf.enforce_legacy_p2_kwargs(kwargs, False)
+kwargs.setdefault("note", "zero-LP mc capture (never registered)")
+box = {}
+real = rc.run_energy_solve
+def spy(fleet, fleet_arrays, demand, mc_base, dispatch_kwargs, config, **kw):
+    box.update(fleet=fleet, fa=fleet_arrays, mc=np.asarray(mc_base, dtype=float), config=config, dk=dispatch_kwargs, kw=kw)
+    raise CaptureAbort()
+rc.run_energy_solve = spy
+try:
+    try:
+        rcf.solve_and_persist(**kwargs)
+    except CaptureAbort:
+        pass
+finally:
+    rc.run_energy_solve = real
+fleet = box["fleet"]; mc = box["mc"]
+uid = np.array([str(g.unit_id) for g in fleet]); pc = np.array([int(g.plant_code) for g in fleet])
+grp = np.array([str(g.plant_group) for g in fleet]); fuel = np.array([str(g.fuel_type) for g in fleet]); zone = np.array([str(g.zone) for g in fleet])
+sel = pc == 2493
+dump = {}
+for g in [g for g in fleet if int(g.plant_code) == 2493]:
+    d = g.model_dump() if hasattr(g, "model_dump") else g.__dict__
+    dump[str(g.unit_id)] = {k: (v.tolist() if hasattr(v, "tolist") else v) for k, v in d.items() if not isinstance(v, (list, dict)) or len(str(v)) < 2000}
+np.savez_compressed(OUT, mc=mc, unit_id=uid, plant_code=pc, plant_group=grp, fuel=fuel, zone=zone)
+(OUT.with_suffix(".plant2493.json")).write_text(json.dumps(dump, indent=1, default=str))
+import pickle
+def _plain(o, depth=0):
+    if isinstance(o, np.ndarray): return o
+    if isinstance(o, dict): return {k: _plain(v, depth+1) for k, v in o.items()}
+    if isinstance(o, (list, tuple)): return type(o)(_plain(v, depth+1) for v in o)
+    if isinstance(o, (int, float, str, bool, type(None))): return o
+    if callable(o): return f"<callable {getattr(o,'__name__',type(o).__name__)}>"
+    try:
+        pickle.dumps(o); return o
+    except Exception:
+        return f"<{type(o).__name__}>"
+with open(OUT.with_suffix(".kw.pkl"), "wb") as fh:
+    pickle.dump({"kw": _plain(box["kw"]), "dk": _plain(box["dk"])}, fh)
+print("kw keys:", {k: (getattr(v, "shape", None) if v is not None else None) for k, v in box["kw"].items()})
+cfg = box["config"]
+print("captured", mc.shape, "gens of 2493:", uid[sel].tolist())
+print("config id-ish:", getattr(cfg, "cache_key", lambda: "?")())
+```
