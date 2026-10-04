@@ -157,18 +157,20 @@ def test_min_up_carries_across_the_window_boundary(uc_params_frame, uc_results_r
     assert stage.schedule.v[0, 22] >= 1
 
 
-def test_month_end_checkpoint_is_written_when_the_stage_crosses_a_month(
+def test_month_end_checkpoints_and_sidecars_across_two_month_boundaries(
     uc_params_frame, uc_results_root
 ):
-    """UC-2-SPP Addendum A: every armed ISO-year died at the first month-end
-    checkpoint (``UcStage.run`` read an attribute nothing assigned). A stage that
-    crosses the end of January must write ``checkpoint_01`` under
-    ``uc_checkpoint_dir`` and finish."""
+    """UC-2-SPP Addendum A / UC-DESK: every armed ISO-year died at the first
+    month-end checkpoint (``UcStage.run`` read an attribute nothing assigned).
+    Gate on, ``write=True`` (the default), a stage crossing the January AND
+    February month-ends must write ``checkpoint_01`` and ``checkpoint_02``
+    under ``uc_checkpoint_dir``, finish, and its three sidecars must land in
+    the bundle."""
     import market_sim.pipeline.uc as puc
     from market_sim.model.uc.schedule import month_boundaries
 
-    t_month = int(month_boundaries()[0])
-    T2 = t_month + 48
+    t_feb = int(month_boundaries()[1])
+    T2 = t_feb + 48
     gens, fa, demand, mc, dk = toy_inputs(T2, day_mw=190.0)
     cfg = ScenarioConfig(
         iso="NEISO",
@@ -177,11 +179,22 @@ def test_month_end_checkpoint_is_written_when_the_stage_crosses_a_month(
         uc_window_hours=24,
         uc_lookahead_hours=12,
     )
-    run_energy_solve(gens, fa, demand, mc, dk, cfg)
+    res = run_energy_solve(gens, fa, demand, mc, dk, cfg)
     stage = puc.take_uc_stages()[-1]
     assert stage.schedule.is_complete()
     assert stage.checkpoint_dir.is_relative_to(uc_results_root)
     assert (stage.checkpoint_dir / "checkpoint_01.npz").is_file()
+    assert (stage.checkpoint_dir / "checkpoint_02.npz").is_file()
+    bundle = uc_results_root / "bundle2"
+    paths = write_uc_artifacts(bundle, stage.year, [stage.artifacts(res.p1)])
+    assert {p.name for p in paths} == {
+        f"uc_schedule_{stage.year}.parquet",
+        f"uc_uplift_{stage.year}.parquet",
+        f"uc_solve_log_{stage.year}.json",
+    }
+    assert all(p.is_file() for p in paths)
+    log = json.loads((bundle / f"uc_solve_log_{stage.year}.json").read_text())
+    assert log["summary"]["n_windows"] == -(-T2 // 24)
 
 
 def test_stack_refused_at_validation():
