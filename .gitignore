@@ -4085,3 +4085,5 @@ frontend/data/backcast/runs/2026-10-03-closeout-pjm-nuc-7yr.js
 
 # closeout-SOCO-w3 DIAGNOSTIC artifact (never a keeper input; rule 13)
 !data/raw/_processed-legacy/coal_metered_online_floor_SOCO.parquet
+
+!results/calibration/closeout_soco_w3d_2021/**
