@@ -201,3 +201,31 @@ preflight warning (13.36 GiB + 5 GiB swap = 18.4 GiB < 24 GiB target, naming MIS
   relaunch. Arm-vs-control deltas remain UC-only only if the SPP golden still reproduces at the new pin; if the fix
   commit touches anything outside the UC stage (`model/uc/`, `pipeline/uc.py`, their tests), the addendum says so and
   the desk decides whether a golden re-check is needed before the A/B is scored.
+
+## Addendum B (2026-10-04 22:15Z, before any number exists) — the relaunch pin, ruled
+
+**Pin for the relaunch: `c8690022bf5024d5fee469abc2663b1c61a3ee49`** (`claude/ucmilp-1-engine-mcst`, PR #7194, rebased onto
+`origin/main` `d62ae1a7`; owner-desk ruling UC-DESK 22:10Z, verbatim: *"ruling — option (1), relaunch now, at
+c8690022bf5024d5fee469abc2663b1c61a3ee49, NOT 6c530a58 … Your zero-LP G-DRIFT is accepted as the evidence; no SPP
+re-golden"*). Readings (§2), control rule (§3), structure and cost readings (§4–§5), kills (§6), verdict rule (§7),
+`uc_*` defaults (§1) and the 120-min budget are UNCHANGED. The pin is the only change.
+
+**What moved between the pins (zero LP, verified on the objects):**
+
+| content | files | SPP classification |
+|---|---|---|
+| the Addendum A fix | `src/market_sim/pipeline/uc.py:363` `self.artifact_dir` → `self.checkpoint_dir` (one token; `artifact_dir` now has 0 references) | LIVE on the gate-on path, the fix itself |
+| gate-on tests | `tests/unit/model/uc/test_stage_pipeline.py` (+27, then +29/−8: two month-ends crossed with checkpoints on, three sidecars), `tests/unit/model/uc/test_window_captured.py` (+34) | tests, not solve path |
+| shard hygiene | `.gitignore` +4: `results/uc-checkpoints/` (the E9 scratch checkpoints, so a shard's `git status --short` proof stays clean) | not solve path |
+| two FINDINGs | `docs/records/governance/uc-milp-2026-10/FINDING-ucmilp-golden-{miso-recipe-gap,nwpp-pjm-zero-lp}-2026-10-04.md` | docs |
+| **main's advance** `e8570532..d62ae1a7` carried in by the rebase (155 files) | `440ad144` NWPP-NEXT-27 `nwpp_path76_served_schedule` (`scenarios.py`, `runner.py`, `run_calibration*.py`, `pipeline/ttc.py`, `data/eia930/{demand,envelopes}.py`); `90cea720` closeout-PJM-elliott `pjm_elliott_measured_outage_overlay` (`scenarios.py`, `data/fleet/arrays.py`, new `data/pjm_elliott_outages.py`, `run_calibration_full.py`); desk/registry/frontier docs and the matrix anchor-digit repairs | **INERT for SPP**: (a) both fields default `False` at the pin (`scenarios.py:21933`, `:15219`); (b) ISO-gated in code (`arrays.py` `_iso == "PJM"`, `ttc.py` `iso == "NWPP"`, the NWPP served-schedule path in `demand.py`/`envelopes.py`); (c) armed nowhere — no `iso_configs` override, ABSENT from the SPP keeper's `run_config.json`, so dropped from `cache_key()` at default |
+
+- `scripts/solve_surface_register.py --diff`: `6d47c762 → 6c530a58`, `d62ae1a7 → 6c530a58` and `d62ae1a7 → c8690022` all read
+  *"341 → 341 names; 0 value(s) moved, 0 added, 0 removed — NO VALUE MOVED"*.
+- `scripts/shard_prompt.py`, `calibration_verdict.py`, `legitimacy_diagnostics.py`, `replay_keeper.py`, `dashboard_add_run.py`,
+  `results/calibration/closeout_spp_nuc_span/**` and `frontend/data/backcast/keepers/SPP.json` are byte-identical between
+  the pin and `origin/main` `d62ae1a7`; `scripts/probes/_ucmilp_compose_span.py` is present at the pin;
+  `grep -c unit_commitment_milp src/market_sim/config/scenarios.py` = 6.
+- The control is therefore unchanged (main's keeper bundle, rule 29(b)); the SPP golden stands on `ec758d64` as before and
+  the desk ruled no re-golden. Prompts regenerated with `--sha c8690022…` and re-committed as
+  `shard-prompts-ucmilp-spp.txt` (the 6d47c762 prompts stay in history at `b2167930`).
