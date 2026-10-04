@@ -4082,3 +4082,7 @@ frontend/data/backcast/runs/2026-10-03-closeout-pjm-nuc-6yr.js
 results/calibration/closeout_pjm_nuc_full_span/
 frontend/data/backcast/registry/2026-10-03-closeout-pjm-nuc-7yr.json
 frontend/data/backcast/runs/2026-10-03-closeout-pjm-nuc-7yr.js
+
+!results/calibration/closeout_miso_w3_2025/**
+# rule 15: the full unit_hourly stays gitignored; unit_marginal is the committed slim layer
+results/calibration/closeout_miso_w3_2025/hourly/unit_hourly_*.parquet
