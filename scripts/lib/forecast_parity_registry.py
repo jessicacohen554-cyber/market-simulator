@@ -482,6 +482,21 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
         ),
     ),
     ParityDeclaration(
+        fields=("miso_seam_neighbour_hourly_full_span",),
+        disposition=PARAMETER_OF,
+        parent="miso_seam_neighbour_hourly_ladder",
+        why="closeout-MISO-w3 extension of the hourly neighbour anchor's YEARS "
+        "to 2019-2022 (MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_FULL_SPAN_BY_YEAR and "
+        "its SPP twin merged under the 2023-2025 tables) — adds years, never a "
+        "mechanism, REQUIRES miso_seam_neighbour_hourly_ladder (rule 19 "
+        "[R-ONE-MECH]); it resolves to the parent's BACKCAST_ONLY disposition",
+        evidence=(
+            _BACKCAST_ORCH,
+            "src/market_sim/model/interchange/miso.py",
+            "src/market_sim/model/interchange/spec.py",
+        ),
+    ),
+    ParityDeclaration(
         fields=("miso_seam_envelope_hour_ending_key",),
         disposition=PARAMETER_OF,
         parent="miso_seam_flow_limit",

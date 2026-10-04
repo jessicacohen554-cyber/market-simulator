@@ -6040,6 +6040,18 @@ def run_year(
                 "other keeps a frozen annual anchor is the half-armed state "
                 "rule 19 [R-ONE-MECH] exists to prevent"
             )
+        # closeout-MISO-w3: the 2019-2022 extension adds YEARS to the hourly
+        # family, so it is refused without the family it extends (rule 19).
+        if getattr(
+            config, "miso_seam_neighbour_hourly_full_span", False
+        ) and not getattr(config, "miso_seam_neighbour_hourly_ladder", False):
+            raise ValueError(
+                "miso_seam_neighbour_hourly_full_span requires "
+                "miso_seam_neighbour_hourly_ladder: the 2019-2022 offsets "
+                "extend the hourly neighbour-anchored family's years, and there "
+                "is no hourly family to extend when it is off (rule 19 "
+                "[R-ONE-MECH])"
+            )
         if (
             getattr(config, "reference_price_interface", False)
             and iso in INTERFACE_NEIGHBORS
@@ -6059,6 +6071,9 @@ def run_year(
             neighbour_hourly_spp = bool(
                 getattr(config, "miso_seam_neighbour_hourly_spp", False)
             )
+            neighbour_hourly_full_span = bool(
+                getattr(config, "miso_seam_neighbour_hourly_full_span", False)
+            )
             if inject_miso_seam_ladder_prices(
                 fleet_arrays,
                 mc_base,
@@ -6067,6 +6082,7 @@ def run_year(
                 neighbour_anchored=neighbour,
                 neighbour_hourly=neighbour_hourly,
                 neighbour_hourly_spp=neighbour_hourly_spp,
+                neighbour_hourly_full_span=neighbour_hourly_full_span,
             ):
                 logger.info(
                     "%s %d: seam bands repriced to the MEASURED per-seam Q-Q "
