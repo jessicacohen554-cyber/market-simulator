@@ -1,0 +1,231 @@
+INFO: container preflight: memory ceiling 13.36 GiB (/sys/fs/cgroup/memory/process_api/01a1094f-3872-71dd-810b-78852c0d6a54/claude-code-bash/memory.limit_in_bytes; MemTotal 15.72 GiB), swap 10.0 GiB, target ceiling+swap 24 GiB
+WARNING: container preflight: swap: /swapfile-marketsim is already active (10.0 GiB) but ceiling+swap is still 0.6 GiB short of the 24 GiB target; leaving it as it is
+INFO: container preflight: solve profile MALLOC_ARENA_MAX=2 MARKET_SIM_HIGHS_THREADS=1 OMP_NUM_THREADS=1
+WARNING: container preflight: ceiling+swap 23.4 GiB is below the 24 GiB target; a per-plant ISO-year LP (MISO, PJM) may be OOM-killed here. Fix: provision swap before data steps (`python3 scripts/prepare_solve_container.py` before hydrate_data / regenerate_clean / any fetch); free disk 6.2 GiB
+WARNING: eGRID boundary heat-rate reconciliation active for 2 plant(s): 7350->6.808, 55641->6.836
+WARNING: eGRID plant 1137 heat rate 8.065 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 5 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1285 heat rate 3.061 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 6 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1297 heat rate 7.154 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 5 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1325 heat rate 6.122 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1326 heat rate 5.813 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 7 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2230 heat rate 8.750 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2308 heat rate 8.357 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 5 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 7481 heat rate 7.667 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 2 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 56238 heat rate 8.716 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 2 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 56348 heat rate 6.320 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 2 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 57881 heat rate 5.761 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 23 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 59726 heat rate 8.830 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 64420 heat rate 7.657 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 2 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 65295 heat rate 8.269 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 6 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 65512 heat rate 8.684 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: SPP: CC plant 50558 fleet pmax sum 213.2 MW exceeds trusted bound 131.4 MW (nameplate; corrupt summer-capacity rows) — reconciled (81.8 MW removed)
+WARNING: SPP: CC plant 55178 fleet pmax sum 656.5 MW exceeds trusted bound 655.2 MW (nameplate; corrupt summer-capacity rows) — reconciled (1.3 MW removed)
+WARNING: SPP: CC plant 55463 fleet pmax sum 2009.6 MW exceeds trusted bound 1433.6 MW (nameplate; corrupt summer-capacity rows) — reconciled (576.0 MW removed)
+INFO: Loaded SPP fleet from EIA-860 parquet (1012 generators)
+INFO: Rebuilt binned fleet cache for SPP — 1012 plants → spp_fleet_binned.parquet
+INFO: SPP net interchange applied for 2020: +127 MW avg (export-positive, measured EIA-930)
+INFO: solving SPP 2020 (hours=8760, Henry Hub=$2.03/MMBtu, commitment=False)
+INFO: SPP net interchange applied for 2020: +127 MW avg (export-positive, measured EIA-930)
+INFO: SPP wind 2020 oversupply curtailment allocation: 2143.6 GWh over 1174 hour(s) (13.4% of the year) at net-load level 12999 MW; annual potential 84.173 TWh, unchanged from the flat gross-up
+INFO: SPP per-zone wind SHAPE (2020): 2 zone(s) from spp_2020_wind_zone_shape.parquet, measured night/afternoon ratio SPP-North=0.99, SPP-South=1.05
+INFO: partial-plant exit carry (SPP): injecting 20 unit(s), 411 MW — plants [165, 1271, 1316, 1327, 1417, 2115, 2139, 2161, 2966, 3344, 3476]
+INFO: mid-vintage-year exit carry (SPP 2020): injecting 6 unit(s), 942 MW — plants [127, 2076, 3477, 6144, 56834]
+INFO: retiree vintage-status scope (SPP 2020): dropped 6 unit(s), 231 MW — [(2115, '4', 'SB'), (2161, '4', 'OS'), (2161, '5', 'OS'), (3344, '2A', 'SB'), (6144, '1', 'OS'), (6144, '2', 'OS')]
+WARNING: 1 of 19 SPP generators not in eGRID lookup — assigned fallback zone
+INFO: SPP: measured power-only CHP heat rates applied to 0 generator(s) across 6 (plant, class) pair(s)
+INFO: loaded 19 within-window retiree units for SPP (1111 MW, plants [127, 165, 1271, 1316, 1327, 1417, 2076, 2139, 2966, 3476, 3477])
+INFO: EIA-860: 21 combined-cycle block(s) rated on one row resolved for the cc_block_summer_rating reconciliation (vintage_2020)
+INFO: SPP: CC block summer rating (plant 50558): 207.2 MW carried -> 120.0 MW reported block rating (87.2 MW nameplate-fill phantom removed)
+INFO: SPP: CC block summer rating (plant 55463): 1999.6 MW carried -> 1204.0 MW reported block rating (795.6 MW nameplate-fill phantom removed)
+WARNING: eGRID boundary heat-rate reconciliation active for 1 plant(s): 7350->6.989
+WARNING: eGRID plant 1322 heat rate 6.250 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1325 heat rate 6.122 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 2 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2140 heat rate 8.000 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 2 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2214 heat rate 8.231 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 2 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2221 heat rate 3.733 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 6 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2232 heat rate 7.250 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2249 heat rate 4.167 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2297 heat rate 7.667 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2300 heat rate 6.000 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2308 heat rate 8.357 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 5 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2991 heat rate 4.600 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 3344 heat rate 3.841 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 7018 heat rate 8.967 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 5 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 56348 heat rate 5.000 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 2 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 56489 heat rate 8.847 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 57881 heat rate 3.833 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 15 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+INFO: EIA-860: 4 combined-cycle steam part(s) resolved for the cc_steam_part_capacity repair
+WARNING: SPP: CC plant 1239 fleet pmax sum 297.0 MW exceeds trusted bound 267.6 MW (nameplate; corrupt summer-capacity rows) — reconciled (29.4 MW removed)
+WARNING: SPP: CC plant 55178 fleet pmax sum 677.2 MW exceeds trusted bound 630.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (47.2 MW removed)
+WARNING: 1 of 1107 SPP generators not in eGRID lookup — assigned fallback zone
+INFO: Loaded SPP fleet from EIA-860 parquet (1107 generators)
+INFO: SPP: measured power-only CHP heat rates applied to 6 generator(s) across 6 (plant, class) pair(s)
+INFO: Binned fleet cache for SPP is up to date — loaded from spp_fleet_binned.parquet
+INFO: SPP: CC block summer rating (plant 50558): 207.2 MW carried -> 120.0 MW reported block rating (87.2 MW nameplate-fill phantom removed)
+INFO: SPP: CC block summer rating (plant 55463): 1999.6 MW carried -> 1204.0 MW reported block rating (795.6 MW nameplate-fill phantom removed)
+WARNING: eGRID plant 1322 heat rate 6.250 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1325 heat rate 6.122 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 2 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2140 heat rate 8.000 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 2 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2214 heat rate 8.231 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 2 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2221 heat rate 3.733 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 6 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2232 heat rate 7.250 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2249 heat rate 4.167 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2297 heat rate 7.667 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2300 heat rate 6.000 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2308 heat rate 8.357 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 5 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2991 heat rate 4.600 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 3344 heat rate 3.841 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 7018 heat rate 8.967 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 5 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 56348 heat rate 5.000 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 2 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 56489 heat rate 8.847 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 57881 heat rate 3.833 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 15 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: SPP: CC plant 1239 fleet pmax sum 297.0 MW exceeds trusted bound 267.6 MW (nameplate; corrupt summer-capacity rows) — reconciled (29.4 MW removed)
+WARNING: SPP: CC plant 55178 fleet pmax sum 677.2 MW exceeds trusted bound 630.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (47.2 MW removed)
+WARNING: 1 of 1107 SPP generators not in eGRID lookup — assigned fallback zone
+INFO: Loaded SPP fleet from EIA-860 parquet (1107 generators)
+INFO: Binned fleet cache for SPP is up to date — loaded from spp_fleet_binned.parquet
+INFO: mid-vintage-year exit carry (SPP 2020): injecting 6 unit(s), 942 MW — plants [127, 2076, 3477, 6144, 56834]
+WARNING: 1 of 5 SPP generators not in eGRID lookup — assigned fallback zone
+INFO: loaded 5 within-window retiree units for SPP (932 MW, plants [127, 2076, 3477, 6144])
+INFO: unit-outage derate (SPP 2020): 357 plant-tranches derated
+INFO: short unit-outage derate (SPP 2020): 103 plant-tranches derated (< 5-day windows; coal on, gas off)
+INFO: SPP: CC block summer rating (plant 50558): 207.2 MW carried -> 120.0 MW reported block rating (87.2 MW nameplate-fill phantom removed)
+INFO: SPP: CC block summer rating (plant 55463): 1999.6 MW carried -> 1204.0 MW reported block rating (795.6 MW nameplate-fill phantom removed)
+WARNING: eGRID plant 1322 heat rate 6.250 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1325 heat rate 6.122 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 2 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2140 heat rate 8.000 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 2 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2214 heat rate 8.231 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 2 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2221 heat rate 3.733 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 6 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2232 heat rate 7.250 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2249 heat rate 4.167 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2297 heat rate 7.667 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2300 heat rate 6.000 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2308 heat rate 8.357 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 5 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2991 heat rate 4.600 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 3344 heat rate 3.841 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 7018 heat rate 8.967 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 5 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 56348 heat rate 5.000 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 2 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 56489 heat rate 8.847 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 57881 heat rate 3.833 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 15 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: SPP: CC plant 1239 fleet pmax sum 297.0 MW exceeds trusted bound 267.6 MW (nameplate; corrupt summer-capacity rows) — reconciled (29.4 MW removed)
+WARNING: SPP: CC plant 55178 fleet pmax sum 677.2 MW exceeds trusted bound 630.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (47.2 MW removed)
+WARNING: 1 of 1107 SPP generators not in eGRID lookup — assigned fallback zone
+INFO: Loaded SPP fleet from EIA-860 parquet (1107 generators)
+INFO: Binned fleet cache for SPP is up to date — loaded from spp_fleet_binned.parquet
+INFO: SPP MMU offer-side bands (SPP 2020, MMU year 2020, x available (SPP-107)): 843 fossil rows; flat perf + summer class derate replaced; above-emer 0.0371 + eco-to-emer 0.0260 all year, ambient 0.0000 Jun-Sep (319 MW) on 0 unpaired rows
+INFO: mustrun_commitment_feasibility_clip ARMED (SPP 2020): 21 floored plant-groups tested, 113400 infeasible plant-hours, 472274.9 MWh of commitment floor released
+INFO: COD ramp (SPP 2020): 276 unit-months masked offline (mid-year COD / retirement), 10 unit(s) fully not-yet-built/retired
+INFO: SPP: CC block summer rating (plant 50558): 207.2 MW carried -> 120.0 MW reported block rating (87.2 MW nameplate-fill phantom removed)
+INFO: SPP: CC block summer rating (plant 55463): 1999.6 MW carried -> 1204.0 MW reported block rating (795.6 MW nameplate-fill phantom removed)
+WARNING: eGRID plant 1322 heat rate 6.250 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 1325 heat rate 6.122 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 2 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2140 heat rate 8.000 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 2 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2214 heat rate 8.231 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 2 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2221 heat rate 3.733 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 6 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2232 heat rate 7.250 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2249 heat rate 4.167 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2297 heat rate 7.667 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2300 heat rate 6.000 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2308 heat rate 8.357 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 5 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 2991 heat rate 4.600 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 3344 heat rate 3.841 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 7018 heat rate 8.967 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 5 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 56348 heat rate 5.000 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 2 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 56489 heat rate 8.847 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 3 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 57881 heat rate 3.833 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 15 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: SPP: CC plant 1239 fleet pmax sum 297.0 MW exceeds trusted bound 267.6 MW (nameplate; corrupt summer-capacity rows) — reconciled (29.4 MW removed)
+WARNING: SPP: CC plant 55178 fleet pmax sum 677.2 MW exceeds trusted bound 630.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (47.2 MW removed)
+WARNING: 1 of 1107 SPP generators not in eGRID lookup — assigned fallback zone
+INFO: Loaded SPP fleet from EIA-860 parquet (1107 generators)
+INFO: SPP: measured power-only CHP heat rates applied to 6 generator(s) across 6 (plant, class) pair(s)
+INFO: Binned fleet cache for SPP is up to date — loaded from spp_fleet_binned.parquet
+INFO: SPP 2020 hydro budget: backfilled 1 non-reporting plants (0.0 GWh) from 2024
+INFO: SPP 2020 hydro budget pinned to monthly target total 11611.9 GWh (was 11329.7 GWh)
+INFO: Loaded SPP 2020 hydro budget: 23 plants, 11611.9 GWh annual, 3104 MW nameplate
+INFO: SPP 2020: hydro min-flow floor on 23 units — fleet level 310-1019 MW by month (5.99 TWh, 52% of the 11.61 TWh budget)
+INFO: SPP 2020: 23 hydro plants in LP (3104 MW, 11.61 TWh monthly budget)
+INFO: unit-outage derate (SPP 2020): 357 plant-tranches derated
+INFO: short unit-outage derate (SPP 2020): 103 plant-tranches derated (< 5-day windows; coal on, gas off)
+INFO: SPP MMU offer-side bands (SPP 2020, MMU year 2020, x available (SPP-107)): 1273 fossil rows; flat perf + summer class derate replaced; above-emer 0.0371 + eco-to-emer 0.0260 all year, ambient 0.0058 Jun-Sep (319 MW) on 430 unpaired rows
+INFO: mustrun_commitment_feasibility_clip ARMED (SPP 2020): 21 floored plant-groups tested, 113400 infeasible plant-hours, 229296.6 MWh of commitment floor released
+INFO: COD ramp (SPP 2020): 342 unit-months masked offline (mid-year COD / retirement), 14 unit(s) fully not-yet-built/retired
+INFO: SPP MMU emergency pool (SPP 2020, SPP-North): eco-to-emer 0.0260 of 936 fossil rows, 372-596 MW (mean 494), offered at the shed price - eps
+INFO: SPP MMU emergency pool (SPP 2020, SPP-South): eco-to-emer 0.0260 of 337 fossil rows, 317-679 MW (mean 473), offered at the shed price - eps
+INFO: F923 gas-price plausibility screen for 2020 (SPP, band [0.5, 2.0] x state N3045 reference): 578 plant-months in band, 20 low, 0 negative, 32 high -> reference (13 plants); 298 months on the US fallback reference, 0 unscreened (no reference), 0 unscreened (reference <= 0)
+INFO: F923 fuel costs for 2020: 431 generators priced from their own plant, 971 gap-filled from nearby (state/zone) plants
+INFO: Matrix build: 2.390s, Solve: 102.779s (cold, simplex iterations 78773, objective 136347660.2973)
+INFO: Matrix build: 2.390s, Solve: 31.928s (warm, simplex iterations 15627, objective 194942920.0453)
+INFO: EIA-923 dual-fuel oil re-attribution: 0.178 TWh across 86 modelled plant(s) moved from the `oil` class into the classes their units dispatch in (-0.002 TWh of it from net-negative rows)
+INFO: EIA-923 2020: CAMPD-backfilled 3 under-reported plant(s) across 3 class-row(s) (3 replaced, 0 added)
+INFO: EIA-923 2020: filled 3 plant(s) with EIA-923-withheld month(s) from CAMPD net (0.345 TWh added to the class benchmark)
+INFO: year 2020 phase timing: data_prep=12.9s solve_p0=102.8s markup=16.3s solve_p1=31.9s results_write=32.1s total=196.0s (markup: setup=0.0s p0_post=7.6s markup=0.1s seam=0.0s p1_post=8.5s tail=0.0s other=0.1s) (results_write: state=0.2s frames=1.6s parquet=1.7s bench=18.1s sidecars=10.5s)
+INFO: year 2020 memory after release: resident=1.60 GB peak=5.40 GB (malloc_trim=yes) | accumulators 0.05 GB (campd=0.05)
+INFO: year 2020 glibc arena: total=0.38 GB in_use=0.11 GB free_retained=0.27 GB mmapped=0.61 GB trim_top=0.00 GB
+INFO: year 2020 retained heap: ndarray=0.66 GB (n=336) [pandas=0.08 GB n=13, sparse=0.00 GB n=1 — slices, not additions] | 44 populated cache(s), 63 entries | top: ba_exit_month_share=5, ba_join_first_month=5, plant_entry_month_share=5, _chp_by_plant=3, _vintage_status_index_for=3
+INFO: year 2020 retained frame: 46.4 MB  3477720 x 4  cols=year,plant_id,hour,net_mw
+INFO: year 2020 retained frame: 24.8 MB  137578 x 20  cols=plant_id,plant_name,prime_mover,fuel_type,chp,netgen_annual_mwh,ba_code,netgen_january_mwh,netgen_february_mwh,netgen_march_mwh,netgen_april_mwh,netgen_may_mwh
+INFO: year 2020 retained frame: 4.4 MB  69149 x 7  cols=year,month,plant_id,state,fuel_group,price_per_mmbtu,quantity
+INFO: year 2020 retained frame: 2.3 MB  87600 x 4  cols=year,series,hour,mw
+INFO: year 2020 retained frame: 1.4 MB  17520 x 10  cols=year,pass,zone,hour,price,slack,dump,demand,reserve_price,marginal_emission_rate
+INFO: year 2020 retained frame: 0.7 MB  8760 x 17  cols=UTC time,Local date,Hour,Local time,Demand forecast,Demand,Net generation,Total interchange,NG: COL,NG: NG,NG: NUC,NG: WAT
+INFO: capacity-deliverability: no partition for ISO SPP (energy-only / no locational RA construct)
+WARNING: resolved_inputs: split-remap probe failed
+Traceback (most recent call last):
+  File "/home/user/market-simulator/src/market_sim/data/resolved_inputs.py", line 490, in _campd_split_remap_block
+    "unit_outages_maxgen": unit_outage_maxgen_csv_for_iso(
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/market-simulator/src/market_sim/data/outages.py", line 3056, in unit_outage_maxgen_csv_for_iso
+    return _campd.split_remap_companion(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/market-simulator/src/market_sim/data/campd.py", line 481, in split_remap_companion
+    raise FileNotFoundError(
+FileNotFoundError: campd_split_remap_companions is armed but campd-unit-outages-maxgen-splitremap-SPP.csv has not been derived (base campd-unit-outages-maxgen-SPP.csv); the split-remap companions exist only where the lane re-derived them (miso-280: MISO)
+INFO: wrote calibration bundle to /home/user/market-simulator/results/bench/uc/spp_2020_L1/replay
+INFO: memory peak: cgroup_peak_rss_gib=7.08, cgroup_peak_rss_plus_swap_gib=7.08, process_vmhwm_gib=5.40, process_vmswap_now_gib=0.00
+INFO: UC stage prepared: 219 clusters, 92 integer (401 fleet rows), W=24 L=12
+INFO: Matrix build: 0.003s, Solve: 0.023s (cold, simplex iterations 297, objective -5192926.1212)
+{
+ "iso": "SPP",
+ "year": 2020,
+ "t0": 0,
+ "t1": 36,
+ "integer_clusters": 92,
+ "milp": {
+  "build_s": 0.03921547999993891,
+  "milp_s": 4.202154209000014,
+  "nodes": 1,
+  "gap": 5.0732474398589605e-09,
+  "status": "Optimal",
+  "objective": -4297056.329557943,
+  "integers": 3312,
+  "columns": 57384,
+  "rows": 17229,
+  "time_limit_hit": false,
+  "starts": 16,
+  "warm_accepted": true,
+  "guard_rows": 489
+ },
+ "rss_gb": 5.395545959472656,
+ "relaxation": {
+  "build_s": 0.03743869300001279,
+  "milp_s": 1.561282214999892,
+  "nodes": 0,
+  "gap": 0.0,
+  "status": "Optimal",
+  "objective": -4297246.570250263,
+  "integers": 3312,
+  "columns": 57384,
+  "rows": 17229,
+  "time_limit_hit": false,
+  "starts": 16,
+  "warm_accepted": false
+ },
+ "integrality_gap": 190.24069232027978,
+ "p1_slice": {
+  "solve_s": 0.03882861399995363,
+  "objective": -5192926.1211522445
+ },
+ "delta_committed_energy_mwh": -8668.071875304158,
+ "milp_starts": 16,
+ "p1_slice_starts": 124
+}
