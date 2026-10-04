@@ -1,0 +1,65 @@
+{
+ "2019": {
+  "at_offer": 44,
+  "mean_arm_price_there": -21.68,
+  "total_pts": 0.64,
+  "ptc_pts": 0.04,
+  "hydro_pts": 0.6,
+  "c3a_keeper": 12.24,
+  "c3a_ptc_only_est": 12.28
+ },
+ "2020": {
+  "at_offer": 196,
+  "mean_arm_price_there": -21.29,
+  "total_pts": 1.12,
+  "ptc_pts": 0.26,
+  "hydro_pts": 0.86,
+  "c3a_keeper": 27.69,
+  "c3a_ptc_only_est": 27.95
+ },
+ "2021": {
+  "at_offer": 964,
+  "mean_arm_price_there": -21.19,
+  "total_pts": 1.31,
+  "ptc_pts": 0.6,
+  "hydro_pts": 0.72,
+  "c3a_keeper": 7.08,
+  "c3a_ptc_only_est": 7.67
+ },
+ "2022": {
+  "at_offer": 1460,
+  "mean_arm_price_there": -20.41,
+  "total_pts": 0.99,
+  "ptc_pts": 0.89,
+  "hydro_pts": 0.1,
+  "c3a_keeper": -4.85,
+  "c3a_ptc_only_est": -3.96
+ },
+ "2023": {
+  "at_offer": 1125,
+  "mean_arm_price_there": -20.64,
+  "total_pts": 1.86,
+  "ptc_pts": 1.19,
+  "hydro_pts": 0.67,
+  "c3a_keeper": -6.36,
+  "c3a_ptc_only_est": -5.17
+ },
+ "2024": {
+  "at_offer": 1258,
+  "mean_arm_price_there": -21.49,
+  "total_pts": 2.02,
+  "ptc_pts": 1.08,
+  "hydro_pts": 0.94,
+  "c3a_keeper": -11.2,
+  "c3a_ptc_only_est": -10.12
+ },
+ "2025": {
+  "at_offer": 1112,
+  "mean_arm_price_there": -20.76,
+  "total_pts": 2.12,
+  "ptc_pts": 0.98,
+  "hydro_pts": 1.14,
+  "c3a_keeper": -4.24,
+  "c3a_ptc_only_est": -3.26
+ }
+}
