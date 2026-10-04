@@ -45,7 +45,12 @@ def _voll() -> float:
     return float(get_iso_config("PJM").voll)
 
 
-FUEL_GROUPS = {"gas": ("gas_cc", "gas_ct", "gas_st"), "coal": ("coal",), "oil": ("oil",), "nuclear": ("nuclear",)}
+FUEL_GROUPS = {
+    "gas": ("gas_cc", "gas_ct", "gas_st"),
+    "coal": ("coal",),
+    "oil": ("oil",),
+    "nuclear": ("nuclear",),
+}
 
 
 def measured_hourly(fuel: str | None = None) -> pd.Series:
@@ -60,7 +65,9 @@ def measured_hourly(fuel: str | None = None) -> pd.Series:
     else:
         f = f[f.fuel == fuel].assign(v=lambda d: d.forced_outage_mw)
     t = pd.to_datetime(f.hour_beginning_ept)
-    rows = DEC23_ROW + ((t - pd.Timestamp("2022-12-23")) / pd.Timedelta("1h")).astype(int)
+    rows = DEC23_ROW + ((t - pd.Timestamp("2022-12-23")) / pd.Timedelta("1h")).astype(
+        int
+    )
     s = pd.Series(f.v.to_numpy(float), index=rows.to_numpy())
     full = pd.Series(np.nan, index=np.arange(DEC23_ROW, DEC23_ROW + 72))
     full.loc[s.index] = s.to_numpy()
@@ -71,7 +78,16 @@ def main() -> int:
     """Write the reach JSON and print the headline."""
     u = pd.read_parquet(
         BUNDLE / "unit_marginal_2022.parquet",
-        columns=["unit_id", "plant_group", "fuel", "zone", "hour", "mw", "cap_mw", "mc"],
+        columns=[
+            "unit_id",
+            "plant_group",
+            "fuel",
+            "zone",
+            "hour",
+            "mw",
+            "cap_mw",
+            "mc",
+        ],
     )
     u = u[
         u.fuel.astype(str).isin(THERMAL)
@@ -82,16 +98,25 @@ def main() -> int:
     w = u[(u.hour >= 353 * 24) & (u.hour < 360 * 24)].copy()  # 20..26 Dec
     w["unav"] = w.unit_id.map(inst).astype(float) - w.cap_mw
     w["hr"] = w.cap_mw - w.mw
-    g = w.groupby("hour").agg(cap=("cap_mw", "sum"), gen=("mw", "sum"), unav=("unav", "sum"))
+    g = w.groupby("hour").agg(
+        cap=("cap_mw", "sum"), gen=("mw", "sum"), unav=("unav", "sum")
+    )
     g["headroom"] = g.cap - g.gen
     fuel_unav = {
-        k: w[w.fuel.astype(str).isin(v)].groupby("hour").unav.sum() for k, v in FUEL_GROUPS.items()
+        k: w[w.fuel.astype(str).isin(v)].groupby("hour").unav.sum()
+        for k, v in FUEL_GROUPS.items()
     }
 
     s = pd.read_parquet(BUNDLE / "system_2022.parquet")
-    s = s[(s["pass"] == "P1") & (s.zone.astype(str) != "PJM_external")].assign(zone=lambda d: d.zone.astype(str))
+    s = s[(s["pass"] == "P1") & (s.zone.astype(str) != "PJM_external")].assign(
+        zone=lambda d: d.zone.astype(str)
+    )
     r = pd.read_parquet(BUNDLE / "reserve_family_2022.parquet")
-    req = r[(r["pass"] == "P1") & (r.family == "pjm_primary")].groupby("hour").requirement_mw.sum()
+    req = (
+        r[(r["pass"] == "P1") & (r.family == "pjm_primary")]
+        .groupby("hour")
+        .requirement_mw.sum()
+    )
 
     meas = measured_hourly()
     ev = meas.index
@@ -101,18 +126,35 @@ def main() -> int:
     base_rows_a = range(353 * 24, 356 * 24)
     base_rows_b = range(DEC23_ROW, DEC23_ROW + 5)
     baselines = {
-        "A_desk_edart_20_22": (float(e.forced_outages_mw.mean()), float(g.unav.loc[base_rows_a].mean())),
-        "B_same_source_23dec_00_04": (float(meas.loc[base_rows_b].mean()), float(g.unav.loc[base_rows_b].mean())),
+        "A_desk_edart_20_22": (
+            float(e.forced_outages_mw.mean()),
+            float(g.unav.loc[base_rows_a].mean()),
+        ),
+        "B_same_source_23dec_00_04": (
+            float(meas.loc[base_rows_b].mean()),
+            float(g.unav.loc[base_rows_b].mean()),
+        ),
     }
 
-    real = pd.read_parquet(REAL).query("year == 2022")[["zone", "hour", "rt"]].merge(s[["zone", "hour", "demand", "price"]], on=["zone", "hour"])
-    yr = real.assign(x=real.price * real.demand, a=real.rt * real.demand).groupby("hour")[["x", "a", "demand"]].sum()
+    real = (
+        pd.read_parquet(REAL)
+        .query("year == 2022")[["zone", "hour", "rt"]]
+        .merge(s[["zone", "hour", "demand", "price"]], on=["zone", "hour"])
+    )
+    yr = (
+        real.assign(x=real.price * real.demand, a=real.rt * real.demand)
+        .groupby("hour")[["x", "a", "demand"]]
+        .sum()
+    )
     yr["m"] = (pd.Timestamp("2022-01-01") + pd.to_timedelta(yr.index, unit="h")).month
 
     def c3(d: pd.DataFrame) -> list[float]:
         mm = d.groupby("m")[["x", "a", "demand"]].sum()
         pm, am = mm.x / mm.demand, mm.a / mm.demand
-        return [round(100 * (d.x.sum() / d.a.sum() - 1), 2), round(float(np.sqrt(((pm - am) ** 2).mean()) / am.mean()), 3)]
+        return [
+            round(100 * (d.x.sum() / d.a.sum() - 1), 2),
+            round(float(np.sqrt(((pm - am) ** 2).mean()) / am.mean()), 3),
+        ]
 
     voll = _voll()
     rec = {
@@ -134,7 +176,10 @@ def main() -> int:
     for k in FUEL_GROUPS:
         m = measured_hourly(k)
         mu = fuel_unav[k].reindex(g.index)
-        inc_c = inc_c + ((m - m.loc[base_rows_b].mean()) - (mu.reindex(ev) - mu.loc[base_rows_b].mean())).clip(lower=0.0)
+        inc_c = inc_c + (
+            (m - m.loc[base_rows_b].mean())
+            - (mu.reindex(ev) - mu.loc[base_rows_b].mean())
+        ).clip(lower=0.0)
     incs["C_fuel_grain_same_source"] = inc_c
     baselines["C_fuel_grain_same_source"] = baselines["B_same_source_23dec_00_04"]
     for name, inc in incs.items():
@@ -147,7 +192,11 @@ def main() -> int:
             above = d[d.mc >= sysp[h] - 1e-6]
             c = np.cumsum(above.hr.to_numpy(float))
             k = int(np.searchsorted(c, inc[h]))
-            walk = float(above.mc.to_numpy(float)[min(k, len(above) - 1)]) if len(above) else float(sysp[h])
+            walk = (
+                float(above.mc.to_numpy(float)[min(k, len(above) - 1)])
+                if len(above)
+                else float(sysp[h])
+            )
             q = float(req.get(h, 0.0))
             if resid[h] < 0:
                 p = voll
@@ -169,10 +218,16 @@ def main() -> int:
             "increment_mean_23_24_mw": round(float(inc.loc[d2324].mean()), 0),
             "hours_resid_lt_0": int((resid < 0).sum()),
             "hours_resid_lt_req": int((resid < req.reindex(ev).fillna(0)).sum()),
-            "hours_resid_lt_req_plus_190": int((resid < req.reindex(ev).fillna(0) + STEP2_WIDTH).sum()),
+            "hours_resid_lt_req_plus_190": int(
+                (resid < req.reindex(ev).fillna(0) + STEP2_WIDTH).sum()
+            ),
             "min_resid_headroom_mw": round(float(resid.min()), 0),
-            "dec23_24_mean_est_price": round(float(np.average(est.loc[d2324], weights=yr.demand.loc[d2324])), 2),
-            "dec23_24_mean_actual": round(float(yr.a.loc[d2324].sum() / yr.demand.loc[d2324].sum()), 2),
+            "dec23_24_mean_est_price": round(
+                float(np.average(est.loc[d2324], weights=yr.demand.loc[d2324])), 2
+            ),
+            "dec23_24_mean_actual": round(
+                float(yr.a.loc[d2324].sum() / yr.demand.loc[d2324].sum()), 2
+            ),
             "c3a_c3b_2022_est": c3(cf),
             "est_unserved_mwh_upper": round(float((-resid).clip(lower=0).sum()), 0),
         }
