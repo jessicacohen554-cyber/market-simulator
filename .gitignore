@@ -4082,3 +4082,5 @@ frontend/data/backcast/runs/2026-10-03-closeout-pjm-nuc-6yr.js
 results/calibration/closeout_pjm_nuc_full_span/
 frontend/data/backcast/registry/2026-10-03-closeout-pjm-nuc-7yr.json
 frontend/data/backcast/runs/2026-10-03-closeout-pjm-nuc-7yr.js
+
+!results/calibration/closeout_miso_w3_2019/**
