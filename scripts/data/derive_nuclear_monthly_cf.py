@@ -96,7 +96,8 @@ def derive_monthly_cf(iso: str, year: int, clip: bool = True) -> list[float] | N
     to 1.0 and rounded to 2 decimals, matching the committed constants table.
     A month with no unit online reads 0.0.
 
-    ``clip=False`` returns the same ratio unclipped, rounded to 3 decimals: the
+    ``clip=False`` returns the same row except that a month whose ratio exceeds
+    1.0 keeps its unclipped value, rounded to 3 decimals: the
     ``NUCLEAR_MONTHLY_CF_UNCLIPPED_BY_YEAR`` rows that
     ``ScenarioConfig.nuclear_winter_capability_basis`` reads (a winter month whose
     measured output exceeds the summer-rated fleet pmax reads above 1.0).
@@ -115,7 +116,12 @@ def derive_monthly_cf(iso: str, year: int, clip: bool = True) -> list[float] | N
             cfs.append(0.0)
             continue
         cf = float(monthly_mwh.iloc[m - 1]) / (pmax_mw * hours)
-        cfs.append(round(min(cf, 1.0), 2) if clip else round(cf, 3))
+        # Unclipped twin: identical to the clipped row wherever the measured
+        # ratio does not exceed 1.0 (so every unclipped month is byte-equal in
+        # energy); only a month above the summer-rated pmax keeps its 3-decimal
+        # measured value.
+        clipped = round(min(cf, 1.0), 2)
+        cfs.append(clipped if clip or cf <= 1.0 else round(cf, 3))
     return cfs
 
 

@@ -44,3 +44,27 @@ Pin = this branch's build commit. Seven year-isolated shards replay the keeper r
 `mustrun_online_frac_per_year=true`, as slots free (max 6 alive). Compose each set, score against the keeper, and
 register as probes on the branch. RESULT, and a slot request only if one beats the keeper on structure with no
 undeclared flip.
+
+## Addendum A (2026-10-04, after the first two (A)+(B) legs; before any corrected solve)
+
+**K2 fired on the v1 build (pin `2c9284cb`).**
+- 2019: nuclear Δ +0.257 TWh, against an R1 band of [0.53, 0.92].
+- 2023: +0.565 TWh, against a predicted +0.15. Spread over every month, not confined to Jan/Dec.
+
+**Cause, a design flaw in v1.** `NUCLEAR_MONTHLY_CF_UNCLIPPED_BY_YEAR` carried 3-decimal values in **every**
+month, while the live table carries 2. Every unclipped month therefore moved by the rounding difference (up to
+±0.1 TWh a month), against R1's requirement that they stay byte-equal. The clipped months moved as designed:
+2019 Jan +0.33 and Dec +0.32 TWh. The 1.05× ceiling also proved generous on per-unit caps; the fleet-ratio
+prediction overstates because some units carry no winter uplift.
+
+**v1 verdict: KILLED under its own K2.** Its legs (w3ab-*) are registered as evidence only, never as a candidate.
+
+**Correction (v2).** The unclipped table now equals the committed row in every month whose measured ratio is ≤ 1.0.
+Only a month above 1.0 keeps its 3-decimal value. Same frozen derive (`--unclipped`); the clipped `--check` is
+unchanged; the solve-surface declaration is re-taken on this branch, where it never reached `main`.
+
+**v2 bars.**
+- **R1' (B mechanics).** Nuclear Δ ≥ 0 in every month, nonzero only in months whose committed CF row reads 1.00.
+  The yearly total lies within [0.4×, 1.05×] of the fleet-ratio prediction (0.88/0.65/1.24/0.73/0.15/0.90/0.69 TWh).
+- Every other bar is unchanged: R2, the declared CT_PEAKER 2021 risk, and K1.
+- The (A)-only legs (w3a-*) are unaffected by (B) and are solved at the v1 pin, where (A)'s code is identical.

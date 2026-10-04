@@ -3439,8 +3439,9 @@ NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
 
 # Unclipped twin of NUCLEAR_MONTHLY_CF_BY_YEAR for ScenarioConfig.nuclear_winter_capability_basis
 # (closeout-PJM-w3, default off; owner ruling pending, desk 2026-10-04). Same frozen derive, same
-# EIA-923 Page 1 source and the same summer-rated fleet-pmax denominator, with the 1.0 clip removed
-# and 3 decimals kept (`derive_nuclear_monthly_cf.py --isos PJM --years 2019..2025 --unclipped`; the
+# EIA-923 Page 1 source and the same summer-rated fleet-pmax denominator; identical to the clipped
+# row in every month whose measured ratio is <= 1.0, and the unclipped 3-decimal value only where it
+# exceeds 1.0 (`derive_nuclear_monthly_cf.py --isos PJM --years 2019..2025 --unclipped`; the
 # clipped table's `--check` passes byte-unchanged). Winter months read above 1.0 (up to 1.030):
 # measured output exceeds the SUMMER rating the model carries for nuclear, because EIA-860 winter
 # net capability runs ~2.5 % higher (2019/22/25 vintages: 100.1/97.0/100.9 GW winter vs
@@ -3449,13 +3450,13 @@ NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
 # fmt: off
 NUCLEAR_MONTHLY_CF_UNCLIPPED_BY_YEAR: dict[str, dict[int, list[float]]] = {
     "PJM": {
-        2019: [1.023, 0.986, 0.871, 0.866, 0.958, 0.980, 0.986, 0.978, 0.950, 0.879, 0.929, 1.022],
-        2020: [1.025, 0.967, 0.903, 0.885, 0.932, 1.001, 0.990, 0.992, 0.961, 0.895, 0.962, 1.008],
-        2021: [1.030, 1.004, 0.869, 0.833, 0.894, 0.990, 0.967, 0.995, 0.968, 0.883, 0.933, 1.020],
-        2022: [1.027, 0.987, 0.919, 0.822, 0.930, 0.982, 0.987, 0.971, 0.939, 0.840, 0.935, 1.003],
-        2023: [1.003, 0.972, 0.900, 0.853, 0.913, 0.993, 0.989, 0.982, 0.961, 0.894, 0.962, 1.003],
-        2024: [1.013, 0.984, 0.898, 0.806, 0.909, 0.987, 0.974, 0.991, 0.961, 0.904, 0.929, 1.024],
-        2025: [1.027, 0.987, 0.884, 0.859, 0.908, 0.992, 0.978, 0.983, 0.944, 0.828, 0.926, 1.002],
+        2019: [1.023, 0.99, 0.87, 0.87, 0.96, 0.98, 0.99, 0.98, 0.95, 0.88, 0.93, 1.022],
+        2020: [1.025, 0.97, 0.90, 0.88, 0.93, 1.001, 0.99, 0.99, 0.96, 0.90, 0.96, 1.008],
+        2021: [1.030, 1.004, 0.87, 0.83, 0.89, 0.99, 0.97, 1.00, 0.97, 0.88, 0.93, 1.020],
+        2022: [1.027, 0.99, 0.92, 0.82, 0.93, 0.98, 0.99, 0.97, 0.94, 0.84, 0.94, 1.003],
+        2023: [1.003, 0.97, 0.90, 0.85, 0.91, 0.99, 0.99, 0.98, 0.96, 0.89, 0.96, 1.003],
+        2024: [1.013, 0.98, 0.90, 0.81, 0.91, 0.99, 0.97, 0.99, 0.96, 0.90, 0.93, 1.024],
+        2025: [1.027, 0.99, 0.88, 0.86, 0.91, 0.99, 0.98, 0.98, 0.94, 0.83, 0.93, 1.002],
     },
 }
 # fmt: on
