@@ -252,6 +252,15 @@ MECH_PJM_GAS_COMMITMENT_BRIDGE: int = 27
 # REPLACES the bridges, the posture family and cc_mustrun_per_plant wherever
 # armed (ScenarioConfig refuses the stack, rule 19).
 MECH_UC_SCHEDULE: int = 28
+# diagnostic_coal_metered_online_floor (closeout-SOCO-w3, pipeline.commitment.
+# wrap_coal_metered_online_diagnostic_prep): a DIAGNOSTIC, NEVER-PROMOTABLE
+# floor (rule 13 [R-MEASURED]: it pins each coal plant's METERED online state —
+# the hours its own CEMS shows it synchronized — so it has no forward story and
+# can never back a keeper). It holds a coal plant at the P5 of its own online net
+# MW in every metered-online hour (data.coal_metered_online). Its own id so its
+# forced energy is attributed separately and can never be mistaken for a
+# structural coal floor; ablated like every merchant floor.
+MECH_DIAG_COAL_METERED_ONLINE: int = 29
 
 MECH_NAMES: dict[int, str] = {
     MECH_NONE: "none",
@@ -283,6 +292,7 @@ MECH_NAMES: dict[int, str] = {
     MECH_MISO_GAS_ECOMIN_ONLINE: "miso_gas_ecomin_online_floor",
     MECH_PJM_GAS_COMMITMENT_BRIDGE: "pjm_gas_commitment_bridge",
     MECH_UC_SCHEDULE: "uc_schedule",
+    MECH_DIAG_COAL_METERED_ONLINE: "diagnostic_coal_metered_online_floor",
 }
 
 # Mechanisms whose forced energy is exempt from the D-2 merchant-class gates
@@ -361,6 +371,9 @@ MECH_ABLATION_FIELDS: dict[int, dict[str, object]] = {
     # leg (a visible, switchable commitment mechanism; the twin solves the
     # commitment-free LP).
     MECH_UC_SCHEDULE: {"unit_commitment_milp": False},
+    # closeout-SOCO-w3: the diagnostic metered coal online floor, ABLATED (it is
+    # never a keeper input; the twin must never carry it).
+    MECH_DIAG_COAL_METERED_ONLINE: {"diagnostic_coal_metered_online_floor": False},
 }
 
 # Mechanisms KEPT in the ablation twin (carry NO ablation entry): the structural

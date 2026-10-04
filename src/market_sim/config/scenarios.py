@@ -2459,6 +2459,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # paths.measured_oil_burn_days_path; no sub-fields. Registered IN THE SAME
     # COMMIT as the field (the nyiso-119 discipline).
     "dual_fuel_measured_oil_burn",
+    # closeout-SOCO-w3: DIAGNOSTIC metered coal online floor, default off,
+    # dropped from the hash at False. Registered IN THE SAME COMMIT as the
+    # field (the nyiso-119 discipline).
+    "diagnostic_coal_metered_online_floor",
     # PJM-NEXT-17: plant-conduct placement of the cc_mustrun_per_plant window
     # (default off). Dropped from the hash at its default so every pre-existing
     # run -- every ISO's keepers included -- keeps its key; an armed run places
@@ -3382,6 +3386,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "eia923_cc_family_heat_rates": "False",
     # Added by soco-96 WITH the field (the nyiso-119 discipline).
     "dual_fuel_measured_oil_burn": "False",
+    # Added by closeout-SOCO-w3 WITH the field (the nyiso-119 discipline).
+    "diagnostic_coal_metered_online_floor": "False",
     # Added by PJM-NEXT-17 WITH the field (the nyiso-119 discipline).
     "cc_mustrun_conduct_window": "False",
     # Added by W0 (closeout-B) WITH the field (the nyiso-119 discipline).
@@ -4045,6 +4051,7 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "caiso_citygate_blackout_bridge": "measured Henry Hub daily spot + the two bracketing measured citygate prints, across EIA's publication blackouts",
     "dual_fuel_oil_daily_parity": "measured daily oil prints for the parity cap",
     "dual_fuel_measured_oil_burn": "measured CAMPD plant-day oil burn (soco-96)",
+    "diagnostic_coal_metered_online_floor": "measured CEMS coal online state (closeout-SOCO-w3 DIAGNOSTIC, never promotable)",
     # --- measured availability / outage records ---
     "caiso_dam_outages": "CAISO's published DAM outage record for the year",
     "miso_native_outage_source": "MISO's published outage record for the year",
@@ -21451,6 +21458,22 @@ class ScenarioConfig:
     # Default off; byte-identical off.
     dual_fuel_measured_oil_burn: bool = False
 
+    # DIAGNOSTIC — NEVER PROMOTABLE (closeout-SOCO-w3, desk direction
+    # 2026-10-04). Rule 13 [R-MEASURED] lists pinning a unit to its observed
+    # operation as forbidden in a keeper; this flag does exactly that for coal
+    # COMMITMENT: it holds each coal plant at the P5 of its own online net MW in
+    # every hour its own CEMS meter shows it online (artifact
+    # coal_metered_online_floor_<ISO>.parquet, scripts/data/
+    # derive_coal_metered_online_floor.py; consumer pipeline.commitment.
+    # wrap_coal_metered_online_diagnostic_prep; D-2 id
+    # MECH_DIAG_COAL_METERED_ONLINE). It exists only as the default-off,
+    # labelled diagnostic probe rule 13 allows, to answer one question: if
+    # Southern's metered coal commitment practice is imposed, how much of that
+    # coal displaces CC (frontier row SOCO-F1)? Backcast-only
+    # (_BACKCAST_ONLY_OVERLAY_FIELDS); inert in any ISO without its own artifact
+    # (rule 25). Default off; byte-identical off.
+    diagnostic_coal_metered_online_floor: bool = False
+
     # Tier 3 (calibration) — thermal availability source. "statistical"
     # (default) builds coal/CC availability from the seasonal WEFOR/POF model;
     # "historic" additionally overlays actual ERCOT outages (coal/CC plants,
@@ -25883,6 +25906,8 @@ TIER_TAGS: dict[str, int] = {
     "uc_noload_source": 1,
     "uc_boundary_mode": 1,
     "uc_prefixing": 1,
+    # closeout-SOCO-w3 DIAGNOSTIC (rule 13: never a keeper input).
+    "diagnostic_coal_metered_online_floor": 1,
 }
 
 # SweepDefinition (the sweep / named-case-matrix expansion engine) moved
