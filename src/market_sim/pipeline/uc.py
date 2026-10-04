@@ -360,7 +360,7 @@ class UcStage:
                 next_month += 1
                 if write and kept_to < T:
                     sched.checkpoint(
-                        self.artifact_dir,
+                        self.checkpoint_dir,
                         next_month,
                         self._log(windows, sched, partial=True),
                     )
