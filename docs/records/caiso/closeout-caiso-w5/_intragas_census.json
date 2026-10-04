@@ -1,0 +1,185 @@
+{
+ "2019": {
+  "CC_REGULAR": {
+   "model_twh": 38.63399887084961,
+   "actual_twh": 40.66,
+   "missed_twh": {
+    "off_priced": 10.664,
+    "cap_limited": 0.41,
+    "not_in_lp": 0.0,
+    "cheap_unused": 0.905
+   },
+   "off_priced_gap_energy_weighted_p25_p50_p75": [
+    0.5,
+    1.77,
+    5.69
+   ],
+   "off_priced_twh_gap_le_5": 7.639,
+   "off_priced_twh_gap_le_10": 8.949,
+   "excess_twh": 9.958,
+   "excess_at_floor_twh_by_mechanism": {
+    "7": 2.387
+   },
+   "top_under_plants": [
+    {
+     "plant": 55656,
+     "model_gwh": 2876.0,
+     "actual_gwh": 4060.8
+    },
+    {
+     "plant": 56476,
+     "model_gwh": 2010.300048828125,
+     "actual_gwh": 2872.9
+    },
+    {
+     "plant": 55518,
+     "model_gwh": 2629.300048828125,
+     "actual_gwh": 3337.4
+    },
+    {
+     "plant": 55295,
+     "model_gwh": 868.2000122070312,
+     "actual_gwh": 1468.6
+    },
+    {
+     "plant": 57978,
+     "model_gwh": 756.9000244140625,
+     "actual_gwh": 1189.3
+    },
+    {
+     "plant": 358,
+     "model_gwh": 2709.699951171875,
+     "actual_gwh": 3040.7
+    },
+    {
+     "plant": 56041,
+     "model_gwh": 283.70001220703125,
+     "actual_gwh": 609.0
+    },
+    {
+     "plant": 55077,
+     "model_gwh": 993.2999877929688,
+     "actual_gwh": 1314.5
+    }
+   ]
+  },
+  "CT_PEAKER": {
+   "model_twh": 2.575000047683716,
+   "actual_twh": 4.121,
+   "missed_twh": {
+    "off_priced": 3.198,
+    "cap_limited": 0.062,
+    "not_in_lp": 0.008,
+    "cheap_unused": 0.028
+   },
+   "off_priced_gap_energy_weighted_p25_p50_p75": [
+    5.48,
+    9.78,
+    17.16
+   ],
+   "off_priced_twh_gap_le_5": 0.729,
+   "off_priced_twh_gap_le_10": 1.635,
+   "top_under_plants": [
+    {
+     "plant": 56803,
+     "model_gwh": 211.89999389648438,
+     "actual_gwh": 632.8
+    },
+    {
+     "plant": 246,
+     "model_gwh": 43.0,
+     "actual_gwh": 405.2
+    },
+    {
+     "plant": 56051,
+     "model_gwh": 2.5999999046325684,
+     "actual_gwh": 309.0
+    },
+    {
+     "plant": 59002,
+     "model_gwh": 104.69999694824219,
+     "actual_gwh": 372.1
+    },
+    {
+     "plant": 57482,
+     "model_gwh": 439.20001220703125,
+     "actual_gwh": 576.7
+    },
+    {
+     "plant": 57515,
+     "model_gwh": 352.1000061035156,
+     "actual_gwh": 456.2
+    },
+    {
+     "plant": 57027,
+     "model_gwh": 38.599998474121094,
+     "actual_gwh": 123.2
+    },
+    {
+     "plant": 62176,
+     "model_gwh": 0.0,
+     "actual_gwh": 48.2
+    }
+   ]
+  },
+  "ST_GAS": {
+   "model_twh": 0.0820000022649765,
+   "actual_twh": 1.236,
+   "missed_twh": {
+    "off_priced": 1.069,
+    "cap_limited": 0.025,
+    "not_in_lp": 0.076,
+    "cheap_unused": 0.011
+   },
+   "off_priced_gap_energy_weighted_p25_p50_p75": [
+    7.7,
+    13.95,
+    20.11
+   ],
+   "off_priced_twh_gap_le_5": 0.153,
+   "off_priced_twh_gap_le_10": 0.368,
+   "top_under_plants": [
+    {
+     "plant": 315,
+     "model_gwh": 7.699999809265137,
+     "actual_gwh": 581.1
+    },
+    {
+     "plant": 335,
+     "model_gwh": 6.900000095367432,
+     "actual_gwh": 221.7
+    },
+    {
+     "plant": 356,
+     "model_gwh": 4.400000095367432,
+     "actual_gwh": 195.9
+    },
+    {
+     "plant": 350,
+     "model_gwh": 63.5,
+     "actual_gwh": 160.8
+    },
+    {
+     "plant": 10444,
+     "model_gwh": 0.0,
+     "actual_gwh": 16.9
+    },
+    {
+     "plant": 10446,
+     "model_gwh": 0.0,
+     "actual_gwh": 15.9
+    },
+    {
+     "plant": 57073,
+     "model_gwh": 0.0,
+     "actual_gwh": 13.2
+    },
+    {
+     "plant": 57075,
+     "model_gwh": 0.0,
+     "actual_gwh": 10.8
+    }
+   ]
+  }
+ }
+}
