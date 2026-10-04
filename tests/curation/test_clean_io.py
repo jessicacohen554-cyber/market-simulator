@@ -114,6 +114,7 @@ ALL_DATATYPES = [
     # refreshed 2026-09-24 by lane Y-30.
     "coal-stocks",
     "coal-receipts",
+    "pjm-elliott-forced-outages",
 ]
 
 

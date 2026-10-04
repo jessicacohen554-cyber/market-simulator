@@ -3069,6 +3069,60 @@ def _apply_outage_overlays(
             )
         np.clip(availability, 0.0, 1.0, out=availability)
 
+    # PJM Winter Storm Elliott hourly MEASURED forced-outage overlay
+    # (config.pjm_elliott_measured_outage_overlay, closeout-PJM-elliott, owner
+    # ruling R-64; backcast only, 2022 only — the loader returns None for every
+    # other year). Placed after every other PJM availability layer so the
+    # model's own outage state U_f(h) it nets against is final. Per covered fuel
+    # f and event hour h: inc_f(h) = max(0, [M_f(h) - M_f(base)] -
+    # [U_f(h) - U_f(base)]), base = Figure 30's own pre-front bars (23 Dec
+    # 00:00-04:00), withdrawn pro rata from the fuel's available MW. Remove-only;
+    # relative availability and every zero preserved; zero free parameters.
+    if (
+        config is not None
+        and _iso == "PJM"
+        and config.pjm_elliott_measured_outage_overlay
+        and config.mode == "backcast"
+        and _yr is not None
+    ):
+        from market_sim.data.pjm_elliott_outages import (
+            BASELINE_HOURS,
+            FUEL_GROUPS,
+            elliott_forced_outage_mw,
+        )
+
+        _meas = elliott_forced_outage_mw(int(_yr), hours)
+        if _meas is not None:
+            _fuel = np.array([str(g.fuel_type) for g in generators])
+            for _f, _types in FUEL_GROUPS.items():
+                _m = _meas[_f]
+                _ev = np.flatnonzero(np.isfinite(_m))
+                _idx = np.flatnonzero(np.isin(_fuel, _types))
+                if _ev.size == 0 or _idx.size == 0:
+                    continue
+                _base = _ev[:BASELINE_HOURS]
+                _cap = pmax[_idx]
+                _a = availability[np.ix_(_idx, _ev)]  # (n_f, event hours)
+                _avail_mw = _cap @ _a  # (event hours,) available MW
+                _unav = float(_cap.sum()) - _avail_mw  # model's own outage MW
+                _base_pos = np.searchsorted(_ev, _base)
+                _inc = (_m[_ev] - _m[_base].mean()) - (_unav - _unav[_base_pos].mean())
+                _inc = np.clip(_inc, 0.0, _avail_mw)
+                _mu = np.ones_like(_avail_mw)
+                _live = _avail_mw > 1e-9
+                _mu[_live] = (_avail_mw[_live] - _inc[_live]) / _avail_mw[_live]
+                availability[np.ix_(_idx, _ev)] = np.clip(_a * _mu[None, :], 0.0, 1.0)
+                logger.info(
+                    "PJM Elliott measured outage overlay (%d) %s: %d event hours, "
+                    "withdrawn max %.0f MW / mean %.0f MW over %d units",
+                    int(_yr),
+                    _f,
+                    int(_ev.size),
+                    float(_inc.max()),
+                    float(_inc.mean()),
+                    int(_idx.size),
+                )
+
     # ercot-219 stage-1 measured aggregate-capability reconciliation (B-1
     # SIGNED by dispatch of ERCOT-219 2026-08-18; PRECOMMIT-ercot219 §1.1).
     # A single hourly TIGHTEN-ONLY scalar on merchant-thermal availability so

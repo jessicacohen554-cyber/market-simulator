@@ -1,0 +1,29 @@
+datatype: pjm-elliott-forced-outages
+schema_version: 1
+title: PJM Winter Storm Elliott hourly GADS forced outage by fuel (23-25 Dec 2022)
+description: >-
+  Hourly forced outages and derates by fuel for PJM during Winter Storm Elliott,
+  digitised from PJM's Winter Storm Elliott Event Analysis and Recommendation Report
+  (2023-07-17), Figure 30 (GADS as of 2023-03-01; wind and solar excluded). Raw:
+  data/raw/pjm-elliott-forced-outages/ (README: URL, sha256, digitisation uncertainty
+  +-104 MW per bar, check bar 46,250 vs labelled 46,124 MW). Even hours plus 24 Dec
+  07:00 are read off the figure; odd hours are linear interpolations and 25 Dec 23:00
+  holds 22:00 (digitised = False). Admissible ONLY as a windowed, backcast-only
+  measured outage overlay (owner ruling R-64, 2026-10-04; rule 13); consumed by
+  ScenarioConfig.pjm_elliott_measured_outage_overlay.
+key_columns: [iso, year, hour_of_year, fuel]
+allow_additional_columns: false
+columns:
+  - {name: iso, dtype: string, unit: none, nullable: false, description: Always PJM.}
+  - {name: year, dtype: int64, unit: year, nullable: false, description: Calendar year (2022).}
+  - {name: hour_of_year, dtype: int64, unit: hour, nullable: false,
+     description: Row on the model's 8760 clock (EIA-930 local prevailing, hour-beginning;
+       23 Dec 2022 00:00 EPT = 8544).}
+  - {name: hour_beginning_ept, dtype: "datetime64[ns]", unit: none, nullable: false,
+     description: Hour-beginning timestamp in Eastern Prevailing Time as printed on the figure axis.}
+  - {name: fuel, dtype: string, unit: none, nullable: false,
+     description: One of gas | coal | oil | nuclear | hydro | other (Figure 30 legend).}
+  - {name: forced_outage_mw, dtype: float64, unit: mw, nullable: false,
+     description: GADS forced outage plus derate MW for that fuel in that hour.}
+  - {name: digitised, dtype: bool, unit: none, nullable: false,
+     description: True when read directly off a printed bar; False when interpolated or held.}

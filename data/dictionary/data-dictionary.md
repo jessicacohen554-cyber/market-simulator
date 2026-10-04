@@ -94,6 +94,7 @@ for the market split.
 | ps-water-state | — | — | — | — | — | — | — | — |
 | ra-import-allocations | — | — | — | — | — | — | — | — |
 | load-forecast | — | — | — | — | — | — | — | — |
+| pjm-elliott-forced-outages | — | — | 2022 | — | — | — | — | — |
 
 ### National / ISO-agnostic datatypes
 
@@ -123,8 +124,8 @@ snapshot).
 | carb-cap-schedule | — | n/a |
 | coal-basin-price | national/regional (EIA Annual Coal Report, by producing region) | n/a |
 | coal-mining-ppi | national (BLS PPI, coal) | n/a |
-| coal-stocks | national (EIA-923 Schedule 2, by plant) | 2018–2024 |
-| coal-receipts | national (EIA-923 Page 5, by plant) | 2017–2025 |
+| coal-stocks | national (EIA-923 Schedule 2, by plant) | n/a |
+| coal-receipts | national (EIA-923 Page 5, by plant) | n/a |
 | stb-coal-loadings | national (STB EP 724, by carrier x region) | n/a |
 | nwpp-plant-basis-energy | NWPP only (one committed CSV, year x family) | n/a |
 | carbon-auction-results | — | n/a |
@@ -2280,3 +2281,27 @@ Schema: [`schema/load-forecast.schema.yaml`](schema/load-forecast.schema.yaml).
 | `basis` | `string` | `none` | no | net \| gross \| unspecified -- whether the value is net of behind-the-meter DER (the convention the model's demand arrays use) or gross. Part of the KEY, because a publisher that reports both (ISO-NE's CELT prints a Gross and a Net row for every energy and peak series) would otherwise collide on it. "unspecified" is the honest label for a publication that does not draw the distinction at all -- never a silent default onto "net". |
 | `source_doc` | `string` | `none` | no | The source document, as a repo path where the file is held under data/raw/ (including a gitignored corpus payload, which is still the provenance record) or a URL where it is not. |
 | `source_page` | `string` | `none` | no | Locator within source_doc -- sheet name, table number and page, or slide number. For a value read from a chart's vector coordinates this says so explicitly, and the raw README records the printed number the read was validated against. |
+
+## pjm-elliott-forced-outages
+
+PJM's hourly GADS forced outages and derates by fuel during Winter Storm
+Elliott (23–25 Dec 2022), digitised from Figure 30 of PJM's Event Analysis
+report — a windowed, backcast-only measured outage overlay input (owner ruling
+R-64). Schema:
+[`schema/pjm-elliott-forced-outages.schema.yaml`](schema/pjm-elliott-forced-outages.schema.yaml).
+
+- **Keys:** `iso`, `year`, `hour_of_year`, `fuel`
+- **Reconciles:** A printed bar chart (even hours plus the labelled 24 Dec
+  07:00 peak) onto the model's 8760 clock: odd hours interpolated and flagged
+  digitised=False, 25 Dec 23:00 held at 22:00. Scale from the chart's own
+  gridlines (±104 MW per bar; check bar 46,250 vs labelled 46,124 MW).
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | Always PJM. |
+| `year` | `int64` | `year` | no | Calendar year (2022). |
+| `hour_of_year` | `int64` | `hour` | no | Row on the model's 8760 clock (EIA-930 local prevailing |
+| `hour_beginning_ept` | `datetime64[ns]` | `none` | no | Hour-beginning timestamp in Eastern Prevailing Time as printed on the figure axis. |
+| `fuel` | `string` | `none` | no | One of gas \| coal \| oil \| nuclear \| hydro \| other (Figure 30 legend). |
+| `forced_outage_mw` | `float64` | `mw` | no | GADS forced outage plus derate MW for that fuel in that hour. |
+| `digitised` | `bool` | `none` | no | True when read directly off a printed bar; False when interpolated or held. |

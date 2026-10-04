@@ -13859,6 +13859,20 @@ def main() -> None:
         "CAISO-only. Default (unset) keeps the base config value (off).",
     )
     parser.add_argument(
+        "--pjm-elliott-outage-overlay",
+        dest="pjm_elliott_measured_outage_overlay",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Withdraw PJM's measured Winter Storm Elliott hourly GADS forced "
+        "outage (Event Analysis report Figure 30, 23-25 Dec 2022) beyond the "
+        "model's own outage rise, per fuel, pro rata from available units "
+        "(ScenarioConfig.pjm_elliott_measured_outage_overlay, closeout-PJM-"
+        "elliott, owner ruling R-64). Backcast-only, PJM 2022 only; a no-op in "
+        "every other year. Rides the generic prb_overrides channel; "
+        "--no-pjm-elliott-outage-overlay reaches the pre-arm posture. Default "
+        "(unset) keeps the base config value (off).",
+    )
+    parser.add_argument(
         "--zonal-loss-demand-reconciliation",
         dest="zonal_loss_demand_reconciliation",
         action=argparse.BooleanOptionalAction,
@@ -15852,6 +15866,10 @@ def main() -> None:
             # closeout-PJM-lossdemand: generic channel, so run_config.json
             # records it (prb_overrides is applied to recorded_cfg).
             "zonal_loss_demand_reconciliation": (args.zonal_loss_demand_reconciliation),
+            # closeout-PJM-elliott: generic channel, so run_config.json records it.
+            "pjm_elliott_measured_outage_overlay": (
+                args.pjm_elliott_measured_outage_overlay
+            ),
             # spp-49: the benchmark's vintage-aware membership union rides the
             # same generic channel for the same reasons -- ONE read path for a
             # fresh solve, a replay override and a recipe, and
