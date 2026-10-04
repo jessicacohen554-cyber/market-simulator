@@ -1,0 +1,936 @@
+iso,cls,plant,name,mw,inmap
+CAISO,cc,260,Moss Landing Power Plant,1020.0,False
+CAISO,cc,358,Mountainview Generating Station,1018.0,False
+CAISO,cc,55151,La Paloma Generating Plant,1010.0,False
+CAISO,cc,55518,High Desert Power Project,889.2,False
+CAISO,cc,55333,"Delta Energy Center, LLC",842.0,False
+CAISO,cc,55656,Pastoria Energy Facility,757.0,False
+CAISO,cc,56532,Colusa Generating Station,640.0,False
+CAISO,cc,62116,AES Huntington Beach,630.0,False
+CAISO,cc,56467,Russell City Energy Company LLC,605.0,False
+CAISO,cc,62115,AES Alamitos,603.0,False
+CAISO,cc,55345,"Otay Mesa Energy Center, LLC",592.72,False
+CAISO,cc,56476,Gateway Generating Station,563.4,False
+CAISO,cc,55182,Sunrise Power Company,561.0,False
+CAISO,cc,55985,Palomar Energy Center,559.0,False
+CAISO,cc,55393,Metcalf Energy Center,557.0,False
+CAISO,cc,55295,Blythe Energy,514.0,False
+CAISO,cc,57901,El Segundo,510.0,False
+CAISO,cc,55077,Desert Star Energy Center,450.0,False
+CAISO,cc,55933,Tracy Combined Cycle Power Plant,320.1,False
+CAISO,cc,55748,Los Esteros Critical Energy Facility,300.0,False
+CAISO,cc,57978,Lodi Energy Center,273.0,False
+CAISO,cc,56026,Donald Von Raesfeld,147.8,False
+CAISO,cc,56041,Malburg Generating Station,130.0,False
+CAISO,cc,422,Glenarm,84.0,False
+CAISO,cc,57564,Algonquin Power Sanger,61.5,False
+CAISO,cc,10169,Carson Cogeneration Company,49.3,False
+ERCOT,cc,55480,Forney Power Plant,1770.0,True
+ERCOT,cc,55091,Midlothian Energy,1620.0,True
+ERCOT,cc,58001,Temple Power Station,1580.0,True
+ERCOT,cc,55230,Jack County Generation Facility,1241.0,True
+ERCOT,cc,55501,Tenaska Kiamichi Generating Station,1224.0,False
+ERCOT,cc,60122,Colorado Bend II,1142.7,True
+ERCOT,cc,59812,Wolf Hollow II,1103.4,True
+ERCOT,cc,55215,Odessa Ector Generating Station,1061.8,True
+ERCOT,cc,55097,Lamar Power Plant,1044.0,True
+ERCOT,cc,55226,Freestone Power Generation,1032.0,True
+ERCOT,cc,55153,Guadalupe Generating Station,1005.0,True
+ERCOT,cc,55144,Hays Energy Facility,931.0,True
+ERCOT,cc,55062,Tenaska Frontier Generating Station,860.0,True
+ERCOT,cc,55132,Tenaska Gateway Generating Station,826.0,True
+ERCOT,cc,55137,"Rio Nogales Power Project, LP",799.5,True
+ERCOT,cc,55172,Bosque County Power Plant,763.0,True
+ERCOT,cc,55139,Wolf Hollow Generating Station,756.0,True
+ERCOT,cc,55320,"Wise County Power Company, LLC",735.0,True
+ERCOT,cc,58005,Rayburn Energy Station,685.0,True
+ERCOT,cc,55357,"Brazos Valley Energy, LP",675.6,True
+ERCOT,cc,55123,Magic Valley Generating Station,667.0,True
+ERCOT,cc,3469,T H Wharton,652.0,True
+ERCOT,cc,3441,Nueces Bay,633.0,True
+ERCOT,cc,4939,Barney M. Davis,633.0,True
+ERCOT,cc,55168,Bastrop Clean Energy Center,575.0,True
+ERCOT,cc,56350,Colorado Bend Energy Center,546.0,True
+ERCOT,cc,55098,Frontera Generation Facility,529.0,True
+ERCOT,cc,4937,T C Ferguson Power Plant,516.0,True
+ERCOT,cc,55154,Lost Pines 1,510.0,True
+ERCOT,cc,56806,Cedar Bayou 4,504.0,True
+ERCOT,cc,56349,Quail Run Energy Center,472.2,True
+ERCOT,cc,55086,Gregory Power Facility,366.0,True
+ERCOT,cc,55223,"Ennis Power Company, LLC",359.5,True
+ERCOT,cc,7900,Sand Hill Energy Center,312.0,True
+ERCOT,cc,3443,Victoria Power Station,288.0,True
+ERCOT,cc,54817,Johnson County Generation Facility,277.0,True
+ERCOT,cc,50109,Paris Energy Center,239.0,True
+ERCOT,cc,3631,Sam Rayburn Plant,183.0,True
+ERCOT,cc,3559,Silas Ray,62.0,True
+MISO,cc,55380,Union Power Station,2428.0,False
+MISO,cc,4040,Port Washington Generating Station,1236.5,False
+MISO,cc,55358,Cottonwood Energy Project,1149.1,True
+MISO,cc,62192,Blue Water Energy Center,1146.0,False
+MISO,cc,55173,Acadia Power Station,1072.7,False
+MISO,cc,60927,Lake Charles Power Station,1000.0,False
+MISO,cc,60926,St. Charles Power Station,1000.0,False
+MISO,cc,60925,Montgomery County Power Station,1000.0,True
+MISO,cc,55467,Ouachita Plant,903.9,False
+MISO,cc,1396,Coughlin Power Station,727.0,False
+MISO,cc,55418,Hot Spring Energy Facility,714.8,False
+MISO,cc,991,IPL - Eagle Valley Generating Station,673.0,True
+MISO,cc,58236,Marshalltown Generating Station,665.2,False
+MISO,cc,56104,Mankato Energy Center,654.0,False
+MISO,cc,1403,Ninemile Point,649.5,False
+MISO,cc,55714,Magnet Cove Generating Station,641.5,False
+MISO,cc,55620,Perryville Power Station,637.9,False
+MISO,cc,55334,Holland Energy Facility,602.2,True
+MISO,cc,55357,"Brazos Valley Energy, LP",602.0,True
+MISO,cc,56031,Fox Energy Center,577.5,False
+MISO,cc,55364,Sugar Creek Generating Station,574.2,True
+MISO,cc,55220,Attala Generating Plant,551.3,False
+MISO,cc,55218,Hinds Energy Facility,551.3,False
+MISO,cc,55221,Oswald Generating Station,548.0,False
+MISO,cc,8031,Emery Station,539.4,False
+MISO,cc,55641,Riverside Energy Center,534.8,False
+MISO,cc,55270,Jackson Generating Station,534.4,False
+MISO,cc,6061,R D Morrow Senior Generating Plant,530.5,False
+MISO,cc,1912,High Bridge,530.0,False
+MISO,cc,55087,Zeeland Generating Station,524.5,False
+MISO,cc,862,"Grand Tower Energy Center, LLC",511.0,False
+MISO,cc,7985,Greater Des Moines Energy Center,503.7,False
+MISO,cc,1927,Riverside (1927),454.0,False
+MISO,cc,1904,Black Dog,282.0,False
+MISO,cc,2070,Moselle Generation Complex,268.0,False
+MISO,cc,1007,Noblesville,264.0,True
+MISO,cc,55011,Whitewater Cogeneration Facility,261.0,False
+MISO,cc,56164,Faribault Energy Park,261.0,False
+MISO,cc,63259,Delta Energy Park,177.6,False
+MISO,cc,58478,LEPA Unit No. 1,64.0,False
+MISO,cc,6358,Hutchinson - Plant 2,51.0,False
+NEISO,cc,1588,Mystic,1413.4,True
+NEISO,cc,55149,Lake Road Generating Company,828.8,True
+NEISO,cc,60903,Salem Harbor Station NGCC,798.2,True
+NEISO,cc,56047,CPV Towantic Energy Center,743.76,True
+NEISO,cc,55317,Fore River Energy Center,724.0,True
+NEISO,cc,55170,Granite Ridge Energy,668.0,True
+NEISO,cc,56798,Kleen Energy Systems Project,622.0,True
+NEISO,cc,55661,Newington Energy,560.5,True
+NEISO,cc,55107,Rhode Island State Energy Center,554.0,True
+NEISO,cc,55042,Bridgeport Energy,538.0,True
+NEISO,cc,55294,Westbrook Energy Center,526.77,True
+NEISO,cc,55211,Bellingham Power Generation LLC,520.23,True
+NEISO,cc,55126,Milford Power Company LLC,510.15,True
+NEISO,cc,55068,Maine Independence Station,497.6,True
+NEISO,cc,568,Bridgeport Harbor Station,496.2,True
+NEISO,cc,55212,Blackstone Power Generation LLC,481.66,True
+NEISO,cc,3236,Manchester Street Station,471.0,True
+NEISO,cc,55079,Millennium Power,330.1,True
+NEISO,cc,55048,"Tiverton Power, LLC",273.0,True
+NEISO,cc,54324,Ocean State Power II,267.6,True
+NEISO,cc,10307,Bellingham,264.0,True
+NEISO,cc,55100,Rumford Power,253.8,True
+NEISO,cc,10726,MASSPOWER,245.0,True
+NEISO,cc,51030,Ocean State Power,231.8,True
+NEISO,cc,55041,Berkshire Power,229.22,True
+NEISO,cc,6081,Stony Brook Energy Center,209.1,True
+NEISO,cc,54805,"Milford Power, LLC",204.8,True
+NEISO,cc,55026,Dighton,165.6,True
+NEISO,cc,54586,"Tanner Street Generation, LLC",75.0,True
+NEISO,cc,52026,Dartmouth Power,74.1,True
+NEISO,cc,54056,"Pawtucket Power Associates, LP",60.0,True
+NWPP,cc,55322,Chuck Lenzie Generating Station,1242.0,False
+NWPP,cc,56237,Lake Side Power Plant,1176.0,False
+NWPP,cc,2336,Tracy,713.0,False
+NWPP,cc,55328,Hermiston Power Plant,629.0,False
+NWPP,cc,55687,Walter M. Higgins III Generating Station,620.0,False
+NWPP,cc,55841,Silverhawk,620.0,False
+NWPP,cc,7999,Grays Harbor Energy Center,595.0,False
+NWPP,cc,55514,Apex Generating Station,524.4,False
+NWPP,cc,56102,Currant Creek Power Project,524.0,False
+NWPP,cc,7082,Harry Allen,510.0,False
+NWPP,cc,55662,Chehalis Generation Facility,477.0,False
+NWPP,cc,58503,Carty Generating Station,416.3,False
+NWPP,cc,56227,Port Westward,392.2,False
+NWPP,cc,57028,Langley Gulch Power Plant,303.32,False
+NWPP,cc,10761,Las Vegas Generating Station,282.0,False
+NWPP,cc,55700,Mint Farm Generating Station,270.0,False
+NWPP,cc,55482,Goldendale Generating Station,263.7,False
+NWPP,cc,55818,Frederickson Power LP,246.0,False
+NWPP,cc,7605,River Road,230.0,False
+NWPP,cc,55179,"Rathdrum Power, LLC",210.0,False
+NWPP,cc,7870,Encogen Generating Station,159.4,False
+NWPP,cc,56177,Nebo Power Station,130.0,False
+NYISO,cc,57185,Cricket Valley Energy Center,1016.1,False
+NYISO,cc,55405,Athens Generating Company,984.4,False
+NYISO,cc,2539,Bethlehem Energy Center (Albany),812.7,False
+NYISO,cc,56940,Valley Energy Center,654.19,False
+NYISO,cc,56196,Poletti 500 MW CC,560.0,False
+NYISO,cc,55375,Astoria Energy,558.0,False
+NYISO,cc,56234,Caithness Long Island Energy Center,317.3,False
+NYISO,cc,54574,"Saranac Power Partners, LP",237.8,False
+NYISO,cc,2500,Ravenswood Generating Station,222.2,False
+NYISO,cc,7314,Richard M Flynn (Holtsville),170.0,False
+NYISO,cc,50292,Bethpage Energy Center,128.99,False
+NYISO,cc,50978,Carr Street Generating Station,93.0,False
+NYISO,cc,10621,"Syracuse, LLC",86.2,False
+NYISO,cc,54592,Massena Energy Facility,81.0,False
+NYISO,cc,54034,Rensselaer Cogen,79.4,False
+NYISO,cc,56188,Pinelawn Power,74.5,False
+NYISO,cc,10190,"Castleton Power, LLC",72.0,False
+NYISO,cc,10620,Carthage Energy,61.1,False
+NYISO,cc,50744,Sterling Power Plant,54.8,False
+NYISO,cc,54593,Batavia Energy,48.8,False
+PJM,cc,62949,Guernsey Power Station,1788.5,True
+PJM,cc,59913,Greensville County Power Station,1605.1,True
+PJM,cc,55524,York Energy Center,1404.0,True
+PJM,cc,58260,Brunswick County Power Station,1376.0,True
+PJM,cc,55939,Warren County Power Station,1369.9,True
+PJM,cc,55736,Hanging Rock Power Company LLC,1365.0,True
+PJM,cc,60357,Lackawanna Energy Center,1362.0,True
+PJM,cc,2406,Linden Generating Station,1300.0,True
+PJM,cc,55298,Fairless Energy Center,1280.0,True
+PJM,cc,2398,Bergen Generating Station,1255.0,True
+PJM,cc,63931,CPV Three Rivers Energy Center,1220.9,True
+PJM,cc,60356,"South Field Energy, LLC",1210.4,True
+PJM,cc,55502,Lawrenceburg Energy Facility,1206.7,True
+PJM,cc,55297,Covert Generating Station,1192.4,False
+PJM,cc,62926,"Jackson Generation, LLC",1185.5,True
+PJM,cc,55131,Kendall Energy Facility,1140.0,True
+PJM,cc,55690,Bethlehem Power Plant,1136.0,True
+PJM,cc,7153,Hay Road,1098.2,True
+PJM,cc,60368,Hummel Station,1085.7,True
+PJM,cc,55460,Indeck-Niles Energy Center,1081.5,False
+PJM,cc,60589,"CPV Fairview, LLC",1065.4,True
+PJM,cc,59906,Moxie Freedom Generation Plant,1045.0,True
+PJM,cc,59220,Wildcat Point Generation Facility,991.3,True
+PJM,cc,61028,Hickory Run Energy Station,962.3,True
+PJM,cc,60464,Tenaska Westmoreland Generating Station,947.0,True
+PJM,cc,55439,Tenaska Virginia Generating Station,937.4,True
+PJM,cc,55503,Waterford Plant,874.6,True
+PJM,cc,60376,"Clean Energy Future - Lordstown, LLC",856.5,True
+PJM,cc,60302,Keys Energy Center,830.6,True
+PJM,cc,58420,Hamilton Liberty Generation Plant,830.0,True
+PJM,cc,59764,Oregon Clean Energy Center,816.9,True
+PJM,cc,55976,Hunterstown Combined Cycle,810.0,True
+PJM,cc,58426,Hamilton Patriot Generation Plant,795.0,True
+PJM,cc,55239,"Red Oak Power, LLC",775.9,True
+PJM,cc,59004,"Potomac Energy Center, LLC",766.0,True
+PJM,cc,55337,Helix Ironwood LLC,760.0,True
+PJM,cc,56963,West Deptford Energy Station,735.8,True
+PJM,cc,56846,CPV St. Charles Energy Center,733.3,True
+PJM,cc,57839,Woodbridge Energy Center,726.3,True
+PJM,cc,57794,St. Joseph Energy Center LLC,715.0,True
+PJM,cc,59773,Carroll County Energy,714.6,True
+PJM,cc,58079,Newark Energy Center,705.0,True
+PJM,cc,52019,Doswell Limited Partnership,701.5,True
+PJM,cc,55701,Fremont Energy Center,685.1,True
+PJM,cc,55516,Fayette Power Company LLC,667.6,True
+PJM,cc,55397,Washington Power Company LLC,661.0,True
+PJM,cc,56807,Bear Garden Generating Station,628.2,True
+PJM,cc,62565,Hill Top Energy Center,623.5,True
+PJM,cc,55667,"Lower Mount Bethel Energy, LLC",601.6,True
+PJM,cc,55183,Nelson Energy Center,586.0,True
+PJM,cc,3804,Possum Point Power Station,570.7,True
+PJM,cc,55231,Liberty Electric Power Plant,562.0,True
+PJM,cc,55710,Springdale Generating Station (55710),556.0,True
+PJM,cc,55193,Ontelaunee Energy Center,545.9,True
+PJM,cc,2411,Sewaren Generating Station,541.0,True
+PJM,cc,55350,Dresden Energy Facility,540.0,True
+PJM,cc,55188,Cordova Energy Company,521.2,True
+PJM,cc,61322,Long Ridge Energy Generation,485.0,True
+PJM,cc,61035,Birdsboro Power,485.0,True
+PJM,cc,59326,Middletown Energy Center,462.5,True
+PJM,cc,3797,Chesterfield Power Station,386.0,True
+PJM,cc,57349,Garrison Energy Center,309.0,True
+PJM,cc,2393,Gilbert Generating Station,302.5,True
+PJM,cc,10308,Sayreville Power LP,292.0,True
+PJM,cc,50561,Eagle Point Power Generation,244.0,True
+PJM,cc,3096,Brunot Island Power Station,243.5,True
+PJM,cc,54844,Gordonsville Power Station,218.0,True
+PJM,cc,10751,"Camden Plant Holding, LLC",172.9,True
+PJM,cc,50385,Newark Bay Cogen,152.0,False
+PJM,cc,10099,Pedricktown Cogeneration Plant,140.2,False
+PJM,cc,3176,Hunlock Creek Energy Center,125.2,True
+PJM,cc,50799,"EFS Parlin Holdings, LLC",114.6,True
+SOCO,cc,710,Jack McDonough,2471.0,False
+SOCO,cc,7710,Plant H. Allen Franklin,1901.8,False
+SOCO,cc,3,Barry,1821.2,False
+SOCO,cc,56150,McIntosh Combined Cycle Facility,1315.6,False
+SOCO,cc,7897,E B Harris Generating Plant,1304.0,False
+SOCO,cc,55382,Thomas A. Smith Energy Facility,1192.0,False
+SOCO,cc,55965,Wansley CC (55965),1184.8,False
+SOCO,cc,6073,Daniel Electric Generating Plant,1132.4,False
+SOCO,cc,55440,Central Alabama Gen Station,917.0,False
+SOCO,cc,55271,Tenaska Lindsay Hill Generating Station,848.0,False
+SOCO,cc,57037,David M Ratcliffe,840.0,False
+SOCO,cc,55411,Hillabee Energy Center,752.7,False
+SOCO,cc,533,McWilliams,650.0,False
+SOCO,cc,56,Charles R Lowman,639.0,False
+SOCO,cc,55406,Bobby C. Smith Jr. Energy Facility,524.6,False
+SOCO,cc,7917,Chattahoochee Energy Facility,466.0,False
+SOCO,cc,7946,Wansley (7946),462.8,False
+SOCO,cc,55241,Hog Bayou Energy Center,230.0,False
+SPP,cc,55463,Redbud Power Plant,1433.6,False
+SPP,cc,55225,Oneta Energy Center,1086.4,False
+SPP,cc,55146,"Green Country Energy, LLC",783.0,False
+SPP,cc,55178,Dogwood Energy Facility,655.2,False
+SPP,cc,56458,Hobbs Generating Station,573.8,False
+SPP,cc,7296,State Line (MO),538.3,False
+SPP,cc,55664,Harrison County Power Project,514.4,True
+SPP,cc,55457,McClain Energy Facility,486.98,False
+SPP,cc,165,Grand River Dam Authority,480.7,False
+SPP,cc,55065,Mustang Station,464.8,True
+SPP,cc,2963,Northeastern,444.0,False
+SPP,cc,56610,Deer Creek Station,295.0,False
+SPP,cc,3006,Anadarko,282.0,False
+SPP,cc,1239,Riverton,252.2,False
+SPP,cc,2079,Hawthorn,241.8,False
+SPP,cc,8059,Comanche (8059),233.0,False
+SPP,cc,8000,Beatrice,219.5,False
+SPP,cc,201,Thomas Fitzhugh,162.0,False
+SPP,cc,50558,Frontier Generating Station,131.4,False
+SPP,cc,7887,Terry Bundy Generating Station,121.8,False
+SPP,cc,3604,J Robert Massengale Generating Station,74.0,True
+ERCOT,coal,3470,W A Parish,2514.0,True
+ERCOT,coal,6146,Martin Lake,2455.0,True
+ERCOT,coal,6180,Oak Grove,1710.0,True
+ERCOT,coal,298,Limestone,1688.0,True
+ERCOT,coal,6179,Sam Seymour,1615.0,True
+ERCOT,coal,7097,J K Spruce,1345.0,True
+ERCOT,coal,56611,Sandy Creek Energy Station,932.6,True
+ERCOT,coal,127,Oklaunion Power Station,720.0,False
+ERCOT,coal,6178,Coleto Creek,655.0,True
+ERCOT,coal,6183,San Miguel,391.0,True
+ERCOT,coal,7030,Twin Oaks,305.0,True
+MISO,coal,6113,Gibson,3132.0,True
+MISO,coal,1733,Monroe,3066.0,False
+MISO,coal,2103,Labadie,2372.0,False
+MISO,coal,6090,Sherburne County,2238.0,False
+MISO,coal,994,IPL - Petersburg Generating Station,1701.5,True
+MISO,coal,6641,Independence,1665.8,False
+MISO,coal,55856,Prairie State Generating Station,1630.0,True
+MISO,coal,6085,R M Schahfer Generating Station,1625.0,True
+MISO,coal,1082,Walter Scott Jr. Energy Center,1511.7,False
+MISO,coal,1710,J H Campbell,1330.5,False
+MISO,coal,56068,Elm Road Generating Station,1270.8,False
+MISO,coal,6034,Belle River,1270.0,False
+MISO,coal,6009,White Bluff,1252.9,False
+MISO,coal,6155,Rush Island,1178.0,False
+MISO,coal,889,Baldwin Energy Complex,1157.0,True
+MISO,coal,6030,Coal Creek,1142.2,False
+MISO,coal,8023,Columbia,1128.3,False
+MISO,coal,4041,South Oak Creek,1112.0,False
+MISO,coal,6055,Big Cajun 2,1105.4,False
+MISO,coal,1743,St. Clair,1065.0,False
+MISO,coal,1001,Cayuga,995.0,True
+MISO,coal,6213,Merom,978.0,True
+MISO,coal,2107,Sioux,974.0,False
+MISO,coal,1893,Boswell Energy Center,937.0,False
+MISO,coal,4078,Weston,887.9,False
+MISO,coal,6664,Louisa,745.6,False
+MISO,coal,6254,Ottumwa,714.1,False
+MISO,coal,2823,Milton R Young,684.0,False
+MISO,coal,56456,Plum Point Energy Station,680.0,False
+MISO,coal,6705,Alcoa Allowance Management Inc,665.1,True
+MISO,coal,7343,George Neal South,647.1,False
+MISO,coal,51,Dolet Hills Power Station,634.8,False
+MISO,coal,6017,Newton,595.0,True
+MISO,coal,856,E D Edwards,560.0,False
+MISO,coal,1004,Edwardsport Generating Station,555.0,True
+MISO,coal,2104,Meramec,540.0,False
+MISO,coal,1393,R S Nelson,513.5,False
+MISO,coal,963,Dallman,511.8,True
+MISO,coal,1915,Allen S King,511.0,False
+MISO,coal,1091,George Neal North,510.0,False
+MISO,coal,1702,Dan E Karn,489.2,False
+MISO,coal,6190,Brame Energy Center,488.1,False
+MISO,coal,6137,A B Brown Generating Station,485.0,True
+MISO,coal,6098,Big Stone,477.6,False
+MISO,coal,997,Michigan City Generating Station,455.0,True
+MISO,coal,8222,Coyote,425.5,False
+MISO,coal,6823,D B Wilson,417.0,True
+MISO,coal,4050,Edgewater (4050),402.0,False
+MISO,coal,4271,J P Madgett,389.8,False
+MISO,coal,1012,F B Culley Generating Station,360.0,True
+MISO,coal,4143,Genoa,307.5,False
+MISO,coal,976,Marion,290.0,True
+MISO,coal,1008,R Gallagher,280.0,False
+MISO,coal,1740,River Rouge,272.0,False
+MISO,coal,1167,Muscatine,263.4,False
+MISO,coal,1047,Lansing,235.3,False
+MISO,coal,1831,Eckert Station,189.9,False
+MISO,coal,1832,Erickson,154.5,False
+MISO,coal,1943,Hoot Lake,138.0,False
+MISO,coal,2790,R M Heskett,104.3,False
+MISO,coal,1825,J B Sims,69.1,False
+NEISO,coal,2364,Merrimack,438.5,True
+NEISO,coal,568,Bridgeport Harbor Station,257.6,True
+NEISO,coal,2367,Schiller,95.4,True
+NWPP,coal,6076,Colstrip,2094.0,False
+NWPP,coal,6165,Hunter,1363.0,False
+NWPP,coal,3845,Centralia,1340.0,False
+NWPP,coal,8066,Jim Bridger,1049.0,False
+NWPP,coal,8069,Huntington,909.0,False
+NWPP,coal,4158,Dave Johnston,745.0,False
+NWPP,coal,6106,Boardman,585.0,False
+NWPP,coal,7790,Bonanza,458.0,False
+NWPP,coal,4162,Naughton,357.0,False
+NWPP,coal,6101,Wyodak,332.0,False
+NWPP,coal,8224,North Valmy,268.0,False
+NWPP,coal,56224,TS Power Plant,218.4,False
+NWPP,coal,55749,Hardin Generating Station,107.0,False
+NYISO,coal,6082,Somerset Operating Company  (Kintigh),684.4,False
+PJM,coal,3935,John E Amos,2900.0,True
+PJM,coal,8102,Gen J M Gavin,2722.0,True
+PJM,coal,6166,Rockport,2600.0,True
+PJM,coal,2866,W H Sammis,2210.0,True
+PJM,coal,3944,Harrison Power Station,1954.0,True
+PJM,coal,3122,Homer City,1888.3,True
+PJM,coal,2828,Cardinal,1790.0,True
+PJM,coal,3136,Keystone,1700.0,True
+PJM,coal,3118,Conemaugh,1700.0,True
+PJM,coal,3954,Mount Storm Power Station,1613.5,True
+PJM,coal,3948,Mitchell (WV),1560.0,True
+PJM,coal,879,Powerton,1538.0,True
+PJM,coal,6041,H L Spurlock,1346.0,True
+PJM,coal,6019,W H Zimmer Generating Station,1305.0,False
+PJM,coal,6264,Mountaineer (1301),1299.0,True
+PJM,coal,6004,Pleasants Power Station,1278.0,True
+PJM,coal,602,Brandon Shores,1273.0,True
+PJM,coal,1573,Morgantown,1205.0,True
+PJM,coal,983,Clifty Creek,1173.0,True
+PJM,coal,876,Kincaid Generating Station,1112.0,True
+PJM,coal,3943,Fort Martin Power Station,1098.0,True
+PJM,coal,2832,Miami Fort Power Station,1020.0,True
+PJM,coal,3797,Chesterfield Power Station,1006.0,True
+PJM,coal,2876,Kyger Creek,962.8,True
+PJM,coal,7213,Clover Power Station,877.1,True
+PJM,coal,2840,Conesville,780.0,False
+PJM,coal,56671,Longview Power,710.0,True
+PJM,coal,883,Waukegan,689.0,True
+PJM,coal,1571,Chalk Point,670.0,True
+PJM,coal,2836,Avon Lake Power Plant,627.0,False
+PJM,coal,6018,East Bend,600.0,True
+PJM,coal,8226,Cheswick,565.0,False
+PJM,coal,1572,Dickerson,519.0,True
+PJM,coal,884,Will County,510.0,False
+PJM,coal,594,Indian River,410.0,True
+PJM,coal,1384,John S. Cooper,341.0,True
+PJM,coal,54304,Birchwood Power Facility,237.7,False
+PJM,coal,10678,AES Warrior Run,180.0,True
+PJM,coal,1554,Herbert A Wagner,118.0,True
+PJM,coal,50888,Northampton Generating Plant,112.0,True
+PJM,coal,10143,Colver Green Energy,110.0,True
+PJM,coal,1040,Whitewater Valley,99.7,True
+PJM,coal,10603,Ebensburg Power Company,50.0,True
+PJM,coal,10343,Mt. Carmel Cogeneration,43.0,True
+PJM,coal,50611,"Rausch Creek Generation, LLC",30.0,True
+SOCO,coal,6257,Scherer,3440.0,False
+SOCO,coal,703,Bowen,3200.0,False
+SOCO,coal,6002,James H Miller Jr,2777.5,False
+SOCO,coal,6052,Wansley (6052),1744.0,False
+SOCO,coal,3,Barry,1118.5,False
+SOCO,coal,6073,Daniel Electric Generating Plant,1004.0,False
+SOCO,coal,641,Gulf Clean Energy Center,924.0,False
+SOCO,coal,26,E C Gaston,832.0,False
+SPP,coal,6068,Jeffrey Energy Center,2178.8,False
+SPP,coal,6065,Iatan,1616.4,False
+SPP,coal,1241,La Cygne,1437.8,False
+SPP,coal,6077,Gerald Gentleman Station,1365.0,False
+SPP,coal,6096,Nebraska City Station,1337.5,False
+SPP,coal,6194,Tolk Station,1067.0,True
+SPP,coal,6095,Sooner,1038.0,False
+SPP,coal,6139,Welsh Power Plant,1000.0,True
+SPP,coal,6469,Antelope Valley,900.0,False
+SPP,coal,2817,Leland Olds,660.0,False
+SPP,coal,127,Oklaunion Power Station,650.0,False
+SPP,coal,7902,H W Pirkey Power Plant,650.0,True
+SPP,coal,56564,John W. Turk Jr. Power Plant,650.0,False
+SPP,coal,2079,Hawthorn,561.1,False
+SPP,coal,2952,Muskogee,521.0,False
+SPP,coal,6138,Flint Creek Power Plant,494.0,False
+SPP,coal,1250,Lawrence Energy Center,491.3,False
+SPP,coal,165,Grand River Dam Authority,478.9,False
+SPP,coal,2963,Northeastern,460.0,False
+SPP,coal,6195,John Twitty Energy Center,459.0,False
+SPP,coal,6772,Hugo,440.0,False
+SPP,coal,108,Holcomb,358.9,False
+SPP,coal,2291,North Omaha Station,323.9,False
+SPP,coal,60,Gerald Whelan Energy Center,296.0,False
+SPP,coal,6064,Nearman Creek,243.0,False
+SPP,coal,2277,Sheldon,214.0,False
+SPP,coal,2076,Asbury,198.0,False
+SPP,coal,2240,Lon D Wright Power Plant,118.5,False
+SPP,coal,59,Platte,100.0,False
+CAISO,ct,57482,"Sentinel Energy Center, LLC",800.0,False
+CAISO,ct,57267,Marsh Landing Generating Station,765.2,False
+CAISO,ct,57515,Walnut Creek Energy Park,500.5,False
+CAISO,ct,56803,Panoche Energy Center,388.0,False
+CAISO,ct,57555,Pio Pico Energy Center LLC,318.0,False
+CAISO,ct,341,Long Beach Generating Station,260.0,False
+CAISO,ct,57483,Mariposa Energy Project,199.6,False
+CAISO,ct,56143,Riverside Energy Resource Center,196.0,False
+CAISO,ct,57027,Canyon Power Plant,194.8,False
+CAISO,ct,55810,"Gilroy Energy Center, LLC",144.0,False
+CAISO,ct,55541,Indigo Generation Facility,142.5,False
+CAISO,ct,60698,Stanton Energy Reliability Center,141.0,False
+CAISO,ct,422,Glenarm,138.4,False
+CAISO,ct,56639,Midway Peaking,111.2,False
+CAISO,ct,56914,Orange Grove Project,98.2,False
+CAISO,ct,56239,Malaga Power,96.0,False
+CAISO,ct,56232,Miramar Energy Facility,94.0,False
+CAISO,ct,55807,Henrietta Peaker Plant,92.4,False
+CAISO,ct,55698,Hanford Energy Park Peaker,91.8,False
+CAISO,ct,55542,Larkspur Energy Facility,91.6,False
+CAISO,ct,57001,El Cajon Energy Center,60.5,False
+CAISO,ct,58122,"Delano Energy Center, LLC",60.5,False
+CAISO,ct,10350,Greenleaf One,60.0,False
+CAISO,ct,55538,"Escondido Energy Center, LLC",54.0,False
+CAISO,ct,7449,NCPA Combustion Turbine Project #2,49.3,False
+CAISO,ct,56473,Mira Loma Generating Station,49.0,False
+CAISO,ct,56471,McGrath Generating Station,49.0,False
+CAISO,ct,56474,Barre Generating Station,49.0,False
+CAISO,ct,55512,Cuyamaca Peak Energy,48.7,False
+CAISO,ct,10776,E. F. Oxnard Energy Facility,48.5,False
+CAISO,ct,55627,Goose Haven Energy Center,48.0,False
+CAISO,ct,55510,CalPeak Power - Border,48.0,False
+CAISO,ct,55499,CalPeak Power - Vaca Dixon,48.0,False
+CAISO,ct,55513,CalPeak Power - Enterprise,48.0,False
+CAISO,ct,55508,CalPeak Power - Panoche,48.0,False
+CAISO,ct,55847,Feather River Energy Center,48.0,False
+CAISO,ct,55625,Creed Energy Center,48.0,False
+CAISO,ct,56475,Center Generating Station,47.0,False
+CAISO,ct,55855,Wolfskill Energy Center,47.0,False
+CAISO,ct,55963,Riverview Energy Center,47.0,False
+CAISO,ct,56472,Grapeland Generating Station,46.0,False
+CAISO,ct,55626,Lambie Energy Center,46.0,False
+CAISO,ct,55951,Agua Mansa Power,40.0,False
+CAISO,ct,55540,Chula Vista Energy Center,37.2,False
+ERCOT,ct,63688,Topaz Generating,445.0,True
+ERCOT,ct,65372,Mark One Power Station,356.8,True
+ERCOT,ct,65373,Brotman Power Station,356.8,True
+ERCOT,ct,66604,Remy Jade Power Station,356.0,True
+ERCOT,ct,64383,Braes Bayou Plant,356.0,True
+ERCOT,ct,63335,HO Clarke Generating,356.0,True
+ERCOT,ct,3469,T H Wharton,350.0,True
+ERCOT,ct,3464,Greens Bayou,327.0,True
+ERCOT,ct,60264,Bacliff Generating Station,324.0,True
+ERCOT,ct,58471,Ector County Energy Center,320.0,True
+ERCOT,ct,3494,Permian Basin,320.0,True
+ERCOT,ct,7900,Sand Hill Energy Center,283.8,True
+ERCOT,ct,8063,Decordova,274.0,True
+ERCOT,ct,3548,Decker Creek,208.0,True
+ERCOT,ct,3628,R W Miller,208.0,True
+ERCOT,ct,3612,V H Braunig,191.0,True
+ERCOT,ct,3609,Leon Creek,184.0,True
+ERCOT,ct,3439,Laredo,177.4,True
+ERCOT,ct,56674,Winchester Power Park,176.0,True
+ERCOT,ct,52176,C. R. Wing Cogeneration Plant,169.8,True
+ERCOT,ct,7325,San Jacinto Steam Electric Station,160.0,True
+ERCOT,ct,55365,LaPorte Generating Station,144.0,True
+ERCOT,ct,60468,Tejas Power Generation Unit 1,117.0,True
+ERCOT,ct,6243,Roland C. Dansby Power Plant,94.2,True
+ERCOT,ct,60460,"Chamon Power, LLC",92.0,True
+ERCOT,ct,62548,SJRR Power Peaking Facility,90.0,True
+ERCOT,ct,61241,Victoria City Peaking Facility,86.0,True
+ERCOT,ct,61242,Victoria Port Peaking Facility,86.0,True
+ERCOT,ct,61966,Victoria Port Power II Peaking Facility,86.0,True
+ERCOT,ct,60459,Port Comfort Peaking Facility,84.0,True
+ERCOT,ct,3576,Ray Olinger,75.0,True
+ERCOT,ct,50137,New Gulf Power Facility,75.0,True
+ERCOT,ct,56350,Colorado Bend Energy Center,62.0,True
+ERCOT,ct,3559,Silas Ray,45.0,True
+MISO,ct,55402,Renaissance Power,652.0,False
+MISO,ct,55234,Audrain Power Plant,600.0,False
+MISO,ct,6137,A B Brown Generating Station,597.92,True
+MISO,ct,55111,Vermillion Generating Station,576.0,True
+MISO,ct,7925,Lakefield Junction Generating,497.4,False
+MISO,ct,55391,Rockgen Energy Center,489.0,False
+MISO,ct,913,Venice,486.0,True
+MISO,ct,55224,Wheatland Generating Facility LLC,442.0,True
+MISO,ct,55496,Goose Creek Power Plant,432.0,True
+MISO,ct,7843,Pleasant Valley Station,424.1,False
+MISO,ct,59926,Alpine Power Plant,405.8,False
+MISO,ct,55486,Washington Parish Energy Center,369.9,False
+MISO,ct,7159,Concord,367.2,False
+MISO,ct,7270,Paris,359.8,False
+MISO,ct,55135,Neenah Energy Facility,351.1,False
+MISO,ct,56166,Sheboygan Falls Energy Facility,346.1,False
+MISO,ct,7237,Angus Anson,343.0,False
+MISO,ct,55237,Shelby County,336.0,True
+MISO,ct,8027,Blue Lake Generating Plant,328.2,False
+MISO,ct,7203,South Fond Du Lac,326.5,False
+MISO,ct,55087,Zeeland Generating Station,318.2,False
+MISO,ct,7759,Georgetown Substation,316.4,True
+MISO,ct,56241,Cannon Falls Energy Center,316.0,False
+MISO,ct,55202,Pinckneyville Power Plant,316.0,True
+MISO,ct,55718,Dean Peakers,312.0,False
+MISO,ct,55395,Crossroads Energy Center (CPU),308.0,False
+MISO,ct,55165,Calcasieu Plant,301.8,False
+MISO,ct,55417,Raccoon Creek Power Plant,300.0,True
+MISO,ct,7972,Sumpter Plant,299.5,False
+MISO,ct,55433,Bayou Cove Peaking Power Plant,289.8,False
+MISO,ct,990,IPL - Harding Street Station (EW Stout),288.0,True
+MISO,ct,1913,Inver Hills,272.0,False
+MISO,ct,61144,Astoria Station,241.7,False
+MISO,ct,7948,Hoosier Energy Lawrence Co Station,236.5,True
+MISO,ct,4014,Wheaton Generating Plant,236.0,False
+MISO,ct,55229,Montpelier Electric Gen Station,233.1,True
+MISO,ct,55201,"Gibson City Energy Center, LLC",232.0,True
+MISO,ct,7988,Silver Creek Generating Plant,225.0,False
+MISO,ct,6035,Greenwood,224.0,False
+MISO,ct,6034,Belle River,224.0,False
+MISO,ct,1904,Black Dog,209.0,False
+MISO,ct,2039,Elk River,208.0,False
+MISO,ct,55204,Kinmundy Power Plant,208.0,True
+MISO,ct,1464,Big Cajun 1,199.5,False
+MISO,ct,6063,Electrifarm,190.3,False
+MISO,ct,7760,Tilton Power Station,182.0,True
+MISO,ct,56505,City Water & Light - City of Jonesboro,177.0,False
+MISO,ct,2790,R M Heskett,176.4,False
+MISO,ct,55148,Worthington Generation,169.5,True
+MISO,ct,7964,Peno Creek Energy Center,168.0,False
+MISO,ct,55029,Depere Energy Center,166.0,False
+MISO,ct,7818,Alsey Station,164.3,True
+MISO,ct,1068,Marshalltown CTs,156.5,False
+MISO,ct,6085,R M Schahfer Generating Station,155.0,True
+MISO,ct,57842,Wabash River Highland Plant,154.0,True
+MISO,ct,7145,Pleasant Hill Energy Center,153.6,False
+MISO,ct,4076,West Marinette,153.0,False
+MISO,ct,55620,Perryville Power Station,152.7,False
+MISO,ct,2038,Cambridge Station,152.7,False
+MISO,ct,2070,Moselle Generation Complex,150.0,False
+MISO,ct,56603,San Jacinto County Peaking Facility,146.0,True
+MISO,ct,56604,Hardin County Peaking Facility,140.6,True
+MISO,ct,8029,Sycamore Combustion Turbine,140.6,False
+MISO,ct,55447,Columbia Energy Center (MO),140.0,False
+MISO,ct,976,Marion,140.0,True
+MISO,ct,55102,Livingston Generating Station,132.0,False
+MISO,ct,7989,Sylvarena Generating Plant,129.0,False
+MISO,ct,1728,Delray,127.0,False
+MISO,ct,7763,Henry County Generating Station,126.0,True
+MISO,ct,1206,Summit Lake,111.8,False
+MISO,ct,7425,Interstate,109.6,True
+MISO,ct,56108,T J Labbe Electric Generating Station,95.5,False
+MISO,ct,56283,Hargis-Hebert Electric Generating Statio,95.1,False
+MISO,ct,1730,Hancock Peakers,93.0,False
+MISO,ct,1001,Cayuga,84.0,True
+MISO,ct,4072,Pulliam,79.8,False
+MISO,ct,6253,Germantown Power Plant,79.8,False
+MISO,ct,6058,Cascade Creek,77.4,False
+MISO,ct,55101,Kalamazoo River Generating Station,72.0,False
+MISO,ct,7863,Elk Mound Generating Station,64.6,False
+MISO,ct,4078,Weston,64.0,False
+MISO,ct,1383,Robert Reid,58.0,True
+MISO,ct,55836,Island Street Peaking Plant,54.6,False
+MISO,ct,56480,Marshfield Utilities Combustion Turbine,53.3,False
+MISO,ct,7984,Kalkaska CT Project #1,48.3,False
+MISO,ct,63259,Delta Energy Park,46.3,False
+MISO,ct,7842,Freedom Power Project,45.0,True
+MISO,ct,7947,Solway Plant,40.1,False
+MISO,ct,7844,Minnesota River Station,39.0,False
+MISO,ct,1400,Teche Power Station,33.6,False
+MISO,ct,55218,Hinds Energy Facility,27.2,False
+NEISO,ct,1599,Canal Station,330.0,True
+NEISO,ct,55517,"Wallingford Energy, LLC",317.94,True
+NEISO,ct,59882,Exelon West Medway II,188.6,True
+NEISO,ct,1660,Potter,105.2,True
+NEISO,ct,56629,Waterbury Generation,96.0,True
+NEISO,ct,6635,Alfred L Pierce Generating Station,74.1,True
+NEISO,ct,1642,West Springfield,66.7,True
+NEISO,ct,1678,Waters River,46.0,True
+NEISO,ct,52026,Dartmouth Power,19.6,True
+NWPP,ct,2322,Clark,679.0,False
+NWPP,ct,55841,Silverhawk Generating Station,444.0,False
+NWPP,ct,607,Fredonia Generating Station,280.0,False
+NWPP,ct,7953,Evander Andrews Power Complex,269.83,False
+NWPP,ct,54854,Sun Peak Generating Station,222.0,False
+NWPP,ct,55733,Bennett Mountain Power Project,185.12,False
+NWPP,ct,55622,West Valley Power Plant,185.0,False
+NWPP,ct,7082,Harry Allen,144.0,False
+NWPP,ct,2336,Tracy,132.6,False
+NWPP,ct,56908,Dave Gates Generating Station,132.3,False
+NWPP,ct,7456,Rathdrum Combustion Turbine Project,132.0,False
+NWPP,ct,3648,Gadsby,116.1,False
+NWPP,ct,55544,Klamath Generation Peakers,100.0,False
+NWPP,ct,56253,Millcreek Power,73.6,False
+NYISO,ct,56964,Bayonne Energy Center,598.1,True
+NYISO,ct,55243,Astoria Gas Turbine Power,415.6,False
+NYISO,ct,2499,Narrows Generating Station,309.1,False
+NYISO,ct,2494,Gowanus Generating Station,299.6,False
+NYISO,ct,2511,E F Barrett,281.4,False
+NYISO,ct,56032,Equus  Power I,94.0,False
+NYISO,ct,7869,Glenwood Landing Energy Center,85.1,False
+NYISO,ct,55786,Edgewood Energy,85.0,False
+NYISO,ct,2517,Port Jefferson Energy Center,82.7,False
+NYISO,ct,7910,23rd and 3rd,79.9,False
+NYISO,ct,7909,Vernon Boulevard,79.9,False
+NYISO,ct,7914,Harlem River Yard,79.5,False
+NYISO,ct,7913,Hell Gate,79.5,False
+NYISO,ct,55699,Bayswater Peaking Facility,55.8,False
+NYISO,ct,2679,Freeport Power Plant No. 2,49.0,False
+NYISO,ct,7915,North 1st,46.0,False
+NYISO,ct,7912,Brentwood,45.0,False
+NYISO,ct,8053,Pouch Terminal,44.7,False
+NYISO,ct,50292,Bethpage Energy Center,44.08,False
+NYISO,ct,2500,Ravenswood Generating Station,40.5,False
+NYISO,ct,2628,Hillburn,33.1,False
+NYISO,ct,2632,Shoemaker,33.0,False
+NYISO,ct,8906,Astoria Generating Station,15.7,False
+NYISO,ct,2503,59th Street,14.5,False
+NYISO,ct,2490,Arthur Kill,12.4,False
+PJM,ct,55199,Elwood Energy Facility,1350.0,True
+PJM,ct,55279,Aurora,990.2,True
+PJM,ct,55401,Rolling Hills Generating LLC,925.0,True
+PJM,ct,55198,Riverside Generating Company,825.0,True
+PJM,ct,7839,Ladysmith Combustion Turbine Sta,788.9,True
+PJM,ct,54,Smith Generating Facility,755.6,True
+PJM,ct,55348,"Troy Energy, LLC",704.41,True
+PJM,ct,55236,"Lee County Generating Station, LLC",676.8,True
+PJM,ct,55347,"Armstrong Power, LLC",670.7,True
+PJM,ct,7835,Rock Springs Generating Facility,666.7,True
+PJM,ct,55222,Lincoln Generating Facility,622.9,True
+PJM,ct,7838,Remington Combustion Turbine Station,613.7,True
+PJM,ct,2847,Frank M Tait Station,597.1,True
+PJM,ct,55110,Madison Generating Station,566.0,True
+PJM,ct,55640,"LSP University Park, LLC",540.0,True
+PJM,ct,52019,Doswell Limited Partnership,496.7,True
+PJM,ct,55164,Bluegrass Generating Station,495.0,True
+PJM,ct,55438,"Elgin Energy Center, LLC",487.9,True
+PJM,ct,7836,Marsh Run Generation Facility,484.0,True
+PJM,ct,55247,Darby Electric Generating Station,480.0,True
+PJM,ct,55392,Zion Energy Center,478.0,True
+PJM,ct,7158,Woodsdale,476.0,True
+PJM,ct,7837,Louisa Generation Facility,466.0,True
+PJM,ct,2404,Kearny Generating Station,457.9,True
+PJM,ct,55276,Ceredo Generating Station,450.0,True
+PJM,ct,7872,Robert P Mone,441.0,True
+PJM,ct,2869,West Lorain,399.6,True
+PJM,ct,1571,Chalk Point,390.0,True
+PJM,ct,55238,Rockford Energy Center,362.2,True
+PJM,ct,2880,Richland Peaking Station,358.0,True
+PJM,ct,55349,"Pleasants Energy, LLC",341.1,True
+PJM,ct,55109,"Rocky Road Power, LLC",340.8,True
+PJM,ct,7032,Gravel Neck Combustion Turbine,340.0,True
+PJM,ct,7212,Darbytown Combustion Turbine,340.0,True
+PJM,ct,2406,Linden Generating Station,336.2,True
+PJM,ct,55938,Ocean Peaking Power,332.8,True
+PJM,ct,55296,"Calumet Energy Team, LLC",326.1,True
+PJM,ct,60387,Invenergy Nelson Expansion LLC,314.0,True
+PJM,ct,55284,Big Sandy Peaker Plant,300.0,True
+PJM,ct,55253,Crete Energy Park,300.0,True
+PJM,ct,55250,University Park Energy,300.0,True
+PJM,ct,1572,Dickerson,299.0,True
+PJM,ct,55233,Handsome Lake Energy,267.5,True
+PJM,ct,55285,Wolf Hills Energy,250.0,True
+PJM,ct,1556,Perryman,248.8,True
+PJM,ct,55228,Greenville Electric Gen Station,196.0,True
+PJM,ct,5083,Cumberland Energy Center,186.9,True
+PJM,ct,55936,Rockford II Energy Center,180.7,True
+PJM,ct,2399,Burlington Generating Station,171.6,True
+PJM,ct,2393,Gilbert Generating Station,152.7,True
+PJM,ct,7336,Anderson,140.0,True
+PJM,ct,1560,Westport,115.8,False
+PJM,ct,55654,Chambersburg Units 12 & 13,100.4,True
+PJM,ct,7962,Warren F. Sam Beasley Pwr Station,98.0,True
+PJM,ct,55377,Gans Generating Facility,97.4,True
+PJM,ct,55196,Springdale Generating Station (55196),96.8,True
+PJM,ct,7288,Sherman Avenue,86.9,True
+PJM,ct,55738,Buchanan Units 1 & 2,84.0,True
+PJM,ct,59073,Cove Point LNG Terminal,81.8,True
+PJM,ct,2401,Essex,81.0,False
+PJM,ct,2379,Carlls Corner Energy Center,76.8,True
+PJM,ct,7335,Richmond (IN),68.0,True
+PJM,ct,7138,Forked River Power,65.0,True
+PJM,ct,8008,Mickleton Energy Center,63.7,True
+PJM,ct,3132,Warren,62.0,True
+PJM,ct,2434,Howard M Down,55.0,True
+PJM,ct,58235,Clayville,55.0,True
+PJM,ct,56397,Hunlock Unit 4,44.8,True
+PJM,ct,50279,PEI Power Corporation,43.7,True
+PJM,ct,7318,Van Sant,42.0,True
+PJM,ct,55264,AMP-Ohio Gas Turbines Napoleon,38.0,True
+PJM,ct,55262,AMP-Ohio Gas Turbines Bowling Green,38.0,True
+PJM,ct,55263,AMP-Ohio Gas Turbines Galion,38.0,True
+PJM,ct,7782,Omega JV2 Hamilton,29.0,True
+PJM,ct,7783,Omega JV2 Bowling Green,29.0,True
+PJM,ct,56668,NIH Cogeneration Facility,27.6,True
+PJM,ct,2848,O H Hutchings,25.2,True
+SOCO,ct,55061,Tenaska Georgia Generating Station,945.0,False
+SOCO,ct,10,Greene County,740.0,False
+SOCO,ct,55409,Calhoun Generating Facility,704.0,False
+SOCO,ct,6124,McIntosh (6124),657.6,False
+SOCO,ct,55332,Washington County Power,623.4,False
+SOCO,ct,55267,Edward L Addison Generating Plant,591.9,False
+SOCO,ct,7063,McIntosh (7063),580.0,False
+SOCO,ct,55672,AL Sandersville Energy Facility,576.4,False
+SOCO,ct,7916,Talbot Energy Facility,572.4,False
+SOCO,ct,55128,Walton County Power,449.7,False
+SOCO,ct,55141,Hawk Road Energy Facility,447.6,False
+SOCO,ct,7813,Sewell Creek Energy,445.5,False
+SOCO,ct,55244,Doyle Energy Facility,311.1,False
+SOCO,ct,7764,MPC Generating,302.5,False
+SOCO,ct,55304,Baconton Power,193.0,False
+SOCO,ct,7829,Smarr Energy Facility,190.4,False
+SOCO,ct,56018,AMEA Sylacauga Plant,95.0,False
+SOCO,ct,7768,Sowega Power Project,92.0,False
+SOCO,ct,2049,Watson Electric Generating Plant,33.0,False
+SOCO,ct,2048,Sweatt Electric Generating Plant,32.0,False
+SPP,ct,57881,Pioneer Generating Station,763.0,False
+SPP,ct,56502,Emporia Energy Center,668.8,False
+SPP,ct,56326,Mustang Station (56326),459.3,True
+SPP,ct,64547,Turtle Creek Station,442.2,False
+SPP,ct,2953,Mustang,398.0,False
+SPP,ct,7929,West Gardner Generating Station,342.6,False
+SPP,ct,3482,Jones Station,334.0,True
+SPP,ct,55972,Cass County Station,323.8,False
+SPP,ct,1240,Gordon Evans Energy Center,323.4,False
+SPP,ct,56151,South Harper Peaking Facility,321.2,False
+SPP,ct,2292,Sarpy County Station,312.5,False
+SPP,ct,55651,Spring Creek Power Plant,293.5,False
+SPP,ct,6373,Rokeby,253.0,False
+SPP,ct,6074,Greenwood Energy Center,248.5,False
+SPP,ct,6223,Empire District Elec Co Energy Ctr,244.0,False
+SPP,ct,57943,Lonesome Creek Station,240.0,False
+SPP,ct,3006,Anadarko,225.0,False
+SPP,ct,2454,Cunningham,207.0,False
+SPP,ct,56238,Groton Generating Station,170.0,False
+SPP,ct,1248,Hutchinson Energy Center,166.5,False
+SPP,ct,57865,Antelope Elk Energy Center,162.0,True
+SPP,ct,4940,Riverside (4940),158.0,False
+SPP,ct,2079,Hawthorn,157.4,False
+SPP,ct,2161,James River,155.0,False
+SPP,ct,7825,Fulton,153.0,False
+SPP,ct,2964,Southwestern,152.0,False
+SPP,ct,56013,Exira Station,140.1,False
+SPP,ct,58325,Charles D Lamb Energy Center,122.0,False
+SPP,ct,1336,Garden City,110.4,False
+SPP,ct,6195,John Twitty Energy Center,104.0,False
+SPP,ct,1305,McPherson 2,102.6,False
+SPP,ct,7903,McCartney Generating Station,100.0,False
+SPP,ct,2951,Horseshoe Lake,90.76,False
+SPP,ct,7296,State Line (MO),89.0,False
+SPP,ct,56606,Culbertson Station,85.0,False
+SPP,ct,2241,C W Burdick,81.6,False
+SPP,ct,7515,McPherson Municipal Power Plant #3,80.2,False
+SPP,ct,2122,Chillicothe,80.0,False
+SPP,ct,7928,Osawatomie Generating Station,76.6,False
+SPP,ct,8037,Clifton Station,76.2,False
+SPP,ct,1217,Earl F Wisdom,76.0,False
+SPP,ct,6064,Nearman Creek,72.0,False
+SPP,ct,2092,Ralph Green Station,65.8,False
+SPP,ct,63628,Tinker,64.0,False
+SPP,ct,3338,Aberdeen Generating Station,52.0,False
+SPP,ct,7887,Terry Bundy Generating Station,47.6,False
+SPP,ct,1268,Chanute 2,46.0,False
+SPP,ct,2240,Lon D Wright Power Plant,38.0,False
+SPP,ct,2131,Higginsville Municipal Power Plant,37.5,False
+SPP,ct,2250,J Street,30.1,False
+CAISO,st,350,"Ormond Beach Power, LLC.",1491.0,False
+CAISO,st,315,AES Alamitos,1142.0,False
+CAISO,st,356,AES Redondo Beach,830.0,False
+CAISO,st,335,AES Huntington Beach,225.8,False
+ERCOT,st,3460,Cedar Bayou,1495.0,True
+ERCOT,st,3491,Handley Generating Station,1245.0,True
+ERCOT,st,3470,W A Parish,1105.0,True
+ERCOT,st,3452,Lake Hubbard,915.0,True
+ERCOT,st,3612,V H Braunig,859.0,True
+ERCOT,st,3611,O W Sommers,830.0,True
+ERCOT,st,3453,Mountain Creek Generating Station,808.0,True
+ERCOT,st,3548,Decker Creek,724.0,True
+ERCOT,st,3504,Stryker Creek,672.0,True
+ERCOT,st,3490,Graham,634.0,True
+ERCOT,st,3601,Sim Gideon,607.0,True
+ERCOT,st,3628,R W Miller,379.0,True
+ERCOT,st,3576,Ray Olinger,320.0,True
+ERCOT,st,4939,Barney M. Davis,292.0,True
+ERCOT,st,3507,Trinidad,236.0,True
+ERCOT,st,4266,Spencer,122.0,True
+ERCOT,st,6243,Roland C. Dansby Power Plant,110.0,True
+ERCOT,st,4195,Power Lane Steam Plant,18.0,True
+MISO,st,3459,Sabine,1501.4,True
+MISO,st,1403,Ninemile Point,1465.4,False
+MISO,st,1702,Dan E Karn,1199.8,False
+MISO,st,1402,Little Gypsy,916.5,False
+MISO,st,8056,Waterford 1 & 2,826.8,False
+MISO,st,6035,Greenwood,785.0,False
+MISO,st,8054,Gerald Andrus,701.1,False
+MISO,st,990,IPL - Harding Street Station (EW Stout),618.0,True
+MISO,st,6055,Big Cajun 2,546.4,False
+MISO,st,170,Lake Catherine,522.0,False
+MISO,st,3457,Lewis Creek,499.3,True
+MISO,st,2050,Baxter Wilson,494.3,False
+MISO,st,6639,R D Green,454.0,True
+MISO,st,6190,Brame Energy Center,428.5,False
+MISO,st,1400,Teche Power Station,250.0,False
+MISO,st,2104,Meramec,226.0,False
+MISO,st,1464,Big Cajun 1,174.5,False
+MISO,st,1104,Burlington (IA),170.3,False
+MISO,st,1122,Ames,108.7,False
+MISO,st,1891,Laskin Energy Center,98.0,False
+MISO,st,3992,Blount Street,95.7,False
+MISO,st,1439,Houma,67.5,False
+MISO,st,2070,Moselle Generation Complex,59.0,False
+MISO,st,1131,Streeter Station,54.6,False
+NEISO,st,562,Middletown,353.0,True
+NEISO,st,546,Montville,81.0,True
+NWPP,st,8066,Jim Bridger,1070.0,False
+NWPP,st,8224,North Valmy,254.0,False
+NWPP,st,4162,Naughton,247.0,False
+NWPP,st,3648,Gadsby,237.5,False
+NWPP,st,2330,Fort Churchill,226.0,False
+NWPP,st,2336,Tracy,108.0,False
+NYISO,st,2500,Ravenswood Generating Station,1724.8,False
+NYISO,st,2516,Northport,1592.2,False
+NYISO,st,8006,Roseton Generating LLC,1222.0,False
+NYISO,st,2625,Bowline Generating Station,1159.6,False
+NYISO,st,8906,Astoria Generating Station,923.2,False
+NYISO,st,2490,Arthur Kill,876.6,False
+NYISO,st,2480,Danskammer Generating Station,497.3,False
+NYISO,st,2517,Port Jefferson Energy Center,385.0,False
+NYISO,st,2511,E F Barrett,372.2,False
+NYISO,st,2527,Greenidge Generation LLC,104.5,False
+PJM,st,3148,"Martins Creek, LLC",1700.0,True
+PJM,st,3149,"Montour, LLC",1504.0,True
+PJM,st,3140,"Brunner Island, LLC",1411.0,True
+PJM,st,1571,Chalk Point,1180.3,True
+PJM,st,384,Joliet 29,1036.0,True
+PJM,st,3161,Eddystone Generating Station,760.0,True
+PJM,st,593,Edge Moor,695.0,True
+PJM,st,3131,Shawville,596.0,True
+PJM,st,3775,Clinch River,460.0,True
+PJM,st,3138,New Castle,326.3,True
+PJM,st,874,Joliet 9,314.0,True
+PJM,st,1353,Big Sandy,260.0,True
+SOCO,st,26,E C Gaston,1020.0,False
+SOCO,st,2049,Watson Electric Generating Plant,721.0,False
+SOCO,st,728,Yates,714.0,False
+SOCO,st,10,Greene County,516.1,False
+SOCO,st,3,Barry,160.0,False
+SPP,st,2956,Seminole (2956),1521.5,False
+SPP,st,6193,Harrington Station,1018.0,True
+SPP,st,2952,Muskogee,989.0,False
+SPP,st,4940,Riverside (4940),909.0,False
+SPP,st,3478,Wilkes Power Plant,883.0,True
+SPP,st,2951,Horseshoe Lake,758.0,False
+SPP,st,3482,Jones Station,486.0,True
+SPP,st,3484,Nichols Station,457.0,True
+SPP,st,2964,Southwestern,446.0,False
+SPP,st,2963,Northeastern,434.0,False
+SPP,st,3485,Plant X,411.0,True
+SPP,st,3476,Knox Lee Power Plant,398.0,True
+SPP,st,3008,Mooreland,322.0,False
+SPP,st,2965,Tulsa,322.0,False
+SPP,st,2454,Cunningham,254.0,False
+SPP,st,2291,North Omaha Station,240.0,False
+SPP,st,1417,Lieberman Power Plant,234.0,False
+SPP,st,1233,Fort Dodge aka Judson Large,148.7,False
+SPP,st,2446,Maddox,117.0,False
+SPP,st,1416,Arsenal Hill Power Plant,110.0,False
+SPP,st,1235,Great Bend Station aka Arthur Mullergren,99.8,False
+SPP,st,2226,Canaday,99.3,False
+SPP,st,1336,Garden City,97.3,False
+SPP,st,1230,Cimarron River,52.1,False
+SPP,st,2132,Blue Valley,51.0,False
+SPP,st,3477,Lone Star Power Plant,50.0,False
+SPP,st,1217,Earl F Wisdom,37.5,False
+SPP,st,1271,Coffeyville,37.0,False
+SPP,st,7013,East 12th Street,25.8,False
