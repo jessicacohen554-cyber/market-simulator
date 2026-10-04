@@ -3993,6 +3993,16 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             soco_campaign_prep = build_soco_gas_st_campaign_p1_prep(
                 config, iso, dispatch_fleet, fleet_arrays
             )
+            # DIAGNOSTIC metered coal online floor (closeout-SOCO-w3; rule 13: never
+            # promotable, backcast-only, default off): composes after the incumbent
+            # P1 fleet prep. Returns it unchanged when off (byte-identical).
+            from market_sim.pipeline.commitment import (
+                wrap_coal_metered_online_diagnostic_prep,
+            )
+
+            soco_campaign_prep = wrap_coal_metered_online_diagnostic_prep(
+                config, iso, year, fleet_arrays, soco_campaign_prep
+            )
             # P1-native MISO regulated-coal night floor (miso-113):
             # committed-state floor on the regulated PRB/subbituminous fleet
             # at each plant's OWN measured within-run night level, net of its

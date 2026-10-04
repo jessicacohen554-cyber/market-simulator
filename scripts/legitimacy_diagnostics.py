@@ -100,6 +100,7 @@ from market_sim.data.floor_mechanisms import (  # noqa: E402
     MECH_COAL_MIN_CONFIG,
     MECH_COAL_MUSTRUN,
     MECH_CT_NETLOAD_DRAG,
+    MECH_DIAG_COAL_METERED_ONLINE,
     MECH_ERCOT_RUC_COMMITMENT,
     MECH_FIRM_IMPORT,
     MECH_GAS_COMMITMENT_BRIDGE,
@@ -679,6 +680,13 @@ D4_WINDOWS: dict[tuple[int, str | None], tuple[int, int]] = {
     #   detector; the meter sets the LEVEL and the POPULATION, never the
     #   placement.
     (MECH_SOCO_GAS_ST_CAMPAIGN, "ST_GAS"): (0, 24),
+    # diagnostic_coal_metered_online_floor (closeout-SOCO-w3,
+    # MECH_DIAG_COAL_METERED_ONLINE): DIAGNOSTIC, never promotable (rule 13).
+    # WINDOW — the plant's own metered online hours, which carry no clock hour,
+    # so ALL 24 hours are declared; DRIVER — the plant's own CEMS online state;
+    # FORWARD STORY — none (it is the observed outcome), which is why it can
+    # never back a keeper. Declared so D-4 scores it rather than misreading it.
+    (MECH_DIAG_COAL_METERED_ONLINE, None): (0, 24),
     # miso_coal_night_floor (miso-113, MECH_MISO_COAL_NIGHT_FLOOR —
     # pipeline.commitment.build_miso_coal_night_floor_p1_prep): the P1-native
     # within-run NIGHT floor on MISO's regulated PRB/subbituminous coal fleet,

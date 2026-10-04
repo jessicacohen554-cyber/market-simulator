@@ -9997,6 +9997,25 @@ def _bundle_caiso_clock_repair(bundle: Path) -> bool:
     return False
 
 
+def _run_config_mustrun_chp_btm(cfg: dict) -> bool:
+    """Whether a bundle's ``run_config.json`` records ``mustrun_chp_btm_holdout`` armed.
+
+    Reads the top level, ``calibration_flags`` and the resolved
+    ``scenario_config``: a ``replay_keeper --set`` lands the flag only in the
+    last (closeout-SOCO-w3; the PJM-NEXT defect on its sibling
+    ``benchmark_membership_vintage_union``), and reading the top two blocks
+    alone rebuilt an armed bundle on the un-partitioned benchmark.
+    """
+    for blk in (
+        cfg,
+        cfg.get("calibration_flags") or {},
+        cfg.get("scenario_config") or {},
+    ):
+        if isinstance(blk, dict) and blk.get("mustrun_chp_btm_holdout"):
+            return True
+    return False
+
+
 def build_benchmark_frames(bundle: Path) -> tuple[str, dict[str, "pd.DataFrame"]]:
     """Rebuild a bundle's benchmark frames with the bundle's own EIA-930 clock.
 
@@ -10102,10 +10121,7 @@ def _build_benchmark_frames(bundle: Path) -> tuple[str, dict[str, "pd.DataFrame"
     _rc = bundle / "run_config.json"
     if _rc.exists():
         _cfg = json.loads(_rc.read_text())
-        for _blk in (_cfg, _cfg.get("calibration_flags") or {}):
-            if isinstance(_blk, dict) and _blk.get("mustrun_chp_btm_holdout"):
-                _mustrun_chp_btm = True
-                break
+        _mustrun_chp_btm = _run_config_mustrun_chp_btm(_cfg)
         if not _bench_vintage_union:
             # PJM-NEXT: a replay_keeper ``--set`` lands the flag in the generic
             # override bag and the resolved ``scenario_config``, never at the
