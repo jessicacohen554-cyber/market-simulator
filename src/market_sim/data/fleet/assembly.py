@@ -110,6 +110,68 @@ logger = logging.getLogger("market_sim.data.fleet")
 MIN_TRANCHE_CAPACITY_MW = 0.5
 
 
+def _coal_cliff_split_frac(
+    fuel: str,
+    plant_code: int,
+    config: ScenarioConfig,
+    below_econ_cap: float,
+    econ_cap: float,
+    peak_cap: float,
+) -> float | None:
+    """Fraction of a coal econ tranche below its plant's measured price cliff.
+
+    ``ScenarioConfig.coal_perplant_cliff_split`` (closeout-ERCOT-w3, default
+    off, ERCOT only): the econ tranche of a coal plant in the per-plant measured
+    curve registry (``config.coal_perplant_offer_curves``, ERCOT-144) is split
+    at :func:`~market_sim.data.fleet.legacy_bins.coal_curve_cliff_boundary`, the
+    largest measured price step inside its capacity window, so the downstream
+    window pricing (``_coal_perplant_levels``) prices each side on its own side
+    of the step instead of one mean across it. The window is the econ tranche's
+    position in the plant's stacked capability: everything below it (must-run,
+    sync, committed) first, the peak tranche above it.
+
+    Returns ``None`` (one econ tranche, the default) when the gate is off, the
+    fuel is not coal, the plant has no curve, no breakpoint lies inside the
+    window, or either side would fall under ``MIN_TRANCHE_CAPACITY_MW`` (so the
+    split can never drop capacity).
+
+    Raises:
+        ValueError: the gate is armed outside ERCOT (rule 25 — the curves are
+            ERCOT conduct) or without ``coal_perplant_offer_level`` and its
+            resolved curves (rule 24 — the split would silently do nothing).
+    """
+    if fuel != "coal" or not getattr(config, "coal_perplant_cliff_split", False):
+        return None
+    if getattr(config, "iso", None) != "ERCOT":
+        raise ValueError(
+            "coal_perplant_cliff_split is ERCOT-scoped (rule 25): the per-plant "
+            "curves are ERCOT SCED conduct"
+        )
+    curves = getattr(config, "coal_perplant_offer_curves", None)
+    if not getattr(config, "coal_perplant_offer_level", False) or not curves:
+        raise ValueError(
+            "coal_perplant_cliff_split is armed without coal_perplant_offer_level "
+            "and its resolved coal_perplant_offer_curves — the split refines that "
+            "mechanism's window pricing and does nothing without it (rule 24)"
+        )
+    curve = {int(k): v for k, v in curves.items()}.get(int(plant_code))
+    total = below_econ_cap + econ_cap + peak_cap
+    if curve is None or econ_cap <= 0.0 or total <= 0.0:
+        return None
+    from market_sim.config.constants import COAL_PERPLANT_SELF_SCHED_FLOOR
+    from market_sim.data.fleet.legacy_bins import coal_curve_cliff_boundary
+
+    lo_f = below_econ_cap / total
+    hi_f = (below_econ_cap + econ_cap) / total
+    b = coal_curve_cliff_boundary(curve, lo_f, hi_f, COAL_PERPLANT_SELF_SCHED_FLOOR)
+    if b is None:
+        return None
+    frac = (b - lo_f) / (hi_f - lo_f)
+    if min(econ_cap * frac, econ_cap * (1.0 - frac)) <= MIN_TRANCHE_CAPACITY_MW:
+        return None
+    return frac
+
+
 def _top_refine_ok(curve_cap: float, n: int, enabled: bool) -> bool:
     """Return whether SCHEME R1 can be applied to a ramp of ``curve_cap`` MW.
 
@@ -1165,6 +1227,25 @@ def bins_to_fleet(
                         0.0,
                     ),
                 ]
+        elif (
+            cliff_frac := _coal_cliff_split_frac(
+                fuel,
+                plant_code,
+                config,
+                mustrun_cap + sync_cap + committed_cap,
+                econ_cap,
+                peak_cap,
+            )
+        ) is not None:
+            # closeout-ERCOT-w3: split the coal econ tranche at the measured
+            # price cliff of the plant's own curve, so each side is priced on
+            # its own side of the cliff by _coal_perplant_levels (same window
+            # construction; the heat rate here is replaced by the measured
+            # all-in level downstream).
+            econ_steps = [
+                ("econlo", econ_cap * cliff_frac, econ_hr, 1.0, 0, 0, 0.0),
+                ("econhi", econ_cap * (1.0 - cliff_frac), econ_hr, 1.0, 0, 0, 0.0),
+            ]
         else:
             econ_steps = [("econ", econ_cap, econ_hr, 1.0, 0, 0, 0.0)]
         # Spread the CHP steam-following grid floor across the econ slices in
