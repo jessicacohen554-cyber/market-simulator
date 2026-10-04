@@ -1,0 +1,138 @@
+# Canonical schema: uc-params (measured per-plant commitment physics for the
+# MILP unit-commitment stage, ScenarioConfig.unit_commitment_milp).
+#
+# One measured public source, EPA CAMPD (CEMS) hourly unit-level gross load
+# and heat input (data/raw/campd-unit-level/<ST>_<year>.parquet), pooled over
+# the vintage span 2023-2025 (the same span every CAMPD commitment derive in
+# the repo uses), scoped per ISO by the state footprint of
+# market_sim.data.campd.ISO_STATES through scripts/lib/uc_params/<iso>.py.
+# Written by scripts/data/derive_uc_cluster_params.py; re-derived ONLY when
+# the CAMPD source updates (CLAUDE.md rule 23 [R-FROZEN-DERIVE]).
+#
+# Grain: one row per (plant_code, uc_class) CLUSTER — the facility's units of
+# one CAMPD unit-type family summed to one plant series before any statistic
+# is measured (the plant-basis construction of
+# campd_gas_commitment_params_plant_<ISO>.csv). The family token `uc_class`
+# is a data-contract vocabulary derived from CAMPD `unitType` /
+# `primaryFuelInfo`, never a model plant class:
+#   cc     = "Combined cycle"
+#   ct     = "Combustion turbine"
+#   coal   = any boiler whose primary fuel names coal
+#   st_gas = any other boiler (gas, oil, wood steam)
+# The engine maps model plant groups onto these families
+# (model/uc/params.py) and resolves every parameter in a declared order
+# (DESIGN-uc-milp-engine-2026-10-03.md section 1.2).
+#
+# Class-fallback rows carry plant_code = 0: the ISO's own fitted plants of the
+# family pooled, so a plant with no fit takes the family's no-load per MW of
+# HSL (noload_mmbtu_h / hsl_mw) — the UC-0 F7 construction. Every number is a
+# measured unit/plant property (rule 13): the LP never pins to it, it only
+# prices a start, a no-load hour and a minimum stable level.
+datatype: uc-params
+schema_version: 1
+title: Measured per-plant commitment physics for the MILP unit-commitment stage
+description: >-
+  Per (plant, CAMPD unit-type family) cluster: unit count, plant HSL/LSL and
+  minimum-stable fraction, minimum run and down durations (p25 of the measured
+  on-runs and off-gaps) and the plant no-load heat input (sum of per-unit OLS
+  intercepts of heatInput on grossLoad over online hours), pooled 2023-2025.
+  Inputs to the integer cluster parameters of ScenarioConfig.unit_commitment_milp.
+
+key_columns: [plant_code, uc_class]
+allow_additional_columns: false
+
+columns:
+  - name: plant_code
+    dtype: int64
+    unit: none
+    nullable: false
+    description: >-
+      EIA plant code (ORISPL; CAMPD facilityId). 0 marks the family's
+      class-fallback row (the ISO's fitted plants pooled).
+  - name: uc_class
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      CAMPD unit-type family token: cc, ct, coal or st_gas (see header).
+  - name: n_units
+    dtype: int64
+    unit: none
+    nullable: false
+    description: >-
+      Units of the family at the plant with at least one online hour in the
+      pooled span (the integer range of the cluster). Fallback rows: plants
+      pooled.
+  - name: hsl_mw
+    dtype: float64
+    unit: mw
+    nullable: false
+    description: >-
+      Plant high sustainable limit: p99.5 of the summed hourly gross load.
+      Fallback rows: the sum over the fitted plants of the family.
+  - name: lsl_mw
+    dtype: float64
+    unit: mw
+    nullable: false
+    description: >-
+      Plant low sustainable limit: p5 of the summed gross load over online
+      plant-hours (load >= max(1 MW, 0.05 x HSL)).
+  - name: mlf
+    dtype: float64
+    unit: fraction
+    nullable: false
+    description: Minimum stable fraction when online, lsl_mw / hsl_mw, in [0, 1].
+  - name: ut_h
+    dtype: int64
+    unit: hours
+    nullable: false
+    description: >-
+      Minimum up time: p25 of the measured on-run lengths of the plant series
+      (hours), at least 1.
+  - name: dt_h
+    dtype: int64
+    unit: hours
+    nullable: false
+    description: >-
+      Measured off-gap p25 between on-runs (hours), at least 1. DIAGNOSTIC:
+      the engine's minimum down time is the published class value (an
+      observed idle gap is usage, not the physical restart bar).
+  - name: noload_mmbtu_h
+    dtype: float64
+    unit: mmbtu_per_hour
+    nullable: true
+    description: >-
+      Plant no-load heat input: the sum over fitted units of the OLS intercept
+      of heatInput on grossLoad over online hours (opTime >= 1, grossLoad > 0,
+      heatInput > 0; >= 200 points spanning >= 10 % of the unit peak; intercept
+      floored at 0). Null when no unit of the plant fits.
+  - name: noload_units_fitted
+    dtype: int64
+    unit: none
+    nullable: false
+    description: Units whose intercept regression met the fit screen.
+  - name: noload_r2_median
+    dtype: float64
+    unit: fraction
+    nullable: true
+    description: Median R^2 across the plant's fitted units; null when none fit.
+  - name: online_frac
+    dtype: float64
+    unit: fraction
+    nullable: false
+    description: Share of pooled plant-hours with the plant online.
+  - name: n_runs
+    dtype: int64
+    unit: none
+    nullable: false
+    description: Number of on-runs of the plant series in the pooled span.
+  - name: years
+    dtype: string
+    unit: none
+    nullable: false
+    description: Pooled vintage span, e.g. "2023-2025".
+  - name: source
+    dtype: string
+    unit: none
+    nullable: false
+    description: Construction provenance (source files and the measurement rules).
