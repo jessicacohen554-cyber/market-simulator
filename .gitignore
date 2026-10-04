@@ -4082,3 +4082,14 @@ frontend/data/backcast/runs/2026-10-03-closeout-pjm-nuc-6yr.js
 results/calibration/closeout_pjm_nuc_full_span/
 frontend/data/backcast/registry/2026-10-03-closeout-pjm-nuc-7yr.json
 frontend/data/backcast/runs/2026-10-03-closeout-pjm-nuc-7yr.js
+
+!results/calibration/closeout_pjm_w3abv2_full_span/**
+# slim probe bundle only: the heavy files ride the shard leg branches (rule 34)
+results/calibration/closeout_pjm_w3abv2_full_span/dispatch/
+results/calibration/closeout_pjm_w3abv2_full_span/floors/
+results/calibration/closeout_pjm_w3abv2_full_span/hourly/unit_hourly_*
+results/calibration/closeout_pjm_w3abv2_full_span/hourly/network_*
+results/calibration/closeout_pjm_w3abv2_full_span/btm.parquet
+results/calibration/closeout_pjm_w3abv2_full_span/flows.parquet
+results/calibration/closeout_pjm_w3abv2_full_span/storage.parquet
+results/calibration/closeout_pjm_w3abv2_full_span/system.parquet

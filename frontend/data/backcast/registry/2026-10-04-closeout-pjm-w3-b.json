@@ -1,0 +1,19 @@
+{
+  "id": "2026-10-04-closeout-pjm-w3-b",
+  "label": "closeout pjm w3 b",
+  "date": "2026-10-04",
+  "shorthand": "closeout-pjm-w3-b",
+  "definition": "closeout-PJM-w3 v2 (A)+(B): own-year CC window + nuclear winter-capability basis",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-10-04-closeout-pjm-w3-b.js",
+  "bundle": "results/calibration/closeout_pjm_w3abv2_full_span"
+}
