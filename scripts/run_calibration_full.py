@@ -13179,6 +13179,19 @@ def main() -> None:
         "with a byte-identical LP and a warning. Tri-state.",
     )
     parser.add_argument(
+        "--coal-perplant-cliff-split",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Arm ScenarioConfig.coal_perplant_cliff_split (closeout-ERCOT-w3, "
+        "ERCOT only, requires the ERCOT-144 per-plant coal offer level): split "
+        "each curve-registry coal plant's econ tranche at the largest measured "
+        "price step inside its capacity window, so each side is priced on its "
+        "own side of the step instead of one capacity-weighted mean across it. "
+        "Zero parameters. Tri-state: unset keeps the recipe value, "
+        "--no-coal-perplant-cliff-split forces it off. Rides the generic "
+        "prb_overrides ScenarioConfig channel (rule 24).",
+    )
+    parser.add_argument(
         "--hydro-pondage-bound",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -16007,6 +16020,9 @@ def main() -> None:
             # tri-state channel and same replayability contract as the
             # cascade flag above (rule 24).
             "hydro_pondage_bound": args.hydro_pondage_bound,
+            # closeout-ERCOT-w3 coal econ cliff split. Same tri-state channel:
+            # None keeps the recipe value (rule 24).
+            "coal_perplant_cliff_split": args.coal_perplant_cliff_split,
             # The three pre-existing hydro gates, given a CLI surface by
             # hydro-1 (rule 24 gap — see the parser block). Same tri-state
             # channel: None keeps the recipe / per-ISO value untouched.

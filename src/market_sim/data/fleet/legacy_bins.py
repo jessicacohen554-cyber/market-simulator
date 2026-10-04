@@ -588,6 +588,54 @@ def _coal_tranche_rank(unit_id: str) -> float:
     return 50.0  # unknown suffixes stack below peak, above econ
 
 
+def coal_curve_cliff_boundary(
+    curve: "tuple[tuple[float, float], ...]",
+    lo_frac: float,
+    hi_frac: float,
+    self_sched_floor: float,
+) -> float | None:
+    """Plant-capability fraction of the largest measured price step inside a window.
+
+    Support for ``ScenarioConfig.coal_perplant_cliff_split`` (closeout-ERCOT-w3).
+    :func:`_coal_perplant_levels` prices a tranche at the capacity-weighted
+    mean of the measured curve over its window ``[lo_frac, hi_frac]`` (fractions
+    of plant capability, mapped onto the curve scaled to its own top MW). When
+    the window holds a price cliff, that mean sits between the two sides of the
+    cliff and offers the cheap side at a price nobody submitted (Fayette's econ
+    window holds ~280 MW offered at ~$17 and ~400 MW at ~$104; the tranche
+    prices all of it at $80.13).
+
+    The boundary is the curve breakpoint, strictly inside the window, with the
+    largest price rise over the preceding priced segment. Zero parameters: no
+    threshold decides whether a step counts, the largest step is always taken,
+    and a flat curve yields two rows at nearly the same price. Segments at or
+    below ``self_sched_floor`` are not priced and never start a step. The curve
+    convention is :func:`_coal_perplant_levels`'s: point ``k`` is
+    ``(segment end MW, segment price)``.
+
+    Returns the boundary as a fraction of plant capability, or ``None`` when no
+    priced breakpoint lies strictly inside the window.
+    """
+    top = float(curve[-1][0])
+    if top <= 0.0 or hi_frac <= lo_frac:
+        return None
+    lo, hi = lo_frac * top, hi_frac * top
+    best: tuple[float, float] | None = None  # (rise, boundary MW)
+    prev_price: float | None = None
+    for k in range(1, len(curve)):
+        start = float(curve[k - 1][0])
+        price, below = float(curve[k][1]), float(curve[k - 1][1])
+        if below > self_sched_floor:
+            prev_price = below
+        if price <= self_sched_floor or prev_price is None:
+            continue
+        if lo < start < hi:
+            rise = price - prev_price
+            if best is None or rise > best[0]:
+                best = (rise, start)
+    return None if best is None else best[1] / top
+
+
 def _coal_perplant_levels(
     generators: "list[Generator]",
     fleet_arrays: FleetArrays,
