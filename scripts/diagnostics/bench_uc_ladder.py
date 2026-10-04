@@ -78,6 +78,23 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument(
         "--set", dest="overrides", action="append", default=[], metavar="KEY=JSON"
     )
+    ap.add_argument(
+        "--dump-dir",
+        default=None,
+        help=(
+            "L1 only: on an infeasible window write its model (.mps), carried "
+            "state (.npz) and zero-LP diagnosis (.json) here — a harness "
+            "argument, never a registry field or an env knob"
+        ),
+    )
+    ap.add_argument(
+        "--save-capture",
+        action="store_true",
+        help=(
+            "L1/L2: also save the YearCapture pickle under --out (tens of MB with "
+            "a solved capture; off by default so a bench shard's push stays small)"
+        ),
+    )
     args = ap.parse_args(argv)
     out = Path(args.out)
     if not out.is_absolute():
@@ -107,9 +124,11 @@ def main(argv: list[str] | None = None) -> int:
             solve=not args.no_solve,
             bundle=Path(args.bundle) if args.bundle else None,
         )
-        cap.save(out / f"capture_{args.iso}_{args.year}.pkl")
+        if args.save_capture:
+            cap.save(out / f"capture_{args.iso}_{args.year}.pkl")
     if args.rung == "L1":
-        res = uc_bench.rung_l1(cap, out, **overrides)
+        dump_dir = Path(args.dump_dir) if args.dump_dir else None
+        res = uc_bench.rung_l1(cap, out, dump_dir=dump_dir, **overrides)
         print(
             json.dumps(
                 {k: v for k, v in res.items() if k != "trough_price_milp_vs_p1"},
