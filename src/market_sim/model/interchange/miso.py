@@ -286,6 +286,7 @@ def inject_miso_seam_ladder_prices(
     neighbour_anchored: bool = False,
     neighbour_hourly: bool = False,
     neighbour_hourly_spp: bool = False,
+    neighbour_hourly_full_span: bool = False,
 ) -> bool:
     """Overwrite MISO's seam band rows of ``mc`` with the measured Q-Q ladders.
 
@@ -350,6 +351,15 @@ def inject_miso_seam_ladder_prices(
     ladder — never to an unpriced seam — when the year or the measured hub
     series is missing.
 
+    ``neighbour_hourly_full_span`` (closeout-MISO-w3,
+    ``ScenarioConfig.miso_seam_neighbour_hourly_full_span``) extends BOTH hourly
+    overlays above to 2019-2022 by merging
+    :data:`~market_sim.config.interchange_config.MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_FULL_SPAN_BY_YEAR`
+    and its SPP twin under the 2023-2025 tables. It adds years, never a
+    mechanism: the same offsets construction, the same anchors, the same
+    sub-gate predicate (the SPP rows apply only when ``neighbour_hourly_spp``
+    does). Byte-identical when ``False`` and inert for 2023-2025.
+
     No hurdle is added on top: the ladder prices are revealed clearing
     thresholds that already embed delivery/wheeling costs. Band capacities,
     the measured (month × hour-of-day) seam deliverability envelopes
@@ -368,7 +378,9 @@ def inject_miso_seam_ladder_prices(
         MISO_SEAM_LADDER_BY_YEAR,
         MISO_SEAM_LADDER_NEIGHBOUR_BY_YEAR,
         MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_BY_YEAR,
+        MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_FULL_SPAN_BY_YEAR,
         MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_SPP_BY_YEAR,
+        MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_SPP_FULL_SPAN_BY_YEAR,
     )
     from market_sim.data.eia_loader import (
         measured_miso_pjm_border_prices,
@@ -381,16 +393,25 @@ def inject_miso_seam_ladder_prices(
     if ladder is None:
         return False
     anchors: dict[str, np.ndarray] = {}
+    # closeout-MISO-w3: the 2019-2022 rows extend the SAME hourly tables; they
+    # never displace a 2023-2025 row (the base tables win on any shared key).
+    hourly_table = MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_BY_YEAR
+    hourly_spp_table = MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_SPP_BY_YEAR
+    if neighbour_hourly_full_span:
+        hourly_table = {
+            **MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_FULL_SPAN_BY_YEAR,
+            **hourly_table,
+        }
+        hourly_spp_table = {
+            **MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_SPP_FULL_SPAN_BY_YEAR,
+            **hourly_spp_table,
+        }
     # miso-231's HOURLY overlay is tried FIRST and DISPLACES the annual one on
     # any seam it covers (rule 19 [R-ONE-MECH]: alternatives, never stacked).
     # It degrades to the annual overlay — not to an unpriced seam — whenever
     # its year is absent from the table or the measured border series is
     # unavailable, so an armed run is never silently cheaper than the keeper.
-    hourly = (
-        MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_BY_YEAR.get(year)
-        if neighbour_hourly
-        else None
-    )
+    hourly = hourly_table.get(year) if neighbour_hourly else None
     if hourly:
         border = measured_miso_pjm_border_prices(iso, year, int(mc.shape[1]))
         if border is not None:
@@ -406,7 +427,7 @@ def inject_miso_seam_ladder_prices(
     # half-armed state rule 19 [R-ONE-MECH] exists to prevent). Same per-seam
     # `anchors` mapping, so `_inject_seam_ladder` needs no change.
     if neighbour_hourly_spp and hourly:
-        spp_rows = MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_SPP_BY_YEAR.get(year)
+        spp_rows = hourly_spp_table.get(year)
         if spp_rows:
             spp_hub = measured_miso_spp_hub_prices("MISO", year, int(mc.shape[1]))
             if spp_hub is not None:
