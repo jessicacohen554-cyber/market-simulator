@@ -236,6 +236,22 @@ MECH_MISO_GAS_ECOMIN_ONLINE: int = 26
 # own id (the MECH_SPP_GAS_COMMITMENT_BRIDGE precedent). A merchant commitment
 # floor — subject to the D-2 forced-share gate.
 MECH_PJM_GAS_COMMITMENT_BRIDGE: int = 27
+# unit_commitment_milp (lane UC-1, pipeline.uc.build_uc_p1_prep): the MILP
+# unit-commitment STAGE's schedule entering the scored P1 LP as per-unit-hour
+# bounds (CLAUDE.md "Dispatch and commitment", owner ruling R2 2026-10-03;
+# docs/records/governance/uc-milp-2026-10/DESIGN-uc-milp-engine-2026-10-03.md
+# section 2.5). The rolling-horizon MILP CHOOSES u[c,t] (units online per
+# slow-start cluster, rule-18 physics gate) and the hook injects ceiling =
+# availability*u/n and floor = mlf*pbar*u through the same maximum-composition
+# tail every commitment bridge uses (pipeline.commitment._bridge_floored_fleet).
+# NOT a detected floor and NOT forced energy in the rule-17 sense: the floor
+# exists only where the LP's own commitment decision put a unit online, so it
+# cannot bind where its driver says the class is offline. Reported under its
+# own id so D-2 can attribute min-load energy at a UC floor; whether rule 20
+# budgets it is owner card D-4 (reported, not budgeted, until ruled). It
+# REPLACES the bridges, the posture family and cc_mustrun_per_plant wherever
+# armed (ScenarioConfig refuses the stack, rule 19).
+MECH_UC_SCHEDULE: int = 28
 # diagnostic_coal_metered_online_floor (closeout-SOCO-w3, pipeline.commitment.
 # wrap_coal_metered_online_diagnostic_prep): a DIAGNOSTIC, NEVER-PROMOTABLE
 # floor (rule 13 [R-MEASURED]: it pins each coal plant's METERED online state —
@@ -244,7 +260,7 @@ MECH_PJM_GAS_COMMITMENT_BRIDGE: int = 27
 # MW in every metered-online hour (data.coal_metered_online). Its own id so its
 # forced energy is attributed separately and can never be mistaken for a
 # structural coal floor; ablated like every merchant floor.
-MECH_DIAG_COAL_METERED_ONLINE: int = 28
+MECH_DIAG_COAL_METERED_ONLINE: int = 29
 
 MECH_NAMES: dict[int, str] = {
     MECH_NONE: "none",
@@ -275,6 +291,7 @@ MECH_NAMES: dict[int, str] = {
     MECH_SOCO_GAS_ST_CAMPAIGN: "soco_gas_st_campaign_commitment",
     MECH_MISO_GAS_ECOMIN_ONLINE: "miso_gas_ecomin_online_floor",
     MECH_PJM_GAS_COMMITMENT_BRIDGE: "pjm_gas_commitment_bridge",
+    MECH_UC_SCHEDULE: "uc_schedule",
     MECH_DIAG_COAL_METERED_ONLINE: "diagnostic_coal_metered_online_floor",
 }
 
@@ -350,6 +367,10 @@ MECH_ABLATION_FIELDS: dict[int, dict[str, object]] = {
     MECH_SOCO_GAS_ST_CAMPAIGN: {"soco_gas_st_campaign_commitment": False},
     # PJM-NEXT-16: the PJM leg, ABLATED like every other leg of the family.
     MECH_PJM_GAS_COMMITMENT_BRIDGE: {"pjm_gas_commitment_bridge": False},
+    # UC-1: the MILP UC stage's injected schedule, ABLATED like every bridge
+    # leg (a visible, switchable commitment mechanism; the twin solves the
+    # commitment-free LP).
+    MECH_UC_SCHEDULE: {"unit_commitment_milp": False},
     # closeout-SOCO-w3: the diagnostic metered coal online floor, ABLATED (it is
     # never a keeper input; the twin must never carry it).
     MECH_DIAG_COAL_METERED_ONLINE: {"diagnostic_coal_metered_online_floor": False},

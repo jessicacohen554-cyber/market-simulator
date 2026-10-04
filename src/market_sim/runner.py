@@ -4167,6 +4167,20 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # results_write exactly.
             _t_pre_save = time.perf_counter()
             save_result(result, config, iso, year, context=context, demand=year_demand)
+            # MILP unit-commitment stage sidecars (unit_commitment_milp; lane
+            # UC-1, the region UC-DESK granted on DESIGN b974d2c9 point 3):
+            # the year's schedule, solve log and post-P1 make-whole frame are
+            # written beside the cached result (the forecast cache is flat, so
+            # no hourly/ subdir). Gate off: the block does not run.
+            if getattr(config, "unit_commitment_milp", False):
+                from market_sim.pipeline.uc import take_uc_artifacts, write_uc_artifacts
+
+                write_uc_artifacts(
+                    get_cache_path(iso, config.cache_key(), year).parent,
+                    year,
+                    take_uc_artifacts(result),
+                    hourly_subdir=None,
+                )
             _t_end = time.perf_counter()
             # The three subtrahends are the pass's OWN totals (PERF-B session 3,
             # charter C-2): ``build_s`` is EVERY matrix build run_energy_solve

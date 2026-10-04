@@ -4085,3 +4085,6 @@ frontend/data/backcast/runs/2026-10-03-closeout-pjm-nuc-7yr.js
 
 # closeout-SOCO-w3 DIAGNOSTIC artifact (never a keeper input; rule 13)
 !data/raw/_processed-legacy/coal_metered_online_floor_SOCO.parquet
+# uc-milp UC-1: the MILP UC stage's monthly checkpoint scratch (pipeline/uc.py uc_checkpoint_dir;
+# DESIGN-uc-milp-engine-2026-10-03 section 4). Never a sidecar, never pushed.
+results/uc-checkpoints/
