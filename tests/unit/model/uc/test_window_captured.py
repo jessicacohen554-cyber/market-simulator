@@ -12,12 +12,46 @@ profile (``regenerate_clean.py --solve-profile NEISO``), so it is
 
 from __future__ import annotations
 
+import os
+
 import pytest
 
 from market_sim.config import paths
 from tests.helpers import requires_raw
 
 pytestmark = pytest.mark.slow
+
+# The env keys ``capture_year`` writes and never restores: the solve-container
+# pins (``scripts/lib/solve_container.py``) and ``replay_keeper``'s determinism
+# pins (FINDING-ucmilp-golden-nwpp-pjm-zero-lp-2026-10-04.md section 5).
+_LEAKED_ENV = (
+    "MARKET_SIM_HIGHS_THREADS",
+    "OMP_NUM_THREADS",
+    "MALLOC_ARENA_MAX",
+    "MARKET_SIM_WARMSTART_XYEAR",
+    "MARKET_SIM_P1_BASIS_SEED",
+)
+
+
+@pytest.fixture(autouse=True)
+def _isolate_highs_threads(monkeypatch):
+    """Restore the pinned env and reset HiGHS's process-global scheduler.
+
+    HiGHS fixes its scheduler's thread count at the first solve in a process;
+    a later run at a different ``threads`` value ends "Not Set". Resetting on
+    both sides lets this test run after (and before) tests that solved at the
+    default thread count.
+    """
+    import highspy
+
+    for key in _LEAKED_ENV:
+        if key in os.environ:
+            monkeypatch.setenv(key, os.environ[key])
+        else:
+            monkeypatch.delenv(key, raising=False)
+    highspy.Highs.resetGlobalScheduler(True)
+    yield
+    highspy.Highs.resetGlobalScheduler(True)
 
 
 @requires_raw(paths.RAW_DIR / "campd-unit-level", paths.RAW_DIR / "ISNE_region.parquet")

@@ -88,10 +88,13 @@ toy-window tests fail when they run after `test_stage_pipeline.py`.
 This is not an engine defect: a solve shard pins the env before its first HiGHS
 call (`prepare_solve_container.py --emit-exports`, and the runners' own `ensure_solve_container` before their first solve). It will
 bite a full-lane `pytest` run and a ladder rung that varies `threads` inside one
-process (rung L2's threads arm). Proposed fix, not applied (the UC files stay
-byte-identical to `6d47c762` for UC-2-SPP): in the captured test, `monkeypatch` the
-five env keys, and call `highspy.Highs.resetGlobalScheduler(True)` before and
-after `capture_year`. The L2 threads arm should run each arm in its own process.
+process (rung L2's threads arm). Fix, applied in this lane's PR (the UC-1 files moved off `6d47c762` anyway, for
+the `artifact_dir` defect UC-2-SPP routed): an autouse fixture in the captured test
+restores the five env keys through `monkeypatch` and calls
+`highspy.Highs.resetGlobalScheduler(True)` before and after. After the fix,
+`pytest tests/unit/model/uc tests/unit/config/test_uc_fields.py
+tests/test_curate_uc_params.py -m ""` reads 45 passed with no env pre-pinned.
+Rung L2's threads arm should still run each arm in its own process.
 
 ## Appendix — commands
 
