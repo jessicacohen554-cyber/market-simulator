@@ -1,0 +1,19 @@
+{
+  "id": "2026-10-04-closeout-caiso-w2-unprinted",
+  "label": "closeout caiso w2 unprinted",
+  "date": "2026-10-04",
+  "shorthand": "closeout-caiso-w2-unprinted",
+  "definition": "closeout-CAISO-w2 arm: daytime+late-evening DSW clean rungs in unprinted hours (owner ruling R-63)",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-10-04-closeout-caiso-w2-unprinted.js",
+  "bundle": "results/calibration/closeout_caiso_w2_a1_span"
+}
