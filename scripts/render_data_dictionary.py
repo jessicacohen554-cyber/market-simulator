@@ -148,6 +148,7 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "ps-water-state",
     "ra-import-allocations",
     "load-forecast",
+    "pjm-elliott-forced-outages",
 )
 
 # Per-datatype narrative scaffold. ``summary`` is the one-line purpose under the
@@ -475,6 +476,21 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "energy flow. INTAKE-ONLY \u2014 the pre-registered firm-block "
             "re-split arm was stopped by its own rule (held north share within "
             "5 points of the MIC share), so no mechanism consumes it."
+        ),
+    },
+    "pjm-elliott-forced-outages": {
+        "summary": (
+            "PJM's hourly GADS forced outages and derates by fuel during Winter "
+            "Storm Elliott (23\u201325 Dec 2022), digitised from Figure 30 of PJM's "
+            "Event Analysis report \u2014 a windowed, backcast-only measured "
+            "outage overlay input (owner ruling R-64)."
+        ),
+        "reconciles": (
+            "A printed bar chart (even hours plus the labelled 24 Dec 07:00 "
+            "peak) onto the model's 8760 clock: odd hours interpolated and "
+            "flagged digitised=False, 25 Dec 23:00 held at 22:00. Scale from the "
+            "chart's own gridlines (\u00b1104 MW per bar; check bar 46,250 vs "
+            "labelled 46,124 MW)."
         ),
     },
     "load-forecast": {
