@@ -1,0 +1,2 @@
+unit_id,zone,plant_group,fuel,cap_mw,n_hours_mc_differs,first_hour,last_hour,mc_keeper_first,mc_golden_first,mc_keeper_median,mc_golden_median,max_abs_mc_diff
+CT_CHP_NYC_p2493_committed,NYC,CT_CHP,gas_ct,88.36459,1464,2880,4343,34.01213,33.93492,34.262108,34.25949,0.07721328735351562

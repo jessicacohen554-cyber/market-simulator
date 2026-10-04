@@ -133,3 +133,44 @@ golden-diff: FAIL — 30 files, 175 numeric columns, 12 failures, absent: keeper
 ```
 
 The golden bundle (results/regression-goldens/ucmilp-off/NYISO, incl. dispatch/ and unit_hourly) is gitignored and stays in this container only; it will not outlive the container.
+
+## 2021 mc-diff summary
+
+Zero-LP, from `hourly/unit_marginal_2021.parquet` on both sides (inner join on unit_id, zone, plant_group, fuel, hour; join: 8707440 matched rows). Unit list: `diff_2021_units.csv`.
+
+- Distinct units with mc differing in any hour: **1**; differing unit-hours: **1464**; max |Δmc| 0.0772 $/MWh; median |Δmc| 0.0772
+- Rows where cap_mw differs: 0
+- Hour range of differing rows: 2880–4343 (distinct hours 1464)
+
+plant_group (units):
+```
+plant_group
+CT_CHP    1
+```
+fuel (units):
+```
+fuel
+gas_ct    1
+```
+zone (units):
+```
+zone
+NYC    1
+```
+Month histogram of differing unit-hours (hour//730):
+```
+hour
+3     40
+4    730
+5    694
+```
+Clustering: 1 run(s) of differing hours (gap > 24 h splits a run). Largest runs (start–end hour, n hours):
+```
+2880-4343  n=1464
+```
+Top 15 units by n_hours_mc_differs:
+```
+                   unit_id zone plant_group   fuel    cap_mw  n_hours_mc_differs  first_hour  last_hour  mc_keeper_first  mc_golden_first  mc_keeper_median  mc_golden_median  max_abs_mc_diff
+CT_CHP_NYC_p2493_committed  NYC      CT_CHP gas_ct 88.364594                1464        2880       4343        34.012131        33.934921         34.262108         34.259491         0.077213
+```
+Date range: hours 2880–4343 (0-indexed, 2021 non-leap) = **2021-05-01 00:00 through 2021-06-30 23:00**, exactly the May and June calendar months, contiguous. (The hour//730 proxy splits this into bins 3–5.) A single unit's P1 offer `mc` moved over exactly two calendar months, which looks like a monthly-resolved input (e.g. a monthly fuel/offer-anchor or monthly heat-rate/CEMS value for plant 2493). That is an inference, not verified.
