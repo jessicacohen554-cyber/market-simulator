@@ -15,6 +15,7 @@ one entry per datatype a solve-path loader reads from `data/clean` with **no**
 `MARKET_SIM_USE_CLEAN` gate and **no** raw fallback (absent ⇒ the mechanism
 silently no-ops). Backcast lane: capacity-deliverability, hydro-plant-modes,
 coal-stocks, coal-receipts, transfer-interface-limits, ramp-capability,
+uc-params (every ISO; read only when `unit_commitment_milp` is armed),
 gtc-limits, reserve-requirements, storage-as-awards, maxgen-events,
 winter-fuel-inventory, chp-btm-share, nyiso-interface-flows,
 seam-neighbour-price. Forecast lane (`--with-forecast`): confirmed-retirements,
@@ -25,9 +26,9 @@ forwarded to the coal tables (year Y reads Y-1 stocks and earlier receipts).
 
 | ISO | datatypes | ISO | datatypes | ISO | datatypes |
 |---|---|---|---|---|---|
-| ERCOT | 4 | PJM | 7 | NEISO | 7 |
-| CAISO | 7 | MISO | 7 | SPP | 4 |
-| NYISO | 7 | NWPP | 4 | SOCO | 3 |
+| ERCOT | 5 | PJM | 8 | NEISO | 8 |
+| CAISO | 8 | MISO | 8 | SPP | 5 |
+| NYISO | 8 | NWPP | 5 | SOCO | 4 |
 
 **Manifest key** — `data/clean/<datatype>/.manifest.json`: sha256 over the git
 blob shas of the curate script, `clean_io.py` and every `scripts.lib` module it
