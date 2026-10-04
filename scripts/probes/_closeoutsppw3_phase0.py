@@ -43,7 +43,9 @@ def model_frame(year: int) -> pd.DataFrame:
     s = pd.read_parquet(BUNDLE / f"system_{year}.parquet")
     s = s[s["pass"] == "P1"][["zone", "hour", "price", "demand"]].copy()
     s["zone"] = s["zone"].astype(str)
-    s["month"] = (pd.Timestamp(f"{year}-01-01") + pd.to_timedelta(s["hour"], unit="h")).dt.month
+    s["month"] = (
+        pd.Timestamp(f"{year}-01-01") + pd.to_timedelta(s["hour"], unit="h")
+    ).dt.month
     return s.reset_index(drop=True)
 
 
@@ -71,7 +73,9 @@ def c3(df: pd.DataFrame, col: str, a: float, a_mon: list[float]) -> tuple[float,
     m = lw(df, col)
     mon = df.groupby("month").apply(lambda b: lw(b, col)).to_numpy()
     am = np.asarray(a_mon, dtype=float)
-    return 100 * (m / a - 1), math.sqrt(float(((mon - am) ** 2).mean())) / float(am.mean())
+    return 100 * (m / a - 1), math.sqrt(float(((mon - am) ** 2).mean())) / float(
+        am.mean()
+    )
 
 
 def section_a(year: int) -> dict:
@@ -80,13 +84,19 @@ def section_a(year: int) -> dict:
         index="period", columns="fueltype", values="value_mwh"
     )
     ch = pd.read_parquet(BUNDLE / f"class_hourly_{year}.parquet")
-    ch = ch[ch["pass"] == "P1"].pivot_table(index="hour", columns="klass", values="mw", aggfunc="sum").fillna(0)
+    ch = (
+        ch[ch["pass"] == "P1"]
+        .pivot_table(index="hour", columns="klass", values="mw", aggfunc="sum")
+        .fillna(0)
+    )
     # model hour 0 = 07:00 UTC on EIA-930's period stamp (lag that maximises wind r, 0.992)
     idx = pd.date_range(f"{year}-01-01 07:00", periods=len(ch), freq="h", tz="UTC")
     act = e.reindex(idx)
     act.index = range(len(ch))
     s = model_frame(year)
-    z = pd.read_parquet(REPO / "data/raw/_validation-source/actual_lmp_hourly_SPP.parquet")
+    z = pd.read_parquet(
+        REPO / "data/raw/_validation-source/actual_lmp_hourly_SPP.parquet"
+    )
     rt = z[z.year == year].set_index("hour")["rt"].reindex(range(len(ch)))
     gas_m = ch[[c for c in ch.columns if c[:2] in ("CC", "CT", "ST")]].sum(axis=1)
     coal_m = ch[[c for c in ch.columns if c.startswith("COAL")]].sum(axis=1)
@@ -106,7 +116,9 @@ def section_a(year: int) -> dict:
         },
         "wind_TWh_model": round(float(ch["wind"].sum()) / 1e6, 2),
         "wind_TWh_bench": b["classFull"].get("wind"),
-        "hours_at_wind_floor_share": round(float(np.isclose(s["price"], WIND_FLOOR, atol=0.01).mean()), 4),
+        "hours_at_wind_floor_share": round(
+            float(np.isclose(s["price"], WIND_FLOOR, atol=0.01).mean()), 4
+        ),
     }
 
 
@@ -124,9 +136,13 @@ def ptc_delta(year: int, s: pd.DataFrame) -> tuple[np.ndarray, dict]:
     d = np.where(at, offer - s["price"].to_numpy(), 0.0)
     return d, {
         "ptc_statutory": ptc,
-        "eligible_share_mean": {z: round(float(share[i].mean()), 3) for i, z in enumerate(ZONES)},
+        "eligible_share_mean": {
+            z: round(float(share[i].mean()), 3) for i, z in enumerate(ZONES)
+        },
         "zone_hours_at_floor": int(at.sum()),
-        "mean_new_offer_at_floor": round(float(offer[at].mean()), 2) if at.any() else None,
+        "mean_new_offer_at_floor": round(float(offer[at].mean()), 2)
+        if at.any()
+        else None,
     }
 
 
@@ -136,15 +152,26 @@ def hydro_delta(year: int, s: pd.DataFrame) -> tuple[np.ndarray, dict]:
 
     env = measured_hydro_hourly_envelope("SPP", year, 8760)
     um = pd.read_parquet(
-        BUNDLE / f"unit_marginal_{year}.parquet", columns=["fuel", "hour", "mw", "cap_mw", "mc"]
+        BUNDLE / f"unit_marginal_{year}.parquet",
+        columns=["fuel", "hour", "mw", "cap_mw", "mc"],
     )
     fuel = um["fuel"].astype(str)
-    hyd = um[fuel == "hydro"].groupby("hour")["mw"].sum().reindex(range(8760), fill_value=0).to_numpy()
-    th = um[~fuel.isin(["hydro", "wind", "solar", "nuclear"])][["hour", "mw", "cap_mw", "mc"]].to_numpy()
+    hyd = (
+        um[fuel == "hydro"]
+        .groupby("hour")["mw"]
+        .sum()
+        .reindex(range(8760), fill_value=0)
+        .to_numpy()
+    )
+    th = um[~fuel.isin(["hydro", "wind", "solar", "nuclear"])][
+        ["hour", "mw", "cap_mw", "mc"]
+    ].to_numpy()
     th = th[np.argsort(th[:, 0], kind="stable")]
     bnd = np.searchsorted(th[:, 0], np.arange(8761))
     sysp = s.groupby("hour").apply(lambda b: lw(b, "price")).to_numpy()
-    month = (pd.Timestamp(f"{year}-01-01") + pd.to_timedelta(np.arange(8760), unit="h")).month.to_numpy()
+    month = (
+        pd.Timestamp(f"{year}-01-01") + pd.to_timedelta(np.arange(8760), unit="h")
+    ).month.to_numpy()
     exc = np.clip(hyd - env, 0, None)
     room = np.clip(env - hyd, 0, None)
     dh = -exc.copy()
@@ -217,7 +244,13 @@ def main() -> None:
         s["p_ptc"] = s["price"] + d_ptc
         s["p_hyd"] = s["price"] + d_hyd
         s["p_both"] = s["price"] + d_ptc + d_hyd
-        r = {"scorer_basis": basis, "A": section_a(year), "B": b_info, "C": c_info, "D": {}}
+        r = {
+            "scorer_basis": basis,
+            "A": section_a(year),
+            "B": b_info,
+            "C": c_info,
+            "D": {},
+        }
         for col in ("price", "p_ptc", "p_hyd", "p_both"):
             ca, cb = c3(s, col, a, a_mon)
             r["D"][col] = {"C3a_pct": round(ca, 2), "C3b": round(cb, 4)}
