@@ -1,0 +1,19 @@
+{
+  "id": "2026-10-04-closeout-soco-w3d-diag",
+  "label": "closeout soco w3d diag",
+  "date": "2026-10-04",
+  "shorthand": "closeout-soco-w3d-diag",
+  "definition": "closeout-SOCO-w3 DIAGNOSTIC (never promotable): metered coal online floor on the BTM-holdout recipe",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SOCO",
+  "file": "frontend/data/backcast/runs/2026-10-04-closeout-soco-w3d-diag.js",
+  "bundle": "results/calibration/closeout_soco_w3d_span"
+}

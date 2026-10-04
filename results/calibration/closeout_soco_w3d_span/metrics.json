@@ -1,0 +1,149 @@
+{
+  "run_id": "2026-10-04-closeout-soco-w3d-diag",
+  "iso": "SOCO",
+  "label": "closeout soco w3d diag",
+  "target_years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "scorable_years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "data_blocked_years": [],
+  "price_reference_blocked_years": [],
+  "rubric_version": "3.20",
+  "determination": "NOT-YET",
+  "reasons": [
+    "governance gate UNATTESTED: no governance attestation in bundle"
+  ],
+  "notes": [
+    "C8 2020 ST_GAS: grounded above budget \u2014 37.4% forced (2.1166 of 5.6626 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.974 (\u22650.8) & off-peak CV ratio 1.347 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2021 ST_GAS: grounded above budget \u2014 41.5% forced (2.1367 of 5.1478 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.978 (\u22650.8) & off-peak CV ratio 1.681 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2022 ST_GAS: grounded above budget \u2014 30.6% forced (1.95 of 6.384 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.965 (\u22650.8) & off-peak CV ratio 1.997 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2023 ST_GAS: grounded above budget \u2014 33.0% forced (1.9399 of 5.8735 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.979 (\u22650.8) & off-peak CV ratio 1.745 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2024 ST_GAS: grounded above budget \u2014 40.0% forced (2.0833 of 5.2085 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.972 (\u22650.8) & off-peak CV ratio 1.442 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2025 ST_GAS: grounded above budget \u2014 44.8% forced (2.4275 of 5.4218 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.935 (\u22650.8) & off-peak CV ratio 1.574 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+  ],
+  "criteria": {
+    "fuelmix": {
+      "label": "C1 fuel-mix by class (grid-delivered)",
+      "tier": "load-bearing",
+      "status": "FAIL"
+    },
+    "sysvol": {
+      "label": "C2 system volume (gas/coal families)",
+      "tier": "load-bearing",
+      "status": "PASS"
+    },
+    "price_mean": {
+      "label": "C3a mean LMP",
+      "tier": "load-bearing",
+      "status": "FAIL"
+    },
+    "price_shape": {
+      "label": "C3b price duration/shape",
+      "tier": "load-bearing",
+      "status": "FAIL"
+    },
+    "price_tail": {
+      "label": "C3c price tail / scarcity (RT hourly)",
+      "tier": "supporting",
+      "status": "SKIPPED"
+    },
+    "dispatch_corr": {
+      "label": "C4 fleet hourly dispatch correlation",
+      "tier": "supporting",
+      "status": "PASS"
+    },
+    "governance": {
+      "label": "C6 governance gate",
+      "tier": "protective",
+      "status": "UNATTESTED"
+    },
+    "forced_share": {
+      "label": "C8 forced-energy share (D-2)",
+      "tier": "protective",
+      "status": "FAIL"
+    }
+  },
+  "caveats": {
+    "protective": [],
+    "ledgered": [],
+    "commercial_band": [],
+    "configuration_exception": [],
+    "reference_definition": [],
+    "budget": {
+      "protective_max": 0,
+      "ledgered_max": 1
+    }
+  },
+  "grade_summary": {
+    "scored": 6,
+    "target_grade": 2,
+    "commercial_grade": 0,
+    "ledgered": 0,
+    "fails": 4
+  },
+  "reported": {
+    "co2": {
+      "label": "C5a CO2 vs eGRID (REPORTED-ONLY, v2.9 \u2014 see the CRITERIA note)",
+      "years": {
+        "2019": "-2.4%",
+        "2020": "-1.3%",
+        "2021": "+0.6%",
+        "2022": "+2.4%",
+        "2023": "+1.1%",
+        "2024": "-0.8%",
+        "2025": "+2.5%"
+      }
+    },
+    "diurnal_amplitude": {
+      "label": "D-A diurnal price amplitude, hour-of-day (REPORTED-ONLY, BAND-FREE, v3.5 \u2014 no external comparable exists to band it; see the note)",
+      "years": {
+        "2019": "no committed measured hod profile",
+        "2020": "no committed measured hod profile",
+        "2021": "no committed measured hod profile",
+        "2022": "no committed measured hod profile",
+        "2023": "no committed measured hod profile",
+        "2024": "no committed measured hod profile",
+        "2025": "no committed measured hod profile"
+      }
+    }
+  },
+  "free_class_score": {
+    "iso": "SOCO",
+    "pinned_classes": [
+      "CC_CHP",
+      "CT_CHP",
+      "ST_CHP",
+      "hydro",
+      "nuclear",
+      "solar",
+      "wind"
+    ],
+    "excluded_from_free": [
+      "CC_CHP",
+      "ST_CHP"
+    ],
+    "all": {
+      "pass": 43,
+      "total": 44
+    },
+    "free": {
+      "pass": 31,
+      "total": 32
+    },
+    "headline": "C1 all 43/44 \u00b7 free 31/32"
+  }
+}
