@@ -618,6 +618,77 @@ def _nuclear_monthly(
                 availability[g_idx, :] = 0.0
 
 
+def _apply_nuclear_winter_basis(
+    generators: list[Generator],
+    pmax: np.ndarray,
+    availability: np.ndarray,
+    hours: int,
+    iso: str,
+    year: int,
+) -> None:
+    """Re-rate nuclear units to their EIA-860 winter capability (in place).
+
+    ``ScenarioConfig.nuclear_winter_capability_basis``. For every nuclear unit
+    with a winter rating in the active EIA-860 vintage's operable sheet:
+    ``pmax <- min(winter, max(nameplate, summer))`` (never below the summer
+    pmax the fleet carries) and ``availability <- min(1, cf_unclipped[month] *
+    summer / winter)`` where the incumbent availability is positive. A year
+    without unclipped rows, or a unit without a rating, is left untouched.
+    """
+    import pandas as pd
+
+    from market_sim.config.constants import NUCLEAR_MONTHLY_CF_UNCLIPPED_BY_YEAR
+    from market_sim.config.paths import active_eia860_dir
+
+    cf = NUCLEAR_MONTHLY_CF_UNCLIPPED_BY_YEAR.get(iso, {}).get(year)
+    if cf is None:
+        return
+    path = active_eia860_dir() / "eia860_generator_operable.parquet"
+    if not path.exists():
+        logger.warning(
+            "nuclear winter basis: %s absent; nuclear left on summer basis", path
+        )
+        return
+    raw = pd.read_parquet(path)
+    raw.columns = [str(c).strip() for c in raw.columns]
+    key = zip(
+        pd.to_numeric(raw["Plant Code"], errors="coerce"),
+        raw["Generator ID"].astype(str).str.strip(),
+    )
+    rating = {
+        (int(p), g): (
+            pd.to_numeric(n, errors="coerce"),
+            pd.to_numeric(w, errors="coerce"),
+        )
+        for (p, g), n, w in zip(
+            key, raw["Nameplate Capacity (MW)"], raw["Winter Capacity (MW)"]
+        )
+        if pd.notna(p)
+    }
+    month_cf = np.asarray(cf, dtype=float)[_hour_to_month_index(hours)]
+    rerated = 0
+    for g_idx, gen in enumerate(generators):
+        if gen.fuel_type != "nuclear":
+            continue
+        gen_id = str(gen.unit_id).split("_", 1)[-1]
+        plate, winter = rating.get((int(gen.plant_code), gen_id), (np.nan, np.nan))
+        summer = float(pmax[g_idx])
+        if not (np.isfinite(winter) and winter > 0.0 and summer > 0.0):
+            continue
+        cap = max(float(plate) if np.isfinite(plate) else 0.0, summer)
+        new_pmax = max(summer, min(float(winter), cap))
+        live = availability[g_idx, :] > 0.0
+        availability[g_idx, live] = np.minimum(1.0, month_cf[live] * summer / new_pmax)
+        pmax[g_idx] = new_pmax
+        rerated += 1
+    logger.info(
+        "nuclear winter-capability basis (%s %d): %d unit(s) re-rated to EIA-860 winter",
+        iso,
+        year,
+        rerated,
+    )
+
+
 def _seasonal_basis_pair(gen: "Generator") -> tuple[float, float] | None:
     """``(summer_frac, winter_frac)`` of a W0 seasonal-basis unit, else ``None``.
 
@@ -4620,6 +4691,20 @@ def generators_to_fleet_arrays(
     _iso = iso.upper() if iso else None
     _yr = getattr(config, "weather_year", None) if config is not None else None
     _nuclear_monthly(generators, availability, hours, _iso, _yr, config)
+    # PJM nuclear winter-capability basis (config.nuclear_winter_capability_basis,
+    # closeout-PJM-w3, backcast only): pmax -> EIA-860 winter rating, availability
+    # -> unclipped measured monthly CF x summer/winter, so the Jan/Dec CF rows no
+    # longer clip at the summer rating. Zero stays zero (dormant units).
+    if (
+        config is not None
+        and _iso == "PJM"
+        and config.nuclear_winter_capability_basis
+        and config.mode == "backcast"
+        and _yr is not None
+    ):
+        _apply_nuclear_winter_basis(
+            generators, pmax, availability, hours, _iso, int(_yr)
+        )
 
     # Per-plant CT_PEAKER reliability must-run floor (config.ct_mustrun_per_plant,
     # backcast only). The observed EIA-923 net generation is forced on these

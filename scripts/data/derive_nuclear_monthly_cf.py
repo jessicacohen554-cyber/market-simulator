@@ -85,7 +85,7 @@ def _nuclear_fleet(iso: str, year: int) -> tuple[list[int], list[float]]:
     return sorted({int(g.plant_code) for g in units}), online_pmax
 
 
-def derive_monthly_cf(iso: str, year: int) -> list[float] | None:
+def derive_monthly_cf(iso: str, year: int, clip: bool = True) -> list[float] | None:
     """Return the 12 monthly CFs for one ISO-year, or ``None`` when EIA-923
     has no rows for the fleet's nuclear plants that year.
 
@@ -95,6 +95,11 @@ def derive_monthly_cf(iso: str, year: int) -> list[float] | None:
     :func:`_nuclear_fleet` for the COD-aware denominator). Values are clipped
     to 1.0 and rounded to 2 decimals, matching the committed constants table.
     A month with no unit online reads 0.0.
+
+    ``clip=False`` returns the same ratio unclipped, rounded to 3 decimals: the
+    ``NUCLEAR_MONTHLY_CF_UNCLIPPED_BY_YEAR`` rows that
+    ``ScenarioConfig.nuclear_winter_capability_basis`` reads (a winter month whose
+    measured output exceeds the summer-rated fleet pmax reads above 1.0).
     """
     plant_codes, online_pmax = _nuclear_fleet(iso, year)
     gen = load_monthly_generation()
@@ -110,7 +115,7 @@ def derive_monthly_cf(iso: str, year: int) -> list[float] | None:
             cfs.append(0.0)
             continue
         cf = float(monthly_mwh.iloc[m - 1]) / (pmax_mw * hours)
-        cfs.append(round(min(cf, 1.0), 2))
+        cfs.append(round(min(cf, 1.0), 2) if clip else round(cf, 3))
     return cfs
 
 
@@ -136,19 +141,26 @@ def main() -> None:
         "NUCLEAR_MONTHLY_CF_BY_YEAR table and exit nonzero "
         "on any mismatch.",
     )
+    ap.add_argument(
+        "--unclipped",
+        action="store_true",
+        help="Print the unclipped 3-decimal rows (NUCLEAR_MONTHLY_CF_UNCLIPPED_BY_YEAR).",
+    )
     args = ap.parse_args()
 
     mismatched = False
     for iso in args.isos:
         print(f'    "{iso}": {{')
         for year in args.years:
-            cfs = derive_monthly_cf(iso, year)
+            cfs = derive_monthly_cf(iso, year, clip=not args.unclipped)
             if cfs is None:
                 print(f"        # {year}: no EIA-923 nuclear rows")
                 continue
-            rendered = ", ".join(f"{cf:.2f}" for cf in cfs)
+            rendered = ", ".join(
+                f"{cf:.3f}" if args.unclipped else f"{cf:.2f}" for cf in cfs
+            )
             print(f"        {year}: [{rendered}],")
-            if args.check:
+            if args.check and not args.unclipped:
                 committed = NUCLEAR_MONTHLY_CF_BY_YEAR.get(iso, {}).get(year)
                 if committed is None:
                     print(f"        # {year}: NOT IN constants table")

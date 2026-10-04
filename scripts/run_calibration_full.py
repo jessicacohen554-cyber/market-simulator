@@ -13859,6 +13859,19 @@ def main() -> None:
         "CAISO-only. Default (unset) keeps the base config value (off).",
     )
     parser.add_argument(
+        "--nuclear-winter-capability-basis",
+        dest="nuclear_winter_capability_basis",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Re-rate PJM nuclear to its EIA-860 winter capability and read the "
+        "unclipped measured monthly CF rows (ScenarioConfig."
+        "nuclear_winter_capability_basis, closeout-PJM-w3), so January/December "
+        "nuclear output stops clipping at the summer rating. Backcast-only, "
+        "PJM-only. Rides the generic prb_overrides channel; "
+        "--no-nuclear-winter-capability-basis reaches the pre-arm posture. "
+        "Default (unset) keeps the base config value (off).",
+    )
+    parser.add_argument(
         "--pjm-elliott-outage-overlay",
         dest="pjm_elliott_measured_outage_overlay",
         action=argparse.BooleanOptionalAction,
@@ -15870,6 +15883,8 @@ def main() -> None:
             "pjm_elliott_measured_outage_overlay": (
                 args.pjm_elliott_measured_outage_overlay
             ),
+            # closeout-PJM-w3: generic channel, so run_config.json records it.
+            "nuclear_winter_capability_basis": (args.nuclear_winter_capability_basis),
             # spp-49: the benchmark's vintage-aware membership union rides the
             # same generic channel for the same reasons -- ONE read path for a
             # fresh solve, a replay override and a recipe, and
