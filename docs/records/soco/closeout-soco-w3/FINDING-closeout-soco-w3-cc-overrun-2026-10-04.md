@@ -76,3 +76,40 @@ Bowen and Gaston plus coal **commitment** at Barry/Wansley, against offers 1.7�
 at most 0.8–1.7 TWh/yr and cannot clear CC 2021. No other admissible lever is open. The lane's candidate list is
 exhausted. This is new evidence for frontier row SOCO-F1 (the census above), and its re-open condition (Georgia PSC
 FCR / Alabama ECR fuel testimony on burn plans) is unchanged.
+
+## 6. The SOCO-F1 re-open source: what was reachable (desk direction, 2026-10-04)
+
+| Source | URL | Outcome |
+|---|---|---|
+| GA PSC FCR-25 staff testimony (Newsome/Hayet, Docket 43011, May 2020; historic period covers 2019) | services.psc.ga.gov …/DownloadFile/181022/63169 | Fetched. Coal inventory targets and the Bowen/Wansley/Scherer pile are trade-secret redacted. Staff: **no coal unit was operated out of economic dispatch to manage fuel inventories** (Company burned down inventory only at retiring plants, as an economic decision). Qualitative; no driver. |
+| Synapse, "Georgia Power's Uneconomic Coal Practices Cost Customers Millions" (for Sierra Club, Nov 2021) | synapse-energy.com/sites/default/files/Georgia_Powers_Uneconomic_Practices_Cost_Customers_Millions_21-083.pdf | Fetched. Public-data hourly analysis (FERC-714 λ, EIA-923, CAMD): Bowen, Scherer and Wansley committed out of merit in 46 of 48 months 2017–2020; excess cost $232 M (Bowen $219 M); 2019 Bowen −$69.8 M, Scherer −$15.0 M, Wansley −$21.0 M. Footnote 3: Georgia Power does **not** appear to exclude fixed fuel/transport costs from dispatch. Confirms the object is **commitment practice** (keep coal online and loaded through low-λ hours), not fuel pricing. Aggregate $; no unit schedules. |
+| GA PSC FCR-27 (Docket 56765, 2026; historic period 2023–2025) | psc.ga.gov/search/facts-docket/?docketId=56765 | Docket page lists no filings in the public index. Press (Daily Energy Insider, Sierra Club, GPB, May 2026): staff found ≈ $152 M of potentially uneconomic coal dispatch over 2023–2025 and witness Goggin testified the Company "routinely committed and operated Plant Bowen when its generation was not needed". Staff and expert PDFs not located. |
+| SACE / Kalin testimony, FCR-27 | cleanenergy.org/wp-content/uploads/Kalin-Testimony-DN56765.pdf | Fetched. Regulatory-policy testimony; no dispatch data. |
+| Other GA PSC PDFs surfaced by search (IRP 56002/56003, RFP 56298/56310, IRP 55378 brief, VCM 29849) | DownloadFile/222493, 224506, 218245, 223243, 192559 | Fetched; not about dispatch or commitment. |
+| Alabama PSC (Rate ECR / RSE) | www.psc.state.al.us | Connection reset from this container. |
+| Mississippi PSC | www.psc.ms.gov | Reachable; not searched further (Daniel is near actual in the census). |
+| Unit minimum loads | gridinfo.com/plant/bowen/703 (EIA-860) | Bowen units 1–2 450 MW, 3–4 550 MW minimum load. Already the order of the model's must-run share. |
+
+**Reading.** Every reachable source agrees that the object is Southern's coal **commitment practice**: units held
+committed and loaded through hours where λ is below their cost. They give no measured, forward-reproducible driver
+(rule 13): no published must-run designation, minimum-load schedule or take-or-pay volume, and FCR-25 staff
+explicitly rules out inventory-driven dispatch for the 2019 period.
+
+**The only measured form is the outcome itself**: a backcast-only coal commitment-state overlay that holds each coal
+plant at its metered online P5 whenever CEMS shows it online. This is the soco-96 pattern, where the owner admitted
+CAMPD daily fuel mix as a backcast-only input. Its upper bound on the holdout control, zero LP:
+
+| Year | Overlay coal added (TWh) | Of which night |
+|---|---|---|
+| 2019 | 4.49 | 1.41 |
+| 2020 | 2.94 | 0.99 |
+| 2021 | 2.00 | 0.74 |
+| 2022 | 1.78 | 0.55 |
+| 2023 | 2.06 | 0.68 |
+| 2024 | 2.05 | 0.60 |
+| 2025 | 1.30 | 0.38 |
+
+CC 2021 needs about −1.53 TWh, so the overlay clears it only if ≥ 77 % of the added coal displaces CC; CC 2023 needs
+≥ 26 %. It has no forward story beyond "the forecast does not carry it": it pins measured online state, which rule 13
+lists as forbidden unless the owner admits it as a backcast-only overlay. **Not built; sent to the desk as an owner
+question.**
