@@ -26,7 +26,7 @@ border zones declared in ``INTERFACE_NEIGHBORS["PJM"]`` as
 ``border_zones=("PJM_ComEd", "PJM_AEP_Ohio", "PJM_ATSI")``.
 
 Usage:
-    python scripts/data/build_pjm_border_lmp_miso.py [--years 2023 2024 2025]
+    python scripts/data/build_pjm_border_lmp_miso.py [--years 2019 ... 2025]
 """
 
 from __future__ import annotations
@@ -122,7 +122,14 @@ def build_year(year: int) -> pd.DataFrame | None:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--years", nargs="+", type=int, default=[2023, 2024, 2025])
+    # closeout-MISO-w3: 2019-2022 added (the Data Miner hub CSVs cover them);
+    # the output is rewritten whole, so the default must name every year.
+    ap.add_argument(
+        "--years",
+        nargs="+",
+        type=int,
+        default=[2019, 2020, 2021, 2022, 2023, 2024, 2025],
+    )
     args = ap.parse_args()
 
     frames = []

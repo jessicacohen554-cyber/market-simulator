@@ -1,0 +1,394 @@
+{
+ "2019": {
+  "scorer_basis": "rt (LEGACY equal-hour)",
+  "A": {
+   "rt_neg_hours": 547,
+   "in_rt_neg_hours_MW": {
+    "model_price": 17.2,
+    "wind_model": 14211,
+    "wind_930": 13254,
+    "gas_model": 3934,
+    "gas_930": 4466,
+    "coal_model": 6486,
+    "coal_930": 6818
+   },
+   "wind_TWh_model": 78.26,
+   "wind_TWh_bench": 77.033,
+   "hours_at_wind_floor_share": 0.0025
+  },
+  "B": {
+   "ptc_statutory": 26.0,
+   "eligible_share_mean": {
+    "SPP-North": 0.866,
+    "SPP-South": 0.834
+   },
+   "zone_hours_at_floor": 44,
+   "mean_new_offer_at_floor": -22.02
+  },
+  "C": {
+   "model_hydro_above_p95_TWh": 1.34,
+   "hours_capped": 2220,
+   "mean_dP_capped_hours": 0.76,
+   "mean_dP_receiving_hours": -0.4
+  },
+  "D": {
+   "price": {
+    "C3a_pct": 12.24,
+    "C3b": 0.1604
+   },
+   "p_ptc": {
+    "C3a_pct": 12.28,
+    "C3b": 0.1609
+   },
+   "p_hyd": {
+    "C3a_pct": 12.62,
+    "C3b": 0.1642
+   },
+   "p_both": {
+    "C3a_pct": 12.65,
+    "C3b": 0.1647
+   }
+  },
+  "E": {
+   "legacy_rt": 20.85,
+   "rt_lw": 21.84,
+   "C3a_legacy_pct": 12.2,
+   "C3a_lw_pct": 7.2,
+   "C3b_legacy": 0.16,
+   "C3b_lw": 0.133
+  }
+ },
+ "2020": {
+  "scorer_basis": "rt (LEGACY equal-hour)",
+  "A": {
+   "rt_neg_hours": 936,
+   "in_rt_neg_hours_MW": {
+    "model_price": 13.15,
+    "wind_model": 15582,
+    "wind_930": 11153,
+    "gas_model": 3520,
+    "gas_930": 5416,
+    "coal_model": 4773,
+    "coal_930": 6933
+   },
+   "wind_TWh_model": 84.07,
+   "wind_TWh_bench": 82.03,
+   "hours_at_wind_floor_share": 0.0112
+  },
+  "B": {
+   "ptc_statutory": 26.0,
+   "eligible_share_mean": {
+    "SPP-North": 0.855,
+    "SPP-South": 0.812
+   },
+   "zone_hours_at_floor": 196,
+   "mean_new_offer_at_floor": -21.72
+  },
+  "C": {
+   "model_hydro_above_p95_TWh": 1.88,
+   "hours_capped": 2564,
+   "mean_dP_capped_hours": 0.82,
+   "mean_dP_receiving_hours": -0.45
+  },
+  "D": {
+   "price": {
+    "C3a_pct": 27.69,
+    "C3b": 0.3453
+   },
+   "p_ptc": {
+    "C3a_pct": 27.93,
+    "C3b": 0.3484
+   },
+   "p_hyd": {
+    "C3a_pct": 28.29,
+    "C3b": 0.351
+   },
+   "p_both": {
+    "C3a_pct": 28.52,
+    "C3b": 0.3541
+   }
+  },
+  "E": {
+   "legacy_rt": 16.52,
+   "rt_lw": 17.54,
+   "C3a_legacy_pct": 27.7,
+   "C3a_lw_pct": 20.3,
+   "C3b_legacy": 0.345,
+   "C3b_lw": 0.315
+  }
+ },
+ "2021": {
+  "scorer_basis": "rt (LEGACY equal-hour)",
+  "A": {
+   "rt_neg_hours": 1108,
+   "in_rt_neg_hours_MW": {
+    "model_price": 4.07,
+    "wind_model": 19004,
+    "wind_930": 16527,
+    "gas_model": 832,
+    "gas_930": 2825,
+    "coal_model": 5427,
+    "coal_930": 5662
+   },
+   "wind_TWh_model": 98.12,
+   "wind_TWh_bench": 92.858,
+   "hours_at_wind_floor_share": 0.055
+  },
+  "B": {
+   "ptc_statutory": 26.0,
+   "eligible_share_mean": {
+    "SPP-North": 0.856,
+    "SPP-South": 0.808
+   },
+   "zone_hours_at_floor": 964,
+   "mean_new_offer_at_floor": -21.65
+  },
+  "C": {
+   "model_hydro_above_p95_TWh": 2.15,
+   "hours_capped": 2502,
+   "mean_dP_capped_hours": 3.43,
+   "mean_dP_receiving_hours": -2.59
+  },
+  "D": {
+   "price": {
+    "C3a_pct": 7.08,
+    "C3b": 0.1761
+   },
+   "p_ptc": {
+    "C3a_pct": 7.61,
+    "C3b": 0.1789
+   },
+   "p_hyd": {
+    "C3a_pct": 7.46,
+    "C3b": 0.1654
+   },
+   "p_both": {
+    "C3a_pct": 8.0,
+    "C3b": 0.1683
+   }
+  },
+  "E": {
+   "legacy_rt": 37.36,
+   "rt_lw": 40.93,
+   "C3a_legacy_pct": 7.1,
+   "C3a_lw_pct": -2.3,
+   "C3b_legacy": 0.176,
+   "C3b_lw": 0.288
+  }
+ },
+ "2022": {
+  "scorer_basis": "rt (LEGACY equal-hour)",
+  "A": {
+   "rt_neg_hours": 995,
+   "in_rt_neg_hours_MW": {
+    "model_price": -0.64,
+    "wind_model": 21328,
+    "wind_930": 17704,
+    "gas_model": 724,
+    "gas_930": 3014,
+    "coal_model": 4673,
+    "coal_930": 5707
+   },
+   "wind_TWh_model": 116.62,
+   "wind_TWh_bench": 107.435,
+   "hours_at_wind_floor_share": 0.0833
+  },
+  "B": {
+   "ptc_statutory": 26.0,
+   "eligible_share_mean": {
+    "SPP-North": 0.826,
+    "SPP-South": 0.775
+   },
+   "zone_hours_at_floor": 1460,
+   "mean_new_offer_at_floor": -20.91
+  },
+  "C": {
+   "model_hydro_above_p95_TWh": 2.07,
+   "hours_capped": 2141,
+   "mean_dP_capped_hours": 3.49,
+   "mean_dP_receiving_hours": -2.65
+  },
+  "D": {
+   "price": {
+    "C3a_pct": -4.85,
+    "C3b": 0.1751
+   },
+   "p_ptc": {
+    "C3a_pct": -4.04,
+    "C3b": 0.1723
+   },
+   "p_hyd": {
+    "C3a_pct": -5.03,
+    "C3b": 0.1771
+   },
+   "p_both": {
+    "C3a_pct": -4.23,
+    "C3b": 0.1742
+   }
+  },
+  "E": {
+   "legacy_rt": 44.09,
+   "rt_lw": 48.41,
+   "C3a_legacy_pct": -4.8,
+   "C3a_lw_pct": -13.3,
+   "C3b_legacy": 0.175,
+   "C3b_lw": 0.215
+  }
+ },
+ "2023": {
+  "scorer_basis": "rt_lw",
+  "A": {
+   "rt_neg_hours": 992,
+   "in_rt_neg_hours_MW": {
+    "model_price": 3.04,
+    "wind_model": 20970,
+    "wind_930": 17752,
+    "gas_model": 2071,
+    "gas_930": 4491,
+    "coal_model": 4185,
+    "coal_930": 4692
+   },
+   "wind_TWh_model": 111.4,
+   "wind_TWh_bench": 103.049,
+   "hours_at_wind_floor_share": 0.0642
+  },
+  "B": {
+   "ptc_statutory": 28.0,
+   "eligible_share_mean": {
+    "SPP-North": 0.756,
+    "SPP-South": 0.735
+   },
+   "zone_hours_at_floor": 1125,
+   "mean_new_offer_at_floor": -20.89
+  },
+  "C": {
+   "model_hydro_above_p95_TWh": 1.78,
+   "hours_capped": 2111,
+   "mean_dP_capped_hours": 1.25,
+   "mean_dP_receiving_hours": -0.5
+  },
+  "D": {
+   "price": {
+    "C3a_pct": -6.36,
+    "C3b": 0.1758
+   },
+   "p_ptc": {
+    "C3a_pct": -5.23,
+    "C3b": 0.1715
+   },
+   "p_hyd": {
+    "C3a_pct": -5.82,
+    "C3b": 0.1759
+   },
+   "p_both": {
+    "C3a_pct": -4.69,
+    "C3b": 0.1721
+   }
+  },
+  "E": null
+ },
+ "2024": {
+  "scorer_basis": "rt_lw",
+  "A": {
+   "rt_neg_hours": 1172,
+   "in_rt_neg_hours_MW": {
+    "model_price": 3.52,
+    "wind_model": 21257,
+    "wind_930": 15220,
+    "gas_model": 2679,
+    "gas_930": 6360,
+    "coal_model": 4188,
+    "coal_930": 5871
+   },
+   "wind_TWh_model": 120.67,
+   "wind_TWh_bench": 109.317,
+   "hours_at_wind_floor_share": 0.0718
+  },
+  "B": {
+   "ptc_statutory": 29.0,
+   "eligible_share_mean": {
+    "SPP-North": 0.745,
+    "SPP-South": 0.736
+   },
+   "zone_hours_at_floor": 1258,
+   "mean_new_offer_at_floor": -21.63
+  },
+  "C": {
+   "model_hydro_above_p95_TWh": 1.62,
+   "hours_capped": 2029,
+   "mean_dP_capped_hours": 1.51,
+   "mean_dP_receiving_hours": -0.69
+  },
+  "D": {
+   "price": {
+    "C3a_pct": -11.2,
+    "C3b": 0.2127
+   },
+   "p_ptc": {
+    "C3a_pct": -10.16,
+    "C3b": 0.2061
+   },
+   "p_hyd": {
+    "C3a_pct": -10.58,
+    "C3b": 0.2129
+   },
+   "p_both": {
+    "C3a_pct": -9.53,
+    "C3b": 0.206
+   }
+  },
+  "E": null
+ },
+ "2025": {
+  "scorer_basis": "rt_lw",
+  "A": {
+   "rt_neg_hours": 1018,
+   "in_rt_neg_hours_MW": {
+    "model_price": 4.07,
+    "wind_model": 22725,
+    "wind_930": 18422,
+    "gas_model": 1774,
+    "gas_930": 4844,
+    "coal_model": 4774,
+    "coal_930": 5576
+   },
+   "wind_TWh_model": 121.28,
+   "wind_TWh_bench": 110.457,
+   "hours_at_wind_floor_share": 0.0635
+  },
+  "B": {
+   "ptc_statutory": 30.0,
+   "eligible_share_mean": {
+    "SPP-North": 0.735,
+    "SPP-South": 0.677
+   },
+   "zone_hours_at_floor": 1112,
+   "mean_new_offer_at_floor": -21.28
+  },
+  "C": {
+   "model_hydro_above_p95_TWh": 1.93,
+   "hours_capped": 2156,
+   "mean_dP_capped_hours": 2.23,
+   "mean_dP_receiving_hours": -0.98
+  },
+  "D": {
+   "price": {
+    "C3a_pct": -4.24,
+    "C3b": 0.1533
+   },
+   "p_ptc": {
+    "C3a_pct": -3.36,
+    "C3b": 0.1537
+   },
+   "p_hyd": {
+    "C3a_pct": -3.42,
+    "C3b": 0.1551
+   },
+   "p_both": {
+    "C3a_pct": -2.54,
+    "C3b": 0.1558
+   }
+  },
+  "E": null
+ }
+}

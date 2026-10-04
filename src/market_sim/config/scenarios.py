@@ -1547,6 +1547,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # 16 band rows HOURLY and hashes distinctly. Registered WITH the field, per
     # the nyiso-119 discipline.
     "miso_seam_neighbour_hourly_spp",
+    # closeout-MISO-w3: byte-identical OFF (the 2019-2022 offset tables are
+    # read only inside the armed branch, and the flag is REFUSED without
+    # miso_seam_neighbour_hourly_ladder); an armed run reprices the PJM / SPP
+    # seam band rows HOURLY in 2019-2022 and hashes distinctly. Registered WITH
+    # the field, per the nyiso-119 discipline.
+    "miso_seam_neighbour_hourly_full_span",
     # caiso-243: both F923 fallback guards are byte-identical OFF (the zone
     # tier is unguarded and the CAMPD-bin fleet carries no state exactly as
     # before); an armed run re-tiers gap-fill months and hashes distinctly.
@@ -3018,6 +3024,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-233 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "miso_seam_neighbour_hourly_spp": "False",
+    # Added by closeout-MISO-w3 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "miso_seam_neighbour_hourly_full_span": "False",
     # Added by caiso-243 WITH the fields, in the same commit as their
     # _CACHE_KEY_OPTIONAL_FIELDS entries (the nyiso-119 discipline).
     "nearby_fuel_price_zone_donor_guard": "False",
@@ -20681,6 +20690,25 @@ class ScenarioConfig:
     # PRECOMMIT-miso233-spp-hourly-seam-2026-09-07.md.
     miso_seam_neighbour_hourly_spp: bool = False
 
+    # The hourly neighbour anchor above (PJM, and SPP when its sub-gate is
+    # armed) extended from 2023-2025 to 2019-2022 (closeout-MISO-w3). The keeper
+    # arms the family in every leg, but its offset tables carry 2023-2025 only,
+    # so the 2019-2022 legs degrade to the flat annual MISO-hub ladder: every
+    # PJM / SPP band is ONE price all year, the defect miso-226 named, on four
+    # of seven years. miso-252 / miso-261 recorded those years as blocked on
+    # data ("PJM border LMP and the SPP hub both start 2023"); that boundary
+    # has moved (PJM Data Miner hub CSVs 2019-2022 and the SPPNORTH_HUB series
+    # 2019-2025 are under data/raw), so rule 14 [R-ACCURATE] applies. Armed,
+    # the frozen derive's 2019-2022 offsets
+    # (interchange spec MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_FULL_SPAN_BY_YEAR and
+    # its SPP twin; derive_miso_seam_ladders.py, rule 23, reproducing every
+    # committed 2023-2025 offset exactly) are read under the 2023-2025 tables.
+    # Adds years, never a mechanism (rule 19): same construction, anchors and
+    # sub-gate predicate. Zero fitted parameters. REFUSED without
+    # miso_seam_neighbour_hourly_ladder. Off by default; byte-identical off and
+    # inert for 2023-2025. See docs/records/miso/closeout-miso-w3/.
+    miso_seam_neighbour_hourly_full_span: bool = False
+
     # CAISO per-zone citygate-hub gas basis spread. CAISO's zones buy from two
     # separately traded LDC citygate hubs — NP15/ZP26 on PG&E Citygate, SP15 on
     # SoCal Citygate — but the model prices every zone off the single blended
@@ -25773,6 +25801,7 @@ TIER_TAGS: dict[str, int] = {
     "miso_seam_neighbour_anchored_ladder": 3,
     "miso_seam_neighbour_hourly_ladder": 3,
     "miso_seam_neighbour_hourly_spp": 3,
+    "miso_seam_neighbour_hourly_full_span": 3,
     "pjm_congestion": 3,
     "ercot_zonal_gas_basis": 3,
     "ercot_ep_gas_basis_monthly": 3,
