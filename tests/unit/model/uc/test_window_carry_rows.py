@@ -314,3 +314,38 @@ def test_floor_above_availability_solves_gate_off_and_on(
     assert (
         p1f.min_gen[0, 8:20] <= p1f.pmax[0] * p1f.availability[0, 8:20] + 1e-9
     ).all()
+
+
+def test_guard_adds_no_row_without_a_floor_past_the_horizon(uc_params_frame):
+    """UC-DESK review point 3: the look-ahead guard is a row family only where
+    a structural floor needs units past the horizon. With no such floor the
+    window carries zero guard rows and is the same model as one built with no
+    look-ahead at all (same row count, same optimum)."""
+    uc_params_frame(toy_uc_params(ut_h=4, noload_mmbtu_h=100.0))
+    T_w = 12
+    _, fa, demand, mc, dk = toy_inputs(T_w, night_mw=40.0, day_mw=260.0)
+    p = build_uc_cluster_params(fa, "NEISO")
+    dt = int(p.dt_h[0])
+    none = _window(fa, demand, mc, dk, p, u_prev=0, noload_usd_h=50.0)
+    zeros = _window(
+        fa,
+        demand,
+        mc,
+        dk,
+        p,
+        u_prev=0,
+        noload_usd_h=50.0,
+        floor_need_ahead=np.zeros((1, dt - 1)),
+    )
+    assert zeros._n_guard_rows == 0 and none._n_guard_rows == 0
+    assert zeros.h.getNumRow() == none.h.getNumRow()
+    a = solve_window(none, OPTS)
+    b = solve_window(zeros, OPTS)
+    assert np.array_equal(a.u, b.u) and abs(a.objective - b.objective) < 1e-6
+    # and a floor ahead that no window hour can reach (h' >= dt - 1) adds none either
+    far = np.zeros((1, dt + 3))
+    far[0, dt - 1 :] = 2.0
+    w_far = _window(
+        fa, demand, mc, dk, p, u_prev=0, noload_usd_h=50.0, floor_need_ahead=far
+    )
+    assert w_far._n_guard_rows == 0

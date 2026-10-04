@@ -49,6 +49,15 @@ upstream floors at that same effective level. Engine version `uc-1.1`.
 | **Year roll, same stand-in, fixed engine** | **365 windows Optimal**, 0 time-limit hits, gap ≤ 9.8e-4, MILP p50 2.4 s / p95 3.8 s / max 18.2 s, nodes p50 1; joint min-up violations 0, joint min-down violations 0, `u > n` cells 0; guard rows p50 448–561 per window |
 | Toy reproduction (`tests/unit/model/uc/test_window_carry_rows.py`) | against the pre-fix tree (`681b71cf`): the SPP-pattern stage test raises `UcWindowInfeasible` (90 columns, 54 rows, 1 integer cluster) and the look-ahead floor test raises it too; 7 of 7 new tests fail there and pass on the fix |
 
+**Diagnostic-only evidence (UC-DESK ruling, 2026-10-04).** The window rolls in this record
+(§1 "Year roll" rows, §2 step 4) solved 36-hour window MILPs in the lane container — not an
+ISO-year LP, accepted under rule 32 as diagnosis evidence only — with the keeper's committed
+**P1** dispatch and storage SOC standing in for the **P0** boundary (hydro / oil pins,
+`u_prev`, SOC state). Their numbers (wall, gaps, nodes, guard-row counts) are evidence for
+this FINDING and nothing else: no reading, no wall row, no matrix cell. The engine's proof on
+the real P0 boundary is the L1 shard (§5, window 0 only) and UC-2-SPP's relaunch (every
+window of every year).
+
 ## 2. The zero-LP diagnosis, in order
 
 1. **Capture** the keeper recipe's LP inputs for SPP 2020 at the `run_energy_solve` seam
@@ -88,7 +97,7 @@ upstream floors at that same effective level. Engine version `uc-1.1`.
 | Change | Where | What |
 |---|---|---|
 | History inside the rows | `UcWindowModel._carry_history`, `_add_uc_rows` (d)/(e) | `Σ_{lag<UT} v_{τ−lag} − u_τ ≤ −hist_v(τ)` and `Σ_{lag<DT} w_{τ−lag} + u_τ ≤ n − hist_w(τ)`: the window's own and the carried starts (stops) in one inequality. The `u` bounds keep the history as the implied root-relaxation tightening |
-| Look-ahead min-down guard | `_add_uc_rows` (f), `floor_need_ahead` | For every hour `h ∈ [t1, t1 + DT − 1)` with `floor_need(h) > 0`: `Σ_{τ∈window, h−τ<DT} w_τ ≤ n − floor_need(h) − hist_w(h)` — row (e) at an unseen hour with `u` at its known lower bound. A kept stop is never one a floor beyond the 12-hour look-ahead needs (coal `DT = 16 > L + 1`, 97 floor-need rises in SPP 2020). The stage computes the year's floor need once, zero LP (`units_needed_for_floor` on the year fleet) |
+| Look-ahead min-down guard (physics, rule 18: a unit stopped at `τ` is unavailable until `τ + DT`; a floor the year's inputs already fix at hour `h` is a known lower bound on the units online there, so stopping more than `n − floor_need(h)` units within `DT` of `h` is a decision the window's own physics forbids — the row only brings the known floor into the window's sight) | `_add_uc_rows` (f), `floor_need_ahead` | For every hour `h ∈ [t1, t1 + DT − 1)` with `floor_need(h) > 0`: `Σ_{τ∈window, h−τ<DT} w_τ ≤ n − floor_need(h) − hist_w(h)` — row (e) at an unseen hour with `u` at its known lower bound. A kept stop is never one a floor beyond the 12-hour look-ahead needs (coal `DT = 16 > L + 1`, 97 floor-need rises in SPP 2020). The stage computes the year's floor need once, zero LP (`units_needed_for_floor` on the year fleet) |
 | LP-effective floor | `params.units_needed_for_floor(params, fleet, t0, t1)` | `min(min_gen, pmax·availability)` summed per cluster, `ceil(·/pbar)` capped at `n` — the clip `bounds.build_variable_bounds` applies to the P column, so the UC never asks for a unit the LP's own floor does not |
 | Injection at the effective floor | `UcStage.inject` | The upstream `min_gen` is composed into P1 clipped to `pmax·availability`, so `_bridge_floored_fleet`'s availability raise never re-opens a ceiling the schedule closed |
 | Instrumentation (gate-on path only) | `solve.solve_window`, `UcWindowInfeasible`, `diagnose.py`, `UcSolveOptions.debug_dump_dir` | The exception names the window (`window 156 [3744, 3780)`), re-solves the LP relaxation on the same handle and attaches the zero-LP report (bound propagation per row family, carried starts above `n`, floors above the carried min-down). `bench_uc_ladder.py --dump-dir` writes the model (`.mps`), state (`.npz`) and report (`.json`); never a registry field or an env knob |
@@ -106,6 +115,7 @@ Not changed: the floor mechanisms, `model/lp`, `iso_configs`, any `ScenarioConfi
 * `test_spp_pattern_three_starts_within_one_min_up` — the SPP chain in miniature (`ut = 16`, W = 6, L = 3): raises on the pre-fix tree, completes with joint physics intact on the fix.
 * `test_floor_beyond_the_horizon_is_guarded_against_min_down` — a floor past the horizon within the published min-down: raises on the pre-fix tree; the guard keeps the units on.
 * `test_floor_above_availability_solves_gate_off_and_on` — the charter's toy: gate off and on both solve; the schedule and P1 honour the clipped floor (200 MW where available, 100 MW where not).
+* `test_guard_adds_no_row_without_a_floor_past_the_horizon` — UC-DESK review point 3: no floor past the horizon (or one no window hour can reach) adds no guard row; the model equals one built with no look-ahead (same rows, same optimum).
 
 The 19 pre-existing fast UC tests pass unchanged; `test_min_down_holds_after_a_stop` now
 exercises the history through the row (same assertions).
