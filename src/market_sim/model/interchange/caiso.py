@@ -2212,6 +2212,46 @@ def apply_caiso_local_import_limits(
     return extended
 
 
+def apply_caiso_humboldt_import_limit(
+    iso_config: ISOConfig, iso: str, year: int
+) -> ISOConfig:
+    """Set the NP15 -> HUMBOLDT link to the solve year's published import capability.
+
+    closeout-CAISO-w5 D3 (``ScenarioConfig.caiso_humboldt_local_area``): the
+    Humboldt local-area zone exists only under that variant, with its one-way
+    import link baked at the tightest-year value. This swaps the link's
+    ``ttc_mw`` to ``constants.CAISO_HUMBOLDT_IMPORT_CAP_MW_BY_YEAR[year]`` (the
+    CAISO LCT 1-in-10 peak load minus the area LCR -- the LA_BASIN / SDGE
+    convention); a year past the table takes the latest published vintage
+    (rule 23: it refreshes when the next LCT report lands), a year before it
+    the earliest. A no-op for any ISO but CAISO or when the link is absent
+    (variant off), so the base topology is byte-identical.
+    """
+    if iso.upper() != "CAISO":
+        return iso_config
+    from market_sim.config.constants import CAISO_HUMBOLDT_IMPORT_CAP_MW_BY_YEAR
+
+    table = CAISO_HUMBOLDT_IMPORT_CAP_MW_BY_YEAR
+    key = year if year in table else (max(table) if year > max(table) else min(table))
+    cap = float(table[key])
+    changed = False
+    new_links: list[TransferLink] = []
+    for link in iso_config.links:
+        if (link.from_zone, link.to_zone) == (
+            "NP15",
+            "HUMBOLDT",
+        ) and link.ttc_mw != cap:
+            new_links.append(link.model_copy(update={"ttc_mw": cap}))
+            changed = True
+        else:
+            new_links.append(link)
+    if not changed:
+        return iso_config
+    extended = iso_config.model_copy(update={"links": new_links})
+    extended.validate_topology()
+    return extended
+
+
 # WECC-accepted directional ratings for CAISO's two internal N-S paths
 # (WECC Path Rating Catalog, 2024 public version; Tier 1 measured). Each model
 # link's symmetric ttc_mw is only ONE direction's rating — Path 15's 5,400 MW
@@ -2305,7 +2345,7 @@ CAISO_LOSS_LINK_TIEBREAK_EPS = 1e-3
 # precommit §3 parent-inheritance rule (zero new tunables; deriving a
 # sub-zonal anchor from SLAP_PGF1 is the recorded sharpener). Inert when
 # FSNO is not in the topology.
-_CAISO_LOSS_SURFACE_PARENT: dict[str, str] = {"FSNO": "NP15"}
+_CAISO_LOSS_SURFACE_PARENT: dict[str, str] = {"FSNO": "NP15", "HUMBOLDT": "NP15"}
 
 
 def _caiso_loss_surface_row(surface: dict, zone: str) -> np.ndarray:

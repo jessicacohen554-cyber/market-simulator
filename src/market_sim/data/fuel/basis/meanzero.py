@@ -233,6 +233,10 @@ def _apply_meanzero_zonal_gas_basis(
     # MMBtu below citygate). Inert when FSNO is not in the topology.
     if iso == "CAISO" and "FSNO" not in basis:
         basis["FSNO"] = basis.get("NP15", 0.0)
+    # closeout-CAISO-w5 D3: HUMBOLDT is carved from NP15 the same way (PG&E
+    # citygate system); inert when HUMBOLDT is not in the topology.
+    if iso == "CAISO" and "HUMBOLDT" not in basis:
+        basis["HUMBOLDT"] = basis.get("NP15", 0.0)
     from market_sim.config.iso_configs import get_iso_config
 
     zone_names = get_iso_config(config.iso).zone_names

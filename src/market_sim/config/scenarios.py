@@ -2356,6 +2356,7 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "caiso_ra_mustoffer_physics_eligibility",
     "caiso_ra_st_min_load_frac",
     "measured_ct_heat_rates_crosswalk_remap",
+    "caiso_humboldt_local_area",
     # NWPP-NEXT-6 (2026-09-26): WECC Path 76 "Alturas" link NWPP-NW <->
     # NWPP-SNV (default off). Byte-identical off by construction: its one
     # applier, pipeline.ttc.apply_nwpp_path76_link, returns the SAME ISOConfig
@@ -3336,6 +3337,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "caiso_ra_mustoffer_physics_eligibility": "False",
     "caiso_ra_st_min_load_frac": "0.119",
     "measured_ct_heat_rates_crosswalk_remap": "False",
+    "caiso_humboldt_local_area": "False",
     # Added by NWPP-NEXT-6 WITH the field (the nyiso-119 discipline).
     "nwpp_path76_alturas_link": "False",
     # Added by NWPP-NEXT-7 WITH the field (the nyiso-119 discipline).
@@ -11007,6 +11009,24 @@ class ScenarioConfig:
     # construction). Carried by model.storage.caiso_charge_allocation_params
     # + dispatch._build_storage_alloc_rows via run_calibration.run_year.
     # Default off (byte-identical); CAISO-only.
+    caiso_humboldt_local_area: bool = False  # closeout-CAISO-w5 D3 (2026-10-05).
+    # The CAISO LCT Humboldt local area as its own zone (rule 17 prefers
+    # topology to a floor; rule 14 measured inputs, zero free parameters).
+    # Armed (via config.topology_variant at the per-solve seams), HUMBOLDT is
+    # carved from NP15: load = the measured SLAP_PGHB share of PG&E TAC load
+    # (OASIS ATL_LDF, constants.CAISO_HUMBOLDT_PGE_TAC_WEIGHT 0.005878, the
+    # caiso-172 static-weight construction); fleet = plants whose eGRID county
+    # is Humboldt (zone_assignment.CAISO_HUMBOLDT_COUNTIES: Humboldt Bay 246,
+    # Fairhaven, Blue Lake, Scotia, ...); one-way NP15 -> HUMBOLDT import link
+    # at the published LCT capability, 1-in-10 peak load minus LCR
+    # (constants.CAISO_HUMBOLDT_IMPORT_CAP_MW_BY_YEAR 22 / 23 / 23 / 33 / 34 /
+    # 40 / 50 MW 2019-25; the LA_BASIN / SDGE convention), set per study year by
+    # model.interchange.caiso.apply_caiso_humboldt_import_limit. Gas basis,
+    # loss surface and AS region inherit NP15 (the FSNO parent rule). Measured
+    # object: Humboldt Bay produced 0.35-0.55 TWh/yr 2019-25 against 0.01-0.29
+    # in the zonal model, priced $20-40 above both trading-hub prints
+    # (docs/records/caiso/closeout-caiso-w5/). Does not compose with
+    # caiso_fsno_subzonal_topology (raises). Default off; CAISO-only.
     caiso_fsno_subzonal_topology: bool = False  # Arm the caiso-223 P-A' FSNO
     # sub-zonal partition (caiso-222 Q2 route (iii), owner-chartered; solve
     # round PRECOMMIT-caiso224-fsno-arm-2026-08-30.md): a new FSNO San-Joaquin

@@ -5132,6 +5132,14 @@ def solve_and_persist(
         iso == "CAISO"
         and bool((prb_overrides or {}).get("caiso_fsno_subzonal_topology", False))
     )
+    # closeout-CAISO-w5 D3: the Humboldt local-area zone, same seam, same
+    # reason (the demand threaded into run_year is loaded HERE).
+    from market_sim.config.topology_variant import set_caiso_humboldt_area
+
+    set_caiso_humboldt_area(
+        iso == "CAISO"
+        and bool((prb_overrides or {}).get("caiso_humboldt_local_area", False))
+    )
     # SPP-93 West/East re-partition, armed at the same seam for the same
     # reason (config.topology_variant); "north_south" for every other ISO.
     from market_sim.config.topology_variant import set_spp_zone_partition

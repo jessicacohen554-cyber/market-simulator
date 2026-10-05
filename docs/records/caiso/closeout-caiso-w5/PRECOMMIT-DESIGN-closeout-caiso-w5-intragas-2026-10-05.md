@@ -191,3 +191,53 @@ bdf292ce89b4caa6b6a0a89af21f248bbb910039e7c9355108773875a47dcdda  dmm_2024.pdf
 **Next steps.**
 - The package D1 + D3 + D4 recovers ≈ 1.4 TWh in 2020 and projects C1 CC_REGULAR 2020 at +3.6 … +4.3 (band ±4.60): a PASS, but with thin margin at low realisation. Adding D2 (+0.6) widens it to +3.0 … +4.0.
 - One full-span arm of 7 year-isolated shards on the w3 recipe, after the ruling.
+
+## Addendum A: build, arms, bars and kills (2026-10-05, written before any solve)
+
+**Desk ruling (2026-10-05).** D1, D3 and D4 build and solve now. Each is default-off and structural, and the owner
+rules at promotion. D3 is the topology variant; D2 is held for the owner; D5 is deferred.
+
+**As built.** Each item is its own flag, and each is byte-identical when off.
+
+| Item | Flag | What changed from the design |
+|---|---|---|
+| D1 | `measured_ct_heat_rates_crosswalk_remap` | **Narrowed to the CT heat-rate artifact.** Arming the full `campd_split_remap_companions` set for CAISO would mean rebuilding companions whose CAISO recipes the builder cannot reproduce (tranche invocation unrecoverable; the CC family aborts on 2020 identity rows). That is infrastructure repair, not the lever. The deriver gains `--apply-remap`; the control derive reproduces the incumbent byte for byte (313 / 313). The companion is the incumbent plus 16 rows: Carlsbad, 9.07 pooled net vs eGRID 9.71, and King City 55811. Carlsbad's CEMS outage windows stay unread, as before (documented). |
+| D4 | `caiso_ra_mustoffer_physics_eligibility` + `caiso_ra_st_min_load_frac` (0.119, measured CAMPD 2019–25) | Built as designed. **Reach revised:** the bridge only holds a unit across gaps between its own P0 runs. The upper bound on the w3 run pattern is 0.12 / 0.57 / 0.28 / 0.26 / 0.07 TWh for 2019–23. |
+| D3 | `caiso_humboldt_local_area` | Built as designed. Load weight 0.005878 of PG&E (ATL_LDF SLAP_PGHB, pooled 2023–25). Import capability per year from the LCT Table 3.1-1: 22 / 23 / 23 / 33 / 34 / 40 / 50 MW. Carve by Humboldt County: 246, 10052, 10764, 50049, 59428, 64766. |
+
+The D1 remap rows also re-key the benchmark's shared CAMPD frame for any new CAISO run. Carlsbad's hourly benchmark
+shape becomes its own CEMS instead of flat. This moves C4 hourly shapes only; C1 levels are EIA-923.
+
+**G-DRIFT** (`90cea720` → this build):
+- **Fleet-only fingerprint of the w3 recipe, new flags off:** identical in all 7 years to the w3 build (`519dbd84`).
+- **Hunks:** the w4/w5 probes are inert. D1, D3 and D4 are gated. The remap rows are LIVE only on raw-CAMPD readers,
+  which means the benchmark frame and the derive scripts.
+
+**Arms** (recipe = the w3 probe = `closeout_caiso_w1_a2_span` + the three w3 arm fields; one SHA, year-isolated):
+- **A1 (stacked):** + D1 + D3 + D4.
+- **A2 (D1-only):** + D1.
+- **A3 (D1 + D4)**, if shard budget allows. Then D3 = A1 − A3 and D4 = A3 − A2.
+
+**Targets and bars** (control = the w3 probe):
+
+| Target | Bar |
+|---|---|
+| T1: C1 CC_REGULAR 2020 | +5.00 → ≤ +4.60 (PASS) |
+| T2: CT_PEAKER energy | moves toward actual in ≥ 5 of 7 years (reported) |
+| T3: Humboldt Bay (246) energy | reported against EIA-923 0.35–0.55 TWh |
+
+**Declared ex ante (WATCH, not kills unless they cross the band):**
+- C1 CC_REGULAR 2019 (−2.04, ±4.84);
+- C1 CT_PEAKER 2021 (+1.63, ±4.83).
+
+**Kills** (any one means NOT PROMOTED; the cell moves to R with the reason):
+1. **K1:** any C1 PASS → FAIL in any year.
+2. **K2:** C4 gas NRMSE worse by more than 0.02 in any year.
+3. **K3:** C3a worse by more than 1.0 pp in any year.
+4. **K4:** HUMBOLDT unserved energy (slack) over 0.1 % of HUMBOLDT load in any year. That would mean an infeasible pocket, which is a data or representation error.
+5. **K5:** a C8 forced-energy breach on CT_PEAKER or CC_REGULAR (rule 20).
+6. **K6:** C2 gas leaves its band.
+
+**Decision rule:**
+- Every kill clears and T1 is met: request a promotion slot superseding the w3 probe.
+- Kills clear but T1 is missed: report; the cells stay U with evidence.

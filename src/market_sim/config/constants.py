@@ -5491,6 +5491,40 @@ CAISO_TAC_ZONE_WEIGHTS_FSNO: dict[str, float] = {
     "ZP26": 0.114794,
 }
 
+# CAISO HUMBOLDT local area (closeout-CAISO-w5 D3, ScenarioConfig.
+# caiso_humboldt_local_area, default off). The Humboldt LCR area's share of
+# PG&E TAC load, MEASURED from CAISO's own published load distribution
+# factors: the DLAP_PGAE-APND distribution factors of the pnodes CAISO places
+# in sub-LAP SLAP_PGHB-APND (OASIS ATL_LDF, data/raw/caiso-atlas/ATL_LDF.csv),
+# day-weighted per year exactly as scripts/data/derive_caiso_path15_load_split.py
+# weighs the NP15/ZP26 split: 0.005562 / 0.005930 / 0.006143 (2023 / 2024 /
+# 2025), pooled 0.005878. Static, as the caiso-172 weights are (no hourly
+# sub-LAP load series is published). Under the variant the PGE-TAC hourly
+# share is re-split NP15 0.878073 / HUMBOLDT 0.005878 / ZP26 0.116049 (sum
+# 1.0, ZP26 untouched). Zero free parameters.
+CAISO_HUMBOLDT_PGE_TAC_WEIGHT: float = 0.005878
+
+# Humboldt area import capability, MW, per study year: the CAISO Final Local
+# Capacity Technical (LCT) reports' Table 3.1-1 "Local Capacity Needs vs. Peak
+# Load", 1-in-10 peak load minus the total LCR -- the literal
+# import_cap = peak_load - LCR convention the LA_BASIN / SDGE pocket links use
+# (iso_configs._caiso_config). (peak / LCR): 2019 187/165, 2020 153/130,
+# 2021 153/130, 2022 144/111, 2023 175/141, 2024 173/133, 2025 214/164.
+# Sources: caiso.com/Documents/Final{2019..2023}LocalCapacityTechnicalReport.pdf;
+# stakeholdercenter.caiso.com/InitiativeDocuments/Final-2024-Local-Capacity-
+# Technical-Report.pdf and Final2025LocalCapacityTechnicalReport.pdf. The
+# binding contingency every year is the Humboldt-Trinity 115 kV overload on
+# the Cottonwood-Bridgeville 115 kV + Humboldt-Humboldt Bay 115 kV (P6) outage.
+CAISO_HUMBOLDT_IMPORT_CAP_MW_BY_YEAR: dict[int, float] = {
+    2019: 22.0,
+    2020: 23.0,
+    2021: 23.0,
+    2022: 33.0,
+    2023: 34.0,
+    2024: 40.0,
+    2025: 50.0,
+}
+
 # NYISO local self-supply floors (transmission.inject_nyiso_local_selfsupply,
 # gated on ScenarioConfig.nyiso_local_selfsupply). Per downstate load-pocket
 # zone, the fraction of that zone's hourly load that must be met by IN-ZONE

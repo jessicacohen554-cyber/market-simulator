@@ -287,6 +287,14 @@ CAISO_FSNO_COUNTIES: frozenset[int] = frozenset(
     }
 )
 
+# Humboldt LCR-area county FIPS (state 6 = California) for the closeout-CAISO-w5
+# D3 HUMBOLDT zone (ScenarioConfig.caiso_humboldt_local_area). The CAISO LCT
+# "Humboldt Area" is bounded by the Humboldt-Trinity / Cottonwood-Bridgeville
+# 115 kV ties ("Humboldt is in, Trinity is out"), i.e. the PG&E Humboldt
+# division -- Humboldt County. Its generators (Humboldt Bay 246, Fairhaven,
+# Blue Lake, Scotia) all sit in it.
+CAISO_HUMBOLDT_COUNTIES: frozenset[int] = frozenset({23})
+
 # LA-basin / SDG&E LCR-pocket county FIPS codes (state 6 = California),
 # matching the county names in local_capacity.COUNTY_AREA_CAISO — the same
 # LCT membership geography that parameterizes the SP15 sub-zone split
@@ -1719,10 +1727,17 @@ def build_zone_lookup(iso: str) -> dict[int, str]:
     )
 
     iso_u = iso.upper()
+    from market_sim.config.topology_variant import caiso_humboldt_area_active
+
     fsno = caiso_fsno_partition_active() if iso_u == "CAISO" else False
     spp_we = spp_west_east_active() if iso_u == "SPP" else False
     nyiso_fg = nyiso_fg_split_active() if iso_u == "NYISO" else False
-    return dict(_build_zone_lookup_cached(iso_u, _use_clean(), fsno, spp_we, nyiso_fg))
+    humboldt = caiso_humboldt_area_active() if iso_u == "CAISO" else False
+    return dict(
+        _build_zone_lookup_cached(
+            iso_u, _use_clean(), fsno, spp_we, nyiso_fg, caiso_humboldt=humboldt
+        )
+    )
 
 
 def _ercot_dam_admitted_zones(egrid: pd.DataFrame, members: set[int]) -> dict[int, str]:
@@ -1778,8 +1793,12 @@ def _build_zone_lookup_cached(
     caiso_fsno: bool = False,
     spp_we: bool = False,
     nyiso_fg: bool = False,
+    caiso_humboldt: bool = False,
 ) -> dict[int, str]:
     """Cache-bearing core of :func:`build_zone_lookup` (already-uppercased ISO).
+
+    ``caiso_humboldt`` (closeout-CAISO-w5 D3) carves the Humboldt LCR-area
+    plants (:data:`CAISO_HUMBOLDT_COUNTIES`) out of NP15 into ``HUMBOLDT``.
 
     ``nyiso_fg`` is carried only as a cache-key bit: the NYISO F/G re-partition
     is read inside :func:`_nyiso_zone` from ``config.topology_variant``, and the
@@ -1837,7 +1856,7 @@ def _build_zone_lookup_cached(
             _to_int(row.FIPSST),
             _to_int(row.FIPSCNTY),
         )
-        if caiso_fsno:
+        if caiso_fsno or caiso_humboldt:
             counties[oris] = (_to_int(row.FIPSST), _to_int(row.FIPSCNTY))
 
     if iso in _EIA860_SUPPLEMENT_ISOS:
@@ -1895,6 +1914,21 @@ def _build_zone_lookup_cached(
                 and zone in ("NP15", "ZP26")
             ):
                 lookup[oris] = "FSNO"
+
+    # CAISO HUMBOLDT local-area carve (closeout-CAISO-w5 D3, armed via
+    # config.topology_variant from ScenarioConfig caiso_humboldt_local_area):
+    # a plant whose eGRID county is Humboldt and whose hub/geographic zone is
+    # NP15 moves to HUMBOLDT. It re-zones only plants already in the ISO's
+    # population (never widens it) and never pulls an SP15-side plant north.
+    if iso == "CAISO" and caiso_humboldt:
+        for oris, zone in lookup.items():
+            fips_state, fips_county = counties.get(oris, (None, None))
+            if (
+                fips_state == _CALIFORNIA_FIPS
+                and fips_county in CAISO_HUMBOLDT_COUNTIES
+                and zone == "NP15"
+            ):
+                lookup[oris] = "HUMBOLDT"
 
     # SPP-93 West/East re-partition (armed via config.topology_variant from
     # ScenarioConfig spp_zone_partition): the measured plant table OVERRIDES

@@ -694,6 +694,43 @@ def _caiso_config() -> ISOConfig:
                 is_bidirectional=False,
             ),
         ]
+    # closeout-CAISO-w5 D3 (ScenarioConfig.caiso_humboldt_local_area, default
+    # off): the Humboldt LCR area leaves NP15 as its own zone. Load = the
+    # measured SLAP_PGHB share of PG&E TAC (constants.
+    # CAISO_HUMBOLDT_PGE_TAC_WEIGHT 0.005878 x 0.4615 = 0.002713 of the ISO,
+    # NP15 the exact residual so the PG&E total is unchanged); one-way
+    # NP15 -> HUMBOLDT import link at the published LCT import capability
+    # (peak_load - LCR, the LA_BASIN / SDGE convention), the STATIC tightest-year
+    # value here, re-set per study year by
+    # model.interchange.caiso.apply_caiso_humboldt_import_limit. Does not
+    # compose with the FSNO partition (both re-split the PG&E zone).
+    from market_sim.config.topology_variant import caiso_humboldt_area_active
+
+    if caiso_humboldt_area_active():
+        if caiso_fsno_partition_active():
+            raise ValueError(
+                "caiso_humboldt_local_area does not compose with "
+                "caiso_fsno_subzonal_topology (both re-split the PG&E zone)"
+            )
+        from market_sim.config.constants import CAISO_HUMBOLDT_IMPORT_CAP_MW_BY_YEAR
+
+        zones = [
+            Zone(name="NP15", iso="CAISO", load_share=0.405187),
+            Zone(name="HUMBOLDT", iso="CAISO", load_share=0.002713),
+            Zone(name="ZP26", iso="CAISO", load_share=0.0536),
+            Zone(name="LA_BASIN", iso="CAISO", load_share=0.374),
+            Zone(name="SDGE", iso="CAISO", load_share=0.091),
+            Zone(name="SP15_rest", iso="CAISO", load_share=0.0735),
+            Zone(name="WECC_import", iso="CAISO", load_share=0.0),
+        ]
+        links = list(links) + [
+            TransferLink(
+                from_zone="NP15",
+                to_zone="HUMBOLDT",
+                ttc_mw=min(CAISO_HUMBOLDT_IMPORT_CAP_MW_BY_YEAR.values()),
+                is_bidirectional=False,
+            ),
+        ]
     # CAISO VOLL: $2,000/MWh — represents the CAISO administrative price cap
     # for real-time energy. CAISO's bid cap is lower than ERCOT's because
     # CAISO has capacity-market-like mechanisms (RA program) that provide

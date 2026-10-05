@@ -76,7 +76,7 @@ REGION_ZONES: dict[str, tuple[str, ...]] = {
     # FSNO (caiso-224 sub-zonal partition, carved from NP15) is north of
     # Path 26 by construction; listing it here is inert whenever the zone is
     # not in the active topology (zone-name matching finds nothing).
-    "AS_NP26": ("NP15", "FSNO", "ZP26"),
+    "AS_NP26": ("NP15", "FSNO", "HUMBOLDT", "ZP26"),
 }
 
 #: (ANC_TYPE, bound) -> XML_DATA_ITEM. Spin/non-spin only — the upward

@@ -1424,6 +1424,12 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     set_caiso_fsno_partition(
         iso == "CAISO" and getattr(config, "caiso_fsno_subzonal_topology", False)
     )
+    # closeout-CAISO-w5 D3: the Humboldt local-area zone, same seam, same reason.
+    from market_sim.config.topology_variant import set_caiso_humboldt_area
+
+    set_caiso_humboldt_area(
+        iso == "CAISO" and getattr(config, "caiso_humboldt_local_area", False)
+    )
     # SPP-93 West/East re-partition, armed at the same seam for the same
     # reason (config.topology_variant); "north_south" for every other ISO.
     from market_sim.config.topology_variant import set_spp_zone_partition
@@ -3469,6 +3475,16 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 if _caiso_year_iso_config is not iso_config:
                     _year_iso_config = _caiso_year_iso_config
                     year_ttc = get_ttc_array(_caiso_year_iso_config.links)
+            # closeout-CAISO-w5 D3: the Humboldt local-area link per study year.
+            if iso == "CAISO" and getattr(config, "caiso_humboldt_local_area", False):
+                from market_sim.model.interchange.caiso import (
+                    apply_caiso_humboldt_import_limit,
+                )
+
+                _hum = apply_caiso_humboldt_import_limit(_year_iso_config, iso, year)
+                if _hum is not _year_iso_config:
+                    _year_iso_config = _hum
+                    year_ttc = get_ttc_array(_hum.links)
             # Forward transmission-expansion channel (FF-G1): add the
             # cumulative in-service committed deltas to this solve year's link
             # TTCs / interface caps. apply_transmission_expansion returns the

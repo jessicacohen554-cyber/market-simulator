@@ -19,12 +19,14 @@ source of truth remains the registered ScenarioConfig field
 settable outside the config seams, and the run's ``run_config.json``
 records the field like any other.
 
-Three variants exist, each default off with the base topology byte-identical:
+Four variants exist, each default off with the base topology byte-identical:
 the CAISO FSNO sub-zonal partition (PRECOMMIT-caiso224-fsno-arm-2026-08-30.md
 §1/§3; the caiso-223 P-A' partition), the SPP West/East re-partition
 (``ScenarioConfig.spp_zone_partition``; PRECOMMIT-spp-93-west-east-2026-09-27.md),
-and the NYISO F/G re-partition (``ScenarioConfig.nyiso_fg_split``;
-DESIGN-nyiso-next17-fg-split-2026-09-30.md).
+the NYISO F/G re-partition (``ScenarioConfig.nyiso_fg_split``;
+DESIGN-nyiso-next17-fg-split-2026-09-30.md), and the CAISO Humboldt local
+area (``ScenarioConfig.caiso_humboldt_local_area``; closeout-CAISO-w5 D3,
+PRECOMMIT-DESIGN-closeout-caiso-w5-intragas-2026-10-05.md).
 """
 
 from __future__ import annotations
@@ -95,3 +97,26 @@ def set_nyiso_fg_split(active: bool) -> None:
 def nyiso_fg_split_active() -> bool:
     """Return True when the NYISO F/G re-partition is armed."""
     return _nyiso_fg_split
+
+
+_caiso_humboldt_area: bool = False
+
+
+def set_caiso_humboldt_area(active: bool) -> None:
+    """Arm/disarm the CAISO Humboldt local-area zone for this process (closeout-CAISO-w5 D3).
+
+    Called from the same per-solve config seams as
+    :func:`set_caiso_fsno_partition`, with
+    ``ScenarioConfig.caiso_humboldt_local_area`` for a CAISO solve and ``False``
+    for any other ISO. Armed, the Humboldt LCR area (CAISO LCT "Humboldt Area";
+    load = the measured SLAP_PGHB share of PG&E load) leaves NP15 as its own
+    zone behind a one-way NP15 -> HUMBOLDT import link at the area's published
+    import capability.
+    """
+    global _caiso_humboldt_area
+    _caiso_humboldt_area = bool(active)
+
+
+def caiso_humboldt_area_active() -> bool:
+    """Return True when the CAISO Humboldt local-area zone is armed."""
+    return _caiso_humboldt_area

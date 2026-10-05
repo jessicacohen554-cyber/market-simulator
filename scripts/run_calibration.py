@@ -3314,6 +3314,12 @@ def run_year(
     set_caiso_fsno_partition(
         iso == "CAISO" and getattr(config, "caiso_fsno_subzonal_topology", False)
     )
+    # closeout-CAISO-w5 D3: the Humboldt local-area zone, same seam, same reason.
+    from market_sim.config.topology_variant import set_caiso_humboldt_area
+
+    set_caiso_humboldt_area(
+        iso == "CAISO" and getattr(config, "caiso_humboldt_local_area", False)
+    )
     # SPP-93 West/East re-partition, armed at the same seam for the same
     # reason (config.topology_variant); "north_south" for every other ISO.
     from market_sim.config.topology_variant import set_spp_zone_partition
@@ -3381,6 +3387,14 @@ def run_year(
             year,
             sd_floor_static=getattr(config, "caiso_import_cap_floor_static", False),
         )
+    # closeout-CAISO-w5 D3: the Humboldt local-area link at the solve year's
+    # published LCT import capability (no-op unless the variant is armed).
+    if iso == "CAISO" and getattr(config, "caiso_humboldt_local_area", False):
+        from market_sim.model.interchange.caiso import (
+            apply_caiso_humboldt_import_limit,
+        )
+
+        iso_config = apply_caiso_humboldt_import_limit(iso_config, iso, year)
     # Priced import/export node (orchestrator-unification Stage 5): the
     # builder choice — reference-price seam vs CAISO per-hub / bidirectional
     # intertie vs the static year-grounded tranche ladder, plus the Manitoba

@@ -325,12 +325,18 @@ def load_zonal_shares(
     if iso == "CAISO" and caiso_standard_time:
         if "FSNO" in zone_names:
             return _caiso_fsno_rescale(iso, year, zone_names, standard_time=True)
+        if "HUMBOLDT" in zone_names:
+            return _caiso_humboldt_rescale(iso, year, zone_names, standard_time=True)
         return _zonal_shares_from_raw(iso, year, zone_names, standard_time=True)
     # CAISO FSNO sub-zonal partition (caiso-224): the 7-zone caller list is
     # served by exact scalar re-split of the 6-zone measured shares — no new
     # hourly series exists (see _caiso_fsno_rescale).
     if iso == "CAISO" and "FSNO" in zone_names:
         return _caiso_fsno_rescale(iso, year, zone_names)
+    # closeout-CAISO-w5 D3: the Humboldt local area re-splits the same
+    # PGE-TAC hourly share by its measured static weight (_caiso_humboldt_rescale).
+    if iso == "CAISO" and "HUMBOLDT" in zone_names:
+        return _caiso_humboldt_rescale(iso, year, zone_names)
     # SPP-93 West/East re-partition: the curated clean parquet is keyed only by
     # ISO-year and holds the BASE North/South grouping, so the variant always
     # parses the measured raw sub-BA file with its own grouping.
@@ -345,6 +351,42 @@ def load_zonal_shares(
         if nyiso_fg_split_active():
             return _zonal_shares_from_raw(iso, year, zone_names)
     return _load_zonal_shares_base(iso, year, zone_names)
+
+
+def _caiso_humboldt_rescale(
+    iso: str, year: int, zone_names: list[str], *, standard_time: bool = False
+) -> np.ndarray | None:
+    """Serve CAISO shares with the HUMBOLDT zone carved out of NP15 (closeout-CAISO-w5 D3).
+
+    The NP15 hourly share is, by construction, the measured PGE-TAC hourly
+    share times the static caiso-172 weight 0.883951. Under the Humboldt
+    variant the same PGE-TAC shape is re-split: HUMBOLDT takes
+    ``constants.CAISO_HUMBOLDT_PGE_TAC_WEIGHT`` (the measured SLAP_PGHB share of
+    PG&E load, OASIS ATL_LDF) and NP15 keeps the rest of its weight, so every
+    column total is preserved and ZP26 is untouched.
+    """
+    from market_sim.config.constants import CAISO_HUMBOLDT_PGE_TAC_WEIGHT
+
+    base_names = [z for z in zone_names if z != "HUMBOLDT"]
+    base = (
+        _zonal_shares_from_raw(iso, year, base_names, standard_time=True)
+        if standard_time
+        else _load_zonal_shares_base(iso, year, base_names)
+    )
+    if base is None:
+        return None
+    pge = base[base_names.index("NP15")] / CAISO_TAC_ZONE_WEIGHTS["PGE-TAC"]["NP15"]
+    out = np.zeros((len(zone_names), base.shape[1]), dtype=float)
+    for i, zone in enumerate(zone_names):
+        if zone == "HUMBOLDT":
+            out[i] = pge * CAISO_HUMBOLDT_PGE_TAC_WEIGHT
+        elif zone == "NP15":
+            out[i] = (
+                base[base_names.index("NP15")] - pge * CAISO_HUMBOLDT_PGE_TAC_WEIGHT
+            )
+        else:
+            out[i] = base[base_names.index(zone)]
+    return _validate_zonal_shares(iso, year, zone_names, out, "humboldt-rescale")
 
 
 def _caiso_fsno_rescale(

@@ -127,7 +127,10 @@ def test_families_zone_masks_include_fsno_when_partition_is_active(monkeypatch):
     fams = _caiso_locational_as_families(zones, len(zones), T, 2024, pen, wid, pen, wid)
     by_name = {f.name: f for f in fams}
     np_zones = {zones[i] for i in np.flatnonzero(by_name["caiso_np26_spin"].zone_mask)}
-    assert np_zones == set(REGION_ZONES["AS_NP26"]) == {"NP15", "FSNO", "ZP26"}
+    assert np_zones == {"NP15", "FSNO", "ZP26"}
+    # The region table also lists the closeout-CAISO-w5 HUMBOLDT zone (carved
+    # from NP15), inert here because it is not in the active zone list.
+    assert set(REGION_ZONES["AS_NP26"]) == {"NP15", "FSNO", "HUMBOLDT", "ZP26"}
     sp_zones = {zones[i] for i in np.flatnonzero(by_name["caiso_sp26_spin"].zone_mask)}
     assert "FSNO" not in sp_zones
     assert sp_zones == set(REGION_ZONES["AS_SP26"])
