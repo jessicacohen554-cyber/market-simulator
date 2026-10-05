@@ -1557,6 +1557,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # seam band rows HOURLY in 2019-2022 and hashes distinctly. Registered WITH
     # the field, per the nyiso-119 discipline.
     "miso_seam_neighbour_hourly_full_span",
+    # closeout-MISO-w3e: byte-identical OFF (the measured MISO artifact is
+    # never read by the capacity carve unless the flag is True); registered
+    # WITH the field, per the nyiso-119 discipline.
+    "miso_chp_btm_measured",
     # caiso-243: both F923 fallback guards are byte-identical OFF (the zone
     # tier is unguarded and the CAMPD-bin fleet carries no state exactly as
     # before); an armed run re-tiers gap-fill months and hashes distinctly.
@@ -3040,6 +3044,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by closeout-MISO-w3 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "miso_seam_neighbour_hourly_full_span": "False",
+    # Added by closeout-MISO-w3e WITH the field (the nyiso-119 discipline).
+    "miso_chp_btm_measured": "False",
     # Added by caiso-243 WITH the fields, in the same commit as their
     # _CACHE_KEY_OPTIONAL_FIELDS entries (the nyiso-119 discipline).
     "nearby_fuel_price_zone_donor_guard": "False",
@@ -20771,6 +20777,25 @@ class ScenarioConfig:
     # miso_seam_neighbour_hourly_ladder. Off by default; byte-identical off and
     # inert for 2023-2025. See docs/records/miso/closeout-miso-w3/.
     miso_seam_neighbour_hourly_full_span: bool = False
+    miso_chp_btm_measured: bool = False  # closeout-MISO-w3e (2026-10-05).
+    # Measured MISO CHP behind-the-meter electric share: the MISO leg of the
+    # caiso_chp_btm_measured / nyiso_chp_btm_measured family, replacing the
+    # sector-keyed constants.CHP_BTM_PCT_BY_SECTOR default in the
+    # chp_steam_following capacity carve with the plant's own on-site-use
+    # share from its EIA-923 Schedules 6/7 source-and-disposition filing, the
+    # SAME definition and derive function as CAISO
+    # (scripts/data/derive_miso_chp_btm_share.py reuses
+    # derive_caiso_chp_btm_share.derive: grid = sales for resale + tolling +
+    # outgoing, retail = host, pooled CY2022-2024; rule-23 artifact
+    # data/raw/_processed-legacy/chp_btm_share_measured_MISO.csv, plants whose
+    # EIA-860 balancing authority is MISO). Rule 14: the default is refuted by
+    # the plants' own filings (Midland Cogen 10745 self-uses ~6 % against 35 %,
+    # Dearborn 55088 ~2 % against 35 %); rule 13: the filing regenerates every
+    # year. Consumed by the capacity carve (data/fleet/assembly.py) and the
+    # run-side BTM add-back (run_calibration_full._btm_frame); the benchmark
+    # subtrahend reads the artifact whenever it exists (nyiso-149). A plant
+    # absent from Schedules 6/7 keeps the default. Default off; MISO-only
+    # (rule 25). See docs/records/miso/closeout-miso-w3/.
 
     # CAISO per-zone citygate-hub gas basis spread. CAISO's zones buy from two
     # separately traded LDC citygate hubs — NP15/ZP26 on PG&E Citygate, SP15 on
@@ -25881,6 +25906,7 @@ TIER_TAGS: dict[str, int] = {
     "miso_seam_neighbour_hourly_ladder": 3,
     "miso_seam_neighbour_hourly_spp": 3,
     "miso_seam_neighbour_hourly_full_span": 3,
+    "miso_chp_btm_measured": 1,
     "pjm_congestion": 3,
     "ercot_zonal_gas_basis": 3,
     "ercot_ep_gas_basis_monthly": 3,
