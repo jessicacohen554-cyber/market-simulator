@@ -18,6 +18,7 @@ import pandas as pd
 from market_sim.config.constants import HOURS_PER_YEAR
 from market_sim.config.interchange_config import CAISO_IMPORT_TRANCHE_HUB
 from market_sim.config.paths import ISO_TRANSMISSION_DIR, RAW_DIR, REFERENCE_DIR
+from market_sim.utils.hour_calendar import model_clock
 
 from .frames import (
     _ISO_TO_HOURLY_BA,
@@ -463,7 +464,7 @@ def measured_interchange_envelope(
     # Map the (month, hod) tables onto the run horizon. Row 0 of the dispatch
     # is the first local hour of the year (see _eia_hourly_frame), so a plain
     # local clock reproduces that index.
-    clock = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
+    clock = model_clock(year, hours)
     rm = clock.month.to_numpy() - 1
     rh = clock.hour.to_numpy()
     return imp_tab[rm, rh], exp_tab[rm, rh]
@@ -518,7 +519,7 @@ def measured_gas_floor_profile(
         ng, hod, percentile, _month_hod_buckets(month, hod), True
     )
 
-    clock = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
+    clock = model_clock(year, hours)
     rm = clock.month.to_numpy() - 1
     rh = clock.hour.to_numpy()
     out = tab[rm, rh]
@@ -1729,7 +1730,7 @@ def pjm_zonal_interchange_envelope(
     if zonal is None:
         return None
     src_hours = zonal.shape[1]
-    src_clock = pd.date_range(f"{year}-01-01", periods=src_hours, freq="h")
+    src_clock = model_clock(year, src_hours)
     s_month = src_clock.month.to_numpy()
     s_hod = src_clock.hour.to_numpy()
     n = len(zone_names)
@@ -1747,7 +1748,7 @@ def pjm_zonal_interchange_envelope(
             exp, s_hod, percentile, buckets, False
         )
     # Map the (month, hod) tables onto the run horizon (row 0 = first local hour).
-    clock = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
+    clock = model_clock(year, hours)
     rm = clock.month.to_numpy() - 1
     rh = clock.hour.to_numpy()
     import_cap = imp_tab[:, rm, rh]
@@ -1818,7 +1819,7 @@ def pjm_neighbor_interchange_envelope(
     if series is None:
         return None
     src_hours = series.shape[1]
-    src_clock = pd.date_range(f"{year}-01-01", periods=src_hours, freq="h")
+    src_clock = model_clock(year, src_hours)
     s_month = src_clock.month.to_numpy()
     s_hod = src_clock.hour.to_numpy()
     n = len(neighbor_names)
@@ -1835,7 +1836,7 @@ def pjm_neighbor_interchange_envelope(
         exp_tab[ni] = _month_hod_percentile_table(
             exp, s_hod, percentile, buckets, False
         )
-    clock = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
+    clock = model_clock(year, hours)
     rm = clock.month.to_numpy() - 1
     rh = clock.hour.to_numpy()
     return imp_tab[:, rm, rh], exp_tab[:, rm, rh]
@@ -1879,13 +1880,13 @@ def pjm_net_interchange_envelope(
         return None
     net_import = -np.asarray(export, dtype=float)
     src_hours = net_import.shape[0]
-    src_clock = pd.date_range(f"{year}-01-01", periods=src_hours, freq="h")
+    src_clock = model_clock(year, src_hours)
     s_month = src_clock.month.to_numpy()
     s_hod = src_clock.hour.to_numpy()
     table = _month_hod_percentile_table(
         net_import, s_hod, percentile, _month_hod_buckets(s_month, s_hod), False
     )
-    clock = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
+    clock = model_clock(year, hours)
     return table[clock.month.to_numpy() - 1, clock.hour.to_numpy()]
 
 

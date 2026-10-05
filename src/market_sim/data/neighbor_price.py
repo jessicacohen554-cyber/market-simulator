@@ -56,6 +56,7 @@ from market_sim.config.constants import HENRY_HUB_TRAJECTORIES
 from market_sim.config.interchange_config import INTERFACE_NEIGHBORS, NeighborInterface
 from market_sim.data.eia_loader import _eia_hourly_frame_filled
 from market_sim.data.fuel.trajectories import _hold_flat_extrapolate
+from market_sim.utils.hour_calendar import model_clock
 
 if TYPE_CHECKING:
     from market_sim.config.interchange_config import CaisoHubNeighbor
@@ -675,7 +676,7 @@ def caiso_hub_measured_gas_reference_price(
     shape = caiso_hub_load_shape(spec, year, hours)
     if shape is None:
         return None
-    month = pd.date_range(f"{year}-01-01", periods=hours, freq="h").month.to_numpy()
+    month = model_clock(year, hours).month.to_numpy()
     return gas[month - 1] * spec.marginal_heat_rate * shape
 
 

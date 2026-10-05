@@ -9,7 +9,7 @@ full-surface facade.
 """
 
 import numpy as np
-import pandas as pd
+from market_sim.utils.hour_calendar import model_clock
 
 
 # Winter cold-snap peak hours (morning HB6-9 + evening HB17-20) — the gas-system
@@ -139,7 +139,7 @@ def inject_neiso_gas_coldsnap_derate(
 
     # Temperature-dependent forced-outage fraction, cold-snap window only.
     frac = np.clip(slope_per_c * (t0_c - tmin), 0.0, cap)
-    clock = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
+    clock = model_clock(year, hours)
     window = np.isin(clock.hour.to_numpy(), np.asarray(NEISO_COLDSNAP_FLOOR_HOURS))
     frac = np.where(window, frac, 0.0)
     if not np.any(frac > 0.0):

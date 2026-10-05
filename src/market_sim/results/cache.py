@@ -76,6 +76,25 @@ human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-10-05a — leap-year model clock (lane closeout-infra-bugs).
+KEY-MOVING for every backcast ISO, through ``solve_surface.SolveEpoch``
+2026-10-05a.** WHAT CHANGED (code, no field): 23 call sites in ``src/`` and
+``scripts/run_calibration_full.py`` read a month, day or weekday off
+``pd.date_range(f"{year}-01-01", periods=hours)``. That range keeps Feb 29, but
+every hourly input (``eia930.frames._eia_hourly_frame`` and the rest) drops it.
+So in 2020 and 2024 every model hour from Mar 1 on was labelled one day early:
+month-keyed tables read the previous month on the first day of each month
+Mar-Dec, and day-keyed inputs (Henry Hub gas day, daily temperatures, the NYISO
+On-Peak weekday mask) read the previous day. They now read
+``hour_calendar.model_clock``. ``_hour_to_month_index`` was already correct.
+WHAT IS INVALIDATED: the 2020 and 2024 backcast legs. Common years are
+byte-identical; they are re-keyed only because an epoch cannot scope by year.
+WHAT IS NOT: forecast keys. A forecast whose pinned weather year is a leap year
+does read the corrected daily temperature and On-Peak mask, but its key does
+not move. That is a SAME-KEY invalidation for such forecasts, left to the
+forecast program because a mode-wide epoch would move the pinned default key. Record:
+``docs/records/governance/closeout-2026-10/FINDING-closeout-infra-bugs-2026-10-05.md``.
+
 **Epoch 2026-10-03d — MISO 2019-2022 measured nuclear: anchor rows plus the
 NRC daily extract (rule 14; lane closeout-miso-nuc, owner ruling R-43).
 KEY-MOVING for backcast MISO, through ``solve_surface.SolveEpoch`` 2026-10-03d.**

@@ -106,11 +106,12 @@ def test_within_season_preserves_the_bin_count() -> None:
 
 
 def test_month_of_hour_handles_leap_years() -> None:
-    """Month boundaries follow the array's leap-ness when no year is given."""
+    """Month boundaries are the model clock's: Feb 29 dropped in every year."""
     assert _month_of_hour(8760)[-1] == 12
-    assert _month_of_hour(8784)[-1] == 12
-    # 2024-02-29 exists, so hour 1416 (Mar 1 in a non-leap year) is still Feb.
-    assert _month_of_hour(8784, 2024)[1416] == 2
+    # Hour 1416 is Mar 1 on the model clock in a leap year too (demand drops
+    # Feb 29), and the last hour is Dec 31.
+    assert _month_of_hour(8760, 2024)[1416] == 3
+    assert _month_of_hour(8760, 2024)[-1] == 12
     assert _month_of_hour(8760, 2023)[1416] == 3
 
 

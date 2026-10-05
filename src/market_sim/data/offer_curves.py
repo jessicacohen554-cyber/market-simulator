@@ -25,6 +25,7 @@ from market_sim.config.constants import (
 )
 from market_sim.config.plant_taxonomy import COAL_ARTIFACT_FAMILY, is_coal_class
 from market_sim.config.scenarios import ScenarioConfig
+from market_sim.utils.hour_calendar import model_clock
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -1849,10 +1850,8 @@ def apply_miso_offer_spread_anchored(
             "affected econ/peak tranches — a wiring error, never a silent no-op"
         )
 
-    import pandas as pd
-
     T = int(mc.shape[1])
-    months = pd.date_range(f"{year}-01-01", periods=T, freq="h").month.to_numpy()
+    months = model_clock(year, T).month.to_numpy()
     pmax_aff = np.asarray(fleet_arrays.pmax, dtype=float)[aff]
     if float(pmax_aff.sum()) <= 0.0:
         raise ValueError(

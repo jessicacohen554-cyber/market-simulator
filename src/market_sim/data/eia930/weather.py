@@ -14,6 +14,7 @@ import numpy as np
 import pandas as pd
 
 from market_sim.config.paths import RAW_DIR
+from market_sim.utils.hour_calendar import model_clock
 
 
 # ---------------------------------------------------------------------------
@@ -149,7 +150,7 @@ def _broadcast_daily_to_hourly(
             df[col].to_numpy(dtype=float),
         )
     )
-    clock = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
+    clock = model_clock(year, hours)
     doy = clock.dayofyear.to_numpy()
     out = np.array([doy_val.get(int(d), np.nan) for d in doy], dtype=float)
     if not np.any(np.isfinite(out)):
@@ -232,7 +233,7 @@ def diurnal_drybulb_from_daily(
     tmin = np.asarray(tmin, dtype=float)
     tmax = np.asarray(tmax, dtype=float)
 
-    hod = pd.date_range(f"{year}-01-01", periods=hours, freq="h").hour.to_numpy()
+    hod = model_clock(year, hours).hour.to_numpy()
 
     # Neighbouring days' extremes, day-flat like the inputs. The first day has
     # no predecessor and the last no successor; holding the edge value there

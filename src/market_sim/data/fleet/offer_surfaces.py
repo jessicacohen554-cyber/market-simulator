@@ -22,6 +22,7 @@ from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.offer_curves import CONDITIONAL_SURFACE_GROUPS
 from pathlib import Path
 from market_sim.data.fleet.models import FleetArrays, Generator
+from market_sim.utils.hour_calendar import model_clock
 
 # Pre-split logger name: records keep the historical module path.
 logger = logging.getLogger("market_sim.data.fleet")
@@ -245,15 +246,16 @@ _WITHIN_YEAR = "within-year"
 
 
 def _month_of_hour(hours: int, year: int | None = None) -> np.ndarray:
-    """Calendar month (1-12) of each hour index in a Jan-1-based year array.
+    """Calendar month (1-12) of each hour index on the model clock.
 
-    Month boundaries depend only on the year's leap-ness, so an unknown year is
-    resolved from the array length (8784 h = leap). Used to map hours onto
+    The model clock drops Feb 29 (:func:`market_sim.utils.hour_calendar.model_clock`),
+    so month boundaries are the same in every year; an unknown year is
+    resolved from the array length for legacy callers. Used to map hours onto
     :data:`market_sim.config.constants.PJM_SEASON_OF_MONTH` for the
     within-season tightness conditioning.
     """
     ref = year if year is not None else (2024 if hours >= 8784 else 2023)
-    return pd.date_range(f"{ref}-01-01", periods=hours, freq="h").month.to_numpy()
+    return model_clock(ref, hours).month.to_numpy()
 
 
 def _tightness_hour_bin(
@@ -605,7 +607,7 @@ def _ercot_gas_day(year: int, hours: int) -> np.ndarray:
     s = hh.set_index("date")["price_usd_mmbtu"].sort_index()
     full = pd.date_range(s.index.min(), s.index.max() + pd.Timedelta(days=14), freq="D")
     daily = s.reindex(full).ffill() + float(GAS_BASIS_DIFFERENTIAL["ERCOT"])
-    hour_days = pd.date_range(f"{year}-01-01", periods=hours, freq="h").normalize()
+    hour_days = model_clock(year, hours).normalize()
     return daily.reindex(hour_days).ffill().bfill().to_numpy(dtype=float)
 
 
@@ -1218,7 +1220,7 @@ def _pjm_midcurve_context(
     s = hh.set_index("date")["price_usd_mmbtu"].sort_index()
     full = pd.date_range(s.index.min(), s.index.max() + pd.Timedelta(days=14), freq="D")
     daily = s.reindex(full).ffill() + float(GAS_BASIS_DIFFERENTIAL["PJM"])
-    hour_days = pd.date_range(f"{year}-01-01", periods=hours, freq="h").normalize()
+    hour_days = model_clock(year, hours).normalize()
     gas_day = daily.reindex(hour_days).ffill().bfill().to_numpy(dtype=float)  # (T,)
 
     # Per-segment (n_bins, n_shares) mult tables for this delivery year
@@ -1686,7 +1688,7 @@ def build_ercot_offer_midcurve_conditional_markup(
     s = hh.set_index("date")["price_usd_mmbtu"].sort_index()
     full = pd.date_range(s.index.min(), s.index.max() + pd.Timedelta(days=14), freq="D")
     daily = s.reindex(full).ffill() + float(GAS_BASIS_DIFFERENTIAL["ERCOT"])
-    hour_days = pd.date_range(f"{year}-01-01", periods=hours, freq="h").normalize()
+    hour_days = model_clock(year, hours).normalize()
     gas_day = daily.reindex(hour_days).ffill().bfill().to_numpy(dtype=float)  # (T,)
 
     # Per-class (n_bins, n_shares) mult tables for this delivery year (pooled
@@ -2091,7 +2093,7 @@ def build_ercot_offer_surface_cleared_share_markup(
     s = hh.set_index("date")["price_usd_mmbtu"].sort_index()
     full = pd.date_range(s.index.min(), s.index.max() + pd.Timedelta(days=14), freq="D")
     daily = s.reindex(full).ffill() + float(GAS_BASIS_DIFFERENTIAL["ERCOT"])
-    hour_days = pd.date_range(f"{year}-01-01", periods=hours, freq="h").normalize()
+    hour_days = model_clock(year, hours).normalize()
     gas_day = daily.reindex(hour_days).ffill().bfill().to_numpy(dtype=float)  # (T,)
 
     # Per-class boundary (n_bins,) + wall table (n_bins, n_q) for this delivery
@@ -3150,7 +3152,7 @@ def build_ercot_faststart_pool_markup(
     s = hh.set_index("date")["price_usd_mmbtu"].sort_index()
     full = pd.date_range(s.index.min(), s.index.max() + pd.Timedelta(days=14), freq="D")
     daily = s.reindex(full).ffill() + float(GAS_BASIS_DIFFERENTIAL["ERCOT"])
-    hour_days = pd.date_range(f"{year}-01-01", periods=hours, freq="h").normalize()
+    hour_days = model_clock(year, hours).normalize()
     gas_day = daily.reindex(hour_days).ffill().bfill().to_numpy(dtype=float)  # (T,)
 
     # Row universe: the wall's measured merchant-CT class scope (the pool
@@ -3590,7 +3592,7 @@ def build_ercot_offline_commit_target(
     s = hh.set_index("date")["price_usd_mmbtu"].sort_index()
     full = pd.date_range(s.index.min(), s.index.max() + pd.Timedelta(days=14), freq="D")
     daily = s.reindex(full).ffill() + float(GAS_BASIS_DIFFERENTIAL["ERCOT"])
-    hour_days = pd.date_range(f"{year}-01-01", periods=hours, freq="h").normalize()
+    hour_days = model_clock(year, hours).normalize()
     gas_day = daily.reindex(hour_days).ffill().bfill().to_numpy(dtype=float)  # (T,)
 
     # Row universe: the wall's measured CC class scope (the ladder's own

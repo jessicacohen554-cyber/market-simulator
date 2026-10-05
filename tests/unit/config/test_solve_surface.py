@@ -317,6 +317,28 @@ class SolveEpochScopeTest(unittest.TestCase):
             S.applicable_epochs(ScenarioConfig(iso="SOCO", mode="forecast")), []
         )
 
+    def test_the_leap_clock_epoch_reaches_every_backcast_iso_only(self):
+        """2026-10-05a (leap-year model clock): every backcast ISO, no forecast."""
+        for iso in (
+            "ERCOT",
+            "CAISO",
+            "PJM",
+            "MISO",
+            "NYISO",
+            "NEISO",
+            "SPP",
+            "NWPP",
+            "SOCO",
+        ):
+            self.assertIn(
+                "2026-10-05a",
+                S.applicable_epochs(ScenarioConfig(iso=iso, mode="backcast")),
+            )
+        self.assertNotIn(
+            "2026-10-05a",
+            S.applicable_epochs(ScenarioConfig(iso="PJM", mode="forecast")),
+        )
+
     def test_the_live_roster_epoch_reaches_only_isos_with_dead_cohorts(self):
         """2026-10-02d (closeout-W0 D-1 part 2): the ISOs the sweep moved."""
         for iso in ("MISO", "NWPP", "PJM", "SOCO"):

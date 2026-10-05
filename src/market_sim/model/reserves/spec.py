@@ -141,6 +141,7 @@ ERCOT_ECRS_LAUNCH_HOUR: int = 160 * 24  # 2023-06-10 00:00
 # --- PJM -------------------------------------------------------------------
 PJM_PRIMARY_RESERVE_LSC_FACTOR: float = 1.5
 from market_sim.config.paths import CALIBRATION_DIR  # noqa: E402
+from market_sim.utils.hour_calendar import model_clock  # noqa: E402
 
 PJM_ORDC_CURVE_PATH: str = str(CALIBRATION_DIR / "pjm_ordc_curve.csv")
 
@@ -721,9 +722,7 @@ def nyiso_onpeak_mask(year: int, hours: int) -> "np.ndarray":
     Returns:
         ``(hours,)`` bool array — True on On-Peak hours.
     """
-    import pandas as pd
-
-    idx = pd.date_range(f"{year}-01-01", periods=int(hours), freq="h")
+    idx = model_clock(year, int(hours))
     on = (idx.hour >= 7) & (idx.hour <= 22) & (idx.dayofweek < 5)
     holiday = np.isin(idx.values.astype("datetime64[D]"), nerc_holidays(year))
     return np.asarray(on & ~holiday, dtype=bool)

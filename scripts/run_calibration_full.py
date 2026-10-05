@@ -131,6 +131,7 @@ from market_sim.pipeline.flags import (  # noqa: E402
 from market_sim.pipeline.backcast_config import backcast_config  # noqa: E402
 from market_sim.pipeline.timing import log_year_phase_timing  # noqa: E402
 from market_sim.results.calibration import check_cf_band_occupancy  # noqa: E402
+from market_sim.utils.hour_calendar import model_clock
 from scripts.lib.bundle_io import (  # noqa: E402
     SHARED_INPUT_NAMES,
     bundle_input_path,
@@ -2552,7 +2553,7 @@ _INJECTED_MUSTRUN_CLASSES: tuple[str, ...] = ("biomass", "OTHER")
 
 def _hour_months(year: int, hours: int) -> np.ndarray:
     """``(hours,)`` array of 1-based calendar month for each hour-of-year."""
-    idx = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
+    idx = model_clock(year, hours)
     return idx.month.to_numpy()
 
 

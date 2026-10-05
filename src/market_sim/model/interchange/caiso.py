@@ -72,6 +72,7 @@ from market_sim.model.interchange.spec import (
     IMPORT_TRANCHE_EF,
     IMPORT_ZONE,
 )
+from market_sim.utils.hour_calendar import model_clock
 
 _logger = logging.getLogger(__name__)
 
@@ -1424,8 +1425,6 @@ def _caiso_measured_da_hub_spread(
     -3.21 / -0.36 / -0.03 for 2023 / 2024 / 2025 -- which is what pins this
     gate to that session's own refusal rather than to a re-derivation.
     """
-    import pandas as pd
-
     from market_sim.config.paths import RAW_DIR
 
     path = RAW_DIR / "_validation-source" / f"actual_lmp_hourly_{iso}.parquet"
@@ -2535,7 +2534,7 @@ def inject_caiso_gas_commitment_floor(
     # Restrict the floor to the midday window (zero elsewhere). Row 0 of the
     # dispatch is the first local hour of the year, so a plain local clock
     # reproduces the hour-of-day index (the interchange-envelope convention).
-    clock = pd.date_range(f"{year}-01-01", periods=hours, freq="h")
+    clock = model_clock(year, hours)
     hod = clock.hour.to_numpy()
     start, end = hod_window
     midday = (hod >= start) & (hod < end)

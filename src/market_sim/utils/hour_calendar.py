@@ -25,6 +25,11 @@ Two hour-of-year forms are offered because two conventions coexist in the tree:
 * :func:`hour_of_year` takes ``(month, day, hour)`` arrays; a leap year's
   Feb 29 maps to ``-1`` for the caller to drop.
 * :func:`hour_index` takes a timestamp Series and is the same map, Feb 29 -> -1.
+* :func:`model_clock` is the inverse: the naive local (standard-time) stamp of
+  each model hour, Feb 29 skipped — the one way to read a calendar field
+  (month, day, weekday) off a model hour index. ``pd.date_range(f"{year}-01-01",
+  periods=hours)`` is NOT this clock in a leap year: it keeps Feb 29, so from
+  Mar 1 on every model hour is labelled one day early.
 * :func:`std_hour_index` first converts tz-aware instants to a fixed
   standard-time zone, then maps them (used when the source carries real UTC
   instants rather than pre-localised wall-clock stamps).
@@ -52,6 +57,7 @@ __all__ = [
     "std_hour_index",
     "to_model_hour",
     "by_month",
+    "model_clock",
 ]
 
 # Common-year month lengths (days). Feb has 28: the model's clock drops Feb 29,
@@ -150,6 +156,22 @@ def to_model_hour(dates: pd.Series, hour_end: pd.Series, year: int) -> np.ndarra
     if calendar.isleap(year):
         idx = np.where(feb29.to_numpy(), -1, idx)
     return idx
+
+
+def model_clock(year: int, hours: int = HOURS_PER_YEAR) -> pd.DatetimeIndex:
+    """Naive local standard-time stamp of each model hour ``0 .. hours-1``.
+
+    Hour ``k`` is the k-th hour after Jan 1 00:00 of ``year`` with a leap
+    year's Feb 29 skipped, so ``model_clock(2024)[1416]`` is 2024-03-01 00:00
+    (the same slot demand and every other hourly input occupy) and the last
+    hour is Dec 31 23:00. Identical to ``pd.date_range(f"{year}-01-01",
+    periods=hours, freq="h")`` in a common year. A horizon past 8760 runs on
+    into the next year, Feb 29 skipped there too.
+    """
+    n = int(hours)
+    idx = pd.date_range(f"{int(year)}-01-01", periods=n + 48, freq="h")
+    idx = idx[~((idx.month == 2) & (idx.day == 29))]
+    return idx[:n]
 
 
 def by_month(values, months) -> list:

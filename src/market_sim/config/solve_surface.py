@@ -151,6 +151,11 @@ class SolveEpoch:
 #: 2026-10-03d: MISO's 2019-2022 NRC daily nuclear extract plus Duane Arnold /
 #: Palisades pass-through rows (backcast MISO; the CSV is in no key; the MISO
 #: NUCLEAR_MONTHLY_CF_BY_YEAR row is declared and moves MISO keys on its own).
+#: 2026-10-05a: leap-year model clock (hour_calendar.model_clock) for every
+#: calendar-field read off an hour index; every backcast ISO (only the leap
+#: legs change; an epoch cannot scope by year). Forecast stays unscoped so the
+#: pinned default key does not move; a leap weather year's forecast exposure
+#: is the forecast program's open item (FINDING-closeout-infra-bugs §2).
 SOLVE_EPOCHS: tuple[SolveEpoch, ...] = (
     SolveEpoch(
         id="2026-10-02c",
@@ -217,6 +222,15 @@ SOLVE_EPOCHS: tuple[SolveEpoch, ...] = (
         ),
         modes=("backcast",),
         isos=("MISO",),
+    ),
+    SolveEpoch(
+        id="2026-10-05a",
+        cause=(
+            "leap-year model clock: month/day/weekday read off an hour index "
+            "via hour_calendar.model_clock (Feb 29 dropped) instead of "
+            "pd.date_range(year), which labelled Mar 1-Dec 31 one day early"
+        ),
+        modes=("backcast",),
     ),
 )
 

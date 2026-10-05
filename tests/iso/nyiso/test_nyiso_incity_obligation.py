@@ -127,8 +127,9 @@ class TestOnPeakCalendar:
         assert int(nyiso_onpeak_mask(2024, 8784).sum()) == 256 * 16
 
     def test_holiday_hours_are_offpeak(self):
-        mask = nyiso_onpeak_mask(2024, 8784)
-        july4 = (31 + 29 + 31 + 30 + 31 + 30 + 3) * 24  # start of Jul 4
+        mask = nyiso_onpeak_mask(2024, 8760)
+        # Model clock drops Feb 29, so Jul 4 starts after a 28-day February.
+        july4 = (31 + 28 + 31 + 30 + 31 + 30 + 3) * 24
         assert not mask[july4 : july4 + 24].any()
 
 
