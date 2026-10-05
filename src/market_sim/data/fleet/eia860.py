@@ -1383,7 +1383,7 @@ def _rows_to_generators(
     iso: str,
     iso_config: ISOConfig | None,
     apply_cc_summer_guard: bool = True,
-    measured_ct_heat_rates: bool = False,
+    measured_ct_heat_rates: bool | str = False,
     measured_coal_heat_rates: bool = False,
     measured_st_heat_rates: bool = False,
     measured_cc_heat_rates: bool | str = False,
@@ -1500,7 +1500,11 @@ def _rows_to_generators(
     # to CT_PEAKER may take it, so a mixed steam/CT facility's boilers keep the
     # eGRID plant average while its turbines take their own measured rate.
     ct_heat_rates: dict[int, float] = (
-        _pkg_ns().measured_ct_heat_rates(iso, heat_rate_year)
+        _pkg_ns().measured_ct_heat_rates(
+            iso,
+            heat_rate_year,
+            crosswalk_remap=measured_ct_heat_rates == "ctremap",
+        )
         if measured_ct_heat_rates
         else {}
     )
@@ -2412,7 +2416,7 @@ def _load_fleet_from_parquet(
     iso_config: ISOConfig | None,
     year: int | None = None,
     apply_cc_summer_guard: bool = True,
-    measured_ct_heat_rates: bool = False,
+    measured_ct_heat_rates: bool | str = False,
     measured_coal_heat_rates: bool = False,
     measured_st_heat_rates: bool = False,
     measured_cc_heat_rates: bool | str = False,
@@ -2609,7 +2613,7 @@ def _load_fleet_from_clean(
     data_dir: Path,
     year: int | None = None,
     apply_cc_summer_guard: bool = True,
-    measured_ct_heat_rates: bool = False,
+    measured_ct_heat_rates: bool | str = False,
     measured_coal_heat_rates: bool = False,
     measured_st_heat_rates: bool = False,
     measured_cc_heat_rates: bool | str = False,
@@ -2884,7 +2888,7 @@ def load_fleet_from_csv(
     data_dir: Path | None = None,
     year: int | None = None,
     apply_cc_summer_guard: bool = True,
-    measured_ct_heat_rates: bool = False,
+    measured_ct_heat_rates: bool | str = False,
     measured_coal_heat_rates: bool = False,
     measured_st_heat_rates: bool = False,
     measured_cc_heat_rates: bool | str = False,
@@ -3584,7 +3588,7 @@ def load_retired_within_window(
     vintage_status_scope: bool = False,
     partial_plant_exit_carry: bool = False,
     mid_vintage_exit_carry: bool = False,
-    measured_ct_heat_rates: bool = False,
+    measured_ct_heat_rates: bool | str = False,
     measured_coal_heat_rates: bool = False,
     measured_st_heat_rates: bool = False,
     measured_cc_heat_rates: bool | str = False,
@@ -3826,7 +3830,7 @@ def load_mothballed_but_operating(
     data_dir: Path | None = None,
     year: int | None = None,
     partial_plant_exit_carry: bool = False,
-    measured_ct_heat_rates: bool = False,
+    measured_ct_heat_rates: bool | str = False,
     measured_coal_heat_rates: bool = False,
     measured_st_heat_rates: bool = False,
     measured_cc_heat_rates: bool | str = False,

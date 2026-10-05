@@ -87,6 +87,7 @@ from market_sim.data.fleet import (  # noqa: E402
     load_mothballed_but_operating,
     load_retired_within_window,
     measured_cc_heat_rate_selector,
+    measured_ct_heat_rate_selector,
     thermal_tranche_overrides,
 )
 from market_sim.data.offer_curves import (  # noqa: E402
@@ -4501,7 +4502,7 @@ def run_year(
                 iso,
                 iso_config,
                 year=year,
-                measured_ct_heat_rates=config.measured_ct_heat_rates,
+                measured_ct_heat_rates=measured_ct_heat_rate_selector(config),
                 measured_coal_heat_rates=config.measured_coal_heat_rates,
                 measured_st_heat_rates=config.measured_st_heat_rates,
                 measured_cc_heat_rates=measured_cc_heat_rate_selector(config),

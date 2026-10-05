@@ -314,8 +314,16 @@ def _measured_rate_map(path: Path, year: int | None, class_keyed: bool = False) 
     return out
 
 
+#: Filename infix of the CT heat-rate companion re-derived with the CAMPD
+#: unit->plant remap applied (closeout-CAISO-w5 D1), read only under
+#: ``ScenarioConfig.measured_ct_heat_rates_crosswalk_remap``.
+CT_REMAP_TAG: str = "ctremap"
+
+
 @lru_cache(maxsize=64)
-def measured_ct_heat_rates(iso: str, year: int | None = None) -> dict[int, float]:
+def measured_ct_heat_rates(
+    iso: str, year: int | None = None, crosswalk_remap: bool = False
+) -> dict[int, float]:
     """Return ``{plant_code: measured loaded heat rate}`` for an ISO's CT_PEAKERs.
 
     Reads the committed CAMPD-measured artifact
@@ -332,11 +340,46 @@ def measured_ct_heat_rates(iso: str, year: int | None = None) -> dict[int, float
     the physical simple-cycle band as a meter defect rather than applying it.
     Empty dict when the ISO has no artifact, which leaves every plant on its
     eGRID rate — never a silent hand number (rule 24 [R-FROZEN-DERIVE]).
+
+    ``crosswalk_remap`` (``ScenarioConfig.measured_ct_heat_rates_crosswalk_remap``,
+    closeout-CAISO-w5 D1; resolved by :func:`measured_ct_heat_rate_selector`)
+    reads the ``-ctremap-`` companion: the incumbent artifact plus the rows of
+    the plants whose CEMS files under a legacy facility
+    (``campd.CAMPD_UNIT_PLANT_REMAP``; CAISO: Carlsbad 59002, King City Peaking
+    55811), derived by ``derive_campd_ct_heat_rates.py --apply-remap``. An
+    absent companion RAISES rather than silently pricing on the incumbent.
     """
     path = PROCESSED_DIR / f"campd_ct_heat_rates_{iso.upper()}.csv"
+    if crosswalk_remap:
+        alt = PROCESSED_DIR / f"campd_ct_heat_rates-{CT_REMAP_TAG}-{iso.upper()}.csv"
+        if not alt.exists():
+            raise FileNotFoundError(
+                f"measured_ct_heat_rates_crosswalk_remap is armed but {alt.name} "
+                "has not been derived (derive_campd_ct_heat_rates.py --apply-remap)"
+            )
+        path = alt
     if not path.exists():
         return {}
     return _measured_rate_map(path, year)
+
+
+def measured_ct_heat_rate_selector(config: object) -> bool | str:
+    """Return the ``measured_ct_heat_rates`` value the fleet loaders receive.
+
+    ``False`` / ``True`` exactly as ``ScenarioConfig.measured_ct_heat_rates``
+    reads, unless ``measured_ct_heat_rates_crosswalk_remap`` (closeout-CAISO-w5
+    D1, default False) is ALSO armed, in which case :data:`CT_REMAP_TAG` — a
+    truthy tag the loaders forward to :func:`measured_ct_heat_rates` as
+    ``crosswalk_remap=True``. One accessor for every fleet call site, so no
+    channel prices a CT on the incumbent while another reads the companion
+    (rule 19 ``[R-ONE-MECH]``).
+    """
+    measured = bool(getattr(config, "measured_ct_heat_rates", False))
+    if measured and bool(
+        getattr(config, "measured_ct_heat_rates_crosswalk_remap", False)
+    ):
+        return CT_REMAP_TAG
+    return measured
 
 
 @lru_cache(maxsize=64)

@@ -1770,6 +1770,11 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         from market_sim.data.fleet import measured_cc_heat_rate_selector
 
         _mhr["measured_cc_heat_rates"] = measured_cc_heat_rate_selector(config)
+        # closeout-CAISO-w5 D1: the CT swap carries the crosswalk-remap tag the
+        # same way, so retirees read the same CT artifact as the operable fleet.
+        from market_sim.data.fleet import measured_ct_heat_rate_selector
+
+        _mhr["measured_ct_heat_rates"] = measured_ct_heat_rate_selector(config)
         retired_within_window = load_retired_within_window(
             iso,
             iso_config,

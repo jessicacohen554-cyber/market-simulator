@@ -160,7 +160,9 @@ def parasitic_factors() -> dict[int, float]:
     return campd.pooled_factor_map(pd.read_parquet(path))
 
 
-def unit_loaded_heat_rates(iso: str, years: list[int], codes: set[int]) -> pd.DataFrame:
+def unit_loaded_heat_rates(
+    iso: str, years: list[int], codes: set[int], apply_remap: bool = False
+) -> pd.DataFrame:
     """Return one row per CAMPD combustion-turbine unit with its loaded rate.
 
     Each state-year extract is read once and immediately narrowed to the ISO's
@@ -174,6 +176,11 @@ def unit_loaded_heat_rates(iso: str, years: list[int], codes: set[int]) -> pd.Da
         years: CAMPD vintages to pool.
         codes: Plant codes to keep (the target class's plants across the
             backcast fleet union, :func:`scripts.lib.heat_rate_years.union_fleet`).
+        apply_remap: Re-key CEMS units filed under a legacy facility to the EIA
+            plant :data:`campd.CAMPD_UNIT_PLANT_REMAP` names BEFORE the fleet
+            filter -- the CC derive's split-plant routing (closeout-CAISO-w5 D1:
+            Carlsbad 302 -> 59002, King City 10294 -> 55811). Default False
+            reproduces the committed artifacts byte-identically.
 
     Returns:
         Columns ``plant_code``, ``plant_name``, ``unit_id``, ``gross_mwh``,
@@ -198,6 +205,15 @@ def unit_loaded_heat_rates(iso: str, years: list[int], codes: set[int]) -> pd.Da
                 ],
             )
             df["facilityId"] = pd.to_numeric(df["facilityId"], errors="coerce")
+            if apply_remap:
+                fac = df["facilityId"].fillna(-1).astype(int)
+                uid = df["unitId"].astype(str)
+                at_split = fac.isin(campd.CAMPD_SPLIT_FACILITIES)
+                if at_split.any():
+                    df.loc[at_split, "facilityId"] = [
+                        campd.CAMPD_UNIT_PLANT_REMAP.get((f, u), f)
+                        for f, u in zip(fac[at_split], uid[at_split])
+                    ]
             df = df[df["facilityId"].isin(codes)]
             df = df[
                 df["unitType"].astype(str).str.strip().str.casefold()
@@ -374,6 +390,15 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     parser.add_argument(
+        "--apply-remap",
+        action="store_true",
+        help=(
+            "Re-key CEMS units through campd.CAMPD_UNIT_PLANT_REMAP before the "
+            "fleet filter (closeout-CAISO-w5 D1); default off reproduces the "
+            "committed artifacts"
+        ),
+    )
+    parser.add_argument(
         "--detail",
         action="store_true",
         help="ALSO write the per-unit table (pooled) alongside the plant summary",
@@ -398,7 +423,7 @@ def main(argv: list[str] | None = None) -> int:
     if not caps:
         raise SystemExit(f"{iso}: model fleet has no {TARGET_CLASS} plants")
     factors = parasitic_factors()
-    units = unit_loaded_heat_rates(iso, years, set(caps))
+    units = unit_loaded_heat_rates(iso, years, set(caps), args.apply_remap)
     if units.empty:
         raise SystemExit(f"{iso}: no unit cleared the loaded-window screen")
     pooled = plant_table(
@@ -406,7 +431,7 @@ def main(argv: list[str] | None = None) -> int:
     )
 
     def _year_table(year: int) -> pd.DataFrame | None:
-        year_units = unit_loaded_heat_rates(iso, [year], set(caps))
+        year_units = unit_loaded_heat_rates(iso, [year], set(caps), args.apply_remap)
         if year_units.empty:
             return None
         return plant_table(

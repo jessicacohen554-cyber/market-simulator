@@ -2355,6 +2355,7 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # is True, and the min-load scalar only under the gate.
     "caiso_ra_mustoffer_physics_eligibility",
     "caiso_ra_st_min_load_frac",
+    "measured_ct_heat_rates_crosswalk_remap",
     # NWPP-NEXT-6 (2026-09-26): WECC Path 76 "Alturas" link NWPP-NW <->
     # NWPP-SNV (default off). Byte-identical off by construction: its one
     # applier, pipeline.ttc.apply_nwpp_path76_link, returns the SAME ISOConfig
@@ -3334,6 +3335,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by closeout-CAISO-w5 WITH the fields (the nyiso-119 discipline).
     "caiso_ra_mustoffer_physics_eligibility": "False",
     "caiso_ra_st_min_load_frac": "0.119",
+    "measured_ct_heat_rates_crosswalk_remap": "False",
     # Added by NWPP-NEXT-6 WITH the field (the nyiso-119 discipline).
     "nwpp_path76_alturas_link": "False",
     # Added by NWPP-NEXT-7 WITH the field (the nyiso-119 discipline).
@@ -6193,6 +6195,22 @@ class ScenarioConfig:
     measured_ct_heat_rates: bool = (
         True  # F1 2026-09-24: backcast default; coerced off outside a backcast
     )
+    # CT heat-rate CROSSWALK REMAP companion (closeout-CAISO-w5 D1, default
+    # off, byte-identical off; rule 14 [R-ACCURATE]). CEMS files some
+    # combustion turbines under a LEGACY facility ORIS while EIA-860 carries
+    # them under their own plant: CAISO's Carlsbad Energy Center (EIA 59002,
+    # 5 x LMS100, 527.5 MW) files as Encina 302 units 6-10, King City Peaking
+    # (55811) as King City 10294 unit 2 -- both rows in the EPA CAMD-EIA
+    # crosswalk of record and in campd.CAMPD_UNIT_PLANT_REMAP. The committed
+    # CT artifact's derive filters on the raw facility id, so those plants had
+    # no measured row and priced at eGRID/class rates (caiso-146 recorded
+    # Carlsbad as "no CAMPD account"). Armed (with measured_ct_heat_rates),
+    # the loader reads the '-ctremap-' companion: the incumbent artifact
+    # byte-for-byte plus the remapped plants' rows from
+    # derive_campd_ct_heat_rates.py --apply-remap (plant-scoped splice; rule
+    # 23 trigger: the identity data change, not a residual). Raises if armed
+    # and the companion is absent. Zero free parameters.
+    measured_ct_heat_rates_crosswalk_remap: bool = False
 
     # Measured COAL steady-state operating heat rates (nwpp-42, default OFF,
     # byte-identical off). scripts/data/derive_campd_coal_heat_rates.py ->
