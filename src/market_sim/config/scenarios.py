@@ -2365,6 +2365,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # COMMIT as the field: off, the measured artifact is never read by the
     # capacity carve, so every pre-existing key is byte-stable.
     "caiso_chp_btm_measured",
+    # closeout-ERCOT-w6 (2026-10-05), default off, registered IN THE SAME
+    # COMMIT as the field: off, the measured artifact is never read by the
+    # capacity carve, so every pre-existing key is byte-stable.
+    "ercot_chp_btm_measured",
     # NWPP-NEXT-6 (2026-09-26): WECC Path 76 "Alturas" link NWPP-NW <->
     # NWPP-SNV (default off). Byte-identical off by construction: its one
     # applier, pipeline.ttc.apply_nwpp_path76_link, returns the SAME ISOConfig
@@ -3366,6 +3370,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "caiso_dsw_daytime_lateevening_unprinted_arm": "False",
     # Added by closeout-CAISO-w6 WITH the field (the nyiso-119 discipline).
     "caiso_chp_btm_measured": "False",
+    # Added by closeout-ERCOT-w6 WITH the field (the nyiso-119 discipline).
+    "ercot_chp_btm_measured": "False",
     # Added by NWPP-NEXT-6 WITH the field (the nyiso-119 discipline).
     "nwpp_path76_alturas_link": "False",
     # Added by NWPP-NEXT-7 WITH the field (the nyiso-119 discipline).
@@ -11011,6 +11017,27 @@ class ScenarioConfig:
     # construction). Carried by model.storage.caiso_charge_allocation_params
     # + dispatch._build_storage_alloc_rows via run_calibration.run_year.
     # Default off (byte-identical); CAISO-only.
+    ercot_chp_btm_measured: bool = False  # closeout-ERCOT-w6 (2026-10-05).
+    # Measured ERCOT CHP behind-the-meter electric share: the ERCOT leg of
+    # caiso_chp_btm_measured (closeout-CAISO-w6), same definition and the SAME
+    # derive function (scripts/data/derive_caiso_chp_btm_share.derive) scoped
+    # to EIA-860 BA ERCO: 100 x clip(1 - (sales for resale + tolling +
+    # outgoing) / (gross - station use)), pooled CY2022-2024 from the plant's
+    # own EIA-923 Schedules 6/7 filing (rule-23 artifact
+    # data/raw/_processed-legacy/chp_btm_share_measured_ERCOT.csv,
+    # scripts/data/derive_ercot_chp_btm_share.py). Replaces the sector-keyed
+    # constants.CHP_BTM_PCT_BY_SECTOR default in the chp_steam_following
+    # capacity carve; because chp_export_floor_measured multiplies the same
+    # share (floor = 923 CF x (1 - btm) x nameplate) the floor follows it --
+    # one share, its existing readers, no second floor (rule 19). Rule 14: the
+    # plants' own filings refute the default (Deer Park 55464 2.9 % vs 35 %,
+    # Pasadena 55047 0 % vs 35 %, Sweeny 55015 84.9 % vs 35 %;
+    # closeout-chp-transfer census, +3.9 to +5.1 TWh/yr of grid CHP). The
+    # benchmark subtrahend reads the artifact whenever it exists (nyiso-149).
+    # A plant absent from Schedules 6/7 keeps the default. Default off;
+    # ERCOT-only (rule 25); armed per run (--ercot-chp-btm-measured /
+    # replay_keeper --set), --no-ercot-chp-btm-measured reaches the pre-arm
+    # posture.
     caiso_chp_btm_measured: bool = False  # closeout-CAISO-w6 (2026-10-05).
     # Measured CAISO CHP behind-the-meter electric share: the CAISO analogue of
     # nyiso_chp_btm_measured (nyiso-147), replacing the sector-keyed
