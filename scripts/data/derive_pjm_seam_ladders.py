@@ -297,13 +297,27 @@ def offline_score(g: pd.DataFrame, ladders: dict) -> dict[str, dict[str, float]]
     return scores
 
 
+def pjm_eia930_label_to_est(labels: pd.Series) -> pd.Series:
+    """Map the PJM per-DIBA file's ``local_time`` labels to EST hour-beginning.
+
+    Despite its name, ``local_time`` in ``PJM interchange hourly.parquet`` is
+    the UTC hour-BEGINNING (every other BA's file is local prevailing
+    hour-ending): differenced against PJM's tie-line meter
+    (``datetime_beginning_utc``) the label correlates at |r| 0.89-0.93 at zero
+    shift in 2020-2025 and < 0.15 at every other shift. FINDING:
+    ``docs/records/governance/closeout-2026-10/FINDING-closeout-infra-bugs-2026-10-05.md``.
+    """
+    utc = pd.to_datetime(labels).dt.tz_localize("UTC")
+    return utc.dt.tz_convert("Etc/GMT+5").dt.tz_localize(None)
+
+
 def eia930_crosscheck(years: tuple[int, ...]) -> None:
     """Print the per-seam annual TWh from BOTH meters (rule 14 boundary note)."""
     if not EIA930_PARQUET.exists():
         print("  (EIA-930 PJM parquet absent — cross-check skipped)")
         return
     ix = pd.read_parquet(EIA930_PARQUET)
-    t = pd.to_datetime(ix["local_time"]) - pd.Timedelta(hours=1)
+    t = pjm_eia930_label_to_est(ix["local_time"])
     ix = ix.assign(year=t.dt.year.to_numpy())
     ix = ix.assign(seam=ix["diba"].astype(str).map(_EIA930_DIBA_SEAM))
     # EIA sign: + = PJM exports to the DIBA → import-positive is −mw.

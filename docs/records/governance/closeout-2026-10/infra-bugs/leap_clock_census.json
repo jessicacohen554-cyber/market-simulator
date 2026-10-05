@@ -1,0 +1,293 @@
+{
+ "ERCOT 2020 _ercot_gas_day (cleared-share + fast-start pool offer gas)": {
+  "hours_changed": 4848,
+  "sum_abs": 517.9,
+  "max_abs": 0.76,
+  "sum_level": 13341.4,
+  "unit": "$/MMBtu-h"
+ },
+ "PJM 2020 _pjm_midcurve_context gas_day": {
+  "hours_changed": 4848,
+  "sum_abs": 517.9,
+  "max_abs": 0.76,
+  "sum_level": 23590.6,
+  "unit": "$/MMBtu-h"
+ },
+ "ERCOT 2024 _ercot_gas_day (cleared-share + fast-start pool offer gas)": {
+  "hours_changed": 4728,
+  "sum_abs": 618.0,
+  "max_abs": 0.77,
+  "sum_level": 15338.4,
+  "unit": "$/MMBtu-h"
+ },
+ "PJM 2024 _pjm_midcurve_context gas_day": {
+  "hours_changed": 4728,
+  "sum_abs": 618.0,
+  "max_abs": 0.77,
+  "sum_level": 25587.6,
+  "unit": "$/MMBtu-h"
+ },
+ "PJM 2020 pjm_zonal_interchange_envelope import_cap (pjm_congestion)": {
+  "hours_changed": 5146,
+  "sum_abs": 896563.7,
+  "max_abs": 2081.0,
+  "sum_level": 27839382.5,
+  "unit": "MWh"
+ },
+ "PJM 2020 pjm_zonal_interchange_envelope export_cap": {
+  "hours_changed": 5586,
+  "sum_abs": 1394627.6,
+  "max_abs": 2710.8,
+  "sum_level": 93605886.9,
+  "unit": "MWh"
+ },
+ "PJM 2020 pjm_neighbor_interchange_envelope import_cap (pjm_seam_flow_limit)": {
+  "hours_changed": 5836,
+  "sum_abs": 488215.5,
+  "max_abs": 1145.2,
+  "sum_level": 16082697.9,
+  "unit": "MWh"
+ },
+ "PJM 2020 pjm_neighbor_interchange_envelope export_cap (pjm_seam_export_limit)": {
+  "hours_changed": 5615,
+  "sum_abs": 809905.4,
+  "max_abs": 1596.0,
+  "sum_level": 68832820.4,
+  "unit": "MWh"
+ },
+ "PJM 2020 pjm_net_interchange_envelope (net position cut)": {
+  "hours_changed": 3871,
+  "sum_abs": 722969.8,
+  "max_abs": 1887.99,
+  "sum_level": 26728730.2,
+  "unit": "MWh"
+ },
+ "CAISO 2020 measured_gas_floor_profile (x0.8 midday floor; p50 default)": {
+  "hours_changed": 240,
+  "sum_abs": 360104.4,
+  "max_abs": 4808.8,
+  "sum_level": 58279676.0,
+  "unit": "MWh"
+ },
+ "PJM 2024 pjm_zonal_interchange_envelope import_cap (pjm_congestion)": {
+  "hours_changed": 4877,
+  "sum_abs": 1227841.6,
+  "max_abs": 2201.0,
+  "sum_level": 45009523.0,
+  "unit": "MWh"
+ },
+ "PJM 2024 pjm_zonal_interchange_envelope export_cap": {
+  "hours_changed": 6898,
+  "sum_abs": 2810473.5,
+  "max_abs": 3195.3,
+  "sum_level": 94325849.7,
+  "unit": "MWh"
+ },
+ "PJM 2024 pjm_neighbor_interchange_envelope import_cap (pjm_seam_flow_limit)": {
+  "hours_changed": 4819,
+  "sum_abs": 521936.0,
+  "max_abs": 1299.7,
+  "sum_level": 25507054.0,
+  "unit": "MWh"
+ },
+ "PJM 2024 pjm_neighbor_interchange_envelope export_cap (pjm_seam_export_limit)": {
+  "hours_changed": 5106,
+  "sum_abs": 893742.5,
+  "max_abs": 1737.8,
+  "sum_level": 66796098.8,
+  "unit": "MWh"
+ },
+ "PJM 2024 pjm_net_interchange_envelope (net position cut)": {
+  "hours_changed": 2758,
+  "sum_abs": 853148.4,
+  "max_abs": 4312.92,
+  "sum_level": 14691194.2,
+  "unit": "MWh"
+ },
+ "CAISO 2024 measured_gas_floor_profile (x0.8 midday floor; p50 default)": {
+  "hours_changed": 240,
+  "sum_abs": 409364.0,
+  "max_abs": 7748.4,
+  "sum_level": 67370613.2,
+  "unit": "MWh"
+ },
+ "CAISO 2024 measured-gas ref price WECC_PNW (gap hours only consume it)": {
+  "hours_changed": 240,
+  "sum_abs": 1064.4,
+  "max_abs": 11.12,
+  "sum_level": 251042.9,
+  "unit": "$/MWh-h"
+ },
+ "CAISO 2024 measured-gas ref price WECC_DSW (gap hours only consume it)": {
+  "hours_changed": 240,
+  "sum_abs": 1859.1,
+  "max_abs": 22.39,
+  "sum_level": 267147.9,
+  "unit": "$/MWh-h"
+ },
+ "NYISO 2024 LI 30-min requirement (On-Peak weekday mask)": {
+  "hours_changed": 1504,
+  "sum_abs": 406080.0,
+  "max_abs": 270.0,
+  "sum_level": 3466800.0,
+  "unit": "MWh"
+ },
+ "CAISO 2020 iso_zone_tmax daily temp (2 zones)": {
+  "tmax": {
+   "sum_abs_degC_h": 29766,
+   "hours_changed_max_zone": 7224,
+   "max_abs_degC": 11.3
+  },
+  "tmin": {
+   "sum_abs_degC_h": 20895,
+   "hours_changed_max_zone": 7104,
+   "max_abs_degC": 8.3
+  }
+ },
+ "CAISO 2024 iso_zone_tmax daily temp (2 zones)": {
+  "tmax": {
+   "sum_abs_degC_h": 30545,
+   "hours_changed_max_zone": 7248,
+   "max_abs_degC": 12.8
+  },
+  "tmin": {
+   "sum_abs_degC_h": 21696,
+   "hours_changed_max_zone": 7200,
+   "max_abs_degC": 7.2
+  }
+ },
+ "ERCOT 2020 iso_zone_tmax daily temp (6 zones)": {
+  "tmax": {
+   "sum_abs_degC_h": 116334,
+   "hours_changed_max_zone": 7200,
+   "max_abs_degC": 26.1
+  },
+  "tmin": {
+   "sum_abs_degC_h": 105122,
+   "hours_changed_max_zone": 7224,
+   "max_abs_degC": 14.1
+  }
+ },
+ "ERCOT 2024 iso_zone_tmax daily temp (6 zones)": {
+  "tmax": {
+   "sum_abs_degC_h": 100746,
+   "hours_changed_max_zone": 7152,
+   "max_abs_degC": 17.2
+  },
+  "tmin": {
+   "sum_abs_degC_h": 91669,
+   "hours_changed_max_zone": 7176,
+   "max_abs_degC": 15.2
+  }
+ },
+ "MISO 2020 iso_zone_tmax daily temp (6 zones)": {
+  "tmax": {
+   "sum_abs_degC_h": 130608,
+   "hours_changed_max_zone": 7344,
+   "max_abs_degC": 21.6
+  },
+  "tmin": {
+   "sum_abs_degC_h": 98818,
+   "hours_changed_max_zone": 7320,
+   "max_abs_degC": 12.2
+  }
+ },
+ "MISO 2024 iso_zone_tmax daily temp (6 zones)": {
+  "tmax": {
+   "sum_abs_degC_h": 124562,
+   "hours_changed_max_zone": 7320,
+   "max_abs_degC": 18.9
+  },
+  "tmin": {
+   "sum_abs_degC_h": 100780,
+   "hours_changed_max_zone": 7320,
+   "max_abs_degC": 16.6
+  }
+ },
+ "PJM 2020 iso_zone_tmax daily temp (8 zones)": {
+  "tmax": {
+   "sum_abs_degC_h": 187700,
+   "hours_changed_max_zone": 7272,
+   "max_abs_degC": 20.0
+  },
+  "tmin": {
+   "sum_abs_degC_h": 144351,
+   "hours_changed_max_zone": 7296,
+   "max_abs_degC": 15.9
+  }
+ },
+ "PJM 2024 iso_zone_tmax daily temp (8 zones)": {
+  "tmax": {
+   "sum_abs_degC_h": 180621,
+   "hours_changed_max_zone": 7296,
+   "max_abs_degC": 16.1
+  },
+  "tmin": {
+   "sum_abs_degC_h": 142677,
+   "hours_changed_max_zone": 7272,
+   "max_abs_degC": 14.2
+  }
+ },
+ "NEISO 2020 iso_zone_tmax daily temp (4 zones)": {
+  "tmax": {
+   "sum_abs_degC_h": 99782,
+   "hours_changed_max_zone": 7344,
+   "max_abs_degC": 15.5
+  },
+  "tmin": {
+   "sum_abs_degC_h": 75809,
+   "hours_changed_max_zone": 7344,
+   "max_abs_degC": 14.6
+  }
+ },
+ "NEISO 2024 iso_zone_tmax daily temp (4 zones)": {
+  "tmax": {
+   "sum_abs_degC_h": 92452,
+   "hours_changed_max_zone": 7320,
+   "max_abs_degC": 13.9
+  },
+  "tmin": {
+   "sum_abs_degC_h": 66430,
+   "hours_changed_max_zone": 7344,
+   "max_abs_degC": 12.7
+  }
+ },
+ "NEISO 2020 neiso_load_weighted_temp (coldsnap derate driver)": {
+  "hours_changed": 7344,
+  "sum_abs": 23380.8,
+  "max_abs": 12.25,
+  "sum_level": 146636.6,
+  "unit": "degC-h"
+ },
+ "NEISO 2024 neiso_load_weighted_temp (coldsnap derate driver)": {
+  "hours_changed": 7344,
+  "sum_abs": 21559.6,
+  "max_abs": 12.41,
+  "sum_level": 147887.6,
+  "unit": "degC-h"
+ },
+ "NYISO 2020 iso_zone_tmax daily temp (5 zones)": {
+  "tmax": {
+   "sum_abs_degC_h": 116352,
+   "hours_changed_max_zone": 6960,
+   "max_abs_degC": 17.8
+  },
+  "tmin": {
+   "sum_abs_degC_h": 90655,
+   "hours_changed_max_zone": 6864,
+   "max_abs_degC": 14.9
+  }
+ },
+ "NYISO 2024 iso_zone_tmax daily temp (5 zones)": {
+  "tmax": {
+   "sum_abs_degC_h": 108425,
+   "hours_changed_max_zone": 6984,
+   "max_abs_degC": 15.0
+  },
+  "tmin": {
+   "sum_abs_degC_h": 86575,
+   "hours_changed_max_zone": 6888,
+   "max_abs_degC": 15.0
+  }
+ }
+}
