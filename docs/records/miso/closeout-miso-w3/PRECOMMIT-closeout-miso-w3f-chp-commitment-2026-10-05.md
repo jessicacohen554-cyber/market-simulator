@@ -38,3 +38,16 @@ Report every moving record:
 - C8 / D-2 and unserved energy.
 
 A prediction missed by more than 2× is a model-of-the-model failure, not a gate. **Stop conditions:** a shard fails, or a leg's `run_config` lacks the flags.
+
+## Addendum: desk bars for arm B (2026-10-05 05:22Z, fixed before any solve)
+
+On the reconciled basis, arm B is scored against these bars:
+
+1. **Failing records:** at most 4.
+2. **C8 forced share:** still PASSES.
+3. **D-4 window:** clean for any new CHP commitment.
+4. **C3a 2020:** no worse than +10.5 %.
+
+**Kill:** any CHP class whose forced share exceeds 30 %.
+
+Arm A has no bars. It supplies the attribution for B (rule 19): the commitment lever's effect on its own, before the holdout is stacked on it.
