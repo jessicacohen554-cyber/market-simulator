@@ -1,0 +1,130 @@
+SHARD NWPP-NEXT-28b (keeper nwppnext27 recipe + TWO keys: energy_reserve_coopt=true, nwpp_ba_contingency_reserve=true) / year 2024 — one backcast solve, then push the bundle. You are a SHARD, not an orchestrator.
+DATA PROFILE: nwpp
+MODEL: Opus or Fable. CLAUDE.md is binding (rules 12, 27, 31, 32, 34, 36).
+
+"A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE."
+Push without asking: you cannot be messaged, and a shard that stops to ask strands its bundle. Do NOT run
+legitimacy_diagnostics.py or any scorer yourself (replay_keeper's own post-step is fine); a legitimacy FAIL is never a hard stop.
+
+PIN: 4ada1b3d2c9cb19c157f0dbb65ef9a9aee829c31 (branch claude/nwppnext28-pin2) = main bba28607 (keeper 2026-10-03-nwpp-next-27-path76) + NEXT-28: the default-off key nwpp_ba_contingency_reserve (spinning pools per thermal plant, PRECOMMIT addendum) (per-BA WECC BAL-002-WECC contingency reserve, 3 % load + 3 % net generation per member BA, half spinning on online units) and its tests.
+The replay source is the keeper bundle results/calibration/nwppnext27_span, committed AT THE PIN (no fetch needed).
+
+STEP 0 — setup
+- Your checkout is ALREADY the PIN 4ada1b3d2c9cb19c157f0dbb65ef9a9aee829c31. Do NOT git fetch anything (a second full fetch fills the disk and leaves no room for swap). If HEAD differs, do ONE `git fetch --depth=1 --filter=blob:none origin 4ada1b3d2c9cb19c157f0dbb65ef9a9aee829c31 && git checkout --detach 4ada1b3d2c9cb19c157f0dbb65ef9a9aee829c31`. Then `python3 scripts/prepare_solve_container.py` BEFORE any data step; it MUST report swap active, else STOP and report.
+- `git rev-parse HEAD` MUST equal the PIN, else STOP.
+- NEVER rebase, pull, merge or "sync". Never switch to another commit after this.
+- `pip install --ignore-installed pyyaml==6.0.3 && pip install -r requirements.txt && pip install -e . --no-deps` (EXACTLY this — never a bare `pip install -e .`).
+- `python3 scripts/hydrate_data.py --profile nwpp` (a "FULL clone" notice is fine), then confirm `ls data/raw/caiso-trns-usage/caiso_trns_usage_dam_2025.parquet` exists (a sparse nwpp profile drops it: if absent, `git checkout HEAD -- data/raw/caiso-trns-usage` — that is a read of the pin's own tree, not a repair).
+- `git checkout -b claude/nwppnext28b-2024` (your own branch, from the pin).
+
+STEP 1 — hard-stop pre-checks (any miss = STOP, report, no push)
+python3 -c "import highspy,pandas,pyarrow,pydantic,importlib.metadata as m;print(m.version('highspy'),pandas.__version__,pyarrow.__version__,pydantic.__version__)"
+  -> MUST print: 1.14.0 3.0.3 24.0.0 2.13.4. Anything else = STOP.
+sha256sum data/raw/_processed-legacy/campd_ct_heat_rates_NWPP.csv  -> 29baa2f1ecfa10d9734c7e44cc306a88d527adb28968ea260f3409de37d7ff92
+sha256sum data/raw/campd-unit-outages-perunit-NWPP.csv             -> ff5b0644553095e6600691673f3442877e287b42623a772bda052b4df734e5f3
+sha256sum data/raw/_processed-legacy/thermal_tranches-perunit-vintage-NWPP.csv -> 6fe20358860f826f8051ccf8989c46a34bb5347e0ff2e8adf5d60b9bbbe65ab9
+sha256sum data/raw/_processed-legacy/eia923_cc_family_heat_rates_NWPP.csv -> cc9ac299d93ad256e7315c86b24cd9abed2535625561e496cf1dae32dada9d38
+Arm construction (zero LP) — FIRST curate the two interface-limit partitions the arm reads, then run this and print its output verbatim:
+python3 scripts/data/curate_transfer_interface_limits.py --isos NWPP CAISO
+python3 - <<'EOF2'
+import logging; logging.disable(logging.WARNING)
+from market_sim.config.scenarios import ScenarioConfig
+from market_sim.config.iso_configs import get_iso_config
+from market_sim.config.interchange_config import get_interchange_spec, build_interchange_fleet
+from market_sim.model.interchange.import_nodes import extend_with_import_node
+from market_sim.model.interchange.spec import build_seam_limit_groups
+from market_sim.data.transfer_interface_limits import nwpp_seam_limits_hourly
+from market_sim.data.eia930.envelopes import nwpp_unpriced_residual_interchange, nwpp_seam_priced_hours_model
+y=2024
+cfg=ScenarioConfig().with_overrides(reference_price_interface=True, nwpp_seam_measured_limits=True, nwpp_coi_pnw_delivery_basis=True, nwpp_seam_in_service_vintage=True, nwpp_path76_served_schedule=True)
+rows=build_interchange_fleet(get_interchange_spec(cfg,"NWPP",year=y),0.0)
+ic=extend_with_import_node(get_iso_config("NWPP"))
+zn=[getattr(z,"name",z) for z in ic.zones]
+r=nwpp_unpriced_residual_interchange(y,grid_carried_wind_served=True,plant_basis=True,seam_in_service_vintage=True)
+caps=nwpp_seam_limits_hourly(y,8760)
+g=build_seam_limit_groups("NWPP",ic.links,caps,y)
+print("ext zones",[z for z in zn if str(z).startswith("NWPP_ext")],"rows",len(rows),"residual TWh %.2f"%(r.sum()/1e6),"| seam groups",len(g),"caps",{k:(round(v[0].mean()),round(v[1].mean())) for k,v in caps.items()})
+from market_sim.model.interchange.spec import CAISO_IMPORT_DELIVERY_BASIS as C, NWPP_SEAM_EXPORT_DELIVERY_TRANCHE as T
+print("basis",{k:C[v] for k,v in T.items()}, cfg.nwpp_coi_pnw_delivery_basis)
+print("NEVP priced hours",int(nwpp_seam_priced_hours_model("CAISO_NEVP",y,in_service_vintage=True).sum()), cfg.nwpp_seam_in_service_vintage)
+import pandas as pd
+from market_sim.data.eia930.envelopes import nwpp_path76_served_zone_legs, _eia_hourly_frame_filled
+m=nwpp_path76_served_zone_legs(y,["NWPP-NW","NWPP-OR","NWPP-INLAND","NWPP-EAST","NWPP-SNV"],pd.DatetimeIndex(_eia_hourly_frame_filled("NWPP",y)["UTC time"]))
+print("path76 leg TWh %.3f"%(m[4].sum()/1e6), cfg.nwpp_path76_served_schedule)
+from market_sim.data.eia930.envelopes import nwpp_ba_contingency_basis
+from market_sim.data.online_reserve_rho import load_online_rho
+l,g=nwpp_ba_contingency_basis(y,["NWPP-NW","NWPP-OR","NWPP-INLAND","NWPP-EAST","NWPP-SNV"])
+print("BAL002 req MW",[round(float(x),1) for x in (0.03*(l+g)).mean(axis=1)],"rho %.4f"%load_online_rho("NWPP","nwpp_spin").rho_used)
+EOF2
+  -> MUST print: ext zones ['NWPP_ext_COI', 'NWPP_ext_NEVP', 'NWPP_ext_BC'] rows 48 residual TWh -19.06 | seam groups 2 caps {'CAISO_COI': (1858, 2751), 'WECC_CAN': (2271, 2342)}
+     AND the next line MUST print: basis {'CAISO_COI': (0.05, 5.0)} True
+     AND the line after MUST print: NEVP priced hours 8760 True
+     AND the line after MUST print: path76 leg TWh -0.177 True
+     AND the last line MUST print: BAL002 req MW [791.3, 258.0, 297.7, 364.0, 268.4] rho 0.2130 (each requirement ±0.5)
+     (residual ±0.01, cap means ±1). Anything else = STOP.
+Data-delta check (zero LP), print verbatim:
+python3 -c "from market_sim.config.constants import NUCLEAR_MONTHLY_CF_BY_YEAR as N;r=N['NWPP'].get(2024);print('nuclear row',r is not None,round(sum(r)/12,4) if r else None)"
+  -> MUST print: nuclear row True 0.985
+After STEP 2's curate_coal_stocks.py: `python3 -c "import sys;sys.path.insert(0,'.');from scripts.lib.clean_io import read_clean as r;d=r('coal-stocks',year=2015);print('coal-stocks 2015 rows',len(d))"` -> MUST print a non-zero row count (the #7134 rows). Zero or an error = STOP.
+
+STEP 2 — the solve (run the runner UNMODIFIED; never pass --no-container-preflight)
+python3 scripts/data/curate_hydro_plant_modes.py --iso NWPP
+python3 scripts/data/curate_coal_receipts.py && python3 scripts/data/curate_coal_stocks.py
+nohup python3 scripts/replay_keeper.py results/calibration/nwppnext27_span \
+  --out-dir results/calibration/nwppnext28b_2024 --years 2024 \
+  --set energy_reserve_coopt=true --set nwpp_ba_contingency_reserve=true \
+  --note "NWPP-NEXT-28b (per-plant spin pools): keeper nwppnext27 + per-BA BAL-002-WECC contingency reserve (spinning half online-gated)" \
+  > /tmp/solve_2024.log 2>&1 &
+Launch it ONCE, as a single command, and record the PID (`echo $!` right after, or `pgrep -f "nwppnext28b_2024"`). Never launch a second solve
+into the same out-dir; if unsure whether one is running, check `pgrep -af replay_keeper` first.
+TWO --set keys (energy_reserve_coopt=true is the shared co-opt gate nwpp_ba_contingency_reserve requires); the keeper bundle's recipe already carries nwpp_path76_served_schedule, nwpp_seam_in_service_vintage, priced_interchange, reference_price_interface,
+nwpp_seam_measured_limits, nwpp_coi_pnw_delivery_basis and nwpp_served_schedule_zonal_attribution. Do not add any other key.
+BUDGET: 360 minutes of solve (with the reserve arm P1 takes 47-83 min on the fast years; 2019/2020 are slower). NEVER end your turn while the solve runs — poll IN-TURN with bounded wait loops
+(e.g. `timeout 540 bash -c 'while kill -0 <pid> 2>/dev/null; do sleep 30; done'`, repeated) until it exits. If it passes
+the budget with no bundle, STOP and report (never push a half-written bundle).
+
+STEP 3 — hard stops on the result (any miss = STOP, report, no push)
+B=results/calibration/nwppnext28b_2024; L=results/calibration/nwppnext27_span
+a) scenario_config diff vs the keeper's year config:
+   python3 -c "import json;a=json.load(open('$B/run_config.json'));b=json.load(open('$L/run_config_2024.json'));A=a.get('scenario_config',a);B=b.get('scenario_config',b);print(sorted((k,B.get(k),A.get(k)) for k in set(A)|set(B) if A.get(k)!=B.get(k)))"
+   Allowed: exactly [('energy_reserve_coopt', False, True), ('nwpp_ba_contingency_reserve', None, True)] (or with False in place of None for the second), optionally plus ('caiso_dsw_daytime_lateevening_unprinted_arm', None, False) (CAISO-only, default off, added on main after the keeper solved — INERT) and/or ('spp_mmu_offer_repair', None, False) or its reverse (SPP-only, inert). Provenance-only keys outside scenario_config are fine. Anything else = STOP.
+   AND: python3 -c "import json;m=json.load(open('$B/meta.json'));print(m.get('priced_interchange'),m.get('reference_price_interface'))" MUST print: True True
+b) Arm live:
+   python3 -c "import pandas as pd;f=pd.read_parquet('$B/flows.parquet');f=f[f['pass']=='P1'];f['seam']=f.from_zone.where(f.from_zone.str.startswith('NWPP_ext'),f.to_zone);f=f[f.seam.str.startswith('NWPP_ext')];f['x']=f.mw.where(f.to_zone.str.startswith('NWPP_ext'),-f.mw);g=f.groupby('seam');print((g.x.sum()/1e6).round(3).to_dict(),(g.mw.apply(lambda s:s.abs().sum())/1e6).round(3).to_dict())"
+   (net export-positive TWh, then gross |flow| TWh per external zone). MUST list all three NWPP_ext_* zones, and NWPP_ext_COI gross > 0. Otherwise STOP.
+   (In 2019–2022 NWPP_ext_BC has no seam rows: report its gross verbatim; non-zero is NOT a stop, the parent reads it.)
+b2) Link gone: python3 -c "import pandas as pd;f=pd.read_parquet('$B/flows.parquet');print(int(((f.from_zone=='NWPP-NW')&(f.to_zone=='NWPP-SNV')|(f.from_zone=='NWPP-SNV')&(f.to_zone=='NWPP-NW')).sum()))" MUST print 0. Otherwise STOP.
+c) meta.json hydro_backfill_year equals the keeper's ($L/meta.json: 2024).
+d) P1 summed demand over the five NWPP-* zones (exclude NWPP_ext_*) from $B/system.parquet = 271.480 TWh ± 0.05 (unchanged from the keeper).
+   The arm serves NEVP's measured BPAT leg (-0.177 TWh) at SNV (+) and NW (-). AND per zone, P1 TWh, each ±0.10: NWPP-NW 110.11, NWPP-OR 51.03, NWPP-INLAND 40.65, NWPP-EAST 43.42, NWPP-SNV 26.27
+   (python3 -c "import pandas as pd;s=pd.read_parquet('$B/system.parquet');s=s[(s['pass']=='P1')&s.zone.str.startswith('NWPP-')];print((s.groupby('zone').demand.sum()/1e6).round(2).to_dict())")
+e) Log lines present in /tmp/solve_2024.log: `BAL-002-WECC contingency reserve: 10 families` (with `rho 0.2130`); `MEASURED online_rho=0.2130`; `coal per-yard budget`; `coal take floor`; `coal monthly pile`; `Path 76 served: NEVP -> BPAT` (and NO `NWPP Path 76 (Alturas)` line — if present, STOP); `NWPP unpriced residual interchange applied`; `NWPP served schedule placed by reporting member`; `measured seam headroom on`; `seam export delivery basis CAISO_COI loss 0.05 wheel 5.0`. (No `seam in-service vintage:` line is expected this year: the seam is in service all year.)
+f) Bundle contains dispatch/2024_P1.parquet, hourly/class_hourly_2024.parquet, hourly/system_2024.parquet, hourly/hydro_cascade_2024.parquet, hourly/unit_hourly_2024.parquet. ALSO report whether hourly/reserve_family_2024.parquet exists (absent is NOT a stop; then report the reserve stats from the solve log instead).
+g) Solve not infeasible / Unknown (if so: STOP, report the log tail, no retry).
+h) Headroom live: /tmp/solve_2024.log contains `measured seam headroom on 2 seam(s)`, and the P1 net seam flow respects the caps:
+   python3 -c "
+import pandas as pd,numpy as np
+from market_sim.data.transfer_interface_limits import nwpp_seam_limits_hourly
+f=pd.read_parquet('$B/flows.parquet');f=f[f['pass']=='P1'];c=nwpp_seam_limits_hourly(2024,8760)
+for s,z in (('CAISO_COI','NWPP_ext_COI'),('WECC_CAN','NWPP_ext_BC')):
+  imp=f[f.from_zone==z].groupby('hour').mw.sum().reindex(range(8760)).fillna(0)-f[f.to_zone==z].groupby('hour').mw.sum().reindex(range(8760)).fillna(0)
+  i,e=c[s];print(s,'max import excess %.1f'%float((imp-i).max()),'max export excess %.1f'%float((-imp-e).max()),'h at import cap',int((imp>=i-1).sum()),'h at export cap',int((-imp>=e-1).sum()))"
+   Both excess values MUST be <= 1.0 MW for CAISO_COI in every year, and for WECC_CAN in 2023-2025 (in 2019-2022 WECC_CAN is unpriced; report it verbatim, not a stop).
+
+STEP 4 — push the FULL bundle to YOUR branch (rule 34(a)); a PLAIN git add, NEVER `git add -f`, NEVER `git add -A` / `git add .`
+printf '\n!results/calibration/nwppnext28b_2024/\n!results/calibration/nwppnext28b_2024/**\n!results/calibration/nwppnext28b_2024/dispatch/**\n!results/calibration/nwppnext28b_2024/hourly/**\n' >> .gitignore
+git add .gitignore && git add results/calibration/nwppnext28b_2024
+git status --short   # MUST show nothing staged outside .gitignore and results/calibration/nwppnext28b_2024/ (untracked curated data is fine)
+git commit -m "NWPP-NEXT-28b shard 2024: keeper nwppnext27 + nwpp_ba_contingency_reserve"
+git push -u origin claude/nwppnext28b-2024   (on HTTP 408/500: git config http.version HTTP/1.1 and retry)
+Verify: `git ls-tree -r --name-only HEAD -- results/calibration/nwppnext28b_2024 | grep -E 'dispatch/2024_P1.parquet|unit_hourly_2024.parquet'` (must print both).
+
+FORBIDDEN, by name: git add -A / git add . / git add -f; dashboard_add_run.py, build_manifest.py, build_status.py,
+prune_iso_runs.py, promote_keeper.py, anything under frontend/data/backcast/**; ANY edit under src/ or scripts/; opening a PR; rebasing;
+deleting any result (rule 31).
+
+FINAL MESSAGE — report in numbers: the reserve-family table from hourly/reserve_family_2024.parquet (P1 rows; per family: mean requirement_mw, mean held, hours with shortfall_mw > 0.5, total shortfall GWh, mean dual $/MWh, hours with dual >= 1999) — python3 -c "import pandas as pd;r=pd.read_parquet('$B/hourly/reserve_family_2024.parquet');r=r[r['pass']=='P1'] if 'pass' in r else r;print(r.columns.tolist());print(r.groupby('family').agg(req=('requirement_mw','mean'),dual=('dual','mean')).round(2))" plus the other stats from the same frame (adapt column names to what the first print shows, report verbatim); P1 CC_REGULAR and CT_PEAKER TWh in zones NWPP-SNV and NWPP-EAST from dispatch/2024_P1.parquet; SNV-zone gas energy TWh (sum of P1 gas units with zone NWPP-SNV in dispatch/2024_P1.parquet) and P1 unserved (slack) GWh by zone; pushed commit SHA (full 40 chars); solve wall time; the `container preflight:` and
+`memory peak:` log lines; the library versions; the STEP-1 construction line verbatim; each hard stop a)–h) with its value
+(b's two dicts and h's printout verbatim); P1 class energy TWh (CC_REGULAR, CT_PEAKER, COAL_PRB, COAL_BIT, COAL_WC, ST_GAS, CC_CHP); the
+P1 demand-weighted mean NWPP price $/MWh; and Jim Bridger (plant_code 8066) and North Valmy (8224) coal energy TWh from
+dispatch/2024_P1.parquet.
