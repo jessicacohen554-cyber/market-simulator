@@ -1,0 +1,19 @@
+{
+  "id": "2026-10-05-closeout-caiso-w8-a1",
+  "label": "closeout caiso w8 a1",
+  "date": "2026-10-05",
+  "shorthand": "closeout-caiso-w8-a1",
+  "definition": "closeout-CAISO-w8 A1: w6 recipe + CC_REGULAR econ tranches at measured incremental HR",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-10-05-closeout-caiso-w8-a1.js",
+  "bundle": "results/calibration/closeout_caiso_w8_a1_span"
+}
