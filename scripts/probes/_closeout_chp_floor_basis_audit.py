@@ -78,8 +78,11 @@ def applied_levels(cfg, iso: str) -> dict[tuple[int, str], dict]:
         p2 = float(r.chp_pmin_cf) if r.chp_pmin_cf == r.chp_pmin_cf else None
         sw = lev.get(k)
         on = duty.get(k, (None, None))[0]
-        scoped_out = sw is not None and scope and on is not None and (
-            on <= CHP_STEAM_ALLHOURS_MIN_ON_FRAC
+        scoped_out = (
+            sw is not None
+            and scope
+            and on is not None
+            and (on <= CHP_STEAM_ALLHOURS_MIN_ON_FRAC)
         )
         use_sw = sw is not None and not scoped_out and sw > (p2 or 0.0)
         out[k] = {
@@ -108,7 +111,11 @@ def btm_shares(cfg, iso: str, keys) -> dict[tuple[int, str], float]:
     mg = bool(getattr(cfg, "campd_outage_merit_order_guard", False))
     meas = measured_chp_btm_pct_for_iso(iso) if chp_btm_measured_armed(cfg) else {}
     return {
-        k: float(meas.get(k[0], chp_btm_pct(k[0], k[1], iso=iso, per_unit=pu, merit_guard=mg)))
+        k: float(
+            meas.get(
+                k[0], chp_btm_pct(k[0], k[1], iso=iso, per_unit=pu, merit_guard=mg)
+            )
+        )
         for k in keys
     }
 
@@ -183,7 +190,9 @@ def main() -> int:
                 continue
             lv = applied_levels(cfg, iso)
             camp, f923 = meter_side(iso, year)
-            keys = sorted({(int(a), str(b)) for a, b in zip(df.plant_code, df.plant_group)})
+            keys = sorted(
+                {(int(a), str(b)) for a, b in zip(df.plant_code, df.plant_group)}
+            )
             btm = btm_shares(cfg, iso, keys)
             cy: dict[str, dict] = {}
             for (pc, pg), d in df.groupby(["plant_code", "plant_group"]):
@@ -197,14 +206,18 @@ def main() -> int:
                 b = btm.get(k, 0.0) / 100.0
                 grid_cap = float(d.pmax.sum())
                 lp_np = grid_cap / (1.0 - b) if b < 1.0 else float("nan")
-                m_camp = float(camp.get(pc, np.nan)) if a.get("status") == "ok" else np.nan
+                m_camp = (
+                    float(camp.get(pc, np.nan)) if a.get("status") == "ok" else np.nan
+                )
                 m_923 = float(f923.get(k, np.nan))
                 meter = m_camp if m_camp == m_camp else m_923
                 meter_grid = meter * (1.0 - b) if meter == meter else np.nan
                 ratio = floor / meter_grid if meter_grid and meter_grid > 0 else None
                 # Capped at the metered basis: scale the hourly floor so its
                 # energy cannot exceed the meter's grid share.
-                scale = min(1.0, meter_grid / floor) if meter_grid == meter_grid else 1.0
+                scale = (
+                    min(1.0, meter_grid / floor) if meter_grid == meter_grid else 1.0
+                )
                 held = np.minimum(mw_h, fl_h)
                 release = float(np.maximum(0.0, held - fl_h * scale).sum()) / 1e6
                 row = {
@@ -231,16 +244,28 @@ def main() -> int:
                     "cap_release_twh_ub": round(release, 4),
                 }
                 res["rows"].append(row)
-                c = cy.setdefault(str(pg), {"floor": 0.0, "model": 0.0, "release": 0.0, "over": 0})
+                c = cy.setdefault(
+                    str(pg), {"floor": 0.0, "model": 0.0, "release": 0.0, "over": 0}
+                )
                 c["floor"] += floor
                 c["model"] += row["model_grid_twh"]
                 c["release"] += release
                 c["over"] += int(ratio is not None and ratio > 1.0)
             for pg, c in sorted(cy.items()):
                 res["class_year"].append(
-                    {"iso": iso, "year": year, "class": pg, **{k: round(v, 4) for k, v in c.items()}}
+                    {
+                        "iso": iso,
+                        "year": year,
+                        "class": pg,
+                        **{k: round(v, 4) for k, v in c.items()},
+                    }
                 )
-            print(iso, year, {k: {kk: round(vv, 3) for kk, vv in v.items()} for k, v in cy.items()}, flush=True)
+            print(
+                iso,
+                year,
+                {k: {kk: round(vv, 3) for kk, vv in v.items()} for k, v in cy.items()},
+                flush=True,
+            )
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(res, indent=1, default=float))
     return 0
