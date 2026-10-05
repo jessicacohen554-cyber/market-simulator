@@ -241,3 +241,17 @@ shape becomes its own CEMS instead of flat. This moves C4 hourly shapes only; C1
 **Decision rule:**
 - Every kill clears and T1 is met: request a promotion slot superseding the w3 probe.
 - Kills clear but T1 is missed: report; the cells stay U with evidence.
+
+**Launch (pin `d24bd6aaeab257e52251c972cdfa32ba29bc7ea8`, environment `env_016R8xUY4maDbppZ6TEns5V8`; fast lane
+11,534 passed, the one failure fixed in the same commit):**
+
+| A1 leg | Shard session |
+|---|---|
+| 2019 | `session_01WS3eFjt4xkRaAuF8wnd6ZA` |
+| 2020 | `session_014VeALCfe7WPEa9xBpzqQLm` |
+| 2021 | `session_018azZPZ6VMbjdRh8jBUpz9K` |
+| 2022 | `session_01BmX1h6LXvGijJJyeKHes6H` |
+| 2023 | `session_01WMAq5naAP659x7vLqQRBFG` |
+| 2024 | `session_01RttHzBMTK9FLJad8nwGRgN` |
+
+A1 2025 and the seven A2 (D1-only) legs are queued under the 6-alive cap.
