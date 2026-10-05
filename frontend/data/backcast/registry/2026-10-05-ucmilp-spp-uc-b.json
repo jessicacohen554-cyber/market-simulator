@@ -1,0 +1,19 @@
+{
+  "id": "2026-10-05-ucmilp-spp-uc-b",
+  "label": "ucmilp spp uc b",
+  "date": "2026-10-05",
+  "shorthand": "ucmilp-spp-uc-b",
+  "definition": "ucmilp-spp: UC A/B",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SPP",
+  "file": "frontend/data/backcast/runs/2026-10-05-ucmilp-spp-uc-b.js",
+  "bundle": "results/calibration/ucmilp_spp_span"
+}
