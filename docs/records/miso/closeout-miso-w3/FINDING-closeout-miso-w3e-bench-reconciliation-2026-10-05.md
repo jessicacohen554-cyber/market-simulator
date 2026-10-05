@@ -65,6 +65,45 @@ This is the test that admitted SOCO and CAISO to `EIA930_GAS_FOLD_REFUTED`: EIA-
 | 2024 | 419.2 | 404.6 (−3.5 %) | 416.2 | 416.2 (−0.7 %) |
 | 2025 | 425.3 | 414.4 (scaled) | 425.4 | 425.4 (0.0 %) |
 
+### 3a. 2019 sits on the deadband edge, and the reconcile does NOT fire
+
+**Deadband.** `benchmark_semantics.VINTAGE_RECONCILE_FRAC = 0.97`, applied in `render_calibration_html.reconcile_vintage_classes`. It leaves the family alone iff 0.97 × target ≤ family ≤ target / 0.97.
+
+**Target.** On the PR basis the target is raw EIA-930 gas + coal, 429.9220 TWh: the MISO fold is refuted and the 930 oil cell is absent.
+
+**Exact numbers per year.** The margin is the distance below the upper edge. The ratio is family ÷ target.
+
+| year | family | upper edge | margin | ratio |
+|---|---:|---:|---:|---:|
+| 2019 | 443.1819 | 443.2186 | **+0.0367** | 1.03084 |
+| 2020 | 394.0855 | 401.0825 | +7.00 | 1.01294 |
+| 2021 | 428.7029 | 433.1309 | +4.43 | 1.02039 |
+| 2022 | 426.7493 | 438.6258 | +11.88 | 1.00301 |
+| 2023 | 414.5304 | 429.0639 | +14.53 | 0.99601 |
+| 2024 | 416.1558 | 432.1175 | +15.96 | 0.99285 |
+| 2025 | 425.4078 | 438.4845 | +13.08 | 1.00018 |
+
+All years are measured on the seam-control span's plant membership.
+
+**2019 does not fire, but the margin is 0.0367 TWh (0.008 %).** It is not robust: a re-registration with a different plant membership, a 923 vintage revision, or a 37 GWh change in any fossil class would trip it.
+
+**If it fired,** every fossil actual would scale by ×0.9701, moving these classes by:
+
+| class | change (TWh) |
+|---|---:|
+| COAL_PRB | −4.81 |
+| CC_REGULAR | −3.12 |
+| COAL_BIT | −2.56 |
+| CC_CHP | −0.98 |
+| ST_GAS | −0.51 |
+| OTHER_FOSSIL | −0.30 |
+| CT_PEAKER | −0.29 |
+| CT_CHP | −0.29 |
+| COAL_LIGNITE | −0.26 |
+| ST_CHP | −0.15 |
+
+The 2019 COAL_PRB record would move by +4.8 TWh against the model. On the seam control that is +0.42 → about +5.2, still inside the ±8 band. The 2019 binary state is therefore reported with its margin, and the arm's own registration re-checks it.
+
 ## 4. Effect on the incumbent keeper (2026-10-03-closeout-miso-nuc-r), C1 fuelmix
 
 Zero LP. Scored locally from re-rendered bench parts; nothing was committed.
