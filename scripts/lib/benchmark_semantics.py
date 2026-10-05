@@ -140,7 +140,16 @@ EIA930_NG_CELL_CORRUPT: frozenset[str] = frozenset({"CAISO"})
 # 11-13 % below both (2019). The CEMS cap (EIA930_NG_CORRUPT_ONSET) is kept.
 # Benchmark-only: the CAISO demand derive reads the geo/biomass term through
 # :func:`geo_biomass_outside_930_other`, which this set does not gate.
-EIA930_GAS_FOLD_REFUTED: frozenset[str] = frozenset({"SOCO", "CAISO"})
+#
+# ERCOT (closeout-ERCOT-w6, 2026-10-05; lands only on owner decision #20;
+# evidence docs/records/ercot/closeout-ercot-w6/FINDING-closeout-ercot-w6-chp-btm-phase0-2026-10-05.md
+# §1, census scripts/probes/_closeout_chp_transfer_census.py): on SOCO-60's own
+# test, ERCO 930 gas minus the 923 gas classes FULL (ERCO-BA plants, CHP host
+# incl.) is -32.9 / -36.6 / -32.9 / -32.3 / -36.4 / -40.2 / -40.1 TWh in
+# 2019-2025 against a fold F of 2.43 / 1.36 / 2.13 / 1.93 / 1.25 / 0.17 / 1.10
+# TWh -- 930 gas is BELOW 923 gas in every year, no room for a fold.
+# Benchmark-only.
+EIA930_GAS_FOLD_REFUTED: frozenset[str] = frozenset({"SOCO", "CAISO", "ERCOT"})
 
 # First VINTAGE year the corruption contaminates: the hourly gas actual
 # (fuelRows / C4) switches to the CEMS+cogen basis from this vintage; earlier

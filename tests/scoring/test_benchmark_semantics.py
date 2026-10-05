@@ -66,9 +66,10 @@ def test_gas_foldin_deflation_refuted_ba_is_zero():
     # SOCO-60 / R-33: SOCO's and CAISO's EIA-930 gas cells are measured NOT to
     # carry the fold (930 gas at or below the 923 gas classes FULL), so the
     # deflation is 0 in both regimes; every other BA is unchanged.
-    assert bs.EIA930_GAS_FOLD_REFUTED == frozenset({"SOCO", "CAISO"})
+    # ERCOT joins on owner decision #20 (closeout-ERCOT-w6 fold test).
+    assert bs.EIA930_GAS_FOLD_REFUTED == frozenset({"SOCO", "CAISO", "ERCOT"})
     cf, e930 = {"OTHER": -0.478, "biomass": 9.315}, {"other": 2.469}
-    for iso in ("SOCO", "CAISO"):
+    for iso in ("SOCO", "CAISO", "ERCOT"):
         assert bs.gas_foldin_deflation(cf, e930, iso) == 0.0
         assert bs.gas_foldin_deflation(cf, {}, iso) == 0.0
     assert abs(bs.gas_foldin_deflation(cf, e930, "MISO") - 6.368) < 1e-9
