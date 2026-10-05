@@ -1,0 +1,851 @@
+iso,plant,name,mw,classes,status,factor_main,factor_branch,raw_net_over_gross
+CAISO,260,Moss Landing Power Plant,1020.0,cc,newly_measured,,0.964073,0.9641
+CAISO,315,AES Alamitos,1142.0,st,newly_measured,,0.943799,0.9438
+CAISO,335,AES Huntington Beach,225.8,st,newly_measured,,0.929964,0.93
+CAISO,341,Long Beach Generating Station,260.0,ct,newly_measured,,0.937927,0.9379
+CAISO,350,"Ormond Beach Power, LLC.",1491.0,st,newly_measured,,0.954689,0.9547
+CAISO,356,AES Redondo Beach,830.0,st,newly_measured,,0.928298,0.9283
+CAISO,358,Mountainview Generating Station,1018.0,cc,newly_measured,,0.957641,0.9576
+CAISO,422,Glenarm,222.4,cc+ct,unmeasured_out_of_band,,,1.0501
+CAISO,7449,NCPA Combustion Turbine Project #2,49.3,ct,newly_measured,,0.900748,0.9007
+CAISO,10169,Carson Cogeneration Company,49.3,cc,unmeasured_out_of_band,,,1.0347
+CAISO,10350,Greenleaf One,60.0,ct,unmeasured_out_of_band,,,0.7875
+CAISO,10776,E. F. Oxnard Energy Facility,48.5,ct,unmeasured_out_of_band,,,3.2911
+CAISO,55077,Desert Star Energy Center,450.0,cc,newly_measured,,0.981998,0.982
+CAISO,55151,La Paloma Generating Plant,1010.0,cc,newly_measured,,0.954707,0.9547
+CAISO,55182,Sunrise Power Company,561.0,cc,newly_measured,,0.96337,0.9634
+CAISO,55295,Blythe Energy,514.0,cc,unmeasured_out_of_band,,,1.3619
+CAISO,55333,"Delta Energy Center, LLC",842.0,cc,newly_measured,,0.962425,0.9624
+CAISO,55345,"Otay Mesa Energy Center, LLC",592.72,cc,newly_measured,,0.961138,0.9611
+CAISO,55393,Metcalf Energy Center,557.0,cc,newly_measured,,0.963443,0.9634
+CAISO,55499,CalPeak Power - Vaca Dixon,48.0,ct,unmeasured_out_of_band,,,0.7371
+CAISO,55508,CalPeak Power - Panoche,48.0,ct,unmeasured_out_of_band,,,0.7587
+CAISO,55510,CalPeak Power - Border,48.0,ct,unmeasured_out_of_band,,,0.7628
+CAISO,55512,Cuyamaca Peak Energy,48.7,ct,newly_measured,,0.878225,0.8782
+CAISO,55513,CalPeak Power - Enterprise,48.0,ct,unmeasured_out_of_band,,,0.7565
+CAISO,55518,High Desert Power Project,889.2,cc,newly_measured,,0.959095,0.9591
+CAISO,55538,"Escondido Energy Center, LLC",54.0,ct,unmeasured_out_of_band,,,0.7871
+CAISO,55540,Chula Vista Energy Center,37.2,ct,unmeasured_out_of_band,,,0.7873
+CAISO,55541,Indigo Generation Facility,142.5,ct,newly_measured,,0.842844,0.8428
+CAISO,55542,Larkspur Energy Facility,91.6,ct,newly_measured,,0.819716,0.8197
+CAISO,55625,Creed Energy Center,48.0,ct,newly_measured,,0.801173,0.8012
+CAISO,55626,Lambie Energy Center,46.0,ct,newly_measured,,0.815541,0.8155
+CAISO,55627,Goose Haven Energy Center,48.0,ct,unmeasured_out_of_band,,,0.7995
+CAISO,55656,Pastoria Energy Facility,757.0,cc,unmeasured_out_of_band,,,1.0579
+CAISO,55698,Hanford Energy Park Peaker,91.8,ct,unmeasured_out_of_band,,,0.7941
+CAISO,55748,Los Esteros Critical Energy Facility,300.0,cc,newly_measured,,0.905473,0.9055
+CAISO,55807,Henrietta Peaker Plant,92.4,ct,newly_measured,,0.802141,0.8021
+CAISO,55810,"Gilroy Energy Center, LLC",144.0,ct,unmeasured_out_of_band,,,0.7985
+CAISO,55847,Feather River Energy Center,48.0,ct,newly_measured,,0.883949,0.8839
+CAISO,55855,Wolfskill Energy Center,47.0,ct,newly_measured,,0.800169,0.8002
+CAISO,55933,Tracy Combined Cycle Power Plant,320.1,cc,newly_measured,,0.934729,0.9347
+CAISO,55951,Agua Mansa Power,40.0,ct,newly_measured,,0.882893,0.8829
+CAISO,55963,Riverview Energy Center,47.0,ct,newly_measured,,0.827284,0.8273
+CAISO,55985,Palomar Energy Center,559.0,cc,newly_measured,,0.969512,0.9695
+CAISO,56026,Donald Von Raesfeld,147.8,cc,newly_measured,,0.954387,0.9544
+CAISO,56041,Malburg Generating Station,130.0,cc,newly_measured,,0.958487,0.9585
+CAISO,56143,Riverside Energy Resource Center,196.0,ct,unmeasured_out_of_band,,,0.7923
+CAISO,56232,Miramar Energy Facility,94.0,ct,newly_measured,,0.84114,0.8411
+CAISO,56239,Malaga Power,96.0,ct,unmeasured_out_of_band,,,0.7552
+CAISO,56467,Russell City Energy Company LLC,605.0,cc,newly_measured,,0.954824,0.9548
+CAISO,56471,McGrath Generating Station,49.0,ct,unmeasured_out_of_band,,,0.771
+CAISO,56472,Grapeland Generating Station,46.0,ct,unmeasured_out_of_band,,,0.7237
+CAISO,56473,Mira Loma Generating Station,49.0,ct,unmeasured_out_of_band,,,0.7929
+CAISO,56474,Barre Generating Station,49.0,ct,unmeasured_out_of_band,,,0.7958
+CAISO,56475,Center Generating Station,47.0,ct,unmeasured_out_of_band,,,0.7399
+CAISO,56476,Gateway Generating Station,563.4,cc,newly_measured,,0.97924,0.9792
+CAISO,56532,Colusa Generating Station,640.0,cc,newly_measured,,0.969055,0.9691
+CAISO,56639,Midway Peaking,111.2,ct,newly_measured,,0.81677,0.8168
+CAISO,56803,Panoche Energy Center,388.0,ct,newly_measured,,0.881406,0.8814
+CAISO,56914,Orange Grove Project,98.2,ct,unmeasured_out_of_band,,,0.7986
+CAISO,57001,El Cajon Energy Center,60.5,ct,unmeasured_out_of_band,,,0.7924
+CAISO,57027,Canyon Power Plant,194.8,ct,newly_measured,,0.866621,0.8666
+CAISO,57267,Marsh Landing Generating Station,765.2,ct,newly_measured,,0.850251,0.8503
+CAISO,57482,"Sentinel Energy Center, LLC",800.0,ct,newly_measured,,0.82894,0.8289
+CAISO,57483,Mariposa Energy Project,199.6,ct,newly_measured,,0.807787,0.8078
+CAISO,57515,Walnut Creek Energy Park,500.5,ct,newly_measured,,0.840868,0.8409
+CAISO,57555,Pio Pico Energy Center LLC,318.0,ct,unmeasured_out_of_band,,,0.7759
+CAISO,57564,Algonquin Power Sanger,61.5,cc,unmeasured_out_of_band,,,1.3874
+CAISO,57901,El Segundo,510.0,cc,newly_measured,,0.894788,0.8948
+CAISO,57978,Lodi Energy Center,273.0,cc,unmeasured_out_of_band,,,1.4776
+CAISO,58122,"Delano Energy Center, LLC",60.5,ct,unmeasured_out_of_band,,,0.7877
+CAISO,60698,Stanton Energy Reliability Center,141.0,ct,unmeasured_out_of_band,,,0.5026
+CAISO,62115,AES Alamitos,603.0,cc,newly_measured,,0.961916,0.9619
+CAISO,62116,AES Huntington Beach,630.0,cc,newly_measured,,0.969217,0.9692
+ERCOT,127,Oklaunion Power Station,720.0,coal,newly_measured,,0.918825,0.9188
+ERCOT,298,Limestone,1688.0,coal,covered_before_measured,0.90305,0.90305,0.9103
+ERCOT,3439,Laredo,177.4,ct,covered_before_measured,0.974492,0.974492,0.9695
+ERCOT,3441,Nueces Bay,633.0,cc,covered_before_measured,0.91989,0.91989,0.9328
+ERCOT,3443,Victoria Power Station,288.0,cc,covered_before_measured,0.99006,0.99006,0.9821
+ERCOT,3452,Lake Hubbard,915.0,st,covered_before_measured,0.964128,0.964128,0.9578
+ERCOT,3453,Mountain Creek Generating Station,808.0,st,covered_before_measured,0.957109,0.957109,0.9448
+ERCOT,3460,Cedar Bayou,1495.0,st,covered_before_measured,0.956217,0.956217,0.9534
+ERCOT,3464,Greens Bayou,327.0,ct,covered_before_measured,0.955032,0.955032,0.9546
+ERCOT,3469,T H Wharton,1002.0,cc+ct,covered_before_class_default,0.975,0.975,1.2291
+ERCOT,3470,W A Parish,3619.0,coal+st,covered_before_measured,0.925566,0.925566,0.9288
+ERCOT,3490,Graham,634.0,st,covered_before_measured,0.952399,0.952399,0.9453
+ERCOT,3491,Handley Generating Station,1245.0,st,covered_before_measured,0.938331,0.938331,0.9409
+ERCOT,3494,Permian Basin,320.0,ct,covered_before_measured,0.955299,0.955299,0.9656
+ERCOT,3504,Stryker Creek,672.0,st,covered_before_measured,0.96305,0.96305,0.9526
+ERCOT,3507,Trinidad,236.0,st,covered_before_measured,0.970419,0.970419,0.9654
+ERCOT,3548,Decker Creek,932.0,ct+st,covered_before_class_default,0.99,0.99,0.8257
+ERCOT,3559,Silas Ray,107.0,cc+ct,covered_before_class_default,0.99,0.99,1.0555
+ERCOT,3576,Ray Olinger,395.0,ct+st,covered_before_measured,0.907848,0.907848,0.8927
+ERCOT,3601,Sim Gideon,607.0,st,covered_before_measured,0.939454,0.939454,0.9516
+ERCOT,3609,Leon Creek,184.0,ct,covered_before_measured,0.89733,0.89733,0.8983
+ERCOT,3611,O W Sommers,830.0,st,covered_before_measured,0.964862,0.964862,0.9585
+ERCOT,3612,V H Braunig,1050.0,ct+st,covered_before_class_default,0.97,0.97,0.2835
+ERCOT,3628,R W Miller,587.0,ct+st,covered_before_measured,0.901475,0.901475,0.8638
+ERCOT,3631,Sam Rayburn Plant,183.0,cc,covered_before_class_default,0.975,0.975,1.1514
+ERCOT,4195,Power Lane Steam Plant,18.0,st,covered_before_class_default,0.99,0.99,2.5195
+ERCOT,4266,Spencer,122.0,st,covered_before_measured,0.81443,0.81443,0.8092
+ERCOT,4937,T C Ferguson Power Plant,516.0,cc,covered_before_class_default,0.975,0.975,1.5324
+ERCOT,4939,Barney M. Davis,925.0,cc+st,covered_before_measured,0.947954,0.947954,0.937
+ERCOT,6146,Martin Lake,2455.0,coal,covered_before_measured,0.885334,0.885334,0.9081
+ERCOT,6178,Coleto Creek,655.0,coal,covered_before_measured,0.932008,0.932008,0.9342
+ERCOT,6179,Sam Seymour,1615.0,coal,covered_before_measured,0.924744,0.924744,0.933
+ERCOT,6180,Oak Grove,1710.0,coal,covered_before_measured,0.921222,0.921222,0.9251
+ERCOT,6183,San Miguel,391.0,coal,covered_before_measured,0.878158,0.878158,0.9015
+ERCOT,6243,Roland C. Dansby Power Plant,204.2,ct+st,covered_before_measured,0.836096,0.836096,0.8228
+ERCOT,7030,Twin Oaks,305.0,coal,covered_before_measured,0.877933,0.877933,0.8812
+ERCOT,7097,J K Spruce,1345.0,coal,covered_before_measured,0.941613,0.941613,0.9443
+ERCOT,7325,San Jacinto Steam Electric Station,160.0,ct,covered_before_measured,0.991414,0.991414,0.9946
+ERCOT,7900,Sand Hill Energy Center,595.8,cc+ct,covered_before_measured,0.939113,0.939113,0.9417
+ERCOT,8063,Decordova,274.0,ct,covered_before_measured,0.873183,0.873183,0.8588
+ERCOT,50109,Paris Energy Center,239.0,cc,covered_before_measured,0.960147,0.960147,0.9546
+ERCOT,50137,New Gulf Power Facility,75.0,ct,covered_before_measured,0.88816,0.88816,0.7544
+ERCOT,52176,C. R. Wing Cogeneration Plant,169.8,ct,covered_before_measured,0.916191,0.916191,0.9587
+ERCOT,54817,Johnson County Generation Facility,277.0,cc,covered_before_measured,0.960801,0.960801,0.9614
+ERCOT,55062,Tenaska Frontier Generating Station,860.0,cc,covered_before_measured,0.978259,0.978259,0.9782
+ERCOT,55086,Gregory Power Facility,366.0,cc,covered_before_class_default,0.975,0.975,1.0043
+ERCOT,55091,Midlothian Energy,1620.0,cc,covered_before_measured,0.96745,0.96745,0.9618
+ERCOT,55097,Lamar Power Plant,1044.0,cc,covered_before_measured,0.975969,0.975969,0.9778
+ERCOT,55098,Frontera Generation Facility,529.0,cc,covered_before_measured,0.872751,0.872751,0.2849
+ERCOT,55123,Magic Valley Generating Station,667.0,cc,covered_before_measured,0.902728,0.902728,0.9034
+ERCOT,55132,Tenaska Gateway Generating Station,826.0,cc,covered_before_measured,0.967235,0.967235,0.9739
+ERCOT,55137,"Rio Nogales Power Project, LP",799.5,cc,covered_before_measured,0.930008,0.930008,0.9293
+ERCOT,55139,Wolf Hollow Generating Station,756.0,cc,covered_before_measured,0.967225,0.967225,0.9682
+ERCOT,55144,Hays Energy Facility,931.0,cc,covered_before_measured,0.970362,0.970362,0.9632
+ERCOT,55153,Guadalupe Generating Station,1005.0,cc,covered_before_measured,0.980378,0.980378,0.9778
+ERCOT,55154,Lost Pines 1,510.0,cc,covered_before_class_default,0.975,0.975,1.5219
+ERCOT,55168,Bastrop Clean Energy Center,575.0,cc,covered_before_measured,0.949648,0.949648,0.9609
+ERCOT,55172,Bosque County Power Plant,763.0,cc,covered_before_class_default,0.975,0.975,1.0922
+ERCOT,55215,Odessa Ector Generating Station,1061.8,cc,covered_before_measured,0.975675,0.975675,0.9716
+ERCOT,55223,"Ennis Power Company, LLC",359.5,cc,covered_before_measured,0.974979,0.974979,1.0005
+ERCOT,55226,Freestone Power Generation,1032.0,cc,covered_before_measured,0.974167,0.974167,0.9742
+ERCOT,55230,Jack County Generation Facility,1241.0,cc,covered_before_measured,0.968522,0.968522,0.9646
+ERCOT,55320,"Wise County Power Company, LLC",735.0,cc,covered_before_measured,0.963163,0.963163,0.985
+ERCOT,55357,"Brazos Valley Energy, LP",675.6,cc,covered_before_class_default,0.97,0.97,0.971
+ERCOT,55365,LaPorte Generating Station,144.0,ct,covered_before_measured,0.903064,0.903064,0.9096
+ERCOT,55480,Forney Power Plant,1770.0,cc,covered_before_measured,0.970642,0.970642,0.9703
+ERCOT,55501,Tenaska Kiamichi Generating Station,1224.0,cc,newly_measured,,0.960366,0.9604
+ERCOT,56349,Quail Run Energy Center,472.2,cc,covered_before_measured,0.977416,0.977416,1.0035
+ERCOT,56350,Colorado Bend Energy Center,608.0,cc+ct,covered_before_measured,0.967707,0.967707,0.97
+ERCOT,56611,Sandy Creek Energy Station,932.6,coal,covered_before_measured,0.927543,0.927543,0.9356
+ERCOT,56674,Winchester Power Park,176.0,ct,covered_before_measured,0.87836,0.87836,0.8822
+ERCOT,56806,Cedar Bayou 4,504.0,cc,covered_before_class_default,0.975,0.975,1.4523
+ERCOT,58001,Temple Power Station,1580.0,cc,covered_before_measured,0.970545,0.970545,0.968
+ERCOT,58005,Rayburn Energy Station,685.0,cc,covered_before_measured,0.975083,0.975083,0.9731
+ERCOT,58471,Ector County Energy Center,320.0,ct,covered_before_measured,0.961866,0.961866,0.9536
+ERCOT,59812,Wolf Hollow II,1103.4,cc,covered_before_measured,0.971546,0.971546,0.9691
+ERCOT,60122,Colorado Bend II,1142.7,cc,covered_before_measured,0.976534,0.976534,0.9719
+ERCOT,60264,Bacliff Generating Station,324.0,ct,covered_before_measured,0.938085,0.938085,0.9155
+ERCOT,60459,Port Comfort Peaking Facility,84.0,ct,covered_before_measured,0.861477,0.861477,0.8401
+ERCOT,60460,"Chamon Power, LLC",92.0,ct,covered_before_measured,0.836301,0.836301,0.8486
+ERCOT,60468,Tejas Power Generation Unit 1,117.0,ct,covered_before_measured,0.895972,0.895972,0.9044
+ERCOT,61241,Victoria City Peaking Facility,86.0,ct,covered_before_measured,0.885484,0.885484,0.878
+ERCOT,61242,Victoria Port Peaking Facility,86.0,ct,covered_before_measured,0.890954,0.890954,0.8754
+ERCOT,61966,Victoria Port Power II Peaking Facility,86.0,ct,covered_before_measured,0.832705,0.832705,0.8739
+ERCOT,62548,SJRR Power Peaking Facility,90.0,ct,covered_before_class_default,0.99,0.99,0.9669
+ERCOT,63335,HO Clarke Generating,356.0,ct,covered_before_measured,0.907395,0.907395,0.8819
+ERCOT,63688,Topaz Generating,445.0,ct,covered_before_measured,0.911256,0.911256,0.9358
+ERCOT,64383,Braes Bayou Plant,356.0,ct,covered_before_measured,0.915365,0.915365,0.9313
+ERCOT,65372,Mark One Power Station,356.8,ct,covered_before_measured,0.908098,0.908098,0.936
+ERCOT,65373,Brotman Power Station,356.8,ct,covered_before_measured,0.904465,0.904465,0.9019
+ERCOT,66604,Remy Jade Power Station,356.0,ct,covered_before_class_default,0.99,0.99,1.016
+MISO,51,Dolet Hills Power Station,634.8,coal,newly_measured,,0.885072,0.8851
+MISO,170,Lake Catherine,522.0,st,newly_measured,,0.948472,0.9485
+MISO,856,E D Edwards,560.0,coal,newly_measured,,0.952375,0.9524
+MISO,862,"Grand Tower Energy Center, LLC",511.0,cc,newly_measured,,0.975339,0.9753
+MISO,889,Baldwin Energy Complex,1157.0,coal,covered_before_measured,0.909719,0.909719,0.9209
+MISO,913,Venice,486.0,ct,covered_before_class_default,0.97,0.97,0.9612
+MISO,963,Dallman,511.8,coal,covered_before_measured,0.838455,0.838455,0.8755
+MISO,976,Marion,430.0,coal+ct,covered_before_measured,0.917705,0.917705,0.9385
+MISO,990,IPL - Harding Street Station (EW Stout),906.0,ct+st,covered_before_measured,0.935526,0.935526,0.9252
+MISO,991,IPL - Eagle Valley Generating Station,673.0,cc,covered_before_measured,0.973541,0.973541,0.9692
+MISO,994,IPL - Petersburg Generating Station,1701.5,coal,covered_before_measured,0.886815,0.886815,0.8945
+MISO,997,Michigan City Generating Station,455.0,coal,covered_before_measured,0.897982,0.897982,0.9015
+MISO,1001,Cayuga,1079.0,coal+ct,covered_before_measured,0.898336,0.898336,0.9006
+MISO,1004,Edwardsport Generating Station,555.0,coal,covered_before_class_default,0.97,0.97,1.1033
+MISO,1007,Noblesville,264.0,cc,covered_before_measured,0.90271,0.90271,1.3973
+MISO,1008,R Gallagher,280.0,coal,unmeasured_out_of_band,,,0.5462
+MISO,1012,F B Culley Generating Station,360.0,coal,covered_before_measured,0.911418,0.911418,0.9152
+MISO,1047,Lansing,235.3,coal,newly_measured,,0.871763,0.8718
+MISO,1068,Marshalltown CTs,156.5,ct,newly_measured,,0.92806,0.9281
+MISO,1082,Walter Scott Jr. Energy Center,1511.7,coal,newly_measured,,0.916844,0.9168
+MISO,1091,George Neal North,510.0,coal,newly_measured,,0.900489,0.9005
+MISO,1104,Burlington (IA),170.3,st,newly_measured,,0.91304,0.913
+MISO,1122,Ames,108.7,st,newly_measured,,0.922861,0.9229
+MISO,1131,Streeter Station,54.6,st,newly_measured,,0.995758,0.9958
+MISO,1167,Muscatine,263.4,coal,unmeasured_out_of_band,,,0.7709
+MISO,1206,Summit Lake,111.8,ct,unmeasured_out_of_band,,,10.4813
+MISO,1383,Robert Reid,58.0,ct,covered_before_measured,0.853213,0.853213,-1.1604
+MISO,1393,R S Nelson,513.5,coal,unmeasured_out_of_band,,,1.375
+MISO,1396,Coughlin Power Station,727.0,cc,newly_measured,,0.966176,0.9662
+MISO,1400,Teche Power Station,283.6,ct+st,newly_measured,,0.953568,0.9536
+MISO,1402,Little Gypsy,916.5,st,newly_measured,,0.956417,0.9564
+MISO,1403,Ninemile Point,2114.9,cc+st,newly_measured,,0.957741,0.9577
+MISO,1439,Houma,67.5,st,newly_measured,,0.867128,0.8671
+MISO,1464,Big Cajun 1,374.0,ct+st,newly_measured,,0.954737,0.9547
+MISO,1702,Dan E Karn,1689.0,coal+st,newly_measured,,0.951791,0.9518
+MISO,1710,J H Campbell,1330.5,coal,newly_measured,,0.92871,0.9287
+MISO,1728,Delray,127.0,ct,newly_measured,,0.943563,0.9436
+MISO,1730,Hancock Peakers,93.0,ct,unmeasured_out_of_band,,,1.2834
+MISO,1733,Monroe,3066.0,coal,newly_measured,,0.923732,0.9237
+MISO,1740,River Rouge,272.0,coal,newly_measured,,0.809121,0.8091
+MISO,1743,St. Clair,1065.0,coal,newly_measured,,0.896012,0.896
+MISO,1825,J B Sims,69.1,coal,newly_measured,,0.846382,0.8464
+MISO,1831,Eckert Station,189.9,coal,unmeasured_out_of_band,,,0.7728
+MISO,1832,Erickson,154.5,coal,newly_measured,,0.91987,0.9199
+MISO,1891,Laskin Energy Center,98.0,st,newly_measured,,0.989339,0.9893
+MISO,1893,Boswell Energy Center,937.0,coal,newly_measured,,0.914948,0.9149
+MISO,1904,Black Dog,491.0,cc+ct,newly_measured,,0.973783,0.9738
+MISO,1912,High Bridge,530.0,cc,newly_measured,,0.980965,0.981
+MISO,1913,Inver Hills,272.0,ct,newly_measured,,0.957859,0.9579
+MISO,1915,Allen S King,511.0,coal,newly_measured,,0.875063,0.8751
+MISO,1927,Riverside (1927),454.0,cc,newly_measured,,0.97765,0.9776
+MISO,1943,Hoot Lake,138.0,coal,newly_measured,,0.935213,0.9352
+MISO,2038,Cambridge Station,152.7,ct,newly_measured,,0.803329,0.8033
+MISO,2039,Elk River,208.0,ct,newly_measured,,0.942462,0.9425
+MISO,2050,Baxter Wilson,494.3,st,newly_measured,,0.971924,0.9719
+MISO,2070,Moselle Generation Complex,477.0,cc+ct+st,newly_measured,,0.952898,0.9529
+MISO,2103,Labadie,2372.0,coal,newly_measured,,0.941506,0.9415
+MISO,2104,Meramec,766.0,coal+st,newly_measured,,0.84106,0.8411
+MISO,2107,Sioux,974.0,coal,newly_measured,,0.919715,0.9197
+MISO,2790,R M Heskett,280.7,coal+ct,unmeasured_out_of_band,,,1.0246
+MISO,2823,Milton R Young,684.0,coal,newly_measured,,0.902314,0.9023
+MISO,3457,Lewis Creek,499.3,st,covered_before_class_default,0.97,0.97,0.971
+MISO,3459,Sabine,1501.4,st,covered_before_class_default,0.97,0.97,0.9552
+MISO,3992,Blount Street,95.7,st,newly_measured,,0.820299,0.8203
+MISO,4014,Wheaton Generating Plant,236.0,ct,newly_measured,,0.911112,0.9111
+MISO,4040,Port Washington Generating Station,1236.5,cc,newly_measured,,0.978667,0.9787
+MISO,4041,South Oak Creek,1112.0,coal,newly_measured,,0.885198,0.8852
+MISO,4050,Edgewater (4050),402.0,coal,newly_measured,,0.933841,0.9338
+MISO,4072,Pulliam,79.8,ct,newly_measured,,0.927228,0.9272
+MISO,4076,West Marinette,153.0,ct,unmeasured_out_of_band,,,0.4148
+MISO,4078,Weston,951.9,coal+ct,newly_measured,,0.900701,0.9007
+MISO,4143,Genoa,307.5,coal,newly_measured,,0.933251,0.9333
+MISO,4271,J P Madgett,389.8,coal,newly_measured,,0.912329,0.9123
+MISO,6009,White Bluff,1252.9,coal,newly_measured,,0.937352,0.9374
+MISO,6017,Newton,595.0,coal,covered_before_measured,0.917555,0.917555,0.929
+MISO,6030,Coal Creek,1142.2,coal,newly_measured,,0.925072,0.9251
+MISO,6034,Belle River,1494.0,coal+ct,newly_measured,,0.917788,0.9178
+MISO,6035,Greenwood,1009.0,ct+st,newly_measured,,0.929588,0.9296
+MISO,6055,Big Cajun 2,1651.8000000000002,coal+st,newly_measured,,0.939254,0.9393
+MISO,6058,Cascade Creek,77.4,ct,unmeasured_out_of_band,,,1.415
+MISO,6061,R D Morrow Senior Generating Plant,530.5,cc,newly_measured,,0.912373,0.9124
+MISO,6063,Electrifarm,190.3,ct,newly_measured,,0.898172,0.8982
+MISO,6085,R M Schahfer Generating Station,1780.0,coal+ct,covered_before_measured,0.823156,0.823156,0.855
+MISO,6090,Sherburne County,2238.0,coal,newly_measured,,0.916706,0.9167
+MISO,6098,Big Stone,477.6,coal,newly_measured,,0.949207,0.9492
+MISO,6113,Gibson,3132.0,coal,covered_before_measured,0.903119,0.903119,0.9068
+MISO,6137,A B Brown Generating Station,1082.92,coal+ct,covered_before_class_default,0.97,0.97,0.9082
+MISO,6155,Rush Island,1178.0,coal,newly_measured,,0.913822,0.9138
+MISO,6190,Brame Energy Center,916.6,coal+st,newly_measured,,0.899504,0.8995
+MISO,6213,Merom,978.0,coal,covered_before_measured,0.930316,0.930316,0.919
+MISO,6253,Germantown Power Plant,79.8,ct,unmeasured_out_of_band,,,1.0174
+MISO,6254,Ottumwa,714.1,coal,newly_measured,,0.921945,0.9219
+MISO,6358,Hutchinson - Plant 2,51.0,cc,newly_measured,,0.931448,0.9314
+MISO,6639,R D Green,454.0,st,covered_before_measured,0.8256,0.8256,0.8745
+MISO,6641,Independence,1665.8,coal,newly_measured,,0.942042,0.942
+MISO,6664,Louisa,745.6,coal,newly_measured,,0.923557,0.9236
+MISO,6705,Alcoa Allowance Management Inc,665.1,coal,covered_before_measured,0.894162,0.894162,0.8983
+MISO,6823,D B Wilson,417.0,coal,covered_before_measured,0.91881,0.91881,0.9194
+MISO,7145,Pleasant Hill Energy Center,153.6,ct,newly_measured,,0.969181,0.9692
+MISO,7159,Concord,367.2,ct,newly_measured,,0.927493,0.9275
+MISO,7203,South Fond Du Lac,326.5,ct,unmeasured_out_of_band,,,0.6305
+MISO,7237,Angus Anson,343.0,ct,newly_measured,,0.931133,0.9311
+MISO,7270,Paris,359.8,ct,newly_measured,,0.940691,0.9407
+MISO,7343,George Neal South,647.1,coal,newly_measured,,0.882908,0.8829
+MISO,7425,Interstate,109.6,ct,covered_before_class_default,0.97,0.97,0.9199
+MISO,7759,Georgetown Substation,316.4,ct,covered_before_class_default,0.97,0.97,0.7189
+MISO,7760,Tilton Power Station,182.0,ct,covered_before_class_default,0.97,0.97,0.8702
+MISO,7763,Henry County Generating Station,126.0,ct,covered_before_class_default,0.97,0.97,0.9324
+MISO,7818,Alsey Station,164.3,ct,covered_before_class_default,0.97,0.97,1.1602
+MISO,7842,Freedom Power Project,45.0,ct,covered_before_measured,0.916454,0.916454,0.8931
+MISO,7843,Pleasant Valley Station,424.1,ct,newly_measured,,0.915141,0.9151
+MISO,7844,Minnesota River Station,39.0,ct,newly_measured,,0.929304,0.9293
+MISO,7863,Elk Mound Generating Station,64.6,ct,unmeasured_out_of_band,,,0.6157
+MISO,7925,Lakefield Junction Generating,497.4,ct,newly_measured,,0.96306,0.9631
+MISO,7947,Solway Plant,40.1,ct,newly_measured,,0.933618,0.9336
+MISO,7948,Hoosier Energy Lawrence Co Station,236.5,ct,covered_before_class_default,0.97,0.97,0.9376
+MISO,7964,Peno Creek Energy Center,168.0,ct,newly_measured,,0.981601,0.9816
+MISO,7972,Sumpter Plant,299.5,ct,newly_measured,,0.95976,0.9598
+MISO,7984,Kalkaska CT Project #1,48.3,ct,newly_measured,,0.900296,0.9003
+MISO,7985,Greater Des Moines Energy Center,503.7,cc,unmeasured_out_of_band,,,1.5
+MISO,7988,Silver Creek Generating Plant,225.0,ct,newly_measured,,0.9462,0.9462
+MISO,7989,Sylvarena Generating Plant,129.0,ct,newly_measured,,0.90432,0.9043
+MISO,8023,Columbia,1128.3,coal,newly_measured,,0.91568,0.9157
+MISO,8027,Blue Lake Generating Plant,328.2,ct,newly_measured,,0.930912,0.9309
+MISO,8029,Sycamore Combustion Turbine,140.6,ct,newly_measured,,0.92173,0.9217
+MISO,8031,Emery Station,539.4,cc,newly_measured,,0.966847,0.9668
+MISO,8054,Gerald Andrus,701.1,st,newly_measured,,0.939648,0.9396
+MISO,8056,Waterford 1 & 2,826.8,st,newly_measured,,0.995464,0.9955
+MISO,8222,Coyote,425.5,coal,newly_measured,,0.939246,0.9392
+MISO,55011,Whitewater Cogeneration Facility,261.0,cc,newly_measured,,0.966341,0.9663
+MISO,55029,Depere Energy Center,166.0,ct,newly_measured,,0.93475,0.9348
+MISO,55087,Zeeland Generating Station,842.7,cc+ct,newly_measured,,0.979908,0.9799
+MISO,55101,Kalamazoo River Generating Station,72.0,ct,newly_measured,,0.986269,0.9863
+MISO,55102,Livingston Generating Station,132.0,ct,newly_measured,,0.923121,0.9231
+MISO,55111,Vermillion Generating Station,576.0,ct,covered_before_class_default,0.97,0.97,0.9362
+MISO,55135,Neenah Energy Facility,351.1,ct,newly_measured,,0.976944,0.9769
+MISO,55148,Worthington Generation,169.5,ct,covered_before_class_default,0.97,0.97,0.9632
+MISO,55165,Calcasieu Plant,301.8,ct,newly_measured,,0.954957,0.955
+MISO,55173,Acadia Power Station,1072.7,cc,newly_measured,,0.892306,0.8923
+MISO,55201,"Gibson City Energy Center, LLC",232.0,ct,covered_before_class_default,0.97,0.97,0.9485
+MISO,55202,Pinckneyville Power Plant,316.0,ct,covered_before_class_default,0.97,0.97,0.8476
+MISO,55204,Kinmundy Power Plant,208.0,ct,covered_before_class_default,0.97,0.97,0.7238
+MISO,55218,Hinds Energy Facility,578.5,cc+ct,newly_measured,,0.986575,0.9866
+MISO,55220,Attala Generating Plant,551.3,cc,newly_measured,,0.988119,0.9881
+MISO,55221,Oswald Generating Station,548.0,cc,unmeasured_out_of_band,,,1.0059
+MISO,55224,Wheatland Generating Facility LLC,442.0,ct,covered_before_class_default,0.97,0.97,0.899
+MISO,55229,Montpelier Electric Gen Station,233.1,ct,covered_before_measured,0.867604,0.867604,0.908
+MISO,55234,Audrain Power Plant,600.0,ct,newly_measured,,0.964644,0.9646
+MISO,55237,Shelby County,336.0,ct,covered_before_class_default,0.97,0.97,0.9274
+MISO,55270,Jackson Generating Station,534.4,cc,newly_measured,,0.949469,0.9495
+MISO,55334,Holland Energy Facility,602.2,cc,covered_before_measured,0.949755,0.949755,0.9548
+MISO,55357,"Brazos Valley Energy, LP",602.0,cc,covered_before_class_default,0.97,0.97,0.971
+MISO,55358,Cottonwood Energy Project,1149.1,cc,covered_before_class_default,0.97,0.97,0.9774
+MISO,55364,Sugar Creek Generating Station,574.2,cc,covered_before_measured,0.989671,0.989671,0.9882
+MISO,55380,Union Power Station,2428.0,cc,newly_measured,,0.971367,0.9714
+MISO,55391,Rockgen Energy Center,489.0,ct,newly_measured,,0.957158,0.9572
+MISO,55395,Crossroads Energy Center (CPU),308.0,ct,newly_measured,,0.950803,0.9508
+MISO,55402,Renaissance Power,652.0,ct,newly_measured,,0.969057,0.9691
+MISO,55417,Raccoon Creek Power Plant,300.0,ct,covered_before_class_default,0.97,0.97,0.7375
+MISO,55418,Hot Spring Energy Facility,714.8,cc,newly_measured,,0.986034,0.986
+MISO,55433,Bayou Cove Peaking Power Plant,289.8,ct,newly_measured,,0.932839,0.9328
+MISO,55447,Columbia Energy Center (MO),140.0,ct,newly_measured,,0.925752,0.9258
+MISO,55467,Ouachita Plant,903.9,cc,newly_measured,,0.976301,0.9763
+MISO,55486,Washington Parish Energy Center,369.9,ct,newly_measured,,0.941108,0.9411
+MISO,55496,Goose Creek Power Plant,432.0,ct,covered_before_class_default,0.97,0.97,0.6131
+MISO,55620,Perryville Power Station,790.5999999999999,cc+ct,newly_measured,,0.982656,0.9827
+MISO,55641,Riverside Energy Center,534.8,cc,newly_measured,,0.985597,0.9856
+MISO,55714,Magnet Cove Generating Station,641.5,cc,newly_measured,,0.904501,0.9045
+MISO,55718,Dean Peakers,312.0,ct,newly_measured,,0.989717,0.9897
+MISO,55836,Island Street Peaking Plant,54.6,ct,newly_measured,,0.895511,0.8955
+MISO,55856,Prairie State Generating Station,1630.0,coal,covered_before_measured,0.931567,0.931567,0.956
+MISO,56031,Fox Energy Center,577.5,cc,newly_measured,,0.97833,0.9783
+MISO,56068,Elm Road Generating Station,1270.8,coal,newly_measured,,0.928147,0.9281
+MISO,56104,Mankato Energy Center,654.0,cc,newly_measured,,0.969534,0.9695
+MISO,56108,T J Labbe Electric Generating Station,95.5,ct,unmeasured_out_of_band,,,0.7579
+MISO,56164,Faribault Energy Park,261.0,cc,newly_measured,,0.935755,0.9358
+MISO,56166,Sheboygan Falls Energy Facility,346.1,ct,newly_measured,,0.952119,0.9521
+MISO,56241,Cannon Falls Energy Center,316.0,ct,newly_measured,,0.972607,0.9726
+MISO,56283,Hargis-Hebert Electric Generating Statio,95.1,ct,unmeasured_out_of_band,,,0.7606
+MISO,56456,Plum Point Energy Station,680.0,coal,newly_measured,,0.912604,0.9126
+MISO,56480,Marshfield Utilities Combustion Turbine,53.3,ct,newly_measured,,0.898081,0.8981
+MISO,56505,City Water & Light - City of Jonesboro,177.0,ct,unmeasured_out_of_band,,,1.0785
+MISO,56603,San Jacinto County Peaking Facility,146.0,ct,covered_before_class_default,0.97,0.97,0.9255
+MISO,56604,Hardin County Peaking Facility,140.6,ct,covered_before_class_default,0.97,0.97,0.923
+MISO,57842,Wabash River Highland Plant,154.0,ct,covered_before_measured,0.97545,0.97545,0.9543
+MISO,58236,Marshalltown Generating Station,665.2,cc,newly_measured,,0.970374,0.9704
+MISO,58478,LEPA Unit No. 1,64.0,cc,newly_measured,,0.968263,0.9683
+MISO,59926,Alpine Power Plant,405.8,ct,newly_measured,,0.974223,0.9742
+MISO,60925,Montgomery County Power Station,1000.0,cc,covered_before_class_default,0.97,0.97,0.8908
+MISO,60926,St. Charles Power Station,1000.0,cc,newly_measured,,0.975717,0.9757
+MISO,60927,Lake Charles Power Station,1000.0,cc,newly_measured,,0.984095,0.9841
+MISO,61144,Astoria Station,241.7,ct,newly_measured,,0.948661,0.9487
+MISO,62192,Blue Water Energy Center,1146.0,cc,newly_measured,,0.94866,0.9487
+MISO,63259,Delta Energy Park,223.89999999999998,cc+ct,newly_measured,,0.927681,0.9277
+NEISO,546,Montville,81.0,st,covered_before_class_default,0.97,0.97,0.8827
+NEISO,562,Middletown,353.0,st,covered_before_class_default,0.97,0.97,0.8171
+NEISO,568,Bridgeport Harbor Station,753.8,cc+coal,covered_before_class_default,0.97,0.97,1.0129
+NEISO,1588,Mystic,1413.4,cc,covered_before_measured,0.978142,0.978142,0.9781
+NEISO,1599,Canal Station,330.0,ct,covered_before_measured,0.873156,0.873156,0.8732
+NEISO,1642,West Springfield,66.7,ct,covered_before_measured,0.871668,0.871668,0.8717
+NEISO,1660,Potter,105.2,ct,covered_before_class_default,0.97,0.97,0.8114
+NEISO,1678,Waters River,46.0,ct,covered_before_class_default,0.97,0.97,0.8647
+NEISO,2364,Merrimack,438.5,coal,covered_before_measured,0.901886,0.901886,0.9019
+NEISO,2367,Schiller,95.4,coal,covered_before_measured,0.885216,0.885216,0.8852
+NEISO,3236,Manchester Street Station,471.0,cc,covered_before_class_default,0.97,0.97,1.4249
+NEISO,6081,Stony Brook Energy Center,209.1,cc,covered_before_class_default,0.97,0.97,1.249
+NEISO,6635,Alfred L Pierce Generating Station,74.1,ct,covered_before_class_default,0.97,0.97,0.241
+NEISO,10307,Bellingham,264.0,cc,covered_before_measured,0.983725,0.983725,1.3261
+NEISO,10726,MASSPOWER,245.0,cc,covered_before_class_default,0.97,0.97,1.3636
+NEISO,51030,Ocean State Power,231.8,cc,covered_before_class_default,0.97,0.97,1.4646
+NEISO,52026,Dartmouth Power,93.69999999999999,cc+ct,covered_before_class_default,0.97,0.97,0.9524
+NEISO,54056,"Pawtucket Power Associates, LP",60.0,cc,covered_before_measured,0.955626,0.955626,0.9556
+NEISO,54324,Ocean State Power II,267.6,cc,covered_before_class_default,0.97,0.97,1.4552
+NEISO,54586,"Tanner Street Generation, LLC",75.0,cc,covered_before_measured,0.929133,0.929133,0.9291
+NEISO,54805,"Milford Power, LLC",204.8,cc,covered_before_class_default,0.97,0.97,0.9491
+NEISO,55026,Dighton,165.6,cc,covered_before_measured,0.859772,0.859772,0.9861
+NEISO,55041,Berkshire Power,229.22,cc,covered_before_class_default,0.97,0.97,0.9742
+NEISO,55042,Bridgeport Energy,538.0,cc,covered_before_measured,0.990642,0.990642,0.9906
+NEISO,55048,"Tiverton Power, LLC",273.0,cc,covered_before_measured,0.829822,0.829822,0.9743
+NEISO,55068,Maine Independence Station,497.6,cc,covered_before_class_default,0.97,0.97,1.5684
+NEISO,55079,Millennium Power,330.1,cc,covered_before_class_default,0.97,0.97,1.4936
+NEISO,55100,Rumford Power,253.8,cc,covered_before_class_default,0.97,0.97,0.9669
+NEISO,55107,Rhode Island State Energy Center,554.0,cc,covered_before_measured,0.971701,0.971701,0.9717
+NEISO,55126,Milford Power Company LLC,510.15,cc,covered_before_measured,0.974248,0.974248,0.9742
+NEISO,55149,Lake Road Generating Company,828.8,cc,covered_before_class_default,0.97,0.97,1.5437
+NEISO,55170,Granite Ridge Energy,668.0,cc,covered_before_class_default,0.97,0.97,1.4652
+NEISO,55211,Bellingham Power Generation LLC,520.23,cc,covered_before_class_default,0.97,0.97,1.5904
+NEISO,55212,Blackstone Power Generation LLC,481.66,cc,covered_before_class_default,0.97,0.97,1.4617
+NEISO,55294,Westbrook Energy Center,526.77,cc,covered_before_measured,0.922198,0.922198,0.9222
+NEISO,55317,Fore River Energy Center,724.0,cc,covered_before_measured,0.975092,0.975092,0.9751
+NEISO,55517,"Wallingford Energy, LLC",317.94,ct,covered_before_class_default,0.97,0.97,0.8312
+NEISO,55661,Newington Energy,560.5,cc,covered_before_measured,0.961679,0.961679,0.9617
+NEISO,56047,CPV Towantic Energy Center,743.76,cc,covered_before_measured,0.975986,0.975986,0.976
+NEISO,56629,Waterbury Generation,96.0,ct,covered_before_class_default,0.97,0.97,0.7135
+NEISO,56798,Kleen Energy Systems Project,622.0,cc,covered_before_measured,0.968119,0.968119,0.9681
+NEISO,59882,Exelon West Medway II,188.6,ct,covered_before_measured,0.974496,0.974496,0.9745
+NEISO,60903,Salem Harbor Station NGCC,798.2,cc,covered_before_measured,0.944114,0.944114,0.9441
+NWPP,607,Fredonia Generating Station,280.0,ct,unmeasured_out_of_band,,,3.4228
+NWPP,2322,Clark,679.0,ct,unmeasured_out_of_band,,,3.5716
+NWPP,2330,Fort Churchill,226.0,st,newly_measured,,0.945034,0.945
+NWPP,2336,Tracy,953.6,cc+ct+st,newly_measured,,0.976677,0.9767
+NWPP,3648,Gadsby,353.6,ct+st,unmeasured_out_of_band,,,0.7999
+NWPP,3845,Centralia,1340.0,coal,newly_measured,,0.93535,0.9354
+NWPP,4158,Dave Johnston,745.0,coal,newly_measured,,0.90399,0.904
+NWPP,4162,Naughton,604.0,coal+st,newly_measured,,0.91075,0.9108
+NWPP,6076,Colstrip,2094.0,coal,newly_measured,,0.906694,0.9067
+NWPP,6101,Wyodak,332.0,coal,newly_measured,,0.85959,0.8596
+NWPP,6106,Boardman,585.0,coal,newly_measured,,0.937049,0.937
+NWPP,6165,Hunter,1363.0,coal,newly_measured,,0.898437,0.8984
+NWPP,7082,Harry Allen,654.0,cc+ct,newly_measured,,0.972517,0.9725
+NWPP,7456,Rathdrum Combustion Turbine Project,132.0,ct,newly_measured,,0.989572,0.9896
+NWPP,7605,River Road,230.0,cc,newly_measured,,0.973234,0.9732
+NWPP,7790,Bonanza,458.0,coal,newly_measured,,0.9282,0.9282
+NWPP,7870,Encogen Generating Station,159.4,cc,unmeasured_out_of_band,,,1.4345
+NWPP,7953,Evander Andrews Power Complex,269.83,ct,newly_measured,,0.985633,0.9856
+NWPP,7999,Grays Harbor Energy Center,595.0,cc,newly_measured,,0.9688,0.9688
+NWPP,8066,Jim Bridger,2119.0,coal+st,newly_measured,,0.922041,0.922
+NWPP,8069,Huntington,909.0,coal,newly_measured,,0.907121,0.9071
+NWPP,8224,North Valmy,522.0,coal+st,newly_measured,,0.850444,0.8504
+NWPP,10761,Las Vegas Generating Station,282.0,cc,unmeasured_out_of_band,,,1.1753
+NWPP,54854,Sun Peak Generating Station,222.0,ct,newly_measured,,0.895818,0.8958
+NWPP,55179,"Rathdrum Power, LLC",210.0,cc,newly_measured,,0.986002,0.986
+NWPP,55322,Chuck Lenzie Generating Station,1242.0,cc,newly_measured,,0.967512,0.9675
+NWPP,55328,Hermiston Power Plant,629.0,cc,newly_measured,,0.977324,0.9773
+NWPP,55482,Goldendale Generating Station,263.7,cc,newly_measured,,0.980297,0.9803
+NWPP,55514,Apex Generating Station,524.4,cc,newly_measured,,0.996748,0.9967
+NWPP,55544,Klamath Generation Peakers,100.0,ct,newly_measured,,0.884303,0.8843
+NWPP,55622,West Valley Power Plant,185.0,ct,newly_measured,,0.952963,0.953
+NWPP,55662,Chehalis Generation Facility,477.0,cc,newly_measured,,0.958449,0.9584
+NWPP,55687,Walter M. Higgins III Generating Station,620.0,cc,newly_measured,,0.973542,0.9735
+NWPP,55700,Mint Farm Generating Station,270.0,cc,newly_measured,,0.969511,0.9695
+NWPP,55733,Bennett Mountain Power Project,185.12,ct,newly_measured,,0.987912,0.9879
+NWPP,55749,Hardin Generating Station,107.0,coal,newly_measured,,0.863549,0.8635
+NWPP,55818,Frederickson Power LP,246.0,cc,newly_measured,,0.988565,0.9886
+NWPP,55841,Silverhawk,1064.0,cc+ct,newly_measured,,0.976019,0.976
+NWPP,56102,Currant Creek Power Project,524.0,cc,newly_measured,,0.975693,0.9757
+NWPP,56177,Nebo Power Station,130.0,cc,newly_measured,,0.962079,0.9621
+NWPP,56224,TS Power Plant,218.4,coal,newly_measured,,0.90712,0.9071
+NWPP,56227,Port Westward,392.2,cc,newly_measured,,0.978358,0.9784
+NWPP,56237,Lake Side Power Plant,1176.0,cc,newly_measured,,0.970083,0.9701
+NWPP,56253,Millcreek Power,73.6,ct,newly_measured,,0.906968,0.907
+NWPP,56908,Dave Gates Generating Station,132.3,ct,newly_measured,,0.964286,0.9643
+NWPP,57028,Langley Gulch Power Plant,303.32,cc,newly_measured,,0.977046,0.977
+NWPP,58503,Carty Generating Station,416.3,cc,newly_measured,,0.983276,0.9833
+NYISO,2480,Danskammer Generating Station,497.3,st,newly_measured,,0.955457,0.9555
+NYISO,2490,Arthur Kill,889.0,ct+st,newly_measured,,0.938207,0.9382
+NYISO,2494,Gowanus Generating Station,299.6,ct,newly_measured,,0.828614,0.8286
+NYISO,2499,Narrows Generating Station,309.1,ct,unmeasured_out_of_band,,,1.0035
+NYISO,2500,Ravenswood Generating Station,1987.5,cc+ct+st,newly_measured,,0.949169,0.9492
+NYISO,2503,59th Street,14.5,ct,unmeasured_out_of_band,,,1.0373
+NYISO,2511,E F Barrett,653.5999999999999,ct+st,newly_measured,,0.941802,0.9418
+NYISO,2516,Northport,1592.2,st,newly_measured,,0.942567,0.9426
+NYISO,2517,Port Jefferson Energy Center,467.7,ct+st,newly_measured,,0.894616,0.8946
+NYISO,2527,Greenidge Generation LLC,104.5,st,newly_measured,,0.899598,0.8996
+NYISO,2539,Bethlehem Energy Center (Albany),812.7,cc,unmeasured_out_of_band,,,1.0757
+NYISO,2625,Bowline Generating Station,1159.6,st,newly_measured,,0.951927,0.9519
+NYISO,2628,Hillburn,33.1,ct,unmeasured_out_of_band,,,0.6907
+NYISO,2632,Shoemaker,33.0,ct,unmeasured_out_of_band,,,0.6675
+NYISO,2679,Freeport Power Plant No. 2,49.0,ct,newly_measured,,0.960744,0.9607
+NYISO,6082,Somerset Operating Company  (Kintigh),684.4,coal,newly_measured,,0.930908,0.9309
+NYISO,7314,Richard M Flynn (Holtsville),170.0,cc,unmeasured_out_of_band,,,1.4601
+NYISO,7869,Glenwood Landing Energy Center,85.1,ct,newly_measured,,0.91318,0.9132
+NYISO,7909,Vernon Boulevard,79.9,ct,newly_measured,,0.848925,0.8489
+NYISO,7910,23rd and 3rd,79.9,ct,newly_measured,,0.852025,0.852
+NYISO,7912,Brentwood,45.0,ct,newly_measured,,0.842914,0.8429
+NYISO,7913,Hell Gate,79.5,ct,newly_measured,,0.829937,0.8299
+NYISO,7914,Harlem River Yard,79.5,ct,newly_measured,,0.828668,0.8287
+NYISO,7915,North 1st,46.0,ct,newly_measured,,0.860834,0.8608
+NYISO,8006,Roseton Generating LLC,1222.0,st,newly_measured,,0.930914,0.9309
+NYISO,8053,Pouch Terminal,44.7,ct,newly_measured,,0.854009,0.854
+NYISO,8906,Astoria Generating Station,938.9000000000001,ct+st,newly_measured,,0.928683,0.9287
+NYISO,10190,"Castleton Power, LLC",72.0,cc,newly_measured,,0.95766,0.9577
+NYISO,10620,Carthage Energy,61.1,cc,newly_measured,,0.939371,0.9394
+NYISO,10621,"Syracuse, LLC",86.2,cc,newly_measured,,0.900541,0.9005
+NYISO,50292,Bethpage Energy Center,173.07,cc+ct,newly_measured,,0.942952,0.943
+NYISO,50744,Sterling Power Plant,54.8,cc,unmeasured_out_of_band,,,1.3211
+NYISO,50978,Carr Street Generating Station,93.0,cc,unmeasured_out_of_band,,,1.2593
+NYISO,54034,Rensselaer Cogen,79.4,cc,newly_measured,,0.988368,0.9884
+NYISO,54574,"Saranac Power Partners, LP",237.8,cc,newly_measured,,0.956882,0.9569
+NYISO,54592,Massena Energy Facility,81.0,cc,unmeasured_out_of_band,,,1.5316
+NYISO,54593,Batavia Energy,48.8,cc,unmeasured_out_of_band,,,1.2846
+NYISO,55243,Astoria Gas Turbine Power,415.6,ct,unmeasured_out_of_band,,,0.606
+NYISO,55375,Astoria Energy,558.0,cc,newly_measured,,0.966583,0.9666
+NYISO,55405,Athens Generating Company,984.4,cc,newly_measured,,0.957426,0.9574
+NYISO,55699,Bayswater Peaking Facility,55.8,ct,unmeasured_out_of_band,,,0.5778
+NYISO,55786,Edgewood Energy,85.0,ct,newly_measured,,0.893491,0.8935
+NYISO,56032,Equus  Power I,94.0,ct,newly_measured,,0.826521,0.8265
+NYISO,56188,Pinelawn Power,74.5,cc,newly_measured,,0.922572,0.9226
+NYISO,56196,Poletti 500 MW CC,560.0,cc,newly_measured,,0.96301,0.963
+NYISO,56234,Caithness Long Island Energy Center,317.3,cc,newly_measured,,0.965131,0.9651
+NYISO,56940,Valley Energy Center,654.19,cc,newly_measured,,0.998109,0.9981
+NYISO,56964,Bayonne Energy Center,598.1,ct,covered_before_measured,0.898093,0.898093,0.8903
+NYISO,57185,Cricket Valley Energy Center,1016.1,cc,newly_measured,,0.973184,0.9732
+PJM,54,Smith Generating Facility,755.6,ct,covered_before_measured,0.963362,0.963362,0.9626
+PJM,384,Joliet 29,1036.0,st,covered_before_measured,0.947563,0.947563,0.9599
+PJM,593,Edge Moor,695.0,st,covered_before_class_default,0.97,0.97,0.8688
+PJM,594,Indian River,410.0,coal,covered_before_class_default,0.97,0.97,0.7375
+PJM,602,Brandon Shores,1273.0,coal,covered_before_measured,0.869463,0.869463,0.8583
+PJM,874,Joliet 9,314.0,st,covered_before_class_default,0.97,0.97,-6.4692
+PJM,876,Kincaid Generating Station,1112.0,coal,covered_before_measured,0.908157,0.908157,0.9261
+PJM,879,Powerton,1538.0,coal,covered_before_measured,0.87403,0.87403,0.8984
+PJM,883,Waukegan,689.0,coal,covered_before_class_default,0.97,0.97,0.9248
+PJM,884,Will County,510.0,coal,newly_measured,,0.951205,0.9512
+PJM,983,Clifty Creek,1173.0,coal,covered_before_measured,0.900058,0.900058,0.9003
+PJM,1040,Whitewater Valley,99.7,coal,covered_before_class_default,0.97,0.97,0.8104
+PJM,1353,Big Sandy,260.0,st,covered_before_measured,0.956215,0.956215,0.9559
+PJM,1384,John S. Cooper,341.0,coal,covered_before_measured,0.881707,0.881707,0.8752
+PJM,1554,Herbert A Wagner,118.0,coal,covered_before_measured,0.888361,0.888361,0.8129
+PJM,1556,Perryman,248.8,ct,covered_before_measured,0.901795,0.901795,0.9026
+PJM,1560,Westport,115.8,ct,newly_measured,,0.859357,0.8594
+PJM,1571,Chalk Point,2240.3,coal+ct+st,covered_before_measured,0.903167,0.903167,0.7515
+PJM,1572,Dickerson,818.0,coal+ct,covered_before_measured,0.930469,0.930469,0.8609
+PJM,1573,Morgantown,1205.0,coal,covered_before_class_default,0.97,0.97,0.8853
+PJM,2379,Carlls Corner Energy Center,76.8,ct,covered_before_measured,0.988387,0.988387,0.984
+PJM,2393,Gilbert Generating Station,455.2,cc+ct,covered_before_class_default,0.97,0.97,0.9213
+PJM,2398,Bergen Generating Station,1255.0,cc,covered_before_measured,0.937204,0.937204,1.1499
+PJM,2399,Burlington Generating Station,171.6,ct,covered_before_class_default,0.97,0.97,0.841
+PJM,2401,Essex,81.0,ct,unmeasured_out_of_band,,,0.6969
+PJM,2404,Kearny Generating Station,457.9,ct,covered_before_class_default,0.97,0.97,0.7966
+PJM,2406,Linden Generating Station,1636.2,cc+ct,covered_before_measured,0.965356,0.965356,0.9653
+PJM,2411,Sewaren Generating Station,541.0,cc,covered_before_measured,0.960853,0.960853,0.9644
+PJM,2434,Howard M Down,55.0,ct,covered_before_measured,0.886945,0.886945,0.8825
+PJM,2828,Cardinal,1790.0,coal,covered_before_measured,0.93077,0.93077,0.9304
+PJM,2832,Miami Fort Power Station,1020.0,coal,covered_before_measured,0.899852,0.899852,0.9125
+PJM,2836,Avon Lake Power Plant,627.0,coal,newly_measured,,0.910421,0.9104
+PJM,2840,Conesville,780.0,coal,newly_measured,,0.910027,0.91
+PJM,2847,Frank M Tait Station,597.1,ct,covered_before_class_default,0.97,0.97,3.3545
+PJM,2848,O H Hutchings,25.2,ct,covered_before_class_default,0.97,0.97,0.4311
+PJM,2866,W H Sammis,2210.0,coal,covered_before_measured,0.834393,0.834393,0.879
+PJM,2869,West Lorain,399.6,ct,covered_before_measured,0.969261,0.969261,0.9742
+PJM,2876,Kyger Creek,962.8,coal,covered_before_measured,0.879372,0.879372,0.8866
+PJM,2880,Richland Peaking Station,358.0,ct,covered_before_measured,0.96449,0.96449,0.9545
+PJM,3096,Brunot Island Power Station,243.5,cc,covered_before_measured,0.875097,0.875097,1.1616
+PJM,3118,Conemaugh,1700.0,coal,covered_before_measured,0.916552,0.916552,0.923
+PJM,3122,Homer City,1888.3,coal,covered_before_measured,0.843453,0.843453,0.891
+PJM,3131,Shawville,596.0,st,covered_before_measured,0.896886,0.896886,0.8952
+PJM,3132,Warren,62.0,ct,covered_before_class_default,0.97,0.97,0.9171
+PJM,3136,Keystone,1700.0,coal,covered_before_measured,0.898482,0.898482,0.9154
+PJM,3138,New Castle,326.3,st,covered_before_class_default,0.97,0.97,0.9316
+PJM,3140,"Brunner Island, LLC",1411.0,st,covered_before_measured,0.922216,0.922216,0.9092
+PJM,3148,"Martins Creek, LLC",1700.0,st,covered_before_measured,0.94457,0.94457,0.9277
+PJM,3149,"Montour, LLC",1504.0,st,covered_before_measured,0.948393,0.948393,0.9303
+PJM,3161,Eddystone Generating Station,760.0,st,covered_before_class_default,0.97,0.97,0.876
+PJM,3176,Hunlock Creek Energy Center,125.2,cc,covered_before_class_default,0.97,0.97,0.9302
+PJM,3775,Clinch River,460.0,st,covered_before_measured,0.925108,0.925108,0.9313
+PJM,3797,Chesterfield Power Station,1392.0,cc+coal,covered_before_measured,0.97475,0.97475,0.9617
+PJM,3804,Possum Point Power Station,570.7,cc,covered_before_measured,0.97607,0.97607,0.9999
+PJM,3935,John E Amos,2900.0,coal,covered_before_measured,0.920518,0.920518,0.9215
+PJM,3943,Fort Martin Power Station,1098.0,coal,covered_before_measured,0.906771,0.906771,0.9131
+PJM,3944,Harrison Power Station,1954.0,coal,covered_before_measured,0.924219,0.924219,0.9251
+PJM,3948,Mitchell (WV),1560.0,coal,covered_before_measured,0.902245,0.902245,0.9131
+PJM,3954,Mount Storm Power Station,1613.5,coal,covered_before_measured,0.925555,0.925555,0.9288
+PJM,5083,Cumberland Energy Center,186.9,ct,covered_before_class_default,0.97,0.97,0.875
+PJM,6004,Pleasants Power Station,1278.0,coal,covered_before_measured,0.879842,0.879842,0.8962
+PJM,6018,East Bend,600.0,coal,covered_before_measured,0.902148,0.902148,0.908
+PJM,6019,W H Zimmer Generating Station,1305.0,coal,newly_measured,,0.885632,0.8856
+PJM,6041,H L Spurlock,1346.0,coal,covered_before_measured,0.89683,0.89683,0.8982
+PJM,6166,Rockport,2600.0,coal,covered_before_measured,0.921256,0.921256,0.8939
+PJM,6264,Mountaineer (1301),1299.0,coal,covered_before_measured,0.911755,0.911755,0.9179
+PJM,7032,Gravel Neck Combustion Turbine,340.0,ct,covered_before_measured,0.942759,0.942759,0.969
+PJM,7138,Forked River Power,65.0,ct,covered_before_class_default,0.97,0.97,0.786
+PJM,7153,Hay Road,1098.2,cc,covered_before_measured,0.988318,0.988318,1.0673
+PJM,7158,Woodsdale,476.0,ct,covered_before_measured,0.884469,0.884469,0.8556
+PJM,7212,Darbytown Combustion Turbine,340.0,ct,covered_before_measured,0.942269,0.942269,0.9612
+PJM,7213,Clover Power Station,877.1,coal,covered_before_measured,0.918285,0.918285,0.9193
+PJM,7288,Sherman Avenue,86.9,ct,covered_before_class_default,0.97,0.97,0.9339
+PJM,7318,Van Sant,42.0,ct,covered_before_class_default,0.97,0.97,0.893
+PJM,7335,Richmond (IN),68.0,ct,covered_before_class_default,0.97,0.97,0.9301
+PJM,7336,Anderson,140.0,ct,covered_before_class_default,0.97,0.97,2.3246
+PJM,7782,Omega JV2 Hamilton,29.0,ct,covered_before_measured,0.991803,0.991803,0.9536
+PJM,7783,Omega JV2 Bowling Green,29.0,ct,covered_before_measured,0.972292,0.972292,0.9189
+PJM,7835,Rock Springs Generating Facility,666.7,ct,covered_before_class_default,0.97,0.97,0.9346
+PJM,7836,Marsh Run Generation Facility,484.0,ct,covered_before_measured,0.943725,0.943725,0.9557
+PJM,7837,Louisa Generation Facility,466.0,ct,covered_before_measured,0.931498,0.931498,0.931
+PJM,7838,Remington Combustion Turbine Station,613.7,ct,covered_before_measured,0.968584,0.968584,0.9664
+PJM,7839,Ladysmith Combustion Turbine Sta,788.9,ct,covered_before_measured,0.964262,0.964262,0.969
+PJM,7872,Robert P Mone,441.0,ct,covered_before_measured,0.916214,0.916214,0.9295
+PJM,7962,Warren F. Sam Beasley Pwr Station,98.0,ct,covered_before_measured,0.857556,0.857556,0.8355
+PJM,8008,Mickleton Energy Center,63.7,ct,covered_before_measured,0.998561,0.998561,0.9973
+PJM,8102,Gen J M Gavin,2722.0,coal,covered_before_measured,0.920582,0.920582,0.9185
+PJM,8226,Cheswick,565.0,coal,newly_measured,,0.876253,0.8763
+PJM,10099,Pedricktown Cogeneration Plant,140.2,cc,newly_measured,,0.832963,0.833
+PJM,10143,Colver Green Energy,110.0,coal,covered_before_class_default,0.97,0.97,0.8592
+PJM,10308,Sayreville Power LP,292.0,cc,covered_before_class_default,0.97,0.97,0.9606
+PJM,10343,Mt. Carmel Cogeneration,43.0,coal,covered_before_class_default,0.97,0.97,1.0104
+PJM,10603,Ebensburg Power Company,50.0,coal,covered_before_class_default,0.97,0.97,0.8612
+PJM,10678,AES Warrior Run,180.0,coal,covered_before_class_default,0.97,0.97,1.0026
+PJM,10751,"Camden Plant Holding, LLC",172.9,cc,covered_before_class_default,0.97,0.97,0.9316
+PJM,50279,PEI Power Corporation,43.7,ct,covered_before_class_default,0.97,0.97,2.1354
+PJM,50385,Newark Bay Cogen,152.0,cc,newly_measured,,0.929975,0.93
+PJM,50561,Eagle Point Power Generation,244.0,cc,covered_before_class_default,0.97,0.97,0.9367
+PJM,50611,"Rausch Creek Generation, LLC",30.0,coal,covered_before_class_default,0.97,0.97,0.8803
+PJM,50799,"EFS Parlin Holdings, LLC",114.6,cc,covered_before_measured,0.915912,0.915912,0.9238
+PJM,50888,Northampton Generating Plant,112.0,coal,covered_before_measured,0.874625,0.874625,0.8635
+PJM,52019,Doswell Limited Partnership,1198.2,cc+ct,covered_before_measured,0.996836,0.996836,0.9867
+PJM,54304,Birchwood Power Facility,237.7,coal,unmeasured_out_of_band,,,0.7978
+PJM,54844,Gordonsville Power Station,218.0,cc,covered_before_measured,0.985233,0.985233,0.9859
+PJM,55109,"Rocky Road Power, LLC",340.8,ct,covered_before_class_default,0.97,0.97,0.9345
+PJM,55110,Madison Generating Station,566.0,ct,covered_before_measured,0.937956,0.937956,0.9208
+PJM,55131,Kendall Energy Facility,1140.0,cc,covered_before_measured,0.968491,0.968491,0.9671
+PJM,55164,Bluegrass Generating Station,495.0,ct,covered_before_measured,0.92919,0.92919,0.9433
+PJM,55183,Nelson Energy Center,586.0,cc,covered_before_class_default,0.97,0.97,0.9795
+PJM,55188,Cordova Energy Company,521.2,cc,covered_before_class_default,0.97,0.97,0.9821
+PJM,55193,Ontelaunee Energy Center,545.9,cc,covered_before_measured,0.990585,0.990585,0.9914
+PJM,55196,Springdale Generating Station (55196),96.8,ct,covered_before_class_default,0.97,0.97,0.9092
+PJM,55198,Riverside Generating Company,825.0,ct,covered_before_measured,0.949444,0.949444,0.9488
+PJM,55199,Elwood Energy Facility,1350.0,ct,covered_before_measured,0.947479,0.947479,0.9496
+PJM,55222,Lincoln Generating Facility,622.9,ct,covered_before_class_default,0.97,0.97,0.8599
+PJM,55228,Greenville Electric Gen Station,196.0,ct,covered_before_measured,0.838964,0.838964,0.8995
+PJM,55231,Liberty Electric Power Plant,562.0,cc,covered_before_measured,0.978926,0.978926,1.2222
+PJM,55233,Handsome Lake Energy,267.5,ct,covered_before_class_default,0.97,0.97,0.7391
+PJM,55236,"Lee County Generating Station, LLC",676.8,ct,covered_before_class_default,0.97,0.97,0.9156
+PJM,55238,Rockford Energy Center,362.2,ct,covered_before_class_default,0.97,0.97,0.9518
+PJM,55239,"Red Oak Power, LLC",775.9,cc,covered_before_class_default,0.97,0.97,1.2546
+PJM,55247,Darby Electric Generating Station,480.0,ct,covered_before_measured,0.94072,0.94072,0.9393
+PJM,55250,University Park Energy,300.0,ct,covered_before_class_default,0.97,0.97,0.93
+PJM,55253,Crete Energy Park,300.0,ct,covered_before_class_default,0.97,0.97,0.8848
+PJM,55262,AMP-Ohio Gas Turbines Bowling Green,38.0,ct,covered_before_class_default,0.97,0.97,1.5662
+PJM,55263,AMP-Ohio Gas Turbines Galion,38.0,ct,covered_before_class_default,0.97,0.97,1.5257
+PJM,55264,AMP-Ohio Gas Turbines Napoleon,38.0,ct,covered_before_class_default,0.97,0.97,1.5602
+PJM,55276,Ceredo Generating Station,450.0,ct,covered_before_measured,0.996482,0.996482,0.9898
+PJM,55279,Aurora,990.2,ct,covered_before_measured,0.93497,0.93497,0.935
+PJM,55284,Big Sandy Peaker Plant,300.0,ct,covered_before_measured,0.886487,0.886487,0.899
+PJM,55285,Wolf Hills Energy,250.0,ct,covered_before_measured,0.825163,0.825163,0.8338
+PJM,55296,"Calumet Energy Team, LLC",326.1,ct,covered_before_class_default,0.97,0.97,0.6815
+PJM,55297,Covert Generating Station,1192.4,cc,unmeasured_out_of_band,,,1.0069
+PJM,55298,Fairless Energy Center,1280.0,cc,covered_before_measured,0.970364,0.970364,0.9698
+PJM,55337,Helix Ironwood LLC,760.0,cc,covered_before_class_default,0.97,0.97,1.4766
+PJM,55347,"Armstrong Power, LLC",670.7,ct,covered_before_measured,0.956201,0.956201,0.9597
+PJM,55348,"Troy Energy, LLC",704.41,ct,covered_before_class_default,0.97,0.97,0.9908
+PJM,55349,"Pleasants Energy, LLC",341.1,ct,covered_before_measured,0.975992,0.975992,0.9653
+PJM,55350,Dresden Energy Facility,540.0,cc,covered_before_measured,0.951905,0.951905,0.9703
+PJM,55377,Gans Generating Facility,97.4,ct,covered_before_class_default,0.97,0.97,0.8984
+PJM,55392,Zion Energy Center,478.0,ct,covered_before_class_default,0.97,0.97,0.9285
+PJM,55397,Washington Power Company LLC,661.0,cc,covered_before_measured,0.977832,0.977832,0.9797
+PJM,55401,Rolling Hills Generating LLC,925.0,ct,covered_before_class_default,0.97,0.97,1.1287
+PJM,55438,"Elgin Energy Center, LLC",487.9,ct,covered_before_class_default,0.97,0.97,0.9659
+PJM,55439,Tenaska Virginia Generating Station,937.4,cc,covered_before_measured,0.988477,0.988477,0.9876
+PJM,55460,Indeck-Niles Energy Center,1081.5,cc,newly_measured,,0.979813,0.9798
+PJM,55502,Lawrenceburg Energy Facility,1206.7,cc,covered_before_measured,0.974498,0.974498,0.9743
+PJM,55503,Waterford Plant,874.6,cc,covered_before_measured,0.977589,0.977589,0.9781
+PJM,55516,Fayette Power Company LLC,667.6,cc,covered_before_measured,0.976862,0.976862,0.9748
+PJM,55524,York Energy Center,1404.0,cc,covered_before_measured,0.968594,0.968594,0.9797
+PJM,55640,"LSP University Park, LLC",540.0,ct,covered_before_class_default,0.97,0.97,0.9559
+PJM,55654,Chambersburg Units 12 & 13,100.4,ct,covered_before_class_default,0.97,0.97,0.9238
+PJM,55667,"Lower Mount Bethel Energy, LLC",601.6,cc,covered_before_measured,0.978093,0.978093,0.9749
+PJM,55690,Bethlehem Power Plant,1136.0,cc,covered_before_measured,0.954502,0.954502,0.9582
+PJM,55701,Fremont Energy Center,685.1,cc,covered_before_class_default,0.97,0.97,1.0501
+PJM,55710,Springdale Generating Station (55710),556.0,cc,covered_before_class_default,0.97,0.97,1.4706
+PJM,55736,Hanging Rock Power Company LLC,1365.0,cc,covered_before_measured,0.92833,0.92833,0.9441
+PJM,55738,Buchanan Units 1 & 2,84.0,ct,covered_before_class_default,0.97,0.97,0.9888
+PJM,55936,Rockford II Energy Center,180.7,ct,covered_before_class_default,0.97,0.97,0.9442
+PJM,55938,Ocean Peaking Power,332.8,ct,covered_before_class_default,0.97,0.97,0.9568
+PJM,55939,Warren County Power Station,1369.9,cc,covered_before_measured,0.98336,0.98336,0.9806
+PJM,55976,Hunterstown Combined Cycle,810.0,cc,covered_before_class_default,0.97,0.97,1.5356
+PJM,56397,Hunlock Unit 4,44.8,ct,covered_before_class_default,0.97,0.97,0.8725
+PJM,56668,NIH Cogeneration Facility,27.6,ct,covered_before_measured,0.946825,0.946825,0.9442
+PJM,56671,Longview Power,710.0,coal,covered_before_measured,0.899846,0.899846,0.9018
+PJM,56807,Bear Garden Generating Station,628.2,cc,covered_before_measured,0.969921,0.969921,0.972
+PJM,56846,CPV St. Charles Energy Center,733.3,cc,covered_before_class_default,0.97,0.97,1.1085
+PJM,56963,West Deptford Energy Station,735.8,cc,covered_before_measured,0.948254,0.948254,0.9629
+PJM,57349,Garrison Energy Center,309.0,cc,covered_before_measured,0.961447,0.961447,0.9712
+PJM,57794,St. Joseph Energy Center LLC,715.0,cc,covered_before_class_default,0.97,0.97,0.9891
+PJM,57839,Woodbridge Energy Center,726.3,cc,covered_before_measured,0.968494,0.968494,0.9714
+PJM,58079,Newark Energy Center,705.0,cc,covered_before_measured,0.961499,0.961499,0.968
+PJM,58235,Clayville,55.0,ct,covered_before_class_default,0.97,0.97,0.8869
+PJM,58260,Brunswick County Power Station,1376.0,cc,covered_before_measured,0.983349,0.983349,0.9807
+PJM,58420,Hamilton Liberty Generation Plant,830.0,cc,covered_before_measured,0.98661,0.98661,0.9809
+PJM,58426,Hamilton Patriot Generation Plant,795.0,cc,covered_before_measured,0.984583,0.984583,0.985
+PJM,59004,"Potomac Energy Center, LLC",766.0,cc,covered_before_measured,0.990776,0.990776,0.9767
+PJM,59073,Cove Point LNG Terminal,81.8,ct,covered_before_class_default,0.97,0.97,0.1238
+PJM,59220,Wildcat Point Generation Facility,991.3,cc,covered_before_measured,0.967751,0.967751,0.9683
+PJM,59326,Middletown Energy Center,462.5,cc,covered_before_measured,0.977954,0.977954,0.9789
+PJM,59764,Oregon Clean Energy Center,816.9,cc,covered_before_measured,0.973792,0.973792,0.9732
+PJM,59773,Carroll County Energy,714.6,cc,covered_before_measured,0.975821,0.975821,0.9754
+PJM,59906,Moxie Freedom Generation Plant,1045.0,cc,covered_before_measured,0.988507,0.988507,0.9851
+PJM,59913,Greensville County Power Station,1605.1,cc,covered_before_measured,0.978526,0.978526,0.9767
+PJM,60302,Keys Energy Center,830.6,cc,covered_before_measured,0.987114,0.987114,0.9869
+PJM,60356,"South Field Energy, LLC",1210.4,cc,covered_before_measured,0.967515,0.967515,0.967
+PJM,60357,Lackawanna Energy Center,1362.0,cc,covered_before_measured,0.979901,0.979901,0.9792
+PJM,60368,Hummel Station,1085.7,cc,covered_before_measured,0.985812,0.985812,0.9842
+PJM,60376,"Clean Energy Future - Lordstown, LLC",856.5,cc,covered_before_measured,0.980262,0.980262,0.9774
+PJM,60387,Invenergy Nelson Expansion LLC,314.0,ct,covered_before_measured,0.987728,0.987728,0.9877
+PJM,60464,Tenaska Westmoreland Generating Station,947.0,cc,covered_before_measured,0.977881,0.977881,0.9779
+PJM,60589,"CPV Fairview, LLC",1065.4,cc,covered_before_measured,0.983673,0.983673,0.9908
+PJM,61028,Hickory Run Energy Station,962.3,cc,covered_before_measured,0.982926,0.982926,0.9731
+PJM,61035,Birdsboro Power,485.0,cc,covered_before_measured,0.980774,0.980774,0.9893
+PJM,61322,Long Ridge Energy Generation,485.0,cc,covered_before_measured,0.976717,0.976717,0.9836
+PJM,62565,Hill Top Energy Center,623.5,cc,covered_before_measured,0.978042,0.978042,0.9833
+PJM,62926,"Jackson Generation, LLC",1185.5,cc,covered_before_measured,0.983092,0.983092,0.9799
+PJM,62949,Guernsey Power Station,1788.5,cc,covered_before_measured,0.967799,0.967799,0.9713
+PJM,63931,CPV Three Rivers Energy Center,1220.9,cc,covered_before_measured,0.974644,0.974644,0.9746
+SOCO,3,Barry,3099.7,cc+coal+st,newly_measured,,0.937377,0.9374
+SOCO,10,Greene County,1256.1,ct+st,newly_measured,,0.93195,0.9319
+SOCO,26,E C Gaston,1852.0,coal+st,newly_measured,,0.914123,0.9141
+SOCO,56,Charles R Lowman,639.0,cc,newly_measured,,0.932198,0.9322
+SOCO,533,McWilliams,650.0,cc,unmeasured_out_of_band,,,1.4267
+SOCO,641,Gulf Clean Energy Center,924.0,coal,newly_measured,,0.895058,0.8951
+SOCO,703,Bowen,3200.0,coal,newly_measured,,0.91488,0.9149
+SOCO,710,Jack McDonough,2471.0,cc,newly_measured,,0.986893,0.9869
+SOCO,728,Yates,714.0,st,newly_measured,,0.924931,0.9249
+SOCO,2048,Sweatt Electric Generating Plant,32.0,ct,unmeasured_out_of_band,,,1.0809
+SOCO,2049,Watson Electric Generating Plant,754.0,ct+st,newly_measured,,0.939899,0.9399
+SOCO,6002,James H Miller Jr,2777.5,coal,newly_measured,,0.936989,0.937
+SOCO,6052,Wansley (6052),1744.0,coal,newly_measured,,0.816546,0.8165
+SOCO,6073,Daniel Electric Generating Plant,2136.4,cc+coal,newly_measured,,0.947621,0.9476
+SOCO,6124,McIntosh (6124),657.6,ct,unmeasured_out_of_band,,,0.7921
+SOCO,6257,Scherer,3440.0,coal,newly_measured,,0.883207,0.8832
+SOCO,7063,McIntosh (7063),580.0,ct,newly_measured,,0.919726,0.9197
+SOCO,7710,Plant H. Allen Franklin,1901.8,cc,newly_measured,,0.974441,0.9744
+SOCO,7764,MPC Generating,302.5,ct,newly_measured,,0.927971,0.928
+SOCO,7768,Sowega Power Project,92.0,ct,newly_measured,,0.919679,0.9197
+SOCO,7813,Sewell Creek Energy,445.5,ct,newly_measured,,0.942844,0.9428
+SOCO,7829,Smarr Energy Facility,190.4,ct,newly_measured,,0.940272,0.9403
+SOCO,7897,E B Harris Generating Plant,1304.0,cc,newly_measured,,0.97713,0.9771
+SOCO,7916,Talbot Energy Facility,572.4,ct,newly_measured,,0.930392,0.9304
+SOCO,7917,Chattahoochee Energy Facility,466.0,cc,newly_measured,,0.979558,0.9796
+SOCO,7946,Wansley (7946),462.8,cc,unmeasured_out_of_band,,,1.48
+SOCO,55061,Tenaska Georgia Generating Station,945.0,ct,newly_measured,,0.94784,0.9478
+SOCO,55128,Walton County Power,449.7,ct,newly_measured,,0.866632,0.8666
+SOCO,55141,Hawk Road Energy Facility,447.6,ct,newly_measured,,0.97313,0.9731
+SOCO,55241,Hog Bayou Energy Center,230.0,cc,newly_measured,,0.996416,0.9964
+SOCO,55244,Doyle Energy Facility,311.1,ct,newly_measured,,0.932035,0.932
+SOCO,55267,Edward L Addison Generating Plant,591.9,ct,newly_measured,,0.937198,0.9372
+SOCO,55271,Tenaska Lindsay Hill Generating Station,848.0,cc,newly_measured,,0.972633,0.9726
+SOCO,55304,Baconton Power,193.0,ct,newly_measured,,0.970868,0.9709
+SOCO,55332,Washington County Power,623.4,ct,newly_measured,,0.834198,0.8342
+SOCO,55382,Thomas A. Smith Energy Facility,1192.0,cc,newly_measured,,0.961345,0.9613
+SOCO,55406,Bobby C. Smith Jr. Energy Facility,524.6,cc,unmeasured_out_of_band,,,1.2292
+SOCO,55409,Calhoun Generating Facility,704.0,ct,newly_measured,,0.938086,0.9381
+SOCO,55411,Hillabee Energy Center,752.7,cc,newly_measured,,0.96572,0.9657
+SOCO,55440,Central Alabama Gen Station,917.0,cc,newly_measured,,0.994653,0.9947
+SOCO,55672,AL Sandersville Energy Facility,576.4,ct,unmeasured_out_of_band,,,1.0926
+SOCO,55965,Wansley CC (55965),1184.8,cc,newly_measured,,0.976754,0.9768
+SOCO,56018,AMEA Sylacauga Plant,95.0,ct,newly_measured,,0.978542,0.9785
+SOCO,56150,McIntosh Combined Cycle Facility,1315.6,cc,newly_measured,,0.987758,0.9878
+SOCO,57037,David M Ratcliffe,840.0,cc,newly_measured,,0.977501,0.9775
+SPP,59,Platte,100.0,coal,newly_measured,,0.892416,0.8924
+SPP,60,Gerald Whelan Energy Center,296.0,coal,newly_measured,,0.884872,0.8849
+SPP,108,Holcomb,358.9,coal,newly_measured,,0.909391,0.9094
+SPP,127,Oklaunion Power Station,650.0,coal,newly_measured,,0.918825,0.9188
+SPP,165,Grand River Dam Authority,959.5999999999999,cc+coal,newly_measured,,0.94555,0.9455
+SPP,201,Thomas Fitzhugh,162.0,cc,newly_measured,,0.977685,0.9777
+SPP,1217,Earl F Wisdom,113.5,ct+st,unmeasured_out_of_band,,,0.7555
+SPP,1230,Cimarron River,52.1,st,newly_measured,,0.957179,0.9572
+SPP,1233,Fort Dodge aka Judson Large,148.7,st,newly_measured,,0.865544,0.8655
+SPP,1235,Great Bend Station aka Arthur Mullergren,99.8,st,newly_measured,,0.83886,0.8389
+SPP,1239,Riverton,252.2,cc,newly_measured,,0.966949,0.9669
+SPP,1240,Gordon Evans Energy Center,323.4,ct,newly_measured,,0.940644,0.9406
+SPP,1241,La Cygne,1437.8,coal,newly_measured,,0.90738,0.9074
+SPP,1248,Hutchinson Energy Center,166.5,ct,newly_measured,,0.922491,0.9225
+SPP,1250,Lawrence Energy Center,491.3,coal,newly_measured,,0.904434,0.9044
+SPP,1268,Chanute 2,46.0,ct,newly_measured,,0.981194,0.9812
+SPP,1271,Coffeyville,37.0,st,newly_measured,,0.912981,0.913
+SPP,1305,McPherson 2,102.6,ct,unmeasured_out_of_band,,,0.745
+SPP,1336,Garden City,207.7,ct+st,newly_measured,,0.868022,0.868
+SPP,1416,Arsenal Hill Power Plant,110.0,st,newly_measured,,0.935577,0.9356
+SPP,1417,Lieberman Power Plant,234.0,st,newly_measured,,0.95533,0.9553
+SPP,2076,Asbury,198.0,coal,newly_measured,,0.897413,0.8974
+SPP,2079,Hawthorn,960.3,cc+coal+ct,newly_measured,,0.926999,0.927
+SPP,2092,Ralph Green Station,65.8,ct,newly_measured,,0.920471,0.9205
+SPP,2122,Chillicothe,80.0,ct,newly_measured,,0.998183,0.9982
+SPP,2131,Higginsville Municipal Power Plant,37.5,ct,newly_measured,,0.897253,0.8973
+SPP,2132,Blue Valley,51.0,st,newly_measured,,0.893727,0.8937
+SPP,2161,James River,155.0,ct,newly_measured,,0.974936,0.9749
+SPP,2226,Canaday,99.3,st,newly_measured,,0.925409,0.9254
+SPP,2240,Lon D Wright Power Plant,156.5,coal+ct,unmeasured_out_of_band,,,1.2177
+SPP,2241,C W Burdick,81.6,ct,unmeasured_out_of_band,,,0.7224
+SPP,2250,J Street,30.1,ct,unmeasured_out_of_band,,,0.7221
+SPP,2277,Sheldon,214.0,coal,newly_measured,,0.885572,0.8856
+SPP,2291,North Omaha Station,563.9,coal+st,newly_measured,,0.910739,0.9107
+SPP,2292,Sarpy County Station,312.5,ct,newly_measured,,0.871765,0.8718
+SPP,2446,Maddox,117.0,st,unmeasured_out_of_band,,,1.1797
+SPP,2454,Cunningham,461.0,ct+st,newly_measured,,0.95375,0.9538
+SPP,2817,Leland Olds,660.0,coal,newly_measured,,0.887075,0.8871
+SPP,2951,Horseshoe Lake,848.76,ct+st,newly_measured,,0.958581,0.9586
+SPP,2952,Muskogee,1510.0,coal+st,newly_measured,,0.949964,0.95
+SPP,2953,Mustang,398.0,ct,newly_measured,,0.930198,0.9302
+SPP,2956,Seminole (2956),1521.5,st,newly_measured,,0.957156,0.9572
+SPP,2963,Northeastern,1338.0,cc+coal+st,unmeasured_out_of_band,,,1.0875
+SPP,2964,Southwestern,598.0,ct+st,newly_measured,,0.881156,0.8812
+SPP,2965,Tulsa,322.0,st,newly_measured,,0.875984,0.876
+SPP,3006,Anadarko,507.0,cc+ct,unmeasured_out_of_band,,,1.0936
+SPP,3008,Mooreland,322.0,st,newly_measured,,0.857977,0.858
+SPP,3338,Aberdeen Generating Station,52.0,ct,newly_measured,,0.922044,0.922
+SPP,3476,Knox Lee Power Plant,398.0,st,covered_before_class_default,0.97,0.97,0.9411
+SPP,3477,Lone Star Power Plant,50.0,st,newly_measured,,0.899358,0.8994
+SPP,3478,Wilkes Power Plant,883.0,st,covered_before_class_default,0.97,0.97,0.9335
+SPP,3482,Jones Station,820.0,ct+st,covered_before_class_default,0.97,0.97,0.955
+SPP,3484,Nichols Station,457.0,st,covered_before_class_default,0.97,0.97,0.9301
+SPP,3485,Plant X,411.0,st,covered_before_class_default,0.97,0.97,0.9472
+SPP,3604,J Robert Massengale Generating Station,74.0,cc,covered_before_class_default,0.97,0.97,0.9571
+SPP,4940,Riverside (4940),1067.0,ct+st,newly_measured,,0.927915,0.9279
+SPP,6064,Nearman Creek,315.0,coal+ct,newly_measured,,0.89019,0.8902
+SPP,6065,Iatan,1616.4,coal,newly_measured,,0.922005,0.922
+SPP,6068,Jeffrey Energy Center,2178.8,coal,newly_measured,,0.880867,0.8809
+SPP,6074,Greenwood Energy Center,248.5,ct,newly_measured,,0.923813,0.9238
+SPP,6077,Gerald Gentleman Station,1365.0,coal,newly_measured,,0.9388,0.9388
+SPP,6095,Sooner,1038.0,coal,newly_measured,,0.923486,0.9235
+SPP,6096,Nebraska City Station,1337.5,coal,newly_measured,,0.920281,0.9203
+SPP,6138,Flint Creek Power Plant,494.0,coal,newly_measured,,0.921635,0.9216
+SPP,6139,Welsh Power Plant,1000.0,coal,covered_before_class_default,0.97,0.97,0.9257
+SPP,6193,Harrington Station,1018.0,st,covered_before_class_default,0.97,0.97,0.913
+SPP,6194,Tolk Station,1067.0,coal,covered_before_class_default,0.97,0.97,0.9252
+SPP,6195,John Twitty Energy Center,563.0,coal+ct,newly_measured,,0.901292,0.9013
+SPP,6223,Empire District Elec Co Energy Ctr,244.0,ct,newly_measured,,0.941106,0.9411
+SPP,6373,Rokeby,253.0,ct,newly_measured,,0.890088,0.8901
+SPP,6469,Antelope Valley,900.0,coal,newly_measured,,0.937468,0.9375
+SPP,6772,Hugo,440.0,coal,newly_measured,,0.924108,0.9241
+SPP,7013,East 12th Street,25.8,st,newly_measured,,0.923986,0.924
+SPP,7296,State Line (MO),627.3,cc+ct,newly_measured,,0.936287,0.9363
+SPP,7515,McPherson Municipal Power Plant #3,80.2,ct,newly_measured,,0.854553,0.8546
+SPP,7825,Fulton,153.0,ct,newly_measured,,0.968179,0.9682
+SPP,7887,Terry Bundy Generating Station,169.4,cc+ct,unmeasured_out_of_band,,,1.1202
+SPP,7902,H W Pirkey Power Plant,650.0,coal,covered_before_class_default,0.97,0.97,0.9248
+SPP,7903,McCartney Generating Station,100.0,ct,newly_measured,,0.985931,0.9859
+SPP,7928,Osawatomie Generating Station,76.6,ct,newly_measured,,0.946437,0.9464
+SPP,7929,West Gardner Generating Station,342.6,ct,newly_measured,,0.958495,0.9585
+SPP,8000,Beatrice,219.5,cc,newly_measured,,0.960933,0.9609
+SPP,8037,Clifton Station,76.2,ct,newly_measured,,0.90449,0.9045
+SPP,8059,Comanche (8059),233.0,cc,unmeasured_out_of_band,,,1.6705
+SPP,50558,Frontier Generating Station,131.4,cc,unmeasured_out_of_band,,,1.0179
+SPP,55065,Mustang Station,464.8,cc,covered_before_class_default,0.97,0.97,0.9684
+SPP,55146,"Green Country Energy, LLC",783.0,cc,newly_measured,,0.99251,0.9925
+SPP,55178,Dogwood Energy Facility,655.2,cc,newly_measured,,0.97468,0.9747
+SPP,55225,Oneta Energy Center,1086.4,cc,newly_measured,,0.959981,0.96
+SPP,55457,McClain Energy Facility,486.98,cc,unmeasured_out_of_band,,,1.5161
+SPP,55463,Redbud Power Plant,1433.6,cc,newly_measured,,0.969712,0.9697
+SPP,55651,Spring Creek Power Plant,293.5,ct,newly_measured,,0.953484,0.9535
+SPP,55664,Harrison County Power Project,514.4,cc,covered_before_class_default,0.97,0.97,0.9657
+SPP,55972,Cass County Station,323.8,ct,newly_measured,,0.951272,0.9513
+SPP,56013,Exira Station,140.1,ct,newly_measured,,0.916513,0.9165
+SPP,56151,South Harper Peaking Facility,321.2,ct,newly_measured,,0.964371,0.9644
+SPP,56238,Groton Generating Station,170.0,ct,newly_measured,,0.90652,0.9065
+SPP,56326,Mustang Station (56326),459.3,ct,covered_before_class_default,0.97,0.97,0.9637
+SPP,56458,Hobbs Generating Station,573.8,cc,newly_measured,,0.971298,0.9713
+SPP,56502,Emporia Energy Center,668.8,ct,newly_measured,,0.931809,0.9318
+SPP,56564,John W. Turk Jr. Power Plant,650.0,coal,newly_measured,,0.933424,0.9334
+SPP,56606,Culbertson Station,85.0,ct,newly_measured,,0.948842,0.9488
+SPP,56610,Deer Creek Station,295.0,cc,newly_measured,,0.968907,0.9689
+SPP,57865,Antelope Elk Energy Center,162.0,ct,covered_before_class_default,0.97,0.97,0.296
+SPP,57881,Pioneer Generating Station,763.0,ct,unmeasured_out_of_band,,,2.3951
+SPP,57943,Lonesome Creek Station,240.0,ct,newly_measured,,0.968788,0.9688
+SPP,58325,Charles D Lamb Energy Center,122.0,ct,newly_measured,,0.966691,0.9667
+SPP,63628,Tinker,64.0,ct,unmeasured_no_campd,,,
+SPP,64547,Turtle Creek Station,442.2,ct,unmeasured_out_of_band,,,1.047
