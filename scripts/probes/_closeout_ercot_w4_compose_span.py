@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""Compose the closeout-ERCOT-w3 coal cliff-split span from the incumbent keeper.
+"""Compose the closeout-ERCOT-w4 span (cliff split + coal warm committed) from the keeper.
 
 Zero LP. The keeper bundle ``closeout_ercot_l1_span`` is the base. 2023 stays
 byte-identical (owner carve-out, not armed): the keeper's own 2023 files are
 sha-identical to the ``closeout_ercot_l1b_2023`` leg. The 2019–2022 and
-2024–2025 year files are swapped for the cliff-split legs
-(``closeout_ercot_w3_<Y>``), each solved at the solve base ``35ef9a1e``
-(keeper pin ``106d6bb7`` plus the lane's default-off code) with only
-``coal_perplant_cliff_split=true`` set.
+2024–2025 year files are swapped for the w4 legs (``closeout_ercot_w4_<Y>``),
+each solved at ``1283e27f`` (keeper pin ``106d6bb7`` plus the w3 default-off
+code plus the keeper bundle) with only ``coal_perplant_cliff_split=true`` and
+``coal_warm_committed=true`` set.
 
 Steps:
 1. Copy the keeper bundle.
@@ -20,8 +20,8 @@ Steps:
 5. Regenerate ``legitimacy_diagnostics.json`` over all seven years.
 
 Usage:
-    python scripts/probes/_closeout_ercot_w3_compose_span.py \
-        --out results/calibration/closeout_ercot_w3_span
+    python scripts/probes/_closeout_ercot_w4_compose_span.py \
+        --out results/calibration/closeout_ercot_w4_span
 """
 
 from __future__ import annotations
@@ -39,7 +39,7 @@ CAL = REPO / "results" / "calibration"
 KEEPER = CAL / "closeout_ercot_l1_span"
 STRIP_YEARS = (2019, 2020, 2021, 2022, 2024, 2025)
 KEPT_LEGS = {2023: "closeout_ercot_l1b_2023"}
-ARM_KEY = "coal_perplant_cliff_split"
+ARM_KEYS = ("coal_perplant_cliff_split", "coal_warm_committed")
 ROOT_FRAMES = ("system.parquet", "btm.parquet", "flows.parquet", "storage.parquet")
 
 
@@ -58,14 +58,14 @@ def _flat(d: dict, pre: str = "") -> dict:
 
 
 def check_leg(year: int) -> Path:
-    """K1 at compose time: the leg differs from the keeper only in the arm key."""
-    leg = CAL / f"closeout_ercot_w3_{year}"
+    """K1 at compose time: the leg differs from the keeper only in the arm keys."""
+    leg = CAL / f"closeout_ercot_w4_{year}"
     a = _flat(json.loads((leg / "run_config.json").read_text())["scenario_config"])
     k = _flat(
         json.loads((KEEPER / f"run_config_{year}.json").read_text())["scenario_config"]
     )
     diff = sorted(x for x in set(a) | set(k) if a.get(x) != k.get(x))
-    if diff != [ARM_KEY] or a[ARM_KEY] is not True:
+    if diff != sorted(ARM_KEYS) or any(a[k] is not True for k in ARM_KEYS):
         raise SystemExit(f"ABORT K1 {year}: diffs {diff}")
     if not (leg / "dispatch" / f"{year}_P1.parquet").is_file():
         raise SystemExit(f"ABORT: {leg}/dispatch/{year}_P1.parquet missing")
@@ -76,7 +76,7 @@ def concat_root_frames(out: Path, legs: dict[int, Path]) -> None:
     """Concatenate the per-leg root frames (the registration renderer reads them).
 
     The slim keeper bundle no longer carries them, so every year comes from its
-    leg: the armed years from the w3 legs, 2023 from the l1b leg.
+    leg: the armed years from the w4 legs, 2023 from the l1b leg.
     """
     import pandas as pd
 
@@ -129,13 +129,14 @@ def compose(out: Path) -> None:
     concat_root_frames(out, {**legs, **{y: CAL / n for y, n in KEPT_LEGS.items()}})
     meta = json.loads((out / "meta.json").read_text())
     meta["composed_from"] = {
-        **{f"closeout_ercot_w3_{y}": [y] for y in STRIP_YEARS},
+        **{f"closeout_ercot_w4_{y}": [y] for y in STRIP_YEARS},
         **{n: [y] for y, n in KEPT_LEGS.items()},
     }
     meta["run_note"] = (
-        "closeout-ERCOT-w3: coal_perplant_cliff_split armed in 2019-2022 and "
-        "2024-2025 (ERCOT-144 econ tranche split at its largest measured curve "
-        "step); 2023 keeper leg byte-identical (owner carve-out)"
+        "closeout-ERCOT-w4: coal_perplant_cliff_split + coal_warm_committed "
+        "armed in 2019-2022 and 2024-2025 (cliff split; warm-boiler committed "
+        "band exempt from the P1 startup markup); 2023 keeper leg "
+        "byte-identical (owner carve-out)"
     )
     (out / "meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
     legspec = [f"--leg={y}=run_config_{y}.json" for y in range(2019, 2026)]
