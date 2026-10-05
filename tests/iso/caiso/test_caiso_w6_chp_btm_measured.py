@@ -74,7 +74,9 @@ def _disposition(**over) -> pd.DataFrame:
 def test_derive_wholesale_is_grid_retail_is_host():
     """Grid = resale + tolling + outgoing over net; retail counts as host supply."""
     out = derive(
-        _disposition(sales_for_resale_mwh=500.0, tolling_mwh=100.0, retail_sales_mwh=300.0),
+        _disposition(
+            sales_for_resale_mwh=500.0, tolling_mwh=100.0, retail_sales_mwh=300.0
+        ),
         {1},
     )
     assert out.loc[0, "grid_share"] == pytest.approx(0.6)
