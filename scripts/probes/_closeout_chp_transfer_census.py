@@ -49,7 +49,7 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(REPO / "src"), str(REPO), str(REPO / "scripts")]
 
 import scripts.run_calibration_full as rcf  # noqa: E402
-from market_sim.data.chp import chp_btm_pct  # noqa: E402
+from market_sim.data.chp import chp_btm_pct, measured_chp_btm_pct_for_iso  # noqa: E402
 from scripts.lib import benchmark_semantics as bs  # noqa: E402
 
 OUT = REPO / "results/phase0/governance/_closeout_chp_transfer_census.json"
@@ -107,6 +107,7 @@ def census(iso: str, y: int, gen: pd.DataFrame, pooled: dict, same: dict) -> dic
     f = rcf._eia923_frame(y, gen, iso)
     fh = rcf._eia923_frame(y, gen, iso, mustrun_chp_btm_holdout=True)
     ctot = f.groupby(["plant_id", "klass"]).annual_mwh.sum()
+    bench_meas = measured_chp_btm_pct_for_iso(iso)
     rows = []
     for code, p in b["plants"].items():
         grp = p.get("group")
@@ -114,7 +115,9 @@ def census(iso: str, y: int, gen: pd.DataFrame, pooled: dict, same: dict) -> dic
             continue
         pid = int(str(code).split(":")[0])
         e = float(ctot.get((pid, grp), 0.0))
-        dflt = chp_btm_pct(pid, grp, iso=iso) / 100.0
+        # the bench subtrahend's own share: an ISO's measured artifact where it
+        # exists (NYISO Gold Book, nyiso-149), else the sector default
+        dflt = bench_meas.get(pid, chp_btm_pct(pid, grp, iso=iso)) / 100.0
         m = pooled.get(pid)
         rows.append(
             {
@@ -400,9 +403,9 @@ def main() -> None:
     res = json.loads(out.read_text()) if out.exists() else {}
     pf = None if a.no_campd else rcf._parasitic_factor_map()
     for iso in a.isos:
-        res[iso] = {}
+        res.setdefault(iso, {})
         for y in a.years:
-            if bench(iso, y) is None:
+            if bench(iso, y) is None or str(y) in res[iso]:
                 continue
             r = census(iso, y, gen, pooled, same)
             shares = r.pop("_shares")
@@ -420,6 +423,8 @@ def main() -> None:
             res[iso][str(y)] = r
             print(iso, y, json.dumps({k: r[k] for k in ("dE_bench_twh", "dE_by_group")}),
                   flush=True)
+            out.parent.mkdir(parents=True, exist_ok=True)
+            out.write_text(json.dumps(res, indent=1, default=float))
         recheck(res[iso])
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(json.dumps(res, indent=1, default=float))

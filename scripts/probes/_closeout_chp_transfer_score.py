@@ -63,7 +63,10 @@ def _gen(recs: list[dict]) -> float:
         for r in recs
         if abs(r["model"] - r["actual"]) > 1.0 and abs(r.get("share_pp") or 0) > 0.2
     ]
-    return float(np.median(v)) if v else float("nan")
+    if len(v) >= 3:
+        return float(np.median(v))
+    # few material records: the volume band's own 3 %-of-generation leg
+    return float(np.median([r["tol_twh"] for r in recs])) / 0.03
 
 
 def _status(miss: float, share: float, tol: float) -> str:
