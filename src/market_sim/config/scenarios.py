@@ -2349,6 +2349,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # construction: the injectors / formula read them only when handed True.
     "caiso_dsw_clean_depth_own_year",
     "caiso_intertie_unprinted_daily_gas_shape",
+    # closeout-CAISO-w5 (2026-10-05), default off, registered IN THE SAME
+    # COMMIT as the fields (the nyiso-119 discipline). Byte-identical off by
+    # construction: the CAISO RA bridge reads the steam leg only when the gate
+    # is True, and the min-load scalar only under the gate.
+    "caiso_ra_mustoffer_physics_eligibility",
+    "caiso_ra_st_min_load_frac",
     # NWPP-NEXT-6 (2026-09-26): WECC Path 76 "Alturas" link NWPP-NW <->
     # NWPP-SNV (default off). Byte-identical off by construction: its one
     # applier, pipeline.ttc.apply_nwpp_path76_link, returns the SAME ISOConfig
@@ -3325,6 +3331,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by closeout-CAISO-w3 WITH the fields (the nyiso-119 discipline).
     "caiso_dsw_clean_depth_own_year": "False",
     "caiso_intertie_unprinted_daily_gas_shape": "False",
+    # Added by closeout-CAISO-w5 WITH the fields (the nyiso-119 discipline).
+    "caiso_ra_mustoffer_physics_eligibility": "False",
+    "caiso_ra_st_min_load_frac": "0.119",
     # Added by NWPP-NEXT-6 WITH the field (the nyiso-119 discipline).
     "nwpp_path76_alturas_link": "False",
     # Added by NWPP-NEXT-7 WITH the field (the nyiso-119 discipline).
@@ -8160,6 +8169,38 @@ class ScenarioConfig:
     # minimum generation (one combustion train at minimum; NREL "Power Plant
     # Cycling Costs" 2012; CAISO Master File PMin/PMax). A physical turn-down
     # limit, not a price/volume fit. Only used when caiso_ra_mustoffer is on.
+    caiso_ra_mustoffer_physics_eligibility: bool = False  # closeout-CAISO-w5
+    # (2026-10-05). Rule 18 [R-PHYSICS]: the RA must-offer bridge's eligibility
+    # becomes unit physics only. Today the CAISO call admits the merchant-gas
+    # fuel types ("gas_cc", "gas_ct"), so a long-start gas STEAM unit (min-down
+    # 8-12 h, startup $55-70/MW, constants.ST_GAS_COMMITMENT_PARAMS) the P0
+    # pattern runs before and after a gap is cycled off across it even though a
+    # real unit commitment holds it at minimum load. Armed, "gas_st" joins the
+    # same detector call, so the physical (< min-down) and economic (restart
+    # inequality, DA horizon, RUC-order decommit) legs apply to it exactly as to
+    # a CC; fast-start CTs stay unbridgeable by their own 1 h min-down. The
+    # steam leg's level is its OWN measured minimum stable load,
+    # caiso_ra_st_min_load_frac, never the CC scalar. One mechanism (rule 19):
+    # the same detector and D-2 code (ra_mustoffer_bridge), wider physics; no
+    # other floor binds a CAISO ST_GAS row (w3 floors 2020 / 2023: none), and
+    # the caiso_st_gas_committed_measured / caiso_st_gas_peak_measured offer
+    # bypasses are offer surfaces, not floors, so nothing stacks. Measured
+    # object: legacy OTC steam (Alamitos, Redondo, Huntington, Ormond) online
+    # 41-56 % of hours at minimum load in multi-day blocks 2019-23 while both
+    # trading-hub prints sat $20-41 below their offer
+    # (docs/records/caiso/closeout-caiso-w5/). Default off; CAISO-only (the
+    # CAISO bridge call is the only reader).
+    caiso_ra_st_min_load_frac: float = 0.119  # closeout-CAISO-w5: minimum stable
+    # load of a bridged CAISO gas-steam unit as a fraction of the plant's
+    # available capacity. MEASURED from EPA CAMPD unit conduct 2019-2025 by the
+    # same WP-3 loading-when-on construction as the NYISO legs (HSL = p99.5 of
+    # pooled load, LSL = p5 of online-hour load, class value = capacity-weighted
+    # p50 across 14 units, p25 0.081 / p75 0.246):
+    # scripts/data/derive_campd_gas_commitment_params.py --iso CAISO --years
+    # 2019 ... 2025 -> data/raw/_processed-legacy/
+    # campd_gas_commitment_params-span1925-CAISO.csv. The span covers the OTC
+    # steam fleet the 2023-25 artifact no longer sees (3 plants left).
+    # Frozen against residuals (rules 13/21/23). Read only under the gate above.
     caiso_ra_startup_bridge: bool = False  # CAISO RA must-offer STARTUP-COST-AWARE
     # extension (caiso-44). The plain RA bridge (caiso_ra_mustoffer above) floors a
     # CC/CT only across a midday idle gap SHORTER than its physical min-down time.

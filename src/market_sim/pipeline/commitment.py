@@ -201,6 +201,20 @@ def caiso_ra_p1_floor_fleet(
         if getattr(config, "caiso_ra_startup_trajectory", False)
         else None
     )
+    # closeout-CAISO-w5 (rule 18): physics-only eligibility admits long-start
+    # gas steam to the SAME detector call at its own measured min-load; off,
+    # the call is byte-identical (default fuel types, scalar min-load).
+    physics_kw: dict = {}
+    if getattr(config, "caiso_ra_mustoffer_physics_eligibility", False):
+        cc_frac = float(config.caiso_ra_min_load_frac)
+        st_frac = float(config.caiso_ra_st_min_load_frac)
+        physics_kw = {
+            "fuel_types": ("gas_cc", "gas_ct", "gas_st"),
+            "min_load_frac_by_gen": np.array(
+                [st_frac if gen.fuel_type == "gas_st" else cc_frac for gen in fleet],
+                dtype=float,
+            ),
+        }
     ra_floor = caiso_ra_mustoffer_min_gen(
         p0_dispatch,
         fleet_arrays,
@@ -214,6 +228,7 @@ def caiso_ra_p1_floor_fleet(
         startup_aware=startup_aware,
         release_hours=release_hours,
         startup_lead_hours=startup_lead,
+        **physics_kw,
     )
     # RA-quantity gate (gap G-61 path (a)): cap the bridged fleet at the
     # published gas-fired must-offer RA capacity for the compliance year —
