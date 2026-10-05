@@ -262,3 +262,19 @@ no slack, no penalty, no tolerance. L1 proof in a shard: SPP 2020 window 0 Optim
 
 Nothing is LIVE for SPP outside the UC stage. Prompts regenerated with `--sha ae224faf…` and re-committed as `shard-prompts-ucmilp-spp.txt`
 (the `6d47c762` and `c8690022` prompts stay in history at `b2167930` and `c72748dc`).
+
+## Addendum D (2026-10-05, after the legs landed; disclosure of two zero-LP composition deviations — no reading, bar or kill changed)
+
+1. `scripts/probes/_ucmilp_compose_span.py` at the pin aborted: *"DISAGREE gas_price_override"* — the keeper records the gas price per year
+   (`run_config_<y>.json`, 2.57 / 2.03 / 3.72 / 6.45 / 2.54 / 2.19 / 3.52 $/MMBtu) and the keeper's own composer (`_closeoutsppnuc_compose_span.py`)
+   declares `YEAR_INDEXED = {"weather_year", "gas_price_override"}`; the UC composer's `PER_YEAR_FIELDS` lists `gas_price` (None everywhere) but not
+   `gas_price_override`. The legs carry exactly the keeper's per-year values. The lane ran a scratch copy of the composer with `gas_price_override` added to
+   that set (no repo script edited; `scripts/` is not this lane's); everything else in the compose is the committed script's logic.
+2. Registration (`dashboard_add_run.py`) needs the benchmark frames in `results/calibration/_shared/SPP/`, which a shard cannot push (gitignored sibling).
+   `run_calibration_full.py --restore-shared-inputs` refused because the span's `meta.json` (copied from the 2019 leg) recorded one-year frame hashes. The
+   keeper composer carries `_respan_shared_inputs` for exactly this (miso-267); the UC composer does not. The lane applied the keeper composer's function to
+   the span's meta: the re-spanned hashes are the keeper's own (`campd-8b15fb193a60`, `eia923-ada99c7451fd`, `eia930-c3bec7e7b952`), so the arm is scored on
+   the control's benchmark basis; restore then verified every frame against its recorded hash.
+3. The probe carries no `calibration_attestation.json` (attestation is a promotion step), so C6 reads UNATTESTED and the rule-22 C3c ledger route is
+   unavailable: C3c CAVEAT → FAIL in 2019–2022 is an artefact and is marked as such in the RESULT; the C3c magnitudes are compared directly.
+4. Both composer gaps (per-year `gas_price_override`; the respan step) are routed to UC-DESK for the engine lane's composer.
