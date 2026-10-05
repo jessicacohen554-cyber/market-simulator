@@ -1,0 +1,694 @@
+{
+ "2019": {
+  "plants": 123,
+  "plants_in_sched67": 106,
+  "netgen_twh_all": 65.497,
+  "netgen_twh_covered": 63.088,
+  "btm_twh_default": 36.321,
+  "btm_twh_measured_where_covered": 25.523,
+  "dE_grid_twh": 10.798,
+  "by_group": {
+   "CC_CHP": {
+    "netgen": 43.377,
+    "dE": 11.026
+   },
+   "CT_CHP": {
+    "netgen": 19.086,
+    "dE": 0.057
+   },
+   "ST_CHP": {
+    "netgen": 3.033,
+    "dE": -0.285
+   }
+  },
+  "default_shares": [
+   0.35,
+   0.65,
+   0.7,
+   0.9
+  ],
+  "top": [
+   {
+    "plant": 10745,
+    "group": "CC_CHP",
+    "netgen_twh": 8.853,
+    "default": 0.35,
+    "measured": 0.013,
+    "dE_twh": 2.98
+   },
+   {
+    "plant": 55089,
+    "group": "CC_CHP",
+    "netgen_twh": 5.735,
+    "default": 0.7,
+    "measured": 0.245,
+    "dE_twh": 2.612
+   },
+   {
+    "plant": 10789,
+    "group": "CC_CHP",
+    "netgen_twh": 3.17,
+    "default": 0.7,
+    "measured": 0.117,
+    "dE_twh": 1.848
+   },
+   {
+    "plant": 55088,
+    "group": "CT_CHP",
+    "netgen_twh": 3.716,
+    "default": 0.35,
+    "measured": 0.0,
+    "dE_twh": 1.301
+   },
+   {
+    "plant": 55404,
+    "group": "CC_CHP",
+    "netgen_twh": 2.97,
+    "default": 0.35,
+    "measured": 0.018,
+    "dE_twh": 0.987
+   },
+   {
+    "plant": 50625,
+    "group": "CT_CHP",
+    "netgen_twh": 3.499,
+    "default": 0.7,
+    "measured": 0.427,
+    "dE_twh": 0.954
+   },
+   {
+    "plant": 55259,
+    "group": "CC_CHP",
+    "netgen_twh": 2.772,
+    "default": 0.35,
+    "measured": 0.028,
+    "dE_twh": 0.894
+   },
+   {
+    "plant": 55419,
+    "group": "CC_CHP",
+    "netgen_twh": 5.307,
+    "default": 0.7,
+    "measured": 0.559,
+    "dE_twh": 0.747
+   }
+  ],
+  "reach": {
+   "model_grid_chp_add_twh": 6.522,
+   "model_grid_chp_add_by_group": {
+    "CC_CHP": 7.048,
+    "CT_CHP": -0.087,
+    "ST_CHP": -0.439
+   },
+   "displaced_twh_by_class": {
+    "": 1.009,
+    "CC_REGULAR": 1.349,
+    "COAL_BIT": 0.721,
+    "COAL_LIGNITE": 0.067,
+    "COAL_PRB": 1.438,
+    "CT_PEAKER": 0.041,
+    "ST_GAS": 1.207
+   },
+   "unabsorbed_twh": 0.691,
+   "static_marginal_offer_move_mean": -0.77
+  }
+ },
+ "2020": {
+  "plants": 120,
+  "plants_in_sched67": 104,
+  "netgen_twh_all": 60.925,
+  "netgen_twh_covered": 58.102,
+  "btm_twh_default": 33.019,
+  "btm_twh_measured_where_covered": 22.903,
+  "dE_grid_twh": 10.117,
+  "by_group": {
+   "CC_CHP": {
+    "netgen": 39.757,
+    "dE": 10.564
+   },
+   "CT_CHP": {
+    "netgen": 17.779,
+    "dE": -0.105
+   },
+   "ST_CHP": {
+    "netgen": 3.389,
+    "dE": -0.342
+   }
+  },
+  "default_shares": [
+   0.35,
+   0.65,
+   0.7,
+   0.9
+  ],
+  "top": [
+   {
+    "plant": 10745,
+    "group": "CC_CHP",
+    "netgen_twh": 9.472,
+    "default": 0.35,
+    "measured": 0.014,
+    "dE_twh": 3.186
+   },
+   {
+    "plant": 55089,
+    "group": "CC_CHP",
+    "netgen_twh": 5.476,
+    "default": 0.7,
+    "measured": 0.241,
+    "dE_twh": 2.515
+   },
+   {
+    "plant": 10789,
+    "group": "CC_CHP",
+    "netgen_twh": 2.421,
+    "default": 0.7,
+    "measured": 0.122,
+    "dE_twh": 1.399
+   },
+   {
+    "plant": 55088,
+    "group": "CT_CHP",
+    "netgen_twh": 3.564,
+    "default": 0.35,
+    "measured": 0.0,
+    "dE_twh": 1.247
+   },
+   {
+    "plant": 55259,
+    "group": "CC_CHP",
+    "netgen_twh": 2.806,
+    "default": 0.35,
+    "measured": 0.028,
+    "dE_twh": 0.904
+   },
+   {
+    "plant": 55419,
+    "group": "CC_CHP",
+    "netgen_twh": 4.872,
+    "default": 0.7,
+    "measured": 0.516,
+    "dE_twh": 0.898
+   },
+   {
+    "plant": 55404,
+    "group": "CC_CHP",
+    "netgen_twh": 2.434,
+    "default": 0.35,
+    "measured": 0.02,
+    "dE_twh": 0.804
+   },
+   {
+    "plant": 50625,
+    "group": "CT_CHP",
+    "netgen_twh": 3.288,
+    "default": 0.7,
+    "measured": 0.474,
+    "dE_twh": 0.742
+   }
+  ],
+  "reach": {
+   "model_grid_chp_add_twh": 7.549,
+   "model_grid_chp_add_by_group": {
+    "CC_CHP": 8.408,
+    "CT_CHP": -0.255,
+    "ST_CHP": -0.604
+   },
+   "displaced_twh_by_class": {
+    "": 1.104,
+    "CC_REGULAR": 1.574,
+    "COAL_BIT": 0.459,
+    "COAL_LIGNITE": 0.126,
+    "COAL_PRB": 1.198,
+    "CT_PEAKER": 0.437,
+    "ST_GAS": 1.692
+   },
+   "unabsorbed_twh": 0.959,
+   "static_marginal_offer_move_mean": -0.74
+  }
+ },
+ "2021": {
+  "plants": 122,
+  "plants_in_sched67": 106,
+  "netgen_twh_all": 57.784,
+  "netgen_twh_covered": 55.232,
+  "btm_twh_default": 32.386,
+  "btm_twh_measured_where_covered": 24.397,
+  "dE_grid_twh": 7.989,
+  "by_group": {
+   "CC_CHP": {
+    "netgen": 35.481,
+    "dE": 9.156
+   },
+   "CT_CHP": {
+    "netgen": 18.888,
+    "dE": -0.715
+   },
+   "ST_CHP": {
+    "netgen": 3.415,
+    "dE": -0.451
+   }
+  },
+  "default_shares": [
+   0.35,
+   0.65,
+   0.7,
+   0.9
+  ],
+  "top": [
+   {
+    "plant": 10745,
+    "group": "CC_CHP",
+    "netgen_twh": 6.298,
+    "default": 0.35,
+    "measured": 0.021,
+    "dE_twh": 2.074
+   },
+   {
+    "plant": 10789,
+    "group": "CC_CHP",
+    "netgen_twh": 3.052,
+    "default": 0.7,
+    "measured": 0.117,
+    "dE_twh": 1.779
+   },
+   {
+    "plant": 55089,
+    "group": "CC_CHP",
+    "netgen_twh": 3.879,
+    "default": 0.7,
+    "measured": 0.322,
+    "dE_twh": 1.465
+   },
+   {
+    "plant": 55419,
+    "group": "CC_CHP",
+    "netgen_twh": 4.966,
+    "default": 0.7,
+    "measured": 0.516,
+    "dE_twh": 0.912
+   },
+   {
+    "plant": 55404,
+    "group": "CC_CHP",
+    "netgen_twh": 2.744,
+    "default": 0.35,
+    "measured": 0.019,
+    "dE_twh": 0.909
+   },
+   {
+    "plant": 55088,
+    "group": "CT_CHP",
+    "netgen_twh": 2.716,
+    "default": 0.35,
+    "measured": 0.027,
+    "dE_twh": 0.877
+   },
+   {
+    "plant": 55259,
+    "group": "CC_CHP",
+    "netgen_twh": 2.716,
+    "default": 0.35,
+    "measured": 0.027,
+    "dE_twh": 0.877
+   },
+   {
+    "plant": 50625,
+    "group": "CT_CHP",
+    "netgen_twh": 3.402,
+    "default": 0.7,
+    "measured": 0.483,
+    "dE_twh": 0.737
+   }
+  ],
+  "reach": {
+   "model_grid_chp_add_twh": 4.646,
+   "model_grid_chp_add_by_group": {
+    "CC_CHP": 6.05,
+    "CT_CHP": -0.612,
+    "ST_CHP": -0.792
+   },
+   "displaced_twh_by_class": {
+    "": 0.558,
+    "CC_REGULAR": 1.793,
+    "COAL_BIT": 0.28,
+    "COAL_LIGNITE": 0.012,
+    "COAL_PRB": 0.634,
+    "CT_PEAKER": 0.191,
+    "ST_GAS": 0.543
+   },
+   "unabsorbed_twh": 0.635,
+   "static_marginal_offer_move_mean": -0.8
+  }
+ },
+ "2022": {
+  "plants": 122,
+  "plants_in_sched67": 106,
+  "netgen_twh_all": 61.93,
+  "netgen_twh_covered": 59.114,
+  "btm_twh_default": 35.066,
+  "btm_twh_measured_where_covered": 24.914,
+  "dE_grid_twh": 10.152,
+  "by_group": {
+   "CC_CHP": {
+    "netgen": 38.869,
+    "dE": 10.611
+   },
+   "CT_CHP": {
+    "netgen": 19.649,
+    "dE": -0.007
+   },
+   "ST_CHP": {
+    "netgen": 3.413,
+    "dE": -0.452
+   }
+  },
+  "default_shares": [
+   0.35,
+   0.65,
+   0.7,
+   0.9
+  ],
+  "top": [
+   {
+    "plant": 55089,
+    "group": "CC_CHP",
+    "netgen_twh": 5.628,
+    "default": 0.7,
+    "measured": 0.239,
+    "dE_twh": 2.596
+   },
+   {
+    "plant": 10745,
+    "group": "CC_CHP",
+    "netgen_twh": 7.412,
+    "default": 0.35,
+    "measured": 0.017,
+    "dE_twh": 2.472
+   },
+   {
+    "plant": 10789,
+    "group": "CC_CHP",
+    "netgen_twh": 2.93,
+    "default": 0.7,
+    "measured": 0.138,
+    "dE_twh": 1.647
+   },
+   {
+    "plant": 55419,
+    "group": "CC_CHP",
+    "netgen_twh": 4.975,
+    "default": 0.7,
+    "measured": 0.422,
+    "dE_twh": 1.381
+   },
+   {
+    "plant": 55088,
+    "group": "CT_CHP",
+    "netgen_twh": 2.946,
+    "default": 0.35,
+    "measured": 0.025,
+    "dE_twh": 0.958
+   },
+   {
+    "plant": 50625,
+    "group": "CT_CHP",
+    "netgen_twh": 3.716,
+    "default": 0.7,
+    "measured": 0.455,
+    "dE_twh": 0.911
+   },
+   {
+    "plant": 55404,
+    "group": "CC_CHP",
+    "netgen_twh": 2.468,
+    "default": 0.35,
+    "measured": 0.02,
+    "dE_twh": 0.814
+   },
+   {
+    "plant": 55259,
+    "group": "CC_CHP",
+    "netgen_twh": 2.436,
+    "default": 0.35,
+    "measured": 0.027,
+    "dE_twh": 0.786
+   }
+  ],
+  "reach": {
+   "model_grid_chp_add_twh": 6.479,
+   "model_grid_chp_add_by_group": {
+    "CC_CHP": 7.982,
+    "CT_CHP": -0.519,
+    "ST_CHP": -0.985
+   },
+   "displaced_twh_by_class": {
+    "": 0.893,
+    "CC_REGULAR": 2.324,
+    "COAL_BIT": 0.362,
+    "COAL_LIGNITE": 0.014,
+    "COAL_PRB": 0.745,
+    "CT_PEAKER": 0.404,
+    "ST_GAS": 0.881
+   },
+   "unabsorbed_twh": 0.854,
+   "static_marginal_offer_move_mean": -2.16
+  }
+ },
+ "2023": {
+  "plants": 125,
+  "plants_in_sched67": 109,
+  "netgen_twh_all": 66.786,
+  "netgen_twh_covered": 63.973,
+  "btm_twh_default": 36.891,
+  "btm_twh_measured_where_covered": 23.97,
+  "dE_grid_twh": 12.921,
+  "by_group": {
+   "CC_CHP": {
+    "netgen": 42.273,
+    "dE": 12.676
+   },
+   "CT_CHP": {
+    "netgen": 20.786,
+    "dE": 0.686
+   },
+   "ST_CHP": {
+    "netgen": 3.727,
+    "dE": -0.441
+   }
+  },
+  "default_shares": [
+   0.35,
+   0.65,
+   0.7,
+   0.9
+  ],
+  "top": [
+   {
+    "plant": 10745,
+    "group": "CC_CHP",
+    "netgen_twh": 9.756,
+    "default": 0.35,
+    "measured": 0.015,
+    "dE_twh": 3.273
+   },
+   {
+    "plant": 55089,
+    "group": "CC_CHP",
+    "netgen_twh": 5.848,
+    "default": 0.7,
+    "measured": 0.207,
+    "dE_twh": 2.881
+   },
+   {
+    "plant": 55117,
+    "group": "CC_CHP",
+    "netgen_twh": 2.111,
+    "default": 0.7,
+    "measured": 0.001,
+    "dE_twh": 1.475
+   },
+   {
+    "plant": 55419,
+    "group": "CC_CHP",
+    "netgen_twh": 4.899,
+    "default": 0.7,
+    "measured": 0.406,
+    "dE_twh": 1.442
+   },
+   {
+    "plant": 10789,
+    "group": "CC_CHP",
+    "netgen_twh": 2.32,
+    "default": 0.7,
+    "measured": 0.179,
+    "dE_twh": 1.207
+   },
+   {
+    "plant": 50625,
+    "group": "CT_CHP",
+    "netgen_twh": 3.451,
+    "default": 0.7,
+    "measured": 0.355,
+    "dE_twh": 1.189
+   },
+   {
+    "plant": 55088,
+    "group": "CT_CHP",
+    "netgen_twh": 3.608,
+    "default": 0.35,
+    "measured": 0.023,
+    "dE_twh": 1.179
+   },
+   {
+    "plant": 55404,
+    "group": "CC_CHP",
+    "netgen_twh": 3.237,
+    "default": 0.35,
+    "measured": 0.02,
+    "dE_twh": 1.067
+   }
+  ],
+  "reach": {
+   "model_grid_chp_add_twh": 10.225,
+   "model_grid_chp_add_by_group": {
+    "CC_CHP": 11.507,
+    "CT_CHP": -0.356,
+    "ST_CHP": -0.925
+   },
+   "displaced_twh_by_class": {
+    "": 1.645,
+    "CC_REGULAR": 2.292,
+    "COAL_BIT": 0.312,
+    "COAL_LIGNITE": 0.048,
+    "COAL_PRB": 1.624,
+    "CT_PEAKER": 1.061,
+    "ST_GAS": 1.58
+   },
+   "unabsorbed_twh": 1.663,
+   "static_marginal_offer_move_mean": -1.04
+  }
+ },
+ "2024": {
+  "plants": 124,
+  "plants_in_sched67": 106,
+  "netgen_twh_all": 65.982,
+  "netgen_twh_covered": 61.341,
+  "btm_twh_default": 36.49,
+  "btm_twh_measured_where_covered": 24.451,
+  "dE_grid_twh": 12.039,
+  "by_group": {
+   "CC_CHP": {
+    "netgen": 40.964,
+    "dE": 11.977
+   },
+   "CT_CHP": {
+    "netgen": 20.81,
+    "dE": 0.562
+   },
+   "ST_CHP": {
+    "netgen": 4.207,
+    "dE": -0.501
+   }
+  },
+  "default_shares": [
+   0.35,
+   0.65,
+   0.7,
+   0.9
+  ],
+  "top": [
+   {
+    "plant": 10745,
+    "group": "CC_CHP",
+    "netgen_twh": 10.766,
+    "default": 0.35,
+    "measured": 0.014,
+    "dE_twh": 3.619
+   },
+   {
+    "plant": 55089,
+    "group": "CC_CHP",
+    "netgen_twh": 4.869,
+    "default": 0.7,
+    "measured": 0.259,
+    "dE_twh": 2.147
+   },
+   {
+    "plant": 10789,
+    "group": "CC_CHP",
+    "netgen_twh": 2.646,
+    "default": 0.7,
+    "measured": 0.152,
+    "dE_twh": 1.449
+   },
+   {
+    "plant": 55117,
+    "group": "CC_CHP",
+    "netgen_twh": 2.043,
+    "default": 0.7,
+    "measured": 0.052,
+    "dE_twh": 1.324
+   },
+   {
+    "plant": 55088,
+    "group": "CT_CHP",
+    "netgen_twh": 3.978,
+    "default": 0.35,
+    "measured": 0.021,
+    "dE_twh": 1.308
+   },
+   {
+    "plant": 50625,
+    "group": "CT_CHP",
+    "netgen_twh": 3.564,
+    "default": 0.7,
+    "measured": 0.36,
+    "dE_twh": 1.213
+   },
+   {
+    "plant": 55419,
+    "group": "CC_CHP",
+    "netgen_twh": 4.793,
+    "default": 0.7,
+    "measured": 0.467,
+    "dE_twh": 1.117
+   },
+   {
+    "plant": 55404,
+    "group": "CC_CHP",
+    "netgen_twh": 2.967,
+    "default": 0.35,
+    "measured": 0.019,
+    "dE_twh": 0.981
+   }
+  ],
+  "reach": {
+   "model_grid_chp_add_twh": 10.526,
+   "model_grid_chp_add_by_group": {
+    "CC_CHP": 12.241,
+    "CT_CHP": -0.64,
+    "ST_CHP": -1.075
+   },
+   "displaced_twh_by_class": {
+    "": 1.511,
+    "CC_REGULAR": 1.751,
+    "COAL_BIT": 0.383,
+    "COAL_LIGNITE": 0.024,
+    "COAL_PRB": 1.549,
+    "CT_PEAKER": 1.524,
+    "ST_GAS": 2.027
+   },
+   "unabsorbed_twh": 1.757,
+   "static_marginal_offer_move_mean": -1.19
+  }
+ },
+ "sha256_sched67_xlsx": {
+  "y2019": "e444ca3eabcaced92f37f56c54bf5b8228ee9e39aa71646f6189bb552fe65c0a",
+  "y2020": "4c9a3997f25c6ba9f30bd0ee20722a4ed3e88dc01ce2d06fd9be0a2bb96eb1f3",
+  "y2021": "37757c1c26b6edf082f563a075f6eb1f4f515bf6fb2e20f1f19504e64ec9629c",
+  "y2022": "862c41bd9e9d145e81f0fcbbe6387d285ecaa49bd72c42d21b719c12ffbf07ce",
+  "y2023": "883d62ca451a62757931c8db271613e1e84570db6d9e99e7010db0f7b0027bb6",
+  "y2024": "acee49f8ccbc578b46f623c16429f476628505f0d6d94519bd373b608711831b"
+ }
+}
