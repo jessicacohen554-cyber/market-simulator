@@ -481,22 +481,35 @@ def units_online_from_dispatch(
 
 
 def units_needed_for_floor(
-    params: UcClusterParams, min_gen: np.ndarray | None, t0: int, t1: int
+    params: UcClusterParams, fleet: FleetArrays, t0: int, t1: int
 ) -> np.ndarray:
     """``(n_c, t1 - t0)`` lower bound on ``u`` implied by structural member floors.
 
     A floor on a member (nuclear / CHP / coal must-run / reliability floors,
     all upstream of the hook) is an input the UC respects: ``u >=
-    ceil(sum_members min_gen / pbar)`` (DESIGN section 2.2, last row).
+    ceil(sum_members floor / pbar)`` (DESIGN section 2.2, last row), where the
+    floor is the member's EFFECTIVE P lower bound — ``min_gen`` clipped to
+    ``pmax * availability`` — exactly the clip ``model.lp.bounds.build_variable_
+    bounds`` applies to the P column (``col_lower = min(col_lower,
+    col_upper)``), so the UC never asks for a unit the LP's own floor does
+    not (a floor above the available capacity is already released by that
+    clip in P0, P1 and the window alike).
     """
     n_t = t1 - t0
+    min_gen = getattr(fleet, "min_gen", None)
     if min_gen is None:
         return np.zeros((params.n_clusters, n_t), dtype=int)
+    rows = params.member_gen
+    floor = np.asarray(min_gen, dtype=float)[rows, t0:t1]
+    ceiling = (
+        np.asarray(fleet.pmax, dtype=float)[rows][:, None]
+        * np.asarray(fleet.availability, dtype=float)[rows, t0:t1]
+    )
     tot = np.zeros((params.n_clusters, n_t))
     np.add.at(
         tot,
         params.member_cluster,
-        np.maximum(np.asarray(min_gen, dtype=float)[params.member_gen, t0:t1], 0.0),
+        np.maximum(np.minimum(floor, ceiling), 0.0),
     )
     with np.errstate(invalid="ignore", divide="ignore"):
         need = np.where(

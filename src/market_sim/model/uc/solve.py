@@ -11,17 +11,26 @@ presolve barely reduces) does not transfer to a 100 k column MIP.
 Outcomes (DESIGN section 2.4): ``Optimal`` and a gap-tolerance stop are the
 solution; a time-limit stop WITH an incumbent is accepted and counted; a
 window with no feasible incumbent raises :class:`UcWindowInfeasible` (an
-engine defect, never a tuning invitation — GATESPEC section 5).
+engine defect, never a tuning invitation — GATESPEC section 5). Before it
+raises, :func:`solve_window` names the window, re-solves the LP relaxation
+on the same handle (row/bound contradiction vs integrality) and attaches the
+zero-LP :func:`~market_sim.model.uc.diagnose.diagnose_window` report; with
+``UcSolveOptions.debug_dump_dir`` set — a bench-harness argument, never a
+registry field or an environment knob — it also writes the model, the
+carried state and the report there.
 """
 
 from __future__ import annotations
 
+import json
 import time
 from dataclasses import dataclass
+from pathlib import Path
 
 import highspy
 import numpy as np
 
+from market_sim.model.uc.diagnose import diagnose_window
 from market_sim.model.uc.window import UcWindowInfeasible, UcWindowModel, WindowResult
 
 #: HiGHS ``primal_solution_status`` value meaning a feasible primal point exists.
@@ -30,11 +39,75 @@ _PRIMAL_FEASIBLE = 2
 
 @dataclass(frozen=True)
 class UcSolveOptions:
-    """Solver settings of one window (every value a registry field)."""
+    """Solver settings of one window (every value a registry field).
+
+    ``debug_dump_dir`` is the one exception: a directory the bench harness
+    (``scripts/diagnostics/bench_uc_ladder.py --dump-dir``) passes so an
+    infeasible window leaves its model and state behind for a zero-LP
+    post-mortem. The production stage never sets it.
+    """
 
     mip_rel_gap: float
     time_limit_s: float
     warm_start: bool = True
+    debug_dump_dir: Path | None = None
+
+
+def _set_u_integrality(window: UcWindowModel, integer: bool) -> None:
+    n_u = window.V0 - window.U0
+    if not n_u:
+        return
+    u_idx = np.arange(window.U0, window.V0, dtype=np.int32)
+    kind = (
+        highspy.HighsVarType.kInteger if integer else highspy.HighsVarType.kContinuous
+    )
+    window.h.changeColsIntegrality(n_u, u_idx, [kind] * n_u)
+
+
+def _relaxation_status(window: UcWindowModel) -> str:
+    """Re-solve the window's LP relaxation on its handle; restore integrality after."""
+    _set_u_integrality(window, integer=False)
+    try:
+        window.h.clearSolver()
+        window.h.run()
+        return window.h.modelStatusToString(window.h.getModelStatus())
+    finally:
+        _set_u_integrality(window, integer=True)
+
+
+def _dump_window(
+    window: UcWindowModel,
+    out_dir: Path,
+    window_index: int | None,
+    t0: int | None,
+    report: dict,
+    warm_values: np.ndarray | None,
+) -> list[Path]:
+    """Write ``window_<w>.mps``, ``window_<w>_state.npz`` and ``window_<w>_diagnosis.json``."""
+    out_dir = Path(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    tag = f"window_{window_index if window_index is not None else 'x'}"
+    paths = [out_dir / f"{tag}.mps"]
+    window.h.writeModel(str(paths[0]))
+    p, k = window.params, window.int_idx
+    paths.append(out_dir / f"{tag}_state.npz")
+    np.savez_compressed(
+        paths[-1],
+        t0=-1 if t0 is None else int(t0),
+        u_lower=window.u_lower,
+        u_upper=window.u_upper,
+        hist_v=window.hist_v,
+        hist_w=window.hist_w,
+        n_units=p.n_units[k],
+        ut_h=p.ut_h[k],
+        dt_h=p.dt_h[k],
+        plant_code=p.plant_code[k],
+        family=p.family[k].astype(str),
+        warm=np.asarray([] if warm_values is None else warm_values, dtype=float),
+    )
+    paths.append(out_dir / f"{tag}_diagnosis.json")
+    paths[-1].write_text(json.dumps(report, indent=1, default=str))
+    return paths
 
 
 def solve_window(
@@ -42,15 +115,25 @@ def solve_window(
     options: UcSolveOptions,
     warm_values: np.ndarray | None = None,
     relax: bool = False,
+    window_index: int | None = None,
+    t0: int | None = None,
+    t1: int | None = None,
 ) -> WindowResult:
     """Solve one window and return its :class:`WindowResult`.
 
     Args:
         window: The built window model.
-        options: Gap / time limit / warm-start flag.
+        options: Gap / time limit / warm-start flag (and the bench dump dir).
         warm_values: Optional full column vector for ``setSolution``.
         relax: Solve the LP relaxation instead (ladder rung L1 (b)): every
             ``u`` column is made continuous for this call and restored after.
+        window_index, t0, t1: The rolling window's index and hour range, for
+            the :class:`UcWindowInfeasible` report (the stage passes them;
+            a bare window test may not).
+
+    Raises:
+        UcWindowInfeasible: No feasible incumbent — with the window named,
+            the LP relaxation's status and the zero-LP diagnosis attached.
     """
     h = window.h
     h.setOptionValue("output_flag", False)
@@ -58,18 +141,17 @@ def solve_window(
     h.setOptionValue("mip_rel_gap", float(options.mip_rel_gap))
     h.setOptionValue("time_limit", float(options.time_limit_s))
     n_u = window.V0 - window.U0
-    u_idx = np.arange(window.U0, window.V0, dtype=np.int32)
     if relax and n_u:
-        h.changeColsIntegrality(n_u, u_idx, [highspy.HighsVarType.kContinuous] * n_u)
+        _set_u_integrality(window, integer=False)
     warm = False
     if options.warm_start and warm_values is not None and not relax:
         sol = highspy.HighsSolution()
         sol.col_value = [float(x) for x in np.asarray(warm_values, dtype=float)]
         sol.value_valid = True
         warm = h.setSolution(sol) == highspy.HighsStatus.kOk
-    t0 = time.perf_counter()
+    t0_clock = time.perf_counter()
     h.run()
-    milp_s = time.perf_counter() - t0
+    milp_s = time.perf_counter() - t0_clock
     status = h.getModelStatus()
     status_str = h.modelStatusToString(status)
     _, primal = h.getInfoValue("primal_solution_status")
@@ -78,17 +160,38 @@ def solve_window(
     if status != highspy.HighsModelStatus.kOptimal and not (
         time_limit_hit and feasible
     ):
+        if relax and n_u:
+            _set_u_integrality(window, integer=True)
+        report = diagnose_window(window)
+        relaxation = status_str if relax else _relaxation_status(window)
+        where = (f"window {window_index}" if window_index is not None else "window") + (
+            f" [{t0}, {t1})" if t0 is not None and t1 is not None else ""
+        )
+        bad = report.get("contradictory_rows", {})
+        summary = ", ".join(f"{fam}={v['count']}" for fam, v in bad.items()) or "none"
+        if options.debug_dump_dir is not None:
+            _dump_window(
+                window, options.debug_dump_dir, window_index, t0, report, warm_values
+            )
         raise UcWindowInfeasible(
-            f"UC window solve ended {status_str} with "
+            f"UC {where} solve ended {status_str} with "
             f"{'a' if feasible else 'no'} feasible incumbent "
             f"({window.n_total} columns, {window.h.getNumRow()} rows, "
-            f"{window.n_int} integer clusters)"
+            f"{window.n_int} integer clusters); LP relaxation: {relaxation}; "
+            f"a-priori contradictory rows: {summary}; "
+            f"carried starts above n: {report.get('history_starts_above_n', 0)}; "
+            f"floor above min-down: {report.get('floor_above_min_down', 0)}",
+            window_index=window_index,
+            t0=t0,
+            t1=t1,
+            relaxation_status=relaxation,
+            diagnosis=report,
         )
     info = h.getInfo()
     sol = h.getSolution()
     col_value = np.asarray(sol.col_value, dtype=float)
     if relax and n_u:
-        h.changeColsIntegrality(n_u, u_idx, [highspy.HighsVarType.kInteger] * n_u)
+        _set_u_integrality(window, integer=True)
     gap = float(info.mip_gap) if n_u and not relax else 0.0
     nodes = int(info.mip_node_count) if n_u and not relax else 0
     return window.extract(

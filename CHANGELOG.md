@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-10-04 — uc-milp UC-1-FIX: window infeasibility under kept floors (engine `uc-1.1`, gate-on path only)
+
+Every SPP year raised `UcWindowInfeasible` with `unit_commitment_milp=true` (UC-2-SPP kill #1).
+Root cause, proved on real data without a year LP (`docs/records/governance/uc-milp-2026-10/
+FINDING-ucmilp-1-fix-window-infeasibility-2026-10-04.md`): the carried min-up / min-down history
+was a separate `u` column bound beside window-only Rajan–Takriti rows, so a window could stop a
+unit inside its min-up when another unit's earlier start carried the bound; the kept history
+accumulated three starts within one min-up on two-unit plants (SPP 2020 plants 2965 and 2817)
+and a later window's bound exceeded `n`. Fix: the history enters the Rajan–Takriti rows as RHS
+constants (rolling-horizon form), a look-ahead min-down guard row keeps a window from stopping a
+unit a structural floor beyond its horizon needs, the floor-derived `u` bound and the P1
+injection use the LP-effective floor (`min_gen` clipped to `pmax·availability`). An infeasible
+window now names itself (index, hours), re-solves its LP relaxation and attaches a zero-LP
+bound-propagation diagnosis (`model/uc/diagnose.py`); `bench_uc_ladder.py --dump-dir` writes the
+model and state. No `ScenarioConfig` field, no `model/lp` change, gate-off byte-identical.
+
 ## 2026-10-03 — Inert performance workstream closed: LP handoff, loader memoization, CAISO-AS prune, calamine (PRs #7098, #7123, #7125, zero LP)
 
 Close-out of the mathematically inert optimization workstream opened by PR #7087 (entry below).

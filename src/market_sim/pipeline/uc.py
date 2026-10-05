@@ -52,6 +52,7 @@ from market_sim.model.uc.params import (
     UcClusterParams,
     build_uc_cluster_params,
     params_log_rows,
+    units_needed_for_floor,
     units_online_from_dispatch,
     units_online_profile,
 )
@@ -72,7 +73,9 @@ from market_sim.pipeline.commitment import _bridge_floored_fleet
 logger = logging.getLogger(__name__)
 
 #: Engine version stamped in every ``uc_solve_log`` (bumped on a formulation change).
-UC_ENGINE_VERSION = "uc-1.0"
+#: uc-1.1: carried min-up / min-down history inside the Rajan–Takriti rows and
+#: the look-ahead min-down guard (FINDING-ucmilp-1-fix-window-infeasibility-2026-10-04).
+UC_ENGINE_VERSION = "uc-1.1"
 
 #: The most recent stage objects (one per year solved in this process), for a
 #: harness that writes the post-P1 uplift sidecar; drained by :func:`take_uc_stages`.
@@ -284,6 +287,11 @@ class UcStage:
         u_init = units_online_from_dispatch(p, p0_dispatch[:, t_init])[k]
         hist = int(max(int(p.ut_h[k].max()), int(p.dt_h[k].max())) - 1) if k.size else 0
         sched = UcSchedule(p, T, hist)
+        # The structural floors' unit needs over the whole year (zero LP): each
+        # window receives the slice just past its horizon — up to the longest
+        # min-down minus one hour — for its look-ahead guard rows.
+        floor_need_year = units_needed_for_floor(p, fleet_in, 0, T)[k]
+        guard_reach = int(p.dt_h[k].max()) - 1 if k.size else 0
         month_ends = month_boundaries(T)
         next_month = int(np.searchsorted(month_ends, t_start, side="right"))
         windows: list[dict] = []
@@ -325,6 +333,7 @@ class UcStage:
                 soc_terminal=soc_terminal,
                 fix_on=fix_on,
                 fix_off=fix_off,
+                floor_need_ahead=floor_need_year[:, t1 : min(t1 + guard_reach, T)],
             )
             warm = window.warm_start_vector(
                 prev,
@@ -332,7 +341,14 @@ class UcStage:
                 p0_dispatch[:, t0:t1],
                 units_online_profile(p, p0_dispatch[:, t0:t1])[k],
             )
-            result = solve_window(window, self.options, warm)
+            result = solve_window(
+                window,
+                self.options,
+                warm,
+                window_index=len(windows),
+                t0=int(t0),
+                t1=int(t1),
+            )
             kept_to = sched.keep(result, t0, W)
             windows.append(
                 {
@@ -352,6 +368,7 @@ class UcStage:
                     "integers": int(result.integers),
                     "columns": int(result.columns),
                     "rows": int(result.rows),
+                    "guard_rows": int(window._n_guard_rows),
                 }
             )
             prev = result
@@ -473,9 +490,24 @@ class UcStage:
         return floor, avail
 
     def inject(self, fleet_in: FleetArrays) -> FleetArrays:
-        """The P1 fleet: ceiling applied, floor composed under ``MECH_UC_SCHEDULE``."""
+        """The P1 fleet: ceiling applied, floor composed under ``MECH_UC_SCHEDULE``.
+
+        The upstream floors are composed at their LP-EFFECTIVE level —
+        ``min_gen`` clipped to ``pmax * availability`` of the fleet the stage
+        was handed, the clip ``model.lp.bounds.build_variable_bounds`` applies
+        to the P column in P0 — so the bridge tail's availability raise (which
+        keeps a floor feasible) never re-opens a ceiling the schedule closed or
+        lifts a floor P0 itself could not carry.
+        """
         floor, avail = self.floor_and_ceiling(fleet_in)
-        capped = dataclasses.replace(fleet_in, availability=avail)
+        fields = {"availability": avail}
+        if fleet_in.min_gen is not None:
+            fields["min_gen"] = np.minimum(
+                np.asarray(fleet_in.min_gen, dtype=float),
+                np.asarray(fleet_in.pmax, dtype=float)[:, None]
+                * np.asarray(fleet_in.availability, dtype=float),
+            )
+        capped = dataclasses.replace(fleet_in, **fields)
         return _bridge_floored_fleet(capped, floor, MECH_UC_SCHEDULE)
 
     # ---------------------------------------------------------- artifacts

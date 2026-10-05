@@ -250,10 +250,19 @@ def _relaxation_as_p0(cap: YearCapture, t0: int, t1: int):
     return r0
 
 
-def rung_l1(cap: YearCapture, out_dir: Path, **uc_fields) -> dict:
-    """L1: one window — MILP (a), LP relaxation (b), the production P1 slice (c)."""
+def rung_l1(
+    cap: YearCapture, out_dir: Path, dump_dir: Path | None = None, **uc_fields
+) -> dict:
+    """L1: one window — MILP (a), LP relaxation (b), the production P1 slice (c).
+
+    ``dump_dir`` (``bench_uc_ladder.py --dump-dir``) is handed to
+    :class:`UcSolveOptions` so an infeasible window writes its model, state
+    and zero-LP diagnosis there — a harness argument, never a registry field.
+    The window is built exactly as the production stage builds its first one
+    (the carried P0 state, the look-ahead floor need for the guard rows).
+    """
     from market_sim.model.lp.model import DispatchModel
-    from market_sim.model.uc.params import units_online_profile
+    from market_sim.model.uc.params import units_needed_for_floor, units_online_profile
     from market_sim.model.uc.solve import UcSolveOptions, solve_window
     from market_sim.model.uc.window import UcWindowModel, slice_window_inputs
 
@@ -280,9 +289,14 @@ def rung_l1(cap: YearCapture, out_dir: Path, **uc_fields) -> dict:
         if getattr(r0, "storage_soc", None) is None
         else np.asarray(r0.storage_soc)[:, t1 - 1]
     )
+    guard_reach = int(p.dt_h[k].max()) - 1 if k.size else 0
+    floor_ahead = units_needed_for_floor(
+        p, cap.fleet_arrays, t1, min(t1 + guard_reach, T)
+    )[k]
     opts = UcSolveOptions(
         mip_rel_gap=float(cfg.uc_mip_rel_gap),
         time_limit_s=float(cfg.uc_window_time_limit_s),
+        debug_dump_dir=None if dump_dir is None else Path(dump_dir),
     )
     out: dict[str, Any] = {
         "iso": cap.iso,
@@ -291,21 +305,30 @@ def rung_l1(cap: YearCapture, out_dir: Path, **uc_fields) -> dict:
         "t1": t1,
         "integer_clusters": int(k.size),
     }
+
+    def _build():
+        return UcWindowModel(
+            inputs,
+            p,
+            mc_w[:, t0:t1],
+            noload[:, t0:t1],
+            sched_state,
+            soc_terminal=soc_t,
+            floor_need_ahead=floor_ahead,
+        )
+
     # (a) MILP
-    w = UcWindowModel(
-        inputs, p, mc_w[:, t0:t1], noload[:, t0:t1], sched_state, soc_terminal=soc_t
-    )
+    w = _build()
     warm = w.warm_start_vector(
         None, W, p0[:, t0:t1], units_online_profile(p, p0[:, t0:t1])[k]
     )
-    a = solve_window(w, opts, warm)
+    a = solve_window(w, opts, warm, window_index=0, t0=t0, t1=t1)
     out["milp"] = _window_stats(a)
+    out["milp"]["guard_rows"] = int(w._n_guard_rows)
     out["rss_gb"] = _peak_rss_gb()
     # (b) LP relaxation
-    w2 = UcWindowModel(
-        inputs, p, mc_w[:, t0:t1], noload[:, t0:t1], sched_state, soc_terminal=soc_t
-    )
-    b = solve_window(w2, opts, relax=True)
+    w2 = _build()
+    b = solve_window(w2, opts, relax=True, window_index=0, t0=t0, t1=t1)
     out["relaxation"] = _window_stats(b)
     out["integrality_gap"] = float(a.objective - b.objective)
     # (c) the production P1 slice (no UC rows, the P1 bid)

@@ -7,10 +7,13 @@ owns, the commitment columns and rows this module adds
 (:class:`UcWindowModel`): per integer cluster ``c`` and window hour ``t`` an
 integer ``u[c,t]`` (units online, ``0..n_c``) and continuous ``v[c,t]`` /
 ``w[c,t]`` (units started / stopped), the output-coupling rows, the logic
-row, the Rajan–Takriti min-up / min-down rows and the boundary edits of
-DESIGN section 2 (``docs/records/governance/uc-milp-2026-10/DESIGN-uc-milp-
-engine-2026-10-03.md``). Every row family is assembled from index arithmetic
-over all clusters and hours at once (rule 2: no Python loop over hours).
+row, the Rajan–Takriti min-up / min-down rows in rolling-horizon form (the
+carried start / stop history on their right-hand side), the look-ahead
+min-down guard rows and the boundary edits of DESIGN section 2
+(``docs/records/governance/uc-milp-2026-10/DESIGN-uc-milp-engine-2026-10-03.md``,
+section 2.2 as amended by FINDING-ucmilp-1-fix-window-infeasibility-2026-10-04).
+Every row family is assembled from index arithmetic over all clusters and
+hours at once (rule 2: no Python loop over hours).
 
 What the window cannot carry (declared, DESIGN section 2.1): the annual and
 monthly budget families are dropped and their generators pinned to the P0
@@ -115,7 +118,35 @@ REFUSED_KWARGS: tuple[str, ...] = (
 
 
 class UcWindowInfeasible(RuntimeError):
-    """A window returned no feasible commitment (GATESPEC section 5 kill)."""
+    """A window returned no feasible commitment (GATESPEC section 5 kill).
+
+    Attributes (``None`` where the caller gave no context):
+        window_index / t0 / t1: Which rolling window failed and its hour range.
+        relaxation_status: The HiGHS status of the window's LP relaxation,
+            re-solved on the same handle after the MILP failed — separates a
+            row/bound contradiction (relaxation infeasible too) from an
+            integrality-only one.
+        diagnosis: :func:`market_sim.model.uc.diagnose.diagnose_window`'s
+            zero-LP report (bound propagation per row family, history and
+            floor consistency).
+    """
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        window_index: int | None = None,
+        t0: int | None = None,
+        t1: int | None = None,
+        relaxation_status: str | None = None,
+        diagnosis: dict | None = None,
+    ) -> None:
+        super().__init__(message)
+        self.window_index = window_index
+        self.t0 = t0
+        self.t1 = t1
+        self.relaxation_status = relaxation_status
+        self.diagnosis = diagnosis
 
 
 def _slice_obj(obj, t0: int, t1: int, T: int):
@@ -389,6 +420,16 @@ class UcWindowModel:
         soc_terminal: ``(n_storage,)`` one-sided terminal SOC lower bound
             (P0's level at ``t1 - 1``) or ``None``.
         fix_on / fix_off: optional ``(n_int,)`` pre-fixing masks.
+        floor_need_ahead: ``(n_int, n_ahead)`` units the structural member
+            floors need in the hours ``t1, t1 + 1, ...`` AFTER the window
+            (:func:`~market_sim.model.uc.params.units_needed_for_floor` on
+            the year fleet). Feeds the look-ahead min-down guard rows: a
+            stop inside the window that would leave fewer units than a
+            floor the window cannot see needs — before that unit's min-down
+            expires — is refused here, so the next window never inherits a
+            floor it cannot honour (FINDING-ucmilp-1-fix-window-infeasibility
+            -2026-10-04 section 3). ``None`` adds no guard row (the year's
+            last window, and tests without a floor).
     """
 
     def __init__(
@@ -401,6 +442,7 @@ class UcWindowModel:
         soc_terminal: np.ndarray | None = None,
         fix_on: np.ndarray | None = None,
         fix_off: np.ndarray | None = None,
+        floor_need_ahead: np.ndarray | None = None,
     ) -> None:
         t_build = time.perf_counter()
         self.params = params
@@ -420,9 +462,14 @@ class UcWindowModel:
         self.fixed_on = 0
         self.fixed_off = 0
         self._n_uc_rows = 0
+        self._n_guard_rows = 0
+        self._n_ramp_rows = 0
+        self.hist_v = np.zeros((self.n_int, self.T_w))
+        self.hist_w = np.zeros((self.n_int, self.T_w))
         if self.n_int:
+            self.hist_v, self.hist_w = self._carry_history(state)
             self._add_uc_columns(noload_w, state, fix_on, fix_off)
-            self._add_uc_rows(state)
+            self._add_uc_rows(state, floor_need_ahead)
             self._set_integrality()
         self._pin_state_rows(state, soc_terminal)
         self._add_ramp_boundary_rows(inputs, state)
@@ -479,47 +526,70 @@ class UcWindowModel:
         """Column of ``w`` (stops)."""
         return self.W0 + np.asarray(t) * self.n_int + np.asarray(k)
 
-    def _carry_bounds(self, state: WindowState) -> tuple[np.ndarray, np.ndarray]:
-        """Min-up / min-down carry as ``u`` column bounds (DESIGN section 2.2)."""
+    def _history_cumsum(self, hist: np.ndarray) -> np.ndarray:
+        """``csum[k, m]`` = events of ``hist`` in the last ``m`` hours before ``t0``."""
+        return np.concatenate(
+            [np.zeros((self.n_int, 1)), np.cumsum(hist[:, ::-1], axis=1)], axis=1
+        )
+
+    def _carry_history(self, state: WindowState) -> tuple[np.ndarray, np.ndarray]:
+        """The carried start / stop history each window hour still feels.
+
+        ``hist_v[k, tau]`` = units of cluster ``k`` started in the last
+        ``ut_k - 1 - tau`` hours before ``t0`` (still inside their min-up at
+        window hour ``tau``); ``hist_w[k, tau]`` = units stopped in the last
+        ``dt_k - 1 - tau`` hours (still inside their min-down). Both enter the
+        Rajan–Takriti rows of :meth:`_add_uc_rows` as right-hand-side constants
+        — the rolling-horizon form of the rows, in which the history and the
+        window's own starts / stops are summed in ONE inequality. Carrying the
+        history as a separate ``u`` column bound (the engine before
+        FINDING-ucmilp-1-fix-window-infeasibility-2026-10-04) let a window stop
+        a unit still inside its min-up whenever another unit's earlier start
+        satisfied the bound on its own; the kept history then held more starts
+        within one min-up than the plant has units, and a later window's bound
+        exceeded ``n`` (SPP 2020, plants 2965 and 2817).
+        """
         p = self.params
         k = self.int_idx
         T_w, n_int = self.T_w, self.n_int
-        n = p.n_units[k]
-        lb = np.zeros((n_int, T_w))
-        ub = np.broadcast_to(n[:, None], (n_int, T_w)).astype(float).copy()
+        hist_v = np.zeros((n_int, T_w))
+        hist_w = np.zeros((n_int, T_w))
         H = state.v_hist.shape[1] if state.v_hist.size else 0
         if H:
-            # csum[k, m] = units started / stopped in the last m hours before t0.
-            csum_v = np.concatenate(
-                [np.zeros((n_int, 1)), np.cumsum(state.v_hist[:, ::-1], axis=1)], axis=1
-            )
-            csum_w = np.concatenate(
-                [np.zeros((n_int, 1)), np.cumsum(state.w_hist[:, ::-1], axis=1)], axis=1
-            )
+            csum_v = self._history_cumsum(state.v_hist)
+            csum_w = self._history_cumsum(state.w_hist)
             tau = np.arange(T_w)[None, :]
             m_up = np.clip(p.ut_h[k][:, None] - 1 - tau, 0, H)
             m_dn = np.clip(p.dt_h[k][:, None] - 1 - tau, 0, H)
-            lb = np.maximum(lb, np.take_along_axis(csum_v, m_up, axis=1))
-            ub = np.minimum(ub, n[:, None] - np.take_along_axis(csum_w, m_dn, axis=1))
-        return lb, ub
+            hist_v = np.take_along_axis(csum_v, m_up, axis=1)
+            hist_w = np.take_along_axis(csum_w, m_dn, axis=1)
+        return hist_v, hist_w
 
     def _add_uc_columns(self, noload_w, state, fix_on, fix_off) -> None:
         p = self.params
         k = self.int_idx
         T_w, n_int = self.T_w, self.n_int
         n = p.n_units[k].astype(float)
-        lb, ub = self._carry_bounds(state)
-        floor_need = units_needed_for_floor(p, self.fleet.min_gen, 0, T_w)[k].astype(
-            float
-        )
-        lb = np.maximum(lb, floor_need)
+        # Column bounds: the structural floors (clipped exactly as the LP clips
+        # the member P lower bounds) and the carried history. The history
+        # bounds are implied by the rows below (a window with no start of its
+        # own must still carry ``hist_v`` units) and only tighten the root
+        # relaxation; the rows are the mechanism.
+        floor_need = units_needed_for_floor(p, self.fleet, 0, T_w)[k].astype(float)
+        lb = np.maximum(self.hist_v, floor_need)
+        ub = n[:, None] - self.hist_w
         if fix_on is not None and fix_on.any():
-            lb[fix_on, :] = np.maximum(lb[fix_on, :], n[fix_on][:, None])
+            # Plan-E5 fix-ON: every unit NOT inside its min-down is online.
+            lb[fix_on, :] = np.maximum(lb[fix_on, :], ub[fix_on, :])
             self.fixed_on = int(fix_on.sum())
         if fix_off is not None and fix_off.any():
             ub[fix_off, :] = np.minimum(ub[fix_off, :], lb[fix_off, :])
             self.fixed_off = int(fix_off.sum())
-        ub = np.maximum(ub, lb)  # a carry can never make a window infeasible by itself
+        # A floor can need more units than the carried min-down leaves (only
+        # when the previous window had no look-ahead guard for it: the first
+        # window, or a test state); the bound is widened so the contradiction
+        # surfaces in the min-down ROW, where the diagnosis names it.
+        ub = np.maximum(ub, lb)
         # Hour-major layout: column U0 + t*n_int + k  <->  array[k, t].T
         u_lb, u_ub = lb.T.ravel(), ub.T.ravel()
         u_cost = np.asarray(noload_w, dtype=float).T.ravel()
@@ -544,7 +614,9 @@ class UcWindowModel:
         )
         self.u_lower, self.u_upper = lb, ub
 
-    def _add_uc_rows(self, state: WindowState) -> None:
+    def _add_uc_rows(
+        self, state: WindowState, floor_need_ahead: np.ndarray | None = None
+    ) -> None:
         p = self.params
         k_all = self.int_idx
         T_w, n_int, vph = self.T_w, self.n_int, self.layout.vars_per_hour
@@ -623,10 +695,15 @@ class UcWindowModel:
             np.where(tt == 0, state.u_prev[:, None], 0.0).T.ravel(),
             size,
         )
-        # (d)/(e) Rajan–Takriti with the sums clipped to the window.
+        # (d)/(e) Rajan–Takriti in rolling-horizon form: the window's own
+        # starts / stops within the min-up / min-down reach of hour t, PLUS the
+        # carried history still inside that reach (``hist_v`` / ``hist_w``,
+        # constants on the right-hand side), in ONE row —
+        #   (d)  sum_{lag<UT} v[t-lag] - u[t] <= -hist_v[t]
+        #   (e)  sum_{lag<DT} w[t-lag] + u[t] <=  n - hist_w[t].
         for widths, col_fn, sign_u, rhs in (
-            (p.ut_h[k_all], self.v_col, -1.0, np.zeros(size)),
-            (p.dt_h[k_all], self.w_col, 1.0, np.tile(n, T_w)),
+            (p.ut_h[k_all], self.v_col, -1.0, (-self.hist_v).T.ravel()),
+            (p.dt_h[k_all], self.w_col, 1.0, (n[:, None] - self.hist_w).T.ravel()),
         ):
             L = int(min(max(int(widths.max()), 1), T_w))
             lag = np.arange(L)
@@ -642,6 +719,55 @@ class UcWindowModel:
                 rhs,
                 size,
             )
+        # (f) Look-ahead min-down guard: row (e) for the hours h = T_w + h'
+        # AFTER the window, with u[h] replaced by its known lower bound (the
+        # units the structural floors need there) —
+        #   sum_{tau in window, h - tau < DT} w[tau] <= n - floor_need[h] - hist_w[h].
+        # A stop the window takes is thereby never one a floor it cannot see
+        # will need before the min-down expires; rows exist only where a floor
+        # needs a unit and some window hour is within reach (h' < DT - 1).
+        if floor_need_ahead is not None and floor_need_ahead.size:
+            need = np.asarray(floor_need_ahead, dtype=float)
+            n_ahead = int(need.shape[1])
+            dt = p.dt_h[k_all].astype(int)
+            hh = np.arange(n_ahead)
+            kk2, hh2 = np.meshgrid(
+                np.arange(n_int), hh, indexing="ij"
+            )  # (n_int, n_ahead)
+            live = (need > 0.0) & (hh2 < (dt[:, None] - 1))
+            if live.any():
+                L = int(min(int(dt.max()), T_w + n_ahead))
+                lag = np.arange(L)
+                j = (T_w + hh2)[:, :, None] - lag[None, None, :]  # window hour
+                valid = (
+                    (j >= 0)
+                    & (j < T_w)
+                    & (lag[None, None, :] < dt[:, None, None])
+                    & live[:, :, None]
+                )
+                row_id = np.full(live.shape, -1, dtype=np.int64)
+                row_id[live] = np.arange(int(live.sum()))
+                r = np.broadcast_to(row_id[:, :, None], j.shape)[valid]
+                c = self.w_col(
+                    np.broadcast_to(kk2[:, :, None], j.shape)[valid], j[valid]
+                )
+                H = state.w_hist.shape[1] if state.w_hist.size else 0
+                hist_beyond = np.zeros(live.shape)
+                if H:
+                    csum_w = self._history_cumsum(state.w_hist)
+                    m = np.clip(dt[:, None] - 1 - (T_w + hh2), 0, H)
+                    hist_beyond = np.take_along_axis(csum_w, m, axis=1)
+                rhs = (n[:, None] - need - hist_beyond)[live]
+                n_guard = int(live.sum())
+                _block(
+                    r,
+                    c,
+                    np.ones(r.size),
+                    np.full(n_guard, -np.inf),
+                    rhs,
+                    n_guard,
+                )
+                self._n_guard_rows = n_guard
         A = sp.coo_matrix(
             (np.concatenate(data), (np.concatenate(rows), np.concatenate(cols))),
             shape=(off, self.n_total),
@@ -742,6 +868,7 @@ class UcWindowModel:
             shape=(n_groups, self.n_total),
         ).tocsr()
         self._append_rows(A, lower, upper)
+        self._n_ramp_rows = int(n_groups)
 
     # ----------------------------------------------------------------- warm
     def warm_start_vector(

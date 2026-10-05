@@ -59,15 +59,31 @@ untouched), installs the production cost vector (integer clusters at
   `U0 + t·n_int + k`;
 * rows, each family one vectorized block (rule 2): coupling
   `mlf·p̄·a·u ≤ Σ P ≤ p̄·a·u`, logic `u_t − u_{t−1} − v_t + w_t = 0` (the
-  carried `u_prev` in the `t0` RHS), Rajan–Takriti `Σ_{lag<UT} v ≤ u` and
-  `Σ_{lag<DT} w + u ≤ n` with the sums clipped to the window;
+  carried `u_prev` in the `t0` RHS), Rajan–Takriti in rolling-horizon form
+  `Σ_{lag<UT} v − u ≤ −hist_v` and `Σ_{lag<DT} w + u ≤ n − hist_w` (the
+  window's own sums plus the carried starts / stops still inside their
+  min-up / min-down, `_carry_history`, on the RHS — one inequality, so a
+  window can never stop a unit inside its min-up because another unit's
+  earlier start carried the bound alone), and the look-ahead min-down guard
+  `Σ_{h−τ<DT} w[τ] ≤ n − floor_need[h] − hist_w[h]` for every hour `h` past
+  the window that a structural floor needs units in (`floor_need_ahead`,
+  the stage's zero-LP `units_needed_for_floor` over the year fleet);
 * boundary edits: the cyclic SOC row's `SOC[s, T_w−1]` coefficient zeroed and
   its RHS set to the carried `SOC_init` (`_state_cyclic_rows` locates the row
   on the LP HiGHS holds), a one-sided terminal `SOC[s, t1−1] ≥ P0's`, one
   added ramp row block for the `t0` transition;
-* `u` bounds: min-up / min-down carry from the kept `v`/`w` history
-  (`_carry_bounds`), structural member floors (`units_needed_for_floor`),
-  optional pre-fixing (`prefix_bounds`, `uc_prefixing`).
+* `u` bounds: the carried history (implied by the rows; a root-relaxation
+  tightening), structural member floors (`units_needed_for_floor`, on the
+  LP-effective floor `min(min_gen, pmax·availability)` — the clip
+  `bounds.build_variable_bounds` applies to the P column), optional
+  pre-fixing (`prefix_bounds`, `uc_prefixing`).
+
+An infeasible window raises `UcWindowInfeasible` carrying the window index
+and hour range, the LP relaxation's status (re-solved on the same handle) and
+the zero-LP `diagnose.py` report (bound propagation per row family, carried
+starts above `n`, floors above the carried min-down); the bench harness's
+`--dump-dir` writes the model, state and report (`UcSolveOptions.debug_dump_dir`,
+never a registry field).
 
 `warm_start_vector` shifts the previous window's incumbent and fills the tail
 from P0; `extract` packages a HiGHS column vector as `WindowResult`.
