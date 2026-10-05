@@ -1,0 +1,19 @@
+{
+  "id": "2026-10-04-closeout-miso-w3c-chp",
+  "label": "closeout miso w3c chp",
+  "date": "2026-10-04",
+  "shorthand": "closeout-miso-w3c-chp",
+  "definition": "closeout-MISO-w3c chp holdout on seam",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-10-04-closeout-miso-w3c-chp.js",
+  "bundle": "results/calibration/closeout_miso_w3c_span"
+}
