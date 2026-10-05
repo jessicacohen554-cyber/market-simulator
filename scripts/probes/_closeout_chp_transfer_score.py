@@ -39,6 +39,7 @@ CENSUS = REPO / "results/phase0/governance/_closeout_chp_transfer_census.json"
 OUT = REPO / "results/phase0/governance/_closeout_chp_transfer_score.json"
 STARTUP_REALISED = 0.40  # MISO w3f arm A: realised CC_CHP gain / static gain
 SHARE_PP = 3.0
+ARMS = ("M", "A1", "A2", "A3", "R", "Mr", "A1r", "A2r", "A3r")
 FAMILY = set(bs.GAS_GROUPS) | set(bs.COAL_GROUPS) | set(bs.OIL_GROUPS)
 
 
@@ -73,21 +74,28 @@ def _status(miss: float, share: float, tol: float) -> str:
     return "PASS" if abs(miss) <= tol + 1e-9 and abs(share) <= SHARE_PP + 1e-9 else "FAIL"
 
 
-def arms(c: dict) -> tuple[dict[str, dict[str, float]], object]:
+def arms(c: dict, refuted: bool = False, measured: bool = True) -> tuple[dict[str, dict[str, float]], object]:
     """Per arm, per class: cumulative d_model TWh; plus the bench actual shift.
 
     The bench shift is the same in every arm (the measured share is pinned on
     the bench whenever the artifact exists): a family class rescales from the
     committed reconcile factor to the new one, a CHP class gains dE first.
+    ``refuted`` re-targets the reconcile at raw EIA-930 (the ISO added to
+    ``EIA930_GAS_FOLD_REFUTED``); ``measured=False`` keeps the default shares.
     """
     rc = c["reconcile"]
-    s_old = rc["target"] / rc["family_pre_est"] if rc["fired_committed"] else 1.0
-    s_new = rc["scale_new"]
+    lo = bs.VINTAGE_RECONCILE_FRAC
+    pre = rc["family_pre_est"]
+    s_old = rc["target"] / pre if rc["fired_committed"] else 1.0
+    tgt = rc["raw_930"] if refuted else rc["target"]
+    dE = c["dE_by_group"] if measured else {}
+    new = pre + sum(dE.values())
+    s_new = 1.0 if lo * tgt <= new <= tgt / lo else tgt / new
 
     def actual_shift(cls: str, committed: float) -> float:
         if cls not in FAMILY:
             return 0.0
-        return (committed / s_old + c["dE_by_group"].get(cls, 0.0)) * s_new - committed
+        return (committed / s_old + dE.get(cls, 0.0)) * s_new - committed
 
     def add(base: dict, src: dict, sign: float, k: float = 1.0) -> dict:
         out = dict(base)
@@ -101,7 +109,7 @@ def arms(c: dict) -> tuple[dict[str, dict[str, float]], object]:
     a2 = add(add(a1, rel.get("gain_by_group", {}), 1, STARTUP_REALISED),
              rel.get("displaced_twh_by_class", {}), -1, STARTUP_REALISED)
     a3 = add(a2, c.get("holdout_reach", {}).get("taken_twh_by_class", {}), 1)
-    return {"M": {}, "A1": a1, "A2": a2, "A3": a3}, actual_shift
+    return {"M": {}, "A1": a1, "A2": a2, "A3": a3, "R": {}}, actual_shift
 
 
 def main() -> None:
@@ -117,24 +125,29 @@ def main() -> None:
             c = yrs.get(str(r["year"]))
             if c is None:
                 continue
-            a, shift = arms(c)
             miss0 = r["model"] - r["actual"]
             gen = gen_by_year.get(r["year"]) or float("nan")
             row = {
                 "year": r["year"], "key": r["key"], "tol": r["tol_twh"],
                 "miss": round(miss0, 2), "share": r.get("share_pp"), "status": r["status"],
             }
-            d_actual = shift(r["key"], r["actual"])
-            for arm in ("M", "A1", "A2", "A3"):
-                dm = a[arm].get(r["key"], 0.0)
-                miss = miss0 + dm - d_actual
+            bases = {
+                "deflated": arms(c),
+                "refuted": arms(c, refuted=True),
+                "refuted_default": arms(c, refuted=True, measured=False),
+            }
+            for arm in ARMS:
+                basis = "refuted_default" if arm == "R" else ("refuted" if arm.endswith("r") else "deflated")
+                a, shift = bases[basis]
+                dm = a[arm.rstrip("r")].get(r["key"], 0.0)
+                miss = miss0 + dm - shift(r["key"], r["actual"])
                 share = (r.get("share_pp") or 0.0) + (
                     (miss - miss0) * 100.0 / gen if gen == gen and gen else 0.0
                 )
                 row[arm] = {"miss": round(miss, 2), "share": round(share, 2),
                             "status": _status(miss, share, r["tol_twh"])}
             res[iso]["records"].append(row)
-        for arm in ("M", "A1", "A2", "A3"):
+        for arm in ARMS:
             rr = res[iso]["records"]
             res[iso]["summary"][arm] = {
                 "fail": sum(x[arm]["status"] == "FAIL" for x in rr),
