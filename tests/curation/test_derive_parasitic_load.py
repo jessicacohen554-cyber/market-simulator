@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import numpy as np
 import pandas as pd
 
 from scripts.data import derive_parasitic_load as dpl
@@ -101,7 +102,7 @@ def test_reproduce_check_flags_factor_and_source_drift() -> None:
     assert not bool(cmp.loc[3, "within_tol"])  # 0.010 > tol
 
 
-def test_campd_annual_totals_sums_across_extracts(monkeypatch) -> None:
+def test_campd_totals_sums_across_extracts(monkeypatch) -> None:
     """Per-extract totals summed per plant-year equal one pooled call."""
     hourly = {
         ("AA", 2023): pd.DataFrame(
@@ -114,6 +115,7 @@ def test_campd_annual_totals_sums_across_extracts(monkeypatch) -> None:
                 "nox_kg": [0.0, 0.0, 0.0],
                 "so2_kg": [0.0, 0.0, 0.0],
                 "facility_name": ["A", "A", "B"],
+                "date": pd.to_datetime(["2023-01-05", "2023-02-05", "2023-01-05"]),
             }
         ),
         ("BB", 2023): pd.DataFrame(
@@ -126,6 +128,7 @@ def test_campd_annual_totals_sums_across_extracts(monkeypatch) -> None:
                 "nox_kg": [0.0],
                 "so2_kg": [0.0],
                 "facility_name": ["A"],
+                "date": pd.to_datetime(["2023-01-09"]),
             }
         ),
     }
@@ -134,10 +137,73 @@ def test_campd_annual_totals_sums_across_extracts(monkeypatch) -> None:
         return hourly.get((states[0], years[0]), pd.DataFrame())
 
     monkeypatch.setattr(dpl.campd, "load_campd_hourly", fake_load)
-    out = dpl.campd_annual_totals(["AA", "BB", "CC"], [2023]).set_index("plant_id")
+    annual, monthly = dpl.campd_totals(["AA", "BB", "CC"], [2023])
+    out = annual.set_index("plant_id")
     assert out.loc[1, "gross_mwh"] == 14.0
     assert out.loc[1, "op_hours"] == 2
     assert out.loc[2, "gross_mwh"] == 5.0
     pooled = dpl.campd.annual_plant_totals(pd.concat(list(hourly.values())))
     pooled = pooled.set_index("plant_id")
     assert out.loc[1, "heat_mmbtu"] == pooled.loc[1, "heat_mmbtu"]
+    by_month = monthly.set_index(["plant_id", "month"])["gross_mwh"]
+    assert by_month[(1, 1)] == 14.0
+    assert by_month[(1, 2)] == 0.0
+    assert by_month[(2, 1)] == 5.0
+
+
+def _months(
+    pid: int, slope: float, intercept: float, gross: np.ndarray
+) -> pd.DataFrame:
+    """Monthly rows whose net is exactly ``intercept + slope * gross``."""
+    return pd.DataFrame(
+        {
+            "plant_id": pid,
+            "year": 2021,
+            "month": np.arange(1, len(gross) + 1),
+            "gross_mwh": gross,
+            "net_mwh": intercept + slope * gross,
+        }
+    )
+
+
+def test_running_slope_recovers_running_factor_not_annual_ratio() -> None:
+    """A fixed offline draw lowers the annual ratio but not the running slope."""
+    gross = np.linspace(50_000, 400_000, 12)
+    m = _months(1, 0.93, -12_000.0, gross)
+    out = dpl.running_parasitic_factors(m, {1: {"COAL"}})
+    assert len(out) == 1
+    assert abs(out.parasitic_factor.iloc[0] - 0.93) < 1e-6
+    assert out.source.iloc[0] == "measured_running"
+    assert m.net_mwh.sum() / m.gross_mwh.sum() < 0.93
+
+
+def test_running_slope_skips_ct_mixed_positive_intercept_out_of_band() -> None:
+    """CT, mixed-family, positive-intercept and out-of-band plants get no row."""
+    gross = np.linspace(50_000, 400_000, 12)
+    m = pd.concat(
+        [
+            _months(2, 0.95, -1_000.0, gross),
+            _months(3, 0.95, -1_000.0, gross),
+            _months(4, 0.95, 5_000.0, gross),
+            _months(5, 0.70, -1_000.0, gross),
+        ]
+    )
+    fams = {2: {"CT"}, 3: {"COAL", "CC"}, 4: {"CC"}, 5: {"ST"}}
+    assert dpl.running_parasitic_factors(m, fams).empty
+
+
+def test_fill_gives_uncovered_fleet_plants_their_largest_family_default() -> None:
+    """Only fleet plants without a pooled row are filled, at the dominant family."""
+    parasitic = _rows([(1, 0, 0.95, "measured"), (2, 2022, 0.90, "measured")])
+    family_mw = {
+        1: {"COAL": 500.0},  # already pooled: untouched
+        2: {"CC": 600.0, "CT": 100.0},  # per-year only: filled at CC
+        3: {"CT": 200.0},
+        4: {},  # no combustion family: no row
+    }
+    fill = dpl.fleet_class_default_rows(parasitic, family_mw).set_index("plant_id")
+    assert set(fill.index) == {2, 3}
+    assert fill.loc[2, "parasitic_factor"] == 0.975
+    assert fill.loc[3, "parasitic_factor"] == 0.99
+    assert set(fill["source"]) == {"class_default_fleet"}
+    assert set(fill["year"]) == {0}

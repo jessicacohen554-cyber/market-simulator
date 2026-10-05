@@ -25,6 +25,13 @@ Usage:
     python scripts/data/derive_parasitic_load.py --iso ALL --years 2019 2020 2021 \
         2022 2023 2024 2025 --merge --no-registry   # back-fill every uncovered plant
 
+Modes (closeout-parasitic-backfill, porting closeout-SOCO-w3's running slope):
+``--running-slope`` writes the monthly net-on-gross slope (``measured_running``)
+for single-family COAL/CC/ST plants instead of the annual ratio;
+``--fleet-scope`` keeps only the ``--iso`` fleets' plants; ``--fill-class-default``
+gives every remaining fleet plant its class default (``class_default_fleet``),
+the single-fallback proposal.
+
 ``--check`` recomputes every requested plant-year and compares it with the
 committed file (no write): it is the reproduction gate a back-fill runs first,
 so a merge only ever extends a construction shown to reproduce what the file
@@ -50,6 +57,28 @@ from market_sim.data.eia923 import load_monthly_generation  # noqa: E402
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("derive_parasitic_load")
+
+#: plant_group artifact class -> combustion family (running-slope / fill modes)
+_FAMILY: dict[str, str] = {
+    "COAL": "COAL",
+    "CC_REGULAR": "CC",
+    "CC_CHP": "CC",
+    "ST_GAS": "ST",
+    "ST_CHP": "ST",
+    "CT_PEAKER": "CT",
+    "CT_CHP": "CT",
+}
+#: families whose monthly gross explains monthly net (steady units); CT is not
+#: identified at monthly grain
+_RUNNING_FAMILIES: tuple[str, ...] = ("COAL", "CC", "ST")
+#: family -> the artifact class whose campd.DEFAULT_PARASITIC_LOAD_PCT it takes
+#: (the CHP variants carry the same value)
+_FAMILY_DEFAULT_CLASS: dict[str, str] = {
+    "COAL": "COAL",
+    "CC": "CC_REGULAR",
+    "CT": "CT_PEAKER",
+    "ST": "ST_GAS",
+}
 
 # W1 collapsed the old inputs/ tree into data/raw/ — these are the live
 # locations the model reads (config/paths.py PROCESSED_DIR, REFERENCE_DIR).
@@ -83,35 +112,217 @@ def _update_registry(parasitic: pd.DataFrame) -> int:
     return int(mask.sum())
 
 
-def campd_annual_totals(states: list[str], years: list[int]) -> pd.DataFrame:
-    """Return :func:`campd.annual_plant_totals` over ``states`` x ``years``.
+def campd_totals(
+    states: list[str], years: list[int]
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Return CAMPD annual plant totals and monthly plant gross over ``states`` x ``years``.
 
-    Reads one state-year extract at a time and reduces it to plant-year totals
-    before reading the next, then sums across extracts per ``(plant_id,
-    year)``. Every column of :func:`campd.annual_plant_totals` is a sum (or
-    ``first`` for the name), so this equals one call over the concatenated
-    frame, without holding every hourly extract at once.
+    Reads one state-year extract at a time and reduces it before reading the
+    next, then sums across extracts per key. The annual frame equals one
+    :func:`campd.annual_plant_totals` call over the concatenated hourly frame
+    (every column is a sum, or ``first`` for the name) without holding every
+    extract at once. The monthly frame is ``plant_id, year, month, gross_mwh``
+    (the running-slope input).
     """
-    frames = []
+    annual, monthly = [], []
     for state in states:
         for year in years:
             hourly = campd.load_campd_hourly([state], [int(year)])
-            if not hourly.empty:
-                frames.append(campd.annual_plant_totals(hourly))
-    if not frames:
-        return pd.DataFrame()
-    stacked = pd.concat(frames, ignore_index=True)
+            if hourly.empty:
+                continue
+            annual.append(campd.annual_plant_totals(hourly))
+            monthly.append(monthly_gross(hourly))
+    if not annual:
+        return pd.DataFrame(), pd.DataFrame()
+    stacked = pd.concat(annual, ignore_index=True)
     sums = ["gross_mwh", "heat_mmbtu", "co2_kg", "nox_kg", "so2_kg", "op_hours"]
     agg = {c: "sum" for c in sums}
     agg["facility_name"] = "first"
-    return stacked.groupby(["plant_id", "year"], as_index=False).agg(agg)
+    annual_out = stacked.groupby(["plant_id", "year"], as_index=False).agg(agg)
+    monthly_out = (
+        pd.concat(monthly, ignore_index=True)
+        .groupby(["plant_id", "year", "month"], as_index=False)["gross_mwh"]
+        .sum()
+    )
+    return annual_out, monthly_out
+
+
+def monthly_gross(df: pd.DataFrame) -> pd.DataFrame:
+    """Return per ``(plant_id, year, month)`` CAMPD gross MWh from an hourly frame."""
+    out = (
+        df.assign(month=df["date"].dt.month)
+        .groupby(["plant_id", "year", "month"], observed=True)["gross_mw"]
+        .sum()
+        .rename("gross_mwh")
+        .reset_index()
+    )
+    for k in ("plant_id", "year", "month"):
+        out[k] = out[k].astype(int)
+    return out
+
+
+def monthly_gross_net(gross: pd.DataFrame, generation: pd.DataFrame) -> pd.DataFrame:
+    """Return monthly CAMPD gross beside EIA-923 combustion net per plant-month.
+
+    ``gross`` is :func:`monthly_gross` output; ``generation`` the EIA-923
+    Page-1 frame, filtered to combustion fuels exactly as
+    :func:`campd.eia923_combustion_net` does.
+    """
+    fuels = generation["fuel_type"].astype(str).str.upper()
+    comb = generation[~fuels.isin(campd._NON_COMBUSTION_FUELS)]
+    cols = list(campd._EIA923_MONTH_COLUMNS)
+    net = (
+        comb.groupby(["plant_id", "year"], observed=True)[cols]
+        .sum()
+        .reset_index()
+        .melt(id_vars=["plant_id", "year"], var_name="col", value_name="net_mwh")
+    )
+    net["month"] = net["col"].map({c: i + 1 for i, c in enumerate(cols)})
+    for k in ("plant_id", "year"):
+        net[k] = net[k].astype(int)
+    return gross.merge(
+        net[["plant_id", "year", "month", "net_mwh"]], on=["plant_id", "year", "month"]
+    )
+
+
+def running_parasitic_factors(
+    monthly: pd.DataFrame, families: dict[int, set[str]]
+) -> pd.DataFrame:
+    """Return pooled RUNNING parasitic factors: the slope of monthly net on monthly gross.
+
+    Annual net / gross charges station service drawn in OFFLINE hours to the
+    running output, which for a low-capacity-factor unit is a boundary
+    misalignment (rule 14). Over a plant's months with gross > 0,
+    ``net = a + b * gross`` separates the two: ``b`` is the running factor,
+    ``a`` (negative) the offline draw. Written only for a plant whose fleet
+    classes form ONE steady family (COAL, CC or ST) and whose slope lies inside
+    the construction's own band (``campd._PARASITIC_MIN``..``_PARASITIC_MAX``)
+    with a non-positive intercept (a positive one means the gross misses part
+    of the plant); a CT or mixed-family plant is not identified at monthly
+    grain and keeps its consumers' class default. Ported from closeout-SOCO-w3
+    (``claude/closeout-soco-w3p`` dcc67bc6) so the derive has one version.
+    """
+    rows = []
+    for pid, sub in monthly[monthly["gross_mwh"] > 0].groupby("plant_id"):
+        fam = families.get(int(pid), set())
+        if len(fam) != 1 or next(iter(fam)) not in _RUNNING_FAMILIES:
+            continue
+        intercept, slope = campd._ols_intercept_slope(
+            sub["gross_mwh"].to_numpy(), sub["net_mwh"].to_numpy()
+        )
+        # A positive intercept is net the gross cannot explain at zero output
+        # (station service cannot be negative): the CAMPD gross misses part of
+        # the plant (e.g. an unmetered steam turbine).
+        if intercept > 0.0 or not (
+            campd._PARASITIC_MIN <= slope <= campd._PARASITIC_MAX
+        ):
+            continue
+        rows.append(
+            {
+                "plant_id": int(pid),
+                "year": 0,
+                "gross_mwh": round(float(sub["gross_mwh"].sum()), 3),
+                "net_mwh": round(float(sub["net_mwh"].sum()), 3),
+                "parasitic_factor": round(float(slope), 6),
+                "parasitic_load_pct": round(float(1.0 - slope), 6),
+                "source": "measured_running",
+                "flag": "ok",
+            }
+        )
+    cols = [
+        "plant_id",
+        "year",
+        "gross_mwh",
+        "net_mwh",
+        "parasitic_factor",
+        "parasitic_load_pct",
+        "source",
+        "flag",
+    ]
+    return pd.DataFrame(rows, columns=cols)
+
+
+def iso_fleet_family_mw(
+    isos: list[str], years: list[int]
+) -> dict[int, dict[str, float]]:
+    """Return ``{plant_code: {family: pmax_mw}}`` over ``isos``' own EIA-860 fleets.
+
+    Each year loads its own EIA-860 vintage, the population the solve sees; a
+    family's MW is its largest summed ``pmax_mw`` in any year. A family is the
+    combustion artifact family of the generator's ``plant_group``
+    (:data:`_FAMILY`); a non-combustion generator maps to none, but its plant
+    is still listed (with an empty dict) so fleet scope keeps it.
+    """
+    from market_sim.config.iso_configs import get_iso_config
+    from market_sim.config.paths import set_eia860_vintage
+    from market_sim.config.plant_taxonomy import artifact_class
+    from market_sim.data.fleet import load_fleet_from_csv
+
+    out: dict[int, dict[str, float]] = {}
+    try:
+        for iso in isos:
+            for year in years:
+                set_eia860_vintage(int(year))
+                year_mw: dict[tuple[int, str], float] = {}
+                for gen in load_fleet_from_csv(
+                    iso, get_iso_config(iso), year=int(year)
+                ):
+                    code = int(gen.plant_code)
+                    if code <= 0:
+                        continue
+                    out.setdefault(code, {})
+                    fam = _FAMILY.get(artifact_class(gen.plant_group))
+                    if fam:
+                        key = (code, fam)
+                        year_mw[key] = year_mw.get(key, 0.0) + float(gen.pmax_mw)
+                for (code, fam), mw in year_mw.items():
+                    out[code][fam] = max(out[code].get(fam, 0.0), mw)
+    finally:
+        set_eia860_vintage(None)
+    return out
+
+
+def fleet_class_default_rows(
+    parasitic: pd.DataFrame, family_mw: dict[int, dict[str, float]]
+) -> pd.DataFrame:
+    """Return pooled class-default rows for fleet plants ``parasitic`` has no pooled row for.
+
+    The single-fallback proposal (rule 19): every CEMS fleet plant carries a
+    pooled row, so every consumer converts it on the same factor — today the
+    HR derives fall back to their artifact class default while the benchmark
+    and the tranche derives fall back to 1.0 (gross as net). The class is the
+    plant's largest combustion family by fleet MW, valued at
+    :data:`campd.DEFAULT_PARASITIC_LOAD_PCT`; source ``class_default_fleet``.
+    A plant with no combustion family gets no row.
+    """
+    have = set(parasitic.loc[parasitic["year"] == 0, "plant_id"].astype(int))
+    rows = []
+    for code, fams in sorted(family_mw.items()):
+        if code in have or not fams:
+            continue
+        fam = max(sorted(fams), key=lambda f: fams[f])
+        pct = campd.DEFAULT_PARASITIC_LOAD_PCT[_FAMILY_DEFAULT_CLASS[fam]]
+        rows.append(
+            {
+                "plant_id": int(code),
+                "year": 0,
+                "gross_mwh": 0.0,
+                "net_mwh": 0.0,
+                "parasitic_factor": round(1.0 - pct, 6),
+                "parasitic_load_pct": round(pct, 6),
+                "source": "class_default_fleet",
+                "flag": f"fallback_{fam.lower()}",
+            }
+        )
+    return pd.DataFrame(rows, columns=parasitic.columns)
 
 
 def merge_parasitic(existing: pd.DataFrame, parasitic: pd.DataFrame) -> pd.DataFrame:
     """Return ``existing`` extended by the measured rows of ``parasitic`` it lacks.
 
     Every committed ``(plant_id, year)`` row is kept byte-identical; only
-    plant-years absent from ``existing`` are added, and only ``measured`` ones.
+    plant-years absent from ``existing`` are added, and only measured ones
+    (``measured`` or ``measured_running``).
 
     * A freshly pooled ``year == 0`` row is added only for a plant ``existing``
       carries no pooled row for: writing one over a committed pooled row would
@@ -130,7 +341,7 @@ def merge_parasitic(existing: pd.DataFrame, parasitic: pd.DataFrame) -> pd.DataF
     have = set(map(tuple, existing[["plant_id", "year"]].to_numpy()))
     have_pooled = set(existing.loc[existing["year"] == 0, "plant_id"].to_numpy())
     cand = parasitic[
-        (parasitic["source"] == "measured")
+        parasitic["source"].isin(("measured", "measured_running"))
         & ((parasitic["year"] != 0) | (~parasitic["plant_id"].isin(have_pooled)))
     ]
     keys = map(tuple, cand[["plant_id", "year"]].to_numpy())
@@ -209,6 +420,29 @@ def main() -> None:
     parser.add_argument(
         "--check-out", default=None, help="Optional CSV of the --check comparison."
     )
+    parser.add_argument(
+        "--fleet-scope",
+        action="store_true",
+        help="Keep only plants in --iso's own EIA-860 fleet(s) over --years. A "
+        "state extract also carries plants of a neighbouring ISO, so a scoped "
+        "back-fill must not write them (rule 25; closeout-SOCO-w3).",
+    )
+    parser.add_argument(
+        "--running-slope",
+        action="store_true",
+        help="Write the pooled RUNNING factor (slope of monthly EIA-923 net on "
+        "monthly CAMPD gross, source measured_running) for single-family "
+        "COAL/CC/ST plants instead of the annual ratio (closeout-SOCO-w3; see "
+        "running_parasitic_factors).",
+    )
+    parser.add_argument(
+        "--fill-class-default",
+        action="store_true",
+        help="After the derive (and merge), give every --iso fleet plant still "
+        "without a pooled row its largest family's class default (source "
+        "class_default_fleet), so every consumer shares one fallback (rule 19; "
+        "see fleet_class_default_rows).",
+    )
     args = parser.parse_args()
 
     isos = args.iso or []
@@ -219,9 +453,16 @@ def main() -> None:
     )
     if not states:
         parser.error("supply --states or an --iso with a known state mapping")
+    fleet_modes = args.fleet_scope or args.running_slope or args.fill_class_default
+    if fleet_modes and not isos:
+        parser.error(
+            "--fleet-scope / --running-slope / --fill-class-default need --iso"
+        )
+    if args.check and (args.running_slope or args.fill_class_default):
+        parser.error("--check reproduces the annual per-year rows only")
 
     logger.info("loading CAMPD hourly for states=%s years=%s", states, args.years)
-    campd_annual = campd_annual_totals(states, args.years)
+    campd_annual, campd_monthly = campd_totals(states, args.years)
     if campd_annual.empty:
         logger.error("no CAMPD extracts found for the requested states/years")
         return
@@ -236,9 +477,26 @@ def main() -> None:
         generation[generation["year"].isin(args.years)]
     )
 
-    parasitic = campd.compute_parasitic_factors(
-        campd_annual, eia_net, plant_groups=_registry_plant_groups()
-    )
+    family_mw = iso_fleet_family_mw(isos, args.years) if fleet_modes else {}
+    if args.running_slope:
+        families = {code: set(fams) for code, fams in family_mw.items()}
+        parasitic = running_parasitic_factors(
+            monthly_gross_net(
+                campd_monthly, generation[generation["year"].isin(args.years)]
+            ),
+            families,
+        )
+        logger.info("running slope: %d plants identified", len(parasitic))
+    else:
+        parasitic = campd.compute_parasitic_factors(
+            campd_annual, eia_net, plant_groups=_registry_plant_groups()
+        )
+    if args.fleet_scope:
+        before = parasitic["plant_id"].nunique()
+        parasitic = parasitic[parasitic["plant_id"].astype(int).isin(set(family_mw))]
+        logger.info(
+            "fleet scope: kept %d of %d plants", parasitic["plant_id"].nunique(), before
+        )
 
     PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
     pq_path = PROCESSED_DIR / "parasitic_load_factors.parquet"
@@ -265,13 +523,21 @@ def main() -> None:
         # so a scoped back-fill without --merge would silently delete every
         # other ISO's rows (rule 25).
         parasitic = merge_parasitic(pd.read_parquet(pq_path), parasitic)
+    if args.fill_class_default:
+        fill = fleet_class_default_rows(parasitic, family_mw)
+        logger.info("fill: %d fleet plants given their class default", len(fill))
+        parasitic = (
+            pd.concat([parasitic, fill], ignore_index=True)
+            .sort_values(["plant_id", "year"], kind="stable")
+            .reset_index(drop=True)
+        )
 
     parasitic.to_parquet(pq_path, index=False)
     parasitic.to_csv(csv_path, index=False)
     logger.info("wrote %s and %s", pq_path, csv_path)
 
     pooled = parasitic[parasitic["year"] == 0]
-    measured = pooled[pooled["source"] == "measured"]
+    measured = pooled[pooled["source"].isin(("measured", "measured_running"))]
     logger.info(
         "pooled factors: %d plants (%d measured, %d class-default); "
         "measured net/gross mean=%.4f median=%.4f",
