@@ -170,8 +170,18 @@ def census(iso: str, y: int, gen: pd.DataFrame, pooled: dict, same: dict) -> dic
         "default_shares": sorted({round(v, 3) for v in df["default"]}),
         "top": cov.assign(a=cov.dE_twh.abs())
         .sort_values("a", ascending=False)
-        .head(6)[["plant", "name", "group", "netgen_twh", "default", "measured",
-                  "measured_same_year", "dE_twh"]]
+        .head(6)[
+            [
+                "plant",
+                "name",
+                "group",
+                "netgen_twh",
+                "default",
+                "measured",
+                "measured_same_year",
+                "dE_twh",
+            ]
+        ]
         .round(3)
         .to_dict("records"),
         "reconcile": {
@@ -191,7 +201,9 @@ def census(iso: str, y: int, gen: pd.DataFrame, pooled: dict, same: dict) -> dic
             "lower_margin_new_twh": round(new - lo, 3),
             "ratio_new_fold_refuted": round(new / raw, 4),
             "fires_new_fold_refuted": not (
-                bs.VINTAGE_RECONCILE_FRAC * raw <= new <= raw / bs.VINTAGE_RECONCILE_FRAC
+                bs.VINTAGE_RECONCILE_FRAC * raw
+                <= new
+                <= raw / bs.VINTAGE_RECONCILE_FRAC
             ),
         },
         "fold_test": {
@@ -222,7 +234,11 @@ def recheck(yrs: dict) -> None:
     unscaled year (backfills, membership), so a scaled year's pre-scale family
     is committed x s_ref / s, s_ref the mean s over the ISO's unscaled years.
     """
-    ref = [v["reconcile"]["s_est"] for v in yrs.values() if not v["reconcile"]["fired_committed"]]
+    ref = [
+        v["reconcile"]["s_est"]
+        for v in yrs.values()
+        if not v["reconcile"]["fired_committed"]
+    ]
     s_ref = float(np.mean(ref)) if ref else 1.0
     lo_f = bs.VINTAGE_RECONCILE_FRAC
     for v in yrs.values():
@@ -233,17 +249,19 @@ def recheck(yrs: dict) -> None:
         pre = c["family_committed"] * s_ref / c["s_est"]
         new = pre + v["dE_bench_twh"]
         tgt, raw = c["target"], c["raw_930"]
-        c.update({
-            "family_pre_est": round(pre, 3),
-            "ratio_pre": round(pre / tgt, 4),
-            "family_new": round(new, 3),
-            "ratio_new": round(new / tgt, 4),
-            "fires_new": not (lo_f * tgt <= new <= tgt / lo_f),
-            "upper_margin_new_twh": round(tgt / lo_f - new, 3),
-            "lower_margin_new_twh": round(new - lo_f * tgt, 3),
-            "ratio_new_fold_refuted": round(new / raw, 4),
-            "fires_new_fold_refuted": not (lo_f * raw <= new <= raw / lo_f),
-        })
+        c.update(
+            {
+                "family_pre_est": round(pre, 3),
+                "ratio_pre": round(pre / tgt, 4),
+                "family_new": round(new, 3),
+                "ratio_new": round(new / tgt, 4),
+                "fires_new": not (lo_f * tgt <= new <= tgt / lo_f),
+                "upper_margin_new_twh": round(tgt / lo_f - new, 3),
+                "lower_margin_new_twh": round(new - lo_f * tgt, 3),
+                "ratio_new_fold_refuted": round(new / raw, 4),
+                "fires_new_fold_refuted": not (lo_f * raw <= new <= raw / lo_f),
+            }
+        )
         c["scale_new"] = round(tgt / new, 4) if c["fires_new"] else 1.0
 
 
@@ -263,22 +281,41 @@ def _walk(um: pd.DataFrame, add_h: pd.Series) -> dict:
     w["cut"] = (w.need - w.above).clip(lower=0.0).clip(upper=w.mw)
     cls = (w.groupby("plant_group", observed=True).cut.sum() / 1e6).round(3)
     unabs = (
-        add_h.clip(lower=0)
-        - w.groupby("hour").cut.sum().reindex(add_h.index).fillna(0)
+        add_h.clip(lower=0) - w.groupby("hour").cut.sum().reindex(add_h.index).fillna(0)
     ).sum() / 1e6
     return {
-        "displaced_twh_by_class": {k: float(v) for k, v in cls.items() if abs(v) >= 0.005},
+        "displaced_twh_by_class": {
+            k: float(v) for k, v in cls.items() if abs(v) >= 0.005
+        },
         "unabsorbed_twh": round(float(unabs), 3),
     }
 
 
 def _load_um(iso: str, y: int) -> pd.DataFrame | None:
     """The keeper's committed unit_marginal sidecar for (iso, year)."""
-    f = REPO / "results/calibration" / KEEPER[iso] / "hourly" / f"unit_marginal_{y}.parquet"
+    f = (
+        REPO
+        / "results/calibration"
+        / KEEPER[iso]
+        / "hourly"
+        / f"unit_marginal_{y}.parquet"
+    )
     if not f.exists():
         return None
-    um = pd.read_parquet(f, columns=["unit_id", "plant_code", "plant_group", "fuel",
-                                     "hour", "mw", "cap_mw", "mc", "marginal"])
+    um = pd.read_parquet(
+        f,
+        columns=[
+            "unit_id",
+            "plant_code",
+            "plant_group",
+            "fuel",
+            "hour",
+            "mw",
+            "cap_mw",
+            "mc",
+            "marginal",
+        ],
+    )
     for c in ("plant_group", "fuel", "unit_id"):
         um[c] = um[c].astype("category")
     for c in ("mw", "cap_mw", "mc"):
@@ -289,16 +326,26 @@ def _load_um(iso: str, y: int) -> pd.DataFrame | None:
 def arm_reach(um: pd.DataFrame, shares: dict) -> dict:
     """Model-side static reach of the measured carve (w3d method)."""
     chp = um[um.plant_group.isin(CHP)].copy()
-    f = np.array([shares.get((int(p), g), (0.0, 0.0))
-                  for p, g in zip(chp.plant_code, chp.plant_group)])
+    f = np.array(
+        [
+            shares.get((int(p), g), (0.0, 0.0))
+            for p, g in zip(chp.plant_code, chp.plant_group)
+        ]
+    )
     d, m = f[:, 0], f[:, 1]
     scale = np.where(d < 1.0, (d - m) / np.maximum(1.0 - d, 1e-9), 0.0)
     chp["add"] = chp.mw.to_numpy() * scale
     add_h = chp.groupby("hour").add.sum()
     out = {
         "model_add_twh": round(float(add_h.sum() / 1e6), 3),
-        "model_add_by_group": (chp.groupby("plant_group", observed=True).add.sum() / 1e6).round(3).to_dict(),
-        "model_chp_twh": (chp.groupby("plant_group", observed=True).mw.sum() / 1e6).round(3).to_dict(),
+        "model_add_by_group": (
+            chp.groupby("plant_group", observed=True).add.sum() / 1e6
+        )
+        .round(3)
+        .to_dict(),
+        "model_chp_twh": (chp.groupby("plant_group", observed=True).mw.sum() / 1e6)
+        .round(3)
+        .to_dict(),
     }
     out.update(_walk(um, add_h))
     return out
@@ -340,20 +387,34 @@ def commitment(iso: str, y: int, um: pd.DataFrame, campd: pd.DataFrame | None) -
     rows = []
     if campd is not None:
         for pid, u in chp.groupby("plant_code"):
-            c = (campd[campd.plant_id == pid].groupby("hour").net_mw.sum()
-                 .reindex(range(8760), fill_value=0.0).to_numpy())
+            c = (
+                campd[campd.plant_id == pid]
+                .groupby("hour")
+                .net_mw.sum()
+                .reindex(range(8760), fill_value=0.0)
+                .to_numpy()
+            )
             if c.max() <= 0:
                 continue
             on = c > 0.05 * c.max()
-            g = (u.groupby("hour").agg(mw=("mw", "sum"), cap=("cap_mw", "sum"))
-                 .reindex(range(8760), fill_value=0.0))
+            g = (
+                u.groupby("hour")
+                .agg(mw=("mw", "sum"), cap=("cap_mw", "sum"))
+                .reindex(range(8760), fill_value=0.0)
+            )
             mon = (g.mw > 0.05 * max(g.cap.max(), 1e-9)).to_numpy()
-            rows.append({
-                "plant": int(pid), "group": str(u.plant_group.iloc[0]),
-                "cems_twh": c.sum() / 1e6, "model_twh": float(g.mw.sum()) / 1e6,
-                "cems_on": float(on.mean()), "cems_starts": _runs(on),
-                "model_on": float(mon.mean()), "model_starts": _runs(mon),
-            })
+            rows.append(
+                {
+                    "plant": int(pid),
+                    "group": str(u.plant_group.iloc[0]),
+                    "cems_twh": c.sum() / 1e6,
+                    "model_twh": float(g.mw.sum()) / 1e6,
+                    "cems_on": float(on.mean()),
+                    "cems_starts": _runs(on),
+                    "model_on": float(mon.mean()),
+                    "model_starts": _runs(mon),
+                }
+            )
     if rows:
         df = pd.DataFrame(rows)
         wt = df.cems_twh / df.cems_twh.sum()
@@ -367,14 +428,24 @@ def commitment(iso: str, y: int, um: pd.DataFrame, campd: pd.DataFrame | None) -
             "model_starts_median": float(df.model_starts.median()),
         }
     com = chp[chp.band == "committed"].set_index(["plant_code", "hour"])
-    lo = (chp[chp.band.isin(["econlo", "econ"])]
-          .groupby(["plant_code", "hour"])[["mw", "cap_mw", "mc"]]
-          .agg({"mw": "sum", "cap_mw": "sum", "mc": "min"}).add_suffix("_lo"))
+    lo = (
+        chp[chp.band.isin(["econlo", "econ"])]
+        .groupby(["plant_code", "hour"])[["mw", "cap_mw", "mc"]]
+        .agg({"mw": "sum", "cap_mw": "sum", "mc": "min"})
+        .add_suffix("_lo")
+    )
     if com.empty or lo.empty:
-        out["release"] = {"gain_twh": 0.0, "note": "no committed/econ-low CHP band pair"}
+        out["release"] = {
+            "gain_twh": 0.0,
+            "note": "no committed/econ-low CHP band pair",
+        }
         return out
     j = com.join(lo, how="inner")
-    bind = (j.mw_lo >= 0.98 * j.cap_mw_lo) & (j.mw < 0.98 * j.cap_mw) & (j.mc > j.mc_lo + 0.5)
+    bind = (
+        (j.mw_lo >= 0.98 * j.cap_mw_lo)
+        & (j.mw < 0.98 * j.cap_mw)
+        & (j.mc > j.mc_lo + 0.5)
+    )
     add = (j.cap_mw - j.mw) * bind
     add_h = add.groupby(level="hour").sum()
     inv = j.mc - j.mc_lo
@@ -421,8 +492,12 @@ def main() -> None:
                         r["campd_error"] = repr(exc)[:200]
                 r["commitment"] = commitment(iso, y, um, campd)
             res[iso][str(y)] = r
-            print(iso, y, json.dumps({k: r[k] for k in ("dE_bench_twh", "dE_by_group")}),
-                  flush=True)
+            print(
+                iso,
+                y,
+                json.dumps({k: r[k] for k in ("dE_bench_twh", "dE_by_group")}),
+                flush=True,
+            )
             out.parent.mkdir(parents=True, exist_ok=True)
             out.write_text(json.dumps(res, indent=1, default=float))
         recheck(res[iso])

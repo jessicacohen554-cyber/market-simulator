@@ -71,10 +71,14 @@ def _gen(recs: list[dict]) -> float:
 
 
 def _status(miss: float, share: float, tol: float) -> str:
-    return "PASS" if abs(miss) <= tol + 1e-9 and abs(share) <= SHARE_PP + 1e-9 else "FAIL"
+    return (
+        "PASS" if abs(miss) <= tol + 1e-9 and abs(share) <= SHARE_PP + 1e-9 else "FAIL"
+    )
 
 
-def arms(c: dict, refuted: bool = False, measured: bool = True) -> tuple[dict[str, dict[str, float]], object]:
+def arms(
+    c: dict, refuted: bool = False, measured: bool = True
+) -> tuple[dict[str, dict[str, float]], object]:
     """Per arm, per class: cumulative d_model TWh; plus the bench actual shift.
 
     The bench shift is the same in every arm (the measured share is pinned on
@@ -105,9 +109,17 @@ def arms(c: dict, refuted: bool = False, measured: bool = True) -> tuple[dict[st
 
     ar = c.get("arm_reach", {})
     rel = c.get("commitment", {}).get("release", {})
-    a1 = add(add({}, ar.get("model_add_by_group", {}), 1), ar.get("displaced_twh_by_class", {}), -1)
-    a2 = add(add(a1, rel.get("gain_by_group", {}), 1, STARTUP_REALISED),
-             rel.get("displaced_twh_by_class", {}), -1, STARTUP_REALISED)
+    a1 = add(
+        add({}, ar.get("model_add_by_group", {}), 1),
+        ar.get("displaced_twh_by_class", {}),
+        -1,
+    )
+    a2 = add(
+        add(a1, rel.get("gain_by_group", {}), 1, STARTUP_REALISED),
+        rel.get("displaced_twh_by_class", {}),
+        -1,
+        STARTUP_REALISED,
+    )
     a3 = add(a2, c.get("holdout_reach", {}).get("taken_twh_by_class", {}), 1)
     return {"M": {}, "A1": a1, "A2": a2, "A3": a3, "R": {}}, actual_shift
 
@@ -119,7 +131,8 @@ def main() -> None:
         recs = records(iso)
         res[iso] = {"records": [], "summary": {}}
         gen_by_year = {
-            y: _gen([r for r in recs if r["year"] == y]) for y in {r["year"] for r in recs}
+            y: _gen([r for r in recs if r["year"] == y])
+            for y in {r["year"] for r in recs}
         }
         for r in recs:
             c = yrs.get(str(r["year"]))
@@ -128,8 +141,12 @@ def main() -> None:
             miss0 = r["model"] - r["actual"]
             gen = gen_by_year.get(r["year"]) or float("nan")
             row = {
-                "year": r["year"], "key": r["key"], "tol": r["tol_twh"],
-                "miss": round(miss0, 2), "share": r.get("share_pp"), "status": r["status"],
+                "year": r["year"],
+                "key": r["key"],
+                "tol": r["tol_twh"],
+                "miss": round(miss0, 2),
+                "share": r.get("share_pp"),
+                "status": r["status"],
             }
             bases = {
                 "deflated": arms(c),
@@ -137,26 +154,41 @@ def main() -> None:
                 "refuted_default": arms(c, refuted=True, measured=False),
             }
             for arm in ARMS:
-                basis = "refuted_default" if arm == "R" else ("refuted" if arm.endswith("r") else "deflated")
+                basis = (
+                    "refuted_default"
+                    if arm == "R"
+                    else ("refuted" if arm.endswith("r") else "deflated")
+                )
                 a, shift = bases[basis]
                 dm = a[arm.rstrip("r")].get(r["key"], 0.0)
                 miss = miss0 + dm - shift(r["key"], r["actual"])
                 share = (r.get("share_pp") or 0.0) + (
                     (miss - miss0) * 100.0 / gen if gen == gen and gen else 0.0
                 )
-                row[arm] = {"miss": round(miss, 2), "share": round(share, 2),
-                            "status": _status(miss, share, r["tol_twh"])}
+                row[arm] = {
+                    "miss": round(miss, 2),
+                    "share": round(share, 2),
+                    "status": _status(miss, share, r["tol_twh"]),
+                }
             res[iso]["records"].append(row)
         for arm in ARMS:
             rr = res[iso]["records"]
             res[iso]["summary"][arm] = {
                 "fail": sum(x[arm]["status"] == "FAIL" for x in rr),
-                "fail_to_pass": [f'{x["key"]} {x["year"]}' for x in rr
-                                 if x["status"] == "FAIL" and x[arm]["status"] == "PASS"],
-                "pass_to_fail": [f'{x["key"]} {x["year"]}' for x in rr
-                                 if x["status"] == "PASS" and x[arm]["status"] == "FAIL"],
+                "fail_to_pass": [
+                    f"{x['key']} {x['year']}"
+                    for x in rr
+                    if x["status"] == "FAIL" and x[arm]["status"] == "PASS"
+                ],
+                "pass_to_fail": [
+                    f"{x['key']} {x['year']}"
+                    for x in rr
+                    if x["status"] == "PASS" and x[arm]["status"] == "FAIL"
+                ],
             }
-        res[iso]["summary"]["keeper_fail"] = sum(x["status"] == "FAIL" for x in res[iso]["records"])
+        res[iso]["summary"]["keeper_fail"] = sum(
+            x["status"] == "FAIL" for x in res[iso]["records"]
+        )
         print(iso, json.dumps(res[iso]["summary"]))
     OUT.write_text(json.dumps(res, indent=1, default=float))
 
