@@ -1,0 +1,19 @@
+{
+  "id": "2026-10-05-closeout-miso-w3f-arm",
+  "label": "closeout miso w3f arm",
+  "date": "2026-10-05",
+  "shorthand": "closeout-miso-w3f-arm",
+  "definition": "closeout-MISO-w3f arm A",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-10-05-closeout-miso-w3f-arm.js",
+  "bundle": "results/calibration/closeout_miso_w3f_a_span"
+}
