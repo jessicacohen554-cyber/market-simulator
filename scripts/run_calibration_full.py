@@ -3851,6 +3851,7 @@ def _btm_frame(
     iso: str = "ERCOT",
     group_by_code: dict[int, str] | None = None,
     nyiso_chp_btm_measured: bool = False,
+    caiso_chp_btm_measured: bool = False,
 ) -> pd.DataFrame:
     """Return behind-the-meter CHP must-run by class for one year-pass.
 
@@ -4005,10 +4006,16 @@ def _btm_frame(
     # every ISO without a measured artifact the two maps are identical and
     # the column duplicates ``btm_twh`` byte-for-byte.
     share_bench_by_plant = dict(share_by_plant)
-    if iso == "NYISO":
-        from market_sim.data.chp import measured_chp_btm_pct_nyiso
+    # closeout-CAISO-w6: CAISO carries its own measured artifact (EIA-923
+    # Schedules 6/7 on-site use), pinned on the bench side the same way and
+    # following ``caiso_chp_btm_measured`` on the run side.
+    if iso in ("NYISO", "CAISO"):
+        from market_sim.data.chp import measured_chp_btm_pct_for_iso
 
-        _measured = measured_chp_btm_pct_nyiso()
+        _measured = measured_chp_btm_pct_for_iso(iso)
+        _run_measured = (
+            nyiso_chp_btm_measured if iso == "NYISO" else caiso_chp_btm_measured
+        )
         _chp_codes = {
             int(code)
             for code, grp in zip(bins["Plant_Code"], bins["Plant_Group"])
@@ -4018,7 +4025,7 @@ def _btm_frame(
             if _code in _chp_codes:
                 if _code in share_bench_by_plant:
                     share_bench_by_plant[_code] = float(_pct) / 100.0
-                if nyiso_chp_btm_measured and _code in share_by_plant:
+                if _run_measured and _code in share_by_plant:
                     share_by_plant[_code] = float(_pct) / 100.0
 
     def _class_totals(shares: dict[int, float]) -> dict[str, float]:
@@ -7407,6 +7414,9 @@ def solve_and_persist(
                     iso=iso,
                     group_by_code=group_by_code,
                     nyiso_chp_btm_measured=bool(nyiso_chp_btm_measured),
+                    caiso_chp_btm_measured=bool(
+                        (prb_overrides or {}).get("caiso_chp_btm_measured", False)
+                    ),
                 )
             )
 
@@ -9024,6 +9034,11 @@ def run_p2_layer(bundle: Path, screen_coal: bool) -> None:
                 generation,
                 iso=meta["iso"],
                 nyiso_chp_btm_measured=bool(meta.get("nyiso_chp_btm_measured")),
+                caiso_chp_btm_measured=bool(
+                    (meta.get("coal_prb_sigmoid_overrides") or {}).get(
+                        "caiso_chp_btm_measured"
+                    )
+                ),
             )
         )
         # Older p2_state pickles predate the storage frame; skip them.

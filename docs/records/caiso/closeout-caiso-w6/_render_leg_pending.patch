@@ -1,0 +1,39 @@
+diff --git a/scripts/render_calibration_html.py b/scripts/render_calibration_html.py
+index 19b158eb..e287bb0c 100644
+--- a/scripts/render_calibration_html.py
++++ b/scripts/render_calibration_html.py
+@@ -1405,10 +1405,12 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
+         # add-back (what its LP actually held out) still comes from the
+         # bundle's ``btm_twh`` below. [R-ACCURATE]
+         _btm_measured: dict[int, float] | None = None
+-        if meta.get("iso") == "NYISO":
+-            from market_sim.data.chp import measured_chp_btm_pct_nyiso
++        # closeout-CAISO-w6: CAISO's EIA-923 Schedules 6/7 artifact is pinned
++        # on the bench side by the same principle.
++        if meta.get("iso") in ("NYISO", "CAISO"):
++            from market_sim.data.chp import measured_chp_btm_pct_for_iso
+ 
+-            _measured_map = measured_chp_btm_pct_nyiso()
++            _measured_map = measured_chp_btm_pct_for_iso(meta["iso"])
+             if _measured_map:
+                 _btm_measured = {c: p / 100.0 for c, p in _measured_map.items()}
+         # The MODEL-side add-back must mirror what THIS run's LP held out
+@@ -1420,7 +1422,17 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
+         # +6.6 TWh/yr across the NYISO CHP classes, inflating the nyiso-190/191
+         # plant-grain record 3x at its top row. [R-ACCURATE]
+         _btm_run_measured: dict[int, float] | None = (
+-            _btm_measured if meta.get("nyiso_chp_btm_measured") else None
++            _btm_measured
++            if (
++                (meta.get("iso") == "NYISO" and meta.get("nyiso_chp_btm_measured"))
++                or (
++                    meta.get("iso") == "CAISO"
++                    and (meta.get("coal_prb_sigmoid_overrides") or {}).get(
++                        "caiso_chp_btm_measured"
++                    )
++                )
++            )
++            else None
+         )
+         run_years: dict[int, dict] = {}
+         # Non-CEMS gas-class cogen block per rendered year — (grid, full-plant)

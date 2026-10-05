@@ -485,13 +485,17 @@ def bins_to_fleet(
             # rule-23 artifact carries it (rule 14 [R-ACCURATE] — the
             # "merchant" 35% default is refuted by the market meter for the
             # large NYISO merchant cogens; Sithe Independence measured ~0).
-            if (
-                getattr(config, "nyiso_chp_btm_measured", False)
-                and getattr(config, "iso", "ERCOT") == "NYISO"
-            ):
-                from market_sim.data.chp import measured_chp_btm_pct_nyiso
+            # closeout-CAISO-w6: CAISO's analogue under caiso_chp_btm_measured
+            # (the plant's own EIA-923 Schedules 6/7 on-site-use share).
+            from market_sim.data.chp import (
+                chp_btm_measured_armed,
+                measured_chp_btm_pct_for_iso,
+            )
 
-                _measured = measured_chp_btm_pct_nyiso()
+            if chp_btm_measured_armed(config):
+                _measured = measured_chp_btm_pct_for_iso(
+                    getattr(config, "iso", "ERCOT")
+                )
                 if int(b["Plant_Code"]) in _measured:
                     pct_mr = _measured[int(b["Plant_Code"])]
         # Petra Nova runs on its own classification (see PETRA_NOVA_* above):

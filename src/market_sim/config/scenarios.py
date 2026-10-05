@@ -2357,6 +2357,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "caiso_ra_st_min_load_frac",
     "measured_ct_heat_rates_crosswalk_remap",
     "caiso_humboldt_local_area",
+    # closeout-CAISO-w6 (2026-10-05), default off, registered IN THE SAME
+    # COMMIT as the field: off, the measured artifact is never read by the
+    # capacity carve, so every pre-existing key is byte-stable.
+    "caiso_chp_btm_measured",
     # NWPP-NEXT-6 (2026-09-26): WECC Path 76 "Alturas" link NWPP-NW <->
     # NWPP-SNV (default off). Byte-identical off by construction: its one
     # applier, pipeline.ttc.apply_nwpp_path76_link, returns the SAME ISOConfig
@@ -3338,6 +3342,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "caiso_ra_st_min_load_frac": "0.119",
     "measured_ct_heat_rates_crosswalk_remap": "False",
     "caiso_humboldt_local_area": "False",
+    # Added by closeout-CAISO-w6 WITH the field (the nyiso-119 discipline).
+    "caiso_chp_btm_measured": "False",
     # Added by NWPP-NEXT-6 WITH the field (the nyiso-119 discipline).
     "nwpp_path76_alturas_link": "False",
     # Added by NWPP-NEXT-7 WITH the field (the nyiso-119 discipline).
@@ -11027,6 +11033,26 @@ class ScenarioConfig:
     # in the zonal model, priced $20-40 above both trading-hub prints
     # (docs/records/caiso/closeout-caiso-w5/). Does not compose with
     # caiso_fsno_subzonal_topology (raises). Default off; CAISO-only.
+    caiso_chp_btm_measured: bool = False  # closeout-CAISO-w6 (2026-10-05).
+    # Measured CAISO CHP behind-the-meter electric share: the CAISO analogue of
+    # nyiso_chp_btm_measured (nyiso-147), replacing the sector-keyed
+    # constants.CHP_BTM_PCT_BY_SECTOR default (and the thermal-tranche
+    # chp_btm_pct overrides) in the chp_steam_following capacity carve with the
+    # plant's own measured on-site-use share, 100 x clip((net generation -
+    # sales for resale - retail sales - tolling - outgoing) / net generation),
+    # pooled CY2022-2024 from its EIA-923 Schedules 6/7 annual source-and-
+    # disposition filing (rule-23 artifact
+    # data/raw/_processed-legacy/chp_btm_share_measured_CAISO.csv,
+    # scripts/data/derive_caiso_chp_btm_share.py, raw filing at
+    # data/raw/eia-923-disposition/). Rule 13: the filing regenerates every
+    # year and responds to changed host arrangements; rule 14: the default is
+    # refuted by the plants' own filings (Watson 50216 self-uses ~2 % against
+    # 65 %, Los Medanos 55217 ~2 % against 35 %, Richmond 52109 ~99 % against
+    # 65 %). Consumed by the capacity carve (data/fleet/assembly.py) and the
+    # run-side BTM add-back (run_calibration_full._btm_frame); the benchmark
+    # subtrahend reads the artifact whenever it exists (nyiso-149). A plant
+    # absent from Schedules 6/7 keeps the default. Default off; CAISO-only
+    # (rule 25).
     caiso_fsno_subzonal_topology: bool = False  # Arm the caiso-223 P-A' FSNO
     # sub-zonal partition (caiso-222 Q2 route (iii), owner-chartered; solve
     # round PRECOMMIT-caiso224-fsno-arm-2026-08-30.md): a new FSNO San-Joaquin

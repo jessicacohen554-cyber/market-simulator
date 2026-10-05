@@ -110,6 +110,16 @@ EIA_923_GENERATION_FUEL_PATH: Path = (
     EIA_923_GENERATION_FUEL_DIR / "eia923_generation_fuel_2019_2025.csv"
 )
 
+# EIA-923 Schedules 6/7 "Annual Source and Disposition of Electricity for
+# Non-Utility Generators", per plant-year: gross generation, station use,
+# direct (facility) use, retail sales, sales for resale, tolling, outgoing.
+# closeout-CAISO-w6 intake; the owner's own disposition filing, the measured
+# on-site-use (behind-the-meter) share (scripts/data/fetch_eia923_disposition.py).
+EIA_923_DISPOSITION_DIR: Path = RAW_DATA_DIR / "eia-923-disposition"
+EIA_923_DISPOSITION_PATH: Path = (
+    EIA_923_DISPOSITION_DIR / "eia923_disposition_2019_2025.csv"
+)
+
 # --- EIA-860 vintage selection -------------------------------------------
 # The committed EIA-860 parquets in EIA_860_DIR are the 2025 Early Release
 # (operating years through 2025) — a single recent snapshot the COD ramp
