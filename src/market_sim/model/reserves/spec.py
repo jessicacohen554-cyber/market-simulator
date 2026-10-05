@@ -4764,16 +4764,53 @@ def nwpp_pergen_structure(
 ) -> tuple[np.ndarray, np.ndarray, int, np.ndarray]:
     """NWPP pergen reserve-pool structure ``(gen_idx, col, n_r, ramp10)``.
 
-    (zone, fuel-class) pools over :func:`_nwpp_reserve_eligible` with the hydro
-    ramp backfilled from :data:`NWPP_HYDRO_RAMP10_FRAC`
-    (:func:`_hydro_backfilled_pergen_structure`).
+    Members are :func:`_nwpp_reserve_eligible` rows with a nonzero 10-minute
+    ramp (hydro backfilled from :data:`NWPP_HYDRO_RAMP10_FRAC`,
+    :func:`_hydro_backfilled_pergen_structure`). Pools are **per plant** for
+    thermal and per (zone, fuel-class) for hydro:
+
+    * A thermal pool is one plant's one fuel class, so its joint
+      ``ΣP + R <= Σcap`` row and online gate ``R <= rho·ΣP`` are that
+      plant's own physics. Pooled by (zone, fuel-class),
+      the IDLE capacity of an offline plant sat in the same row as an online
+      plant's output, so the gate counted it as spinning headroom. That is a
+      phantom no BA can hold, and it left the design inert (NEXT-28 legs
+      2022-2024: SNV gas_cc pool mean idle 1.3 GW against a 134 MW spin
+      requirement). Per plant, an offline plant (ΣP = 0) backs no spin, and an
+      energy-loaded plant must open its own headroom.
+    * Hydro stays zone-pooled. A hydro project's units are dispatched as one
+      cascade-constrained block, and the NW hydro headroom (~18 GW) exceeds
+      any requirement, so a finer split would add columns and no binding row.
+
+    Rows without a plant code (``plant_code <= 0``) keep their (zone,
+    fuel-class) pool.
     """
-    return _hydro_backfilled_pergen_structure(
+    gen_idx, base_col, _n, ramp10 = _hydro_backfilled_pergen_structure(
         fleet_arrays,
         _nwpp_reserve_eligible(fleet_arrays),
         NWPP_HYDRO_RAMP10_FRAC,
         "nwpp_ba_contingency_reserve",
     )
+    if gen_idx.size == 0:
+        return gen_idx, base_col, 0, ramp10
+    fuel_names = np.array([FUEL_TYPE_NAMES[i] for i in fleet_arrays.fuel_type_idx])
+    plant = np.asarray(fleet_arrays.plant_code, dtype=np.int64)[gen_idx]
+    per_plant = (fuel_names[gen_idx] != "hydro") & (plant > 0)
+    # Key: (0, plant, fuel) for a per-plant thermal pool (a plant's CC block
+    # and its CTs are separate devices: an idle CT backs no spin because the
+    # CC beside it runs), (1, base pool, -1) otherwise.
+    fuel = np.asarray(fleet_arrays.fuel_type_idx, dtype=np.int64)[gen_idx]
+    keys = np.stack(
+        [
+            np.where(per_plant, 0, 1),
+            np.where(per_plant, plant, base_col),
+            np.where(per_plant, fuel, -1),
+        ],
+        axis=1,
+    )
+    _, col = np.unique(keys, axis=0, return_inverse=True)
+    col = col.astype(int).reshape(-1)
+    return gen_idx, col, int(col.max()) + 1, ramp10
 
 
 def _nwpp_design(
@@ -4800,8 +4837,8 @@ def _nwpp_design(
       zone's spinning columns only.
 
     Layout (the MISO ``miso_reserve_online_gated`` pergen product split): one
-    (zone, fuel-class) pool per thermal/hydro class (:func:`nwpp_pergen_structure`),
-    each with a GATED spinning column and an UNGATED offline column sharing
+    pool per thermal PLANT and per (zone, fuel-class) for hydro
+    (:func:`nwpp_pergen_structure`), each with a GATED spinning column and an UNGATED offline column sharing
     the pool's joint ``ΣP + R <= Σcap`` row and its 10-minute deliverable
     ramp. The gated column also carries ``R − rho·ΣP <= 0``: idle capacity
     backs no spinning reserve, so an energy-loaded CC fleet must open

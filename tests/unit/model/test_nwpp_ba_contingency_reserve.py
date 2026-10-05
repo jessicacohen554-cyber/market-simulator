@@ -170,3 +170,37 @@ def test_spinning_half_opens_cc_headroom():
     # Requirement met (no $2,000 shortfall): the reserve price is the CT-CC
     # opportunity cost, far below voll.
     assert float(np.asarray(r.reserve_price).max()) < 100.0
+
+
+def test_idle_plant_backs_no_spin_for_a_loaded_one():
+    # Two CC plants in one zone: plant 1 cheap and loaded to its cap by the
+    # 400 MW demand, plant 2 dearer and idle. Pooled by (zone, fuel-class),
+    # plant 2's idle 400 MW sat in the same joint row as plant 1's output and
+    # backed the spin for free (the NEXT-28 inert legs). Per plant, the 20 MW
+    # spin needs ONLINE headroom: plant 1 opens it or plant 2 runs.
+    zones = ["NWPP-SNV"]
+    fa = _fleet(
+        [0, 0], ["gas_cc", "gas_cc"], [400.0, 400.0], [160.0, 160.0], [7.0, 9.0]
+    )
+    load = np.full((1, T), 600.0)
+    gen = np.full((1, T), 733.3333333333334)  # 40 MW contingency, 20 MW spin
+    design = _nwpp_design(_config(), fa, T, zones, basis_mw=(load, gen))
+    assert int(design.pergen_col.max()) + 1 == 2  # one pool per plant
+    r = solve_dispatch(
+        fa,
+        np.full((1, T), 400.0),
+        wind_cf=np.zeros((1, T)),
+        wind_cap=np.zeros(1),
+        solar_cf=np.zeros((1, T)),
+        solar_cap=np.zeros(1),
+        fuel_prices=np.full((2, T), 1.0),
+        voll=2000.0,
+        **build_reserve_dispatch_kwargs(design),
+    )
+    assert r.status == "Optimal"
+    d = np.asarray(r.dispatch)
+    rho = design.online_rho
+    spin = np.minimum(400.0 - d[0], rho * d[0]) + np.minimum(400.0 - d[1], rho * d[1])
+    assert np.all(spin >= 20.0 - 1e-4), spin
+    assert np.all(d[0] < 400.0 - 1.0), d  # the loaded plant gives up energy
+    assert float(np.asarray(r.reserve_price).max()) > 0.0  # holding spin costs

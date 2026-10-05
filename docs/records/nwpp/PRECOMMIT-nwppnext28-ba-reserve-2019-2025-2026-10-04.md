@@ -61,3 +61,45 @@
   - reserve is met (prediction 2);
   - no new FAIL appears outside the predicted risk list.
 - The promotion goes on ONE owner card in every case, with the full verdict diff against the keeper.
+
+## Addendum (2026-10-05): per-plant spinning pools. Pin 1 legs are superseded.
+
+**What the pin-1 legs showed** (pin `971685b4`, all hard stops passed, zero shortfall hours):
+
+| leg | commit | CC_REGULAR vs keeper | coal vs keeper | spin duals |
+|---|---|---|---|---|
+| 2022 | `072f715a` | +0.82 TWh | −0.40 TWh | — |
+| 2023 | `f4486f64` | +0.45 TWh | −0.17 TWh | — |
+| 2024 | `603b275e` | +0.00 TWh | — | ≈ 0 |
+
+Predictions 3 and 4 failed: CC_REGULAR rose or held instead of falling.
+
+**Cause: the pooling, not the obligation.**
+- (Zone, fuel-class) pools put an offline plant's idle capacity in the same `ΣP + R ≤ Σcap` row as an online plant's
+  output. The gate `R ≤ rho·ΣP` then counted that idle capacity as spinning headroom.
+- In 2024, mean pooled spin available was SNV 501 MW and EAST 606 MW, against a requirement of 134 and 182 MW.
+
+**Fix: `nwpp_pergen_structure`.**
+- Pools are per thermal (plant, fuel class). Hydro stays zone-pooled.
+- An offline plant now backs no spin.
+- Test: `test_idle_plant_backs_no_spin_for_a_loaded_one`.
+
+**Zero-LP check at keeper dispatch** (`scripts/probes/_nwppnext28_perplant_spin.py`): the spin shortfall the LP must
+close by re-dispatch, in TWh.
+
+| zone | layout | 2019 | 2022 | 2023 | 2024 | 2025 |
+|---|---|---:|---:|---:|---:|---:|
+| SNV | per-plant | 0.13 | 0.31 | 0.37 | 0.26 | 0.37 |
+| SNV | pooled | 0.00 | 0.11 | 0.14 | 0.03 | 0.09 |
+| EAST | per-plant | 0.26 | 0.79 | 0.34 | 0.29 | 0.54 |
+| EAST | pooled | 0.11 | 0.55 | 0.20 | 0.00 | 0.08 |
+| OR | per-plant | 0.03 | 0.12 | 0.17 | 0.20 | 0.23 |
+| NW | both | ≈ 0 | ≈ 0 | ≈ 0 | ≈ 0 | ≈ 0 |
+| INLAND | both | ≈ 0 | ≈ 0 | ≈ 0 | ≈ 0 | ≈ 0 |
+
+**Revised predictions for the pin-2 legs** (replacing 3 and 4):
+- **3′ CC_REGULAR (footprint).** It falls by 0 … −0.8 TWh in each year. The SNV and EAST per-plant shortfall bounds the
+  cut before re-dispatch; part of it returns through other CCs and imports. C1 CC_REGULAR 2024 stays FAIL.
+- **4′ CT_PEAKER.** It moves by ±0.3 TWh.
+- **Unchanged:** predictions 1, 2, 5 and 6.
+- **Solve time.** It roughly doubles: P1 took 47–83 min on pin 1, so the budget is now 360 min.
