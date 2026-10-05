@@ -2361,6 +2361,9 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # COMMIT as the field: off, the measured artifact is never read by the
     # capacity carve, so every pre-existing key is byte-stable.
     "caiso_chp_btm_measured",
+    # closeout-CAISO-w7 (2026-10-05), default off, registered with the field:
+    # off, the RTM sibling artifact is never read (byte-stable keys).
+    "caiso_intertie_print_rt_basis",
     # NWPP-NEXT-6 (2026-09-26): WECC Path 76 "Alturas" link NWPP-NW <->
     # NWPP-SNV (default off). Byte-identical off by construction: its one
     # applier, pipeline.ttc.apply_nwpp_path76_link, returns the SAME ISOConfig
@@ -3344,6 +3347,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "caiso_humboldt_local_area": "False",
     # Added by closeout-CAISO-w6 WITH the field (the nyiso-119 discipline).
     "caiso_chp_btm_measured": "False",
+    # Added by closeout-CAISO-w7 WITH the field (the nyiso-119 discipline).
+    "caiso_intertie_print_rt_basis": "False",
     # Added by NWPP-NEXT-6 WITH the field (the nyiso-119 discipline).
     "nwpp_path76_alturas_link": "False",
     # Added by NWPP-NEXT-7 WITH the field (the nyiso-119 discipline).
@@ -11053,6 +11058,24 @@ class ScenarioConfig:
     # subtrahend reads the artifact whenever it exists (nyiso-149). A plant
     # absent from Schedules 6/7 keeps the default. Default off; CAISO-only
     # (rule 25).
+    caiso_intertie_print_rt_basis: bool = False  # closeout-CAISO-w7 (2026-10-05).
+    # The measured intertie-print SETTLEMENT for the hub-priced CAISO import
+    # ladder. Off, every hub-priced import tranche and clean rung (and the
+    # surplus trigger that reads the same series) is priced at the OASIS DAM
+    # delivered nodal LMP (wecc_intertie_lmp_hourly_CAISO.parquet). Armed,
+    # every hour the RTM sibling prints (wecc_intertie_lmp_hourly_CAISO_rtm
+    # .parquet: PRC_INTVL_LMP 5-min averaged per hour, same MCE+MCC+MCL
+    # construction, GHG excluded; scripts/data/fetch_caiso_intertie_lmp.py
+    # --rtm) is priced at the RTM print instead; every other hour keeps the DAM
+    # print and the gap-fill / formula chain unchanged
+    # (data/eia930/envelopes._read_intertie_frame, set per solve by
+    # set_caiso_intertie_rt_basis at the run_year seams). Rule 14: the LP is a
+    # real-time analogue scored on RT, and the DAM print carries the DA risk
+    # premium the rubric forbids the LP to price (measured intertie RT - DAM on
+    # the model's construction: PALOVRDE -5.8 / MALIN -9.4 $/MWh 2021 Apr-Dec,
+    # -15.9 / -17.6 in 2022). Zero fitted parameters. The late-evening rung's
+    # spread band (measured DA CAISO - hub) is unchanged (declared mixed basis).
+    # Default off; CAISO-only (rule 25).
     caiso_fsno_subzonal_topology: bool = False  # Arm the caiso-223 P-A' FSNO
     # sub-zonal partition (caiso-222 Q2 route (iii), owner-chartered; solve
     # round PRECOMMIT-caiso224-fsno-arm-2026-08-30.md): a new FSNO San-Joaquin

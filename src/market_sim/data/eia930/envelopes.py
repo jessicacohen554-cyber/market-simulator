@@ -535,6 +535,59 @@ def measured_gas_floor_profile(
 _CAISO_IMPORT_TRANCHE_HUB: dict[str, str] = CAISO_IMPORT_TRANCHE_HUB
 
 
+#: closeout-CAISO-w7: the per-solve intertie-print settlement toggle, set at the
+#: run_year seams from ``ScenarioConfig.caiso_intertie_print_rt_basis`` (a CAISO
+#: solve) and False otherwise. Module-level for the same reason the topology
+#: variants are (``config.topology_variant``): the measured intertie series is
+#: read at ~20 call sites, and every one must see the same settlement.
+_CAISO_INTERTIE_RT_BASIS: bool = False
+
+
+def set_caiso_intertie_rt_basis(active: bool) -> None:
+    """Arm (or disarm) the RTM intertie-print basis for the next CAISO solve."""
+    global _CAISO_INTERTIE_RT_BASIS
+    _CAISO_INTERTIE_RT_BASIS = bool(active)
+
+
+def caiso_intertie_rt_basis_active() -> bool:
+    """Whether the RTM intertie-print basis is armed for the current solve."""
+    return _CAISO_INTERTIE_RT_BASIS
+
+
+def _read_intertie_frame(path: Path, iso: str) -> pd.DataFrame:
+    """Read the measured intertie series, on the RTM print where armed.
+
+    closeout-CAISO-w7 (``ScenarioConfig.caiso_intertie_print_rt_basis``). The
+    main artifact is the OASIS **DAM** delivered nodal LMP. Armed, every
+    (year, hub, hour) the sibling ``wecc_intertie_lmp_hourly_<ISO>_rtm.parquet``
+    prints (the RTM delivered nodal LMP on the identical construction:
+    MCE + MCC + MCL, GHG excluded, nodes averaged per hub, local calendar) is
+    replaced by that RTM print; every other hour keeps the DAM print and the
+    downstream gap-fill / formula chain unchanged. The LP is a real-time
+    analogue scored on RT, and the DAM print carries the DA risk premium the
+    rubric forbids the LP to price (``score_price_mean_da_diagnostic``).
+    Disarmed (the default) the frame is returned untouched (byte-identical).
+    An armed run without the sibling artifact raises rather than silently
+    pricing on DAM.
+    """
+    frame = pd.read_parquet(path)
+    if not (_CAISO_INTERTIE_RT_BASIS and iso.upper() == "CAISO"):
+        return frame
+    rt_path = _calibration_dir() / f"wecc_intertie_lmp_hourly_{iso.upper()}_rtm.parquet"
+    if not rt_path.exists():
+        raise FileNotFoundError(
+            f"caiso_intertie_print_rt_basis is armed but {rt_path} is absent — "
+            "run scripts/data/fetch_caiso_intertie_lmp.py --rtm"
+        )
+    rt = pd.read_parquet(rt_path)[["year", "hub", "hour", "price"]].rename(
+        columns={"price": "_rt"}
+    )
+    merged = frame.merge(rt, on=["year", "hub", "hour"], how="left")
+    rt_vals = pd.to_numeric(merged["_rt"], errors="coerce")
+    merged["price"] = rt_vals.where(rt_vals.notna(), merged["price"])
+    return merged.drop(columns="_rt")
+
+
 def _intertie_gap_fill_dam(
     iso: str, year: int, hub: str, hours: int
 ) -> np.ndarray | None:
@@ -666,7 +719,7 @@ def measured_import_hub_prices(
     path = _calibration_dir() / f"wecc_intertie_lmp_hourly_{iso.upper()}.parquet"
     if not path.exists():
         return None
-    frame = pd.read_parquet(path)
+    frame = _read_intertie_frame(path, iso)
     frame = frame[frame["year"] == year]
     if frame.empty:
         if not unprinted_year_measured_gas:
@@ -822,7 +875,7 @@ def measured_intertie_hub_unprinted_year_mask(
     path = _calibration_dir() / f"wecc_intertie_lmp_hourly_{iso.upper()}.parquet"
     if not path.exists():
         return None
-    frame = pd.read_parquet(path)
+    frame = _read_intertie_frame(path, iso)
     frame = frame[(frame["year"] == year) & (frame["hub"] == hub)]
     if frame.empty:
         price = np.full(hours, np.nan)
@@ -871,7 +924,7 @@ def measured_intertie_hub_price_raw(
     path = _calibration_dir() / f"wecc_intertie_lmp_hourly_{iso.upper()}.parquet"
     if not path.exists():
         return None
-    frame = pd.read_parquet(path)
+    frame = _read_intertie_frame(path, iso)
     frame = frame[(frame["year"] == year) & (frame["hub"] == hub)]
     if frame.empty:
         return None

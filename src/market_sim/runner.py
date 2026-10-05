@@ -1430,6 +1430,13 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     set_caiso_humboldt_area(
         iso == "CAISO" and getattr(config, "caiso_humboldt_local_area", False)
     )
+    # closeout-CAISO-w7: the intertie-print settlement (RTM vs DAM), same seam:
+    # the measured intertie series is read by ~20 call sites in this solve.
+    from market_sim.data.eia930.envelopes import set_caiso_intertie_rt_basis
+
+    set_caiso_intertie_rt_basis(
+        iso == "CAISO" and getattr(config, "caiso_intertie_print_rt_basis", False)
+    )
     # SPP-93 West/East re-partition, armed at the same seam for the same
     # reason (config.topology_variant); "north_south" for every other ISO.
     from market_sim.config.topology_variant import set_spp_zone_partition

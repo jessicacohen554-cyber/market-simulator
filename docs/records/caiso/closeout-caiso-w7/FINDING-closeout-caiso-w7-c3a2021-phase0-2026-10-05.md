@@ -60,17 +60,20 @@ units carry the LP's "marginal" flag (they are energy-limited) but do not set λ
 **The structural point.** In printed hours the whole hub-priced import ladder is priced at the **OASIS DAM** intertie
 print (`envelopes.py:586–767`, `wecc_intertie_lmp_hourly_CAISO.parquet`). This includes the DSW surplus, overnight,
 daytime and late-evening clean rungs, and the CCGT, CT and scarcity tranches (hub + wheel + carbon).
-- The measured DAM−RT spread at the interties is large and one-signed:
-  - PALOVRDE RT − DAM: −13.9 $/MWh (2021 Apr–Dec), −20.7 (2022), −21.4 (2023, 1,272 h);
-  - MALIN: −9.4 / −20.8 / −6.7.
+- The measured RT − DAM spread at the interties is one-signed. It is measured on the model's own construction:
+  delivered MCE + MCC + MCL, GHG excluded, nodes averaged per hub (`wecc_intertie_lmp_hourly_CAISO{,_rtm}.parquet`).
+  - PALOVRDE: −5.8 $/MWh (2021 Apr–Dec), −15.9 (2022).
+  - MALIN: −9.4 / −17.6.
+  - Hourly, it is largest at hours 06 and 17–21 (MALIN −15 to −40 at hours 17–20).
+  - The raw `LMP` column, which includes MGHG, reads larger: PV −13.9 / −20.7. The model never uses that basis.
 - The model is an RT analogue scored on RT, and the rubric states that the DA−RT premium is a forward risk premium the
   LP must not price (`score_price_mean_da_diagnostic`).
 - **Pricing the boundary at DAM imports that premium into λ through the import offers.** The model sits between DA
   and RT in every year: −5.0 % vs DA and +10.6 % vs RT in 2021.
 
-**Reach (upper bound, greedy).** Lower λ by the hour's intertie RT−DAM in every hour where a hub-priced rung is
-marginal (80 %), with no re-dispatch. This takes C3a 2021 from +9.9 % to −9.7 %. Re-dispatch will absorb much of that,
-but the reach clearly exceeds the 1 pp T1 needs.
+**Reach (upper bound, greedy).** Lower λ by the hour's intertie RT−DAM, on the model's construction, in every hour
+where a hub-priced rung is marginal (80 %), with no re-dispatch. This takes C3a 2021 from +9.9 % to **−2.5 %**.
+Re-dispatch will absorb part of that, but the reach clearly exceeds the ~1 pp T1 needs.
 
 ## 3. Checked and excluded
 

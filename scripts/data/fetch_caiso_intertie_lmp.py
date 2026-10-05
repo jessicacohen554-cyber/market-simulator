@@ -91,6 +91,11 @@ from market_sim.utils.hour_calendar import hour_index  # noqa: E402
 OUT_PARQUET = CALIBRATION_DIR / "wecc_intertie_lmp_hourly_CAISO.parquet"
 # R-CAISO-4: measured DAM prints for hours the main series leaves NaN (--fill-gaps).
 GAPFILL_PARQUET = CALIBRATION_DIR / "wecc_intertie_lmp_hourly_CAISO_gapfill_dam.parquet"
+# closeout-CAISO-w7: the same delivered nodal LMP on the REAL-TIME market
+# (PRC_INTVL_LMP 5-min averaged per hour in the tracked CAISO_rtm_hourly_<year>
+# aggregate), a SIBLING artifact read only under
+# ScenarioConfig.caiso_intertie_print_rt_basis (--rtm).
+RTM_PARQUET = CALIBRATION_DIR / "wecc_intertie_lmp_hourly_CAISO_rtm.parquet"
 
 PRC_LMP_DAM = {"queryname": "PRC_LMP", "market_run_id": "DAM", "version": "12"}
 
@@ -212,7 +217,9 @@ def _raw_from_grp_windows(node: str, year: int) -> pd.DataFrame | None:
     return pd.concat(frames, ignore_index=True)
 
 
-def _raw_from_hourly_aggregate(node: str, year: int) -> pd.DataFrame | None:
+def _raw_from_hourly_aggregate(
+    node: str, year: int, market: str = "dam"
+) -> pd.DataFrame | None:
     """Long-form PRC_LMP rows for ``node`` in ``year`` from the committed aggregate.
 
     i-caiso (2026-09-24). The GroupZip fold (``fold_caiso_oasis_grp_zips``)
@@ -228,12 +235,14 @@ def _raw_from_hourly_aggregate(node: str, year: int) -> pd.DataFrame | None:
     (max |diff| 1e-4, zero hours differ by more than 1e-3). Adjacent-year files
     are read for the local-calendar edges and rows are kept to the local
     Pacific ``year``. Returns ``None`` when no aggregate carries the node.
+    ``market="rtm"`` reads the RTM aggregate (``CAISO_rtm_hourly_<year>.csv``,
+    5-minute intervals already averaged per hour, same columns).
     """
     from scripts.data.fold_caiso_oasis_grp_zips import LMP_DIR
 
     frames = []
     for y in (year - 1, year, year + 1):
-        path = LMP_DIR / f"CAISO_dam_hourly_{y}.csv"
+        path = LMP_DIR / f"CAISO_{market}_hourly_{y}.csv"
         if not path.exists():
             continue
         df = pd.read_csv(path)
@@ -351,6 +360,13 @@ def main() -> None:
         "(GroupZip-folded years 2021/2022, whose windows are discarded)",
     )
     ap.add_argument(
+        "--rtm",
+        action="store_true",
+        help="build the RTM SIBLING artifact (wecc_intertie_lmp_hourly_CAISO_rtm"
+        ".parquet) from the tracked CAISO_rtm_hourly_<year>.csv aggregate; "
+        "implies --from-hourly-aggregate and never touches the main parquet",
+    )
+    ap.add_argument(
         "--fill-gaps",
         action="store_true",
         help="write the SIBLING gap-fill artifact: only hours the main parquet "
@@ -369,6 +385,8 @@ def main() -> None:
         else None
     )
 
+    if args.rtm:
+        args.from_hourly_aggregate = True
     existing = pd.read_parquet(OUT_PARQUET) if OUT_PARQUET.exists() else None
     records = []
     for year in args.years:
@@ -377,7 +395,9 @@ def main() -> None:
             for node in nodes:
                 print(f"=== {year} {hub} {node} ===", flush=True)
                 if args.from_hourly_aggregate:
-                    raw = _raw_from_hourly_aggregate(node, year)
+                    raw = _raw_from_hourly_aggregate(
+                        node, year, "rtm" if args.rtm else "dam"
+                    )
                 elif args.from_grp_windows:
                     raw = _raw_from_grp_windows(node, year)
                 else:
@@ -420,6 +440,18 @@ def main() -> None:
         print("no intertie data fetched — nothing written.", file=sys.stderr)
         sys.exit(1)
     out = pd.DataFrame.from_records(records)
+    if args.rtm:
+        # RTM sibling: replace only the requested years; the main DAM parquet
+        # and the gap-fill sibling are never touched.
+        if RTM_PARQUET.exists():
+            prior = pd.read_parquet(RTM_PARQUET)
+            out = pd.concat(
+                [prior[~prior["year"].isin(args.years)], out], ignore_index=True
+            )
+        out = out.sort_values(["year", "hub", "hour"]).reset_index(drop=True)
+        out.to_parquet(RTM_PARQUET, index=False)
+        print(f"wrote {RTM_PARQUET.relative_to(REPO)} ({len(out)} rows)")
+        return
     if args.fill_gaps:
         # Fill-only SIBLING artifact (R-CAISO-4). The main parquet is NEVER
         # touched: the rows written here are exactly the (year, hub, hour)s
