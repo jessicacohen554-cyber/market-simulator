@@ -1,0 +1,19 @@
+{
+  "id": "2026-10-05-closeout-soco-w3p-parasitic",
+  "label": "closeout soco w3p parasitic",
+  "date": "2026-10-05",
+  "shorthand": "closeout-soco-w3p-parasitic",
+  "definition": "closeout-SOCO-w3p: SOCO measured running parasitic factors (branch-only data at the pin) on the BTM-holdout recipe",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SOCO",
+  "file": "frontend/data/backcast/runs/2026-10-05-closeout-soco-w3p-parasitic.js",
+  "bundle": "results/calibration/closeout_soco_w3p_span"
+}
