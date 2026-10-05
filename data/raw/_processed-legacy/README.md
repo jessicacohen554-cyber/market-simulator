@@ -68,9 +68,13 @@ gross→net on a class default (HR derives) or 1.0 (benchmark CEMS-net series).
 `derive_parasitic_load.py --iso ALL --years 2019 … 2025 --check` reproduces every
 shared committed row (CAMPD gross byte-identical; 1,227/1,228 measured rows
 within ±0.005, the rest EIA-923 revisions), and `--merge` (measured rows only,
-committed rows never moved) adds 380 plants. Those rows live on branch
-`claude/closeout-parasitic-backfill-rows` pending the owner's ruling, because they
-re-key every keeper but NEISO's. Also open: 249 committed `class_default` pooled
+committed rows never moved) adds 380 plants (branch
+`claude/closeout-parasitic-backfill-rows`). The running-slope form
+(`--running-slope`: monthly net-on-gross slope for single-family coal/CC/ST,
+`measured_running`) adds 186, and `--fill-class-default` gives every other fleet
+plant its class default so the benchmark stops reading them at 1.0 (branch
+`claude/closeout-parasitic-backfill-rows-running`). Both stay off main pending
+the owner's ruling, because they re-key every keeper but NEISO's. Also open: 249 committed `class_default` pooled
 rows carry the generic 0.97, not their class default (registry gap). Census and
 impact: `docs/records/governance/closeout-2026-10/FINDING-closeout-parasitic-backfill-2026-10-05.md`.
 
