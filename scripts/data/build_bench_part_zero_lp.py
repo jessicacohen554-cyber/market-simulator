@@ -177,6 +177,9 @@ def _scaffold_bundle(bundle: Path, year: int, overrides: dict, scratch: Path) ->
         iso=iso,
         group_by_code=rcf._fleet_group_by_code(iso, get_iso_config(iso), year),
         nyiso_chp_btm_measured=bool(meta.get("nyiso_chp_btm_measured")),
+        caiso_chp_btm_measured=bool(
+            (meta.get("coal_prb_sigmoid_overrides") or {}).get("caiso_chp_btm_measured")
+        ),
     ).to_parquet(run_dir / "btm.parquet", index=False)
     return run_dir
 
