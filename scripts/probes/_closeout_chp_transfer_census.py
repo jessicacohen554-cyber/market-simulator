@@ -258,7 +258,7 @@ def _walk(um: pd.DataFrame, add_h: pd.Series) -> dict:
     w["above"] = w.groupby("hour").mw.cumsum() - w.mw
     w["need"] = w.hour.map(add_h).fillna(0.0).clip(lower=0.0)
     w["cut"] = (w.need - w.above).clip(lower=0.0).clip(upper=w.mw)
-    cls = (w.groupby("plant_group").cut.sum() / 1e6).round(3)
+    cls = (w.groupby("plant_group", observed=True).cut.sum() / 1e6).round(3)
     unabs = (
         add_h.clip(lower=0)
         - w.groupby("hour").cut.sum().reindex(add_h.index).fillna(0)
@@ -274,10 +274,12 @@ def _load_um(iso: str, y: int) -> pd.DataFrame | None:
     f = REPO / "results/calibration" / KEEPER[iso] / "hourly" / f"unit_marginal_{y}.parquet"
     if not f.exists():
         return None
-    um = pd.read_parquet(f)
+    um = pd.read_parquet(f, columns=["unit_id", "plant_code", "plant_group", "fuel",
+                                     "hour", "mw", "cap_mw", "mc", "marginal"])
     for c in ("plant_group", "fuel", "unit_id"):
-        if c in um:
-            um[c] = um[c].astype(str)
+        um[c] = um[c].astype("category")
+    for c in ("mw", "cap_mw", "mc"):
+        um[c] = um[c].astype("float32")
     return um
 
 
@@ -292,8 +294,8 @@ def arm_reach(um: pd.DataFrame, shares: dict) -> dict:
     add_h = chp.groupby("hour").add.sum()
     out = {
         "model_add_twh": round(float(add_h.sum() / 1e6), 3),
-        "model_add_by_group": (chp.groupby("plant_group").add.sum() / 1e6).round(3).to_dict(),
-        "model_chp_twh": (chp.groupby("plant_group").mw.sum() / 1e6).round(3).to_dict(),
+        "model_add_by_group": (chp.groupby("plant_group", observed=True).add.sum() / 1e6).round(3).to_dict(),
+        "model_chp_twh": (chp.groupby("plant_group", observed=True).mw.sum() / 1e6).round(3).to_dict(),
     }
     out.update(_walk(um, add_h))
     return out
@@ -313,7 +315,7 @@ def holdout_reach(um: pd.DataFrame, removed_twh: float) -> dict:
     w = w.sort_values(["hour", "mc"])
     w["below"] = w.groupby("hour").room.cumsum() - w.room
     w["got"] = (add - w.below).clip(lower=0.0).clip(upper=w.room)
-    cls = (w.groupby("plant_group").got.sum() / 1e6).round(3)
+    cls = (w.groupby("plant_group", observed=True).got.sum() / 1e6).round(3)
     return {
         "removed_twh": round(removed_twh, 3),
         "taken_twh_by_class": {k: float(v) for k, v in cls.items() if abs(v) >= 0.005},
@@ -329,7 +331,8 @@ def _runs(on: np.ndarray) -> int:
 def commitment(iso: str, y: int, um: pd.DataFrame, campd: pd.DataFrame | None) -> dict:
     """Part (b): CEMS vs keeper online/starts and the startup-covered release."""
     chp = um[um.plant_group.isin(CHP)].copy()
-    chp["band"] = chp.unit_id.str.split("_").str[-1]
+    chp["plant_group"] = chp.plant_group.astype(str)
+    chp["band"] = chp.unit_id.astype(str).str.split("_").str[-1]
     out: dict = {"bands": sorted(chp.band.unique().tolist())[:12]}
     rows = []
     if campd is not None:
