@@ -107,3 +107,41 @@ Re-dispatch will absorb part of that, but the reach clearly exceeds the ~1 pp T1
 - The case against: most CAISO imports are DA-scheduled and paid the DA price, so an RT print could be read as a
   structurally wrong offer basis for import quantity decisions.
 - This is the one judgement call in the lever. It is flagged rather than assumed.
+
+## Addendum A: rule-13 circularity check (desk, 05:28Z). Legs held
+
+**Method.** The intertie series are on the model's construction (MCE + MCC + MCL; MALIN = mean of MALIN_5_N101 and
+CAPTJACK_5_N003). Each is compared hourly against the C3a reference (trading-hub RT LMP, weighted 0.3969 / 0.0646 /
+0.5385).
+
+| Year | Series | n | Pearson r | Spearman | Mean gap vs hub | MAE |
+|---|---|--:|--:|--:|--:|--:|
+| 2021 | PV RTM | 5,713 | 0.614 | 0.903 | −1.07 | 10.5 |
+| 2021 | MALIN RTM | 5,713 | 0.868 | 0.853 | −1.90 | 6.2 |
+| 2021 | PV DAM (incumbent) | 5,713 | 0.523 | 0.859 | +4.76 | 12.5 |
+| 2021 | MALIN DAM (incumbent) | 5,713 | 0.503 | 0.835 | +7.48 | 13.2 |
+| 2022 | PV RTM | 8,760 | 0.663 | 0.881 | −12.04 | 21.2 |
+| 2022 | MALIN RTM | 8,760 | 0.739 | 0.683 | −10.25 | 22.0 |
+| 2022 | PV DAM (incumbent) | 8,760 | 0.838 | 0.900 | +3.88 | 18.1 |
+| 2022 | MALIN DAM (incumbent) | 8,760 | 0.837 | 0.883 | +7.31 | 19.2 |
+
+**Reading.**
+- The desk's numeric circularity test (r ≥ 0.95 with a small gap) is **not** met. The RTM intertie is no more
+  correlated with the scored hub than the incumbent DAM print is.
+- But both prints are outputs of the CAISO market itself.
+- In 2021 the RTM intertie mean sits within $1–2 of the scored hub mean. C3a is a level test and the rung is marginal
+  in 80 % of hours, so L1 would price the margin at about the answer's level exactly where it binds.
+- In 2022 the RTM intertie runs $10–12 below the hub, which puts C3a 2022 (+7.1 %) at real risk of the low-side kill.
+
+**No admissible external RT index on a free source:**
+- EIA's ICE workbook is daily DA bilateral, peak block only.
+- Powerdex and ICE hourly RT Palo Verde / Mid-C are licensed.
+- SRP, APS and BPA publish no LMP.
+- WEIM ELAP prices are CAISO-market outputs, so they are circular too.
+
+**No forward-driver alternative.** A structural RT import-offer discount would be an offset sized to the DART residual,
+which rule 13 forbids.
+
+**Lane recommendation.** Record L1 as **I** (rule 13: same-market output, level ≈ the scored mean where it binds) unless
+the owner rules otherwise as decision #22. The default-off build stays (rule 26 removal follows the ruling). No leg is
+launched.
