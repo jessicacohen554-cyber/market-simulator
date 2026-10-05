@@ -118,3 +118,47 @@ in ≥ 89 % of its keeper binding hours.
 - The renderer's per-plant BTM fields stay on the sector default (the CAISO-w6 held render leg,
   `docs/records/caiso/closeout-caiso-w6/_render_leg_pending.patch`, covers NYISO/CAISO only and is a payload-source edit).
   C1 reads `btm.parquet`'s `btm_bench_twh`, so no C1 cell depends on it.
+
+## Addendum — exact zero-LP bench on the three bases (supersedes the static §2/§3 reconcile estimate)
+
+Bench parts rebuilt for all seven years by `scripts/data/build_bench_part_zero_lp.py` on the keeper's own recipe:
+- basis (b) = the artifact present;
+- basis (c) = (b) + `_bench_basis_reconciled.patch`.
+
+The keeper was re-scored by `calibration_verdict.py` on each set. The committed parts were then restored, and **no bench
+part was committed**.
+
+**classFull actuals, TWh, (a) → (b) / (c).**
+
+| Year | CC_CHP | CT_CHP | CC_REGULAR | COAL_PRB |
+|---|---|---|---|---|
+| 2019 | 28.60 → 31.57 / 31.57 | 4.49 → 2.22 / 2.22 | 132.20 unchanged | 61.30 unchanged |
+| 2020 | 28.34 → 31.42 / 31.42 | 5.39 → 2.56 / 2.56 | 127.84 unchanged | 50.70 unchanged |
+| 2021 | 27.13 → 29.95 / 29.95 | 6.13 → 3.86 / 3.86 | unchanged | unchanged |
+| 2022 | 25.65 → 28.76 / 28.76 | 5.83 → 3.84 / 3.84 | unchanged | unchanged |
+| 2023 | 28.51 → 31.47 / 31.47 | 5.61 → 3.63 / 3.63 | unchanged | unchanged |
+| 2024 | 30.03 → 33.74 / 33.74 | 5.66 → 3.58 / 3.58 | unchanged | unchanged |
+| 2025 | 29.07 → 31.68 / 32.71 | 5.65 → 3.44 / 3.55 | 148.06 → **143.38** / 148.06 | 47.68 → **46.18** / 47.68 |
+
+**Corrections to the static estimate.**
+- **Bench dE.** The exact net CHP dE is +0.7 to +1.5 TWh (CC_CHP +2.8 to +3.7, CT_CHP −2.0 to −2.8), not +3.9 to +5.1.
+  The census undercounted the CT_CHP hosts that self-supply (Sweeny 55015 is CT_CHP in the bins; 35 % → 85 %).
+- **Reconcile on (b).** It fires in **2025 only** (×0.968 on every fossil class; the preliminary-vintage year), not
+  2020–25.
+- **Reconcile on (c).** It fires **in no year**.
+
+**Keeper re-scored, C1/C3a/C3b status.**
+
+| | (a) | (b) | (c) |
+|---|---|---|---|
+| C1 FAILs | 4 | 4 | 4 |
+| C1 records that move | — | CC_CHP misses only (2019 −1.54 → −4.51, 2024 −1.40 → −5.12); COAL_PRB 2025 +0.87 → +2.37 | CC_CHP only |
+| C1 status flips | — | 0 | 0 |
+| C3a / C3b | — | unchanged | unchanged |
+| Determination | NOT-YET | NOT-YET | NOT-YET |
+
+**T1 arithmetic is unchanged.** CC_REGULAR 2019 actual = 132.20 on every basis, so T1 needs the solved CC_REGULAR to
+fall ≥ 1.21 TWh.
+
+**The control.** The keeper on bases (b) and (c) is the control row for the RESULT (`keeper_three_bases.txt`, the lane
+scratch, reproduced in the RESULT).
