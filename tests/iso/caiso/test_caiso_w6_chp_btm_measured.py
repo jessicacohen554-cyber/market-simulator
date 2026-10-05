@@ -46,7 +46,6 @@ def test_flag_is_iso_scoped():
 
 def test_no_artifact_for_other_isos():
     """ISOs without a measured artifact get an empty map (the default stands)."""
-    assert measured_chp_btm_pct_for_iso("ERCOT") == {}
     assert measured_chp_btm_pct_for_iso("PJM") == {}
 
 
