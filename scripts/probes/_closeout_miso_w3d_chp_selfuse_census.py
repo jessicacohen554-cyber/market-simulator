@@ -30,6 +30,7 @@ LP response is smaller (the w3 seam arm realised 0.53 static->LP on price).
 
 Output: results/phase0/miso/_closeout_miso_w3d_chp_selfuse_census.json
 """
+
 from __future__ import annotations
 
 import glob
@@ -55,12 +56,28 @@ NO_WALK = ("nuclear", "hydro")
 
 def reach(year: int, share: dict[tuple[int, str], tuple[float, float]]) -> dict:
     """Static first-order grid reach of measured shares on the control leg ``year``."""
-    um = pd.read_parquet(CONTROL / f"closeout_miso_w3_{year}/hourly/unit_marginal_{year}.parquet",
-                         columns=["plant_code", "plant_group", "fuel", "hour", "mw", "cap_mw", "mc", "marginal"])
+    um = pd.read_parquet(
+        CONTROL / f"closeout_miso_w3_{year}/hourly/unit_marginal_{year}.parquet",
+        columns=[
+            "plant_code",
+            "plant_group",
+            "fuel",
+            "hour",
+            "mw",
+            "cap_mw",
+            "mc",
+            "marginal",
+        ],
+    )
     um["plant_group"] = um.plant_group.astype(str)
     um["fuel"] = um.fuel.astype(str)
     chp = um[um.plant_group.isin(CHP)].copy()
-    f = np.array([share.get((int(p), g), (0.0, 0.0)) for p, g in zip(chp.plant_code, chp.plant_group)])
+    f = np.array(
+        [
+            share.get((int(p), g), (0.0, 0.0))
+            for p, g in zip(chp.plant_code, chp.plant_group)
+        ]
+    )
     d, m = f[:, 0], f[:, 1]
     scale = np.where(d < 1.0, (d - m) / np.maximum(1.0 - d, 1e-9), 0.0)
     chp["add"] = chp.mw.to_numpy() * scale  # added grid MW x own utilisation
@@ -70,8 +87,12 @@ def reach(year: int, share: dict[tuple[int, str], tuple[float, float]]) -> dict:
     # a unit dispatched above it is held on by a floor / commitment, not by merit.
     price = um[um.marginal == 1].groupby("hour").mc.max()
     um["price"] = um.hour.map(price)
-    w = um[~um.plant_group.isin(CHP) & ~um.fuel.isin(NO_WALK) & (um.mw > 0)
-           & (um.mc <= um.price + 1e-6)].copy()
+    w = um[
+        ~um.plant_group.isin(CHP)
+        & ~um.fuel.isin(NO_WALK)
+        & (um.mw > 0)
+        & (um.mc <= um.price + 1e-6)
+    ].copy()
     w = w.sort_values(["hour", "mc"], ascending=[True, False])
     w["above"] = w.groupby("hour").mw.cumsum() - w.mw
     w["need"] = w.hour.map(add_h).fillna(0.0).clip(lower=0.0)
@@ -84,15 +105,34 @@ def reach(year: int, share: dict[tuple[int, str], tuple[float, float]]) -> dict:
     return {
         "model_grid_chp_add_twh": round(float(add_h.sum() / 1e6), 3),
         "model_grid_chp_add_by_group": add_grp.round(3).to_dict(),
-        "displaced_twh_by_class": {k: float(v) for k, v in cls.items() if abs(v) >= 0.005},
-        "unabsorbed_twh": round(float((add_h.clip(lower=0) - w.groupby("hour").cut.sum().reindex(add_h.index).fillna(0)).sum() / 1e6), 3),
+        "displaced_twh_by_class": {
+            k: float(v) for k, v in cls.items() if abs(v) >= 0.005
+        },
+        "unabsorbed_twh": round(
+            float(
+                (
+                    add_h.clip(lower=0)
+                    - w.groupby("hour").cut.sum().reindex(add_h.index).fillna(0)
+                ).sum()
+                / 1e6
+            ),
+            3,
+        ),
         "static_marginal_offer_move_mean": round(float(dp.mean()), 2),
     }
+
+
 COLS = {
-    "Plant Code": "plant", "CHP Plant": "chp", "Gross\n Generation": "gross",
-    "Station_Use": "station", "Direct_Use": "direct", "Retail Sales": "retail",
-    "Sales\n for Resale": "resale", "Tolling\n Agreements": "tolling",
-    "Outgoing\n Electricity": "outgoing", "Incoming\n Electricity": "incoming",
+    "Plant Code": "plant",
+    "CHP Plant": "chp",
+    "Gross\n Generation": "gross",
+    "Station_Use": "station",
+    "Direct_Use": "direct",
+    "Retail Sales": "retail",
+    "Sales\n for Resale": "resale",
+    "Tolling\n Agreements": "tolling",
+    "Outgoing\n Electricity": "outgoing",
+    "Incoming\n Electricity": "incoming",
 }
 
 
@@ -114,8 +154,9 @@ def load_sd(year: int) -> pd.DataFrame:
 def main() -> None:
     res = {}
     for y in range(2019, 2025):
-        um = pd.read_parquet(KEEPER / f"unit_marginal_{y}.parquet",
-                             columns=["plant_code", "plant_group"]).drop_duplicates()
+        um = pd.read_parquet(
+            KEEPER / f"unit_marginal_{y}.parquet", columns=["plant_code", "plant_group"]
+        ).drop_duplicates()
         um = um[um.plant_group.astype(str).isin(CHP)]
         sd = load_sd(y)
         netgen = chp_class_netgen_mwh(y)
@@ -125,31 +166,50 @@ def main() -> None:
             e = netgen.get((pid, grp), 0.0)
             default = chp_btm_pct(pid, grp, iso="MISO") / 100.0
             meas = float(sd.share.get(pid, np.nan)) if pid in sd.index else np.nan
-            rows.append({"plant": pid, "group": grp, "netgen_twh": e / 1e6,
-                         "default": default, "measured": meas,
-                         "dE_twh": (e * (default - meas) / 1e6) if not np.isnan(meas) else 0.0})
+            rows.append(
+                {
+                    "plant": pid,
+                    "group": grp,
+                    "netgen_twh": e / 1e6,
+                    "default": default,
+                    "measured": meas,
+                    "dE_twh": (e * (default - meas) / 1e6)
+                    if not np.isnan(meas)
+                    else 0.0,
+                }
+            )
             if not np.isnan(meas):
                 shares[(pid, grp)] = (default, meas)
         df = pd.DataFrame(rows)
         cov = df[~df.measured.isna()]
         by = df.groupby("group").agg(netgen=("netgen_twh", "sum"), dE=("dE_twh", "sum"))
         res[y] = {
-            "plants": int(len(df)), "plants_in_sched67": int(len(cov)),
+            "plants": int(len(df)),
+            "plants_in_sched67": int(len(cov)),
             "netgen_twh_all": round(float(df.netgen_twh.sum()), 3),
             "netgen_twh_covered": round(float(cov.netgen_twh.sum()), 3),
             "btm_twh_default": round(float((df.netgen_twh * df["default"]).sum()), 3),
-            "btm_twh_measured_where_covered": round(float(
-                (df.netgen_twh * df.measured.fillna(df["default"])).sum()), 3),
+            "btm_twh_measured_where_covered": round(
+                float((df.netgen_twh * df.measured.fillna(df["default"])).sum()), 3
+            ),
             "dE_grid_twh": round(float(df.dE_twh.sum()), 3),
-            "by_group": {g: {"netgen": round(r.netgen, 3), "dE": round(r.dE, 3)} for g, r in by.iterrows()},
+            "by_group": {
+                g: {"netgen": round(r.netgen, 3), "dE": round(r.dE, 3)}
+                for g, r in by.iterrows()
+            },
             "default_shares": sorted({round(v, 3) for v in df["default"]}),
-            "top": cov.assign(a=cov.dE_twh.abs()).sort_values("a", ascending=False).head(8)[
-                ["plant", "group", "netgen_twh", "default", "measured", "dE_twh"]].round(3).to_dict("records"),
+            "top": cov.assign(a=cov.dE_twh.abs())
+            .sort_values("a", ascending=False)
+            .head(8)[["plant", "group", "netgen_twh", "default", "measured", "dE_twh"]]
+            .round(3)
+            .to_dict("records"),
         }
         res[y]["reach"] = reach(y, shares)
         print(y, json.dumps({k: v for k, v in res[y].items() if k != "top"}))
-    res["sha256_sched67_xlsx"] = {p.parent.name: hashlib.sha256(p.read_bytes()).hexdigest()
-                     for p in sorted(F923_DIR.glob("y*/*Schedules_6_7*.xlsx"))}
+    res["sha256_sched67_xlsx"] = {
+        p.parent.name: hashlib.sha256(p.read_bytes()).hexdigest()
+        for p in sorted(F923_DIR.glob("y*/*Schedules_6_7*.xlsx"))
+    }
     OUT.write_text(json.dumps(res, indent=1, default=float))
 
 
