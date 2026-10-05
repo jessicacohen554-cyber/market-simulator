@@ -935,6 +935,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # a pinned default key; an armed run derates 72 measured 2022 hours and
     # keys distinctly.
     "pjm_elliott_measured_outage_overlay",
+    # closeout-PJM-w3 nuclear winter-capability basis (default off):
+    # registered at introduction; an armed run re-rates PJM nuclear pmax and
+    # keys distinctly.
+    "nuclear_winter_capability_basis",
     # PJM mid-curve LEVEL-form scope (pjm-121 §5, default None = floor-only).
     # Default-off and byte-identical for every config that does not arm it (the
     # level branch is unreachable with an empty scope), so it is dropped from
@@ -2459,6 +2463,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # paths.measured_oil_burn_days_path; no sub-fields. Registered IN THE SAME
     # COMMIT as the field (the nyiso-119 discipline).
     "dual_fuel_measured_oil_burn",
+    # closeout-SOCO-w3: DIAGNOSTIC metered coal online floor, default off,
+    # dropped from the hash at False. Registered IN THE SAME COMMIT as the
+    # field (the nyiso-119 discipline).
+    "diagnostic_coal_metered_online_floor",
     # PJM-NEXT-17: plant-conduct placement of the cc_mustrun_per_plant window
     # (default off). Dropped from the hash at its default so every pre-existing
     # run -- every ISO's keepers included -- keeps its key; an armed run places
@@ -2855,6 +2863,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "pjm_dam_availability": "False",
     "pjm_measured_outage_event_cap": "False",
     "pjm_elliott_measured_outage_overlay": "False",
+    "nuclear_winter_capability_basis": "False",
     "pjm_offer_midcurve_level_segments": "None",
     "pjm_offer_midcurve_shape_segments": "None",
     "pjm_offer_midcurve_peak_segments": "None",
@@ -3382,6 +3391,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "eia923_cc_family_heat_rates": "False",
     # Added by soco-96 WITH the field (the nyiso-119 discipline).
     "dual_fuel_measured_oil_burn": "False",
+    # Added by closeout-SOCO-w3 WITH the field (the nyiso-119 discipline).
+    "diagnostic_coal_metered_online_floor": "False",
     # Added by PJM-NEXT-17 WITH the field (the nyiso-119 discipline).
     "cc_mustrun_conduct_window": "False",
     # Added by W0 (closeout-B) WITH the field (the nyiso-119 discipline).
@@ -4045,6 +4056,7 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "caiso_citygate_blackout_bridge": "measured Henry Hub daily spot + the two bracketing measured citygate prints, across EIA's publication blackouts",
     "dual_fuel_oil_daily_parity": "measured daily oil prints for the parity cap",
     "dual_fuel_measured_oil_burn": "measured CAMPD plant-day oil burn (soco-96)",
+    "diagnostic_coal_metered_online_floor": "measured CEMS coal online state (closeout-SOCO-w3 DIAGNOSTIC, never promotable)",
     # --- measured availability / outage records ---
     "caiso_dam_outages": "CAISO's published DAM outage record for the year",
     "miso_native_outage_source": "MISO's published outage record for the year",
@@ -4108,6 +4120,7 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "pjm_dam_availability": "measured PJM DAM availability record",
     "pjm_measured_outage_event_cap": "measured PJM published-outage event cap (remove-only)",
     "pjm_elliott_measured_outage_overlay": "measured PJM Winter Storm Elliott hourly GADS forced outage (23-25 Dec 2022)",
+    "nuclear_winter_capability_basis": "measured EIA-923 monthly nuclear CF on the EIA-860 winter-rating basis",
     "ercot_noncampd_plant_availability": "measured availability for non-CAMPD plants",
     # --- measured per-plant operating conduct ---
     "coal_mustrun_per_plant": "measured per-plant coal operating floors",
@@ -15237,6 +15250,30 @@ class ScenarioConfig:
     # every year but 2022 armed (the loader returns None).
     pjm_elliott_measured_outage_overlay: bool = False
 
+    # PJM nuclear WINTER-capability basis (default off; backcast-only;
+    # closeout-PJM-w3, desk 2026-10-04, owner ruling pending;
+    # docs/records/pjm/closeout-pjm-w3/FINDING-closeout-pjm-w3-levers-1-3-2026-10-04.md).
+    #
+    # WHY: nuclear is outside the W0 seasonal capacity basis, so its pmax is
+    # the EIA-860 SUMMER rating and the measured R-35 monthly CF rows
+    # (NUCLEAR_MONTHLY_CF_BY_YEAR, EIA-923 / summer-rated fleet pmax) clip at
+    # 1.0 every January and December: measured winter output runs 0.3-3.0 %
+    # above the summer rating (model nuclear 0.1-1.4 TWh/yr short of EIA-923,
+    # all of it in the clipped months), because EIA-860 winter net capability
+    # is ~2.5 % above summer.
+    #
+    # WHAT (data/fleet/arrays.py, right after _nuclear_monthly): each PJM
+    # nuclear unit's pmax becomes its EIA-860 winter rating from the active
+    # vintage's operable sheet, capped as W0 caps every non-CC class at
+    # max(nameplate, summer) and never below summer; its availability becomes
+    # min(1, NUCLEAR_MONTHLY_CF_UNCLIPPED_BY_YEAR[month] x summer / winter),
+    # zero kept zero (dormancy). Fleet energy then equals the measured EIA-923
+    # energy in every month whose output fits under the winter rating, with no
+    # clip; every other month is byte-equal in MWh. Rule 14: measured ratings
+    # and measured energy replace a summer-only estimate; rule 21: zero free
+    # parameters. Byte-identical off.
+    nuclear_winter_capability_basis: bool = False
+
     # ERCOT measured class-HOUR thermal availability (default off, ERCOT
     # backcast-gated — ERCOT-96, 2026-07-22). The GRAIN switch of the mechanism
     # above, not a second overlay (rule 19): when armed on top of
@@ -21451,6 +21488,22 @@ class ScenarioConfig:
     # Default off; byte-identical off.
     dual_fuel_measured_oil_burn: bool = False
 
+    # DIAGNOSTIC — NEVER PROMOTABLE (closeout-SOCO-w3, desk direction
+    # 2026-10-04). Rule 13 [R-MEASURED] lists pinning a unit to its observed
+    # operation as forbidden in a keeper; this flag does exactly that for coal
+    # COMMITMENT: it holds each coal plant at the P5 of its own online net MW in
+    # every hour its own CEMS meter shows it online (artifact
+    # coal_metered_online_floor_<ISO>.parquet, scripts/data/
+    # derive_coal_metered_online_floor.py; consumer pipeline.commitment.
+    # wrap_coal_metered_online_diagnostic_prep; D-2 id
+    # MECH_DIAG_COAL_METERED_ONLINE). It exists only as the default-off,
+    # labelled diagnostic probe rule 13 allows, to answer one question: if
+    # Southern's metered coal commitment practice is imposed, how much of that
+    # coal displaces CC (frontier row SOCO-F1)? Backcast-only
+    # (_BACKCAST_ONLY_OVERLAY_FIELDS); inert in any ISO without its own artifact
+    # (rule 25). Default off; byte-identical off.
+    diagnostic_coal_metered_online_floor: bool = False
+
     # Tier 3 (calibration) — thermal availability source. "statistical"
     # (default) builds coal/CC availability from the seasonal WEFOR/POF model;
     # "historic" additionally overlays actual ERCOT outages (coal/CC plants,
@@ -25883,6 +25936,8 @@ TIER_TAGS: dict[str, int] = {
     "uc_noload_source": 1,
     "uc_boundary_mode": 1,
     "uc_prefixing": 1,
+    # closeout-SOCO-w3 DIAGNOSTIC (rule 13: never a keeper input).
+    "diagnostic_coal_metered_online_floor": 1,
 }
 
 # SweepDefinition (the sweep / named-case-matrix expansion engine) moved

@@ -3437,6 +3437,30 @@ NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
     },
 }
 
+# Unclipped twin of NUCLEAR_MONTHLY_CF_BY_YEAR for ScenarioConfig.nuclear_winter_capability_basis
+# (closeout-PJM-w3, default off; owner ruling pending, desk 2026-10-04). Same frozen derive, same
+# EIA-923 Page 1 source and the same summer-rated fleet-pmax denominator; identical to the clipped
+# row in every month whose measured ratio is <= 1.0, and the unclipped 3-decimal value only where it
+# exceeds 1.0 (`derive_nuclear_monthly_cf.py --isos PJM --years 2019..2025 --unclipped`; the
+# clipped table's `--check` passes byte-unchanged). Winter months read above 1.0 (up to 1.030):
+# measured output exceeds the SUMMER rating the model carries for nuclear, because EIA-860 winter
+# net capability runs ~2.5 % higher (2019/22/25 vintages: 100.1/97.0/100.9 GW winter vs
+# 98.1/94.7/98.4 GW summer, US operable nuclear). Read only with the winter-capability basis, which
+# raises nuclear pmax to the EIA-860 winter rating so these rows never need clipping (rule 14).
+# fmt: off
+NUCLEAR_MONTHLY_CF_UNCLIPPED_BY_YEAR: dict[str, dict[int, list[float]]] = {
+    "PJM": {
+        2019: [1.023, 0.99, 0.87, 0.87, 0.96, 0.98, 0.99, 0.98, 0.95, 0.88, 0.93, 1.022],
+        2020: [1.025, 0.97, 0.90, 0.88, 0.93, 1.001, 0.99, 0.99, 0.96, 0.90, 0.96, 1.008],
+        2021: [1.030, 1.004, 0.87, 0.83, 0.89, 0.99, 0.97, 1.00, 0.97, 0.88, 0.93, 1.020],
+        2022: [1.027, 0.99, 0.92, 0.82, 0.93, 0.98, 0.99, 0.97, 0.94, 0.84, 0.94, 1.003],
+        2023: [1.003, 0.97, 0.90, 0.85, 0.91, 0.99, 0.99, 0.98, 0.96, 0.89, 0.96, 1.003],
+        2024: [1.013, 0.98, 0.90, 0.81, 0.91, 0.99, 0.97, 0.99, 0.96, 0.90, 0.93, 1.024],
+        2025: [1.027, 0.99, 0.88, 0.86, 0.91, 0.99, 0.98, 0.98, 0.94, 0.83, 0.93, 1.002],
+    },
+}
+# fmt: on
+
 # Equivalent forced outage rate (demand) by technology class.
 # Source: NERC GADS.
 EFORD: dict[str, float] = {

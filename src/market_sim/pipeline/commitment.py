@@ -2790,3 +2790,113 @@ def build_soco_gas_st_campaign_p1_prep(config, iso: str, fleet: list, fleet_arra
         )
 
     return _fleet_prep
+
+
+# Tranche order a plant's metered online floor fills (cheapest band first, so
+# the floor never forces an expensive peak tranche ahead of the committed band).
+_COAL_TRANCHE_FILL_ORDER: tuple[str, ...] = (
+    "_mustrun",
+    "_committed",
+    "_econlo",
+    "_econ",
+    "_econhi",
+    "_peak",
+)
+
+
+def _coal_metered_online_floor(fleet_arrays, plant_floor: dict) -> np.ndarray | None:
+    """Spread each plant's metered online floor over its coal rows.
+
+    ``plant_floor`` is ``{plant_code: (T,) MW}``. The plant's floor fills its
+    coal rows in :data:`_COAL_TRANCHE_FILL_ORDER`, each capped at its available
+    capacity ``pmax x availability`` in that hour, so an outage hour relaxes the
+    floor exactly as it relaxes every other floor. Returns the ``(n_gen, T)``
+    floor, or ``None`` when no coal row matches.
+    """
+    n_gen, T = fleet_arrays.availability.shape
+    groups = (
+        np.asarray(fleet_arrays.plant_group, dtype=str)
+        if fleet_arrays.plant_group is not None
+        else np.array([""] * n_gen)
+    )
+    codes = np.asarray(fleet_arrays.plant_code, dtype=int)
+    ids = [str(u) for u in fleet_arrays.unit_ids]
+    floor = np.zeros((n_gen, T), dtype=float)
+    matched = 0
+    for code, level in plant_floor.items():
+        rows = [
+            g
+            for g in range(n_gen)
+            if codes[g] == int(code) and groups[g].startswith("COAL")
+        ]
+        if not rows:
+            continue
+
+        def _rank(g: int) -> int:
+            for k, suffix in enumerate(_COAL_TRANCHE_FILL_ORDER):
+                if ids[g].endswith(suffix):
+                    return k
+            return len(_COAL_TRANCHE_FILL_ORDER)
+
+        rows.sort(key=_rank)
+        remaining = np.asarray(level[:T], dtype=float).copy()
+        for g in rows:
+            cap = fleet_arrays.pmax[g] * fleet_arrays.availability[g]
+            take = np.minimum(remaining, cap)
+            floor[g] = take
+            remaining = remaining - take
+        matched += 1
+    if matched == 0 or not np.any(floor > 0.0):
+        return None
+    return floor
+
+
+def wrap_coal_metered_online_diagnostic_prep(
+    config, iso: str, year: int, fleet_arrays, base_prep
+):
+    """Chain the DIAGNOSTIC metered coal online floor after ``base_prep``.
+
+    ``ScenarioConfig.diagnostic_coal_metered_online_floor`` (closeout-SOCO-w3,
+    default off, backcast-only, NEVER promotable — rule 13 [R-MEASURED]): holds
+    each coal plant at the P5 of its own online net MW in every hour its own CEMS
+    shows it online (``data.coal_metered_online``). Its question is diagnostic:
+    how much of that metered commitment's coal displaces CC. Composes AFTER the
+    incumbent P1 fleet prep (e.g. the SOCO gas-steam campaign floor) by maximum
+    with its own D-2 id, so every other floor keeps its attribution. Returns
+    ``base_prep`` unchanged when the flag is off or the ISO has no artifact
+    (byte-identical).
+    """
+    if not getattr(config, "diagnostic_coal_metered_online_floor", False):
+        return base_prep
+
+    from market_sim.data.coal_metered_online import load_coal_metered_online_floor
+    from market_sim.data.floor_mechanisms import MECH_DIAG_COAL_METERED_ONLINE
+
+    plant_floor = load_coal_metered_online_floor(
+        iso, int(year), int(fleet_arrays.availability.shape[1])
+    )
+    if not plant_floor:
+        logger.info(
+            "DIAGNOSTIC coal metered online floor: no artifact rows for %s %s — inert",
+            iso,
+            year,
+        )
+        return base_prep
+
+    def _diag_prep(r0, _base=base_prep):
+        floored = _base(r0) if _base is not None else None
+        base_fa = floored if floored is not None else fleet_arrays
+        floor = _coal_metered_online_floor(base_fa, plant_floor)
+        if floor is None:
+            return floored
+        logger.info(
+            "DIAGNOSTIC coal metered online floor (%s %s, never promotable): "
+            "%d plant(s), %.4f TWh floor volume",
+            iso,
+            year,
+            len(plant_floor),
+            float(floor.sum()) / 1e6,
+        )
+        return _bridge_floored_fleet(base_fa, floor, MECH_DIAG_COAL_METERED_ONLINE)
+
+    return _diag_prep

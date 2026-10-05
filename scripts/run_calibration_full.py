@@ -9997,6 +9997,25 @@ def _bundle_caiso_clock_repair(bundle: Path) -> bool:
     return False
 
 
+def _run_config_mustrun_chp_btm(cfg: dict) -> bool:
+    """Whether a bundle's ``run_config.json`` records ``mustrun_chp_btm_holdout`` armed.
+
+    Reads the top level, ``calibration_flags`` and the resolved
+    ``scenario_config``: a ``replay_keeper --set`` lands the flag only in the
+    last (closeout-SOCO-w3; the PJM-NEXT defect on its sibling
+    ``benchmark_membership_vintage_union``), and reading the top two blocks
+    alone rebuilt an armed bundle on the un-partitioned benchmark.
+    """
+    for blk in (
+        cfg,
+        cfg.get("calibration_flags") or {},
+        cfg.get("scenario_config") or {},
+    ):
+        if isinstance(blk, dict) and blk.get("mustrun_chp_btm_holdout"):
+            return True
+    return False
+
+
 def build_benchmark_frames(bundle: Path) -> tuple[str, dict[str, "pd.DataFrame"]]:
     """Rebuild a bundle's benchmark frames with the bundle's own EIA-930 clock.
 
@@ -10102,10 +10121,7 @@ def _build_benchmark_frames(bundle: Path) -> tuple[str, dict[str, "pd.DataFrame"
     _rc = bundle / "run_config.json"
     if _rc.exists():
         _cfg = json.loads(_rc.read_text())
-        for _blk in (_cfg, _cfg.get("calibration_flags") or {}):
-            if isinstance(_blk, dict) and _blk.get("mustrun_chp_btm_holdout"):
-                _mustrun_chp_btm = True
-                break
+        _mustrun_chp_btm = _run_config_mustrun_chp_btm(_cfg)
         if not _bench_vintage_union:
             # PJM-NEXT: a replay_keeper ``--set`` lands the flag in the generic
             # override bag and the resolved ``scenario_config``, never at the
@@ -13886,6 +13902,19 @@ def main() -> None:
         "CAISO-only. Default (unset) keeps the base config value (off).",
     )
     parser.add_argument(
+        "--nuclear-winter-capability-basis",
+        dest="nuclear_winter_capability_basis",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Re-rate PJM nuclear to its EIA-860 winter capability and read the "
+        "unclipped measured monthly CF rows (ScenarioConfig."
+        "nuclear_winter_capability_basis, closeout-PJM-w3), so January/December "
+        "nuclear output stops clipping at the summer rating. Backcast-only, "
+        "PJM-only. Rides the generic prb_overrides channel; "
+        "--no-nuclear-winter-capability-basis reaches the pre-arm posture. "
+        "Default (unset) keeps the base config value (off).",
+    )
+    parser.add_argument(
         "--pjm-elliott-outage-overlay",
         dest="pjm_elliott_measured_outage_overlay",
         action=argparse.BooleanOptionalAction,
@@ -15897,6 +15926,8 @@ def main() -> None:
             "pjm_elliott_measured_outage_overlay": (
                 args.pjm_elliott_measured_outage_overlay
             ),
+            # closeout-PJM-w3: generic channel, so run_config.json records it.
+            "nuclear_winter_capability_basis": (args.nuclear_winter_capability_basis),
             # spp-49: the benchmark's vintage-aware membership union rides the
             # same generic channel for the same reasons -- ONE read path for a
             # fresh solve, a replay override and a recipe, and

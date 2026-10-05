@@ -76,7 +76,7 @@ def concat_root_frames(out: Path, legs: dict[int, Path]) -> None:
     """Concatenate the per-leg root frames (the registration renderer reads them).
 
     The slim keeper bundle no longer carries them, so every year comes from its
-    leg: 2019–2023 from the strip legs, 2024/2025 from the l1b legs.
+    leg: the armed years from the w3 legs, 2023 from the l1b leg.
     """
     import pandas as pd
 
