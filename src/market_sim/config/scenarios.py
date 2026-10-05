@@ -935,6 +935,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # a pinned default key; an armed run derates 72 measured 2022 hours and
     # keys distinctly.
     "pjm_elliott_measured_outage_overlay",
+    # closeout-PJM-w3 nuclear winter-capability basis (default off):
+    # registered at introduction; an armed run re-rates PJM nuclear pmax and
+    # keys distinctly.
+    "nuclear_winter_capability_basis",
     # PJM mid-curve LEVEL-form scope (pjm-121 §5, default None = floor-only).
     # Default-off and byte-identical for every config that does not arm it (the
     # level branch is unreachable with an empty scope), so it is dropped from
@@ -2859,6 +2863,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "pjm_dam_availability": "False",
     "pjm_measured_outage_event_cap": "False",
     "pjm_elliott_measured_outage_overlay": "False",
+    "nuclear_winter_capability_basis": "False",
     "pjm_offer_midcurve_level_segments": "None",
     "pjm_offer_midcurve_shape_segments": "None",
     "pjm_offer_midcurve_peak_segments": "None",
@@ -4115,6 +4120,7 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "pjm_dam_availability": "measured PJM DAM availability record",
     "pjm_measured_outage_event_cap": "measured PJM published-outage event cap (remove-only)",
     "pjm_elliott_measured_outage_overlay": "measured PJM Winter Storm Elliott hourly GADS forced outage (23-25 Dec 2022)",
+    "nuclear_winter_capability_basis": "measured EIA-923 monthly nuclear CF on the EIA-860 winter-rating basis",
     "ercot_noncampd_plant_availability": "measured availability for non-CAMPD plants",
     # --- measured per-plant operating conduct ---
     "coal_mustrun_per_plant": "measured per-plant coal operating floors",
@@ -15243,6 +15249,30 @@ class ScenarioConfig:
     # Rule 21: zero free parameters. Byte-identical off, and byte-identical in
     # every year but 2022 armed (the loader returns None).
     pjm_elliott_measured_outage_overlay: bool = False
+
+    # PJM nuclear WINTER-capability basis (default off; backcast-only;
+    # closeout-PJM-w3, desk 2026-10-04, owner ruling pending;
+    # docs/records/pjm/closeout-pjm-w3/FINDING-closeout-pjm-w3-levers-1-3-2026-10-04.md).
+    #
+    # WHY: nuclear is outside the W0 seasonal capacity basis, so its pmax is
+    # the EIA-860 SUMMER rating and the measured R-35 monthly CF rows
+    # (NUCLEAR_MONTHLY_CF_BY_YEAR, EIA-923 / summer-rated fleet pmax) clip at
+    # 1.0 every January and December: measured winter output runs 0.3-3.0 %
+    # above the summer rating (model nuclear 0.1-1.4 TWh/yr short of EIA-923,
+    # all of it in the clipped months), because EIA-860 winter net capability
+    # is ~2.5 % above summer.
+    #
+    # WHAT (data/fleet/arrays.py, right after _nuclear_monthly): each PJM
+    # nuclear unit's pmax becomes its EIA-860 winter rating from the active
+    # vintage's operable sheet, capped as W0 caps every non-CC class at
+    # max(nameplate, summer) and never below summer; its availability becomes
+    # min(1, NUCLEAR_MONTHLY_CF_UNCLIPPED_BY_YEAR[month] x summer / winter),
+    # zero kept zero (dormancy). Fleet energy then equals the measured EIA-923
+    # energy in every month whose output fits under the winter rating, with no
+    # clip; every other month is byte-equal in MWh. Rule 14: measured ratings
+    # and measured energy replace a summer-only estimate; rule 21: zero free
+    # parameters. Byte-identical off.
+    nuclear_winter_capability_basis: bool = False
 
     # ERCOT measured class-HOUR thermal availability (default off, ERCOT
     # backcast-gated — ERCOT-96, 2026-07-22). The GRAIN switch of the mechanism

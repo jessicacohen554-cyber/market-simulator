@@ -289,6 +289,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     dam_availability_rebasis: { cell: "R", ev: "neiso-62" },
     pjm_measured_outage_event_cap: { cell: "." },
     pjm_elliott_measured_outage_overlay: { cell: "." },
+    nuclear_winter_capability_basis: { cell: "." },
     ercot_dam_availability_coal_event_cap: { cell: "." },
     ercot_dam_availability_gas_event_cap: { cell: "." },
     ercot_dam_availability_event_cap_reconciliation: { cell: "." },
