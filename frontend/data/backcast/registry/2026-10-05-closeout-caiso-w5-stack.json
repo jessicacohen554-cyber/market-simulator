@@ -1,0 +1,19 @@
+{
+  "id": "2026-10-05-closeout-caiso-w5-stack",
+  "label": "closeout caiso w5 stack",
+  "date": "2026-10-05",
+  "shorthand": "closeout-caiso-w5-stack",
+  "definition": "closeout-CAISO-w5 A1: w3 recipe + D1 CT crosswalk remap + D3 Humboldt local area + D4 physics-only RA bridge",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-10-05-closeout-caiso-w5-stack.js",
+  "bundle": "results/calibration/closeout_caiso_w5_a1_span"
+}
