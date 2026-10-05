@@ -1,0 +1,8030 @@
+{
+ "SPP": {
+  "2019": {
+   "plants_chp": 2,
+   "plants_in_sched67": 2,
+   "netgen_twh": 3.717,
+   "netgen_twh_covered": 3.717,
+   "btm_default_twh": 1.301,
+   "btm_measured_twh": 1.02,
+   "dE_bench_twh": 0.281,
+   "dE_by_group": {
+    "CC_CHP": -0.11,
+    "CT_CHP": 0.39
+   },
+   "netgen_by_group": {
+    "CC_CHP": 2.472,
+    "CT_CHP": 1.245
+   },
+   "default_shares": [
+    0.35
+   ],
+   "top": [
+    {
+     "plant": 55064,
+     "name": "Black Hawk Station",
+     "group": "CT_CHP",
+     "netgen_twh": 1.245,
+     "default": 0.35,
+     "measured": 0.037,
+     "measured_same_year": 0.04,
+     "dE_twh": 0.39
+    },
+    {
+     "plant": 55176,
+     "name": "Eastman Cogeneration Facility",
+     "group": "CC_CHP",
+     "netgen_twh": 2.472,
+     "default": 0.35,
+     "measured": 0.394,
+     "measured_same_year": 0.477,
+     "dE_twh": -0.11
+    }
+   ],
+   "reconcile": {
+    "family_committed": 161.486,
+    "raw_930": 163.427,
+    "fold_F": 1.684,
+    "target": 161.743,
+    "fired_committed": false,
+    "s_est": 0.9754,
+    "family_pre_est": 161.486,
+    "ratio_pre": 0.9984,
+    "family_new": 161.767,
+    "ratio_new": 1.0001,
+    "fires_new": false,
+    "scale_new": 1.0,
+    "upper_margin_new_twh": 4.978,
+    "lower_margin_new_twh": 4.876,
+    "ratio_new_fold_refuted": 0.9898,
+    "fires_new_fold_refuted": false,
+    "s_ref": 0.9768
+   },
+   "fold_test": {
+    "e930_gas": 69.18,
+    "eia923_gas_full": 73.21,
+    "gap_930_minus_923": -4.03,
+    "fold_F": 1.68
+   },
+   "holdout": {
+    "e930_other": 0.331,
+    "bench_OTHER": 0.603,
+    "bench_biomass": 1.412,
+    "inj_total_twh": 2.016,
+    "inj_chpY_twh": 1.562,
+    "inj_chpY_by_class": {
+     "OTHER": 0.321,
+     "biomass": 1.242
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 0.446,
+    "model_add_by_group": {
+     "CC_CHP": -0.135,
+     "CT_CHP": 0.581,
+     "ST_CHP": 0.0
+    },
+    "model_chp_twh": {
+     "CC_CHP": 1.9780000448226929,
+     "CT_CHP": 1.4819999933242798,
+     "ST_CHP": 0.2709999978542328
+    },
+    "displaced_twh_by_class": {
+     "CC_REGULAR": 0.104,
+     "COAL_LIGNITE": 0.014,
+     "COAL_PRB": 0.131,
+     "CT_PEAKER": 0.085,
+     "ST_GAS": 0.033
+    },
+    "unabsorbed_twh": 0.08
+   },
+   "holdout_reach": {
+    "removed_twh": 1.562,
+    "taken_twh_by_class": {
+     "CC_REGULAR": 0.3630000054836273,
+     "COAL_LIGNITE": 0.054999999701976776,
+     "COAL_PRB": 0.5910000205039978,
+     "CT_CHP": 0.006000000052154064,
+     "CT_PEAKER": 0.4059999883174896,
+     "ST_CHP": 0.006000000052154064,
+     "ST_GAS": 0.13099999725818634
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econ",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 3,
+     "cems_twh": 4.341,
+     "model_twh_same_plants": 3.32,
+     "cems_on_wmean": 0.982,
+     "model_on_wmean": 0.995,
+     "cems_starts_median": 8.0,
+     "model_starts_median": 1.0
+    },
+    "release": {
+     "gain_twh": 0.073,
+     "gain_by_group": {
+      "CT_CHP": 0.04100000113248825,
+      "ST_CHP": 0.03200000151991844
+     },
+     "markup_mean": 5.48,
+     "plants_inverted": 6,
+     "plants": 7,
+     "displaced_twh_by_class": {
+      "CC_REGULAR": 0.017000000923871994,
+      "COAL_PRB": 0.01600000075995922,
+      "CT_PEAKER": 0.01899999938905239,
+      "ST_GAS": 0.008999999612569809
+     },
+     "unabsorbed_twh": 0.011
+    }
+   }
+  },
+  "2020": {
+   "plants_chp": 2,
+   "plants_in_sched67": 2,
+   "netgen_twh": 3.776,
+   "netgen_twh_covered": 3.776,
+   "btm_default_twh": 1.322,
+   "btm_measured_twh": 1.015,
+   "dE_bench_twh": 0.307,
+   "dE_by_group": {
+    "CC_CHP": -0.109,
+    "CT_CHP": 0.415
+   },
+   "netgen_by_group": {
+    "CC_CHP": 2.452,
+    "CT_CHP": 1.325
+   },
+   "default_shares": [
+    0.35
+   ],
+   "top": [
+    {
+     "plant": 55064,
+     "name": "Black Hawk Station",
+     "group": "CT_CHP",
+     "netgen_twh": 1.325,
+     "default": 0.35,
+     "measured": 0.037,
+     "measured_same_year": 0.035,
+     "dE_twh": 0.415
+    },
+    {
+     "plant": 55176,
+     "name": "Eastman Cogeneration Facility",
+     "group": "CC_CHP",
+     "netgen_twh": 2.452,
+     "default": 0.35,
+     "measured": 0.394,
+     "measured_same_year": 0.483,
+     "dE_twh": -0.109
+    }
+   ],
+   "reconcile": {
+    "family_committed": 148.07,
+    "raw_930": 152.73,
+    "fold_F": 1.508,
+    "target": 151.222,
+    "fired_committed": false,
+    "s_est": 0.9787,
+    "family_pre_est": 148.07,
+    "ratio_pre": 0.9792,
+    "family_new": 148.377,
+    "ratio_new": 0.9812,
+    "fires_new": false,
+    "scale_new": 1.0,
+    "upper_margin_new_twh": 7.522,
+    "lower_margin_new_twh": 1.692,
+    "ratio_new_fold_refuted": 0.9715,
+    "fires_new_fold_refuted": false,
+    "s_ref": 0.9768
+   },
+   "fold_test": {
+    "e930_gas": 69.94,
+    "eia923_gas_full": 72.42,
+    "gap_930_minus_923": -2.48,
+    "fold_F": 1.51
+   },
+   "holdout": {
+    "e930_other": 0.298,
+    "bench_OTHER": 0.441,
+    "bench_biomass": 1.365,
+    "inj_total_twh": 1.806,
+    "inj_chpY_twh": 1.441,
+    "inj_chpY_by_class": {
+     "OTHER": 0.26,
+     "biomass": 1.18
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 0.449,
+    "model_add_by_group": {
+     "CC_CHP": -0.131,
+     "CT_CHP": 0.58,
+     "ST_CHP": 0.0
+    },
+    "model_chp_twh": {
+     "CC_CHP": 1.9290000200271606,
+     "CT_CHP": 1.4809999465942383,
+     "ST_CHP": 0.31200000643730164
+    },
+    "displaced_twh_by_class": {
+     "CC_REGULAR": 0.096,
+     "COAL_LIGNITE": 0.018,
+     "COAL_PRB": 0.131,
+     "CT_PEAKER": 0.079,
+     "ST_GAS": 0.04
+    },
+    "unabsorbed_twh": 0.084
+   },
+   "holdout_reach": {
+    "removed_twh": 1.441,
+    "taken_twh_by_class": {
+     "CC_REGULAR": 0.3700000047683716,
+     "COAL_LIGNITE": 0.06199999898672104,
+     "COAL_PRB": 0.49300000071525574,
+     "CT_PEAKER": 0.35499998927116394,
+     "ST_CHP": 0.006000000052154064,
+     "ST_GAS": 0.14800000190734863
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econ",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 3,
+     "cems_twh": 4.299,
+     "model_twh_same_plants": 3.31,
+     "cems_on_wmean": 0.972,
+     "model_on_wmean": 0.973,
+     "cems_starts_median": 3.0,
+     "model_starts_median": 2.0
+    },
+    "release": {
+     "gain_twh": 0.071,
+     "gain_by_group": {
+      "CT_CHP": 0.03999999910593033,
+      "ST_CHP": 0.03099999949336052
+     },
+     "markup_mean": 5.01,
+     "plants_inverted": 6,
+     "plants": 7,
+     "displaced_twh_by_class": {
+      "CC_REGULAR": 0.012000000104308128,
+      "COAL_PRB": 0.020999999716877937,
+      "CT_PEAKER": 0.013000000268220901,
+      "ST_GAS": 0.007000000216066837
+     },
+     "unabsorbed_twh": 0.016
+    }
+   }
+  },
+  "2021": {
+   "plants_chp": 4,
+   "plants_in_sched67": 2,
+   "netgen_twh": 3.429,
+   "netgen_twh_covered": 3.424,
+   "btm_default_twh": 1.2,
+   "btm_measured_twh": 0.887,
+   "dE_bench_twh": 0.313,
+   "dE_by_group": {
+    "CC_CHP": -0.094,
+    "CT_CHP": 0.407,
+    "ST_CHP": 0.0
+   },
+   "netgen_by_group": {
+    "CC_CHP": 2.126,
+    "CT_CHP": 1.302,
+    "ST_CHP": 0.002
+   },
+   "default_shares": [
+    0.35
+   ],
+   "top": [
+    {
+     "plant": 55064,
+     "name": "Black Hawk Station",
+     "group": "CT_CHP",
+     "netgen_twh": 1.299,
+     "default": 0.35,
+     "measured": 0.037,
+     "measured_same_year": 0.037,
+     "dE_twh": 0.407
+    },
+    {
+     "plant": 55176,
+     "name": "Eastman Cogeneration Facility",
+     "group": "CC_CHP",
+     "netgen_twh": 2.126,
+     "default": 0.35,
+     "measured": 0.394,
+     "measured_same_year": 0.565,
+     "dE_twh": -0.094
+    }
+   ],
+   "reconcile": {
+    "family_committed": 145.637,
+    "raw_930": 151.171,
+    "fold_F": 1.367,
+    "target": 149.804,
+    "fired_committed": false,
+    "s_est": 0.9681,
+    "family_pre_est": 145.637,
+    "ratio_pre": 0.9722,
+    "family_new": 145.95,
+    "ratio_new": 0.9743,
+    "fires_new": false,
+    "scale_new": 1.0,
+    "upper_margin_new_twh": 8.487,
+    "lower_margin_new_twh": 0.64,
+    "ratio_new_fold_refuted": 0.9655,
+    "fires_new_fold_refuted": true,
+    "s_ref": 0.9768
+   },
+   "fold_test": {
+    "e930_gas": 53.9,
+    "eia923_gas_full": 55.63,
+    "gap_930_minus_923": -1.73,
+    "fold_F": 1.37
+   },
+   "holdout": {
+    "e930_other": 0.377,
+    "bench_OTHER": 0.479,
+    "bench_biomass": 1.266,
+    "inj_total_twh": 1.744,
+    "inj_chpY_twh": 1.289,
+    "inj_chpY_by_class": {
+     "OTHER": 0.202,
+     "biomass": 1.087
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 0.465,
+    "model_add_by_group": {
+     "CC_CHP": -0.11,
+     "CT_CHP": 0.575,
+     "ST_CHP": 0.0
+    },
+    "model_chp_twh": {
+     "CC_CHP": 1.6180000305175781,
+     "CT_CHP": 1.4299999475479126,
+     "ST_CHP": 0.2370000034570694
+    },
+    "displaced_twh_by_class": {
+     "CC_REGULAR": 0.149,
+     "COAL_LIGNITE": 0.01,
+     "COAL_PRB": 0.119,
+     "CT_PEAKER": 0.074,
+     "ST_GAS": 0.019
+    },
+    "unabsorbed_twh": 0.092
+   },
+   "holdout_reach": {
+    "removed_twh": 1.289,
+    "taken_twh_by_class": {
+     "": 0.012000000104308128,
+     "CC_REGULAR": 0.39100000262260437,
+     "COAL_LIGNITE": 0.06300000101327896,
+     "COAL_PRB": 0.44999998807907104,
+     "CT_PEAKER": 0.3140000104904175,
+     "ST_CHP": 0.007000000216066837,
+     "ST_GAS": 0.04600000008940697
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econ",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 3,
+     "cems_twh": 3.956,
+     "model_twh_same_plants": 2.91,
+     "cems_on_wmean": 0.976,
+     "model_on_wmean": 0.972,
+     "cems_starts_median": 5.0,
+     "model_starts_median": 10.0
+    },
+    "release": {
+     "gain_twh": 0.067,
+     "gain_by_group": {
+      "CT_CHP": 0.017000000923871994,
+      "ST_CHP": 0.04899999871850014
+     },
+     "markup_mean": 7.1,
+     "plants_inverted": 8,
+     "plants": 8,
+     "displaced_twh_by_class": {
+      "CC_REGULAR": 0.020999999716877937,
+      "COAL_PRB": 0.019999999552965164,
+      "CT_PEAKER": 0.009999999776482582
+     },
+     "unabsorbed_twh": 0.011
+    }
+   }
+  },
+  "2022": {
+   "plants_chp": 2,
+   "plants_in_sched67": 2,
+   "netgen_twh": 3.527,
+   "netgen_twh_covered": 3.527,
+   "btm_default_twh": 1.234,
+   "btm_measured_twh": 0.924,
+   "dE_bench_twh": 0.311,
+   "dE_by_group": {
+    "CC_CHP": -0.098,
+    "CT_CHP": 0.409
+   },
+   "netgen_by_group": {
+    "CC_CHP": 2.222,
+    "CT_CHP": 1.305
+   },
+   "default_shares": [
+    0.35
+   ],
+   "top": [
+    {
+     "plant": 55064,
+     "name": "Black Hawk Station",
+     "group": "CT_CHP",
+     "netgen_twh": 1.305,
+     "default": 0.35,
+     "measured": 0.037,
+     "measured_same_year": 0.036,
+     "dE_twh": 0.409
+    },
+    {
+     "plant": 55176,
+     "name": "Eastman Cogeneration Facility",
+     "group": "CC_CHP",
+     "netgen_twh": 2.222,
+     "default": 0.35,
+     "measured": 0.394,
+     "measured_same_year": 0.493,
+     "dE_twh": -0.098
+    }
+   ],
+   "reconcile": {
+    "family_committed": 151.405,
+    "raw_930": 156.945,
+    "fold_F": 1.273,
+    "target": 155.672,
+    "fired_committed": false,
+    "s_est": 0.9852,
+    "family_pre_est": 151.405,
+    "ratio_pre": 0.9726,
+    "family_new": 151.716,
+    "ratio_new": 0.9746,
+    "fires_new": false,
+    "scale_new": 1.0,
+    "upper_margin_new_twh": 8.771,
+    "lower_margin_new_twh": 0.714,
+    "ratio_new_fold_refuted": 0.9667,
+    "fires_new_fold_refuted": true,
+    "s_ref": 0.9768
+   },
+   "fold_test": {
+    "e930_gas": 59.88,
+    "eia923_gas_full": 62.11,
+    "gap_930_minus_923": -2.22,
+    "fold_F": 1.27
+   },
+   "holdout": {
+    "e930_other": 0.404,
+    "bench_OTHER": 0.411,
+    "bench_biomass": 1.265,
+    "inj_total_twh": 1.677,
+    "inj_chpY_twh": 1.285,
+    "inj_chpY_by_class": {
+     "OTHER": 0.18,
+     "biomass": 1.106
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 0.444,
+    "model_add_by_group": {
+     "CC_CHP": -0.121,
+     "CT_CHP": 0.565,
+     "ST_CHP": 0.0
+    },
+    "model_chp_twh": {
+     "CC_CHP": 1.777999997138977,
+     "CT_CHP": 1.3739999532699585,
+     "ST_CHP": 0.1770000010728836
+    },
+    "displaced_twh_by_class": {
+     "CC_REGULAR": 0.149,
+     "COAL_LIGNITE": 0.015,
+     "COAL_PRB": 0.098,
+     "CT_PEAKER": 0.063,
+     "ST_GAS": 0.031
+    },
+    "unabsorbed_twh": 0.087
+   },
+   "holdout_reach": {
+    "removed_twh": 1.285,
+    "taken_twh_by_class": {
+     "CC_REGULAR": 0.3400000035762787,
+     "COAL_LIGNITE": 0.06700000166893005,
+     "COAL_PRB": 0.5199999809265137,
+     "CT_PEAKER": 0.2639999985694885,
+     "ST_GAS": 0.0860000029206276
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econ",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 3,
+     "cems_twh": 4.098,
+     "model_twh_same_plants": 2.974,
+     "cems_on_wmean": 0.982,
+     "model_on_wmean": 0.979,
+     "cems_starts_median": 3.0,
+     "model_starts_median": 3.0
+    },
+    "release": {
+     "gain_twh": 0.056,
+     "gain_by_group": {
+      "CT_CHP": 0.009999999776482582,
+      "ST_CHP": 0.04600000008940697
+     },
+     "markup_mean": 9.45,
+     "plants_inverted": 8,
+     "plants": 8,
+     "displaced_twh_by_class": {
+      "CC_REGULAR": 0.017999999225139618,
+      "COAL_PRB": 0.017999999225139618
+     },
+     "unabsorbed_twh": 0.01
+    }
+   }
+  },
+  "2023": {
+   "plants_chp": 4,
+   "plants_in_sched67": 2,
+   "netgen_twh": 3.8,
+   "netgen_twh_covered": 3.753,
+   "btm_default_twh": 1.33,
+   "btm_measured_twh": 1.071,
+   "dE_bench_twh": 0.259,
+   "dE_by_group": {
+    "CC_CHP": -0.114,
+    "CT_CHP": 0.373,
+    "ST_CHP": 0.0
+   },
+   "netgen_by_group": {
+    "CC_CHP": 2.565,
+    "CT_CHP": 1.201,
+    "ST_CHP": 0.034
+   },
+   "default_shares": [
+    0.35
+   ],
+   "top": [
+    {
+     "plant": 55064,
+     "name": "Black Hawk Station",
+     "group": "CT_CHP",
+     "netgen_twh": 1.189,
+     "default": 0.35,
+     "measured": 0.037,
+     "measured_same_year": 0.039,
+     "dE_twh": 0.373
+    },
+    {
+     "plant": 55176,
+     "name": "Eastman Cogeneration Facility",
+     "group": "CC_CHP",
+     "netgen_twh": 2.565,
+     "default": 0.35,
+     "measured": 0.394,
+     "measured_same_year": 0.352,
+     "dE_twh": -0.114
+    }
+   ],
+   "reconcile": {
+    "family_committed": 153.805,
+    "raw_930": 154.966,
+    "fold_F": 1.161,
+    "target": 153.805,
+    "fired_committed": true,
+    "s_est": 1.0276,
+    "family_pre_est": 146.209,
+    "ratio_pre": 0.9506,
+    "family_new": 146.468,
+    "ratio_new": 0.9523,
+    "fires_new": true,
+    "scale_new": 1.0501,
+    "upper_margin_new_twh": 12.094,
+    "lower_margin_new_twh": -2.723,
+    "ratio_new_fold_refuted": 0.9452,
+    "fires_new_fold_refuted": true,
+    "s_ref": 0.9768
+   },
+   "fold_test": {
+    "e930_gas": 76.34,
+    "eia923_gas_full": 77.25,
+    "gap_930_minus_923": -0.92,
+    "fold_F": 1.16
+   },
+   "holdout": {
+    "e930_other": 0.394,
+    "bench_OTHER": 0.454,
+    "bench_biomass": 1.101,
+    "inj_total_twh": 1.555,
+    "inj_chpY_twh": 1.155,
+    "inj_chpY_by_class": {
+     "OTHER": 0.213,
+     "biomass": 0.942
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 0.444,
+    "model_add_by_group": {
+     "CC_CHP": -0.128,
+     "CT_CHP": 0.572,
+     "ST_CHP": 0.0
+    },
+    "model_chp_twh": {
+     "CC_CHP": 1.871999979019165,
+     "CT_CHP": 1.5460000038146973,
+     "ST_CHP": 0.30399999022483826
+    },
+    "displaced_twh_by_class": {
+     "CC_REGULAR": 0.098,
+     "COAL_LIGNITE": 0.012,
+     "COAL_PRB": 0.11,
+     "CT_PEAKER": 0.091,
+     "ST_GAS": 0.046
+    },
+    "unabsorbed_twh": 0.087
+   },
+   "holdout_reach": {
+    "removed_twh": 1.155,
+    "taken_twh_by_class": {
+     "CC_REGULAR": 0.26499998569488525,
+     "COAL_LIGNITE": 0.041999999433755875,
+     "COAL_PRB": 0.39500001072883606,
+     "CT_PEAKER": 0.3199999928474426,
+     "ST_GAS": 0.11999999731779099
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econ",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 3,
+     "cems_twh": 4.373,
+     "model_twh_same_plants": 3.227,
+     "cems_on_wmean": 0.94,
+     "model_on_wmean": 0.949,
+     "cems_starts_median": 5.0,
+     "model_starts_median": 2.0
+    },
+    "release": {
+     "gain_twh": 0.066,
+     "gain_by_group": {
+      "CT_CHP": 0.029999999329447746,
+      "ST_CHP": 0.035999998450279236
+     },
+     "markup_mean": 5.11,
+     "plants_inverted": 8,
+     "plants": 8,
+     "displaced_twh_by_class": {
+      "CC_REGULAR": 0.014999999664723873,
+      "COAL_PRB": 0.014999999664723873,
+      "CT_PEAKER": 0.013000000268220901,
+      "ST_GAS": 0.007000000216066837
+     },
+     "unabsorbed_twh": 0.014
+    }
+   }
+  },
+  "2024": {
+   "plants_chp": 2,
+   "plants_in_sched67": 2,
+   "netgen_twh": 3.958,
+   "netgen_twh_covered": 3.958,
+   "btm_default_twh": 1.385,
+   "btm_measured_twh": 1.12,
+   "dE_bench_twh": 0.265,
+   "dE_by_group": {
+    "CC_CHP": -0.121,
+    "CT_CHP": 0.386
+   },
+   "netgen_by_group": {
+    "CC_CHP": 2.726,
+    "CT_CHP": 1.232
+   },
+   "default_shares": [
+    0.35
+   ],
+   "top": [
+    {
+     "plant": 55064,
+     "name": "Black Hawk Station",
+     "group": "CT_CHP",
+     "netgen_twh": 1.232,
+     "default": 0.35,
+     "measured": 0.037,
+     "measured_same_year": 0.034,
+     "dE_twh": 0.386
+    },
+    {
+     "plant": 55176,
+     "name": "Eastman Cogeneration Facility",
+     "group": "CC_CHP",
+     "netgen_twh": 2.726,
+     "default": 0.35,
+     "measured": 0.394,
+     "measured_same_year": 0.355,
+     "dE_twh": -0.121
+    }
+   ],
+   "reconcile": {
+    "family_committed": 154.413,
+    "raw_930": 155.746,
+    "fold_F": 1.333,
+    "target": 154.413,
+    "fired_committed": true,
+    "s_est": 1.0547,
+    "family_pre_est": 143.015,
+    "ratio_pre": 0.9262,
+    "family_new": 143.28,
+    "ratio_new": 0.9279,
+    "fires_new": true,
+    "scale_new": 1.0777,
+    "upper_margin_new_twh": 15.908,
+    "lower_margin_new_twh": -6.5,
+    "ratio_new_fold_refuted": 0.92,
+    "fires_new_fold_refuted": true,
+    "s_ref": 0.9768
+   },
+   "fold_test": {
+    "e930_gas": 83.21,
+    "eia923_gas_full": 83.04,
+    "gap_930_minus_923": 0.16,
+    "fold_F": 1.33
+   },
+   "holdout": {
+    "e930_other": 0.399,
+    "bench_OTHER": 0.551,
+    "bench_biomass": 1.18,
+    "inj_total_twh": 1.732,
+    "inj_chpY_twh": 1.264,
+    "inj_chpY_by_class": {
+     "OTHER": 0.235,
+     "biomass": 1.029
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 0.441,
+    "model_add_by_group": {
+     "CC_CHP": -0.131,
+     "CT_CHP": 0.572,
+     "ST_CHP": 0.0
+    },
+    "model_chp_twh": {
+     "CC_CHP": 1.9240000247955322,
+     "CT_CHP": 1.5609999895095825,
+     "ST_CHP": 0.3919999897480011
+    },
+    "displaced_twh_by_class": {
+     "CC_REGULAR": 0.099,
+     "COAL_LIGNITE": 0.012,
+     "COAL_PRB": 0.093,
+     "CT_PEAKER": 0.101,
+     "ST_GAS": 0.045
+    },
+    "unabsorbed_twh": 0.092
+   },
+   "holdout_reach": {
+    "removed_twh": 1.264,
+    "taken_twh_by_class": {
+     "CC_REGULAR": 0.28700000047683716,
+     "COAL_LIGNITE": 0.04399999976158142,
+     "COAL_PRB": 0.39800000190734863,
+     "CT_PEAKER": 0.3840000033378601,
+     "ST_GAS": 0.14000000059604645
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econ",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 3,
+     "cems_twh": 4.592,
+     "model_twh_same_plants": 3.402,
+     "cems_on_wmean": 0.944,
+     "model_on_wmean": 0.957,
+     "cems_starts_median": 7.0,
+     "model_starts_median": 2.0
+    },
+    "release": {
+     "gain_twh": 0.065,
+     "gain_by_group": {
+      "CT_CHP": 0.028999999165534973,
+      "ST_CHP": 0.035999998450279236
+     },
+     "markup_mean": 4.18,
+     "plants_inverted": 6,
+     "plants": 6,
+     "displaced_twh_by_class": {
+      "CC_REGULAR": 0.014999999664723873,
+      "COAL_PRB": 0.01600000075995922,
+      "CT_PEAKER": 0.010999999940395355
+     },
+     "unabsorbed_twh": 0.016
+    }
+   }
+  },
+  "2025": {
+   "plants_chp": 2,
+   "plants_in_sched67": 2,
+   "netgen_twh": 3.83,
+   "netgen_twh_covered": 3.83,
+   "btm_default_twh": 1.34,
+   "btm_measured_twh": 1.085,
+   "dE_bench_twh": 0.256,
+   "dE_by_group": {
+    "CC_CHP": -0.117,
+    "CT_CHP": 0.373
+   },
+   "netgen_by_group": {
+    "CC_CHP": 2.641,
+    "CT_CHP": 1.189
+   },
+   "default_shares": [
+    0.35
+   ],
+   "top": [
+    {
+     "plant": 55064,
+     "name": "Black Hawk Station",
+     "group": "CT_CHP",
+     "netgen_twh": 1.189,
+     "default": 0.35,
+     "measured": 0.037,
+     "measured_same_year": 0.037,
+     "dE_twh": 0.373
+    },
+    {
+     "plant": 55176,
+     "name": "Eastman Cogeneration Facility",
+     "group": "CC_CHP",
+     "netgen_twh": 2.641,
+     "default": 0.35,
+     "measured": 0.394,
+     "measured_same_year": 0.344,
+     "dE_twh": -0.117
+    }
+   ],
+   "reconcile": {
+    "family_committed": 162.557,
+    "raw_930": 163.673,
+    "fold_F": 1.116,
+    "target": 162.557,
+    "fired_committed": true,
+    "s_est": 1.0351,
+    "family_pre_est": 153.409,
+    "ratio_pre": 0.9437,
+    "family_new": 153.665,
+    "ratio_new": 0.9453,
+    "fires_new": true,
+    "scale_new": 1.0579,
+    "upper_margin_new_twh": 13.919,
+    "lower_margin_new_twh": -4.015,
+    "ratio_new_fold_refuted": 0.9389,
+    "fires_new_fold_refuted": true,
+    "s_ref": 0.9768
+   },
+   "fold_test": {
+    "e930_gas": 75.95,
+    "eia923_gas_full": 76.5,
+    "gap_930_minus_923": -0.56,
+    "fold_F": 1.12
+   },
+   "holdout": {
+    "e930_other": 0.588,
+    "bench_OTHER": 0.486,
+    "bench_biomass": 1.218,
+    "inj_total_twh": 1.704,
+    "inj_chpY_twh": 1.303,
+    "inj_chpY_by_class": {
+     "OTHER": 0.223,
+     "biomass": 1.08
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 0.437,
+    "model_add_by_group": {
+     "CC_CHP": -0.135,
+     "CT_CHP": 0.572,
+     "ST_CHP": 0.0
+    },
+    "model_chp_twh": {
+     "CC_CHP": 1.9880000352859497,
+     "CT_CHP": 1.468999981880188,
+     "ST_CHP": 0.20499999821186066
+    },
+    "displaced_twh_by_class": {
+     "CC_REGULAR": 0.105,
+     "COAL_LIGNITE": 0.012,
+     "COAL_PRB": 0.091,
+     "CT_PEAKER": 0.085,
+     "ST_GAS": 0.04
+    },
+    "unabsorbed_twh": 0.104
+   },
+   "holdout_reach": {
+    "removed_twh": 1.303,
+    "taken_twh_by_class": {
+     "CC_REGULAR": 0.30300000309944153,
+     "COAL_LIGNITE": 0.061000000685453415,
+     "COAL_PRB": 0.4259999990463257,
+     "CT_PEAKER": 0.3869999945163727,
+     "ST_GAS": 0.11500000208616257
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econ",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 3,
+     "cems_twh": 4.483,
+     "model_twh_same_plants": 3.23,
+     "cems_on_wmean": 0.988,
+     "model_on_wmean": 0.985,
+     "cems_starts_median": 1.0,
+     "model_starts_median": 1.0
+    },
+    "release": {
+     "gain_twh": 0.043,
+     "gain_by_group": {
+      "CT_CHP": 0.012000000104308128,
+      "ST_CHP": 0.03099999949336052
+     },
+     "markup_mean": 3.68,
+     "plants_inverted": 6,
+     "plants": 6,
+     "displaced_twh_by_class": {
+      "CC_REGULAR": 0.014000000432133675,
+      "COAL_PRB": 0.010999999940395355
+     },
+     "unabsorbed_twh": 0.009
+    }
+   }
+  }
+ },
+ "SOCO": {
+  "2019": {
+   "plants_chp": 8,
+   "plants_in_sched67": 3,
+   "netgen_twh": 4.738,
+   "netgen_twh_covered": 0.704,
+   "btm_default_twh": 1.918,
+   "btm_measured_twh": 1.979,
+   "dE_bench_twh": -0.061,
+   "dE_by_group": {
+    "CC_CHP": -0.01,
+    "CT_CHP": -0.051,
+    "ST_CHP": 0.0
+   },
+   "netgen_by_group": {
+    "CC_CHP": 3.314,
+    "CT_CHP": 1.255,
+    "ST_CHP": 0.17
+   },
+   "default_shares": [
+    0.35,
+    0.7,
+    0.9
+   ],
+   "top": [
+    {
+     "plant": 54096,
+     "name": "International Paper Riverdale Mill",
+     "group": "CC_CHP",
+     "netgen_twh": 0.3,
+     "default": 0.7,
+     "measured": 1.0,
+     "measured_same_year": 1.0,
+     "dE_twh": -0.09
+    },
+    {
+     "plant": 55040,
+     "name": "Mid-Georgia Cogeneration Facility",
+     "group": "CC_CHP",
+     "netgen_twh": 0.23,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 0.08
+    },
+    {
+     "plant": 54802,
+     "name": "Mead Coated Board",
+     "group": "CT_CHP",
+     "netgen_twh": 0.175,
+     "default": 0.7,
+     "measured": 0.993,
+     "measured_same_year": 0.997,
+     "dE_twh": -0.051
+    }
+   ],
+   "reconcile": {
+    "family_committed": 186.402,
+    "raw_930": 181.584,
+    "fold_F": 0.0,
+    "target": 181.584,
+    "fired_committed": false,
+    "s_est": 1.0377,
+    "family_pre_est": 186.402,
+    "ratio_pre": 1.0265,
+    "family_new": 186.342,
+    "ratio_new": 1.0262,
+    "fires_new": false,
+    "scale_new": 1.0,
+    "upper_margin_new_twh": 0.858,
+    "lower_margin_new_twh": 10.205,
+    "ratio_new_fold_refuted": 1.0262,
+    "fires_new_fold_refuted": false,
+    "s_ref": 1.0152
+   },
+   "fold_test": {
+    "e930_gas": 125.33,
+    "eia923_gas_full": 129.08,
+    "gap_930_minus_923": -3.75,
+    "fold_F": 0.0
+   },
+   "holdout": {
+    "e930_other": 2.117,
+    "bench_OTHER": -0.404,
+    "bench_biomass": 9.489,
+    "inj_total_twh": 9.085,
+    "inj_chpY_twh": 8.789,
+    "inj_chpY_by_class": {
+     "OTHER": 0.236,
+     "biomass": 8.553
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": -0.068,
+    "model_add_by_group": {
+     "CC_CHP": -0.014,
+     "CT_CHP": -0.054,
+     "ST_CHP": 0.0
+    },
+    "model_chp_twh": {
+     "CC_CHP": 2.1510000228881836,
+     "CT_CHP": 1.1890000104904175,
+     "ST_CHP": 0.35600000619888306
+    },
+    "displaced_twh_by_class": {
+     "COAL_BIT": 0.008,
+     "COAL_PRB": 0.007,
+     "CT_PEAKER": 0.015,
+     "ST_GAS": 0.007
+    },
+    "unabsorbed_twh": 0.018
+   },
+   "holdout_reach": {
+    "removed_twh": 8.789,
+    "taken_twh_by_class": {
+     "CC_CHP": 0.06800000369548798,
+     "CC_REGULAR": 2.007999897003174,
+     "COAL_BIT": 0.7680000066757202,
+     "COAL_PRB": 2.9070000648498535,
+     "CT_CHP": 0.029999999329447746,
+     "CT_PEAKER": 2.5490000247955322,
+     "ST_GAS": 0.45899999141693115
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econ",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 7,
+     "cems_twh": 4.974,
+     "model_twh_same_plants": 2.864,
+     "cems_on_wmean": 0.838,
+     "model_on_wmean": 0.867,
+     "cems_starts_median": 7.0,
+     "model_starts_median": 4.0
+    },
+    "release": {
+     "gain_twh": 0.238,
+     "gain_by_group": {
+      "CC_CHP": 0.17100000381469727,
+      "CT_CHP": 0.06599999964237213,
+      "ST_CHP": 0.0
+     },
+     "markup_mean": 3.72,
+     "plants_inverted": 7,
+     "plants": 11,
+     "displaced_twh_by_class": {
+      "CC_REGULAR": 0.08399999886751175,
+      "COAL_BIT": 0.024000000208616257,
+      "COAL_PRB": 0.035999998450279236,
+      "CT_PEAKER": 0.010999999940395355
+     },
+     "unabsorbed_twh": 0.08
+    }
+   }
+  },
+  "2020": {
+   "plants_chp": 7,
+   "plants_in_sched67": 2,
+   "netgen_twh": 4.318,
+   "netgen_twh_covered": 0.309,
+   "btm_default_twh": 1.599,
+   "btm_measured_twh": 1.6,
+   "dE_bench_twh": -0.002,
+   "dE_by_group": {
+    "CC_CHP": 0.048,
+    "CT_CHP": -0.05,
+    "ST_CHP": 0.0
+   },
+   "netgen_by_group": {
+    "CC_CHP": 3.075,
+    "CT_CHP": 1.192,
+    "ST_CHP": 0.05
+   },
+   "default_shares": [
+    0.35,
+    0.7,
+    0.9
+   ],
+   "top": [
+    {
+     "plant": 54802,
+     "name": "Mead Coated Board",
+     "group": "CT_CHP",
+     "netgen_twh": 0.171,
+     "default": 0.7,
+     "measured": 0.993,
+     "measured_same_year": 0.997,
+     "dE_twh": -0.05
+    },
+    {
+     "plant": 55040,
+     "name": "Mid-Georgia Cogeneration Facility",
+     "group": "CC_CHP",
+     "netgen_twh": 0.138,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 0.048
+    }
+   ],
+   "reconcile": {
+    "family_committed": 169.067,
+    "raw_930": 164.687,
+    "fold_F": 0.0,
+    "target": 164.687,
+    "fired_committed": false,
+    "s_est": 1.0412,
+    "family_pre_est": 169.067,
+    "ratio_pre": 1.0266,
+    "family_new": 169.065,
+    "ratio_new": 1.0266,
+    "fires_new": false,
+    "scale_new": 1.0,
+    "upper_margin_new_twh": 0.715,
+    "lower_margin_new_twh": 9.319,
+    "ratio_new_fold_refuted": 1.0266,
+    "fires_new_fold_refuted": false,
+    "s_ref": 1.0152
+   },
+   "fold_test": {
+    "e930_gas": 125.55,
+    "eia923_gas_full": 128.47,
+    "gap_930_minus_923": -2.92,
+    "fold_F": 0.0
+   },
+   "holdout": {
+    "e930_other": 2.682,
+    "bench_OTHER": -0.339,
+    "bench_biomass": 9.916,
+    "inj_total_twh": 9.578,
+    "inj_chpY_twh": 8.695,
+    "inj_chpY_by_class": {
+     "OTHER": 0.223,
+     "biomass": 8.472
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": -0.03,
+    "model_add_by_group": {
+     "CC_CHP": 0.023,
+     "CT_CHP": -0.053,
+     "ST_CHP": 0.0
+    },
+    "model_chp_twh": {
+     "CC_CHP": 2.1559998989105225,
+     "CT_CHP": 1.1030000448226929,
+     "ST_CHP": 0.35199999809265137
+    },
+    "displaced_twh_by_class": {
+     "CT_PEAKER": 0.007
+    },
+    "unabsorbed_twh": 0.006
+   },
+   "holdout_reach": {
+    "removed_twh": 8.695,
+    "taken_twh_by_class": {
+     "CC_CHP": 0.07400000095367432,
+     "CC_REGULAR": 2.9639999866485596,
+     "COAL_BIT": 0.46399998664855957,
+     "COAL_PRB": 1.899999976158142,
+     "CT_CHP": 0.061000000685453415,
+     "CT_PEAKER": 2.8440001010894775,
+     "ST_CHP": 0.006000000052154064,
+     "ST_GAS": 0.38199999928474426
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econ",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 7,
+     "cems_twh": 4.908,
+     "model_twh_same_plants": 2.8,
+     "cems_on_wmean": 0.901,
+     "model_on_wmean": 0.913,
+     "cems_starts_median": 5.0,
+     "model_starts_median": 3.0
+    },
+    "release": {
+     "gain_twh": 0.35,
+     "gain_by_group": {
+      "CC_CHP": 0.210999995470047,
+      "CT_CHP": 0.12999999523162842,
+      "ST_CHP": 0.008999999612569809
+     },
+     "markup_mean": 3.53,
+     "plants_inverted": 8,
+     "plants": 10,
+     "displaced_twh_by_class": {
+      "CC_REGULAR": 0.16200000047683716,
+      "COAL_BIT": 0.017999999225139618,
+      "COAL_PRB": 0.041999999433755875,
+      "CT_PEAKER": 0.013000000268220901
+     },
+     "unabsorbed_twh": 0.112
+    }
+   }
+  },
+  "2021": {
+   "plants_chp": 7,
+   "plants_in_sched67": 2,
+   "netgen_twh": 4.37,
+   "netgen_twh_covered": 0.317,
+   "btm_default_twh": 1.58,
+   "btm_measured_twh": 1.567,
+   "dE_bench_twh": 0.013,
+   "dE_by_group": {
+    "CC_CHP": 0.058,
+    "CT_CHP": -0.045,
+    "ST_CHP": 0.0
+   },
+   "netgen_by_group": {
+    "CC_CHP": 3.157,
+    "CT_CHP": 1.218,
+    "ST_CHP": -0.006
+   },
+   "default_shares": [
+    0.35,
+    0.7,
+    0.9
+   ],
+   "top": [
+    {
+     "plant": 55040,
+     "name": "Mid-Georgia Cogeneration Facility",
+     "group": "CC_CHP",
+     "netgen_twh": 0.165,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 0.058
+    },
+    {
+     "plant": 54802,
+     "name": "Mead Coated Board",
+     "group": "CT_CHP",
+     "netgen_twh": 0.153,
+     "default": 0.7,
+     "measured": 0.993,
+     "measured_same_year": 0.996,
+     "dE_twh": -0.045
+    }
+   ],
+   "reconcile": {
+    "family_committed": 171.722,
+    "raw_930": 171.332,
+    "fold_F": 0.0,
+    "target": 171.332,
+    "fired_committed": false,
+    "s_est": 1.0016,
+    "family_pre_est": 171.722,
+    "ratio_pre": 1.0023,
+    "family_new": 171.735,
+    "ratio_new": 1.0023,
+    "fires_new": false,
+    "scale_new": 1.0,
+    "upper_margin_new_twh": 4.896,
+    "lower_margin_new_twh": 5.543,
+    "ratio_new_fold_refuted": 1.0023,
+    "fires_new_fold_refuted": false,
+    "s_ref": 1.0152
+   },
+   "fold_test": {
+    "e930_gas": 121.0,
+    "eia923_gas_full": 125.75,
+    "gap_930_minus_923": -4.75,
+    "fold_F": 0.0
+   },
+   "holdout": {
+    "e930_other": 2.704,
+    "bench_OTHER": -0.289,
+    "bench_biomass": 9.935,
+    "inj_total_twh": 9.646,
+    "inj_chpY_twh": 8.529,
+    "inj_chpY_by_class": {
+     "OTHER": 0.177,
+     "biomass": 8.352
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": -0.028,
+    "model_add_by_group": {
+     "CC_CHP": 0.026,
+     "CT_CHP": -0.053,
+     "ST_CHP": 0.0
+    },
+    "model_chp_twh": {
+     "CC_CHP": 2.191999912261963,
+     "CT_CHP": 1.2289999723434448,
+     "ST_CHP": 0.3659999966621399
+    },
+    "displaced_twh_by_class": {
+     "CT_PEAKER": 0.01
+    },
+    "unabsorbed_twh": 0.01
+   },
+   "holdout_reach": {
+    "removed_twh": 8.529,
+    "taken_twh_by_class": {
+     "CC_CHP": 0.05999999865889549,
+     "CC_REGULAR": 4.4029998779296875,
+     "COAL_BIT": 0.6800000071525574,
+     "COAL_PRB": 1.100000023841858,
+     "CT_PEAKER": 2.0490000247955322,
+     "ST_GAS": 0.23499999940395355
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econ",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 7,
+     "cems_twh": 4.953,
+     "model_twh_same_plants": 2.967,
+     "cems_on_wmean": 0.904,
+     "model_on_wmean": 0.927,
+     "cems_starts_median": 7.0,
+     "model_starts_median": 3.0
+    },
+    "release": {
+     "gain_twh": 0.285,
+     "gain_by_group": {
+      "CC_CHP": 0.20600000023841858,
+      "CT_CHP": 0.07900000363588333,
+      "ST_CHP": 0.0
+     },
+     "markup_mean": 4.27,
+     "plants_inverted": 7,
+     "plants": 10,
+     "displaced_twh_by_class": {
+      "CC_REGULAR": 0.1459999978542328,
+      "COAL_BIT": 0.017000000923871994,
+      "COAL_PRB": 0.02199999988079071,
+      "CT_PEAKER": 0.007000000216066837
+     },
+     "unabsorbed_twh": 0.092
+    }
+   }
+  },
+  "2022": {
+   "plants_chp": 8,
+   "plants_in_sched67": 3,
+   "netgen_twh": 4.599,
+   "netgen_twh_covered": 0.721,
+   "btm_default_twh": 1.701,
+   "btm_measured_twh": 1.621,
+   "dE_bench_twh": 0.079,
+   "dE_by_group": {
+    "CC_CHP": 0.113,
+    "CT_CHP": 0.0,
+    "ST_CHP": -0.034
+   },
+   "netgen_by_group": {
+    "CC_CHP": 3.478,
+    "CT_CHP": 1.011,
+    "ST_CHP": 0.11
+   },
+   "default_shares": [
+    0.35,
+    0.7,
+    0.9
+   ],
+   "top": [
+    {
+     "plant": 55040,
+     "name": "Mid-Georgia Cogeneration Facility",
+     "group": "CC_CHP",
+     "netgen_twh": 0.455,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 0.159
+    },
+    {
+     "plant": 54096,
+     "name": "International Paper Riverdale Mill",
+     "group": "CC_CHP",
+     "netgen_twh": 0.152,
+     "default": 0.7,
+     "measured": 1.0,
+     "measured_same_year": 1.0,
+     "dE_twh": -0.046
+    },
+    {
+     "plant": 54096,
+     "name": "International Paper Riverdale Mill",
+     "group": "ST_CHP",
+     "netgen_twh": 0.114,
+     "default": 0.7,
+     "measured": 1.0,
+     "measured_same_year": 1.0,
+     "dE_twh": -0.034
+    }
+   ],
+   "reconcile": {
+    "family_committed": 177.963,
+    "raw_930": 177.542,
+    "fold_F": 0.0,
+    "target": 177.542,
+    "fired_committed": false,
+    "s_est": 1.0025,
+    "family_pre_est": 177.963,
+    "ratio_pre": 1.0024,
+    "family_new": 178.043,
+    "ratio_new": 1.0028,
+    "fires_new": false,
+    "scale_new": 1.0,
+    "upper_margin_new_twh": 4.99,
+    "lower_margin_new_twh": 5.827,
+    "ratio_new_fold_refuted": 1.0028,
+    "fires_new_fold_refuted": false,
+    "s_ref": 1.0152
+   },
+   "fold_test": {
+    "e930_gas": 130.63,
+    "eia923_gas_full": 134.71,
+    "gap_930_minus_923": -4.07,
+    "fold_F": 0.0
+   },
+   "holdout": {
+    "e930_other": 2.708,
+    "bench_OTHER": -0.449,
+    "bench_biomass": 9.648,
+    "inj_total_twh": 9.199,
+    "inj_chpY_twh": 8.278,
+    "inj_chpY_by_class": {
+     "OTHER": 0.194,
+     "biomass": 8.084
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 0.044,
+    "model_add_by_group": {
+     "CC_CHP": 0.052,
+     "CT_CHP": 0.0,
+     "ST_CHP": -0.008
+    },
+    "model_chp_twh": {
+     "CC_CHP": 2.4800000190734863,
+     "CT_CHP": 1.2259999513626099,
+     "ST_CHP": 0.3580000102519989
+    },
+    "displaced_twh_by_class": {
+     "CT_PEAKER": 0.047,
+     "ST_GAS": 0.018
+    },
+    "unabsorbed_twh": 0.034
+   },
+   "holdout_reach": {
+    "removed_twh": 8.278,
+    "taken_twh_by_class": {
+     "CC_CHP": 0.028999999165534973,
+     "CC_REGULAR": 2.4809999465942383,
+     "COAL_BIT": 0.6629999876022339,
+     "COAL_PRB": 2.568000078201294,
+     "CT_PEAKER": 1.9500000476837158,
+     "ST_GAS": 0.5820000171661377
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econ",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 6,
+     "cems_twh": 4.887,
+     "model_twh_same_plants": 3.195,
+     "cems_on_wmean": 0.845,
+     "model_on_wmean": 0.856,
+     "cems_starts_median": 6.5,
+     "model_starts_median": 3.0
+    },
+    "release": {
+     "gain_twh": 0.086,
+     "gain_by_group": {
+      "CC_CHP": 0.00800000037997961,
+      "CT_CHP": 0.07800000160932541,
+      "ST_CHP": 0.0
+     },
+     "markup_mean": 5.23,
+     "plants_inverted": 6,
+     "plants": 10,
+     "displaced_twh_by_class": {
+      "CC_REGULAR": 0.03799999877810478,
+      "CT_PEAKER": 0.00800000037997961
+     },
+     "unabsorbed_twh": 0.028
+    }
+   }
+  },
+  "2023": {
+   "plants_chp": 5,
+   "plants_in_sched67": 1,
+   "netgen_twh": 4.127,
+   "netgen_twh_covered": 0.146,
+   "btm_default_twh": 1.444,
+   "btm_measured_twh": 1.393,
+   "dE_bench_twh": 0.051,
+   "dE_by_group": {
+    "CC_CHP": 0.051,
+    "CT_CHP": 0.0
+   },
+   "netgen_by_group": {
+    "CC_CHP": 3.107,
+    "CT_CHP": 1.019
+   },
+   "default_shares": [
+    0.35
+   ],
+   "top": [
+    {
+     "plant": 55040,
+     "name": "Mid-Georgia Cogeneration Facility",
+     "group": "CC_CHP",
+     "netgen_twh": 0.146,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 0.051
+    }
+   ],
+   "reconcile": {
+    "family_committed": 166.352,
+    "raw_930": 167.845,
+    "fold_F": 0.0,
+    "target": 167.845,
+    "fired_committed": false,
+    "s_est": 1.0112,
+    "family_pre_est": 166.352,
+    "ratio_pre": 0.9911,
+    "family_new": 166.403,
+    "ratio_new": 0.9914,
+    "fires_new": false,
+    "scale_new": 1.0,
+    "upper_margin_new_twh": 6.633,
+    "lower_margin_new_twh": 3.593,
+    "ratio_new_fold_refuted": 0.9914,
+    "fires_new_fold_refuted": false,
+    "s_ref": 1.0152
+   },
+   "fold_test": {
+    "e930_gas": 129.59,
+    "eia923_gas_full": 130.23,
+    "gap_930_minus_923": -0.64,
+    "fold_F": 0.0
+   },
+   "holdout": {
+    "e930_other": 2.537,
+    "bench_OTHER": -0.509,
+    "bench_biomass": 8.804,
+    "inj_total_twh": 8.295,
+    "inj_chpY_twh": 7.385,
+    "inj_chpY_by_class": {
+     "OTHER": 0.145,
+     "biomass": 7.24
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 0.039,
+    "model_add_by_group": {
+     "CC_CHP": 0.039,
+     "CT_CHP": 0.0,
+     "ST_CHP": 0.0
+    },
+    "model_chp_twh": {
+     "CC_CHP": 2.2639999389648438,
+     "CT_CHP": 1.1399999856948853,
+     "ST_CHP": 0.4359999895095825
+    },
+    "displaced_twh_by_class": {
+     "COAL_PRB": 0.006,
+     "CT_PEAKER": 0.013
+    },
+    "unabsorbed_twh": 0.015
+   },
+   "holdout_reach": {
+    "removed_twh": 7.385,
+    "taken_twh_by_class": {
+     "CC_CHP": 0.054999999701976776,
+     "CC_REGULAR": 2.2119998931884766,
+     "COAL_PRB": 1.2319999933242798,
+     "CT_CHP": 0.04800000041723251,
+     "CT_PEAKER": 3.315999984741211,
+     "ST_GAS": 0.5210000276565552
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econ",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 5,
+     "cems_twh": 4.913,
+     "model_twh_same_plants": 2.743,
+     "cems_on_wmean": 0.916,
+     "model_on_wmean": 0.909,
+     "cems_starts_median": 7.0,
+     "model_starts_median": 4.0
+    },
+    "release": {
+     "gain_twh": 0.275,
+     "gain_by_group": {
+      "CC_CHP": 0.16099999845027924,
+      "CT_CHP": 0.11400000005960464,
+      "ST_CHP": 0.0
+     },
+     "markup_mean": 4.28,
+     "plants_inverted": 7,
+     "plants": 10,
+     "displaced_twh_by_class": {
+      "CC_REGULAR": 0.12200000137090683,
+      "COAL_BIT": 0.006000000052154064,
+      "COAL_PRB": 0.035999998450279236,
+      "CT_PEAKER": 0.009999999776482582
+     },
+     "unabsorbed_twh": 0.099
+    }
+   }
+  },
+  "2024": {
+   "plants_chp": 5,
+   "plants_in_sched67": 1,
+   "netgen_twh": 4.118,
+   "netgen_twh_covered": 0.116,
+   "btm_default_twh": 1.441,
+   "btm_measured_twh": 1.401,
+   "dE_bench_twh": 0.041,
+   "dE_by_group": {
+    "CC_CHP": 0.041,
+    "CT_CHP": 0.0
+   },
+   "netgen_by_group": {
+    "CC_CHP": 3.105,
+    "CT_CHP": 1.013
+   },
+   "default_shares": [
+    0.35
+   ],
+   "top": [
+    {
+     "plant": 55040,
+     "name": "Mid-Georgia Cogeneration Facility",
+     "group": "CC_CHP",
+     "netgen_twh": 0.116,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 0.041
+    }
+   ],
+   "reconcile": {
+    "family_committed": 167.172,
+    "raw_930": 166.138,
+    "fold_F": 0.0,
+    "target": 166.138,
+    "fired_committed": false,
+    "s_est": 1.0016,
+    "family_pre_est": 167.172,
+    "ratio_pre": 1.0062,
+    "family_new": 167.213,
+    "ratio_new": 1.0065,
+    "fires_new": false,
+    "scale_new": 1.0,
+    "upper_margin_new_twh": 4.063,
+    "lower_margin_new_twh": 6.059,
+    "ratio_new_fold_refuted": 1.0065,
+    "fires_new_fold_refuted": false,
+    "s_ref": 1.0152
+   },
+   "fold_test": {
+    "e930_gas": 125.68,
+    "eia923_gas_full": 129.54,
+    "gap_930_minus_923": -3.86,
+    "fold_F": 0.0
+   },
+   "holdout": {
+    "e930_other": 2.469,
+    "bench_OTHER": -0.478,
+    "bench_biomass": 9.301,
+    "inj_total_twh": 8.822,
+    "inj_chpY_twh": 8.005,
+    "inj_chpY_by_class": {
+     "OTHER": 0.193,
+     "biomass": 7.812
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 0.019,
+    "model_add_by_group": {
+     "CC_CHP": 0.019,
+     "CT_CHP": 0.0,
+     "ST_CHP": 0.0
+    },
+    "model_chp_twh": {
+     "CC_CHP": 2.2190001010894775,
+     "CT_CHP": 1.0019999742507935,
+     "ST_CHP": 0.4309999942779541
+    },
+    "displaced_twh_by_class": {
+     "CT_PEAKER": 0.006
+    },
+    "unabsorbed_twh": 0.008
+   },
+   "holdout_reach": {
+    "removed_twh": 8.005,
+    "taken_twh_by_class": {
+     "CC_CHP": 0.05299999937415123,
+     "CC_REGULAR": 3.2709999084472656,
+     "COAL_BIT": 0.2290000021457672,
+     "COAL_PRB": 0.9049999713897705,
+     "CT_CHP": 0.09799999743700027,
+     "CT_PEAKER": 3.049999952316284,
+     "ST_CHP": 0.006000000052154064,
+     "ST_GAS": 0.39399999380111694
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econ",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 5,
+     "cems_twh": 4.826,
+     "model_twh_same_plants": 2.568,
+     "cems_on_wmean": 0.932,
+     "model_on_wmean": 0.917,
+     "cems_starts_median": 5.0,
+     "model_starts_median": 3.0
+    },
+    "release": {
+     "gain_twh": 0.401,
+     "gain_by_group": {
+      "CC_CHP": 0.20600000023841858,
+      "CT_CHP": 0.1899999976158142,
+      "ST_CHP": 0.004999999888241291
+     },
+     "markup_mean": 4.31,
+     "plants_inverted": 8,
+     "plants": 10,
+     "displaced_twh_by_class": {
+      "CC_REGULAR": 0.18700000643730164,
+      "COAL_BIT": 0.006000000052154064,
+      "COAL_PRB": 0.05299999937415123,
+      "CT_PEAKER": 0.013000000268220901
+     },
+     "unabsorbed_twh": 0.139
+    }
+   }
+  },
+  "2025": {
+   "plants_chp": 5,
+   "plants_in_sched67": 1,
+   "netgen_twh": 3.989,
+   "netgen_twh_covered": 0.169,
+   "btm_default_twh": 1.396,
+   "btm_measured_twh": 1.337,
+   "dE_bench_twh": 0.059,
+   "dE_by_group": {
+    "CC_CHP": 0.059,
+    "CT_CHP": 0.0
+   },
+   "netgen_by_group": {
+    "CC_CHP": 2.877,
+    "CT_CHP": 1.112
+   },
+   "default_shares": [
+    0.35
+   ],
+   "top": [
+    {
+     "plant": 55040,
+     "name": "Mid-Georgia Cogeneration Facility",
+     "group": "CC_CHP",
+     "netgen_twh": 0.169,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 0.059
+    }
+   ],
+   "reconcile": {
+    "family_committed": 170.189,
+    "raw_930": 169.383,
+    "fold_F": 0.0,
+    "target": 169.383,
+    "fired_committed": false,
+    "s_est": 1.0107,
+    "family_pre_est": 170.189,
+    "ratio_pre": 1.0048,
+    "family_new": 170.248,
+    "ratio_new": 1.0051,
+    "fires_new": false,
+    "scale_new": 1.0,
+    "upper_margin_new_twh": 4.374,
+    "lower_margin_new_twh": 5.946,
+    "ratio_new_fold_refuted": 1.0051,
+    "fires_new_fold_refuted": false,
+    "s_ref": 1.0152
+   },
+   "fold_test": {
+    "e930_gas": 125.28,
+    "eia923_gas_full": 128.16,
+    "gap_930_minus_923": -2.88,
+    "fold_F": 0.0
+   },
+   "holdout": {
+    "e930_other": 1.875,
+    "bench_OTHER": -0.562,
+    "bench_biomass": 8.453,
+    "inj_total_twh": 7.891,
+    "inj_chpY_twh": 7.119,
+    "inj_chpY_by_class": {
+     "OTHER": 0.152,
+     "biomass": 6.967
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 0.052,
+    "model_add_by_group": {
+     "CC_CHP": 0.052,
+     "CT_CHP": 0.0,
+     "ST_CHP": 0.0
+    },
+    "model_chp_twh": {
+     "CC_CHP": 1.9639999866485596,
+     "CT_CHP": 1.0410000085830688,
+     "ST_CHP": 0.2240000069141388
+    },
+    "displaced_twh_by_class": {
+     "CT_PEAKER": 0.019,
+     "ST_GAS": 0.006
+    },
+    "unabsorbed_twh": 0.017
+   },
+   "holdout_reach": {
+    "removed_twh": 7.119,
+    "taken_twh_by_class": {
+     "CC_CHP": 0.041999999433755875,
+     "CC_REGULAR": 3.4830000400543213,
+     "COAL_BIT": 0.5559999942779541,
+     "COAL_PRB": 0.8999999761581421,
+     "CT_CHP": 0.0560000017285347,
+     "CT_PEAKER": 1.777999997138977,
+     "ST_GAS": 0.30300000309944153
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econ",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 5,
+     "cems_twh": 4.534,
+     "model_twh_same_plants": 2.508,
+     "cems_on_wmean": 0.864,
+     "model_on_wmean": 0.854,
+     "cems_starts_median": 6.0,
+     "model_starts_median": 5.0
+    },
+    "release": {
+     "gain_twh": 0.368,
+     "gain_by_group": {
+      "CC_CHP": 0.19300000369548798,
+      "CT_CHP": 0.17499999701976776,
+      "ST_CHP": 0.0
+     },
+     "markup_mean": 8.38,
+     "plants_inverted": 8,
+     "plants": 10,
+     "displaced_twh_by_class": {
+      "CC_REGULAR": 0.20600000023841858,
+      "COAL_BIT": 0.013000000268220901,
+      "COAL_PRB": 0.035999998450279236,
+      "CT_PEAKER": 0.007000000216066837
+     },
+     "unabsorbed_twh": 0.104
+    }
+   }
+  }
+ },
+ "NEISO": {
+  "2019": {
+   "plants_chp": 9,
+   "plants_in_sched67": 8,
+   "netgen_twh": 2.537,
+   "netgen_twh_covered": 2.537,
+   "btm_default_twh": 0.979,
+   "btm_measured_twh": 0.322,
+   "dE_bench_twh": 0.657,
+   "dE_by_group": {
+    "CC_CHP": 0.602,
+    "CT_CHP": 0.06,
+    "ST_CHP": -0.005
+   },
+   "netgen_by_group": {
+    "CC_CHP": 1.932,
+    "CT_CHP": 0.554,
+    "ST_CHP": 0.052
+   },
+   "default_shares": [
+    0.35,
+    0.65,
+    0.7,
+    0.9
+   ],
+   "top": [
+    {
+     "plant": 1595,
+     "name": "Kendall Square Station",
+     "group": "CC_CHP",
+     "netgen_twh": 1.446,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 0.506
+    },
+    {
+     "plant": 55031,
+     "name": "55031",
+     "group": "CT_CHP",
+     "netgen_twh": 0.361,
+     "default": 0.35,
+     "measured": 0.013,
+     "measured_same_year": 0.015,
+     "dE_twh": 0.122
+    },
+    {
+     "plant": 10726,
+     "name": "Masspower",
+     "group": "CC_CHP",
+     "netgen_twh": 0.282,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.024,
+     "dE_twh": 0.099
+    },
+    {
+     "plant": 54907,
+     "name": "Mass Inst Tech Cntrl Utilities/Cogen Plt",
+     "group": "CT_CHP",
+     "netgen_twh": 0.093,
+     "default": 0.65,
+     "measured": 1.0,
+     "measured_same_year": 1.0,
+     "dE_twh": -0.033
+    },
+    {
+     "plant": 54605,
+     "name": "Pratt & Whitney",
+     "group": "CT_CHP",
+     "netgen_twh": 0.099,
+     "default": 0.7,
+     "measured": 0.991,
+     "measured_same_year": 0.987,
+     "dE_twh": -0.029
+    },
+    {
+     "plant": 10567,
+     "name": "Algonquin Windsor Locks",
+     "group": "CC_CHP",
+     "netgen_twh": 0.124,
+     "default": 0.35,
+     "measured": 0.568,
+     "measured_same_year": 0.625,
+     "dE_twh": -0.027
+    }
+   ],
+   "reconcile": {
+    "family_committed": 47.872,
+    "raw_930": 48.136,
+    "fold_F": 1.006,
+    "target": 47.13,
+    "fired_committed": false,
+    "s_est": 1.0017,
+    "family_pre_est": 47.872,
+    "ratio_pre": 1.0157,
+    "family_new": 48.529,
+    "ratio_new": 1.0297,
+    "fires_new": false,
+    "scale_new": 1.0,
+    "upper_margin_new_twh": 0.059,
+    "lower_margin_new_twh": 2.813,
+    "ratio_new_fold_refuted": 1.0082,
+    "fires_new_fold_refuted": false,
+    "s_ref": 1.0081
+   },
+   "fold_test": {
+    "e930_gas": 47.53,
+    "eia923_gas_full": 48.84,
+    "gap_930_minus_923": -1.31,
+    "fold_F": 1.01
+   },
+   "holdout": {
+    "e930_other": 5.88,
+    "bench_OTHER": 2.721,
+    "bench_biomass": 4.164,
+    "inj_total_twh": 6.886,
+    "inj_chpY_twh": 1.585,
+    "inj_chpY_by_class": {
+     "OTHER": 0.251,
+     "biomass": 1.334
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 0.478,
+    "model_add_by_group": {
+     "CC_CHP": 0.198,
+     "CT_CHP": 0.291,
+     "ST_CHP": -0.011
+    },
+    "model_chp_twh": {
+     "CC_CHP": 0.8420000076293945,
+     "CT_CHP": 1.246000051498413,
+     "ST_CHP": 0.19599999487400055
+    },
+    "displaced_twh_by_class": {
+     "CC_REGULAR": 0.203,
+     "CT_PEAKER": 0.023,
+     "ST_GAS": 0.01
+    },
+    "unabsorbed_twh": 0.237
+   },
+   "holdout_reach": {
+    "removed_twh": 1.585,
+    "taken_twh_by_class": {
+     "": 0.00800000037997961,
+     "CC_CHP": 0.07599999755620956,
+     "CC_REGULAR": 1.0470000505447388,
+     "COAL_PRB": 0.3449999988079071,
+     "CT_PEAKER": 0.07000000029802322,
+     "ST_GAS": 0.03700000047683716
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econ",
+     "econc00",
+     "econc01",
+     "econc02",
+     "econc03",
+     "econc04",
+     "econc05",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 8,
+     "cems_twh": 2.984,
+     "model_twh_same_plants": 1.642,
+     "cems_on_wmean": 0.838,
+     "model_on_wmean": 0.308,
+     "cems_starts_median": 24.5,
+     "model_starts_median": 49.0
+    },
+    "release": {
+     "gain_twh": 0.039,
+     "gain_by_group": {
+      "CC_CHP": 0.0,
+      "CT_CHP": 0.039000000804662704,
+      "ST_CHP": 0.0
+     },
+     "markup_mean": 2.48,
+     "plants_inverted": 3,
+     "plants": 10,
+     "displaced_twh_by_class": {
+      "CC_REGULAR": 0.01899999938905239
+     },
+     "unabsorbed_twh": 0.017
+    }
+   }
+  },
+  "2020": {
+   "plants_chp": 8,
+   "plants_in_sched67": 7,
+   "netgen_twh": 2.414,
+   "netgen_twh_covered": 2.414,
+   "btm_default_twh": 0.897,
+   "btm_measured_twh": 0.239,
+   "dE_bench_twh": 0.658,
+   "dE_by_group": {
+    "CC_CHP": 0.586,
+    "CT_CHP": 0.072
+   },
+   "netgen_by_group": {
+    "CC_CHP": 1.886,
+    "CT_CHP": 0.528
+   },
+   "default_shares": [
+    0.35,
+    0.65,
+    0.7
+   ],
+   "top": [
+    {
+     "plant": 1595,
+     "name": "Kendall Square Station",
+     "group": "CC_CHP",
+     "netgen_twh": 1.37,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 0.48
+    },
+    {
+     "plant": 55031,
+     "name": "55031",
+     "group": "CT_CHP",
+     "netgen_twh": 0.367,
+     "default": 0.35,
+     "measured": 0.013,
+     "measured_same_year": 0.011,
+     "dE_twh": 0.124
+    },
+    {
+     "plant": 10726,
+     "name": "Masspower",
+     "group": "CC_CHP",
+     "netgen_twh": 0.353,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.025,
+     "dE_twh": 0.123
+    },
+    {
+     "plant": 10567,
+     "name": "Algonquin Windsor Locks",
+     "group": "CC_CHP",
+     "netgen_twh": 0.128,
+     "default": 0.35,
+     "measured": 0.568,
+     "measured_same_year": 0.679,
+     "dE_twh": -0.028
+    },
+    {
+     "plant": 54907,
+     "name": "Mass Inst Tech Cntrl Utilities/Cogen Plt",
+     "group": "CT_CHP",
+     "netgen_twh": 0.08,
+     "default": 0.65,
+     "measured": 1.0,
+     "measured_same_year": 1.0,
+     "dE_twh": -0.028
+    },
+    {
+     "plant": 54605,
+     "name": "Pratt & Whitney",
+     "group": "CT_CHP",
+     "netgen_twh": 0.081,
+     "default": 0.7,
+     "measured": 0.991,
+     "measured_same_year": 0.99,
+     "dE_twh": -0.024
+    }
+   ],
+   "reconcile": {
+    "family_committed": 50.023,
+    "raw_930": 50.012,
+    "fold_F": 0.956,
+    "target": 49.056,
+    "fired_committed": false,
+    "s_est": 1.0032,
+    "family_pre_est": 50.023,
+    "ratio_pre": 1.0197,
+    "family_new": 50.681,
+    "ratio_new": 1.0331,
+    "fires_new": true,
+    "scale_new": 0.9679,
+    "upper_margin_new_twh": -0.108,
+    "lower_margin_new_twh": 3.097,
+    "ratio_new_fold_refuted": 1.0134,
+    "fires_new_fold_refuted": false,
+    "s_ref": 1.0081
+   },
+   "fold_test": {
+    "e930_gas": 49.7,
+    "eia923_gas_full": 51.09,
+    "gap_930_minus_923": -1.39,
+    "fold_F": 0.96
+   },
+   "holdout": {
+    "e930_other": 5.598,
+    "bench_OTHER": 2.736,
+    "bench_biomass": 3.818,
+    "inj_total_twh": 6.554,
+    "inj_chpY_twh": 1.382,
+    "inj_chpY_by_class": {
+     "OTHER": 0.21,
+     "biomass": 1.171
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 0.419,
+    "model_add_by_group": {
+     "CC_CHP": 0.127,
+     "CT_CHP": 0.292,
+     "ST_CHP": 0.0
+    },
+    "model_chp_twh": {
+     "CC_CHP": 0.5609999895095825,
+     "CT_CHP": 1.2319999933242798,
+     "ST_CHP": 0.17900000512599945
+    },
+    "displaced_twh_by_class": {
+     "CC_REGULAR": 0.183,
+     "CT_PEAKER": 0.019,
+     "ST_GAS": 0.011
+    },
+    "unabsorbed_twh": 0.205
+   },
+   "holdout_reach": {
+    "removed_twh": 1.382,
+    "taken_twh_by_class": {
+     "CC_CHP": 0.06599999964237213,
+     "CC_REGULAR": 1.159000039100647,
+     "COAL_PRB": 0.006000000052154064,
+     "CT_PEAKER": 0.08799999952316284,
+     "ST_GAS": 0.05900000035762787
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econ",
+     "econc00",
+     "econc01",
+     "econc02",
+     "econc03",
+     "econc04",
+     "econc05",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 8,
+     "cems_twh": 2.851,
+     "model_twh_same_plants": 1.369,
+     "cems_on_wmean": 0.788,
+     "model_on_wmean": 0.273,
+     "cems_starts_median": 19.0,
+     "model_starts_median": 32.0
+    },
+    "release": {
+     "gain_twh": 0.043,
+     "gain_by_group": {
+      "CC_CHP": 0.0,
+      "CT_CHP": 0.0430000014603138,
+      "ST_CHP": 0.0
+     },
+     "markup_mean": 2.99,
+     "plants_inverted": 3,
+     "plants": 10,
+     "displaced_twh_by_class": {
+      "CC_REGULAR": 0.023000000044703484
+     },
+     "unabsorbed_twh": 0.018
+    }
+   }
+  },
+  "2021": {
+   "plants_chp": 7,
+   "plants_in_sched67": 7,
+   "netgen_twh": 2.19,
+   "netgen_twh_covered": 2.19,
+   "btm_default_twh": 0.826,
+   "btm_measured_twh": 0.266,
+   "dE_bench_twh": 0.56,
+   "dE_by_group": {
+    "CC_CHP": 0.49,
+    "CT_CHP": 0.071
+   },
+   "netgen_by_group": {
+    "CC_CHP": 1.625,
+    "CT_CHP": 0.565
+   },
+   "default_shares": [
+    0.35,
+    0.65,
+    0.7
+   ],
+   "top": [
+    {
+     "plant": 1595,
+     "name": "Kendall Square Station",
+     "group": "CC_CHP",
+     "netgen_twh": 1.171,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 0.41
+    },
+    {
+     "plant": 55031,
+     "name": "55031",
+     "group": "CT_CHP",
+     "netgen_twh": 0.382,
+     "default": 0.35,
+     "measured": 0.013,
+     "measured_same_year": 0.014,
+     "dE_twh": 0.129
+    },
+    {
+     "plant": 10726,
+     "name": "Masspower",
+     "group": "CC_CHP",
+     "netgen_twh": 0.256,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 0.09
+    },
+    {
+     "plant": 54605,
+     "name": "Pratt & Whitney",
+     "group": "CT_CHP",
+     "netgen_twh": 0.103,
+     "default": 0.7,
+     "measured": 0.991,
+     "measured_same_year": 0.97,
+     "dE_twh": -0.03
+    },
+    {
+     "plant": 10567,
+     "name": "Algonquin Windsor Locks",
+     "group": "CC_CHP",
+     "netgen_twh": 0.134,
+     "default": 0.35,
+     "measured": 0.568,
+     "measured_same_year": 0.548,
+     "dE_twh": -0.029
+    },
+    {
+     "plant": 54907,
+     "name": "Mass Inst Tech Cntrl Utilities/Cogen Plt",
+     "group": "CT_CHP",
+     "netgen_twh": 0.08,
+     "default": 0.65,
+     "measured": 1.0,
+     "measured_same_year": 1.0,
+     "dE_twh": -0.028
+    }
+   ],
+   "reconcile": {
+    "family_committed": 54.888,
+    "raw_930": 55.054,
+    "fold_F": 0.765,
+    "target": 54.289,
+    "fired_committed": false,
+    "s_est": 1.0025,
+    "family_pre_est": 54.888,
+    "ratio_pre": 1.011,
+    "family_new": 55.449,
+    "ratio_new": 1.0214,
+    "fires_new": false,
+    "scale_new": 1.0,
+    "upper_margin_new_twh": 0.519,
+    "lower_margin_new_twh": 2.789,
+    "ratio_new_fold_refuted": 1.0072,
+    "fires_new_fold_refuted": false,
+    "s_ref": 1.0081
+   },
+   "fold_test": {
+    "e930_gas": 54.27,
+    "eia923_gas_full": 55.5,
+    "gap_930_minus_923": -1.24,
+    "fold_F": 0.77
+   },
+   "holdout": {
+    "e930_other": 5.712,
+    "bench_OTHER": 2.705,
+    "bench_biomass": 3.772,
+    "inj_total_twh": 6.477,
+    "inj_chpY_twh": 1.099,
+    "inj_chpY_by_class": {
+     "OTHER": 0.159,
+     "biomass": 0.94
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 0.476,
+    "model_add_by_group": {
+     "CC_CHP": 0.212,
+     "CT_CHP": 0.265,
+     "ST_CHP": 0.0
+    },
+    "model_chp_twh": {
+     "CC_CHP": 0.7329999804496765,
+     "CT_CHP": 1.2649999856948853,
+     "ST_CHP": 0.24199999868869781
+    },
+    "displaced_twh_by_class": {
+     "CC_REGULAR": 0.243,
+     "CT_PEAKER": 0.023,
+     "ST_GAS": 0.017
+    },
+    "unabsorbed_twh": 0.187
+   },
+   "holdout_reach": {
+    "removed_twh": 1.099,
+    "taken_twh_by_class": {
+     "CC_CHP": 0.04600000008940697,
+     "CC_REGULAR": 0.7710000276565552,
+     "COAL_BIT": 0.17499999701976776,
+     "CT_PEAKER": 0.052000001072883606,
+     "ST_GAS": 0.05000000074505806
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econ",
+     "econc00",
+     "econc01",
+     "econc02",
+     "econc03",
+     "econc04",
+     "econc05",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 7,
+     "cems_twh": 2.5,
+     "model_twh_same_plants": 1.564,
+     "cems_on_wmean": 0.796,
+     "model_on_wmean": 0.253,
+     "cems_starts_median": 26.0,
+     "model_starts_median": 17.0
+    },
+    "release": {
+     "gain_twh": 0.045,
+     "gain_by_group": {
+      "CC_CHP": 0.0,
+      "CT_CHP": 0.04500000178813934,
+      "ST_CHP": 0.0
+     },
+     "markup_mean": 5.64,
+     "plants_inverted": 4,
+     "plants": 10,
+     "displaced_twh_by_class": {
+      "CC_REGULAR": 0.02500000037252903
+     },
+     "unabsorbed_twh": 0.017
+    }
+   }
+  },
+  "2022": {
+   "plants_chp": 6,
+   "plants_in_sched67": 6,
+   "netgen_twh": 2.108,
+   "netgen_twh_covered": 2.108,
+   "btm_default_twh": 0.762,
+   "btm_measured_twh": 0.15,
+   "dE_bench_twh": 0.612,
+   "dE_by_group": {
+    "CC_CHP": 0.5,
+    "CT_CHP": 0.112
+   },
+   "netgen_by_group": {
+    "CC_CHP": 1.648,
+    "CT_CHP": 0.461
+   },
+   "default_shares": [
+    0.35,
+    0.7
+   ],
+   "top": [
+    {
+     "plant": 1595,
+     "name": "Kendall Square Station",
+     "group": "CC_CHP",
+     "netgen_twh": 1.226,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 0.429
+    },
+    {
+     "plant": 55031,
+     "name": "55031",
+     "group": "CT_CHP",
+     "netgen_twh": 0.392,
+     "default": 0.35,
+     "measured": 0.013,
+     "measured_same_year": 0.016,
+     "dE_twh": 0.132
+    },
+    {
+     "plant": 10726,
+     "name": "Masspower",
+     "group": "CC_CHP",
+     "netgen_twh": 0.234,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 0.082
+    },
+    {
+     "plant": 10567,
+     "name": "Algonquin Windsor Locks",
+     "group": "CC_CHP",
+     "netgen_twh": 0.131,
+     "default": 0.35,
+     "measured": 0.568,
+     "measured_same_year": 0.532,
+     "dE_twh": -0.029
+    },
+    {
+     "plant": 54605,
+     "name": "Pratt & Whitney",
+     "group": "CT_CHP",
+     "netgen_twh": 0.069,
+     "default": 0.7,
+     "measured": 0.991,
+     "measured_same_year": 0.989,
+     "dE_twh": -0.02
+    },
+    {
+     "plant": 50002,
+     "name": "Pittsfield Generating LP",
+     "group": "CC_CHP",
+     "netgen_twh": 0.057,
+     "default": 0.35,
+     "measured": 0.045,
+     "measured_same_year": 0.051,
+     "dE_twh": 0.017
+    }
+   ],
+   "reconcile": {
+    "family_committed": 56.0,
+    "raw_930": 55.924,
+    "fold_F": 1.18,
+    "target": 54.744,
+    "fired_committed": false,
+    "s_est": 1.0297,
+    "family_pre_est": 56.0,
+    "ratio_pre": 1.0229,
+    "family_new": 56.612,
+    "ratio_new": 1.0341,
+    "fires_new": true,
+    "scale_new": 0.967,
+    "upper_margin_new_twh": -0.175,
+    "lower_margin_new_twh": 3.511,
+    "ratio_new_fold_refuted": 1.0123,
+    "fires_new_fold_refuted": false,
+    "s_ref": 1.0081
+   },
+   "fold_test": {
+    "e930_gas": 53.76,
+    "eia923_gas_full": 54.98,
+    "gap_930_minus_923": -1.22,
+    "fold_F": 1.18
+   },
+   "holdout": {
+    "e930_other": 5.028,
+    "bench_OTHER": 2.945,
+    "bench_biomass": 3.263,
+    "inj_total_twh": 6.208,
+    "inj_chpY_twh": 1.147,
+    "inj_chpY_by_class": {
+     "OTHER": 0.204,
+     "biomass": 0.944
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 0.467,
+    "model_add_by_group": {
+     "CC_CHP": 0.12,
+     "CT_CHP": 0.347,
+     "ST_CHP": 0.0
+    },
+    "model_chp_twh": {
+     "CC_CHP": 0.597000002861023,
+     "CT_CHP": 1.284000039100647,
+     "ST_CHP": 0.2409999966621399
+    },
+    "displaced_twh_by_class": {
+     "": 0.007,
+     "CC_REGULAR": 0.255,
+     "CT_PEAKER": 0.022,
+     "ST_GAS": 0.008
+    },
+    "unabsorbed_twh": 0.173
+   },
+   "holdout_reach": {
+    "removed_twh": 1.147,
+    "taken_twh_by_class": {
+     "": 0.017999999225139618,
+     "CC_CHP": 0.014999999664723873,
+     "CC_REGULAR": 0.3869999945163727,
+     "COAL_BIT": 0.6930000185966492,
+     "CT_PEAKER": 0.027000000700354576,
+     "ST_GAS": 0.006000000052154064
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econ",
+     "econc00",
+     "econc01",
+     "econc02",
+     "econc03",
+     "econc04",
+     "econc05",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 6,
+     "cems_twh": 2.484,
+     "model_twh_same_plants": 1.34,
+     "cems_on_wmean": 0.78,
+     "model_on_wmean": 0.262,
+     "cems_starts_median": 29.0,
+     "model_starts_median": 59.5
+    },
+    "release": {
+     "gain_twh": 0.041,
+     "gain_by_group": {
+      "CC_CHP": 0.0,
+      "CT_CHP": 0.04100000113248825,
+      "ST_CHP": 0.0
+     },
+     "markup_mean": 9.77,
+     "plants_inverted": 5,
+     "plants": 9,
+     "displaced_twh_by_class": {
+      "CC_REGULAR": 0.026000000536441803
+     },
+     "unabsorbed_twh": 0.013
+    }
+   }
+  },
+  "2023": {
+   "plants_chp": 4,
+   "plants_in_sched67": 4,
+   "netgen_twh": 1.772,
+   "netgen_twh_covered": 1.772,
+   "btm_default_twh": 0.662,
+   "btm_measured_twh": 0.186,
+   "dE_bench_twh": 0.477,
+   "dE_by_group": {
+    "CC_CHP": 0.512,
+    "CT_CHP": -0.035
+   },
+   "netgen_by_group": {
+    "CC_CHP": 1.652,
+    "CT_CHP": 0.12
+   },
+   "default_shares": [
+    0.35,
+    0.7
+   ],
+   "top": [
+    {
+     "plant": 1595,
+     "name": "Kendall Square Station",
+     "group": "CC_CHP",
+     "netgen_twh": 1.517,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 0.531
+    },
+    {
+     "plant": 54605,
+     "name": "Pratt & Whitney",
+     "group": "CT_CHP",
+     "netgen_twh": 0.12,
+     "default": 0.7,
+     "measured": 0.991,
+     "measured_same_year": 0.983,
+     "dE_twh": -0.035
+    },
+    {
+     "plant": 10567,
+     "name": "Algonquin Windsor Locks",
+     "group": "CC_CHP",
+     "netgen_twh": 0.115,
+     "default": 0.35,
+     "measured": 0.568,
+     "measured_same_year": 0.6,
+     "dE_twh": -0.025
+    },
+    {
+     "plant": 50002,
+     "name": "Pittsfield Generating LP",
+     "group": "CC_CHP",
+     "netgen_twh": 0.02,
+     "default": 0.35,
+     "measured": 0.045,
+     "measured_same_year": 0.04,
+     "dE_twh": 0.006
+    }
+   ],
+   "reconcile": {
+    "family_committed": 55.86,
+    "raw_930": 55.97,
+    "fold_F": 1.222,
+    "target": 54.748,
+    "fired_committed": false,
+    "s_est": 1.0044,
+    "family_pre_est": 55.86,
+    "ratio_pre": 1.0203,
+    "family_new": 56.337,
+    "ratio_new": 1.029,
+    "fires_new": false,
+    "scale_new": 1.0,
+    "upper_margin_new_twh": 0.105,
+    "lower_margin_new_twh": 3.231,
+    "ratio_new_fold_refuted": 1.0065,
+    "fires_new_fold_refuted": false,
+    "s_ref": 1.0081
+   },
+   "fold_test": {
+    "e930_gas": 55.47,
+    "eia923_gas_full": 56.74,
+    "gap_930_minus_923": -1.27,
+    "fold_F": 1.22
+   },
+   "holdout": {
+    "e930_other": 4.809,
+    "bench_OTHER": 3.026,
+    "bench_biomass": 3.005,
+    "inj_total_twh": 6.031,
+    "inj_chpY_twh": 1.022,
+    "inj_chpY_by_class": {
+     "OTHER": 0.215,
+     "biomass": 0.807
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 0.098,
+    "model_add_by_group": {
+     "CC_CHP": 0.162,
+     "CT_CHP": -0.063,
+     "ST_CHP": 0.0
+    },
+    "model_chp_twh": {
+     "CC_CHP": 0.5630000233650208,
+     "CT_CHP": 0.4970000088214874,
+     "ST_CHP": 0.16599999368190765
+    },
+    "displaced_twh_by_class": {
+     "CC_REGULAR": 0.062,
+     "CT_PEAKER": 0.006
+    },
+    "unabsorbed_twh": 0.086
+   },
+   "holdout_reach": {
+    "removed_twh": 1.022,
+    "taken_twh_by_class": {
+     "CC_CHP": 0.04600000008940697,
+     "CC_REGULAR": 0.8700000047683716,
+     "CT_PEAKER": 0.06400000303983688,
+     "ST_GAS": 0.032999999821186066
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econ",
+     "econc00",
+     "econc01",
+     "econc02",
+     "econc03",
+     "econc04",
+     "econc05",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 4,
+     "cems_twh": 2.32,
+     "model_twh_same_plants": 0.517,
+     "cems_on_wmean": 0.93,
+     "model_on_wmean": 0.328,
+     "cems_starts_median": 16.0,
+     "model_starts_median": 136.5
+    },
+    "release": {
+     "gain_twh": 0.042,
+     "gain_by_group": {
+      "CC_CHP": 0.0,
+      "CT_CHP": 0.041999999433755875,
+      "ST_CHP": 0.0
+     },
+     "markup_mean": 6.2,
+     "plants_inverted": 4,
+     "plants": 8,
+     "displaced_twh_by_class": {
+      "CC_REGULAR": 0.024000000208616257
+     },
+     "unabsorbed_twh": 0.016
+    }
+   }
+  },
+  "2024": {
+   "plants_chp": 4,
+   "plants_in_sched67": 4,
+   "netgen_twh": 1.858,
+   "netgen_twh_covered": 1.858,
+   "btm_default_twh": 0.693,
+   "btm_measured_twh": 0.195,
+   "dE_bench_twh": 0.497,
+   "dE_by_group": {
+    "CC_CHP": 0.533,
+    "CT_CHP": -0.035
+   },
+   "netgen_by_group": {
+    "CC_CHP": 1.737,
+    "CT_CHP": 0.121
+   },
+   "default_shares": [
+    0.35,
+    0.7
+   ],
+   "top": [
+    {
+     "plant": 1595,
+     "name": "Kendall Square Station",
+     "group": "CC_CHP",
+     "netgen_twh": 1.579,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 0.553
+    },
+    {
+     "plant": 54605,
+     "name": "Pratt & Whitney",
+     "group": "CT_CHP",
+     "netgen_twh": 0.121,
+     "default": 0.7,
+     "measured": 0.991,
+     "measured_same_year": 1.0,
+     "dE_twh": -0.035
+    },
+    {
+     "plant": 10567,
+     "name": "Algonquin Windsor Locks",
+     "group": "CC_CHP",
+     "netgen_twh": 0.13,
+     "default": 0.35,
+     "measured": 0.568,
+     "measured_same_year": 0.576,
+     "dE_twh": -0.028
+    },
+    {
+     "plant": 50002,
+     "name": "Pittsfield Generating LP",
+     "group": "CC_CHP",
+     "netgen_twh": 0.028,
+     "default": 0.35,
+     "measured": 0.045,
+     "measured_same_year": 0.035,
+     "dE_twh": 0.009
+    }
+   ],
+   "reconcile": {
+    "family_committed": 60.149,
+    "raw_930": 60.249,
+    "fold_F": 1.139,
+    "target": 59.11,
+    "fired_committed": false,
+    "s_est": 1.0028,
+    "family_pre_est": 60.149,
+    "ratio_pre": 1.0176,
+    "family_new": 60.646,
+    "ratio_new": 1.026,
+    "fires_new": false,
+    "scale_new": 1.0,
+    "upper_margin_new_twh": 0.292,
+    "lower_margin_new_twh": 3.31,
+    "ratio_new_fold_refuted": 1.0066,
+    "fires_new_fold_refuted": false,
+    "s_ref": 1.0081
+   },
+   "fold_test": {
+    "e930_gas": 59.64,
+    "eia923_gas_full": 61.12,
+    "gap_930_minus_923": -1.48,
+    "fold_F": 1.14
+   },
+   "holdout": {
+    "e930_other": 4.698,
+    "bench_OTHER": 2.873,
+    "bench_biomass": 2.964,
+    "inj_total_twh": 5.837,
+    "inj_chpY_twh": 1.036,
+    "inj_chpY_by_class": {
+     "OTHER": 0.191,
+     "biomass": 0.845
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 0.27,
+    "model_add_by_group": {
+     "CC_CHP": 0.333,
+     "CT_CHP": -0.063,
+     "ST_CHP": 0.0
+    },
+    "model_chp_twh": {
+     "CC_CHP": 0.8700000047683716,
+     "CT_CHP": 0.515999972820282,
+     "ST_CHP": 0.17499999701976776
+    },
+    "displaced_twh_by_class": {
+     "CC_REGULAR": 0.155,
+     "CT_PEAKER": 0.012
+    },
+    "unabsorbed_twh": 0.136
+   },
+   "holdout_reach": {
+    "removed_twh": 1.036,
+    "taken_twh_by_class": {
+     "CC_CHP": 0.026000000536441803,
+     "CC_REGULAR": 0.8920000195503235,
+     "CT_PEAKER": 0.08699999749660492,
+     "ST_GAS": 0.026000000536441803
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econ",
+     "econc00",
+     "econc01",
+     "econc02",
+     "econc03",
+     "econc04",
+     "econc05",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 4,
+     "cems_twh": 2.396,
+     "model_twh_same_plants": 0.821,
+     "cems_on_wmean": 0.896,
+     "model_on_wmean": 0.588,
+     "cems_starts_median": 22.0,
+     "model_starts_median": 72.5
+    },
+    "release": {
+     "gain_twh": 0.057,
+     "gain_by_group": {
+      "CC_CHP": 0.0,
+      "CT_CHP": 0.050999999046325684,
+      "ST_CHP": 0.004999999888241291
+     },
+     "markup_mean": 6.66,
+     "plants_inverted": 5,
+     "plants": 9,
+     "displaced_twh_by_class": {
+      "CC_REGULAR": 0.03200000151991844
+     },
+     "unabsorbed_twh": 0.021
+    }
+   }
+  },
+  "2025": {
+   "plants_chp": 4,
+   "plants_in_sched67": 4,
+   "netgen_twh": 1.856,
+   "netgen_twh_covered": 1.856,
+   "btm_default_twh": 0.673,
+   "btm_measured_twh": 0.148,
+   "dE_bench_twh": 0.524,
+   "dE_by_group": {
+    "CC_CHP": 0.543,
+    "CT_CHP": -0.019
+   },
+   "netgen_by_group": {
+    "CC_CHP": 1.79,
+    "CT_CHP": 0.066
+   },
+   "default_shares": [
+    0.35,
+    0.7
+   ],
+   "top": [
+    {
+     "plant": 1595,
+     "name": "Kendall Square Station",
+     "group": "CC_CHP",
+     "netgen_twh": 1.521,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 0.532
+    },
+    {
+     "plant": 50002,
+     "name": "Pittsfield Generating LP",
+     "group": "CC_CHP",
+     "netgen_twh": 0.133,
+     "default": 0.35,
+     "measured": 0.045,
+     "measured_same_year": 0.0,
+     "dE_twh": 0.041
+    },
+    {
+     "plant": 10567,
+     "name": "Algonquin Windsor Locks",
+     "group": "CC_CHP",
+     "netgen_twh": 0.136,
+     "default": 0.35,
+     "measured": 0.568,
+     "measured_same_year": 0.538,
+     "dE_twh": -0.03
+    },
+    {
+     "plant": 54605,
+     "name": "Pratt & Whitney",
+     "group": "CT_CHP",
+     "netgen_twh": 0.066,
+     "default": 0.7,
+     "measured": 0.991,
+     "measured_same_year": 1.0,
+     "dE_twh": -0.019
+    }
+   ],
+   "reconcile": {
+    "family_committed": 61.384,
+    "raw_930": 61.607,
+    "fold_F": 1.21,
+    "target": 60.397,
+    "fired_committed": false,
+    "s_est": 1.0121,
+    "family_pre_est": 61.384,
+    "ratio_pre": 1.0163,
+    "family_new": 61.908,
+    "ratio_new": 1.025,
+    "fires_new": false,
+    "scale_new": 1.0,
+    "upper_margin_new_twh": 0.356,
+    "lower_margin_new_twh": 3.323,
+    "ratio_new_fold_refuted": 1.0049,
+    "fires_new_fold_refuted": false,
+    "s_ref": 1.0081
+   },
+   "fold_test": {
+    "e930_gas": 60.09,
+    "eia923_gas_full": 61.47,
+    "gap_930_minus_923": -1.38,
+    "fold_F": 1.21
+   },
+   "holdout": {
+    "e930_other": 4.737,
+    "bench_OTHER": 2.721,
+    "bench_biomass": 3.226,
+    "inj_total_twh": 5.947,
+    "inj_chpY_twh": 1.056,
+    "inj_chpY_by_class": {
+     "OTHER": 0.183,
+     "biomass": 0.874
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 0.184,
+    "model_add_by_group": {
+     "CC_CHP": 0.247,
+     "CT_CHP": -0.063,
+     "ST_CHP": 0.0
+    },
+    "model_chp_twh": {
+     "CC_CHP": 0.7739999890327454,
+     "CT_CHP": 0.5239999890327454,
+     "ST_CHP": 0.11599999666213989
+    },
+    "displaced_twh_by_class": {
+     "CC_REGULAR": 0.105,
+     "CT_PEAKER": 0.012
+    },
+    "unabsorbed_twh": 0.119
+   },
+   "holdout_reach": {
+    "removed_twh": 1.056,
+    "taken_twh_by_class": {
+     "": 0.00800000037997961,
+     "CC_CHP": 0.028999999165534973,
+     "CC_REGULAR": 0.9010000228881836,
+     "CT_PEAKER": 0.10700000077486038,
+     "ST_GAS": 0.007000000216066837
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econ",
+     "econc00",
+     "econc01",
+     "econc02",
+     "econc03",
+     "econc04",
+     "econc05",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 4,
+     "cems_twh": 2.376,
+     "model_twh_same_plants": 0.763,
+     "cems_on_wmean": 0.886,
+     "model_on_wmean": 0.458,
+     "cems_starts_median": 30.0,
+     "model_starts_median": 86.5
+    },
+    "release": {
+     "gain_twh": 0.047,
+     "gain_by_group": {
+      "CC_CHP": 0.0,
+      "CT_CHP": 0.04699999839067459,
+      "ST_CHP": 0.0
+     },
+     "markup_mean": 12.21,
+     "plants_inverted": 6,
+     "plants": 9,
+     "displaced_twh_by_class": {
+      "CC_REGULAR": 0.027000000700354576
+     },
+     "unabsorbed_twh": 0.018
+    }
+   }
+  }
+ },
+ "NWPP": {
+  "2019": {
+   "plants_chp": 5,
+   "plants_in_sched67": 2,
+   "netgen_twh": 9.475,
+   "netgen_twh_covered": 6.174,
+   "btm_default_twh": 3.316,
+   "btm_measured_twh": 1.194,
+   "dE_bench_twh": 2.122,
+   "dE_by_group": {
+    "CC_CHP": 2.122
+   },
+   "netgen_by_group": {
+    "CC_CHP": 9.475
+   },
+   "default_shares": [
+    0.35
+   ],
+   "top": [
+    {
+     "plant": 55103,
+     "name": "Klamath Cogeneration Plant",
+     "group": "CC_CHP",
+     "netgen_twh": 3.312,
+     "default": 0.35,
+     "measured": 0.012,
+     "measured_same_year": 0.0,
+     "dE_twh": 1.12
+    },
+    {
+     "plant": 54761,
+     "name": "Hermiston Generating Plant",
+     "group": "CC_CHP",
+     "netgen_twh": 2.863,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 1.002
+    }
+   ],
+   "reconcile": {
+    "family_committed": 117.918,
+    "raw_930": 118.834,
+    "fold_F": 0.916,
+    "target": 117.918,
+    "fired_committed": true,
+    "s_est": 0.8717,
+    "family_pre_est": 135.274,
+    "ratio_pre": 1.1472,
+    "family_new": 137.396,
+    "ratio_new": 1.1652,
+    "fires_new": true,
+    "scale_new": 0.8582,
+    "upper_margin_new_twh": -15.831,
+    "lower_margin_new_twh": 23.015,
+    "ratio_new_fold_refuted": 1.1562,
+    "fires_new_fold_refuted": true,
+    "s_ref": 1.0
+   },
+   "fold_test": {
+    "e930_gas": 63.83,
+    "eia923_gas_full": 75.66,
+    "gap_930_minus_923": -11.83,
+    "fold_F": 0.92
+   },
+   "holdout": {
+    "e930_other": 7.845,
+    "bench_OTHER": 5.674,
+    "bench_biomass": 3.087,
+    "inj_total_twh": 8.761,
+    "inj_chpY_twh": 3.528,
+    "inj_chpY_by_class": {
+     "OTHER": 1.365,
+     "biomass": 2.163
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 2.249,
+    "model_add_by_group": {
+     "CC_CHP": 2.249,
+     "CT_CHP": 0.0,
+     "ST_CHP": 0.0
+    },
+    "model_chp_twh": {
+     "CC_CHP": 6.165999889373779,
+     "CT_CHP": 0.4300000071525574,
+     "ST_CHP": 0.014999999664723873
+    },
+    "displaced_twh_by_class": {
+     "": 0.029,
+     "CC_REGULAR": 0.677,
+     "COAL_BIT": 0.334,
+     "COAL_PRB": 0.935,
+     "CT_PEAKER": 0.087
+    },
+    "unabsorbed_twh": 0.183
+   },
+   "holdout_reach": {
+    "removed_twh": 3.528,
+    "taken_twh_by_class": {
+     "": 0.3709999918937683,
+     "CC_CHP": 0.12300000339746475,
+     "CC_REGULAR": 1.8639999628067017,
+     "COAL_BIT": 0.6349999904632568,
+     "COAL_PRB": 0.16200000047683716,
+     "CT_PEAKER": 0.36000001430511475,
+     "ST_GAS": 0.007000000216066837
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 5,
+     "cems_twh": 11.009,
+     "model_twh_same_plants": 6.105,
+     "cems_on_wmean": 0.86,
+     "model_on_wmean": 0.872,
+     "cems_starts_median": 22.0,
+     "model_starts_median": 3.0
+    },
+    "release": {
+     "gain_twh": 0.671,
+     "gain_by_group": {
+      "CC_CHP": 0.621999979019165,
+      "CT_CHP": 0.04899999871850014
+     },
+     "markup_mean": 13.5,
+     "plants_inverted": 7,
+     "plants": 8,
+     "displaced_twh_by_class": {
+      "": 0.010999999940395355,
+      "CC_REGULAR": 0.2070000022649765,
+      "COAL_BIT": 0.07199999690055847,
+      "COAL_PRB": 0.27399998903274536,
+      "CT_PEAKER": 0.01899999938905239
+     },
+     "unabsorbed_twh": 0.085
+    }
+   }
+  },
+  "2020": {
+   "plants_chp": 5,
+   "plants_in_sched67": 2,
+   "netgen_twh": 8.233,
+   "netgen_twh_covered": 5.054,
+   "btm_default_twh": 2.882,
+   "btm_measured_twh": 1.145,
+   "dE_bench_twh": 1.737,
+   "dE_by_group": {
+    "CC_CHP": 1.737
+   },
+   "netgen_by_group": {
+    "CC_CHP": 8.233
+   },
+   "default_shares": [
+    0.35
+   ],
+   "top": [
+    {
+     "plant": 55103,
+     "name": "Klamath Cogeneration Plant",
+     "group": "CC_CHP",
+     "netgen_twh": 2.71,
+     "default": 0.35,
+     "measured": 0.012,
+     "measured_same_year": 0.0,
+     "dE_twh": 0.917
+    },
+    {
+     "plant": 54761,
+     "name": "Hermiston Generating Plant",
+     "group": "CC_CHP",
+     "netgen_twh": 2.344,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 0.82
+    }
+   ],
+   "reconcile": {
+    "family_committed": 110.9,
+    "raw_930": 111.477,
+    "fold_F": 0.577,
+    "target": 110.9,
+    "fired_committed": true,
+    "s_est": 0.9158,
+    "family_pre_est": 121.096,
+    "ratio_pre": 1.0919,
+    "family_new": 122.833,
+    "ratio_new": 1.1076,
+    "fires_new": true,
+    "scale_new": 0.9028,
+    "upper_margin_new_twh": -8.503,
+    "lower_margin_new_twh": 15.26,
+    "ratio_new_fold_refuted": 1.1019,
+    "fires_new_fold_refuted": true,
+    "s_ref": 1.0
+   },
+   "fold_test": {
+    "e930_gas": 59.08,
+    "eia923_gas_full": 73.45,
+    "gap_930_minus_923": -14.37,
+    "fold_F": 0.58
+   },
+   "holdout": {
+    "e930_other": 8.054,
+    "bench_OTHER": 5.65,
+    "bench_biomass": 2.981,
+    "inj_total_twh": 8.631,
+    "inj_chpY_twh": 3.398,
+    "inj_chpY_by_class": {
+     "OTHER": 1.358,
+     "biomass": 2.041
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 1.965,
+    "model_add_by_group": {
+     "CC_CHP": 1.965,
+     "CT_CHP": 0.0,
+     "ST_CHP": 0.0
+    },
+    "model_chp_twh": {
+     "CC_CHP": 5.1020002365112305,
+     "CT_CHP": 0.4399999976158142,
+     "ST_CHP": 0.023000000044703484
+    },
+    "displaced_twh_by_class": {
+     "": 0.019,
+     "CC_REGULAR": 0.68,
+     "COAL_BIT": 0.244,
+     "COAL_PRB": 0.525,
+     "CT_PEAKER": 0.106
+    },
+    "unabsorbed_twh": 0.389
+   },
+   "holdout_reach": {
+    "removed_twh": 3.398,
+    "taken_twh_by_class": {
+     "": 0.4490000009536743,
+     "CC_CHP": 0.12700000405311584,
+     "CC_REGULAR": 1.8480000495910645,
+     "COAL_BIT": 0.24699999392032623,
+     "COAL_PRB": 0.0820000022649765,
+     "CT_CHP": 0.012000000104308128,
+     "CT_PEAKER": 0.6269999742507935
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 5,
+     "cems_twh": 9.573,
+     "model_twh_same_plants": 5.053,
+     "cems_on_wmean": 0.809,
+     "model_on_wmean": 0.824,
+     "cems_starts_median": 33.0,
+     "model_starts_median": 3.0
+    },
+    "release": {
+     "gain_twh": 1.46,
+     "gain_by_group": {
+      "CC_CHP": 1.121999979019165,
+      "CT_CHP": 0.33799999952316284
+     },
+     "markup_mean": 12.03,
+     "plants_inverted": 8,
+     "plants": 10,
+     "displaced_twh_by_class": {
+      "": 0.014999999664723873,
+      "CC_REGULAR": 0.4580000042915344,
+      "COAL_BIT": 0.19900000095367432,
+      "COAL_PRB": 0.32199999690055847,
+      "CT_PEAKER": 0.08699999749660492
+     },
+     "unabsorbed_twh": 0.378
+    }
+   }
+  },
+  "2021": {
+   "plants_chp": 5,
+   "plants_in_sched67": 2,
+   "netgen_twh": 9.483,
+   "netgen_twh_covered": 5.878,
+   "btm_default_twh": 3.319,
+   "btm_measured_twh": 1.298,
+   "dE_bench_twh": 2.021,
+   "dE_by_group": {
+    "CC_CHP": 2.021
+   },
+   "netgen_by_group": {
+    "CC_CHP": 9.483
+   },
+   "default_shares": [
+    0.35
+   ],
+   "top": [
+    {
+     "plant": 55103,
+     "name": "Klamath Cogeneration Plant",
+     "group": "CC_CHP",
+     "netgen_twh": 3.055,
+     "default": 0.35,
+     "measured": 0.012,
+     "measured_same_year": 0.0,
+     "dE_twh": 1.033
+    },
+    {
+     "plant": 54761,
+     "name": "Hermiston Generating Plant",
+     "group": "CC_CHP",
+     "netgen_twh": 2.823,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 0.988
+    }
+   ],
+   "reconcile": {
+    "family_committed": 113.868,
+    "raw_930": 114.543,
+    "fold_F": 0.675,
+    "target": 113.868,
+    "fired_committed": true,
+    "s_est": 0.886,
+    "family_pre_est": 128.519,
+    "ratio_pre": 1.1287,
+    "family_new": 130.54,
+    "ratio_new": 1.1464,
+    "fires_new": true,
+    "scale_new": 0.8723,
+    "upper_margin_new_twh": -13.15,
+    "lower_margin_new_twh": 20.088,
+    "ratio_new_fold_refuted": 1.1397,
+    "fires_new_fold_refuted": true,
+    "s_ref": 1.0
+   },
+   "fold_test": {
+    "e930_gas": 63.94,
+    "eia923_gas_full": 80.0,
+    "gap_930_minus_923": -16.05,
+    "fold_F": 0.68
+   },
+   "holdout": {
+    "e930_other": 8.149,
+    "bench_OTHER": 5.702,
+    "bench_biomass": 3.122,
+    "inj_total_twh": 8.824,
+    "inj_chpY_twh": 3.426,
+    "inj_chpY_by_class": {
+     "OTHER": 1.333,
+     "biomass": 2.093
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 2.235,
+    "model_add_by_group": {
+     "CC_CHP": 2.235,
+     "CT_CHP": 0.0,
+     "ST_CHP": 0.0
+    },
+    "model_chp_twh": {
+     "CC_CHP": 5.8520002365112305,
+     "CT_CHP": 0.4390000104904175,
+     "ST_CHP": 0.02500000037252903
+    },
+    "displaced_twh_by_class": {
+     "": 0.098,
+     "CC_REGULAR": 1.306,
+     "COAL_BIT": 0.08,
+     "COAL_PRB": 0.403,
+     "COAL_WC": 0.005,
+     "CT_PEAKER": 0.206
+    },
+    "unabsorbed_twh": 0.134
+   },
+   "holdout_reach": {
+    "removed_twh": 3.426,
+    "taken_twh_by_class": {
+     "": 0.2809999883174896,
+     "CC_CHP": 0.15299999713897705,
+     "CC_REGULAR": 1.3049999475479126,
+     "COAL_BIT": 0.6480000019073486,
+     "COAL_PRB": 0.8149999976158142,
+     "COAL_WC": 0.017999999225139618,
+     "CT_PEAKER": 0.19699999690055847,
+     "ST_GAS": 0.006000000052154064
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 5,
+     "cems_twh": 10.525,
+     "model_twh_same_plants": 5.751,
+     "cems_on_wmean": 0.885,
+     "model_on_wmean": 0.87,
+     "cems_starts_median": 9.0,
+     "model_starts_median": 3.0
+    },
+    "release": {
+     "gain_twh": 1.22,
+     "gain_by_group": {
+      "CC_CHP": 0.8730000257492065,
+      "CT_CHP": 0.34700000286102295
+     },
+     "markup_mean": 11.56,
+     "plants_inverted": 11,
+     "plants": 11,
+     "displaced_twh_by_class": {
+      "": 0.1080000028014183,
+      "CC_REGULAR": 0.5709999799728394,
+      "COAL_BIT": 0.07500000298023224,
+      "COAL_PRB": 0.27900001406669617,
+      "CT_PEAKER": 0.12099999934434891
+     },
+     "unabsorbed_twh": 0.058
+    }
+   }
+  },
+  "2022": {
+   "plants_chp": 5,
+   "plants_in_sched67": 2,
+   "netgen_twh": 7.699,
+   "netgen_twh_covered": 4.896,
+   "btm_default_twh": 2.695,
+   "btm_measured_twh": 1.009,
+   "dE_bench_twh": 1.685,
+   "dE_by_group": {
+    "CC_CHP": 1.685
+   },
+   "netgen_by_group": {
+    "CC_CHP": 7.699
+   },
+   "default_shares": [
+    0.35
+   ],
+   "top": [
+    {
+     "plant": 54761,
+     "name": "Hermiston Generating Plant",
+     "group": "CC_CHP",
+     "netgen_twh": 2.472,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 0.865
+    },
+    {
+     "plant": 55103,
+     "name": "Klamath Cogeneration Plant",
+     "group": "CC_CHP",
+     "netgen_twh": 2.424,
+     "default": 0.35,
+     "measured": 0.012,
+     "measured_same_year": 0.0,
+     "dE_twh": 0.82
+    }
+   ],
+   "reconcile": {
+    "family_committed": 109.381,
+    "raw_930": 109.858,
+    "fold_F": 0.477,
+    "target": 109.381,
+    "fired_committed": true,
+    "s_est": 0.8914,
+    "family_pre_est": 122.707,
+    "ratio_pre": 1.1218,
+    "family_new": 124.392,
+    "ratio_new": 1.1372,
+    "fires_new": true,
+    "scale_new": 0.8793,
+    "upper_margin_new_twh": -11.628,
+    "lower_margin_new_twh": 18.292,
+    "ratio_new_fold_refuted": 1.1323,
+    "fires_new_fold_refuted": true,
+    "s_ref": 1.0
+   },
+   "fold_test": {
+    "e930_gas": 59.99,
+    "eia923_gas_full": 74.15,
+    "gap_930_minus_923": -14.16,
+    "fold_F": 0.48
+   },
+   "holdout": {
+    "e930_other": 8.099,
+    "bench_OTHER": 5.745,
+    "bench_biomass": 2.832,
+    "inj_total_twh": 8.576,
+    "inj_chpY_twh": 3.123,
+    "inj_chpY_by_class": {
+     "OTHER": 1.269,
+     "biomass": 1.854
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 1.957,
+    "model_add_by_group": {
+     "CC_CHP": 1.957,
+     "CT_CHP": 0.0,
+     "ST_CHP": 0.0
+    },
+    "model_chp_twh": {
+     "CC_CHP": 5.4720001220703125,
+     "CT_CHP": 0.41499999165534973,
+     "ST_CHP": 0.023000000044703484
+    },
+    "displaced_twh_by_class": {
+     "": 0.167,
+     "CC_REGULAR": 1.314,
+     "COAL_BIT": 0.031,
+     "COAL_PRB": 0.119,
+     "CT_PEAKER": 0.164
+    },
+    "unabsorbed_twh": 0.156
+   },
+   "holdout_reach": {
+    "removed_twh": 3.123,
+    "taken_twh_by_class": {
+     "": 0.21299999952316284,
+     "CC_CHP": 0.06300000101327896,
+     "CC_REGULAR": 0.734000027179718,
+     "COAL_BIT": 1.0440000295639038,
+     "COAL_PRB": 0.875,
+     "COAL_WC": 0.007000000216066837,
+     "CT_CHP": 0.007000000216066837,
+     "CT_PEAKER": 0.17800000309944153
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 5,
+     "cems_twh": 9.19,
+     "model_twh_same_plants": 5.412,
+     "cems_on_wmean": 0.811,
+     "model_on_wmean": 0.813,
+     "cems_starts_median": 32.0,
+     "model_starts_median": 6.0
+    },
+    "release": {
+     "gain_twh": 0.967,
+     "gain_by_group": {
+      "CC_CHP": 0.6340000033378601,
+      "CT_CHP": 0.3330000042915344
+     },
+     "markup_mean": 13.19,
+     "plants_inverted": 10,
+     "plants": 11,
+     "displaced_twh_by_class": {
+      "": 0.2029999941587448,
+      "CC_REGULAR": 0.5529999732971191,
+      "COAL_BIT": 0.026000000536441803,
+      "COAL_PRB": 0.04800000041723251,
+      "CT_PEAKER": 0.05400000140070915
+     },
+     "unabsorbed_twh": 0.08
+    }
+   }
+  },
+  "2023": {
+   "plants_chp": 6,
+   "plants_in_sched67": 3,
+   "netgen_twh": 10.353,
+   "netgen_twh_covered": 6.08,
+   "btm_default_twh": 3.624,
+   "btm_measured_twh": 1.531,
+   "dE_bench_twh": 2.093,
+   "dE_by_group": {
+    "CC_CHP": 2.093
+   },
+   "netgen_by_group": {
+    "CC_CHP": 10.353
+   },
+   "default_shares": [
+    0.35
+   ],
+   "top": [
+    {
+     "plant": 54761,
+     "name": "Hermiston Generating Plant",
+     "group": "CC_CHP",
+     "netgen_twh": 2.99,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 1.046
+    },
+    {
+     "plant": 55103,
+     "name": "Klamath Cogeneration Plant",
+     "group": "CC_CHP",
+     "netgen_twh": 2.881,
+     "default": 0.35,
+     "measured": 0.012,
+     "measured_same_year": 0.0,
+     "dE_twh": 0.974
+    },
+    {
+     "plant": 54271,
+     "name": "Saguaro Power",
+     "group": "CC_CHP",
+     "netgen_twh": 0.209,
+     "default": 0.35,
+     "measured": 0.007,
+     "measured_same_year": 0.004,
+     "dE_twh": 0.072
+    }
+   ],
+   "reconcile": {
+    "family_committed": 112.697,
+    "raw_930": 112.927,
+    "fold_F": 0.23,
+    "target": 112.697,
+    "fired_committed": true,
+    "s_est": 0.9,
+    "family_pre_est": 125.219,
+    "ratio_pre": 1.1111,
+    "family_new": 127.312,
+    "ratio_new": 1.1297,
+    "fires_new": true,
+    "scale_new": 0.8852,
+    "upper_margin_new_twh": -11.129,
+    "lower_margin_new_twh": 17.996,
+    "ratio_new_fold_refuted": 1.1274,
+    "fires_new_fold_refuted": true,
+    "s_ref": 1.0
+   },
+   "fold_test": {
+    "e930_gas": 70.17,
+    "eia923_gas_full": 85.48,
+    "gap_930_minus_923": -15.31,
+    "fold_F": 0.23
+   },
+   "holdout": {
+    "e930_other": 8.454,
+    "bench_OTHER": 5.912,
+    "bench_biomass": 2.772,
+    "inj_total_twh": 8.684,
+    "inj_chpY_twh": 3.109,
+    "inj_chpY_by_class": {
+     "OTHER": 1.294,
+     "biomass": 1.815
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 2.211,
+    "model_add_by_group": {
+     "CC_CHP": 2.211,
+     "CT_CHP": 0.0,
+     "ST_CHP": 0.0
+    },
+    "model_chp_twh": {
+     "CC_CHP": 6.863999843597412,
+     "CT_CHP": 0.44600000977516174,
+     "ST_CHP": 0.032999999821186066
+    },
+    "displaced_twh_by_class": {
+     "": 0.433,
+     "CC_REGULAR": 0.688,
+     "COAL_BIT": 0.211,
+     "COAL_PRB": 0.397,
+     "COAL_WC": 0.006,
+     "CT_PEAKER": 0.34,
+     "ST_GAS": 0.006
+    },
+    "unabsorbed_twh": 0.129
+   },
+   "holdout_reach": {
+    "removed_twh": 3.109,
+    "taken_twh_by_class": {
+     "": 0.6340000033378601,
+     "CC_CHP": 0.017000000923871994,
+     "CC_REGULAR": 1.152999997138977,
+     "COAL_BIT": 0.6769999861717224,
+     "COAL_PRB": 0.3930000066757202,
+     "COAL_WC": 0.017999999225139618,
+     "CT_PEAKER": 0.1940000057220459,
+     "ST_GAS": 0.020999999716877937
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 6,
+     "cems_twh": 12.096,
+     "model_twh_same_plants": 6.752,
+     "cems_on_wmean": 0.862,
+     "model_on_wmean": 0.903,
+     "cems_starts_median": 7.0,
+     "model_starts_median": 13.0
+    },
+    "release": {
+     "gain_twh": 0.712,
+     "gain_by_group": {
+      "CC_CHP": 0.3840000033378601,
+      "CT_CHP": 0.328000009059906
+     },
+     "markup_mean": 10.16,
+     "plants_inverted": 10,
+     "plants": 12,
+     "displaced_twh_by_class": {
+      "": 0.3019999861717224,
+      "CC_REGULAR": 0.17399999499320984,
+      "COAL_BIT": 0.041999999433755875,
+      "COAL_PRB": 0.09399999678134918,
+      "CT_PEAKER": 0.05900000035762787
+     },
+     "unabsorbed_twh": 0.038
+    }
+   }
+  },
+  "2024": {
+   "plants_chp": 7,
+   "plants_in_sched67": 4,
+   "netgen_twh": 12.064,
+   "netgen_twh_covered": 7.653,
+   "btm_default_twh": 4.222,
+   "btm_measured_twh": 1.599,
+   "dE_bench_twh": 2.623,
+   "dE_by_group": {
+    "CC_CHP": 2.623
+   },
+   "netgen_by_group": {
+    "CC_CHP": 12.064
+   },
+   "default_shares": [
+    0.35
+   ],
+   "top": [
+    {
+     "plant": 55103,
+     "name": "Klamath Cogeneration Plant",
+     "group": "CC_CHP",
+     "netgen_twh": 3.665,
+     "default": 0.35,
+     "measured": 0.012,
+     "measured_same_year": 0.028,
+     "dE_twh": 1.24
+    },
+    {
+     "plant": 54761,
+     "name": "Hermiston Generating Plant",
+     "group": "CC_CHP",
+     "netgen_twh": 3.346,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 1.171
+    },
+    {
+     "plant": 54350,
+     "name": "Nevada Cogen Assoc#1 GarnetVly",
+     "group": "CC_CHP",
+     "netgen_twh": 0.43,
+     "default": 0.35,
+     "measured": 0.025,
+     "measured_same_year": 0.023,
+     "dE_twh": 0.14
+    },
+    {
+     "plant": 54271,
+     "name": "Saguaro Power",
+     "group": "CC_CHP",
+     "netgen_twh": 0.213,
+     "default": 0.35,
+     "measured": 0.007,
+     "measured_same_year": 0.0,
+     "dE_twh": 0.073
+    }
+   ],
+   "reconcile": {
+    "family_committed": 111.825,
+    "raw_930": 111.825,
+    "fold_F": 0.0,
+    "target": 111.825,
+    "fired_committed": true,
+    "s_est": 0.9121,
+    "family_pre_est": 122.602,
+    "ratio_pre": 1.0964,
+    "family_new": 125.225,
+    "ratio_new": 1.1198,
+    "fires_new": true,
+    "scale_new": 0.893,
+    "upper_margin_new_twh": -9.941,
+    "lower_margin_new_twh": 16.754,
+    "ratio_new_fold_refuted": 1.1198,
+    "fires_new_fold_refuted": true,
+    "s_ref": 1.0
+   },
+   "fold_test": {
+    "e930_gas": 73.14,
+    "eia923_gas_full": 90.51,
+    "gap_930_minus_923": -17.36,
+    "fold_F": 0.0
+   },
+   "holdout": {
+    "e930_other": 8.253,
+    "bench_OTHER": 5.566,
+    "bench_biomass": 2.593,
+    "inj_total_twh": 8.159,
+    "inj_chpY_twh": 2.795,
+    "inj_chpY_by_class": {
+     "OTHER": 1.203,
+     "biomass": 1.592
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 2.683,
+    "model_add_by_group": {
+     "CC_CHP": 2.683,
+     "CT_CHP": 0.0,
+     "ST_CHP": 0.0
+    },
+    "model_chp_twh": {
+     "CC_CHP": 7.96999979019165,
+     "CT_CHP": 0.49000000953674316,
+     "ST_CHP": 0.032999999821186066
+    },
+    "displaced_twh_by_class": {
+     "": 0.217,
+     "CC_REGULAR": 0.698,
+     "COAL_BIT": 0.157,
+     "COAL_PRB": 0.338,
+     "CT_PEAKER": 0.328,
+     "ST_GAS": 0.165
+    },
+    "unabsorbed_twh": 0.779
+   },
+   "holdout_reach": {
+    "removed_twh": 2.795,
+    "taken_twh_by_class": {
+     "": 0.6010000109672546,
+     "CC_CHP": 0.04800000041723251,
+     "CC_REGULAR": 1.062999963760376,
+     "COAL_BIT": 0.23100000619888306,
+     "COAL_PRB": 0.19300000369548798,
+     "CT_PEAKER": 0.39500001072883606,
+     "ST_GAS": 0.25999999046325684
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 7,
+     "cems_twh": 13.8,
+     "model_twh_same_plants": 7.843,
+     "cems_on_wmean": 0.92,
+     "model_on_wmean": 0.916,
+     "cems_starts_median": 8.0,
+     "model_starts_median": 40.0
+    },
+    "release": {
+     "gain_twh": 0.604,
+     "gain_by_group": {
+      "CC_CHP": 0.28200000524520874,
+      "CT_CHP": 0.32199999690055847
+     },
+     "markup_mean": 6.78,
+     "plants_inverted": 8,
+     "plants": 12,
+     "displaced_twh_by_class": {
+      "": 0.06300000101327896,
+      "CC_REGULAR": 0.15199999511241913,
+      "COAL_BIT": 0.026000000536441803,
+      "COAL_PRB": 0.07400000095367432,
+      "CT_PEAKER": 0.07199999690055847,
+      "ST_GAS": 0.0430000014603138
+     },
+     "unabsorbed_twh": 0.173
+    }
+   }
+  },
+  "2025": {
+   "plants_chp": 7,
+   "plants_in_sched67": 4,
+   "netgen_twh": 10.406,
+   "netgen_twh_covered": 6.672,
+   "btm_default_twh": 3.642,
+   "btm_measured_twh": 1.353,
+   "dE_bench_twh": 2.289,
+   "dE_by_group": {
+    "CC_CHP": 2.289
+   },
+   "netgen_by_group": {
+    "CC_CHP": 10.406
+   },
+   "default_shares": [
+    0.35
+   ],
+   "top": [
+    {
+     "plant": 55103,
+     "name": "Klamath Cogeneration Plant",
+     "group": "CC_CHP",
+     "netgen_twh": 3.104,
+     "default": 0.35,
+     "measured": 0.012,
+     "measured_same_year": 0.0,
+     "dE_twh": 1.05
+    },
+    {
+     "plant": 54761,
+     "name": "Hermiston Generating Plant",
+     "group": "CC_CHP",
+     "netgen_twh": 2.998,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 1.049
+    },
+    {
+     "plant": 54350,
+     "name": "Nevada Cogen Assoc#1 GarnetVly",
+     "group": "CC_CHP",
+     "netgen_twh": 0.305,
+     "default": 0.35,
+     "measured": 0.025,
+     "measured_same_year": 0.019,
+     "dE_twh": 0.099
+    },
+    {
+     "plant": 54271,
+     "name": "Saguaro Power",
+     "group": "CC_CHP",
+     "netgen_twh": 0.264,
+     "default": 0.35,
+     "measured": 0.007,
+     "measured_same_year": 0.001,
+     "dE_twh": 0.091
+    }
+   ],
+   "reconcile": {
+    "family_committed": 113.993,
+    "raw_930": 113.993,
+    "fold_F": 0.0,
+    "target": 113.993,
+    "fired_committed": true,
+    "s_est": 0.9417,
+    "family_pre_est": 121.05,
+    "ratio_pre": 1.0619,
+    "family_new": 123.339,
+    "ratio_new": 1.082,
+    "fires_new": true,
+    "scale_new": 0.9242,
+    "upper_margin_new_twh": -5.821,
+    "lower_margin_new_twh": 12.766,
+    "ratio_new_fold_refuted": 1.082,
+    "fires_new_fold_refuted": true,
+    "s_ref": 1.0
+   },
+   "fold_test": {
+    "e930_gas": 71.27,
+    "eia923_gas_full": 83.6,
+    "gap_930_minus_923": -12.33,
+    "fold_F": 0.0
+   },
+   "holdout": {
+    "e930_other": 8.293,
+    "bench_OTHER": 5.271,
+    "bench_biomass": 2.637,
+    "inj_total_twh": 7.907,
+    "inj_chpY_twh": 3.12,
+    "inj_chpY_by_class": {
+     "OTHER": 1.352,
+     "biomass": 1.768
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 2.131,
+    "model_add_by_group": {
+     "CC_CHP": 2.131,
+     "CT_CHP": 0.0,
+     "ST_CHP": 0.0
+    },
+    "model_chp_twh": {
+     "CC_CHP": 6.392000198364258,
+     "CT_CHP": 0.44600000977516174,
+     "ST_CHP": 0.0
+    },
+    "displaced_twh_by_class": {
+     "": 0.227,
+     "CC_REGULAR": 0.527,
+     "COAL_BIT": 0.334,
+     "COAL_PRB": 0.226,
+     "CT_PEAKER": 0.152,
+     "ST_GAS": 0.038
+    },
+    "unabsorbed_twh": 0.627
+   },
+   "holdout_reach": {
+    "removed_twh": 3.12,
+    "taken_twh_by_class": {
+     "": 0.9810000061988831,
+     "CC_CHP": 0.05700000002980232,
+     "CC_REGULAR": 1.059000015258789,
+     "COAL_BIT": 0.2070000022649765,
+     "COAL_PRB": 0.19599999487400055,
+     "CT_PEAKER": 0.49799999594688416,
+     "ST_GAS": 0.11900000274181366
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 7,
+     "cems_twh": 12.695,
+     "model_twh_same_plants": 6.312,
+     "cems_on_wmean": 0.849,
+     "model_on_wmean": 0.882,
+     "cems_starts_median": 5.0,
+     "model_starts_median": 44.0
+    },
+    "release": {
+     "gain_twh": 0.908,
+     "gain_by_group": {
+      "CC_CHP": 0.5899999737739563,
+      "CT_CHP": 0.3179999887943268
+     },
+     "markup_mean": 10.14,
+     "plants_inverted": 11,
+     "plants": 13,
+     "displaced_twh_by_class": {
+      "": 0.12099999934434891,
+      "CC_REGULAR": 0.2619999945163727,
+      "COAL_BIT": 0.1080000028014183,
+      "COAL_PRB": 0.0820000022649765,
+      "CT_PEAKER": 0.06499999761581421,
+      "ST_GAS": 0.01600000075995922
+     },
+     "unabsorbed_twh": 0.254
+    }
+   }
+  }
+ },
+ "PJM": {
+  "2019": {
+   "plants_chp": 20,
+   "plants_in_sched67": 20,
+   "netgen_twh": 12.473,
+   "netgen_twh_covered": 12.473,
+   "btm_default_twh": 5.862,
+   "btm_measured_twh": 3.777,
+   "dE_bench_twh": 2.085,
+   "dE_by_group": {
+    "CC_CHP": 1.995,
+    "CT_CHP": 0.35,
+    "ST_CHP": -0.26
+   },
+   "netgen_by_group": {
+    "CC_CHP": 7.557,
+    "CT_CHP": 2.978,
+    "ST_CHP": 1.938
+   },
+   "default_shares": [
+    0.35,
+    0.7,
+    0.9
+   ],
+   "top": [
+    {
+     "plant": 55801,
+     "name": "Marcus Hook Energy LP",
+     "group": "CC_CHP",
+     "netgen_twh": 4.47,
+     "default": 0.35,
+     "measured": 0.022,
+     "measured_same_year": 0.025,
+     "dE_twh": 1.467
+    },
+    {
+     "plant": 10633,
+     "name": "Hopewell Cogeneration",
+     "group": "CC_CHP",
+     "netgen_twh": 1.495,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 0.523
+    },
+    {
+     "plant": 52193,
+     "name": "Delaware City Plant",
+     "group": "CT_CHP",
+     "netgen_twh": 1.0,
+     "default": 0.7,
+     "measured": 0.366,
+     "measured_same_year": 0.515,
+     "dE_twh": 0.334
+    },
+    {
+     "plant": 55216,
+     "name": "Morris Cogeneration LLC",
+     "group": "CC_CHP",
+     "netgen_twh": 0.653,
+     "default": 0.35,
+     "measured": 0.76,
+     "measured_same_year": 0.697,
+     "dE_twh": -0.268
+    },
+    {
+     "plant": 54832,
+     "name": "Brandywine Power Facility",
+     "group": "CC_CHP",
+     "netgen_twh": 0.705,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 0.247
+    },
+    {
+     "plant": 54785,
+     "name": "Grays Ferry Cogeneration",
+     "group": "CT_CHP",
+     "netgen_twh": 0.763,
+     "default": 0.35,
+     "measured": 0.027,
+     "measured_same_year": 0.0,
+     "dE_twh": 0.247
+    }
+   ],
+   "reconcile": {
+    "family_committed": 482.749,
+    "raw_930": 490.49,
+    "fold_F": 2.951,
+    "target": 487.539,
+    "fired_committed": false,
+    "s_est": 1.0047,
+    "family_pre_est": 482.749,
+    "ratio_pre": 0.9902,
+    "family_new": 484.834,
+    "ratio_new": 0.9945,
+    "fires_new": false,
+    "scale_new": 1.0,
+    "upper_margin_new_twh": 17.784,
+    "lower_margin_new_twh": 11.921,
+    "ratio_new_fold_refuted": 0.9885,
+    "fires_new_fold_refuted": false,
+    "s_ref": 1.0037
+   },
+   "fold_test": {
+    "e930_gas": 293.87,
+    "eia923_gas_full": 305.12,
+    "gap_930_minus_923": -11.26,
+    "fold_F": 2.95
+   },
+   "holdout": {
+    "e930_other": 9.595,
+    "bench_OTHER": 5.502,
+    "bench_biomass": 7.045,
+    "inj_total_twh": 11.62,
+    "inj_chpY_twh": 5.421,
+    "inj_chpY_by_class": {
+     "OTHER": 2.668,
+     "biomass": 2.753
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 2.619,
+    "model_add_by_group": {
+     "CC_CHP": 2.306,
+     "CT_CHP": 0.426,
+     "ST_CHP": -0.113
+    },
+    "model_chp_twh": {
+     "CC_CHP": 6.184999942779541,
+     "CT_CHP": 1.6050000190734863,
+     "ST_CHP": 0.7350000143051147
+    },
+    "displaced_twh_by_class": {
+     "": 0.047,
+     "CC_REGULAR": 1.127,
+     "COAL_BIT": 0.582,
+     "COAL_PRB": 0.019,
+     "COAL_WC": 0.026,
+     "CT_PEAKER": 0.323,
+     "ST_GAS": 0.079
+    },
+    "unabsorbed_twh": 0.418
+   },
+   "holdout_reach": {
+    "removed_twh": 5.421,
+    "taken_twh_by_class": {
+     "": 3.0959999561309814,
+     "CC_CHP": 0.007000000216066837,
+     "CC_REGULAR": 0.8539999723434448,
+     "COAL_BIT": 0.8199999928474426,
+     "COAL_PRB": 0.35199999809265137,
+     "COAL_WC": 0.04899999871850014,
+     "CT_CHP": 0.027000000700354576,
+     "CT_PEAKER": 0.19099999964237213,
+     "ST_GAS": 0.024000000208616257
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econ",
+     "econc00",
+     "econc01",
+     "econc02",
+     "econc03",
+     "econc04",
+     "econc05",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 9,
+     "cems_twh": 8.517,
+     "model_twh_same_plants": 6.905,
+     "cems_on_wmean": 0.731,
+     "model_on_wmean": 0.757,
+     "cems_starts_median": 20.0,
+     "model_starts_median": 6.0
+    },
+    "release": {
+     "gain_twh": 0.423,
+     "gain_by_group": {
+      "CC_CHP": 0.0729999989271164,
+      "CT_CHP": 0.3089999854564667,
+      "ST_CHP": 0.041999999433755875
+     },
+     "markup_mean": 1.38,
+     "plants_inverted": 16,
+     "plants": 36,
+     "displaced_twh_by_class": {
+      "": 0.020999999716877937,
+      "CC_REGULAR": 0.20200000703334808,
+      "COAL_BIT": 0.0989999994635582,
+      "COAL_WC": 0.007000000216066837,
+      "CT_PEAKER": 0.01600000075995922,
+      "ST_GAS": 0.009999999776482582
+     },
+     "unabsorbed_twh": 0.064
+    }
+   }
+  },
+  "2020": {
+   "plants_chp": 21,
+   "plants_in_sched67": 21,
+   "netgen_twh": 13.756,
+   "netgen_twh_covered": 13.756,
+   "btm_default_twh": 6.385,
+   "btm_measured_twh": 3.981,
+   "dE_bench_twh": 2.404,
+   "dE_by_group": {
+    "CC_CHP": 2.326,
+    "CT_CHP": 0.341,
+    "ST_CHP": -0.262
+   },
+   "netgen_by_group": {
+    "CC_CHP": 8.612,
+    "CT_CHP": 2.97,
+    "ST_CHP": 2.173
+   },
+   "default_shares": [
+    0.35,
+    0.7,
+    0.9
+   ],
+   "top": [
+    {
+     "plant": 55801,
+     "name": "Marcus Hook Energy LP",
+     "group": "CC_CHP",
+     "netgen_twh": 5.19,
+     "default": 0.35,
+     "measured": 0.022,
+     "measured_same_year": 0.022,
+     "dE_twh": 1.703
+    },
+    {
+     "plant": 10633,
+     "name": "Hopewell Cogeneration",
+     "group": "CC_CHP",
+     "netgen_twh": 1.921,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 0.672
+    },
+    {
+     "plant": 52193,
+     "name": "Delaware City Plant",
+     "group": "CT_CHP",
+     "netgen_twh": 0.899,
+     "default": 0.7,
+     "measured": 0.366,
+     "measured_same_year": 0.606,
+     "dE_twh": 0.3
+    },
+    {
+     "plant": 54785,
+     "name": "Grays Ferry Cogeneration",
+     "group": "CT_CHP",
+     "netgen_twh": 0.841,
+     "default": 0.35,
+     "measured": 0.027,
+     "measured_same_year": 0.029,
+     "dE_twh": 0.272
+    },
+    {
+     "plant": 55216,
+     "name": "Morris Cogeneration LLC",
+     "group": "CC_CHP",
+     "netgen_twh": 0.609,
+     "default": 0.35,
+     "measured": 0.76,
+     "measured_same_year": 0.742,
+     "dE_twh": -0.25
+    },
+    {
+     "plant": 54832,
+     "name": "Brandywine Power Facility",
+     "group": "CC_CHP",
+     "netgen_twh": 0.587,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 0.205
+    }
+   ],
+   "reconcile": {
+    "family_committed": 467.656,
+    "raw_930": 463.162,
+    "fold_F": 1.495,
+    "target": 461.667,
+    "fired_committed": false,
+    "s_est": 1.0051,
+    "family_pre_est": 467.656,
+    "ratio_pre": 1.013,
+    "family_new": 470.06,
+    "ratio_new": 1.0182,
+    "fires_new": false,
+    "scale_new": 1.0,
+    "upper_margin_new_twh": 5.886,
+    "lower_margin_new_twh": 22.243,
+    "ratio_new_fold_refuted": 1.0149,
+    "fires_new_fold_refuted": false,
+    "s_ref": 1.0037
+   },
+   "fold_test": {
+    "e930_gas": 310.19,
+    "eia923_gas_full": 324.86,
+    "gap_930_minus_923": -14.67,
+    "fold_F": 1.49
+   },
+   "holdout": {
+    "e930_other": 10.718,
+    "bench_OTHER": 5.812,
+    "bench_biomass": 6.4,
+    "inj_total_twh": 11.724,
+    "inj_chpY_twh": 6.379,
+    "inj_chpY_by_class": {
+     "OTHER": 3.605,
+     "biomass": 2.774
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 2.483,
+    "model_add_by_group": {
+     "CC_CHP": 2.265,
+     "CT_CHP": 0.401,
+     "ST_CHP": -0.183
+    },
+    "model_chp_twh": {
+     "CC_CHP": 6.177999973297119,
+     "CT_CHP": 1.7860000133514404,
+     "ST_CHP": 1.003999948501587
+    },
+    "displaced_twh_by_class": {
+     "": 0.026,
+     "CC_REGULAR": 0.989,
+     "COAL_BIT": 0.524,
+     "COAL_PRB": 0.012,
+     "COAL_WC": 0.022,
+     "CT_PEAKER": 0.285,
+     "ST_GAS": 0.145
+    },
+    "unabsorbed_twh": 0.48
+   },
+   "holdout_reach": {
+    "removed_twh": 6.379,
+    "taken_twh_by_class": {
+     "": 4.076000213623047,
+     "CC_REGULAR": 1.1180000305175781,
+     "COAL_BIT": 0.8420000076293945,
+     "COAL_PRB": 0.07000000029802322,
+     "COAL_WC": 0.039000000804662704,
+     "CT_CHP": 0.035999998450279236,
+     "CT_PEAKER": 0.15600000321865082,
+     "ST_GAS": 0.039000000804662704
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econ",
+     "econc00",
+     "econc01",
+     "econc02",
+     "econc03",
+     "econc04",
+     "econc05",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 10,
+     "cems_twh": 9.847,
+     "model_twh_same_plants": 7.066,
+     "cems_on_wmean": 0.846,
+     "model_on_wmean": 0.836,
+     "cems_starts_median": 9.5,
+     "model_starts_median": 16.5
+    },
+    "release": {
+     "gain_twh": 0.324,
+     "gain_by_group": {
+      "CC_CHP": 0.06400000303983688,
+      "CT_CHP": 0.24699999392032623,
+      "ST_CHP": 0.013000000268220901
+     },
+     "markup_mean": 2.13,
+     "plants_inverted": 20,
+     "plants": 36,
+     "displaced_twh_by_class": {
+      "": 0.008999999612569809,
+      "CC_REGULAR": 0.14399999380111694,
+      "COAL_BIT": 0.06499999761581421,
+      "CT_PEAKER": 0.017999999225139618,
+      "ST_GAS": 0.012000000104308128
+     },
+     "unabsorbed_twh": 0.07
+    }
+   }
+  },
+  "2021": {
+   "plants_chp": 22,
+   "plants_in_sched67": 22,
+   "netgen_twh": 12.866,
+   "netgen_twh_covered": 12.866,
+   "btm_default_twh": 6.089,
+   "btm_measured_twh": 4.051,
+   "dE_bench_twh": 2.038,
+   "dE_by_group": {
+    "CC_CHP": 2.151,
+    "CT_CHP": 0.237,
+    "ST_CHP": -0.35
+   },
+   "netgen_by_group": {
+    "CC_CHP": 7.958,
+    "CT_CHP": 2.544,
+    "ST_CHP": 2.363
+   },
+   "default_shares": [
+    0.35,
+    0.7,
+    0.9
+   ],
+   "top": [
+    {
+     "plant": 55801,
+     "name": "Marcus Hook Energy LP",
+     "group": "CC_CHP",
+     "netgen_twh": 5.246,
+     "default": 0.35,
+     "measured": 0.022,
+     "measured_same_year": 0.023,
+     "dE_twh": 1.722
+    },
+    {
+     "plant": 10633,
+     "name": "Hopewell Cogeneration",
+     "group": "CC_CHP",
+     "netgen_twh": 0.956,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 0.335
+    },
+    {
+     "plant": 55216,
+     "name": "Morris Cogeneration LLC",
+     "group": "CC_CHP",
+     "netgen_twh": 0.616,
+     "default": 0.35,
+     "measured": 0.76,
+     "measured_same_year": 0.761,
+     "dE_twh": -0.252
+    },
+    {
+     "plant": 54832,
+     "name": "Brandywine Power Facility",
+     "group": "CC_CHP",
+     "netgen_twh": 0.693,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 0.242
+    },
+    {
+     "plant": 54785,
+     "name": "Grays Ferry Cogeneration",
+     "group": "CT_CHP",
+     "netgen_twh": 0.723,
+     "default": 0.35,
+     "measured": 0.027,
+     "measured_same_year": 0.031,
+     "dE_twh": 0.234
+    },
+    {
+     "plant": 52193,
+     "name": "Delaware City Plant",
+     "group": "CT_CHP",
+     "netgen_twh": 0.658,
+     "default": 0.7,
+     "measured": 0.366,
+     "measured_same_year": 0.784,
+     "dE_twh": 0.22
+    }
+   ],
+   "reconcile": {
+    "family_committed": 488.036,
+    "raw_930": 497.608,
+    "fold_F": 1.321,
+    "target": 496.287,
+    "fired_committed": false,
+    "s_est": 1.0047,
+    "family_pre_est": 488.036,
+    "ratio_pre": 0.9834,
+    "family_new": 490.074,
+    "ratio_new": 0.9875,
+    "fires_new": false,
+    "scale_new": 1.0,
+    "upper_margin_new_twh": 21.562,
+    "lower_margin_new_twh": 8.676,
+    "ratio_new_fold_refuted": 0.9849,
+    "fires_new_fold_refuted": false,
+    "s_ref": 1.0037
+   },
+   "fold_test": {
+    "e930_gas": 311.74,
+    "eia923_gas_full": 318.54,
+    "gap_930_minus_923": -6.8,
+    "fold_F": 1.32
+   },
+   "holdout": {
+    "e930_other": 10.606,
+    "bench_OTHER": 5.692,
+    "bench_biomass": 6.235,
+    "inj_total_twh": 11.65,
+    "inj_chpY_twh": 6.168,
+    "inj_chpY_by_class": {
+     "OTHER": 3.468,
+     "biomass": 2.7
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 2.472,
+    "model_add_by_group": {
+     "CC_CHP": 2.397,
+     "CT_CHP": 0.363,
+     "ST_CHP": -0.287
+    },
+    "model_chp_twh": {
+     "CC_CHP": 6.381999969482422,
+     "CT_CHP": 1.7100000381469727,
+     "ST_CHP": 1.031000018119812
+    },
+    "displaced_twh_by_class": {
+     "": 0.029,
+     "CC_REGULAR": 1.196,
+     "COAL_BIT": 0.342,
+     "COAL_PRB": 0.011,
+     "COAL_WC": 0.006,
+     "CT_PEAKER": 0.352,
+     "ST_GAS": 0.065
+    },
+    "unabsorbed_twh": 0.472
+   },
+   "holdout_reach": {
+    "removed_twh": 6.168,
+    "taken_twh_by_class": {
+     "": 2.6610000133514404,
+     "CC_CHP": 0.007000000216066837,
+     "CC_REGULAR": 1.5269999504089355,
+     "COAL_BIT": 0.8330000042915344,
+     "COAL_PRB": 0.32899999618530273,
+     "COAL_WC": 0.026000000536441803,
+     "CT_CHP": 0.052000001072883606,
+     "CT_PEAKER": 0.6930000185966492,
+     "ST_CHP": 0.007000000216066837,
+     "ST_GAS": 0.03400000184774399
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econ",
+     "econc00",
+     "econc01",
+     "econc02",
+     "econc03",
+     "econc04",
+     "econc05",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 10,
+     "cems_twh": 8.998,
+     "model_twh_same_plants": 7.03,
+     "cems_on_wmean": 0.823,
+     "model_on_wmean": 0.836,
+     "cems_starts_median": 15.0,
+     "model_starts_median": 13.0
+    },
+    "release": {
+     "gain_twh": 0.394,
+     "gain_by_group": {
+      "CC_CHP": 0.05900000035762787,
+      "CT_CHP": 0.3009999990463257,
+      "ST_CHP": 0.03400000184774399
+     },
+     "markup_mean": 3.07,
+     "plants_inverted": 22,
+     "plants": 38,
+     "displaced_twh_by_class": {
+      "": 0.008999999612569809,
+      "CC_REGULAR": 0.20499999821186066,
+      "COAL_BIT": 0.06400000303983688,
+      "CT_PEAKER": 0.02199999988079071,
+      "ST_GAS": 0.008999999612569809
+     },
+     "unabsorbed_twh": 0.08
+    }
+   }
+  },
+  "2022": {
+   "plants_chp": 22,
+   "plants_in_sched67": 22,
+   "netgen_twh": 13.756,
+   "netgen_twh_covered": 13.756,
+   "btm_default_twh": 6.767,
+   "btm_measured_twh": 4.234,
+   "dE_bench_twh": 2.533,
+   "dE_by_group": {
+    "CC_CHP": 2.462,
+    "CT_CHP": 0.343,
+    "ST_CHP": -0.273
+   },
+   "netgen_by_group": {
+    "CC_CHP": 8.76,
+    "CT_CHP": 2.866,
+    "ST_CHP": 2.13
+   },
+   "default_shares": [
+    0.35,
+    0.7,
+    0.9
+   ],
+   "top": [
+    {
+     "plant": 55801,
+     "name": "Marcus Hook Energy LP",
+     "group": "CC_CHP",
+     "netgen_twh": 5.445,
+     "default": 0.35,
+     "measured": 0.022,
+     "measured_same_year": 0.023,
+     "dE_twh": 1.787
+    },
+    {
+     "plant": 58933,
+     "name": "Shell Chemical Appalachia LLC",
+     "group": "CC_CHP",
+     "netgen_twh": 1.408,
+     "default": 0.7,
+     "measured": 0.335,
+     "measured_same_year": 0.214,
+     "dE_twh": 0.514
+    },
+    {
+     "plant": 54785,
+     "name": "Grays Ferry Cogeneration",
+     "group": "CT_CHP",
+     "netgen_twh": 0.884,
+     "default": 0.35,
+     "measured": 0.027,
+     "measured_same_year": 0.027,
+     "dE_twh": 0.286
+    },
+    {
+     "plant": 52193,
+     "name": "Delaware City Plant",
+     "group": "CT_CHP",
+     "netgen_twh": 0.82,
+     "default": 0.7,
+     "measured": 0.366,
+     "measured_same_year": 0.453,
+     "dE_twh": 0.273
+    },
+    {
+     "plant": 55216,
+     "name": "Morris Cogeneration LLC",
+     "group": "CC_CHP",
+     "netgen_twh": 0.585,
+     "default": 0.35,
+     "measured": 0.76,
+     "measured_same_year": 0.771,
+     "dE_twh": -0.24
+    },
+    {
+     "plant": 10633,
+     "name": "Hopewell Cogeneration",
+     "group": "CC_CHP",
+     "netgen_twh": 0.65,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 0.227
+    }
+   ],
+   "reconcile": {
+    "family_committed": 490.867,
+    "raw_930": 502.463,
+    "fold_F": 0.0,
+    "target": 502.463,
+    "fired_committed": false,
+    "s_est": 1.0056,
+    "family_pre_est": 490.867,
+    "ratio_pre": 0.9769,
+    "family_new": 493.4,
+    "ratio_new": 0.982,
+    "fires_new": false,
+    "scale_new": 1.0,
+    "upper_margin_new_twh": 24.603,
+    "lower_margin_new_twh": 6.011,
+    "ratio_new_fold_refuted": 0.982,
+    "fires_new_fold_refuted": false,
+    "s_ref": 1.0037
+   },
+   "fold_test": {
+    "e930_gas": 332.28,
+    "eia923_gas_full": 338.02,
+    "gap_930_minus_923": -5.73,
+    "fold_F": 0.0
+   },
+   "holdout": {
+    "e930_other": 10.848,
+    "bench_OTHER": 4.614,
+    "bench_biomass": 5.959,
+    "inj_total_twh": 10.472,
+    "inj_chpY_twh": 5.705,
+    "inj_chpY_by_class": {
+     "OTHER": 3.168,
+     "biomass": 2.537
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 2.781,
+    "model_add_by_group": {
+     "CC_CHP": 2.728,
+     "CT_CHP": 0.294,
+     "ST_CHP": -0.242
+    },
+    "model_chp_twh": {
+     "CC_CHP": 6.702000141143799,
+     "CT_CHP": 1.6690000295639038,
+     "ST_CHP": 1.0989999771118164
+    },
+    "displaced_twh_by_class": {
+     "": 0.033,
+     "CC_REGULAR": 1.218,
+     "COAL_BIT": 0.477,
+     "COAL_PRB": 0.016,
+     "COAL_WC": 0.019,
+     "CT_PEAKER": 0.326,
+     "ST_GAS": 0.15
+    },
+    "unabsorbed_twh": 0.542
+   },
+   "holdout_reach": {
+    "removed_twh": 5.705,
+    "taken_twh_by_class": {
+     "": 1.805999994277954,
+     "CC_CHP": 0.008999999612569809,
+     "CC_REGULAR": 1.034000039100647,
+     "COAL_BIT": 0.5960000157356262,
+     "COAL_PRB": 0.6110000014305115,
+     "COAL_WC": 0.02800000086426735,
+     "CT_CHP": 0.03799999877810478,
+     "CT_PEAKER": 1.3079999685287476,
+     "ST_GAS": 0.2720000147819519
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econ",
+     "econc00",
+     "econc01",
+     "econc02",
+     "econc03",
+     "econc04",
+     "econc05",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 10,
+     "cems_twh": 9.937,
+     "model_twh_same_plants": 7.343,
+     "cems_on_wmean": 0.868,
+     "model_on_wmean": 0.901,
+     "cems_starts_median": 14.0,
+     "model_starts_median": 3.0
+    },
+    "release": {
+     "gain_twh": 0.765,
+     "gain_by_group": {
+      "CC_CHP": 0.08799999952316284,
+      "CT_CHP": 0.6380000114440918,
+      "ST_CHP": 0.039000000804662704
+     },
+     "markup_mean": 5.73,
+     "plants_inverted": 34,
+     "plants": 39,
+     "displaced_twh_by_class": {
+      "": 0.014999999664723873,
+      "CC_REGULAR": 0.38999998569488525,
+      "COAL_BIT": 0.12800000607967377,
+      "CT_PEAKER": 0.04100000113248825,
+      "ST_GAS": 0.054999999701976776
+     },
+     "unabsorbed_twh": 0.127
+    }
+   }
+  },
+  "2023": {
+   "plants_chp": 22,
+   "plants_in_sched67": 22,
+   "netgen_twh": 14.901,
+   "netgen_twh_covered": 14.901,
+   "btm_default_twh": 7.236,
+   "btm_measured_twh": 4.291,
+   "dE_bench_twh": 2.945,
+   "dE_by_group": {
+    "CC_CHP": 2.844,
+    "CT_CHP": 0.391,
+    "ST_CHP": -0.289
+   },
+   "netgen_by_group": {
+    "CC_CHP": 9.752,
+    "CT_CHP": 3.001,
+    "ST_CHP": 2.148
+   },
+   "default_shares": [
+    0.35,
+    0.7,
+    0.9
+   ],
+   "top": [
+    {
+     "plant": 55801,
+     "name": "Marcus Hook Energy LP",
+     "group": "CC_CHP",
+     "netgen_twh": 5.907,
+     "default": 0.35,
+     "measured": 0.022,
+     "measured_same_year": 0.022,
+     "dE_twh": 1.939
+    },
+    {
+     "plant": 58933,
+     "name": "Shell Chemical Appalachia LLC",
+     "group": "CC_CHP",
+     "netgen_twh": 1.531,
+     "default": 0.7,
+     "measured": 0.335,
+     "measured_same_year": 0.315,
+     "dE_twh": 0.559
+    },
+    {
+     "plant": 52193,
+     "name": "Delaware City Plant",
+     "group": "CT_CHP",
+     "netgen_twh": 0.977,
+     "default": 0.7,
+     "measured": 0.366,
+     "measured_same_year": 0.328,
+     "dE_twh": 0.326
+    },
+    {
+     "plant": 10633,
+     "name": "Hopewell Cogeneration",
+     "group": "CC_CHP",
+     "netgen_twh": 0.912,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 0.319
+    },
+    {
+     "plant": 54785,
+     "name": "Grays Ferry Cogeneration",
+     "group": "CT_CHP",
+     "netgen_twh": 0.873,
+     "default": 0.35,
+     "measured": 0.027,
+     "measured_same_year": 0.025,
+     "dE_twh": 0.282
+    },
+    {
+     "plant": 54832,
+     "name": "Brandywine Power Facility",
+     "group": "CC_CHP",
+     "netgen_twh": 0.649,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 0.227
+    }
+   ],
+   "reconcile": {
+    "family_committed": 479.612,
+    "raw_930": 484.392,
+    "fold_F": 0.0,
+    "target": 484.392,
+    "fired_committed": false,
+    "s_est": 1.0005,
+    "family_pre_est": 479.612,
+    "ratio_pre": 0.9901,
+    "family_new": 482.557,
+    "ratio_new": 0.9962,
+    "fires_new": false,
+    "scale_new": 1.0,
+    "upper_margin_new_twh": 16.816,
+    "lower_margin_new_twh": 12.697,
+    "ratio_new_fold_refuted": 0.9962,
+    "fires_new_fold_refuted": false,
+    "s_ref": 1.0037
+   },
+   "fold_test": {
+    "e930_gas": 360.72,
+    "eia923_gas_full": 374.44,
+    "gap_930_minus_923": -13.72,
+    "fold_F": 0.0
+   },
+   "holdout": {
+    "e930_other": 11.149,
+    "bench_OTHER": 4.7,
+    "bench_biomass": 5.298,
+    "inj_total_twh": 9.998,
+    "inj_chpY_twh": 5.632,
+    "inj_chpY_by_class": {
+     "OTHER": 3.359,
+     "biomass": 2.273
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 3.261,
+    "model_add_by_group": {
+     "CC_CHP": 3.195,
+     "CT_CHP": 0.312,
+     "ST_CHP": -0.246
+    },
+    "model_chp_twh": {
+     "CC_CHP": 7.264999866485596,
+     "CT_CHP": 2.0490000247955322,
+     "ST_CHP": 1.0260000228881836
+    },
+    "displaced_twh_by_class": {
+     "": 0.053,
+     "CC_REGULAR": 1.358,
+     "COAL_BIT": 0.468,
+     "COAL_PRB": 0.013,
+     "COAL_WC": 0.044,
+     "CT_PEAKER": 0.406,
+     "ST_GAS": 0.259
+    },
+    "unabsorbed_twh": 0.66
+   },
+   "holdout_reach": {
+    "removed_twh": 5.632,
+    "taken_twh_by_class": {
+     "": 1.5190000534057617,
+     "CC_CHP": 0.010999999940395355,
+     "CC_REGULAR": 1.121999979019165,
+     "COAL_BIT": 0.5889999866485596,
+     "COAL_PRB": 0.1860000044107437,
+     "COAL_WC": 0.09099999815225601,
+     "CT_CHP": 0.02500000037252903,
+     "CT_PEAKER": 1.6169999837875366,
+     "ST_GAS": 0.4699999988079071
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econ",
+     "econc00",
+     "econc01",
+     "econc02",
+     "econc03",
+     "econc04",
+     "econc05",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 10,
+     "cems_twh": 10.631,
+     "model_twh_same_plants": 8.205,
+     "cems_on_wmean": 0.835,
+     "model_on_wmean": 0.867,
+     "cems_starts_median": 8.5,
+     "model_starts_median": 3.5
+    },
+    "release": {
+     "gain_twh": 0.251,
+     "gain_by_group": {
+      "CC_CHP": 0.05400000140070915,
+      "CT_CHP": 0.12600000202655792,
+      "ST_CHP": 0.07100000232458115
+     },
+     "markup_mean": 2.14,
+     "plants_inverted": 24,
+     "plants": 39,
+     "displaced_twh_by_class": {
+      "": 0.009999999776482582,
+      "CC_REGULAR": 0.09600000083446503,
+      "COAL_BIT": 0.039000000804662704,
+      "CT_PEAKER": 0.026000000536441803,
+      "ST_GAS": 0.027000000700354576
+     },
+     "unabsorbed_twh": 0.048
+    }
+   }
+  },
+  "2024": {
+   "plants_chp": 23,
+   "plants_in_sched67": 23,
+   "netgen_twh": 16.648,
+   "netgen_twh_covered": 16.648,
+   "btm_default_twh": 7.848,
+   "btm_measured_twh": 4.327,
+   "dE_bench_twh": 3.521,
+   "dE_by_group": {
+    "CC_CHP": 3.437,
+    "CT_CHP": 0.4,
+    "ST_CHP": -0.316
+   },
+   "netgen_by_group": {
+    "CC_CHP": 11.635,
+    "CT_CHP": 2.649,
+    "ST_CHP": 2.364
+   },
+   "default_shares": [
+    0.35,
+    0.7,
+    0.9
+   ],
+   "top": [
+    {
+     "plant": 55801,
+     "name": "Marcus Hook Energy LP",
+     "group": "CC_CHP",
+     "netgen_twh": 6.599,
+     "default": 0.35,
+     "measured": 0.022,
+     "measured_same_year": 0.021,
+     "dE_twh": 2.166
+    },
+    {
+     "plant": 10633,
+     "name": "Hopewell Cogeneration",
+     "group": "CC_CHP",
+     "netgen_twh": 2.025,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 0.709
+    },
+    {
+     "plant": 58933,
+     "name": "Shell Chemical Appalachia LLC",
+     "group": "CC_CHP",
+     "netgen_twh": 1.61,
+     "default": 0.7,
+     "measured": 0.335,
+     "measured_same_year": 0.46,
+     "dE_twh": 0.588
+    },
+    {
+     "plant": 52193,
+     "name": "Delaware City Plant",
+     "group": "CT_CHP",
+     "netgen_twh": 0.869,
+     "default": 0.7,
+     "measured": 0.366,
+     "measured_same_year": 0.327,
+     "dE_twh": 0.29
+    },
+    {
+     "plant": 54785,
+     "name": "Grays Ferry Cogeneration",
+     "group": "CT_CHP",
+     "netgen_twh": 0.866,
+     "default": 0.35,
+     "measured": 0.027,
+     "measured_same_year": 0.027,
+     "dE_twh": 0.28
+    },
+    {
+     "plant": 55216,
+     "name": "Morris Cogeneration LLC",
+     "group": "CC_CHP",
+     "netgen_twh": 0.598,
+     "default": 0.35,
+     "measured": 0.76,
+     "measured_same_year": 0.779,
+     "dE_twh": -0.245
+    }
+   ],
+   "reconcile": {
+    "family_committed": 500.3,
+    "raw_930": 494.809,
+    "fold_F": 0.0,
+    "target": 494.809,
+    "fired_committed": false,
+    "s_est": 1.0022,
+    "family_pre_est": 500.3,
+    "ratio_pre": 1.0111,
+    "family_new": 503.821,
+    "ratio_new": 1.0182,
+    "fires_new": false,
+    "scale_new": 1.0,
+    "upper_margin_new_twh": 6.292,
+    "lower_margin_new_twh": 23.856,
+    "ratio_new_fold_refuted": 1.0182,
+    "fires_new_fold_refuted": false,
+    "s_ref": 1.0037
+   },
+   "fold_test": {
+    "e930_gas": 368.31,
+    "eia923_gas_full": 392.07,
+    "gap_930_minus_923": -23.76,
+    "fold_F": 0.0
+   },
+   "holdout": {
+    "e930_other": 13.245,
+    "bench_OTHER": 4.643,
+    "bench_biomass": 5.264,
+    "inj_total_twh": 9.896,
+    "inj_chpY_twh": 5.802,
+    "inj_chpY_by_class": {
+     "OTHER": 3.424,
+     "biomass": 2.378
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 3.389,
+    "model_add_by_group": {
+     "CC_CHP": 3.434,
+     "CT_CHP": 0.24,
+     "ST_CHP": -0.285
+    },
+    "model_chp_twh": {
+     "CC_CHP": 7.818999767303467,
+     "CT_CHP": 1.9529999494552612,
+     "ST_CHP": 1.1540000438690186
+    },
+    "displaced_twh_by_class": {
+     "": 0.046,
+     "CC_REGULAR": 1.367,
+     "COAL_BIT": 0.423,
+     "COAL_PRB": 0.013,
+     "COAL_WC": 0.039,
+     "CT_PEAKER": 0.542,
+     "ST_GAS": 0.281
+    },
+    "unabsorbed_twh": 0.678
+   },
+   "holdout_reach": {
+    "removed_twh": 5.802,
+    "taken_twh_by_class": {
+     "": 1.2890000343322754,
+     "CC_CHP": 0.014999999664723873,
+     "CC_REGULAR": 0.7940000295639038,
+     "COAL_BIT": 0.35899999737739563,
+     "COAL_PRB": 0.29499998688697815,
+     "COAL_WC": 0.04100000113248825,
+     "CT_CHP": 0.017999999225139618,
+     "CT_PEAKER": 2.6740000247955322,
+     "ST_GAS": 0.3149999976158142
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econ",
+     "econc00",
+     "econc01",
+     "econc02",
+     "econc03",
+     "econc04",
+     "econc05",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 10,
+     "cems_twh": 11.688,
+     "model_twh_same_plants": 8.72,
+     "cems_on_wmean": 0.886,
+     "model_on_wmean": 0.89,
+     "cems_starts_median": 8.5,
+     "model_starts_median": 6.0
+    },
+    "release": {
+     "gain_twh": 0.313,
+     "gain_by_group": {
+      "CC_CHP": 0.0560000017285347,
+      "CT_CHP": 0.24300000071525574,
+      "ST_CHP": 0.014000000432133675
+     },
+     "markup_mean": 3.39,
+     "plants_inverted": 28,
+     "plants": 38,
+     "displaced_twh_by_class": {
+      "CC_REGULAR": 0.12200000137090683,
+      "COAL_BIT": 0.03700000047683716,
+      "COAL_WC": 0.007000000216066837,
+      "CT_PEAKER": 0.04100000113248825,
+      "ST_GAS": 0.032999999821186066
+     },
+     "unabsorbed_twh": 0.066
+    }
+   }
+  },
+  "2025": {
+   "plants_chp": 23,
+   "plants_in_sched67": 23,
+   "netgen_twh": 15.354,
+   "netgen_twh_covered": 15.354,
+   "btm_default_twh": 7.383,
+   "btm_measured_twh": 4.267,
+   "dE_bench_twh": 3.115,
+   "dE_by_group": {
+    "CC_CHP": 3.039,
+    "CT_CHP": 0.382,
+    "ST_CHP": -0.305
+   },
+   "netgen_by_group": {
+    "CC_CHP": 10.447,
+    "CT_CHP": 2.809,
+    "ST_CHP": 2.098
+   },
+   "default_shares": [
+    0.35,
+    0.7,
+    0.9
+   ],
+   "top": [
+    {
+     "plant": 55801,
+     "name": "Marcus Hook Energy LP",
+     "group": "CC_CHP",
+     "netgen_twh": 5.617,
+     "default": 0.35,
+     "measured": 0.022,
+     "measured_same_year": 0.021,
+     "dE_twh": 1.844
+    },
+    {
+     "plant": 10633,
+     "name": "Hopewell Cogeneration",
+     "group": "CC_CHP",
+     "netgen_twh": 1.754,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 0.614
+    },
+    {
+     "plant": 58933,
+     "name": "Shell Chemical Appalachia LLC",
+     "group": "CC_CHP",
+     "netgen_twh": 1.564,
+     "default": 0.7,
+     "measured": 0.335,
+     "measured_same_year": 0.436,
+     "dE_twh": 0.571
+    },
+    {
+     "plant": 52193,
+     "name": "Delaware City Plant",
+     "group": "CT_CHP",
+     "netgen_twh": 0.872,
+     "default": 0.7,
+     "measured": 0.366,
+     "measured_same_year": 0.367,
+     "dE_twh": 0.291
+    },
+    {
+     "plant": 54785,
+     "name": "Grays Ferry Cogeneration",
+     "group": "CT_CHP",
+     "netgen_twh": 0.897,
+     "default": 0.35,
+     "measured": 0.027,
+     "measured_same_year": 0.03,
+     "dE_twh": 0.29
+    },
+    {
+     "plant": 55216,
+     "name": "Morris Cogeneration LLC",
+     "group": "CC_CHP",
+     "netgen_twh": 0.603,
+     "default": 0.35,
+     "measured": 0.76,
+     "measured_same_year": 0.786,
+     "dE_twh": -0.247
+    }
+   ],
+   "reconcile": {
+    "family_committed": 522.023,
+    "raw_930": 517.844,
+    "fold_F": 0.0,
+    "target": 517.844,
+    "fired_committed": false,
+    "s_est": 1.0032,
+    "family_pre_est": 522.023,
+    "ratio_pre": 1.0081,
+    "family_new": 525.139,
+    "ratio_new": 1.0141,
+    "fires_new": false,
+    "scale_new": 1.0,
+    "upper_margin_new_twh": 8.721,
+    "lower_margin_new_twh": 22.83,
+    "ratio_new_fold_refuted": 1.0141,
+    "fires_new_fold_refuted": false,
+    "s_ref": 1.0037
+   },
+   "fold_test": {
+    "e930_gas": 366.62,
+    "eia923_gas_full": 389.23,
+    "gap_930_minus_923": -22.61,
+    "fold_F": 0.0
+   },
+   "holdout": {
+    "e930_other": 12.64,
+    "bench_OTHER": 4.562,
+    "bench_biomass": 5.046,
+    "inj_total_twh": 9.595,
+    "inj_chpY_twh": 5.674,
+    "inj_chpY_by_class": {
+     "OTHER": 3.331,
+     "biomass": 2.343
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 3.299,
+    "model_add_by_group": {
+     "CC_CHP": 3.306,
+     "CT_CHP": 0.169,
+     "ST_CHP": -0.176
+    },
+    "model_chp_twh": {
+     "CC_CHP": 7.328999996185303,
+     "CT_CHP": 1.656000018119812,
+     "ST_CHP": 0.9100000262260437
+    },
+    "displaced_twh_by_class": {
+     "": 0.081,
+     "CC_REGULAR": 1.344,
+     "COAL_BIT": 0.331,
+     "COAL_PRB": 0.01,
+     "COAL_WC": 0.015,
+     "CT_PEAKER": 0.574,
+     "ST_GAS": 0.25
+    },
+    "unabsorbed_twh": 0.694
+   },
+   "holdout_reach": {
+    "removed_twh": 5.674,
+    "taken_twh_by_class": {
+     "": 1.5180000066757202,
+     "CC_CHP": 0.010999999940395355,
+     "CC_REGULAR": 0.8209999799728394,
+     "COAL_BIT": 0.5759999752044678,
+     "COAL_PRB": 0.20600000023841858,
+     "COAL_WC": 0.028999999165534973,
+     "CT_CHP": 0.017000000923871994,
+     "CT_PEAKER": 2.121999979019165,
+     "ST_GAS": 0.3720000088214874
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econ",
+     "econc00",
+     "econc01",
+     "econc02",
+     "econc03",
+     "econc04",
+     "econc05",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 10,
+     "cems_twh": 11.11,
+     "model_twh_same_plants": 8.119,
+     "cems_on_wmean": 0.811,
+     "model_on_wmean": 0.828,
+     "cems_starts_median": 10.0,
+     "model_starts_median": 15.5
+    },
+    "release": {
+     "gain_twh": 0.644,
+     "gain_by_group": {
+      "CC_CHP": 0.050999999046325684,
+      "CT_CHP": 0.5799999833106995,
+      "ST_CHP": 0.014000000432133675
+     },
+     "markup_mean": 4.95,
+     "plants_inverted": 30,
+     "plants": 38,
+     "displaced_twh_by_class": {
+      "": 0.020999999716877937,
+      "CC_REGULAR": 0.2370000034570694,
+      "COAL_BIT": 0.07100000232458115,
+      "CT_PEAKER": 0.07999999821186066,
+      "ST_GAS": 0.07599999755620956
+     },
+     "unabsorbed_twh": 0.151
+    }
+   }
+  }
+ },
+ "ERCOT": {
+  "2019": {
+   "plants_chp": 11,
+   "plants_in_sched67": 11,
+   "netgen_twh": 38.666,
+   "netgen_twh_covered": 38.666,
+   "btm_default_twh": 14.916,
+   "btm_measured_twh": 10.779,
+   "dE_bench_twh": 4.137,
+   "dE_by_group": {
+    "CC_CHP": 4.988,
+    "CT_CHP": -0.85
+   },
+   "netgen_by_group": {
+    "CC_CHP": 36.962,
+    "CT_CHP": 1.704
+   },
+   "default_shares": [
+    0.35,
+    0.7
+   ],
+   "top": [
+    {
+     "plant": 55464,
+     "name": "Deer Park Energy Center",
+     "group": "CC_CHP",
+     "netgen_twh": 6.809,
+     "default": 0.35,
+     "measured": 0.029,
+     "measured_same_year": 0.0,
+     "dE_twh": 2.183
+    },
+    {
+     "plant": 55047,
+     "name": "Pasadena Cogeneration",
+     "group": "CC_CHP",
+     "netgen_twh": 4.255,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.085,
+     "dE_twh": 1.489
+    },
+    {
+     "plant": 55015,
+     "name": "Sweeny Cogen Facility",
+     "group": "CT_CHP",
+     "netgen_twh": 1.704,
+     "default": 0.35,
+     "measured": 0.849,
+     "measured_same_year": 0.604,
+     "dE_twh": -0.85
+    },
+    {
+     "plant": 55187,
+     "name": "Channelview Cogeneration Plant",
+     "group": "CC_CHP",
+     "netgen_twh": 5.537,
+     "default": 0.35,
+     "measured": 0.476,
+     "measured_same_year": 0.419,
+     "dE_twh": -0.699
+    },
+    {
+     "plant": 52088,
+     "name": "Texas City Power Plant",
+     "group": "CC_CHP",
+     "netgen_twh": 1.75,
+     "default": 0.35,
+     "measured": 0.03,
+     "measured_same_year": 0.032,
+     "dE_twh": 0.56
+    },
+    {
+     "plant": 50815,
+     "name": "Odyssey Energy Altura Cogen, LLC",
+     "group": "CC_CHP",
+     "netgen_twh": 3.209,
+     "default": 0.35,
+     "measured": 0.184,
+     "measured_same_year": 0.179,
+     "dE_twh": 0.533
+    }
+   ],
+   "reconcile": {
+    "family_committed": 260.431,
+    "raw_930": 259.218,
+    "fold_F": 2.433,
+    "target": 256.786,
+    "fired_committed": false,
+    "s_est": 0.9907,
+    "family_pre_est": 260.431,
+    "ratio_pre": 1.0142,
+    "family_new": 264.568,
+    "ratio_new": 1.0303,
+    "fires_new": false,
+    "scale_new": 1.0,
+    "upper_margin_new_twh": 0.159,
+    "lower_margin_new_twh": 15.486,
+    "ratio_new_fold_refuted": 1.0206,
+    "fires_new_fold_refuted": false,
+    "s_ref": 0.9961
+   },
+   "fold_test": {
+    "e930_gas": 181.01,
+    "eia923_gas_full": 213.92,
+    "gap_930_minus_923": -32.91,
+    "fold_F": 2.43
+   },
+   "holdout": {
+    "e930_other": 0.775,
+    "bench_OTHER": 2.742,
+    "bench_biomass": 0.465,
+    "inj_total_twh": 3.208,
+    "inj_chpY_twh": 2.387,
+    "inj_chpY_by_class": {
+     "OTHER": 2.376,
+     "biomass": 0.012
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 3.533,
+    "model_add_by_group": {
+     "CC_CHP": 4.738,
+     "CT_CHP": -1.205,
+     "ST_CHP": 0.0
+    },
+    "model_chp_twh": {
+     "CC_CHP": 27.062000274658203,
+     "CT_CHP": 3.7730000019073486,
+     "ST_CHP": 0.07100000232458115
+    },
+    "displaced_twh_by_class": {
+     "CC_REGULAR": 1.695,
+     "COAL_LIGNITE": 0.044,
+     "COAL_PRB": 0.948,
+     "CT_PEAKER": 0.154,
+     "ST_GAS": 0.517
+    },
+    "unabsorbed_twh": 0.174
+   },
+   "holdout_reach": {
+    "removed_twh": 2.387,
+    "taken_twh_by_class": {
+     "CC_CHP": 0.0860000029206276,
+     "CC_REGULAR": 0.9279999732971191,
+     "COAL_LIGNITE": 0.17599999904632568,
+     "COAL_PRB": 0.7699999809265137,
+     "CT_CHP": 0.02199999988079071,
+     "CT_PEAKER": 0.10100000351667404,
+     "ST_GAS": 0.3019999861717224
+    }
+   },
+   "commitment": {
+    "bands": [
+     "econ",
+     "econc00",
+     "econc01",
+     "econc02",
+     "econc03",
+     "econc04",
+     "econc05",
+     "econc06",
+     "econc07",
+     "econc08",
+     "econc09",
+     "econc10"
+    ],
+    "census": {
+     "plants": 11,
+     "cems_twh": 41.421,
+     "model_twh_same_plants": 22.882,
+     "cems_on_wmean": 0.982,
+     "model_on_wmean": 1.0,
+     "cems_starts_median": 1.0,
+     "model_starts_median": 1.0
+    },
+    "release": {
+     "gain_twh": 0.0,
+     "note": "no committed/econ-low CHP band pair"
+    }
+   }
+  },
+  "2020": {
+   "plants_chp": 11,
+   "plants_in_sched67": 11,
+   "netgen_twh": 39.081,
+   "netgen_twh_covered": 39.081,
+   "btm_default_twh": 15.073,
+   "btm_measured_twh": 11.179,
+   "dE_bench_twh": 3.894,
+   "dE_by_group": {
+    "CC_CHP": 4.983,
+    "CT_CHP": -1.089
+   },
+   "netgen_by_group": {
+    "CC_CHP": 36.898,
+    "CT_CHP": 2.183
+   },
+   "default_shares": [
+    0.35,
+    0.7
+   ],
+   "top": [
+    {
+     "plant": 55464,
+     "name": "Deer Park Energy Center",
+     "group": "CC_CHP",
+     "netgen_twh": 7.385,
+     "default": 0.35,
+     "measured": 0.029,
+     "measured_same_year": 0.0,
+     "dE_twh": 2.368
+    },
+    {
+     "plant": 55047,
+     "name": "Pasadena Cogeneration",
+     "group": "CC_CHP",
+     "netgen_twh": 3.822,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.126,
+     "dE_twh": 1.338
+    },
+    {
+     "plant": 55015,
+     "name": "Sweeny Cogen Facility",
+     "group": "CT_CHP",
+     "netgen_twh": 2.183,
+     "default": 0.35,
+     "measured": 0.849,
+     "measured_same_year": 0.609,
+     "dE_twh": -1.089
+    },
+    {
+     "plant": 55187,
+     "name": "Channelview Cogeneration Plant",
+     "group": "CC_CHP",
+     "netgen_twh": 5.126,
+     "default": 0.35,
+     "measured": 0.476,
+     "measured_same_year": 0.474,
+     "dE_twh": -0.648
+    },
+    {
+     "plant": 50815,
+     "name": "Odyssey Energy Altura Cogen, LLC",
+     "group": "CC_CHP",
+     "netgen_twh": 3.342,
+     "default": 0.35,
+     "measured": 0.184,
+     "measured_same_year": 0.161,
+     "dE_twh": 0.555
+    },
+    {
+     "plant": 52088,
+     "name": "Texas City Power Plant",
+     "group": "CC_CHP",
+     "netgen_twh": 1.624,
+     "default": 0.35,
+     "measured": 0.03,
+     "measured_same_year": 0.04,
+     "dE_twh": 0.52
+    }
+   ],
+   "reconcile": {
+    "family_committed": 244.361,
+    "raw_930": 240.106,
+    "fold_F": 1.357,
+    "target": 238.749,
+    "fired_committed": false,
+    "s_est": 0.9919,
+    "family_pre_est": 244.361,
+    "ratio_pre": 1.0235,
+    "family_new": 248.255,
+    "ratio_new": 1.0398,
+    "fires_new": true,
+    "scale_new": 0.9617,
+    "upper_margin_new_twh": -2.122,
+    "lower_margin_new_twh": 16.668,
+    "ratio_new_fold_refuted": 1.0339,
+    "fires_new_fold_refuted": true,
+    "s_ref": 0.9961
+   },
+   "fold_test": {
+    "e930_gas": 171.45,
+    "eia923_gas_full": 208.03,
+    "gap_930_minus_923": -36.58,
+    "fold_F": 1.36
+   },
+   "holdout": {
+    "e930_other": 1.646,
+    "bench_OTHER": 2.611,
+    "bench_biomass": 0.392,
+    "inj_total_twh": 3.003,
+    "inj_chpY_twh": 2.312,
+    "inj_chpY_by_class": {
+     "OTHER": 2.311,
+     "biomass": 0.002
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 2.996,
+    "model_add_by_group": {
+     "CC_CHP": 4.706,
+     "CT_CHP": -1.71,
+     "ST_CHP": 0.0
+    },
+    "model_chp_twh": {
+     "CC_CHP": 26.03499984741211,
+     "CT_CHP": 4.710999965667725,
+     "ST_CHP": 0.07000000029802322
+    },
+    "displaced_twh_by_class": {
+     "CC_REGULAR": 1.414,
+     "COAL_LIGNITE": 0.102,
+     "COAL_PRB": 0.717,
+     "CT_PEAKER": 0.112,
+     "ST_GAS": 0.493
+    },
+    "unabsorbed_twh": 0.159
+   },
+   "holdout_reach": {
+    "removed_twh": 2.312,
+    "taken_twh_by_class": {
+     "CC_CHP": 0.09700000286102295,
+     "CC_REGULAR": 1.190000057220459,
+     "COAL_LIGNITE": 0.07800000160932541,
+     "COAL_PRB": 0.5339999794960022,
+     "CT_CHP": 0.027000000700354576,
+     "CT_PEAKER": 0.08299999684095383,
+     "ST_GAS": 0.3019999861717224
+    }
+   },
+   "commitment": {
+    "bands": [
+     "econ",
+     "econc00",
+     "econc01",
+     "econc02",
+     "econc03",
+     "econc04",
+     "econc05",
+     "econc06",
+     "econc07",
+     "econc08",
+     "econc09",
+     "econc10"
+    ],
+    "census": {
+     "plants": 11,
+     "cems_twh": 42.142,
+     "model_twh_same_plants": 22.938,
+     "cems_on_wmean": 0.982,
+     "model_on_wmean": 0.993,
+     "cems_starts_median": 1.0,
+     "model_starts_median": 1.0
+    },
+    "release": {
+     "gain_twh": 0.0,
+     "note": "no committed/econ-low CHP band pair"
+    }
+   }
+  },
+  "2021": {
+   "plants_chp": 13,
+   "plants_in_sched67": 13,
+   "netgen_twh": 40.056,
+   "netgen_twh_covered": 40.056,
+   "btm_default_twh": 16.136,
+   "btm_measured_twh": 12.058,
+   "dE_bench_twh": 4.078,
+   "dE_by_group": {
+    "CC_CHP": 4.648,
+    "CT_CHP": -0.57
+   },
+   "netgen_by_group": {
+    "CC_CHP": 35.68,
+    "CT_CHP": 4.376
+   },
+   "default_shares": [
+    0.35,
+    0.7
+   ],
+   "top": [
+    {
+     "plant": 55464,
+     "name": "Deer Park Energy Center",
+     "group": "CC_CHP",
+     "netgen_twh": 7.324,
+     "default": 0.35,
+     "measured": 0.029,
+     "measured_same_year": 0.0,
+     "dE_twh": 2.349
+    },
+    {
+     "plant": 55047,
+     "name": "Pasadena Cogeneration",
+     "group": "CC_CHP",
+     "netgen_twh": 3.441,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.086,
+     "dE_twh": 1.204
+    },
+    {
+     "plant": 55015,
+     "name": "Sweeny Cogen Facility",
+     "group": "CT_CHP",
+     "netgen_twh": 2.413,
+     "default": 0.35,
+     "measured": 0.849,
+     "measured_same_year": 0.698,
+     "dE_twh": -1.204
+    },
+    {
+     "plant": 55187,
+     "name": "Channelview Cogeneration Plant",
+     "group": "CC_CHP",
+     "netgen_twh": 5.377,
+     "default": 0.35,
+     "measured": 0.476,
+     "measured_same_year": 0.418,
+     "dE_twh": -0.679
+    },
+    {
+     "plant": 10298,
+     "name": "Bayou Cogen Plant",
+     "group": "CT_CHP",
+     "netgen_twh": 1.963,
+     "default": 0.7,
+     "measured": 0.377,
+     "measured_same_year": 0.427,
+     "dE_twh": 0.634
+    },
+    {
+     "plant": 50815,
+     "name": "Odyssey Energy Altura Cogen, LLC",
+     "group": "CC_CHP",
+     "netgen_twh": 3.249,
+     "default": 0.35,
+     "measured": 0.184,
+     "measured_same_year": 0.166,
+     "dE_twh": 0.54
+    }
+   ],
+   "reconcile": {
+    "family_committed": 240.168,
+    "raw_930": 239.013,
+    "fold_F": 2.134,
+    "target": 236.879,
+    "fired_committed": false,
+    "s_est": 1.0025,
+    "family_pre_est": 240.168,
+    "ratio_pre": 1.0139,
+    "family_new": 244.247,
+    "ratio_new": 1.0311,
+    "fires_new": true,
+    "scale_new": 0.9698,
+    "upper_margin_new_twh": -0.041,
+    "lower_margin_new_twh": 14.474,
+    "ratio_new_fold_refuted": 1.0219,
+    "fires_new_fold_refuted": false,
+    "s_ref": 0.9961
+   },
+   "fold_test": {
+    "e930_gas": 163.92,
+    "eia923_gas_full": 196.77,
+    "gap_930_minus_923": -32.85,
+    "fold_F": 2.13
+   },
+   "holdout": {
+    "e930_other": 0.592,
+    "bench_OTHER": 2.312,
+    "bench_biomass": 0.414,
+    "inj_total_twh": 2.726,
+    "inj_chpY_twh": 2.193,
+    "inj_chpY_by_class": {
+     "OTHER": 2.193,
+     "biomass": 0.0
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 3.963,
+    "model_add_by_group": {
+     "CC_CHP": 5.098,
+     "CT_CHP": -1.135,
+     "ST_CHP": 0.0
+    },
+    "model_chp_twh": {
+     "CC_CHP": 27.663000106811523,
+     "CT_CHP": 5.89900016784668,
+     "ST_CHP": 0.0689999982714653
+    },
+    "displaced_twh_by_class": {
+     "": 0.007,
+     "CC_REGULAR": 2.313,
+     "COAL_LIGNITE": 0.078,
+     "COAL_PRB": 0.335,
+     "CT_PEAKER": 0.27,
+     "ST_GAS": 0.601
+    },
+    "unabsorbed_twh": 0.358
+   },
+   "holdout_reach": {
+    "removed_twh": 2.193,
+    "taken_twh_by_class": {
+     "CC_CHP": 0.07599999755620956,
+     "CC_REGULAR": 1.0329999923706055,
+     "COAL_LIGNITE": 0.47699999809265137,
+     "COAL_PRB": 0.23000000417232513,
+     "CT_CHP": 0.013000000268220901,
+     "CT_PEAKER": 0.13699999451637268,
+     "ST_GAS": 0.22499999403953552
+    }
+   },
+   "commitment": {
+    "bands": [
+     "ccs",
+     "econ",
+     "econc00",
+     "econc01",
+     "econc02",
+     "econc03",
+     "econc04",
+     "econc05",
+     "econc06",
+     "econc07",
+     "econc08",
+     "econc09"
+    ],
+    "census": {
+     "plants": 12,
+     "cems_twh": 43.5,
+     "model_twh_same_plants": 25.053,
+     "cems_on_wmean": 0.975,
+     "model_on_wmean": 0.985,
+     "cems_starts_median": 1.5,
+     "model_starts_median": 1.0
+    },
+    "release": {
+     "gain_twh": 0.0,
+     "note": "no committed/econ-low CHP band pair"
+    }
+   }
+  },
+  "2022": {
+   "plants_chp": 13,
+   "plants_in_sched67": 13,
+   "netgen_twh": 37.301,
+   "netgen_twh_covered": 37.301,
+   "btm_default_twh": 15.076,
+   "btm_measured_twh": 10.684,
+   "dE_bench_twh": 4.392,
+   "dE_by_group": {
+    "CC_CHP": 4.802,
+    "CT_CHP": -0.41
+   },
+   "netgen_by_group": {
+    "CC_CHP": 33.14,
+    "CT_CHP": 4.16
+   },
+   "default_shares": [
+    0.35,
+    0.7
+   ],
+   "top": [
+    {
+     "plant": 55464,
+     "name": "Deer Park Energy Center",
+     "group": "CC_CHP",
+     "netgen_twh": 6.95,
+     "default": 0.35,
+     "measured": 0.029,
+     "measured_same_year": 0.028,
+     "dE_twh": 2.228
+    },
+    {
+     "plant": 55047,
+     "name": "Pasadena Cogeneration",
+     "group": "CC_CHP",
+     "netgen_twh": 3.802,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.073,
+     "dE_twh": 1.331
+    },
+    {
+     "plant": 55015,
+     "name": "Sweeny Cogen Facility",
+     "group": "CT_CHP",
+     "netgen_twh": 2.134,
+     "default": 0.35,
+     "measured": 0.849,
+     "measured_same_year": 0.821,
+     "dE_twh": -1.065
+    },
+    {
+     "plant": 55187,
+     "name": "Channelview Cogeneration Plant",
+     "group": "CC_CHP",
+     "netgen_twh": 5.584,
+     "default": 0.35,
+     "measured": 0.476,
+     "measured_same_year": 0.453,
+     "dE_twh": -0.705
+    },
+    {
+     "plant": 10298,
+     "name": "Bayou Cogen Plant",
+     "group": "CT_CHP",
+     "netgen_twh": 2.026,
+     "default": 0.7,
+     "measured": 0.377,
+     "measured_same_year": 0.324,
+     "dE_twh": 0.655
+    },
+    {
+     "plant": 52088,
+     "name": "Texas City Power Plant",
+     "group": "CC_CHP",
+     "netgen_twh": 1.702,
+     "default": 0.35,
+     "measured": 0.03,
+     "measured_same_year": 0.031,
+     "dE_twh": 0.545
+    }
+   ],
+   "reconcile": {
+    "family_committed": 256.325,
+    "raw_930": 254.653,
+    "fold_F": 1.928,
+    "target": 252.725,
+    "fired_committed": false,
+    "s_est": 0.9979,
+    "family_pre_est": 256.325,
+    "ratio_pre": 1.0142,
+    "family_new": 260.716,
+    "ratio_new": 1.0316,
+    "fires_new": true,
+    "scale_new": 0.9693,
+    "upper_margin_new_twh": -0.175,
+    "lower_margin_new_twh": 15.573,
+    "ratio_new_fold_refuted": 1.0238,
+    "fires_new_fold_refuted": false,
+    "s_ref": 0.9961
+   },
+   "fold_test": {
+    "e930_gas": 182.74,
+    "eia923_gas_full": 215.02,
+    "gap_930_minus_923": -32.29,
+    "fold_F": 1.93
+   },
+   "holdout": {
+    "e930_other": 1.15,
+    "bench_OTHER": 2.426,
+    "bench_biomass": 0.651,
+    "inj_total_twh": 3.078,
+    "inj_chpY_twh": 2.381,
+    "inj_chpY_by_class": {
+     "OTHER": 2.38,
+     "biomass": 0.0
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 4.044,
+    "model_add_by_group": {
+     "CC_CHP": 5.345,
+     "CT_CHP": -1.301,
+     "ST_CHP": 0.0
+    },
+    "model_chp_twh": {
+     "CC_CHP": 27.059999465942383,
+     "CT_CHP": 6.0879998207092285,
+     "ST_CHP": 0.07000000029802322
+    },
+    "displaced_twh_by_class": {
+     "CC_REGULAR": 2.273,
+     "COAL_LIGNITE": 0.06,
+     "COAL_PRB": 0.279,
+     "CT_PEAKER": 0.294,
+     "ST_GAS": 0.52
+    },
+    "unabsorbed_twh": 0.616
+   },
+   "holdout_reach": {
+    "removed_twh": 2.381,
+    "taken_twh_by_class": {
+     "": 0.008999999612569809,
+     "CC_REGULAR": 0.30799999833106995,
+     "COAL_LIGNITE": 0.24300000071525574,
+     "COAL_PRB": 1.5670000314712524,
+     "CT_PEAKER": 0.12300000339746475,
+     "ST_GAS": 0.125
+    }
+   },
+   "commitment": {
+    "bands": [
+     "ccs",
+     "econ",
+     "econc00",
+     "econc01",
+     "econc02",
+     "econc03",
+     "econc04",
+     "econc05",
+     "econc06",
+     "econc07",
+     "econc08",
+     "econc09"
+    ],
+    "census": {
+     "plants": 12,
+     "cems_twh": 40.479,
+     "model_twh_same_plants": 24.584,
+     "cems_on_wmean": 0.96,
+     "model_on_wmean": 0.973,
+     "cems_starts_median": 3.0,
+     "model_starts_median": 1.0
+    },
+    "release": {
+     "gain_twh": 0.0,
+     "note": "no committed/econ-low CHP band pair"
+    }
+   }
+  },
+  "2023": {
+   "plants_chp": 13,
+   "plants_in_sched67": 13,
+   "netgen_twh": 40.857,
+   "netgen_twh_covered": 40.857,
+   "btm_default_twh": 16.301,
+   "btm_measured_twh": 11.446,
+   "dE_bench_twh": 4.855,
+   "dE_by_group": {
+    "CC_CHP": 5.101,
+    "CT_CHP": -0.247
+   },
+   "netgen_by_group": {
+    "CC_CHP": 37.05,
+    "CT_CHP": 3.808
+   },
+   "default_shares": [
+    0.35,
+    0.7
+   ],
+   "top": [
+    {
+     "plant": 55464,
+     "name": "Deer Park Energy Center",
+     "group": "CC_CHP",
+     "netgen_twh": 6.87,
+     "default": 0.35,
+     "measured": 0.029,
+     "measured_same_year": 0.028,
+     "dE_twh": 2.203
+    },
+    {
+     "plant": 55047,
+     "name": "Pasadena Cogeneration",
+     "group": "CC_CHP",
+     "netgen_twh": 4.667,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 1.633
+    },
+    {
+     "plant": 55015,
+     "name": "Sweeny Cogen Facility",
+     "group": "CT_CHP",
+     "netgen_twh": 1.745,
+     "default": 0.35,
+     "measured": 0.849,
+     "measured_same_year": 0.832,
+     "dE_twh": -0.871
+    },
+    {
+     "plant": 52088,
+     "name": "Texas City Power Plant",
+     "group": "CC_CHP",
+     "netgen_twh": 2.059,
+     "default": 0.35,
+     "measured": 0.03,
+     "measured_same_year": 0.029,
+     "dE_twh": 0.66
+    },
+    {
+     "plant": 10298,
+     "name": "Bayou Cogen Plant",
+     "group": "CT_CHP",
+     "netgen_twh": 1.953,
+     "default": 0.7,
+     "measured": 0.377,
+     "measured_same_year": 0.423,
+     "dE_twh": 0.631
+    },
+    {
+     "plant": 55187,
+     "name": "Channelview Cogeneration Plant",
+     "group": "CC_CHP",
+     "netgen_twh": 4.962,
+     "default": 0.35,
+     "measured": 0.476,
+     "measured_same_year": 0.52,
+     "dE_twh": -0.627
+    }
+   ],
+   "reconcile": {
+    "family_committed": 266.462,
+    "raw_930": 263.758,
+    "fold_F": 1.254,
+    "target": 262.505,
+    "fired_committed": false,
+    "s_est": 0.9976,
+    "family_pre_est": 266.462,
+    "ratio_pre": 1.0151,
+    "family_new": 271.316,
+    "ratio_new": 1.0336,
+    "fires_new": true,
+    "scale_new": 0.9675,
+    "upper_margin_new_twh": -0.693,
+    "lower_margin_new_twh": 16.687,
+    "ratio_new_fold_refuted": 1.0287,
+    "fires_new_fold_refuted": false,
+    "s_ref": 0.9961
+   },
+   "fold_test": {
+    "e930_gas": 201.47,
+    "eia923_gas_full": 237.86,
+    "gap_930_minus_923": -36.4,
+    "fold_F": 1.25
+   },
+   "holdout": {
+    "e930_other": 1.147,
+    "bench_OTHER": 1.988,
+    "bench_biomass": 0.412,
+    "inj_total_twh": 2.4,
+    "inj_chpY_twh": 2.08,
+    "inj_chpY_by_class": {
+     "OTHER": 2.08,
+     "biomass": 0.0
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 4.008,
+    "model_add_by_group": {
+     "CC_CHP": 5.011,
+     "CT_CHP": -1.003,
+     "ST_CHP": 0.0
+    },
+    "model_chp_twh": {
+     "CC_CHP": 26.28700065612793,
+     "CT_CHP": 5.64300012588501,
+     "ST_CHP": 0.0689999982714653
+    },
+    "displaced_twh_by_class": {
+     "": 0.012,
+     "CC_REGULAR": 1.798,
+     "COAL_LIGNITE": 0.066,
+     "COAL_PRB": 0.606,
+     "CT_PEAKER": 0.364,
+     "ST_GAS": 0.644
+    },
+    "unabsorbed_twh": 0.518
+   },
+   "holdout_reach": {
+    "removed_twh": 2.08,
+    "taken_twh_by_class": {
+     "": 0.006000000052154064,
+     "CC_CHP": 0.07199999690055847,
+     "CC_REGULAR": 0.765999972820282,
+     "COAL_LIGNITE": 0.2879999876022339,
+     "COAL_PRB": 0.4350000023841858,
+     "CT_CHP": 0.017999999225139618,
+     "CT_PEAKER": 0.20499999821186066,
+     "ST_GAS": 0.28999999165534973
+    }
+   },
+   "commitment": {
+    "bands": [
+     "ccs",
+     "econ",
+     "econc00",
+     "econc01",
+     "econc02",
+     "econc03",
+     "econc04",
+     "econc05",
+     "econc06",
+     "econc07",
+     "econc08",
+     "econc09"
+    ],
+    "census": {
+     "plants": 13,
+     "cems_twh": 44.978,
+     "model_twh_same_plants": 23.93,
+     "cems_on_wmean": 0.99,
+     "model_on_wmean": 0.998,
+     "cems_starts_median": 1.0,
+     "model_starts_median": 1.0
+    },
+    "release": {
+     "gain_twh": 0.0,
+     "note": "no committed/econ-low CHP band pair"
+    }
+   }
+  },
+  "2024": {
+   "plants_chp": 13,
+   "plants_in_sched67": 13,
+   "netgen_twh": 44.533,
+   "netgen_twh_covered": 44.533,
+   "btm_default_twh": 17.668,
+   "btm_measured_twh": 12.532,
+   "dE_bench_twh": 5.135,
+   "dE_by_group": {
+    "CC_CHP": 5.548,
+    "CT_CHP": -0.413
+   },
+   "netgen_by_group": {
+    "CC_CHP": 40.109,
+    "CT_CHP": 4.425
+   },
+   "default_shares": [
+    0.35,
+    0.7
+   ],
+   "top": [
+    {
+     "plant": 55464,
+     "name": "Deer Park Energy Center",
+     "group": "CC_CHP",
+     "netgen_twh": 8.004,
+     "default": 0.35,
+     "measured": 0.029,
+     "measured_same_year": 0.032,
+     "dE_twh": 2.566
+    },
+    {
+     "plant": 55047,
+     "name": "Pasadena Cogeneration",
+     "group": "CC_CHP",
+     "netgen_twh": 4.942,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.105,
+     "dE_twh": 1.73
+    },
+    {
+     "plant": 55015,
+     "name": "Sweeny Cogen Facility",
+     "group": "CT_CHP",
+     "netgen_twh": 2.147,
+     "default": 0.35,
+     "measured": 0.849,
+     "measured_same_year": 0.893,
+     "dE_twh": -1.071
+    },
+    {
+     "plant": 55187,
+     "name": "Channelview Cogeneration Plant",
+     "group": "CC_CHP",
+     "netgen_twh": 5.8,
+     "default": 0.35,
+     "measured": 0.476,
+     "measured_same_year": 0.462,
+     "dE_twh": -0.733
+    },
+    {
+     "plant": 52088,
+     "name": "Texas City Power Plant",
+     "group": "CC_CHP",
+     "netgen_twh": 2.132,
+     "default": 0.35,
+     "measured": 0.03,
+     "measured_same_year": 0.03,
+     "dE_twh": 0.683
+    },
+    {
+     "plant": 10298,
+     "name": "Bayou Cogen Plant",
+     "group": "CT_CHP",
+     "netgen_twh": 2.077,
+     "default": 0.7,
+     "measured": 0.377,
+     "measured_same_year": 0.385,
+     "dE_twh": 0.671
+    }
+   ],
+   "reconcile": {
+    "family_committed": 268.418,
+    "raw_930": 262.452,
+    "fold_F": 0.171,
+    "target": 262.281,
+    "fired_committed": false,
+    "s_est": 0.9979,
+    "family_pre_est": 268.418,
+    "ratio_pre": 1.0234,
+    "family_new": 273.553,
+    "ratio_new": 1.043,
+    "fires_new": true,
+    "scale_new": 0.9588,
+    "upper_margin_new_twh": -3.16,
+    "lower_margin_new_twh": 19.141,
+    "ratio_new_fold_refuted": 1.0423,
+    "fires_new_fold_refuted": true,
+    "s_ref": 0.9961
+   },
+   "fold_test": {
+    "e930_gas": 203.68,
+    "eia923_gas_full": 243.87,
+    "gap_930_minus_923": -40.19,
+    "fold_F": 0.17
+   },
+   "holdout": {
+    "e930_other": 1.845,
+    "bench_OTHER": 1.696,
+    "bench_biomass": 0.32,
+    "inj_total_twh": 2.016,
+    "inj_chpY_twh": 2.04,
+    "inj_chpY_by_class": {
+     "OTHER": 2.04,
+     "biomass": 0.0
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 4.302,
+    "model_add_by_group": {
+     "CC_CHP": 5.521,
+     "CT_CHP": -1.219,
+     "ST_CHP": 0.0
+    },
+    "model_chp_twh": {
+     "CC_CHP": 28.628999710083008,
+     "CT_CHP": 6.494999885559082,
+     "ST_CHP": 0.0689999982714653
+    },
+    "displaced_twh_by_class": {
+     "CC_REGULAR": 1.505,
+     "COAL_LIGNITE": 0.054,
+     "COAL_PRB": 0.609,
+     "CT_PEAKER": 0.434,
+     "ST_GAS": 0.784
+    },
+    "unabsorbed_twh": 0.915
+   },
+   "holdout_reach": {
+    "removed_twh": 2.04,
+    "taken_twh_by_class": {
+     "CC_CHP": 0.08799999952316284,
+     "CC_REGULAR": 0.7699999809265137,
+     "COAL_LIGNITE": 0.27300000190734863,
+     "COAL_PRB": 0.3019999861717224,
+     "CT_CHP": 0.014999999664723873,
+     "CT_PEAKER": 0.23499999940395355,
+     "ST_GAS": 0.3569999933242798
+    }
+   },
+   "commitment": {
+    "bands": [
+     "ccs",
+     "econ",
+     "econc00",
+     "econc01",
+     "econc02",
+     "econc03",
+     "econc04",
+     "econc05",
+     "econc06",
+     "econc07",
+     "econc08",
+     "econc09"
+    ],
+    "census": {
+     "plants": 13,
+     "cems_twh": 48.128,
+     "model_twh_same_plants": 26.853,
+     "cems_on_wmean": 0.992,
+     "model_on_wmean": 1.0,
+     "cems_starts_median": 1.0,
+     "model_starts_median": 1.0
+    },
+    "release": {
+     "gain_twh": 0.0,
+     "note": "no committed/econ-low CHP band pair"
+    }
+   }
+  },
+  "2025": {
+   "plants_chp": 12,
+   "plants_in_sched67": 12,
+   "netgen_twh": 42.87,
+   "netgen_twh_covered": 42.87,
+   "btm_default_twh": 17.108,
+   "btm_measured_twh": 12.026,
+   "dE_bench_twh": 5.081,
+   "dE_by_group": {
+    "CC_CHP": 5.545,
+    "CT_CHP": -0.464
+   },
+   "netgen_by_group": {
+    "CC_CHP": 38.214,
+    "CT_CHP": 4.657
+   },
+   "default_shares": [
+    0.35,
+    0.7
+   ],
+   "top": [
+    {
+     "plant": 55464,
+     "name": "Deer Park Energy Center",
+     "group": "CC_CHP",
+     "netgen_twh": 7.822,
+     "default": 0.35,
+     "measured": 0.029,
+     "measured_same_year": 0.031,
+     "dE_twh": 2.508
+    },
+    {
+     "plant": 55047,
+     "name": "Pasadena Cogeneration",
+     "group": "CC_CHP",
+     "netgen_twh": 5.088,
+     "default": 0.35,
+     "measured": 0.0,
+     "measured_same_year": 0.103,
+     "dE_twh": 1.781
+    },
+    {
+     "plant": 55015,
+     "name": "Sweeny Cogen Facility",
+     "group": "CT_CHP",
+     "netgen_twh": 2.3,
+     "default": 0.35,
+     "measured": 0.849,
+     "measured_same_year": 0.843,
+     "dE_twh": -1.148
+    },
+    {
+     "plant": 10298,
+     "name": "Bayou Cogen Plant",
+     "group": "CT_CHP",
+     "netgen_twh": 2.156,
+     "default": 0.7,
+     "measured": 0.377,
+     "measured_same_year": 0.391,
+     "dE_twh": 0.697
+    },
+    {
+     "plant": 55187,
+     "name": "Channelview Cogeneration Plant",
+     "group": "CC_CHP",
+     "netgen_twh": 5.496,
+     "default": 0.35,
+     "measured": 0.476,
+     "measured_same_year": 0.466,
+     "dE_twh": -0.694
+    },
+    {
+     "plant": 50815,
+     "name": "Odyssey Energy Altura Cogen, LLC",
+     "group": "CC_CHP",
+     "netgen_twh": 3.444,
+     "default": 0.35,
+     "measured": 0.184,
+     "measured_same_year": 0.204,
+     "dE_twh": 0.572
+    }
+   ],
+   "reconcile": {
+    "family_committed": 269.487,
+    "raw_930": 263.558,
+    "fold_F": 1.101,
+    "target": 262.457,
+    "fired_committed": false,
+    "s_est": 0.9943,
+    "family_pre_est": 269.487,
+    "ratio_pre": 1.0268,
+    "family_new": 274.568,
+    "ratio_new": 1.0461,
+    "fires_new": true,
+    "scale_new": 0.9559,
+    "upper_margin_new_twh": -3.994,
+    "lower_margin_new_twh": 19.985,
+    "ratio_new_fold_refuted": 1.0418,
+    "fires_new_fold_refuted": true,
+    "s_ref": 0.9961
+   },
+   "fold_test": {
+    "e930_gas": 200.18,
+    "eia923_gas_full": 240.31,
+    "gap_930_minus_923": -40.13,
+    "fold_F": 1.1
+   },
+   "holdout": {
+    "e930_other": 0.267,
+    "bench_OTHER": 0.978,
+    "bench_biomass": 0.39,
+    "inj_total_twh": 1.368,
+    "inj_chpY_twh": 1.919,
+    "inj_chpY_by_class": {
+     "OTHER": 1.919,
+     "biomass": 0.0
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 4.02,
+    "model_add_by_group": {
+     "CC_CHP": 5.314,
+     "CT_CHP": -1.294,
+     "ST_CHP": 0.0
+    },
+    "model_chp_twh": {
+     "CC_CHP": 27.584999084472656,
+     "CT_CHP": 6.704999923706055,
+     "ST_CHP": 0.0689999982714653
+    },
+    "displaced_twh_by_class": {
+     "CC_REGULAR": 1.541,
+     "COAL_LIGNITE": 0.04,
+     "COAL_PRB": 0.246,
+     "CT_PEAKER": 0.362,
+     "ST_GAS": 0.572
+    },
+    "unabsorbed_twh": 1.258
+   },
+   "holdout_reach": {
+    "removed_twh": 1.919,
+    "taken_twh_by_class": {
+     "CC_CHP": 0.04699999839067459,
+     "CC_REGULAR": 0.5820000171661377,
+     "COAL_LIGNITE": 0.2409999966621399,
+     "COAL_PRB": 0.593999981880188,
+     "CT_PEAKER": 0.2150000035762787,
+     "ST_GAS": 0.23499999940395355
+    }
+   },
+   "commitment": {
+    "bands": [
+     "ccs",
+     "econ",
+     "econc00",
+     "econc01",
+     "econc02",
+     "econc03",
+     "econc04",
+     "econc05",
+     "econc06",
+     "econc07",
+     "econc08",
+     "econc09"
+    ],
+    "census": {
+     "plants": 12,
+     "cems_twh": 45.757,
+     "model_twh_same_plants": 25.655,
+     "cems_on_wmean": 0.986,
+     "model_on_wmean": 0.993,
+     "cems_starts_median": 1.5,
+     "model_starts_median": 1.0
+    },
+    "release": {
+     "gain_twh": 0.0,
+     "note": "no committed/econ-low CHP band pair"
+    }
+   }
+  }
+ },
+ "NYISO": {
+  "2021": {
+   "plants_chp": 22,
+   "plants_in_sched67": 20,
+   "netgen_twh": 19.954,
+   "netgen_twh_covered": 16.776,
+   "btm_default_twh": 1.803,
+   "btm_measured_twh": 0.87,
+   "dE_bench_twh": 0.934,
+   "dE_by_group": {
+    "CC_CHP": 0.998,
+    "CT_CHP": -0.194,
+    "ST_CHP": 0.13
+   },
+   "netgen_by_group": {
+    "CC_CHP": 16.117,
+    "CT_CHP": 2.701,
+    "ST_CHP": 1.137
+   },
+   "default_shares": [
+    0.0,
+    0.002,
+    0.004,
+    0.006,
+    0.012,
+    0.02,
+    0.028,
+    0.051,
+    0.222,
+    0.35,
+    0.65,
+    0.7,
+    0.981
+   ],
+   "top": [
+    {
+     "plant": 50006,
+     "name": "Linden Cogen Plant",
+     "group": "CC_CHP",
+     "netgen_twh": 5.601,
+     "default": 0.222,
+     "measured": 0.0,
+     "measured_same_year": 0.006,
+     "dE_twh": 1.244
+    },
+    {
+     "plant": 54149,
+     "name": "Stony Brook Cogen Plant",
+     "group": "CT_CHP",
+     "netgen_twh": 0.28,
+     "default": 0.0,
+     "measured": 0.693,
+     "measured_same_year": 0.7,
+     "dE_twh": -0.194
+    },
+    {
+     "plant": 10025,
+     "name": "RED-Rochester, LLC",
+     "group": "ST_CHP",
+     "netgen_twh": 0.27,
+     "default": 0.981,
+     "measured": 0.377,
+     "measured_same_year": 1.0,
+     "dE_twh": 0.163
+    },
+    {
+     "plant": 56259,
+     "name": "Empire Generating Co LLC",
+     "group": "CC_CHP",
+     "netgen_twh": 3.463,
+     "default": 0.002,
+     "measured": 0.035,
+     "measured_same_year": 0.036,
+     "dE_twh": -0.113
+    },
+    {
+     "plant": 54547,
+     "name": "Sithe Independence Station",
+     "group": "CC_CHP",
+     "netgen_twh": 3.522,
+     "default": 0.0,
+     "measured": 0.027,
+     "measured_same_year": 0.029,
+     "dE_twh": -0.096
+    },
+    {
+     "plant": 54099,
+     "name": "Ticonderoga Mill",
+     "group": "ST_CHP",
+     "netgen_twh": 0.109,
+     "default": 0.7,
+     "measured": 1.0,
+     "measured_same_year": 1.0,
+     "dE_twh": -0.033
+    }
+   ],
+   "reconcile": {
+    "family_committed": 60.449,
+    "raw_930": 60.235,
+    "fold_F": 0.0,
+    "target": 60.235,
+    "fired_committed": false,
+    "s_est": 1.0124,
+    "family_pre_est": 60.449,
+    "ratio_pre": 1.0036,
+    "family_new": 61.383,
+    "ratio_new": 1.0191,
+    "fires_new": false,
+    "scale_new": 1.0,
+    "upper_margin_new_twh": 0.715,
+    "lower_margin_new_twh": 2.955,
+    "ratio_new_fold_refuted": 1.0191,
+    "fires_new_fold_refuted": false,
+    "s_ref": 1.0177
+   },
+   "fold_test": {
+    "e930_gas": 55.79,
+    "eia923_gas_full": 61.84,
+    "gap_930_minus_923": -6.06,
+    "fold_F": 0.0
+   },
+   "holdout": {
+    "e930_other": 3.029,
+    "bench_OTHER": 1.639,
+    "bench_biomass": 1.109,
+    "inj_total_twh": 2.747,
+    "inj_chpY_twh": 0.707,
+    "inj_chpY_by_class": {
+     "OTHER": 0.546,
+     "biomass": 0.162
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 1.686,
+    "model_add_by_group": {
+     "CC_CHP": 1.32,
+     "CT_CHP": -0.022,
+     "ST_CHP": 0.388
+    },
+    "model_chp_twh": {
+     "CC_CHP": 16.31800079345703,
+     "CT_CHP": 1.2070000171661377,
+     "ST_CHP": 1.3359999656677246
+    },
+    "displaced_twh_by_class": {
+     "": 0.232,
+     "CC_REGULAR": 0.486,
+     "CT_PEAKER": 0.374,
+     "ST_GAS": 0.345
+    },
+    "unabsorbed_twh": 0.248
+   },
+   "holdout_reach": {
+    "removed_twh": 0.707,
+    "taken_twh_by_class": {
+     "": 0.6129999756813049,
+     "CC_CHP": 0.041999999433755875,
+     "CC_REGULAR": 0.02199999988079071,
+     "CT_PEAKER": 0.00800000037997961,
+     "ST_GAS": 0.020999999716877937
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econ",
+     "econc00",
+     "econc01",
+     "econc02",
+     "econc03",
+     "econc04",
+     "econc05",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 18,
+     "cems_twh": 20.913,
+     "model_twh_same_plants": 18.586,
+     "cems_on_wmean": 0.883,
+     "model_on_wmean": 0.803,
+     "cems_starts_median": 20.0,
+     "model_starts_median": 107.0
+    },
+    "release": {
+     "gain_twh": 0.0,
+     "gain_by_group": {
+      "CT_CHP": 0.0,
+      "ST_CHP": 0.0
+     },
+     "markup_mean": 4.75,
+     "plants_inverted": 4,
+     "plants": 5,
+     "displaced_twh_by_class": {},
+     "unabsorbed_twh": -0.0
+    }
+   }
+  },
+  "2022": {
+   "plants_chp": 21,
+   "plants_in_sched67": 19,
+   "netgen_twh": 20.013,
+   "netgen_twh_covered": 17.027,
+   "btm_default_twh": 1.865,
+   "btm_measured_twh": 1.029,
+   "dE_bench_twh": 0.837,
+   "dE_by_group": {
+    "CC_CHP": 0.887,
+    "CT_CHP": -0.194,
+    "ST_CHP": 0.144
+   },
+   "netgen_by_group": {
+    "CC_CHP": 16.35,
+    "CT_CHP": 2.498,
+    "ST_CHP": 1.165
+   },
+   "default_shares": [
+    0.0,
+    0.002,
+    0.004,
+    0.006,
+    0.012,
+    0.02,
+    0.028,
+    0.051,
+    0.222,
+    0.35,
+    0.65,
+    0.7,
+    0.981
+   ],
+   "top": [
+    {
+     "plant": 50006,
+     "name": "Linden Cogen Plant",
+     "group": "CC_CHP",
+     "netgen_twh": 5.233,
+     "default": 0.222,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 1.162
+    },
+    {
+     "plant": 54149,
+     "name": "Stony Brook Cogen Plant",
+     "group": "CT_CHP",
+     "netgen_twh": 0.28,
+     "default": 0.0,
+     "measured": 0.693,
+     "measured_same_year": 0.716,
+     "dE_twh": -0.194
+    },
+    {
+     "plant": 10025,
+     "name": "RED-Rochester, LLC",
+     "group": "ST_CHP",
+     "netgen_twh": 0.291,
+     "default": 0.981,
+     "measured": 0.377,
+     "measured_same_year": 1.0,
+     "dE_twh": 0.176
+    },
+    {
+     "plant": 56259,
+     "name": "Empire Generating Co LLC",
+     "group": "CC_CHP",
+     "netgen_twh": 3.203,
+     "default": 0.002,
+     "measured": 0.035,
+     "measured_same_year": 0.032,
+     "dE_twh": -0.105
+    },
+    {
+     "plant": 54547,
+     "name": "Sithe Independence Station",
+     "group": "CC_CHP",
+     "netgen_twh": 3.683,
+     "default": 0.0,
+     "measured": 0.027,
+     "measured_same_year": 0.027,
+     "dE_twh": -0.1
+    },
+    {
+     "plant": 54114,
+     "name": "Kennedy International Airport Cogen",
+     "group": "CC_CHP",
+     "netgen_twh": 0.555,
+     "default": 0.004,
+     "measured": 0.064,
+     "measured_same_year": 0.068,
+     "dE_twh": -0.033
+    }
+   ],
+   "reconcile": {
+    "family_committed": 66.169,
+    "raw_930": 65.142,
+    "fold_F": 0.0,
+    "target": 65.142,
+    "fired_committed": false,
+    "s_est": 1.0371,
+    "family_pre_est": 66.169,
+    "ratio_pre": 1.0158,
+    "family_new": 67.006,
+    "ratio_new": 1.0286,
+    "fires_new": false,
+    "scale_new": 1.0,
+    "upper_margin_new_twh": 0.15,
+    "lower_margin_new_twh": 3.818,
+    "ratio_new_fold_refuted": 1.0286,
+    "fires_new_fold_refuted": false,
+    "s_ref": 1.0177
+   },
+   "fold_test": {
+    "e930_gas": 60.26,
+    "eia923_gas_full": 65.51,
+    "gap_930_minus_923": -5.26,
+    "fold_F": 0.0
+   },
+   "holdout": {
+    "e930_other": 3.203,
+    "bench_OTHER": 1.732,
+    "bench_biomass": 1.062,
+    "inj_total_twh": 2.793,
+    "inj_chpY_twh": 0.754,
+    "inj_chpY_by_class": {
+     "OTHER": 0.585,
+     "biomass": 0.168
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 1.486,
+    "model_add_by_group": {
+     "CC_CHP": 1.126,
+     "CT_CHP": -0.055,
+     "ST_CHP": 0.415
+    },
+    "model_chp_twh": {
+     "CC_CHP": 17.631999969482422,
+     "CT_CHP": 2.0239999294281006,
+     "ST_CHP": 1.6009999513626099
+    },
+    "displaced_twh_by_class": {
+     "": 0.345,
+     "CC_REGULAR": 0.425,
+     "CT_PEAKER": 0.181,
+     "ST_GAS": 0.25
+    },
+    "unabsorbed_twh": 0.286
+   },
+   "holdout_reach": {
+    "removed_twh": 0.754,
+    "taken_twh_by_class": {
+     "": 0.6919999718666077,
+     "CC_CHP": 0.02500000037252903,
+     "CC_REGULAR": 0.013000000268220901,
+     "CT_PEAKER": 0.00800000037997961,
+     "ST_GAS": 0.014999999664723873
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econ",
+     "econc00",
+     "econc01",
+     "econc02",
+     "econc03",
+     "econc04",
+     "econc05",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 17,
+     "cems_twh": 20.522,
+     "model_twh_same_plants": 20.959,
+     "cems_on_wmean": 0.844,
+     "model_on_wmean": 0.851,
+     "cems_starts_median": 20.0,
+     "model_starts_median": 79.0
+    },
+    "release": {
+     "gain_twh": 0.0,
+     "gain_by_group": {
+      "CT_CHP": 0.0,
+      "ST_CHP": 0.0
+     },
+     "markup_mean": 6.62,
+     "plants_inverted": 3,
+     "plants": 5,
+     "displaced_twh_by_class": {},
+     "unabsorbed_twh": 0.0
+    }
+   }
+  },
+  "2023": {
+   "plants_chp": 21,
+   "plants_in_sched67": 19,
+   "netgen_twh": 20.069,
+   "netgen_twh_covered": 16.995,
+   "btm_default_twh": 1.95,
+   "btm_measured_twh": 1.024,
+   "dE_bench_twh": 0.926,
+   "dE_by_group": {
+    "CC_CHP": 0.981,
+    "CT_CHP": -0.199,
+    "ST_CHP": 0.144
+   },
+   "netgen_by_group": {
+    "CC_CHP": 16.31,
+    "CT_CHP": 2.31,
+    "ST_CHP": 1.449
+   },
+   "default_shares": [
+    0.0,
+    0.002,
+    0.004,
+    0.006,
+    0.012,
+    0.02,
+    0.028,
+    0.051,
+    0.222,
+    0.35,
+    0.65,
+    0.7,
+    0.981
+   ],
+   "top": [
+    {
+     "plant": 50006,
+     "name": "Linden Cogen Plant",
+     "group": "CC_CHP",
+     "netgen_twh": 5.605,
+     "default": 0.222,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 1.245
+    },
+    {
+     "plant": 54149,
+     "name": "Stony Brook Cogen Plant",
+     "group": "CT_CHP",
+     "netgen_twh": 0.288,
+     "default": 0.0,
+     "measured": 0.693,
+     "measured_same_year": 0.701,
+     "dE_twh": -0.199
+    },
+    {
+     "plant": 10025,
+     "name": "RED-Rochester, LLC",
+     "group": "ST_CHP",
+     "netgen_twh": 0.291,
+     "default": 0.981,
+     "measured": 0.377,
+     "measured_same_year": 0.059,
+     "dE_twh": 0.176
+    },
+    {
+     "plant": 54547,
+     "name": "Sithe Independence Station",
+     "group": "CC_CHP",
+     "netgen_twh": 4.043,
+     "default": 0.0,
+     "measured": 0.027,
+     "measured_same_year": 0.028,
+     "dE_twh": -0.11
+    },
+    {
+     "plant": 56259,
+     "name": "Empire Generating Co LLC",
+     "group": "CC_CHP",
+     "netgen_twh": 3.029,
+     "default": 0.002,
+     "measured": 0.035,
+     "measured_same_year": 0.032,
+     "dE_twh": -0.099
+    },
+    {
+     "plant": 54099,
+     "name": "Ticonderoga Mill",
+     "group": "ST_CHP",
+     "netgen_twh": 0.106,
+     "default": 0.7,
+     "measured": 1.0,
+     "measured_same_year": 1.0,
+     "dE_twh": -0.032
+    }
+   ],
+   "reconcile": {
+    "family_committed": 62.093,
+    "raw_930": 63.173,
+    "fold_F": 0.0,
+    "target": 63.173,
+    "fired_committed": false,
+    "s_est": 1.0058,
+    "family_pre_est": 62.093,
+    "ratio_pre": 0.9829,
+    "family_new": 63.019,
+    "ratio_new": 0.9976,
+    "fires_new": false,
+    "scale_new": 1.0,
+    "upper_margin_new_twh": 2.107,
+    "lower_margin_new_twh": 1.742,
+    "ratio_new_fold_refuted": 0.9976,
+    "fires_new_fold_refuted": false,
+    "s_ref": 1.0177
+   },
+   "fold_test": {
+    "e930_gas": 61.0,
+    "eia923_gas_full": 63.87,
+    "gap_930_minus_923": -2.87,
+    "fold_F": 0.0
+   },
+   "holdout": {
+    "e930_other": 4.96,
+    "bench_OTHER": 1.825,
+    "bench_biomass": 0.84,
+    "inj_total_twh": 2.665,
+    "inj_chpY_twh": 0.776,
+    "inj_chpY_by_class": {
+     "OTHER": 0.63,
+     "biomass": 0.146
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 1.565,
+    "model_add_by_group": {
+     "CC_CHP": 1.235,
+     "CT_CHP": -0.042,
+     "ST_CHP": 0.372
+    },
+    "model_chp_twh": {
+     "CC_CHP": 17.650999069213867,
+     "CT_CHP": 0.9350000023841858,
+     "ST_CHP": 1.2259999513626099
+    },
+    "displaced_twh_by_class": {
+     "": 0.269,
+     "CC_REGULAR": 0.503,
+     "CT_PEAKER": 0.049,
+     "ST_GAS": 0.453
+    },
+    "unabsorbed_twh": 0.29
+   },
+   "holdout_reach": {
+    "removed_twh": 0.776,
+    "taken_twh_by_class": {
+     "": 0.6700000166893005,
+     "CC_CHP": 0.03099999949336052,
+     "CC_REGULAR": 0.03500000014901161,
+     "CT_PEAKER": 0.00800000037997961,
+     "ST_GAS": 0.029999999329447746
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econ",
+     "econc00",
+     "econc01",
+     "econc02",
+     "econc03",
+     "econc04",
+     "econc05",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 17,
+     "cems_twh": 20.219,
+     "model_twh_same_plants": 19.503,
+     "cems_on_wmean": 0.882,
+     "model_on_wmean": 0.829,
+     "cems_starts_median": 16.0,
+     "model_starts_median": 52.0
+    },
+    "release": {
+     "gain_twh": 0.0,
+     "gain_by_group": {
+      "CT_CHP": 0.0,
+      "ST_CHP": 0.0
+     },
+     "markup_mean": 3.28,
+     "plants_inverted": 3,
+     "plants": 5,
+     "displaced_twh_by_class": {},
+     "unabsorbed_twh": 0.0
+    }
+   }
+  },
+  "2024": {
+   "plants_chp": 21,
+   "plants_in_sched67": 19,
+   "netgen_twh": 22.205,
+   "netgen_twh_covered": 19.311,
+   "btm_default_twh": 2.039,
+   "btm_measured_twh": 1.245,
+   "dE_bench_twh": 0.794,
+   "dE_by_group": {
+    "CC_CHP": 0.853,
+    "CT_CHP": -0.214,
+    "ST_CHP": 0.155
+   },
+   "netgen_by_group": {
+    "CC_CHP": 18.576,
+    "CT_CHP": 2.458,
+    "ST_CHP": 1.17
+   },
+   "default_shares": [
+    0.0,
+    0.002,
+    0.004,
+    0.006,
+    0.012,
+    0.02,
+    0.028,
+    0.051,
+    0.222,
+    0.35,
+    0.65,
+    0.7,
+    0.981
+   ],
+   "top": [
+    {
+     "plant": 50006,
+     "name": "Linden Cogen Plant",
+     "group": "CC_CHP",
+     "netgen_twh": 5.592,
+     "default": 0.222,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 1.242
+    },
+    {
+     "plant": 54149,
+     "name": "Stony Brook Cogen Plant",
+     "group": "CT_CHP",
+     "netgen_twh": 0.309,
+     "default": 0.0,
+     "measured": 0.693,
+     "measured_same_year": 0.665,
+     "dE_twh": -0.214
+    },
+    {
+     "plant": 10025,
+     "name": "RED-Rochester, LLC",
+     "group": "ST_CHP",
+     "netgen_twh": 0.313,
+     "default": 0.981,
+     "measured": 0.377,
+     "measured_same_year": 0.083,
+     "dE_twh": 0.189
+    },
+    {
+     "plant": 54547,
+     "name": "Sithe Independence Station",
+     "group": "CC_CHP",
+     "netgen_twh": 6.158,
+     "default": 0.0,
+     "measured": 0.027,
+     "measured_same_year": 0.026,
+     "dE_twh": -0.167
+    },
+    {
+     "plant": 56259,
+     "name": "Empire Generating Co LLC",
+     "group": "CC_CHP",
+     "netgen_twh": 2.89,
+     "default": 0.002,
+     "measured": 0.035,
+     "measured_same_year": 0.04,
+     "dE_twh": -0.095
+    },
+    {
+     "plant": 54131,
+     "name": "World Generation X",
+     "group": "CC_CHP",
+     "netgen_twh": 0.289,
+     "default": 0.35,
+     "measured": 0.654,
+     "measured_same_year": 0.768,
+     "dE_twh": -0.088
+    }
+   ],
+   "reconcile": {
+    "family_committed": 66.261,
+    "raw_930": 68.093,
+    "fold_F": 0.0,
+    "target": 68.093,
+    "fired_committed": false,
+    "s_est": 1.0048,
+    "family_pre_est": 66.261,
+    "ratio_pre": 0.9731,
+    "family_new": 67.055,
+    "ratio_new": 0.9848,
+    "fires_new": false,
+    "scale_new": 1.0,
+    "upper_margin_new_twh": 3.144,
+    "lower_margin_new_twh": 1.005,
+    "ratio_new_fold_refuted": 0.9848,
+    "fires_new_fold_refuted": false,
+    "s_ref": 1.0177
+   },
+   "fold_test": {
+    "e930_gas": 67.8,
+    "eia923_gas_full": 68.18,
+    "gap_930_minus_923": -0.38,
+    "fold_F": 0.0
+   },
+   "holdout": {
+    "e930_other": 3.32,
+    "bench_OTHER": 1.792,
+    "bench_biomass": 0.76,
+    "inj_total_twh": 2.552,
+    "inj_chpY_twh": 0.782,
+    "inj_chpY_by_class": {
+     "OTHER": 0.634,
+     "biomass": 0.149
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 1.322,
+    "model_add_by_group": {
+     "CC_CHP": 1.033,
+     "CT_CHP": -0.116,
+     "ST_CHP": 0.405
+    },
+    "model_chp_twh": {
+     "CC_CHP": 17.94700050354004,
+     "CT_CHP": 0.8579999804496765,
+     "ST_CHP": 0.921999990940094
+    },
+    "displaced_twh_by_class": {
+     "": 0.371,
+     "CC_REGULAR": 0.346,
+     "CT_PEAKER": 0.068,
+     "ST_GAS": 0.302
+    },
+    "unabsorbed_twh": 0.235
+   },
+   "holdout_reach": {
+    "removed_twh": 0.782,
+    "taken_twh_by_class": {
+     "": 0.7020000219345093,
+     "CC_CHP": 0.029999999329447746,
+     "CC_REGULAR": 0.026000000536441803,
+     "CT_PEAKER": 0.00800000037997961,
+     "ST_GAS": 0.014999999664723873
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econ",
+     "econc00",
+     "econc01",
+     "econc02",
+     "econc03",
+     "econc04",
+     "econc05",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 17,
+     "cems_twh": 22.741,
+     "model_twh_same_plants": 19.484,
+     "cems_on_wmean": 0.909,
+     "model_on_wmean": 0.826,
+     "cems_starts_median": 15.0,
+     "model_starts_median": 104.0
+    },
+    "release": {
+     "gain_twh": 0.001,
+     "gain_by_group": {
+      "CT_CHP": 0.0,
+      "ST_CHP": 0.0
+     },
+     "markup_mean": 0.02,
+     "plants_inverted": 1,
+     "plants": 4,
+     "displaced_twh_by_class": {},
+     "unabsorbed_twh": 0.0
+    }
+   }
+  },
+  "2025": {
+   "plants_chp": 22,
+   "plants_in_sched67": 20,
+   "netgen_twh": 23.171,
+   "netgen_twh_covered": 20.418,
+   "btm_default_twh": 2.103,
+   "btm_measured_twh": 1.327,
+   "dE_bench_twh": 0.776,
+   "dE_by_group": {
+    "CC_CHP": 0.8,
+    "CT_CHP": -0.146,
+    "ST_CHP": 0.122
+   },
+   "netgen_by_group": {
+    "CC_CHP": 19.671,
+    "CT_CHP": 2.448,
+    "ST_CHP": 1.053
+   },
+   "default_shares": [
+    0.0,
+    0.002,
+    0.004,
+    0.006,
+    0.012,
+    0.02,
+    0.028,
+    0.051,
+    0.222,
+    0.35,
+    0.65,
+    0.7,
+    0.981
+   ],
+   "top": [
+    {
+     "plant": 50006,
+     "name": "Linden Cogen Plant",
+     "group": "CC_CHP",
+     "netgen_twh": 5.651,
+     "default": 0.222,
+     "measured": 0.0,
+     "measured_same_year": 0.0,
+     "dE_twh": 1.255
+    },
+    {
+     "plant": 54149,
+     "name": "Stony Brook Cogen Plant",
+     "group": "CT_CHP",
+     "netgen_twh": 0.285,
+     "default": 0.0,
+     "measured": 0.693,
+     "measured_same_year": 0.661,
+     "dE_twh": -0.197
+    },
+    {
+     "plant": 54547,
+     "name": "Sithe Independence Station",
+     "group": "CC_CHP",
+     "netgen_twh": 6.2,
+     "default": 0.0,
+     "measured": 0.027,
+     "measured_same_year": 0.025,
+     "dE_twh": -0.168
+    },
+    {
+     "plant": 10025,
+     "name": "RED-Rochester, LLC",
+     "group": "ST_CHP",
+     "netgen_twh": 0.26,
+     "default": 0.981,
+     "measured": 0.377,
+     "measured_same_year": 0.172,
+     "dE_twh": 0.157
+    },
+    {
+     "plant": 54131,
+     "name": "World Generation X",
+     "group": "CC_CHP",
+     "netgen_twh": 0.404,
+     "default": 0.35,
+     "measured": 0.654,
+     "measured_same_year": 0.511,
+     "dE_twh": -0.123
+    },
+    {
+     "plant": 56259,
+     "name": "Empire Generating Co LLC",
+     "group": "CC_CHP",
+     "netgen_twh": 2.943,
+     "default": 0.002,
+     "measured": 0.035,
+     "measured_same_year": 0.039,
+     "dE_twh": -0.096
+    }
+   ],
+   "reconcile": {
+    "family_committed": 68.404,
+    "raw_930": 70.428,
+    "fold_F": 0.0,
+    "target": 70.428,
+    "fired_committed": false,
+    "s_est": 1.0282,
+    "family_pre_est": 68.404,
+    "ratio_pre": 0.9713,
+    "family_new": 69.18,
+    "ratio_new": 0.9823,
+    "fires_new": false,
+    "scale_new": 1.0,
+    "upper_margin_new_twh": 3.426,
+    "lower_margin_new_twh": 0.865,
+    "ratio_new_fold_refuted": 0.9823,
+    "fires_new_fold_refuted": false,
+    "s_ref": 1.0177
+   },
+   "fold_test": {
+    "e930_gas": 70.25,
+    "eia923_gas_full": 69.05,
+    "gap_930_minus_923": 1.21,
+    "fold_F": 0.0
+   },
+   "holdout": {
+    "e930_other": 2.92,
+    "bench_OTHER": 1.69,
+    "bench_biomass": 0.695,
+    "inj_total_twh": 2.384,
+    "inj_chpY_twh": 0.737,
+    "inj_chpY_by_class": {
+     "OTHER": 0.588,
+     "biomass": 0.149
+    }
+   },
+   "arm_reach": {
+    "model_add_twh": 1.358,
+    "model_add_by_group": {
+     "CC_CHP": 1.014,
+     "CT_CHP": 0.01,
+     "ST_CHP": 0.334
+    },
+    "model_chp_twh": {
+     "CC_CHP": 19.617000579833984,
+     "CT_CHP": 1.440999984741211,
+     "ST_CHP": 1.3420000076293945
+    },
+    "displaced_twh_by_class": {
+     "": 0.286,
+     "CC_REGULAR": 0.334,
+     "CT_PEAKER": 0.126,
+     "ST_GAS": 0.318
+    },
+    "unabsorbed_twh": 0.295
+   },
+   "holdout_reach": {
+    "removed_twh": 0.737,
+    "taken_twh_by_class": {
+     "": 0.6669999957084656,
+     "CC_CHP": 0.024000000208616257,
+     "CC_REGULAR": 0.014999999664723873,
+     "ST_GAS": 0.026000000536441803
+    }
+   },
+   "commitment": {
+    "bands": [
+     "committed",
+     "econ",
+     "econc00",
+     "econc01",
+     "econc02",
+     "econc03",
+     "econc04",
+     "econc05",
+     "econhi",
+     "econlo",
+     "peak"
+    ],
+    "census": {
+     "plants": 17,
+     "cems_twh": 23.779,
+     "model_twh_same_plants": 22.184,
+     "cems_on_wmean": 0.896,
+     "model_on_wmean": 0.866,
+     "cems_starts_median": 21.0,
+     "model_starts_median": 57.0
+    },
+    "release": {
+     "gain_twh": 0.0,
+     "gain_by_group": {
+      "CT_CHP": 0.0,
+      "ST_CHP": 0.0
+     },
+     "markup_mean": 0.63,
+     "plants_inverted": 1,
+     "plants": 3,
+     "displaced_twh_by_class": {},
+     "unabsorbed_twh": 0.0
+    }
+   }
+  }
+ }
+}
