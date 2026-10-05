@@ -1,0 +1,19 @@
+{
+  "id": "2026-10-05-closeout-caiso-w6-a1",
+  "label": "closeout caiso w6 a1",
+  "date": "2026-10-05",
+  "shorthand": "closeout-caiso-w6-a1",
+  "definition": "closeout-CAISO-w6 A1: w3 recipe + D1 CT crosswalk remap + measured CAISO CHP BTM share (EIA-923 Sched 6/7)",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-10-05-closeout-caiso-w6-a1.js",
+  "bundle": "results/calibration/closeout_caiso_w6_a1_span"
+}
