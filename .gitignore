@@ -4090,3 +4090,4 @@ frontend/data/backcast/runs/2026-10-03-closeout-pjm-nuc-7yr.js
 results/uc-checkpoints/
 
 !results/calibration/closeout_miso_w3e_2025/**
+results/calibration/closeout_miso_w3e_2025/hourly/unit_hourly_*.parquet
