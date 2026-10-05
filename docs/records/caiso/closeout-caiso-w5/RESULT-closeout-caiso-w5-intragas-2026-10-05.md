@@ -41,9 +41,10 @@ source SHA.
 | 2024 | `97837f6b50c05bf9aa8ec3ac456c0c062f460bd5` |
 | 2025 | `d6f540b53178babc6f09c8478e567686be4c1772` |
 
-**A2 (D1 only, attribution).** Legs 2019–2023 are verified and extracted:
-- 2019 `af3455a6`, 2020 `6d040a9a`, 2021 `fe16c47d`, 2022 `7be62627`, 2023 `6d537304`.
-- 2024 and 2025 are still solving.
+**A2 (D1 only, attribution).** All seven legs are verified (parent `d24bd6aa`, 17 files including
+dispatch, D1 armed, D3 and D4 off), extracted and archived:
+- 2019 `af3455a6`, 2020 `6d040a9a`, 2021 `fe16c47d`, 2022 `7be62627`, 2023 `6d537304`;
+- 2024 `8b2161c74ce74298b65ca965c9099ccbaa360062`, 2025 `371a97882431073127550b63d365a5a164df5722`.
 
 ## 1. Gate table (w3 → w5; every scored record that moved)
 
