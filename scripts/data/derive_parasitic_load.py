@@ -39,6 +39,19 @@ from market_sim.data.eia923 import load_monthly_generation  # noqa: E402
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("derive_parasitic_load")
 
+#: plant_group artifact class -> combustion family (running-slope mode)
+_FAMILY: dict[str, str] = {
+    "COAL": "COAL",
+    "CC_REGULAR": "CC",
+    "CC_CHP": "CC",
+    "ST_GAS": "ST",
+    "ST_CHP": "ST",
+    "CT_PEAKER": "CT",
+    "CT_CHP": "CT",
+}
+#: families whose monthly gross explains monthly net (steady units); CT is not identified at monthly grain
+_RUNNING_FAMILIES: tuple[str, ...] = ("COAL", "CC", "ST")
+
 # W1 collapsed the old inputs/ tree into data/raw/ — these are the live
 # locations the model reads (config/paths.py PROCESSED_DIR, REFERENCE_DIR).
 PROCESSED_DIR = PROCESSED_DIR
@@ -51,6 +64,101 @@ def _registry_plant_groups() -> dict[int, str]:
         return {}
     reg = pd.read_csv(REGISTRY_PATH)
     return dict(zip(reg["plantid"].astype(int), reg["plant_group"].astype(str)))
+
+
+def iso_fleet_plant_families(iso: str, years: list[int]) -> dict[int, set[str]]:
+    """Return ``{plant_code: {family, ...}}`` for ``iso``'s own EIA-860 fleet over ``years``.
+
+    Each year loads its own EIA-860 vintage, the population the solve sees. A family is the
+    combustion artifact family of the generator's ``plant_group`` (:data:`_FAMILY`); a
+    non-combustion generator (solar, storage, hydro, nuclear) maps to no family.
+    """
+    from market_sim.config.iso_configs import get_iso_config
+    from market_sim.config.paths import set_eia860_vintage
+    from market_sim.config.plant_taxonomy import artifact_class
+    from market_sim.data.fleet import load_fleet_from_csv
+
+    out: dict[int, set[str]] = {}
+    for year in years:
+        set_eia860_vintage(int(year))
+        for gen in load_fleet_from_csv(iso, get_iso_config(iso), year=int(year)):
+            code = int(gen.plant_code)
+            if code <= 0:
+                continue
+            fam = _FAMILY.get(artifact_class(gen.plant_group))
+            out.setdefault(code, set())
+            if fam:
+                out[code].add(fam)
+    return out
+
+
+def monthly_gross_net(df: pd.DataFrame, generation: pd.DataFrame) -> pd.DataFrame:
+    """Return per ``(plant_id, year, month)`` CAMPD gross MWh beside EIA-923 combustion net MWh."""
+    gross = (
+        df.assign(month=df["date"].dt.month)
+        .groupby(["plant_id", "year", "month"], observed=True)["gross_mw"]
+        .sum()
+        .rename("gross_mwh")
+        .reset_index()
+    )
+    fuels = generation["fuel_type"].astype(str).str.upper()
+    comb = generation[~fuels.isin(campd._NON_COMBUSTION_FUELS)]
+    cols = list(campd._EIA923_MONTH_COLUMNS)
+    net = (
+        comb.groupby(["plant_id", "year"], observed=True)[cols]
+        .sum()
+        .reset_index()
+        .melt(id_vars=["plant_id", "year"], var_name="col", value_name="net_mwh")
+    )
+    net["month"] = net["col"].map({c: i + 1 for i, c in enumerate(cols)})
+    for k in ("plant_id", "year"):
+        gross[k] = gross[k].astype(int)
+        net[k] = net[k].astype(int)
+    return gross.merge(
+        net[["plant_id", "year", "month", "net_mwh"]], on=["plant_id", "year", "month"]
+    )
+
+
+def running_parasitic_factors(
+    monthly: pd.DataFrame, families: dict[int, set[str]]
+) -> pd.DataFrame:
+    """Return pooled RUNNING parasitic factors: the slope of monthly net on monthly gross.
+
+    Annual net / gross charges station service drawn in OFFLINE hours to the running output, which for
+    a low-capacity-factor unit is a boundary misalignment (rule 14). Over a plant's months with gross > 0,
+    ``net = a + b * gross`` separates the two: ``b`` is the running factor, ``a`` (negative) the offline
+    draw. Written only for a plant whose fleet classes form ONE steady family (COAL, CC or ST) and whose
+    slope lies inside the construction's own band (``campd._PARASITIC_MIN``..``_PARASITIC_MAX``) with a
+    non-positive intercept (a positive one means the gross misses part of the plant); a CT
+    or mixed-family plant is not identified at monthly grain and keeps its consumers' class default.
+    """
+    rows = []
+    for pid, sub in monthly[monthly["gross_mwh"] > 0].groupby("plant_id"):
+        fam = families.get(int(pid), set())
+        if len(fam) != 1 or next(iter(fam)) not in _RUNNING_FAMILIES:
+            continue
+        intercept, slope = campd._ols_intercept_slope(
+            sub["gross_mwh"].to_numpy(), sub["net_mwh"].to_numpy()
+        )
+        # A positive intercept is net the gross cannot explain at zero output (station service cannot
+        # be negative): the CAMPD gross misses part of the plant (e.g. an unmetered steam turbine).
+        if intercept > 0.0 or not (
+            campd._PARASITIC_MIN <= slope <= campd._PARASITIC_MAX
+        ):
+            continue
+        rows.append(
+            {
+                "plant_id": int(pid),
+                "year": 0,
+                "gross_mwh": round(float(sub["gross_mwh"].sum()), 3),
+                "net_mwh": round(float(sub["net_mwh"].sum()), 3),
+                "parasitic_factor": round(float(slope), 6),
+                "parasitic_load_pct": round(float(1.0 - slope), 6),
+                "source": "measured_running",
+                "flag": "ok",
+            }
+        )
+    return pd.DataFrame(rows)
 
 
 def _update_registry(parasitic: pd.DataFrame) -> int:
@@ -89,7 +197,33 @@ def main() -> None:
         "lacks are added. Required for a scoped back-fill — this output is "
         "shared across ISOs, so a plain write would delete the rest.",
     )
+    parser.add_argument(
+        "--fleet-scope",
+        action="store_true",
+        help="Keep only plants in --iso's own EIA-860 fleet over --years. A "
+        "state extract also carries plants of a neighbouring ISO (MS/FL plants "
+        "of MISO in SOCO's states), so a scoped back-fill must not write them "
+        "(rule 25 [R-ISO-SCOPE]; closeout-SOCO-w3).",
+    )
+    parser.add_argument(
+        "--measured-only",
+        action="store_true",
+        help="Write only rows whose factor was measured (source == measured). "
+        "A class_default row carries a generic default that would replace the "
+        "consumer's own class default with another estimate, not a measurement "
+        "(rule 14); a plant without a measured row keeps its consumers' class "
+        "defaults (closeout-SOCO-w3).",
+    )
+    parser.add_argument(
+        "--running-slope",
+        action="store_true",
+        help="Write the pooled RUNNING factor (slope of monthly EIA-923 net on monthly CAMPD gross, "
+        "source measured_running) for single-family COAL/CC/ST plants instead of the annual "
+        "ratio (closeout-SOCO-w3; see running_parasitic_factors).",
+    )
     args = parser.parse_args()
+    if (args.fleet_scope or args.running_slope) and not args.iso:
+        parser.error("--fleet-scope / --running-slope need --iso")
 
     states = args.states or list(campd.states_for_iso(args.iso or ""))
     if not states:
@@ -112,9 +246,34 @@ def main() -> None:
         generation[generation["year"].isin(args.years)]
     )
 
-    parasitic = campd.compute_parasitic_factors(
-        campd_annual, eia_net, plant_groups=_registry_plant_groups()
+    families = (
+        iso_fleet_plant_families(args.iso, args.years)
+        if args.fleet_scope or args.running_slope
+        else {}
     )
+    if args.running_slope:
+        parasitic = running_parasitic_factors(
+            monthly_gross_net(df, generation[generation["year"].isin(args.years)]),
+            families,
+        )
+        logger.info("running slope %s: %d plants identified", args.iso, len(parasitic))
+    else:
+        parasitic = campd.compute_parasitic_factors(
+            campd_annual, eia_net, plant_groups=_registry_plant_groups()
+        )
+    if args.fleet_scope:
+        before = parasitic["plant_id"].nunique()
+        parasitic = parasitic[parasitic["plant_id"].astype(int).isin(set(families))]
+        logger.info(
+            "fleet scope %s: kept %d of %d plants",
+            args.iso,
+            parasitic["plant_id"].nunique(),
+            before,
+        )
+    if args.measured_only:
+        parasitic = parasitic[
+            parasitic["source"].isin(("measured", "measured_running"))
+        ]
 
     PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
     pq_path = PROCESSED_DIR / "parasitic_load_factors.parquet"
