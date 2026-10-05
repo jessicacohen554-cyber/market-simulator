@@ -90,8 +90,34 @@ branch, CLI, generic-channel key) LP-INERT, scoring-LIVE for ERCOT through the b
 
 ## Addendum A — launch table
 
-(filled at launch)
+Pin: **`60e11319cc500262ef3bb21290a377777c6bfe7e`** (the commit carrying this PRECOMMIT). Prompts from
+`scripts/shard_prompt.py` plus step 0 `git fetch origin <sha> && git checkout --detach <sha>` and the zstd-9 size rule.
+Environment `env_016R8xUY4maDbppZ6TEns5V8`, auto mode, ≤ 6 alive. Launched 2026-10-05 10:01Z.
 
-## Addendum B — G-DRIFT result
+| Year | Shard session | Out-dir / branch |
+|---|---|---|
+| 2019 | session_011SAy94Yi6RjnsEcPWeUdyP | `closeout_ercot_w6_2019` / `claude/closeout-ercot-w6-2019` |
+| 2020 | session_013MGxDWDh4sGT3iHQAVWNQz | `closeout_ercot_w6_2020` / `claude/closeout-ercot-w6-2020` |
+| 2021 | session_01EW9gwCshbjfUR17vuCMFM6 | `closeout_ercot_w6_2021` / `claude/closeout-ercot-w6-2021` |
+| 2022 | session_01AcpPc6UXFm9geLhjJmrsC9 | `closeout_ercot_w6_2022` / `claude/closeout-ercot-w6-2022` |
+| 2023 | session_01YFbfAwtrGDAceomqqVGThi | `closeout_ercot_w6_2023` / `claude/closeout-ercot-w6-2023` |
+| 2024 | session_015y1vfKBm8n62jWpSawzZQr | `closeout_ercot_w6_2024` / `claude/closeout-ercot-w6-2024` |
+| 2025 | launched when a slot frees (≤ 6 alive) | `closeout_ercot_w6_2025` / `claude/closeout-ercot-w6-2025` |
 
-(filled before launch)
+## Addendum B — G-DRIFT result (keeper `106d6bb7` → build working tree = `60e11319`, flag off)
+
+`results/phase0/ercot/_closeout_ercot_w6_gdrift_identity.json`. Completed ≈ 10:01Z, as the shards were being created and
+before any shard reached its LP (the arm solve does not depend on it; it decides only whether the keeper is a valid
+control).
+
+- **Instrument 3 (every LP-visible fleet array + demand + every numeric state array, all seven years, on the keeper's
+  own per-year recipe): ALL LP INPUTS BIT-IDENTICAL.**
+- ScenarioConfig defaults changed: five `*_path` fields only (absolute-path strings of the two trees). Constants
+  changed: `CAMPD_BINNING_ISOS`, `NUCLEAR_MONTHLY_CF_BY_YEAR`, `RGGI_MEMBER_STATES_BY_YEAR` — none reaches an ERCOT
+  array (instrument 3).
+- LP construction / solve, by reading: `lp/layout.kron_hours` replaces `sp.kron(eye(T), block)` with a documented
+  byte-identical CSR construction; basis-status and reduced-cost copies are dtype-identical vectorisations; the UC
+  package is gated on `unit_commitment_milp` (absent from the recipe, default off); `run_calibration`'s live-roster
+  change runs only under `reliability_floor_layup_window_mask` (off in every ERCOT leg) and `iso != "ERCOT"`; the coal
+  take-floor and NWPP seam hunks are ISO-gated away from ERCOT. **No LIVE hunk → no control solve** (rule 29(b)); the
+  keeper's committed bundle is the control.
