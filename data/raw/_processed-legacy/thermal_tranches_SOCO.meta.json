@@ -1,7 +1,7 @@
 {
   "artifact": "thermal_tranches_SOCO.csv",
   "artifact_rows": 65,
-  "artifact_sha256": "ab5ec265d192379551c14facc6f65d8d972f117a565bae36b0179bbf96122ad7",
+  "artifact_sha256": "4c56de97fa0bf75751dda64f8ce6014628e5011891967f4cf80abbf85eee6b8c",
   "columns": [
     "plant_code",
     "plant_group",
@@ -388,5 +388,6 @@
       "ST_CHP",
       "ST_GAS"
     ]
-  }
+  },
+  "parasitic_running_transplant": "closeout-SOCO-w3p: share/CF columns scaled by the arm/control ratio of two HEAD re-derives (SOCO measured_running parasitic rows added); see scripts/probes/_closeout_socow3p_tranche_transplant.py"
 }
