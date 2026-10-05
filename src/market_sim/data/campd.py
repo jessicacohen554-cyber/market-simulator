@@ -363,6 +363,27 @@ CAMPD_UNIT_PLANT_REMAP: dict[tuple[int, str], int] = {
     # identity data change, not a residual).
     (55641, "CT-03"): 64020,
     (55641, "CT-04"): 64020,
+    # Carlsbad Energy Center (CAISO, SDGE, CT_PEAKER, 5 x LMS100, 527.5 MW,
+    # COD 2018-12): CEMS files the five CTs under the legacy Encina Power
+    # Station ORIS 302 as units "6".."10", while EIA-860 carries them as
+    # generators CEC 6..CEC10 under plant 59002. Every row is in the EPA CAMD-EIA
+    # Power Sector Data Crosswalk (data/raw/reference/camd-eia-crosswalk,
+    # CAMD_PLANT_ID 302 -> EIA_PLANT_ID 59002). caiso-146 recorded Carlsbad as
+    # "no CAMPD account at all" (PREREG-caiso146 §B.1 cause A), so it priced at
+    # the eGRID/class rate with no CEMS outage windows; Encina's own steam units
+    # 1-5 (retired 2018) keep ORIS 302. King City Peaking (CT_PEAKER, 47.3 MW):
+    # CEMS unit "2" under the King City Power Plant ORIS 10294 is EIA 55811
+    # CTG1 (same crosswalk). [R-ACCURATE]
+    # docs/records/caiso/closeout-caiso-w5/PRECOMMIT-DESIGN-closeout-caiso-w5-intragas-2026-10-05.md
+    # (D1). The CAISO keeper's derived artifacts move only through the
+    # default-off ScenarioConfig.campd_split_remap_companions gate (rule 23
+    # trigger: this identity data change, not a residual).
+    (302, "6"): 59002,
+    (302, "7"): 59002,
+    (302, "8"): 59002,
+    (302, "9"): 59002,
+    (302, "10"): 59002,
+    (10294, "2"): 55811,
 }
 
 # Facilities with at least one remapped unit (split facilities).
