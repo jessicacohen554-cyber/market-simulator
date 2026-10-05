@@ -105,6 +105,11 @@ def year_test(year: int, e923: pd.DataFrame, campd: pd.DataFrame) -> dict:
     for klass in CLASSES:
         e = ey[ey.klass == klass].groupby("plant_id")[MCOLS].sum()
         acc = {"da_clears": 0.0, "rt_only": 0.0, "neither": 0.0, "no_print": 0.0}
+        nblk = {
+            "neither_in_block_with_clearing_hour": 0.0,
+            "neither_isolated_block": 0.0,
+        }
+        blen = {"le_6h": 0.0, "7_12h": 0.0, "13_24h": 0.0, "gt_24h": 0.0}
         lam_gap, da_gap = [], []
         for p, g in um[um.plant_group == klass].groupby("plant_code"):
             p = int(p)
@@ -145,12 +150,43 @@ def year_test(year: int, e923: pd.DataFrame, campd: pd.DataFrame) -> dict:
             acc["da_clears"] += short[dac].sum()
             acc["rt_only"] += short[rto].sum()
             acc["neither"] += short[nei].sum()
+            # run blocks of the ACTUAL plant: contiguous hours with act > ON_MW;
+            # a block "clears" if any hour in it had a measured DA or RT print >= the
+            # plant's cheapest offer (model-off hours included) -- the neither-hours
+            # inside such a block are min-run / min-load tails of an economic start
+            on = act > ON_MW
+            clears_h = (
+                on
+                & np.isfinite(offer)
+                & np.isfinite(pd_)
+                & np.isfinite(pr_)
+                & ((pd_ >= offer) | (pr_ >= offer))
+            )
+            blk = np.cumsum(np.r_[True, on[1:] != on[:-1]])
+            ids = np.unique(blk[clears_h])
+            in_clear = np.isin(blk, ids) & on
+            nblk["neither_in_block_with_clearing_hour"] += short[nei & in_clear].sum()
+            nblk["neither_isolated_block"] += short[nei & ~in_clear].sum()
+            # length of the run block each in-block neither hour belongs to
+            ln = np.bincount(blk)[blk]
+            sel = nei & in_clear
+            for key, lo, hi in (
+                ("le_6h", 0, 6),
+                ("7_12h", 7, 12),
+                ("13_24h", 13, 24),
+                ("gt_24h", 25, 10**9),
+            ):
+                blen[key] += short[sel & (ln >= lo) & (ln <= hi)].sum()
             lam_gap.append((lz - pd_)[dac])
             da_gap.append((offer - pd_)[nei])
         lg = np.concatenate(lam_gap) if lam_gap else np.array([])
         dg = np.concatenate(da_gap) if da_gap else np.array([])
         out[klass] = {
             "priced_out_missed_twh": {k: round(v / 1e6, 3) for k, v in acc.items()},
+            "neither_by_run_block_twh": {k: round(v / 1e6, 3) for k, v in nblk.items()},
+            "neither_in_clearing_block_by_block_length_twh": {
+                k: round(v / 1e6, 3) for k, v in blen.items()
+            },
             "da_clears_hours_model_lambda_minus_da_p25_p50_p75": [
                 round(float(np.percentile(lg, q)), 2) for q in (25, 50, 75)
             ]

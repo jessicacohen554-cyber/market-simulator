@@ -124,3 +124,19 @@ local commitment, it would displace CC roughly one for one.
   PRECOMMIT for an owner card.
 - The w3 promotion request stands.
 - No `ScenarioConfig` field was added, so there is no matrix row.
+
+## Addendum A (2026-10-05): the DMM data and the plant-level split supersede §4
+
+- **DMM annual reports 2019–25 publish ED and RUC volumes by reason and quarter only.**
+  - ED is 0.25–0.70 % of load, under about 1.5 TWh, and not split by class or area.
+  - RUC commits only long-start units (CC and steam).
+  - So a single DMM-sized local-commitment floor would need a fitted allocation, and §4's route is withdrawn.
+- **The neither-market energy is four plant-level objects:**
+  - a missing CAMPD↔EIA remap for Carlsbad Energy Center (59002, filing under CAMD 302);
+  - industrial self-generators labelled CT_PEAKER (THUMS 56051, New-Indy 10427);
+  - the isolated Humboldt area (246);
+  - legacy OTC steam held committed (2019–23).
+- **True peaker min-run tails** are a smaller fifth object.
+- **Correction to §2 item 2:** start/min-run physics does bind for the steam limb and the short peaker tails, through
+  long blocks below offer. The "priced, not capability-limited" census reading did not exclude it.
+- **The design for an owner ruling** is `PRECOMMIT-DESIGN-closeout-caiso-w5-intragas-2026-10-05.md`.

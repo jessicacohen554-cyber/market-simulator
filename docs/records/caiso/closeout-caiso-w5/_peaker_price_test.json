@@ -1,42 +1,4 @@
 {
- "2021": {
-  "CT_PEAKER": {
-   "priced_out_missed_twh": {
-    "da_clears": 0.376,
-    "rt_only": 0.099,
-    "neither": 1.383,
-    "no_print": 0.929
-   },
-   "da_clears_hours_model_lambda_minus_da_p25_p50_p75": [
-    -28.26,
-    -16.49,
-    -10.14
-   ],
-   "neither_hours_offer_minus_da_p25_p50_p75": [
-    16.13,
-    25.43,
-    36.37
-   ]
-  },
-  "ST_GAS": {
-   "priced_out_missed_twh": {
-    "da_clears": 0.311,
-    "rt_only": 0.026,
-    "neither": 0.617,
-    "no_print": 0.209
-   },
-   "da_clears_hours_model_lambda_minus_da_p25_p50_p75": [
-    -55.93,
-    -29.43,
-    -19.27
-   ],
-   "neither_hours_offer_minus_da_p25_p50_p75": [
-    23.84,
-    32.76,
-    40.04
-   ]
-  }
- },
  "2022": {
   "CT_PEAKER": {
    "priced_out_missed_twh": {
@@ -44,6 +6,16 @@
     "rt_only": 0.216,
     "neither": 2.239,
     "no_print": 0.0
+   },
+   "neither_by_run_block_twh": {
+    "neither_in_block_with_clearing_hour": 1.887,
+    "neither_isolated_block": 0.352
+   },
+   "neither_in_clearing_block_by_block_length_twh": {
+    "le_6h": 0.206,
+    "7_12h": 0.215,
+    "13_24h": 0.177,
+    "gt_24h": 1.289
    },
    "da_clears_hours_model_lambda_minus_da_p25_p50_p75": [
     -34.71,
@@ -62,6 +34,16 @@
     "rt_only": 0.023,
     "neither": 0.794,
     "no_print": 0.0
+   },
+   "neither_by_run_block_twh": {
+    "neither_in_block_with_clearing_hour": 0.738,
+    "neither_isolated_block": 0.057
+   },
+   "neither_in_clearing_block_by_block_length_twh": {
+    "le_6h": 0.0,
+    "7_12h": 0.001,
+    "13_24h": 0.003,
+    "gt_24h": 0.734
    },
    "da_clears_hours_model_lambda_minus_da_p25_p50_p75": [
     -53.47,
@@ -83,6 +65,16 @@
     "neither": 1.665,
     "no_print": 0.037
    },
+   "neither_by_run_block_twh": {
+    "neither_in_block_with_clearing_hour": 1.519,
+    "neither_isolated_block": 0.146
+   },
+   "neither_in_clearing_block_by_block_length_twh": {
+    "le_6h": 0.114,
+    "7_12h": 0.128,
+    "13_24h": 0.102,
+    "gt_24h": 1.175
+   },
    "da_clears_hours_model_lambda_minus_da_p25_p50_p75": [
     -35.61,
     -22.36,
@@ -100,6 +92,16 @@
     "rt_only": 0.05,
     "neither": 0.763,
     "no_print": 0.011
+   },
+   "neither_by_run_block_twh": {
+    "neither_in_block_with_clearing_hour": 0.725,
+    "neither_isolated_block": 0.038
+   },
+   "neither_in_clearing_block_by_block_length_twh": {
+    "le_6h": 0.0,
+    "7_12h": 0.0,
+    "13_24h": 0.001,
+    "gt_24h": 0.724
    },
    "da_clears_hours_model_lambda_minus_da_p25_p50_p75": [
     -57.66,
@@ -121,6 +123,16 @@
     "neither": 2.172,
     "no_print": 0.0
    },
+   "neither_by_run_block_twh": {
+    "neither_in_block_with_clearing_hour": 1.929,
+    "neither_isolated_block": 0.243
+   },
+   "neither_in_clearing_block_by_block_length_twh": {
+    "le_6h": 0.073,
+    "7_12h": 0.196,
+    "13_24h": 0.359,
+    "gt_24h": 1.301
+   },
    "da_clears_hours_model_lambda_minus_da_p25_p50_p75": [
     -29.16,
     -15.68,
@@ -139,6 +151,16 @@
     "neither": 0.051,
     "no_print": 0.0
    },
+   "neither_by_run_block_twh": {
+    "neither_in_block_with_clearing_hour": 0.042,
+    "neither_isolated_block": 0.009
+   },
+   "neither_in_clearing_block_by_block_length_twh": {
+    "le_6h": 0.0,
+    "7_12h": 0.0,
+    "13_24h": 0.011,
+    "gt_24h": 0.031
+   },
    "da_clears_hours_model_lambda_minus_da_p25_p50_p75": [
     -48.1,
     -13.44,
@@ -148,44 +170,6 @@
     11.81,
     19.05,
     33.08
-   ]
-  }
- },
- "2025": {
-  "CT_PEAKER": {
-   "priced_out_missed_twh": {
-    "da_clears": 0.494,
-    "rt_only": 0.215,
-    "neither": 1.573,
-    "no_print": 0.0
-   },
-   "da_clears_hours_model_lambda_minus_da_p25_p50_p75": [
-    -17.97,
-    -12.65,
-    -8.34
-   ],
-   "neither_hours_offer_minus_da_p25_p50_p75": [
-    14.37,
-    23.65,
-    41.2
-   ]
-  },
-  "ST_GAS": {
-   "priced_out_missed_twh": {
-    "da_clears": 0.001,
-    "rt_only": 0.001,
-    "neither": 0.051,
-    "no_print": 0.0
-   },
-   "da_clears_hours_model_lambda_minus_da_p25_p50_p75": [
-    -30.4,
-    -13.92,
-    -9.72
-   ],
-   "neither_hours_offer_minus_da_p25_p50_p75": [
-    15.86,
-    27.21,
-    44.59
    ]
   }
  }
