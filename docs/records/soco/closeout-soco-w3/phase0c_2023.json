@@ -1,0 +1,94 @@
+{
+ "year": 2023,
+ "control": "results/calibration/closeout_soco_w3_span",
+ "vom_implied_median": {
+  "CC": 2.0,
+  "COAL": 4.5
+ },
+ "fuel_vs_f923": {
+  "CC": {
+   "robust_gap_usd_mmbtu": 0.073,
+   "robust_gap_usd_mwh": 0.51,
+   "plants": 12,
+   "outliers": [
+    {
+     "plant_code": 7917,
+     "month": 8,
+     "model_fuel": 3.08,
+     "price_per_mmbtu": 1.94
+    },
+    {
+     "plant_code": 7917,
+     "month": 10,
+     "model_fuel": 3.56,
+     "price_per_mmbtu": 1.53
+    },
+    {
+     "plant_code": 55382,
+     "month": 8,
+     "model_fuel": 3.08,
+     "price_per_mmbtu": 1.94
+    },
+    {
+     "plant_code": 55382,
+     "month": 9,
+     "model_fuel": 3.15,
+     "price_per_mmbtu": 2.07
+    },
+    {
+     "plant_code": 55382,
+     "month": 10,
+     "model_fuel": 3.56,
+     "price_per_mmbtu": 1.89
+    },
+    {
+     "plant_code": 55406,
+     "month": 2,
+     "model_fuel": 2.84,
+     "price_per_mmbtu": 4.51
+    },
+    {
+     "plant_code": 55406,
+     "month": 3,
+     "model_fuel": 2.75,
+     "price_per_mmbtu": 4.13
+    },
+    {
+     "plant_code": 55406,
+     "month": 12,
+     "model_fuel": 3.01,
+     "price_per_mmbtu": 5.57
+    }
+   ]
+  },
+  "COAL": {
+   "robust_gap_usd_mmbtu": -0.0,
+   "robust_gap_usd_mwh": -0.0,
+   "plants": 6,
+   "outliers": []
+  }
+ },
+ "parasitic": {
+  "COAL": {
+   "measured_pf": 0.9042,
+   "default_pf": 0.93,
+   "offer_change_usd_mwh": 1.42
+  },
+  "CC": {
+   "measured_pf": 0.9595,
+   "default_pf": 0.975,
+   "offer_change_usd_mwh": 0.38
+  }
+ },
+ "reach": {
+  "idle_coal_twh_within_usd": {
+   "1": 0.77,
+   "2": 1.8,
+   "3": 2.87,
+   "4": 3.56,
+   "6": 4.73
+  },
+  "night_lmp": 27.89,
+  "cc_night_offer_median": 23.48
+ }
+}

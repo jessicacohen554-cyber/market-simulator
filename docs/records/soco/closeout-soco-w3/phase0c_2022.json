@@ -1,0 +1,112 @@
+{
+ "year": 2022,
+ "control": "results/calibration/closeout_soco_w3_span",
+ "vom_implied_median": {
+  "CC": 2.0,
+  "COAL": 4.5
+ },
+ "fuel_vs_f923": {
+  "CC": {
+   "robust_gap_usd_mmbtu": -0.325,
+   "robust_gap_usd_mwh": -2.3,
+   "plants": 12,
+   "outliers": [
+    {
+     "plant_code": 533,
+     "month": 4,
+     "model_fuel": 7.85,
+     "price_per_mmbtu": 5.16
+    },
+    {
+     "plant_code": 533,
+     "month": 5,
+     "model_fuel": 9.7,
+     "price_per_mmbtu": 6.1
+    },
+    {
+     "plant_code": 643,
+     "month": 5,
+     "model_fuel": 9.69,
+     "price_per_mmbtu": 6.42
+    },
+    {
+     "plant_code": 7917,
+     "month": 1,
+     "model_fuel": 5.22,
+     "price_per_mmbtu": 9.38
+    },
+    {
+     "plant_code": 7917,
+     "month": 12,
+     "model_fuel": 6.59,
+     "price_per_mmbtu": 10.92
+    },
+    {
+     "plant_code": 55382,
+     "month": 1,
+     "model_fuel": 5.22,
+     "price_per_mmbtu": 7.97
+    },
+    {
+     "plant_code": 55382,
+     "month": 12,
+     "model_fuel": 6.58,
+     "price_per_mmbtu": 10.34
+    },
+    {
+     "plant_code": 55406,
+     "month": 1,
+     "model_fuel": 5.22,
+     "price_per_mmbtu": 11.98
+    },
+    {
+     "plant_code": 55406,
+     "month": 2,
+     "model_fuel": 5.58,
+     "price_per_mmbtu": 10.58
+    },
+    {
+     "plant_code": 55406,
+     "month": 11,
+     "model_fuel": 6.49,
+     "price_per_mmbtu": 10.54
+    },
+    {
+     "plant_code": 55406,
+     "month": 12,
+     "model_fuel": 6.58,
+     "price_per_mmbtu": 21.72
+    }
+   ]
+  },
+  "COAL": {
+   "robust_gap_usd_mmbtu": -0.0,
+   "robust_gap_usd_mwh": -0.0,
+   "plants": 7,
+   "outliers": []
+  }
+ },
+ "parasitic": {
+  "COAL": {
+   "measured_pf": 0.9091,
+   "default_pf": 0.93,
+   "offer_change_usd_mwh": 0.97
+  },
+  "CC": {
+   "measured_pf": 0.9746,
+   "default_pf": 0.975,
+   "offer_change_usd_mwh": 0.03
+  }
+ },
+ "reach": {
+  "idle_coal_twh_within_usd": {
+   "1": 0.35,
+   "2": 0.61,
+   "3": 0.8,
+   "4": 0.98,
+   "6": 1.28
+  },
+  "night_lmp": 61.31,
+  "cc_night_offer_median": 56.68
+ }
+}
