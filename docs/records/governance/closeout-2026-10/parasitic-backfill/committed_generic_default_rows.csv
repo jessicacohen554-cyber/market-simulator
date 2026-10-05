@@ -1,0 +1,140 @@
+iso,cls,plant,name,mw,inmap,plant_id,parasitic_factor,flag,cls_default
+ERCOT,cc,55357,"Brazos Valley Energy, LP",675.6,True,55357,0.97,no_net,0.975
+ERCOT,cc,3559,Silas Ray,62.0,True,3559,0.99,out_of_band,0.975
+MISO,cc,55358,Cottonwood Energy Project,1149.1,True,55358,0.97,no_net,0.975
+MISO,cc,60925,Montgomery County Power Station,1000.0,True,60925,0.97,no_net,0.975
+MISO,cc,55357,"Brazos Valley Energy, LP",602.0,True,55357,0.97,no_net,0.975
+NEISO,cc,55149,Lake Road Generating Company,828.8,True,55149,0.97,out_of_band,0.975
+NEISO,cc,55170,Granite Ridge Energy,668.0,True,55170,0.97,out_of_band,0.975
+NEISO,cc,55211,Bellingham Power Generation LLC,520.23,True,55211,0.97,out_of_band,0.975
+NEISO,cc,55068,Maine Independence Station,497.6,True,55068,0.97,out_of_band,0.975
+NEISO,cc,568,Bridgeport Harbor Station,496.2,True,568,0.97,out_of_band,0.975
+NEISO,cc,55212,Blackstone Power Generation LLC,481.66,True,55212,0.97,out_of_band,0.975
+NEISO,cc,3236,Manchester Street Station,471.0,True,3236,0.97,out_of_band,0.975
+NEISO,cc,55079,Millennium Power,330.1,True,55079,0.97,out_of_band,0.975
+NEISO,cc,54324,Ocean State Power II,267.6,True,54324,0.97,out_of_band,0.975
+NEISO,cc,55100,Rumford Power,253.8,True,55100,0.97,out_of_band,0.975
+NEISO,cc,10726,MASSPOWER,245.0,True,10726,0.97,out_of_band,0.975
+NEISO,cc,51030,Ocean State Power,231.8,True,51030,0.97,out_of_band,0.975
+NEISO,cc,55041,Berkshire Power,229.22,True,55041,0.97,out_of_band,0.975
+NEISO,cc,6081,Stony Brook Energy Center,209.1,True,6081,0.97,out_of_band,0.975
+NEISO,cc,54805,"Milford Power, LLC",204.8,True,54805,0.97,out_of_band,0.975
+NEISO,cc,52026,Dartmouth Power,74.1,True,52026,0.97,out_of_band,0.975
+PJM,cc,55976,Hunterstown Combined Cycle,810.0,True,55976,0.97,out_of_band,0.975
+PJM,cc,55239,"Red Oak Power, LLC",775.9,True,55239,0.97,out_of_band,0.975
+PJM,cc,55337,Helix Ironwood LLC,760.0,True,55337,0.97,out_of_band,0.975
+PJM,cc,56846,CPV St. Charles Energy Center,733.3,True,56846,0.97,out_of_band,0.975
+PJM,cc,57794,St. Joseph Energy Center LLC,715.0,True,57794,0.97,out_of_band,0.975
+PJM,cc,55701,Fremont Energy Center,685.1,True,55701,0.97,out_of_band,0.975
+PJM,cc,55183,Nelson Energy Center,586.0,True,55183,0.97,out_of_band,0.975
+PJM,cc,55710,Springdale Generating Station (55710),556.0,True,55710,0.97,out_of_band,0.975
+PJM,cc,55188,Cordova Energy Company,521.2,True,55188,0.97,out_of_band,0.975
+PJM,cc,2393,Gilbert Generating Station,302.5,True,2393,0.97,out_of_band,0.975
+PJM,cc,10308,Sayreville Power LP,292.0,True,10308,0.97,out_of_band,0.975
+PJM,cc,50561,Eagle Point Power Generation,244.0,True,50561,0.97,out_of_band,0.975
+PJM,cc,10751,"Camden Plant Holding, LLC",172.9,True,10751,0.97,out_of_band,0.975
+PJM,cc,3176,Hunlock Creek Energy Center,125.2,True,3176,0.97,out_of_band,0.975
+SPP,cc,55664,Harrison County Power Project,514.4,True,55664,0.97,no_net,0.975
+SPP,cc,55065,Mustang Station,464.8,True,55065,0.97,no_net,0.975
+SPP,cc,3604,J Robert Massengale Generating Station,74.0,True,3604,0.97,no_net,0.975
+MISO,coal,1004,Edwardsport Generating Station,555.0,True,1004,0.97,out_of_band,0.93
+MISO,coal,6137,A B Brown Generating Station,485.0,True,6137,0.97,out_of_band,0.93
+NEISO,coal,568,Bridgeport Harbor Station,257.6,True,568,0.97,out_of_band,0.93
+PJM,coal,1573,Morgantown,1205.0,True,1573,0.97,out_of_band,0.93
+PJM,coal,883,Waukegan,689.0,True,883,0.97,no_net,0.93
+PJM,coal,594,Indian River,410.0,True,594,0.97,out_of_band,0.93
+PJM,coal,10678,AES Warrior Run,180.0,True,10678,0.97,out_of_band,0.93
+PJM,coal,10143,Colver Green Energy,110.0,True,10143,0.97,out_of_band,0.93
+PJM,coal,1040,Whitewater Valley,99.7,True,1040,0.97,out_of_band,0.93
+PJM,coal,10603,Ebensburg Power Company,50.0,True,10603,0.97,out_of_band,0.93
+PJM,coal,10343,Mt. Carmel Cogeneration,43.0,True,10343,0.97,out_of_band,0.93
+PJM,coal,50611,"Rausch Creek Generation, LLC",30.0,True,50611,0.97,out_of_band,0.93
+SPP,coal,6194,Tolk Station,1067.0,True,6194,0.97,no_net,0.93
+SPP,coal,6139,Welsh Power Plant,1000.0,True,6139,0.97,no_net,0.93
+SPP,coal,7902,H W Pirkey Power Plant,650.0,True,7902,0.97,no_net,0.93
+ERCOT,ct,3469,T H Wharton,350.0,True,3469,0.975,out_of_band,0.99
+ERCOT,ct,3612,V H Braunig,191.0,True,3612,0.97,out_of_band,0.99
+MISO,ct,6137,A B Brown Generating Station,597.92,True,6137,0.97,out_of_band,0.99
+MISO,ct,55111,Vermillion Generating Station,576.0,True,55111,0.97,out_of_band,0.99
+MISO,ct,913,Venice,486.0,True,913,0.97,out_of_band,0.99
+MISO,ct,55224,Wheatland Generating Facility LLC,442.0,True,55224,0.97,out_of_band,0.99
+MISO,ct,55496,Goose Creek Power Plant,432.0,True,55496,0.97,out_of_band,0.99
+MISO,ct,55237,Shelby County,336.0,True,55237,0.97,out_of_band,0.99
+MISO,ct,7759,Georgetown Substation,316.4,True,7759,0.97,out_of_band,0.99
+MISO,ct,55202,Pinckneyville Power Plant,316.0,True,55202,0.97,out_of_band,0.99
+MISO,ct,55417,Raccoon Creek Power Plant,300.0,True,55417,0.97,no_net,0.99
+MISO,ct,7948,Hoosier Energy Lawrence Co Station,236.5,True,7948,0.97,out_of_band,0.99
+MISO,ct,55201,"Gibson City Energy Center, LLC",232.0,True,55201,0.97,out_of_band,0.99
+MISO,ct,55204,Kinmundy Power Plant,208.0,True,55204,0.97,out_of_band,0.99
+MISO,ct,7760,Tilton Power Station,182.0,True,7760,0.97,out_of_band,0.99
+MISO,ct,55148,Worthington Generation,169.5,True,55148,0.97,out_of_band,0.99
+MISO,ct,7818,Alsey Station,164.3,True,7818,0.97,out_of_band,0.99
+MISO,ct,56603,San Jacinto County Peaking Facility,146.0,True,56603,0.97,no_net,0.99
+MISO,ct,56604,Hardin County Peaking Facility,140.6,True,56604,0.97,no_net,0.99
+MISO,ct,7763,Henry County Generating Station,126.0,True,7763,0.97,out_of_band,0.99
+MISO,ct,7425,Interstate,109.6,True,7425,0.97,out_of_band,0.99
+NEISO,ct,55517,"Wallingford Energy, LLC",317.94,True,55517,0.97,out_of_band,0.99
+NEISO,ct,1660,Potter,105.2,True,1660,0.97,out_of_band,0.99
+NEISO,ct,56629,Waterbury Generation,96.0,True,56629,0.97,out_of_band,0.99
+NEISO,ct,6635,Alfred L Pierce Generating Station,74.1,True,6635,0.97,out_of_band,0.99
+NEISO,ct,1678,Waters River,46.0,True,1678,0.97,out_of_band,0.99
+NEISO,ct,52026,Dartmouth Power,19.6,True,52026,0.97,out_of_band,0.99
+PJM,ct,55401,Rolling Hills Generating LLC,925.0,True,55401,0.97,out_of_band,0.99
+PJM,ct,55348,"Troy Energy, LLC",704.41,True,55348,0.97,out_of_band,0.99
+PJM,ct,55236,"Lee County Generating Station, LLC",676.8,True,55236,0.97,out_of_band,0.99
+PJM,ct,7835,Rock Springs Generating Facility,666.7,True,7835,0.97,out_of_band,0.99
+PJM,ct,55222,Lincoln Generating Facility,622.9,True,55222,0.97,out_of_band,0.99
+PJM,ct,2847,Frank M Tait Station,597.1,True,2847,0.97,out_of_band,0.99
+PJM,ct,55640,"LSP University Park, LLC",540.0,True,55640,0.97,out_of_band,0.99
+PJM,ct,55438,"Elgin Energy Center, LLC",487.9,True,55438,0.97,out_of_band,0.99
+PJM,ct,55392,Zion Energy Center,478.0,True,55392,0.97,out_of_band,0.99
+PJM,ct,2404,Kearny Generating Station,457.9,True,2404,0.97,out_of_band,0.99
+PJM,ct,55238,Rockford Energy Center,362.2,True,55238,0.97,out_of_band,0.99
+PJM,ct,55109,"Rocky Road Power, LLC",340.8,True,55109,0.97,out_of_band,0.99
+PJM,ct,55938,Ocean Peaking Power,332.8,True,55938,0.97,out_of_band,0.99
+PJM,ct,55296,"Calumet Energy Team, LLC",326.1,True,55296,0.97,out_of_band,0.99
+PJM,ct,55253,Crete Energy Park,300.0,True,55253,0.97,out_of_band,0.99
+PJM,ct,55250,University Park Energy,300.0,True,55250,0.97,out_of_band,0.99
+PJM,ct,55233,Handsome Lake Energy,267.5,True,55233,0.97,out_of_band,0.99
+PJM,ct,5083,Cumberland Energy Center,186.9,True,5083,0.97,out_of_band,0.99
+PJM,ct,55936,Rockford II Energy Center,180.7,True,55936,0.97,out_of_band,0.99
+PJM,ct,2399,Burlington Generating Station,171.6,True,2399,0.97,out_of_band,0.99
+PJM,ct,2393,Gilbert Generating Station,152.7,True,2393,0.97,out_of_band,0.99
+PJM,ct,7336,Anderson,140.0,True,7336,0.97,out_of_band,0.99
+PJM,ct,55654,Chambersburg Units 12 & 13,100.4,True,55654,0.97,out_of_band,0.99
+PJM,ct,55377,Gans Generating Facility,97.4,True,55377,0.97,out_of_band,0.99
+PJM,ct,55196,Springdale Generating Station (55196),96.8,True,55196,0.97,out_of_band,0.99
+PJM,ct,7288,Sherman Avenue,86.9,True,7288,0.97,out_of_band,0.99
+PJM,ct,55738,Buchanan Units 1 & 2,84.0,True,55738,0.97,no_net,0.99
+PJM,ct,59073,Cove Point LNG Terminal,81.8,True,59073,0.97,no_net,0.99
+PJM,ct,7335,Richmond (IN),68.0,True,7335,0.97,out_of_band,0.99
+PJM,ct,7138,Forked River Power,65.0,True,7138,0.97,out_of_band,0.99
+PJM,ct,3132,Warren,62.0,True,3132,0.97,out_of_band,0.99
+PJM,ct,58235,Clayville,55.0,True,58235,0.97,out_of_band,0.99
+PJM,ct,56397,Hunlock Unit 4,44.8,True,56397,0.97,out_of_band,0.99
+PJM,ct,50279,PEI Power Corporation,43.7,True,50279,0.97,out_of_band,0.99
+PJM,ct,7318,Van Sant,42.0,True,7318,0.97,out_of_band,0.99
+PJM,ct,55264,AMP-Ohio Gas Turbines Napoleon,38.0,True,55264,0.97,out_of_band,0.99
+PJM,ct,55262,AMP-Ohio Gas Turbines Bowling Green,38.0,True,55262,0.97,out_of_band,0.99
+PJM,ct,55263,AMP-Ohio Gas Turbines Galion,38.0,True,55263,0.97,out_of_band,0.99
+PJM,ct,2848,O H Hutchings,25.2,True,2848,0.97,out_of_band,0.99
+SPP,ct,56326,Mustang Station (56326),459.3,True,56326,0.97,no_net,0.99
+SPP,ct,3482,Jones Station,334.0,True,3482,0.97,no_net,0.99
+SPP,ct,57865,Antelope Elk Energy Center,162.0,True,57865,0.97,no_net,0.99
+ERCOT,st,3612,V H Braunig,859.0,True,3612,0.97,out_of_band,0.95
+ERCOT,st,3548,Decker Creek,724.0,True,3548,0.99,no_net,0.95
+ERCOT,st,4195,Power Lane Steam Plant,18.0,True,4195,0.99,out_of_band,0.95
+MISO,st,3459,Sabine,1501.4,True,3459,0.97,no_net,0.95
+MISO,st,3457,Lewis Creek,499.3,True,3457,0.97,no_net,0.95
+NEISO,st,562,Middletown,353.0,True,562,0.97,out_of_band,0.95
+NEISO,st,546,Montville,81.0,True,546,0.97,out_of_band,0.95
+PJM,st,3161,Eddystone Generating Station,760.0,True,3161,0.97,out_of_band,0.95
+PJM,st,593,Edge Moor,695.0,True,593,0.97,out_of_band,0.95
+PJM,st,3138,New Castle,326.3,True,3138,0.97,out_of_band,0.95
+PJM,st,874,Joliet 9,314.0,True,874,0.97,no_net,0.95
+SPP,st,6193,Harrington Station,1018.0,True,6193,0.97,no_net,0.95
+SPP,st,3478,Wilkes Power Plant,883.0,True,3478,0.97,no_net,0.95
+SPP,st,3482,Jones Station,486.0,True,3482,0.97,no_net,0.95
+SPP,st,3484,Nichols Station,457.0,True,3484,0.97,no_net,0.95
+SPP,st,3485,Plant X,411.0,True,3485,0.97,no_net,0.95
+SPP,st,3476,Knox Lee Power Plant,398.0,True,3476,0.97,no_net,0.95
