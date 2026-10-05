@@ -202,6 +202,18 @@ submissions). The PJM seam-ladder derivation
 (`scripts/derive_pjm_seam_ladders.py`) therefore uses the tie-line file as
 its flow source and keeps this parquet as the printed cross-check.
 
+**PJM clock exception (measured 2026-10-05, lane closeout-infra-bugs).**
+PJM's `local_time` is NOT local hour-ending: it is the **UTC hour-beginning**.
+Differenced against the tie-line meter's `datetime_beginning_utc`, the
+label lines up at zero shift (|r| 0.89-0.93, 2020-2025) and at no other
+shift (|r| < 0.15). It is constant in UTC across DST. Read it with
+`tz_localize("UTC")`, as `derive_pjm_seam_ladders.pjm_eia930_label_to_est`
+does. A second PJM defect: the per-DIBA sign is inverted from the start of
+the file through about 2019-10-31 (monthly r vs the tie meter −0.89 to
+−0.99 for Jan-Oct 2019). It is not yet registered as a sign window. Every
+other BA file verified on its stated basis (MISO: fixed EST hour-ending).
+Record: `docs/records/governance/closeout-2026-10/FINDING-closeout-infra-bugs-2026-10-05.md`.
+
 **Source:** EIA-930 (Hourly Electric Grid Monitor), public domain — see
 `docs/data-licensing.md` §1.
 
