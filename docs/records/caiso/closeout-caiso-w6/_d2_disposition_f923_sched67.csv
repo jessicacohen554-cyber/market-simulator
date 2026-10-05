@@ -1,0 +1,15 @@
+YEAR,Utility ID,Utility Name,Sector Code,Plant Code,CHP Plant,Plant Name,Plant State,Gross Generation,Incoming Electricity,Total Source,Station_Use,Direct_Use,Total Facility Use,Retail Sales,Sales for Resale,Tolling Agreements,Outgoing Electricity,Total_Disposition,Revenue from Resale,Types of Incoming Electricity,Types of Outgoing Electricity
+2019,22091,New-Indy Ontario LLC,6,10427,N,New-Indy Ontario Mill,CA,245987,5406,251393,0,201080,201080,7663,42650,0,0,251393,1844,Electricity purchased from utility,
+2019,18986,THUMS Long Beach Company,6,56051,N,THUMS,CA,330779,328657,659436,22823,636613,659436,0,0,0,0,659436,.,Utility Purchase,
+2020,22091,New-Indy Ontario LLC,6,10427,N,New-Indy Ontario Mill,CA,264136,2166,266302,15329,193325,208654,8755,48893,0,0,266302,1653,Purchased from Southern California Edison,
+2020,18986,THUMS Long Beach Company,6,56051,N,THUMS,CA,381614,274976,656590,25150,631440,656590,0,0,0,0,656590,.,SCE (Utility),
+2021,22091,New-Indy Ontario LLC,6,10427,N,New-Indy Ontario Mill,CA,260244,5099,265343,15277,191050,206327,9540,49476,0,0,265343,2898,Purchased from Southern California Edison,No outgoing electricity
+2021,18986,THUMS Long Beach Company,6,56051,N,THUMS,CA,321358,282531,603889,22813,581076,603889,0,0,0,0,603889,.,SCE Electric Utility,
+2022,22091,New-Indy Ontario LLC,6,10427,N,New-Indy Ontario Mill,CA,262121,428,262549,15264,191628,206892,9048,46609,0,0,262549,3880,Purchased from Southern California Edison,No outgoing electricity
+2022,18986,THUMS Long Beach Company,6,56051,N,THUMS,CA,187900,410054,597954,15157,582797,597954,0,0,0,0,597954,.,SCE (Utility),
+2023,22091,New-Indy Ontario LLC,6,10427,N,New-Indy Ontario Mill,CA,256753,613,257366,15234,193909,209143,7901,40322,0,0,257366,3753,Purchased from Southern California Edison,Not outgoing electricity
+2023,18986,THUMS Long Beach Company,6,56051,N,THUMS,CA,308433,309041,617474,22412,595062,617474,0,0,0,0,617474,.,"SCE, utility",
+2024,22091,New-Indy Ontario LLC,6,10427,N,New-Indy Ontario Mill,CA,256144,6801,262945,15258,190929,206187,9174,47584,0,0,262945,2000,Purchased from SCE,
+2024,18986,THUMS Long Beach Company,6,56051,N,THUMS,CA,372284,218473,590757,24553,566204,590757,0,0,0,0,590757,.,SCE,
+2025,22091,New-Indy Ontario LLC,6,10427,N,New-Indy Ontario Mill,CA,255137,351,255488,15217,187393,202610,9338,43540,0,0,255488,1867,Purchased from Southern CA Edison,
+2025,18986,THUMS Long Beach Company,6,56051,N,THUMS,CA,192031,377034,569065,23814,545251,569065,0,0,0,0,569065,.,SCE(Utility),

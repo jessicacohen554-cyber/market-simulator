@@ -63,3 +63,63 @@ null.
 | D2-c | Keep CT_PEAKER; benchmark-side BTM deduction for the two plants | benchmark construction (a shared-bench change, not a run flag); a rubric-adjacent change, so rule 37 caution | 0 on CC_REGULAR; CT_PEAKER actual −0.5 TWh |
 
 `ct_mustrun_per_plant` (a same-year EIA-923 pin) is the quarantined actuals crutch and is not a candidate (rule 13).
+
+## Addendum A: grid visibility answered from data (desk, 02:40Z). The energy is behind the meter, so D2-c is the rule-14 correction
+
+**Source.** EIA-923 Schedules 6/7, "Annual Source and Disposition of Electricity for Non-Utility Generators", 2019–2025
+(final revisions; `eia.gov/electricity/data/eia923/[archive/]xls/f923_<y>.zip`). The rows are extracted to
+`_d2_disposition_f923_sched67.csv`.
+
+**Own generation consumed on site** = (gross − station use) − sales for resale − retail sales − tolling − outgoing.
+This equals direct use minus incoming, so the two sides of the balance agree.
+
+| Plant | Sales for resale, every year | Incoming from SCE (GWh/yr) | Own net generation consumed on site |
+|---|---|---|---|
+| THUMS 56051 (NAICS 211, Long Beach oil islands) | **0** (retail 0, tolling 0, outgoing 0) | 218–410 | **100 %**. THUMS is a net importer: its host buys 0.22–0.41 TWh/yr from SCE on top of its own 0.17–0.36 TWh. |
+| New-Indy 10427 (NAICS 32213, paperboard mill) | 40–49 GWh (plus 8–10 GWh retail) | 0.4–6.8 | **76–80 %**. Grid-visible exports are about 0.05 TWh/yr. |
+
+**What this means.**
+- Both plants are behind-the-meter self-generators. Their own output, and the host load it serves, sit outside
+  CISO-metered demand.
+- The model's ≈ 0 TWh for these plants is therefore correct on the grid basis, apart from New-Indy's ≈ 0.05 TWh of
+  exports.
+- The 0.5–0.6 TWh "O2 gap" in the w5 FINDING is a benchmark-basis artifact. It is not missing in-market energy, and
+  it cannot displace CC_REGULAR.
+- **The w5 FINDING §1's O2 attribution to the CC_REGULAR excess is withdrawn.**
+- D2-b (a floor) would force grid energy the data say does not exist on the grid. It is not admissible.
+
+**Scope: the rule applies to every plant, not two.** The same Schedule 6/7 test run over every CAISO plant in the shared
+EIA-923 benchmark frame finds:
+- CT_PEAKER self-consumption of **0.45–0.68 TWh/yr**. THUMS and New-Indy carry 0.34–0.55 of it; the rest is small
+  industrial and institutional units such as Berry NMW, Kern Oil, Blacksand and Kaweah Delta.
+- CC_REGULAR ≤ 0.036 TWh and ST_GAS 0.
+- CC_CHP / CT_CHP 4.4–5.0 / 2.5–3.1 TWh. These are already handled by the sector-default `chp_btm_pct` deduction. A
+  measured replacement is a separate question: the `chp_btm_measured` family, which is U in CAISO.
+
+The admissible D2-c is therefore "deduct each non-CHP-class plant's measured Schedule 6/7 self-consumption from its
+class actual", applied to all plants rather than a hand-picked list.
+
+**Census: D2-c effect on C1, zero LP, against the w3 control** (`_d2c_census.json`; TWh; miss = model − actual):
+
+| Year | CT_PEAKER miss, w3 | Two plants only | All plants | Band | Status |
+|---|--:|--:|--:|--:|---|
+| 2019 | −1.531 | −1.188 | −1.074 | 4.84 | PASS → PASS |
+| 2020 | −1.906 | −1.358 | −1.226 | 4.60 | PASS → PASS |
+| 2021 | +1.630 | +2.114 | +2.216 | 4.83 | PASS → PASS (moves away; already WATCH) |
+| 2022 | −0.634 | −0.270 | −0.153 | 5.01 | PASS → PASS |
+| 2023 | −1.137 | −0.658 | −0.562 | 5.27 | PASS → PASS |
+| 2024 | −1.036 | −0.504 | −0.413 | 5.29 | PASS → PASS |
+| 2025 | −1.737 | −1.382 | −1.287 | 5.08 | PASS → PASS |
+
+- CT_PEAKER moves toward actual in 6 of 7 years. 2021 moves away but stays inside its band.
+- **CC_REGULAR 2020 (T1) is unchanged at +4.996 (w3) / +4.80 (w5)**, because no 2020 CC_REGULAR self-consumption
+  exists. 2021–23 CC_REGULAR moves by at most 0.036.
+- ST_GAS is unchanged.
+- No C1 status changes in any class or year. The total-generation term in the band moves by at most 0.02 TWh.
+
+**Nature of the change.** This is a benchmark construction: measured BTM deducted from the EIA-923 actual, the same
+place `_btm_frame` already deducts CHP BTM. It is not a run flag. The shared bench part must stay run-config
+independent (nyiso-149), and it moves no model quantity, so it needs no solve.
+
+**Conclusion.** D2 is closed for T1. The CC_REGULAR 2020 residual (+0.20 TWh over band in w5) has no remaining
+plant-level object in O1–O3.
