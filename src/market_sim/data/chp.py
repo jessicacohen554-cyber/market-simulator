@@ -364,11 +364,39 @@ def measured_chp_btm_pct_caiso() -> dict[int, float]:
     return {int(r.plant_code): float(r.btm_pct) for r in df.itertuples(index=False)}
 
 
+@lru_cache(maxsize=2)
+def measured_chp_btm_pct_miso() -> dict[int, float]:
+    """Measured MISO per-plant CHP BTM electric share (% of nameplate).
+
+    The closeout-MISO-w3e rule-23 artifact
+    ``data/raw/_processed-legacy/chp_btm_share_measured_MISO.csv``
+    (:mod:`scripts.data.derive_miso_chp_btm_share`), built by the SAME derive
+    function and definition as :func:`measured_chp_btm_pct_caiso` (EIA-923
+    Schedules 6/7, pooled CY2022-2024) over plants whose EIA-860 balancing
+    authority is MISO. Consumed only under ``ScenarioConfig.miso_chp_btm_measured``
+    (MISO-only, rule 25 [R-ISO-SCOPE]) for the run's capacity carve; the
+    benchmark subtrahend reads it whenever it exists (nyiso-149). A plant
+    absent from Schedules 6/7 keeps the :func:`chp_btm_pct` default. Empty
+    when the artifact is absent.
+    """
+    path = PROCESSED_DIR / "chp_btm_share_measured_MISO.csv"
+    if not path.exists():
+        logger.warning(
+            "miso_chp_btm_measured armed but %s is absent — "
+            "run scripts/data/derive_miso_chp_btm_share.py",
+            path,
+        )
+        return {}
+    df = pd.read_csv(path)
+    return {int(r.plant_code): float(r.btm_pct) for r in df.itertuples(index=False)}
+
+
 def measured_chp_btm_pct_for_iso(iso: str) -> dict[int, float]:
     """Return the ISO's measured per-plant CHP BTM share map (% of nameplate).
 
     NYISO reads the nyiso-147 Gold-Book/EIA-923 artifact, CAISO the
-    closeout-CAISO-w6 EIA-923 Schedules 6/7 artifact; every other ISO has no
+    closeout-CAISO-w6 EIA-923 Schedules 6/7 artifact, MISO the closeout-MISO-w3e
+    artifact built by the same derive; every other ISO has no
     measured artifact and gets an empty map (the sector default stands).
     """
     key = str(iso).upper()
@@ -376,20 +404,25 @@ def measured_chp_btm_pct_for_iso(iso: str) -> dict[int, float]:
         return measured_chp_btm_pct_nyiso()
     if key == "CAISO":
         return measured_chp_btm_pct_caiso()
+    if key == "MISO":
+        return measured_chp_btm_pct_miso()
     return {}
 
 
 def chp_btm_measured_armed(config: object) -> bool:
     """Whether the run's capacity carve uses the ISO's measured CHP BTM share.
 
-    True only for NYISO under ``nyiso_chp_btm_measured`` and CAISO under
-    ``caiso_chp_btm_measured`` (each flag is ISO-scoped, rule 25).
+    True only for NYISO under ``nyiso_chp_btm_measured``, CAISO under
+    ``caiso_chp_btm_measured`` and MISO under ``miso_chp_btm_measured`` (each
+    flag is ISO-scoped, rule 25).
     """
     iso = str(getattr(config, "iso", "ERCOT")).upper()
     if iso == "NYISO":
         return bool(getattr(config, "nyiso_chp_btm_measured", False))
     if iso == "CAISO":
         return bool(getattr(config, "caiso_chp_btm_measured", False))
+    if iso == "MISO":
+        return bool(getattr(config, "miso_chp_btm_measured", False))
     return False
 
 

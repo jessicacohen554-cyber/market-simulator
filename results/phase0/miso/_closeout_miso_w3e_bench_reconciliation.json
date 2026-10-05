@@ -1,0 +1,301 @@
+{
+ "plant": [
+  {
+   "year": 2019,
+   "plant": 10745,
+   "name": "Midland Cogen",
+   "ba": "MISO",
+   "to": "Michigan Electric Transmission Company",
+   "eia923_net_gwh": 8853.0,
+   "sched67_net_gwh": 9126.9,
+   "sched67_grid_gwh": 8601.5,
+   "campd_net_gwh": 7379.7,
+   "default_grid_gwh": 5754.5,
+   "default_share": 0.35
+  },
+  {
+   "year": 2019,
+   "plant": 55089,
+   "name": "Taft",
+   "ba": "MISO",
+   "to": "Entergy Louisiana LLC",
+   "eia923_net_gwh": 5773.8,
+   "sched67_net_gwh": 5772.5,
+   "sched67_grid_gwh": 4360.6,
+   "campd_net_gwh": 3867.9,
+   "default_grid_gwh": 1732.1,
+   "default_share": 0.7
+  },
+  {
+   "year": 2019,
+   "plant": 10789,
+   "name": "Sabine River Works",
+   "ba": "MISO",
+   "to": "Entergy Texas Inc.",
+   "eia923_net_gwh": 3183.7,
+   "sched67_net_gwh": 3111.3,
+   "sched67_grid_gwh": 2411.6,
+   "campd_net_gwh": NaN,
+   "default_grid_gwh": 955.1,
+   "default_share": 0.7
+  },
+  {
+   "year": 2019,
+   "plant": 55088,
+   "name": "Dearborn Industrial",
+   "ba": "MISO",
+   "to": "DTE Electric Company",
+   "eia923_net_gwh": 5482.7,
+   "sched67_net_gwh": 5354.9,
+   "sched67_grid_gwh": 5354.9,
+   "campd_net_gwh": 3689.0,
+   "default_grid_gwh": 3563.8,
+   "default_share": 0.35
+  },
+  {
+   "year": 2019,
+   "plant": 55404,
+   "name": "Carville",
+   "ba": "MISO",
+   "to": "Entergy Louisiana LLC",
+   "eia923_net_gwh": 2970.4,
+   "sched67_net_gwh": 3024.3,
+   "sched67_grid_gwh": 2970.7,
+   "campd_net_gwh": 3232.8,
+   "default_grid_gwh": 1930.8,
+   "default_share": 0.35
+  },
+  {
+   "year": 2021,
+   "plant": 10745,
+   "name": "Midland Cogen",
+   "ba": "MISO",
+   "to": "Michigan Electric Transmission Company",
+   "eia923_net_gwh": 6298.3,
+   "sched67_net_gwh": 6975.7,
+   "sched67_grid_gwh": 6467.0,
+   "campd_net_gwh": 5630.3,
+   "default_grid_gwh": 4093.9,
+   "default_share": 0.35
+  },
+  {
+   "year": 2021,
+   "plant": 55089,
+   "name": "Taft",
+   "ba": "MISO",
+   "to": "Entergy Louisiana LLC",
+   "eia923_net_gwh": 3922.4,
+   "sched67_net_gwh": 3913.3,
+   "sched67_grid_gwh": 2652.0,
+   "campd_net_gwh": 2688.6,
+   "default_grid_gwh": 1176.7,
+   "default_share": 0.7
+  },
+  {
+   "year": 2021,
+   "plant": 10789,
+   "name": "Sabine River Works",
+   "ba": "MISO",
+   "to": "Entergy Texas Inc.",
+   "eia923_net_gwh": 3062.5,
+   "sched67_net_gwh": 3182.3,
+   "sched67_grid_gwh": 2459.2,
+   "campd_net_gwh": NaN,
+   "default_grid_gwh": 918.7,
+   "default_share": 0.7
+  },
+  {
+   "year": 2021,
+   "plant": 55088,
+   "name": "Dearborn Industrial",
+   "ba": "MISO",
+   "to": "DTE Electric Company",
+   "eia923_net_gwh": 4173.0,
+   "sched67_net_gwh": 4173.1,
+   "sched67_grid_gwh": 4059.6,
+   "campd_net_gwh": 2731.8,
+   "default_grid_gwh": 2712.5,
+   "default_share": 0.35
+  },
+  {
+   "year": 2021,
+   "plant": 55404,
+   "name": "Carville",
+   "ba": "MISO",
+   "to": "Entergy Louisiana LLC",
+   "eia923_net_gwh": 2744.3,
+   "sched67_net_gwh": 2797.2,
+   "sched67_grid_gwh": 2744.3,
+   "campd_net_gwh": 3026.5,
+   "default_grid_gwh": 1783.8,
+   "default_share": 0.35
+  },
+  {
+   "year": 2023,
+   "plant": 10745,
+   "name": "Midland Cogen",
+   "ba": "MISO",
+   "to": "Michigan Electric Transmission Company",
+   "eia923_net_gwh": 9755.7,
+   "sched67_net_gwh": 10055.2,
+   "sched67_grid_gwh": 9505.5,
+   "campd_net_gwh": 7890.5,
+   "default_grid_gwh": 6341.2,
+   "default_share": 0.35
+  },
+  {
+   "year": 2023,
+   "plant": 55089,
+   "name": "Taft",
+   "ba": "MISO",
+   "to": "Entergy Louisiana LLC",
+   "eia923_net_gwh": 5917.2,
+   "sched67_net_gwh": 5916.2,
+   "sched67_grid_gwh": 4689.6,
+   "campd_net_gwh": 3861.6,
+   "default_grid_gwh": 1775.2,
+   "default_share": 0.7
+  },
+  {
+   "year": 2023,
+   "plant": 10789,
+   "name": "Sabine River Works",
+   "ba": "MISO",
+   "to": "Entergy Texas Inc.",
+   "eia923_net_gwh": 2325.5,
+   "sched67_net_gwh": 2335.7,
+   "sched67_grid_gwh": 1675.7,
+   "campd_net_gwh": NaN,
+   "default_grid_gwh": 697.6,
+   "default_share": 0.7
+  },
+  {
+   "year": 2023,
+   "plant": 55088,
+   "name": "Dearborn Industrial",
+   "ba": "MISO",
+   "to": "DTE Electric Company",
+   "eia923_net_gwh": 5259.8,
+   "sched67_net_gwh": 5298.6,
+   "sched67_grid_gwh": 5175.7,
+   "campd_net_gwh": 3648.1,
+   "default_grid_gwh": 3418.9,
+   "default_share": 0.35
+  },
+  {
+   "year": 2023,
+   "plant": 55404,
+   "name": "Carville",
+   "ba": "MISO",
+   "to": "Entergy Louisiana LLC",
+   "eia923_net_gwh": 3236.7,
+   "sched67_net_gwh": 3303.9,
+   "sched67_grid_gwh": 3236.7,
+   "campd_net_gwh": 3406.3,
+   "default_grid_gwh": 2103.8,
+   "default_share": 0.35
+  }
+ ],
+ "fold_test": [
+  {
+   "year": 2019,
+   "e930_gas": 190.995,
+   "eia923_gas_full": 219.12,
+   "gap_930_minus_923": -28.13,
+   "fold_F": 14.09
+  },
+  {
+   "year": 2020,
+   "e930_gas": 197.38,
+   "eia923_gas_full": 220.2,
+   "gap_930_minus_923": -22.82,
+   "fold_F": 13.08
+  },
+  {
+   "year": 2021,
+   "e930_gas": 181.038,
+   "eia923_gas_full": 205.4,
+   "gap_930_minus_923": -24.36,
+   "fold_F": 12.6
+  },
+  {
+   "year": 2022,
+   "e930_gas": 208.389,
+   "eia923_gas_full": 233.3,
+   "gap_930_minus_923": -24.91,
+   "fold_F": 12.97
+  },
+  {
+   "year": 2023,
+   "e930_gas": 241.242,
+   "eia923_gas_full": 258.41,
+   "gap_930_minus_923": -17.17,
+   "fold_F": 13.13
+  },
+  {
+   "year": 2024,
+   "e930_gas": 252.084,
+   "eia923_gas_full": 265.47,
+   "gap_930_minus_923": -13.39,
+   "fold_F": 11.75
+  },
+  {
+   "year": 2025,
+   "e930_gas": 233.227,
+   "eia923_gas_full": 248.98,
+   "gap_930_minus_923": -15.75,
+   "fold_F": 10.96
+  }
+ ],
+ "system": [
+  {
+   "year": 2019,
+   "e930_gas_coal": 429.9,
+   "default": 415.8,
+   "measured": 415.8,
+   "reconciled": 443.2
+  },
+  {
+   "year": 2020,
+   "e930_gas_coal": 389.0,
+   "default": 382.9,
+   "measured": 376.0,
+   "reconciled": 394.1
+  },
+  {
+   "year": 2021,
+   "e930_gas_coal": 420.1,
+   "default": 418.6,
+   "measured": 407.5,
+   "reconciled": 428.7
+  },
+  {
+   "year": 2022,
+   "e930_gas_coal": 425.5,
+   "default": 415.7,
+   "measured": 412.5,
+   "reconciled": 426.7
+  },
+  {
+   "year": 2023,
+   "e930_gas_coal": 416.2,
+   "default": 402.9,
+   "measured": 414.5,
+   "reconciled": 414.5
+  },
+  {
+   "year": 2024,
+   "e930_gas_coal": 419.2,
+   "default": 404.6,
+   "measured": 416.2,
+   "reconciled": 416.2
+  },
+  {
+   "year": 2025,
+   "e930_gas_coal": 425.3,
+   "default": 414.4,
+   "measured": 425.4,
+   "reconciled": 425.4
+  }
+ ]
+}

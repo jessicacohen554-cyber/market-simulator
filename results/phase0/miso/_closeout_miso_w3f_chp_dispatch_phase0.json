@@ -1,0 +1,849 @@
+{
+ "2019": {
+  "census_summary": {
+   "plants": 18,
+   "cems_on_wmean": 0.926,
+   "model_on_wmean": 0.181,
+   "cems_starts_median": 8.0,
+   "model_starts_median": 65.0
+  },
+  "census_top": [
+   {
+    "plant": 10745,
+    "group": "CC_CHP",
+    "cems_twh": 7.380000114440918,
+    "cems_on": 1.0,
+    "cems_starts": 1,
+    "model_on": 0.057,
+    "model_starts": 70
+   },
+   {
+    "plant": 55089,
+    "group": "CC_CHP",
+    "cems_twh": 3.868000030517578,
+    "cems_on": 0.999,
+    "cems_starts": 3,
+    "model_on": 0.311,
+    "model_starts": 254
+   },
+   {
+    "plant": 55088,
+    "group": "CT_CHP",
+    "cems_twh": 3.688999891281128,
+    "cems_on": 0.965,
+    "cems_starts": 11,
+    "model_on": 0.666,
+    "model_starts": 303
+   },
+   {
+    "plant": 55117,
+    "group": "CC_CHP",
+    "cems_twh": 3.2360000610351562,
+    "cems_on": 1.0,
+    "cems_starts": 1,
+    "model_on": 0.001,
+    "model_starts": 2
+   },
+   {
+    "plant": 55404,
+    "group": "CC_CHP",
+    "cems_twh": 3.2330000400543213,
+    "cems_on": 0.967,
+    "cems_starts": 3,
+    "model_on": 0.194,
+    "model_starts": 188
+   },
+   {
+    "plant": 55259,
+    "group": "CC_CHP",
+    "cems_twh": 2.062000036239624,
+    "cems_on": 0.981,
+    "cems_starts": 2,
+    "model_on": 0.043,
+    "model_starts": 65
+   },
+   {
+    "plant": 1393,
+    "group": "ST_CHP",
+    "cems_twh": 1.9919999837875366,
+    "cems_on": 0.63,
+    "cems_starts": 12,
+    "model_on": 0.0,
+    "model_starts": 0
+   },
+   {
+    "plant": 55075,
+    "group": "CC_CHP",
+    "cems_twh": 1.7599999904632568,
+    "cems_on": 0.859,
+    "cems_starts": 8,
+    "model_on": 0.0,
+    "model_starts": 0
+   },
+   {
+    "plant": 54915,
+    "group": "CC_CHP",
+    "cems_twh": 1.0149999856948853,
+    "cems_on": 0.928,
+    "cems_starts": 9,
+    "model_on": 0.042,
+    "model_starts": 60
+   },
+   {
+    "plant": 59093,
+    "group": "CC_CHP",
+    "cems_twh": 0.9290000200271606,
+    "cems_on": 0.986,
+    "cems_starts": 4,
+    "model_on": 0.363,
+    "model_starts": 275
+   }
+  ],
+  "reach": {
+   "gain_twh": 9.763,
+   "gain_by_group": {
+    "CC_CHP": 9.543999671936035,
+    "CT_CHP": 0.1889999955892563,
+    "ST_CHP": 0.029999999329447746
+   },
+   "displaced_by_class": {
+    "": 1.6160000562667847,
+    "CC_REGULAR": 3.244999885559082,
+    "COAL_BIT": 0.9860000014305115,
+    "COAL_LIGNITE": 0.10400000214576721,
+    "COAL_PRB": 1.8309999704360962,
+    "CT_PEAKER": 0.02199999988079071,
+    "ST_GAS": 0.796999990940094
+   },
+   "markup_committed_minus_econlo_mean": 8.62,
+   "plants_inverted": 20,
+   "plants": 31
+  }
+ },
+ "2020": {
+  "census_summary": {
+   "plants": 17,
+   "cems_on_wmean": 0.917,
+   "model_on_wmean": 0.235,
+   "cems_starts_median": 8.0,
+   "model_starts_median": 116.0
+  },
+  "census_top": [
+   {
+    "plant": 10745,
+    "group": "CC_CHP",
+    "cems_twh": 7.718999862670898,
+    "cems_on": 1.0,
+    "cems_starts": 1,
+    "model_on": 0.13,
+    "model_starts": 116
+   },
+   {
+    "plant": 55089,
+    "group": "CC_CHP",
+    "cems_twh": 3.6449999809265137,
+    "cems_on": 1.0,
+    "cems_starts": 1,
+    "model_on": 0.414,
+    "model_starts": 283
+   },
+   {
+    "plant": 55088,
+    "group": "CT_CHP",
+    "cems_twh": 3.562999963760376,
+    "cems_on": 0.967,
+    "cems_starts": 12,
+    "model_on": 0.624,
+    "model_starts": 254
+   },
+   {
+    "plant": 55117,
+    "group": "CC_CHP",
+    "cems_twh": 2.7720000743865967,
+    "cems_on": 0.888,
+    "cems_starts": 4,
+    "model_on": 0.027,
+    "model_starts": 48
+   },
+   {
+    "plant": 55404,
+    "group": "CC_CHP",
+    "cems_twh": 2.7119998931884766,
+    "cems_on": 0.988,
+    "cems_starts": 6,
+    "model_on": 0.271,
+    "model_starts": 228
+   },
+   {
+    "plant": 55259,
+    "group": "CC_CHP",
+    "cems_twh": 2.187000036239624,
+    "cems_on": 1.0,
+    "cems_starts": 1,
+    "model_on": 0.143,
+    "model_starts": 149
+   },
+   {
+    "plant": 55075,
+    "group": "CC_CHP",
+    "cems_twh": 1.8179999589920044,
+    "cems_on": 0.896,
+    "cems_starts": 26,
+    "model_on": 0.036,
+    "model_starts": 53
+   },
+   {
+    "plant": 54915,
+    "group": "CC_CHP",
+    "cems_twh": 1.0809999704360962,
+    "cems_on": 0.986,
+    "cems_starts": 3,
+    "model_on": 0.163,
+    "model_starts": 157
+   },
+   {
+    "plant": 1393,
+    "group": "ST_CHP",
+    "cems_twh": 1.0169999599456787,
+    "cems_on": 0.303,
+    "cems_starts": 5,
+    "model_on": 0.055,
+    "model_starts": 50
+   },
+   {
+    "plant": 55011,
+    "group": "CC_CHP",
+    "cems_twh": 0.9070000052452087,
+    "cems_on": 0.489,
+    "cems_starts": 259,
+    "model_on": 0.496,
+    "model_starts": 252
+   }
+  ],
+  "reach": {
+   "gain_twh": 9.069,
+   "gain_by_group": {
+    "CC_CHP": 8.855999946594238,
+    "CT_CHP": 0.18199999630451202,
+    "ST_CHP": 0.03099999949336052
+   },
+   "displaced_by_class": {
+    "": 1.4600000381469727,
+    "CC_REGULAR": 3.2909998893737793,
+    "COAL_BIT": 0.5080000162124634,
+    "COAL_LIGNITE": 0.13300000131130219,
+    "COAL_PRB": 1.2120000123977661,
+    "CT_PEAKER": 0.13099999725818634,
+    "ST_GAS": 1.062000036239624
+   },
+   "markup_committed_minus_econlo_mean": 5.8,
+   "plants_inverted": 19,
+   "plants": 30
+  }
+ },
+ "2021": {
+  "census_summary": {
+   "plants": 17,
+   "cems_on_wmean": 0.862,
+   "model_on_wmean": 0.143,
+   "cems_starts_median": 10.0,
+   "model_starts_median": 76.0
+  },
+  "census_top": [
+   {
+    "plant": 10745,
+    "group": "CC_CHP",
+    "cems_twh": 5.630000114440918,
+    "cems_on": 0.978,
+    "cems_starts": 2,
+    "model_on": 0.027,
+    "model_starts": 46
+   },
+   {
+    "plant": 55404,
+    "group": "CC_CHP",
+    "cems_twh": 3.0260000228881836,
+    "cems_on": 0.981,
+    "cems_starts": 2,
+    "model_on": 0.113,
+    "model_starts": 148
+   },
+   {
+    "plant": 55088,
+    "group": "CT_CHP",
+    "cems_twh": 2.7320001125335693,
+    "cems_on": 0.811,
+    "cems_starts": 74,
+    "model_on": 0.656,
+    "model_starts": 239
+   },
+   {
+    "plant": 55089,
+    "group": "CC_CHP",
+    "cems_twh": 2.688999891281128,
+    "cems_on": 0.909,
+    "cems_starts": 5,
+    "model_on": 0.159,
+    "model_starts": 176
+   },
+   {
+    "plant": 55117,
+    "group": "CC_CHP",
+    "cems_twh": 2.2730000019073486,
+    "cems_on": 0.997,
+    "cems_starts": 4,
+    "model_on": 0.0,
+    "model_starts": 1
+   },
+   {
+    "plant": 55259,
+    "group": "CC_CHP",
+    "cems_twh": 2.075000047683716,
+    "cems_on": 1.0,
+    "cems_starts": 1,
+    "model_on": 0.023,
+    "model_starts": 46
+   },
+   {
+    "plant": 1393,
+    "group": "ST_CHP",
+    "cems_twh": 1.6269999742507935,
+    "cems_on": 0.48,
+    "cems_starts": 12,
+    "model_on": 0.0,
+    "model_starts": 0
+   },
+   {
+    "plant": 55075,
+    "group": "CC_CHP",
+    "cems_twh": 1.4769999980926514,
+    "cems_on": 0.693,
+    "cems_starts": 12,
+    "model_on": 0.0,
+    "model_starts": 0
+   },
+   {
+    "plant": 55011,
+    "group": "CC_CHP",
+    "cems_twh": 0.9129999876022339,
+    "cems_on": 0.49,
+    "cems_starts": 255,
+    "model_on": 0.478,
+    "model_starts": 195
+   },
+   {
+    "plant": 54915,
+    "group": "CC_CHP",
+    "cems_twh": 0.8939999938011169,
+    "cems_on": 0.812,
+    "cems_starts": 3,
+    "model_on": 0.055,
+    "model_starts": 76
+   }
+  ],
+  "reach": {
+   "gain_twh": 9.544,
+   "gain_by_group": {
+    "CC_CHP": 9.317000389099121,
+    "CT_CHP": 0.20000000298023224,
+    "ST_CHP": 0.026000000536441803
+   },
+   "displaced_by_class": {
+    "": 0.9750000238418579,
+    "CC_REGULAR": 5.241000175476074,
+    "COAL_BIT": 0.6169999837875366,
+    "COAL_LIGNITE": 0.02199999988079071,
+    "COAL_PRB": 1.1330000162124634,
+    "CT_PEAKER": 0.125,
+    "ST_GAS": 0.3160000145435333
+   },
+   "markup_committed_minus_econlo_mean": 9.04,
+   "plants_inverted": 20,
+   "plants": 30
+  }
+ },
+ "2022": {
+  "census_summary": {
+   "plants": 16,
+   "cems_on_wmean": 0.906,
+   "model_on_wmean": 0.18,
+   "cems_starts_median": 6.5,
+   "model_starts_median": 66.0
+  },
+  "census_top": [
+   {
+    "plant": 10745,
+    "group": "CC_CHP",
+    "cems_twh": 6.145999908447266,
+    "cems_on": 1.0,
+    "cems_starts": 1,
+    "model_on": 0.137,
+    "model_starts": 121
+   },
+   {
+    "plant": 55089,
+    "group": "CC_CHP",
+    "cems_twh": 3.7100000381469727,
+    "cems_on": 1.0,
+    "cems_starts": 2,
+    "model_on": 0.331,
+    "model_starts": 286
+   },
+   {
+    "plant": 55088,
+    "group": "CT_CHP",
+    "cems_twh": 3.25600004196167,
+    "cems_on": 0.909,
+    "cems_starts": 39,
+    "model_on": 0.49,
+    "model_starts": 231
+   },
+   {
+    "plant": 55117,
+    "group": "CC_CHP",
+    "cems_twh": 2.878000020980835,
+    "cems_on": 0.999,
+    "cems_starts": 2,
+    "model_on": 0.01,
+    "model_starts": 13
+   },
+   {
+    "plant": 55404,
+    "group": "CC_CHP",
+    "cems_twh": 2.6389999389648438,
+    "cems_on": 0.807,
+    "cems_starts": 3,
+    "model_on": 0.193,
+    "model_starts": 175
+   },
+   {
+    "plant": 1393,
+    "group": "ST_CHP",
+    "cems_twh": 2.180999994277954,
+    "cems_on": 0.683,
+    "cems_starts": 7,
+    "model_on": 0.008,
+    "model_starts": 11
+   },
+   {
+    "plant": 55259,
+    "group": "CC_CHP",
+    "cems_twh": 1.9769999980926514,
+    "cems_on": 0.905,
+    "cems_starts": 5,
+    "model_on": 0.042,
+    "model_starts": 40
+   },
+   {
+    "plant": 55075,
+    "group": "CC_CHP",
+    "cems_twh": 1.875,
+    "cems_on": 0.893,
+    "cems_starts": 9,
+    "model_on": 0.025,
+    "model_starts": 24
+   },
+   {
+    "plant": 54915,
+    "group": "CC_CHP",
+    "cems_twh": 1.0709999799728394,
+    "cems_on": 0.972,
+    "cems_starts": 8,
+    "model_on": 0.099,
+    "model_starts": 78
+   },
+   {
+    "plant": 59093,
+    "group": "CC_CHP",
+    "cems_twh": 0.8379999995231628,
+    "cems_on": 0.935,
+    "cems_starts": 6,
+    "model_on": 0.436,
+    "model_starts": 204
+   }
+  ],
+  "reach": {
+   "gain_twh": 8.433,
+   "gain_by_group": {
+    "CC_CHP": 8.222000122070312,
+    "CT_CHP": 0.19699999690055847,
+    "ST_CHP": 0.013000000268220901
+   },
+   "displaced_by_class": {
+    "": 1.1059999465942383,
+    "CC_REGULAR": 4.77400016784668,
+    "COAL_BIT": 0.414000004529953,
+    "COAL_LIGNITE": 0.020999999716877937,
+    "COAL_PRB": 0.7699999809265137,
+    "CT_PEAKER": 0.1080000028014183,
+    "ST_GAS": 0.3490000069141388
+   },
+   "markup_committed_minus_econlo_mean": 5.3,
+   "plants_inverted": 19,
+   "plants": 30
+  }
+ },
+ "2023": {
+  "census_summary": {
+   "plants": 16,
+   "cems_on_wmean": 0.92,
+   "model_on_wmean": 0.308,
+   "cems_starts_median": 8.0,
+   "model_starts_median": 119.5
+  },
+  "census_top": [
+   {
+    "plant": 10745,
+    "group": "CC_CHP",
+    "cems_twh": 7.890999794006348,
+    "cems_on": 1.0,
+    "cems_starts": 1,
+    "model_on": 0.154,
+    "model_starts": 162
+   },
+   {
+    "plant": 55089,
+    "group": "CC_CHP",
+    "cems_twh": 3.861999988555908,
+    "cems_on": 1.0,
+    "cems_starts": 1,
+    "model_on": 0.564,
+    "model_starts": 296
+   },
+   {
+    "plant": 55088,
+    "group": "CC_CHP",
+    "cems_twh": 3.6480000019073486,
+    "cems_on": 0.967,
+    "cems_starts": 19,
+    "model_on": 0.723,
+    "model_starts": 265
+   },
+   {
+    "plant": 55404,
+    "group": "CC_CHP",
+    "cems_twh": 3.4059998989105225,
+    "cems_on": 1.0,
+    "cems_starts": 1,
+    "model_on": 0.514,
+    "model_starts": 291
+   },
+   {
+    "plant": 55259,
+    "group": "CC_CHP",
+    "cems_twh": 2.1989998817443848,
+    "cems_on": 1.0,
+    "cems_starts": 1,
+    "model_on": 0.214,
+    "model_starts": 202
+   },
+   {
+    "plant": 55117,
+    "group": "CC_CHP",
+    "cems_twh": 2.1679999828338623,
+    "cems_on": 0.76,
+    "cems_starts": 6,
+    "model_on": 0.065,
+    "model_starts": 81
+   },
+   {
+    "plant": 55075,
+    "group": "CC_CHP",
+    "cems_twh": 1.7740000486373901,
+    "cems_on": 0.839,
+    "cems_starts": 12,
+    "model_on": 0.132,
+    "model_starts": 140
+   },
+   {
+    "plant": 1393,
+    "group": "ST_CHP",
+    "cems_twh": 1.6089999675750732,
+    "cems_on": 0.493,
+    "cems_starts": 9,
+    "model_on": 0.051,
+    "model_starts": 63
+   },
+   {
+    "plant": 55010,
+    "group": "CC_CHP",
+    "cems_twh": 1.0779999494552612,
+    "cems_on": 0.632,
+    "cems_starts": 232,
+    "model_on": 0.047,
+    "model_starts": 41
+   },
+   {
+    "plant": 54915,
+    "group": "CC_CHP",
+    "cems_twh": 1.0429999828338623,
+    "cems_on": 0.955,
+    "cems_starts": 6,
+    "model_on": 0.063,
+    "model_starts": 99
+   }
+  ],
+  "reach": {
+   "gain_twh": 7.933,
+   "gain_by_group": {
+    "CC_CHP": 7.794000148773193,
+    "CT_CHP": 0.11500000208616257,
+    "ST_CHP": 0.02500000037252903
+   },
+   "displaced_by_class": {
+    "": 1.434000015258789,
+    "CC_REGULAR": 2.9240000247955322,
+    "COAL_BIT": 0.19099999964237213,
+    "COAL_LIGNITE": 0.035999998450279236,
+    "COAL_PRB": 1.0149999856948853,
+    "CT_PEAKER": 0.335999995470047,
+    "ST_GAS": 0.7590000033378601
+   },
+   "markup_committed_minus_econlo_mean": 4.0,
+   "plants_inverted": 19,
+   "plants": 28
+  }
+ },
+ "2024": {
+  "census_summary": {
+   "plants": 16,
+   "cems_on_wmean": 0.933,
+   "model_on_wmean": 0.4,
+   "cems_starts_median": 7.0,
+   "model_starts_median": 204.5
+  },
+  "census_top": [
+   {
+    "plant": 10745,
+    "group": "CC_CHP",
+    "cems_twh": 8.54699993133545,
+    "cems_on": 1.0,
+    "cems_starts": 1,
+    "model_on": 0.322,
+    "model_starts": 252
+   },
+   {
+    "plant": 55088,
+    "group": "CC_CHP",
+    "cems_twh": 4.01200008392334,
+    "cems_on": 0.988,
+    "cems_starts": 4,
+    "model_on": 0.762,
+    "model_starts": 232
+   },
+   {
+    "plant": 55089,
+    "group": "CC_CHP",
+    "cems_twh": 3.321000099182129,
+    "cems_on": 0.989,
+    "cems_starts": 3,
+    "model_on": 0.627,
+    "model_starts": 275
+   },
+   {
+    "plant": 55404,
+    "group": "CC_CHP",
+    "cems_twh": 3.1429998874664307,
+    "cems_on": 0.976,
+    "cems_starts": 3,
+    "model_on": 0.567,
+    "model_starts": 288
+   },
+   {
+    "plant": 55259,
+    "group": "CC_CHP",
+    "cems_twh": 2.2809998989105225,
+    "cems_on": 1.0,
+    "cems_starts": 1,
+    "model_on": 0.351,
+    "model_starts": 310
+   },
+   {
+    "plant": 55117,
+    "group": "CC_CHP",
+    "cems_twh": 2.1470000743865967,
+    "cems_on": 0.986,
+    "cems_starts": 5,
+    "model_on": 0.036,
+    "model_starts": 56
+   },
+   {
+    "plant": 55075,
+    "group": "CC_CHP",
+    "cems_twh": 1.5609999895095825,
+    "cems_on": 0.737,
+    "cems_starts": 9,
+    "model_on": 0.133,
+    "model_starts": 137
+   },
+   {
+    "plant": 1393,
+    "group": "ST_CHP",
+    "cems_twh": 1.5540000200271606,
+    "cems_on": 0.561,
+    "cems_starts": 11,
+    "model_on": 0.077,
+    "model_starts": 100
+   },
+   {
+    "plant": 55010,
+    "group": "CC_CHP",
+    "cems_twh": 1.3309999704360962,
+    "cems_on": 0.754,
+    "cems_starts": 190,
+    "model_on": 0.306,
+    "model_starts": 215
+   },
+   {
+    "plant": 54915,
+    "group": "CC_CHP",
+    "cems_twh": 1.0529999732971191,
+    "cems_on": 0.957,
+    "cems_starts": 3,
+    "model_on": 0.205,
+    "model_starts": 194
+   }
+  ],
+  "reach": {
+   "gain_twh": 7.095,
+   "gain_by_group": {
+    "CC_CHP": 6.933000087738037,
+    "CT_CHP": 0.1459999978542328,
+    "ST_CHP": 0.01600000075995922
+   },
+   "displaced_by_class": {
+    "": 1.0490000247955322,
+    "CC_REGULAR": 2.438999891281128,
+    "COAL_BIT": 0.22300000488758087,
+    "COAL_LIGNITE": 0.01600000075995922,
+    "COAL_PRB": 0.8709999918937683,
+    "CT_PEAKER": 0.37599998712539673,
+    "ST_GAS": 0.9300000071525574
+   },
+   "markup_committed_minus_econlo_mean": 2.04,
+   "plants_inverted": 18,
+   "plants": 28
+  }
+ },
+ "2025": {
+  "census_summary": {
+   "plants": 16,
+   "cems_on_wmean": 0.907,
+   "model_on_wmean": 0.297,
+   "cems_starts_median": 8.5,
+   "model_starts_median": 150.0
+  },
+  "census_top": [
+   {
+    "plant": 10745,
+    "group": "CC_CHP",
+    "cems_twh": 7.880000114440918,
+    "cems_on": 1.0,
+    "cems_starts": 1,
+    "model_on": 0.27,
+    "model_starts": 181
+   },
+   {
+    "plant": 55089,
+    "group": "CC_CHP",
+    "cems_twh": 3.8429999351501465,
+    "cems_on": 1.0,
+    "cems_starts": 1,
+    "model_on": 0.408,
+    "model_starts": 263
+   },
+   {
+    "plant": 55404,
+    "group": "CC_CHP",
+    "cems_twh": 3.240999937057495,
+    "cems_on": 0.996,
+    "cems_starts": 2,
+    "model_on": 0.35,
+    "model_starts": 262
+   },
+   {
+    "plant": 55088,
+    "group": "CC_CHP",
+    "cems_twh": 2.808000087738037,
+    "cems_on": 0.822,
+    "cems_starts": 60,
+    "model_on": 0.742,
+    "model_starts": 195
+   },
+   {
+    "plant": 55117,
+    "group": "CC_CHP",
+    "cems_twh": 2.765000104904175,
+    "cems_on": 0.933,
+    "cems_starts": 4,
+    "model_on": 0.03,
+    "model_starts": 51
+   },
+   {
+    "plant": 1393,
+    "group": "ST_CHP",
+    "cems_twh": 2.109999895095825,
+    "cems_on": 0.553,
+    "cems_starts": 18,
+    "model_on": 0.081,
+    "model_starts": 104
+   },
+   {
+    "plant": 55259,
+    "group": "CC_CHP",
+    "cems_twh": 2.0829999446868896,
+    "cems_on": 0.998,
+    "cems_starts": 2,
+    "model_on": 0.266,
+    "model_starts": 206
+   },
+   {
+    "plant": 55075,
+    "group": "CC_CHP",
+    "cems_twh": 1.63100004196167,
+    "cems_on": 0.787,
+    "cems_starts": 10,
+    "model_on": 0.07,
+    "model_starts": 83
+   },
+   {
+    "plant": 54915,
+    "group": "CC_CHP",
+    "cems_twh": 1.065999984741211,
+    "cems_on": 0.941,
+    "cems_starts": 7,
+    "model_on": 0.201,
+    "model_starts": 149
+   },
+   {
+    "plant": 59093,
+    "group": "CC_CHP",
+    "cems_twh": 1.003000020980835,
+    "cems_on": 0.947,
+    "cems_starts": 4,
+    "model_on": 0.538,
+    "model_starts": 233
+   }
+  ],
+  "reach": {
+   "gain_twh": 7.866,
+   "gain_by_group": {
+    "CC_CHP": 7.706999778747559,
+    "CT_CHP": 0.1459999978542328,
+    "ST_CHP": 0.013000000268220901
+   },
+   "displaced_by_class": {
+    "": 0.8119999766349792,
+    "CC_REGULAR": 3.3889999389648438,
+    "COAL_BIT": 0.3959999978542328,
+    "COAL_LIGNITE": 0.032999999821186066,
+    "COAL_PRB": 1.065000057220459,
+    "CT_PEAKER": 0.2529999911785126,
+    "ST_GAS": 0.5070000290870667
+   },
+   "markup_committed_minus_econlo_mean": 8.08,
+   "plants_inverted": 20,
+   "plants": 28
+  }
+ }
+}

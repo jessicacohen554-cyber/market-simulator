@@ -33,7 +33,6 @@
     "ccs_retrofit_max_gw_per_year",
     "ccs_retrofit_min_remaining_life",
     "chp_btm_floor_pct",
-    "chp_startup_covered",
     "class_commitment_overrides",
     "coal_bit_committed_takeorpay",
     "coal_bit_dispatchable",

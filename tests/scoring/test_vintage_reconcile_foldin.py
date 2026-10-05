@@ -190,13 +190,14 @@ class TestVintageReconcileFoldIn(unittest.TestCase):
 
     # --- general partial-fold path: bundle carries the EIA-930 "other" series ---
 
-    def test_miso_partial_foldin_subtracts_only_leaked_portion(self):
-        """MISO folds only PART of its geo/biomass into NG; 930 'other' carries rest.
+    def test_partial_foldin_subtracts_only_leaked_portion(self):
+        """A partial-fold BA folds only PART of its geo/biomass into NG; 930 'other' carries rest.
 
-        Real 2024 signature: 930 NG=252.9, 930 Other=2.74, model OTHER+biomass=15.5.
-        With the 930 'other' series present, the deflation must be only the leaked
-        12.76 (= 15.5 - 2.74), NOT the full 15.5 the legacy CAISO formula would use
-        (which would under-scale MISO gas by ~2.7 TWh).
+        Written on the MISO 2024 signature (930 NG=252.9, 930 Other=2.74, model
+        OTHER+biomass=15.5); MISO itself is in EIA930_GAS_FOLD_REFUTED since
+        closeout-MISO-w3e, so the mechanics are pinned on the stand-in BA. With the
+        930 'other' series present, the deflation must be only the leaked 12.76
+        (= 15.5 - 2.74), NOT the full 15.5 the legacy formula would use.
         """
         cf = {
             "CC_REGULAR": 150.0,
@@ -206,7 +207,7 @@ class TestVintageReconcileFoldIn(unittest.TestCase):
             "biomass": 7.2,  # OTHER+biomass = 15.5
         }
         e930 = {"gas": 252.9, "coal": 0.0, "other": 2.74}
-        rch.reconcile_vintage_classes(cf, e930, "MISO")
+        rch.reconcile_vintage_classes(cf, e930, FOLD_BA)
         target = 252.9 - max(0.0, 15.5 - 2.74)  # 240.14
         self.assertAlmostEqual(self._gas_sum(cf), round(target, 4), places=1)
         # NOT the over-deflated full-subtraction target (237.4) the allowlist gave.

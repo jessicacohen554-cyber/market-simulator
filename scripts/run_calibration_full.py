@@ -3852,6 +3852,7 @@ def _btm_frame(
     group_by_code: dict[int, str] | None = None,
     nyiso_chp_btm_measured: bool = False,
     caiso_chp_btm_measured: bool = False,
+    miso_chp_btm_measured: bool = False,
 ) -> pd.DataFrame:
     """Return behind-the-meter CHP must-run by class for one year-pass.
 
@@ -4008,14 +4009,17 @@ def _btm_frame(
     share_bench_by_plant = dict(share_by_plant)
     # closeout-CAISO-w6: CAISO carries its own measured artifact (EIA-923
     # Schedules 6/7 on-site use), pinned on the bench side the same way and
-    # following ``caiso_chp_btm_measured`` on the run side.
-    if iso in ("NYISO", "CAISO"):
+    # following ``caiso_chp_btm_measured`` on the run side. closeout-MISO-w3e:
+    # MISO's artifact (same derive) likewise, under ``miso_chp_btm_measured``.
+    if iso in ("NYISO", "CAISO", "MISO"):
         from market_sim.data.chp import measured_chp_btm_pct_for_iso
 
         _measured = measured_chp_btm_pct_for_iso(iso)
-        _run_measured = (
-            nyiso_chp_btm_measured if iso == "NYISO" else caiso_chp_btm_measured
-        )
+        _run_measured = {
+            "NYISO": nyiso_chp_btm_measured,
+            "CAISO": caiso_chp_btm_measured,
+            "MISO": miso_chp_btm_measured,
+        }[iso]
         _chp_codes = {
             int(code)
             for code, grp in zip(bins["Plant_Code"], bins["Plant_Group"])
@@ -7409,6 +7413,9 @@ def solve_and_persist(
                     caiso_chp_btm_measured=bool(
                         (prb_overrides or {}).get("caiso_chp_btm_measured", False)
                     ),
+                    miso_chp_btm_measured=bool(
+                        (prb_overrides or {}).get("miso_chp_btm_measured", False)
+                    ),
                 )
             )
 
@@ -9043,6 +9050,11 @@ def run_p2_layer(bundle: Path, screen_coal: bool) -> None:
                 caiso_chp_btm_measured=bool(
                     (meta.get("coal_prb_sigmoid_overrides") or {}).get(
                         "caiso_chp_btm_measured"
+                    )
+                ),
+                miso_chp_btm_measured=bool(
+                    (meta.get("coal_prb_sigmoid_overrides") or {}).get(
+                        "miso_chp_btm_measured"
                     )
                 ),
             )

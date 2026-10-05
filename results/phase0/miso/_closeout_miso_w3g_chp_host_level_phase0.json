@@ -1,0 +1,213 @@
+{
+ "census": {
+  "rows": {
+   "both": 104,
+   "right_only": 6,
+   "left_only": 0
+  },
+  "status": "104/110",
+  "nameplate_mw": "104/110",
+  "chp_pmin_cf": "28/110",
+  "chp_sector": "104/110",
+  "median_cf": "95/110",
+  "committed_pct": "101/110"
+ },
+ "metered_on_frac": {
+  "7991:CC_CHP": 0.7140381282495667,
+  "10745:CC_CHP": 0.9969183359013867,
+  "54915:CC_CHP": 0.9867886178861788,
+  "55010:CC_CHP": 0.5975155279503106,
+  "55075:CC_CHP": 0.9785502958579884,
+  "55088:CC_CHP": 0.9196969696969698,
+  "55089:CC_CHP": 0.9855072463768116,
+  "55117:CC_CHP": 0.9956140350877193,
+  "55259:CC_CHP": 0.9823874755381605,
+  "55404:CC_CHP": 0.9965556831228474,
+  "55419:CC_CHP": 1.0,
+  "55558:CC_CHP": 0.8769751693002258,
+  "58427:CC_CHP": 0.9744075829383886,
+  "59093:CC_CHP": 0.9848637739656912,
+  "1391:CT_CHP": 1.0,
+  "50625:CT_CHP": 0.9993220338983051,
+  "55096:CT_CHP": 0.3611859838274933,
+  "55799:CT_CHP": 0.39436619718309857,
+  "64854:CT_CHP": 0.7915168943206327,
+  "2001:ST_CHP": 0.05798138869005011
+ },
+ "added_vs_B_twh": {
+  "2019": {
+   "CC_CHP|eia923_cf": 0.56,
+   "CC_CHP|ok": 10.39,
+   "CT_CHP|eia923_cf": 0.27,
+   "CT_CHP|ok": 0.0,
+   "ST_CHP|eia923_cf": 0.05
+  },
+  "2020": {
+   "CC_CHP|eia923_cf": 0.48,
+   "CC_CHP|ok": 9.34,
+   "CT_CHP|eia923_cf": 0.28,
+   "CT_CHP|ok": 0.0,
+   "ST_CHP|eia923_cf": 0.08,
+   "ST_CHP|ok": 0.0
+  },
+  "2021": {
+   "CC_CHP|eia923_cf": 0.85,
+   "CC_CHP|ok": 12.0,
+   "CT_CHP|eia923_cf": 0.3,
+   "CT_CHP|ok": 0.0,
+   "ST_CHP|eia923_cf": 0.06,
+   "ST_CHP|ok": 0.0
+  },
+  "2022": {
+   "CC_CHP|eia923_cf": 0.76,
+   "CC_CHP|ok": 11.41,
+   "CT_CHP|eia923_cf": 0.31,
+   "CT_CHP|ok": 0.0,
+   "ST_CHP|eia923_cf": 0.03,
+   "ST_CHP|ok": 0.0
+  },
+  "2023": {
+   "CC_CHP|eia923_cf": 0.33,
+   "CC_CHP|ok": 9.25,
+   "CT_CHP|eia923_cf": 0.15,
+   "CT_CHP|ok": 0.0,
+   "ST_CHP|eia923_cf": 0.1
+  },
+  "2024": {
+   "CC_CHP|eia923_cf": 0.28,
+   "CC_CHP|ok": 7.46,
+   "CT_CHP|eia923_cf": 0.14,
+   "CT_CHP|ok": 0.0,
+   "ST_CHP|eia923_cf": 0.07
+  },
+  "2025": {
+   "CC_CHP|eia923_cf": 0.4,
+   "CC_CHP|ok": 9.86,
+   "CT_CHP|eia923_cf": 0.17,
+   "CT_CHP|ok": 0.0,
+   "ST_CHP|eia923_cf": 0.07,
+   "ST_CHP|ok": 0.0
+  }
+ },
+ "basis_2023": {
+  "1391:CT_CHP": {
+   "level": 146.6,
+   "grid_cap_mw": 73,
+   "B_twh": 0.6,
+   "floored_twh": 0.6,
+   "campd_net_twh": 3.33
+  },
+  "7991:CC_CHP": {
+   "level": 41.2,
+   "grid_cap_mw": 78,
+   "B_twh": 0.02,
+   "floored_twh": 0.27,
+   "campd_net_twh": 0.44
+  },
+  "10745:CC_CHP": {
+   "level": 64.7,
+   "grid_cap_mw": 1750,
+   "B_twh": 8.49,
+   "floored_twh": 11.66,
+   "campd_net_twh": 7.89
+  },
+  "50625:CT_CHP": {
+   "level": 147.4,
+   "grid_cap_mw": 297,
+   "B_twh": 2.4,
+   "floored_twh": 2.4,
+   "campd_net_twh": 5.67
+  },
+  "54915:CC_CHP": {
+   "level": 97.1,
+   "grid_cap_mw": 144,
+   "B_twh": 0.32,
+   "floored_twh": 1.14,
+   "campd_net_twh": 1.04
+  },
+  "55010:CC_CHP": {
+   "level": 48.1,
+   "grid_cap_mw": 247,
+   "B_twh": 0.32,
+   "floored_twh": 1.08,
+   "campd_net_twh": 1.08
+  },
+  "55075:CC_CHP": {
+   "level": 132.3,
+   "grid_cap_mw": 189,
+   "B_twh": 0.54,
+   "floored_twh": 1.31,
+   "campd_net_twh": 1.77
+  },
+  "55088:CC_CHP": {
+   "level": 121.4,
+   "grid_cap_mw": 595,
+   "B_twh": 4.0,
+   "floored_twh": 5.0,
+   "campd_net_twh": 3.65
+  },
+  "55089:CC_CHP": {
+   "level": 61.2,
+   "grid_cap_mw": 624,
+   "B_twh": 3.49,
+   "floored_twh": 3.83,
+   "campd_net_twh": 3.86
+  },
+  "55117:CC_CHP": {
+   "level": 90.8,
+   "grid_cap_mw": 330,
+   "B_twh": 1.15,
+   "floored_twh": 1.94,
+   "campd_net_twh": 2.17
+  },
+  "55259:CC_CHP": {
+   "level": 50.2,
+   "grid_cap_mw": 509,
+   "B_twh": 2.53,
+   "floored_twh": 2.96,
+   "campd_net_twh": 2.2
+  },
+  "55404:CC_CHP": {
+   "level": 86.8,
+   "grid_cap_mw": 499,
+   "B_twh": 3.21,
+   "floored_twh": 3.74,
+   "campd_net_twh": 3.41
+  },
+  "55419:CC_CHP": {
+   "level": 143.0,
+   "grid_cap_mw": 500,
+   "B_twh": 3.61,
+   "floored_twh": 3.61,
+   "campd_net_twh": 9.85
+  },
+  "55558:CC_CHP": {
+   "level": 77.7,
+   "grid_cap_mw": 16,
+   "B_twh": 0.03,
+   "floored_twh": 0.12,
+   "campd_net_twh": 0.35
+  },
+  "55799:CT_CHP": {
+   "level": 0.0,
+   "grid_cap_mw": 4,
+   "B_twh": 0.03,
+   "floored_twh": 0.03,
+   "campd_net_twh": 0.07
+  },
+  "58427:CC_CHP": {
+   "level": 102.8,
+   "grid_cap_mw": 61,
+   "B_twh": 0.18,
+   "floored_twh": 0.38,
+   "campd_net_twh": 0.49
+  },
+  "59093:CC_CHP": {
+   "level": 97.6,
+   "grid_cap_mw": 91,
+   "B_twh": 0.61,
+   "floored_twh": 0.72,
+   "campd_net_twh": 0.98
+  }
+ }
+}

@@ -180,6 +180,9 @@ def _scaffold_bundle(bundle: Path, year: int, overrides: dict, scratch: Path) ->
         caiso_chp_btm_measured=bool(
             (meta.get("coal_prb_sigmoid_overrides") or {}).get("caiso_chp_btm_measured")
         ),
+        miso_chp_btm_measured=bool(
+            (meta.get("coal_prb_sigmoid_overrides") or {}).get("miso_chp_btm_measured")
+        ),
     ).to_parquet(run_dir / "btm.parquet", index=False)
     return run_dir
 
