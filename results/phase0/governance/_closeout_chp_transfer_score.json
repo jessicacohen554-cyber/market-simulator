@@ -5606,5 +5606,1412 @@
    },
    "keeper_fail": 1
   }
+ },
+ "PJM": {
+  "records": [
+   {
+    "year": 2019,
+    "key": "CC_REGULAR",
+    "tol": 8.0,
+    "miss": 3.62,
+    "share": -0.08,
+    "status": "PASS",
+    "M": {
+     "miss": 3.62,
+     "share": -0.08,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": 2.49,
+     "share": -0.22,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": 2.41,
+     "share": -0.23,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": 3.26,
+     "share": -0.12,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2019,
+    "key": "CC_CHP",
+    "tol": 8.0,
+    "miss": 1.04,
+    "share": 0.12,
+    "status": "PASS",
+    "M": {
+     "miss": -0.96,
+     "share": -0.13,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": 1.35,
+     "share": 0.16,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": 1.38,
+     "share": 0.16,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": 1.39,
+     "share": 0.16,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2019,
+    "key": "CT_PEAKER",
+    "tol": 8.0,
+    "miss": -5.49,
+    "share": -0.7,
+    "status": "PASS",
+    "M": {
+     "miss": -5.49,
+     "share": -0.7,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": -5.81,
+     "share": -0.74,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": -5.81,
+     "share": -0.74,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": -5.62,
+     "share": -0.72,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2019,
+    "key": "ST_GAS",
+    "tol": 8.0,
+    "miss": -3.84,
+    "share": -0.48,
+    "status": "PASS",
+    "M": {
+     "miss": -3.84,
+     "share": -0.48,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": -3.92,
+     "share": -0.49,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": -3.92,
+     "share": -0.49,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": -3.9,
+     "share": -0.49,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2019,
+    "key": "ST_CHP",
+    "tol": 8.0,
+    "miss": -1.63,
+    "share": -0.2,
+    "status": "PASS",
+    "M": {
+     "miss": -1.37,
+     "share": -0.17,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": -1.48,
+     "share": -0.18,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": -1.46,
+     "share": -0.18,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": -1.46,
+     "share": -0.18,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2019,
+    "key": "COAL_PRB",
+    "tol": 8.0,
+    "miss": -1.07,
+    "share": -0.14,
+    "status": "PASS",
+    "M": {
+     "miss": -1.07,
+     "share": -0.14,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": -1.09,
+     "share": -0.14,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": -1.09,
+     "share": -0.14,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": -0.74,
+     "share": -0.1,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2019,
+    "key": "COAL_BIT",
+    "tol": 8.0,
+    "miss": 19.73,
+    "share": 2.07,
+    "status": "FAIL",
+    "M": {
+     "miss": 19.73,
+     "share": 2.07,
+     "status": "FAIL"
+    },
+    "A1": {
+     "miss": 19.15,
+     "share": 2.0,
+     "status": "FAIL"
+    },
+    "A2": {
+     "miss": 19.11,
+     "share": 1.99,
+     "status": "FAIL"
+    },
+    "A3": {
+     "miss": 19.93,
+     "share": 2.09,
+     "status": "FAIL"
+    }
+   },
+   {
+    "year": 2019,
+    "key": "COAL_WC",
+    "tol": 8.0,
+    "miss": 0.28,
+    "share": 0.02,
+    "status": "PASS",
+    "M": {
+     "miss": 0.28,
+     "share": 0.02,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": 0.25,
+     "share": 0.02,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": 0.25,
+     "share": 0.02,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": 0.3,
+     "share": 0.02,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2020,
+    "key": "CC_REGULAR",
+    "tol": 8.0,
+    "miss": 6.0,
+    "share": 0.37,
+    "status": "PASS",
+    "M": {
+     "miss": 6.0,
+     "share": 0.37,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": 5.01,
+     "share": 0.25,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": 4.95,
+     "share": 0.25,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": 6.07,
+     "share": 0.38,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2020,
+    "key": "CC_CHP",
+    "tol": 8.0,
+    "miss": 0.4,
+    "share": 0.04,
+    "status": "PASS",
+    "M": {
+     "miss": -1.93,
+     "share": -0.24,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": 0.34,
+     "share": 0.03,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": 0.36,
+     "share": 0.04,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": 0.36,
+     "share": 0.04,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2020,
+    "key": "CT_PEAKER",
+    "tol": 8.0,
+    "miss": -5.04,
+    "share": -0.66,
+    "status": "PASS",
+    "M": {
+     "miss": -5.04,
+     "share": -0.66,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": -5.32,
+     "share": -0.69,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": -5.33,
+     "share": -0.69,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": -5.17,
+     "share": -0.68,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2020,
+    "key": "ST_GAS",
+    "tol": 8.0,
+    "miss": -2.71,
+    "share": -0.35,
+    "status": "PASS",
+    "M": {
+     "miss": -2.71,
+     "share": -0.35,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": -2.85,
+     "share": -0.37,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": -2.86,
+     "share": -0.37,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": -2.82,
+     "share": -0.36,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2020,
+    "key": "ST_CHP",
+    "tol": 8.0,
+    "miss": -1.51,
+    "share": -0.19,
+    "status": "PASS",
+    "M": {
+     "miss": -1.25,
+     "share": -0.16,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": -1.43,
+     "share": -0.18,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": -1.43,
+     "share": -0.18,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": -1.43,
+     "share": -0.18,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2020,
+    "key": "COAL_PRB",
+    "tol": 8.0,
+    "miss": -0.1,
+    "share": -0.02,
+    "status": "PASS",
+    "M": {
+     "miss": -0.1,
+     "share": -0.02,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": -0.11,
+     "share": -0.02,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": -0.11,
+     "share": -0.02,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": -0.04,
+     "share": -0.01,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2020,
+    "key": "COAL_LIGNITE",
+    "tol": 8.0,
+    "miss": 0.0,
+    "share": 0.0,
+    "status": "PASS",
+    "M": {
+     "miss": 0.0,
+     "share": 0.0,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": 0.0,
+     "share": 0.0,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": 0.0,
+     "share": 0.0,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": 0.0,
+     "share": 0.0,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2020,
+    "key": "COAL_BIT",
+    "tol": 8.0,
+    "miss": 12.74,
+    "share": 1.41,
+    "status": "FAIL",
+    "M": {
+     "miss": 12.74,
+     "share": 1.41,
+     "status": "FAIL"
+    },
+    "A1": {
+     "miss": 12.21,
+     "share": 1.35,
+     "status": "FAIL"
+    },
+    "A2": {
+     "miss": 12.19,
+     "share": 1.34,
+     "status": "FAIL"
+    },
+    "A3": {
+     "miss": 13.03,
+     "share": 1.44,
+     "status": "FAIL"
+    }
+   },
+   {
+    "year": 2020,
+    "key": "COAL_WC",
+    "tol": 8.0,
+    "miss": -0.99,
+    "share": -0.13,
+    "status": "PASS",
+    "M": {
+     "miss": -0.99,
+     "share": -0.13,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": -1.02,
+     "share": -0.13,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": -1.02,
+     "share": -0.13,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": -0.98,
+     "share": -0.13,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2021,
+    "key": "CC_REGULAR",
+    "tol": 8.0,
+    "miss": 0.77,
+    "share": -0.27,
+    "status": "PASS",
+    "M": {
+     "miss": 0.77,
+     "share": -0.27,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": -0.43,
+     "share": -0.42,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": -0.51,
+     "share": -0.43,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": 1.01,
+     "share": -0.24,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2021,
+    "key": "CC_CHP",
+    "tol": 8.0,
+    "miss": 1.0,
+    "share": 0.11,
+    "status": "PASS",
+    "M": {
+     "miss": -1.15,
+     "share": -0.16,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": 1.24,
+     "share": 0.14,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": 1.27,
+     "share": 0.14,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": 1.27,
+     "share": 0.14,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2021,
+    "key": "CT_PEAKER",
+    "tol": 8.0,
+    "miss": -7.92,
+    "share": -0.99,
+    "status": "PASS",
+    "M": {
+     "miss": -7.92,
+     "share": -0.99,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": -8.27,
+     "share": -1.03,
+     "status": "FAIL"
+    },
+    "A2": {
+     "miss": -8.28,
+     "share": -1.03,
+     "status": "FAIL"
+    },
+    "A3": {
+     "miss": -7.59,
+     "share": -0.95,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2021,
+    "key": "ST_GAS",
+    "tol": 8.0,
+    "miss": -2.01,
+    "share": -0.25,
+    "status": "PASS",
+    "M": {
+     "miss": -2.01,
+     "share": -0.25,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": -2.08,
+     "share": -0.26,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": -2.08,
+     "share": -0.26,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": -2.05,
+     "share": -0.25,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2021,
+    "key": "ST_CHP",
+    "tol": 8.0,
+    "miss": -1.38,
+    "share": -0.17,
+    "status": "PASS",
+    "M": {
+     "miss": -1.03,
+     "share": -0.13,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": -1.32,
+     "share": -0.16,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": -1.31,
+     "share": -0.16,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": -1.3,
+     "share": -0.16,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2021,
+    "key": "COAL_PRB",
+    "tol": 8.0,
+    "miss": 0.91,
+    "share": 0.1,
+    "status": "PASS",
+    "M": {
+     "miss": 0.91,
+     "share": 0.1,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": 0.89,
+     "share": 0.1,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": 0.89,
+     "share": 0.1,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": 1.22,
+     "share": 0.14,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2021,
+    "key": "COAL_BIT",
+    "tol": 8.0,
+    "miss": 16.72,
+    "share": 1.82,
+    "status": "FAIL",
+    "M": {
+     "miss": 16.72,
+     "share": 1.82,
+     "status": "FAIL"
+    },
+    "A1": {
+     "miss": 16.38,
+     "share": 1.78,
+     "status": "FAIL"
+    },
+    "A2": {
+     "miss": 16.35,
+     "share": 1.77,
+     "status": "FAIL"
+    },
+    "A3": {
+     "miss": 17.18,
+     "share": 1.88,
+     "status": "FAIL"
+    }
+   },
+   {
+    "year": 2021,
+    "key": "COAL_WC",
+    "tol": 8.0,
+    "miss": 0.54,
+    "share": 0.06,
+    "status": "PASS",
+    "M": {
+     "miss": 0.54,
+     "share": 0.06,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": 0.54,
+     "share": 0.06,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": 0.54,
+     "share": 0.06,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": 0.56,
+     "share": 0.06,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2022,
+    "key": "CC_REGULAR",
+    "tol": 8.0,
+    "miss": 8.96,
+    "share": 0.38,
+    "status": "FAIL",
+    "M": {
+     "miss": 8.96,
+     "share": 0.38,
+     "status": "FAIL"
+    },
+    "A1": {
+     "miss": 7.74,
+     "share": 0.27,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": 7.58,
+     "share": 0.26,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": 8.62,
+     "share": 0.35,
+     "status": "FAIL"
+    }
+   },
+   {
+    "year": 2022,
+    "key": "CC_CHP",
+    "tol": 8.0,
+    "miss": 1.19,
+    "share": 0.13,
+    "status": "PASS",
+    "M": {
+     "miss": -1.27,
+     "share": -0.09,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": 1.46,
+     "share": 0.15,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": 1.5,
+     "share": 0.16,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": 1.51,
+     "share": 0.16,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2022,
+    "key": "CT_PEAKER",
+    "tol": 8.0,
+    "miss": -5.38,
+    "share": -0.69,
+    "status": "PASS",
+    "M": {
+     "miss": -5.38,
+     "share": -0.69,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": -5.71,
+     "share": -0.72,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": -5.73,
+     "share": -0.72,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": -4.42,
+     "share": -0.6,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2022,
+    "key": "ST_GAS",
+    "tol": 8.0,
+    "miss": 2.7,
+    "share": 0.31,
+    "status": "PASS",
+    "M": {
+     "miss": 2.7,
+     "share": 0.31,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": 2.55,
+     "share": 0.3,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": 2.53,
+     "share": 0.29,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": 2.8,
+     "share": 0.32,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2022,
+    "key": "ST_CHP",
+    "tol": 8.0,
+    "miss": -1.16,
+    "share": -0.14,
+    "status": "PASS",
+    "M": {
+     "miss": -0.89,
+     "share": -0.12,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": -1.13,
+     "share": -0.14,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": -1.12,
+     "share": -0.14,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": -1.12,
+     "share": -0.14,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2022,
+    "key": "COAL_PRB",
+    "tol": 8.0,
+    "miss": 1.76,
+    "share": 0.19,
+    "status": "PASS",
+    "M": {
+     "miss": 1.76,
+     "share": 0.19,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": 1.74,
+     "share": 0.19,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": 1.74,
+     "share": 0.19,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": 2.35,
+     "share": 0.24,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2022,
+    "key": "COAL_BIT",
+    "tol": 8.0,
+    "miss": 6.97,
+    "share": 0.51,
+    "status": "PASS",
+    "M": {
+     "miss": 6.97,
+     "share": 0.51,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": 6.49,
+     "share": 0.47,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": 6.44,
+     "share": 0.46,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": 7.04,
+     "share": 0.52,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2022,
+    "key": "COAL_WC",
+    "tol": 8.0,
+    "miss": -0.19,
+    "share": -0.04,
+    "status": "PASS",
+    "M": {
+     "miss": -0.19,
+     "share": -0.04,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": -0.21,
+     "share": -0.04,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": -0.21,
+     "share": -0.04,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": -0.18,
+     "share": -0.04,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2023,
+    "key": "CC_REGULAR",
+    "tol": 8.0,
+    "miss": 3.4,
+    "share": 0.1,
+    "status": "PASS",
+    "M": {
+     "miss": 3.4,
+     "share": 0.1,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": 2.04,
+     "share": -0.41,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": 2.0,
+     "share": -0.42,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": 3.12,
+     "share": -0.0,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2023,
+    "key": "CC_CHP",
+    "tol": 8.0,
+    "miss": 1.15,
+    "share": 0.13,
+    "status": "PASS",
+    "M": {
+     "miss": -1.7,
+     "share": -0.94,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": 1.5,
+     "share": 0.26,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": 1.52,
+     "share": 0.27,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": 1.53,
+     "share": 0.27,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2023,
+    "key": "CT_PEAKER",
+    "tol": 8.0,
+    "miss": -1.2,
+    "share": -0.17,
+    "status": "PASS",
+    "M": {
+     "miss": -1.2,
+     "share": -0.17,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": -1.6,
+     "share": -0.32,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": -1.61,
+     "share": -0.33,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": 0.01,
+     "share": 0.28,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2023,
+    "key": "ST_GAS",
+    "tol": 8.0,
+    "miss": 0.31,
+    "share": 0.03,
+    "status": "PASS",
+    "M": {
+     "miss": 0.31,
+     "share": 0.03,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": 0.05,
+     "share": -0.07,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": 0.04,
+     "share": -0.07,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": 0.51,
+     "share": 0.11,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2023,
+    "key": "ST_CHP",
+    "tol": 8.0,
+    "miss": -1.24,
+    "share": -0.15,
+    "status": "PASS",
+    "M": {
+     "miss": -0.95,
+     "share": -0.04,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": -1.2,
+     "share": -0.13,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": -1.17,
+     "share": -0.12,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": -1.17,
+     "share": -0.12,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2023,
+    "key": "COAL_PRB",
+    "tol": 8.0,
+    "miss": -0.06,
+    "share": -0.01,
+    "status": "PASS",
+    "M": {
+     "miss": -0.06,
+     "share": -0.01,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": -0.08,
+     "share": -0.01,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": -0.08,
+     "share": -0.01,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": 0.11,
+     "share": 0.05,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2023,
+    "key": "COAL_BIT",
+    "tol": 8.0,
+    "miss": 3.05,
+    "share": 0.27,
+    "status": "PASS",
+    "M": {
+     "miss": 3.05,
+     "share": 0.27,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": 2.58,
+     "share": 0.09,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": 2.57,
+     "share": 0.09,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": 3.16,
+     "share": 0.31,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2023,
+    "key": "COAL_WC",
+    "tol": 8.0,
+    "miss": -0.99,
+    "share": -0.13,
+    "status": "PASS",
+    "M": {
+     "miss": -0.99,
+     "share": -0.13,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": -1.03,
+     "share": -0.15,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": -1.03,
+     "share": -0.15,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": -0.94,
+     "share": -0.11,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2024,
+    "key": "CC_REGULAR",
+    "tol": 8.0,
+    "miss": -4.95,
+    "share": -0.56,
+    "status": "PASS",
+    "M": {
+     "miss": -4.95,
+     "share": -0.56,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": -6.31,
+     "share": -1.07,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": -6.36,
+     "share": -1.09,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": -5.57,
+     "share": -0.79,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2024,
+    "key": "CC_CHP",
+    "tol": 8.0,
+    "miss": 0.53,
+    "share": 0.06,
+    "status": "PASS",
+    "M": {
+     "miss": -2.91,
+     "share": -1.23,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": 0.52,
+     "share": 0.06,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": 0.55,
+     "share": 0.07,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": 0.56,
+     "share": 0.07,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2024,
+    "key": "CT_PEAKER",
+    "tol": 8.0,
+    "miss": 3.97,
+    "share": 0.48,
+    "status": "PASS",
+    "M": {
+     "miss": 3.97,
+     "share": 0.48,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": 3.43,
+     "share": 0.28,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": 3.41,
+     "share": 0.27,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": 6.09,
+     "share": 1.27,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2024,
+    "key": "ST_GAS",
+    "tol": 8.0,
+    "miss": 0.6,
+    "share": 0.07,
+    "status": "PASS",
+    "M": {
+     "miss": 0.6,
+     "share": 0.07,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": 0.32,
+     "share": -0.04,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": 0.3,
+     "share": -0.04,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": 0.62,
+     "share": 0.08,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2024,
+    "key": "ST_CHP",
+    "tol": 8.0,
+    "miss": -1.28,
+    "share": -0.15,
+    "status": "PASS",
+    "M": {
+     "miss": -0.97,
+     "share": -0.03,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": -1.25,
+     "share": -0.14,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": -1.25,
+     "share": -0.14,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": -1.25,
+     "share": -0.14,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2024,
+    "key": "COAL_PRB",
+    "tol": 8.0,
+    "miss": -0.18,
+    "share": -0.02,
+    "status": "PASS",
+    "M": {
+     "miss": -0.18,
+     "share": -0.02,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": -0.19,
+     "share": -0.02,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": -0.19,
+     "share": -0.02,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": 0.1,
+     "share": 0.09,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2024,
+    "key": "COAL_BIT",
+    "tol": 8.0,
+    "miss": 0.59,
+    "share": 0.08,
+    "status": "PASS",
+    "M": {
+     "miss": 0.59,
+     "share": 0.08,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": 0.17,
+     "share": -0.08,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": 0.16,
+     "share": -0.08,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": 0.52,
+     "share": 0.05,
+     "status": "PASS"
+    }
+   },
+   {
+    "year": 2024,
+    "key": "COAL_WC",
+    "tol": 8.0,
+    "miss": -0.6,
+    "share": -0.07,
+    "status": "PASS",
+    "M": {
+     "miss": -0.6,
+     "share": -0.07,
+     "status": "PASS"
+    },
+    "A1": {
+     "miss": -0.64,
+     "share": -0.08,
+     "status": "PASS"
+    },
+    "A2": {
+     "miss": -0.64,
+     "share": -0.09,
+     "status": "PASS"
+    },
+    "A3": {
+     "miss": -0.6,
+     "share": -0.07,
+     "status": "PASS"
+    }
+   }
+  ],
+  "summary": {
+   "M": {
+    "fail": 4,
+    "fail_to_pass": [],
+    "pass_to_fail": []
+   },
+   "A1": {
+    "fail": 4,
+    "fail_to_pass": [
+     "CC_REGULAR 2022"
+    ],
+    "pass_to_fail": [
+     "CT_PEAKER 2021"
+    ]
+   },
+   "A2": {
+    "fail": 4,
+    "fail_to_pass": [
+     "CC_REGULAR 2022"
+    ],
+    "pass_to_fail": [
+     "CT_PEAKER 2021"
+    ]
+   },
+   "A3": {
+    "fail": 4,
+    "fail_to_pass": [],
+    "pass_to_fail": []
+   },
+   "keeper_fail": 4
+  }
  }
 }
