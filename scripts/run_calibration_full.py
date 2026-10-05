@@ -3852,6 +3852,7 @@ def _btm_frame(
     group_by_code: dict[int, str] | None = None,
     nyiso_chp_btm_measured: bool = False,
     caiso_chp_btm_measured: bool = False,
+    ercot_chp_btm_measured: bool = False,
 ) -> pd.DataFrame:
     """Return behind-the-meter CHP must-run by class for one year-pass.
 
@@ -4008,14 +4009,17 @@ def _btm_frame(
     share_bench_by_plant = dict(share_by_plant)
     # closeout-CAISO-w6: CAISO carries its own measured artifact (EIA-923
     # Schedules 6/7 on-site use), pinned on the bench side the same way and
-    # following ``caiso_chp_btm_measured`` on the run side.
-    if iso in ("NYISO", "CAISO"):
+    # following ``caiso_chp_btm_measured`` on the run side. closeout-ERCOT-w6:
+    # ERCOT's artifact (same derive) likewise, under ``ercot_chp_btm_measured``.
+    if iso in ("NYISO", "CAISO", "ERCOT"):
         from market_sim.data.chp import measured_chp_btm_pct_for_iso
 
         _measured = measured_chp_btm_pct_for_iso(iso)
-        _run_measured = (
-            nyiso_chp_btm_measured if iso == "NYISO" else caiso_chp_btm_measured
-        )
+        _run_measured = {
+            "NYISO": nyiso_chp_btm_measured,
+            "CAISO": caiso_chp_btm_measured,
+            "ERCOT": ercot_chp_btm_measured,
+        }[iso]
         _chp_codes = {
             int(code)
             for code, grp in zip(bins["Plant_Code"], bins["Plant_Group"])
@@ -7409,6 +7413,9 @@ def solve_and_persist(
                     caiso_chp_btm_measured=bool(
                         (prb_overrides or {}).get("caiso_chp_btm_measured", False)
                     ),
+                    ercot_chp_btm_measured=bool(
+                        (prb_overrides or {}).get("ercot_chp_btm_measured", False)
+                    ),
                 )
             )
 
@@ -9043,6 +9050,11 @@ def run_p2_layer(bundle: Path, screen_coal: bool) -> None:
                 caiso_chp_btm_measured=bool(
                     (meta.get("coal_prb_sigmoid_overrides") or {}).get(
                         "caiso_chp_btm_measured"
+                    )
+                ),
+                ercot_chp_btm_measured=bool(
+                    (meta.get("coal_prb_sigmoid_overrides") or {}).get(
+                        "ercot_chp_btm_measured"
                     )
                 ),
             )
@@ -13930,6 +13942,20 @@ def main() -> None:
         "Default (unset) keeps the base config value (off).",
     )
     parser.add_argument(
+        "--ercot-chp-btm-measured",
+        dest="ercot_chp_btm_measured",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Replace the sector-default ERCOT CHP behind-the-meter share with "
+        "each plant's measured EIA-923 Schedules 6/7 on-site-use share "
+        "(ScenarioConfig.ercot_chp_btm_measured, closeout-ERCOT-w6; artifact "
+        "chp_btm_share_measured_ERCOT.csv) in the capacity carve, the "
+        "chp_export_floor_measured grid floor and the run-side BTM add-back. "
+        "ERCOT-only. Rides the generic prb_overrides channel; "
+        "--no-ercot-chp-btm-measured reaches the pre-arm posture. "
+        "Default (unset) keeps the base config value (off).",
+    )
+    parser.add_argument(
         "--pjm-elliott-outage-overlay",
         dest="pjm_elliott_measured_outage_overlay",
         action=argparse.BooleanOptionalAction,
@@ -15943,6 +15969,9 @@ def main() -> None:
             ),
             # closeout-PJM-w3: generic channel, so run_config.json records it.
             "nuclear_winter_capability_basis": (args.nuclear_winter_capability_basis),
+            # closeout-ERCOT-w6: generic channel, so run_config.json records it
+            # and _btm_frame's run-side add-back reads the same value.
+            "ercot_chp_btm_measured": args.ercot_chp_btm_measured,
             # spp-49: the benchmark's vintage-aware membership union rides the
             # same generic channel for the same reasons -- ONE read path for a
             # fresh solve, a replay override and a recipe, and
