@@ -451,6 +451,40 @@ def coal_incremental_hr_ratios(
 
 
 @lru_cache(maxsize=64)
+def cc_incremental_hr_ratios(
+    iso: str, year: int | None = None
+) -> dict[int, tuple[float, float]]:
+    """Return ``{plant_code: (ratio_econ_low, ratio_econ_high)}`` for an ISO's CCs.
+
+    Reads ``data/raw/_processed-legacy/cc_incremental_hr_ratio_<ISO>.csv``
+    (``scripts/data/derive_cc_incremental_hr_ratio.py``, closeout-CAISO-w8): each
+    CC_REGULAR plant's measured INCREMENTAL heat rate (the frozen
+    ``derive_campd_marginal_hr`` I/O-curve slope at econ_low x = 0.5 / econ_high
+    x = 0.9) over its AVERAGE operating heat rate from
+    ``campd_cc_heat_rates_<ISO>.csv``. Consumed by
+    :func:`~market_sim.data.fleet.assembly.bins_to_fleet` under
+    ``ScenarioConfig.cc_econ_incremental_hr``. Same year rule as
+    :func:`coal_incremental_hr_ratios`: the solve year's own ``ok`` row, else the
+    plant's pooled (``year == 0``) row; ``year=None`` reads pooled only. Empty
+    dict when the ISO has no artifact (rule 25: a no-op there).
+    """
+    path = PROCESSED_DIR / f"cc_incremental_hr_ratio_{iso.upper()}.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    df = df[df["flag"].astype(str) == "ok"]
+    out: dict[int, tuple[float, float]] = {}
+    for yr in (0, year):
+        if yr is None:
+            continue
+        for r in df[df["year"] == int(yr)].itertuples(index=False):
+            lo, hi = float(r.ratio_econ_low), float(r.ratio_econ_high)
+            if lo > 0.0 and hi > 0.0:
+                out[int(r.plant_code)] = (lo, hi)
+    return out
+
+
+@lru_cache(maxsize=64)
 def measured_cc_heat_rates(
     iso: str, year: int | None = None, split_remap: bool = False
 ) -> dict[int, float]:

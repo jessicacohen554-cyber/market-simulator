@@ -2361,6 +2361,9 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # COMMIT as the field: off, the measured artifact is never read by the
     # capacity carve, so every pre-existing key is byte-stable.
     "caiso_chp_btm_measured",
+    # closeout-CAISO-w8 (2026-10-05), default off, registered with the field:
+    # off, the CC ratio artifact is never read (byte-stable keys).
+    "cc_econ_incremental_hr",
     # NWPP-NEXT-6 (2026-09-26): WECC Path 76 "Alturas" link NWPP-NW <->
     # NWPP-SNV (default off). Byte-identical off by construction: its one
     # applier, pipeline.ttc.apply_nwpp_path76_link, returns the SAME ISOConfig
@@ -3344,6 +3347,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "caiso_humboldt_local_area": "False",
     # Added by closeout-CAISO-w6 WITH the field (the nyiso-119 discipline).
     "caiso_chp_btm_measured": "False",
+    # Added by closeout-CAISO-w8 WITH the field (the nyiso-119 discipline).
+    "cc_econ_incremental_hr": "False",
     # Added by NWPP-NEXT-6 WITH the field (the nyiso-119 discipline).
     "nwpp_path76_alturas_link": "False",
     # Added by NWPP-NEXT-7 WITH the field (the nyiso-119 discipline).
@@ -13372,6 +13377,25 @@ class ScenarioConfig:
     # free parameters (rule 21); per-ISO artifact, a no-op for an ISO without
     # one (rule 25; derived for SOCO only). Default off: byte-identical.
     coal_econ_marginal_hr_two_sided: bool = False
+    # closeout-CAISO-w8 (2026-10-05; desk GO): the CC_REGULAR sibling of the
+    # two-sided coal ratio above. A committed combined cycle carries its no-load
+    # heat ONCE, in its committed (min-load) tranche, which keeps the plant's
+    # measured AVERAGE operating HR (campd_cc_heat_rates_<ISO>.csv); each econ
+    # step above it is incremental output of a running unit, so its heat rate is
+    # scaled by the plant's measured INCREMENTAL/AVERAGE ratio
+    # (data/raw/_processed-legacy/cc_incremental_hr_ratio_<ISO>.csv,
+    # scripts/data/derive_cc_incremental_hr_ratio.py: the frozen
+    # derive_campd_marginal_hr I/O-curve slope at econ_low x = 0.5 / econ_high
+    # x = 0.9 over the same plant-year's CEMS average, both gross; pooled
+    # year 0 = mean of ok years, rule 13). Applied in
+    # data/fleet/assembly.bins_to_fleet to CC_REGULAR econ steps only; the
+    # authorized offer-band multipliers stay on them unchanged (rule 1(c)), and
+    # the committed, peak (duct) and must-run tranches are untouched (rule 19:
+    # no-load fuel counted once). Measured on CAISO's own CEMS (2019-2025):
+    # econ_low ~0.82-0.92, econ_high ~0.87-1.07 at the large CCs. Zero fitted
+    # parameters. Per-ISO artifact (rule 25): a no-op for an ISO without one.
+    # Default off.
+    cc_econ_incremental_hr: bool = False
 
     # ROUTE A "REPLACE" -- the COMMITTED band's MEASURED basis (pjm-h6, chartered
     # by docs/records/pjm/PRECOMMIT-pjm-h5-coal-committed-charter-2026-09-13.md §4/§10a and

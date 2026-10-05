@@ -237,6 +237,7 @@ window.MECH_MATRIX_SHARDS.NYISO = {
     coal_passthrough_sigmoids: { cell: "K" },
     coal_econ_bound: { cell: "." },
     coal_econ_two_sided: { cell: ".", ev: "soco-81 (2026-09-27) row seed: no coal fleet the mechanism could reach at this ISO's keeper, and no artifact derived (derive_coal_incremental_hr_ratio.ISO_SCOPE is SOCO only)." },
+    cc_econ_incremental_hr: { cell: "U", ev: "row minted closeout-CAISO-w8 (2026-10-05); untested here. Rule 25: a no-op until this lane derives its own cc_incremental_hr_ratio_<ISO>.csv from its own CEMS; no verdict transfers." },
     coal_offer_net_revenue_margin: { cell: "." },
     cc_committed_offer_margin: { cell: "G", ev: "nyiso-115 (ex-ante transfer adjudication, 0 solves; scripts/probes/_nyiso115_transfer_queue_adjudication.py -> results/phase0/nyiso/nyiso115_transfer_queue_adjudication.json). STAYS G, annotated 2026-09-20 (nyiso-243): the refusal has two legs and only one is superseded. NYISO offer data now EXISTS (P-27, data/raw/nyiso-bid-data) -- but this mechanism needs a PER-CLASS, PER-UNIT curve bottom and P-27 is masked with no class, fuel or zone, so the identification leg still fails. Honestly still refused, not merely stale. Contrast measured_offer_surface, which needs a distribution rather than a unit and is therefore re-opened to U" },
     coal_peak_offer_margin: { cell: "." },

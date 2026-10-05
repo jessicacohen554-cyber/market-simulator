@@ -83,6 +83,7 @@ from market_sim.data.fleet.campd_bins import (
     cc_duct_burner_peak_mult,
     cc_duct_peaking_pct,
     coal_incremental_hr_ratios,
+    cc_incremental_hr_ratios,
     coal_prb_committed_split_night,
     load_plant_registry,
     load_plant_tranche_config,
@@ -306,6 +307,16 @@ def bins_to_fleet(
         else {}
     )
     _inc_applied: set[int] = set()
+    # closeout-CAISO-w8 CC_REGULAR incremental heat rate
+    # (ScenarioConfig.cc_econ_incremental_hr): {plant: (lo, hi)} ratios of the
+    # measured incremental to average operating HR. Per-ISO artifact (rule 25);
+    # empty when the flag is off.
+    _cc_inc_ratio: dict[int, tuple[float, float]] = (
+        cc_incremental_hr_ratios(getattr(config, "iso", "ERCOT") or "ERCOT", year)
+        if getattr(config, "cc_econ_incremental_hr", False)
+        else {}
+    )
+    _cc_inc_applied: set[int] = set()
 
     # Optional per-plant tranche-config override sheet: when set, each listed
     # plant's tranche shares + per-band HR multipliers come straight from the
@@ -1359,6 +1370,35 @@ def bins_to_fleet(
                 )
                 for i, (sfx, cap_, _hr, *rest) in enumerate(econ_steps)
             ]
+        # closeout-CAISO-w8 CC_REGULAR incremental HR (cc_econ_incremental_hr).
+        # A committed CC carries its no-load heat ONCE, in its committed
+        # (min-load) tranche, which keeps the plant's measured AVERAGE operating
+        # HR unchanged; each econ step above it is the incremental output of a
+        # running unit, so its heat rate is scaled by the plant's measured
+        # incremental/average ratio at that step (econ_low x = 0.5 to econ_high
+        # x = 0.9, interpolated across a smoothed ramp). Rule 19: the slope never
+        # reaches the committed tranche, so no-load fuel is not double counted.
+        # The authorized offer-band multipliers already on the econ steps stay
+        # unchanged (rule 1(c), the owner's channel); the peak (duct) band and
+        # any must-run tranche are untouched.
+        _cc_inc = (
+            _cc_inc_ratio.get(plant_code)
+            if _cc_inc_ratio and group == "CC_REGULAR"
+            else None
+        )
+        if _cc_inc is not None and econ_steps:
+            _cr_lo, _cr_hi = _cc_inc
+            _cc_inc_applied.add(plant_code)
+            _n_ce = len(econ_steps)
+            econ_steps = [
+                (
+                    sfx,
+                    cap_,
+                    hr_ * _incremental_econ_ratio(sfx, i, _n_ce, _cr_lo, _cr_hi),
+                    *rest,
+                )
+                for i, (sfx, cap_, hr_, *rest) in enumerate(econ_steps)
+            ]
         # Fast-start tranche pricing (Order 825 analogue,
         # ScenarioConfig.tranche_startup_amortization): the FAST-START-capable
         # tranches carry the same NREL start cost as the committed anchor, so
@@ -1676,6 +1716,13 @@ def bins_to_fleet(
             year,
             len(_inc_applied),
             sorted(_inc_applied),
+        )
+    if _cc_inc_ratio:
+        logger.info(
+            "%s CC incremental HR (year %s): econ tranches repriced at %d plant(s)",
+            getattr(config, "iso", "ERCOT"),
+            year,
+            len(_cc_inc_applied),
         )
     if getattr(config, "use_plant_emission_rates_v2", False):
         _pkg_ns().apply_plant_emission_rates_v2(
