@@ -4088,3 +4088,6 @@ frontend/data/backcast/runs/2026-10-03-closeout-pjm-nuc-7yr.js
 # uc-milp UC-1: the MILP UC stage's monthly checkpoint scratch (pipeline/uc.py uc_checkpoint_dir;
 # DESIGN-uc-milp-engine-2026-10-03 section 4). Never a sidecar, never pushed.
 results/uc-checkpoints/
+
+!results/calibration/closeout_miso_w3f_b_2022/**
+results/calibration/closeout_miso_w3f_b_2022/hourly/unit_hourly_*
