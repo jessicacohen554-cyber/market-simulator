@@ -122,8 +122,20 @@ exercises the history through the row (same assertions).
 
 ## 5. Proof on real data — L1 shard
 
-Pending at the time of this record's first commit; filled in by the follow-up commit:
-shard session, report SHA, MILP s, nodes, gap (window 0 must solve to optimality, gap ≤ 1e-3).
+| Item | Value |
+|---|---|
+| Shard | `ucmilp-bench-spp-2020-L1`, `session_01WKCvTvVfE9Y5puqJLg6dqL` (claude-opus-5-5), HEAD `1c0a8b8f1e1a0ef91d745569ae6c19d2d0ac49a1`; every hard stop passed; 3.5 min of the 30 min budget |
+| Report | branch `claude/ucmilp-bench-spp-2020-L1` @ `41de489e19c7c00e39013a51039fe5c7ed10b751` — `results/bench/uc/spp_2020_L1/l1.json` (blob `38877e42`, 1,141 B) and `stdout.txt` (blob `a206cd3a`); bytes fetched and read by the parent; no dump written (nothing was infeasible) |
+| Capture (real P0 + P1 of the keeper recipe) | P0 102.8 s cold (78,773 simplex iterations), P1 31.9 s warm; year 196.0 s; peak 7.08 GiB |
+| **Window 0 MILP** | **Optimal**, 4.20 s, 1 node, gap 5.07e-9 (≤ 1e-3), 3,312 integers, 57,384 columns, 17,229 rows (489 guard rows), RSS 5.40 GiB, warm start accepted, 16 starts |
+| LP relaxation | Optimal, 1.56 s; integrality gap $190.24 |
+| vs the P1 slice | committed energy −8,668 MWh; starts 16 vs 124 |
+| Side note from the shard | a pre-existing non-fatal WARNING: `resolved_inputs` split-remap probe (`campd_split_remap_companions`) finds no SPP companion file; provenance only, not the LP, not this lane |
+
+L1 solves window 0 on the real P0 boundary; the defect lived at windows 156 and 284, so
+this line is necessary, not sufficient. The sufficient proof is UC-2-SPP's relaunch at
+the merged SHA (every window of every year), with the diagnostic-only roll of §1 as the
+lane's evidence.
 
 ## 6. G-DRIFT (rule 29)
 
@@ -145,4 +157,4 @@ arm's wall rows will come from the shards. The window-156 / 284 reproductions ab
 
 ## Log entry
 
-- 2026-10-04 · UC-1-FIX `session_01UWCaF48NJuC3M2GeQGuwPk` (Fable) · branch `claude/ucmilp-1-fix-infeas-h2w` off `681b71cf` · zero year LP in the parent · window 0 of SPP 2020 feasible on the keeper inputs (clip lead refuted: 0 contradictory cells in 8760 h × 92 clusters) · year roll on a realistic stand-in reproduced the kill at windows 156 (plant 2965, carried min-up bound 3 > n = 2) and 284 (plant 2817) · root cause: carried min-up / min-down as a column bound separate from the window rows · fix: history on the Rajan–Takriti RHS + look-ahead min-down guard + LP-effective floor; engine `uc-1.1` · 365/365 windows Optimal on the fix · 7 new fast tests (7/7 fail on the pre-fix tree) · L1 shard: see §5.
+- 2026-10-04 · UC-1-FIX `session_01UWCaF48NJuC3M2GeQGuwPk` (Fable) · branch `claude/ucmilp-1-fix-infeas-h2w` off `681b71cf` · zero year LP in the parent · window 0 of SPP 2020 feasible on the keeper inputs (clip lead refuted: 0 contradictory cells in 8760 h × 92 clusters) · year roll on a realistic stand-in reproduced the kill at windows 156 (plant 2965, carried min-up bound 3 > n = 2) and 284 (plant 2817) · root cause: carried min-up / min-down as a column bound separate from the window rows · fix: history on the Rajan–Takriti RHS + look-ahead min-down guard + LP-effective floor; engine `uc-1.1` · 365/365 windows Optimal on the fix · 7 new fast tests (7/7 fail on the pre-fix tree) · L1 shard `session_01WKCvTvVfE9Y5puqJLg6dqL` @ `1c0a8b8f`: window 0 Optimal, 4.20 s, 1 node, gap 5.07e-9, 489 guard rows (report `41de489e`); shard archived.
