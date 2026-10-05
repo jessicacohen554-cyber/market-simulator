@@ -15926,3 +15926,27 @@ Record: `docs/records/caiso/r-caiso-38/`.
 - **July's uncovered hour is de minimis** (rt_cov 0.9987, about one hour), so the render payload is unchanged.
 
 Record: `docs/records/caiso/closeout-caiso-2/RESULT-closeout-caiso-r40-2026-10-03.md`.
+
+## 2026-10-05 — closeout-CAISO-w8: `cc_econ_incremental_hr` (CC econ tranches at the measured incremental HR), R on K1, keeper unchanged
+
+- **Probe:** `2026-10-05-closeout-caiso-w8-a1` (w6 recipe + `cc_econ_incremental_hr`; 7 year-isolated legs at
+  `725554dc`; registered on the lane branch only).
+
+| record | w6 probe | w8 probe |
+|---|---|---|
+| C3a 2021 | +11.0 % | **+8.8 %** (T1 met) |
+| C3a 2022–25 | +7.1 / +6.8 / +5.5 / +5.1 % | +4.9 / +4.3 / +3.7 / +3.8 % |
+| C1 CC_REGULAR 2020 | +4.00 TWh | **+6.24 (FAIL, ±4.66)** |
+| C1 CC_REGULAR 2021 | +2.67 TWh | **+6.59 (FAIL, ±4.89)** |
+| C4 gas NRMSE 2020 / 2021 | 0.293 / 0.299 | 0.303 / 0.304 (FAIL) |
+
+- **Mechanism:** cheaper CC econ steps displace hub-priced import rungs about one for one (2021: +3.99 CC / −3.65
+  import TWh). The price gain is a merit swap against import volume that already matched EIA-930.
+- **Cell:** `cc_econ_incremental_hr` CAISO **R**. Code and derive stay off `main` (desk ruling).
+- **DRAFT frontier row** (unsigned; signing is the owner's act, R-66): *CAISO C3a 2021 — the level gap sits at the
+  merit boundary between in-state CC_REGULAR and the hub-priced DSW/PNW import ladder. Pricing CC econ steps at the
+  measured incremental HR closes it only by displacing 1–4 TWh/yr of measured import volume (breaks C1 CC_REGULAR and
+  C4 gas 2020/21); re-pricing the rungs at the RT intertie print is circular (w7, rule 13). Data-limited: 2021 RT
+  reference coverage 65 %; in-state CC offers and intertie bid stacks are not public.*
+
+Record: `docs/records/caiso/closeout-caiso-w8/RESULT-closeout-caiso-w8-cc-incremental-hr-2026-10-05.md`.
