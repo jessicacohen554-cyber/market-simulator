@@ -51,3 +51,17 @@ On the reconciled basis, arm B is scored against these bars:
 **Kill:** any CHP class whose forced share exceeds 30 %.
 
 Arm A has no bars. It supplies the attribution for B (rule 19): the commitment lever's effect on its own, before the holdout is stacked on it.
+
+## Addendum 2: kill-bar reading (desk ruling, 2026-10-05 05:45Z)
+
+**Ruling.** Reading (i): the kill fires only if arm B *raises* a CHP class's forced share relative to the control *and* the share ends above 30 %.
+
+**Timing.** This was ruled mid-run, after the B2020 and B2023 legs reported their D-2 diagnostics but before any arm-B score was known on the gated records.
+
+**Why it was needed.** The original wording ("any CHP class forced share > 30 %") was ambiguous:
+
+- Read literally, it fires on the w3e control itself: CC_CHP 0.432 in 2020, CT_CHP 0.328 in 2023.
+- That forced energy is the existing D-2-exempt `chp_steam` floor (`chp_steam_following`, cell K), which the kill was never meant to catch.
+- Arm B lowers both shares: CC_CHP 0.320 in 2020, CT_CHP 0.306 in 2023.
+
+The RESULT reports both readings.
