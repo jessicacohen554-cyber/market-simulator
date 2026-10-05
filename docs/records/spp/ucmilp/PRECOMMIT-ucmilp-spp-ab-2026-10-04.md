@@ -229,3 +229,36 @@ re-golden"*). Readings (§2), control rule (§3), structure and cost readings (�
 - The control is therefore unchanged (main's keeper bundle, rule 29(b)); the SPP golden stands on `ec758d64` as before and
   the desk ruled no re-golden. Prompts regenerated with `--sha c8690022…` and re-committed as
   `shard-prompts-ucmilp-spp.txt` (the 6d47c762 prompts stay in history at `b2167930`).
+
+## Addendum C (2026-10-05 00:35Z, before any number exists) — the third pin, after the window-infeasibility fix
+
+**Pin for the relaunch: `ae224fafdda926bf8817afee385bd6cedc470120`** = `origin/main` at the merge of PR #7201 (lane UC-1-FIX,
+engine uc-1.1), ruled by UC-DESK 00:22Z: *"the fix is merged. Pin = main ae224faf… Relaunch now under the Addendum A rule."*
+Readings (§2), control rule (§3), structure and cost readings (§4–§5), kills (§6), verdict rule (§7), `uc_*` defaults (§1) and
+the 120-min budget are UNCHANGED. A second infeasible window is kill #1 again: record and stop.
+
+**The defect this pin fixes** (RESULT §1, step 3; `FINDING-ucmilp-1-fix-window-infeasibility-2026-10-04.md`): at `c8690022` every SPP
+year raised `UcWindowInfeasible` (no feasible incumbent). Root cause per the FINDING, proved on real data: the carried min-up /
+min-down history was enforced as a separate `u` column bound while the in-window Rajan–Takriti rows summed only the window's own
+starts/stops, so the kept history could accumulate more starts within one min-up than the plant has units; the next window's carried
+bound exceeded `n`, the bound repair lifted `u` above `n`, and `w + u ≤ n` became contradictory (windows 156/284 in the desk's
+summary). This lane's first lead (the floor-derived `u` bound vs the P0 feasibility clip) is **refuted** by the FINDING §2 (zero
+contradicting cluster-hours). Fix: the history enters the Rajan–Takriti rows as RHS constants, plus a look-ahead min-down guard;
+no slack, no penalty, no tolerance. L1 proof in a shard: SPP 2020 window 0 Optimal, 4.2 s, gap 5e-9.
+
+**What moved `c8690022 → ae224faf`, classified for SPP (zero LP, on the objects):**
+
+| content | files | SPP classification |
+|---|---|---|
+| the UC fix (PR #7201) | `model/uc/{window,solve,params}.py`, new `model/uc/diagnose.py`, `pipeline/uc.py` (+818/−49 across UC files), `tests/unit/model/uc/test_window_carry_rows.py` | LIVE on the gate-on path — the fix itself and its diagnostics; the arm's only live change |
+| engine PR #7194 merged (`681b71cf`) | the engine files already at `c8690022`; `floor_mechanisms.py` MECH 28; the gated hunk in `pipeline/solve.py`, drains in `runner.py` / `run_calibration_full.py` | gate-on path, unchanged from Addendum B |
+| closeout-PJM-w3 (#7193, `41a9e2d9`, `bc163dbc`, `007ace12`) | `nuclear_winter_capability_basis: bool = False`; `data/fleet/arrays.py` `_apply_nuclear_winter_basis` under `_iso == "PJM" and config.nuclear_winter_capability_basis and mode == "backcast"`; `constants.NUCLEAR_MONTHLY_CF_UNCLIPPED_BY_YEAR` (PJM key only) | **INERT**: default off, PJM-gated, ABSENT from the SPP recipe, unarmed in `iso_configs` |
+| closeout-ERCOT-w3 (#7197, `9d06ad03`) | `coal_perplant_cliff_split: bool = False`; `data/fleet/assembly.py` `_coal_cliff_split_frac` under `getattr(config, "iso") == "ERCOT"` and the flag; `legacy_bins.py` helper | **INERT**: default off, ERCOT-gated, ABSENT, unarmed |
+| closeout-MISO-w3 (#7198) | `miso_seam_neighbour_hourly_full_span: bool = False`; `model/interchange/spec.py` +97 — `MISO_SEAM_LADDER_NEIGHBOUR_HOURLY_FULL_SPAN_BY_YEAR` and `…_SPP_FULL_SPAN_BY_YEAR` tables (MISO's seam ladder; the `"SPP"` keys are MISO's neighbour, read only by `model/interchange/miso.py` under the flag); `run_calibration.py` rule-19 refusal | **INERT**: default off, consumed only by the MISO interchange path, ABSENT, unarmed |
+| closeout-SOCO-w3 (#7196/#7199/#7200) | `diagnostic_coal_metered_online_floor: bool = False` (never promotable, rule 13); `data/coal_metered_online.py` (new); `pipeline/commitment.py` `wrap_coal_metered_online_diagnostic_prep` (returns the prep unchanged when off); `pipeline/year.py` + `run_calibration_full.py` wrap calls; `floor_mechanisms.py` MECH 29; `legitimacy_diagnostics.py` +8 (a D-4 window row for MECH 29 only) | **INERT**: default off, the wrap is an identity when off, ABSENT, unarmed; the scorer change adds a window for an id this run never emits |
+| closeout-SPP-w3 records (#7195) | `docs/records/spp/*`, `results/phase0/spp/*`, matrix shard text | docs and phase-0 JSON only |
+| solve surface | `solve_surface_register.py --diff d62ae1a7 → ae224faf`: *"341 → 342 names; 0 value(s) moved, 1 added (`NUCLEAR_MONTHLY_CF_UNCLIPPED_BY_YEAR`, moves no key), 0 removed — NO VALUE MOVED"* | no ISO's key reached |
+| tooling and control | `shard_prompt.py`, `calibration_verdict.py`, `replay_keeper.py`, `dashboard_add_run.py`, `iso_configs.py`, `results/calibration/closeout_spp_nuc_span/**`, `keepers/SPP.json` byte-identical to `d62ae1a7`; `_ucmilp_compose_span.py` present; `grep -c unit_commitment_milp scenarios.py` = 6; `artifact_dir` 0 references | control unchanged (rule 29(b)) |
+
+Nothing is LIVE for SPP outside the UC stage. Prompts regenerated with `--sha ae224faf…` and re-committed as `shard-prompts-ucmilp-spp.txt`
+(the `6d47c762` and `c8690022` prompts stay in history at `b2167930` and `c72748dc`).

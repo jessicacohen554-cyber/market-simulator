@@ -1,14 +1,14 @@
-# Shard prompts — lane UC-2-SPP, RELAUNCH at the fixed engine SHA (PRECOMMIT Addendum B), generated 2026-10-04 by
-# python3 scripts/shard_prompt.py --iso SPP --all-years --sha c8690022bf5024d5fee469abc2663b1c61a3ee49 --lane ucmilp-spp \
+# Shard prompts — lane UC-2-SPP, RELAUNCH #2 at the fixed engine SHA on main (PRECOMMIT Addendum C), generated 2026-10-05 by
+# python3 scripts/shard_prompt.py --iso SPP --all-years --sha ae224fafdda926bf8817afee385bd6cedc470120 --lane ucmilp-spp \
 #   --bundle results/calibration/closeout_spp_nuc_span --set unit_commitment_milp=true --budget 120 --note "ucmilp-spp: UC A/B"
-# + the lane ADDENDUM appended to each prompt. One create_session per block: source_revision = c8690022bf5024d5fee469abc2663b1c61a3ee49,
-# model claude-opus-5-5, tag ucmilp:UC-2-SPP-shard. The first launch (pin 6d47c762, prompts in git history at b2167930) stopped on uc.py:363.
+# + the lane ADDENDUM appended to each prompt. One create_session per block: source_revision = ae224fafdda926bf8817afee385bd6cedc470120,
+# model claude-opus-5-5, tag ucmilp:UC-2-SPP-shard. Earlier launches: 6d47c762 (b2167930; uc.py:363 crash) and c8690022 (c72748dc; UcWindowInfeasible).
 
 SOLVE SHARD ucmilp-spp-2019 — SPP backcast year 2019, ONE year, ONE container (rule 36). Model: Opus.
 DATA PROFILE: spp
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
-1. `git rev-parse HEAD` == c8690022bf5024d5fee469abc2663b1c61a3ee49  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+1. `git rev-parse HEAD` == ae224fafdda926bf8817afee385bd6cedc470120  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
 2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
 3. `python3 scripts/hydrate_data.py --profile spp` then `python3 scripts/regenerate_clean.py --solve-profile SPP` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
 4. the recipe you will solve: `results/calibration/closeout_spp_nuc_span` replayed with unit_commitment_milp=true; confirm by reading `results/calibration/closeout_spp_nuc_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true
@@ -32,10 +32,10 @@ FORBIDDEN, by name: git add -A / git add . ; any edit under src/ or scripts/ ; d
 
 REPORT in your final message, in numbers: HEAD sha; the `container preflight:` and `memory peak:` lines; LP wall time; for 2019: objective, total generation TWh by class, mean and p99 price per zone, unserved energy MWh; the commit sha and branch; `git ls-tree` count under results/calibration/ucmilp_spp_2019; and any hard stop that fired. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
 
-ADDENDUM (lane UC-2-SPP, PRECOMMIT docs/records/spp/ucmilp/PRECOMMIT-ucmilp-spp-ab-2026-10-04.md on branch claude/ucmilp-2-spp-ab-r7qd; relaunch under its Addendum B at the fixed engine SHA):
+ADDENDUM (lane UC-2-SPP, PRECOMMIT docs/records/spp/ucmilp/PRECOMMIT-ucmilp-spp-ab-2026-10-04.md on branch claude/ucmilp-2-spp-ab-r7qd; relaunch under its Addendum C at the fixed engine SHA on main):
 - also confirm hourly/uc_schedule_2019.parquet, hourly/uc_uplift_2019.parquet and uc_solve_log_2019.json are in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp_spp_2019/hourly results/calibration/ucmilp_spp_2019/uc_solve_log_2019.json`), and hourly/unit_marginal_2019.parquet with them; if the recipe armed the UC gate but no uc_schedule_2019.parquet was written, that is a HARD STOP: report it, do not push.
 - report the GATESPEC section 6.1 wall row: paste the `log_year_phase_timing` log line verbatim (solve_p0 / markup / solve_p1 / results_write / total seconds) and the `summary` object of uc_solve_log_2019.json verbatim (uc_total_s, milp_s_mean, milp_s_p95, nodes_p50, nodes_p95, gap_p95, time_limit_hits, windows_zero_nodes_share, peak_rss_gb), plus `engine.integers_per_window` and `engine.n_clusters`, and the count of windows whose status is not optimal. The ratio total/(solve_p0+solve_p1) is computed by the parent; do not judge it.
-- the UC stage runs 365 rolling MILP windows inside the P0->P1 seam; it is expected to add wall clock. The 120-minute budget covers it. If the runner stops with a UC hard stop (an infeasible window, 'no incumbent'), that is a SUCCESSFUL shard report: paste the window number and the message, push nothing, stop.
+- the UC stage runs 365 rolling MILP windows inside the P0->P1 seam; it is expected to add wall clock. The 120-minute budget covers it. If the runner stops with a UC hard stop (an infeasible window, 'no incumbent'), that is a SUCCESSFUL shard report: paste the full exception text verbatim (it now names the window / t0) and any diagnostic the engine prints, push nothing, stop.
 - never edit any uc_* field, never pass a second --set, never re-run with a different time limit.
 
 ====================================================================================================
@@ -44,7 +44,7 @@ SOLVE SHARD ucmilp-spp-2020 — SPP backcast year 2020, ONE year, ONE container 
 DATA PROFILE: spp
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
-1. `git rev-parse HEAD` == c8690022bf5024d5fee469abc2663b1c61a3ee49  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+1. `git rev-parse HEAD` == ae224fafdda926bf8817afee385bd6cedc470120  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
 2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
 3. `python3 scripts/hydrate_data.py --profile spp` then `python3 scripts/regenerate_clean.py --solve-profile SPP` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
 4. the recipe you will solve: `results/calibration/closeout_spp_nuc_span` replayed with unit_commitment_milp=true; confirm by reading `results/calibration/closeout_spp_nuc_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true
@@ -68,10 +68,10 @@ FORBIDDEN, by name: git add -A / git add . ; any edit under src/ or scripts/ ; d
 
 REPORT in your final message, in numbers: HEAD sha; the `container preflight:` and `memory peak:` lines; LP wall time; for 2020: objective, total generation TWh by class, mean and p99 price per zone, unserved energy MWh; the commit sha and branch; `git ls-tree` count under results/calibration/ucmilp_spp_2020; and any hard stop that fired. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
 
-ADDENDUM (lane UC-2-SPP, PRECOMMIT docs/records/spp/ucmilp/PRECOMMIT-ucmilp-spp-ab-2026-10-04.md on branch claude/ucmilp-2-spp-ab-r7qd; relaunch under its Addendum B at the fixed engine SHA):
+ADDENDUM (lane UC-2-SPP, PRECOMMIT docs/records/spp/ucmilp/PRECOMMIT-ucmilp-spp-ab-2026-10-04.md on branch claude/ucmilp-2-spp-ab-r7qd; relaunch under its Addendum C at the fixed engine SHA on main):
 - also confirm hourly/uc_schedule_2020.parquet, hourly/uc_uplift_2020.parquet and uc_solve_log_2020.json are in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp_spp_2020/hourly results/calibration/ucmilp_spp_2020/uc_solve_log_2020.json`), and hourly/unit_marginal_2020.parquet with them; if the recipe armed the UC gate but no uc_schedule_2020.parquet was written, that is a HARD STOP: report it, do not push.
 - report the GATESPEC section 6.1 wall row: paste the `log_year_phase_timing` log line verbatim (solve_p0 / markup / solve_p1 / results_write / total seconds) and the `summary` object of uc_solve_log_2020.json verbatim (uc_total_s, milp_s_mean, milp_s_p95, nodes_p50, nodes_p95, gap_p95, time_limit_hits, windows_zero_nodes_share, peak_rss_gb), plus `engine.integers_per_window` and `engine.n_clusters`, and the count of windows whose status is not optimal. The ratio total/(solve_p0+solve_p1) is computed by the parent; do not judge it.
-- the UC stage runs 365 rolling MILP windows inside the P0->P1 seam; it is expected to add wall clock. The 120-minute budget covers it. If the runner stops with a UC hard stop (an infeasible window, 'no incumbent'), that is a SUCCESSFUL shard report: paste the window number and the message, push nothing, stop.
+- the UC stage runs 365 rolling MILP windows inside the P0->P1 seam; it is expected to add wall clock. The 120-minute budget covers it. If the runner stops with a UC hard stop (an infeasible window, 'no incumbent'), that is a SUCCESSFUL shard report: paste the full exception text verbatim (it now names the window / t0) and any diagnostic the engine prints, push nothing, stop.
 - never edit any uc_* field, never pass a second --set, never re-run with a different time limit.
 
 ====================================================================================================
@@ -80,7 +80,7 @@ SOLVE SHARD ucmilp-spp-2021 — SPP backcast year 2021, ONE year, ONE container 
 DATA PROFILE: spp
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
-1. `git rev-parse HEAD` == c8690022bf5024d5fee469abc2663b1c61a3ee49  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+1. `git rev-parse HEAD` == ae224fafdda926bf8817afee385bd6cedc470120  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
 2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
 3. `python3 scripts/hydrate_data.py --profile spp` then `python3 scripts/regenerate_clean.py --solve-profile SPP` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
 4. the recipe you will solve: `results/calibration/closeout_spp_nuc_span` replayed with unit_commitment_milp=true; confirm by reading `results/calibration/closeout_spp_nuc_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true
@@ -104,10 +104,10 @@ FORBIDDEN, by name: git add -A / git add . ; any edit under src/ or scripts/ ; d
 
 REPORT in your final message, in numbers: HEAD sha; the `container preflight:` and `memory peak:` lines; LP wall time; for 2021: objective, total generation TWh by class, mean and p99 price per zone, unserved energy MWh; the commit sha and branch; `git ls-tree` count under results/calibration/ucmilp_spp_2021; and any hard stop that fired. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
 
-ADDENDUM (lane UC-2-SPP, PRECOMMIT docs/records/spp/ucmilp/PRECOMMIT-ucmilp-spp-ab-2026-10-04.md on branch claude/ucmilp-2-spp-ab-r7qd; relaunch under its Addendum B at the fixed engine SHA):
+ADDENDUM (lane UC-2-SPP, PRECOMMIT docs/records/spp/ucmilp/PRECOMMIT-ucmilp-spp-ab-2026-10-04.md on branch claude/ucmilp-2-spp-ab-r7qd; relaunch under its Addendum C at the fixed engine SHA on main):
 - also confirm hourly/uc_schedule_2021.parquet, hourly/uc_uplift_2021.parquet and uc_solve_log_2021.json are in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp_spp_2021/hourly results/calibration/ucmilp_spp_2021/uc_solve_log_2021.json`), and hourly/unit_marginal_2021.parquet with them; if the recipe armed the UC gate but no uc_schedule_2021.parquet was written, that is a HARD STOP: report it, do not push.
 - report the GATESPEC section 6.1 wall row: paste the `log_year_phase_timing` log line verbatim (solve_p0 / markup / solve_p1 / results_write / total seconds) and the `summary` object of uc_solve_log_2021.json verbatim (uc_total_s, milp_s_mean, milp_s_p95, nodes_p50, nodes_p95, gap_p95, time_limit_hits, windows_zero_nodes_share, peak_rss_gb), plus `engine.integers_per_window` and `engine.n_clusters`, and the count of windows whose status is not optimal. The ratio total/(solve_p0+solve_p1) is computed by the parent; do not judge it.
-- the UC stage runs 365 rolling MILP windows inside the P0->P1 seam; it is expected to add wall clock. The 120-minute budget covers it. If the runner stops with a UC hard stop (an infeasible window, 'no incumbent'), that is a SUCCESSFUL shard report: paste the window number and the message, push nothing, stop.
+- the UC stage runs 365 rolling MILP windows inside the P0->P1 seam; it is expected to add wall clock. The 120-minute budget covers it. If the runner stops with a UC hard stop (an infeasible window, 'no incumbent'), that is a SUCCESSFUL shard report: paste the full exception text verbatim (it now names the window / t0) and any diagnostic the engine prints, push nothing, stop.
 - never edit any uc_* field, never pass a second --set, never re-run with a different time limit.
 
 ====================================================================================================
@@ -116,7 +116,7 @@ SOLVE SHARD ucmilp-spp-2022 — SPP backcast year 2022, ONE year, ONE container 
 DATA PROFILE: spp
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
-1. `git rev-parse HEAD` == c8690022bf5024d5fee469abc2663b1c61a3ee49  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+1. `git rev-parse HEAD` == ae224fafdda926bf8817afee385bd6cedc470120  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
 2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
 3. `python3 scripts/hydrate_data.py --profile spp` then `python3 scripts/regenerate_clean.py --solve-profile SPP` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
 4. the recipe you will solve: `results/calibration/closeout_spp_nuc_span` replayed with unit_commitment_milp=true; confirm by reading `results/calibration/closeout_spp_nuc_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true
@@ -140,10 +140,10 @@ FORBIDDEN, by name: git add -A / git add . ; any edit under src/ or scripts/ ; d
 
 REPORT in your final message, in numbers: HEAD sha; the `container preflight:` and `memory peak:` lines; LP wall time; for 2022: objective, total generation TWh by class, mean and p99 price per zone, unserved energy MWh; the commit sha and branch; `git ls-tree` count under results/calibration/ucmilp_spp_2022; and any hard stop that fired. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
 
-ADDENDUM (lane UC-2-SPP, PRECOMMIT docs/records/spp/ucmilp/PRECOMMIT-ucmilp-spp-ab-2026-10-04.md on branch claude/ucmilp-2-spp-ab-r7qd; relaunch under its Addendum B at the fixed engine SHA):
+ADDENDUM (lane UC-2-SPP, PRECOMMIT docs/records/spp/ucmilp/PRECOMMIT-ucmilp-spp-ab-2026-10-04.md on branch claude/ucmilp-2-spp-ab-r7qd; relaunch under its Addendum C at the fixed engine SHA on main):
 - also confirm hourly/uc_schedule_2022.parquet, hourly/uc_uplift_2022.parquet and uc_solve_log_2022.json are in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp_spp_2022/hourly results/calibration/ucmilp_spp_2022/uc_solve_log_2022.json`), and hourly/unit_marginal_2022.parquet with them; if the recipe armed the UC gate but no uc_schedule_2022.parquet was written, that is a HARD STOP: report it, do not push.
 - report the GATESPEC section 6.1 wall row: paste the `log_year_phase_timing` log line verbatim (solve_p0 / markup / solve_p1 / results_write / total seconds) and the `summary` object of uc_solve_log_2022.json verbatim (uc_total_s, milp_s_mean, milp_s_p95, nodes_p50, nodes_p95, gap_p95, time_limit_hits, windows_zero_nodes_share, peak_rss_gb), plus `engine.integers_per_window` and `engine.n_clusters`, and the count of windows whose status is not optimal. The ratio total/(solve_p0+solve_p1) is computed by the parent; do not judge it.
-- the UC stage runs 365 rolling MILP windows inside the P0->P1 seam; it is expected to add wall clock. The 120-minute budget covers it. If the runner stops with a UC hard stop (an infeasible window, 'no incumbent'), that is a SUCCESSFUL shard report: paste the window number and the message, push nothing, stop.
+- the UC stage runs 365 rolling MILP windows inside the P0->P1 seam; it is expected to add wall clock. The 120-minute budget covers it. If the runner stops with a UC hard stop (an infeasible window, 'no incumbent'), that is a SUCCESSFUL shard report: paste the full exception text verbatim (it now names the window / t0) and any diagnostic the engine prints, push nothing, stop.
 - never edit any uc_* field, never pass a second --set, never re-run with a different time limit.
 
 ====================================================================================================
@@ -152,7 +152,7 @@ SOLVE SHARD ucmilp-spp-2023 — SPP backcast year 2023, ONE year, ONE container 
 DATA PROFILE: spp
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
-1. `git rev-parse HEAD` == c8690022bf5024d5fee469abc2663b1c61a3ee49  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+1. `git rev-parse HEAD` == ae224fafdda926bf8817afee385bd6cedc470120  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
 2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
 3. `python3 scripts/hydrate_data.py --profile spp` then `python3 scripts/regenerate_clean.py --solve-profile SPP` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
 4. the recipe you will solve: `results/calibration/closeout_spp_nuc_span` replayed with unit_commitment_milp=true; confirm by reading `results/calibration/closeout_spp_nuc_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true
@@ -176,10 +176,10 @@ FORBIDDEN, by name: git add -A / git add . ; any edit under src/ or scripts/ ; d
 
 REPORT in your final message, in numbers: HEAD sha; the `container preflight:` and `memory peak:` lines; LP wall time; for 2023: objective, total generation TWh by class, mean and p99 price per zone, unserved energy MWh; the commit sha and branch; `git ls-tree` count under results/calibration/ucmilp_spp_2023; and any hard stop that fired. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
 
-ADDENDUM (lane UC-2-SPP, PRECOMMIT docs/records/spp/ucmilp/PRECOMMIT-ucmilp-spp-ab-2026-10-04.md on branch claude/ucmilp-2-spp-ab-r7qd; relaunch under its Addendum B at the fixed engine SHA):
+ADDENDUM (lane UC-2-SPP, PRECOMMIT docs/records/spp/ucmilp/PRECOMMIT-ucmilp-spp-ab-2026-10-04.md on branch claude/ucmilp-2-spp-ab-r7qd; relaunch under its Addendum C at the fixed engine SHA on main):
 - also confirm hourly/uc_schedule_2023.parquet, hourly/uc_uplift_2023.parquet and uc_solve_log_2023.json are in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp_spp_2023/hourly results/calibration/ucmilp_spp_2023/uc_solve_log_2023.json`), and hourly/unit_marginal_2023.parquet with them; if the recipe armed the UC gate but no uc_schedule_2023.parquet was written, that is a HARD STOP: report it, do not push.
 - report the GATESPEC section 6.1 wall row: paste the `log_year_phase_timing` log line verbatim (solve_p0 / markup / solve_p1 / results_write / total seconds) and the `summary` object of uc_solve_log_2023.json verbatim (uc_total_s, milp_s_mean, milp_s_p95, nodes_p50, nodes_p95, gap_p95, time_limit_hits, windows_zero_nodes_share, peak_rss_gb), plus `engine.integers_per_window` and `engine.n_clusters`, and the count of windows whose status is not optimal. The ratio total/(solve_p0+solve_p1) is computed by the parent; do not judge it.
-- the UC stage runs 365 rolling MILP windows inside the P0->P1 seam; it is expected to add wall clock. The 120-minute budget covers it. If the runner stops with a UC hard stop (an infeasible window, 'no incumbent'), that is a SUCCESSFUL shard report: paste the window number and the message, push nothing, stop.
+- the UC stage runs 365 rolling MILP windows inside the P0->P1 seam; it is expected to add wall clock. The 120-minute budget covers it. If the runner stops with a UC hard stop (an infeasible window, 'no incumbent'), that is a SUCCESSFUL shard report: paste the full exception text verbatim (it now names the window / t0) and any diagnostic the engine prints, push nothing, stop.
 - never edit any uc_* field, never pass a second --set, never re-run with a different time limit.
 
 ====================================================================================================
@@ -188,7 +188,7 @@ SOLVE SHARD ucmilp-spp-2024 — SPP backcast year 2024, ONE year, ONE container 
 DATA PROFILE: spp
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
-1. `git rev-parse HEAD` == c8690022bf5024d5fee469abc2663b1c61a3ee49  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+1. `git rev-parse HEAD` == ae224fafdda926bf8817afee385bd6cedc470120  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
 2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
 3. `python3 scripts/hydrate_data.py --profile spp` then `python3 scripts/regenerate_clean.py --solve-profile SPP` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
 4. the recipe you will solve: `results/calibration/closeout_spp_nuc_span` replayed with unit_commitment_milp=true; confirm by reading `results/calibration/closeout_spp_nuc_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true
@@ -212,10 +212,10 @@ FORBIDDEN, by name: git add -A / git add . ; any edit under src/ or scripts/ ; d
 
 REPORT in your final message, in numbers: HEAD sha; the `container preflight:` and `memory peak:` lines; LP wall time; for 2024: objective, total generation TWh by class, mean and p99 price per zone, unserved energy MWh; the commit sha and branch; `git ls-tree` count under results/calibration/ucmilp_spp_2024; and any hard stop that fired. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
 
-ADDENDUM (lane UC-2-SPP, PRECOMMIT docs/records/spp/ucmilp/PRECOMMIT-ucmilp-spp-ab-2026-10-04.md on branch claude/ucmilp-2-spp-ab-r7qd; relaunch under its Addendum B at the fixed engine SHA):
+ADDENDUM (lane UC-2-SPP, PRECOMMIT docs/records/spp/ucmilp/PRECOMMIT-ucmilp-spp-ab-2026-10-04.md on branch claude/ucmilp-2-spp-ab-r7qd; relaunch under its Addendum C at the fixed engine SHA on main):
 - also confirm hourly/uc_schedule_2024.parquet, hourly/uc_uplift_2024.parquet and uc_solve_log_2024.json are in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp_spp_2024/hourly results/calibration/ucmilp_spp_2024/uc_solve_log_2024.json`), and hourly/unit_marginal_2024.parquet with them; if the recipe armed the UC gate but no uc_schedule_2024.parquet was written, that is a HARD STOP: report it, do not push.
 - report the GATESPEC section 6.1 wall row: paste the `log_year_phase_timing` log line verbatim (solve_p0 / markup / solve_p1 / results_write / total seconds) and the `summary` object of uc_solve_log_2024.json verbatim (uc_total_s, milp_s_mean, milp_s_p95, nodes_p50, nodes_p95, gap_p95, time_limit_hits, windows_zero_nodes_share, peak_rss_gb), plus `engine.integers_per_window` and `engine.n_clusters`, and the count of windows whose status is not optimal. The ratio total/(solve_p0+solve_p1) is computed by the parent; do not judge it.
-- the UC stage runs 365 rolling MILP windows inside the P0->P1 seam; it is expected to add wall clock. The 120-minute budget covers it. If the runner stops with a UC hard stop (an infeasible window, 'no incumbent'), that is a SUCCESSFUL shard report: paste the window number and the message, push nothing, stop.
+- the UC stage runs 365 rolling MILP windows inside the P0->P1 seam; it is expected to add wall clock. The 120-minute budget covers it. If the runner stops with a UC hard stop (an infeasible window, 'no incumbent'), that is a SUCCESSFUL shard report: paste the full exception text verbatim (it now names the window / t0) and any diagnostic the engine prints, push nothing, stop.
 - never edit any uc_* field, never pass a second --set, never re-run with a different time limit.
 
 ====================================================================================================
@@ -224,7 +224,7 @@ SOLVE SHARD ucmilp-spp-2025 — SPP backcast year 2025, ONE year, ONE container 
 DATA PROFILE: spp
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
-1. `git rev-parse HEAD` == c8690022bf5024d5fee469abc2663b1c61a3ee49  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+1. `git rev-parse HEAD` == ae224fafdda926bf8817afee385bd6cedc470120  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
 2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
 3. `python3 scripts/hydrate_data.py --profile spp` then `python3 scripts/regenerate_clean.py --solve-profile SPP` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
 4. the recipe you will solve: `results/calibration/closeout_spp_nuc_span` replayed with unit_commitment_milp=true; confirm by reading `results/calibration/closeout_spp_nuc_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true
@@ -248,8 +248,8 @@ FORBIDDEN, by name: git add -A / git add . ; any edit under src/ or scripts/ ; d
 
 REPORT in your final message, in numbers: HEAD sha; the `container preflight:` and `memory peak:` lines; LP wall time; for 2025: objective, total generation TWh by class, mean and p99 price per zone, unserved energy MWh; the commit sha and branch; `git ls-tree` count under results/calibration/ucmilp_spp_2025; and any hard stop that fired. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
 
-ADDENDUM (lane UC-2-SPP, PRECOMMIT docs/records/spp/ucmilp/PRECOMMIT-ucmilp-spp-ab-2026-10-04.md on branch claude/ucmilp-2-spp-ab-r7qd; relaunch under its Addendum B at the fixed engine SHA):
+ADDENDUM (lane UC-2-SPP, PRECOMMIT docs/records/spp/ucmilp/PRECOMMIT-ucmilp-spp-ab-2026-10-04.md on branch claude/ucmilp-2-spp-ab-r7qd; relaunch under its Addendum C at the fixed engine SHA on main):
 - also confirm hourly/uc_schedule_2025.parquet, hourly/uc_uplift_2025.parquet and uc_solve_log_2025.json are in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp_spp_2025/hourly results/calibration/ucmilp_spp_2025/uc_solve_log_2025.json`), and hourly/unit_marginal_2025.parquet with them; if the recipe armed the UC gate but no uc_schedule_2025.parquet was written, that is a HARD STOP: report it, do not push.
 - report the GATESPEC section 6.1 wall row: paste the `log_year_phase_timing` log line verbatim (solve_p0 / markup / solve_p1 / results_write / total seconds) and the `summary` object of uc_solve_log_2025.json verbatim (uc_total_s, milp_s_mean, milp_s_p95, nodes_p50, nodes_p95, gap_p95, time_limit_hits, windows_zero_nodes_share, peak_rss_gb), plus `engine.integers_per_window` and `engine.n_clusters`, and the count of windows whose status is not optimal. The ratio total/(solve_p0+solve_p1) is computed by the parent; do not judge it.
-- the UC stage runs 365 rolling MILP windows inside the P0->P1 seam; it is expected to add wall clock. The 120-minute budget covers it. If the runner stops with a UC hard stop (an infeasible window, 'no incumbent'), that is a SUCCESSFUL shard report: paste the window number and the message, push nothing, stop.
+- the UC stage runs 365 rolling MILP windows inside the P0->P1 seam; it is expected to add wall clock. The 120-minute budget covers it. If the runner stops with a UC hard stop (an infeasible window, 'no incumbent'), that is a SUCCESSFUL shard report: paste the full exception text verbatim (it now names the window / t0) and any diagnostic the engine prints, push nothing, stop.
 - never edit any uc_* field, never pass a second --set, never re-run with a different time limit.
