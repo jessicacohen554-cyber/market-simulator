@@ -6,8 +6,8 @@ as a percent of the ARTIFACT's ``nameplate_mw`` x the outage derate, on the
 plant's facility-summed CAMPD net. ``fleet/assembly.py`` multiplies that
 percent by the LP bin's ``capacity_mw`` (``floor_mw = pmin_cf x (1 - btm) x
 nameplate``), and ``fleet/arrays.py`` holds it in every hour (clipped to
-``pmax x availability``). This probe measures, for every keeper that arms
-``chp_steam_floor_p25``, per CHP plant-group and solved year:
+``pmax x availability``). This probe measures, for every keeper (the swap keepers first,
+the p2-only keepers on request), per CHP plant-group and solved year:
 
 * the level actually applied, its source (``steam_level_cf`` swap or p2
   ``chp_pmin_cf``), the artifact nameplate and the LP nameplate it multiplies;
@@ -24,8 +24,15 @@ nameplate``), and ``fleet/arrays.py`` holds it in every hour (clipped to
 
 Fleets come from the sanctioned :func:`scripts.lib.bundle_fleet.reconstruct_bundle_fleet`.
 
-Run: ``uv run python scripts/probes/_closeout_chp_floor_basis_audit.py``
-Output: ``results/phase0/governance/_closeout_chp_floor_basis_audit.json``.
+* the re-based floor (``floor / basis ratio``, clipped to ``pmax x availability``)
+  and its dispatch bound: energy released (held above the re-based floor) and
+  added (re-based floor above keeper dispatch).
+
+Run: ``uv run python scripts/probes/_closeout_chp_floor_basis_audit.py`` (SPP and
+CAISO, the swap keepers) → ``results/phase0/governance/_closeout_chp_floor_basis_audit.json``;
+``--isos ERCOT PJM MISO NYISO NEISO SOCO NWPP --out
+results/phase0/governance/_closeout_chp_floor_basis_audit_p2.json`` for the
+p2-floor keepers (desk follow-up).
 """
 
 from __future__ import annotations
@@ -51,7 +58,17 @@ ensure_probe_path()
 KEEPERS = {
     "SPP": "closeout_spp_nuc_span",
     "CAISO": "closeout_caiso_w1_a2_span",
+    "ERCOT": "closeout_ercot_l1_span",
+    "PJM": "closeout_pjm_nuc_full_span",
+    "MISO": "closeout_miso_nuc_span",
+    "NYISO": "w0_nyiso_span",
+    "NEISO": "w0_neiso_span",
+    "SOCO": "closeout_soco_3_span",
+    "NWPP": "nwppnext27_span",
 }
+#: The two keepers that arm ``chp_steam_floor_p25`` (first pass); the other
+#: seven carry only the p2 ``chp_pmin_cf`` floor (desk follow-up, ``--isos``).
+SWAP_KEEPERS = ("SPP", "CAISO")
 YEARS = tuple(range(2019, 2026))
 OUT = REPO / "results/phase0/governance/_closeout_chp_floor_basis_audit.json"
 CHP = ("CC_CHP", "CT_CHP", "ST_CHP")
@@ -68,7 +85,10 @@ def applied_levels(cfg, iso: str) -> dict[tuple[int, str], dict]:
 
     pu = bool(getattr(cfg, "campd_per_unit_attribution", False))
     mg = bool(getattr(cfg, "campd_outage_merit_order_guard", False))
-    art = pd.read_csv(thermal_tranche_csv_for_iso(iso, pu, mg))
+    path = thermal_tranche_csv_for_iso(iso, pu, mg)
+    if not path.exists():
+        return {}  # ERCOT: no artifact; the hardcoded CAMPD map has no nameplate
+    art = pd.read_csv(path)
     lev = thermal_tranche_chp_steam_level(iso, pu, mg)
     duty = thermal_tranche_chp_steam_duty(iso, pu, mg)
     scope = bool(getattr(cfg, "chp_steam_floor_conduct_scope", False))
@@ -125,6 +145,14 @@ def model_side(bundle: Path, iso: str, year: int) -> tuple[pd.DataFrame, object]
     from market_sim.data.floor_mechanisms import MECH_CHP_STEAM
 
     clear_fleet_caches()
+    if iso == "PJM":
+        # The PJM keeper arms pjm_da_virtual_bids, whose DataMiner2 parquets are
+        # gitignored (licence) and absent from a fresh container. Its INC/DEC
+        # pseudo-units are APPENDED after the physical fleet and never touch a
+        # CHP row's min_gen, so the fleet-only audit stubs them out (declared).
+        import market_sim.data.virtual_bids as _vb
+
+        _vb.build_pjm_da_virtual_units = lambda *a, **k: ([], {}, {})
     state, _ = reconstruct_bundle_fleet(bundle, year, verbose=False)
     fa = state["fleet_arrays"]
     gens = getattr(state["fleet"], "generators", state["fleet"])
@@ -138,7 +166,8 @@ def model_side(bundle: Path, iso: str, year: int) -> tuple[pd.DataFrame, object]
         if pg not in CHP:
             continue
         cap_h = pmax[i] * avail[i, :]
-        fl = np.where(mech[i, :] == MECH_CHP_STEAM, np.minimum(mg[i, :], cap_h), 0.0)
+        on = mech[i, :] == MECH_CHP_STEAM
+        fl = np.where(on, np.minimum(mg[i, :], cap_h), 0.0)
         rows.append(
             {
                 "unit_id": str(g.unit_id),
@@ -148,6 +177,10 @@ def model_side(bundle: Path, iso: str, year: int) -> tuple[pd.DataFrame, object]
                 "floor_mw": float(getattr(g, "chp_grid_pmin_mw", 0.0) or 0.0),
                 "floor_mwh": float(fl.sum()),
                 "floor_h": fl,
+                # Unclipped floor in its own hours, and the clip it meets: what
+                # a re-based floor (floor_mw / basis ratio) would be clipped to.
+                "raw_h": np.where(on, mg[i, :], 0.0),
+                "cap_h": np.where(on, cap_h, 0.0),
             }
         )
     u = pd.read_parquet(
@@ -180,15 +213,35 @@ def meter_side(iso: str, year: int) -> tuple[pd.Series, dict]:
 
 
 def main() -> int:
-    """Measure every arming keeper and write the JSON."""
-    res: dict = {"keepers": KEEPERS, "rows": [], "class_year": []}
-    for iso, run in KEEPERS.items():
-        bundle = REPO / "results/calibration" / run
+    """Measure the requested keepers and write the JSON."""
+    import argparse
+
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--isos", nargs="+", default=list(SWAP_KEEPERS))
+    ap.add_argument("--out", type=Path, default=OUT)
+    args = ap.parse_args()
+    from market_sim.data.chp import chp_class_netgen_mwh
+
+    res: dict = {
+        "keepers": {i: KEEPERS[i] for i in args.isos},
+        "rows": [],
+        "class_year": [],
+    }
+    for iso in args.isos:
+        bundle = REPO / "results/calibration" / KEEPERS[iso]
         for year in YEARS:
-            df, cfg = model_side(bundle, iso, year)
-            if not getattr(cfg, "chp_steam_floor_p25", False):
+            if not (bundle / f"hourly/unit_marginal_{year}.parquet").exists():
                 continue
+            df, cfg = model_side(bundle, iso, year)
             lv = applied_levels(cfg, iso)
+            # chp_export_floor_measured (ERCOT): the solve year's EIA-923 class
+            # net over the LP nameplate replaces the artifact level — already
+            # on the LP basis, so a re-base does not touch it.
+            measured = (
+                set(chp_class_netgen_mwh(year))
+                if getattr(cfg, "chp_export_floor_measured", False)
+                else set()
+            )
             camp, f923 = meter_side(iso, year)
             keys = sorted(
                 {(int(a), str(b)) for a, b in zip(df.plant_code, df.plant_group)}
@@ -220,6 +273,18 @@ def main() -> int:
                 )
                 held = np.minimum(mw_h, fl_h)
                 release = float(np.maximum(0.0, held - fl_h * scale).sum()) / 1e6
+                # Re-based floor: the artifact level expressed on the capacity
+                # it multiplies (floor / basis ratio), clipped as arrays.py clips.
+                art_np = a.get("artifact_nameplate_mw")
+                basis = lp_np / art_np if art_np and k not in measured else None
+                raw_h = np.sum(np.stack(d.raw_h.to_list()), axis=0)
+                cap_h = np.sum(np.stack(d.cap_h.to_list()), axis=0)
+                if basis:
+                    rb_h = np.minimum(raw_h / basis, cap_h)
+                else:
+                    rb_h = fl_h
+                rb_rel = float(np.maximum(0.0, held - rb_h).sum()) / 1e6
+                rb_add = float(np.maximum(0.0, rb_h - mw_h).sum()) / 1e6
                 row = {
                     "iso": iso,
                     "year": year,
@@ -232,9 +297,10 @@ def main() -> int:
                     "on_frac": a.get("on_frac"),
                     "artifact_nameplate_mw": a.get("artifact_nameplate_mw"),
                     "lp_nameplate_mw": round(lp_np, 1),
-                    "basis_ratio": round(lp_np / a["artifact_nameplate_mw"], 3)
-                    if a.get("artifact_nameplate_mw")
-                    else None,
+                    "basis_ratio": round(basis, 3) if basis else None,
+                    "level_basis": "measured_923_lp"
+                    if k in measured
+                    else ("artifact" if art_np else "unknown"),
                     "btm_pct": round(100 * b, 1),
                     "floor_grid_twh": round(floor, 4),
                     "model_grid_twh": round(float(mw_h.sum()) / 1e6, 4),
@@ -242,12 +308,27 @@ def main() -> int:
                     "eia923_net_twh": round(m_923, 4) if m_923 == m_923 else None,
                     "floor_to_meter": round(ratio, 3) if ratio is not None else None,
                     "cap_release_twh_ub": round(release, 4),
+                    "floor_rebased_twh": round(float(rb_h.sum()) / 1e6, 4),
+                    "rebase_release_twh_ub": round(rb_rel, 4),
+                    "rebase_add_twh_ub": round(rb_add, 4),
                 }
                 res["rows"].append(row)
                 c = cy.setdefault(
-                    str(pg), {"floor": 0.0, "model": 0.0, "release": 0.0, "over": 0}
+                    str(pg),
+                    {
+                        "floor": 0.0,
+                        "floor_rebased": 0.0,
+                        "model": 0.0,
+                        "release": 0.0,
+                        "rb_release": 0.0,
+                        "rb_add": 0.0,
+                        "over": 0,
+                    },
                 )
                 c["floor"] += floor
+                c["floor_rebased"] += float(rb_h.sum()) / 1e6
+                c["rb_release"] += rb_rel
+                c["rb_add"] += rb_add
                 c["model"] += row["model_grid_twh"]
                 c["release"] += release
                 c["over"] += int(ratio is not None and ratio > 1.0)
@@ -266,8 +347,8 @@ def main() -> int:
                 {k: {kk: round(vv, 3) for kk, vv in v.items()} for k, v in cy.items()},
                 flush=True,
             )
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(res, indent=1, default=float))
+    args.out.parent.mkdir(parents=True, exist_ok=True)
+    args.out.write_text(json.dumps(res, indent=1, default=float))
     return 0
 
 

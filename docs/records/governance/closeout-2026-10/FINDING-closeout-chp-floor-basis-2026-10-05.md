@@ -152,12 +152,123 @@ the floor multiplies.
 4. **Keepers touched.**
    - SPP `closeout_spp_nuc_span`: Eastman's floor −7 to −9 %, Black Hawk's −10 %.
    - CAISO `closeout_caiso_w1_a2_span`: Martinez −23 %, Elk Hills / Los Medanos −4 to −7 %, Fresno up 3×.
-   - Under (a), the p2 floor in every other keeper, by its own basis ratios. Not measured here; the probe extends by
-     adding a `KEEPERS` entry.
-   - Expected scored effect: no C1 status flip in SPP or CAISO (§4).
+   - Under (a), the p2 floor in every other keeper, by its own basis ratios. Measured in §7.
+   - Expected scored effect: no C1 status flip in SPP or CAISO (§4). Under (a) no PASS→FAIL anywhere (§7).
 5. **Order with MISO.** The fix must land before any MISO arm of the swap. The MISO > 100 % artifact rows additionally need
    the miso-95 re-derivation (w3g §4).
 
 ## 6. Matrix
 
 No cell moves (nothing solved). The lane edits no ISO shard.
+
+## 7. Option (a) exposure: the p2 floor in all nine keepers (desk follow-up, zero LP)
+
+**Method.** Same probe, now with `--isos`. Output for the other seven keepers is
+`results/phase0/governance/_closeout_chp_floor_basis_audit_p2.json`; SPP and CAISO were re-run into the first JSON with
+the new columns.
+
+The re-based floor is the realised floor ÷ basis ratio, clipped to `pmax × availability`. Δ is the bound on dispatch
+change: energy added above keeper dispatch minus energy held above the re-based floor. It is an upper bound before LP
+re-dispatch. Under option (a), SPP and CAISO re-base the p2 rows as well as the swap rows, so their Δ here is the full
+option-(a) figure.
+
+**PJM stub.** The PJM rebuild stubs `pjm_da_virtual_bids`, whose licensed DataMiner2 parquets are not in a fresh
+container. Those pseudo-units are appended after the physical fleet and never touch a CHP row.
+
+### 7.1 Basis ratio (LP ÷ artifact nameplate), floored CHP plant-group-years
+
+| keeper | rows | artifact-based | p05 | median | p95 | min–max | > 1.05 | < 0.95 |
+|---|---:|---:|---:|---:|---:|---|---:|---:|
+| ERCOT `closeout_ercot_l1_span` | 261 | 0 | — | — | — | — | — | — |
+| PJM `closeout_pjm_nuc_full_span` | 265 | 251 | 0.857 | 1.037 | 1.222 | 0.83–1.35 | 119 | 31 |
+| MISO `closeout_miso_nuc_span` | 400 | 353 | 1.000 | 1.095 | 1.927 | 0.58–**2.67** | 234 | 5 |
+| NYISO `w0_nyiso_span` | 18 | 18 | 1.051 | 1.099 | 1.221 | 1.03–1.22 | 17 | 0 |
+| NEISO `w0_neiso_span` | 58 | 44 | 0.885 | 1.000 | 1.706 | 0.60–1.71 | 7 | 6 |
+| SOCO `closeout_soco_3_span` | 66 | 60 | 0.874 | 1.061 | 3.247 | 0.82–**3.25** | 41 | 6 |
+| NWPP `nwppnext27_span` | 59 | 59 | 0.892 | 1.109 | 1.150 | 0.89–1.39 | 46 | 5 |
+| SPP (§1) | 61 | 61 | 0.777 | 1.065 | 1.250 | 0.78–1.25 | 36 | 9 |
+| CAISO (§1) | 274 | 274 | 1.000 | 1.000 | 1.125 | 0.26–1.30 | 57 | 7 |
+
+**ERCOT is untouched.** `chp_export_floor_measured` sets 259 of its 261 rows from EIA-923 over the LP nameplate. The
+other two come from the hardcoded CAMPD map, which has no nameplate, so their basis is unknown.
+
+**Rows outside the re-base.** Rows marked "unknown" in other ISOs are floored plant-groups the artifact has no row for:
+MISO 47, PJM 14, NEISO 14, SOCO 6. They keep their floor under the re-base.
+
+### 7.2 CHP floor energy before → after re-basing, TWh (range over the keeper's years) and Δ bound
+
+| keeper | class | floor now | floor re-based | Δ dispatch bound |
+|---|---|---|---|---|
+| ERCOT | CC / CT / ST_CHP | 19.0–23.8 / 2.6–4.3 / 0.03–0.05 | unchanged | 0 |
+| PJM | CC_CHP | 3.14–3.90 | 3.03–3.66 | −0.11 to −0.24 |
+| PJM | CT_CHP | 0.67–0.70 | 0.61–0.64 | −0.06 to −0.07 |
+| PJM | ST_CHP | 0.24–0.34 | 0.24–0.34 | ≈ 0 |
+| MISO | CC_CHP | 8.56–8.84 | 7.34–7.62 | **−1.17 to −1.37** |
+| MISO | CT_CHP | 2.54–3.28 | 2.10–2.81 | −0.32 to −0.47 |
+| MISO | ST_CHP | 0.61–0.79 | 0.59–0.74 | −0.02 to −0.06 |
+| NYISO (2021–25) | CC_CHP | 4.30–4.61 | 3.97–4.26 | −0.32 to −0.42 |
+| NYISO (2021–25) | CT / ST_CHP | 0.05 / 0.04 | 0.04 / 0.04 | ≈ 0 |
+| NEISO | CT_CHP | 0.14–0.17 | 0.14–0.16 | ≤ −0.02 |
+| NEISO | ST_CHP | 0.02–0.03 | unchanged | 0 |
+| SOCO | CC_CHP | 1.79–1.96 | 1.67–1.81 | −0.13 to −0.16 |
+| SOCO | CT / ST_CHP | 0.04 / 0.02–0.05 | ≈ unchanged | ≈ 0 |
+| NWPP | CC_CHP | 2.78–3.50 | 2.51–3.16 | −0.27 to −0.33 |
+| NWPP | CT_CHP | 0.07–0.12 | 0.07–0.11 | ≈ −0.01 |
+| SPP | CC / CT / ST_CHP | 1.59–1.84 / 1.13–1.21 / 0.11 | 1.45–1.68 / 1.01–1.08 / 0.10 | −0.12 to −0.16 / −0.11 to −0.12 / −0.01 |
+| CAISO | CC / CT_CHP | 6.51–7.81 / 1.18–1.22 | 6.29–7.46 / 1.17–1.19 | −0.21 to −0.35 / ≤ −0.04 |
+
+The net direction is a release everywhere: the re-based floor adds ≤ 0.001 TWh in any class-year. Largest released
+energy per ISO-year:
+
+| keeper | max release, TWh |
+|---|---:|
+| MISO | 1.73 |
+| NYISO | 0.43 |
+| CAISO | 0.39 |
+| NWPP | 0.35 |
+| PJM | 0.31 |
+| SPP | 0.29 |
+| SOCO | 0.16 |
+| NEISO | 0.02 |
+| ERCOT | 0 |
+
+### 7.3 C1 records
+
+**PASS→FAIL: none in any keeper.**
+
+**CHP records where |Δ| exceeds 25 % of the remaining band margin.** None flips.
+
+| record | model − actual, TWh | band | margin | Δ | Δ as % of margin | direction |
+|---|---:|---:|---:|---:|---:|---|
+| MISO 2019 CC_CHP PASS | −5.25 | ±8.00 | 2.75 | −1.18 | 43 % | away from actual |
+| MISO 2020 CC_CHP PASS | −4.49 | ±8.00 | 3.51 | −1.18 | 34 % | away from actual |
+| MISO 2021 CC_CHP PASS | −5.04 | ±8.00 | 2.96 | −1.18 | 40 % | away from actual |
+| MISO 2022 CC_CHP PASS | −5.83 | ±8.00 | 2.17 | −1.17 | **54 %** | away from actual |
+| NYISO 2023 CC_CHP PASS | +2.81 | ±3.82 | 1.01 | −0.42 | 42 % | toward actual |
+
+- MISO's share stays inside 3 pp (−0.9 pp → about −1.1 pp).
+- NYISO's share moves toward actual (+2.38 pp → lower).
+
+**Receiving classes.** The released energy is re-dispatched elsewhere, so it can only push other classes up. A PASS can
+fail only where the class is already over actual by more than its margin minus the release. No record meets that in any
+keeper; SPP 2025 CC_REGULAR (margin 0.14) is under actual, so the release moves it toward actual.
+
+Two MISO FAILs are under actual by less than the 1.7 TWh MISO release, so they *could* clear (FAIL→PASS) if enough of the
+release went to them:
+
+| record | model − actual, TWh | short of the band by |
+|---|---:|---:|
+| MISO 2019 ST_GAS | −8.71 | 0.71 |
+| MISO 2021 CC_REGULAR | −8.15 | 0.15 |
+
+These are upper bounds, not predictions, and rule 1 does not count them in the fix's favour. No determination moves on
+these bounds.
+
+### 7.4 What this changes in the recommendation
+
+- Option (a) is safe on the scored record: no PASS→FAIL in nine keepers.
+- MISO carries most of the exposure. Its keeper's p2 CHP floors sit on basis ratios up to 2.67, and those floors over-force
+  CC_CHP by about 1.2 TWh/yr against its own artifact level. MISO CC_CHP would then drop further below actual, at up to
+  54 % of its margin.
+- SOCO's p95 ratio is 3.25 (a small CHP fleet).
+- Both are the same basis bug in the p2 floor, not a swap effect. They strengthen the case for (a) over (b).
