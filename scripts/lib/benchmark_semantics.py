@@ -140,7 +140,20 @@ EIA930_NG_CELL_CORRUPT: frozenset[str] = frozenset({"CAISO"})
 # 11-13 % below both (2019). The CEMS cap (EIA930_NG_CORRUPT_ONSET) is kept.
 # Benchmark-only: the CAISO demand derive reads the geo/biomass term through
 # :func:`geo_biomass_outside_930_other`, which this set does not gate.
-EIA930_GAS_FOLD_REFUTED: frozenset[str] = frozenset({"SOCO", "CAISO"})
+#
+# MISO (closeout-MISO-w3e, 2026-10-05; desk ruling, owner decision #20 pending;
+# evidence docs/records/miso/closeout-miso-w3/FINDING-closeout-miso-w3e-bench-reconciliation-2026-10-05.md,
+# probe scripts/probes/_closeout_miso_w3e_bench_reconciliation.py): on SOCO-60's
+# own test, MISO 930 gas minus the 923 gas classes FULL (MISO-BA plants, CHP host
+# incl.) is -28.1 / -22.8 / -24.4 / -24.9 / -17.2 / -13.4 / -15.8 TWh in
+# 2019-2025 against a fold F of 14.1 / 13.1 / 12.6 / 13.0 / 13.1 / 11.8 / 11.0
+# TWh -- 930 gas is BELOW 923 gas in every year, so there is no room for a fold.
+# The F excess is chp=Y host biomass/OTHER the BA never meters (EIA-930 OTH
+# 4.5 TWh vs ~19 TWh injected, closeout-MISO-w3c). With the measured Schedules
+# 6/7 CHP shares, EIA-923 grid gas+coal matches RAW EIA-930 gas+coal within
+# ~2.5 % in every year; the deflated target sat ~3 % below it, and the sector
+# CHP default (~11 TWh too much host) was what cancelled it. Benchmark-only.
+EIA930_GAS_FOLD_REFUTED: frozenset[str] = frozenset({"SOCO", "CAISO", "MISO"})
 
 # First VINTAGE year the corruption contaminates: the hourly gas actual
 # (fuelRows / C4) switches to the CEMS+cogen basis from this vintage; earlier
