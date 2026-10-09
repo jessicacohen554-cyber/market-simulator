@@ -1,0 +1,65 @@
+[   0.000s] MIP has 17364 rows; 57384 cols; 191242 nonzeros; 3312 integer variables (982 binary)
+[   0.001s] Coefficient ranges:
+[   0.001s]   Matrix  [8e-01, 7e+02]
+[   0.001s]   Cost    [3e-14, 8e+04]
+[   0.001s]   Bound   [2e-02, 7e+03]
+[   0.001s]   RHS     [1e+00, 2e+04]
+[   0.001s] WARNING: Problem has some excessively small costs
+[   0.001s] Assessing feasibility of MIP using primal feasibility and integrality tolerance of       1e-06
+[   0.001s] WARNING: Col  47440 has         infeasibility of         2.3 from [lower, value, upper] = [            2.3;               0;             2.3]
+[   0.001s] WARNING: Col  47441 has         infeasibility of        46.2 from [lower, value, upper] = [           46.2;               0;            46.2]
+[   0.001s] WARNING: Col  47442 has         infeasibility of        1692 from [lower, value, upper] = [      1692.0831;               0;            2592]
+[   0.002s] WARNING: Row     24 has         infeasibility of        2875 from [lower, value, upper] = [       22252.45;       19377.209;        22252.45]
+[   0.002s] Solution has               num          max          sum
+[   0.002s] Col     infeasibilities      3         1692         1741
+[   0.002s] Integer infeasibilities      0            0            0
+[   0.002s] Row     infeasibilities    292         6228    1.803e+05
+[   0.002s] Row     residuals            0            0            0
+[   0.002s] Attempting to find feasible solution by solving LP for user-supplied values of discrete variables
+[   0.032s] Presolving model
+[   0.078s] Problem status detected on presolve: Infeasible
+[   0.078s] Model status        : Infeasible
+[   0.078s] Objective value     :  0.0000000000e+00
+[   0.078s] HiGHS run time      :          0.08
+[   0.109s] Presolving model
+[   0.823s] 12066 rows, 49875 cols, 137562 nonzeros 0s
+[   1.602s] 11474 rows, 22115 cols, 96578 nonzeros 1s
+[   2.400s] 10598 rows, 21281 cols, 84053 nonzeros 2s
+[   2.426s] Presolve reductions: rows 10598(-6766); columns 21281(-36103); nonzeros 84053(-107189) 
+[   2.449s] 
+Solving MIP model with:
+   10598 rows
+   21281 cols (1624 binary, 808 integer, 764 implied int., 18085 continuous, 0 domain fixed)
+   84053 nonzeros
+[   2.471s] 
+Src: B => Branching; C => Central rounding; F => Feasibility pump; H => Heuristic;
+[   2.471s]      I => Shifting; J => Feasibility jump; L => Sub-MIP; P => Empty MIP; R => Randomized rounding;
+[   2.471s]      S => Solve LP; T => Evaluate node; U => Unbounded; X => User solution; Y => HiGHS solution;
+[   2.471s]      Z => ZI Round; l => Trivial lower; p => Trivial point; u => Trivial upper; z => Trivial zero
+[   2.471s] 
+        Nodes      |    B&B Tree     |            Objective Bounds              |  Dynamic Constraints |       Work      
+Src  Proc. InQueue |  Leaves   Expl. | BestBound       BestSol              Gap |   Cuts   InLp Confl. | LpIters     Time
+
+[   2.471s]          0       0         0   0.00%   -3239139.82821  inf                  inf        0      0      0         0     2.4s
+[   2.966s]  R       0       0         0   0.00%   9294365.512875  9294503.338251     0.00%        0      0      0      2261     2.9s
+[   2.974s]          1       0         1 100.00%   9294365.512875  9294503.338251     0.00%        0      0      0      2261     2.9s
+[   2.974s] 
+Solving report
+[   2.974s]   Status            Optimal
+  Primal bound      9294503.33825
+  Dual bound        9294365.51288
+  Gap               0.00148% (tolerance: 0.1%)
+[   2.974s]   P-D integral      2.6275013634e-07
+[   2.974s]   Solution status   feasible
+[   2.974s]                     9294503.33825 (objective)
+                    0 (bound viol.)
+                    4.4408920985e-16 (int. viol.)
+                    0 (row viol.)
+[   2.974s]   Timing            2.89
+[   2.974s]   Max sub-MIP depth 0
+  Nodes             1
+[   2.974s]   Repair LPs        0
+[   2.974s]   LP iterations     2261
+[   2.974s]                     0 (strong br.)
+                    0 (separation)
+                    0 (heuristics)
