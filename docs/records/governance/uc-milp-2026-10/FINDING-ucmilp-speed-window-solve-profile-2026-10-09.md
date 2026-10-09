@@ -31,7 +31,19 @@ on every later window is a *different problem* (its carried state changed), so o
 schedules diverge for reasons that have nothing to do with the optimum. The gate this record
 uses is **paired**: the arm solves the base run's exact window problems (same carried state,
 `UcStage.run(pin=...)`) and must return the same objective to the gap on every one of them.
-Result: §3 (TBD-EQ). L3 wall row at the final SHA: §4 (TBD-L3).
+**Gate result (§3): the lean path returns the same optimum as the uc-1.1 path on all 62 paired
+window problems** (largest relative objective delta 8.9e-4, 0 windows beyond the 1e-3 gap; July
+identical to machine precision), at −23 % wall in January and −7 % in July.
+
+**The ceiling is not reached (§4).** The full-year L3 row at the final SHA reads **7.10×** the
+shard's own P0 + P1 (UC Σ 1,144.5 s over 365 windows, mean 3.07 s, every window Optimal at the
+root), against 6.9× for the uc-1.1 path in the UC-2-SPP shard. Of the stage, **MIP presolve is
+803 s (70 %)**, the root LP 157 s, the tail 138 s, the Python side 24 s. Presolve alone is 4× the
+baseline, so no setting of the search (heuristics, restarts, threads, horizon) can reach 3×: the
+stage cannot arm for SPP at this structure. The next lever is the presolve cost itself —
+presolve removes 63 % of the window's columns and 37 % of its rows at 2.2 s per window; building
+the window without those fixed columns (an exact transformation, inside `model/uc/window.py`)
+is the in-lane candidate, E10 month-parallel the owner's (§4.2).
 
 ## 1. Facts
 
@@ -102,11 +114,101 @@ restart off, symmetry on** (`model/uc/solve.py::UC_SOLVER_PRESETS`); the arms' s
 
 ## 3. The equivalence gate (paired; SPP 2020 January + July at `5dc76955`)
 
-TBD-EQ
+Shard `session_01XQnF2Nmhz65LrZQ91JPgtc`, branch `claude/ucmilp-bench-spp-2020-L2-equiv`
+`71f3f861`; capture 177 s. `base` = the registry default (`lean`), rolling, recording its
+handed-over state at every 24-hour frontier; every other arm solves the base run's exact window
+problems (`UcStage.run(pin=...)`) and is compared window by window. 62 windows (31 + 31).
+
+| arm | what | wall s Jan / Jul | MILP Σ s | presolve Σ | pre-root Σ | root LP Σ | tail Σ | kept `u` = base | max rel Δobj | windows > gap | Σ (arm − base) objective |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| **base = lean** | presolve on; fj, LP heuristics, restart off | **137.0 / 116.4** | 245.7 | 176.0 | 1.6 | 33.0 | 32.3 | — | — | — | — |
+| legacy | the uc-1.1 path (`highs_default`) | 177.1 / 125.4 | 295.0 | 167.1 | 26.1 | 31.7 | 67.6 | 55 / 62 | **8.9e-4** | **0** | +$437 Jan, +$0.0 Jul |
+| prefix | `uc_prefixing=true` (E5; 984 on / 580 off fixed) | 107.6 / 105.7 | 205.9 | 153.0 | 1.4 | 27.3 | 21.8 | 39 / 62 | 9.6e-4 | 0 | +$9,073 Jan, +$1,111 Jul |
+| probelift | `mip_lifting_for_probing=0` | 341.0 / 289.3 | 621.9 | 203.2 | 1.5 | 128.0 | 286.2 | 1 / 62 | 36 | 61 | +$25.4 M Jan, +$230 M Jul |
+| rulelog | `presolve_rule_logging=true` (+ raw log dump) | 137.6 / 112.6 | 242.0 | 170.9 | 1.7 | 33.4 | 33.2 | 62 / 62 | 0.0 | 0 | 0 |
+
+Reading:
+
+* **Gate: PASS.** On the same window problems the uc-1.1 path and the lean path return the same
+  objective to the declared gap on every one of 62 windows (January: 5 windows differ, the
+  largest by 8.9e-4 relative, the lean path's incumbent the better one by $437 over the month;
+  July: bit-identical objectives). The kept `u` differs in 7 of 62 windows (58 cluster-hours) —
+  the within-gap ties the headline describes. `rulelog` (the same path plus logging) reproduces
+  base bit for bit, which is the harness's own control: a paired arm with an identical path
+  reads 62/62, 0.0.
+* **Wall: lean −23 % (January) / −7 % (July)** against the uc-1.1 path in the same container;
+  MILP seconds −17 % over the two months. The saving is the tail (67.6 → 32.3 s) and the
+  pre-root heuristics (26.1 → 1.6 s); presolve and the root LP are untouched.
+* **E5 pre-fixing: within the gap, but one-sided.** 0 windows beyond the gap, yet the objective
+  is worse than base in 22 of 62 windows and better in none (+$9,073 over January, +$1,111 over
+  July; largest 9.6e-4 relative, just under the bar). Fixing a cluster on or off is a restriction,
+  and it bites — the "reachability" rule is conservative to the gap tolerance, not exact. It is a
+  wall lever (−16 % against lean here, −33 % against the uc-1.1 path), not an optimum-preserving
+  one; the DESIGN's "schedule equality" bar is not met and the default stays `False`. Its arming
+  is a declared PRECOMMIT choice for an A/B lane, with this one-sidedness stated.
+* **`mip_lifting_for_probing=0` is a HiGHS anomaly, not a lever.** On the same window problems
+  HiGHS 1.14.0 returns objectives 8–60 % WORSE than base while reporting a gap of 5.7e-7, i.e. it
+  proves optimality of a worse point: the option changes what the presolved model is, not how it
+  is searched. Wall 2.5× worse as well. Reported here so no later lane touches it; a HiGHS
+  upstream report is the desk's call. (The `presolve_rule_logging` option printed no rule
+  statistics in this HiGHS build; the raw log is on the shard branch.)
+* The paired harness is the reusable artifact: `rung_l2` with `paired=True` (the default) is how
+  any later solver-path change proves it moved wall and not the optimum.
 
 ## 4. The L3 wall row (SPP 2020, full year, at `5dc76955`)
 
-TBD-L3
+Shard `session_017j3ggXTYLqFXGm78xxXM2v`, branch `claude/ucmilp-bench-spp-2020-L3-speed`
+`2c95fad3`; `replay_keeper.py results/calibration/closeout_spp_nuc_span --years 2020 --set
+unit_commitment_milp=true` at the lean default; 4 cores, `MARKET_SIM_HIGHS_THREADS=1`.
+
+### 4.1 GATESPEC §6.1 row (denominator = the shard's own P0 + P1, the UC-2-SPP PRECOMMIT §5 proxy)
+
+| ISO-year | baseline P0+P1 s | P0 s | UC Σ s (windows, mean, p95 MILP s) | P1 s | total s | **ratio** | integers/window | nodes p50/p95 | gap p95 | time-limit hits | peak RSS GB |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| SPP 2020 (lean, `5dc76955`) | 199.4 | 100.6 | 1,144.5 (365, 3.07, 4.28) | 98.8 | 1,415.0 | **7.10** | 3,312 | 1 / 1 | 5.5e-4 | 0 | 5.09 |
+| SPP 2020 (uc-1.1 path, `ae224faf`, UC-2-SPP shard) | 198.9 | 97.7 | 1,106.9 (365, 2.97, 4.23) | 101.2 | 1,367.1 | 6.9 | 3,312 | 1 / 1 | 5.7e-4 | 0 | 5.09 |
+
+Phase timing line: `data_prep=16.7s solve_p0=100.6s markup=1164.4s solve_p1=98.8s
+results_write=34.5s total=1415.0s (markup: seam=1147.6s …)`. 365 / 365 windows Optimal.
+
+Where the 1,144.5 s go (`summary.phase_sums`): **presolve 803.0 s (70 %)**, root LP 157.3 s
+(14 %), post-root tail 137.8 s (12 %; 5,665 separation and 1,231 strong-branching LP
+iterations, 0 heuristic), pre-root 8.4 s, HiGHS setup/report 12.6 s, Python side 24.3 s (UC rows
+15.5, slicing 4.4, `setSolution` 1.8, LP build 1.4, extract 1.1). Per window: presolve p50 2.20 s
+/ p95 2.49 s; root LP p50 0.42 s; tail p50 0.008 s / p95 1.50 s; MILP p50 2.81 s / p95 4.27 s.
+Incumbent sources: randomized rounding first in 318 of 365 windows, the node evaluation itself
+in 44.
+
+### 4.2 Reading, and the next lever
+
+* **Target ≤ 3× not met; best measured ratio 7.10×.** The year-level number is not better than
+  the uc-1.1 path's 6.9× measured in another container, although the paired in-container
+  comparison (§3) puts the lean path 17 % faster on MILP seconds over two months. The two
+  containers agree on P0 + P1 to 0.3 % but the identical January computation (uc-1.1 path,
+  31 windows) took 159.7 s in the profile shard and 173.3 s in the equivalence shard (+8.5 %):
+  cross-container noise is of the order of the lean saving, and the saving is on the smallest
+  part of the stage.
+* **The ceiling is structurally out of reach of any search setting.** Presolve alone (803 s) is
+  4.0× the baseline; with the root LP and the tail at zero the stage would still read ≥ 5.1×. To
+  reach 3× the stage must cost ≤ 399 s, i.e. ≤ 1.09 s per window, which means presolve must fall
+  by ~4×. Nothing in the heuristic, restart, symmetry, thread or horizon space does that (§1.1,
+  §3), and presolve off makes the root LP 4.5× dearer (§1.1).
+* **Next lever, in-lane (recommended): the slim window.** Presolve removes 35,909 of 57,384
+  columns (63 %) and 6,381 of 17,380 rows (37 %) from window 0 in 2.7 s (`rulelog` raw log) —
+  the pinned budget units (bounds fixed at their P0 dispatch), zero-availability units,
+  zero-CF renewable hours, and the rows those columns empty. Dropping fixed columns BEFORE
+  HiGHS, with each fixed column's contribution moved into its rows' bounds, is an exact
+  transformation (the same LP, the same optimum) that `model/uc/window.py` can do on the handle
+  the production builder returns (`deleteCols` + `changeRowsBounds` + an index map for the
+  extract and the warm vector) without touching `model/lp`. What it buys is a measurement for a
+  shard, not a prediction: HiGHS would still presolve the remaining 21 k columns.
+* **Next lever, owner card: E10 month-parallel** (rule-36 amendment), which multiplies
+  throughput without changing the per-window cost. **Not** E2: a 72-hour window costs the same
+  wall for half the windows (§1.1).
+* **Not a lever:** `mip_lifting_for_probing` (§3), `presolve=off` (§1.1), threads (§1.1).
+
+The L3 bundle (dispatch, sidecars) stayed in the shard container (a bench, never registrable);
+only `uc_solve_log_2020.json`, `l3.json`, `wall_table.md` and the logs were pushed.
 
 ## 5. What landed (G-DRIFT: every hunk inside the gate-on path; goldens untouched)
 
@@ -139,12 +241,24 @@ TBD-L3
 | shard | session | SHA | branch (transport) | state |
 |---|---|---|---|---|
 | L2 profile, Jan, 10 arms | `session_0151fzU7u47JRsH9vhuh24ir` | `84e928ef` | `claude/ucmilp-bench-spp-2020-L2-speed` `f213b765` | fetched, verified, archived |
-| L2 paired equivalence, Jan + Jul | `session_01XQnF2Nmhz65LrZQ91JPgtc` | `5dc76955` | `claude/ucmilp-bench-spp-2020-L2-equiv` | TBD-EQ |
-| L3 full year | `session_017j3ggXTYLqFXGm78xxXM2v` | `5dc76955` | `claude/ucmilp-bench-spp-2020-L3-speed` | TBD-L3 |
+| L2 paired equivalence, Jan + Jul | `session_01XQnF2Nmhz65LrZQ91JPgtc` | `5dc76955` | `claude/ucmilp-bench-spp-2020-L2-equiv` `71f3f861` | fetched, verified, archived |
+| L3 full year | `session_017j3ggXTYLqFXGm78xxXM2v` | `5dc76955` | `claude/ucmilp-bench-spp-2020-L3-speed` `2c95fad3` | fetched, verified, archived |
 
-Bench branches carry JSON, markdown and logs only (no dispatch bundle, no capture pickle);
-the owner may delete them once this PR merges (a session cannot, 403).
+Bench branches carry JSON, markdown and logs only (no dispatch bundle, no capture pickle; the
+equivalence shard's `replay/` slim P1 sidecars of the capture, ~10 MB, rode along under the
+block-D negation — a bench artefact, never registrable); the owner may delete the three
+branches once this PR merges (a session cannot, 403). None left alive.
 
 ## Log entry
 
-TBD-LOG
+- 2026-10-09 · UC-SPEED `session_01KhMnMmEfydP4sHykH9xrCS` (Fable) · `claude/ucmilp-speed-q8n` · zero LP in the
+  parent · three bench shards (L2 profile Jan 10 arms at `84e928ef`; L2 paired equivalence Jan + Jul at
+  `5dc76955`; L3 full year at `5dc76955`) · **the window's seconds are HiGHS's: presolve 70 % of the year's
+  stage, root LP 14 %, tail 12 %, build 1 %** · E6 not implemented (cannot help), E3 basis unreachable
+  (incumbent kept), E5 within gap but one-sided (+$9 k/month, default stays off), E7 −2 % (no knob), E2
+  same wall for half the windows · `uc_solver_preset` born at `lean` (presolve on; feasibility jump, LP
+  heuristics, root restart off): paired gate PASS (max rel Δobj 8.9e-4, 0/62 beyond gap), −23 % / −7 %
+  wall Jan / Jul in-container · **L3 SPP 2020 ratio 7.10× (target ≤ 3× not met; structural: presolve alone
+  4.0× the baseline)** · `mip_lifting_for_probing=0` returns worse optima at gap 0 (HiGHS anomaly, do not
+  use) · next lever: slim window (drop fixed columns before HiGHS, exact) in-lane; E10 month-parallel owner
+  card · PR "uc-milp UC-SPEED: window model reuse (wall)" · no promotion, no registration.
