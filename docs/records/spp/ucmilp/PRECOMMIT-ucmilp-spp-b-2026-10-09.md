@@ -1,5 +1,9 @@
 # PRECOMMIT — UC-2-SPP-B: pre-registered A/B of the MILP unit-commitment stage on every SPP backcast year with SPP's two conduct floors OFF, 2026-10-09
 
+> **STATUS: DRAFT, HELD (UC-DESK 18:01Z: "HOLD the shard launch … a second logical delta … I'm taking it to the owner as a card").** The seven shards
+> launched 18:08–18:10Z before the HOLD reached this session (18:14Z) were interrupted at 18:15Z and archived at 18:17Z with nothing pushed (Addendum B).
+> §1 now carries BOTH arm variants; which one is solved is the owner's ruling. No shard launches until it lands. Every other section is unchanged.
+
 **Written and pushed BEFORE any shard exists.** Every reading, bar, kill and budget below is fixed here and fails
 closed; nothing moves after a number comes in (GATESPEC §7.1; rule 1(c) by analogy). Lane `UC-2-SPP-B`
 (session `session_01N2LCxAQwPFjvYwCdSH4uCx`, Fable), branch `claude/ucmilp-2-spp-b-v3k` off `origin/main`
@@ -37,25 +41,26 @@ The config is different; the SPP `unit_commitment_milp` cell is re-entered on th
   (`82d6ee60`; PROBE `2026-10-05-ucmilp-spp-uc-b`), read into a scratch directory — never re-solved, never edited.
 - **Pin (every shard):** `6cf95135b8db1b827d55831d81df7870a76bf12c` = `origin/main` HEAD at session start
   (*closeout-ERCOT-w6*, PR #7216). `source_revision` is this full SHA, never a branch.
-- **Arm — ONE logical delta (UC on, conduct floors off):** `replay_keeper.py results/calibration/closeout_spp_nuc_span --years <y>
-  --set unit_commitment_milp=true --set st_gas_mustrun_per_plant=false --set coal_sync_srmc_tranche=false --set coal_mustrun_per_plant=false`.
-  Everything else — the recipe, `uc_*` at their declared defaults (table below), the keeper's authorized price tuning
-  (`offer_curve_by_group` all bands 0.93), pricing (R3: markup zeroed on integer clusters, uplift sidecar), rule 20 (R4: MECH 28
-  reported, not budgeted) — is identical to arm A.
+- **Arm — ONE logical delta (UC on, conduct floors off). Two variants, written out; the owner picks one (card D-5b):**
 
-  | field | keeper | arm B | what it is (on the objects at the pin) |
-  |---|---|---|---|
-  | `unit_commitment_milp` | absent (off) | `true` | the UC stage (MECH 28) |
-  | `st_gas_mustrun_per_plant` | `true` | **`false`** | D-2 id 16 `st_gas_mustrun_per_plant`: the per-plant measured ST_GAS online floor (control 1.96–3.02 TWh/yr forced; 20.9 % of class over the span, UC-0 FINDING §4). Exact field, exact off-value |
-  | `coal_sync_srmc_tranche` | `true` | **`false`** | **the registered off-switch of D-2 id 3 `coal_mustrun`** (control LIG 0.82–1.97, PRB 3.36–7.24 TWh/yr forced; LIG 15.3 % / PRB 7.2 % of class). The forced floor is `coal_sync_pmin_mw`, set at `data/fleet/assembly.py:1645` `sync_floor = cap if (coal_sync and suffix in ("mustrun","sync")) else 0.0` with `coal_sync = coal_sync_srmc_tranche ∧ coal_mustrun_online_pmin`; `arrays.py:4015–4032` raises `min_gen` under `MECH_COAL_MUSTRUN` only from that field. Off ⇒ no MECH 3 row can exist |
-  | `coal_mustrun_per_plant` | `true` | **`false`** | the field the charter names. **Byte-inert for SPP**: its only consumers (`assembly.py:489`, `offer_curves.py:1186`) read the hard-coded ERCOT map `COAL_MUSTRUN_BY_PLANT` (`eia860.py:4601`), which holds none of SPP's 35 coal plant codes (checked against the keeper's `unit_marginal_2019`); SPP's coal must-run % comes from `thermal_tranches_SPP.csv` through `thermal_tranche_overrides` whatever the flag reads. Set to `false` so the recipe reads "both floor fields off" literally; it moves nothing |
-  | `coal_mustrun_online_pmin` | `true` | `true` (kept) | sizes the coal min-load band from the artifact's `mustrun_online_pct` — band SIZING, not forcing; kept so the offer stack above the band is identical to the keeper's |
-  | `coal_sync_ensemble_level`, `mustrun_window_commitment_grain`, `mustrun_commitment_feasibility_clip` | `true` | `true` (kept, now inert) | each shapes a floor that no longer exists (the ensemble level lives inside the `coal_sync` block; the grain and the clip act on the per-plant CC/ST_GAS floors). Left as the keeper has them so the delta stays the floors |
-  | `uc_window_hours` / `uc_lookahead_hours` | — | 24 / 12 | DESIGN §3 |
-  | `uc_mip_rel_gap` · `uc_window_time_limit_s` | — | 1e-3 · 600 | DESIGN §3 (declared placeholder; D-2 now ruled 3×, §5) |
-  | `uc_integer_scope` / `uc_noload_source` / `uc_boundary_mode` / `uc_prefixing` | — | `physics` / `campd_regression` / `p0_targets` / `false` | DESIGN §1.1, §1.2, §2.2, §2.3 |
+  **V1 — registered fields only:** `replay_keeper.py results/calibration/closeout_spp_nuc_span --years <y> --set unit_commitment_milp=true
+  --set st_gas_mustrun_per_plant=false --set coal_sync_srmc_tranche=false --set coal_mustrun_per_plant=false`. Removes the MECH 16 floor and the
+  MECH 3 floor, **and** re-prices the PRB `_sync` band (the side-effect quantified in Addendum B — a second logical delta under GATESPEC §5's
+  one-delta rule, which is why this is held). Needs no code change; solvable at the pin today.
 
-- **Disclosed side-effect of the coal off-switch (not a tuning; the only registered route).** With `coal_sync_srmc_tranche` off the
+  **V2 — one delta, new field:** `--set unit_commitment_milp=true --set st_gas_mustrun_per_plant=false --set <new field>=true`, where the new
+  field (proposed name `coal_sync_floor_release: bool = False`, default off, byte-identical off, in `_CACHE_KEY_OPTIONAL_FIELDS`) makes
+  `assembly.py:1645` read `sync_floor = 0.0` while `coal_sync` stays True — the forcing goes, the `_mustrun`/`_sync` split and its pricing stay.
+  Rule 19: it removes a mechanism, adds none. Rule 28: a solve-affecting `ScenarioConfig` field ⇒ its row in `mechanism-matrix.js` and a cell in
+  every ISO shard, in the PR that adds it (CI `check_mechanism_matrix.py`), plus a unit test that the fleet is byte-identical with it off and
+  that `coal_sync_pmin_mw == 0` on every coal row with it on. That PR is `src/` work outside this lane's charter and must merge (or be pinned as
+  the engine SHA was for arm A, owner ruling R6) before the shards launch; the pin then moves and §8's G-DRIFT is redone in an addendum.
+
+  Under either variant everything else — the recipe, `uc_*` at their declared defaults (table below), the keeper's authorized price tuning
+  (`offer_curve_by_group` all bands 0.93), pricing (R3: markup zeroed on integer clusters, uplift sidecar), rule 20 (R4: MECH 28 reported, not
+  budgeted) — is identical to arm A.
+
+- **Disclosed side-effect of the V1 coal off-switch (not a tuning; the only registered route; quantified zero-LP in Addendum B).** With `coal_sync_srmc_tranche` off the
   keeper's split of each coal plant's min-load band into a fuel-free contracted `_mustrun` tranche and a spot `_sync` tranche priced
   at full SRMC collapses back to one fuel-free `_mustrun` band (`assembly.py:633–641`). In SPP that re-prices the PRB `_sync` share —
   783 MW of the 4,895 MW PRB min-load band (16 %), 4.8 TWh/yr dispatched in the keeper; lignite carries no `_sync` — from full SRMC to
@@ -182,9 +187,9 @@ artifact stops and reports. PENDING > 45 min: archive and relaunch.
 
 Nothing is LIVE for SPP. No control solve is owed (rule 29(b)); the keeper bundle is the control.
 
-## 9. Solve plan (rules 16, 32–36)
+## 9. Solve plan (rules 16, 32–36) — HELD until the D-5b ruling; the `--set` list and the pin follow the chosen variant
 
-- **Seven shards, 2019–2025**, one year each, branch `claude/ucmilp-spp-b-<y>`, out-dir `results/calibration/ucmilp_spp_b_<y>`, prompts from
+- **Seven shards, 2019–2025**, one year each, branch `claude/ucmilp-spp-b-<y>`, out-dir `results/calibration/ucmilp_spp_b_<y>`, prompts (V1 as committed; V2 regenerated at the new pin) from
   `scripts/shard_prompt.py --iso SPP --all-years --sha 6cf95135b8db1b827d55831d81df7870a76bf12c --lane ucmilp-spp-b --bundle
   results/calibration/closeout_spp_nuc_span --set unit_commitment_milp=true --set st_gas_mustrun_per_plant=false --set coal_sync_srmc_tranche=false
   --set coal_mustrun_per_plant=false --budget 59 --note "ucmilp-spp-b: …"`, each appended with: confirm the three UC files and
@@ -222,3 +227,38 @@ Seven shards launched 18:08–18:10Z at `6cf95135b8db1b827d55831d81df7870a76bf12
 `session_01Ucr9zKmeBjgoqaeVuygUku` 2025. The floor-mapping finding (§1) was sent to UC-DESK at 17:58Z before launch; no reply had
 arrived at launch, so the arm stands as written (the desk may still re-rule before the legs are scored; a re-ruling after launch is
 recorded here and the legs are not re-used for a different config).
+
+## Addendum B (2026-10-09 18:15–18:40Z, before any number exists) — HOLD, the interrupted launch, and the re-pricing quantified (zero LP)
+
+**HOLD.** UC-DESK's reply to this lane's floor-mapping message (queued 18:01Z, delivered 18:14Z): *"HOLD the shard launch. coal_sync_srmc_tranche=false
+is a second logical delta: it re-prices ~16 % of the PRB min-load band toward zero fuel, which biases the arm toward coal, the opposite of H1/H2. That
+breaks GATESPEC §5's one-delta rule. I'm taking it to the owner as a card now."* The seven shards had launched at 18:08–18:10Z (Addendum A); all seven
+were interrupted at 18:15Z and archived at 18:17Z. **None pushed a branch** (`git ls-remote --heads origin 'claude/ucmilp-spp-b-*'` is empty); nothing
+was fetched, composed or scored; no number exists. The desk asked for (a) this PRECOMMIT as a DRAFT carrying both arm variants — done above (§1
+V1/V2) — and (b) the offer-stack delta of `coal_sync_srmc_tranche=false` with the gate off, which follows. Launch waits for the owner's card.
+
+**(b) The re-pricing alone, from the keeper's own `hourly/unit_marginal_<y>.parquet` (P1 offer `mc`, `cap_mw`, `mw` per unit-hour; zero LP, no rebuild).**
+With `coal_sync_srmc_tranche=false` every `_sync` tranche (spot share of the coal min-load band, priced at full SRMC) merges into the plant's fuel-free
+`_mustrun` tranche (VOM + carbon + NOx; SPP 2019: $4.50/MWh flat on 8 of 9 plants). The `mc` is a per-unit offer constant across the year, so the $/MWh
+moved is the same in every hour band (trough = off-peak = peak); what varies by band is the CC offer it is measured against. "Crosses" = the `_sync`
+offer sits above the cheapest offered CC_REGULAR tranche before and below it after. Nine PRB plants carry a `_sync` band (Jeffrey EC 272 MW, La Cygne
+169, Iatan 144, Nearman/6068 137, 1250 36, 6139 10, 56564 8, 6138 6, Lawrence/60 1); lignite none.
+
+| year | `_sync` MW (9 PRB plants) | `_sync` TWh in keeper / cap-factor | `_sync` offer → re-priced, cap-weighted $/MWh | cheapest CC offer, trough h0–5: min / q25 $/MWh | share of hours `_sync` above CC-min BEFORE | **share crossing below CC-min AFTER** | share crossing below CC-q25 | hours `_sync` was marginal |
+|---|---|---|---|---|---|---|---|---|
+| 2019 | 783 | 4.83 / 0.986 | 20.23 → 4.24 (Δ −14.80) | 14.77 / 18.31 | 0.925 | **0.823** | 0.672 | 71 |
+| 2020 | 773 | 4.59 / 0.974 | 20.27 → 4.27 (Δ −14.99) | 13.34 / 16.34 | 0.972 | **0.861** | 0.762 | 52 |
+| 2021 | 782 | 5.07 / 0.983 | 19.10 → 4.29 (Δ −13.78) | 21.88 / 38.60 | 0.756 | **0.672** | 0.104 | 39 |
+| 2022 | 782 | 5.07 / 0.980 | 23.47 → 4.24 (Δ −17.49) | 22.03 / 45.97 | 0.638 | **0.527** | 0.000 | 25 |
+| 2023 | 735 | 4.51 / 0.979 | 21.77 → 4.22 (Δ −15.85) | 16.04 / 20.86 | 0.981 | **0.870** | 0.604 | 32 |
+| 2024 | 798 | 4.31 / 0.975 | 21.04 → 4.27 (Δ −15.52) | 15.89 / 19.41 | 0.932 | **0.823** | 0.679 | 21 |
+| 2025 | 798 | 4.92 / 0.987 | 20.94 → 4.34 (Δ −15.64) | 19.38 / 25.16 | 0.716 | **0.614** | 0.179 | 47 |
+
+**Reading.** The re-pricing moves **735–798 MW** of PRB from a **$19–23/MWh** spot offer to a **$4.2–4.5/MWh** fuel-free offer (Δ ≈ **−$14 to −$17.5/MWh**),
+in every hour. Against SPP's CC fleet that is merit-order-relevant exactly where the hypothesis is tested: in the low-gas years (2019, 2020, 2023, 2024)
+the `_sync` band sits above the cheapest CC tranche in 92–98 % of hours today and would fall below it in **82–87 %** of hours (below CC's q25 offer in
+60–76 %). In the high-gas years (2021, 2022) CC offers are higher, so the crossing is 53–67 % at CC-min and 0–10 % at CC-q25; 2025 is in between
+(61 % / 18 %). In the keeper the band is forced anyway (cap-factor 0.97–0.99 under the MECH 3 floor), so the re-pricing changes little while the
+floor stands; with the floor removed and the UC deciding commitment, a fuel-free 780 MW is a band the UC will keep online through the trough instead
+of backing down at $20 — a coal-ward bias of up to ≈ 2 TWh/yr (the Addendum-free bound in §1) concentrated in trough hours. **Conclusion: the desk's
+objection holds; V1 is two deltas. V2 (a field that zeroes `sync_floor` and keeps the split) is the one-delta arm.** Which is solved is the owner's card.
