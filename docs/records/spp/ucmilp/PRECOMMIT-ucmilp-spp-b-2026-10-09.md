@@ -212,3 +212,13 @@ Nothing is LIVE for SPP. No control solve is owed (rule 29(b)); the keeper bundl
 Everything in `docs/mechanism-testing-matrix.md` §5.7's DO-NOT-REDO (curtailment ceiling, gas bridge, offer-band retunes); `spp_commitment_posture`
 (R) is not re-run in any form; no `uc_*` value other than the declared defaults; no further `--set` beyond the four above; no control solve; no
 re-solve of arm A; no sweep of which floor to remove (the ruling removes both).
+
+## Addendum A (2026-10-09 18:10Z, before any number exists) — launch record
+
+PRECOMMIT pushed as `fb38c1bf` (blobs verified: PRECOMMIT `1660ebdd…` 214 lines, prompts `7d90b10d…` 228 lines) **before** any shard.
+Seven shards launched 18:08–18:10Z at `6cf95135b8db1b827d55831d81df7870a76bf12c`, model `claude-opus-5-5`, tag `ucmilp:UC-2-SPP-B-shard`:
+`session_01RzxGcy7V73PvDkyYYVFPpX` 2019 · `session_01Jo1Vb2KagT3KCaR8Qujdfw` 2020 · `session_018cHDvhzMZAo46DjRRG5GXE` 2021 ·
+`session_014X7kCzmZ1acusvESw62sRw` 2022 · `session_01Nu2YzSrXyvMu97NFYaidmU` 2023 · `session_01YKxBH98RAXEcKXTmt3c2HK` 2024 ·
+`session_01Ucr9zKmeBjgoqaeVuygUku` 2025. The floor-mapping finding (§1) was sent to UC-DESK at 17:58Z before launch; no reply had
+arrived at launch, so the arm stands as written (the desk may still re-rule before the legs are scored; a re-ruling after launch is
+recorded here and the legs are not re-used for a different config).
