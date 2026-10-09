@@ -3427,7 +3427,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "uc_boundary_mode": "'p0_targets'",
     "uc_prefixing": "False",
     # Added by lane UC-SPEED WITH the field (the nyiso-119 discipline).
-    "uc_solver_preset": "'highs_default'",
+    "uc_solver_preset": "'lean'",
 }
 
 
@@ -23112,15 +23112,16 @@ class ScenarioConfig:
     uc_prefixing: bool = False
     # The window MILP's HiGHS solver path (lane UC-SPEED, plan E6/E7; owner
     # ruling D-2 "Keep 3x; fund speedup", 2026-10-09): "highs_default" = the
-    # uc-1.1 path (MIP presolve on, every HiGHS heuristic at its default);
-    # "lean" = presolve off, feasibility-jump and LP heuristics off (the window
-    # LP is a tight dispatch LP presolve barely reduces, the carried incumbent
-    # and HiGHS's root rounding supply the solution). A preset moves wall
-    # clock, never the optimum: the same schedule to uc_mip_rel_gap
-    # (model/uc/solve.py::UC_SOLVER_PRESETS; FINDING-ucmilp-speed-window-
-    # solve-profile-2026-10-09.md, the equivalence gate). Admissible names:
-    # UC_SOLVER_PRESET_NAMES.
-    uc_solver_preset: str = "highs_default"
+    # uc-1.1 path (MIP presolve on, every HiGHS heuristic and the root restart
+    # at its default); "lean" = presolve on (it pays for itself), the
+    # feasibility-jump and LP heuristics off, the root restart off (the carried
+    # incumbent and HiGHS's root rounding supply the solution). A preset moves
+    # wall clock, never the optimum: the same window problem solves to the
+    # same objective within uc_mip_rel_gap (model/uc/solve.py::
+    # UC_SOLVER_PRESETS; FINDING-ucmilp-speed-window-solve-profile-2026-10-09.
+    # md, the paired equivalence gate). Born at "lean" and registered there, so
+    # no committed key moves. Admissible names: UC_SOLVER_PRESET_NAMES.
+    uc_solver_preset: str = "lean"
 
     def __post_init__(self) -> None:
         # YAML round-trip type repair: YAML has no tuple type, so a config

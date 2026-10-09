@@ -47,7 +47,13 @@ class UcSchedule:
             keeps (the longest min-up / min-down among the integer clusters).
     """
 
-    def __init__(self, params: UcClusterParams, T: int, hist_hours: int) -> None:
+    def __init__(
+        self,
+        params: UcClusterParams,
+        T: int,
+        hist_hours: int,
+        record_states: bool = False,
+    ) -> None:
         self.params = params
         self.int_idx = params.integer_clusters
         self.n_int = int(self.int_idx.size)
@@ -60,6 +66,12 @@ class UcSchedule:
         self.soc_prev: np.ndarray | None = None
         self.kept_until = 0
         self.windows: list[dict] = []
+        #: ``record_states``: the ``(dispatch_prev, soc_prev)`` handed to the
+        #: window starting at each kept frontier, keyed by that frontier —
+        #: what a PAIRED bench run replays so an arm solves the same window
+        #: problems as the base arm (``UcStage.run(pin=...)``).
+        self.record_states = bool(record_states)
+        self.prev_states: dict[int, tuple[np.ndarray, np.ndarray | None]] = {}
 
     # ------------------------------------------------------------------ keep
     def keep(self, result: WindowResult, t0: int, keep_hours: int) -> int:
@@ -77,6 +89,26 @@ class UcSchedule:
             else None
         )
         self.kept_until = t1
+        if self.record_states:
+            self.prev_states[t1] = (self.dispatch_prev, self.soc_prev)
+        return t1
+
+    def keep_from(self, pin: "UcSchedule", t0: int, keep_hours: int) -> int:
+        """Advance along ``pin``'s kept schedule and states instead of a solved window (paired runs)."""
+        t1 = min(t0 + keep_hours, self.T, pin.kept_until)
+        if self.n_int:
+            self.u[:, t0:t1] = pin.u[:, t0:t1]
+            self.v[:, t0:t1] = pin.v[:, t0:t1]
+            self.w[:, t0:t1] = pin.w[:, t0:t1]
+        if t1 not in pin.prev_states:
+            raise ValueError(
+                f"the pinned schedule recorded no state at hour {t1}; build it "
+                "with record_states=True"
+            )
+        self.dispatch_prev, self.soc_prev = pin.prev_states[t1]
+        self.kept_until = t1
+        if self.record_states:
+            self.prev_states[t1] = (self.dispatch_prev, self.soc_prev)
         return t1
 
     def state_for(
@@ -106,12 +138,13 @@ class UcSchedule:
                 else None,
             )
         lo = max(0, t0 - self.H)
+        d_prev, s_prev = self.prev_states.get(t0, (self.dispatch_prev, self.soc_prev))
         return WindowState(
             u_prev=self.u[:, t0 - 1].astype(float),
             v_hist=self.v[:, lo:t0].astype(float),
             w_hist=self.w[:, lo:t0].astype(float),
-            soc_prev=self.soc_prev,
-            p_prev=self.dispatch_prev,
+            soc_prev=s_prev,
+            p_prev=d_prev,
             avail_prev=np.asarray(fleet.availability, dtype=float)[:, t0 - 1],
         )
 

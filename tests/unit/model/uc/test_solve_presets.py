@@ -104,8 +104,6 @@ def test_phase_profile_sums_to_the_solve_and_names_the_path(uc_params_frame):
         )
         assert abs(seconds - res.milp_s) <= 0.02 + 1e-3 * res.milp_s
         assert ph["presolve_s"] <= ph["setup_s"] + 1e-9
-        if preset == "lean":
-            assert ph["presolve_s"] == 0.0
         assert ph["lp_iters"] >= ph["lp_iters_sep"] + ph["lp_iters_heur"]
         assert isinstance(ph["incumbent_src"], str)
         assert res.lp_build_s <= res.build_s
@@ -166,5 +164,48 @@ def test_harness_thread_count_reaches_the_handle(uc_params_frame):
     ucs.apply_solver_options(w.h, opts)
     assert w.h.getOptionValue("threads")[1] == 2
     assert w.h.getOptionValue("parallel")[1] == "on"
-    assert w.h.getOptionValue("presolve")[1] == "off"
+    assert w.h.getOptionValue("presolve")[1] == "on"
     assert w.h.getOptionValue("mip_heuristic_run_feasibility_jump")[1] is False
+    assert w.h.getOptionValue("mip_allow_restart")[1] is False
+    assert w.h.getOptionValue("mip_heuristic_effort")[1] == 0.0
+
+
+def test_paired_run_solves_the_base_runs_window_problems(
+    uc_params_frame, uc_results_root
+):
+    """A paired stage run (``pin``) advances along the base schedule and records,
+    per window, the same-problem objective delta and kept-``u`` agreement."""
+    from market_sim.pipeline.solve import run_energy_solve
+    from market_sim.pipeline.uc import take_uc_stages
+
+    T2 = 72
+    gens, fa, demand, mc, dk = toy_inputs(T2, day_mw=190.0)
+    cfg = ScenarioConfig(
+        iso="NEISO",
+        hours=T2,
+        unit_commitment_milp=True,
+        uc_window_hours=24,
+        uc_lookahead_hours=12,
+        uc_mip_rel_gap=GAP,
+    )
+    res = run_energy_solve(gens, fa, demand, mc, dk, cfg)
+    stage = take_uc_stages()[-1]
+    base = stage.run(
+        stage.fleet_in, np.asarray(res.mc_bid), write=False, record_states=True
+    )
+    assert set(base.prev_states) == {24, 48, 72}
+    base_obj = [w["objective"] for w in stage.log["windows"]]
+    stage.options = ucs.options_for_arm(
+        stage.options, **ucs.UC_SOLVER_PRESETS["highs_default"]
+    )
+    arm = stage.run(stage.fleet_in, np.asarray(res.mc_bid), write=False, pin=base)
+    assert np.array_equal(arm.u, base.u)  # advanced along the pin
+    wins = stage.log["windows"]
+    assert all(w["paired"] is not None for w in wins)
+    assert all(w["paired"]["u_kept_equal"] for w in wins)
+    for w, ob in zip(wins, base_obj):
+        assert abs(w["objective"] - ob) <= GAP * max(abs(ob), 1.0)
+    unrecorded = stage.run(stage.fleet_in, np.asarray(res.mc_bid), write=False)
+    with pytest.raises(ValueError, match="record_states"):
+        stage.run(stage.fleet_in, np.asarray(res.mc_bid), write=False, pin=unrecorded)
+    take_uc_stages()  # every run re-registers the stage; leave the deque empty

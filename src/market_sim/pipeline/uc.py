@@ -298,6 +298,8 @@ class UcStage:
         t_start: int = 0,
         t_end: int | None = None,
         write: bool = True,
+        record_states: bool = False,
+        pin: UcSchedule | None = None,
     ) -> UcSchedule:
         """Solve the rolling windows over ``[t_start, t_end)`` and stitch the schedule.
 
@@ -305,6 +307,13 @@ class UcStage:
         L2 rung solves one month at a time (``bench_uc_ladder.py``) and passes
         ``write=False`` (no checkpoint files). The first window's state comes from P0 at
         ``t_start - 1`` (cyclic for ``t_start == 0``, DESIGN section 2.2).
+
+        ``record_states`` keeps each window's handed-over state on the
+        schedule (``UcSchedule.prev_states``); ``pin`` makes this a PAIRED
+        run (bench only): every window takes its carried state from ``pin``
+        and the schedule advances along ``pin``, so each window is the same
+        problem the pinned run solved and ``windows[].paired`` records this
+        solver path's objective delta and kept-``u`` agreement against it.
         """
         t_end = self.T if t_end is None else min(int(t_end), self.T)
         t_init = (int(t_start) - 1) % self.T
@@ -323,7 +332,9 @@ class UcStage:
         p0_prices = np.asarray(r0.prices, dtype=float)
         u_init = units_online_from_dispatch(p, p0_dispatch[:, t_init])[k]
         hist = int(max(int(p.ut_h[k].max()), int(p.dt_h[k].max())) - 1) if k.size else 0
-        sched = UcSchedule(p, T, hist)
+        sched = UcSchedule(p, T, hist, record_states=record_states or pin is not None)
+        if pin is not None and not pin.prev_states:
+            raise ValueError("a paired run needs a pin built with record_states=True")
         # The structural floors' unit needs over the whole year (zero LP): each
         # window receives the slice just past its horizon — up to the longest
         # min-down minus one hour — for its look-ahead guard rows.
@@ -340,7 +351,7 @@ class UcStage:
             inputs = slice_window_inputs(
                 fleet_in, self.demand, self.dispatch_kwargs, t0, t1, p0_dispatch
             )
-            state = sched.state_for(
+            state = (pin if pin is not None and t0 > t_start else sched).state_for(
                 t0,
                 fleet_in,
                 u_init,
@@ -391,7 +402,20 @@ class UcStage:
                 t1=int(t1),
             )
             t_w4 = time.perf_counter()
-            kept_to = sched.keep(result, t0, W)
+            paired = None
+            if pin is not None:
+                kept_to = sched.keep_from(pin, t0, W)
+                n_k = kept_to - t0
+                paired = {
+                    "u_kept_equal": bool(
+                        np.array_equal(result.u[:, :n_k], pin.u[:, t0:kept_to])
+                    ),
+                    "u_cells_differ": int(
+                        np.sum(result.u[:, :n_k] != pin.u[:, t0:kept_to])
+                    ),
+                }
+            else:
+                kept_to = sched.keep(result, t0, W)
             phase = dict(result.phase or {})
             phase.update(
                 {
@@ -424,6 +448,7 @@ class UcStage:
                     "columns": int(result.columns),
                     "rows": int(result.rows),
                     "guard_rows": int(window._n_guard_rows),
+                    "paired": paired,
                 }
             )
             prev = result

@@ -70,7 +70,16 @@ def main(argv: list[str] | None = None) -> int:
         default="warm,prefix",
         help=(
             "L2 arms (comma list; base always runs): "
-            "warm,prefix,threads,legacy,lean,presolve,fj,lpheur,symmetry,restart,wide"
+            "warm,prefix,threads,legacy,lean,presolve,fj,lpheur,symmetry,restart,"
+            "probelift,rulelog,wide"
+        ),
+    )
+    ap.add_argument(
+        "--rolling",
+        action="store_true",
+        help=(
+            "L2: run every arm rolling instead of paired against base (paired = "
+            "each arm solves the base run's exact window problems)"
         ),
     )
     ap.add_argument("--months", default="1,7", help="L2 months (1-12)")
@@ -144,7 +153,9 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     months = tuple(int(m) for m in args.months.split(","))
     arms = tuple(a for a in args.arms.split(",") if a)
-    res = uc_bench.rung_l2(cap, out, months=months, arms=arms, **overrides)
+    res = uc_bench.rung_l2(
+        cap, out, months=months, arms=arms, paired=not args.rolling, **overrides
+    )
     for name, arm in res["arms"].items():
         for m in arm["months"]:
             print(

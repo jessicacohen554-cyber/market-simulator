@@ -8,25 +8,28 @@ Options come from the registry (``uc_mip_rel_gap``, ``uc_window_time_limit_s``,
 inherits that handle), unless a bench arm asks for another count
 (:attr:`UcSolveOptions.threads`, a harness argument).
 
-**Solver path (plan E6/E7 as measured by lane UC-SPEED, 2026-10-09).** The
+**Solver path (plan E3/E5/E6/E7 as measured by lane UC-SPEED, 2026-10-09).** The
 per-window wall is HiGHS's own work on the 36-hour MILP, not the model build
 (SPP 2020 L1: build 0.04 s, MILP 4.2 s; the production P1 slice of the same
-hours solves in 0.04 s). Inside ``run()`` the seconds go to MIP presolve, the
-LP-free feasibility-jump heuristic, the cold root LP and the rounding /
-LP-heuristic tail; every window of every SPP year solved at the root (nodes
-p50 = p95 = 1, UC-2-SPP RESULT section 0.2). :data:`UC_SOLVER_PRESETS` names
-the two solver paths the registry admits: ``highs_default`` (engine uc-1.1:
-presolve on, every HiGHS heuristic at its default) and ``lean`` (presolve off,
-the feasibility jump and the LP heuristics off — the window LP is a tight
-dispatch LP that presolve barely reduces, exactly the annual LP's
-``presolve=off`` reasoning in ``model/lp/model.py``, and the warm start plus
-HiGHS's root rounding supply the incumbent). A preset changes the solver's
-PATH, never the feasible set or the objective: the optimum it returns is the
-same to ``uc_mip_rel_gap`` (the equivalence gate of
-``FINDING-ucmilp-speed-window-solve-profile-2026-10-09.md``). A MIP root LP
-takes no user basis (measured: identical iteration counts with and without
-``setBasis``), so plan E3's "basis carry" cannot reach it; the carried
-incumbent (``setSolution``) is the warm start that exists.
+hours solves in 0.04 s). Measured on SPP 2020, January, 31 windows (the
+profile shard, FINDING-ucmilp-speed-window-solve-profile-2026-10-09.md): of
+160 s of ``run()``, MIP presolve 79 s, the LP-free feasibility jump 11 s, the
+root LP 15 s and the post-root tail (rounding, central rounding, sub-MIP,
+root restart with its second presolve) 53 s; every window solved at the root.
+Presolve PAYS for itself — off, the root LP costs 67 s and the tail 80 s — so
+it stays on. :data:`UC_SOLVER_PRESETS` names the two solver paths the
+registry admits: ``highs_default`` (engine uc-1.1: presolve on, every HiGHS
+heuristic and the root restart at its default) and ``lean`` (presolve on, the
+feasibility jump off, the LP heuristics off, the root restart off — the
+carried incumbent and HiGHS's root rounding supply the solution). A preset
+changes the solver's PATH, never the feasible set or the objective: for the
+same window problem the optimum it returns is the same to ``uc_mip_rel_gap``
+(the paired equivalence gate of the FINDING; a within-gap tie taken
+differently in one window changes every later window's inputs, so the rolling
+schedule hash is not the gate). A MIP root LP takes no user basis (measured:
+identical iteration counts with and without ``setBasis``), so plan E3's
+"basis carry" cannot reach it; the carried incumbent (``setSolution``) is the
+warm start that exists and is kept (off: +8 % wall).
 
 **Phase profile.** Every solve subscribes to HiGHS's log callback with a
 timestamp per line and parses the MIP log into :data:`PHASE_KEYS`
@@ -72,11 +75,13 @@ _PRIMAL_FEASIBLE = 2
 #:
 #: ``highs_default`` — engine uc-1.1's path: MIP presolve on (``solve_window``
 #: set it explicitly), every HiGHS heuristic at its shipped default.
-#: ``lean`` — presolve off, the feasibility-jump heuristic off, the LP-based
-#: heuristics (RINS / RENS / root reduced cost; ``mip_heuristic_effort`` 0) off;
-#: symmetry detection and root restarts stay at HiGHS's default. Composition
-#: fixed by the UC-SPEED profile shard (SPP 2020, January, 31 windows):
-#: FINDING-ucmilp-speed-window-solve-profile-2026-10-09.md section 2.
+#: ``lean`` — presolve ON (it pays for itself: off, the root LP costs 4.5x),
+#: the feasibility-jump heuristic off (11 s of 160 s, never the incumbent),
+#: the LP-based heuristics (RINS / RENS / root reduced cost;
+#: ``mip_heuristic_effort`` 0) off, the root restart off (its second presolve
+#: is a third of the post-root tail); symmetry detection stays on (off: +3 %).
+#: Composition fixed by the UC-SPEED profile shard (SPP 2020, January, 31
+#: windows): FINDING-ucmilp-speed-window-solve-profile-2026-10-09.md section 2.
 UC_SOLVER_PRESETS: dict[str, dict] = {
     "highs_default": dict(
         presolve="on",
@@ -86,13 +91,16 @@ UC_SOLVER_PRESETS: dict[str, dict] = {
         restart=True,
     ),
     "lean": dict(
-        presolve="off",
+        presolve="on",
         feasibility_jump=False,
         lp_heuristics=False,
         symmetry=True,
-        restart=True,
+        restart=False,
     ),
 }
+
+#: How many windows a ``raw_log_dir`` harness run dumps the raw HiGHS log for.
+RAW_LOG_WINDOWS = 2
 
 #: Keys of the per-window phase profile (seconds unless named otherwise).
 PHASE_KEYS: tuple[str, ...] = (
@@ -150,6 +158,12 @@ class UcSolveOptions:
     warm_start: bool = True
     threads: int = 0
     debug_dump_dir: Path | None = None
+    #: Harness-only: extra HiGHS options applied LAST, for a measurement arm
+    #: (e.g. ``(("mip_lifting_for_probing", 0),)``). Never a registry value.
+    extra_highs_options: tuple[tuple[str, object], ...] = ()
+    #: Harness-only: directory receiving the raw stamped HiGHS log of the
+    #: first :data:`RAW_LOG_WINDOWS` windows (``window_<i>_highs.log``).
+    raw_log_dir: Path | None = None
 
     def solver_path(self) -> dict:
         """The solver-path fields as a dict (what a preset sets)."""
@@ -211,6 +225,8 @@ def apply_solver_options(h: highspy.Highs, options: UcSolveOptions) -> None:
     if int(options.threads) > 0:
         h.setOptionValue("threads", int(options.threads))
         h.setOptionValue("parallel", "on")
+    for name, value in options.extra_highs_options:
+        h.setOptionValue(str(name), value)
 
 
 class _LogCollector:
@@ -410,6 +426,16 @@ def solve_window(
             h.cbLogging.unsubscribe(collector)
         except Exception:  # pragma: no cover - a profile hook never breaks a solve
             pass
+    if (
+        options.raw_log_dir is not None
+        and window_index is not None
+        and window_index < RAW_LOG_WINDOWS
+    ):
+        out = Path(options.raw_log_dir)
+        out.mkdir(parents=True, exist_ok=True)
+        (out / f"window_{window_index}_highs.log").write_text(
+            "".join(f"[{t:8.3f}s] {m}" for t, m in collector.lines)
+        )
     status = h.getModelStatus()
     status_str = h.modelStatusToString(status)
     _, primal = h.getInfoValue("primal_solution_status")
