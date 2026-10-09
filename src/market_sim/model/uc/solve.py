@@ -1,12 +1,40 @@
-"""The HiGHS MILP call for one UC window (integrality, gap, time limit, warm start).
+"""The HiGHS MILP call for one UC window (integrality, gap, time limit, warm start, phase profile).
 
-Options come from the registry (``uc_mip_rel_gap``, ``uc_window_time_limit_s``)
-through :class:`UcSolveOptions`; the thread count is the solve container's
+Options come from the registry (``uc_mip_rel_gap``, ``uc_window_time_limit_s``,
+``uc_solver_preset``) through :class:`UcSolveOptions`
+(:func:`solve_options_from_config`); the thread count is the solve container's
 ``MARKET_SIM_HIGHS_THREADS`` pin, read exactly where
 :class:`~market_sim.model.lp.model.DispatchModel` reads it (the window model
-inherits that handle). Presolve is left at HiGHS's default for a MIP: the
-annual LP's ``presolve=off`` reasoning (a 22-30 M column dispatch LP that
-presolve barely reduces) does not transfer to a 100 k column MIP.
+inherits that handle), unless a bench arm asks for another count
+(:attr:`UcSolveOptions.threads`, a harness argument).
+
+**Solver path (plan E6/E7 as measured by lane UC-SPEED, 2026-10-09).** The
+per-window wall is HiGHS's own work on the 36-hour MILP, not the model build
+(SPP 2020 L1: build 0.04 s, MILP 4.2 s; the production P1 slice of the same
+hours solves in 0.04 s). Inside ``run()`` the seconds go to MIP presolve, the
+LP-free feasibility-jump heuristic, the cold root LP and the rounding /
+LP-heuristic tail; every window of every SPP year solved at the root (nodes
+p50 = p95 = 1, UC-2-SPP RESULT section 0.2). :data:`UC_SOLVER_PRESETS` names
+the two solver paths the registry admits: ``highs_default`` (engine uc-1.1:
+presolve on, every HiGHS heuristic at its default) and ``lean`` (presolve off,
+the feasibility jump and the LP heuristics off — the window LP is a tight
+dispatch LP that presolve barely reduces, exactly the annual LP's
+``presolve=off`` reasoning in ``model/lp/model.py``, and the warm start plus
+HiGHS's root rounding supply the incumbent). A preset changes the solver's
+PATH, never the feasible set or the objective: the optimum it returns is the
+same to ``uc_mip_rel_gap`` (the equivalence gate of
+``FINDING-ucmilp-speed-window-solve-profile-2026-10-09.md``). A MIP root LP
+takes no user basis (measured: identical iteration counts with and without
+``setBasis``), so plan E3's "basis carry" cannot reach it; the carried
+incumbent (``setSolution``) is the warm start that exists.
+
+**Phase profile.** Every solve subscribes to HiGHS's log callback with a
+timestamp per line and parses the MIP log into :data:`PHASE_KEYS`
+(:func:`parse_highs_mip_log`): seconds in setup / presolve, the LP-free
+heuristics before the root LP, the root LP itself, the post-root tail
+(rounding, cuts, LP heuristics, branching) and the solving report, plus the
+LP iteration split and the incumbent sources. The stage writes it per window
+into ``uc_solve_log`` (``windows[].phase``) and sums it in ``summary``.
 
 Outcomes (DESIGN section 2.4): ``Optimal`` and a gap-tolerance stop are the
 solution; a time-limit stop WITH an incumbent is accepted and counted; a
@@ -22,7 +50,9 @@ carried state and the report there.
 
 from __future__ import annotations
 
+import dataclasses
 import json
+import re
 import time
 from dataclasses import dataclass
 from pathlib import Path
@@ -36,21 +66,237 @@ from market_sim.model.uc.window import UcWindowInfeasible, UcWindowModel, Window
 #: HiGHS ``primal_solution_status`` value meaning a feasible primal point exists.
 _PRIMAL_FEASIBLE = 2
 
+#: The solver paths ``uc_solver_preset`` admits (``scenarios.UC_SOLVER_PRESET_NAMES``
+#: lists the same names; ``tests/unit/model/uc/test_solve_presets.py`` holds
+#: them equal). Each maps to the :class:`UcSolveOptions` solver-path fields.
+#:
+#: ``highs_default`` — engine uc-1.1's path: MIP presolve on (``solve_window``
+#: set it explicitly), every HiGHS heuristic at its shipped default.
+#: ``lean`` — presolve off, the feasibility-jump heuristic off, the LP-based
+#: heuristics (RINS / RENS / root reduced cost; ``mip_heuristic_effort`` 0) off;
+#: symmetry detection and root restarts stay at HiGHS's default. Composition
+#: fixed by the UC-SPEED profile shard (SPP 2020, January, 31 windows):
+#: FINDING-ucmilp-speed-window-solve-profile-2026-10-09.md section 2.
+UC_SOLVER_PRESETS: dict[str, dict] = {
+    "highs_default": dict(
+        presolve="on",
+        feasibility_jump=True,
+        lp_heuristics=True,
+        symmetry=True,
+        restart=True,
+    ),
+    "lean": dict(
+        presolve="off",
+        feasibility_jump=False,
+        lp_heuristics=False,
+        symmetry=True,
+        restart=True,
+    ),
+}
+
+#: Keys of the per-window phase profile (seconds unless named otherwise).
+PHASE_KEYS: tuple[str, ...] = (
+    "setup_s",  # run() entry -> "Solving MIP model with" (user-solution check, repair LP, presolve)
+    "presolve_s",  # "Presolving model" -> "Solving MIP model with" (0 when presolve is off)
+    "pre_root_heur_s",  # header -> the last table row before the root LP finished (LP-free heuristics)
+    "root_lp_s",  # -> the first table row with LP iterations (the root relaxation)
+    "tail_s",  # root done -> "Solving report" (rounding, cuts, LP heuristics, branching)
+    "report_s",  # "Solving report" -> run() return
+    "lp_iters",  # total simplex iterations of the MIP
+    "lp_iters_sep",  # of which cut separation
+    "lp_iters_heur",  # of which heuristics
+    "lp_iters_strong",  # of which strong branching
+    "repair_lps",  # user-solution repair LPs HiGHS ran
+    "warm_feasible",  # 1 when the user solution entered as an incumbent ("X" row), else 0
+    "incumbent_src",  # the table's source letters in order, e.g. "JR"
+)
+
+_RE_TABLE_ROW = re.compile(
+    r"^\s*([A-Za-z]?)\s+(\d+)\s+(\d+)\s+(\d+)\s+([\d.]+%|-)\s+(\S+)\s+(\S+)\s+(\S+)\s+"
+    r"(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+([\d.]+)s"
+)
+_RE_LP_ITERS = re.compile(r"LP iterations\s+(\d+)")
+_RE_ITER_PART = re.compile(r"^\s*(\d+)\s+\((strong br\.|separation|heuristics)\)")
+_RE_REPAIR = re.compile(r"Repair LPs\s+(\d+)")
+
 
 @dataclass(frozen=True)
 class UcSolveOptions:
-    """Solver settings of one window (every value a registry field).
+    """Solver settings of one window (every registry-backed value a registry field).
 
-    ``debug_dump_dir`` is the one exception: a directory the bench harness
-    (``scripts/diagnostics/bench_uc_ladder.py --dump-dir``) passes so an
-    infeasible window leaves its model and state behind for a zero-LP
-    post-mortem. The production stage never sets it.
+    ``mip_rel_gap`` / ``time_limit_s`` come from ``uc_mip_rel_gap`` /
+    ``uc_window_time_limit_s``; the solver-path fields (``presolve``,
+    ``feasibility_jump``, ``lp_heuristics``, ``symmetry``, ``restart``) come
+    from ``uc_solver_preset`` through :data:`UC_SOLVER_PRESETS`.
+
+    The remaining fields are bench-harness arguments, never registry fields or
+    environment knobs: ``warm_start`` (the L2 "warm off" arm; the carried
+    incumbent cannot change the optimum), ``threads`` (the L2 "threads" arm,
+    plan E7 — ``0`` inherits the handle's setting, i.e. the solve container's
+    pin; a positive count is set on the window handle together with
+    ``parallel=on``, and the harness resets HiGHS's process-global scheduler
+    around the arm because HiGHS fixes the scheduler's thread count at the
+    first solve in a process) and ``debug_dump_dir`` (a directory the bench
+    harness passes so an infeasible window leaves its model and state behind).
     """
 
     mip_rel_gap: float
     time_limit_s: float
+    presolve: str = "on"
+    feasibility_jump: bool = True
+    lp_heuristics: bool = True
+    symmetry: bool = True
+    restart: bool = True
     warm_start: bool = True
+    threads: int = 0
     debug_dump_dir: Path | None = None
+
+    def solver_path(self) -> dict:
+        """The solver-path fields as a dict (what a preset sets)."""
+        return dict(
+            presolve=self.presolve,
+            feasibility_jump=self.feasibility_jump,
+            lp_heuristics=self.lp_heuristics,
+            symmetry=self.symmetry,
+            restart=self.restart,
+        )
+
+
+def solve_options_from_config(config, **harness) -> UcSolveOptions:
+    """The window :class:`UcSolveOptions` of a ``ScenarioConfig`` (plus harness arguments).
+
+    Reads ``uc_mip_rel_gap``, ``uc_window_time_limit_s`` and ``uc_solver_preset``
+    (an unknown preset name is refused here as well as in the config
+    validator). ``harness`` may set ``warm_start`` / ``threads`` /
+    ``debug_dump_dir`` or override a single solver-path field for a bench arm.
+    """
+    preset = str(getattr(config, "uc_solver_preset", "highs_default"))
+    if preset not in UC_SOLVER_PRESETS:
+        raise ValueError(
+            f"uc_solver_preset {preset!r} is not one of {sorted(UC_SOLVER_PRESETS)}"
+        )
+    return UcSolveOptions(
+        mip_rel_gap=float(config.uc_mip_rel_gap),
+        time_limit_s=float(config.uc_window_time_limit_s),
+        **{**UC_SOLVER_PRESETS[preset], **harness},
+    )
+
+
+def apply_solver_options(h: highspy.Highs, options: UcSolveOptions) -> None:
+    """Set the HiGHS options of one window run from ``options`` (idempotent)."""
+    h.setOptionValue("mip_rel_gap", float(options.mip_rel_gap))
+    h.setOptionValue("time_limit", float(options.time_limit_s))
+    h.setOptionValue("presolve", str(options.presolve))
+    h.setOptionValue(
+        "mip_heuristic_run_feasibility_jump", bool(options.feasibility_jump)
+    )
+    if options.lp_heuristics:
+        h.setOptionValue("mip_heuristic_effort", 0.05)  # HiGHS shipped default
+        for name in (
+            "mip_heuristic_run_rins",
+            "mip_heuristic_run_rens",
+            "mip_heuristic_run_root_reduced_cost",
+        ):
+            h.setOptionValue(name, True)
+    else:
+        h.setOptionValue("mip_heuristic_effort", 0.0)
+        for name in (
+            "mip_heuristic_run_rins",
+            "mip_heuristic_run_rens",
+            "mip_heuristic_run_root_reduced_cost",
+        ):
+            h.setOptionValue(name, False)
+    h.setOptionValue("mip_detect_symmetry", bool(options.symmetry))
+    h.setOptionValue("mip_allow_restart", bool(options.restart))
+    if int(options.threads) > 0:
+        h.setOptionValue("threads", int(options.threads))
+        h.setOptionValue("parallel", "on")
+
+
+class _LogCollector:
+    """Collects HiGHS log lines with a wall-clock stamp relative to ``run()`` entry."""
+
+    def __init__(self) -> None:
+        self.lines: list[tuple[float, str]] = []
+        self.t0 = time.perf_counter()
+
+    def __call__(self, event) -> None:
+        self.lines.append((time.perf_counter() - self.t0, str(event.message)))
+
+
+def parse_highs_mip_log(lines: list[tuple[float, str]], total_s: float) -> dict:
+    """Phase seconds and counters from a stamped HiGHS MIP log (:data:`PHASE_KEYS`).
+
+    ``lines`` are ``(seconds since run() entry, message)``; a message may hold
+    several newline-separated log lines. ``total_s`` is the measured ``run()``
+    wall, which the phases sum to (the report phase takes the remainder).
+    """
+    rows: list[tuple[float, str]] = []
+    for t, msg in lines:
+        for ln in str(msg).split("\n"):
+            if ln.strip():
+                rows.append((t, ln))
+    t_presolve0 = t_header = t_report = None
+    table: list[tuple[float, str, int]] = []  # (t, src, lp_iters)
+    lp_iters = lp_sep = lp_heur = lp_strong = repair = 0
+    for t, ln in rows:
+        if ln.startswith("Presolving model") and t_presolve0 is None:
+            t_presolve0 = t
+        elif ln.startswith("Solving MIP model with") and t_header is None:
+            t_header = t
+        elif ln.startswith("Solving report") and t_report is None:
+            t_report = t
+        else:
+            m = _RE_TABLE_ROW.match(ln)
+            if m and t_header is not None and t_report is None:
+                table.append((t, m.group(1), int(m.group(12))))
+                continue
+            m = _RE_LP_ITERS.search(ln)
+            if m:
+                lp_iters = int(m.group(1))
+                continue
+            m = _RE_ITER_PART.match(ln)
+            if m and t_report is not None:
+                n = int(m.group(1))
+                if m.group(2) == "separation":
+                    lp_sep = n
+                elif m.group(2) == "heuristics":
+                    lp_heur = n
+                else:
+                    lp_strong = n
+                continue
+            m = _RE_REPAIR.search(ln)
+            if m:
+                repair = int(m.group(1))
+    t_header = t_header if t_header is not None else 0.0
+    t_report = t_report if t_report is not None else float(total_s)
+    presolve_s = max(0.0, t_header - t_presolve0) if t_presolve0 is not None else 0.0
+    first_lp = next((i for i, r in enumerate(table) if r[2] > 0), None)
+    if first_lp is None:
+        pre_root = table[-1][0] - t_header if table else 0.0
+        root_lp = max(0.0, t_report - t_header - pre_root)
+        tail = 0.0
+    else:
+        t_before = table[first_lp - 1][0] if first_lp > 0 else t_header
+        pre_root = max(0.0, t_before - t_header)
+        root_lp = max(0.0, table[first_lp][0] - t_before)
+        tail = max(0.0, t_report - table[first_lp][0])
+    srcs = "".join(r[1] for r in table if r[1])
+    return {
+        "setup_s": round(max(0.0, t_header), 4),
+        "presolve_s": round(presolve_s, 4),
+        "pre_root_heur_s": round(pre_root, 4),
+        "root_lp_s": round(root_lp, 4),
+        "tail_s": round(tail, 4),
+        "report_s": round(max(0.0, float(total_s) - t_report), 4),
+        "lp_iters": lp_iters,
+        "lp_iters_sep": lp_sep,
+        "lp_iters_heur": lp_heur,
+        "lp_iters_strong": lp_strong,
+        "repair_lps": repair,
+        "warm_feasible": int("X" in srcs),
+        "incumbent_src": srcs,
+    }
 
 
 def _set_u_integrality(window: UcWindowModel, integer: bool) -> None:
@@ -119,11 +365,11 @@ def solve_window(
     t0: int | None = None,
     t1: int | None = None,
 ) -> WindowResult:
-    """Solve one window and return its :class:`WindowResult`.
+    """Solve one window and return its :class:`WindowResult` (phase profile attached).
 
     Args:
         window: The built window model.
-        options: Gap / time limit / warm-start flag (and the bench dump dir).
+        options: Gap / time limit / solver path (and the harness arguments).
         warm_values: Optional full column vector for ``setSolution``.
         relax: Solve the LP relaxation instead (ladder rung L1 (b)): every
             ``u`` column is made continuous for this call and restored after.
@@ -136,22 +382,34 @@ def solve_window(
             the LP relaxation's status and the zero-LP diagnosis attached.
     """
     h = window.h
-    h.setOptionValue("output_flag", False)
-    h.setOptionValue("presolve", "on")
-    h.setOptionValue("mip_rel_gap", float(options.mip_rel_gap))
-    h.setOptionValue("time_limit", float(options.time_limit_s))
+    # HiGHS's log is the phase profile's source: logging on, console off, the
+    # lines collected by the callback with a wall-clock stamp each.
+    h.setOptionValue("output_flag", True)
+    h.setOptionValue("log_to_console", False)
+    apply_solver_options(h, options)
     n_u = window.V0 - window.U0
     if relax and n_u:
         _set_u_integrality(window, integer=False)
     warm = False
+    t_warm = time.perf_counter()
     if options.warm_start and warm_values is not None and not relax:
         sol = highspy.HighsSolution()
         sol.col_value = [float(x) for x in np.asarray(warm_values, dtype=float)]
         sol.value_valid = True
         warm = h.setSolution(sol) == highspy.HighsStatus.kOk
+    set_solution_s = time.perf_counter() - t_warm
+    collector = _LogCollector()
+    h.cbLogging.subscribe(collector)
     t0_clock = time.perf_counter()
-    h.run()
-    milp_s = time.perf_counter() - t0_clock
+    collector.t0 = t0_clock
+    try:
+        h.run()
+    finally:
+        milp_s = time.perf_counter() - t0_clock
+        try:
+            h.cbLogging.unsubscribe(collector)
+        except Exception:  # pragma: no cover - a profile hook never breaks a solve
+            pass
     status = h.getModelStatus()
     status_str = h.modelStatusToString(status)
     _, primal = h.getInfoValue("primal_solution_status")
@@ -187,6 +445,7 @@ def solve_window(
             relaxation_status=relaxation,
             diagnosis=report,
         )
+    t_extract = time.perf_counter()
     info = h.getInfo()
     sol = h.getSolution()
     col_value = np.asarray(sol.col_value, dtype=float)
@@ -194,7 +453,13 @@ def solve_window(
         _set_u_integrality(window, integer=True)
     gap = float(info.mip_gap) if n_u and not relax else 0.0
     nodes = int(info.mip_node_count) if n_u and not relax else 0
-    return window.extract(
+    phase = (
+        parse_highs_mip_log(collector.lines, milp_s)
+        if n_u and not relax
+        else {k: (0 if k != "incumbent_src" else "") for k in PHASE_KEYS}
+    )
+    phase["set_solution_s"] = round(set_solution_s, 4)
+    result = window.extract(
         col_value,
         objective=float(info.objective_function_value),
         status=status_str,
@@ -203,4 +468,12 @@ def solve_window(
         time_limit_hit=bool(time_limit_hit),
         milp_s=milp_s,
         warm_accepted=warm,
+        phase=phase,
     )
+    phase["extract_s"] = round(time.perf_counter() - t_extract, 4)
+    return result
+
+
+def options_for_arm(options: UcSolveOptions, **changes) -> UcSolveOptions:
+    """A copy of ``options`` with the given fields replaced (the bench arms' helper)."""
+    return dataclasses.replace(options, **changes)

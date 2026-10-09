@@ -66,7 +66,12 @@ def main(argv: list[str] | None = None) -> int:
         help="L1 only: zero-LP capture; the window LP relaxation stands in for P0",
     )
     ap.add_argument(
-        "--arms", default="warm,prefix", help="L2 arms: warm,prefix,threads"
+        "--arms",
+        default="warm,prefix",
+        help=(
+            "L2 arms (comma list; base always runs): "
+            "warm,prefix,threads,legacy,lean,presolve,fj,lpheur,symmetry,restart,wide"
+        ),
     )
     ap.add_argument("--months", default="1,7", help="L2 months (1-12)")
     ap.add_argument(
@@ -149,6 +154,7 @@ def main(argv: list[str] | None = None) -> int:
                 f"TL hits {m['time_limit_hits']}, fixed on/off {m['fixed_on']}/{m['fixed_off']}, hash {m['schedule_hash']}"
             )
     print("schedule equal across arms:", res["schedule_equal_across_arms"])
+    print(res["profile_table"])
     return 0
 
 

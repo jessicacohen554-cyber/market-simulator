@@ -2507,6 +2507,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "uc_noload_source",
     "uc_boundary_mode",
     "uc_prefixing",
+    # Lane UC-SPEED (2026-10-09): the window solver path, born at its declared
+    # value and dropped from the hash there, so every committed key is unmoved
+    # (the field changes the MILP's PATH to the same optimum, never the
+    # feasible set — FINDING-ucmilp-speed-window-solve-profile-2026-10-09.md).
+    "uc_solver_preset",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -3421,6 +3426,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "uc_noload_source": "'campd_regression'",
     "uc_boundary_mode": "'p0_targets'",
     "uc_prefixing": "False",
+    # Added by lane UC-SPEED WITH the field (the nyiso-119 discipline).
+    "uc_solver_preset": "'highs_default'",
 }
 
 
@@ -4410,6 +4417,12 @@ UC_REFUSED_ALWAYS: tuple[tuple[str, str], ...] = (
 #: the hard cases st_gas_mustrun_per_plant / coal_mustrun /
 #: ercot_coal_min_config_floor / gas_st_netload_drag).
 UC_REFUSED_BY_RULING: tuple[tuple[str, str], ...] = ()
+
+#: The window solver paths ``uc_solver_preset`` admits. The table that maps
+#: each name to HiGHS options is ``model/uc/solve.py::UC_SOLVER_PRESETS``
+#: (``tests/unit/model/uc/test_solve_presets.py`` holds the two in step); the
+#: validator below refuses any other name.
+UC_SOLVER_PRESET_NAMES: tuple[str, ...] = ("highs_default", "lean")
 
 
 @dataclass
@@ -23097,6 +23110,17 @@ class ScenarioConfig:
     # off. Default OFF until ladder rung L2 proves schedule equality across
     # arms (DESIGN section 2.3).
     uc_prefixing: bool = False
+    # The window MILP's HiGHS solver path (lane UC-SPEED, plan E6/E7; owner
+    # ruling D-2 "Keep 3x; fund speedup", 2026-10-09): "highs_default" = the
+    # uc-1.1 path (MIP presolve on, every HiGHS heuristic at its default);
+    # "lean" = presolve off, feasibility-jump and LP heuristics off (the window
+    # LP is a tight dispatch LP presolve barely reduces, the carried incumbent
+    # and HiGHS's root rounding supply the solution). A preset moves wall
+    # clock, never the optimum: the same schedule to uc_mip_rel_gap
+    # (model/uc/solve.py::UC_SOLVER_PRESETS; FINDING-ucmilp-speed-window-
+    # solve-profile-2026-10-09.md, the equivalence gate). Admissible names:
+    # UC_SOLVER_PRESET_NAMES.
+    uc_solver_preset: str = "highs_default"
 
     def __post_init__(self) -> None:
         # YAML round-trip type repair: YAML has no tuple type, so a config
@@ -24641,6 +24665,11 @@ class ScenarioConfig:
                     "uc_boundary_mode: 'p0_targets' is the only admissible mode "
                     f"(got {self.uc_boundary_mode!r})."
                 )
+            if self.uc_solver_preset not in UC_SOLVER_PRESET_NAMES:
+                raise ValueError(
+                    "uc_solver_preset must be one of "
+                    f"{UC_SOLVER_PRESET_NAMES} (got {self.uc_solver_preset!r})."
+                )
 
     @property
     def real_discount_rate(self) -> float:
@@ -25989,6 +26018,7 @@ TIER_TAGS: dict[str, int] = {
     "uc_noload_source": 1,
     "uc_boundary_mode": 1,
     "uc_prefixing": 1,
+    "uc_solver_preset": 1,
     # closeout-SOCO-w3 DIAGNOSTIC (rule 13: never a keeper input).
     "diagnostic_coal_metered_online_floor": 1,
 }

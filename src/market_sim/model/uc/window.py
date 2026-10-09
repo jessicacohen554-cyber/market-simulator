@@ -314,6 +314,14 @@ class WindowResult:
     fixed_on: int
     fixed_off: int
     warm_accepted: bool = False
+    #: Seconds of ``build_s`` spent constructing the sliced production
+    #: ``DispatchModel`` (its matrix build and the HiGHS ``addCols`` /
+    #: ``addRows``); the remainder is the UC columns, rows and boundary edits.
+    lp_build_s: float = 0.0
+    #: The HiGHS phase profile of the solve (``solve.PHASE_KEYS`` plus
+    #: ``set_solution_s`` / ``extract_s``); ``None`` on a result a test builds
+    #: without solving.
+    phase: dict | None = None
 
 
 def _lp_matrix_csc(h: highspy.Highs) -> sp.csc_matrix:
@@ -449,6 +457,7 @@ class UcWindowModel:
         self.int_idx = params.integer_clusters
         self.n_int = int(self.int_idx.size)
         self.model = DispatchModel(inputs.fleet, inputs.demand, **inputs.kwargs)
+        self.lp_build_s = time.perf_counter() - t_build
         self.h: highspy.Highs = self.model._h
         self.layout = self.model.layout
         self.T_w = int(self.layout.T)
@@ -944,5 +953,6 @@ class UcWindowModel:
             fixed_on=self.fixed_on,
             fixed_off=self.fixed_off,
             build_s=self.build_s,
+            lp_build_s=self.lp_build_s,
             **stats,
         )
