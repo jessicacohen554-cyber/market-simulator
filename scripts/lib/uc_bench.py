@@ -28,10 +28,8 @@ rung writes JSON under its ``--out``.
 
 from __future__ import annotations
 
-import dataclasses
 import hashlib
 import json
-import os
 import pickle
 import subprocess
 import sys
@@ -263,7 +261,7 @@ def rung_l1(
     """
     from market_sim.model.lp.model import DispatchModel
     from market_sim.model.uc.params import units_needed_for_floor, units_online_profile
-    from market_sim.model.uc.solve import UcSolveOptions, solve_window
+    from market_sim.model.uc.solve import solve_options_from_config, solve_window
     from market_sim.model.uc.window import UcWindowModel, slice_window_inputs
 
     cfg = _armed_config(cap, **uc_fields)
@@ -293,10 +291,8 @@ def rung_l1(
     floor_ahead = units_needed_for_floor(
         p, cap.fleet_arrays, t1, min(t1 + guard_reach, T)
     )[k]
-    opts = UcSolveOptions(
-        mip_rel_gap=float(cfg.uc_mip_rel_gap),
-        time_limit_s=float(cfg.uc_window_time_limit_s),
-        debug_dump_dir=None if dump_dir is None else Path(dump_dir),
+    opts = solve_options_from_config(
+        cfg, debug_dump_dir=None if dump_dir is None else Path(dump_dir)
     )
     out: dict[str, Any] = {
         "iso": cap.iso,
@@ -368,48 +364,186 @@ def stage_state(stage, fleet_arrays, p0_dispatch, p0_soc, T):
     )
 
 
+#: L2 arms: name -> (ScenarioConfig overrides, UcSolveOptions overrides, note).
+#: Every arm but ``wide`` is a solver-PATH arm: run PAIRED against ``base``
+#: (each window takes the base run's carried state, so it is the same problem;
+#: ``UcStage.run(pin=...)``) its per-window objective delta and kept-``u``
+#: agreement are the equivalence evidence. ``wide`` re-declares the horizon
+#: (plan E2: 48 + 24 h) and so changes the optimum — a wall measurement only,
+#: run rolling and excluded from the equivalence summary.
+L2_ARMS: dict[str, tuple[dict, dict, str]] = {
+    "warm": ({}, {"warm_start": False}, "no setSolution incumbent (E3 off)"),
+    "prefix": ({"uc_prefixing": True}, {}, "reachability pre-fixing on (E5)"),
+    "threads": ({}, {"threads": 4}, "4 HiGHS threads, parallel on (E7)"),
+    "legacy": ({"uc_solver_preset": "highs_default"}, {}, "the uc-1.1 solver path"),
+    "lean": ({"uc_solver_preset": "lean"}, {}, "the lean solver path"),
+    "presolve": ({}, {"presolve": "off"}, "MIP presolve off"),
+    "fj": ({}, {"feasibility_jump": False}, "feasibility-jump heuristic off"),
+    "lpheur": (
+        {},
+        {"lp_heuristics": False},
+        "RINS/RENS/root-reduced-cost off, effort 0",
+    ),
+    "symmetry": ({}, {"symmetry": False}, "symmetry detection off"),
+    "restart": ({}, {"restart": False}, "root restarts off"),
+    "probelift": (
+        {},
+        {"extra_highs_options": (("mip_lifting_for_probing", 0),)},
+        "HiGHS mip_lifting_for_probing=0 on the default path (presolve cost probe)",
+    ),
+    "rulelog": (
+        {},
+        {
+            "extra_highs_options": (("presolve_rule_logging", True),),
+            "raw_log_dir": "RAW",
+        },
+        "default path + presolve rule logging; raw HiGHS log of the first two windows kept",
+    ),
+    "wide": (
+        {"uc_window_hours": 48, "uc_lookahead_hours": 24},
+        {},
+        "E2 horizon 48 + 24 h (optimum-changing; wall only, rolling)",
+    ),
+}
+
+#: Arms whose schedule may legitimately differ from ``base`` beyond the gap.
+_OPTIMUM_CHANGING_ARMS = frozenset({"wide"})
+
+
+def _reset_highs_scheduler() -> None:
+    """Reset HiGHS's process-global scheduler (its thread count is fixed at the first solve)."""
+    import highspy
+
+    highspy.Highs.resetGlobalScheduler(True)
+
+
+def _month_stats(wins: list[dict]) -> dict:
+    """Distribution / phase sums of one month's windows (``stage.log['windows']``)."""
+    from market_sim.pipeline.uc import phase_sums
+
+    milp = np.array([w["milp_s"] for w in wins])
+    nodes = np.array([w["nodes"] for w in wins])
+    paired = [w.get("paired") for w in wins]
+    return {
+        "windows": len(wins),
+        "milp_s_sum": float(milp.sum()),
+        "milp_s_p50": float(np.percentile(milp, 50)),
+        "milp_s_p95": float(np.percentile(milp, 95)),
+        "milp_s_max": float(milp.max()),
+        "build_s_sum": float(sum(w["build_s"] for w in wins)),
+        "nodes_p50": float(np.percentile(nodes, 50)),
+        "nodes_p95": float(np.percentile(nodes, 95)),
+        "zero_node_share": float(np.mean(nodes == 0)),
+        "time_limit_hits": int(sum(w["time_limit_hit"] for w in wins)),
+        "fixed_on": int(sum(w["fixed_on"] for w in wins)),
+        "fixed_off": int(sum(w["fixed_off"] for w in wins)),
+        "gap_max": float(max(w["gap"] for w in wins)),
+        "phase_sums": phase_sums(wins),
+        "objectives": [float(w["objective"]) for w in wins],
+        "window_t0": [int(w["t0"]) for w in wins],
+        "paired": (
+            {
+                "u_kept_equal_windows": int(
+                    sum(1 for q in paired if q and q["u_kept_equal"])
+                ),
+                "u_cells_differ_total": int(
+                    sum(q["u_cells_differ"] for q in paired if q)
+                ),
+            }
+            if all(paired)
+            else None
+        ),
+    }
+
+
+def _equivalence(base_m: dict, arm_m: dict, rel_gap: float) -> dict:
+    """Per-window objective deltas of an arm against ``base`` (same month).
+
+    Exact only for a PAIRED arm (same window problems); for a rolling arm the
+    deltas are confounded by state divergence after the first within-gap tie
+    and ``paired`` reads ``None``.
+    """
+    ob = np.asarray(base_m["objectives"], dtype=float)
+    oa = np.asarray(arm_m["objectives"], dtype=float)
+    if ob.shape != oa.shape or not np.array_equal(
+        base_m["window_t0"], arm_m["window_t0"]
+    ):
+        return {"comparable": False}
+    scale = np.maximum(np.abs(ob), 1.0)
+    rel = np.abs(oa - ob) / scale
+    out = {
+        "comparable": True,
+        "paired": arm_m.get("paired"),
+        "schedule_hash_equal": arm_m["schedule_hash"] == base_m["schedule_hash"],
+        "max_rel_obj_delta": float(rel.max()) if rel.size else 0.0,
+        "windows_beyond_gap": int(np.sum(rel > rel_gap)),
+        "windows_obj_differ": int(np.sum(rel > 1e-9)),
+        "arm_minus_base_obj_sum": float(np.sum(oa - ob)),
+    }
+    return out
+
+
 def rung_l2(
     cap: YearCapture,
     out_dir: Path,
     months: tuple[int, ...] = (1, 7),
     arms: tuple[str, ...] = ("warm", "prefix"),
+    paired: bool = True,
     **uc_fields,
 ) -> dict:
-    """L2: rolling windows over ``months`` per arm; distributions and schedule hashes."""
+    """L2: rolling windows over ``months`` per arm; distributions, phase sums, equivalence.
+
+    ``arms`` names :data:`L2_ARMS` entries; ``base`` (the registry defaults
+    plus ``uc_fields``) always runs first, rolling, recording its handed-over
+    states. With ``paired`` (the default) every solver-path arm then solves
+    the base run's exact window problems (``UcStage.run(pin=...)``), so the
+    ``equivalence`` block's per-window objective deltas and kept-``u``
+    agreement are exact; ``paired=False`` runs every arm rolling (its
+    schedule hash is then the only comparison, confounded after the first
+    within-gap tie). Optimum-changing arms (``wide``) always run rolling.
+    """
+    import dataclasses as _dc
+
     from market_sim.model.uc.schedule import month_boundaries
 
     if cap.r0 is None:
         raise RuntimeError(
             "rung L2 needs a solved capture (capture_year(..., solve=True))"
         )
+    unknown = [a for a in arms if a not in L2_ARMS]
+    if unknown:
+        raise SystemExit(f"unknown L2 arm(s) {unknown}; known: {sorted(L2_ARMS)}")
     ends = month_boundaries(cap.demand.shape[1])
     starts = np.concatenate([[0], ends[:-1]])
-    arm_specs: list[tuple[str, dict, dict]] = [("base", {}, {})]
-    if "warm" in arms:
-        arm_specs.append(("warm_off", {}, {"warm_start": False}))
-    if "prefix" in arms:
-        arm_specs.append(("prefix_on", {"uc_prefixing": True}, {}))
-    if "threads" in arms:
-        arm_specs.append(("threads_4", {}, {"threads": "4"}))
+    arm_specs: list[tuple[str, dict, dict, str]] = [
+        ("base", {}, {}, "registry defaults")
+    ]
+    arm_specs += [(a, *L2_ARMS[a]) for a in arms]
     out: dict[str, Any] = {
         "iso": cap.iso,
         "year": cap.year,
         "months": list(months),
+        "paired": bool(paired),
+        "capture_wall_s": cap.wall_s,
         "arms": {},
     }
-    for name, cfg_over, solve_over in arm_specs:
-        prev_threads = os.environ.get("MARKET_SIM_HIGHS_THREADS")
-        if "threads" in solve_over:
-            os.environ["MARKET_SIM_HIGHS_THREADS"] = solve_over["threads"]
+    base_cfg = _armed_config(cap, **uc_fields)
+    rel_gap = float(base_cfg.uc_mip_rel_gap)
+    base_scheds: dict[int, Any] = {}
+    for name, cfg_over, solve_over, note in arm_specs:
+        solve_over = dict(solve_over)
+        if solve_over.get("raw_log_dir") == "RAW":
+            solve_over["raw_log_dir"] = Path(out_dir) / "highs_logs" / name
+        threads_arm = int(solve_over.get("threads", 0)) > 0
+        pin_this = paired and name != "base" and name not in _OPTIMUM_CHANGING_ARMS
+        if threads_arm:
+            _reset_highs_scheduler()
         try:
             cfg = _armed_config(cap, **{**uc_fields, **cfg_over})
             stage = _stage(cap, cfg, cap.r0, cap.mc_bid, Path(out_dir) / "uc" / name)
-            if "warm_start" in solve_over:
-                stage.options = dataclasses.replace(
-                    stage.options, warm_start=solve_over["warm_start"]
-                )
+            if solve_over:
+                stage.options = _dc.replace(stage.options, **solve_over)
             per_month = []
-            hashes = []
             for m in months:
                 t0, t1 = int(starts[m - 1]), int(ends[m - 1])
                 tm = time.perf_counter()
@@ -419,53 +553,147 @@ def rung_l2(
                     t_start=t0,
                     t_end=t1,
                     write=False,
+                    record_states=(name == "base"),
+                    pin=base_scheds[m] if pin_this else None,
                 )
                 wall = time.perf_counter() - tm
-                wins = stage.log["windows"]
-                milp = np.array([w["milp_s"] for w in wins])
-                nodes = np.array([w["nodes"] for w in wins])
-                hashes.append(
-                    hashlib.sha256(
-                        np.ascontiguousarray(sched.u[:, t0:t1]).tobytes()
-                    ).hexdigest()[:16]
-                )
-                per_month.append(
+                if name == "base":
+                    base_scheds[m] = sched
+                stats = _month_stats(stage.log["windows"])
+                stats.update(
                     {
                         "month": m,
-                        "windows": len(wins),
                         "wall_s": wall,
-                        "milp_s_p50": float(np.percentile(milp, 50)),
-                        "milp_s_p95": float(np.percentile(milp, 95)),
-                        "milp_s_max": float(milp.max()),
-                        "build_s_sum": float(sum(w["build_s"] for w in wins)),
-                        "nodes_p50": float(np.percentile(nodes, 50)),
-                        "nodes_p95": float(np.percentile(nodes, 95)),
-                        "zero_node_share": float(np.mean(nodes == 0)),
-                        "time_limit_hits": int(sum(w["time_limit_hit"] for w in wins)),
-                        "fixed_on": int(sum(w["fixed_on"] for w in wins)),
-                        "fixed_off": int(sum(w["fixed_off"] for w in wins)),
-                        "schedule_hash": hashes[-1],
+                        "paired_run": bool(pin_this),
+                        "schedule_hash": hashlib.sha256(
+                            np.ascontiguousarray(sched.u[:, t0:t1]).tobytes()
+                        ).hexdigest()[:16],
                     }
                 )
+                per_month.append(stats)
             out["arms"][name] = {
+                "note": note,
                 "config": cfg_over,
-                "solve": solve_over,
+                "solve": {
+                    k: str(v) if isinstance(v, Path) else v
+                    for k, v in solve_over.items()
+                },
+                "solver_path": stage.options.solver_path(),
                 "months": per_month,
+                "wall_s_total": float(sum(m["wall_s"] for m in per_month)),
                 "rss_gb": _peak_rss_gb(),
             }
+            # A shard near its budget keeps every finished arm (rule 32 stop rule).
+            _write_json(Path(out_dir) / "l2_partial.json", out)
         finally:
-            if "threads" in solve_over:
-                if prev_threads is None:
-                    os.environ.pop("MARKET_SIM_HIGHS_THREADS", None)
-                else:
-                    os.environ["MARKET_SIM_HIGHS_THREADS"] = prev_threads
-    base_hashes = [m["schedule_hash"] for m in out["arms"]["base"]["months"]]
+            if threads_arm:
+                _reset_highs_scheduler()
+    base = out["arms"]["base"]
+    base_hashes = [m["schedule_hash"] for m in base["months"]]
     out["schedule_equal_across_arms"] = {
         name: [m["schedule_hash"] for m in arm["months"]] == base_hashes
         for name, arm in out["arms"].items()
     }
+    out["equivalence"] = {
+        name: {
+            "optimum_changing_arm": name in _OPTIMUM_CHANGING_ARMS,
+            "paired": bool(arm["months"][0].get("paired_run")),
+            "months": [
+                _equivalence(bm, am, rel_gap)
+                for bm, am in zip(base["months"], arm["months"])
+            ],
+        }
+        for name, arm in out["arms"].items()
+        if name != "base"
+    }
+    out["profile_table"] = l2_profile_table(out)
     _write_json(Path(out_dir) / "l2.json", out)
+    (Path(out_dir) / "l2_profile.md").write_text(out["profile_table"] + "\n")
     return out
+
+
+_PROFILE_COLS = (
+    ("wall_s_total", "wall s"),
+    ("milp_s_sum", "MILP Σ s"),
+    ("setup_s", "setup Σ"),
+    ("presolve_s", "presolve Σ"),
+    ("pre_root_heur_s", "pre-root heur Σ"),
+    ("root_lp_s", "root LP Σ"),
+    ("tail_s", "tail Σ"),
+    ("lp_build_s", "LP build Σ"),
+    ("uc_build_s", "UC build Σ"),
+    ("set_solution_s", "setSolution Σ"),
+    ("extract_s", "extract Σ"),
+    ("lp_iters", "LP iters Σ"),
+    ("lp_iters_heur", "heur iters Σ"),
+    ("warm_feasible_windows", "warm feasible"),
+)
+
+
+def l2_profile_table(res: dict) -> str:
+    """The per-arm profile table (markdown) of an L2 result: seconds summed over the months.
+
+    The three equivalence columns read, for a PAIRED arm, the windows whose
+    kept ``u`` equals the base run's (of all windows), the largest relative
+    objective delta on the same window problem and the windows beyond the gap;
+    for a rolling arm they read the schedule-hash equality instead and the
+    deltas are confounded (marked ``~``).
+    """
+    head = [
+        "arm",
+        "windows",
+        "nodes p50/p95",
+        "gap max",
+        "u = base",
+        "max rel Δobj",
+        "> gap",
+    ]
+    head += [c[1] for c in _PROFILE_COLS]
+    lines = ["| " + " | ".join(head) + " |", "|" + "---|" * len(head)]
+    for name, arm in res["arms"].items():
+        months = arm["months"]
+        sums: dict[str, float] = {}
+        for m in months:
+            for key, _ in _PROFILE_COLS:
+                if key == "wall_s_total":
+                    continue
+                src = m["phase_sums"] if key in m["phase_sums"] else m
+                sums[key] = sums.get(key, 0.0) + float(src.get(key, 0.0) or 0.0)
+        sums["wall_s_total"] = arm["wall_s_total"]
+        eq = res.get("equivalence", {}).get(name, {})
+        eqm = [e for e in eq.get("months", []) if e.get("comparable")]
+        is_paired = bool(eq.get("paired"))
+        n_win = sum(m["windows"] for m in months)
+        max_rel = max((e.get("max_rel_obj_delta", 0.0) for e in eqm), default=0.0)
+        beyond = sum(e.get("windows_beyond_gap", 0) for e in eqm)
+        if name == "base":
+            ucol, dcol, gcol = "—", "—", "—"
+        elif is_paired:
+            same = sum(
+                (e.get("paired") or {}).get("u_kept_equal_windows", 0) for e in eqm
+            )
+            ucol, dcol, gcol = f"{same}/{n_win}", f"{max_rel:.1e}", str(beyond)
+        else:
+            ucol = f"hash {res['schedule_equal_across_arms'].get(name)}"
+            dcol, gcol = f"~{max_rel:.1e}", f"~{beyond}"
+        row = [
+            name,
+            str(n_win),
+            f"{np.median([m['nodes_p50'] for m in months]):.0f}/{max(m['nodes_p95'] for m in months):.0f}",
+            f"{max(m['gap_max'] for m in months):.1e}",
+            ucol,
+            dcol,
+            gcol,
+        ]
+        for key, _ in _PROFILE_COLS:
+            v = sums.get(key, 0.0)
+            row.append(
+                f"{v:.0f}"
+                if key.endswith("iters") or key == "warm_feasible_windows"
+                else f"{v:.1f}"
+            )
+        lines.append("| " + " | ".join(row) + " |")
+    return "\n".join(lines)
 
 
 def rung_l3(
@@ -508,15 +736,32 @@ def rung_l3(
     log_path = run_dir / f"uc_solve_log_{year}.json"
     log = json.loads(log_path.read_text()) if log_path.is_file() else {}
     summ = log.get("summary", {})
+    phases = parse_phase_timing_line(proc.stdout + proc.stderr, year)
+    p0_s = phases.get("solve_p0")
+    p1_s = phases.get("solve_p1")
+    own_baseline = (p0_s + p1_s) if p0_s is not None and p1_s is not None else None
+    # The denominator: the caller's --baseline-s when given, else the shard's
+    # own P0 + P1 (the UC-2-SPP PRECOMMIT section 5 proxy: P0 is the unchanged
+    # LP and P1 differs only by bounds). ``total_s`` is the year's phase-timing
+    # total (P0 + markup/UC + P1 + results write), not the subprocess wall.
+    denom = baseline_s if baseline_s else own_baseline
+    total_year = phases.get("total", wall)
     row = {
         "iso_year": f"{iso.upper()} {year}",
-        "baseline_s": baseline_s,
-        "total_s": wall,
+        "baseline_s": denom,
+        "baseline_source": "--baseline-s" if baseline_s else "own solve_p0 + solve_p1",
+        "p0_s": p0_s,
+        "p1_s": p1_s,
+        "markup_s": phases.get("markup"),
+        "subprocess_wall_s": wall,
+        "total_s": total_year,
         "uc_sum_s": summ.get("uc_total_s"),
         "uc_windows": summ.get("n_windows"),
         "uc_mean_s": summ.get("milp_s_mean"),
         "uc_p95_s": summ.get("milp_s_p95"),
-        "ratio": (wall / baseline_s) if baseline_s else None,
+        "ratio": (total_year / denom) if denom else None,
+        "phase_sums": summ.get("phase_sums"),
+        "solver_path": log.get("engine", {}).get("solver_path"),
         "integers_per_window": log.get("engine", {}).get("integers_per_window"),
         "nodes_p50": summ.get("nodes_p50"),
         "nodes_p95": summ.get("nodes_p95"),
@@ -528,6 +773,24 @@ def rung_l3(
     }
     _write_json(out_dir / "l3.json", row)
     return row
+
+
+def parse_phase_timing_line(text: str, year: int) -> dict:
+    """The ``log_year_phase_timing`` fields of ``year`` from an orchestrator's log text.
+
+    Returns ``{}`` when the line is absent (a cached year prints a different line).
+    """
+    import re
+
+    pat = re.compile(
+        rf"year {int(year)} phase timing: data_prep=([\d.]+)s solve_p0=([\d.]+)s "
+        rf"markup=([\d.]+)s solve_p1=([\d.]+)s results_write=([\d.]+)s total=([\d.]+)s"
+    )
+    m = pat.search(text)
+    if not m:
+        return {}
+    keys = ("data_prep", "solve_p0", "markup", "solve_p1", "results_write", "total")
+    return {k: float(v) for k, v in zip(keys, m.groups())}
 
 
 # --------------------------------------------------------------------------- #

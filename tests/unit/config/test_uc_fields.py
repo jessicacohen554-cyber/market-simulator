@@ -22,6 +22,7 @@ UC_FIELDS = (
     "uc_noload_source",
     "uc_boundary_mode",
     "uc_prefixing",
+    "uc_solver_preset",
 )
 
 
@@ -74,6 +75,7 @@ def test_rule_19_stacks_are_refused(stack):
         dict(uc_integer_scope="all"),
         dict(uc_noload_source="table"),
         dict(uc_boundary_mode="cyclic"),
+        dict(uc_solver_preset="fast"),
     ],
 )
 def test_declared_value_sets_are_enforced(bad):

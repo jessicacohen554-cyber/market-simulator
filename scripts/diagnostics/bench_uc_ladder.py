@@ -66,7 +66,21 @@ def main(argv: list[str] | None = None) -> int:
         help="L1 only: zero-LP capture; the window LP relaxation stands in for P0",
     )
     ap.add_argument(
-        "--arms", default="warm,prefix", help="L2 arms: warm,prefix,threads"
+        "--arms",
+        default="warm,prefix",
+        help=(
+            "L2 arms (comma list; base always runs): "
+            "warm,prefix,threads,legacy,lean,presolve,fj,lpheur,symmetry,restart,"
+            "probelift,rulelog,wide"
+        ),
+    )
+    ap.add_argument(
+        "--rolling",
+        action="store_true",
+        help=(
+            "L2: run every arm rolling instead of paired against base (paired = "
+            "each arm solves the base run's exact window problems)"
+        ),
     )
     ap.add_argument("--months", default="1,7", help="L2 months (1-12)")
     ap.add_argument(
@@ -139,7 +153,9 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     months = tuple(int(m) for m in args.months.split(","))
     arms = tuple(a for a in args.arms.split(",") if a)
-    res = uc_bench.rung_l2(cap, out, months=months, arms=arms, **overrides)
+    res = uc_bench.rung_l2(
+        cap, out, months=months, arms=arms, paired=not args.rolling, **overrides
+    )
     for name, arm in res["arms"].items():
         for m in arm["months"]:
             print(
@@ -149,6 +165,7 @@ def main(argv: list[str] | None = None) -> int:
                 f"TL hits {m['time_limit_hits']}, fixed on/off {m['fixed_on']}/{m['fixed_off']}, hash {m['schedule_hash']}"
             )
     print("schedule equal across arms:", res["schedule_equal_across_arms"])
+    print(res["profile_table"])
     return 0
 
 
