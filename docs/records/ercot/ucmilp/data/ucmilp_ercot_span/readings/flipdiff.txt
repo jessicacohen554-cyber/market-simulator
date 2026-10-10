@@ -1,0 +1,11 @@
+status changes: 7
+   (('forced_share', 'ST_GAS', 2020), 'PASS', 'FAIL', '23.6% forced (2.8135 of 11.906 TWh) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)', '36.9% forced (3.7427 of 10.1577 TWh) — above the 30% cap and NOT grounded (forcing variables miscalibrated): provenance — no declared D-4 window: uc_schedule; floors a unit its own meter says is offline (D-4 per-unit conduct FAIL): st_netload_drag (plant 3452) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)')
+   (('price_mean', 'None', 2024), 'FAIL', 'PASS', '-11.3%', '-6.3%')
+   (('price_shape', 'None', 2019), 'FAIL', 'PASS', 'NRMSE 0.216', 'NRMSE 0.078')
+   (('price_shape', 'None', 2024), 'PASS', 'FAIL', 'NRMSE 0.198', 'NRMSE 0.201')
+   (('price_tail', 'None', 2020), 'CAVEAT', 'FAIL', 'model 22h [energy-only LMP] vs RT actual 56h (0.39×, >$200)', 'model 23h [energy-only LMP] vs RT actual 56h (0.41×, >$200)')
+   (('price_tail', 'None', 2024), 'CAVEAT', 'FAIL', 'model 11h [energy-only LMP] vs RT actual 53h (0.21×, >$200)', 'model 15h [energy-only LMP] vs RT actual 53h (0.28×, >$200)')
+   (('price_tail', 'None', 2025), 'CAVEAT', 'FAIL', 'model 0h [energy-only LMP] vs RT actual 31h (0.00×, >$200)', 'model 0h [energy-only LMP] vs RT actual 31h (0.00×, >$200)')
+PASS->FAIL flips: 2
+  FLIP ('forced_share', 'ST_GAS', 2020)
+  FLIP ('price_shape', 'None', 2024)

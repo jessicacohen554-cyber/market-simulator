@@ -188,3 +188,31 @@ this PR merges (a session cannot, 403).
   set 71–77 of 139–167 (ruling (a)) · T1 met (+10.2 → +10.0 %), T2 wrong sign, T3/T4 right sign · kill #3: 2024 unserved +2,760 MWh; C8
   ST_GAS 2019/2020/2025 and C4 gas 2021 flips; the kept ST_GAS floor stacks +1.3–2.0 TWh/yr · wall 3.0–5.2× · uplift 0.7–1.5 % ·
   **verdict R**; matrix cell `unit_commitment_milp` × MISO stamped R.
+
+## Addendum — 2023 recovered and scored (2026-10-10, after #7232 merged); verdict unchanged, R
+
+The owner approved the 2023 shard's commit + push in its own session. The bundle is on
+`claude/ucmilp-miso-2023b` @ `3af378b190799a626f4794052d34d1d14f4e2d8d` (parented on the pin; 24 files, with `dispatch/2023_P1.parquet` as three
+split parts + `.sha256`). It was fetched; the parts were reassembled and checked (`sha256sum -c` OK, `f0b88147…091b`); the recipe gate passes
+and P1 unserved is 0 (keeper 0). The shard was then archived (rule 33): all seven shards are now archived.
+
+The span was recomposed over **six years** (2019 / 2020 / 2021 / 2023 / 2024 / 2025) with the same scratch composer, registered locally,
+scored and removed from the tree as before. **No status changed in the five years already reported** (per-(criterion, key, year) diff
+empty). The slim span under `data/ucmilp_miso_span/` now carries 2023 and the six-year `legitimacy_diagnostics.json` / `metrics.json` /
+`readings/arm_verdict.json`.
+
+**2023, control → arm** (no real flip; C3c CAVEAT → FAIL is the attestation artefact again, magnitude 0 h both sides vs 30 h actual):
+
+| C1 Δ TWh | C3a | C3b | C4 gas NRMSE | C8 ST_GAS (MECH 28 inside) | C8 CT_PEAKER | unserved |
+|---|---|---|---|---|---|---|
+| CC_REGULAR −0.87 → −5.27; ST_GAS −1.48 → −4.09; COAL_PRB −0.10 → −0.23; CT_PEAKER −4.21 → −3.81 (all PASS) | +4.8 → **+2.9 %** PASS | 0.078 → **0.058** PASS | 0.165 → 0.194 PASS | 15.4 → 26.1 % PASS | 49.0 → 47.5 %, grounded PASS | 0 → 0 |
+
+- **Readings.** Starts vs CEMS: CC 1.41 → 0.42×; ST_GAS 6.54 → 0.39×; COAL_PRB 1.87 → 1.54×; COAL_BIT 2.74 → 3.67×. Hours ≤ $15: 0 → 5
+  of 241. Lower-tercile error 5.98 → 4.38 $/MWh. M4 dormancy 1.000 → 1.000 (mean MCP $0.00 → 0.03 vs actual $2.34).
+- **Stacking.** The kept `st_gas_mustrun_per_plant` floor: 3.32 → 4.57 TWh (+1.25). Over the six years the stacking is +1.25–2.0 TWh/yr.
+- **D-4.** The keeper's plant 1122 conduct row (2023 / 2025) clears.
+- **Cost.** Uplift $141.8 M = 0.71 % of energy cost. Wall row (§0.2) unchanged.
+
+**Effect on the verdict: none.** 2023 is the arm's best year (price body and shape both closer to actual, no flip). Kill #3 (2024 unserved),
+T2 (2021 C3b wrong sign) and the C8 ST_GAS / C4 gas flips stand: **R**. Coverage is now **6 of 7** years; 2022 remains a budget stop.
+Additional shard branch for the owner to cut: `claude/ucmilp-miso-2023b`. (`claude/ucmilp-miso-2023` was never pushed.)

@@ -4089,5 +4089,10 @@ frontend/data/backcast/runs/2026-10-03-closeout-pjm-nuc-7yr.js
 # DESIGN-uc-milp-engine-2026-10-03 section 4). Never a sidecar, never pushed.
 results/uc-checkpoints/
 
+# UC-2-ERCOT dc3860be evidence legs: bytes on claude/ucmilp-ercot-2024 (0c76c8c3) / -2025 (df87a9be); never on main (UC-DESK 17:38Z)
+results/calibration/ucmilp_ercot_2024/
+results/calibration/ucmilp_ercot_2025/
+results/calibration/ucmilp_ercot_d_*/
+results/calibration/_s1_ucmilp_ercot_*/
 # UC-2-MISO lane: leg bundles checked out locally for zero-LP compose/score; they live on their shard branches (rules 29(c), 31, 33)
 results/calibration/ucmilp_miso_*/
