@@ -440,3 +440,25 @@ def test_slim_field_is_registered_at_its_default():
     assert (
         ScenarioConfig().cache_key() == ScenarioConfig(uc_slim_window=True).cache_key()
     )
+
+
+def test_float_noise_on_a_row_is_not_a_contradiction():
+    """A coupling row whose minimum activity misses its bound by a few ulp
+    (SPP 2020 April / October: 4e-15 on one row of every window) is kept for
+    HiGHS, not read as an unsatisfiable row — and not forced or dropped either."""
+    # x0 fixed at 0.1 + 0.2 (= 0.30000000000000004), x1 in [0, 1] with
+    # coefficient -1: row  x0 - x1 <= 0.3  is satisfiable only at x1 >= 4e-17
+    # in float; in real arithmetic x1 = 0 satisfies it exactly.
+    v = 0.1 + 0.2
+    red = _lp([[1, -1], [1, 1]], [v, 0], [v, 1], [-INF, -INF], [0.3, 5], cost=[1, 2])
+    assert red is not None
+    assert ucslim.LAST_STAND_DOWN is None
+    # once x0 is gone the noisy row is a singleton on x1 and becomes its
+    # (4e-17) lower bound; the other row is redundant (max 1.3 <= 5); nothing
+    # was forced
+    assert red.n_slim_rows == 0 and red.counts["cols_fixed_by_forcing"] == 0
+    assert 0.0 <= red.col_lower[0] <= 1e-15
+    # a real contradiction still stands the reduction down, with its reason
+    assert _lp([[1, 1]], [0, 0], [1, 1], [3], [INF]) is None
+    assert ucslim.LAST_STAND_DOWN["reason"] == "row_unsatisfiable"
+    assert ucslim.LAST_STAND_DOWN["worst"] > 0.5

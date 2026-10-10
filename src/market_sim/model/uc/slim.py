@@ -79,6 +79,30 @@ MAX_PASSES = 12
 #: the row it would accept.
 EMPTY_ROW_TOL = 1e-9
 
+#: Why the last :func:`reduce_lp` call stood down (``None`` when it did not):
+#: one of ``"bounds_crossed"``, ``"row_unsatisfiable"``, ``"forcing_infinite"``,
+#: ``"forcing_disagree"``, ``"empty_row_violated"`` plus the worst violation —
+#: surfaced per window in ``uc_solve_log`` (``windows[].slim.stand_down``).
+LAST_STAND_DOWN: dict | None = None
+
+
+def _stand_down(reason: str, **detail) -> None:
+    """Record why the reduction returns ``None`` (see :data:`LAST_STAND_DOWN`)."""
+    global LAST_STAND_DOWN
+    LAST_STAND_DOWN = {"reason": reason, **{k: float(v) for k, v in detail.items()}}
+    return None
+
+
+#: Relative slack below which a row's activity range is NOT read as a
+#: contradiction. ``mx`` / ``mn`` are float sums of bound products; a row the
+#: bounds satisfy exactly in real arithmetic can miss its own bound by a few
+#: ulp (SPP 2020: 4e-15 on one row of every April and October window, which
+#: sent 43 windows of the first L3 shard back to the full model). Within this
+#: slack nothing is forced or dropped either (those tests stay exact
+#: equalities), the row simply stays for HiGHS; beyond it the full model is
+#: infeasible and the reduction stands down so the existing report fires.
+ROW_TOL = 1e-9
+
 #: Columns with more nonzeros than this are never merged (the parallel-column
 #: key is a fixed-width padded array; a window's continuous columns carry a
 #: handful of entries — balance, reserve, ramp, coupling rows).
@@ -214,14 +238,40 @@ def _assign_fixed(
     c, v = cols[order], values[order]
     first = np.concatenate([[True], c[1:] != c[:-1]])
     head = np.maximum.accumulate(np.where(first, np.arange(c.size), 0))
-    if not np.all(v == v[head]):
+    tol = ROW_TOL * np.maximum(1.0, np.abs(v[head]))
+    if not np.all(np.abs(v - v[head]) <= tol):
         return False
     cu, vu = c[first], v[first]
-    if np.any(vu < col_lower[cu]) or np.any(vu > col_upper[cu]):
+    tol = ROW_TOL * np.maximum(1.0, np.abs(vu))
+    if np.any(vu < col_lower[cu] - tol) or np.any(vu > col_upper[cu] + tol):
         return False
+    # a forced value is always one of the column's own bounds; keep it there
+    vu = np.clip(vu, col_lower[cu], col_upper[cu])
     col_lower[cu] = vu
     col_upper[cu] = vu
     return True
+
+
+def _row_violation(
+    alive: np.ndarray, mn: np.ndarray, mx: np.ndarray, rl: np.ndarray, ru: np.ndarray
+) -> np.ndarray:
+    """Per-row contradiction beyond :data:`ROW_TOL` (``-inf`` for a dead or satisfiable row).
+
+    A finite ``mx`` below ``rl`` (or ``mn`` above ``ru``) by more than
+    ``ROW_TOL * max(1, |bound|, |activity|)`` is a row no bound setting
+    satisfies; a miss inside that slack is float noise and is not a
+    contradiction (nor a forcing or redundant row — those are exact).
+    """
+    with np.errstate(invalid="ignore"):
+        scale_lo = np.maximum(1.0, np.maximum(np.abs(rl), np.abs(mx)))
+        scale_hi = np.maximum(1.0, np.maximum(np.abs(ru), np.abs(mn)))
+        v_lo = np.where(
+            np.isfinite(mx) & np.isfinite(rl), (rl - mx) - ROW_TOL * scale_lo, -np.inf
+        )
+        v_hi = np.where(
+            np.isfinite(mn) & np.isfinite(ru), (mn - ru) - ROW_TOL * scale_hi, -np.inf
+        )
+    return np.where(alive, np.maximum(v_lo, v_hi), -np.inf)
 
 
 def _activity_from(
@@ -312,8 +362,15 @@ def reduce_lp(
         if is_integer is None
         else np.asarray(is_integer, dtype=bool)
     )
+    global LAST_STAND_DOWN
+    LAST_STAND_DOWN = None
     if np.any(cl > cu) or np.any(rl > ru):
-        return None
+        return _stand_down(
+            "bounds_crossed",
+            worst=max(
+                float(np.max(cl - cu, initial=0.0)), float(np.max(rl - ru, initial=0.0))
+            ),
+        )
     Ap = A.maximum(0).tocsr()
     An = A.minimum(0).tocsr()
     pattern = A.copy()
@@ -335,8 +392,9 @@ def reduce_lp(
         passes += 1
         changed = False
         mn, mx = _activity_from(Ap, An, cl, cu)
-        if np.any(alive & ((mx < rl) | (mn > ru))):
-            return None
+        viol = _row_violation(alive, mn, mx, rl, ru)
+        if np.any(viol > 0.0):
+            return _stand_down("row_unsatisfiable", worst=viol.max(), pass_no=passes)
         # (4) redundant rows
         red = alive & (mn >= rl) & (mx <= ru)
         if red.any():
@@ -362,9 +420,9 @@ def reduce_lp(
             fvals = np.concatenate(fvals)
             if fcols.size:
                 if not np.all(_finite(fvals)):
-                    return None
+                    return _stand_down("forcing_infinite", pass_no=passes)
                 if not _assign_fixed(cl, cu, fcols, fvals):
-                    return None
+                    return _stand_down("forcing_disagree", pass_no=passes)
                 new_fixed = (cl == cu) & _finite(cl) & ~fixed
                 counts["cols_fixed_by_forcing"] += int(new_fixed.sum())
                 fixed |= new_fixed
@@ -415,8 +473,9 @@ def reduce_lp(
                 changed = True
     # final sweep: rows the last pass's fixings made redundant
     mn, mx = _activity_from(Ap, An, cl, cu)
-    if np.any(alive & ((mx < rl) | (mn > ru))):
-        return None
+    viol = _row_violation(alive, mn, mx, rl, ru)
+    if np.any(viol > 0.0):
+        return _stand_down("row_unsatisfiable", worst=viol.max(), pass_no=passes + 1)
     red = alive & (mn >= rl) & (mx <= ru)
     if red.any():
         alive &= ~red
@@ -439,7 +498,10 @@ def reduce_lp(
         if np.any(rl_k[empty] > EMPTY_ROW_TOL * scale) or np.any(
             ru_k[empty] < -EMPTY_ROW_TOL * scale
         ):
-            return None
+            return _stand_down(
+                "empty_row_violated",
+                worst=max(float(np.max(rl_k[empty])), float(-np.min(ru_k[empty]))),
+            )
         counts["rows_dropped_empty"] = int(empty.sum())
         kept_rows = kept_rows[~empty]
         rl_k = rl_k[~empty]

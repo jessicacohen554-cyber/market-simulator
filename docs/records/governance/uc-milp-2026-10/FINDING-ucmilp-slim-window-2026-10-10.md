@@ -110,6 +110,23 @@ solver's own tolerance — and reproduces the objective exactly (`slim.full_row_
   `lower == upper` exactly, so a one-ulp pin stays a column (HiGHS fixes it inside its own
   tolerance); nothing in the window build was changed to force the equality.
 
+### 1.5 The first shard pair, and the stand-down that was float noise
+
+The first L3 shard (`180b4812`, §5) reduced 322 of 365 windows: every window of 2 April –
+30 April and 20 September – 10 October (43 windows, two contiguous blocks) solved on the full
+model because the reduction read one row as unsatisfiable by **3.9e-15**. Reproduced here
+zero-LP (the keeper's committed P1 dispatch standing in for P0, the UC-1-FIX precedent): the
+row is an output-coupling row (a) `Σ P − p̄·a·u ≤ 0` of a cluster with a budget-pinned
+member, whose pinned `P` (`pmax · (p_pin / pmax)`) and the cluster's `p̄ · a · n` agree in real
+arithmetic and differ by a few ulp in float — the activity minimum lands at +4e-15 against
+an upper bound of 0. The contradiction test now carries `ROW_TOL = 1e-9` (relative; a miss
+inside it is float noise: nothing is forced or dropped — those tests stay exact equalities —
+the row simply stays for HiGHS; beyond it the full model is infeasible and the reduction
+stands down, naming the reason in `uc_solve_log` through `slim.LAST_STAND_DOWN`). The ten
+probed windows (April, October and controls) all reduce after the fix; the 62 windows of the
+first L2 shard were all reduced before it (the fix touches no reduction they took), and both
+rungs were re-run at the fixed SHA (§3–§4).
+
 ## 2. What landed (G-DRIFT: every hunk inside the gate-on path; goldens untouched)
 
 * `model/uc/slim.py` (new): `reduce_lp` (fixed / forcing / singleton / redundant / empty, then
