@@ -3423,7 +3423,21 @@ def _compose_min_gen_floors(
     min_gen = None
     min_gen_mech = None
     chp_pmin_any = any(getattr(g, "chp_grid_pmin_mw", 0.0) > 0.0 for g in generators)
-    coal_sync_any = any(getattr(g, "coal_sync_pmin_mw", 0.0) > 0.0 for g in generators)
+    # Coal synchronization floor RELEASE (config.coal_sync_floor_release,
+    # UC-2-SPP-B, owner ruling D-5b): the FORCING alone is removed. The
+    # ``coal_sync_pmin_mw`` stamp stays on the _mustrun / _sync rows -- it still
+    # selects their availability basis in generators_to_fleet_arrays and keeps
+    # the band split and its pricing exactly as coal_sync_srmc_tranche built
+    # them -- but no MECH_COAL_MUSTRUN min_gen floor is composed here, so the
+    # UC stage (MECH 28) is the one mechanism carrying coal's commitment state
+    # (rule 19 [R-ONE-MECH]). Off, the historical branch is taken verbatim.
+    _coal_sync_release = bool(
+        config is not None and getattr(config, "coal_sync_floor_release", False)
+    )
+    coal_sync_any = (
+        any(getattr(g, "coal_sync_pmin_mw", 0.0) > 0.0 for g in generators)
+        and not _coal_sync_release
+    )
     coal_min_config_any = any(
         getattr(g, "coal_min_config_pmin_mw", 0.0) > 0.0 for g in generators
     )

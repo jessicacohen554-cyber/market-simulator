@@ -51,6 +51,7 @@ from market_sim.data.floor_mechanisms import MECH_UC_SCHEDULE
 from market_sim.model.uc.params import (
     UcClusterParams,
     build_uc_cluster_params,
+    demote_budget_pinned,
     params_log_rows,
     units_needed_for_floor,
     units_online_from_dispatch,
@@ -70,8 +71,10 @@ from market_sim.model.uc.solve import (
 )
 from market_sim.model.uc.window import (
     UcWindowModel,
+    budget_pinned_gens,
     prefix_bounds,
     slice_window_inputs,
+    window_fleet,
 )
 from market_sim.pipeline.commitment import _bridge_floored_fleet
 
@@ -80,7 +83,11 @@ logger = logging.getLogger(__name__)
 #: Engine version stamped in every ``uc_solve_log`` (bumped on a formulation change).
 #: uc-1.1: carried min-up / min-down history inside the Rajan–Takriti rows and
 #: the look-ahead min-down guard (FINDING-ucmilp-1-fix-window-infeasibility-2026-10-04).
-UC_ENGINE_VERSION = "uc-1.1"
+#: uc-1.2: the floor unit need is the one row (a) implies (``pbar * a`` per unit)
+#: and the guard reads it on the window's own pinned fleet
+#: (FINDING-ucmilp-fix2-floor-mindown-2026-10-10); a cluster whose members are
+#: all budget-pinned carries no integer (UC-DESK ruling, option (a)).
+UC_ENGINE_VERSION = "uc-1.2"
 
 #: The most recent stage objects (one per year solved in this process), for a
 #: harness that writes the post-P1 uplift sidecar; drained by :func:`take_uc_stages`.
@@ -177,6 +184,7 @@ PHASE_SUM_KEYS: tuple[str, ...] = tuple(
 ) + (
     "set_solution_s",
     "extract_s",
+    "slim_s",
     "slice_s",
     "lp_build_s",
     "uc_build_s",
@@ -200,6 +208,41 @@ def phase_sums(windows: list[dict]) -> dict:
     out["incumbent_src_hist"] = hist
     out["warm_feasible_windows"] = int(
         sum(int(w.get("phase", {}).get("warm_feasible", 0) or 0) for w in windows)
+    )
+    return out
+
+
+#: Per-window ``slim`` census keys summed into ``summary.slim_sums``.
+SLIM_SUM_KEYS: tuple[str, ...] = (
+    "cols_fixed_by_bounds",
+    "cols_fixed_by_forcing",
+    "cols_fixed_by_singleton",
+    "cols_merged_parallel",
+    "rows_dropped_redundant",
+    "rows_dropped_singleton",
+    "rows_dropped_empty",
+)
+
+
+def slim_sums(windows: list[dict]) -> dict:
+    """Sum the slim census over ``windows[].slim`` (plus mean solved columns / rows and the windows reduced)."""
+    out: dict = {k: 0 for k in SLIM_SUM_KEYS}
+    reduced = [w for w in windows if w.get("slim") and w["slim"].get("reduced")]
+    for w in reduced:
+        for k in SLIM_SUM_KEYS:
+            out[k] += int(w["slim"].get(k, 0) or 0)
+    out["windows_reduced"] = len(reduced)
+    out["solved_columns_mean"] = (
+        round(
+            float(np.mean([w["slim"]["columns"] for w in windows if w.get("slim")])), 1
+        )
+        if any(w.get("slim") for w in windows)
+        else 0.0
+    )
+    out["solved_rows_mean"] = (
+        round(float(np.mean([w["slim"]["rows"] for w in windows if w.get("slim")])), 1)
+        if any(w.get("slim") for w in windows)
+        else 0.0
     )
     return out
 
@@ -247,7 +290,16 @@ class UcStage:
         self.upstream_prep = upstream_prep
         self.bid_getter = bid_getter
         self.checkpoint_dir = uc_checkpoint_dir(self.iso, self.year, checkpoint_root)
-        self.params: UcClusterParams = build_uc_cluster_params(fleet_arrays, self.iso)
+        gate_params = build_uc_cluster_params(fleet_arrays, self.iso)
+        #: Integer clusters the E1 gate admits, before the budget-pin demotion.
+        self.integer_gate_size = int(gate_params.integer.sum())
+        # A cluster whose members are all pinned to P0 by a dropped budget
+        # family carries no integer: its commitment is the identity's
+        # (``demote_budget_pinned``, rule 19).
+        self.params: UcClusterParams
+        self.params, self.pinned_demoted = demote_budget_pinned(
+            gate_params, budget_pinned_gens(dispatch_kwargs)
+        )
         self.int_idx = self.params.integer_clusters
         self.schedule: UcSchedule | None = None
         self.log: dict = {}
@@ -256,11 +308,14 @@ class UcStage:
         self.L = int(config.uc_lookahead_hours)
         self.options: UcSolveOptions = solve_options_from_config(config)
         self.prefixing = bool(getattr(config, "uc_prefixing", False))
+        self.slim = bool(getattr(config, "uc_slim_window", False))
         logger.info(
-            "UC stage prepared: %d clusters, %d integer (%d fleet rows), W=%d L=%d",
+            "UC stage prepared: %d clusters, %d integer (%d fleet rows; %d "
+            "all-budget-pinned clusters left to their budget identity), W=%d L=%d",
             self.params.n_clusters,
             int(self.int_idx.size),
             int(self.params.integer_member_gens.size),
+            int(self.pinned_demoted.size),
             self.W,
             self.L,
         )
@@ -335,10 +390,11 @@ class UcStage:
         sched = UcSchedule(p, T, hist, record_states=record_states or pin is not None)
         if pin is not None and not pin.prev_states:
             raise ValueError("a paired run needs a pin built with record_states=True")
-        # The structural floors' unit needs over the whole year (zero LP): each
-        # window receives the slice just past its horizon — up to the longest
-        # min-down minus one hour — for its look-ahead guard rows.
-        floor_need_year = units_needed_for_floor(p, fleet_in, 0, T)[k]
+        # Each window's look-ahead guard rows read the floor unit needs of the
+        # hours just past its horizon — up to the longest min-down minus one
+        # hour — on the fleet a window covering those hours sees
+        # (``window_fleet``: budget rows pinned to P0), never on the unpinned
+        # year fleet (FINDING-ucmilp-fix2-floor-mindown-2026-10-10).
         guard_reach = int(p.dt_h[k].max()) - 1 if k.size else 0
         month_ends = month_boundaries(T)
         next_month = int(np.searchsorted(month_ends, t_start, side="right"))
@@ -349,7 +405,13 @@ class UcStage:
             t1 = min(t0 + W + L, T)
             t_w0 = time.perf_counter()
             inputs = slice_window_inputs(
-                fleet_in, self.demand, self.dispatch_kwargs, t0, t1, p0_dispatch
+                fleet_in,
+                self.demand,
+                self.dispatch_kwargs,
+                t0,
+                t1,
+                p0_dispatch,
+                p0_flows=getattr(r0, "flows", None),
             )
             state = (pin if pin is not None and t0 > t_start else sched).state_for(
                 t0,
@@ -383,7 +445,10 @@ class UcStage:
                 soc_terminal=soc_terminal,
                 fix_on=fix_on,
                 fix_off=fix_off,
-                floor_need_ahead=floor_need_year[:, t1 : min(t1 + guard_reach, T)],
+                floor_need_ahead=self._floor_need_ahead(
+                    fleet_in, p0_dispatch, t1, min(t1 + guard_reach, T)
+                ),
+                slim=self.slim,
             )
             t_w2 = time.perf_counter()
             warm = window.warm_start_vector(
@@ -448,8 +513,25 @@ class UcStage:
                     "columns": int(result.columns),
                     "rows": int(result.rows),
                     "guard_rows": int(window._n_guard_rows),
+                    "slim": {
+                        "reduced": window.slim is not None,
+                        "columns": int(result.slim_columns),
+                        "rows": int(result.slim_rows),
+                        **(result.slim_counts or {}),
+                    },
                     "paired": paired,
                 }
+            )
+            logger.info(
+                "UC window %d [%d, %d): %s, MILP %.2f s, %d nodes, gap %.2e%s",
+                len(windows) - 1,
+                t0,
+                t1,
+                result.status,
+                result.milp_s,
+                int(result.nodes),
+                float(result.gap),
+                ", time limit" if result.time_limit_hit else "",
             )
             prev = result
             t0 = kept_to
@@ -478,6 +560,26 @@ class UcStage:
         )
         return sched
 
+    def _floor_need_ahead(
+        self, fleet_in: FleetArrays, p0_dispatch: np.ndarray, h0: int, h1: int
+    ) -> np.ndarray | None:
+        """``(n_int, h1 - h0)`` floor unit needs past a window's horizon (zero LP).
+
+        Computed on :func:`~market_sim.model.uc.window.window_fleet` of
+        ``[h0, h1)`` — the same pinned availability and ``min_gen`` the window
+        covering those hours builds its rows on — so the guard rows of one
+        window and the bounds and rows of the next agree hour by hour.
+        ``None`` when the range is empty (the year's last window).
+        """
+        if h1 <= h0:
+            return None
+        fleet_ahead, _ = window_fleet(
+            fleet_in, self.dispatch_kwargs, h0, h1, p0_dispatch
+        )
+        return units_needed_for_floor(self.params, fleet_ahead, 0, h1 - h0)[
+            self.int_idx
+        ]
+
     def _log(self, windows: list[dict], sched: UcSchedule, partial: bool) -> dict:
         """Assemble the ``uc_solve_log`` dict (DESIGN section 4)."""
         c = self.config
@@ -503,11 +605,16 @@ class UcStage:
                     "uc_solver_preset": str(
                         getattr(c, "uc_solver_preset", "highs_default")
                     ),
+                    "uc_slim_window": bool(getattr(c, "uc_slim_window", False)),
                 },
                 "solver_path": self.options.solver_path(),
                 "threads": int(self.options.threads),
                 "n_clusters": int(self.params.n_clusters),
                 "integer_set_size": int(self.int_idx.size),
+                "integer_gate_size": int(self.integer_gate_size),
+                "integer_demoted_budget_pinned": [
+                    int(self.params.plant_code[c]) for c in self.pinned_demoted
+                ],
                 "integer_fleet_rows": int(self.params.integer_member_gens.size),
                 "integers_per_window": int(self.int_idx.size * (self.W + self.L)),
                 "kept_until": int(sched.kept_until),
@@ -536,6 +643,7 @@ class UcStage:
                 "fixed_off_total": int(sum(w["fixed_off"] for w in windows)),
                 "peak_rss_gb": None,
                 "phase_sums": phase_sums(windows),
+                "slim_sums": slim_sums(windows),
             },
         }
 

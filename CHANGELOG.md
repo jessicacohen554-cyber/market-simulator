@@ -1,5 +1,32 @@
 # Changelog
 
+## 2026-10-10 — uc-milp UC-SLIM: the slim window (`uc_slim_window`, exact reduction before HiGHS; gate-on path only)
+
+Owner ruling "Try 'slim window' first" under D-2 "Keep 3×; fund speedup". UC-SPEED had measured
+HiGHS's MIP presolve at 70 % of the UC stage (SPP 2020: 803 s of 1,144 s, 2.2 s per 36-hour
+window, 63 % of the columns removed). The zero-LP census of this lane
+(`docs/records/governance/uc-milp-2026-10/FINDING-ucmilp-slim-window-2026-10-10.md`) shows only
+15 % of a window's columns are bound-fixed (pinned budget units, zero-availability units,
+zero-CF renewable hours, pinned `u`/`v`/`w`) — cheap for HiGHS — while 48 % are PARALLEL
+generator `P` columns (one zone-balance row, one offer; SPP's legacy bins) that HiGHS merges only
+after a full first presolve pass over all of them. `model/uc/slim.py` does both before HiGHS,
+exactly and vectorized: fixed columns leave with their cost as the objective offset and their
+contribution shifted into the row bounds, forcing / singleton / redundant / emptied rows are
+resolved, parallel continuous columns become one slim column with summed bounds; the slim model
+solves on its own handle, the full handle stays for the diagnosis, relaxation and dump paths, and
+a contradiction stands the reduction down (the full model solves, the existing report fires). SPP
+2020 window 0: 57,384 × 17,229 → 21,304 × 12,204 in ~0.1 s, the window MILP 2.9 s → 1.6 s, the
+same objective and `u`. Field `uc_slim_window` (default True, born and registered there — no
+committed key moves; TIER_TAGS 1; the matrix row's `def` names it). Bench: L2 arms `noslim` /
+`slim` / `slim_noprobe`, the reduction census in `uc_solve_log` (`windows[].slim`,
+`summary.slim_sums`), the L3 row. Tests: `tests/unit/model/uc/test_slim.py`. Paired equivalence gate
+(SPP 2020 Jan + Jul, 62 windows, twice): PASS — the same objective to the gap on every window
+(max rel Δobj 3.9e-4, 0 beyond), −40 % MILP seconds, presolve −55 % in-container. L3 SPP 2020
+wall row: 4.96× / 5.71× the shard's own P0 + P1 (two containers; 7.10× for the full-model lean
+path) — the D-2 ceiling of 3× is not reached and not reachable by an exact reduction (root LP +
+tail + Python alone exceed it); next card E10 month-parallel (owner). No `model/lp` change;
+gate-off byte-identical.
+
 ## 2026-10-04 — uc-milp UC-1-FIX: window infeasibility under kept floors (engine `uc-1.1`, gate-on path only)
 
 Every SPP year raised `UcWindowInfeasible` with `unit_commitment_milp=true` (UC-2-SPP kill #1).

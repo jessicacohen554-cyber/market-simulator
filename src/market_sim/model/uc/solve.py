@@ -315,26 +315,26 @@ def parse_highs_mip_log(lines: list[tuple[float, str]], total_s: float) -> dict:
     }
 
 
-def _set_u_integrality(window: UcWindowModel, integer: bool) -> None:
-    n_u = window.V0 - window.U0
-    if not n_u:
+def _set_full_u_integrality(window: UcWindowModel, integer: bool) -> None:
+    """Integrality of every ``u`` on the FULL handle (the diagnosis relaxation)."""
+    u_idx = window.u_cols_full()
+    if not u_idx.size:
         return
-    u_idx = np.arange(window.U0, window.V0, dtype=np.int32)
     kind = (
         highspy.HighsVarType.kInteger if integer else highspy.HighsVarType.kContinuous
     )
-    window.h.changeColsIntegrality(n_u, u_idx, [kind] * n_u)
+    window.h.changeColsIntegrality(int(u_idx.size), u_idx, [kind] * int(u_idx.size))
 
 
 def _relaxation_status(window: UcWindowModel) -> str:
-    """Re-solve the window's LP relaxation on its handle; restore integrality after."""
-    _set_u_integrality(window, integer=False)
+    """Re-solve the window's LP relaxation on its FULL handle; restore integrality after."""
+    _set_full_u_integrality(window, integer=False)
     try:
         window.h.clearSolver()
         window.h.run()
         return window.h.modelStatusToString(window.h.getModelStatus())
     finally:
-        _set_u_integrality(window, integer=True)
+        _set_full_u_integrality(window, integer=True)
 
 
 def _dump_window(
@@ -372,6 +372,28 @@ def _dump_window(
     return paths
 
 
+def _plants_text(report: dict) -> str:
+    """The plants the diagnosis names, as exception text (empty when none)."""
+    parts = []
+    for key, label in (
+        ("clusters_floor_above_min_down", "floor above min-down"),
+        ("clusters_ceiling_contradiction", "ceiling contradicted"),
+        ("clusters_history_starts_above_n", "carried starts above n"),
+    ):
+        rows = report.get(key) or []
+        if rows:
+            parts.append(
+                f"{label} at "
+                + "; ".join(
+                    f"plant {r['plant_code']} {r['family']} (n={r['n']}, "
+                    f"dt={r.get('dt_h')}, pinned {r.get('pinned_members', 0)}/"
+                    f"{r.get('members', 0)} members, hours {r.get('hours', [])})"
+                    for r in rows
+                )
+            )
+    return (" — " + " | ".join(parts)) if parts else ""
+
+
 def solve_window(
     window: UcWindowModel,
     options: UcSolveOptions,
@@ -397,7 +419,10 @@ def solve_window(
         UcWindowInfeasible: No feasible incumbent — with the window named,
             the LP relaxation's status and the zero-LP diagnosis attached.
     """
-    h = window.h
+    # The handle that runs is the slim window's when the reduction applied
+    # (``uc_slim_window``), else the full model's; every read of the
+    # solution below comes back through ``window.from_solve_space``.
+    h = window.h_solve
     # HiGHS's log is the phase profile's source: logging on, console off, the
     # lines collected by the callback with a wall-clock stamp each.
     h.setOptionValue("output_flag", True)
@@ -405,12 +430,12 @@ def solve_window(
     apply_solver_options(h, options)
     n_u = window.V0 - window.U0
     if relax and n_u:
-        _set_u_integrality(window, integer=False)
+        window.set_u_integrality(False)
     warm = False
     t_warm = time.perf_counter()
     if options.warm_start and warm_values is not None and not relax:
         sol = highspy.HighsSolution()
-        sol.col_value = [float(x) for x in np.asarray(warm_values, dtype=float)]
+        sol.col_value = window.to_solve_space(warm_values).tolist()
         sol.value_valid = True
         warm = h.setSolution(sol) == highspy.HighsStatus.kOk
     set_solution_s = time.perf_counter() - t_warm
@@ -445,7 +470,7 @@ def solve_window(
         time_limit_hit and feasible
     ):
         if relax and n_u:
-            _set_u_integrality(window, integer=True)
+            window.set_u_integrality(True)
         report = diagnose_window(window)
         relaxation = status_str if relax else _relaxation_status(window)
         where = (f"window {window_index}" if window_index is not None else "window") + (
@@ -461,10 +486,14 @@ def solve_window(
             f"UC {where} solve ended {status_str} with "
             f"{'a' if feasible else 'no'} feasible incumbent "
             f"({window.n_total} columns, {window.h.getNumRow()} rows, "
-            f"{window.n_int} integer clusters); LP relaxation: {relaxation}; "
+            f"{window.n_int} integer clusters; solved as "
+            f"{h.getNumCol()} x {h.getNumRow()}"
+            f"{' slim' if window.slim is not None else ''}); "
+            f"LP relaxation: {relaxation}; "
             f"a-priori contradictory rows: {summary}; "
             f"carried starts above n: {report.get('history_starts_above_n', 0)}; "
-            f"floor above min-down: {report.get('floor_above_min_down', 0)}",
+            f"floor above min-down: {report.get('floor_above_min_down', 0)}"
+            f"{_plants_text(report)}",
             window_index=window_index,
             t0=t0,
             t1=t1,
@@ -474,9 +503,9 @@ def solve_window(
     t_extract = time.perf_counter()
     info = h.getInfo()
     sol = h.getSolution()
-    col_value = np.asarray(sol.col_value, dtype=float)
+    col_value = window.from_solve_space(np.asarray(sol.col_value, dtype=float))
     if relax and n_u:
-        _set_u_integrality(window, integer=True)
+        window.set_u_integrality(True)
     gap = float(info.mip_gap) if n_u and not relax else 0.0
     nodes = int(info.mip_node_count) if n_u and not relax else 0
     phase = (
@@ -485,6 +514,7 @@ def solve_window(
         else {k: (0 if k != "incumbent_src" else "") for k in PHASE_KEYS}
     )
     phase["set_solution_s"] = round(set_solution_s, 4)
+    phase["slim_s"] = round(float(window.slim_s), 4)
     result = window.extract(
         col_value,
         objective=float(info.objective_function_value),
