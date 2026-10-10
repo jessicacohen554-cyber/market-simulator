@@ -71,7 +71,7 @@ def main(argv: list[str] | None = None) -> int:
         help=(
             "L2 arms (comma list; base always runs): "
             "warm,prefix,threads,legacy,lean,presolve,fj,lpheur,symmetry,restart,"
-            "probelift,rulelog,wide"
+            "probelift,rulelog,wide,noslim,slim,slim_noprobe"
         ),
     )
     ap.add_argument(
