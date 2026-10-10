@@ -205,6 +205,64 @@ class WindowInputs:
     pinned_gens: np.ndarray
 
 
+def budget_pinned_gens(dispatch_kwargs: dict) -> np.ndarray:
+    """Sorted fleet rows a dropped budget family names (:data:`BUDGET_GEN_IDX_KEYS`)."""
+    pinned: set[int] = set()
+    for key in BUDGET_GEN_IDX_KEYS:
+        val = dispatch_kwargs.get(key)
+        if val is not None:
+            pinned.update(int(g) for g in np.asarray(val, dtype=int).ravel())
+    return np.array(sorted(pinned), dtype=int)
+
+
+def window_fleet(
+    fleet: FleetArrays,
+    dispatch_kwargs: dict,
+    t0: int,
+    t1: int,
+    p0_dispatch: np.ndarray | None = None,
+    free_budget_units: bool = False,
+) -> tuple[FleetArrays, np.ndarray]:
+    """The fleet a window over ``[t0, t1)`` sees, and the rows pinned to P0.
+
+    The hourly fields are sliced and every row a dropped budget family names
+    (:data:`BUDGET_GEN_IDX_KEYS`) is pinned to its P0 dispatch through its
+    ``availability`` (``P0 / pmax``) and ``min_gen`` (``P0``). Every field is
+    hour-local, so the fleet of ``[t0, t1)`` is the same hour by hour whatever
+    window it belongs to: the look-ahead min-down guard reads its floor needs
+    from this function too (``pipeline/uc.py``), never from the unpinned year
+    fleet, so the guard sees exactly the floors and availability the next
+    window's rows will hold (FINDING-ucmilp-fix2-floor-mindown-2026-10-10).
+    ``free_budget_units`` leaves the rows unpinned (the bench P0 stand-in only).
+    """
+    T = int(np.asarray(fleet.availability).shape[-1])
+    pinned_gens = budget_pinned_gens(dispatch_kwargs)
+    fleet_w = _slice_obj(fleet, t0, t1, T)
+    if pinned_gens.size and not free_budget_units:
+        if p0_dispatch is None:
+            raise ValueError(
+                "budget-governed generators need the P0 dispatch to pin to"
+            )
+        p_pin = np.maximum(
+            np.asarray(p0_dispatch, dtype=float)[pinned_gens, t0:t1], 0.0
+        )
+        pmax = np.asarray(fleet_w.pmax, dtype=float)[pinned_gens]
+        avail = np.array(fleet_w.availability, dtype=float, copy=True)
+        with np.errstate(invalid="ignore", divide="ignore"):
+            frac = np.where(pmax[:, None] > 0.0, p_pin / pmax[:, None], 0.0)
+        avail[pinned_gens, :] = np.clip(frac, 0.0, 1.0)
+        base = (
+            np.array(fleet_w.min_gen, dtype=float, copy=True)
+            if fleet_w.min_gen is not None
+            else np.broadcast_to(
+                np.asarray(fleet_w.pmin, dtype=float)[:, None], avail.shape
+            ).copy()
+        )
+        base[pinned_gens, :] = np.minimum(p_pin, pmax[:, None] * avail[pinned_gens, :])
+        fleet_w = dataclasses.replace(fleet_w, availability=avail, min_gen=base)
+    return fleet_w, pinned_gens
+
+
 def slice_window_inputs(
     fleet: FleetArrays,
     demand: np.ndarray,
@@ -246,40 +304,14 @@ def slice_window_inputs(
                 "lagged cyclic terms cannot be pinned at a window edge — DESIGN "
                 "section 8 R5)"
             )
-    pinned = set()
-    for key in BUDGET_GEN_IDX_KEYS:
-        val = dispatch_kwargs.get(key)
-        if val is not None:
-            pinned.update(int(g) for g in np.asarray(val, dtype=int).ravel())
-    pinned_gens = np.array(sorted(pinned), dtype=int)
     kwargs_w = {
         k: _slice_obj(v, t0, t1, T)
         for k, v in dispatch_kwargs.items()
         if k not in BUDGET_KWARGS and k != "T"
     }
-    fleet_w = _slice_obj(fleet, t0, t1, T)
-    if pinned_gens.size and not free_budget_units:
-        if p0_dispatch is None:
-            raise ValueError(
-                "budget-governed generators need the P0 dispatch to pin to"
-            )
-        p_pin = np.maximum(
-            np.asarray(p0_dispatch, dtype=float)[pinned_gens, t0:t1], 0.0
-        )
-        pmax = np.asarray(fleet_w.pmax, dtype=float)[pinned_gens]
-        avail = np.array(fleet_w.availability, dtype=float, copy=True)
-        with np.errstate(invalid="ignore", divide="ignore"):
-            frac = np.where(pmax[:, None] > 0.0, p_pin / pmax[:, None], 0.0)
-        avail[pinned_gens, :] = np.clip(frac, 0.0, 1.0)
-        base = (
-            np.array(fleet_w.min_gen, dtype=float, copy=True)
-            if fleet_w.min_gen is not None
-            else np.broadcast_to(
-                np.asarray(fleet_w.pmin, dtype=float)[:, None], avail.shape
-            ).copy()
-        )
-        base[pinned_gens, :] = np.minimum(p_pin, pmax[:, None] * avail[pinned_gens, :])
-        fleet_w = dataclasses.replace(fleet_w, availability=avail, min_gen=base)
+    fleet_w, pinned_gens = window_fleet(
+        fleet, dispatch_kwargs, t0, t1, p0_dispatch, free_budget_units
+    )
     band = dispatch_kwargs.get("import_link_band")
     if band is not None and not free_budget_units:
         if p0_flows is None:
@@ -523,6 +555,8 @@ class UcWindowModel:
         self.T_w = int(self.layout.T)
         self.n_lp = int(self.layout.total_columns)
         self.fleet = inputs.fleet
+        #: Fleet rows a dropped budget family pinned to P0 (the diagnosis names them).
+        self.pinned_gens = np.asarray(inputs.pinned_gens, dtype=int)
         self._install_lp_cost(np.asarray(mc_w, dtype=float))
         self.U0 = self.n_lp
         self.V0 = self.U0 + self.n_int * self.T_w

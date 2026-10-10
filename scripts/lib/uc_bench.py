@@ -283,7 +283,7 @@ def rung_l1(
     (the carried P0 state, the look-ahead floor need for the guard rows).
     """
     from market_sim.model.lp.model import DispatchModel
-    from market_sim.model.uc.params import units_needed_for_floor, units_online_profile
+    from market_sim.model.uc.params import units_online_profile
     from market_sim.model.uc.solve import solve_options_from_config, solve_window
     from market_sim.model.uc.window import UcWindowModel, slice_window_inputs
 
@@ -317,9 +317,9 @@ def rung_l1(
         else np.asarray(r0.storage_soc)[:, t1 - 1]
     )
     guard_reach = int(p.dt_h[k].max()) - 1 if k.size else 0
-    floor_ahead = units_needed_for_floor(
-        p, cap.fleet_arrays, t1, min(t1 + guard_reach, T)
-    )[k]
+    floor_ahead = stage._floor_need_ahead(
+        cap.fleet_arrays, p0, t1, min(t1 + guard_reach, T)
+    )
     opts = solve_options_from_config(
         cfg, debug_dump_dir=None if dump_dir is None else Path(dump_dir)
     )
@@ -540,9 +540,17 @@ def rung_l2(
     months: tuple[int, ...] = (1, 7),
     arms: tuple[str, ...] = ("warm", "prefix"),
     paired: bool = True,
+    dump_dir: Path | None = None,
     **uc_fields,
 ) -> dict:
     """L2: rolling windows over ``months`` per arm; distributions, phase sums, equivalence.
+
+    ``dump_dir`` (``bench_uc_ladder.py --dump-dir``) is handed to every arm's
+    :class:`UcSolveOptions`: an infeasible window writes its model, carried
+    state and zero-LP diagnosis there, and the raised
+    :class:`~market_sim.model.uc.window.UcWindowInfeasible` (window, plants,
+    hours) is also written to ``<out_dir>/l2_infeasible.json`` before it
+    propagates — a harness argument, never a registry field.
 
     ``arms`` names :data:`L2_ARMS` entries; ``base`` (the registry defaults
     plus ``uc_fields``) always runs first, rolling, recording its handed-over
@@ -556,6 +564,7 @@ def rung_l2(
     import dataclasses as _dc
 
     from market_sim.model.uc.schedule import month_boundaries
+    from market_sim.model.uc.window import UcWindowInfeasible
 
     if cap.r0 is None:
         raise RuntimeError(
@@ -592,21 +601,39 @@ def rung_l2(
         try:
             cfg = _armed_config(cap, **{**uc_fields, **cfg_over})
             stage = _stage(cap, cfg, cap.r0, cap.mc_bid, Path(out_dir) / "uc" / name)
+            if dump_dir is not None:
+                solve_over.setdefault("debug_dump_dir", Path(dump_dir) / name)
             if solve_over:
                 stage.options = _dc.replace(stage.options, **solve_over)
             per_month = []
             for m in months:
                 t0, t1 = int(starts[m - 1]), int(ends[m - 1])
                 tm = time.perf_counter()
-                sched = stage.run(
-                    cap.fleet_arrays,
-                    np.asarray(cap.mc_bid),
-                    t_start=t0,
-                    t_end=t1,
-                    write=False,
-                    record_states=(name == "base"),
-                    pin=base_scheds[m] if pin_this else None,
-                )
+                try:
+                    sched = stage.run(
+                        cap.fleet_arrays,
+                        np.asarray(cap.mc_bid),
+                        t_start=t0,
+                        t_end=t1,
+                        write=False,
+                        record_states=(name == "base"),
+                        pin=base_scheds[m] if pin_this else None,
+                    )
+                except UcWindowInfeasible as exc:
+                    _write_json(
+                        Path(out_dir) / "l2_infeasible.json",
+                        {
+                            "arm": name,
+                            "month": m,
+                            "message": str(exc),
+                            "window_index": exc.window_index,
+                            "t0": exc.t0,
+                            "t1": exc.t1,
+                            "relaxation_status": exc.relaxation_status,
+                            "diagnosis": exc.diagnosis,
+                        },
+                    )
+                    raise
                 wall = time.perf_counter() - tm
                 if name == "base":
                     base_scheds[m] = sched

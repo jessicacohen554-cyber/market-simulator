@@ -174,6 +174,34 @@ def test_restrict_and_expand_round_trip_with_fixed_and_merged_columns():
     assert np.all(back >= [0, 1, 7, 0, 0]) and np.all(back <= [2, 3, 7, 4, 1])
 
 
+def test_expand_fills_an_unbounded_member_last_and_never_returns_nan():
+    """UC-1-FIX-2: a merged group with a member of upper bound +inf. The inf
+    cap used to enter the running cumsum, and every later member, in this
+    group and in every later group, came back NaN (ERCOT, slim.py
+    RuntimeWarning). Now the unbounded member is filled last, the bounded
+    ones first, and a later merged group is untouched."""
+    # group A: x0 (unbounded, lower 0) and x1 (bound 2), parallel, same cost;
+    # group B: x2 and x3 (bounds 1, 1), parallel with each other, another cost.
+    rows = [[1, 1, 1, 1], [2, 2, 3, 3]]
+    red = _lp(
+        rows,
+        [0, 0, 0, 0],
+        [INF, 2, 1, 1],
+        [-INF, -INF],
+        [100, 100],
+        cost=[5, 5, 6, 6],
+    )
+    assert red is not None
+    assert red.col_map.tolist() == [0, 0, 1, 1]
+    with np.errstate(invalid="raise"):
+        back = red.expand(np.array([5.0, 1.5]))
+    assert np.isfinite(back).all(), back
+    # x1 (bounded) takes its cap first, x0 (unbounded) the remainder
+    assert back[:2].tolist() == [3.0, 2.0]
+    # the later group splits in index order, unaffected by the inf upstream
+    assert back[2:].tolist() == [1.0, 0.5]
+
+
 def test_slim_index_maps_u_columns_and_names_fixed_ones():
     red = _lp([[1, 1, 1]], [0, 3, 0], [1, 3, 1], [-INF], [10], cost=[1, 2, 3])
     assert red is not None

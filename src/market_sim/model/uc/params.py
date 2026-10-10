@@ -19,6 +19,7 @@ family's fast-start exemption inverted (rule 18 physics, never class names).
 
 from __future__ import annotations
 
+import dataclasses
 import math
 from dataclasses import dataclass
 
@@ -430,6 +431,44 @@ def _cluster_of_gen(
     return out
 
 
+def demote_budget_pinned(
+    params: UcClusterParams, pinned_gens: np.ndarray
+) -> tuple[UcClusterParams, np.ndarray]:
+    """Drop the integer of every cluster whose members are ALL budget-pinned.
+
+    A row a dropped budget family names (``window.BUDGET_GEN_IDX_KEYS``: the
+    coal-yard identity, hydro, oil, import nodes) is pinned to its P0
+    dispatch inside every window (DESIGN section 2.1). A cluster made only of
+    such rows has its output fixed hour by hour, so its commitment is the
+    budget identity's, set by P0, and is not a decision the window can take.
+    Under rule 19 the identity owns it: the cluster carries no ``u``, no
+    commitment rows and no ``MECH_UC_SCHEDULE`` floor, and P1 treats it as
+    the gate-off run does. A cluster with at least one unpinned member keeps
+    its integer (UC-DESK ruling on UC-1-FIX-2, option (a);
+    FINDING-ucmilp-fix2-floor-mindown-2026-10-10 section 6).
+
+    Returns ``(params, demoted)``: the params with the integer mask cleared on
+    those clusters, and their cluster indices.
+    """
+    pinned = np.zeros(int(params.cluster_of_gen.size), dtype=bool)
+    idx = np.asarray(pinned_gens, dtype=int)
+    if idx.size:
+        pinned[idx[(idx >= 0) & (idx < pinned.size)]] = True
+    n_mem = np.bincount(params.member_cluster, minlength=params.n_clusters)
+    n_pin = np.bincount(
+        params.member_cluster,
+        weights=pinned[params.member_gen].astype(float),
+        minlength=params.n_clusters,
+    )
+    all_pinned = (n_mem > 0) & (n_pin >= n_mem)
+    demoted = np.flatnonzero(params.integer & all_pinned)
+    if not demoted.size:
+        return params, demoted
+    integer = np.array(params.integer, dtype=bool, copy=True)
+    integer[demoted] = False
+    return dataclasses.replace(params, integer=integer), demoted
+
+
 def params_log_rows(params: UcClusterParams) -> list[dict]:
     """Per-cluster rows for ``uc_solve_log_<y>.json`` (``clusters[]``)."""
     out = []
@@ -486,14 +525,26 @@ def units_needed_for_floor(
     """``(n_c, t1 - t0)`` lower bound on ``u`` implied by structural member floors.
 
     A floor on a member (nuclear / CHP / coal must-run / reliability floors,
-    all upstream of the hook) is an input the UC respects: ``u >=
-    ceil(sum_members floor / pbar)`` (DESIGN section 2.2, last row), where the
-    floor is the member's EFFECTIVE P lower bound — ``min_gen`` clipped to
-    ``pmax * availability`` — exactly the clip ``model.lp.bounds.build_variable_
-    bounds`` applies to the P column (``col_lower = min(col_lower,
-    col_upper)``), so the UC never asks for a unit the LP's own floor does
-    not (a floor above the available capacity is already released by that
-    clip in P0, P1 and the window alike).
+    all upstream of the hook; a budget row pinned to P0 inside a window) is an
+    input the UC respects. The floor is the member's EFFECTIVE P lower bound —
+    ``min_gen`` clipped to ``pmax * availability`` — exactly the clip
+    ``model.lp.bounds.build_variable_bounds`` applies to the P column
+    (``col_lower = min(col_lower, col_upper)``), so the UC never asks for a
+    unit the LP's own floor does not (a floor above the available capacity is
+    already released by that clip in P0, P1 and the window alike).
+
+    The unit count is the one the window's own output-coupling row (a)
+    ``sum_members P <= pbar * a * u`` implies at ``P = floor``:
+    ``u >= ceil(sum_members floor / (pbar * a))``, ``a`` the cluster's
+    capacity-weighted availability on the SAME fleet hours
+    (:meth:`UcClusterParams.cluster_availability`). Dividing by ``pbar``
+    alone (engine uc-1.1) under-counts wherever ``a < 1`` — a derate, or a
+    budget row pinned to P0 through its availability, which makes ``a``
+    exactly the pinned output share and the need every unit — and the
+    look-ahead guard then let a window stop a unit a later window's row (a)
+    needs (MISO 2020-2025, FINDING-ucmilp-fix2-floor-mindown-2026-10-10). The
+    effective floors sum to at most ``cap * a = n * pbar * a``, so the need
+    never exceeds ``n``.
     """
     n_t = t1 - t0
     min_gen = getattr(fleet, "min_gen", None)
@@ -511,10 +562,11 @@ def units_needed_for_floor(
         params.member_cluster,
         np.maximum(np.minimum(floor, ceiling), 0.0),
     )
+    per_unit = params.pbar_mw[:, None] * params.cluster_availability(fleet, t0, t1)
     with np.errstate(invalid="ignore", divide="ignore"):
         need = np.where(
-            params.pbar_mw[:, None] > 0.0,
-            np.ceil(tot / params.pbar_mw[:, None] - 1e-9),
+            (per_unit > 0.0) & (tot > 0.0),
+            np.ceil(tot / per_unit - 1e-9),
             0.0,
         )
     return np.clip(need, 0, params.n_units[:, None]).astype(int)

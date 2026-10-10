@@ -96,9 +96,10 @@ def main(argv: list[str] | None = None) -> int:
         "--dump-dir",
         default=None,
         help=(
-            "L1 only: on an infeasible window write its model (.mps), carried "
-            "state (.npz) and zero-LP diagnosis (.json) here — a harness "
-            "argument, never a registry field or an env knob"
+            "L1/L2: on an infeasible window write its model (.mps), carried "
+            "state (.npz) and zero-LP diagnosis (.json) here (L2: one "
+            "subdirectory per arm) — a harness argument, never a registry "
+            "field or an env knob"
         ),
     )
     ap.add_argument(
@@ -155,7 +156,13 @@ def main(argv: list[str] | None = None) -> int:
     months = tuple(int(m) for m in args.months.split(","))
     arms = tuple(a for a in args.arms.split(",") if a)
     res = uc_bench.rung_l2(
-        cap, out, months=months, arms=arms, paired=not args.rolling, **overrides
+        cap,
+        out,
+        months=months,
+        arms=arms,
+        paired=not args.rolling,
+        dump_dir=Path(args.dump_dir) if args.dump_dir else None,
+        **overrides,
     )
     for name, arm in res["arms"].items():
         for m in arm["months"]:

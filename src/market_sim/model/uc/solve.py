@@ -372,6 +372,28 @@ def _dump_window(
     return paths
 
 
+def _plants_text(report: dict) -> str:
+    """The plants the diagnosis names, as exception text (empty when none)."""
+    parts = []
+    for key, label in (
+        ("clusters_floor_above_min_down", "floor above min-down"),
+        ("clusters_ceiling_contradiction", "ceiling contradicted"),
+        ("clusters_history_starts_above_n", "carried starts above n"),
+    ):
+        rows = report.get(key) or []
+        if rows:
+            parts.append(
+                f"{label} at "
+                + "; ".join(
+                    f"plant {r['plant_code']} {r['family']} (n={r['n']}, "
+                    f"dt={r.get('dt_h')}, pinned {r.get('pinned_members', 0)}/"
+                    f"{r.get('members', 0)} members, hours {r.get('hours', [])})"
+                    for r in rows
+                )
+            )
+    return (" — " + " | ".join(parts)) if parts else ""
+
+
 def solve_window(
     window: UcWindowModel,
     options: UcSolveOptions,
@@ -470,7 +492,8 @@ def solve_window(
             f"LP relaxation: {relaxation}; "
             f"a-priori contradictory rows: {summary}; "
             f"carried starts above n: {report.get('history_starts_above_n', 0)}; "
-            f"floor above min-down: {report.get('floor_above_min_down', 0)}",
+            f"floor above min-down: {report.get('floor_above_min_down', 0)}"
+            f"{_plants_text(report)}",
             window_index=window_index,
             t0=t0,
             t1=t1,
