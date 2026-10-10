@@ -372,3 +372,30 @@ pass. Prompt re-committed as `shard-prompts-ucmilp-nyiso-bench.txt` (the `2f872a
 
 Nothing is LIVE for NYISO outside the UC stage and the bench harness. The arm-vs-control delta remains UC-only for
 2022–2025 and UC + the §9 drift for 2021.
+
+## Addendum C (2026-10-10 02:15Z, before any span shard exists) — KILL #1 at the bench gate, pin `dc3860be`: window 0 infeasible a priori
+
+Bench shard `session_01PTiFHXu5JX3fexNjqaLGZa` (relaunch #2, pin `dc3860be`): every hard stop passed (the #7221 harness fix
+present: `overrides=overrides` ×2); capture of the ARM recipe `data_prep=16.6s solve_p0=146.7s markup=16.5s solve_p1=48.9s
+results_write=14.6s total=243.4s` (P0 293,681 simplex iterations, objective 2.2292e9; P1 warm 87,944 iterations,
+2.2498e9 — the bridge-off P1 is fast); UC stage prepared: **78 clusters, 34 integer (173 fleet rows), W = 24, L = 12**;
+memory peak cgroup 6.65 GiB. Then, at L1 window 0, before any MILP node:
+
+```
+market_sim.model.uc.window.UcWindowInfeasible: UC window 0 [0, 36) solve ended Infeasible with no feasible
+incumbent (43776 columns, 9754 rows, 34 integer clusters); LP relaxation: Infeasible; a-priori contradictory
+rows: production=48; carried starts above n: 0; floor above min-down: 0
+```
+
+- **Classification: kill #1 (§6) — an engine defect, recorded and STOPPED; no re-tune, no second arm, no span shard.**
+  The LP RELAXATION is infeasible and 48 production rows are contradictory before any search, so the defect is in the
+  window's build of NYISO's inputs (bounds/floors inside `[0, 36)`), not in the UC rows (carried-starts and min-down
+  guards both read 0). Lead (unverified, for the engine lane): a kept floor's `min_gen` exceeding `pmax × availability`
+  inside the window for NYISO units — the production P1 path clips such rows where the window builder may not; the
+  SPP and ERCOT gates would not see it if their kept floors never exceed capacity in hour 0–35. The shard writes the
+  harness's `--dump-dir` zero-LP diagnosis (.json) from its saved capture; its contents are appended as C.1 and
+  forwarded to UC-DESK.
+- **Not a tuning invitation (GATESPEC §7.1):** no `uc_*` value, no `--set`, no floor is moved to make the window feasible.
+- **Relaunch rule (unchanged from Addendum A):** when `main` carries the fix the pin moves to that merge SHA and nothing
+  else changes; the bench gate is re-run first; the span launches only on a pass; the new pin's G-DRIFT is recorded in
+  Addendum D before the relaunch.
