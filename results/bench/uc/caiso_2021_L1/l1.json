@@ -1,0 +1,49 @@
+{
+ "iso": "CAISO",
+ "year": 2021,
+ "t0": 0,
+ "t1": 36,
+ "integer_clusters": 33,
+ "milp": {
+  "build_s": 0.04000668099979521,
+  "milp_s": 4.135889104999933,
+  "nodes": 1,
+  "gap": 0.0008746338016392473,
+  "status": "Optimal",
+  "objective": 17681497.598717958,
+  "integers": 1188,
+  "columns": 69768,
+  "rows": 6819,
+  "time_limit_hit": false,
+  "starts": 17,
+  "warm_accepted": true,
+  "guard_rows": 15
+ },
+ "rss_gb": 7.963855743408203,
+ "relaxation": {
+  "build_s": 0.036227633999942555,
+  "milp_s": 1.3836886089998188,
+  "nodes": 0,
+  "gap": 0.0,
+  "status": "Optimal",
+  "objective": 17645557.88670844,
+  "integers": 1188,
+  "columns": 69768,
+  "rows": 6819,
+  "time_limit_hit": false,
+  "starts": 17,
+  "warm_accepted": false
+ },
+ "integrality_gap": 35939.71200951934,
+ "p1_slice": {
+  "solve_s": 0.08472708900012549,
+  "objective": 15730186.858485548
+ },
+ "delta_committed_energy_mwh": -51179.2519428519,
+ "milp_starts": 17,
+ "p1_slice_starts": 149,
+ "trough_price_milp_vs_p1": {
+  "p1_slice_lower_tercile_mean": 36.02147505920783,
+  "note": "the MILP prices nothing (rule 4); the trough reading is scored on the L3 P1 bundle"
+ }
+}
