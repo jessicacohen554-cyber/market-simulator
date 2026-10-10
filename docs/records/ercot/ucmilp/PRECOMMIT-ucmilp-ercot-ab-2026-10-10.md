@@ -462,3 +462,49 @@ Fixed now, before any number:
 budget report (fresh boot, process gone, not an OOM: RSS 8.2 of 13.4 GiB), so the extension bought nothing; UC had run > 9,780 s
 unfinished; nothing pushed; archived. Two harness lessons written into the Addendum C prompts: a shard with a multi-hour solve
 keeps its session active (a re-armed Monitor) until the process exits, and the per-window log line stays a routed engine ask.
+
+## Addendum D (2026-10-10, written before any stage-1 shard exists) — `<<PIN_C>>` filled: the uc-1.2 pin, G-DRIFT, stage-1 budgets
+
+Lane relaunched by **UC-2-ERCOT-R2** (Opus; this session takes over from the Fable session, which hit the weekly limit).
+Branch `claude/ucmilp-2-ercot-ab-e4w1`, `origin/main` merged in (merge, not rebase).
+
+**Pin (Addendum C item 1).** **PIN_C = `eab17188c75cd0332f9323ed3464c62bc0cd1848`** (`main`, merge of PR #7230,
+UC-1-FIX-2). It carries uc-1.2 (desk ruling (a), `e4a57362`: a fully budget-pinned cluster carries no integer — ERCOT
+72 → 61 integer clusters of 141), the slim-window NaN fix (`7688a68a`: unbounded merged members filled last), the per-window
+INFO log line, and UC-1-FIX-3 (#7229: uc-params keyed by EIA plant code via the CAMD↔EIA crosswalk; Kiamichi OK 55501 read
+as an ERCOT facility; Hidalgo and Arthur von Rosenberg now joined). **Gate on record** (FINDING-ucmilp-fix2-floor-mindown
+§5, at PR head `7688a68a`, whose `src/` equals the pin's): ERCOT 2020 end-to-end 365/365 Optimal (w118 Optimal, 35.9 s,
+65 nodes), 0 time-limit hits, P1 solved with 0 unserved and 0 NaN cells, pass-1 and pass-2 `u`/`v`/`w` identical on hours
+0–8015, wall ≈ 249 min (UC 6,994 + 7,030 s; P1 244 + 229 s).
+
+**G-DRIFT `dc3860be` → `eab17188` (zero LP; rule 29(b)).** 300 files change; 284 are `tests/` and `docs/` (records,
+findings, the slim span of other lanes). The 16 others, every hunk classified:
+
+| file | hunk | control (keeper recipe, gate off) | arm |
+|---|---|---|---|
+| `model/uc/{window,slim,solve,diagnose,params}.py`, `pipeline/uc.py` | uc-1.2 guard on the window's pinned fleet (⌈floor/(p̄·a)⌉), all-budget-pinned clusters demoted from the integer set, slim expand NaN fix, per-window INFO log, diagnosis text | **INERT**: imported only under `if getattr(config, "unit_commitment_milp", False)` (`pipeline/solve.py:675`) | LIVE (intended: the release) |
+| `config/scenarios.py` | new field `uc_slim_window: bool = True` + its `_CACHE_KEY_OPTIONAL_FIELDS` / `_DEFAULTS` / `TIER_TAGS` entries | **INERT**: born at its registered default, dropped from `cache_key()` there; read only inside the UC stage; absent from the keeper's `run_config_<y>.json` | LIVE at default (`True`, the slim path the gate validated) — not a `--set`, not swept |
+| `data/campd_crosswalk.py` | `crosswalk_of_record()` refactored onto `load_crosswalk(paths)` (same canonical paths); new `camd_to_eia_plant()` | **INERT**: no caller on the solve path (`grep`: only `scripts/lib/uc_params`); `crosswalk_of_record` is the audit helper, unchanged in output | LIVE through uc-params only |
+| `scripts/lib/uc_params/{__init__,ercot}.py`, `data/dictionary/schema/uc-params.schema.yaml`, `data-dictionary.md`, `scripts/lib/clean_profiles.py` | FIX-3: plants keyed by EIA plant code; `extra_facilities` (Kiamichi); two raw inputs added to the `uc-params` clean source | **INERT**: `data/clean/uc-params` is consumed only by `model/uc/params.py` behind the gate | LIVE (intended: measured no-load / mlf / UT / DT for Hidalgo, AvR, Kiamichi replace class-mean fallback) |
+| `scripts/lib/uc_bench.py`, `scripts/diagnostics/bench_uc_ladder.py` | bench harness | not on the solve path | not on the solve path |
+| `CHANGELOG.md` | prose | — | — |
+
+No `constants.py`, `iso_configs.py`, `model/lp/*`, `data/fleet/*` or orchestrator hunk. **Control INERT**: the keeper's
+committed bundle remains the control (rule 29(b)); no control solve. The arm differs from Addendum A's only by the uc-1.2
+release and FIX-3 parameters, which is the purpose of the relaunch; the arm's recipe delta stays the two `--set` fields.
+
+**Shards (Addendum C items 2–4; the per-shard numbers below replace Addendum C's 193 min for stage 1, per UC-DESK's
+relaunch instruction).**
+
+| stage | years | budget per shard | why |
+|---|---|---|---|
+| 1 | 2019, 2020, 2024, 2025 | **300 min** | the measured gate wall (≈ 249 min for 2020, both passes running the UC) × 1.2; Addendum C's 193 min predates the two-pass finding and would stop a green 2020 |
+| 2 (only if no kill on stage 1) | 2021, 2022, 2023 | **680 min** | Addendum B.3, unchanged |
+
+Out-dirs `results/calibration/ucmilp_ercot_d_<y>`, branches `claude/ucmilp-ercot-d-<y>` (new names: the `dc3860be` legs on
+`claude/ucmilp-ercot-<y>` stay evidence, never scored, never overwritten). Prompts: `shard-prompts-ucmilp-ercot-d.txt`
+(`shard_prompt.py` at the pin + lane addenda). New in the addenda: the solve runs **detached** (`nohup … &`, log under
+`/tmp`, a re-armed Monitor until `EXIT`) because the shard tool kills a foreground process at 120 min, and the session stays
+active until the process exits (the 2021 container-recycle lesson); `hourly/unit_hourly_<y>.parquet` is unstaged before the
+commit (rule 15). Readings (§2), bars, kills (§7), the stage-1 gate (Addendum C item 3) and the composition workaround (§8)
+do not move.
