@@ -1,6 +1,7 @@
 # PRECOMMIT — UC-2-SPP-B: pre-registered A/B of the MILP unit-commitment stage on every SPP backcast year with SPP's two conduct floors OFF, 2026-10-09
 
-> **STATUS: DRAFT, HELD (UC-DESK 18:01Z: "HOLD the shard launch … a second logical delta … I'm taking it to the owner as a card").** The seven shards
+> **STATUS: SOLVED AND SCORED — verdict R; see `RESULT-ucmilp-spp-b-2026-10-10.md` (composition and scoring deviations in its §5–§6, the same as arm A's Addendum D).**
+> Superseded status line kept for the record: **DRAFT, HELD (UC-DESK 18:01Z: "HOLD the shard launch … a second logical delta … I'm taking it to the owner as a card").** The seven shards
 > launched 18:08–18:10Z before the HOLD reached this session (18:14Z) were interrupted at 18:15Z and archived at 18:17Z with nothing pushed (Addendum B).
 > §1 carries BOTH arm variants; **the owner ruled V2 (D-5b, 2026-10-10) — Addendum C has the arm, the field, the pin and the solver choice; the hold is lifted.** Every other section is unchanged.
 
