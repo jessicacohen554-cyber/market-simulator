@@ -112,10 +112,23 @@ The uc-1.1 value of 1 unit at `a = 0.25` was a `u` row (a) cannot hold.
 
 (filled from the shards)
 
-## 6. Desk flag (D-5, not changed here)
+## 6. D-5 note (desk decision; not changed here)
 
-Under the yard pin, a pinned MISO coal cluster must hold `u = n` in every hour with
-`P0 > 0`; uc-1.1 already did this inside each window. The MILP therefore cannot decommit
-MISO yard coal while `coal_fuel_inventory_plant_grain` is armed, and the UC's commitment
-benefit for that coal is structurally close to nil. The same holds for any integer cluster
-whose rows a budget family pins: the same yard pin is armed in NEISO and ERCOT.
+**The UC cannot decommit pinned yard coal.** Wherever `coal_fuel_inventory_plant_grain` is
+armed, a window pins every yard coal row to P0 through `availability = P0/pmax`. Row (a)
+then requires `u = n` in every hour with `P0 > 0`, and leaves `u` free (zero output) where
+`P0 = 0`. The commitment of those clusters is therefore P0's on/off pattern, held to its
+min-down by the guard; the MILP chooses nothing about it. uc-1.1 already did this inside
+each window, and uc-1.2 only extends it consistently past the horizon. The yard pin can be
+armed in `COAL_PLANT_GRAIN_ISOS = (MISO, NEISO, NWPP, ERCOT, SOCO)`; the MISO, NEISO and
+ERCOT keepers arm it, and UC-2-ERCOT's census counts all 11 ERCOT yards as budget rows.
+
+So in those ISOs the UC stage's commitment benefit for coal is structurally close to nil
+while the yard budget is armed. UC benefit read off those ISOs' coal is not evidence about
+UC. Options for the desk / owner (D-5):
+(a) accept it: coal commitment is fixed by the fuel identity, and the UC acts on gas only;
+(b) build a window form of the yard identity (a per-window energy target from P0, with
+`u` free), which changes the boundary approximation (DESIGN §2.1);
+(c) refuse the yard pin together with `unit_commitment_milp` (rule 19 by refusal), which
+loses the measured fuel identity.
+This lane recommends none of them; it is an owner call.
