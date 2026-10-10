@@ -215,3 +215,30 @@ approaching the budget with no artifact stops and reports.
 No offer-band retune; no `neiso_dynamic_reserve_requirements` / `dam_availability_rebasis` re-test (R, new evidence belongs to
 another lane); no scarcity-physics arm; no `uc_*` value other than the declared defaults; no second `--set`; no control solve;
 no other ISO; nothing on `src/` or `scripts/`; no dashboard registration; no promotion; no deletion of any bundle.
+
+## Addendum A (2026-10-10 01:10Z, before any span shard exists) — the L1 gate PASSED; the budget by the §5 rule
+
+Bench shard `session_012ycymxYWiMTrKiuCs6PZnW` (Opus) at the pin, branch `claude/ucmilp-bench-neiso-2023-L1L2` `bcd35c32`
+(fetched, checked out, verified: `l1.json`, `l2.json`, logs; archived 01:08Z). Container 4 cpus, ceiling 13.36 GiB + 10 GiB swap,
+`MARKET_SIM_HIGHS_THREADS=1`; peak RSS 4.89 GiB (capture) / 0.88 GB (L2 stage). The shard ran `uv sync` because the container
+had no `.venv` (hard stop 3 fired on the system interpreter, pyarrow absent) — the repo's only install route, not a repair; nothing edited.
+
+| rung | reading | value | gate |
+|---|---|---|---|
+| L1 (hours 0–35, NEISO 2023) | window 0 status | **Optimal**, 10.34 s MILP, 12 nodes, gap 7.3e-4, 1,332 integers / 35,388 columns / 7,560 rows | **PASS** |
+| L1 | integer set | 37 integer clusters of 70 (273 fleet rows); UC-0 M6 said 37 | — |
+| L1 | integrality gap | $17,376 on a $5.28 M window objective (0.33 %); LP relaxation 0.23 s | — |
+| L1 | Δ vs the P1 slice | committed energy +35.5 MWh; starts 5 (MILP) vs 77 (P1 slice) | — |
+| L1 | capture (one P0 + P1 of 2023) | `solve_p0` 76.5 s + `solve_p1` 27.9 s; year total 136.1 s; harness `capture_wall_s` 117.7 s | — |
+| L2 (January, base arm = registry defaults, rolling) | windows / statuses | **31 windows, 31 objectives, 0 time-limit hits, 0 infeasible** (`UcWindowInfeasible` raises on an infeasible window; the run exited 0); gap max 9.9966e-4 ≤ 1e-3. The harness records no per-window status string, so "31/31 Optimal" rests on those three facts — stated as such | **PASS** |
+| L2 | wall | month 623.6 s; MILP Σ 621.9 s; p50 / p95 / max 10.03 / 63.99 / 148.38 s per window | — |
+| L2 | search | nodes p50 / p95 **33 / 544**, zero-node share 0.00; phase sums: presolve 9.9 s, root LP 4.5 s, **tail 606.6 s (97 %)**, 1.66 M LP iterations of which 1.15 M strong branching | — |
+
+Reading, not a judgement: NEISO's January windows do **not** solve at the root as SPP's did (SPP nodes 1/1, 2.6–4.9 s per
+window); the NEISO window branches (33–544 nodes) and the branch-and-bound tail is 97 % of the stage. The schedule hash is
+`6d1c2823a82b497c`. Nothing is tuned: `uc_window_time_limit_s` stays 600 (max window 148 s), the preset stays `lean`.
+
+**Budget (the §5 rule, computed, not chosen):** E = 117.7 + (365 / 31) × 623.6 = **7,460 s = 124.3 min**; budget = ceil(1.3 × 124.3) =
+**162 min** per shard. (The denominator proxy for the §6.1 ratio is the shard's own P0 + P1 ≈ 104 s; the extrapolated ratio is
+≈ 70×, far above the D-2 ceiling — reported, not judged, D-2 "Keep 3×; fund speedup".) Prompts regenerated with `--budget 162`
+and committed as `shard-prompts-ucmilp-neiso.txt`; seven shards launched after this addendum is pushed.
