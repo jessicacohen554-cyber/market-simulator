@@ -128,6 +128,22 @@ The uc-1.1 value of 1 unit at `a = 0.25` was a `u` row (a) cannot hold.
 Every reproduction names a **yard-pinned coal plant** (all of its members pinned), and every
 uc-1.2 run clears the window that killed it. Defect 5 is closed.
 
+### 5.0 Gate (UC-DESK, after ruling (a)) — engine uc-1.2 @ `e4a57362`, full year through P1
+
+| ISO-year | UC windows | Time-limit hits | MILP mean / p95 / max s | Integer clusters (E1 gate → set) | P1 | Unserved MWh | Branch @ SHA |
+|---|---|---|---|---|---|---|---|
+| MISO 2021 | **365/365 Optimal** (w30, w129 Optimal) | 0 | 6.2 / 11.4 / 37.4 | **161 → 75** (86 all-budget-pinned demoted) | solved, objective $6.754 bn | **0** | `claude/ucfix2-gate-miso-2021` @ `37b8eeab` (`dispatch/2021_P1.parquet`, 102.7 MB, over GitHub's limit, held in the shard container only) |
+| NEISO 2021 | **365/365 Optimal** (w259 Optimal) | 0 | 8.7 / 36.9 / 111.6 | **40 → 22** (18 demoted: yard coal and oil-budget dual-fuel ST/CT) | solved, objective $2.296 bn | **0** | `claude/ucfix2-gate-neiso-2021` @ `b756026e` (full bundle) |
+| ERCOT 2020 | pending | | | | | | |
+| ERCOT 2019 | pending | | | | | | |
+
+The desk ruled the demotion GENERIC, not coal-only: every `BUDGET_GEN_IDX_KEYS` row is pinned
+to P0 inside a window, so the UC never decided its commitment, whatever the family. Each
+A/B's D-6 card states how many clusters the UC acts on (`integer_set_size` of `integer_gate_size`).
+NEISO 2021's `legitimacy_diagnostics` read FAIL on D-1 (COAL_PRB diurnal shape) and D-4 (plant 54605's
+CHP floor binding outside its window). These are calibration readings for UC-2-NEISO, not
+engine-gate items.
+
 ### 5.1 A second, separate defect at the UC → P1 seam (MISO; open, not fixed here)
 
 In MISO, P1 is infeasible after a complete UC stage. The NEISO P1s solve; NEISO has few yard
