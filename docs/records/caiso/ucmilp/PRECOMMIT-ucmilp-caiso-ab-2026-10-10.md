@@ -246,3 +246,43 @@ inert polarity — the replay guard's declared case). **Nothing is LIVE for CAIS
 `docs/mechanism-testing-matrix.md` §5.2 DO-NOT-REDO (sub-zonal topology, export-sink family, DA/RT two-settlement, CC
 must-run floors, CC winter capability); `ASSESSMENT-caiso261-panoche-instrument-search` (no CT floor, pin or window for
 Panoche); no `uc_*` value other than the declared defaults; no second `--set`; no control solve; no NEISO/NYISO span.
+
+## Addendum A (2026-10-10 01:55Z, before any arm number exists) — the L1 gate attempt at the pin stopped on a bench-harness defect; relaunch rule
+
+**L1 shard `session_01YCHGbBrjNnfeuoiRcGrDgL`** (Opus, pin `2f872a62`, prompt `bench-prompt-ucmilp-caiso-2021-L1.txt`) ran the
+keeper 2021 capture to completion and then crashed in the harness, before the L1 window and before the January month:
+
+```
+scripts/lib/uc_bench.py:77  pickle.dump(self, ...)
+AttributeError: Can't pickle local object 'build_caiso_ra_p1_prep.<locals>._prep'
+```
+
+`--save-capture` pickles the captured P1 hook closures; the keeper's RA must-offer bridge hands a closure in, so any CAISO
+capture fails there at this SHA. The bench also built the capture WITHOUT the `--set` offs (they reach only the armed
+window config), so the captured recipe still carried the bridge. **Both are the bench half of PR #7221** ("uc-milp: slice
+time-major transfer limits per window (engine defect 3); bench carries --set", head `3caa07dd`, base `e86eb2a4`, opened
+by UC-DESK 01:52Z from the UC-2-ERCOT fixes). No L1 or L2 JSON exists; nothing was pushed; the shard was archived at
+01:54Z (rule 33: nothing to fetch). What the attempt did measure, verbatim from the shard's report:
+
+| item | value |
+|---|---|
+| hard stops | 1, 2, 4, 5, 6 pass; **3 failed once**: `regenerate_clean` exited 1 on a missing `pyarrow` because the container had no `.venv` (the session-start `uv sync` had not run); the shard ran `uv sync` (RUNBOOK §0, no tracked file changed) and both data steps then exited 0, `uc-params/CAISO/uc-params.parquet` present. Classified here as container setup, not infrastructure repair; every later prompt says so explicitly |
+| preflight | 13.36 GiB ceiling, +10 GiB swap (23.4 GiB total, below the 24 GiB target, warning only), 4 cpus |
+| **capture = the keeper 2021 recipe replayed gate-off (the CAISO baseline)** | data_prep 19.0 s · **solve_p0 610.9 s** · markup 22.7 s · **solve_p1 604.8 s** · results_write 23.4 s · **total 1,280.7 s** (21.3 min; P0 + P1 = 1,215.7 s) |
+| memory peak | cgroup RSS 8.45 GiB, process VmHWM 8.14 GiB, swap 0 |
+| L1 window 0 / L2 January | not run |
+
+**Engine defect 3 (UC-DESK heads-up 01:53Z), checked zero-LP for CAISO:** the keeper's `run_calibration.py` TTC block builds an
+hourly time-major `ttc`/`ttc_import` only for ERCOT (`ercot_gtc_limits_measured`), PJM interface feeds and the NYISO seam
+legs; CAISO's import path is the import-node ladder (fleet rows with hourly availability), not a `(T, n_links)` TTC, so the
+broadcast failure is not expected here. The harness defect alone blocks the gate, so the pin moves regardless.
+
+**Relaunch rule (fixed now):** when PR #7221 merges, the pin moves to that merge's full SHA and NOTHING else changes — same
+recipe, same five `--set` values, same `uc_*` defaults, same readings, bars, kills and verdict rule as §§1–7. Before the
+relaunch, Addendum B records the new pin, `solve_surface_register.py --diff 2f872a62 <pin>` (CAISO must read 0), the
+`grep -c unit_commitment_milp` check, tooling byte-identity (`shard_prompt.py`, `calibration_verdict.py`,
+`legitimacy_diagnostics.py`, `replay_keeper.py`, the keeper bundle, `keepers/CAISO.json`) and a classification of every
+commit between the pins on the CAISO backcast path (the G-DRIFT §9 table extended). The L1 gate re-runs first (same two
+commands; budget raised to 90 min because the capture alone is 21 min and the pickle fix is what lets L2 reuse it); the
+span launches only after window 0 and 31/31 January windows read Optimal. The per-shard budget formula (§5) stands, with
+`capture_wall_s` now known: 1,280.7 s.
