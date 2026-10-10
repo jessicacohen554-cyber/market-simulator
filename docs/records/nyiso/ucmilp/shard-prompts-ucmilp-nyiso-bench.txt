@@ -1,16 +1,16 @@
 # Bench-gate shard prompt — lane UC-2-NYISO (branch claude/ucmilp-2-nyiso-ab-y5h8), 2026-10-10.
 # The charter's task 0 (L1 GATE, from the two SPP engine defects): ONE bench shard, rung L1 + one rolled month
-# (HANDOFF block D), NYISO 2024, at the pin dc3860bef44f8ac0e322f92da94fd6c011bec381 (origin/main at the merge of PR #7221, engine +
-# UC-1-FIX + UC-SPEED lean preset + the window time-major TTC slice and the bench harness fixes). RELAUNCH #2 under PRECOMMIT Addendum B; the first run at 2f872a62 is in Addendum A / A.2. Gate: window 0 Optimal and 31/31 January windows Optimal (no
+# (HANDOFF block D), NYISO 2024, at the pin f2bf73bfffa0946176432df2e11349bf8fcc2bfa (origin/main at the merge of PR #7224, engine +
+# UC-1-FIX + UC-SPEED lean preset + the window time-major TTC slice and the bench harness fixes). RELAUNCH #3 under PRECOMMIT Addendum D (#7222 slim window + #7224 import-link-band pin); the runs at 2f872a62 and dc3860be are in Addenda A–C. Gate: window 0 Optimal and 31/31 January windows Optimal (no
 # UcWindowInfeasible, 0 time-limit hits, gap_max <= uc_mip_rel_gap). If not: STOP; no span shards.
-# create_session: source_revision = dc3860bef44f8ac0e322f92da94fd6c011bec381, model claude-opus-5-5,
+# create_session: source_revision = f2bf73bfffa0946176432df2e11349bf8fcc2bfa, model claude-opus-5-5,
 # tag ucmilp:UC-2-NYISO-bench. Budget 60 min.
 
 BENCH SHARD ucmilp-bench-nyiso-2024-L1 — NYISO 2024, rung L1 then rung L2 on ONE rolled month (January), ONE container. Model: Opus.
 DATA PROFILE: nyiso
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
-1. `git rev-parse HEAD` == dc3860bef44f8ac0e322f92da94fd6c011bec381  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+1. `git rev-parse HEAD` == f2bf73bfffa0946176432df2e11349bf8fcc2bfa  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
 2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
 3. `python3 scripts/hydrate_data.py --profile nyiso` then `python3 scripts/regenerate_clean.py --solve-profile NYISO`; both exit 0
 4. `python3 scripts/diagnostics/bench_uc_ladder.py --help` exists at this SHA and lists `--rung {L1,L2,L3}`, `--capture`, `--months`, `--arms`, `--rolling`, `--set`, `--save-capture`

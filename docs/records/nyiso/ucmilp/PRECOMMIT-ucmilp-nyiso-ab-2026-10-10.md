@@ -439,3 +439,31 @@ Routed to UC-DESK 02:30Z as engine defect 4.
 
 **Status of this lane:** STOPPED at the gate (kill #1 recorded). No span shard launched; the control is untouched; the arm's
 readings, bars and kills stand unchanged for the relaunch under the Addendum A rule once the fix is on `main` (Addendum D).
+
+## Addendum D (2026-10-10 02:55Z, before any span shard exists) — the third pin, after engine defect 4's fix merged
+
+**Pin for the relaunch: `f2bf73bfffa0946176432df2e11349bf8fcc2bfa`** = `origin/main` at the merge of PR #7224 (UC-DESK 02:50Z:
+*"#7224 (defect 4, link-band pin) merged. PIN = f2bf73bf… Proceed: addendum → bench gate → span."*; `main` has since gained
+#7223, SPP-B records only — the pin is NOT chased). Readings (§2), control rule (§3), structure and cost readings (§4–§5),
+kills (§6), verdict rule (§7) and the nine `--set`s (§1) are UNCHANGED. The bench gate is re-run first at this pin (block D,
+original two-command form); the span launches only on a pass. Prompt re-committed as `shard-prompts-ucmilp-nyiso-bench.txt`.
+UC-DESK's standing note: MISO hit a different signature (defect 5: `floor above min-down` infeasibility mid-year); the same
+signature in this lane's span is kill #1 again — stop and report, never patch.
+
+**One declared-default change to the arm (not a tuning):** #7222 adds `uc_slim_window: bool = True` (registered at its
+default; the exact column/row reduction of `model/uc/slim.py` applied to each window before HiGHS — UC-SPEED §4.2's "slim
+window"; the optimum is unchanged by construction, the test file `test_slim.py` proves it on the toy and captured windows).
+The §1 table's `uc_*` row set therefore gains `uc_slim_window = true` at this pin; every `uc_*` field is still at its
+declared default and none is swept.
+
+**What moved `dc3860be → f2bf73bf`, classified for NYISO (zero LP, on the objects; 9 files under `src/ scripts/ tests/`):**
+
+| content | files | NYISO classification |
+|---|---|---|
+| **engine defect 4 fix** (#7224) | `model/uc/window.py` +36: `import_link_band` joins `BUDGET_KWARGS`; the banded links' `Flow` is pinned to the P0 flows over `[t0, t1)` by setting `ttc` and `ttc_import` to `±f` on those links (marked bidirectional so a one-way floor cannot loosen the pin); `pipeline/uc.py` passes `r0.flows`; `uc_bench.py` likewise; new `tests/unit/model/uc/test_window_link_band_pin.py` | **LIVE on the gate-on path only** — the C.1 defect's fix, option (a) of C.1 (P0's monthly import reconciliation is kept inside every window); control INERT |
+| UC-SLIM (#7222) | `model/uc/slim.py` (new, 658), `model/uc/window.py` +69 (`slim=` build path), `model/uc/solve.py`, `pipeline/uc.py`, `scenarios.py` (`uc_slim_window: bool = True`, cache-key registered at True, TIER 1), `uc_bench.py`, `test_slim.py` | **LIVE on the gate-on path only** (an exact reduction; wall lever); control INERT (field at its default, ABSENT from the keeper recipe → dropped from `cache_key()`) |
+| solve surface | `--diff dc3860be → f2bf73bf`: *"342 → 342 names; 0 moved, 0 added, 0 removed — NO VALUE MOVED"* | no ISO's key reached |
+| tooling and control | `shard_prompt.py`, `replay_keeper.py`, `calibration_verdict.py`, `legitimacy_diagnostics.py`, `_ucmilp_compose_span.py`, `results/calibration/w0_nyiso_span/**`, `keepers/NYISO.json` byte-identical to `dc3860be` | control unchanged (rule 29(b)) |
+
+Nothing is LIVE for NYISO outside the UC stage. §10's G-DRIFT stands, extended by Addenda B and D. The arm-vs-control delta
+remains UC-only for 2022–2025 and UC + the §9 drift for 2021.
