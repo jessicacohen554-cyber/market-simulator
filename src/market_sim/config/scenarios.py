@@ -2512,6 +2512,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # (the field changes the MILP's PATH to the same optimum, never the
     # feasible set — FINDING-ucmilp-speed-window-solve-profile-2026-10-09.md).
     "uc_solver_preset",
+    # Lane UC-SLIM (2026-10-10): the slim window, born at its declared value
+    # and dropped from the hash there (an EXACT reduction of the window MILP
+    # before HiGHS — the same feasible set and optimum, model/uc/slim.py;
+    # FINDING-ucmilp-slim-window-2026-10-10.md).
+    "uc_slim_window",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -3428,6 +3433,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "uc_prefixing": "False",
     # Added by lane UC-SPEED WITH the field (the nyiso-119 discipline).
     "uc_solver_preset": "'lean'",
+    # Added by lane UC-SLIM WITH the field (the nyiso-119 discipline).
+    "uc_slim_window": "True",
 }
 
 
@@ -23122,6 +23129,21 @@ class ScenarioConfig:
     # md, the paired equivalence gate). Born at "lean" and registered there, so
     # no committed key moves. Admissible names: UC_SOLVER_PRESET_NAMES.
     uc_solver_preset: str = "lean"
+    # The slim window (lane UC-SLIM, owner ruling "Try 'slim window' first",
+    # 2026-10-10): before HiGHS sees a window, drop every column its bounds
+    # pin (pinned budget units, zero-availability units, zero-CF renewable
+    # hours, commitment columns a floor or the carried history fixes, and
+    # what forcing / singleton rows then fix), the rows that leaves empty,
+    # implied or redundant, and merge parallel continuous columns (the same
+    # rows, coefficients and offer) into one — an EXACT transformation: the
+    # same feasible set in the kept columns, the fixed columns' cost as the
+    # objective offset, the same optimum (model/uc/slim.py; the paired
+    # equivalence gate of FINDING-ucmilp-slim-window-2026-10-10.md). It moves
+    # wall clock only; a within-gap tie HiGHS takes differently on the slim
+    # model is the same class of difference as a solver preset's. Born at
+    # True and registered there, so no committed key moves. False solves
+    # every window on the full model (the uc-1.1 path).
+    uc_slim_window: bool = True
 
     def __post_init__(self) -> None:
         # YAML round-trip type repair: YAML has no tuple type, so a config
@@ -26020,6 +26042,7 @@ TIER_TAGS: dict[str, int] = {
     "uc_boundary_mode": 1,
     "uc_prefixing": 1,
     "uc_solver_preset": 1,
+    "uc_slim_window": 1,
     # closeout-SOCO-w3 DIAGNOSTIC (rule 13: never a keeper input).
     "diagnostic_coal_metered_online_floor": 1,
 }
