@@ -300,3 +300,11 @@ that main SHA (G-DRIFT lane SHA→main: expect only the doc/record delta). Bench
 numbers carry over (engine bytes identical)."* → route **(a)**: the span pins the desk's merge SHA on `main`; the span prompts
 are regenerated at it; the bench numbers from `97e33b54` carry (engine bytes identical, to be confirmed by `git diff` of
 `src/` between `97e33b54` and the merge SHA before launch).
+
+**UC-DESK (01:59Z, verbatim):** *"#7221 merged. PIN = dc3860bef44f8ac0e322f92da94fd6c011bec381 (engine bytes = your
+97e33b54; bench harness = ad5a74d9 half). G-DRIFT 2f872a62→pin: UC window slice + bench harness LIVE on arm only, control
+INERT; plus docs-only #7220. Record addendum, then launch span shards."* → **SPAN PIN = `dc3860be`** (`main`). Verified by this
+lane: `git diff --stat 97e33b54 dc3860be -- src/ scripts/lib/uc_bench.py scripts/diagnostics/bench_uc_ladder.py` is EMPTY
+(engine and bench bytes identical to the lane SHA the bench runs at), and `2f872a62 → dc3860be` carries only the three fixes
+and docs. The seven span prompts are regenerated at `dc3860be` (`shard-prompts-ucmilp-ercot.txt`). The span launches once the
+L1 gate (bench run 3, in flight) reports its pass line — the gate's purpose does not change with the pin.

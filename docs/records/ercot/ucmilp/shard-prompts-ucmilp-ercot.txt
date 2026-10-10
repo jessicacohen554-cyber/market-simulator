@@ -2,7 +2,7 @@ SOLVE SHARD ucmilp-ercot-2019 — ERCOT backcast year 2019, ONE year, ONE contai
 DATA PROFILE: ercot
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
-1. `git rev-parse HEAD` == 2f872a62a7cccadb6800555c11a73745dcdb89a4  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+1. `git rev-parse HEAD` == dc3860bef44f8ac0e322f92da94fd6c011bec381  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
 2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
 3. `python3 scripts/hydrate_data.py --profile ercot` (exit 0, OR exit 1 with its own "This is a FULL clone" message: nothing to do, never --force) then `python3 scripts/regenerate_clean.py --solve-profile ERCOT` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
 4. the recipe you will solve: `results/calibration/closeout_ercot_l1_span` replayed with unit_commitment_milp=true, ercot_gas_commitment_bridge=false; confirm by reading `results/calibration/closeout_ercot_l1_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; ercot_gas_commitment_bridge=false
@@ -28,18 +28,18 @@ REPORT in your final message, in numbers: HEAD sha; the `container preflight:` a
 
 ====================================================================================================
 
-LANE ADDENDA (UC-2-ERCOT, PRECOMMIT docs/records/ercot/ucmilp/PRECOMMIT-ucmilp-ercot-ab-2026-10-10.md §8):
+LANE ADDENDA (UC-2-ERCOT, PRECOMMIT docs/records/ercot/ucmilp/PRECOMMIT-ucmilp-ercot-ab-2026-10-10.md §8, Addendum A):
 - If `python3 -c "import pyarrow, highspy"` fails, run `uv sync` once and use `uv run python` in place of `python3` (install is not repair).
 - The two --set fields are ONE logical delta: the UC gate refuses the keeper's ercot_gas_commitment_bridge (rule 19), so the disarm is the gate's substitution, never a second lever. No third --set, no uc_* value.
 - Before pushing, these MUST be in the bundle and in the pushed tree: dispatch/2019_P1.parquet, hourly/uc_schedule_2019.parquet, hourly/uc_uplift_2019.parquet, uc_solve_log_2019.json, hourly/unit_marginal_2019.parquet (`git ls-tree -r HEAD -- results/calibration/ucmilp_ercot_2019/hourly results/calibration/ucmilp_ercot_2019/dispatch`). A missing UC artifact is a STOP-and-report, not a repair.
-- An INFEASIBLE window or a "no incumbent" hard stop in the UC log is a kill (PRECOMMIT §7.1): STOP, report the window index, hour range and the engine's diagnosis dump path verbatim; do not retry, do not push a half bundle.
+- An INFEASIBLE window, a "no incumbent" hard stop, or any traceback from the UC stage is a kill (PRECOMMIT §7): STOP, report the window index, hour range and the last 30 traceback lines verbatim; do not retry, do not push a half bundle.
 - REPORT additionally (GATESPEC §6.1 wall row): the `log_year_phase_timing` line verbatim (data_prep / solve_p0 / markup / uc / solve_p1 / results_write / total); from uc_solve_log_2019.json `summary`: windows, Σ MILP s, mean and p95 MILP s, nodes p50/p95, gap p95, time_limit_hits, infeasible, warm_accepted, integers per window; the ratio total/(solve_p0+solve_p1); peak RSS GiB; the number of clusters with src == class-mean fallback (clusters[].src).
 
 SOLVE SHARD ucmilp-ercot-2020 — ERCOT backcast year 2020, ONE year, ONE container (rule 36). Model: Opus.
 DATA PROFILE: ercot
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
-1. `git rev-parse HEAD` == 2f872a62a7cccadb6800555c11a73745dcdb89a4  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+1. `git rev-parse HEAD` == dc3860bef44f8ac0e322f92da94fd6c011bec381  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
 2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
 3. `python3 scripts/hydrate_data.py --profile ercot` (exit 0, OR exit 1 with its own "This is a FULL clone" message: nothing to do, never --force) then `python3 scripts/regenerate_clean.py --solve-profile ERCOT` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
 4. the recipe you will solve: `results/calibration/closeout_ercot_l1_span` replayed with unit_commitment_milp=true, ercot_gas_commitment_bridge=false; confirm by reading `results/calibration/closeout_ercot_l1_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; ercot_gas_commitment_bridge=false
@@ -65,18 +65,18 @@ REPORT in your final message, in numbers: HEAD sha; the `container preflight:` a
 
 ====================================================================================================
 
-LANE ADDENDA (UC-2-ERCOT, PRECOMMIT docs/records/ercot/ucmilp/PRECOMMIT-ucmilp-ercot-ab-2026-10-10.md §8):
+LANE ADDENDA (UC-2-ERCOT, PRECOMMIT docs/records/ercot/ucmilp/PRECOMMIT-ucmilp-ercot-ab-2026-10-10.md §8, Addendum A):
 - If `python3 -c "import pyarrow, highspy"` fails, run `uv sync` once and use `uv run python` in place of `python3` (install is not repair).
 - The two --set fields are ONE logical delta: the UC gate refuses the keeper's ercot_gas_commitment_bridge (rule 19), so the disarm is the gate's substitution, never a second lever. No third --set, no uc_* value.
 - Before pushing, these MUST be in the bundle and in the pushed tree: dispatch/2020_P1.parquet, hourly/uc_schedule_2020.parquet, hourly/uc_uplift_2020.parquet, uc_solve_log_2020.json, hourly/unit_marginal_2020.parquet (`git ls-tree -r HEAD -- results/calibration/ucmilp_ercot_2020/hourly results/calibration/ucmilp_ercot_2020/dispatch`). A missing UC artifact is a STOP-and-report, not a repair.
-- An INFEASIBLE window or a "no incumbent" hard stop in the UC log is a kill (PRECOMMIT §7.1): STOP, report the window index, hour range and the engine's diagnosis dump path verbatim; do not retry, do not push a half bundle.
+- An INFEASIBLE window, a "no incumbent" hard stop, or any traceback from the UC stage is a kill (PRECOMMIT §7): STOP, report the window index, hour range and the last 30 traceback lines verbatim; do not retry, do not push a half bundle.
 - REPORT additionally (GATESPEC §6.1 wall row): the `log_year_phase_timing` line verbatim (data_prep / solve_p0 / markup / uc / solve_p1 / results_write / total); from uc_solve_log_2020.json `summary`: windows, Σ MILP s, mean and p95 MILP s, nodes p50/p95, gap p95, time_limit_hits, infeasible, warm_accepted, integers per window; the ratio total/(solve_p0+solve_p1); peak RSS GiB; the number of clusters with src == class-mean fallback (clusters[].src).
 
 SOLVE SHARD ucmilp-ercot-2021 — ERCOT backcast year 2021, ONE year, ONE container (rule 36). Model: Opus.
 DATA PROFILE: ercot
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
-1. `git rev-parse HEAD` == 2f872a62a7cccadb6800555c11a73745dcdb89a4  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+1. `git rev-parse HEAD` == dc3860bef44f8ac0e322f92da94fd6c011bec381  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
 2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
 3. `python3 scripts/hydrate_data.py --profile ercot` (exit 0, OR exit 1 with its own "This is a FULL clone" message: nothing to do, never --force) then `python3 scripts/regenerate_clean.py --solve-profile ERCOT` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
 4. the recipe you will solve: `results/calibration/closeout_ercot_l1_span` replayed with unit_commitment_milp=true, ercot_gas_commitment_bridge=false; confirm by reading `results/calibration/closeout_ercot_l1_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; ercot_gas_commitment_bridge=false
@@ -102,18 +102,18 @@ REPORT in your final message, in numbers: HEAD sha; the `container preflight:` a
 
 ====================================================================================================
 
-LANE ADDENDA (UC-2-ERCOT, PRECOMMIT docs/records/ercot/ucmilp/PRECOMMIT-ucmilp-ercot-ab-2026-10-10.md §8):
+LANE ADDENDA (UC-2-ERCOT, PRECOMMIT docs/records/ercot/ucmilp/PRECOMMIT-ucmilp-ercot-ab-2026-10-10.md §8, Addendum A):
 - If `python3 -c "import pyarrow, highspy"` fails, run `uv sync` once and use `uv run python` in place of `python3` (install is not repair).
 - The two --set fields are ONE logical delta: the UC gate refuses the keeper's ercot_gas_commitment_bridge (rule 19), so the disarm is the gate's substitution, never a second lever. No third --set, no uc_* value.
 - Before pushing, these MUST be in the bundle and in the pushed tree: dispatch/2021_P1.parquet, hourly/uc_schedule_2021.parquet, hourly/uc_uplift_2021.parquet, uc_solve_log_2021.json, hourly/unit_marginal_2021.parquet (`git ls-tree -r HEAD -- results/calibration/ucmilp_ercot_2021/hourly results/calibration/ucmilp_ercot_2021/dispatch`). A missing UC artifact is a STOP-and-report, not a repair.
-- An INFEASIBLE window or a "no incumbent" hard stop in the UC log is a kill (PRECOMMIT §7.1): STOP, report the window index, hour range and the engine's diagnosis dump path verbatim; do not retry, do not push a half bundle.
+- An INFEASIBLE window, a "no incumbent" hard stop, or any traceback from the UC stage is a kill (PRECOMMIT §7): STOP, report the window index, hour range and the last 30 traceback lines verbatim; do not retry, do not push a half bundle.
 - REPORT additionally (GATESPEC §6.1 wall row): the `log_year_phase_timing` line verbatim (data_prep / solve_p0 / markup / uc / solve_p1 / results_write / total); from uc_solve_log_2021.json `summary`: windows, Σ MILP s, mean and p95 MILP s, nodes p50/p95, gap p95, time_limit_hits, infeasible, warm_accepted, integers per window; the ratio total/(solve_p0+solve_p1); peak RSS GiB; the number of clusters with src == class-mean fallback (clusters[].src).
 
 SOLVE SHARD ucmilp-ercot-2022 — ERCOT backcast year 2022, ONE year, ONE container (rule 36). Model: Opus.
 DATA PROFILE: ercot
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
-1. `git rev-parse HEAD` == 2f872a62a7cccadb6800555c11a73745dcdb89a4  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+1. `git rev-parse HEAD` == dc3860bef44f8ac0e322f92da94fd6c011bec381  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
 2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
 3. `python3 scripts/hydrate_data.py --profile ercot` (exit 0, OR exit 1 with its own "This is a FULL clone" message: nothing to do, never --force) then `python3 scripts/regenerate_clean.py --solve-profile ERCOT` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
 4. the recipe you will solve: `results/calibration/closeout_ercot_l1_span` replayed with unit_commitment_milp=true, ercot_gas_commitment_bridge=false; confirm by reading `results/calibration/closeout_ercot_l1_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; ercot_gas_commitment_bridge=false
@@ -139,18 +139,18 @@ REPORT in your final message, in numbers: HEAD sha; the `container preflight:` a
 
 ====================================================================================================
 
-LANE ADDENDA (UC-2-ERCOT, PRECOMMIT docs/records/ercot/ucmilp/PRECOMMIT-ucmilp-ercot-ab-2026-10-10.md §8):
+LANE ADDENDA (UC-2-ERCOT, PRECOMMIT docs/records/ercot/ucmilp/PRECOMMIT-ucmilp-ercot-ab-2026-10-10.md §8, Addendum A):
 - If `python3 -c "import pyarrow, highspy"` fails, run `uv sync` once and use `uv run python` in place of `python3` (install is not repair).
 - The two --set fields are ONE logical delta: the UC gate refuses the keeper's ercot_gas_commitment_bridge (rule 19), so the disarm is the gate's substitution, never a second lever. No third --set, no uc_* value.
 - Before pushing, these MUST be in the bundle and in the pushed tree: dispatch/2022_P1.parquet, hourly/uc_schedule_2022.parquet, hourly/uc_uplift_2022.parquet, uc_solve_log_2022.json, hourly/unit_marginal_2022.parquet (`git ls-tree -r HEAD -- results/calibration/ucmilp_ercot_2022/hourly results/calibration/ucmilp_ercot_2022/dispatch`). A missing UC artifact is a STOP-and-report, not a repair.
-- An INFEASIBLE window or a "no incumbent" hard stop in the UC log is a kill (PRECOMMIT §7.1): STOP, report the window index, hour range and the engine's diagnosis dump path verbatim; do not retry, do not push a half bundle.
+- An INFEASIBLE window, a "no incumbent" hard stop, or any traceback from the UC stage is a kill (PRECOMMIT §7): STOP, report the window index, hour range and the last 30 traceback lines verbatim; do not retry, do not push a half bundle.
 - REPORT additionally (GATESPEC §6.1 wall row): the `log_year_phase_timing` line verbatim (data_prep / solve_p0 / markup / uc / solve_p1 / results_write / total); from uc_solve_log_2022.json `summary`: windows, Σ MILP s, mean and p95 MILP s, nodes p50/p95, gap p95, time_limit_hits, infeasible, warm_accepted, integers per window; the ratio total/(solve_p0+solve_p1); peak RSS GiB; the number of clusters with src == class-mean fallback (clusters[].src).
 
 SOLVE SHARD ucmilp-ercot-2023 — ERCOT backcast year 2023, ONE year, ONE container (rule 36). Model: Opus.
 DATA PROFILE: ercot
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
-1. `git rev-parse HEAD` == 2f872a62a7cccadb6800555c11a73745dcdb89a4  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+1. `git rev-parse HEAD` == dc3860bef44f8ac0e322f92da94fd6c011bec381  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
 2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
 3. `python3 scripts/hydrate_data.py --profile ercot` (exit 0, OR exit 1 with its own "This is a FULL clone" message: nothing to do, never --force) then `python3 scripts/regenerate_clean.py --solve-profile ERCOT` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
 4. the recipe you will solve: `results/calibration/closeout_ercot_l1_span` replayed with unit_commitment_milp=true, ercot_gas_commitment_bridge=false; confirm by reading `results/calibration/closeout_ercot_l1_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; ercot_gas_commitment_bridge=false
@@ -176,18 +176,18 @@ REPORT in your final message, in numbers: HEAD sha; the `container preflight:` a
 
 ====================================================================================================
 
-LANE ADDENDA (UC-2-ERCOT, PRECOMMIT docs/records/ercot/ucmilp/PRECOMMIT-ucmilp-ercot-ab-2026-10-10.md §8):
+LANE ADDENDA (UC-2-ERCOT, PRECOMMIT docs/records/ercot/ucmilp/PRECOMMIT-ucmilp-ercot-ab-2026-10-10.md §8, Addendum A):
 - If `python3 -c "import pyarrow, highspy"` fails, run `uv sync` once and use `uv run python` in place of `python3` (install is not repair).
 - The two --set fields are ONE logical delta: the UC gate refuses the keeper's ercot_gas_commitment_bridge (rule 19), so the disarm is the gate's substitution, never a second lever. No third --set, no uc_* value.
 - Before pushing, these MUST be in the bundle and in the pushed tree: dispatch/2023_P1.parquet, hourly/uc_schedule_2023.parquet, hourly/uc_uplift_2023.parquet, uc_solve_log_2023.json, hourly/unit_marginal_2023.parquet (`git ls-tree -r HEAD -- results/calibration/ucmilp_ercot_2023/hourly results/calibration/ucmilp_ercot_2023/dispatch`). A missing UC artifact is a STOP-and-report, not a repair.
-- An INFEASIBLE window or a "no incumbent" hard stop in the UC log is a kill (PRECOMMIT §7.1): STOP, report the window index, hour range and the engine's diagnosis dump path verbatim; do not retry, do not push a half bundle.
+- An INFEASIBLE window, a "no incumbent" hard stop, or any traceback from the UC stage is a kill (PRECOMMIT §7): STOP, report the window index, hour range and the last 30 traceback lines verbatim; do not retry, do not push a half bundle.
 - REPORT additionally (GATESPEC §6.1 wall row): the `log_year_phase_timing` line verbatim (data_prep / solve_p0 / markup / uc / solve_p1 / results_write / total); from uc_solve_log_2023.json `summary`: windows, Σ MILP s, mean and p95 MILP s, nodes p50/p95, gap p95, time_limit_hits, infeasible, warm_accepted, integers per window; the ratio total/(solve_p0+solve_p1); peak RSS GiB; the number of clusters with src == class-mean fallback (clusters[].src).
 
 SOLVE SHARD ucmilp-ercot-2024 — ERCOT backcast year 2024, ONE year, ONE container (rule 36). Model: Opus.
 DATA PROFILE: ercot
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
-1. `git rev-parse HEAD` == 2f872a62a7cccadb6800555c11a73745dcdb89a4  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+1. `git rev-parse HEAD` == dc3860bef44f8ac0e322f92da94fd6c011bec381  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
 2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
 3. `python3 scripts/hydrate_data.py --profile ercot` (exit 0, OR exit 1 with its own "This is a FULL clone" message: nothing to do, never --force) then `python3 scripts/regenerate_clean.py --solve-profile ERCOT` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
 4. the recipe you will solve: `results/calibration/closeout_ercot_l1_span` replayed with unit_commitment_milp=true, ercot_gas_commitment_bridge=false; confirm by reading `results/calibration/closeout_ercot_l1_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; ercot_gas_commitment_bridge=false
@@ -213,18 +213,18 @@ REPORT in your final message, in numbers: HEAD sha; the `container preflight:` a
 
 ====================================================================================================
 
-LANE ADDENDA (UC-2-ERCOT, PRECOMMIT docs/records/ercot/ucmilp/PRECOMMIT-ucmilp-ercot-ab-2026-10-10.md §8):
+LANE ADDENDA (UC-2-ERCOT, PRECOMMIT docs/records/ercot/ucmilp/PRECOMMIT-ucmilp-ercot-ab-2026-10-10.md §8, Addendum A):
 - If `python3 -c "import pyarrow, highspy"` fails, run `uv sync` once and use `uv run python` in place of `python3` (install is not repair).
 - The two --set fields are ONE logical delta: the UC gate refuses the keeper's ercot_gas_commitment_bridge (rule 19), so the disarm is the gate's substitution, never a second lever. No third --set, no uc_* value.
 - Before pushing, these MUST be in the bundle and in the pushed tree: dispatch/2024_P1.parquet, hourly/uc_schedule_2024.parquet, hourly/uc_uplift_2024.parquet, uc_solve_log_2024.json, hourly/unit_marginal_2024.parquet (`git ls-tree -r HEAD -- results/calibration/ucmilp_ercot_2024/hourly results/calibration/ucmilp_ercot_2024/dispatch`). A missing UC artifact is a STOP-and-report, not a repair.
-- An INFEASIBLE window or a "no incumbent" hard stop in the UC log is a kill (PRECOMMIT §7.1): STOP, report the window index, hour range and the engine's diagnosis dump path verbatim; do not retry, do not push a half bundle.
+- An INFEASIBLE window, a "no incumbent" hard stop, or any traceback from the UC stage is a kill (PRECOMMIT §7): STOP, report the window index, hour range and the last 30 traceback lines verbatim; do not retry, do not push a half bundle.
 - REPORT additionally (GATESPEC §6.1 wall row): the `log_year_phase_timing` line verbatim (data_prep / solve_p0 / markup / uc / solve_p1 / results_write / total); from uc_solve_log_2024.json `summary`: windows, Σ MILP s, mean and p95 MILP s, nodes p50/p95, gap p95, time_limit_hits, infeasible, warm_accepted, integers per window; the ratio total/(solve_p0+solve_p1); peak RSS GiB; the number of clusters with src == class-mean fallback (clusters[].src).
 
 SOLVE SHARD ucmilp-ercot-2025 — ERCOT backcast year 2025, ONE year, ONE container (rule 36). Model: Opus.
 DATA PROFILE: ercot
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
-1. `git rev-parse HEAD` == 2f872a62a7cccadb6800555c11a73745dcdb89a4  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+1. `git rev-parse HEAD` == dc3860bef44f8ac0e322f92da94fd6c011bec381  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
 2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
 3. `python3 scripts/hydrate_data.py --profile ercot` (exit 0, OR exit 1 with its own "This is a FULL clone" message: nothing to do, never --force) then `python3 scripts/regenerate_clean.py --solve-profile ERCOT` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
 4. the recipe you will solve: `results/calibration/closeout_ercot_l1_span` replayed with unit_commitment_milp=true, ercot_gas_commitment_bridge=false; confirm by reading `results/calibration/closeout_ercot_l1_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; ercot_gas_commitment_bridge=false
@@ -248,10 +248,10 @@ FORBIDDEN, by name: git add -A / git add . ; any edit under src/ or scripts/ ; d
 
 REPORT in your final message, in numbers: HEAD sha; the `container preflight:` and `memory peak:` lines; LP wall time; for 2025: objective, total generation TWh by class, mean and p99 price per zone, unserved energy MWh; the commit sha and branch; `git ls-tree` count under results/calibration/ucmilp_ercot_2025; and any hard stop that fired. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
 
-LANE ADDENDA (UC-2-ERCOT, PRECOMMIT docs/records/ercot/ucmilp/PRECOMMIT-ucmilp-ercot-ab-2026-10-10.md §8):
+LANE ADDENDA (UC-2-ERCOT, PRECOMMIT docs/records/ercot/ucmilp/PRECOMMIT-ucmilp-ercot-ab-2026-10-10.md §8, Addendum A):
 - If `python3 -c "import pyarrow, highspy"` fails, run `uv sync` once and use `uv run python` in place of `python3` (install is not repair).
 - The two --set fields are ONE logical delta: the UC gate refuses the keeper's ercot_gas_commitment_bridge (rule 19), so the disarm is the gate's substitution, never a second lever. No third --set, no uc_* value.
 - Before pushing, these MUST be in the bundle and in the pushed tree: dispatch/2025_P1.parquet, hourly/uc_schedule_2025.parquet, hourly/uc_uplift_2025.parquet, uc_solve_log_2025.json, hourly/unit_marginal_2025.parquet (`git ls-tree -r HEAD -- results/calibration/ucmilp_ercot_2025/hourly results/calibration/ucmilp_ercot_2025/dispatch`). A missing UC artifact is a STOP-and-report, not a repair.
-- An INFEASIBLE window or a "no incumbent" hard stop in the UC log is a kill (PRECOMMIT §7.1): STOP, report the window index, hour range and the engine's diagnosis dump path verbatim; do not retry, do not push a half bundle.
+- An INFEASIBLE window, a "no incumbent" hard stop, or any traceback from the UC stage is a kill (PRECOMMIT §7): STOP, report the window index, hour range and the last 30 traceback lines verbatim; do not retry, do not push a half bundle.
 - REPORT additionally (GATESPEC §6.1 wall row): the `log_year_phase_timing` line verbatim (data_prep / solve_p0 / markup / uc / solve_p1 / results_write / total); from uc_solve_log_2025.json `summary`: windows, Σ MILP s, mean and p95 MILP s, nodes p50/p95, gap p95, time_limit_hits, infeasible, warm_accepted, integers per window; the ratio total/(solve_p0+solve_p1); peak RSS GiB; the number of clusters with src == class-mean fallback (clusters[].src).
 
