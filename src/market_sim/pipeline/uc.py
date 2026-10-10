@@ -11,7 +11,8 @@ schedule as per-unit-hour bounds (DESIGN section 2.5):
 
 * **ceiling** ``availability[g,t] * u[c,t] / n_c`` on every member of an
   integer cluster (the online share of the cluster's capacity);
-* **floor** ``mlf_c * pbar_c * u[c,t]`` filled into the members in MERIT
+* **floor** ``mlf_c * pbar_c * a_c[t] * u[c,t]`` (the window's row (b), on the
+  window fleet's availability) filled into the members in MERIT
   ORDER of the P1 offer (:func:`merit_floor_allocation`: cheapest member-hour
   first, each up to its ceiling, the remainder carried to the next), composed
   through :func:`market_sim.pipeline.commitment._bridge_floored_fleet` under
@@ -98,10 +99,12 @@ logger = logging.getLogger(__name__)
 #: and the guard reads it on the window's own pinned fleet
 #: (FINDING-ucmilp-fix2-floor-mindown-2026-10-10); a cluster whose members are
 #: all budget-pinned carries no integer (UC-DESK ruling, option (a)).
+#: uc-1.4: the P1 floor is the window's row (b) floor ``mlf * pbar * a * u``
+#: (availability-weighted, on the window fleet), not ``mlf * pbar * u``.
 #: uc-1.3: the P1 floor fills a cluster's members in merit order of the P1
 #: offer, capped at each member's ceiling (FINDING-ucmilp-fix4-floor-merit-2026-10-10);
 #: a stage whose inputs digest identically to the previous stage's reuses its schedule.
-UC_ENGINE_VERSION = "uc-1.3"
+UC_ENGINE_VERSION = "uc-1.4"
 
 #: The most recent stage objects (one per year solved in this process), for a
 #: harness that writes the post-P1 uplift sidecar; drained by :func:`take_uc_stages`.
@@ -875,10 +878,14 @@ class UcStage:
         """``(floor, availability)`` the schedule implies on the P1 fleet rows.
 
         Ceiling: the member's availability scaled by ``u / n_c``. Floor:
-        ``mlf_c * pbar_c * u[c,t]`` filled into the cluster's members in merit
-        order of ``mc`` (the final P1 bid; default the bid the hook read),
-        each up to its ceiling ``pmax * availability * u / n_c``
-        (:func:`merit_floor_allocation`).
+        ``mlf_c * pbar_c * a_c[t] * u[c,t]`` — exactly the floor the window's
+        row (b) enforced, with ``a_c`` the cluster availability on
+        :func:`~market_sim.model.uc.window.window_fleet` of the year (the
+        pinned, hour-local fleet every window builds its rows on;
+        FINDING-ucmilp-fix4-floor-merit-2026-10-10 §6.1) — filled into the
+        cluster's members in merit order of ``mc`` (the final P1 bid; default
+        the bid the hook read), each up to its ceiling
+        ``pmax * availability * u / n_c`` (:func:`merit_floor_allocation`).
         """
         p = self.params
         k = self.int_idx
@@ -903,7 +910,11 @@ class UcStage:
         cap = (
             pmax[mem_gen][:, None] * avail[mem_gen, :]
         )  # (n_mem, T), after the ceiling
-        cluster_floor = (p.mlf[k] * p.pbar_mw[k])[:, None] * u  # (n_int, T)
+        fleet_w, _ = window_fleet(
+            fleet_in, self.dispatch_kwargs, 0, T, np.asarray(self.r0.dispatch)
+        )
+        a = p.cluster_availability(fleet_w)[k]  # (n_int, T), row (b)'s a
+        cluster_floor = (p.mlf[k] * p.pbar_mw[k])[:, None] * a * u  # (n_int, T)
         floor[mem_gen, :] = merit_floor_allocation(
             mem_k,
             mem_gen,
