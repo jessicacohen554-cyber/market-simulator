@@ -310,3 +310,22 @@ the five `--set` values are UNCHANGED. The pin is the only change. `2f872a62` is
   conclusion stands: nothing LIVE for CAISO outside the UC stage.
 - L1 gate relaunched with `bench-prompt-ucmilp-caiso-2021-L1-relaunch.txt` (same two commands at the new pin; budget 90 min;
   a `uv sync`-as-setup line, ruled fine by the desk). The span prompts will be generated with `--sha dc3860be…`.
+
+## Addendum C (2026-10-10 02:35Z, before any arm number exists) — the L1 gate PASSED at `dc3860be`; the span budget
+
+**L1 shard `session_01CGsGcpKcXobESgqrKVjPWm`** (Opus, pin `dc3860be`, prompt `bench-prompt-ucmilp-caiso-2021-L1-relaunch.txt`),
+branch `claude/ucmilp-bench-caiso-2021-L1` @ `241f9679` (files: `results/bench/uc/caiso_2021_L1/l1.json`,
+`caiso_2021_L2m1/{l2.json,l2_partial.json,l2_profile.md}`; fetched and read by this lane, zero LP):
+
+| rung | reading |
+|---|---|
+| L1 window 0 (hours 0–35) | **Optimal**, MILP 4.14 s, **1 node**, gap 8.7e-4, 33 integer clusters, 1,188 integers / 69,768 columns / 6,819 rows, 15 guard rows, warm start accepted, RSS 7.96 GB; LP relaxation 1.38 s; integrality gap $35,940 (0.20 % of the window objective); Δ committed energy vs the P1 slice −51,179 MWh; starts 17 (MILP) vs 149 (P1 slice) |
+| L2 January, base arm, rolling | **31 windows, 0 time-limit hits, gap max 8.9e-4, nodes p50/p95 = 1/1** (every window at the root); MILP p50 / p95 / max 3.53 / 3.99 / 4.22 s; Σ MILP 102.7 s, month wall **107.0 s**; phase sums: setup 48.3 s, presolve 47.7 s, root LP 28.5 s, tail 24.6 s; schedule hash `e94575a9c9754882`; RSS 1.43 GB |
+| capture (keeper 2021 gate-off, P0 + P1) | **`capture_wall_s` 1,133.2 s** (18.9 min; the first attempt measured 1,215.7 s in another container — cross-container noise of the order SPP saw) |
+
+Gate read: window 0 Optimal and 31/31 Optimal → **the span launches.**
+
+**Shard budget (§5 formula, fixed ex ante):** ceil(1.3 × (1,133.2 + 12 × 107.0 + 60) / 60) = ceil(53.7) = **54 min** of LP wall
+per shard (`shard_prompt.py --budget 54`). The L1-month extrapolation (P0 + P1 + 12 Januaries ≈ 41 min) is the expectation;
+the 1.3 covers seasonal variance in the windows (January's 3.5 s per 36-h window may not be the year's slowest). A shard
+reaching the budget with no bundle stops and reports (rule 32); that outcome is reported, never re-tuned.
