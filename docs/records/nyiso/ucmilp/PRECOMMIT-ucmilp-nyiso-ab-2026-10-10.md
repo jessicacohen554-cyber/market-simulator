@@ -399,3 +399,43 @@ rows: production=48; carried starts above n: 0; floor above min-down: 0
 - **Relaunch rule (unchanged from Addendum A):** when `main` carries the fix the pin moves to that merge SHA and nothing
   else changes; the bench gate is re-run first; the span launches only on a pass; the new pin's G-DRIFT is recorded in
   Addendum D before the relaunch.
+
+### C.1 (02:30Z) — root cause, reproduced zero-LP in the parent: the window keeps the NYISO monthly import-link band with its year-month bounds (engine defect 4)
+
+The shard's `--dump-dir` diagnosis (`claude/ucmilp-bench-nyiso-2024-L1` @ `aa9f123e`,
+`results/bench/uc/nyiso_2024_L1/dump/window_0_diagnosis.json`, 425 bytes; shard archived 02:16Z after the bytes were in hand):
+`rows 9754, columns 43776, 34 integer clusters, bad_column_bounds 0, contradictory_rows {production: 48, examples 2674…2685},
+history_starts_above_n 0, floor_above_min_down 0`.
+
+**Reproduction (this container, zero LP):** the arm recipe captured with `uc_bench.capture_year(solve=False)` (the data-prep
+spy, no solve), `slice_window_inputs(fa, demand, dk, 0, 36, None, free_budget_units=True)`, `DispatchModel(...)` BUILT (the
+matrix and bounds only; never `solve`), then `diagnose.highs_lp_arrays` + `row_activity_bounds`: **the same 48 rows,
+2674–2721, contradictory** (the production LP has 3,550 rows / 40,104 columns before the UC rows). Their bounds and columns:
+
+| row | `rl` (MWh) | `ru` (MWh) | columns in the window | min / max activity |
+|---|---|---|---|---|
+| 2674 (link 0, month 1) | 492,734 | 512,846 | 36 `Flow` columns (one link × 36 h) | 0 / 31,312 → **max < lower** |
+| 2675–2685, … (link 0 months 2–12, links 1–3 all months) | 132,952 … 1,161,184 | 138,379 … 1,208,579 | **0** (their hours are outside `[0, 36)`) | 0 / 0 → **max < lower** |
+| 2722 (next family, hourly) | −∞ | 10,795 | 228 (P, Chg, Dis, reserve) | feasible |
+
+**Family:** `_build_import_link_rows` (`model/lp/rows.py`), the per-(banded link, month) net-flow band of
+`nyiso_import_landing_band=True` — `dispatch_kwargs["import_link_band"] = (link_idx (4,), monthly_lo (4, 12), monthly_hi (4, 12))`,
+4 links × 12 months = **48 rows**. `slice_window_inputs` slices every kwarg with a T axis and drops `BUDGET_KWARGS` (hydro / oil /
+coal / coal-plant / import-NODE budgets, whose generators are then pinned to the P0 dispatch through `BUDGET_GEN_IDX_KEYS`), but
+`import_link_band` has no T axis and is in neither set, so it passes through untouched and the 36-hour window inherits the
+year's monthly MWh bands on its `Flow` columns: 44 rows with no columns at all and 4 January rows whose 36 hours cannot reach a
+monthly lower bound. The LP relaxation is infeasible before any UC row exists. The other NYISO budget-shaped inputs are
+handled (`hydro_*` dropped + 147 hydro units pinned; `oil_*` dropped + pinned; `hydro_envelope_mw` is `(8760,)` and slices);
+`ttc` / `ttc_import` `(8760, 13)` slice at this pin (#7221). SPP's and ERCOT's keepers arm no link band, so their gates
+never met it; every ISO whose keeper arms a monthly flow band (`nyiso_import_landing_band`; the import-node band is
+generator-based and already pinned) will.
+
+**Fix (the engine lane's, not this lane's):** treat the banded links as budget-governed flows — drop `import_link_band` from the
+window kwargs and pin those links' `Flow` columns to the P0 flows over `[t0, t1)` (the DESIGN §2.1 "budget-governed rows are
+pinned to P0" rule, applied to the flow block as `BUDGET_GEN_IDX_KEYS` applies it to generators); or, at minimum, drop the band
+with a declared statement that the window's imports float within TTC. Which of the two is the structurally right call is a
+DESIGN decision (the band is a measured monthly schedule; pinning keeps P0's monthly reconciliation, floating loses it).
+Routed to UC-DESK 02:30Z as engine defect 4.
+
+**Status of this lane:** STOPPED at the gate (kill #1 recorded). No span shard launched; the control is untouched; the arm's
+readings, bars and kills stand unchanged for the relaunch under the Addendum A rule once the fix is on `main` (Addendum D).
