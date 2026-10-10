@@ -415,3 +415,21 @@ Addendum C pin is its merge SHA. **Structural note for the RESULT:** under uc-1.
 no integer, so MECH 28 governs CC_REGULAR and ST_GAS only and the coal rows keep their incumbent floors (`coal_min_config`, the
 `_mustrun` band) — §2 T4 (coal up under the UC) and §4 S2 (coal starts toward CEMS) are then read as "not reachable by this
 arm" rather than as UC outcomes.
+
+### Addendum B.3 (06:50Z) — 2021, 2022, 2023 hit the 193-minute budget inside the UC stage: the §5 risk realised
+
+| year | P0 s | UC progress at the stop | measured MILP | stop |
+|---|---|---|---|---|
+| 2021 | 320 | > 9,780 s in UC, windows unknown (no per-window log until the stage ends) | — | budget; process left running, extended to 8 h total (until 10:53Z) for its wall row |
+| 2022 | 494 | **120 of 365 windows** (Jan 1 → Apr 30) in 11,584 s | Σ 9,321 s; mean 77.7 / p50 61.6 / p95 227.6 / max 297.4 s; nodes p50/p95 **86 / 541**; gap p95 9.9e-4; 0 time-limit hits; warm incumbent 120/120 but `warm_feasible` **0/120**; 93 % of MILP time in the post-root tail; 30-window blocks 1,922 / 2,250 / 1,768 / 3,381 s | killed by the shard at budget; projected ≈ 28,000 s MILP for the year (3.5× the January extrapolation) |
+| 2023 | 444 | ≈ 10,500 s in UC, unfinished | — | SIGINT at budget inside HiGHS `run()` |
+
+**Reading.** The §5 budget rule extrapolated January 2020 (31 windows, p50 15.6 s) to the year; 2024 and 2025 fit it (Σ 6,482 /
+6,660 s) and 2019's UC did too (6,257 s), but 2021–2023 run ≈ 3.5× slower per window, with the B&B tail (nodes p95 541 vs the
+gate's 78) carrying 93 % of the time and the warm start rejected in every window (`warm_feasible` 0 — E3 does not help on
+ERCOT's hard windows, the gate's own finding). A rolled 2022 year is ≈ 8 h of MILP on one core; the D-2 ratio for those years
+projects to **≈ 30×** against the owner's 3× (a cost finding for the speedup lane, not a kill). **Budget for the Addendum C
+relaunch (fixed now, from the measured 2022 rate): 2021, 2022, 2023 at ceil(1.3 × (494 + 28,400 + 455 + 10 % build) / 60) =
+680 min; 2019, 2020, 2024, 2025 at 193 min** (their UC fits: 6,257 / ≈ 6,500 / 6,482 / 6,660 s). uc-1.2 removes the eleven
+yard-pinned coal clusters from the integer set (72 → 61), which can only shorten the windows. None of the three legs produced a
+bundle; 2022's partial UC log is quoted above (its checkpoints under `results/uc-checkpoints/` died with the container).
