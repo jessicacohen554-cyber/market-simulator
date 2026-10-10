@@ -177,6 +177,7 @@ PHASE_SUM_KEYS: tuple[str, ...] = tuple(
 ) + (
     "set_solution_s",
     "extract_s",
+    "slim_s",
     "slice_s",
     "lp_build_s",
     "uc_build_s",
@@ -200,6 +201,41 @@ def phase_sums(windows: list[dict]) -> dict:
     out["incumbent_src_hist"] = hist
     out["warm_feasible_windows"] = int(
         sum(int(w.get("phase", {}).get("warm_feasible", 0) or 0) for w in windows)
+    )
+    return out
+
+
+#: Per-window ``slim`` census keys summed into ``summary.slim_sums``.
+SLIM_SUM_KEYS: tuple[str, ...] = (
+    "cols_fixed_by_bounds",
+    "cols_fixed_by_forcing",
+    "cols_fixed_by_singleton",
+    "cols_merged_parallel",
+    "rows_dropped_redundant",
+    "rows_dropped_singleton",
+    "rows_dropped_empty",
+)
+
+
+def slim_sums(windows: list[dict]) -> dict:
+    """Sum the slim census over ``windows[].slim`` (plus mean solved columns / rows and the windows reduced)."""
+    out: dict = {k: 0 for k in SLIM_SUM_KEYS}
+    reduced = [w for w in windows if w.get("slim") and w["slim"].get("reduced")]
+    for w in reduced:
+        for k in SLIM_SUM_KEYS:
+            out[k] += int(w["slim"].get(k, 0) or 0)
+    out["windows_reduced"] = len(reduced)
+    out["solved_columns_mean"] = (
+        round(
+            float(np.mean([w["slim"]["columns"] for w in windows if w.get("slim")])), 1
+        )
+        if any(w.get("slim") for w in windows)
+        else 0.0
+    )
+    out["solved_rows_mean"] = (
+        round(float(np.mean([w["slim"]["rows"] for w in windows if w.get("slim")])), 1)
+        if any(w.get("slim") for w in windows)
+        else 0.0
     )
     return out
 
@@ -256,6 +292,7 @@ class UcStage:
         self.L = int(config.uc_lookahead_hours)
         self.options: UcSolveOptions = solve_options_from_config(config)
         self.prefixing = bool(getattr(config, "uc_prefixing", False))
+        self.slim = bool(getattr(config, "uc_slim_window", False))
         logger.info(
             "UC stage prepared: %d clusters, %d integer (%d fleet rows), W=%d L=%d",
             self.params.n_clusters,
@@ -384,6 +421,7 @@ class UcStage:
                 fix_on=fix_on,
                 fix_off=fix_off,
                 floor_need_ahead=floor_need_year[:, t1 : min(t1 + guard_reach, T)],
+                slim=self.slim,
             )
             t_w2 = time.perf_counter()
             warm = window.warm_start_vector(
@@ -448,6 +486,12 @@ class UcStage:
                     "columns": int(result.columns),
                     "rows": int(result.rows),
                     "guard_rows": int(window._n_guard_rows),
+                    "slim": {
+                        "reduced": window.slim is not None,
+                        "columns": int(result.slim_columns),
+                        "rows": int(result.slim_rows),
+                        **(result.slim_counts or {}),
+                    },
                     "paired": paired,
                 }
             )
@@ -503,6 +547,7 @@ class UcStage:
                     "uc_solver_preset": str(
                         getattr(c, "uc_solver_preset", "highs_default")
                     ),
+                    "uc_slim_window": bool(getattr(c, "uc_slim_window", False)),
                 },
                 "solver_path": self.options.solver_path(),
                 "threads": int(self.options.threads),
@@ -536,6 +581,7 @@ class UcStage:
                 "fixed_off_total": int(sum(w["fixed_off"] for w in windows)),
                 "peak_rss_gb": None,
                 "phase_sums": phase_sums(windows),
+                "slim_sums": slim_sums(windows),
             },
         }
 

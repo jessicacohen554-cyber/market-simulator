@@ -424,6 +424,27 @@ L2_ARMS: dict[str, tuple[dict, dict, str]] = {
         {},
         "E2 horizon 48 + 24 h (optimum-changing; wall only, rolling)",
     ),
+    # Lane UC-SLIM: the slim window (model/uc/slim.py). ``noslim`` is the
+    # uc-1.1 full-model path against a ``base`` that runs at the registry
+    # default (slim on); ``slim`` arms it explicitly for a base run at
+    # ``--set uc_slim_window=false``. ``slim_noprobe`` is a MEASUREMENT arm
+    # only (HiGHS presolve_rule_off bit 15 = probing, the costliest rule left
+    # on the slim model): a solver-path change, never a registry value.
+    "noslim": (
+        {"uc_slim_window": False},
+        {},
+        "every window on the full model (slim off)",
+    ),
+    "slim": (
+        {"uc_slim_window": True},
+        {},
+        "the slim window (exact reduction before HiGHS)",
+    ),
+    "slim_noprobe": (
+        {"uc_slim_window": True},
+        {"extra_highs_options": (("presolve_rule_off", 1 << 15),)},
+        "slim window + HiGHS probing off (measurement only)",
+    ),
 }
 
 #: Arms whose schedule may legitimately differ from ``base`` beyond the gap.
@@ -439,7 +460,7 @@ def _reset_highs_scheduler() -> None:
 
 def _month_stats(wins: list[dict]) -> dict:
     """Distribution / phase sums of one month's windows (``stage.log['windows']``)."""
-    from market_sim.pipeline.uc import phase_sums
+    from market_sim.pipeline.uc import phase_sums, slim_sums
 
     milp = np.array([w["milp_s"] for w in wins])
     nodes = np.array([w["nodes"] for w in wins])
@@ -459,6 +480,7 @@ def _month_stats(wins: list[dict]) -> dict:
         "fixed_off": int(sum(w["fixed_off"] for w in wins)),
         "gap_max": float(max(w["gap"] for w in wins)),
         "phase_sums": phase_sums(wins),
+        "slim_sums": slim_sums(wins),
         "objectives": [float(w["objective"]) for w in wins],
         "window_t0": [int(w["t0"]) for w in wins],
         "paired": (
@@ -644,6 +666,8 @@ _PROFILE_COLS = (
     ("uc_build_s", "UC build Σ"),
     ("set_solution_s", "setSolution Σ"),
     ("extract_s", "extract Σ"),
+    ("slim_s", "slim Σ"),
+    ("solved_columns_mean", "solved cols"),
     ("lp_iters", "LP iters Σ"),
     ("lp_iters_heur", "heur iters Σ"),
     ("warm_feasible_windows", "warm feasible"),
@@ -677,8 +701,14 @@ def l2_profile_table(res: dict) -> str:
             for key, _ in _PROFILE_COLS:
                 if key == "wall_s_total":
                     continue
+                if key == "solved_columns_mean":
+                    vals = sums.setdefault("_solved_cols", [])
+                    vals.append(float(m.get("slim_sums", {}).get(key, 0.0) or 0.0))
+                    continue
                 src = m["phase_sums"] if key in m["phase_sums"] else m
                 sums[key] = sums.get(key, 0.0) + float(src.get(key, 0.0) or 0.0)
+        if "_solved_cols" in sums:
+            sums["solved_columns_mean"] = float(np.mean(sums.pop("_solved_cols")))
         sums["wall_s_total"] = arm["wall_s_total"]
         eq = res.get("equivalence", {}).get(name, {})
         eqm = [e for e in eq.get("months", []) if e.get("comparable")]
@@ -709,7 +739,8 @@ def l2_profile_table(res: dict) -> str:
             v = sums.get(key, 0.0)
             row.append(
                 f"{v:.0f}"
-                if key.endswith("iters") or key == "warm_feasible_windows"
+                if key.endswith("iters")
+                or key in ("warm_feasible_windows", "solved_columns_mean")
                 else f"{v:.1f}"
             )
         lines.append("| " + " | ".join(row) + " |")
@@ -783,6 +814,8 @@ def rung_l3(
         "phase_sums": summ.get("phase_sums"),
         "solver_path": log.get("engine", {}).get("solver_path"),
         "integers_per_window": log.get("engine", {}).get("integers_per_window"),
+        "slim_sums": summ.get("slim_sums"),
+        "uc_slim_window": log.get("engine", {}).get("fields", {}).get("uc_slim_window"),
         "nodes_p50": summ.get("nodes_p50"),
         "nodes_p95": summ.get("nodes_p95"),
         "gap_p95": summ.get("gap_p95"),

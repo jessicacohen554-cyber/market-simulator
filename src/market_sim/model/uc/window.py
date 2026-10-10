@@ -42,6 +42,7 @@ from market_sim.model.uc.params import (
     UcClusterParams,
     units_needed_for_floor,
 )
+from market_sim.model.uc.slim import SlimReduction, reduce_window
 
 #: Dispatch kwargs the window DROPS: annual / monthly budget families whose
 #: rows cannot be sliced (DESIGN section 2.1). Their generators are pinned to
@@ -331,6 +332,14 @@ class WindowResult:
     #: ``set_solution_s`` / ``extract_s``); ``None`` on a result a test builds
     #: without solving.
     phase: dict | None = None
+    #: The slim window (``uc_slim_window``, ``model/uc/slim.py``): the
+    #: columns and rows of the model HiGHS actually solved (equal to
+    #: ``columns`` / ``rows`` when the window solved on the full model), the
+    #: reduction census and the seconds the reduction took.
+    slim_columns: int = 0
+    slim_rows: int = 0
+    slim_counts: dict | None = None
+    slim_s: float = 0.0
 
 
 def _lp_matrix_csc(h: highspy.Highs) -> sp.csc_matrix:
@@ -437,6 +446,11 @@ class UcWindowModel:
         soc_terminal: ``(n_storage,)`` one-sided terminal SOC lower bound
             (P0's level at ``t1 - 1``) or ``None``.
         fix_on / fix_off: optional ``(n_int,)`` pre-fixing masks.
+        slim: Build the slim window (``uc_slim_window``): the exact
+            reduction of ``model/uc/slim.py`` on the full model, solved on
+            its own handle (:attr:`h_solve`); the full handle (:attr:`h`)
+            stays for the diagnosis, relaxation and dump paths. A reduction
+            that meets a contradiction leaves the window on the full model.
         floor_need_ahead: ``(n_int, n_ahead)`` units the structural member
             floors need in the hours ``t1, t1 + 1, ...`` AFTER the window
             (:func:`~market_sim.model.uc.params.units_needed_for_floor` on
@@ -460,6 +474,7 @@ class UcWindowModel:
         fix_on: np.ndarray | None = None,
         fix_off: np.ndarray | None = None,
         floor_need_ahead: np.ndarray | None = None,
+        slim: bool = False,
     ) -> None:
         t_build = time.perf_counter()
         self.params = params
@@ -492,6 +507,56 @@ class UcWindowModel:
         self._pin_state_rows(state, soc_terminal)
         self._add_ramp_boundary_rows(inputs, state)
         self.build_s = time.perf_counter() - t_build
+        #: The exact reduction the window solves on (``None``: the full model).
+        self.slim: SlimReduction | None = None
+        #: The handle :func:`~market_sim.model.uc.solve.solve_window` runs.
+        self.h_solve: highspy.Highs = self.h
+        self.slim_s = 0.0
+        if slim:
+            t_slim = time.perf_counter()
+            red, h_slim = reduce_window(self.h, integer_cols=self.u_cols_full())
+            if red is not None:
+                self.h_solve = h_slim
+                self.slim = red
+            self.slim_s = time.perf_counter() - t_slim
+
+    # ------------------------------------------------------------------ slim
+    def u_cols_full(self) -> np.ndarray:
+        """The ``u`` columns of the full model (``U0 .. V0``), int32."""
+        return np.arange(self.U0, self.V0, dtype=np.int32)
+
+    def u_cols_solve(self) -> np.ndarray:
+        """The ``u`` columns of the model that solves (slim or full), int32.
+
+        A ``u`` column the reduction fixed has no slim column and is absent.
+        """
+        full = self.u_cols_full()
+        if self.slim is None:
+            return full
+        idx = self.slim.slim_index(full)
+        return idx[idx >= 0].astype(np.int32)
+
+    def set_u_integrality(self, integer: bool) -> None:
+        """Make every ``u`` of the solving model integer or continuous (the relaxation rung)."""
+        idx = self.u_cols_solve()
+        if not idx.size:
+            return
+        kind = (
+            highspy.HighsVarType.kInteger
+            if integer
+            else highspy.HighsVarType.kContinuous
+        )
+        self.h_solve.changeColsIntegrality(int(idx.size), idx, [kind] * int(idx.size))
+
+    def to_solve_space(self, x_full: np.ndarray) -> np.ndarray:
+        """A full column vector (the warm start) in the solving model's space."""
+        x = np.asarray(x_full, dtype=float)
+        return x if self.slim is None else self.slim.restrict(x)
+
+    def from_solve_space(self, x_solve: np.ndarray) -> np.ndarray:
+        """The solving model's column vector back in the full space (fixed values reinserted)."""
+        x = np.asarray(x_solve, dtype=float)
+        return x if self.slim is None else self.slim.expand(x)
 
     # ----------------------------------------------------------------- build
     def _install_lp_cost(self, mc_w: np.ndarray) -> None:
@@ -963,5 +1028,9 @@ class UcWindowModel:
             fixed_off=self.fixed_off,
             build_s=self.build_s,
             lp_build_s=self.lp_build_s,
+            slim_columns=int(self.h_solve.getNumCol()),
+            slim_rows=int(self.h_solve.getNumRow()),
+            slim_counts=None if self.slim is None else dict(self.slim.counts),
+            slim_s=self.slim_s,
             **stats,
         )

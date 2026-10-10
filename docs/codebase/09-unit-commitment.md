@@ -88,12 +88,44 @@ never a registry field).
 `warm_start_vector` shifts the previous window's incumbent and fills the tail
 from P0; `extract` packages a HiGHS column vector as `WindowResult`.
 
+**The slim window — `model/uc/slim.py` (`uc_slim_window`, default True).**
+With the full model built, `UcWindowModel(slim=True)` reads it back from the
+handle once (`diagnose.highs_lp_arrays`) and applies `reduce_lp`, an EXACT
+reduction iterated to a fixpoint and vectorized over the whole model: every
+column whose bounds pin it (`lower == upper`: pinned budget units,
+zero-availability units, zero-CF renewable hours, `u`/`v`/`w` a floor or the
+carried history fixes) leaves with its cost as the objective offset and its
+contribution shifted into the row bounds; forcing rows fix their columns;
+singleton rows become column bounds; redundant and emptied rows drop; and
+parallel continuous columns (the same column of `A` and the same cost — the
+generator `P` columns of one zone-balance row at one offer, which is what
+HiGHS's own "parallel rows and columns" rule merges after a full presolve
+pass) become one slim column with summed bounds. The slim model goes to a
+fresh handle `h_solve` (`slim_handle`, options copied); the full handle `h`
+stays for the diagnosis, relaxation and dump paths. `SlimReduction.restrict`
+carries the warm start into the slim space, `expand` brings the solution
+back (fixed values reinserted, merged members split in index order above
+their lower bounds — a split the stage is indifferent to: a member's
+dispatch feeds only the next window's warm start and its ramp-group sum). A
+contradiction met on the way returns `None` and the window solves on the
+full model, so the existing infeasibility report is what fires.
+`WindowResult.slim_columns/rows/counts/slim_s` and `uc_solve_log`
+(`windows[].slim`, `summary.slim_sums`, `phase_sums.slim_s`) carry the
+census. SPP 2020 window 0: 57,384 × 17,229 → 21,304 × 12,204 (8.5 k columns
+fixed, 27.6 k merged, 5.0 k rows dropped) in ~0.1 s; the MILP 2.9 s → 1.6 s,
+the same objective and `u` (FINDING-ucmilp-slim-window-2026-10-10.md).
+
 ## 9.3 Solve, stitch, inject — `solve.py`, `schedule.py`, `pipeline/uc.py`
 
-`solve_window` sets `mip_rel_gap`, `time_limit`, `presolve on`, applies the
-warm start and runs; `Optimal` or a time-limit stop with an incumbent is
-accepted, anything else raises `UcWindowInfeasible` (an engine defect, never a
-tuning invitation). `UcSchedule.keep` records the first `W` hours of each
+`solve_window` applies the registry options (`mip_rel_gap`, `time_limit`, the
+`uc_solver_preset` solver path — `UC_SOLVER_PRESETS`: `highs_default` or
+`lean`) on the handle that solves (`window.h_solve`: the slim model when the
+reduction applied, else the full one), restricts the warm start to that
+space, runs with HiGHS's log collected into the per-window phase profile
+(`parse_highs_mip_log`), and expands the solution back to the full column
+vector; `Optimal` or a time-limit stop with an incumbent is accepted,
+anything else raises `UcWindowInfeasible` (an engine defect, never a tuning
+invitation) with the relaxation re-solved on the FULL handle. `UcSchedule.keep` records the first `W` hours of each
 window, `state_for` hands the next window its state, `checkpoint` writes
 `checkpoint_<month>.npz` after every completed month (plan E9).
 
@@ -112,11 +144,13 @@ and `uc_solve_log_<y>.json`. Monthly checkpoints are scratch under
 
 ## 9.4 Registry, refusals, tooling
 
-Nine fields (`unit_commitment_milp`, `uc_window_hours` 24,
+Eleven fields (`unit_commitment_milp`, `uc_window_hours` 24,
 `uc_lookahead_hours` 12, `uc_mip_rel_gap` 1e-3, `uc_window_time_limit_s` 600,
 `uc_integer_scope` `physics`, `uc_noload_source` `campd_regression`,
-`uc_boundary_mode` `p0_targets`, `uc_prefixing` False), cache-key registered at
-their defaults (TIER_TAGS 1). `__post_init__` refuses the gate beside any
+`uc_boundary_mode` `p0_targets`, `uc_prefixing` False, `uc_solver_preset`
+`lean` (lane UC-SPEED), `uc_slim_window` True (lane UC-SLIM)), cache-key
+registered at their defaults (TIER_TAGS 1); the last two were born at their
+fast values, so no committed key moved. `__post_init__` refuses the gate beside any
 armed member of the two declared tuples `UC_REFUSED_ALWAYS` (every commitment
 bridge and its legs, the posture family) and `UC_REFUSED_BY_RULING` (empty
 until an owner D-5 ruling extends it) — rule 19 as data.
