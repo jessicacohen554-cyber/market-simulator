@@ -229,3 +229,38 @@ def test_changed_inputs_resolve_the_windows(uc_params_frame, uc_results_root):
     assert s2.log["engine"]["reused_schedule"] is None
     assert s2.schedule is not s1.schedule
     assert s2.log["engine"]["input_digest"] != s1.log["engine"]["input_digest"]
+
+
+# ------------------------------------------------- legacy heat-rate bins (no plant)
+def test_legacy_bin_rows_are_singleton_clusters_with_a_capped_floor(uc_params_frame):
+    """A legacy bin (``plant_code`` 0) is its own cluster: its whole floor is its own, capped."""
+    from market_sim.model.uc.params import build_uc_cluster_params
+
+    gens = [
+        Generator(
+            unit_id=f"NEISO_cc_bin{i}",
+            name="cc",
+            zone="Z0",
+            fuel_type="gas_cc",
+            pmax_mw=cap,
+            pmin_mw=0.0,
+            heat_rate=hr,
+            vom=2.0,
+            eford=0.0,
+            plant_code=0,
+        )
+        for i, (cap, hr) in enumerate([(300.0, 6.8), (200.0, 7.6), (100.0, 9.5)])
+    ]
+    fa = generators_to_fleet_arrays(gens, ["Z0"], hours=T)
+    p = build_uc_cluster_params(fa, "NEISO")
+    assert p.n_clusters == 3
+    assert np.bincount(p.member_cluster).tolist() == [1, 1, 1]
+    # singleton fill: the floor is the member's own, capped at its (derated) ceiling
+    k = np.arange(3)
+    floor = np.full((3, T), 50.0)
+    cap = np.repeat(np.array([[300.0], [30.0], [100.0]]), T, axis=1)
+    mc = np.repeat(np.array([[20.0], [25.0], [40.0]]), T, axis=1)
+    out = merit_floor_allocation(
+        k, p.member_gen[np.argsort(p.member_cluster)], floor, cap, mc
+    )
+    np.testing.assert_array_equal(out[:, 0], [50.0, 30.0, 50.0])

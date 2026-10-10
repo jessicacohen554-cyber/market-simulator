@@ -50,6 +50,26 @@ the uplift basis change is housekeeping.
 | Where was R2's 2019 uplift computed? | In-process: the leg tree at `dd7fe8a8` carries `hourly/uc_uplift_2019.parquet`, so `compute_uplift` at `mc_base` produced it. Energy cost $19.14 B on 153.1 TWh ($125/MWh). |
 | Does pass 2 read the same inputs? | Yes, by construction: the adaptive pass differs only in `p1_storage_discharge_cost`, which is merged into the P1 kwargs **after** the stage (`pipeline/solve.py` ~L967), and `r0` is reused when P1 was cold. The digest checks this; it does not assume it. |
 
+**Per-ISO member layouts (UC-DESK request, after UC-2-NEISO #7236).** These counts come from the
+committed `uc_solve_log` cluster rows (`members`, `plant_code`), zero LP:
+
+| ISO (log) | clusters / integer | members per integer cluster | clusters with `plant_code ≤ 0` (legacy singleton key) |
+|---|---|---|---|
+| ERCOT 2024 | 139 / 61 | 3 (6), 4 (1), 12 (13), 17 (41) | 0 |
+| NEISO 2022 | 69 / 35 | 7 (16), 8 (19) | 0 |
+| MISO 2024 | 320 / 77 | 4 (20), 7 (19), 8 (37), 24 (1) | 0 |
+| CAISO 2024 | 115 / 34 | 3 (1), 6 (2), 7 (14), 8 (2), 12 (15) | 0 |
+| NYISO 2024 | 78 / 34 | **1 (7)**, 4 (11), 7 (6), 8 (10) | 0 |
+| SPP 2024 | 221 / 83 | 3–12 | 0 |
+
+Every armed ISO's integer cluster is one plant's set of offer tranches, keyed `(plant_code,
+family)`. NEISO's "legacy bins" are per-plant tranches too (7–8 members). The pro-rata split
+therefore floored every ISO's peak tranches, which matches the NEISO evidence: CC_REGULAR `peak`
+ran 8,758–8,760 h in the arm against 14–467 h in control. One merit fill covers all of them. A
+true legacy row (no plant code) is its own singleton cluster. There the fill is the old split up
+to the member's ceiling, tested by `test_legacy_bin_rows_are_singleton_clusters_with_a_capped_floor`.
+NYISO's seven single-member clusters are the same case.
+
 **Make-whole convention.** The repo declares one: DESIGN-uc-milp-engine §2.6/§4, per cluster-day
 `max(0, Σ mc_base·P1 + nl·u + su·p̄·v − Σ λ·P1)`. I follow it. It matches the ISO practice of
 guaranteeing the **as-offered** three-part cost (start-up + no-load/minimum energy + the energy
