@@ -433,3 +433,27 @@ relaunch (fixed now, from the measured 2022 rate): 2021, 2022, 2023 at ceil(1.3 
 680 min; 2019, 2020, 2024, 2025 at 193 min** (their UC fits: 6,257 / ≈ 6,500 / 6,482 / 6,660 s). uc-1.2 removes the eleven
 yard-pinned coal clusters from the integer set (72 → 61), which can only shorten the windows. None of the three legs produced a
 bundle; 2022's partial UC log is quoted above (its checkpoints under `results/uc-checkpoints/` died with the container).
+
+## Addendum C (pre-declared 06:55Z, before the uc-1.2 merge SHA exists) — the relaunch: staged, at the uc-1.2 pin
+
+**UC-DESK ruling (06:49Z, verbatim):** *"Staged launch, pre-declared in Addendum C before any number: at the merge SHA launch
+2019/2020/2024/2025 first, 193 min each. If a kill fires on those four (kill #1 or #2, or kill #3 on ≥1 real control flip under
+your PRECOMMIT's flip rule), the verdict is R and 2021–2023 are not launched; record them as 'not run: verdict reached' (rule 16
+doesn't bite, since nothing is registered). If no kill fires, launch 2021–2023 at 680 min. Reason: the 3× ruling governs arming,
+not A/B runs, but 24 core-hours on years that can't change an R is waste."*
+
+Fixed now, before any number:
+
+1. **Pin:** the uc-1.2 merge SHA on `main`, `<<PIN_C>>`, filled in by the lane the minute UC-DESK sends it, with the same
+   G-DRIFT check as Addendum A (the `src/` diff from `dc3860be` must be the uc-1.2 release and nothing else on the ERCOT solve
+   path; anything else is classified before launch).
+2. **Stage 1:** 2019, 2020, 2024, 2025 at 193 min each, the same two-field arm, prompts regenerated at the pin with the lane
+   addenda. Each leg is fetched, verified (five artifacts) and checked out before its shard is archived.
+3. **Stage-1 gate:** kill #1 (an infeasible window / no incumbent), kill #2 (the P1 LP infeasible after the UC), or **kill #3 — a
+   §3 control flip** read on the four legs' own `calibration_verdict.py` rows against the keeper's (a PASS → FAIL on any
+   registered criterion, class row, year, excluding the attestation artefacts named in §8). Any one ⇒ **verdict R**, 2021–2023
+   recorded as *not run: verdict reached*, RESULT written on the four legs.
+4. **Stage 2:** no kill on stage 1 ⇒ 2021, 2022, 2023 at 680 min each (Addendum B.3), then the seven-leg composition, the
+   verdict and the RESULT as §8 says.
+5. Readings (§2), bars, kills (§7), the budget rule's measured replacement (B.3) and the composition workaround (§8) do not move.
+   The `dc3860be` legs (2024, 2025 complete; 2022's partial UC log) stay evidence, never scored.
