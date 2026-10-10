@@ -143,3 +143,8 @@ Shard branches are transport (rule 33): the owner may delete the seven `claude/u
   reserve dormancy unmoved; control flips 2023 C3a/C3b, C1 CC 2023–25, C1 PRB 2025, C8 ST_GAS 2021–23/25; CC → coal 6–8 TWh/yr; CC starts to 0.6× CEMS;
   uplift 1.0–4.4 % of energy cost; wall 5.1–10.2× P0+P1 (D-2 unruled) · PROBE `2026-10-05-ucmilp-spp-uc-b` registered · cell `unit_commitment_milp` SPP → R
   (desk stamps) · D-6: record R, stage default-off for SPP · no promotion proposed.
+
+
+## Desk addendum (UC-DESK, 2026-10-10)
+
+Probe registration removed by desk ruling (option 2): audit E13 admits only keepers or folded runs, so the rejected probe `2026-10-05-ucmilp-spp-uc-b` is not registered (rule 15 duty unmet by ruling; ERCOT-w4 #7202 precedent). The slim span moved to `docs/records/spp/ucmilp/data/ucmilp_spp_span/`; full leg bundles remain on `claude/ucmilp-spp-2019…2025` (rule 31, nothing deleted). Matrix cell `unit_commitment_milp` × SPP stamped `R`. Owner D-6 (2026-10-09): "Record R + test floors-off arm".
