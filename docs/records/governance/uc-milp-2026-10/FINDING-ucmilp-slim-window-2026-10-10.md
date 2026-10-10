@@ -174,6 +174,11 @@ rungs were re-run at the fixed SHA (§3–§4).
   registration. The 37 pre-existing UC tests pass unchanged.
 * No engine-version bump: `uc-1.1`'s formulation is unchanged; the slim model is the same
   model.
+* Rebased onto `main` at `dc3860be` (PR #7221's time-major transfer-limit slice, #7220's desk
+  rulings, #7219's `coal_sync_floor_release`) before the PR: no conflict, every check green on
+  the rebased head. The four shards ran at `180b4812` / `45b4f5dc` on the pre-#7221 window;
+  the slim reduction is model-agnostic (it reads whatever the window builder hands HiGHS), so
+  the gate and the census transfer, and the L3 wall row is the pre-#7221 window's.
 
 ## 3. The equivalence gate (paired; SPP 2020 January + July)
 
