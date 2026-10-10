@@ -1,0 +1,25 @@
+2020 session_01XEjFwLBv4SGDAHw3a6JQW4 sha 985780105b7293d8536fb8447935169f42f50752
+year 2020 phase timing: data_prep=64.8s solve_p0=551.5s markup=3588.1s solve_p1=780.6s results_write=99.3s total=5084.2s (markup: seam=3500.3s)
+UC stage prepared: 336 clusters, 76 integer (499 fleet rows; 88 all-budget-pinned clusters left to their budget identity)
+memory peak: cgroup_peak_rss_gib=13.36, cgroup_peak_rss_plus_swap_gib=16.88, process_vmhwm_gib=13.33; exit 0; wall 84.7 min; unserved 0
+2021 session_01NiDuJaNBaLqyRLhdskUEZ7 sha 7b3575a34ca5a4c1ddb4878e077d3d2ba43bf4ba
+year 2021 phase timing: data_prep=60.1s solve_p0=750.1s markup=3291.5s solve_p1=978.3s results_write=95.6s total=5175.6s (seam=3209.6s)
+UC stage prepared: 330 clusters, 75 integer (487 fleet rows; 86 all-budget-pinned)
+memory peak: cgroup_peak_rss_gib=13.36, plus_swap=16.67, vmhwm=13.33; exit 0; unserved 0
+2024 session_01GyYoFNeXCFi5CabPjAS87u sha 4bbbe13b32c98128b7a493a4728ca3266a928788
+INFO: year 2024 phase timing: data_prep=66.5s solve_p0=447.8s markup=3762.8s solve_p1=474.7s results_write=75.2s total=4827.0s (seam=3684.6s)
+UC stage prepared: 320 clusters, 77 integer (533 fleet rows; 67 all-budget-pinned); unserved 11,116.8 MWh, dump 416.4
+memory peak: cgroup_peak_rss_gib=13.36, plus_swap=17.67, vmhwm=13.33; exit 0
+2025 session_01CW8CEfZ5YikyVowxaLCLME sha 3521f9f141aa910d170d1b5c38ac0f68722c63f6
+INFO: year 2025 phase timing: data_prep=65.8s solve_p0=594.6s markup=2751.7s solve_p1=668.3s results_write=74.2s total=4154.6s (seam=2673.8s)
+UC stage prepared: 316 clusters, 74 integer (505 fleet rows; 65 all-budget-pinned); unserved 0; leg-local D-2 CT_PEAKER 35.8% / ST_GAS 31.5% (shard's own diagnostics, single year)
+memory peak: cgroup_peak_rss_gib=13.36, plus_swap=17.55, vmhwm=13.33; exit 0
+2019 session_01NrZdEVbUPDbuh28pKQ7V7F sha 8e3e53b490299e91fb8db704ffe10ae8aff3e3ce
+year 2019 phase timing: data_prep=64.5s solve_p0=649.5s markup=3811.5s solve_p1=807.0s results_write=106.4s total=5438.8s (seam=3724.8s)
+UC stage prepared: 338 clusters, 71 integer (469 fleet rows; 96 all-budget-pinned); unserved 0
+memory peak: cgroup_peak_rss_gib=13.36, plus_swap=16.93, vmhwm=13.33; exit 0
+2022 session_01JwPkP9JprGyHhyhUBouxvK BUDGET STOP (no bundle): P0 solve 3559.6 s (matrix build 44.0 s); UC stage prepared 328 clusters, 77 integer (506 fleet rows; 80 all-budget-pinned); 284/365 windows logged, all Optimal (MILP mean 12.1 s, max 50 s through w260); process group ended unlogged ~16:35Z after window 283 (no traceback, no exit code; cause unknown); P1 never started.
+2023 session_01WNeaDPLLqcuKm3C1xa3aif branch claude/ucmilp-miso-2023b @ 3af378b190799a626f4794052d34d1d14f4e2d8d (dispatch/2023_P1.parquet as 3 split parts + sha256 f0b88147...091b; owner-approved push)
+year 2023 phase timing: data_prep=83.4s solve_p0=560.0s markup=3294.1s solve_p1=612.5s results_write=99.2s total=4649.2s (seam=3199.4s)
+UC stage prepared: 322 clusters, 74 integer (493 fleet rows; 73 all-budget-pinned); unserved 0
+memory peak: cgroup_peak_rss_gib=13.36, plus_swap=17.87, vmhwm=13.33; exit 0
