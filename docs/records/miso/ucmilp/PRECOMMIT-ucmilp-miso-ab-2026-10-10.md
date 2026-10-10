@@ -430,3 +430,34 @@ Seven span shards launched 14:18:04–14:18:10Z at the pin `eab17188c75cd0332f93
 2020 `session_01XEjFwLBv4SGDAHw3a6JQW4` · 2021 `session_01NiDuJaNBaLqyRLhdskUEZ7` · 2022 `session_01JwPkP9JprGyHhyhUBouxvK` ·
 2023 `session_01WNeaDPLLqcuKm3C1xa3aif` · 2024 `session_01GyYoFNeXCFi5CabPjAS87u` · 2025 `session_01CW8CEfZ5YikyVowxaLCLME`.
 Nothing in §§1–8 changed.
+
+## Addendum H (2026-10-10 16:00Z) — four legs in; the recipe gate's field set, stated; KILL #3 fires on 2024 (unserved +2,760 MWh)
+
+**Legs fetched, verified, archived (rule 33).** Each parented on the pin, 21 files, `dispatch/<y>_P1.parquet` + `uc_schedule` / `uc_uplift`
+/ `unit_marginal` / `uc_solve_log` present; every window Optimal (365/365), 0 time-limit hits, exit 0, no OOM (every leg at the 13.36 GiB cap,
+3.3–4.3 GiB in swap):
+
+| year | branch @ SHA | shard | integer gate → set (demoted all-pinned) | P1 unserved MWh (keeper) |
+|---|---|---|---|---|
+| 2020 | `claude/ucmilp-miso-2020` @ `985780105b7293d8536fb8447935169f42f50752` | `session_01XEjFwLBv4SGDAHw3a6JQW4` | 164 → 76 (88) | 0 (0) |
+| 2021 | `claude/ucmilp-miso-2021` @ `7b3575a34ca5a4c1ddb4878e077d3d2ba43bf4ba` | `session_01NiDuJaNBaLqyRLhdskUEZ7` | 161 → 75 (86) | 0 (0) |
+| 2024 | `claude/ucmilp-miso-2024` @ `4bbbe13b32c98128b7a493a4728ca3266a928788` | `session_01GyYoFNeXCFi5CabPjAS87u` | 144 → 77 (67) | **11,116.8 (8,356.9)** |
+| 2025 | `claude/ucmilp-miso-2025` @ `3521f9f141aa910d170d1b5c38ac0f68722c63f6` | `session_01CW8CEfZ5YikyVowxaLCLME` | 139 → 74 (65) | 0 (0) |
+
+**Recipe gate (§1 / Addendum F), stated precisely.** Every field the keeper's `run_config_<y>.json` records is equal in each leg
+(`gas_price_override`, `gas_offer_margin_anchor`, `weather_year`, and for 2023–25 the two reserve flags included). The legs additionally
+record 13 fields the keeper predates, each `False`, each at its registered default in `_CACHE_KEY_OPTIONAL_FIELDS`, armed by no
+`iso_configs` entry and born before the first pin `2f872a62` (so inside the §9 G-DRIFT span that classified the control INERT):
+`caiso_chp_btm_measured`, `caiso_dsw_daytime_lateevening_unprinted_arm`, `coal_perplant_cliff_split`, `diagnostic_coal_metered_online_floor`,
+`ercot_chp_btm_measured`, `miso_seam_neighbour_hourly_full_span`, `nuclear_winter_capability_basis`, `nwpp_coi_pnw_delivery_basis`,
+`nwpp_path76_served_schedule`, `nwpp_seam_in_service_vintage`, `nwpp_served_schedule_zonal_attribution`, `pjm_elliott_measured_outage_overlay`,
+`zonal_loss_demand_reconciliation`. The §1 sentence ("except `unit_commitment_milp` and the ten `uc_*` fields") omitted this class; it is a
+default-off field absent from the keeper's record, not a recipe difference, and the gate is read as passing. Disclosed, not a reading change.
+(The legs write `run_config.json` only, no `run_config_<y>.json`; the composer copies it per year.)
+
+**KILL #3 (§3 "also gating": unserved up by ≤ 500 MWh vs the keeper) fires on MISO 2024: +2,759.9 MWh.** Both runs shed load in the same
+event, hours 5701–5706 (26 Aug 2024, the heat peak): keeper 5 zone-hours (West, Indiana, East), 8,356.9 MWh; arm 6 zone-hours (West ×3,
+Plains, Illinois, Indiana), 11,116.8 MWh, plus 416.4 MWh of dump the keeper does not have. Recorded per §6; no re-tune, no relaunch, no
+`uc_*` change. The verdict rule (§7) makes the lane **R** whatever the remaining readings show. The three shards still solving (2019, 2022,
+2023) were already launched and are left to finish as evidence (Addendum D precedent); no new LP is started. The span is still composed
+and scored zero-LP so the RESULT carries the full gate table.
