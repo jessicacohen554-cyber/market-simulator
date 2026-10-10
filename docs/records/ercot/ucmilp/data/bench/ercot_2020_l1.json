@@ -1,0 +1,49 @@
+{
+ "iso": "ERCOT",
+ "year": 2020,
+ "t0": 0,
+ "t1": 36,
+ "integer_clusters": 72,
+ "milp": {
+  "build_s": 0.07753226500017263,
+  "milp_s": 4.898443299000064,
+  "nodes": 1,
+  "gap": 6.715411515321831e-06,
+  "status": "Optimal",
+  "objective": -3860551.323854296,
+  "integers": 2592,
+  "columns": 89928,
+  "rows": 14313,
+  "time_limit_hit": false,
+  "starts": 12,
+  "warm_accepted": true,
+  "guard_rows": 165
+ },
+ "rss_gb": 11.386577606201172,
+ "relaxation": {
+  "build_s": 0.08542267999996511,
+  "milp_s": 1.771362597999996,
+  "nodes": 0,
+  "gap": 0.0,
+  "status": "Optimal",
+  "objective": -3942736.005870646,
+  "integers": 2592,
+  "columns": 89928,
+  "rows": 14313,
+  "time_limit_hit": false,
+  "starts": 12,
+  "warm_accepted": false
+ },
+ "integrality_gap": 82184.68201634986,
+ "p1_slice": {
+  "solve_s": 0.08386188200006472,
+  "objective": -5359177.639034026
+ },
+ "delta_committed_energy_mwh": -3746.348228505114,
+ "milp_starts": 12,
+ "p1_slice_starts": 144,
+ "trough_price_milp_vs_p1": {
+  "p1_slice_lower_tercile_mean": 7.75755988114632,
+  "note": "the MILP prices nothing (rule 4); the trough reading is scored on the L3 P1 bundle"
+ }
+}

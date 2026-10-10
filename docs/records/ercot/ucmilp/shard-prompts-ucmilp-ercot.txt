@@ -11,7 +11,7 @@ HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do 
 SOLVE (sequential, this year only):
   eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"
   python3 scripts/replay_keeper.py results/calibration/closeout_ercot_l1_span --years 2019 --out-dir results/calibration/ucmilp_ercot_2019 --set unit_commitment_milp=true --set ercot_gas_commitment_bridge=false --note "ucmilp-ercot: UC A/B"
-Budget: 120 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
+Budget: 193 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
 
 PUSH THE WHOLE BUNDLE (rule 34 (a) — a bundle that cannot back a promotion is a wasted solve):
   git checkout -b claude/ucmilp-ercot-2019
@@ -31,6 +31,7 @@ REPORT in your final message, in numbers: HEAD sha; the `container preflight:` a
 LANE ADDENDA (UC-2-ERCOT, PRECOMMIT docs/records/ercot/ucmilp/PRECOMMIT-ucmilp-ercot-ab-2026-10-10.md §8, Addendum A):
 - If `python3 -c "import pyarrow, highspy"` fails, run `uv sync` once and use `uv run python` in place of `python3` (install is not repair).
 - The two --set fields are ONE logical delta: the UC gate refuses the keeper's ercot_gas_commitment_bridge (rule 19), so the disarm is the gate's substitution, never a second lever. No third --set, no uc_* value.
+- Expected wall from the L1 gate (ERCOT 2020 at the same engine bytes): capture P0 529 s + P1 264 s; rolled January 31 windows Σ MILP 671 s (p50 15.6 s, p95 50 s, max 76 s, 0 time-limit hits); a rolled year ≈ 8,000 s of MILP. Run the solve in the background with a Monitor on its log; never let a foreground tool timeout kill it.
 - Before pushing, these MUST be in the bundle and in the pushed tree: dispatch/2019_P1.parquet, hourly/uc_schedule_2019.parquet, hourly/uc_uplift_2019.parquet, uc_solve_log_2019.json, hourly/unit_marginal_2019.parquet (`git ls-tree -r HEAD -- results/calibration/ucmilp_ercot_2019/hourly results/calibration/ucmilp_ercot_2019/dispatch`). A missing UC artifact is a STOP-and-report, not a repair.
 - An INFEASIBLE window, a "no incumbent" hard stop, or any traceback from the UC stage is a kill (PRECOMMIT §7): STOP, report the window index, hour range and the last 30 traceback lines verbatim; do not retry, do not push a half bundle.
 - REPORT additionally (GATESPEC §6.1 wall row): the `log_year_phase_timing` line verbatim (data_prep / solve_p0 / markup / uc / solve_p1 / results_write / total); from uc_solve_log_2019.json `summary`: windows, Σ MILP s, mean and p95 MILP s, nodes p50/p95, gap p95, time_limit_hits, infeasible, warm_accepted, integers per window; the ratio total/(solve_p0+solve_p1); peak RSS GiB; the number of clusters with src == class-mean fallback (clusters[].src).
@@ -48,7 +49,7 @@ HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do 
 SOLVE (sequential, this year only):
   eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"
   python3 scripts/replay_keeper.py results/calibration/closeout_ercot_l1_span --years 2020 --out-dir results/calibration/ucmilp_ercot_2020 --set unit_commitment_milp=true --set ercot_gas_commitment_bridge=false --note "ucmilp-ercot: UC A/B"
-Budget: 120 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
+Budget: 193 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
 
 PUSH THE WHOLE BUNDLE (rule 34 (a) — a bundle that cannot back a promotion is a wasted solve):
   git checkout -b claude/ucmilp-ercot-2020
@@ -68,6 +69,7 @@ REPORT in your final message, in numbers: HEAD sha; the `container preflight:` a
 LANE ADDENDA (UC-2-ERCOT, PRECOMMIT docs/records/ercot/ucmilp/PRECOMMIT-ucmilp-ercot-ab-2026-10-10.md §8, Addendum A):
 - If `python3 -c "import pyarrow, highspy"` fails, run `uv sync` once and use `uv run python` in place of `python3` (install is not repair).
 - The two --set fields are ONE logical delta: the UC gate refuses the keeper's ercot_gas_commitment_bridge (rule 19), so the disarm is the gate's substitution, never a second lever. No third --set, no uc_* value.
+- Expected wall from the L1 gate (ERCOT 2020 at the same engine bytes): capture P0 529 s + P1 264 s; rolled January 31 windows Σ MILP 671 s (p50 15.6 s, p95 50 s, max 76 s, 0 time-limit hits); a rolled year ≈ 8,000 s of MILP. Run the solve in the background with a Monitor on its log; never let a foreground tool timeout kill it.
 - Before pushing, these MUST be in the bundle and in the pushed tree: dispatch/2020_P1.parquet, hourly/uc_schedule_2020.parquet, hourly/uc_uplift_2020.parquet, uc_solve_log_2020.json, hourly/unit_marginal_2020.parquet (`git ls-tree -r HEAD -- results/calibration/ucmilp_ercot_2020/hourly results/calibration/ucmilp_ercot_2020/dispatch`). A missing UC artifact is a STOP-and-report, not a repair.
 - An INFEASIBLE window, a "no incumbent" hard stop, or any traceback from the UC stage is a kill (PRECOMMIT §7): STOP, report the window index, hour range and the last 30 traceback lines verbatim; do not retry, do not push a half bundle.
 - REPORT additionally (GATESPEC §6.1 wall row): the `log_year_phase_timing` line verbatim (data_prep / solve_p0 / markup / uc / solve_p1 / results_write / total); from uc_solve_log_2020.json `summary`: windows, Σ MILP s, mean and p95 MILP s, nodes p50/p95, gap p95, time_limit_hits, infeasible, warm_accepted, integers per window; the ratio total/(solve_p0+solve_p1); peak RSS GiB; the number of clusters with src == class-mean fallback (clusters[].src).
@@ -85,7 +87,7 @@ HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do 
 SOLVE (sequential, this year only):
   eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"
   python3 scripts/replay_keeper.py results/calibration/closeout_ercot_l1_span --years 2021 --out-dir results/calibration/ucmilp_ercot_2021 --set unit_commitment_milp=true --set ercot_gas_commitment_bridge=false --note "ucmilp-ercot: UC A/B"
-Budget: 120 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
+Budget: 193 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
 
 PUSH THE WHOLE BUNDLE (rule 34 (a) — a bundle that cannot back a promotion is a wasted solve):
   git checkout -b claude/ucmilp-ercot-2021
@@ -105,6 +107,7 @@ REPORT in your final message, in numbers: HEAD sha; the `container preflight:` a
 LANE ADDENDA (UC-2-ERCOT, PRECOMMIT docs/records/ercot/ucmilp/PRECOMMIT-ucmilp-ercot-ab-2026-10-10.md §8, Addendum A):
 - If `python3 -c "import pyarrow, highspy"` fails, run `uv sync` once and use `uv run python` in place of `python3` (install is not repair).
 - The two --set fields are ONE logical delta: the UC gate refuses the keeper's ercot_gas_commitment_bridge (rule 19), so the disarm is the gate's substitution, never a second lever. No third --set, no uc_* value.
+- Expected wall from the L1 gate (ERCOT 2020 at the same engine bytes): capture P0 529 s + P1 264 s; rolled January 31 windows Σ MILP 671 s (p50 15.6 s, p95 50 s, max 76 s, 0 time-limit hits); a rolled year ≈ 8,000 s of MILP. Run the solve in the background with a Monitor on its log; never let a foreground tool timeout kill it.
 - Before pushing, these MUST be in the bundle and in the pushed tree: dispatch/2021_P1.parquet, hourly/uc_schedule_2021.parquet, hourly/uc_uplift_2021.parquet, uc_solve_log_2021.json, hourly/unit_marginal_2021.parquet (`git ls-tree -r HEAD -- results/calibration/ucmilp_ercot_2021/hourly results/calibration/ucmilp_ercot_2021/dispatch`). A missing UC artifact is a STOP-and-report, not a repair.
 - An INFEASIBLE window, a "no incumbent" hard stop, or any traceback from the UC stage is a kill (PRECOMMIT §7): STOP, report the window index, hour range and the last 30 traceback lines verbatim; do not retry, do not push a half bundle.
 - REPORT additionally (GATESPEC §6.1 wall row): the `log_year_phase_timing` line verbatim (data_prep / solve_p0 / markup / uc / solve_p1 / results_write / total); from uc_solve_log_2021.json `summary`: windows, Σ MILP s, mean and p95 MILP s, nodes p50/p95, gap p95, time_limit_hits, infeasible, warm_accepted, integers per window; the ratio total/(solve_p0+solve_p1); peak RSS GiB; the number of clusters with src == class-mean fallback (clusters[].src).
@@ -122,7 +125,7 @@ HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do 
 SOLVE (sequential, this year only):
   eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"
   python3 scripts/replay_keeper.py results/calibration/closeout_ercot_l1_span --years 2022 --out-dir results/calibration/ucmilp_ercot_2022 --set unit_commitment_milp=true --set ercot_gas_commitment_bridge=false --note "ucmilp-ercot: UC A/B"
-Budget: 120 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
+Budget: 193 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
 
 PUSH THE WHOLE BUNDLE (rule 34 (a) — a bundle that cannot back a promotion is a wasted solve):
   git checkout -b claude/ucmilp-ercot-2022
@@ -142,6 +145,7 @@ REPORT in your final message, in numbers: HEAD sha; the `container preflight:` a
 LANE ADDENDA (UC-2-ERCOT, PRECOMMIT docs/records/ercot/ucmilp/PRECOMMIT-ucmilp-ercot-ab-2026-10-10.md §8, Addendum A):
 - If `python3 -c "import pyarrow, highspy"` fails, run `uv sync` once and use `uv run python` in place of `python3` (install is not repair).
 - The two --set fields are ONE logical delta: the UC gate refuses the keeper's ercot_gas_commitment_bridge (rule 19), so the disarm is the gate's substitution, never a second lever. No third --set, no uc_* value.
+- Expected wall from the L1 gate (ERCOT 2020 at the same engine bytes): capture P0 529 s + P1 264 s; rolled January 31 windows Σ MILP 671 s (p50 15.6 s, p95 50 s, max 76 s, 0 time-limit hits); a rolled year ≈ 8,000 s of MILP. Run the solve in the background with a Monitor on its log; never let a foreground tool timeout kill it.
 - Before pushing, these MUST be in the bundle and in the pushed tree: dispatch/2022_P1.parquet, hourly/uc_schedule_2022.parquet, hourly/uc_uplift_2022.parquet, uc_solve_log_2022.json, hourly/unit_marginal_2022.parquet (`git ls-tree -r HEAD -- results/calibration/ucmilp_ercot_2022/hourly results/calibration/ucmilp_ercot_2022/dispatch`). A missing UC artifact is a STOP-and-report, not a repair.
 - An INFEASIBLE window, a "no incumbent" hard stop, or any traceback from the UC stage is a kill (PRECOMMIT §7): STOP, report the window index, hour range and the last 30 traceback lines verbatim; do not retry, do not push a half bundle.
 - REPORT additionally (GATESPEC §6.1 wall row): the `log_year_phase_timing` line verbatim (data_prep / solve_p0 / markup / uc / solve_p1 / results_write / total); from uc_solve_log_2022.json `summary`: windows, Σ MILP s, mean and p95 MILP s, nodes p50/p95, gap p95, time_limit_hits, infeasible, warm_accepted, integers per window; the ratio total/(solve_p0+solve_p1); peak RSS GiB; the number of clusters with src == class-mean fallback (clusters[].src).
@@ -159,7 +163,7 @@ HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do 
 SOLVE (sequential, this year only):
   eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"
   python3 scripts/replay_keeper.py results/calibration/closeout_ercot_l1_span --years 2023 --out-dir results/calibration/ucmilp_ercot_2023 --set unit_commitment_milp=true --set ercot_gas_commitment_bridge=false --note "ucmilp-ercot: UC A/B"
-Budget: 120 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
+Budget: 193 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
 
 PUSH THE WHOLE BUNDLE (rule 34 (a) — a bundle that cannot back a promotion is a wasted solve):
   git checkout -b claude/ucmilp-ercot-2023
@@ -179,6 +183,7 @@ REPORT in your final message, in numbers: HEAD sha; the `container preflight:` a
 LANE ADDENDA (UC-2-ERCOT, PRECOMMIT docs/records/ercot/ucmilp/PRECOMMIT-ucmilp-ercot-ab-2026-10-10.md §8, Addendum A):
 - If `python3 -c "import pyarrow, highspy"` fails, run `uv sync` once and use `uv run python` in place of `python3` (install is not repair).
 - The two --set fields are ONE logical delta: the UC gate refuses the keeper's ercot_gas_commitment_bridge (rule 19), so the disarm is the gate's substitution, never a second lever. No third --set, no uc_* value.
+- Expected wall from the L1 gate (ERCOT 2020 at the same engine bytes): capture P0 529 s + P1 264 s; rolled January 31 windows Σ MILP 671 s (p50 15.6 s, p95 50 s, max 76 s, 0 time-limit hits); a rolled year ≈ 8,000 s of MILP. Run the solve in the background with a Monitor on its log; never let a foreground tool timeout kill it.
 - Before pushing, these MUST be in the bundle and in the pushed tree: dispatch/2023_P1.parquet, hourly/uc_schedule_2023.parquet, hourly/uc_uplift_2023.parquet, uc_solve_log_2023.json, hourly/unit_marginal_2023.parquet (`git ls-tree -r HEAD -- results/calibration/ucmilp_ercot_2023/hourly results/calibration/ucmilp_ercot_2023/dispatch`). A missing UC artifact is a STOP-and-report, not a repair.
 - An INFEASIBLE window, a "no incumbent" hard stop, or any traceback from the UC stage is a kill (PRECOMMIT §7): STOP, report the window index, hour range and the last 30 traceback lines verbatim; do not retry, do not push a half bundle.
 - REPORT additionally (GATESPEC §6.1 wall row): the `log_year_phase_timing` line verbatim (data_prep / solve_p0 / markup / uc / solve_p1 / results_write / total); from uc_solve_log_2023.json `summary`: windows, Σ MILP s, mean and p95 MILP s, nodes p50/p95, gap p95, time_limit_hits, infeasible, warm_accepted, integers per window; the ratio total/(solve_p0+solve_p1); peak RSS GiB; the number of clusters with src == class-mean fallback (clusters[].src).
@@ -196,7 +201,7 @@ HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do 
 SOLVE (sequential, this year only):
   eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"
   python3 scripts/replay_keeper.py results/calibration/closeout_ercot_l1_span --years 2024 --out-dir results/calibration/ucmilp_ercot_2024 --set unit_commitment_milp=true --set ercot_gas_commitment_bridge=false --note "ucmilp-ercot: UC A/B"
-Budget: 120 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
+Budget: 193 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
 
 PUSH THE WHOLE BUNDLE (rule 34 (a) — a bundle that cannot back a promotion is a wasted solve):
   git checkout -b claude/ucmilp-ercot-2024
@@ -216,6 +221,7 @@ REPORT in your final message, in numbers: HEAD sha; the `container preflight:` a
 LANE ADDENDA (UC-2-ERCOT, PRECOMMIT docs/records/ercot/ucmilp/PRECOMMIT-ucmilp-ercot-ab-2026-10-10.md §8, Addendum A):
 - If `python3 -c "import pyarrow, highspy"` fails, run `uv sync` once and use `uv run python` in place of `python3` (install is not repair).
 - The two --set fields are ONE logical delta: the UC gate refuses the keeper's ercot_gas_commitment_bridge (rule 19), so the disarm is the gate's substitution, never a second lever. No third --set, no uc_* value.
+- Expected wall from the L1 gate (ERCOT 2020 at the same engine bytes): capture P0 529 s + P1 264 s; rolled January 31 windows Σ MILP 671 s (p50 15.6 s, p95 50 s, max 76 s, 0 time-limit hits); a rolled year ≈ 8,000 s of MILP. Run the solve in the background with a Monitor on its log; never let a foreground tool timeout kill it.
 - Before pushing, these MUST be in the bundle and in the pushed tree: dispatch/2024_P1.parquet, hourly/uc_schedule_2024.parquet, hourly/uc_uplift_2024.parquet, uc_solve_log_2024.json, hourly/unit_marginal_2024.parquet (`git ls-tree -r HEAD -- results/calibration/ucmilp_ercot_2024/hourly results/calibration/ucmilp_ercot_2024/dispatch`). A missing UC artifact is a STOP-and-report, not a repair.
 - An INFEASIBLE window, a "no incumbent" hard stop, or any traceback from the UC stage is a kill (PRECOMMIT §7): STOP, report the window index, hour range and the last 30 traceback lines verbatim; do not retry, do not push a half bundle.
 - REPORT additionally (GATESPEC §6.1 wall row): the `log_year_phase_timing` line verbatim (data_prep / solve_p0 / markup / uc / solve_p1 / results_write / total); from uc_solve_log_2024.json `summary`: windows, Σ MILP s, mean and p95 MILP s, nodes p50/p95, gap p95, time_limit_hits, infeasible, warm_accepted, integers per window; the ratio total/(solve_p0+solve_p1); peak RSS GiB; the number of clusters with src == class-mean fallback (clusters[].src).
@@ -233,7 +239,7 @@ HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do 
 SOLVE (sequential, this year only):
   eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"
   python3 scripts/replay_keeper.py results/calibration/closeout_ercot_l1_span --years 2025 --out-dir results/calibration/ucmilp_ercot_2025 --set unit_commitment_milp=true --set ercot_gas_commitment_bridge=false --note "ucmilp-ercot: UC A/B"
-Budget: 120 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
+Budget: 193 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
 
 PUSH THE WHOLE BUNDLE (rule 34 (a) — a bundle that cannot back a promotion is a wasted solve):
   git checkout -b claude/ucmilp-ercot-2025
@@ -251,6 +257,7 @@ REPORT in your final message, in numbers: HEAD sha; the `container preflight:` a
 LANE ADDENDA (UC-2-ERCOT, PRECOMMIT docs/records/ercot/ucmilp/PRECOMMIT-ucmilp-ercot-ab-2026-10-10.md §8, Addendum A):
 - If `python3 -c "import pyarrow, highspy"` fails, run `uv sync` once and use `uv run python` in place of `python3` (install is not repair).
 - The two --set fields are ONE logical delta: the UC gate refuses the keeper's ercot_gas_commitment_bridge (rule 19), so the disarm is the gate's substitution, never a second lever. No third --set, no uc_* value.
+- Expected wall from the L1 gate (ERCOT 2020 at the same engine bytes): capture P0 529 s + P1 264 s; rolled January 31 windows Σ MILP 671 s (p50 15.6 s, p95 50 s, max 76 s, 0 time-limit hits); a rolled year ≈ 8,000 s of MILP. Run the solve in the background with a Monitor on its log; never let a foreground tool timeout kill it.
 - Before pushing, these MUST be in the bundle and in the pushed tree: dispatch/2025_P1.parquet, hourly/uc_schedule_2025.parquet, hourly/uc_uplift_2025.parquet, uc_solve_log_2025.json, hourly/unit_marginal_2025.parquet (`git ls-tree -r HEAD -- results/calibration/ucmilp_ercot_2025/hourly results/calibration/ucmilp_ercot_2025/dispatch`). A missing UC artifact is a STOP-and-report, not a repair.
 - An INFEASIBLE window, a "no incumbent" hard stop, or any traceback from the UC stage is a kill (PRECOMMIT §7): STOP, report the window index, hour range and the last 30 traceback lines verbatim; do not retry, do not push a half bundle.
 - REPORT additionally (GATESPEC §6.1 wall row): the `log_year_phase_timing` line verbatim (data_prep / solve_p0 / markup / uc / solve_p1 / results_write / total); from uc_solve_log_2025.json `summary`: windows, Σ MILP s, mean and p95 MILP s, nodes p50/p95, gap p95, time_limit_hits, infeasible, warm_accepted, integers per window; the ratio total/(solve_p0+solve_p1); peak RSS GiB; the number of clusters with src == class-mean fallback (clusters[].src).

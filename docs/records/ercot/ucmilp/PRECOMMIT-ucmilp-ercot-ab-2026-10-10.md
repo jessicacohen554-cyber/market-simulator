@@ -47,6 +47,17 @@ class); `save()` drops `hooks`, which no rung reads. The bench harness is not on
 `scripts/diagnostics/bench_uc_ladder.py`): **the span pin stays `main` `2f872a62`**; only the bench shard runs at the lane SHA.
 Routed to UC-DESK for the engine lane to port. Run 2 is relaunched at `ad5a74d9` with the same pass line.
 
+**Run 3 (`97e33b54`, 01:51–02:28Z): PASS.** Bridge OFF (no "gas commitment bridge … floored" line; in its place *"UC stage
+prepared: 141 clusters, 72 integer (937 fleet rows), W=24 L=12"*). Capture P0 529.2 s, P1 263.5 s (phase total 981 s; peak RSS
+11.59 GiB). **L1 window 0 (h0–36): Optimal**, MILP 4.90 s, 1 node, gap 6.7e-6, 2,592 integers / 89,928 columns / 14,313 rows,
+integrality gap $82,185 (MILP −3,860,551 vs relaxation −3,942,736), Δ committed energy −3,746 MWh vs the P1 slice, starts 12 vs
+144, warm start accepted. **Rolled January, base arm: 31/31 windows solved** (every window a finite objective, max gap 9.8e-4,
+0 time-limit hits, 0 infeasible; the L2 record carries no per-window `status` field, so "Optimal" is inferred from gap ≤ 1e-3
+and no limit hit — a harness gap to report), MILP s p50/p95/max 15.6 / 49.9 / 75.6, nodes p50/p95 16 / 78 (no rolled window
+solved at the root), Σ MILP 670.8 s (wall 678.2 s), **warm start accepted 0/31** (E3 did not fire on the rolled path — a cost
+finding for UC-DESK, not a kill). Records: `data/bench/ercot_2020_l1.json`, `ercot_2020_l2_jan_rolled.json`,
+`ercot_2020_l2_jan_profile.md` (leg `0008523d` on `claude/ucmilp-bench-ercot-2020-L1gate`). Gate condition (a) **met**.
+
 ## 1. Control, pin, arm
 
 - **Control (rule 29(b), no control solve):** ERCOT's designated keeper `2026-10-02-closeout-l1-coal-fuel`, bundle
@@ -179,7 +190,11 @@ ERCOT is NOT-YET on the keeper's open rows and stays so unless every failing row
 | W4 | infeasible windows (`windows[].status`) | **0** (otherwise §6 kill #1) |
 | W5 | the D-2 ratio vs the 3× ceiling, per year | reported, not judged (owner "Keep 3×; fund speedup"; SPP 5.1–10.2× at uc-1.1, 7.1× lean) |
 
-<<BUDGET>>
+**Budget (fixed by the rule declared before the bench): ceil(1.3 × (P0+P1 capture + 12 × January UC Σ s + build) / 60) =
+ceil(1.3 × (529.2 + 263.5 + 12 × 670.8 + 12 × 2.5) / 60) = **193 min** per span shard** (the rolled year extrapolates to
+≈ 8,050 s of MILP against ≈ 790 s of P0+P1, a D-2 ratio near 11× before the P1 and write phases; January is one month of
+thirty-one windows, so a summer window set that runs longer than 1.3 × January is the declared risk, and a shard that reaches the
+budget with no bundle stops and reports). The span prompts are regenerated at the pin with this budget.
 
 ## 6. G-DRIFT: `main` at the pin vs the keeper's solve basis (rule 29(b): a zero-LP code audit; LIVE only earns a control solve, which this lane does not run)
 
