@@ -1,0 +1,103 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+WARNING: replay environment differs from the bundle's recorded environment — byte-identity is not guaranteed:
+  python_version: bundle '3.11.15' != now '3.11.17'
+  platform: bundle 'Linux-6.18.44-fc-v51-x86_64-with-glibc2.39' != now 'Linux-6.18.44-fc-v114-x86_64-with-glibc2.39'
+replaying results/calibration/closeout_ercot_l1_span (ERCOT [2019, 2020, 2021, 2022, 2023, 2024, 2025]) ...
+INFO: container preflight: memory ceiling 13.36 GiB (/sys/fs/cgroup/memory/process_api/01a12442-ad30-7725-b930-2a71b8261d2f/claude-code-bash/memory.limit_in_bytes; MemTotal 15.72 GiB), swap 5.0 GiB, target ceiling+swap 24 GiB
+WARNING: container preflight: swap: /swapfile-marketsim is already active (5.0 GiB) but ceiling+swap is still 5.6 GiB short of the 24 GiB target; leaving it as it is
+INFO: container preflight: solve profile MALLOC_ARENA_MAX=2 MARKET_SIM_HIGHS_THREADS=1 OMP_NUM_THREADS=1
+WARNING: container preflight: ceiling+swap 18.4 GiB is below the 24 GiB target; a per-plant ISO-year LP (MISO, PJM) may be OOM-killed here. Fix: provision swap before data steps (`python3 scripts/prepare_solve_container.py` before hydrate_data / regenerate_clean / any fetch); free disk 6.4 GiB
+INFO: Loaded 309 per-plant CAMPD bins from /home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv (83.1 GW)
+INFO: ERCO by-neighbor interchange 2019: CEN has 0 rows (need 8760) — tie-zone attribution unavailable, keeping load-share spread
+INFO: ERCOT DAM-membership admission: 1 plant(s) outside the ERCO BA geography admitted from accepted DAM crosswalk rows — [(55357, 'Houston')]
+INFO: solving ERCOT 2019 (hours=8760, Henry Hub=$2.57/MMBtu, commitment=False)
+INFO: ERCOT coal peak-tranche YEAR level (ercot-192): years [2023]; solve year 2019 is NOT in (static fall-through) the table
+WARNING: ercot_wtx_curtailment_driver: explicit kwarg False is stomped by prb_overrides True (this channel applies last) — the LP solves with the prb value. Pass the driver through ONE channel.
+INFO: ERCOT coal econ marginal-HR floor: no band below its measured basis — offer curve unchanged
+INFO: ERCOT coal per-plant measured offer curves (ERCOT-144): 10 plants; COAL_* offer_curve_by_group groups stripped, PRB/lignite sigmoids + coal econ marginal-HR floor disarmed (rule-19 replacement)
+INFO: ERCOT coal per-plant YEAR-windowed offer curves (ercot-168): years [2023]; solve year 2019 is NOT in (static fall-through) the table
+INFO: gtc-limits 2019: PNHNDL -> Panhandle->North x 1.000 (measured export cap 3428-3428 MW over 1 active hours; static fill 2680)
+INFO: ercot_wtx_curtailment_driver: 2019 West/Panhandle VRE ceiling active (depth wind=0.1354 solar=0.1614, unpooled families, panhandle_owner=share)
+INFO: partial-plant exit carry (ERCOT): injecting 4 unit(s), 7 MW — plants [3559, 10261]
+INFO: mid-vintage-year exit carry (ERCOT 2019): injecting 12 unit(s), 904 MW — plants [3468, 6136, 52069, 54607, 55367, 55554]
+INFO: retiree vintage-status scope (ERCOT 2019): dropped 5 unit(s), 298 MW — [(3468, 'ST1', 'OS'), (3468, 'ST2', 'OS'), (3559, 'DG-7a', 'SB'), (3559, 'DG-7b', 'SB'), (54607, 'GEN1', 'SB')]
+WARNING: 5 of 10 ERCOT generators not in eGRID lookup — assigned fallback zone
+INFO: loaded 10 within-window retiree units for ERCOT (538 MW, plants [6136, 10261, 52069, 55554])
+INFO: R-ERCOT year-matched bin heat rates (2019): measured 66256 MW, eGRID 15699 MW, sheet 0 MW, class default 1130 MW
+INFO: EIA-923 2019: reclassified Petra Nova Carbon Capture Cogen  CT_CHP -> CT_PEAKER (curated bin drifted)
+INFO: EIA-923 2019: reclassified Bayou Cogen Plant  CT_CHP -> CT_PEAKER (curated bin drifted)
+INFO: EIA-923 2019: reclassified Powerlane Plant  CT_PEAKER -> ST_GAS (curated bin drifted)
+INFO: EIA-923 2019: reclassified Silas Ray  CT_PEAKER -> CC_REGULAR (curated bin drifted)
+INFO: EIA-923 2019: reclassified Decker Creek  CT_PEAKER -> ST_GAS (curated bin drifted)
+INFO: EIA-923 2019: reclassified Union Carbide Seadrift Cogen  CT_CHP -> CC_CHP (curated bin drifted)
+INFO: Loaded 309 per-plant CAMPD bins from /home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv (83.1 GW)
+INFO: ERCOT nuclear unit-availability overlay (2019): 0 reactor(s) on measured daily windows (uncovered dates keep the monthly CF)
+INFO: unit-outage derate (ERCOT 2019): 886 plant-tranches derated
+INFO: short unit-outage derate (ERCOT 2019): 862 plant-tranches derated (< 5-day windows; coal on, gas on)
+INFO: ERCOT CAMPD-blind availability (2019): 46 tranche(s) across 3 blind plant(s) capped to measured per-plant series
+INFO: partial-outage derate (2019): 116 bin-tranches derated
+INFO: ERCOT measured thermal DAM availability (2019): CC_REGULAR plant-grain redistribution — 13 crosswalked plant(s), 465 unmapped tranche(s), median class target 0.815
+INFO: ERCOT measured thermal DAM availability (2019): COAL plant-grain redistribution — 11 crosswalked plant(s), 0 unmapped tranche(s), median class target 0.831
+INFO: ERCOT measured thermal DAM availability (2019): CT_PEAKER plant-grain redistribution — 2 crosswalked plant(s), 716 unmapped tranche(s), median class target 0.842 (3071 covered plant-hour(s) fell back to class grain)
+INFO: ERCOT measured thermal DAM availability (2019): ST_GAS plant-grain redistribution — 4 crosswalked plant(s), 185 unmapped tranche(s), median class target 0.711
+INFO: ERCOT measured-event precedence cap (2019): 769 CC_REGULAR/COAL_BIT/COAL_LIGNITE/COAL_PRB/COAL_WC/CT_PEAKER/ST_GAS tranche(s) capped at the CAMPD event-window ceiling (DAM COP restore bounded by measured full-stop/partial windows)
+INFO: coal_min_config floor ARMED (availability-conditional): 11 plants, 2379 MW of minimum online configuration across 44 tranches
+INFO: COD ramp (ERCOT 2019): 2832 unit-months masked offline (mid-year COD / retirement), 219 unit(s) fully not-yet-built/retired
+INFO: plant entry (ERCOT 2019): 17 unit(s), 529 MW outside the region before LP row 8760
+INFO: EIA-860: 1 combined-cycle block(s) rated on one row resolved for the cc_block_summer_rating reconciliation (vintage_2019)
+WARNING: eGRID boundary heat-rate reconciliation active for 1 plant(s): 7350->6.873
+WARNING: eGRID plant 55052 heat rate 8.707 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 4 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 59391 heat rate 8.934 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 12 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 61643 heat rate 8.310 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 12 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+INFO: EIA-860: 3 combined-cycle steam part(s) resolved for the cc_steam_part_capacity repair
+WARNING: 2 of 610 ERCOT generators not in eGRID lookup — assigned fallback zone
+INFO: Loaded ERCOT fleet from EIA-860 parquet (610 generators)
+INFO: Rebuilt binned fleet cache for ERCOT — 610 plants → ercot_fleet_binned.parquet
+INFO: Loaded ERCOT 2019 hydro budget: 18 plants, 852.0 GWh annual, 524 MW nameplate
+INFO: ERCOT 2019: 18 hydro plants in LP (524 MW, 0.85 TWh monthly budget)
+INFO: ERCOT nuclear unit-availability overlay (2019): 4 reactor(s) on measured daily windows (uncovered dates keep the monthly CF)
+INFO: unit-outage derate (ERCOT 2019): 886 plant-tranches derated
+INFO: short unit-outage derate (ERCOT 2019): 862 plant-tranches derated (< 5-day windows; coal on, gas on)
+INFO: ERCOT CAMPD-blind availability (2019): 46 tranche(s) across 3 blind plant(s) capped to measured per-plant series
+INFO: partial-outage derate (2019): 116 bin-tranches derated
+INFO: ERCOT measured thermal DAM availability (2019): CC_REGULAR plant-grain redistribution — 13 crosswalked plant(s), 465 unmapped tranche(s), median class target 0.815
+INFO: ERCOT measured thermal DAM availability (2019): COAL plant-grain redistribution — 11 crosswalked plant(s), 0 unmapped tranche(s), median class target 0.831
+INFO: ERCOT measured thermal DAM availability (2019): CT_PEAKER plant-grain redistribution — 2 crosswalked plant(s), 716 unmapped tranche(s), median class target 0.842 (3071 covered plant-hour(s) fell back to class grain)
+INFO: ERCOT measured thermal DAM availability (2019): ST_GAS plant-grain redistribution — 4 crosswalked plant(s), 185 unmapped tranche(s), median class target 0.711
+INFO: ERCOT measured-event precedence cap (2019): 769 CC_REGULAR/COAL_BIT/COAL_LIGNITE/COAL_PRB/COAL_WC/CT_PEAKER/ST_GAS tranche(s) capped at the CAMPD event-window ceiling (DAM COP restore bounded by measured full-stop/partial windows)
+INFO: coal_min_config floor ARMED (availability-conditional): 11 plants, 2379 MW of minimum online configuration across 44 tranches
+INFO: COD ramp (ERCOT 2019): 2832 unit-months masked offline (mid-year COD / retirement), 219 unit(s) fully not-yet-built/retired
+INFO: plant entry (ERCOT 2019): 17 unit(s), 529 MW outside the region before LP row 8760
+INFO: netload_drag_layup_window_mask ARMED (ERCOT 2019): 17 plant-tranche lay-up share series mask the net-load drag floors
+INFO: netload_drag_prior_year_commitment_index: no ERCOT 2018 vintage — pro-rata
+INFO: ST_GAS net-load drag: SEASON-RESOLVED curve armed (gas_st_drag_seasonal, ERCOT-91 rule-22 grain fix) — per-hour coefficients from the frozen seasonal artifact replace the pooled scalars; slope range [0.00601, 0.01354]/GW
+INFO: ERCOT 2019: ST_GAS net-load reliability-drag floor applied (frac = clip(0.00906*netGW -0.1376, 0, 0.34); net-load mean 33443 / max 66559 MW)
+INFO: ERCOT 2019: reliability floor — dropped 8 drag-owned limb(s) (CLAUDE.md rule 19: net-load drag owns the class commitment)
+INFO: ERCOT 2019: reliability floor — 5 enabled limb spec(s) applied from RELIABILITY_FLOOR_REGISTRY
+INFO: F923 fuel costs for 2019: 18 generators priced from their own plant, 0 gap-filled from nearby (state/zone) plants
+INFO: ERCOT pooled South-Texas basis (2019): South +1.19 / South_Central -0.05 -> pooled +0.03 $/MMBtu
+INFO: ERCOT zonal spread EP reference (2019): 4/7 zone row(s) F923-sourced, shifted by +0.2179 $/MMBtu; convention row(s) ['West', 'Panhandle', 'Houston'] untouched
+INFO: ERCOT zonal gas basis (2019): 1918 gas units; level -0.50 -> measured EP -0.22 (corr +0.28 MONTHLY, month corr +0.15..+0.48), zonal spread -0.23..0.16 $/MMBtu
+INFO: ERCOT West net-load gas step (2019): 97 West/Panhandle gas units; collapse_freq 0.420 (default; endogenous-oversupply 0.000 vs measured neg-day n/a); split nl 30193 MW; firm basis -0.50 -> firm $2.07, deep $2.55..$2.55 (deliv floor $0.40); annual gas $2.27 -> $2.27 (floor-lifted from the negative hub tail)
+INFO: coal peak-tranche offer YEAR level (ercot-192): solve year 2019 is NOT in the table [2023] — static level kept
+INFO: coal offer net-revenue margin: 11 _mustrun tranche(s) repriced at level 15.8807 $/MWh / anchor 1.7387 $/MMBtu (fuel-invariant margin, full delivered-fuel tracking)
+INFO: coal per-plant measured offer levels (ERCOT-144): 20 committed/econ tranche(s) across 10 plant(s) repriced onto their own merged modal SCED TPO curves — 298 [15.76..20.86]; 3470 [17.07..21.12]; 6146 [21.53..22.23]; 6178 [17.33..18.47]; 6179 [15.58..80.13]; 6180 [9.32..9.42]; 6183 [42.97..43.00]; 7030 [14.73..14.74]; 7097 [16.05..18.47]; 56611 [31.05..43.07]
+INFO: coal peak-tranche offer margin: 11 _peak tranche(s) repriced at level 35.1989 $/MWh / gas slope 10.4100 MMBtu/MWh / shared gas anchor 2.2494 $/MMBtu (gas-parity top-of-curve form; coal-fuel tracking removed on these rows by measurement — ERCOT-140)
+INFO: gas offer net-revenue margin: 1756 tranches compressed at anchor 2.2494 $/MMBtu (median fixed margin 14.41 $/MWh, max 20075.87); 1756 tranches on per-class EP anchors
+INFO: CC committed-block offer margin: 43 _committed tranche(s) repriced at level 10.3540 $/MWh / shared gas anchor 2.2494 $/MMBtu (fuel-invariant margin, full delivered-fuel tracking)
+INFO: ERCOT conditional offer surface: repriced 461 gas peak-rung rows across 4 net-load bins (tightest bin binds 263/8760 hours); P1-only, loose hours byte-identical
+INFO: ERCOT cleared-share RT basis: year 2019 absent from the RT artifact — DAM basis retained byte-identical (year-scoped, rule 13)
+INFO: ERCOT cleared-share offer boundary: floored 565 gas econ tranche rows above the measured DAM cleared share (7 net-load bins, year table pooled); P1-only
+INFO: ERCOT fast-start pool (ERCOT-88): year 2019 absent from the pool artifact — every surface byte-identical (year-scoped, rule 13)
+INFO: ERCOT measured storage capability re-basis (2019): fleet power mean 106 -> 85 MW
+INFO: coal per-yard budget (ERCOT 2019): 11 yards, 44 coal gens rowed (0 unrowed: no curated record), annual 80.4 TWh-equiv @HR10.661 (rate from 2017+2018)
+INFO: coal measured receipts (ERCOT 2019): 11 yard rows measured, 0 ratable; receipts 883.22 TBtu, contract 579.54 TBtu
+INFO: coal monthly pile (ERCOT 2019): CEILING-ONLY, 11 yard rows x 12 month-ends, cumulative; year-end ceiling 87.7 TWh-equiv @HR10.661
+INFO: energy+reserve co-opt (ERCOT MULTI-PRODUCT): 4 AS products ['RegUp', 'RRS', 'ECRS', 'NonSpin'], per-product req means [0, 0, 0, 0] MW, 40 steps total, 2 headroom tiers
+INFO: ERCOT reserve-supply cap ON: 2 headroom row(s), mean cap MW [10069, 13854]
+INFO: Matrix build: 19.560s, Solve: 198.404s (cold, simplex iterations 190518, objective 2531679651.8969)
+INFO: UC stage prepared: 141 clusters, 62 integer (910 fleet rows; 11 all-budget-pinned clusters left to their budget identity), W=24 L=12
+/home/user/market-simulator/src/market_sim/model/uc/slim.py:206: RuntimeWarning: invalid value encountered in subtract
+  cum_before = np.cumsum(cap) - cap
+/home/user/market-simulator/src/market_sim/model/uc/slim.py:207: RuntimeWarning: invalid value encountered in subtract
+  before = cum_before - np.repeat(cum_before[starts], sizes)
