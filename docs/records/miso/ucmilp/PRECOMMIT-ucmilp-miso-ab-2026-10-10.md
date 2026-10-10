@@ -252,3 +252,28 @@ Everything in `docs/mechanism-testing-matrix.md` §5.4's DO-NOT-REDO (`miso_coal
 G/O, every R/I/G cell without new evidence); `miso_commitment_posture` (R) is not re-run in any form;
 `miso_gas_ecomin_online_floor` (I) stays off; no `uc_*` value other than the declared defaults; no second `--set`; no
 control solve; no offer-band retune; no NEISO/NYISO span.
+
+## Addendum A (2026-10-10 01:55Z, before any span shard exists) — the L1 gate PASSED; the budget is 109 min
+
+**Bench shard** `ucmilp-bench-miso-2020-L1` at the pin, model `claude-opus-5-5`: first launch (`session_0116uJFx8cCqjmBxMRcWAMF6`,
+00:48Z) stopped at its own hard stop 3 — the container had no `.venv` (`uv sync` never ran; `pyarrow` missing); nothing solved,
+nothing pushed, archived. Relaunch (`session_012an4XfAv35RRQKJw8KqVxM`, 00:55Z) with `uv sync` as step 0 and every step under
+`uv run python3`; nothing else changed. Results on `claude/ucmilp-bench-miso-2020-L1` `2db7198152d2c0bc8e18b4a8471167bab9c8a036`
+(`results/bench/uc/miso_2020_L1/l1.json`, `miso_2020_L2m1/l2.json`, console logs). Archived after fetch and read (rule 33).
+**Lesson carried into every span-shard prompt:** step 0 `uv sync` if `.venv` is absent; every python step as `uv run python3`.
+
+| gate element | reading | pass? |
+|---|---|---|
+| window 0 (L1, h0–36) | **Optimal**, 20.02 s MILP (build 0.13 s), 33 nodes, gap 9.1e-4, 5,904 integers / 149,220 columns / 31,594 rows, warm start accepted, 58 guard rows; relaxation 3.02 s; integrality gap $55,865 (0.87 % of the window objective); Δ committed energy −23.6 GWh vs the P1 slice; starts 42 vs 205 in the P1 slice | yes |
+| January rolled month (L2 base arm, `lean`) | **31 / 31 windows**, wall 307.0 s, MILP Σ 300.3 s (p50 8.96, p95 15.17, max 19.82 s), nodes p50 / p95 **1 / 13.5** (MISO branches; SPP solved every window at the root), zero-node share 0, **0 time-limit hits**, gap_max 9.98e-4 ≤ 1e-3, no exception; phase sums setup 120.0 / presolve 118.0 / root LP 38.9 / tail 138.7 s | yes |
+| census | 336 clusters, **164 integer**, 1,231 fleet rows, W = 24, L = 12 (UC-0's M6 said 159 plant clusters; the engine's integer set is 164) | reported |
+| capture (one P0 + P1 of MISO 2020 at the keeper recipe) | `log_year_phase_timing`: data_prep 47.9 / **solve_p0 501.3** / markup 66.0 / **solve_p1 138.2** / results_write 77.9 / total 831.3 s; `capture_wall_s` 722.8 | reported |
+| memory | preflight `before: ceiling 13.36 GiB, swap 0.0, 16.3 GiB free disk, 4 cpus`; `swap: added 10 GiB → 23.4 GiB total` (0.6 GiB under the 24 GiB target, warning only); `cgroup_peak_rss_gib=13.36, cgroup_peak_rss_plus_swap_gib=16.44, process_vmhwm_gib=13.32` — RAM at the cap, ~3 GiB spilled to swap, not killed; UC stage RSS 2.62 GB | reported (W5 live risk: every leg will touch the cap) |
+
+**Budget (the §5 rule, numbers in):** extrapolation = P0 + P1 (501.3 + 138.2 = 639.5 s) + 365/31 × 307.0 s (3,614.3 s UC) +
+a P1 re-solve (138.2 s) + 600 s overhead = 4,992 s = **83.2 min**; × 1.3 = 108.2 → **budget 109 min per shard**. Expected stage
+ratio at the shard, total/(P0+P1) ≈ (501 + 3,614 + 138 + 66 + 78) / 640 ≈ **6.9×** (reported, not judged; D-2 ceiling 3×).
+The MILP per window is ~3× SPP's (9.7 vs 3.0 s mean) on ~1.8× the integers (5,904 vs 3,312) and with branching (p95 13.5 nodes).
+
+Prompts generated with `--budget 109` and committed as `docs/records/miso/ucmilp/shard-prompts-ucmilp-miso.txt`; readings, bars,
+kills and the verdict rule of §§2–7 are unchanged.
