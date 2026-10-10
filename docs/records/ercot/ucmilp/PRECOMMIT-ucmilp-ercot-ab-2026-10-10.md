@@ -304,7 +304,12 @@ are regenerated at it; the bench numbers from `97e33b54` carry (engine bytes ide
 **UC-DESK (01:59Z, verbatim):** *"#7221 merged. PIN = dc3860bef44f8ac0e322f92da94fd6c011bec381 (engine bytes = your
 97e33b54; bench harness = ad5a74d9 half). G-DRIFT 2f872a62→pin: UC window slice + bench harness LIVE on arm only, control
 INERT; plus docs-only #7220. Record addendum, then launch span shards."* → **SPAN PIN = `dc3860be`** (`main`). Verified by this
-lane: `git diff --stat 97e33b54 dc3860be -- src/ scripts/lib/uc_bench.py scripts/diagnostics/bench_uc_ladder.py` is EMPTY
-(engine and bench bytes identical to the lane SHA the bench runs at), and `2f872a62 → dc3860be` carries only the three fixes
-and docs. The seven span prompts are regenerated at `dc3860be` (`shard-prompts-ucmilp-ercot.txt`). The span launches once the
+lane, with one correction to the desk's line: `git diff 97e33b54 dc3860be -- src/ scripts/lib/uc_bench.py
+scripts/diagnostics/bench_uc_ladder.py` is NOT empty. The UC engine (`model/uc/*`, `pipeline/uc.py`) and the bench harness ARE
+byte-identical to the lane SHA the bench runs at; `main` additionally carries PR #7219 (`coal_sync_floor_release`, UC-2-SPP-B,
+owner ruling D-5b): a new `ScenarioConfig` field, default `False`, cache-key registered, and one hunk in
+`data/fleet/arrays.py::_compose_min_gen_floors` gated behind it (*"Off, the historical branch is taken verbatim"*). The ERCOT
+keeper does not record it and the arm does not set it → **INERT for both control and arm** (G-DRIFT instrument 1: added at
+default, absent from the recipe). `2f872a62 → dc3860be` therefore carries the three fixes, #7219 (inert here) and docs (#7220,
+the SPP RESULT's records). The seven span prompts are regenerated at `dc3860be` (`shard-prompts-ucmilp-ercot.txt`). The span launches once the
 L1 gate (bench run 3, in flight) reports its pass line — the gate's purpose does not change with the pin.
