@@ -1,0 +1,133 @@
+
+slow-class plants with DERATED availability (0<min avail<1) in hours 2832-2868: 63
+ plant_code  plant_group  avail_min  cap_year  cap_win_min
+      55230   CC_REGULAR      0.009  1280.000       11.106
+       6183 COAL_LIGNITE      0.030   410.000       12.320
+        127     COAL_PRB      0.031   720.000       22.000
+       3443   CC_REGULAR      0.037   376.900       14.111
+      55154   CC_REGULAR      0.097   609.000       59.230
+      34702       ST_GAS      0.110  1235.485      135.348
+       3601       ST_GAS      0.173   616.277      106.311
+       3612       ST_GAS      0.195  1138.000      222.386
+      55226   CC_REGULAR      0.241  1028.300      248.122
+      55153   CC_REGULAR      0.246  1088.200      267.648
+      55215   CC_REGULAR      0.251  1144.232      287.624
+       6146     COAL_PRB      0.370  2374.802      878.866
+       3628       ST_GAS      0.451   532.211      239.943
+      55137   CC_REGULAR      0.457   940.200      429.241
+      56350   CC_REGULAR      0.504   575.386      290.100
+      60122   CC_REGULAR      0.506  1214.710      615.200
+      55091   CC_REGULAR      0.509  1704.266      867.000
+      58001   CC_REGULAR      0.511  1573.316      803.200
+       4939   CC_REGULAR      0.514   710.447      364.900
+      56349   CC_REGULAR      0.560   543.996      304.819
+       6243       ST_GAS      0.575   203.200      116.864
+      55144   CC_REGULAR      0.584   953.157      556.281
+       3453       ST_GAS      0.693   842.834      583.977
+       3490       ST_GAS      0.699   628.214      438.975
+       3491       ST_GAS      0.703  1302.125      915.629
+       3507       ST_GAS      0.706   241.048      170.209
+       4266       ST_GAS      0.708   125.354       88.699
+       3504       ST_GAS      0.708   706.935      500.221
+       3452       ST_GAS      0.713   919.810      656.249
+       3611       ST_GAS      0.716   884.949      633.972
+      49392       ST_GAS      0.719   349.353      251.298
+       6180 COAL_LIGNITE      0.733  1795.400     1315.664
+       3470     COAL_PRB      0.739  2710.704     2002.700
+       3548       ST_GAS      0.740   205.007      151.658
+       7097     COAL_PRB      0.742  1488.500     1104.291
+      56708       ST_GAS      0.743   308.625      229.210
+      55357   CC_REGULAR      0.872   675.600      589.232
+       3469   CC_REGULAR      0.879   653.521      574.761
+       7900   CC_REGULAR      0.885   388.000      343.304
+      55545   CC_REGULAR      0.885   551.300      487.828
+      50127   CC_REGULAR      0.913    79.122       72.199
+       4937   CC_REGULAR      0.924   574.600      530.735
+      54817   CC_REGULAR      0.935   280.090      261.911
+      55168   CC_REGULAR      0.938   618.700      580.350
+      56233   CC_REGULAR      0.941   152.756      143.814
+      56806   CC_REGULAR      0.941   531.520      500.404
+       3559   CC_REGULAR      0.941   134.989      127.087
+      55097   CC_REGULAR      0.941  1104.331     1039.682
+      55172   CC_REGULAR      0.942   800.539      754.110
+      55123   CC_REGULAR      0.942   794.542      748.504
+      59812   CC_REGULAR      0.944  1218.643     1150.509
+      55132   CC_REGULAR      0.944   930.017      878.020
+      55480   CC_REGULAR      0.944  1874.088     1770.057
+       3631   CC_REGULAR      0.945   190.557      180.164
+      55223   CC_REGULAR      0.945   413.136      390.605
+      55062   CC_REGULAR      0.946   927.793      878.114
+      58005   CC_REGULAR      0.947   792.267      750.560
+       3441   CC_REGULAR      0.956   730.200      698.260
+       6178     COAL_PRB      0.962   622.400      598.644
+       3576       ST_GAS      0.968   427.700      414.176
+        298     COAL_PRB      0.987  1849.800     1825.373
+      55501   CC_REGULAR      0.992  1370.200     1359.060
+       6179     COAL_PRB      0.998  1684.829     1680.692
+
+plants with a zero-availability hour in window: 6
+ plant_code plant_group  avail_min  cap_year  cap_win_min
+       3460      ST_GAS      0.000  1511.118        0.000
+       7512  CC_REGULAR      0.000   575.000        0.000
+      50109  CC_REGULAR      0.000   259.405        0.000
+      55086  CC_REGULAR      0.000   446.723        0.000
+      55139  CC_REGULAR      0.000   776.224        0.000
+      55320  CC_REGULAR      0.000   815.075        0.000
+
+plants whose available cap STEPS inside the window: 46
+  3441 CC_REGULAR: cap 700 -> 716 MW (min 698), step at hours [2840, 2841, 2842, 2856]
+  3452 ST_GAS: cap 669 -> 656 MW (min 656), step at hours [2856]
+  3453 ST_GAS: cap 596 -> 584 MW (min 584), step at hours [2856]
+  3469 CC_REGULAR: cap 582 -> 582 MW (min 575), step at hours [2838, 2840, 2844, 2849, 2856, 2865]
+  3490 ST_GAS: cap 448 -> 439 MW (min 439), step at hours [2856]
+  3491 ST_GAS: cap 934 -> 916 MW (min 916), step at hours [2856]
+  3504 ST_GAS: cap 510 -> 500 MW (min 500), step at hours [2856]
+  3507 ST_GAS: cap 174 -> 170 MW (min 170), step at hours [2856]
+  3548 ST_GAS: cap 155 -> 152 MW (min 152), step at hours [2856]
+  3559 CC_REGULAR: cap 128 -> 128 MW (min 127), step at hours []
+  3611 ST_GAS: cap 647 -> 634 MW (min 634), step at hours [2856]
+  3628 ST_GAS: cap 245 -> 240 MW (min 240), step at hours [2856]
+  3631 CC_REGULAR: cap 181 -> 181 MW (min 180), step at hours []
+  4266 ST_GAS: cap 90 -> 89 MW (min 89), step at hours [2856]
+  4937 CC_REGULAR: cap 531 -> 538 MW (min 531), step at hours [2834, 2837, 2838, 2839, 2841, 2842]
+  4939 CC_REGULAR: cap 365 -> 640 MW (min 365), step at hours [2844, 2849, 2856, 2865]
+  6146 COAL_PRB: cap 961 -> 879 MW (min 879), step at hours [2856]
+  6178 COAL_PRB: cap 603 -> 599 MW (min 599), step at hours [2856]
+  6180 COAL_LIGNITE: cap 1316 -> 1795 MW (min 1316), step at hours [2859]
+  6183 COAL_LIGNITE: cap 182 -> 12 MW (min 12), step at hours [2856]
+  7097 COAL_PRB: cap 1104 -> 1109 MW (min 1104), step at hours [2856, 2866]
+  34702 ST_GAS: cap 138 -> 135 MW (min 135), step at hours [2856]
+  49392 ST_GAS: cap 256 -> 251 MW (min 251), step at hours [2856]
+  54817 CC_REGULAR: cap 264 -> 264 MW (min 262), step at hours [2856]
+  55062 CC_REGULAR: cap 883 -> 883 MW (min 878), step at hours [2838, 2840, 2844, 2849, 2856]
+  55091 CC_REGULAR: cap 867 -> 1156 MW (min 867), step at hours [2849, 2850, 2851, 2852, 2854]
+  55097 CC_REGULAR: cap 1046 -> 1045 MW (min 1040), step at hours [2838, 2840, 2844, 2849, 2856, 2865]
+  55123 CC_REGULAR: cap 753 -> 753 MW (min 749), step at hours [2838, 2844, 2849, 2856]
+  55132 CC_REGULAR: cap 883 -> 883 MW (min 878), step at hours [2838, 2840, 2844, 2849, 2856]
+  55137 CC_REGULAR: cap 576 -> 429 MW (min 429), step at hours [2833, 2836, 2848, 2851, 2854, 2856]
+  55144 CC_REGULAR: cap 556 -> 736 MW (min 556), step at hours [2840, 2843, 2844, 2849, 2850, 2851]
+  55153 CC_REGULAR: cap 273 -> 268 MW (min 268), step at hours [2856]
+  55168 CC_REGULAR: cap 580 -> 603 MW (min 580), step at hours [2833, 2834, 2835, 2837, 2838, 2840]
+  55172 CC_REGULAR: cap 759 -> 758 MW (min 754), step at hours [2838, 2844, 2849, 2856]
+  55223 CC_REGULAR: cap 393 -> 393 MW (min 391), step at hours [2856]
+  55226 CC_REGULAR: cap 248 -> 251 MW (min 248), step at hours [2856]
+  55230 CC_REGULAR: cap 11 -> 484 MW (min 11), step at hours [2856, 2859, 2863, 2864, 2865, 2866]
+  55357 CC_REGULAR: cap 598 -> 617 MW (min 589), step at hours [2838, 2841, 2842, 2843, 2844, 2845]
+  55480 CC_REGULAR: cap 1781 -> 1780 MW (min 1770), step at hours [2838, 2840, 2844, 2849, 2856, 2864]
+  55545 CC_REGULAR: cap 490 -> 500 MW (min 488), step at hours [2837, 2841, 2848, 2849, 2850, 2852]
+  56233 CC_REGULAR: cap 145 -> 145 MW (min 144), step at hours []
+  56349 CC_REGULAR: cap 305 -> 410 MW (min 305), step at hours [2837, 2844, 2849, 2856]
+  56708 ST_GAS: cap 234 -> 229 MW (min 229), step at hours [2856]
+  56806 CC_REGULAR: cap 503 -> 503 MW (min 500), step at hours [2844, 2856]
+  58005 CC_REGULAR: cap 755 -> 755 MW (min 751), step at hours [2838, 2844, 2849, 2856]
+  59812 CC_REGULAR: cap 1157 -> 1157 MW (min 1151), step at hours [2838, 2840, 2844, 2849, 2856, 2865]
+
+mustrun/sync band dispatch in window: plants with floor_mw_min>0: 9 of 11
+ plant_code  plant_group  floor_mw_min  floor_mw_max  avail_min
+        298     COAL_PRB        300.00        365.07       0.99
+       3470     COAL_PRB        175.00        300.40       0.74
+       6146     COAL_PRB        175.00        192.27       0.37
+       6178     COAL_PRB        175.00        181.02       0.96
+       6179     COAL_PRB        156.00        504.21       1.00
+       6180 COAL_LIGNITE        348.00        807.93       0.73
+       7097     COAL_PRB        130.00        143.31       0.74
