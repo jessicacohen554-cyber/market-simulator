@@ -1,0 +1,287 @@
+SOLVE SHARD ucmilp-ercot-d-2019 — ERCOT backcast year 2019, ONE year, ONE container (rule 36). Model: Opus.
+DATA PROFILE: ercot
+
+HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
+1. `git rev-parse HEAD` == eab17188c75cd0332f9323ed3464c62bc0cd1848  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
+3. `python3 scripts/hydrate_data.py --profile ercot` then `python3 scripts/regenerate_clean.py --solve-profile ERCOT` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
+4. the recipe you will solve: `results/calibration/closeout_ercot_l1_span` replayed with unit_commitment_milp=true, ercot_gas_commitment_bridge=false; confirm by reading `results/calibration/closeout_ercot_l1_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; ercot_gas_commitment_bridge=false
+5. memory: the runner calls `scripts/lib/solve_container.ensure_solve_container` itself; never pass `--no-container-preflight`, never read `free` — report the `container preflight:` and `memory peak:` log lines
+
+SOLVE (sequential, this year only):
+  eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"
+  python3 scripts/replay_keeper.py results/calibration/closeout_ercot_l1_span --years 2019 --out-dir results/calibration/ucmilp_ercot_d_2019 --set unit_commitment_milp=true --set ercot_gas_commitment_bridge=false --note "ucmilp-ercot: UC A/B (Addendum D, uc-1.2 pin)"
+Budget: 300 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
+
+PUSH THE WHOLE BUNDLE (rule 34 (a) — a bundle that cannot back a promotion is a wasted solve):
+  git checkout -b claude/ucmilp-ercot-d-2019
+  printf '\n!results/calibration/ucmilp_ercot_d_2019/**\n' >> .gitignore
+  git add .gitignore && git add results/calibration/ucmilp_ercot_d_2019
+  git status --short      # MUST show nothing outside .gitignore and results/calibration/ucmilp_ercot_d_2019
+  git commit -m "ucmilp-ercot-d: ERCOT 2019 leg (results/calibration/ucmilp_ercot_d_2019)"
+  git push -u origin claude/ucmilp-ercot-d-2019     # on HTTP 408/500: git config http.version HTTP/1.1, retry
+`results/calibration/ucmilp_ercot_d_2019/dispatch/2019_P1.parquet` MUST be in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp_ercot_d_2019/dispatch`). A plain `git add` after the .gitignore negation — never `git add -f`, never `git add -A`, never `git add .`.
+
+FORBIDDEN, by name: git add -A / git add . ; any edit under src/ or scripts/ ; dashboard_add_run.py, build_manifest.py, build_status.py, prune_iso_runs.py, promote_keeper.py, anything under frontend/data/ (registration is the parent's job, once) ; opening a PR ; deleting any result (rule 31) ; solving any other year.
+
+REPORT in your final message, in numbers: HEAD sha; the `container preflight:` and `memory peak:` lines; LP wall time; for 2019: objective, total generation TWh by class, mean and p99 price per zone, unserved energy MWh; the commit sha and branch; `git ls-tree` count under results/calibration/ucmilp_ercot_d_2019; and any hard stop that fired. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
+
+LANE ADDENDA (UC-2-ERCOT, PRECOMMIT docs/records/ercot/ucmilp/PRECOMMIT-ucmilp-ercot-ab-2026-10-10.md §8, Addenda A–D):
+- If `python3 -c "import pyarrow, highspy"` fails, run `uv sync` once and use `uv run python` in place of `python3` (install is not repair).
+- The two --set fields are ONE logical delta: the UC gate refuses the keeper's ercot_gas_commitment_bridge (rule 19), so the disarm is the gate's substitution, never a second lever. No third --set, no uc_* value.
+- RUN THE SOLVE DETACHED. The shard tool kills a foreground process at 120 min, and this solve runs 4-11 h. Launch exactly (one line):
+    nohup bash -c 'eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"; python3 scripts/replay_keeper.py results/calibration/closeout_ercot_l1_span --years 2019 --out-dir results/calibration/ucmilp_ercot_d_2019 --set unit_commitment_milp=true --set ercot_gas_commitment_bridge=false --note "ucmilp-ercot: UC A/B (Addendum D, uc-1.2 pin)"; echo "EXIT $?"' > /tmp/solve_2019.log 2>&1 &
+  then watch /tmp/solve_2019.log with a Monitor (or short repeated tail checks) that you re-arm until the line "EXIT <code>" appears. KEEP THIS SESSION ACTIVE until the process exits: an idle session's container is recycled and the solve dies with it (the first 2021 leg was lost that way). Never block a single tool call for more than a few minutes.
+- Expected wall (uc-1.2, ERCOT 2020 gate at the pre-merge head 7688a68a): ERCOT solves P1 twice (adaptive expectation) and the UC stage runs in BOTH passes — UC pass 1 6,994 s, UC pass 2 7,030 s, P1 244 / 229 s, about 249 min in total; 61 integer clusters (the 11 yard-pinned coal clusters carry no integer). The stage logs one INFO line per window (index, hours, status, MILP s, nodes, gap): if you stop at the budget, report the last window index and pass seen.
+- Before pushing: do NOT commit `results/calibration/ucmilp_ercot_d_2019/hourly/unit_hourly_2019.parquet` (gitignored by rule 15, ~80 MB): after the `git add`, run `git reset -q -- results/calibration/ucmilp_ercot_d_2019/hourly/unit_hourly_2019.parquet` (harmless if not staged). Everything else in the bundle is pushed. These MUST be in the pushed tree: dispatch/2019_P1.parquet, hourly/uc_schedule_2019.parquet, hourly/uc_uplift_2019.parquet, uc_solve_log_2019.json, hourly/unit_marginal_2019.parquet (`git ls-tree -r HEAD -- results/calibration/ucmilp_ercot_d_2019/hourly results/calibration/ucmilp_ercot_d_2019/dispatch`). A missing UC artifact is a STOP-and-report, not a repair. If GitHub rejects a file over 100 MB, report its name and size and stop.
+- An INFEASIBLE window, a "no incumbent" hard stop, a P1 "no feasible primal solution", or any traceback from the UC stage is a kill (PRECOMMIT §7): STOP, report the window index, hour range and the last 30 traceback lines verbatim; do not retry, do not push a half bundle.
+- REPORT additionally (GATESPEC §6.1 wall row): the `log_year_phase_timing` line(s) verbatim (data_prep / solve_p0 / markup / uc / solve_p1 / results_write / total), both passes if two are logged; from uc_solve_log_2019.json `summary`: windows, status counts, Σ MILP s, mean and p95 MILP s, nodes p50/p95, gap p95, time_limit_hits, infeasible, warm_accepted, integers per window, integer cluster count; the ratio total/(solve_p0+solve_p1); peak RSS GiB; the number of clusters with src == class-mean fallback (clusters[].src); NaN cell count in dispatch/2019_P1.parquet; unserved MWh.
+
+====================================================================================================
+
+SOLVE SHARD ucmilp-ercot-d-2020 — ERCOT backcast year 2020, ONE year, ONE container (rule 36). Model: Opus.
+DATA PROFILE: ercot
+
+HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
+1. `git rev-parse HEAD` == eab17188c75cd0332f9323ed3464c62bc0cd1848  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
+3. `python3 scripts/hydrate_data.py --profile ercot` then `python3 scripts/regenerate_clean.py --solve-profile ERCOT` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
+4. the recipe you will solve: `results/calibration/closeout_ercot_l1_span` replayed with unit_commitment_milp=true, ercot_gas_commitment_bridge=false; confirm by reading `results/calibration/closeout_ercot_l1_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; ercot_gas_commitment_bridge=false
+5. memory: the runner calls `scripts/lib/solve_container.ensure_solve_container` itself; never pass `--no-container-preflight`, never read `free` — report the `container preflight:` and `memory peak:` log lines
+
+SOLVE (sequential, this year only):
+  eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"
+  python3 scripts/replay_keeper.py results/calibration/closeout_ercot_l1_span --years 2020 --out-dir results/calibration/ucmilp_ercot_d_2020 --set unit_commitment_milp=true --set ercot_gas_commitment_bridge=false --note "ucmilp-ercot: UC A/B (Addendum D, uc-1.2 pin)"
+Budget: 300 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
+
+PUSH THE WHOLE BUNDLE (rule 34 (a) — a bundle that cannot back a promotion is a wasted solve):
+  git checkout -b claude/ucmilp-ercot-d-2020
+  printf '\n!results/calibration/ucmilp_ercot_d_2020/**\n' >> .gitignore
+  git add .gitignore && git add results/calibration/ucmilp_ercot_d_2020
+  git status --short      # MUST show nothing outside .gitignore and results/calibration/ucmilp_ercot_d_2020
+  git commit -m "ucmilp-ercot-d: ERCOT 2020 leg (results/calibration/ucmilp_ercot_d_2020)"
+  git push -u origin claude/ucmilp-ercot-d-2020     # on HTTP 408/500: git config http.version HTTP/1.1, retry
+`results/calibration/ucmilp_ercot_d_2020/dispatch/2020_P1.parquet` MUST be in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp_ercot_d_2020/dispatch`). A plain `git add` after the .gitignore negation — never `git add -f`, never `git add -A`, never `git add .`.
+
+FORBIDDEN, by name: git add -A / git add . ; any edit under src/ or scripts/ ; dashboard_add_run.py, build_manifest.py, build_status.py, prune_iso_runs.py, promote_keeper.py, anything under frontend/data/ (registration is the parent's job, once) ; opening a PR ; deleting any result (rule 31) ; solving any other year.
+
+REPORT in your final message, in numbers: HEAD sha; the `container preflight:` and `memory peak:` lines; LP wall time; for 2020: objective, total generation TWh by class, mean and p99 price per zone, unserved energy MWh; the commit sha and branch; `git ls-tree` count under results/calibration/ucmilp_ercot_d_2020; and any hard stop that fired. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
+
+LANE ADDENDA (UC-2-ERCOT, PRECOMMIT docs/records/ercot/ucmilp/PRECOMMIT-ucmilp-ercot-ab-2026-10-10.md §8, Addenda A–D):
+- If `python3 -c "import pyarrow, highspy"` fails, run `uv sync` once and use `uv run python` in place of `python3` (install is not repair).
+- The two --set fields are ONE logical delta: the UC gate refuses the keeper's ercot_gas_commitment_bridge (rule 19), so the disarm is the gate's substitution, never a second lever. No third --set, no uc_* value.
+- RUN THE SOLVE DETACHED. The shard tool kills a foreground process at 120 min, and this solve runs 4-11 h. Launch exactly (one line):
+    nohup bash -c 'eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"; python3 scripts/replay_keeper.py results/calibration/closeout_ercot_l1_span --years 2020 --out-dir results/calibration/ucmilp_ercot_d_2020 --set unit_commitment_milp=true --set ercot_gas_commitment_bridge=false --note "ucmilp-ercot: UC A/B (Addendum D, uc-1.2 pin)"; echo "EXIT $?"' > /tmp/solve_2020.log 2>&1 &
+  then watch /tmp/solve_2020.log with a Monitor (or short repeated tail checks) that you re-arm until the line "EXIT <code>" appears. KEEP THIS SESSION ACTIVE until the process exits: an idle session's container is recycled and the solve dies with it (the first 2021 leg was lost that way). Never block a single tool call for more than a few minutes.
+- Expected wall (uc-1.2, ERCOT 2020 gate at the pre-merge head 7688a68a): ERCOT solves P1 twice (adaptive expectation) and the UC stage runs in BOTH passes — UC pass 1 6,994 s, UC pass 2 7,030 s, P1 244 / 229 s, about 249 min in total; 61 integer clusters (the 11 yard-pinned coal clusters carry no integer). The stage logs one INFO line per window (index, hours, status, MILP s, nodes, gap): if you stop at the budget, report the last window index and pass seen.
+- Before pushing: do NOT commit `results/calibration/ucmilp_ercot_d_2020/hourly/unit_hourly_2020.parquet` (gitignored by rule 15, ~80 MB): after the `git add`, run `git reset -q -- results/calibration/ucmilp_ercot_d_2020/hourly/unit_hourly_2020.parquet` (harmless if not staged). Everything else in the bundle is pushed. These MUST be in the pushed tree: dispatch/2020_P1.parquet, hourly/uc_schedule_2020.parquet, hourly/uc_uplift_2020.parquet, uc_solve_log_2020.json, hourly/unit_marginal_2020.parquet (`git ls-tree -r HEAD -- results/calibration/ucmilp_ercot_d_2020/hourly results/calibration/ucmilp_ercot_d_2020/dispatch`). A missing UC artifact is a STOP-and-report, not a repair. If GitHub rejects a file over 100 MB, report its name and size and stop.
+- An INFEASIBLE window, a "no incumbent" hard stop, a P1 "no feasible primal solution", or any traceback from the UC stage is a kill (PRECOMMIT §7): STOP, report the window index, hour range and the last 30 traceback lines verbatim; do not retry, do not push a half bundle.
+- REPORT additionally (GATESPEC §6.1 wall row): the `log_year_phase_timing` line(s) verbatim (data_prep / solve_p0 / markup / uc / solve_p1 / results_write / total), both passes if two are logged; from uc_solve_log_2020.json `summary`: windows, status counts, Σ MILP s, mean and p95 MILP s, nodes p50/p95, gap p95, time_limit_hits, infeasible, warm_accepted, integers per window, integer cluster count; the ratio total/(solve_p0+solve_p1); peak RSS GiB; the number of clusters with src == class-mean fallback (clusters[].src); NaN cell count in dispatch/2020_P1.parquet; unserved MWh.
+
+====================================================================================================
+
+SOLVE SHARD ucmilp-ercot-d-2024 — ERCOT backcast year 2024, ONE year, ONE container (rule 36). Model: Opus.
+DATA PROFILE: ercot
+
+HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
+1. `git rev-parse HEAD` == eab17188c75cd0332f9323ed3464c62bc0cd1848  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
+3. `python3 scripts/hydrate_data.py --profile ercot` then `python3 scripts/regenerate_clean.py --solve-profile ERCOT` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
+4. the recipe you will solve: `results/calibration/closeout_ercot_l1_span` replayed with unit_commitment_milp=true, ercot_gas_commitment_bridge=false; confirm by reading `results/calibration/closeout_ercot_l1_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; ercot_gas_commitment_bridge=false
+5. memory: the runner calls `scripts/lib/solve_container.ensure_solve_container` itself; never pass `--no-container-preflight`, never read `free` — report the `container preflight:` and `memory peak:` log lines
+
+SOLVE (sequential, this year only):
+  eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"
+  python3 scripts/replay_keeper.py results/calibration/closeout_ercot_l1_span --years 2024 --out-dir results/calibration/ucmilp_ercot_d_2024 --set unit_commitment_milp=true --set ercot_gas_commitment_bridge=false --note "ucmilp-ercot: UC A/B (Addendum D, uc-1.2 pin)"
+Budget: 300 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
+
+PUSH THE WHOLE BUNDLE (rule 34 (a) — a bundle that cannot back a promotion is a wasted solve):
+  git checkout -b claude/ucmilp-ercot-d-2024
+  printf '\n!results/calibration/ucmilp_ercot_d_2024/**\n' >> .gitignore
+  git add .gitignore && git add results/calibration/ucmilp_ercot_d_2024
+  git status --short      # MUST show nothing outside .gitignore and results/calibration/ucmilp_ercot_d_2024
+  git commit -m "ucmilp-ercot-d: ERCOT 2024 leg (results/calibration/ucmilp_ercot_d_2024)"
+  git push -u origin claude/ucmilp-ercot-d-2024     # on HTTP 408/500: git config http.version HTTP/1.1, retry
+`results/calibration/ucmilp_ercot_d_2024/dispatch/2024_P1.parquet` MUST be in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp_ercot_d_2024/dispatch`). A plain `git add` after the .gitignore negation — never `git add -f`, never `git add -A`, never `git add .`.
+
+FORBIDDEN, by name: git add -A / git add . ; any edit under src/ or scripts/ ; dashboard_add_run.py, build_manifest.py, build_status.py, prune_iso_runs.py, promote_keeper.py, anything under frontend/data/ (registration is the parent's job, once) ; opening a PR ; deleting any result (rule 31) ; solving any other year.
+
+REPORT in your final message, in numbers: HEAD sha; the `container preflight:` and `memory peak:` lines; LP wall time; for 2024: objective, total generation TWh by class, mean and p99 price per zone, unserved energy MWh; the commit sha and branch; `git ls-tree` count under results/calibration/ucmilp_ercot_d_2024; and any hard stop that fired. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
+
+LANE ADDENDA (UC-2-ERCOT, PRECOMMIT docs/records/ercot/ucmilp/PRECOMMIT-ucmilp-ercot-ab-2026-10-10.md §8, Addenda A–D):
+- If `python3 -c "import pyarrow, highspy"` fails, run `uv sync` once and use `uv run python` in place of `python3` (install is not repair).
+- The two --set fields are ONE logical delta: the UC gate refuses the keeper's ercot_gas_commitment_bridge (rule 19), so the disarm is the gate's substitution, never a second lever. No third --set, no uc_* value.
+- RUN THE SOLVE DETACHED. The shard tool kills a foreground process at 120 min, and this solve runs 4-11 h. Launch exactly (one line):
+    nohup bash -c 'eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"; python3 scripts/replay_keeper.py results/calibration/closeout_ercot_l1_span --years 2024 --out-dir results/calibration/ucmilp_ercot_d_2024 --set unit_commitment_milp=true --set ercot_gas_commitment_bridge=false --note "ucmilp-ercot: UC A/B (Addendum D, uc-1.2 pin)"; echo "EXIT $?"' > /tmp/solve_2024.log 2>&1 &
+  then watch /tmp/solve_2024.log with a Monitor (or short repeated tail checks) that you re-arm until the line "EXIT <code>" appears. KEEP THIS SESSION ACTIVE until the process exits: an idle session's container is recycled and the solve dies with it (the first 2021 leg was lost that way). Never block a single tool call for more than a few minutes.
+- Expected wall (uc-1.2, ERCOT 2020 gate at the pre-merge head 7688a68a): ERCOT solves P1 twice (adaptive expectation) and the UC stage runs in BOTH passes — UC pass 1 6,994 s, UC pass 2 7,030 s, P1 244 / 229 s, about 249 min in total; 61 integer clusters (the 11 yard-pinned coal clusters carry no integer). The stage logs one INFO line per window (index, hours, status, MILP s, nodes, gap): if you stop at the budget, report the last window index and pass seen.
+- Before pushing: do NOT commit `results/calibration/ucmilp_ercot_d_2024/hourly/unit_hourly_2024.parquet` (gitignored by rule 15, ~80 MB): after the `git add`, run `git reset -q -- results/calibration/ucmilp_ercot_d_2024/hourly/unit_hourly_2024.parquet` (harmless if not staged). Everything else in the bundle is pushed. These MUST be in the pushed tree: dispatch/2024_P1.parquet, hourly/uc_schedule_2024.parquet, hourly/uc_uplift_2024.parquet, uc_solve_log_2024.json, hourly/unit_marginal_2024.parquet (`git ls-tree -r HEAD -- results/calibration/ucmilp_ercot_d_2024/hourly results/calibration/ucmilp_ercot_d_2024/dispatch`). A missing UC artifact is a STOP-and-report, not a repair. If GitHub rejects a file over 100 MB, report its name and size and stop.
+- An INFEASIBLE window, a "no incumbent" hard stop, a P1 "no feasible primal solution", or any traceback from the UC stage is a kill (PRECOMMIT §7): STOP, report the window index, hour range and the last 30 traceback lines verbatim; do not retry, do not push a half bundle.
+- REPORT additionally (GATESPEC §6.1 wall row): the `log_year_phase_timing` line(s) verbatim (data_prep / solve_p0 / markup / uc / solve_p1 / results_write / total), both passes if two are logged; from uc_solve_log_2024.json `summary`: windows, status counts, Σ MILP s, mean and p95 MILP s, nodes p50/p95, gap p95, time_limit_hits, infeasible, warm_accepted, integers per window, integer cluster count; the ratio total/(solve_p0+solve_p1); peak RSS GiB; the number of clusters with src == class-mean fallback (clusters[].src); NaN cell count in dispatch/2024_P1.parquet; unserved MWh.
+
+====================================================================================================
+
+SOLVE SHARD ucmilp-ercot-d-2025 — ERCOT backcast year 2025, ONE year, ONE container (rule 36). Model: Opus.
+DATA PROFILE: ercot
+
+HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
+1. `git rev-parse HEAD` == eab17188c75cd0332f9323ed3464c62bc0cd1848  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
+3. `python3 scripts/hydrate_data.py --profile ercot` then `python3 scripts/regenerate_clean.py --solve-profile ERCOT` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
+4. the recipe you will solve: `results/calibration/closeout_ercot_l1_span` replayed with unit_commitment_milp=true, ercot_gas_commitment_bridge=false; confirm by reading `results/calibration/closeout_ercot_l1_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; ercot_gas_commitment_bridge=false
+5. memory: the runner calls `scripts/lib/solve_container.ensure_solve_container` itself; never pass `--no-container-preflight`, never read `free` — report the `container preflight:` and `memory peak:` log lines
+
+SOLVE (sequential, this year only):
+  eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"
+  python3 scripts/replay_keeper.py results/calibration/closeout_ercot_l1_span --years 2025 --out-dir results/calibration/ucmilp_ercot_d_2025 --set unit_commitment_milp=true --set ercot_gas_commitment_bridge=false --note "ucmilp-ercot: UC A/B (Addendum D, uc-1.2 pin)"
+Budget: 300 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
+
+PUSH THE WHOLE BUNDLE (rule 34 (a) — a bundle that cannot back a promotion is a wasted solve):
+  git checkout -b claude/ucmilp-ercot-d-2025
+  printf '\n!results/calibration/ucmilp_ercot_d_2025/**\n' >> .gitignore
+  git add .gitignore && git add results/calibration/ucmilp_ercot_d_2025
+  git status --short      # MUST show nothing outside .gitignore and results/calibration/ucmilp_ercot_d_2025
+  git commit -m "ucmilp-ercot-d: ERCOT 2025 leg (results/calibration/ucmilp_ercot_d_2025)"
+  git push -u origin claude/ucmilp-ercot-d-2025     # on HTTP 408/500: git config http.version HTTP/1.1, retry
+`results/calibration/ucmilp_ercot_d_2025/dispatch/2025_P1.parquet` MUST be in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp_ercot_d_2025/dispatch`). A plain `git add` after the .gitignore negation — never `git add -f`, never `git add -A`, never `git add .`.
+
+FORBIDDEN, by name: git add -A / git add . ; any edit under src/ or scripts/ ; dashboard_add_run.py, build_manifest.py, build_status.py, prune_iso_runs.py, promote_keeper.py, anything under frontend/data/ (registration is the parent's job, once) ; opening a PR ; deleting any result (rule 31) ; solving any other year.
+
+REPORT in your final message, in numbers: HEAD sha; the `container preflight:` and `memory peak:` lines; LP wall time; for 2025: objective, total generation TWh by class, mean and p99 price per zone, unserved energy MWh; the commit sha and branch; `git ls-tree` count under results/calibration/ucmilp_ercot_d_2025; and any hard stop that fired. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
+
+LANE ADDENDA (UC-2-ERCOT, PRECOMMIT docs/records/ercot/ucmilp/PRECOMMIT-ucmilp-ercot-ab-2026-10-10.md §8, Addenda A–D):
+- If `python3 -c "import pyarrow, highspy"` fails, run `uv sync` once and use `uv run python` in place of `python3` (install is not repair).
+- The two --set fields are ONE logical delta: the UC gate refuses the keeper's ercot_gas_commitment_bridge (rule 19), so the disarm is the gate's substitution, never a second lever. No third --set, no uc_* value.
+- RUN THE SOLVE DETACHED. The shard tool kills a foreground process at 120 min, and this solve runs 4-11 h. Launch exactly (one line):
+    nohup bash -c 'eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"; python3 scripts/replay_keeper.py results/calibration/closeout_ercot_l1_span --years 2025 --out-dir results/calibration/ucmilp_ercot_d_2025 --set unit_commitment_milp=true --set ercot_gas_commitment_bridge=false --note "ucmilp-ercot: UC A/B (Addendum D, uc-1.2 pin)"; echo "EXIT $?"' > /tmp/solve_2025.log 2>&1 &
+  then watch /tmp/solve_2025.log with a Monitor (or short repeated tail checks) that you re-arm until the line "EXIT <code>" appears. KEEP THIS SESSION ACTIVE until the process exits: an idle session's container is recycled and the solve dies with it (the first 2021 leg was lost that way). Never block a single tool call for more than a few minutes.
+- Expected wall (uc-1.2, ERCOT 2020 gate at the pre-merge head 7688a68a): ERCOT solves P1 twice (adaptive expectation) and the UC stage runs in BOTH passes — UC pass 1 6,994 s, UC pass 2 7,030 s, P1 244 / 229 s, about 249 min in total; 61 integer clusters (the 11 yard-pinned coal clusters carry no integer). The stage logs one INFO line per window (index, hours, status, MILP s, nodes, gap): if you stop at the budget, report the last window index and pass seen.
+- Before pushing: do NOT commit `results/calibration/ucmilp_ercot_d_2025/hourly/unit_hourly_2025.parquet` (gitignored by rule 15, ~80 MB): after the `git add`, run `git reset -q -- results/calibration/ucmilp_ercot_d_2025/hourly/unit_hourly_2025.parquet` (harmless if not staged). Everything else in the bundle is pushed. These MUST be in the pushed tree: dispatch/2025_P1.parquet, hourly/uc_schedule_2025.parquet, hourly/uc_uplift_2025.parquet, uc_solve_log_2025.json, hourly/unit_marginal_2025.parquet (`git ls-tree -r HEAD -- results/calibration/ucmilp_ercot_d_2025/hourly results/calibration/ucmilp_ercot_d_2025/dispatch`). A missing UC artifact is a STOP-and-report, not a repair. If GitHub rejects a file over 100 MB, report its name and size and stop.
+- An INFEASIBLE window, a "no incumbent" hard stop, a P1 "no feasible primal solution", or any traceback from the UC stage is a kill (PRECOMMIT §7): STOP, report the window index, hour range and the last 30 traceback lines verbatim; do not retry, do not push a half bundle.
+- REPORT additionally (GATESPEC §6.1 wall row): the `log_year_phase_timing` line(s) verbatim (data_prep / solve_p0 / markup / uc / solve_p1 / results_write / total), both passes if two are logged; from uc_solve_log_2025.json `summary`: windows, status counts, Σ MILP s, mean and p95 MILP s, nodes p50/p95, gap p95, time_limit_hits, infeasible, warm_accepted, integers per window, integer cluster count; the ratio total/(solve_p0+solve_p1); peak RSS GiB; the number of clusters with src == class-mean fallback (clusters[].src); NaN cell count in dispatch/2025_P1.parquet; unserved MWh.
+
+====================================================================================================
+
+SOLVE SHARD ucmilp-ercot-d-2021 — ERCOT backcast year 2021, ONE year, ONE container (rule 36). Model: Opus.
+DATA PROFILE: ercot
+
+HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
+1. `git rev-parse HEAD` == eab17188c75cd0332f9323ed3464c62bc0cd1848  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
+3. `python3 scripts/hydrate_data.py --profile ercot` then `python3 scripts/regenerate_clean.py --solve-profile ERCOT` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
+4. the recipe you will solve: `results/calibration/closeout_ercot_l1_span` replayed with unit_commitment_milp=true, ercot_gas_commitment_bridge=false; confirm by reading `results/calibration/closeout_ercot_l1_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; ercot_gas_commitment_bridge=false
+5. memory: the runner calls `scripts/lib/solve_container.ensure_solve_container` itself; never pass `--no-container-preflight`, never read `free` — report the `container preflight:` and `memory peak:` log lines
+
+SOLVE (sequential, this year only):
+  eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"
+  python3 scripts/replay_keeper.py results/calibration/closeout_ercot_l1_span --years 2021 --out-dir results/calibration/ucmilp_ercot_d_2021 --set unit_commitment_milp=true --set ercot_gas_commitment_bridge=false --note "ucmilp-ercot: UC A/B (Addendum D, uc-1.2 pin)"
+Budget: 680 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
+
+PUSH THE WHOLE BUNDLE (rule 34 (a) — a bundle that cannot back a promotion is a wasted solve):
+  git checkout -b claude/ucmilp-ercot-d-2021
+  printf '\n!results/calibration/ucmilp_ercot_d_2021/**\n' >> .gitignore
+  git add .gitignore && git add results/calibration/ucmilp_ercot_d_2021
+  git status --short      # MUST show nothing outside .gitignore and results/calibration/ucmilp_ercot_d_2021
+  git commit -m "ucmilp-ercot-d: ERCOT 2021 leg (results/calibration/ucmilp_ercot_d_2021)"
+  git push -u origin claude/ucmilp-ercot-d-2021     # on HTTP 408/500: git config http.version HTTP/1.1, retry
+`results/calibration/ucmilp_ercot_d_2021/dispatch/2021_P1.parquet` MUST be in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp_ercot_d_2021/dispatch`). A plain `git add` after the .gitignore negation — never `git add -f`, never `git add -A`, never `git add .`.
+
+FORBIDDEN, by name: git add -A / git add . ; any edit under src/ or scripts/ ; dashboard_add_run.py, build_manifest.py, build_status.py, prune_iso_runs.py, promote_keeper.py, anything under frontend/data/ (registration is the parent's job, once) ; opening a PR ; deleting any result (rule 31) ; solving any other year.
+
+REPORT in your final message, in numbers: HEAD sha; the `container preflight:` and `memory peak:` lines; LP wall time; for 2021: objective, total generation TWh by class, mean and p99 price per zone, unserved energy MWh; the commit sha and branch; `git ls-tree` count under results/calibration/ucmilp_ercot_d_2021; and any hard stop that fired. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
+
+LANE ADDENDA (UC-2-ERCOT, PRECOMMIT docs/records/ercot/ucmilp/PRECOMMIT-ucmilp-ercot-ab-2026-10-10.md §8, Addenda A–D):
+- If `python3 -c "import pyarrow, highspy"` fails, run `uv sync` once and use `uv run python` in place of `python3` (install is not repair).
+- The two --set fields are ONE logical delta: the UC gate refuses the keeper's ercot_gas_commitment_bridge (rule 19), so the disarm is the gate's substitution, never a second lever. No third --set, no uc_* value.
+- RUN THE SOLVE DETACHED. The shard tool kills a foreground process at 120 min, and this solve runs 4-11 h. Launch exactly (one line):
+    nohup bash -c 'eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"; python3 scripts/replay_keeper.py results/calibration/closeout_ercot_l1_span --years 2021 --out-dir results/calibration/ucmilp_ercot_d_2021 --set unit_commitment_milp=true --set ercot_gas_commitment_bridge=false --note "ucmilp-ercot: UC A/B (Addendum D, uc-1.2 pin)"; echo "EXIT $?"' > /tmp/solve_2021.log 2>&1 &
+  then watch /tmp/solve_2021.log with a Monitor (or short repeated tail checks) that you re-arm until the line "EXIT <code>" appears. KEEP THIS SESSION ACTIVE until the process exits: an idle session's container is recycled and the solve dies with it (the first 2021 leg was lost that way). Never block a single tool call for more than a few minutes.
+- Expected wall (uc-1.2, ERCOT 2020 gate at the pre-merge head 7688a68a): ERCOT solves P1 twice (adaptive expectation) and the UC stage runs in BOTH passes — UC pass 1 6,994 s, UC pass 2 7,030 s, P1 244 / 229 s, about 249 min in total; 61 integer clusters (the 11 yard-pinned coal clusters carry no integer). The stage logs one INFO line per window (index, hours, status, MILP s, nodes, gap): if you stop at the budget, report the last window index and pass seen.
+- Before pushing: do NOT commit `results/calibration/ucmilp_ercot_d_2021/hourly/unit_hourly_2021.parquet` (gitignored by rule 15, ~80 MB): after the `git add`, run `git reset -q -- results/calibration/ucmilp_ercot_d_2021/hourly/unit_hourly_2021.parquet` (harmless if not staged). Everything else in the bundle is pushed. These MUST be in the pushed tree: dispatch/2021_P1.parquet, hourly/uc_schedule_2021.parquet, hourly/uc_uplift_2021.parquet, uc_solve_log_2021.json, hourly/unit_marginal_2021.parquet (`git ls-tree -r HEAD -- results/calibration/ucmilp_ercot_d_2021/hourly results/calibration/ucmilp_ercot_d_2021/dispatch`). A missing UC artifact is a STOP-and-report, not a repair. If GitHub rejects a file over 100 MB, report its name and size and stop.
+- An INFEASIBLE window, a "no incumbent" hard stop, a P1 "no feasible primal solution", or any traceback from the UC stage is a kill (PRECOMMIT §7): STOP, report the window index, hour range and the last 30 traceback lines verbatim; do not retry, do not push a half bundle.
+- REPORT additionally (GATESPEC §6.1 wall row): the `log_year_phase_timing` line(s) verbatim (data_prep / solve_p0 / markup / uc / solve_p1 / results_write / total), both passes if two are logged; from uc_solve_log_2021.json `summary`: windows, status counts, Σ MILP s, mean and p95 MILP s, nodes p50/p95, gap p95, time_limit_hits, infeasible, warm_accepted, integers per window, integer cluster count; the ratio total/(solve_p0+solve_p1); peak RSS GiB; the number of clusters with src == class-mean fallback (clusters[].src); NaN cell count in dispatch/2021_P1.parquet; unserved MWh.
+
+====================================================================================================
+
+SOLVE SHARD ucmilp-ercot-d-2022 — ERCOT backcast year 2022, ONE year, ONE container (rule 36). Model: Opus.
+DATA PROFILE: ercot
+
+HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
+1. `git rev-parse HEAD` == eab17188c75cd0332f9323ed3464c62bc0cd1848  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
+3. `python3 scripts/hydrate_data.py --profile ercot` then `python3 scripts/regenerate_clean.py --solve-profile ERCOT` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
+4. the recipe you will solve: `results/calibration/closeout_ercot_l1_span` replayed with unit_commitment_milp=true, ercot_gas_commitment_bridge=false; confirm by reading `results/calibration/closeout_ercot_l1_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; ercot_gas_commitment_bridge=false
+5. memory: the runner calls `scripts/lib/solve_container.ensure_solve_container` itself; never pass `--no-container-preflight`, never read `free` — report the `container preflight:` and `memory peak:` log lines
+
+SOLVE (sequential, this year only):
+  eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"
+  python3 scripts/replay_keeper.py results/calibration/closeout_ercot_l1_span --years 2022 --out-dir results/calibration/ucmilp_ercot_d_2022 --set unit_commitment_milp=true --set ercot_gas_commitment_bridge=false --note "ucmilp-ercot: UC A/B (Addendum D, uc-1.2 pin)"
+Budget: 680 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
+
+PUSH THE WHOLE BUNDLE (rule 34 (a) — a bundle that cannot back a promotion is a wasted solve):
+  git checkout -b claude/ucmilp-ercot-d-2022
+  printf '\n!results/calibration/ucmilp_ercot_d_2022/**\n' >> .gitignore
+  git add .gitignore && git add results/calibration/ucmilp_ercot_d_2022
+  git status --short      # MUST show nothing outside .gitignore and results/calibration/ucmilp_ercot_d_2022
+  git commit -m "ucmilp-ercot-d: ERCOT 2022 leg (results/calibration/ucmilp_ercot_d_2022)"
+  git push -u origin claude/ucmilp-ercot-d-2022     # on HTTP 408/500: git config http.version HTTP/1.1, retry
+`results/calibration/ucmilp_ercot_d_2022/dispatch/2022_P1.parquet` MUST be in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp_ercot_d_2022/dispatch`). A plain `git add` after the .gitignore negation — never `git add -f`, never `git add -A`, never `git add .`.
+
+FORBIDDEN, by name: git add -A / git add . ; any edit under src/ or scripts/ ; dashboard_add_run.py, build_manifest.py, build_status.py, prune_iso_runs.py, promote_keeper.py, anything under frontend/data/ (registration is the parent's job, once) ; opening a PR ; deleting any result (rule 31) ; solving any other year.
+
+REPORT in your final message, in numbers: HEAD sha; the `container preflight:` and `memory peak:` lines; LP wall time; for 2022: objective, total generation TWh by class, mean and p99 price per zone, unserved energy MWh; the commit sha and branch; `git ls-tree` count under results/calibration/ucmilp_ercot_d_2022; and any hard stop that fired. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
+
+LANE ADDENDA (UC-2-ERCOT, PRECOMMIT docs/records/ercot/ucmilp/PRECOMMIT-ucmilp-ercot-ab-2026-10-10.md §8, Addenda A–D):
+- If `python3 -c "import pyarrow, highspy"` fails, run `uv sync` once and use `uv run python` in place of `python3` (install is not repair).
+- The two --set fields are ONE logical delta: the UC gate refuses the keeper's ercot_gas_commitment_bridge (rule 19), so the disarm is the gate's substitution, never a second lever. No third --set, no uc_* value.
+- RUN THE SOLVE DETACHED. The shard tool kills a foreground process at 120 min, and this solve runs 4-11 h. Launch exactly (one line):
+    nohup bash -c 'eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"; python3 scripts/replay_keeper.py results/calibration/closeout_ercot_l1_span --years 2022 --out-dir results/calibration/ucmilp_ercot_d_2022 --set unit_commitment_milp=true --set ercot_gas_commitment_bridge=false --note "ucmilp-ercot: UC A/B (Addendum D, uc-1.2 pin)"; echo "EXIT $?"' > /tmp/solve_2022.log 2>&1 &
+  then watch /tmp/solve_2022.log with a Monitor (or short repeated tail checks) that you re-arm until the line "EXIT <code>" appears. KEEP THIS SESSION ACTIVE until the process exits: an idle session's container is recycled and the solve dies with it (the first 2021 leg was lost that way). Never block a single tool call for more than a few minutes.
+- Expected wall (uc-1.2, ERCOT 2020 gate at the pre-merge head 7688a68a): ERCOT solves P1 twice (adaptive expectation) and the UC stage runs in BOTH passes — UC pass 1 6,994 s, UC pass 2 7,030 s, P1 244 / 229 s, about 249 min in total; 61 integer clusters (the 11 yard-pinned coal clusters carry no integer). The stage logs one INFO line per window (index, hours, status, MILP s, nodes, gap): if you stop at the budget, report the last window index and pass seen.
+- Before pushing: do NOT commit `results/calibration/ucmilp_ercot_d_2022/hourly/unit_hourly_2022.parquet` (gitignored by rule 15, ~80 MB): after the `git add`, run `git reset -q -- results/calibration/ucmilp_ercot_d_2022/hourly/unit_hourly_2022.parquet` (harmless if not staged). Everything else in the bundle is pushed. These MUST be in the pushed tree: dispatch/2022_P1.parquet, hourly/uc_schedule_2022.parquet, hourly/uc_uplift_2022.parquet, uc_solve_log_2022.json, hourly/unit_marginal_2022.parquet (`git ls-tree -r HEAD -- results/calibration/ucmilp_ercot_d_2022/hourly results/calibration/ucmilp_ercot_d_2022/dispatch`). A missing UC artifact is a STOP-and-report, not a repair. If GitHub rejects a file over 100 MB, report its name and size and stop.
+- An INFEASIBLE window, a "no incumbent" hard stop, a P1 "no feasible primal solution", or any traceback from the UC stage is a kill (PRECOMMIT §7): STOP, report the window index, hour range and the last 30 traceback lines verbatim; do not retry, do not push a half bundle.
+- REPORT additionally (GATESPEC §6.1 wall row): the `log_year_phase_timing` line(s) verbatim (data_prep / solve_p0 / markup / uc / solve_p1 / results_write / total), both passes if two are logged; from uc_solve_log_2022.json `summary`: windows, status counts, Σ MILP s, mean and p95 MILP s, nodes p50/p95, gap p95, time_limit_hits, infeasible, warm_accepted, integers per window, integer cluster count; the ratio total/(solve_p0+solve_p1); peak RSS GiB; the number of clusters with src == class-mean fallback (clusters[].src); NaN cell count in dispatch/2022_P1.parquet; unserved MWh.
+
+====================================================================================================
+
+SOLVE SHARD ucmilp-ercot-d-2023 — ERCOT backcast year 2023, ONE year, ONE container (rule 36). Model: Opus.
+DATA PROFILE: ercot
+
+HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
+1. `git rev-parse HEAD` == eab17188c75cd0332f9323ed3464c62bc0cd1848  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
+3. `python3 scripts/hydrate_data.py --profile ercot` then `python3 scripts/regenerate_clean.py --solve-profile ERCOT` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
+4. the recipe you will solve: `results/calibration/closeout_ercot_l1_span` replayed with unit_commitment_milp=true, ercot_gas_commitment_bridge=false; confirm by reading `results/calibration/closeout_ercot_l1_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; ercot_gas_commitment_bridge=false
+5. memory: the runner calls `scripts/lib/solve_container.ensure_solve_container` itself; never pass `--no-container-preflight`, never read `free` — report the `container preflight:` and `memory peak:` log lines
+
+SOLVE (sequential, this year only):
+  eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"
+  python3 scripts/replay_keeper.py results/calibration/closeout_ercot_l1_span --years 2023 --out-dir results/calibration/ucmilp_ercot_d_2023 --set unit_commitment_milp=true --set ercot_gas_commitment_bridge=false --note "ucmilp-ercot: UC A/B (Addendum D, uc-1.2 pin)"
+Budget: 680 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
+
+PUSH THE WHOLE BUNDLE (rule 34 (a) — a bundle that cannot back a promotion is a wasted solve):
+  git checkout -b claude/ucmilp-ercot-d-2023
+  printf '\n!results/calibration/ucmilp_ercot_d_2023/**\n' >> .gitignore
+  git add .gitignore && git add results/calibration/ucmilp_ercot_d_2023
+  git status --short      # MUST show nothing outside .gitignore and results/calibration/ucmilp_ercot_d_2023
+  git commit -m "ucmilp-ercot-d: ERCOT 2023 leg (results/calibration/ucmilp_ercot_d_2023)"
+  git push -u origin claude/ucmilp-ercot-d-2023     # on HTTP 408/500: git config http.version HTTP/1.1, retry
+`results/calibration/ucmilp_ercot_d_2023/dispatch/2023_P1.parquet` MUST be in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp_ercot_d_2023/dispatch`). A plain `git add` after the .gitignore negation — never `git add -f`, never `git add -A`, never `git add .`.
+
+FORBIDDEN, by name: git add -A / git add . ; any edit under src/ or scripts/ ; dashboard_add_run.py, build_manifest.py, build_status.py, prune_iso_runs.py, promote_keeper.py, anything under frontend/data/ (registration is the parent's job, once) ; opening a PR ; deleting any result (rule 31) ; solving any other year.
+
+REPORT in your final message, in numbers: HEAD sha; the `container preflight:` and `memory peak:` lines; LP wall time; for 2023: objective, total generation TWh by class, mean and p99 price per zone, unserved energy MWh; the commit sha and branch; `git ls-tree` count under results/calibration/ucmilp_ercot_d_2023; and any hard stop that fired. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
+
+LANE ADDENDA (UC-2-ERCOT, PRECOMMIT docs/records/ercot/ucmilp/PRECOMMIT-ucmilp-ercot-ab-2026-10-10.md §8, Addenda A–D):
+- If `python3 -c "import pyarrow, highspy"` fails, run `uv sync` once and use `uv run python` in place of `python3` (install is not repair).
+- The two --set fields are ONE logical delta: the UC gate refuses the keeper's ercot_gas_commitment_bridge (rule 19), so the disarm is the gate's substitution, never a second lever. No third --set, no uc_* value.
+- RUN THE SOLVE DETACHED. The shard tool kills a foreground process at 120 min, and this solve runs 4-11 h. Launch exactly (one line):
+    nohup bash -c 'eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"; python3 scripts/replay_keeper.py results/calibration/closeout_ercot_l1_span --years 2023 --out-dir results/calibration/ucmilp_ercot_d_2023 --set unit_commitment_milp=true --set ercot_gas_commitment_bridge=false --note "ucmilp-ercot: UC A/B (Addendum D, uc-1.2 pin)"; echo "EXIT $?"' > /tmp/solve_2023.log 2>&1 &
+  then watch /tmp/solve_2023.log with a Monitor (or short repeated tail checks) that you re-arm until the line "EXIT <code>" appears. KEEP THIS SESSION ACTIVE until the process exits: an idle session's container is recycled and the solve dies with it (the first 2021 leg was lost that way). Never block a single tool call for more than a few minutes.
+- Expected wall (uc-1.2, ERCOT 2020 gate at the pre-merge head 7688a68a): ERCOT solves P1 twice (adaptive expectation) and the UC stage runs in BOTH passes — UC pass 1 6,994 s, UC pass 2 7,030 s, P1 244 / 229 s, about 249 min in total; 61 integer clusters (the 11 yard-pinned coal clusters carry no integer). The stage logs one INFO line per window (index, hours, status, MILP s, nodes, gap): if you stop at the budget, report the last window index and pass seen.
+- Before pushing: do NOT commit `results/calibration/ucmilp_ercot_d_2023/hourly/unit_hourly_2023.parquet` (gitignored by rule 15, ~80 MB): after the `git add`, run `git reset -q -- results/calibration/ucmilp_ercot_d_2023/hourly/unit_hourly_2023.parquet` (harmless if not staged). Everything else in the bundle is pushed. These MUST be in the pushed tree: dispatch/2023_P1.parquet, hourly/uc_schedule_2023.parquet, hourly/uc_uplift_2023.parquet, uc_solve_log_2023.json, hourly/unit_marginal_2023.parquet (`git ls-tree -r HEAD -- results/calibration/ucmilp_ercot_d_2023/hourly results/calibration/ucmilp_ercot_d_2023/dispatch`). A missing UC artifact is a STOP-and-report, not a repair. If GitHub rejects a file over 100 MB, report its name and size and stop.
+- An INFEASIBLE window, a "no incumbent" hard stop, a P1 "no feasible primal solution", or any traceback from the UC stage is a kill (PRECOMMIT §7): STOP, report the window index, hour range and the last 30 traceback lines verbatim; do not retry, do not push a half bundle.
+- REPORT additionally (GATESPEC §6.1 wall row): the `log_year_phase_timing` line(s) verbatim (data_prep / solve_p0 / markup / uc / solve_p1 / results_write / total), both passes if two are logged; from uc_solve_log_2023.json `summary`: windows, status counts, Σ MILP s, mean and p95 MILP s, nodes p50/p95, gap p95, time_limit_hits, infeasible, warm_accepted, integers per window, integer cluster count; the ratio total/(solve_p0+solve_p1); peak RSS GiB; the number of clusters with src == class-mean fallback (clusters[].src); NaN cell count in dispatch/2023_P1.parquet; unserved MWh.
+
+====================================================================================================
+

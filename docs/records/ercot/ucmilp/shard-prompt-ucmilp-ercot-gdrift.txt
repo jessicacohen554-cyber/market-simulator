@@ -1,0 +1,37 @@
+ZERO-LP PROBE SHARD ucmilp-ercot-gdrift — ERCOT G-DRIFT identity (rule 29(b)) of the keeper basis 106d6bb7 vs the A/B pin 2f872a62, ONE container, NO LP. Model: Opus.
+Chartered by lane UC-2-ERCOT (branch claude/ucmilp-2-ercot-ab-e4w1) under UC-DESK. The probe exists at the pin: scripts/probes/_closeout_ercot_w6_gdrift_identity.py
+(two fleet_only rebuilds per year of the ERCOT keeper closeout_ercot_l1_span, market_sim imported from a sparse worktree at the keeper sha in one arm and from HEAD in the other,
+every LP-visible array differenced by sha256). It solves nothing.
+DATA PROFILE: ercot
+
+HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
+1. `git rev-parse HEAD` == 2f872a62a7cccadb6800555c11a73745dcdb89a4  (never pull, rebase, merge, "sync")
+2. `python3 scripts/prepare_solve_container.py` FIRST (R-50); report `before:` / `swap:` (a fleet rebuild of ERCOT is several GB)
+3. `python3 scripts/hydrate_data.py --profile ercot` then `python3 scripts/regenerate_clean.py --solve-profile ERCOT`; both exit 0
+   (if `python3 -c "import pyarrow, highspy"` fails, run `uv sync` once and use `uv run python` in place of `python3` below — install is not repair)
+4. the keeper sha must be an object in this clone: `git cat-file -t 106d6bb737488f4086151907b4dbc4a45ee17306` prints `commit`; if not,
+   run EXACTLY `git fetch --filter=blob:none --depth=1 origin 106d6bb737488f4086151907b4dbc4a45ee17306` (blobless: never a plain fetch — a plain
+   fetch of that sha pulls ~5 GB of data blobs and fills the disk) and re-check. This does not move HEAD.
+5. `python3 scripts/probes/_closeout_ercot_w6_gdrift_identity.py --help` runs at this SHA and lists --keeper-sha and --out
+
+RUN (this only):
+  eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"
+  PYTHONPATH=.:src python3 scripts/probes/_closeout_ercot_w6_gdrift_identity.py \
+      --keeper-sha 106d6bb737488f4086151907b4dbc4a45ee17306 \
+      --out results/phase0/ercot/_ucmilp_ercot_gdrift_identity.json
+Budget: 60 minutes. The probe prints `ScenarioConfig:` / `constants:` / the per-year array verdict and writes the JSON. At the budget with no JSON:
+STOP and report the stdout/stderr tail. If the probe's keeper arm fails to import because the keeper sha predates a module the probe's CHILD
+imports (an AttributeError/ImportError inside the `[keeper]` arm), STOP and report the traceback verbatim — do not patch the probe.
+
+PUSH THE RESULT (one small JSON):
+  git checkout -b claude/ucmilp-ercot-gdrift
+  git add results/phase0/ercot/_ucmilp_ercot_gdrift_identity.json
+  git status --short     # MUST show nothing else (results/phase0/ercot is tracked; no .gitignore edit needed)
+  git commit -m "ucmilp-ercot: G-DRIFT identity probe, keeper 106d6bb7 vs pin 2f872a62" && git push -u origin claude/ucmilp-ercot-gdrift
+
+FORBIDDEN: git add -A / git add . ; any edit under src/ or scripts/ ; any solve (run_calibration_full.py, replay_keeper.py, bench_uc_ladder.py);
+any dashboard/registration script ; anything under frontend/data/ ; opening a PR ; deleting any result ; any other ISO.
+
+REPORT in your final message: HEAD sha; the preflight lines; the probe's printed verdict lines verbatim (ScenarioConfig existing defaults
+CHANGED / added; constants CHANGED / added; per-year "ALL LP INPUTS BIT-IDENTICAL" or the mismatch list); the JSON path; the commit sha and
+branch; any hard stop that fired. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
