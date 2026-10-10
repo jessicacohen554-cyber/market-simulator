@@ -55,9 +55,36 @@ year's first window (which carries no history), so a yield path would be dead co
 | Could guard reach be short? | No: a stop at window hour `τ ≤ T_w − 1` reaches `h < τ + DT`; the guard covers `h' < DT − 1` past `t1`, i.e. exactly the reach |
 | Why did January 2020 pass (L1)? | Window 0 carries no history; the collision needs a stop kept by an earlier window |
 
-## 2. Shard evidence
+## 2. Shard evidence — the reproduction
 
-(filled from the shards; see §5)
+**MISO 2021, engine uc-1.1 + the new diagnostics** (shard `session_018JgYx4Boi5ynK6htk2xt6d`
+@ `e8507b79`, `bench_uc_ladder.py --rung L2 --months 1 --rolling --dump-dir`; branch
+`claude/ucfix2-repro-miso-2021` @ `f33a0ab3`, `l2_infeasible.json` and
+`dump/base/window_30_{diagnosis.json,state.npz}`; capture ~22 min, cgroup peak 13.36 GiB +
+3 GiB swap). Windows 0–29 solved; window 30 raised, verbatim:
+
+```
+UC window 30 [720, 756) solve ended Infeasible with no feasible incumbent (147708 columns,
+31068 rows, 161 integer clusters; solved as 147708 x 31068); LP relaxation: Infeasible;
+a-priori contradictory rows: min_down=2; carried starts above n: 0; floor above min-down: 2
+— floor above min-down at plant 6823 coal (n=1, dt=16, pinned 3/3 members, hours [12, 13])
+```
+
+The one flagged cluster (k = 89) is plant **6823**, coal, `n = 1`, `dt = 16`, measured
+`ut = 91`, and **all 3 members are pinned by the yard budget**. Its carried `hist_w = 1`
+through window hour 14 means the unit was stopped at hour 719, kept by window 29 [696, 732).
+The window-30 bounds read:
+
+| Window hour | 8–11 | **12–13** | 14 | 15 | 16–35 |
+|---|---|---|---|---|---|
+| `u_lower` / `u_upper` | 0 / 0 | **1 / 1** | 0 / 0 | 0 / 1 | 1 / 1 |
+| `hist_w` | 1 | **1** | 1 | 0 | 0 |
+
+The P0 dispatch this cluster is pinned to blips on for two hours (abs. 732–733) inside the
+unit's 16-hour min-down; P0 is an LP and carries no min-down. Window 29's guard covered
+exactly those hours (`[732, 747)`) but read them on the unpinned fleet, so it saw no floor
+and kept the stop. Under uc-1.2 the same guard reads `u ≥ 1` at 732–733 (row (a) at the
+pinned availability) and refuses any stop of plant 6823 in window 29 from hour 717 on.
 
 ## 3. Tests
 
