@@ -137,6 +137,7 @@ def main(argv: list[str] | None = None) -> int:
             out,
             solve=not args.no_solve,
             bundle=Path(args.bundle) if args.bundle else None,
+            overrides=overrides,
         )
         if args.save_capture:
             cap.save(out / f"capture_{args.iso}_{args.year}.pkl")
