@@ -522,6 +522,17 @@ class UcStage:
                     "paired": paired,
                 }
             )
+            logger.info(
+                "UC window %d [%d, %d): %s, MILP %.2f s, %d nodes, gap %.2e%s",
+                len(windows) - 1,
+                t0,
+                t1,
+                result.status,
+                result.milp_s,
+                int(result.nodes),
+                float(result.gap),
+                ", time limit" if result.time_limit_hit else "",
+            )
             prev = result
             t0 = kept_to
             while next_month < len(month_ends) and kept_to >= month_ends[next_month]:

@@ -177,7 +177,8 @@ class SlimReduction:
         Fixed columns take their values; a slim column with one member hands
         it its value; a merged column is split among its members in index
         order — each member at its lower bound, the remainder filled member
-        by member up to its upper bound (a feasible split exists whenever
+        by member up to its upper bound, members with no finite upper bound
+        last (a feasible split exists whenever
         the slim value lies within the slim bounds; a solver-tolerance excess
         lands on the last member).
         """
@@ -197,13 +198,20 @@ class SlimReduction:
                 np.isfinite(self.member_lower[multi]), self.member_lower[multi], 0.0
             )
             cap = self.member_upper[multi] - lo
-            order = np.lexsort((m_cols, m_g))
+            # A member with no finite upper bound (cap = +inf) is filled LAST in
+            # its group and kept out of the running sum: an inf in the cumsum
+            # turned every later member of every later group into inf - inf =
+            # NaN (UC-1-FIX-2; ERCOT windows, RuntimeWarning at this line).
+            unbounded = ~np.isfinite(cap)
+            order = np.lexsort((m_cols, unbounded, m_g))
             m_cols, m_g, lo, cap = m_cols[order], m_g[order], lo[order], cap[order]
+            unbounded = unbounded[order]
             starts = np.flatnonzero(np.concatenate([[True], m_g[1:] != m_g[:-1]]))
             sizes = np.diff(np.append(starts, m_g.size))
             resid = xs[m_g[starts]] - np.add.reduceat(lo, starts)
             resid_m = np.repeat(resid, sizes)
-            cum_before = np.cumsum(cap) - cap
+            cap_sum = np.where(unbounded, 0.0, cap)
+            cum_before = np.cumsum(cap_sum) - cap_sum
             before = cum_before - np.repeat(cum_before[starts], sizes)
             take = np.clip(resid_m - before, 0.0, cap)
             last = np.append(starts[1:], m_g.size) - 1
