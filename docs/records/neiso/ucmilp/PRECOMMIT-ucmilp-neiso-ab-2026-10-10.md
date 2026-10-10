@@ -314,3 +314,12 @@ read, archived).
 = 228 min; it is NOT applied — Addendum C fixed 162 ahead of any uc-1.2 number, and on uc-1.1 the same extrapolation over-read actual years by
 2–4× (124 min projected vs 32–80 min measured). A shard reaching 162 min stops and reports which months completed (not a kill; recorded).
 Seven span shards launch now with the prompts committed at `bf80c04e`.
+
+## Addendum E (2026-10-10 20:02Z, while the legs run; no leg result read except 2020's wall) — budget restored to the charter rule: 228 min
+
+The charter fixes the shard budget as *"ceil(1.3 × the L1-month extrapolation)"*. Applied to the uc-1.2 gate (Addendum D) that is **228 min**;
+Addendum C/D kept 162 min on the lane's own judgement (uc-1.1 extrapolations over-read actual walls). The 2023 shard reports 52/365 windows at
+~35 min, pacing past 162. The budget is a wall-clock cost cap, not a reading, bar, kill or solver setting — it changes no optimum and no score —
+so the lane restores the charter's rule rather than spend a second shard relaunching a year that would otherwise stop at 162 min. Sent to
+every running shard at 20:02Z: *"Budget raised to 228 min (charter rule); nothing else changes."* The one completed leg (2020, 33 min) is
+unaffected. A leg that still reaches 228 min stops and reports its completed months (recorded, not a kill).
