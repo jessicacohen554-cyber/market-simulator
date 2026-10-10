@@ -134,8 +134,8 @@ uc-1.2 run clears the window that killed it. Defect 5 is closed.
 |---|---|---|---|---|---|---|---|
 | MISO 2021 | **365/365 Optimal** (w30, w129 Optimal) | 0 | 6.2 / 11.4 / 37.4 | **161 → 75** (86 all-budget-pinned demoted) | solved, objective $6.754 bn | **0** | `claude/ucfix2-gate-miso-2021` @ `37b8eeab` (`dispatch/2021_P1.parquet`, 102.7 MB, over GitHub's limit, held in the shard container only) |
 | NEISO 2021 | **365/365 Optimal** (w259 Optimal) | 0 | 8.7 / 36.9 / 111.6 | **40 → 22** (18 demoted: yard coal and oil-budget dual-fuel ST/CT) | solved, objective $2.296 bn | **0** | `claude/ucfix2-gate-neiso-2021` @ `b756026e` (full bundle) |
-| ERCOT 2020 | pending | | | | | | |
-| ERCOT 2019 | pending | | | | | | |
+| ERCOT 2020 | pass 1 (pre-slim-fix head `e4a57362`, from the log; the run was killed at the shard tool's 120-min ceiling inside UC pass 2): **365 windows solved** (w118 cleared: the stage raises on any infeasible window), 0 TL, MILP mean 14.6 s, nodes p50 17 | 0 | 14.6 / – / – | 61 integer after demotion (11 all-pinned demoted) | pass-1 P1 solved, objective $17.74 bn vs P0 $1.48 bn (ratio unexplained until unserved MWh is reported) | **pending**: end-to-end rerun at the PR head `7688a68a`, detached | – |
+| ERCOT 2019 | pending (same 120-min ceiling) | | | | | | |
 
 The desk ruled the demotion GENERIC, not coal-only: every `BUDGET_GEN_IDX_KEYS` row is pinned
 to P0 inside a window, so the UC never decided its commitment, whatever the family. Each
@@ -143,6 +143,27 @@ A/B's D-6 card states how many clusters the UC acts on (`integer_set_size` of `i
 NEISO 2021's `legitimacy_diagnostics` read FAIL on D-1 (COAL_PRB diurnal shape) and D-4 (plant 54605's
 CHP floor binding outside its window). These are calibration readings for UC-2-NEISO, not
 engine-gate items.
+
+### 5.0a Two engine items found while gating (in this PR)
+
+**Slim expand NaN (`model/uc/slim.py`, `SlimReduction.expand`).** A merged slim column is split
+among its members with a running `cumsum` of member capacities over ALL merged groups. A member
+with no finite upper bound (`cap = +inf`) turned every later member, in its own group and in
+every later group, into `inf - inf = NaN`. On ERCOT every window warned at `slim.py:206`, and the
+NaN could reach the kept dispatch (`dispatch_prev`) and the next window's ramp-boundary rows.
+Fix: unbounded members sort last in their group and stay out of the running sum. Test:
+`test_expand_fills_an_unbounded_member_last_and_never_returns_nan`, which raises
+`FloatingPointError` on the old code. UC-DESK ruled it into this PR as a correctness defect on
+the arm path of every lane.
+
+**Per-window log line.** `UcStage.run` logs one INFO line per window (index, hours, status,
+MILP s, nodes, gap), at UC-2-ERCOT's request.
+
+**Cost finding (not changed here).** ERCOT's adaptive-expectation step re-solves P1 a second
+time, and the second pass reruns the whole UC stage: UC pass 1 took 5,485 s, so the full year
+is ≈195 min, about 2× the UC wall. Whether pass 2's integer schedule differs from pass 1's is
+measured by the ERCOT 2020 end-to-end gate (§5.0). If the schedules are identical, reusing the
+pass-1 schedule is a later speed lever.
 
 ### 5.1 A second, separate defect at the UC → P1 seam (MISO; open, not fixed here)
 
