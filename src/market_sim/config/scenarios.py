@@ -2259,6 +2259,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # distinct key. SHARED field -- very end, per HOUSE-3. Registered IN THE
     # SAME COMMIT as the field (the nyiso-119 discipline).
     "coal_sync_ensemble_level",
+    # UC-2-SPP-B (2026-10-10, owner ruling D-5b): the coal synchronization
+    # floor RELEASE, default off, registered IN THE SAME COMMIT as the field
+    # (the nyiso-119 discipline). Byte-identical off by construction: the
+    # flag is read only in arrays.py's _compose_min_gen_floors (coal_sync_any
+    # gate), which takes the historical branch when it is False.
+    "coal_sync_floor_release",
     # pjm-h16: the whole-operating-day commitment grain for the COAL
     # synchronization window (default off) -- the coal-seam sibling of
     # mustrun_window_commitment_grain above. Dropped from the hash at its
@@ -3341,6 +3347,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by SPP-71 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "coal_sync_ensemble_level": "False",
+    # Added by UC-2-SPP-B WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "coal_sync_floor_release": "False",
     # Added by miso-273 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "wefor_residual_short_screened_coal": "False",
@@ -13107,6 +13116,38 @@ class ScenarioConfig:
     # 2019-2025, median 1.045. Record:
     # docs/records/spp/PRECOMMIT-spp-71-ensemble-sync-floor-2026-09-22.md.
     coal_sync_ensemble_level: bool = False
+    # COAL SYNCHRONIZATION FLOOR RELEASE (lane UC-2-SPP-B, owner ruling D-5b
+    # 2026-10-10, decision card verbatim "Add a clean floor-off switch
+    # (Recommended)"). GATED, default False, byte-identical off: the flag is
+    # read at exactly ONE site, data/fleet/arrays.py::_compose_min_gen_floors,
+    # where ``coal_sync_any`` becomes False under it, so off no array, row or
+    # column moves. When True the step-3a synchronization FORCING is removed:
+    # no ``MECH_COAL_MUSTRUN`` min_gen floor is composed and the D-2
+    # ``coal_mustrun`` row vanishes -- while EVERYTHING ELSE the band carries
+    # stays as ``coal_sync_srmc_tranche`` built it: the ``_mustrun`` / ``_sync``
+    # SPLIT, its PRICING (fuel-free contracted share, full-SRMC spot share) and
+    # the band's AVAILABILITY BASIS (the ``coal_sync_pmin_mw`` stamp assembly.py
+    # writes is untouched, so generators_to_fleet_arrays still spares the band
+    # the statistical WEFOR / maintenance derate; measured on the SPP keeper's
+    # 2019 recipe, zeroing the stamp instead would have derated the 43 coal
+    # min-load rows by ~5 pp and moved 214 MW-mean of coal availability -- a
+    # second delta). WHY A SEPARATE SWITCH rather than
+    # ``coal_sync_srmc_tranche=False``: turning the
+    # tranche off also merges the spot ``_sync`` band back into the fuel-free
+    # ``_mustrun`` band -- in SPP 735-798 MW of PRB re-priced from $19-23 to
+    # $4.2-4.5/MWh, crossing below the cheapest CC tranche in 82-87 % of hours
+    # in the low-gas years -- a second delta that GATESPEC section 5's one-delta
+    # A/B rule forbids (PRECOMMIT-ucmilp-spp-b-2026-10-09.md section 1 and
+    # Addendum B). PURPOSE: the UC-2 floors-off arm (unit_commitment_milp=true
+    # + st_gas_mustrun_per_plant=false + this), where the MILP stage's own
+    # integer commitment (MECH 28, measured min-load mlf / min-up / min-down /
+    # no-load) is the ONE mechanism carrying coal's commitment state (rule 19
+    # [R-ONE-MECH]); it is a mechanism REMOVAL and adds none. Rule 13: no
+    # measured outcome enters; rule 21: zero free parameters (a bool). Rule 25:
+    # shared field (the sync floor is shared), armed per run only
+    # (replay_keeper --set); no ISO arms it in iso_configs. Registered in
+    # _CACHE_KEY_OPTIONAL_FIELDS at its declared False in the same commit.
+    coal_sync_floor_release: bool = False
 
     # COAL MUST-RUN REQUIRES A MEASURED ROW (pjm-h14). GATED, default False, so
     # every committed keeper in every ISO is byte-identical unarmed
@@ -25847,6 +25888,7 @@ TIER_TAGS: dict[str, int] = {
     "coal_lignite_mustrun_override": 3,
     "coal_prb_mustrun_override": 3,
     "coal_mustrun_per_plant": 3,
+    "coal_sync_floor_release": 3,
     "ercot_coal_min_config_floor": 3,
     "ct_mustrun_per_plant": 3,
     "ct_mustrun_floor_frac": 3,
