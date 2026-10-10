@@ -386,7 +386,13 @@ class UcStage:
             t1 = min(t0 + W + L, T)
             t_w0 = time.perf_counter()
             inputs = slice_window_inputs(
-                fleet_in, self.demand, self.dispatch_kwargs, t0, t1, p0_dispatch
+                fleet_in,
+                self.demand,
+                self.dispatch_kwargs,
+                t0,
+                t1,
+                p0_dispatch,
+                p0_flows=getattr(r0, "flows", None),
             )
             state = (pin if pin is not None and t0 > t_start else sched).state_for(
                 t0,

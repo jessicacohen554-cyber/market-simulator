@@ -265,6 +265,9 @@ def _relaxation_as_p0(cap: YearCapture, t0: int, t1: int):
     if res.storage_soc is not None:
         r0.storage_soc = np.zeros((res.storage_soc.shape[0], T))
         r0.storage_soc[:, t0:t1] = res.storage_soc
+    if getattr(res, "flows", None) is not None:
+        r0.flows = np.zeros((res.flows.shape[0], T))
+        r0.flows[:, t0:t1] = res.flows
     return r0
 
 
@@ -292,7 +295,13 @@ def rung_l1(
     p, k = stage.params, stage.int_idx
     p0 = np.asarray(r0.dispatch, dtype=float)
     inputs = slice_window_inputs(
-        cap.fleet_arrays, cap.demand, cap.dispatch_kwargs, t0, t1, p0
+        cap.fleet_arrays,
+        cap.demand,
+        cap.dispatch_kwargs,
+        t0,
+        t1,
+        p0,
+        p0_flows=getattr(r0, "flows", None),
     )
     bid = np.asarray(cap.mc_bid if cap.mc_bid is not None else cap.mc_base, dtype=float)
     mc_w = bid.copy()
