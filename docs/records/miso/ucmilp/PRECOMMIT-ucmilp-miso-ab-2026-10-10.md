@@ -350,3 +350,26 @@ need vs carried min-down / ceiling). No D-5 re-ruling — the arm stays as decla
 So: no `--set` changes, no floor switched off, no new shard; 2019 / 2022 / 2024 run to their own stop and are recorded; the
 relaunch happens at the merge SHA UC-DESK names, under Addendum D's rule (pin moves, nothing else), after the Addendum-C-style
 zero-LP read of what moved between the pins.
+
+**Addendum D, closed (03:20Z) — 7 of 7 MISO years stop on the same signature at the pin.** The three remaining shards reported;
+all seven are archived (rule 33; nothing pushed by any shard, nothing to fetch):
+
+| year | window (hours; calendar) | exception tail (verbatim) | census (clusters / integer / rows) | P0 s |
+|---|---|---|---|---|
+| 2019 | 186 [4464, 4500); 5–6 Jul | `… ceiling=3, min_down=3; carried starts above n: 0; floor above min-down: 3` | 338 / 167 / 1,251 | 488 |
+| 2020 | 129 [3096, 3132); 10–11 May | `… min_down=1; carried starts above n: 0; floor above min-down: 1` | 336 / 164 / 1,231 | 473 |
+| 2021 | 30 [720, 756); 31 Jan–1 Feb | `… min_down=2; carried starts above n: 0; floor above min-down: 2` | 330 / 161 / 1,211 | 702 |
+| 2022 | 190 [4560, 4596); 9–10 Jul | `… ceiling=2, min_down=2; carried starts above n: 0; floor above min-down: 2` | 328 / 157 / 1,185 | 1,706 |
+| 2023 | 227 [5448, 5484); 16–17 Aug | `… ceiling=2, min_down=2; carried starts above n: 0; floor above min-down: 2` | 322 / 147 / 1,127 | 385 |
+| 2024 | 312 [7488, 7524); 8–9 Nov | `… ceiling=1, min_down=1; carried starts above n: 0; floor above min-down: 1` | 320 / 144 / 1,134 | 363 |
+| 2025 | 135 [3240, 3276); 16–17 May | `… ceiling=2, min_down=2; carried starts above n: 0; floor above min-down: 2` | 316 / 139 / 1,097 | 515 |
+
+Every exception reads `LP relaxation: Infeasible` and `carried starts above n: 0`; the count of "floor above min-down" clusters equals
+the count of contradictory min-down rows in every year (1–3), and where ceiling rows also contradict their count matches too. The
+collision is year-round (January to November), so it is not a seasonal floor window. Shards wrote nothing to the log between
+`UC stage prepared` and the traceback (the engine has no per-window progress line), so the time-to-failure is only bounded: 36 min
+(2020, window 129) to 62 min (2022, window 190, with a 1,706-s P0). Memory: every container at 18.4 GiB ceiling+swap, UC-stage RSS
+~10 GB, no OOM kill. Shard sessions, all archived: 2019 `session_011btcKiUP9SV8CwD1frxESQ`, 2020 `session_01MaGZYCkVzevC6MrhZowr2M`,
+2021 `session_01TMV8TKm9EC9nUVX5RsiB5j`, 2022 `session_01PyziKkUq9u83cKMQz1SzoD`, 2023 `session_015qt5jGxEdY529gMRR8e1YG`,
+2024 `session_01RkDeuTxQWJ4ccMUNPcHwn9`, 2025 `session_01TNU8C6Be2nVyEvcZEpgu2e`. Cost of the attempt: 7 containers, 29–62 min each,
+plus the two bench containers. No span exists; nothing is scored; the matrix cell stays `U` until the relaunch (Addendum E).
