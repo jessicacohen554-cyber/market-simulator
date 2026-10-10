@@ -264,3 +264,40 @@ def test_legacy_bin_rows_are_singleton_clusters_with_a_capped_floor(uc_params_fr
         k, p.member_gen[np.argsort(p.member_cluster)], floor, cap, mc
     )
     np.testing.assert_array_equal(out[:, 0], [50.0, 30.0, 50.0])
+
+
+def test_digest_encodes_sparse_matrices_by_value():
+    import hashlib
+
+    import scipy.sparse as sps
+
+    from market_sim.pipeline.uc import _digest_update
+
+    def dig(x):
+        h, opaque = hashlib.blake2b(digest_size=16), []
+        _digest_update(h, {"m": x}, opaque)
+        return h.hexdigest(), opaque
+
+    a = sps.csr_matrix(np.array([[1.0, 0.0], [0.0, 2.0]]))
+    b = sps.csr_matrix(np.array([[3.0, 0.0], [0.0, 2.0]]))  # same shape and nnz
+    assert dig(a)[1] == [] and dig(a)[0] == dig(a.copy())[0]
+    assert dig(a)[0] != dig(b)[0]
+
+
+def test_an_opaque_input_forfeits_reuse(uc_params_frame, uc_results_root, monkeypatch):
+    import market_sim.pipeline.uc as puc
+
+    real = puc.uc_input_digest
+
+    def with_opaque(stage, fleet_in, mc_bid):
+        digest, _ = real(stage, fleet_in, mc_bid)
+        return digest, ["Opaque"]
+
+    monkeypatch.setattr(puc, "uc_input_digest", with_opaque)
+    gens, fa, demand, mc, dk = _tranche_fleet()
+    run_energy_solve(gens, fa, demand, mc, dk, _cfg())
+    run_energy_solve(gens, fa, demand, mc, dk, _cfg())
+    s1, s2 = puc.take_uc_stages()[-2:]
+    assert s1.log["engine"]["input_digest"] == s2.log["engine"]["input_digest"]
+    assert s2.log["engine"]["reused_schedule"] is None
+    assert s2.schedule is not s1.schedule

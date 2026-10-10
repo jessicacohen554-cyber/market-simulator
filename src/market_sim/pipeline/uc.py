@@ -54,6 +54,7 @@ from typing import Callable, Optional
 
 import numpy as np
 import pandas as pd
+import scipy.sparse as sp
 
 from market_sim.config.paths import RESULTS_ROOT
 from market_sim.data.fleet import FleetArrays
@@ -116,10 +117,11 @@ _LAST_SOLVED: dict = {}
 def _digest_update(h, obj, opaque: list[str]) -> None:
     """Feed ``obj`` into hash ``h`` by value (arrays by dtype, shape and bytes).
 
-    Containers and dataclasses recurse; a ``FleetArrays`` / kwargs value of a
-    type with no by-value encoding is fed its type name and ``repr`` and named
-    in ``opaque`` — a ``repr`` carrying an object address makes the digest
-    unique, so such an input can only forfeit reuse, never fake it.
+    Containers and dataclasses recurse; a scipy sparse matrix is fed by value
+    (CSR ``data`` / ``indices`` / ``indptr`` / shape). Any other type has no
+    by-value encoding: it is named in ``opaque`` and the caller FORFEITS reuse
+    (a ``repr`` need not distinguish two different objects, so it can never
+    certify equal inputs).
     """
     if obj is None or isinstance(obj, (bool, int, float, str, np.generic)):
         h.update(f"{type(obj).__name__}:{obj!r};".encode())
@@ -147,6 +149,11 @@ def _digest_update(h, obj, opaque: list[str]) -> None:
         for f in dataclasses.fields(obj):
             _digest_update(h, f.name, opaque)
             _digest_update(h, getattr(obj, f.name), opaque)
+    elif sp.issparse(obj):
+        m = sp.csr_matrix(obj)
+        h.update(f"sp:{m.dtype.str}:{m.shape};".encode())
+        for a in (m.data, m.indices, m.indptr):
+            _digest_update(h, np.asarray(a), opaque)
     elif isinstance(obj, (pd.DataFrame, pd.Series, pd.Index)):
         h.update(f"pd:{type(obj).__name__}:{obj.shape};".encode())
         _digest_update(h, [str(c) for c in getattr(obj, "columns", [])], opaque)
@@ -512,7 +519,8 @@ class UcStage:
         t0 = time.perf_counter()
         digest, opaque = uc_input_digest(self, fleet_in, mc_bid)
         digest_s = time.perf_counter() - t0
-        prior = _LAST_SOLVED.get(digest)
+        # An input with no by-value encoding cannot certify equality: no reuse.
+        prior = None if opaque else _LAST_SOLVED.get(digest)
         if prior is not None:
             self.adopt(prior, fleet_in, digest, digest_s)
         else:

@@ -35,9 +35,11 @@ the uplift basis change is housekeeping.
    That covers engine version, ISO/year/horizon, every `uc_*` field, solve options, cluster
    params, both fleets, demand, dispatch kwargs, `mc_base`, the final P1 bid, and P0
    dispatch/SOC/prices/flows. A stage whose digest equals the previous stage's adopts that
-   stage's schedule instead of re-solving the windows. One slot per process; a type with no
-   by-value encoding is named in `engine.input_digest_opaque_types` and can only forfeit reuse,
-   never fake it.
+   stage's schedule instead of re-solving the windows. There is one slot per process. Arrays,
+   containers, dataclasses, pandas objects and scipy sparse matrices are hashed by value. Any
+   other type is named in `engine.input_digest_opaque_types` and **forfeits** reuse. The repro
+   showed that a `repr` (here `csr_matrix`) can match for different contents, so a `repr` never
+   certifies equality. That hardening landed after the repro (§5.2).
 
 ## 1. Phase 0 (zero LP)
 
@@ -79,7 +81,7 @@ make-whole (Nodal Protocols §5.7). I did not re-verify those section numbers th
 this model `mc_base` is that as-offered energy curve, without the amortized start markup (paid
 once in `start`) and without any P1-only bid adjustment.
 
-## 2. Tests (unit first; `tests/unit/model/uc/test_floor_merit_fill.py`, 10 new)
+## 2. Tests (unit first; `tests/unit/model/uc/test_floor_merit_fill.py`, 13 new: the 10 below, the legacy-bin singleton test (§1) and the two digest tests (§5.2))
 
 Pure allocator, one cluster with 3 tranches over 24 h (offers $30 / $20 / $2,821; ceilings 50 / 30 / 20):
 - **cheapest first:** a floor of 50 gives [20, 30, 0], and the peak tranche is never floored;
@@ -101,7 +103,7 @@ Amended: `test_compose_span` (a leg without a frame is no longer repriced) and
 clears the reuse slot per test.
 
 **Fast lane** (`pytest -n auto -m "not slow and not integration and not fulldata"`) at
-`5209ab90`: **11,685 passed**, 67 skipped, 3 xfailed, 0 failed.
+`5209ab90`: **11,685 passed**, 67 skipped, 3 xfailed, 0 failed. At the PR head: 11,687 passed and 1 transient failure, `test_committed_run_payloads_reencode_byte_identical`. That test ran while my local scoring payload sat under `frontend/data/backcast/runs/`; it passes once the payload was moved out.
 
 ## 3. G-OFF and G-DRIFT
 
@@ -132,7 +134,64 @@ correctness, not tuning; it bites only where `a < mlf`.
 
 ## 5. Repro shard — ERCOT 2019, R2 arm at uc-1.3
 
-PENDING.
+**Run.** Shard `session_0182rsShjTKUPJQyKZCufYTT` @ `5209ab90`, replaying `closeout_ercot_l1_span --years 2019`
+with `unit_commitment_milp=true`, `ercot_gas_commitment_bridge=false`, the same arm as R2's 2019 leg.
+Bundle `claude/ucmilp-fix4-ercot-2019` @ `6f61bdee`: 21 files, including `dispatch/2019_P1.parquet`
+and all five UC artifacts. I fetched it, checked it out and verified it, then archived the shard.
+Scoring: `calibration_verdict.py` rubric 3.20, through a local `dashboard_add_run.py --no-prune`.
+The sidecar and payload were moved out of the tree and never committed (E13, the R2 procedure).
+Forced-peak and uplift readings come from `fix4_readings.py` (zero LP; script, both readings and the FIX-4 verdict JSON in `data/fix4/`). Its metric is P1 MW on a
+`_peak*` tranche of a committed integer cluster, in hours where the offer is above the zonal
+LMP. It reproduces R2's 5.81 TWh exactly.
+
+| 2019 reading | control (keeper) | R2 (uc-1.2, `dd7fe8a8`) | **FIX-4 (uc-1.3, `6f61bdee`)** |
+|---|---|---|---|
+| forced `_peak*` energy, TWh (CC / ST_GAS) | – | 5.807 (5.301 / 0.506), median offer $2,797 | **0.120** (0.116 / 0.004) |
+| uplift $, and % of Σ λ·load | – | $14,977.7 M, 83.9 % | **$349.6 M, 1.65 %** |
+| C3a mean LMP (actual RT $46.55) | $49.41, +6.2 % PASS | $46.58, +0.1 % PASS | **$55.16, +18.5 % FAIL** |
+| C3b monthly NRMSE (band ≤ 0.20) | 0.216 FAIL | 0.078 PASS | **0.281 FAIL** |
+| C1 CC_REGULAR (actual 132.2 TWh) | +9.21 FAIL | +8.31 FAIL | **+0.25 PASS** |
+| C1 COAL_PRB (actual 61.3 TWh) | −10.79 FAIL | −9.15 FAIL | **−4.61 PASS** |
+| C1 ST_GAS | +3.29 PASS | +1.23 PASS | +2.03 PASS |
+| C8 ST_GAS forced share (< 30 %) | – | 28.0 % PASS | 25.8 % PASS |
+| C8 CC_REGULAR forced share | – | 1.7 % PASS | 2.9 % PASS |
+| tail hours (actual 106) | 90 | 76 | 111 |
+| unserved MWh / NaN cells | – | 0 / 0 | 0 / 0 |
+| UC windows | – | 365 Optimal ×2 passes | 365 Optimal, 0 TL; pass 2 **reused** (2.3 s) |
+| wall: total / (P0+P1) | – | 18,756 s, **21.7×** | 8,302 s, **10.3×** (UC 7,337 s; P0 247; P1 562 both passes) |
+
+**Schedule identity.** The reused `u` / `v` / `w` equal R2's cell for cell. R2 re-solved pass 2
+from scratch, so the reuse produced the same schedule a re-solve does. This is the third
+measurement of that, after the FIX-2 2020 gate and R2. The floor allocation is P1-only; the
+windows never read it.
+
+### 5.1 What the numbers say
+
+The merit fill removes **98 %** of the forced peak-tranche energy and **97.7 %** of the uplift.
+It also closes the keeper's long-standing 2019 CC over-run and PRB under-run (C1 CC +8.31 → +0.25,
+PRB −9.15 → −4.61, both FAIL → PASS). The 5.8 TWh of peak-tranche energy R2 forced was
+uneconomic must-run supply. It displaced coal and depressed prices (362 hours at or below $15
+in R2, 52 in FIX-4).
+
+**R2's near-perfect 2019 price fit (C3a +0.1 %, C3b 0.078) rested on that defect.** Remove it
+and the mean LMP rises to $55.16 (+18.5 %), and C3b FAILs at 0.281, worse than the control's
+0.216. Under rule 1 / rule 14 this is a discovered miss elsewhere, not a reason to keep the
+pro-rata split. The structurally right allocation exposes a price-level gap that the forced
+energy was masking. FIX-4 adds no lever for it. Candidate causes, unexamined here: the
+injection floor sitting above the window's own row (§6.1), and the peak-band scarcity wall
+(151×) now setting price in more hours (tail 111 h against 106 actual).
+
+### 5.2 Digest hardening after the repro
+
+The repro's log carried `input_digest_opaque_types: ['csr_matrix']`. A scipy sparse matrix's
+`repr` names only shape and nnz, so two different matrices could digest alike. In this run the
+inputs were truly identical: the reused schedule equals R2's re-solved one cell for cell. The
+gap was still real, and it is closed in this PR:
+- sparse matrices are hashed by value (CSR `data` / `indices` / `indptr` / shape);
+- any remaining opaque type forfeits reuse.
+
+The digest is now strictly finer, so the repro's reuse would still fire. Tests:
+`test_digest_encodes_sparse_matrices_by_value`, `test_an_opaque_input_forfeits_reuse`.
 
 ## 6. Open questions for the desk
 
@@ -145,3 +204,8 @@ PENDING.
    (`base_hr`, not the authorized band), `FleetArrays` needs a per-row unbanded heat rate. That is
    a new field and a separate decision. After merit fill the floor energy sits on committed/econ
    tranches (bands 0.72–1.36), so the distinction is now small.
+3. **The 2019 price level after the fix.** C3a +18.5 % and C3b 0.281 FAIL at uc-1.3, while C1
+   CC and PRB now PASS (§5.1). For any later ERCOT UC A/B, the fair baseline is FIX-4, not R2:
+   R2's price PASS came from the defect. Whether the gap belongs to (1) above, to the peak-band
+   wall, or to the UC's decommitment pattern (T1, wrong sign in R2) is a calibration-lane
+   question. This lane names it and does not tune it.
