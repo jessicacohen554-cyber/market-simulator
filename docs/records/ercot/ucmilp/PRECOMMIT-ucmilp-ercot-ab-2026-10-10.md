@@ -508,3 +508,7 @@ Out-dirs `results/calibration/ucmilp_ercot_d_<y>`, branches `claude/ucmilp-ercot
 active until the process exits (the 2021 container-recycle lesson); `hourly/unit_hourly_<y>.parquet` is unstaged before the
 commit (rule 15). Readings (§2), bars, kills (§7), the stage-1 gate (Addendum C item 3) and the composition workaround (§8)
 do not move.
+
+**D.1 — stage 1 launched 14:14Z at `eab17188`** (model Opus, tag `ucmilp:UC-2-ERCOT-shard`): 2019 `session_01FqeWwxWUjaiV3F7i278YM6`,
+2020 `session_01FpPuQW4mMNburhWVsD9L8X`, 2024 `session_016FDZqY7NXFW6Y88oXt4gqm`, 2025 `session_01SDmBkrN2ghak9yPgQeoyFE`;
+300 min each; branches `claude/ucmilp-ercot-d-<y>`.
