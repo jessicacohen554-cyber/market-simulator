@@ -373,3 +373,52 @@ collision is year-round (January to November), so it is not a seasonal floor win
 2021 `session_01TMV8TKm9EC9nUVX5RsiB5j`, 2022 `session_01PyziKkUq9u83cKMQz1SzoD`, 2023 `session_015qt5jGxEdY529gMRR8e1YG`,
 2024 `session_01RkDeuTxQWJ4ccMUNPcHwn9`, 2025 `session_01TNU8C6Be2nVyEvcZEpgu2e`. Cost of the attempt: 7 containers, 29–62 min each,
 plus the two bench containers. No span exists; nothing is scored; the matrix cell stays `U` until the relaunch (Addendum E).
+
+## Addendum F (2026-10-10, before any relaunch shard exists) — the relaunch: pin moves to `eab17188`, nothing else changes
+
+Lane taken over as **UC-2-MISO-R2** (Opus, this session) from the Fable session `session_016bPoPZ6beefv8kJUn8sQFH`, which hit the
+weekly Fable limit before relaunching. UC-DESK named the fix's merge SHA. Addendum D's relaunch rule applies verbatim: **the pin moves
+and nothing else does** — same recipe, same single `--set unit_commitment_milp=true`, empty offs set, every `uc_*` field at its
+declared default, readings, bars, kills, verdict rule and the §5 budget rule of §§1–8 unchanged. `origin/main` was merged into this
+branch (merge, not rebase).
+
+**New pin (every shard): `eab17188c75cd0332f9323ed3464c62bc0cd1848`** = `origin/main` at the merge of PR #7230 (UC-1-FIX-2). What it
+carries for this lane: engine **uc-1.2** (defect-5 guard on the pinned window fleet, `model/uc/window.py`); **ruling (a)**, a cluster
+whose members are ALL budget-pinned carries no integer (`params.demote_budget_pinned`; MISO's yard coal is pinned by
+`coal_fuel_inventory_plant_grain=true`, so on the 2021 gate the integer set went **161 → 75**, 86 demoted — the UC acts on gas and
+unpinned coal only, and that count is stated per year in the RESULT headline from `engine.integer_gate_size` /
+`integer_set_size`); the slim-expand inf-cap NaN fix; a per-window INFO log line; **FIX-3** (#7229) uc-params keyed by EIA plant
+code through `campd_crosswalk.camd_to_eia_plant`; **UC-SLIM** (#7222, `uc_slim_window`, born `True`). Gate evidence (FIX-2 FINDING
+§5.0): MISO 2021 at uc-1.2 `e4a57362`, **365/365 windows Optimal** (w30 and w129 Optimal), 0 time-limit hits, MILP mean / p95 / max
+6.2 / 11.4 / 37.4 s, UC 2,568 s, P1 solved, **0 unserved**. The FIX-2 FINDING §5.1 seam defect (MISO P1 infeasible after a complete
+UC stage under the uc-1.1 guard) is the one ruling (a) removes; if a leg's P1 is nonetheless infeasible, that is kill #1's engine route.
+
+**G-DRIFT `2f872a62 → eab17188` (zero LP, rule 29(b)).** `scripts/solve_surface_register.py --diff 2f872a62 eab17188`: *"342 → 342
+names; 0 value(s) moved, 0 added, 0 removed — NO VALUE MOVED"*. Every changed hunk on the backcast path, classified:
+
+| content | files | MISO classification |
+|---|---|---|
+| UC engine uc-1.2: defect-5 guard on the pinned window fleet, ruling (a) demotion, per-window log, diagnosis printing | `model/uc/{window,params,solve,diagnose}.py`, `pipeline/uc.py` (`UC_ENGINE_VERSION = "uc-1.2"`) | **LIVE on the arm only.** Reached solely through `pipeline/solve.py:675` (`if getattr(config, "unit_commitment_milp", False)`) and `runner.py:4175` (same gate); neither hunk changed. Control: INERT |
+| UC-SLIM exact window reduction + inf-cap NaN fix | `model/uc/slim.py` (new), `window.py`, `solve.py`; `scenarios.py` `uc_slim_window: bool = True`, registered in `_CACHE_KEY_OPTIONAL_FIELDS` at `True` (born and dropped from the hash there), TIER_TAGS 1 | **LIVE on the arm only**, exact (same feasible set and optimum; paired equivalence PASS, SLIM FINDING). Added to the arm table of §1 as a declared default, never swept. Control: INERT (the field is read only inside the UC stage) |
+| FIX-3 uc-params CAMD → EIA crosswalk | `data/campd_crosswalk.py` (`load_crosswalk` refactor of `crosswalk_of_record`, same output; new `camd_to_eia_plant`), `scripts/lib/uc_params/__init__.py`, `uc_params/ercot.py`, `scripts/lib/clean_profiles.py` (uc-params raw inputs + crosswalk, PUDL), `uc-params.schema.yaml` | **The uc-params VALUES move for the re-keyed MISO clusters** (FIX-3 commit `121cee93`, zero LP: MISO measured clusters 190 → 193, integer 103 → 104 on the uc_solve_log census) — the arm's cluster physics for those plants switch from class fallback to their measured rows; rule 23: a join-bug fix, not a re-fit. uc-params is read only by `model/uc/params.py` under the gate; `camd_to_eia_plant` has no caller outside the uc-params derive; `crosswalk_of_record`'s only in-`src` caller is the `classify_remap_rows` audit (changes no solve). Control: INERT. The miso hydrate profile carries `data/raw/reference/camd-eia-crosswalk` (4 files) and `data/raw/pudl` (3), checked by `hydrate_data.resolve_files` |
+| UC-2-SPP-B coal sync floor release | `scenarios.py` `coal_sync_floor_release: bool = False` (registered at `False`), `data/fleet/arrays.py::_compose_min_gen_floors` (`coal_sync_any … and not _coal_sync_release`) | **INERT**: default off, ABSENT from the MISO recipe, armed by no `iso_configs`; off, the historical branch is taken verbatim. Not armed on this lane's arm either (no second `--set`) |
+| bench harness | `scripts/lib/uc_bench.py`, `scripts/diagnostics/bench_uc_ladder.py` | bench only |
+| tests, docs, matrix rows, other lanes' records and slim spans | `tests/**`, `docs/**`, `CHANGELOG.md`, `data/dictionary/data-dictionary.md` | no solve path |
+
+**Solve surface on the control reads 0**; the two new fields sit at their registered defaults, so no committed cache key moves.
+Nothing is LIVE for MISO outside the UC stage: the control is the committed keeper bundle unchanged (rule 29(b)); no control solve.
+
+**Two mechanical consequences, declared now (not a reading change):**
+1. **Recipe verification gate (§1).** The allowed differing fields between a leg's `scenario_config` and the keeper's are now
+   `unit_commitment_milp`, every `uc_*` field at its declared default (including `uc_slim_window = True`), and
+   `coal_sync_floor_release = False` (a new default-off field the keeper predates). Any other differing field is a recipe break and
+   the leg is not composed.
+2. **Budget (§5 rule, new numbers in).** Measured at the gate and Addendum A/D: P0 ~600 s (Addendum D range 363–1,706 s), P1 ~800 s
+   (the UC-armed P1 is heavier than the 138 s gate-off capture), UC ~2,500 s (2,568 s at the 2021 gate). Extrapolation = P0 + P1
+   (1,400 s) + UC (2,500 s) + a P1 re-solve (800 s) + 600 s overhead = 5,300 s = 88.3 min; × 1.3 = 114.8 → **budget 115 min per
+   shard**. Memory: every leg touches the 13.36 GiB cgroup cap in P0 (~13 GiB RSS) and spills to swap; an OOM kill is W5's stop.
+   Shards run the replay detached (`nohup setsid … &`, polled from the log) so no tool-call ceiling ends it before the budget.
+
+Prompts regenerated at the new pin (`scripts/shard_prompt.py … --sha eab17188c75cd0332f9323ed3464c62bc0cd1848 --budget 115`; the base
+text is byte-identical to Addendum A's apart from the SHA and the budget) and committed over
+`docs/records/miso/ucmilp/shard-prompts-ucmilp-miso.txt` (the launched pin-1 text stays in git history at `ace67246`).
