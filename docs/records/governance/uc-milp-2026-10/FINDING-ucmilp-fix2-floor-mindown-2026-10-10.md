@@ -6,7 +6,7 @@ Lane UC-1-FIX-2 (`session_01VQbdDQky4y91ytyky1UEge`, Opus), 2026-10-10, chartere
 `closeout_miso_nuc_span` + `unit_commitment_milp=true`, every floor kept) and UC-2-NEISO
 (same pin; keeper `w0_neiso_span`). Mid-year windows raised `UcWindowInfeasible` with
 the LP relaxation infeasible: MISO 2020 w129, 2021 w30, 2023 w227, 2025 w135; NEISO 2021
-w259, 2023 w187. Year LP solved in this session: **zero**.
+w259, 2023 w187; ERCOT 2020 w118 (UC-2-ERCOT, pin `dc3860be`). Year LP solved in this session: **zero**.
 
 ## 0. Headline
 
@@ -50,7 +50,10 @@ year's first window (which carries no history), so a yield path would be dead co
 | Question | Answer |
 |---|---|
 | Which kwargs are budget-pinned in MISO? | `coal_fuel_inventory: true`, `coal_fuel_inventory_plant_grain: true` (run_config of `closeout_miso_nuc_span`) → `coal_plant_gen_idx` pins every yard coal row |
-| NEISO | `neiso_oil_burn_budget: true`, `dual_fuel_oil_reattribution: true`, `reliability_floor: true` (run_config of `w0_neiso_span`) |
+| NEISO | `coal_fuel_inventory_plant_grain: true` (plus `neiso_oil_burn_budget: true`) in the run_config of `w0_neiso_span` |
+| ERCOT (2020 w118, reported by UC-DESK at pin `dc3860be`) | `coal_fuel_inventory_plant_grain: true`, `coal_fuel_inventory_monthly_pile: true` in the run_config of `closeout_ercot_l1_span` |
+| Which ISOs can arm the yard pin? | `scripts/run_calibration.py::COAL_PLANT_GRAIN_ISOS = (MISO, NEISO, NWPP, ERCOT, SOCO)`. All three failing keepers arm it. SPP is not in the list, consistent with SPP solving 365/365 on uc-1.1 |
+| Can an UNPINNED floor give this signature on uc-1.1? | No. The guard and the next window then read the same `min_gen` and the same `⌈floor/p̄⌉`, and the guard covers the whole min-down reach. An unpinned floor on derated availability shows up instead as a `ceiling` contradiction (`⌈floor/(p̄·a)⌉ > ⌈floor/p̄⌉`), which uc-1.2's row-(a) count also closes |
 | Can carried starts + carried stops exceed `n`? | No: the kept schedule satisfies the aggregate Rajan–Takriti rows, so `hist_v(τ) + hist_w(τ) ≤ n`. The diagnosis's `u_lower > n − hist_w` is therefore floor-driven |
 | Could guard reach be short? | No: a stop at window hour `τ ≤ T_w − 1` reaches `h < τ + DT`; the guard covers `h' < DT − 1` past `t1`, i.e. exactly the reach |
 | Why did January 2020 pass (L1)? | Window 0 carries no history; the collision needs a stop kept by an earlier window |
@@ -115,4 +118,4 @@ Under the yard pin, a pinned MISO coal cluster must hold `u = n` in every hour w
 `P0 > 0`; uc-1.1 already did this inside each window. The MILP therefore cannot decommit
 MISO yard coal while `coal_fuel_inventory_plant_grain` is armed, and the UC's commitment
 benefit for that coal is structurally close to nil. The same holds for any integer cluster
-whose rows a budget family pins (NEISO dual-fuel oil rows, if clustered).
+whose rows a budget family pins: the same yard pin is armed in NEISO and ERCOT.
