@@ -28,7 +28,9 @@ rung writes JSON under its ``--out``.
 
 from __future__ import annotations
 
+import dataclasses
 import hashlib
+import inspect
 import json
 import pickle
 import subprocess
@@ -71,10 +73,21 @@ class YearCapture:
     wall_s: float | None = None
 
     def save(self, path: Path) -> Path:
+        """Pickle the capture without its ``hooks``.
+
+        The P1 hooks are closures (e.g. an ERCOT gas-bridge ``_fleet_prep``
+        defined inside its builder) that pickle cannot serialize; no rung
+        reads them (``_stage`` hands the UC stage no upstream prep), so the
+        saved capture carries ``hooks={}`` and loads with the same rungs.
+        """
         path = Path(path)
         path.parent.mkdir(parents=True, exist_ok=True)
         with open(path, "wb") as fh:
-            pickle.dump(self, fh, protocol=pickle.HIGHEST_PROTOCOL)
+            pickle.dump(
+                dataclasses.replace(self, hooks={}),
+                fh,
+                protocol=pickle.HIGHEST_PROTOCOL,
+            )
         return path
 
     @staticmethod
@@ -114,7 +127,14 @@ def _solve_kwargs(
     rk.apply_config_overlay(
         kwargs, rk.flipped_default_overlay(bundle, kwargs["years"], meta)
     )
+    # Both channels, as replay_keeper's --set loop: a key that is also an
+    # explicit solve_and_persist kwarg (e.g. ercot_gas_commitment_bridge, which
+    # the ERCOT keeper's meta carries) is re-stomped by the meta's value when
+    # it rides prb_overrides alone (the ERCOT-65 defect class).
+    solve_params = set(inspect.signature(rcf.solve_and_persist).parameters)
     for key, val in (overrides or {}).items():
+        if key in solve_params:
+            kwargs[key] = val
         kwargs.setdefault("prb_overrides", {})
         kwargs["prb_overrides"][key] = val
     rcf.enforce_legacy_p2_kwargs(kwargs, False)

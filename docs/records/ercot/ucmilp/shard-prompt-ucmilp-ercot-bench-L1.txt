@@ -1,0 +1,44 @@
+BENCH SHARD ucmilp-bench-ercot-2020-L1gate — ERCOT 2020, rung L1 + ONE ROLLED MONTH (January, base arm only), ONE container. Model: Opus.
+Chartered by lane UC-2-ERCOT (branch claude/ucmilp-2-ercot-ab-e4w1) under UC-DESK; this is the L1 GATE of the ERCOT UC A/B
+(the two SPP engine defects were found in shards; this rung must prove the engine on ERCOT's own LP before any span shard launches).
+DATA PROFILE: ercot
+
+HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
+1. `git rev-parse HEAD` == 2f872a62a7cccadb6800555c11a73745dcdb89a4  (never pull, rebase, merge, "sync")
+2. `python3 scripts/prepare_solve_container.py` FIRST, before any data step (R-50); report `before:` / `swap:`
+3. `python3 scripts/hydrate_data.py --profile ercot` then `python3 scripts/regenerate_clean.py --solve-profile ERCOT`; both exit 0
+   (if `python3 -c "import pyarrow, highspy"` fails, run `uv sync` once and use `uv run python` in place of `python3` below — install is not repair)
+4. `python3 scripts/diagnostics/bench_uc_ladder.py --help` exists at this SHA and lists --rung L1 and L2, --capture, --save-capture, --rolling, --months, --set
+5. memory: the harness calls ensure_solve_container itself; never --no-container-preflight; never read `free`
+
+RUN (these two rungs only, in this order; the keeper bundle is results/calibration/closeout_ercot_l1_span; the keeper ARMS
+ercot_gas_commitment_bridge, which the UC gate refuses (rule 19), so BOTH commands carry the one disarm below — it is the A/B's arm delta):
+  eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"
+  python3 scripts/diagnostics/bench_uc_ladder.py --iso ERCOT --year 2020 --rung L1 \
+      --bundle results/calibration/closeout_ercot_l1_span --out results/bench/uc/ercot_2020_L1 \
+      --set ercot_gas_commitment_bridge=false --save-capture
+  python3 scripts/diagnostics/bench_uc_ladder.py --iso ERCOT --year 2020 --rung L2 \
+      --bundle results/calibration/closeout_ercot_l1_span --capture results/bench/uc/ercot_2020_L1/capture_ERCOT_2020.pkl \
+      --out results/bench/uc/ercot_2020_L2m1 --months 1 --rolling --arms "" \
+      --set ercot_gas_commitment_bridge=false
+No other --set, no other arm, no other month, no L3. Budget: 60 minutes total. At the budget with no L2 report written:
+STOP and report what completed (the L1 JSON alone is a valid report).
+
+PUSH THE RESULTS (small files only: JSON + markdown; never the capture pickle, never the uc/ checkpoint dir):
+  git checkout -b claude/ucmilp-bench-ercot-2020-L1gate
+  printf '\n!results/bench/uc/ercot_2020_L1/**\n!results/bench/uc/ercot_2020_L2m1/**\n' >> .gitignore
+  git add .gitignore
+  git add -- results/bench/uc/ercot_2020_L1 results/bench/uc/ercot_2020_L2m1 ':(exclude)**/*.pkl' ':(exclude)**/uc/**'
+  git status --short     # MUST show nothing else; `git diff --cached --stat | tail -1` MUST be < 5 MB
+  git commit -m "ucmilp-bench: ERCOT 2020 L1 gate (L1 + rolled January)" && git push -u origin claude/ucmilp-bench-ercot-2020-L1gate
+
+FORBIDDEN: git add -A / git add . ; any edit under src/ or scripts/ ; any dashboard/registration script ;
+anything under frontend/data/ ; opening a PR ; deleting any result ; any other ISO, year, rung or arm.
+
+REPORT in your final message, in numbers (GATESPEC §3/§6.1): HEAD sha; preflight + memory peak lines; the capture wall
+(P0 s, P1 s, capture_wall_s); for L1 (window 0): status, build s, MILP s, nodes, gap, integers, columns, RSS, integrality gap
+(MILP − LP-relax objective), Δ committed energy / Δ starts / Δ trough price vs the P1 slice; for the rolled January (base arm):
+number of windows, count with status Optimal (state "31/31 Optimal" or list every non-Optimal window with its status), p50/p95/max
+MILP s and nodes, Σ MILP s for the month, time-limit hits, infeasible windows, warm_accepted count; the JSON file paths; the commit
+sha and branch; any hard stop that fired. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure
+is a FAILURE.
