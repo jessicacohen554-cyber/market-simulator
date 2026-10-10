@@ -321,3 +321,23 @@ running as evidence of whether the conflict is year-specific; each outcome is re
 form): when the engine carries a fix, the pin moves to that full SHA and NOTHING else changes (same recipe, same single `--set`,
 same `uc_*` defaults, readings, bars, kills, budget); if the resolution is instead a D-5 re-ruling (a floor switched off for MISO),
 that is an ARM change and needs the owner's card before any relaunch — the readings would then be re-pre-registered against it.
+
+**Addendum D, continued (02:50Z) — the infeasibility is systematic across MISO years at the pin.** Four of seven shards stopped on
+the same signature (every one raised at `pipeline/uc.py:396 → model/uc/solve.py:460` inside `p1_fleet_prep`; no OOM; nothing pushed;
+all four archived after their reports were read, rule 33):
+
+| year | window | exception tail (verbatim) | census | P0 s |
+|---|---|---|---|---|
+| 2020 | 129 [3096, 3132) | `LP relaxation: Infeasible; a-priori contradictory rows: min_down=1; carried starts above n: 0; floor above min-down: 1` | 336 / 164 int / 1,231 rows | 473 |
+| 2021 | 30 [720, 756) | `… min_down=2; carried starts above n: 0; floor above min-down: 2` | 330 / 161 / 1,211 | 702 |
+| 2023 | 227 [5448, 5484) | `… ceiling=2, min_down=2; carried starts above n: 0; floor above min-down: 2` | 322 / 147 / 1,127 | 385 |
+| 2025 | 135 [3240, 3276) | `… ceiling=2, min_down=2; carried starts above n: 0; floor above min-down: 2` | 316 / 139 / 1,097 | 515 |
+
+2019, 2022 and 2024 were still in their UC stage at 02:45Z; their outcomes are recorded below when they report. The engine's
+per-cluster diagnosis (`model/uc/diagnose.py` `clusters_floor_above_min_down`: plant code, `n`, `dt_h`, `u_lower`) is built on the
+exception but never printed, so no log names the colliding plants; a zero-LP identification needs the P0 capture and is the engine
+lane's. Reading: `u_lower > n − hist_w` — a floor-derived online need exceeds the units the carried min-down leaves; in 2023/2025 the
+ceiling rows collide too. The MISO arm keeps every conduct floor (D-5), so the UC's min-down physics and a kept floor contradict at a
+window boundary; SPP's kept floors never produced this. Routed to UC-DESK 02:49Z with the two resolutions named (engine fix → re-pin
+under this addendum's rule; D-5 re-ruling → owner card, re-pre-registration). The L1 gate passed because no January 2020 window
+carried the collision; the earliest MISO collision is window 30 of 2021.
