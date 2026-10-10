@@ -258,3 +258,68 @@ and committed as `shard-prompts-ucmilp-neiso.txt`; seven shards launched after t
   payload the scorer reads, control and arm scored on the SAME committed NEISO bench parts (the local build rebuilt none; `check_bench_freshness` still reads them
   STALE for both), then both files under `frontend/data/` removed before the commit — the PR touches nothing under `frontend/data/`.
 - **Verdict rule applied unchanged (§7): R** — kill #1 fired; independently, 2020 C3b worsened by 0.026 (> 0.02). RESULT: `RESULT-ucmilp-neiso-ab-2026-10-10.md`.
+
+## Addendum C (2026-10-10 18:40Z, before any number exists at the new pin) — the relaunch, ruled; re-pin to engine uc-1.2; all seven years
+
+**Ruling.** UC-DESK held the relaunch (message 12:00Z: *"HOLD: no relaunch until the owner rules on NEISO (rerun 2021/2023 → all 7 years at
+the new pin, for one-engine consistency, vs record R)"*); the owner's instruction in this session at 18:26Z: *"Proceed"*. The lane reads it as
+the relaunch option and runs **all seven years**, not 2021/2023 alone: uc-1.2 changes the integer set itself (desk ruling (a): every
+all-budget-pinned cluster is demoted to continuous; NEISO 2021 40 → 22 integer clusters) and #7229 changes every cluster's no-load source, so
+legs from uc-1.1 and uc-1.2 are not one recipe and cannot be composed into one span (rule 16, rule 36). The R recorded in
+`RESULT-ucmilp-neiso-ab-2026-10-10.md` stands as the uc-1.1 record; this relaunch produces a new RESULT.
+
+**Correction to the uc-1.1 RESULT §5.1 (engine evidence, FINDING-ucmilp-fix2-floor-mindown §0/§5).** The collision was **not** the
+`reliability_floor` hot-day CC limb this lane named. The 2021 w259 flagged cluster is plant **2364 (coal, n = 2, dt = 16, 8/8 members
+budget-pinned)**: the keeper's `coal_fuel_inventory_plant_grain` / `neiso_oil_burn_budget` rows are pinned to P0 inside a window, the uc-1.1
+look-ahead guard read the unpinned year fleet and `⌈Σ floor / p̄⌉`, and a window stopped units the next window's pinned rows needed inside
+their min-down. Fixed structurally in uc-1.2; no floor, limb or field of this A/B is touched.
+
+**Pin: `eab17188c75cd0332f9323ed3464c62bc0cd1848`** (main at the merge of PR #7230, engine uc-1.2; desk-named). Not chased to later main.
+
+**G-DRIFT `2f872a62 → eab17188` (zero LP, on the objects):**
+
+| content | files | NEISO classification |
+|---|---|---|
+| uc-1.2 (PR #7230): guard on the window's own fleet, row-(a) unit count, all-pinned clusters demoted (desk ruling (a)), slim NaN fix | `model/uc/{window,params,solve,diagnose,slim}.py`, `pipeline/uc.py` | **LIVE on the gate-on path** — the fix and the ruling; the arm's integer set shrinks (2021: 40 → 22) |
+| uc-params plant key = EIA plant code, not the CEMS facility id (PR #7229, UC-1-FIX-3) | `data/campd_crosswalk.py`, `scripts/lib/uc_params/*` → `data/clean/uc-params/NEISO` (built in each shard by `regenerate_clean`) | **LIVE on the gate-on path** — the no-load / mlf / UT / DT source per cluster; the fallback share is reported |
+| `uc_slim_window: bool = True` (UC-SPEED slim window: fixed columns dropped before HiGHS, an exact transformation) | `config/scenarios.py`, `model/uc/slim.py` | **LIVE on the gate-on path, wall only** — a declared registry default, born at `True`, dropped from `cache_key()` there; not swept |
+| `coal_sync_floor_release: bool = False` (UC-2-SPP-B) | `config/scenarios.py`, `data/fleet/arrays.py` | **INERT for NEISO**: default off, ABSENT from the NEISO recipe; the branch is taken verbatim when False |
+| solve surface | `solve_surface_register.py --diff 2f872a62 eab17188`: *"342 → 342 names; 0 value(s) moved, 0 added, 0 removed — NO VALUE MOVED"* | no key reached |
+| control | `results/calibration/w0_neiso_span/**`, `frontend/data/backcast/keepers/NEISO.json`, `replay_keeper.py`, `shard_prompt.py`, `calibration_verdict.py`, `legitimacy_diagnostics.py`, `_ucmilp_compose_span.py` unchanged between the pins | control unchanged (rule 29(b)); the two composer gaps are still open → §8 (a)/(b) workaround again |
+
+**Unchanged:** the arm (one `--set unit_commitment_milp=true`, every floor kept), every `uc_*` field at its declared default, readings (§2–§5),
+kills (§6), verdict rule (§7), the 162-min budget (desk evidence: NEISO 2021 uc-1.2 UC stage 4,342 s, P1 solved), composition and scoring (§8).
+
+**L1 gate again (§7), at this pin:** the desk's full-year NEISO 2021 gate ran at `e4a57362`, which predates the crosswalk fix, so one bench
+shard (L1 + January L2, base arm, 60 min) runs at `eab17188` first. PASS iff window 0 Optimal and 31/31 January windows without an infeasible
+window or a time-limit hit; FAIL ⇒ STOP. Then seven span shards, prompts regenerated with `--sha eab17188…` and re-committed as
+`shard-prompts-ucmilp-neiso.txt` (the `2f872a62` prompts stay in history at `873ed7a2`). Legs land in `results/calibration/ucmilp_neiso_<y>`
+on branches `claude/ucmilp-neiso-<y>-uc12`.
+
+## Addendum D (2026-10-10 19:05Z, before any span shard at the new pin) — the uc-1.2 L1 gate PASSED
+
+Bench shard `session_016qxRqwbJ4DF5gRu1reYCMC` (Opus) at `eab17188`, branch `claude/ucmilp-bench-neiso-2023-L1L2-uc12` `1c4a65f6` (fetched,
+read, archived).
+
+| rung | reading | uc-1.2 (`eab17188`) | uc-1.1 (`2f872a62`, Addendum A) | gate |
+|---|---|---|---|---|
+| L1 window 0 | status / MILP s / nodes / gap | **Optimal** / 8.19 s / 10 / 8.0e-4 | Optimal / 10.34 / 12 / 7.3e-4 | **PASS** |
+| L1 | integer clusters / integers / columns | **22** / 792 / 33,768 | 37 / 1,332 / 35,388 | ruling (a) demotion visible |
+| L1 | integrality gap; starts MILP vs P1 slice | $17,518 on $4.93 M (0.36 %); 3 vs 68 | $17,376 on $5.28 M; 5 vs 77 | — |
+| L2 January (base arm) | windows / time-limit hits / infeasible | **31 / 0 / 0** (exit 0), gap max 9.99e-4 | 31 / 0 / 0 | **PASS** |
+| L2 | month wall; MILP p50 / p95 / max; nodes p50 / p95 | 878 s; 12.8 / 104.7 / 170.0 s; 54 / 976 | 624 s; 10.0 / 64.0 / 148.4 s; 33 / 544 | — |
+| L2 | phase sums | tail 856 s (97 %), presolve 12 s, root LP 6 s, slim 1.8 s | tail 607 s (97 %) | — |
+
+**Budget stays 162 min (Addendum C, fixed before this number).** The §5 one-month extrapolation would now read ceil(1.3 × (184 + 365/31 × 878) / 60)
+= 228 min; it is NOT applied — Addendum C fixed 162 ahead of any uc-1.2 number, and on uc-1.1 the same extrapolation over-read actual years by
+2–4× (124 min projected vs 32–80 min measured). A shard reaching 162 min stops and reports which months completed (not a kill; recorded).
+Seven span shards launch now with the prompts committed at `bf80c04e`.
+
+## Addendum E (2026-10-10 20:02Z, while the legs run; no leg result read except 2020's wall) — budget restored to the charter rule: 228 min
+
+The charter fixes the shard budget as *"ceil(1.3 × the L1-month extrapolation)"*. Applied to the uc-1.2 gate (Addendum D) that is **228 min**;
+Addendum C/D kept 162 min on the lane's own judgement (uc-1.1 extrapolations over-read actual walls). The 2023 shard reports 52/365 windows at
+~35 min, pacing past 162. The budget is a wall-clock cost cap, not a reading, bar, kill or solver setting — it changes no optimum and no score —
+so the lane restores the charter's rule rather than spend a second shard relaunching a year that would otherwise stop at 162 min. Sent to
+every running shard at 20:02Z: *"Budget raised to 228 min (charter rule); nothing else changes."* The one completed leg (2020, 33 min) is
+unaffected. A leg that still reaches 228 min stops and reports its completed months (recorded, not a kill).
