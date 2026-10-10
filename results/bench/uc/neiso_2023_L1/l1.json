@@ -1,0 +1,49 @@
+{
+ "iso": "NEISO",
+ "year": 2023,
+ "t0": 0,
+ "t1": 36,
+ "integer_clusters": 37,
+ "milp": {
+  "build_s": 0.021216527999968093,
+  "milp_s": 10.33800621499995,
+  "nodes": 12,
+  "gap": 0.0007275525566708084,
+  "status": "Optimal",
+  "objective": 5281784.164541791,
+  "integers": 1332,
+  "columns": 35388,
+  "rows": 7560,
+  "time_limit_hit": false,
+  "starts": 5,
+  "warm_accepted": true,
+  "guard_rows": 0
+ },
+ "rss_gb": 4.494602203369141,
+ "relaxation": {
+  "build_s": 0.02419548099999247,
+  "milp_s": 0.2302502039999581,
+  "nodes": 0,
+  "gap": 0.0,
+  "status": "Optimal",
+  "objective": 5264407.858926323,
+  "integers": 1332,
+  "columns": 35388,
+  "rows": 7560,
+  "time_limit_hit": false,
+  "starts": 4,
+  "warm_accepted": false
+ },
+ "integrality_gap": 17376.30561546795,
+ "p1_slice": {
+  "solve_s": 0.04027296300000671,
+  "objective": 4439466.6411968665
+ },
+ "delta_committed_energy_mwh": 35.53838021027332,
+ "milp_starts": 5,
+ "p1_slice_starts": 77,
+ "trough_price_milp_vs_p1": {
+  "p1_slice_lower_tercile_mean": 36.66603985512554,
+  "note": "the MILP prices nothing (rule 4); the trough reading is scored on the L3 P1 bundle"
+ }
+}
