@@ -457,3 +457,8 @@ Fixed now, before any number:
    verdict and the RESULT as §8 says.
 5. Readings (§2), bars, kills (§7), the budget rule's measured replacement (B.3) and the composition workaround (§8) do not move.
    The `dc3860be` legs (2024, 2025 complete; 2022's partial UC log) stay evidence, never scored.
+
+**2021 update (06:50Z):** the leg is lost — the shard's container was recycled while the session sat idle after its 06:06Z
+budget report (fresh boot, process gone, not an OOM: RSS 8.2 of 13.4 GiB), so the extension bought nothing; UC had run > 9,780 s
+unfinished; nothing pushed; archived. Two harness lessons written into the Addendum C prompts: a shard with a multi-hour solve
+keeps its session active (a re-armed Monitor) until the process exits, and the per-window log line stays a routed engine ask.
