@@ -5,6 +5,7 @@
     2019,
     2020,
     2021,
+    2023,
     2024,
     2025
   ],
@@ -533,9 +534,9 @@
   "mass_cap_program": null,
   "btm_backfill_year": null,
   "shared_inputs": {
-    "eia930": "../_shared/MISO/eia930-0567e737b02f.parquet",
-    "eia923": "../_shared/MISO/eia923-084a49b1eb68.parquet",
-    "campd": "../_shared/MISO/campd-0d59aba20be7.parquet",
+    "eia930": "../_shared/MISO/eia930-111ed3afa442.parquet",
+    "eia923": "../_shared/MISO/eia923-a8dd8edd4f4e.parquet",
+    "campd": "../_shared/MISO/campd-12cf88e2db5f.parquet",
     "unit_outages": "../_shared/MISO/unit_outages-5b083f8b739a.parquet",
     "unit_outages_short": "../_shared/MISO/unit_outages_short-d1ceb6a72af9.parquet",
     "unit_outages_partial": "../_shared/MISO/unit_outages_partial-b00540584f5f.parquet",
@@ -588,6 +589,9 @@
     ],
     "ucmilp_miso_2021": [
       2021
+    ],
+    "ucmilp_miso_2023": [
+      2023
     ],
     "ucmilp_miso_2024": [
       2024
