@@ -197,4 +197,4 @@ per-plant grouping, the identity the fleet's CAMPD binning already uses. The foo
 miss is the same kind of gap as the NV extension in `campd.ISO_STATES`. Both change the
 frozen derive (rule 23: a code fix of the join, not a residual-driven re-derive) and
 re-derive `uc-params` for every ISO, so they are proposed as a follow-up, not folded into
-this PR (§8, desk call).
+this PR (desk call).
