@@ -286,3 +286,16 @@ Seven span shards launched 01:53–01:56Z at the pin `2f872a62`, model `claude-o
 2023 `session_015qt5jGxEdY529gMRR8e1YG` · 2024 `session_01RkDeuTxQWJ4ccMUNPcHwn9` · 2025 `session_01TNU8C6Be2nVyEvcZEpgu2e`.
 Bench shards archived: `session_0116uJFx8cCqjmBxMRcWAMF6` (no .venv, nothing pushed), `session_012an4XfAv35RRQKJw8KqVxM` (results on
 `claude/ucmilp-bench-miso-2020-L1` `2db7198`). Nothing in §§1–7 changed.
+
+## Addendum C (2026-10-10 02:00Z) — UC-DESK's engine-defect-3 heads-up, checked zero-LP: MISO is NOT hit; the pin stands
+
+UC-DESK (01:53Z): the UC window does not slice a time-major `(T, n_links)` `ttc` / `ttc_import` (ERCOT's first window build
+fails with a `(8760, n) → (36, n)` broadcast). Checked for MISO without an LP: (a) `pipeline/ttc.py` returns a 2-D `ttc` only
+for NYISO (`apply_iso_monthly_ttc`: `if iso != "NYISO": return ttc`); `ttc_import` is set only on ERCOT's measured-GTC path
+(`pipeline/spec.py` UNSET elsewhere); no MISO path assigns a 2-D `ttc` (`run_calibration_full.py`, `interchange/core.py`,
+`interchange/miso.py`, `pipeline/kwargs.py`). (b) MISO's hourly seam limits ride inside `interface_groups` as per-link `(T,)`
+arrays, whose last axis is `T`, so `model/uc/window.py::_slice_obj` slices them. (c) Live evidence at the pin: the L1 gate
+built and solved window 0 and all 31 January windows on MISO 2020 (Addendum A) — the first window build is where ERCOT fails
+— and every MISO year shares the same interchange construction (the per-year overlay changes only the reserve flags and the
+gas price). No re-pin; nothing in §§1–7 changed. If a span shard nonetheless fails at its first window build, that is kill #1's
+engine-defect route: record, stop, route to UC-DESK.
