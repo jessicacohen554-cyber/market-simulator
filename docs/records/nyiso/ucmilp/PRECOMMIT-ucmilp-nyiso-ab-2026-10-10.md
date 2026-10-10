@@ -320,3 +320,32 @@ AttributeError: Can't pickle local object 'build_nyiso_gas_bridge_p1_prep.<local
 - **Budget extrapolation (§5) now reads:** capture wall (the `total=` of the L2 rung's own timing line) + 12 × the January
   month wall + the stage's fixed overhead — computed from the amended run's report in Addendum B before the span prompts
   are generated.
+
+### A.2 (01:55Z) — the amended run reached the L1 window build and hit ENGINE DEFECT 3 at the pin; gate NOT passed; no span shard launched
+
+Capture (amended run): `data_prep=42.4s solve_p0=200.7s markup=17.1s solve_p1=215.1s results_write=18.9s total=494.2s`
+(first run 386.5 s — the same container, re-provisioned swap; cross-run noise ~25 %); memory peak cgroup 6.68 GiB. Then,
+at the first window build, before any MILP:
+
+```
+File "src/market_sim/model/lp/bounds.py", line 193, in build_variable_bounds
+    col_lower[:, layout._flow_off : layout._slack_off] = lower_arr
+ValueError: could not broadcast input array from shape (8760,13) into shape (36,13)
+```
+
+- **Classification:** engine defect 3 (UC-DESK heads-up 01:52Z, found by UC-2-ERCOT): `model/uc/window.py::_slice_obj`
+  slices only arrays whose LAST axis is T; NYISO's per-hour transfer limits (`ttc` / `ttc_import`, time-major
+  `(8760, 13 links)` under the keeper's seasonal / seam-envelope TTC arms) reach the 36-h window unsliced. It is the
+  GATESPEC §5 engine-defect route (not a kill, not a tuning invitation); the gate is exactly what caught it before any
+  span shard was spent. Fix: PR #7221 (`claude/ucmilp-fix-window-slice`, head `3caa07dd`; also passes the bench `--set`s
+  into the capture and pickles `YearCapture` without its hooks — the Addendum A defect), merging on green CI.
+- **Shard:** stopped with a clear report, pushed nothing (no `l1.json`), deleted nothing; archived 01:57Z (rule 33: nothing
+  to fetch). Two captures (P0 + P1) spent; zero LP in the parent.
+- **Relaunch rule (fixed now, the SPP Addendum A rule):** when `main` carries #7221 the pin moves to that merge SHA and
+  NOTHING else changes — same recipe, same nine `--set`s, same `uc_*` defaults, same readings, bars, kills; the bench gate
+  is re-run first (block D, L1 + January L2, the ORIGINAL two-command form with `--save-capture` / `--capture` now that the
+  harness pickles cleanly) and the span launches only on a pass. The new pin, its G-DRIFT vs `2f872a62` on the NYISO
+  backcast path and the `solve_surface --diff` are recorded in Addendum B before the relaunch. Already classified for the
+  part of the move that exists at 01:55Z (`2f872a62 → e86eb2a4`: #7207 SPP records + slim span, #7219 SPP-B
+  `coal_sync_floor_release` — `scenarios.py` default False, `fleet/arrays.py` under the flag only, ABSENT from the NYISO
+  recipe, NYISO has no coal → INERT; #7220 desk records): control INERT.
