@@ -1,0 +1,20 @@
+{
+ "forced_peak_twh": 0.12,
+ "forced_peak_by_family_twh": {
+  "cc": 0.116,
+  "st_gas": 0.004
+ },
+ "forced_peak_median_mc": 2808.5,
+ "peak_tranche_energy_while_committed_twh": 0.203,
+ "uplift_musd": 349.6,
+ "uc_energy_cost_musd": 2790.7,
+ "system_energy_cost_musd": 21129.7,
+ "uplift_pct_of_system_energy_cost": 1.65,
+ "unserved_mwh": 0.0,
+ "engine": "uc-1.3",
+ "reused_schedule": {
+  "input_digest": "51713b36fea899c5a9c9d21493f47f63f1d7ba29bbff3efcab39cdebfe3241c8",
+  "solved_uc_total_s": 7336.659
+ },
+ "uc_total_s": 2.317
+}

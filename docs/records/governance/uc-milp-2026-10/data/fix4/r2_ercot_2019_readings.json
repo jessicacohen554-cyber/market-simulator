@@ -1,0 +1,17 @@
+{
+ "forced_peak_twh": 5.807,
+ "forced_peak_by_family_twh": {
+  "cc": 5.301,
+  "st_gas": 0.506
+ },
+ "forced_peak_median_mc": 2796.9,
+ "peak_tranche_energy_while_committed_twh": 5.891,
+ "uplift_musd": 14977.7,
+ "uc_energy_cost_musd": 19141.6,
+ "system_energy_cost_musd": 17844.9,
+ "uplift_pct_of_system_energy_cost": 83.93,
+ "unserved_mwh": 0.0,
+ "engine": "uc-1.2",
+ "reused_schedule": null,
+ "uc_total_s": 8696.564
+}
