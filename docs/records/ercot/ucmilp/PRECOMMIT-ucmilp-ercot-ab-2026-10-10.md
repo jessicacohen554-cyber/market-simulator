@@ -404,3 +404,14 @@ regenerated `legitimacy_diagnostics.json` reads **D-2 ST_GAS 32.6 %** of class e
 removed (17.9 % → no flip) when a scorable span exists; D-4 `reliability_floor × CT_PEAKER` 93.4 % off-window (pre-existing
 class, control 77.9 % in 2019). The `**` negation pushed `unit_hourly_2024.parquet` (84 MB), `2024_P1_fleet.parquet` and
 `floors/` on the 2024 leg (the 2025 shard unstaged its `unit_hourly`); neither enters the slim records.
+
+**UC-DESK (05:21Z, verbatim):** *"kill #2 (2019, P1 infeasible after a full UC) matches the MISO P1-seam defect UC-1-FIX-2 found:
+yard-pinned coal clusters (ERCOT arms coal_fuel_inventory_plant_grain + monthly pile) were committed as integers, MECH 28
+floored P1 at mlf·p̄·u, and the floors exceeded the year LP's pile/budget rows. The desk ruled option (a), folded into uc-1.2 at
+e4a57362: a fully budget-pinned cluster carries no integer, so no MECH 28 floor. One relaunch of all seven legs on the uc-1.2
+merge SHA; no second fix expected. The ERCOT 2020 gate shard at e4a57362 is running. The 52/140 no-load fallback coverage is a
+separate parameter-coverage finding; I'm passing it to the engine lane."* → both kills are one engine release (uc-1.2); the
+Addendum C pin is its merge SHA. **Structural note for the RESULT:** under uc-1.2 ERCOT's eleven yard-pinned coal clusters carry
+no integer, so MECH 28 governs CC_REGULAR and ST_GAS only and the coal rows keep their incumbent floors (`coal_min_config`, the
+`_mustrun` band) — §2 T4 (coal up under the UC) and §4 S2 (coal starts toward CEMS) are then read as "not reachable by this
+arm" rather than as UC outcomes.
