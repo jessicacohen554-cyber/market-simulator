@@ -18,7 +18,9 @@ overrides. :func:`classify_remap_rows` is that audit; it changes no solve.
 from __future__ import annotations
 
 from functools import lru_cache
+from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 from market_sim.config.paths import RAW_DATA_DIR
@@ -58,10 +60,20 @@ CAMPD_REMAP_OVERRIDE_CITATIONS: dict[tuple[int, str], str] = {
 @lru_cache(maxsize=1)
 def crosswalk_of_record() -> pd.DataFrame:
     """``(camd_plant, camd_unit, eia_plant, source)`` rows from both crosswalks."""
+    return load_crosswalk(EPA_CROSSWALK_CSV, PUDL_SUBPLANT_PARQUET)
+
+
+def load_crosswalk(epa_csv: Path, pudl_parquet: Path) -> pd.DataFrame:
+    """The crosswalk of record read from explicit paths (a missing file is skipped).
+
+    :func:`crosswalk_of_record` is this function on the canonical raw paths; a
+    derive that takes a ``raw_root`` (tests point it at a fixture tree) calls
+    it on that tree's paths instead.
+    """
     frames = []
-    if EPA_CROSSWALK_CSV.exists():
+    if epa_csv.exists():
         epa = pd.read_csv(
-            EPA_CROSSWALK_CSV,
+            epa_csv,
             usecols=["CAMD_PLANT_ID", "CAMD_UNIT_ID", "EIA_PLANT_ID"],
             encoding="utf-8-sig",
             dtype=str,
@@ -76,8 +88,8 @@ def crosswalk_of_record() -> pd.DataFrame:
                 }
             )
         )
-    if PUDL_SUBPLANT_PARQUET.exists():
-        pudl = pd.read_parquet(PUDL_SUBPLANT_PARQUET)
+    if pudl_parquet.exists():
+        pudl = pd.read_parquet(pudl_parquet)
         frames.append(
             pd.DataFrame(
                 {
@@ -135,3 +147,74 @@ def classify_remap_rows(
             }
         )
     return pd.DataFrame(rows)
+
+
+def camd_to_eia_plant(
+    facility: np.ndarray,
+    unit: np.ndarray,
+    crosswalk: pd.DataFrame,
+    remap: dict[tuple[int, str], int] | None = None,
+) -> np.ndarray:
+    """The EIA plant code of each CEMS ``(facility, unit)`` — the fleet's plant key.
+
+    Resolution order, per unit:
+
+    1. the operative hand table ``campd.CAMPD_UNIT_PLANT_REMAP`` (``remap``);
+    2. the crosswalk of record at UNIT grain, when it is unanimous (EPA and
+       PUDL name one EIA plant). When they disagree and one of them names the
+       CAMD code itself, the shared code is kept, so an ambiguous unit is never
+       moved (Tinker: EPA 2953, PUDL 63628, fleet 63628; CAMD 55248
+       CT4-7: EPA 55248, PUDL 2847). Otherwise the unit falls through;
+    3. the crosswalk at FACILITY grain, when every row of the facility names
+       the same EIA plant;
+    4. the CAMD facility id itself (the two registries share most codes).
+
+    This is the identity the fleet's own CAMPD joins rest on. Applied in any
+    derive that groups CEMS units into model plants, it stops a plant whose
+    CEMS id differs from its EIA id (Hidalgo: CAMD 7762, EIA 55545; Arthur von
+    Rosenberg: CAMD 3612 units CT01/CT02, EIA 7512) from silently missing the
+    join (FINDING-ucmilp-fix2-floor-mindown-2026-10-10 section 7).
+    """
+    if remap is None:
+        from market_sim.data.campd import CAMPD_UNIT_PLANT_REMAP as remap
+    fac = np.asarray(facility, dtype=np.int64)
+    uid = np.asarray(unit).astype(str)
+    out = fac.copy()
+    if crosswalk is not None and len(crosswalk):
+        cw = crosswalk.dropna(subset=["camd_plant", "eia_plant"])
+        unit_map: dict[tuple[int, str], int] = {}
+        for (cp, cu), grp in cw.groupby(["camd_plant", "camd_unit"], sort=False):
+            eias = set(grp["eia_plant"].astype(int))
+            if len(eias) == 1:
+                unit_map[(int(cp), str(cu).strip())] = eias.pop()
+            elif int(cp) in eias:
+                # The sources disagree and one names the shared code: keep it.
+                unit_map[(int(cp), str(cu).strip())] = int(cp)
+        fac_n = cw.groupby("camd_plant")["eia_plant"].nunique()
+        fac_first = cw.groupby("camd_plant")["eia_plant"].first()
+        fac_map = {
+            int(cp): int(fac_first[cp]) for cp in fac_n.index[fac_n.to_numpy() == 1]
+        }
+        keys = pd.MultiIndex.from_arrays([fac, pd.Index(uid).str.strip()])
+        pairs = (
+            pd.Series(
+                list(unit_map.values()),
+                index=pd.MultiIndex.from_tuples(list(unit_map.keys())),
+            )
+            if unit_map
+            else pd.Series(dtype="int64")
+        )
+        hit_u = (
+            pairs.reindex(keys).to_numpy() if len(pairs) else np.full(fac.size, np.nan)
+        )
+        hit_f = (
+            pd.Series(fac_map).reindex(fac).to_numpy()
+            if fac_map
+            else np.full(fac.size, np.nan)
+        )
+        out = np.where(
+            ~pd.isna(hit_u), hit_u, np.where(~pd.isna(hit_f), hit_f, fac)
+        ).astype(np.int64)
+    for (rf, ru), target in remap.items():
+        out[(fac == int(rf)) & (uid == str(ru))] = int(target)
+    return out

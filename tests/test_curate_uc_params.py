@@ -144,3 +144,85 @@ class TestDerive(CleanDirTestCase):
     def test_missing_footprint_skips(self):
         up.register(up.IsoSpec(iso="ZZNONE", campd_states=("QQ",)))
         self.assertEqual(duc.curate(raw_root=self.raw, isos=["ZZNONE"]), [])
+
+
+def _write_crosswalk(raw_root, epa_rows=(), pudl_rows=()) -> None:
+    """EPA crosswalk CSV / PUDL subplant parquet under ``raw_root`` (either may be empty)."""
+    if epa_rows:
+        d = raw_root / "reference" / "camd-eia-crosswalk"
+        d.mkdir(parents=True, exist_ok=True)
+        pd.DataFrame(
+            epa_rows, columns=["CAMD_PLANT_ID", "CAMD_UNIT_ID", "EIA_PLANT_ID"]
+        ).to_csv(d / "epa_eia_crosswalk.csv", index=False)
+    if pudl_rows:
+        d = raw_root / "pudl"
+        d.mkdir(parents=True, exist_ok=True)
+        pd.DataFrame(
+            pudl_rows,
+            columns=["plant_id_epa", "emissions_unit_id_epa", "plant_id_eia"],
+        ).to_parquet(d / "core_epa__assn_eia_epacamd_subplant_ids.parquet")
+
+
+class TestEiaPlantKey(CleanDirTestCase):
+    """UC-1-FIX-3: plants are keyed by the EIA plant the fleet uses, not the CEMS id."""
+
+    def setUp(self):
+        super().setUp()
+        up.load_registry()
+        up.register(up.IsoSpec(iso=_ISO, campd_states=(_STATE,)))
+        self.raw = self.tmp_path / "raw"
+        _write_fixture(self.raw, up.POOLED_VINTAGES[0])
+
+    def _frame(self):
+        duc.curate(raw_root=self.raw, isos=[_ISO])
+        return read_clean_or_fail(up.DATATYPE, iso=_ISO)
+
+    def test_no_crosswalk_keeps_the_cems_id(self):
+        df = self._frame()
+        self.assertEqual(sorted(set(df["plant_code"]) - {0}), [777, 888])
+
+    def test_cems_units_filed_under_another_id_join_their_eia_plant(self):
+        # Hidalgo-style: CEMS facility 777, EIA plant 5777 for both units.
+        _write_crosswalk(self.raw, epa_rows=[(777, "U1", 5777), (777, "U2", 5777)])
+        df = self._frame()
+        self.assertNotIn(777, set(df["plant_code"]))
+        cc = df[(df["plant_code"] == 5777) & (df["uc_class"] == "cc")].iloc[0]
+        self.assertEqual(int(cc["n_units"]), 2)
+        self.assertAlmostEqual(float(cc["hsl_mw"]), 250.0, delta=2.0)
+
+    def test_split_facility_moves_only_its_mapped_units(self):
+        # Braunig / Arthur von Rosenberg-style: one CEMS facility, two EIA plants.
+        _write_crosswalk(self.raw, epa_rows=[(777, "U1", 777), (777, "U2", 5777)])
+        df = self._frame()
+        a = df[(df["plant_code"] == 777) & (df["uc_class"] == "cc")].iloc[0]
+        b = df[(df["plant_code"] == 5777) & (df["uc_class"] == "cc")].iloc[0]
+        self.assertEqual((int(a["n_units"]), int(b["n_units"])), (1, 1))
+
+    def test_disagreeing_sources_keep_the_shared_code(self):
+        _write_crosswalk(
+            self.raw,
+            epa_rows=[(777, "U1", 9999), (777, "U2", 9999)],
+            pudl_rows=[(777, "U1", 777), (777, "U2", 777)],
+        )
+        df = self._frame()
+        self.assertIn(777, set(df["plant_code"]))
+        self.assertNotIn(9999, set(df["plant_code"]))
+
+    def test_extra_facility_reads_only_the_listed_plant_of_another_state(self):
+        _write_fixture(self.raw, up.POOLED_VINTAGES[0])
+        src = (
+            self.raw / "campd-unit-level" / f"{_STATE}_{up.POOLED_VINTAGES[0]}.parquet"
+        )
+        other = pd.read_parquet(src)
+        other["stateCode"] = "YY"
+        other["facilityId"] = other["facilityId"].map({"777": "999", "888": "998"})
+        other.to_parquet(src.with_name(f"YY_{up.POOLED_VINTAGES[0]}.parquet"))
+        up.register(
+            up.IsoSpec(
+                iso=_ISO, campd_states=(_STATE,), extra_facilities=(("YY", 999),)
+            )
+        )
+        df = self._frame()
+        codes = set(df["plant_code"])
+        self.assertIn(999, codes)
+        self.assertNotIn(998, codes)

@@ -14,7 +14,12 @@ regression of closeout-PJM-decommit B0 / UC-0 F7):
 
 * every unit is classed by its CAMPD ``unitType`` / ``primaryFuelInfo`` into a
   family token (:data:`UC_CLASS_BY_UNIT_TYPE`, :func:`classify_unit`);
-* the facility's units of one family are summed to ONE hourly plant series;
+* each CEMS unit is mapped to the EIA plant the fleet keys on
+  (:func:`market_sim.data.campd_crosswalk.camd_to_eia_plant`: the operative
+  remap, then the crosswalk of record at unit then facility grain). Grouping
+  by the raw CAMD facility id missed every plant whose CEMS id differs from
+  its EIA id (UC-1-FIX-3; FINDING-ucmilp-fix2-floor-mindown-2026-10-10 §7);
+* the plant's units of one family are summed to ONE hourly plant series;
   HSL = p99.5 of that series, online = load >= max(1 MW, 0.05 x HSL), LSL = p5
   of the online-hour load, ``mlf = LSL / HSL``;
 * on-runs and off-gaps of the online mask give ``ut_h`` / ``dt_h`` (p25 each,
@@ -35,6 +40,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from market_sim.data.campd_crosswalk import camd_to_eia_plant, load_crosswalk
 from scripts.lib.datatype_registry import make_registry
 
 DATATYPE = "uc-params"
@@ -87,6 +93,9 @@ NOLOAD_MIN_POINTS: int = 200
 NOLOAD_MIN_RANGE_FRAC: float = 0.10
 
 _CAMPD_DIR = Path("campd-unit-level")
+#: The crosswalk of record under the raw root (``data.campd_crosswalk``).
+_CROSSWALK_CSV = Path("reference") / "camd-eia-crosswalk" / "epa_eia_crosswalk.csv"
+_CROSSWALK_PUDL = Path("pudl") / "core_epa__assn_eia_epacamd_subplant_ids.parquet"
 _COLUMNS = (
     "facilityId",
     "unitId",
@@ -102,7 +111,7 @@ _COLUMNS = (
 _R = make_registry(
     DATATYPE,
     CANONICAL_COLUMNS,
-    [("iso", str), ("campd_states", tuple)],
+    [("iso", str), ("campd_states", tuple), ("extra_facilities", tuple, ())],
     package=__name__,
     iso_modules=(
         "caiso",
@@ -291,22 +300,34 @@ def derive_iso(iso: str, raw_root: Path) -> pd.DataFrame:
     campd = raw_root / _CAMPD_DIR
     frames: list[pd.DataFrame] = []
     read: list[str] = []
-    for state in spec.campd_states:
+    extra: dict[str, set[int]] = {}
+    for state, fac in spec.extra_facilities:
+        if state not in spec.campd_states:
+            extra.setdefault(str(state), set()).add(int(fac))
+    for state in (*spec.campd_states, *sorted(extra)):
         for year in POOLED_VINTAGES:
             path = campd / f"{state}_{year}.parquet"
             if not path.is_file():
                 continue
             df = _load_state_year(path)
+            if state in extra:
+                df = df[df["facilityId"].isin(sorted(extra[state]))]
             if not df.empty:
                 frames.append(df)
                 read.append(path.name)
     if not frames:
         return pd.DataFrame(columns=list(CANONICAL_COLUMNS))
     data = pd.concat(frames, ignore_index=True)
+    # Group by the EIA plant the fleet keys on, not the raw CEMS facility id.
+    crosswalk = load_crosswalk(raw_root / _CROSSWALK_CSV, raw_root / _CROSSWALK_PUDL)
+    data["plant_code"] = camd_to_eia_plant(
+        data["facilityId"].to_numpy(), data["unitId"].to_numpy(), crosswalk
+    )
     years = f"{POOLED_VINTAGES[0]}-{POOLED_VINTAGES[-1]}"
     source = (
         f"EPA CAMPD unit-level hourly grossLoad/heatInput ({len(read)} extracts: "
-        f"{', '.join(read)}); plant basis per (facility, unit-type family): "
+        f"{', '.join(read)}); plant basis per (EIA plant, unit-type family), CEMS "
+        "units mapped to EIA plants by campd_crosswalk.camd_to_eia_plant: "
         f"HSL = p{HSL_PERCENTILE} of the summed load, online >= max({ONLINE_MIN_MW} MW, "
         f"{ONLINE_FRAC_OF_HSL} x HSL), LSL = p{LSL_PERCENTILE} of online-hour load, "
         f"ut_h/dt_h = p{DURATION_PERCENTILE} of on-runs/off-gaps, no-load = sum of "
@@ -314,7 +335,7 @@ def derive_iso(iso: str, raw_root: Path) -> pd.DataFrame:
         f"(>= {NOLOAD_MIN_POINTS} points, range >= {NOLOAD_MIN_RANGE_FRAC} x peak)"
     )
     rows: list[dict] = []
-    for (fac, fam), cluster in data.groupby(["facilityId", "uc_class"], sort=True):
+    for (fac, fam), cluster in data.groupby(["plant_code", "uc_class"], sort=True):
         stats = _plant_stats(cluster)
         if stats is None:
             continue
