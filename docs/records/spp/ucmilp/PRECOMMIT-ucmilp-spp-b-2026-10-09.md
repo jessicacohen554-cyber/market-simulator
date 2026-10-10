@@ -301,3 +301,13 @@ Also landed on `main` since Addendum B (PR #7207, `525b3f4e`): arm A's records m
 `docs/records/spp/ucmilp/data/ucmilp_spp_span/` (the PROBE de-registered, desk option 2) and SPP's `unit_commitment_milp` cell stamped **R**. The second
 comparator of §1 is therefore read from `main`, not from a branch; the control is unchanged. The shard appendix asks for the recorded
 `uc_solver_preset` (written to `uc_solve_log_<y>.json` by `pipeline/uc.py`).
+
+## Addendum D (2026-10-10 00:53Z, before any number exists) — the V2 launch record
+
+Addendum C pushed as `c33da440` (PRECOMMIT blob `9c7fb654…` 303 lines, prompts `070f082e…` 228 lines; every `--set` value verified to parse as JSON,
+`uc_solver_preset='"highs_default"'` single-quoted so the shell hands `replay_keeper` a JSON string) **before** any V2 shard. UC-DESK (00:47Z): *"#7219
+merged. PIN = 9cb0eecb… Push the PRECOMMIT addendum … then launch the 7 shards. No further ruling needed."* Seven shards launched 00:52:44–00:52:50Z
+at `9cb0eecb1fd97f52e3e1b75cb1380aeb7f6f52eb`, model `claude-opus-5-5`, tag `ucmilp:UC-2-SPP-B-shard`:
+`session_01LqT5BziuqWTwarBKSA2Ny9` 2019 · `session_0156TvjnpYVXr5nxYqnbbePk` 2020 · `session_01HnmQa8qgNZywh3N9uiqv4N` 2021 ·
+`session_01A2KTua7sy6htbuyvT5YDib` 2022 · `session_0154GuqYRjttDBujQPCoV7dq` 2023 · `session_01DsXJhAFGhYao8t7hQWMT9s` 2024 ·
+`session_01TixbnTkTokJQP7LMbsTiv5` 2025. The shard branches `claude/ucmilp-spp-b-<y>` were free (the Addendum-B shards pushed nothing).
