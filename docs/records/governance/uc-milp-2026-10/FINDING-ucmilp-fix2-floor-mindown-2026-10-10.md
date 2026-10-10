@@ -172,3 +172,29 @@ demotion. Tests: `test_all_pinned_cluster_carries_no_integer`,
 
 Consequence for reading UC benefit: in an ISO with the yard pin armed, the UC acts on gas and
 unpinned coal only. Coal commitment there stays the fuel identity's.
+
+## 7. ERCOT uc-params coverage (UC-DESK item, from UC-2-ERCOT: 52 of 139 clusters on class fallback)
+
+Census zero LP, from UC-2-ERCOT's `uc_solve_log_2024.json` (`claude/ucmilp-2-ercot-ab-e4w1`;
+139 clusters, 87 `uc-params`, 52 `none->1`) against `data/raw/campd-unit-level/TX_2023–2025`
+and the crosswalk of record (`data.campd_crosswalk.crosswalk_of_record`):
+
+| Cause | Clusters | Integer |
+|---|---|---|
+| Crosswalked, but no CAMPD record in the 2023–25 pool (sub-25 MW engines and CTs without CEMS; plant 127 retired 2020) | 43 | 4 (50127, 56233 CC; 127 coal; +1) |
+| No crosswalk entry and not in CAMPD (34702, 49392 ST_GAS; 3 CT) | 5 | 2 |
+| **Join miss: the plant files CEMS under a different CAMD id** (Hidalgo, EIA 55545 ← CAMD 7762; Arthur von Rosenberg, EIA 7512 ← CAMD 3612) | **2** | **2** |
+| Out of the TX footprint (Kiamichi, EIA 55501, files under OK) | 1 | 1 |
+| Same id, class mismatch (4195: a CAMPD boiler, a fleet CT) | 1 | 0 |
+
+Most of the gap is real absence from the measured source. 43 of the 52 are CTs, and the E1
+gate leaves CTs continuous, so they carry no integer. **The join defect is real but narrow:**
+`scripts/lib/uc_params` groups by the raw CAMD `facilityId` and never maps to the EIA
+plant code the fleet keys on, so a plant whose CEMS id differs is missed. In ERCOT that is 2
+integer CC clusters; the other ISOs are not yet counted. The fix: map CAMD (facility, unit)
+→ EIA plant through `crosswalk_of_record` and `campd.CAMPD_UNIT_PLANT_REMAP` before the
+per-plant grouping, the identity the fleet's CAMPD binning already uses. The footprint
+miss is the same kind of gap as the NV extension in `campd.ISO_STATES`. Both change the
+frozen derive (rule 23: a code fix of the join, not a residual-driven re-derive) and
+re-derive `uc-params` for every ISO, so they are proposed as a follow-up, not folded into
+this PR (§8, desk call).
