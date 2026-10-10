@@ -329,3 +329,22 @@ Gate read: window 0 Optimal and 31/31 Optimal → **the span launches.**
 per shard (`shard_prompt.py --budget 54`). The L1-month extrapolation (P0 + P1 + 12 Januaries ≈ 41 min) is the expectation;
 the 1.3 covers seasonal variance in the windows (January's 3.5 s per 36-h window may not be the year's slowest). A shard
 reaching the budget with no bundle stops and reports (rule 32); that outcome is reported, never re-tuned.
+
+## Addendum D (2026-10-10 04:15Z, after six legs landed, before any score exists) — the 2022 shard stopped at the 54-min budget; one relaunch at 120 min, nothing else changed
+
+Six of seven legs solved and pushed at `dc3860be` (2019 `52c4f7d3`, 2020 `5ba2c963`, 2021 `21245317`, 2023 `3f7ab193`,
+2024 `45c411aa`, 2025 `a793a5ee`; every leg 365/365 windows Optimal, 0 time-limit hits, 0 infeasible; recipe signature verified
+in each `run_config.json`; the five required files in every pushed tree). Their LP walls (P0 + UC + P1) were 39–54 min; the UC
+stage alone ran 17–34 min against Addendum C's 20–25 min expectation (January's 3.5 s per window is the year's fast season:
+2019 and 2023 average 5.3–5.5 s with p95 11–16 s and a p95 node count of 33–53, where January solved at the root).
+
+**2022 (`session_01DKfFss5xjrgnC2XPGDX13E`) stopped at the 54-min LP budget with no bundle written and nothing pushed** (rule 32,
+as the prompt required): P0 took 799.6 s (the longest of the seven; 2022 is the $6.45 gas year with 515 scarcity hours) and the UC
+stage had run about 40 min without finishing when the budget fired (SIGTERM, exit 143); the log carries no per-window progress.
+No UC exception, no infeasible window: this is a cost outcome, not a kill. Session archived (nothing to fetch).
+
+**Relaunch, declared before it runs:** one relaunch of the 2022 shard with `--budget 120` (the SPP precedent's budget) and NO
+other change — same pin, same five `--set` values, same `uc_*` defaults. A wall budget is not a solve setting: it changes no
+optimum and no reading, so this is not a re-tune (GATESPEC §7.1). The first attempt is reported in the RESULT's wall table as a
+budget stop at 54 min. Kill #2 (non-determinism) stays "not exercised": the first attempt produced no schedule to compare.
+Prompt: `shard-prompts-ucmilp-caiso.txt` 2022 block with the budget line changed to 120 min and this addendum cited.
