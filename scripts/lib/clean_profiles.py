@@ -188,7 +188,11 @@ SOLVE_SOURCES: tuple[CleanSource, ...] = (
         "uc-params",
         "market_sim.model.uc.params",
         partitions="scripts.lib.uc_params:load_registry",
-        raw_inputs=("data/raw/campd-unit-level",),
+        raw_inputs=(
+            "data/raw/campd-unit-level",
+            "data/raw/reference/camd-eia-crosswalk",
+            "data/raw/pudl",
+        ),
     ),
     # data/gtc.py — ERCOT generic transmission constraints (run_calibration).
     # The curate CLI takes no ISO flag; the product is ERCOT-only.

@@ -94,7 +94,7 @@ for the market split.
 | ps-water-state | — | — | — | — | — | — | — | — |
 | ra-import-allocations | — | — | — | — | — | — | — | — |
 | load-forecast | — | — | — | — | — | — | — | — |
-| pjm-elliott-forced-outages | — | — | 2022 | — | — | — | — | — |
+| pjm-elliott-forced-outages | — | — | — | — | — | — | — | — |
 
 ### National / ISO-agnostic datatypes
 
@@ -125,8 +125,8 @@ snapshot).
 | carb-cap-schedule | — | n/a |
 | coal-basin-price | national/regional (EIA Annual Coal Report, by producing region) | n/a |
 | coal-mining-ppi | national (BLS PPI, coal) | n/a |
-| coal-stocks | national (EIA-923 Schedule 2, by plant) | 2015–2024 |
-| coal-receipts | national (EIA-923 Page 5, by plant) | 2017–2025 |
+| coal-stocks | national (EIA-923 Schedule 2, by plant) | n/a |
+| coal-receipts | national (EIA-923 Page 5, by plant) | n/a |
 | stb-coal-loadings | national (STB EP 724, by carrier x region) | n/a |
 | nwpp-plant-basis-energy | NWPP only (one committed CSV, year x family) | n/a |
 | carbon-auction-results | — | n/a |
@@ -1083,7 +1083,7 @@ no-load heat input) for the MILP unit-commitment stage. Schema:
 
 | column | dtype | unit | nullable | description |
 |---|---|---|---|---|
-| `plant_code` | `int64` | `none` | no | EIA plant code (ORISPL; CAMPD facilityId). 0 marks the family's class-fallback row (the ISO's fitted plants pooled). |
+| `plant_code` | `int64` | `none` | no | EIA plant code, the fleet's plant key. CEMS units are mapped to it by market_sim.data.campd_crosswalk.camd_to_eia_plant (the operative remap, then the CAMD-EIA crosswalk of record), so a plant whose CAMPD facilityId differs from its EIA code is keyed by the EIA code. 0 marks the family's class-fallback row (the ISO's fitted plants pooled). |
 | `uc_class` | `string` | `none` | no | CAMPD unit-type family token: cc, ct, coal or st_gas (see header). |
 | `n_units` | `int64` | `none` | no | Units of the family at the plant with at least one online hour in the pooled span (the integer range of the cluster). Fallback rows: plants pooled. |
 | `hsl_mw` | `float64` | `mw` | no | Plant high sustainable limit: p99.5 of the summed hourly gross load. Fallback rows: the sum over the fitted plants of the family. |
