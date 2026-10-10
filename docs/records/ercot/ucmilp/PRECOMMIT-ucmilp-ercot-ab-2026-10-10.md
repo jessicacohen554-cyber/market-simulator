@@ -328,3 +328,34 @@ keeper does not record it and the arm does not set it → **INERT for both contr
 default, absent from the recipe). `2f872a62 → dc3860be` therefore carries the three fixes, #7219 (inert here) and docs (#7220,
 the SPP RESULT's records). The seven span prompts are regenerated at `dc3860be` (`shard-prompts-ucmilp-ercot.txt`). The span launches once the
 L1 gate (bench run 3, in flight) reports its pass line — the gate's purpose does not change with the pin.
+
+## Addendum B (2026-10-10 04:40Z) — KILL #1 on the 2020 span leg (§7.1): UC window 118 infeasible
+
+**Shard `ucmilp-ercot-2020` (`session_01Y1MSsw7nq6jweLCUL3Urn6`, pin `dc3860be`, 02:43–03:56Z): STOPPED on §7 kill 1, nothing
+pushed, archived.** P0 364 s (219,638 simplex iterations); UC prep *141 clusters, 72 integer (937 fleet rows), W=24 L=12*;
+windows 0–117 (Jan 1 → Apr 27) solved; **window 118 [2832, 2868) (Apr 28 00:00 → Apr 29 12:00, leap year)
+`UcWindowInfeasible`: no feasible incumbent, LP relaxation ALSO Infeasible** (89,928 columns, 14,359 rows, 72 integer clusters).
+Engine diagnosis verbatim: *"a-priori contradictory rows: min_down=1; carried starts above n: 0; floor above min-down: 1"*.
+
+**Reading (zero-LP, from `model/uc/diagnose.py::diagnose_window` at the pin):** `floor_above_min_down` counts cells where
+`u_lower > n − hist_w`, i.e. the window's floor needs more units of a cluster online in some hour than the cluster has NOT
+held offline by shutdowns carried in from the previous window's committed hours (`hist_w`, min-down holds). The one
+contradictory `min_down` row is that cell's hold row against the floor's lower bound; the relaxation is infeasible before any
+integrality. This is a floor (a P1 fleet prep composed upstream of the UC hook — `coal_min_config`, `st_netload_drag`,
+`reliability_floor`, or the availability-scaled pmin of a `_mustrun` band) demanding output inside a carried min-down hold:
+the collision the look-ahead min-down guard rows (`units_needed_for_floor`, reach `dt_max − 1` beyond the window end;
+FINDING-ucmilp-1-fix-window-infeasibility-2026-10-04) exist to prevent, so a case they do not cover. Rule 17/19 territory
+(a floor binding where the commitment physics says the unit is offline), inside the engine. **Engine defect #4 class**; the
+dump (`_dump_window`) is not written on the production path (`debug_dump_dir=None`), so naming the cluster and the floor needs
+either a bench re-run of window 118 with `--dump-dir` or a production dump switch — the engine lane's call. Routed to UC-DESK
+04:33Z with the question: relax a floor that falls inside a carried hold (floor loses, logged under its D-2 id) or extend the
+guard reach to the floor horizon.
+
+**Consequences for this lane (fixed by §7):** no re-tune, no second arm, **no relaunch of 2020 at this pin**. The other six legs
+(2019, 2021–2025) run on; a leg that completes is fetched, verified and kept (rule 31); a leg that hits the same kill is recorded
+here. A seven-year span cannot be composed without 2020 (rule 16), so the A/B's gate table is NOT scorable at `dc3860be`; the
+RESULT reports what the legs that finished show (structure and cost readings per year) and the kill. The relaunch route is the
+SPP Addendum A/C route: the engine lane's fix lands on `main`, UC-DESK sends the new pin, this file gets Addendum C with the
+new pin, the 2020 leg (and any other killed leg) relaunches there, and legs solved at `dc3860be` carry only if the fix is
+byte-inert on their windows (the desk's G-DRIFT call, else all seven relaunch). The L1 gate's January-only roll is recorded as
+the gate's limit: a window-118-class collision is a mid-year event the gate cannot see.
