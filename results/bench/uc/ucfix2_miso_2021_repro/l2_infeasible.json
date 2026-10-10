@@ -1,0 +1,59 @@
+{
+ "arm": "base",
+ "month": 1,
+ "message": "UC window 30 [720, 756) solve ended Infeasible with no feasible incumbent (147708 columns, 31068 rows, 161 integer clusters; solved as 147708 x 31068); LP relaxation: Infeasible; a-priori contradictory rows: min_down=2; carried starts above n: 0; floor above min-down: 2 \u2014 floor above min-down at plant 6823 coal (n=1, dt=16, pinned 3/3 members, hours [12, 13])",
+ "window_index": 30,
+ "t0": 720,
+ "t1": 756,
+ "relaxation_status": "Infeasible",
+ "diagnosis": {
+  "rows": 31068,
+  "columns": 147708,
+  "integer_clusters": 161,
+  "bad_column_bounds": 0,
+  "contradictory_rows": {
+   "min_down": {
+    "count": 2,
+    "examples": [
+     [
+      89,
+      12
+     ],
+     [
+      89,
+      13
+     ]
+    ]
+   }
+  },
+  "contradictory_rows_total": 2,
+  "history_starts_above_n": 0,
+  "floor_above_min_down": 2,
+  "clusters_floor_above_min_down": [
+   {
+    "k": 89,
+    "plant_code": 6823,
+    "family": "coal",
+    "n": 1,
+    "dt_h": 16,
+    "ut_h": 91,
+    "pinned_members": 3,
+    "members": 3,
+    "hours": [
+     12,
+     13
+    ],
+    "u_lower": [
+     1.0,
+     1.0
+    ],
+    "n_minus_hist_w": [
+     0.0,
+     0.0
+    ]
+   }
+  ],
+  "clusters_ceiling_contradiction": [],
+  "clusters_history_starts_above_n": []
+ }
+}
