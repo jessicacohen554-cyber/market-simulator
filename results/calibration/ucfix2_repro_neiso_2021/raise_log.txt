@@ -1,0 +1,144 @@
+WARNING: replay environment differs from the bundle's recorded environment — byte-identity is not guaranteed:
+  python_version: bundle '3.11.15' != now '3.11.17'
+  platform: bundle 'Linux-6.18.44-fc-v51-x86_64-with-glibc2.39' != now 'Linux-6.18.44-fc-v114-x86_64-with-glibc2.39'
+replaying results/calibration/w0_neiso_span (NEISO [2019, 2020, 2021, 2022, 2023, 2024, 2025]) ...
+INFO: container preflight: memory ceiling 13.36 GiB (/sys/fs/cgroup/memory/process_api/01a123ce-31c0-7384-821f-3b874080bbb1/claude-code-bash/memory.limit_in_bytes; MemTotal 15.72 GiB), swap 5.0 GiB, target ceiling+swap 24 GiB
+WARNING: container preflight: swap: /swapfile-marketsim is already active (5.0 GiB) but ceiling+swap is still 5.6 GiB short of the 24 GiB target; leaving it as it is
+INFO: container preflight: solve profile MALLOC_ARENA_MAX=2 MARKET_SIM_HIGHS_THREADS=1 OMP_NUM_THREADS=1
+WARNING: container preflight: ceiling+swap 18.4 GiB is below the 24 GiB target; a per-plant ISO-year LP (MISO, PJM) may be OOM-killed here. Fix: provision swap before data steps (`python3 scripts/prepare_solve_container.py` before hydrate_data / regenerate_clean / any fetch); free disk 6.2 GiB
+WARNING: eGRID boundary heat-rate reconciliation active for 2 plant(s): 7350->6.808, 55641->6.836
+WARNING: eGRID plant 57602 heat rate 8.654 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: eGRID plant 64378 heat rate 8.500 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 1 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: NEISO: CC plant 52026 fleet pmax sum 94.3 MW exceeds trusted bound 74.1 MW (nameplate; corrupt summer-capacity rows) — reconciled (20.2 MW removed)
+WARNING: NEISO: CC plant 60903 fleet pmax sum 1156.4 MW exceeds trusted bound 798.2 MW (nameplate; corrupt summer-capacity rows) — reconciled (358.2 MW removed)
+INFO: Loaded NEISO fleet from EIA-860 parquet (431 generators)
+INFO: Rebuilt binned fleet cache for NEISO — 431 plants → neiso_fleet_binned.parquet
+INFO: NEISO net interchange applied for 2021: -2119 MW avg (export-positive, measured EIA-930)
+WARNING: NEISO zonal load file not found (/home/user/market-simulator/data/raw/zone-specific-demand/NEISO/NEISO_load_hourly_2021.csv); skipping
+INFO: solving NEISO 2021 (hours=8760, Henry Hub=$3.72/MMBtu, commitment=False)
+INFO: gas offer margin anchor VINTAGE 2021: 4.5344 $/MMBtu (window anchor 4.534438356164384) — the solve year's own mean delivered-gas series
+INFO: partial-plant exit carry (NEISO): injecting 22 unit(s), 974 MW — plants [568, 1588, 1615, 1642, 1682, 6519, 10029, 10883, 50447, 54907, 54981, 58185, 63673]
+INFO: mid-vintage-year exit carry (NEISO 2021): injecting 13 unit(s), 134 MW — plants [1481, 10553, 50498, 54056, 58595, 58993]
+INFO: retiree vintage-status scope (NEISO 2021): dropped 8 unit(s), 21 MW — [(1615, '12', 'SB'), (1615, '13', 'SB'), (10029, 'GEN5', 'OS'), (10553, '3622', 'OS'), (10553, '6033', 'SB'), (10553, '6035', 'SB'), (10553, '6046', 'SB'), (10883, 'DEG6', 'SB')]
+WARNING: NEISO: CC plant 50498 fleet pmax sum 83.1 MW exceeds trusted bound 70.5 MW (nameplate; corrupt summer-capacity rows) — reconciled (12.6 MW removed)
+WARNING: 8 of 20 NEISO generators not in eGRID lookup — assigned fallback zone
+INFO: NEISO: measured power-only CHP heat rates applied to 1 generator(s) across 17 (plant, class) pair(s)
+INFO: loaded 20 within-window retiree units for NEISO (1101 MW, plants [568, 1588, 1642, 1682, 6519, 10029, 50498, 54056, 54907, 58185, 58595, 58993, 63673])
+INFO: EIA-860: 1 combined-cycle block(s) rated on one row resolved for the cc_block_summer_rating reconciliation (vintage_2021)
+WARNING: eGRID boundary heat-rate reconciliation active for 1 plant(s): 7350->7.040
+INFO: EIA-860: 4 combined-cycle steam part(s) resolved for the cc_steam_part_capacity repair
+WARNING: NEISO: CC plant 6081 fleet pmax sum 366.0 MW exceeds trusted bound 360.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (6.0 MW removed)
+WARNING: NEISO: CC plant 52026 fleet pmax sum 99.9 MW exceeds trusted bound 74.1 MW (nameplate; corrupt summer-capacity rows) — reconciled (25.8 MW removed)
+WARNING: NEISO: CC plant 55042 fleet pmax sum 566.0 MW exceeds trusted bound 544.0 MW (demonstrated peak; corrupt summer-capacity rows) — reconciled (22.0 MW removed)
+WARNING: NEISO: CC plant 55048 fleet pmax sum 303.6 MW exceeds trusted bound 290.6 MW (demonstrated peak; corrupt summer-capacity rows) — reconciled (13.0 MW removed)
+WARNING: NEISO: CC plant 55126 fleet pmax sum 585.3 MW exceeds trusted bound 578.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (7.3 MW removed)
+WARNING: NEISO: CC plant 55149 fleet pmax sum 897.9 MW exceeds trusted bound 840.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (57.9 MW removed)
+WARNING: NEISO: CC plant 55170 fleet pmax sum 797.0 MW exceeds trusted bound 790.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (7.0 MW removed)
+WARNING: NEISO: CC plant 55211 fleet pmax sum 602.1 MW exceeds trusted bound 578.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (24.1 MW removed)
+WARNING: NEISO: CC plant 55661 fleet pmax sum 634.7 MW exceeds trusted bound 605.5 MW (nameplate; corrupt summer-capacity rows) — reconciled (29.2 MW removed)
+WARNING: NEISO: CC plant 56047 fleet pmax sum 859.9 MW exceeds trusted bound 841.5 MW (nameplate; corrupt summer-capacity rows) — reconciled (18.4 MW removed)
+WARNING: NEISO: CC plant 60903 fleet pmax sum 1191.8 MW exceeds trusted bound 798.2 MW (nameplate; corrupt summer-capacity rows) — reconciled (393.6 MW removed)
+WARNING: 10 of 508 NEISO generators not in eGRID lookup — assigned fallback zone
+INFO: Loaded NEISO fleet from EIA-860 parquet (508 generators)
+INFO: NEISO: measured power-only CHP heat rates applied to 25 generator(s) across 17 (plant, class) pair(s)
+INFO: Binned fleet cache for NEISO is up to date — loaded from neiso_fleet_binned.parquet
+INFO: NEISO nuclear unit-availability overlay (2021): 0 reactor(s) on measured daily windows (uncovered dates keep the monthly CF)
+WARNING: NEISO: CC plant 6081 fleet pmax sum 366.0 MW exceeds trusted bound 360.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (6.0 MW removed)
+WARNING: NEISO: CC plant 52026 fleet pmax sum 99.9 MW exceeds trusted bound 74.1 MW (nameplate; corrupt summer-capacity rows) — reconciled (25.8 MW removed)
+WARNING: NEISO: CC plant 55042 fleet pmax sum 566.0 MW exceeds trusted bound 544.0 MW (demonstrated peak; corrupt summer-capacity rows) — reconciled (22.0 MW removed)
+WARNING: NEISO: CC plant 55048 fleet pmax sum 303.6 MW exceeds trusted bound 290.6 MW (demonstrated peak; corrupt summer-capacity rows) — reconciled (13.0 MW removed)
+WARNING: NEISO: CC plant 55126 fleet pmax sum 585.3 MW exceeds trusted bound 578.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (7.3 MW removed)
+WARNING: NEISO: CC plant 55149 fleet pmax sum 897.9 MW exceeds trusted bound 840.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (57.9 MW removed)
+WARNING: NEISO: CC plant 55170 fleet pmax sum 797.0 MW exceeds trusted bound 790.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (7.0 MW removed)
+WARNING: NEISO: CC plant 55211 fleet pmax sum 602.1 MW exceeds trusted bound 578.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (24.1 MW removed)
+WARNING: NEISO: CC plant 55661 fleet pmax sum 634.7 MW exceeds trusted bound 605.5 MW (nameplate; corrupt summer-capacity rows) — reconciled (29.2 MW removed)
+WARNING: NEISO: CC plant 56047 fleet pmax sum 859.9 MW exceeds trusted bound 841.5 MW (nameplate; corrupt summer-capacity rows) — reconciled (18.4 MW removed)
+WARNING: NEISO: CC plant 60903 fleet pmax sum 1191.8 MW exceeds trusted bound 798.2 MW (nameplate; corrupt summer-capacity rows) — reconciled (393.6 MW removed)
+WARNING: 10 of 508 NEISO generators not in eGRID lookup — assigned fallback zone
+INFO: Loaded NEISO fleet from EIA-860 parquet (508 generators)
+INFO: Binned fleet cache for NEISO is up to date — loaded from neiso_fleet_binned.parquet
+INFO: mid-vintage-year exit carry (NEISO 2021): injecting 13 unit(s), 134 MW — plants [1481, 10553, 50498, 54056, 58595, 58993]
+WARNING: NEISO: CC plant 50498 fleet pmax sum 83.1 MW exceeds trusted bound 70.5 MW (nameplate; corrupt summer-capacity rows) — reconciled (12.6 MW removed)
+WARNING: 11 of 11 NEISO generators not in eGRID lookup — assigned fallback zone
+INFO: loaded 11 within-window retiree units for NEISO (148 MW, plants [10553, 50498, 54056, 58595, 58993])
+INFO: unit-outage derate (NEISO 2021): 210 plant-tranches derated; 64 NEISO floor-class tranche(s) exempted (temp-reliability floor governs availability)
+INFO: short unit-outage derate (NEISO 2021): 187 plant-tranches derated (< 5-day windows; coal off, gas on)
+WARNING: NEISO: CC plant 6081 fleet pmax sum 366.0 MW exceeds trusted bound 360.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (6.0 MW removed)
+WARNING: NEISO: CC plant 52026 fleet pmax sum 99.9 MW exceeds trusted bound 74.1 MW (nameplate; corrupt summer-capacity rows) — reconciled (25.8 MW removed)
+WARNING: NEISO: CC plant 55042 fleet pmax sum 566.0 MW exceeds trusted bound 544.0 MW (demonstrated peak; corrupt summer-capacity rows) — reconciled (22.0 MW removed)
+WARNING: NEISO: CC plant 55048 fleet pmax sum 303.6 MW exceeds trusted bound 290.6 MW (demonstrated peak; corrupt summer-capacity rows) — reconciled (13.0 MW removed)
+WARNING: NEISO: CC plant 55126 fleet pmax sum 585.3 MW exceeds trusted bound 578.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (7.3 MW removed)
+WARNING: NEISO: CC plant 55149 fleet pmax sum 897.9 MW exceeds trusted bound 840.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (57.9 MW removed)
+WARNING: NEISO: CC plant 55170 fleet pmax sum 797.0 MW exceeds trusted bound 790.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (7.0 MW removed)
+WARNING: NEISO: CC plant 55211 fleet pmax sum 602.1 MW exceeds trusted bound 578.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (24.1 MW removed)
+WARNING: NEISO: CC plant 55661 fleet pmax sum 634.7 MW exceeds trusted bound 605.5 MW (nameplate; corrupt summer-capacity rows) — reconciled (29.2 MW removed)
+WARNING: NEISO: CC plant 56047 fleet pmax sum 859.9 MW exceeds trusted bound 841.5 MW (nameplate; corrupt summer-capacity rows) — reconciled (18.4 MW removed)
+WARNING: NEISO: CC plant 60903 fleet pmax sum 1191.8 MW exceeds trusted bound 798.2 MW (nameplate; corrupt summer-capacity rows) — reconciled (393.6 MW removed)
+WARNING: 10 of 508 NEISO generators not in eGRID lookup — assigned fallback zone
+INFO: Loaded NEISO fleet from EIA-860 parquet (508 generators)
+INFO: Binned fleet cache for NEISO is up to date — loaded from neiso_fleet_binned.parquet
+INFO: COD ramp (NEISO 2021): 400 unit-months masked offline (mid-year COD / retirement), 8 unit(s) fully not-yet-built/retired
+WARNING: NEISO: CC plant 6081 fleet pmax sum 366.0 MW exceeds trusted bound 360.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (6.0 MW removed)
+WARNING: NEISO: CC plant 52026 fleet pmax sum 99.9 MW exceeds trusted bound 74.1 MW (nameplate; corrupt summer-capacity rows) — reconciled (25.8 MW removed)
+WARNING: NEISO: CC plant 55042 fleet pmax sum 566.0 MW exceeds trusted bound 544.0 MW (demonstrated peak; corrupt summer-capacity rows) — reconciled (22.0 MW removed)
+WARNING: NEISO: CC plant 55048 fleet pmax sum 303.6 MW exceeds trusted bound 290.6 MW (demonstrated peak; corrupt summer-capacity rows) — reconciled (13.0 MW removed)
+WARNING: NEISO: CC plant 55126 fleet pmax sum 585.3 MW exceeds trusted bound 578.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (7.3 MW removed)
+WARNING: NEISO: CC plant 55149 fleet pmax sum 897.9 MW exceeds trusted bound 840.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (57.9 MW removed)
+WARNING: NEISO: CC plant 55170 fleet pmax sum 797.0 MW exceeds trusted bound 790.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (7.0 MW removed)
+WARNING: NEISO: CC plant 55211 fleet pmax sum 602.1 MW exceeds trusted bound 578.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (24.1 MW removed)
+WARNING: NEISO: CC plant 55661 fleet pmax sum 634.7 MW exceeds trusted bound 605.5 MW (nameplate; corrupt summer-capacity rows) — reconciled (29.2 MW removed)
+WARNING: NEISO: CC plant 56047 fleet pmax sum 859.9 MW exceeds trusted bound 841.5 MW (nameplate; corrupt summer-capacity rows) — reconciled (18.4 MW removed)
+WARNING: NEISO: CC plant 60903 fleet pmax sum 1191.8 MW exceeds trusted bound 798.2 MW (nameplate; corrupt summer-capacity rows) — reconciled (393.6 MW removed)
+WARNING: 10 of 508 NEISO generators not in eGRID lookup — assigned fallback zone
+INFO: Loaded NEISO fleet from EIA-860 parquet (508 generators)
+INFO: NEISO: measured power-only CHP heat rates applied to 25 generator(s) across 17 (plant, class) pair(s)
+INFO: Binned fleet cache for NEISO is up to date — loaded from neiso_fleet_binned.parquet
+INFO: NEISO 2021: EIA-930 NG: WAT level pin REFUSED for this year — the BA's NG: PS column starts mid-series (time split) and this year predates its first wholly-split year, so its NG: WAT still folds pumped-storage discharge; the monthly hydro level stays on EIA-923 HY (rule 14, neiso-72)
+INFO: NEISO 2021 hydro budget: backfilled 2 non-reporting plants (28.5 GWh) from 2024
+INFO: Loaded NEISO 2021 hydro budget: 170 plants, 6231.6 GWh annual, 1914 MW nameplate
+WARNING: NEISO 2021: RoR flat level exceeds nameplate on 7 plant-month(s) — clipped to nameplate (source-data inconsistency: monthly budget above nameplate-hours)
+INFO: NEISO 2021: RoR split — 112/170 plants flat at their monthly water (51.8% of the 6.23 TWh budget; fleet flat base 188-548 MW by month; 1 plants unclassified -> shapeable)
+INFO: NEISO 2021: 170 hydro plants in LP (1915 MW, 6.23 TWh monthly budget)
+INFO: NEISO nuclear unit-availability overlay (2021): 3 reactor(s) on measured daily windows (uncovered dates keep the monthly CF)
+INFO: unit-outage derate (NEISO 2021): 210 plant-tranches derated; 64 NEISO floor-class tranche(s) exempted (temp-reliability floor governs availability)
+INFO: short unit-outage derate (NEISO 2021): 187 plant-tranches derated (< 5-day windows; coal off, gas on)
+INFO: COD ramp (NEISO 2021): 432 unit-months masked offline (mid-year COD / retirement), 9 unit(s) fully not-yet-built/retired
+INFO: NEISO 2021: reliability floor — 6 enabled limb spec(s) applied from RELIABILITY_FLOOR_REGISTRY
+INFO: NEISO 2021: winter fuel-security conduct roster (leave-one-year-out CEMS, online share >= D-4 threshold): 1 plant(s) kept: [2367]
+INFO: NEISO 2021: conditional dual-fuel derate exemption — switch active in 0 of 8760 hours; dual-fuel gas capacity is derated in the other 8760
+INFO: EIA-860 multifuel: 603 (plant, group) dual-fuel gas keys flagged
+INFO: NEISO 2021: winter gas-availability derate — non-dual-fuel gas-CC/CT availability cut by clip(slope*(t0-TMIN),0,cap) over the cold-snap window (TDFOR, NERC cold-weather anchored)
+INFO: F923 gas-price plausibility screen for 2021 (NEISO, band [0.5, 2.0] x state N3045 reference): 18 plant-months in band, 0 low, 0 negative, 0 high -> reference (0 plants); 0 months on the US fallback reference, 0 unscreened (no reference), 0 unscreened (reference <= 0)
+INFO: F923 fuel costs for 2021: 16 generators priced from their own plant, 326 gap-filled from nearby (state/zone) plants
+INFO: hub-basis overlay (NEISO 2021, daily): 455 gas generators repriced at the measured hub spot in 12/12 months (winter max 13.43 $/MMBtu)
+INFO: dual-fuel switching (NEISO 2021): 215 gas tranches (7890 MW) capped at the delivered oil price
+INFO: gas offer net-revenue margin: 360 tranches compressed at anchor 4.5344 $/MMBtu (median fixed margin 5.08 $/MWh, max 183.94)
+INFO: winter fuel-inventory budget (NEISO 2021): 405 oil-capable gens, start_fill=2.8M(default) bbl, 5 winter month(s) constrained, monthly cap 9.79 M MMBtu (~0.91 TWh @HR10.8)
+INFO: coal per-yard budget (NEISO 2021): 2 yards, 16 coal gens rowed (0 unrowed: no curated record), annual 1.3 TWh-equiv @HR10.661 (rate from 2019+2020)
+INFO: energy+reserve co-opt (NEISO): 3 system reserve families (2 10-min/quick-start), 24 ORDC steps ($6-$1500), 664 full-fleet / 318 quick-start reserve-eligible units
+INFO: Matrix build: 5.790s, Solve: 81.099s (cold, simplex iterations 176774, objective 2219669700.0399)
+INFO: UC stage prepared: 68 clusters, 40 integer (304 fleet rows), W=24 L=12
+Traceback (most recent call last):
+  File "/home/user/market-simulator/scripts/replay_keeper.py", line 1212, in <module>
+    main()
+  File "/home/user/market-simulator/scripts/replay_keeper.py", line 1175, in main
+    run_dir = rcf.solve_and_persist(**kwargs)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/market-simulator/scripts/run_calibration_full.py", line 6835, in solve_and_persist
+    result, context, result_p1, p2_state = run_year(
+                                           ^^^^^^^^^
+  File "/home/user/market-simulator/scripts/run_calibration.py", line 7700, in run_year
+    energy_solve = run_energy_solve(
+                   ^^^^^^^^^^^^^^^^^
+  File "/home/user/market-simulator/src/market_sim/pipeline/solve.py", line 754, in run_energy_solve
+    replaced = p1_fleet_prep(r0)
+               ^^^^^^^^^^^^^^^^^
+  File "/home/user/market-simulator/src/market_sim/pipeline/uc.py", line 327, in p1_fleet_prep
+    self.run(fleet_in, mc_bid)
+  File "/home/user/market-simulator/src/market_sim/pipeline/uc.py", line 440, in run
+    result = solve_window(
+             ^^^^^^^^^^^^^
+  File "/home/user/market-simulator/src/market_sim/model/uc/solve.py", line 485, in solve_window
+    raise UcWindowInfeasible(
+market_sim.model.uc.window.UcWindowInfeasible: UC window 259 [6216, 6252) solve ended Infeasible with no feasible incumbent (37188 columns, 8100 rows, 40 integer clusters; solved as 37188 x 8100); LP relaxation: Infeasible; a-priori contradictory rows: min_down=1; carried starts above n: 0; floor above min-down: 1 — floor above min-down at plant 2364 coal (n=2, dt=16, pinned 8/8 members, hours [12])
+EXIT=1
