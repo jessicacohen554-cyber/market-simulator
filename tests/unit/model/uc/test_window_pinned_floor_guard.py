@@ -14,11 +14,18 @@ cluster, a few hours), then the stage over a toy horizon.
 
 from __future__ import annotations
 
+import dataclasses
+
 import numpy as np
 import pytest
 
 from market_sim.config.scenarios import ScenarioConfig
-from market_sim.model.uc.params import build_uc_cluster_params, units_needed_for_floor
+from market_sim.data.fleet import generators_to_fleet_arrays
+from market_sim.model.uc.params import (
+    build_uc_cluster_params,
+    demote_budget_pinned,
+    units_needed_for_floor,
+)
 from market_sim.model.uc.solve import UcSolveOptions, solve_window
 from market_sim.model.uc.window import (
     UcWindowInfeasible,
@@ -29,7 +36,7 @@ from market_sim.model.uc.window import (
 )
 from market_sim.pipeline.uc import UcStage
 
-from .conftest import toy_inputs, toy_uc_params
+from .conftest import toy_generators, toy_inputs, toy_uc_params
 
 OPTS = UcSolveOptions(mip_rel_gap=1e-6, time_limit_s=60.0)
 
@@ -103,7 +110,7 @@ def test_window_bound_matches_row_a_under_a_pin(uc_params_frame):
 
 
 # --------------------------------------------------------------------------- #
-# The stage: a pin past window 0's horizon, inside the min-down               #
+# The stage                                                                   #
 # --------------------------------------------------------------------------- #
 class _P0:
     """A synthetic P0 result (the stage reads dispatch / prices / SOC / flows)."""
@@ -115,56 +122,111 @@ class _P0:
         self.flows = None
 
 
-def _pinned_stage(tmp_path, pin_mw_after: float):
-    T, W, L = 72, 24, 2
-    gens, fa, demand, mc, dk = toy_inputs(T, night_mw=40.0, day_mw=40.0)
-    p = build_uc_cluster_params(fa, "NEISO")
-    dt = int(p.dt_h[0])
-    assert dt >= L + 2, "the collision needs a min-down longer than the look-ahead"
-    p0 = np.zeros((fa.n_gen, T))
-    p0[0, 0:22] = 200.0  # both units through hour 21
-    p0[0, 22 : W + L] = 0.0  # the pinned plant idles to window 0's horizon ...
-    p0[0, W + L :] = pin_mw_after  # ... and runs again one hour past it
-    p0[0, T - 1] = 200.0  # the cyclic first state: both units on
-    p0[1, :] = 60.0
-    demand[0, :] = p0[0, :] + 60.0
+T_STAGE, W_STAGE, L_STAGE = 72, 24, 2
+
+
+def _stage(tmp_path, fa, demand, mc, dk, p0):
     cfg = ScenarioConfig(
         iso="NEISO",
-        hours=T,
+        hours=T_STAGE,
         unit_commitment_milp=True,
-        uc_window_hours=W,
-        uc_lookahead_hours=L,
+        uc_window_hours=W_STAGE,
+        uc_lookahead_hours=L_STAGE,
     )
-    stage = UcStage(
+    return UcStage(
         cfg,
         fa,
         demand,
-        {**dk, **PIN},
+        dk,
         mc,
         _P0(p0, demand.shape[0]),
         None,
         lambda: mc,
         checkpoint_root=tmp_path,
     )
-    return stage, fa, mc, dt, W + L
 
 
-@pytest.mark.parametrize("pin_mw_after", [150.0, 50.0])
-def test_guard_keeps_units_a_later_pin_needs(uc_params_frame, tmp_path, pin_mw_after):
-    """Window 0 sees the pinned plant idle over hours 22-25 and nothing after;
-    window 1 pins it at ``pin_mw_after`` from hour 26, which row (a) carries
-    only with both units. uc-1.1 stopped both at hour 22 (its guard read the
-    unpinned fleet: no floor) and window 1 raised ``UcWindowInfeasible``; at
-    50 MW even a pinned-fleet guard dividing by ``pbar`` alone asked for one
-    unit. uc-1.2's guard reads row (a)'s count on the pinned fleet: no stop
-    inside the min-down of hour 26, every window Optimal."""
+def _p0_off_then_on(fa, on_mw_after: float) -> np.ndarray:
+    """The CC plant runs both units to hour 21, idles to window 0's horizon, runs again after."""
+    p0 = np.zeros((fa.n_gen, T_STAGE))
+    p0[0, 0:22] = 200.0
+    p0[0, W_STAGE + L_STAGE :] = on_mw_after
+    p0[0, T_STAGE - 1] = 200.0  # the cyclic first state: both units on
+    p0[1, :] = 60.0
+    return p0
+
+
+def test_all_pinned_cluster_carries_no_integer(uc_params_frame, tmp_path):
+    """UC-DESK ruling (option (a)): a cluster whose members are ALL budget-pinned
+    has its commitment fixed by the identity (P0), so it carries no ``u``. The
+    stage drops its integer, logs the plant, and runs the year with no integer
+    clusters (the uc-1.1 engine raised here: window 1 inherited a pin inside
+    the min-down of stops window 0 kept)."""
     uc_params_frame(toy_uc_params(ut_h=4, noload_mmbtu_h=100.0))
-    stage, fa, mc, dt, h_pin = _pinned_stage(tmp_path, pin_mw_after)
+    gens, fa, demand, mc, dk = toy_inputs(T_STAGE, night_mw=40.0, day_mw=40.0)
+    p = build_uc_cluster_params(fa, "NEISO")
+    assert demote_budget_pinned(p, np.array([], dtype=int))[1].size == 0
+    p_dem, demoted = demote_budget_pinned(p, PIN["coal_plant_gen_idx"])
+    assert demoted.tolist() == [0] and not p_dem.integer.any()
+    p0 = _p0_off_then_on(fa, 50.0)
+    demand[0, :] = p0[0, :] + 60.0
+    stage = _stage(tmp_path, fa, demand, mc, {**dk, **PIN}, p0)
+    assert stage.int_idx.size == 0 and stage.integer_gate_size == 1
+    sched = stage.run(fa, mc, write=False)
+    assert sched.kept_until == T_STAGE
+    eng = stage.log["engine"]
+    assert eng["integer_demoted_budget_pinned"] == [1]
+    assert eng["integer_set_size"] == 0 and eng["integer_gate_size"] == 1
+    # no integer cluster: P1's markup is not zeroed on the pinned rows either
+    markup = np.ones((fa.n_gen, T_STAGE))
+    assert stage.zero_markup(markup) is markup
+
+
+def test_partially_pinned_cluster_keeps_its_integer(uc_params_frame):
+    """One unpinned member is enough for the window to decide the commitment."""
+    gens = toy_generators()
+    gens.insert(1, gens[0].model_copy(update={"unit_id": "CC1b", "pmax_mw": 100.0}))
+    fa = generators_to_fleet_arrays(gens, ["Z0"], hours=4)
+    p = build_uc_cluster_params(fa, "NEISO")
+    assert p.integer.any()
+    c = int(p.cluster_of_gen[0])
+    assert int(p.cluster_of_gen[1]) == c, "both CC rows are one plant cluster"
+    _, demoted = demote_budget_pinned(p, np.array([0]))
+    assert demoted.size == 0
+    _, demoted = demote_budget_pinned(p, np.array([0, 1]))
+    assert demoted.tolist() == [c]
+
+
+def test_guard_keeps_units_a_later_derated_floor_needs(uc_params_frame, tmp_path):
+    """No pin: a structural floor of 50 MW past window 0's horizon on a plant at
+    availability 0.25 (25 MW per unit) needs BOTH units by row (a). uc-1.1's
+    guard counted ``ceil(50 / 100) = 1``, let window 0 stop one unit at hour 22,
+    and window 1 raised on the contradicted ceiling. uc-1.2's guard counts
+    ``ceil(50 / (100 * 0.25)) = 2``: no stop inside the floor hour's min-down."""
+    uc_params_frame(toy_uc_params(ut_h=4, noload_mmbtu_h=100.0))
+    gens, fa, demand, mc, dk = toy_inputs(T_STAGE, night_mw=40.0, day_mw=40.0)
+    p = build_uc_cluster_params(fa, "NEISO")
+    dt = int(p.dt_h[0])
+    assert dt >= L_STAGE + 2, (
+        "the collision needs a min-down longer than the look-ahead"
+    )
+    h = W_STAGE + L_STAGE  # the first hour window 0 cannot see
+    mg = np.zeros((fa.n_gen, T_STAGE))
+    mg[0, h] = 50.0
+    av = np.array(fa.availability, dtype=float, copy=True)
+    av[0, h] = 0.25
+    mech = np.zeros((fa.n_gen, T_STAGE), dtype=np.int8)
+    mech[0, h] = 1
+    fa = dataclasses.replace(fa, min_gen=mg, availability=av, min_gen_mechanism=mech)
+    p0 = _p0_off_then_on(fa, 0.0)
+    p0[0, h] = 50.0
+    demand[0, :] = p0[0, :] + 60.0
+    stage = _stage(tmp_path, fa, demand, mc, dk, p0)
     sched = stage.run(fa, mc, write=False)
     assert sched.is_complete()
     u, w = sched.u[0].astype(int), sched.w[0].astype(int)
-    assert (u[h_pin:] == 2).all(), u
-    assert w[h_pin - dt + 1 : h_pin + 1].sum() == 0, (u, w)
+    assert u[h] == 2, u
+    assert w[h - dt + 1 : h + 1].sum() == 0, (u, w)
     assert all(win["status"] == "Optimal" for win in stage.log["windows"])
     assert stage.log["windows"][0]["guard_rows"] >= 1
     assert stage.log["engine"]["version"] == "uc-1.2"

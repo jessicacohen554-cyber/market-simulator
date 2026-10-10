@@ -205,6 +205,16 @@ class WindowInputs:
     pinned_gens: np.ndarray
 
 
+def budget_pinned_gens(dispatch_kwargs: dict) -> np.ndarray:
+    """Sorted fleet rows a dropped budget family names (:data:`BUDGET_GEN_IDX_KEYS`)."""
+    pinned: set[int] = set()
+    for key in BUDGET_GEN_IDX_KEYS:
+        val = dispatch_kwargs.get(key)
+        if val is not None:
+            pinned.update(int(g) for g in np.asarray(val, dtype=int).ravel())
+    return np.array(sorted(pinned), dtype=int)
+
+
 def window_fleet(
     fleet: FleetArrays,
     dispatch_kwargs: dict,
@@ -226,12 +236,7 @@ def window_fleet(
     ``free_budget_units`` leaves the rows unpinned (the bench P0 stand-in only).
     """
     T = int(np.asarray(fleet.availability).shape[-1])
-    pinned = set()
-    for key in BUDGET_GEN_IDX_KEYS:
-        val = dispatch_kwargs.get(key)
-        if val is not None:
-            pinned.update(int(g) for g in np.asarray(val, dtype=int).ravel())
-    pinned_gens = np.array(sorted(pinned), dtype=int)
+    pinned_gens = budget_pinned_gens(dispatch_kwargs)
     fleet_w = _slice_obj(fleet, t0, t1, T)
     if pinned_gens.size and not free_budget_units:
         if p0_dispatch is None:

@@ -51,6 +51,7 @@ from market_sim.data.floor_mechanisms import MECH_UC_SCHEDULE
 from market_sim.model.uc.params import (
     UcClusterParams,
     build_uc_cluster_params,
+    demote_budget_pinned,
     params_log_rows,
     units_needed_for_floor,
     units_online_from_dispatch,
@@ -70,6 +71,7 @@ from market_sim.model.uc.solve import (
 )
 from market_sim.model.uc.window import (
     UcWindowModel,
+    budget_pinned_gens,
     prefix_bounds,
     slice_window_inputs,
     window_fleet,
@@ -83,7 +85,8 @@ logger = logging.getLogger(__name__)
 #: the look-ahead min-down guard (FINDING-ucmilp-1-fix-window-infeasibility-2026-10-04).
 #: uc-1.2: the floor unit need is the one row (a) implies (``pbar * a`` per unit)
 #: and the guard reads it on the window's own pinned fleet
-#: (FINDING-ucmilp-fix2-floor-mindown-2026-10-10).
+#: (FINDING-ucmilp-fix2-floor-mindown-2026-10-10); a cluster whose members are
+#: all budget-pinned carries no integer (UC-DESK ruling, option (a)).
 UC_ENGINE_VERSION = "uc-1.2"
 
 #: The most recent stage objects (one per year solved in this process), for a
@@ -287,7 +290,16 @@ class UcStage:
         self.upstream_prep = upstream_prep
         self.bid_getter = bid_getter
         self.checkpoint_dir = uc_checkpoint_dir(self.iso, self.year, checkpoint_root)
-        self.params: UcClusterParams = build_uc_cluster_params(fleet_arrays, self.iso)
+        gate_params = build_uc_cluster_params(fleet_arrays, self.iso)
+        #: Integer clusters the E1 gate admits, before the budget-pin demotion.
+        self.integer_gate_size = int(gate_params.integer.sum())
+        # A cluster whose members are all pinned to P0 by a dropped budget
+        # family carries no integer: its commitment is the identity's
+        # (``demote_budget_pinned``, rule 19).
+        self.params: UcClusterParams
+        self.params, self.pinned_demoted = demote_budget_pinned(
+            gate_params, budget_pinned_gens(dispatch_kwargs)
+        )
         self.int_idx = self.params.integer_clusters
         self.schedule: UcSchedule | None = None
         self.log: dict = {}
@@ -298,10 +310,12 @@ class UcStage:
         self.prefixing = bool(getattr(config, "uc_prefixing", False))
         self.slim = bool(getattr(config, "uc_slim_window", False))
         logger.info(
-            "UC stage prepared: %d clusters, %d integer (%d fleet rows), W=%d L=%d",
+            "UC stage prepared: %d clusters, %d integer (%d fleet rows; %d "
+            "all-budget-pinned clusters left to their budget identity), W=%d L=%d",
             self.params.n_clusters,
             int(self.int_idx.size),
             int(self.params.integer_member_gens.size),
+            int(self.pinned_demoted.size),
             self.W,
             self.L,
         )
@@ -586,6 +600,10 @@ class UcStage:
                 "threads": int(self.options.threads),
                 "n_clusters": int(self.params.n_clusters),
                 "integer_set_size": int(self.int_idx.size),
+                "integer_gate_size": int(self.integer_gate_size),
+                "integer_demoted_budget_pinned": [
+                    int(self.params.plant_code[c]) for c in self.pinned_demoted
+                ],
                 "integer_fleet_rows": int(self.params.integer_member_gens.size),
                 "integers_per_window": int(self.int_idx.size * (self.W + self.L)),
                 "kept_until": int(sched.kept_until),

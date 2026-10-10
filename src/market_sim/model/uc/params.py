@@ -19,6 +19,7 @@ family's fast-start exemption inverted (rule 18 physics, never class names).
 
 from __future__ import annotations
 
+import dataclasses
 import math
 from dataclasses import dataclass
 
@@ -428,6 +429,44 @@ def _cluster_of_gen(
     out = np.full(n_gen, -1, dtype=int)
     out[rows] = member_cluster
     return out
+
+
+def demote_budget_pinned(
+    params: UcClusterParams, pinned_gens: np.ndarray
+) -> tuple[UcClusterParams, np.ndarray]:
+    """Drop the integer of every cluster whose members are ALL budget-pinned.
+
+    A row a dropped budget family names (``window.BUDGET_GEN_IDX_KEYS``: the
+    coal-yard identity, hydro, oil, import nodes) is pinned to its P0
+    dispatch inside every window (DESIGN section 2.1). A cluster made only of
+    such rows has its output fixed hour by hour, so its commitment is the
+    budget identity's, set by P0, and is not a decision the window can take.
+    Under rule 19 the identity owns it: the cluster carries no ``u``, no
+    commitment rows and no ``MECH_UC_SCHEDULE`` floor, and P1 treats it as
+    the gate-off run does. A cluster with at least one unpinned member keeps
+    its integer (UC-DESK ruling on UC-1-FIX-2, option (a);
+    FINDING-ucmilp-fix2-floor-mindown-2026-10-10 section 6).
+
+    Returns ``(params, demoted)``: the params with the integer mask cleared on
+    those clusters, and their cluster indices.
+    """
+    pinned = np.zeros(int(params.cluster_of_gen.size), dtype=bool)
+    idx = np.asarray(pinned_gens, dtype=int)
+    if idx.size:
+        pinned[idx[(idx >= 0) & (idx < pinned.size)]] = True
+    n_mem = np.bincount(params.member_cluster, minlength=params.n_clusters)
+    n_pin = np.bincount(
+        params.member_cluster,
+        weights=pinned[params.member_gen].astype(float),
+        minlength=params.n_clusters,
+    )
+    all_pinned = (n_mem > 0) & (n_pin >= n_mem)
+    demoted = np.flatnonzero(params.integer & all_pinned)
+    if not demoted.size:
+        return params, demoted
+    integer = np.array(params.integer, dtype=bool, copy=True)
+    integer[demoted] = False
+    return dataclasses.replace(params, integer=integer), demoted
 
 
 def params_log_rows(params: UcClusterParams) -> list[dict]:
