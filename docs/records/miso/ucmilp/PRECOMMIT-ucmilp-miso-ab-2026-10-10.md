@@ -422,3 +422,11 @@ Nothing is LIVE for MISO outside the UC stage: the control is the committed keep
 Prompts regenerated at the new pin (`scripts/shard_prompt.py … --sha eab17188c75cd0332f9323ed3464c62bc0cd1848 --budget 115`; the base
 text is byte-identical to Addendum A's apart from the SHA and the budget) and committed over
 `docs/records/miso/ucmilp/shard-prompts-ucmilp-miso.txt` (the launched pin-1 text stays in git history at `ace67246`).
+
+## Addendum G (2026-10-10 14:18Z) — relaunch record
+
+Seven span shards launched 14:18:04–14:18:10Z at the pin `eab17188c75cd0332f9323ed3464c62bc0cd1848`, model `claude-opus-5-5`, tag
+`ucmilp:UC-2-MISO-shard`, prompts = `shard-prompts-ucmilp-miso.txt` at `b30a7fc3` (Addendum F text): 2019 `session_01NrZdEVbUPDbuh28pKQ7V7F` ·
+2020 `session_01XEjFwLBv4SGDAHw3a6JQW4` · 2021 `session_01NiDuJaNBaLqyRLhdskUEZ7` · 2022 `session_01JwPkP9JprGyHhyhUBouxvK` ·
+2023 `session_01WNeaDPLLqcuKm3C1xa3aif` · 2024 `session_01GyYoFNeXCFi5CabPjAS87u` · 2025 `session_01CW8CEfZ5YikyVowxaLCLME`.
+Nothing in §§1–8 changed.
