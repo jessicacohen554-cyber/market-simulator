@@ -283,7 +283,7 @@ def rung_l1(
     (the carried P0 state, the look-ahead floor need for the guard rows).
     """
     from market_sim.model.lp.model import DispatchModel
-    from market_sim.model.uc.params import units_needed_for_floor, units_online_profile
+    from market_sim.model.uc.params import units_online_profile
     from market_sim.model.uc.solve import solve_options_from_config, solve_window
     from market_sim.model.uc.window import UcWindowModel, slice_window_inputs
 
@@ -317,9 +317,9 @@ def rung_l1(
         else np.asarray(r0.storage_soc)[:, t1 - 1]
     )
     guard_reach = int(p.dt_h[k].max()) - 1 if k.size else 0
-    floor_ahead = units_needed_for_floor(
-        p, cap.fleet_arrays, t1, min(t1 + guard_reach, T)
-    )[k]
+    floor_ahead = stage._floor_need_ahead(
+        cap.fleet_arrays, p0, t1, min(t1 + guard_reach, T)
+    )
     opts = solve_options_from_config(
         cfg, debug_dump_dir=None if dump_dir is None else Path(dump_dir)
     )

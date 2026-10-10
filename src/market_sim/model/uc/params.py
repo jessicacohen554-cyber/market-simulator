@@ -486,14 +486,26 @@ def units_needed_for_floor(
     """``(n_c, t1 - t0)`` lower bound on ``u`` implied by structural member floors.
 
     A floor on a member (nuclear / CHP / coal must-run / reliability floors,
-    all upstream of the hook) is an input the UC respects: ``u >=
-    ceil(sum_members floor / pbar)`` (DESIGN section 2.2, last row), where the
-    floor is the member's EFFECTIVE P lower bound — ``min_gen`` clipped to
-    ``pmax * availability`` — exactly the clip ``model.lp.bounds.build_variable_
-    bounds`` applies to the P column (``col_lower = min(col_lower,
-    col_upper)``), so the UC never asks for a unit the LP's own floor does
-    not (a floor above the available capacity is already released by that
-    clip in P0, P1 and the window alike).
+    all upstream of the hook; a budget row pinned to P0 inside a window) is an
+    input the UC respects. The floor is the member's EFFECTIVE P lower bound —
+    ``min_gen`` clipped to ``pmax * availability`` — exactly the clip
+    ``model.lp.bounds.build_variable_bounds`` applies to the P column
+    (``col_lower = min(col_lower, col_upper)``), so the UC never asks for a
+    unit the LP's own floor does not (a floor above the available capacity is
+    already released by that clip in P0, P1 and the window alike).
+
+    The unit count is the one the window's own output-coupling row (a)
+    ``sum_members P <= pbar * a * u`` implies at ``P = floor``:
+    ``u >= ceil(sum_members floor / (pbar * a))``, ``a`` the cluster's
+    capacity-weighted availability on the SAME fleet hours
+    (:meth:`UcClusterParams.cluster_availability`). Dividing by ``pbar``
+    alone (engine uc-1.1) under-counts wherever ``a < 1`` — a derate, or a
+    budget row pinned to P0 through its availability, which makes ``a``
+    exactly the pinned output share and the need every unit — and the
+    look-ahead guard then let a window stop a unit a later window's row (a)
+    needs (MISO 2020-2025, FINDING-ucmilp-fix2-floor-mindown-2026-10-10). The
+    effective floors sum to at most ``cap * a = n * pbar * a``, so the need
+    never exceeds ``n``.
     """
     n_t = t1 - t0
     min_gen = getattr(fleet, "min_gen", None)
@@ -511,10 +523,11 @@ def units_needed_for_floor(
         params.member_cluster,
         np.maximum(np.minimum(floor, ceiling), 0.0),
     )
+    per_unit = params.pbar_mw[:, None] * params.cluster_availability(fleet, t0, t1)
     with np.errstate(invalid="ignore", divide="ignore"):
         need = np.where(
-            params.pbar_mw[:, None] > 0.0,
-            np.ceil(tot / params.pbar_mw[:, None] - 1e-9),
+            (per_unit > 0.0) & (tot > 0.0),
+            np.ceil(tot / per_unit - 1e-9),
             0.0,
         )
     return np.clip(need, 0, params.n_units[:, None]).astype(int)

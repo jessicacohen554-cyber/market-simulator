@@ -72,6 +72,7 @@ from market_sim.model.uc.window import (
     UcWindowModel,
     prefix_bounds,
     slice_window_inputs,
+    window_fleet,
 )
 from market_sim.pipeline.commitment import _bridge_floored_fleet
 
@@ -80,7 +81,10 @@ logger = logging.getLogger(__name__)
 #: Engine version stamped in every ``uc_solve_log`` (bumped on a formulation change).
 #: uc-1.1: carried min-up / min-down history inside the Rajan–Takriti rows and
 #: the look-ahead min-down guard (FINDING-ucmilp-1-fix-window-infeasibility-2026-10-04).
-UC_ENGINE_VERSION = "uc-1.1"
+#: uc-1.2: the floor unit need is the one row (a) implies (``pbar * a`` per unit)
+#: and the guard reads it on the window's own pinned fleet
+#: (FINDING-ucmilp-fix2-floor-mindown-2026-10-10).
+UC_ENGINE_VERSION = "uc-1.2"
 
 #: The most recent stage objects (one per year solved in this process), for a
 #: harness that writes the post-P1 uplift sidecar; drained by :func:`take_uc_stages`.
@@ -372,10 +376,11 @@ class UcStage:
         sched = UcSchedule(p, T, hist, record_states=record_states or pin is not None)
         if pin is not None and not pin.prev_states:
             raise ValueError("a paired run needs a pin built with record_states=True")
-        # The structural floors' unit needs over the whole year (zero LP): each
-        # window receives the slice just past its horizon — up to the longest
-        # min-down minus one hour — for its look-ahead guard rows.
-        floor_need_year = units_needed_for_floor(p, fleet_in, 0, T)[k]
+        # Each window's look-ahead guard rows read the floor unit needs of the
+        # hours just past its horizon — up to the longest min-down minus one
+        # hour — on the fleet a window covering those hours sees
+        # (``window_fleet``: budget rows pinned to P0), never on the unpinned
+        # year fleet (FINDING-ucmilp-fix2-floor-mindown-2026-10-10).
         guard_reach = int(p.dt_h[k].max()) - 1 if k.size else 0
         month_ends = month_boundaries(T)
         next_month = int(np.searchsorted(month_ends, t_start, side="right"))
@@ -426,7 +431,9 @@ class UcStage:
                 soc_terminal=soc_terminal,
                 fix_on=fix_on,
                 fix_off=fix_off,
-                floor_need_ahead=floor_need_year[:, t1 : min(t1 + guard_reach, T)],
+                floor_need_ahead=self._floor_need_ahead(
+                    fleet_in, p0_dispatch, t1, min(t1 + guard_reach, T)
+                ),
                 slim=self.slim,
             )
             t_w2 = time.perf_counter()
@@ -527,6 +534,26 @@ class UcStage:
             self.log["summary"]["time_limit_hits"],
         )
         return sched
+
+    def _floor_need_ahead(
+        self, fleet_in: FleetArrays, p0_dispatch: np.ndarray, h0: int, h1: int
+    ) -> np.ndarray | None:
+        """``(n_int, h1 - h0)`` floor unit needs past a window's horizon (zero LP).
+
+        Computed on :func:`~market_sim.model.uc.window.window_fleet` of
+        ``[h0, h1)`` — the same pinned availability and ``min_gen`` the window
+        covering those hours builds its rows on — so the guard rows of one
+        window and the bounds and rows of the next agree hour by hour.
+        ``None`` when the range is empty (the year's last window).
+        """
+        if h1 <= h0:
+            return None
+        fleet_ahead, _ = window_fleet(
+            fleet_in, self.dispatch_kwargs, h0, h1, p0_dispatch
+        )
+        return units_needed_for_floor(self.params, fleet_ahead, 0, h1 - h0)[
+            self.int_idx
+        ]
 
     def _log(self, windows: list[dict], sched: UcSchedule, partial: bool) -> dict:
         """Assemble the ``uc_solve_log`` dict (DESIGN section 4)."""
