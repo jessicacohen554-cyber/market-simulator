@@ -377,3 +377,30 @@ and could not see that. The availability steps at 2856 also change row (a)'s per
 ⌈floor/(p̄·a)⌉ on the window's own fleet. Validation shard for ERCOT 2020 at f2c7166a (uc-1.2): session_01M6wvBm27qR66hrxksg9oKe
 (arm: unit_commitment_milp=true, ercot_gas_commitment_bridge=false)."* The census is at `data/census_w118_2020.txt`. The lane
 waits for the uc-1.2 merge SHA (Addendum C) and the six `dc3860be` legs in flight.
+
+### Addendum B.2 (05:20Z) — KILL #2 on the 2019 leg; 2024 and 2025 legs complete at `dc3860be`
+
+**2019 (`session_019138zrzCoLCMQd4A5C5qiF`): STOPPED on §7 kill 1, a different signature.** Every UC window solved (365 windows,
+Σ MILP 6,257 s, mean 17.0 s, nodes p50 13, 0 time-limit hits; 73 integer clusters / 954 rows); the **P1 dispatch LP built on the
+UC schedule is Infeasible** — cold rebuild on the floored fleet, 0 simplex iterations (HiGHS presolve found the bounds
+contradictory): `model/lp/model.py:1419 RuntimeError: dispatch LP has no feasible primal solution (status: Infeasible)`. P0 266.9 s.
+Nothing pushed; archived. Reading: the UC's per-unit-hour bounds (MECH 28) collide with another P1 row family on the full-year
+LP — the candidates the shard named are derated availability, the coal monthly pile ceiling (a budget row the window pins to P0
+but the year LP does not) and the reserve headroom cap. The engine lane's call whether uc-1.2 (which changes the guard's unit
+count, not the P1 bounds) covers it; routed to UC-DESK and UC-1-FIX-2 with the traceback.
+
+**2024 (`0c76c8c3`) and 2025 (`df87a9be`): COMPLETE**, fetched blobless, all five artifacts verified in the pushed trees, checked out
+onto this container (22 and 21 files). Wall rows (GATESPEC §6.1; evidence only — the span is not scorable at this pin):
+
+| year | P0 s | UC Σ MILP s (windows / mean / p95 / max) | P1 s | total s | ratio total/(P0+P1) | nodes p50/p95 | gap p95 | TL hits | warm | integers/window | peak RSS GiB |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 2024 | 368.9 | 6,482 (365 / 17.8 / 38.8 / —) | 359.7 | 7,404 | **10.2** | 17 / 79 | 9.5e-4 | 0 | 365/365 | 2,556 | 12.63 |
+| 2025 | 493.0 | 6,660 (365 / 18.3 / 48.9 / 235.8) | 454.9 | 7,807 | **8.2** | 17 / 126 | 9.8e-4 | 0 | 365/365 | 2,556 | 12.69 |
+
+Both: 0 unserved MWh; **52 of 139–140 clusters on the class-mean no-load fallback** (count `none → 1`, up/down from the class
+table; 87–88 on measured `uc-params`) — far above UC-0's 4–8 fallback plants, a parameter-coverage finding for UC-DESK. 2025's
+regenerated `legitimacy_diagnostics.json` reads **D-2 ST_GAS 32.6 %** of class energy (3.71 of 11.39 TWh: `st_netload_drag` 2.07 +
+`uc_schedule` 1.65) — the §3 kill-row candidate (2022 C8 ST_GAS was named; 2025 sat at 21.1 %), to be read under R4 with MECH 28
+removed (17.9 % → no flip) when a scorable span exists; D-4 `reliability_floor × CT_PEAKER` 93.4 % off-window (pre-existing
+class, control 77.9 % in 2019). The `**` negation pushed `unit_hourly_2024.parquet` (84 MB), `2024_P1_fleet.parquet` and
+`floors/` on the 2024 leg (the 2025 shard unstaged its `unit_hourly`); neither enters the slim records.
