@@ -144,7 +144,10 @@ def test_min_down_history_and_window_stop_are_summed(uc_params_frame):
 
 def test_units_needed_for_floor_uses_the_lp_effective_floor(uc_params_frame):
     """A floor above the available capacity is clipped exactly as the LP clips
-    the P lower bound: the UC never asks for a unit the LP's own floor does not."""
+    the P lower bound: the UC never asks for a unit the LP's own floor does not.
+    The unit count is the one row (a) implies at that floor: in hours 2-3 each
+    unit carries ``pbar * a = 25`` MW, so the clipped 50 MW floor needs both
+    units (engine uc-1.1 said 1 — a ``u`` row (a) cannot hold, uc-1.2)."""
     T_w = 6
     _, fa, demand, mc, dk = toy_inputs(T_w, night_mw=100.0, day_mw=100.0)
     p = build_uc_cluster_params(fa, "NEISO")
@@ -154,7 +157,7 @@ def test_units_needed_for_floor_uses_the_lp_effective_floor(uc_params_frame):
     av[0, 2:4] = 0.25  # only 50 MW available in hours 2-3
     fa2 = dataclasses.replace(fa, min_gen=mg, availability=av)
     need = units_needed_for_floor(p, fa2, 0, T_w)[0]
-    assert need.tolist() == [2, 2, 1, 1, 2, 2]
+    assert need.tolist() == [2, 2, 2, 2, 2, 2]
 
 
 def test_infeasible_window_names_itself_and_dumps(uc_params_frame, tmp_path):

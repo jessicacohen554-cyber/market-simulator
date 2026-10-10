@@ -42,6 +42,7 @@ from market_sim.model.uc.params import (
     UcClusterParams,
     units_needed_for_floor,
 )
+from market_sim.model.uc.slim import SlimReduction, reduce_window
 
 #: Dispatch kwargs the window DROPS: annual / monthly budget families whose
 #: rows cannot be sliced (DESIGN section 2.1). Their generators are pinned to
@@ -74,6 +75,7 @@ BUDGET_KWARGS: frozenset[str] = frozenset(
         "import_node_monthly_lo",
         "import_node_monthly_hi",
         "import_node_month_index",
+        "import_link_band",
         "hydro_envelope_gen_idx",
         "hydro_envelope_mw",
         "hydro_envelope_storage_idx",
@@ -203,51 +205,38 @@ class WindowInputs:
     pinned_gens: np.ndarray
 
 
-def slice_window_inputs(
+def budget_pinned_gens(dispatch_kwargs: dict) -> np.ndarray:
+    """Sorted fleet rows a dropped budget family names (:data:`BUDGET_GEN_IDX_KEYS`)."""
+    pinned: set[int] = set()
+    for key in BUDGET_GEN_IDX_KEYS:
+        val = dispatch_kwargs.get(key)
+        if val is not None:
+            pinned.update(int(g) for g in np.asarray(val, dtype=int).ravel())
+    return np.array(sorted(pinned), dtype=int)
+
+
+def window_fleet(
     fleet: FleetArrays,
-    demand: np.ndarray,
     dispatch_kwargs: dict,
     t0: int,
     t1: int,
     p0_dispatch: np.ndarray | None = None,
     free_budget_units: bool = False,
-) -> WindowInputs:
-    """Build the window inputs from the year's (DESIGN section 2.1).
+) -> tuple[FleetArrays, np.ndarray]:
+    """The fleet a window over ``[t0, t1)`` sees, and the rows pinned to P0.
 
-    Args:
-        fleet: The year's fleet.
-        demand: ``(n_zones, T)``.
-        dispatch_kwargs: The assembled year kwargs.
-        t0, t1: The window's hour range.
-        p0_dispatch: ``(n_gen, T)`` P0 dispatch; the budget-governed rows are
-            pinned to it (``None`` only in tests that pass no budget family).
-        free_budget_units: Leave the budget-governed rows free within their
-            availability instead of pinning them — the ladder's P0 stand-in
-            (``uc_bench._relaxation_as_p0``) only; never the production hook.
-
-    Raises:
-        ValueError: A refused kwarg is present (:data:`REFUSED_KWARGS`).
+    The hourly fields are sliced and every row a dropped budget family names
+    (:data:`BUDGET_GEN_IDX_KEYS`) is pinned to its P0 dispatch through its
+    ``availability`` (``P0 / pmax``) and ``min_gen`` (``P0``). Every field is
+    hour-local, so the fleet of ``[t0, t1)`` is the same hour by hour whatever
+    window it belongs to: the look-ahead min-down guard reads its floor needs
+    from this function too (``pipeline/uc.py``), never from the unpinned year
+    fleet, so the guard sees exactly the floors and availability the next
+    window's rows will hold (FINDING-ucmilp-fix2-floor-mindown-2026-10-10).
+    ``free_budget_units`` leaves the rows unpinned (the bench P0 stand-in only).
     """
-    T = int(demand.shape[1])
-    for key in REFUSED_KWARGS:
-        if dispatch_kwargs.get(key) is not None:
-            raise ValueError(
-                f"unit_commitment_milp cannot build a window with {key!r} armed "
-                "(the posture family is refused by rule 19; the hydraulic cascade's "
-                "lagged cyclic terms cannot be pinned at a window edge — DESIGN "
-                "section 8 R5)"
-            )
-    pinned = set()
-    for key in BUDGET_GEN_IDX_KEYS:
-        val = dispatch_kwargs.get(key)
-        if val is not None:
-            pinned.update(int(g) for g in np.asarray(val, dtype=int).ravel())
-    pinned_gens = np.array(sorted(pinned), dtype=int)
-    kwargs_w = {
-        k: _slice_obj(v, t0, t1, T)
-        for k, v in dispatch_kwargs.items()
-        if k not in BUDGET_KWARGS and k != "T"
-    }
+    T = int(np.asarray(fleet.availability).shape[-1])
+    pinned_gens = budget_pinned_gens(dispatch_kwargs)
     fleet_w = _slice_obj(fleet, t0, t1, T)
     if pinned_gens.size and not free_budget_units:
         if p0_dispatch is None:
@@ -271,6 +260,86 @@ def slice_window_inputs(
         )
         base[pinned_gens, :] = np.minimum(p_pin, pmax[:, None] * avail[pinned_gens, :])
         fleet_w = dataclasses.replace(fleet_w, availability=avail, min_gen=base)
+    return fleet_w, pinned_gens
+
+
+def slice_window_inputs(
+    fleet: FleetArrays,
+    demand: np.ndarray,
+    dispatch_kwargs: dict,
+    t0: int,
+    t1: int,
+    p0_dispatch: np.ndarray | None = None,
+    free_budget_units: bool = False,
+    p0_flows: np.ndarray | None = None,
+) -> WindowInputs:
+    """Build the window inputs from the year's (DESIGN section 2.1).
+
+    Args:
+        fleet: The year's fleet.
+        demand: ``(n_zones, T)``.
+        dispatch_kwargs: The assembled year kwargs.
+        t0, t1: The window's hour range.
+        p0_dispatch: ``(n_gen, T)`` P0 dispatch; the budget-governed rows are
+            pinned to it (``None`` only in tests that pass no budget family).
+        free_budget_units: Leave the budget-governed rows free within their
+            availability instead of pinning them — the ladder's P0 stand-in
+            (``uc_bench._relaxation_as_p0``) only; never the production hook.
+        p0_flows: ``(n_links, T)`` P0 link flows. The monthly per-link import
+            band (``import_link_band``, NYISO landing links) is a budget
+            family like the import-node band: it is dropped and its links'
+            flows are pinned to P0 over ``[t0, t1)`` (both bounds set to the
+            P0 flow; a pinned link is marked bidirectional so a one-way floor
+            cannot loosen the pin). Required when the band is armed.
+
+    Raises:
+        ValueError: A refused kwarg is present (:data:`REFUSED_KWARGS`).
+    """
+    T = int(demand.shape[1])
+    for key in REFUSED_KWARGS:
+        if dispatch_kwargs.get(key) is not None:
+            raise ValueError(
+                f"unit_commitment_milp cannot build a window with {key!r} armed "
+                "(the posture family is refused by rule 19; the hydraulic cascade's "
+                "lagged cyclic terms cannot be pinned at a window edge — DESIGN "
+                "section 8 R5)"
+            )
+    kwargs_w = {
+        k: _slice_obj(v, t0, t1, T)
+        for k, v in dispatch_kwargs.items()
+        if k not in BUDGET_KWARGS and k != "T"
+    }
+    fleet_w, pinned_gens = window_fleet(
+        fleet, dispatch_kwargs, t0, t1, p0_dispatch, free_budget_units
+    )
+    band = dispatch_kwargs.get("import_link_band")
+    if band is not None and not free_budget_units:
+        if p0_flows is None:
+            raise ValueError(
+                "the monthly import link band needs the P0 flows to pin to"
+            )
+        link_idx = np.asarray(band[0], dtype=int).ravel()
+        f = np.asarray(p0_flows, dtype=float)[link_idx, t0:t1].T  # (T_w, n_band)
+        T_w = t1 - t0
+        ttc_w = np.asarray(kwargs_w["ttc"], dtype=float)
+        n_links = ttc_w.shape[-1]
+        ttc_w = np.array(np.broadcast_to(ttc_w, (T_w, n_links)), copy=True)
+        imp = kwargs_w.get("ttc_import")
+        imp_w = np.array(
+            np.broadcast_to(
+                np.asarray(ttc_w if imp is None else imp, dtype=float), (T_w, n_links)
+            ),
+            copy=True,
+        )
+        ttc_w[:, link_idx] = f
+        imp_w[:, link_idx] = -f
+        kwargs_w["ttc"] = ttc_w
+        kwargs_w["ttc_import"] = imp_w
+        bidir = kwargs_w.get("link_bidirectional")
+        if bidir is not None:
+            bidir = np.array(bidir, dtype=bool, copy=True)
+            bidir[link_idx] = True
+            kwargs_w["link_bidirectional"] = bidir
     return WindowInputs(
         fleet=fleet_w,
         demand=np.ascontiguousarray(demand[:, t0:t1]),
@@ -331,6 +400,14 @@ class WindowResult:
     #: ``set_solution_s`` / ``extract_s``); ``None`` on a result a test builds
     #: without solving.
     phase: dict | None = None
+    #: The slim window (``uc_slim_window``, ``model/uc/slim.py``): the
+    #: columns and rows of the model HiGHS actually solved (equal to
+    #: ``columns`` / ``rows`` when the window solved on the full model), the
+    #: reduction census and the seconds the reduction took.
+    slim_columns: int = 0
+    slim_rows: int = 0
+    slim_counts: dict | None = None
+    slim_s: float = 0.0
 
 
 def _lp_matrix_csc(h: highspy.Highs) -> sp.csc_matrix:
@@ -437,6 +514,11 @@ class UcWindowModel:
         soc_terminal: ``(n_storage,)`` one-sided terminal SOC lower bound
             (P0's level at ``t1 - 1``) or ``None``.
         fix_on / fix_off: optional ``(n_int,)`` pre-fixing masks.
+        slim: Build the slim window (``uc_slim_window``): the exact
+            reduction of ``model/uc/slim.py`` on the full model, solved on
+            its own handle (:attr:`h_solve`); the full handle (:attr:`h`)
+            stays for the diagnosis, relaxation and dump paths. A reduction
+            that meets a contradiction leaves the window on the full model.
         floor_need_ahead: ``(n_int, n_ahead)`` units the structural member
             floors need in the hours ``t1, t1 + 1, ...`` AFTER the window
             (:func:`~market_sim.model.uc.params.units_needed_for_floor` on
@@ -460,6 +542,7 @@ class UcWindowModel:
         fix_on: np.ndarray | None = None,
         fix_off: np.ndarray | None = None,
         floor_need_ahead: np.ndarray | None = None,
+        slim: bool = False,
     ) -> None:
         t_build = time.perf_counter()
         self.params = params
@@ -472,6 +555,8 @@ class UcWindowModel:
         self.T_w = int(self.layout.T)
         self.n_lp = int(self.layout.total_columns)
         self.fleet = inputs.fleet
+        #: Fleet rows a dropped budget family pinned to P0 (the diagnosis names them).
+        self.pinned_gens = np.asarray(inputs.pinned_gens, dtype=int)
         self._install_lp_cost(np.asarray(mc_w, dtype=float))
         self.U0 = self.n_lp
         self.V0 = self.U0 + self.n_int * self.T_w
@@ -492,6 +577,56 @@ class UcWindowModel:
         self._pin_state_rows(state, soc_terminal)
         self._add_ramp_boundary_rows(inputs, state)
         self.build_s = time.perf_counter() - t_build
+        #: The exact reduction the window solves on (``None``: the full model).
+        self.slim: SlimReduction | None = None
+        #: The handle :func:`~market_sim.model.uc.solve.solve_window` runs.
+        self.h_solve: highspy.Highs = self.h
+        self.slim_s = 0.0
+        if slim:
+            t_slim = time.perf_counter()
+            red, h_slim = reduce_window(self.h, integer_cols=self.u_cols_full())
+            if red is not None:
+                self.h_solve = h_slim
+                self.slim = red
+            self.slim_s = time.perf_counter() - t_slim
+
+    # ------------------------------------------------------------------ slim
+    def u_cols_full(self) -> np.ndarray:
+        """The ``u`` columns of the full model (``U0 .. V0``), int32."""
+        return np.arange(self.U0, self.V0, dtype=np.int32)
+
+    def u_cols_solve(self) -> np.ndarray:
+        """The ``u`` columns of the model that solves (slim or full), int32.
+
+        A ``u`` column the reduction fixed has no slim column and is absent.
+        """
+        full = self.u_cols_full()
+        if self.slim is None:
+            return full
+        idx = self.slim.slim_index(full)
+        return idx[idx >= 0].astype(np.int32)
+
+    def set_u_integrality(self, integer: bool) -> None:
+        """Make every ``u`` of the solving model integer or continuous (the relaxation rung)."""
+        idx = self.u_cols_solve()
+        if not idx.size:
+            return
+        kind = (
+            highspy.HighsVarType.kInteger
+            if integer
+            else highspy.HighsVarType.kContinuous
+        )
+        self.h_solve.changeColsIntegrality(int(idx.size), idx, [kind] * int(idx.size))
+
+    def to_solve_space(self, x_full: np.ndarray) -> np.ndarray:
+        """A full column vector (the warm start) in the solving model's space."""
+        x = np.asarray(x_full, dtype=float)
+        return x if self.slim is None else self.slim.restrict(x)
+
+    def from_solve_space(self, x_solve: np.ndarray) -> np.ndarray:
+        """The solving model's column vector back in the full space (fixed values reinserted)."""
+        x = np.asarray(x_solve, dtype=float)
+        return x if self.slim is None else self.slim.expand(x)
 
     # ----------------------------------------------------------------- build
     def _install_lp_cost(self, mc_w: np.ndarray) -> None:
@@ -963,5 +1098,9 @@ class UcWindowModel:
             fixed_off=self.fixed_off,
             build_s=self.build_s,
             lp_build_s=self.lp_build_s,
+            slim_columns=int(self.h_solve.getNumCol()),
+            slim_rows=int(self.h_solve.getNumRow()),
+            slim_counts=None if self.slim is None else dict(self.slim.counts),
+            slim_s=self.slim_s,
             **stats,
         )

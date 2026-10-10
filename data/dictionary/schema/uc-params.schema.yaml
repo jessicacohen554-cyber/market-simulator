@@ -9,7 +9,7 @@
 # Written by scripts/data/derive_uc_cluster_params.py; re-derived ONLY when
 # the CAMPD source updates (CLAUDE.md rule 23 [R-FROZEN-DERIVE]).
 #
-# Grain: one row per (plant_code, uc_class) CLUSTER — the facility's units of
+# Grain: one row per (plant_code, uc_class) CLUSTER — the EIA plant's units of
 # one CAMPD unit-type family summed to one plant series before any statistic
 # is measured (the plant-basis construction of
 # campd_gas_commitment_params_plant_<ISO>.csv). The family token `uc_class`
@@ -47,8 +47,11 @@ columns:
     unit: none
     nullable: false
     description: >-
-      EIA plant code (ORISPL; CAMPD facilityId). 0 marks the family's
-      class-fallback row (the ISO's fitted plants pooled).
+      EIA plant code, the fleet's plant key. CEMS units are mapped to it by
+      market_sim.data.campd_crosswalk.camd_to_eia_plant (the operative remap,
+      then the CAMD-EIA crosswalk of record), so a plant whose CAMPD
+      facilityId differs from its EIA code is keyed by the EIA code. 0 marks
+      the family's class-fallback row (the ISO's fitted plants pooled).
   - name: uc_class
     dtype: string
     unit: none

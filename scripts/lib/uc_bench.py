@@ -265,6 +265,9 @@ def _relaxation_as_p0(cap: YearCapture, t0: int, t1: int):
     if res.storage_soc is not None:
         r0.storage_soc = np.zeros((res.storage_soc.shape[0], T))
         r0.storage_soc[:, t0:t1] = res.storage_soc
+    if getattr(res, "flows", None) is not None:
+        r0.flows = np.zeros((res.flows.shape[0], T))
+        r0.flows[:, t0:t1] = res.flows
     return r0
 
 
@@ -280,7 +283,7 @@ def rung_l1(
     (the carried P0 state, the look-ahead floor need for the guard rows).
     """
     from market_sim.model.lp.model import DispatchModel
-    from market_sim.model.uc.params import units_needed_for_floor, units_online_profile
+    from market_sim.model.uc.params import units_online_profile
     from market_sim.model.uc.solve import solve_options_from_config, solve_window
     from market_sim.model.uc.window import UcWindowModel, slice_window_inputs
 
@@ -292,7 +295,13 @@ def rung_l1(
     p, k = stage.params, stage.int_idx
     p0 = np.asarray(r0.dispatch, dtype=float)
     inputs = slice_window_inputs(
-        cap.fleet_arrays, cap.demand, cap.dispatch_kwargs, t0, t1, p0
+        cap.fleet_arrays,
+        cap.demand,
+        cap.dispatch_kwargs,
+        t0,
+        t1,
+        p0,
+        p0_flows=getattr(r0, "flows", None),
     )
     bid = np.asarray(cap.mc_bid if cap.mc_bid is not None else cap.mc_base, dtype=float)
     mc_w = bid.copy()
@@ -308,9 +317,9 @@ def rung_l1(
         else np.asarray(r0.storage_soc)[:, t1 - 1]
     )
     guard_reach = int(p.dt_h[k].max()) - 1 if k.size else 0
-    floor_ahead = units_needed_for_floor(
-        p, cap.fleet_arrays, t1, min(t1 + guard_reach, T)
-    )[k]
+    floor_ahead = stage._floor_need_ahead(
+        cap.fleet_arrays, p0, t1, min(t1 + guard_reach, T)
+    )
     opts = solve_options_from_config(
         cfg, debug_dump_dir=None if dump_dir is None else Path(dump_dir)
     )
@@ -424,6 +433,27 @@ L2_ARMS: dict[str, tuple[dict, dict, str]] = {
         {},
         "E2 horizon 48 + 24 h (optimum-changing; wall only, rolling)",
     ),
+    # Lane UC-SLIM: the slim window (model/uc/slim.py). ``noslim`` is the
+    # uc-1.1 full-model path against a ``base`` that runs at the registry
+    # default (slim on); ``slim`` arms it explicitly for a base run at
+    # ``--set uc_slim_window=false``. ``slim_noprobe`` is a MEASUREMENT arm
+    # only (HiGHS presolve_rule_off bit 15 = probing, the costliest rule left
+    # on the slim model): a solver-path change, never a registry value.
+    "noslim": (
+        {"uc_slim_window": False},
+        {},
+        "every window on the full model (slim off)",
+    ),
+    "slim": (
+        {"uc_slim_window": True},
+        {},
+        "the slim window (exact reduction before HiGHS)",
+    ),
+    "slim_noprobe": (
+        {"uc_slim_window": True},
+        {"extra_highs_options": (("presolve_rule_off", 1 << 15),)},
+        "slim window + HiGHS probing off (measurement only)",
+    ),
 }
 
 #: Arms whose schedule may legitimately differ from ``base`` beyond the gap.
@@ -439,7 +469,7 @@ def _reset_highs_scheduler() -> None:
 
 def _month_stats(wins: list[dict]) -> dict:
     """Distribution / phase sums of one month's windows (``stage.log['windows']``)."""
-    from market_sim.pipeline.uc import phase_sums
+    from market_sim.pipeline.uc import phase_sums, slim_sums
 
     milp = np.array([w["milp_s"] for w in wins])
     nodes = np.array([w["nodes"] for w in wins])
@@ -459,6 +489,7 @@ def _month_stats(wins: list[dict]) -> dict:
         "fixed_off": int(sum(w["fixed_off"] for w in wins)),
         "gap_max": float(max(w["gap"] for w in wins)),
         "phase_sums": phase_sums(wins),
+        "slim_sums": slim_sums(wins),
         "objectives": [float(w["objective"]) for w in wins],
         "window_t0": [int(w["t0"]) for w in wins],
         "paired": (
@@ -509,9 +540,17 @@ def rung_l2(
     months: tuple[int, ...] = (1, 7),
     arms: tuple[str, ...] = ("warm", "prefix"),
     paired: bool = True,
+    dump_dir: Path | None = None,
     **uc_fields,
 ) -> dict:
     """L2: rolling windows over ``months`` per arm; distributions, phase sums, equivalence.
+
+    ``dump_dir`` (``bench_uc_ladder.py --dump-dir``) is handed to every arm's
+    :class:`UcSolveOptions`: an infeasible window writes its model, carried
+    state and zero-LP diagnosis there, and the raised
+    :class:`~market_sim.model.uc.window.UcWindowInfeasible` (window, plants,
+    hours) is also written to ``<out_dir>/l2_infeasible.json`` before it
+    propagates — a harness argument, never a registry field.
 
     ``arms`` names :data:`L2_ARMS` entries; ``base`` (the registry defaults
     plus ``uc_fields``) always runs first, rolling, recording its handed-over
@@ -525,6 +564,7 @@ def rung_l2(
     import dataclasses as _dc
 
     from market_sim.model.uc.schedule import month_boundaries
+    from market_sim.model.uc.window import UcWindowInfeasible
 
     if cap.r0 is None:
         raise RuntimeError(
@@ -561,21 +601,39 @@ def rung_l2(
         try:
             cfg = _armed_config(cap, **{**uc_fields, **cfg_over})
             stage = _stage(cap, cfg, cap.r0, cap.mc_bid, Path(out_dir) / "uc" / name)
+            if dump_dir is not None:
+                solve_over.setdefault("debug_dump_dir", Path(dump_dir) / name)
             if solve_over:
                 stage.options = _dc.replace(stage.options, **solve_over)
             per_month = []
             for m in months:
                 t0, t1 = int(starts[m - 1]), int(ends[m - 1])
                 tm = time.perf_counter()
-                sched = stage.run(
-                    cap.fleet_arrays,
-                    np.asarray(cap.mc_bid),
-                    t_start=t0,
-                    t_end=t1,
-                    write=False,
-                    record_states=(name == "base"),
-                    pin=base_scheds[m] if pin_this else None,
-                )
+                try:
+                    sched = stage.run(
+                        cap.fleet_arrays,
+                        np.asarray(cap.mc_bid),
+                        t_start=t0,
+                        t_end=t1,
+                        write=False,
+                        record_states=(name == "base"),
+                        pin=base_scheds[m] if pin_this else None,
+                    )
+                except UcWindowInfeasible as exc:
+                    _write_json(
+                        Path(out_dir) / "l2_infeasible.json",
+                        {
+                            "arm": name,
+                            "month": m,
+                            "message": str(exc),
+                            "window_index": exc.window_index,
+                            "t0": exc.t0,
+                            "t1": exc.t1,
+                            "relaxation_status": exc.relaxation_status,
+                            "diagnosis": exc.diagnosis,
+                        },
+                    )
+                    raise
                 wall = time.perf_counter() - tm
                 if name == "base":
                     base_scheds[m] = sched
@@ -644,6 +702,8 @@ _PROFILE_COLS = (
     ("uc_build_s", "UC build Σ"),
     ("set_solution_s", "setSolution Σ"),
     ("extract_s", "extract Σ"),
+    ("slim_s", "slim Σ"),
+    ("solved_columns_mean", "solved cols"),
     ("lp_iters", "LP iters Σ"),
     ("lp_iters_heur", "heur iters Σ"),
     ("warm_feasible_windows", "warm feasible"),
@@ -677,8 +737,14 @@ def l2_profile_table(res: dict) -> str:
             for key, _ in _PROFILE_COLS:
                 if key == "wall_s_total":
                     continue
+                if key == "solved_columns_mean":
+                    vals = sums.setdefault("_solved_cols", [])
+                    vals.append(float(m.get("slim_sums", {}).get(key, 0.0) or 0.0))
+                    continue
                 src = m["phase_sums"] if key in m["phase_sums"] else m
                 sums[key] = sums.get(key, 0.0) + float(src.get(key, 0.0) or 0.0)
+        if "_solved_cols" in sums:
+            sums["solved_columns_mean"] = float(np.mean(sums.pop("_solved_cols")))
         sums["wall_s_total"] = arm["wall_s_total"]
         eq = res.get("equivalence", {}).get(name, {})
         eqm = [e for e in eq.get("months", []) if e.get("comparable")]
@@ -709,7 +775,8 @@ def l2_profile_table(res: dict) -> str:
             v = sums.get(key, 0.0)
             row.append(
                 f"{v:.0f}"
-                if key.endswith("iters") or key == "warm_feasible_windows"
+                if key.endswith("iters")
+                or key in ("warm_feasible_windows", "solved_columns_mean")
                 else f"{v:.1f}"
             )
         lines.append("| " + " | ".join(row) + " |")
@@ -783,6 +850,8 @@ def rung_l3(
         "phase_sums": summ.get("phase_sums"),
         "solver_path": log.get("engine", {}).get("solver_path"),
         "integers_per_window": log.get("engine", {}).get("integers_per_window"),
+        "slim_sums": summ.get("slim_sums"),
+        "uc_slim_window": log.get("engine", {}).get("fields", {}).get("uc_slim_window"),
         "nodes_p50": summ.get("nodes_p50"),
         "nodes_p95": summ.get("nodes_p95"),
         "gap_p95": summ.get("gap_p95"),
