@@ -1,0 +1,61 @@
+# Bench-gate shard prompt — lane UC-2-NYISO (branch claude/ucmilp-2-nyiso-ab-y5h8), 2026-10-10.
+# The charter's task 0 (L1 GATE, from the two SPP engine defects): ONE bench shard, rung L1 + one rolled month
+# (HANDOFF block D), NYISO 2024, at the pin f2bf73bfffa0946176432df2e11349bf8fcc2bfa (origin/main at the merge of PR #7224, engine +
+# UC-1-FIX + UC-SPEED lean preset + the window time-major TTC slice and the bench harness fixes). RELAUNCH #3 under PRECOMMIT Addendum D (#7222 slim window + #7224 import-link-band pin); the runs at 2f872a62 and dc3860be are in Addenda A–C. Gate: window 0 Optimal and 31/31 January windows Optimal (no
+# UcWindowInfeasible, 0 time-limit hits, gap_max <= uc_mip_rel_gap). If not: STOP; no span shards.
+# create_session: source_revision = f2bf73bfffa0946176432df2e11349bf8fcc2bfa, model claude-opus-5-5,
+# tag ucmilp:UC-2-NYISO-bench. Budget 60 min.
+
+BENCH SHARD ucmilp-bench-nyiso-2024-L1 — NYISO 2024, rung L1 then rung L2 on ONE rolled month (January), ONE container. Model: Opus.
+DATA PROFILE: nyiso
+
+HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
+1. `git rev-parse HEAD` == f2bf73bfffa0946176432df2e11349bf8fcc2bfa  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
+3. `python3 scripts/hydrate_data.py --profile nyiso` then `python3 scripts/regenerate_clean.py --solve-profile NYISO`; both exit 0
+4. `python3 scripts/diagnostics/bench_uc_ladder.py --help` exists at this SHA and lists `--rung {L1,L2,L3}`, `--capture`, `--months`, `--arms`, `--rolling`, `--set`, `--save-capture`
+5. memory: the harness calls `scripts/lib/solve_container.ensure_solve_container` itself; never pass `--no-container-preflight`, never read `free` — report the `container preflight:` and `memory peak:` log lines
+
+RUN (both commands, in this order; the second reuses the first's saved capture so P0 + P1 of NYISO 2024 is solved ONCE):
+  eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"
+  python3 scripts/diagnostics/bench_uc_ladder.py --iso NYISO --year 2024 --rung L1 \
+      --bundle results/calibration/w0_nyiso_span --out results/bench/uc/nyiso_2024_L1 --save-capture \
+      --set nyiso_gas_commitment_bridge=false --set nyiso_gas_bridge_da_horizon=false --set nyiso_gas_bridge_min_run=false \
+      --set nyiso_gas_bridge_online_hours=false --set nyiso_gas_bridge_plant_exclusions=false \
+      --set nyiso_gas_bridge_reserve_duty_exclusions=false --set nyiso_gas_bridge_startup=false \
+      --set nyiso_gas_bridge_startup_aware=false --set nyiso_gas_bridge_state_floor_min_run=false
+  python3 scripts/diagnostics/bench_uc_ladder.py --iso NYISO --year 2024 --rung L2 \
+      --capture results/bench/uc/nyiso_2024_L1/capture_NYISO_2024.pkl --out results/bench/uc/nyiso_2024_L2 \
+      --months 1 --arms "" --rolling \
+      --set nyiso_gas_commitment_bridge=false --set nyiso_gas_bridge_da_horizon=false --set nyiso_gas_bridge_min_run=false \
+      --set nyiso_gas_bridge_online_hours=false --set nyiso_gas_bridge_plant_exclusions=false \
+      --set nyiso_gas_bridge_reserve_duty_exclusions=false --set nyiso_gas_bridge_startup=false \
+      --set nyiso_gas_bridge_startup_aware=false --set nyiso_gas_bridge_state_floor_min_run=false
+The nine `--set` values are the arm's rule-19 substitution set (the NYISO gas commitment bridge and its armed legs OFF; the
+validator refuses `unit_commitment_milp=true` while `nyiso_gas_commitment_bridge` is armed). At this pin the harness applies them to the capture too (bench_uc_ladder.py passes --set into capture_year), so the capture replays the ARM recipe; the UC stage reads the same config
+via `with_overrides`. Never change a
+`uc_*` field, never add or drop a `--set`, never re-run with a different month, time limit or arm list.
+Budget: 60 minutes of wall clock in total. At the budget with no `l2.json` written: STOP and report what completed (`l1.json`;
+the harness checkpoints `l2_partial.json`). An exception `UcWindowInfeasible` (or "no incumbent") at either rung is a
+SUCCESSFUL shard report: paste the full exception text verbatim (it names the window / t0), push what was written, stop.
+
+PUSH THE RESULTS (small files only: JSON + markdown; never the capture pickle, never the `replay/` bundle under the L1 out-dir):
+  git checkout -b claude/ucmilp-bench-nyiso-2024-L1
+  git add results/bench/uc/nyiso_2024_L1/l1.json results/bench/uc/nyiso_2024_L2/
+  git status --short     # STAGED entries must be only those files; untracked capture_*.pkl / replay/ stay untracked and unpushed
+  git commit -m "ucmilp-bench: NYISO 2024 L1 + January L2 (UC-2-NYISO gate)" && git push -u origin claude/ucmilp-bench-nyiso-2024-L1
+If `git add` of either path is refused by .gitignore, append `!results/bench/uc/nyiso_2024_L1/l1.json` and
+`!results/bench/uc/nyiso_2024_L2/**` to .gitignore, `git add .gitignore`, and repeat the plain `git add` (never `git add -f`,
+never `git add -A`, never `git add .`).
+
+FORBIDDEN: git add -A / git add . ; any edit under src/ or scripts/ ; any dashboard/registration script ; anything under
+frontend/data/ ; opening a PR ; deleting any result ; any other ISO, year, month or rung ; a second arm.
+
+REPORT in your final message, in numbers:
+- HEAD sha; the `container preflight:` and `memory peak:` lines; whether any hard stop fired.
+- the capture: the `log_year_phase_timing` log line of the NYISO 2024 replay verbatim (data_prep / solve_p0 / markup / solve_p1 / results_write / total seconds).
+- L1 (`l1.json`): milp.status, milp.milp_s, milp.nodes, milp.gap, milp.integers, milp.columns, milp.rows, milp.build_s, milp.guard_rows, milp.warm_accepted; relaxation.objective and milp.objective; integrality_gap; rss_gb; delta_committed_energy_mwh; milp_starts vs p1_slice_starts; p1_slice.solve_s; integer_clusters, t0, t1.
+- L2 (`l2.json`, arm `base`, month 1): windows, wall_s, milp_s_sum, milp_s_p50 / p95 / max, build_s_sum, nodes_p50 / p95, zero_node_share, time_limit_hits, gap_max, fixed_on / fixed_off, phase_sums verbatim, schedule_hash, rss_gb, solver_path.
+- the gate line, stated plainly: "window 0 <status>; January <n>/31 windows completed, <k> time-limit hits, gap_max <g>" and whether UcWindowInfeasible fired (verbatim text if so).
+- the commit sha and branch; `git ls-tree -r HEAD --name-only -- results/bench/uc/` listing.
+A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.

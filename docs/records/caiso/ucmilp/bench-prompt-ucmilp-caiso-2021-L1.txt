@@ -1,0 +1,42 @@
+BENCH SHARD ucmilp-bench-caiso-2021-L1 — CAISO 2021, rung L1 (one window) PLUS one rolled month (rung L2, January, base arm only), ONE container. Model: Opus.
+DATA PROFILE: caiso
+Chartered by lane UC-2-CAISO (session_01T6HUKtuBPRdR9nXaHvALxT) as the L1 GATE before any CAISO UC A/B span shard (HANDOFF block D; GATESPEC §3).
+
+HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
+1. `git rev-parse HEAD` == 2f872a62a7cccadb6800555c11a73745dcdb89a4  (never pull, rebase, merge, "sync")
+2. `python3 scripts/prepare_solve_container.py` FIRST, before any data step (R-50); report `before:` / `swap:`
+3. `python3 scripts/hydrate_data.py --profile caiso` then `python3 scripts/regenerate_clean.py --solve-profile CAISO`; both exit 0 (the clean `uc-params/CAISO` partition must exist afterwards: `ls data/clean/uc-params/CAISO/`)
+4. `python3 scripts/diagnostics/bench_uc_ladder.py --help` exists at this SHA and lists --rung L1, --capture, --months, --arms, --set
+5. memory: the harness calls ensure_solve_container itself; never --no-container-preflight; never read `free`
+6. `grep -c unit_commitment_milp src/market_sim/config/scenarios.py` >= 1 and `results/calibration/closeout_caiso_w1_a2_span/run_config.json` exists (the CAISO keeper bundle, the control)
+
+RUN (exactly these two commands, in this order; the four `--set ...=false` are the D-5 substitution offs the UC validator REQUIRES for CAISO — the keeper arms the RA must-offer bridge, which `unit_commitment_milp` replaces; nothing else is changed; every uc_* field stays at its registry default):
+  eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"
+  python3 scripts/diagnostics/bench_uc_ladder.py --iso CAISO --year 2021 --rung L1 \
+      --bundle results/calibration/closeout_caiso_w1_a2_span --out results/bench/uc/caiso_2021_L1 --save-capture \
+      --set caiso_ra_mustoffer=false --set caiso_ra_startup_bridge=false --set caiso_ra_bridge_decommit=false --set caiso_ra_startup_trajectory=false
+  python3 scripts/diagnostics/bench_uc_ladder.py --iso CAISO --year 2021 --rung L2 \
+      --bundle results/calibration/closeout_caiso_w1_a2_span --capture results/bench/uc/caiso_2021_L1/capture_CAISO_2021.pkl \
+      --out results/bench/uc/caiso_2021_L2m1 --months 1 --arms "" \
+      --set caiso_ra_mustoffer=false --set caiso_ra_startup_bridge=false --set caiso_ra_bridge_decommit=false --set caiso_ra_startup_trajectory=false
+(If the harness rejects a `--set` key or `--arms ""`, STOP and report the exact error; do not edit scripts/ or src/.)
+Budget: 60 minutes from the first bench command. The L1 capture replays the full keeper year (P0 + P1, the baseline wall) before the window; CAISO's baseline year is ~24 min. At the budget with no l2 report written: STOP and report what completed (the L1 json if it exists).
+
+PUSH THE RESULTS (small files only: JSON + markdown + logs; NEVER the capture pickle `capture_CAISO_2021.pkl`, never a dispatch bundle, never the `replay/` directory):
+  git checkout -b claude/ucmilp-bench-caiso-2021-L1
+  printf '\n!results/bench/uc/caiso_2021_L1/*.json\n!results/bench/uc/caiso_2021_L1/*.md\n!results/bench/uc/caiso_2021_L2m1/*.json\n!results/bench/uc/caiso_2021_L2m1/*.md\n' >> .gitignore
+  git add .gitignore results/bench/uc/caiso_2021_L1/*.json results/bench/uc/caiso_2021_L2m1/*.json
+  git add results/bench/uc/caiso_2021_L1/*.md results/bench/uc/caiso_2021_L2m1/*.md 2>/dev/null || true
+  git status --short     # MUST show nothing else; the .pkl and replay/ must NOT appear as staged
+  git commit -m "ucmilp-bench: CAISO 2021 L1 + January rolled month (UC-2-CAISO L1 gate)" && git push -u origin claude/ucmilp-bench-caiso-2021-L1
+
+FORBIDDEN: git add -A / git add . / git add -f ; any edit under src/ or scripts/ ; any dashboard/registration script ;
+anything under frontend/data/ ; opening a PR ; deleting any result ; any other ISO, year or rung ; any uc_* override.
+
+REPORT in your final message, in numbers (GATESPEC §3/§6.1): HEAD sha; preflight + memory peak lines; the capture's P0+P1 wall
+(`capture_wall_s` in the L2 json, and the `log_year_phase_timing` line if printed: solve_p0, solve_p1); for L1 (from l1.json):
+window 0 status (Optimal?), build s, MILP s, nodes, gap, integer clusters, columns, RSS GB, integrality gap (MILP − LP-relax
+objective), Δ committed energy MWh / Δ starts / trough price vs the P1 slice, guard rows; for L2 base month 1: windows (expect 31),
+how many Optimal (31/31?), wall s, MILP p50/p95/max s, nodes p50/p95, zero-node share, time-limit hits, fixed on/off, schedule hash,
+the profile table; the commit sha and branch; the exact list of files pushed; any hard stop that fired.
+A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
