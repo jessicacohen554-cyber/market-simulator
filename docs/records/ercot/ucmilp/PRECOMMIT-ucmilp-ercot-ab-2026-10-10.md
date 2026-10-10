@@ -520,3 +520,22 @@ finishes. A budget is a cost line, not a reading. Extend 2025 too if its pace pr
 In the RESULT, report the wall rows including the double-UC cost (pass 2 identical to pass 1 per the FIX-2 FINDING)."*
 → 2019 and 2020 run to **720 min**. 2025 runs to 720 min if its shard projects over 300 min. 2024 stays at 300 min.
 Readings, bars and kills do not move.
+
+**D.3 (17:45Z) — KILL #3 on stage 1: a control flip on 2024 C3b.** The 2024 (`2631ed81`) and 2025 (`7814b011`) legs are
+complete at the pin. Both were fetched; `ls-tree` shows 21 files each with all five artifacts; both are checked out here and their
+shards archived. 365/365 windows Optimal in each; 0 time-limit hits; 61 integer clusters of 139/140; the adaptive-expectation check
+skipped the second pass in both years. They were composed with the scratch composer, which confirmed the recipe delta is exactly
+the two arm fields (plus the rule-26-deleted `unit_outage_dispatched_bin_live_denominator`, recorded `false` by the keeper and
+absent from the leg). They were scored locally (`calibration_verdict.py --json`; the sidecar and payload were moved out of the
+tree) and diffed per (criterion, key, year) against the keeper:
+
+| year | criterion | control | arm | read |
+|---|---|---|---|---|
+| 2024 | **C3b price shape** | 0.198 PASS | **0.201 FAIL** (band ≤ 0.20) | **PASS → FAIL: kill #3.** §3 named this as the row with the least headroom (0.002). Price-only metric; no attestation artefact |
+| 2024 | C3a price mean | −11.3 % FAIL | −6.3 % PASS | FAIL → PASS (the declared-cost row moved toward the band, against §2's expectation) |
+| 2024 / 2025 | C3c price tail | CAVEAT | FAIL | attestation artefact (§8); magnitudes 11 → 15 h vs 53 h; 0 → 0 h vs 31 h. Not a flip |
+| 2024 / 2025 | C8 ST_GAS | 15.6 / 21.1 % PASS | 25.5 / 29.0 % PASS (R4, MECH 28 removed: 18.2 / 15.6 %) | no flip |
+| 2025 | C3b | 0.125 PASS | 0.082 PASS | improved |
+
+**Verdict R** under Addendum C item 3. **Stage 2 (2021, 2022, 2023): not run: verdict reached.** The 2019 and 2020 legs, already
+in flight, run to completion as evidence for the RESULT on the four stage-1 legs; whatever they show does not change the verdict.
