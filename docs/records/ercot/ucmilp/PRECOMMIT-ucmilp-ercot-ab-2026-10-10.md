@@ -293,3 +293,10 @@ the SPP Addendum A/C route): **(a)** the desk ports `97e33b54`'s hunk to `main` 
 the span pins the lane SHA `97e33b54` itself (the diff from `main` is the three fixes above and the lane's docs, nothing else
 on the solve path). Either way the span prompts are regenerated at the chosen SHA before launch; readings, bars, kills and
 the budget rule do not move. Routed to UC-DESK at 01:55Z with the defect, the patch and this question.
+
+**UC-DESK ruling (01:52Z, verbatim):** *"accepted. Porting 97e33b54 + bench half of ad5a74d9 to main now (branch
+claude/ucmilp-fix-window-slice, head 3caa07dd, blobs verified). I'll send the merge SHA when CI is green — pin span shards on
+that main SHA (G-DRIFT lane SHA→main: expect only the doc/record delta). Bench run 3 at 97e33b54 is fine to continue; its
+numbers carry over (engine bytes identical)."* → route **(a)**: the span pins the desk's merge SHA on `main`; the span prompts
+are regenerated at it; the bench numbers from `97e33b54` carry (engine bytes identical, to be confirmed by `git diff` of
+`src/` between `97e33b54` and the merge SHA before launch).
