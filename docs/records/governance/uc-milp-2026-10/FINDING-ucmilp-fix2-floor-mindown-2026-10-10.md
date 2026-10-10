@@ -108,9 +108,35 @@ The uc-1.1 value of 1 unit at `a = 0.25` was a `u` row (a) cannot hold.
 `UcWindowInfeasible` text carries them. `bench_uc_ladder.py --dump-dir` now also serves L2
 (`l2_infeasible.json` plus a per-arm dump).
 
-## 5. Results
+## 5. Results (validation @ `f2c7166a`, engine uc-1.2; reproductions @ `e8507b79`, uc-1.1 + diagnostics)
 
-(filled from the shards)
+| ISO-year | Shard | uc-1.1 (repro) | uc-1.2 UC stage | uc-1.2 P1 |
+|---|---|---|---|---|
+| MISO 2021 | repro `018JgYx4`, val `01MEBNjx` | w30 raises: plant **6823** coal, n=1, dt=16, pinned 3/3 | **365/365 windows Optimal**, 0 time-limit hits, 2,568 s, MILP mean 6.4 s, nodes p50 1; w30 Optimal (1,178 guard rows) | **Infeasible**: `dispatch LP has no feasible primal solution` in `run_energy_solve` after the UC (§5.1) |
+| MISO 2020 | val `01L2dDn4` | (UC-2-MISO: w129 raised) | 334 windows in the last checkpoint (through hour 8028), all Optimal, w129 Optimal; P1 then raised, so the UC stage finished | **Infeasible** (same error) |
+| NEISO 2021 | repro `01G4RNti`, val `01Cpn1su` | w259 raises: plant **2364** coal, n=2, dt=16, pinned **8/8** | **365/365 Optimal**, 0 TL, 4,342 s, MILP mean 11.7 s / p95 42.0 s / max 103.5 s, gap ≤ 1.0e-3, guard rows Σ 11,677 / max 116; w259 Optimal | solved, 0 unserved; bundle `claude/ucfix2-val-neiso-2021` @ `e6c2c160` |
+| NEISO 2023 | val `01DfRTmJ` | (UC-2-NEISO: w187 raised) | **365/365 Optimal**, 0 TL, 3,451 s, MILP mean 9.4 s / max 210.6 s, gap ≤ 1.0e-3; w187 Optimal | solved, 0 unserved; bundle `claude/ucfix2-val-neiso-2023` @ `5a6be899` |
+| ERCOT 2020 | val `01M6wvBm` | (UC-2-ERCOT: w118 raised) | pending | pending |
+
+Every reproduction names a **yard-pinned coal plant** (all of its members pinned), and every
+uc-1.2 run clears the window that killed it. Defect 5 is closed.
+
+### 5.1 A second, separate defect at the UC → P1 seam (MISO; open, not fixed here)
+
+In MISO, P1 is infeasible after a complete UC stage. The NEISO P1s solve; NEISO has few yard
+coal units. Working hypothesis, not verified (zero LP needs the P0 dispatch the failed
+bundles did not write):
+- the window decides `u` for a yard-pinned cluster from the P0 pin: all units online
+  wherever `P0 > 0`, and, under the guard, online through short `P0 = 0` gaps inside
+  their min-down;
+- `UcStage.floor_and_ceiling` then floors P1 at `mlf·p̄·u` on PHYSICAL availability, so
+  each such hour carries about `mlf × capacity` of output, however small (or zero) P0 was;
+- P1 keeps the yard's ANNUAL energy budget (`coal_plant_budget`), and those floors can sum
+  above it.
+
+This is the §6 inconsistency at the P1 seam: inside a window a pinned row's commitment is
+not a UC decision, yet P1 enforces it as one. It is not caused by uc-1.2; uc-1.1 never
+reached P1 in these years. It belongs with the D-5 decision below.
 
 ## 6. D-5 note (desk decision; not changed here)
 
