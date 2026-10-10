@@ -75,6 +75,7 @@ BUDGET_KWARGS: frozenset[str] = frozenset(
         "import_node_monthly_lo",
         "import_node_monthly_hi",
         "import_node_month_index",
+        "import_link_band",
         "hydro_envelope_gen_idx",
         "hydro_envelope_mw",
         "hydro_envelope_storage_idx",
@@ -212,6 +213,7 @@ def slice_window_inputs(
     t1: int,
     p0_dispatch: np.ndarray | None = None,
     free_budget_units: bool = False,
+    p0_flows: np.ndarray | None = None,
 ) -> WindowInputs:
     """Build the window inputs from the year's (DESIGN section 2.1).
 
@@ -225,6 +227,12 @@ def slice_window_inputs(
         free_budget_units: Leave the budget-governed rows free within their
             availability instead of pinning them — the ladder's P0 stand-in
             (``uc_bench._relaxation_as_p0``) only; never the production hook.
+        p0_flows: ``(n_links, T)`` P0 link flows. The monthly per-link import
+            band (``import_link_band``, NYISO landing links) is a budget
+            family like the import-node band: it is dropped and its links'
+            flows are pinned to P0 over ``[t0, t1)`` (both bounds set to the
+            P0 flow; a pinned link is marked bidirectional so a one-way floor
+            cannot loosen the pin). Required when the band is armed.
 
     Raises:
         ValueError: A refused kwarg is present (:data:`REFUSED_KWARGS`).
@@ -272,6 +280,34 @@ def slice_window_inputs(
         )
         base[pinned_gens, :] = np.minimum(p_pin, pmax[:, None] * avail[pinned_gens, :])
         fleet_w = dataclasses.replace(fleet_w, availability=avail, min_gen=base)
+    band = dispatch_kwargs.get("import_link_band")
+    if band is not None and not free_budget_units:
+        if p0_flows is None:
+            raise ValueError(
+                "the monthly import link band needs the P0 flows to pin to"
+            )
+        link_idx = np.asarray(band[0], dtype=int).ravel()
+        f = np.asarray(p0_flows, dtype=float)[link_idx, t0:t1].T  # (T_w, n_band)
+        T_w = t1 - t0
+        ttc_w = np.asarray(kwargs_w["ttc"], dtype=float)
+        n_links = ttc_w.shape[-1]
+        ttc_w = np.array(np.broadcast_to(ttc_w, (T_w, n_links)), copy=True)
+        imp = kwargs_w.get("ttc_import")
+        imp_w = np.array(
+            np.broadcast_to(
+                np.asarray(ttc_w if imp is None else imp, dtype=float), (T_w, n_links)
+            ),
+            copy=True,
+        )
+        ttc_w[:, link_idx] = f
+        imp_w[:, link_idx] = -f
+        kwargs_w["ttc"] = ttc_w
+        kwargs_w["ttc_import"] = imp_w
+        bidir = kwargs_w.get("link_bidirectional")
+        if bidir is not None:
+            bidir = np.array(bidir, dtype=bool, copy=True)
+            bidir[link_idx] = True
+            kwargs_w["link_bidirectional"] = bidir
     return WindowInputs(
         fleet=fleet_w,
         demand=np.ascontiguousarray(demand[:, t0:t1]),
