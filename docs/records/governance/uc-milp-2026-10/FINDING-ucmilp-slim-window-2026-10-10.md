@@ -33,8 +33,20 @@ slim model is not a lever either (the root LP pays it back).
 moves) does both reductions in `model/uc/slim.py`: fixed columns (with forcing rows,
 singleton rows, redundant / emptied rows) and parallel continuous columns, iterated to a
 fixpoint, vectorized over the whole model (rule 2), ~0.1 s per window, the slim model on its
-own HiGHS handle and the full handle kept for the diagnosis, relaxation and dump paths. The
-gate (§3) is the paired equivalence run UC-SPEED established; the L3 row (§4) is the ratio.
+own HiGHS handle and the full handle kept for the diagnosis, relaxation and dump paths.
+
+**Gate (§3): PASS, twice.** On the same 62 window problems (SPP 2020 January + July) the
+full model and the slim model return the same objective to the gap on every one (largest
+relative delta 3.9e-4, 0 of 62 beyond 1e-3; where they differ the slim incumbent is the
+better one), at **−40 % MILP seconds** in the same container (presolve −55 %, root LP and tail
+unchanged). **Ceiling (§4): not reached.** The full-year L3 row reads **4.96×** the shard's
+own P0 + P1 (first shard, 43 windows unreduced by a float-noise stand-down since fixed) and
+**5.71×** on the rerun (every window reduced, a container ~30 % slower on every phase
+including the Python side; the LP iteration count is identical) against 7.10× for the
+full-model lean path. The stage's remaining seconds are HiGHS's own on the slim model —
+presolve 0.9–1.2 s per window (probing half of it), the root LP 0.4 s, the tail 0.3 s — and
+the arithmetic of §4.2 says no further exact reduction reaches ≤ 3×: the next card is the
+owner's E10 month-parallel.
 
 ## 1. The zero-LP census (SPP 2020 window 0, keeper recipe inputs captured solve-less)
 
@@ -196,9 +208,19 @@ Reading:
   (+$5.7 k January, −$5.5 k July): a solver-path change of the `uc_solver_preset` class, not a
   reduction, reported as a measurement for the desk — not armed, not a registry value.
 
-### 3.2 Final pair (`45b4f5dc`, after the `ROW_TOL` fix of §1.5)
+### 3.2 Final pair (`45b4f5dc`, after the `ROW_TOL` fix of §1.5; shard `session_01WUhRgRyjXnKSPgdcaTMFJG`, branch `claude/ucmilp-bench-spp-2020-L2-slim2` `735018a5`; capture 150 s)
 
-_Pending the rerun shard._
+| arm | what | wall s Jan / Jul | MILP Σ s | presolve Σ | root LP Σ | tail Σ | slim Σ | solved cols (mean) | kept `u` = base | max rel Δobj | windows > gap | Σ (arm − base) objective |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| **base = slim** | `uc_slim_window=True` | **79.0 / 63.9** | 129.3 | 66.9 | 28.3 | 31.2 | 7.4 | 22,745 | — | — | — | — |
+| noslim | the uc-1.1 full-model path | 116.4 / 103.4 | 213.6 | 151.9 | 28.7 | 29.2 | 0.0 | 57,384 | 53 / 62 | **3.9e-4** | **0** | +$67 Jan, +$7,050 Jul |
+| slim_noprobe | slim + HiGHS probing off (measurement) | 61.7 / 49.2 | 97.2 | 36.8 | 27.9 | 29.6 | 7.8 | 22,745 | 39 / 62 | 8.1e-4 | 0 | +$5,678 Jan, −$5,459 Jul |
+
+The rerun reproduces the first pair exactly in every equivalence column (the same 53 / 62,
+3.9e-4, 0; the same objective sums to the dollar: the `ROW_TOL` fix changes no reduction these
+windows take) and reads every wall 25–30 % lower in a faster container — the cross-container
+noise UC-SPEED reported. In-container: **slim −32 % / −38 % wall, −39 % MILP seconds, presolve
+−56 %**; probing off a further −25 % wall. 62 / 62 base windows reduced.
 
 ## 4. The L3 wall row (SPP 2020, full year)
 
@@ -212,7 +234,7 @@ unit_commitment_milp=true` at the registry defaults (slim on, lean); 4 cores,
 | ISO-year | baseline P0+P1 s | P0 s | UC Σ s (windows, mean, p95 MILP s) | P1 s | total s | **ratio** | integers/window | nodes p50/p95 | gap p95 | time-limit hits | peak RSS GB |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | SPP 2020 (slim, `180b4812`, first shard: 322 / 365 windows reduced) | 188.5 | 97.1 | 685.7 (365, 1.71, 2.80) | 91.4 | 935.4 | **4.96** | 3,312 | 1 / 1 | 5.4e-4 | 0 | 5.08 |
-| SPP 2020 (slim, `45b4f5dc`, final) | _pending_ | | | | | | | | | | |
+| SPP 2020 (slim, `45b4f5dc`, final: 365 / 365 windows reduced) | 199.9 | 103.4 | 863.7 (365, 2.11, 3.35) | 96.5 | 1,141.6 | **5.71** | 3,312 | 1 / 1 | 5.5e-4 | 0 | 5.08 |
 | SPP 2020 (lean, full model, `5dc76955`, UC-SPEED) | 199.4 | 100.6 | 1,144.5 (365, 3.07, 4.28) | 98.8 | 1,415.0 | 7.10 | 3,312 | 1 / 1 | 5.5e-4 | 0 | 5.09 |
 | SPP 2020 (uc-1.1 path, `ae224faf`, UC-2-SPP) | 198.9 | 97.7 | 1,106.9 (365, 2.97, 4.23) | 101.2 | 1,367.1 | 6.9 | 3,312 | 1 / 1 | 5.7e-4 | 0 | 5.09 |
 
@@ -226,9 +248,44 @@ total=935.4s`. Census over the 322 reduced windows: 2.39 M columns fixed by boun
 forcing rows, 0.16 M by singleton rows, **8.41 M merged as parallel**, 1.51 M rows redundant,
 0.17 M singleton; the solved model 26,682 columns × 12,595 rows on average.
 
+Final shard (`session_01QKd8EhdSAb91BusFbeEe5r`, branch `claude/ucmilp-bench-spp-2020-L3-slim2`
+`b7400b77`), where the 863.7 s go: presolve 429.6 s (50 %), root LP 176.6 s, tail 145.1 s,
+pre-root 8.7, HiGHS setup/report 9.6, the reduction 64.7 s (0.14 s per window p50, 0.33 p95),
+the rest of the Python side 27 s. 365 / 365 Optimal and reduced; presolve p50 1.17 s / p95
+1.34 s; MILP p50 1.80 s / p95 3.35 s / max 4.16 s. Phase timing line: `solve_p0=103.4s
+markup=883.8s solve_p1=96.5s total=1141.6s`. Census over 365 windows: 2.74 M columns fixed by
+bounds, 0.24 M by forcing rows, 0.18 M by singleton rows, **9.52 M merged as parallel**,
+1.70 M rows redundant, 0.19 M singleton; the solved model 22,579 columns × 12,018 rows on
+average (of 57,384 × ~17,300).
+
 ### 4.2 Reading
 
-_Pending the final row._
+* **Target ≤ 3× not met; best measured 4.96×, 5.71× at the final SHA.** The two L3 rows are
+  not a regression between SHAs: the rerun does strictly less HiGHS work (365 reduced windows
+  against 322; the same 854.9 k simplex iterations) and every phase, the pure-Python
+  reduction included (37.9 → 64.7 s for the same numpy), is 25–35 % slower — the container,
+  not the model. The paired L2 pairs (§3), which measure both paths in one container, are the
+  clean number: the slim window takes **39–40 % of the MILP seconds** off the stage, all of it
+  presolve (−55 %); UC-SPEED's full-model stage at 1,144 s would read ≈ 700 s in its own
+  container, ≈ 5× its P0 + P1.
+* **Why no exact reduction reaches 3×.** With every window reduced the stage is 864 s of
+  which presolve 430, root LP 177, tail 145, Python 110 (reduction 65). The ceiling needs the
+  stage ≤ 3 × 200 − 200 = 400 s. Root LP + tail + Python alone are 430 s — above the ceiling
+  with presolve at zero — and they are not reducible by a model transformation that keeps the
+  feasible set: the root LP solves the same relaxation on a smaller matrix in the same
+  iterations (28.3 s vs 28.7 s over 62 windows, §3.2), the tail is the branch-and-bound to the
+  gap. What remains in presolve is HiGHS's probing (half of it; `slim_noprobe` −25 % wall but
+  a two-sided within-gap change of the schedule, a solver-path choice for the desk, not a
+  reduction) and its bound-propagation / dominated-column passes.
+* **The owner's card is therefore the one the charter named: E10 month-parallel** (rule-36
+  amendment), which divides the stage's wall by the parallelism without changing a window.
+  With the slim window on, the stage per year is ≈ 700–860 s of single-thread MILP; two
+  parallel months reach ≈ 2.6–3.1×, three ≈ 2.1–2.4×, against the ISO-year's own P0 + P1.
+* **What the slim window is, for the record:** an exact transformation that stays on at no
+  cost to the optimum (the same objective class in every paired window; the full `col_value`
+  and per-unit dispatch reinserted), −40 % of the stage's MILP seconds, and the census that
+  names what the window's columns are (a quarter pinned or fixed, half parallel duplicates of
+  one offer in one zone row) — the structural fact behind UC-SPEED's "presolve removes 63 %".
 
 ## 5. Shards (rule 33)
 
@@ -236,8 +293,8 @@ _Pending the final row._
 |---|---|---|---|---|
 | L2 paired equivalence, Jan + Jul (first pair) | `session_01XBNF3CEmmsoQJ9hcBKg5Pa` | `180b4812` | `claude/ucmilp-bench-spp-2020-L2-slim` `b925e34e` | fetched, verified, archived |
 | L3 full year (first) | `session_01JC2FQPTUCpbRoEz6kvj3xG` | `180b4812` | `claude/ucmilp-bench-spp-2020-L3-slim` `9a4e2553` | fetched, verified, archived |
-| L2 paired equivalence, Jan + Jul (final) | `session_01WUhRgRyjXnKSPgdcaTMFJG` | `45b4f5dc` | `claude/ucmilp-bench-spp-2020-L2-slim2` | _running_ |
-| L3 full year (final) | `session_01QKd8EhdSAb91BusFbeEe5r` | `45b4f5dc` | `claude/ucmilp-bench-spp-2020-L3-slim2` | _running_ |
+| L2 paired equivalence, Jan + Jul (final) | `session_01WUhRgRyjXnKSPgdcaTMFJG` | `45b4f5dc` | `claude/ucmilp-bench-spp-2020-L2-slim2` `735018a5` | fetched, verified, archived |
+| L3 full year (final) | `session_01QKd8EhdSAb91BusFbeEe5r` | `45b4f5dc` | `claude/ucmilp-bench-spp-2020-L3-slim2` `b7400b77` | fetched, verified, archived |
 
 Bench branches carry JSON, markdown and logs only (no dispatch bundle, no capture pickle; each
 L3 shard's bundle was moved to `/tmp` inside its container and dies with it — a bench
@@ -246,4 +303,15 @@ session cannot, 403).
 
 ## Log entry
 
-_Pending._
+- 2026-10-10 · UC-SLIM `session_01AFhyYxUC9rdRBBPYDZnDus` (Fable) · `claude/ucmilp-slim-r4d` · zero LP in the
+  parent · four bench shards (L2 paired Jan + Jul and L3 full year at `180b4812`, both again at `45b4f5dc`) ·
+  **the 63 % HiGHS presolve removes is 15 % bound-fixed columns (cheap) and 48 % parallel P columns (one
+  zone row, one offer — the costly first presolve pass)** · `model/uc/slim.py`: fixed / forcing / singleton /
+  redundant rows + exact parallel-column merge, ~0.1 s per window, slim handle + full handle kept ·
+  `uc_slim_window` born at True (no committed key moves) · paired gate PASS twice (max rel Δobj 3.9e-4, 0/62
+  beyond gap, slim incumbents the better ones), −40 % MILP seconds, presolve −55 % in-container · a 4e-15
+  float residual on a budget-pinned cluster's coupling row stood the reduction down on 43 April/October
+  windows of the first L3 → `ROW_TOL` · **L3 SPP 2020 ratio 4.96× (first) / 5.71× (final SHA, slower
+  container); target ≤ 3× not met, and not reachable by an exact reduction (root LP + tail + Python alone
+  exceed the ceiling)** · `slim_noprobe` −25 % wall, within gap, two-sided (desk's call) · next card: E10
+  month-parallel (owner) · PR "uc-milp UC-SLIM: slim window" · no promotion, no registration.

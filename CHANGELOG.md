@@ -19,9 +19,13 @@ a contradiction stands the reduction down (the full model solves, the existing r
 same objective and `u`. Field `uc_slim_window` (default True, born and registered there — no
 committed key moves; TIER_TAGS 1; the matrix row's `def` names it). Bench: L2 arms `noslim` /
 `slim` / `slim_noprobe`, the reduction census in `uc_solve_log` (`windows[].slim`,
-`summary.slim_sums`), the L3 row. Tests: `tests/unit/model/uc/test_slim.py`. The paired
-equivalence gate and the L3 wall row are the FINDING's §3–§4. No `model/lp` change; gate-off
-byte-identical.
+`summary.slim_sums`), the L3 row. Tests: `tests/unit/model/uc/test_slim.py`. Paired equivalence gate
+(SPP 2020 Jan + Jul, 62 windows, twice): PASS — the same objective to the gap on every window
+(max rel Δobj 3.9e-4, 0 beyond), −40 % MILP seconds, presolve −55 % in-container. L3 SPP 2020
+wall row: 4.96× / 5.71× the shard's own P0 + P1 (two containers; 7.10× for the full-model lean
+path) — the D-2 ceiling of 3× is not reached and not reachable by an exact reduction (root LP +
+tail + Python alone exceed it); next card E10 month-parallel (owner). No `model/lp` change;
+gate-off byte-identical.
 
 ## 2026-10-04 — uc-milp UC-1-FIX: window infeasibility under kept floors (engine `uc-1.1`, gate-on path only)
 
