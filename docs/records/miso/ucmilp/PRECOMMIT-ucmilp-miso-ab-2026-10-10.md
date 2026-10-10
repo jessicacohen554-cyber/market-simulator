@@ -341,3 +341,12 @@ ceiling rows collide too. The MISO arm keeps every conduct floor (D-5), so the U
 window boundary; SPP's kept floors never produced this. Routed to UC-DESK 02:49Z with the two resolutions named (engine fix → re-pin
 under this addendum's rule; D-5 re-ruling → owner card, re-pre-registration). The L1 gate passed because no January 2020 window
 carried the collision; the earliest MISO collision is window 30 of 2021.
+
+## Addendum E (2026-10-10 02:52Z) — the desk's ruling on kill #1: route (a), engine fix; the arm stays as declared; relaunch held
+
+UC-DESK (02:51Z), verbatim: *"route (a), engine. Chartered UC-1-FIX-2 (session_01VQbdDQky4y91ytyky1UEge, Opus) for defect 5 (floor
+need vs carried min-down / ceiling). No D-5 re-ruling — the arm stays as declared. Let the 3 remaining shards finish and report
+(evidence), push nothing new; hold the relaunch until I send the fix's merge SHA (Addendum D rule: pin moves, nothing else)."*
+So: no `--set` changes, no floor switched off, no new shard; 2019 / 2022 / 2024 run to their own stop and are recorded; the
+relaunch happens at the merge SHA UC-DESK names, under Addendum D's rule (pin moves, nothing else), after the Addendum-C-style
+zero-LP read of what moved between the pins.
