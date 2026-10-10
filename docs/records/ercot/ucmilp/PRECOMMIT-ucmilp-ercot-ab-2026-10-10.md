@@ -262,3 +262,34 @@ list in an addendum and routes it to UC-DESK (a control solve is the desk's call
 Everything in `docs/mechanism-testing-matrix.md` §5.1's DO-NOT-REDO; no posture (`ercot_commitment_posture`) in any form; no
 `online_capacity_envelope`; no `uc_*` value other than the declared defaults; no third `--set`; no control solve; no NEISO/NYISO
 span (the UC-2 control lanes'); no dashboard registration; no promotion.
+
+## Addendum A (2026-10-10 01:55Z) — engine defect #3 from the L1 gate; the bench moves to the lane SHA; the span pin is a desk question
+
+**L1 gate run 2 (`b61f0279`, 01:22–01:43Z): STOPPED with a clear report.** The harness fixes held (bridge OFF confirmed:
+no "gas commitment bridge … floored" line; `replay/run_config.json` records `ercot_gas_commitment_bridge: false`; capture P0
+440.0 s, P1 215.9 s, peak RSS 11.58 GiB; UC prep *141 clusters, 72 integer (937 fleet rows), W=24 L=12*). Both rungs then
+crashed at the FIRST window build, before any MILP:
+
+```
+src/market_sim/model/lp/bounds.py:194  col_upper[:, _flow_off:_slack_off] = ttc_arr
+ValueError: could not broadcast input array from shape (8760,10) into shape (36,10)
+```
+
+**Root cause (confirmed by this lane's read at the pin):** `model/uc/window.py::_slice_obj` sliced only arrays whose LAST
+axis is `T`. ERCOT's hourly `ttc` / `ttc_import` (the measured GTC overlay) are time-major `(T, n_links)`, a form
+`lp/bounds.py` accepts beside the static `(n_links,)`; they reached the 36-hour window unsliced. SPP has no hourly link
+limit, which is why its A/B never hit it. **The third engine defect found by a shard** (SPP found two), and the L1 gate did
+exactly what it was added for: no span shard was spent.
+
+**Fix (this lane, Fable, rule 27; commit `97e33b54` on the lane branch; blob of the 967-line module verified on the remote):** a
+2-D array whose leading axis is `T` is sliced on that axis; hour-minor arrays and static vectors untouched. Unit test
+`tests/unit/model/uc/test_window_slice_time_major.py` (the slicer, and `slice_window_inputs` with an hourly `ttc`); the UC
+unit suite 36/36 and the model window/bounds/dispatch suite 184/184 pass. The hunk is inside the UC stage, gated behind
+`unit_commitment_milp` (G-DRIFT: INERT at the keeper's default; the control is untouched).
+
+**Pins, restated.** Bench run 3 runs at `97e33b54` (the lane SHA: pin + two harness fixes + this engine fix). The SPAN pin is
+no longer `main 2f872a62` as §1 declared: `2f872a62` cannot solve an ERCOT UC window. The choice is UC-DESK's (engine owner;
+the SPP Addendum A/C route): **(a)** the desk ports `97e33b54`'s hunk to `main` and the span pins that `main` SHA, or **(b)**
+the span pins the lane SHA `97e33b54` itself (the diff from `main` is the three fixes above and the lane's docs, nothing else
+on the solve path). Either way the span prompts are regenerated at the chosen SHA before launch; readings, bars, kills and
+the budget rule do not move. Routed to UC-DESK at 01:55Z with the defect, the patch and this question.

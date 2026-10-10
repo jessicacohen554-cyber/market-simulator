@@ -4,14 +4,14 @@ Chartered by lane UC-2-ERCOT (branch claude/ucmilp-2-ercot-ab-e4w1) under UC-DES
 DATA PROFILE: ercot
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
-1. `git rev-parse HEAD` == b61f0279eeec4eb146dd3b35f59454dcc3302a8e  (the lane branch claude/ucmilp-2-ercot-ab-e4w1 carrying the bench-harness fix; never pull, rebase, merge, "sync")
+1. `git rev-parse HEAD` == 97e33b543c176c8a0ea4a93ee20e4fbaefc9fbae  (the lane branch claude/ucmilp-2-ercot-ab-e4w1 carrying the bench-harness fix; never pull, rebase, merge, "sync")
 2. `python3 scripts/prepare_solve_container.py` FIRST, before any data step (R-50); report `before:` / `swap:`
 3. `python3 scripts/hydrate_data.py --profile ercot` (exit 0, OR exit 1 with its own "This is a FULL clone" message — then every blob is already local and nothing is to do; never --force) then `python3 scripts/regenerate_clean.py --solve-profile ERCOT` exit 0
    (if `python3 -c "import pyarrow, highspy"` fails, run `uv sync` once and use `uv run python` in place of `python3` below — install is not repair)
 4. `python3 scripts/diagnostics/bench_uc_ladder.py --help` exists at this SHA and lists --rung L1 and L2, --capture, --save-capture, --rolling, --months, --set
 5. memory: the harness calls ensure_solve_container itself; never --no-container-preflight; never read `free`
 
-RUN 2 — run 1 at the pin stopped on two harness defects (the capture ignored --set; save() pickled closures), fixed on this branch. RUN (these two rungs only, in this order; the keeper bundle is results/calibration/closeout_ercot_l1_span; the keeper ARMS
+RUN 3 — run 1 at the pin stopped on two harness defects (the capture ignored --set; save() pickled closures), run 2 at b61f0279 on engine defect #3 (the window slicer skipped the time-major hourly ttc); all three fixed on this branch. RUN (these two rungs only, in this order; the keeper bundle is results/calibration/closeout_ercot_l1_span; the keeper ARMS
 ercot_gas_commitment_bridge, which the UC gate refuses (rule 19), so BOTH commands carry the one disarm below — it is the A/B's arm delta):
   eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"
   python3 scripts/diagnostics/bench_uc_ladder.py --iso ERCOT --year 2020 --rung L1 \
