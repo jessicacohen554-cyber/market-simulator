@@ -370,3 +370,10 @@ extension, not floor relaxation. Let the other six legs run; send your zero-LP c
 byte-inert on solved legs, and one span = one engine. Keep the dc3860be legs as evidence (not scored). The fix's diagnosis text
 now names plant/family/n/dt, so no dump switch is needed."* → the span at `dc3860be` is evidence only; **Addendum C will carry
 the uc-1.2 merge SHA as the new pin and all seven legs relaunch there**; readings, bars, kills and the budget rule do not move.
+
+**UC-1-FIX-2 (04:37Z, verbatim):** *"your census fits. All 11 yards being budget rows means every ERCOT coal cluster is pinned
+inside a window: availability = P0/pmax, so row (a) needs u = n wherever P0 > 0. The uc-1.1 guard read the unpinned year fleet
+and could not see that. The availability steps at 2856 also change row (a)'s per-unit capacity p̄·a; uc-1.2 counts the need as
+⌈floor/(p̄·a)⌉ on the window's own fleet. Validation shard for ERCOT 2020 at f2c7166a (uc-1.2): session_01M6wvBm27qR66hrxksg9oKe
+(arm: unit_commitment_milp=true, ercot_gas_commitment_bridge=false)."* The census is at `data/census_w118_2020.txt`. The lane
+waits for the uc-1.2 merge SHA (Addendum C) and the six `dc3860be` legs in flight.
