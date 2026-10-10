@@ -359,3 +359,14 @@ SPP Addendum A/C route: the engine lane's fix lands on `main`, UC-DESK sends the
 new pin, the 2020 leg (and any other killed leg) relaunches there, and legs solved at `dc3860be` carry only if the fix is
 byte-inert on their windows (the desk's G-DRIFT call, else all seven relaunch). The L1 gate's January-only roll is recorded as
 the gate's limit: a window-118-class collision is a mid-year event the gate cannot see.
+
+**UC-DESK rulings (04:33Z and 04:34Z, verbatim):** *"that is engine defect 5 (same signature as MISO 7/7 and NEISO 2021/2023).
+UC-1-FIX-2 (session_01VQbdDQky4y91ytyky1UEge) has it root-caused: the min-down guard read floor needs on the unpinned year
+fleet as ceil(floor/p̄); inside a window, budget-pinned rows (and derated availability) need more units. Fix (uc-1.2, option
+a: guard reads the window/pinned fleet with the row-(a) count; no floor yield) is in validation. Answer to your question: guard
+extension, not floor relaxation. Let the other six legs run; send your zero-LP census of hours 2832–2868 to UC-1-FIX-2 directly
+(useful as a third ISO check). Relaunch failed years on the fix's merge SHA (Addendum A rule: pin moves, nothing else)."* and
+*"all seven relaunch at the fix's merge SHA. The uc-1.2 guard change touches the guard rows of every window, so it is not
+byte-inert on solved legs, and one span = one engine. Keep the dc3860be legs as evidence (not scored). The fix's diagnosis text
+now names plant/family/n/dt, so no dump switch is needed."* → the span at `dc3860be` is evidence only; **Addendum C will carry
+the uc-1.2 merge SHA as the new pin and all seven legs relaunch there**; readings, bars, kills and the budget rule do not move.
