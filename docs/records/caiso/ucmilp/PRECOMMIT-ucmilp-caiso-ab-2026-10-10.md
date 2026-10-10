@@ -286,3 +286,27 @@ commit between the pins on the CAISO backcast path (the G-DRIFT §9 table extend
 commands; budget raised to 90 min because the capture alone is 21 min and the pickle fix is what lets L2 reuse it); the
 span launches only after window 0 and 31/31 January windows read Optimal. The per-shard budget formula (§5) stands, with
 `capture_wall_s` now known: 1,280.7 s.
+
+## Addendum B (2026-10-10 02:05Z, before any arm number exists) — the relaunch pin, ruled
+
+**Pin for the relaunch: `dc3860bef44f8ac0e322f92da94fd6c011bec381`** = `origin/main` at the merge of PR #7221 (UC-DESK message
+01:59Z, verbatim: *"#7221 merged. PIN = dc3860bef44f8ac0e322f92da94fd6c011bec381. Proceed per your Addendum A relaunch rule"*).
+Readings (§2), control rule (§3), structure and cost readings (§4–§5), kills (§6), verdict rule (§7), `uc_*` defaults (§1) and
+the five `--set` values are UNCHANGED. The pin is the only change. `2f872a62` is an ancestor of the new pin.
+
+**What moved between the pins (zero LP, verified on the objects):**
+
+| content | files | CAISO classification |
+|---|---|---|
+| `3caa07dd5` uc-milp (PR #7221): `_slice_obj` slices a 2-D array whose leading axis is T (engine defect 3); the bench carries `--set` into the capture and `YearCapture.save` drops the P1 hook closures | `model/uc/window.py` +17/−, `scripts/lib/uc_bench.py` 22, `bench_uc_ladder.py` 1, new `tests/unit/model/uc/test_window_slice_time_major.py` | LIVE on the gate-on path only (the arm) and the bench harness; the Addendum A defect's fix |
+| `b295469e3` `coal_sync_floor_release: bool = False` (owner ruling; SPP keeper test) | `scenarios.py` +42, `data/fleet/arrays.py` 16 under `getattr(config, "coal_sync_floor_release", False)` AND a generator with `coal_sync_pmin_mw > 0` | **INERT**: default off, ABSENT from the keeper recipe, and CAISO arms no coal synchronization floor (`coal_sync_srmc_tranche=false`, `coal_mustrun_online_pmin=false`) |
+| the rest of the 89 files | records, tests, dashboard run payloads | not the solve path |
+
+- `scripts/solve_surface_register.py --diff 2f872a62 dc3860be`: *"342 → 342 names; 0 value(s) moved, 0 added, 0 removed — NO VALUE MOVED"*.
+- Byte-identical between the pins: `shard_prompt.py`, `calibration_verdict.py`, `legitimacy_diagnostics.py`, `replay_keeper.py`,
+  `run_calibration_full.py`, `run_calibration.py`, `iso_configs.py`, `_ucmilp_compose_span.py`, `_ucmilp_benefit_screen.py`,
+  `frontend/data/backcast/keepers/CAISO.json`; `results/calibration/closeout_caiso_w1_a2_span/**` 0 files differ;
+  `grep -c unit_commitment_milp scenarios.py` = 7. The control is therefore unchanged (rule 29(b)) and the §9 G-DRIFT
+  conclusion stands: nothing LIVE for CAISO outside the UC stage.
+- L1 gate relaunched with `bench-prompt-ucmilp-caiso-2021-L1-relaunch.txt` (same two commands at the new pin; budget 90 min;
+  a `uv sync`-as-setup line, ruled fine by the desk). The span prompts will be generated with `--sha dc3860be…`.
