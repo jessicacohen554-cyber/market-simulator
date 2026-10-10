@@ -1,0 +1,242 @@
+{
+ "2021": {
+  "m3": {
+   "coverage": 1.0,
+   "lower_mean_err": 12.614,
+   "lower_hours": 2920,
+   "lower_dollar_h": 36834.0,
+   "mid_mean_err": 9.264,
+   "upper_mean_err": -2.416,
+   "model_mean": 44.94,
+   "actual_mean": 39.1,
+   "hours_le15_actual": 689,
+   "hours_le15_model": 0,
+   "ratio_le15": 0.0,
+   "hours_neg_actual": 31,
+   "hours_neg_model": 0,
+   "ratio_neg": 0.0
+  },
+  "m4": {
+   "coverage": 1.0,
+   "model_dormant_share": 1.0,
+   "actual_dormant_share": 0.849,
+   "model_mean_mcp": 0.0,
+   "actual_mean_mcp": 2.07,
+   "gap": 0.151
+  },
+  "classes": {
+   "CC_REGULAR": {
+    "class_twh": 24.55,
+    "m1_starts_model": 439,
+    "m1_starts_cems": 797,
+    "m1_starts_ratio": 0.551,
+    "m2a_twh": 0.0,
+    "m2b_twh": 0.0125,
+    "online_hours_model": 61351,
+    "online_hours_cems": 71511
+   },
+   "ST_GAS": {
+    "class_twh": 6.17,
+    "m1_starts_model": 64,
+    "m1_starts_cems": 181,
+    "m1_starts_ratio": 0.354,
+    "m2a_twh": 0.0,
+    "m2b_twh": 0.0233,
+    "online_hours_model": 40493,
+    "online_hours_cems": 45538
+   }
+  }
+ },
+ "2022": {
+  "m3": {
+   "coverage": 1.0,
+   "lower_mean_err": 22.916,
+   "lower_hours": 2920,
+   "lower_dollar_h": 66915.0,
+   "mid_mean_err": 17.287,
+   "upper_mean_err": -20.718,
+   "model_mean": 85.09,
+   "actual_mean": 80.37,
+   "hours_le15_actual": 50,
+   "hours_le15_model": 0,
+   "ratio_le15": 0.0,
+   "hours_neg_actual": 2,
+   "hours_neg_model": 0,
+   "ratio_neg": 0.0
+  },
+  "m4": {
+   "coverage": 1.0,
+   "model_dormant_share": 0.999,
+   "actual_dormant_share": 0.787,
+   "model_mean_mcp": 0.04,
+   "actual_mean_mcp": 7.22,
+   "gap": 0.212
+  },
+  "classes": {
+   "CC_REGULAR": {
+    "class_twh": 31.528,
+    "m1_starts_model": 431,
+    "m1_starts_cems": 727,
+    "m1_starts_ratio": 0.593,
+    "m2a_twh": 0.0,
+    "m2b_twh": 0.0176,
+    "online_hours_model": 75104,
+    "online_hours_cems": 79293
+   },
+   "ST_GAS": {
+    "class_twh": 7.424,
+    "m1_starts_model": 83,
+    "m1_starts_cems": 199,
+    "m1_starts_ratio": 0.417,
+    "m2a_twh": 0.0,
+    "m2b_twh": 0.0509,
+    "online_hours_model": 46052,
+    "online_hours_cems": 44639
+   }
+  }
+ },
+ "2023": {
+  "m3": {
+   "coverage": 1.0,
+   "lower_mean_err": 10.769,
+   "lower_hours": 2920,
+   "lower_dollar_h": 31445.0,
+   "mid_mean_err": 8.012,
+   "upper_mean_err": -4.413,
+   "model_mean": 36.11,
+   "actual_mean": 32.05,
+   "hours_le15_actual": 450,
+   "hours_le15_model": 0,
+   "ratio_le15": 0.0,
+   "hours_neg_actual": 15,
+   "hours_neg_model": 0,
+   "ratio_neg": 0.0
+  },
+  "m4": {
+   "coverage": 1.0,
+   "model_dormant_share": 1.0,
+   "actual_dormant_share": 0.829,
+   "model_mean_mcp": 0.0,
+   "actual_mean_mcp": 2.12,
+   "gap": 0.171
+  },
+  "classes": {
+   "CC_REGULAR": {
+    "class_twh": 27.162,
+    "m1_starts_model": 464,
+    "m1_starts_cems": 740,
+    "m1_starts_ratio": 0.627,
+    "m2a_twh": 0.0,
+    "m2b_twh": 0.0344,
+    "online_hours_model": 71685,
+    "online_hours_cems": 80706
+   },
+   "ST_GAS": {
+    "class_twh": 9.811,
+    "m1_starts_model": 85,
+    "m1_starts_cems": 186,
+    "m1_starts_ratio": 0.457,
+    "m2a_twh": 0.0,
+    "m2b_twh": 0.0349,
+    "online_hours_model": 46549,
+    "online_hours_cems": 45085
+   }
+  }
+ },
+ "2024": {
+  "m3": {
+   "coverage": 1.0,
+   "lower_mean_err": 8.277,
+   "lower_hours": 2920,
+   "lower_dollar_h": 24169.0,
+   "mid_mean_err": 5.606,
+   "upper_mean_err": -5.248,
+   "model_mean": 40.34,
+   "actual_mean": 38.13,
+   "hours_le15_actual": 171,
+   "hours_le15_model": 0,
+   "ratio_le15": 0.0,
+   "hours_neg_actual": 1,
+   "hours_neg_model": 0,
+   "ratio_neg": 0.0
+  },
+  "m4": {
+   "coverage": 1.0,
+   "model_dormant_share": 1.0,
+   "actual_dormant_share": 0.828,
+   "model_mean_mcp": 0.0,
+   "actual_mean_mcp": 2.04,
+   "gap": 0.172
+  },
+  "classes": {
+   "CC_REGULAR": {
+    "class_twh": 30.525,
+    "m1_starts_model": 511,
+    "m1_starts_cems": 649,
+    "m1_starts_ratio": 0.787,
+    "m2a_twh": 0.0,
+    "m2b_twh": 0.0112,
+    "online_hours_model": 74351,
+    "online_hours_cems": 82452
+   },
+   "ST_GAS": {
+    "class_twh": 8.795,
+    "m1_starts_model": 93,
+    "m1_starts_cems": 162,
+    "m1_starts_ratio": 0.574,
+    "m2a_twh": 0.0,
+    "m2b_twh": 0.0279,
+    "online_hours_model": 45551,
+    "online_hours_cems": 46029
+   }
+  }
+ },
+ "2025": {
+  "m3": {
+   "coverage": 1.0,
+   "lower_mean_err": 10.138,
+   "lower_hours": 2920,
+   "lower_dollar_h": 29602.0,
+   "mid_mean_err": 4.144,
+   "upper_mean_err": -19.712,
+   "model_mean": 62.15,
+   "actual_mean": 66.35,
+   "hours_le15_actual": 136,
+   "hours_le15_model": 0,
+   "ratio_le15": 0.0,
+   "hours_neg_actual": 1,
+   "hours_neg_model": 0,
+   "ratio_neg": 0.0
+  },
+  "m4": {
+   "coverage": 1.0,
+   "model_dormant_share": 0.998,
+   "actual_dormant_share": 0.682,
+   "model_mean_mcp": 0.09,
+   "actual_mean_mcp": 6.43,
+   "gap": 0.316
+  },
+  "classes": {
+   "CC_REGULAR": {
+    "class_twh": 30.016,
+    "m1_starts_model": 584,
+    "m1_starts_cems": 804,
+    "m1_starts_ratio": 0.726,
+    "m2a_twh": 0.0,
+    "m2b_twh": 0.0115,
+    "online_hours_model": 84468,
+    "online_hours_cems": 87295
+   },
+   "ST_GAS": {
+    "class_twh": 10.651,
+    "m1_starts_model": 108,
+    "m1_starts_cems": 210,
+    "m1_starts_ratio": 0.514,
+    "m2a_twh": 0.0,
+    "m2b_twh": 0.0144,
+    "online_hours_model": 51343,
+    "online_hours_cems": 52185
+   }
+  }
+ }
+}
