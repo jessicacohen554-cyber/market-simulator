@@ -12,8 +12,19 @@ default):
     noload      = sum_t nl[c, t] * u[c, t]
     start       = sum_t su_c * pbar_c * v[c, t]
 
-Written as ``uc_uplift_<y>.parquet`` by the bench L3 harness and the compose
-script from the stage's schedule and the P1 result.
+Cost basis: ``mc_base``, the P0 cost the stage was handed (heat rate x fuel +
+VOM + emissions, with the authorized offer bands where an ISO's tranches carry
+them in their heat rate), never the P1 bid (DESIGN section 2.6 / section 4).
+It is the integer clusters' as-offered energy curve without the amortized start
+markup (paid in ``start``) and without any P1-only bid adjustment — the
+make-whole convention of an as-offered, cost-capped three-part offer.
+
+Computed in-process only, by :meth:`market_sim.pipeline.uc.UcStage.artifacts`
+from the P1 result the orchestrator holds, and written into the bundle as
+``uc_uplift_<y>.parquet``. A bundle's sidecars carry the P1 offer, not
+``mc_base``, so no bundle-side recomputation exists (the former
+``uplift_from_bundle`` priced at the P1 offer and was deleted, rule 26;
+FINDING-ucmilp-fix4-floor-merit-2026-10-10).
 """
 
 from __future__ import annotations
@@ -47,7 +58,8 @@ def compute_uplift(
         dispatch_p1: ``(n_gen, T)`` scored P1 dispatch.
         prices_p1: ``(n_zones, T)`` P1 zonal prices (the duals).
         zone_idx: ``(n_gen,)`` zone of every fleet row.
-        mc_base: ``(n_gen, T)`` base marginal cost.
+        mc_base: ``(n_gen, T)`` base marginal cost — the P0 cost, never the
+            P1 bid (the module docstring's cost basis).
         noload_per_unit: ``(n_int, T)`` no-load $/h per unit.
         year: The year stamped on every row.
     """
@@ -117,104 +129,5 @@ def compute_uplift(
             "noload_usd": n_d.ravel(),
             "start_usd": s_d.ravel(),
             "uplift_usd": uplift.ravel(),
-        }
-    )
-
-
-#: Model plant group -> ``uc_class`` family token (mirrors ``params.FAMILY_BY_GROUP``).
-def _family_of_group(group: str) -> str | None:
-    from market_sim.model.uc.params import FAMILY_BY_GROUP
-
-    return FAMILY_BY_GROUP.get(str(group))
-
-
-def uplift_from_bundle(bundle: str, uc_dir: str, year: int) -> pd.DataFrame:
-    """The ``uc_uplift_<y>`` frame from a bundle's committed sidecars (zero LP).
-
-    Reads ``hourly/unit_marginal_<y>.parquet`` (per-unit P1 ``mw`` and the P1
-    offer ``mc`` — which IS ``mc_base`` on the integer clusters, whose markup
-    the stage zeroes), ``hourly/system_<y>.parquet`` (zonal P1 prices) and the
-    stage's ``uc_schedule_<y>.parquet`` / ``uc_solve_log_<y>.json`` (``u``,
-    ``v``, the no-load $/h per unit, ``su_per_mw`` x ``pbar_mw``), found under
-    ``uc_dir`` directly or under its ``hourly/`` (a composed bundle). Members
-    are the unit rows whose ``plant_code`` and plant-group family match the
-    cluster's. Per cluster-day, as :func:`compute_uplift`.
-    """
-    import json
-    from pathlib import Path
-
-    bundle_p, uc_p = Path(bundle), Path(uc_dir)
-    sched_path = next(
-        (
-            c
-            for c in (
-                uc_p / f"uc_schedule_{year}.parquet",
-                uc_p / "hourly" / f"uc_schedule_{year}.parquet",
-            )
-            if c.is_file()
-        ),
-        None,
-    )
-    if sched_path is None:
-        raise FileNotFoundError(f"no uc_schedule_{year}.parquet under {uc_p}")
-    um = pd.read_parquet(
-        bundle_p / "hourly" / f"unit_marginal_{year}.parquet",
-        columns=["pass", "plant_code", "plant_group", "zone", "hour", "mw", "mc"],
-    )
-    um = um[um["pass"] == "P1"]
-    sysf = pd.read_parquet(
-        bundle_p / "hourly" / f"system_{year}.parquet",
-        columns=["pass", "zone", "hour", "price"],
-    )
-    sysf = sysf[sysf["pass"] == "P1"][["zone", "hour", "price"]]
-    sched = pd.read_parquet(sched_path)
-    log = json.loads((uc_p / f"uc_solve_log_{year}.json").read_text())
-    start_cost = {
-        int(c["cluster"]): float(c["su_per_mw"]) * float(c["pbar_mw"])
-        for c in log["clusters"]
-    }
-    um = um.assign(family=um["plant_group"].map(_family_of_group)).dropna(
-        subset=["family"]
-    )
-    um = um.merge(sysf, on=["zone", "hour"], how="left").rename(
-        columns={"price": "lam"}
-    )
-    um["rev"] = um["mw"] * um["lam"].fillna(0.0)
-    um["cost"] = um["mw"] * um["mc"]
-    um["day"] = (um["hour"] // _DAY_HOURS).astype(int)
-    agg = (
-        um.groupby(["plant_code", "family", "day"])[["mw", "rev", "cost"]]
-        .sum()
-        .reset_index()
-    )
-    sched["day"] = (sched["hour"] // _DAY_HOURS).astype(int)
-    sched["noload"] = sched["noload_usd_per_unit_h"] * sched["u"].clip(lower=0)
-    sched["start"] = sched["cluster"].map(start_cost) * sched["v"].clip(lower=0)
-    sd = (
-        sched.groupby(["cluster", "plant_code", "uc_class", "day"])[["noload", "start"]]
-        .sum()
-        .reset_index()
-    )
-    out = sd.merge(
-        agg.rename(columns={"family": "uc_class"}),
-        on=["plant_code", "uc_class", "day"],
-        how="left",
-    ).fillna({"mw": 0.0, "rev": 0.0, "cost": 0.0})
-    out["uplift_usd"] = (out["cost"] + out["noload"] + out["start"] - out["rev"]).clip(
-        lower=0.0
-    )
-    return pd.DataFrame(
-        {
-            "year": np.full(len(out), int(year), dtype=np.int16),
-            "day": out["day"].astype(np.int16),
-            "cluster": out["cluster"].astype(np.int32),
-            "plant_code": out["plant_code"].astype(np.int64),
-            "uc_class": out["uc_class"].astype(str),
-            "energy_mwh": out["mw"].astype(float),
-            "revenue_usd": out["rev"].astype(float),
-            "energy_cost_usd": out["cost"].astype(float),
-            "noload_usd": out["noload"].astype(float),
-            "start_usd": out["start"].astype(float),
-            "uplift_usd": out["uplift_usd"].astype(float),
         }
     )

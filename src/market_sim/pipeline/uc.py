@@ -11,11 +11,20 @@ schedule as per-unit-hour bounds (DESIGN section 2.5):
 
 * **ceiling** ``availability[g,t] * u[c,t] / n_c`` on every member of an
   integer cluster (the online share of the cluster's capacity);
-* **floor** ``mlf_c * pbar_c * u[c,t]`` allocated to the members in proportion
-  to their available capacity, composed through
-  :func:`market_sim.pipeline.commitment._bridge_floored_fleet` under
+* **floor** ``mlf_c * pbar_c * u[c,t]`` filled into the members in MERIT
+  ORDER of the P1 offer (:func:`merit_floor_allocation`: cheapest member-hour
+  first, each up to its ceiling, the remainder carried to the next), composed
+  through :func:`market_sim.pipeline.commitment._bridge_floored_fleet` under
   ``MECH_UC_SCHEDULE`` — the same maximum-composition tail every commitment
-  bridge uses, so a floor exists only where the UC put a unit online.
+  bridge uses, so a floor exists only where the UC put a unit online. A
+  CAMPD-binned plant's members are offer tranches of the same physical units,
+  whose minimum stable output is produced by the lowest-cost segment first
+  (FINDING-ucmilp-fix4-floor-merit-2026-10-10, defect 6).
+
+A second stage of the same year (ERCOT's adaptive-expectation pass 2) whose
+inputs digest identically to the previous stage's (:func:`uc_input_digest`)
+reuses that stage's schedule instead of re-solving the windows: the windows
+are a deterministic function of exactly those inputs.
 
 An empty integer set (G-EMPTY) runs no MILP: the markup is returned as the
 same object and the hook returns the upstream hook's result unchanged.
@@ -35,6 +44,7 @@ E9) are scratch, never a sidecar: ``results/uc-checkpoints/<ISO>/<year>/``.
 from __future__ import annotations
 
 import dataclasses
+import hashlib
 import logging
 import resource
 import time
@@ -43,7 +53,7 @@ from pathlib import Path
 from typing import Callable, Optional
 
 import numpy as np
-import pandas as pd  # noqa: F401  (type annotations of UcArtifacts)
+import pandas as pd
 
 from market_sim.config.paths import RESULTS_ROOT
 from market_sim.data.fleet import FleetArrays
@@ -87,11 +97,165 @@ logger = logging.getLogger(__name__)
 #: and the guard reads it on the window's own pinned fleet
 #: (FINDING-ucmilp-fix2-floor-mindown-2026-10-10); a cluster whose members are
 #: all budget-pinned carries no integer (UC-DESK ruling, option (a)).
-UC_ENGINE_VERSION = "uc-1.2"
+#: uc-1.3: the P1 floor fills a cluster's members in merit order of the P1
+#: offer, capped at each member's ceiling (FINDING-ucmilp-fix4-floor-merit-2026-10-10);
+#: a stage whose inputs digest identically to the previous stage's reuses its schedule.
+UC_ENGINE_VERSION = "uc-1.3"
 
 #: The most recent stage objects (one per year solved in this process), for a
 #: harness that writes the post-P1 uplift sidecar; drained by :func:`take_uc_stages`.
 _STAGES: "deque[UcStage]" = deque(maxlen=8)
+
+
+#: The last solved stage's schedule, keyed by its input digest (one slot): a
+#: later stage of the same process with the same digest reuses it. Holds the
+#: schedule, the log and the no-load array only (``n_int x T`` each).
+_LAST_SOLVED: dict = {}
+
+
+def _digest_update(h, obj, opaque: list[str]) -> None:
+    """Feed ``obj`` into hash ``h`` by value (arrays by dtype, shape and bytes).
+
+    Containers and dataclasses recurse; a ``FleetArrays`` / kwargs value of a
+    type with no by-value encoding is fed its type name and ``repr`` and named
+    in ``opaque`` — a ``repr`` carrying an object address makes the digest
+    unique, so such an input can only forfeit reuse, never fake it.
+    """
+    if obj is None or isinstance(obj, (bool, int, float, str, np.generic)):
+        h.update(f"{type(obj).__name__}:{obj!r};".encode())
+    elif isinstance(obj, np.ndarray):
+        a = np.ascontiguousarray(obj)
+        h.update(f"nd:{a.dtype.str}:{a.shape};".encode())
+        if a.dtype == object:
+            for x in a.ravel():
+                _digest_update(h, x, opaque)
+        else:
+            h.update(a.view(np.uint8).ravel() if a.size else b"")
+    elif isinstance(obj, dict):
+        h.update(f"dict:{len(obj)};".encode())
+        for key in sorted(obj, key=repr):
+            _digest_update(h, key, opaque)
+            _digest_update(h, obj[key], opaque)
+    elif isinstance(obj, (list, tuple)):
+        h.update(f"{type(obj).__name__}:{len(obj)};".encode())
+        for x in obj:
+            _digest_update(h, x, opaque)
+    elif isinstance(obj, (set, frozenset)):
+        _digest_update(h, sorted(obj, key=repr), opaque)
+    elif dataclasses.is_dataclass(obj) and not isinstance(obj, type):
+        h.update(f"dc:{type(obj).__name__};".encode())
+        for f in dataclasses.fields(obj):
+            _digest_update(h, f.name, opaque)
+            _digest_update(h, getattr(obj, f.name), opaque)
+    elif isinstance(obj, (pd.DataFrame, pd.Series, pd.Index)):
+        h.update(f"pd:{type(obj).__name__}:{obj.shape};".encode())
+        _digest_update(h, [str(c) for c in getattr(obj, "columns", [])], opaque)
+        h.update(pd.util.hash_pandas_object(obj, index=True).to_numpy().tobytes())
+    else:
+        opaque.append(type(obj).__name__)
+        h.update(f"opaque:{type(obj).__name__}:{obj!r};".encode())
+
+
+def uc_input_digest(
+    stage: "UcStage", fleet_in: FleetArrays, mc_bid: np.ndarray
+) -> tuple[str, list[str]]:
+    """``(hex digest, opaque type names)`` of everything :meth:`UcStage.run` reads.
+
+    The engine version, the ISO / year / horizon, every ``uc_*`` config field,
+    the solve options, the cluster parameters, the year fleet and the hooked
+    P1 fleet, demand, the dispatch kwargs, ``mc_base``, the final P1 bid and
+    the P0 dispatch / storage SOC / prices / flows. Two stages with equal
+    digests build the same windows from the same state, so the second may take
+    the first's schedule.
+    """
+    h = hashlib.blake2b(digest_size=32)
+    opaque: list[str] = []
+    cfg = stage.config
+    uc_fields = {
+        name: getattr(cfg, name)
+        for name in sorted(dir(cfg))
+        if name.startswith("uc_") and not callable(getattr(cfg, name, None))
+    }
+    r0 = stage.r0
+    for part in (
+        UC_ENGINE_VERSION,
+        stage.iso,
+        stage.year,
+        stage.T,
+        stage.W,
+        stage.L,
+        stage.prefixing,
+        stage.slim,
+        uc_fields,
+        repr(stage.options),
+        stage.params,
+        stage.fleet_arrays,
+        fleet_in,
+        stage.demand,
+        stage.dispatch_kwargs,
+        stage.mc_base,
+        np.asarray(mc_bid, dtype=float),
+        np.asarray(r0.dispatch, dtype=float),
+        getattr(r0, "storage_soc", None),
+        np.asarray(r0.prices, dtype=float),
+        getattr(r0, "flows", None),
+    ):
+        _digest_update(h, part, opaque)
+    return h.hexdigest(), sorted(set(opaque))
+
+
+def merit_floor_allocation(
+    member_k: np.ndarray,
+    member_gen: np.ndarray,
+    cluster_floor: np.ndarray,
+    cap: np.ndarray,
+    mc: np.ndarray,
+) -> np.ndarray:
+    """``(n_mem, T)`` member floors: each cluster's floor filled in merit order.
+
+    Per cluster-hour the members are ranked by ascending ``mc`` (the P1 offer
+    the LP sees for that member-hour; ties by fleet row ``member_gen``), and
+    the floor is poured into them in that order, each up to its ``cap`` (the
+    member's ceiling, ``pmax * availability * u / n``), the remainder carried
+    to the next member. A floor above the cluster's summed ceiling is filled to
+    the ceiling and the rest dropped (no member is floored above what the
+    schedule left it). Vectorised: one ``lexsort`` per hour axis and a cumsum
+    over a ``(T, n_int, M)`` block, ``M`` = the most members any cluster has
+    (no loop over hours or members).
+
+    Args:
+        member_k: ``(n_mem,)`` local integer-cluster index of each member.
+        member_gen: ``(n_mem,)`` fleet row of each member (the tie-break).
+        cluster_floor: ``(n_int, T)`` cluster floor MW.
+        cap: ``(n_mem, T)`` member ceiling MW (non-negative).
+        mc: ``(n_mem, T)`` member P1 offer $/MWh.
+    """
+    member_k = np.asarray(member_k, dtype=int)
+    n_mem = int(member_k.size)
+    T = int(np.asarray(cluster_floor).shape[1])
+    if n_mem == 0:
+        return np.zeros((0, T))
+    cap_t = np.maximum(np.asarray(cap, dtype=float), 0.0).T  # (T, n_mem)
+    mc_t = np.asarray(mc, dtype=float).T
+    k_b = np.broadcast_to(member_k, (T, n_mem))
+    g_b = np.broadcast_to(np.asarray(member_gen, dtype=int), (T, n_mem))
+    # Primary key the cluster, so a cluster occupies the same sorted span in
+    # every hour; then ascending offer; then fleet row.
+    order = np.lexsort((g_b, mc_t, k_b), axis=-1)  # (T, n_mem)
+    ks = np.sort(member_k, kind="stable")  # cluster of each sorted slot
+    n_int = int(np.asarray(cluster_floor).shape[0])
+    start = np.searchsorted(ks, np.arange(n_int), side="left")
+    pos = np.arange(n_mem) - start[ks]  # slot within its cluster
+    M = int(pos.max()) + 1
+    cap_s = np.take_along_axis(cap_t, order, axis=1)  # (T, n_mem)
+    block = np.zeros((T, n_int, M))
+    block[:, ks, pos] = cap_s
+    filled_before = (np.cumsum(block, axis=2) - block)[:, ks, pos]  # (T, n_mem)
+    floor_s = np.asarray(cluster_floor, dtype=float).T[:, ks]
+    alloc_s = np.clip(floor_s - filled_before, 0.0, cap_s)
+    alloc_t = np.empty_like(alloc_s)
+    np.put_along_axis(alloc_t, order, alloc_s, axis=1)
+    return alloc_t.T
 
 
 def take_uc_stages() -> list["UcStage"]:
@@ -302,6 +466,8 @@ class UcStage:
         )
         self.int_idx = self.params.integer_clusters
         self.schedule: UcSchedule | None = None
+        #: The P1 bid the schedule was solved on (the merit order of the floor).
+        self.mc_bid: np.ndarray | None = None
         self.log: dict = {}
         self.ran = False
         self.W = int(config.uc_window_hours)
@@ -342,8 +508,53 @@ class UcStage:
             return base
         fleet_in = base if base is not None else self.fleet_arrays
         mc_bid = np.asarray(self.bid_getter(), dtype=float)
-        self.run(fleet_in, mc_bid)
+        self.mc_bid = mc_bid
+        t0 = time.perf_counter()
+        digest, opaque = uc_input_digest(self, fleet_in, mc_bid)
+        digest_s = time.perf_counter() - t0
+        prior = _LAST_SOLVED.get(digest)
+        if prior is not None:
+            self.adopt(prior, fleet_in, digest, digest_s)
+        else:
+            self.run(fleet_in, mc_bid)
+            _LAST_SOLVED.clear()
+            _LAST_SOLVED[digest] = {
+                "schedule": self.schedule,
+                "log": self.log,
+                "noload_full": self.noload_full,
+            }
+        self.log["engine"]["input_digest"] = digest
+        self.log["engine"]["input_digest_opaque_types"] = opaque
+        self.log["engine"]["input_digest_s"] = round(digest_s, 3)
         return self.inject(fleet_in)
+
+    def adopt(
+        self, prior: dict, fleet_in: FleetArrays, digest: str, digest_s: float
+    ) -> None:
+        """Take a previous stage's schedule (equal input digest) instead of solving.
+
+        The log is the solving stage's, with ``engine.reused_schedule`` set and
+        ``summary.uc_total_s`` the digest time (the windows were not re-solved).
+        """
+        import copy
+
+        self.schedule = prior["schedule"]
+        self.noload_full = prior["noload_full"]
+        self.log = copy.deepcopy(prior["log"])
+        self.log["engine"]["reused_schedule"] = {
+            "input_digest": digest,
+            "solved_uc_total_s": self.log["summary"].get("uc_total_s"),
+        }
+        self.log["summary"]["uc_total_s"] = round(digest_s, 3)
+        self.ran = True
+        self.fleet_in = fleet_in
+        _STAGES.append(self)
+        logger.info(
+            "UC stage: inputs identical to the previous stage (digest %s), "
+            "schedule reused; %d windows not re-solved",
+            digest[:12],
+            int(self.log["summary"]["n_windows"]),
+        )
 
     # ---------------------------------------------------------------- run
     def run(
@@ -376,6 +587,7 @@ class UcStage:
         k = self.int_idx
         T, W, L = self.T, self.W, self.L
         r0 = self.r0
+        self.mc_bid = mc_bid
         t_stage = time.perf_counter()
         int_rows = p.integer_member_gens
         mc_w_full = mc_bid.copy()
@@ -618,6 +830,7 @@ class UcStage:
                 "integer_fleet_rows": int(self.params.integer_member_gens.size),
                 "integers_per_window": int(self.int_idx.size * (self.W + self.L)),
                 "kept_until": int(sched.kept_until),
+                "reused_schedule": None,
             },
             "clusters": params_log_rows(self.params),
             "windows": windows,
@@ -648,12 +861,16 @@ class UcStage:
         }
 
     # ---------------------------------------------------------- injection
-    def floor_and_ceiling(self, fleet_in: FleetArrays) -> tuple[np.ndarray, np.ndarray]:
+    def floor_and_ceiling(
+        self, fleet_in: FleetArrays, mc: np.ndarray | None = None
+    ) -> tuple[np.ndarray, np.ndarray]:
         """``(floor, availability)`` the schedule implies on the P1 fleet rows.
 
-        Floor: ``mlf_c * pbar_c * u[c,t]`` split across the cluster's members
-        in proportion to ``pmax * availability``; ceiling: the member's
-        availability scaled by ``u / n_c``.
+        Ceiling: the member's availability scaled by ``u / n_c``. Floor:
+        ``mlf_c * pbar_c * u[c,t]`` filled into the cluster's members in merit
+        order of ``mc`` (the final P1 bid; default the bid the hook read),
+        each up to its ceiling ``pmax * availability * u / n_c``
+        (:func:`merit_floor_allocation`).
         """
         p = self.params
         k = self.int_idx
@@ -665,6 +882,7 @@ class UcStage:
         floor = np.zeros((n_gen, T))
         if k.size == 0:
             return floor, avail
+        mc = self.mc_bid if mc is None else mc
         u = np.maximum(sched.u.astype(float), 0.0)  # (n_int, T)
         int_local = np.full(p.n_clusters, -1)
         int_local[k] = np.arange(k.size)
@@ -672,15 +890,19 @@ class UcStage:
         mem_gen = p.member_gen[mem_mask]
         mem_k = int_local[p.member_cluster[mem_mask]]
         pmax = np.asarray(fleet_in.pmax, dtype=float)
-        share_num = pmax[mem_gen][:, None] * avail[mem_gen, :]  # (n_mem, T)
-        share_den = np.zeros((k.size, T))
-        np.add.at(share_den, mem_k, share_num)
-        with np.errstate(invalid="ignore", divide="ignore"):
-            share = np.where(share_den[mem_k] > 0.0, share_num / share_den[mem_k], 0.0)
-        cluster_floor = (p.mlf[k] * p.pbar_mw[k])[:, None] * u  # (n_int, T)
-        floor[mem_gen, :] = cluster_floor[mem_k] * share
         frac = u / p.n_units[k][:, None]  # (n_int, T)
         avail[mem_gen, :] = avail[mem_gen, :] * frac[mem_k]
+        cap = (
+            pmax[mem_gen][:, None] * avail[mem_gen, :]
+        )  # (n_mem, T), after the ceiling
+        cluster_floor = (p.mlf[k] * p.pbar_mw[k])[:, None] * u  # (n_int, T)
+        floor[mem_gen, :] = merit_floor_allocation(
+            mem_k,
+            mem_gen,
+            cluster_floor,
+            cap,
+            np.asarray(mc, dtype=float)[mem_gen, :],
+        )
         return floor, avail
 
     def inject(self, fleet_in: FleetArrays) -> FleetArrays:

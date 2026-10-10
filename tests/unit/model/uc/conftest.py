@@ -140,3 +140,13 @@ def uc_results_root(monkeypatch, tmp_path):
 
     monkeypatch.setattr(puc, "RESULTS_ROOT", tmp_path / "results")
     return tmp_path / "results"
+
+
+@pytest.fixture(autouse=True)
+def _no_stage_reuse_across_tests():
+    """Clear the one-slot schedule reuse cache so no test reuses another's schedule."""
+    import market_sim.pipeline.uc as puc
+
+    puc._LAST_SOLVED.clear()
+    yield
+    puc._LAST_SOLVED.clear()

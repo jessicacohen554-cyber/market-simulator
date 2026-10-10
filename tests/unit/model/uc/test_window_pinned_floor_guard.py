@@ -34,7 +34,7 @@ from market_sim.model.uc.window import (
     slice_window_inputs,
     window_fleet,
 )
-from market_sim.pipeline.uc import UcStage
+from market_sim.pipeline.uc import UC_ENGINE_VERSION, UcStage
 
 from .conftest import toy_generators, toy_inputs, toy_uc_params
 
@@ -229,4 +229,4 @@ def test_guard_keeps_units_a_later_derated_floor_needs(uc_params_frame, tmp_path
     assert w[h - dt + 1 : h + 1].sum() == 0, (u, w)
     assert all(win["status"] == "Optimal" for win in stage.log["windows"])
     assert stage.log["windows"][0]["guard_rows"] >= 1
-    assert stage.log["engine"]["version"] == "uc-1.2"
+    assert stage.log["engine"]["version"] == UC_ENGINE_VERSION

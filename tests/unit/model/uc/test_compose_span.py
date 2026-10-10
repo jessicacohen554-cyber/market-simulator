@@ -135,7 +135,7 @@ def test_compose_two_legs_gate_off(tmp_path, monkeypatch):
     assert not list((out / "hourly").glob("uc_*"))
 
 
-def test_compose_folds_uc_artifacts_and_writes_uplift(tmp_path, monkeypatch):
+def test_compose_folds_uc_artifacts_and_never_reprices_uplift(tmp_path, monkeypatch):
     cal = tmp_path / "results" / "calibration"
     monkeypatch.setattr(compose_mod, "CAL", cal)
     _leg(cal, "leg_2023", 2023, armed=True)
@@ -150,14 +150,8 @@ def test_compose_folds_uc_artifacts_and_writes_uplift(tmp_path, monkeypatch):
     assert pd.read_parquet(out / "hourly" / "uc_uplift_2024.parquet")[
         "uplift_usd"
     ].tolist() == [-1.0]
-    for y in (2023,):
-        up = pd.read_parquet(out / "hourly" / f"uc_uplift_{y}.parquet")
-        assert len(up) == 2  # one cluster, two days
-        # day: 17 h x 150 MW at $25 cost, revenue at $50 -> no energy shortfall;
-        # no-load 17 h x 2 units x $100 + start 2 x 50 x 100 = 13,400 vs margin 17*150*25 = 63,750
-        assert (up["uplift_usd"] == 0.0).all()
-        assert up["noload_usd"].iloc[0] == pytest.approx(17 * 2 * 100.0)
-        assert up["start_usd"].iloc[0] == pytest.approx(2 * 50.0 * 100.0)
+    # a leg without the frame is not repriced from the bundle (P1 offer != mc_base)
+    assert not (out / "hourly" / "uc_uplift_2023.parquet").exists()
 
 
 def test_compose_refuses_a_leg_without_artifacts(tmp_path, monkeypatch):

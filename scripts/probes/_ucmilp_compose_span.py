@@ -11,9 +11,10 @@ What it adds for the MILP UC stage (``unit_commitment_milp``): each leg's
 stage sidecars — ``hourly/uc_schedule_<y>.parquet``, ``hourly/uc_uplift_<y>.parquet``
 and the bundle-root ``uc_solve_log_<y>.json`` the orchestrator's drain
 writes — ride along (the hourly files with every other year-stamped sidecar,
-the log copied explicitly); a leg that lacks the make-whole frame gets it
-computed from the composite's own committed per-unit layer
-(:func:`market_sim.model.uc.uplift.uplift_from_bundle`, zero LP). A leg whose
+the log copied explicitly). The make-whole frame is priced only in-process at
+``mc_base`` (``model/uc/uplift.py``); a leg that lacks it is reported, never
+recomputed from the bundle, whose per-unit layer carries the P1 offer
+(FINDING-ucmilp-fix4-floor-merit-2026-10-10). A leg whose
 recipe arms the gate but carries no schedule is an ABORT: the schedule is the
 evidence the A/B is scored against.
 
@@ -173,22 +174,16 @@ def compose(legs: dict[str, int], iso: str, out: Path) -> None:
 
 
 def write_uplift(out: Path, years: list[int]) -> None:
-    """``hourly/uc_uplift_<y>.parquet`` from the composite's own sidecars (zero LP)."""
-    from market_sim.model.uc.uplift import uplift_from_bundle
+    """Report, per year, whether the composite carries the leg's ``uc_uplift_<y>.parquet``.
 
+    The frame is priced in-process at ``mc_base`` by the leg's stage; a bundle
+    carries only the P1 offer, so a missing frame stays missing.
+    """
     for y in years:
-        um = out / "hourly" / f"unit_marginal_{y}.parquet"
         if (out / "hourly" / f"uc_uplift_{y}.parquet").is_file():
             print(f"  uplift {y}: carried by the leg")
-            continue
-        if not um.is_file() or not (out / f"uc_solve_log_{y}.json").is_file():
-            print(f"  uplift {y}: unit_marginal or uc_solve_log absent — not written")
-            continue
-        frame = uplift_from_bundle(str(out), str(out), y)
-        frame.to_parquet(out / "hourly" / f"uc_uplift_{y}.parquet", index=False)
-        print(
-            f"  uplift {y}: {len(frame)} cluster-days, total ${frame['uplift_usd'].sum():,.0f}"
-        )
+        else:
+            print(f"  uplift {y}: absent in the leg — not recomputed (in-process only)")
 
 
 def regenerate_diagnostics(out: Path, iso: str, years: list[int]) -> int:

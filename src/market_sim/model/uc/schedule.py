@@ -183,8 +183,10 @@ class UcSchedule:
         """The ``uc_schedule_<y>.parquet`` rows (cluster x hour, long).
 
         ``noload_per_unit`` (``(n_int, T)`` $/h per unit) is carried as a
-        column so the post-P1 uplift can be computed from the bundle alone
-        (:func:`market_sim.model.uc.uplift.uplift_from_bundle`).
+        column (the no-load leg of the make-whole, readable from the bundle).
+        ``floor_mw`` is the cluster floor ``mlf * pbar * u`` before the member
+        allocation (``pipeline.uc.merit_floor_allocation``), which caps it at
+        the members' summed ceiling.
         """
         p = self.params
         k = self.int_idx
