@@ -2,7 +2,7 @@
 
 > **STATUS: DRAFT, HELD (UC-DESK 18:01Z: "HOLD the shard launch … a second logical delta … I'm taking it to the owner as a card").** The seven shards
 > launched 18:08–18:10Z before the HOLD reached this session (18:14Z) were interrupted at 18:15Z and archived at 18:17Z with nothing pushed (Addendum B).
-> §1 now carries BOTH arm variants; which one is solved is the owner's ruling. No shard launches until it lands. Every other section is unchanged.
+> §1 carries BOTH arm variants; **the owner ruled V2 (D-5b, 2026-10-10) — Addendum C has the arm, the field, the pin and the solver choice; the hold is lifted.** Every other section is unchanged.
 
 **Written and pushed BEFORE any shard exists.** Every reading, bar, kill and budget below is fixed here and fails
 closed; nothing moves after a number comes in (GATESPEC §7.1; rule 1(c) by analogy). Lane `UC-2-SPP-B`
@@ -262,3 +262,42 @@ the `_sync` band sits above the cheapest CC tranche in 92–98 % of hours today 
 floor stands; with the floor removed and the UC deciding commitment, a fuel-free 780 MW is a band the UC will keep online through the trough instead
 of backing down at $20 — a coal-ward bias of up to ≈ 2 TWh/yr (the Addendum-free bound in §1) concentrated in trough hours. **Conclusion: the desk's
 objection holds; V1 is two deltas. V2 (a field that zeroes `sync_floor` and keeps the split) is the one-delta arm.** Which is solved is the owner's card.
+
+## Addendum C (2026-10-10, before any number exists) — the owner's ruling (V2), the field, the new pin, the solver choice
+
+**Owner ruling D-5b (2026-10-10, decision card, verbatim): *"Add a clean floor-off switch (Recommended)"*** — relayed by UC-DESK, which chartered this lane
+to write the field. **The arm is V2:** `--set unit_commitment_milp=true --set st_gas_mustrun_per_plant=false --set coal_sync_floor_release=true
+--set uc_solver_preset=highs_default` (the fourth `--set` is the declared solver choice below, not a model delta). V1 is withdrawn; `coal_sync_srmc_tranche`
+and `coal_mustrun_per_plant` stay exactly as the keeper arms them.
+
+**The field** (PR #7219, merged as `9cb0eecb1fd97f52e3e1b75cb1380aeb7f6f52eb`; branch `claude/ucmilp-2-spp-b-floor-release`): `coal_sync_floor_release: bool = False`. True removes the
+step-3a FORCING on the coal `_mustrun`/`_sync` bands — `_compose_min_gen_floors` composes no `MECH_COAL_MUSTRUN` floor — and nothing else: the band split, its
+pricing and the `coal_sync_pmin_mw` stamp that selects the band's availability basis stay as `coal_sync_srmc_tranche` built them. The gate sits in
+`arrays.py::_compose_min_gen_floors` (`coal_sync_any` reads False under the flag), not at the assembly stamp: zeroing the stamp was measured on the SPP keeper's
+2019 recipe to ALSO move the band's availability basis (43 coal rows −5 pp, 214 MW-mean of coal, plus the `SPP_MMU_EMER_*` pseudo-units) — a second delta.
+Evidence in the PR: two-SHA `fleet_only` identity probe (`2f872a62` vs the branch, SPP keeper recipe, 2019–2025) **ALL LP INPUTS BIT-IDENTICAL** with the
+flag off; fulldata test on SPP 2019 (on vs off: every LP-visible array but `min_gen` equal; `min_gen` → 0 on the 43 coal `_mustrun`/`_sync` rows only).
+Registered: `_CACHE_KEY_OPTIONAL_FIELDS` at `"False"`, `TIER_TAGS` 3, matrix row + `U` cell in every shard.
+
+**Pin: `9cb0eecb1fd97f52e3e1b75cb1380aeb7f6f52eb`** (= `origin/main` at the merge of PR #7219). `source_revision` is this full SHA.
+
+**G-DRIFT `6cf95135` (Addendum A's pin) → `9cb0eecb1fd97f52e3e1b75cb1380aeb7f6f52eb`, classified for SPP (zero LP, on the objects):**
+
+| content | files | control (keeper, UC off) | arm B (UC on) |
+|---|---|---|---|
+| UC-SPEED (PR #7218, `2f872a62`): `uc_solver_preset` (`str = "lean"`, in `_CACHE_KEY_OPTIONAL_FIELDS` at `'lean'`, `TIER_TAGS` 1, validator over `UC_SOLVER_PRESET_NAMES`); `model/uc/solve.py` +339 (`UC_SOLVER_PRESETS`, per-window HiGHS phase profile), `model/uc/schedule.py` +39, `model/uc/window.py` +10, `pipeline/uc.py` +102 (profile in `uc_solve_log`); `scripts/lib/uc_bench.py`, `scripts/diagnostics/bench_uc_ladder.py`; tests | **INERT**: every hunk is inside the UC stage or its bench tooling, reached only through `pipeline/solve.py`'s one gated hunk (unchanged); the new field drops out of `cache_key()` at its default; `solve_surface --diff 6cf95135 2f872a62`: *"342 → 342 names; 0 moved, 0 added, 0 removed — NO VALUE MOVED"* | **LIVE on the solver path**: the registry default is now `lean`, so an arm-B shard at the pin would run the lean HiGHS path (presolve on; feasibility-jump, LP heuristics and root restart off) where arm A ran uc-1.1's `highs_default`. FINDING-ucmilp-speed §3: paired equivalence PASS — same optimum within `uc_mip_rel_gap` on 62/62 window problems, largest relative objective delta 8.9e-4; wall −7 to −23 %. **Declared choice (one, ex ante): the arm pins `uc_solver_preset=highs_default`**, so arm B differs from arm A by the two floors alone and the A↔B gate columns compare like with like. Cost of the choice, stated: this arm's wall rows do NOT carry the lean preset's gain; they are reported against the ruled 3× ceiling as arm A's were (arm A: 5.1–10.2×; UC-SPEED's L3 at lean: 7.10×). |
+| this lane's field (PR #7219) | `scenarios.py` (field, cache-key, tier), `data/fleet/arrays.py` (one gate), two tests, matrix row + 9 cells | **INERT**: default False; identity probe above | **LIVE by design**: the arm's coal delta |
+| nothing else moved | `git log 6cf95135..9cb0eecb1fd97f52e3e1b75cb1380aeb7f6f52eb` = UC-SPEED + this field | control unchanged (rule 29(b)) | — |
+
+`shard_prompt.py`, `replay_keeper.py`, `calibration_verdict.py`, `legitimacy_diagnostics.py`, `_ucmilp_compose_span.py`, `_ucmilp_benefit_screen.py`,
+`iso_configs.py`, `keepers/SPP.json`, `results/calibration/closeout_spp_nuc_span/**` — byte-identical `6cf95135` → `9cb0eecb1fd97f52e3e1b75cb1380aeb7f6f52eb` (checked: shard_prompt.py, replay_keeper.py, calibration_verdict.py, legitimacy_diagnostics.py, _ucmilp_compose_span.py, _ucmilp_benefit_screen.py, _closeoutsppnuc_compose_span.py, iso_configs.py, keepers/SPP.json, closeout_spp_nuc_span/** all IDENTICAL; solve_surface --diff 6cf95135 → 9cb0eecb: 342 → 342 names, NO VALUE MOVED).
+
+**Readings, bars, kills, budget: UNCHANGED** (§§2–7). H1–H4 stand as written; the expected-cost paragraph stands. The `_sync` re-pricing side-effect of §1
+(V1) no longer exists in the arm, so the H2 confound noted there is withdrawn. Prompts regenerated with `--sha 9cb0eecb1fd97f52e3e1b75cb1380aeb7f6f52eb` and the four `--set`s (`uc_solver_preset="highs_default"`, JSON-quoted), committed as
+`shard-prompts-ucmilp-spp-b.txt` (the `6cf95135` V1 prompts stay in history at `fb38c1bf`). The shard appendix now asks for the four field values plus
+`uc_solver_preset` pasted.
+
+Also landed on `main` since Addendum B (PR #7207, `525b3f4e`): arm A's records moved to `docs/records/spp/ucmilp/` with its slim span at
+`docs/records/spp/ucmilp/data/ucmilp_spp_span/` (the PROBE de-registered, desk option 2) and SPP's `unit_commitment_milp` cell stamped **R**. The second
+comparator of §1 is therefore read from `main`, not from a branch; the control is unchanged. The shard appendix asks for the recorded
+`uc_solver_preset` (written to `uc_solve_log_<y>.json` by `pipeline/uc.py`).
