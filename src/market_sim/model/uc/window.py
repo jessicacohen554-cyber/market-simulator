@@ -150,14 +150,23 @@ class UcWindowInfeasible(RuntimeError):
 
 
 def _slice_obj(obj, t0: int, t1: int, T: int):
-    """Slice every array whose last axis is the year's ``T`` to ``[t0, t1)``.
+    """Slice every array with a ``T`` axis (last, or leading for a 2-D
+    time-major array) to ``[t0, t1)``.
 
-    Recurses into tuples, lists, dicts and dataclasses; scalars, ``None`` and
-    arrays with no ``T`` axis pass through unchanged.
+    Hour-minor arrays ``(..., T)`` are the fleet and kwargs convention; the
+    time-major ``(T, n_links)`` form is the per-hour transfer limit
+    (``ttc`` / ``ttc_import``, ``lp/bounds.py``: an ISO with an hourly
+    interface overlay, ERCOT's measured GTC and NYISO's seasonal TTC). Left
+    unsliced it cannot broadcast into the window's ``(T_w, n_links)`` flow
+    bounds (the UC-2-ERCOT L1 gate, 2026-10-10). Recurses into tuples, lists,
+    dicts and dataclasses; scalars, ``None`` and arrays with no ``T`` axis pass
+    through unchanged.
     """
     if isinstance(obj, np.ndarray):
         if obj.ndim >= 1 and obj.shape[-1] == T:
             return np.ascontiguousarray(obj[..., t0:t1])
+        if obj.ndim == 2 and obj.shape[0] == T:
+            return np.ascontiguousarray(obj[t0:t1, :])
         return obj
     if isinstance(obj, tuple):
         return tuple(_slice_obj(x, t0, t1, T) for x in obj)
