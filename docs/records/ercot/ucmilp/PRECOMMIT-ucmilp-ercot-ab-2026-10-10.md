@@ -512,3 +512,11 @@ do not move.
 **D.1 — stage 1 launched 14:14Z at `eab17188`** (model Opus, tag `ucmilp:UC-2-ERCOT-shard`): 2019 `session_01FqeWwxWUjaiV3F7i278YM6`,
 2020 `session_01FpPuQW4mMNburhWVsD9L8X`, 2024 `session_016FDZqY7NXFW6Y88oXt4gqm`, 2025 `session_01SDmBkrN2ghak9yPgQeoyFE`;
 300 min each; branches `claude/ucmilp-ercot-d-<y>`.
+
+**D.2 (15:05Z, before any leg finishes) — budgets extended.** At 15:00Z the pace on pass 1 was: 2019 ~0.9 min/window
+(projected ≈ 11 h with both UC passes), 2020 ~33 s/window (≈ 7 h), 2024 ~18 s/window (≈ 4 h, fits), 2025 not yet read.
+**UC-DESK (15:01Z, verbatim):** *"approved. Extend 2019 and 2020 to 720 min and record it as Addendum D.2 before any leg
+finishes. A budget is a cost line, not a reading. Extend 2025 too if its pace projects over 300 min, under the same addendum.
+In the RESULT, report the wall rows including the double-UC cost (pass 2 identical to pass 1 per the FIX-2 FINDING)."*
+→ 2019 and 2020 run to **720 min**. 2025 runs to 720 min if its shard projects over 300 min. 2024 stays at 300 min.
+Readings, bars and kills do not move.
