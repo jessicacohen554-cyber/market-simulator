@@ -134,8 +134,8 @@ uc-1.2 run clears the window that killed it. Defect 5 is closed.
 |---|---|---|---|---|---|---|---|
 | MISO 2021 | **365/365 Optimal** (w30, w129 Optimal) | 0 | 6.2 / 11.4 / 37.4 | **161 → 75** (86 all-budget-pinned demoted) | solved, objective $6.754 bn | **0** | `claude/ucfix2-gate-miso-2021` @ `37b8eeab` (`dispatch/2021_P1.parquet`, 102.7 MB, over GitHub's limit, held in the shard container only) |
 | NEISO 2021 | **365/365 Optimal** (w259 Optimal) | 0 | 8.7 / 36.9 / 111.6 | **40 → 22** (18 demoted: yard coal and oil-budget dual-fuel ST/CT) | solved, objective $2.296 bn | **0** | `claude/ucfix2-gate-neiso-2021` @ `b756026e` (full bundle) |
-| ERCOT 2020 | pass 1 (pre-slim-fix head `e4a57362`, from the log; the run was killed at the shard tool's 120-min ceiling inside UC pass 2): **365 windows solved** (w118 cleared: the stage raises on any infeasible window), 0 TL, MILP mean 14.6 s, nodes p50 17 | 0 | 14.6 / – / – | 61 integer after demotion (11 all-pinned demoted) | pass-1 P1 solved, objective $17.74 bn vs P0 $1.48 bn (ratio unexplained until unserved MWh is reported) | **pending**: end-to-end rerun at the PR head `7688a68a`, detached | – |
-| ERCOT 2019 | pending (same 120-min ceiling) | | | | | | |
+| ERCOT 2020 @ **PR head `7688a68a`** (detached) | **365/365 Optimal** (w118 Optimal: 35.9 s, 65 nodes) | 0 | 19.0 / 42.4 / 79.4 | **72 → 61** (11 demoted: 3470, 6180, 7030, 298, 6146, 6178, 6183, 6179, 7097, 56611, 127) | solved (pass 2, scored), objective $16.739 bn; 0 NaN cells in `dispatch/2020_P1.parquet`; 0 `slim.py` warnings | **0** | `claude/ucfix2-gate-ercot-2020c` @ `d1091ac4` (full bundle, 22 files) |
+| ERCOT 2019 @ `e4a57362` | 334/334 Optimal through hour 8016 (cut off at the shard tool's 120-min ceiling), 0 TL | 0 | 18.9 / 46.9 / 237.9 | 73 → 62 | not reached | – | `claude/ucfix2-gate-ercot-2019` @ `6c3d4441` (partial log only; left to UC-2-ERCOT's relaunch per UC-DESK) |
 
 The desk ruled the demotion GENERIC, not coal-only: every `BUDGET_GEN_IDX_KEYS` row is pinned
 to P0 inside a window, so the UC never decided its commitment, whatever the family. Each
@@ -162,8 +162,12 @@ MILP s, nodes, gap), at UC-2-ERCOT's request.
 **Cost finding (not changed here).** ERCOT's adaptive-expectation step re-solves P1 a second
 time, and the second pass reruns the whole UC stage: UC pass 1 took 5,485 s, so the full year
 is ≈195 min, about 2× the UC wall. Whether pass 2's integer schedule differs from pass 1's is
-measured by the ERCOT 2020 end-to-end gate (§5.0). If the schedules are identical, reusing the
-pass-1 schedule is a later speed lever.
+measured by the ERCOT 2020 end-to-end gate (§5.0): over hours 0–8015 (the last pass-1
+checkpoint), **0 of 61 × 8016 cells differ in `u`, `v` or `w`**, and the per-window MILP
+objectives of windows 0–333 are identical. Hours 8016–8759 have no pass-1 artifact to
+compare. Measured stage walls: UC pass 1 6,994 s, UC pass 2 7,030 s, P1 pass 1 244 s,
+P1 pass 2 229 s, about 249 min in total. **Reusing the pass-1 schedule in pass 2 would halve
+ERCOT's UC wall with an identical schedule.** That is a later speed lever, not changed here.
 
 ### 5.1 A second, separate defect at the UC → P1 seam (MISO; open, not fixed here)
 
