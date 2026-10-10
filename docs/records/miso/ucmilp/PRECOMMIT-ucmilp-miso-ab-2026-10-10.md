@@ -299,3 +299,25 @@ built and solved window 0 and all 31 January windows on MISO 2020 (Addendum A) �
 — and every MISO year shares the same interchange construction (the per-year overlay changes only the reserve flags and the
 gas price). No re-pin; nothing in §§1–7 changed. If a span shard nonetheless fails at its first window build, that is kill #1's
 engine-defect route: record, stop, route to UC-DESK.
+
+## Addendum D (2026-10-10 02:45Z) — KILL #1 fired on MISO 2020 at the pin: window 129 Infeasible; recorded, routed, no re-tune
+
+Shard `ucmilp-miso-2020` (`session_01MaGZYCkVzevC6MrhZowr2M`) stopped at 02:39:57Z, 36 min in (P0 473 s; UC prepared 336 clusters,
+164 integer, 1,231 fleet rows, W = 24, L = 12; windows 0–128 solved), on the engine's hard stop, verbatim:
+
+```
+market_sim.model.uc.window.UcWindowInfeasible: UC window 129 [3096, 3132) solve ended Infeasible with no feasible incumbent
+(149220 columns, 31580 rows, 164 integer clusters); LP relaxation: Infeasible; a-priori contradictory rows: min_down=1;
+carried starts above n: 0; floor above min-down: 1
+```
+
+raised at `pipeline/uc.py:396 run → model/uc/solve.py:460 solve_window` inside `p1_fleet_prep`. Not defect 3 (Addendum C): the
+window built and 129 windows solved before it. The engine's own diagnosis names one contradictory min-down row and one
+"floor above min-down" conflict with no carried-starts overflow: a kept floor (D-5 keeps `st_gas_mustrun_per_plant`, the coal
+yard floors and `reliability_floor` / the CT drag) asserts a cluster online inside its carried min-down — the UC-0 §4 hard case,
+here as a hard infeasibility rather than a C8 share. **Kill #1 (PRECOMMIT §6): recorded; the shard pushed nothing and was archived
+(rule 33, nothing to fetch); no `uc_*` value moves; routed to UC-DESK 02:44Z.** The six other shards (2019, 2021–2025) stay
+running as evidence of whether the conflict is year-specific; each outcome is recorded here. Relaunch rule (the SPP Addendum A
+form): when the engine carries a fix, the pin moves to that full SHA and NOTHING else changes (same recipe, same single `--set`,
+same `uc_*` defaults, readings, bars, kills, budget); if the resolution is instead a D-5 re-ruling (a floor switched off for MISO),
+that is an ARM change and needs the owner's card before any relaunch — the readings would then be re-pre-registered against it.
