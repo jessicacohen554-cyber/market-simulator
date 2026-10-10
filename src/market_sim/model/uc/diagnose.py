@@ -75,6 +75,41 @@ def row_activity_bounds(
     return mn, mx
 
 
+def cluster_rows(
+    window: "UcWindowModel", mask: np.ndarray, max_examples: int, **cells
+) -> list[dict]:
+    """One entry per integer cluster with a flagged ``(k, hour)`` cell in ``mask``.
+
+    Names the plant (``plant_code``, ``family``, ``n``, ``dt_h``, ``ut_h``),
+    whether any member is a budget row pinned to P0 inside the window
+    (``pinned_members``), the flagged hours (up to ``max_examples``) and, per
+    keyword in ``cells`` (an ``(n_int, T_w)`` array), its values there — so an
+    infeasible window's exception says WHICH plant and hours collide.
+    """
+    p, k_all = window.params, window.int_idx
+    pinned = set(np.asarray(getattr(window, "pinned_gens", []), dtype=int).tolist())
+    out = []
+    for k in np.flatnonzero(mask.any(axis=1))[:max_examples]:
+        c = int(k_all[k])
+        hours = np.flatnonzero(mask[k])[:max_examples]
+        members = p.member_gen[p.member_cluster == c]
+        row = {
+            "k": int(k),
+            "plant_code": int(p.plant_code[c]),
+            "family": str(p.family[c]),
+            "n": int(p.n_units[c]),
+            "dt_h": int(p.dt_h[c]),
+            "ut_h": int(p.ut_h[c]),
+            "pinned_members": int(sum(int(g) in pinned for g in members)),
+            "members": int(members.size),
+            "hours": [int(h) for h in hours],
+        }
+        for name, arr in cells.items():
+            row[name] = [float(arr[k, h]) for h in hours]
+        out.append(row)
+    return out
+
+
 def diagnose_window(window: "UcWindowModel", max_examples: int = 12) -> dict:
     """The zero-LP report of ``window`` (see the module docstring).
 
@@ -82,7 +117,11 @@ def diagnose_window(window: "UcWindowModel", max_examples: int = 12) -> dict:
     bounds`` (``lower > upper``); ``contradictory_rows`` by family with up to
     ``max_examples`` ``(cluster, hour)`` pairs each (``cluster`` is the
     integer-local index ``k``; production rows are listed by row index);
-    ``history_starts_above_n`` and ``floor_above_min_down`` cell counts.
+    ``history_starts_above_n`` and ``floor_above_min_down`` cell counts, and
+    the plants behind them (:func:`cluster_rows`):
+    ``clusters_floor_above_min_down`` (floor need above ``n`` less the carried
+    min-down), ``clusters_ceiling_contradiction`` (row (a) contradicted) and
+    ``clusters_history_starts_above_n``.
     """
     A, cl, cu, rl, ru = highs_lp_arrays(window.h)
     mn, mx = row_activity_bounds(A, cl, cu)
@@ -130,6 +169,20 @@ def diagnose_window(window: "UcWindowModel", max_examples: int = 12) -> dict:
         collide = window.u_lower > (n - window.hist_w) + _TOL
         report["history_starts_above_n"] = int(above.sum())
         report["floor_above_min_down"] = int(collide.sum())
+        report["clusters_floor_above_min_down"] = cluster_rows(
+            window,
+            collide,
+            max_examples,
+            u_lower=window.u_lower,
+            n_minus_hist_w=n - window.hist_w,
+        )
+        ceiling = by_family.get("ceiling", [])
+        ceil_mask = np.zeros_like(collide)
+        for kk, tt in ceiling:
+            ceil_mask[kk, tt] = True
+        report["clusters_ceiling_contradiction"] = cluster_rows(
+            window, ceil_mask, max_examples, u_upper=window.u_upper
+        )
         report["clusters_history_starts_above_n"] = [
             {
                 "k": int(k),
