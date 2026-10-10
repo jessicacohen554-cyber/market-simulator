@@ -277,3 +277,12 @@ The MILP per window is ~3× SPP's (9.7 vs 3.0 s mean) on ~1.8× the integers (5,
 
 Prompts generated with `--budget 109` and committed as `docs/records/miso/ucmilp/shard-prompts-ucmilp-miso.txt`; readings, bars,
 kills and the verdict rule of §§2–7 are unchanged.
+
+## Addendum B (2026-10-10 01:56Z) — launch record
+
+Seven span shards launched 01:53–01:56Z at the pin `2f872a62`, model `claude-opus-5-5`, tag `ucmilp:UC-2-MISO-shard`, prompts =
+`shard-prompts-ucmilp-miso.txt` (commit `ace67246`; the "PER YEAR" wording is the text as launched): 2019 `session_011btcKiUP9SV8CwD1frxESQ` ·
+2020 `session_01MaGZYCkVzevC6MrhZowr2M` · 2021 `session_01TMV8TKm9EC9nUVX5RsiB5j` · 2022 `session_01PyziKkUq9u83cKMQz1SzoD` ·
+2023 `session_015qt5jGxEdY529gMRR8e1YG` · 2024 `session_01RkDeuTxQWJ4ccMUNPcHwn9` · 2025 `session_01TNU8C6Be2nVyEvcZEpgu2e`.
+Bench shards archived: `session_0116uJFx8cCqjmBxMRcWAMF6` (no .venv, nothing pushed), `session_012an4XfAv35RRQKJw8KqVxM` (results on
+`claude/ucmilp-bench-miso-2020-L1` `2db7198`). Nothing in §§1–7 changed.
