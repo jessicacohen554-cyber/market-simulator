@@ -292,3 +292,31 @@ UC + the §9 drift for 2021.
 Everything in `docs/mechanism-testing-matrix.md` §5.5's DO-NOT-REDO list (§1); no `uc_*` value other than the declared
 defaults; no second arm (a floors-off arm is the owner's separate D-6 follow-up, as ruled for SPP); no control solve; no
 re-solve of the 2021 control leg (the owner's open question, §9); no registration on the dashboard; no promotion.
+
+## Addendum A (2026-10-10 01:50Z, before any span shard exists) — the bench gate's first run hit a HARNESS defect; amended run
+
+The bench shard (`session_01PbNTnQLYPvowX7bqgSH11a`) passed every hard stop and solved the NYISO 2024 capture
+(`data_prep=24.6s solve_p0=145.4s markup=19.6s solve_p1=177.6s results_write=19.2s total=386.5s`; memory peak
+cgroup 6.81 GiB), then stopped BEFORE the L1 window on:
+
+```
+File "scripts/lib/uc_bench.py", line 77, in save
+    pickle.dump(self, fh, protocol=pickle.HIGHEST_PROTOCOL)
+AttributeError: Can't pickle local object 'build_nyiso_gas_bridge_p1_prep.<locals>._fleet_prep'
+```
+
+- **Classification:** a bench-HARNESS defect, not an engine defect and not a kill (§6): `--save-capture` pickles the
+  `YearCapture`, whose `hooks` carry the NYISO keeper recipe's bridge P1 hook — a closure defined inside
+  `pipeline/commitment.py::build_nyiso_gas_bridge_p1_prep`, which `pickle` cannot serialise. Every ISO whose keeper arms a
+  P1-prep closure (NYISO; CAISO's RA bridge, ERCOT's gas bridge by the same construction) hits it with `--save-capture`;
+  SPP's keeper arms none, so the SPP ladder never saw it. The engine itself was never reached. Routed to UC-DESK for the
+  engine lane (`scripts/lib/uc_bench.py`: strip non-picklable hooks in `YearCapture.save`, or hoist the closure); this lane
+  edits no script (rule 32: a shard that stops with a clear report is a success).
+- **Amended run (the shard is re-instructed in its warm container; one logical change — no saved capture):** L1 and L2 are
+  run as two independent invocations, each capturing P0 + P1 itself (`--save-capture` and `--capture` dropped); every
+  other argument — the nine `--set`s, `--months 1 --arms "" --rolling`, the out-dirs, the push list, the 60-min budget
+  (restarted at the amendment) — is unchanged. The gate line (§0) is unchanged: window 0 Optimal AND 31/31 January
+  windows Optimal, 0 time-limit hits, gap_max ≤ `uc_mip_rel_gap`, no `UcWindowInfeasible`.
+- **Budget extrapolation (§5) now reads:** capture wall (the `total=` of the L2 rung's own timing line) + 12 × the January
+  month wall + the stage's fixed overhead — computed from the amended run's report in Addendum B before the span prompts
+  are generated.
