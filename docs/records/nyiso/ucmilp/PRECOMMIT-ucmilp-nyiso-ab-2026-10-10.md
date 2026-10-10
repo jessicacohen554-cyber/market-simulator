@@ -349,3 +349,26 @@ ValueError: could not broadcast input array from shape (8760,13) into shape (36,
   part of the move that exists at 01:55Z (`2f872a62 → e86eb2a4`: #7207 SPP records + slim span, #7219 SPP-B
   `coal_sync_floor_release` — `scenarios.py` default False, `fleet/arrays.py` under the flag only, ABSENT from the NYISO
   recipe, NYISO has no coal → INERT; #7220 desk records): control INERT.
+
+## Addendum B (2026-10-10 02:05Z, before any span shard exists) — the second pin, after engine defect 3's fix merged
+
+**Pin for the relaunch: `dc3860bef44f8ac0e322f92da94fd6c011bec381`** = `origin/main` at the merge of PR #7221 (UC-DESK message
+01:59Z: *"#7221 merged. PIN = dc3860be… Proceed: addendum → bench gate → span."*). Readings (§2), control rule (§3),
+structure and cost readings (§4–§5), kills (§6), verdict rule (§7), `uc_*` defaults and the nine `--set`s (§1) are
+UNCHANGED. The pin is the only change. The bench gate (§0, block D: L1 + January L2, NYISO 2024, `claude-opus-5-5`, 60 min)
+is re-run FIRST at this pin in its original two-command form (`--save-capture` / `--capture`); the span launches only on a
+pass. Prompt re-committed as `shard-prompts-ucmilp-nyiso-bench.txt` (the `2f872a62` form stays in history at `f4f3add2`).
+
+**What moved `2f872a62 → dc3860be`, classified for NYISO (zero LP, on the objects; 8 files under `src/ scripts/ tests/`):**
+
+| content | files | NYISO classification |
+|---|---|---|
+| **engine defect 3 fix** (#7221) | `model/uc/window.py::_slice_obj` +13/−4: a 2-D array with leading axis T is sliced on that axis (the time-major `ttc` / `ttc_import` `(8760, n_links)` of NYISO's seasonal / seam-envelope TTC — the A.2 stop); new `tests/unit/model/uc/test_window_slice_time_major.py` | **LIVE on the gate-on path only** (the window builder is reached solely under `unit_commitment_milp`); control INERT |
+| bench harness (#7221) | `scripts/diagnostics/bench_uc_ladder.py` +1 (`overrides=overrides` into `capture_year`, so the capture replays the ARM recipe — bridge off — instead of the keeper's); `scripts/lib/uc_bench.py` +21/−1 (`YearCapture.save` pickles `hooks={}`; `_solve_kwargs` also stomps explicit `solve_and_persist` kwargs, the ERCOT-65 class) | bench only; not on the solve path of any registrable run |
+| SPP-B floor release (#7219) | `coal_sync_floor_release: bool = False` (`scenarios.py` +42, registered at its default), `data/fleet/arrays.py` +16/−2: `coal_sync_any` is false under the flag | **INERT**: default off, ABSENT from the NYISO recipe (dropped from `cache_key()`), NYISO has no coal row |
+| #7207 (SPP UC-2 records + slim span), #7220 (desk r04) | docs, matrix shards (NYISO.js +1 line: the SPP cell's cross-reference text only), `results/calibration` untouched | docs |
+| solve surface | `solve_surface_register.py --diff 2f872a62 → dc3860be`: *"342 → 342 names; 0 moved, 0 added, 0 removed — NO VALUE MOVED"* | no ISO's key reached |
+| tooling and control | `shard_prompt.py`, `replay_keeper.py`, `calibration_verdict.py`, `legitimacy_diagnostics.py`, `_ucmilp_compose_span.py`, `results/calibration/w0_nyiso_span/**`, `keepers/NYISO.json` byte-identical between the two pins | control unchanged (rule 29(b)); §10's G-DRIFT stands, extended by this table |
+
+Nothing is LIVE for NYISO outside the UC stage and the bench harness. The arm-vs-control delta remains UC-only for
+2022–2025 and UC + the §9 drift for 2021.
