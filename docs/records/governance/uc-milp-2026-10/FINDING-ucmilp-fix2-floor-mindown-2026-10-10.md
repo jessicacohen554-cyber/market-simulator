@@ -38,6 +38,11 @@ verbatim on uc-1.1 (§3).
   (`UcStage._floor_need_ahead`). The fleet is hour-local, so the guard of window w and the
   rows of window w+1 agree hour by hour.
 
+- **(Desk ruling, §6.)** A cluster whose members are all budget-pinned carries no integer
+  (`params.demote_budget_pinned`), so its commitment is the identity's (P0's). This removes
+  the pinned case at its source and fixes the UC→P1 seam (§5.1). The two changes above stay
+  for partially pinned clusters and for derated floors.
+
 Rule basis: rule 18 (physics by parameters: a stopped unit is unavailable for `DT`); rule 17
 (the floor is the one the window's own driver states, nothing new); rule 19 (no new
 mechanism, the guard row is unchanged). **Option (b), "the floor yields to physics", was not
@@ -91,12 +96,14 @@ pinned availability) and refuses any stop of plant 6823 in window 29 from hour 7
 
 ## 3. Tests
 
-`tests/unit/model/uc/test_window_pinned_floor_guard.py` (new; 4 of 5 fail on uc-1.1):
+`tests/unit/model/uc/test_window_pinned_floor_guard.py` (new, 6 tests):
 
 * `test_pinned_row_needs_every_unit_the_unpinned_fleet_does_not`: pin 150 / 50 MW on 2 × 100 MW gives need `[0,2,2,2]`; the unpinned fleet gives `[0,0,0,0]` (the uc-1.1 guard's view).
 * `test_window_fleet_is_hour_local`: the guard's slice equals the next window's.
 * `test_window_bound_matches_row_a_under_a_pin`: `u` lower bound 2 at a 50 MW pin; a carried min-down raises with **the plant, its pinned members and the hours named** in the text.
-* `test_guard_keeps_units_a_later_pin_needs[150.0|50.0]`: the stage over 72 h, W=24, L=2; the pin restarts one hour past window 0's horizon. On uc-1.1 the stage raises at window 1 with `min_down=2; floor above min-down: 2` (150 MW) and `ceiling=2, min_down=2` (50 MW), the MISO signatures. On uc-1.2 every window is Optimal and no stop falls inside the pin hour's min-down.
+* `test_all_pinned_cluster_carries_no_integer`: the stage over 72 h with the CC plant pinned to a P0 that restarts one hour past window 0's horizon. Before the demotion, uc-1.1 raised at window 1 with `min_down=2; floor above min-down: 2` (150 MW pin) and `ceiling=2, min_down=2` (50 MW pin), the MISO signatures. Under the ruling the cluster carries no integer: the stage logs plant 1 as demoted, runs with no integer cluster, and P1 keeps its markup.
+* `test_partially_pinned_cluster_keeps_its_integer`: one unpinned member keeps the integer; all members pinned demotes it.
+* `test_guard_keeps_units_a_later_derated_floor_needs`: no pin. A 50 MW floor past the horizon at availability 0.25 needs 2 units by row (a). With the uc-1.1 count (`⌈50/100⌉ = 1`) window 1 raises `ceiling=1` on plant 1 (verified by restoring the old count); on uc-1.2 no stop falls inside the floor hour's min-down.
 
 Amended: `test_units_needed_for_floor_uses_the_lp_effective_floor` now expects `[2,2,2,2,2,2]`.
 The uc-1.1 value of 1 unit at `a = 0.25` was a `u` row (a) cannot hold.
@@ -138,23 +145,30 @@ This is the §6 inconsistency at the P1 seam: inside a window a pinned row's com
 not a UC decision, yet P1 enforces it as one. It is not caused by uc-1.2; uc-1.1 never
 reached P1 in these years. It belongs with the D-5 decision below.
 
-## 6. D-5 note (desk decision; not changed here)
+## 6. The yard pin and commitment: ruled, option (a), in uc-1.2
 
 **The UC cannot decommit pinned yard coal.** Wherever `coal_fuel_inventory_plant_grain` is
 armed, a window pins every yard coal row to P0 through `availability = P0/pmax`. Row (a)
-then requires `u = n` in every hour with `P0 > 0`, and leaves `u` free (zero output) where
-`P0 = 0`. The commitment of those clusters is therefore P0's on/off pattern, held to its
-min-down by the guard; the MILP chooses nothing about it. uc-1.1 already did this inside
-each window, and uc-1.2 only extends it consistently past the horizon. The yard pin can be
-armed in `COAL_PLANT_GRAIN_ISOS = (MISO, NEISO, NWPP, ERCOT, SOCO)`; the MISO, NEISO and
-ERCOT keepers arm it, and UC-2-ERCOT's census counts all 11 ERCOT yards as budget rows.
+then requires `u = n` in every hour with `P0 > 0` and leaves `u` free (zero output) where
+`P0 = 0`. Those clusters' commitment is therefore P0's on/off pattern; the window decides
+nothing about it. Enforced in P1 as a `MECH_UC_SCHEDULE` floor (`mlf·p̄·u` on physical
+availability), that pattern overran the yards' annual budget and made MISO P1 infeasible
+(§5.1). The yard pin can be armed in `COAL_PLANT_GRAIN_ISOS = (MISO, NEISO, NWPP, ERCOT,
+SOCO)`; the MISO, NEISO and ERCOT keepers arm it.
 
-So in those ISOs the UC stage's commitment benefit for coal is structurally close to nil
-while the yard budget is armed. UC benefit read off those ISOs' coal is not evidence about
-UC. Options for the desk / owner (D-5):
-(a) accept it: coal commitment is fixed by the fuel identity, and the UC acts on gas only;
-(b) build a window form of the yard identity (a per-window energy target from P0, with
-`u` free), which changes the boundary approximation (DESIGN §2.1);
-(c) refuse the yard pin together with `unit_commitment_milp` (rule 19 by refusal), which
-loses the measured fuel identity.
-This lane recommends none of them; it is an owner call.
+**UC-DESK ruling (2026-10-10, engine scope, folded into this PR):** option (a). A cluster
+whose members are ALL budget-pinned carries no integer. Its commitment is the identity's
+(DESIGN §2.1 pin): no `u`, no commitment rows, no `MECH_UC_SCHEDULE` floor, and P1 treats
+it as the gate-off run does (markup kept). Partially pinned clusters keep their integers
+under the uc-1.2 row-(a) guard. The desk ruled this engine correctness (rule 19: the yard
+identity owns pinned coal), not a D-5 floor change, so no owner card.
+
+Implementation: `params.demote_budget_pinned` (pure: integer mask cleared where every
+member is in `window.budget_pinned_gens(dispatch_kwargs)`), applied once in `UcStage.__init__`.
+`uc_solve_log.engine` gains `integer_gate_size` (the E1 gate's count) and
+`integer_demoted_budget_pinned` (plant codes); `integer_set_size` is the count after
+demotion. Tests: `test_all_pinned_cluster_carries_no_integer`,
+`test_partially_pinned_cluster_keeps_its_integer`.
+
+Consequence for reading UC benefit: in an ISO with the yard pin armed, the UC acts on gas and
+unpinned coal only. Coal commitment there stays the fuel identity's.
