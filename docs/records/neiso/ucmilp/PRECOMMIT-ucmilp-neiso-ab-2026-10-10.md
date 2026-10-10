@@ -242,3 +242,19 @@ window); the NEISO window branches (33–544 nodes) and the branch-and-bound tai
 **162 min** per shard. (The denominator proxy for the §6.1 ratio is the shard's own P0 + P1 ≈ 104 s; the extrapolated ratio is
 ≈ 70×, far above the D-2 ceiling — reported, not judged, D-2 "Keep 3×; fund speedup".) Prompts regenerated with `--budget 162`
 and committed as `shard-prompts-ucmilp-neiso.txt`; seven shards launched after this addendum is pushed.
+
+## Addendum B (2026-10-10 02:50Z, after the legs landed) — launch record, kill #1 recorded twice, STOP; composition as declared
+
+- **Launch:** seven shards at the pin, 01:10Z, model `claude-opus-5-5`: 2019 `session_01HoP2UhK6AnpAS6yGWVkfuv`, 2020 `session_01GtX64qX7V4jD9uUXRWeqcF`,
+  2021 `session_014rjmPknpDkWTTFbgthZaRZ`, 2022 `session_0139MxkTunndpZfw9rGV3Hz6`, 2023 `session_01XbPPrKssS9ygkNxteZkJXL`, 2024 `session_01UkzJ1WkuLwxMGJoEeMzeQ7`,
+  2025 `session_013467WdXSissQzWUrUTkd9S`. None was PENDING at the 45-minute check; none relaunched.
+- **Kill #1 fired in 2021 and 2023** (§6): `UcWindowInfeasible` at window 259 [6216, 6252) (2021) and window 187 [4488, 4524) (2023), LP relaxation infeasible
+  a priori, engine diagnostic *"floor above min-down: 1 / 3"*. Recorded and STOPPED per §6: nothing relaunched, nothing tuned, routed to UC-DESK. The other five
+  legs (2019, 2020, 2022, 2024, 2025) completed 365 / 365 windows Optimal inside the 162-min budget (max 80 min wall) and are composed and scored as a
+  **partial, five-year span** — scored for the record, not registrable (rule 16) and not a seven-year A/B.
+- **Composition ran exactly as §8 declared:** scratch composer with `gas_price_override` in the per-year set and `_respan_shared_inputs` (the span's frames are
+  the builder's five-year frames `campd-b4e0b6773454`, `eia923-98a04716359f`, `eia930-2c816c479158`, by construction different from the keeper's seven-year hashes);
+  the `neiso` raw profile hydrated for that step only; `dashboard_add_run.py --no-prune` run LOCALLY (`RUN_ID 2026-10-10-ucmilp-neiso-uc-b`) to build the sidecar and
+  payload the scorer reads, control and arm scored on the SAME committed NEISO bench parts (the local build rebuilt none; `check_bench_freshness` still reads them
+  STALE for both), then both files under `frontend/data/` removed before the commit — the PR touches nothing under `frontend/data/`.
+- **Verdict rule applied unchanged (§7): R** — kill #1 fired; independently, 2020 C3b worsened by 0.026 (> 0.02). RESULT: `RESULT-ucmilp-neiso-ab-2026-10-10.md`.
