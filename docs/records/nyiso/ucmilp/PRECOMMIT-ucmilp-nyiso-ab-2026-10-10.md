@@ -495,3 +495,17 @@ ten `--set`s of §1, the lane addendum appended). Five `create_session`s, `sourc
 `claude-opus-5-5`, tag `ucmilp:UC-2-NYISO-shard`, launched after this addendum and the prompts were pushed and blob-verified.
 PENDING > 45 min: archive and relaunch. Kill #1's signatures (an infeasible window; UC-DESK's defect-5 "floor above
 min-down" report) stop the lane again: record, route, never patch.
+
+### E.4 Launched (03:19Z, after `0c2211c7` was pushed and blob-verified)
+
+| year | session | branch (transport) | out-dir |
+|---|---|---|---|
+| 2021 | `session_01VL95fjtMipPHSsH5Lrpfvo` | `claude/ucmilp-nyiso-2021` | `results/calibration/ucmilp_nyiso_2021` |
+| 2022 | `session_019JbEWci8JNPRa6FY5o93Pr` | `claude/ucmilp-nyiso-2022` | `results/calibration/ucmilp_nyiso_2022` |
+| 2023 | `session_01P7SGS4ASFzYTCEVHwCyP15` | `claude/ucmilp-nyiso-2023` | `results/calibration/ucmilp_nyiso_2023` |
+| 2024 | `session_01Tq3C6iNzaTXscuK2nVaXNL` | `claude/ucmilp-nyiso-2024` | `results/calibration/ucmilp_nyiso_2024` |
+| 2025 | `session_01BDNHcDbwQ1dGVgsDhqAQjp` | `claude/ucmilp-nyiso-2025` | `results/calibration/ucmilp_nyiso_2025` |
+
+Bench shards archived: `session_01PbNTnQLYPvowX7bqgSH11a` (pin `2f872a62`; A/A.2), `session_01PTiFHXu5JX3fexNjqaLGZa` (pin
+`dc3860be`; C/C.1, branch `claude/ucmilp-bench-nyiso-2024-L1` @ `aa9f123e`), `session_01ReDMc6YqUKcrULKhP3aEYv` (pin
+`f2bf73bf`; E.1, branch `claude/ucmilp-bench-nyiso-2024-L1-r3` @ `5d83b39`). The bench branches carry JSON/markdown only.
