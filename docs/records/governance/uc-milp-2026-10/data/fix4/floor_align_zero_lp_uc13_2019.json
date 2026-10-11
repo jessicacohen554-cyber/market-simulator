@@ -1,0 +1,20 @@
+{
+ "cluster_hours_on": 384185,
+ "cluster_hours_a_lt_1": 380301,
+ "cluster_hours_a_lt_mlf": 9694,
+ "floor_excess_mwh": 9107237.8,
+ "floor_excess_pct_of_uc_energy": 6.247,
+ "binding_cluster_hours": 33659,
+ "binding_excess_mwh": 1629102.4,
+ "binding_excess_pct_of_uc_energy": 1.117,
+ "uc_cluster_p1_energy_twh": 145.788,
+ "a_quantiles_when_on": {
+  "0.01": 0.195,
+  "0.1": 0.5,
+  "0.5": 0.897
+ },
+ "excess_by_class_mwh": {
+  "cc": 8036213.8,
+  "st_gas": 1071024.0
+ }
+}

@@ -209,3 +209,60 @@ The digest is now strictly finer, so the repro's reuse would still fire. Tests:
    R2's price PASS came from the defect. Whether the gap belongs to (1) above, to the peak-band
    wall, or to the UC's decommitment pattern (T1, wrong sign in R2) is a calibration-lane
    question. This lane names it and does not tune it.
+
+## 7. Addendum (2026-10-11): the P1 floor is the window's row (b), engine `uc-1.4`
+
+UC-DESK ruled open item §6.1 in, as a follow-up PR off `4d13594e` (the #7237 merge).
+Branch `claude/ucmilp-fix5-floor-align` @ `f998cf47`.
+
+**Zero LP first (desk bar: more than 0.5 % of UC-cluster energy, or any hour where the floor exceeds `pmax·a`).**
+Read on the uc-1.3 bundle `6f61bdee`, script `data/fix4/floor_align_zero_lp.py`:
+
+| reading | value |
+|---|---|
+| committed cluster-hours / with `a < 1` | 384,185 / 380,301 (availability while committed: median 0.897, p10 0.50, p1 0.195) |
+| cluster-hours with `a < mlf` (uncapped `mlf·p̄·u` > `pmax·a`) | **9,694** |
+| uc-1.3 floor `min(mlf·p̄·u, p̄·a·u)` minus row (b) `mlf·p̄·a·u` | 9.11 TWh, **6.25 %** of UC-cluster P1 energy (CC 8.04, ST_GAS 1.07) |
+| the same, where P1 sat at the uc-1.3 floor | 1.63 TWh, **1.12 %** (33,659 cluster-hours) |
+
+Both bars are exceeded, so the change and one repro were made.
+
+**Change.** `UcStage.floor_and_ceiling` now floors each cluster at `mlf·p̄·a·u`. `a` is
+`cluster_availability` on `window_fleet(fleet_in, dispatch_kwargs, 0, T, P0)`: the same pinned,
+hour-local availability every window's row (b) reads, so P1 now enforces exactly what the UC
+committed to. The merit fill and ceilings are unchanged. The schedule frame's `floor_mw` becomes
+`mlf·online_mw`. No new field, no tuning. G-OFF: the same import isolation as §3, re-checked at
+`f998cf47`.
+
+**Tests.** `test_p1_floor_is_row_b_on_derated_availability[0.6, 0.3]` checks four things: the floor
+sum equals `mlf·p̄·a·u`; the merit order holds; the peak tranche is never floored; and no member
+floor exceeds its derated ceiling. Both cases fail on uc-1.3. Fast lane at `f998cf47`:
+**11,690 passed**, 0 failed.
+
+**Repro.** Shard `session_01XXeeujkC9TqhbQs4jDkJTF` @ `f998cf47`, same arm. Bundle
+`claude/ucmilp-fix5-ercot-2019` @ `f832aa52`: 21 files. I fetched, checked out and verified it, then
+archived the shard. Scoring is local and unregistered, as in §5. The `u/v/w` schedule is identical
+to uc-1.3's (the floor is P1-only); pass 2 reused it (2.6 s; `input_digest_opaque_types` `[]`).
+
+| 2019 | R2 (uc-1.2) | uc-1.3 (`6f61bdee`) | **uc-1.4 (`f832aa52`)** |
+|---|---|---|---|
+| forced `_peak*` energy | 5.81 TWh | 0.12 TWh | **0.00 TWh** |
+| uplift, % of Σ λ·load | $14,977.7 M, 83.9 % | $349.6 M, 1.65 % | **$27.5 M, 0.13 %** |
+| C3a mean LMP (actual $46.55) | $46.58, +0.1 % PASS | $55.16, +18.5 % FAIL | $55.32, +18.8 % FAIL |
+| C3b monthly NRMSE | 0.078 PASS | 0.281 FAIL | 0.282 FAIL |
+| C1 CC_REGULAR | +8.31 FAIL | +0.25 PASS | +0.35 PASS |
+| C1 COAL_PRB | −9.15 FAIL | −4.61 PASS | −4.37 PASS |
+| C1 ST_GAS | +1.23 PASS | +2.03 PASS | +1.57 PASS |
+| C8 CC_REGULAR / ST_GAS forced share | 1.7 % / 28.0 % | 2.9 % / 25.8 % | **0.6 % / 22.0 %** |
+| tail hours (actual 106) | 76 | 111 | 111 |
+| unserved MWh / NaN | 0 / 0 | 0 / 0 | 0 / 0 |
+| wall total / (P0+P1) | 21.7× | 10.3× | 11.2× (8,030 s; UC 7,167 s) |
+
+**Read.**
+- The alignment removes the forced energy the injection added beyond the UC's own commitment.
+  CC forced share drops 2.9 % → 0.6 %, ST_GAS 25.8 % → 22.0 %, and the last of the uplift
+  ($350 M → $27 M) goes with it.
+- Prices do not move (C3a +18.5 % → +18.8 %; C3b 0.281 → 0.282). **The 2019 price gap is
+  therefore not the §6.1 floor.** §6.3 stands, narrowed: the candidates left are the peak-band
+  scarcity wall and the UC's decommitment pattern. Both are calibration-lane questions.
+- §6.1 is closed by this addendum. §6.2 (no unbanded cost) and §6.3 stay open.

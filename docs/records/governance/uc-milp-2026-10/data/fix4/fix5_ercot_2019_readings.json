@@ -1,0 +1,17 @@
+{
+ "forced_peak_twh": 0.0,
+ "forced_peak_by_family_twh": {},
+ "forced_peak_median_mc": null,
+ "peak_tranche_energy_while_committed_twh": 0.083,
+ "uplift_musd": 27.5,
+ "uc_energy_cost_musd": 2442.4,
+ "system_energy_cost_musd": 21190.6,
+ "uplift_pct_of_system_energy_cost": 0.13,
+ "unserved_mwh": 0.0,
+ "engine": "uc-1.4",
+ "reused_schedule": {
+  "input_digest": "39501c28bf9dfe3520b0d585f9f8187fcdfbff442032860737c6bf13b937c406",
+  "solved_uc_total_s": 7167.211
+ },
+ "uc_total_s": 2.587
+}
