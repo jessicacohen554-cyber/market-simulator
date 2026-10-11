@@ -301,3 +301,29 @@ def test_an_opaque_input_forfeits_reuse(uc_params_frame, uc_results_root, monkey
     assert s1.log["engine"]["input_digest"] == s2.log["engine"]["input_digest"]
     assert s2.log["engine"]["reused_schedule"] is None
     assert s2.schedule is not s1.schedule
+
+
+# ------------------------------------- uc-1.4: the P1 floor is the window's row (b)
+@pytest.mark.parametrize("a", [0.6, 0.3])
+def test_p1_floor_is_row_b_on_derated_availability(uc_params_frame, uc_results_root, a):
+    """Floor = mlf * pbar * a * u (what the window enforced), also where a < mlf."""
+    import dataclasses
+
+    gens, fa, demand, mc, dk = _tranche_fleet()
+    avail = np.array(fa.availability, dtype=float, copy=True)
+    avail[:3, :] = a
+    fa = dataclasses.replace(fa, availability=avail)
+    res = run_energy_solve(gens, fa, demand, mc, dk, _cfg())
+    import market_sim.pipeline.uc as puc
+
+    stage = puc.take_uc_stages()[-1]
+    u = stage.schedule.u[0].astype(float)
+    assert (u > 0).any()
+    floor = res.p1_fleet_arrays.min_gen[:3]
+    np.testing.assert_allclose(floor.sum(axis=0), 0.5 * 100.0 * a * u)
+    # merit order still holds: econ (cap 60*a*u/2) first, peak never floored
+    np.testing.assert_allclose(floor[1], np.minimum(0.5 * 100.0 * a * u, 30.0 * a * u))
+    assert (floor[2] == 0.0).all()
+    # no floor above the member's derated ceiling, so P1 never needs a raise
+    cap = fa.pmax[:3, None] * res.p1_fleet_arrays.availability[:3]
+    assert (floor <= cap + 1e-9).all()

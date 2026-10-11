@@ -184,9 +184,9 @@ class UcSchedule:
 
         ``noload_per_unit`` (``(n_int, T)`` $/h per unit) is carried as a
         column (the no-load leg of the make-whole, readable from the bundle).
-        ``floor_mw`` is the cluster floor ``mlf * pbar * u`` before the member
-        allocation (``pipeline.uc.merit_floor_allocation``), which caps it at
-        the members' summed ceiling.
+        ``floor_mw`` is the cluster floor ``mlf * pbar * a * u`` (``mlf`` times
+        ``online_mw``, on ``fleet``'s availability) before the member allocation
+        (``pipeline.uc.merit_floor_allocation``).
         """
         p = self.params
         k = self.int_idx
@@ -194,7 +194,7 @@ class UcSchedule:
         a = p.cluster_availability(fleet)[k]  # (n_int, T)
         u = self.u.astype(float)
         online_mw = u * p.pbar_mw[k][:, None] * a
-        floor_mw = p.mlf[k][:, None] * p.pbar_mw[k][:, None] * u
+        floor_mw = p.mlf[k][:, None] * online_mw
         hours = np.tile(np.arange(T, dtype=np.int32), self.n_int)
         return pd.DataFrame(
             {
