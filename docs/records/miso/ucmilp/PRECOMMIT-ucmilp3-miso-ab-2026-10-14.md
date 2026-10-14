@@ -256,3 +256,33 @@ per-arm template with only the year substituted (and the 2022 budget). Nothing i
 | 2025 | `session_01HufxCkRxSUxxHFgEZuY6wH` | `session_01DLSUvARfKLj8hn51EGaHSx` |
 
 Arm B therefore starts ~55 min after arm A. Nothing in the arm definitions, readings or rules changes.
+
+## Addendum D (2026-10-14 16:25Z, before any arm-B number is scored): three arm-B legs OOM-killed on under-provisioned containers; relaunched unchanged
+
+- **What happened.** B2023 (`session_019D8q1JxgA3H4t1H4ymN6Ja`), B2024 (`session_01ENvx7D5KNbY2tnR2wBpmye`) and B2025
+  (`session_01HufxCkRxSUxxHFgEZuY6wH`) were each killed by the memory cgroup (exit 137, `Memory cgroup out of memory … anon-rss ≈ 13.2 GiB`).
+  The kill came after the UC stage finished:
+  - B2023: 365/365 Optimal, 3,400.3 s.
+  - B2024: 365/365 Optimal, 3,554.5 s.
+  - B2025: 365/365 Optimal, 2,914.3 s.
+
+  In every case it hit at the first step of P1 (`P1 route: COLD REBUILD on a floored fleet`). No bundle was written and nothing was pushed.
+- **Cause: the container, not the recipe.** These three containers started with **10.6–10.8 GiB free disk**, so
+  `prepare_solve_container.py` could add only **4 GiB of swap**: 13.36 + 4.0 = **17.4 GiB**, against the 24 GiB target, as their own
+  preflight warned. Every leg that completed, all 7 arm A and B2019–B2022, started with 15.9 GiB free disk and got 9 GiB of swap
+  (**22.4 GiB**); their peak was 16.7–17.6 GiB.
+- **Not a kill under §3.** Kill #1 is an infeasible window or no incumbent; none occurred. UC-2 W5 says an OOM means STOP and report, and
+  that a relaunch must never change a setting. These reports are the STOP record.
+- **Relaunch:** byte-identical prompts, the same `source_revision` `054dc883…`, one at a time. No setting changes. A relaunch that again
+  lands on a 17.4 GiB container is expected to OOM again; that is recorded as a coverage gap, not retried with any change.
+- **Verified and archived arm-B legs (rule 33):**
+
+| leg | branch @ sha | files |
+|---|---|---|
+| B2019 | `claude/ucmilp3-miso-b-2019` @ `94237f1a3010827ee476394bccc5dfe34678a3c9` | 21 |
+| B2020 | `claude/ucmilp3-miso-b-2020` @ `c9265bcc822ec17025bfbb2b06de9b2b91f6095a` | 21 |
+| B2021 | `claude/ucmilp3-miso-b-2021` @ `fc46730daf04cfdb7d0e350f2c345b1d9cd45960` | 21 |
+| B2022 | `claude/ucmilp3-miso-b-2022` @ `d427c8ed24f56a8c7aed16a7d8d14e6690691fb5` | 23 (P1 split, sha256 verified) |
+
+  The B-leg recipe gate passes: the differing-field set is exactly arm A's plus `st_gas_mustrun_per_plant = False`. Engine `uc-1.5`, 0
+  non-optimal windows.
