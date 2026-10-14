@@ -181,7 +181,9 @@ def test_stage_floors_the_cheap_tranches_and_never_the_peak(
     assert res.p1.dispatch[2].max() <= 1e-6
 
 
-def test_uplift_is_priced_at_mc_base_not_the_p1_bid(uc_params_frame, uc_results_root):
+def test_uplift_is_priced_at_the_uc_basis_not_the_p1_bid(
+    uc_params_frame, uc_results_root
+):
     gens, fa, demand, mc, dk = _tranche_fleet()
     adjust = np.zeros_like(mc)
     adjust[:3, :] = 500.0  # a P1-only bid adjustment on the integer rows
@@ -192,7 +194,11 @@ def test_uplift_is_priced_at_mc_base_not_the_p1_bid(uc_params_frame, uc_results_
     assert not np.array_equal(res.mc_bid[:3], mc[:3])
     up = stage.artifacts(res.p1).uplift
     P = np.asarray(res.p1.dispatch)[:3]
-    assert up["energy_cost_usd"].sum() == pytest.approx(float((mc[:3] * P).sum()))
+    # The UC's own energy basis (uc-1.5): mc_base less the no-load heat the
+    # average rate carries, never the adjusted P1 bid.
+    mc_uc = stage.params.incremental_energy_cost(fa, mc)
+    assert np.all(mc_uc[:3] < mc[:3])
+    assert up["energy_cost_usd"].sum() == pytest.approx(float((mc_uc[:3] * P).sum()))
     assert up["energy_mwh"].sum() == pytest.approx(float(P.sum()))
 
 
