@@ -1,11 +1,11 @@
-STAGED 2026-10-14T11:46Z — DO NOT LAUNCH until UC-DESK sends the FIX-5 pin; these prompts are regenerated at the new branch head (PRECOMMIT-ucmilp3-spp-2026-10-14.md §6).
-Pinned branch head: fb43183a496213574cea178f575cdad979863263
+LAUNCH-READY at the uc-1.5 pin (PRECOMMIT Addendum A). Shards pin the commit below, which carries this lane's PRECOMMIT and Addendum A.
+Pinned branch head: ca0acb249fc61485982c1a0264fe52e9344254a1
 
 SOLVE SHARD ucmilp3-spp-a-2019 — SPP backcast year 2019, ONE year, ONE container (rule 36). Model: Opus.
 DATA PROFILE: spp
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
-1. `git rev-parse HEAD` == fb43183a496213574cea178f575cdad979863263  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+1. `git rev-parse HEAD` == ca0acb249fc61485982c1a0264fe52e9344254a1  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
 2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
 3. `python3 scripts/hydrate_data.py --profile spp` then `python3 scripts/regenerate_clean.py --solve-profile SPP` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
 4. the recipe you will solve: `results/calibration/closeout_spp_nuc_span` replayed with unit_commitment_milp=true; confirm by reading `results/calibration/closeout_spp_nuc_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true
@@ -41,7 +41,7 @@ SOLVE SHARD ucmilp3-spp-a-2020 — SPP backcast year 2020, ONE year, ONE contain
 DATA PROFILE: spp
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
-1. `git rev-parse HEAD` == fb43183a496213574cea178f575cdad979863263  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+1. `git rev-parse HEAD` == ca0acb249fc61485982c1a0264fe52e9344254a1  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
 2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
 3. `python3 scripts/hydrate_data.py --profile spp` then `python3 scripts/regenerate_clean.py --solve-profile SPP` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
 4. the recipe you will solve: `results/calibration/closeout_spp_nuc_span` replayed with unit_commitment_milp=true; confirm by reading `results/calibration/closeout_spp_nuc_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true
@@ -77,7 +77,7 @@ SOLVE SHARD ucmilp3-spp-a-2021 — SPP backcast year 2021, ONE year, ONE contain
 DATA PROFILE: spp
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
-1. `git rev-parse HEAD` == fb43183a496213574cea178f575cdad979863263  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+1. `git rev-parse HEAD` == ca0acb249fc61485982c1a0264fe52e9344254a1  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
 2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
 3. `python3 scripts/hydrate_data.py --profile spp` then `python3 scripts/regenerate_clean.py --solve-profile SPP` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
 4. the recipe you will solve: `results/calibration/closeout_spp_nuc_span` replayed with unit_commitment_milp=true; confirm by reading `results/calibration/closeout_spp_nuc_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true
@@ -113,7 +113,7 @@ SOLVE SHARD ucmilp3-spp-a-2022 — SPP backcast year 2022, ONE year, ONE contain
 DATA PROFILE: spp
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
-1. `git rev-parse HEAD` == fb43183a496213574cea178f575cdad979863263  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+1. `git rev-parse HEAD` == ca0acb249fc61485982c1a0264fe52e9344254a1  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
 2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
 3. `python3 scripts/hydrate_data.py --profile spp` then `python3 scripts/regenerate_clean.py --solve-profile SPP` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
 4. the recipe you will solve: `results/calibration/closeout_spp_nuc_span` replayed with unit_commitment_milp=true; confirm by reading `results/calibration/closeout_spp_nuc_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true
@@ -149,7 +149,7 @@ SOLVE SHARD ucmilp3-spp-a-2023 — SPP backcast year 2023, ONE year, ONE contain
 DATA PROFILE: spp
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
-1. `git rev-parse HEAD` == fb43183a496213574cea178f575cdad979863263  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+1. `git rev-parse HEAD` == ca0acb249fc61485982c1a0264fe52e9344254a1  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
 2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
 3. `python3 scripts/hydrate_data.py --profile spp` then `python3 scripts/regenerate_clean.py --solve-profile SPP` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
 4. the recipe you will solve: `results/calibration/closeout_spp_nuc_span` replayed with unit_commitment_milp=true; confirm by reading `results/calibration/closeout_spp_nuc_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true
@@ -185,7 +185,7 @@ SOLVE SHARD ucmilp3-spp-a-2024 — SPP backcast year 2024, ONE year, ONE contain
 DATA PROFILE: spp
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
-1. `git rev-parse HEAD` == fb43183a496213574cea178f575cdad979863263  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+1. `git rev-parse HEAD` == ca0acb249fc61485982c1a0264fe52e9344254a1  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
 2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
 3. `python3 scripts/hydrate_data.py --profile spp` then `python3 scripts/regenerate_clean.py --solve-profile SPP` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
 4. the recipe you will solve: `results/calibration/closeout_spp_nuc_span` replayed with unit_commitment_milp=true; confirm by reading `results/calibration/closeout_spp_nuc_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true
@@ -221,7 +221,7 @@ SOLVE SHARD ucmilp3-spp-a-2025 — SPP backcast year 2025, ONE year, ONE contain
 DATA PROFILE: spp
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
-1. `git rev-parse HEAD` == fb43183a496213574cea178f575cdad979863263  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+1. `git rev-parse HEAD` == ca0acb249fc61485982c1a0264fe52e9344254a1  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
 2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
 3. `python3 scripts/hydrate_data.py --profile spp` then `python3 scripts/regenerate_clean.py --solve-profile SPP` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
 4. the recipe you will solve: `results/calibration/closeout_spp_nuc_span` replayed with unit_commitment_milp=true; confirm by reading `results/calibration/closeout_spp_nuc_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true
@@ -257,7 +257,7 @@ SOLVE SHARD ucmilp3-spp-b-2019 — SPP backcast year 2019, ONE year, ONE contain
 DATA PROFILE: spp
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
-1. `git rev-parse HEAD` == fb43183a496213574cea178f575cdad979863263  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+1. `git rev-parse HEAD` == ca0acb249fc61485982c1a0264fe52e9344254a1  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
 2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
 3. `python3 scripts/hydrate_data.py --profile spp` then `python3 scripts/regenerate_clean.py --solve-profile SPP` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
 4. the recipe you will solve: `results/calibration/closeout_spp_nuc_span` replayed with unit_commitment_milp=true, st_gas_mustrun_per_plant=false, coal_sync_floor_release=true; confirm by reading `results/calibration/closeout_spp_nuc_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; st_gas_mustrun_per_plant=false; coal_sync_floor_release=true
@@ -293,7 +293,7 @@ SOLVE SHARD ucmilp3-spp-b-2020 — SPP backcast year 2020, ONE year, ONE contain
 DATA PROFILE: spp
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
-1. `git rev-parse HEAD` == fb43183a496213574cea178f575cdad979863263  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+1. `git rev-parse HEAD` == ca0acb249fc61485982c1a0264fe52e9344254a1  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
 2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
 3. `python3 scripts/hydrate_data.py --profile spp` then `python3 scripts/regenerate_clean.py --solve-profile SPP` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
 4. the recipe you will solve: `results/calibration/closeout_spp_nuc_span` replayed with unit_commitment_milp=true, st_gas_mustrun_per_plant=false, coal_sync_floor_release=true; confirm by reading `results/calibration/closeout_spp_nuc_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; st_gas_mustrun_per_plant=false; coal_sync_floor_release=true
@@ -329,7 +329,7 @@ SOLVE SHARD ucmilp3-spp-b-2021 — SPP backcast year 2021, ONE year, ONE contain
 DATA PROFILE: spp
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
-1. `git rev-parse HEAD` == fb43183a496213574cea178f575cdad979863263  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+1. `git rev-parse HEAD` == ca0acb249fc61485982c1a0264fe52e9344254a1  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
 2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
 3. `python3 scripts/hydrate_data.py --profile spp` then `python3 scripts/regenerate_clean.py --solve-profile SPP` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
 4. the recipe you will solve: `results/calibration/closeout_spp_nuc_span` replayed with unit_commitment_milp=true, st_gas_mustrun_per_plant=false, coal_sync_floor_release=true; confirm by reading `results/calibration/closeout_spp_nuc_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; st_gas_mustrun_per_plant=false; coal_sync_floor_release=true
@@ -365,7 +365,7 @@ SOLVE SHARD ucmilp3-spp-b-2022 — SPP backcast year 2022, ONE year, ONE contain
 DATA PROFILE: spp
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
-1. `git rev-parse HEAD` == fb43183a496213574cea178f575cdad979863263  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+1. `git rev-parse HEAD` == ca0acb249fc61485982c1a0264fe52e9344254a1  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
 2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
 3. `python3 scripts/hydrate_data.py --profile spp` then `python3 scripts/regenerate_clean.py --solve-profile SPP` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
 4. the recipe you will solve: `results/calibration/closeout_spp_nuc_span` replayed with unit_commitment_milp=true, st_gas_mustrun_per_plant=false, coal_sync_floor_release=true; confirm by reading `results/calibration/closeout_spp_nuc_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; st_gas_mustrun_per_plant=false; coal_sync_floor_release=true
@@ -401,7 +401,7 @@ SOLVE SHARD ucmilp3-spp-b-2023 — SPP backcast year 2023, ONE year, ONE contain
 DATA PROFILE: spp
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
-1. `git rev-parse HEAD` == fb43183a496213574cea178f575cdad979863263  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+1. `git rev-parse HEAD` == ca0acb249fc61485982c1a0264fe52e9344254a1  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
 2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
 3. `python3 scripts/hydrate_data.py --profile spp` then `python3 scripts/regenerate_clean.py --solve-profile SPP` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
 4. the recipe you will solve: `results/calibration/closeout_spp_nuc_span` replayed with unit_commitment_milp=true, st_gas_mustrun_per_plant=false, coal_sync_floor_release=true; confirm by reading `results/calibration/closeout_spp_nuc_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; st_gas_mustrun_per_plant=false; coal_sync_floor_release=true
@@ -437,7 +437,7 @@ SOLVE SHARD ucmilp3-spp-b-2024 — SPP backcast year 2024, ONE year, ONE contain
 DATA PROFILE: spp
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
-1. `git rev-parse HEAD` == fb43183a496213574cea178f575cdad979863263  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+1. `git rev-parse HEAD` == ca0acb249fc61485982c1a0264fe52e9344254a1  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
 2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
 3. `python3 scripts/hydrate_data.py --profile spp` then `python3 scripts/regenerate_clean.py --solve-profile SPP` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
 4. the recipe you will solve: `results/calibration/closeout_spp_nuc_span` replayed with unit_commitment_milp=true, st_gas_mustrun_per_plant=false, coal_sync_floor_release=true; confirm by reading `results/calibration/closeout_spp_nuc_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; st_gas_mustrun_per_plant=false; coal_sync_floor_release=true
@@ -473,7 +473,7 @@ SOLVE SHARD ucmilp3-spp-b-2025 — SPP backcast year 2025, ONE year, ONE contain
 DATA PROFILE: spp
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
-1. `git rev-parse HEAD` == fb43183a496213574cea178f575cdad979863263  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+1. `git rev-parse HEAD` == ca0acb249fc61485982c1a0264fe52e9344254a1  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
 2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
 3. `python3 scripts/hydrate_data.py --profile spp` then `python3 scripts/regenerate_clean.py --solve-profile SPP` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
 4. the recipe you will solve: `results/calibration/closeout_spp_nuc_span` replayed with unit_commitment_milp=true, st_gas_mustrun_per_plant=false, coal_sync_floor_release=true; confirm by reading `results/calibration/closeout_spp_nuc_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; st_gas_mustrun_per_plant=false; coal_sync_floor_release=true
