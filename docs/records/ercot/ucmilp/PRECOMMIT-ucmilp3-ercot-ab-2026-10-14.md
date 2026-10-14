@@ -194,3 +194,9 @@ the same two `--set` fields; 720 min each. Out-dirs `results/calibration/ucmilp3
 `claude/ucmilp3b-ercot-<y>`. The prompts are the Addendum A prompts with the SHA, out-dir, branch and note changed
 (`shard-prompts-ucmilp3b-ercot.txt`). Readings, bars, kills and the verdict rule do not move. The uc-1.4 legs for 2021 and 2022
 run to completion as evidence.
+
+**C.1 — launched 12:51Z** at `2fd5947a1293fc0e9585b0a2170e26f721c0fcb1` (model Opus, tag `ucmilp:UC-3-ERCOT-shard`, 720 min each):
+2019 `session_01U1MEvmdgeCjFxTTzShjMRg` · 2020 `session_01L3q9sss3T6pargATjrSEVG` · 2021 `session_015ZxCnZbMHuE2SgpZ1QBf6W` ·
+2022 `session_01J3JwYYJ78q7mU5RRYAxWXc` · 2023 `session_01HRw7VpjFJbNY7cyxmrabXA` · 2024 `session_01NqVjiX8YpsriUjnk1WLYKb` ·
+2025 `session_01D22wyMw8c8QJYxnqqXbb5G`. The 2023 prompt carries one extra line, not in the committed file: the uc-1.4 2023 leg
+peaked at the 13.36 GiB cgroup ceiling (+0.22 GiB swap), which is reported and is not a stop.
