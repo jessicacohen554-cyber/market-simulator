@@ -1,6 +1,6 @@
 # PRECOMMIT — UC-3-SPP: clean relaunch of both SPP UC arms (A: floors kept · B: floors off) at the clean engine, every SPP backcast year, 2026-10-14
 
-> **STATUS: LAUNCHED at the uc-1.5 pin (Addendum A).** The first draft was staged at the charter pin `580c4fbf` and held by UC-DESK (11:38Z) for defect 7. UC-DESK sent the pin `2dd69d5a…` at 12:46Z, and §6 was applied before any number existed.
+> **STATUS: SOLVED AND SCORED — arm A R, arm B R; see `RESULT-ucmilp3-spp-2026-10-14.md`.** Launched at the uc-1.5 pin (Addendum A); the five arm-B 2021–25 shards were relaunched once after 51 min PENDING (Addendum C).
 
 **Written and pushed before any shard of this lane exists.** Every reading, bar, kill and budget below is fixed here and fails
 closed. Nothing moves after a number comes in (GATESPEC §7.1; rule 1(c) by analogy). Lane `UC-3-SPP` (session
@@ -218,3 +218,10 @@ Addendum A was pushed as `ca0acb24` (and the prompts as `b3af1fc7`; PRECOMMIT 20
 | 2025 | `session_01FVzQa1tnKCVju9dkTEaqUn` | `session_01P5PJ4odpkcMonNDKeT3HJw` |
 
 Branches: `claude/ucmilp3-spp-{a,b}-<y>`. Out-dirs: `results/calibration/ucmilp3_spp_{a,b}_<y>`.
+
+## Addendum C (2026-10-14 13:45Z, before any number was read) — relaunch record
+
+Arm B 2021–2025 (`session_01Dr9hepsAe2Rin49BGGr8ca`, `session_012Eh7PCtyaA7BUAdZQXqQir`, `session_01JFncMWzTgMRV4agp1hBQs6`, `session_0112GaACCNyjGszpy9Nza4dm`,
+`session_01P5PJ4odpkcMonNDKeT3HJw`) were still PENDING after 51 min and had never started. Per §5 they were archived and relaunched with identical prompts at the same SHA:
+`session_01QCo79jke6PzK2X38nRYveG` (2021), `session_01QJnnho6YUtRXQut7VFFULD` (2022), `session_01RCEMoeBHimWoDEGpA3CDvn` (2023), `session_017WeVYNoMWrVji6ziEufiHY` (2024),
+`session_011cXiCFekKqBQkZm4hqac4g` (2025). Nothing else changed.
