@@ -235,3 +235,24 @@ per-arm template with only the year substituted (and the 2022 budget). Nothing i
 | 2023 | `session_01XzgyoMkssY8wk6ztaXGJxA` | `session_0139GK3UFPFRGZtpBCf5yHjh` |
 | 2024 | `session_0186qYiVLZCXKRGwZWjUdEwP` | `session_01Qfnj51m1oMQy8fhoDcQbyc` |
 | 2025 | `session_01VkBj79ngtF1A8L5FGeMwe1` | `session_01DLSUvARfKLj8hn51EGaHSx` |
+
+## Addendum C (2026-10-14 13:45–13:49Z): arm B relaunched; the first arm-B launch never ran
+
+- **What happened.** The 7 arm-B sessions of Addendum B never got a container. Each logged `Sandbox allocation failed`
+  (`provision_error_category: rate_limited`) at 12:53Z: the second burst of 7 `create_session` calls within ~8 s, right after arm A's 7.
+- **Fix.** Archived at sweep 1 (13:45Z; PENDING > 45 min, no work done, nothing lost) and relaunched **one at a time**. Each new
+  session was confirmed provisioned (`Environment runner started`, clone started) before the next was created.
+- **What did not change.** The prompts are byte-identical to Addendum B's blocks, with the same `source_revision` `054dc883…`.
+- **Arm A** (Addendum B) is running: solves are detached, and the sessions read idle while their watchers wait.
+
+| year | arm B session (relaunch) | superseded (archived, never provisioned) |
+|---|---|---|
+| 2019 | `session_01PXQdMsA29WdWANPkgn3s6P` | `session_01Qb14cBZTZFw3TNq2K9LY7M` |
+| 2020 | `session_014ZGsdyeT2s9g3ER4Uxmpgj` | `session_01JmFA4vTzmH5GXhcLaPuZd7` |
+| 2021 | `session_01YUeJxXe5hrnNiJjHUcGAvD` | `session_01TAeVqruKCEzqwoVsUhQRGd` |
+| 2022 (720 min) | `session_014u3ehbZU6hEbJmNSAYczAp` | `session_01HJcHXuxo2BBAkdFBVVNPhJ` |
+| 2023 | `session_019D8q1JxgA3H4t1H4ymN6Ja` | `session_0139GK3UFPFRGZtpBCf5yHjh` |
+| 2024 | `session_01ENvx7D5KNbY2tnR2wBpmye` | `session_01Qfnj51m1oMQy8fhoDcQbyc` |
+| 2025 | `session_01HufxCkRxSUxxHFgEZuY6wH` | `session_01DLSUvARfKLj8hn51EGaHSx` |
+
+Arm B therefore starts ~55 min after arm A. Nothing in the arm definitions, readings or rules changes.
