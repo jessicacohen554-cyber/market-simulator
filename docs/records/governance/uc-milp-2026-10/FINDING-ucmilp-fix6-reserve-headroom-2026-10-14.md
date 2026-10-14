@@ -12,7 +12,7 @@
 | Rule 19 | **One reserve mechanism.** The window keeps the production reserve rows; only their integer-member capacity moves from the RHS onto `u`. `reserve_posture_pools` and `posture_gen_idx` stay refused. P1 reserve rows unchanged (`lp/reserve_rows.py` untouched). |
 | G-OFF | **Every hunk is UC-only** (`model/uc/window.py`, `pipeline/uc.py`). With no reserve co-opt the window is byte-identical to uc-1.5 (test). Keeper defaults unchanged. |
 | Arming reserves in a UC arm | **Already possible** through the existing fields: SPP `energy_reserve_coopt=true`; CAISO `energy_reserve_coopt=true` + `caiso_reserve_coopt=true`. No code needed. |
-| Repro shard (SPP 2020, arm B + reserves) | see §4 |
+| Repro shard (SPP 2020, arm B + reserves) | **Engine clean; the gate does not bind in SPP.** Results are the same as arm B. Offline fast-start CTs carry the whole pooled Contingency Reserve (§4). |
 
 ## 1. The change
 
@@ -51,7 +51,7 @@ A slow-start unit cannot be synchronized and loaded within 10 (or 30) minutes, s
 | fast-start CT eligible | CT's offline 150 MW still covers R; CC stays off | pass |
 | pergen pool | entries `−pmax·a/n = −100`, RHS cut 200, `u = 2` | — |
 
-UC suite: 113 passed. Fast lane: see PR.
+UC suite: 113 passed. Fast lane: 11,700 passed, 67 skipped, 3 xfailed, 0 failed.
 
 ## 3. Requirement source each ISO would use (UC arm with reserves armed)
 
@@ -65,4 +65,31 @@ UC suite: 113 passed. Fast lane: see PR.
 
 ## 4. Repro shard — SPP 2020, arm B + UC + reserves (uc-1.6)
 
-_Filled at shard return._
+Shard `session_01SHpzUHnyDfqtUrRcfxQxdr` at pin `2fa8158f` (engine uc-1.6). Bundle commit `d6b326c4b660fb0012d42f5036ef279883e98f82` on `claude/ucmilp-fix6-spp-b-res-2020`: 21 files, including `dispatch/2020_P1.parquet`, `uc_schedule`, `uc_uplift` and `unit_marginal`. The parent verified the bytes locally. Readings come from `data/fix6/repro_metrics.py`, which reproduces arm B's RESULT values exactly (C3a +36.7 %, C3b 0.421, C8 2.0 %, uplift 0.08 %, headroom 0 / 5 MW).
+
+| reading (2020) | keeper (no UC, no reserves) | arm B, uc-1.5 (no reserves) | **arm B + reserves, uc-1.6** |
+|---|---|---|---|
+| CC_REGULAR TWh (C1 Δ vs arm B) | 46.79 | 47.26 (C1 +2.13) | **47.26** (Δ +0.00) |
+| ST_GAS TWh (C1 Δ vs arm B) | 9.47 | 5.33 (C1 −7.40) | **5.30** (Δ −0.03) |
+| CT_PEAKER TWh | 15.94 | 19.76 | **19.75** |
+| C3a | +27.7 % | +36.7 % | **+36.8 %** |
+| C3b | 0.345 | 0.421 | **0.421** |
+| C8 ST_GAS forced share | 15.7 % | 2.0 % | **2.0 %** |
+| Top-100 load h: CC committed online / headroom | 8.29 GW / 4 MW (proxy: units with mw > 0) | 8.23 GW / 0 MW | **8.23 GW / 0 MW** |
+| Top-100 load h: ST_GAS committed online / headroom | 3.67 GW / 22 MW (proxy) | 1.27 GW / 5 MW | **1.30 GW / 5 MW** |
+| Hours with a CT_PEAKER unit marginal | 1,559 | 2,890 | **2,848** |
+| Reserve requirement / held / shortfall / dual | — | — | 1,413 MW mean (997–1,466) / = requirement / **0** / **$0 in every hour** |
+| Unserved MWh | 0 | 0 | **0** |
+| Uplift ÷ λ·load | — | 0.08 % | **0.08 %** |
+| Windows Optimal / time-limit hits | — | 365 / 0 | **365 / 0** |
+| UC stage s; year total s | — | 1,588; 1,895 | **2,254; 2,662** (MILP mean 5.7 s per window, p95 8.9 s) |
+| Peak RSS (cgroup) GiB | — | 7.82 | **7.89** |
+
+`reserve_gated_rows`: 26,256 over 365 windows (48–72 per window), so the gate is installed. It is **slack**. At the top-100 load hours, P1 CT_PEAKER headroom averages **2.77 GW** (minimum 275 MW, the rest of that hour covered by other eligible units), against a requirement of ≤ 1.47 GW. CTs are fast-start (non-integer), so their offline `pmax·a` legitimately counts toward the pooled Spin + Supplemental family. The UC therefore has no reserve reason to commit steam gas or CC, and arm B's de-commitment stands. The 0.03 TWh ST_GAS and 42-hour CT moves are MIP tie noise. Wall time rose 41 % (reserve rows in every window and in P1).
+
+**Reading.** UC-DIAG cause #1 is real, and the engine half is now fixed: an offline slow-start unit carries no reserve. In SPP, however, it is **not the binding cause**, because SPP's modelled product lets offline fast-start capacity cover all of it. The structural gap left in SPP is the **Spinning share**. The RSG definition (p. 5) requires at least half of Contingency Reserve to be Spinning, i.e. ≈ 0.7 GW synchronized, which offline CTs cannot provide. That is a reserve-**spec** change, not an engine change: a second, online-gated family at ½ × requirement in `_spp_design` (SPP-56's object). It needs a PRECOMMIT and a desk/owner ruling (rules 1, 19, 28), and it is not done here. With this engine fix in place, that family would bind on integer clusters' committed capacity directly. UC-DIAG cause #2 (forecast-load commitment) is independent of it.
+
+**Disclosures.**
+- The shard ran `uv sync` once, because the container had no dependencies (the documented install route; no repo edit).
+- A pre-existing `resolved_inputs` warning was logged: `campd_split_remap_companions` is armed in the SPP keeper recipe, but the SPP split-remap CSV is not derived. It was caught as a probe warning, and it is equally present in the keeper and arm B. It is not this lane's.
+- The bundle is not registered (rule 15 probe; E13) and not on `main`; it is held on the shard branch only.
