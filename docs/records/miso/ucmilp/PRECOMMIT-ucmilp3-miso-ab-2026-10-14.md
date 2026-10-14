@@ -193,3 +193,29 @@ energy cost, reported beside the verdict and never netted into it.
 - **Not resolved by this verdict:** if B-i(a) and B-i(b) disagree (fewer starts but less energy than measured), that is a finding on
   the UC's ST_GAS dispatch level, routed to the owner. The lane does not resolve it.
 - **Arm B is not a promotion candidate,** whatever it reads (desk ruling). §3.1's declared costs stand as declared.
+
+## Addendum A (2026-10-14 ~12:55Z, before any shard exists): the pin is uc-1.5; G-DRIFT; launch
+
+**Pin.** UC-DESK, 2026-10-14 12:46Z: *"the uc-1.5 pin is 2dd69d5aa936547b402a1ba54d2eba57e759b7e7 (main; #7246 merged, defect 7 fixed:
+UC pays no-load once)"*. `main` was merged into this branch (merge, not rebase).
+- **`source_revision` for every shard = `054dc883a91196241fc51e079f64f83d699d7ffa`** (this branch's merge commit).
+- Its tree equals the pin's tree except this lane's two docs (`git diff --stat 2dd69d5a 054dc883`: the PRECOMMIT and the prompt file
+  only).
+- Prompts regenerated with `--sha 054dc883…`. Only the SHA and the engine label changed from the staged text at `a0a7cf1e`.
+
+**G-DRIFT `580c4fbf → 2dd69d5a` (zero LP, rule 29(b)).**
+- `solve_surface_register.py --diff`: *"342 → 342 names; 0 value(s) moved, 0 added, 0 removed — NO VALUE MOVED"*.
+- `git diff --name-status` over `src/ scripts/ configs/`, the control bundle, `keepers/MISO.json` and `data/dictionary/schema`:
+
+| hunk | files | MISO classification |
+|---|---|---|
+| uc-1.5 (FIX-5, defect 7): `UcParams.incremental_energy_cost`. The UC energy cost of integer-cluster members drops the no-load heat already inside the average heat rate, `mc_uc = mc_base − nl/p̄ · max(mc_base − vom, 0)/hr`, so the UC pays no-load once. Window cost and the uplift basis switch to `mc_uc`. `UC_ENGINE_VERSION = "uc-1.5"` | `model/uc/params.py` (+44), `pipeline/uc.py` (+12/−4), `model/uc/uplift.py` (+14/−9) | **LIVE on both arms only** (UC stage, behind `unit_commitment_milp`). The docstring states "the P1 bid never reads this array", so P1 stays on the bid curve. Control: INERT |
+| new ERCOT SCED band derive (UC-BANDS-ERCOT) | `scripts/data/derive_ercot_sced_uc_bands.py` (A) | **INERT for MISO**: an ERCOT derive script, not on any solve path, writes nothing MISO reads |
+| bench harness | `scripts/lib/uc_bench.py` (+2/−1) | bench only |
+
+The control is still the committed keeper bundle unchanged; no control solve. §§1–4 and Addendum 0 stand unchanged.
+
+**Budget:** 180 / 720 min as staged. uc-1.5 changes the UC objective coefficients only, not problem size. Its wall effect on MISO is
+unmeasured and is reported in W1.
+
+**Launch:** 14 shards, `create_session` per prompt block in `shard-prompts-ucmilp3-miso.txt`; the record is in Addendum B.
