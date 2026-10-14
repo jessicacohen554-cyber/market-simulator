@@ -4096,3 +4096,13 @@ results/calibration/ucmilp_ercot_d_*/
 results/calibration/_s1_ucmilp_ercot_*/
 # UC-2-MISO lane: leg bundles checked out locally for zero-LP compose/score; they live on their shard branches (rules 29(c), 31, 33)
 results/calibration/ucmilp_miso_*/
+# UC-3-SPP lane: leg and span bundles checked out locally for zero-LP compose/score; they live on their shard branches (rules 29(c), 31, 33)
+results/calibration/ucmilp3_spp_*/
+results/calibration/_shared/SPP/campd-d3d3be2b747d.parquet
+results/calibration/_shared/SPP/eia923-f6375c987537.parquet
+results/calibration/_shared/SPP/eia930-edc4feddcd94.parquet
+results/calibration/_shared/SPP/hydro_plant_modes-366d93e011db.parquet
+results/calibration/_shared/SPP/unit_outages_netloadmask-64a79e322460.parquet
+results/calibration/_shared/SPP/unit_outages_partial-5ac00d164673.parquet
+results/calibration/_shared/SPP/unit_outages_partial_netloadmask-b00540584f5f.parquet
+results/calibration/_shared/SPP/unit_outages_short_netloadmask-9e907a36d162.parquet
