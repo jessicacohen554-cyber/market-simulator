@@ -286,3 +286,21 @@ Arm B therefore starts ~55 min after arm A. Nothing in the arm definitions, read
 
   The B-leg recipe gate passes: the differing-field set is exactly arm A's plus `st_gas_mustrun_per_plant = False`. Engine `uc-1.5`, 0
   non-optimal windows.
+
+## Addendum E (2026-10-14 18:15Z): B2023 and B2025 are a coverage gap
+
+- **What happened.** The unchanged relaunches of Addendum D landed on still smaller containers (**16.4 GiB** ceiling + swap). Both were
+  OOM-killed again, this time earlier:
+  - B2023 `session_01FpcjAn4vutBXLHP6cn1vvK`: in P0 LP assembly.
+  - B2025 `session_01UJtZK7muURFoYu3WDdwx3y`: before the UC stage.
+
+  No bundle was written. Both sessions are archived.
+- **Per Addendum D, there is no further relaunch from this lane.** Arm B is composed and scored over the years that solved:
+  2019–2022, plus 2024 if `session_014XcwcUTcNvHQJDcXNMdjQ4` completes. 2023 and 2025 are reported as **not solved (container
+  memory)**, never as passes.
+- **How the verdict reads.** The arm-B verdict covers only the years it solved. Addendum 0's "every scored year" therefore means every
+  solved year, and the RESULT states the gap beside the verdict.
+- **Engine evidence for 2023/2025 is in hand.** The first B2023 and B2025 attempts (Addendum D) both completed the UC stage
+  (365/365 Optimal) before their P1 kill, so the gap is in P1 dispatch and its readings only.
+- **For UC-DESK.** A ≥ 24 GiB container, or a ruling on the P1 cold-rebuild memory route, is what closes the gap. That is
+  infrastructure, outside this lane.
