@@ -20,6 +20,7 @@ Scripts and readings: `data/fix5/` (`cost_basis_zero_lp.py` → `cost_basis_<iso
    | CAISO 2023 (uc-1.4) | 307 | 12.4 % | 7.22 | 0.20 (6.7 %) | 0.47 (11 %), 1 cluster, 17 MW |
    | ERCOT 2019 (uc-1.4) | 148 | 7.2 % | 1.11 | 18.3 (4.7 %) | none (demoted, budget-pinned) |
    | MISO 2024 (uc-1.2) | 250 | 8.2 % | 1.65 | 28.2 (5.2 %) | none (demoted) |
+   | NEISO 2019–25 (uc-1.4, UC-3-NEISO span) | 80–367 / yr (2023: 129) | 11.6–13.1 % | 2.39–10.22 (2023: 3.66) | ≈ 0 (≤ 0.06) | none |
 
    For reference, the explicit no-load is 13.9–14.8 % of CAISO CC UC energy cost in every year 2019–25 (uplift sidecars). In ERCOT 2019 it is
    10.9 % (CC) and 13.5 % (ST), matching UC-BANDS-ERCOT §2. In MISO 2024–25 it is 9.4–10.1 %.
@@ -61,6 +62,8 @@ Per unit-hour, on each bundle's own P1 offers and no-load $. Values are capacity
 | | P_hi | 19.7 | 22.4 (+13 %) | 19.7 (−0.4 %) | **20.5 (+3.8 %)** |
 | MISO ST_GAS 2024 (0.16, 0.72, 0.87) | Pmin | 63.6 | 67.1 (+5.6 %) | 30.1 (−53 %) | **65.3 (+2.8 %)** |
 | | P_hi | 30.6 | 35.3 (+15 %) | 31.2 (+2 %) | **33.5 (+9.6 %)** |
+| NEISO CC 2023 (0.34, 1.15, 0.79) | Pmin | 56.7 | 60.5 (+6.7 %) | 30.8 (−46 %) | **56.2 (−0.8 %)** |
+| | P_hi | 36.7 | 42.5 (+16 %) | 32.8 (−11 %) | **38.3 (+4.3 %)** |
 
 **Read.**
 - **uc-1.5 is within 3 % of truth at Pmin everywhere** (CAISO ST +5 %).
@@ -79,6 +82,15 @@ Per unit-hour, on each bundle's own P1 offers and no-load $. Values are capacity
   | CAISO CC | 0.84 | 0.81 |
   | ERCOT CC | 0.88 | 0.84 |
   | MISO CC | 0.90 | 0.89 |
+
+**NEISO (UC-DESK question, UC-3-NEISO PR #7244).** The double count works in the same direction as NEISO's decommitment, but it is a
+different effect from the discrete-unit ceiling.
+- **The double count:** it over-charges every online CC unit-hour by `a·P/p̄`. That is 12 % of UC CC energy cost, $3.66/MWh in 2023, and
+  the largest share of any ISO measured here. Removing it makes holding a CC online cheaper.
+- **The ceiling:** a multi-unit plant committed in whole units of `p̄` cannot carry the relaxed P1 part-load output. That is physical,
+  and uc-1.5 keeps it.
+- **The split between the two is unknown.** Neither part of NEISO's 6.6–9.0 TWh/yr can be attributed zero LP. Only a NEISO uc-1.5 leg can
+  measure it; CAISO 2023 is this lane's one repro.
 
 ## 2. Why this form (the charter's decision rule)
 
