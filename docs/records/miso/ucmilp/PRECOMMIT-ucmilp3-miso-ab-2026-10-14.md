@@ -156,3 +156,40 @@ No sweep of any `uc_*` field. No third arm.
 ## Addenda
 
 (none yet; Addendum A = the FIX-5 pin)
+
+## Addendum 0 (2026-10-14 11:47Z, before any shard or number exists): UC-DESK ruling on arm B's verdict
+
+**Source:** UC-DESK `session_01WX9W5tgYMre3Z134LZoGF6`, message of 2026-10-14 11:47Z, answering this lane's §3.1 flag. Desk ruling,
+disclosed to the owner, who may overrule before launch. Verbatim core: *"arm B is a rule-19 diagnostic arm, not a promotion candidate.
+Kill #3 (control flip) is REPORTED for arm B at full magnitude but is NOT binding on its verdict. Arm B's verdict reads on structure,
+against measured data: (i) ST_GAS energy and starts vs CEMS (C1 ST_GAS, starts ratio); (ii) C8 / D-2 forced share with the floor gone;
+(iii) unserved = 0 (kill #2 stays binding); (iv) price C3a/C3b, reported, not gating. Arm A keeps the chartered kills unchanged."*
+
+**Arm A:** §3 unchanged.
+
+**Arm B: binding kills.**
+- Kill #1 (infeasible window / no incumbent) and kill #2 (non-deterministic schedule) stay binding.
+- **Unserved, two corrections recorded with the ruling:**
+  - In this PRECOMMIT the unserved bound sits under §3 "also gating" (kill #3's family). Kill #2 is schedule determinism.
+  - "Unserved = 0" cannot be met literally in 2024, because the control itself sheds **8,356.9 MWh** in h5701–5706 (UC-2 Addendum H).
+  - The desk's intent is read as the existing bound: **P1 unserved ≤ the keeper's + 500 MWh in every year**. This stays BINDING for
+    arm B, with the 2024 event diagnosed zero-LP if it recurs.
+  - Every other kill-#3 row (control PASS→FAIL flips) is reported at full magnitude and is not binding.
+- **P1 Optimal** in every leg stays binding.
+
+**Arm B: verdict rows, fixed now (signs vs control; the bars are the measured actuals, no new threshold):**
+
+| row | reading | "supports un-stack" | "against" |
+|---|---|---|---|
+| B-i(a) | ST_GAS energy, C1 model − EIA-923 TWh per year (2025 SKIPPED, preliminary vintage) | \|gap\| shrinks or holds | \|gap\| widens; the magnitude and any PASS→FAIL stated |
+| B-i(b) | ST_GAS starts, model ÷ CEMS (S2 instrument, on-threshold 1 % of available cap), per year | moves toward 1.0 (control 3.1–6.5×) | moves away from 1.0, or overshoots below 1/control-ratio |
+| B-ii | ST_GAS forced share (D-2, all floor mechanisms incl. MECH 28) and C8 ST_GAS, with and without MECH 28; new D-4 FAIL rows | forced share falls; no new D-4 FAIL row | forced share does not fall, or MECH 28 alone re-forces ≥ the removed floor's energy |
+| B-iii | unserved bound (above) | holds every year | binding kill |
+| B-iv | C3a, C3b per year | reported, not gating | — |
+
+**Arm B verdict wording.** "Structure supports un-stack" requires B-i(b) and B-ii in that column in every scored year, with B-iii holding.
+"Structure against" requires either of those in the right column in any year. Anything else is mixed, stated row by row. B-i(a) is the
+energy cost, reported beside the verdict and never netted into it.
+- **Not resolved by this verdict:** if B-i(a) and B-i(b) disagree (fewer starts but less energy than measured), that is a finding on
+  the UC's ST_GAS dispatch level, routed to the owner. The lane does not resolve it.
+- **Arm B is not a promotion candidate,** whatever it reads (desk ruling). §3.1's declared costs stand as declared.
