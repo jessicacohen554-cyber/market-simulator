@@ -83,3 +83,15 @@ the §9 envelope are "not attributable".
 
 Prior PRECOMMIT §11 verbatim: no `uc_*` value other than the defaults, no second arm (floors-off is a separate owner call), no
 control solve, no 2021 control re-solve, no registration, no promotion, no tuning of anything (rule 1).
+
+## 7. Launched (2026-10-14 08:46Z, after this file was pushed at `1e337eeb` and the prompts at `11756680`)
+
+Pin (every shard, `source_revision`): **`1e337eebd95e11230ecfa8db4694057297554002`** (main `580c4fbf` + this PRECOMMIT).
+
+| year | session | branch (transport) | out-dir |
+|---|---|---|---|
+| 2021 | `session_01Bh6bav4EyrmGrec48ius7X` | `claude/ucmilp3-nyiso-2021` | `results/calibration/ucmilp3_nyiso_2021` |
+| 2022 | `session_01YJmUGThxoJQNh4fnFyQfxb` | `claude/ucmilp3-nyiso-2022` | `results/calibration/ucmilp3_nyiso_2022` |
+| 2023 | `session_01TBJgW8YWpa7WVUUTK5TdvJ` | `claude/ucmilp3-nyiso-2023` | `results/calibration/ucmilp3_nyiso_2023` |
+| 2024 | `session_01QX84u1LojJpxbCvE9XEF7R` | `claude/ucmilp3-nyiso-2024` | `results/calibration/ucmilp3_nyiso_2024` |
+| 2025 | `session_018wTgeLh46kn6ELmVH9VNV7` | `claude/ucmilp3-nyiso-2025` | `results/calibration/ucmilp3_nyiso_2025` |
