@@ -323,3 +323,67 @@ Addendum C/D kept 162 min on the lane's own judgement (uc-1.1 extrapolations ove
 so the lane restores the charter's rule rather than spend a second shard relaunching a year that would otherwise stop at 162 min. Sent to
 every running shard at 20:02Z: *"Budget raised to 228 min (charter rule); nothing else changes."* The one completed leg (2020, 33 min) is
 unaffected. A leg that still reaches 228 min stops and reports its completed months (recorded, not a kill).
+
+## Addendum F (2026-10-14, before any number exists at the new pin) — UC-3-NEISO: the clean A/B at engine uc-1.4
+
+**Charter.** Lane `UC-3-NEISO` (Opus), chartered by UC-DESK (`session_01WX9W5tgYMre3Z134LZoGF6`) on the owner's ruling of
+2026-10-14 (*"Go with your recommendations"*; plan r08 decision 7, relaunch every UC-2 ISO at uc-1.4). Branch
+`claude/ucmilp-3-neiso-ab` fresh from the pin. **Why:** the uc-1.2 record (`RESULT-ucmilp-neiso-ab-uc12-2026-10-10.md`) is
+confounded by engine defect 6. CC_REGULAR `peak` tranches were forced on 8,758–8,760 h/yr in the arm, against 14–467 h in
+the control. Under rule 1 that R is not a structural rejection. This addendum produces the clean A/B; the uc-1.2 record
+stands as history.
+
+**Pin: `580c4fbf80b8bf970bc19acf14f614728de9d401`** (main at #7239; engine uc-1.4 = #7237 merit-order floor fill, uplift at
+`mc_base`, pass-2 reuse + #7238 P1 floor `mlf·p̄·a·u`). Shards run at this branch's head SHA, which differs from the pin by
+docs only (this addendum and the prompts file).
+
+**G-DRIFT `eab17188 → 580c4fbf` (zero LP, on the objects):**
+
+| content | files | NEISO classification |
+|---|---|---|
+| uc-1.3 merit fill: the integer cluster's P1 floor is poured into members in ascending P1 offer, replacing the pro-rata split (deleted, rule 26) | `pipeline/uc.py` (`merit_floor_allocation`, `UcStage.floor_and_ceiling`) | **LIVE, gate-on path only.** This is the defect-6 fix, and the arm's P1 bounds move. NEISO uses legacy bins, so most clusters are singletons and merit fill ≡ the old split there (FINDING-fix4 §1). Multi-member clusters change. |
+| uc-1.4: P1 floor = window row (b) `mlf·p̄·a·u` (availability added) | `pipeline/uc.py`, `model/uc/schedule.py` (`floor_mw`) | **LIVE, gate-on path only.** The P1 floor is never above available capacity. |
+| uplift priced in-process at `mc_base`; `uplift_from_bundle` deleted | `model/uc/uplift.py`, `scripts/probes/_ucmilp_compose_span.py` | **LIVE for the W3 reading only.** It moves no dispatch or price. The composer reports a missing frame and no longer recomputes it. |
+| pass-2 schedule reuse by input digest (`uc_input_digest`, `UcStage.adopt`) | `pipeline/uc.py` | **LIVE, wall only.** A second stage with identical inputs adopts the first schedule, so the optimum is identical by construction. |
+| window MILP (`model/uc/{window,params,solve,diagnose,slim}.py`) | — | **unchanged byte-for-byte** (`git diff --stat eab17188 580c4fbf -- src/market_sim/model/uc/` touches only `schedule.py` and `uplift.py`) |
+| gate-off path | `pipeline/solve.py` and `runner.py` enter the UC code only under `if getattr(config, "unit_commitment_milp", False)`; neither file changed | **INERT**: the control is unaffected (rule 29(b)) |
+| solve surface | `solve_surface_register.py --diff eab17188 580c4fbf`: *"342 → 342 names; 0 value(s) moved, 0 added, 0 removed — NO VALUE MOVED"* | no key reached |
+| control | `w0_neiso_span`, keeper shard, `replay_keeper.py`, `shard_prompt.py`, `calibration_verdict.py`, `legitimacy_diagnostics.py` unchanged | control = keeper `2026-10-02-w0-neiso` committed bundle, no control solve |
+
+**Unchanged from §§1–8 and Addenda C–E:**
+- **Arm:** keeper recipe + one `--set unit_commitment_milp=true`. Every floor is kept and nothing is switched off: the keeper arms no `UC_REFUSED_ALWAYS` field, so D-5 adds no substitution. Every `uc_*` field stays at its registry default.
+- Readings (§2–§5), kills (§6), verdict rule (§7) and composition/scoring (§8 (a)–(e)) are unchanged.
+
+**The kill and verdict rules, restated before launch (GATESPEC §5 as applied in §6/§7):**
+- **Kills.** (1) An infeasible window or a "no incumbent" stop. (2) A non-deterministic schedule (exercised only on a relaunched leg). (3) A PASS → FAIL flip on any gated criterion in any year, or |ΔC3a 2023| > 1 pp.
+- **R.** Any kill fires. Or C3b worsens by > 0.02 in any year. Or C3a moves away from 0 by > 1 pp in any year.
+- **K candidate.** No R trigger, AND S2 CC_REGULAR starts/CEMS closer to 1 in ≥ 4 of 7 years, AND T2 rises in ≥ 4 of 7 years.
+- **I.** Otherwise.
+- **Probe artefacts.** C6 UNATTESTED and C3c CAVEAT → FAIL from a missing attestation are artefacts at identical magnitude (Addendum B precedent). They are not flips.
+
+**L1 gate: carried from Addendum D, declared.** §7's gate tests window feasibility. The window MILP code is byte-identical
+between `eab17188` and the pin, so the gate's object is unchanged; 2,554/2,555 uc-1.2 windows were Optimal over the full span.
+No bench shard runs. A window infeasibility in any leg is still kill #1.
+
+**Readings added by the charter** (reported, not gated; all zero LP from the composed bundles):
+- **Forced peak-tranche energy.** CC_REGULAR `peak`-band hours > 1 MW and TWh, from `class_band_hourly`, control → arm. uc-1.4 is expected to bring this to ~0 forced. A peak band that runs in merit is reported as such.
+- **Integer set under ruling (a).** Integer clusters / clusters and integer CC GW.
+- **C8 both ways.** As scored, and with MECH 28 removed.
+- **Starts vs CEMS.** CC, ST_GAS and coal starts against CEMS (S2).
+- **Uplift share** (W3), from the in-process frame.
+- **Wall.** Wall ÷ (P0 + P1) and time-limit hits.
+- **Price moves.** Every price move is diagnosed by sign and hour class: which hours (load tercile, ≤ $15 hours) and which classes are marginal (`unit_marginal_<y>`).
+
+**Shards.**
+- Seven legs, 2019–2025, one year each.
+- Prompts: `scripts/shard_prompt.py --iso NEISO --all-years --sha <this branch head> --lane ucmilp3-neiso --bundle results/calibration/w0_neiso_span --set unit_commitment_milp=true --budget 720`, plus the Addendum C shard addendum (UC files confirmed in tree; wall row verbatim; a UC hard stop is a successful report).
+- Branches `claude/ucmilp3-neiso-<y>`; out-dirs `results/calibration/ucmilp3_neiso_<y>`.
+- Committed as `shard-prompts-ucmilp3-neiso.txt`. `create_session` per year: model `claude-opus-5-5`, tag `ucmilp:UC-3-NEISO-shard`.
+- **Budget: 720 min**, the charter's cap. It is a cost cap only; it changes no optimum and no score. uc-1.2 legs took 32–115 min.
+- Any file > 100 MB is split into parts with its sha256 recorded.
+- An engine defect stops that leg and is reported to UC-DESK with a repro. Nothing under `src/` is patched in this lane.
+
+**Exit.**
+- New RESULT `RESULT-ucmilp3-neiso-ab-2026-10-14.md` and slim span `docs/records/neiso/ucmilp/data/ucmilp3_neiso_span/`.
+- NEISO `unit_commitment_milp` cell stamped with the verdict and citation.
+- One PR, not merged by the lane. Nothing registered or promoted (E13); nothing deleted (rule 31).
