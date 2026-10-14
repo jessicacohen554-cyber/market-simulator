@@ -89,3 +89,35 @@ the first place to look, and the diagnostic row above isolates it.
   workaround applies verbatim). Local registration only to feed the scorer, removed before commit; nothing registered or promoted (E13).
 - Deliver: RESULT + slim span under `docs/records/caiso/ucmilp/` (`data/ucmilp3_caiso_span/`), the CAISO `unit_commitment_milp` cell stamped
   from the RESULT, one PR to main (UC-DESK merges).
+
+## Addendum A (2026-10-14 ~12:55Z, before any uc-1.5 number of this lane exists) — relaunch at engine uc-1.5
+
+**Why.** UC-DESK (12:46Z): engine defect 7 — the UC objective paid integer clusters' no-load twice (once explicitly, once inside the
+average-rate heat rate) — is fixed in #7246 (`FINDING-ucmilp-fix5-cost-basis-2026-10-14.md`; CAISO 2023: $307 M, 12.4 % of CC energy cost).
+The uc-1.4 `R` above (RESULT, PR #7243) is confounded by it (rule 1 [R-STRUCT]). Branch `claude/ucmilp-3-caiso-ab-uc15`, fresh from the pin.
+
+**Pin: `2dd69d5aa936547b402a1ba54d2eba57e759b7e7`** (main at #7246). Arm, readings (UC-2 PRECOMMIT §§2–7), kills, verdict rule, `uc_*`
+defaults and the five `--set` values are UNCHANGED. The pin is the only change. Budget 180 min LP per shard (charter ceiling 720).
+
+**G-DRIFT `580c4fbf` → `2dd69d5a` (zero LP).** Two non-merge commits touch code:
+
+| commit | content | CAISO classification |
+|---|---|---|
+| `2dd69d5a` uc-1.5 (#7246) | `model/uc/params.py` `incremental_energy_cost` (integer members' UC energy = `mc_base` less no-load heat per MWh at full output); `pipeline/uc.py` uses it in the window objective, the boundary targets and the uplift cost side; `UC_ENGINE_VERSION` uc-1.5 | **LIVE, gate-on only** — the fix under test |
+| `a81b9683` UC-BANDS-ERCOT 1a (#7242) | new `scripts/data/derive_ercot_sced_uc_bands.py`; `scripts/lib/uc_bench.py` 3 lines | INERT: an ERCOT derive script and the bench harness; no solve-path import, no registry field |
+
+`solve_surface_register.py --diff 580c4fbf 2dd69d5a`: *"342 → 342 names; 0 value(s) moved, 0 added, 0 removed — NO VALUE MOVED"*.
+Byte-identical between the pins: `shard_prompt.py`, `calibration_verdict.py`, `legitimacy_diagnostics.py`, `replay_keeper.py`,
+`run_calibration_full.py`, `run_calibration.py`, `iso_configs.py`, `scenarios.py`, `pipeline/solve.py`, `pipeline/commitment.py`,
+`_ucmilp_compose_span.py`, `keepers/CAISO.json`; the keeper bundle 0 files differ. The control stands without a solve (rule 29(b)).
+
+**Reused leg (declared now): 2023 = FIX-5 repro `claude/ucmilp-fix5-caiso-2023` @ `a2635bd6`**, solved at `f92d01ea` (the #7246 head before
+merge). G-DRIFT `f92d01ea` → `2dd69d5a`: `git diff --stat` over `src/ scripts/ configs/` is **empty** → INERT. Its `run_config.json`
+`scenario_config` is identical, field by field, to this lane's uc-1.4 2023 leg recipe (diff = {}); engine `uc-1.5`; clean tree; 0 time-limit
+hits. So **six new shards** (2019, 2020, 2021, 2022, 2024, 2025) at the pin, and 2023 is taken from `a2635bd6`.
+
+**Reported in the RESULT addendum:** the §3 per-year list control → uc-1.4 → **uc-1.5**, the same verdict rule against the control, and the
+price diagnosis (imports, CT, hydro water value by hour class; zero LP). Expectation, written before the numbers: the double-counted no-load
+made committed CC look dearer than it is, so uc-1.5 should keep more CC online. The FIX-5 2023 repro recovered 5.3 of 8.2 TWh. If that
+holds in every year, the C1 CC_REGULAR 2022–25 flips may clear, and C1 CC_REGULAR 2019–21 may re-open on the over-run side. The price
+direction is the open question.
