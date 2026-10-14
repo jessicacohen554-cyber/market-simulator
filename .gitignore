@@ -4096,3 +4096,5 @@ results/calibration/ucmilp_ercot_d_*/
 results/calibration/_s1_ucmilp_ercot_*/
 # UC-2-MISO lane: leg bundles checked out locally for zero-LP compose/score; they live on their shard branches (rules 29(c), 31, 33)
 results/calibration/ucmilp_miso_*/
+
+!results/calibration/ucmilp3b_ercot_2023/**
