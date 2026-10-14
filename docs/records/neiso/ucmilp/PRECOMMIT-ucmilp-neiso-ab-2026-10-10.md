@@ -387,3 +387,63 @@ No bench shard runs. A window infeasibility in any leg is still kill #1.
 - New RESULT `RESULT-ucmilp3-neiso-ab-2026-10-14.md` and slim span `docs/records/neiso/ucmilp/data/ucmilp3_neiso_span/`.
 - NEISO `unit_commitment_milp` cell stamped with the verdict and citation.
 - One PR, not merged by the lane. Nothing registered or promoted (E13); nothing deleted (rule 31).
+
+## Addendum G (2026-10-14, before any number exists at the new pin) — UC-3-NEISO relaunch at engine uc-1.5
+
+**Charter.** UC-DESK (`session_01WX9W5tgYMre3Z134LZoGF6`), 2026-10-14 12:46Z, same charter and arm as Addendum F. Engine defect 7 is fixed in #7246 (UC-1-FIX-5). The defect: the UC objective paid no-load twice, once inside the average-rate heat rate and once as the explicit no-load term, which over-penalised commitment.
+- The uc-1.4 record (`RESULT-ucmilp3-neiso-ab-2026-10-14.md`, R) is confounded by defect 7. Its §2 diagnosis — whole-unit decommitment raises the price body — is exactly the channel a double-counted no-load inflates.
+- That record stands as history.
+- This addendum produces the uc-1.5 A/B, plus the decomposition the desk asked for: how much of the uc-1.4 decommitment and price rise was the double count, and how much is the physical whole-unit ceiling.
+
+**Pin: `2dd69d5aa936547b402a1ba54d2eba57e759b7e7`** (main at #7246, engine uc-1.5). Branch `claude/ucmilp-3-neiso-ab-uc15`. Shards run at this branch's head SHA, which differs from the pin by docs only.
+
+**G-DRIFT `580c4fbf → 2dd69d5a` (zero LP):**
+
+| content | files | NEISO classification |
+|---|---|---|
+| uc-1.5: integer-cluster UC energy cost on the incremental basis, `mc_uc = mc_base − (nl/p̄)·max(mc_base − vom, 0)/hr`; the explicit no-load is paid once | `model/uc/params.py` (`incremental_energy_cost`), `pipeline/uc.py` (window objective and uplift basis) | **LIVE, gate-on path only.** The window MILP's objective coefficients change; its constraints do not. The P1 bid never reads `mc_uc`, so P1 changes only through the schedule. |
+| uplift cost basis `mc_base → mc_uc` | `model/uc/uplift.py`, `pipeline/uc.py` | **LIVE for W3 only.** |
+| bench harness | `scripts/lib/uc_bench.py` | INERT for the span (bench only) |
+| ERCOT SCED band derivation | `scripts/data/derive_ercot_sced_uc_bands.py`, `data/raw/_validation-source/ercot_sced_uc_bands.json` | INERT for NEISO: an ERCOT script and file, not on NEISO's solve path |
+| gate-off path | `pipeline/solve.py` and `runner.py` unchanged; the UC is entered only under `unit_commitment_milp` | **INERT**: the control is unaffected |
+| solve surface | `solve_surface_register.py --diff 580c4fbf 2dd69d5a`: *"342 → 342 names; 0 value(s) moved, 0 added, 0 removed — NO VALUE MOVED"* | no key reached |
+| tests, docs, records | `tests/unit/model/uc/*`, `docs/**` | not on the solve path |
+
+**Unchanged from §§1–8 and Addendum F:**
+- **Arm:** keeper + one `--set unit_commitment_milp=true`, every floor kept, every `uc_*` at its default.
+- Readings (§§2–5 plus the Addendum F additions), kills (§6), verdict rule (§7), composition and scoring (§8), and the 720-min cost cap.
+
+**The kill and verdict rules, restated before launch:**
+- **Kills.** (1) An infeasible window or "no incumbent". (2) A non-deterministic schedule (relaunch only). (3) A PASS → FAIL flip on any gated criterion, or |ΔC3a 2023| > 1 pp.
+- **R.** A kill fires, or C3b worsens by > 0.02 in any year, or C3a moves away from 0 by > 1 pp in any year.
+- **K candidate.** No R trigger, AND S2 CC starts/CEMS closer to 1 in ≥ 4 of 7 years, AND T2 rises in ≥ 4 of 7 years.
+- **I.** Otherwise.
+- **Probe artefacts.** C6 UNATTESTED and C3c CAVEAT → FAIL at identical magnitude are artefacts, not flips.
+
+**L1 gate: carried, declared.** uc-1.5 changes only the window objective, not its constraints, and window feasibility is a property of the constraints. A window infeasibility is still kill #1.
+
+**The decomposition, fixed now:** uc-1.4 → uc-1.5 per year, from the two composed bundles, zero LP, by the same instruments as the uc-1.4 RESULT §2. The control is the third column of every row.
+- load-weighted price (all hours and by load tercile), C3a, C3b;
+- control energy above the arm's P1 ceiling (u/n·cap) on integer plants, and its fully-off-hours part;
+- the share of on-hours with partial commitment;
+- integer-plant net output;
+- hours an integer plant is marginal;
+- CC starts / CEMS;
+- uplift share.
+
+How the decomposition is read:
+- **Double-count share** of each uc-1.4 movement (arm − control) = (uc-1.4 − uc-1.5) / (uc-1.4 − control).
+- **Physical-ceiling share** = the remainder: what uc-1.5 still moves against the control.
+- Both are stated per year. A year where uc-1.5 overshoots the control is reported as such, not forced into [0, 1].
+- This is an accounting split of two engine versions on one recipe. It is not a causal attribution within uc-1.5.
+
+**Shards.**
+- Seven legs, one year each. Prompts from `scripts/shard_prompt.py --iso NEISO --all-years --sha <this branch head> --lane ucmilp3-neiso-uc15 --bundle results/calibration/w0_neiso_span --set unit_commitment_milp=true --budget 720`, plus the Addendum F shard addendum (expect `engine.version` uc-1.5).
+- Branches `claude/ucmilp3-neiso-uc15-<y>`; out-dirs `results/calibration/ucmilp3_neiso_uc15_<y>`.
+- Committed as `shard-prompts-ucmilp3-neiso-uc15.txt`.
+
+**Exit.**
+- An addendum to `RESULT-ucmilp3-neiso-ab-2026-10-14.md` (uc-1.5 gate table, wall rows, uc-1.4 vs uc-1.5 per year, the decomposition, verdict).
+- Slim span `docs/records/neiso/ucmilp/data/ucmilp3_neiso_uc15_span/`.
+- NEISO `unit_commitment_milp` cell stamped with the verdict and citation.
+- One PR, not merged by the lane. Nothing registered, promoted or deleted.

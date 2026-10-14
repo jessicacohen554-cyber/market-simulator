@@ -202,3 +202,123 @@ The rise is largest in low and mid-load hours and in the high-gas years (2022, 2
   - **Verdict R:** C3a wrong-way > 1 pp ×5; C3b ×2; kill #3 2.60 pp.
   - **Cause:** whole-unit commitment on multi-unit CC plants (6.6–9.0 TWh/yr of relaxed part-load output above the arm's ceiling); CC starts closer to CEMS in 5/7 years.
   - **Housekeeping:** cell stays R with the new citation. Nothing registered, promoted or deleted; 7 shards archived.
+
+---
+
+# Addendum — relaunch at engine uc-1.5 (defect 7 fixed): **R stands; the double count was 11–31 % of the price rise, the whole-unit ceiling is the rest**
+
+**Charter:** UC-DESK, 2026-10-14 12:46Z. Engine defect 7 (no-load paid twice in the UC objective) is fixed in #7246 (main `2dd69d5a`). That made the uc-1.4 R above confounded.
+**PRECOMMIT:** Addendum G, pushed at `b5be5e58` before any shard. It carries G-DRIFT, the rules restated, and the decomposition fixed in advance.
+**Pin solved:** `b5be5e5878b3a2c77f396479904ff874717ce51b`, which is `2dd69d5a` plus docs only.
+**Branch:** `claude/ucmilp-3-neiso-ab-uc15`.
+**LP in this session:** zero. Seven shards, one year each.
+**Registered:** nothing. The local scoring sidecar `2026-10-14-ucmilp3-neiso-uc-1` was removed before the commit.
+
+## A.0 Headline
+
+**The solve is clean.** 2,555/2,555 windows Optimal, 0 time-limit hits, 0 infeasible, 0 MWh unserved. `engine.version` reads uc-1.5 in every leg. The integer set is unchanged: 18–22 of 61–71 clusters, of which 17–20 CC at 8.2–10.3 GW.
+
+**Uplift collapses, which confirms defect 7 was real.** Make-whole falls from 0.74–1.08 % to 0.03–0.15 % of energy cost ($2.0–9.1 M/yr).
+
+**No gated flip.** The only status changes are the unattested-probe artefacts: C6, and C3c CAVEAT → FAIL in 2022, 2023 and 2025 at identical magnitudes.
+
+**Verdict: R** under the fixed §7 rule, on three independent counts:
+1. **C3a moves away from 0 by more than 1 pp in five years:** 2019 +2.30, 2021 +1.51, 2022 +2.56, 2024 +2.64, 2025 +2.71 pp.
+2. **C3b worsens by more than 0.02 in 2025:** +0.026.
+3. **Kill #3:** |ΔC3a 2023| = 2.31 pp, toward the actual.
+
+**2019 C3a is +9.14 %**, 0.86 pp inside the +10 % FAIL edge.
+
+**This R is clean of known engine defects.**
+
+## A.1 Gate table: control → uc-1.4 → uc-1.5 (rubric 3.20, same bench parts)
+
+| year | C3a (control → uc-1.4 → uc-1.5) | uc-1.5 ΔC3a vs control | C3b NRMSE | C4 gas r / NRMSE (uc-1.5) | C8 CC_REGULAR forced, scored (MECH 28) | C1 / C2 | unserved MWh | uplift % (uc-1.4 → uc-1.5) |
+|---|---|---|---|---|---|---|---|---|
+| 2019 | +6.84 → +9.51 → **+9.14 %** | **+2.30 away** | 0.105 → 0.125 → 0.123 | 0.936 / 0.143 | 0.7 → 2.4 % (0.76 TWh, 1.8 %) | PASS → PASS | 0 | 0.92 → **0.15** |
+| 2020 | −1.23 → +0.04 → −0.32 % | toward 0 | 0.111 → 0.115 → 0.114 | 0.962 / 0.114 | 1.7 → 2.9 % (0.70, 1.5 %) | PASS → PASS | 0 | 0.90 → **0.11** |
+| 2021 | +2.85 → +5.02 → +4.35 % | **+1.51 away** | 0.120 → 0.137 → 0.134 | 0.961 / 0.105 | 1.2 → 2.7 % (0.79, 1.6 %) | PASS → PASS | 0 | 0.82 → **0.09** |
+| 2022 | +2.47 → +5.63 → +5.02 % | **+2.56 away** | 0.091 → 0.113 → 0.109 (+0.018) | 0.939 / 0.134 | 1.1 → 2.4 % (0.66, 1.3 %) | PASS → PASS | 0 | 0.95 → **0.10** |
+| 2023 | −3.04 → −0.45 → −0.73 % | **2.31 toward 0 (1-pp bar year)** | 0.096 → 0.104 → 0.104 | 0.944 / 0.098 | 0.4 → 1.5 % (0.62, 1.2 %) | PASS → PASS | 0 | 1.08 → **0.09** |
+| 2024 | +0.46 → +3.60 → +3.10 % | **+2.64 away** | 0.152 → 0.171 → 0.171 (+0.019) | 0.949 / 0.094 | 0.7 → 1.3 % (0.52, 0.9 %) | PASS → PASS | 0 | 0.97 → **0.08** |
+| 2025 | +3.80 → +7.29 → +6.51 % | **+2.71 away** | 0.070 → 0.103 → **0.096 (+0.026)** | 0.884 / 0.162 | 0.5 → 1.2 % (0.49, 0.8 %) | SKIPPED (preliminary EIA-923) | 0 | 0.74 → **0.03** |
+
+- **D-4** is identical to the control's (2021 `chp_steam` plant 54605).
+- **D-1** is not gated. uc-1.5 adds 2024 COAL_BIT (r 0.734); uc-1.4's 2025 COAL_BIT row is gone. The other rows are the control's own.
+- **CC peak tranches** run 73–929 h/yr (control 14–467) at 0.009–0.240 TWh, within +0.07 TWh of the control. Defect 6 stays fixed.
+
+## A.2 Wall rows (GATESPEC §6.1; container and solver path as §0.2; pass-2 reuse did not fire)
+
+| year | P0 s | UC Σ s (mean / p95 MILP s) | P1 s | total s | **total ÷ (P0+P1)** | nodes p50 / p95 | gap p95 | TL hits | peak RSS GiB | shard wall |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 2019 | 94.8 | 3,466.8 (9.40 / 31.21) | 91.2 | 3,708.0 | **19.9** | 12 / 117 | 9.96e-4 | 0 | 5.00 | 62 min |
+| 2020 | 91.2 | 2,353.3 (6.37 / 25.84) | 92.1 | 2,589.6 | **14.1** | 6 / 107 | 9.97e-4 | 0 | 5.20 | 43 min |
+| 2021 | 88.5 | 3,519.7 (9.56 / 37.77) | 100.4 | 3,755.0 | **19.9** | 11 / 158 | 9.97e-4 | 0 | 5.17 | 63 min |
+| 2022 | 98.2 | 8,310.0 (22.67 / 69.12) | 93.0 | 8,556.2 | **44.7** | 41 / 607 | 9.99e-4 | 0 | 5.10 | 143 min |
+| 2023 | 85.6 | 5,329.6 (14.52 / 48.57) | 99.5 | 5,560.1 | **30.0** | 19 / 338 | 9.99e-4 | 0 | 5.02 | 93 min |
+| 2024 | 146.9 | 3,527.9 (9.52 / 39.86) | 176.0 | 3,936.6 | **12.2** | 1 / 115 | 9.98e-4 | 0 | 5.02 | 66 min |
+| 2025 | 91.4 | 4,771.3 (12.99 / 56.39) | 93.5 | 5,001.4 | **27.0** | 11 / 412 | 9.97e-4 | 0 | 4.95 | 84 min |
+
+The MILP is harder at uc-1.5: UC Σ is 0.96–1.60× uc-1.4's. Removing the no-load double count takes away the strong penalty that let the solver settle on "off" early, so branching is deeper (2022 nodes p95 267 → 607). D-2 is reported, not judged.
+
+## A.3 The decomposition: double count vs whole-unit ceiling (Addendum G, fixed before any number)
+
+- **Double-count share** = (uc-1.4 − uc-1.5) / (uc-1.4 − control).
+- **Ceiling share** = the remainder, i.e. what uc-1.5 still moves against the control.
+
+| | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 |
+|---|---|---|---|---|---|---|---|
+| load-weighted price $/MWh, control / uc-1.4 / uc-1.5 | 34.82 / 35.69 / 35.57 | 24.83 / 25.15 / 25.06 | 49.13 / 50.17 / 49.85 | 93.40 / 96.28 / 95.73 | 36.94 / 37.93 / 37.82 | 41.87 / 43.18 / 42.98 | 72.90 / 75.35 / 74.80 |
+| **price-rise share that was the double count** | **14 %** | **26 %** | **31 %** | **19 %** | **11 %** | **15 %** | **22 %** |
+| C3a move share that was the double count | 14 % | 28 % | 31 % | 19 % | 11 % | 16 % | 22 % |
+| control energy above the arm's P1 ceiling (u/n·cap), TWh: uc-1.4 → uc-1.5 | 6.83 → 5.54 | 6.89 → 5.78 | 6.62 → 5.35 | 6.73 → 5.22 | 8.77 → 7.86 | 8.48 → 7.73 | 9.01 → 7.70 |
+| …of which plant fully off, TWh: uc-1.4 → uc-1.5 | 4.71 → 3.17 | 5.10 → 3.46 | 4.45 → 3.26 | 4.29 → 2.86 | 7.14 → 5.94 | 7.18 → 6.26 | 7.16 → 5.69 |
+| share of on-hours with partial commitment, uc-1.4 → uc-1.5 | 0.31 → 0.40 | 0.21 → 0.30 | 0.26 → 0.30 | 0.31 → 0.35 | 0.22 → 0.29 | 0.17 → 0.21 | 0.21 → 0.27 |
+| integer-plant output TWh, control / uc-1.4 / uc-1.5 | 32.0 / 30.8 / 31.0 | 34.3 / 33.6 / 33.7 | 36.3 / 34.9 / 35.3 | 38.1 / 36.0 / 36.4 | 39.2 / 38.0 / 38.2 | 41.7 / 40.5 / 40.7 | 42.7 / 41.1 / 41.4 |
+| hours an integer plant sets price, control / uc-1.4 / uc-1.5 | 2,733 / 1,747 / 1,873 | 2,845 / 2,039 / 2,195 | 2,940 / 2,159 / 2,283 | 3,372 / 2,423 / 2,457 | 3,459 / 2,226 / 2,217 | 3,625 / 1,978 / 2,079 | 3,112 / 1,845 / 1,954 |
+| CC_REGULAR starts / CEMS, control / uc-1.4 / uc-1.5 | 1.049 / 0.870 / 0.837 | 1.187 / 1.170 / 1.152 | 0.998 / 0.892 / 0.890 | 1.063 / 0.949 / 0.946 | 1.245 / 1.157 / 1.154 | 1.378 / 1.290 / 1.290 | 1.139 / 1.085 / 1.079 |
+| committed-tranche energy vs control, TWh: uc-1.4 / uc-1.5 | +6.87 / +6.08 | +7.16 / +6.63 | +7.30 / +6.58 | +7.09 / +6.14 | +6.30 / +5.82 | +4.46 / +4.07 | +5.22 / +4.42 |
+
+**Reading.**
+- **The double count was a minority share in every year.** It accounts for 11–31 % of the uc-1.4 price and C3a moves; 69–89 % survives the fix.
+- **What the fix changed.** It cuts whole-plant decommitment: fully-off energy is down 13–33 %. Some of that becomes partial commitment, which rises 4–9 points. Integer plants set price in −0.4 to +8 % more hours than at uc-1.4, and their output recovers 0.1–0.4 TWh.
+- **What survives.** 5.2–7.9 TWh/yr of the relaxation's part-load output on multi-unit CC plants still sits above what the committed units can supply. The arm still moves 4.1–6.6 TWh/yr into the committed (min-load) tranche.
+- **On this evidence the surviving share is physical.** Whole units cannot run at the fractional commitment the continuous P1 uses. The defect-free UC therefore still raises the NEISO price body by $0.23–2.33/MWh against a keeper whose offer bands were set on the relaxed posture. This last step is an inference from these numbers, not something the A/B tests directly.
+- **What the UC does right.** CC starts move toward CEMS in 6 of 7 years at uc-1.5. 2019 and 2021 overshoot below 1, as at uc-1.4.
+- **Limits.** This is an accounting split of two engine versions on one recipe, both zero LP from the composed bundles. It is not a causal attribution within uc-1.5.
+
+## A.4 Verdict, D-6 card, matrix
+
+- **Verdict: `R`** (§7, fixed): C3a away from 0 by > 1 pp in five years; C3b +0.026 in 2025; kill #3 at |ΔC3a 2023| = 2.31 pp. No gated flip. K-candidate bars: S2 CC is closer to CEMS in 5 of 7 years (met); T2 rises in 1 of 7 (not met).
+- **Matrix:** NEISO `unit_commitment_milp` stays **R**, with this addendum as the citation, superseding the uc-1.4 record.
+- **D-6 card (copy-paste):**
+
+  > "UC-3 NEISO at uc-1.5 (2dd69d5a) — R, defect-free. 2,555/2,555 windows Optimal, 0 MWh unserved, make-whole 0.03–0.15 % of energy cost (uc-1.4: 0.74–1.08 %, the defect-7 double count). No gated flip, but the price body still rises in every year (+$0.23–2.33/MWh): C3a away from 0 by 1.5–2.7 pp in 2019/2021/2022/2024/2025 (2019 at +9.1 %), C3b +0.026 in 2025, |ΔC3a 2023| 2.3 pp toward the actual. Decomposition vs uc-1.4: the no-load double count was 11–31 % of the price rise; the remaining 69–89 % is whole-unit commitment of multi-unit CC plants (5.2–7.9 TWh/yr of relaxed part-load output above the committed ceiling), against a keeper whose band level was fixed ex ante on the relaxed posture. CC starts closer to CEMS in 6/7 years. Wall 12–45× P0+P1. Options: (1) record R, stage default-off for NEISO [recommended]; (2) a UC-native NEISO keeper would declare its band level ex ante under the UC posture in its own PRECOMMIT (rule 1 channel), never swept against these gates; (3) promote on structure (not recommended)."
+
+## A.5 Bundles and process (rules 31, 33, 34)
+
+| year | session | branch @ SHA | wall |
+|---|---|---|---|
+| 2019 | `session_01DBktdQ3SC7UvrcyZPVwSMo` | `claude/ucmilp3-neiso-uc15-2019` @ `d5ed4704` | 62 min |
+| 2020 | `session_01CCV5EY3feqcN5gL9Dn6LZQ` | `-2020` @ `53df597f` | 43 min |
+| 2021 | `session_01EhNcWjB1pDBMFVVMW5qTzD` | `-2021` @ `0fb0314c` (P1 dump 3,380 MWh) | 63 min |
+| 2022 | `session_01Sg3gBLaJAn2GMTZjpS9ZSZ` | `-2022` @ `59361333` | 143 min |
+| 2023 | `session_01Ugc1kDyoKARkZ2G5r6GTSs` | `-2023` @ `7df39658` | 93 min |
+| 2024 | `session_01Hb7BS8hVW1e2kGLSqzPjre` | `-2024` @ `129f779f` | 66 min |
+| 2025 | `session_017KKPD9u5dkmp3rGGDSJCvj` | `-2025` @ `c6f27c93` | 84 min |
+
+- **Every leg** was parented on `b5be5e58`, carried 21 files and the five required files, and changed only `.gitignore` outside its bundle. Each was fetched and verified, then archived.
+- **Every shard** ran `uv sync` once and logged the 23.4-GiB ceiling+swap warning (peak 5.2 GiB). None edited `src/` or `scripts/`.
+- **Composition (§8 (a)/(b)).** The respanned frame hashes equal the keeper's. `legitimacy_diagnostics.json` was regenerated over all seven years.
+- **Slim span:** `docs/records/neiso/ucmilp/data/ucmilp3_neiso_uc15_span/`. The full legs stay on the shard branches.
+- **No promotion is proposed.** The leg bundles will not survive this container; they survive on the shard branches, which the owner may cut after merge.
+
+## Log entry (uc-1.5)
+
+- 2026-10-14 · UC-3-NEISO `session_01XS3YxX7AQRJFBAQoGi6TRF` · `claude/ucmilp-3-neiso-ab-uc15` · zero LP in the parent.
+  - **Setup:** Addendum G at `2dd69d5a` (uc-1.5); G-DRIFT UC-objective LIVE, gate-off INERT.
+  - **Solve:** 7 shards at `b5be5e58`, 2,555/2,555 Optimal, wall 12–45×.
+  - **Gates:** no gated flip. C3a 2019 +9.1, 2020 −0.3, 2021 +4.4, 2022 +5.0, 2023 −0.7, 2024 +3.1, 2025 +6.5 %. 2025 C3b +0.026. Verdict R.
+  - **Decomposition:** the double count was 11–31 % of the price rise; the whole-unit ceiling is 69–89 %.
+  - **Uplift:** 0.74–1.08 → 0.03–0.15 %.
+  - **Housekeeping:** cell R, citation updated. Nothing registered, promoted or deleted; 7 shards archived.
