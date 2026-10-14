@@ -47,7 +47,7 @@ structural rejection. Same config, clean engine: this lane re-enters the `unit_c
   as the keeper arms them (owner ruling R5). Rule-19 substitutions: none needed, because the keeper arms no bridge and no posture.
 - **Arm B (model delta unchanged, `PRECOMMIT-ucmilp-spp-b-2026-10-09.md` Addendum C, owner ruling D-5b V2):** `--set unit_commitment_milp=true
   --set st_gas_mustrun_per_plant=false --set coal_sync_floor_release=true`.
-- **Solver settings, ONE declared choice for both arms: the pin's registered defaults** (`uc_solver_preset="lean"`, `uc_slim_window=true`).
+- **Solver settings, ONE declared choice for both arms (accepted by UC-DESK, 2026-10-14 11:45Z): the pin's registered defaults** (`uc_solver_preset="lean"`, `uc_slim_window=true`).
   Arm B's prior fourth `--set uc_solver_preset="highs_default"` was declared (its Addendum C) as *"the declared solver choice … not a model
   delta"*, made **so that arm B matched arm A's solver path**. At this pin the rationale points the other way. Arm A's definition is
   "`uc_*` at declared defaults", which now means `lean` + slim. A/B parity therefore means both arms at the defaults, so the fourth `--set`
@@ -57,7 +57,6 @@ structural rejection. Same config, clean engine: this lane re-enters the `unit_c
     gate passed with 0/62 windows differing.
   - The sibling lane UC-3-ERCOT solves at the same defaults (`PRECOMMIT-ucmilp3-ercot-ab-2026-10-14.md` §1).
   - Cost, stated: arm B's uc-1.1 wall rows (highs_default, full window) are not like-for-like with this lane's.
-  - UC-DESK may overrule this before launch. If it does, both arms take `highs_default` and nothing else changes.
 - Every other `uc_*` field stays at its declared default and is never swept: window/look-ahead 24/12, `uc_mip_rel_gap` 1e-3,
   `uc_window_time_limit_s` 600, scope `physics`, no-load source `campd_regression`, boundary `p0_targets`, `uc_prefixing=false`.
   Pricing (R3: markup zeroed on integer clusters, make-whole in the sidecar, never in the LMP) and rule 20 (R4: MECH 28 reported,
@@ -143,7 +142,7 @@ arm's verdict at R. Every year is still scored and reported. Nothing is re-tuned
 
 - **14 shards**: arms {A, B} × 2019–2025, one year each, solved alone (rule 36). Out-dirs are `results/calibration/ucmilp3_spp_{a,b}_<y>`
   and branches `claude/ucmilp3-spp-{a,b}-<y>`. Prompts come from `scripts/shard_prompt.py --iso SPP --year <y> --sha <branch head>
-  --lane ucmilp3-spp-{a,b} --bundle results/calibration/closeout_spp_nuc_span --set … --budget 180`, plus the lane appendix:
+  --lane ucmilp3-spp-{a,b} --bundle results/calibration/closeout_spp_nuc_span --set … --budget 720`, plus the lane appendix:
   - confirm in the pushed tree `hourly/uc_schedule_<y>.parquet`, `hourly/uc_uplift_<y>.parquet`, `uc_solve_log_<y>.json` and
     `hourly/unit_marginal_<y>.parquet`, with `dispatch/<y>_P1.parquet` (rule 34);
   - paste the arm's field values from `run_config.json`, the recorded `uc_solver_preset` / `uc_slim_window` and engine version, and
@@ -153,10 +152,7 @@ arm's verdict at R. Every year is still scored and reported. Nothing is re-tuned
     `<out-dir>/SPLIT_SHA256SUMS`, and keep the original unstaged.
 
   Prompts are committed as `shard-prompts-ucmilp3-spp.txt` (staged; regenerated at the FIX-5 pin, §6).
-- **Budget: 180 min of LP wall per shard.** Basis: arm B at uc-1.1 (highs_default, full window) ran 39–67 min end to end, with an
-  LP total of 1,852–3,422 s. The pin's defaults and ruling (a) can only shorten that. 180 min is ≤ the charter cap of 720. A shard at
-  the budget with no bundle stops and reports, and that is a cost finding, not a kill. One shard commit is ≤ 20 min of runtime
-  (rule 32). A shard PENDING for more than 45 min is archived and relaunched.
+- **Budget: 720 min of LP wall per shard** (the protocol cap; UC-DESK 2026-10-14 11:45Z, before any number: *"Raise the per-shard budget to the protocol's 720 min: SPP has run 5–7× P0+P1, and a 180-min budget risks budget stops"*; this file's first draft read 180). For reference, arm B at uc-1.1 (highs_default, full window) ran 39–67 min end to end. A shard at the budget with no bundle stops and reports, and that is a cost finding, not a kill. One shard commit is ≤ 20 min of runtime (rule 32). A shard PENDING for more than 45 min is archived and relaunched.
 - **Each leg:** fetch; check that `git ls-tree -r <sha> -- <out-dir>` is non-empty; check out; verify the P1 dispatch, the three UC
   files and `unit_marginal`; then archive (rule 33).
 - **Compose and score in the parent (zero LP).** `_ucmilp_compose_span.py` at the pin still lacks per-year `gas_price_override` and
