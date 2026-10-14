@@ -13,7 +13,7 @@ Scripts and readings: `data/fix5/` (`cost_basis_zero_lp.py` → `cost_basis_<iso
    - An average rate at full output is `a/p̄ + b` (OLS identity). So the energy term already carries `a·P/p̄` of no-load heat, and
      `noload_cost_per_unit_h` adds `a·u` on top.
    - **Double count = `a·P/p̄`:** zero at P = 0, the whole no-load at full output.
-2. **Size** (Σ `nl·P1/p̄`, from the bundles):
+2. **Size** (Σ `nl·P1/p̄`, from the bundles; every UC-armed ISO examined shows it, and the CC double count is 7–15 % of UC CC energy cost):
 
    | ISO-year (engine) | CC $M | % of UC CC energy cost | $/MWh | ST_GAS $M (%) | coal |
    |---|---|---|---|---|---|
@@ -21,6 +21,7 @@ Scripts and readings: `data/fix5/` (`cost_basis_zero_lp.py` → `cost_basis_<iso
    | ERCOT 2019 (uc-1.4) | 148 | 7.2 % | 1.11 | 18.3 (4.7 %) | none (demoted, budget-pinned) |
    | MISO 2024 (uc-1.2) | 250 | 8.2 % | 1.65 | 28.2 (5.2 %) | none (demoted) |
    | NEISO 2019–25 (uc-1.4, UC-3-NEISO span) | 80–367 / yr (2023: 129) | 11.6–13.1 % | 2.39–10.22 (2023: 3.66) | ≈ 0 (≤ 0.06) | none |
+   | NYISO 2021–25 (uc-1.4, UC-3-NYISO span) | 65–230 / yr (2023: 65) | 9.8–14.7 % | 2.35–7.30 (2023: 2.35) | 10–25 / yr (3.3–4.1 %) | none |
 
    For reference, the explicit no-load is 13.9–14.8 % of CAISO CC UC energy cost in every year 2019–25 (uplift sidecars). In ERCOT 2019 it is
    10.9 % (CC) and 13.5 % (ST), matching UC-BANDS-ERCOT §2. In MISO 2024–25 it is 9.4–10.1 %.
@@ -64,6 +65,10 @@ Per unit-hour, on each bundle's own P1 offers and no-load $. Values are capacity
 | | P_hi | 30.6 | 35.3 (+15 %) | 31.2 (+2 %) | **33.5 (+9.6 %)** |
 | NEISO CC 2023 (0.34, 1.15, 0.79) | Pmin | 56.7 | 60.5 (+6.7 %) | 30.8 (−46 %) | **56.2 (−0.8 %)** |
 | | P_hi | 36.7 | 42.5 (+16 %) | 32.8 (−11 %) | **38.3 (+4.3 %)** |
+| NYISO CC 2023 (0.33, 1.47, 0.78) | Pmin | 61.7 | 66.1 (+7.2 %) | 23.6 (−62 %) | **60.5 (−2.0 %)** |
+| | P_hi | 30.8 | 35.9 (+17 %) | 24.4 (−21 %) | **30.3 (−1.5 %)** |
+| NYISO ST_GAS 2023 (0.11, 0.59, 0.87) | Pmin | 204.1 | 210.8 (+3.3 %) | 37.9 (−81 %) | **209.0 (+2.4 %)** |
+| | P_hi | 48.8 | 55.7 (+14 %) | 38.1 (−22 %) | **53.9 (+10 %)** |
 
 **Read.**
 - **uc-1.5 is within 3 % of truth at Pmin everywhere** (CAISO ST +5 %).
