@@ -122,3 +122,13 @@ Added report row **U5: uc-1.4 vs uc-1.5 per year** (same rows as U3), from the u
 
 Nothing is LIVE for NYISO outside the UC stage. The uc-1.5-vs-control delta is UC-only for 2022–2025 and UC + the §9 `59490433` drift for
 2021 (envelope unchanged); the uc-1.4 → uc-1.5 delta is defect 7 alone.
+
+### A.2 Launched (2026-10-14 12:50Z) — pin `da11c2489b84c010f5658023c08c97973cd92c47`, budget 720 min, prompts `shard-prompts-ucmilp35-nyiso.txt`
+
+| year | session | branch (transport) | out-dir |
+|---|---|---|---|
+| 2021 | `session_01JnfebGQwRb4ubXN583rYXb` | `claude/ucmilp35-nyiso-2021` | `results/calibration/ucmilp35_nyiso_2021` |
+| 2022 | `session_01UnbZcKB98eBE6GApu6Qqqk` | `claude/ucmilp35-nyiso-2022` | `results/calibration/ucmilp35_nyiso_2022` |
+| 2023 | `session_01VmgkPX3cexSDwL7fhTJhVf` | `claude/ucmilp35-nyiso-2023` | `results/calibration/ucmilp35_nyiso_2023` |
+| 2024 | `session_01DWcfMnSHYz2FqntZqt4g9q` | `claude/ucmilp35-nyiso-2024` | `results/calibration/ucmilp35_nyiso_2024` |
+| 2025 | `session_01BPxr66AVWS3M6ttH8dda8B` | `claude/ucmilp35-nyiso-2025` | `results/calibration/ucmilp35_nyiso_2025` |
