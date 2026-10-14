@@ -305,7 +305,8 @@ def rung_l1(
     )
     bid = np.asarray(cap.mc_bid if cap.mc_bid is not None else cap.mc_base, dtype=float)
     mc_w = bid.copy()
-    mc_w[p.integer_member_gens, :] = cap.mc_base[p.integer_member_gens, :]
+    mc_uc = p.incremental_energy_cost(cap.fleet_arrays, cap.mc_base)
+    mc_w[p.integer_member_gens, :] = mc_uc[p.integer_member_gens, :]
     noload = p.noload_cost_per_unit_h(cap.fleet_arrays, cap.mc_base)[k]
     T = cap.demand.shape[1]
     sched_state = stage_state(

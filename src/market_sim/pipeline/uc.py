@@ -104,7 +104,11 @@ logger = logging.getLogger(__name__)
 #: uc-1.3: the P1 floor fills a cluster's members in merit order of the P1
 #: offer, capped at each member's ceiling (FINDING-ucmilp-fix4-floor-merit-2026-10-10);
 #: a stage whose inputs digest identically to the previous stage's reuses its schedule.
-UC_ENGINE_VERSION = "uc-1.4"
+#: uc-1.5: integer clusters' UC energy (and the uplift cost side) on the
+#: incremental basis — the average-rate offer less the no-load heat it carries
+#: per MWh at full output — so the explicit no-load is paid once
+#: (FINDING-ucmilp-fix5-cost-basis-2026-10-14).
+UC_ENGINE_VERSION = "uc-1.5"
 
 #: The most recent stage objects (one per year solved in this process), for a
 #: harness that writes the post-P1 uplift sidecar; drained by :func:`take_uc_stages`.
@@ -601,8 +605,12 @@ class UcStage:
         self.mc_bid = mc_bid
         t_stage = time.perf_counter()
         int_rows = p.integer_member_gens
+        # Integer clusters: base cost on the incremental basis (the explicit
+        # no-load below is the only place the no-load heat is paid, rule 19;
+        # UcClusterParams.incremental_energy_cost). Every other row: the P1 bid.
+        mc_uc = p.incremental_energy_cost(fleet_in, self.mc_base)
         mc_w_full = mc_bid.copy()
-        mc_w_full[int_rows, :] = self.mc_base[int_rows, :]
+        mc_w_full[int_rows, :] = mc_uc[int_rows, :]
         noload_full = p.noload_cost_per_unit_h(fleet_in, self.mc_base)[k]  # (n_int, T)
         self.noload_full = noload_full
         p0_dispatch = np.asarray(r0.dispatch, dtype=float)
@@ -654,7 +662,7 @@ class UcStage:
                     p.cluster_availability(inputs.fleet)[k],
                     p0_dispatch[:, t0:t1],
                     p0_prices[:, t0:t1],
-                    self.mc_base[:, t0:t1],
+                    mc_uc[:, t0:t1],
                     np.asarray(fleet_in.zone_idx, dtype=int),
                     noload_full[:, t0:t1],
                 )
@@ -964,7 +972,7 @@ class UcStage:
                 np.asarray(p1_result.dispatch, dtype=float),
                 np.asarray(p1_result.prices, dtype=float),
                 np.asarray(fleet_in.zone_idx, dtype=int),
-                self.mc_base,
+                self.params.incremental_energy_cost(fleet_in, self.mc_base),
                 noload,
                 self.year,
             )

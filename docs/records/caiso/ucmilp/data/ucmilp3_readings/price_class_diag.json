@@ -1,0 +1,347 @@
+{
+ "2019": {
+  "mean": [
+   38.06,
+   41.95,
+   42.27
+  ],
+  "terc_low": 3.63,
+  "terc_mid": 3.2,
+  "terc_high": 5.79,
+  "hod_night0-6": 3.49,
+  "hod_morn7-9": 4.41,
+  "hod_solar10-16": 4.07,
+  "hod_eve17-21": 5.33,
+  "hod_late22-23": 4.13,
+  "n_le15": [
+   195,
+   86
+  ],
+  "n_neg": [
+   162,
+   69
+  ],
+  "dTWh": {
+   "CC_CHP": 0.3100000023841858,
+   "CC_REGULAR": -8.609999656677246,
+   "CT_PEAKER": 3.490000009536743,
+   "ST_GAS": -0.1599999964237213,
+   "import": 4.760000228881836
+  },
+  "uc14_minus_uc11_TWh": {
+   "CC_REGULAR": -0.6499999761581421,
+   "CT_PEAKER": 0.27000001072883606,
+   "import": 0.3400000035762787
+  },
+  "marg_low_ctl": {
+   "hydro": 96.6,
+   "CC_REGULAR": 3.0,
+   "CT_PEAKER": 0.4,
+   "CC_CHP": 0.0,
+   "COAL_BIT": 0.0
+  },
+  "marg_low_arm": {
+   "hydro": 98.1,
+   "CC_REGULAR": 1.1,
+   "CT_PEAKER": 0.7,
+   "CC_CHP": 0.1,
+   "CT_CHP": 0.0,
+   "COAL_BIT": 0.0
+  }
+ },
+ "2020": {
+  "mean": [
+   34.3,
+   36.79,
+   36.93
+  ],
+  "terc_low": 2.72,
+  "terc_mid": 1.95,
+  "terc_high": 3.23,
+  "hod_night0-6": 1.75,
+  "hod_morn7-9": 2.73,
+  "hod_solar10-16": 2.99,
+  "hod_eve17-21": 3.23,
+  "hod_late22-23": 2.83,
+  "n_le15": [
+   207,
+   109
+  ],
+  "n_neg": [
+   201,
+   109
+  ],
+  "dTWh": {
+   "CC_CHP": 0.20999999344348907,
+   "CC_REGULAR": -9.609999656677246,
+   "CT_CHP": 0.15000000596046448,
+   "CT_PEAKER": 3.930000066757202,
+   "ST_GAS": -0.6399999856948853,
+   "import": 5.75,
+   "solar": 0.20999999344348907
+  },
+  "uc14_minus_uc11_TWh": {
+   "CC_REGULAR": -0.5199999809265137,
+   "CT_PEAKER": 0.23000000417232513,
+   "import": 0.27000001072883606
+  },
+  "marg_low_ctl": {
+   "hydro": 95.9,
+   "CC_REGULAR": 4.0,
+   "CC_CHP": 0.1,
+   "COAL_BIT": 0.0,
+   "CT_PEAKER": 0.0
+  },
+  "marg_low_arm": {
+   "hydro": 97.4,
+   "CC_REGULAR": 2.2,
+   "CT_PEAKER": 0.3,
+   "CC_CHP": 0.1,
+   "COAL_BIT": 0.0,
+   "CT_CHP": 0.0
+  }
+ },
+ "2021": {
+  "mean": [
+   54.6,
+   58.54,
+   58.66
+  ],
+  "terc_low": 3.3,
+  "terc_mid": 2.53,
+  "terc_high": 6.33,
+  "hod_night0-6": 3.61,
+  "hod_morn7-9": 3.56,
+  "hod_solar10-16": 3.91,
+  "hod_eve17-21": 5.24,
+  "hod_late22-23": 3.91,
+  "n_le15": [
+   203,
+   133
+  ],
+  "n_neg": [
+   94,
+   53
+  ],
+  "dTWh": {
+   "CC_CHP": 0.20000000298023224,
+   "CC_REGULAR": -9.300000190734863,
+   "CT_CHP": 0.20000000298023224,
+   "CT_PEAKER": 2.859999895095825,
+   "import": 5.960000038146973,
+   "solar": 0.10000000149011612
+  },
+  "uc14_minus_uc11_TWh": {
+   "CC_REGULAR": -0.20000000298023224,
+   "import": 0.10999999940395355
+  },
+  "marg_low_ctl": {
+   "hydro": 96.2,
+   "CC_REGULAR": 3.3,
+   "CT_PEAKER": 0.3,
+   "CC_CHP": 0.1,
+   "CT_CHP": 0.0
+  },
+  "marg_low_arm": {
+   "hydro": 97.0,
+   "CC_REGULAR": 1.7,
+   "CT_PEAKER": 1.0,
+   "CC_CHP": 0.2,
+   "CT_CHP": 0.1,
+   "COAL_BIT": 0.0
+  }
+ },
+ "2022": {
+  "mean": [
+   88.02,
+   94.95,
+   95.52
+  ],
+  "terc_low": 6.29,
+  "terc_mid": 5.45,
+  "terc_high": 10.76,
+  "hod_night0-6": 6.85,
+  "hod_morn7-9": 7.57,
+  "hod_solar10-16": 8.39,
+  "hod_eve17-21": 7.2,
+  "hod_late22-23": 7.3,
+  "n_le15": [
+   439,
+   377
+  ],
+  "n_neg": [
+   190,
+   154
+  ],
+  "dTWh": {
+   "CC_CHP": 0.17000000178813934,
+   "CC_REGULAR": -9.739999771118164,
+   "CT_PEAKER": 2.390000104904175,
+   "import": 7.050000190734863
+  },
+  "uc14_minus_uc11_TWh": {
+   "CC_REGULAR": -0.5899999737739563,
+   "CT_PEAKER": 0.25,
+   "import": 0.30000001192092896
+  },
+  "marg_low_ctl": {
+   "hydro": 97.8,
+   "CC_REGULAR": 2.1,
+   "CT_PEAKER": 0.0,
+   "CC_CHP": 0.0
+  },
+  "marg_low_arm": {
+   "hydro": 98.8,
+   "CC_REGULAR": 0.8,
+   "CT_PEAKER": 0.4,
+   "CC_CHP": 0.0
+  }
+ },
+ "2023": {
+  "mean": [
+   56.48,
+   61.1,
+   61.45
+  ],
+  "terc_low": 4.51,
+  "terc_mid": 2.9,
+  "terc_high": 7.52,
+  "hod_night0-6": 4.39,
+  "hod_morn7-9": 4.8,
+  "hod_solar10-16": 5.55,
+  "hod_eve17-21": 5.24,
+  "hod_late22-23": 4.58,
+  "n_le15": [
+   626,
+   506
+  ],
+  "n_neg": [
+   309,
+   258
+  ],
+  "dTWh": {
+   "CC_CHP": 0.1899999976158142,
+   "CC_REGULAR": -8.199999809265137,
+   "CT_CHP": 0.14000000059604645,
+   "CT_PEAKER": 2.5999999046325684,
+   "import": 5.099999904632568,
+   "solar": 0.10000000149011612
+  },
+  "uc14_minus_uc11_TWh": {
+   "CC_REGULAR": -0.33000001311302185,
+   "CT_PEAKER": 0.25
+  },
+  "marg_low_ctl": {
+   "hydro": 95.4,
+   "CC_REGULAR": 4.2,
+   "CT_PEAKER": 0.4,
+   "CC_CHP": 0.1,
+   "CT_CHP": 0.0,
+   "COAL_BIT": 0.0
+  },
+  "marg_low_arm": {
+   "hydro": 96.7,
+   "CC_REGULAR": 2.0,
+   "CT_PEAKER": 1.0,
+   "CC_CHP": 0.2,
+   "CT_CHP": 0.0
+  }
+ },
+ "2024": {
+  "mean": [
+   35.31,
+   38.21,
+   38.41
+  ],
+  "terc_low": 4.15,
+  "terc_mid": 2.41,
+  "terc_high": 2.76,
+  "hod_night0-6": 2.38,
+  "hod_morn7-9": 3.03,
+  "hod_solar10-16": 3.93,
+  "hod_eve17-21": 3.19,
+  "hod_late22-23": 2.63,
+  "n_le15": [
+   1024,
+   837
+  ],
+  "n_neg": [
+   668,
+   589
+  ],
+  "dTWh": {
+   "CC_CHP": 0.12999999523162842,
+   "CC_REGULAR": -8.130000114440918,
+   "CT_PEAKER": 3.240000009536743,
+   "ST_GAS": -0.11999999731779099,
+   "import": 4.559999942779541,
+   "solar": 0.18000000715255737
+  },
+  "uc14_minus_uc11_TWh": {
+   "CC_REGULAR": -0.44999998807907104,
+   "CT_PEAKER": 0.25,
+   "import": 0.18000000715255737
+  },
+  "marg_low_ctl": {
+   "hydro": 98.1,
+   "CC_REGULAR": 1.8,
+   "CT_PEAKER": 0.1,
+   "CC_CHP": 0.0,
+   "CT_CHP": 0.0
+  },
+  "marg_low_arm": {
+   "hydro": 98.0,
+   "CC_REGULAR": 1.3,
+   "CT_PEAKER": 0.7,
+   "CC_CHP": 0.1,
+   "CT_CHP": 0.0
+  }
+ },
+ "2025": {
+  "mean": [
+   35.09,
+   39.23,
+   39.33
+  ],
+  "terc_low": 5.52,
+  "terc_mid": 3.62,
+  "terc_high": 3.55,
+  "hod_night0-6": 3.33,
+  "hod_morn7-9": 4.07,
+  "hod_solar10-16": 5.18,
+  "hod_eve17-21": 4.32,
+  "hod_late22-23": 4.14,
+  "n_le15": [
+   869,
+   664
+  ],
+  "n_neg": [
+   551,
+   477
+  ],
+  "dTWh": {
+   "CC_CHP": 0.1899999976158142,
+   "CC_REGULAR": -10.40999984741211,
+   "CT_CHP": 0.11999999731779099,
+   "CT_PEAKER": 2.259999990463257,
+   "import": 7.579999923706055,
+   "solar": 0.12999999523162842
+  },
+  "uc14_minus_uc11_TWh": {
+   "CC_REGULAR": -0.14000000059604645,
+   "CT_PEAKER": 0.10999999940395355
+  },
+  "marg_low_ctl": {
+   "hydro": 98.8,
+   "CC_REGULAR": 1.2,
+   "CC_CHP": 0.0,
+   "COAL_BIT": 0.0
+  },
+  "marg_low_arm": {
+   "hydro": 99.3,
+   "CC_REGULAR": 0.5,
+   "CT_PEAKER": 0.2,
+   "CC_CHP": 0.1
+  }
+ }
+}

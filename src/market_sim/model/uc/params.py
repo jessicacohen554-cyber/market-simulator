@@ -187,6 +187,50 @@ class UcClusterParams:
         per_mmbtu = np.maximum(per_mmbtu, 0.0)
         return self.noload_mmbtu_h[:, None] * per_mmbtu
 
+    def incremental_energy_cost(
+        self, fleet: FleetArrays, mc_base: np.ndarray
+    ) -> np.ndarray:
+        """``(n_gen, T)`` UC energy cost: ``mc_base`` with integer members on the incremental basis.
+
+        Every fleet heat rate the offer bands multiply is an AVERAGE operating
+        rate (heat input / output), so at full output it already carries the
+        unit's no-load heat, ``noload_mmbtu_h / pbar_mw`` MMBtu per MWh (the
+        CAMPD regression identity ``avg(pbar) = a / pbar + b``). The UC pays
+        that no-load explicitly (:meth:`noload_cost_per_unit_h`), so each
+        integer-cluster member's energy cost drops it, priced at the member's
+        own implied $/MMBtu, ``(mc_base - vom) / heat_rate`` (a fuel-free or
+        part-passthrough tranche carries proportionally less):
+
+            mc_uc[g, t] = mc_base[g, t] - noload_mmbtu_h[c] / pbar_mw[c]
+                          * max(mc_base[g, t] - vom[g], 0) / heat_rate[g]
+
+        At full output the UC cost ``nl * u + sum mc_uc * P`` equals the
+        as-offered ``sum mc_base * P``; below it, the UC adds the measured
+        part-load penalty ``a * (1 - P / pbar)`` (UC-1-FIX-5,
+        FINDING-ucmilp-fix5-cost-basis-2026-10-14; rule 19: no-load is
+        paid in one place). Non-member rows and non-integer clusters keep
+        ``mc_base``; a zero heat rate or ``pbar`` removes nothing. The P1 bid
+        never reads this array (P1 stays on the bid curve).
+        """
+        mc = np.array(mc_base, dtype=float, copy=True)
+        rows = self.integer_member_gens
+        if rows.size == 0:
+            return mc
+        c = self.cluster_of_gen[rows]
+        with np.errstate(invalid="ignore", divide="ignore"):
+            nl_per_mw = np.where(
+                self.pbar_mw[c] > 0.0, self.noload_mmbtu_h[c] / self.pbar_mw[c], 0.0
+            )
+        hr = np.asarray(fleet.heat_rate, dtype=float)[rows]
+        vom = np.asarray(fleet.vom, dtype=float)[rows]
+        sub = mc[rows, :]
+        with np.errstate(invalid="ignore", divide="ignore"):
+            per_mmbtu = np.where(
+                hr[:, None] > 0.0, (sub - vom[:, None]) / hr[:, None], 0.0
+            )
+        mc[rows, :] = sub - nl_per_mw[:, None] * np.maximum(per_mmbtu, 0.0)
+        return mc
+
 
 def integer_gate(dt_h: np.ndarray, su_per_mw: np.ndarray) -> np.ndarray:
     """The E1 gate: ``min-down > 2 h or start >= $30/MW`` (posture gate inverted).
