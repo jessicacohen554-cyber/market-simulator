@@ -95,3 +95,30 @@ Pin (every shard, `source_revision`): **`1e337eebd95e11230ecfa8db469405729755400
 | 2023 | `session_01TBJgW8YWpa7WVUUTK5TdvJ` | `claude/ucmilp3-nyiso-2023` | `results/calibration/ucmilp3_nyiso_2023` |
 | 2024 | `session_01QX84u1LojJpxbCvE9XEF7R` | `claude/ucmilp3-nyiso-2024` | `results/calibration/ucmilp3_nyiso_2024` |
 | 2025 | `session_018wTgeLh46kn6ELmVH9VNV7` | `claude/ucmilp3-nyiso-2025` | `results/calibration/ucmilp3_nyiso_2025` |
+
+## Addendum A (2026-10-14 12:55Z, before any uc-1.5 shard exists) — relaunch at engine uc-1.5 (defect 7)
+
+**Why.** UC-DESK (12:46Z) reports engine defect 7 (`FINDING-ucmilp-fix5-cost-basis-2026-10-14.md`): the UC objective paid each integer
+member's no-load heat twice — explicitly in `noload` AND inside the average-rate heat rate of `mc_base` (NYISO CC $65–230 M/yr,
+9.8–14.7 %; ST 3–4 %). Over-costing commitment pushes the stage to decommit CC, which is exactly the direction of the uc-1.4 signature
+(RESULT §0: CC −5.3 to −7.4 TWh/yr → imports). The uc-1.4 R (PR #7245) is therefore confounded. Fixed in #7246 (uc-1.5).
+
+**Pin for the relaunch:** this branch `claude/ucmilp-3-nyiso-ab-uc15`, cut from main **`2dd69d5aa936547b402a1ba54d2eba57e759b7e7`**, head at
+launch = this addendum (full SHA recorded in the prompts and §A.3). Arm, control, readings (§3 and the prior PRECOMMIT's T1–T5, S1–S5,
+W1–W4, U1–U4), kills, verdict rule and the ten `--set`s are **UNCHANGED**. Five shards, one per year, budget 720 min each (UC-DESK).
+Added report row **U5: uc-1.4 vs uc-1.5 per year** (same rows as U3), from the uc-1.4 slim span on `main`
+(`docs/records/nyiso/ucmilp/data/ucmilp3_nyiso_span/`) — zero LP.
+
+### A.1 G-DRIFT `580c4fbf → 2dd69d5a` on the NYISO backcast path (zero LP)
+
+7 commits; 2 non-merge commits touch `src/` or `scripts/` (5 files):
+
+| content | files | NYISO classification |
+|---|---|---|
+| uc-1.5 (#7246, defect 7): `UcClusterParams.incremental_energy_cost` — integer members' UC energy cost = `mc_base` less `noload_mmbtu_h/pbar_mw × (mc_base−vom)/heat_rate`; used for the window objective and the uplift cost side; `UC_ENGINE_VERSION = "uc-1.5"` | `model/uc/params.py` +44, `model/uc/uplift.py`, `pipeline/uc.py` +16/−4, `scripts/lib/uc_bench.py` | **LIVE on the gate-on path only** (the fix this relaunch exists for); the P1 bid never reads it; control INERT |
+| UC-BANDS-ERCOT 1a (#7242) | `scripts/data/derive_ercot_sced_uc_bands.py` (new derive, ERCOT only) | **INERT** — a derive script, not on any solve path; not ERCOT-ISO data NYISO reads |
+| `scenarios.py`, `constants.py`, `runner.py`, `pipeline/solve.py`, `replay_keeper.py`, `shard_prompt.py`, `calibration_verdict.py`, `_ucmilp_compose_span.py`, `results/calibration/w0_nyiso_span/**`, `keepers/NYISO.json` | unchanged (`git diff --stat` empty) | — |
+| solve surface | `solve_surface_register.py --diff 580c4fbf 2dd69d5a`: *"342 → 342 names; 0 value(s) moved, 0 added, 0 removed — NO VALUE MOVED"* | no ISO's key reached |
+
+Nothing is LIVE for NYISO outside the UC stage. The uc-1.5-vs-control delta is UC-only for 2022–2025 and UC + the §9 `59490433` drift for
+2021 (envelope unchanged); the uc-1.4 → uc-1.5 delta is defect 7 alone.
