@@ -201,3 +201,20 @@ Records-only commits: desk r09 (#7240), UC-BANDS-ERCOT phase 0 (#7241), UC-3-CAI
 `iso_configs.py`, `scenarios.py`, `model/lp/*`, fleet/offer `data/*` or orchestrator hunk. `results/calibration/closeout_spp_nuc_span/**` and
 `keepers/SPP.json` are not touched. **The control is INERT, so the keeper bundle remains the control.** Arms, readings, bars, kills, verdict
 rule, solver declaration (lean + slim) and the 720-min budget are UNCHANGED. The 14 prompts are regenerated at this branch head.
+
+## Addendum B (2026-10-14 12:48–12:52Z, before any number exists) — launch record
+
+Addendum A was pushed as `ca0acb24` (and the prompts as `b3af1fc7`; PRECOMMIT 203 lines and prompts 507 lines, both blob-verified) **before** any shard.
+14 shards were launched at `ca0acb249fc61485982c1a0264fe52e9344254a1`, model `claude-opus-5-5`, tag `ucmilp:UC-3-SPP-shard`, budget 720 min:
+
+| year | arm A (floors kept) | arm B (floors off) |
+|---|---|---|
+| 2019 | `session_016JRaeUkeeGq6z84NoCtsWd` | `session_01Y8uj8JU7N57fPtkbL33G91` |
+| 2020 | `session_01CpvB2qbHznhFYj8NWuF8Yk` | `session_01RSZqvjg4miQvSudYmxbvKq` |
+| 2021 | `session_01XpYakgUBjGXPwcrQs22Frn` | `session_01Dr9hepsAe2Rin49BGGr8ca` |
+| 2022 | `session_01QzkT6SRX5pPcanu1oBUbso` | `session_012Eh7PCtyaA7BUAdZQXqQir` |
+| 2023 | `session_01Rirmg2uuNT2s3iX4SVP2Pa` | `session_01JFncMWzTgMRV4agp1hBQs6` |
+| 2024 | `session_0191BgT1JL6ABsLvZEiQMzDk` | `session_0112GaACCNyjGszpy9Nza4dm` |
+| 2025 | `session_01FVzQa1tnKCVju9dkTEaqUn` | `session_01P5PJ4odpkcMonNDKeT3HJw` |
+
+Branches: `claude/ucmilp3-spp-{a,b}-<y>`. Out-dirs: `results/calibration/ucmilp3_spp_{a,b}_<y>`.
