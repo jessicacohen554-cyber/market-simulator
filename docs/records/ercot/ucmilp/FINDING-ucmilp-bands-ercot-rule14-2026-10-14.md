@@ -26,7 +26,7 @@ Files in `data/bands/`:
    | gas factor, CC classes only (the DAM-measured core) | +3.0 % | +15.5 % |
    | heat-rate × gas, CC only | +3.3 % | +15.8 % |
    | heat-rate × gas, all four gas classes | **+1.0 %** | **+13.0 %** |
-   | SCED bands × basis factor | +5.4 % | +15.5 % (CT committed variant: +13.2 %) |
+   | SCED bands × basis factor (scaled estimate; exact re-derive in RESULT-1a §0: +4.6 % / +14.6 %, CT variant +12.3 %) | +5.4 % | +15.5 % (CT committed variant: +13.2 %) |
 
    - **(b) does not explain the UC gap.** About 13 points of C3a remain after a basis-consistent normalization.
 3. **(a) ST_GAS econ_high 3.17 is a broad measured shape, not a few resources and not a tail.**

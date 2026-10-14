@@ -8,42 +8,43 @@
    2023
   ],
   "n_source_files": 323,
-  "gas_basis": "Henry Hub daily + ERCOT basis (DAM cconly lineage basis)",
+  "gas_basis": "HH daily + measured monthly EP basis (dispatch basis; ERCOT-117/118)",
+  "hr_basis": "fleet CAMPD-measured operating HR, bin fallback",
   "rule_23": "re-derive only on a SCED corpus or CAMPD-year change"
  },
  "offer_curve_by_group": {
   "CC_REGULAR": {
-   "committed": 0.974,
-   "econ_low": 0.978,
-   "econ_high": 1.642,
-   "peak": 1.76
+   "committed": 0.775,
+   "econ_low": 0.787,
+   "econ_high": 1.285,
+   "peak": 1.384
   },
   "CC_CHP": {
-   "committed": 0.945,
-   "econ_low": 0.948,
-   "econ_high": 1.593,
-   "peak": 1.708
+   "committed": 0.742,
+   "econ_low": 0.754,
+   "econ_high": 1.231,
+   "peak": 1.326
   },
   "CT_PEAKER": {
-   "econ_low": 0.855,
-   "econ_high": 1.288,
-   "peak": 1.524
+   "econ_low": 0.637,
+   "econ_high": 0.962,
+   "peak": 1.132
   },
   "ST_GAS": {
-   "committed": 1.075,
-   "econ_low": 1.075,
-   "econ_high": 3.166,
-   "peak": 3.23
+   "committed": 0.823,
+   "econ_low": 0.828,
+   "econ_high": 2.419,
+   "peak": 2.472
   }
  },
  "variants": {
   "CT_PEAKER": {
-   "committed": 0.847
+   "committed": 0.622
   }
  },
  "detail": {
   "CC_REGULAR": {
-   "base_hr": 7.649,
+   "base_hr": 7.553,
    "incremental": {
     "ratio": 0.836,
     "slope_hr": 6.375,
@@ -54,35 +55,35 @@
    },
    "bands": {
     "committed": {
-     "p25": 0.787,
-     "p50": 0.974,
-     "p75": 1.219,
+     "p25": 0.634,
+     "p50": 0.775,
+     "p75": 0.964,
      "n_resources": 221
     },
     "econ_low": {
-     "p25": 0.789,
-     "p50": 0.978,
-     "p75": 1.256,
+     "p25": 0.634,
+     "p50": 0.787,
+     "p75": 0.987,
      "n_resources": 216
     },
     "econ_high": {
-     "p25": 1.324,
-     "p50": 1.642,
-     "p75": 2.083,
+     "p25": 1.067,
+     "p50": 1.285,
+     "p75": 1.709,
      "n_resources": 216
     },
     "peak": {
-     "p25": 1.444,
-     "p50": 1.76,
-     "p75": 4.156,
+     "p25": 1.163,
+     "p50": 1.384,
+     "p75": 3.331,
      "n_resources": 221
     }
    },
    "bands_incremental_basis_p50": {
-    "committed": 1.165,
-    "econ_low": 1.17,
-    "econ_high": 1.964,
-    "peak": 2.105
+    "committed": 0.927,
+    "econ_low": 0.941,
+    "econ_high": 1.537,
+    "peak": 1.656
    },
    "n_resource_hours": 400838
   },
@@ -98,40 +99,40 @@
    },
    "bands": {
     "committed": {
-     "p25": 0.764,
-     "p50": 0.945,
-     "p75": 1.183,
+     "p25": 0.608,
+     "p50": 0.742,
+     "p75": 0.923,
      "n_resources": 221
     },
     "econ_low": {
-     "p25": 0.766,
-     "p50": 0.948,
-     "p75": 1.219,
+     "p25": 0.607,
+     "p50": 0.754,
+     "p75": 0.946,
      "n_resources": 216
     },
     "econ_high": {
-     "p25": 1.285,
-     "p50": 1.593,
-     "p75": 2.021,
+     "p25": 1.022,
+     "p50": 1.231,
+     "p75": 1.637,
      "n_resources": 216
     },
     "peak": {
-     "p25": 1.401,
-     "p50": 1.708,
-     "p75": 4.033,
+     "p25": 1.114,
+     "p50": 1.326,
+     "p75": 3.191,
      "n_resources": 221
     }
    },
    "bands_incremental_basis_p50": {
-    "committed": 1.176,
-    "econ_low": 1.179,
-    "econ_high": 1.982,
-    "peak": 2.125
+    "committed": 0.923,
+    "econ_low": 0.938,
+    "econ_high": 1.531,
+    "peak": 1.65
    },
    "n_resource_hours": 400838
   },
   "CT_PEAKER": {
-   "base_hr": 11.209,
+   "base_hr": 11.778,
    "incremental": {
     "ratio": 0.7992,
     "slope_hr": 9.1,
@@ -142,40 +143,40 @@
    },
    "bands": {
     "committed": {
-     "p25": 0.586,
-     "p50": 0.847,
-     "p75": 1.282,
+     "p25": 0.434,
+     "p50": 0.622,
+     "p75": 0.95,
      "n_resources": 147
     },
     "econ_low": {
-     "p25": 0.515,
-     "p50": 0.855,
-     "p75": 1.279,
+     "p25": 0.386,
+     "p50": 0.637,
+     "p75": 0.95,
      "n_resources": 147
     },
     "econ_high": {
-     "p25": 1.028,
-     "p50": 1.288,
-     "p75": 1.504,
+     "p25": 0.765,
+     "p50": 0.962,
+     "p75": 1.114,
      "n_resources": 147
     },
     "peak": {
-     "p25": 1.149,
-     "p50": 1.524,
-     "p75": 1.92,
+     "p25": 0.851,
+     "p50": 1.132,
+     "p75": 1.437,
      "n_resources": 147
     }
    },
    "bands_incremental_basis_p50": {
-    "committed": 1.06,
-    "econ_low": 1.07,
-    "econ_high": 1.612,
-    "peak": 1.907
+    "committed": 0.778,
+    "econ_low": 0.797,
+    "econ_high": 1.204,
+    "peak": 1.416
    },
    "n_resource_hours": 359533
   },
   "ST_GAS": {
-   "base_hr": 11.191,
+   "base_hr": 11.36,
    "incremental": {
     "ratio": 0.8632,
     "slope_hr": 9.114,
@@ -186,35 +187,35 @@
    },
    "bands": {
     "committed": {
-     "p25": 1.05,
-     "p50": 1.075,
-     "p75": 1.159,
+     "p25": 0.784,
+     "p50": 0.823,
+     "p75": 0.88,
      "n_resources": 38
     },
     "econ_low": {
-     "p25": 1.05,
-     "p50": 1.075,
-     "p75": 1.297,
+     "p25": 0.791,
+     "p50": 0.828,
+     "p75": 0.977,
      "n_resources": 38
     },
     "econ_high": {
-     "p25": 1.328,
-     "p50": 3.166,
-     "p75": 4.401,
+     "p25": 1.013,
+     "p50": 2.419,
+     "p75": 3.426,
      "n_resources": 38
     },
     "peak": {
-     "p25": 1.424,
-     "p50": 3.23,
-     "p75": 6.035,
+     "p25": 1.074,
+     "p50": 2.472,
+     "p75": 4.808,
      "n_resources": 38
     }
    },
    "bands_incremental_basis_p50": {
-    "committed": 1.245,
-    "econ_low": 1.245,
-    "econ_high": 3.668,
-    "peak": 3.742
+    "committed": 0.953,
+    "econ_low": 0.959,
+    "econ_high": 2.802,
+    "peak": 2.864
    },
    "n_resource_hours": 114234
   }

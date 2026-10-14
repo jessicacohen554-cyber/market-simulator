@@ -32,11 +32,16 @@ changes only what the UC basis requires.
   bands are then capacity-weighted (HSL) to p25 / p50 / p75 across resources,
   pooled over every delivery year in ``--years``. One value covers every scored
   year: no year partition, no × k and no deltas.
-* **Divisor.** The band is price ÷ (delivered gas of the day × the output
-  group's cap-weighted ``Plant_Avg_HR``). Gas is Henry Hub daily plus the ERCOT
-  basis, and the heat rate is ``output_base_hr``, the DAM lineage's divisor. The
-  multiplier is therefore directly comparable to the keeper's band and lands on
-  the model's own base heat rate.
+* **Divisor (dispatch basis).** The band is price ÷ (delivered gas of the day ×
+  the output group's cap-weighted fleet heat rate). Gas is Henry Hub daily plus
+  the measured monthly EP basis (``ep_gas_day_series``), the series dispatch
+  pays. The heat rate is the CAMPD-measured operating rate the fleet
+  multiplies (``fleet_class_hr``). So ``band × fleet HR × dispatch gas``
+  reproduces the posted offer. The DAM lineage's ``HH − 0.50`` × bin
+  ``Plant_Avg_HR`` divisor is the inconsistency ERCOT-117 proved causal
+  (FINDING-ucmilp-bands-ercot-rule14-2026-10-14: window gas ratio 0.885, 2023
+  0.797). ``--gas-basis hh --hr-basis bin`` keeps it only as a reported
+  comparison.
 * **Incremental equivalent.** The UC prices no-load separately, so the
   committed / econ energy belongs on the incremental heat rate. For each output
   group the derive measures the ratio (incremental ÷ average heat rate) from
@@ -75,6 +80,7 @@ from market_sim.config.paths import CALIBRATION_DIR, RAW_DIR  # noqa: E402
 
 from scripts.data.derive_dam_offer_hrmults import (  # noqa: E402
     CAMPD_BINS,
+    ERCOT_GAS_BASIS,
     PCTS,
     SCARCITY_THRESH,
     _wquantile,
@@ -129,10 +135,68 @@ _COLS = [
 MIN_UNIT_HOURS = 200
 
 
-def load_sced(years: tuple[int, ...]) -> tuple[pd.DataFrame, list[str]]:
+def ep_gas_day_series(years: tuple[int, ...]) -> pd.Series:
+    """Delivered gas on the dispatch basis: HH daily + the measured monthly EP basis.
+
+    This is the level ``apply_ercot_zonal_gas_basis`` moves every ERCOT gas unit
+    to under the keeper's armed ``ercot_zonal_gas_basis`` /
+    ``ercot_ep_gas_basis_monthly`` / ``_corroborated`` / ``_receipts_fallback``
+    flags. It is the same construction as ERCOT-118's
+    ``derive_dam_offer_hrmults.derive_ep_basis_yearly``, at monthly grain. The
+    lineage's ``HH − 0.50`` divisor (``_gas_day_series``) is the basis ERCOT-117
+    proved inconsistent with dispatch, so ``--gas-basis hh`` keeps it only as a
+    reported comparison.
+    """
+    from market_sim.data.fuel.basis.ercot import ercot_electric_power_gas_basis_monthly
+
+    hh = _gas_day_series() - float(ERCOT_GAS_BASIS)  # back to plain HH daily
+    out = []
+    for y in years:
+        basis = ercot_electric_power_gas_basis_monthly(
+            y, corroborated=True, receipts_fallback=True
+        )
+        if basis is None:
+            raise SystemExit(f"EP monthly gas basis unavailable for {y}")
+        idx = pd.date_range(f"{y}-01-01", f"{y}-12-31", freq="D")
+        out.append(
+            pd.Series(
+                hh.reindex(idx).to_numpy() + np.asarray(basis)[idx.month - 1], index=idx
+            )
+        )
+    return pd.concat(out)
+
+
+def fleet_class_hr(group: str, year: int) -> float:
+    """Cap-weighted heat rate the fleet multiplies for ``group`` in ``year``.
+
+    The value is the CAMPD-measured operating rate
+    (``campd_bins.measured_{cc,ct,st}_heat_rates``, the keeper's armed
+    ``measured_*_heat_rates``) where it exists, falling back to the bin
+    ``Plant_Avg_HR`` where it does not. The fleet loader resolves a plant's base
+    rate the same way, so ``band × fleet HR`` reproduces the measured offer.
+    CC_CHP carries no measured rate because ``measured_chp_heat_rates`` is off.
+    """
+    from market_sim.data.fleet import campd_bins as cb
+
+    meas = {
+        "CC_REGULAR": cb.measured_cc_heat_rates,
+        "CT_PEAKER": cb.measured_ct_heat_rates,
+        "ST_GAS": cb.measured_st_heat_rates,
+    }
+    bins = pd.read_csv(CAMPD_BINS)
+    d = bins[(bins["Plant_Group"] == group) & (bins["Plant_Avg_HR_MMBtu_MWh"] > 0)]
+    hr = d["Plant_Avg_HR_MMBtu_MWh"].astype(float)
+    if group in meas:
+        hr = d["Plant_Code"].map(meas[group]("ERCOT", year)).astype(float).fillna(hr)
+    return float(np.average(hr, weights=d["Nameplate_MW"].astype(float)))
+
+
+def load_sced(
+    years: tuple[int, ...], gas_basis: str = "ep"
+) -> tuple[pd.DataFrame, list[str]]:
     """One ON-status row per gas resource-hour, numeric, with delivery date + gas."""
     frames, names = [], []
-    gas = _gas_day_series()
+    gas = ep_gas_day_series(years) if gas_basis == "ep" else _gas_day_series()
     for y in years:
         for path in _sced_source_files(y):
             df = pd.read_parquet(path, columns=_COLS)
@@ -255,15 +319,21 @@ def main() -> None:
     ap.add_argument("--years", type=int, nargs="+", default=[2023])
     ap.add_argument("--campd-year", type=int, default=2023)
     ap.add_argument("--out", default=str(DEFAULT_OUT))
+    ap.add_argument("--gas-basis", choices=("ep", "hh"), default="ep")
+    ap.add_argument("--hr-basis", choices=("fleet", "bin"), default="fleet")
     args = ap.parse_args()
 
-    d, files = load_sced(tuple(args.years))
+    d, files = load_sced(tuple(args.years), args.gas_basis)
     per_res = per_resource_bands(d)
     groups: dict = {}
     for cls, outs in CLASS_TO_OUTPUT.items():
         pr = per_res[per_res["cls"] == cls]
         for og in outs:
-            bhr = output_base_hr({}, (og,))
+            bhr = (
+                fleet_class_hr(og, max(args.years))
+                if args.hr_basis == "fleet"
+                else output_base_hr({}, (og,))
+            )
             inc = incremental_ratio((og,), args.campd_year)
             bands = {
                 b: capwt(pr, b, bhr)
@@ -289,7 +359,16 @@ def main() -> None:
             "derived_on": date.today().isoformat(),
             "sced_delivery_years": args.years,
             "n_source_files": len(files),
-            "gas_basis": "Henry Hub daily + ERCOT basis (DAM cconly lineage basis)",
+            "gas_basis": (
+                "HH daily + measured monthly EP basis (dispatch basis; ERCOT-117/118)"
+                if args.gas_basis == "ep"
+                else "HH daily - 0.50 (lineage basis, ERCOT-117-inconsistent)"
+            ),
+            "hr_basis": (
+                "fleet CAMPD-measured operating HR, bin fallback"
+                if args.hr_basis == "fleet"
+                else "bin Plant_Avg_HR (lineage)"
+            ),
             "rule_23": "re-derive only on a SCED corpus or CAMPD-year change",
         },
         "offer_curve_by_group": curve,
