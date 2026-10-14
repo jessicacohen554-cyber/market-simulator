@@ -219,3 +219,19 @@ The control is still the committed keeper bundle unchanged; no control solve. §
 unmeasured and is reported in W1.
 
 **Launch:** 14 shards, `create_session` per prompt block in `shard-prompts-ucmilp3-miso.txt`; the record is in Addendum B.
+
+## Addendum B (2026-10-14 12:50–12:53Z): launch record
+
+14 span shards launched with `source_revision` `054dc883a91196241fc51e079f64f83d699d7ffa`, model `claude-opus-5-5`, tag
+`ucmilp:UC-3-MISO-shard`. Prompts = the blocks of `shard-prompts-ucmilp3-miso.txt` at `6d9c946e`, verified byte-equal to the
+per-arm template with only the year substituted (and the 2022 budget). Nothing in §§1–4, Addendum 0 or Addendum A changed.
+
+| year | arm A session | arm B session |
+|---|---|---|
+| 2019 | `session_01NffxjDiykaVwDCiJASMV4S` | `session_01Qb14cBZTZFw3TNq2K9LY7M` |
+| 2020 | `session_01KNg26QdV6t64NSSbseGR4P` | `session_01JmFA4vTzmH5GXhcLaPuZd7` |
+| 2021 | `session_018HoWwzCggzv4xea6DcN6rg` | `session_01TAeVqruKCEzqwoVsUhQRGd` |
+| 2022 (720 min) | `session_01FqUznJNGSCTBaLimof4aTy` | `session_01HJcHXuxo2BBAkdFBVVNPhJ` |
+| 2023 | `session_01XzgyoMkssY8wk6ztaXGJxA` | `session_0139GK3UFPFRGZtpBCf5yHjh` |
+| 2024 | `session_0186qYiVLZCXKRGwZWjUdEwP` | `session_01Qfnj51m1oMQy8fhoDcQbyc` |
+| 2025 | `session_01VkBj79ngtF1A8L5FGeMwe1` | `session_01DLSUvARfKLj8hn51EGaHSx` |
