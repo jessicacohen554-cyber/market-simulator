@@ -1,0 +1,442 @@
+{
+ "2021": {
+  "m3": {
+   "coverage": 1.0,
+   "tercile_edges": [
+    26.23,
+    40.39
+   ],
+   "lower_mean_err": 11.367,
+   "lower_hours": 2920,
+   "lower_dollar_h": 33191.0,
+   "mid_mean_err": 7.326,
+   "upper_mean_err": -5.029,
+   "model_mean": 43.01,
+   "actual_mean": 39.1,
+   "hours_le15_actual": 689,
+   "hours_le15_model": 0,
+   "ratio_le15": 0.0,
+   "hours_neg_actual": 31,
+   "hours_neg_model": 0,
+   "ratio_neg": 0.0
+  },
+  "m4": {
+   "coverage": 1.0,
+   "model_dormant_share": 1.0,
+   "actual_dormant_share": 0.849,
+   "model_mean_mcp": 0.0,
+   "actual_mean_mcp": 2.07,
+   "gap": 0.151
+  },
+  "classes": {
+   "CC_REGULAR": {
+    "plants": 21,
+    "plants_with_cems": 20,
+    "physics": {
+     "S": 50.0,
+     "UT": 21,
+     "DT": 6,
+     "mlf": 0.523
+    },
+    "class_twh": 27.19,
+    "m1_short_on_twh": 0.2361,
+    "m1_short_on_share": 0.0087,
+    "m1_short_on_runs": 257,
+    "m1_short_off_gaps": 29,
+    "m1_short_off_hours": 127,
+    "m1_starts_model": 465,
+    "m1_starts_cems": 797,
+    "m1_starts_ratio": 0.583,
+    "m2a_twh": 0.0,
+    "m2b_twh": 0.0995,
+    "m2_cems_on_model_off_twh": 1.7824,
+    "online_hours_cems": 71511,
+    "online_hours_model": 77925,
+    "m6_clusters": 21,
+    "m6_mw": 6634.9,
+    "m6_integers_per_window": 756,
+    "noload_fallback_plants": 4
+   },
+   "ST_GAS": {
+    "plants": 11,
+    "plants_with_cems": 11,
+    "physics": {
+     "S": 35.0,
+     "UT": 13,
+     "DT": 8,
+     "mlf": 0.239
+    },
+    "class_twh": 5.915,
+    "m1_short_on_twh": 0.0078,
+    "m1_short_on_share": 0.0013,
+    "m1_short_on_runs": 1,
+    "m1_short_off_gaps": 0,
+    "m1_short_off_hours": 0,
+    "m1_starts_model": 64,
+    "m1_starts_cems": 181,
+    "m1_starts_ratio": 0.354,
+    "m2a_twh": 0.0,
+    "m2b_twh": 0.0133,
+    "m2_cems_on_model_off_twh": 1.5293,
+    "online_hours_cems": 45538,
+    "online_hours_model": 39674,
+    "m6_clusters": 11,
+    "m6_mw": 7423.7,
+    "m6_integers_per_window": 396,
+    "noload_fallback_plants": 1
+   }
+  }
+ },
+ "2022": {
+  "m3": {
+   "coverage": 1.0,
+   "tercile_edges": [
+    47.24,
+    72.46
+   ],
+   "lower_mean_err": 21.065,
+   "lower_hours": 2920,
+   "lower_dollar_h": 61509.0,
+   "mid_mean_err": 14.809,
+   "upper_mean_err": -22.801,
+   "model_mean": 82.97,
+   "actual_mean": 80.37,
+   "hours_le15_actual": 50,
+   "hours_le15_model": 0,
+   "ratio_le15": 0.0,
+   "hours_neg_actual": 2,
+   "hours_neg_model": 0,
+   "ratio_neg": 0.0
+  },
+  "m4": {
+   "coverage": 1.0,
+   "model_dormant_share": 0.999,
+   "actual_dormant_share": 0.787,
+   "model_mean_mcp": 0.04,
+   "actual_mean_mcp": 7.22,
+   "gap": 0.212
+  },
+  "classes": {
+   "CC_REGULAR": {
+    "plants": 22,
+    "plants_with_cems": 20,
+    "physics": {
+     "S": 50.0,
+     "UT": 21,
+     "DT": 6,
+     "mlf": 0.523
+    },
+    "class_twh": 33.244,
+    "m1_short_on_twh": 0.2376,
+    "m1_short_on_share": 0.0071,
+    "m1_short_on_runs": 291,
+    "m1_short_off_gaps": 38,
+    "m1_short_off_hours": 172,
+    "m1_starts_model": 375,
+    "m1_starts_cems": 727,
+    "m1_starts_ratio": 0.516,
+    "m2a_twh": 0.0,
+    "m2b_twh": 0.08,
+    "m2_cems_on_model_off_twh": 1.0989,
+    "online_hours_cems": 79293,
+    "online_hours_model": 84951,
+    "m6_clusters": 22,
+    "m6_mw": 6709.7,
+    "m6_integers_per_window": 792,
+    "noload_fallback_plants": 7
+   },
+   "ST_GAS": {
+    "plants": 11,
+    "plants_with_cems": 10,
+    "physics": {
+     "S": 35.0,
+     "UT": 13,
+     "DT": 8,
+     "mlf": 0.239
+    },
+    "class_twh": 6.86,
+    "m1_short_on_twh": 0.0,
+    "m1_short_on_share": 0.0,
+    "m1_short_on_runs": 0,
+    "m1_short_off_gaps": 2,
+    "m1_short_off_hours": 11,
+    "m1_starts_model": 80,
+    "m1_starts_cems": 199,
+    "m1_starts_ratio": 0.402,
+    "m2a_twh": 0.0,
+    "m2b_twh": 0.0337,
+    "m2_cems_on_model_off_twh": 1.8951,
+    "online_hours_cems": 44639,
+    "online_hours_model": 44452,
+    "m6_clusters": 11,
+    "m6_mw": 7223.1,
+    "m6_integers_per_window": 396,
+    "noload_fallback_plants": 1
+   }
+  }
+ },
+ "2023": {
+  "m3": {
+   "coverage": 1.0,
+   "tercile_edges": [
+    22.8,
+    30.5
+   ],
+   "lower_mean_err": 10.309,
+   "lower_hours": 2920,
+   "lower_dollar_h": 30101.0,
+   "mid_mean_err": 7.218,
+   "upper_mean_err": -5.298,
+   "model_mean": 35.36,
+   "actual_mean": 32.05,
+   "hours_le15_actual": 450,
+   "hours_le15_model": 0,
+   "ratio_le15": 0.0,
+   "hours_neg_actual": 15,
+   "hours_neg_model": 0,
+   "ratio_neg": 0.0
+  },
+  "m4": {
+   "coverage": 1.0,
+   "model_dormant_share": 1.0,
+   "actual_dormant_share": 0.829,
+   "model_mean_mcp": 0.0,
+   "actual_mean_mcp": 2.12,
+   "gap": 0.171
+  },
+  "classes": {
+   "CC_REGULAR": {
+    "plants": 21,
+    "plants_with_cems": 20,
+    "physics": {
+     "S": 50.0,
+     "UT": 21,
+     "DT": 6,
+     "mlf": 0.523
+    },
+    "class_twh": 29.211,
+    "m1_short_on_twh": 0.2271,
+    "m1_short_on_share": 0.0078,
+    "m1_short_on_runs": 280,
+    "m1_short_off_gaps": 8,
+    "m1_short_off_hours": 34,
+    "m1_starts_model": 458,
+    "m1_starts_cems": 740,
+    "m1_starts_ratio": 0.619,
+    "m2a_twh": 0.0,
+    "m2b_twh": 0.0768,
+    "m2_cems_on_model_off_twh": 1.5359,
+    "online_hours_cems": 80706,
+    "online_hours_model": 84342,
+    "m6_clusters": 21,
+    "m6_mw": 6781.2,
+    "m6_integers_per_window": 756,
+    "noload_fallback_plants": 6
+   },
+   "ST_GAS": {
+    "plants": 11,
+    "plants_with_cems": 11,
+    "physics": {
+     "S": 35.0,
+     "UT": 13,
+     "DT": 8,
+     "mlf": 0.239
+    },
+    "class_twh": 8.525,
+    "m1_short_on_twh": 0.0007,
+    "m1_short_on_share": 0.0001,
+    "m1_short_on_runs": 1,
+    "m1_short_off_gaps": 3,
+    "m1_short_off_hours": 19,
+    "m1_starts_model": 83,
+    "m1_starts_cems": 186,
+    "m1_starts_ratio": 0.446,
+    "m2a_twh": 0.0,
+    "m2b_twh": 0.0351,
+    "m2_cems_on_model_off_twh": 1.5364,
+    "online_hours_cems": 45085,
+    "online_hours_model": 44760,
+    "m6_clusters": 11,
+    "m6_mw": 7785.9,
+    "m6_integers_per_window": 396,
+    "noload_fallback_plants": 1
+   }
+  }
+ },
+ "2024": {
+  "m3": {
+   "coverage": 1.0,
+   "tercile_edges": [
+    24.95,
+    35.32
+   ],
+   "lower_mean_err": 7.003,
+   "lower_hours": 2920,
+   "lower_dollar_h": 20449.0,
+   "mid_mean_err": 4.37,
+   "upper_mean_err": -6.856,
+   "model_mean": 38.97,
+   "actual_mean": 38.13,
+   "hours_le15_actual": 171,
+   "hours_le15_model": 0,
+   "ratio_le15": 0.0,
+   "hours_neg_actual": 1,
+   "hours_neg_model": 0,
+   "ratio_neg": 0.0
+  },
+  "m4": {
+   "coverage": 1.0,
+   "model_dormant_share": 1.0,
+   "actual_dormant_share": 0.828,
+   "model_mean_mcp": 0.0,
+   "actual_mean_mcp": 2.04,
+   "gap": 0.172
+  },
+  "classes": {
+   "CC_REGULAR": {
+    "plants": 22,
+    "plants_with_cems": 20,
+    "physics": {
+     "S": 50.0,
+     "UT": 21,
+     "DT": 6,
+     "mlf": 0.523
+    },
+    "class_twh": 32.576,
+    "m1_short_on_twh": 0.1388,
+    "m1_short_on_share": 0.0043,
+    "m1_short_on_runs": 231,
+    "m1_short_off_gaps": 7,
+    "m1_short_off_hours": 30,
+    "m1_starts_model": 405,
+    "m1_starts_cems": 649,
+    "m1_starts_ratio": 0.624,
+    "m2a_twh": 0.0,
+    "m2b_twh": 0.049,
+    "m2_cems_on_model_off_twh": 1.0962,
+    "online_hours_cems": 82452,
+    "online_hours_model": 86218,
+    "m6_clusters": 22,
+    "m6_mw": 6767.3,
+    "m6_integers_per_window": 792,
+    "noload_fallback_plants": 7
+   },
+   "ST_GAS": {
+    "plants": 11,
+    "plants_with_cems": 11,
+    "physics": {
+     "S": 35.0,
+     "UT": 13,
+     "DT": 8,
+     "mlf": 0.239
+    },
+    "class_twh": 8.275,
+    "m1_short_on_twh": 0.0,
+    "m1_short_on_share": 0.0,
+    "m1_short_on_runs": 0,
+    "m1_short_off_gaps": 0,
+    "m1_short_off_hours": 0,
+    "m1_starts_model": 87,
+    "m1_starts_cems": 162,
+    "m1_starts_ratio": 0.537,
+    "m2a_twh": 0.0,
+    "m2b_twh": 0.0323,
+    "m2_cems_on_model_off_twh": 1.4835,
+    "online_hours_cems": 46029,
+    "online_hours_model": 44278,
+    "m6_clusters": 11,
+    "m6_mw": 7772.5,
+    "m6_integers_per_window": 396,
+    "noload_fallback_plants": 1
+   }
+  }
+ },
+ "2025": {
+  "m3": {
+   "coverage": 1.0,
+   "tercile_edges": [
+    36.92,
+    57.63
+   ],
+   "lower_mean_err": 8.403,
+   "lower_hours": 2920,
+   "lower_dollar_h": 24536.0,
+   "mid_mean_err": 2.974,
+   "upper_mean_err": -21.699,
+   "model_mean": 60.52,
+   "actual_mean": 66.35,
+   "hours_le15_actual": 136,
+   "hours_le15_model": 0,
+   "ratio_le15": 0.0,
+   "hours_neg_actual": 1,
+   "hours_neg_model": 0,
+   "ratio_neg": 0.0
+  },
+  "m4": {
+   "coverage": 1.0,
+   "model_dormant_share": 0.997,
+   "actual_dormant_share": 0.682,
+   "model_mean_mcp": 0.09,
+   "actual_mean_mcp": 6.43,
+   "gap": 0.315
+  },
+  "classes": {
+   "CC_REGULAR": {
+    "plants": 22,
+    "plants_with_cems": 20,
+    "physics": {
+     "S": 50.0,
+     "UT": 21,
+     "DT": 6,
+     "mlf": 0.523
+    },
+    "class_twh": 31.741,
+    "m1_short_on_twh": 0.1694,
+    "m1_short_on_share": 0.0053,
+    "m1_short_on_runs": 253,
+    "m1_short_off_gaps": 21,
+    "m1_short_off_hours": 93,
+    "m1_starts_model": 489,
+    "m1_starts_cems": 804,
+    "m1_starts_ratio": 0.608,
+    "m2a_twh": 0.0,
+    "m2b_twh": 0.0526,
+    "m2_cems_on_model_off_twh": 0.9097,
+    "online_hours_cems": 87295,
+    "online_hours_model": 97746,
+    "m6_clusters": 22,
+    "m6_mw": 6708.0,
+    "m6_integers_per_window": 792,
+    "noload_fallback_plants": 4
+   },
+   "ST_GAS": {
+    "plants": 11,
+    "plants_with_cems": 11,
+    "physics": {
+     "S": 35.0,
+     "UT": 13,
+     "DT": 8,
+     "mlf": 0.239
+    },
+    "class_twh": 10.054,
+    "m1_short_on_twh": 0.0,
+    "m1_short_on_share": 0.0,
+    "m1_short_on_runs": 0,
+    "m1_short_off_gaps": 1,
+    "m1_short_off_hours": 7,
+    "m1_starts_model": 101,
+    "m1_starts_cems": 210,
+    "m1_starts_ratio": 0.481,
+    "m2a_twh": 0.0,
+    "m2b_twh": 0.0297,
+    "m2_cems_on_model_off_twh": 2.3612,
+    "online_hours_cems": 52185,
+    "online_hours_model": 50437,
+    "m6_clusters": 11,
+    "m6_mw": 7637.7,
+    "m6_integers_per_window": 396,
+    "noload_fallback_plants": 0
+   }
+  }
+ }
+}

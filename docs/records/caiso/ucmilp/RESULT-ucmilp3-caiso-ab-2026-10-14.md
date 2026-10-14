@@ -117,3 +117,132 @@ are transport only; the owner may cut them once this PR merges (a session cannot
   Optimal (2 TL, 2022), 0 infeasible, 0 unserved · forced peak 0.00 TWh (uc-1.1: 0.5–0.8) · **R**: the same 12 control flips as UC-2 (C1 CC 2022–25,
   CT 2021, C3a 2022–25, C3b 2022–23, C4 2025); T1a–c, T3, T4 met; C3a 2021 +12.7 → +19.8 % · price +$2.6–7.5/MWh in every hour class
   (imports/CTs + hydro water value) · wall 1.8–3.2× · not registered · cell `unit_commitment_milp` CAISO → R (clean engine).
+
+---
+
+## Addendum A — the relaunch at engine uc-1.5 (defect 7 fixed): **still R, but narrowed from 12 control flips to 4, all C3a**
+
+**Pin:** `2dd69d5aa936547b402a1ba54d2eba57e759b7e7` (#7246, uc-1.5). Shards ran at `de1d9005`, which is the pin plus records only. The
+PRECOMMIT Addendum A was pushed before any number: arm, readings, kills and verdict rule are unchanged. 2023 is the FIX-5 repro leg
+`a2635bd6`, reused because G-DRIFT `f92d01ea → 2dd69d5a` touches no `src/`, `scripts/` or `configs/` and the recipe is identical. Branch
+`claude/ucmilp-3-caiso-ab-uc15`. LP in the parent: zero. Nothing registered; the scoring sidecar and payload were removed and the bench
+parts restored.
+
+### A.1 Gate table: control → uc-1.4 → **uc-1.5**
+
+| year | C1 CC_REGULAR (TWh) | C1 CT_PEAKER | C3a | C3b | C3c h (actual) | C4 gas NRMSE | C8 CC scored / w/o MECH 28 | CC starts ÷ CEMS | uplift % |
+|---|---|---|---|---|---|---|---|---|---|
+| 2019 | +5.63 F → −2.91 P → **+2.11 P** | +0.38 → +3.82 → +1.64 P | no ref | no ref | — | .385 → .339 → .373 F | 8.6 → 1.9 → 3.7 % / 0.0 | 2.79 → 0.39 → **0.45** | 0.06 |
+| 2020 | +13.46 F → +3.95 P → **+10.33 F** | −0.04 → +3.80 → +1.33 P | no ref | no ref | — | .399 → .348 → .386 F | 6.2 → 1.5 → 3.0 / 0.0 | 2.56 → 0.29 → **0.34** | 0.09 |
+| 2021 | +6.59 F → −2.71 P → **+3.10 P** | +2.52 P → +5.37 F → **+3.44 P** | +12.7 % C → +19.8 % → **+15.7 %** (F\*) | 0.148 C → 0.218 → **0.178 P** | 0 vs 27 (artefact\*) | .348 → .319 → .335 F | 6.8 → 1.6 → 3.3 / 0.0 | 2.65 → 0.56 → **0.54** | 0.10 |
+| 2022 | +0.95 P → −8.75 F → **−3.38 P** | −0.63 → +1.72 → +0.15 P | +8.6 % P → +17.3 % F → **+12.5 % F** | 0.121 P → 0.221 F → **0.162 P** | 515 → 548 → 521 (510) P | .249 → .266 → .249 P | 7.1 → 1.0 → 2.5 / 0.0 | 2.89 → 0.72 → **0.82** | 0.09 |
+| 2023 | −1.07 P → −9.27 F → **−3.96 P** | −1.14 → +1.45 → −0.43 P | +7.6 % P → +16.6 % F → **+11.4 % F** | 0.117 P → 0.216 F → **0.158 P** | 51 → 88 → 73 (47) P | .235 → .271 → .248 P | 7.6 → 1.7 → 3.3 / 0.0 | 2.96 → 0.72 → **0.78** | 0.15 |
+| 2024 | −1.67 P → −9.80 F → **−4.76 P** | −1.04 → +2.20 → −0.07 P | +6.6 % P → +15.4 % F → **+10.5 % F** | 0.122 → 0.189 → 0.152 P | 0 vs 35 (artefact\*) | .240 → .265 → .240 P | 10.8 → 2.6 → 4.9 / 0.0 | 3.34 → 0.57 → **0.64** | 0.21 |
+| 2025 | −0.36 P → −10.77 F → **−4.43 P** | −1.74 → +0.52 → −1.20 P | +6.0 % P → +18.2 % F → **+11.5 % F** | 0.089 → 0.197 → 0.136 P | 0 vs 8 P | .283 P → .321 F → **.278 P** | 12.3 → 3.2 → 6.0 / 0.0 | 3.31 → 0.54 → **0.65** | 0.25 |
+
+\* Attestation artefacts, as in §0.1 (C6 UNATTESTED). Unserved energy is 0 MWh in every year, forced `_peak*` energy is 0.00 TWh, and
+C3c 2021/2024 are unchanged. **Sensitivity:** on the regenerated bench parts the same 4 flips fire.
+
+**Readings (UC-2 PRECOMMIT §§2–7):**
+- **T1a** met: 2019 +2.11 ≤ +5.24.
+- **T1b** NOT met: 2020 moved the right way, +13.46 → +10.33, but only 3.13 TWh against the 4.43 bar. C1 stays FAIL.
+- **T1c** met: 2021 +3.10 ≤ +5.71.
+- **T2** wrong way: C3a 2021 +12.7 → +15.7 %.
+- **T3** met in every year: 0.34–0.82× CEMS, all under the midpoints.
+- **T4** falls: 1.2–3.0 % of CC energy is in sub-min-up runs, against 12.8–19.4 %.
+- **T5** no move: model reserve dormancy stays 1.00.
+- **Kill #3 fires on 4 real flips, C3a 2022 / 2023 / 2024 / 2025, at +12.5 / +11.4 / +10.5 / +11.5 % against the ±10 % band → verdict R.**
+- What uc-1.5 removed from the uc-1.4 flip set:
+  - C1 CC_REGULAR 2022–25 (now −3.4 to −4.8 TWh, inside the bands)
+  - C1 CT_PEAKER 2021
+  - C3b 2022–23
+  - C4 2025
+
+### A.2 What defect 7 was doing, and what is left (zero LP; `data/ucmilp15_readings/price_class_diag.{py,json}`)
+
+**Class energy, uc-1.5 minus uc-1.4 (TWh):**
+- CC_REGULAR: +5.0 / +6.4 / +5.8 / +5.4 / +5.3 / +5.0 / +6.3
+- imports: −2.6 / −3.7 / −3.6 / −3.6 / −3.2 / −2.7 / −4.4
+- CT_PEAKER: −1.6 to −2.5
+
+The double-counted no-load had made committed CC look dearer than it is (CAISO 2023: $307 M, 12.4 % of CC energy cost; FINDING-ucmilp-fix5). Removing it brought back roughly 60 % of the CC
+energy the uc-1.4 arm had lost. Against the control, CC is still −2.9 to −4.3 TWh/yr, imports +1.9 to +3.4, CT +0.5 to +1.4.
+
+**Price (CAISO load-weighted, $/MWh), control → uc-1.4 → uc-1.5:**
+- 2019: 38.1 → 42.3 → 40.8
+- 2020: 34.3 → 36.9 → 35.5
+- 2021: 54.6 → 58.7 → 56.7
+- 2022: 88.0 → 95.5 → 91.4
+- 2023: 56.5 → 61.5 → 58.7
+- 2024: 35.3 → 38.4 → 36.7
+- 2025: 35.1 → 39.3 → 37.0
+
+So the residual lift over the control is **+$1.4–3.4/MWh, about half of uc-1.4's**.
+
+**Shape of the residual lift:**
+- It sits mostly in the **low tercile** (+1.6 to +4.0) and in **solar hours, 10–16 h** (+1.5 to +5.1).
+- The high tercile is +0.6 to +4.0, and overnight is +0.5 to +2.3.
+- Hours at or below $15 still fall: 2024 1,024 → 864; 2025 869 → 677.
+- Hydro carries the marginal flag in 96–99 % of low-tercile hours in every arm. CC_REGULAR's share falls slightly, e.g. 2023 4.2 → 2.8 %.
+
+**Reading:**
+- The mechanism is the same as at uc-1.4, at about half the size. The UC still keeps ~3–4 TWh/yr of CC off that the keeper's RA bridge
+  held on. The import ladder and CTs replace it at a higher price, and the energy-budgeted hydro's water value carries that into the
+  low-price and solar hours.
+- C3a's band is ±10 %. The keeper sat at +6.0 to +8.6 % in 2022–25, so a +3.9 to +5.5 pt lift is enough to cross it.
+- The C1 and starts readings say the UC's commitment is now closer to physics than the keeper's. CC is −3 to −5 TWh in the model-low years
+  against −0.4 to −1.7 in the keeper, but inside the band; starts are 0.34–0.82× CEMS against 2.6–3.3×. The price says the replacement supply
+  is still dearer than CAISO's real one.
+- That is the same object the uc-1.4 reading named: a measured import / WEIM price print. It is a calibration-lane question, not a `uc_*`
+  value. Nothing was tuned.
+
+### A.3 Wall (uc-1.5)
+
+| year | P0 s | UC s | P1 s | total s | ratio total ÷ (P0+P1) | MILP mean / p95 s | nodes p95 | TL hits | int / clusters |
+|---|---|---|---|---|---|---|---|---|---|
+| 2019 | 765.5 | 8,849.3 | 814.1 | 10,495.8 | **6.64** | 23.9 / 98.4 | 382 | **6** (w38, 43–45, 56–57; gap ≤ 3.18e-3) | 32 / 110 |
+| 2020 | ≈1,010 (derived) | 1,727.7 (Σ UC) | 853.8 | 3,665.7 | ≈1.97 | 4.51 / 7.53 | 10.8 | 0 | 35 / 114 |
+| 2021 | 927.1 | 1,500.1 | 1,029.2 | 3,533.5 | 1.81 | 3.77 / 8.12 | 11 | 0 | 33 / 112 |
+| 2022 | 763.6 | 2,814.2 | 838.3 | 4,488.9 | 2.80 | 7.39 / 16.03 | 41.8 | 1 (w364, gap 1.27e-3) | 34 / 115 |
+| 2023 (FIX-5 leg) | — | 1,878.6 (Σ UC) | — | — | — (not in that leg's record) | 4.95 / 9.37 | 24 | 0 | — |
+| 2024 | 664.7 | 1,383.4 | 516.0 | 2,621.9 | 2.22 | 3.50 / 7.35 | 13.8 | 0 | 34 / 115 |
+| 2025 | 820.2 | 1,317.5 | 641.8 | 2,850.6 | 1.95 | 3.30 / 6.99 | 11 | 0 | 33 / 114 |
+
+- 2,548 of 2,555 windows were Optimal; 7 hit the time limit, every one with an incumbent at gap ≤ 3.18e-3; 0 were infeasible.
+- W2 (≤ 3 time-limit hits per year) is **breached in 2019 (6)**. It is reported, not a kill (GATESPEC §5 kills only infeasibility).
+- **Cost finding for the desk:** CAISO 2019 at uc-1.5 is 4.3× slower per window than at uc-1.4 (23.9 s vs 5.5 s). The slow windows
+  cluster in mid-to-late February. One pass through them ran at 96.6 s per window (shard report, 14:46Z). The cheaper CC
+  energy may make more commitment combinations near-tie for the MILP to separate (hypothesis, not tested here). Ratio 6.6× against the 3× D-2 ceiling.
+- 2020's P0 is derived (total − UC − P1 − ~75 s I/O) because the shard was archived before it posted its phase line.
+
+### A.4 Verdict and card
+
+- **Verdict R on the clean engine (uc-1.5)**, by kill #3 on C3a 2022–25 only. T1a/T1c/T3/T4 met; T1b moved right but sub-bar; T2 wrong
+  way. The cell stays **R**, with evidence re-pointed to this addendum.
+- **D-6 card (copy-paste):** *"UC-3 CAISO at uc-1.5 — record R (narrow). Fixing defect 7 restores ~60 % of the CC energy uc-1.4 lost.
+  Of the 12 control flips, 8 clear: C1 CC 2022–25, CT 2021, C3b 2022–23, C4 2025. C1 CC_REGULAR 2019/2021 go FAIL → PASS; CC starts fall
+  2.6–3.3× → 0.34–0.82× CEMS. The 4 left are all C3a 2022–25 (+10.5 to +12.5 % vs the ±10 % band): the price body still sits
+  $1.4–3.4/MWh above the keeper, because ~3–4 TWh/yr of CC is replaced by imports/CTs, carried through hydro water value. Options:
+  (1) record R, stage default-off for CAISO [recommended]; (2) hold for a measured import-price object (CAISO calibration lane), then re-run;
+  (3) promote on structure: closer to physics on commitment and C1, but 4 C3a flips and a 6.6× wall in 2019."*
+
+### A.5 Bundles
+
+- **Legs:**
+  - `claude/ucmilp15-caiso-2019` `6bc13434`
+  - `-2020` `8739f36c`
+  - `-2021` `c7f819c4`
+  - `-2022` `ea4e243e`
+  - `-2024` `b0f55c2e`
+  - `-2025` `9ea376e4`
+  - 2023 is `claude/ucmilp-fix5-caiso-2023` `a2635bd6`
+  - All are full bundles with `dispatch/`; no file is over 95 MB and none was split.
+- **Slim span:** `docs/records/caiso/ucmilp/data/ucmilp15_caiso_span/`.
+- **Readings:** `data/ucmilp15_readings/`.
+- **Shards:** 6 launched, 6 archived. Nothing was deleted (rule 31); no promotion is proposed.
+
+#### Log entry
+
+- 2026-10-14 · UC-3-CAISO uc-1.5 relaunch · `claude/ucmilp-3-caiso-ab-uc15` · Addendum A `de1d9005` before any number · 6 legs + reused
+  FIX-5 2023 · **R (narrow)**: 4 flips, all C3a 2022–25 (+10.5 to +12.5 %); C1 CC 2019/2021 FAIL → PASS, 2020 +13.46 → +10.33 (sub-bar);
+  CC starts 0.34–0.82× CEMS; price +$1.4–3.4/MWh vs keeper (uc-1.4: +2.6–7.5) · wall 1.8–2.8×, 2019 6.6× (6 TL) · cell R.

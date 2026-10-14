@@ -108,7 +108,12 @@ logger = logging.getLogger(__name__)
 #: incremental basis — the average-rate offer less the no-load heat it carries
 #: per MWh at full output — so the explicit no-load is paid once
 #: (FINDING-ucmilp-fix5-cost-basis-2026-10-14).
-UC_ENGINE_VERSION = "uc-1.5"
+#: uc-1.6: an integer cluster member's share of every reserve headroom row the
+#: window carries is its committed capacity ``pmax * a * u / n``, not
+#: ``pmax * a`` (``window.reserve_headroom_u_terms``;
+#: FINDING-ucmilp-fix6-reserve-headroom-2026-10-14). A no-op without
+#: reserve co-optimization.
+UC_ENGINE_VERSION = "uc-1.6"
 
 #: The most recent stage objects (one per year solved in this process), for a
 #: harness that writes the post-P1 uplift sidecar; drained by :func:`take_uc_stages`.
@@ -744,6 +749,7 @@ class UcStage:
                     "columns": int(result.columns),
                     "rows": int(result.rows),
                     "guard_rows": int(window._n_guard_rows),
+                    "reserve_gated_rows": int(window.n_reserve_gated_rows),
                     "slim": {
                         "reduced": window.slim is not None,
                         "columns": int(result.slim_columns),

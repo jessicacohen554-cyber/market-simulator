@@ -21,6 +21,14 @@ dispatch (``uc_boundary_mode = "p0_targets"``); the posture family is refused
 upstream; a hydraulic cascade (``hydro_cascade``) is refused here because its
 lagged upstream terms wrap cyclically at the window edge and the slim P0
 extract carries no pond levels to pin them to (DESIGN section 8).
+
+Reserve headroom (uc-1.6, FINDING-ucmilp-fix6-reserve-headroom-2026-10-14):
+where the sliced LP carries the ISO's reserve co-optimization, an integer
+cluster member's share of every reserve headroom row is its COMMITTED
+capacity, ``pmax * a * u / n``, not ``pmax * a`` (:func:`reserve_headroom_u_terms`)
+— the ceiling the schedule later imposes on P1. The rows stay the production
+rows (one reserve mechanism, rule 19); only their integer-member capacity
+moves from the right-hand side onto ``u``.
 """
 
 from __future__ import annotations
@@ -449,6 +457,127 @@ def _state_cyclic_rows(
     return out
 
 
+def reserve_headroom_u_terms(
+    model: DispatchModel,
+    params: UcClusterParams,
+    kwargs: dict,
+    row0: int,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """The u-gate of the reserve headroom rows the sliced LP carries.
+
+    Every capacity-anchored reserve headroom row of the production LP reads
+    ``sum P + sum R (+ storage room) <= sum_{eligible g} pmax_g * a_g,t (+ ...)``
+    (``lp/reserve_rows.py``: the zone-aggregate shared-headroom rows and the
+    per-generator joint P+R pool rows), so an integer cluster at ``u = 0``
+    still "carries" reserve on its whole available capacity. Inside the
+    window that capacity is moved onto the cluster's ``u``: member ``g`` of
+    integer cluster ``c`` contributes ``pmax_g * a_g,t * u_c,t / n_c`` to the
+    row, the ceiling the schedule puts on P1 (``pipeline/uc.py``,
+    ``availability * u / n``), so reserve on an integer member is
+    ``r <= pmax * a * u / n - P``. At ``u = n`` the row is the production row
+    unchanged.
+
+    No product is exempt: an integer cluster is by construction NOT fast-start
+    (:func:`~market_sim.model.uc.params.integer_gate`, the posture fast-start
+    exemption inverted), and that exemption is exactly the set whose OFFLINE
+    capacity the reserve specs credit for non-synchronized products (offline
+    supplemental / non-spin; ``model.reserves.spec.POSTURE_FAST_START_*``).
+    Non-integer members — fast-start or not a cluster — keep ``pmax * a``.
+    Rows already P-gated (a legacy ``reserve_online_gated`` class, whose row
+    has no capacity right-hand side) are left alone; the pergen per-column
+    online-gated coupling rows are separate rows and are untouched.
+
+    Args:
+        model: The window's production ``DispatchModel`` (built, not solved).
+        params: The cluster struct-of-arrays.
+        kwargs: The window dispatch kwargs the model was built from (the
+            reserve spec: eligibility, headroom rows, pergen pools).
+        row0: Index of the first reserve row on the HiGHS handle (the reserve
+            block is the LP's last ``model._n_reserve_rows`` rows).
+
+    Returns:
+        ``(rows, u_local, vals, rhs_rows, rhs_cut)``: the coefficient triplets
+        of the ``u`` columns (``u_local`` = ``t * n_int + k``, the window's
+        ``u`` block order; duplicates are summed by the caller's sparse
+        assembly) and the per-row right-hand-side reduction (the integer
+        member capacity the triplets now carry). All empty when the LP carries
+        no reserve co-optimization or no integer member is reserve-eligible.
+    """
+    empty_i = np.zeros(0, dtype=np.int64)
+    empty = (empty_i, empty_i, np.zeros(0), empty_i, np.zeros(0))
+    lay = model.layout
+    if not getattr(model, "_coopt", False) or lay.n_reserve == 0:
+        return empty
+    kw = kwargs
+    k_all = params.integer_clusters
+    n_int = int(k_all.size)
+    if not n_int:
+        return empty
+    T = int(lay.T)
+    fleet = model.fleet
+    int_local = np.full(params.n_clusters, -1)
+    int_local[k_all] = np.arange(n_int)
+    is_int_mem = int_local[params.member_cluster] >= 0
+    mem_gen = params.member_gen[is_int_mem]
+    mem_k = int_local[params.member_cluster[is_int_mem]]
+    k_of_gen = np.full(lay.n_gen, -1)
+    k_of_gen[mem_gen] = mem_k
+    n_units = params.n_units[k_all].astype(float)
+    pmax = np.asarray(fleet.pmax, dtype=float)
+    avail = np.asarray(fleet.availability, dtype=float)
+    zone_idx = np.asarray(fleet.zone_idx, dtype=int)
+    # (entry -> row within one hour of the headroom block, entry -> gen),
+    # plus the hour stride of the block.
+    pergen_gidx = kw.get("reserve_pergen_gen_idx")
+    if pergen_gidx is not None:
+        gidx = np.asarray(pergen_gidx, dtype=int)
+        col = kw.get("reserve_pergen_col")
+        col = np.arange(gidx.size) if col is None else np.asarray(col, dtype=int)
+        n_pools = int(col.max()) + 1 if col.size else 0
+        sel = k_of_gen[gidx] >= 0
+        e_row, e_gen, stride = col[sel], gidx[sel], n_pools
+    else:
+        elig = kw.get("reserve_eligible")
+        elig2d = np.atleast_2d(
+            np.ones(lay.n_gen, dtype=bool)
+            if elig is None
+            else np.asarray(elig, dtype=bool)
+        )
+        n_classes = elig2d.shape[0]
+        hr_prod = kw.get("reserve_headroom_products")
+        if hr_prod is None:
+            hr_elig = elig2d
+            gated = kw.get("reserve_online_gated")
+            gated = (
+                np.zeros(n_classes, dtype=bool)
+                if gated is None
+                else np.asarray(gated, dtype=bool).reshape(n_classes)
+            )
+        else:
+            hr_elig = np.atleast_2d(
+                np.asarray(kw["reserve_headroom_eligible"], dtype=bool)
+            )
+            gated = np.zeros(hr_elig.shape[0], dtype=bool)
+        n_zones = int(lay.n_zones)
+        hh, gg = np.nonzero(hr_elig & ~gated[:, None])
+        sel = k_of_gen[gg] >= 0
+        hh, gg = hh[sel], gg[sel]
+        e_row, e_gen, stride = (
+            hh * n_zones + zone_idx[gg],
+            gg,
+            hr_elig.shape[0] * n_zones,
+        )
+    if not e_gen.size:
+        return empty
+    t = np.arange(T)
+    cap = pmax[e_gen][:, None] * avail[e_gen, :T]  # (n_entries, T)
+    rows = (row0 + t[None, :] * stride + e_row[:, None]).ravel()
+    k_e = k_of_gen[e_gen]
+    u_local = (t[None, :] * n_int + k_e[:, None]).ravel()
+    vals = (-cap / n_units[k_e][:, None]).ravel()
+    return rows, u_local, vals, rows, cap.ravel()
+
+
 def prefix_bounds(
     params: UcClusterParams,
     int_idx: np.ndarray,
@@ -564,6 +693,9 @@ class UcWindowModel:
         self.n_total = self.W0 + self.n_int * self.T_w
         self.fixed_on = 0
         self.fixed_off = 0
+        #: Reserve headroom rows whose integer-member capacity moved onto ``u``
+        #: (:func:`reserve_headroom_u_terms`; 0 when no reserve is co-optimized).
+        self.n_reserve_gated_rows = 0
         self._n_uc_rows = 0
         self._n_guard_rows = 0
         self._n_ramp_rows = 0
@@ -571,7 +703,7 @@ class UcWindowModel:
         self.hist_w = np.zeros((self.n_int, self.T_w))
         if self.n_int:
             self.hist_v, self.hist_w = self._carry_history(state)
-            self._add_uc_columns(noload_w, state, fix_on, fix_off)
+            self._add_uc_columns(noload_w, state, fix_on, fix_off, inputs.kwargs)
             self._add_uc_rows(state, floor_need_ahead)
             self._set_integrality()
         self._pin_state_rows(state, soc_terminal)
@@ -718,7 +850,7 @@ class UcWindowModel:
             hist_w = np.take_along_axis(csum_w, m_dn, axis=1)
         return hist_v, hist_w
 
-    def _add_uc_columns(self, noload_w, state, fix_on, fix_off) -> None:
+    def _add_uc_columns(self, noload_w, state, fix_on, fix_off, kwargs=None) -> None:
         p = self.params
         k = self.int_idx
         T_w, n_int = self.T_w, self.n_int
@@ -754,17 +886,43 @@ class UcWindowModel:
         costs = np.concatenate([u_cost, v_cost, np.zeros(n_int * T_w)])
         lower = np.concatenate([u_lb, np.zeros(n_int * T_w), np.zeros(n_int * T_w)])
         upper = np.concatenate([u_ub, vw_ub, vw_ub])
-        empty_i = np.array([], dtype=np.int32)
+        # Reserve headroom u-gate: the u columns enter the production reserve
+        # headroom rows with -pmax*a/n per integer member, and those rows'
+        # right-hand side drops the same member capacity (uc-1.6).
+        n_row = int(self.h.getNumRow())
+        r_rows, r_u, r_vals, rhs_rows, rhs_cut = reserve_headroom_u_terms(
+            self.model, p, kwargs or {}, n_row - int(self.model._n_reserve_rows)
+        )
+        A_u = sp.csc_matrix((r_vals, (r_rows, r_u)), shape=(n_row, n_new))
+        A_u.sum_duplicates()
         self.h.addCols(
             n_new,
             costs,
             lower,
             upper,
-            0,
-            np.zeros(n_new, dtype=np.int32),
-            empty_i,
-            np.array([], dtype=float),
+            int(A_u.nnz),
+            np.asarray(A_u.indptr[:-1], dtype=np.int32),
+            np.asarray(A_u.indices, dtype=np.int32),
+            np.asarray(A_u.data, dtype=float),
         )
+        if rhs_rows.size:
+            cut = np.bincount(rhs_rows, weights=rhs_cut, minlength=n_row)
+            touched = np.flatnonzero(cut > 0.0).astype(np.int32)
+            lp = self.h.getLp()
+            row_lo = np.asarray(lp.row_lower_, dtype=float)[touched]
+            row_hi = np.asarray(lp.row_upper_, dtype=float)[touched]
+            new_hi = row_hi - cut[touched]
+            tol = 1e-6 * np.maximum(1.0, np.abs(row_hi))
+            if np.any(new_hi < -tol):
+                raise RuntimeError(
+                    "reserve headroom u-gate: integer member capacity exceeds "
+                    "the row's right-hand side (the reserve block is not where "
+                    "the layout says)"
+                )
+            self.h.changeRowsBounds(
+                int(touched.size), touched, row_lo, np.maximum(new_hi, 0.0)
+            )
+            self.n_reserve_gated_rows = int(touched.size)
         self.u_lower, self.u_upper = lb, ub
 
     def _add_uc_rows(
