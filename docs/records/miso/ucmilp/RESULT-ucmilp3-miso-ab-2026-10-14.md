@@ -163,10 +163,23 @@ shortfall west; it does not create it.
 >
 > Options: record R (A) · record arm-B finding and charter a VLR-commitment design · hold.
 
+## 6. Engine-version caveat: uc-1.6 landed after these solves
+
+While this RESULT was being written, `main` merged **uc-1.6** (UC-1-FIX-6, #7253, `1aec8c4e`): *"an offline integer cluster carries no
+reserve"*.
+- **What it changes.** Inside the UC window an integer member's reserve headroom becomes `pmax·a·u/n` instead of `pmax·a`. It is a
+  no-op without reserve co-optimization; P1 rows are unchanged.
+- **MISO is probably exposed.** MISO's P1 carries the `miso_rbdc` reserve family in every year (`hourly/reserve_family_<y>`), so the UC
+  window very likely co-optimizes reserve, and uc-1.6 is probably **LIVE for both arms in all years**.
+- **Direction and size are not measured here.** A cluster credited with reserve while offline relaxes the UC's commitment need. Fixing
+  it should commit more slow units, which pushes in the direction of the arm-A CC and ST_GAS energy shortfalls. The size needs a solve.
+- **So both verdicts carry this caveat.** A uc-1.6 relaunch, under the same PRECOMMIT with only the pin moving and on ≥ 22.4 GiB
+  containers, is UC-DESK's call. This lane does not relaunch on its own.
+
 ## Log entry
 
 - 2026-10-14 · UC-3-MISO · pin uc-1.5 `2dd69d5a` (lane `054dc883`) · 14 shards → 11 legs:
   - A 7/7 years. B 2019–22; B 2023–25 OOM on 16.4–17.4 GiB containers, twice each (2024's first launch was also rate-limited, Addendum C).
   - Every window Optimal, 0 TL hits.
 - **A: R** (4 flips + T1 wrong way). **B: structure supports un-stack** with a 4.6–6.1 TWh/yr ST_GAS energy cost, owner question
-  raised. No defect found in uc-1.5.
+  raised. No new defect found in uc-1.5. uc-1.6 (reserve headroom on offline integer clusters) merged after these solves and is probably live for MISO: both verdicts carry that caveat (§6).
