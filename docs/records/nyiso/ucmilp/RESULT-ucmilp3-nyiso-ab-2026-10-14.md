@@ -200,3 +200,118 @@ The legs are promotable in form, but no promotion is proposed.
   price up 5/5 years (CC decommit → CT/CHP/imports marginal); CC starts 0.54–0.76× CEMS; wall 3.3–21.7× P0+P1 · nothing registered
   (E13) · slim span under `docs/records/nyiso/ucmilp/data/ucmilp3_nyiso_span/` · cell `unit_commitment_milp` NYISO → R (clean) · no
   promotion proposed.
+
+---
+
+# Addendum A — relaunch at engine uc-1.5 (defect 7: no-load paid once), 2026-10-14 — **R (3 real flips; T2 and T3 now met)**
+
+**Why:** UC-DESK (12:46Z) — engine defect 7 (`FINDING-ucmilp-fix5-cost-basis-2026-10-14.md`): the UC objective paid each integer member's
+no-load twice (explicit `noload` + the average-rate heat rate in `mc_base`; NYISO CC $65–230 M/yr). It over-costed commitment in the
+direction of the uc-1.4 signature, so the uc-1.4 R above is **confounded and superseded by this addendum**. **Pin:** `da11c2489b84c010f5658023c08c97973cd92c47`
+(main `2dd69d5a` = uc-1.5, + PRECOMMIT Addendum A, pushed before any shard). Arm, control, readings, kills and verdict rule unchanged
+(PRECOMMIT Addendum A; G-DRIFT `580c4fbf → 2dd69d5a`: UC path only, solve surface 0 moved). LP in this session: zero. Nothing registered.
+
+## A.0 Headline
+
+**Removing the double-counted no-load restores most of the CC energy and flips the price sign, but the control still does not stay
+calibrated.** CC_REGULAR comes back 2.9–4.3 TWh/yr vs uc-1.4 (now −2.2 to −3.1 TWh vs control, inside the C1 band every year — **T3 met**);
+the price body now moves DOWN in 4 of 5 years (−$0.4 to −2.7/MWh; 2023 +$0.6) and **2024 C3a −1.5 % (T2 met)**. Three real flips remain:
+**C1 ST_GAS 2021** (−3.44 → −4.81 TWh), **C1 CC_CHP 2023** (share +2.4 → +3.2 pp), **C3a 2025** (−7.7 → **−12.6 %**). The new driver is
+**ST_GAS decommitment** (−1.4 to −3.0 TWh/yr vs control; starts 0.35–0.54× CEMS) with imports still +5.1 to +6.3 TWh/yr. Engine clean:
+1,825/1,825 windows Optimal, 0 TL, 0 unserved, uplift 1.15–1.55 %. **Verdict `R`** (kill #3), now on an un-confounded engine but a
+narrower miss than uc-1.4 (3 flips vs 5; T2/T3 met).
+
+## A.1 Gate table — control → uc-1.5 [uc-1.4]
+
+| year | C1 (Δ TWh vs actual) | C3a | C3b | C3c | C4 gas r | C8 ST_GAS as printed / w/o MECH 28 · CC | unserved | uplift % ($M) |
+|---|---|---|---|---|---|---|---|---|
+| 2021 | CC_REGULAR +1.31 → −1.83 PASS [−6.11 FAIL]; **ST_GAS −3.44 → −4.81 FAIL** [−4.32]; CC_CHP +1.52 → +0.81 | +4.3 → +2.0 % [+9.3] | 0.117 → 0.109 | 0 / 3 PASS | 0.918 → 0.928 | 22.1 → **30.2 % FAIL as printed** / 22.2 % PASS · 1.6 % | 0 | 1.55 (101) |
+| 2022 | CC_REGULAR +1.24 → −0.83; ST_GAS −2.19 → −3.79; CC_CHP +2.43 → +1.80 — all PASS | −0.7 → −3.8 % [+2.3] | 0.149 → 0.166 | CAVEAT → FAIL\* (5 / 101 h) | 0.826 → 0.829 | 14.9 → 22.9 % / 15.8 % · 1.4 % | 0 | 1.38 (175) |
+| 2023 | CC_REGULAR +0.61 → −2.04 PASS [−5.43 FAIL]; **CC_CHP +2.81 → +3.05 (+3.2 pp) FAIL** [+3.75]; ST_GAS +1.34 → −1.66 | +2.0 → +4.3 % PASS [+10.5 FAIL] | 0.129 → 0.157 | CAVEAT → FAIL\* (0 / 10 h) | 0.919 → 0.921 | 11.3 → 16.4 % / 12.4 % · 2.1 % | 0 | 1.28 (67) |
+| 2024 | CC_REGULAR +2.02 → −0.40; ST_GAS −0.51 → −3.09; CC_CHP +0.84 → +0.48 — all PASS | −0.8 → **−1.5 %** (T2 met) [+4.5] | 0.118 → 0.143 | CAVEAT → FAIL\* (0 / 13 h) | 0.890 → 0.887 | 13.6 → 20.7 % / 15.3 % · 1.1 % | 0 | 1.15 (67) |
+| 2025 | (C1 SKIPPED) CC_REGULAR 35.39 → 32.70 TWh; ST_GAS 10.25 → 8.06 | **−7.7 → −12.6 % FAIL** [−7.4] | 0.148 → 0.190 | 8 → 0 / 42 h CAVEAT → FAIL\* | 0.841 → 0.839 | 11.8 → 17.0 % / 12.1 % · 0.8 % | 0 | 1.35 (124) |
+
+\* attestation artefact (C6 UNATTESTED), magnitudes as control except 2025 (8 → 0 h > $300). C8 2021 crosses the 30 % cap only with MECH 28
+inside the D-2 sum (rule-20 R4: MECH 28 reported, not budgeted) — reported, **not counted as a flip**; it is the kept `reliability_floor`'s
+share rising as ST_GAS shrinks (the SPP stacking signature, now visible in NYISO). Determination CALIBRATED → NOT-YET. 2021 §9 envelope:
+ΔC3a −2.3 pt, ΔST_GAS −1.37 TWh → UC-attributable.
+
+## A.2 Readings
+
+| # | result | met? |
+|---|---|---|
+| T1 | real flips: C1 ST_GAS 2021, C1 CC_CHP 2023, C3a 2025 (+ C8 2021 under the printed reading only; 4 C3c attestation artefacts) | **breached → kill #3** |
+| T2 | 2024 C3a −1.5 % ∈ [−1.8, +0.2] | **met** |
+| T3 | C1 CC_REGULAR PASS 2021–2024 (−1.83 / −0.83 / −2.04 / −0.40 TWh) | **met** |
+| T4 | ≤ $15 ratios 0.00 every year; lower-tercile error control → uc-1.5: +12.0 → +11.4, +23.0 → +21.1, +9.5 → +10.3, +6.7 → +7.0, +8.9 → +8.4 | mixed: down 3/5, up 2/5 |
+| T5 | `reliability_floor` ST_GAS 1.35 / 1.12 / 1.06 / 1.27 / 1.23 TWh (= 15.8–22.2 % of a shrunken class); MECH 28 adds 0.35–0.51 TWh | the kept floor's SHARE rises (stacking by shrinkage) |
+| S2 | CC starts 465 / 375 / 458 / 405 / 489 = **0.52–0.62× CEMS**; ST_GAS 64 / 80 / 83 / 87 / 101 = **0.35–0.54×** | under-cycling persists |
+| S5 / M4 | reserve dormancy 0.997–1.00 | unmoved |
+| U1 | CC peak-tranche 0.06 / 0.27 / 0.50 / 0.71 / 0.68 TWh (control 0.07–0.76) | defect 6 stays gone |
+| W2–W4 | 0 TL, uplift 1.15–1.55 %, 0 infeasible | met |
+
+### A.2.1 U5 — uc-1.4 → uc-1.5 per year (what defect 7 was worth on NYISO)
+
+| year | price $/MWh (ctl / uc-1.4 / uc-1.5) | C3a | CC_REGULAR TWh | ST_GAS TWh | imports TWh | uplift % |
+|---|---|---|---|---|---|---|
+| 2021 | 43.95 / 46.07 / 43.01 | +9.3 → +2.0 | 24.21 → 28.49 (ctl 31.63) | 4.99 → 4.50 (5.87) | 33.58 → 33.29 (27.48) | 1.25 → 1.55 |
+| 2022 | 85.70 / 88.25 / 82.97 | +2.3 → −3.8 | 31.05 → 34.12 (36.35) | 5.81 → 5.27 (6.99) | 31.51 → 31.30 (25.88) | 1.24 → 1.38 |
+| 2023 | 34.59 / 37.48 / 35.36 | +10.5 → +4.3 | 27.64 → 31.03 (33.67) | 8.01 → 6.66 (9.67) | 28.85 → 28.26 (23.12) | 0.95 → 1.28 |
+| 2024 | 39.27 / 41.35 / 38.97 | +4.5 → −1.5 | 30.62 → 33.69 (36.11) | 7.43 → 6.93 (9.51) | 29.19 → 28.41 (23.15) | 1.06 → 1.15 |
+| 2025 | 63.90 / 64.12 / 60.52 | −7.4 → −12.6 | 29.83 → 32.70 (35.39) | 8.77 → 8.06 (10.25) | 26.09 → 25.84 (19.59) | 1.40 → 1.35 |
+
+Defect 7 was worth **+2.9 to +4.3 TWh/yr of CC_REGULAR** and **$2.1–5.3/MWh of price** (uc-1.4 over-priced). It did NOT move imports
+(−0.2 to −0.8 TWh) or ST_GAS (−0.5 to −1.4 TWh further down): with no-load paid once the stage re-commits CC but still decommits ST_GAS,
+and the seam keeps the ~5–6 TWh/yr it took at uc-1.4.
+
+### A.2.2 U4 — price move by sign and hour class (control → uc-1.5, zero LP)
+
+| year | Δ mean | Δ lower / mid / upper tercile | share of zone-hours up > $1 / down > $1 | marginal mix in DOWN-hours: control → arm |
+|---|---|---|---|---|
+| 2021 | −0.99 | −0.28 / −1.25 / −1.42 | 14 % / 39 % | CC_CHP 37, CC_REG 25, ST_GAS 15 → **CC_CHP 51**, CC_REG 13, CT 12 |
+| 2022 | −2.73 | −1.14 / −2.02 / −5.02 | 16 % / 55 % | CC_REG 30, CC_CHP 27, ST_GAS 19 → **CC_CHP 37**, CC_REG 20, CT 12 |
+| 2023 | +0.61 | +0.63 / +1.15 / +0.05 | 38 % / 19 % | (up-hours) ST_GAS 48, CC_REG 21 → **import 26, CT 23**, ST_GAS 15 |
+| 2024 | −0.37 | +0.07 / +0.12 / −1.28 | 26 % / 28 % | CC_REG 30, CC_CHP 26, ST_GAS 21 → **CC_CHP 37**, CC_REG 26, import 14 |
+| 2025 | −2.65 | −0.29 / −0.13 / **−7.54** | 17 % / 44 % | CC_REG 30, ST_GAS 24, CC_CHP 21 → CC_CHP 25, CC_REG 25, ST_GAS 16 |
+
+**Mechanism at uc-1.5.** With CC commitment re-costed correctly the integer stage keeps more CC online and **decommits ST_GAS** instead
+(steam units' no-load is large relative to their energy; 13 h / 8 h min-up/down). Down-hours are set by CC_CHP / CC (cheaper than the
+ST_GAS the control had marginal); the upper tercile falls most (−$1.3 to −7.5) because more online CC headroom shaves the shoulders and
+peaks — which is exactly the 2025 C3a flip (model already −7.7 % low). In up-hours (2023) the marginal unit moves from ST_GAS to imports/CTs.
+The ST_GAS decommit drives C1 ST_GAS 2021 out of band and leaves CC_CHP to fill (2023 share). Not a tuning invitation (rule 1).
+
+## A.3 Wall rows (§6.1; baseline = the shard's own P0+P1)
+
+| year | P0+P1 s | UC Σ s (mean / p95 MILP s) | total s | **ratio** | clusters / integer set / per window | nodes p50/p95 | gap p95 | TL | RSS GB (UC / cgroup) |
+|---|---|---|---|---|---|---|---|---|---|
+| 2021 | 403.8 | 2,004.5 (5.31 / 13.37) | 2,487.6 | **6.16** | 74 / 33 / 1,188 | 1 / 23 | 9.3e-4 | 0 | 6.14 / 6.89 |
+| 2022 | 429.7 | 5,879.2 (15.93 / 39.63) | 6,389.2 | **14.87** | 79 / 34 / 1,224 | 12 / 59 | 9.9e-4 | 0 | 6.18 / 6.89 |
+| 2023 | 377.4 | 1,214.8 (3.18 / 8.02) | 1,659.7 | **4.40** | 78 / 33 / 1,188 | 1 / 31 | 9.4e-4 | 0 | 6.13 / 6.81 |
+| 2024 | 334.4 | 6,719.0 (18.27 / 36.72) | 7,113.1 | **21.27** | 78 / 34 / 1,224 | 10 / 58 | 9.4e-4 | 0 | 6.19 / 6.86 |
+| 2025 | 388.0 | 1,301.5 (3.40 / 9.04) | 1,764.8 | **4.55** | 77 / 34 / 1,224 | 1 / 25 | 9.4e-4 | 0 | 6.12 / 6.77 |
+
+1,825/1,825 Optimal; 0 all-budget-pinned clusters; pass-2 reuse not fired. D-2 (3×) exceeded every year; reported, not judged.
+
+## A.4 Verdict, D-6 card, bundles
+
+- **Verdict `R`** (kill #3: 3 real flips), on the clean uc-1.5 engine; T2 and T3 met — a materially narrower miss than uc-1.4.
+  Matrix NYISO `unit_commitment_milp` → R, evidence this addendum (uc-1.4 evidence kept as PRIOR).
+- **D-6 card:** *"UC-3 NYISO at uc-1.5 — R, narrower. Defect 7's fix restores 2.9–4.3 TWh/yr of CC (C1 CC_REGULAR PASS every year, T3 met)
+  and the 2024 price lands at −1.5 % (T2 met), but the UC now decommits ST_GAS (−1.4 to −3.0 TWh/yr, starts 0.35–0.54× CEMS) and shaves
+  the upper price tercile: C1 ST_GAS 2021, C1 CC_CHP share 2023 and C3a 2025 (−7.7 → −12.6 %) flip; the kept reliability_floor's ST_GAS
+  share rises with the shrinking class (C8 2021 30.2 % as printed, 22.2 % without MECH 28). Options: (1) record R, stage default-off for
+  NYISO [recommended]; (2) a pre-registered design question on ST_GAS commitment (no-load/start basis for steam units; the
+  reliability_floor ↔ UC interaction, rule 19) — not a NYISO tuning; (3) promote on structure (not recommended: 3 control flips)."*
+- **Bundles:** legs on `claude/ucmilp35-nyiso-2021` `eedbfe05` · `-2022` `66f215b5` · `-2023` `074e6c65` · `-2024` `91e443d8` ·
+  `-2025` `2efcbf6b` (21 files each, 53–56 MB, incl. `dispatch/<y>_P1.parquet`); slim span
+  `docs/records/nyiso/ucmilp/data/ucmilp35_nyiso_span/` (readings JSON `zero_lp_readings_ctl_uc14_uc15.json`: its `uc11` key = uc-1.4,
+  `uc14` key = uc-1.5 — the script's labels). Same two disclosed deviations as §3 (scratch composer; scoring in a scratch copy, bench parts
+  byte-identical to `main`). Cost: five shards 28–119 min each (≈ 5.4 container-hours). 5 launched, 5 verified and archived. Branches for
+  the owner to cut: `claude/ucmilp35-nyiso-2021` … `-2025`. No promotion proposed.
+
+### Log entry (Addendum A)
+
+- 2026-10-14 · UC-3-NYISO `session_01CQxD6oMjTSxFp8nDQKPKRs` · `claude/ucmilp-3-nyiso-ab-uc15` · uc-1.5 relaunch (defect 7) at `da11c248`,
+  PRECOMMIT Addendum A before any shard · 5/5 legs, 1,825/1,825 Optimal, 0 TL, 0 unserved · **R**: C1 ST_GAS 2021, C1 CC_CHP 2023, C3a 2025
+  (−12.6 %) flip; T2 (2024 −1.5 %) and T3 (CC_REGULAR PASS) met; defect 7 worth +2.9–4.3 TWh/yr CC and −$2–5/MWh vs uc-1.4; new driver
+  ST_GAS decommit (starts 0.35–0.54× CEMS); wall 4.4–21.3× · nothing registered · cell → R (uc-1.5).
