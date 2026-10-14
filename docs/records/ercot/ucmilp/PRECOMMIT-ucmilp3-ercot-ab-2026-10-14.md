@@ -168,3 +168,29 @@ Fixed now, before any uc-1.5 number exists:
 4. Defect 7 inflates the UC's cost of keeping integer clusters online, so it biases the schedule toward decommitment. That is
    the direction of every uc-1.4 price move in this lane (§2 diagnosis: −4 GW CC online, +$4–6/MWh). The uc-1.4 → uc-1.5 delta
    is therefore reported per year as a direct measure of how much of the price move was the defect.
+
+## Addendum C (2026-10-14 12:55Z) — uc-1.5 pin, G-DRIFT and launch (written before any uc-1.5 number)
+
+**Pin = `2dd69d5aa936547b402a1ba54d2eba57e759b7e7`** (`main`, merge of PR #7246, UC-1-FIX-5, engine `uc-1.5`; sent by UC-DESK at
+12:46Z). The pin is merged into the lane branch; outside this lane's two record files, the lane head's tree equals the pin's.
+Shards pin the lane head.
+
+**G-DRIFT `580c4fbf` → `2dd69d5a` (zero LP).** Six commits: #7240–#7245 (desk r09, UC-BANDS-ERCOT phases 0/1a, and the
+UC-3 NEISO/NYISO/CAISO RESULTs) and #7246. Outside `docs/`, `tests/`, `results/` and `frontend/`, six paths change:
+
+| path | hunk | control (gate off) | arm |
+|---|---|---|---|
+| `model/uc/params.py` | new `UcClusterParams.incremental_energy_cost`: integer-member UC energy cost = `mc_base − (noload/p̄)·max(mc_base − vom, 0)/heat_rate` | **INERT**: imported only behind the `unit_commitment_milp` gate (Addendum A §1.1 importer list unchanged) | LIVE (the release) |
+| `pipeline/uc.py` | the window objective and the uplift cost side read `mc_uc` instead of `mc_base`; `UC_ENGINE_VERSION = "uc-1.5"` | **INERT** (gated) | LIVE (the release) |
+| `model/uc/uplift.py` | docstrings only (the cost basis is named `mc_uc`) | INERT | INERT |
+| `scripts/lib/uc_bench.py` | bench harness | not on the solve path | not on the solve path |
+| `scripts/data/derive_ercot_sced_uc_bands.py`, `data/raw/_validation-source/ercot_sced_uc_bands.json` | UC-BANDS-ERCOT phase 1a derivation and its output | **INERT**: `git grep sced_uc_bands` at the pin finds no reader under `src/`, `scripts/` (other than the derive script) or `config/`. The keeper's offer bands are unchanged | INERT (offer bands are not touched in this lane, rule 1) |
+
+No `config/scenarios.py`, `constants.py`, `iso_configs.py`, `model/lp/*`, `data/fleet/*` or orchestrator hunk. **Control INERT**:
+the keeper bundle stays the control. The arm differs from the uc-1.4 arm only by #7246, which is the purpose of the relaunch.
+
+**Launch (Addendum B item 2).** Seven shards, 2019–2025, are pinned to the lane head that carries this addendum. Same arm and
+the same two `--set` fields; 720 min each. Out-dirs `results/calibration/ucmilp3b_ercot_<y>`, branches
+`claude/ucmilp3b-ercot-<y>`. The prompts are the Addendum A prompts with the SHA, out-dir, branch and note changed
+(`shard-prompts-ucmilp3b-ercot.txt`). Readings, bars, kills and the verdict rule do not move. The uc-1.4 legs for 2021 and 2022
+run to completion as evidence.
