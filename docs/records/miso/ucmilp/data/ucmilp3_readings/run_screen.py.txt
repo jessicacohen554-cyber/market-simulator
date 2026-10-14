@@ -1,0 +1,10 @@
+"""M1/M3/M4 (screen_year) over a composed span; zero LP."""
+import json,sys
+from pathlib import Path
+sys.path.insert(0,"/home/user/market-simulator/scripts/probes"); sys.path.insert(0,"/home/user/market-simulator/src"); sys.path.insert(0,"/home/user/market-simulator")
+import _ucmilp_benefit_screen as s
+bundle=Path(sys.argv[1]); out=sys.argv[2]; years=[int(y) for y in sys.argv[3:]]
+cp=s.committed_pct("MISO"); res={}
+for y in years:
+    res[str(y)]=s.screen_year("MISO",bundle,y,cp); print(y,"done",flush=True)
+    json.dump(res,open(out,"w"),indent=1,default=float)
