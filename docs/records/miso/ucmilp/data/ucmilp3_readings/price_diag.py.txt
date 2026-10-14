@@ -1,0 +1,24 @@
+"""Zero-LP price diagnosis: load-weighted P1 price by hour class and marginal-class mix, control vs arms."""
+import sys, json
+import numpy as np, pandas as pd, pyarrow.parquet as pq
+B={"C":"results/calibration/closeout_miso_nuc_span","A":"results/calibration/ucmilp3_miso_a_span","B":"results/calibration/ucmilp3_miso_b_span"}
+out={}
+for y in [int(a) for a in sys.argv[1:]]:
+    res={}
+    for n,b in B.items():
+        s=pd.read_parquet(f"{b}/hourly/system_{y}.parquet")
+        if "pass" in s and s["pass"].astype(str).str.contains("P1").any(): s=s[s["pass"].astype(str).str.contains("P1")]
+        s=s[~s["zone"].astype(str).str.contains("external")]
+        g=s.groupby("hour").apply(lambda d: pd.Series({"p":np.average(d.price,weights=d.demand),"load":d.demand.sum()}))
+        hod=(g.index%24)  # model clock hour-of-day
+        q=pd.qcut(g["load"],[0,.25,.75,.95,1.0],labels=["low25","mid50","high20","top5"])
+        t=pq.read_table(f"{b}/hourly/unit_marginal_{y}.parquet",columns=["hour","plant_group","mc","marginal"],filters=[("marginal","==",1)]).to_pandas()
+        if "pass" in pq.read_schema(f"{b}/hourly/unit_marginal_{y}.parquet").names: pass
+        t=t.sort_values("mc").groupby("hour").tail(1)  # price-setting = highest-mc marginal unit
+        mix=(t["plant_group"].value_counts(normalize=True).round(3)).head(6).to_dict()
+        res[n]={"mean":round(float(np.average(g.p,weights=g.load)),2),
+                "by_load":{k:round(float(np.average(g.p[q==k],weights=g.load[q==k])),2) for k in ["low25","mid50","high20","top5"]},
+                "h14_21":round(float(g.p[(hod>=14)&(hod<=21)].mean()),2),"other":round(float(g.p[(hod<14)|(hod>21)].mean()),2),
+                "hours_le15":int((g.p<=15).sum()),"hours_gt200":int((g.p>200).sum()),"marginal_mix":mix}
+    out[y]=res; print(y,json.dumps(res),flush=True)
+json.dump(out,open(sys.argv[0].replace("price_diag.py","readings/price_diag.json"),"w"),indent=1)

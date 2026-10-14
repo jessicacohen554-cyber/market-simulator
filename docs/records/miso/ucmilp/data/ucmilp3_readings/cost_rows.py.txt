@@ -1,0 +1,30 @@
+"""Per-leg cost/structure readings from a bundle: unserved, dump, uplift share, forced peak TWh, MECH28 TWh, UC engine."""
+import json,sys
+import numpy as np, pandas as pd
+from pathlib import Path
+rows=[]
+for arg in sys.argv[1:]:
+    b=Path(arg.split("=")[1]); y=int(arg.split("=")[0]); lab=b.name
+    sysf=pd.read_parquet(b/f"hourly/system_{y}.parquet")
+    if "pass" in sysf: sysf=sysf[sysf["pass"].astype(str).str.upper().str.contains("P1")] if sysf["pass"].astype(str).str.upper().str.contains("P1").any() else sysf
+    internal=sysf[~sysf["zone"].astype(str).str.contains("external")]
+    cost=float((internal["price"]*internal["demand"]).sum())
+    r={"leg":lab,"year":y,"unserved_mwh":round(float(sysf["slack"].sum()),1),"dump_mwh":round(float(sysf["dump"].sum()),1)}
+    upf=b/f"hourly/uc_uplift_{y}.parquet"
+    if upf.exists():
+        up=pd.read_parquet(upf); r["uplift_musd"]=round(up["uplift_usd"].sum()/1e6,2); r["uplift_pct"]=round(100*up["uplift_usd"].sum()/cost,3)
+    if not (b/f"floors/{y}_P1.npz").exists():
+        rows.append(r); print(json.dumps(r),flush=True); continue
+    z=np.load(b/f"floors/{y}_P1.npz",allow_pickle=True)
+    mg=z["min_gen"].astype(float); me=z["mechanism"]; u=z["unit_ids"]; grp=z["plant_group"]
+    peak=np.array([x.endswith("_peak") or "_peak" in x for x in u])
+    m28=(me==28)
+    r["mech28_twh"]=round(float(mg[m28].sum())/1e6,3)
+    r["forced_peak_mech28_twh"]=round(float((mg*(m28&peak[:,None])).sum())/1e6,4)
+    r["forced_peak_any_twh"]=round(float((mg*((me>0)&peak[:,None])).sum())/1e6,4)
+    for g in ("ST_GAS","CC_REGULAR"):
+        rowsel=(grp==g)[:,None]
+        r[f"{g}_floor_twh"]=round(float(mg[(me>0)&rowsel].sum())/1e6,3)
+    lg=json.load(open(b/f"uc_solve_log_{y}.json")); e=lg["engine"]; s=lg["summary"]
+    r.update({"engine":e["version"],"int_set":e["integer_set_size"],"gate":e["integer_gate_size"],"uc_s":s["uc_total_s"],"tl_hits":s["time_limit_hits"],"nonopt":sum(1 for w in lg["windows"] if str(w.get("status")).lower()!="optimal")})
+    rows.append(r); print(json.dumps(r),flush=True)
