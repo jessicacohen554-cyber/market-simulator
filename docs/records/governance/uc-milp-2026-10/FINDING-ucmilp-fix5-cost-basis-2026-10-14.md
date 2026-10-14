@@ -1,4 +1,4 @@
-# FINDING — UC-1-FIX-5: the UC cost basis double-counts no-load (candidate defect 7) — **confirmed; fixed in uc-1.5**
+# FINDING — UC-1-FIX-5: the UC cost basis double-counts no-load (candidate defect 7) — **confirmed; fixed in uc-1.5; the CAISO 2023 repro recovers 5.3 of 8.2 TWh of CC**
 
 Lane UC-1-FIX-5 (Opus), 2026-10-14, chartered by UC-DESK (`session_01WX9W5tgYMre3Z134LZoGF6`). Pin `a81b9683`; branch
 `claude/ucmilp-fix5-cost-basis`. Phase 0 zero LP; one repro shard (CAISO 2023). Nothing registered, nothing deleted.
@@ -125,12 +125,50 @@ different effect from the discrete-unit ceiling.
 
 ## 4. Repro shard — CAISO 2023, UC-3-CAISO arm, uc-1.5
 
-Shard `session_01AwFD64Q23SdKoDpzxuH4QN`, pin `f92d01ea181fbdeeda9532ed41ecc450fd6f1f20`, prompt `data/fix5/shard-prompt-ucmilp-fix5-caiso-2023.txt`.
+**Run.** Shard `session_01AwFD64Q23SdKoDpzxuH4QN`, pin `f92d01ea181fbdeeda9532ed41ecc450fd6f1f20`, prompt
+`data/fix5/shard-prompt-ucmilp-fix5-caiso-2023.txt`.
+- **Bundle:** `claude/ucmilp-fix5-caiso-2023` @ `a2635bd6937522e2359cea0a90c8609305d21c48`, 20 files (108 MB). It includes
+  `dispatch/2023_P1.parquet` and the four UC sidecars. `engine.version` reads `uc-1.5`.
+- **Scoring:** the pin's `calibration_verdict.py` on the committed CAISO 2023 bench part. The leg was registered locally and the
+  registration was removed before commit. The same path re-scores the UC-3 uc-1.4 leg to exactly its RESULT numbers.
 
-_Pending._
+| 2023 | keeper (control) | UC-3 leg, uc-1.4 | **FIX-5 leg, uc-1.5** |
+|---|---|---|---|
+| C1 CC_REGULAR (TWh, vs 51.84 actual) | 50.77, −1.07 PASS | 42.57, −9.27 **FAIL** | **47.88, −3.96 PASS** |
+| C1 CT_PEAKER (vs 4.13) | 2.99, −1.14 PASS | 5.58, +1.45 PASS | **3.71, −0.43 PASS** |
+| imports TWh (P1 class) | 34.31 | 39.42 | **36.24** |
+| C3a load-weighted price (vs $54.17 RT) | $58.27, +7.6 % PASS | $63.17, +16.6 % **FAIL** | **$60.37, +11.4 % FAIL** |
+| C3b monthly NRMSE | 0.117 PASS | 0.216 **FAIL** | **0.158 PASS** |
+| C3c hours > $200 (vs 47) | 51 PASS | 88 PASS | **73 PASS** |
+| C4 gas r / NRMSE | .912 / .235 PASS | .910 / .271 PASS | **.916 / .248 PASS** |
+| C5a CO2 vs eGRID (reported) | −6.3 % PASS | −12.0 % FAIL | −8.7 % CAVEAT |
+| CC_REGULAR starts, model / CEMS 3,222 | 9,528 (2.96×) | 2,306 (0.72×) | **2,521 (0.78×)** |
+| CC energy in sub-min-up runs | — | 3.2 % | 2.3 % |
+| uplift, $M (% of Σλ·load) | — | 20.7 (0.16 %) | 18.7 (0.15 %) |
+| explicit no-load paid, $M | — | 357 | 481 (more units online) |
+| windows Optimal / TL / infeasible | — | 365 / 0 / 0 | 365 / 0 / 0 |
+| wall P0 / UC / P1 s (UC ÷ (P0+P1) + 1) | — | 499 / 2,372 / 658 (3.10×) | 502 / 1,919 / 662 (**2.65×**) |
+| MILP s mean / p95; nodes p50 / p95 | — | 6.20 / 16.80; 1 / 57.8 | 4.95 / 9.37; 1 / 24 |
+| peak RSS UC / cgroup GB | — | 7.52 / 8.51 | 7.53 / 8.54 |
+
+**Read.** One year only, so this is a direction reading, not a verdict.
+- **The fix moves CAISO 2023 back toward the control on every gate that uc-1.4 broke.**
+  - CC decommitment shrinks from −8.2 to −2.9 TWh against the keeper, and C1 CC flips back FAIL → PASS.
+  - Imports fall by 3.2 TWh and CTs by 1.9 TWh.
+  - C3b flips back FAIL → PASS.
+  - C3a recovers 5.2 of the 9.0 points the UC added, but is still FAIL at +11.4 %.
+- **Starts stay physical:** 0.78× CEMS, against the keeper's 2.96×. The fix restores commitment without bringing back the bridge's cycling.
+- **The fix is not the whole story.** The remaining +$2.1/MWh over the keeper, and the C3a FAIL, fit the UC-3 RESULT §2 reading:
+  - the keeper's C3a pass depends on bridge-held CC;
+  - the missing import-price object is a CAISO calibration-lane question.
+- **Solve cost:** wall drops 3.10× → 2.65×, and no window hit the time limit.
+- **Matrix and verdict:** no cell is stamped here. The CAISO `unit_commitment_milp` verdict is UC-3's A/B over seven years (PR #7243, uc-1.4).
+  An uc-1.5 relaunch is the desk's call (D-6).
 
 ## Log entry
 
 - 2026-10-14 · UC-1-FIX-5 · `claude/ucmilp-fix5-cost-basis` · defect 7 confirmed from code. The average-rate offer carries `a·P/p̄` of no-load
   that the UC also paid explicitly: CAISO 2023 CC $307 M (12.4 %), ERCOT 2019 CC $148 M (7.2 %), MISO 2024 CC $250 M (8.2 %). Start: no double
-  count. Fix uc-1.5: integer members' UC energy less `a/p̄` heat; P1 untouched; G-OFF inert.
+  count. Fix uc-1.5: integer members' UC energy less `a/p̄` heat; P1 untouched; G-OFF inert. CAISO 2023 repro (`a2635bd6`): CC
+  −9.27 → −3.96 TWh (FAIL → PASS), C3a +16.6 → +11.4 % (still FAIL; keeper +7.6 %), C3b 0.216 → 0.158 (PASS), starts 0.72 → 0.78× CEMS,
+  imports −3.2 TWh, wall 3.10 → 2.65×. NEISO and NYISO added to the no-load table at the desk's request.
