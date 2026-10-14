@@ -129,3 +129,19 @@ lane re-solves 2019 at the pin under §4's budget.
 
 Inherited §9: no posture, no `online_capacity_envelope`, no `uc_*` value other than the defaults, no third `--set`, no
 control solve, no offer-band change, no registration, no promotion.
+
+## Addendum A (2026-10-14 08:49Z) — launched
+
+Six shards were launched at the lane head `36b5c3f3a44d54791fc5cdddfaf158f135a88b69` (this file's first commit, with code
+equal to `580c4fbf`). Model Opus, tag `ucmilp:UC-3-ERCOT-shard`, 720 min each, prompts in `shard-prompts-ucmilp3-ercot.txt`:
+
+| year | session | branch |
+|---|---|---|
+| 2020 | `session_01VhB8cLCd2bB9bsQCAxQTbr` | `claude/ucmilp3-ercot-2020` |
+| 2021 | `session_01NeHxoYbmZLgJpKWzZSv4yw` | `claude/ucmilp3-ercot-2021` |
+| 2022 | `session_01R8MdgJEWNkgRrHrY7S3iuM` | `claude/ucmilp3-ercot-2022` |
+| 2023 | `session_01H9eBzn6ycpWjnMP6aAX6Ze` | `claude/ucmilp3-ercot-2023` |
+| 2024 | `session_01AfFUGJNKzacAk8xMP1jDSi` | `claude/ucmilp3-ercot-2024` |
+| 2025 | `session_01L9fKwrsVqGz2VQoLcMGgvX` | `claude/ucmilp3-ercot-2025` |
+
+The 2019 leg is reused from `f832aa52` (§1.1).
