@@ -121,3 +121,12 @@ price diagnosis (imports, CT, hydro water value by hour class; zero LP). Expecta
 made committed CC look dearer than it is, so uc-1.5 should keep more CC online. The FIX-5 2023 repro recovered 5.3 of 8.2 TWh. If that
 holds in every year, the C1 CC_REGULAR 2022–25 flips may clear, and C1 CC_REGULAR 2019–21 may re-open on the over-run side. The price
 direction is the open question.
+
+## Addendum B (2026-10-14 14:48Z, before any uc-1.5 gate number of this lane exists) — 2019 budget raised to the charter ceiling
+
+The 2019 uc-1.5 shard (`session_01EU72FcaCJVGC4TF2yfqhek`) reported at 14:46Z that it was 105 min in. It had solved 56 of 365 windows, at
+a mean of 96.6 s MILP per window, with 4 windows hitting the 600 s time limit and none infeasible. The projected UC stage is 8–10 h, past the
+180-min LP budget. At uc-1.4 the same year took 5.5 s per window. This lane does not diagnose the slowdown; it is reported to the desk as a
+cost finding of uc-1.5. **2019's LP budget is raised to 720 min** (the charter's per-shard ceiling) for the run already in progress. Nothing
+else changes: no restart, no setting, no `uc_*` value. A wall budget changes no optimum (GATESPEC §7.1), so this is not a re-tune. If 2019
+stops at 720 min, it is reported as a budget stop and the span is scored on the years that solved, with 2019 marked unsolved.
