@@ -1,0 +1,582 @@
+{
+ "keeper": {
+  "lw_mean_base": 49.41383835840173,
+  "lw_mean_repriced": 48.12389520086101,
+  "delta_usd_mwh": -1.2899431575407263,
+  "c3a_vs_actual_46.55": {
+   "base_pct": 6.152176924600927,
+   "repriced_pct": 3.3810852864898155
+  },
+  "contrib_by_class_band": {
+   "CC_CHP/econ": {
+    "rows": 352,
+    "contrib": -0.0985
+   },
+   "CC_CHP/peak": {
+    "rows": 13,
+    "contrib": -3.7445
+   },
+   "CC_REGULAR/committed": {
+    "rows": 123,
+    "contrib": -0.0034
+   },
+   "CC_REGULAR/econ": {
+    "rows": 4041,
+    "contrib": 3.2297
+   },
+   "CC_REGULAR/peak": {
+    "rows": 3,
+    "contrib": -1.3859
+   },
+   "CT_PEAKER/committed": {
+    "rows": 164,
+    "contrib": 0.0
+   },
+   "CT_PEAKER/econ": {
+    "rows": 161,
+    "contrib": -0.566
+   },
+   "ST_GAS/committed": {
+    "rows": 391,
+    "contrib": 0.2849
+   },
+   "ST_GAS/econ": {
+    "rows": 766,
+    "contrib": 1.5364
+   },
+   "ST_GAS/peak": {
+    "rows": 17,
+    "contrib": -0.5427
+   },
+   "none": {
+    "rows": 3038,
+    "contrib": 0.0
+   }
+  },
+  "marginal_unit_hours_by_class": {
+   "": {
+    "n": 2,
+    "dmc": 0.0
+   },
+   "CC_CHP": {
+    "n": 365,
+    "dmc": -58.866
+   },
+   "CC_REGULAR": {
+    "n": 4167,
+    "dmc": 4.973
+   },
+   "COAL_LIGNITE": {
+    "n": 199,
+    "dmc": 0.0
+   },
+   "COAL_PRB": {
+    "n": 2437,
+    "dmc": 0.0
+   },
+   "CT_CHP": {
+    "n": 61,
+    "dmc": 0.0
+   },
+   "CT_PEAKER": {
+    "n": 325,
+    "dmc": -10.912
+   },
+   "ST_CHP": {
+    "n": 1,
+    "dmc": 0.0
+   },
+   "ST_GAS": {
+    "n": 1174,
+    "dmc": 10.23
+   },
+   "hydro": {
+    "n": 338,
+    "dmc": 0.0
+   }
+  },
+  "bands_old": {
+   "CC_REGULAR": {
+    "committed": 0.998,
+    "econ_low": 0.723,
+    "econ_high": 1.324,
+    "peak": 151.008
+   },
+   "CC_CHP": {
+    "committed": 1.029,
+    "econ_low": 0.946,
+    "econ_high": 1.857,
+    "peak": 123.684
+   },
+   "CT_PEAKER": {
+    "committed": 1.14,
+    "econ_low": 1.27,
+    "econ_high": 2.18,
+    "peak": 433.95
+   },
+   "ST_GAS": {
+    "committed": 0.91,
+    "econ_low": 1.02,
+    "econ_high": 1.2,
+    "peak": 105.6
+   }
+  },
+  "bands_new": {
+   "CC_REGULAR": {
+    "committed": 0.974,
+    "econ_low": 0.978,
+    "econ_high": 1.642,
+    "peak": 1.76
+   },
+   "CC_CHP": {
+    "committed": 0.945,
+    "econ_low": 0.948,
+    "econ_high": 1.593,
+    "peak": 1.708
+   },
+   "CT_PEAKER": {
+    "committed": 1.14,
+    "econ_low": 0.855,
+    "econ_high": 1.288,
+    "peak": 1.524
+   },
+   "ST_GAS": {
+    "committed": 1.075,
+    "econ_low": 1.075,
+    "econ_high": 3.166,
+    "peak": 3.23
+   }
+  }
+ },
+ "keeper_ct_committed_variant": {
+  "lw_mean_base": 49.41383835840173,
+  "lw_mean_repriced": 47.85720787363424,
+  "delta_usd_mwh": -1.5566304847674957,
+  "c3a_vs_actual_46.55": {
+   "base_pct": 6.152176924600927,
+   "repriced_pct": 2.8081801796653982
+  },
+  "contrib_by_class_band": {
+   "CC_CHP/econ": {
+    "rows": 352,
+    "contrib": -0.0985
+   },
+   "CC_CHP/peak": {
+    "rows": 13,
+    "contrib": -3.7445
+   },
+   "CC_REGULAR/committed": {
+    "rows": 123,
+    "contrib": -0.0034
+   },
+   "CC_REGULAR/econ": {
+    "rows": 4041,
+    "contrib": 3.2297
+   },
+   "CC_REGULAR/peak": {
+    "rows": 3,
+    "contrib": -1.3859
+   },
+   "CT_PEAKER/committed": {
+    "rows": 164,
+    "contrib": -0.2667
+   },
+   "CT_PEAKER/econ": {
+    "rows": 161,
+    "contrib": -0.566
+   },
+   "ST_GAS/committed": {
+    "rows": 391,
+    "contrib": 0.2849
+   },
+   "ST_GAS/econ": {
+    "rows": 766,
+    "contrib": 1.5364
+   },
+   "ST_GAS/peak": {
+    "rows": 17,
+    "contrib": -0.5427
+   },
+   "none": {
+    "rows": 3038,
+    "contrib": 0.0
+   }
+  },
+  "marginal_unit_hours_by_class": {
+   "": {
+    "n": 2,
+    "dmc": 0.0
+   },
+   "CC_CHP": {
+    "n": 365,
+    "dmc": -58.866
+   },
+   "CC_REGULAR": {
+    "n": 4167,
+    "dmc": 4.973
+   },
+   "COAL_LIGNITE": {
+    "n": 199,
+    "dmc": 0.0
+   },
+   "COAL_PRB": {
+    "n": 2437,
+    "dmc": 0.0
+   },
+   "CT_CHP": {
+    "n": 61,
+    "dmc": 0.0
+   },
+   "CT_PEAKER": {
+    "n": 325,
+    "dmc": -16.586
+   },
+   "ST_CHP": {
+    "n": 1,
+    "dmc": 0.0
+   },
+   "ST_GAS": {
+    "n": 1174,
+    "dmc": 10.23
+   },
+   "hydro": {
+    "n": 338,
+    "dmc": 0.0
+   }
+  },
+  "bands_old": {
+   "CC_REGULAR": {
+    "committed": 0.998,
+    "econ_low": 0.723,
+    "econ_high": 1.324,
+    "peak": 151.008
+   },
+   "CC_CHP": {
+    "committed": 1.029,
+    "econ_low": 0.946,
+    "econ_high": 1.857,
+    "peak": 123.684
+   },
+   "CT_PEAKER": {
+    "committed": 1.14,
+    "econ_low": 1.27,
+    "econ_high": 2.18,
+    "peak": 433.95
+   },
+   "ST_GAS": {
+    "committed": 0.91,
+    "econ_low": 1.02,
+    "econ_high": 1.2,
+    "peak": 105.6
+   }
+  },
+  "bands_new": {
+   "CC_REGULAR": {
+    "committed": 0.974,
+    "econ_low": 0.978,
+    "econ_high": 1.642,
+    "peak": 1.76
+   },
+   "CC_CHP": {
+    "committed": 0.945,
+    "econ_low": 0.948,
+    "econ_high": 1.593,
+    "peak": 1.708
+   },
+   "CT_PEAKER": {
+    "committed": 0.847,
+    "econ_low": 0.855,
+    "econ_high": 1.288,
+    "peak": 1.524
+   },
+   "ST_GAS": {
+    "committed": 1.075,
+    "econ_low": 1.075,
+    "econ_high": 3.166,
+    "peak": 3.23
+   }
+  }
+ },
+ "uc": {
+  "lw_mean_base": 55.31704994461931,
+  "lw_mean_repriced": 52.77092750915831,
+  "delta_usd_mwh": -2.546122435461001,
+  "c3a_vs_actual_46.55": {
+   "base_pct": 18.83361964472463,
+   "repriced_pct": 13.363968870372322
+  },
+  "contrib_by_class_band": {
+   "CC_CHP/econ": {
+    "rows": 418,
+    "contrib": -0.1215
+   },
+   "CC_CHP/peak": {
+    "rows": 13,
+    "contrib": -3.7445
+   },
+   "CC_REGULAR/econ": {
+    "rows": 3184,
+    "contrib": 3.2486
+   },
+   "CC_REGULAR/peak": {
+    "rows": 3,
+    "contrib": -1.3859
+   },
+   "CT_PEAKER/committed": {
+    "rows": 465,
+    "contrib": 0.0
+   },
+   "CT_PEAKER/econ": {
+    "rows": 577,
+    "contrib": -1.4204
+   },
+   "ST_GAS/committed": {
+    "rows": 190,
+    "contrib": 0.115
+   },
+   "ST_GAS/econ": {
+    "rows": 392,
+    "contrib": 1.2424
+   },
+   "ST_GAS/peak": {
+    "rows": 2,
+    "contrib": -0.4798
+   },
+   "none": {
+    "rows": 3728,
+    "contrib": 0.0
+   }
+  },
+  "marginal_unit_hours_by_class": {
+   "": {
+    "n": 3,
+    "dmc": 0.0
+   },
+   "CC_CHP": {
+    "n": 431,
+    "dmc": -50.481
+   },
+   "CC_REGULAR": {
+    "n": 3187,
+    "dmc": 6.018
+   },
+   "COAL_LIGNITE": {
+    "n": 289,
+    "dmc": 0.0
+   },
+   "COAL_PRB": {
+    "n": 2938,
+    "dmc": 0.0
+   },
+   "CT_CHP": {
+    "n": 97,
+    "dmc": 0.0
+   },
+   "CT_PEAKER": {
+    "n": 1042,
+    "dmc": -10.004
+   },
+   "ST_GAS": {
+    "n": 584,
+    "dmc": 16.397
+   },
+   "hydro": {
+    "n": 401,
+    "dmc": 0.0
+   }
+  },
+  "bands_old": {
+   "CC_REGULAR": {
+    "committed": 0.998,
+    "econ_low": 0.723,
+    "econ_high": 1.324,
+    "peak": 151.008
+   },
+   "CC_CHP": {
+    "committed": 1.029,
+    "econ_low": 0.946,
+    "econ_high": 1.857,
+    "peak": 123.684
+   },
+   "CT_PEAKER": {
+    "committed": 1.14,
+    "econ_low": 1.27,
+    "econ_high": 2.18,
+    "peak": 433.95
+   },
+   "ST_GAS": {
+    "committed": 0.91,
+    "econ_low": 1.02,
+    "econ_high": 1.2,
+    "peak": 105.6
+   }
+  },
+  "bands_new": {
+   "CC_REGULAR": {
+    "committed": 0.974,
+    "econ_low": 0.978,
+    "econ_high": 1.642,
+    "peak": 1.76
+   },
+   "CC_CHP": {
+    "committed": 0.945,
+    "econ_low": 0.948,
+    "econ_high": 1.593,
+    "peak": 1.708
+   },
+   "CT_PEAKER": {
+    "committed": 1.14,
+    "econ_low": 0.855,
+    "econ_high": 1.288,
+    "peak": 1.524
+   },
+   "ST_GAS": {
+    "committed": 1.075,
+    "econ_low": 1.075,
+    "econ_high": 3.166,
+    "peak": 3.23
+   }
+  }
+ },
+ "uc_ct_committed_variant": {
+  "lw_mean_base": 55.31704994461931,
+  "lw_mean_repriced": 52.143244915298595,
+  "delta_usd_mwh": -3.173805029320718,
+  "c3a_vs_actual_46.55": {
+   "base_pct": 18.83361964472463,
+   "repriced_pct": 12.015563727816536
+  },
+  "contrib_by_class_band": {
+   "CC_CHP/econ": {
+    "rows": 418,
+    "contrib": -0.1215
+   },
+   "CC_CHP/peak": {
+    "rows": 13,
+    "contrib": -3.7445
+   },
+   "CC_REGULAR/econ": {
+    "rows": 3184,
+    "contrib": 3.2486
+   },
+   "CC_REGULAR/peak": {
+    "rows": 3,
+    "contrib": -1.3859
+   },
+   "CT_PEAKER/committed": {
+    "rows": 465,
+    "contrib": -0.6277
+   },
+   "CT_PEAKER/econ": {
+    "rows": 577,
+    "contrib": -1.4204
+   },
+   "ST_GAS/committed": {
+    "rows": 190,
+    "contrib": 0.115
+   },
+   "ST_GAS/econ": {
+    "rows": 392,
+    "contrib": 1.2424
+   },
+   "ST_GAS/peak": {
+    "rows": 2,
+    "contrib": -0.4798
+   },
+   "none": {
+    "rows": 3728,
+    "contrib": 0.0
+   }
+  },
+  "marginal_unit_hours_by_class": {
+   "": {
+    "n": 3,
+    "dmc": 0.0
+   },
+   "CC_CHP": {
+    "n": 431,
+    "dmc": -50.481
+   },
+   "CC_REGULAR": {
+    "n": 3187,
+    "dmc": 6.018
+   },
+   "COAL_LIGNITE": {
+    "n": 289,
+    "dmc": 0.0
+   },
+   "COAL_PRB": {
+    "n": 2938,
+    "dmc": 0.0
+   },
+   "CT_CHP": {
+    "n": 97,
+    "dmc": 0.0
+   },
+   "CT_PEAKER": {
+    "n": 1042,
+    "dmc": -14.754
+   },
+   "ST_GAS": {
+    "n": 584,
+    "dmc": 16.397
+   },
+   "hydro": {
+    "n": 401,
+    "dmc": 0.0
+   }
+  },
+  "bands_old": {
+   "CC_REGULAR": {
+    "committed": 0.998,
+    "econ_low": 0.723,
+    "econ_high": 1.324,
+    "peak": 151.008
+   },
+   "CC_CHP": {
+    "committed": 1.029,
+    "econ_low": 0.946,
+    "econ_high": 1.857,
+    "peak": 123.684
+   },
+   "CT_PEAKER": {
+    "committed": 1.14,
+    "econ_low": 1.27,
+    "econ_high": 2.18,
+    "peak": 433.95
+   },
+   "ST_GAS": {
+    "committed": 0.91,
+    "econ_low": 1.02,
+    "econ_high": 1.2,
+    "peak": 105.6
+   }
+  },
+  "bands_new": {
+   "CC_REGULAR": {
+    "committed": 0.974,
+    "econ_low": 0.978,
+    "econ_high": 1.642,
+    "peak": 1.76
+   },
+   "CC_CHP": {
+    "committed": 0.945,
+    "econ_low": 0.948,
+    "econ_high": 1.593,
+    "peak": 1.708
+   },
+   "CT_PEAKER": {
+    "committed": 0.847,
+    "econ_low": 0.855,
+    "econ_high": 1.288,
+    "peak": 1.524
+   },
+   "ST_GAS": {
+    "committed": 1.075,
+    "econ_low": 1.075,
+    "econ_high": 3.166,
+    "peak": 3.23
+   }
+  }
+ }
+}

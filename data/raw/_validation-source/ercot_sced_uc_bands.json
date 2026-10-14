@@ -1,0 +1,222 @@
+{
+ "_provenance": {
+  "derive": "scripts/data/derive_ercot_sced_uc_bands.py",
+  "precommit": "docs/records/ercot/ucmilp/PRECOMMIT-ucmilp-bands-ercot-2026-10-14.md",
+  "ruling": "UC-DESK phase-1a authorization on owner decision 8 (2026-10-14)",
+  "derived_on": "2026-10-14",
+  "sced_delivery_years": [
+   2023
+  ],
+  "n_source_files": 323,
+  "gas_basis": "Henry Hub daily + ERCOT basis (DAM cconly lineage basis)",
+  "rule_23": "re-derive only on a SCED corpus or CAMPD-year change"
+ },
+ "offer_curve_by_group": {
+  "CC_REGULAR": {
+   "committed": 0.974,
+   "econ_low": 0.978,
+   "econ_high": 1.642,
+   "peak": 1.76
+  },
+  "CC_CHP": {
+   "committed": 0.945,
+   "econ_low": 0.948,
+   "econ_high": 1.593,
+   "peak": 1.708
+  },
+  "CT_PEAKER": {
+   "econ_low": 0.855,
+   "econ_high": 1.288,
+   "peak": 1.524
+  },
+  "ST_GAS": {
+   "committed": 1.075,
+   "econ_low": 1.075,
+   "econ_high": 3.166,
+   "peak": 3.23
+  }
+ },
+ "variants": {
+  "CT_PEAKER": {
+   "committed": 0.847
+  }
+ },
+ "detail": {
+  "CC_REGULAR": {
+   "base_hr": 7.649,
+   "incremental": {
+    "ratio": 0.836,
+    "slope_hr": 6.375,
+    "avg_hr": 7.626,
+    "noload_share_at_p99": 0.1248,
+    "n_units": 122,
+    "campd_year": 2023
+   },
+   "bands": {
+    "committed": {
+     "p25": 0.787,
+     "p50": 0.974,
+     "p75": 1.219,
+     "n_resources": 221
+    },
+    "econ_low": {
+     "p25": 0.789,
+     "p50": 0.978,
+     "p75": 1.256,
+     "n_resources": 216
+    },
+    "econ_high": {
+     "p25": 1.324,
+     "p50": 1.642,
+     "p75": 2.083,
+     "n_resources": 216
+    },
+    "peak": {
+     "p25": 1.444,
+     "p50": 1.76,
+     "p75": 4.156,
+     "n_resources": 221
+    }
+   },
+   "bands_incremental_basis_p50": {
+    "committed": 1.165,
+    "econ_low": 1.17,
+    "econ_high": 1.964,
+    "peak": 2.105
+   },
+   "n_resource_hours": 400838
+  },
+  "CC_CHP": {
+   "base_hr": 7.884,
+   "incremental": {
+    "ratio": 0.8038,
+    "slope_hr": 6.429,
+    "avg_hr": 7.998,
+    "noload_share_at_p99": 0.131,
+    "n_units": 32,
+    "campd_year": 2023
+   },
+   "bands": {
+    "committed": {
+     "p25": 0.764,
+     "p50": 0.945,
+     "p75": 1.183,
+     "n_resources": 221
+    },
+    "econ_low": {
+     "p25": 0.766,
+     "p50": 0.948,
+     "p75": 1.219,
+     "n_resources": 216
+    },
+    "econ_high": {
+     "p25": 1.285,
+     "p50": 1.593,
+     "p75": 2.021,
+     "n_resources": 216
+    },
+    "peak": {
+     "p25": 1.401,
+     "p50": 1.708,
+     "p75": 4.033,
+     "n_resources": 221
+    }
+   },
+   "bands_incremental_basis_p50": {
+    "committed": 1.176,
+    "econ_low": 1.179,
+    "econ_high": 1.982,
+    "peak": 2.125
+   },
+   "n_resource_hours": 400838
+  },
+  "CT_PEAKER": {
+   "base_hr": 11.209,
+   "incremental": {
+    "ratio": 0.7992,
+    "slope_hr": 9.1,
+    "avg_hr": 11.387,
+    "noload_share_at_p99": 0.1764,
+    "n_units": 100,
+    "campd_year": 2023
+   },
+   "bands": {
+    "committed": {
+     "p25": 0.586,
+     "p50": 0.847,
+     "p75": 1.282,
+     "n_resources": 147
+    },
+    "econ_low": {
+     "p25": 0.515,
+     "p50": 0.855,
+     "p75": 1.279,
+     "n_resources": 147
+    },
+    "econ_high": {
+     "p25": 1.028,
+     "p50": 1.288,
+     "p75": 1.504,
+     "n_resources": 147
+    },
+    "peak": {
+     "p25": 1.149,
+     "p50": 1.524,
+     "p75": 1.92,
+     "n_resources": 147
+    }
+   },
+   "bands_incremental_basis_p50": {
+    "committed": 1.06,
+    "econ_low": 1.07,
+    "econ_high": 1.612,
+    "peak": 1.907
+   },
+   "n_resource_hours": 359533
+  },
+  "ST_GAS": {
+   "base_hr": 11.191,
+   "incremental": {
+    "ratio": 0.8632,
+    "slope_hr": 9.114,
+    "avg_hr": 10.559,
+    "noload_share_at_p99": 0.0792,
+    "n_units": 41,
+    "campd_year": 2023
+   },
+   "bands": {
+    "committed": {
+     "p25": 1.05,
+     "p50": 1.075,
+     "p75": 1.159,
+     "n_resources": 38
+    },
+    "econ_low": {
+     "p25": 1.05,
+     "p50": 1.075,
+     "p75": 1.297,
+     "n_resources": 38
+    },
+    "econ_high": {
+     "p25": 1.328,
+     "p50": 3.166,
+     "p75": 4.401,
+     "n_resources": 38
+    },
+    "peak": {
+     "p25": 1.424,
+     "p50": 3.23,
+     "p75": 6.035,
+     "n_resources": 38
+    }
+   },
+   "bands_incremental_basis_p50": {
+    "committed": 1.245,
+    "econ_low": 1.245,
+    "econ_high": 3.668,
+    "peak": 3.742
+   },
+   "n_resource_hours": 114234
+  }
+ }
+}
