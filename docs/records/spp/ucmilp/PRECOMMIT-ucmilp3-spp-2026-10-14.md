@@ -1,9 +1,6 @@
 # PRECOMMIT — UC-3-SPP: clean relaunch of both SPP UC arms (A: floors kept · B: floors off) at the clean engine, every SPP backcast year, 2026-10-14
 
-> **STATUS: STAGED, LAUNCH HELD.** UC-DESK (2026-10-14 11:38Z): *"'PRECOMMIT only' for now … Do NOT launch shards. A probable
-> engine defect 7 (UC no-load double count, lane UC-1-FIX-5) is in repro, and solving at 580c4fbf would confound the result. I'll
-> send you the new full-SHA pin when FIX-5 merges."* The pin below is the charter pin. §6 fixes now what happens when it moves.
-> No shard exists and no number exists.
+> **STATUS: LAUNCHED at the uc-1.5 pin (Addendum A).** The first draft was staged at the charter pin `580c4fbf` and held by UC-DESK (11:38Z) for defect 7. UC-DESK sent the pin `2dd69d5a…` at 12:46Z, and §6 was applied before any number existed.
 
 **Written and pushed before any shard of this lane exists.** Every reading, bar, kill and budget below is fixed here and fails
 closed. Nothing moves after a number comes in (GATESPEC §7.1; rule 1(c) by analogy). Lane `UC-3-SPP` (session
@@ -184,3 +181,23 @@ launch is handled the same way, under kill #1.
 `docs/mechanism-testing-matrix.md` §5.7's DO-NOT-REDO list (curtailment ceiling, gas bridge, offer-band retunes). `spp_commitment_posture`
 (R) is not re-run in any form. No `uc_*` value other than the declared defaults. No `--set` beyond each arm's list. No control
 solve. No re-solve of a uc-1.1 leg for comparison. No sweep of which floor to remove.
+
+## Addendum A (2026-10-14, before any number exists) — the uc-1.5 pin, G-DRIFT `580c4fbf → 2dd69d5a`
+
+**Pin: `2dd69d5aa936547b402a1ba54d2eba57e759b7e7`** = `main` at the merge of PR #7246 (UC-1-FIX-5, engine `UC_ENGINE_VERSION = "uc-1.5"`:
+defect 7 fixed, the UC cost basis pays no-load once). UC-DESK (12:46Z): *"the uc-1.5 pin is 2dd69d5a… Go: run your §6 pin-move rule …
+then launch arms A and B."* The pin was merged into this branch with no rebase (`7575ba7a`). The branch tree equals the pin's apart from
+this file and the prompts (`git diff --name-only 2dd69d5a HEAD` lists only those two). Shards pin the branch head after this addendum.
+
+**G-DRIFT (zero LP).** 7 commits. Outside `docs/` and `tests/`, 6 paths change:
+
+| file(s) | hunk | control (gate off) | arms (gate on) |
+|---|---|---|---|
+| `model/uc/params.py` +44, `model/uc/uplift.py` ±23, `pipeline/uc.py` ±16 | uc-1.5: integer clusters' UC energy and the uplift cost side priced on a basis that excludes the no-load heat already paid by `noload` (defect 7) | **INERT**: `pipeline/solve.py`, `runner.py` and `run_calibration_full.py` are unchanged, so the import is still gated (§0 row 3) | **LIVE**, intended (the release) |
+| `scripts/lib/uc_bench.py` ±3 | bench harness | not on the solve path | not used |
+| `scripts/data/derive_ercot_sced_uc_bands.py` (new), `data/raw/_validation-source/ercot_sced_uc_bands.json` (new) | UC-BANDS-ERCOT phase 1a (#7242), zero-LP evidence | **INERT**: no `src/` or `scripts/` importer or reader (`git grep` at the pin); ERCOT-only validation source | not read |
+
+Records-only commits: desk r09 (#7240), UC-BANDS-ERCOT phase 0 (#7241), UC-3-CAISO/NEISO/NYISO RESULTs (#7243–#7245). No `constants.py`,
+`iso_configs.py`, `scenarios.py`, `model/lp/*`, fleet/offer `data/*` or orchestrator hunk. `results/calibration/closeout_spp_nuc_span/**` and
+`keepers/SPP.json` are not touched. **The control is INERT, so the keeper bundle remains the control.** Arms, readings, bars, kills, verdict
+rule, solver declaration (lean + slim) and the 720-min budget are UNCHANGED. The 14 prompts are regenerated at this branch head.
