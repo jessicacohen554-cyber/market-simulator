@@ -1,0 +1,357 @@
+{
+ "year": 2025,
+ "classes": {
+  "all": {
+   "hours": 8760,
+   "actual_mean": 32.49063669411853,
+   "ctl_mean": 32.233614024438836,
+   "arm_mean": 38.536431200174135,
+   "delta_mean": 6.302817175735294,
+   "contrib_to_annual_delta": 6.302817175735294,
+   "share_hours_arm_up": 0.970662100456621,
+   "share_hours_arm_down": 0.002511415525114155,
+   "reserve_mcp_ctl": 0.2404759758183328,
+   "reserve_mcp_arm": 0.2404899585732159,
+   "online_gw_ctl": {
+    "CC_REGULAR": 23.401206970214844,
+    "COAL_LIGNITE": 1.934702754020691,
+    "COAL_PRB": 7.2787322998046875,
+    "ST_GAS": 3.728133201599121
+   },
+   "online_gw_arm": {
+    "CC_REGULAR": 19.066349029541016,
+    "COAL_LIGNITE": 1.934848666191101,
+    "COAL_PRB": 7.278790473937988,
+    "ST_GAS": 2.6520111560821533
+   },
+   "marginal_mix_ctl": {
+    "CC_REGULAR:econ": 0.437,
+    "ST_GAS:econ": 0.129,
+    "COAL_PRB:econ": 0.093,
+    "CT_PEAKER:committed": 0.078,
+    "ST_GAS:committed": 0.051,
+    "CC_REGULAR:committed": 0.045,
+    "CT_PEAKER:econ": 0.04,
+    "CC_CHP:econ": 0.036
+   },
+   "marginal_mix_arm": {
+    "CC_REGULAR:econ": 0.293,
+    "CT_PEAKER:committed": 0.172,
+    "COAL_PRB:econ": 0.127,
+    "CT_PEAKER:econ": 0.108,
+    "ST_GAS:econ": 0.096,
+    "COAL_PRB:committed": 0.047,
+    "ST_GAS:committed": 0.037,
+    "hydro:other": 0.034
+   }
+  },
+  "T1_low": {
+   "hours": 2920,
+   "actual_mean": 14.235188355715945,
+   "ctl_mean": 22.016541887853787,
+   "arm_mean": 26.8631240924661,
+   "delta_mean": 4.846582204612314,
+   "contrib_to_annual_delta": 1.6155274015374381,
+   "share_hours_arm_up": 0.9373287671232877,
+   "share_hours_arm_down": 0.007534246575342466,
+   "reserve_mcp_ctl": 0.0,
+   "reserve_mcp_arm": 0.0,
+   "online_gw_ctl": {
+    "CC_REGULAR": 20.822603225708008,
+    "COAL_LIGNITE": 1.9232133626937866,
+    "COAL_PRB": 6.992079734802246,
+    "ST_GAS": 1.962862253189087
+   },
+   "online_gw_arm": {
+    "CC_REGULAR": 14.493952751159668,
+    "COAL_LIGNITE": 1.9225066900253296,
+    "COAL_PRB": 6.992253303527832,
+    "ST_GAS": 2.0324184894561768
+   },
+   "marginal_mix_ctl": {
+    "CC_REGULAR:econ": 0.507,
+    "COAL_PRB:econ": 0.196,
+    "CC_REGULAR:committed": 0.12,
+    "COAL_PRB:committed": 0.057,
+    "CC_CHP:econ": 0.047,
+    "CT_CHP:econ": 0.015,
+    "COAL_LIGNITE:econ": 0.013,
+    "CT_PEAKER:committed": 0.008
+   },
+   "marginal_mix_arm": {
+    "CC_REGULAR:econ": 0.395,
+    "COAL_PRB:econ": 0.253,
+    "COAL_PRB:committed": 0.089,
+    "CC_CHP:econ": 0.068,
+    "CT_PEAKER:committed": 0.041,
+    "ST_GAS:econ": 0.035,
+    "ST_GAS:committed": 0.03,
+    "COAL_LIGNITE:econ": 0.015
+   }
+  },
+  "T2_mid": {
+   "hours": 2920,
+   "actual_mean": 26.238305635974832,
+   "ctl_mean": 30.506931406744464,
+   "arm_mean": 36.37940221673818,
+   "delta_mean": 5.872470809993707,
+   "contrib_to_annual_delta": 1.9574902699979024,
+   "share_hours_arm_up": 0.9900684931506849,
+   "share_hours_arm_down": 0.0,
+   "reserve_mcp_ctl": 0.0,
+   "reserve_mcp_arm": 0.0,
+   "online_gw_ctl": {
+    "CC_REGULAR": 24.70206069946289,
+    "COAL_LIGNITE": 1.9238195419311523,
+    "COAL_PRB": 7.510263442993164,
+    "ST_GAS": 3.849778413772583
+   },
+   "online_gw_arm": {
+    "CC_REGULAR": 20.249300003051758,
+    "COAL_LIGNITE": 1.9239795207977295,
+    "COAL_PRB": 7.510263442993164,
+    "ST_GAS": 2.616762161254883
+   },
+   "marginal_mix_ctl": {
+    "CC_REGULAR:econ": 0.568,
+    "ST_GAS:econ": 0.097,
+    "COAL_PRB:econ": 0.085,
+    "CT_PEAKER:committed": 0.058,
+    "ST_GAS:committed": 0.052,
+    "CC_CHP:econ": 0.049,
+    "COAL_PRB:committed": 0.027,
+    "CC_REGULAR:committed": 0.02
+   },
+   "marginal_mix_arm": {
+    "CC_REGULAR:econ": 0.316,
+    "CT_PEAKER:committed": 0.212,
+    "ST_GAS:econ": 0.129,
+    "COAL_PRB:econ": 0.112,
+    "CT_PEAKER:econ": 0.08,
+    "ST_GAS:committed": 0.05,
+    "COAL_PRB:committed": 0.045,
+    "CC_CHP:econ": 0.023
+   }
+  },
+  "T3_high": {
+   "hours": 2920,
+   "actual_mean": 56.9984160906648,
+   "ctl_mean": 44.177368778718254,
+   "arm_mean": 52.366767291318105,
+   "delta_mean": 8.18939851259986,
+   "contrib_to_annual_delta": 2.729799504199953,
+   "share_hours_arm_up": 0.9845890410958904,
+   "share_hours_arm_down": 0.0,
+   "reserve_mcp_ctl": 0.7214279274549982,
+   "reserve_mcp_arm": 0.7214698757196475,
+   "online_gw_ctl": {
+    "CC_REGULAR": 24.678958892822266,
+    "COAL_LIGNITE": 1.957074761390686,
+    "COAL_PRB": 7.333855152130127,
+    "ST_GAS": 5.37175989151001
+   },
+   "online_gw_arm": {
+    "CC_REGULAR": 22.455787658691406,
+    "COAL_LIGNITE": 1.9580600261688232,
+    "COAL_PRB": 7.333855152130127,
+    "ST_GAS": 3.3068528175354004
+   },
+   "marginal_mix_ctl": {
+    "ST_GAS:econ": 0.268,
+    "CC_REGULAR:econ": 0.243,
+    "CT_PEAKER:committed": 0.158,
+    "CT_PEAKER:econ": 0.094,
+    "ST_GAS:committed": 0.086,
+    "hydro:other": 0.066,
+    "COAL_PRB:peak": 0.018,
+    "COAL_PRB:econ": 0.014
+   },
+   "marginal_mix_arm": {
+    "CT_PEAKER:committed": 0.244,
+    "CT_PEAKER:econ": 0.222,
+    "CC_REGULAR:econ": 0.178,
+    "ST_GAS:econ": 0.113,
+    "hydro:other": 0.078,
+    "COAL_PRB:econ": 0.032,
+    "COAL_PRB:peak": 0.031,
+    "ST_GAS:committed": 0.03
+   }
+  },
+  "act<=15": {
+   "hours": 1154,
+   "actual_mean": 7.32619367367015,
+   "ctl_mean": 17.270981671937175,
+   "arm_mean": 21.700696643840814,
+   "delta_mean": 4.429714971903641,
+   "contrib_to_annual_delta": 0.5835492097690413,
+   "share_hours_arm_up": 0.8466204506065858,
+   "share_hours_arm_down": 0.018197573656845753,
+   "reserve_mcp_ctl": 0.0,
+   "reserve_mcp_arm": 0.0,
+   "online_gw_ctl": {
+    "CC_REGULAR": 17.49319076538086,
+    "COAL_LIGNITE": 1.9410747289657593,
+    "COAL_PRB": 6.667038917541504,
+    "ST_GAS": 0.8568221926689148
+   },
+   "online_gw_arm": {
+    "CC_REGULAR": 11.304421424865723,
+    "COAL_LIGNITE": 1.9393054246902466,
+    "COAL_PRB": 6.667479038238525,
+    "ST_GAS": 1.779783844947815
+   },
+   "marginal_mix_ctl": {
+    "CC_REGULAR:econ": 0.396,
+    "CC_REGULAR:committed": 0.225,
+    "COAL_PRB:econ": 0.168,
+    "COAL_PRB:committed": 0.081,
+    "COAL_LIGNITE:econ": 0.029,
+    "CT_CHP:econ": 0.022,
+    "CC_CHP:econ": 0.021,
+    "COAL_PRB:mustrun": 0.021
+   },
+   "marginal_mix_arm": {
+    "CC_REGULAR:econ": 0.399,
+    "COAL_PRB:econ": 0.222,
+    "CC_CHP:econ": 0.089,
+    "COAL_PRB:committed": 0.079,
+    "CC_REGULAR:committed": 0.037,
+    "COAL_LIGNITE:mustrun": 0.033,
+    "COAL_PRB:mustrun": 0.03,
+    "COAL_LIGNITE:econ": 0.026
+   }
+  },
+  "top100": {
+   "hours": 100,
+   "actual_mean": 225.09669967651368,
+   "ctl_mean": 67.64208197337031,
+   "arm_mean": 80.5184622571099,
+   "delta_mean": 12.876380283739577,
+   "contrib_to_annual_delta": 0.14699064250844265,
+   "share_hours_arm_up": 0.97,
+   "share_hours_arm_down": 0.0,
+   "reserve_mcp_ctl": 21.043308933630787,
+   "reserve_mcp_arm": 21.043308933630787,
+   "online_gw_ctl": {
+    "CC_REGULAR": 24.067142486572266,
+    "COAL_LIGNITE": 1.9129259586334229,
+    "COAL_PRB": 6.93257999420166,
+    "ST_GAS": 6.514692306518555
+   },
+   "online_gw_arm": {
+    "CC_REGULAR": 23.276229858398438,
+    "COAL_LIGNITE": 1.9129259586334229,
+    "COAL_PRB": 6.93257999420166,
+    "ST_GAS": 4.382730007171631
+   },
+   "marginal_mix_ctl": {
+    "CT_PEAKER:econ": 0.214,
+    "hydro:other": 0.179,
+    "ST_GAS:econ": 0.125,
+    "CC_REGULAR:econ": 0.107,
+    "ST_GAS:committed": 0.089,
+    "COAL_PRB:peak": 0.071,
+    "CC_REGULAR:peak": 0.054,
+    "COAL_PRB:econ": 0.054
+   },
+   "marginal_mix_arm": {
+    "CC_REGULAR:econ": 0.216,
+    "hydro:other": 0.196,
+    "CT_PEAKER:econ": 0.157,
+    "COAL_PRB:econ": 0.137,
+    "ST_GAS:econ": 0.078,
+    "CC_CHP:peak": 0.059,
+    "CT_PEAKER:committed": 0.059,
+    "CC_REGULAR:peak": 0.039
+   }
+  },
+  "onpeak": {
+   "hours": 4176,
+   "actual_mean": 36.00557110304452,
+   "ctl_mean": 34.05467621489554,
+   "arm_mean": 40.64215894947217,
+   "delta_mean": 6.587482734576636,
+   "contrib_to_annual_delta": 3.1403342351132455,
+   "share_hours_arm_up": 0.962404214559387,
+   "share_hours_arm_down": 0.0038314176245210726,
+   "reserve_mcp_ctl": 0.5041666344985362,
+   "reserve_mcp_arm": 0.5041959661395266,
+   "online_gw_ctl": {
+    "CC_REGULAR": 23.550880432128906,
+    "COAL_LIGNITE": 1.938523769378662,
+    "COAL_PRB": 7.326474666595459,
+    "ST_GAS": 3.9785070419311523
+   },
+   "online_gw_arm": {
+    "CC_REGULAR": 19.72024154663086,
+    "COAL_LIGNITE": 1.9383915662765503,
+    "COAL_PRB": 7.326521873474121,
+    "ST_GAS": 2.809694528579712
+   },
+   "marginal_mix_ctl": {
+    "CC_REGULAR:econ": 0.396,
+    "ST_GAS:econ": 0.152,
+    "CT_PEAKER:committed": 0.094,
+    "COAL_PRB:econ": 0.085,
+    "ST_GAS:committed": 0.062,
+    "CC_REGULAR:committed": 0.045,
+    "CT_PEAKER:econ": 0.045,
+    "hydro:other": 0.034
+   },
+   "marginal_mix_arm": {
+    "CC_REGULAR:econ": 0.272,
+    "CT_PEAKER:committed": 0.185,
+    "CT_PEAKER:econ": 0.119,
+    "COAL_PRB:econ": 0.108,
+    "ST_GAS:econ": 0.098,
+    "hydro:other": 0.045,
+    "COAL_PRB:committed": 0.043,
+    "ST_GAS:committed": 0.034
+   }
+  },
+  "offpeak": {
+   "hours": 4584,
+   "actual_mean": 29.288549850384904,
+   "ctl_mean": 30.574635903289803,
+   "arm_mean": 36.618124245316224,
+   "delta_mean": 6.0434883420264285,
+   "contrib_to_annual_delta": 3.1624829406220485,
+   "share_hours_arm_up": 0.9781849912739965,
+   "share_hours_arm_down": 0.0013089005235602095,
+   "reserve_mcp_ctl": 0.0002551663400323337,
+   "reserve_mcp_arm": 0.0002551663400323337,
+   "online_gw_ctl": {
+    "CC_REGULAR": 23.264856338500977,
+    "COAL_LIGNITE": 1.9312217235565186,
+    "COAL_PRB": 7.2352399826049805,
+    "ST_GAS": 3.500044345855713
+   },
+   "online_gw_arm": {
+    "CC_REGULAR": 18.470651626586914,
+    "COAL_LIGNITE": 1.9316213130950928,
+    "COAL_PRB": 7.235307216644287,
+    "ST_GAS": 2.508362054824829
+   },
+   "marginal_mix_ctl": {
+    "CC_REGULAR:econ": 0.471,
+    "ST_GAS:econ": 0.11,
+    "COAL_PRB:econ": 0.1,
+    "CT_PEAKER:committed": 0.065,
+    "CC_REGULAR:committed": 0.045,
+    "ST_GAS:committed": 0.042,
+    "CC_CHP:econ": 0.041,
+    "CT_PEAKER:econ": 0.035
+   },
+   "marginal_mix_arm": {
+    "CC_REGULAR:econ": 0.31,
+    "CT_PEAKER:committed": 0.161,
+    "COAL_PRB:econ": 0.142,
+    "CT_PEAKER:econ": 0.099,
+    "ST_GAS:econ": 0.094,
+    "COAL_PRB:committed": 0.05,
+    "ST_GAS:committed": 0.039,
+    "CC_CHP:econ": 0.034
+   }
+  }
+ }
+}
