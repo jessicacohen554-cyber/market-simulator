@@ -145,3 +145,26 @@ equal to `580c4fbf`). Model Opus, tag `ucmilp:UC-3-ERCOT-shard`, 720 min each, p
 | 2025 | `session_01L9fKwrsVqGz2VQoLcMGgvX` | `claude/ucmilp3-ercot-2025` |
 
 The 2019 leg is reused from `f832aa52` (§1.1).
+
+## Addendum B (2026-10-14 12:40Z) — engine defect 7; the verdict moves to uc-1.5
+
+**UC-DESK (12:37Z, verbatim):** *"engine defect 7 is confirmed: the UC double-counted no-load on integer clusters
+(ERCOT 2019: $148M CC, $18M ST). The fix (uc-1.5, PR #7246) merges shortly. Plan for you: let the shards already running at
+580c4fbf finish; they're kept as uc-1.4 evidence, so don't kill them. Don't launch any new uc-1.4 legs. When I send the uc-1.5
+full SHA, add a PRECOMMIT addendum with G-DRIFT to it and run all 7 years at uc-1.5. The RESULT reports uc-1.4 and uc-1.5 side
+by side; the verdict is read at uc-1.5."*
+
+Fixed now, before any uc-1.5 number exists:
+
+1. **The uc-1.4 legs are evidence and are not scored for the verdict.** Five are in hand: 2019 `f832aa52`, 2020 `2f6b9e1d`,
+   2023 `090b2a35`, 2024 `bbe10707` and 2025 `9a0665e8`. 2021 and 2022 run to completion. The RESULT shows their gate rows
+   beside the uc-1.5 rows.
+2. **uc-1.5 span.** Seven new shards, 2019–2025; the 2019 repro is not reused, because its engine is uc-1.4. Each shard pins
+   this lane branch's head after Addendum C. Addendum C records the uc-1.5 merge SHA and the G-DRIFT `580c4fbf` → uc-1.5, and
+   only a UC-stage hunk (gated) may be LIVE. Same arm, same two `--set` fields, 720 min per shard. Out-dirs
+   `results/calibration/ucmilp3b_ercot_<y>`, branches `claude/ucmilp3b-ercot-<y>`.
+3. **Verdict at uc-1.5.** The readings, bars, kills and verdict rule do not move. §0's 2019 pre-known flip is a uc-1.4 number,
+   so it no longer fixes the verdict: the uc-1.5 2019 leg is read fresh under the inherited §3 rule.
+4. Defect 7 inflates the UC's cost of keeping integer clusters online, so it biases the schedule toward decommitment. That is
+   the direction of every uc-1.4 price move in this lane (§2 diagnosis: −4 GW CC online, +$4–6/MWh). The uc-1.4 → uc-1.5 delta
+   is therefore reported per year as a direct measure of how much of the price move was the defect.
