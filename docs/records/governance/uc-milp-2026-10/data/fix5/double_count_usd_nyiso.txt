@@ -1,0 +1,135 @@
+{
+ "engine": "uc-1.4",
+ "iso": "NYISO",
+ "year": 2021,
+ "by_class": {
+  "cc": {
+   "explicit": 101.8112,
+   "double": 79.5563,
+   "P": 24.2874,
+   "energy_mwh": 24.2874,
+   "energy_cost_usd": 758.5288,
+   "double_share_of_energy_cost": 0.1049,
+   "double_usd_per_mwh": 3.2756,
+   "double_share_of_explicit": 0.7814
+  },
+  "st_gas": {
+   "explicit": 35.839,
+   "double": 10.31,
+   "P": 5.0152,
+   "energy_mwh": 5.0152,
+   "energy_cost_usd": 315.0192,
+   "double_share_of_energy_cost": 0.0327,
+   "double_usd_per_mwh": 2.0557,
+   "double_share_of_explicit": 0.2877
+  }
+ }
+}
+{
+ "engine": "uc-1.4",
+ "iso": "NYISO",
+ "year": 2022,
+ "by_class": {
+  "cc": {
+   "explicit": 292.1389,
+   "double": 230.3221,
+   "P": 31.5719,
+   "energy_mwh": 31.5719,
+   "energy_cost_usd": 1749.8459,
+   "double_share_of_energy_cost": 0.1316,
+   "double_usd_per_mwh": 7.2952,
+   "double_share_of_explicit": 0.7884
+  },
+  "st_gas": {
+   "explicit": 85.659,
+   "double": 24.8484,
+   "P": 5.914,
+   "energy_mwh": 5.914,
+   "energy_cost_usd": 646.828,
+   "double_share_of_energy_cost": 0.0384,
+   "double_usd_per_mwh": 4.2016,
+   "double_share_of_explicit": 0.2901
+  }
+ }
+}
+{
+ "engine": "uc-1.4",
+ "iso": "NYISO",
+ "year": 2023,
+ "by_class": {
+  "cc": {
+   "explicit": 82.4261,
+   "double": 65.1459,
+   "P": 27.6776,
+   "energy_mwh": 27.6776,
+   "energy_cost_usd": 664.9627,
+   "double_share_of_energy_cost": 0.098,
+   "double_usd_per_mwh": 2.3537,
+   "double_share_of_explicit": 0.7904
+  },
+  "st_gas": {
+   "explicit": 34.0495,
+   "double": 12.3824,
+   "P": 8.0117,
+   "energy_mwh": 8.0117,
+   "energy_cost_usd": 305.8122,
+   "double_share_of_energy_cost": 0.0405,
+   "double_usd_per_mwh": 1.5455,
+   "double_share_of_explicit": 0.3637
+  }
+ }
+}
+{
+ "engine": "uc-1.4",
+ "iso": "NYISO",
+ "year": 2024,
+ "by_class": {
+  "cc": {
+   "explicit": 138.0033,
+   "double": 109.4374,
+   "P": 30.7881,
+   "energy_mwh": 30.7881,
+   "energy_cost_usd": 780.3315,
+   "double_share_of_energy_cost": 0.1402,
+   "double_usd_per_mwh": 3.5545,
+   "double_share_of_explicit": 0.793
+  },
+  "st_gas": {
+   "explicit": 35.6011,
+   "double": 12.4075,
+   "P": 7.4599,
+   "energy_mwh": 7.4599,
+   "energy_cost_usd": 331.1195,
+   "double_share_of_energy_cost": 0.0375,
+   "double_usd_per_mwh": 1.6632,
+   "double_share_of_explicit": 0.3485
+  }
+ }
+}
+{
+ "engine": "uc-1.4",
+ "iso": "NYISO",
+ "year": 2025,
+ "by_class": {
+  "cc": {
+   "explicit": 230.385,
+   "double": 176.4328,
+   "P": 30.5879,
+   "energy_mwh": 30.5879,
+   "energy_cost_usd": 1200.2537,
+   "double_share_of_energy_cost": 0.147,
+   "double_usd_per_mwh": 5.7681,
+   "double_share_of_explicit": 0.7658
+  },
+  "st_gas": {
+   "explicit": 70.1756,
+   "double": 23.0577,
+   "P": 8.9316,
+   "energy_mwh": 8.9316,
+   "energy_cost_usd": 567.4723,
+   "double_share_of_energy_cost": 0.0406,
+   "double_usd_per_mwh": 2.5816,
+   "double_share_of_explicit": 0.3286
+  }
+ }
+}
