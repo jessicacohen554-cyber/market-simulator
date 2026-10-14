@@ -57,6 +57,8 @@ A candidate cluster carries `u` iff `dt_c > POSTURE_FAST_START_MIN_DOWN_H (2 h)`
 | `ut_c` / `dt_c` | min-up / min-down h | `ut`: `uc-params.ut_h` (plant-basis run-length p25, CAMPD — an observed run bounds a min-run from above, the nyiso-90 / SPP-44 convention) → NREL class table `min_run_hours` (coal `COAL_BIN_MIN_RUN_HOURS` 36); `dt`: ALWAYS the published class value, NREL `min_down_hours` / `COAL_BIN_MIN_DOWN_HOURS` 16 (**amended 2026-10-03 before any shard**: the first NEISO window let CTs through the gate on their measured off-gap p25, which is how long a peaker chose to idle, not its restart bar; `uc-params.dt_h` stays a diagnostic column) | published physics |
 | `a_c,t` | available fraction | capacity-weighted member `availability` | fleet |
 
+**Amended 2026-10-14 (UC-1-FIX-5, engine `uc-1.5`, `FINDING-ucmilp-fix5-cost-basis-2026-10-14.md`):** every fleet heat rate the offer bands multiply is an average operating rate, which at full output already carries `nl_c / p̄_c` MMBtu per MWh of no-load heat (the regression identity `avg(p̄) = a/p̄ + b`). The explicit `nl_c,t·u_c,t` is therefore the only place no-load is paid (rule 19): integer members' UC energy is `mc_uc[g,t] = mc_base[g,t] − (nl_mmbtu_c / p̄_c)·max(mc_base[g,t] − vom_g, 0)/heat_rate_g` (`UcClusterParams.incremental_energy_cost`). At full output the UC cost equals the as-offered curve; below it the UC adds the measured part-load penalty `a·(1 − P/p̄)`. The same array is the uplift cost side and the pre-fixing anchor cost. P1 is untouched.
+
 `uc_noload_source = "campd_regression"` is the only admissible value. A cluster's resolved sources are written per cluster into `uc_solve_log_<y>.json` (`clusters[].src`), so the share of fallbacks is auditable in every bundle (DOF ledger row: no free parameter; the fallback share is reported).
 
 ### 1.3 The frozen derive (rule 23)
@@ -75,7 +77,7 @@ s.t. energy balance, flows, storage SOC, renewables, reserve rows, ramp envelope
      u_c,t − u_c,t−1 − v_c,t + w_c,t = 0            (t−1 = window state for t = t0)                          NEW logic
      Σ_{k=t−ut_c+1}^{t} v_c,k ≤ u_c,t ;   Σ_{k=t−dt_c+1}^{t} w_c,k ≤ n_c − u_c,t     (Rajan–Takriti; the pre-window part of each sum is the CARRIED history, entering as u bounds — §2.2)  NEW
      0 ≤ u_c,t ≤ n_c integer ;  0 ≤ v, w ≤ n_c                                                              NEW, integer set = E1
-mc:  integer clusters at mc_base (start and no-load are explicit above); every other row at the final P1 bid mc_bid
+mc:  integer clusters at mc_uc = mc_base less the no-load heat its average rate carries per MWh at full output (start and no-load are explicit above; uc-1.5); every other row at the final P1 bid mc_bid
 keep u[c, t0 : t0+W]; advance W
 ```
 
@@ -149,7 +151,7 @@ Every field: `_CACHE_KEY_OPTIONAL_FIELDS` + `_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS`
 |---|---|---|
 | `uc_schedule_<y>.parquet` | cluster × hour (long, zstd, delta-packed `hour`) | `year` int16, `hour` int32, `cluster` int32, `plant_code` int64, `uc_class` str, `u` int16 (units on), `n` int16, `v` int16 (starts), `w` int16 (stops), `online_mw` float32 (`u·p̄·a`), `floor_mw` float32 (`mlf·p̄·u`) |
 | `uc_solve_log_<y>.json` | run + per window | `engine` {version, fields echoed, integer_set_size, n_clusters, integers_per_window}, `clusters[]` {cluster, plant_code, uc_class, n, pbar_mw, mlf, su_per_mw, ut_h, dt_h, noload_mmbtu_h, integer, src {n, mlf, ut_dt, noload}}, `windows[]` {w, t0, t1, build_s, milp_s, nodes, gap, status, time_limit_hit, incumbent_warm, fixed_on, fixed_off, objective, integers, columns, rows}, `summary` {uc_total_s, milp_s_mean/p95, nodes_p50/p95, gap_p95, time_limit_hits, windows_zero_nodes_share, peak_rss_gb, checkpoints_written} |
-| `uc_uplift_<y>.parquet` | cluster × day | `year`, `day` int16, `cluster`, `plant_code`, `uc_class`, `energy_mwh`, `revenue_usd` (Σ λ_P1·P1), `energy_cost_usd` (Σ mc_base·P1), `noload_usd`, `start_usd`, `uplift_usd` = max(0, cost − revenue) |
+| `uc_uplift_<y>.parquet` | cluster × day | `year`, `day` int16, `cluster`, `plant_code`, `uc_class`, `energy_mwh`, `revenue_usd` (Σ λ_P1·P1), `energy_cost_usd` (Σ mc_uc·P1; Σ mc_base·P1 before uc-1.5), `noload_usd`, `start_usd`, `uplift_usd` = max(0, cost − revenue) |
 
 Nothing here enters a price, a score or the rubric; the schedule enters P1 only as bounds.
 

@@ -8,16 +8,21 @@ default):
 
     uplift = max(0, energy_cost + noload + start - revenue)
     revenue     = sum_t lambda[z(c), t] * P1[c, t]
-    energy_cost = sum_t mc_base[g, t] * P1[g, t]      over the members
+    energy_cost = sum_t mc_uc[g, t] * P1[g, t]        over the members
     noload      = sum_t nl[c, t] * u[c, t]
     start       = sum_t su_c * pbar_c * v[c, t]
 
-Cost basis: ``mc_base``, the P0 cost the stage was handed (heat rate x fuel +
-VOM + emissions, with the authorized offer bands where an ISO's tranches carry
-them in their heat rate), never the P1 bid (DESIGN section 2.6 / section 4).
-It is the integer clusters' as-offered energy curve without the amortized start
-markup (paid in ``start``) and without any P1-only bid adjustment — the
-make-whole convention of an as-offered, cost-capped three-part offer.
+Cost basis: ``mc_uc``, the UC objective's own energy cost
+(:meth:`~market_sim.model.uc.params.UcClusterParams.incremental_energy_cost`):
+``mc_base`` — the P0 cost the stage was handed (heat rate x fuel + VOM +
+emissions, with the offer bands where an ISO's tranches carry them in their
+heat rate) — less the no-load heat its average-rate heat rate carries per MWh
+at full output, because ``noload`` pays that heat explicitly (uc-1.5,
+FINDING-ucmilp-fix5-cost-basis-2026-10-14). Never the P1 bid (DESIGN section
+2.6 / section 4): the integer clusters' as-offered curve without the amortized
+start markup (paid in ``start``), without any P1-only bid adjustment and
+without a second no-load — the make-whole convention of an as-offered,
+cost-capped three-part offer.
 
 Computed in-process only, by :meth:`market_sim.pipeline.uc.UcStage.artifacts`
 from the P1 result the orchestrator holds, and written into the bundle as
@@ -58,8 +63,8 @@ def compute_uplift(
         dispatch_p1: ``(n_gen, T)`` scored P1 dispatch.
         prices_p1: ``(n_zones, T)`` P1 zonal prices (the duals).
         zone_idx: ``(n_gen,)`` zone of every fleet row.
-        mc_base: ``(n_gen, T)`` base marginal cost — the P0 cost, never the
-            P1 bid (the module docstring's cost basis).
+        mc_base: ``(n_gen, T)`` UC energy cost of the members — ``mc_uc``,
+            never the P1 bid (the module docstring's cost basis).
         noload_per_unit: ``(n_int, T)`` no-load $/h per unit.
         year: The year stamped on every row.
     """
