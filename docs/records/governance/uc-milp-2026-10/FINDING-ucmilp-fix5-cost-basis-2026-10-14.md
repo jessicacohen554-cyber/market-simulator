@@ -1,0 +1,119 @@
+# FINDING — UC-1-FIX-5: the UC cost basis double-counts no-load (candidate defect 7) — **confirmed; fixed in uc-1.5**
+
+Lane UC-1-FIX-5 (Opus), 2026-10-14, chartered by UC-DESK (`session_01WX9W5tgYMre3Z134LZoGF6`). Pin `a81b9683`; branch
+`claude/ucmilp-fix5-cost-basis`. Phase 0 zero LP; one repro shard (CAISO 2023). Nothing registered, nothing deleted.
+Scripts and readings: `data/fix5/` (`cost_basis_zero_lp.py` → `cost_basis_<iso>_<y>.json`; `double_count_usd.py` → `double_count_usd.txt`).
+
+## 0. Answer
+
+1. **Confirmed, from code.** The UC objective for an integer cluster is `nl·u + Σ mc_base·P`.
+   - `mc_base` = tranche heat rate × fuel + VOM + emissions. The tranche heat rate is `base_hr × band` (`data/fleet/assembly.py`), and
+     `base_hr` is an **average** operating rate (CAMPD heat input ÷ load). Every ISO solves on CAMPD bins; the bands are multiples of
+     that average (`phys_committed` = `avg_committed_p50`; ERCOT's CC committed = DAM all-in Min Gen Cost).
+   - An average rate at full output is `a/p̄ + b` (OLS identity). So the energy term already carries `a·P/p̄` of no-load heat, and
+     `noload_cost_per_unit_h` adds `a·u` on top.
+   - **Double count = `a·P/p̄`:** zero at P = 0, the whole no-load at full output.
+2. **Size** (Σ `nl·P1/p̄`, from the bundles):
+
+   | ISO-year (engine) | CC $M | % of UC CC energy cost | $/MWh | ST_GAS $M (%) | coal |
+   |---|---|---|---|---|---|
+   | CAISO 2023 (uc-1.4) | 307 | 12.4 % | 7.22 | 0.20 (6.7 %) | 0.47 (11 %), 1 cluster, 17 MW |
+   | ERCOT 2019 (uc-1.4) | 148 | 7.2 % | 1.11 | 18.3 (4.7 %) | none (demoted, budget-pinned) |
+   | MISO 2024 (uc-1.2) | 250 | 8.2 % | 1.65 | 28.2 (5.2 %) | none (demoted) |
+
+   For reference, the explicit no-load is 13.9–14.8 % of CAISO CC UC energy cost in every year 2019–25 (uplift sidecars). In ERCOT 2019 it is
+   10.9 % (CC) and 13.5 % (ST), matching UC-BANDS-ERCOT §2. In MISO 2024–25 it is 9.4–10.1 %.
+3. **Start cost: no double count on integer clusters.**
+   - `UcStage.zero_markup` zeroes the P1 amortized start markup on every integer member, so start is paid once, in the UC.
+   - The "startup proxy" committed bands are CT (non-integer) and ST. CT keeps the P1 markup and the proxy stacked together, but that is a
+     pre-existing P1 issue already routed by UC-BANDS-ERCOT §2, not the UC.
+   - ST's committed band is 0.81 (CAISO) / 0.91 (ERCOT), *below* the average rate, so it carries no start cost.
+4. **Fix (rule 19, one place): `uc-1.5`.** Integer members' UC energy moves to the incremental basis:
+
+   `mc_uc[g,t] = mc_base[g,t] − (a_c/p̄_c) · max(mc_base[g,t] − vom_g, 0) / hr_g`
+
+   (`UcClusterParams.incremental_energy_cost`). The explicit no-load stays.
+   - Effect: at full output the UC cost equals the as-offered curve. Below full output it adds the measured part-load penalty
+     `a·(1 − P/p̄)`.
+   - Fuel-free or part-passthrough tranches lose proportionally less.
+   - The same array is the uplift cost side and the pre-fixing anchor cost.
+   - P1 is untouched (pure LP on the bid curve). There is no new field, no new tunable and no derive re-run.
+   - The mechanism matrix gets no row, because no ScenarioConfig field was added.
+
+## 1. Cost per MWh against fuel truth (zero LP)
+
+Per unit-hour, on each bundle's own P1 offers and no-load $. Values are capacity-weighted over integer clusters with a regression no-load.
+- **Truth** = `(a + b·P)·p_eff + vom·P`: the CAMPD per-unit OLS line (2023–25, the derive's screen), slope included. `p_eff` is the
+  cluster's own $/MMBtu.
+- **P_hi** = top of the non-peak curve. ERCOT's 2019 ×151 peak tranche would otherwise swamp a full-output average.
+
+| ISO · class (mlf, a/p̄ MMBtu/MWh, b/avg) | point | truth | uc-1.4 (avg + NL) | drop NL (option A) | **uc-1.5** |
+|---|---|---|---|---|---|
+| CAISO CC (0.23, 1.17, 0.81) | Pmin | 139.5 | 150.5 (+7.9 %) | 58.3 (−58 %) | **141.6 (+1.5 %)** |
+| | P_hi | 62.9 | 75.9 (+21 %) | 60.4 (−4 %) | **67.0 (+6.5 %)** |
+| CAISO ST_GAS (0.07, 0.65, 0.73) | Pmin | 305.3 | 326.4 (+6.9 %) | 86.6 (−72 %) | **321.6 (+5.3 %)** |
+| | P_hi | 82.2 | 107.2 (+30 %) | 90.4 (+10 %) | **102.3 (+24 %)** |
+| ERCOT CC 2019 (0.29, 0.95, 0.84) | Pmin | 24.2 | 25.3 (+4.9 %) | 11.7 (−51 %) | **24.1 (−0.4 %)** |
+| | P_hi | 13.6 | 22.8 (+68 %) | 19.8 (+45 %) | **21.5 (+58 %)** |
+| ERCOT ST_GAS 2019 (0.09, 0.64, 0.87) | Pmin | 74.7 | 78.2 (+4.6 %) | 28.8 (−61 %) | **76.7 (+2.6 %)** |
+| | P_hi | 30.0 | 36.3 (+21 %) | 31.7 (+6 %) | **34.8 (+16 %)** |
+| MISO CC 2024 (0.40, 0.72, 0.89) | Pmin | 24.9 | 27.1 (+8.9 %) | 19.3 (−23 %) | **25.3 (+1.4 %)** |
+| | P_hi | 19.7 | 22.4 (+13 %) | 19.7 (−0.4 %) | **20.5 (+3.8 %)** |
+| MISO ST_GAS 2024 (0.16, 0.72, 0.87) | Pmin | 63.6 | 67.1 (+5.6 %) | 30.1 (−53 %) | **65.3 (+2.8 %)** |
+| | P_hi | 30.6 | 35.3 (+15 %) | 31.2 (+2 %) | **33.5 (+9.6 %)** |
+
+**Read.**
+- **uc-1.5 is within 3 % of truth at Pmin everywhere** (CAISO ST +5 %).
+- **What remains at P_hi is the band surface, not the cost basis:**
+  - ERCOT CC econ_high is 1.324;
+  - CAISO and MISO ST econ bands sit above the measured average;
+  - P_hi excludes the 8–15 % peak share, so part of the part-load penalty is still there.
+
+  The ERCOT band question belongs to UC-BANDS-ERCOT.
+- **Option A (drop the explicit no-load) is refuted by the data.** The bands carry no part-load shape: CAISO CC committed is 1.0, against a
+  measured average at LSL of 1.10. Dropping the no-load under-prices a unit held at Pmin by 23–72 %.
+- **The regression identity holds.** `1 − (a/p̄)/avg` predicts the measured slope ratio:
+
+  | ISO · class | predicted | measured |
+  |---|---|---|
+  | CAISO CC | 0.84 | 0.81 |
+  | ERCOT CC | 0.88 | 0.84 |
+  | MISO CC | 0.90 | 0.89 |
+
+## 2. Why this form (the charter's decision rule)
+
+| criterion | incremental via `a/p̄` (built) | CAMPD-slope column | drop explicit NL |
+|---|---|---|---|
+| measured | yes (uc-params `a`, fleet `p̄`, `hr`) | yes, but needs a new uc-params column and a re-derive | bands only; not measured part-load |
+| consistent with P1's bid curve | yes: same band shape; equals P1's offer at full output | no: commits on cost and dispatches on bands | yes |
+| truth at Pmin / P_hi | within 3 % / band residual | exact by construction | −23 to −72 % / ≈ |
+| new field / tunable | none | a schema column | none |
+
+## 3. G-OFF and G-DRIFT (zero LP)
+
+- **G-OFF: INERT by construction.** Every changed hunk sits behind `unit_commitment_milp`:
+  - `pipeline/uc.py` is imported only inside the armed branch of `pipeline/solve.py`, which is byte-identical;
+  - `model/uc/params.py` gains a new method called only from the UC stage, the bench and uplift;
+  - `model/uc/uplift.py` and `scripts/lib/uc_bench.py` are UC-only.
+
+  The solve surface is unmoved, because no registry value changed. Fast lane: 11,694 passed, 0 failed.
+- **G-DRIFT UC-3-CAISO pin `87c23363` → this lane:**
+  - main `580c4fbf..a81b9683` adds only `scripts/data/derive_ercot_sced_uc_bands.py`, which is not on the solve path (INERT);
+  - this lane's hunks are LIVE, gate-on only, and they are the fix under test.
+
+  The UC-3-CAISO 2023 leg is therefore the control for the repro. The keeper `closeout_caiso_w1_a2_span` is the gate-off control.
+- **Tests** (`tests/unit/model/uc/test_cost_basis.py`): 1 cluster, 24 h, known `a`/`b`. Unit cost equals fuel truth at Pmin and at Pmax; the
+  full-output cost equals the as-offered curve; non-members and fuel-free rows are untouched; the solved window objective decomposes to fuel
+  truth. `test_floor_merit_fill` uplift test re-based to `mc_uc`.
+
+## 4. Repro shard — CAISO 2023, UC-3-CAISO arm, uc-1.5
+
+Shard `session_01AwFD64Q23SdKoDpzxuH4QN`, pin `f92d01ea181fbdeeda9532ed41ecc450fd6f1f20`, prompt `data/fix5/shard-prompt-ucmilp-fix5-caiso-2023.txt`.
+
+_Pending._
+
+## Log entry
+
+- 2026-10-14 · UC-1-FIX-5 · `claude/ucmilp-fix5-cost-basis` · defect 7 confirmed from code. The average-rate offer carries `a·P/p̄` of no-load
+  that the UC also paid explicitly: CAISO 2023 CC $307 M (12.4 %), ERCOT 2019 CC $148 M (7.2 %), MISO 2024 CC $250 M (8.2 %). Start: no double
+  count. Fix uc-1.5: integer members' UC energy less `a/p̄` heat; P1 untouched; G-OFF inert.
