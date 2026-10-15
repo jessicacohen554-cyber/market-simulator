@@ -490,6 +490,14 @@ class UcStage:
             gate_params, budget_pinned_gens(dispatch_kwargs)
         )
         self.int_idx = self.params.integer_clusters
+        # Synchronized reserve classes (SPP spinning share): restricted to the
+        # integer members for the windows and P1 (P0 keeps the design as built).
+        #: P1 kwargs overrides the stage owns (``{}`` = none; see solve.py).
+        self.p1_kwargs_overrides: dict = synchronized_reserve_overrides(
+            dispatch_kwargs, self.params
+        )
+        if self.p1_kwargs_overrides:
+            self.dispatch_kwargs = {**dispatch_kwargs, **self.p1_kwargs_overrides}
         self.schedule: UcSchedule | None = None
         #: The P1 bid the schedule was solved on (the merit order of the floor).
         self.mc_bid: np.ndarray | None = None
@@ -1019,6 +1027,57 @@ class UcStage:
         return UcArtifacts(
             year=self.year, schedule=schedule, uplift=uplift, log=self.log
         )
+
+
+def synchronized_reserve_overrides(
+    dispatch_kwargs: dict, params: UcClusterParams
+) -> dict:
+    """Restrict every SYNCHRONIZED reserve class to the integer-cluster members.
+
+    A synchronized class (``reserve_synchronized``; SPP's Spinning share,
+    ``spp_spinning_reserve_share``) may count only capacity that is online.
+    The UC stage is the one place a commitment state exists: an integer
+    member's headroom in the window is ``pmax * a * u / n``
+    (:func:`~market_sim.model.uc.window.reserve_headroom_u_terms`) and in P1
+    its availability is the schedule's ``a * u / n``. Every other member
+    (a fast-start cluster, a budget-pinned demoted cluster, a non-cluster
+    row) has no commitment state here, so it is dropped from the class:
+    its offline capacity must not count, and the LP cannot tell it online.
+
+    Returns:
+        ``{"reserve_eligible": <restricted mask>}`` when the kwargs carry a
+        synchronized class, else ``{}`` (the stage then holds the caller's
+        dict itself, byte-identical).
+    """
+    sync = dispatch_kwargs.get("reserve_synchronized")
+    elig = dispatch_kwargs.get("reserve_eligible")
+    if (
+        sync is None
+        or elig is None
+        or dispatch_kwargs.get("reserve_requirement") is None
+    ):
+        return {}
+    sync = np.asarray(sync, dtype=bool)
+    if not sync.any():
+        return {}
+    elig2d = np.atleast_2d(np.asarray(elig, dtype=bool))
+    if elig2d.shape[0] != sync.size:
+        raise ValueError(
+            f"reserve_synchronized has {sync.size} classes, reserve_eligible "
+            f"{elig2d.shape[0]}"
+        )
+    is_int = np.zeros(elig2d.shape[1], dtype=bool)
+    is_int[params.integer_member_gens] = True
+    out = elig2d.copy()
+    out[sync] &= is_int
+    logger.info(
+        "UC synchronized reserve: class(es) %s restricted to integer members "
+        "(%d of %d eligible rows kept)",
+        np.flatnonzero(sync).tolist(),
+        int(out[sync].sum()),
+        int(elig2d[sync].sum()),
+    )
+    return {"reserve_eligible": out}
 
 
 def prepare_uc_stage(

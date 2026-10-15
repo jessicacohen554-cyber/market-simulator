@@ -179,6 +179,7 @@ class DispatchModel:
         reserve_balance_class: np.ndarray | None = None,
         reserve_online_gated: np.ndarray | None = None,
         reserve_online_rho: float = 1.0,
+        reserve_synchronized: np.ndarray | None = None,
         reserve_headroom_eligible: np.ndarray | None = None,
         reserve_headroom_products: np.ndarray | None = None,
         reserve_headroom_extra_cap: np.ndarray | None = None,
@@ -294,6 +295,25 @@ class DispatchModel:
                 raise ValueError(
                     "reserve_pergen_gen_idx requires reserve_pergen_ramp10 "
                     "(the per-column 10-min deliverable cap)"
+                )
+        # Synchronized classes (SPP spinning share): an ordinary capacity-
+        # headroom class here — the LP has no commitment state; the UC stage
+        # (pipeline/uc.py) restricts it to integer-cluster members before the
+        # window and P1 builds. It may not also be P-gated or additive.
+        if reserve_synchronized is not None and coopt:
+            _sync = np.asarray(reserve_synchronized, dtype=bool)
+            if _sync.any() and (
+                pergen
+                or reserve_headroom_products is not None
+                or (
+                    reserve_online_gated is not None
+                    and np.any(np.asarray(reserve_online_gated, dtype=bool) & _sync)
+                )
+            ):
+                raise ValueError(
+                    "reserve_synchronized applies to the legacy per-class "
+                    "capacity-headroom layout only (not pergen, additive "
+                    "headroom rows or an online-gated class)"
                 )
         n_reserve_classes = (
             1
@@ -969,6 +989,8 @@ class DispatchModel:
         self.mass_cap_labels = mass_cap_labels
         # Co-opt state for re-costing and dual extraction.
         self._coopt = coopt
+        #: (n_classes,) synchronized-class mask or None (read by the UC stage).
+        self._reserve_synchronized = reserve_synchronized
         self.ordc_penalties = ordc_penalties
         # (T,) hourly ORDC penalty multiplier (ERCOT hourly effective SWCAP,
         # R-ERCOT-23). None -> static penalties, byte-identical.
