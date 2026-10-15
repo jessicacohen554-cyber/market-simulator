@@ -1,0 +1,13 @@
+import json, sys
+leg, keeper = sys.argv[1], sys.argv[2]
+a = json.load(open(leg))["scenario_config"]; b = json.load(open(keeper))
+b = b.get("scenario_config", b)
+allowed_prefix = ("uc_",)
+allowed = {"unit_commitment_milp","st_gas_mustrun_per_plant","vlr_pocket_commitment","uc_commitment_demand_source"}
+diffs = []
+for k in sorted(set(a) | set(b)):
+    if a.get(k) != b.get(k):
+        tag = "ALLOWED" if (k in allowed or k.startswith(allowed_prefix)) else ("NEW-FIELD(default?)" if k not in b else "BREAK")
+        diffs.append((tag, k, b.get(k, "<absent>"), a.get(k, "<absent>")))
+for d in diffs: print(*d, sep=" | ")
+print("BREAKS:", sum(1 for d in diffs if d[0]=="BREAK"))

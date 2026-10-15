@@ -1,0 +1,29 @@
+"""V-2 / V-3 / V-4 (PRECOMMIT Addendum 0) for the arm-V legs; zero LP."""
+import sys, json, pandas as pd, numpy as np, pyarrow.parquet as pq
+SETS={'Amite South':[1402,8056],'DSG':[1403],'Western':[3457],'WOTAB':[3459]}
+NREQ={'Amite South':1,'DSG':1,'Western':1,'WOTAB':2}
+ELIG={1402:('LA',('1','2','3')),8056:('LA',('1','2')),1403:('LA',('3','4','5')),3457:('TX',('1','2')),3459:('TX',('1','2','3','4','5'))}
+out={}
+for y in [int(a) for a in sys.argv[1:]]:
+    s=pd.read_parquet(f'results/calibration/ucmilp4_miso_u4_{y}/hourly/uc_schedule_{y}.parquet')
+    s=s[s.uc_class=='st_gas']
+    cems={}
+    for st in ('LA','TX'):
+        cems[st]=pq.read_table(f'data/raw/campd-unit-level/{st}_{y}.parquet',columns=['facilityId','unitId','date','hour','opTime']).to_pandas()
+    for p,plants in SETS.items():
+        u=s[s.plant_code.isin(plants)].groupby('hour').u.sum().reindex(range(8760 if y%4 else 8784),fill_value=0)
+        v=s[s.plant_code.isin(plants)].groupby('hour').v.sum().sum()
+        cs=[]; cstarts=0
+        for pc in plants:
+            st,units=ELIG[pc]; d=cems[st]; d=d[(d.facilityId==str(pc))&d.unitId.isin(units)].copy()
+            d['on']=(d.opTime>0).astype(int); d=d.sort_values(['unitId','date','hour'])
+            cstarts+=int(((d.groupby('unitId').on.diff()==1)).sum())
+            cs.append(d.groupby(['date','hour']).on.sum().reset_index(drop=True))
+        n_on=pd.concat(cs,axis=1).fillna(0).sum(axis=1).to_numpy()
+        T=min(len(u),len(n_on)); um=u.to_numpy()[:T]; n_on=n_on[:T]
+        req=NREQ[p]
+        bind=(um==req)  # requirement binding approximated at n_req (availability relaxations ignored)
+        out[f'{y}:{p}']=dict(model_on_share=round(float((um>=1).mean()),3), cems_on_share=round(float((n_on>=1).mean()),3),
+            model_starts=int(v), cems_starts=cstarts, starts_ratio=round(v/cstarts,2) if cstarts else None,
+            bind_hours=int(bind.sum()), bind_cems_dark_share=round(float((n_on[bind]==0).mean()),3) if bind.any() else None)
+print(json.dumps(out,indent=1))

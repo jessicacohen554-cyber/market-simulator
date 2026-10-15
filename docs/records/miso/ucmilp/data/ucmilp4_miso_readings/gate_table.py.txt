@@ -1,0 +1,24 @@
+"""Control -> arm gate table + PASS->FAIL flip list from calibration_verdict --json outputs."""
+import json,sys
+ctl=json.load(open(sys.argv[1])); arms=[(p.split("=")[0],json.load(open(p.split("=")[1]))) for p in sys.argv[2:]]
+def recs(d):
+    out={}
+    for k,v in d["criteria"].items():
+        for r in v.get("records",[]):
+            out[(k,r.get("key"),r.get("year"))]=r
+    return out
+C=recs(ctl)
+SHOW={"fuelmix","price_mean","price_shape","price_tail","dispatch_corr","forced_share"}
+for name,a in arms:
+    A=recs(a)
+    print(f"\n### {name}: {a['determination']} {a['grade_summary']} (control {ctl['determination']} {ctl['grade_summary']})")
+    flips=[];imps=[]
+    for k in sorted(set(C)|set(A),key=lambda x:(x[0],str(x[1]),x[2] or 0)):
+        c=C.get(k,{}).get("status"); s=A.get(k,{}).get("status")
+        if c==s: continue
+        row=(k,c,s,C.get(k,{}).get("magnitude"),A.get(k,{}).get("magnitude"))
+        (flips if (c in("PASS","CAVEAT") and s=="FAIL") else imps).append(row)
+    print("PASS/CAVEAT->FAIL flips:",len(flips))
+    for r in flips: print("  FLIP",r)
+    print("other status changes:",len(imps))
+    for r in imps: print("  CHG",r)

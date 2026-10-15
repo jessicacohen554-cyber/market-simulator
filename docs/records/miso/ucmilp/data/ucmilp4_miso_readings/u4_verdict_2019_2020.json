@@ -1,0 +1,838 @@
+{
+  "run_id": "2026-10-15-uc-4-miso-u4",
+  "iso": "MISO",
+  "label": "uc 4 miso u4",
+  "rubric_version": "3.20",
+  "reported": {
+    "co2": {
+      "label": "C5a CO2 vs eGRID (REPORTED-ONLY, v2.9 \u2014 see the CRITERIA note)",
+      "records": [
+        {
+          "criterion": "co2",
+          "key": null,
+          "year": 2019,
+          "status": "PASS",
+          "classification": null,
+          "metric": "system CO2 vs eGRID (full-plant basis, BTM CHP added back)",
+          "model": 329.919,
+          "actual": 345.27,
+          "tol": "\u00b17% target / \u00b110% commercial",
+          "magnitude": "-4.4%"
+        },
+        {
+          "criterion": "co2",
+          "key": null,
+          "year": 2020,
+          "status": "PASS",
+          "classification": null,
+          "metric": "system CO2 vs eGRID (full-plant basis, BTM CHP added back)",
+          "model": 283.094,
+          "actual": 292.597,
+          "tol": "\u00b17% target / \u00b110% commercial",
+          "magnitude": "-3.2%"
+        }
+      ]
+    },
+    "diurnal_amplitude": {
+      "label": "D-A diurnal price amplitude, hour-of-day (REPORTED-ONLY, BAND-FREE, v3.5 \u2014 no external comparable exists to band it; see the note)",
+      "records": [
+        {
+          "criterion": "diurnal_amplitude",
+          "key": null,
+          "year": 2019,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "D-A diurnal price amplitude, hour-of-day (REPORTED-ONLY, BAND-FREE, v3.5 \u2014 no external comparable exists to band it; see the note)",
+          "model": null,
+          "actual": null,
+          "tol": null,
+          "magnitude": "no committed measured hod profile"
+        },
+        {
+          "criterion": "diurnal_amplitude",
+          "key": null,
+          "year": 2020,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "D-A diurnal price amplitude, hour-of-day (REPORTED-ONLY, BAND-FREE, v3.5 \u2014 no external comparable exists to band it; see the note)",
+          "model": null,
+          "actual": null,
+          "tol": null,
+          "magnitude": "no committed measured hod profile"
+        }
+      ]
+    }
+  },
+  "target_years": [
+    2019,
+    2020
+  ],
+  "scorable_years": [
+    2019,
+    2020
+  ],
+  "data_blocked_years": [],
+  "price_reference_blocked_years": [],
+  "determination": "NOT-YET",
+  "reasons": [
+    "governance gate UNATTESTED: no governance attestation in bundle"
+  ],
+  "notes": [
+    "C8 2020 CT_PEAKER: grounded above budget \u2014 75.3% forced (6.7987 of 9.023 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.898 (\u22650.8) & off-peak CV ratio 2.243 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+  ],
+  "criteria": {
+    "fuelmix": {
+      "label": "C1 fuel-mix by class (grid-delivered)",
+      "tier": "load-bearing",
+      "hard": false,
+      "status": "FAIL",
+      "caveat_kind": null,
+      "records": [
+        {
+          "criterion": "fuelmix",
+          "key": "CC_REGULAR",
+          "year": 2019,
+          "status": "PASS",
+          "classification": null,
+          "metric": "CC_REGULAR grid-delivered TWh + share of generation",
+          "model": 106.552,
+          "actual": 100.658,
+          "share_pp": 1.03,
+          "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
+          "completeness": "complete",
+          "magnitude": "+5.89 TWh, share +1.0pp"
+        },
+        {
+          "criterion": "fuelmix",
+          "key": "CC_CHP",
+          "year": 2019,
+          "status": "PASS",
+          "classification": null,
+          "metric": "CC_CHP grid-delivered TWh + share of generation",
+          "model": 15.33,
+          "actual": 20.087,
+          "share_pp": -0.78,
+          "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
+          "completeness": "complete",
+          "magnitude": "-4.76 TWh, share -0.8pp"
+        },
+        {
+          "criterion": "fuelmix",
+          "key": "CT_PEAKER",
+          "year": 2019,
+          "status": "PASS",
+          "classification": null,
+          "metric": "CT_PEAKER grid-delivered TWh + share of generation",
+          "model": 11.558,
+          "actual": 9.459,
+          "share_pp": 0.35,
+          "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
+          "completeness": "complete",
+          "magnitude": "+2.10 TWh, share +0.4pp"
+        },
+        {
+          "criterion": "fuelmix",
+          "key": "ST_GAS",
+          "year": 2019,
+          "status": "FAIL",
+          "classification": "MODEL MISS",
+          "metric": "ST_GAS grid-delivered TWh + share of generation",
+          "model": 6.042,
+          "actual": 16.42,
+          "share_pp": -1.72,
+          "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
+          "completeness": "complete",
+          "magnitude": "-10.38 TWh, share -1.7pp (volume out of band)"
+        },
+        {
+          "criterion": "fuelmix",
+          "key": "ST_CHP",
+          "year": 2019,
+          "status": "PASS",
+          "classification": null,
+          "metric": "ST_CHP grid-delivered TWh + share of generation",
+          "model": 2.217,
+          "actual": 5.19,
+          "share_pp": -0.49,
+          "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
+          "completeness": "complete",
+          "magnitude": "-2.97 TWh, share -0.5pp"
+        },
+        {
+          "criterion": "fuelmix",
+          "key": "COAL_PRB",
+          "year": 2019,
+          "status": "PASS",
+          "classification": null,
+          "metric": "COAL_PRB grid-delivered TWh + share of generation",
+          "model": 160.534,
+          "actual": 155.06,
+          "share_pp": 0.98,
+          "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
+          "completeness": "complete",
+          "magnitude": "+5.47 TWh, share +1.0pp"
+        },
+        {
+          "criterion": "fuelmix",
+          "key": "COAL_LIGNITE",
+          "year": 2019,
+          "status": "PASS",
+          "classification": null,
+          "metric": "COAL_LIGNITE grid-delivered TWh + share of generation",
+          "model": 9.292,
+          "actual": 8.37,
+          "share_pp": 0.16,
+          "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
+          "completeness": "complete",
+          "magnitude": "+0.92 TWh, share +0.2pp"
+        },
+        {
+          "criterion": "fuelmix",
+          "key": "COAL_BIT",
+          "year": 2019,
+          "status": "PASS",
+          "classification": null,
+          "metric": "COAL_BIT grid-delivered TWh + share of generation",
+          "model": 79.992,
+          "actual": 82.475,
+          "share_pp": -0.37,
+          "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
+          "completeness": "complete",
+          "magnitude": "-2.48 TWh, share -0.4pp"
+        },
+        {
+          "criterion": "fuelmix",
+          "key": "CC_REGULAR",
+          "year": 2020,
+          "status": "PASS",
+          "classification": null,
+          "metric": "CC_REGULAR grid-delivered TWh + share of generation",
+          "model": 108.635,
+          "actual": 107.08,
+          "share_pp": 0.67,
+          "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
+          "completeness": "complete",
+          "magnitude": "+1.56 TWh, share +0.7pp"
+        },
+        {
+          "criterion": "fuelmix",
+          "key": "CC_CHP",
+          "year": 2020,
+          "status": "PASS",
+          "classification": null,
+          "metric": "CC_CHP grid-delivered TWh + share of generation",
+          "model": 16.556,
+          "actual": 20.424,
+          "share_pp": -0.61,
+          "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
+          "completeness": "complete",
+          "magnitude": "-3.87 TWh, share -0.6pp"
+        },
+        {
+          "criterion": "fuelmix",
+          "key": "CT_PEAKER",
+          "year": 2020,
+          "status": "PASS",
+          "classification": null,
+          "metric": "CT_PEAKER grid-delivered TWh + share of generation",
+          "model": 10.073,
+          "actual": 12.578,
+          "share_pp": -0.4,
+          "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
+          "completeness": "complete",
+          "magnitude": "-2.50 TWh, share -0.4pp"
+        },
+        {
+          "criterion": "fuelmix",
+          "key": "ST_GAS",
+          "year": 2020,
+          "status": "FAIL",
+          "classification": "MODEL MISS",
+          "metric": "ST_GAS grid-delivered TWh + share of generation",
+          "model": 7.964,
+          "actual": 17.511,
+          "share_pp": -1.62,
+          "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
+          "completeness": "complete",
+          "magnitude": "-9.55 TWh, share -1.6pp (volume out of band)"
+        },
+        {
+          "criterion": "fuelmix",
+          "key": "ST_CHP",
+          "year": 2020,
+          "status": "PASS",
+          "classification": null,
+          "metric": "ST_CHP grid-delivered TWh + share of generation",
+          "model": 2.451,
+          "actual": 5.857,
+          "share_pp": -0.58,
+          "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
+          "completeness": "complete",
+          "magnitude": "-3.41 TWh, share -0.6pp"
+        },
+        {
+          "criterion": "fuelmix",
+          "key": "COAL_PRB",
+          "year": 2020,
+          "status": "PASS",
+          "classification": null,
+          "metric": "COAL_PRB grid-delivered TWh + share of generation",
+          "model": 131.325,
+          "actual": 126.859,
+          "share_pp": 1.26,
+          "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
+          "completeness": "complete",
+          "magnitude": "+4.47 TWh, share +1.3pp"
+        },
+        {
+          "criterion": "fuelmix",
+          "key": "COAL_LIGNITE",
+          "year": 2020,
+          "status": "PASS",
+          "classification": null,
+          "metric": "COAL_LIGNITE grid-delivered TWh + share of generation",
+          "model": 9.741,
+          "actual": 8.379,
+          "share_pp": 0.27,
+          "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
+          "completeness": "complete",
+          "magnitude": "+1.36 TWh, share +0.3pp"
+        },
+        {
+          "criterion": "fuelmix",
+          "key": "COAL_BIT",
+          "year": 2020,
+          "status": "PASS",
+          "classification": null,
+          "metric": "COAL_BIT grid-delivered TWh + share of generation",
+          "model": 61.996,
+          "actual": 66.369,
+          "share_pp": -0.53,
+          "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share",
+          "completeness": "complete",
+          "magnitude": "-4.37 TWh, share -0.5pp"
+        }
+      ]
+    },
+    "sysvol": {
+      "label": "C2 system volume (gas/coal families)",
+      "tier": "load-bearing",
+      "hard": false,
+      "status": "PASS",
+      "caveat_kind": null,
+      "records": [
+        {
+          "criterion": "sysvol",
+          "key": "gas",
+          "year": 2019,
+          "status": "PASS",
+          "classification": null,
+          "metric": "gas family \u2014 fully reported; per-class volume/share governed by the C1 universal gate (no family netting/percent band)",
+          "model": 141.7,
+          "actual": 151.81,
+          "tol": "per-class \u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share (via C1)",
+          "magnitude": "C1 flags: ST_GAS",
+          "source": "EIA-923 \u2212 BTM (grid-delivered), per-class via C1",
+          "vintage_reconciled": false
+        },
+        {
+          "criterion": "sysvol",
+          "key": "coal",
+          "year": 2019,
+          "status": "PASS",
+          "classification": null,
+          "metric": "coal family \u2014 fully reported; per-class volume/share governed by the C1 universal gate (no family netting/percent band)",
+          "model": 249.82,
+          "actual": 245.91,
+          "tol": "per-class \u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share (via C1)",
+          "magnitude": "all classes in band (C1)",
+          "source": "EIA-923 \u2212 BTM (grid-delivered), per-class via C1",
+          "vintage_reconciled": false
+        },
+        {
+          "criterion": "sysvol",
+          "key": "gas",
+          "year": 2020,
+          "status": "PASS",
+          "classification": null,
+          "metric": "gas family \u2014 fully reported; per-class volume/share governed by the C1 universal gate (no family netting/percent band)",
+          "model": 145.68,
+          "actual": 163.45,
+          "tol": "per-class \u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share (via C1)",
+          "magnitude": "C1 flags: ST_GAS",
+          "source": "EIA-923 \u2212 BTM (grid-delivered), per-class via C1",
+          "vintage_reconciled": false
+        },
+        {
+          "criterion": "sysvol",
+          "key": "coal",
+          "year": 2020,
+          "status": "PASS",
+          "classification": null,
+          "metric": "coal family \u2014 fully reported; per-class volume/share governed by the C1 universal gate (no family netting/percent band)",
+          "model": 203.06,
+          "actual": 201.61,
+          "tol": "per-class \u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b18.00 TWh & \u00b13pp share (via C1)",
+          "magnitude": "all classes in band (C1)",
+          "source": "EIA-923 \u2212 BTM (grid-delivered), per-class via C1",
+          "vintage_reconciled": false
+        }
+      ]
+    },
+    "price_mean": {
+      "label": "C3a mean LMP",
+      "tier": "load-bearing",
+      "hard": false,
+      "status": "FAIL",
+      "caveat_kind": null,
+      "records": [
+        {
+          "criterion": "price_mean",
+          "key": null,
+          "year": 2019,
+          "status": "PASS",
+          "classification": null,
+          "metric": "system load-weighted mean LMP $/MWh (vs RT (load-weighted))",
+          "benchmark": "RT",
+          "model": 27.27,
+          "actual": 25.67,
+          "tol": "\u00b110% target / \u00b110% commercial",
+          "magnitude": "+6.2%"
+        },
+        {
+          "criterion": "price_mean",
+          "key": "da_diagnostic",
+          "year": 2019,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "mean LMP vs DA (diagnostic \u2014 DART premium, not gated)",
+          "benchmark": "DA",
+          "model": 27.27,
+          "actual": 26.2,
+          "tol": "not gated",
+          "magnitude": "+4.1% vs DA (DA\u2212RT premium $+0.53)"
+        },
+        {
+          "criterion": "price_mean",
+          "key": null,
+          "year": 2020,
+          "status": "FAIL",
+          "classification": "MODEL MISS",
+          "metric": "system load-weighted mean LMP $/MWh (vs RT (load-weighted))",
+          "benchmark": "RT",
+          "model": 24.3,
+          "actual": 21.97,
+          "tol": "\u00b110% target / \u00b110% commercial",
+          "magnitude": "+10.6%"
+        },
+        {
+          "criterion": "price_mean",
+          "key": "da_diagnostic",
+          "year": 2020,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "mean LMP vs DA (diagnostic \u2014 DART premium, not gated)",
+          "benchmark": "DA",
+          "model": 24.3,
+          "actual": 22.21,
+          "tol": "not gated",
+          "magnitude": "+9.4% vs DA (DA\u2212RT premium $+0.24)"
+        }
+      ]
+    },
+    "price_shape": {
+      "label": "C3b price duration/shape",
+      "tier": "load-bearing",
+      "hard": false,
+      "status": "PASS",
+      "caveat_kind": null,
+      "records": [
+        {
+          "criterion": "price_shape",
+          "key": null,
+          "year": 2019,
+          "status": "PASS",
+          "classification": null,
+          "metric": "monthly load-weighted price NRMSE (load-weighted actual)",
+          "model": 0.093,
+          "actual": null,
+          "tol": "\u22640.20 target / \u22640.20 commercial",
+          "magnitude": "NRMSE 0.093"
+        },
+        {
+          "criterion": "price_shape",
+          "key": null,
+          "year": 2020,
+          "status": "PASS",
+          "classification": null,
+          "metric": "monthly load-weighted price NRMSE (load-weighted actual)",
+          "model": 0.149,
+          "actual": null,
+          "tol": "\u22640.20 target / \u22640.20 commercial",
+          "magnitude": "NRMSE 0.149"
+        }
+      ]
+    },
+    "price_tail": {
+      "label": "C3c price tail / scarcity (RT hourly)",
+      "tier": "supporting",
+      "hard": false,
+      "status": "FAIL",
+      "caveat_kind": null,
+      "records": [
+        {
+          "criterion": "price_tail",
+          "key": null,
+          "year": 2019,
+          "status": "FAIL",
+          "classification": "MODEL MISS",
+          "metric": "hours RT-expressible LMP > $200/MWh",
+          "model": 0.0,
+          "actual": 17.0,
+          "tol": "[0.5\u00d7, 2\u00d7] of RT actual (|\u0394|\u226410h when actual <10h)",
+          "magnitude": "model 0h [energy-only LMP] vs RT actual 17h (0.00\u00d7, >$200)"
+        },
+        {
+          "criterion": "price_tail",
+          "key": "da_diagnostic",
+          "year": 2019,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "hours DA LMP > $200/MWh (diagnostic \u2014 embeds the DA forecast-risk premium, not gated)",
+          "model": 0.0,
+          "actual": 0.0,
+          "tol": "not gated",
+          "magnitude": "model 0h vs DA actual 0h (out-of-representation companion)"
+        },
+        {
+          "criterion": "price_tail",
+          "key": null,
+          "year": 2020,
+          "status": "PASS",
+          "classification": null,
+          "metric": "hours RT-expressible LMP > $200/MWh",
+          "model": 0.0,
+          "actual": 8.0,
+          "tol": "[0.5\u00d7, 2\u00d7] of RT actual (|\u0394|\u226410h when actual <10h)",
+          "magnitude": "model 0h [energy-only LMP] vs RT actual 8h (small-count |\u0394|\u226410h, >$200)"
+        },
+        {
+          "criterion": "price_tail",
+          "key": "da_diagnostic",
+          "year": 2020,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "hours DA LMP > $200/MWh (diagnostic \u2014 embeds the DA forecast-risk premium, not gated)",
+          "model": 0.0,
+          "actual": 0.0,
+          "tol": "not gated",
+          "magnitude": "model 0h vs DA actual 0h (out-of-representation companion)"
+        }
+      ]
+    },
+    "dispatch_corr": {
+      "label": "C4 fleet hourly dispatch correlation",
+      "tier": "supporting",
+      "hard": false,
+      "status": "PASS",
+      "caveat_kind": null,
+      "records": [
+        {
+          "criterion": "dispatch_corr",
+          "key": "gas",
+          "year": 2019,
+          "status": "PASS",
+          "classification": null,
+          "metric": "gas fleet hourly r / NRMSE",
+          "model": "r=0.943 nrmse=0.189",
+          "actual": null,
+          "tol": "r\u22650.70, NRMSE\u22640.30",
+          "magnitude": "r=0.943, NRMSE=0.189"
+        },
+        {
+          "criterion": "dispatch_corr",
+          "key": "coal",
+          "year": 2019,
+          "status": "PASS",
+          "classification": null,
+          "metric": "coal fleet hourly r / NRMSE",
+          "model": "r=0.927 nrmse=0.106",
+          "actual": null,
+          "tol": "r\u22650.70, NRMSE\u22640.30",
+          "magnitude": "r=0.927, NRMSE=0.106"
+        },
+        {
+          "criterion": "dispatch_corr",
+          "key": "gas",
+          "year": 2020,
+          "status": "PASS",
+          "classification": null,
+          "metric": "gas fleet hourly r / NRMSE",
+          "model": "r=0.954 nrmse=0.195",
+          "actual": null,
+          "tol": "r\u22650.70, NRMSE\u22640.30",
+          "magnitude": "r=0.954, NRMSE=0.195"
+        },
+        {
+          "criterion": "dispatch_corr",
+          "key": "coal",
+          "year": 2020,
+          "status": "PASS",
+          "classification": null,
+          "metric": "coal fleet hourly r / NRMSE",
+          "model": "r=0.951 nrmse=0.126",
+          "actual": null,
+          "tol": "r\u22650.70, NRMSE\u22640.30",
+          "magnitude": "r=0.951, NRMSE=0.126"
+        }
+      ]
+    },
+    "governance": {
+      "label": "C6 governance gate",
+      "tier": "protective",
+      "hard": true,
+      "status": "UNATTESTED",
+      "records": [
+        {
+          "criterion": "governance",
+          "key": null,
+          "year": null,
+          "status": "UNATTESTED",
+          "classification": "MODEL MISS",
+          "metric": "every lever measured; no residual fit / pinning; exogenous outages",
+          "model": null,
+          "actual": null,
+          "tol": "pass/fail",
+          "magnitude": "no governance attestation in bundle",
+          "machine_issues": []
+        }
+      ]
+    },
+    "forced_share": {
+      "label": "C8 forced-energy share (D-2)",
+      "tier": "protective",
+      "hard": true,
+      "status": "PASS",
+      "caveat_kind": null,
+      "records": [
+        {
+          "criterion": "forced_share",
+          "key": "CC_REGULAR",
+          "year": 2019,
+          "status": "PASS",
+          "classification": null,
+          "metric": "CC_REGULAR energy at binding non-exempt floors (D-2)",
+          "model": 0.0797,
+          "actual": null,
+          "tol": "< 30% of class energy, OR above-cap with D-4 window + D-1 shape clear (class \u2265 2% of load)",
+          "magnitude": "8.0% forced (8.5219 of 106.8949 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+        },
+        {
+          "criterion": "forced_share",
+          "key": "COAL_BIT",
+          "year": 2019,
+          "status": "PASS",
+          "classification": null,
+          "metric": "COAL_BIT energy at binding non-exempt floors (D-2)",
+          "model": 0.0114,
+          "actual": null,
+          "tol": "< 30% of class energy, OR above-cap with D-4 window + D-1 shape clear (class \u2265 2% of load)",
+          "magnitude": "1.1% forced (0.9168 of 80.1804 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+        },
+        {
+          "criterion": "forced_share",
+          "key": "COAL_LIGNITE",
+          "year": 2019,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "C8 forced-energy share (D-2)",
+          "model": null,
+          "actual": null,
+          "tol": null,
+          "magnitude": "COAL_LIGNITE immaterial (1.4% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-2 reads 0.0% forced"
+        },
+        {
+          "criterion": "forced_share",
+          "key": "COAL_PRB",
+          "year": 2019,
+          "status": "PASS",
+          "classification": null,
+          "metric": "COAL_PRB energy at binding non-exempt floors (D-2)",
+          "model": 0.0001,
+          "actual": null,
+          "tol": "< 30% of class energy, OR above-cap with D-4 window + D-1 shape clear (class \u2265 2% of load)",
+          "magnitude": "0.0% forced (0.0229 of 160.1018 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+        },
+        {
+          "criterion": "forced_share",
+          "key": "CT_PEAKER",
+          "year": 2019,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "C8 forced-energy share (D-2)",
+          "model": null,
+          "actual": null,
+          "tol": null,
+          "magnitude": "CT_PEAKER immaterial (1.8% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-2 reads 99.3% forced"
+        },
+        {
+          "criterion": "forced_share",
+          "key": "ST_GAS",
+          "year": 2019,
+          "status": "PASS",
+          "classification": null,
+          "metric": "ST_GAS energy at binding non-exempt floors (D-2)",
+          "model": 0.182,
+          "actual": null,
+          "tol": "< 30% of class energy, OR above-cap with D-4 window + D-1 shape clear (class \u2265 2% of load)",
+          "magnitude": "18.2% forced (2.4547 of 13.4862 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+        },
+        {
+          "criterion": "forced_share",
+          "key": "hydro",
+          "year": 2019,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "C8 forced-energy share (D-2)",
+          "model": null,
+          "actual": null,
+          "tol": null,
+          "magnitude": "hydro immaterial (1.7% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-2 reads 0.0% forced"
+        },
+        {
+          "criterion": "forced_share",
+          "key": "CC_REGULAR",
+          "year": 2020,
+          "status": "PASS",
+          "classification": null,
+          "metric": "CC_REGULAR energy at binding non-exempt floors (D-2)",
+          "model": 0.0714,
+          "actual": null,
+          "tol": "< 30% of class energy, OR above-cap with D-4 window + D-1 shape clear (class \u2265 2% of load)",
+          "magnitude": "7.1% forced (7.792 of 109.1172 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+        },
+        {
+          "criterion": "forced_share",
+          "key": "COAL_BIT",
+          "year": 2020,
+          "status": "PASS",
+          "classification": null,
+          "metric": "COAL_BIT energy at binding non-exempt floors (D-2)",
+          "model": 0.0089,
+          "actual": null,
+          "tol": "< 30% of class energy, OR above-cap with D-4 window + D-1 shape clear (class \u2265 2% of load)",
+          "magnitude": "0.9% forced (0.5554 of 62.2544 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+        },
+        {
+          "criterion": "forced_share",
+          "key": "COAL_LIGNITE",
+          "year": 2020,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "C8 forced-energy share (D-2)",
+          "model": null,
+          "actual": null,
+          "tol": null,
+          "magnitude": "COAL_LIGNITE immaterial (1.6% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-2 reads 0.0% forced"
+        },
+        {
+          "criterion": "forced_share",
+          "key": "COAL_PRB",
+          "year": 2020,
+          "status": "PASS",
+          "classification": null,
+          "metric": "COAL_PRB energy at binding non-exempt floors (D-2)",
+          "model": 0.0001,
+          "actual": null,
+          "tol": "< 30% of class energy, OR above-cap with D-4 window + D-1 shape clear (class \u2265 2% of load)",
+          "magnitude": "0.0% forced (0.0114 of 131.1447 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+        },
+        {
+          "criterion": "forced_share",
+          "key": "CT_PEAKER",
+          "year": 2020,
+          "status": "PASS",
+          "classification": "GROUNDED ABOVE BUDGET (D-4 window + D-1 shape clear)",
+          "metric": "CT_PEAKER energy at binding non-exempt floors (D-2)",
+          "model": 0.7535,
+          "actual": null,
+          "tol": "< 15% of class energy, OR above-cap with D-4 window + D-1 shape clear (class \u2265 2% of load)",
+          "magnitude": "75.3% forced (6.7987 of 9.023 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.898 (\u22650.8) & off-peak CV ratio 2.243 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+        },
+        {
+          "criterion": "forced_share",
+          "key": "ST_GAS",
+          "year": 2020,
+          "status": "PASS",
+          "classification": null,
+          "metric": "ST_GAS energy at binding non-exempt floors (D-2)",
+          "model": 0.1253,
+          "actual": null,
+          "tol": "< 30% of class energy, OR above-cap with D-4 window + D-1 shape clear (class \u2265 2% of load)",
+          "magnitude": "12.5% forced (2.0111 of 16.0475 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+        },
+        {
+          "criterion": "forced_share",
+          "key": "hydro",
+          "year": 2020,
+          "status": "SKIPPED",
+          "classification": null,
+          "metric": "C8 forced-energy share (D-2)",
+          "model": null,
+          "actual": null,
+          "tol": null,
+          "magnitude": "hydro immaterial (1.8% of ISO load < 2% floor, max(model, actual) energy): reported by the D-1/D-2 diagnostics, not gated (rubric v2.1 owner amendment 2026-07-06); D-2 reads 0.0% forced"
+        }
+      ]
+    }
+  },
+  "free_class_score": {
+    "iso": "MISO",
+    "pinned_classes": [
+      "CC_CHP",
+      "CT_CHP",
+      "ST_CHP",
+      "hydro",
+      "imports",
+      "nuclear",
+      "solar",
+      "wind"
+    ],
+    "excluded_from_free": [
+      "CC_CHP",
+      "ST_CHP"
+    ],
+    "all": {
+      "pass": 14,
+      "total": 16
+    },
+    "free": {
+      "pass": 10,
+      "total": 12
+    },
+    "headline": "C1 all 14/16 \u00b7 free 10/12"
+  },
+  "grade_summary": {
+    "scored": 7,
+    "target_grade": 4,
+    "commercial_grade": 0,
+    "ledgered": 0,
+    "fails": 3
+  },
+  "caveats": {
+    "protective": [],
+    "ledgered": [],
+    "commercial_band": [],
+    "configuration_exception": [],
+    "reference_definition": [],
+    "budget": {
+      "protective_max": 0,
+      "ledgered_max": 1
+    }
+  },
+  "ledger_entries": [],
+  "span_restricted": [
+    2019,
+    2020
+  ]
+}
