@@ -203,3 +203,29 @@ reflects the container's starting disk allowance; it is not something the shard 
 
 Nothing else is deleted. The gate is read on the first prepare print, and the swapfile is not turned off and re-created. The
 gate, the cadence and the attempt cap stand. The first relaunch's du table goes to UC-DESK.
+
+## Addendum C (2026-10-15 11:14Z): paused by UC-DESK; attempt log
+
+**Pause (UC-DESK 10:59:40Z, verbatim gist).** *"Pause all ERCOT relaunches now; pausing spends no attempts."* The desk's
+working hypothesis is that the boot disk allowance shrinks as concurrency rises. The 09:51Z launch, with few sessions alive,
+got 15.7 GiB free. Every launch since 10:00Z, with about 20 UC-4 shards alive across six lanes, got about 11 GiB.
+
+**Resume rule.** The lane waits for a desk message. After it, one year at a time, and the next year launches only after the
+previous one passes the gate.
+
+**Relaunch 1 diagnostic (2021, 10:57Z).** Before the clean, `df` showed 11G available on a 252G volume (29G used); `~/.cache/uv`
+was 425M and `~/.cache/pip` 2.9M. `uv cache clean` freed 391 MiB. After the clean, `df` still showed 11G available.
+`prepare_solve_container.py` then found 10.7 GiB free disk, added 4 GiB of swap, and printed a 17.4 GiB total. The cache clean
+does not close the gap.
+
+| year | attempt | session | boot free disk | ceiling + swap (GiB) | result |
+|---|---|---|---|---|---|
+| 2021 | 0 (prompt defect, Addendum A; not counted) | `01HrUZG3…` | 15.7 GiB | 13.36 + 9.0 = 22.36 | wrongly blocked by prompt wording |
+| 2021 | 1 | `01FoVutx…` | 11.4 GiB | 13.36 + 5.0 = 18.4 | blocked |
+| 2022 | 1 | `019ZccBE…` | 11.0 GiB | 13.36 + 4.0 = 17.4 | blocked |
+| 2025 | 1 | `01Hhoc8H…` | ≈ 11 GiB | 17.4 | blocked |
+| 2019 | 1 | `0119KZup…` | ≈ 11 GiB | 17.4 | blocked |
+| 2021 | 2 (relaunch 1/4) | `01669GRr…` | 10.7 GiB | 17.4 | blocked |
+| 2022 | 2 (relaunch 1/4) | `01XY8aqq…` (sent 10:59:50Z, before the pause was read) | ≈ 11 GiB | 17.4 | blocked |
+
+Not yet launched: 2020, 2023, 2024. Every shard listed above is archived. No year has passed the gate, and no LP has run.
