@@ -157,3 +157,22 @@ Matrix (`mechanism-matrix/MISO.js`): the `uc_commitment_demand_source` cell, cit
   - `calibration_verdict.py --json` on the control and U4;
   - `legitimacy_diagnostics.py` regenerated.
 - The RESULT, the slim span and the readings go in a records-only PR. UC-DESK merges it.
+
+## Addendum A (2026-10-15 10:12Z): launch HELD on engine defect FIX-8
+
+- **UC-DESK HOLD (10:09Z).** At `7dbfe20f`, `uc_commitment_demand_source="da_forecast"` raises in
+  `data/commitment_demand.py:254` ("commitment increment has N zones, demand N+k") wherever the solve adds an `IMPORT_ZONE`
+  pseudo-zone. Reported by UC-4-NYISO and confirmed zero-LP by the desk.
+- **MISO is affected.** `interchange/spec.py` maps `IMPORT_ZONE["MISO"] = "MISO_external"`, and the keeper runs
+  `priced_interchange=true`. Every U4 leg would fail at UC prep.
+- **Phase 0 (§2.1) missed it.** That check exercised the BA-level forecast series. It did not exercise the zone split against the
+  solve's zone count.
+- **Actions:**
+  - Shards 2020 (`session_01PWVVQuu6T7qH5hvhagsJXS`) and 2021 (`session_01FSq3ThzjCDV3Fvftamycfo`) were interrupted while still
+    cloning. Nothing ran or was pushed, and both are archived.
+  - These are recorded as defect stops, which do not spend relaunches.
+  - Shard 2019 attempt 1 (`session_01Mm7h9R1rpSr4VjRvQ7GRpL`) had already gate-stopped at 16.4 GiB before the hold. It is
+    archived and counts as a memory attempt.
+  - No further shard launches.
+- **Resume.** The desk sends a new full-SHA pin once FIX-8 lands. Addendum B then records the pin, the G-DRIFT `7dbfe20f → <pin>`
+  and the regenerated prompts. Nothing in §§1–6 changes except the pin.
