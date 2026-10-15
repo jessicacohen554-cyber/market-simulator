@@ -122,6 +122,7 @@ snapshot).
 | pjm-outages | — | n/a |
 | pjm-marginal-fuel | — | n/a |
 | uc-params | — | n/a |
+| load-forecast-error | — | n/a |
 | rggi-co2-budgets | — | n/a |
 | carb-cap-schedule | — | n/a |
 | coal-basin-price | national/regional (EIA Annual Coal Report, by producing region) | n/a |
@@ -1099,6 +1100,30 @@ no-load heat input) for the MILP unit-commitment stage. Schema:
 | `n_runs` | `int64` | `none` | no | Number of per-unit on-runs in the pooled span, summed over the cluster's units (the sample behind ut_h). |
 | `years` | `string` | `none` | no | Pooled vintage span, e.g. "2023-2025". |
 | `source` | `string` | `none` | no | Construction provenance (source files and the measurement rules). |
+
+## load-forecast-error
+
+Measured day-ahead load-forecast error by season x hour of day (the forward UC
+commitment demand). Schema:
+[`schema/load-forecast-error.schema.yaml`](schema/load-forecast-error.schema.yaml).
+
+- **Keys:** `season`, `hour_of_day`
+- **Reconciles:** EIA-930 BA hourly `Demand forecast` and `Demand`
+  (`data/raw/eia-930-hourly`) on the demand loader's filled frame, every
+  complete year, hours failing the 30 % data-QA cut dropped: `bias_frac` = mean
+  (DF - actual) / actual per meteorological season x local hour. Read by
+  `market_sim.data.commitment_demand` only when `uc_commitment_demand_source`
+  is `da_forecast` in forecast mode.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `season` | `string` | `none` | no | Meteorological season token, DJF, MAM, JJA or SON. |
+| `hour_of_day` | `int64` | `none` | no | Local hour of day 0-23 (interval-beginning, the model clock). |
+| `bias_frac` | `float64` | `fraction` | no | Mean of (forecast - actual) / actual over the cell's valid hours. The forward commitment demand is realised load x (1 + bias_frac). |
+| `mean_error_mw` | `float64` | `mw` | no | Mean of (forecast - actual) in MW over the cell's valid hours (reference). |
+| `n_hours` | `int64` | `none` | no | Valid hours pooled into the cell. |
+| `ba` | `string` | `none` | no | EIA-930 balancing-authority code (or pool code) read. |
+| `years` | `string` | `none` | no | Pooled span of complete years, e.g. "2016-2025". |
 
 ## vlr-pocket-groups
 

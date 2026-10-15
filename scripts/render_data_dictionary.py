@@ -107,6 +107,7 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "transmission-expansion",
     "ramp-capability",
     "uc-params",
+    "load-forecast-error",
     "vlr-pocket-groups",
     "winter-fuel-inventory",
     "rggi-co2-budgets",
@@ -734,6 +735,21 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "is the CAMPD state footprint in `scripts/lib/uc_params/<iso>.py` "
             "(every ISO). Read by `market_sim.model.uc.params` only when "
             "`unit_commitment_milp` is armed."
+        ),
+    },
+    "load-forecast-error": {
+        "summary": (
+            "Measured day-ahead load-forecast error by season x hour of day "
+            "(the forward UC commitment demand)."
+        ),
+        "reconciles": (
+            "EIA-930 BA hourly `Demand forecast` and `Demand` "
+            "(`data/raw/eia-930-hourly`) on the demand loader's filled frame, "
+            "every complete year, hours failing the 30 % data-QA cut dropped: "
+            "`bias_frac` = mean (DF - actual) / actual per meteorological "
+            "season x local hour. Read by `market_sim.data.commitment_demand` "
+            "only when `uc_commitment_demand_source` is `da_forecast` in "
+            "forecast mode."
         ),
     },
     "energy-offers": {

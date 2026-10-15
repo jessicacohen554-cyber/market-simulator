@@ -2528,6 +2528,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # before HiGHS — the same feasible set and optimum, model/uc/slim.py;
     # FINDING-ucmilp-slim-window-2026-10-10.md).
     "uc_slim_window",
+    # Lane UC-1-FIX-7 (2026-10-15, owner ruling UC-DESK r13): the UC window's
+    # commitment demand, born at its declared "actual" (the uc-1.6 behaviour)
+    # and dropped from the hash there, so no committed key moves.
+    "uc_commitment_demand_source",
     # Lane UC-MISO-VLR (2026-10-15, owner ruling r13 Q1=A): the VLR load-pocket
     # commitment requirement in the UC window, born default off and dropped
     # from the hash there, so every committed key is unmoved. Registered IN THE
@@ -3456,6 +3460,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "uc_solver_preset": "'lean'",
     # Added by lane UC-SLIM WITH the field (the nyiso-119 discipline).
     "uc_slim_window": "True",
+    # Added by lane UC-1-FIX-7 WITH the field (the nyiso-119 discipline).
+    "uc_commitment_demand_source": "'actual'",
     # Added by lane UC-MISO-VLR WITH the field (the nyiso-119 discipline).
     "vlr_pocket_commitment": "False",
 }
@@ -4453,6 +4459,11 @@ UC_REFUSED_BY_RULING: tuple[tuple[str, str], ...] = ()
 #: (``tests/unit/model/uc/test_solve_presets.py`` holds the two in step); the
 #: validator below refuses any other name.
 UC_SOLVER_PRESET_NAMES: tuple[str, ...] = ("highs_default", "lean")
+
+#: The commitment demands ``uc_commitment_demand_source`` admits; held in step
+#: with ``data/commitment_demand.py::COMMITMENT_DEMAND_SOURCES`` by
+#: ``tests/unit/data/test_commitment_demand.py``.
+UC_COMMITMENT_DEMAND_SOURCES: tuple[str, ...] = ("actual", "da_forecast")
 
 
 @dataclass
@@ -23218,6 +23229,16 @@ class ScenarioConfig:
     # True and registered there, so no committed key moves. False solves
     # every window on the full model (the uc-1.1 path).
     uc_slim_window: bool = True
+    # The demand the UC WINDOW commits against (lane UC-1-FIX-7; owner ruling
+    # UC-DESK r13, 2026-10-15; FINDING-ucmilp-diag-undercommit-2026-10-14.md
+    # cause 2, perfect foresight). "actual" = the P1 demand (uc-1.6).
+    # "da_forecast" = backcast: the BA's measured EIA-930 day-ahead demand
+    # forecast, mapped to zones by the demand loader's own weights; forecast:
+    # realised load times one plus the measured multi-year (DF - actual) /
+    # actual profile by season x hour of day (frozen derive, rule 23). P1
+    # always clears on actual load, so prices stay its duals (rule 4). No free
+    # number (data/commitment_demand.py). Admissible: UC_COMMITMENT_DEMAND_SOURCES.
+    uc_commitment_demand_source: str = "actual"
     # VLR LOAD-POCKET COMMITMENT REQUIREMENT (lane UC-MISO-VLR, owner ruling
     # 2026-10-15 r13, decision card Q1 = "A"). GATED, default False,
     # byte-identical off (the one consumer, pipeline.uc.UcStage, builds no
@@ -24807,6 +24828,20 @@ class ScenarioConfig:
                     "uc_solver_preset must be one of "
                     f"{UC_SOLVER_PRESET_NAMES} (got {self.uc_solver_preset!r})."
                 )
+        if self.uc_commitment_demand_source not in UC_COMMITMENT_DEMAND_SOURCES:
+            raise ValueError(
+                "uc_commitment_demand_source must be one of "
+                f"{UC_COMMITMENT_DEMAND_SOURCES} "
+                f"(got {self.uc_commitment_demand_source!r})."
+            )
+        if (
+            self.uc_commitment_demand_source != "actual"
+            and not self.unit_commitment_milp
+        ):
+            raise ValueError(
+                "uc_commitment_demand_source is read only by the UC window: "
+                "arm unit_commitment_milp or leave it 'actual'."
+            )
 
     @property
     def real_discount_rate(self) -> float:
@@ -26162,6 +26197,10 @@ TIER_TAGS: dict[str, int] = {
     "uc_prefixing": 1,
     "uc_solver_preset": 1,
     "uc_slim_window": 1,
+    # Lane UC-1-FIX-7: structural (which demand the UC commits against); no
+    # free number of its own (rule 21) -- the backcast series is measured
+    # EIA-930 DF, the forward profile a frozen derive of it.
+    "uc_commitment_demand_source": 1,
     "vlr_pocket_commitment": 1,
     # closeout-SOCO-w3 DIAGNOSTIC (rule 13: never a keeper input).
     "diagnostic_coal_metered_online_floor": 1,

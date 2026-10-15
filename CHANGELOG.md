@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-10-15 — uc-milp UC-1-FIX-7: the UC commitment demand (`uc_commitment_demand_source`, engine uc-1.7)
+
+Owner ruling UC-DESK r13. The MILP UC window can commit against a commitment demand that is separate
+from the P1 demand, which fixes UC-DIAG cause 2 (perfect foresight). At `"actual"` (the default)
+the windows get the P1 demand object, so the run is byte-identical to uc-1.6 (toy G-OFF hash
+equal to main; no key moves). At `"da_forecast"` in a backcast, the windows get the BA's measured
+EIA-930 day-ahead `Demand forecast`. It is read off the demand loader's own frame, split by the
+loader's zone weights (`eia930.load_zone_weights`, factored out of `load_demand`) and grossed up by
+`td_loss_factor`. An hour whose forecast is more than 30 % off the actual is dropped as a data error
+(`COMMITMENT_DF_DATA_ERROR_FRACTION`, the UC-DIAG QA cut). In forecast mode the commitment demand
+is realised load × (1 + the measured mean relative error by season × hour), taken from the new
+frozen `load-forecast-error` clean datatype (`scripts/data/derive_load_forecast_error.py`). P1
+still clears on actual load (rule 4). SPP backcast increment at the top-100 load hours: +0.7 to
++1.2 GW in 2019–22. Matrix row added; every shard cell is `U`. Record:
+`docs/records/governance/uc-milp-2026-10/FINDING-ucmilp-fix7-commitment-demand-2026-10-15.md`.
+
 ## 2026-10-10 — uc-milp UC-SLIM: the slim window (`uc_slim_window`, exact reduction before HiGHS; gate-on path only)
 
 Owner ruling "Try 'slim window' first" under D-2 "Keep 3×; fund speedup". UC-SPEED had measured

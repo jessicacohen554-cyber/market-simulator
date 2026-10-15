@@ -176,6 +176,7 @@ from .demand import (
     _load_nwpp_hourly_demand as _load_nwpp_hourly_demand,
     load_demand,
     load_demand_meta,
+    load_zone_weights,
 )
 
 __all__ = [
@@ -245,4 +246,5 @@ __all__ = [
     "DemandProfileNotRepairedError",
     "load_demand",
     "load_demand_meta",
+    "load_zone_weights",
 ]
