@@ -425,6 +425,7 @@ def run_year_solve(
         mc_base,
         dispatch_kwargs,
         config,
+        zone_names=zone_names,
         xyear_cache=xyear_cache,
         p1_fleet_prep=(
             ra_p1_prep
