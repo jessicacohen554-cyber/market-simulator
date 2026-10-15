@@ -1017,7 +1017,11 @@ def synchronized_reserve_overrides(
     """
     sync = dispatch_kwargs.get("reserve_synchronized")
     elig = dispatch_kwargs.get("reserve_eligible")
-    if sync is None or elig is None or dispatch_kwargs.get("reserve_requirement") is None:
+    if (
+        sync is None
+        or elig is None
+        or dispatch_kwargs.get("reserve_requirement") is None
+    ):
         return {}
     sync = np.asarray(sync, dtype=bool)
     if not sync.any():
