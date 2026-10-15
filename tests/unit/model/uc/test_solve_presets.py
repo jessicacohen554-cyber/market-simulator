@@ -167,7 +167,7 @@ def test_harness_thread_count_reaches_the_handle(uc_params_frame):
     assert w.h.getOptionValue("presolve")[1] == "on"
     assert w.h.getOptionValue("mip_heuristic_run_feasibility_jump")[1] is False
     assert w.h.getOptionValue("mip_allow_restart")[1] is False
-    assert w.h.getOptionValue("mip_heuristic_effort")[1] == 0.0
+    assert w.h.getOptionValue("mip_heuristic_effort")[1] == pytest.approx(0.05)
 
 
 def test_paired_run_solves_the_base_runs_window_problems(

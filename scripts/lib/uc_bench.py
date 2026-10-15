@@ -71,6 +71,8 @@ class YearCapture:
     mc_bid: np.ndarray | None = None
     p1: Any = None
     wall_s: float | None = None
+    #: The solve's runtime zone list (``demand``'s rows; lane UC-1-FIX-8).
+    zone_names: list | None = None
 
     def save(self, path: Path) -> Path:
         """Pickle the capture without its ``hooks``.
@@ -177,6 +179,9 @@ def capture_year(
             mc_base=np.asarray(mc_base),
             dispatch_kwargs=dict(dispatch_kwargs),
             config=config,
+            zone_names=(
+                None if kw.get("zone_names") is None else list(kw["zone_names"])
+            ),
             hooks={
                 k: v
                 for k, v in kw.items()
@@ -228,6 +233,7 @@ def _stage(cap: YearCapture, config, r0, mc_bid, checkpoint_root: Path):
         None,
         lambda: bid,
         checkpoint_root=checkpoint_root,
+        zone_names=cap.zone_names,
     )
 
 

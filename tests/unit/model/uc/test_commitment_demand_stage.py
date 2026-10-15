@@ -57,7 +57,7 @@ def _solve(cfg, day_mw: float = 150.0):
 
     gens, fa, demand, mc, dk = toy_inputs(T, day_mw=day_mw)
     puc._LAST_SOLVED.clear()
-    res = run_energy_solve(gens, fa, demand, mc, dk, cfg)
+    res = run_energy_solve(gens, fa, demand, mc, dk, cfg, zone_names=["North"])
     return res, puc.take_uc_stages()[-1], demand
 
 

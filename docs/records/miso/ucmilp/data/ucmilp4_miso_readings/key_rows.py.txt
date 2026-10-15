@@ -1,0 +1,13 @@
+import json,sys
+def recs(p):
+    d=json.load(open(p)); out={}
+    for k,v in d["criteria"].items():
+        for r in v.get("records",[]): out[(k,r.get("key"),r.get("year"))]=r
+    return out
+files=[(a.split("=")[0],recs(a.split("=")[1])) for a in sys.argv[1:]]
+keys=sorted(set().union(*[set(f[1]) for f in files]),key=lambda x:(x[0],str(x[1]),x[2] or 0))
+for k in keys:
+    if k[0] not in ("fuelmix","price_mean","price_shape","dispatch_corr","forced_share"): continue
+    if k[0]=="fuelmix" and k[1] not in ("CC_REGULAR","ST_GAS","COAL_PRB","COAL_BIT","CT_PEAKER","CC_CHP","import"): continue
+    row=[f"{k[0]}:{k[1]}:{k[2]}"]+[f"{n}={f.get(k,{}).get('status')} {f.get(k,{}).get('magnitude')}" for n,f in files]
+    print(" | ".join(row))

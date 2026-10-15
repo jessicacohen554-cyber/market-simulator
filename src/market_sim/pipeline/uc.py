@@ -51,7 +51,7 @@ import resource
 import time
 from collections import deque
 from pathlib import Path
-from typing import Callable, Optional
+from typing import Callable, Optional, Sequence
 
 import numpy as np
 import pandas as pd
@@ -126,8 +126,18 @@ logger = logging.getLogger(__name__)
 #: lane UC-MISO-VLR, #7263; default off, no row when off) and the SPP
 #: synchronized-reserve restriction of the windows' reserve classes to the
 #: integer members (``spp_spinning_reserve_share``, lane UC-SPP-SPIN, #7261;
-#: default off, no override when off).
-UC_ENGINE_VERSION = "uc-1.7"
+#: default off, no override when off). Lane UC-1-FIX-8 maps the "da_forecast"
+#: increment onto the runtime zone rows by name (interchange rows get none)
+#: without a bump: wherever uc-1.7 built a schedule the runtime zones were the
+#: configured zones and the commitment demand is bit-identical; everywhere
+#: else uc-1.7 raised before any schedule existed.
+#: uc-1.8 (lane UC-1-FIX-9, UC-DESK ruling 2026-10-15): the ``lean`` solver
+#: path runs HiGHS's LP-based heuristics (``model/uc/solve.py::
+#: UC_SOLVER_PRESETS``). A solver-path change only: the window model, its
+#: integer feasible set, the gap and the time limit are unchanged; a window's
+#: optimum moves at most within ``uc_mip_rel_gap``. The version and the solve
+#: options both enter :func:`uc_input_digest`, so no uc-1.7 schedule is reused.
+UC_ENGINE_VERSION = "uc-1.8"
 
 #: The most recent stage objects (one per year solved in this process), for a
 #: harness that writes the post-P1 uplift sidecar; drained by :func:`take_uc_stages`.
@@ -469,6 +479,9 @@ class UcStage:
             hook fires (late-bound: the bid is assembled after the stage is
             prepared).
         checkpoint_root: Override of ``RESULTS_ROOT`` for the scratch checkpoints (tests).
+        zone_names: The solve's runtime zone list (``demand``'s row order,
+            interchange zones included); the "da_forecast" commitment demand
+            maps its increment onto these rows by name (lane UC-1-FIX-8).
     """
 
     def __init__(
@@ -482,6 +495,7 @@ class UcStage:
         upstream_prep: Optional[Callable],
         bid_getter: Callable[[], np.ndarray],
         checkpoint_root: Path | None = None,
+        zone_names: Sequence[str] | None = None,
     ) -> None:
         self.config = config
         self.iso = str(getattr(config, "iso", ""))
@@ -490,7 +504,7 @@ class UcStage:
         self.fleet_arrays = fleet_arrays
         self.demand = demand
         #: What the windows commit against (``uc_commitment_demand_source``).
-        self.commit: CommitmentDemand = commitment_demand(config, demand)
+        self.commit: CommitmentDemand = commitment_demand(config, demand, zone_names)
         self.dispatch_kwargs = dispatch_kwargs
         self.mc_base = np.asarray(mc_base, dtype=float)
         self.r0 = r0
@@ -1112,12 +1126,14 @@ def prepare_uc_stage(
     r0,
     upstream_prep: Optional[Callable],
     bid_getter: Callable[[], np.ndarray],
+    zone_names: Sequence[str] | None = None,
 ) -> UcStage:
     """Build the year's :class:`UcStage` (the one call ``run_energy_solve`` makes).
 
     ``fleet`` (the ``list[Generator]``) is accepted for signature parity with
     the other seam builders and unused: every parameter is read from
-    ``fleet_arrays`` and the frozen derive (rule 6).
+    ``fleet_arrays`` and the frozen derive (rule 6). ``zone_names`` is the
+    solve's runtime zone list (:class:`UcStage`).
     """
     return UcStage(
         config,
@@ -1128,4 +1144,5 @@ def prepare_uc_stage(
         r0,
         upstream_prep,
         bid_getter,
+        zone_names=zone_names,
     )
