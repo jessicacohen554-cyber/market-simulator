@@ -82,6 +82,7 @@ import os
 import time
 from collections import deque
 from dataclasses import dataclass, field
+from collections.abc import Sequence
 from typing import TYPE_CHECKING, Optional
 
 import numpy as np
@@ -365,6 +366,7 @@ def run_energy_solve(
     p1_storage_discharge_cost: Optional[np.ndarray] = None,
     reuse_p0_from: Optional[EnergySolveResult] = None,
     export_p1_basis: bool = False,
+    zone_names: Optional[Sequence[str]] = None,
 ) -> EnergySolveResult:
     """Run the shared P0 → markup → P1 energy solve (both orchestrators).
 
@@ -474,6 +476,10 @@ def run_energy_solve(
             pass 1 and every ercot-230 fixed-point iteration). ``False``
             (every other caller) exports nothing; an unseeded pass ignores
             it.
+        zone_names: The solve's runtime zone list (``demand``'s row order,
+            appended interchange zones included). Read only by the UC stage's
+            "da_forecast" commitment demand, which maps its increment onto
+            these rows by name and raises without it (lane UC-1-FIX-8).
 
     Returns:
         :class:`EnergySolveResult` with the P0/P1 results, the bid MC, the
@@ -685,6 +691,7 @@ def run_energy_solve(
             r0,
             upstream_prep=p1_fleet_prep,
             bid_getter=lambda: mc_bid,  # read at hook time, after assembly
+            zone_names=zone_names,
         )
         markup = _uc_stage.zero_markup(markup)
         p1_fleet_prep = _uc_stage.p1_fleet_prep
