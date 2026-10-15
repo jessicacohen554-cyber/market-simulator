@@ -1,0 +1,16 @@
+year	attempt	session	launched_utc	container_mem_plus_swap_gib	outcome
+2019	1	session_01XvDo542vMLi6Yzw8HBnuxX	05:23	22.36	solved, 5af6176b, verified
+2020	1	session_011YGNjf1ruTErzuCD6tuPAK	05:28	22.36	solved, 180823b9, verified
+2021	1	session_01Ue48DFueBeZBE3G8qHkxKo	05:34	22.36	solved, d076c401, verified
+2022	1	session_01GU3eYiFc3BbjR3g9EWWEdJ	05:40	17.4	gate stop
+2023	1	session_01RKPM379ygTi56aUZ2SkFtn	05:45	16.4	gate stop
+2024	1	session_017oq7UxNR7jfoNeRJP8pHaU	05:51	16.4	gate stop
+2025	1	session_01SDCY4jpaKRg9LM32kqF451	05:56	16.4	gate stop
+2022	2	session_01EN2mc9K4PvSghTmrsMJvdQ	07:14	16.4	gate stop
+2023	2	session_01LvPwpKNZp8MfAsu33DrwfQ	07:20	16.4	gate stop
+2024	2	session_01NM5PseUgoHsfV9uV9BdM6j	07:26	16.4	gate stop
+2025	2	session_01Nn1PfPKTovDPMdMPsUnf3k	07:27	16.4	gate stop
+# UC-DESK ruling 07:38Z: option (a); at most 4 MORE attempts per year after this point (attempts 3..6), one shard at a time ~30 min apart; gate unchanged.
+2022	3	session_01PG72cB9yifi9HAv8PEQVoh	07:39	17.4	gate stop
+2023	3	session_016dsq9CFNjBA9CrbwcdNB4s	08:12	17.4	gate stop
+# UC-DESK ruling 08:22Z: (i) stop. Verdict R (kill #3). No further launches.
