@@ -57,9 +57,11 @@ import numpy as np
 import pandas as pd
 import scipy.sparse as sp
 
+from market_sim.config.constants import VLR_GROUP_MIN_COMMITTED_UNITS
 from market_sim.config.paths import RESULTS_ROOT
 from market_sim.data.fleet import FleetArrays
 from market_sim.data.floor_mechanisms import MECH_UC_SCHEDULE
+from market_sim.data.vlr_pocket_groups import load_vlr_pocket_groups
 from market_sim.model.uc.params import (
     UcClusterParams,
     build_uc_cluster_params,
@@ -69,6 +71,7 @@ from market_sim.model.uc.params import (
     units_online_from_dispatch,
     units_online_profile,
 )
+from market_sim.model.uc.pocket import PocketRequirement, build_pocket_requirement
 from market_sim.model.uc.schedule import (
     UcSchedule,
     month_boundaries,
@@ -205,6 +208,9 @@ def uc_input_digest(
         stage.L,
         stage.prefixing,
         stage.slim,
+        # The pocket requirement is not a ``uc_*`` field: hash it by value when
+        # armed (absent off, so a gate-off digest is unchanged).
+        *(() if stage.pocket is None else (stage.pocket,)),
         uc_fields,
         repr(stage.options),
         stage.params,
@@ -484,6 +490,14 @@ class UcStage:
             gate_params, budget_pinned_gens(dispatch_kwargs)
         )
         self.int_idx = self.params.integer_clusters
+        # Synchronized reserve classes (SPP spinning share): restricted to the
+        # integer members for the windows and P1 (P0 keeps the design as built).
+        #: P1 kwargs overrides the stage owns (``{}`` = none; see solve.py).
+        self.p1_kwargs_overrides: dict = synchronized_reserve_overrides(
+            dispatch_kwargs, self.params
+        )
+        if self.p1_kwargs_overrides:
+            self.dispatch_kwargs = {**dispatch_kwargs, **self.p1_kwargs_overrides}
         self.schedule: UcSchedule | None = None
         #: The P1 bid the schedule was solved on (the merit order of the floor).
         self.mc_bid: np.ndarray | None = None
@@ -494,6 +508,21 @@ class UcStage:
         self.options: UcSolveOptions = solve_options_from_config(config)
         self.prefixing = bool(getattr(config, "uc_prefixing", False))
         self.slim = bool(getattr(config, "uc_slim_window", False))
+        #: The VLR load-pocket requirement (``vlr_pocket_commitment``), built
+        #: on the post-demotion params so a demoted cluster carries no row.
+        self.pocket: PocketRequirement | None = None
+        if bool(getattr(config, "vlr_pocket_commitment", False)):
+            self.pocket = build_pocket_requirement(
+                self.params,
+                load_vlr_pocket_groups(self.iso),
+                VLR_GROUP_MIN_COMMITTED_UNITS,
+            )
+            logger.info(
+                "VLR pocket requirement: %d set(s) %s; unmatched groups %s",
+                self.pocket.n_sets,
+                list(self.pocket.labels),
+                list(self.pocket.unmatched),
+            )
         logger.info(
             "UC stage prepared: %d clusters, %d integer (%d fleet rows; %d "
             "all-budget-pinned clusters left to their budget identity), W=%d L=%d",
@@ -685,6 +714,7 @@ class UcStage:
                     fleet_in, p0_dispatch, t1, min(t1 + guard_reach, T)
                 ),
                 slim=self.slim,
+                pocket=self.pocket,
             )
             t_w2 = time.perf_counter()
             warm = window.warm_start_vector(
@@ -750,6 +780,8 @@ class UcStage:
                     "rows": int(result.rows),
                     "guard_rows": int(window._n_guard_rows),
                     "reserve_gated_rows": int(window.n_reserve_gated_rows),
+                    "pocket_rows": int(window._n_pocket_rows),
+                    "pocket_sets_skipped": int(window.pocket_sets_skipped),
                     "slim": {
                         "reduced": window.slim is not None,
                         "columns": int(result.slim_columns),
@@ -843,6 +875,9 @@ class UcStage:
                         getattr(c, "uc_solver_preset", "highs_default")
                     ),
                     "uc_slim_window": bool(getattr(c, "uc_slim_window", False)),
+                    "vlr_pocket_commitment": bool(
+                        getattr(c, "vlr_pocket_commitment", False)
+                    ),
                 },
                 "solver_path": self.options.solver_path(),
                 "threads": int(self.options.threads),
@@ -856,6 +891,13 @@ class UcStage:
                 "integers_per_window": int(self.int_idx.size * (self.W + self.L)),
                 "kept_until": int(sched.kept_until),
                 "reused_schedule": None,
+                "vlr_pocket": None
+                if self.pocket is None
+                else {
+                    "min_units_per_group": int(VLR_GROUP_MIN_COMMITTED_UNITS),
+                    "sets": self.pocket.log_rows(self.params),
+                    "unmatched_groups": list(self.pocket.unmatched),
+                },
             },
             "clusters": params_log_rows(self.params),
             "windows": windows,
@@ -985,6 +1027,57 @@ class UcStage:
         return UcArtifacts(
             year=self.year, schedule=schedule, uplift=uplift, log=self.log
         )
+
+
+def synchronized_reserve_overrides(
+    dispatch_kwargs: dict, params: UcClusterParams
+) -> dict:
+    """Restrict every SYNCHRONIZED reserve class to the integer-cluster members.
+
+    A synchronized class (``reserve_synchronized``; SPP's Spinning share,
+    ``spp_spinning_reserve_share``) may count only capacity that is online.
+    The UC stage is the one place a commitment state exists: an integer
+    member's headroom in the window is ``pmax * a * u / n``
+    (:func:`~market_sim.model.uc.window.reserve_headroom_u_terms`) and in P1
+    its availability is the schedule's ``a * u / n``. Every other member
+    (a fast-start cluster, a budget-pinned demoted cluster, a non-cluster
+    row) has no commitment state here, so it is dropped from the class:
+    its offline capacity must not count, and the LP cannot tell it online.
+
+    Returns:
+        ``{"reserve_eligible": <restricted mask>}`` when the kwargs carry a
+        synchronized class, else ``{}`` (the stage then holds the caller's
+        dict itself, byte-identical).
+    """
+    sync = dispatch_kwargs.get("reserve_synchronized")
+    elig = dispatch_kwargs.get("reserve_eligible")
+    if (
+        sync is None
+        or elig is None
+        or dispatch_kwargs.get("reserve_requirement") is None
+    ):
+        return {}
+    sync = np.asarray(sync, dtype=bool)
+    if not sync.any():
+        return {}
+    elig2d = np.atleast_2d(np.asarray(elig, dtype=bool))
+    if elig2d.shape[0] != sync.size:
+        raise ValueError(
+            f"reserve_synchronized has {sync.size} classes, reserve_eligible "
+            f"{elig2d.shape[0]}"
+        )
+    is_int = np.zeros(elig2d.shape[1], dtype=bool)
+    is_int[params.integer_member_gens] = True
+    out = elig2d.copy()
+    out[sync] &= is_int
+    logger.info(
+        "UC synchronized reserve: class(es) %s restricted to integer members "
+        "(%d of %d eligible rows kept)",
+        np.flatnonzero(sync).tolist(),
+        int(out[sync].sum()),
+        int(elig2d[sync].sum()),
+    )
+    return {"reserve_eligible": out}
 
 
 def prepare_uc_stage(

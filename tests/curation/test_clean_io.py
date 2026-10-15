@@ -64,6 +64,7 @@ ALL_DATATYPES = [
     "chp-btm-share",
     "ramp-capability",
     "uc-params",
+    "vlr-pocket-groups",
     "nyiso-downstate-gas",
     "ercot-wtx-congestion",
     "nyiso-renewable-curtailment",

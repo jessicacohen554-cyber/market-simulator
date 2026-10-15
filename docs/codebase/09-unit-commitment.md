@@ -115,6 +115,23 @@ census. SPP 2020 window 0: 57,384 × 17,229 → 21,304 × 12,204 (8.5 k columns
 fixed, 27.6 k merged, 5.0 k rows dropped) in ~0.1 s; the MILP 2.9 s → 1.6 s,
 the same objective and `u` (FINDING-ucmilp-slim-window-2026-10-10.md).
 
+**VLR load-pocket rows — `model/uc/pocket.py` (`vlr_pocket_commitment`, default False).**
+`build_pocket_requirement` maps the ISO's clean `vlr-pocket-groups` partition
+(`data/vlr_pocket_groups.py`; MISO: the MTEP15 VLR study's Scenario-1C groups)
+onto `(plant_code, family)` clusters through each unit's EIA-860 prime mover /
+energy source. Groups on the same cluster set add their requirement (capped at
+the set's units); overlapping sets are refused; a group with no fleet cluster is
+logged `unmatched`. `UcWindowModel._add_pocket_rows` then adds, per set and
+window hour, `sum_{c in set} u[c,t] >= min(N, sum_c min(u_upper[c,t],
+ceil(n_c a[c,t])))` with `N = constants.VLR_GROUP_MIN_COMMITTED_UNITS` per
+group: a u-floor that relaxes inside a carried min-down and on outage, so it
+never makes a window infeasible by itself. The rows sit after the UC rows and
+before the ramp rows (`diagnose` names them `vlr_pocket`). The stage logs
+`engine.vlr_pocket` and `windows[].pocket_rows`, and hashes the requirement
+into the pass-2 reuse digest (it is not a `uc_*` field). `__post_init__`
+refuses the field without `unit_commitment_milp` and beside
+`st_gas_mustrun_per_plant` (rule 19: it replaces that floor).
+
 ## 9.3 Solve, stitch, inject — `solve.py`, `schedule.py`, `pipeline/uc.py`
 
 `solve_window` applies the registry options (`mip_rel_gap`, `time_limit`, the

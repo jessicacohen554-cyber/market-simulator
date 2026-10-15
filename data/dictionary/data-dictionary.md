@@ -65,6 +65,7 @@ for the market split.
 | transfer-interface-limits | — | — | — | — | — | — | — | — |
 | transmission-expansion | — | — | — | — | — | — | — | — |
 | ramp-capability | — | — | — | — | — | — | — | — |
+| vlr-pocket-groups | — | — | — | — | — | — | — | — |
 | winter-fuel-inventory | — | — | — | — | — | — | — | — |
 | chp-btm-share | — | — | — | — | — | — | — | — |
 | nyiso-downstate-gas | — | — | — | — | — | — | — | — |
@@ -94,7 +95,7 @@ for the market split.
 | ps-water-state | — | — | — | — | — | — | — | — |
 | ra-import-allocations | — | — | — | — | — | — | — | — |
 | load-forecast | — | — | — | — | — | — | — | — |
-| pjm-elliott-forced-outages | — | — | 2022 | — | — | — | — | — |
+| pjm-elliott-forced-outages | — | — | — | — | — | — | — | — |
 
 ### National / ISO-agnostic datatypes
 
@@ -125,8 +126,8 @@ snapshot).
 | carb-cap-schedule | — | n/a |
 | coal-basin-price | national/regional (EIA Annual Coal Report, by producing region) | n/a |
 | coal-mining-ppi | national (BLS PPI, coal) | n/a |
-| coal-stocks | national (EIA-923 Schedule 2, by plant) | 2015–2024 |
-| coal-receipts | national (EIA-923 Page 5, by plant) | 2017–2025 |
+| coal-stocks | national (EIA-923 Schedule 2, by plant) | n/a |
+| coal-receipts | national (EIA-923 Page 5, by plant) | n/a |
 | stb-coal-loadings | national (STB EP 724, by carrier x region) | n/a |
 | nwpp-plant-basis-energy | NWPP only (one committed CSV, year x family) | n/a |
 | carbon-auction-results | — | n/a |
@@ -1087,17 +1088,49 @@ no-load heat input) for the MILP unit-commitment stage. Schema:
 | `uc_class` | `string` | `none` | no | CAMPD unit-type family token: cc, ct, coal or st_gas (see header). |
 | `n_units` | `int64` | `none` | no | Units of the family at the plant with at least one online hour in the pooled span (the integer range of the cluster). Fallback rows: plants pooled. |
 | `hsl_mw` | `float64` | `mw` | no | Plant high sustainable limit: p99.5 of the summed hourly gross load. Fallback rows: the sum over the fitted plants of the family. |
-| `lsl_mw` | `float64` | `mw` | no | Plant low sustainable limit: p5 of the summed gross load over online plant-hours (load >= max(1 MW, 0.05 x HSL)). |
-| `mlf` | `float64` | `fraction` | no | Minimum stable fraction when online, lsl_mw / hsl_mw, in [0, 1]. |
-| `ut_h` | `int64` | `hours` | no | Minimum up time: p25 of the measured on-run lengths of the plant series (hours), at least 1. |
-| `dt_h` | `int64` | `hours` | no | Measured off-gap p25 between on-runs (hours), at least 1. DIAGNOSTIC: the engine's minimum down time is the published class value (an observed idle gap is usage, not the physical restart bar). |
+| `lsl_mw` | `float64` | `mw` | no | Cluster low sustainable limit on the per-unit basis, mlf x hsl_mw (every unit at its own minimum). Not the p5 of the summed plant load, which is one unit of n at minimum (UC-DATA-UT, owner ruling 2026-10-15, rule 23). |
+| `mlf` | `float64` | `fraction` | no | Per-unit minimum stable fraction when online, in [0, 1]: sum over units of the unit LSL (p5 of the unit's load over its FULL online hours, CEMS opTime >= 1 and load >= max(1 MW, 0.05 x unit HSL); a unit with no full online hour uses all its online hours) / sum of the unit HSL (p99.5 of the unit's series). Owner ruling 2026-10-15 (UC-DATA-UT). |
+| `ut_h` | `int64` | `hours` | no | Minimum up time: p25 of the measured on-run lengths of the cluster's UNITS, pooled (hours), at least 1. Each unit is online at load >= max(1 MW, 0.05 x its own HSL); runs never span a reporting hole. Not the plant series, whose runs last while ANY unit is on (UC-DATA-UT, owner ruling r13 2026-10-15, rule 23 defect fix). |
+| `dt_h` | `int64` | `hours` | no | p25 of the per-unit off-gaps between on-runs, pooled over the cluster's units (hours), at least 1; same unit basis as ut_h. DIAGNOSTIC: the engine's minimum down time is the published class value (an observed idle gap is usage, not the physical restart bar). |
 | `noload_mmbtu_h` | `float64` | `mmbtu_per_hour` | yes | Plant no-load heat input: the sum over fitted units of the OLS intercept of heatInput on grossLoad over online hours (opTime >= 1, grossLoad > 0, heatInput > 0; >= 200 points spanning >= 10 % of the unit peak; intercept floored at 0). Null when no unit of the plant fits. |
 | `noload_units_fitted` | `int64` | `none` | no | Units whose intercept regression met the fit screen. |
 | `noload_r2_median` | `float64` | `fraction` | yes | Median R^2 across the plant's fitted units; null when none fit. |
 | `online_frac` | `float64` | `fraction` | no | Share of pooled plant-hours with the plant online. |
-| `n_runs` | `int64` | `none` | no | Number of on-runs of the plant series in the pooled span. |
+| `n_runs` | `int64` | `none` | no | Number of per-unit on-runs in the pooled span, summed over the cluster's units (the sample behind ut_h). |
 | `years` | `string` | `none` | no | Pooled vintage span, e.g. "2023-2025". |
 | `source` | `string` | `none` | no | Construction provenance (source files and the measurement rules). |
+
+## vlr-pocket-groups
+
+Units an ISO's voltage-and-local-reliability operating guides name, per load
+pocket and outage-study group, for the UC stage's pocket commitment rows.
+Schema:
+[`schema/vlr-pocket-groups.schema.yaml`](schema/vlr-pocket-groups.schema.yaml).
+
+- **Keys:** `iso`, `pocket`, `group_id`, `plant_code`, `unit_id`
+- **Reconciles:** MISO: the MTEP15 VLR study (PUCT Docket 46416, Exh. CWL-5,
+  Scenario 1C groups A-F) hand-transcribed with each unit's EIA-860 prime mover
+  / energy source / retirement year
+  (`data/raw/vlr-pocket-groups/miso/miso.csv`); `uc_family` is derived from the
+  EIA-860 identity. Per-ISO scoping is
+  `scripts/lib/vlr_pocket_groups/<iso>.py`. Read by
+  `market_sim.data.vlr_pocket_groups` only when `vlr_pocket_commitment` is
+  armed.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO/RTO whose operating guides name the unit (MISO). |
+| `pocket` | `string` | `none` | no | Load pocket the operating guide protects (e.g. Amite South, DSG, WOTAB, Western). |
+| `group_id` | `string` | `none` | no | The source's outage-study group (MTEP15 Scenario 1C groups A-F). The commitment requirement is stated per group. |
+| `plant_code` | `int64` | `none` | no | EIA plant code (ORISPL). |
+| `plant_name` | `string` | `none` | no | Plant name as EIA-860 records it. |
+| `unit_id` | `string` | `none` | no | Unit / generator ID as the source names it (EIA-860 generator ID). |
+| `eia860_prime_mover` | `string` | `none` | no | EIA-860 prime mover code of the unit (ST, GT, CT, CA, ...). |
+| `eia860_energy_source` | `string` | `none` | no | EIA-860 energy source 1 of the unit (NG, DFO, SUB, ...). |
+| `eia860_retirement_year` | `float64` | `year` | yes | EIA-860 retirement year; null while the unit is operable. |
+| `uc_family` | `string` | `none` | no | Model commitment-cluster family the unit falls in (st_gas / ct / cc / coal), derived from the EIA-860 prime mover and energy source by the curate script; the cluster is (plant_code, uc_family). |
+| `source_doc` | `string` | `none` | no | Document the unit and group come from. |
+| `source_page` | `string` | `none` | no | Page / table within source_doc. |
 
 ## winter-fuel-inventory
 

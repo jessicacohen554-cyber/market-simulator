@@ -161,14 +161,19 @@ def live_epochs(payload: dict) -> list[str]:
     """The ``SOLVE_EPOCHS`` ids whose declared scope covers a recorded payload.
 
     The SAME selection rule ``ScenarioConfig.cache_key`` applies
-    (``solve_surface.applicable_epochs``: mode, ISO and reach year), run over
-    the committed payload's ``mode`` / ``iso`` / ``end_year`` literals rather
+    (``solve_surface.applicable_epochs``: mode, ISO, reach year and any
+    ``requires`` gate), run over the committed payload's ``mode`` / ``iso`` /
+    ``end_year`` (and gate-field) literals rather
     than a re-hydrated config, so a payload older than the live schema is
     scoped exactly as the config it recorded would be (capx D100).
     """
+    from market_sim.config.solve_surface import SOLVE_EPOCHS
+
+    gates = {e.requires: payload.get(e.requires) for e in SOLVE_EPOCHS if e.requires}
     return list(
         applicable_epochs(
             SimpleNamespace(
+                **gates,
                 mode=payload.get("mode"),
                 iso=payload.get("iso"),
                 end_year=payload.get("end_year"),

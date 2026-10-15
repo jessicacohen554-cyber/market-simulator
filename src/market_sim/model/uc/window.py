@@ -50,6 +50,7 @@ from market_sim.model.uc.params import (
     UcClusterParams,
     units_needed_for_floor,
 )
+from market_sim.model.uc.pocket import PocketRequirement
 from market_sim.model.uc.slim import SlimReduction, reduce_window
 
 #: Dispatch kwargs the window DROPS: annual / monthly budget families whose
@@ -125,6 +126,12 @@ REFUSED_KWARGS: tuple[str, ...] = (
     "reserve_posture_pools",
     "hydro_cascade",
 )
+
+
+#: Round-off guard on ``n * a`` before the ceiling in the pocket rows'
+#: available-unit count (a float availability of exactly k/n must read k units,
+#: not k + 1).
+_AVAIL_UNIT_TOL: float = 1e-9
 
 
 class UcWindowInfeasible(RuntimeError):
@@ -658,6 +665,9 @@ class UcWindowModel:
             floor it cannot honour (FINDING-ucmilp-1-fix-window-infeasibility
             -2026-10-04 section 3). ``None`` adds no guard row (the year's
             last window, and tests without a floor).
+        pocket: The VLR load-pocket requirement
+            (``vlr_pocket_commitment``; :mod:`market_sim.model.uc.pocket`), or
+            ``None`` for no pocket row (:meth:`_add_pocket_rows`).
     """
 
     def __init__(
@@ -672,6 +682,7 @@ class UcWindowModel:
         fix_off: np.ndarray | None = None,
         floor_need_ahead: np.ndarray | None = None,
         slim: bool = False,
+        pocket: PocketRequirement | None = None,
     ) -> None:
         t_build = time.perf_counter()
         self.params = params
@@ -699,12 +710,17 @@ class UcWindowModel:
         self._n_uc_rows = 0
         self._n_guard_rows = 0
         self._n_ramp_rows = 0
+        #: VLR pocket rows (``vlr_pocket_commitment``), after the UC rows.
+        self._n_pocket_rows = 0
+        #: Pocket sets with no integer cluster in this window (no row built).
+        self.pocket_sets_skipped = 0
         self.hist_v = np.zeros((self.n_int, self.T_w))
         self.hist_w = np.zeros((self.n_int, self.T_w))
         if self.n_int:
             self.hist_v, self.hist_w = self._carry_history(state)
             self._add_uc_columns(noload_w, state, fix_on, fix_off, inputs.kwargs)
             self._add_uc_rows(state, floor_need_ahead)
+            self._add_pocket_rows(pocket)
             self._set_integrality()
         self._pin_state_rows(state, soc_terminal)
         self._add_ramp_boundary_rows(inputs, state)
@@ -1087,6 +1103,59 @@ class UcWindowModel:
         upper = np.concatenate(hi)
         self._append_rows(A, lower, upper)
         self._n_uc_rows = int(off)
+
+    def _add_pocket_rows(self, pocket: PocketRequirement | None) -> None:
+        """(g) VLR load-pocket commitment: ``sum_{c in set} u[c, t] >= rhs[t]``.
+
+        One row per pocket set and window hour, over the integer ``u`` of the
+        set's clusters, with
+        ``rhs[t] = min(n_req, sum_c min(u_upper[c, t], ceil(n_c * a[c, t])))``:
+        the requirement relaxes to the units the window can hold online — not
+        inside a carried min-down (``u_upper``) and not on outage (the
+        cluster's availability ``a`` covers ``ceil(n * a)`` units) — so the row
+        never makes a window infeasible by itself, and an outage never forces
+        an unavailable unit on. A set with no integer cluster builds no row
+        (counted in :attr:`pocket_sets_skipped`). Integer rows: they are never
+        priced (rule 4).
+        """
+        if pocket is None or pocket.n_sets == 0:
+            return
+        p = self.params
+        k_all = self.int_idx
+        T_w = self.T_w
+        int_local = np.full(p.n_clusters, -1)
+        int_local[k_all] = np.arange(self.n_int)
+        a = p.cluster_availability(self.fleet)[k_all]  # (n_int, T_w)
+        n = p.n_units[k_all].astype(float)
+        avail_units = np.minimum(
+            np.asarray(self.u_upper, dtype=float),
+            np.maximum(np.ceil(n[:, None] * a - _AVAIL_UNIT_TOL), 0.0),
+        )
+        rows, cols, lower = [], [], []
+        off = 0
+        t = np.arange(T_w)
+        for s in range(pocket.n_sets):
+            loc = int_local[pocket.clusters_of(s)]
+            loc = loc[loc >= 0]
+            if loc.size == 0:
+                self.pocket_sets_skipped += 1
+                continue
+            rhs = np.minimum(float(pocket.n_req[s]), avail_units[loc].sum(axis=0))
+            tt = np.repeat(t, loc.size)
+            kk = np.tile(loc, T_w)
+            rows.append(off + tt)
+            cols.append(self.u_col(kk, tt))
+            lower.append(rhs)
+            off += T_w
+        if not off:
+            return
+        r = np.concatenate(rows)
+        A = sp.coo_matrix(
+            (np.ones(r.size), (r, np.concatenate(cols))), shape=(off, self.n_total)
+        ).tocsr()
+        lo = np.concatenate(lower)
+        self._append_rows(A, lo, np.full(off, np.inf))
+        self._n_pocket_rows = int(off)
 
     def _append_rows(
         self, A: sp.csr_matrix, lower: np.ndarray, upper: np.ndarray

@@ -76,6 +76,38 @@ human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-10-15b — ``uc-params`` ``mlf`` re-derived per UNIT (lane
+UC-DATA-UT scope extension, owner ruling 2026-10-15; rule 23 derivation-defect
+fix). KEY-MOVING for every config that arms ``unit_commitment_milp`` in CAISO,
+ERCOT, MISO, NEISO, NYISO and SPP, through ``solve_surface.SolveEpoch``
+2026-10-15b (its ``requires`` gate).** WHAT CHANGED: ``mlf`` was p5 of the summed
+plant online load over plant HSL; a multi-unit plant reaches that p5 with one
+unit of n at minimum (about 1/n of a unit's minimum), while the UC applies
+``mlf`` per committed unit (``mlf x pbar x a x u``). It is now sum(unit LSL) /
+sum(unit HSL), unit LSL = p5 of the unit's load over its FULL online hours (CEMS
+``opTime == 1``, owner ruling 2026-10-15 on the statistic; a unit with no full
+hour uses all its online hours), ``lsl_mw = mlf x HSL``. Its own id: 2026-10-15a landed on ``main`` (#7262) without it, so
+keys cut under 15a carry the plant-basis ``mlf`` (rule 26: never edit 15a).
+WHAT IS NOT INVALIDATED: every config with the UC stage off (every keeper and
+forecast recipe on ``main``). Record: ``docs/records/governance/uc-milp-2026-10/
+FINDING-ucdata-ut-unit-basis-2026-10-15.md`` §6.
+
+**Epoch 2026-10-15a — ``uc-params`` min-up / min-down re-derived per UNIT
+(lane UC-DATA-UT, owner ruling r13 2026-10-15; rule 23 derivation-defect fix).
+KEY-MOVING for every config that arms ``unit_commitment_milp`` in CAISO, ERCOT,
+MISO, NEISO, NYISO and SPP, through ``solve_surface.SolveEpoch`` 2026-10-15a
+(its ``requires`` gate).** WHAT CHANGED: ``scripts/lib/uc_params`` measured
+``ut_h`` / ``dt_h`` / ``n_runs`` on the PLANT series (online while any unit is
+on) and the UC stage applied ``ut_h`` per unit, an economic run length used as
+a physical bound (``FINDING-ucmilp-diag-undercommit-2026-10-14`` cause 3); they
+are now p25 of the per-unit runs / gaps pooled over the cluster, cut at
+reporting holes. ``data/clean/uc-params/<ISO>`` is gitignored and in no key, so
+the epoch carries the change. ``dt_h`` is a diagnostic column (the engine reads
+the published class min-down), so only ``ut_h`` reaches a solve. WHAT IS NOT
+INVALIDATED: every config with the UC stage off, i.e. every keeper and every
+forecast recipe on ``main``. Record: ``docs/records/governance/uc-milp-2026-10/
+FINDING-ucdata-ut-unit-basis-2026-10-15.md``.
+
 **Epoch 2026-10-03d — MISO 2019-2022 measured nuclear: anchor rows plus the
 NRC daily extract (rule 14; lane closeout-miso-nuc, owner ruling R-43).
 KEY-MOVING for backcast MISO, through ``solve_surface.SolveEpoch`` 2026-10-03d.**

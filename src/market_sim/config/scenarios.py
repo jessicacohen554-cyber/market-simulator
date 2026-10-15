@@ -2464,6 +2464,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # emergency-pool row). No input of its own. Registered IN THE SAME COMMIT
     # as the field (the nyiso-119 discipline).
     "spp_mmu_offer_repair",
+    # UC-SPP-SPIN spinning share (default off): dropped from the hash at its
+    # default so every pre-existing run keeps its key. Byte-identical off by
+    # construction (_spp_design returns the one-family design unchanged).
+    # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
+    "spp_spinning_reserve_share",
     # EIA-923 CC-family heat rates (NWPP-NEXT-14, default off): dropped from
     # the hash at its default so every pre-existing run -- every ISO's keepers
     # included -- keeps its key. Byte-identical off by construction (the seam
@@ -2523,6 +2528,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # before HiGHS — the same feasible set and optimum, model/uc/slim.py;
     # FINDING-ucmilp-slim-window-2026-10-10.md).
     "uc_slim_window",
+    # Lane UC-MISO-VLR (2026-10-15, owner ruling r13 Q1=A): the VLR load-pocket
+    # commitment requirement in the UC window, born default off and dropped
+    # from the hash there, so every committed key is unmoved. Registered IN THE
+    # SAME COMMIT as the field (the nyiso-119 discipline).
+    "vlr_pocket_commitment",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -3418,6 +3428,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "spp_mmu_offer_unavailability": "False",
     # Added by SPP-107 WITH the field (the nyiso-119 discipline).
     "spp_mmu_offer_repair": "False",
+    # Added by UC-SPP-SPIN WITH the field (the nyiso-119 discipline).
+    "spp_spinning_reserve_share": "False",
     # Added by NWPP-NEXT-14 WITH the field (the nyiso-119 discipline).
     "eia923_cc_family_heat_rates": "False",
     # Added by soco-96 WITH the field (the nyiso-119 discipline).
@@ -3444,6 +3456,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "uc_solver_preset": "'lean'",
     # Added by lane UC-SLIM WITH the field (the nyiso-119 discipline).
     "uc_slim_window": "True",
+    # Added by lane UC-MISO-VLR WITH the field (the nyiso-119 discipline).
+    "vlr_pocket_commitment": "False",
 }
 
 
@@ -19431,6 +19445,25 @@ class ScenarioConfig:
     # docs/records/spp/DESIGN-spp-106-offer-side-unavailability-2026-10-01.md.
     spp_mmu_offer_unavailability: bool = False
 
+    # SPP SPINNING SHARE of Contingency Reserve (lane UC-SPP-SPIN, owner ruling
+    # r13 2026-10-15; SPP-56's object). Default off; SPP-only. Read only by
+    # _spp_design (so inert without energy_reserve_coopt), which refuses it
+    # without unit_commitment_milp. Disarm: --set
+    # spp_spinning_reserve_share=false (the pre-arm posture).
+    #
+    # WHEN TRUE, _spp_design adds a SUB-requirement to its one Contingency
+    # Reserve family system (rule 19: no second reserve system): a nested
+    # class-1 family "spp_spinning_reserve" at SPP_RSG_SPIN_MIN_SHARE (1/2,
+    # RSG Operating Process 0820EXT00002 Definitions p. 5: "At least half of
+    # the Contingency Reserve shall be Operating Reserve - Spinning") x the
+    # Contingency Reserve requirement, short at the $250/MW Spinning Reserve
+    # VRL (Protocols v119 Exhibit 4-1). Class 1 is SYNCHRONIZED: the UC stage
+    # restricts it to integer-cluster members, so an offline fast-start CT
+    # still counts toward the pooled requirement but never toward Spinning,
+    # and a committed unit's headroom (u-gated in the window, a*u/n in P1)
+    # must carry it. Zero free parameters (rule 21).
+    spp_spinning_reserve_share: bool = False
+
     # SPP-107 repair sub-gate of spp_mmu_offer_unavailability (2026-10-02; owner
     # card "Build + solve EXR"). Requires spp_mmu_offer_unavailability; SPP-only.
     #
@@ -23185,6 +23218,29 @@ class ScenarioConfig:
     # True and registered there, so no committed key moves. False solves
     # every window on the full model (the uc-1.1 path).
     uc_slim_window: bool = True
+    # VLR LOAD-POCKET COMMITMENT REQUIREMENT (lane UC-MISO-VLR, owner ruling
+    # 2026-10-15 r13, decision card Q1 = "A"). GATED, default False,
+    # byte-identical off (the one consumer, pipeline.uc.UcStage, builds no
+    # requirement and the window adds no row). When True, every UC window adds,
+    # per load-pocket group of the ISO's ``vlr-pocket-groups`` partition
+    # (MTEP15 VLR study, PUCT 46416 Exh. CWL-5 Scenario 1C) and per hour,
+    #   sum_{c in group} u[c, t] >= min(N, units available in the group at t),
+    # N = constants.VLR_GROUP_MIN_COMMITTED_UNITS per group (groups that land
+    # on the same cluster set add). A u-floor in the commitment stage, never a
+    # P floor: committed units dispatch freely from their min-load up, and P1
+    # sees the requirement only through the MECH 28 schedule bounds. The row is
+    # an integer commitment row (MISO's own SCUC form, Wang & Chen, FERC 2018)
+    # and is not priced (rule 4: P1's duals stay the prices). Driver / window /
+    # forward story (rule 17): the op-guide N-1-G-1 pocket need; every hour (an
+    # op guide commits for the next day's peak hour, 2025 MISO SOM fn 7); the
+    # groups hold forward until their units retire (the fleet drops a retired
+    # unit's cluster). Rule 19: it REPLACES the ST_GAS per-plant must-run floor
+    # (refused together below); rule 21: zero fitted values (the groups are
+    # the source's, N is the ruling's). Requires unit_commitment_milp; the
+    # ISO must carry a ``vlr-pocket-groups`` partition (MISO only), else the
+    # stage raises. FINDING-ucmiso-vlr-phase0-2026-10-15.md;
+    # PRECOMMIT-ucmiso-vlr-2026-10-15.md.
+    vlr_pocket_commitment: bool = False
 
     def __post_init__(self) -> None:
         # YAML round-trip type repair: YAML has no tuple type, so a config
@@ -24460,6 +24516,11 @@ class ScenarioConfig:
                 "spp_mmu_offer_unavailability is SPP-only (SPP-106: the SPP MMU's "
                 "own measured unavailability classes, rule 25)."
             )
+        if self.spp_spinning_reserve_share and str(self.iso) != "SPP":
+            raise ValueError(
+                "spp_spinning_reserve_share is SPP-only (RSG Operating Process "
+                "p. 5, rule 25)."
+            )
         if self.spp_mmu_offer_repair and not self.spp_mmu_offer_unavailability:
             raise ValueError(
                 "spp_mmu_offer_repair is a sub-gate of spp_mmu_offer_unavailability "
@@ -24678,6 +24739,18 @@ class ScenarioConfig:
         # UC_REFUSED_BY_RULING. The archived P2 is a solve_and_persist kwarg
         # (``commitment`` / ``--enable-legacy-p2``), not a field, so it is
         # refused where it lives (run_calibration_full.enforce_legacy_p2_kwargs).
+        if self.vlr_pocket_commitment:
+            if not self.unit_commitment_milp:
+                raise ValueError(
+                    "vlr_pocket_commitment is a row of the MILP UC window; it "
+                    "needs unit_commitment_milp=True."
+                )
+            if self.st_gas_mustrun_per_plant:
+                raise ValueError(
+                    "vlr_pocket_commitment REPLACES st_gas_mustrun_per_plant "
+                    "(rule 19 [R-ONE-MECH]; owner ruling 2026-10-15): disarm "
+                    "the per-plant ST_GAS floor."
+                )
         if self.unit_commitment_milp:
             _armed = [
                 f"{name} ({what})"
@@ -26066,6 +26139,10 @@ TIER_TAGS: dict[str, int] = {
     # (multiplicative; economic-to-emergency slice as a scarcity-priced zonal
     # pool at VOLL - epsilon); no free number of its own (rule 21).
     "spp_mmu_offer_repair": 1,
+    # Structural gate (1): SPP's published >= 1/2 Spinning share of Contingency
+    # Reserve (RSG Operating Process p. 5) priced at the published $250/MW
+    # Spinning Reserve VRL (Protocols Exhibit 4-1); no free number (rule 21).
+    "spp_spinning_reserve_share": 1,
     # Structural gate (1): the plant-day measured gas/oil mix (CAMPD CO2 /
     # heat-input identity on Part 75 factors); no free number of its own
     # (rule 21). Backcast-only (rule 13).
@@ -26085,6 +26162,7 @@ TIER_TAGS: dict[str, int] = {
     "uc_prefixing": 1,
     "uc_solver_preset": 1,
     "uc_slim_window": 1,
+    "vlr_pocket_commitment": 1,
     # closeout-SOCO-w3 DIAGNOSTIC (rule 13: never a keeper input).
     "diagnostic_coal_metered_online_floor": 1,
 }

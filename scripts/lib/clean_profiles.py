@@ -194,6 +194,15 @@ SOLVE_SOURCES: tuple[CleanSource, ...] = (
             "data/raw/pudl",
         ),
     ),
+    # data/vlr_pocket_groups.py — the UC stage's VLR pocket commitment rows
+    # (read only when vlr_pocket_commitment is armed; no raw fallback, it
+    # fails loudly).
+    CleanSource(
+        "vlr-pocket-groups",
+        "market_sim.data.vlr_pocket_groups",
+        partitions="scripts.lib.vlr_pocket_groups:load_registry",
+        raw_inputs=("data/raw/vlr-pocket-groups",),
+    ),
     # data/gtc.py — ERCOT generic transmission constraints (run_calibration).
     # The curate CLI takes no ISO flag; the product is ERCOT-only.
     CleanSource(
