@@ -1,0 +1,21 @@
+"""Zero-LP sizing of a ">= N committed units per MTEP15 group" requirement against UC-3-MISO arm B (uc-1.5).
+
+Per group, the UC would meet the requirement with the cheapest-to-hold member; this sizes it per plant cluster
+at the cluster's own uc-params min-load (mlf * pbar) and counts the unit-hours arm B sits below N.
+Run from repo root with the project venv.
+"""
+import json, pandas as pd
+REQ = {1403: 1, 3459: 2, 3457: 1, 1402: 1, 8056: 1}   # DSG grp B, WOTAB grps D+E, Western grp F, Amite South grp A (LG, Waterford)
+rows = []
+for y in (2019, 2020, 2021, 2022):
+    log = json.load(open(f"docs/records/miso/ucmilp/data/ucmilp3_miso_b_span/uc_solve_log_{y}.json"))
+    c = pd.DataFrame(log["clusters"]); c = c[c.plant_code.isin(REQ) & (c.uc_class == "st_gas")]
+    s = pd.read_parquet(f"docs/records/miso/ucmilp/data/ucmilp3_miso_b_span/hourly/uc_schedule_{y}.parquet")
+    s = s[s.plant_code.isin(REQ) & (s.uc_class == "st_gas")]
+    for _, r in c.iterrows():
+        n_req = min(REQ[r.plant_code], r.n)
+        short = (n_req - s[s.cluster == r.cluster].u).clip(lower=0)
+        rows.append(dict(year=y, plant=r.plant_code, n=r.n, pbar=round(r.pbar_mw), mlf=round(r.mlf, 3), N=n_req,
+                         armB_share_hours_short=round((short > 0).mean(), 2),
+                         added_min_twh=round((short * r.pbar_mw * r.mlf).sum() / 1e6, 2)))
+pd.DataFrame(rows).to_csv("docs/records/miso/ucmilp/data/ucmiso_vlr_readings/sizing_armB.csv", index=False)
