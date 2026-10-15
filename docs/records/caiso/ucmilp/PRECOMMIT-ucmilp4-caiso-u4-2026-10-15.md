@@ -168,3 +168,25 @@ The lane never promotes (rule 31; D-6 is the owner's).
   - RESULT and slim span under `docs/records/caiso/ucmilp/` (`data/ucmilp4_caiso_span/`, `data/ucmilp4_readings/`);
   - the CAISO cells `unit_commitment_milp` and `uc_commitment_demand_source` stamped from the RESULT;
   - one records-only PR to main. UC-DESK merges it.
+
+## Addendum A (2026-10-15 ~10:20Z, before any U4 number exists) — defect stop FIX-8; attempt log
+
+**UC-DESK hold, 10:09Z.** At `7dbfe20f`, `uc_commitment_demand_source="da_forecast"` raises in `data/commitment_demand.py:254`
+("commitment increment has N zones, demand N+k") for every ISO with an `IMPORT_ZONE` pseudo-zone. CAISO has one (`WECC_import`), and the
+desk confirmed it without an LP. The defect is deterministic, so every CAISO year fails at UC prep. This lane confirmed from the code that the shape
+check sits between `backcast_commitment_increment` (real zones) and the solve demand (real zones + import pseudo-zone). Nothing was patched (`src/` untouched).
+
+| year | shard session | launched | reached | memory gate (`swap:` line) | outcome |
+|---|---|---|---|---|---|
+| 2019 | `session_018fBc5hQH45cYV5CJ815ojV` | 09:52Z | data prep / P0 build (co-opt rows logged: 2 families, req 1,120 MW each, 21 pergen R columns, Σ ramp cap 18.7 GW); killed ≈10:10Z before the UC stage | ceiling 13.36 + swap 9.0 = "22.4 GiB" (22.36 unrounded) | stopped on hold; nothing pushed; archived |
+| 2020 | `session_01PrfXjh22z5RbzxfGPF2F3d` | 09:57Z | data prep / P0 build (Σ ramp cap 19.1 GW); killed before the UC stage | same, 22.36 unrounded | stopped on hold; nothing pushed; archived |
+| 2021 | `session_01Spg7FCVmBRKwVuTasPrGzJ` | 10:03Z | HEAD check only | not run | stopped on hold; archived |
+| 2022 | `session_01J8TdBgnGoWF6oQZvj68RzS` | 10:08Z | no report (interrupted) | — | archived; `git ls-remote` shows no `claude/ucmilp4-caiso-*` branch |
+| 2023–2025 | — | not launched | — | — | — |
+
+This is a defect stop. Per the desk, it spends none of the four memory relaunches. **Gate note for the desk:** the shard containers print
+"22.4 GiB" from a raw 22.36 GiB (13.36 ceiling + 9.0 swap). Two shards read that as passing. The relaunch keeps the gate as the printed
+`swap:` total ≥ 22.4. CAISO's UC-3 peak RSS was 7.4–7.6 GB, so CAISO is not memory-bound at this ceiling.
+
+**What changes on relaunch:** the pin only, which will be the desk's FIX-8 full SHA, recorded in Addendum B with its G-DRIFT before any shard. The arm,
+readings, kills, verdict rule and budget are unchanged.
