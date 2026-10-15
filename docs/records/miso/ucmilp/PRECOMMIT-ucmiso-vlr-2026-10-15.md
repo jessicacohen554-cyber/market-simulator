@@ -86,3 +86,32 @@ The cell is `scuc_load_pocket_commitment` (MISO) plus the new mechanism's row, b
 
 - **Build.** One engine PR: the row, the field, the intake, tests (1 gen / 1 pocket / 24 h first). Opus/Fable.
 - **Solve.** 7 shards × ~2–2.5 h.
+
+## Addendum 0 (2026-10-15, before the build PR merges and before any shard): operational definitions
+
+No bar, kill or arm changes. Fixes how V-2 and V-4 are computed, because the VLR rows enter P1 through MECH 28 and
+`legitimacy_diagnostics` has no separate VLR mechanism id:
+
+- **Sets.** The four cluster sets that the build maps at uc-1.5 (zero LP, `uc_solve_log` cluster tables 2019 and
+  2022):
+  - Amite South A: 1402 + 8056, N = 1.
+  - DSG B: 1403 st_gas, N = 1.
+  - Western F: 3457, N = 1.
+  - WOTAB D+E: 3459, N = 2.
+  - MTEP15 group C (Nelson 4, EIA-860 operable 592 MW NG steam) has **no cluster**: the unit is absent from the
+    model fleet. It builds no row and is reported, not repaired here.
+- **V-2.** Computed per set from `hourly/uc_schedule_<y>`: the share of hours with `Σ u ≥ 1` over the set's
+  clusters. It is compared against the CEMS share of hours with ≥ 1 eligible unit synchronized
+  (`ucmiso_vlr_readings/pocket_sync_campd_2019_2025.csv`, same estimator, same year).
+- **V-4** (the D-4 unit-conduct rider applied to the VLR rows). For each set and hour, the row **binds** when
+  `Σ u` equals the row's requirement `min(N, available units)` and the requirement is ≥ 1. The row does not bind
+  where the set is held above it. A set FAILS a year when, in ≥ 50 % of its binding hours, CEMS shows **no**
+  eligible unit of the set synchronized. That is the rider's own threshold, "metered offline in at least half the
+  hours the floor binds".
+- **Engine checks per leg** (reported, not bars):
+  - `engine.fields.vlr_pocket_commitment = true`;
+  - `engine.vlr_pocket.sets` equal to the four sets above;
+  - `windows[].pocket_rows > 0` in every window;
+  - `pocket_sets_skipped = 0`.
+
+  A leg that fails one of these is a recipe break and is not composed.
