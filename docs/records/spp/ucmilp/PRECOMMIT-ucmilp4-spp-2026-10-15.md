@@ -138,3 +138,37 @@ Per year, **control → U4** (and U4 vs UC-3 arm B, descriptive), from `calibrat
 
 `docs/mechanism-testing-matrix.md` §5.7's list. `spp_commitment_posture` (R) in no form. No `uc_*` value other than the declared defaults.
 No `--set` beyond §1. No control solve. No re-solve of a UC-3 leg. No second arm, no sweep of which mechanism to drop.
+
+## Addendum A (2026-10-15, before any number was read) — launch record and the desk's gate-wording ruling
+
+PRECOMMIT pushed as `b14efcf7` and prompts as `d5b289d6` (blob-verified) before any shard. Shards pin
+`b14efcf79ec1f1cf045f17e2c7ed8df8866fe846`, model `claude-opus-5-5`, tag `ucmilp:UC-4-SPP-shard`, launched serially ~5 min apart.
+UC-DESK ruling 10:19Z (all UC-4 lanes): the 22.4 GiB gate passes iff the printed ceiling+swap rounds to ≥ 22.4 (raw ≥ 22.35), so the
+standard 13.36 + 9.0 = 22.36 container passes. Prompts for 2024 onward carry that wording; the recipe and every other line are unchanged.
+
+| year | attempt 1 | attempt 2 |
+|---|---|---|
+| 2019 | `session_01PFiFm2tqTdHZdHbuGXCBC6` solved (22.36) | — |
+| 2020 | `session_013185fkroSi8eioHWR63Lda` solved (22.36) | — |
+| 2021 | `session_0132cr1ysVtosNmgW2JavPU9` blocked 18.4 | `session_01HsfdP3e2G1eaMJYbNUcKzA` blocked 17.4 |
+| 2022 | `session_01MGeNGRitpcBnp9RBUR3Fk2` blocked 17.4 | `session_01E3jPSwKEcspVCgAnxpkp4b` blocked 17.4 |
+| 2023 | `session_01VDPF1nn49J7fJZybe3YLvz` blocked 18.4 | `session_016ct9KBLWz3TWxRo1haDKRE` launched |
+| 2024 | `session_01QYGk3HB3AEPUpKWivcU6ex` blocked 17.4 | `session_01Bmewqv7BWZphdcQAWo1eqk` launched |
+| 2025 | `session_01H7oDaAuQY41cjK2qpPhKrY` passed (solving) | — |
+
+## Addendum B (2026-10-15 11:14Z, before any number was read) — memory gate re-based by UC-DESK
+
+UC-DESK ruling, verbatim: *"gate_ISO = 1.5 × max observed cgroup peak (rss+swap) over all solved UC legs of that ISO, rounded up to 0.1 GiB.
+This is an infra safety factor, not a model parameter; solve-surface inert. SPP: 1.5 × 8.48 = 12.8 GiB."* The SPP gate is therefore
+**printed ceiling+swap ≥ 12.8 GiB**, effective for every launch after this addendum is pushed. Attempts already spent stay counted; the
+≤ 4-relaunch cap is unchanged. Any leg whose cgroup peak exceeds 12.8 GiB, or that OOMs, stops the lane's launches and is reported to
+UC-DESK; the lane never raises the gate. Every solved leg's cgroup peak is reported in the RESULT. Recipe, readings, bars, kills and
+verdict rule are unchanged.
+
+Evidence (cgroup peak / process VmHWM, GiB; UC-3 from `RESULT-ucmilp3-spp-2026-10-14.md` §2.4, UC-4 from the shards' `memory peak:` lines, swap peak 0.00):
+
+| | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 |
+|---|---|---|---|---|---|---|---|
+| UC-3 A | 8.47 / 4.75 | 8.46 / 5.35 | 8.39 / 5.61 | 8.36 / 4.73 | 8.45 / 4.67 | 7.88 / 5.63 | 8.47 / 4.72 |
+| UC-3 B | 8.32 / 4.79 | 7.82 / 5.67 | **8.48** / 5.67 | 8.48 / 5.63 | 7.99 / 5.59 | 7.99 / 4.74 | n/a |
+| UC-4 U4 | 7.88 / 6.01 | 7.85 / 7.01 | — | — | — | — | — |
