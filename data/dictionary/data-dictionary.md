@@ -65,6 +65,7 @@ for the market split.
 | transfer-interface-limits | — | — | — | — | — | — | — | — |
 | transmission-expansion | — | — | — | — | — | — | — | — |
 | ramp-capability | — | — | — | — | — | — | — | — |
+| vlr-pocket-groups | — | — | — | — | — | — | — | — |
 | winter-fuel-inventory | — | — | — | — | — | — | — | — |
 | chp-btm-share | — | — | — | — | — | — | — | — |
 | nyiso-downstate-gas | — | — | — | — | — | — | — | — |
@@ -1098,6 +1099,38 @@ no-load heat input) for the MILP unit-commitment stage. Schema:
 | `n_runs` | `int64` | `none` | no | Number of on-runs of the plant series in the pooled span. |
 | `years` | `string` | `none` | no | Pooled vintage span, e.g. "2023-2025". |
 | `source` | `string` | `none` | no | Construction provenance (source files and the measurement rules). |
+
+## vlr-pocket-groups
+
+Units an ISO's voltage-and-local-reliability operating guides name, per load
+pocket and outage-study group, for the UC stage's pocket commitment rows.
+Schema:
+[`schema/vlr-pocket-groups.schema.yaml`](schema/vlr-pocket-groups.schema.yaml).
+
+- **Keys:** `iso`, `pocket`, `group_id`, `plant_code`, `unit_id`
+- **Reconciles:** MISO: the MTEP15 VLR study (PUCT Docket 46416, Exh. CWL-5,
+  Scenario 1C groups A-F) hand-transcribed with each unit's EIA-860 prime mover
+  / energy source / retirement year
+  (`data/raw/vlr-pocket-groups/miso/miso.csv`); `uc_family` is derived from the
+  EIA-860 identity. Per-ISO scoping is
+  `scripts/lib/vlr_pocket_groups/<iso>.py`. Read by
+  `market_sim.data.vlr_pocket_groups` only when `vlr_pocket_commitment` is
+  armed.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO/RTO whose operating guides name the unit (MISO). |
+| `pocket` | `string` | `none` | no | Load pocket the operating guide protects (e.g. Amite South, DSG, WOTAB, Western). |
+| `group_id` | `string` | `none` | no | The source's outage-study group (MTEP15 Scenario 1C groups A-F). The commitment requirement is stated per group. |
+| `plant_code` | `int64` | `none` | no | EIA plant code (ORISPL). |
+| `plant_name` | `string` | `none` | no | Plant name as EIA-860 records it. |
+| `unit_id` | `string` | `none` | no | Unit / generator ID as the source names it (EIA-860 generator ID). |
+| `eia860_prime_mover` | `string` | `none` | no | EIA-860 prime mover code of the unit (ST, GT, CT, CA, ...). |
+| `eia860_energy_source` | `string` | `none` | no | EIA-860 energy source 1 of the unit (NG, DFO, SUB, ...). |
+| `eia860_retirement_year` | `float64` | `year` | yes | EIA-860 retirement year; null while the unit is operable. |
+| `uc_family` | `string` | `none` | no | Model commitment-cluster family the unit falls in (st_gas / ct / cc / coal), derived from the EIA-860 prime mover and energy source by the curate script; the cluster is (plant_code, uc_family). |
+| `source_doc` | `string` | `none` | no | Document the unit and group come from. |
+| `source_page` | `string` | `none` | no | Page / table within source_doc. |
 
 ## winter-fuel-inventory
 
