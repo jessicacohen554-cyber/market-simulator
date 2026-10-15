@@ -162,3 +162,19 @@ reading is "no kill on the solved years".
 
 No control solve; no fourth `--set`; no `uc_*` value other than the defaults; no posture; no offer-band change; no
 registration or promotion; no edit under `src/` or `scripts/`; no LP in this session.
+
+## Addendum A (2026-10-15 10:00Z): the memory-gate wording is corrected; no reading, bar or kill changes
+
+The first 2021 shard, `session_01HrUZG3A4zn3Bhvid95Z1tx`, launched at 09:51Z on `ec657888`. It stopped at hard stop 2 and
+reported "BLOCKED: memory gate". Its container had the standard ceiling of 13.358 GiB plus 9.000 GiB of swap, a total of
+22.358 GiB, which `prepare_solve_container.py` prints as "22.4 GiB total".
+
+That container is the **22.4 GiB class** the desk's gate names. UC-DESK r11 contrasts 16.4 GiB and 22.4 GiB swap ceilings, and
+22.4 is the script's rounded print. The lane's prompt compared the gate against exact bytes, which made it unpassable for
+that class. This was a lane wording defect, not an infrastructure finding.
+
+- **Corrected gate:** the total the script prints on its `swap:` line must be ≥ 22.4 (exact ≥ 22.35 GiB). Its
+  "below the 24 GiB target" warning is not a stop.
+- **Scope:** nothing else in the prompts changes. The shard pin stays `ec657888`.
+- **Relaunch count:** the blocked attempt is recorded in the attempt log. It does not count against 2021's four relaunches,
+  because the cause was the prompt, not the container.
