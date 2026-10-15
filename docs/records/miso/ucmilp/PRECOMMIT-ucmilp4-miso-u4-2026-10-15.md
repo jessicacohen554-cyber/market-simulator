@@ -207,3 +207,12 @@ Matrix (`mechanism-matrix/MISO.js`): the `uc_commitment_demand_source` cell, cit
   - A per-year gate is refused: the 0.4 GiB margin is too thin, and U4 adds DA-forecast commitment.
 - **Reporting.** Each U4 leg's RSS+swap peak is reported to UC-DESK as it lands. If any exceeds 17.89 GiB, the desk re-bases the
   gate upward.
+
+## Addendum D (2026-10-15 12:36Z): UC-DESK hold on the 4th memory attempt
+
+- The gate stays at ≥ 22.35 GiB raw (22.4), supported by MISO's measured need (Addendum C).
+- **Hold.** A year at 3 memory-gate stops gets no further launch. It is recorded as **"held pending owner gate ruling"**, not yet as
+  a coverage gap.
+- Other years keep the normal cadence: attempt 3 goes ahead.
+- Attempts are counted as gate stops, including each year's first launch (Addendum B accounting). Defect stops (Addendum A) are not
+  counted.
