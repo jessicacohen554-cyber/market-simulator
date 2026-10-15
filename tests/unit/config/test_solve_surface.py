@@ -375,18 +375,15 @@ class SolveEpochScopeTest(unittest.TestCase):
         )
 
     def test_the_uc_params_epoch_spares_every_unarmed_config(self):
-        """2026-10-15a re-keys UC-armed runs only; no keeper arms the UC."""
+        """2026-10-15a/b re-key UC-armed runs only; no keeper arms the UC."""
         for iso in ("CAISO", "ERCOT", "MISO", "NEISO", "NYISO", "SPP"):
-            self.assertNotIn(
-                "2026-10-15a",
-                S.applicable_epochs(ScenarioConfig(iso=iso, mode="backcast")),
+            unarmed = S.applicable_epochs(ScenarioConfig(iso=iso, mode="backcast"))
+            armed = S.applicable_epochs(
+                SimpleNamespace(iso=iso, mode="backcast", unit_commitment_milp=True)
             )
-            self.assertIn(
-                "2026-10-15a",
-                S.applicable_epochs(
-                    SimpleNamespace(iso=iso, mode="backcast", unit_commitment_milp=True)
-                ),
-            )
+            for eid in ("2026-10-15a", "2026-10-15b"):
+                self.assertNotIn(eid, unarmed)
+                self.assertIn(eid, armed)
 
     def test_an_applicable_epoch_moves_the_key(self):
         config = ScenarioConfig()

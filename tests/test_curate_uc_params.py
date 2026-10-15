@@ -204,6 +204,10 @@ class TestUnitBasisDurations(CleanDirTestCase):
         # Plant basis would read 20 h up / 4 h down; each unit is 12 / 12.
         self.assertEqual(int(cc["ut_h"]), 12)
         self.assertEqual(int(cc["dt_h"]), 12)
+        # Each unit runs flat at its HSL, so its minimum stable fraction is 1.
+        # The plant series reads 100 MW (one unit) over a 200 MW HSL = 0.5.
+        self.assertAlmostEqual(float(cc["mlf"]), 1.0, delta=1e-9)
+        self.assertAlmostEqual(float(cc["lsl_mw"]), float(cc["hsl_mw"]), delta=1e-6)
 
     def test_reporting_hole_is_no_gap(self):
         _, g = up._unit_runs_and_gaps(

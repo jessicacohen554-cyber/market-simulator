@@ -76,6 +76,21 @@ human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-10-15b — ``uc-params`` ``mlf`` re-derived per UNIT (lane
+UC-DATA-UT scope extension, owner ruling 2026-10-15; rule 23 derivation-defect
+fix). KEY-MOVING for every config that arms ``unit_commitment_milp`` in CAISO,
+ERCOT, MISO, NEISO, NYISO and SPP, through ``solve_surface.SolveEpoch``
+2026-10-15b (its ``requires`` gate).** WHAT CHANGED: ``mlf`` was p5 of the summed
+plant online load over plant HSL; a multi-unit plant reaches that p5 with one
+unit of n at minimum (about 1/n of a unit's minimum), while the UC applies
+``mlf`` per committed unit (``mlf x pbar x a x u``). It is now sum(unit p5
+online load) / sum(unit HSL), ``lsl_mw = mlf x HSL``; single-unit plants are
+unchanged. Its own id: 2026-10-15a landed on ``main`` (#7262) without it, so
+keys cut under 15a carry the plant-basis ``mlf`` (rule 26: never edit 15a).
+WHAT IS NOT INVALIDATED: every config with the UC stage off (every keeper and
+forecast recipe on ``main``). Record: ``docs/records/governance/uc-milp-2026-10/
+FINDING-ucdata-ut-unit-basis-2026-10-15.md`` §6.
+
 **Epoch 2026-10-15a — ``uc-params`` min-up / min-down re-derived per UNIT
 (lane UC-DATA-UT, owner ruling r13 2026-10-15; rule 23 derivation-defect fix).
 KEY-MOVING for every config that arms ``unit_commitment_milp`` in CAISO, ERCOT,
