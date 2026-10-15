@@ -20,8 +20,11 @@ Presolve PAYS for itself — off, the root LP costs 67 s and the tail 80 s — s
 it stays on. :data:`UC_SOLVER_PRESETS` names the two solver paths the
 registry admits: ``highs_default`` (engine uc-1.1: presolve on, every HiGHS
 heuristic and the root restart at its default) and ``lean`` (presolve on, the
-feasibility jump off, the LP heuristics off, the root restart off — the
-carried incumbent and HiGHS's root rounding supply the solution). A preset
+feasibility jump off, the root restart off; since uc-1.8 the LP heuristics —
+RINS / RENS / root reduced cost — ON: with the uc-1.6 reserve u-gate the node
+LPs stop landing integral and the sub-MIP heuristics are the window's only
+source of a good incumbent, FINDING-ucmilp-fix9-gated-window-slowdown-2026-10-15).
+A preset
 changes the solver's PATH, never the feasible set or the objective: for the
 same window problem the optimum it returns is the same to ``uc_mip_rel_gap``
 (the paired equivalence gate of the FINDING; a within-gap tie taken
@@ -77,11 +80,19 @@ _PRIMAL_FEASIBLE = 2
 #: set it explicitly), every HiGHS heuristic at its shipped default.
 #: ``lean`` — presolve ON (it pays for itself: off, the root LP costs 4.5x),
 #: the feasibility-jump heuristic off (11 s of 160 s, never the incumbent),
-#: the LP-based heuristics (RINS / RENS / root reduced cost;
-#: ``mip_heuristic_effort`` 0) off, the root restart off (its second presolve
-#: is a third of the post-root tail); symmetry detection stays on (off: +3 %).
-#: Composition fixed by the UC-SPEED profile shard (SPP 2020, January, 31
-#: windows): FINDING-ucmilp-speed-window-solve-profile-2026-10-09.md section 2.
+#: the root restart off (its second presolve is a third of the post-root
+#: tail); symmetry detection stays on (off: +3 %). Composition fixed by the
+#: UC-SPEED profile shard (SPP 2020, January, 31 windows):
+#: FINDING-ucmilp-speed-window-solve-profile-2026-10-09.md section 2.
+#: uc-1.8 (lane UC-1-FIX-9, UC-DESK ruling 2026-10-15): the LP-based
+#: heuristics (RINS / RENS / root reduced cost; ``mip_heuristic_effort`` at
+#: HiGHS's 0.05) are ON in ``lean``. UC-SPEED turned them off for -6 % on
+#: ungated windows; under the uc-1.6 reserve u-gate a fractional ``u`` buys
+#: reserve headroom, node LPs stop landing integral, and without the sub-MIP
+#: incumbents the tree stalls at the root rounding (NEISO 2023 w12: bound
+#: within 0.08 % of the optimum at the 600 s limit, incumbent +1.0 %). The
+#: gap, time limit and model are unchanged
+#: (FINDING-ucmilp-fix9-gated-window-slowdown-2026-10-15.md).
 UC_SOLVER_PRESETS: dict[str, dict] = {
     "highs_default": dict(
         presolve="on",
@@ -93,7 +104,7 @@ UC_SOLVER_PRESETS: dict[str, dict] = {
     "lean": dict(
         presolve="on",
         feasibility_jump=False,
-        lp_heuristics=False,
+        lp_heuristics=True,
         symmetry=True,
         restart=False,
     ),
