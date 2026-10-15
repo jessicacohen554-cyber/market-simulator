@@ -1,4 +1,4 @@
-# RESULT-interim — UC-4-NYISO: arm U4 at engine uc-1.7 — **KILL #1 (engine defect), no leg solved, no verdict on the arm; lane OPEN, awaiting the FIX-8 pin**
+# RESULT-interim — UC-4-NYISO: arm U4 at engine uc-1.7 — **KILL #1 (engine defect), no leg solved, no verdict on the arm (interim, defect stop); lane OPEN, awaiting the FIX-8 pin**
 
 **Desk ruling (UC-DESK, 2026-10-15 10:09Z):** a defect stop is not a verdict on the arm; the lane stays open, amends this PRECOMMIT with a
 dated pin addendum at the FIX-8 pin and relaunches the full span. The defect stop spends no relaunches; the 2022 memory-gate block counts
@@ -20,8 +20,8 @@ ValueError: commitment increment has 5 zones, demand 7
 ```
 
 PRECOMMIT §5 kill #1 (an exception inside the UC stage is an engine defect): the lane stops, routes the defect to UC-DESK and patches
-nothing. **No year was solved, so U4 gets no verdict.** The NYISO `unit_commitment_milp` cell stays R (uc-1.5). The
-`uc_commitment_demand_source` cell stays U, with this record cited.
+nothing. **No year was solved, so U4 gets no verdict.** Per UC-DESK, a defect stop stamps no matrix cell: both NYISO cells stay as on
+`main` until the final RESULT.
 
 ## 1. The defect (zero-LP reading, `7dbfe20f`)
 
@@ -93,5 +93,4 @@ This is a small tooling gap for UC-DESK to note: `shard_prompt.py` does not shel
   (G-DRIFT `2dd69d5a → 7dbfe20f`: UC path only, solve surface 0 moved; DA-forecast lowers NYISO commitment demand 0.3–1.0 GW at peak) ·
   **kill #1**: `commitment_demand.py:254` "commitment increment has 5 zones, demand 7" (load zones vs P1 demand with interchange
   pseudo-zones) at UC-stage prep, 2021, before any LP · 2022 memory-gate blocked (17.4 GiB) · 2023/2024 archived, 2025 not launched ·
-  0 legs solved, no verdict · nothing registered · matrix: `uc_commitment_demand_source` NYISO stays U (cited), `unit_commitment_milp`
-  stays R (U4 noted as pending).
+  0 legs solved, no verdict · nothing registered · matrix: no cell stamped (desk ruling: a defect stop is not a verdict).
