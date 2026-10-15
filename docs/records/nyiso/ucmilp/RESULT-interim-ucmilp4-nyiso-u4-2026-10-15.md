@@ -1,4 +1,8 @@
-# RESULT — UC-4-NYISO: arm U4 at engine uc-1.7 — **KILL #1 (engine defect), no leg solved, no verdict on the arm**
+# RESULT-interim — UC-4-NYISO: arm U4 at engine uc-1.7 — **KILL #1 (engine defect), no leg solved, no verdict on the arm; lane OPEN, awaiting the FIX-8 pin**
+
+**Desk ruling (UC-DESK, 2026-10-15 10:09Z):** a defect stop is not a verdict on the arm; the lane stays open, amends this PRECOMMIT with a
+dated pin addendum at the FIX-8 pin and relaunches the full span. The defect stop spends no relaunches; the 2022 memory-gate block counts
+as attempt 1 of 4 for 2022.
 
 **Lane:** UC-4-NYISO · **Session:** `session_01TwaDV4e3y8xUFmUnHeK2HZ` (Opus) · **Date:** 2026-10-15 · **Branch:** `claude/ucmilp-4-nyiso`
 · **PRECOMMIT:** `PRECOMMIT-ucmilp4-nyiso-u4-2026-10-15.md` (pushed `e7e12823` before any shard) · **Charter:** UC-DESK
@@ -63,8 +67,8 @@ unchanged and CALIBRATED.
 
 - **Archived:** all four shard sessions. None is left alive.
 - **Branches:** no shard pushed one, so none needs cutting.
-- **2022 relaunch budget:** none of the four permitted relaunches was used. Relaunching into a deterministic stage failure would only waste
-  containers.
+- **2022 relaunch budget:** the memory-gate block counts as attempt 1 of 4 (desk ruling); 3 remain for the FIX-8 relaunch. The kill-#1
+  stop spends no relaunch for any year.
 
 ## 4. Disclosed deviations
 
