@@ -1,0 +1,130 @@
+{
+  "run_id": "2026-10-15-ucmiso-vlr-v-partial",
+  "iso": "MISO",
+  "label": "ucmiso vlr v partial",
+  "target_years": [
+    2019,
+    2020,
+    2021
+  ],
+  "scorable_years": [
+    2019,
+    2020,
+    2021
+  ],
+  "data_blocked_years": [],
+  "price_reference_blocked_years": [],
+  "rubric_version": "3.20",
+  "determination": "NOT-YET",
+  "reasons": [
+    "governance gate UNATTESTED: no governance attestation in bundle"
+  ],
+  "notes": [
+    "C8 2020 CT_PEAKER: grounded above budget \u2014 70.5% forced (6.6065 of 9.3744 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.901 (\u22650.8) & off-peak CV ratio 2.206 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2021 CT_PEAKER: grounded above budget \u2014 83.5% forced (8.1402 of 9.7498 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.918 (\u22650.8) & off-peak CV ratio 1.916 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+  ],
+  "criteria": {
+    "fuelmix": {
+      "label": "C1 fuel-mix by class (grid-delivered)",
+      "tier": "load-bearing",
+      "status": "FAIL"
+    },
+    "sysvol": {
+      "label": "C2 system volume (gas/coal families)",
+      "tier": "load-bearing",
+      "status": "PASS"
+    },
+    "price_mean": {
+      "label": "C3a mean LMP",
+      "tier": "load-bearing",
+      "status": "FAIL"
+    },
+    "price_shape": {
+      "label": "C3b price duration/shape",
+      "tier": "load-bearing",
+      "status": "FAIL"
+    },
+    "price_tail": {
+      "label": "C3c price tail / scarcity (RT hourly)",
+      "tier": "supporting",
+      "status": "FAIL"
+    },
+    "dispatch_corr": {
+      "label": "C4 fleet hourly dispatch correlation",
+      "tier": "supporting",
+      "status": "FAIL"
+    },
+    "governance": {
+      "label": "C6 governance gate",
+      "tier": "protective",
+      "status": "UNATTESTED"
+    },
+    "forced_share": {
+      "label": "C8 forced-energy share (D-2)",
+      "tier": "protective",
+      "status": "PASS"
+    }
+  },
+  "caveats": {
+    "protective": [],
+    "ledgered": [],
+    "commercial_band": [],
+    "configuration_exception": [],
+    "reference_definition": [],
+    "budget": {
+      "protective_max": 0,
+      "ledgered_max": 1
+    }
+  },
+  "grade_summary": {
+    "scored": 7,
+    "target_grade": 2,
+    "commercial_grade": 0,
+    "ledgered": 0,
+    "fails": 5
+  },
+  "reported": {
+    "co2": {
+      "label": "C5a CO2 vs eGRID (REPORTED-ONLY, v2.9 \u2014 see the CRITERIA note)",
+      "years": {
+        "2019": "-4.2%",
+        "2020": "-3.2%",
+        "2021": "-3.5%"
+      }
+    },
+    "diurnal_amplitude": {
+      "label": "D-A diurnal price amplitude, hour-of-day (REPORTED-ONLY, BAND-FREE, v3.5 \u2014 no external comparable exists to band it; see the note)",
+      "years": {
+        "2019": "no committed measured hod profile",
+        "2020": "no committed measured hod profile",
+        "2021": "no committed measured hod profile"
+      }
+    }
+  },
+  "free_class_score": {
+    "iso": "MISO",
+    "pinned_classes": [
+      "CC_CHP",
+      "CT_CHP",
+      "ST_CHP",
+      "hydro",
+      "imports",
+      "nuclear",
+      "solar",
+      "wind"
+    ],
+    "excluded_from_free": [
+      "CC_CHP",
+      "ST_CHP"
+    ],
+    "all": {
+      "pass": 20,
+      "total": 24
+    },
+    "free": {
+      "pass": 14,
+      "total": 18
+    },
+    "headline": "C1 all 20/24 \u00b7 free 14/18"
+  }
+}
