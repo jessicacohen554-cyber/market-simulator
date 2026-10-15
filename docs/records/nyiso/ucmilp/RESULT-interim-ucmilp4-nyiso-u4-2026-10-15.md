@@ -94,3 +94,46 @@ This is a small tooling gap for UC-DESK to note: `shard_prompt.py` does not shel
   **kill #1**: `commitment_demand.py:254` "commitment increment has 5 zones, demand 7" (load zones vs P1 demand with interchange
   pseudo-zones) at UC-stage prep, 2021, before any LP · 2022 memory-gate blocked (17.4 GiB) · 2023/2024 archived, 2025 not launched ·
   0 legs solved, no verdict · nothing registered · matrix: no cell stamped (desk ruling: a defect stop is not a verdict).
+
+## Interim B: relaunch at the FIX-8 pin `7c93273e` (PRECOMMIT Addendum A), status at 14:57Z
+
+**FIX-8 works.** Both legs that reached the UC stage solved every window:
+- 365/365 windows Optimal and 0 time-limit hits;
+- 0 MWh unserved;
+- the engine is uc-1.7.
+
+The commitment-demand increments match PRECOMMIT §1.1 exactly. 2021: mean −412.5 MW, top-100 median −1,040 MW. 2022: −398.7 MW and −649 MW.
+
+### Legs solved: verified (`git ls-tree` = 21 files incl. `dispatch/<y>_P1.parquet`; bytes in hand), then the shard archived
+
+| year | commit (transport) | memory peak (cgroup / VmHWM / swap) GiB | wall P0+P1 / UC / total s | ratio | integer clusters / per window | nodes p50 / p95 |
+|---|---|---|---|---|---|---|
+| 2021 | `86f82682` `claude/ucmilp4b-nyiso-2021` | 7.00 / 6.72 / 0.00 | 419.6 / 6,235 / 6,735 | 16.0 | 33 of 74 / 1,188 | 9 / 52 |
+| 2022 | `1e9fc3f7` `claude/ucmilp4b-nyiso-2022` | 6.95 / 6.73 / 0.00 | 340.5 / 7,153 / 7,561 | 22.2 | 34 of 79 / 1,224 | 20 / 93 |
+
+### Memory gate (22.4 GiB, as printed): attempt log
+
+Every block happened at the gate, before any data step: ceiling 13.36 GiB + 4.0 GiB swap = 17.4 GiB, with 10.3–10.9 GiB free disk at boot. Both containers that passed had 15.7 GiB free disk and reached 13.36 + 9.0 = 22.36 GiB.
+
+| year | attempt | session | launched (Z) | outcome |
+|---|---|---|---|---|
+| 2022 | 1 | `session_014xa7hMEctDfZrymaKTE3ec` | 09:56 | blocked (first launch, pin `7dbfe20f`) |
+| 2021 | 1 | `session_012DTFNAUvz4jizsfc2Tfgcp` | 10:40 | passed, **solved** |
+| 2022 | 2 | `session_0121bGM2cpm5888aV7whcbT2` | 10:46 | passed, **solved** |
+| 2023 | 1 | `session_01L4fvpDNDRh2ZL2u8iPNSY2` | 10:51 | blocked (10.8 GiB disk) |
+| 2024 | 1 | `session_01VU2zTChpUQx886CLA68Ncx` | 10:57 | blocked (10.3) |
+| 2025 | 1 | `session_01CPHviU3Zn2GvR38BpGaDCQ` | 11:02 | blocked (10.3) |
+| 2023 | 2 | `session_012r3gJyn6Fm7gb7FkUoX3ep` | 11:33 | blocked (10.3) |
+| 2024 | 2 | `session_019YqMiYbifeD7nusiXUiabv` | 11:39 | blocked (10.3) |
+| 2025 | 2 | `session_01Q3mszsMCUdqGSTmAR3UioM` | 11:44 | blocked (10.6) |
+| 2023 | 3 | `session_017sBa7ND8g3n5FvYvERXsdN` | 12:14 | blocked (10.9) |
+| 2024 | 3 | `session_01VcDNJV8DTRYwmVAM2TFKQd` | 12:20 | blocked (10.4) |
+| 2025 | 3 | `session_01M2ucjmrSNLTiwFPmnTXnS3` | 12:25 | blocked (10.3) |
+
+**2023, 2024 and 2025 are HELD, pending the owner's gate ruling, with 3 of 4 attempts used each** (UC-DESK, 12:35Z). Their fourth attempts have not been launched, and **no coverage gap is recorded**.
+
+NYISO's measured need, from the two solved legs and the 10 UC-3 legs:
+- cgroup peak ≤ 7.03 GB;
+- swap never touched.
+
+Every shard session launched so far has been archived; none is left alive. Composition and scoring wait for the full span or for the desk.
