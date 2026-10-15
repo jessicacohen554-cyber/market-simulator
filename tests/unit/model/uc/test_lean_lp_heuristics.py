@@ -158,12 +158,16 @@ def test_digest_separates_the_uc17_and_uc18_lean(
     puc._LAST_SOLVED.clear()
     puc.take_uc_stages()
     gens, fa, demand, mc, dk = _tranche_fleet()
-    old = dict(ucs.UC_SOLVER_PRESETS["lean"], lp_heuristics=False)
-    monkeypatch.setitem(ucs.UC_SOLVER_PRESETS, "lean", old)
+    new = dict(ucs.UC_SOLVER_PRESETS["lean"])
+    version = puc.UC_ENGINE_VERSION
+    assert new["lp_heuristics"] is True and version == "uc-1.8"
+    # The uc-1.7 stage: old composition and version. Restored by setting them
+    # back (never monkeypatch.undo(), which would also drop uc_params_frame's patch).
+    monkeypatch.setitem(ucs.UC_SOLVER_PRESETS, "lean", dict(new, lp_heuristics=False))
     monkeypatch.setattr(puc, "UC_ENGINE_VERSION", "uc-1.7")
     run_energy_solve(gens, fa, demand, mc, dk, _cfg())
-    monkeypatch.undo()
-    assert ucs.UC_SOLVER_PRESETS["lean"]["lp_heuristics"] is True
+    monkeypatch.setitem(ucs.UC_SOLVER_PRESETS, "lean", new)
+    monkeypatch.setattr(puc, "UC_ENGINE_VERSION", version)
     run_energy_solve(gens, fa, demand, mc, dk, _cfg())
     s1, s2 = puc.take_uc_stages()[-2:]
     assert s1.options.lp_heuristics is False and s2.options.lp_heuristics is True
