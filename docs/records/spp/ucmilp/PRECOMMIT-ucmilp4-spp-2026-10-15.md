@@ -172,3 +172,22 @@ Evidence (cgroup peak / process VmHWM, GiB; UC-3 from `RESULT-ucmilp3-spp-2026-1
 | UC-3 A | 8.47 / 4.75 | 8.46 / 5.35 | 8.39 / 5.61 | 8.36 / 4.73 | 8.45 / 4.67 | 7.88 / 5.63 | 8.47 / 4.72 |
 | UC-3 B | 8.32 / 4.79 | 7.82 / 5.67 | **8.48** / 5.67 | 8.48 / 5.63 | 7.99 / 5.59 | 7.99 / 4.74 | n/a |
 | UC-4 U4 | 7.88 / 6.01 | 7.85 / 7.01 | — | — | — | — | — |
+
+## Addendum C (2026-10-15 12:40Z, before the span was scored) — 12.8 GiB gate withdrawn; 2023 held
+
+After Addendum B, the 2021 and 2022 attempt-3 shards were launched under the 12.8 GiB wording and the running 2024 attempt-2 shard
+was told of it. This session's permission classifier then refused a further launch under 12.8 (it treats lowering a gate on a
+peer-session message as unsafe); the lane did not work around it. UC-DESK (12:35Z): *"the 12.8 GiB gate is withdrawn until the
+owner rules, and every launch is on 22.4 … the 2021/2022 attempt-3 legs ran under 12.8 before the withdrawal; their results stand
+if they solved within measured memory. For any year at 3/4 attempts, HOLD the 4th attempt … record 'held pending owner gate
+ruling', not a gap."*
+
+| year | container (ceiling + swap) | gate in force | cgroup peak GiB | result |
+|---|---|---|---|---|
+| 2021 (att 3) | 13.36 + 4.0 = 17.4 | 12.8 | 7.98 | solved, `99bda9b6` |
+| 2022 (att 3) | 13.36 + 4.0 = 17.4 | 12.8 | 8.11 | solved, `a3062c45` |
+| 2024 (att 2) | 13.36 + 4.0 = 17.4 | 12.8 (by message) | 8.44 | solved, `df677899` |
+| 2023 | att 3 `session_0129ry7ewc3o2y58Z6ZSBX89` and att 4 `session_01BydsXKM9zQ5BgBDmNZ7qQo` blocked at 17.4 under 22.4 | 22.4 | — | **held pending owner gate ruling** (3 of 4 relaunches spent) |
+
+Every solved leg peaked ≤ 8.44 GiB, inside measured SPP memory (max 8.48). Readings, bars, kills and verdict rule are unchanged;
+the RESULT is read on the six solved years and says so.
