@@ -1,0 +1,70 @@
+# UC-4-NEISO arm U4, NEISO 2023, engine uc-1.7 @ 43bc180e; shard session_013z3111kB5xpKgdCvGrZkRt; from /tmp/solve_2023.log via send_message 2026-10-15 13:25Z
+# Condensed by the shard: "N [t0,t1) status MILP_s nodes gap". Verbatim line format: "INFO: UC window N [a, b): <status>, MILP <s> s, <n> nodes, gap <g>[, time limit]"
+# Engine-performance stop 13:27Z (UC-DESK ruling): solver ran 2h41m, 64/365 windows, ~24 windows/h, so ~15 h projected vs the 720-min budget. No bundle written; nothing pushed.
+# container preflight: memory ceiling 13.36 GiB (MemTotal 15.72 GiB), swap 9.0 GiB, target ceiling+swap 24 GiB
+INFO: UC stage prepared: 70 clusters, 22 integer (155 fleet rows; 15 all-budget-pinned clusters left to their budget identity), W=24 L=12
+INFO: UC commitment demand (da_forecast, eia930_da_forecast): -141 MW mean increment, 0 QA-dropped hours
+0 [0,36) Optimal 176.89s 1433n gap 4.80e-04
+1 [24,60) Optimal 219.45s 2301n 5.44e-04
+2 [48,84) Optimal 205.86s 2781n 4.30e-04
+3 [72,108) Optimal 81.46s 651n 6.05e-05
+4 [96,132) Optimal 107.10s 873n 1.10e-04
+5 [120,156) Optimal 40.06s 271n 7.33e-04
+6 [144,180) Optimal 7.98s 14n 2.83e-04
+7 [168,204) Optimal 104.31s 1483n 9.98e-04
+8 [192,228) Optimal 67.72s 355n 2.78e-04
+9 [216,252) Optimal 39.13s 87n 7.60e-04
+10 [240,276) Optimal 39.65s 157n 9.00e-04
+11 [264,300) Optimal 71.24s 668n 5.91e-04
+12 [288,324) Time limit reached 600.07s 8102n 4.33e-03
+13 [312,348) Optimal 69.28s 724n 5.42e-04
+14 [336,372) Optimal 58.83s 530n 3.34e-04
+15 [360,396) Optimal 77.24s 914n 8.53e-04
+16 [384,420) Optimal 46.39s 177n 7.33e-04
+17 [408,444) Optimal 30.59s 176n 1.06e-04
+18 [432,468) Optimal 120.25s 748n 5.16e-04
+19 [456,492) Optimal 29.39s 95n 7.56e-04
+20 [480,516) Optimal 131.80s 1120n 1.04e-04
+21 [504,540) Optimal 394.28s 4205n 2.25e-04
+22 [528,564) Optimal 33.29s 97n 9.16e-04
+23 [552,588) Optimal 298.56s 4290n 9.67e-04
+24 [576,612) Optimal 154.86s 2030n 8.88e-04
+25 [600,636) Optimal 24.96s 42n 6.47e-04
+26 [624,660) Optimal 16.09s 21n 1.00e-03
+27 [648,684) Optimal 165.78s 1589n 4.50e-04
+28 [672,708) Optimal 135.17s 1748n 7.09e-04
+29 [696,732) Optimal 113.09s 1175n 4.84e-04
+30 [720,756) Optimal 391.16s 5459n 8.27e-04
+31 [744,780) Time limit reached 600.08s 7783n 3.62e-03
+32 [768,804) Optimal 101.21s 939n 2.22e-04
+33 [792,828) Optimal 0.90s 1n 9.95e-04
+34 [816,852) Optimal 0.57s 1n 4.34e-04
+35 [840,876) Optimal 81.76s 313n 3.36e-04
+36 [864,900) Optimal 74.29s 830n 9.98e-04
+37 [888,924) Optimal 273.88s 2754n 4.87e-04
+38 [912,948) Optimal 281.16s 3182n 1.00e-03
+39 [936,972) Optimal 223.82s 1259n 2.30e-04
+40 [960,996) Optimal 138.33s 1249n 6.41e-04
+41 [984,1020) Optimal 51.86s 192n 7.37e-04
+42 [1008,1044) Optimal 66.12s 299n 1.00e-03
+43 [1032,1068) Optimal 243.60s 1530n 4.23e-04
+44 [1056,1092) Optimal 148.64s 1769n 2.86e-04
+45 [1080,1116) Optimal 112.70s 1104n 3.45e-04
+46 [1104,1140) Optimal 93.07s 929n 6.46e-04
+47 [1128,1164) Optimal 77.08s 658n 5.02e-04
+48 [1152,1188) Optimal 51.08s 95n 9.89e-04
+49 [1176,1212) Optimal 51.05s 120n 5.43e-04
+50 [1200,1236) Optimal 102.29s 1058n 8.05e-04
+51 [1224,1260) Optimal 144.50s 1043n 4.27e-04
+52 [1248,1284) Optimal 84.89s 650n 1.00e-03
+53 [1272,1308) Optimal 38.42s 238n 9.64e-04
+54 [1296,1332) Optimal 62.47s 495n 3.71e-04
+55 [1320,1356) Optimal 54.80s 213n 2.50e-04
+56 [1344,1380) Optimal 147.38s 1288n 7.01e-04
+57 [1368,1404) Optimal 199.91s 1967n 1.00e-03
+58 [1392,1428) Optimal 206.26s 3494n 2.40e-04
+59 [1416,1452) Optimal 363.33s 6207n 7.84e-04
+60 [1440,1476) Optimal 94.41s 1109n 7.14e-04
+61 [1464,1500) Time limit reached 600.10s 11814n 4.69e-03
+62 [1488,1524) Optimal 127.63s 1384n 4.99e-04
+63 [1512,1548) Optimal 340.35s 1757n 1.00e-03
