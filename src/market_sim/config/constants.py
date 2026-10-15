@@ -7046,3 +7046,14 @@ VOLUNTARY_WTP_CEILING_USD_PER_MWH: dict[str, float] = {
 # median output over the hours the floor binds is 0 MW", i.e. it is metered
 # offline in at least half of them). Online share >= 0.5 <=> median output > 0.
 WINTER_FUELSEC_CONDUCT_MIN_ONLINE_SHARE: float = 0.5
+
+# Units each VLR load-pocket group must hold committed in every UC window hour
+# under ``ScenarioConfig.vlr_pocket_commitment`` (lane UC-MISO-VLR). NOT fitted
+# and NOT a published requirement (the operating guides' own counts are not
+# public): it is the owner's ruling 2026-10-15 r13, decision card Q1 = "A",
+# "≥ 1 committed unit per MTEP15 group". The source behind it is the MTEP15 VLR
+# study (PUCT Docket 46416, Exh. CWL-5, Scenario 1C pp.12–13): taking each
+# group wholly out of service causes N-1 / P3 thermal or voltage violations at
+# summer peak, so one unit is the least commitment consistent with the study.
+# docs/records/miso/ucmilp/FINDING-ucmiso-vlr-phase0-2026-10-15.md §3.
+VLR_GROUP_MIN_COMMITTED_UNITS: int = 1
