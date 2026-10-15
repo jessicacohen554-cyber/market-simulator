@@ -157,3 +157,36 @@ invented no tolerance around it. The "GW above / below" columns are the flag.
 **Caveat (statistic, a desk item):** unit online starts at 5 % of unit HSL, so p5 includes start-up and
 shut-down ramp hours and biases `mlf` low. Restricting to full operating hours (`opTime == 1`) or
 changing the percentile would be a statistic change, which is a PRECOMMIT item, not decided here.
+
+## 7. Registered min-run / min-up in on-disk ISO offer disclosures (zero LP, no fetch)
+
+Asked by UC-DESK before it puts the statistic question to the owner: does a **registered** physical
+duration exist on disk? One would beat both the p25 and the class table (rules 14, 18).
+
+**Answer: none on disk. The only ISO feed that publishes one (PJM `min_runtime`) is gitignored; only
+its README is present.**
+
+| ISO | corpus | registered duration field | on disk | unit → EIA plant |
+|---|---|---|---|---|
+| PJM | `data/raw/pjm-energy-offers/` | **`min_runtime`** → `min_runtime_h` ("Minimum continuous runtime (hours) once the unit is committed", `energy-offers.schema.yaml`); also `max_daily_starts` | README only (gitignored; re-fetchable, 2019–25) | masked `unit_code`, no crosswalk |
+| MISO | `data/raw/miso-energy-offers/` | none (Economic / Emergency Min are **MW**) | README only | masked; class bridge refuted (miso-138) |
+| NYISO | `data/raw/nyiso-bid-data/genbids/` | none (Fixed Min Gen MW) | `SHA256SUMS.txt` only | no published crosswalk |
+| ISO-NE | `data/raw/NEISO-AS/da-energy-offers/` | none (Economic Min MW) | README only | masked |
+| CAISO | `data/raw/caiso-public-bids/` | none | README only | masked |
+| ERCOT | 60-day DAM Gen Resource Data; SCED extracts | **none**. DAM has `LSL`, start-up offers and `Min Gen Cost`; SCED has HSL/LSL/HDL/LDL | yes | resource names unmasked (network-model map exists) |
+| SPP | — | no offer corpus | — | — |
+
+Notes:
+- Coverage by class is **zero in every ISO × class on disk**.
+- PJM `min_runtime` is used today only as a CT ≤ 2 h / CC (2, 16] h / LONG_RUN > 16 h class splitter
+  (`derive_pjm_offer_surface.py`, `derive_pjm_offer_midcurve.py`). PJM is not a UC ISO.
+- Masked unit codes would need a mapping to plants before the field could feed `uc-params`.
+- No existing min-run input comes from an ISO offer file:
+  - ERCOT `custom-bin-assignments.csv` (`Min_Run_Hours`) is hand-authored.
+  - `derive_campd_perplant_min_run.py` and `uc-params` are observed-run p25s.
+  - The coal 36/16 h defaults are the NREL SR-5500-55433 attribution.
+- The ERCOT DAM `LSL` is an offered or telemetered **MW** limit. It could serve as a measured check on
+  the per-unit `mlf` in ERCOT (a later card, not done here).
+
+Survey method: corpus READMEs plus a schema-only read of the ERCOT parquet headers; no payload was
+loaded and nothing was fetched.
