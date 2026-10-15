@@ -170,3 +170,55 @@ shard log, and the uc-1.5 w0–15 sum is 563 s in the committed UC-3 log.
 - No full-year rolling run.
 - The 2019 bound-side residual (§3.1) is open. Branching priority or cut-family work would be solver-path work for a
   later lane.
+
+## 7. Merge gate (UC-DESK ruling 2026-10-15, conditions 1–4)
+
+**(1) Paired rolling chain, NEISO 2023, w0–31 (32 consecutive windows).**
+
+- **Setup.** One U4 stage at uc-1.8 `lean` (+LPH) rolls and records each window's carried state. The uc-1.7 `lean`
+  composition then solves the same 32 window problems on those states (`UcStage.run(pin=…)`). Same container, registered
+  gap and time limit. The first attempt, with the order reversed, was lost to a container reclaim after its 5,809 s
+  base pass.
+
+| path | MILP Σ s | TL hits | nodes p50 | max window s | Σ objective |
+|---|---|---|---|---|---|
+| uc-1.7 `lean` | 5,132 | 2 (w12, w31) | 666 | 600 | 259,805,349 |
+| uc-1.8 `lean` (+LPH) | **920** | **0** | 1 | 294 | 259,661,229 (−0.055 %) |
+
+- **Per-window Δobj/obj** = (uc-1.7 − uc-1.8)/uc-1.8:
+  - **30 of 32 windows** have |Δ| ≤ 9.8e-4, inside the 1e-3 gap.
+  - **w31** is inside the gap too: +5.8e-4, though uc-1.7 timed out there at gap 1.2e-3.
+  - **Flagged: w12, +9.75e-3.** This is uc-1.7's time-limit incumbent: the defect itself, not a uc-1.8 deviation.
+    uc-1.8 solves w12 to gap 1.0e-3 in 294 s.
+  - uc-1.8's objective is lower in 25 of 32 windows.
+- **Kept `u` cells differing:** median 21.5 and max 71 of 528 per window. These are within-gap alternative commitments
+  (the rolling schedule hash is not the gate, FINDING-ucmilp-speed §3).
+
+**(2) Other ISOs, 2023, P0-state single windows** (§3.4).
+
+| ISO | gated rows | window | uc-1.7 lean | uc-1.8 lean | Δobj/obj |
+|---|---|---|---|---|---|
+| NYISO | 144 | w12 | 4 s | 3 s | 0 |
+| NYISO | 144 | w31 | 129 s | 30 s | +3.8e-5 |
+| CAISO | 0 | w12 | 258 s | 49 s | +1.1e-4 |
+| CAISO | 0 | w31 | 4 s | 3 s | 0 |
+| SPP (ungated) | 0 | w0 / w12 / w31 / w200 | 2.6 / 4 / 2 / 4.7 s | 2.8 / 4 / 2 / 4.9 s | 0 (identical) |
+
+**(3) Tests.** `tests/unit/model/uc/test_lean_lp_heuristics.py` covers:
+
+- the `lean` composition;
+- the handle options;
+- an identical window model (matrix, bounds, costs, integrality) under every path on a gated toy, so the same integer
+  feasible set;
+- the same toy optimum under the uc-1.7 and uc-1.8 `lean`;
+- the schedule-reuse digest. It separates the two (`UC_ENGINE_VERSION` and `repr(options)` both enter
+  `uc_input_digest`), so no uc-1.7 schedule is reused.
+
+`test_solve_presets.py` now reads the `lean` effort as 0.05.
+
+**(4) Records.**
+
+- The uc-1.7 UC-4 legs remain valid records at uc-1.7. The solver path moves no model term, and every window
+  uc-1.7 solved to `Optimal` agrees with uc-1.8 within the 1e-3 gap.
+- Relaunches after merge pin uc-1.8.
+- The warm-start defect (`warm_feasible = 0`, 365/365 windows, uc-1.5 onward) is a separate open item (§5.2).
