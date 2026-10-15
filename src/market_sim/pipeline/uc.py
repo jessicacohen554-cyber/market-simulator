@@ -58,6 +58,7 @@ import pandas as pd
 import scipy.sparse as sp
 
 from market_sim.config.paths import RESULTS_ROOT
+from market_sim.data.commitment_demand import CommitmentDemand, commitment_demand
 from market_sim.data.fleet import FleetArrays
 from market_sim.data.floor_mechanisms import MECH_UC_SCHEDULE
 from market_sim.model.uc.params import (
@@ -113,7 +114,12 @@ logger = logging.getLogger(__name__)
 #: ``pmax * a`` (``window.reserve_headroom_u_terms``;
 #: FINDING-ucmilp-fix6-reserve-headroom-2026-10-14). A no-op without
 #: reserve co-optimization.
-UC_ENGINE_VERSION = "uc-1.6"
+#: uc-1.7: the window balances against the COMMITMENT DEMAND
+#: (``uc_commitment_demand_source``; ``data/commitment_demand.py``; owner
+#: ruling UC-DESK r13): the P1 demand at "actual" (the uc-1.6 windows, the same
+#: object), the measured EIA-930 day-ahead forecast mapped to zones at
+#: "da_forecast". P1 still clears on actual load (rule 4).
+UC_ENGINE_VERSION = "uc-1.7"
 
 #: The most recent stage objects (one per year solved in this process), for a
 #: harness that writes the post-P1 uplift sidecar; drained by :func:`take_uc_stages`.
@@ -182,7 +188,8 @@ def uc_input_digest(
 
     The engine version, the ISO / year / horizon, every ``uc_*`` config field,
     the solve options, the cluster parameters, the year fleet and the hooked
-    P1 fleet, demand, the dispatch kwargs, ``mc_base``, the final P1 bid and
+    P1 fleet, demand and the commitment demand, the dispatch kwargs,
+    ``mc_base``, the final P1 bid and
     the P0 dispatch / storage SOC / prices / flows. Two stages with equal
     digests build the same windows from the same state, so the second may take
     the first's schedule.
@@ -211,6 +218,7 @@ def uc_input_digest(
         stage.fleet_arrays,
         fleet_in,
         stage.demand,
+        stage.commit.demand,
         stage.dispatch_kwargs,
         stage.mc_base,
         np.asarray(mc_bid, dtype=float),
@@ -437,7 +445,10 @@ class UcStage:
         config: ScenarioConfig (reads the ``uc_*`` fields, ``iso``,
             ``weather_year``, ``hours``).
         fleet_arrays: The year's dispatch fleet.
-        demand: ``(n_zones, T)``.
+        demand: ``(n_zones, T)`` P1 demand. The windows balance against the
+            commitment demand built from it
+            (:func:`~market_sim.data.commitment_demand.commitment_demand`,
+            ``uc_commitment_demand_source``); at "actual" that is ``demand``.
         dispatch_kwargs: The assembled LP kwargs.
         mc_base: ``(n_gen, T)`` base cost.
         r0: The P0 result (dispatch, prices, storage SOC).
@@ -467,6 +478,8 @@ class UcStage:
         self.T = int(getattr(config, "hours", demand.shape[1]))
         self.fleet_arrays = fleet_arrays
         self.demand = demand
+        #: What the windows commit against (``uc_commitment_demand_source``).
+        self.commit: CommitmentDemand = commitment_demand(config, demand)
         self.dispatch_kwargs = dispatch_kwargs
         self.mc_base = np.asarray(mc_base, dtype=float)
         self.r0 = r0
@@ -642,7 +655,7 @@ class UcStage:
             t_w0 = time.perf_counter()
             inputs = slice_window_inputs(
                 fleet_in,
-                self.demand,
+                self.commit.demand,
                 self.dispatch_kwargs,
                 t0,
                 t1,
@@ -843,7 +856,11 @@ class UcStage:
                         getattr(c, "uc_solver_preset", "highs_default")
                     ),
                     "uc_slim_window": bool(getattr(c, "uc_slim_window", False)),
+                    "uc_commitment_demand_source": str(
+                        getattr(c, "uc_commitment_demand_source", "actual")
+                    ),
                 },
+                "commitment_demand": self.commit.log_row(self.demand),
                 "solver_path": self.options.solver_path(),
                 "threads": int(self.options.threads),
                 "n_clusters": int(self.params.n_clusters),

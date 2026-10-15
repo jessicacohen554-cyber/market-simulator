@@ -1199,6 +1199,43 @@ assert not _UNKNOWN_LOADER_KEYS, (
 )
 
 
+def load_zone_weights(
+    iso: str,
+    year: int,
+    iso_config: ISOConfig,
+    caiso_tac_shares_standard_time: bool = False,
+) -> np.ndarray:
+    """``(n_zones, HOURS_PER_YEAR)`` weights splitting a system series across zones.
+
+    The one allocation :func:`load_demand` uses (and the UC commitment demand
+    reuses, :mod:`market_sim.data.commitment_demand`, so a forecast increment
+    lands in the zones exactly as the actual load does). Each column sums to
+    1.0.
+
+    PJM, ERCOT, CAISO, NYISO, NEISO and MISO allocate demand by each zone's
+    own measured hourly shape (from the PJM metered-load / ERCOT native-load /
+    CAISO TAC-area / NYISO pal / ISO-NE SMD / MISO sub-BA demand files) when
+    available, so zones peak at different times; every other ISO (and these
+    six without their file) uses the static per-zone share broadcast across
+    hours. Resolved through the package namespace so tests patching
+    ``market_sim.data.eia_loader.load_zonal_shares`` keep intercepting it.
+    R-CAISO-11: ``caiso_tac_shares_standard_time`` re-parses the TAC shares on
+    the fixed-PST clock the system total rides; it is passed only when armed,
+    so the historical 3-argument call (and every test patch intercepting it)
+    is unchanged when off.
+    """
+    if caiso_tac_shares_standard_time and iso == "CAISO":
+        zonal_shares = _pkg_ns().load_zonal_shares(
+            iso, year, iso_config.zone_names, caiso_standard_time=True
+        )
+    else:
+        zonal_shares = _pkg_ns().load_zonal_shares(iso, year, iso_config.zone_names)
+    if zonal_shares is not None:
+        return zonal_shares
+    load_shares = np.array([zone.load_share for zone in iso_config.zones], dtype=float)
+    return np.broadcast_to(load_shares[:, None], (len(load_shares), HOURS_PER_YEAR))
+
+
 def load_demand(
     iso: str,
     year: int,
@@ -1480,33 +1517,12 @@ def load_demand(
             float(residual.mean()),
         )
 
-    # PJM, ERCOT, CAISO, NYISO, NEISO and MISO allocate demand by each zone's
-    # own measured hourly shape (from the PJM metered-load / ERCOT native-load /
-    # CAISO TAC-area / NYISO pal / ISO-NE SMD / MISO sub-BA demand files) when
-    # available, so zones peak at different times; every other ISO (and these
-    # six without their file) uses the static per-zone share broadcast across
-    # hours. Both are (n_zones, T) weight matrices summing to 1.0 down each
-    # hour, so the rest of the math is identical.
-    # Resolved through the package namespace so tests patching
-    # ``market_sim.data.eia_loader.load_zonal_shares`` keep intercepting it.
-    # R-CAISO-11: the TAC shares re-parsed on the fixed-PST clock the system
-    # total rides. Passed only when armed, so the historical 3-argument call
-    # (and every test patch intercepting it) is unchanged when off.
-    if caiso_tac_shares_standard_time and iso == "CAISO":
-        zonal_shares = _pkg_ns().load_zonal_shares(
-            iso, year, iso_config.zone_names, caiso_standard_time=True
-        )
-    else:
-        zonal_shares = _pkg_ns().load_zonal_shares(iso, year, iso_config.zone_names)
-    if zonal_shares is not None:
-        weights = zonal_shares
-    else:
-        load_shares = np.array(
-            [zone.load_share for zone in iso_config.zones], dtype=float
-        )
-        weights = np.broadcast_to(
-            load_shares[:, None], (len(load_shares), HOURS_PER_YEAR)
-        )
+    weights = load_zone_weights(
+        iso,
+        year,
+        iso_config,
+        caiso_tac_shares_standard_time=caiso_tac_shares_standard_time,
+    )
     demand = weights * raw_mw[None, :]
     if td_loss_factor > 0.0:
         demand *= 1.0 + td_loss_factor

@@ -380,6 +380,37 @@ ST_GAS_STARTUP_PARAMS: list[tuple[float, float]] = [
 # ScenarioConfig.caiso_ra_bridge_decommit is on.
 DA_COMMITMENT_HORIZON_HOURS: int = 24
 
+# UC commitment demand (ScenarioConfig.uc_commitment_demand_source, lane
+# UC-1-FIX-7; owner ruling UC-DESK r13, 2026-10-15). DATA QA, not a tunable:
+# an EIA-930 BA hour whose day-ahead "Demand forecast" differs from its
+# metered "Demand" by more than this fraction of the metered value is a
+# reporting error (unit slips, dropped forecast rows), and the commitment
+# demand falls back to the actual for that hour. The threshold is the one the
+# UC-DIAG zero-LP reading applied (docs/records/governance/uc-milp-2026-10/
+# FINDING-ucmilp-diag-undercommit-2026-10-14.md section 3; SPP 2019-21: 12-45
+# hours dropped per year); the BA's own forecast MAPE is 2-4 %, so the cut
+# sits an order of magnitude outside any genuine forecast miss.
+COMMITMENT_DF_DATA_ERROR_FRACTION: float = 0.30
+
+# Season of each calendar month for the forward commitment-demand error
+# profile (hour-of-day x season, scripts/data/derive_load_forecast_error.py):
+# the meteorological seasons (WMO convention: DJF winter, MAM spring, JJA
+# summer, SON autumn). A calendar definition, not a fitted grouping.
+COMMITMENT_DF_SEASON_OF_MONTH: dict[int, str] = {
+    12: "DJF",
+    1: "DJF",
+    2: "DJF",
+    3: "MAM",
+    4: "MAM",
+    5: "MAM",
+    6: "JJA",
+    7: "JJA",
+    8: "JJA",
+    9: "SON",
+    10: "SON",
+    11: "SON",
+}
+
 # Measured run-length ceiling that scopes the NYISO ONLINE-HOURS LSL state
 # floor (ScenarioConfig.nyiso_gas_bridge_state_floor_min_run) to the
 # near-baseload duty cohort: a CC plant carries the state floor only when its

@@ -258,6 +258,16 @@ SOLVE_SOURCES: tuple[CleanSource, ...] = (
         raw_inputs=("data/raw/seam-neighbour-price",),
     ),
     # --- forecast lane: capacity evolution, never entered by mode="backcast" ---
+    # data/commitment_demand.py — the forward UC commitment demand (read only
+    # when uc_commitment_demand_source="da_forecast" in forecast mode; no raw
+    # fallback, it fails loudly). The backcast path reads EIA-930 raw directly.
+    CleanSource(
+        "load-forecast-error",
+        "market_sim.data.commitment_demand",
+        lane="forecast",
+        partitions="scripts.data.derive_load_forecast_error:load_registry",
+        raw_inputs=("data/raw/eia-930-hourly",),
+    ),
     # data/confirmed_retirements.py — step-0 confirmed exits.
     CleanSource(
         "confirmed-retirements",

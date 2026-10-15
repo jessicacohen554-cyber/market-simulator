@@ -142,6 +142,25 @@ frame, `model/uc/uplift.py`, priced from the P1 result and never into a price)
 and `uc_solve_log_<y>.json`. Monthly checkpoints are scratch under
 `results/uc-checkpoints/`.
 
+**Commitment demand (uc-1.7) — `data/commitment_demand.py`.** The windows
+balance against `UcStage.commit.demand`, not the P1 demand
+(`uc_commitment_demand_source`; owner ruling UC-DESK r13). `"actual"` (default)
+is the P1 demand object itself. `"da_forecast"` in a backcast adds the BA's
+EIA-930 `Demand forecast − Demand`, read off the demand loader's own filled
+frame (same model clock), split by `eia930.load_zone_weights` (the loader's
+zone weights) and grossed up by `td_loss_factor`; hours with
+`|DF − actual| > COMMITMENT_DF_DATA_ERROR_FRACTION · actual` (0.30, the UC-DIAG
+data-QA cut) or a missing forecast add nothing. In forecast mode it is
+realised load × (1 + `bias_frac`), the measured mean relative error by
+meteorological season × local hour from the frozen `load-forecast-error`
+partition (`scripts/data/derive_load_forecast_error.py`, rule 23). Only the
+window energy balance moves: reserve rows, P0 targets and P1 are untouched,
+and P1 clears on actual load (rule 4). Every hour the commitment exceeds what
+actual load can absorb above the committed floors shows as P1 dump — the
+over-commitment cost of a forecast error; P1 has no real-time decommitment.
+`uc_solve_log.engine.commitment_demand` records the source, basis, QA-dropped
+hours and the increment (mean, top-100-load-hour median, max, min).
+
 ## 9.4 Registry, refusals, tooling
 
 Eleven fields (`unit_commitment_milp`, `uc_window_hours` 24,

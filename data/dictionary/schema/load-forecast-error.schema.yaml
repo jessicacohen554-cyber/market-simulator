@@ -1,0 +1,71 @@
+# Canonical schema: load-forecast-error (the measured day-ahead load-forecast
+# error profile the UC commitment demand applies in FORECAST mode,
+# ScenarioConfig.uc_commitment_demand_source = "da_forecast"; lane
+# UC-1-FIX-7, owner ruling UC-DESK r13, 2026-10-15).
+#
+# One measured public source: the EIA-930 BA hourly extracts
+# (data/raw/eia-930-hourly/<BA> hourly.parquet), columns "Demand forecast"
+# (the BA's own day-ahead forecast) and "Demand" (metered), read through the
+# same filled frame the demand loader uses
+# (market_sim.data.eia930.frames._eia_hourly_frame_filled; row k = local
+# model hour k), over every complete year the extract carries. Hours whose
+# |forecast - actual| exceeds COMMITMENT_DF_DATA_ERROR_FRACTION of the actual
+# (or whose forecast is missing) are data errors and excluded
+# (market_sim.data.commitment_demand.qa_forecast_error). Written by
+# scripts/data/derive_load_forecast_error.py; re-derived ONLY when the
+# EIA-930 extract updates (CLAUDE.md rule 23 [R-FROZEN-DERIVE]).
+#
+# Grain: one row per (season, hour_of_day) per ISO partition
+# data/clean/load-forecast-error/<ISO>/ (year=None). Seasons are the
+# meteorological DJF / MAM / JJA / SON (constants.COMMITMENT_DF_SEASON_OF_MONTH).
+datatype: load-forecast-error
+schema_version: 1
+title: Measured day-ahead load-forecast error by season x hour of day
+description: >-
+  Mean relative error (forecast - actual) / actual of the BA's EIA-930
+  day-ahead demand forecast, by meteorological season and local hour of day,
+  pooled over every complete year of the extract. The forward analogue of the
+  backcast commitment demand (the measured hourly forecast) for the MILP UC
+  stage.
+
+key_columns: [season, hour_of_day]
+allow_additional_columns: false
+
+columns:
+  - name: season
+    dtype: string
+    unit: none
+    nullable: false
+    description: Meteorological season token, DJF, MAM, JJA or SON.
+  - name: hour_of_day
+    dtype: int64
+    unit: none
+    nullable: false
+    description: Local hour of day 0-23 (interval-beginning, the model clock).
+  - name: bias_frac
+    dtype: float64
+    unit: fraction
+    nullable: false
+    description: >-
+      Mean of (forecast - actual) / actual over the cell's valid hours. The
+      forward commitment demand is realised load x (1 + bias_frac).
+  - name: mean_error_mw
+    dtype: float64
+    unit: mw
+    nullable: false
+    description: Mean of (forecast - actual) in MW over the cell's valid hours (reference).
+  - name: n_hours
+    dtype: int64
+    unit: none
+    nullable: false
+    description: Valid hours pooled into the cell.
+  - name: ba
+    dtype: string
+    unit: none
+    nullable: false
+    description: EIA-930 balancing-authority code (or pool code) read.
+  - name: years
+    dtype: string
+    unit: none
+    nullable: false
+    description: Pooled span of complete years, e.g. "2016-2025".
