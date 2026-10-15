@@ -9,5 +9,6 @@ year	attempt	session	launched_utc	container_gib	outcome	leg_sha
 2023	1	session_01HtUBR1aiVhE78TZSQvKbpz	2026-10-15T11:11:48Z	17.4	gate stop; archived (memory attempt 1)	
 2024	1	session_01ExsbFWt18PvXwa1HeM2xFy	2026-10-15T11:19:24Z	16.4	gate stop; archived (memory attempt 1)	
 2025	1	session_019KCqb5DpWfY2aU99mp9GAf	2026-10-15T11:27:45Z	16.4	gate stop; archived (memory attempt 1)	
-2021	2	session_01JVRmig9G4M5aBZkkjANj5H	2026-10-15T11:38:19Z		launched (relaunch 1)	
+2021	2	session_01JVRmig9G4M5aBZkkjANj5H	2026-10-15T11:38:19Z	16.4	gate stop; archived (memory attempt 2)	
 2022	2	session_016zsxMd4vaC1Vwv8iVYCZ9L	2026-10-15T11:47:44Z		launched (relaunch 1)	
+2023	2	session_01HMfmv6q3dFERCpGkKhkfZC	2026-10-15T11:55:25Z		launched (relaunch 1)	
