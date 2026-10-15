@@ -194,3 +194,19 @@ No bar, kill, reading or recipe changes.
   | 2025 | `session_015z1WqocpdnxG5DJdHSxPUq` | 12:57Z |
 
 - **Still solving from launch 2:** 2019 (`session_01BYXcr8`, 22.36 GiB) and 2023 (`session_013z3111`, 22.36 GiB).
+
+## Addendum C (2026-10-15 15:25Z) — attempt ledger, engine-performance stop, infrastructure loss, FIX-9 hold
+
+No bar, kill, reading or recipe changes. No leg has produced a bundle. Nothing has been composed, scored or judged.
+
+| year | outcome so far | memory attempts (corrected order) |
+|---|---|---|
+| 2019 | Solved UC windows 0–254, then **lost to a container reclaim ~14:28Z** while the shard session was idle (`session_01BYXcr8`). UC-DESK ruled it an infrastructure loss: not a memory attempt, not a verdict. | 0 |
+| 2020 | Gate-blocked at 17.4 GiB on corrected attempts 1 and 2. | 2/4 |
+| 2021 / 2022 / 2024 / 2025 | Gate-blocked at 17.4 GiB on corrected attempt 1. | 1/4 each |
+| 2023 | **Engine-performance stop at 13:27Z** (UC-DESK ruling), 64/365 windows in 2 h 41 m, ~15 h projected against the 720-min budget (`session_013z3111`). | 0 |
+
+- **Engine finding (zero LP).** Against UC-3 uc-1.5 on the same windows, U4 MILP time is 7.0× (2019, w0–254) and 4.6× (2023, w0–63). Branch-and-bound nodes rise ~10–15× on an identical integer set (61/18 and 70/22 clusters). There are 3 time-limit hits per ~100 windows, against 0 in UC-3. Evidence is in `data/ucmilp4_fix9_evidence/`.
+- **FIX-9.** UC-DESK chartered FIX-9 (`session_018AWf6q`): an ablation bench that separates the u-gate, per-unit `mlf`/`ut_h`, and DA demand on captured NEISO windows.
+- **Hold.** Every NEISO launch is held until FIX-9 reports.
+- **Standing shard rule (UC-DESK, 15:20Z).** A shard running a detached solve keeps its session alive. It re-arms its watcher, or schedules a `send_later`, at intervals of 90 min or less, and never ends a turn on a watcher that expires before the solve does. Every relaunch prompt carries this rule.
