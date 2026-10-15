@@ -210,3 +210,30 @@ No bar, kill, reading or recipe changes. No leg has produced a bundle. Nothing h
 - **FIX-9.** UC-DESK chartered FIX-9 (`session_018AWf6q`): an ablation bench that separates the u-gate, per-unit `mlf`/`ut_h`, and DA demand on captured NEISO windows.
 - **Hold.** Every NEISO launch is held until FIX-9 reports.
 - **Standing shard rule (UC-DESK, 15:20Z).** A shard running a detached solve keeps its session alive. It re-arms its watcher, or schedules a `send_later`, at intervals of 90 min or less, and never ends a turn on a watcher that expires before the solve does. Every relaunch prompt carries this rule.
+
+## Addendum D (2026-10-15 21:20Z, before any shard at the new pin) — re-pin to engine uc-1.8 (FIX-9); resume
+
+No bar, kill, reading or recipe changes. The arm is still keeper + `unit_commitment_milp=true` + `uc_commitment_demand_source="da_forecast"`.
+
+**Pin: `41cd55dc9b254a412f52cce051257ea15965c70e`** (main at #7270, engine **uc-1.8**). Branch `claude/ucmilp-4-neiso` merges it; the branch head differs from the pin by docs only (`git diff --name-only 41cd55dc HEAD` lists only `docs/`). Shards run at the branch head SHA.
+
+**G-DRIFT `7dbfe20f → 41cd55dc` (zero LP):**
+
+| hunk | files | NEISO classification |
+|---|---|---|
+| FIX-8: the DA increment is mapped onto the solve's runtime rows **by zone name** (`load_row_index`); `zone_names` is threaded through the solve core | `data/commitment_demand.py`, `pipeline/{uc,solve,year}.py`, `runner.py`, `scripts/run_calibration.py`, `scripts/lib/uc_bench.py` | **INERT for NEISO, by construction.** NEISO's runtime zones ARE its configured zones (`HQ_import` is configured, not appended; Addendum A). The mapping is the identity, as the module docstring states for NEISO. The `HQ_import` weight is 0.0 every hour 2019–2025. The legacy positional result equals the named one, and the 2019 leg logged −189 MW, matching phase 0 (§2). |
+| FIX-9: the `lean` preset runs the LP heuristics (RINS/RENS/root reduced cost); engine version uc-1.8 | `model/uc/solve.py`, `config/scenarios.py` (comment) | **LIVE, UC path only, solver PATH.** Model, gap (1e-3) and time limit (600 s) are unchanged. The returned optimum is the same within `uc_mip_rel_gap`; a within-gap tie may resolve differently from uc-1.7. FIX-9 paired NEISO 2023 w0–31: MILP 5,132 → 920 s, time-limit hits 2 → 0. |
+| gate-off path | — | INERT: every hunk is behind `unit_commitment_milp` / `da_forecast`; the keeper (control) is untouched |
+| solve surface | `solve_surface_register.py --diff 7dbfe20f 41cd55dc`: *"345 → 345 names; 0 value(s) moved … NO VALUE MOVED"* | no key reached |
+
+**Carried rulings:**
+- **Memory gate** stays at 22.4 GiB (printed ceiling + swap, raw ≥ 22.35); the owner has not ruled a per-ISO gate.
+- **`prepare_solve_container.py`** runs FIRST with system `python3` (Addendum B).
+- **Keep-alive** (UC-DESK, 15:20Z): a detached solve's shard re-arms its watcher, or schedules a `send_later`, at ≤ 90 min intervals until the solve exits.
+- **Memory attempts carried** (UC-DESK, 21:13Z): 2020 2/4; 2021, 2022, 2024, 2025 1/4; 2019 and 2023 0/4. A year that reaches 3/4 holds its 4th attempt pending the owner's gate ruling.
+- **Expected wall:** the uc-1.7 U4 MILP cost was 4.6–7.0× UC-3 (Addendum C). uc-1.8 is expected to remove most of that; the wall row is reported, not judged.
+
+**Shards:**
+- Seven legs, one per year, launched serially about 5 min apart.
+- Branches `claude/ucmilp4-neiso-u4-<y>` (none exists yet); out-dirs `results/calibration/ucmilp4_neiso_u4_<y>`.
+- Prompts: `shard-prompts-ucmilp4-neiso-u4-uc18.txt`. The expected `engine.version` is uc-1.8.
