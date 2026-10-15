@@ -229,3 +229,35 @@ does not close the gap.
 | 2022 | 2 (relaunch 1/4) | `01XY8aqq…` (sent 10:59:50Z, before the pause was read) | ≈ 11 GiB | 17.4 | blocked |
 
 Not yet launched: 2020, 2023, 2024. Every shard listed above is archived. No year has passed the gate, and no LP has run.
+
+## Addendum D (2026-10-15 13:57Z): resume, 9/9 blocked, paused pending the owner's gate ruling
+
+**Resume (UC-DESK 13:15:58Z).** The desk resumed launches on the same gate: the printed total must be ≥ 22.4 GiB, with no
+per-ISO re-base. Years ran one at a time in the order 2020, 2023, 2024, then the rest.
+
+| year | attempt | session | boot free disk | ceiling + swap (GiB) | result |
+|---|---|---|---|---|---|
+| 2020 | 1 | `01LVcedsd…` | 11.6 GiB (`df` 12G avail) | 13.36 + 5.0 = 18.4 | blocked |
+| 2023 | 1 | `011TxYtV…` | ≈ 11.6 GiB | 18.4 | blocked |
+| 2024 | 1 | `01XLvkuw…` | ≈ 11.6 GiB | 18.4 | blocked |
+
+**STOP (UC-DESK 13:55:54Z).** The desk read 9 blocks in 9 attempts since 10:00Z as deterministic, not a draw: the boot disk
+allowance is 10.7–11.6 GiB, so swap is capped at 4–5 GiB. Lower concurrency after the SPP and MISO lanes closed did not
+restore the 15.7 GiB seen at 09:51Z. Further launches would only spend attempts.
+
+- **Crossing:** 2019 attempt 2 (`01H8QYuj…`) was launched at 13:55:53Z and archived at 13:56Z, before it reached the gate. It
+  is **not counted**.
+- **Attempts standing:**
+
+  | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 |
+  |---|---|---|---|---|---|---|
+  | 1 | 1 | 2 | 2 | 1 | 1 | 1 |
+
+- **Resume condition:** the lane launches nothing until UC-DESK sends a resume after the owner's gate ruling.
+
+**Memory evidence offered for that ruling (zero LP, UC-3 records).** ERCOT's measured peak is cgroup ceiling plus swap peak
+≤ 13.58 GiB (2023). It is 13.43–13.58 GiB for 2021–23 and ≤ 12.6 GiB for the other years. The 18.4 GiB containers would leave
+about 4.8 GiB of headroom. U4 adds no structural memory over uc-1.5 that is expected, but none has been measured.
+
+**State:** no ERCOT U4 year has solved and no LP has run. Every shard session is archived. No shard branch exists, because no
+shard pushed.
