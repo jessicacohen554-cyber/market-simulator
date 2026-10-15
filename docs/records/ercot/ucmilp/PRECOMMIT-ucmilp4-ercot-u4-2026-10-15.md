@@ -178,3 +178,28 @@ that class. This was a lane wording defect, not an infrastructure finding.
 - **Scope:** nothing else in the prompts changes. The shard pin stays `ec657888`.
 - **Relaunch count:** the blocked attempt is recorded in the attempt log. It does not count against 2021's four relaunches,
   because the cause was the prompt, not the container.
+
+## Addendum B (2026-10-15 10:32Z): memory blocks and the disk diagnostic; no reading, bar or kill changes
+
+Three real launches blocked at the memory gate:
+
+| year | blocked at | memory ceiling | swap | total | free disk at boot |
+|---|---|---|---|---|---|
+| 2021 r2 | 10:10Z | 13.36 GiB | 5.0 GiB | 18.4 GiB | 11.4 GiB |
+| 2022 | 10:18Z | 13.36 GiB | 4.0 GiB | 17.4 GiB | 11.0 GiB |
+| 2025 | 10:26Z | 13.36 GiB | 4.0 GiB | 17.4 GiB | ≈ 11 GiB |
+
+Each counts as attempt 1 of that year's ≤ 4. The year's next relaunch comes about 30 min after its block. The first launches of
+2020, 2023 and 2024 are held until a container passes.
+
+`provision_swap` sizes the swapfile from the free disk at boot, and keeps an active swapfile as it is. A shortfall therefore
+reflects the container's starting disk allowance; it is not something the shard fills.
+
+**UC-DESK ruling (10:30Z): option A, diagnostic only.** Each relaunch does three things before `prepare_solve_container.py`:
+
+1. It logs `df -h .` and `du -sh ~/.cache/uv ~/.cache/pip`.
+2. It runs `uv cache clean` and removes `~/.cache/pip`, only if either cache is non-empty.
+3. It logs `df -h .` again.
+
+Nothing else is deleted. The gate is read on the first prepare print, and the swapfile is not turned off and re-created. The
+gate, the cadence and the attempt cap stand. The first relaunch's du table goes to UC-DESK.
