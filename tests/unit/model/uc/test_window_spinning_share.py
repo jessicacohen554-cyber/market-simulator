@@ -250,3 +250,17 @@ def test_spp_design_spin_family():
 def test_spp_design_spin_refused_without_uc():
     with pytest.raises(ValueError, match="unit_commitment_milp"):
         _spp_design(_Cfg(True, False), _Fleet(), T, largest_unit_mw={})
+
+
+def test_solve_dispatch_accepts_synchronized_kwarg(st_params_frame):
+    """The P1 cold route (``solve_dispatch``) takes the stage's kwargs whole."""
+    from market_sim.model.lp import solve_dispatch
+
+    fa, demand, mc, dk = _inputs()
+    params = build_uc_cluster_params(fa, "SPP")
+    kw = {**dk, **build_reserve_dispatch_kwargs(_design(True))}
+    kw = {**kw, **synchronized_reserve_overrides(kw, params)}
+    res = solve_dispatch(fa, demand, mc=mc, **kw)
+    # No commitment state here (an LP): the ST may hold spin on pmax*a, so
+    # both requirements clear without shortfall.
+    assert float(np.asarray(res.dispatch).sum()) > 0.0
