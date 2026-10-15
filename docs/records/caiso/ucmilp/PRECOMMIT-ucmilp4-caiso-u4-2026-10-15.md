@@ -190,3 +190,25 @@ This is a defect stop. Per the desk, it spends none of the four memory relaunche
 
 **What changes on relaunch:** the pin only, which will be the desk's FIX-8 full SHA, recorded in Addendum B with its G-DRIFT before any shard. The arm,
 readings, kills, verdict rule and budget are unchanged.
+
+## Addendum B (2026-10-15 ~10:45Z, before any U4 number exists) — re-pin to FIX-8
+
+**Pin: `7c93273ec9056b1cd9f6e4fcf387e812f78f6e8a`** (main at #7267, UC-1-FIX-8: the DA-forecast increment is mapped onto the runtime zone
+rows by name, and interchange pseudo-zones get 0). The engine label stays **uc-1.7**. The desk repro for CAISO 2022 gives runtime zones = 5 load + `WECC_PNW` +
+`WECC_DSW`, pseudo rows 0, mean increment −415.6 MW. That agrees with this file's §1.1 table (2022 mean −416 MW). This branch merges the pin, so
+shards run at this branch head = pin + records only (`git diff --stat 7c93273e HEAD` touches only `docs/records/caiso/ucmilp/`).
+
+**G-DRIFT `7dbfe20f` → `7c93273e` (zero LP).** Two commits: `ca90d2e8` (desk docs) and `7c93273e` (FIX-8):
+
+| file | hunk | CAISO classification |
+|---|---|---|
+| `data/commitment_demand.py` | increment mapped by zone name; new `zone_names` argument | LIVE, `da_forecast` path only (the fix) |
+| `pipeline/uc.py`, `pipeline/solve.py`, `pipeline/year.py`, `runner.py`, `scripts/run_calibration.py` | `zone_names` plumbed to the UC stage (keyword argument, default `None`) | INERT gate-off: read only by the UC stage's `da_forecast` commitment demand |
+| `scripts/lib/uc_bench.py` | bench capture carries `zone_names` | INERT: not the solve path |
+
+`solve_surface_register.py --diff 7dbfe20f 7c93273e`: *"345 → 345 names; 0 value(s) moved, 0 added, 0 removed — NO VALUE MOVED"*. The
+control stands without a solve (rule 29(b)).
+
+**Unchanged:** the arm (the nine `--set` values, `'"da_forecast"'` quoted), readings, kills, verdict rule, the 720-min budget and serial launch.
+Memory gate per the desk's ruling (10:19Z): pass iff the printed ceiling+swap rounds to ≥ 22.4 GiB (raw ≥ 22.35). A blocked year gets ≤ 4
+relaunches about 30 min apart, then becomes a coverage gap. The Addendum A defect stop spends none of them.
