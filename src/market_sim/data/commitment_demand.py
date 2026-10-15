@@ -41,7 +41,10 @@ NYISO, ERCOT, SOCO) the increment is on the same basis. NWPP is a pool frame
 (the members' summed forecast). CAISO's armed demand corrections
 (``caiso_demand_clock_realign`` / ``caiso_supply_consistent_demand``) re-clock
 or replace the metered series; the increment stays on the EIA-930 frame clock
-(a one-hour misalignment where the realign is armed). The UC-DIAG reading
+(a one-hour misalignment where the realign is armed), and the increment is
+split by the default TAC shares even where ``caiso_tac_shares_standard_time``
+re-clocks them for the P1 demand (a backcast-only CAISO flag this module does
+not read; the zonal split moves, the system total does not). The UC-DIAG reading
 measured the bias as material only for SPP and MISO.
 """
 
@@ -246,9 +249,6 @@ def commitment_demand(config, demand: np.ndarray) -> CommitmentDemand:
             int(config.weather_year),
             get_iso_config(iso),
             td_loss_factor=float(getattr(config, "td_loss_factor", 0.0) or 0.0),
-            caiso_tac_shares_standard_time=bool(
-                getattr(config, "caiso_tac_shares_standard_time", False)
-            ),
         )
         if inc.shape[0] != demand.shape[0]:
             raise ValueError(

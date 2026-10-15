@@ -20,7 +20,7 @@ P1, the reserve rows and the P0 targets are untouched. P1 clears on actual load 
 
 - **Backcast increment** = `load_zone_weights · (DF − Demand) · (1 + td_loss_factor)`, on the same `<BA> hourly` filled frame (same local model clock) the loader reads. This is `load_demand` with the forecast in place of the metered load. Interchange and must-run residuals stay as the solve built them.
 - EIA-930 DF is the **BA's own day-ahead forecast**, not the DA-cleared load or the RUC load. For SPP (`SWPP`) it is the same BA as the model demand.
-- NWPP is a pool frame (summed members). CAISO's armed demand corrections (clock realign, supply-consistent series) re-clock or replace the metered series; the increment stays on the EIA-930 clock (up to 1 h misaligned where the realign is armed). UC-DIAG found the bias immaterial for CAISO.
+- NWPP is a pool frame (summed members). CAISO's armed demand corrections (clock realign, supply-consistent series) re-clock or replace the metered series; the increment stays on the EIA-930 clock (up to 1 h misaligned where the realign is armed), and it is split by the default TAC shares even under `caiso_tac_shares_standard_time` (the zonal split differs; the system total does not). UC-DIAG found the bias immaterial for CAISO.
 
 ## 3. Zero-LP reading: SPP backcast increment (this field's own seam)
 
