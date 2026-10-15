@@ -632,4 +632,5 @@ DECLARED: dict[str, str | dict[str, str]] = {
     "NWPP_MEMBER_LOCAL_TZ": "ec3a6413bab8bdaa",
     "NWPP_SEAM_IN_SERVICE_UTC": "5a8de0687a0d0c32",
     "NUCLEAR_MONTHLY_CF_UNCLIPPED_BY_YEAR": {"PJM": "3a156545628c07d3"},
+    "VLR_GROUP_MIN_COMMITTED_UNITS": "196bf27c76e388ef",
 }

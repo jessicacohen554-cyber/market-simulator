@@ -1,0 +1,89 @@
+# Canonical schema: vlr-pocket-groups (load-pocket VLR commitment unit groups).
+#
+# The units an ISO's voltage-and-local-reliability (VLR) operating guides name
+# for each load pocket, grouped as the source's own outage studies group them.
+# MISO is the first ISO: the MTEP15 VLR study (PUCT docket 46416, Exhibit
+# CWL-5) lists the op-guide VLR units by pocket (Amite South, DSG, WOTAB,
+# Western) and, in its Scenario 1C, takes each GROUP out and finds N-1 / P3
+# thermal or voltage violations at 2024 summer peak. One row per listed unit;
+# the group is the unit of the commitment requirement the UC stage builds
+# (ScenarioConfig.vlr_pocket_commitment). The EIA-860 prime mover / energy
+# source / retirement year are the unit's own EIA-860 record and decide which
+# model commitment cluster (plant x family) the unit belongs to.
+datatype: vlr-pocket-groups
+schema_version: 1
+title: VLR load-pocket commitment unit groups
+description: >-
+  Units named by an ISO's voltage-and-local-reliability operating guides, per
+  load pocket and outage-study group, with the EIA-860 identity that maps each
+  unit onto a model commitment cluster.
+
+key_columns: [iso, pocket, group_id, plant_code, unit_id]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: ISO/RTO whose operating guides name the unit (MISO).
+  - name: pocket
+    dtype: string
+    unit: none
+    nullable: false
+    description: Load pocket the operating guide protects (e.g. Amite South, DSG, WOTAB, Western).
+  - name: group_id
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      The source's outage-study group (MTEP15 Scenario 1C groups A-F). The
+      commitment requirement is stated per group.
+  - name: plant_code
+    dtype: int64
+    unit: none
+    nullable: false
+    description: EIA plant code (ORISPL).
+  - name: plant_name
+    dtype: string
+    unit: none
+    nullable: false
+    description: Plant name as EIA-860 records it.
+  - name: unit_id
+    dtype: string
+    unit: none
+    nullable: false
+    description: Unit / generator ID as the source names it (EIA-860 generator ID).
+  - name: eia860_prime_mover
+    dtype: string
+    unit: none
+    nullable: false
+    description: EIA-860 prime mover code of the unit (ST, GT, CT, CA, ...).
+  - name: eia860_energy_source
+    dtype: string
+    unit: none
+    nullable: false
+    description: EIA-860 energy source 1 of the unit (NG, DFO, SUB, ...).
+  - name: eia860_retirement_year
+    dtype: float64
+    unit: year
+    nullable: true
+    description: EIA-860 retirement year; null while the unit is operable.
+  - name: uc_family
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Model commitment-cluster family the unit falls in (st_gas / ct / cc /
+      coal), derived from the EIA-860 prime mover and energy source by the
+      curate script; the cluster is (plant_code, uc_family).
+  - name: source_doc
+    dtype: string
+    unit: none
+    nullable: false
+    description: Document the unit and group come from.
+  - name: source_page
+    dtype: string
+    unit: none
+    nullable: false
+    description: Page / table within source_doc.

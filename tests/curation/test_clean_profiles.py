@@ -79,6 +79,7 @@ def _fake_partitions(source: cp.CleanSource) -> tuple[str, ...] | None:
         "reserve-requirements": ("NEISO",),
         "storage-as-awards": ("CAISO",),
         "maxgen-events": ("MISO",),
+        "vlr-pocket-groups": ("MISO",),
         "winter-fuel-inventory": ("ISONE",),
     }
     if isinstance(source.partitions, tuple):
