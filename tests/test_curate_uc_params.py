@@ -121,7 +121,8 @@ class TestDerive(CleanDirTestCase):
         # 14 h on, 10 h off every day.
         self.assertEqual(int(cc["ut_h"]), 14)
         self.assertEqual(int(cc["dt_h"]), 10)
-        self.assertEqual(int(cc["n_runs"]), 20)
+        # Durations are per unit: 20 daily runs of each of the two units.
+        self.assertEqual(int(cc["n_runs"]), 40)
         # Two intercepts of 50 MMBtu/h each, a perfect fit.
         self.assertEqual(int(cc["noload_units_fitted"]), 2)
         self.assertAlmostEqual(float(cc["noload_mmbtu_h"]), 100.0, delta=1e-6)
@@ -144,6 +145,78 @@ class TestDerive(CleanDirTestCase):
     def test_missing_footprint_skips(self):
         up.register(up.IsoSpec(iso="ZZNONE", campd_states=("QQ",)))
         self.assertEqual(duc.curate(raw_root=self.raw, isos=["ZZNONE"]), [])
+
+
+def _write_staggered_fixture(raw_root, year: int, n_hours: int = 24 * 20) -> None:
+    """Two CC units at facility 999 on staggered 12 h shifts (00-11 and 08-19).
+
+    The plant series is on 20 h / off 4 h every day while each UNIT is on
+    12 h / off 12 h, so a plant-basis duration (any unit on) and a unit-basis
+    duration disagree. Unit U2 does not report day 10 (a reporting hole).
+    """
+    hours = np.arange(n_hours)
+    rows = []
+    for unit, first in (("U1", 0), ("U2", 8)):
+        on = ((hours % 24) >= first) & ((hours % 24) < first + 12)
+        keep = np.ones(n_hours, dtype=bool)
+        if unit == "U2":
+            keep = (hours // 24) != 10
+        h = hours[keep]
+        o = on[keep]
+        rows.append(
+            pd.DataFrame(
+                {
+                    "facilityId": "999",
+                    "unitId": unit,
+                    "date": pd.Timestamp(f"{year}-01-01")
+                    + pd.to_timedelta(h // 24, "D"),
+                    "hour": h % 24,
+                    "opTime": np.where(o, 1.0, 0.0),
+                    "grossLoad": np.where(o, 100.0, np.nan),
+                    "heatInput": np.where(o, 50.0 + 8.0 * 100.0, np.nan),
+                    "primaryFuelInfo": "Pipeline Natural Gas",
+                    "unitType": "Combined cycle",
+                }
+            )
+        )
+    out = raw_root / "campd-unit-level"
+    out.mkdir(parents=True, exist_ok=True)
+    pd.concat(rows, ignore_index=True).to_parquet(
+        out / f"{_STATE}_{year}.parquet", index=False
+    )
+
+
+class TestUnitBasisDurations(CleanDirTestCase):
+    """UC-DATA-UT (owner ruling r13, rule 23): min-up/down come from UNIT runs."""
+
+    def setUp(self):
+        super().setUp()
+        up.load_registry()
+        up.register(up.IsoSpec(iso=_ISO, campd_states=(_STATE,)))
+        self.raw = self.tmp_path / "raw"
+        _write_staggered_fixture(self.raw, up.POOLED_VINTAGES[0])
+
+    def test_unit_runs_not_plant_runs(self):
+        duc.curate(raw_root=self.raw, isos=[_ISO])
+        df = read_clean_or_fail(up.DATATYPE, iso=_ISO)
+        cc = df[(df["plant_code"] == 999) & (df["uc_class"] == "cc")].iloc[0]
+        self.assertEqual(int(cc["n_units"]), 2)
+        # Plant basis would read 20 h up / 4 h down; each unit is 12 / 12.
+        self.assertEqual(int(cc["ut_h"]), 12)
+        self.assertEqual(int(cc["dt_h"]), 12)
+
+    def test_reporting_hole_is_no_gap(self):
+        _, g = up._unit_runs_and_gaps(
+            up._load_state_year(
+                self.raw
+                / "campd-unit-level"
+                / f"{_STATE}_{up.POOLED_VINTAGES[0]}.parquet"
+            )
+        )
+        # U1: 19 gaps of 12 h; U2: its unreported day 10 cuts the series, so
+        # no gap spans it (8 + 9 gaps of 12 h, never a 36 h one).
+        self.assertEqual(sorted(set(g.tolist())), [12])
+        self.assertEqual(g.size, 19 + 8 + 9)
 
 
 def _write_crosswalk(raw_root, epa_rows=(), pudl_rows=()) -> None:

@@ -413,7 +413,9 @@ def build_uc_cluster_params(
             src_n[c] = "uc-params"
             mlf[c] = float(np.clip(float(row.mlf), 0.0, 1.0))
             src_mlf[c] = "uc-params"
-            # Measured minimum RUN (p25 of the plant's on-runs: an observed run
+            # Measured minimum RUN (p25 of the cluster's per-UNIT on-runs,
+            # UC-DATA-UT / owner ruling r13: ``u`` counts units, so its min-up is
+            # a unit's, never the plant's any-unit-on run; an observed run
             # bounds a min-run constraint from above, the nyiso-90 / SPP-44
             # convention). The minimum DOWN time stays the PUBLISHED class
             # value: a measured off-gap is how long a unit chose to stay off
