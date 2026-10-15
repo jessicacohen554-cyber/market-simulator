@@ -57,10 +57,12 @@ import numpy as np
 import pandas as pd
 import scipy.sparse as sp
 
+from market_sim.config.constants import VLR_GROUP_MIN_COMMITTED_UNITS
 from market_sim.config.paths import RESULTS_ROOT
 from market_sim.data.commitment_demand import CommitmentDemand, commitment_demand
 from market_sim.data.fleet import FleetArrays
 from market_sim.data.floor_mechanisms import MECH_UC_SCHEDULE
+from market_sim.data.vlr_pocket_groups import load_vlr_pocket_groups
 from market_sim.model.uc.params import (
     UcClusterParams,
     build_uc_cluster_params,
@@ -70,6 +72,7 @@ from market_sim.model.uc.params import (
     units_online_from_dispatch,
     units_online_profile,
 )
+from market_sim.model.uc.pocket import PocketRequirement, build_pocket_requirement
 from market_sim.model.uc.schedule import (
     UcSchedule,
     month_boundaries,
@@ -118,7 +121,9 @@ logger = logging.getLogger(__name__)
 #: (``uc_commitment_demand_source``; ``data/commitment_demand.py``; owner
 #: ruling UC-DESK r13): the P1 demand at "actual" (the uc-1.6 windows, the same
 #: object), the measured EIA-930 day-ahead forecast mapped to zones at
-#: "da_forecast". P1 still clears on actual load (rule 4).
+#: "da_forecast". P1 still clears on actual load (rule 4). The same version
+#: carries the VLR load-pocket commitment rows (``vlr_pocket_commitment``,
+#: lane UC-MISO-VLR, #7263; default off, no row when off).
 UC_ENGINE_VERSION = "uc-1.7"
 
 #: The most recent stage objects (one per year solved in this process), for a
@@ -212,6 +217,9 @@ def uc_input_digest(
         stage.L,
         stage.prefixing,
         stage.slim,
+        # The pocket requirement is not a ``uc_*`` field: hash it by value when
+        # armed (absent off, so a gate-off digest is unchanged).
+        *(() if stage.pocket is None else (stage.pocket,)),
         uc_fields,
         repr(stage.options),
         stage.params,
@@ -507,6 +515,21 @@ class UcStage:
         self.options: UcSolveOptions = solve_options_from_config(config)
         self.prefixing = bool(getattr(config, "uc_prefixing", False))
         self.slim = bool(getattr(config, "uc_slim_window", False))
+        #: The VLR load-pocket requirement (``vlr_pocket_commitment``), built
+        #: on the post-demotion params so a demoted cluster carries no row.
+        self.pocket: PocketRequirement | None = None
+        if bool(getattr(config, "vlr_pocket_commitment", False)):
+            self.pocket = build_pocket_requirement(
+                self.params,
+                load_vlr_pocket_groups(self.iso),
+                VLR_GROUP_MIN_COMMITTED_UNITS,
+            )
+            logger.info(
+                "VLR pocket requirement: %d set(s) %s; unmatched groups %s",
+                self.pocket.n_sets,
+                list(self.pocket.labels),
+                list(self.pocket.unmatched),
+            )
         logger.info(
             "UC stage prepared: %d clusters, %d integer (%d fleet rows; %d "
             "all-budget-pinned clusters left to their budget identity), W=%d L=%d",
@@ -698,6 +721,7 @@ class UcStage:
                     fleet_in, p0_dispatch, t1, min(t1 + guard_reach, T)
                 ),
                 slim=self.slim,
+                pocket=self.pocket,
             )
             t_w2 = time.perf_counter()
             warm = window.warm_start_vector(
@@ -763,6 +787,8 @@ class UcStage:
                     "rows": int(result.rows),
                     "guard_rows": int(window._n_guard_rows),
                     "reserve_gated_rows": int(window.n_reserve_gated_rows),
+                    "pocket_rows": int(window._n_pocket_rows),
+                    "pocket_sets_skipped": int(window.pocket_sets_skipped),
                     "slim": {
                         "reduced": window.slim is not None,
                         "columns": int(result.slim_columns),
@@ -859,6 +885,9 @@ class UcStage:
                     "uc_commitment_demand_source": str(
                         getattr(c, "uc_commitment_demand_source", "actual")
                     ),
+                    "vlr_pocket_commitment": bool(
+                        getattr(c, "vlr_pocket_commitment", False)
+                    ),
                 },
                 "commitment_demand": self.commit.log_row(self.demand),
                 "solver_path": self.options.solver_path(),
@@ -873,6 +902,13 @@ class UcStage:
                 "integers_per_window": int(self.int_idx.size * (self.W + self.L)),
                 "kept_until": int(sched.kept_until),
                 "reused_schedule": None,
+                "vlr_pocket": None
+                if self.pocket is None
+                else {
+                    "min_units_per_group": int(VLR_GROUP_MIN_COMMITTED_UNITS),
+                    "sets": self.pocket.log_rows(self.params),
+                    "unmatched_groups": list(self.pocket.unmatched),
+                },
             },
             "clusters": params_log_rows(self.params),
             "windows": windows,

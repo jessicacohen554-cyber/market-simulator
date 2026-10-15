@@ -119,6 +119,10 @@ class SolveEpoch:
         reaches_year: Applies only to a run whose horizon reaches this year.
             A config with no ``end_year`` is treated as reaching it (fail-safe:
             an unknown horizon is invalidated rather than silently served).
+        requires: Applies only to a config whose boolean ``ScenarioConfig``
+            field of this name is truthy (e.g. ``"unit_commitment_milp"``), so a
+            change to an input only an armed stage reads re-keys exactly the
+            runs that arm it and never the keepers that do not.
     """
 
     id: str
@@ -126,6 +130,7 @@ class SolveEpoch:
     modes: tuple[str, ...] = ()
     isos: tuple[str, ...] = ()
     reaches_year: int | None = None
+    requires: str | None = None
 
 
 #: APPEND-ONLY (rule 26 [R-DELETE]): an epoch id is never edited or removed once
@@ -151,6 +156,13 @@ class SolveEpoch:
 #: 2026-10-03d: MISO's 2019-2022 NRC daily nuclear extract plus Duane Arnold /
 #: Palisades pass-through rows (backcast MISO; the CSV is in no key; the MISO
 #: NUCLEAR_MONTHLY_CF_BY_YEAR row is declared and moves MISO keys on its own).
+#: 2026-10-15a: the ``uc-params`` min-up / min-down durations are re-derived per
+#: UNIT (UC-DATA-UT, owner ruling r13; rule 23 defect fix). The clean partition
+#: is in no key, so the epoch re-keys every config that arms the UC stage (the
+#: only reader) in the six UC ISOs, and no keeper (none arms it).
+#: 2026-10-15b: the ``uc-params`` minimum stable fraction ``mlf`` is re-derived
+#: per UNIT (UC-DATA-UT scope extension, owner ruling 2026-10-15; rule 23). Its
+#: own id because 15a's keys were cut on main without it (rule 26: append-only).
 SOLVE_EPOCHS: tuple[SolveEpoch, ...] = (
     SolveEpoch(
         id="2026-10-02c",
@@ -217,6 +229,27 @@ SOLVE_EPOCHS: tuple[SolveEpoch, ...] = (
         ),
         modes=("backcast",),
         isos=("MISO",),
+    ),
+    SolveEpoch(
+        id="2026-10-15a",
+        cause=(
+            "uc-params ut_h / dt_h re-derived from per-UNIT CAMPD on-runs and "
+            "off-gaps instead of the plant series (UC-DATA-UT, owner ruling r13; "
+            "FINDING-ucmilp-diag-undercommit-2026-10-14 cause 3)"
+        ),
+        isos=("CAISO", "ERCOT", "MISO", "NEISO", "NYISO", "SPP"),
+        requires="unit_commitment_milp",
+    ),
+    SolveEpoch(
+        id="2026-10-15b",
+        cause=(
+            "uc-params mlf re-derived per UNIT (sum of unit p5 load over full "
+            "online hours, CEMS opTime == 1, over sum of unit HSL) instead of the "
+            "plant series p5 over plant HSL, about 1/n of a unit's minimum "
+            "(UC-DATA-UT, owner rulings 2026-10-15)"
+        ),
+        isos=("CAISO", "ERCOT", "MISO", "NEISO", "NYISO", "SPP"),
+        requires="unit_commitment_milp",
     ),
 )
 
@@ -434,7 +467,8 @@ def applicable_epochs(config) -> list[str]:
     """Return the ids of the :data:`SOLVE_EPOCHS` whose scope covers ``config``.
 
     Args:
-        config: A ``ScenarioConfig`` (duck-typed: ``mode``, ``iso``, ``end_year``).
+        config: A ``ScenarioConfig`` (duck-typed: ``mode``, ``iso``, ``end_year``
+            and any field an epoch ``requires``).
 
     Returns:
         Epoch ids in declaration order — empty for every config while
@@ -445,6 +479,8 @@ def applicable_epochs(config) -> list[str]:
         if epoch.modes and getattr(config, "mode", None) not in epoch.modes:
             continue
         if epoch.isos and getattr(config, "iso", None) not in epoch.isos:
+            continue
+        if epoch.requires is not None and not getattr(config, epoch.requires, False):
             continue
         end_year = getattr(config, "end_year", None)
         if (

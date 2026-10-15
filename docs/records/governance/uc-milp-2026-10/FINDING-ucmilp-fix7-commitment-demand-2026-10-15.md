@@ -38,7 +38,7 @@ This agrees with UC-DIAG (+0.8 to +1.3 GW at peak, 2019–22). The forward profi
 
 ## 4. Gates
 
-- **G-OFF.** On the toy stage (two loads, 48 h), main `80521461` (uc-1.6) and this branch (uc-1.7, field at default) give the same SHA-256 over `u/v/w`, P1 dispatch, prices, objective and the P1 bounds (`73becfab1785d51b`). The default `cache_key` is unchanged. At `"actual"` the windows receive the P1 demand object itself (`test_actual_source_is_the_p1_demand_object`).
+- **G-OFF.** On the toy stage (two loads, 48 h), main `80521461` (uc-1.6) and this branch (uc-1.7, field at default) give the same SHA-256 over `u/v/w`, P1 dispatch, prices, objective and the P1 bounds (`73becfab1785d51b`). The default `cache_key` is unchanged. At `"actual"` the windows receive the P1 demand object itself (`test_actual_source_is_the_p1_demand_object`). The same hash is reproduced after merging main `01b90bd0` (#7253, #7262, #7263, #7264) against that main.
 - **Trivial case** (`tests/unit/model/uc/test_commitment_demand_stage.py`): 1 zone, 48 h, CC 2 × 100 MW. Actual 150 MW commits one unit. A forecast 60 MW higher commits two. P1 still clears 150 MW: the CC floor holds and the nuclear unit backs down and sets the price.
 - **Seen in the toy:** at night the forecast (100 MW) commits one unit whose 50 MW floor exceeds the actual 40 MW, and P1 dumps the excess. This is the cost of over-commitment that a forecast error carries. P1 has no real-time decommitment. Read it in the repro: SPP's mean bias is positive.
 
@@ -53,3 +53,5 @@ This agrees with UC-DIAG (+0.8 to +1.3 GW at peak, 2019–22). The forward profi
 ## 6. Repro result
 
 Pending: the shard runs on its own branch; the result is reported to UC-DESK.
+
+The shard is pinned to `3111853c`, which is the PRE-MERGE engine: uc-1.7 commitment demand on the uc-1.6 base, before main's per-unit `ut_h`/`mlf` (#7262/#7264, epochs 2026-10-15a/b) and the VLR pocket rows (#7263, default off). It stays valid evidence for the mechanism (UC-DESK, 2026-10-15). Its control, the uc-1.5 arm B, likewise predates the per-unit `uc-params`. The repro therefore isolates the commitment demand, but its levels are not the post-merge engine's.

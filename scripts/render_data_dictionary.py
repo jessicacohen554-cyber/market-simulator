@@ -108,6 +108,7 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "ramp-capability",
     "uc-params",
     "load-forecast-error",
+    "vlr-pocket-groups",
     "winter-fuel-inventory",
     "rggi-co2-budgets",
     "carb-cap-schedule",
@@ -698,6 +699,23 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "spec in `scripts/lib/ramp_capability/<iso>.py` (PJM, MISO, CAISO). "
             "Consumed as the measured ceiling on the class-rate estimate feeding "
             "`FleetArrays.ramp10`, the 10-minute reserve-deliverability bound."
+        ),
+    },
+    "vlr-pocket-groups": {
+        "summary": (
+            "Units an ISO's voltage-and-local-reliability operating guides name, "
+            "per load pocket and outage-study group, for the UC stage's pocket "
+            "commitment rows."
+        ),
+        "reconciles": (
+            "MISO: the MTEP15 VLR study (PUCT Docket 46416, Exh. CWL-5, "
+            "Scenario 1C groups A-F) hand-transcribed with each unit's EIA-860 "
+            "prime mover / energy source / retirement year "
+            "(`data/raw/vlr-pocket-groups/miso/miso.csv`); `uc_family` is "
+            "derived from the EIA-860 identity. Per-ISO scoping is "
+            "`scripts/lib/vlr_pocket_groups/<iso>.py`. Read by "
+            "`market_sim.data.vlr_pocket_groups` only when "
+            "`vlr_pocket_commitment` is armed."
         ),
     },
     "uc-params": {

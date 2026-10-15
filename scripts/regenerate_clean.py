@@ -75,6 +75,9 @@ DATATYPES: tuple[str, ...] = (
     # UC-1-FIX-7 (2026-10-15): the measured day-ahead load-forecast error
     # profile (forecast-mode UC commitment demand).
     "load-forecast-error",
+    # UC-MISO-VLR (2026-10-15): VLR operating-guide unit groups by load pocket
+    # (MTEP15, PUCT 46416) for the UC stage's pocket commitment rows.
+    "vlr-pocket-groups",
     "nyiso-downstate-gas",
     "ercot-wtx-congestion",
     "nyiso-renewable-curtailment",

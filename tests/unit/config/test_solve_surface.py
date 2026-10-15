@@ -31,6 +31,7 @@ from __future__ import annotations
 import sys
 import pytest
 import unittest
+from types import SimpleNamespace
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
@@ -356,6 +357,33 @@ class SolveEpochScopeTest(unittest.TestCase):
     def test_an_unknown_horizon_is_invalidated_not_served(self):
         S.SOLVE_EPOCHS = (S.SolveEpoch(id="e", cause="c", reaches_year=2028),)
         self.assertEqual(S.applicable_epochs(ScenarioConfig(end_year=None)), ["e"])
+
+    def test_a_requires_gated_epoch_reaches_only_armed_configs(self):
+        S.SOLVE_EPOCHS = (
+            S.SolveEpoch(
+                id="e", cause="c", isos=("SPP",), requires="unit_commitment_milp"
+            ),
+        )
+        armed = SimpleNamespace(iso="SPP", mode="backcast", unit_commitment_milp=True)
+        self.assertEqual(S.applicable_epochs(armed), ["e"])
+        self.assertEqual(S.applicable_epochs(ScenarioConfig(iso="SPP")), [])
+        self.assertEqual(
+            S.applicable_epochs(
+                SimpleNamespace(iso="PJM", mode="backcast", unit_commitment_milp=True)
+            ),
+            [],
+        )
+
+    def test_the_uc_params_epoch_spares_every_unarmed_config(self):
+        """2026-10-15a/b re-key UC-armed runs only; no keeper arms the UC."""
+        for iso in ("CAISO", "ERCOT", "MISO", "NEISO", "NYISO", "SPP"):
+            unarmed = S.applicable_epochs(ScenarioConfig(iso=iso, mode="backcast"))
+            armed = S.applicable_epochs(
+                SimpleNamespace(iso=iso, mode="backcast", unit_commitment_milp=True)
+            )
+            for eid in ("2026-10-15a", "2026-10-15b"):
+                self.assertNotIn(eid, unarmed)
+                self.assertIn(eid, armed)
 
     def test_an_applicable_epoch_moves_the_key(self):
         config = ScenarioConfig()

@@ -2527,6 +2527,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # commitment demand, born at its declared "actual" (the uc-1.6 behaviour)
     # and dropped from the hash there, so no committed key moves.
     "uc_commitment_demand_source",
+    # Lane UC-MISO-VLR (2026-10-15, owner ruling r13 Q1=A): the VLR load-pocket
+    # commitment requirement in the UC window, born default off and dropped
+    # from the hash there, so every committed key is unmoved. Registered IN THE
+    # SAME COMMIT as the field (the nyiso-119 discipline).
+    "vlr_pocket_commitment",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -3450,6 +3455,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "uc_slim_window": "True",
     # Added by lane UC-1-FIX-7 WITH the field (the nyiso-119 discipline).
     "uc_commitment_demand_source": "'actual'",
+    # Added by lane UC-MISO-VLR WITH the field (the nyiso-119 discipline).
+    "vlr_pocket_commitment": "False",
 }
 
 
@@ -23206,6 +23213,29 @@ class ScenarioConfig:
     # always clears on actual load, so prices stay its duals (rule 4). No free
     # number (data/commitment_demand.py). Admissible: UC_COMMITMENT_DEMAND_SOURCES.
     uc_commitment_demand_source: str = "actual"
+    # VLR LOAD-POCKET COMMITMENT REQUIREMENT (lane UC-MISO-VLR, owner ruling
+    # 2026-10-15 r13, decision card Q1 = "A"). GATED, default False,
+    # byte-identical off (the one consumer, pipeline.uc.UcStage, builds no
+    # requirement and the window adds no row). When True, every UC window adds,
+    # per load-pocket group of the ISO's ``vlr-pocket-groups`` partition
+    # (MTEP15 VLR study, PUCT 46416 Exh. CWL-5 Scenario 1C) and per hour,
+    #   sum_{c in group} u[c, t] >= min(N, units available in the group at t),
+    # N = constants.VLR_GROUP_MIN_COMMITTED_UNITS per group (groups that land
+    # on the same cluster set add). A u-floor in the commitment stage, never a
+    # P floor: committed units dispatch freely from their min-load up, and P1
+    # sees the requirement only through the MECH 28 schedule bounds. The row is
+    # an integer commitment row (MISO's own SCUC form, Wang & Chen, FERC 2018)
+    # and is not priced (rule 4: P1's duals stay the prices). Driver / window /
+    # forward story (rule 17): the op-guide N-1-G-1 pocket need; every hour (an
+    # op guide commits for the next day's peak hour, 2025 MISO SOM fn 7); the
+    # groups hold forward until their units retire (the fleet drops a retired
+    # unit's cluster). Rule 19: it REPLACES the ST_GAS per-plant must-run floor
+    # (refused together below); rule 21: zero fitted values (the groups are
+    # the source's, N is the ruling's). Requires unit_commitment_milp; the
+    # ISO must carry a ``vlr-pocket-groups`` partition (MISO only), else the
+    # stage raises. FINDING-ucmiso-vlr-phase0-2026-10-15.md;
+    # PRECOMMIT-ucmiso-vlr-2026-10-15.md.
+    vlr_pocket_commitment: bool = False
 
     def __post_init__(self) -> None:
         # YAML round-trip type repair: YAML has no tuple type, so a config
@@ -24699,6 +24729,18 @@ class ScenarioConfig:
         # UC_REFUSED_BY_RULING. The archived P2 is a solve_and_persist kwarg
         # (``commitment`` / ``--enable-legacy-p2``), not a field, so it is
         # refused where it lives (run_calibration_full.enforce_legacy_p2_kwargs).
+        if self.vlr_pocket_commitment:
+            if not self.unit_commitment_milp:
+                raise ValueError(
+                    "vlr_pocket_commitment is a row of the MILP UC window; it "
+                    "needs unit_commitment_milp=True."
+                )
+            if self.st_gas_mustrun_per_plant:
+                raise ValueError(
+                    "vlr_pocket_commitment REPLACES st_gas_mustrun_per_plant "
+                    "(rule 19 [R-ONE-MECH]; owner ruling 2026-10-15): disarm "
+                    "the per-plant ST_GAS floor."
+                )
         if self.unit_commitment_milp:
             _armed = [
                 f"{name} ({what})"
@@ -26124,6 +26166,7 @@ TIER_TAGS: dict[str, int] = {
     # free number of its own (rule 21) -- the backcast series is measured
     # EIA-930 DF, the forward profile a frozen derive of it.
     "uc_commitment_demand_source": 1,
+    "vlr_pocket_commitment": 1,
     # closeout-SOCO-w3 DIAGNOSTIC (rule 13: never a keeper input).
     "diagnostic_coal_metered_online_floor": 1,
 }
