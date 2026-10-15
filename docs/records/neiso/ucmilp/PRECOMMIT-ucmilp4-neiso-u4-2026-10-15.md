@@ -149,3 +149,28 @@ Every LIVE hunk is on the gate-on path; the keeper (the control) is untouched, s
 
 No offer-band retune; no `neiso_dynamic_reserve_requirements` / `dam_availability_rebasis` re-test; no control solve; no
 third `--set`; no `uc_*` value other than the two above; no per-mechanism ablation arm (the charter names one arm).
+
+## Addendum A (2026-10-15 10:45Z, after launch, before any leg result) — launch record, FIX-8 hold, memory-gate ruling
+
+No bar, kill, reading or recipe changes. This records process facts only.
+
+- **Prompts:** `shard-prompts-ucmilp4-neiso-u4.txt` (commit `69e4a9d0`). The SOLVE line's second `--set` is single-quoted, because bash would otherwise strip the JSON quotes `replay_keeper` needs.
+- **Launch 1, 09:56–10:08Z:** 2019 (`session_01CakQES`), 2020 (`session_01LZqWFb`), 2021 (`session_01GuU6FZ`). 2019 was first created with a placeholder prompt; the full prompt followed by message.
+- **UC-DESK hold FIX-8, 10:09Z:** `da_forecast` raises at `commitment_demand.py:254` for ISOs whose import pseudo-zone is appended to the demand. All three shards were stopped. Nothing was pushed and no leg branch exists. The stop is logged as a defect hold, not a memory relaunch.
+- **NEISO is unaffected:**
+  - 2019 passed UC prep before it was stopped: `UC commitment demand (da_forecast, eia930_da_forecast): -189 MW mean increment, 0 QA-dropped hours`, then `UC stage prepared: 61 clusters, 18 integer`. The raise sits before that log line.
+  - `HQ_import` is a configured zone of `get_iso_config('NEISO')`, not an appended one. The increment and the demand both carry 5 zones.
+  - `eia930.load_zone_weights` gives `HQ_import` a **maximum weight of 0.0 in every hour, 2019–2025**, so its increment is exactly 0. Every hour's weights sum to 1.0.
+  - UC-DESK accepted this at 10:11Z ("continue at 7dbfe20f"). No re-pin.
+- **Memory-gate ruling (UC-DESK, 10:19Z):** the gate passes iff the printed ceiling + swap rounds to ≥ 22.4 GiB (raw ≥ 22.35). The standard 13.36 + 9.0 = 22.36 GiB container passes. The 2021–2025 prompts carry this wording.
+- **Launch 2, all at `43bc180e`:**
+
+  | year | session | launched |
+  |---|---|---|
+  | 2019 | `session_01BYXcr8563mzSAskNzvDhFW` | 10:11Z |
+  | 2020 | `session_015koVxfzEmdvPD9TcbADfqz` | 10:17Z |
+  | 2021 | `session_01BXU3AbtzQndDxEJg8dJkgD` | 10:22Z |
+  | 2022 | `session_01B1pvMUBTNN9c8SjD6zUGE2` | 10:28Z |
+  | 2023 | `session_013z3111kB5xpKgdCvGrZkRt` | 10:33Z |
+  | 2024 | `session_01RnG1qA2JVdBo4LMhZ96wyi` | 10:39Z |
+  | 2025 | `session_01QJSpD4bsyen8DPVYNkXjNE` | 10:44Z |
