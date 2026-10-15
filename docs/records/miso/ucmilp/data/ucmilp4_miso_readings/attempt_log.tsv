@@ -4,5 +4,6 @@ year	attempt	session	launched_utc	container_gib	outcome	leg_sha
 2021	1	session_01FSq3ThzjCDV3Fvftamycfo	2026-10-15T10:10:00Z	—	DEFECT STOP (UC-DESK HOLD FIX-8, 10:09Z): interrupted in clone, nothing run or pushed; archived; does not spend a relaunch	
 2019	2	session_01L9MgYN7GSUv6WFibjTDnP2	2026-10-15T10:39:47Z	(passed gate: reached hydrate_data)	running	
 2020	1	session_01EVngpn9cJuXFRzpZs1MQfN	2026-10-15T10:47:10Z	(passed gate)	running	
-2021	1	session_01TDyje7HYS7QaYu9xwDAmG1	2026-10-15T10:55:11Z		launched (pin 7c93273e)	
+2021	1	session_01TDyje7HYS7QaYu9xwDAmG1	2026-10-15T10:55:11Z	17.4	gate stop; archived (memory attempt 1)	
 2022	1	session_01SxZz4BBazUD5xahuPqnxeC	2026-10-15T11:03:45Z		launched (pin 7c93273e)	
+2023	1	session_01HtUBR1aiVhE78TZSQvKbpz	2026-10-15T11:11:48Z		launched (pin 7c93273e)	
