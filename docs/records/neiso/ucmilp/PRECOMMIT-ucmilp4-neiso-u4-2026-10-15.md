@@ -154,7 +154,7 @@ third `--set`; no `uc_*` value other than the two above; no per-mechanism ablati
 
 No bar, kill, reading or recipe changes. This records process facts only.
 
-- **Prompts:** `shard-prompts-ucmilp4-neiso-u4.txt` (commit `69e4a9d0`). The SOLVE line's second `--set` is single-quoted, because bash would otherwise strip the JSON quotes `replay_keeper` needs.
+- **Prompts:** `shard-prompts-ucmilp4-neiso-u4.txt` (commit `3ab0b1e9`). The SOLVE line's second `--set` is single-quoted, because bash would otherwise strip the JSON quotes `replay_keeper` needs.
 - **Launch 1, 09:56–10:08Z:** 2019 (`session_01CakQES`), 2020 (`session_01LZqWFb`), 2021 (`session_01GuU6FZ`). 2019 was first created with a placeholder prompt; the full prompt followed by message.
 - **UC-DESK hold FIX-8, 10:09Z:** `da_forecast` raises at `commitment_demand.py:254` for ISOs whose import pseudo-zone is appended to the demand. All three shards were stopped. Nothing was pushed and no leg branch exists. The stop is logged as a defect hold, not a memory relaunch.
 - **NEISO is unaffected:**
