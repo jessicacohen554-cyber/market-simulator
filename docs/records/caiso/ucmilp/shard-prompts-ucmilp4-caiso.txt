@@ -2,7 +2,7 @@ SOLVE SHARD ucmilp4-caiso-2019 — CAISO backcast year 2019, ONE year, ONE conta
 DATA PROFILE: caiso
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
-1. `git rev-parse HEAD` == 23aefcaeb89c37c7f4723f09647f22cb7a15a1b5  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+1. `git rev-parse HEAD` == 804aa91649b0d61ff7a8ce6782e5f965e4e05912  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
 2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
 3. `python3 scripts/hydrate_data.py --profile caiso` then `python3 scripts/regenerate_clean.py --solve-profile CAISO` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
 4. the recipe you will solve: `results/calibration/closeout_caiso_w1_a2_span` replayed with unit_commitment_milp=true, caiso_ra_mustoffer=false, caiso_ra_startup_bridge=false, caiso_ra_bridge_decommit=false, caiso_ra_startup_trajectory=false, uc_commitment_demand_source="da_forecast", energy_reserve_coopt=true, caiso_reserve_coopt=true, caiso_scarcity_pricing=false; confirm by reading `results/calibration/closeout_caiso_w1_a2_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; caiso_ra_mustoffer=false; caiso_ra_startup_bridge=false; caiso_ra_bridge_decommit=false; caiso_ra_startup_trajectory=false; uc_commitment_demand_source="da_forecast"; energy_reserve_coopt=true; caiso_reserve_coopt=true; caiso_scarcity_pricing=false
@@ -40,7 +40,7 @@ SOLVE SHARD ucmilp4-caiso-2020 — CAISO backcast year 2020, ONE year, ONE conta
 DATA PROFILE: caiso
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
-1. `git rev-parse HEAD` == 23aefcaeb89c37c7f4723f09647f22cb7a15a1b5  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+1. `git rev-parse HEAD` == 804aa91649b0d61ff7a8ce6782e5f965e4e05912  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
 2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
 3. `python3 scripts/hydrate_data.py --profile caiso` then `python3 scripts/regenerate_clean.py --solve-profile CAISO` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
 4. the recipe you will solve: `results/calibration/closeout_caiso_w1_a2_span` replayed with unit_commitment_milp=true, caiso_ra_mustoffer=false, caiso_ra_startup_bridge=false, caiso_ra_bridge_decommit=false, caiso_ra_startup_trajectory=false, uc_commitment_demand_source="da_forecast", energy_reserve_coopt=true, caiso_reserve_coopt=true, caiso_scarcity_pricing=false; confirm by reading `results/calibration/closeout_caiso_w1_a2_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; caiso_ra_mustoffer=false; caiso_ra_startup_bridge=false; caiso_ra_bridge_decommit=false; caiso_ra_startup_trajectory=false; uc_commitment_demand_source="da_forecast"; energy_reserve_coopt=true; caiso_reserve_coopt=true; caiso_scarcity_pricing=false
@@ -78,7 +78,7 @@ SOLVE SHARD ucmilp4-caiso-2021 — CAISO backcast year 2021, ONE year, ONE conta
 DATA PROFILE: caiso
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
-1. `git rev-parse HEAD` == 23aefcaeb89c37c7f4723f09647f22cb7a15a1b5  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+1. `git rev-parse HEAD` == 804aa91649b0d61ff7a8ce6782e5f965e4e05912  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
 2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
 3. `python3 scripts/hydrate_data.py --profile caiso` then `python3 scripts/regenerate_clean.py --solve-profile CAISO` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
 4. the recipe you will solve: `results/calibration/closeout_caiso_w1_a2_span` replayed with unit_commitment_milp=true, caiso_ra_mustoffer=false, caiso_ra_startup_bridge=false, caiso_ra_bridge_decommit=false, caiso_ra_startup_trajectory=false, uc_commitment_demand_source="da_forecast", energy_reserve_coopt=true, caiso_reserve_coopt=true, caiso_scarcity_pricing=false; confirm by reading `results/calibration/closeout_caiso_w1_a2_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; caiso_ra_mustoffer=false; caiso_ra_startup_bridge=false; caiso_ra_bridge_decommit=false; caiso_ra_startup_trajectory=false; uc_commitment_demand_source="da_forecast"; energy_reserve_coopt=true; caiso_reserve_coopt=true; caiso_scarcity_pricing=false
@@ -116,7 +116,7 @@ SOLVE SHARD ucmilp4-caiso-2022 — CAISO backcast year 2022, ONE year, ONE conta
 DATA PROFILE: caiso
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
-1. `git rev-parse HEAD` == 23aefcaeb89c37c7f4723f09647f22cb7a15a1b5  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+1. `git rev-parse HEAD` == 804aa91649b0d61ff7a8ce6782e5f965e4e05912  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
 2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
 3. `python3 scripts/hydrate_data.py --profile caiso` then `python3 scripts/regenerate_clean.py --solve-profile CAISO` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
 4. the recipe you will solve: `results/calibration/closeout_caiso_w1_a2_span` replayed with unit_commitment_milp=true, caiso_ra_mustoffer=false, caiso_ra_startup_bridge=false, caiso_ra_bridge_decommit=false, caiso_ra_startup_trajectory=false, uc_commitment_demand_source="da_forecast", energy_reserve_coopt=true, caiso_reserve_coopt=true, caiso_scarcity_pricing=false; confirm by reading `results/calibration/closeout_caiso_w1_a2_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; caiso_ra_mustoffer=false; caiso_ra_startup_bridge=false; caiso_ra_bridge_decommit=false; caiso_ra_startup_trajectory=false; uc_commitment_demand_source="da_forecast"; energy_reserve_coopt=true; caiso_reserve_coopt=true; caiso_scarcity_pricing=false
@@ -154,7 +154,7 @@ SOLVE SHARD ucmilp4-caiso-2023 — CAISO backcast year 2023, ONE year, ONE conta
 DATA PROFILE: caiso
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
-1. `git rev-parse HEAD` == 23aefcaeb89c37c7f4723f09647f22cb7a15a1b5  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+1. `git rev-parse HEAD` == 804aa91649b0d61ff7a8ce6782e5f965e4e05912  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
 2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
 3. `python3 scripts/hydrate_data.py --profile caiso` then `python3 scripts/regenerate_clean.py --solve-profile CAISO` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
 4. the recipe you will solve: `results/calibration/closeout_caiso_w1_a2_span` replayed with unit_commitment_milp=true, caiso_ra_mustoffer=false, caiso_ra_startup_bridge=false, caiso_ra_bridge_decommit=false, caiso_ra_startup_trajectory=false, uc_commitment_demand_source="da_forecast", energy_reserve_coopt=true, caiso_reserve_coopt=true, caiso_scarcity_pricing=false; confirm by reading `results/calibration/closeout_caiso_w1_a2_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; caiso_ra_mustoffer=false; caiso_ra_startup_bridge=false; caiso_ra_bridge_decommit=false; caiso_ra_startup_trajectory=false; uc_commitment_demand_source="da_forecast"; energy_reserve_coopt=true; caiso_reserve_coopt=true; caiso_scarcity_pricing=false
@@ -192,7 +192,7 @@ SOLVE SHARD ucmilp4-caiso-2024 — CAISO backcast year 2024, ONE year, ONE conta
 DATA PROFILE: caiso
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
-1. `git rev-parse HEAD` == 23aefcaeb89c37c7f4723f09647f22cb7a15a1b5  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+1. `git rev-parse HEAD` == 804aa91649b0d61ff7a8ce6782e5f965e4e05912  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
 2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
 3. `python3 scripts/hydrate_data.py --profile caiso` then `python3 scripts/regenerate_clean.py --solve-profile CAISO` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
 4. the recipe you will solve: `results/calibration/closeout_caiso_w1_a2_span` replayed with unit_commitment_milp=true, caiso_ra_mustoffer=false, caiso_ra_startup_bridge=false, caiso_ra_bridge_decommit=false, caiso_ra_startup_trajectory=false, uc_commitment_demand_source="da_forecast", energy_reserve_coopt=true, caiso_reserve_coopt=true, caiso_scarcity_pricing=false; confirm by reading `results/calibration/closeout_caiso_w1_a2_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; caiso_ra_mustoffer=false; caiso_ra_startup_bridge=false; caiso_ra_bridge_decommit=false; caiso_ra_startup_trajectory=false; uc_commitment_demand_source="da_forecast"; energy_reserve_coopt=true; caiso_reserve_coopt=true; caiso_scarcity_pricing=false
@@ -230,7 +230,7 @@ SOLVE SHARD ucmilp4-caiso-2025 — CAISO backcast year 2025, ONE year, ONE conta
 DATA PROFILE: caiso
 
 HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
-1. `git rev-parse HEAD` == 23aefcaeb89c37c7f4723f09647f22cb7a15a1b5  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+1. `git rev-parse HEAD` == 804aa91649b0d61ff7a8ce6782e5f965e4e05912  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
 2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
 3. `python3 scripts/hydrate_data.py --profile caiso` then `python3 scripts/regenerate_clean.py --solve-profile CAISO` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
 4. the recipe you will solve: `results/calibration/closeout_caiso_w1_a2_span` replayed with unit_commitment_milp=true, caiso_ra_mustoffer=false, caiso_ra_startup_bridge=false, caiso_ra_bridge_decommit=false, caiso_ra_startup_trajectory=false, uc_commitment_demand_source="da_forecast", energy_reserve_coopt=true, caiso_reserve_coopt=true, caiso_scarcity_pricing=false; confirm by reading `results/calibration/closeout_caiso_w1_a2_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; caiso_ra_mustoffer=false; caiso_ra_startup_bridge=false; caiso_ra_bridge_decommit=false; caiso_ra_startup_trajectory=false; uc_commitment_demand_source="da_forecast"; energy_reserve_coopt=true; caiso_reserve_coopt=true; caiso_scarcity_pricing=false
