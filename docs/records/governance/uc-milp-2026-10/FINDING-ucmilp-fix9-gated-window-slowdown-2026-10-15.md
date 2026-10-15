@@ -10,8 +10,9 @@
   LP heuristics off. Under the gate, node LPs stop coming out integral, and the gate roughly doubles the root gap left
   after cuts. The DA-forecast commitment demand (2019) and per-unit `mlf` (some windows) amplify the effect, but neither
   causes it alone. The `/n` aggregation is exact: no tighter formulation with the same integer set exists at the
-  cluster level (§4). **The model-preserving remedy is a solver-path setting** (§5): turn the LP heuristics on. The
-  charter holds solver settings as registered, so this is put to UC-DESK, not landed here.
+  cluster level (§4). **The model-preserving remedy is a solver-path setting** (§5): turn the LP heuristics on in
+  `lean`. UC-DESK ruled 2026-10-15 that this is not tuning (the gap, time limit and model are unchanged). It lands as
+  engine **uc-1.8** with no new knob.
 
 ## 1. Method
 
@@ -112,9 +113,9 @@ Reading:
 | 2023 U4 (`lean`) | 2,578 | 1 (w12) | 724 | 117,209,937 |
 | 2023 U4 + LPH | **717** | 0 | 1 | 117,211,361 (+0.001 %) |
 | 2023 uc-1.5 | 937 | 0 | 63 | — |
-| 2019 U4 (`lean`) | (running) | | | |
-| 2019 U4 + LPH | (running) | | | |
-| 2019 −gate | (running) | | | |
+| 2019 U4 (`lean`) | 1,831 | 0 | | |
+| 2019 U4 + LPH | **523** | 0 | | |
+| 2019 −gate | 847 | 0 | | |
 
 This container runs about 1.3–1.7× slower than the UC-4 shards. The 2023 U4 w0–15 sum is 1,966 s in the UC-4-NEISO
 shard log, and the uc-1.5 w0–15 sum is 563 s in the committed UC-3 log.
@@ -127,6 +128,8 @@ shard log, and the uc-1.5 w0–15 sum is 563 s in the committed UC-3 log.
 - **CAISO** (RA bridges off): the gate builds **0** rows (no integer member is in a capacity-anchored headroom row), so
   CAISO cannot regress from it.
   - w12: U4 = −gate = 258 s; +LPH 49 s.
+- **SPP** (keeper recipe, ungated: 0 gated rows): w0, w12, w31, w200 all solve at the root. U4 and +LPH return the same
+  objective in 2.6–4.9 s, and +LPH costs ≤ 0.2 s. The change does not slow an ungated ISO.
 
 ## 4. The `/n` question: the gated form is already the tight one
 
@@ -151,18 +154,19 @@ shard log, and the uc-1.5 w0–15 sum is 563 s in the committed UC-3 log.
    - **What it leaves alone:** the same gap, the same time limit, the same model, the same integer set. The schedule may
      move within the 1e-3 gap, as any solver-path change does.
    - **Evidence:**
-     - 2023: rolling 3.6× faster than U4 `lean`, and faster than uc-1.5.
-     - 2019: probes 1.3–9×. The 2019 hard windows stay bound-limited (§3.1, root-after-cuts 0.21–0.26 %), so 2019 is
-       not fully restored.
-   - **Status:** a registered solver setting. Charter: UC-DESK rules.
-2. **Warm-start repair** (§3.2): makes the carried incumbent feasible, but not useful as built. Recorded, not proposed.
+     - Rolling w0–15: 3.6× faster in 2023 and 3.5× in 2019 than U4 `lean`, and faster than uc-1.5 / −gate.
+     - 2019 single-window probes: 1.3–9×. Some P0-state hard windows stay bound-limited (§3.1, root-after-cuts
+       0.21–0.26 %).
+     - The paired rolling gate (§7) bounds every window's objective delta.
+   - **Status: landed as uc-1.8** (UC-DESK ruling 2026-10-15; §7).
+2. **Warm-start repair** (§3.2): makes the carried incumbent feasible, but not useful as built. It is recorded as a
+   **separate open item** (UC-DESK): `warm_feasible = 0` in 365/365 windows at uc-1.5 and since. Not fixed here.
 3. **Not proposed:** a looser gap or time limit, or any change to the gate, `mlf` or the demand source (each is the
    model).
 
 ## 6. Not done
 
-- No engine change landed: the only effective remedy is a registered solver setting.
-- No ScenarioConfig default moved.
+- No ScenarioConfig default moved (`uc_solver_preset` stays `"lean"`; its composition is the engine's).
 - No full-year rolling run.
 - The 2019 bound-side residual (§3.1) is open. Branching priority or cut-family work would be solver-path work for a
   later lane.
