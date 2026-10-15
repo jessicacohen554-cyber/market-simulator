@@ -52,6 +52,37 @@ This agrees with UC-DIAG (+0.8 to +1.3 GW at peak, 2019–22). The forward profi
 
 ## 6. Repro result
 
-Pending: the shard runs on its own branch; the result is reported to UC-DESK.
+SPP 2020, arm B (`unit_commitment_milp`, `st_gas_mustrun_per_plant=false`, `coal_sync_floor_release=true`) with `uc_commitment_demand_source="da_forecast"`. Shard `session_01ALAmFzXrSA7xw8LG16fCi1` ran at `3111853c`. The bundle is commit `1090b5dd` on `claude/ucfix7-spp-b-2020` (20 files, `dispatch/2020_P1.parquet` present, legitimacy PASS). The shard was verified (bytes extracted locally) and then archived.
+
+Control: the committed uc-1.5 arm B (`docs/records/spp/ucmilp/data/ucmilp3_spp_b_span`). Its `run_config_2020` differs from the repro only in `uc_commitment_demand_source`. Both runs have 219 clusters and 92 integers. The engine changes between them are uc-1.6 (a no-op here; this arm runs no reserve co-optimisation) and uc-1.7 (this field). Scoring: `calibration_verdict.py`, rubric 3.20 (the control's rubric), through a local `dashboard_add_run --no-prune`. The sidecar is kept out of git with `.git/info/exclude` and is never committed. Benchmark frames were restored at zero LP with `--restore-shared-inputs`, hash-verified against `meta.json`.
+
+| Reading (2020) | uc-1.5 arm B (control) | uc-1.7 arm B + DA forecast | Δ |
+|---|---|---|---|
+| Commitment increment, top-100 load h (median) | 0 (actual) | +717 MW (mean +1,078; 36 QA-dropped h) | — |
+| Committed CC, top-100 load h | 8.23 GW | 8.24 GW | +0.01 |
+| Committed ST_GAS, top-100 load h | 1.27 GW | 1.81 GW | **+0.54** |
+| Committed coal, top-100 load h | 16.31 GW | 16.41 GW | +0.10 |
+| Committed ST_GAS / CC / coal, annual mean | 0.75 / 5.58 / 10.04 GW | 0.95 / 5.76 / 10.54 GW | +0.20 / +0.18 / +0.50 |
+| Starts ST_GAS / CC / coal | 243 / 1,580 / 350 | 343 / 1,560 / 389 | +100 / −20 / +39 |
+| C1 CC_REGULAR (TWh) | +2.13 | +2.73 PASS | +0.60 |
+| C1 COAL_PRB (TWh) | −4.20 | −3.07 PASS | +1.13 |
+| C1 ST_GAS (TWh) | −7.40 | −6.76 PASS | +0.64 |
+| C1 CT_PEAKER (TWh) | **+9.84 F** | +7.47 PASS | **−2.37 (FAIL→PASS)** |
+| C1 other (repro) | — | COAL_LIGNITE −1.27, COAL_BIT −0.04, CC_CHP +0.33, ST_CHP −0.23; all PASS (C1 8/8) | — |
+| C3a mean LMP vs RT | **+36.7 % F** | **+30.7 % F** ($21.59 vs $16.52) | −6.0 pp |
+| C3b monthly NRMSE | **0.421 F** | **0.367 F** | −0.054 |
+| C3c hours > $200 (model / actual) | 0 / 23 | 0 / 23 | 0 |
+| Top-100-load-hour mean price | $33.52 | $30.56 | −$2.96 |
+| Unserved / dump | 0 / 0 MWh | 0 / 0 MWh | 0 |
+| Uplift (share of UC-cluster revenue) | $4.7 M (0.16 %) | $14.4 M (0.50 %) | +$9.7 M |
+| Start cost / no-load | $32.3 M / $179.5 M | $34.5 M / $191.6 M | +$2.2 M / +$12.2 M |
+
+**Reading.**
+- The mechanism works as designed. A forecast increment of +0.72 GW at peak commits +0.65 GW more slow-start capacity at peak. Nearly all of it is ST_GAS, and CC is unchanged.
+- That extra capacity displaces CT: CT_PEAKER energy falls 2.4 TWh and C1 CT_PEAKER flips FAIL→PASS. ST_GAS, PRB and CC all move toward actual.
+- Price moves in the right direction but does not close the gap. C3a goes +36.7 → +30.7 % and C3b 0.421 → 0.367. Both still FAIL, and both remain worse than the floors-on keeper control (+27.7 % / 0.345).
+- No P1 dump: SPP's positive bias does not over-commit past what actual load absorbs at the committed floors in 2020.
+- Uplift triples. It is still small (0.5 % of cluster revenue), which is the expected cost of committing on a forecast that runs above actual.
+- Not a tuning reading: no value was chosen from it. One year only, pre-merge engine (below).
 
 The shard is pinned to `3111853c`, which is the PRE-MERGE engine: uc-1.7 commitment demand on the uc-1.6 base, before main's per-unit `ut_h`/`mlf` (#7262/#7264, epochs 2026-10-15a/b) and the VLR pocket rows (#7263, default off). It stays valid evidence for the mechanism (UC-DESK, 2026-10-15). Its control, the uc-1.5 arm B, likewise predates the per-unit `uc-params`. The repro therefore isolates the commitment demand, but its levels are not the post-merge engine's.
