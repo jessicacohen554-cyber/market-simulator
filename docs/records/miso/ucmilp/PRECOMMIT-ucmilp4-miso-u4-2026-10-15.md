@@ -199,3 +199,11 @@ Matrix (`mechanism-matrix/MISO.js`): the `uc_commitment_demand_source` cell, cit
   - Each year gets ≤ 4 relaunches after its first gate stop, ~30 min apart, then becomes a recorded coverage gap.
 - **Prompts.** `shard-prompts-ucmilp4-miso.txt` is re-pinned in place to `7c93273e`, with the gate line restated. The
   `'uc_commitment_demand_source="da_forecast"'` quoting is kept.
+
+## Addendum C (2026-10-15 11:15Z): gate re-basing ruling (UC-DESK), no change for MISO
+
+- **Rule for all ISOs.** gate = 1.25 × the maximum observed RSS+swap peak, rounded up to 0.1 GiB.
+- **MISO.** The maximum is 17.89 GiB (UC-3 arm A 2023). 1.25 × 17.89 = 22.4, so the MISO gate is **unchanged** at ≥ 22.35 GiB raw.
+  - A per-year gate is refused: the 0.4 GiB margin is too thin, and U4 adds DA-forecast commitment.
+- **Reporting.** Each U4 leg's RSS+swap peak is reported to UC-DESK as it lands. If any exceeds 17.89 GiB, the desk re-bases the
+  gate upward.
