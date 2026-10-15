@@ -112,3 +112,51 @@ A coverage gap (§7) caps the verdict at "hold: coverage" unless a solved year a
 
 No `uc_*` value other than the defaults and the one ruled `uc_commitment_demand_source`; no second arm; no control solve; no
 registration; no promotion; no tuning of anything (rule 1); no patch to `src/` or `scripts/` (a defect is reported, not repaired).
+
+## Addendum A (2026-10-15 ~10:45Z, before any FIX-8 shard exists): relaunch at the FIX-8 pin
+
+**Why.** The first launch at `7dbfe20f` hit kill #1 at UC-stage preparation, before any LP:
+`commitment_demand.py:254 "commitment increment has 5 zones, demand 7"` (`RESULT-interim-ucmilp4-nyiso-u4-2026-10-15.md`). UC-DESK
+ruled that a defect stop is not a verdict and that the lane relaunches the full span at the fix pin.
+
+**Pin (every shard `source_revision`):** **`7c93273ec9056b1cd9f6e4fcf387e812f78f6e8a`** (main; FIX-8 #7267; engine version string
+unchanged at uc-1.7). Every part of §§1, 3–6 and 8 is **unchanged**: the recipe and its eleven `--set`s
+(`uc_commitment_demand_source='"da_forecast"'` shell-quoted), the bars, the reported readings, the kills and the verdict rule. §1.1
+stands as written.
+
+### A.1 G-DRIFT `7dbfe20f → 7c93273e` (zero LP, verified here)
+
+2 commits: #7265 (desk log, docs only) and #7267 (FIX-8), which touches 7 files.
+
+| content | files | NYISO classification |
+|---|---|---|
+| the `da_forecast` increment mapped onto the demand rows **by zone name** (interchange or seam rows get no increment) | `data/commitment_demand.py` | **LIVE on the arm's path only**: the `"actual"` branch is unchanged (`return CommitmentDemand(demand=demand, …)`), and the control never reaches the module |
+| `zone_names` (the runtime zone list) threaded to the UC stage | `pipeline/solve.py` (new optional kwarg, passed only to `prepare_uc_stage` inside the UC branch), `pipeline/uc.py`, `pipeline/year.py`, `runner.py`, `scripts/run_calibration.py`, `scripts/lib/uc_bench.py` | plumbing; read only by the `da_forecast` commitment demand. **INERT** on the control |
+| solve surface | `solve_surface_register.py --diff 7dbfe20f 7c93273e`: *"345 -> 345 names; 0 value(s) moved, 0 added, 0 removed — NO VALUE MOVED"* | no key reached |
+| `results/calibration/w0_nyiso_span/**`, `keepers/NYISO.json`, `replay_keeper.py`, `shard_prompt.py`, `calibration_verdict.py` | unchanged | — |
+
+No LIVE hunk is on the control path, so there is no control solve (rule 29(b)).
+
+### A.2 Memory gate (UC-DESK ruling, 2026-10-15 10:19Z, all UC-4 lanes)
+
+The gate passes iff ceiling + swap, **as printed** by `prepare_solve_container` / `ensure_solve_container`, rounds to ≥ 22.4 GiB
+(raw ≥ 22.35):
+- the standard 13.36 + 9.0 = 22.36 GiB container passes;
+- a 17.4 GiB container fails and counts as a memory attempt.
+
+**Relaunch budget** (blocked year, ~30 min apart):
+
+| year | memory attempts used | remaining |
+|---|---|---|
+| 2022 | 1 of 4 (the 09:56Z block) | 3 |
+| every other year | none | 4 |
+
+The kill-#1 stop spends no attempt. A blocked year is a draw: swap is sized at boot from the container's own disk. After 4 blocked
+attempts a year becomes a coverage gap, with the attempt log recorded.
+
+### A.3 Shards
+
+- Prompts are `shard-prompts-ucmilp4-nyiso.txt` with the pin replaced by `7c93273e…` (re-emitted by `shard_prompt.py` and committed as
+  `shard-prompts-ucmilp4b-nyiso.txt`).
+- The lane id is `ucmilp4b-nyiso`; branches are `claude/ucmilp4b-nyiso-<y>`; out-dirs are `results/calibration/ucmilp4b_nyiso_<y>`. The
+  launch table is recorded in the RESULT.
