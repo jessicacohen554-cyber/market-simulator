@@ -204,6 +204,10 @@ class TestUnitBasisDurations(CleanDirTestCase):
         # Plant basis would read 20 h up / 4 h down; each unit is 12 / 12.
         self.assertEqual(int(cc["ut_h"]), 12)
         self.assertEqual(int(cc["dt_h"]), 12)
+        # Each unit runs flat at its HSL, so its minimum stable fraction is 1.
+        # The plant series reads 100 MW (one unit) over a 200 MW HSL = 0.5.
+        self.assertAlmostEqual(float(cc["mlf"]), 1.0, delta=1e-9)
+        self.assertAlmostEqual(float(cc["lsl_mw"]), float(cc["hsl_mw"]), delta=1e-6)
 
     def test_reporting_hole_is_no_gap(self):
         _, g = up._unit_runs_and_gaps(
@@ -217,6 +221,43 @@ class TestUnitBasisDurations(CleanDirTestCase):
         # no gap spans it (8 + 9 gaps of 12 h, never a 36 h one).
         self.assertEqual(sorted(set(g.tolist())), [12])
         self.assertEqual(g.size, 19 + 8 + 9)
+
+
+def _unit_frame(load, optime, unit="U1") -> pd.DataFrame:
+    """One unit's hourly frame in the shape ``_load_state_year`` returns."""
+    n = len(load)
+    return pd.DataFrame(
+        {
+            "facilityId": 1,
+            "unitId": unit,
+            "uc_class": "cc",
+            "ts": pd.Timestamp("2023-01-01") + pd.to_timedelta(np.arange(n), "h"),
+            "opTime": np.asarray(optime, dtype=float),
+            "grossLoad": np.asarray(load, dtype=float),
+            "heatInput": 0.0,
+        }
+    )
+
+
+class TestFullHourLsl(CleanDirTestCase):
+    """Owner ruling 2026-10-15: the unit LSL sample is its FULL online hours."""
+
+    def test_partial_start_hours_do_not_set_the_minimum(self):
+        # 10 daily cycles: a 0.5 h start hour at 20 MW, then 9 full hours at 60 MW.
+        load = np.tile([20.0] + [60.0] * 9 + [0.0] * 14, 10)
+        optime = np.tile([0.5] + [1.0] * 9 + [0.0] * 14, 10)
+        _, _, hsl, lsl, n_full = up._unit_series_stats(_unit_frame(load, optime))
+        self.assertAlmostEqual(float(lsl[0]), 60.0)
+        self.assertAlmostEqual(float(hsl[0]), 60.0)
+        self.assertEqual(int(n_full[0]), 90)
+
+    def test_no_full_hour_falls_back_to_online_hours(self):
+        load = np.tile([20.0, 60.0, 0.0, 0.0], 30)
+        optime = np.tile([0.5, 0.75, 0.0, 0.0], 30)
+        frame = _unit_frame(load, optime)
+        _, _, _, lsl, _ = up._unit_series_stats(frame)
+        self.assertAlmostEqual(float(lsl[0]), 20.0)
+        self.assertEqual(up.unit_lsl_fallback_count(frame)[:2], (1, 1))
 
 
 def _write_crosswalk(raw_root, epa_rows=(), pudl_rows=()) -> None:

@@ -1,4 +1,4 @@
-# FINDING — UC-DATA-UT: `uc-params` min-up / min-down on a per-UNIT basis (2026-10-15)
+# FINDING — UC-DATA-UT: `uc-params` min-up / min-down / `mlf` on a per-UNIT basis (2026-10-15)
 
 Lane UC-DATA-UT (Opus), chartered by UC-DESK r13. Zero LP. Owner ruling r13 (2026-10-15, rule 23):
 `ut_h` is re-derived from per-unit CAMPD on-runs. Defect: `FINDING-ucmilp-diag-undercommit-2026-10-14` cause 3.
@@ -91,9 +91,128 @@ runs. Full list: lane scratch `outliers.csv` (regenerable from `compare.py` over
 
 ## 5. Cache key, engine version
 
-* Data-only change; no engine code path changes behaviour, so `UC_ENGINE_VERSION` stays `uc-1.6`.
+* Data-only change (`ut_h` and `mlf` both reach a UC solve); no engine code path changes behaviour,
+  so `UC_ENGINE_VERSION` stays `uc-1.6`.
 * `data/clean/uc-params` is gitignored and in no key. The new `SolveEpoch` **2026-10-15a** (with a new
   `requires="unit_commitment_milp"` gate) re-keys exactly the UC-armed configs in CAISO, ERCOT, MISO,
   NEISO, NYISO and SPP. No keeper arms the UC, so no keeper key moves. The key-provenance census
   (`scripts/lib/key_provenance.live_epochs`) applies the same gate.
 * No solves ran. No repro shard was launched.
+
+## 6. `mlf` per unit (scope extension)
+
+**Same derivation path as `ut_h`** (`_plant_stats` in `scripts/lib/uc_params/__init__.py`). #7262
+merged the `ut_h` change before this one landed, so `mlf` ships in its own PR under its own epoch,
+**2026-10-15b**, with the same `requires="unit_commitment_milp"` gate. 15a is not edited (rule 26).
+
+**Defect.** `mlf` was `p5(summed plant load over online plant-hours) / plant HSL`. The UC applies it per
+committed unit (`mlf · p̄ · a · u`; `pipeline/uc.py`, `model/uc/window.py`, `model/uc/schedule.py`).
+A multi-unit plant reaches its p5 with one unit of n at minimum, so the ratio read about 1/n of a unit's
+minimum stable fraction.
+
+**Fix (owner ruling 2026-10-15 on the statistic).** `mlf = Σ unit LSL / Σ unit HSL`, where
+- unit LSL = p5 of the unit's own load over its **FULL operating hours** (CEMS `opTime == 1` and online,
+  load ≥ max(1 MW, 0.05 × unit HSL)), so start-up and shut-down partial hours never set the minimum
+  (`FULL_HOUR_OPTIME = 1.0`);
+- unit HSL = p99.5 of its series;
+- `lsl_mw = mlf × hsl_mw`.
+
+**The one fallback, stated:** a unit with **no** full online hour in 2023–25 takes p5 over all its online
+hours. There is no minimum-sample floor; counts are below.
+
+**Check that the fix touches the defect.** On multi-unit plants the median new/old ratio is **2.08**.
+On single-unit plants it is **1.08**: that 8 % is the full-hour restriction alone, since the plant basis
+equals the unit basis for one unit. MISO ST_GAS goes 0.141 → **0.266** (HSL-weighted mean), inside the
+0.20–0.30 that #7259 measured.
+
+The table runs old (plant basis) → **new (unit basis, full hours)**. The parenthesised p50 is the interim
+unit-basis, all-online-hours value this PR first carried. HSL-weighted. The reference is
+`MIN_STABLE_PCT_PHYSICAL`, the engine's fallback (WWSIS-2, as cited in `constants.py`).
+
+| ISO | class | WWSIS-2 | mlf p10 | mlf p50 (online-hours basis) | mlf p90 | GW below WWSIS-2 (old→new) | GW above |
+|---|---|---|---|---|---|---|---|
+| CAISO | cc | 0.52 | 0.11 → **0.40** | 0.26 → **0.55** (0.39) | 0.38 → **0.68** | 23.8 → 10.5 | 0.3 → 13.7 |
+| CAISO | coal | 0.40 | 0.16 → **0.30** | 0.16 → **0.30** (0.30) | 0.41 → **0.41** | 0.4 → 0.4 | 0.2 → 0.2 |
+| CAISO | ct | 0.38 | 0.07 → **0.36** | 0.14 → **0.54** (0.28) | 0.33 → **0.80** | 8.0 → 0.9 | 0.4 → 7.5 |
+| CAISO | st_gas | 0.12 | 0.05 → **0.09** | 0.07 → **0.20** (0.20) | 0.25 → **0.42** | 2.4 → 0.8 | 1.0 → 2.5 |
+| ERCOT | cc | 0.52 | 0.20 → **0.38** | 0.31 → **0.53** (0.51) | 0.44 → **0.66** | 41.1 → 20.0 | 3.2 → 24.3 |
+| ERCOT | coal | 0.40 | 0.10 → **0.30** | 0.19 → **0.34** (0.34) | 0.45 → **0.51** | 13.9 → 13.9 | 4.2 → 4.2 |
+| ERCOT | ct | 0.38 | 0.09 → **0.46** | 0.15 → **0.74** (0.45) | 0.53 → **0.85** | 9.0 → 0.8 | 1.9 → 10.1 |
+| ERCOT | st_gas | 0.12 | 0.06 → **0.14** | 0.09 → **0.20** (0.19) | 0.20 → **0.30** | 12.4 → 0.0 | 3.4 → 15.8 |
+| MISO | cc | 0.52 | 0.22 → **0.44** | 0.32 → **0.59** (0.56) | 0.56 → **0.75** | 81.5 → 28.4 | 14.2 → 67.4 |
+| MISO | coal | 0.40 | 0.14 → **0.30** | 0.22 → **0.41** (0.41) | 0.45 → **0.56** | 79.0 → 43.0 | 12.3 → 48.3 |
+| MISO | ct | 0.38 | 0.08 → **0.46** | 0.15 → **0.67** (0.33) | 0.33 → **0.85** | 40.3 → 3.4 | 3.1 → 40.0 |
+| MISO | st_gas | 0.12 | 0.06 → **0.14** | 0.10 → **0.23** (0.23) | 0.30 → **0.44** | 17.7 → 1.4 | 11.6 → 27.9 |
+| NEISO | cc | 0.52 | 0.22 → **0.48** | 0.34 → **0.56** (0.51) | 0.51 → **0.69** | 12.6 → 5.3 | 0.8 → 8.1 |
+| NEISO | coal | 0.40 | 0.22 → **0.48** | 0.22 → **0.48** (0.46) | 0.22 → **0.48** | 0.4 → 0.0 | 0.0 → 0.4 |
+| NEISO | ct | 0.38 | 0.09 → **0.26** | 0.22 → **0.70** (0.34) | 0.42 → **0.94** | 1.6 → 0.6 | 0.2 → 1.1 |
+| NEISO | st_gas | 0.12 | 0.07 → **0.14** | 0.18 → **0.30** (0.25) | 0.30 → **0.52** | 0.6 → 0.1 | 1.9 → 2.4 |
+| NYISO | cc | 0.52 | 0.13 → **0.43** | 0.25 → **0.54** (0.50) | 0.49 → **0.71** | 18.6 → 8.3 | 0.9 → 11.2 |
+| NYISO | ct | 0.38 | 0.08 → **0.33** | 0.13 → **0.79** (0.33) | 0.38 → **0.94** | 4.1 → 0.5 | 0.4 → 4.1 |
+| NYISO | st_gas | 0.12 | 0.06 → **0.19** | 0.11 → **0.24** (0.22) | 0.14 → **0.30** | 6.5 → 0.0 | 2.2 → 8.7 |
+| SPP | cc | 0.52 | 0.20 → **0.38** | 0.30 → **0.54** (0.52) | 0.53 → **0.70** | 68.6 → 28.9 | 8.5 → 48.2 |
+| SPP | coal | 0.40 | 0.13 → **0.29** | 0.20 → **0.37** (0.36) | 0.45 → **0.55** | 56.8 → 39.3 | 10.4 → 27.9 |
+| SPP | ct | 0.38 | 0.08 → **0.35** | 0.15 → **0.65** (0.34) | 0.36 → **0.83** | 25.8 → 3.5 | 2.7 → 25.1 |
+| SPP | st_gas | 0.12 | 0.06 → **0.14** | 0.09 → **0.23** (0.23) | 0.31 → **0.43** | 18.1 → 0.5 | 11.4 → 29.0 |
+
+**Outliers, reported and NOT clipped.** WWSIS-2 gives one typical value per class, not a band, so I
+invented no tolerance around it. The "GW above / below" columns are the flag.
+- **CT is the large mover:** p50 0.65–0.79, p90 up to 0.94, against WWSIS-2's 0.38. A CT's full hours
+  are dispatched near its maximum, so its full-hour p5 is how it chose to run, not its physical minimum.
+  **This has no effect on a UC solve:** CT clusters fail the E1 integer gate (class min-down 1 h, start
+  cost < $30/MW; `integer_gate`), and the `mlf` floor applies only to integer clusters. The CT rows are
+  diagnostic.
+- Rows ≥ 0.90: 63 of 1 389, mostly CT. Non-CT examples: CAISO CC 54271 (2 units, 93 MW) 0.51 → 0.92; CC
+  6358 (42 MW) 0.93; SPP ST_GAS 7013 and 1271 (16–18 MW) 0.94.
+- Rows < 0.05: 8 of 1 389. Lowest non-CT: MISO ST_GAS 6035 at 0.066 (single unit, unchanged).
+- Integer classes against WWSIS-2:
+  - CC p50 0.53–0.59 vs 0.52;
+  - coal p50 0.30–0.48 vs 0.40;
+  - ST_GAS p50 0.20–0.30 vs 0.12, about 2× in every ISO and consistent with #7259.
+
+**Fallback and sample counts (units with 0 / < 20 / < 200 full online hours):**
+
+| ISO | units (cc / coal / ct / st_gas) | 0 full hours (fallback) | < 20 | < 200 | p10 full hours, integer classes (cc / coal / st_gas) |
+|---|---|---|---|---|---|
+| CAISO | 118 / 3 / 164 / 21 | **0** | 0 | 15 (14 CT, 1 CC) | 2 215 / 21 267 / 477 |
+| ERCOT | 166 / 29 / 172 / 77 | **0** | 0 | 2 (ST_GAS) | 8 243 / 13 677 / 695 |
+| MISO | 365 / 184 / 628 / 133 | **0** | 0 | 13 (10 CT, 3 ST_GAS) | 11 552 / 7 148 / 710 |
+| NEISO | 61 / 2 / 53 / 15 | **0** | 1 (CT) | 32 (31 CT, 1 CC) | 1 457 / 613 / 391 |
+| NYISO | 104 / – / 143 / 28 | **0** | 0 | 30 (27 CT, 2 CC, 1 ST_GAS) | 1 039 / – / 368 |
+| SPP | 310 / 125 / 474 / 156 | **0** | 0 | 13 (9 CT, 4 ST_GAS) | 7 842 / 9 439 / 675 |
+
+**No unit in any ISO takes the fallback.** One unit has fewer than 20 full hours (a NEISO CT, which is
+non-integer). The integer classes have fewer than 200 full hours in at most 4 units per ISO.
+
+## 7. Registered min-run / min-up in on-disk ISO offer disclosures (zero LP, no fetch)
+
+Asked by UC-DESK before it puts the statistic question to the owner: does a **registered** physical
+duration exist on disk? One would beat both the p25 and the class table (rules 14, 18).
+
+**Answer: none on disk. The only ISO feed that publishes one (PJM `min_runtime`) is gitignored; only
+its README is present.**
+
+| ISO | corpus | registered duration field | on disk | unit → EIA plant |
+|---|---|---|---|---|
+| PJM | `data/raw/pjm-energy-offers/` | **`min_runtime`** → `min_runtime_h` ("Minimum continuous runtime (hours) once the unit is committed", `energy-offers.schema.yaml`); also `max_daily_starts` | README only (gitignored; re-fetchable, 2019–25) | masked `unit_code`, no crosswalk |
+| MISO | `data/raw/miso-energy-offers/` | none (Economic / Emergency Min are **MW**) | README only | masked; class bridge refuted (miso-138) |
+| NYISO | `data/raw/nyiso-bid-data/genbids/` | none (Fixed Min Gen MW) | `SHA256SUMS.txt` only | no published crosswalk |
+| ISO-NE | `data/raw/NEISO-AS/da-energy-offers/` | none (Economic Min MW) | README only | masked |
+| CAISO | `data/raw/caiso-public-bids/` | none | README only | masked |
+| ERCOT | 60-day DAM Gen Resource Data; SCED extracts | **none**. DAM has `LSL`, start-up offers and `Min Gen Cost`; SCED has HSL/LSL/HDL/LDL | yes | resource names unmasked (network-model map exists) |
+| SPP | — | no offer corpus | — | — |
+
+Notes:
+- Coverage by class is **zero in every ISO × class on disk**.
+- PJM `min_runtime` is used today only as a CT ≤ 2 h / CC (2, 16] h / LONG_RUN > 16 h class splitter
+  (`derive_pjm_offer_surface.py`, `derive_pjm_offer_midcurve.py`). PJM is not a UC ISO.
+- Masked unit codes would need a mapping to plants before the field could feed `uc-params`.
+- No existing min-run input comes from an ISO offer file:
+  - ERCOT `custom-bin-assignments.csv` (`Min_Run_Hours`) is hand-authored.
+  - `derive_campd_perplant_min_run.py` and `uc-params` are observed-run p25s.
+  - The coal 36/16 h defaults are the NREL SR-5500-55433 attribution.
+- The ERCOT DAM `LSL` is an offered or telemetered **MW** limit. It could serve as a measured check on
+  the per-unit `mlf` in ERCOT (a later card, not done here).
+
+Survey method: corpus READMEs plus a schema-only read of the ERCOT parquet headers; no payload was
+loaded and nothing was fetched.

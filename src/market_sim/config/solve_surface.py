@@ -160,6 +160,9 @@ class SolveEpoch:
 #: UNIT (UC-DATA-UT, owner ruling r13; rule 23 defect fix). The clean partition
 #: is in no key, so the epoch re-keys every config that arms the UC stage (the
 #: only reader) in the six UC ISOs, and no keeper (none arms it).
+#: 2026-10-15b: the ``uc-params`` minimum stable fraction ``mlf`` is re-derived
+#: per UNIT (UC-DATA-UT scope extension, owner ruling 2026-10-15; rule 23). Its
+#: own id because 15a's keys were cut on main without it (rule 26: append-only).
 SOLVE_EPOCHS: tuple[SolveEpoch, ...] = (
     SolveEpoch(
         id="2026-10-02c",
@@ -233,6 +236,17 @@ SOLVE_EPOCHS: tuple[SolveEpoch, ...] = (
             "uc-params ut_h / dt_h re-derived from per-UNIT CAMPD on-runs and "
             "off-gaps instead of the plant series (UC-DATA-UT, owner ruling r13; "
             "FINDING-ucmilp-diag-undercommit-2026-10-14 cause 3)"
+        ),
+        isos=("CAISO", "ERCOT", "MISO", "NEISO", "NYISO", "SPP"),
+        requires="unit_commitment_milp",
+    ),
+    SolveEpoch(
+        id="2026-10-15b",
+        cause=(
+            "uc-params mlf re-derived per UNIT (sum of unit p5 load over full "
+            "online hours, CEMS opTime == 1, over sum of unit HSL) instead of the "
+            "plant series p5 over plant HSL, about 1/n of a unit's minimum "
+            "(UC-DATA-UT, owner rulings 2026-10-15)"
         ),
         isos=("CAISO", "ERCOT", "MISO", "NEISO", "NYISO", "SPP"),
         requires="unit_commitment_milp",
