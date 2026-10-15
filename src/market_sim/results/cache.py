@@ -76,7 +76,7 @@ human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
-**Epoch 2026-10-15a — ``uc-params`` min-up / min-down re-derived per UNIT
+**Epoch 2026-10-15a — ``uc-params`` min-up / min-down / ``mlf`` re-derived per UNIT
 (lane UC-DATA-UT, owner ruling r13 2026-10-15; rule 23 derivation-defect fix).
 KEY-MOVING for every config that arms ``unit_commitment_milp`` in CAISO, ERCOT,
 MISO, NEISO, NYISO and SPP, through ``solve_surface.SolveEpoch`` 2026-10-15a
@@ -85,9 +85,13 @@ MISO, NEISO, NYISO and SPP, through ``solve_surface.SolveEpoch`` 2026-10-15a
 on) and the UC stage applied ``ut_h`` per unit, an economic run length used as
 a physical bound (``FINDING-ucmilp-diag-undercommit-2026-10-14`` cause 3); they
 are now p25 of the per-unit runs / gaps pooled over the cluster, cut at
-reporting holes. ``data/clean/uc-params/<ISO>`` is gitignored and in no key, so
+reporting holes. ``mlf`` (scope extension, owner ruling 2026-10-15) was p5 of
+the summed plant load over plant HSL, which a multi-unit plant reaches with one
+unit of n at minimum (about 1/n of a unit's minimum), while the UC applies it per
+committed unit; it is now sum(unit p5 online load) / sum(unit HSL).
+``data/clean/uc-params/<ISO>`` is gitignored and in no key, so
 the epoch carries the change. ``dt_h`` is a diagnostic column (the engine reads
-the published class min-down), so only ``ut_h`` reaches a solve. WHAT IS NOT
+the published class min-down), so ``ut_h`` and ``mlf`` reach a solve. WHAT IS NOT
 INVALIDATED: every config with the UC stage off, i.e. every keeper and every
 forecast recipe on ``main``. Record: ``docs/records/governance/uc-milp-2026-10/
 FINDING-ucdata-ut-unit-basis-2026-10-15.md``.

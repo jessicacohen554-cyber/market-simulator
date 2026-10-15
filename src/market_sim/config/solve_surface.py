@@ -156,8 +156,9 @@ class SolveEpoch:
 #: 2026-10-03d: MISO's 2019-2022 NRC daily nuclear extract plus Duane Arnold /
 #: Palisades pass-through rows (backcast MISO; the CSV is in no key; the MISO
 #: NUCLEAR_MONTHLY_CF_BY_YEAR row is declared and moves MISO keys on its own).
-#: 2026-10-15a: the ``uc-params`` min-up / min-down durations are re-derived per
-#: UNIT (UC-DATA-UT, owner ruling r13; rule 23 defect fix). The clean partition
+#: 2026-10-15a: the ``uc-params`` min-up / min-down durations and the minimum
+#: stable fraction are re-derived per UNIT (UC-DATA-UT, owner ruling r13 and its
+#: 2026-10-15 mlf extension; rule 23 defect fix). The clean partition
 #: is in no key, so the epoch re-keys every config that arms the UC stage (the
 #: only reader) in the six UC ISOs, and no keeper (none arms it).
 SOLVE_EPOCHS: tuple[SolveEpoch, ...] = (
@@ -230,8 +231,9 @@ SOLVE_EPOCHS: tuple[SolveEpoch, ...] = (
     SolveEpoch(
         id="2026-10-15a",
         cause=(
-            "uc-params ut_h / dt_h re-derived from per-UNIT CAMPD on-runs and "
-            "off-gaps instead of the plant series (UC-DATA-UT, owner ruling r13; "
+            "uc-params ut_h / dt_h / mlf re-derived per UNIT from CAMPD "
+            "(on-runs, off-gaps, p5 online load) instead of the plant series "
+            "(UC-DATA-UT, owner rulings r13 and 2026-10-15; "
             "FINDING-ucmilp-diag-undercommit-2026-10-14 cause 3)"
         ),
         isos=("CAISO", "ERCOT", "MISO", "NEISO", "NYISO", "SPP"),

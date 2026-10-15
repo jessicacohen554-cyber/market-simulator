@@ -20,8 +20,14 @@ regression of closeout-PJM-decommit B0 / UC-0 F7):
   by the raw CAMD facility id missed every plant whose CEMS id differs from
   its EIA id (UC-1-FIX-3; FINDING-ucmilp-fix2-floor-mindown-2026-10-10 §7);
 * the plant's units of one family are summed to ONE hourly plant series;
-  HSL = p99.5 of that series, online = load >= max(1 MW, 0.05 x HSL), LSL = p5
-  of the online-hour load, ``mlf = LSL / HSL``;
+  HSL = p99.5 of that series, online = load >= max(1 MW, 0.05 x HSL);
+* ``mlf`` is measured per UNIT (UC-DATA-UT scope extension, owner ruling
+  2026-10-15, rule 23): each unit's LSL = p5 of its own online-hour load, its
+  HSL = p99.5 of its own series, ``mlf = sum(unit LSL) / sum(unit HSL)`` (the
+  capacity-weighted unit minimum stable fraction) and ``lsl_mw = mlf x HSL``.
+  The UC applies ``mlf`` per committed unit (``mlf x pbar x u``); the plant
+  series' p5 is reached with ONE unit of n at minimum, so ``LSL_plant /
+  HSL_plant`` read about 1/n of a unit's minimum (the derivation defect);
 * ``ut_h`` / ``dt_h`` / ``n_runs`` are measured per UNIT, never on the plant
   series (UC-DATA-UT, owner ruling r13 2026-10-15, rule 23): each unit's own
   series is online at load >= max(1 MW, 0.05 x the unit's own HSL), its on-runs
@@ -168,7 +174,19 @@ def _runs_and_gaps(online: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
 
 
 def _unit_runs_and_gaps(cluster: pd.DataFrame) -> tuple[np.ndarray, np.ndarray]:
-    """On-runs and off-gaps of every UNIT of one cluster, pooled (hours).
+    """On-runs and off-gaps of every UNIT of one cluster, pooled (hours)."""
+    runs, gaps, _, _ = _unit_series_stats(cluster)
+    return runs, gaps
+
+
+def _unit_series_stats(
+    cluster: pd.DataFrame,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """Per-UNIT durations and load limits of one cluster.
+
+    Returns ``(runs, gaps, unit_hsl, unit_lsl)``: the on-runs and off-gaps of
+    every unit pooled (hours), and each unit's HSL (p99.5 of its series) and
+    LSL (p5 of its online-hour load), MW.
 
     A unit is keyed by its CEMS ``(facilityId, unitId)`` (two CEMS facilities
     mapped to one EIA plant may reuse a unit id). Each unit's series is online
@@ -178,6 +196,8 @@ def _unit_runs_and_gaps(cluster: pd.DataFrame) -> tuple[np.ndarray, np.ndarray]:
     """
     runs: list[np.ndarray] = []
     gaps: list[np.ndarray] = []
+    hsls: list[float] = []
+    lsls: list[float] = []
     one_hour = np.timedelta64(1, "h")
     for _, unit in cluster.groupby(["facilityId", "unitId"], sort=False):
         series = unit.groupby("ts", sort=True)["grossLoad"].sum()
@@ -188,6 +208,10 @@ def _unit_runs_and_gaps(cluster: pd.DataFrame) -> tuple[np.ndarray, np.ndarray]:
         if hsl <= 0.0:
             continue
         online = load >= max(ONLINE_MIN_MW, ONLINE_FRAC_OF_HSL * hsl)
+        if not online.any():
+            continue
+        hsls.append(hsl)
+        lsls.append(float(np.percentile(load[online], LSL_PERCENTILE)))
         ts = series.index.to_numpy(dtype="datetime64[ns]")
         cuts = np.flatnonzero(np.diff(ts) != one_hour) + 1
         for seg in np.split(online, cuts):
@@ -195,8 +219,14 @@ def _unit_runs_and_gaps(cluster: pd.DataFrame) -> tuple[np.ndarray, np.ndarray]:
             runs.append(r)
             gaps.append(g)
     if not runs:
-        return np.zeros(0, dtype=int), np.zeros(0, dtype=int)
-    return np.concatenate(runs), np.concatenate(gaps)
+        empty = np.zeros(0, dtype=int)
+        return empty, empty, np.zeros(0), np.zeros(0)
+    return (
+        np.concatenate(runs),
+        np.concatenate(gaps),
+        np.asarray(hsls, dtype=float),
+        np.asarray(lsls, dtype=float),
+    )
 
 
 def _noload_fit(unit: pd.DataFrame) -> tuple[float | None, float | None]:
@@ -258,10 +288,15 @@ def _plant_stats(cluster: pd.DataFrame) -> dict | None:
     online = load >= max(ONLINE_MIN_MW, ONLINE_FRAC_OF_HSL * hsl)
     if not online.any():
         return None
-    lsl = float(np.percentile(load[online], LSL_PERCENTILE))
-    # Durations per unit (rule 23 defect fix, UC-DATA-UT): the plant mask's
-    # runs are how long ANY unit stayed on, not how long a unit must.
-    runs, gaps = _unit_runs_and_gaps(cluster)
+    # Durations and the minimum stable fraction per unit (rule 23 defect fix,
+    # UC-DATA-UT): the plant mask's runs are how long ANY unit stayed on, and
+    # the plant series' p5 is one unit of n at minimum.
+    runs, gaps, unit_hsl, unit_lsl = _unit_series_stats(cluster)
+    mlf = (
+        float(np.clip(unit_lsl.sum() / unit_hsl.sum(), 0.0, 1.0))
+        if unit_hsl.size
+        else 0.0
+    )
     ut_h = (
         int(max(1, round(np.percentile(runs, DURATION_PERCENTILE)))) if runs.size else 1
     )
@@ -285,8 +320,8 @@ def _plant_stats(cluster: pd.DataFrame) -> dict | None:
     return {
         "n_units": n_units,
         "hsl_mw": hsl,
-        "lsl_mw": lsl,
-        "mlf": float(np.clip(lsl / hsl, 0.0, 1.0)),
+        "lsl_mw": mlf * hsl,
+        "mlf": mlf,
         "ut_h": ut_h,
         "dt_h": dt_h,
         "noload_mmbtu_h": float(sum(intercepts)) if intercepts else np.nan,
@@ -370,7 +405,8 @@ def derive_iso(iso: str, raw_root: Path) -> pd.DataFrame:
         f"{', '.join(read)}); plant basis per (EIA plant, unit-type family), CEMS "
         "units mapped to EIA plants by campd_crosswalk.camd_to_eia_plant: "
         f"HSL = p{HSL_PERCENTILE} of the summed load, online >= max({ONLINE_MIN_MW} MW, "
-        f"{ONLINE_FRAC_OF_HSL} x HSL), LSL = p{LSL_PERCENTILE} of online-hour load, "
+        f"{ONLINE_FRAC_OF_HSL} x HSL), mlf = sum of per-UNIT LSL (p{LSL_PERCENTILE} of the "
+        "unit's online-hour load) / sum of per-UNIT HSL, lsl_mw = mlf x HSL, "
         f"ut_h/dt_h = p{DURATION_PERCENTILE} of per-UNIT on-runs/off-gaps (unit online "
         f">= max({ONLINE_MIN_MW} MW, {ONLINE_FRAC_OF_HSL} x unit HSL), cut at reporting "
         "holes, pooled over the cluster's units), no-load = sum of "

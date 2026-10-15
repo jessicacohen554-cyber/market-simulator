@@ -1,4 +1,4 @@
-# FINDING — UC-DATA-UT: `uc-params` min-up / min-down on a per-UNIT basis (2026-10-15)
+# FINDING — UC-DATA-UT: `uc-params` min-up / min-down / `mlf` on a per-UNIT basis (2026-10-15)
 
 Lane UC-DATA-UT (Opus), chartered by UC-DESK r13. Zero LP. Owner ruling r13 (2026-10-15, rule 23):
 `ut_h` is re-derived from per-unit CAMPD on-runs. Defect: `FINDING-ucmilp-diag-undercommit-2026-10-14` cause 3.
@@ -91,9 +91,68 @@ runs. Full list: lane scratch `outliers.csv` (regenerable from `compare.py` over
 
 ## 5. Cache key, engine version
 
-* Data-only change; no engine code path changes behaviour, so `UC_ENGINE_VERSION` stays `uc-1.6`.
+* Data-only change (`ut_h` and `mlf` both reach a UC solve); no engine code path changes behaviour,
+  so `UC_ENGINE_VERSION` stays `uc-1.6`.
 * `data/clean/uc-params` is gitignored and in no key. The new `SolveEpoch` **2026-10-15a** (with a new
   `requires="unit_commitment_milp"` gate) re-keys exactly the UC-armed configs in CAISO, ERCOT, MISO,
   NEISO, NYISO and SPP. No keeper arms the UC, so no keeper key moves. The key-provenance census
   (`scripts/lib/key_provenance.live_epochs`) applies the same gate.
 * No solves ran. No repro shard was launched.
+
+## 6. `mlf` per unit (scope extension)
+
+**Same derivation path as `ut_h`** (`_plant_stats` in `scripts/lib/uc_params/__init__.py`), so both
+changes are in one PR.
+
+**Defect.** `mlf` was `p5(summed plant load over online plant-hours) / plant HSL`. The UC applies it per
+committed unit (`mlf · p̄ · a · u`; `pipeline/uc.py`, `model/uc/window.py`, `model/uc/schedule.py`).
+A multi-unit plant reaches its p5 with one unit of n at minimum, so the ratio read about 1/n of a unit's
+minimum stable fraction. **Fix:** `mlf = Σ unit LSL / Σ unit HSL`, where unit LSL = p5 of the unit's own
+online-hour load (online ≥ max(1 MW, 0.05 × unit HSL)), unit HSL = p99.5 of its series, and
+`lsl_mw = mlf × hsl_mw`. The statistic (p5) is unchanged.
+
+**Check that the fix touches only the defect.** On single-unit plants the median new/old ratio is
+**1.00**. On multi-unit plants it is **1.77**. MISO ST_GAS goes 0.141 → 0.247 (HSL-weighted mean), inside
+the 0.20–0.30 that #7259 measured.
+
+Old → new, HSL-weighted p10 / p50 / p90. The reference is `MIN_STABLE_PCT_PHYSICAL`, the engine's
+fallback (WWSIS-2, as cited in `constants.py`).
+
+| ISO | class | WWSIS-2 | mlf p10 | mlf p50 | mlf p90 | GW below WWSIS-2 (old→new) | GW above |
+|---|---|---|---|---|---|---|---|
+| CAISO | cc | 0.52 | 0.11 → **0.24** | 0.26 → **0.39** | 0.38 → **0.66** | 23.8 → 16.9 | 0.3 → 7.3 |
+| CAISO | coal | 0.40 | 0.16 → **0.30** | 0.16 → **0.30** | 0.41 → **0.41** | 0.4 → 0.4 | 0.2 → 0.2 |
+| CAISO | ct | 0.38 | 0.07 → **0.11** | 0.14 → **0.28** | 0.33 → **0.41** | 8.0 → 6.3 | 0.4 → 2.0 |
+| CAISO | st_gas | 0.12 | 0.05 → **0.08** | 0.07 → **0.20** | 0.25 → **0.34** | 2.4 → 0.8 | 1.0 → 2.5 |
+| ERCOT | cc | 0.52 | 0.20 → **0.35** | 0.31 → **0.51** | 0.44 → **0.65** | 41.1 → 23.3 | 3.2 → 21.0 |
+| ERCOT | coal | 0.40 | 0.10 → **0.30** | 0.19 → **0.34** | 0.45 → **0.51** | 13.9 → 13.9 | 4.2 → 4.2 |
+| ERCOT | ct | 0.38 | 0.09 → **0.23** | 0.15 → **0.45** | 0.53 → **0.69** | 9.0 → 3.6 | 1.9 → 7.3 |
+| ERCOT | st_gas | 0.12 | 0.06 → **0.14** | 0.09 → **0.19** | 0.20 → **0.30** | 12.4 → 0.9 | 3.4 → 14.9 |
+| MISO | cc | 0.52 | 0.22 → **0.35** | 0.32 → **0.56** | 0.56 → **0.73** | 81.5 → 37.1 | 14.2 → 58.6 |
+| MISO | coal | 0.40 | 0.14 → **0.30** | 0.22 → **0.41** | 0.45 → **0.56** | 79.0 → 43.0 | 12.3 → 48.3 |
+| MISO | ct | 0.38 | 0.08 → **0.17** | 0.15 → **0.33** | 0.33 → **0.59** | 40.3 → 26.2 | 3.1 → 17.2 |
+| MISO | st_gas | 0.12 | 0.06 → **0.14** | 0.10 → **0.23** | 0.30 → **0.38** | 17.7 → 2.4 | 11.6 → 27.0 |
+| NEISO | cc | 0.52 | 0.22 → **0.24** | 0.34 → **0.51** | 0.51 → **0.67** | 12.6 → 7.4 | 0.8 → 6.0 |
+| NEISO | coal | 0.40 | 0.22 → **0.46** | 0.22 → **0.46** | 0.22 → **0.46** | 0.4 → 0.0 | 0.0 → 0.4 |
+| NEISO | ct | 0.38 | 0.09 → **0.17** | 0.22 → **0.34** | 0.42 → **0.70** | 1.6 → 0.9 | 0.2 → 0.9 |
+| NEISO | st_gas | 0.12 | 0.07 → **0.13** | 0.18 → **0.25** | 0.30 → **0.37** | 0.6 → 0.1 | 1.9 → 2.4 |
+| NYISO | cc | 0.52 | 0.13 → **0.24** | 0.25 → **0.50** | 0.49 → **0.68** | 18.6 → 12.2 | 0.9 → 7.3 |
+| NYISO | ct | 0.38 | 0.08 → **0.13** | 0.13 → **0.33** | 0.38 → **0.61** | 4.1 → 2.9 | 0.4 → 1.6 |
+| NYISO | st_gas | 0.12 | 0.06 → **0.19** | 0.11 → **0.22** | 0.14 → **0.29** | 6.5 → 0.0 | 2.2 → 8.7 |
+| SPP | cc | 0.52 | 0.20 → **0.34** | 0.30 → **0.52** | 0.53 → **0.68** | 68.6 → 39.4 | 8.5 → 37.6 |
+| SPP | coal | 0.40 | 0.13 → **0.29** | 0.20 → **0.36** | 0.45 → **0.55** | 56.8 → 39.3 | 10.4 → 27.9 |
+| SPP | ct | 0.38 | 0.08 → **0.14** | 0.15 → **0.34** | 0.36 → **0.60** | 25.8 → 16.7 | 2.7 → 11.8 |
+| SPP | st_gas | 0.12 | 0.06 → **0.14** | 0.09 → **0.23** | 0.31 → **0.43** | 18.1 → 1.4 | 11.4 → 28.0 |
+
+**Outliers, reported and NOT clipped.** WWSIS-2 gives one typical value per class, not a band, so I
+invented no tolerance around it. The "GW above / below" columns are the flag.
+- Rows with new mlf ≥ 0.90: 11 of 1 389. Most are small (16–131 MW); the exception is MISO CC 55460
+  (2 units, 1 103 MW), 0.48 → 0.89.
+- Rows below 0.05: 8 of 1 389.
+- Lowest non-CT values: SPP CC 7887 at 0.057 and MISO ST_GAS 6035 at 0.066 (single unit, unchanged).
+- ST_GAS medians (0.19–0.25) sit above WWSIS-2's 0.12. That matches the #7259 CEMS reading. CC medians
+  (0.50–0.56) now bracket WWSIS-2's 0.52; CAISO CC (0.39) is the low exception.
+
+**Caveat (statistic, a desk item):** unit online starts at 5 % of unit HSL, so p5 includes start-up and
+shut-down ramp hours and biases `mlf` low. Restricting to full operating hours (`opTime == 1`) or
+changing the percentile would be a statistic change, which is a PRECOMMIT item, not decided here.
