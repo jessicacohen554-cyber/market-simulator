@@ -1,0 +1,24 @@
+import pandas as pd, pyarrow.parquet as pq, pyarrow.compute as pc
+p=pd.read_parquet('data/raw/eia-860/eia860_plant.parquet',columns=['Plant Code','Plant Name','State','County','Utility Name','Transmission or Distribution System Owner'])
+p=p.drop_duplicates('Plant Code').set_index('Plant Code')
+K='results/calibration/closeout_miso_nuc_span/hourly/unit_marginal_%d.parquet'
+B='docs/records/miso/ucmilp/data/ucmilp3_miso_b_span/hourly/unit_marginal_%d.parquet'
+A='docs/records/miso/ucmilp/data/ucmilp3_miso_a_span/hourly/unit_marginal_%d.parquet'
+def st(path):
+    t=pq.read_table(path,columns=['plant_group','plant_code','mw','pass'],filters=[('plant_group','=','ST_GAS'),('pass','=','P1')]).to_pandas()
+    return t.groupby('plant_code').mw.sum()/1e6
+rows=[]
+for y in [2019,2020,2021,2022]:
+    k=st(K%y); b=st(B%y); a=st(A%y)
+    df=pd.DataFrame({'keeper':k,'armA':a,'armB':b}).fillna(0); df['year']=y
+    rows.append(df)
+df=pd.concat(rows).reset_index().rename(columns={'index':'plant_code'})
+df['loss']=df.keeper-df.armB
+df=df.join(p,on='plant_code')
+g=df.groupby(['plant_code','Plant Name','State','Utility Name'])[['keeper','armA','armB','loss']].sum()/4
+g=g.sort_values('loss',ascending=False)
+pd.set_option('display.width',250); pd.set_option('display.max_rows',80)
+print(g.round(3).head(40))
+print('total mean loss TWh/yr', g.loss.sum().round(2))
+st_=df.groupby('State').loss.sum()/4; print(st_.sort_values(ascending=False).round(2))
+df.to_csv('/tmp/claude-0/-home-user-market-simulator/c0d25d63-2555-5dda-806f-b360b9e1a9c8/scratchpad/an/stgas_plant_ab.csv',index=False)

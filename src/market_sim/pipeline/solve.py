@@ -688,6 +688,17 @@ def run_energy_solve(
         )
         markup = _uc_stage.zero_markup(markup)
         p1_fleet_prep = _uc_stage.p1_fleet_prep
+        # Stage-owned P1 kwargs (a synchronized reserve class restricted to
+        # the integer members); ``{}`` leaves ``p1_kwargs_prep`` untouched.
+        if _uc_stage.p1_kwargs_overrides:
+            _uc_kw = _uc_stage.p1_kwargs_overrides
+            _up_kw_prep = p1_kwargs_prep
+
+            def p1_kwargs_prep(r0_, fa_, _up=_up_kw_prep, _uc=_uc_kw):
+                """Upstream P1 kwargs overrides, then the UC stage's."""
+                base = (_up(r0_, fa_) if _up is not None else None) or {}
+                return {**base, **_uc}
+
     _t3 = time.perf_counter()
     mc_bid = mc_base + markup
     # P1-only bid adjustment (ERCOT condition-responsive offer surface): an additive

@@ -1,0 +1,126 @@
+plant_code,keeper,armA,armB,year,loss,Plant Name,State,County,Utility Name,Transmission or Distribution System Owner
+170,0.0029842998,0.0,0.0,2019,0.0029842998,Lake Catherine,AR,Hot Spring,Entergy Arkansas LLC,Entergy Arkansas Inc
+202,0.00026483147,0.0,0.0,2019,0.00026483147,Carl Bailey,AR,Woodruff,Arkansas Electric Coop Corp,Entergy Arkansas Inc
+203,0.0005646547,0.0,0.0,2019,0.0005646547,McClellan (AR),AR,Ouachita,Arkansas Electric Coop Corp,Entergy Arkansas Inc
+990,1.0844431,1.1180689,0.110099144,2019,0.97434396,Harding Street,IN,Marion,AES Indiana,Indianapolis Power & Light Co
+1081,0.048334893,0.019493813,0.013758979,2019,0.034575913,Riverside,IA,Scott,MidAmerican Energy Co,MidAmerican Energy Co
+1122,0.117048614,0.13805924,0.007887515,2019,0.1091611,Ames Electric Services Power Plant,IA,Story,City of Ames - (IA),City of Ames - (IA)
+1131,0.0,0.0,0.0,2019,0.0,Streeter Station,IA,Black Hawk,Cedar Falls Utilities,Cedar Falls Utilities
+1400,0.68294275,0.9563309,0.62263936,2019,0.06030339,Teche,LA,St Mary,Cleco Power LLC,Cleco Power LLC
+1402,0.7134262,0.73504966,0.33317408,2019,0.3802521,Little Gypsy,LA,St Charles,Entergy Louisiana LLC,Entergy Louisiana LLC
+1403,5.622706,5.66075,0.80300635,2019,4.8197,Nine Mile Point,LA,Jefferson,Entergy Louisiana LLC,Entergy Louisiana LLC
+1439,0.021032877,0.05414572,0.005352616,2019,0.015680261,Houma,LA,Terrebonne,Terrebonne Parish Consol Gov't,Entergy Louisiana LLC
+1464,0.0028148496,0.0,0.0014665383,2019,0.0013483113,Big Cajun 1,LA,Pointe Coupee,Louisiana Generating LLC,Entergy Louisiana LLC
+1702,0.000519238,0.0,0.0,2019,0.000519238,Dan E Karn,MI,Bay,Consumers Energy Co - (MI),ITC Transmission
+1866,0.0,0.0,0.0,2019,0.0,Wyandotte,MI,Wayne,Wyandotte Municipal Serv Comm - (MI),Wyandotte Municipal Serv Comm
+1891,0.0,0.0,0.0,2019,0.0,Syl Laskin,MN,St Louis,"ALLETE, Inc.","ALLETE, Inc."
+2050,0.6375457,0.72569,0.3945726,2019,0.24297312,Baxter Wilson,MS,Warren,Entergy Mississippi LLC,Entergy Mississippi Inc
+2053,0.08208506,0.04242153,0.1402093,2019,-0.058124244,Rex Brown,MS,Hinds,Entergy Mississippi LLC,Entergy Mississippi Inc
+2070,0.017572064,0.031468518,0.0004903406,2019,0.017081723,Moselle,MS,Jones,Cooperative Energy,South Mississippi El Pwr Assn
+2104,0.0127,0.04268688,0.0,2019,0.0127,Meramec,MO,St Louis,Union Electric Co - (MO),Union Electric Co - (MO)
+2123,0.0125070205,0.013448339,0.014054902,2019,-0.0015478814,Columbia (MO),MO,Boone,City of Columbia - (MO),City of Columbia - (MO)
+3457,1.2222079,1.1062942,0.6972474,2019,0.5249605,Lewis Creek,TX,Montgomery,Entergy Texas Inc.,Entergy Texas Inc.
+3459,2.2421446,2.0450242,0.25377518,2019,1.9883695,Sabine,TX,Orange,Entergy Texas Inc.,Entergy Texas Inc.
+3982,0.0,0.0,0.0,2019,0.0,Bay Front,WI,Ashland,Northern States Power Co - Minnesota,Northern States Power Co
+3992,0.0,0.0,0.0,2019,0.0,Blount Street,WI,Dane,Madison Gas & Electric Co,American Transmission Co
+4078,0.10613152,0.029273046,0.05289797,2019,0.053233545,Weston,WI,Marathon,Wisconsin Public Service Corp,American Transmission Co
+6035,0.10461,0.17133243,0.0,2019,0.10461,Greenwood (MI),MI,St Clair,DTE Electric Company,ITC Transmission
+6055,0.2906241,0.59905493,0.04105114,2019,0.24957298,Big Cajun 2,LA,Pointe Coupee,Louisiana Generating LLC,Entergy Louisiana LLC
+6190,0.16711713,0.15407561,0.055964474,2019,0.111152664,Brame Energy Center,LA,Rapides,Cleco Power LLC,Cleco Power LLC
+8054,0.12158276,0.0,0.06354223,2019,0.05804053,Gerald Andrus,MS,Washington,Entergy Mississippi LLC,Entergy Mississippi Inc
+8056,0.020147972,0.0,0.0,2019,0.020147972,Waterford 1 & 2,LA,St Charles,Entergy Louisiana LLC,Entergy Louisiana LLC
+170,0.14818873,0.0,0.05133202,2020,0.096856706,Lake Catherine,AR,Hot Spring,Entergy Arkansas LLC,Entergy Arkansas Inc
+203,0.030009605,0.009786645,0.036971837,2020,-0.0069622323,McClellan (AR),AR,Ouachita,Arkansas Electric Coop Corp,Entergy Arkansas Inc
+990,1.1814877,1.1893319,0.15154164,2020,1.0299461,Harding Street,IN,Marion,AES Indiana,Indianapolis Power & Light Co
+1081,0.1707583,0.080055274,0.098701544,2020,0.07205676,Riverside,IA,Scott,MidAmerican Energy Co,MidAmerican Energy Co
+1122,0.26297712,0.29747796,0.01442732,2020,0.2485498,Ames Electric Services Power Plant,IA,Story,City of Ames - (IA),City of Ames - (IA)
+1131,0.0,0.0,0.0,2020,0.0,Streeter Station,IA,Black Hawk,Cedar Falls Utilities,Cedar Falls Utilities
+1400,0.7495471,1.0049261,0.4201599,2020,0.32938722,Teche,LA,St Mary,Cleco Power LLC,Cleco Power LLC
+1402,0.7622933,0.5762682,0.32031366,2020,0.44197962,Little Gypsy,LA,St Charles,Entergy Louisiana LLC,Entergy Louisiana LLC
+1403,6.216857,6.1282825,1.4995089,2020,4.717348,Nine Mile Point,LA,Jefferson,Entergy Louisiana LLC,Entergy Louisiana LLC
+1439,0.041811258,0.076203376,0.006137441,2020,0.035673816,Houma,LA,Terrebonne,Terrebonne Parish Consol Gov't,Entergy Louisiana LLC
+1464,0.07101858,0.00956302,0.023728115,2020,0.04729046,Big Cajun 1,LA,Pointe Coupee,Louisiana Generating LLC,Entergy Louisiana LLC
+1702,0.0,0.0,0.0,2020,0.0,Dan E Karn,MI,Bay,Consumers Energy Co - (MI),ITC Transmission
+1866,0.0,0.0,0.0,2020,0.0,Wyandotte,MI,Wayne,Wyandotte Municipal Serv Comm - (MI),Wyandotte Municipal Serv Comm
+1891,0.0,0.0,0.0,2020,0.0,Syl Laskin,MN,St Louis,"ALLETE, Inc.","ALLETE, Inc."
+2018,0.0,0.0,0.0,2020,0.0,,,,,
+2022,0.0061463844,0.011408437,0.013642559,2020,-0.0074961744,Willmar,MN,Kandiyohi,Willmar Municipal Utilities (MN),Willmar Municipal Utilities
+2050,0.66765463,0.74351746,0.41794264,2020,0.24971199,Baxter Wilson,MS,Warren,Entergy Mississippi LLC,Entergy Mississippi Inc
+2070,0.031100454,0.03900938,0.015986819,2020,0.015113635,Moselle,MS,Jones,Cooperative Energy,South Mississippi El Pwr Assn
+2104,0.024874004,0.049568783,0.0,2020,0.024874004,Meramec,MO,St Louis,Union Electric Co - (MO),Union Electric Co - (MO)
+2123,0.023574289,0.021886267,0.02578618,2020,-0.002211891,Columbia (MO),MO,Boone,City of Columbia - (MO),City of Columbia - (MO)
+3457,1.5835003,1.4155061,1.1979955,2020,0.38550472,Lewis Creek,TX,Montgomery,Entergy Texas Inc.,Entergy Texas Inc.
+3459,3.3903017,2.7414672,1.1706358,2020,2.219666,Sabine,TX,Orange,Entergy Texas Inc.,Entergy Texas Inc.
+3982,0.0,0.0,0.0,2020,0.0,Bay Front,WI,Ashland,Northern States Power Co - Minnesota,Northern States Power Co
+3992,0.0015786615,0.0,0.0,2020,0.0015786615,Blount Street,WI,Dane,Madison Gas & Electric Co,American Transmission Co
+4078,0.1366704,0.07977391,0.104488194,2020,0.0321822,Weston,WI,Marathon,Wisconsin Public Service Corp,American Transmission Co
+6035,0.20352046,0.3132651,0.0,2020,0.20352046,Greenwood (MI),MI,St Clair,DTE Electric Company,ITC Transmission
+6055,0.24742727,0.4952087,0.0,2020,0.24742727,Big Cajun 2,LA,Pointe Coupee,Louisiana Generating LLC,Entergy Louisiana LLC
+6190,0.28444606,0.24721543,0.07856737,2020,0.20587869,Brame Energy Center,LA,Rapides,Cleco Power LLC,Cleco Power LLC
+8054,0.27479997,0.0,0.16580287,2020,0.10899711,Gerald Andrus,MS,Washington,Entergy Mississippi LLC,Entergy Mississippi Inc
+8056,0.09621788,0.020780088,0.023464609,2020,0.072753266,Waterford 1 & 2,LA,St Charles,Entergy Louisiana LLC,Entergy Louisiana LLC
+58200,0.012585888,0.0075693405,0.009810082,2020,0.002775806,,,,,
+63921,0.021208363,0.02044684,0.021264827,2020,-5.6464225e-05,POET Biorefining - Shelbyville,IN,Shelby,POET Biorefining- Shelbyville,Midwest Energy Cooperative
+170,0.005523572,0.0,0.0,2021,0.005523572,Lake Catherine,AR,Hot Spring,Entergy Arkansas LLC,Entergy Arkansas Inc
+203,0.0,0.0,0.0,2021,0.0,McClellan (AR),AR,Ouachita,Arkansas Electric Coop Corp,Entergy Arkansas Inc
+990,1.2201698,1.2449311,0.099713385,2021,1.1204565,Harding Street,IN,Marion,AES Indiana,Indianapolis Power & Light Co
+1081,0.0,0.0,0.0,2021,0.0,Riverside,IA,Scott,MidAmerican Energy Co,MidAmerican Energy Co
+1122,0.19626093,0.25508758,0.0139007205,2021,0.1823602,Ames Electric Services Power Plant,IA,Story,City of Ames - (IA),City of Ames - (IA)
+1131,0.0,0.0,0.0,2021,0.0,Streeter Station,IA,Black Hawk,Cedar Falls Utilities,Cedar Falls Utilities
+1400,0.3576767,0.69345933,0.024845174,2021,0.33283153,Teche,LA,St Mary,Cleco Power LLC,Cleco Power LLC
+1402,0.08221237,0.11927257,0.01046327,2021,0.071749106,Little Gypsy,LA,St Charles,Entergy Louisiana LLC,Entergy Louisiana LLC
+1403,4.970229,4.9767084,0.50655895,2021,4.4636703,Nine Mile Point,LA,Jefferson,Entergy Louisiana LLC,Entergy Louisiana LLC
+1439,0.020545939,0.046572015,0.0009260741,2021,0.019619865,Houma,LA,Terrebonne,Terrebonne Parish Consol Gov't,Entergy Louisiana LLC
+1464,0.0029476115,0.0,0.0,2021,0.0029476115,Big Cajun 1,LA,Pointe Coupee,Louisiana Generating LLC,Entergy Louisiana LLC
+1702,0.0003473223,0.0,0.0,2021,0.0003473223,Dan E Karn,MI,Bay,Consumers Energy Co - (MI),ITC Transmission
+1866,0.0,0.0,0.0,2021,0.0,Wyandotte,MI,Wayne,Wyandotte Municipal Serv Comm - (MI),Wyandotte Municipal Serv Comm
+1891,0.0,0.0,0.0,2021,0.0,Syl Laskin,MN,St Louis,"ALLETE, Inc.","ALLETE, Inc."
+2018,0.0,0.0,0.0,2021,0.0,,,,,
+2022,0.0,0.0,0.0,2021,0.0,Willmar,MN,Kandiyohi,Willmar Municipal Utilities (MN),Willmar Municipal Utilities
+2050,0.34669343,0.36715788,0.051445033,2021,0.2952484,Baxter Wilson,MS,Warren,Entergy Mississippi LLC,Entergy Mississippi Inc
+2070,0.01931099,0.022997413,0.014681454,2021,0.0046295365,Moselle,MS,Jones,Cooperative Energy,South Mississippi El Pwr Assn
+2104,0.01271105,0.037621032,0.0,2021,0.01271105,Meramec,MO,St Louis,Union Electric Co - (MO),Union Electric Co - (MO)
+2123,0.030916937,0.027483756,0.029455798,2021,0.001461139,Columbia (MO),MO,Boone,City of Columbia - (MO),City of Columbia - (MO)
+3457,1.0059266,0.96552134,0.29516968,2021,0.7107569,Lewis Creek,TX,Montgomery,Entergy Texas Inc.,Entergy Texas Inc.
+3459,2.1131096,2.0814922,0.13156232,2021,1.9815472,Sabine,TX,Orange,Entergy Texas Inc.,Entergy Texas Inc.
+3982,0.0,0.0,0.0,2021,0.0,Bay Front,WI,Ashland,Northern States Power Co - Minnesota,Northern States Power Co
+3992,0.0,0.0,0.0,2021,0.0,Blount Street,WI,Dane,Madison Gas & Electric Co,American Transmission Co
+6035,0.13724567,0.2226574,0.0,2021,0.13724567,Greenwood (MI),MI,St Clair,DTE Electric Company,ITC Transmission
+6055,0.08098984,0.16389546,0.0,2021,0.08098984,Big Cajun 2,LA,Pointe Coupee,Louisiana Generating LLC,Entergy Louisiana LLC
+6190,0.1519579,0.15323791,0.009607121,2021,0.14235078,Brame Energy Center,LA,Rapides,Cleco Power LLC,Cleco Power LLC
+8054,0.0,0.0,0.0,2021,0.0,Gerald Andrus,MS,Washington,Entergy Mississippi LLC,Entergy Mississippi Inc
+8056,0.028725404,0.021627584,0.023969235,2021,0.0047561694,Waterford 1 & 2,LA,St Charles,Entergy Louisiana LLC,Entergy Louisiana LLC
+10612,0.01592352,0.0013479068,0.015448032,2021,0.0004754886,,,,,
+55245,0.0012724991,0.000107136,0.0012287287,2021,4.3770415e-05,,,,,
+63921,0.030491145,0.028904973,0.030644197,2021,-0.00015305169,POET Biorefining - Shelbyville,IN,Shelby,POET Biorefining- Shelbyville,Midwest Energy Cooperative
+170,0.0621237,0.025555888,0.041064326,2022,0.021059375,Lake Catherine,AR,Hot Spring,Entergy Arkansas LLC,Entergy Arkansas Inc
+203,0.0056233495,0.0,0.0021703446,2022,0.0034530049,McClellan (AR),AR,Ouachita,Arkansas Electric Coop Corp,Entergy Arkansas Inc
+990,1.2749494,1.293417,0.070467696,2022,1.2044817,Harding Street,IN,Marion,AES Indiana,Indianapolis Power & Light Co
+1104,0.004930358,0.0024935326,0.0026402113,2022,0.0022901467,Burlington (IA),IA,Des Moines,Interstate Power and Light Co,ITC Midwest LLC
+1122,0.23921916,0.25934222,0.028770762,2022,0.2104484,Ames Electric Services Power Plant,IA,Story,City of Ames - (IA),City of Ames - (IA)
+1131,0.0,0.0,0.0,2022,0.0,Streeter Station,IA,Black Hawk,Cedar Falls Utilities,Cedar Falls Utilities
+1400,0.399684,0.62654686,0.15282203,2022,0.24686198,Teche,LA,St Mary,Cleco Power LLC,Cleco Power LLC
+1402,0.26779997,0.17640449,0.011020404,2022,0.25677958,Little Gypsy,LA,St Charles,Entergy Louisiana LLC,Entergy Louisiana LLC
+1403,6.0474515,6.028054,0.5522893,2022,5.495162,Nine Mile Point,LA,Jefferson,Entergy Louisiana LLC,Entergy Louisiana LLC
+1439,0.02631006,0.05314042,0.007857476,2022,0.018452585,Houma,LA,Terrebonne,Terrebonne Parish Consol Gov't,Entergy Louisiana LLC
+1464,0.011622235,0.0083787115,0.010091871,2022,0.0015303642,Big Cajun 1,LA,Pointe Coupee,Louisiana Generating LLC,Entergy Louisiana LLC
+1702,0.011106692,0.0,0.0,2022,0.011106692,Dan E Karn,MI,Bay,Consumers Energy Co - (MI),ITC Transmission
+1866,6.09435e-06,0.0,0.0,2022,6.09435e-06,Wyandotte,MI,Wayne,Wyandotte Municipal Serv Comm - (MI),Wyandotte Municipal Serv Comm
+1891,0.0,0.0,0.0,2022,0.0,Syl Laskin,MN,St Louis,"ALLETE, Inc.","ALLETE, Inc."
+2018,0.0,0.0,0.0,2022,0.0,,,,,
+2022,0.0,0.0,0.0,2022,0.0,Willmar,MN,Kandiyohi,Willmar Municipal Utilities (MN),Willmar Municipal Utilities
+2050,0.06509242,0.0941329,0.0,2022,0.06509242,Baxter Wilson,MS,Warren,Entergy Mississippi LLC,Entergy Mississippi Inc
+2070,0.020168971,0.019975372,0.01957921,2022,0.0005897619,Moselle,MS,Jones,Cooperative Energy,South Mississippi El Pwr Assn
+2104,0.056054093,0.09376218,0.033844456,2022,0.022209637,Meramec,MO,St Louis,Union Electric Co - (MO),Union Electric Co - (MO)
+2123,0.0,0.0,0.0,2022,0.0,Columbia (MO),MO,Boone,City of Columbia - (MO),City of Columbia - (MO)
+3457,0.98066044,0.9230436,0.33585367,2022,0.64480674,Lewis Creek,TX,Montgomery,Entergy Texas Inc.,Entergy Texas Inc.
+3459,1.9404995,1.8825971,0.28580087,2022,1.6546986,Sabine,TX,Orange,Entergy Texas Inc.,Entergy Texas Inc.
+3982,0.0,0.0,0.0,2022,0.0,Bay Front,WI,Ashland,Northern States Power Co - Minnesota,Northern States Power Co
+3992,0.00014869893,0.0,0.0,2022,0.00014869893,Blount Street,WI,Dane,Madison Gas & Electric Co,American Transmission Co
+6035,0.09388416,0.15107478,0.011770437,2022,0.08211373,Greenwood (MI),MI,St Clair,DTE Electric Company,ITC Transmission
+6055,0.41116267,0.45736492,0.25709423,2022,0.15406844,Big Cajun 2,LA,Pointe Coupee,Louisiana Generating LLC,Entergy Louisiana LLC
+6190,0.1490679,0.12715422,0.035320725,2022,0.113747165,Brame Energy Center,LA,Rapides,Cleco Power LLC,Cleco Power LLC
+6639,0.003698556,0.0,0.0,2022,0.003698556,R D Green,KY,Webster,Big Rivers Electric Corp,Big Rivers Electric Corp
+8054,0.32273823,0.020274157,0.47649416,2022,-0.15375593,Gerald Andrus,MS,Washington,Entergy Mississippi LLC,Entergy Mississippi Inc
+8056,0.069366306,0.009033973,0.03795994,2022,0.031406365,Waterford 1 & 2,LA,St Charles,Entergy Louisiana LLC,Entergy Louisiana LLC
+63921,0.03534898,0.03066549,0.032546833,2022,0.0028021485,POET Biorefining - Shelbyville,IN,Shelby,POET Biorefining- Shelbyville,Midwest Energy Cooperative

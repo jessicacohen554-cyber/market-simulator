@@ -2464,6 +2464,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # emergency-pool row). No input of its own. Registered IN THE SAME COMMIT
     # as the field (the nyiso-119 discipline).
     "spp_mmu_offer_repair",
+    # UC-SPP-SPIN spinning share (default off): dropped from the hash at its
+    # default so every pre-existing run keeps its key. Byte-identical off by
+    # construction (_spp_design returns the one-family design unchanged).
+    # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
+    "spp_spinning_reserve_share",
     # EIA-923 CC-family heat rates (NWPP-NEXT-14, default off): dropped from
     # the hash at its default so every pre-existing run -- every ISO's keepers
     # included -- keeps its key. Byte-identical off by construction (the seam
@@ -3427,6 +3432,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "spp_mmu_offer_unavailability": "False",
     # Added by SPP-107 WITH the field (the nyiso-119 discipline).
     "spp_mmu_offer_repair": "False",
+    # Added by UC-SPP-SPIN WITH the field (the nyiso-119 discipline).
+    "spp_spinning_reserve_share": "False",
     # Added by NWPP-NEXT-14 WITH the field (the nyiso-119 discipline).
     "eia923_cc_family_heat_rates": "False",
     # Added by soco-96 WITH the field (the nyiso-119 discipline).
@@ -19449,6 +19456,25 @@ class ScenarioConfig:
     # docs/records/spp/DESIGN-spp-106-offer-side-unavailability-2026-10-01.md.
     spp_mmu_offer_unavailability: bool = False
 
+    # SPP SPINNING SHARE of Contingency Reserve (lane UC-SPP-SPIN, owner ruling
+    # r13 2026-10-15; SPP-56's object). Default off; SPP-only. Read only by
+    # _spp_design (so inert without energy_reserve_coopt), which refuses it
+    # without unit_commitment_milp. Disarm: --set
+    # spp_spinning_reserve_share=false (the pre-arm posture).
+    #
+    # WHEN TRUE, _spp_design adds a SUB-requirement to its one Contingency
+    # Reserve family system (rule 19: no second reserve system): a nested
+    # class-1 family "spp_spinning_reserve" at SPP_RSG_SPIN_MIN_SHARE (1/2,
+    # RSG Operating Process 0820EXT00002 Definitions p. 5: "At least half of
+    # the Contingency Reserve shall be Operating Reserve - Spinning") x the
+    # Contingency Reserve requirement, short at the $250/MW Spinning Reserve
+    # VRL (Protocols v119 Exhibit 4-1). Class 1 is SYNCHRONIZED: the UC stage
+    # restricts it to integer-cluster members, so an offline fast-start CT
+    # still counts toward the pooled requirement but never toward Spinning,
+    # and a committed unit's headroom (u-gated in the window, a*u/n in P1)
+    # must carry it. Zero free parameters (rule 21).
+    spp_spinning_reserve_share: bool = False
+
     # SPP-107 repair sub-gate of spp_mmu_offer_unavailability (2026-10-02; owner
     # card "Build + solve EXR"). Requires spp_mmu_offer_unavailability; SPP-only.
     #
@@ -24511,6 +24537,11 @@ class ScenarioConfig:
                 "spp_mmu_offer_unavailability is SPP-only (SPP-106: the SPP MMU's "
                 "own measured unavailability classes, rule 25)."
             )
+        if self.spp_spinning_reserve_share and str(self.iso) != "SPP":
+            raise ValueError(
+                "spp_spinning_reserve_share is SPP-only (RSG Operating Process "
+                "p. 5, rule 25)."
+            )
         if self.spp_mmu_offer_repair and not self.spp_mmu_offer_unavailability:
             raise ValueError(
                 "spp_mmu_offer_repair is a sub-gate of spp_mmu_offer_unavailability "
@@ -26143,6 +26174,10 @@ TIER_TAGS: dict[str, int] = {
     # (multiplicative; economic-to-emergency slice as a scarcity-priced zonal
     # pool at VOLL - epsilon); no free number of its own (rule 21).
     "spp_mmu_offer_repair": 1,
+    # Structural gate (1): SPP's published >= 1/2 Spinning share of Contingency
+    # Reserve (RSG Operating Process p. 5) priced at the published $250/MW
+    # Spinning Reserve VRL (Protocols Exhibit 4-1); no free number (rule 21).
+    "spp_spinning_reserve_share": 1,
     # Structural gate (1): the plant-day measured gas/oil mix (CAMPD CO2 /
     # heat-input identity on Part 75 factors); no free number of its own
     # (rule 21). Backcast-only (rule 13).

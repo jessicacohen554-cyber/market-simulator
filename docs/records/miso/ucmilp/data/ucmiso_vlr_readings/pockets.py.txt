@@ -1,0 +1,26 @@
+"""Zero-LP: measured synchronization of MTEP15 VLR-eligible steam units per pocket (CAMPD hourly)."""
+import pyarrow.parquet as pq, pandas as pd, numpy as np, json
+P={'AmiteSouth':[('LA','8056',('1','2')),('LA','1402',('1','2','3'))],
+   'DSG':[('LA','1403',('3','4','5'))],
+   'WOTAB':[('LA','1393',('4',)),('TX','3459',('1','2','3','4','5'))],
+   'Western':[('TX','3457',('1','2'))]}
+res={}
+for y in range(2019,2026):
+  cache={}
+  for p,lst in P.items():
+    frames=[]
+    for st,fid,units in lst:
+      if st not in cache: cache[st]=pq.read_table(f'data/raw/campd-unit-level/{st}_{y}.parquet',columns=['facilityId','unitId','date','hour','opTime','grossLoad']).to_pandas()
+      d=cache[st]; d=d[(d.facilityId==fid)&(d.unitId.isin(units))].copy()
+      frames.append(d)
+    d=pd.concat(frames); d['on']=(d.opTime>0).astype(int); d['onmw']=np.where(d.opTime>0,d.grossLoad,0)
+    h=d.groupby(['date','hour']).agg(n=('on','sum'),mw=('grossLoad','sum')).reset_index()
+    day=h.groupby('date').n.min()
+    res[(p,y)]=dict(units=int(d.groupby(['facilityId','unitId']).ngroups),
+      share_hours_n0=round(float((h.n==0).mean()),3), share_hours_n_ge1=round(float((h.n>=1).mean()),3),
+      share_days_min_ge1=round(float((day>=1).mean()),3), mean_n=round(float(h.n.mean()),2),
+      p5_n=float(np.percentile(h.n,5)), twh=round(float(d.grossLoad.sum()/1e6),2))
+df=pd.DataFrame(res).T; df.index.names=['pocket','year']
+pd.set_option('display.width',200)
+print(df.to_string())
+df.reset_index().to_csv('/tmp/claude-0/-home-user-market-simulator/c0d25d63-2555-5dda-806f-b360b9e1a9c8/scratchpad/an/pocket_sync.csv',index=False)

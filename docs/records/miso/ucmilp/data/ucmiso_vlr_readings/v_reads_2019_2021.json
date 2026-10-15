@@ -1,0 +1,110 @@
+{
+ "2019:Amite South": {
+  "model_on_share": 0.94,
+  "cems_on_share": 0.907,
+  "model_starts": 30,
+  "cems_starts": 62,
+  "starts_ratio": 0.48,
+  "bind_hours": 7923,
+  "bind_cems_dark_share": 0.041
+ },
+ "2019:DSG": {
+  "model_on_share": 0.932,
+  "cems_on_share": 0.94,
+  "model_starts": 6,
+  "cems_starts": 17,
+  "starts_ratio": 0.35,
+  "bind_hours": 8101,
+  "bind_cems_dark_share": 0.0
+ },
+ "2019:Western": {
+  "model_on_share": 1.0,
+  "cems_on_share": 1.0,
+  "model_starts": 13,
+  "cems_starts": 8,
+  "starts_ratio": 1.62,
+  "bind_hours": 8423,
+  "bind_cems_dark_share": 0.0
+ },
+ "2019:WOTAB": {
+  "model_on_share": 1.0,
+  "cems_on_share": 0.952,
+  "model_starts": 8,
+  "cems_starts": 42,
+  "starts_ratio": 0.19,
+  "bind_hours": 8676,
+  "bind_cems_dark_share": 0.048
+ },
+ "2020:Amite South": {
+  "model_on_share": 0.973,
+  "cems_on_share": 0.803,
+  "model_starts": 22,
+  "cems_starts": 35,
+  "starts_ratio": 0.63,
+  "bind_hours": 8114,
+  "bind_cems_dark_share": 0.185
+ },
+ "2020:DSG": {
+  "model_on_share": 0.959,
+  "cems_on_share": 0.944,
+  "model_starts": 22,
+  "cems_starts": 20,
+  "starts_ratio": 1.1,
+  "bind_hours": 7711,
+  "bind_cems_dark_share": 0.025
+ },
+ "2020:Western": {
+  "model_on_share": 0.927,
+  "cems_on_share": 0.939,
+  "model_starts": 29,
+  "cems_starts": 15,
+  "starts_ratio": 1.93,
+  "bind_hours": 6531,
+  "bind_cems_dark_share": 0.0
+ },
+ "2020:WOTAB": {
+  "model_on_share": 0.989,
+  "cems_on_share": 0.995,
+  "model_starts": 51,
+  "cems_starts": 41,
+  "starts_ratio": 1.24,
+  "bind_hours": 7923,
+  "bind_cems_dark_share": 0.0
+ },
+ "2021:Amite South": {
+  "model_on_share": 1.0,
+  "cems_on_share": 0.39,
+  "model_starts": 5,
+  "cems_starts": 60,
+  "starts_ratio": 0.08,
+  "bind_hours": 8711,
+  "bind_cems_dark_share": 0.614
+ },
+ "2021:DSG": {
+  "model_on_share": 0.822,
+  "cems_on_share": 0.81,
+  "model_starts": 5,
+  "cems_starts": 18,
+  "starts_ratio": 0.28,
+  "bind_hours": 7124,
+  "bind_cems_dark_share": 0.032
+ },
+ "2021:Western": {
+  "model_on_share": 1.0,
+  "cems_on_share": 0.973,
+  "model_starts": 6,
+  "cems_starts": 21,
+  "starts_ratio": 0.29,
+  "bind_hours": 8565,
+  "bind_cems_dark_share": 0.027
+ },
+ "2021:WOTAB": {
+  "model_on_share": 1.0,
+  "cems_on_share": 1.0,
+  "model_starts": 4,
+  "cems_starts": 37,
+  "starts_ratio": 0.11,
+  "bind_hours": 8725,
+  "bind_cems_dark_share": 0.0
+ }
+}

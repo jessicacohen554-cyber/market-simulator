@@ -338,6 +338,21 @@ SPP_RSG_MSSC_MIN_NAMEPLATE_MW: float = 600.0
 # (2023) / 1,484 MW (2024) -> 0.973 / 0.954, pooled 0.964. Derivation:
 # FINDING-spp-55-2026-09-07.md §1.4 (zero-LP; the archives are NOT landed).
 SPP_BA_CR_REQUIREMENT_RATIO: float = 0.964
+# Spinning share (config.spp_spinning_reserve_share; lane UC-SPP-SPIN, owner
+# ruling r13 2026-10-15, SPP-56's object). RSG Operating Process 0820EXT00002
+# v4.0, Definitions (p. 5): "Contingency Reserve is the sum of Operating
+# Reserve - Spinning and Operating Reserve - Supplemental. At least half of
+# the Contingency Reserve shall be Operating Reserve - Spinning" (transcribed
+# in PRECOMMIT-spp-55-2026-09-07.md §2). Spinning is synchronized capacity.
+SPP_RSG_SPIN_MIN_SHARE: float = 0.5
+# The spin sub-constraint's shortfall price: the Spinning Reserve Constraint
+# VRL, "A MW value representing the Spinning Reserve requirement for each SPP
+# Balancing Authority Area" — $250/MW, Protocols v119 §4.1.4 Exhibit 4-1
+# (printed p. 71); §4.1.4.1(5): when the constraint cannot be resolved at a
+# shadow price <= the VRL "the Spinning Reserve requirement is reduced by the
+# amount of the violation", i.e. one shortfall step at $250 spanning the
+# whole requirement (transcription Integrated_Marketplace_Protocols_119.txt).
+SPP_SPINNING_RESERVE_VRL: float = 250.0
 
 # --- CAISO (config.caiso_reserve_coopt, _caiso_design, issue #1492) ---------
 # BAL-002-WECC-3 R1 Contingency Reserve requirement: max(most-severe single
@@ -839,6 +854,15 @@ class ReserveDesign:
     headroom_storage: Optional[np.ndarray] = None
     online_gated: Optional[np.ndarray] = None  # (n_classes,) bool
     online_rho: float = 1.0
+    # (n_classes,) bool — SYNCHRONIZED classes (SPP spinning share,
+    # spp_spinning_reserve_share): a class whose OFFLINE capacity may not
+    # count. The LP has no commitment state, so the class is built as an
+    # ordinary capacity-headroom class and the commitment stage that owns
+    # the state (pipeline/uc.py, unit_commitment_milp) restricts it to the
+    # integer-cluster members, whose capacity the UC window ties to ``u``
+    # (window.reserve_headroom_u_terms) and the P1 schedule to ``a * u / n``.
+    # A design carrying one requires the UC stage. None = no such class.
+    synchronized: Optional[np.ndarray] = None
     # Per-generator reserve spec (dispatch._build_reserve_rows_pergen): one
     # R column per reserve-providing asset, bounded by its 10-min deliverable
     # ramp. ``pergen_gen_idx`` lists every member generator; ``pergen_col``
@@ -1112,6 +1136,10 @@ def build_reserve_dispatch_kwargs(
     if design.online_gated is not None:
         kw["reserve_online_gated"] = design.online_gated
         kw["reserve_online_rho"] = design.online_rho
+
+    # Synchronized classes (SPP spinning share): consumed by the UC stage.
+    if design.synchronized is not None:
+        kw["reserve_synchronized"] = design.synchronized
 
     # Supply cap (ERCOT RTOLCAP, PJM deliverable ramp)
     if design.supply_cap is not None:
@@ -4626,6 +4654,13 @@ def _spp_design(
     Zero fitted scalars: three published caps/factors, two published RSG
     constants, one MEASURED share (rule 21 DOF ledger, FINDING-spp-55 §1.4).
 
+    Spinning share (``spp_spinning_reserve_share``, default off; owner ruling
+    r13): a nested, SYNCHRONIZED class-1 family at ``SPP_RSG_SPIN_MIN_SHARE``
+    x the requirement, short at the $250/MW Spinning Reserve VRL. The UC
+    stage restricts class 1 to integer-cluster members (committed capacity
+    only); offline fast-start capacity still counts toward the pooled
+    family. Refused without ``unit_commitment_milp``.
+
     Args:
         config: ScenarioConfig-like (``iso`` must be ``"SPP"``).
         fleet_arrays: The vectorized fleet.
@@ -4684,8 +4719,41 @@ def _spp_design(
             reserve_class=0,
         )
     ]
+    if not getattr(config, "spp_spinning_reserve_share", False):
+        return ReserveDesign(
+            families=families,
+            eligible=eligible.reshape(1, -1),
+            storage_eligible=False,
+        )
+    # Spinning share (spp_spinning_reserve_share, owner ruling r13): a
+    # SUB-requirement of the same family system, not a second reserve system
+    # (rule 19). Class 1 is NESTED in class 0 (the NYISO 10-in-30 cascade):
+    # each class has its own headroom row over the same units, so
+    # ``R0 <= H_all`` with ``R0 >= req`` and ``R1 <= H_sync`` with
+    # ``R1 >= share * req`` is exactly "Contingency Reserve >= req, of which
+    # >= share * req Spinning" (H_sync is a subset of H_all). Class 1 is
+    # SYNCHRONIZED: the UC stage restricts it to integer-cluster members, so
+    # only committed capacity (u-gated in the window, a*u/n in P1) backs it.
+    if not getattr(config, "unit_commitment_milp", False):
+        raise ValueError(
+            "spp_spinning_reserve_share needs unit_commitment_milp: Spinning "
+            "Reserve is synchronized capacity and only the UC stage carries a "
+            "commitment state (without it offline capacity would count)."
+        )
+    spin_req = SPP_RSG_SPIN_MIN_SHARE * requirement
+    families.append(
+        ReserveFamily(
+            name="spp_spinning_reserve",
+            requirement=spin_req.astype(float),
+            zone_mask=np.ones(n_zones, dtype=bool),
+            ordc_penalties=np.array([SPP_SPINNING_RESERVE_VRL], dtype=float),
+            ordc_step_widths=np.array([float(spin_req.max())], dtype=float),
+            reserve_class=1,
+        )
+    )
     return ReserveDesign(
         families=families,
-        eligible=eligible.reshape(1, -1),
+        eligible=np.vstack([eligible, eligible]),
         storage_eligible=False,
+        synchronized=np.array([False, True]),
     )
