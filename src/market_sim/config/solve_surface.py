@@ -243,9 +243,10 @@ SOLVE_EPOCHS: tuple[SolveEpoch, ...] = (
     SolveEpoch(
         id="2026-10-15b",
         cause=(
-            "uc-params mlf re-derived per UNIT (sum of unit p5 online load over "
-            "sum of unit HSL) instead of the plant series p5 over plant HSL, "
-            "about 1/n of a unit's minimum (UC-DATA-UT, owner ruling 2026-10-15)"
+            "uc-params mlf re-derived per UNIT (sum of unit p5 load over full "
+            "online hours, CEMS opTime == 1, over sum of unit HSL) instead of the "
+            "plant series p5 over plant HSL, about 1/n of a unit's minimum "
+            "(UC-DATA-UT, owner rulings 2026-10-15)"
         ),
         isos=("CAISO", "ERCOT", "MISO", "NEISO", "NYISO", "SPP"),
         requires="unit_commitment_milp",

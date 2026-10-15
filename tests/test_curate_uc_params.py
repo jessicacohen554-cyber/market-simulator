@@ -223,6 +223,43 @@ class TestUnitBasisDurations(CleanDirTestCase):
         self.assertEqual(g.size, 19 + 8 + 9)
 
 
+def _unit_frame(load, optime, unit="U1") -> pd.DataFrame:
+    """One unit's hourly frame in the shape ``_load_state_year`` returns."""
+    n = len(load)
+    return pd.DataFrame(
+        {
+            "facilityId": 1,
+            "unitId": unit,
+            "uc_class": "cc",
+            "ts": pd.Timestamp("2023-01-01") + pd.to_timedelta(np.arange(n), "h"),
+            "opTime": np.asarray(optime, dtype=float),
+            "grossLoad": np.asarray(load, dtype=float),
+            "heatInput": 0.0,
+        }
+    )
+
+
+class TestFullHourLsl(CleanDirTestCase):
+    """Owner ruling 2026-10-15: the unit LSL sample is its FULL online hours."""
+
+    def test_partial_start_hours_do_not_set_the_minimum(self):
+        # 10 daily cycles: a 0.5 h start hour at 20 MW, then 9 full hours at 60 MW.
+        load = np.tile([20.0] + [60.0] * 9 + [0.0] * 14, 10)
+        optime = np.tile([0.5] + [1.0] * 9 + [0.0] * 14, 10)
+        _, _, hsl, lsl, n_full = up._unit_series_stats(_unit_frame(load, optime))
+        self.assertAlmostEqual(float(lsl[0]), 60.0)
+        self.assertAlmostEqual(float(hsl[0]), 60.0)
+        self.assertEqual(int(n_full[0]), 90)
+
+    def test_no_full_hour_falls_back_to_online_hours(self):
+        load = np.tile([20.0, 60.0, 0.0, 0.0], 30)
+        optime = np.tile([0.5, 0.75, 0.0, 0.0], 30)
+        frame = _unit_frame(load, optime)
+        _, _, _, lsl, _ = up._unit_series_stats(frame)
+        self.assertAlmostEqual(float(lsl[0]), 20.0)
+        self.assertEqual(up.unit_lsl_fallback_count(frame)[:2], (1, 1))
+
+
 def _write_crosswalk(raw_root, epa_rows=(), pudl_rows=()) -> None:
     """EPA crosswalk CSV / PUDL subplant parquet under ``raw_root`` (either may be empty)."""
     if epa_rows:

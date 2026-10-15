@@ -87,8 +87,10 @@ columns:
     nullable: false
     description: >-
       Per-unit minimum stable fraction when online, in [0, 1]: sum over units
-      of the unit LSL (p5 of the unit's online-hour load, online >= max(1 MW,
-      0.05 x unit HSL)) / sum of the unit HSL (p99.5 of the unit's series).
+      of the unit LSL (p5 of the unit's load over its FULL online hours, CEMS
+      opTime >= 1 and load >= max(1 MW, 0.05 x unit HSL); a unit with no full
+      online hour uses all its online hours) / sum of the unit HSL (p99.5 of
+      the unit's series). Owner ruling 2026-10-15 (UC-DATA-UT).
   - name: ut_h
     dtype: int64
     unit: hours

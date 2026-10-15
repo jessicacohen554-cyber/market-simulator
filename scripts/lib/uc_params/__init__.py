@@ -22,7 +22,8 @@ regression of closeout-PJM-decommit B0 / UC-0 F7):
 * the plant's units of one family are summed to ONE hourly plant series;
   HSL = p99.5 of that series, online = load >= max(1 MW, 0.05 x HSL);
 * ``mlf`` is measured per UNIT (UC-DATA-UT scope extension, owner ruling
-  2026-10-15, rule 23): each unit's LSL = p5 of its own online-hour load, its
+  2026-10-15, rule 23): each unit's LSL = p5 of its own load over its FULL
+  online hours (``opTime >= 1``; all online hours only if it has none), its
   HSL = p99.5 of its own series, ``mlf = sum(unit LSL) / sum(unit HSL)`` (the
   capacity-weighted unit minimum stable fraction) and ``lsl_mw = mlf x HSL``.
   The UC applies ``mlf`` per committed unit (``mlf x pbar x u``); the plant
@@ -99,6 +100,11 @@ ONLINE_FRAC_OF_HSL: float = 0.05
 #: p5 construction).
 HSL_PERCENTILE: float = 99.5
 LSL_PERCENTILE: float = 5.0
+#: A unit-hour is a FULL operating hour when CEMS ``opTime`` reaches this (the
+#: whole hour on line). The unit LSL sample is restricted to full online hours
+#: (owner ruling 2026-10-15, UC-DATA-UT: start-up / shut-down partial hours are
+#: not a minimum stable level).
+FULL_HOUR_OPTIME: float = 1.0
 #: Minimum-run / minimum-down duration percentile of the measured runs/gaps.
 DURATION_PERCENTILE: float = 25.0
 #: No-load regression fit screen (closeout-PJM-decommit B0; UC-0 F7).
@@ -175,18 +181,22 @@ def _runs_and_gaps(online: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
 
 def _unit_runs_and_gaps(cluster: pd.DataFrame) -> tuple[np.ndarray, np.ndarray]:
     """On-runs and off-gaps of every UNIT of one cluster, pooled (hours)."""
-    runs, gaps, _, _ = _unit_series_stats(cluster)
+    runs, gaps = _unit_series_stats(cluster)[:2]
     return runs, gaps
 
 
 def _unit_series_stats(
     cluster: pd.DataFrame,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Per-UNIT durations and load limits of one cluster.
 
-    Returns ``(runs, gaps, unit_hsl, unit_lsl)``: the on-runs and off-gaps of
-    every unit pooled (hours), and each unit's HSL (p99.5 of its series) and
-    LSL (p5 of its online-hour load), MW.
+    Returns ``(runs, gaps, unit_hsl, unit_lsl, unit_full_hours)``: the on-runs
+    and off-gaps of every unit pooled (hours), each unit's HSL (p99.5 of its
+    series) and LSL (MW), and each unit's count of full online hours. The LSL is p5 of the unit's load over its FULL operating hours
+    (online with ``opTime >= 1``; owner ruling 2026-10-15), so a start-up or
+    shut-down partial hour never sets the minimum. A unit with no full online
+    hour at all falls back to p5 over its online hours (the only fallback);
+    :func:`unit_lsl_fallback_count` counts how often that happens.
 
     A unit is keyed by its CEMS ``(facilityId, unitId)`` (two CEMS facilities
     mapped to one EIA plant may reuse a unit id). Each unit's series is online
@@ -198,9 +208,13 @@ def _unit_series_stats(
     gaps: list[np.ndarray] = []
     hsls: list[float] = []
     lsls: list[float] = []
+    n_full: list[int] = []
     one_hour = np.timedelta64(1, "h")
     for _, unit in cluster.groupby(["facilityId", "unitId"], sort=False):
-        series = unit.groupby("ts", sort=True)["grossLoad"].sum()
+        hourly = unit.groupby("ts", sort=True).agg(
+            grossLoad=("grossLoad", "sum"), opTime=("opTime", "min")
+        )
+        series = hourly["grossLoad"]
         load = series.to_numpy(dtype=float)
         if load.size == 0 or float(load.max()) <= 0.0:
             continue
@@ -211,7 +225,11 @@ def _unit_series_stats(
         if not online.any():
             continue
         hsls.append(hsl)
-        lsls.append(float(np.percentile(load[online], LSL_PERCENTILE)))
+        full = online & (hourly["opTime"].to_numpy(dtype=float) >= FULL_HOUR_OPTIME)
+        n_full.append(int(full.sum()))
+        lsls.append(
+            float(np.percentile(load[full if full.any() else online], LSL_PERCENTILE))
+        )
         ts = series.index.to_numpy(dtype="datetime64[ns]")
         cuts = np.flatnonzero(np.diff(ts) != one_hour) + 1
         for seg in np.split(online, cuts):
@@ -220,13 +238,23 @@ def _unit_series_stats(
             gaps.append(g)
     if not runs:
         empty = np.zeros(0, dtype=int)
-        return empty, empty, np.zeros(0), np.zeros(0)
+        return empty, empty, np.zeros(0), np.zeros(0), empty
     return (
         np.concatenate(runs),
         np.concatenate(gaps),
         np.asarray(hsls, dtype=float),
         np.asarray(lsls, dtype=float),
+        np.asarray(n_full, dtype=int),
     )
+
+
+def unit_lsl_fallback_count(cluster: pd.DataFrame) -> tuple[int, int, np.ndarray]:
+    """``(units, units with no full online hour, full-hour counts)`` of a cluster.
+
+    The audit companion of :func:`_unit_series_stats`'s one fallback.
+    """
+    n_full = _unit_series_stats(cluster)[4]
+    return int(n_full.size), int((n_full == 0).sum()), n_full
 
 
 def _noload_fit(unit: pd.DataFrame) -> tuple[float | None, float | None]:
@@ -291,7 +319,7 @@ def _plant_stats(cluster: pd.DataFrame) -> dict | None:
     # Durations and the minimum stable fraction per unit (rule 23 defect fix,
     # UC-DATA-UT): the plant mask's runs are how long ANY unit stayed on, and
     # the plant series' p5 is one unit of n at minimum.
-    runs, gaps, unit_hsl, unit_lsl = _unit_series_stats(cluster)
+    runs, gaps, unit_hsl, unit_lsl, _ = _unit_series_stats(cluster)
     mlf = (
         float(np.clip(unit_lsl.sum() / unit_hsl.sum(), 0.0, 1.0))
         if unit_hsl.size
@@ -406,7 +434,8 @@ def derive_iso(iso: str, raw_root: Path) -> pd.DataFrame:
         "units mapped to EIA plants by campd_crosswalk.camd_to_eia_plant: "
         f"HSL = p{HSL_PERCENTILE} of the summed load, online >= max({ONLINE_MIN_MW} MW, "
         f"{ONLINE_FRAC_OF_HSL} x HSL), mlf = sum of per-UNIT LSL (p{LSL_PERCENTILE} of the "
-        "unit's online-hour load) / sum of per-UNIT HSL, lsl_mw = mlf x HSL, "
+        f"unit's load over its FULL online hours, opTime >= {FULL_HOUR_OPTIME}; all online "
+        "hours only for a unit with no full hour) / sum of per-UNIT HSL, lsl_mw = mlf x HSL, "
         f"ut_h/dt_h = p{DURATION_PERCENTILE} of per-UNIT on-runs/off-gaps (unit online "
         f">= max({ONLINE_MIN_MW} MW, {ONLINE_FRAC_OF_HSL} x unit HSL), cut at reporting "
         "holes, pooled over the cluster's units), no-load = sum of "
