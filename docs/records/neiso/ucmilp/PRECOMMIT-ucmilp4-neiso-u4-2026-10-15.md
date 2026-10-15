@@ -174,3 +174,23 @@ No bar, kill, reading or recipe changes. This records process facts only.
   | 2023 | `session_013z3111kB5xpKgdCvGrZkRt` | 10:33Z |
   | 2024 | `session_01RnG1qA2JVdBo4LMhZ96wyi` | 10:39Z |
   | 2025 | `session_01QJSpD4bsyen8DPVYNkXjNE` | 10:44Z |
+
+## Addendum B (2026-10-15 12:57Z, before any leg result) — lane prompt error; corrected relaunch order; attempt ledger
+
+No bar, kill, reading or recipe changes.
+
+- **The prompt error (this lane's).** The launch-2 prompts and their a2 relaunches ran `uv sync` (lane STEP 0) before `prepare_solve_container.py`. The template's hard stop 2 says to run the prepare step FIRST. Swap is provisioned from free disk, and after `uv sync` the containers reported 6.7 GiB free. So 2020/21/22/24/25 printed 16.4–17.4 GiB and stopped at the gate, twice each (10 sessions). Nothing was pushed, and every session is archived.
+- **UC-DESK ruling, 12:36Z.** a1 and a2 for those five years are a lane prompt error. They do **not** count as memory attempts.
+- **Attempt cap.** The 4-attempt cap restarts with the corrected order. A year that reaches 3 of 4 holds its 4th attempt; it is recorded "held pending owner gate ruling", not as a coverage gap. The gate stays at 22.4 GiB until the owner rules.
+- **The correction.** `prepare_solve_container.py` is stdlib-only. The corrected prompts run it with system `python3` as the very first command, before `uv sync` or any data step. UC-DESK cautions that other lanes still see 17.4 GiB at boot with prepare first, so the corrected launches may show the container's own allowance.
+- **Corrected attempt 1, all at `43bc180e`:**
+
+  | year | session | launched |
+  |---|---|---|
+  | 2020 | `session_01GjLbAcPzWfuUdePvi9rWQ7` | 12:35Z |
+  | 2021 | `session_01MfeujyTSMEpzQtZP55iQun` | 12:41Z |
+  | 2022 | `session_01FZRM859PyD5nD6p1Giva71` | 12:46Z |
+  | 2024 | `session_01PK7VhWP5miNDN2wnB8bitA` | 12:51Z |
+  | 2025 | `session_015z1WqocpdnxG5DJdHSxPUq` | 12:57Z |
+
+- **Still solving from launch 2:** 2019 (`session_01BYXcr8`, 22.36 GiB) and 2023 (`session_013z3111`, 22.36 GiB).
