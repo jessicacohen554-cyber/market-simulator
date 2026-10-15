@@ -176,3 +176,26 @@ Matrix (`mechanism-matrix/MISO.js`): the `uc_commitment_demand_source` cell, cit
   - No further shard launches.
 - **Resume.** The desk sends a new full-SHA pin once FIX-8 lands. Addendum B then records the pin, the G-DRIFT `7dbfe20f → <pin>`
   and the regenerated prompts. Nothing in §§1–6 changes except the pin.
+
+## Addendum B (2026-10-15 10:45Z, before any further shard): FIX-8 pin, G-DRIFT, gate ruling
+
+- **Pin.** `7c93273ec9056b1cd9f6e4fcf387e812f78f6e8a`: FIX-8 #7267 (UC-DESK pin, 10:38Z). Engine `uc-1.7`, unchanged. This
+  replaces `7dbfe20f` as every shard's `source_revision` and HEAD. Nothing else in §§1–6 changes.
+- **G-DRIFT `7dbfe20f → 7c93273e`** (zero LP; 1 solve-path commit; 7 files):
+  - `data/commitment_demand.py`: the DA-forecast increment is mapped onto the solve's runtime zones **by name**.
+    - Each configured zone lands on its own row, so the MISO load zones get their weighted share.
+    - An appended interchange row (`MISO_external`) gets 0.
+    - A configured load zone missing from the runtime list raises.
+  - `pipeline/{solve,uc,year}.py`, `runner.py`, `scripts/run_calibration.py`, `scripts/lib/uc_bench.py`: `zone_names` plumbing to
+    the UC stage. It is read only on the `da_forecast` path.
+  - **Control (UC off): INERT.**
+  - **U4: LIVE**, only as the fix of the Addendum A defect. The increment's system total is unchanged: §2.1 is a BA total, and the
+    zone split only moves where it lands.
+- **Gate ruling (UC-DESK, 10:19Z, all UC-4 lanes).** The memory gate passes iff ceiling + swap as printed is ≥ 22.35 GiB raw
+  (rounds to ≥ 22.4). The standard 13.36 + 9.0 = 22.36 passes; 16.4 / 17.4 fail and count as memory attempts.
+- **Attempt accounting.**
+  - 2019 has 1 memory attempt used (Addendum A).
+  - The 2020 / 2021 defect stops spent none.
+  - Each year gets ≤ 4 relaunches after its first gate stop, ~30 min apart, then becomes a recorded coverage gap.
+- **Prompts.** `shard-prompts-ucmilp4-miso.txt` is re-pinned in place to `7c93273e`, with the gate line restated. The
+  `'uc_commitment_demand_source="da_forecast"'` quoting is kept.
