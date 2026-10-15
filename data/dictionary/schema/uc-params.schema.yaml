@@ -90,14 +90,18 @@ columns:
     unit: hours
     nullable: false
     description: >-
-      Minimum up time: p25 of the measured on-run lengths of the plant series
-      (hours), at least 1.
+      Minimum up time: p25 of the measured on-run lengths of the cluster's
+      UNITS, pooled (hours), at least 1. Each unit is online at load >=
+      max(1 MW, 0.05 x its own HSL); runs never span a reporting hole. Not the
+      plant series, whose runs last while ANY unit is on (UC-DATA-UT, owner
+      ruling r13 2026-10-15, rule 23 defect fix).
   - name: dt_h
     dtype: int64
     unit: hours
     nullable: false
     description: >-
-      Measured off-gap p25 between on-runs (hours), at least 1. DIAGNOSTIC:
+      p25 of the per-unit off-gaps between on-runs, pooled over the cluster's
+      units (hours), at least 1; same unit basis as ut_h. DIAGNOSTIC:
       the engine's minimum down time is the published class value (an
       observed idle gap is usage, not the physical restart bar).
   - name: noload_mmbtu_h
@@ -128,7 +132,9 @@ columns:
     dtype: int64
     unit: none
     nullable: false
-    description: Number of on-runs of the plant series in the pooled span.
+    description: >-
+      Number of per-unit on-runs in the pooled span, summed over the cluster's
+      units (the sample behind ut_h).
   - name: years
     dtype: string
     unit: none
