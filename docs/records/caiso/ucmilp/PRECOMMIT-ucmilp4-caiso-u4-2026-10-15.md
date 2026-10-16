@@ -212,3 +212,33 @@ control stands without a solve (rule 29(b)).
 **Unchanged:** the arm (the nine `--set` values, `'"da_forecast"'` quoted), readings, kills, verdict rule, the 720-min budget and serial launch.
 Memory gate per the desk's ruling (10:19Z): pass iff the printed ceiling+swap rounds to ≥ 22.4 GiB (raw ≥ 22.35). A blocked year gets ≤ 4
 relaunches about 30 min apart, then becomes a coverage gap. The Addendum A defect stop spends none of them.
+
+## Addendum C (2026-10-16 ~02:30Z, before any 2021–25 U4 number exists): resume on the owner's gate ruling, re-pin 2021–25 to uc-1.8
+
+**Owner ruling (2026-10-16, decision card; desk log r16, PR #7273 `5bdc2c58`).** The memory gate is now 1.25 × each ISO's measured peak; the
+uniform 22.4 GiB is retired. For CAISO the measured peak is 9.4 GiB (U4 2019 cgroup 9.30 GiB, 2020 9.38 GiB), so the **gate is 11.8 GiB of
+ceiling + swap at boot**. Each held year (2021–2025) carries its attempt count forward at 3/4, which leaves **one attempt per year** under the
+new gate. A miss on it is a coverage gap.
+
+**Pin for 2021–2025: `41cd55dc9b254a412f52cce051257ea15965c70e`** (main at #7270, UC-1-FIX-9, engine **uc-1.8**). This branch merges the pin;
+shards run at this branch head (pin + records only).
+
+**G-DRIFT `7c93273e` → `41cd55dc` (zero LP).** Three commits. `e2380108` and `5ff4443b` are records only (UC-4-SPP, UC-4-MISO). `41cd55dc` is FIX-9:
+
+| file | hunk | CAISO classification |
+|---|---|---|
+| `model/uc/solve.py` | `lean` preset `lp_heuristics` False → True (RINS / RENS / root reduced cost) | **LIVE, UC solver path only**: the window model, integer feasible set, `uc_mip_rel_gap` 1e-3 and the 600 s time limit are unchanged, so a window's optimum can move only within the declared gap |
+| `pipeline/uc.py` | `UC_ENGINE_VERSION` uc-1.7 → uc-1.8 (enters the input digest, so no uc-1.7 schedule is reused) | LIVE, gate-on only (label + digest) |
+| `config/scenarios.py` | comments only | INERT |
+
+`solve_surface_register.py --diff 7c93273e 41cd55dc`: *"345 → 345 names; 0 value(s) moved, 0 added, 0 removed — NO VALUE MOVED"*. Gate-off
+path untouched, so the control stands.
+
+**The 2019–20 legs (uc-1.7) stay valid.** FIX-9 changes how HiGHS searches, not what it solves. Both engines solve the same window model to the same
+1e-3 gap, so a uc-1.7 leg and a uc-1.8 leg differ by at most one gap-width per window. That is the same tolerance every UC lane already
+accepts between two incumbents. The RESULT records the engine per year (2019–20 uc-1.7, 2021–25 uc-1.8) and reports any 2021–25 reading whose
+move is within the 2019–20 vs UC-3 engine noise as such.
+
+**Unchanged:** the arm (nine `--set` values), readings, kills, verdict rule and the 720-min budget. **Shard prompt changes:**
+- hard stop 2b reads ceiling + swap ≥ 11.8 GiB;
+- watcher / `send_later` keep-alive every ≤ 90 min (25 min recommended; desk standing rule after the NEISO reclaim).
