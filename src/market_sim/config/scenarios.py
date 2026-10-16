@@ -2537,6 +2537,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # from the hash there, so every committed key is unmoved. Registered IN THE
     # SAME COMMIT as the field (the nyiso-119 discipline).
     "vlr_pocket_commitment",
+    # Lane UC-RUC-BUILD (2026-10-16, owner ruling R12): the RUC pass of the UC
+    # stage, its load basis and the R15 DA-schedule reuse source, born at
+    # their declared defaults (off / "actual" / "") and dropped from the hash
+    # there, so every committed key is unmoved. Registered IN THE SAME COMMIT
+    # as the fields (the nyiso-119 discipline).
+    "uc_reliability_commitment",
+    "uc_ruc_load_basis",
+    "uc_da_schedule_reuse_bundle",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -3464,6 +3472,10 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "uc_commitment_demand_source": "'actual'",
     # Added by lane UC-MISO-VLR WITH the field (the nyiso-119 discipline).
     "vlr_pocket_commitment": "False",
+    # Added by lane UC-RUC-BUILD WITH the fields (the nyiso-119 discipline).
+    "uc_reliability_commitment": "False",
+    "uc_ruc_load_basis": "'actual'",
+    "uc_da_schedule_reuse_bundle": "''",
 }
 
 
@@ -4464,6 +4476,13 @@ UC_SOLVER_PRESET_NAMES: tuple[str, ...] = ("highs_default", "lean")
 #: with ``data/commitment_demand.py::COMMITMENT_DEMAND_SOURCES`` by
 #: ``tests/unit/data/test_commitment_demand.py``.
 UC_COMMITMENT_DEMAND_SOURCES: tuple[str, ...] = ("actual", "da_forecast")
+
+#: The load bases ``uc_ruc_load_basis`` admits (the RUC pass's demand,
+#: ``pipeline/uc.py::ruc_load_basis_demand``). "actual" only: the measured
+#: intraday basis (the SPP MTLF vintage at the 4-h ID-RUC cycle, DESIGN-ucmilp-
+#: ruc-stage-2026-10-16 section 2.2) is added WITH its intake (lane
+#: UC-DF-AUDIT), never before it.
+UC_RUC_LOAD_BASES: tuple[str, ...] = ("actual",)
 
 
 @dataclass
@@ -23263,6 +23282,43 @@ class ScenarioConfig:
     # stage raises. FINDING-ucmiso-vlr-phase0-2026-10-15.md;
     # PRECOMMIT-ucmiso-vlr-2026-10-15.md.
     vlr_pocket_commitment: bool = False
+    # RELIABILITY-COMMITMENT (RUC) PASS of the UC stage (lane UC-RUC-BUILD;
+    # owner ruling R12, 2026-10-16; DESIGN-ucmilp-ruc-stage-2026-10-16.md
+    # section 2). GATED, default False, byte-identical off (pipeline/solve.py
+    # runs no RUC statement at False). Armed: after the DA windows and P1
+    # ("P1a"), a zero-LP screen marks the hours of P1a with energy slack or a
+    # reserve shortfall above the LP's own primal feasibility tolerance; the
+    # windows of those days are re-solved with the same UcWindowModel, add-only
+    # (u >= the DA schedule), against the RUC load basis, with every dispatch
+    # column at the rule-9 epsilon and the commitment priced at start + no-load
+    # + minimum-load energy, P1's penalties unchanged; the sweep runs forward
+    # until the carried state rejoins the DA schedule. The final schedule is
+    # injected through the same MECH 28 bounds and P1 is re-solved ("P1b", the
+    # scored P1). A year with no trigger hour keeps P1a: identical to the arm
+    # without RUC. Never priced (rule 4): RUC start / no-load go to the uplift
+    # sidecar. Rule 17: driver = a P1a shortfall, window = the swept days,
+    # forward story = DESIGN section 2.2. Rule 21: zero free parameters.
+    # Requires unit_commitment_milp and uc_commitment_demand_source=
+    # "da_forecast" (at "actual" the DA windows already commit on the RUC
+    # basis, so the pass is a no-op).
+    uc_reliability_commitment: bool = False
+    # The demand the RUC windows commit against. "actual" = the P1 demand
+    # (realised load): perfect intraday foresight, declared as the upper bound
+    # of a measured intraday basis (DESIGN section 2.2). Admissible:
+    # UC_RUC_LOAD_BASES.
+    uc_ruc_load_basis: str = "actual"
+    # DA-SCHEDULE REUSE ACROSS RUNS (owner ruling R15, 2026-10-16; DESIGN
+    # section 2.5). A committed bundle directory ("" = off). When set, the UC
+    # stage reads the DA schedule from that bundle's
+    # hourly/uc_schedule_<y>.parquet instead of re-solving the DA windows, but
+    # ONLY when this run's UC input digest (pipeline/uc.py::uc_input_digest)
+    # equals the input_digest that bundle's uc_solve_log_<y>.json recorded --
+    # digest equality certifies the same DA problem, the certificate the
+    # in-process pass-2 reuse already relies on. A mismatch or a missing year
+    # RAISES (never a silent re-solve). Explicit opt-in, recorded in
+    # run_config.json (scenario_config) and the log's engine.reused_schedule.
+    # Requires unit_commitment_milp.
+    uc_da_schedule_reuse_bundle: str = ""
 
     def __post_init__(self) -> None:
         # YAML round-trip type repair: YAML has no tuple type, so a config
@@ -24843,6 +24899,29 @@ class ScenarioConfig:
                 "uc_commitment_demand_source is read only by the UC window: "
                 "arm unit_commitment_milp or leave it 'actual'."
             )
+        if self.uc_ruc_load_basis not in UC_RUC_LOAD_BASES:
+            raise ValueError(
+                f"uc_ruc_load_basis must be one of {UC_RUC_LOAD_BASES} (got "
+                f"{self.uc_ruc_load_basis!r}); a measured intraday basis is "
+                "added with its intake (lane UC-DF-AUDIT), not before."
+            )
+        if self.uc_reliability_commitment:
+            if not self.unit_commitment_milp:
+                raise ValueError(
+                    "uc_reliability_commitment is a pass of the MILP UC stage; "
+                    "it needs unit_commitment_milp=True."
+                )
+            if self.uc_commitment_demand_source != "da_forecast":
+                raise ValueError(
+                    "uc_reliability_commitment needs uc_commitment_demand_source="
+                    "'da_forecast': at 'actual' the DA windows already commit on "
+                    "the RUC basis, so the pass would be a no-op."
+                )
+        if self.uc_da_schedule_reuse_bundle and not self.unit_commitment_milp:
+            raise ValueError(
+                "uc_da_schedule_reuse_bundle is read only by the UC stage: arm "
+                "unit_commitment_milp or leave it ''."
+            )
 
     @property
     def real_discount_rate(self) -> float:
@@ -26203,6 +26282,13 @@ TIER_TAGS: dict[str, int] = {
     # EIA-930 DF, the forward profile a frozen derive of it.
     "uc_commitment_demand_source": 1,
     "vlr_pocket_commitment": 1,
+    # Lane UC-RUC-BUILD (owner rulings R12 / R15): structural (the RUC pass
+    # and its load basis) with no free number of its own (rule 21), and the
+    # DA-schedule reuse source (a provenance path; digest-certified identical
+    # schedule, so it moves wall clock only).
+    "uc_reliability_commitment": 1,
+    "uc_ruc_load_basis": 1,
+    "uc_da_schedule_reuse_bundle": 1,
     # closeout-SOCO-w3 DIAGNOSTIC (rule 13: never a keeper input).
     "diagnostic_coal_metered_online_floor": 1,
 }

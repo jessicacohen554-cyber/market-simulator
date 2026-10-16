@@ -73,6 +73,52 @@ class UcSchedule:
         self.record_states = bool(record_states)
         self.prev_states: dict[int, tuple[np.ndarray, np.ndarray | None]] = {}
 
+    def copy(self) -> "UcSchedule":
+        """An independent copy (arrays copied; the recorded states are not carried)."""
+        out = UcSchedule(self.params, self.T, self.H)
+        out.u = self.u.copy()
+        out.v = self.v.copy()
+        out.w = self.w.copy()
+        out.dispatch_prev = (
+            None if self.dispatch_prev is None else self.dispatch_prev.copy()
+        )
+        out.soc_prev = None if self.soc_prev is None else self.soc_prev.copy()
+        out.kept_until = self.kept_until
+        return out
+
+    @classmethod
+    def from_frame(
+        cls, params: UcClusterParams, T: int, hist_hours: int, frame: pd.DataFrame
+    ) -> "UcSchedule":
+        """Rebuild a complete schedule from a ``uc_schedule_<y>.parquet`` frame.
+
+        The DA-schedule reuse across runs (``uc_da_schedule_reuse_bundle``,
+        owner ruling R15) reads a committed leg's schedule this way. The
+        frame's clusters and plant codes must be exactly the integer set of
+        ``params`` (in order) and every hour ``0 .. T`` present; anything else
+        raises (the input digest already certified the same problem, so a
+        mismatch here is a corrupt or foreign file).
+        """
+        out = cls(params, T, hist_hours)
+        k = out.int_idx
+        f = frame.sort_values(["cluster", "hour"], kind="stable")
+        clusters = np.unique(f["cluster"].to_numpy())
+        if not np.array_equal(clusters, np.sort(k)) or f.shape[0] != k.size * T:
+            raise ValueError(
+                "uc_schedule frame does not cover the stage's integer clusters "
+                f"x {T} hours (frame clusters {clusters.size}, rows {f.shape[0]}; "
+                f"stage integer clusters {k.size})"
+            )
+        order = np.searchsorted(np.sort(k), k)  # frame block of each stage cluster
+        codes = f["plant_code"].to_numpy().reshape(k.size, T)[order, 0]
+        if not np.array_equal(codes, params.plant_code[k].astype(np.int64)):
+            raise ValueError("uc_schedule frame plant codes differ from the stage's")
+        for name in ("u", "v", "w"):
+            arr = f[name].to_numpy().reshape(k.size, T)[order]
+            setattr(out, name, arr.astype(np.int16))
+        out.kept_until = int(T)
+        return out
+
     # ------------------------------------------------------------------ keep
     def keep(self, result: WindowResult, t0: int, keep_hours: int) -> int:
         """Record the first ``keep_hours`` of a window solved at ``t0``; return the new frontier."""

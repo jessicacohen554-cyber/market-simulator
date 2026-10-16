@@ -27,6 +27,19 @@ inputs digest identically to the previous stage's (:func:`uc_input_digest`)
 reuses that stage's schedule instead of re-solving the windows: the windows
 are a deterministic function of exactly those inputs.
 
+The same digest certifies a committed bundle's DA schedule across runs when
+the run opts in (``uc_da_schedule_reuse_bundle``, owner ruling R15): the
+schedule is read from that leg's ``uc_schedule`` instead of re-solving.
+
+The reliability-commitment (RUC) pass (``uc_reliability_commitment``, owner
+ruling R12; DESIGN-ucmilp-ruc-stage-2026-10-16 section 2) runs AFTER the
+scored-P1 candidate ("P1a"): :meth:`UcStage.reliability_commitment` screens
+P1a at zero LP for hours with energy slack or a reserve shortfall, re-solves
+those days' windows add-only (``u >= u_DA``) against the RUC load basis on a
+commitment-cost objective, sweeps forward until the carried state rejoins the
+DA schedule, and returns the P1 fleet for "P1b" through the same MECH 28
+bounds. No trigger: P1a is final and nothing else changes.
+
 An empty integer set (G-EMPTY) runs no MILP: the markup is returned as the
 same object and the hook returns the upstream hook's result unchanged.
 
@@ -57,7 +70,10 @@ import numpy as np
 import pandas as pd
 import scipy.sparse as sp
 
-from market_sim.config.constants import VLR_GROUP_MIN_COMMITTED_UNITS
+from market_sim.config.constants import (
+    STORAGE_TIEBREAKER_EPSILON,
+    VLR_GROUP_MIN_COMMITTED_UNITS,
+)
 from market_sim.config.paths import RESULTS_ROOT
 from market_sim.data.commitment_demand import CommitmentDemand, commitment_demand
 from market_sim.data.fleet import FleetArrays
@@ -87,6 +103,7 @@ from market_sim.model.uc.solve import (
 )
 from market_sim.model.uc.window import (
     UcWindowModel,
+    WindowResult,
     budget_pinned_gens,
     prefix_bounds,
     slice_window_inputs,
@@ -137,7 +154,31 @@ logger = logging.getLogger(__name__)
 #: integer feasible set, the gap and the time limit are unchanged; a window's
 #: optimum moves at most within ``uc_mip_rel_gap``. The version and the solve
 #: options both enter :func:`uc_input_digest`, so no uc-1.7 schedule is reused.
-UC_ENGINE_VERSION = "uc-1.8"
+#: uc-1.9 (lane UC-RUC-BUILD, owner ruling R12, 2026-10-16): the
+#: reliability-commitment pass (``uc_reliability_commitment``, default off;
+#: :meth:`UcStage.reliability_commitment`) and the R15 DA-schedule reuse across
+#: runs (``uc_da_schedule_reuse_bundle``). The DA windows are unchanged, so the
+#: input digest keeps hashing :data:`UC_DA_DIGEST_VERSION`.
+UC_ENGINE_VERSION = "uc-1.9"
+
+#: The engine version the DA-window problem last changed at, hashed into
+#: :func:`uc_input_digest` in place of :data:`UC_ENGINE_VERSION`: uc-1.9 added a
+#: pass AFTER the DA windows and left their problem, solver path and options
+#: untouched, so a uc-1.8 DA schedule of the same inputs is the same schedule
+#: (the certificate the R15 cross-run reuse rests on). Bump it with any change
+#: to what the DA windows solve.
+UC_DA_DIGEST_VERSION = "uc-1.8"
+
+#: ``uc_*`` fields read only AFTER the DA windows (the RUC pass) or naming
+#: where a DA schedule may be read from: excluded from :func:`uc_input_digest`,
+#: which certifies the DA problem alone.
+UC_DIGEST_EXCLUDED_FIELDS: frozenset[str] = frozenset(
+    {
+        "uc_reliability_commitment",
+        "uc_ruc_load_basis",
+        "uc_da_schedule_reuse_bundle",
+    }
+)
 
 #: The most recent stage objects (one per year solved in this process), for a
 #: harness that writes the post-P1 uplift sidecar; drained by :func:`take_uc_stages`.
@@ -204,7 +245,9 @@ def uc_input_digest(
 ) -> tuple[str, list[str]]:
     """``(hex digest, opaque type names)`` of everything :meth:`UcStage.run` reads.
 
-    The engine version, the ISO / year / horizon, every ``uc_*`` config field,
+    The DA-window version (:data:`UC_DA_DIGEST_VERSION`), the ISO / year /
+    horizon, every ``uc_*`` config field the DA windows read (all but
+    :data:`UC_DIGEST_EXCLUDED_FIELDS`),
     the solve options, the cluster parameters, the year fleet and the hooked
     P1 fleet, demand and the commitment demand, the dispatch kwargs,
     ``mc_base``, the final P1 bid and
@@ -218,11 +261,13 @@ def uc_input_digest(
     uc_fields = {
         name: getattr(cfg, name)
         for name in sorted(dir(cfg))
-        if name.startswith("uc_") and not callable(getattr(cfg, name, None))
+        if name.startswith("uc_")
+        and name not in UC_DIGEST_EXCLUDED_FIELDS
+        and not callable(getattr(cfg, name, None))
     }
     r0 = stage.r0
     for part in (
-        UC_ENGINE_VERSION,
+        UC_DA_DIGEST_VERSION,
         stage.iso,
         stage.year,
         stage.T,
@@ -459,6 +504,51 @@ def slim_sums(windows: list[dict]) -> dict:
     return out
 
 
+def lp_feasibility_tolerance() -> float:
+    """HiGHS's own ``primal_feasibility_tolerance`` (the LP's, never a new constant).
+
+    The P1 LP runs at the solver default (``model/lp/model.py`` sets no
+    tolerance), so the RUC trigger reads the same value from a fresh handle:
+    a slack or shortfall at or below it is solver round-off, not a shortfall.
+    """
+    import highspy
+
+    out = highspy.Highs().getOptionValue("primal_feasibility_tolerance")
+    return float(out[1] if isinstance(out, tuple) else out)
+
+
+def ruc_trigger_hours(p1a, tol: float) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """``(trigger, slack_mw, shortfall_mw)`` — the zero-LP RUC screen of P1a.
+
+    ``trigger[t]``: the hour's energy slack (summed over zones) or its largest
+    reserve-family ORDC shortfall exceeds ``tol``. Families are not summed
+    (a synchronized family is nested in its contingency family; DESIGN
+    section 3.1 note 1). No reserve co-optimization: slack alone.
+    """
+    slack = np.asarray(p1a.slack, dtype=float).sum(axis=0)
+    fam = getattr(p1a, "reserve_shortfall_by_family", None)
+    short = (
+        np.zeros_like(slack)
+        if fam is None or np.asarray(fam).size == 0
+        else np.asarray(fam, dtype=float).max(axis=1)
+    )
+    return (slack > tol) | (short > tol), slack, short
+
+
+def ruc_load_basis_demand(stage: "UcStage") -> np.ndarray:
+    """``(n_zones, T)`` demand the RUC windows commit against (``uc_ruc_load_basis``).
+
+    "actual": the P1 demand the stage was handed (realised load; the declared
+    upper bound of an intraday basis, DESIGN section 2.2). A measured intraday
+    basis enters here with its intake (lane UC-DF-AUDIT); the config refuses
+    any other value until then (``UC_RUC_LOAD_BASES``).
+    """
+    basis = str(getattr(stage.config, "uc_ruc_load_basis", "actual"))
+    if basis == "actual":
+        return stage.demand
+    raise ValueError(f"uc_ruc_load_basis {basis!r} has no loader")
+
+
 class UcStage:
     """One year's UC stage: parameters, the hook, the schedule and its log.
 
@@ -531,6 +621,10 @@ class UcStage:
         if self.p1_kwargs_overrides:
             self.dispatch_kwargs = {**dispatch_kwargs, **self.p1_kwargs_overrides}
         self.schedule: UcSchedule | None = None
+        #: The DA schedule when the RUC pass replaced :attr:`schedule` (else ``None``).
+        self.schedule_da: UcSchedule | None = None
+        #: The RUC pass is armed (``uc_reliability_commitment``).
+        self.ruc_armed = bool(getattr(config, "uc_reliability_commitment", False))
         #: The P1 bid the schedule was solved on (the merit order of the floor).
         self.mc_bid: np.ndarray | None = None
         self.log: dict = {}
@@ -594,8 +688,19 @@ class UcStage:
         digest_s = time.perf_counter() - t0
         # An input with no by-value encoding cannot certify equality: no reuse.
         prior = None if opaque else _LAST_SOLVED.get(digest)
+        reuse_bundle = str(
+            getattr(self.config, "uc_da_schedule_reuse_bundle", "") or ""
+        )
         if prior is not None:
             self.adopt(prior, fleet_in, digest, digest_s)
+        elif reuse_bundle:
+            self.adopt_committed(Path(reuse_bundle), fleet_in, digest, opaque, digest_s)
+            _LAST_SOLVED.clear()
+            _LAST_SOLVED[digest] = {
+                "schedule": self.schedule,
+                "log": self.log,
+                "noload_full": self.noload_full,
+            }
         else:
             self.run(fleet_in, mc_bid)
             _LAST_SOLVED.clear()
@@ -622,6 +727,8 @@ class UcStage:
         self.schedule = prior["schedule"]
         self.noload_full = prior["noload_full"]
         self.log = copy.deepcopy(prior["log"])
+        # A previous stage's RUC block belongs to that stage's P1a.
+        self.log.pop("ruc", None)
         self.log["engine"]["reused_schedule"] = {
             "input_digest": digest,
             "solved_uc_total_s": self.log["summary"].get("uc_total_s"),
@@ -635,6 +742,81 @@ class UcStage:
             "schedule reused; %d windows not re-solved",
             digest[:12],
             int(self.log["summary"]["n_windows"]),
+        )
+
+    def adopt_committed(
+        self,
+        bundle: Path,
+        fleet_in: FleetArrays,
+        digest: str,
+        opaque: list[str],
+        digest_s: float,
+    ) -> None:
+        """Take a committed leg's DA schedule (owner ruling R15) when the digests match.
+
+        Reads ``<bundle>/uc_solve_log_<y>.json`` and
+        ``<bundle>/hourly/uc_schedule_<y>.parquet``. Raises — never a silent
+        re-solve — when this run's digest has an opaque part (it cannot certify
+        equality), the year's files are absent, or the recorded
+        ``engine.input_digest`` differs from this run's: the run opted in to
+        reuse, so a mismatch is a recipe difference the operator must see.
+        The log is the committed leg's, with ``engine.version`` / ``fields``
+        re-stamped to this run and ``engine.reused_schedule`` naming the source.
+        """
+        import copy
+        import json
+
+        bundle = Path(bundle)
+        log_path = bundle / f"uc_solve_log_{self.year}.json"
+        sched_path = bundle / "hourly" / f"uc_schedule_{self.year}.parquet"
+        if opaque:
+            raise ValueError(
+                "uc_da_schedule_reuse_bundle: this run's UC input digest has "
+                f"opaque parts {opaque}; it cannot certify equal inputs"
+            )
+        if not log_path.is_file() or not sched_path.is_file():
+            raise FileNotFoundError(
+                f"uc_da_schedule_reuse_bundle: {bundle} has no committed DA "
+                f"schedule for {self.year} ({log_path.name}, {sched_path.name})"
+            )
+        committed = json.loads(log_path.read_text())
+        recorded = (committed.get("engine") or {}).get("input_digest")
+        if recorded != digest:
+            raise ValueError(
+                "uc_da_schedule_reuse_bundle: the committed leg's UC input digest "
+                f"{recorded} != this run's {digest} ({log_path}); the DA problem "
+                "differs, so its schedule cannot be reused"
+            )
+        p = self.params
+        k = self.int_idx
+        hist = int(max(int(p.ut_h[k].max()), int(p.dt_h[k].max())) - 1) if k.size else 0
+        self.schedule = UcSchedule.from_frame(
+            p, self.T, hist, pd.read_parquet(sched_path)
+        )
+        self.noload_full = p.noload_cost_per_unit_h(fleet_in, self.mc_base)[k]
+        self.log = copy.deepcopy(committed)
+        self.log.pop("ruc", None)
+        solved_version = self.log["engine"].get("version")
+        fresh = self._log([], self.schedule, partial=False)["engine"]
+        self.log["engine"]["version"] = UC_ENGINE_VERSION
+        self.log["engine"]["fields"] = fresh["fields"]
+        self.log["engine"]["reused_schedule"] = {
+            "source": "committed_bundle",
+            "bundle": str(bundle),
+            "input_digest": digest,
+            "solved_engine_version": solved_version,
+            "solved_uc_total_s": self.log["summary"].get("uc_total_s"),
+        }
+        self.log["summary"]["uc_total_s"] = round(digest_s, 3)
+        self.ran = True
+        self.fleet_in = fleet_in
+        _STAGES.append(self)
+        logger.info(
+            "UC stage: DA schedule read from committed bundle %s (digest %s, "
+            "solved at %s); windows not re-solved",
+            bundle,
+            digest[:12],
+            solved_version,
         )
 
     # ---------------------------------------------------------------- run
@@ -913,6 +1095,13 @@ class UcStage:
                     "vlr_pocket_commitment": bool(
                         getattr(c, "vlr_pocket_commitment", False)
                     ),
+                    "uc_reliability_commitment": bool(
+                        getattr(c, "uc_reliability_commitment", False)
+                    ),
+                    "uc_ruc_load_basis": str(getattr(c, "uc_ruc_load_basis", "actual")),
+                    "uc_da_schedule_reuse_bundle": str(
+                        getattr(c, "uc_da_schedule_reuse_bundle", "")
+                    ),
                 },
                 "commitment_demand": self.commit.log_row(self.demand),
                 "solver_path": self.options.solver_path(),
@@ -962,6 +1151,255 @@ class UcStage:
                 "slim_sums": slim_sums(windows),
             },
         }
+
+    # ---------------------------------------------------------------- RUC
+    def reliability_commitment(self, p1a) -> FleetArrays | None:
+        """The RUC pass (DESIGN-ucmilp-ruc-stage-2026-10-16 section 2.1): ``None`` or the P1b fleet.
+
+        Screens ``p1a`` (zero LP, :func:`ruc_trigger_hours`). No trigger hour:
+        returns ``None`` — P1a is the scored P1 and nothing the stage holds
+        changes. Otherwise re-solves the windows of the triggered days with
+        the existing :class:`~market_sim.model.uc.window.UcWindowModel` on the
+        same ``W + L`` slice, changed in exactly four places:
+
+        * demand = the RUC load basis (:func:`ruc_load_basis_demand`);
+        * ``u >= u_DA`` (add-only; the look-ahead guard also reads ``u_DA``
+          past the horizon, so no stop strands a DA unit);
+        * every dispatch column costs the rule-9 epsilon
+          (``STORAGE_TIEBREAKER_EPSILON``): energy cost leaves the decision;
+        * a unit-hour online costs no-load plus minimum-load energy
+          ``mlf * pbar * a * max(mc_uc, 0)`` at the anchor (start cost
+          unchanged; a negative energy cost is floored at zero so the pass
+          never commits for economics);
+
+        P1's penalties (VOLL, the reserve demand curves) are the window LP's
+        own and unchanged. The sweep runs forward from each triggered day and
+        stops once the carried state (``u``, start / stop history over the
+        longest min-up / min-down) equals the DA schedule's and the next day is
+        not triggered. The first window of an episode carries P1a's dispatch
+        and storage level at ``t0 - 1`` (the realised state; the DA pass keeps
+        no per-window state); later windows carry their predecessor's. No
+        pre-fixing (an economic heuristic on the DA objective). The final
+        schedule replaces :attr:`schedule` (the DA one is kept in
+        :attr:`schedule_da`) and is injected exactly as the DA one is.
+        """
+        if not self.ruc_armed or self.int_idx.size == 0 or self.schedule is None:
+            return None
+        t_ruc = time.perf_counter()
+        tol = lp_feasibility_tolerance()
+        trig, slack, short = ruc_trigger_hours(p1a, tol)
+        W, L, T = self.W, self.L, self.T
+        starts = sorted({int(h) // W * W for h in np.flatnonzero(trig)})
+        block: dict = {
+            "load_basis": str(getattr(self.config, "uc_ruc_load_basis", "actual")),
+            "trigger_tolerance": tol,
+            "trigger_hours": int(trig.sum()),
+            "trigger_hours_slack": int((slack > tol).sum()),
+            "trigger_hours_reserve": int((short > tol).sum()),
+            "trigger_days": [int(t0 // W) for t0 in starts],
+            "p1a_slack_mwh": round(float(slack.sum()), 3),
+            "p1a_max_need_mw": round(float((slack + short).max(initial=0.0)), 3),
+        }
+        self.log["ruc"] = block
+        if not starts:
+            block.update({"episodes": 0, "n_windows": 0, "ruc_total_s": 0.0})
+            logger.info("RUC: no trigger hour in P1a; P1a is final")
+            return None
+        p = self.params
+        k = self.int_idx
+        fleet_in = self.fleet_in
+        da = self.schedule
+        final = da.copy()
+        demand = ruc_load_basis_demand(self)
+        r0 = self.r0
+        p0_dispatch = np.asarray(r0.dispatch, dtype=float)
+        p0_soc = getattr(r0, "storage_soc", None)
+        p1_dispatch = np.asarray(p1a.dispatch, dtype=float)
+        p1_soc = getattr(p1a, "storage_soc", None)
+        n_gen = int(np.asarray(fleet_in.pmax).size)
+        mc_uc = p.incremental_energy_cost(fleet_in, self.mc_base)
+        guard_reach = int(p.dt_h[k].max()) - 1
+        hist = da.H
+        t_init = T - 1
+        u_init = units_online_from_dispatch(p, p0_dispatch[:, t_init])[k]
+        windows: list[dict] = []
+        episodes: list[list[int]] = []
+        start_set = set(starts)
+        prev: WindowResult | None = None
+        t0 = starts[0]
+        new_episode = True
+        while t0 < T:
+            t1 = min(t0 + W + L, T)
+            if new_episode:
+                episodes.append([int(t0), int(t0)])
+                prev = None
+                if t0 > 0:
+                    # The realised (P1a) state the episode starts from.
+                    final.kept_until = t0
+                    final.dispatch_prev = p1_dispatch[:, t0 - 1].copy()
+                    final.soc_prev = (
+                        None
+                        if p1_soc is None
+                        else np.asarray(p1_soc, dtype=float)[:, t0 - 1].copy()
+                    )
+            state = final.state_for(
+                t0,
+                fleet_in,
+                u_init,
+                p0_dispatch[:, t_init],
+                None if p0_soc is None else np.asarray(p0_soc, dtype=float)[:, t_init],
+            )
+            inputs = slice_window_inputs(
+                fleet_in,
+                demand,
+                self.dispatch_kwargs,
+                t0,
+                t1,
+                p0_dispatch,
+                p0_flows=getattr(r0, "flows", None),
+            )
+            a = p.cluster_availability(inputs.fleet)[k]  # (n_int, T_w)
+            # Minimum-load energy cost per unit-hour, never negative: a
+            # negative commitment cost would make the RUC commit for energy
+            # economics, which is the DA pass's job, not for reliability.
+            minload = (
+                (p.mlf[k] * p.pbar_mw[k])[:, None]
+                * a
+                * np.maximum(mc_uc[p.anchor_gen[k], t0:t1], 0.0)
+            )
+            u_da = da.u[:, t0:t1].astype(float)
+            ahead = self._floor_need_ahead(
+                fleet_in, p0_dispatch, t1, min(t1 + guard_reach, T)
+            )
+            if ahead is not None:
+                ahead = np.maximum(ahead, da.u[:, t1 : t1 + ahead.shape[1]])
+            window = UcWindowModel(
+                inputs,
+                p,
+                np.full((n_gen, t1 - t0), STORAGE_TIEBREAKER_EPSILON),
+                self.noload_full[:, t0:t1] + minload,
+                state,
+                soc_terminal=None
+                if p0_soc is None
+                else np.asarray(p0_soc, dtype=float)[:, t1 - 1],
+                floor_need_ahead=ahead,
+                slim=self.slim,
+                pocket=self.pocket,
+                u_floor=u_da,
+            )
+            warm = window.warm_start_vector(prev, W, p1_dispatch[:, t0:t1], u_da)
+            result = solve_window(
+                window,
+                self.options,
+                warm,
+                window_index=len(windows),
+                t0=int(t0),
+                t1=int(t1),
+            )
+            kept_to = final.keep(result, t0, W)
+            windows.append(
+                {
+                    "w": len(windows),
+                    "t0": int(t0),
+                    "t1": int(t1),
+                    "triggered": int(t0) in start_set,
+                    "milp_s": round(result.milp_s, 4),
+                    "build_s": round(result.build_s, 4),
+                    "nodes": int(result.nodes),
+                    "gap": float(result.gap),
+                    "status": result.status,
+                    "time_limit_hit": bool(result.time_limit_hit),
+                    "objective": float(result.objective),
+                    "added_unit_hours": int(
+                        (final.u[:, t0:kept_to] - da.u[:, t0:kept_to]).sum()
+                    ),
+                }
+            )
+            logger.info(
+                "RUC window %d [%d, %d)%s: %s, MILP %.2f s, +%d unit-h",
+                len(windows) - 1,
+                t0,
+                t1,
+                " (triggered)" if int(t0) in start_set else " (sweep)",
+                result.status,
+                result.milp_s,
+                windows[-1]["added_unit_hours"],
+            )
+            episodes[-1][1] = int(kept_to)
+            prev = result
+            rejoined = kept_to >= T or (
+                np.array_equal(final.u[:, kept_to - 1], da.u[:, kept_to - 1])
+                and np.array_equal(
+                    final.v[:, max(0, kept_to - hist) : kept_to],
+                    da.v[:, max(0, kept_to - hist) : kept_to],
+                )
+                and np.array_equal(
+                    final.w[:, max(0, kept_to - hist) : kept_to],
+                    da.w[:, max(0, kept_to - hist) : kept_to],
+                )
+            )
+            if kept_to in start_set or not rejoined:
+                t0 = kept_to
+                new_episode = False
+                continue
+            later = [s0 for s0 in starts if s0 > kept_to]
+            if not later:
+                break
+            t0 = later[0]
+            new_episode = True
+        final.kept_until = T
+        added = final.u.astype(int) - da.u.astype(int)
+        if (added < 0).any():
+            raise RuntimeError(
+                "RUC de-committed a DA unit (u_final < u_DA); the add-only "
+                "bound did not hold"
+            )
+        swept = np.zeros(T, dtype=bool)
+        for e0, e1 in episodes:
+            swept[e0:e1] = True
+        fleet_w, _ = window_fleet(fleet_in, self.dispatch_kwargs, 0, T, p0_dispatch)
+        a_year = p.cluster_availability(fleet_w)[k]
+        added_floor = (p.mlf[k] * p.pbar_mw[k])[:, None] * a_year * added
+        fam = p.family[k].astype(str)
+        milp = [w["milp_s"] for w in windows]
+        block.update(
+            {
+                "episodes": len(episodes),
+                "swept_hours": [[int(e0), int(e1)] for e0, e1 in episodes],
+                "n_windows": len(windows),
+                "windows": windows,
+                "time_limit_hits": int(sum(w["time_limit_hit"] for w in windows)),
+                "milp_s_sum": round(float(sum(milp)), 3),
+                "added_unit_hours": int(added.sum()),
+                "added_unit_hours_by_class": {
+                    c: int(added[fam == c].sum()) for c in sorted(set(fam))
+                },
+                "added_floor_mwh": round(float(added_floor.sum()), 3),
+                "added_floor_mwh_by_class": {
+                    c: round(float(added_floor[fam == c].sum()), 3)
+                    for c in sorted(set(fam))
+                },
+                "added_floor_mwh_outside_swept": round(
+                    float(added_floor[:, ~swept].sum()), 3
+                ),
+                "add_only": True,
+            }
+        )
+        self.schedule_da = da
+        self.schedule = final
+        block["ruc_total_s"] = round(time.perf_counter() - t_ruc, 3)
+        logger.info(
+            "RUC done: %d trigger h on %d days, %d episode(s), %d windows, "
+            "+%d unit-h, +%.1f MWh floor, %.1f s",
+            block["trigger_hours"],
+            len(starts),
+            len(episodes),
+            len(windows),
+            block["added_unit_hours"],
+            block["added_floor_mwh"],
+            block["ruc_total_s"],
+        )
+        return self.inject(fleet_in)
 
     # ---------------------------------------------------------- injection
     def floor_and_ceiling(
@@ -1060,9 +1498,52 @@ class UcStage:
                 noload,
                 self.year,
             )
+            if self.ruc_armed:
+                uplift = ruc_uplift_columns(
+                    uplift,
+                    self.params,
+                    self.schedule,
+                    self.schedule_da if self.schedule_da is not None else self.schedule,
+                    noload,
+                )
         return UcArtifacts(
             year=self.year, schedule=schedule, uplift=uplift, log=self.log
         )
+
+
+def ruc_uplift_columns(
+    uplift: pd.DataFrame,
+    params: UcClusterParams,
+    final: UcSchedule,
+    da: UcSchedule,
+    noload_per_unit: np.ndarray,
+) -> pd.DataFrame:
+    """Add the RUC make-whole columns to the ``uc_uplift`` frame (cluster x day).
+
+    ``ruc_added_units`` = unit-hours the RUC added over the DA schedule;
+    ``ruc_noload_usd`` = their no-load; ``ruc_start_usd`` = the start cost of
+    the final schedule less the DA schedule's (net, per cluster-day: a start
+    the RUC moved to an earlier day counts there and is credited where the DA
+    start was dropped). Zero everywhere in a year the RUC did not touch.
+    Reported, never priced (rule 4).
+    """
+    k = params.integer_clusters
+    n_int, T = final.u.shape
+    n_days = int(np.ceil(T / 24))
+
+    def _by_day(x: np.ndarray) -> np.ndarray:
+        pad = n_days * 24 - T
+        xp = np.concatenate([x, np.zeros((n_int, pad))], axis=1) if pad else x
+        return xp.reshape(n_int, n_days, 24).sum(axis=2).ravel()
+
+    du = final.u.astype(float) - da.u.astype(float)
+    dv = final.v.astype(float) - da.v.astype(float)
+    su = (params.su_per_mw[k] * params.pbar_mw[k])[:, None]
+    out = uplift.copy()
+    out["ruc_added_units"] = _by_day(du)
+    out["ruc_start_usd"] = _by_day(su * dv)
+    out["ruc_noload_usd"] = _by_day(np.asarray(noload_per_unit, dtype=float) * du)
+    return out
 
 
 def synchronized_reserve_overrides(

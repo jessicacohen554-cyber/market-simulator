@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-10-16 — uc-milp UC-RUC-BUILD: the reliability-commitment pass (`uc_reliability_commitment`, engine uc-1.9)
+
+Owner rulings R12 and R15. A default-off RUC pass inside the UC stage: after P1 ("P1a") a zero-LP
+screen marks hours with energy slack or a reserve shortfall (above HiGHS's own feasibility
+tolerance); those days' windows are re-solved add-only (`u ≥ u_DA`) on the RUC load basis
+(`uc_ruc_load_basis`, `"actual"` = realised load, the declared upper bound) with dispatch at the
+rule-9 ε and commitment priced at start + no-load + minimum-load energy; the sweep runs until the
+carried state rejoins the DA schedule; the result enters P1 through the same MECH 28 bounds and
+P1b is the scored P1. No trigger: P1a stands, identical to the arm without RUC. RUC make-whole
+columns in `uc_uplift`; `ruc` block in `uc_solve_log`; D-4 sub-row `uc_ruc`. R15:
+`uc_da_schedule_reuse_bundle` reads a committed leg's DA schedule when the UC input digest matches
+(raises otherwise); the digest now hashes the DA-window version (`uc-1.8`) and omits the RUC-only
+fields. Zero free parameters; no key moves; matrix row + `U` in all nine shards. CLAUDE.md /
+spec §1.6 admit the RUC re-solve as part of the UC stage (rule-history §33).
+
 ## 2026-10-15 — uc-milp UC-1-FIX-7: the UC commitment demand (`uc_commitment_demand_source`, engine uc-1.7)
 
 Owner ruling UC-DESK r13. The MILP UC window can commit against a commitment demand that is separate

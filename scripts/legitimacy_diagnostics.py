@@ -1309,6 +1309,53 @@ def run_d2(
     return res
 
 
+def run_d4_uc_ruc(bundle: Path, year: int | str) -> GateResult:
+    """D-4 sub-row ``uc_ruc`` of MECH 28: the RUC pass's added floor energy.
+
+    The reliability-commitment pass (``uc_reliability_commitment``; DESIGN-
+    ucmilp-ruc-stage-2026-10-16 section 2.3) adds commitment, and so MECH 28
+    floor, only on the days P1a went short plus the min-up sweep. Its declared
+    window is therefore those swept hours, and its off-window energy is the
+    added floor (``mlf * pbar * a * (u_final - u_DA)``) outside them — both
+    recorded by the stage in ``uc_solve_log_<y>.json`` ``ruc``. Rule 17 holds
+    by construction (driver = a P1a shortfall); the row makes it measured.
+    A bundle with no RUC block (the pass off, or no UC stage) emits no row.
+    """
+    res = GateResult("D-4 off-window binding")
+    path = Path(bundle) / f"uc_solve_log_{year}.json"
+    if not path.is_file():
+        return res
+    ruc = json.loads(path.read_text()).get("ruc")
+    if not ruc:
+        return res
+    total = float(ruc.get("added_floor_mwh", 0.0) or 0.0)
+    off = float(ruc.get("added_floor_mwh_outside_swept", 0.0) or 0.0)
+    share = off / total if total > 0.0 else 0.0
+    res.rows.append(
+        {
+            "year": year,
+            "check": "window",
+            "floor": "uc_schedule × uc_ruc",
+            "window": "swept "
+            + ",".join(f"{a}-{b - 1}" for a, b in ruc.get("swept_hours", [])),
+            "plant": "",
+            "floored_twh": round(total / 1e6, 4),
+            "offwindow_twh": round(off / 1e6, 4),
+            "offwindow_share": round(share, 4),
+            "binding_hours": int(ruc.get("trigger_hours", 0)),
+            "measured_median_mw": "",
+            "measured_zero_share": "",
+            "verdict": "FAIL" if share > D4_MAX_OFFWINDOW_SHARE else "pass",
+        }
+    )
+    if share > D4_MAX_OFFWINDOW_SHARE:
+        res.failures.append(
+            f"{year} uc_schedule × uc_ruc: {share:.1%} of the RUC-added floor "
+            "outside its swept hours"
+        )
+    return res
+
+
 def run_d4(
     dispatch: np.ndarray,
     min_gen: np.ndarray,
@@ -3920,6 +3967,11 @@ def diagnose_bundle(
                 d4.failures.extend(sub_res.failures)
                 d4.notes.extend(sub_res.notes)
 
+    if "D4" in only:
+        for year in years:
+            ruc_res = run_d4_uc_ruc(bundle, year)
+            d4.rows.extend(ruc_res.rows)
+            d4.failures.extend(ruc_res.failures)
     if "D1" in only:
         results.append(d1)
     if "D2" in only:
