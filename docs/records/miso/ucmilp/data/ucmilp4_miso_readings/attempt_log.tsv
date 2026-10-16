@@ -1,0 +1,21 @@
+year	attempt	session	launched_utc	container_gib	outcome	leg_sha
+2019	1	session_01Mm7h9R1rpSr4VjRvQ7GRpL	2026-10-15T09:53:57Z	16.4 (13.36+3.0)	gate stop; archived	
+2020	1	session_01PWVVQuu6T7qH5hvhagsJXS	2026-10-15T10:01:54Z	—	DEFECT STOP (UC-DESK HOLD FIX-8, 10:09Z): interrupted in clone, nothing run or pushed; archived; does not spend a relaunch	
+2021	1	session_01FSq3ThzjCDV3Fvftamycfo	2026-10-15T10:10:00Z	—	DEFECT STOP (UC-DESK HOLD FIX-8, 10:09Z): interrupted in clone, nothing run or pushed; archived; does not spend a relaunch	
+2019	2	session_01L9MgYN7GSUv6WFibjTDnP2	2026-10-15T10:39:47Z	22.36 (13.36+9.0)	SOLVED; verified (ls-tree 21 files + bytes; engine U-5 pass; recipe gate 0 breaks); peak RSS+swap 16.99; wall 7091 s; archived	17117ee2ffd9e647b6cf658ec91c9116643e7304
+2020	1	session_01EVngpn9cJuXFRzpZs1MQfN	2026-10-15T10:47:10Z	22.36 (13.36+9.0)	SOLVED; verified (ls-tree 21 files + bytes; engine U-5 pass; recipe gate 0 breaks); peak RSS+swap 16.73; wall 6349 s; archived	52e66dc21760aeb05a0def1e8737724c3abe5934
+2021	1	session_01TDyje7HYS7QaYu9xwDAmG1	2026-10-15T10:55:11Z	17.4	gate stop; archived (memory attempt 1)	
+2022	1	session_01SxZz4BBazUD5xahuPqnxeC	2026-10-15T11:03:45Z	17.4	gate stop; archived (memory attempt 1)	
+2023	1	session_01HtUBR1aiVhE78TZSQvKbpz	2026-10-15T11:11:48Z	17.4	gate stop; archived (memory attempt 1)	
+2024	1	session_01ExsbFWt18PvXwa1HeM2xFy	2026-10-15T11:19:24Z	16.4	gate stop; archived (memory attempt 1)	
+2025	1	session_019KCqb5DpWfY2aU99mp9GAf	2026-10-15T11:27:45Z	16.4	gate stop; archived (memory attempt 1)	
+2021	2	session_01JVRmig9G4M5aBZkkjANj5H	2026-10-15T11:38:19Z	16.4	gate stop; archived (memory attempt 2)	
+2022	2	session_016zsxMd4vaC1Vwv8iVYCZ9L	2026-10-15T11:47:44Z	16.4	gate stop; archived (memory attempt 2)	
+2023	2	session_01HMfmv6q3dFERCpGkKhkfZC	2026-10-15T11:55:25Z	17.4	gate stop; archived (memory attempt 2)	
+2024	2	session_01D4N8aaQ1XGbNzpKT2EizFG	2026-10-15T12:04:41Z	16.4	gate stop; archived (memory attempt 2)	
+2025	2	session_0138JLHnEcR2PfNfzcgrfbCH	2026-10-15T12:12:56Z	17.4	gate stop; archived (memory attempt 2)	
+2021	3	session_01NXz8x5cSXZPbZVUVZTSJzo	2026-10-15T12:24:09Z	16.4	gate stop; archived (memory attempt 3) -> HELD pending owner gate ruling (Addendum D)	
+2022	3	session_01M59KKMXzBhC8yJNnbvBXWA	2026-10-15T12:32:56Z	17.4	gate stop; archived (memory attempt 3) -> HELD pending owner gate ruling (Addendum D)	
+2023	3	session_01V4ezmSq7N1H6oBXfebiGAP	2026-10-15T12:42:26Z	16.4	gate stop; archived (memory attempt 3) -> HELD pending owner gate ruling (Addendum D)	
+2024	3	session_01UzDE25CpjBNkSuLLJBeWkg	2026-10-15T12:52:19Z	~18.4 (11.3 GiB free disk)	gate stop; archived (memory attempt 3) -> HELD pending owner gate ruling (Addendum D)	
+2025	3	session_019YjoKjHWhVssG64NbsPFBg	2026-10-15T12:59:03Z	~17.4 (10.7 GiB free disk)	gate stop; archived (memory attempt 3) -> HELD pending owner gate ruling (Addendum D)	

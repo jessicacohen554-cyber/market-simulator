@@ -4048,6 +4048,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 mc_base,
                 dispatch_kwargs,
                 config,
+                zone_names=zone_names,
                 xyear_cache=forecast_xyear_cache,
                 xyear_warmstart=config.forecast_xyear_warmstart,
                 p1_fleet_prep=(

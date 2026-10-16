@@ -23206,8 +23206,9 @@ class ScenarioConfig:
     # ruling D-2 "Keep 3x; fund speedup", 2026-10-09): "highs_default" = the
     # uc-1.1 path (MIP presolve on, every HiGHS heuristic and the root restart
     # at its default); "lean" = presolve on (it pays for itself), the
-    # feasibility-jump and LP heuristics off, the root restart off (the carried
-    # incumbent and HiGHS's root rounding supply the solution). A preset moves
+    # feasibility jump off, the root restart off, the LP heuristics on since
+    # engine uc-1.8 (FINDING-ucmilp-fix9-gated-window-slowdown-2026-10-15.md:
+    # under the reserve u-gate they supply the incumbent). A preset moves
     # wall clock, never the optimum: the same window problem solves to the
     # same objective within uc_mip_rel_gap (model/uc/solve.py::
     # UC_SOLVER_PRESETS; FINDING-ucmilp-speed-window-solve-profile-2026-10-09.
