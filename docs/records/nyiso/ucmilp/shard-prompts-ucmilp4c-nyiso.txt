@@ -1,0 +1,131 @@
+# Shard prompts — lane UC-4-NYISO resume at uc-1.8 (PRECOMMIT Addendum B), pin 41cd55dc9b254a412f52cce051257ea15965c70e, lane ucmilp4c-nyiso, years 2023-2025 (4th and last attempt each).
+# Same eleven --sets and budget as shard-prompts-ucmilp4b-nyiso.txt; lane addendum appended. Parent: session_01TwaDV4e3y8xUFmUnHeK2HZ.
+
+====================================================================================================
+
+SOLVE SHARD ucmilp4c-nyiso-2023 — NYISO backcast year 2023, ONE year, ONE container (rule 36). Model: Opus.
+DATA PROFILE: nyiso
+
+HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
+1. `git rev-parse HEAD` == 41cd55dc9b254a412f52cce051257ea15965c70e  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
+3. `python3 scripts/hydrate_data.py --profile nyiso` then `python3 scripts/regenerate_clean.py --solve-profile NYISO` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
+4. the recipe you will solve: `results/calibration/w0_nyiso_span` replayed with unit_commitment_milp=true, uc_commitment_demand_source='"da_forecast"', nyiso_gas_commitment_bridge=false, nyiso_gas_bridge_da_horizon=false, nyiso_gas_bridge_min_run=false, nyiso_gas_bridge_online_hours=false, nyiso_gas_bridge_plant_exclusions=false, nyiso_gas_bridge_reserve_duty_exclusions=false, nyiso_gas_bridge_startup=false, nyiso_gas_bridge_startup_aware=false, nyiso_gas_bridge_state_floor_min_run=false; confirm by reading `results/calibration/w0_nyiso_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; uc_commitment_demand_source='"da_forecast"'; nyiso_gas_commitment_bridge=false; nyiso_gas_bridge_da_horizon=false; nyiso_gas_bridge_min_run=false; nyiso_gas_bridge_online_hours=false; nyiso_gas_bridge_plant_exclusions=false; nyiso_gas_bridge_reserve_duty_exclusions=false; nyiso_gas_bridge_startup=false; nyiso_gas_bridge_startup_aware=false; nyiso_gas_bridge_state_floor_min_run=false
+5. memory: the runner calls `scripts/lib/solve_container.ensure_solve_container` itself; never pass `--no-container-preflight`, never read `free` — report the `container preflight:` and `memory peak:` log lines
+
+SOLVE (sequential, this year only):
+  eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"
+  python3 scripts/replay_keeper.py results/calibration/w0_nyiso_span --years 2023 --out-dir results/calibration/ucmilp4c_nyiso_2023 --set unit_commitment_milp=true --set uc_commitment_demand_source='"da_forecast"' --set nyiso_gas_commitment_bridge=false --set nyiso_gas_bridge_da_horizon=false --set nyiso_gas_bridge_min_run=false --set nyiso_gas_bridge_online_hours=false --set nyiso_gas_bridge_plant_exclusions=false --set nyiso_gas_bridge_reserve_duty_exclusions=false --set nyiso_gas_bridge_startup=false --set nyiso_gas_bridge_startup_aware=false --set nyiso_gas_bridge_state_floor_min_run=false --note "ucmilp4c-nyiso: UC-4 arm U4 at uc-1.8"
+Budget: 720 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
+
+PUSH THE WHOLE BUNDLE (rule 34 (a) — a bundle that cannot back a promotion is a wasted solve):
+  git checkout -b claude/ucmilp4c-nyiso-2023
+  printf '\n!results/calibration/ucmilp4c_nyiso_2023/**\n' >> .gitignore
+  git add .gitignore && git add results/calibration/ucmilp4c_nyiso_2023
+  git status --short      # MUST show nothing outside .gitignore and results/calibration/ucmilp4c_nyiso_2023
+  git commit -m "ucmilp4c-nyiso: NYISO 2023 leg (results/calibration/ucmilp4c_nyiso_2023)"
+  git push -u origin claude/ucmilp4c-nyiso-2023     # on HTTP 408/500: git config http.version HTTP/1.1, retry
+`results/calibration/ucmilp4c_nyiso_2023/dispatch/2023_P1.parquet` MUST be in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp4c_nyiso_2023/dispatch`). A plain `git add` after the .gitignore negation — never `git add -f`, never `git add -A`, never `git add .`.
+
+FORBIDDEN, by name: git add -A / git add . ; any edit under src/ or scripts/ ; dashboard_add_run.py, build_manifest.py, build_status.py, prune_iso_runs.py, promote_keeper.py, anything under frontend/data/ (registration is the parent's job, once) ; opening a PR ; deleting any result (rule 31) ; solving any other year.
+
+REPORT in your final message, in numbers: HEAD sha; the `container preflight:` and `memory peak:` lines; LP wall time; for 2023: objective, total generation TWh by class, mean and p99 price per zone, unserved energy MWh; the commit sha and branch; `git ls-tree` count under results/calibration/ucmilp4c_nyiso_2023; and any hard stop that fired. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
+
+ADDENDUM (lane UC-4-NYISO, PRECOMMIT docs/records/nyiso/ucmilp/PRECOMMIT-ucmilp4-nyiso-u4-2026-10-15.md Addendum B, branch claude/ucmilp-4-nyiso; engine uc-1.8 at pin 41cd55dc; arm U4):
+- before the solve run `uv sync` and put `.venv/bin` first on PATH so `python3` is the pinned interpreter; hard stop 3's regenerate step needs it. The regenerate step MUST (re)build `data/clean/uc-params/NYISO` at this SHA; report the uc-params line of its output.
+- MEMORY GATE (hard stop 2b, owner ruling 2026-10-16): ceiling + swap AS PRINTED by `prepare_solve_container.py` must be >= 8.8 GiB (the standard 13.36 GiB ceiling passes even with no swap). If it is below 8.8 GiB, STOP before any data step and report the lines verbatim. Do not add swap by hand.
+- KEEP-ALIVE (standing rule): while the detached solve runs, re-arm your watcher (or schedule a send_later wake-up) at intervals of 90 min or less, 25 min recommended, until the solve process exits. An idle container is reclaimed and kills a detached solve.
+- the uc_commitment_demand_source value is the JSON string "da_forecast": run the replay_keeper command exactly as printed (the single quotes are shell quoting). If replay_keeper rejects it, STOP and report the error verbatim.
+- also confirm hourly/uc_schedule_2023.parquet, hourly/uc_uplift_2023.parquet, uc_solve_log_2023.json and hourly/unit_marginal_2023.parquet are in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp4c_nyiso_2023`). If the recipe armed the UC gate but no uc_schedule_2023.parquet was written, that is a HARD STOP: report it, do not push.
+- files over 100 MB: before `git add`, list `find results/calibration/ucmilp4c_nyiso_2023 -size +100M`. For each such file F: record `sha256sum F`, run `split -b 90m -d F F.part`, record `sha256sum F.part*`, append the line `results/calibration/ucmilp4c_nyiso_2023/<relative path of F>` to .gitignore AFTER the negation line so the original stays out, and commit the parts. Report every sha256. Pre-authorised.
+- report: the `log_year_phase_timing` line verbatim; the `summary` object of uc_solve_log_2023.json verbatim; its commitment-demand block (source, basis, qa_dropped_hours, increment_* fields); `engine.integers_per_window`, `engine.n_clusters`, the engine version string (expect uc-1.8); the "UC stage prepared" census line; the count of non-optimal windows; whether pass-2 reuse fired; and the `memory peak:` line (cgroup_peak_rss_gib, process_vmhwm_gib, swap). Do not judge any ratio.
+- if the runner stops with a UC hard stop (an infeasible window, 'no incumbent', any exception inside model/uc, pipeline/uc or data/commitment_demand), that is a SUCCESSFUL shard report: paste the exception verbatim, push nothing, stop. Never patch src/ or scripts/.
+- launch the replay_keeper command detached from the start (`setsid nohup <command> > solve.log 2>&1 &`) and monitor the log (uc-1.7 NYISO legs: 112–126 min end to end; uc-1.8 should be faster).
+- never edit any uc_* field, never pass a --set beyond the eleven listed, never re-run with a different time limit.
+- when done, send your final report to the parent session session_01TwaDV4e3y8xUFmUnHeK2HZ (UC-4-NYISO) with the claude-code-remote send_message tool.
+
+====================================================================================================
+
+SOLVE SHARD ucmilp4c-nyiso-2024 — NYISO backcast year 2024, ONE year, ONE container (rule 36). Model: Opus.
+DATA PROFILE: nyiso
+
+HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
+1. `git rev-parse HEAD` == 41cd55dc9b254a412f52cce051257ea15965c70e  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
+3. `python3 scripts/hydrate_data.py --profile nyiso` then `python3 scripts/regenerate_clean.py --solve-profile NYISO` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
+4. the recipe you will solve: `results/calibration/w0_nyiso_span` replayed with unit_commitment_milp=true, uc_commitment_demand_source='"da_forecast"', nyiso_gas_commitment_bridge=false, nyiso_gas_bridge_da_horizon=false, nyiso_gas_bridge_min_run=false, nyiso_gas_bridge_online_hours=false, nyiso_gas_bridge_plant_exclusions=false, nyiso_gas_bridge_reserve_duty_exclusions=false, nyiso_gas_bridge_startup=false, nyiso_gas_bridge_startup_aware=false, nyiso_gas_bridge_state_floor_min_run=false; confirm by reading `results/calibration/w0_nyiso_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; uc_commitment_demand_source='"da_forecast"'; nyiso_gas_commitment_bridge=false; nyiso_gas_bridge_da_horizon=false; nyiso_gas_bridge_min_run=false; nyiso_gas_bridge_online_hours=false; nyiso_gas_bridge_plant_exclusions=false; nyiso_gas_bridge_reserve_duty_exclusions=false; nyiso_gas_bridge_startup=false; nyiso_gas_bridge_startup_aware=false; nyiso_gas_bridge_state_floor_min_run=false
+5. memory: the runner calls `scripts/lib/solve_container.ensure_solve_container` itself; never pass `--no-container-preflight`, never read `free` — report the `container preflight:` and `memory peak:` log lines
+
+SOLVE (sequential, this year only):
+  eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"
+  python3 scripts/replay_keeper.py results/calibration/w0_nyiso_span --years 2024 --out-dir results/calibration/ucmilp4c_nyiso_2024 --set unit_commitment_milp=true --set uc_commitment_demand_source='"da_forecast"' --set nyiso_gas_commitment_bridge=false --set nyiso_gas_bridge_da_horizon=false --set nyiso_gas_bridge_min_run=false --set nyiso_gas_bridge_online_hours=false --set nyiso_gas_bridge_plant_exclusions=false --set nyiso_gas_bridge_reserve_duty_exclusions=false --set nyiso_gas_bridge_startup=false --set nyiso_gas_bridge_startup_aware=false --set nyiso_gas_bridge_state_floor_min_run=false --note "ucmilp4c-nyiso: UC-4 arm U4 at uc-1.8"
+Budget: 720 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
+
+PUSH THE WHOLE BUNDLE (rule 34 (a) — a bundle that cannot back a promotion is a wasted solve):
+  git checkout -b claude/ucmilp4c-nyiso-2024
+  printf '\n!results/calibration/ucmilp4c_nyiso_2024/**\n' >> .gitignore
+  git add .gitignore && git add results/calibration/ucmilp4c_nyiso_2024
+  git status --short      # MUST show nothing outside .gitignore and results/calibration/ucmilp4c_nyiso_2024
+  git commit -m "ucmilp4c-nyiso: NYISO 2024 leg (results/calibration/ucmilp4c_nyiso_2024)"
+  git push -u origin claude/ucmilp4c-nyiso-2024     # on HTTP 408/500: git config http.version HTTP/1.1, retry
+`results/calibration/ucmilp4c_nyiso_2024/dispatch/2024_P1.parquet` MUST be in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp4c_nyiso_2024/dispatch`). A plain `git add` after the .gitignore negation — never `git add -f`, never `git add -A`, never `git add .`.
+
+FORBIDDEN, by name: git add -A / git add . ; any edit under src/ or scripts/ ; dashboard_add_run.py, build_manifest.py, build_status.py, prune_iso_runs.py, promote_keeper.py, anything under frontend/data/ (registration is the parent's job, once) ; opening a PR ; deleting any result (rule 31) ; solving any other year.
+
+REPORT in your final message, in numbers: HEAD sha; the `container preflight:` and `memory peak:` lines; LP wall time; for 2024: objective, total generation TWh by class, mean and p99 price per zone, unserved energy MWh; the commit sha and branch; `git ls-tree` count under results/calibration/ucmilp4c_nyiso_2024; and any hard stop that fired. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
+
+ADDENDUM (lane UC-4-NYISO, PRECOMMIT docs/records/nyiso/ucmilp/PRECOMMIT-ucmilp4-nyiso-u4-2026-10-15.md Addendum B, branch claude/ucmilp-4-nyiso; engine uc-1.8 at pin 41cd55dc; arm U4):
+- before the solve run `uv sync` and put `.venv/bin` first on PATH so `python3` is the pinned interpreter; hard stop 3's regenerate step needs it. The regenerate step MUST (re)build `data/clean/uc-params/NYISO` at this SHA; report the uc-params line of its output.
+- MEMORY GATE (hard stop 2b, owner ruling 2026-10-16): ceiling + swap AS PRINTED by `prepare_solve_container.py` must be >= 8.8 GiB (the standard 13.36 GiB ceiling passes even with no swap). If it is below 8.8 GiB, STOP before any data step and report the lines verbatim. Do not add swap by hand.
+- KEEP-ALIVE (standing rule): while the detached solve runs, re-arm your watcher (or schedule a send_later wake-up) at intervals of 90 min or less, 25 min recommended, until the solve process exits. An idle container is reclaimed and kills a detached solve.
+- the uc_commitment_demand_source value is the JSON string "da_forecast": run the replay_keeper command exactly as printed (the single quotes are shell quoting). If replay_keeper rejects it, STOP and report the error verbatim.
+- also confirm hourly/uc_schedule_2024.parquet, hourly/uc_uplift_2024.parquet, uc_solve_log_2024.json and hourly/unit_marginal_2024.parquet are in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp4c_nyiso_2024`). If the recipe armed the UC gate but no uc_schedule_2024.parquet was written, that is a HARD STOP: report it, do not push.
+- files over 100 MB: before `git add`, list `find results/calibration/ucmilp4c_nyiso_2024 -size +100M`. For each such file F: record `sha256sum F`, run `split -b 90m -d F F.part`, record `sha256sum F.part*`, append the line `results/calibration/ucmilp4c_nyiso_2024/<relative path of F>` to .gitignore AFTER the negation line so the original stays out, and commit the parts. Report every sha256. Pre-authorised.
+- report: the `log_year_phase_timing` line verbatim; the `summary` object of uc_solve_log_2024.json verbatim; its commitment-demand block (source, basis, qa_dropped_hours, increment_* fields); `engine.integers_per_window`, `engine.n_clusters`, the engine version string (expect uc-1.8); the "UC stage prepared" census line; the count of non-optimal windows; whether pass-2 reuse fired; and the `memory peak:` line (cgroup_peak_rss_gib, process_vmhwm_gib, swap). Do not judge any ratio.
+- if the runner stops with a UC hard stop (an infeasible window, 'no incumbent', any exception inside model/uc, pipeline/uc or data/commitment_demand), that is a SUCCESSFUL shard report: paste the exception verbatim, push nothing, stop. Never patch src/ or scripts/.
+- launch the replay_keeper command detached from the start (`setsid nohup <command> > solve.log 2>&1 &`) and monitor the log (uc-1.7 NYISO legs: 112–126 min end to end; uc-1.8 should be faster).
+- never edit any uc_* field, never pass a --set beyond the eleven listed, never re-run with a different time limit.
+- when done, send your final report to the parent session session_01TwaDV4e3y8xUFmUnHeK2HZ (UC-4-NYISO) with the claude-code-remote send_message tool.
+
+====================================================================================================
+
+SOLVE SHARD ucmilp4c-nyiso-2025 — NYISO backcast year 2025, ONE year, ONE container (rule 36). Model: Opus.
+DATA PROFILE: nyiso
+
+HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
+1. `git rev-parse HEAD` == 41cd55dc9b254a412f52cce051257ea15965c70e  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
+3. `python3 scripts/hydrate_data.py --profile nyiso` then `python3 scripts/regenerate_clean.py --solve-profile NYISO` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
+4. the recipe you will solve: `results/calibration/w0_nyiso_span` replayed with unit_commitment_milp=true, uc_commitment_demand_source='"da_forecast"', nyiso_gas_commitment_bridge=false, nyiso_gas_bridge_da_horizon=false, nyiso_gas_bridge_min_run=false, nyiso_gas_bridge_online_hours=false, nyiso_gas_bridge_plant_exclusions=false, nyiso_gas_bridge_reserve_duty_exclusions=false, nyiso_gas_bridge_startup=false, nyiso_gas_bridge_startup_aware=false, nyiso_gas_bridge_state_floor_min_run=false; confirm by reading `results/calibration/w0_nyiso_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; uc_commitment_demand_source='"da_forecast"'; nyiso_gas_commitment_bridge=false; nyiso_gas_bridge_da_horizon=false; nyiso_gas_bridge_min_run=false; nyiso_gas_bridge_online_hours=false; nyiso_gas_bridge_plant_exclusions=false; nyiso_gas_bridge_reserve_duty_exclusions=false; nyiso_gas_bridge_startup=false; nyiso_gas_bridge_startup_aware=false; nyiso_gas_bridge_state_floor_min_run=false
+5. memory: the runner calls `scripts/lib/solve_container.ensure_solve_container` itself; never pass `--no-container-preflight`, never read `free` — report the `container preflight:` and `memory peak:` log lines
+
+SOLVE (sequential, this year only):
+  eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"
+  python3 scripts/replay_keeper.py results/calibration/w0_nyiso_span --years 2025 --out-dir results/calibration/ucmilp4c_nyiso_2025 --set unit_commitment_milp=true --set uc_commitment_demand_source='"da_forecast"' --set nyiso_gas_commitment_bridge=false --set nyiso_gas_bridge_da_horizon=false --set nyiso_gas_bridge_min_run=false --set nyiso_gas_bridge_online_hours=false --set nyiso_gas_bridge_plant_exclusions=false --set nyiso_gas_bridge_reserve_duty_exclusions=false --set nyiso_gas_bridge_startup=false --set nyiso_gas_bridge_startup_aware=false --set nyiso_gas_bridge_state_floor_min_run=false --note "ucmilp4c-nyiso: UC-4 arm U4 at uc-1.8"
+Budget: 720 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
+
+PUSH THE WHOLE BUNDLE (rule 34 (a) — a bundle that cannot back a promotion is a wasted solve):
+  git checkout -b claude/ucmilp4c-nyiso-2025
+  printf '\n!results/calibration/ucmilp4c_nyiso_2025/**\n' >> .gitignore
+  git add .gitignore && git add results/calibration/ucmilp4c_nyiso_2025
+  git status --short      # MUST show nothing outside .gitignore and results/calibration/ucmilp4c_nyiso_2025
+  git commit -m "ucmilp4c-nyiso: NYISO 2025 leg (results/calibration/ucmilp4c_nyiso_2025)"
+  git push -u origin claude/ucmilp4c-nyiso-2025     # on HTTP 408/500: git config http.version HTTP/1.1, retry
+`results/calibration/ucmilp4c_nyiso_2025/dispatch/2025_P1.parquet` MUST be in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp4c_nyiso_2025/dispatch`). A plain `git add` after the .gitignore negation — never `git add -f`, never `git add -A`, never `git add .`.
+
+FORBIDDEN, by name: git add -A / git add . ; any edit under src/ or scripts/ ; dashboard_add_run.py, build_manifest.py, build_status.py, prune_iso_runs.py, promote_keeper.py, anything under frontend/data/ (registration is the parent's job, once) ; opening a PR ; deleting any result (rule 31) ; solving any other year.
+
+REPORT in your final message, in numbers: HEAD sha; the `container preflight:` and `memory peak:` lines; LP wall time; for 2025: objective, total generation TWh by class, mean and p99 price per zone, unserved energy MWh; the commit sha and branch; `git ls-tree` count under results/calibration/ucmilp4c_nyiso_2025; and any hard stop that fired. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
+
+ADDENDUM (lane UC-4-NYISO, PRECOMMIT docs/records/nyiso/ucmilp/PRECOMMIT-ucmilp4-nyiso-u4-2026-10-15.md Addendum B, branch claude/ucmilp-4-nyiso; engine uc-1.8 at pin 41cd55dc; arm U4):
+- before the solve run `uv sync` and put `.venv/bin` first on PATH so `python3` is the pinned interpreter; hard stop 3's regenerate step needs it. The regenerate step MUST (re)build `data/clean/uc-params/NYISO` at this SHA; report the uc-params line of its output.
+- MEMORY GATE (hard stop 2b, owner ruling 2026-10-16): ceiling + swap AS PRINTED by `prepare_solve_container.py` must be >= 8.8 GiB (the standard 13.36 GiB ceiling passes even with no swap). If it is below 8.8 GiB, STOP before any data step and report the lines verbatim. Do not add swap by hand.
+- KEEP-ALIVE (standing rule): while the detached solve runs, re-arm your watcher (or schedule a send_later wake-up) at intervals of 90 min or less, 25 min recommended, until the solve process exits. An idle container is reclaimed and kills a detached solve.
+- the uc_commitment_demand_source value is the JSON string "da_forecast": run the replay_keeper command exactly as printed (the single quotes are shell quoting). If replay_keeper rejects it, STOP and report the error verbatim.
+- also confirm hourly/uc_schedule_2025.parquet, hourly/uc_uplift_2025.parquet, uc_solve_log_2025.json and hourly/unit_marginal_2025.parquet are in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp4c_nyiso_2025`). If the recipe armed the UC gate but no uc_schedule_2025.parquet was written, that is a HARD STOP: report it, do not push.
+- files over 100 MB: before `git add`, list `find results/calibration/ucmilp4c_nyiso_2025 -size +100M`. For each such file F: record `sha256sum F`, run `split -b 90m -d F F.part`, record `sha256sum F.part*`, append the line `results/calibration/ucmilp4c_nyiso_2025/<relative path of F>` to .gitignore AFTER the negation line so the original stays out, and commit the parts. Report every sha256. Pre-authorised.
+- report: the `log_year_phase_timing` line verbatim; the `summary` object of uc_solve_log_2025.json verbatim; its commitment-demand block (source, basis, qa_dropped_hours, increment_* fields); `engine.integers_per_window`, `engine.n_clusters`, the engine version string (expect uc-1.8); the "UC stage prepared" census line; the count of non-optimal windows; whether pass-2 reuse fired; and the `memory peak:` line (cgroup_peak_rss_gib, process_vmhwm_gib, swap). Do not judge any ratio.
+- if the runner stops with a UC hard stop (an infeasible window, 'no incumbent', any exception inside model/uc, pipeline/uc or data/commitment_demand), that is a SUCCESSFUL shard report: paste the exception verbatim, push nothing, stop. Never patch src/ or scripts/.
+- launch the replay_keeper command detached from the start (`setsid nohup <command> > solve.log 2>&1 &`) and monitor the log (uc-1.7 NYISO legs: 112–126 min end to end; uc-1.8 should be faster).
+- never edit any uc_* field, never pass a --set beyond the eleven listed, never re-run with a different time limit.
+- when done, send your final report to the parent session session_01TwaDV4e3y8xUFmUnHeK2HZ (UC-4-NYISO) with the claude-code-remote send_message tool.

@@ -160,3 +160,39 @@ attempts a year becomes a coverage gap, with the attempt log recorded.
   `shard-prompts-ucmilp4b-nyiso.txt`).
 - The lane id is `ucmilp4b-nyiso`; branches are `claude/ucmilp4b-nyiso-<y>`; out-dirs are `results/calibration/ucmilp4b_nyiso_<y>`. The
   launch table is recorded in the RESULT.
+
+## Addendum B (2026-10-16 ~02:30Z, before any uc-1.8 shard): resume of the held years at engine uc-1.8
+
+**Why.**
+- Owner ruling 2026-10-16 (decision card), recorded in UC-DESK r16 (PR #7273, `5bdc2c58`): the memory gate is **1.25 × each ISO's measured peak**.
+- NYISO's measured peak is 7.0 GiB, so its gate is **8.8 GiB** of ceiling + swap at boot. This replaces A.2's 22.4 GiB.
+- UC-DESK resume, 02:21Z: the held years are relaunched on engine uc-1.8.
+
+**Pin** (every resumed shard's `source_revision`): **`41cd55dc9b254a412f52cce051257ea15965c70e`** (main, FIX-9 #7270, engine uc-1.8).
+
+**Years:** 2023, 2024 and 2025 only. Each carries 3 of 4 attempts used, so this launch is each year's **4th and last** attempt. A block under the 8.8 GiB gate makes that year a coverage gap, recorded with the attempt log.
+
+**Unchanged** (§§1, 3–6, 8): the recipe, the eleven `--set`s, the bars, the readings, the kills and the verdict rule.
+
+### B.1 G-DRIFT `7c93273e → 41cd55dc` (zero LP, verified here)
+
+One non-merge commit touches `src/` (3 files).
+
+| content | files | NYISO classification |
+|---|---|---|
+| the lean solver preset now runs HiGHS's LP heuristics (`lp_heuristics=False → True`: RINS / RENS / root reduced cost) | `model/uc/solve.py` | **LIVE on the arm's solver path only.** It changes which incumbent a window's MILP finds and how fast. The formulation, `uc_mip_rel_gap` (1e-3) and `uc_window_time_limit_s` (600 s) are unchanged, so any solution it accepts is still within the same 1e-3 gap. |
+| `UC_ENGINE_VERSION` uc-1.7 → uc-1.8 | `pipeline/uc.py` | label |
+| a comment / docstring | `config/scenarios.py` | INERT |
+| solve surface | `solve_surface_register.py --diff 7c93273e 41cd55dc`: *"345 -> 345 names; 0 value(s) moved … NO VALUE MOVED"* | no key reached |
+| `results/calibration/w0_nyiso_span/**`, `keepers/NYISO.json` | unchanged | — |
+
+**Classification for NYISO.** FIX-9 is a solver-search change, not a model change. Both engines solve the same windows to the same 1e-3 relative gap and the same time limit, so a uc-1.7 leg and a uc-1.8 leg are two acceptable solutions of one problem. The 2021–22 legs (uc-1.7: 730 of 730 windows Optimal, 0 time-limit hits) therefore **stay valid**.
+
+The span is mixed-engine: 2021–22 on uc-1.7, 2023–25 on uc-1.8. The RESULT records the engine per year. Any schedule difference attributable to the engine is bounded by the gap, and it is not separable from year-to-year differences without a repeat solve, which this lane does not run (rule 29(b) / §8).
+
+### B.2 Shard rules (added)
+
+- **Memory gate:** ceiling + swap, as printed by `prepare_solve_container`, must be at least **8.8 GiB**. The standard 13.36 GiB ceiling passes even with no swap.
+- **Keep-alive** (UC-DESK standing rule, 2026-10-15 15:19Z): a shard running a detached solve re-arms its watcher, or schedules a `send_later` wake-up, at **≤ 90 min** intervals until the solve exits. Every **25 min** is recommended.
+- **Prompts** are re-emitted by `shard_prompt.py` at the uc-1.8 pin with the same eleven `--set`s and committed as `shard-prompts-ucmilp4c-nyiso.txt`.
+- **Lane id** `ucmilp4c-nyiso`; branches `claude/ucmilp4c-nyiso-<y>`; out-dirs `results/calibration/ucmilp4c_nyiso_<y>`.
