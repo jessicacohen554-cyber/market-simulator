@@ -108,6 +108,7 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "ramp-capability",
     "uc-params",
     "load-forecast-error",
+    "load-forecast-vintages",
     "vlr-pocket-groups",
     "winter-fuel-inventory",
     "rggi-co2-budgets",
@@ -750,6 +751,20 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "season x local hour. Read by `market_sim.data.commitment_demand` "
             "only when `uc_commitment_demand_source` is `da_forecast` in "
             "forecast mode."
+        ),
+    },
+    "load-forecast-vintages": {
+        "summary": (
+            "Every issued vintage of an ISO's own short-term hourly load "
+            "forecast, by issue time (SPP MTLF)."
+        ),
+        "reconciles": (
+            "SPP portal `mtlf-vs-actual` hourly `OP-MTLF-*.csv` files "
+            "(`data/raw/load-forecast-vintages/spp/<year>.zip`): issue time "
+            "from the 168 h horizon, cross-checked against the Central "
+            "prevailing stamp; past rows keep SPP's averaged actual. Read by "
+            "`market_sim.data.load_forecast_vintages` (the forecast at a "
+            "stated lead); not yet wired into a solve."
         ),
     },
     "energy-offers": {

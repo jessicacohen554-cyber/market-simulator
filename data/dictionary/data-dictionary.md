@@ -65,6 +65,7 @@ for the market split.
 | transfer-interface-limits | — | — | — | — | — | — | — | — |
 | transmission-expansion | — | — | — | — | — | — | — | — |
 | ramp-capability | — | — | — | — | — | — | — | — |
+| load-forecast-vintages | — | — | — | — | — | — | 2019–2026 | — |
 | vlr-pocket-groups | — | — | — | — | — | — | — | — |
 | winter-fuel-inventory | — | — | — | — | — | — | — | — |
 | chp-btm-share | — | — | — | — | — | — | — | — |
@@ -1124,6 +1125,29 @@ commitment demand). Schema:
 | `n_hours` | `int64` | `none` | no | Valid hours pooled into the cell. |
 | `ba` | `string` | `none` | no | EIA-930 balancing-authority code (or pool code) read. |
 | `years` | `string` | `none` | no | Pooled span of complete years, e.g. "2016-2025". |
+
+## load-forecast-vintages
+
+Every issued vintage of an ISO's own short-term hourly load forecast, by issue
+time (SPP MTLF). Schema:
+[`schema/load-forecast-vintages.schema.yaml`](schema/load-forecast-vintages.schema.yaml).
+
+- **Keys:** `iso`, `area`, `issue_time_utc`, `interval_end_utc`
+- **Reconciles:** SPP portal `mtlf-vs-actual` hourly `OP-MTLF-*.csv` files
+  (`data/raw/load-forecast-vintages/spp/<year>.zip`): issue time from the 168 h
+  horizon, cross-checked against the Central prevailing stamp; past rows keep
+  SPP's averaged actual. Read by `market_sim.data.load_forecast_vintages` (the
+  forecast at a stated lead); not yet wired into a solve.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | Model ISO label (SPP, ...). |
+| `area` | `string` | `none` | no | Forecast area as the source labels it. SPP: the BAA column (SPP, SWPW from the April 2026 RTO West expansion); files without a BAA column (every vintage 2013-2025) are the SPP balancing authority and carry "SPP". |
+| `issue_time_utc` | `datetime64[ns, UTC]` | `utc_timestamp` | no | Vintage issue time. SPP: the file-name stamp (local Central prevailing hour) in UTC, cross-checked against max(GMTIntervalEnd) - 168 h; the file posts about 5 minutes after the stamp. |
+| `interval_end_utc` | `datetime64[ns, UTC]` | `utc_timestamp` | no | End of the forecast hour (SPP GMTIntervalEnd). |
+| `lead_hours` | `int64` | `hours` | no | (interval_end_utc - issue_time_utc) in hours. Negative or small values are past/in-progress intervals that carry the averaged actual. |
+| `forecast_mw` | `float64` | `mw` | no | The ISO's forecast for the interval in this vintage (SPP MTLF). |
+| `actual_mw` | `float64` | `mw` | yes | The ISO's averaged actual load reported in this vintage (SPP Averaged Actual); null for forward intervals. The interval in progress at issue is a partial-hour average. |
 
 ## vlr-pocket-groups
 

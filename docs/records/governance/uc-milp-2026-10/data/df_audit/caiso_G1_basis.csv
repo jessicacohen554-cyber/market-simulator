@@ -1,0 +1,22 @@
+year,pair,n,mean_mw,median_abs_mw,exact_frac
+2019,eia_df - oasis_dam,8760,0.0013,0.2400,1.0000
+2019,eia_demand - oasis_actual,8751,-605.3917,451.0000,0.0010
+2019,eia_demand - charge - oasis_actual,8751,-612.6652,457.0000,0.0013
+2020,eia_df - oasis_dam,8784,0.0064,0.2500,1.0000
+2020,eia_demand - oasis_actual,8781,-125.7447,287.0000,0.0017
+2020,eia_demand - charge - oasis_actual,8781,-132.4129,288.0000,0.0013
+2021,eia_df - oasis_dam,8760,-3.2072,0.2500,0.9973
+2021,eia_demand - oasis_actual,8755,-130.6659,266.0000,0.0007
+2021,eia_demand - charge - oasis_actual,8755,-248.3425,312.0000,0.0006
+2022,eia_df - oasis_dam,8760,0.0049,0.2500,1.0000
+2022,eia_demand - oasis_actual,8757,-126.4967,482.0000,0.0006
+2022,eia_demand - charge - oasis_actual,8757,-328.4648,659.0000,0.0003
+2023,eia_df - oasis_dam,8760,0.0019,0.2500,1.0000
+2023,eia_demand - oasis_actual,8758,-117.0870,832.0000,0.0003
+2023,eia_demand - charge - oasis_actual,8758,-581.5950,1155.0000,0.0003
+2024,eia_df - oasis_dam,8735,0.0062,0.2500,1.0000
+2024,eia_demand - oasis_actual,8783,-94.8409,762.0000,0.0002
+2024,eia_demand - charge - oasis_actual,8783,-1090.0512,1356.0000,0.0001
+2025,eia_df - oasis_dam,8703,0.0054,0.2500,1.0000
+2025,eia_demand - oasis_actual,8751,-90.9555,675.0000,0.0031
+2025,eia_demand - charge - oasis_actual,8751,-1578.6219,1380.0000,0.0024
