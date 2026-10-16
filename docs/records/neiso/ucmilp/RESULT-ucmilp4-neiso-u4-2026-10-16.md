@@ -1,9 +1,9 @@
-# RESULT (INTERIM) — UC-4-NEISO: arm U4 at engine uc-1.8 on NEISO 2020–2021 — **R on the two years solved: C3a moves away from 0 by 1.65 pp in 2021; no gated flip; CC starts move away from CEMS in both years**
+# RESULT — UC-4-NEISO: arm U4 at engine uc-1.8 on NEISO (solved 2020–2021) — **R: C3a moves away from 0 by 1.65 pp in 2021; no gated flip; CC starts move away from CEMS in both years**
 
 **Lane:** UC-4-NEISO · **Session:** `session_01FoAQpHpMAwKdf4fmMqoZWT` (Opus) · **Date:** 2026-10-16 · **Branch:** `claude/ucmilp-4-neiso`.
 **Charter:** UC-DESK (`session_01WX9W5tgYMre3Z134LZoGF6`).
 **PRECOMMIT:** `PRECOMMIT-ucmilp4-neiso-u4-2026-10-15.md` §§1–7 plus Addenda A–D. Addendum D re-pins to uc-1.8 `41cd55dc`. Shards solved at `282150d5`, which is that pin plus docs only.
-**Status: INTERIM.** This is the desk's 2026-10-15 ruling: compose and score what landed, and keep the PR a draft. A final RESULT follows only after the owner rules on the memory gate, or closes it.
+**Status: FINAL (UC-DESK ruling 2026-10-16 00:28Z).** This was first composed as an interim reading under the desk's 2026-10-15 ruling. The desk then accepted R for NEISO U4: the pre-registered K bars fail in 0 of 2 years whatever the held years show, so the verdict does not depend on the gate ruling. 2019 is infra-held and 2022–25 gate-held. Both stay relaunchable at `41cd55dc` and are not needed for the verdict.
 **LP in this session:** zero.
 **Registered:** nothing (E13). Scoring used a local sidecar and payload (`2026-10-15-uc-4-neiso-u4`), both removed before this commit. No bench part changed.
 
@@ -29,7 +29,7 @@ These verdicts are stated on 2020–2021 only. Kill #3's 2023 bar cannot be exer
 | 2021 | PASS → PASS | PASS → PASS | +2.85 → **+4.50 %** | **+1.65 (away)** | 0.120 → 0.135 (+0.015) | PASS → PASS (0 / 2) | 0.960 / 0.107 → 0.963 / 0.102 | 1.2 → 3.5 % PASS | 0 → 0 | 0.13 |
 
 - **Determination:** control CALIBRATED; U4 NOT-YET, on C6 UNATTESTED only. This is the declared probe artefact.
-- **C8:** shown as scored, with MECH 28 included. The MECH 28-removed split was not recomputed in this interim.
+- **C8:** shown as scored, with MECH 28 included. The MECH 28-removed split was not recomputed in this lane.
 - **D-4:** the FAIL set is identical to the control's (2021 `chp_steam` plant 54605).
 - **D-1:** not gated, reported only. 2020 COAL_PRB goes FAIL → pass. 2020 COAL_BIT and 2021 COAL_PRB stay FAIL, as in the control. No row is added.
 
@@ -58,7 +58,7 @@ Order in every cell: 2020 · 2021.
 - **Price.** The price body still rises against the control, in the low tercile by +$0.6 and +$1.5. Against uc-1.5, U4 is within ±$0.3 in every cell.
 - **DA demand.** The forecast runs below load off-peak (−170 to −183 MW). That did not lower the trough, which is what §2 expected it to do: T1 and T2 move away from the control in both years.
 - **Attribution.** The four mechanisms act jointly. No per-mechanism attribution is claimed (§5 X).
-- **Not computed in this interim:** the X rows for integer-plant output and control energy above the arm's P1 ceiling.
+- **Not computed in this lane:** the X rows for integer-plant output and control energy above the arm's P1 ceiling.
 
 ## 3. Wall (GATESPEC §6.1)
 
@@ -97,7 +97,7 @@ Both legs ran on the same solver path (lean preset with FIX-9 LP heuristics). Pa
   The composed full span stays local and gitignored. Nothing is deleted.
 - **Composition.** A scratch wrapper (`_ucmilp_compose_span.py` plus `gas_price_override` in the per-year set) applies `_hydro5_compose_span._respan_shared_inputs`, as in UC-3 §8 (a)/(b). `legitimacy_diagnostics.json` was regenerated over 2020–21.
 
-## 5. Verdict (interim), matrix, D-6 card
+## 5. Verdict, matrix, D-6 card
 
 - **Verdict: `R` on 2020–2021** (§4 rule).
   - C3a moves away from 0 by 1.65 pp in 2021.
@@ -106,7 +106,7 @@ Both legs ran on the same solver path (lean preset with FIX-9 LP heuristics). Pa
   - Kill #3's 2023 bar is not exercisable (held).
   - C3b moves by +0.003 and +0.015, under the 0.02 bar.
   - The K-candidate bars fail independently: CC starts are closer to CEMS in 0 of 2 years, and T2 rises in 0 of 2.
-- **Matrix:** NEISO `uc_commitment_demand_source` moves U → **R (interim, 2020–21, joint U4 arm)**. NEISO `unit_commitment_milp` stays R (UC-3).
+- **Matrix:** NEISO `uc_commitment_demand_source` moves U → **R (2020–21 solved, joint U4 arm; desk-accepted)**. NEISO `unit_commitment_milp` stays R (UC-3).
 - **D-6 card (copy-paste):**
 
-  > "UC-4 NEISO, arm U4 (UC + DA-forecast commitment demand + per-unit ut_h/mlf + reserve u-gate) at uc-1.8 — INTERIM R on 2020–21 (2019 held: repeated container reclaim; 2022–25 held pending the memory-gate ruling). 730/730 windows Optimal, 0 TL, 0 MWh unserved, make-whole 0.13–0.24 %, wall 21–28× P0+P1, peak 5.5 GiB. No gated flip; C3a +2.85 → +4.50 % in 2021 (+1.65 pp away; R), 2020 −1.23 → −0.76 %. U4 ≈ UC-3 uc-1.5 on price (±$0.3/MWh) but loses the starts gain: CC starts/CEMS 1.187 → 1.278 and 0.998 → 0.928, further from 1 in both years; T1/T2 move away. The DA forecast's off-peak under-forecast did not lower the trough. Options: (1) record R and stop U4 for NEISO [recommended: on 2020–21 U4 does not change the UC-3 picture]; (2) finish 2019/2022–25 after the gate ruling for a full-span record (≈ 1 h of UC per year; needs a container that survives > 75 min)."
+  > "UC-4 NEISO, arm U4 (UC + DA-forecast commitment demand + per-unit ut_h/mlf + reserve u-gate) at uc-1.8 — R on 2020–21 (2019 held: repeated container reclaim; 2022–25 held pending the memory-gate ruling). 730/730 windows Optimal, 0 TL, 0 MWh unserved, make-whole 0.13–0.24 %, wall 21–28× P0+P1, peak 5.5 GiB. No gated flip; C3a +2.85 → +4.50 % in 2021 (+1.65 pp away; R), 2020 −1.23 → −0.76 %. U4 ≈ UC-3 uc-1.5 on price (±$0.3/MWh) but loses the starts gain: CC starts/CEMS 1.187 → 1.278 and 0.998 → 0.928, further from 1 in both years; T1/T2 move away. The DA forecast's off-peak under-forecast did not lower the trough. Options: (1) record R and stop U4 for NEISO [recommended: on 2020–21 U4 does not change the UC-3 picture]; (2) finish 2019/2022–25 after the gate ruling for a full-span record (≈ 1 h of UC per year; needs a container that survives > 75 min)."
