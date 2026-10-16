@@ -2451,9 +2451,15 @@ def test_d4_uc_ruc_subrow(tmp_path):
     """The RUC sub-row of MECH 28 reads the stage's own log: no RUC block, no
     row; the added floor inside its swept hours passes, outside fails."""
     assert run_d4_uc_ruc(tmp_path, 2024).rows == []
-    log = {"engine": {}, "ruc": {"added_floor_mwh": 1000.0,
-                                 "added_floor_mwh_outside_swept": 0.0,
-                                 "swept_hours": [[96, 144]], "trigger_hours": 5}}
+    log = {
+        "engine": {},
+        "ruc": {
+            "added_floor_mwh": 1000.0,
+            "added_floor_mwh_outside_swept": 0.0,
+            "swept_hours": [[96, 144]],
+            "trigger_hours": 5,
+        },
+    }
     (tmp_path / "uc_solve_log_2024.json").write_text(json.dumps(log))
     res = run_d4_uc_ruc(tmp_path, 2024)
     assert res.rows[0]["floor"] == "uc_schedule × uc_ruc"

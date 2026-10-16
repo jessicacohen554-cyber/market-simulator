@@ -688,7 +688,9 @@ class UcStage:
         digest_s = time.perf_counter() - t0
         # An input with no by-value encoding cannot certify equality: no reuse.
         prior = None if opaque else _LAST_SOLVED.get(digest)
-        reuse_bundle = str(getattr(self.config, "uc_da_schedule_reuse_bundle", "") or "")
+        reuse_bundle = str(
+            getattr(self.config, "uc_da_schedule_reuse_bundle", "") or ""
+        )
         if prior is not None:
             self.adopt(prior, fleet_in, digest, digest_s)
         elif reuse_bundle:
@@ -1096,9 +1098,7 @@ class UcStage:
                     "uc_reliability_commitment": bool(
                         getattr(c, "uc_reliability_commitment", False)
                     ),
-                    "uc_ruc_load_basis": str(
-                        getattr(c, "uc_ruc_load_basis", "actual")
-                    ),
+                    "uc_ruc_load_basis": str(getattr(c, "uc_ruc_load_basis", "actual")),
                     "uc_da_schedule_reuse_bundle": str(
                         getattr(c, "uc_da_schedule_reuse_bundle", "")
                     ),
@@ -1262,8 +1262,10 @@ class UcStage:
             # Minimum-load energy cost per unit-hour, never negative: a
             # negative commitment cost would make the RUC commit for energy
             # economics, which is the DA pass's job, not for reliability.
-            minload = (p.mlf[k] * p.pbar_mw[k])[:, None] * a * np.maximum(
-                mc_uc[p.anchor_gen[k], t0:t1], 0.0
+            minload = (
+                (p.mlf[k] * p.pbar_mw[k])[:, None]
+                * a
+                * np.maximum(mc_uc[p.anchor_gen[k], t0:t1], 0.0)
             )
             u_da = da.u[:, t0:t1].astype(float)
             ahead = self._floor_need_ahead(
@@ -1285,9 +1287,7 @@ class UcStage:
                 pocket=self.pocket,
                 u_floor=u_da,
             )
-            warm = window.warm_start_vector(
-                prev, W, p1_dispatch[:, t0:t1], u_da
-            )
+            warm = window.warm_start_vector(prev, W, p1_dispatch[:, t0:t1], u_da)
             result = solve_window(
                 window,
                 self.options,
