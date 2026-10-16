@@ -33,3 +33,14 @@ r2 pin 804aa916:
 2024 r4 session_01GWAkZy -> MEMORY GATE 17.4 (10.3 disk) ~12:43Z; mem attempt 3; archived; HELD
 2025 r4 session_015idtQn -> MEMORY GATE 17.4 (10.3 disk) ~12:49Z; mem attempt 3; archived; HELD
 2019 r2 session_01DgbdeW -> SUCCESS f0b8f03c, 21 files 108M verified; peak cgroup 9.30 VmHWM 9.07; wall 210.6 min; UC 10,816 s, 7 TL; archived 14:22Z
+21:14Z desk: FIX-9 uc-1.8 @41cd55dc; on resume re-pin 2021-25 via dated addendum, record both engines. Still HELD.
+02:35Z RESUME (owner gate 11.8 GiB, pin 45574487 uc-1.8). 2021 r5 attempt4(final) launched
+2022 r5 attempt4(final) launched 02:30Z
+2023 r5 attempt4(final) launched 02:35Z
+2024 r5 attempt4(final) launched 02:41Z
+2025 r5 attempt4(final) launched 02:46Z
+2023 r5 session_017r3MwW -> SUCCESS 9550f03c (17.4 GiB container passed 11.8 gate), 21 files 108M verified; peak cgroup 9.69 VmHWM 9.23; UC 2567s 0 TL; ratio 3801/1096=3.47; archived 03:56Z
+2022 r5 session_01FF7G6u -> SUCCESS 67b13b5a (22.4 container), 21 files 112M verified; peak cgroup 9.59 VmHWM 9.34; UC 2291s 0 TL; ratio 4527/2153=2.10; archived 03:57Z
+2024 r5 session_01UzsFoL -> SUCCESS f03c510a (17.4 container), 21 files 99M verified; peak cgroup 9.58 VmHWM 9.20; UC 2697s 0 TL; ratio 4081/1264=3.23; archived 04:05Z
+2025 r5 session_01EGiwkn -> SUCCESS 63e49e26 (17.4 container), 21 files verified; peak cgroup 9.82 VmHWM 9.35; UC 2644s 0 TL; ratio 4177/1435=2.91; archived 04:14Z
+2021 r5 session_015ihJcx -> SUCCESS 5ce9bc0a (22.4 container), 21 files verified; peak cgroup 9.47 VmHWM 9.19; UC 1825s 0 TL; P0 4716s (slow, cold simplex); ratio 7384/5477=1.35; archived 04:50Z
