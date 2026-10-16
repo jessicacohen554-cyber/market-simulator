@@ -261,3 +261,38 @@ about 4.8 GiB of headroom. U4 adds no structural memory over uc-1.5 that is expe
 
 **State:** no ERCOT U4 year has solved and no LP has run. Every shard session is archived. No shard branch exists, because no
 shard pushed.
+
+## Addendum E (2026-10-16 02:25Z): resume under the owner's gate ruling, re-pin to uc-1.8 (written before any U4 number)
+
+**Owner ruling (2026-10-16, decision card; desk log r16; PR #7273 `5bdc2c58`).** The memory gate is 1.25 × each ISO's measured
+peak, compared with the boot ceiling + swap. ERCOT's peak is 13.6 GiB (Addendum D), so its **gate is 17.0 GiB**. A shard passes
+iff the total printed on the `swap:` line of `prepare_solve_container.py` is ≥ 17.0. The 13.36 + 4.0 = 17.4 and 13.36 + 5.0 =
+18.4 containers of Addenda C–D pass. This supersedes the 22.4 GiB gate of §4 and Addenda A–B.
+
+**Re-pin.** The engine pin moves to `41cd55dc9b254a412f52cce051257ea15965c70e` (`main`, #7270, engine **uc-1.8**). It is merged
+into the lane branch, and outside this lane's two record files the lane head's tree equals the pin. Shards pin the lane head
+(Addendum E.1). No U4 leg existed at uc-1.7, so the whole span runs at uc-1.8.
+
+**G-DRIFT `7dbfe20f` → `41cd55dc` (zero LP).** The range contains #7265, #7267 (FIX-8), #7268, #7269 and #7270 (FIX-9). Outside
+`docs/`, `tests/`, `results/` and `frontend/`, nine paths change:
+
+| path | hunk | control (UC off) | arm U4 |
+|---|---|---|---|
+| `data/commitment_demand.py`, `pipeline/uc.py` (zone_names plumbing), `pipeline/solve.py`, `pipeline/year.py`, `runner.py`, `scripts/run_calibration.py` | FIX-8: the "da_forecast" increment is mapped onto the runtime demand rows by zone name; `zone_names` is threaded into the UC stage | **INERT**: `zone_names` is read only by the UC stage | **INERT in outcome**: ERCOT's runtime zones are its configured zones (no interchange pseudo-zone), so the module docstring says the mapping is the identity and the increment is unchanged |
+| `model/uc/solve.py` (`UC_SOLVER_PRESETS["lean"]["lp_heuristics"]` False → True), `pipeline/uc.py` (`UC_ENGINE_VERSION = "uc-1.8"`), `config/scenarios.py` (comment) | FIX-9: the lean solver path runs HiGHS's LP heuristics (RINS / RENS / root reduced cost) | **INERT** (UC-gated) | **LIVE**, a solver-path change only: the window model, its integer feasible set, `uc_mip_rel_gap` and the time limit are unchanged, so a window optimum moves at most within the gap. It is live for ERCOT because the keeper co-optimises reserves with integer clusters, so the uc-1.6 u-gate rows are present (desk 21:14Z, correcting its earlier "no u-gate rows"). Expected: wall-clock change, results within the 1e-3 gap |
+| `scripts/lib/uc_bench.py` | bench harness | not on the solve path | not on the solve path |
+
+The control stays the keeper's bundle and no control solve is earned. U4 itself is unchanged: same recipe, same three `--set`
+fields, readings, bars and kills as §§1–3.
+
+**Launch rules (desk 02:21Z).**
+- All 7 years, one shard each, launched serially; a year relaunches only after the previous one's gate result.
+- Attempt counts carry over from Addendum D: 2019 1, 2020 1, 2021 2, 2022 2, 2023 1, 2024 1, 2025 1. The cap is ≤ 4 per
+  year, then a coverage gap.
+- Watcher keep-alive: re-arm every ~25 min (≤ 90 min hard; the desk's standing rule).
+- The 720 min budget stands.
+- Years without a bundle when the lane closes are labelled "held".
+- Shards only. Nothing is registered.
+
+**Order:** 2021 first (the worst-memory year, peak 13.46 GiB), then 2022, 2023, 2019, 2020, 2024, 2025. After 2021 passes the
+gate, the rest go about 5 min apart.
