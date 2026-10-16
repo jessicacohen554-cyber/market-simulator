@@ -131,7 +131,13 @@ logger = logging.getLogger(__name__)
 #: without a bump: wherever uc-1.7 built a schedule the runtime zones were the
 #: configured zones and the commitment demand is bit-identical; everywhere
 #: else uc-1.7 raised before any schedule existed.
-UC_ENGINE_VERSION = "uc-1.7"
+#: uc-1.8 (lane UC-1-FIX-9, UC-DESK ruling 2026-10-15): the ``lean`` solver
+#: path runs HiGHS's LP-based heuristics (``model/uc/solve.py::
+#: UC_SOLVER_PRESETS``). A solver-path change only: the window model, its
+#: integer feasible set, the gap and the time limit are unchanged; a window's
+#: optimum moves at most within ``uc_mip_rel_gap``. The version and the solve
+#: options both enter :func:`uc_input_digest`, so no uc-1.7 schedule is reused.
+UC_ENGINE_VERSION = "uc-1.8"
 
 #: The most recent stage objects (one per year solved in this process), for a
 #: harness that writes the post-P1 uplift sidecar; drained by :func:`take_uc_stages`.

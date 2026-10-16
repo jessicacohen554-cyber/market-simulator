@@ -1,0 +1,74 @@
+{
+ "2019:Amite South": {
+  "model_on_share": 0.94,
+  "cems_on_share": 0.907,
+  "model_starts": 61,
+  "cems_starts": 62,
+  "starts_ratio": 0.98,
+  "bind_hours": 7320,
+  "bind_cems_dark_share": 0.044
+ },
+ "2019:DSG": {
+  "model_on_share": 0.932,
+  "cems_on_share": 0.94,
+  "model_starts": 20,
+  "cems_starts": 17,
+  "starts_ratio": 1.18,
+  "bind_hours": 7528,
+  "bind_cems_dark_share": 0.0
+ },
+ "2019:Western": {
+  "model_on_share": 1.0,
+  "cems_on_share": 1.0,
+  "model_starts": 29,
+  "cems_starts": 8,
+  "starts_ratio": 3.62,
+  "bind_hours": 7300,
+  "bind_cems_dark_share": 0.0
+ },
+ "2019:WOTAB": {
+  "model_on_share": 1.0,
+  "cems_on_share": 0.952,
+  "model_starts": 17,
+  "cems_starts": 42,
+  "starts_ratio": 0.4,
+  "bind_hours": 8563,
+  "bind_cems_dark_share": 0.049
+ },
+ "2020:Amite South": {
+  "model_on_share": 0.973,
+  "cems_on_share": 0.803,
+  "model_starts": 33,
+  "cems_starts": 35,
+  "starts_ratio": 0.94,
+  "bind_hours": 7730,
+  "bind_cems_dark_share": 0.195
+ },
+ "2020:DSG": {
+  "model_on_share": 0.959,
+  "cems_on_share": 0.944,
+  "model_starts": 31,
+  "cems_starts": 20,
+  "starts_ratio": 1.55,
+  "bind_hours": 7044,
+  "bind_cems_dark_share": 0.027
+ },
+ "2020:Western": {
+  "model_on_share": 0.927,
+  "cems_on_share": 0.939,
+  "model_starts": 42,
+  "cems_starts": 15,
+  "starts_ratio": 2.8,
+  "bind_hours": 4942,
+  "bind_cems_dark_share": 0.001
+ },
+ "2020:WOTAB": {
+  "model_on_share": 0.989,
+  "cems_on_share": 0.995,
+  "model_starts": 79,
+  "cems_starts": 41,
+  "starts_ratio": 1.93,
+  "bind_hours": 7342,
+  "bind_cems_dark_share": 0.0
+ }
+}
