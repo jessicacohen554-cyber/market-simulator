@@ -1,0 +1,46 @@
+r2 pin 804aa916:
+2019 session_01DgbdeWubZ7as4tv9ZuU8ty launched 10:40Z
+2020 session_01NLFK6JshnV1x39TqZt2H82 launched 10:46Z
+2021 session_01CxzaDsQDPeLgWqajaG7TGF launched 10:51Z -> MEMORY GATE 13.36+4.0=17.4 GiB (10.6 GiB free disk) at ~11:02Z; mem attempt 1; archived
+2022 session_01CcqcLXLEKBsfS7ejECz9Ua launched 10:57Z
+2023 session_014Af2fRJAogSfTKif736FSP launched 11:02Z
+2024 launched 11:08Z
+2022 session_01CcqcLX -> MEMORY GATE 13.36+5.0=18.4 GiB (11.2 GiB free disk) ~11:07Z; mem attempt 1; archived
+2025 launched 11:13Z
+2023 session_014Af2fR -> MEMORY GATE 13.36+4.0=17.4 GiB (10.3 free disk) ~11:13Z; mem attempt 1; archived
+2024 session_01FH4sW3 -> MEMORY GATE 13.36+4.0=17.4 (10.5 free disk) ~11:18Z; mem attempt 1; archived
+2025 session_012diufm -> MEMORY GATE 17.4 (10.3 free disk) ~11:24Z; mem attempt 1; archived
+2021 r3 attempt2 launched 11:35Z
+2022 r3 attempt2 launched 11:40Z
+2021 r3 session_015RA7VG -> MEMORY GATE 17.4 (10.6 disk) ~11:45Z; mem attempt 2; archived
+2023 r3 attempt2 launched 11:46Z
+2022 r3 session_01688xb4 -> MEMORY GATE 17.4 (10.3 disk) ~11:50Z; mem attempt 2; archived
+2024 r3 attempt2 launched 11:52Z
+2023 r3 session_01Ns1RKp -> MEMORY GATE 17.4 (11.0 disk) ~11:57Z; mem attempt 2; archived
+2025 r3 attempt2 launched 11:58Z
+2024 r3 session_01Kj9Z82 -> MEMORY GATE 17.4 (10.5 disk) ~12:02Z; mem attempt 2; archived
+2025 r3 session_01W4pWZA -> MEMORY GATE 17.4 (10.3 disk) ~12:08Z; mem attempt 2; archived
+2020 r2 session_01NLFK6J -> SUCCESS 2dcd1cbb (claude/ucmilp4-caiso-2020), 21 files, verified bytes; peak cgroup 9.38 VmHWM 9.12; wall 71.9min; archived 12:12Z
+2021 r4 attempt3 launched 12:17Z
+2022 r4 attempt3 launched 12:22Z
+2021 r4 session_01Kfd8M9 -> MEMORY GATE 18.4 (11.4 disk) ~12:26Z; mem attempt 3; archived
+2023 r4 attempt3 launched 12:27Z
+2022 r4 session_016fk1cp -> MEMORY GATE 17.4 (10.3 disk) ~12:32Z; mem attempt 3; archived
+2024 r4 attempt3 launched 12:33Z
+12:36Z desk: HOLD 4th attempt for years at 3/4 (pending owner gate ruling). 2021, 2022 HELD.
+2023 r4 session_01MxgQyi -> MEMORY GATE 17.4 (10.3 disk) ~12:37Z; mem attempt 3; archived; HELD
+2025 r4 attempt3 launched 12:39Z
+2024 r4 session_01GWAkZy -> MEMORY GATE 17.4 (10.3 disk) ~12:43Z; mem attempt 3; archived; HELD
+2025 r4 session_015idtQn -> MEMORY GATE 17.4 (10.3 disk) ~12:49Z; mem attempt 3; archived; HELD
+2019 r2 session_01DgbdeW -> SUCCESS f0b8f03c, 21 files 108M verified; peak cgroup 9.30 VmHWM 9.07; wall 210.6 min; UC 10,816 s, 7 TL; archived 14:22Z
+21:14Z desk: FIX-9 uc-1.8 @41cd55dc; on resume re-pin 2021-25 via dated addendum, record both engines. Still HELD.
+02:35Z RESUME (owner gate 11.8 GiB, pin 45574487 uc-1.8). 2021 r5 attempt4(final) launched
+2022 r5 attempt4(final) launched 02:30Z
+2023 r5 attempt4(final) launched 02:35Z
+2024 r5 attempt4(final) launched 02:41Z
+2025 r5 attempt4(final) launched 02:46Z
+2023 r5 session_017r3MwW -> SUCCESS 9550f03c (17.4 GiB container passed 11.8 gate), 21 files 108M verified; peak cgroup 9.69 VmHWM 9.23; UC 2567s 0 TL; ratio 3801/1096=3.47; archived 03:56Z
+2022 r5 session_01FF7G6u -> SUCCESS 67b13b5a (22.4 container), 21 files 112M verified; peak cgroup 9.59 VmHWM 9.34; UC 2291s 0 TL; ratio 4527/2153=2.10; archived 03:57Z
+2024 r5 session_01UzsFoL -> SUCCESS f03c510a (17.4 container), 21 files 99M verified; peak cgroup 9.58 VmHWM 9.20; UC 2697s 0 TL; ratio 4081/1264=3.23; archived 04:05Z
+2025 r5 session_01EGiwkn -> SUCCESS 63e49e26 (17.4 container), 21 files verified; peak cgroup 9.82 VmHWM 9.35; UC 2644s 0 TL; ratio 4177/1435=2.91; archived 04:14Z
+2021 r5 session_015ihJcx -> SUCCESS 5ce9bc0a (22.4 container), 21 files verified; peak cgroup 9.47 VmHWM 9.19; UC 1825s 0 TL; P0 4716s (slow, cold simplex); ratio 7384/5477=1.35; archived 04:50Z

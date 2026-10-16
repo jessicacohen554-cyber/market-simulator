@@ -1,0 +1,22 @@
+2019 engine uc-1.7 | price ctrl 38.06 uc15 40.79 U4 38.33 (d vs ctrl +0.27) | by ctrl tercile dU4: low +0.53 mid -0.26 high +0.55 | <=$15 h ctrl 195 U4 153 | uplift 0.623%
+2020 engine uc-1.7 | price ctrl 34.30 uc15 35.46 U4 34.64 (d vs ctrl +0.34) | by ctrl tercile dU4: low -0.28 mid +0.22 high +1.07 | <=$15 h ctrl 207 U4 220 | uplift 0.192%
+2021 engine uc-1.8 | price ctrl 54.60 uc15 56.74 U4 56.21 (d vs ctrl +1.61) | by ctrl tercile dU4: low +0.67 mid +0.42 high +3.73 | <=$15 h ctrl 203 U4 201 | uplift 0.109%
+2022 engine uc-1.8 | price ctrl 88.02 uc15 91.42 U4 92.22 (d vs ctrl +4.20) | by ctrl tercile dU4: low +4.18 mid +2.68 high +5.74 | <=$15 h ctrl 439 U4 376 | uplift 0.079%
+2023 engine uc-1.8 | price ctrl 56.48 uc15 58.68 U4 58.76 (d vs ctrl +2.28) | by ctrl tercile dU4: low +2.85 mid +0.42 high +3.56 | <=$15 h ctrl 626 U4 519 | uplift 0.169%
+2024 engine uc-1.8 | price ctrl 35.31 uc15 36.71 U4 36.91 (d vs ctrl +1.61) | by ctrl tercile dU4: low +3.43 mid +0.93 high +0.47 | <=$15 h ctrl 1024 U4 827 | uplift 0.224%
+2025 engine uc-1.8 | price ctrl 35.09 uc15 37.03 U4 37.72 (d vs ctrl +2.63) | by ctrl tercile dU4: low +4.66 mid +1.94 high +1.29 | <=$15 h ctrl 869 U4 654 | uplift 0.171%
+class cols ['year', 'pass', 'klass', 'hour', 'mw']
+2019 U4-ctrl: CC_REGULAR -0.82 import -0.00 CT_PEAKER +0.86 hydro +0.01 ST_GAS -0.16 CC_CHP +0.01 | U4-uc15: CC_REGULAR +2.76 import -2.16 CT_PEAKER -0.41
+   uc log: {'windows': None, 'time_limit_hits': 7, 'milp_s_total': None, 'milp_s_mean': 29.4473, 'milp_s_p95': 164.5806, 'peak_rss_gb': 8.278} cd: {}
+2020 U4-ctrl: CC_REGULAR -1.85 import +0.86 CT_PEAKER +1.36 hydro -0.00 ST_GAS -0.56 CC_CHP +0.03 | U4-uc15: CC_REGULAR +1.37 import -1.19 CT_PEAKER -0.05
+   uc log: {'windows': None, 'time_limit_hits': 0, 'milp_s_total': None, 'milp_s_mean': 5.8277, 'milp_s_p95': 10.0158, 'peak_rss_gb': 8.348} cd: {}
+2021 U4-ctrl: CC_REGULAR -2.57 import +1.51 CT_PEAKER +0.92 hydro +0.00 ST_GAS -0.05 CC_CHP +0.04 | U4-uc15: CC_REGULAR +0.92 import -0.85 CT_PEAKER -0.01
+   uc log: {'windows': None, 'time_limit_hits': 0, 'milp_s_total': None, 'milp_s_mean': 4.7896, 'milp_s_p95': 22.1298, 'peak_rss_gb': 8.349} cd: {}
+2022 U4-ctrl: CC_REGULAR -4.63 import +3.39 CT_PEAKER +1.05 hydro +0.00 ST_GAS -0.02 CC_CHP +0.07 | U4-uc15: CC_REGULAR -0.28 import -0.02 CT_PEAKER +0.26
+   uc log: {'windows': None, 'time_limit_hits': 0, 'milp_s_total': None, 'milp_s_mean': 6.0725, 'milp_s_p95': 24.8464, 'peak_rss_gb': 8.454} cd: {}
+2023 U4-ctrl: CC_REGULAR -2.67 import +1.60 CT_PEAKER +0.81 hydro +0.01 ST_GAS +0.01 CC_CHP +0.05 | U4-uc15: CC_REGULAR +0.22 import -0.32 CT_PEAKER +0.10
+   uc log: {'windows': None, 'time_limit_hits': 0, 'milp_s_total': None, 'milp_s_mean': 6.8202, 'milp_s_p95': 26.3618, 'peak_rss_gb': 8.393} cd: {}
+2024 U4-ctrl: CC_REGULAR -3.41 import +1.91 CT_PEAKER +1.23 hydro +0.03 ST_GAS -0.10 CC_CHP +0.05 | U4-uc15: CC_REGULAR -0.32 import -0.00 CT_PEAKER +0.26
+   uc log: {'windows': None, 'time_limit_hits': 0, 'milp_s_total': None, 'milp_s_mean': 7.1738, 'milp_s_p95': 25.6856, 'peak_rss_gb': 8.4} cd: {}
+2025 U4-ctrl: CC_REGULAR -5.30 import +3.93 CT_PEAKER +0.88 hydro +0.01 ST_GAS -0.00 CC_CHP +0.09 | U4-uc15: CC_REGULAR -1.24 import +0.78 CT_PEAKER +0.34
+   uc log: {'windows': None, 'time_limit_hits': 0, 'milp_s_total': None, 'milp_s_mean': 7.0441, 'milp_s_p95': 24.716, 'peak_rss_gb': 8.453} cd: {}

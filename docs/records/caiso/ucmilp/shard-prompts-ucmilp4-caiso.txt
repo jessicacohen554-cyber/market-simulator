@@ -1,0 +1,461 @@
+SOLVE SHARD ucmilp4-caiso-2019 — CAISO backcast year 2019, ONE year, ONE container (rule 36). Model: Opus.
+DATA PROFILE: caiso
+
+HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
+1. `git rev-parse HEAD` == 804aa91649b0d61ff7a8ce6782e5f965e4e05912  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
+3. `python3 scripts/hydrate_data.py --profile caiso` then `python3 scripts/regenerate_clean.py --solve-profile CAISO` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
+4. the recipe you will solve: `results/calibration/closeout_caiso_w1_a2_span` replayed with unit_commitment_milp=true, caiso_ra_mustoffer=false, caiso_ra_startup_bridge=false, caiso_ra_bridge_decommit=false, caiso_ra_startup_trajectory=false, uc_commitment_demand_source="da_forecast", energy_reserve_coopt=true, caiso_reserve_coopt=true, caiso_scarcity_pricing=false; confirm by reading `results/calibration/closeout_caiso_w1_a2_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; caiso_ra_mustoffer=false; caiso_ra_startup_bridge=false; caiso_ra_bridge_decommit=false; caiso_ra_startup_trajectory=false; uc_commitment_demand_source="da_forecast"; energy_reserve_coopt=true; caiso_reserve_coopt=true; caiso_scarcity_pricing=false
+2b. MEMORY GATE: from prepare_solve_container's `swap:` line read ceiling + swap total. If it is below 22.4 GiB, STOP before any data step and report the `before:` and `swap:` lines verbatim. Do not solve on a smaller container (UC-MISO lost years to OOM at 16.4-17.4 GiB).
+5. memory: the runner calls `scripts/lib/solve_container.ensure_solve_container` itself; never pass `--no-container-preflight`, never read `free` — report the `container preflight:` and `memory peak:` log lines
+
+SOLVE (sequential, this year only):
+  eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"
+  python3 scripts/replay_keeper.py results/calibration/closeout_caiso_w1_a2_span --years 2019 --out-dir results/calibration/ucmilp4_caiso_2019 --set unit_commitment_milp=true --set caiso_ra_mustoffer=false --set caiso_ra_startup_bridge=false --set caiso_ra_bridge_decommit=false --set caiso_ra_startup_trajectory=false --set 'uc_commitment_demand_source="da_forecast"' --set energy_reserve_coopt=true --set caiso_reserve_coopt=true --set caiso_scarcity_pricing=false --note "ucmilp4-caiso: arm U4 at uc-1.7"
+Budget: 720 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
+
+PUSH THE WHOLE BUNDLE (rule 34 (a) — a bundle that cannot back a promotion is a wasted solve):
+  git checkout -b claude/ucmilp4-caiso-2019
+  printf '\n!results/calibration/ucmilp4_caiso_2019/**\n' >> .gitignore
+  git add .gitignore && git add results/calibration/ucmilp4_caiso_2019
+  git status --short      # MUST show nothing outside .gitignore and results/calibration/ucmilp4_caiso_2019
+  git commit -m "ucmilp4-caiso: CAISO 2019 leg (results/calibration/ucmilp4_caiso_2019)"
+  git push -u origin claude/ucmilp4-caiso-2019     # on HTTP 408/500: git config http.version HTTP/1.1, retry
+`results/calibration/ucmilp4_caiso_2019/dispatch/2019_P1.parquet` MUST be in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp4_caiso_2019/dispatch`). A plain `git add` after the .gitignore negation — never `git add -f`, never `git add -A`, never `git add .`.
+
+FORBIDDEN, by name: git add -A / git add . ; any edit under src/ or scripts/ ; dashboard_add_run.py, build_manifest.py, build_status.py, prune_iso_runs.py, promote_keeper.py, anything under frontend/data/ (registration is the parent's job, once) ; opening a PR ; deleting any result (rule 31) ; solving any other year.
+
+REPORT in your final message, in numbers: HEAD sha; the `container preflight:` and `memory peak:` lines; LP wall time; for 2019: objective, total generation TWh by class, mean and p99 price per zone, unserved energy MWh; the commit sha and branch; `git ls-tree` count under results/calibration/ucmilp4_caiso_2019; and any hard stop that fired. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
+
+UC-4-CAISO ADDITIONS (PRECOMMIT docs/records/caiso/ucmilp/PRECOMMIT-ucmilp4-caiso-u4-2026-10-15.md §5):
+- QUOTING: the `uc_commitment_demand_source` value must reach replay_keeper as the JSON string "da_forecast" — keep the single quotes around that --set exactly as written above. Before the solve, confirm the run log / run_config.json records uc_commitment_demand_source = da_forecast, energy_reserve_coopt = true, caiso_reserve_coopt = true, caiso_scarcity_pricing = false.
+- This is arm U4 of the MILP unit-commitment stage at engine uc-1.7. Every other `uc_*` field stays at its registry default; NEVER pass any other `--set`. If the solve raises `UcWindowInfeasible`, a "no incumbent" stop, or any UC exception, STOP and report the full traceback (an engine defect, routed to the desk) — never retry with a changed setting, never edit src/.
+- Before pushing, CONFIRM these four files exist and are in the pushed tree: `results/calibration/ucmilp4_caiso_2019/hourly/uc_schedule_2019.parquet`, `hourly/uc_uplift_2019.parquet`, `uc_solve_log_2019.json`, `hourly/unit_marginal_2019.parquet` (`git ls-tree -r HEAD -- results/calibration/ucmilp4_caiso_2019 | grep -E 'uc_schedule|uc_uplift|uc_solve_log|unit_marginal'`). A leg without the schedule is unusable: report it as such.
+- FILE SIZE: before `git add`, run `find results/calibration/ucmilp4_caiso_2019 -type f -size +95M`. Any file listed: split it with `split -b 90m -d <file> <file>.part`, record `sha256sum` of the original and of each part in `results/calibration/ucmilp4_caiso_2019/SPLIT_SHA256.txt`, then move the original out of the tree (`mv <file> /tmp/`) so only the parts are committed. Do not ask; report it.
+- REPORT additionally the GATESPEC §6.1 wall row for 2019: the `log_year_phase_timing` line verbatim (data_prep, solve_p0, markup, solve_p1, results_write, total — the UC stage runs inside `markup`); from `uc_solve_log_2019.json` `summary` and `engine`: windows, Σ MILP s, mean and p95 MILP s, nodes p50/p95, gap p95, time_limit_hits, infeasible windows, integer clusters / clusters, reserve_gated_rows, the commitment-demand basis/increment line if logged, engine version (expect uc-1.7), peak RSS; and the mean P1 reserve price.
+- Expected: P0 ≈ 8–17 min, 365 UC windows ≈ 20–180 min (uc-1.5 CAISO: 23–147 min; co-opt adds reserve rows), P1 ≈ 8–17 min. The 720-minute budget is the LP wall only. If the tool's background cap stops the run, relaunch it inside the same container without changing anything and report that you did.
+- Use `run_in_background` for the solve and poll its log; do not exceed the budget.
+====================================================================================================
+SOLVE SHARD ucmilp4-caiso-2020 — CAISO backcast year 2020, ONE year, ONE container (rule 36). Model: Opus.
+DATA PROFILE: caiso
+
+HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
+1. `git rev-parse HEAD` == 804aa91649b0d61ff7a8ce6782e5f965e4e05912  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
+3. `python3 scripts/hydrate_data.py --profile caiso` then `python3 scripts/regenerate_clean.py --solve-profile CAISO` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
+4. the recipe you will solve: `results/calibration/closeout_caiso_w1_a2_span` replayed with unit_commitment_milp=true, caiso_ra_mustoffer=false, caiso_ra_startup_bridge=false, caiso_ra_bridge_decommit=false, caiso_ra_startup_trajectory=false, uc_commitment_demand_source="da_forecast", energy_reserve_coopt=true, caiso_reserve_coopt=true, caiso_scarcity_pricing=false; confirm by reading `results/calibration/closeout_caiso_w1_a2_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; caiso_ra_mustoffer=false; caiso_ra_startup_bridge=false; caiso_ra_bridge_decommit=false; caiso_ra_startup_trajectory=false; uc_commitment_demand_source="da_forecast"; energy_reserve_coopt=true; caiso_reserve_coopt=true; caiso_scarcity_pricing=false
+2b. MEMORY GATE: from prepare_solve_container's `swap:` line read ceiling + swap total. If it is below 22.4 GiB, STOP before any data step and report the `before:` and `swap:` lines verbatim. Do not solve on a smaller container (UC-MISO lost years to OOM at 16.4-17.4 GiB).
+5. memory: the runner calls `scripts/lib/solve_container.ensure_solve_container` itself; never pass `--no-container-preflight`, never read `free` — report the `container preflight:` and `memory peak:` log lines
+
+SOLVE (sequential, this year only):
+  eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"
+  python3 scripts/replay_keeper.py results/calibration/closeout_caiso_w1_a2_span --years 2020 --out-dir results/calibration/ucmilp4_caiso_2020 --set unit_commitment_milp=true --set caiso_ra_mustoffer=false --set caiso_ra_startup_bridge=false --set caiso_ra_bridge_decommit=false --set caiso_ra_startup_trajectory=false --set 'uc_commitment_demand_source="da_forecast"' --set energy_reserve_coopt=true --set caiso_reserve_coopt=true --set caiso_scarcity_pricing=false --note "ucmilp4-caiso: arm U4 at uc-1.7"
+Budget: 720 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
+
+PUSH THE WHOLE BUNDLE (rule 34 (a) — a bundle that cannot back a promotion is a wasted solve):
+  git checkout -b claude/ucmilp4-caiso-2020
+  printf '\n!results/calibration/ucmilp4_caiso_2020/**\n' >> .gitignore
+  git add .gitignore && git add results/calibration/ucmilp4_caiso_2020
+  git status --short      # MUST show nothing outside .gitignore and results/calibration/ucmilp4_caiso_2020
+  git commit -m "ucmilp4-caiso: CAISO 2020 leg (results/calibration/ucmilp4_caiso_2020)"
+  git push -u origin claude/ucmilp4-caiso-2020     # on HTTP 408/500: git config http.version HTTP/1.1, retry
+`results/calibration/ucmilp4_caiso_2020/dispatch/2020_P1.parquet` MUST be in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp4_caiso_2020/dispatch`). A plain `git add` after the .gitignore negation — never `git add -f`, never `git add -A`, never `git add .`.
+
+FORBIDDEN, by name: git add -A / git add . ; any edit under src/ or scripts/ ; dashboard_add_run.py, build_manifest.py, build_status.py, prune_iso_runs.py, promote_keeper.py, anything under frontend/data/ (registration is the parent's job, once) ; opening a PR ; deleting any result (rule 31) ; solving any other year.
+
+REPORT in your final message, in numbers: HEAD sha; the `container preflight:` and `memory peak:` lines; LP wall time; for 2020: objective, total generation TWh by class, mean and p99 price per zone, unserved energy MWh; the commit sha and branch; `git ls-tree` count under results/calibration/ucmilp4_caiso_2020; and any hard stop that fired. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
+
+UC-4-CAISO ADDITIONS (PRECOMMIT docs/records/caiso/ucmilp/PRECOMMIT-ucmilp4-caiso-u4-2026-10-15.md §5):
+- QUOTING: the `uc_commitment_demand_source` value must reach replay_keeper as the JSON string "da_forecast" — keep the single quotes around that --set exactly as written above. Before the solve, confirm the run log / run_config.json records uc_commitment_demand_source = da_forecast, energy_reserve_coopt = true, caiso_reserve_coopt = true, caiso_scarcity_pricing = false.
+- This is arm U4 of the MILP unit-commitment stage at engine uc-1.7. Every other `uc_*` field stays at its registry default; NEVER pass any other `--set`. If the solve raises `UcWindowInfeasible`, a "no incumbent" stop, or any UC exception, STOP and report the full traceback (an engine defect, routed to the desk) — never retry with a changed setting, never edit src/.
+- Before pushing, CONFIRM these four files exist and are in the pushed tree: `results/calibration/ucmilp4_caiso_2020/hourly/uc_schedule_2020.parquet`, `hourly/uc_uplift_2020.parquet`, `uc_solve_log_2020.json`, `hourly/unit_marginal_2020.parquet` (`git ls-tree -r HEAD -- results/calibration/ucmilp4_caiso_2020 | grep -E 'uc_schedule|uc_uplift|uc_solve_log|unit_marginal'`). A leg without the schedule is unusable: report it as such.
+- FILE SIZE: before `git add`, run `find results/calibration/ucmilp4_caiso_2020 -type f -size +95M`. Any file listed: split it with `split -b 90m -d <file> <file>.part`, record `sha256sum` of the original and of each part in `results/calibration/ucmilp4_caiso_2020/SPLIT_SHA256.txt`, then move the original out of the tree (`mv <file> /tmp/`) so only the parts are committed. Do not ask; report it.
+- REPORT additionally the GATESPEC §6.1 wall row for 2020: the `log_year_phase_timing` line verbatim (data_prep, solve_p0, markup, solve_p1, results_write, total — the UC stage runs inside `markup`); from `uc_solve_log_2020.json` `summary` and `engine`: windows, Σ MILP s, mean and p95 MILP s, nodes p50/p95, gap p95, time_limit_hits, infeasible windows, integer clusters / clusters, reserve_gated_rows, the commitment-demand basis/increment line if logged, engine version (expect uc-1.7), peak RSS; and the mean P1 reserve price.
+- Expected: P0 ≈ 8–17 min, 365 UC windows ≈ 20–180 min (uc-1.5 CAISO: 23–147 min; co-opt adds reserve rows), P1 ≈ 8–17 min. The 720-minute budget is the LP wall only. If the tool's background cap stops the run, relaunch it inside the same container without changing anything and report that you did.
+- Use `run_in_background` for the solve and poll its log; do not exceed the budget.
+====================================================================================================
+SOLVE SHARD ucmilp4-caiso-2021 — CAISO backcast year 2021, ONE year, ONE container (rule 36). Model: Opus.
+DATA PROFILE: caiso
+
+HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
+1. `git rev-parse HEAD` == 804aa91649b0d61ff7a8ce6782e5f965e4e05912  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
+3. `python3 scripts/hydrate_data.py --profile caiso` then `python3 scripts/regenerate_clean.py --solve-profile CAISO` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
+4. the recipe you will solve: `results/calibration/closeout_caiso_w1_a2_span` replayed with unit_commitment_milp=true, caiso_ra_mustoffer=false, caiso_ra_startup_bridge=false, caiso_ra_bridge_decommit=false, caiso_ra_startup_trajectory=false, uc_commitment_demand_source="da_forecast", energy_reserve_coopt=true, caiso_reserve_coopt=true, caiso_scarcity_pricing=false; confirm by reading `results/calibration/closeout_caiso_w1_a2_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; caiso_ra_mustoffer=false; caiso_ra_startup_bridge=false; caiso_ra_bridge_decommit=false; caiso_ra_startup_trajectory=false; uc_commitment_demand_source="da_forecast"; energy_reserve_coopt=true; caiso_reserve_coopt=true; caiso_scarcity_pricing=false
+2b. MEMORY GATE: from prepare_solve_container's `swap:` line read ceiling + swap total. If it is below 22.4 GiB, STOP before any data step and report the `before:` and `swap:` lines verbatim. Do not solve on a smaller container (UC-MISO lost years to OOM at 16.4-17.4 GiB).
+5. memory: the runner calls `scripts/lib/solve_container.ensure_solve_container` itself; never pass `--no-container-preflight`, never read `free` — report the `container preflight:` and `memory peak:` log lines
+
+SOLVE (sequential, this year only):
+  eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"
+  python3 scripts/replay_keeper.py results/calibration/closeout_caiso_w1_a2_span --years 2021 --out-dir results/calibration/ucmilp4_caiso_2021 --set unit_commitment_milp=true --set caiso_ra_mustoffer=false --set caiso_ra_startup_bridge=false --set caiso_ra_bridge_decommit=false --set caiso_ra_startup_trajectory=false --set 'uc_commitment_demand_source="da_forecast"' --set energy_reserve_coopt=true --set caiso_reserve_coopt=true --set caiso_scarcity_pricing=false --note "ucmilp4-caiso: arm U4 at uc-1.7"
+Budget: 720 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
+
+PUSH THE WHOLE BUNDLE (rule 34 (a) — a bundle that cannot back a promotion is a wasted solve):
+  git checkout -b claude/ucmilp4-caiso-2021
+  printf '\n!results/calibration/ucmilp4_caiso_2021/**\n' >> .gitignore
+  git add .gitignore && git add results/calibration/ucmilp4_caiso_2021
+  git status --short      # MUST show nothing outside .gitignore and results/calibration/ucmilp4_caiso_2021
+  git commit -m "ucmilp4-caiso: CAISO 2021 leg (results/calibration/ucmilp4_caiso_2021)"
+  git push -u origin claude/ucmilp4-caiso-2021     # on HTTP 408/500: git config http.version HTTP/1.1, retry
+`results/calibration/ucmilp4_caiso_2021/dispatch/2021_P1.parquet` MUST be in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp4_caiso_2021/dispatch`). A plain `git add` after the .gitignore negation — never `git add -f`, never `git add -A`, never `git add .`.
+
+FORBIDDEN, by name: git add -A / git add . ; any edit under src/ or scripts/ ; dashboard_add_run.py, build_manifest.py, build_status.py, prune_iso_runs.py, promote_keeper.py, anything under frontend/data/ (registration is the parent's job, once) ; opening a PR ; deleting any result (rule 31) ; solving any other year.
+
+REPORT in your final message, in numbers: HEAD sha; the `container preflight:` and `memory peak:` lines; LP wall time; for 2021: objective, total generation TWh by class, mean and p99 price per zone, unserved energy MWh; the commit sha and branch; `git ls-tree` count under results/calibration/ucmilp4_caiso_2021; and any hard stop that fired. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
+
+UC-4-CAISO ADDITIONS (PRECOMMIT docs/records/caiso/ucmilp/PRECOMMIT-ucmilp4-caiso-u4-2026-10-15.md §5):
+- QUOTING: the `uc_commitment_demand_source` value must reach replay_keeper as the JSON string "da_forecast" — keep the single quotes around that --set exactly as written above. Before the solve, confirm the run log / run_config.json records uc_commitment_demand_source = da_forecast, energy_reserve_coopt = true, caiso_reserve_coopt = true, caiso_scarcity_pricing = false.
+- This is arm U4 of the MILP unit-commitment stage at engine uc-1.7. Every other `uc_*` field stays at its registry default; NEVER pass any other `--set`. If the solve raises `UcWindowInfeasible`, a "no incumbent" stop, or any UC exception, STOP and report the full traceback (an engine defect, routed to the desk) — never retry with a changed setting, never edit src/.
+- Before pushing, CONFIRM these four files exist and are in the pushed tree: `results/calibration/ucmilp4_caiso_2021/hourly/uc_schedule_2021.parquet`, `hourly/uc_uplift_2021.parquet`, `uc_solve_log_2021.json`, `hourly/unit_marginal_2021.parquet` (`git ls-tree -r HEAD -- results/calibration/ucmilp4_caiso_2021 | grep -E 'uc_schedule|uc_uplift|uc_solve_log|unit_marginal'`). A leg without the schedule is unusable: report it as such.
+- FILE SIZE: before `git add`, run `find results/calibration/ucmilp4_caiso_2021 -type f -size +95M`. Any file listed: split it with `split -b 90m -d <file> <file>.part`, record `sha256sum` of the original and of each part in `results/calibration/ucmilp4_caiso_2021/SPLIT_SHA256.txt`, then move the original out of the tree (`mv <file> /tmp/`) so only the parts are committed. Do not ask; report it.
+- REPORT additionally the GATESPEC §6.1 wall row for 2021: the `log_year_phase_timing` line verbatim (data_prep, solve_p0, markup, solve_p1, results_write, total — the UC stage runs inside `markup`); from `uc_solve_log_2021.json` `summary` and `engine`: windows, Σ MILP s, mean and p95 MILP s, nodes p50/p95, gap p95, time_limit_hits, infeasible windows, integer clusters / clusters, reserve_gated_rows, the commitment-demand basis/increment line if logged, engine version (expect uc-1.7), peak RSS; and the mean P1 reserve price.
+- Expected: P0 ≈ 8–17 min, 365 UC windows ≈ 20–180 min (uc-1.5 CAISO: 23–147 min; co-opt adds reserve rows), P1 ≈ 8–17 min. The 720-minute budget is the LP wall only. If the tool's background cap stops the run, relaunch it inside the same container without changing anything and report that you did.
+- Use `run_in_background` for the solve and poll its log; do not exceed the budget.
+====================================================================================================
+SOLVE SHARD ucmilp4-caiso-2022 — CAISO backcast year 2022, ONE year, ONE container (rule 36). Model: Opus.
+DATA PROFILE: caiso
+
+HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
+1. `git rev-parse HEAD` == 804aa91649b0d61ff7a8ce6782e5f965e4e05912  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
+3. `python3 scripts/hydrate_data.py --profile caiso` then `python3 scripts/regenerate_clean.py --solve-profile CAISO` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
+4. the recipe you will solve: `results/calibration/closeout_caiso_w1_a2_span` replayed with unit_commitment_milp=true, caiso_ra_mustoffer=false, caiso_ra_startup_bridge=false, caiso_ra_bridge_decommit=false, caiso_ra_startup_trajectory=false, uc_commitment_demand_source="da_forecast", energy_reserve_coopt=true, caiso_reserve_coopt=true, caiso_scarcity_pricing=false; confirm by reading `results/calibration/closeout_caiso_w1_a2_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; caiso_ra_mustoffer=false; caiso_ra_startup_bridge=false; caiso_ra_bridge_decommit=false; caiso_ra_startup_trajectory=false; uc_commitment_demand_source="da_forecast"; energy_reserve_coopt=true; caiso_reserve_coopt=true; caiso_scarcity_pricing=false
+2b. MEMORY GATE: from prepare_solve_container's `swap:` line read ceiling + swap total. If it is below 22.4 GiB, STOP before any data step and report the `before:` and `swap:` lines verbatim. Do not solve on a smaller container (UC-MISO lost years to OOM at 16.4-17.4 GiB).
+5. memory: the runner calls `scripts/lib/solve_container.ensure_solve_container` itself; never pass `--no-container-preflight`, never read `free` — report the `container preflight:` and `memory peak:` log lines
+
+SOLVE (sequential, this year only):
+  eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"
+  python3 scripts/replay_keeper.py results/calibration/closeout_caiso_w1_a2_span --years 2022 --out-dir results/calibration/ucmilp4_caiso_2022 --set unit_commitment_milp=true --set caiso_ra_mustoffer=false --set caiso_ra_startup_bridge=false --set caiso_ra_bridge_decommit=false --set caiso_ra_startup_trajectory=false --set 'uc_commitment_demand_source="da_forecast"' --set energy_reserve_coopt=true --set caiso_reserve_coopt=true --set caiso_scarcity_pricing=false --note "ucmilp4-caiso: arm U4 at uc-1.7"
+Budget: 720 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
+
+PUSH THE WHOLE BUNDLE (rule 34 (a) — a bundle that cannot back a promotion is a wasted solve):
+  git checkout -b claude/ucmilp4-caiso-2022
+  printf '\n!results/calibration/ucmilp4_caiso_2022/**\n' >> .gitignore
+  git add .gitignore && git add results/calibration/ucmilp4_caiso_2022
+  git status --short      # MUST show nothing outside .gitignore and results/calibration/ucmilp4_caiso_2022
+  git commit -m "ucmilp4-caiso: CAISO 2022 leg (results/calibration/ucmilp4_caiso_2022)"
+  git push -u origin claude/ucmilp4-caiso-2022     # on HTTP 408/500: git config http.version HTTP/1.1, retry
+`results/calibration/ucmilp4_caiso_2022/dispatch/2022_P1.parquet` MUST be in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp4_caiso_2022/dispatch`). A plain `git add` after the .gitignore negation — never `git add -f`, never `git add -A`, never `git add .`.
+
+FORBIDDEN, by name: git add -A / git add . ; any edit under src/ or scripts/ ; dashboard_add_run.py, build_manifest.py, build_status.py, prune_iso_runs.py, promote_keeper.py, anything under frontend/data/ (registration is the parent's job, once) ; opening a PR ; deleting any result (rule 31) ; solving any other year.
+
+REPORT in your final message, in numbers: HEAD sha; the `container preflight:` and `memory peak:` lines; LP wall time; for 2022: objective, total generation TWh by class, mean and p99 price per zone, unserved energy MWh; the commit sha and branch; `git ls-tree` count under results/calibration/ucmilp4_caiso_2022; and any hard stop that fired. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
+
+UC-4-CAISO ADDITIONS (PRECOMMIT docs/records/caiso/ucmilp/PRECOMMIT-ucmilp4-caiso-u4-2026-10-15.md §5):
+- QUOTING: the `uc_commitment_demand_source` value must reach replay_keeper as the JSON string "da_forecast" — keep the single quotes around that --set exactly as written above. Before the solve, confirm the run log / run_config.json records uc_commitment_demand_source = da_forecast, energy_reserve_coopt = true, caiso_reserve_coopt = true, caiso_scarcity_pricing = false.
+- This is arm U4 of the MILP unit-commitment stage at engine uc-1.7. Every other `uc_*` field stays at its registry default; NEVER pass any other `--set`. If the solve raises `UcWindowInfeasible`, a "no incumbent" stop, or any UC exception, STOP and report the full traceback (an engine defect, routed to the desk) — never retry with a changed setting, never edit src/.
+- Before pushing, CONFIRM these four files exist and are in the pushed tree: `results/calibration/ucmilp4_caiso_2022/hourly/uc_schedule_2022.parquet`, `hourly/uc_uplift_2022.parquet`, `uc_solve_log_2022.json`, `hourly/unit_marginal_2022.parquet` (`git ls-tree -r HEAD -- results/calibration/ucmilp4_caiso_2022 | grep -E 'uc_schedule|uc_uplift|uc_solve_log|unit_marginal'`). A leg without the schedule is unusable: report it as such.
+- FILE SIZE: before `git add`, run `find results/calibration/ucmilp4_caiso_2022 -type f -size +95M`. Any file listed: split it with `split -b 90m -d <file> <file>.part`, record `sha256sum` of the original and of each part in `results/calibration/ucmilp4_caiso_2022/SPLIT_SHA256.txt`, then move the original out of the tree (`mv <file> /tmp/`) so only the parts are committed. Do not ask; report it.
+- REPORT additionally the GATESPEC §6.1 wall row for 2022: the `log_year_phase_timing` line verbatim (data_prep, solve_p0, markup, solve_p1, results_write, total — the UC stage runs inside `markup`); from `uc_solve_log_2022.json` `summary` and `engine`: windows, Σ MILP s, mean and p95 MILP s, nodes p50/p95, gap p95, time_limit_hits, infeasible windows, integer clusters / clusters, reserve_gated_rows, the commitment-demand basis/increment line if logged, engine version (expect uc-1.7), peak RSS; and the mean P1 reserve price.
+- Expected: P0 ≈ 8–17 min, 365 UC windows ≈ 20–180 min (uc-1.5 CAISO: 23–147 min; co-opt adds reserve rows), P1 ≈ 8–17 min. The 720-minute budget is the LP wall only. If the tool's background cap stops the run, relaunch it inside the same container without changing anything and report that you did.
+- Use `run_in_background` for the solve and poll its log; do not exceed the budget.
+====================================================================================================
+SOLVE SHARD ucmilp4-caiso-2023 — CAISO backcast year 2023, ONE year, ONE container (rule 36). Model: Opus.
+DATA PROFILE: caiso
+
+HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
+1. `git rev-parse HEAD` == 804aa91649b0d61ff7a8ce6782e5f965e4e05912  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
+3. `python3 scripts/hydrate_data.py --profile caiso` then `python3 scripts/regenerate_clean.py --solve-profile CAISO` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
+4. the recipe you will solve: `results/calibration/closeout_caiso_w1_a2_span` replayed with unit_commitment_milp=true, caiso_ra_mustoffer=false, caiso_ra_startup_bridge=false, caiso_ra_bridge_decommit=false, caiso_ra_startup_trajectory=false, uc_commitment_demand_source="da_forecast", energy_reserve_coopt=true, caiso_reserve_coopt=true, caiso_scarcity_pricing=false; confirm by reading `results/calibration/closeout_caiso_w1_a2_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; caiso_ra_mustoffer=false; caiso_ra_startup_bridge=false; caiso_ra_bridge_decommit=false; caiso_ra_startup_trajectory=false; uc_commitment_demand_source="da_forecast"; energy_reserve_coopt=true; caiso_reserve_coopt=true; caiso_scarcity_pricing=false
+2b. MEMORY GATE: from prepare_solve_container's `swap:` line read ceiling + swap total. If it is below 22.4 GiB, STOP before any data step and report the `before:` and `swap:` lines verbatim. Do not solve on a smaller container (UC-MISO lost years to OOM at 16.4-17.4 GiB).
+5. memory: the runner calls `scripts/lib/solve_container.ensure_solve_container` itself; never pass `--no-container-preflight`, never read `free` — report the `container preflight:` and `memory peak:` log lines
+
+SOLVE (sequential, this year only):
+  eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"
+  python3 scripts/replay_keeper.py results/calibration/closeout_caiso_w1_a2_span --years 2023 --out-dir results/calibration/ucmilp4_caiso_2023 --set unit_commitment_milp=true --set caiso_ra_mustoffer=false --set caiso_ra_startup_bridge=false --set caiso_ra_bridge_decommit=false --set caiso_ra_startup_trajectory=false --set 'uc_commitment_demand_source="da_forecast"' --set energy_reserve_coopt=true --set caiso_reserve_coopt=true --set caiso_scarcity_pricing=false --note "ucmilp4-caiso: arm U4 at uc-1.7"
+Budget: 720 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
+
+PUSH THE WHOLE BUNDLE (rule 34 (a) — a bundle that cannot back a promotion is a wasted solve):
+  git checkout -b claude/ucmilp4-caiso-2023
+  printf '\n!results/calibration/ucmilp4_caiso_2023/**\n' >> .gitignore
+  git add .gitignore && git add results/calibration/ucmilp4_caiso_2023
+  git status --short      # MUST show nothing outside .gitignore and results/calibration/ucmilp4_caiso_2023
+  git commit -m "ucmilp4-caiso: CAISO 2023 leg (results/calibration/ucmilp4_caiso_2023)"
+  git push -u origin claude/ucmilp4-caiso-2023     # on HTTP 408/500: git config http.version HTTP/1.1, retry
+`results/calibration/ucmilp4_caiso_2023/dispatch/2023_P1.parquet` MUST be in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp4_caiso_2023/dispatch`). A plain `git add` after the .gitignore negation — never `git add -f`, never `git add -A`, never `git add .`.
+
+FORBIDDEN, by name: git add -A / git add . ; any edit under src/ or scripts/ ; dashboard_add_run.py, build_manifest.py, build_status.py, prune_iso_runs.py, promote_keeper.py, anything under frontend/data/ (registration is the parent's job, once) ; opening a PR ; deleting any result (rule 31) ; solving any other year.
+
+REPORT in your final message, in numbers: HEAD sha; the `container preflight:` and `memory peak:` lines; LP wall time; for 2023: objective, total generation TWh by class, mean and p99 price per zone, unserved energy MWh; the commit sha and branch; `git ls-tree` count under results/calibration/ucmilp4_caiso_2023; and any hard stop that fired. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
+
+UC-4-CAISO ADDITIONS (PRECOMMIT docs/records/caiso/ucmilp/PRECOMMIT-ucmilp4-caiso-u4-2026-10-15.md §5):
+- QUOTING: the `uc_commitment_demand_source` value must reach replay_keeper as the JSON string "da_forecast" — keep the single quotes around that --set exactly as written above. Before the solve, confirm the run log / run_config.json records uc_commitment_demand_source = da_forecast, energy_reserve_coopt = true, caiso_reserve_coopt = true, caiso_scarcity_pricing = false.
+- This is arm U4 of the MILP unit-commitment stage at engine uc-1.7. Every other `uc_*` field stays at its registry default; NEVER pass any other `--set`. If the solve raises `UcWindowInfeasible`, a "no incumbent" stop, or any UC exception, STOP and report the full traceback (an engine defect, routed to the desk) — never retry with a changed setting, never edit src/.
+- Before pushing, CONFIRM these four files exist and are in the pushed tree: `results/calibration/ucmilp4_caiso_2023/hourly/uc_schedule_2023.parquet`, `hourly/uc_uplift_2023.parquet`, `uc_solve_log_2023.json`, `hourly/unit_marginal_2023.parquet` (`git ls-tree -r HEAD -- results/calibration/ucmilp4_caiso_2023 | grep -E 'uc_schedule|uc_uplift|uc_solve_log|unit_marginal'`). A leg without the schedule is unusable: report it as such.
+- FILE SIZE: before `git add`, run `find results/calibration/ucmilp4_caiso_2023 -type f -size +95M`. Any file listed: split it with `split -b 90m -d <file> <file>.part`, record `sha256sum` of the original and of each part in `results/calibration/ucmilp4_caiso_2023/SPLIT_SHA256.txt`, then move the original out of the tree (`mv <file> /tmp/`) so only the parts are committed. Do not ask; report it.
+- REPORT additionally the GATESPEC §6.1 wall row for 2023: the `log_year_phase_timing` line verbatim (data_prep, solve_p0, markup, solve_p1, results_write, total — the UC stage runs inside `markup`); from `uc_solve_log_2023.json` `summary` and `engine`: windows, Σ MILP s, mean and p95 MILP s, nodes p50/p95, gap p95, time_limit_hits, infeasible windows, integer clusters / clusters, reserve_gated_rows, the commitment-demand basis/increment line if logged, engine version (expect uc-1.7), peak RSS; and the mean P1 reserve price.
+- Expected: P0 ≈ 8–17 min, 365 UC windows ≈ 20–180 min (uc-1.5 CAISO: 23–147 min; co-opt adds reserve rows), P1 ≈ 8–17 min. The 720-minute budget is the LP wall only. If the tool's background cap stops the run, relaunch it inside the same container without changing anything and report that you did.
+- Use `run_in_background` for the solve and poll its log; do not exceed the budget.
+====================================================================================================
+SOLVE SHARD ucmilp4-caiso-2024 — CAISO backcast year 2024, ONE year, ONE container (rule 36). Model: Opus.
+DATA PROFILE: caiso
+
+HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
+1. `git rev-parse HEAD` == 804aa91649b0d61ff7a8ce6782e5f965e4e05912  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
+3. `python3 scripts/hydrate_data.py --profile caiso` then `python3 scripts/regenerate_clean.py --solve-profile CAISO` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
+4. the recipe you will solve: `results/calibration/closeout_caiso_w1_a2_span` replayed with unit_commitment_milp=true, caiso_ra_mustoffer=false, caiso_ra_startup_bridge=false, caiso_ra_bridge_decommit=false, caiso_ra_startup_trajectory=false, uc_commitment_demand_source="da_forecast", energy_reserve_coopt=true, caiso_reserve_coopt=true, caiso_scarcity_pricing=false; confirm by reading `results/calibration/closeout_caiso_w1_a2_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; caiso_ra_mustoffer=false; caiso_ra_startup_bridge=false; caiso_ra_bridge_decommit=false; caiso_ra_startup_trajectory=false; uc_commitment_demand_source="da_forecast"; energy_reserve_coopt=true; caiso_reserve_coopt=true; caiso_scarcity_pricing=false
+2b. MEMORY GATE: from prepare_solve_container's `swap:` line read ceiling + swap total. If it is below 22.4 GiB, STOP before any data step and report the `before:` and `swap:` lines verbatim. Do not solve on a smaller container (UC-MISO lost years to OOM at 16.4-17.4 GiB).
+5. memory: the runner calls `scripts/lib/solve_container.ensure_solve_container` itself; never pass `--no-container-preflight`, never read `free` — report the `container preflight:` and `memory peak:` log lines
+
+SOLVE (sequential, this year only):
+  eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"
+  python3 scripts/replay_keeper.py results/calibration/closeout_caiso_w1_a2_span --years 2024 --out-dir results/calibration/ucmilp4_caiso_2024 --set unit_commitment_milp=true --set caiso_ra_mustoffer=false --set caiso_ra_startup_bridge=false --set caiso_ra_bridge_decommit=false --set caiso_ra_startup_trajectory=false --set 'uc_commitment_demand_source="da_forecast"' --set energy_reserve_coopt=true --set caiso_reserve_coopt=true --set caiso_scarcity_pricing=false --note "ucmilp4-caiso: arm U4 at uc-1.7"
+Budget: 720 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
+
+PUSH THE WHOLE BUNDLE (rule 34 (a) — a bundle that cannot back a promotion is a wasted solve):
+  git checkout -b claude/ucmilp4-caiso-2024
+  printf '\n!results/calibration/ucmilp4_caiso_2024/**\n' >> .gitignore
+  git add .gitignore && git add results/calibration/ucmilp4_caiso_2024
+  git status --short      # MUST show nothing outside .gitignore and results/calibration/ucmilp4_caiso_2024
+  git commit -m "ucmilp4-caiso: CAISO 2024 leg (results/calibration/ucmilp4_caiso_2024)"
+  git push -u origin claude/ucmilp4-caiso-2024     # on HTTP 408/500: git config http.version HTTP/1.1, retry
+`results/calibration/ucmilp4_caiso_2024/dispatch/2024_P1.parquet` MUST be in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp4_caiso_2024/dispatch`). A plain `git add` after the .gitignore negation — never `git add -f`, never `git add -A`, never `git add .`.
+
+FORBIDDEN, by name: git add -A / git add . ; any edit under src/ or scripts/ ; dashboard_add_run.py, build_manifest.py, build_status.py, prune_iso_runs.py, promote_keeper.py, anything under frontend/data/ (registration is the parent's job, once) ; opening a PR ; deleting any result (rule 31) ; solving any other year.
+
+REPORT in your final message, in numbers: HEAD sha; the `container preflight:` and `memory peak:` lines; LP wall time; for 2024: objective, total generation TWh by class, mean and p99 price per zone, unserved energy MWh; the commit sha and branch; `git ls-tree` count under results/calibration/ucmilp4_caiso_2024; and any hard stop that fired. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
+
+UC-4-CAISO ADDITIONS (PRECOMMIT docs/records/caiso/ucmilp/PRECOMMIT-ucmilp4-caiso-u4-2026-10-15.md §5):
+- QUOTING: the `uc_commitment_demand_source` value must reach replay_keeper as the JSON string "da_forecast" — keep the single quotes around that --set exactly as written above. Before the solve, confirm the run log / run_config.json records uc_commitment_demand_source = da_forecast, energy_reserve_coopt = true, caiso_reserve_coopt = true, caiso_scarcity_pricing = false.
+- This is arm U4 of the MILP unit-commitment stage at engine uc-1.7. Every other `uc_*` field stays at its registry default; NEVER pass any other `--set`. If the solve raises `UcWindowInfeasible`, a "no incumbent" stop, or any UC exception, STOP and report the full traceback (an engine defect, routed to the desk) — never retry with a changed setting, never edit src/.
+- Before pushing, CONFIRM these four files exist and are in the pushed tree: `results/calibration/ucmilp4_caiso_2024/hourly/uc_schedule_2024.parquet`, `hourly/uc_uplift_2024.parquet`, `uc_solve_log_2024.json`, `hourly/unit_marginal_2024.parquet` (`git ls-tree -r HEAD -- results/calibration/ucmilp4_caiso_2024 | grep -E 'uc_schedule|uc_uplift|uc_solve_log|unit_marginal'`). A leg without the schedule is unusable: report it as such.
+- FILE SIZE: before `git add`, run `find results/calibration/ucmilp4_caiso_2024 -type f -size +95M`. Any file listed: split it with `split -b 90m -d <file> <file>.part`, record `sha256sum` of the original and of each part in `results/calibration/ucmilp4_caiso_2024/SPLIT_SHA256.txt`, then move the original out of the tree (`mv <file> /tmp/`) so only the parts are committed. Do not ask; report it.
+- REPORT additionally the GATESPEC §6.1 wall row for 2024: the `log_year_phase_timing` line verbatim (data_prep, solve_p0, markup, solve_p1, results_write, total — the UC stage runs inside `markup`); from `uc_solve_log_2024.json` `summary` and `engine`: windows, Σ MILP s, mean and p95 MILP s, nodes p50/p95, gap p95, time_limit_hits, infeasible windows, integer clusters / clusters, reserve_gated_rows, the commitment-demand basis/increment line if logged, engine version (expect uc-1.7), peak RSS; and the mean P1 reserve price.
+- Expected: P0 ≈ 8–17 min, 365 UC windows ≈ 20–180 min (uc-1.5 CAISO: 23–147 min; co-opt adds reserve rows), P1 ≈ 8–17 min. The 720-minute budget is the LP wall only. If the tool's background cap stops the run, relaunch it inside the same container without changing anything and report that you did.
+- Use `run_in_background` for the solve and poll its log; do not exceed the budget.
+====================================================================================================
+SOLVE SHARD ucmilp4-caiso-2025 — CAISO backcast year 2025, ONE year, ONE container (rule 36). Model: Opus.
+DATA PROFILE: caiso
+
+HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
+1. `git rev-parse HEAD` == 804aa91649b0d61ff7a8ce6782e5f965e4e05912  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
+3. `python3 scripts/hydrate_data.py --profile caiso` then `python3 scripts/regenerate_clean.py --solve-profile CAISO` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
+4. the recipe you will solve: `results/calibration/closeout_caiso_w1_a2_span` replayed with unit_commitment_milp=true, caiso_ra_mustoffer=false, caiso_ra_startup_bridge=false, caiso_ra_bridge_decommit=false, caiso_ra_startup_trajectory=false, uc_commitment_demand_source="da_forecast", energy_reserve_coopt=true, caiso_reserve_coopt=true, caiso_scarcity_pricing=false; confirm by reading `results/calibration/closeout_caiso_w1_a2_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; caiso_ra_mustoffer=false; caiso_ra_startup_bridge=false; caiso_ra_bridge_decommit=false; caiso_ra_startup_trajectory=false; uc_commitment_demand_source="da_forecast"; energy_reserve_coopt=true; caiso_reserve_coopt=true; caiso_scarcity_pricing=false
+2b. MEMORY GATE: from prepare_solve_container's `swap:` line read ceiling + swap total. If it is below 22.4 GiB, STOP before any data step and report the `before:` and `swap:` lines verbatim. Do not solve on a smaller container (UC-MISO lost years to OOM at 16.4-17.4 GiB).
+5. memory: the runner calls `scripts/lib/solve_container.ensure_solve_container` itself; never pass `--no-container-preflight`, never read `free` — report the `container preflight:` and `memory peak:` log lines
+
+SOLVE (sequential, this year only):
+  eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"
+  python3 scripts/replay_keeper.py results/calibration/closeout_caiso_w1_a2_span --years 2025 --out-dir results/calibration/ucmilp4_caiso_2025 --set unit_commitment_milp=true --set caiso_ra_mustoffer=false --set caiso_ra_startup_bridge=false --set caiso_ra_bridge_decommit=false --set caiso_ra_startup_trajectory=false --set 'uc_commitment_demand_source="da_forecast"' --set energy_reserve_coopt=true --set caiso_reserve_coopt=true --set caiso_scarcity_pricing=false --note "ucmilp4-caiso: arm U4 at uc-1.7"
+Budget: 720 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
+
+PUSH THE WHOLE BUNDLE (rule 34 (a) — a bundle that cannot back a promotion is a wasted solve):
+  git checkout -b claude/ucmilp4-caiso-2025
+  printf '\n!results/calibration/ucmilp4_caiso_2025/**\n' >> .gitignore
+  git add .gitignore && git add results/calibration/ucmilp4_caiso_2025
+  git status --short      # MUST show nothing outside .gitignore and results/calibration/ucmilp4_caiso_2025
+  git commit -m "ucmilp4-caiso: CAISO 2025 leg (results/calibration/ucmilp4_caiso_2025)"
+  git push -u origin claude/ucmilp4-caiso-2025     # on HTTP 408/500: git config http.version HTTP/1.1, retry
+`results/calibration/ucmilp4_caiso_2025/dispatch/2025_P1.parquet` MUST be in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp4_caiso_2025/dispatch`). A plain `git add` after the .gitignore negation — never `git add -f`, never `git add -A`, never `git add .`.
+
+FORBIDDEN, by name: git add -A / git add . ; any edit under src/ or scripts/ ; dashboard_add_run.py, build_manifest.py, build_status.py, prune_iso_runs.py, promote_keeper.py, anything under frontend/data/ (registration is the parent's job, once) ; opening a PR ; deleting any result (rule 31) ; solving any other year.
+
+REPORT in your final message, in numbers: HEAD sha; the `container preflight:` and `memory peak:` lines; LP wall time; for 2025: objective, total generation TWh by class, mean and p99 price per zone, unserved energy MWh; the commit sha and branch; `git ls-tree` count under results/calibration/ucmilp4_caiso_2025; and any hard stop that fired. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
+
+UC-4-CAISO ADDITIONS (PRECOMMIT docs/records/caiso/ucmilp/PRECOMMIT-ucmilp4-caiso-u4-2026-10-15.md §5):
+- QUOTING: the `uc_commitment_demand_source` value must reach replay_keeper as the JSON string "da_forecast" — keep the single quotes around that --set exactly as written above. Before the solve, confirm the run log / run_config.json records uc_commitment_demand_source = da_forecast, energy_reserve_coopt = true, caiso_reserve_coopt = true, caiso_scarcity_pricing = false.
+- This is arm U4 of the MILP unit-commitment stage at engine uc-1.7. Every other `uc_*` field stays at its registry default; NEVER pass any other `--set`. If the solve raises `UcWindowInfeasible`, a "no incumbent" stop, or any UC exception, STOP and report the full traceback (an engine defect, routed to the desk) — never retry with a changed setting, never edit src/.
+- Before pushing, CONFIRM these four files exist and are in the pushed tree: `results/calibration/ucmilp4_caiso_2025/hourly/uc_schedule_2025.parquet`, `hourly/uc_uplift_2025.parquet`, `uc_solve_log_2025.json`, `hourly/unit_marginal_2025.parquet` (`git ls-tree -r HEAD -- results/calibration/ucmilp4_caiso_2025 | grep -E 'uc_schedule|uc_uplift|uc_solve_log|unit_marginal'`). A leg without the schedule is unusable: report it as such.
+- FILE SIZE: before `git add`, run `find results/calibration/ucmilp4_caiso_2025 -type f -size +95M`. Any file listed: split it with `split -b 90m -d <file> <file>.part`, record `sha256sum` of the original and of each part in `results/calibration/ucmilp4_caiso_2025/SPLIT_SHA256.txt`, then move the original out of the tree (`mv <file> /tmp/`) so only the parts are committed. Do not ask; report it.
+- REPORT additionally the GATESPEC §6.1 wall row for 2025: the `log_year_phase_timing` line verbatim (data_prep, solve_p0, markup, solve_p1, results_write, total — the UC stage runs inside `markup`); from `uc_solve_log_2025.json` `summary` and `engine`: windows, Σ MILP s, mean and p95 MILP s, nodes p50/p95, gap p95, time_limit_hits, infeasible windows, integer clusters / clusters, reserve_gated_rows, the commitment-demand basis/increment line if logged, engine version (expect uc-1.7), peak RSS; and the mean P1 reserve price.
+- Expected: P0 ≈ 8–17 min, 365 UC windows ≈ 20–180 min (uc-1.5 CAISO: 23–147 min; co-opt adds reserve rows), P1 ≈ 8–17 min. The 720-minute budget is the LP wall only. If the tool's background cap stops the run, relaunch it inside the same container without changing anything and report that you did.
+- Use `run_in_background` for the solve and poll its log; do not exceed the budget.
+# Addendum C relaunch prompts (pin 45574487, uc-1.8, gate 11.8 GiB) for 2021-2025; 2019-20 prompts above (pin 804aa916, uc-1.7).
+====================================================================================================
+SOLVE SHARD ucmilp4-caiso-2021 — CAISO backcast year 2021, ONE year, ONE container (rule 36). Model: Opus.
+DATA PROFILE: caiso
+
+HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
+1. `git rev-parse HEAD` == 45574487409c297d82de32f1e4e4db28844d88f8  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
+3. `python3 scripts/hydrate_data.py --profile caiso` then `python3 scripts/regenerate_clean.py --solve-profile CAISO` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
+4. the recipe you will solve: `results/calibration/closeout_caiso_w1_a2_span` replayed with unit_commitment_milp=true, caiso_ra_mustoffer=false, caiso_ra_startup_bridge=false, caiso_ra_bridge_decommit=false, caiso_ra_startup_trajectory=false, uc_commitment_demand_source="da_forecast", energy_reserve_coopt=true, caiso_reserve_coopt=true, caiso_scarcity_pricing=false; confirm by reading `results/calibration/closeout_caiso_w1_a2_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; caiso_ra_mustoffer=false; caiso_ra_startup_bridge=false; caiso_ra_bridge_decommit=false; caiso_ra_startup_trajectory=false; uc_commitment_demand_source="da_forecast"; energy_reserve_coopt=true; caiso_reserve_coopt=true; caiso_scarcity_pricing=false
+2b. MEMORY GATE: from prepare_solve_container's `swap:` line read ceiling + swap total. If it is below 11.8 GiB (owner ruling 2026-10-16: 1.25 × CAISO measured peak 9.4 GiB), STOP before any data step and report the `before:` and `swap:` lines verbatim.
+5. memory: the runner calls `scripts/lib/solve_container.ensure_solve_container` itself; never pass `--no-container-preflight`, never read `free` — report the `container preflight:` and `memory peak:` log lines
+
+SOLVE (sequential, this year only):
+  eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"
+  python3 scripts/replay_keeper.py results/calibration/closeout_caiso_w1_a2_span --years 2021 --out-dir results/calibration/ucmilp4_caiso_2021 --set unit_commitment_milp=true --set caiso_ra_mustoffer=false --set caiso_ra_startup_bridge=false --set caiso_ra_bridge_decommit=false --set caiso_ra_startup_trajectory=false --set 'uc_commitment_demand_source="da_forecast"' --set energy_reserve_coopt=true --set caiso_reserve_coopt=true --set caiso_scarcity_pricing=false --note "ucmilp4-caiso: arm U4 at uc-1.8"
+Budget: 720 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
+
+PUSH THE WHOLE BUNDLE (rule 34 (a) — a bundle that cannot back a promotion is a wasted solve):
+  git checkout -b claude/ucmilp4-caiso-2021
+  printf '\n!results/calibration/ucmilp4_caiso_2021/**\n' >> .gitignore
+  git add .gitignore && git add results/calibration/ucmilp4_caiso_2021
+  git status --short      # MUST show nothing outside .gitignore and results/calibration/ucmilp4_caiso_2021
+  git commit -m "ucmilp4-caiso: CAISO 2021 leg (results/calibration/ucmilp4_caiso_2021)"
+  git push -u origin claude/ucmilp4-caiso-2021     # on HTTP 408/500: git config http.version HTTP/1.1, retry
+`results/calibration/ucmilp4_caiso_2021/dispatch/2021_P1.parquet` MUST be in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp4_caiso_2021/dispatch`). A plain `git add` after the .gitignore negation — never `git add -f`, never `git add -A`, never `git add .`.
+
+FORBIDDEN, by name: git add -A / git add . ; any edit under src/ or scripts/ ; dashboard_add_run.py, build_manifest.py, build_status.py, prune_iso_runs.py, promote_keeper.py, anything under frontend/data/ (registration is the parent's job, once) ; opening a PR ; deleting any result (rule 31) ; solving any other year.
+
+REPORT in your final message, in numbers: HEAD sha; the `container preflight:` and `memory peak:` lines; LP wall time; for 2021: objective, total generation TWh by class, mean and p99 price per zone, unserved energy MWh; the commit sha and branch; `git ls-tree` count under results/calibration/ucmilp4_caiso_2021; and any hard stop that fired. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
+
+UC-4-CAISO ADDITIONS (PRECOMMIT docs/records/caiso/ucmilp/PRECOMMIT-ucmilp4-caiso-u4-2026-10-15.md §5, Addendum C pin):
+- QUOTING: the `uc_commitment_demand_source` value must reach replay_keeper as the JSON string "da_forecast" — keep the single quotes around that --set exactly as written above. Before the solve, confirm the run log / run_config.json records uc_commitment_demand_source = da_forecast, energy_reserve_coopt = true, caiso_reserve_coopt = true, caiso_scarcity_pricing = false.
+- This is arm U4 of the MILP unit-commitment stage at engine uc-1.8. Every other `uc_*` field stays at its registry default; NEVER pass any other `--set`. If the solve raises `UcWindowInfeasible`, a "no incumbent" stop, or any UC exception, STOP and report the full traceback (an engine defect, routed to the desk) — never retry with a changed setting, never edit src/.
+- Before pushing, CONFIRM these four files exist and are in the pushed tree: `results/calibration/ucmilp4_caiso_2021/hourly/uc_schedule_2021.parquet`, `hourly/uc_uplift_2021.parquet`, `uc_solve_log_2021.json`, `hourly/unit_marginal_2021.parquet` (`git ls-tree -r HEAD -- results/calibration/ucmilp4_caiso_2021 | grep -E 'uc_schedule|uc_uplift|uc_solve_log|unit_marginal'`). A leg without the schedule is unusable: report it as such.
+- FILE SIZE: before `git add`, run `find results/calibration/ucmilp4_caiso_2021 -type f -size +95M`. Any file listed: split it with `split -b 90m -d <file> <file>.part`, record `sha256sum` of the original and of each part in `results/calibration/ucmilp4_caiso_2021/SPLIT_SHA256.txt`, then move the original out of the tree (`mv <file> /tmp/`) so only the parts are committed. Do not ask; report it.
+- REPORT additionally the GATESPEC §6.1 wall row for 2021: the `log_year_phase_timing` line verbatim (data_prep, solve_p0, markup, solve_p1, results_write, total — the UC stage runs inside `markup`); from `uc_solve_log_2021.json` `summary` and `engine`: windows, Σ MILP s, mean and p95 MILP s, nodes p50/p95, gap p95, time_limit_hits, infeasible windows, integer clusters / clusters, reserve_gated_rows, the commitment-demand basis/increment line if logged, engine version (expect uc-1.8), peak RSS; and the mean P1 reserve price.
+- Expected: P0 ≈ 8–17 min, 365 UC windows ≈ 20–180 min (uc-1.5 CAISO: 23–147 min; co-opt adds reserve rows), P1 ≈ 8–17 min. The 720-minute budget is the LP wall only. If the tool's background cap stops the run, relaunch it inside the same container without changing anything and report that you did.
+- Use `run_in_background` for the solve and poll its log; do not exceed the budget. WATCHER RULE (desk standing rule): while the solve runs detached, re-arm your log watcher or schedule a send_later wake-up at ≤ 90-min intervals (25 min recommended) until the solve exits — an idle container is reclaimed at watcher expiry and kills the solve.
+- When you finish (success or stop), send your final REPORT to the parent session session_01V1SFj7XgW15F44YogU5EKJ with mcp__claude-code-remote__send_message (load it via ToolSearch if needed), then end.
+====================================================================================================
+SOLVE SHARD ucmilp4-caiso-2022 — CAISO backcast year 2022, ONE year, ONE container (rule 36). Model: Opus.
+DATA PROFILE: caiso
+
+HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
+1. `git rev-parse HEAD` == 45574487409c297d82de32f1e4e4db28844d88f8  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
+3. `python3 scripts/hydrate_data.py --profile caiso` then `python3 scripts/regenerate_clean.py --solve-profile CAISO` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
+4. the recipe you will solve: `results/calibration/closeout_caiso_w1_a2_span` replayed with unit_commitment_milp=true, caiso_ra_mustoffer=false, caiso_ra_startup_bridge=false, caiso_ra_bridge_decommit=false, caiso_ra_startup_trajectory=false, uc_commitment_demand_source="da_forecast", energy_reserve_coopt=true, caiso_reserve_coopt=true, caiso_scarcity_pricing=false; confirm by reading `results/calibration/closeout_caiso_w1_a2_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; caiso_ra_mustoffer=false; caiso_ra_startup_bridge=false; caiso_ra_bridge_decommit=false; caiso_ra_startup_trajectory=false; uc_commitment_demand_source="da_forecast"; energy_reserve_coopt=true; caiso_reserve_coopt=true; caiso_scarcity_pricing=false
+2b. MEMORY GATE: from prepare_solve_container's `swap:` line read ceiling + swap total. If it is below 11.8 GiB (owner ruling 2026-10-16: 1.25 × CAISO measured peak 9.4 GiB), STOP before any data step and report the `before:` and `swap:` lines verbatim.
+5. memory: the runner calls `scripts/lib/solve_container.ensure_solve_container` itself; never pass `--no-container-preflight`, never read `free` — report the `container preflight:` and `memory peak:` log lines
+
+SOLVE (sequential, this year only):
+  eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"
+  python3 scripts/replay_keeper.py results/calibration/closeout_caiso_w1_a2_span --years 2022 --out-dir results/calibration/ucmilp4_caiso_2022 --set unit_commitment_milp=true --set caiso_ra_mustoffer=false --set caiso_ra_startup_bridge=false --set caiso_ra_bridge_decommit=false --set caiso_ra_startup_trajectory=false --set 'uc_commitment_demand_source="da_forecast"' --set energy_reserve_coopt=true --set caiso_reserve_coopt=true --set caiso_scarcity_pricing=false --note "ucmilp4-caiso: arm U4 at uc-1.8"
+Budget: 720 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
+
+PUSH THE WHOLE BUNDLE (rule 34 (a) — a bundle that cannot back a promotion is a wasted solve):
+  git checkout -b claude/ucmilp4-caiso-2022
+  printf '\n!results/calibration/ucmilp4_caiso_2022/**\n' >> .gitignore
+  git add .gitignore && git add results/calibration/ucmilp4_caiso_2022
+  git status --short      # MUST show nothing outside .gitignore and results/calibration/ucmilp4_caiso_2022
+  git commit -m "ucmilp4-caiso: CAISO 2022 leg (results/calibration/ucmilp4_caiso_2022)"
+  git push -u origin claude/ucmilp4-caiso-2022     # on HTTP 408/500: git config http.version HTTP/1.1, retry
+`results/calibration/ucmilp4_caiso_2022/dispatch/2022_P1.parquet` MUST be in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp4_caiso_2022/dispatch`). A plain `git add` after the .gitignore negation — never `git add -f`, never `git add -A`, never `git add .`.
+
+FORBIDDEN, by name: git add -A / git add . ; any edit under src/ or scripts/ ; dashboard_add_run.py, build_manifest.py, build_status.py, prune_iso_runs.py, promote_keeper.py, anything under frontend/data/ (registration is the parent's job, once) ; opening a PR ; deleting any result (rule 31) ; solving any other year.
+
+REPORT in your final message, in numbers: HEAD sha; the `container preflight:` and `memory peak:` lines; LP wall time; for 2022: objective, total generation TWh by class, mean and p99 price per zone, unserved energy MWh; the commit sha and branch; `git ls-tree` count under results/calibration/ucmilp4_caiso_2022; and any hard stop that fired. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
+
+UC-4-CAISO ADDITIONS (PRECOMMIT docs/records/caiso/ucmilp/PRECOMMIT-ucmilp4-caiso-u4-2026-10-15.md §5, Addendum C pin):
+- QUOTING: the `uc_commitment_demand_source` value must reach replay_keeper as the JSON string "da_forecast" — keep the single quotes around that --set exactly as written above. Before the solve, confirm the run log / run_config.json records uc_commitment_demand_source = da_forecast, energy_reserve_coopt = true, caiso_reserve_coopt = true, caiso_scarcity_pricing = false.
+- This is arm U4 of the MILP unit-commitment stage at engine uc-1.8. Every other `uc_*` field stays at its registry default; NEVER pass any other `--set`. If the solve raises `UcWindowInfeasible`, a "no incumbent" stop, or any UC exception, STOP and report the full traceback (an engine defect, routed to the desk) — never retry with a changed setting, never edit src/.
+- Before pushing, CONFIRM these four files exist and are in the pushed tree: `results/calibration/ucmilp4_caiso_2022/hourly/uc_schedule_2022.parquet`, `hourly/uc_uplift_2022.parquet`, `uc_solve_log_2022.json`, `hourly/unit_marginal_2022.parquet` (`git ls-tree -r HEAD -- results/calibration/ucmilp4_caiso_2022 | grep -E 'uc_schedule|uc_uplift|uc_solve_log|unit_marginal'`). A leg without the schedule is unusable: report it as such.
+- FILE SIZE: before `git add`, run `find results/calibration/ucmilp4_caiso_2022 -type f -size +95M`. Any file listed: split it with `split -b 90m -d <file> <file>.part`, record `sha256sum` of the original and of each part in `results/calibration/ucmilp4_caiso_2022/SPLIT_SHA256.txt`, then move the original out of the tree (`mv <file> /tmp/`) so only the parts are committed. Do not ask; report it.
+- REPORT additionally the GATESPEC §6.1 wall row for 2022: the `log_year_phase_timing` line verbatim (data_prep, solve_p0, markup, solve_p1, results_write, total — the UC stage runs inside `markup`); from `uc_solve_log_2022.json` `summary` and `engine`: windows, Σ MILP s, mean and p95 MILP s, nodes p50/p95, gap p95, time_limit_hits, infeasible windows, integer clusters / clusters, reserve_gated_rows, the commitment-demand basis/increment line if logged, engine version (expect uc-1.8), peak RSS; and the mean P1 reserve price.
+- Expected: P0 ≈ 8–17 min, 365 UC windows ≈ 20–180 min (uc-1.5 CAISO: 23–147 min; co-opt adds reserve rows), P1 ≈ 8–17 min. The 720-minute budget is the LP wall only. If the tool's background cap stops the run, relaunch it inside the same container without changing anything and report that you did.
+- Use `run_in_background` for the solve and poll its log; do not exceed the budget. WATCHER RULE (desk standing rule): while the solve runs detached, re-arm your log watcher or schedule a send_later wake-up at ≤ 90-min intervals (25 min recommended) until the solve exits — an idle container is reclaimed at watcher expiry and kills the solve.
+- When you finish (success or stop), send your final REPORT to the parent session session_01V1SFj7XgW15F44YogU5EKJ with mcp__claude-code-remote__send_message (load it via ToolSearch if needed), then end.
+====================================================================================================
+SOLVE SHARD ucmilp4-caiso-2023 — CAISO backcast year 2023, ONE year, ONE container (rule 36). Model: Opus.
+DATA PROFILE: caiso
+
+HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
+1. `git rev-parse HEAD` == 45574487409c297d82de32f1e4e4db28844d88f8  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
+3. `python3 scripts/hydrate_data.py --profile caiso` then `python3 scripts/regenerate_clean.py --solve-profile CAISO` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
+4. the recipe you will solve: `results/calibration/closeout_caiso_w1_a2_span` replayed with unit_commitment_milp=true, caiso_ra_mustoffer=false, caiso_ra_startup_bridge=false, caiso_ra_bridge_decommit=false, caiso_ra_startup_trajectory=false, uc_commitment_demand_source="da_forecast", energy_reserve_coopt=true, caiso_reserve_coopt=true, caiso_scarcity_pricing=false; confirm by reading `results/calibration/closeout_caiso_w1_a2_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; caiso_ra_mustoffer=false; caiso_ra_startup_bridge=false; caiso_ra_bridge_decommit=false; caiso_ra_startup_trajectory=false; uc_commitment_demand_source="da_forecast"; energy_reserve_coopt=true; caiso_reserve_coopt=true; caiso_scarcity_pricing=false
+2b. MEMORY GATE: from prepare_solve_container's `swap:` line read ceiling + swap total. If it is below 11.8 GiB (owner ruling 2026-10-16: 1.25 × CAISO measured peak 9.4 GiB), STOP before any data step and report the `before:` and `swap:` lines verbatim.
+5. memory: the runner calls `scripts/lib/solve_container.ensure_solve_container` itself; never pass `--no-container-preflight`, never read `free` — report the `container preflight:` and `memory peak:` log lines
+
+SOLVE (sequential, this year only):
+  eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"
+  python3 scripts/replay_keeper.py results/calibration/closeout_caiso_w1_a2_span --years 2023 --out-dir results/calibration/ucmilp4_caiso_2023 --set unit_commitment_milp=true --set caiso_ra_mustoffer=false --set caiso_ra_startup_bridge=false --set caiso_ra_bridge_decommit=false --set caiso_ra_startup_trajectory=false --set 'uc_commitment_demand_source="da_forecast"' --set energy_reserve_coopt=true --set caiso_reserve_coopt=true --set caiso_scarcity_pricing=false --note "ucmilp4-caiso: arm U4 at uc-1.8"
+Budget: 720 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
+
+PUSH THE WHOLE BUNDLE (rule 34 (a) — a bundle that cannot back a promotion is a wasted solve):
+  git checkout -b claude/ucmilp4-caiso-2023
+  printf '\n!results/calibration/ucmilp4_caiso_2023/**\n' >> .gitignore
+  git add .gitignore && git add results/calibration/ucmilp4_caiso_2023
+  git status --short      # MUST show nothing outside .gitignore and results/calibration/ucmilp4_caiso_2023
+  git commit -m "ucmilp4-caiso: CAISO 2023 leg (results/calibration/ucmilp4_caiso_2023)"
+  git push -u origin claude/ucmilp4-caiso-2023     # on HTTP 408/500: git config http.version HTTP/1.1, retry
+`results/calibration/ucmilp4_caiso_2023/dispatch/2023_P1.parquet` MUST be in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp4_caiso_2023/dispatch`). A plain `git add` after the .gitignore negation — never `git add -f`, never `git add -A`, never `git add .`.
+
+FORBIDDEN, by name: git add -A / git add . ; any edit under src/ or scripts/ ; dashboard_add_run.py, build_manifest.py, build_status.py, prune_iso_runs.py, promote_keeper.py, anything under frontend/data/ (registration is the parent's job, once) ; opening a PR ; deleting any result (rule 31) ; solving any other year.
+
+REPORT in your final message, in numbers: HEAD sha; the `container preflight:` and `memory peak:` lines; LP wall time; for 2023: objective, total generation TWh by class, mean and p99 price per zone, unserved energy MWh; the commit sha and branch; `git ls-tree` count under results/calibration/ucmilp4_caiso_2023; and any hard stop that fired. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
+
+UC-4-CAISO ADDITIONS (PRECOMMIT docs/records/caiso/ucmilp/PRECOMMIT-ucmilp4-caiso-u4-2026-10-15.md §5, Addendum C pin):
+- QUOTING: the `uc_commitment_demand_source` value must reach replay_keeper as the JSON string "da_forecast" — keep the single quotes around that --set exactly as written above. Before the solve, confirm the run log / run_config.json records uc_commitment_demand_source = da_forecast, energy_reserve_coopt = true, caiso_reserve_coopt = true, caiso_scarcity_pricing = false.
+- This is arm U4 of the MILP unit-commitment stage at engine uc-1.8. Every other `uc_*` field stays at its registry default; NEVER pass any other `--set`. If the solve raises `UcWindowInfeasible`, a "no incumbent" stop, or any UC exception, STOP and report the full traceback (an engine defect, routed to the desk) — never retry with a changed setting, never edit src/.
+- Before pushing, CONFIRM these four files exist and are in the pushed tree: `results/calibration/ucmilp4_caiso_2023/hourly/uc_schedule_2023.parquet`, `hourly/uc_uplift_2023.parquet`, `uc_solve_log_2023.json`, `hourly/unit_marginal_2023.parquet` (`git ls-tree -r HEAD -- results/calibration/ucmilp4_caiso_2023 | grep -E 'uc_schedule|uc_uplift|uc_solve_log|unit_marginal'`). A leg without the schedule is unusable: report it as such.
+- FILE SIZE: before `git add`, run `find results/calibration/ucmilp4_caiso_2023 -type f -size +95M`. Any file listed: split it with `split -b 90m -d <file> <file>.part`, record `sha256sum` of the original and of each part in `results/calibration/ucmilp4_caiso_2023/SPLIT_SHA256.txt`, then move the original out of the tree (`mv <file> /tmp/`) so only the parts are committed. Do not ask; report it.
+- REPORT additionally the GATESPEC §6.1 wall row for 2023: the `log_year_phase_timing` line verbatim (data_prep, solve_p0, markup, solve_p1, results_write, total — the UC stage runs inside `markup`); from `uc_solve_log_2023.json` `summary` and `engine`: windows, Σ MILP s, mean and p95 MILP s, nodes p50/p95, gap p95, time_limit_hits, infeasible windows, integer clusters / clusters, reserve_gated_rows, the commitment-demand basis/increment line if logged, engine version (expect uc-1.8), peak RSS; and the mean P1 reserve price.
+- Expected: P0 ≈ 8–17 min, 365 UC windows ≈ 20–180 min (uc-1.5 CAISO: 23–147 min; co-opt adds reserve rows), P1 ≈ 8–17 min. The 720-minute budget is the LP wall only. If the tool's background cap stops the run, relaunch it inside the same container without changing anything and report that you did.
+- Use `run_in_background` for the solve and poll its log; do not exceed the budget. WATCHER RULE (desk standing rule): while the solve runs detached, re-arm your log watcher or schedule a send_later wake-up at ≤ 90-min intervals (25 min recommended) until the solve exits — an idle container is reclaimed at watcher expiry and kills the solve.
+- When you finish (success or stop), send your final REPORT to the parent session session_01V1SFj7XgW15F44YogU5EKJ with mcp__claude-code-remote__send_message (load it via ToolSearch if needed), then end.
+====================================================================================================
+SOLVE SHARD ucmilp4-caiso-2024 — CAISO backcast year 2024, ONE year, ONE container (rule 36). Model: Opus.
+DATA PROFILE: caiso
+
+HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
+1. `git rev-parse HEAD` == 45574487409c297d82de32f1e4e4db28844d88f8  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
+3. `python3 scripts/hydrate_data.py --profile caiso` then `python3 scripts/regenerate_clean.py --solve-profile CAISO` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
+4. the recipe you will solve: `results/calibration/closeout_caiso_w1_a2_span` replayed with unit_commitment_milp=true, caiso_ra_mustoffer=false, caiso_ra_startup_bridge=false, caiso_ra_bridge_decommit=false, caiso_ra_startup_trajectory=false, uc_commitment_demand_source="da_forecast", energy_reserve_coopt=true, caiso_reserve_coopt=true, caiso_scarcity_pricing=false; confirm by reading `results/calibration/closeout_caiso_w1_a2_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; caiso_ra_mustoffer=false; caiso_ra_startup_bridge=false; caiso_ra_bridge_decommit=false; caiso_ra_startup_trajectory=false; uc_commitment_demand_source="da_forecast"; energy_reserve_coopt=true; caiso_reserve_coopt=true; caiso_scarcity_pricing=false
+2b. MEMORY GATE: from prepare_solve_container's `swap:` line read ceiling + swap total. If it is below 11.8 GiB (owner ruling 2026-10-16: 1.25 × CAISO measured peak 9.4 GiB), STOP before any data step and report the `before:` and `swap:` lines verbatim.
+5. memory: the runner calls `scripts/lib/solve_container.ensure_solve_container` itself; never pass `--no-container-preflight`, never read `free` — report the `container preflight:` and `memory peak:` log lines
+
+SOLVE (sequential, this year only):
+  eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"
+  python3 scripts/replay_keeper.py results/calibration/closeout_caiso_w1_a2_span --years 2024 --out-dir results/calibration/ucmilp4_caiso_2024 --set unit_commitment_milp=true --set caiso_ra_mustoffer=false --set caiso_ra_startup_bridge=false --set caiso_ra_bridge_decommit=false --set caiso_ra_startup_trajectory=false --set 'uc_commitment_demand_source="da_forecast"' --set energy_reserve_coopt=true --set caiso_reserve_coopt=true --set caiso_scarcity_pricing=false --note "ucmilp4-caiso: arm U4 at uc-1.8"
+Budget: 720 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
+
+PUSH THE WHOLE BUNDLE (rule 34 (a) — a bundle that cannot back a promotion is a wasted solve):
+  git checkout -b claude/ucmilp4-caiso-2024
+  printf '\n!results/calibration/ucmilp4_caiso_2024/**\n' >> .gitignore
+  git add .gitignore && git add results/calibration/ucmilp4_caiso_2024
+  git status --short      # MUST show nothing outside .gitignore and results/calibration/ucmilp4_caiso_2024
+  git commit -m "ucmilp4-caiso: CAISO 2024 leg (results/calibration/ucmilp4_caiso_2024)"
+  git push -u origin claude/ucmilp4-caiso-2024     # on HTTP 408/500: git config http.version HTTP/1.1, retry
+`results/calibration/ucmilp4_caiso_2024/dispatch/2024_P1.parquet` MUST be in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp4_caiso_2024/dispatch`). A plain `git add` after the .gitignore negation — never `git add -f`, never `git add -A`, never `git add .`.
+
+FORBIDDEN, by name: git add -A / git add . ; any edit under src/ or scripts/ ; dashboard_add_run.py, build_manifest.py, build_status.py, prune_iso_runs.py, promote_keeper.py, anything under frontend/data/ (registration is the parent's job, once) ; opening a PR ; deleting any result (rule 31) ; solving any other year.
+
+REPORT in your final message, in numbers: HEAD sha; the `container preflight:` and `memory peak:` lines; LP wall time; for 2024: objective, total generation TWh by class, mean and p99 price per zone, unserved energy MWh; the commit sha and branch; `git ls-tree` count under results/calibration/ucmilp4_caiso_2024; and any hard stop that fired. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
+
+UC-4-CAISO ADDITIONS (PRECOMMIT docs/records/caiso/ucmilp/PRECOMMIT-ucmilp4-caiso-u4-2026-10-15.md §5, Addendum C pin):
+- QUOTING: the `uc_commitment_demand_source` value must reach replay_keeper as the JSON string "da_forecast" — keep the single quotes around that --set exactly as written above. Before the solve, confirm the run log / run_config.json records uc_commitment_demand_source = da_forecast, energy_reserve_coopt = true, caiso_reserve_coopt = true, caiso_scarcity_pricing = false.
+- This is arm U4 of the MILP unit-commitment stage at engine uc-1.8. Every other `uc_*` field stays at its registry default; NEVER pass any other `--set`. If the solve raises `UcWindowInfeasible`, a "no incumbent" stop, or any UC exception, STOP and report the full traceback (an engine defect, routed to the desk) — never retry with a changed setting, never edit src/.
+- Before pushing, CONFIRM these four files exist and are in the pushed tree: `results/calibration/ucmilp4_caiso_2024/hourly/uc_schedule_2024.parquet`, `hourly/uc_uplift_2024.parquet`, `uc_solve_log_2024.json`, `hourly/unit_marginal_2024.parquet` (`git ls-tree -r HEAD -- results/calibration/ucmilp4_caiso_2024 | grep -E 'uc_schedule|uc_uplift|uc_solve_log|unit_marginal'`). A leg without the schedule is unusable: report it as such.
+- FILE SIZE: before `git add`, run `find results/calibration/ucmilp4_caiso_2024 -type f -size +95M`. Any file listed: split it with `split -b 90m -d <file> <file>.part`, record `sha256sum` of the original and of each part in `results/calibration/ucmilp4_caiso_2024/SPLIT_SHA256.txt`, then move the original out of the tree (`mv <file> /tmp/`) so only the parts are committed. Do not ask; report it.
+- REPORT additionally the GATESPEC §6.1 wall row for 2024: the `log_year_phase_timing` line verbatim (data_prep, solve_p0, markup, solve_p1, results_write, total — the UC stage runs inside `markup`); from `uc_solve_log_2024.json` `summary` and `engine`: windows, Σ MILP s, mean and p95 MILP s, nodes p50/p95, gap p95, time_limit_hits, infeasible windows, integer clusters / clusters, reserve_gated_rows, the commitment-demand basis/increment line if logged, engine version (expect uc-1.8), peak RSS; and the mean P1 reserve price.
+- Expected: P0 ≈ 8–17 min, 365 UC windows ≈ 20–180 min (uc-1.5 CAISO: 23–147 min; co-opt adds reserve rows), P1 ≈ 8–17 min. The 720-minute budget is the LP wall only. If the tool's background cap stops the run, relaunch it inside the same container without changing anything and report that you did.
+- Use `run_in_background` for the solve and poll its log; do not exceed the budget. WATCHER RULE (desk standing rule): while the solve runs detached, re-arm your log watcher or schedule a send_later wake-up at ≤ 90-min intervals (25 min recommended) until the solve exits — an idle container is reclaimed at watcher expiry and kills the solve.
+- When you finish (success or stop), send your final REPORT to the parent session session_01V1SFj7XgW15F44YogU5EKJ with mcp__claude-code-remote__send_message (load it via ToolSearch if needed), then end.
+====================================================================================================
+SOLVE SHARD ucmilp4-caiso-2025 — CAISO backcast year 2025, ONE year, ONE container (rule 36). Model: Opus.
+DATA PROFILE: caiso
+
+HARD STOPS — check each FIRST; if any fails, STOP and report (do not push, do not repair):
+1. `git rev-parse HEAD` == 45574487409c297d82de32f1e4e4db28844d88f8  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+2. `python3 scripts/prepare_solve_container.py` — FIRST, before any data step (R-50: swap is bounded by free disk, and the data steps below eat it); report its `before:` and `swap:` lines
+3. `python3 scripts/hydrate_data.py --profile caiso` then `python3 scripts/regenerate_clean.py --solve-profile CAISO` (if that flag is absent at this SHA, run `python3 scripts/regenerate_clean.py`); both exit 0
+4. the recipe you will solve: `results/calibration/closeout_caiso_w1_a2_span` replayed with unit_commitment_milp=true, caiso_ra_mustoffer=false, caiso_ra_startup_bridge=false, caiso_ra_bridge_decommit=false, caiso_ra_startup_trajectory=false, uc_commitment_demand_source="da_forecast", energy_reserve_coopt=true, caiso_reserve_coopt=true, caiso_scarcity_pricing=false; confirm by reading `results/calibration/closeout_caiso_w1_a2_span/run_config.json` and `meta.json` — the config signature the parent expects: unit_commitment_milp=true; caiso_ra_mustoffer=false; caiso_ra_startup_bridge=false; caiso_ra_bridge_decommit=false; caiso_ra_startup_trajectory=false; uc_commitment_demand_source="da_forecast"; energy_reserve_coopt=true; caiso_reserve_coopt=true; caiso_scarcity_pricing=false
+2b. MEMORY GATE: from prepare_solve_container's `swap:` line read ceiling + swap total. If it is below 11.8 GiB (owner ruling 2026-10-16: 1.25 × CAISO measured peak 9.4 GiB), STOP before any data step and report the `before:` and `swap:` lines verbatim.
+5. memory: the runner calls `scripts/lib/solve_container.ensure_solve_container` itself; never pass `--no-container-preflight`, never read `free` — report the `container preflight:` and `memory peak:` log lines
+
+SOLVE (sequential, this year only):
+  eval "$(python3 scripts/prepare_solve_container.py --emit-exports)"
+  python3 scripts/replay_keeper.py results/calibration/closeout_caiso_w1_a2_span --years 2025 --out-dir results/calibration/ucmilp4_caiso_2025 --set unit_commitment_milp=true --set caiso_ra_mustoffer=false --set caiso_ra_startup_bridge=false --set caiso_ra_bridge_decommit=false --set caiso_ra_startup_trajectory=false --set 'uc_commitment_demand_source="da_forecast"' --set energy_reserve_coopt=true --set caiso_reserve_coopt=true --set caiso_scarcity_pricing=false --note "ucmilp4-caiso: arm U4 at uc-1.8"
+Budget: 720 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
+
+PUSH THE WHOLE BUNDLE (rule 34 (a) — a bundle that cannot back a promotion is a wasted solve):
+  git checkout -b claude/ucmilp4-caiso-2025
+  printf '\n!results/calibration/ucmilp4_caiso_2025/**\n' >> .gitignore
+  git add .gitignore && git add results/calibration/ucmilp4_caiso_2025
+  git status --short      # MUST show nothing outside .gitignore and results/calibration/ucmilp4_caiso_2025
+  git commit -m "ucmilp4-caiso: CAISO 2025 leg (results/calibration/ucmilp4_caiso_2025)"
+  git push -u origin claude/ucmilp4-caiso-2025     # on HTTP 408/500: git config http.version HTTP/1.1, retry
+`results/calibration/ucmilp4_caiso_2025/dispatch/2025_P1.parquet` MUST be in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp4_caiso_2025/dispatch`). A plain `git add` after the .gitignore negation — never `git add -f`, never `git add -A`, never `git add .`.
+
+FORBIDDEN, by name: git add -A / git add . ; any edit under src/ or scripts/ ; dashboard_add_run.py, build_manifest.py, build_status.py, prune_iso_runs.py, promote_keeper.py, anything under frontend/data/ (registration is the parent's job, once) ; opening a PR ; deleting any result (rule 31) ; solving any other year.
+
+REPORT in your final message, in numbers: HEAD sha; the `container preflight:` and `memory peak:` lines; LP wall time; for 2025: objective, total generation TWh by class, mean and p99 price per zone, unserved energy MWh; the commit sha and branch; `git ls-tree` count under results/calibration/ucmilp4_caiso_2025; and any hard stop that fired. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
+
+UC-4-CAISO ADDITIONS (PRECOMMIT docs/records/caiso/ucmilp/PRECOMMIT-ucmilp4-caiso-u4-2026-10-15.md §5, Addendum C pin):
+- QUOTING: the `uc_commitment_demand_source` value must reach replay_keeper as the JSON string "da_forecast" — keep the single quotes around that --set exactly as written above. Before the solve, confirm the run log / run_config.json records uc_commitment_demand_source = da_forecast, energy_reserve_coopt = true, caiso_reserve_coopt = true, caiso_scarcity_pricing = false.
+- This is arm U4 of the MILP unit-commitment stage at engine uc-1.8. Every other `uc_*` field stays at its registry default; NEVER pass any other `--set`. If the solve raises `UcWindowInfeasible`, a "no incumbent" stop, or any UC exception, STOP and report the full traceback (an engine defect, routed to the desk) — never retry with a changed setting, never edit src/.
+- Before pushing, CONFIRM these four files exist and are in the pushed tree: `results/calibration/ucmilp4_caiso_2025/hourly/uc_schedule_2025.parquet`, `hourly/uc_uplift_2025.parquet`, `uc_solve_log_2025.json`, `hourly/unit_marginal_2025.parquet` (`git ls-tree -r HEAD -- results/calibration/ucmilp4_caiso_2025 | grep -E 'uc_schedule|uc_uplift|uc_solve_log|unit_marginal'`). A leg without the schedule is unusable: report it as such.
+- FILE SIZE: before `git add`, run `find results/calibration/ucmilp4_caiso_2025 -type f -size +95M`. Any file listed: split it with `split -b 90m -d <file> <file>.part`, record `sha256sum` of the original and of each part in `results/calibration/ucmilp4_caiso_2025/SPLIT_SHA256.txt`, then move the original out of the tree (`mv <file> /tmp/`) so only the parts are committed. Do not ask; report it.
+- REPORT additionally the GATESPEC §6.1 wall row for 2025: the `log_year_phase_timing` line verbatim (data_prep, solve_p0, markup, solve_p1, results_write, total — the UC stage runs inside `markup`); from `uc_solve_log_2025.json` `summary` and `engine`: windows, Σ MILP s, mean and p95 MILP s, nodes p50/p95, gap p95, time_limit_hits, infeasible windows, integer clusters / clusters, reserve_gated_rows, the commitment-demand basis/increment line if logged, engine version (expect uc-1.8), peak RSS; and the mean P1 reserve price.
+- Expected: P0 ≈ 8–17 min, 365 UC windows ≈ 20–180 min (uc-1.5 CAISO: 23–147 min; co-opt adds reserve rows), P1 ≈ 8–17 min. The 720-minute budget is the LP wall only. If the tool's background cap stops the run, relaunch it inside the same container without changing anything and report that you did.
+- Use `run_in_background` for the solve and poll its log; do not exceed the budget. WATCHER RULE (desk standing rule): while the solve runs detached, re-arm your log watcher or schedule a send_later wake-up at ≤ 90-min intervals (25 min recommended) until the solve exits — an idle container is reclaimed at watcher expiry and kills the solve.
+- When you finish (success or stop), send your final REPORT to the parent session session_01V1SFj7XgW15F44YogU5EKJ with mcp__claude-code-remote__send_message (load it via ToolSearch if needed), then end.
