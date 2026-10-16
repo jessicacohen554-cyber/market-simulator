@@ -65,6 +65,7 @@ ALL_DATATYPES = [
     "ramp-capability",
     "uc-params",
     "load-forecast-error",
+    "load-forecast-vintages",
     "vlr-pocket-groups",
     "nyiso-downstate-gas",
     "ercot-wtx-congestion",

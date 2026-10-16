@@ -75,6 +75,9 @@ DATATYPES: tuple[str, ...] = (
     # UC-1-FIX-7 (2026-10-15): the measured day-ahead load-forecast error
     # profile (forecast-mode UC commitment demand).
     "load-forecast-error",
+    # UC-DF-AUDIT (2026-10-16): every issued vintage of the ISO's own hourly
+    # short-term load forecast (SPP MTLF), the measured RUC load basis (r14).
+    "load-forecast-vintages",
     # UC-MISO-VLR (2026-10-15): VLR operating-guide unit groups by load pocket
     # (MTEP15, PUCT 46416) for the UC stage's pocket commitment rows.
     "vlr-pocket-groups",

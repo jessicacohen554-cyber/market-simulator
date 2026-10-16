@@ -1,0 +1,78 @@
+# Canonical schema: load-forecast-vintages (every issued vintage of an ISO's
+# own short-term hourly load forecast, kept by issue time).
+#
+# Intake lane UC-DF-AUDIT (owner ruling UC-DESK r14, 2026-10-16;
+# docs/records/governance/uc-milp-2026-10/DESIGN-ucmilp-ruc-stage-2026-10-16.md
+# §2.2). The RUC load basis needs the forecast AS ISSUED at a given cycle
+# before each operating hour, so no vintage is collapsed: one row per
+# (issue time, forecast interval).
+#
+# Sources (per-ISO modules under scripts/lib/load_forecast_vintages/):
+#   SPP  portal.spp.org file-browser `mtlf-vs-actual`: one CSV per hour,
+#        OP-MTLF-YYYYMMDDHH00.csv (stamp = local Central prevailing time),
+#        columns Interval, GMTIntervalEnd, MTLF, Averaged Actual [, BAA from
+#        the 2026 RTO West expansion]. 24 past intervals carrying the
+#        averaged actual + 169 forward intervals (7 days).
+#
+# Grain: data/clean/load-forecast-vintages/<ISO>/load-forecast-vintages_<year>.parquet,
+# partitioned by the year of the ISSUE time (UTC).
+datatype: load-forecast-vintages
+schema_version: 1
+title: ISO short-term hourly load-forecast vintages (by issue time)
+description: >-
+  Every published vintage of an ISO's own short-term hourly load forecast,
+  one row per issue time x forecast interval, with the ISO's averaged actual
+  where the vintage reports one. Basis for a reliability-commitment (RUC)
+  load forecast at a stated lead.
+
+key_columns: [iso, area, issue_time_utc, interval_end_utc]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: Model ISO label (SPP, ...).
+  - name: area
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Forecast area as the source labels it. SPP: the BAA column (SPP, SWPW
+      from the April 2026 RTO West expansion); files without a BAA column
+      (every vintage 2013-2025) are the SPP balancing authority and carry
+      "SPP".
+  - name: issue_time_utc
+    dtype: datetime64[ns, UTC]
+    unit: utc_timestamp
+    nullable: false
+    description: >-
+      Vintage issue time. SPP: the file-name stamp (local Central prevailing
+      hour) in UTC, cross-checked against max(GMTIntervalEnd) - 168 h; the
+      file posts about 5 minutes after the stamp.
+  - name: interval_end_utc
+    dtype: datetime64[ns, UTC]
+    unit: utc_timestamp
+    nullable: false
+    description: End of the forecast hour (SPP GMTIntervalEnd).
+  - name: lead_hours
+    dtype: int64
+    unit: hours
+    nullable: false
+    description: >-
+      (interval_end_utc - issue_time_utc) in hours. Negative or small values
+      are past/in-progress intervals that carry the averaged actual.
+  - name: forecast_mw
+    dtype: float64
+    unit: mw
+    nullable: false
+    description: The ISO's forecast for the interval in this vintage (SPP MTLF).
+  - name: actual_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: >-
+      The ISO's averaged actual load reported in this vintage (SPP Averaged
+      Actual); null for forward intervals. The interval in progress at issue
+      is a partial-hour average.
