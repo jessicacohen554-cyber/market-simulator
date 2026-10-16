@@ -1,0 +1,614 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+verifying the leg recipes:
+  ucmilp4_ercot_2019           year=2019 uc=True surface=b3e1d301ab67c7ea
+  ucmilp4_ercot_2020           year=2020 uc=True surface=b3e1d301ab67c7ea
+  ucmilp4_ercot_2021           year=2021 uc=True surface=b3e1d301ab67c7ea
+  ucmilp4_ercot_2022           year=2022 uc=True surface=b3e1d301ab67c7ea
+  ucmilp4_ercot_2023           year=2023 uc=True surface=b3e1d301ab67c7ea
+  ucmilp4_ercot_2024           year=2024 uc=True surface=b3e1d301ab67c7ea
+  ucmilp4_ercot_2025           year=2025 uc=True surface=b3e1d301ab67c7ea
+  OK — 961 shared fields agree; unit_commitment_milp=True
+  ucmilp4_ercot_2019: recipe delta vs keeper 2019: ['caiso_chp_btm_measured', 'caiso_dsw_daytime_lateevening_unprinted_arm', 'coal_perplant_cliff_split', 'coal_sync_floor_release', 'diagnostic_coal_metered_online_floor', 'ercot_chp_btm_measured', 'ercot_gas_commitment_bridge', 'miso_seam_neighbour_hourly_full_span', 'nuclear_winter_capability_basis', 'nwpp_coi_pnw_delivery_basis', 'nwpp_path76_served_schedule', 'nwpp_seam_in_service_vintage', 'nwpp_seam_measured_limits', 'nwpp_served_schedule_zonal_attribution', 'pjm_elliott_measured_outage_overlay', 'spp_mmu_offer_repair', 'spp_spinning_reserve_share', 'uc_boundary_mode', 'uc_commitment_demand_source', 'uc_integer_scope', 'uc_lookahead_hours', 'uc_mip_rel_gap', 'uc_noload_source', 'uc_prefixing', 'uc_slim_window', 'uc_solver_preset', 'uc_window_hours', 'uc_window_time_limit_s', 'unit_commitment_milp', 'unit_outage_dispatched_bin_live_denominator', 'vlr_pocket_commitment', 'zonal_loss_demand_reconciliation']
+  NOTE ucmilp4_ercot_2019: fields differing beyond the arm (classify): ['unit_outage_dispatched_bin_live_denominator']
+  ucmilp4_ercot_2020: recipe delta vs keeper 2020: ['caiso_chp_btm_measured', 'caiso_dsw_daytime_lateevening_unprinted_arm', 'coal_perplant_cliff_split', 'coal_sync_floor_release', 'diagnostic_coal_metered_online_floor', 'ercot_chp_btm_measured', 'ercot_gas_commitment_bridge', 'miso_seam_neighbour_hourly_full_span', 'nuclear_winter_capability_basis', 'nwpp_coi_pnw_delivery_basis', 'nwpp_path76_served_schedule', 'nwpp_seam_in_service_vintage', 'nwpp_seam_measured_limits', 'nwpp_served_schedule_zonal_attribution', 'pjm_elliott_measured_outage_overlay', 'spp_mmu_offer_repair', 'spp_spinning_reserve_share', 'uc_boundary_mode', 'uc_commitment_demand_source', 'uc_integer_scope', 'uc_lookahead_hours', 'uc_mip_rel_gap', 'uc_noload_source', 'uc_prefixing', 'uc_slim_window', 'uc_solver_preset', 'uc_window_hours', 'uc_window_time_limit_s', 'unit_commitment_milp', 'unit_outage_dispatched_bin_live_denominator', 'vlr_pocket_commitment', 'zonal_loss_demand_reconciliation']
+  NOTE ucmilp4_ercot_2020: fields differing beyond the arm (classify): ['unit_outage_dispatched_bin_live_denominator']
+  ucmilp4_ercot_2021: recipe delta vs keeper 2021: ['caiso_chp_btm_measured', 'caiso_dsw_daytime_lateevening_unprinted_arm', 'coal_perplant_cliff_split', 'coal_sync_floor_release', 'diagnostic_coal_metered_online_floor', 'ercot_chp_btm_measured', 'ercot_gas_commitment_bridge', 'miso_seam_neighbour_hourly_full_span', 'nuclear_winter_capability_basis', 'nwpp_coi_pnw_delivery_basis', 'nwpp_path76_served_schedule', 'nwpp_seam_in_service_vintage', 'nwpp_seam_measured_limits', 'nwpp_served_schedule_zonal_attribution', 'pjm_elliott_measured_outage_overlay', 'spp_mmu_offer_repair', 'spp_spinning_reserve_share', 'uc_boundary_mode', 'uc_commitment_demand_source', 'uc_integer_scope', 'uc_lookahead_hours', 'uc_mip_rel_gap', 'uc_noload_source', 'uc_prefixing', 'uc_slim_window', 'uc_solver_preset', 'uc_window_hours', 'uc_window_time_limit_s', 'unit_commitment_milp', 'unit_outage_dispatched_bin_live_denominator', 'vlr_pocket_commitment', 'zonal_loss_demand_reconciliation']
+  NOTE ucmilp4_ercot_2021: fields differing beyond the arm (classify): ['unit_outage_dispatched_bin_live_denominator']
+  ucmilp4_ercot_2022: recipe delta vs keeper 2022: ['caiso_chp_btm_measured', 'caiso_dsw_daytime_lateevening_unprinted_arm', 'coal_perplant_cliff_split', 'coal_sync_floor_release', 'diagnostic_coal_metered_online_floor', 'ercot_chp_btm_measured', 'ercot_gas_commitment_bridge', 'miso_seam_neighbour_hourly_full_span', 'nuclear_winter_capability_basis', 'nwpp_coi_pnw_delivery_basis', 'nwpp_path76_served_schedule', 'nwpp_seam_in_service_vintage', 'nwpp_seam_measured_limits', 'nwpp_served_schedule_zonal_attribution', 'pjm_elliott_measured_outage_overlay', 'spp_mmu_offer_repair', 'spp_spinning_reserve_share', 'uc_boundary_mode', 'uc_commitment_demand_source', 'uc_integer_scope', 'uc_lookahead_hours', 'uc_mip_rel_gap', 'uc_noload_source', 'uc_prefixing', 'uc_slim_window', 'uc_solver_preset', 'uc_window_hours', 'uc_window_time_limit_s', 'unit_commitment_milp', 'unit_outage_dispatched_bin_live_denominator', 'vlr_pocket_commitment', 'zonal_loss_demand_reconciliation']
+  NOTE ucmilp4_ercot_2022: fields differing beyond the arm (classify): ['unit_outage_dispatched_bin_live_denominator']
+  ucmilp4_ercot_2023: recipe delta vs keeper 2023: ['caiso_chp_btm_measured', 'caiso_dsw_daytime_lateevening_unprinted_arm', 'coal_perplant_cliff_split', 'coal_sync_floor_release', 'diagnostic_coal_metered_online_floor', 'ercot_chp_btm_measured', 'ercot_gas_commitment_bridge', 'miso_seam_neighbour_hourly_full_span', 'nuclear_winter_capability_basis', 'nwpp_coi_pnw_delivery_basis', 'nwpp_path76_served_schedule', 'nwpp_seam_in_service_vintage', 'nwpp_seam_measured_limits', 'nwpp_served_schedule_zonal_attribution', 'pjm_elliott_measured_outage_overlay', 'spp_mmu_offer_repair', 'spp_spinning_reserve_share', 'uc_boundary_mode', 'uc_commitment_demand_source', 'uc_integer_scope', 'uc_lookahead_hours', 'uc_mip_rel_gap', 'uc_noload_source', 'uc_prefixing', 'uc_slim_window', 'uc_solver_preset', 'uc_window_hours', 'uc_window_time_limit_s', 'unit_commitment_milp', 'unit_outage_dispatched_bin_live_denominator', 'vlr_pocket_commitment', 'zonal_loss_demand_reconciliation']
+  NOTE ucmilp4_ercot_2023: fields differing beyond the arm (classify): ['unit_outage_dispatched_bin_live_denominator']
+  ucmilp4_ercot_2024: recipe delta vs keeper 2024: ['caiso_chp_btm_measured', 'caiso_dsw_daytime_lateevening_unprinted_arm', 'coal_perplant_cliff_split', 'coal_sync_floor_release', 'diagnostic_coal_metered_online_floor', 'ercot_chp_btm_measured', 'ercot_gas_commitment_bridge', 'miso_seam_neighbour_hourly_full_span', 'nuclear_winter_capability_basis', 'nwpp_coi_pnw_delivery_basis', 'nwpp_path76_served_schedule', 'nwpp_seam_in_service_vintage', 'nwpp_seam_measured_limits', 'nwpp_served_schedule_zonal_attribution', 'pjm_elliott_measured_outage_overlay', 'spp_mmu_offer_repair', 'spp_spinning_reserve_share', 'uc_boundary_mode', 'uc_commitment_demand_source', 'uc_integer_scope', 'uc_lookahead_hours', 'uc_mip_rel_gap', 'uc_noload_source', 'uc_prefixing', 'uc_slim_window', 'uc_solver_preset', 'uc_window_hours', 'uc_window_time_limit_s', 'unit_commitment_milp', 'unit_outage_dispatched_bin_live_denominator', 'vlr_pocket_commitment', 'zonal_loss_demand_reconciliation']
+  NOTE ucmilp4_ercot_2024: fields differing beyond the arm (classify): ['unit_outage_dispatched_bin_live_denominator']
+  ucmilp4_ercot_2025: recipe delta vs keeper 2025: ['caiso_chp_btm_measured', 'caiso_dsw_daytime_lateevening_unprinted_arm', 'coal_perplant_cliff_split', 'coal_sync_floor_release', 'diagnostic_coal_metered_online_floor', 'ercot_chp_btm_measured', 'ercot_gas_commitment_bridge', 'miso_seam_neighbour_hourly_full_span', 'nuclear_winter_capability_basis', 'nwpp_coi_pnw_delivery_basis', 'nwpp_path76_served_schedule', 'nwpp_seam_in_service_vintage', 'nwpp_seam_measured_limits', 'nwpp_served_schedule_zonal_attribution', 'pjm_elliott_measured_outage_overlay', 'spp_mmu_offer_repair', 'spp_spinning_reserve_share', 'uc_boundary_mode', 'uc_commitment_demand_source', 'uc_integer_scope', 'uc_lookahead_hours', 'uc_mip_rel_gap', 'uc_noload_source', 'uc_prefixing', 'uc_slim_window', 'uc_solver_preset', 'uc_window_hours', 'uc_window_time_limit_s', 'unit_commitment_milp', 'unit_outage_dispatched_bin_live_denominator', 'vlr_pocket_commitment', 'zonal_loss_demand_reconciliation']
+  NOTE ucmilp4_ercot_2025: fields differing beyond the arm (classify): ['unit_outage_dispatched_bin_live_denominator']
+  ucmilp4_ercot_2019: UC artifacts present (schedule copied with hourly/, log copied)
+  ucmilp4_ercot_2020: UC artifacts present (schedule copied with hourly/, log copied)
+  ucmilp4_ercot_2021: UC artifacts present (schedule copied with hourly/, log copied)
+  ucmilp4_ercot_2022: UC artifacts present (schedule copied with hourly/, log copied)
+  ucmilp4_ercot_2023: UC artifacts present (schedule copied with hourly/, log copied)
+  ucmilp4_ercot_2024: UC artifacts present (schedule copied with hourly/, log copied)
+  ucmilp4_ercot_2025: UC artifacts present (schedule copied with hourly/, log copied)
+  system.parquet: 7 leg(s) concatenated
+  btm.parquet: 7 leg(s) concatenated
+  flows.parquet: 7 leg(s) concatenated
+  storage.parquet: 7 leg(s) concatenated
+INFO: Loaded 309 per-plant CAMPD bins from /home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv (83.1 GW)
+INFO: ERCOT DAM-membership admission: 1 plant(s) outside the ERCO BA geography admitted from accepted DAM crosswalk rows — [(55357, 'Houston')]
+INFO: EIA-923 dual-fuel oil re-attribution: 0.032 TWh across 12 modelled plant(s) moved from the `oil` class into the classes their units dispatch in (+0.000 TWh of it from net-negative rows)
+INFO: EIA-923 2019: CAMPD-backfilled 3 under-reported plant(s) across 3 class-row(s) (2 replaced, 1 added)
+INFO: EIA-923 2019: filled 1 plant(s) with EIA-923-withheld month(s) from CAMPD net (0.037 TWh added to the class benchmark)
+INFO: EIA-923 dual-fuel oil re-attribution: 0.034 TWh across 12 modelled plant(s) moved from the `oil` class into the classes their units dispatch in (+0.000 TWh of it from net-negative rows)
+INFO: EIA-923 2020: CAMPD-backfilled 3 under-reported plant(s) across 3 class-row(s) (2 replaced, 1 added)
+INFO: EIA-923 2020: filled 1 plant(s) with EIA-923-withheld month(s) from CAMPD net (0.054 TWh added to the class benchmark)
+INFO: EIA-923 2020 hydro 0.63 TWh incomplete with no admissible EIA-930 authority; carrying 2019 forward x vintage completeness -> 0.63 TWh
+INFO: EIA-923 dual-fuel oil re-attribution: 0.147 TWh across 20 modelled plant(s) moved from the `oil` class into the classes their units dispatch in (+0.000 TWh of it from net-negative rows)
+INFO: EIA-923 2021: CAMPD-backfilled 3 under-reported plant(s) across 3 class-row(s) (3 replaced, 0 added)
+INFO: EIA-923 2021: filled 1 plant(s) with EIA-923-withheld month(s) from CAMPD net (0.044 TWh added to the class benchmark)
+INFO: EIA-923 dual-fuel oil re-attribution: 0.256 TWh across 39 modelled plant(s) moved from the `oil` class into the classes their units dispatch in (+0.000 TWh of it from net-negative rows)
+INFO: EIA-923 2022: CAMPD-backfilled 2 under-reported plant(s) across 2 class-row(s) (2 replaced, 0 added)
+INFO: EIA-923 2022: filled 3 plant(s) with EIA-923-withheld month(s) from CAMPD net (0.159 TWh added to the class benchmark)
+INFO: EIA-923 dual-fuel oil re-attribution: 0.152 TWh across 37 modelled plant(s) moved from the `oil` class into the classes their units dispatch in (+0.000 TWh of it from net-negative rows)
+INFO: EIA-923 2023: CAMPD-backfilled 2 under-reported plant(s) across 2 class-row(s) (2 replaced, 0 added)
+INFO: EIA-923 2023: filled 2 plant(s) with EIA-923-withheld month(s) from CAMPD net (0.603 TWh added to the class benchmark)
+INFO: EIA-923 2023 solar 28.04 TWh under-counts EIA-930 31.87 TWh; using EIA-930 grid total
+INFO: EIA-923 dual-fuel oil re-attribution: 0.148 TWh across 39 modelled plant(s) moved from the `oil` class into the classes their units dispatch in (+0.000 TWh of it from net-negative rows)
+INFO: EIA-923 2024: CAMPD-backfilled 2 under-reported plant(s) across 2 class-row(s) (2 replaced, 0 added)
+INFO: EIA-923 2024: filled 1 plant(s) with EIA-923-withheld month(s) from CAMPD net (0.092 TWh added to the class benchmark)
+INFO: EIA-923 2024 solar 40.08 TWh under-counts EIA-930 47.68 TWh; using EIA-930 grid total
+INFO: EIA-923 dual-fuel oil re-attribution: 0.164 TWh across 39 modelled plant(s) moved from the `oil` class into the classes their units dispatch in (+0.000 TWh of it from net-negative rows)
+INFO: EIA-923 2025: CAMPD-backfilled 4 under-reported plant(s) across 4 class-row(s) (4 replaced, 0 added)
+INFO: EIA-923 2025: filled 1 plant(s) with EIA-923-withheld month(s) from CAMPD net (0.135 TWh added to the class benchmark)
+  shared campd   campd-70eaa32ef844.parquet -> campd-ccc6ac2215ce.parquet
+  shared eia923  eia923-c092c274a87e.parquet -> eia923-106ce0e9e5ca.parquet
+  shared eia930  eia930-a7876962095d.parquet -> eia930-5bf535c6147b.parquet
+  uplift 2019: carried by the leg
+  uplift 2020: carried by the leg
+  uplift 2021: carried by the leg
+  uplift 2022: carried by the leg
+  uplift 2023: carried by the leg
+  uplift 2024: carried by the leg
+  uplift 2025: carried by the leg
+
+composed /home/user/market-simulator/results/calibration/ucmilp4_ercot_span — 111 files, years [2019, 2020, 2021, 2022, 2023, 2024, 2025]
+
+regenerating legitimacy_diagnostics.json over the composite:
+  /home/user/market-simulator/.venv/bin/python3 /home/user/market-simulator/scripts/legitimacy_diagnostics.py --bundle /home/user/market-simulator/results/calibration/ucmilp4_ercot_span --iso ERCOT --years 2019 2020 2021 2022 2023 2024 2025 --json-out /home/user/market-simulator/results/calibration/ucmilp4_ercot_span/legitimacy_diagnostics.json
+INFO: ERCOT 2019: model dispatch from dispatch/2019_P1.parquet (178 plants)
+INFO: ERCOT 2020: model dispatch from dispatch/2020_P1.parquet (178 plants)
+INFO: ERCOT 2021: model dispatch from dispatch/2021_P1.parquet (178 plants)
+INFO: ERCOT 2022: model dispatch from dispatch/2022_P1.parquet (178 plants)
+INFO: ERCOT 2023: model dispatch from dispatch/2023_P1.parquet (178 plants)
+INFO: ERCOT 2024: model dispatch from dispatch/2024_P1.parquet (178 plants)
+INFO: ERCOT 2025: model dispatch from dispatch/2025_P1.parquet (178 plants)
+# Legitimacy diagnostics report
+
+Bundle: `/home/user/market-simulator/results/calibration/ucmilp4_ercot_span` · ISO: ERCOT · years: [2019, 2020, 2021, 2022, 2023, 2024, 2025]
+Overall: **FAIL**
+
+Diagnostics per `docs/model-legitimacy-audit-2026-07.md` §7; generated by `scripts/legitimacy_diagnostics.py`.
+
+## D-1 diurnal shape — PASS
+
+| year | class | profile_r | model_offpeak_cv | actual_offpeak_cv | cv_ratio | gated | verdict |
+|---|---|---|---|---|---|---|---|
+| 2019 | CC_CHP | 0.992 | 0.09 | 0.079 | 1.137 | False | pass |
+| 2019 | CC_REGULAR | 0.999 | 0.135 | 0.191 | 0.708 | False | pass |
+| 2019 | COAL_LIGNITE | 0.97 | 0.061 | 0.023 | 2.673 | True | pass |
+| 2019 | COAL_PRB | 0.995 | 0.299 | 0.207 | 1.445 | True | pass |
+| 2019 | CT_CHP | -0.642 | 0.289 | 0.006 | 47.903 | False | pass |
+| 2019 | CT_PEAKER | 0.994 | 1.191 | 0.256 | 4.65 | True | pass |
+| 2019 | OTHER_FOSSIL | 0.908 | 0.484 | 1.177 | 0.411 | False | pass |
+| 2019 | ST_GAS | 0.985 | 0.628 | 0.492 | 1.275 | True | pass |
+| 2020 | CC_CHP | 0.992 | 0.098 | 0.092 | 1.071 | False | pass |
+| 2020 | CC_REGULAR | 1.0 | 0.151 | 0.214 | 0.706 | False | pass |
+| 2020 | COAL_LIGNITE | 0.987 | 0.1 | 0.024 | 4.213 | True | pass |
+| 2020 | COAL_PRB | 0.999 | 0.374 | 0.24 | 1.558 | True | pass |
+| 2020 | CT_CHP | -0.416 | 0.159 | 0.009 | 18.047 | False | pass |
+| 2020 | CT_PEAKER | 0.982 | 0.926 | 0.274 | 3.384 | True | pass |
+| 2020 | ST_GAS | 0.984 | 0.626 | 0.455 | 1.374 | True | pass |
+| 2021 | CC_CHP | 0.901 | 0.069 | 0.077 | 0.895 | False | pass |
+| 2021 | CC_REGULAR | 0.999 | 0.2 | 0.236 | 0.848 | False | pass |
+| 2021 | COAL_LIGNITE | 0.967 | 0.08 | 0.021 | 3.831 | True | pass |
+| 2021 | COAL_PRB | 0.98 | 0.063 | 0.097 | 0.657 | True | pass |
+| 2021 | CT_CHP | 0.377 | 0.064 | 0.004 | 17.507 | False | pass |
+| 2021 | CT_PEAKER | 0.986 | 0.851 | 0.479 | 1.777 | True | pass |
+| 2021 | ST_GAS | 0.994 | 0.532 | 0.365 | 1.457 | True | pass |
+| 2022 | CC_CHP | 0.901 | 0.021 | 0.038 | 0.548 | False | pass |
+| 2022 | CC_REGULAR | 0.995 | 0.155 | 0.155 | 1.0 | False | pass |
+| 2022 | COAL_LIGNITE | 0.926 | 0.024 | 0.012 | 1.96 | True | pass |
+| 2022 | COAL_PRB | 0.983 | 0.074 | 0.097 | 0.76 | True | pass |
+| 2022 | CT_CHP | 0.675 | 0.008 | 0.004 | 2.106 | False | pass |
+| 2022 | CT_PEAKER | 0.985 | 0.629 | 0.696 | 0.903 | True | pass |
+| 2022 | OTHER_FOSSIL | 0.873 | 0.248 | 0.495 | 0.5 | False | pass |
+| 2022 | ST_GAS | 0.999 | 0.444 | 0.343 | 1.293 | True | pass |
+| 2023 | CC_CHP | 0.986 | 0.042 | 0.03 | 1.405 | False | pass |
+| 2023 | CC_REGULAR | 0.993 | 0.061 | 0.088 | 0.691 | False | pass |
+| 2023 | COAL_LIGNITE | 0.963 | 0.075 | 0.057 | 1.307 | True | pass |
+| 2023 | COAL_PRB | 0.994 | 0.116 | 0.114 | 1.01 | True | pass |
+| 2023 | CT_CHP | 0.681 | 0.038 | 0.004 | 9.275 | False | pass |
+| 2023 | CT_PEAKER | 0.997 | 0.73 | 0.656 | 1.113 | True | pass |
+| 2023 | OTHER_FOSSIL | 0.983 | 0.282 | 0.611 | 0.462 | False | pass |
+| 2023 | ST_GAS | 0.996 | 0.529 | 0.336 | 1.574 | True | pass |
+| 2024 | CC_CHP | 0.978 | 0.02 | 0.018 | 1.06 | False | pass |
+| 2024 | CC_REGULAR | 0.993 | 0.032 | 0.043 | 0.751 | False | pass |
+| 2024 | COAL_LIGNITE | 0.971 | 0.015 | 0.018 | 0.869 | True | pass |
+| 2024 | COAL_PRB | 0.984 | 0.057 | 0.075 | 0.766 | True | pass |
+| 2024 | CT_CHP | 0.903 | 0.027 | 0.007 | 3.886 | False | pass |
+| 2024 | CT_PEAKER | 0.993 | 0.369 | 0.324 | 1.138 | True | pass |
+| 2024 | OTHER_FOSSIL | 0.887 | 0.242 | 0.192 | 1.262 | False | pass |
+| 2024 | ST_GAS | 0.997 | 0.255 | 0.21 | 1.214 | True | pass |
+| 2025 | CC_CHP | 0.977 | 0.03 | 0.028 | 1.046 | False | pass |
+| 2025 | CC_REGULAR | 0.995 | 0.061 | 0.069 | 0.888 | False | pass |
+| 2025 | COAL_LIGNITE | 0.959 | 0.036 | 0.023 | 1.543 | True | pass |
+| 2025 | COAL_PRB | 0.97 | 0.089 | 0.068 | 1.315 | True | pass |
+| 2025 | CT_CHP | 0.945 | 0.032 | 0.008 | 3.907 | False | pass |
+| 2025 | CT_PEAKER | 0.979 | 0.454 | 0.235 | 1.931 | True | pass |
+| 2025 | OTHER_FOSSIL | 0.82 | 0.14 | 0.039 | 3.555 | False | pass |
+| 2025 | ST_GAS | 0.988 | 0.179 | 0.155 | 1.154 | True | pass |
+
+## D-2 forced-energy attribution — FAIL
+
+**Gate failures:**
+- 2020 ST_GAS: forced share 33.1% > 30% (3.59 of 10.84 TWh at binding non-exempt floors)
+- 2022 ST_GAS: forced share 32.3% > 30% (4.56 of 14.15 TWh at binding non-exempt floors)
+
+_2019: 2 floored plant(s) carry NO dispatch series in the active source (dispatch/2019_P1.parquet) and are scored under the floor-energy convention (dispatch := min_gen; PREREG-pjm149 §3.2) — their forced TWh is the MANDATED floor energy and every affected class's forced_share is an UPPER BOUND, sound on a pass and indeterminate on a fail. By class: (unclassified) x2. Plants: 6145, 6251_
+_2019: floors reconstructed via run_year(fleet_only=True) — the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds._
+_2020: 2 floored plant(s) carry NO dispatch series in the active source (dispatch/2020_P1.parquet) and are scored under the floor-energy convention (dispatch := min_gen; PREREG-pjm149 §3.2) — their forced TWh is the MANDATED floor energy and every affected class's forced_share is an UPPER BOUND, sound on a pass and indeterminate on a fail. By class: (unclassified) x2. Plants: 6145, 6251_
+_2020: floors reconstructed via run_year(fleet_only=True) — the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds._
+_2021: 2 floored plant(s) carry NO dispatch series in the active source (dispatch/2021_P1.parquet) and are scored under the floor-energy convention (dispatch := min_gen; PREREG-pjm149 §3.2) — their forced TWh is the MANDATED floor energy and every affected class's forced_share is an UPPER BOUND, sound on a pass and indeterminate on a fail. By class: (unclassified) x2. Plants: 6145, 6251_
+_2021: floors reconstructed via run_year(fleet_only=True) — the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds._
+_2022: 2 floored plant(s) carry NO dispatch series in the active source (dispatch/2022_P1.parquet) and are scored under the floor-energy convention (dispatch := min_gen; PREREG-pjm149 §3.2) — their forced TWh is the MANDATED floor energy and every affected class's forced_share is an UPPER BOUND, sound on a pass and indeterminate on a fail. By class: (unclassified) x2. Plants: 6145, 6251_
+_2022: floors reconstructed via run_year(fleet_only=True) — the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds._
+_2023: 2 floored plant(s) carry NO dispatch series in the active source (dispatch/2023_P1.parquet) and are scored under the floor-energy convention (dispatch := min_gen; PREREG-pjm149 §3.2) — their forced TWh is the MANDATED floor energy and every affected class's forced_share is an UPPER BOUND, sound on a pass and indeterminate on a fail. By class: (unclassified) x2. Plants: 6145, 6251_
+_2023: floors reconstructed via run_year(fleet_only=True) — the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds._
+_2024: 2 floored plant(s) carry NO dispatch series in the active source (dispatch/2024_P1.parquet) and are scored under the floor-energy convention (dispatch := min_gen; PREREG-pjm149 §3.2) — their forced TWh is the MANDATED floor energy and every affected class's forced_share is an UPPER BOUND, sound on a pass and indeterminate on a fail. By class: (unclassified) x2. Plants: 6145, 6251_
+_2024: floors reconstructed via run_year(fleet_only=True) — the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds._
+_2025: 2 floored plant(s) carry NO dispatch series in the active source (dispatch/2025_P1.parquet) and are scored under the floor-energy convention (dispatch := min_gen; PREREG-pjm149 §3.2) — their forced TWh is the MANDATED floor energy and every affected class's forced_share is an UPPER BOUND, sound on a pass and indeterminate on a fail. By class: (unclassified) x2. Plants: 6145, 6251_
+_2025: floors reconstructed via run_year(fleet_only=True) — the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds._
+
+**Per-class gate summary:**
+
+| year | class | forced_twh | class_total_twh | forced_share | limit | load_share | immaterial | lower_bound | upper_bound | verdict |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 2019 | CC_REGULAR | 9.4828 | 133.5242 | 0.071 | 0.3 | 0.3486 | False | True | False | pass |
+| 2019 | COAL_LIGNITE | 1.1946 | 16.6623 | 0.0717 | 0.3 | 0.0437 | False | True | False | pass |
+| 2019 | COAL_PRB | 4.0922 | 56.1559 | 0.0729 | 0.3 | 0.1605 | False | True | False | pass |
+| 2019 | CT_PEAKER | 0.0763 | 4.2103 | 0.0181 | 0.15 | 0.0159 | True | True | False | pass |
+| 2019 | ST_GAS | 3.4412 | 13.2218 | 0.2603 | 0.3 | 0.0345 | False | True | False | pass |
+| 2020 | CC_REGULAR | 12.5765 | 130.5979 | 0.0963 | 0.3 | 0.3447 | False | True | False | pass |
+| 2020 | COAL_LIGNITE | 1.2764 | 17.1475 | 0.0744 | 0.3 | 0.0466 | False | True | False | pass |
+| 2020 | COAL_PRB | 4.8409 | 43.9105 | 0.1102 | 0.3 | 0.1353 | False | True | False | pass |
+| 2020 | CT_PEAKER | 0.1303 | 3.5389 | 0.0368 | 0.15 | 0.0138 | True | True | False | pass |
+| 2020 | ST_GAS | 3.5856 | 10.8409 | 0.3308 | 0.3 | 0.0286 | False | True | False | FAIL |
+| 2021 | CC_REGULAR | 6.8986 | 105.7529 | 0.0652 | 0.3 | 0.2703 | False | True | False | pass |
+| 2021 | COAL_LIGNITE | 0.6926 | 16.186 | 0.0428 | 0.3 | 0.0421 | False | True | False | pass |
+| 2021 | COAL_PRB | 1.4218 | 58.3006 | 0.0244 | 0.3 | 0.1513 | False | True | False | pass |
+| 2021 | CT_PEAKER | 0.0 | 7.346 | 0.0 | 0.15 | 0.0188 | True | True | False | pass |
+| 2021 | ST_GAS | 3.5013 | 13.3358 | 0.2625 | 0.3 | 0.0341 | False | True | False | pass |
+| 2022 | CC_REGULAR | 3.2753 | 123.7486 | 0.0265 | 0.3 | 0.2884 | False | True | False | pass |
+| 2022 | COAL_LIGNITE | 0.2975 | 17.3325 | 0.0172 | 0.3 | 0.0404 | False | True | False | pass |
+| 2022 | COAL_PRB | 2.8787 | 53.2892 | 0.054 | 0.3 | 0.1291 | False | True | False | pass |
+| 2022 | CT_PEAKER | 0.2463 | 8.302 | 0.0297 | 0.15 | 0.0194 | True | True | False | pass |
+| 2022 | ST_GAS | 4.5644 | 14.1511 | 0.3225 | 0.3 | 0.033 | False | True | False | FAIL |
+| 2023 | CC_REGULAR | 7.2725 | 141.5502 | 0.0514 | 0.3 | 0.3174 | False | True | False | pass |
+| 2023 | COAL_LIGNITE | 0.8627 | 16.3147 | 0.0529 | 0.3 | 0.0366 | False | True | False | pass |
+| 2023 | COAL_PRB | 2.9096 | 46.5935 | 0.0624 | 0.3 | 0.1055 | False | True | False | pass |
+| 2023 | CT_PEAKER | 0.8776 | 9.5502 | 0.0919 | 0.15 | 0.0214 | False | True | False | pass |
+| 2023 | ST_GAS | 3.5099 | 15.1257 | 0.232 | 0.3 | 0.0379 | False | True | False | pass |
+| 2024 | CC_REGULAR | 8.3691 | 136.7306 | 0.0612 | 0.3 | 0.2956 | False | True | False | pass |
+| 2024 | COAL_LIGNITE | 0.9705 | 15.0853 | 0.0643 | 0.3 | 0.0326 | False | True | False | pass |
+| 2024 | COAL_PRB | 2.7633 | 47.023 | 0.0588 | 0.3 | 0.1017 | False | True | False | pass |
+| 2024 | CT_PEAKER | 0.0747 | 11.3421 | 0.0066 | 0.15 | 0.0245 | False | True | False | pass |
+| 2024 | ST_GAS | 3.1294 | 15.0171 | 0.2084 | 0.3 | 0.0385 | False | True | False | pass |
+| 2025 | CC_REGULAR | 6.9895 | 138.7189 | 0.0504 | 0.3 | 0.2844 | False | True | False | pass |
+| 2025 | COAL_LIGNITE | 1.1092 | 15.168 | 0.0731 | 0.3 | 0.0311 | False | True | False | pass |
+| 2025 | COAL_PRB | 1.1557 | 48.8806 | 0.0236 | 0.3 | 0.1024 | False | True | False | pass |
+| 2025 | CT_PEAKER | 0.0642 | 9.6575 | 0.0066 | 0.15 | 0.0198 | True | True | False | pass |
+| 2025 | ST_GAS | 3.1544 | 12.8697 | 0.2451 | 0.3 | 0.034 | False | True | False | pass |
+
+| year | class | mechanism | forced_twh | class_total_twh | share_of_class |
+|---|---|---|---|---|---|
+| 2019 |  | nuclear_mustrun | 40.5583 | 40.5583 | 1.0 |
+| 2019 | CC_CHP | chp_steam | 8.8556 | 28.1191 | 0.3149 |
+| 2019 | CC_REGULAR | reliability_floor | 0.0909 | 133.5242 | 0.0007 |
+| 2019 | CC_REGULAR | uc_schedule | 9.392 | 133.5242 | 0.0703 |
+| 2019 | COAL_LIGNITE | coal_min_config | 1.1946 | 16.6623 | 0.0717 |
+| 2019 | COAL_PRB | coal_min_config | 4.0922 | 56.1559 | 0.0729 |
+| 2019 | CT_CHP | chp_steam | 0.811 | 4.0578 | 0.1999 |
+| 2019 | CT_PEAKER | reliability_floor | 0.0763 | 4.2103 | 0.0181 |
+| 2019 | ST_CHP | chp_steam | 0.0283 | 0.071 | 0.3988 |
+| 2019 | ST_GAS | st_netload_drag | 0.5069 | 13.2218 | 0.0383 |
+| 2019 | ST_GAS | uc_schedule | 2.9343 | 13.2218 | 0.2219 |
+| 2020 |  | nuclear_mustrun | 40.753 | 40.753 | 1.0 |
+| 2020 | CC_CHP | chp_steam | 10.5128 | 27.0543 | 0.3886 |
+| 2020 | CC_REGULAR | reliability_floor | 0.0858 | 130.5979 | 0.0007 |
+| 2020 | CC_REGULAR | uc_schedule | 12.4907 | 130.5979 | 0.0956 |
+| 2020 | COAL_LIGNITE | coal_min_config | 1.2764 | 17.1475 | 0.0744 |
+| 2020 | COAL_PRB | coal_min_config | 4.8409 | 43.9105 | 0.1102 |
+| 2020 | CT_CHP | chp_steam | 1.5063 | 4.9435 | 0.3047 |
+| 2020 | CT_PEAKER | reliability_floor | 0.1303 | 3.5389 | 0.0368 |
+| 2020 | ST_CHP | chp_steam | 0.0285 | 0.0703 | 0.4054 |
+| 2020 | ST_GAS | st_netload_drag | 1.0196 | 10.8409 | 0.0941 |
+| 2020 | ST_GAS | uc_schedule | 2.566 | 10.8409 | 0.2367 |
+| 2021 |  | nuclear_mustrun | 39.9675 | 39.9675 | 1.0 |
+| 2021 | CC_CHP | chp_steam | 4.2166 | 29.399 | 0.1434 |
+| 2021 | CC_REGULAR | uc_schedule | 6.8986 | 105.7529 | 0.0652 |
+| 2021 | COAL_LIGNITE | coal_min_config | 0.6926 | 16.186 | 0.0428 |
+| 2021 | COAL_PRB | coal_min_config | 1.4218 | 58.3006 | 0.0244 |
+| 2021 | CT_CHP | chp_steam | 1.0002 | 6.1998 | 0.1613 |
+| 2021 | ST_CHP | chp_steam | 0.0011 | 0.0699 | 0.015 |
+| 2021 | ST_GAS | st_netload_drag | 0.9363 | 13.3358 | 0.0702 |
+| 2021 | ST_GAS | uc_schedule | 2.565 | 13.3358 | 0.1923 |
+| 2022 |  | nuclear_mustrun | 41.0837 | 41.0837 | 1.0 |
+| 2022 | CC_CHP | chp_steam | 3.3664 | 28.6949 | 0.1173 |
+| 2022 | CC_REGULAR | reliability_floor | 0.1331 | 123.7486 | 0.0011 |
+| 2022 | CC_REGULAR | uc_schedule | 3.1422 | 123.7486 | 0.0254 |
+| 2022 | COAL_LIGNITE | coal_min_config | 0.2975 | 17.3325 | 0.0172 |
+| 2022 | COAL_PRB | coal_min_config | 2.8787 | 53.2892 | 0.054 |
+| 2022 | CT_CHP | chp_steam | 0.6644 | 6.3054 | 0.1054 |
+| 2022 | CT_PEAKER | reliability_floor | 0.2463 | 8.302 | 0.0297 |
+| 2022 | ST_CHP | chp_steam | 0.028 | 0.0709 | 0.3947 |
+| 2022 | ST_GAS | st_netload_drag | 1.7142 | 14.1511 | 0.1211 |
+| 2022 | ST_GAS | uc_schedule | 2.8502 | 14.1511 | 0.2014 |
+| 2023 |  | nuclear_mustrun | 40.3927 | 40.3927 | 1.0 |
+| 2023 | CC_CHP | chp_steam | 9.6113 | 27.598 | 0.3483 |
+| 2023 | CC_REGULAR | reliability_floor | 0.2424 | 141.5502 | 0.0017 |
+| 2023 | CC_REGULAR | uc_schedule | 7.0301 | 141.5502 | 0.0497 |
+| 2023 | COAL_LIGNITE | coal_min_config | 0.8627 | 16.3147 | 0.0529 |
+| 2023 | COAL_PRB | coal_min_config | 2.9096 | 46.5935 | 0.0624 |
+| 2023 | CT_CHP | chp_steam | 1.0186 | 6.0205 | 0.1692 |
+| 2023 | CT_PEAKER | reliability_floor | 0.8776 | 9.5502 | 0.0919 |
+| 2023 | ST_CHP | chp_steam | 0.0282 | 0.0702 | 0.4018 |
+| 2023 | ST_GAS | st_netload_drag | 1.127 | 15.1257 | 0.0745 |
+| 2023 | ST_GAS | uc_schedule | 2.3829 | 15.1257 | 0.1575 |
+| 2024 |  | nuclear_mustrun | 38.2872 | 38.2872 | 1.0 |
+| 2024 | CC_CHP | chp_steam | 10.0901 | 29.8216 | 0.3383 |
+| 2024 | CC_REGULAR | reliability_floor | 0.0243 | 136.7306 | 0.0002 |
+| 2024 | CC_REGULAR | uc_schedule | 8.3447 | 136.7306 | 0.061 |
+| 2024 | COAL_LIGNITE | coal_min_config | 0.9705 | 15.0853 | 0.0643 |
+| 2024 | COAL_PRB | coal_min_config | 2.7633 | 47.023 | 0.0588 |
+| 2024 | CT_CHP | chp_steam | 0.9773 | 6.7368 | 0.1451 |
+| 2024 | CT_PEAKER | reliability_floor | 0.0747 | 11.3421 | 0.0066 |
+| 2024 | ST_CHP | chp_steam | 0.0282 | 0.0693 | 0.4063 |
+| 2024 | ST_GAS | st_netload_drag | 1.1915 | 15.0171 | 0.0793 |
+| 2024 | ST_GAS | uc_schedule | 1.9379 | 15.0171 | 0.129 |
+| 2025 |  | nuclear_mustrun | 41.3036 | 41.3036 | 1.0 |
+| 2025 | CC_CHP | chp_steam | 5.9946 | 28.9889 | 0.2068 |
+| 2025 | CC_REGULAR | uc_schedule | 6.9895 | 138.7189 | 0.0504 |
+| 2025 | COAL_LIGNITE | coal_min_config | 1.1092 | 15.168 | 0.0731 |
+| 2025 | COAL_PRB | coal_min_config | 1.1557 | 48.8806 | 0.0236 |
+| 2025 | CT_CHP | chp_steam | 0.8436 | 6.8595 | 0.123 |
+| 2025 | CT_PEAKER | reliability_floor | 0.0642 | 9.6575 | 0.0066 |
+| 2025 | ST_CHP | chp_steam | 0.0279 | 0.0687 | 0.4065 |
+| 2025 | ST_GAS | st_netload_drag | 0.937 | 12.8697 | 0.0728 |
+| 2025 | ST_GAS | uc_schedule | 2.2174 | 12.8697 | 0.1723 |
+
+## D-4 off-window binding — FAIL
+
+**Gate failures:**
+- 2019 reliability_floor × CT_PEAKER: 78.0% of floored MWh outside its justified window h14-21 (> 5%)
+- 2019 st_netload_drag: plant 3452 is floored for 0.0819 TWh (16.2% of the mechanism's forced energy) while its own measured median output over the 553 hours the floor actually binds for it (inside h0-23) is 0.000 MW (64.7% of them at zero) — the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)
+- 2020 chp_steam: plant 52176 is floored for 0.1135 TWh (0.9% of the mechanism's forced energy) while its own measured median output over the 5010 hours the floor actually binds for it (inside h0-23) is 0.000 MW (67.3% of them at zero) — the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)
+- 2020 reliability_floor × CT_PEAKER: 78.6% of floored MWh outside its justified window h14-21 (> 5%)
+- 2021 chp_steam: plant 52176 is floored for 0.0293 TWh (0.6% of the mechanism's forced energy) while its own measured median output over the 4058 hours the floor actually binds for it (inside h0-23) is 0.000 MW (90.1% of them at zero) — the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)
+- 2022 chp_steam: plant 52176 is floored for 0.0162 TWh (0.4% of the mechanism's forced energy) while its own measured median output over the 2546 hours the floor actually binds for it (inside h0-23) is 0.000 MW (92.8% of them at zero) — the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)
+- 2022 reliability_floor × CT_PEAKER: 94.5% of floored MWh outside its justified window h14-21 (> 5%)
+- 2022 st_netload_drag: plant 3628 is floored for 0.0150 TWh (0.9% of the mechanism's forced energy) while its own measured median output over the 185 hours the floor actually binds for it (inside h0-23) is 0.000 MW (75.7% of them at zero) — the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)
+- 2022 st_netload_drag: plant 6243 is floored for 0.0059 TWh (0.3% of the mechanism's forced energy) while its own measured median output over the 229 hours the floor actually binds for it (inside h0-23) is 0.000 MW (62.4% of them at zero) — the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)
+- 2023 chp_steam: plant 52176 is floored for 0.0014 TWh (0.0% of the mechanism's forced energy) while its own measured median output over the 190 hours the floor actually binds for it (inside h0-23) is 0.000 MW (100.0% of them at zero) — the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)
+- 2023 chp_steam: plant 58378 is floored for 0.3797 TWh (3.6% of the mechanism's forced energy) while its own measured median output over the 8760 hours the floor actually binds for it (inside h0-23) is 0.000 MW (74.1% of them at zero) — the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)
+- 2023 reliability_floor × CT_PEAKER: 96.9% of floored MWh outside its justified window h14-21 (> 5%)
+- 2024 chp_steam: plant 52176 is floored for 0.0016 TWh (0.0% of the mechanism's forced energy) while its own measured median output over the 158 hours the floor actually binds for it (inside h0-23) is 0.000 MW (100.0% of them at zero) — the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)
+- 2024 chp_steam: plant 58378 is floored for 0.3798 TWh (3.4% of the mechanism's forced energy) while its own measured median output over the 8760 hours the floor actually binds for it (inside h0-23) is 0.000 MW (50.3% of them at zero) — the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)
+- 2024 reliability_floor × CT_PEAKER: 98.1% of floored MWh outside its justified window h14-21 (> 5%)
+- 2024 st_netload_drag: plant 3452 is floored for 0.0165 TWh (1.4% of the mechanism's forced energy) while its own measured median output over the 198 hours the floor actually binds for it (inside h0-23) is 0.000 MW (63.6% of them at zero) — the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)
+- 2024 st_netload_drag: plant 6243 is floored for 0.0048 TWh (0.4% of the mechanism's forced energy) while its own measured median output over the 319 hours the floor actually binds for it (inside h0-23) is 0.000 MW (73.7% of them at zero) — the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)
+- 2025 chp_steam: plant 58378 is floored for 0.3798 TWh (5.5% of the mechanism's forced energy) while its own measured median output over the 8760 hours the floor actually binds for it (inside h0-23) is 0.000 MW (50.2% of them at zero) — the meter says it is offline in at least half the hours the floor asserts it must be online (per-unit conduct rider)
+- 2025 reliability_floor × CT_PEAKER: 94.7% of floored MWh outside its justified window h14-21 (> 5%)
+
+_2019: ct_only vintage guard extended the flag from sibling-year vintages for 3 plant(s): 55086, 56349, 56806_
+_2019: 2 floored plant(s) carry NO dispatch series in the active source (dispatch/2019_P1.parquet) and are scored under the floor-energy convention (dispatch := min_gen; PREREG-pjm149 §3.2) — their forced TWh is the MANDATED floor energy and every affected class's forced_share is an UPPER BOUND, sound on a pass and indeterminate on a fail. By class: (unclassified) x2. Plants: 6145, 6251_
+_2019: per-unit conduct rider skipped 2 floored plant(s) carrying the benchmark's CT-only CEMS flag (EIA-923 net > 1.1x CAMPD gross ⇒ scored on EIA-923 MONTHLY, hourly CAMPD incomplete) — a zero median in a series the benchmark itself declines to trust is a metering artifact, not conduct: 4195, 55470_
+_2019: per-unit conduct rider skipped 24 floored row(s) with no measured series (hydro / nuclear / renewables / interchange pseudo-units) — the rider is a measured-conduct test and never fails a mechanism for a missing meter: 10154, 10243, 10261, 10418, 10436, 10554, 10692, 10790, 34702, 50026, 50118, 50150, 50229, 50475, 52120, 52132, 54676, 55311, 55313, 56152 …_
+_2020: ct_only vintage guard extended the flag from sibling-year vintages for 3 plant(s): 55086, 55223, 56349_
+_2020: 2 floored plant(s) carry NO dispatch series in the active source (dispatch/2020_P1.parquet) and are scored under the floor-energy convention (dispatch := min_gen; PREREG-pjm149 §3.2) — their forced TWh is the MANDATED floor energy and every affected class's forced_share is an UPPER BOUND, sound on a pass and indeterminate on a fail. By class: (unclassified) x2. Plants: 6145, 6251_
+_2020: per-unit conduct rider skipped 1 floored plant(s) carrying the benchmark's CT-only CEMS flag (EIA-923 net > 1.1x CAMPD gross ⇒ scored on EIA-923 MONTHLY, hourly CAMPD incomplete) — a zero median in a series the benchmark itself declines to trust is a metering artifact, not conduct: 55470_
+_2020: per-unit conduct rider skipped 26 floored row(s) with no measured series (hydro / nuclear / renewables / interchange pseudo-units) — the rider is a measured-conduct test and never fails a mechanism for a missing meter: 10154, 10243, 10261, 10418, 10436, 10554, 10692, 10790, 34702, 50026, 50118, 50150, 50229, 50475, 52120, 52132, 54520, 54676, 55311, 55313 …_
+_2021: ct_only vintage guard extended the flag from sibling-year vintages for 4 plant(s): 55086, 55172, 55223, 56349_
+_2021: 2 floored plant(s) carry NO dispatch series in the active source (dispatch/2021_P1.parquet) and are scored under the floor-energy convention (dispatch := min_gen; PREREG-pjm149 §3.2) — their forced TWh is the MANDATED floor energy and every affected class's forced_share is an UPPER BOUND, sound on a pass and indeterminate on a fail. By class: (unclassified) x2. Plants: 6145, 6251_
+_2021: per-unit conduct rider skipped 2 floored plant(s) carrying the benchmark's CT-only CEMS flag (EIA-923 net > 1.1x CAMPD gross ⇒ scored on EIA-923 MONTHLY, hourly CAMPD incomplete) — a zero median in a series the benchmark itself declines to trust is a metering artifact, not conduct: 3548, 55470_
+_2021: per-unit conduct rider skipped 27 floored row(s) with no measured series (hydro / nuclear / renewables / interchange pseudo-units) — the rider is a measured-conduct test and never fails a mechanism for a missing meter: 10154, 10243, 10261, 10418, 10436, 10554, 10692, 10790, 50026, 50118, 50150, 50229, 50475, 52120, 52132, 54520, 54676, 55311, 55313, 56152 …_
+_2022: ct_only vintage guard extended the flag from sibling-year vintages for 4 plant(s): 55172, 55223, 56349, 63688_
+_2022: 2 floored plant(s) carry NO dispatch series in the active source (dispatch/2022_P1.parquet) and are scored under the floor-energy convention (dispatch := min_gen; PREREG-pjm149 §3.2) — their forced TWh is the MANDATED floor energy and every affected class's forced_share is an UPPER BOUND, sound on a pass and indeterminate on a fail. By class: (unclassified) x2. Plants: 6145, 6251_
+_2022: per-unit conduct rider skipped 2 floored plant(s) carrying the benchmark's CT-only CEMS flag (EIA-923 net > 1.1x CAMPD gross ⇒ scored on EIA-923 MONTHLY, hourly CAMPD incomplete) — a zero median in a series the benchmark itself declines to trust is a metering artifact, not conduct: 3548, 55470_
+_2022: per-unit conduct rider skipped 27 floored row(s) with no measured series (hydro / nuclear / renewables / interchange pseudo-units) — the rider is a measured-conduct test and never fails a mechanism for a missing meter: 10154, 10243, 10261, 10418, 10436, 10554, 10692, 10790, 34702, 50026, 50118, 50150, 50229, 50475, 52120, 52132, 54676, 55311, 55313, 56152 …_
+_2023: ct_only vintage guard extended the flag from sibling-year vintages for 7 plant(s): 3548, 55172, 55223, 56349, 62548, 63688, 65372_
+_2023: 2 floored plant(s) carry NO dispatch series in the active source (dispatch/2023_P1.parquet) and are scored under the floor-energy convention (dispatch := min_gen; PREREG-pjm149 §3.2) — their forced TWh is the MANDATED floor energy and every affected class's forced_share is an UPPER BOUND, sound on a pass and indeterminate on a fail. By class: (unclassified) x2. Plants: 6145, 6251_
+_2023: per-unit conduct rider skipped 2 floored plant(s) carrying the benchmark's CT-only CEMS flag (EIA-923 net > 1.1x CAMPD gross ⇒ scored on EIA-923 MONTHLY, hourly CAMPD incomplete) — a zero median in a series the benchmark itself declines to trust is a metering artifact, not conduct: 4195, 55470_
+_2023: per-unit conduct rider skipped 26 floored row(s) with no measured series (hydro / nuclear / renewables / interchange pseudo-units) — the rider is a measured-conduct test and never fails a mechanism for a missing meter: 10154, 10243, 10261, 10418, 10436, 10554, 10692, 10790, 34702, 50026, 50118, 50150, 50229, 50475, 52120, 52132, 54676, 55311, 55313, 56152 …_
+_2024: ct_only vintage guard extended the flag from sibling-year vintages for 6 plant(s): 3548, 55223, 56349, 62548, 63688, 65372_
+_2024: 2 floored plant(s) carry NO dispatch series in the active source (dispatch/2024_P1.parquet) and are scored under the floor-energy convention (dispatch := min_gen; PREREG-pjm149 §3.2) — their forced TWh is the MANDATED floor energy and every affected class's forced_share is an UPPER BOUND, sound on a pass and indeterminate on a fail. By class: (unclassified) x2. Plants: 6145, 6251_
+_2024: per-unit conduct rider skipped 1 floored plant(s) carrying the benchmark's CT-only CEMS flag (EIA-923 net > 1.1x CAMPD gross ⇒ scored on EIA-923 MONTHLY, hourly CAMPD incomplete) — a zero median in a series the benchmark itself declines to trust is a metering artifact, not conduct: 55470_
+_2024: per-unit conduct rider skipped 27 floored row(s) with no measured series (hydro / nuclear / renewables / interchange pseudo-units) — the rider is a measured-conduct test and never fails a mechanism for a missing meter: 10154, 10243, 10261, 10418, 10436, 10554, 10692, 10790, 34702, 50026, 50118, 50150, 50229, 50475, 52120, 52132, 54520, 54676, 55311, 55313 …_
+_2025: ct_only vintage guard extended the flag from sibling-year vintages for 9 plant(s): 3548, 3631, 55086, 55172, 55223, 62548, 63688, 65372, 66604_
+_2025: 2 floored plant(s) carry NO dispatch series in the active source (dispatch/2025_P1.parquet) and are scored under the floor-energy convention (dispatch := min_gen; PREREG-pjm149 §3.2) — their forced TWh is the MANDATED floor energy and every affected class's forced_share is an UPPER BOUND, sound on a pass and indeterminate on a fail. By class: (unclassified) x2. Plants: 6145, 6251_
+_2025: per-unit conduct rider skipped 1 floored plant(s) carrying the benchmark's CT-only CEMS flag (EIA-923 net > 1.1x CAMPD gross ⇒ scored on EIA-923 MONTHLY, hourly CAMPD incomplete) — a zero median in a series the benchmark itself declines to trust is a metering artifact, not conduct: 55470_
+_2025: per-unit conduct rider skipped 26 floored row(s) with no measured series (hydro / nuclear / renewables / interchange pseudo-units) — the rider is a measured-conduct test and never fails a mechanism for a missing meter: 10154, 10243, 10261, 10418, 10436, 10554, 10692, 10790, 34702, 50026, 50118, 50150, 50229, 50475, 52120, 52132, 54676, 55311, 55313, 56152 …_
+
+| year | check | floor | window | plant | floored_twh | offwindow_twh | offwindow_share | binding_hours | measured_median_mw | measured_zero_share | verdict |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 2019 | window | chp_steam | h0-23 |  | 9.6949 | 0.0 | 0.0 |  |  |  | pass |
+| 2019 | unit-conduct | chp_steam | h0-23 | 50815 | 0.4895 |  | 0.0505 | 2281 | 308.991 | 0.0 | pass |
+| 2019 | unit-conduct | chp_steam | h0-23 | 52088 | 0.0348 |  | 0.0036 | 465 | 252.031 | 0.0 | pass |
+| 2019 | unit-conduct | chp_steam | h0-23 | 52176 | 0.2598 |  | 0.0268 | 5439 | 92.122 | 0.4319 | pass |
+| 2019 | unit-conduct | chp_steam | h0-23 | 55015 | 0.4802 |  | 0.0495 | 4251 | 286.045 | 0.0 | pass |
+| 2019 | unit-conduct | chp_steam | h0-23 | 55047 | 0.768 |  | 0.0792 | 3395 | 358.662 | 0.0792 | pass |
+| 2019 | unit-conduct | chp_steam | h0-23 | 55187 | 1.5473 |  | 0.1596 | 4475 | 927.461 | 0.0 | pass |
+| 2019 | unit-conduct | chp_steam | h0-23 | 55206 | 0.5104 |  | 0.0526 | 4975 | 189.977 | 0.0062 | pass |
+| 2019 | unit-conduct | chp_steam | h0-23 | 55299 | 0.0526 |  | 0.0054 | 216 | 452.648 | 0.0 | pass |
+| 2019 | unit-conduct | chp_steam | h0-23 | 55327 | 1.1978 |  | 0.1236 | 3880 | 419.755 | 0.0 | pass |
+| 2019 | unit-conduct | chp_steam | h0-23 | 55464 | 1.4225 |  | 0.1467 | 3504 | 658.55 | 0.0 | pass |
+| 2019 | window | coal_min_config | h0-23 |  | 5.2868 | 0.0 | 0.0 |  |  |  | pass |
+| 2019 | unit-conduct | coal_min_config | h0-23 | 127 | 0.8332 |  | 0.1576 | 3875 | 266.265 | 0.023 | pass |
+| 2019 | unit-conduct | coal_min_config | h0-23 | 298 | 0.3544 |  | 0.067 | 1181 | 444.157 | 0.0 | pass |
+| 2019 | unit-conduct | coal_min_config | h0-23 | 3470 | 0.0694 |  | 0.0131 | 395 | 711.64 | 0.0 | pass |
+| 2019 | unit-conduct | coal_min_config | h0-23 | 6146 | 0.1633 |  | 0.0309 | 922 | 713.883 | 0.0 | pass |
+| 2019 | unit-conduct | coal_min_config | h0-23 | 6178 | 0.3926 |  | 0.0743 | 2231 | 211.729 | 0.0 | pass |
+| 2019 | unit-conduct | coal_min_config | h0-23 | 6179 | 0.0157 |  | 0.003 | 100 | 388.716 | 0.0 | pass |
+| 2019 | unit-conduct | coal_min_config | h0-23 | 6180 | 0.0088 |  | 0.0017 | 25 | 771.924 | 0.0 | pass |
+| 2019 | unit-conduct | coal_min_config | h0-23 | 6183 | 1.1208 |  | 0.212 | 4483 | 340.34 | 0.0491 | pass |
+| 2019 | unit-conduct | coal_min_config | h0-23 | 7030 | 0.0651 |  | 0.0123 | 685 | 269.193 | 0.0 | pass |
+| 2019 | unit-conduct | coal_min_config | h0-23 | 7097 | 0.1053 |  | 0.0199 | 809 | 446.127 | 0.0 | pass |
+| 2019 | unit-conduct | coal_min_config | h0-23 | 56611 | 2.1584 |  | 0.4083 | 5777 | 589.487 | 0.0045 | pass |
+| 2019 | window | reliability_floor × CT_PEAKER | h14-21 |  | 0.0763 | 0.0595 | 0.7797 |  |  |  | FAIL |
+| 2019 | window | st_netload_drag | h0-23 |  | 0.5069 | 0.0 | 0.0 |  |  |  | pass |
+| 2019 | unit-conduct | st_netload_drag | h0-23 | 3452 | 0.0819 |  | 0.1617 | 553 | 0.0 | 0.6474 | FAIL |
+| 2019 | unit-conduct | st_netload_drag | h0-23 | 3460 | 0.0443 |  | 0.0874 | 214 | 268.481 | 0.0514 | pass |
+| 2019 | unit-conduct | st_netload_drag | h0-23 | 3491 | 0.0769 |  | 0.1518 | 244 | 171.116 | 0.1352 | pass |
+| 2019 | unit-conduct | st_netload_drag | h0-23 | 3601 | 0.0236 |  | 0.0465 | 193 | 118.346 | 0.3679 | pass |
+| 2019 | unit-conduct | st_netload_drag | h0-23 | 3611 | 0.1042 |  | 0.2057 | 820 | 98.13 | 0.0317 | pass |
+| 2019 | unit-conduct | st_netload_drag | h0-23 | 3612 | 0.1137 |  | 0.2243 | 837 | 466.64 | 0.0 | pass |
+| 2019 | unit-conduct | st_netload_drag | h0-23 | 3628 | 0.0075 |  | 0.0147 | 57 | 102.086 | 0.0877 | pass |
+| 2020 | window | chp_steam | h0-23 |  | 12.0477 | 0.0 | 0.0 |  |  |  | pass |
+| 2020 | unit-conduct | chp_steam | h0-23 | 50815 | 0.6041 |  | 0.0501 | 2747 | 321.814 | 0.0 | pass |
+| 2020 | unit-conduct | chp_steam | h0-23 | 52088 | 0.0321 |  | 0.0027 | 385 | 269.986 | 0.0 | pass |
+| 2020 | unit-conduct | chp_steam | h0-23 | 52176 | 0.1135 |  | 0.0094 | 5010 | 0.0 | 0.6727 | FAIL |
+| 2020 | unit-conduct | chp_steam | h0-23 | 55015 | 0.206 |  | 0.0171 | 1392 | 326.166 | 0.0 | pass |
+| 2020 | unit-conduct | chp_steam | h0-23 | 55047 | 0.7268 |  | 0.0603 | 3965 | 342.427 | 0.0146 | pass |
+| 2020 | unit-conduct | chp_steam | h0-23 | 55187 | 1.3215 |  | 0.1097 | 4395 | 872.377 | 0.0 | pass |
+| 2020 | unit-conduct | chp_steam | h0-23 | 55206 | 0.6752 |  | 0.056 | 5631 | 207.64 | 0.0066 | pass |
+| 2020 | unit-conduct | chp_steam | h0-23 | 55299 | 0.4287 |  | 0.0356 | 1590 | 526.614 | 0.0 | pass |
+| 2020 | unit-conduct | chp_steam | h0-23 | 55327 | 1.2794 |  | 0.1062 | 4135 | 429.066 | 0.0 | pass |
+| 2020 | unit-conduct | chp_steam | h0-23 | 55464 | 1.9476 |  | 0.1617 | 4155 | 693.851 | 0.0 | pass |
+| 2020 | window | coal_min_config | h0-23 |  | 6.1173 | 0.0 | 0.0 |  |  |  | pass |
+| 2020 | unit-conduct | coal_min_config | h0-23 | 127 | 0.4775 |  | 0.0781 | 2221 | 237.372 | 0.0014 | pass |
+| 2020 | unit-conduct | coal_min_config | h0-23 | 298 | 0.6277 |  | 0.1026 | 2092 | 369.786 | 0.0 | pass |
+| 2020 | unit-conduct | coal_min_config | h0-23 | 3470 | 0.3342 |  | 0.0546 | 1903 | 656.718 | 0.0026 | pass |
+| 2020 | unit-conduct | coal_min_config | h0-23 | 6146 | 0.3801 |  | 0.0621 | 2150 | 761.399 | 0.0 | pass |
+| 2020 | unit-conduct | coal_min_config | h0-23 | 6178 | 0.2598 |  | 0.0425 | 1480 | 192.803 | 0.0047 | pass |
+| 2020 | unit-conduct | coal_min_config | h0-23 | 6179 | 0.0875 |  | 0.0143 | 558 | 523.819 | 0.0 | pass |
+| 2020 | unit-conduct | coal_min_config | h0-23 | 6180 | 0.0125 |  | 0.002 | 36 | 1193.772 | 0.0 | pass |
+| 2020 | unit-conduct | coal_min_config | h0-23 | 6183 | 1.196 |  | 0.1955 | 4784 | 360.792 | 0.0025 | pass |
+| 2020 | unit-conduct | coal_min_config | h0-23 | 7030 | 0.0678 |  | 0.0111 | 714 | 220.352 | 0.0 | pass |
+| 2020 | unit-conduct | coal_min_config | h0-23 | 7097 | 0.2206 |  | 0.0361 | 1694 | 446.691 | 0.0012 | pass |
+| 2020 | unit-conduct | coal_min_config | h0-23 | 56611 | 2.4537 |  | 0.4011 | 6619 | 383.542 | 0.0 | pass |
+| 2020 | window | reliability_floor × CT_PEAKER | h14-21 |  | 0.1303 | 0.1024 | 0.786 |  |  |  | FAIL |
+| 2020 | window | st_netload_drag | h0-23 |  | 1.0196 | 0.0 | 0.0 |  |  |  | pass |
+| 2020 | unit-conduct | st_netload_drag | h0-23 | 3460 | 0.1943 |  | 0.1906 | 542 | 199.105 | 0.3026 | pass |
+| 2020 | unit-conduct | st_netload_drag | h0-23 | 3491 | 0.0022 |  | 0.0022 | 22 | 59.587 | 0.4091 | pass |
+| 2020 | unit-conduct | st_netload_drag | h0-23 | 3601 | 0.0945 |  | 0.0927 | 957 | 149.382 | 0.3375 | pass |
+| 2020 | unit-conduct | st_netload_drag | h0-23 | 3611 | 0.4284 |  | 0.4202 | 1819 | 142.953 | 0.127 | pass |
+| 2020 | unit-conduct | st_netload_drag | h0-23 | 3612 | 0.2812 |  | 0.2758 | 2194 | 477.925 | 0.0068 | pass |
+| 2020 | unit-conduct | st_netload_drag | h0-23 | 6243 | 0.0116 |  | 0.0114 | 175 | 13.749 | 0.0 | pass |
+| 2021 | window | chp_steam | h0-23 |  | 5.2179 | 0.0 | 0.0 |  |  |  | pass |
+| 2021 | unit-conduct | chp_steam | h0-23 | 10298 | 0.016 |  | 0.0031 | 256 | 245.236 | 0.4648 | pass |
+| 2021 | unit-conduct | chp_steam | h0-23 | 50815 | 0.1579 |  | 0.0303 | 718 | 321.821 | 0.0 | pass |
+| 2021 | unit-conduct | chp_steam | h0-23 | 52088 | 0.0123 |  | 0.0024 | 188 | 130.506 | 0.0 | pass |
+| 2021 | unit-conduct | chp_steam | h0-23 | 52176 | 0.0293 |  | 0.0056 | 4058 | 0.0 | 0.9009 | FAIL |
+| 2021 | unit-conduct | chp_steam | h0-23 | 55015 | 0.1346 |  | 0.0258 | 840 | 331.838 | 0.0 | pass |
+| 2021 | unit-conduct | chp_steam | h0-23 | 55047 | 0.3167 |  | 0.0607 | 1648 | 366.812 | 0.1329 | pass |
+| 2021 | unit-conduct | chp_steam | h0-23 | 55187 | 0.5754 |  | 0.1103 | 1723 | 890.717 | 0.0 | pass |
+| 2021 | unit-conduct | chp_steam | h0-23 | 55206 | 0.2016 |  | 0.0386 | 1986 | 201.751 | 0.0106 | pass |
+| 2021 | unit-conduct | chp_steam | h0-23 | 55299 | 0.0866 |  | 0.0166 | 392 | 517.367 | 0.0 | pass |
+| 2021 | unit-conduct | chp_steam | h0-23 | 55327 | 0.3307 |  | 0.0634 | 1219 | 345.147 | 0.0 | pass |
+| 2021 | unit-conduct | chp_steam | h0-23 | 55464 | 0.6098 |  | 0.1169 | 1297 | 564.519 | 0.0 | pass |
+| 2021 | window | coal_min_config | h0-23 |  | 2.1144 | 0.0 | 0.0 |  |  |  | pass |
+| 2021 | unit-conduct | coal_min_config | h0-23 | 298 | 0.0842 |  | 0.0398 | 278 | 555.374 | 0.0 | pass |
+| 2021 | unit-conduct | coal_min_config | h0-23 | 3470 | 0.0378 |  | 0.0179 | 198 | 519.894 | 0.0 | pass |
+| 2021 | unit-conduct | coal_min_config | h0-23 | 6146 | 0.03 |  | 0.0142 | 166 | 618.732 | 0.0 | pass |
+| 2021 | unit-conduct | coal_min_config | h0-23 | 6178 | 0.2603 |  | 0.1231 | 1480 | 261.305 | 0.023 | pass |
+| 2021 | unit-conduct | coal_min_config | h0-23 | 6179 | 0.0034 |  | 0.0016 | 21 | 388.669 | 0.0 | pass |
+| 2021 | unit-conduct | coal_min_config | h0-23 | 6180 | 0.0961 |  | 0.0455 | 276 | 1166.909 | 0.0145 | pass |
+| 2021 | unit-conduct | coal_min_config | h0-23 | 6183 | 0.5757 |  | 0.2723 | 2303 | 348.543 | 0.0096 | pass |
+| 2021 | unit-conduct | coal_min_config | h0-23 | 7030 | 0.0207 |  | 0.0098 | 218 | 290.31 | 0.0 | pass |
+| 2021 | unit-conduct | coal_min_config | h0-23 | 7097 | 0.0141 |  | 0.0067 | 99 | 133.883 | 0.0 | pass |
+| 2021 | unit-conduct | coal_min_config | h0-23 | 56611 | 0.9921 |  | 0.4692 | 2657 | 495.946 | 0.006 | pass |
+| 2021 | window | st_netload_drag | h0-23 |  | 0.9363 | 0.0 | 0.0 |  |  |  | pass |
+| 2021 | unit-conduct | st_netload_drag | h0-23 | 3460 | 0.2611 |  | 0.2789 | 638 | 398.273 | 0.2743 | pass |
+| 2021 | unit-conduct | st_netload_drag | h0-23 | 3491 | 0.0238 |  | 0.0254 | 230 | 119.013 | 0.1826 | pass |
+| 2021 | unit-conduct | st_netload_drag | h0-23 | 3601 | 0.0619 |  | 0.0662 | 648 | 74.77 | 0.2917 | pass |
+| 2021 | unit-conduct | st_netload_drag | h0-23 | 3611 | 0.2614 |  | 0.2792 | 1211 | 160.577 | 0.0017 | pass |
+| 2021 | unit-conduct | st_netload_drag | h0-23 | 3612 | 0.2846 |  | 0.3039 | 1945 | 443.798 | 0.0 | pass |
+| 2021 | unit-conduct | st_netload_drag | h0-23 | 6243 | 0.0408 |  | 0.0435 | 567 | 13.891 | 0.0 | pass |
+| 2022 | window | chp_steam | h0-23 |  | 4.0588 | 0.0 | 0.0 |  |  |  | pass |
+| 2022 | unit-conduct | chp_steam | h0-23 | 10298 | 0.0005 |  | 0.0001 | 8 | 254.716 | 0.0 | pass |
+| 2022 | unit-conduct | chp_steam | h0-23 | 50815 | 0.0226 |  | 0.0056 | 102 | 302.528 | 0.0 | pass |
+| 2022 | unit-conduct | chp_steam | h0-23 | 52088 | 0.0973 |  | 0.024 | 408 | 378.057 | 0.0 | pass |
+| 2022 | unit-conduct | chp_steam | h0-23 | 52176 | 0.0162 |  | 0.004 | 2546 | 0.0 | 0.9277 | FAIL |
+| 2022 | unit-conduct | chp_steam | h0-23 | 55015 | 0.016 |  | 0.0039 | 108 | 328.929 | 0.0 | pass |
+| 2022 | unit-conduct | chp_steam | h0-23 | 55047 | 0.0926 |  | 0.0228 | 497 | 187.483 | 0.2274 | pass |
+| 2022 | unit-conduct | chp_steam | h0-23 | 55187 | 0.2503 |  | 0.0617 | 742 | 959.666 | 0.0 | pass |
+| 2022 | unit-conduct | chp_steam | h0-23 | 55206 | 0.1038 |  | 0.0256 | 1157 | 160.174 | 0.2308 | pass |
+| 2022 | unit-conduct | chp_steam | h0-23 | 55299 | 0.0216 |  | 0.0053 | 82 | 434.221 | 0.0 | pass |
+| 2022 | unit-conduct | chp_steam | h0-23 | 55327 | 0.0028 |  | 0.0007 | 31 | 195.959 | 0.0 | pass |
+| 2022 | unit-conduct | chp_steam | h0-23 | 55464 | 0.1508 |  | 0.0372 | 340 | 517.416 | 0.0 | pass |
+| 2022 | window | coal_min_config | h0-23 |  | 3.1762 | 0.0 | 0.0 |  |  |  | pass |
+| 2022 | unit-conduct | coal_min_config | h0-23 | 298 | 0.3954 |  | 0.1245 | 1317 | 443.885 | 0.0106 | pass |
+| 2022 | unit-conduct | coal_min_config | h0-23 | 3470 | 0.0004 |  | 0.0001 | 2 | 642.939 | 0.0 | pass |
+| 2022 | unit-conduct | coal_min_config | h0-23 | 6146 | 0.2165 |  | 0.0682 | 1234 | 927.847 | 0.0 | pass |
+| 2022 | unit-conduct | coal_min_config | h0-23 | 6178 | 0.6763 |  | 0.2129 | 3858 | 236.206 | 0.0435 | pass |
+| 2022 | unit-conduct | coal_min_config | h0-23 | 6179 | 0.0481 |  | 0.0151 | 307 | 388.726 | 0.0 | pass |
+| 2022 | unit-conduct | coal_min_config | h0-23 | 6180 | 0.0211 |  | 0.0066 | 59 | 1005.518 | 0.0 | pass |
+| 2022 | unit-conduct | coal_min_config | h0-23 | 6183 | 0.2068 |  | 0.0651 | 827 | 348.483 | 0.0423 | pass |
+| 2022 | unit-conduct | coal_min_config | h0-23 | 7030 | 0.0696 |  | 0.0219 | 733 | 304.274 | 0.0 | pass |
+| 2022 | unit-conduct | coal_min_config | h0-23 | 7097 | 0.0674 |  | 0.0212 | 499 | 446.307 | 0.0 | pass |
+| 2022 | unit-conduct | coal_min_config | h0-23 | 56611 | 1.4747 |  | 0.4643 | 4039 | 402.322 | 0.0116 | pass |
+| 2022 | window | reliability_floor × CT_PEAKER | h14-21 |  | 0.2463 | 0.2328 | 0.9454 |  |  |  | FAIL |
+| 2022 | window | st_netload_drag | h0-23 |  | 1.7142 | 0.0 | 0.0 |  |  |  | pass |
+| 2022 | unit-conduct | st_netload_drag | h0-23 | 3460 | 0.5771 |  | 0.3367 | 1407 | 429.246 | 0.0782 | pass |
+| 2022 | unit-conduct | st_netload_drag | h0-23 | 3491 | 0.171 |  | 0.0998 | 1038 | 151.814 | 0.2842 | pass |
+| 2022 | unit-conduct | st_netload_drag | h0-23 | 3601 | 0.0721 |  | 0.0421 | 1091 | 43.618 | 0.3987 | pass |
+| 2022 | unit-conduct | st_netload_drag | h0-23 | 3611 | 0.4595 |  | 0.268 | 2675 | 133.788 | 0.0602 | pass |
+| 2022 | unit-conduct | st_netload_drag | h0-23 | 3612 | 0.2921 |  | 0.1704 | 2225 | 546.311 | 0.0067 | pass |
+| 2022 | unit-conduct | st_netload_drag | h0-23 | 3628 | 0.015 |  | 0.0087 | 185 | 0.0 | 0.7568 | FAIL |
+| 2022 | unit-conduct | st_netload_drag | h0-23 | 6243 | 0.0059 |  | 0.0035 | 229 | 0.0 | 0.6245 | FAIL |
+| 2023 | window | chp_steam | h0-23 |  | 10.6581 | 0.0 | 0.0 |  |  |  | pass |
+| 2023 | unit-conduct | chp_steam | h0-23 | 10298 | 0.0156 |  | 0.0015 | 253 | 260.997 | 0.0 | pass |
+| 2023 | unit-conduct | chp_steam | h0-23 | 50815 | 1.9285 |  | 0.1809 | 8741 | 418.364 | 0.0 | pass |
+| 2023 | unit-conduct | chp_steam | h0-23 | 52088 | 0.1219 |  | 0.0114 | 1164 | 135.005 | 0.0 | pass |
+| 2023 | unit-conduct | chp_steam | h0-23 | 52176 | 0.0014 |  | 0.0001 | 190 | 0.0 | 1.0 | FAIL |
+| 2023 | unit-conduct | chp_steam | h0-23 | 55015 | 0.099 |  | 0.0093 | 839 | 331.844 | 0.0 | pass |
+| 2023 | unit-conduct | chp_steam | h0-23 | 55047 | 1.0956 |  | 0.1028 | 3937 | 497.316 | 0.0094 | pass |
+| 2023 | unit-conduct | chp_steam | h0-23 | 55187 | 0.8116 |  | 0.0761 | 3079 | 817.311 | 0.0 | pass |
+| 2023 | unit-conduct | chp_steam | h0-23 | 55206 | 0.7741 |  | 0.0726 | 5020 | 255.102 | 0.0 | pass |
+| 2023 | unit-conduct | chp_steam | h0-23 | 55299 | 0.114 |  | 0.0107 | 637 | 443.483 | 0.0 | pass |
+| 2023 | unit-conduct | chp_steam | h0-23 | 55327 | 0.8182 |  | 0.0768 | 2623 | 457.065 | 0.0 | pass |
+| 2023 | unit-conduct | chp_steam | h0-23 | 55464 | 0.8311 |  | 0.078 | 2036 | 599.693 | 0.0044 | pass |
+| 2023 | unit-conduct | chp_steam | h0-23 | 58378 | 0.3797 |  | 0.0356 | 8760 | 0.0 | 0.7411 | FAIL |
+| 2023 | window | coal_min_config | h0-23 |  | 3.7724 | 0.0 | 0.0 |  |  |  | pass |
+| 2023 | unit-conduct | coal_min_config | h0-23 | 298 | 0.5076 |  | 0.1345 | 1666 | 369.717 | 0.0192 | pass |
+| 2023 | unit-conduct | coal_min_config | h0-23 | 3470 | 0.1353 |  | 0.0359 | 761 | 437.884 | 0.0 | pass |
+| 2023 | unit-conduct | coal_min_config | h0-23 | 6146 | 0.1824 |  | 0.0483 | 1033 | 571.163 | 0.0 | pass |
+| 2023 | unit-conduct | coal_min_config | h0-23 | 6178 | 0.0598 |  | 0.0159 | 338 | 205.367 | 0.0 | pass |
+| 2023 | unit-conduct | coal_min_config | h0-23 | 6179 | 0.0502 |  | 0.0133 | 315 | 523.642 | 0.0 | pass |
+| 2023 | unit-conduct | coal_min_config | h0-23 | 6180 | 0.0268 |  | 0.0071 | 77 | 1149.063 | 0.0 | pass |
+| 2023 | unit-conduct | coal_min_config | h0-23 | 6183 | 0.7982 |  | 0.2116 | 3192 | 221.404 | 0.0204 | pass |
+| 2023 | unit-conduct | coal_min_config | h0-23 | 7030 | 0.0377 |  | 0.01 | 396 | 171.317 | 0.0 | pass |
+| 2023 | unit-conduct | coal_min_config | h0-23 | 7097 | 0.2727 |  | 0.0723 | 2085 | 208.401 | 0.0019 | pass |
+| 2023 | unit-conduct | coal_min_config | h0-23 | 56611 | 1.7018 |  | 0.4511 | 4604 | 374.621 | 0.0022 | pass |
+| 2023 | window | reliability_floor × CT_PEAKER | h14-21 |  | 0.8776 | 0.8504 | 0.969 |  |  |  | FAIL |
+| 2023 | window | st_netload_drag | h0-23 |  | 1.127 | 0.0 | 0.0 |  |  |  | pass |
+| 2023 | unit-conduct | st_netload_drag | h0-23 | 3460 | 0.5918 |  | 0.5251 | 1650 | 398.361 | 0.1352 | pass |
+| 2023 | unit-conduct | st_netload_drag | h0-23 | 3601 | 0.0436 |  | 0.0387 | 536 | 87.189 | 0.1716 | pass |
+| 2023 | unit-conduct | st_netload_drag | h0-23 | 3611 | 0.2698 |  | 0.2394 | 1643 | 214.004 | 0.0018 | pass |
+| 2023 | unit-conduct | st_netload_drag | h0-23 | 3612 | 0.2036 |  | 0.1807 | 1214 | 546.217 | 0.0494 | pass |
+| 2024 | window | chp_steam | h0-23 |  | 11.0955 | 0.0 | 0.0 |  |  |  | pass |
+| 2024 | unit-conduct | chp_steam | h0-23 | 10298 | 0.03 |  | 0.0027 | 459 | 257.861 | 0.0 | pass |
+| 2024 | unit-conduct | chp_steam | h0-23 | 50815 | 1.7023 |  | 0.1534 | 7986 | 405.476 | 0.0 | pass |
+| 2024 | unit-conduct | chp_steam | h0-23 | 52088 | 0.1245 |  | 0.0112 | 1374 | 143.992 | 0.0 | pass |
+| 2024 | unit-conduct | chp_steam | h0-23 | 52176 | 0.0016 |  | 0.0001 | 158 | 0.0 | 1.0 | FAIL |
+| 2024 | unit-conduct | chp_steam | h0-23 | 55015 | 0.0931 |  | 0.0084 | 628 | 257.474 | 0.0 | pass |
+| 2024 | unit-conduct | chp_steam | h0-23 | 55047 | 0.9175 |  | 0.0827 | 3125 | 513.62 | 0.0 | pass |
+| 2024 | unit-conduct | chp_steam | h0-23 | 55187 | 2.8895 |  | 0.2604 | 8088 | 1037.592 | 0.0 | pass |
+| 2024 | unit-conduct | chp_steam | h0-23 | 55206 | 0.6189 |  | 0.0558 | 4663 | 207.665 | 0.0088 | pass |
+| 2024 | unit-conduct | chp_steam | h0-23 | 55299 | 0.3033 |  | 0.0273 | 1246 | 526.61 | 0.0 | pass |
+| 2024 | unit-conduct | chp_steam | h0-23 | 55327 | 0.6958 |  | 0.0627 | 2151 | 447.733 | 0.0 | pass |
+| 2024 | unit-conduct | chp_steam | h0-23 | 55464 | 1.013 |  | 0.0913 | 1980 | 670.366 | 0.0 | pass |
+| 2024 | unit-conduct | chp_steam | h0-23 | 58378 | 0.3798 |  | 0.0342 | 8760 | 0.0 | 0.5031 | FAIL |
+| 2024 | window | coal_min_config | h0-23 |  | 3.7338 | 0.0 | 0.0 |  |  |  | pass |
+| 2024 | unit-conduct | coal_min_config | h0-23 | 298 | 0.3284 |  | 0.088 | 1094 | 369.557 | 0.0 | pass |
+| 2024 | unit-conduct | coal_min_config | h0-23 | 3470 | 0.1248 |  | 0.0334 | 705 | 465.309 | 0.0 | pass |
+| 2024 | unit-conduct | coal_min_config | h0-23 | 6146 | 0.2293 |  | 0.0614 | 1282 | 785.164 | 0.0 | pass |
+| 2024 | unit-conduct | coal_min_config | h0-23 | 6178 | 0.0819 |  | 0.0219 | 466 | 192.909 | 0.0107 | pass |
+| 2024 | unit-conduct | coal_min_config | h0-23 | 6179 | 0.0846 |  | 0.0226 | 542 | 523.909 | 0.0 | pass |
+| 2024 | unit-conduct | coal_min_config | h0-23 | 6180 | 0.0578 |  | 0.0155 | 166 | 879.678 | 0.0 | pass |
+| 2024 | unit-conduct | coal_min_config | h0-23 | 6183 | 0.8063 |  | 0.2159 | 3225 | 221.345 | 0.026 | pass |
+| 2024 | unit-conduct | coal_min_config | h0-23 | 7030 | 0.1064 |  | 0.0285 | 1120 | 167.816 | 0.0 | pass |
+| 2024 | unit-conduct | coal_min_config | h0-23 | 7097 | 0.1302 |  | 0.0349 | 998 | 446.336 | 0.001 | pass |
+| 2024 | unit-conduct | coal_min_config | h0-23 | 56611 | 1.7842 |  | 0.4778 | 4805 | 374.716 | 0.0023 | pass |
+| 2024 | window | reliability_floor × CT_PEAKER | h14-21 |  | 0.0747 | 0.0733 | 0.9815 |  |  |  | FAIL |
+| 2024 | window | st_netload_drag | h0-23 |  | 1.1915 | 0.0 | 0.0 |  |  |  | pass |
+| 2024 | unit-conduct | st_netload_drag | h0-23 | 3452 | 0.0165 |  | 0.0138 | 198 | 0.0 | 0.6364 | FAIL |
+| 2024 | unit-conduct | st_netload_drag | h0-23 | 3460 | 0.2962 |  | 0.2486 | 723 | 658.415 | 0.0318 | pass |
+| 2024 | unit-conduct | st_netload_drag | h0-23 | 3491 | 0.065 |  | 0.0546 | 342 | 92.309 | 0.4327 | pass |
+| 2024 | unit-conduct | st_netload_drag | h0-23 | 3601 | 0.1649 |  | 0.1384 | 1296 | 155.706 | 0.1852 | pass |
+| 2024 | unit-conduct | st_netload_drag | h0-23 | 3611 | 0.3772 |  | 0.3166 | 2010 | 276.492 | 0.003 | pass |
+| 2024 | unit-conduct | st_netload_drag | h0-23 | 3612 | 0.2638 |  | 0.2214 | 2186 | 534.88 | 0.0206 | pass |
+| 2024 | unit-conduct | st_netload_drag | h0-23 | 6243 | 0.0048 |  | 0.004 | 319 | 0.0 | 0.7367 | FAIL |
+| 2025 | window | chp_steam | h0-23 |  | 6.8661 | 0.0 | 0.0 |  |  |  | pass |
+| 2025 | unit-conduct | chp_steam | h0-23 | 10298 | 0.0312 |  | 0.0045 | 465 | 264.253 | 0.0 | pass |
+| 2025 | unit-conduct | chp_steam | h0-23 | 50815 | 1.7875 |  | 0.2603 | 8378 | 405.536 | 0.0 | pass |
+| 2025 | unit-conduct | chp_steam | h0-23 | 52088 | 0.0488 |  | 0.0071 | 629 | 144.013 | 0.0143 | pass |
+| 2025 | unit-conduct | chp_steam | h0-23 | 55015 | 0.0821 |  | 0.012 | 541 | 331.807 | 0.0 | pass |
+| 2025 | unit-conduct | chp_steam | h0-23 | 55047 | 0.638 |  | 0.0929 | 2102 | 464.696 | 0.0 | pass |
+| 2025 | unit-conduct | chp_steam | h0-23 | 55187 | 0.5346 |  | 0.0779 | 1758 | 789.773 | 0.0 | pass |
+| 2025 | unit-conduct | chp_steam | h0-23 | 55206 | 0.2014 |  | 0.0293 | 1703 | 189.852 | 0.0282 | pass |
+| 2025 | unit-conduct | chp_steam | h0-23 | 55299 | 0.2247 |  | 0.0327 | 781 | 508.09 | 0.0397 | pass |
+| 2025 | unit-conduct | chp_steam | h0-23 | 55327 | 0.1527 |  | 0.0222 | 692 | 345.128 | 0.0 | pass |
+| 2025 | unit-conduct | chp_steam | h0-23 | 55464 | 0.4644 |  | 0.0676 | 945 | 505.717 | 0.0 | pass |
+| 2025 | unit-conduct | chp_steam | h0-23 | 58378 | 0.3798 |  | 0.0553 | 8760 | 0.0 | 0.5024 | FAIL |
+| 2025 | window | coal_min_config | h0-23 |  | 2.2648 | 0.0 | 0.0 |  |  |  | pass |
+| 2025 | unit-conduct | coal_min_config | h0-23 | 298 | 0.3561 |  | 0.1572 | 1183 | 388.577 | 0.0 | pass |
+| 2025 | unit-conduct | coal_min_config | h0-23 | 3470 | 0.1085 |  | 0.0479 | 619 | 766.283 | 0.0 | pass |
+| 2025 | unit-conduct | coal_min_config | h0-23 | 6146 | 0.1128 |  | 0.0498 | 644 | 404.612 | 0.0326 | pass |
+| 2025 | unit-conduct | coal_min_config | h0-23 | 6178 | 0.2031 |  | 0.0897 | 1148 | 217.907 | 0.0497 | pass |
+| 2025 | unit-conduct | coal_min_config | h0-23 | 6179 | 0.0599 |  | 0.0264 | 383 | 489.74 | 0.0 | pass |
+| 2025 | unit-conduct | coal_min_config | h0-23 | 6180 | 0.0682 |  | 0.0301 | 196 | 942.682 | 0.0408 | pass |
+| 2025 | unit-conduct | coal_min_config | h0-23 | 6183 | 0.9768 |  | 0.4313 | 3907 | 221.444 | 0.2104 | pass |
+| 2025 | unit-conduct | coal_min_config | h0-23 | 7030 | 0.0642 |  | 0.0284 | 676 | 167.893 | 0.0 | pass |
+| 2025 | unit-conduct | coal_min_config | h0-23 | 7097 | 0.0438 |  | 0.0193 | 335 | 312.657 | 0.0299 | pass |
+| 2025 | unit-conduct | coal_min_config | h0-23 | 56611 | 0.2715 |  | 0.1199 | 729 | 402.728 | 0.0027 | pass |
+| 2025 | window | reliability_floor × CT_PEAKER | h14-21 |  | 0.0642 | 0.0608 | 0.9469 |  |  |  | FAIL |
+| 2025 | window | st_netload_drag | h0-23 |  | 0.937 | 0.0 | 0.0 |  |  |  | pass |
+| 2025 | unit-conduct | st_netload_drag | h0-23 | 3452 | 0.1623 |  | 0.1732 | 1132 | 120.569 | 0.2951 | pass |
+| 2025 | unit-conduct | st_netload_drag | h0-23 | 3460 | 0.0515 |  | 0.0549 | 170 | 107.317 | 0.3 | pass |
+| 2025 | unit-conduct | st_netload_drag | h0-23 | 3601 | 0.1464 |  | 0.1563 | 1357 | 62.306 | 0.3294 | pass |
+| 2025 | unit-conduct | st_netload_drag | h0-23 | 3611 | 0.3394 |  | 0.3623 | 1854 | 409.398 | 0.0761 | pass |
+| 2025 | unit-conduct | st_netload_drag | h0-23 | 3612 | 0.2312 |  | 0.2467 | 4853 | 512.466 | 0.0004 | pass |
+| 2025 | unit-conduct | st_netload_drag | h0-23 | 3628 | 0.0019 |  | 0.002 | 19 | 80.854 | 0.0 | pass |
+| 2025 | unit-conduct | st_netload_drag | h0-23 | 6243 | 0.0001 |  | 0.0002 | 8 | 38.101 | 0.0 | pass |
+
+## D-5 forecast/backcast parity — PASS
+
+| mechanism | difference | declared_overlay | note | verdict |
+|---|---|---|---|---|
+| historic_outage_overlay | backcast-only | True | CAMPD outage windows (physical availability events) | declared |
+| eia860_vintage_snapshot | backcast-only | True | historical fleet vintage pin (runner.py:239 mode gate) | declared |
+| retired_within_window_fleet | backcast-only | True | within-window plant exits injected into the base fleet | declared |
+| planned_additions_pipeline | forecast-only | True | EIA-860 construction-committed pipeline — the declared forecast complement of the backcast fleet boundary | declared |
+| renewable_cf_measured | backcast-only | True | delivered EIA-930/HSL renewable CF upper bound (leakage L1) | declared |
+| nuclear_flat_mustrun | backcast-only | True | measured monthly nuclear CF + flat must-run floor (L3) | declared |
+| ordc_floor_active_mask | backcast-only | True | ERCOT scarcity-floor measured active-hours mask | declared |
+| coal_plant_monthly_pricing | backcast-only | True | F923 per-plant delivered coal cost | declared |
+| storage_as_commitment | backcast-only | True | measured storage up-AS power reservation | declared |
+| chp_export_floor_measured | backcast-only | True | CHP export floor at measured class CF (mode-gated, L4) | declared |
+| reliability_floor | backcast-only | True | declared admissible overlay (2026-06 audit); a wiring gap in the forecast entry is reported but sanctioned by the declaration | declared |
+| ercot_storage_adaptive_expectation | backcast-only | True | adaptive-expectation storage scarcity offer, P1-only two-pass: batteries price scarce SOC at their experienced recent deep-scarcity frequency. DRIVER: the model's OWN pass-1 realized spike experience (daily demand-weighted P1 lambda >= $1,000 — pure model, zero measured content in the armed path, precommit Amendment 3), trailing EWMA half-life 30 d x beta 3.0077 (the two rule-23 constants, identified Phase-0 v2 on the measured 2023 daily evening storage offer surface and FROZEN). WINDOW: evening net-peak hours h17-20 CST, on days the model's own trailing state is active — a spike-free year collapses the floor to vom (self-extinguishing). FORWARD STORY: regenerates from the model's own price path in any year (wired in the backcast driver only today, hence declared backcast-only). Rule-19: exclusive with ercot_storage_reservation_offer on the p1_storage_discharge_cost seam; ordinary-hour cycling untouched by the window scoping. Audit trail: hourly/adaptive_<year>.parquet. | declared |
+
+## D-9 overlay quarantine — PASS
+
+| bundle | check | value | verdict |
+|---|---|---|---|
+| ucmilp4_ercot_span | ct_deployment_overlay | False | pass |
+| ucmilp4_ercot_span | reliability_deployment_overlay | False | pass |
+| ucmilp4_ercot_span | ct_mustrun_per_plant | False | pass |
+| ucmilp4_ercot_span | ordc_reliability_deployment_mw | None | pass |
+| ucmilp4_ercot_span | caiso_gas_commitment_floor | False | pass |
+
+## D-10 free-class-only rescore (renewable-bound provenance) — PASS
+
+_ERCOT: 0/14 wind/solar (year, fuel) rows ride the L1 delivered-outcome bound; their advisory-only C1 rows measure plumbing, not model skill (never gate the keeper verdict)._
+
+| year | fuel | provenance | pinned | verdict |
+|---|---|---|---|---|
+| 2019 | wind | forecast_uncurtailed | False | free |
+| 2019 | solar | forecast_uncurtailed | False | free |
+| 2020 | wind | forecast_uncurtailed | False | free |
+| 2020 | solar | forecast_uncurtailed | False | free |
+| 2021 | wind | forecast_uncurtailed | False | free |
+| 2021 | solar | forecast_uncurtailed | False | free |
+| 2022 | wind | forecast_uncurtailed | False | free |
+| 2022 | solar | forecast_uncurtailed | False | free |
+| 2023 | wind | measured_potential | False | free |
+| 2023 | solar | measured_potential | False | free |
+| 2024 | wind | measured_potential | False | free |
+| 2024 | solar | measured_potential | False | free |
+| 2025 | wind | measured_potential | False | free |
+| 2025 | solar | measured_potential | False | free |
+
+INFO: machine artifact written to /home/user/market-simulator/results/calibration/ucmilp4_ercot_span/legitimacy_diagnostics.json
+  (exit 1 — a failing diagnostic gate, not a missing artifact)
+  years in the regenerated artifact: [2019, 2020, 2021, 2022, 2023, 2024, 2025]
+EXIT 0
