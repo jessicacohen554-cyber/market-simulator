@@ -84,6 +84,7 @@ Both legs ran on the same solver path (lean preset with FIX-9 LP heuristics). Pa
   | uc-1.8 attempt 2 | 22:33:28Z | ~23:48Z | ~75 min | window 361 of ~365 |
   | uc-1.8 attempt 3 | 23:51:54Z | 23:56:40Z–00:19Z | — | window 14 |
 
+  - Per-attempt log mtimes, window counts and last lines: `data/ucmilp4_infra_2019/README.md`.
   - On each relaunch, the fresh boot showed `uptime` "up 0 min" and the swap was gone.
   - Attempts 1 and 2 had a background watcher running and survived about 70–75 min. Attempt 3 had only a 25-min `send_later` and died about 5 min after the shard's turn ended.
   - **Pattern (shard's observation, not adjudicated):** `send_later` alone does not hold a container. A running background task holds it for up to about 70–75 min.
