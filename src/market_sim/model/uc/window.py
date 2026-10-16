@@ -668,6 +668,11 @@ class UcWindowModel:
         pocket: The VLR load-pocket requirement
             (``vlr_pocket_commitment``; :mod:`market_sim.model.uc.pocket`), or
             ``None`` for no pocket row (:meth:`_add_pocket_rows`).
+        u_floor: ``(n_int, T_w)`` add-only lower bound on ``u`` — the DA
+            schedule a reliability-commitment (RUC) window may add to but
+            never de-commit (``uc_reliability_commitment``; DESIGN-ucmilp-
+            ruc-stage-2026-10-16 section 2.1). ``None`` (every DA window)
+            adds no bound.
     """
 
     def __init__(
@@ -683,6 +688,7 @@ class UcWindowModel:
         floor_need_ahead: np.ndarray | None = None,
         slim: bool = False,
         pocket: PocketRequirement | None = None,
+        u_floor: np.ndarray | None = None,
     ) -> None:
         t_build = time.perf_counter()
         self.params = params
@@ -718,7 +724,9 @@ class UcWindowModel:
         self.hist_w = np.zeros((self.n_int, self.T_w))
         if self.n_int:
             self.hist_v, self.hist_w = self._carry_history(state)
-            self._add_uc_columns(noload_w, state, fix_on, fix_off, inputs.kwargs)
+            self._add_uc_columns(
+                noload_w, state, fix_on, fix_off, inputs.kwargs, u_floor
+            )
             self._add_uc_rows(state, floor_need_ahead)
             self._add_pocket_rows(pocket)
             self._set_integrality()
@@ -866,7 +874,9 @@ class UcWindowModel:
             hist_w = np.take_along_axis(csum_w, m_dn, axis=1)
         return hist_v, hist_w
 
-    def _add_uc_columns(self, noload_w, state, fix_on, fix_off, kwargs=None) -> None:
+    def _add_uc_columns(
+        self, noload_w, state, fix_on, fix_off, kwargs=None, u_floor=None
+    ) -> None:
         p = self.params
         k = self.int_idx
         T_w, n_int = self.T_w, self.n_int
@@ -886,6 +896,9 @@ class UcWindowModel:
         if fix_off is not None and fix_off.any():
             ub[fix_off, :] = np.minimum(ub[fix_off, :], lb[fix_off, :])
             self.fixed_off = int(fix_off.sum())
+        if u_floor is not None:
+            # RUC add-only: never fewer units than the DA schedule held.
+            lb = np.maximum(lb, np.asarray(u_floor, dtype=float))
         # A floor can need more units than the carried min-down leaves (only
         # when the previous window had no look-ahead guard for it: the first
         # window, or a test state); the bound is widened so the contradiction

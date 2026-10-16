@@ -30,6 +30,7 @@ from scripts.legitimacy_diagnostics import (
     run_d1,
     run_d2,
     run_d4,
+    run_d4_uc_ruc,
     run_d5,
     run_d9,
 )
@@ -2444,3 +2445,21 @@ class TestScorerDoesNotTrustArtifactMateriality:
         assert V._total_load(ypay, a_gen=999.0) == pytest.approx(152.68)
         # No zone block -> falls back to actual generation, never to 0.
         assert V._total_load({}, a_gen=123.0) == pytest.approx(123.0)
+
+
+def test_d4_uc_ruc_subrow(tmp_path):
+    """The RUC sub-row of MECH 28 reads the stage's own log: no RUC block, no
+    row; the added floor inside its swept hours passes, outside fails."""
+    assert run_d4_uc_ruc(tmp_path, 2024).rows == []
+    log = {"engine": {}, "ruc": {"added_floor_mwh": 1000.0,
+                                 "added_floor_mwh_outside_swept": 0.0,
+                                 "swept_hours": [[96, 144]], "trigger_hours": 5}}
+    (tmp_path / "uc_solve_log_2024.json").write_text(json.dumps(log))
+    res = run_d4_uc_ruc(tmp_path, 2024)
+    assert res.rows[0]["floor"] == "uc_schedule × uc_ruc"
+    assert res.rows[0]["window"] == "swept 96-143"
+    assert res.rows[0]["verdict"] == "pass" and not res.failures
+    log["ruc"]["added_floor_mwh_outside_swept"] = 100.0
+    (tmp_path / "uc_solve_log_2024.json").write_text(json.dumps(log))
+    res = run_d4_uc_ruc(tmp_path, 2024)
+    assert res.rows[0]["verdict"] == "FAIL" and res.failures

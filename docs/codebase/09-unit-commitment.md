@@ -178,6 +178,36 @@ over-commitment cost of a forecast error; P1 has no real-time decommitment.
 `uc_solve_log.engine.commitment_demand` records the source, basis, QA-dropped
 hours and the increment (mean, top-100-load-hour median, max, min).
 
+**Reliability commitment (uc-1.9) — `UcStage.reliability_commitment`.**
+`uc_reliability_commitment` (default off; needs `uc_commitment_demand_source =
+"da_forecast"`; owner ruling R12; DESIGN-ucmilp-ruc-stage-2026-10-16). After P1
+(“P1a”) `pipeline/solve.py`'s one RUC hunk asks the stage for a P1b fleet.
+`ruc_trigger_hours` marks the hours whose P1a energy slack or largest
+reserve-family ORDC shortfall exceeds HiGHS's own `primal_feasibility_tolerance`;
+none → `None`, P1a is final (byte-identical to the arm without RUC). Otherwise
+the triggered days' windows are re-solved on the same `UcWindowModel` with
+`u_floor = u_DA` (add-only; the look-ahead guard reads `u_DA` past the horizon),
+demand = `ruc_load_basis_demand` (`uc_ruc_load_basis`: `"actual"` only for now),
+every dispatch column at `STORAGE_TIEBREAKER_EPSILON`, and a unit-hour costing
+no-load + `mlf·p̄·a·max(mc_uc, 0)` (anchor) on top of the start cost; penalties are the
+window LP's own. The first window of an episode carries P1a's dispatch / SOC at
+`t0 − 1`; the sweep continues until the carried `u` and start / stop history equal
+the DA schedule's. The final schedule replaces `schedule` (`schedule_da` keeps the
+DA one), is injected through the same MECH 28 bounds, and P1b — solved cold on the
+same bid, demand and kwargs — is the scored P1. `uc_solve_log.ruc` records the
+trigger hours / days, episodes, windows, added unit-hours and floor MWh by class;
+`uc_uplift` gains `ruc_added_units`, `ruc_start_usd` (net of the DA starts) and
+`ruc_noload_usd`; `legitimacy_diagnostics.run_d4_uc_ruc` emits the D-4 sub-row
+`uc_schedule × uc_ruc` (window = the swept hours).
+
+**DA-schedule reuse across runs (R15).** `uc_da_schedule_reuse_bundle` names a
+committed bundle; `UcStage.adopt_committed` reads its `uc_schedule_<y>` only when
+that leg's `uc_solve_log.engine.input_digest` equals this run's, and raises
+otherwise. `uc_input_digest` hashes `UC_DA_DIGEST_VERSION` (the DA windows' version,
+`uc-1.8`) and omits the RUC-only fields (`UC_DIGEST_EXCLUDED_FIELDS`), so a uc-1.8
+DA schedule of the same inputs is reusable; uc-1.7 legs are not (their solver
+options differ).
+
 ## 9.4 Registry, refusals, tooling
 
 Eleven fields (`unit_commitment_milp`, `uc_window_hours` 24,

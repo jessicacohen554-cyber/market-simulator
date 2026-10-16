@@ -159,19 +159,21 @@ def test_digest_separates_the_uc17_and_uc18_lean(
     puc.take_uc_stages()
     gens, fa, demand, mc, dk = _tranche_fleet()
     new = dict(ucs.UC_SOLVER_PRESETS["lean"])
-    version = puc.UC_ENGINE_VERSION
+    # The digest hashes the DA-window version (uc-1.9 left the DA windows at
+    # their uc-1.8 problem, so UC_DA_DIGEST_VERSION stays "uc-1.8").
+    version = puc.UC_DA_DIGEST_VERSION
     assert new["lp_heuristics"] is True and version == "uc-1.8"
     # The uc-1.7 stage: old composition and version. Restored by setting them
     # back (never monkeypatch.undo(), which would also drop uc_params_frame's patch).
     monkeypatch.setitem(ucs.UC_SOLVER_PRESETS, "lean", dict(new, lp_heuristics=False))
-    monkeypatch.setattr(puc, "UC_ENGINE_VERSION", "uc-1.7")
+    monkeypatch.setattr(puc, "UC_DA_DIGEST_VERSION", "uc-1.7")
     run_energy_solve(gens, fa, demand, mc, dk, _cfg())
     monkeypatch.setitem(ucs.UC_SOLVER_PRESETS, "lean", new)
-    monkeypatch.setattr(puc, "UC_ENGINE_VERSION", version)
+    monkeypatch.setattr(puc, "UC_DA_DIGEST_VERSION", version)
     run_energy_solve(gens, fa, demand, mc, dk, _cfg())
     s1, s2 = puc.take_uc_stages()[-2:]
     assert s1.options.lp_heuristics is False and s2.options.lp_heuristics is True
     assert s2.log["engine"]["reused_schedule"] is None
     assert s2.log["engine"]["input_digest"] != s1.log["engine"]["input_digest"]
-    assert s2.log["engine"]["version"] == "uc-1.8"
+    assert s2.log["engine"]["version"] == puc.UC_ENGINE_VERSION
     puc._LAST_SOLVED.clear()

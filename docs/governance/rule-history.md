@@ -1821,10 +1821,31 @@ unchanged (none arms the stage). The stage is default-off and does not yet exist
 stacked on a commitment bridge or posture arm), its mechanism-matrix row and a cell in every shard (rule 28), and
 the CI tests (byte-identical off). This entry is text only; nothing scored moves.
 
-## 33. Changes to this file
+## 33. Dispatch and commitment — the UC stage's RUC re-solve (owner, 2026-10-16)
+
+**Owner ruling R12, verbatim** (UC-DESK r17 `session_01WX9W5tgYMre3Z134LZoGF6`, decision card; recorded in
+`docs/uc-milp-program-plan-2026-10.md` §8.1): *"Approve (Recommended)"* — the RUC pass of
+`docs/records/governance/uc-milp-2026-10/DESIGN-ucmilp-ruc-stage-2026-10-16.md` (#7274) is approved for build:
+add-only, P1a-screened, commitment-cost objective, zero DOF, default off; the build lane also amends CLAUDE.md/spec
+"No other pass is a MIP".
+
+**Scope.** No rule ordinal or ID is added or changed. One sentence is inserted before *"No other pass is a MIP."* in
+CLAUDE.md "Dispatch and commitment (per year)" and in `model-methodology-spec.md` §1.6.
+
+**What it says now.** *"Its optional reliability-commitment (RUC) re-solve (`uc_reliability_commitment`, default
+off) is part of the UC stage: on days P1 went short it re-solves the windows add-only (u ≥ the DA schedule) on a
+commitment-cost objective and P1 is re-solved on the result. No other pass is a MIP."*
+
+**What was deliberately KEPT.** Rule 4 `[R-DUALS]`: the RUC never prices; the re-solved P1 is the same pure-LP
+builder and its duals are the prices; RUC start / no-load are reported in the uplift sidecar. Rule 19: the RUC
+schedule enters P1 through the same MECH 28 bounds, no new floor family. Every keeper unchanged (none arms the
+stage). Built by lane UC-RUC-BUILD (engine uc-1.9) in the same PR.
+
+## 34. Changes to this file
 
 | date | change |
 |---|---|
+| 2026-10-16 | Added §33: **the UC stage's RUC re-solve** in "Dispatch and commitment (per year)" (owner ruling R12, verbatim in §33): the optional default-off reliability-commitment re-solve is part of the UC stage; no other pass is a MIP. Spec §1.6 carries the same sentence. No rule ordinal, keeper or determination moves. "Changes to this file" renumbered §33 → §34 (no external reference cited §33). |
 | 2026-10-03 | Added §32: **the MILP UC stage** in "Dispatch and commitment (per year)" (owner ruling R2, verbatim in §32): P0 → [UC] → P1, P1 stays the pure-LP pricer, the optional default-off UC stage is the only MIP and never prices. Spec §1.6/§1.9 carry the same substitution. No rule ordinal, keeper or determination moves. "Changes to this file" renumbered §32 → §33 (no external reference cited §32). |
 | 2026-10-03 | Added §31: **rubric v3.20** (owner rulings R-57/R-58, verbatim in §31): the rule-22 lone-C3c standing rule runs after the owner-signed scoped-ledger, configuration-exception and reference-coverage routes. No determination moves. "Changes to this file" renumbered §31 → §32 (the only external citation of §31 is the new one in `calibration_verdict.py`). |
 | 2026-10-03 | Added §30: **rule 37 `[R-RUBRIC-FREEZE]` is NEW** (owner instruction verbatim in §30) — the determination rubric is frozen between promotions; an amendment is a promotion decision proposed in a PRECOMMIT with its zero-LP effect on every registered ISO, ruled on by the owner, and never landed in the same PR as a keeper designation, status part, `calibration-complete.json` or bundle. Prompted by audit `docs/audit/2026-10/C-data-calibration-governance.md` §5 finding 3 on the v3.10 → v3.19 run (§23–§29). Enforced by `scripts/check_rubric_freeze.py` in CI (`RUBRIC_FREEZE_OVERRIDE` is the owner's promotion-with-amendment override). No rubric content, band, budget or determination moves. "Changes to this file" renumbered §30 → §31 (no external reference cited §30). |

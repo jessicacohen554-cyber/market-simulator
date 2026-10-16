@@ -667,6 +667,7 @@ def run_energy_solve(
         run_ratio_t=startup_run_ratio_t,
     )
     markup = zero_posture_markup(markup, config, dispatch_kwargs)
+    _uc_stage = None
     # MILP unit-commitment stage (``unit_commitment_milp``; CLAUDE.md "Dispatch
     # and commitment", owner ruling R2; DESIGN-uc-milp-engine-2026-10-03 §0).
     # THE ONE GATED HUNK: at the default ``False`` no statement below runs and
@@ -1061,6 +1062,37 @@ def run_energy_solve(
             p1 = solve_dispatch(
                 p1_fleet_arrays, p1_demand, mc=mc_bid, **p1_dispatch_kwargs
             )
+    # Reliability-commitment (RUC) pass of the UC stage
+    # (``uc_reliability_commitment``; owner ruling R12; DESIGN-ucmilp-ruc-
+    # stage-2026-10-16 section 2.1). Off (or no UC stage): no statement runs.
+    # Armed: the P1 just solved is "P1a"; the stage screens it at zero LP and,
+    # when an hour is short, returns the fleet carrying the add-only RUC
+    # schedule through the same MECH 28 bounds, and "P1b" — the scored P1 —
+    # is solved cold on it with P1a's bid, demand and kwargs (the P1 kwargs
+    # hook re-read on the new fleet, as for P1a). No trigger: P1a stands.
+    _ruc_p1a = None
+    if _uc_stage is not None and _uc_stage.ruc_armed:
+        _ruc_fleet = _uc_stage.reliability_commitment(p1)
+        if _ruc_fleet is not None:
+            if getattr(config, "pjm_da_virtual_settle_financial", False):
+                from market_sim.data.virtual_bids import settle_virtuals_financially
+
+                _settled = settle_virtuals_financially(config, _ruc_fleet)
+                if _settled is not None:
+                    _ruc_fleet = _settled
+            _ruc_kwargs = dispatch_kwargs
+            if p1_kwargs_prep is not None:
+                _ruc_ov = p1_kwargs_prep(r0, _ruc_fleet)
+                if _ruc_ov:
+                    _ruc_kwargs = {**dispatch_kwargs, **_ruc_ov}
+            if p1_storage_discharge_cost is not None:
+                _ruc_kwargs = {
+                    **_ruc_kwargs,
+                    "storage_discharge_cost": p1_storage_discharge_cost,
+                }
+            _ruc_p1a = p1
+            p1_fleet_arrays = _ruc_fleet
+            p1 = solve_dispatch(_ruc_fleet, p1_demand, mc=mc_bid, **_ruc_kwargs)
     _t5 = time.perf_counter()
 
     # Hand this year's optimal basis to the next year's P0 (cross-year warm
@@ -1127,6 +1159,13 @@ def run_energy_solve(
     _build_p1_s = float(getattr(p1, "build_time", 0.0) or 0.0) if _p1_cold else 0.0
     _solve_p0_s = 0.0 if _reuse_p0 else float(getattr(r0, "solve_time", 0.0) or 0.0)
     _solve_p1_s = float(getattr(p1, "solve_time", 0.0) or 0.0)
+    if _ruc_p1a is not None:
+        # RUC re-solve: ``p1`` is P1b (always a cold build); P1a's solve, and
+        # its build when P1a was cold too, join the P1 terms.
+        _build_p1_s = float(getattr(p1, "build_time", 0.0) or 0.0) + (
+            float(getattr(_ruc_p1a, "build_time", 0.0) or 0.0) if _p1_cold else 0.0
+        )
+        _solve_p1_s += float(getattr(_ruc_p1a, "solve_time", 0.0) or 0.0)
     # Every matrix build this pass performed. The three terms are mutually
     # exclusive by route: ``_build_setup_s`` is the warm P0 model (0 under
     # WARMSTART=0), ``_build_p0_s`` the cold P0 model (0 when warm),
