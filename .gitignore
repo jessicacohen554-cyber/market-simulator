@@ -4106,3 +4106,5 @@ results/calibration/_shared/SPP/unit_outages_netloadmask-64a79e322460.parquet
 results/calibration/_shared/SPP/unit_outages_partial-5ac00d164673.parquet
 results/calibration/_shared/SPP/unit_outages_partial_netloadmask-b00540584f5f.parquet
 results/calibration/_shared/SPP/unit_outages_short_netloadmask-9e907a36d162.parquet
+
+!results/calibration/ucmilp4c_nyiso_2025/**
