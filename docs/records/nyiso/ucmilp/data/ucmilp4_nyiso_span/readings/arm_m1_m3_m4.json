@@ -1,0 +1,822 @@
+{
+ "2021": {
+  "plants": 32,
+  "plants_with_cems": 31,
+  "classes": {
+   "CC_REGULAR": {
+    "plants": 21,
+    "plants_with_cems": 20,
+    "physics": {
+     "S": 50.0,
+     "UT": 21,
+     "DT": 6,
+     "mlf": 0.523
+    },
+    "class_twh": 25.523,
+    "m1_short_on_twh": 0.2043,
+    "m1_short_on_share": 0.008,
+    "m1_short_on_runs": 221,
+    "m1_short_off_gaps": 11,
+    "m1_short_off_hours": 51,
+    "m1_starts_model": 390,
+    "m1_starts_cems": 797,
+    "m1_starts_ratio": 0.489,
+    "m2a_twh": 0.0,
+    "m2b_twh": 0.0325,
+    "m2_cems_on_model_off_twh": 3.5974,
+    "online_hours_cems": 71511,
+    "online_hours_model": 69190,
+    "m6_clusters": 21,
+    "m6_mw": 6570.2,
+    "m6_integers_per_window": 756,
+    "noload_fallback_plants": 4
+   },
+   "ST_GAS": {
+    "plants": 11,
+    "plants_with_cems": 11,
+    "physics": {
+     "S": 35.0,
+     "UT": 13,
+     "DT": 8,
+     "mlf": 0.239
+    },
+    "class_twh": 6.45,
+    "m1_short_on_twh": 0.0775,
+    "m1_short_on_share": 0.012,
+    "m1_short_on_runs": 13,
+    "m1_short_off_gaps": 0,
+    "m1_short_off_hours": 0,
+    "m1_starts_model": 67,
+    "m1_starts_cems": 181,
+    "m1_starts_ratio": 0.37,
+    "m2a_twh": 0.0,
+    "m2b_twh": 0.0052,
+    "m2_cems_on_model_off_twh": 1.6124,
+    "online_hours_cems": 45538,
+    "online_hours_model": 39771,
+    "m6_clusters": 11,
+    "m6_mw": 7423.7,
+    "m6_integers_per_window": 396,
+    "noload_fallback_plants": 1
+   }
+  },
+  "noload_fit": {
+   "units": 95,
+   "fitted": 73,
+   "plants_fitted": 27,
+   "plants": 32,
+   "r2_median": 0.9765209707637192
+  },
+  "m5": {
+   "pf": {
+    "ST_GAS": {
+     "dp_twh": 1.3122,
+     "keeper_twh": 6.4502,
+     "added_twh": 0.0,
+     "removed_twh": 4.8939,
+     "dp_minload_twh": 0.0556,
+     "keeper_minload_twh": 0.139,
+     "starts_dp": 153,
+     "starts_keeper": 67,
+     "added_low_h": 0,
+     "added_low_cems_on_h": 0,
+     "delta_twh": -5.138,
+     "delta_minload_twh": -0.0834,
+     "precision_added_low": null
+    },
+    "CC_REGULAR": {
+     "dp_twh": 18.8577,
+     "keeper_twh": 25.5235,
+     "added_twh": 0.0,
+     "removed_twh": 6.6443,
+     "dp_minload_twh": 0.1084,
+     "keeper_minload_twh": 0.3467,
+     "starts_dp": 184,
+     "starts_keeper": 392,
+     "added_low_h": 0,
+     "added_low_cems_on_h": 0,
+     "delta_twh": -6.6658,
+     "delta_minload_twh": -0.2383,
+     "precision_added_low": null
+    }
+   },
+   "h36": {
+    "ST_GAS": {
+     "dp_twh": 1.1677,
+     "keeper_twh": 6.4502,
+     "added_twh": 0.0,
+     "removed_twh": 5.1983,
+     "dp_minload_twh": 0.0209,
+     "keeper_minload_twh": 0.139,
+     "starts_dp": 204,
+     "starts_keeper": 67,
+     "added_low_h": 0,
+     "added_low_cems_on_h": 0,
+     "delta_twh": -5.2825,
+     "delta_minload_twh": -0.1182,
+     "precision_added_low": null
+    },
+    "CC_REGULAR": {
+     "dp_twh": 17.0716,
+     "keeper_twh": 25.5235,
+     "added_twh": 0.0,
+     "removed_twh": 8.4326,
+     "dp_minload_twh": 0.0595,
+     "keeper_minload_twh": 0.3467,
+     "starts_dp": 257,
+     "starts_keeper": 392,
+     "added_low_h": 0,
+     "added_low_cems_on_h": 0,
+     "delta_twh": -8.4519,
+     "delta_minload_twh": -0.2873,
+     "precision_added_low": null
+    }
+   }
+  },
+  "m3": {
+   "coverage": 1.0,
+   "tercile_edges": [
+    26.23,
+    40.39
+   ],
+   "lower_mean_err": 12.226,
+   "lower_hours": 2920,
+   "lower_dollar_h": 35700.0,
+   "mid_mean_err": 8.03,
+   "upper_mean_err": -3.208,
+   "model_mean": 44.32,
+   "actual_mean": 39.1,
+   "hours_le15_actual": 689,
+   "hours_le15_model": 0,
+   "ratio_le15": 0.0,
+   "hours_neg_actual": 31,
+   "hours_neg_model": 0,
+   "ratio_neg": 0.0
+  },
+  "m4": {
+   "coverage": 1.0,
+   "model_dormant_share": 1.0,
+   "actual_dormant_share": 0.849,
+   "model_mean_mcp": 0.02,
+   "actual_mean_mcp": 2.07,
+   "gap": 0.151
+  },
+  "seconds": 23.4
+ },
+ "2022": {
+  "plants": 33,
+  "plants_with_cems": 30,
+  "classes": {
+   "CC_REGULAR": {
+    "plants": 22,
+    "plants_with_cems": 20,
+    "physics": {
+     "S": 50.0,
+     "UT": 21,
+     "DT": 6,
+     "mlf": 0.523
+    },
+    "class_twh": 31.337,
+    "m1_short_on_twh": 0.2842,
+    "m1_short_on_share": 0.0091,
+    "m1_short_on_runs": 301,
+    "m1_short_off_gaps": 29,
+    "m1_short_off_hours": 132,
+    "m1_starts_model": 351,
+    "m1_starts_cems": 727,
+    "m1_starts_ratio": 0.483,
+    "m2a_twh": 0.0,
+    "m2b_twh": 0.0246,
+    "m2_cems_on_model_off_twh": 3.4451,
+    "online_hours_cems": 79293,
+    "online_hours_model": 75031,
+    "m6_clusters": 22,
+    "m6_mw": 6661.5,
+    "m6_integers_per_window": 792,
+    "noload_fallback_plants": 7
+   },
+   "ST_GAS": {
+    "plants": 11,
+    "plants_with_cems": 10,
+    "physics": {
+     "S": 35.0,
+     "UT": 13,
+     "DT": 8,
+     "mlf": 0.239
+    },
+    "class_twh": 7.343,
+    "m1_short_on_twh": 0.0093,
+    "m1_short_on_share": 0.0013,
+    "m1_short_on_runs": 4,
+    "m1_short_off_gaps": 1,
+    "m1_short_off_hours": 4,
+    "m1_starts_model": 87,
+    "m1_starts_cems": 199,
+    "m1_starts_ratio": 0.437,
+    "m2a_twh": 0.0,
+    "m2b_twh": 0.0299,
+    "m2_cems_on_model_off_twh": 1.9302,
+    "online_hours_cems": 44639,
+    "online_hours_model": 44117,
+    "m6_clusters": 11,
+    "m6_mw": 7223.1,
+    "m6_integers_per_window": 396,
+    "noload_fallback_plants": 1
+   }
+  },
+  "noload_fit": {
+   "units": 89,
+   "fitted": 71,
+   "plants_fitted": 25,
+   "plants": 33,
+   "r2_median": 0.9855234766784332
+  },
+  "m5": {
+   "pf": {
+    "ST_GAS": {
+     "dp_twh": 2.4259,
+     "keeper_twh": 7.3429,
+     "added_twh": 0.0,
+     "removed_twh": 4.8225,
+     "dp_minload_twh": 0.0173,
+     "keeper_minload_twh": 0.2179,
+     "starts_dp": 353,
+     "starts_keeper": 107,
+     "added_low_h": 0,
+     "added_low_cems_on_h": 0,
+     "delta_twh": -4.917,
+     "delta_minload_twh": -0.2007,
+     "precision_added_low": null
+    },
+    "CC_REGULAR": {
+     "dp_twh": 27.1854,
+     "keeper_twh": 31.3367,
+     "added_twh": 0.0,
+     "removed_twh": 4.1289,
+     "dp_minload_twh": 0.0779,
+     "keeper_minload_twh": 0.2286,
+     "starts_dp": 303,
+     "starts_keeper": 502,
+     "added_low_h": 0,
+     "added_low_cems_on_h": 0,
+     "delta_twh": -4.1513,
+     "delta_minload_twh": -0.1508,
+     "precision_added_low": null
+    }
+   },
+   "h36": {
+    "ST_GAS": {
+     "dp_twh": 2.4137,
+     "keeper_twh": 7.3429,
+     "added_twh": 0.0,
+     "removed_twh": 4.8432,
+     "dp_minload_twh": 0.0145,
+     "keeper_minload_twh": 0.2179,
+     "starts_dp": 367,
+     "starts_keeper": 107,
+     "added_low_h": 0,
+     "added_low_cems_on_h": 0,
+     "delta_twh": -4.9291,
+     "delta_minload_twh": -0.2035,
+     "precision_added_low": null
+    },
+    "CC_REGULAR": {
+     "dp_twh": 26.7664,
+     "keeper_twh": 31.3367,
+     "added_twh": 0.0,
+     "removed_twh": 4.5513,
+     "dp_minload_twh": 0.0679,
+     "keeper_minload_twh": 0.2286,
+     "starts_dp": 343,
+     "starts_keeper": 502,
+     "added_low_h": 0,
+     "added_low_cems_on_h": 0,
+     "delta_twh": -4.5703,
+     "delta_minload_twh": -0.1607,
+     "precision_added_low": null
+    }
+   }
+  },
+  "m3": {
+   "coverage": 1.0,
+   "tercile_edges": [
+    47.24,
+    72.46
+   ],
+   "lower_mean_err": 24.38,
+   "lower_hours": 2920,
+   "lower_dollar_h": 71191.0,
+   "mid_mean_err": 17.466,
+   "upper_mean_err": -19.101,
+   "model_mean": 86.16,
+   "actual_mean": 80.37,
+   "hours_le15_actual": 50,
+   "hours_le15_model": 0,
+   "ratio_le15": 0.0,
+   "hours_neg_actual": 2,
+   "hours_neg_model": 0,
+   "ratio_neg": 0.0
+  },
+  "m4": {
+   "coverage": 1.0,
+   "model_dormant_share": 0.999,
+   "actual_dormant_share": 0.787,
+   "model_mean_mcp": 0.04,
+   "actual_mean_mcp": 7.22,
+   "gap": 0.212
+  },
+  "seconds": 17.8
+ },
+ "2023": {
+  "plants": 32,
+  "plants_with_cems": 31,
+  "classes": {
+   "CC_REGULAR": {
+    "plants": 21,
+    "plants_with_cems": 20,
+    "physics": {
+     "S": 50.0,
+     "UT": 21,
+     "DT": 6,
+     "mlf": 0.523
+    },
+    "class_twh": 28.524,
+    "m1_short_on_twh": 0.2902,
+    "m1_short_on_share": 0.0102,
+    "m1_short_on_runs": 254,
+    "m1_short_off_gaps": 6,
+    "m1_short_off_hours": 23,
+    "m1_starts_model": 397,
+    "m1_starts_cems": 740,
+    "m1_starts_ratio": 0.536,
+    "m2a_twh": 0.0,
+    "m2b_twh": 0.0272,
+    "m2_cems_on_model_off_twh": 2.4539,
+    "online_hours_cems": 80706,
+    "online_hours_model": 77656,
+    "m6_clusters": 21,
+    "m6_mw": 6648.1,
+    "m6_integers_per_window": 756,
+    "noload_fallback_plants": 6
+   },
+   "ST_GAS": {
+    "plants": 11,
+    "plants_with_cems": 11,
+    "physics": {
+     "S": 35.0,
+     "UT": 13,
+     "DT": 8,
+     "mlf": 0.239
+    },
+    "class_twh": 8.706,
+    "m1_short_on_twh": 0.0121,
+    "m1_short_on_share": 0.0014,
+    "m1_short_on_runs": 4,
+    "m1_short_off_gaps": 1,
+    "m1_short_off_hours": 5,
+    "m1_starts_model": 80,
+    "m1_starts_cems": 186,
+    "m1_starts_ratio": 0.43,
+    "m2a_twh": 0.0,
+    "m2b_twh": 0.0079,
+    "m2_cems_on_model_off_twh": 1.677,
+    "online_hours_cems": 45085,
+    "online_hours_model": 43055,
+    "m6_clusters": 11,
+    "m6_mw": 7285.4,
+    "m6_integers_per_window": 396,
+    "noload_fallback_plants": 1
+   }
+  },
+  "noload_fit": {
+   "units": 88,
+   "fitted": 73,
+   "plants_fitted": 25,
+   "plants": 32,
+   "r2_median": 0.969543865271337
+  },
+  "m5": {
+   "pf": {
+    "ST_GAS": {
+     "dp_twh": 3.423,
+     "keeper_twh": 8.7057,
+     "added_twh": 0.0,
+     "removed_twh": 4.9043,
+     "dp_minload_twh": 0.1092,
+     "keeper_minload_twh": 0.1253,
+     "starts_dp": 128,
+     "starts_keeper": 80,
+     "added_low_h": 0,
+     "added_low_cems_on_h": 0,
+     "delta_twh": -5.2827,
+     "delta_minload_twh": -0.0161,
+     "precision_added_low": null
+    },
+    "CC_REGULAR": {
+     "dp_twh": 23.7266,
+     "keeper_twh": 28.5236,
+     "added_twh": 0.0,
+     "removed_twh": 4.6519,
+     "dp_minload_twh": 0.2976,
+     "keeper_minload_twh": 0.2463,
+     "starts_dp": 151,
+     "starts_keeper": 442,
+     "added_low_h": 0,
+     "added_low_cems_on_h": 0,
+     "delta_twh": -4.797,
+     "delta_minload_twh": 0.0512,
+     "precision_added_low": null
+    }
+   },
+   "h36": {
+    "ST_GAS": {
+     "dp_twh": 2.7299,
+     "keeper_twh": 8.7057,
+     "added_twh": 0.0,
+     "removed_twh": 5.8395,
+     "dp_minload_twh": 0.0458,
+     "keeper_minload_twh": 0.1253,
+     "starts_dp": 248,
+     "starts_keeper": 80,
+     "added_low_h": 0,
+     "added_low_cems_on_h": 0,
+     "delta_twh": -5.9759,
+     "delta_minload_twh": -0.0795,
+     "precision_added_low": null
+    },
+    "CC_REGULAR": {
+     "dp_twh": 22.466,
+     "keeper_twh": 28.5236,
+     "added_twh": 0.0,
+     "removed_twh": 5.9594,
+     "dp_minload_twh": 0.2332,
+     "keeper_minload_twh": 0.2463,
+     "starts_dp": 188,
+     "starts_keeper": 442,
+     "added_low_h": 0,
+     "added_low_cems_on_h": 0,
+     "delta_twh": -6.0575,
+     "delta_minload_twh": -0.0132,
+     "precision_added_low": null
+    }
+   }
+  },
+  "m3": {
+   "coverage": 1.0,
+   "tercile_edges": [
+    22.8,
+    30.5
+   ],
+   "lower_mean_err": 10.742,
+   "lower_hours": 2920,
+   "lower_dollar_h": 31365.0,
+   "mid_mean_err": 7.879,
+   "upper_mean_err": -4.215,
+   "model_mean": 36.14,
+   "actual_mean": 32.05,
+   "hours_le15_actual": 450,
+   "hours_le15_model": 0,
+   "ratio_le15": 0.0,
+   "hours_neg_actual": 15,
+   "hours_neg_model": 0,
+   "ratio_neg": 0.0
+  },
+  "m4": {
+   "coverage": 1.0,
+   "model_dormant_share": 1.0,
+   "actual_dormant_share": 0.829,
+   "model_mean_mcp": 0.0,
+   "actual_mean_mcp": 2.12,
+   "gap": 0.171
+  },
+  "seconds": 20.1
+ },
+ "2024": {
+  "plants": 33,
+  "plants_with_cems": 31,
+  "classes": {
+   "CC_REGULAR": {
+    "plants": 22,
+    "plants_with_cems": 20,
+    "physics": {
+     "S": 50.0,
+     "UT": 21,
+     "DT": 6,
+     "mlf": 0.523
+    },
+    "class_twh": 30.722,
+    "m1_short_on_twh": 0.1152,
+    "m1_short_on_share": 0.0038,
+    "m1_short_on_runs": 188,
+    "m1_short_off_gaps": 5,
+    "m1_short_off_hours": 22,
+    "m1_starts_model": 300,
+    "m1_starts_cems": 649,
+    "m1_starts_ratio": 0.462,
+    "m2a_twh": 0.0,
+    "m2b_twh": 0.0135,
+    "m2_cems_on_model_off_twh": 3.336,
+    "online_hours_cems": 82452,
+    "online_hours_model": 76227,
+    "m6_clusters": 22,
+    "m6_mw": 6613.6,
+    "m6_integers_per_window": 792,
+    "noload_fallback_plants": 7
+   },
+   "ST_GAS": {
+    "plants": 11,
+    "plants_with_cems": 11,
+    "physics": {
+     "S": 35.0,
+     "UT": 13,
+     "DT": 8,
+     "mlf": 0.239
+    },
+    "class_twh": 8.745,
+    "m1_short_on_twh": 0.0205,
+    "m1_short_on_share": 0.0023,
+    "m1_short_on_runs": 3,
+    "m1_short_off_gaps": 2,
+    "m1_short_off_hours": 14,
+    "m1_starts_model": 91,
+    "m1_starts_cems": 162,
+    "m1_starts_ratio": 0.562,
+    "m2a_twh": 0.0,
+    "m2b_twh": 0.0103,
+    "m2_cems_on_model_off_twh": 1.515,
+    "online_hours_cems": 46029,
+    "online_hours_model": 43767,
+    "m6_clusters": 11,
+    "m6_mw": 7772.5,
+    "m6_integers_per_window": 396,
+    "noload_fallback_plants": 1
+   }
+  },
+  "noload_fit": {
+   "units": 88,
+   "fitted": 72,
+   "plants_fitted": 25,
+   "plants": 33,
+   "r2_median": 0.9836106716306038
+  },
+  "m5": {
+   "pf": {
+    "ST_GAS": {
+     "dp_twh": 4.2981,
+     "keeper_twh": 8.745,
+     "added_twh": 0.0,
+     "removed_twh": 3.7725,
+     "dp_minload_twh": 0.1736,
+     "keeper_minload_twh": 0.1383,
+     "starts_dp": 176,
+     "starts_keeper": 91,
+     "added_low_h": 0,
+     "added_low_cems_on_h": 0,
+     "delta_twh": -4.4469,
+     "delta_minload_twh": 0.0354,
+     "precision_added_low": null
+    },
+    "CC_REGULAR": {
+     "dp_twh": 26.9345,
+     "keeper_twh": 30.7218,
+     "added_twh": 0.0,
+     "removed_twh": 3.7502,
+     "dp_minload_twh": 0.1461,
+     "keeper_minload_twh": 0.2189,
+     "starts_dp": 144,
+     "starts_keeper": 346,
+     "added_low_h": 0,
+     "added_low_cems_on_h": 0,
+     "delta_twh": -3.7874,
+     "delta_minload_twh": -0.0728,
+     "precision_added_low": null
+    }
+   },
+   "h36": {
+    "ST_GAS": {
+     "dp_twh": 3.4483,
+     "keeper_twh": 8.745,
+     "added_twh": 0.0,
+     "removed_twh": 5.0298,
+     "dp_minload_twh": 0.053,
+     "keeper_minload_twh": 0.1383,
+     "starts_dp": 350,
+     "starts_keeper": 91,
+     "added_low_h": 0,
+     "added_low_cems_on_h": 0,
+     "delta_twh": -5.2967,
+     "delta_minload_twh": -0.0852,
+     "precision_added_low": null
+    },
+    "CC_REGULAR": {
+     "dp_twh": 25.3249,
+     "keeper_twh": 30.7218,
+     "added_twh": 0.0,
+     "removed_twh": 5.3695,
+     "dp_minload_twh": 0.0897,
+     "keeper_minload_twh": 0.2189,
+     "starts_dp": 221,
+     "starts_keeper": 346,
+     "added_low_h": 0,
+     "added_low_cems_on_h": 0,
+     "delta_twh": -5.397,
+     "delta_minload_twh": -0.1292,
+     "precision_added_low": null
+    }
+   }
+  },
+  "m3": {
+   "coverage": 1.0,
+   "tercile_edges": [
+    24.95,
+    35.32
+   ],
+   "lower_mean_err": 8.212,
+   "lower_hours": 2920,
+   "lower_dollar_h": 23980.0,
+   "mid_mean_err": 5.615,
+   "upper_mean_err": -4.441,
+   "model_mean": 40.66,
+   "actual_mean": 38.13,
+   "hours_le15_actual": 171,
+   "hours_le15_model": 0,
+   "ratio_le15": 0.0,
+   "hours_neg_actual": 1,
+   "hours_neg_model": 0,
+   "ratio_neg": 0.0
+  },
+  "m4": {
+   "coverage": 1.0,
+   "model_dormant_share": 1.0,
+   "actual_dormant_share": 0.828,
+   "model_mean_mcp": 0.0,
+   "actual_mean_mcp": 2.04,
+   "gap": 0.172
+  },
+  "seconds": 18.3
+ },
+ "2025": {
+  "plants": 33,
+  "plants_with_cems": 31,
+  "classes": {
+   "CC_REGULAR": {
+    "plants": 22,
+    "plants_with_cems": 20,
+    "physics": {
+     "S": 50.0,
+     "UT": 21,
+     "DT": 6,
+     "mlf": 0.523
+    },
+    "class_twh": 30.534,
+    "m1_short_on_twh": 0.1095,
+    "m1_short_on_share": 0.0036,
+    "m1_short_on_runs": 173,
+    "m1_short_off_gaps": 9,
+    "m1_short_off_hours": 41,
+    "m1_starts_model": 356,
+    "m1_starts_cems": 804,
+    "m1_starts_ratio": 0.443,
+    "m2a_twh": 0.0,
+    "m2b_twh": 0.0193,
+    "m2_cems_on_model_off_twh": 2.4574,
+    "online_hours_cems": 87295,
+    "online_hours_model": 95018,
+    "m6_clusters": 22,
+    "m6_mw": 6535.4,
+    "m6_integers_per_window": 792,
+    "noload_fallback_plants": 4
+   },
+   "ST_GAS": {
+    "plants": 11,
+    "plants_with_cems": 11,
+    "physics": {
+     "S": 35.0,
+     "UT": 13,
+     "DT": 8,
+     "mlf": 0.239
+    },
+    "class_twh": 10.338,
+    "m1_short_on_twh": 0.0065,
+    "m1_short_on_share": 0.0006,
+    "m1_short_on_runs": 2,
+    "m1_short_off_gaps": 0,
+    "m1_short_off_hours": 0,
+    "m1_starts_model": 103,
+    "m1_starts_cems": 210,
+    "m1_starts_ratio": 0.49,
+    "m2a_twh": 0.0,
+    "m2b_twh": 0.0115,
+    "m2_cems_on_model_off_twh": 2.5065,
+    "online_hours_cems": 52185,
+    "online_hours_model": 49327,
+    "m6_clusters": 11,
+    "m6_mw": 7637.7,
+    "m6_integers_per_window": 396,
+    "noload_fallback_plants": 0
+   }
+  },
+  "noload_fit": {
+   "units": 85,
+   "fitted": 76,
+   "plants_fitted": 29,
+   "plants": 33,
+   "r2_median": 0.9810384479255008
+  },
+  "m5": {
+   "pf": {
+    "ST_GAS": {
+     "dp_twh": 4.8837,
+     "keeper_twh": 10.3383,
+     "added_twh": 0.0,
+     "removed_twh": 4.9091,
+     "dp_minload_twh": 0.1466,
+     "keeper_minload_twh": 0.1248,
+     "starts_dp": 204,
+     "starts_keeper": 103,
+     "added_low_h": 0,
+     "added_low_cems_on_h": 0,
+     "delta_twh": -5.4547,
+     "delta_minload_twh": 0.0218,
+     "precision_added_low": null
+    },
+    "CC_REGULAR": {
+     "dp_twh": 26.2251,
+     "keeper_twh": 30.5337,
+     "added_twh": 0.0,
+     "removed_twh": 4.2453,
+     "dp_minload_twh": 0.1064,
+     "keeper_minload_twh": 0.1487,
+     "starts_dp": 200,
+     "starts_keeper": 356,
+     "added_low_h": 0,
+     "added_low_cems_on_h": 0,
+     "delta_twh": -4.3086,
+     "delta_minload_twh": -0.0423,
+     "precision_added_low": null
+    }
+   },
+   "h36": {
+    "ST_GAS": {
+     "dp_twh": 4.4853,
+     "keeper_twh": 10.3383,
+     "added_twh": 0.0,
+     "removed_twh": 5.4894,
+     "dp_minload_twh": 0.0877,
+     "keeper_minload_twh": 0.1248,
+     "starts_dp": 284,
+     "starts_keeper": 103,
+     "added_low_h": 0,
+     "added_low_cems_on_h": 0,
+     "delta_twh": -5.853,
+     "delta_minload_twh": -0.0371,
+     "precision_added_low": null
+    },
+    "CC_REGULAR": {
+     "dp_twh": 25.1264,
+     "keeper_twh": 30.5337,
+     "added_twh": 0.0,
+     "removed_twh": 5.3476,
+     "dp_minload_twh": 0.0909,
+     "keeper_minload_twh": 0.1487,
+     "starts_dp": 229,
+     "starts_keeper": 356,
+     "added_low_h": 0,
+     "added_low_cems_on_h": 0,
+     "delta_twh": -5.4073,
+     "delta_minload_twh": -0.0579,
+     "precision_added_low": null
+    }
+   }
+  },
+  "m3": {
+   "coverage": 1.0,
+   "tercile_edges": [
+    36.92,
+    57.63
+   ],
+   "lower_mean_err": 9.305,
+   "lower_hours": 2920,
+   "lower_dollar_h": 27172.0,
+   "mid_mean_err": 4.639,
+   "upper_mean_err": -19.128,
+   "model_mean": 62.34,
+   "actual_mean": 66.35,
+   "hours_le15_actual": 136,
+   "hours_le15_model": 0,
+   "ratio_le15": 0.0,
+   "hours_neg_actual": 1,
+   "hours_neg_model": 0,
+   "ratio_neg": 0.0
+  },
+  "m4": {
+   "coverage": 1.0,
+   "model_dormant_share": 0.997,
+   "actual_dormant_share": 0.682,
+   "model_mean_mcp": 0.12,
+   "actual_mean_mcp": 6.43,
+   "gap": 0.315
+  },
+  "seconds": 16.9
+ }
+}
