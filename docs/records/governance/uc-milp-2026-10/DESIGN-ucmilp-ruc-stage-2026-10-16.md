@@ -5,7 +5,7 @@
 no solve, no matrix code change. Nothing here is armed until the owner approves the design.
 **Basis:** `main` `5bdc2c58` (engine uc-1.8, `41cd55dc`). Evidence bundles: `docs/records/spp/ucmilp/data/ucmilp4_spp_u4_span/`
 (UC-4 SPP, uc-1.7), the CAISO/NYISO UC-4 PRECOMMITs and interim RESULTs on `claude/ucmilp-4-caiso` / `claude/ucmilp-4-nyiso`.
-Evidence script: §3.4 (reads committed sidecars and the EIA-930 frame the demand loader reads; no LP).
+Evidence script: Appendix A (reads committed sidecars and the EIA-930 frame the demand loader reads; no LP).
 
 ## 0. Summary
 
@@ -16,10 +16,10 @@ Evidence script: §3.4 (reads committed sidecars and the EIA-930 frame the deman
    It re-solves those days' windows with `u ≥ u_DA`, the RUC load basis as demand, and a commitment-cost-only objective.
    It feeds the same MECH 28 bounds into a second P1, and its cost goes to the uplift sidecar. **Zero free parameters.** A year
    with no shortfall is byte-identical to the arm without RUC (§2).
-3. **RUC load basis.** No intraday-forecast series is on disk. The admissible basis without one is the P1 demand itself (the
-   realised load), declared as an upper bound on RUC effect (perfect intraday foresight). The faithful basis is the ISO's
-   intraday forecast vintage at the RUC lead time; SPP and CAISO publish one at source. It is a phase-0 data intake, not a
-   precondition (§2.2).
+3. **RUC load basis.** SPP archives its MTLF hourly vintages at source; the research for this doc downloaded and checked them.
+   That makes the faithful ID-RUC basis measurable: the vintage in force at the ID-RUC cycle before each operating hour. It
+   is not on disk yet. Until it is intaken, the only basis that adds no free parameter is the realised load (the P1 demand),
+   declared as an upper bound (perfect intraday foresight). Recommended: intake first (§2.2, §5 Q5).
 4. **Zero-LP evidence, SPP U4 (§3).**
    - The RUC would act only in 2024: 39 hours on 16 days.
    - In 2019–22 and 2025 there are zero trigger hours, so those years are identical to U4.
@@ -36,17 +36,53 @@ Evidence script: §3.4 (reads committed sidecars and the EIA-930 frame the deman
 
 ## 1. What each UC ISO's RUC does (cited)
 
-<!-- RUC-TABLE -->
+Read 2026-10-16 from the primary sources listed under the table. **UNVERIFIED** marks a claim not confirmed in the effective
+document.
+
+| ISO | process | timing | load basis and reserves | de-commit DA units? | objective | cost / price |
+|---|---|---|---|---|---|---|
+| **SPP** | DA-RUC (Protocols §4.3.2); ID-RUC (§4.4.1) | DA-RUC at 13:45 CPT, or 45 min after DA results if later. ID-RUC at least every 4 h, up to 15 min before RT. A short-term ID-RUC every 15 min covers the next ≥ 120 min | **SPP Mid-Term Load Forecast (MTLF)**, not bid-in demand (§4.1.2.1: "The DA Market relies on bid-in demand so these load forecasts are not used in that process"). Includes Operating Reserve | only as an exception (excess supply / emergency, §4.3.2.2(3)(b), §4.3.2.4) | **commitment cost only**: start-up + no-load + cost at minimum output; energy above minimum and reserve offers excluded (§4.3.2.2(2)) | RUC make-whole (Settlements Calculation Guide §2.7.8); price-setting of RUC units **UNVERIFIED** |
+| **CAISO** | RUC, the step after the IFM inside the DAM (Tariff §31.5) | after the IFM, same DA run | **CAISO Forecast of BAA Demand** vs IFM physical supply, virtuals excluded (§31.5.3). Reserves not procured; the forecast may be raised for an IFM AS shortfall (§31.5.3.1.6) | **no**: uncommitted capacity only (§31.5.5, §31.5.5.2–.3) | RUC availability bids + start-up + min-load + transition; **no energy bids** (§31.5.5.2) | availability paid at RUC price; start-up / min-load via Bid Cost Recovery (§11.8, per §31.5.6) |
+| **NYISO** | DAM SCUC Pass 2, "Bulk Power System Forecast Load Commitment"; Supplemental Resource Evaluation (SRE) | Pass 2 inside DAM SCUC; SRE post-DAM or intraday | **ISO zonal DA load forecast**, ignoring bids and virtuals (M-11 §4.3); MST §4.2.3: "committing sufficient Capacity to meet the ISO's Load forecast and provide associated Ancillary Services" | **no**: Pass-1 units locked at ≥ their Pass-1 output | "only incremental uplift costs", no energy cost | BPCG (MST Att. C). LBMPs come from the bid-load passes |
+| **MISO** | Reliability Assessment Commitment: Multi-Day, Post-DA (Forward), Intraday; plus LAC | Post-DA RAC 14:30–18:00 EPT on OD-1; intraday as needed; LAC from OH-4 | **MISO 7-day hourly load forecast**, "not used to clear the Day-Ahead" market. Includes Operating Reserve | only for a projected surplus (BPM-002 §6.3) | commitment cost, "not the cost to serve the forecasted Energy" | Revenue Sufficiency Guarantee (BPM-002 §6.1.4, BPM-005); fast-start units may set price via ELMP |
+| ERCOT | DRUC, HRUC (Nodal Protocols §5) | DRUC after DAM close; HRUC before every operating hour | **ERCOT load forecast** + RUC AS demand curves (§5.5.2(1)) | only for otherwise unresolvable transmission constraints (§5.5.2(9)) | start-up + minimum-energy offers; energy on proxy curves (§5.5.2(16)) | make-whole / clawback (§5.7.1–.2). **$250/MWh offer floor** for RUC units in SCED (§6.5.7.3(d)) plus the Reliability Deployment Price Adder |
+| ISO-NE | Reserve Adequacy Analysis (RAA) | after the DA re-offer period | ISO load forecast vs DA cleared demand | **UNVERIFIED** | **UNVERIFIED** | NCPC (**UNVERIFIED**); since DASI (ER24-275) part of the gap is cleared in the DA market |
+
+**Sources:**
+- **SPP:** Integrated Marketplace Protocols Rev 119 (2026-07-17), DA-RUC pp.165–171, ID-RUC from p.172.
+  MTLF definition: "rolling hourly basis for the next seven days for input into Reliability Unit Commitment".
+  <https://www.spp.org/Documents/77252/Integrated%20Marketplace%20Protocols%20119%20-%20Active%20Version.zip>
+- **CAISO:** Tariff §31 as of 2026-05-01, <https://www.caiso.com/documents/section-31-day-ahead-market-as-of-may-1-2026.pdf>.
+- **NYISO:** MST §4.2.3, <https://www.nyiso.com/documents/20142/33562316/MST%204.2.pdf>. M-11 §4.3 was read from a v6.5 discussion
+  draft; confirm against the effective manual.
+- **MISO:** BPM-002-r23 §6 (pp.240–250), read from a KY PSC exhibit, <https://psc.ky.gov/pscecf/2022-00402/>. The current revision
+  is **UNVERIFIED**.
+- **ERCOT:** Nodal Protocols §5 and §6 (2026-08-01).
+- **ISO-NE:** SOP-RTMKTS.0050.0010; read from search snippets only.
+
+**Load-forecast data at source (downloaded and checked 2026-10-16):**
+- **SPP:** portal `mtlf-vs-actual` publishes **one file per hour** (`OP-MTLF-YYYYMMDDHH00.csv`: `Interval, GMTIntervalEnd, MTLF,
+  Averaged Actual, BAA`; 7 days forward). Years are archived as one zip each (`/2024/2024.zip`, ~9,100 vintages, 16.9 MB; folders
+  2013–2026). The file-browser API needs no login.
+- **CAISO:** OASIS `SLD_FCST` returns DAM / 2DA / 7DA hourly and RTM (15- and 5-min), one vintage per run id. HASP/RUC runs return no
+  data. Whether DAM is exactly the forecast RUC used is **UNVERIFIED**.
+- **NYISO:** `isolf` publishes one vintage a day, posted about 07:30 D-1.
+- **MISO and ERCOT archives:** not checked.
+- **EIA-930 DF** is the BA's "day-ahead demand forecast" (form instructions, OMB 1905-0129).
+- **SPP's EIA-930 DF vs MTLF:** over 177 days of Jul–Dec 2024, the DF best matches the MTLF vintage stamped 00:00 on D-1 (median
+  |Δ| 28 MW, 44.5 % of hours exact). The match worsens for every later vintage (median about 180 MW by D-1 afternoon). **Inference:**
+  the model's DA basis is an *early* D-1 MTLF. It is not the vintage the 13:45 DA-RUC used, and it is not the ID-RUC's.
 
 **Common structure, which the design keeps:**
 - The RUC runs **after** DA economics.
 - It commits to the **ISO's own load forecast** (not bid-in demand) **plus reserves**.
 - It is **add-only**.
-- The objective is **commitment cost**: start-up, no-load and minimum-load energy. Energy bids are excluded or secondary.
+- The objective is **commitment cost**: start-up, no-load and minimum-load energy. Energy bids are excluded (SPP, CAISO, NYISO
+  Pass 2, MISO; ERCOT uses proxy curves).
 - Its cost is **make-whole outside the LMP**.
 
-**Where the model already stands.** The UC window already commits to the ISO's DA forecast (EIA-930 DF), not to cleared DA demand,
-plus the co-optimized reserve requirement. That is the *DA-RUC* target. The missing object is the **intraday** recommitment (SPP
+**Where the model already stands.** The UC window already commits to the ISO's own forecast (EIA-930 DF), not to bid-in DA demand,
+plus the co-optimized reserve requirement. For SPP that is an early D-1 MTLF vintage, close to the DA-RUC target. The missing object is the **intraday** recommitment (SPP
 ID-RUC, MISO intraday RAC, ERCOT HRUC, NYISO SRE / RTC commitment) on an updated forecast. For SPP 2024, that is what covers a DA
 forecast that was 2 GW low.
 
@@ -96,7 +132,7 @@ add nothing. Two declared approximations:
 | input | backcast | forecast | rule 13 |
 |---|---|---|---|
 | `u_DA`, the DA schedule | the UC-DA pass (already solved) | same | model-internal |
-| RUC basis | **P1 demand (realised load)**, until an intraday-forecast series is intaken | P1 demand (the forecast-year load) | admissible: the same quantity exists forward from forward drivers and moves with them; it is the input P1 already clears on, not an output |
+| RUC basis | **SPP MTLF intraday vintage** once intaken; until then **P1 demand (realised load)**, an upper bound | P1 demand (the forecast-year load) | admissible: the same quantity exists forward from forward drivers and moves with them; it is the input P1 already clears on, not an output |
 | trigger | P1a reserve shortfall / slack | same | model-internal |
 | penalties | P1's VOLL and reserve demand curves (tariff-cited, on `main`) | same | — |
 | `mlf`, `pbar`, `ut_h`, `dt_h`, no-load, start cost | uc-params (frozen derives, rule 23) | same | already admitted |
@@ -104,13 +140,20 @@ add nothing. Two declared approximations:
 **RUC load basis: what exists.**
 - **On disk:** only the EIA-930 DA forecast (already the DA basis) and metered load. `data/raw/load-forecast/` holds long-term
   planning forecasts and is irrelevant here.
-- **At source** (phase-0 intake, to verify; §1 has the citations): SPP's mid-term load forecast, re-issued intraday (portal
-  "MTLF vs Actual"); CAISO OASIS `SLD_FCST` by market run (DAM / RTM / 2DA / 7DA); NYISO's ISO load forecast (DA only).
+- **At source** (§1): SPP MTLF, **one vintage per hour, archived per year** (confirmed). CAISO OASIS `SLD_FCST` keeps one vintage
+  per run id (DAM / 2DA / 7DA / RTM); its RTM run is an intraday forecast. NYISO `isolf` keeps one D-1 vintage a day, so it has no
+  intraday series.
 - **Without an intraday series,** the only basis that adds no free parameter is the realised load. An error draw or a haircut
   would be a number chosen by us (rules 5, 13).
-- So the backcast RUC basis is **actual load, declared as an upper bound**: perfect intraday foresight, zero ID-RUC forecast
-  error. The design is written so a measured intraday vintage replaces it through one enum value (`uc_ruc_load_basis`) once
-  intaken (rule 14: prefer measured).
+- **SPP measured basis (`uc_ruc_load_basis="iso_intraday_forecast"`):** for operating hour *h*, the MTLF vintage issued at the
+  last ID-RUC cycle at least one cycle before *h*. The cycle is the protocol's "at least every 4 h" (§4.4.1), a cited value,
+  not a free one. Rule 13 (backcast): the same quantity is a forecast of forward load; forward it collapses to the error-profile
+  form, like the DA basis.
+- **Fallback basis (`"actual"`):** realised load, declared as an upper bound (perfect intraday foresight, zero ID-RUC error).
+  It is admissible, but it overstates the RUC wherever the intraday forecast also missed. Rule 14 prefers the measured basis
+  for SPP.
+- **Rule-14 alignment check for the intake:** SPP's MTLF BAA is `SPP` / `SWPW`, while the model's demand is EIA-930 SWPP. The
+  intake must reconcile the footprint, as FIX-7 did for the DF.
 - **Forecast mode:** the DA demand is realised × (1 + the mean error profile). For ISOs whose profile is positive in nearly all
   season-hours (SPP, MISO), the RUC is near-inert forward: the mean profile has no bad days. That is a known limit of a mean
   profile, not of the RUC (§5 Q5).
@@ -126,7 +169,8 @@ add nothing. Two declared approximations:
   through `u`, so RUC units supply spin and contingency directly. That is the channel the 2024 shortfall needs (spin short 35 h,
   contingency 28 h).
 - **Markup.** Integer clusters already bid zero amortized start markup in P1 (R3), so RUC units bid `mc_base`. A RUC unit
-  can set the LMP only as an ordinary online unit. Its commitment cost is never in a dual (rule 4).
+  can set the LMP only as an ordinary online unit. Its commitment cost is never in a dual (rule 4). ERCOT is different: it floors
+  RUC units' SCED offers at $250/MWh (§6.5.7.3(d)). That would be a separate, ERCOT-only, cited price rule, out of scope here.
 - **Uplift.** `compute_uplift` runs on `u_final` / `v_final`. The sidecar adds `ruc_added_units` and `ruc_start_usd` /
   `ruc_noload_usd` per cluster-day, so RUC make-whole is reported apart from DA make-whole. It is never priced.
 
@@ -137,7 +181,7 @@ add nothing. Two declared approximations:
 | field | type | default | values |
 |---|---|---|---|
 | `uc_reliability_commitment` | bool | off | requires `unit_commitment_milp` and `uc_commitment_demand_source="da_forecast"`; refused otherwise, because with `"actual"` it is a no-op |
-| `uc_ruc_load_basis` | enum | `"actual"` | `"actual"`; a measured `"iso_intraday_forecast"` added only when intaken |
+| `uc_ruc_load_basis` | enum | `"actual"` | `"actual"`; `"iso_intraday_forecast"` (SPP MTLF vintage at the 4-h ID-RUC cycle, §2.2) added with its intake |
 
 - The trigger tolerance reuses the LP's own feasibility tolerance. It is not a new constant.
 - Penalties, window length, look-ahead, gap and time limit are the DA window's registered values.
@@ -270,8 +314,8 @@ quoted in Appendix A. It reads `system_<y>`, `reserve_family_<y>`, `uc_schedule_
 - **Pin:** the build lane's engine string (uc-1.9 expected), full 40-char SHA. G-DRIFT vs `41cd55dc`: every hunk is LIVE only behind
   `uc_reliability_commitment`.
 - **Control (rule 29(b)):** keeper `2026-10-03-closeout-spp-nuc-keeper`. **Comparator:** U4 (`ucmilp4_spp_u4_span`).
-- **Recipe:** the U4 recipe verbatim plus `--set uc_reliability_commitment=true` (`uc_ruc_load_basis` at `"actual"`).
-  Zero DOF added.
+- **Recipe:** the U4 recipe verbatim plus `--set uc_reliability_commitment=true` and `--set uc_ruc_load_basis='"iso_intraday_forecast"'`
+  (if owner Q5 = intake first; otherwise `"actual"`, declared as the upper bound). Zero DOF added.
 - **Years:** all seven, one shard each, launched serially, gate 10.6 GiB (r16). If owner Q3 = yes: solve 2023 and 2024 only,
   and adopt 2019–22 / 2025 from the U4 legs on the zero-trigger identity. The adoption is checked by each U5 leg's `uc_solve_log`
   showing `ruc.trigger_hours = 0`, or, with no new legs, by the committed U4 sidecars (0 shortfall, 0 slack).
@@ -312,7 +356,7 @@ A leg past the container's life or over the memory gate is a coverage stop, not 
 > `{ id: "uc_reliability_commitment", cat: "commit", name: "UC reliability-commitment (RUC) pass — add-only recommit of slow-start
 > clusters on days the DA-forecast commitment leaves P1 short; commitment-cost objective; same MECH 28 bounds; make-whole sidecar",
 > def: "scenarios.py uc_reliability_commitment (bool, default False; requires unit_commitment_milp and uc_commitment_demand_source=
-> 'da_forecast') + uc_ruc_load_basis ('actual'; measured intraday vintage when intaken). pipeline/uc.py: P1a → zero-LP screen (reserve
+> 'da_forecast') + uc_ruc_load_basis ('actual' | 'iso_intraday_forecast' = SPP MTLF vintage at the 4-h ID-RUC cycle). pipeline/uc.py: P1a → zero-LP screen (reserve
 > shortfall or slack hours) → UcWindowModel re-solve of the triggered days with u ≥ u_DA, demand = RUC basis, dispatch cost ε,
 > commitment cost = start + no-load + min-load energy, P1 penalties; forward sweep until the carried state rejoins the DA schedule →
 > inject (MECH_UC_SCHEDULE) → P1b. Never prices (rule 4); RUC make-whole columns in uc_uplift; D-4 sub-row uc_ruc. Zero DOF.
@@ -325,17 +369,20 @@ A leg past the container's life or over the memory gate is a coverage stop, not 
 1. **Approve the design**: one RUC pass inside the UC stage, P1a-screened, add-only, commitment-cost objective, zero DOF.
    This also needs a wording change to CLAUDE.md's "No other pass is a MIP" (the RUC is a second MIP pass of the UC stage) and to
    spec §1.6. That belongs to a lane owning those files (rule 27).
-2. **Audit the 2024 SWPP DF first?** Recommended, zero LP. Compare EIA-930 SWPP DF against SPP's MTLF archive for 2023–24.
+2. **Audit the 2024 SWPP DF first?** Recommended, zero LP. Compare EIA-930 SWPP DF against SPP's MTLF archive for 2023–24. The
+   research found DF ≈ the D-1 00:00 MTLF vintage for Jul–Dec 2024, so the audit is direct: does the MTLF itself under-forecast
+   in 2024, or does only the EIA-930 report?
    If 2024 is a reporting change, the right fix is the DA basis (rule 14), and the RUC test shrinks to what genuinely remains.
    The same audit is needed for CAISO 2023–25 before any CAISO arm.
 3. **Identity adoption.** May U5 adopt U4's 2019–22 / 2025 legs on the zero-trigger proof (2 solves) instead of re-solving all
-   seven? A G-DRIFT-style INERT-with-reason argument, verified per leg.
+   seven? A G-DRIFT-style INERT-with-reason argument, verified per leg. With the measured MTLF basis the zero-trigger proof is
+   unchanged, because the trigger is P1a's shortfall.
 4. **DA-schedule reuse across runs** by `uc_input_digest` equality (§2.5). It takes SPP 2024 from about 70 to about 15 min. Allow
    it, or keep rule 36's isolation strict and accept the reclaim risk on 2024?
-5. **RUC basis.** Accept realised load as the declared upper-bound basis now and fund an intraday-forecast intake (SPP MTLF
-   vintages, CAISO OASIS) as phase 0 of a later arm? Or hold the arm until the intake lands? Forward, the mean error profile makes
-   the RUC near-inert for over-forecasting ISOs; day-level forecast error forward is a forecast-uncertainty-layer item, not this
-   lane.
+5. **RUC basis.** Recommended: fund the SPP MTLF vintage intake (about 17 MB/yr, no login) before the arm, and run U5 on the
+   measured basis. The same intake answers Q2, since the DF matches the D-1 00:00 vintage. The alternative is to run U5 now on
+   realised load as a declared upper bound. Forward, the mean error profile makes the RUC near-inert for over-forecasting ISOs;
+   day-level forward error is a forecast-uncertainty-layer item, not this lane.
 6. **Order vs the other open SPP object** (ST_GAS under-commitment, UC-4 §8 item 1). The RUC does not touch it, and the 2025
    flips that fix U5's keeper verdict at R come from it.
 
