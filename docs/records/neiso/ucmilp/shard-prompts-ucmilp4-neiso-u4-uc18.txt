@@ -1,0 +1,289 @@
+# Shard prompts — UC-4-NEISO arm U4 relaunch at engine uc-1.8 (PRECOMMIT Addendum D). source_revision = 282150d5fbd00f1f442722cfa0e5b3946ed0f153 (= pin 41cd55dc + docs only); model claude-opus-5-5; tag ucmilp:UC-4-NEISO-shard; launched serially ~5 min apart.
+
+SOLVE SHARD ucmilp4-neiso-u4-2019 — NEISO backcast year 2019, ONE year, ONE container (rule 36). Model: Opus. Engine uc-1.8.
+DATA PROFILE: neiso
+
+VERY FIRST COMMAND, before anything else (before uv sync, before any data step): `cd <repo> && python3 scripts/prepare_solve_container.py` with the SYSTEM python3 (the script is stdlib-only). It provisions swap from free disk; anything run before it eats that disk. Report its `before:` and `swap:` lines verbatim.
+
+HARD STOPS — check each; if any fails, STOP and report (do not push, do not repair):
+1. `git rev-parse HEAD` == 282150d5fbd00f1f442722cfa0e5b3946ed0f153  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+2. the `prepare_solve_container.py` run above (already done FIRST)
+2b. MEMORY GATE (UC-DESK ruling): from that `swap:` line read ceiling + swap total AS PRINTED. It passes iff the printed total is ≥ 22.4 GiB (raw ≥ 22.35; the standard 13.36 + 9.0 = 22.36 container passes). Below that, STOP and report the `before:` and `swap:` lines verbatim plus `df -h /` output.
+2c. only now: if `.venv` is absent run `uv sync` once (the only install route; never pip install) and run EVERY later python step as `uv run python3 …`. `uv.lock` must not change.
+3. `uv run python3 scripts/hydrate_data.py --profile neiso` then `uv run python3 scripts/regenerate_clean.py --solve-profile NEISO`; both exit 0. Then `data/clean/uc-params/NEISO/` must exist.
+4. the recipe you will solve: `results/calibration/w0_neiso_span` replayed with unit_commitment_milp=true, uc_commitment_demand_source="da_forecast"; confirm by reading `results/calibration/w0_neiso_span/run_config.json` and `meta.json`.
+5. memory: the runner calls `scripts/lib/solve_container.ensure_solve_container` itself; never pass `--no-container-preflight`, never read `free` — report the `container preflight:` and `memory peak:` log lines
+
+SOLVE (sequential, this year only), detached because the background-tool cap (120 min) is below the budget:
+  eval "$(uv run python3 scripts/prepare_solve_container.py --emit-exports)"
+  nohup setsid uv run python3 scripts/replay_keeper.py results/calibration/w0_neiso_span --years 2019 --out-dir results/calibration/ucmilp4_neiso_u4_2019 --set unit_commitment_milp=true --set 'uc_commitment_demand_source="da_forecast"' --note "ucmilp4-neiso-u4: UC-4 arm U4 at uc-1.8" > /tmp/solve_2019.log 2>&1 &
+(the second --set is single-quoted so replay_keeper receives the JSON string "da_forecast"). Record the solver PID; poll the log (`tail`, `grep -c "UC window"`) until it exits; record the exit code. Kill only by PID, never `pkill -f`. An aborted launch's output is moved aside (`mv results/calibration/ucmilp4_neiso_u4_2019 /tmp/aborted_2019`), never deleted; say so.
+Budget: 720 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
+
+KEEP-ALIVE (UC-DESK standing rule — a container left idle is reclaimed and kills the detached solve; 2019 was lost this way): until the solver exits you must NEVER end a turn with nothing scheduled that wakes you within 90 minutes. Before ending any turn while the solve runs, either re-arm a background watcher that itself returns within ≤ 90 min (e.g. `timeout 5400 bash -c 'while kill -0 <PID>; do sleep 60; done'`), or schedule `send_later` (claude-code-remote) with delay ≤ 90 min. On every wake: check the PID, `grep -c "UC window"`, then re-arm. Never rely on a single watcher whose cap is shorter than the solve.
+
+ENGINE CHECKS (any failure = recipe break: report, push nothing): in results/calibration/ucmilp4_neiso_u4_2019/uc_solve_log_2019.json, `engine.version` == "uc-1.8"; `engine.fields.uc_commitment_demand_source` == "da_forecast"; `engine.commitment_demand.source` == "da_forecast"; `engine.fields.vlr_pocket_commitment` false. Paste `engine.commitment_demand` and `engine.solver_path` verbatim. From run_config*.json paste: unit_commitment_milp, uc_commitment_demand_source, energy_reserve_coopt, gas_price_override.
+
+FILES > 100 MB: before commit, for each such file f: `sha256sum f > f.SHA256`; `split -b 95m -d f f.part-`; `sha256sum f.part-* >> f.SHA256`; `mv f /tmp/`; then add the parts and f.SHA256 with the rest. Report each split with its whole-file sha256.
+
+PUSH THE WHOLE BUNDLE (rule 34 (a)):
+  git checkout -b claude/ucmilp4-neiso-u4-2019
+  printf '\n!results/calibration/ucmilp4_neiso_u4_2019/**\n' >> .gitignore
+  git add .gitignore && git add results/calibration/ucmilp4_neiso_u4_2019
+  git status --short      # MUST show nothing outside .gitignore and results/calibration/ucmilp4_neiso_u4_2019
+  git commit -m "ucmilp4-neiso-u4: NEISO 2019 leg (results/calibration/ucmilp4_neiso_u4_2019)"
+  git push -u origin claude/ucmilp4-neiso-u4-2019     # on HTTP 408/500: git config http.version HTTP/1.1, retry
+`dispatch/2019_P1.parquet`, `hourly/uc_schedule_2019.parquet`, `hourly/uc_uplift_2019.parquet`, `uc_solve_log_2019.json` and `hourly/unit_marginal_2019.parquet` MUST be in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp4_neiso_u4_2019`). UC armed but no uc_schedule written = HARD STOP: report, do not push. A plain `git add` after the .gitignore negation — never `git add -f`, never `git add -A`, never `git add .`.
+
+FORBIDDEN, by name: git add -A / git add . ; any edit under src/ or scripts/ ; dashboard_add_run.py, build_manifest.py, build_status.py, prune_iso_runs.py, promote_keeper.py, anything under frontend/data/ ; opening a PR ; deleting any result (rule 31) ; solving any other year ; editing any uc_* field ; another --set ; a different time limit or preset.
+
+REPORT in your final message (and ALSO send it to the parent session_01FoAQpHpMAwKdf4fmMqoZWT via send_message), in numbers: HEAD sha; the `before:`, `swap:`, `container preflight:` and `memory peak:` lines; LP wall time; for 2019: objective, total generation TWh by class, mean and p99 price per zone, unserved energy MWh, dump MWh, P1 status; the `year 2019 phase timing` line verbatim; the `UC stage prepared:` line verbatim; the `summary` object of uc_solve_log_2019.json verbatim; `engine.integers_per_window`, `engine.n_clusters`, `engine.integer_set_size`; whether pass-2 reuse fired; count of non-optimal windows; the commit sha and branch; `git ls-tree` count under the bundle; any hard stop that fired. Do not judge results. An OOM kill (rc -9), a UC hard stop (infeasible window, 'no incumbent') or a P1 with no feasible primal is a SUCCESSFUL report: paste the exception verbatim and the last 20 `UC window` lines; push nothing; stop. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
+
+Lane: UC-4-NEISO arm U4, PRECOMMIT docs/records/neiso/ucmilp/PRECOMMIT-ucmilp4-neiso-u4-2026-10-15.md (Addendum D); engine uc-1.8; NEISO is a CALIBRATED CONTROL ISO — you measure, you never tune.
+====================================================================================================
+SOLVE SHARD ucmilp4-neiso-u4-2020 — NEISO backcast year 2020, ONE year, ONE container (rule 36). Model: Opus. Engine uc-1.8.
+DATA PROFILE: neiso
+
+VERY FIRST COMMAND, before anything else (before uv sync, before any data step): `cd <repo> && python3 scripts/prepare_solve_container.py` with the SYSTEM python3 (the script is stdlib-only). It provisions swap from free disk; anything run before it eats that disk. Report its `before:` and `swap:` lines verbatim.
+
+HARD STOPS — check each; if any fails, STOP and report (do not push, do not repair):
+1. `git rev-parse HEAD` == 282150d5fbd00f1f442722cfa0e5b3946ed0f153  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+2. the `prepare_solve_container.py` run above (already done FIRST)
+2b. MEMORY GATE (UC-DESK ruling): from that `swap:` line read ceiling + swap total AS PRINTED. It passes iff the printed total is ≥ 22.4 GiB (raw ≥ 22.35; the standard 13.36 + 9.0 = 22.36 container passes). Below that, STOP and report the `before:` and `swap:` lines verbatim plus `df -h /` output.
+2c. only now: if `.venv` is absent run `uv sync` once (the only install route; never pip install) and run EVERY later python step as `uv run python3 …`. `uv.lock` must not change.
+3. `uv run python3 scripts/hydrate_data.py --profile neiso` then `uv run python3 scripts/regenerate_clean.py --solve-profile NEISO`; both exit 0. Then `data/clean/uc-params/NEISO/` must exist.
+4. the recipe you will solve: `results/calibration/w0_neiso_span` replayed with unit_commitment_milp=true, uc_commitment_demand_source="da_forecast"; confirm by reading `results/calibration/w0_neiso_span/run_config.json` and `meta.json`.
+5. memory: the runner calls `scripts/lib/solve_container.ensure_solve_container` itself; never pass `--no-container-preflight`, never read `free` — report the `container preflight:` and `memory peak:` log lines
+
+SOLVE (sequential, this year only), detached because the background-tool cap (120 min) is below the budget:
+  eval "$(uv run python3 scripts/prepare_solve_container.py --emit-exports)"
+  nohup setsid uv run python3 scripts/replay_keeper.py results/calibration/w0_neiso_span --years 2020 --out-dir results/calibration/ucmilp4_neiso_u4_2020 --set unit_commitment_milp=true --set 'uc_commitment_demand_source="da_forecast"' --note "ucmilp4-neiso-u4: UC-4 arm U4 at uc-1.8" > /tmp/solve_2020.log 2>&1 &
+(the second --set is single-quoted so replay_keeper receives the JSON string "da_forecast"). Record the solver PID; poll the log (`tail`, `grep -c "UC window"`) until it exits; record the exit code. Kill only by PID, never `pkill -f`. An aborted launch's output is moved aside (`mv results/calibration/ucmilp4_neiso_u4_2020 /tmp/aborted_2020`), never deleted; say so.
+Budget: 720 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
+
+KEEP-ALIVE (UC-DESK standing rule — a container left idle is reclaimed and kills the detached solve; 2019 was lost this way): until the solver exits you must NEVER end a turn with nothing scheduled that wakes you within 90 minutes. Before ending any turn while the solve runs, either re-arm a background watcher that itself returns within ≤ 90 min (e.g. `timeout 5400 bash -c 'while kill -0 <PID>; do sleep 60; done'`), or schedule `send_later` (claude-code-remote) with delay ≤ 90 min. On every wake: check the PID, `grep -c "UC window"`, then re-arm. Never rely on a single watcher whose cap is shorter than the solve.
+
+ENGINE CHECKS (any failure = recipe break: report, push nothing): in results/calibration/ucmilp4_neiso_u4_2020/uc_solve_log_2020.json, `engine.version` == "uc-1.8"; `engine.fields.uc_commitment_demand_source` == "da_forecast"; `engine.commitment_demand.source` == "da_forecast"; `engine.fields.vlr_pocket_commitment` false. Paste `engine.commitment_demand` and `engine.solver_path` verbatim. From run_config*.json paste: unit_commitment_milp, uc_commitment_demand_source, energy_reserve_coopt, gas_price_override.
+
+FILES > 100 MB: before commit, for each such file f: `sha256sum f > f.SHA256`; `split -b 95m -d f f.part-`; `sha256sum f.part-* >> f.SHA256`; `mv f /tmp/`; then add the parts and f.SHA256 with the rest. Report each split with its whole-file sha256.
+
+PUSH THE WHOLE BUNDLE (rule 34 (a)):
+  git checkout -b claude/ucmilp4-neiso-u4-2020
+  printf '\n!results/calibration/ucmilp4_neiso_u4_2020/**\n' >> .gitignore
+  git add .gitignore && git add results/calibration/ucmilp4_neiso_u4_2020
+  git status --short      # MUST show nothing outside .gitignore and results/calibration/ucmilp4_neiso_u4_2020
+  git commit -m "ucmilp4-neiso-u4: NEISO 2020 leg (results/calibration/ucmilp4_neiso_u4_2020)"
+  git push -u origin claude/ucmilp4-neiso-u4-2020     # on HTTP 408/500: git config http.version HTTP/1.1, retry
+`dispatch/2020_P1.parquet`, `hourly/uc_schedule_2020.parquet`, `hourly/uc_uplift_2020.parquet`, `uc_solve_log_2020.json` and `hourly/unit_marginal_2020.parquet` MUST be in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp4_neiso_u4_2020`). UC armed but no uc_schedule written = HARD STOP: report, do not push. A plain `git add` after the .gitignore negation — never `git add -f`, never `git add -A`, never `git add .`.
+
+FORBIDDEN, by name: git add -A / git add . ; any edit under src/ or scripts/ ; dashboard_add_run.py, build_manifest.py, build_status.py, prune_iso_runs.py, promote_keeper.py, anything under frontend/data/ ; opening a PR ; deleting any result (rule 31) ; solving any other year ; editing any uc_* field ; another --set ; a different time limit or preset.
+
+REPORT in your final message (and ALSO send it to the parent session_01FoAQpHpMAwKdf4fmMqoZWT via send_message), in numbers: HEAD sha; the `before:`, `swap:`, `container preflight:` and `memory peak:` lines; LP wall time; for 2020: objective, total generation TWh by class, mean and p99 price per zone, unserved energy MWh, dump MWh, P1 status; the `year 2020 phase timing` line verbatim; the `UC stage prepared:` line verbatim; the `summary` object of uc_solve_log_2020.json verbatim; `engine.integers_per_window`, `engine.n_clusters`, `engine.integer_set_size`; whether pass-2 reuse fired; count of non-optimal windows; the commit sha and branch; `git ls-tree` count under the bundle; any hard stop that fired. Do not judge results. An OOM kill (rc -9), a UC hard stop (infeasible window, 'no incumbent') or a P1 with no feasible primal is a SUCCESSFUL report: paste the exception verbatim and the last 20 `UC window` lines; push nothing; stop. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
+
+Lane: UC-4-NEISO arm U4, PRECOMMIT docs/records/neiso/ucmilp/PRECOMMIT-ucmilp4-neiso-u4-2026-10-15.md (Addendum D); engine uc-1.8; NEISO is a CALIBRATED CONTROL ISO — you measure, you never tune.
+====================================================================================================
+SOLVE SHARD ucmilp4-neiso-u4-2021 — NEISO backcast year 2021, ONE year, ONE container (rule 36). Model: Opus. Engine uc-1.8.
+DATA PROFILE: neiso
+
+VERY FIRST COMMAND, before anything else (before uv sync, before any data step): `cd <repo> && python3 scripts/prepare_solve_container.py` with the SYSTEM python3 (the script is stdlib-only). It provisions swap from free disk; anything run before it eats that disk. Report its `before:` and `swap:` lines verbatim.
+
+HARD STOPS — check each; if any fails, STOP and report (do not push, do not repair):
+1. `git rev-parse HEAD` == 282150d5fbd00f1f442722cfa0e5b3946ed0f153  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+2. the `prepare_solve_container.py` run above (already done FIRST)
+2b. MEMORY GATE (UC-DESK ruling): from that `swap:` line read ceiling + swap total AS PRINTED. It passes iff the printed total is ≥ 22.4 GiB (raw ≥ 22.35; the standard 13.36 + 9.0 = 22.36 container passes). Below that, STOP and report the `before:` and `swap:` lines verbatim plus `df -h /` output.
+2c. only now: if `.venv` is absent run `uv sync` once (the only install route; never pip install) and run EVERY later python step as `uv run python3 …`. `uv.lock` must not change.
+3. `uv run python3 scripts/hydrate_data.py --profile neiso` then `uv run python3 scripts/regenerate_clean.py --solve-profile NEISO`; both exit 0. Then `data/clean/uc-params/NEISO/` must exist.
+4. the recipe you will solve: `results/calibration/w0_neiso_span` replayed with unit_commitment_milp=true, uc_commitment_demand_source="da_forecast"; confirm by reading `results/calibration/w0_neiso_span/run_config.json` and `meta.json`.
+5. memory: the runner calls `scripts/lib/solve_container.ensure_solve_container` itself; never pass `--no-container-preflight`, never read `free` — report the `container preflight:` and `memory peak:` log lines
+
+SOLVE (sequential, this year only), detached because the background-tool cap (120 min) is below the budget:
+  eval "$(uv run python3 scripts/prepare_solve_container.py --emit-exports)"
+  nohup setsid uv run python3 scripts/replay_keeper.py results/calibration/w0_neiso_span --years 2021 --out-dir results/calibration/ucmilp4_neiso_u4_2021 --set unit_commitment_milp=true --set 'uc_commitment_demand_source="da_forecast"' --note "ucmilp4-neiso-u4: UC-4 arm U4 at uc-1.8" > /tmp/solve_2021.log 2>&1 &
+(the second --set is single-quoted so replay_keeper receives the JSON string "da_forecast"). Record the solver PID; poll the log (`tail`, `grep -c "UC window"`) until it exits; record the exit code. Kill only by PID, never `pkill -f`. An aborted launch's output is moved aside (`mv results/calibration/ucmilp4_neiso_u4_2021 /tmp/aborted_2021`), never deleted; say so.
+Budget: 720 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
+
+KEEP-ALIVE (UC-DESK standing rule — a container left idle is reclaimed and kills the detached solve; 2019 was lost this way): until the solver exits you must NEVER end a turn with nothing scheduled that wakes you within 90 minutes. Before ending any turn while the solve runs, either re-arm a background watcher that itself returns within ≤ 90 min (e.g. `timeout 5400 bash -c 'while kill -0 <PID>; do sleep 60; done'`), or schedule `send_later` (claude-code-remote) with delay ≤ 90 min. On every wake: check the PID, `grep -c "UC window"`, then re-arm. Never rely on a single watcher whose cap is shorter than the solve.
+
+ENGINE CHECKS (any failure = recipe break: report, push nothing): in results/calibration/ucmilp4_neiso_u4_2021/uc_solve_log_2021.json, `engine.version` == "uc-1.8"; `engine.fields.uc_commitment_demand_source` == "da_forecast"; `engine.commitment_demand.source` == "da_forecast"; `engine.fields.vlr_pocket_commitment` false. Paste `engine.commitment_demand` and `engine.solver_path` verbatim. From run_config*.json paste: unit_commitment_milp, uc_commitment_demand_source, energy_reserve_coopt, gas_price_override.
+
+FILES > 100 MB: before commit, for each such file f: `sha256sum f > f.SHA256`; `split -b 95m -d f f.part-`; `sha256sum f.part-* >> f.SHA256`; `mv f /tmp/`; then add the parts and f.SHA256 with the rest. Report each split with its whole-file sha256.
+
+PUSH THE WHOLE BUNDLE (rule 34 (a)):
+  git checkout -b claude/ucmilp4-neiso-u4-2021
+  printf '\n!results/calibration/ucmilp4_neiso_u4_2021/**\n' >> .gitignore
+  git add .gitignore && git add results/calibration/ucmilp4_neiso_u4_2021
+  git status --short      # MUST show nothing outside .gitignore and results/calibration/ucmilp4_neiso_u4_2021
+  git commit -m "ucmilp4-neiso-u4: NEISO 2021 leg (results/calibration/ucmilp4_neiso_u4_2021)"
+  git push -u origin claude/ucmilp4-neiso-u4-2021     # on HTTP 408/500: git config http.version HTTP/1.1, retry
+`dispatch/2021_P1.parquet`, `hourly/uc_schedule_2021.parquet`, `hourly/uc_uplift_2021.parquet`, `uc_solve_log_2021.json` and `hourly/unit_marginal_2021.parquet` MUST be in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp4_neiso_u4_2021`). UC armed but no uc_schedule written = HARD STOP: report, do not push. A plain `git add` after the .gitignore negation — never `git add -f`, never `git add -A`, never `git add .`.
+
+FORBIDDEN, by name: git add -A / git add . ; any edit under src/ or scripts/ ; dashboard_add_run.py, build_manifest.py, build_status.py, prune_iso_runs.py, promote_keeper.py, anything under frontend/data/ ; opening a PR ; deleting any result (rule 31) ; solving any other year ; editing any uc_* field ; another --set ; a different time limit or preset.
+
+REPORT in your final message (and ALSO send it to the parent session_01FoAQpHpMAwKdf4fmMqoZWT via send_message), in numbers: HEAD sha; the `before:`, `swap:`, `container preflight:` and `memory peak:` lines; LP wall time; for 2021: objective, total generation TWh by class, mean and p99 price per zone, unserved energy MWh, dump MWh, P1 status; the `year 2021 phase timing` line verbatim; the `UC stage prepared:` line verbatim; the `summary` object of uc_solve_log_2021.json verbatim; `engine.integers_per_window`, `engine.n_clusters`, `engine.integer_set_size`; whether pass-2 reuse fired; count of non-optimal windows; the commit sha and branch; `git ls-tree` count under the bundle; any hard stop that fired. Do not judge results. An OOM kill (rc -9), a UC hard stop (infeasible window, 'no incumbent') or a P1 with no feasible primal is a SUCCESSFUL report: paste the exception verbatim and the last 20 `UC window` lines; push nothing; stop. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
+
+Lane: UC-4-NEISO arm U4, PRECOMMIT docs/records/neiso/ucmilp/PRECOMMIT-ucmilp4-neiso-u4-2026-10-15.md (Addendum D); engine uc-1.8; NEISO is a CALIBRATED CONTROL ISO — you measure, you never tune.
+====================================================================================================
+SOLVE SHARD ucmilp4-neiso-u4-2022 — NEISO backcast year 2022, ONE year, ONE container (rule 36). Model: Opus. Engine uc-1.8.
+DATA PROFILE: neiso
+
+VERY FIRST COMMAND, before anything else (before uv sync, before any data step): `cd <repo> && python3 scripts/prepare_solve_container.py` with the SYSTEM python3 (the script is stdlib-only). It provisions swap from free disk; anything run before it eats that disk. Report its `before:` and `swap:` lines verbatim.
+
+HARD STOPS — check each; if any fails, STOP and report (do not push, do not repair):
+1. `git rev-parse HEAD` == 282150d5fbd00f1f442722cfa0e5b3946ed0f153  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+2. the `prepare_solve_container.py` run above (already done FIRST)
+2b. MEMORY GATE (UC-DESK ruling): from that `swap:` line read ceiling + swap total AS PRINTED. It passes iff the printed total is ≥ 22.4 GiB (raw ≥ 22.35; the standard 13.36 + 9.0 = 22.36 container passes). Below that, STOP and report the `before:` and `swap:` lines verbatim plus `df -h /` output.
+2c. only now: if `.venv` is absent run `uv sync` once (the only install route; never pip install) and run EVERY later python step as `uv run python3 …`. `uv.lock` must not change.
+3. `uv run python3 scripts/hydrate_data.py --profile neiso` then `uv run python3 scripts/regenerate_clean.py --solve-profile NEISO`; both exit 0. Then `data/clean/uc-params/NEISO/` must exist.
+4. the recipe you will solve: `results/calibration/w0_neiso_span` replayed with unit_commitment_milp=true, uc_commitment_demand_source="da_forecast"; confirm by reading `results/calibration/w0_neiso_span/run_config.json` and `meta.json`.
+5. memory: the runner calls `scripts/lib/solve_container.ensure_solve_container` itself; never pass `--no-container-preflight`, never read `free` — report the `container preflight:` and `memory peak:` log lines
+
+SOLVE (sequential, this year only), detached because the background-tool cap (120 min) is below the budget:
+  eval "$(uv run python3 scripts/prepare_solve_container.py --emit-exports)"
+  nohup setsid uv run python3 scripts/replay_keeper.py results/calibration/w0_neiso_span --years 2022 --out-dir results/calibration/ucmilp4_neiso_u4_2022 --set unit_commitment_milp=true --set 'uc_commitment_demand_source="da_forecast"' --note "ucmilp4-neiso-u4: UC-4 arm U4 at uc-1.8" > /tmp/solve_2022.log 2>&1 &
+(the second --set is single-quoted so replay_keeper receives the JSON string "da_forecast"). Record the solver PID; poll the log (`tail`, `grep -c "UC window"`) until it exits; record the exit code. Kill only by PID, never `pkill -f`. An aborted launch's output is moved aside (`mv results/calibration/ucmilp4_neiso_u4_2022 /tmp/aborted_2022`), never deleted; say so.
+Budget: 720 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
+
+KEEP-ALIVE (UC-DESK standing rule — a container left idle is reclaimed and kills the detached solve; 2019 was lost this way): until the solver exits you must NEVER end a turn with nothing scheduled that wakes you within 90 minutes. Before ending any turn while the solve runs, either re-arm a background watcher that itself returns within ≤ 90 min (e.g. `timeout 5400 bash -c 'while kill -0 <PID>; do sleep 60; done'`), or schedule `send_later` (claude-code-remote) with delay ≤ 90 min. On every wake: check the PID, `grep -c "UC window"`, then re-arm. Never rely on a single watcher whose cap is shorter than the solve.
+
+ENGINE CHECKS (any failure = recipe break: report, push nothing): in results/calibration/ucmilp4_neiso_u4_2022/uc_solve_log_2022.json, `engine.version` == "uc-1.8"; `engine.fields.uc_commitment_demand_source` == "da_forecast"; `engine.commitment_demand.source` == "da_forecast"; `engine.fields.vlr_pocket_commitment` false. Paste `engine.commitment_demand` and `engine.solver_path` verbatim. From run_config*.json paste: unit_commitment_milp, uc_commitment_demand_source, energy_reserve_coopt, gas_price_override.
+
+FILES > 100 MB: before commit, for each such file f: `sha256sum f > f.SHA256`; `split -b 95m -d f f.part-`; `sha256sum f.part-* >> f.SHA256`; `mv f /tmp/`; then add the parts and f.SHA256 with the rest. Report each split with its whole-file sha256.
+
+PUSH THE WHOLE BUNDLE (rule 34 (a)):
+  git checkout -b claude/ucmilp4-neiso-u4-2022
+  printf '\n!results/calibration/ucmilp4_neiso_u4_2022/**\n' >> .gitignore
+  git add .gitignore && git add results/calibration/ucmilp4_neiso_u4_2022
+  git status --short      # MUST show nothing outside .gitignore and results/calibration/ucmilp4_neiso_u4_2022
+  git commit -m "ucmilp4-neiso-u4: NEISO 2022 leg (results/calibration/ucmilp4_neiso_u4_2022)"
+  git push -u origin claude/ucmilp4-neiso-u4-2022     # on HTTP 408/500: git config http.version HTTP/1.1, retry
+`dispatch/2022_P1.parquet`, `hourly/uc_schedule_2022.parquet`, `hourly/uc_uplift_2022.parquet`, `uc_solve_log_2022.json` and `hourly/unit_marginal_2022.parquet` MUST be in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp4_neiso_u4_2022`). UC armed but no uc_schedule written = HARD STOP: report, do not push. A plain `git add` after the .gitignore negation — never `git add -f`, never `git add -A`, never `git add .`.
+
+FORBIDDEN, by name: git add -A / git add . ; any edit under src/ or scripts/ ; dashboard_add_run.py, build_manifest.py, build_status.py, prune_iso_runs.py, promote_keeper.py, anything under frontend/data/ ; opening a PR ; deleting any result (rule 31) ; solving any other year ; editing any uc_* field ; another --set ; a different time limit or preset.
+
+REPORT in your final message (and ALSO send it to the parent session_01FoAQpHpMAwKdf4fmMqoZWT via send_message), in numbers: HEAD sha; the `before:`, `swap:`, `container preflight:` and `memory peak:` lines; LP wall time; for 2022: objective, total generation TWh by class, mean and p99 price per zone, unserved energy MWh, dump MWh, P1 status; the `year 2022 phase timing` line verbatim; the `UC stage prepared:` line verbatim; the `summary` object of uc_solve_log_2022.json verbatim; `engine.integers_per_window`, `engine.n_clusters`, `engine.integer_set_size`; whether pass-2 reuse fired; count of non-optimal windows; the commit sha and branch; `git ls-tree` count under the bundle; any hard stop that fired. Do not judge results. An OOM kill (rc -9), a UC hard stop (infeasible window, 'no incumbent') or a P1 with no feasible primal is a SUCCESSFUL report: paste the exception verbatim and the last 20 `UC window` lines; push nothing; stop. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
+
+Lane: UC-4-NEISO arm U4, PRECOMMIT docs/records/neiso/ucmilp/PRECOMMIT-ucmilp4-neiso-u4-2026-10-15.md (Addendum D); engine uc-1.8; NEISO is a CALIBRATED CONTROL ISO — you measure, you never tune.
+====================================================================================================
+SOLVE SHARD ucmilp4-neiso-u4-2023 — NEISO backcast year 2023, ONE year, ONE container (rule 36). Model: Opus. Engine uc-1.8.
+DATA PROFILE: neiso
+
+VERY FIRST COMMAND, before anything else (before uv sync, before any data step): `cd <repo> && python3 scripts/prepare_solve_container.py` with the SYSTEM python3 (the script is stdlib-only). It provisions swap from free disk; anything run before it eats that disk. Report its `before:` and `swap:` lines verbatim.
+
+HARD STOPS — check each; if any fails, STOP and report (do not push, do not repair):
+1. `git rev-parse HEAD` == 282150d5fbd00f1f442722cfa0e5b3946ed0f153  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+2. the `prepare_solve_container.py` run above (already done FIRST)
+2b. MEMORY GATE (UC-DESK ruling): from that `swap:` line read ceiling + swap total AS PRINTED. It passes iff the printed total is ≥ 22.4 GiB (raw ≥ 22.35; the standard 13.36 + 9.0 = 22.36 container passes). Below that, STOP and report the `before:` and `swap:` lines verbatim plus `df -h /` output.
+2c. only now: if `.venv` is absent run `uv sync` once (the only install route; never pip install) and run EVERY later python step as `uv run python3 …`. `uv.lock` must not change.
+3. `uv run python3 scripts/hydrate_data.py --profile neiso` then `uv run python3 scripts/regenerate_clean.py --solve-profile NEISO`; both exit 0. Then `data/clean/uc-params/NEISO/` must exist.
+4. the recipe you will solve: `results/calibration/w0_neiso_span` replayed with unit_commitment_milp=true, uc_commitment_demand_source="da_forecast"; confirm by reading `results/calibration/w0_neiso_span/run_config.json` and `meta.json`.
+5. memory: the runner calls `scripts/lib/solve_container.ensure_solve_container` itself; never pass `--no-container-preflight`, never read `free` — report the `container preflight:` and `memory peak:` log lines
+
+SOLVE (sequential, this year only), detached because the background-tool cap (120 min) is below the budget:
+  eval "$(uv run python3 scripts/prepare_solve_container.py --emit-exports)"
+  nohup setsid uv run python3 scripts/replay_keeper.py results/calibration/w0_neiso_span --years 2023 --out-dir results/calibration/ucmilp4_neiso_u4_2023 --set unit_commitment_milp=true --set 'uc_commitment_demand_source="da_forecast"' --note "ucmilp4-neiso-u4: UC-4 arm U4 at uc-1.8" > /tmp/solve_2023.log 2>&1 &
+(the second --set is single-quoted so replay_keeper receives the JSON string "da_forecast"). Record the solver PID; poll the log (`tail`, `grep -c "UC window"`) until it exits; record the exit code. Kill only by PID, never `pkill -f`. An aborted launch's output is moved aside (`mv results/calibration/ucmilp4_neiso_u4_2023 /tmp/aborted_2023`), never deleted; say so.
+Budget: 720 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
+
+KEEP-ALIVE (UC-DESK standing rule — a container left idle is reclaimed and kills the detached solve; 2019 was lost this way): until the solver exits you must NEVER end a turn with nothing scheduled that wakes you within 90 minutes. Before ending any turn while the solve runs, either re-arm a background watcher that itself returns within ≤ 90 min (e.g. `timeout 5400 bash -c 'while kill -0 <PID>; do sleep 60; done'`), or schedule `send_later` (claude-code-remote) with delay ≤ 90 min. On every wake: check the PID, `grep -c "UC window"`, then re-arm. Never rely on a single watcher whose cap is shorter than the solve.
+
+ENGINE CHECKS (any failure = recipe break: report, push nothing): in results/calibration/ucmilp4_neiso_u4_2023/uc_solve_log_2023.json, `engine.version` == "uc-1.8"; `engine.fields.uc_commitment_demand_source` == "da_forecast"; `engine.commitment_demand.source` == "da_forecast"; `engine.fields.vlr_pocket_commitment` false. Paste `engine.commitment_demand` and `engine.solver_path` verbatim. From run_config*.json paste: unit_commitment_milp, uc_commitment_demand_source, energy_reserve_coopt, gas_price_override.
+
+FILES > 100 MB: before commit, for each such file f: `sha256sum f > f.SHA256`; `split -b 95m -d f f.part-`; `sha256sum f.part-* >> f.SHA256`; `mv f /tmp/`; then add the parts and f.SHA256 with the rest. Report each split with its whole-file sha256.
+
+PUSH THE WHOLE BUNDLE (rule 34 (a)):
+  git checkout -b claude/ucmilp4-neiso-u4-2023
+  printf '\n!results/calibration/ucmilp4_neiso_u4_2023/**\n' >> .gitignore
+  git add .gitignore && git add results/calibration/ucmilp4_neiso_u4_2023
+  git status --short      # MUST show nothing outside .gitignore and results/calibration/ucmilp4_neiso_u4_2023
+  git commit -m "ucmilp4-neiso-u4: NEISO 2023 leg (results/calibration/ucmilp4_neiso_u4_2023)"
+  git push -u origin claude/ucmilp4-neiso-u4-2023     # on HTTP 408/500: git config http.version HTTP/1.1, retry
+`dispatch/2023_P1.parquet`, `hourly/uc_schedule_2023.parquet`, `hourly/uc_uplift_2023.parquet`, `uc_solve_log_2023.json` and `hourly/unit_marginal_2023.parquet` MUST be in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp4_neiso_u4_2023`). UC armed but no uc_schedule written = HARD STOP: report, do not push. A plain `git add` after the .gitignore negation — never `git add -f`, never `git add -A`, never `git add .`.
+
+FORBIDDEN, by name: git add -A / git add . ; any edit under src/ or scripts/ ; dashboard_add_run.py, build_manifest.py, build_status.py, prune_iso_runs.py, promote_keeper.py, anything under frontend/data/ ; opening a PR ; deleting any result (rule 31) ; solving any other year ; editing any uc_* field ; another --set ; a different time limit or preset.
+
+REPORT in your final message (and ALSO send it to the parent session_01FoAQpHpMAwKdf4fmMqoZWT via send_message), in numbers: HEAD sha; the `before:`, `swap:`, `container preflight:` and `memory peak:` lines; LP wall time; for 2023: objective, total generation TWh by class, mean and p99 price per zone, unserved energy MWh, dump MWh, P1 status; the `year 2023 phase timing` line verbatim; the `UC stage prepared:` line verbatim; the `summary` object of uc_solve_log_2023.json verbatim; `engine.integers_per_window`, `engine.n_clusters`, `engine.integer_set_size`; whether pass-2 reuse fired; count of non-optimal windows; the commit sha and branch; `git ls-tree` count under the bundle; any hard stop that fired. Do not judge results. An OOM kill (rc -9), a UC hard stop (infeasible window, 'no incumbent') or a P1 with no feasible primal is a SUCCESSFUL report: paste the exception verbatim and the last 20 `UC window` lines; push nothing; stop. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
+
+Lane: UC-4-NEISO arm U4, PRECOMMIT docs/records/neiso/ucmilp/PRECOMMIT-ucmilp4-neiso-u4-2026-10-15.md (Addendum D); engine uc-1.8; NEISO is a CALIBRATED CONTROL ISO — you measure, you never tune.
+====================================================================================================
+SOLVE SHARD ucmilp4-neiso-u4-2024 — NEISO backcast year 2024, ONE year, ONE container (rule 36). Model: Opus. Engine uc-1.8.
+DATA PROFILE: neiso
+
+VERY FIRST COMMAND, before anything else (before uv sync, before any data step): `cd <repo> && python3 scripts/prepare_solve_container.py` with the SYSTEM python3 (the script is stdlib-only). It provisions swap from free disk; anything run before it eats that disk. Report its `before:` and `swap:` lines verbatim.
+
+HARD STOPS — check each; if any fails, STOP and report (do not push, do not repair):
+1. `git rev-parse HEAD` == 282150d5fbd00f1f442722cfa0e5b3946ed0f153  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+2. the `prepare_solve_container.py` run above (already done FIRST)
+2b. MEMORY GATE (UC-DESK ruling): from that `swap:` line read ceiling + swap total AS PRINTED. It passes iff the printed total is ≥ 22.4 GiB (raw ≥ 22.35; the standard 13.36 + 9.0 = 22.36 container passes). Below that, STOP and report the `before:` and `swap:` lines verbatim plus `df -h /` output.
+2c. only now: if `.venv` is absent run `uv sync` once (the only install route; never pip install) and run EVERY later python step as `uv run python3 …`. `uv.lock` must not change.
+3. `uv run python3 scripts/hydrate_data.py --profile neiso` then `uv run python3 scripts/regenerate_clean.py --solve-profile NEISO`; both exit 0. Then `data/clean/uc-params/NEISO/` must exist.
+4. the recipe you will solve: `results/calibration/w0_neiso_span` replayed with unit_commitment_milp=true, uc_commitment_demand_source="da_forecast"; confirm by reading `results/calibration/w0_neiso_span/run_config.json` and `meta.json`.
+5. memory: the runner calls `scripts/lib/solve_container.ensure_solve_container` itself; never pass `--no-container-preflight`, never read `free` — report the `container preflight:` and `memory peak:` log lines
+
+SOLVE (sequential, this year only), detached because the background-tool cap (120 min) is below the budget:
+  eval "$(uv run python3 scripts/prepare_solve_container.py --emit-exports)"
+  nohup setsid uv run python3 scripts/replay_keeper.py results/calibration/w0_neiso_span --years 2024 --out-dir results/calibration/ucmilp4_neiso_u4_2024 --set unit_commitment_milp=true --set 'uc_commitment_demand_source="da_forecast"' --note "ucmilp4-neiso-u4: UC-4 arm U4 at uc-1.8" > /tmp/solve_2024.log 2>&1 &
+(the second --set is single-quoted so replay_keeper receives the JSON string "da_forecast"). Record the solver PID; poll the log (`tail`, `grep -c "UC window"`) until it exits; record the exit code. Kill only by PID, never `pkill -f`. An aborted launch's output is moved aside (`mv results/calibration/ucmilp4_neiso_u4_2024 /tmp/aborted_2024`), never deleted; say so.
+Budget: 720 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
+
+KEEP-ALIVE (UC-DESK standing rule — a container left idle is reclaimed and kills the detached solve; 2019 was lost this way): until the solver exits you must NEVER end a turn with nothing scheduled that wakes you within 90 minutes. Before ending any turn while the solve runs, either re-arm a background watcher that itself returns within ≤ 90 min (e.g. `timeout 5400 bash -c 'while kill -0 <PID>; do sleep 60; done'`), or schedule `send_later` (claude-code-remote) with delay ≤ 90 min. On every wake: check the PID, `grep -c "UC window"`, then re-arm. Never rely on a single watcher whose cap is shorter than the solve.
+
+ENGINE CHECKS (any failure = recipe break: report, push nothing): in results/calibration/ucmilp4_neiso_u4_2024/uc_solve_log_2024.json, `engine.version` == "uc-1.8"; `engine.fields.uc_commitment_demand_source` == "da_forecast"; `engine.commitment_demand.source` == "da_forecast"; `engine.fields.vlr_pocket_commitment` false. Paste `engine.commitment_demand` and `engine.solver_path` verbatim. From run_config*.json paste: unit_commitment_milp, uc_commitment_demand_source, energy_reserve_coopt, gas_price_override.
+
+FILES > 100 MB: before commit, for each such file f: `sha256sum f > f.SHA256`; `split -b 95m -d f f.part-`; `sha256sum f.part-* >> f.SHA256`; `mv f /tmp/`; then add the parts and f.SHA256 with the rest. Report each split with its whole-file sha256.
+
+PUSH THE WHOLE BUNDLE (rule 34 (a)):
+  git checkout -b claude/ucmilp4-neiso-u4-2024
+  printf '\n!results/calibration/ucmilp4_neiso_u4_2024/**\n' >> .gitignore
+  git add .gitignore && git add results/calibration/ucmilp4_neiso_u4_2024
+  git status --short      # MUST show nothing outside .gitignore and results/calibration/ucmilp4_neiso_u4_2024
+  git commit -m "ucmilp4-neiso-u4: NEISO 2024 leg (results/calibration/ucmilp4_neiso_u4_2024)"
+  git push -u origin claude/ucmilp4-neiso-u4-2024     # on HTTP 408/500: git config http.version HTTP/1.1, retry
+`dispatch/2024_P1.parquet`, `hourly/uc_schedule_2024.parquet`, `hourly/uc_uplift_2024.parquet`, `uc_solve_log_2024.json` and `hourly/unit_marginal_2024.parquet` MUST be in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp4_neiso_u4_2024`). UC armed but no uc_schedule written = HARD STOP: report, do not push. A plain `git add` after the .gitignore negation — never `git add -f`, never `git add -A`, never `git add .`.
+
+FORBIDDEN, by name: git add -A / git add . ; any edit under src/ or scripts/ ; dashboard_add_run.py, build_manifest.py, build_status.py, prune_iso_runs.py, promote_keeper.py, anything under frontend/data/ ; opening a PR ; deleting any result (rule 31) ; solving any other year ; editing any uc_* field ; another --set ; a different time limit or preset.
+
+REPORT in your final message (and ALSO send it to the parent session_01FoAQpHpMAwKdf4fmMqoZWT via send_message), in numbers: HEAD sha; the `before:`, `swap:`, `container preflight:` and `memory peak:` lines; LP wall time; for 2024: objective, total generation TWh by class, mean and p99 price per zone, unserved energy MWh, dump MWh, P1 status; the `year 2024 phase timing` line verbatim; the `UC stage prepared:` line verbatim; the `summary` object of uc_solve_log_2024.json verbatim; `engine.integers_per_window`, `engine.n_clusters`, `engine.integer_set_size`; whether pass-2 reuse fired; count of non-optimal windows; the commit sha and branch; `git ls-tree` count under the bundle; any hard stop that fired. Do not judge results. An OOM kill (rc -9), a UC hard stop (infeasible window, 'no incumbent') or a P1 with no feasible primal is a SUCCESSFUL report: paste the exception verbatim and the last 20 `UC window` lines; push nothing; stop. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
+
+Lane: UC-4-NEISO arm U4, PRECOMMIT docs/records/neiso/ucmilp/PRECOMMIT-ucmilp4-neiso-u4-2026-10-15.md (Addendum D); engine uc-1.8; NEISO is a CALIBRATED CONTROL ISO — you measure, you never tune.
+====================================================================================================
+SOLVE SHARD ucmilp4-neiso-u4-2025 — NEISO backcast year 2025, ONE year, ONE container (rule 36). Model: Opus. Engine uc-1.8.
+DATA PROFILE: neiso
+
+VERY FIRST COMMAND, before anything else (before uv sync, before any data step): `cd <repo> && python3 scripts/prepare_solve_container.py` with the SYSTEM python3 (the script is stdlib-only). It provisions swap from free disk; anything run before it eats that disk. Report its `before:` and `swap:` lines verbatim.
+
+HARD STOPS — check each; if any fails, STOP and report (do not push, do not repair):
+1. `git rev-parse HEAD` == 282150d5fbd00f1f442722cfa0e5b3946ed0f153  (never pull, rebase, merge or "sync"; a SHA cannot be raced)
+2. the `prepare_solve_container.py` run above (already done FIRST)
+2b. MEMORY GATE (UC-DESK ruling): from that `swap:` line read ceiling + swap total AS PRINTED. It passes iff the printed total is ≥ 22.4 GiB (raw ≥ 22.35; the standard 13.36 + 9.0 = 22.36 container passes). Below that, STOP and report the `before:` and `swap:` lines verbatim plus `df -h /` output.
+2c. only now: if `.venv` is absent run `uv sync` once (the only install route; never pip install) and run EVERY later python step as `uv run python3 …`. `uv.lock` must not change.
+3. `uv run python3 scripts/hydrate_data.py --profile neiso` then `uv run python3 scripts/regenerate_clean.py --solve-profile NEISO`; both exit 0. Then `data/clean/uc-params/NEISO/` must exist.
+4. the recipe you will solve: `results/calibration/w0_neiso_span` replayed with unit_commitment_milp=true, uc_commitment_demand_source="da_forecast"; confirm by reading `results/calibration/w0_neiso_span/run_config.json` and `meta.json`.
+5. memory: the runner calls `scripts/lib/solve_container.ensure_solve_container` itself; never pass `--no-container-preflight`, never read `free` — report the `container preflight:` and `memory peak:` log lines
+
+SOLVE (sequential, this year only), detached because the background-tool cap (120 min) is below the budget:
+  eval "$(uv run python3 scripts/prepare_solve_container.py --emit-exports)"
+  nohup setsid uv run python3 scripts/replay_keeper.py results/calibration/w0_neiso_span --years 2025 --out-dir results/calibration/ucmilp4_neiso_u4_2025 --set unit_commitment_milp=true --set 'uc_commitment_demand_source="da_forecast"' --note "ucmilp4-neiso-u4: UC-4 arm U4 at uc-1.8" > /tmp/solve_2025.log 2>&1 &
+(the second --set is single-quoted so replay_keeper receives the JSON string "da_forecast"). Record the solver PID; poll the log (`tail`, `grep -c "UC window"`) until it exits; record the exit code. Kill only by PID, never `pkill -f`. An aborted launch's output is moved aside (`mv results/calibration/ucmilp4_neiso_u4_2025 /tmp/aborted_2025`), never deleted; say so.
+Budget: 720 minutes of wall clock for the LP. At the budget with no bundle written: STOP and report; never push a half-written bundle (rule 27).
+
+KEEP-ALIVE (UC-DESK standing rule — a container left idle is reclaimed and kills the detached solve; 2019 was lost this way): until the solver exits you must NEVER end a turn with nothing scheduled that wakes you within 90 minutes. Before ending any turn while the solve runs, either re-arm a background watcher that itself returns within ≤ 90 min (e.g. `timeout 5400 bash -c 'while kill -0 <PID>; do sleep 60; done'`), or schedule `send_later` (claude-code-remote) with delay ≤ 90 min. On every wake: check the PID, `grep -c "UC window"`, then re-arm. Never rely on a single watcher whose cap is shorter than the solve.
+
+ENGINE CHECKS (any failure = recipe break: report, push nothing): in results/calibration/ucmilp4_neiso_u4_2025/uc_solve_log_2025.json, `engine.version` == "uc-1.8"; `engine.fields.uc_commitment_demand_source` == "da_forecast"; `engine.commitment_demand.source` == "da_forecast"; `engine.fields.vlr_pocket_commitment` false. Paste `engine.commitment_demand` and `engine.solver_path` verbatim. From run_config*.json paste: unit_commitment_milp, uc_commitment_demand_source, energy_reserve_coopt, gas_price_override.
+
+FILES > 100 MB: before commit, for each such file f: `sha256sum f > f.SHA256`; `split -b 95m -d f f.part-`; `sha256sum f.part-* >> f.SHA256`; `mv f /tmp/`; then add the parts and f.SHA256 with the rest. Report each split with its whole-file sha256.
+
+PUSH THE WHOLE BUNDLE (rule 34 (a)):
+  git checkout -b claude/ucmilp4-neiso-u4-2025
+  printf '\n!results/calibration/ucmilp4_neiso_u4_2025/**\n' >> .gitignore
+  git add .gitignore && git add results/calibration/ucmilp4_neiso_u4_2025
+  git status --short      # MUST show nothing outside .gitignore and results/calibration/ucmilp4_neiso_u4_2025
+  git commit -m "ucmilp4-neiso-u4: NEISO 2025 leg (results/calibration/ucmilp4_neiso_u4_2025)"
+  git push -u origin claude/ucmilp4-neiso-u4-2025     # on HTTP 408/500: git config http.version HTTP/1.1, retry
+`dispatch/2025_P1.parquet`, `hourly/uc_schedule_2025.parquet`, `hourly/uc_uplift_2025.parquet`, `uc_solve_log_2025.json` and `hourly/unit_marginal_2025.parquet` MUST be in the pushed tree (`git ls-tree -r HEAD -- results/calibration/ucmilp4_neiso_u4_2025`). UC armed but no uc_schedule written = HARD STOP: report, do not push. A plain `git add` after the .gitignore negation — never `git add -f`, never `git add -A`, never `git add .`.
+
+FORBIDDEN, by name: git add -A / git add . ; any edit under src/ or scripts/ ; dashboard_add_run.py, build_manifest.py, build_status.py, prune_iso_runs.py, promote_keeper.py, anything under frontend/data/ ; opening a PR ; deleting any result (rule 31) ; solving any other year ; editing any uc_* field ; another --set ; a different time limit or preset.
+
+REPORT in your final message (and ALSO send it to the parent session_01FoAQpHpMAwKdf4fmMqoZWT via send_message), in numbers: HEAD sha; the `before:`, `swap:`, `container preflight:` and `memory peak:` lines; LP wall time; for 2025: objective, total generation TWh by class, mean and p99 price per zone, unserved energy MWh, dump MWh, P1 status; the `year 2025 phase timing` line verbatim; the `UC stage prepared:` line verbatim; the `summary` object of uc_solve_log_2025.json verbatim; `engine.integers_per_window`, `engine.n_clusters`, `engine.integer_set_size`; whether pass-2 reuse fired; count of non-optimal windows; the commit sha and branch; `git ls-tree` count under the bundle; any hard stop that fired. Do not judge results. An OOM kill (rc -9), a UC hard stop (infeasible window, 'no incumbent') or a P1 with no feasible primal is a SUCCESSFUL report: paste the exception verbatim and the last 20 `UC window` lines; push nothing; stop. A shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE.
+
+Lane: UC-4-NEISO arm U4, PRECOMMIT docs/records/neiso/ucmilp/PRECOMMIT-ucmilp4-neiso-u4-2026-10-15.md (Addendum D); engine uc-1.8; NEISO is a CALIBRATED CONTROL ISO — you measure, you never tune.
+====================================================================================================

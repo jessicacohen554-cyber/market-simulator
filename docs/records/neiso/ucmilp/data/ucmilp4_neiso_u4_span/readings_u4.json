@@ -1,0 +1,208 @@
+{
+ "2020": {
+  "ctl_starts": {
+   "CC_REGULAR": [
+    2600,
+    2190,
+    1.187
+   ],
+   "COAL_BIT": [
+    24,
+    36,
+    0.667
+   ],
+   "COAL_PRB": [
+    2,
+    1,
+    2.0
+   ],
+   "ST_GAS": [
+    301,
+    80,
+    3.763
+   ]
+  },
+  "ctl_M3": null,
+  "arm_starts": {
+   "CC_REGULAR": [
+    2799,
+    2190,
+    1.278
+   ],
+   "COAL_BIT": [
+    24,
+    36,
+    0.667
+   ],
+   "COAL_PRB": [
+    2,
+    1,
+    2.0
+   ],
+   "ST_GAS": [
+    347,
+    80,
+    4.338
+   ]
+  },
+  "arm_M3": null,
+  "summary": {
+   "n_windows": 365,
+   "uc_total_s": 4099.623,
+   "milp_s_sum": 4072.589,
+   "milp_s_mean": 11.1578,
+   "milp_s_p95": 32.1988,
+   "nodes_p50": 1.0,
+   "nodes_p95": 50.600000000000136,
+   "gap_p95": 0.0009994987896318678,
+   "time_limit_hits": 0,
+   "peak_rss_gb": 4.374
+  },
+  "nonopt": 0,
+  "status_set": [
+   "Optimal"
+  ],
+  "cd": {
+   "source": "da_forecast",
+   "basis": "eia930_da_forecast",
+   "qa_dropped_hours": 0,
+   "increment_mean_mw": -170.5,
+   "increment_top100_median_mw": -88.5,
+   "increment_max_mw": 1324.0,
+   "increment_min_mw": -1869.0
+  },
+  "integer": 19,
+  "nclusters": 64,
+  "uplift_usd": 5567653.716613864,
+  "energy_cost_usd": 2297966936.5775013,
+  "uplift_pct": 0.2422860672184475,
+  "unserved_mwh": 0.0,
+  "price_lw": {
+   "ctl": {
+    "all": 24.83250865875814,
+    "low": 20.393370648272573,
+    "mid": 23.82949558146129,
+    "high": 28.272593682251873
+   },
+   "arm": {
+    "all": 24.951977735756355,
+    "low": 21.019268874946683,
+    "mid": 24.28123051403265,
+    "high": 27.834069738625672
+   },
+   "uc15": {
+    "all": 25.063870049935375,
+    "low": 21.016458780591986,
+    "mid": 24.34742655702798,
+    "high": 28.04988072468958
+   }
+  },
+  "unserved_ctl": 0.0,
+  "sched_v_by_class": {
+   "cc": 1461,
+   "st_gas": 3
+  },
+  "uc15_sched_v_by_class": {
+   "cc": 881,
+   "st_gas": 0
+  }
+ },
+ "2021": {
+  "ctl_starts": {
+   "CC_REGULAR": [
+    2469,
+    2474,
+    0.998
+   ],
+   "COAL_BIT": [
+    120,
+    16,
+    7.5
+   ],
+   "ST_GAS": [
+    764,
+    150,
+    5.093
+   ]
+  },
+  "ctl_M3": null,
+  "arm_starts": {
+   "CC_REGULAR": [
+    2296,
+    2474,
+    0.928
+   ],
+   "COAL_BIT": [
+    118,
+    16,
+    7.375
+   ],
+   "ST_GAS": [
+    619,
+    150,
+    4.127
+   ]
+  },
+  "arm_M3": null,
+  "summary": {
+   "n_windows": 365,
+   "uc_total_s": 2993.553,
+   "milp_s_sum": 2967.519,
+   "milp_s_mean": 8.1302,
+   "milp_s_p95": 19.3835,
+   "nodes_p50": 1.0,
+   "nodes_p95": 5.0,
+   "gap_p95": 0.0009982512614451014,
+   "time_limit_hits": 0,
+   "peak_rss_gb": 4.458
+  },
+  "nonopt": 0,
+  "status_set": [
+   "Optimal"
+  ],
+  "cd": {
+   "source": "da_forecast",
+   "basis": "eia930_da_forecast",
+   "qa_dropped_hours": 0,
+   "increment_mean_mw": -183.1,
+   "increment_top100_median_mw": 76.0,
+   "increment_max_mw": 1652.0,
+   "increment_min_mw": -1582.0
+  },
+  "integer": 22,
+  "nclusters": 68,
+  "uplift_usd": 6288495.877835825,
+  "energy_cost_usd": 4919225443.343065,
+  "uplift_pct": 0.12783508197099855,
+  "unserved_mwh": 0.0,
+  "price_lw": {
+   "ctl": {
+    "all": 49.12837591637795,
+    "low": 39.64105400669799,
+    "mid": 47.750818322547914,
+    "high": 56.208746636477656
+   },
+   "arm": {
+    "all": 49.91564747042273,
+    "low": 41.12289424109162,
+    "mid": 48.68731212194307,
+    "high": 56.44003572140947
+   },
+   "uc15": {
+    "all": 49.84706315985352,
+    "low": 40.84463987893537,
+    "mid": 48.57205116820933,
+    "high": 56.5405548956307
+   }
+  },
+  "unserved_ctl": 0.0,
+  "sched_v_by_class": {
+   "cc": 1987,
+   "st_gas": 12
+  },
+  "uc15_sched_v_by_class": {
+   "cc": 1213,
+   "st_gas": 9
+  }
+ }
+}
