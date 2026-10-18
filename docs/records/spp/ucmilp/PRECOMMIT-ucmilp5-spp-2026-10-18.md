@@ -234,3 +234,10 @@ The RUC on the measured ID-RUC basis can see at most 0–62 % of the shortfall (
 unit only if avoiding the reserve demand-curve penalty is worth the unit's start + no-load + minimum-load cost over its min-up time (coal
 median `ut_h` 60 h). Revised expectation for the five unsolved years: **B1 and B2 not met** (2020 the only plausible exception). This
 is a reading of the measured basis and the commitment-cost objective, not a reason to change either.
+
+## Addendum C (2026-10-18, after all legs) — launch record, arm U5
+
+U5 legs pinned `c2fe7670`, one attempt each, none reclaimed, every gate passed, digest reuse matched 6/6:
+2024 `session_017tpwd9fV4StmzxJcUBMkBu` `efb35e9d` · 2023 `session_01GNqBRVSNwWRaZQ1ukxnA3m` `593e4bc0` · 2025 `session_01EGuVLtbnt6iYBBjvnrqb16` `b2e94988` ·
+2019 `session_01QsjMStjBgpYZXynLPNAEsu` `f9399a0d` · 2020 `session_01XhoXwoJ3Tcs2KsKcrWpo4M` `33822e75` · 2022 `session_01CPJEACLcrWHXyPddKDHeLe` `5a08ee13`.
+Readings and verdicts: `RESULT-ucmilp5-spp-2026-10-18.md`.
