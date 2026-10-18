@@ -21,6 +21,7 @@ from market_sim.data.commitment_demand import (
 from scripts.data import derive_load_forecast_error as dlfe
 from scripts.lib.clean_io import read_clean
 from tests.helpers.base import CleanDirTestCase
+from tests.helpers.stale_snapshot import disable_stale_snapshot_repair
 
 SEASON, HOD = model_hour_season_hod()
 
@@ -37,6 +38,11 @@ def _frame(over: float) -> pd.DataFrame:
 
 
 class TestDeriveLoadForecastError(CleanDirTestCase):
+    def setUp(self) -> None:
+        super().setUp()
+        # Synthetic SWPP frames; the stale-snapshot repair is not under test.
+        disable_stale_snapshot_repair(self)
+
     def _patch(self, frames: dict[int, pd.DataFrame]) -> None:
         orig = eia930._eia_hourly_frame_filled
         eia930._eia_hourly_frame_filled = lambda ba, y: frames.get(y)

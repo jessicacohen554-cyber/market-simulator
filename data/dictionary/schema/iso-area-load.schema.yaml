@@ -1,0 +1,50 @@
+# Canonical schema: iso-area-load (an ISO's OWN published hourly metered load
+# by load area / legacy control area).
+#
+# Intake lane UC-SPP-DATAFIX (owner ruling R22, UC-DESK r20). The measured
+# replacement for EIA-930's frozen-snapshot hours in the SPP demand leg and
+# zonal weights (docs/records/spp/FINDING-spp-south-demand-flatruns-2026-10-18.md
+# §3, §4).
+#
+# Sources (per-ISO modules under scripts/lib/iso_area_load/):
+#   SPP  data/raw/spp-hourly-load: HOURLY_LOAD-YYYYMM.csv monthly roll-ups
+#        (wide: MarketHour + the 17 legacy control-area tokens CSWS ... WR, MW),
+#        2019-2024 as members of SPP's yearly hourly-load-<year>.zip, 2025 as
+#        extracted monthlies. MarketHour is the UTC interval END.
+#
+# Grain: data/clean/iso-area-load/<ISO>/iso-area-load_<year>.parquet, one
+# partition per ISO-local calendar year (the year of the interval START on the
+# ISO's market clock). Rows whose source value is blank are dropped.
+datatype: iso-area-load
+schema_version: 1
+title: ISO-published hourly load by area
+description: >-
+  Hourly metered load (MW) by load area as the ISO itself publishes it, one
+  row per (area, hour), stamped at the UTC interval end.
+
+key_columns: [iso, area, interval_end_utc]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: Model ISO label (SPP, ...).
+  - name: area
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Load area as the source labels it. SPP: the legacy control-area token,
+      identical to the EIA-930 SWPP sub-BA code (CSWS, EDE, GRDA, ...).
+  - name: interval_end_utc
+    dtype: datetime64[ns, UTC]
+    unit: utc_timestamp
+    nullable: false
+    description: End of the metered hour (SPP MarketHour).
+  - name: load_mw
+    dtype: float64
+    unit: mw
+    nullable: false
+    description: Hourly metered load for the area.

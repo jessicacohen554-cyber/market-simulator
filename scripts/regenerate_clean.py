@@ -79,6 +79,12 @@ DATATYPES: tuple[str, ...] = (
     # UC-1-FIX-7 (2026-10-15): the measured day-ahead load-forecast error
     # profile (forecast-mode UC commitment demand).
     "load-forecast-error",
+    # UC-SPP-DATAFIX (owner rulings R22 / R23, 2026-10-18): the measured
+    # replacements the SPP EIA-930 stale-snapshot repair serves in frozen hours
+    # (data/stale_snapshot.py): SPP HOURLY_LOAD, both-sides seam legs, GenMix.
+    "iso-area-load",
+    "counterparty-interchange",
+    "iso-genmix",
     # UC-MISO-VLR (2026-10-15): VLR operating-guide unit groups by load pocket
     # (MTEP15, PUCT 46416) for the UC stage's pocket commitment rows.
     "vlr-pocket-groups",

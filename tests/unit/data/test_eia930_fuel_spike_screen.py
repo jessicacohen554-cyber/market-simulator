@@ -49,6 +49,7 @@ from market_sim.data.eia930.frames import (
     _pool_hourly_frame,
 )
 from tests.helpers.base import requires_raw
+from tests.helpers.stale_snapshot import disable_stale_snapshot_repair
 
 _YEAR = 2023
 _SPIKE_HOUR = 4000
@@ -125,6 +126,9 @@ class _SyntheticExtract(unittest.TestCase):
     iso = "SPP"
 
     def setUp(self) -> None:
+        # Synthetic extracts repeat by construction; the stale-snapshot repair
+        # (its own tests) would otherwise rewrite them on the input path.
+        disable_stale_snapshot_repair(self)
         self._tmp = tempfile.TemporaryDirectory()
         self._dir = Path(self._tmp.name)
         self._patch = mock.patch.object(eia_loader, "EIA_HOURLY_DIR", self._dir)
@@ -630,10 +634,18 @@ class TestLivePins(unittest.TestCase):
 
     def test_spp_2023_wind_on_both_paths(self):
         bench = actuals.load_eia_hourly_benchmark("SPP", 2023)
+        repaired = actuals.load_eia_hourly_renewable_gen("SPP", 2023)
+        # The spike pin is a property of the frame screen, so it is read with
+        # the stale-snapshot repair (R23, its own tests) off; with it on, the
+        # input path differs from the benchmark only in the frozen hours.
+        disable_stale_snapshot_repair(self)
         gen = actuals.load_eia_hourly_renewable_gen("SPP", 2023)
         self.assertAlmostEqual(float(bench["wind"].sum()) / 1e6, 103.0488, places=4)
         self.assertAlmostEqual(float(gen["wind"].sum()) / 1e6, 103.0488, places=4)
         self.assertLess(float(bench["wind"].max()), 30_000.0)
+        moved = repaired["wind"] != gen["wind"]
+        self.assertTrue(moved.any())
+        self.assertLessEqual(int(moved.sum()), 33)  # NG: WND frozen hours, 2023
 
     def test_nyiso_2024_other(self):
         bench = actuals.load_eia_hourly_benchmark("NYISO", 2024)

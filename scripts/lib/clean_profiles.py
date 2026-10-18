@@ -205,6 +205,31 @@ SOLVE_SOURCES: tuple[CleanSource, ...] = (
         only_for=("SPP",),
         raw_inputs=("data/raw/load-forecast-vintages",),
     ),
+    # data/stale_snapshot.py — SPP's EIA-930 stale-snapshot repair (owner
+    # rulings R22 / R23, lane UC-SPP-DATAFIX): every SPP backcast demand,
+    # zonal-weight, interchange and wind/solar read serves its frozen hours
+    # from these. No EIA-930 fallback: a missing partition raises.
+    CleanSource(
+        "iso-area-load",
+        "market_sim.data.stale_snapshot",
+        partitions="scripts.lib.iso_area_load:load_registry",
+        only_for=("SPP",),
+        raw_inputs=("data/raw/spp-hourly-load",),
+    ),
+    CleanSource(
+        "counterparty-interchange",
+        "market_sim.data.stale_snapshot",
+        partitions="scripts.lib.counterparty_interchange:load_registry",
+        only_for=("SPP",),
+        raw_inputs=("data/raw/eia-930-interchange",),
+    ),
+    CleanSource(
+        "iso-genmix",
+        "market_sim.data.stale_snapshot",
+        partitions="scripts.lib.iso_genmix:load_registry",
+        only_for=("SPP",),
+        raw_inputs=("data/raw/spp-genmix",),
+    ),
     # data/vlr_pocket_groups.py — the UC stage's VLR pocket commitment rows
     # (read only when vlr_pocket_commitment is armed; no raw fallback, it
     # fails loudly).

@@ -1,0 +1,442 @@
+[
+ {
+  "year": 2019,
+  "masked_h": 828,
+  "zones": {
+   "SPP-North": {
+    "energy_twh": [
+     139.05200362357903,
+     139.09780428699273
+    ],
+    "delta_gwh": 45.80066341370344,
+    "peak_mw": [
+     26384.715331072635,
+     26384.715331072635
+    ],
+    "masked_mean_abs_delta_mw": 1286.4205918718371,
+    "masked_max_abs_delta_mw": 6504.401357788156,
+    "load_leg_delta_gwh": 277.8368128682971,
+    "finding_s4_delta_gwh": 278,
+    "before_vs_keeper_max_abs_mw": 0.0
+   },
+   "SPP-South": {
+    "energy_twh": [
+     132.693797376421,
+     133.00368899700726
+    ],
+    "delta_gwh": 309.8916205862611,
+    "peak_mw": [
+     25487.148284532082,
+     25487.148284532082
+    ],
+    "masked_mean_abs_delta_mw": 1185.738427831965,
+    "masked_max_abs_delta_mw": 6867.903642211846,
+    "load_leg_delta_gwh": 519.5544711316824,
+    "finding_s4_delta_gwh": 520,
+    "before_vs_keeper_max_abs_mw": 0.0
+   }
+  },
+  "interchange_masked_mean_mw": [
+   138.8695652173913,
+   71.1328502415459
+  ],
+  "interchange_residual_h": {
+   "SPC": 336
+  },
+  "interchange_stale_kept_h": 1,
+  "wind_stale_kept_h": 8,
+  "solar_stale_kept_h": 8,
+  "wind": {
+   "masked_h": 828,
+   "energy_twh": [
+    77.033085,
+    74.5304965919697
+   ],
+   "delta_gwh": -2502.5884080303013
+  },
+  "solar": {
+   "masked_h": 1186,
+   "energy_twh": [
+    0.534771,
+    0.49137218843434344
+   ],
+   "delta_gwh": -43.398811565656565
+  }
+ },
+ {
+  "year": 2020,
+  "masked_h": 47,
+  "zones": {
+   "SPP-North": {
+    "energy_twh": [
+     135.42052967799376,
+     135.45994058297134
+    ],
+    "delta_gwh": 39.410904977589844,
+    "peak_mw": [
+     25953.952597805837,
+     25953.952597805837
+    ],
+    "masked_mean_abs_delta_mw": 1143.7585030639639,
+    "masked_max_abs_delta_mw": 2681.9710082787296,
+    "load_leg_delta_gwh": 44.550558426827195,
+    "finding_s4_delta_gwh": 45,
+    "before_vs_keeper_max_abs_mw": 0.0
+   },
+   "SPP-South": {
+    "energy_twh": [
+     127.11860732200626,
+     127.17248497202864
+    ],
+    "delta_gwh": 53.877650022387506,
+    "peak_mw": [
+     24034.958810857388,
+     24034.958810857388
+    ],
+    "masked_mean_abs_delta_mw": 1279.6882399006727,
+    "masked_max_abs_delta_mw": 3432.016991721275,
+    "load_leg_delta_gwh": 58.94849657316506,
+    "finding_s4_delta_gwh": 59,
+    "before_vs_keeper_max_abs_mw": 0.0
+   }
+  },
+  "interchange_masked_mean_mw": [
+   104.76595744680851,
+   -47.829787234042556
+  ],
+  "interchange_residual_h": {},
+  "interchange_stale_kept_h": 0,
+  "wind_stale_kept_h": 0,
+  "solar_stale_kept_h": 0,
+  "wind": {
+   "masked_h": 46,
+   "energy_twh": [
+    82.029861,
+    81.95610245833333
+   ],
+   "delta_gwh": -73.75854166667163
+  },
+  "solar": {
+   "masked_h": 98,
+   "energy_twh": [
+    0.561739,
+    0.5643700583333333
+   ],
+   "delta_gwh": 2.631058333333349
+  }
+ },
+ {
+  "year": 2021,
+  "masked_h": 142,
+  "zones": {
+   "SPP-North": {
+    "energy_twh": [
+     140.88981001805865,
+     141.3207530320729
+    ],
+    "delta_gwh": 430.94301401424406,
+    "peak_mw": [
+     27455.20865290069,
+     27455.20865290069
+    ],
+    "masked_mean_abs_delta_mw": 4071.4115114525594,
+    "masked_max_abs_delta_mw": 11193.299099569995,
+    "load_leg_delta_gwh": 439.9471425252557,
+    "finding_s4_delta_gwh": 440,
+    "before_vs_keeper_max_abs_mw": 0.0
+   },
+   "SPP-South": {
+    "energy_twh": [
+     128.76162398194134,
+     129.02151237292708
+    ],
+    "delta_gwh": 259.8883909857273,
+    "peak_mw": [
+     24685.58975029153,
+     24685.58975029153
+    ],
+    "masked_mean_abs_delta_mw": 3149.560002776907,
+    "masked_max_abs_delta_mw": 9143.112576798485,
+    "load_leg_delta_gwh": 268.4712624747455,
+    "finding_s4_delta_gwh": 269,
+    "before_vs_keeper_max_abs_mw": 0.0
+   }
+  },
+  "interchange_masked_mean_mw": [
+   41.38028169014085,
+   627.7042253521126
+  ],
+  "interchange_residual_h": {},
+  "interchange_stale_kept_h": 0,
+  "wind_stale_kept_h": 0,
+  "solar_stale_kept_h": 0,
+  "wind": {
+   "masked_h": 142,
+   "energy_twh": [
+    92.858482,
+    93.47125223030304
+   ],
+   "delta_gwh": 612.7702303030342
+  },
+  "solar": {
+   "masked_h": 279,
+   "energy_twh": [
+    0.535438,
+    0.5356312833333333
+   ],
+   "delta_gwh": 0.19328333333332556
+  }
+ },
+ {
+  "year": 2022,
+  "masked_h": 9,
+  "zones": {
+   "SPP-North": {
+    "energy_twh": [
+     149.19914373045324,
+     149.20212176243385
+    ],
+    "delta_gwh": 2.9780319806039333,
+    "peak_mw": [
+     27584.01810253435,
+     27584.01810253435
+    ],
+    "masked_mean_abs_delta_mw": 531.8453971677069,
+    "masked_max_abs_delta_mw": 1164.4432531003004,
+    "load_leg_delta_gwh": 2.011913112461567,
+    "finding_s4_delta_gwh": 2,
+    "before_vs_keeper_max_abs_mw": 0.0
+   },
+   "SPP-South": {
+    "energy_twh": [
+     138.84134526954674,
+     138.84526454756616
+    ],
+    "delta_gwh": 3.9192780193984507,
+    "peak_mw": [
+     25998.687882522503,
+     25998.687882522503
+    ],
+    "masked_mean_abs_delta_mw": 743.6580513831959,
+    "masked_max_abs_delta_mw": 1244.3599557741618,
+    "load_leg_delta_gwh": 3.0048968875408173,
+    "finding_s4_delta_gwh": 3,
+    "before_vs_keeper_max_abs_mw": 0.0
+   }
+  },
+  "interchange_masked_mean_mw": [
+   907.8888888888889,
+   1053.4444444444443
+  ],
+  "interchange_residual_h": {},
+  "interchange_stale_kept_h": 0,
+  "wind_stale_kept_h": 0,
+  "solar_stale_kept_h": 0,
+  "wind": {
+   "masked_h": 0,
+   "energy_twh": [
+    107.435271,
+    107.435271
+   ],
+   "delta_gwh": 0.0
+  },
+  "solar": {
+   "masked_h": 45,
+   "energy_twh": [
+    0.536366,
+    0.5363841146681096
+   ],
+   "delta_gwh": 0.018114668109687045
+  }
+ },
+ {
+  "year": 2023,
+  "masked_h": 36,
+  "zones": {
+   "SPP-North": {
+    "energy_twh": [
+     146.4724640632348,
+     146.4868592122625
+    ],
+    "delta_gwh": 14.39514902767539,
+    "peak_mw": [
+     28551.677647144472,
+     28551.677647144472
+    ],
+    "masked_mean_abs_delta_mw": 1471.718498279427,
+    "masked_max_abs_delta_mw": 4047.3646123579056,
+    "load_leg_delta_gwh": 9.409524492859841,
+    "finding_s4_delta_gwh": 9,
+    "before_vs_keeper_max_abs_mw": 0.0
+   },
+   "SPP-South": {
+    "energy_twh": [
+     138.0457844367652,
+     138.06120341773752
+    ],
+    "delta_gwh": 15.418980972319842,
+    "peak_mw": [
+     26754.510722049235,
+     26754.510722049235
+    ],
+    "masked_mean_abs_delta_mw": 1433.212016629769,
+    "masked_max_abs_delta_mw": 4739.455387642098,
+    "load_leg_delta_gwh": 10.51410550713539,
+    "finding_s4_delta_gwh": 11,
+    "before_vs_keeper_max_abs_mw": 0.0
+   }
+  },
+  "interchange_masked_mean_mw": [
+   307.1666666666667,
+   800.2222222222222
+  ],
+  "interchange_residual_h": {},
+  "interchange_stale_kept_h": 0,
+  "wind_stale_kept_h": 0,
+  "solar_stale_kept_h": 0,
+  "wind": {
+   "masked_h": 33,
+   "energy_twh": [
+    103.0487595,
+    103.11276576666667
+   ],
+   "delta_gwh": 64.00626666666567
+  },
+  "solar": {
+   "masked_h": 92,
+   "energy_twh": [
+    0.589348,
+    0.5872897285714286
+   ],
+   "delta_gwh": -2.058271428571432
+  }
+ },
+ {
+  "year": 2024,
+  "masked_h": 510,
+  "zones": {
+   "SPP-North": {
+    "energy_twh": [
+     149.19897164752854,
+     149.35693676880152
+    ],
+    "delta_gwh": 157.96512127298118,
+    "peak_mw": [
+     27843.918235849582,
+     27843.918235849582
+    ],
+    "masked_mean_abs_delta_mw": 990.999710562798,
+    "masked_max_abs_delta_mw": 3588.425520245484,
+    "load_leg_delta_gwh": 158.3715186689496,
+    "finding_s4_delta_gwh": 158,
+    "before_vs_keeper_max_abs_mw": 0.0
+   },
+   "SPP-South": {
+    "energy_twh": [
+     141.68780885247148,
+     141.7650940081985
+    ],
+    "delta_gwh": 77.28515572702885,
+    "peak_mw": [
+     26322.821660947666,
+     26322.821660947666
+    ],
+    "masked_mean_abs_delta_mw": 1124.6006987364847,
+    "masked_max_abs_delta_mw": 4953.619265613828,
+    "load_leg_delta_gwh": 76.53125833106041,
+    "finding_s4_delta_gwh": 77,
+    "before_vs_keeper_max_abs_mw": 0.0
+   }
+  },
+  "interchange_masked_mean_mw": [
+   265.121568627451,
+   493.52156862745096
+  ],
+  "interchange_residual_h": {
+   "SPC": 24
+  },
+  "interchange_stale_kept_h": 0,
+  "wind_stale_kept_h": 0,
+  "solar_stale_kept_h": 0,
+  "wind": {
+   "masked_h": 261,
+   "energy_twh": [
+    109.316529,
+    109.50790588833334
+   ],
+   "delta_gwh": 191.37688833333553
+  },
+  "solar": {
+   "masked_h": 613,
+   "energy_twh": [
+    1.198645,
+    1.1979931987373738
+   ],
+   "delta_gwh": -0.6518012626261916
+  }
+ },
+ {
+  "year": 2025,
+  "masked_h": 698,
+  "zones": {
+   "SPP-North": {
+    "energy_twh": [
+     153.93519543869337,
+     153.69610882174842
+    ],
+    "delta_gwh": -239.0866169449389,
+    "peak_mw": [
+     29509.200267717704,
+     29509.200267717704
+    ],
+    "masked_mean_abs_delta_mw": 1549.2368586576247,
+    "masked_max_abs_delta_mw": 7929.556288865377,
+    "load_leg_delta_gwh": -175.84476072022318,
+    "finding_s4_delta_gwh": -176,
+    "before_vs_keeper_max_abs_mw": 0.0
+   },
+   "SPP-South": {
+    "energy_twh": [
+     147.90500856130663,
+     147.52201583525158
+    ],
+    "delta_gwh": -382.99272605505587,
+    "peak_mw": [
+     27837.47916511229,
+     27837.47916511229
+    ],
+    "masked_mean_abs_delta_mw": 1925.4113837705104,
+    "masked_max_abs_delta_mw": 7180.915522523201,
+    "load_leg_delta_gwh": -318.6045822797716,
+    "finding_s4_delta_gwh": -319,
+    "before_vs_keeper_max_abs_mw": 0.0
+   }
+  },
+  "interchange_masked_mean_mw": [
+   72.48567335243553,
+   277.1948424068768
+  ],
+  "interchange_residual_h": {
+   "SPC": 179
+  },
+  "interchange_stale_kept_h": 0,
+  "wind_stale_kept_h": 0,
+  "solar_stale_kept_h": 0,
+  "wind": {
+   "masked_h": 671,
+   "energy_twh": [
+    110.457436,
+    110.624284625
+   ],
+   "delta_gwh": 166.848625
+  },
+  "solar": {
+   "masked_h": 1264,
+   "energy_twh": [
+    2.347745,
+    2.098196820800866
+   ],
+   "delta_gwh": -249.548179199134
+  }
+ }
+]

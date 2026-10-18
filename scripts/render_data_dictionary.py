@@ -109,6 +109,9 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "uc-params",
     "load-forecast-error",
     "load-forecast-vintages",
+    "iso-area-load",
+    "counterparty-interchange",
+    "iso-genmix",
     "vlr-pocket-groups",
     "winter-fuel-inventory",
     "rggi-co2-budgets",
@@ -765,6 +768,39 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "prevailing stamp; past rows keep SPP's averaged actual. Read by "
             "`market_sim.data.load_forecast_vintages` (the forecast at a "
             "stated lead); not yet wired into a solve."
+        ),
+    },
+    "iso-area-load": {
+        "summary": "An ISO's own published hourly metered load by area (SPP HOURLY_LOAD).",
+        "reconciles": (
+            "SPP portal `hourly-load` WIDE monthlies (`MarketHour` = UTC "
+            "interval end, one MW column per legacy control area = the 17 "
+            "EIA-930 SWPP sub-BA tokens), read from the yearly zips where one "
+            "exists, else the extracted monthlies. Read by "
+            "`market_sim.data.stale_snapshot` in EIA-930 stale-snapshot hours "
+            "(owner ruling R22)."
+        ),
+    },
+    "counterparty-interchange": {
+        "summary": (
+            "Every leg of an ISO BA's hourly interchange, as the BA and as "
+            "each counterparty report it, export-positive from the BA."
+        ),
+        "reconciles": (
+            "EIA-930 interchange rows with DIBA = SWPP (counterparty side, "
+            "negated) and SWPP's own legs (local hour end localized per DIBA). "
+            "SaskPower (SPC) reports nothing to EIA-930. Read by "
+            "`market_sim.data.stale_snapshot` in stale-snapshot hours (R22)."
+        ),
+    },
+    "iso-genmix": {
+        "summary": "An ISO's own generation by fuel, hourly mean of 5-minute values (SPP GenMix).",
+        "reconciles": (
+            "SPP `generation-mix-historical` `GenMix_<year>.csv` (Market + Self "
+            "summed per fuel family; interval-END UTC stamps, measured), "
+            "concatenated at 5-minute grain before the hourly mean. Read by "
+            "`market_sim.data.stale_snapshot` for frozen `NG: WND` / `NG: SUN` "
+            "hours (owner ruling R23)."
         ),
     },
     "energy-offers": {

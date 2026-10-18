@@ -1,0 +1,61 @@
+# Canonical schema: iso-genmix (an ISO's OWN published generation by fuel,
+# aggregated to the hour).
+#
+# Intake lane UC-SPP-DATAFIX (owner ruling R23, UC-DESK r20). The measured
+# replacement for EIA-930's frozen NG: WND / NG: SUN hours in SPP's renewable
+# profile (docs/records/spp/FINDING-spp-south-demand-flatruns-2026-10-18.md §5).
+#
+# Sources (per-ISO modules under scripts/lib/iso_genmix/):
+#   SPP  data/raw/spp-genmix/GenMix_<year>.csv: SPP's 5-minute generation mix,
+#        MW by fuel split Market / Self (summed here), stamped at the UTC
+#        interval END in every year 2019-2025 (measured: hour-of-interval-end
+#        at lag 0 matches EIA-930 NG: WND to a median 29-71 MW, against
+#        >= 346 MW at +/- 1 h). The SPP/ sample-folder files (GenMix_2024_SPP,
+#        GenMixYTD_SPP) are superseded and not read.
+#
+# Grain: data/clean/iso-genmix/<ISO>/iso-genmix_<year>.parquet, one partition
+# per ISO-local calendar year (interval START). generation_mw is the mean of
+# the hour's 5-minute values; n_intervals counts the values averaged.
+datatype: iso-genmix
+schema_version: 1
+title: ISO-published hourly generation by fuel
+description: >-
+  Hourly mean generation (MW) by fuel from the ISO's own generation-mix
+  publication, one row per (area, fuel, hour).
+
+key_columns: [iso, area, fuel, interval_end_utc]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: Model ISO label (SPP, ...).
+  - name: area
+    dtype: string
+    unit: none
+    nullable: false
+    description: Publishing footprint (SPP -> "SPP", the Eastern BAA).
+  - name: fuel
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Fuel family (coal, oil, hydro, gas, nuclear, solar, wind, waste,
+      waste_heat, other), market + self-committed summed.
+  - name: interval_end_utc
+    dtype: datetime64[ns, UTC]
+    unit: utc_timestamp
+    nullable: false
+    description: End of the hour.
+  - name: generation_mw
+    dtype: float64
+    unit: mw
+    nullable: false
+    description: Mean of the hour's 5-minute MW values.
+  - name: n_intervals
+    dtype: int64
+    unit: count
+    nullable: false
+    description: Number of 5-minute values averaged (12 for a complete hour).
