@@ -170,3 +170,40 @@ A leg reclaimed by the container or blocked at the memory gate is a coverage sto
 
 No `--set` beyond §1. No `uc_*` value other than the declared defaults and §1.2. No control solve. No re-solve of a U4 leg.
 `uc_ruc_load_basis="actual"` is not run (R14 chose the measured basis). No U5 leg without reuse.
+
+## Addendum A (2026-10-18, before any U5 shard) — U4b launch record, trigger years, reuse transport, zero-LP expectation
+
+UC-DESK (03:09Z) accepted §§1–5 as written, including the kill scope, and asked that every U4b − U4 table say **basis + FIX-9**.
+
+**U4b legs** (pin `7b13f521`; one attempt each, none reclaimed, every gate passed; all 365/365 windows Optimal, 0 time-limit hits):
+
+| year | session | leg commit | wall s | cgroup peak GiB | trigger h / days | U4b unserved MWh |
+|---|---|---|---|---|---|---|
+| 2019 | `session_014oueodLWfePRw4LXvcTAGV` | `9d02bc67` | 3,706 | 8.46 | 10 / 5 | 137 |
+| 2020 | `session_01SC7d9mKVdgnAFca3riEvNU` | `30503285` | 2,895 | 7.97 | 6 / 4 | 0 |
+| 2021 | `session_01B7Q3ztAtDyQ4SUC83Xe1UH` | `7785a5fd` | 2,092 | 8.75 | **0 / 0** | 0 |
+| 2022 | `session_01QbueK2mGJu4XR1VEdi6oN8` | `f2192a33` | 2,782 | 8.21 | 13 / 5 | 761 |
+| 2023 | `session_01YUyQrKV8NTWJjUaQxCKVmL` | `e42a97b3` | 2,387 | 8.19 | 49 / 15 | 2,656 |
+| 2024 | `session_01NMArKz58zYF1XY4Df3etfy` | `22481a70` | 5,025 | 7.91 | 20 / 6 | 0 |
+| 2025 | `session_014xZVNTVCnwBrCpthLh9iLk` | `491d3bb2` | 2,612 | 7.92 | 17 / 5 | 3,623 |
+
+- **Kill 3 fires on U4b** (unserved > 500 MWh: 2022, 2023, 2025). Per §5 that records U4b R and does not stop U5.
+- **Identity adoption (§3):** 2021 only. Committed sidecars: max P1 slack 0.0, max `reserve_family` shortfall 0.0 (≤ 1e-7). U5 2021 ≡ U4b 2021.
+- **U5 legs:** 2019, 2020, 2022, 2023, 2024, 2025.
+- **Reuse transport (§1.3):** `docs/records/spp/ucmilp/data/ucmilp5_spp_u4b_span/{uc_solve_log_<y>.json, hourly/uc_schedule_<y>.parquet}`,
+  each byte-identical to its leg branch blob (`git hash-object` = `git rev-parse <leg>:<path>`), `input_digest_opaque_types = []` every year.
+
+**Zero-LP expectation, written before any U5 number (not a bar).** At U4b's trigger hours: need = slack + largest family shortfall;
+DA and ID-RUC errors = MTLF − actual (`ba_forecast_error_mw`, `day_ahead` / `intraday`); "ID covers" = hours where the ID-RUC forecast
+is above the DA forecast by at least the need.
+
+| year | trigger h / days | max need MW | DA err mean MW | ID err mean MW | ID covers |
+|---|---|---|---|---|---|
+| 2019 | 10 / 5 | 637 | −1,768 | −752 | 8 of 10 |
+| 2020 | 6 / 4 | 385 | −1,298 | −187 | 6 of 6 |
+| 2022 | 13 / 5 | 531 | −1,025 | −634 | 12 of 13 |
+| 2023 | 49 / 15 | 969 | −2,245 | −1,072 | 45 of 49 |
+| 2024 | 20 / 6 | 1,305 | −2,039 | −992 | 17 of 20 |
+| 2025 | 17 / 5 | 1,522 | −2,905 | −2,428 | **7 of 17** |
+
+Expected: B1/B2 met in 2019–2024; 2025 is the year the ID-RUC forecast itself misses, so the RUC may not halve it. The bars are unchanged.
