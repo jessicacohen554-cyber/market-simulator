@@ -207,3 +207,30 @@ is above the DA forecast by at least the need.
 | 2025 | 17 / 5 | 1,522 | −2,905 | −2,428 | **7 of 17** |
 
 Expected: B1/B2 met in 2019–2024; 2025 is the year the ID-RUC forecast itself misses, so the RUC may not halve it. The bars are unchanged.
+
+## Addendum B (2026-10-18 05:20Z, after U5 2024 and before any other U5 leg) — the Addendum A expectation was mis-specified
+
+**Disclosure:** this is written after the U5 2024 leg reported, and before U5 2019, 2020, 2022, 2023 and 2025 were launched. Bars, kills
+and verdict rules are unchanged; only the zero-LP *expectation* is corrected.
+
+**U5 2024 (leg `efb35e9d`):** DA schedule reused by digest (`25fb53ab…`). RUC: 20 trigger hours, 52 windows, all Optimal, 151 unit-hours
+added (CC 24, coal 61, ST_GAS 66), 9.35 GWh added floor, 0 MWh outside the swept hours. **None of the added unit-hours falls in a trigger
+hour**, and the P1b reserve shortfall equals U4b's in every family-hour (max |Δ| 0.0 MW).
+
+**Why Addendum A's "ID covers" column was the wrong test.** P1a at actual load is short by `need`, so the DA schedule already serves
+`actual − need`. A RUC window on the ID-RUC basis is short only where the ID-RUC demand exceeds that, i.e. ID err > −need. Addendum A
+compared the ID error with the DA error instead. The right count, from the same committed sidecars and loader:
+
+| year | trigger h | RUC-visible h (ID err > −need) | visible need MW·h / total need MW·h |
+|---|---|---|---|
+| 2019 | 10 | 1 | 285 / 2,609 |
+| 2020 | 6 | 3 | 815 / 1,309 |
+| 2022 | 13 | 0 | 0 / 1,500 |
+| 2023 | 49 | 8 | 2,764 / 22,105 |
+| 2024 | 20 | 5 | 1,482 / 9,618 |
+| 2025 | 17 | 4 | 658 / 7,801 |
+
+The RUC on the measured ID-RUC basis can see at most 0–62 % of the shortfall (≤ 15 % outside 2020). Where it can see it, it adds a slow
+unit only if avoiding the reserve demand-curve penalty is worth the unit's start + no-load + minimum-load cost over its min-up time (coal
+median `ut_h` 60 h). Revised expectation for the five unsolved years: **B1 and B2 not met** (2020 the only plausible exception). This
+is a reading of the measured basis and the commitment-cost objective, not a reason to change either.
