@@ -247,9 +247,54 @@ def test_ruc_refusals(kw, match):
 
 def test_basis_and_reuse_refusals():
     with pytest.raises(ValueError, match="must be one of"):
+        _cfg(uc_reliability_commitment=True, uc_ruc_load_basis="forecast_of_choice")
+    # The measured intraday basis is SPP's MTLF vintages: other ISOs and
+    # forecast mode are refused at construction (UC-DA-BASIS).
+    with pytest.raises(ValueError, match="backcast only, ISOs"):
         _cfg(uc_reliability_commitment=True, uc_ruc_load_basis="iso_intraday_forecast")
+    with pytest.raises(ValueError, match="backcast only, ISOs"):
+        _cfg(
+            iso="SPP",
+            mode="forecast",
+            uc_reliability_commitment=True,
+            uc_ruc_load_basis="iso_intraday_forecast",
+        )
+    ok = _cfg(
+        iso="SPP",
+        uc_reliability_commitment=True,
+        uc_ruc_load_basis="iso_intraday_forecast",
+    )
+    assert ok.uc_ruc_load_basis == "iso_intraday_forecast"
     with pytest.raises(ValueError, match="read only by the UC stage"):
         ScenarioConfig(iso="SPP", uc_da_schedule_reuse_bundle="results/x")
+
+
+def test_ruc_load_basis_seam_reads_the_intraday_forecast(monkeypatch):
+    """ "actual" hands back the stage's P1 demand (the same object);
+    "iso_intraday_forecast" reads the data layer with the stage's config,
+    P1 demand and runtime zones."""
+    import market_sim.pipeline.uc as puc
+
+    demand = np.full((2, 4), 100.0)
+    seen = {}
+
+    def fake(config, d, zones):
+        seen.update(config=config, d=d, zones=zones)
+        return d + 7.0
+
+    monkeypatch.setattr(puc, "intraday_commitment_demand", fake)
+    stage = SimpleNamespace(
+        config=SimpleNamespace(uc_ruc_load_basis="actual"),
+        demand=demand,
+        zone_names=["A", "B"],
+    )
+    assert puc.ruc_load_basis_demand(stage) is demand
+    stage.config = SimpleNamespace(uc_ruc_load_basis="iso_intraday_forecast")
+    np.testing.assert_array_equal(puc.ruc_load_basis_demand(stage), demand + 7.0)
+    assert seen["zones"] == ["A", "B"] and seen["config"] is stage.config
+    stage.config = SimpleNamespace(uc_ruc_load_basis="other")
+    with pytest.raises(ValueError, match="has no loader"):
+        puc.ruc_load_basis_demand(stage)
 
 
 def test_defaults_leave_the_cache_key_unmoved():

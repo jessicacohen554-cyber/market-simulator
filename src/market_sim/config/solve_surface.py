@@ -163,6 +163,11 @@ class SolveEpoch:
 #: 2026-10-15b: the ``uc-params`` minimum stable fraction ``mlf`` is re-derived
 #: per UNIT (UC-DATA-UT scope extension, owner ruling 2026-10-15; rule 23). Its
 #: own id because 15a's keys were cut on main without it (rule 26: append-only).
+#: 2026-10-18a: the SPP / CAISO "da_forecast" commitment demand moves to the
+#: ISO's own basis (SPP: MTLF at the DA-RUC; CAISO: actual net of battery
+#: charging) and their forward ``load-forecast-error`` profiles are re-derived
+#: on it (UC-DA-BASIS, owner rulings R16, R17, R19). Read only by the UC stage,
+#: so it re-keys every UC-armed SPP / CAISO config in both modes and no keeper.
 SOLVE_EPOCHS: tuple[SolveEpoch, ...] = (
     SolveEpoch(
         id="2026-10-02c",
@@ -249,6 +254,18 @@ SOLVE_EPOCHS: tuple[SolveEpoch, ...] = (
             "(UC-DATA-UT, owner rulings 2026-10-15)"
         ),
         isos=("CAISO", "ERCOT", "MISO", "NEISO", "NYISO", "SPP"),
+        requires="unit_commitment_milp",
+    ),
+    SolveEpoch(
+        id="2026-10-18a",
+        cause=(
+            "UC commitment demand on the ISO's own forecast basis: SPP's MTLF "
+            "vintage in force at the DA-RUC (13:00 CPT D-1) replaces the EIA-930 "
+            "SWPP DF; CAISO's actual is net of battery charging; both forward "
+            "load-forecast-error profiles re-derived (UC-DA-BASIS, owner rulings "
+            "R16, R17, R19)"
+        ),
+        isos=("CAISO", "SPP"),
         requires="unit_commitment_milp",
     ),
 )

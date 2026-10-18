@@ -4478,11 +4478,16 @@ UC_SOLVER_PRESET_NAMES: tuple[str, ...] = ("highs_default", "lean")
 UC_COMMITMENT_DEMAND_SOURCES: tuple[str, ...] = ("actual", "da_forecast")
 
 #: The load bases ``uc_ruc_load_basis`` admits (the RUC pass's demand,
-#: ``pipeline/uc.py::ruc_load_basis_demand``). "actual" only: the measured
-#: intraday basis (the SPP MTLF vintage at the 4-h ID-RUC cycle, DESIGN-ucmilp-
-#: ruc-stage-2026-10-16 section 2.2) is added WITH its intake (lane
-#: UC-DF-AUDIT), never before it.
-UC_RUC_LOAD_BASES: tuple[str, ...] = ("actual",)
+#: ``pipeline/uc.py::ruc_load_basis_demand``). "iso_intraday_forecast" (lane
+#: UC-DA-BASIS): the ISO's own forecast vintage in force at the intraday
+#: commitment cycle (SPP: the MTLF at the 4-h ID-RUC, DESIGN-ucmilp-ruc-stage-
+#: 2026-10-16 section 2.2), admitted only for the ISOs below and in backcast.
+UC_RUC_LOAD_BASES: tuple[str, ...] = ("actual", "iso_intraday_forecast")
+
+#: ISOs with a measured intraday commitment forecast; held in step with
+#: ``data/commitment_demand.py::intraday_forecast_isos`` by
+#: ``tests/unit/data/test_commitment_demand.py``.
+UC_RUC_INTRADAY_FORECAST_ISOS: tuple[str, ...] = ("SPP",)
 
 
 @dataclass
@@ -23304,8 +23309,12 @@ class ScenarioConfig:
     uc_reliability_commitment: bool = False
     # The demand the RUC windows commit against. "actual" = the P1 demand
     # (realised load): perfect intraday foresight, declared as the upper bound
-    # of a measured intraday basis (DESIGN section 2.2). Admissible:
-    # UC_RUC_LOAD_BASES.
+    # of a measured intraday basis (DESIGN section 2.2).
+    # "iso_intraday_forecast" (SPP backcast only; lane UC-DA-BASIS) = the P1
+    # demand plus SPP's MTLF error at the vintage in force at the last 4-h
+    # ID-RUC cycle at least one cycle before the hour (Protocols section
+    # 4.4.1; data/commitment_demand.py::intraday_commitment_demand).
+    # Admissible: UC_RUC_LOAD_BASES.
     uc_ruc_load_basis: str = "actual"
     # DA-SCHEDULE REUSE ACROSS RUNS (owner ruling R15, 2026-10-16; DESIGN
     # section 2.5). A committed bundle directory ("" = off). When set, the UC
@@ -24904,6 +24913,15 @@ class ScenarioConfig:
                 f"uc_ruc_load_basis must be one of {UC_RUC_LOAD_BASES} (got "
                 f"{self.uc_ruc_load_basis!r}); a measured intraday basis is "
                 "added with its intake (lane UC-DF-AUDIT), not before."
+            )
+        if self.uc_ruc_load_basis == "iso_intraday_forecast" and (
+            self.iso not in UC_RUC_INTRADAY_FORECAST_ISOS or self.mode != "backcast"
+        ):
+            raise ValueError(
+                "uc_ruc_load_basis='iso_intraday_forecast' reads the ISO's own "
+                f"measured forecast vintages: backcast only, ISOs "
+                f"{UC_RUC_INTRADAY_FORECAST_ISOS} (got iso={self.iso!r}, "
+                f"mode={self.mode!r}); use 'actual' elsewhere."
             )
         if self.uc_reliability_commitment:
             if not self.unit_commitment_milp:

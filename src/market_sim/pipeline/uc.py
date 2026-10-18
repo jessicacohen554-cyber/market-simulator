@@ -75,7 +75,11 @@ from market_sim.config.constants import (
     VLR_GROUP_MIN_COMMITTED_UNITS,
 )
 from market_sim.config.paths import RESULTS_ROOT
-from market_sim.data.commitment_demand import CommitmentDemand, commitment_demand
+from market_sim.data.commitment_demand import (
+    CommitmentDemand,
+    commitment_demand,
+    intraday_commitment_demand,
+)
 from market_sim.data.fleet import FleetArrays
 from market_sim.data.floor_mechanisms import MECH_UC_SCHEDULE
 from market_sim.data.vlr_pocket_groups import load_vlr_pocket_groups
@@ -159,7 +163,18 @@ logger = logging.getLogger(__name__)
 #: :meth:`UcStage.reliability_commitment`) and the R15 DA-schedule reuse across
 #: runs (``uc_da_schedule_reuse_bundle``). The DA windows are unchanged, so the
 #: input digest keeps hashing :data:`UC_DA_DIGEST_VERSION`.
-UC_ENGINE_VERSION = "uc-1.9"
+#: uc-1.10 (lane UC-DA-BASIS, owner rulings R16, R17, R19, 2026-10-18): the
+#: "da_forecast" commitment demand is measured per ISO
+#: (``data/commitment_demand.py::FORECAST_ERROR_BASES``): SPP on its own MTLF
+#: vintage in force at the DA-RUC (13:00 CPT D-1), CAISO on its DAM forecast
+#: vs the metered demand net of battery charging; and the RUC load basis
+#: "iso_intraday_forecast" (SPP: the MTLF at the 4-h ID-RUC cycle). Every
+#: other ISO's commitment demand is unchanged. The DA digest version stays:
+#: the commitment demand enters :func:`uc_input_digest` BY VALUE, so a
+#: uc-1.8 schedule built on the old SPP / CAISO basis cannot match a new-basis
+#: digest, and an unchanged problem (every other ISO, and SPP / CAISO at
+#: "actual") keeps certifying its committed schedule.
+UC_ENGINE_VERSION = "uc-1.10"
 
 #: The engine version the DA-window problem last changed at, hashed into
 #: :func:`uc_input_digest` in place of :data:`UC_ENGINE_VERSION`: uc-1.9 added a
@@ -539,13 +554,16 @@ def ruc_load_basis_demand(stage: "UcStage") -> np.ndarray:
     """``(n_zones, T)`` demand the RUC windows commit against (``uc_ruc_load_basis``).
 
     "actual": the P1 demand the stage was handed (realised load; the declared
-    upper bound of an intraday basis, DESIGN section 2.2). A measured intraday
-    basis enters here with its intake (lane UC-DF-AUDIT); the config refuses
-    any other value until then (``UC_RUC_LOAD_BASES``).
+    upper bound of an intraday basis, DESIGN section 2.2).
+    "iso_intraday_forecast": the P1 demand plus the ISO's measured intraday
+    forecast error (:func:`~market_sim.data.commitment_demand.
+    intraday_commitment_demand`; SPP backcast only, it raises elsewhere).
     """
     basis = str(getattr(stage.config, "uc_ruc_load_basis", "actual"))
     if basis == "actual":
         return stage.demand
+    if basis == "iso_intraday_forecast":
+        return intraday_commitment_demand(stage.config, stage.demand, stage.zone_names)
     raise ValueError(f"uc_ruc_load_basis {basis!r} has no loader")
 
 
@@ -593,6 +611,8 @@ class UcStage:
         self.T = int(getattr(config, "hours", demand.shape[1]))
         self.fleet_arrays = fleet_arrays
         self.demand = demand
+        #: The solve's runtime zones (``demand``'s row order).
+        self.zone_names = None if zone_names is None else list(zone_names)
         #: What the windows commit against (``uc_commitment_demand_source``).
         self.commit: CommitmentDemand = commitment_demand(config, demand, zone_names)
         self.dispatch_kwargs = dispatch_kwargs

@@ -194,6 +194,17 @@ SOLVE_SOURCES: tuple[CleanSource, ...] = (
             "data/raw/pudl",
         ),
     ),
+    # data/commitment_demand.py — SPP's backcast UC commitment demand and RUC
+    # load basis read its MTLF vintages (lane UC-DA-BASIS, owner rulings R16;
+    # read only when uc_commitment_demand_source="da_forecast" or
+    # uc_ruc_load_basis="iso_intraday_forecast"; no EIA-930 fallback, it raises).
+    CleanSource(
+        "load-forecast-vintages",
+        "market_sim.data.load_forecast_vintages",
+        partitions="scripts.lib.load_forecast_vintages:load_registry",
+        only_for=("SPP",),
+        raw_inputs=("data/raw/load-forecast-vintages",),
+    ),
     # data/vlr_pocket_groups.py — the UC stage's VLR pocket commitment rows
     # (read only when vlr_pocket_commitment is armed; no raw fallback, it
     # fails loudly).
@@ -270,12 +281,14 @@ SOLVE_SOURCES: tuple[CleanSource, ...] = (
     # data/commitment_demand.py — the forward UC commitment demand (read only
     # when uc_commitment_demand_source="da_forecast" in forecast mode; no raw
     # fallback, it fails loudly). The backcast path reads EIA-930 raw directly.
+    # SPP's profile is on its MTLF vintages (UC-DA-BASIS, R19): the derive reads
+    # the load-forecast-vintages partition, built first (DATATYPES order).
     CleanSource(
         "load-forecast-error",
         "market_sim.data.commitment_demand",
         lane="forecast",
         partitions="scripts.data.derive_load_forecast_error:load_registry",
-        raw_inputs=("data/raw/eia-930-hourly",),
+        raw_inputs=("data/raw/eia-930-hourly", "data/raw/load-forecast-vintages"),
     ),
     # data/confirmed_retirements.py — step-0 confirmed exits.
     CleanSource(

@@ -14,8 +14,9 @@ P1 still clears on actual load, so prices stay the P1 duals (rule 4).
   object; byte-identical to uc-1.6).
 * ``"da_forecast"`` -- the P1 demand plus a measured forecast increment:
 
-  - **backcast**: the BA's own EIA-930 day-ahead ``Demand forecast`` minus its
-    metered ``Demand``, hour by hour, on the same ``<BA> hourly`` frame (and
+  - **backcast**: the BA's own day-ahead forecast (the EIA-930 ``Demand
+    forecast`` unless the ISO's basis below says otherwise) minus its metered
+    ``Demand``, hour by hour, on the same ``<BA> hourly`` frame (and
     therefore the same local model clock) the demand loader reads, split
     across zones by the loader's own weights
     (:func:`market_sim.data.eia930.load_zone_weights`) and grossed up by the
@@ -29,6 +30,29 @@ P1 still clears on actual load, so prices stay the P1 duals (rule 4).
     measured multi-year mean relative error ``(DF - actual) / actual`` by
     season x hour of day (the frozen ``load-forecast-error`` clean partition,
     ``scripts/data/derive_load_forecast_error.py``, rule 23).
+
+Per-ISO forecast-error basis (lane UC-DA-BASIS, owner rulings R16, R17, R19,
+2026-10-18; :data:`FORECAST_ERROR_BASES`, default :data:`EIA930_BASIS`; record
+``docs/records/governance/uc-milp-2026-10/FINDING-ucmilp-df-audit-2026-10-16.md``
+section 4):
+
+* **SPP** -- the forecast is SPP's own MTLF vintage in force at the DA-RUC (the
+  latest issued at or before 13:00 CPT on D-1, Protocols section 4.3.2), read
+  from ``load-forecast-vintages`` and placed on the frame rows by their
+  ``UTC time`` (hour end = the MTLF ``GMTIntervalEnd``). The EIA-930 SWPP DF
+  is NOT read: it carries a reporting uplift outside 2023-09-02 .. 2025-05-06.
+  A missing vintage partition raises (:class:`MissingForecastVintages`), never
+  a fallback to EIA-930; an hour with no vintage in force (only the first
+  hours of the earliest intaked year) gets no increment and is counted as
+  QA-dropped. The actual stays the EIA-930 SWPP Demand.
+* **CAISO** -- the forecast is the EIA-930 CISO DF (= CAISO's DAM forecast);
+  the actual is the metered Demand net of battery charging ``max(-NG: OTH,
+  0)``, the basis the DAM forecast is on (charging stays an LP decision).
+
+The RUC load basis ``uc_ruc_load_basis="iso_intraday_forecast"``
+(:func:`intraday_commitment_demand`) is the same construction at the intraday
+horizon: SPP's MTLF in force at the last 4-h ID-RUC cycle at least one cycle
+before the hour (Protocols section 4.4.1). Backcast, SPP only.
 
 Data QA (not a tunable): an hour whose ``|DF - actual|`` exceeds
 :data:`~market_sim.config.constants.COMMITMENT_DF_DATA_ERROR_FRACTION` of the
@@ -64,7 +88,7 @@ NEISO, SOCO) the mapping is the identity and the result is unchanged.
 from __future__ import annotations
 
 import logging
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 
 import numpy as np
@@ -74,6 +98,9 @@ from market_sim.config.constants import (
     COMMITMENT_DF_DATA_ERROR_FRACTION,
     COMMITMENT_DF_SEASON_OF_MONTH,
     HOURS_PER_YEAR,
+    SPP_DA_RUC_FORECAST_CUTOFF_HOUR_LOCAL,
+    SPP_ID_RUC_CYCLE_HOURS,
+    SPP_MARKET_TIMEZONE,
 )
 
 logger = logging.getLogger(__name__)
@@ -88,6 +115,8 @@ FORECAST_ERROR_DATATYPE = "load-forecast-error"
 #: with Feb 29 dropped (``eia930.frames._eia_hourly_frame_filled``), so every
 #: year's row-to-(month, hour) map is this one.
 _MODEL_CALENDAR = pd.date_range("2023-01-01", periods=HOURS_PER_YEAR, freq="h")
+
+_HOUR = pd.Timedelta(hours=1)
 
 
 @dataclass(frozen=True)
@@ -158,27 +187,310 @@ def qa_forecast_error(
     return np.where(valid, err, 0.0), valid
 
 
-def ba_forecast_error_mw(iso: str, year: int) -> tuple[np.ndarray, int]:
-    """``((HOURS_PER_YEAR,) DF - actual MW, QA-dropped hours)`` for an ISO-year.
+class MissingForecastVintages(FileNotFoundError):
+    """An ISO's forecast-vintage basis has no partition for the year (never a fallback)."""
+
+
+def _eia930_day_ahead(iso: str, year: int, frame: pd.DataFrame) -> np.ndarray:
+    """The BA's EIA-930 ``Demand forecast`` (its own day-ahead forecast)."""
+    return frame["Demand forecast"].to_numpy(dtype=float)
+
+
+def _eia930_demand(frame: pd.DataFrame) -> np.ndarray:
+    """The BA's metered EIA-930 ``Demand``."""
+    return frame["Demand"].to_numpy(dtype=float)
+
+
+def storage_charging_mw(frame: pd.DataFrame) -> np.ndarray:
+    """``max(-NG: OTH, 0)`` MW, 0 where unreported (CAISO battery charging).
+
+    EIA-930 CISO ``NG: OTH`` is CAISO's battery net output (FINDING-ucmilp-df-
+    audit-2026-10-16 section 3); its negative part is charging. Raises when
+    the column is absent: the netted basis is never silently the raw one.
+    """
+    if "NG: OTH" not in frame.columns:
+        raise ValueError(
+            "storage-charging-netted actual needs the EIA-930 'NG: OTH' column"
+        )
+    chg = np.clip(-frame["NG: OTH"].to_numpy(dtype=float), 0.0, None)
+    return np.nan_to_num(chg, nan=0.0)
+
+
+def _eia930_demand_net_storage_charging(frame: pd.DataFrame) -> np.ndarray:
+    """Metered ``Demand`` less battery charging (the basis CAISO's DAM forecast is on).
+
+    Owner ruling R17: CAISO's DAM load forecast (= EIA-930 CISO ``Demand
+    forecast``) excludes storage charging, a bid-in market-dispatched
+    resource; the metered actual includes it. Netting it keeps the increment
+    genuine load-forecast error and leaves charging an LP decision.
+    """
+    return _eia930_demand(frame) - storage_charging_mw(frame)
+
+
+def _frame_interval_end_utc(frame: pd.DataFrame) -> pd.DatetimeIndex:
+    """The frame's ``UTC time`` (hour END, = SPP ``GMTIntervalEnd``) as tz-aware UTC."""
+    t = pd.DatetimeIndex(pd.to_datetime(frame["UTC time"]))
+    return t.tz_localize("UTC") if t.tz is None else t.tz_convert("UTC")
+
+
+def da_ruc_cutoff_utc(
+    interval_end_utc: pd.DatetimeIndex, tz: str, cutoff_hour_local: int
+) -> pd.DatetimeIndex:
+    """Per operating hour, ``cutoff_hour_local``:00 local on the day before its operating day.
+
+    The operating day is the local calendar date of the hour's START. The
+    cutoff is built on the wall clock (a DST day is 23 or 25 h, so it is not
+    a fixed UTC lead) and localized; a mid-day hour is never ambiguous.
+    """
+    start_local = (interval_end_utc - _HOUR).tz_convert(tz)
+    day = start_local.tz_localize(None).normalize()
+    wall = day - pd.Timedelta(days=1) + pd.Timedelta(hours=int(cutoff_hour_local))
+    return wall.tz_localize(tz, ambiguous="raise", nonexistent="raise").tz_convert(
+        "UTC"
+    )
+
+
+def cycle_cutoff_utc(
+    interval_end_utc: pd.DatetimeIndex, tz: str, cycle_hours: int
+) -> pd.DatetimeIndex:
+    """Per operating hour, the last cycle at least one cycle before its start.
+
+    Cycles sit on a ``cycle_hours`` grid of the local wall clock from 00:00
+    (grid points never fall in a US DST fold or gap). The cutoff is the wall
+    floor of ``start - cycle_hours`` onto that grid, so it is always at or
+    before ``start - cycle_hours`` in absolute time.
+    """
+    c = int(cycle_hours)
+    if c <= 0 or 24 % c:
+        raise ValueError(f"cycle_hours must divide 24, got {cycle_hours}")
+    wall = (
+        (interval_end_utc - _HOUR - pd.Timedelta(hours=c))
+        .tz_convert(tz)
+        .tz_localize(None)
+        .floor("h")
+    )
+    wall = wall - pd.to_timedelta(wall.hour % c, unit="h")
+    return wall.tz_localize(tz, ambiguous="raise", nonexistent="raise").tz_convert(
+        "UTC"
+    )
+
+
+def vintage_in_force(
+    vintages: pd.DataFrame,
+    interval_end_utc: pd.DatetimeIndex,
+    cutoff_utc: pd.DatetimeIndex,
+) -> np.ndarray:
+    """``(len(interval_end_utc),)`` MW: per hour, the latest vintage issued at or before its cutoff.
+
+    ``vintages`` is one area's ``load-forecast-vintages`` frame. NaN where no
+    vintage issued by the cutoff covers the hour. Vectorized (rule 2 spirit):
+    one filter, one sort, one de-duplication.
+    """
+    cut = pd.Series(np.asarray(cutoff_utc), index=interval_end_utc)
+    if not cut.index.is_unique:
+        raise ValueError("vintage_in_force: interval_end_utc must be unique")
+    v = vintages[vintages["interval_end_utc"].isin(cut.index)]
+    ok = v["issue_time_utc"].to_numpy() <= cut.reindex(v["interval_end_utc"]).to_numpy()
+    pick = (
+        v.loc[ok, ["interval_end_utc", "issue_time_utc", "forecast_mw"]]
+        .sort_values(["interval_end_utc", "issue_time_utc"])
+        .drop_duplicates("interval_end_utc", keep="last")
+        .set_index("interval_end_utc")["forecast_mw"]
+    )
+    return pick.reindex(interval_end_utc).to_numpy(dtype=float)
+
+
+@dataclass(frozen=True)
+class VintageClock:
+    """When an ISO's reliability commitments read its own forecast vintages.
+
+    Attributes:
+        area: The ``load-forecast-vintages`` area label on the model's footprint.
+        tz: The market timezone the deadlines are stated in.
+        da_cutoff_hour_local: DA commitment vintage: the latest issued at or
+            before this local hour of D-1.
+        id_cycle_hours: Intraday commitment cycle (hours, a divisor of 24).
+    """
+
+    area: str
+    tz: str
+    da_cutoff_hour_local: int
+    id_cycle_hours: int
+
+
+def _vintage_frame(iso: str, year: int, area: str) -> pd.DataFrame:
+    """The ``iso`` vintages covering model ``year`` (issue years ``year - 1 .. year``).
+
+    Raises :class:`MissingForecastVintages` when the issue-``year`` partition
+    is absent (never a fallback to EIA-930). The ``year - 1`` partition is
+    read where present: without it, the first hours of the earliest intaked
+    year have no vintage in force (counted as QA-dropped, logged).
+    """
+    from market_sim.data import load_forecast_vintages as lfv
+
+    if int(year) not in lfv.available_years(iso):
+        raise MissingForecastVintages(
+            f"{iso} {year}: the commitment forecast basis reads SPP's own "
+            f"{lfv.DATATYPE} vintages and partition {year} is absent; run "
+            "scripts/regenerate_clean.py load-forecast-vintages (no EIA-930 "
+            "fallback)"
+        )
+    return lfv.load_vintages(iso, (int(year) - 1, int(year)), area=area)
+
+
+def _vintage_forecast(
+    iso: str, year: int, frame: pd.DataFrame, horizon: str
+) -> np.ndarray:
+    """The ISO's own forecast in force at its DA or intraday commitment, on the frame rows."""
+    clock = VINTAGE_CLOCKS[iso]
+    ends = _frame_interval_end_utc(frame)
+    if horizon == "day_ahead":
+        cut = da_ruc_cutoff_utc(ends, clock.tz, clock.da_cutoff_hour_local)
+    else:
+        cut = cycle_cutoff_utc(ends, clock.tz, clock.id_cycle_hours)
+    fc = vintage_in_force(_vintage_frame(iso, year, clock.area), ends, cut)
+    uncovered = int(np.isnan(fc).sum())
+    if uncovered:
+        logger.warning(
+            "%s %d %s: %d hour(s) have no %s vintage in force (no increment there)",
+            iso,
+            year,
+            horizon,
+            uncovered,
+            clock.area,
+        )
+    return fc
+
+
+def _spp_da_ruc(iso: str, year: int, frame: pd.DataFrame) -> np.ndarray:
+    """SPP's MTLF vintage in force at the DA-RUC (owner ruling R16)."""
+    return _vintage_forecast(iso, year, frame, "day_ahead")
+
+
+def _spp_id_ruc(iso: str, year: int, frame: pd.DataFrame) -> np.ndarray:
+    """SPP's MTLF vintage in force at the last ID-RUC cycle a cycle before the hour."""
+    return _vintage_forecast(iso, year, frame, "intraday")
+
+
+#: Per-ISO vintage clocks (values from ``constants.py``, cited there).
+VINTAGE_CLOCKS: dict[str, VintageClock] = {
+    "SPP": VintageClock(
+        area="SPP",
+        tz=SPP_MARKET_TIMEZONE,
+        da_cutoff_hour_local=SPP_DA_RUC_FORECAST_CUTOFF_HOUR_LOCAL,
+        id_cycle_hours=SPP_ID_RUC_CYCLE_HOURS,
+    ),
+}
+
+
+@dataclass(frozen=True)
+class ForecastErrorBasis:
+    """How an ISO's load-forecast error ``forecast - actual`` is measured.
+
+    Attributes:
+        label: ``CommitmentDemand.basis`` of a backcast built on it.
+        forecast: ``(iso, year, frame) -> (HOURS_PER_YEAR,)`` MW, the DA
+            commitment forecast on the filled EIA-930 frame's rows.
+        actual: ``frame -> (HOURS_PER_YEAR,)`` MW, the actual on the
+            forecast's basis.
+        intraday_forecast: As ``forecast``, at the intraday commitment
+            (``uc_ruc_load_basis="iso_intraday_forecast"``); ``None`` = none.
+    """
+
+    label: str
+    forecast: Callable[[str, int, pd.DataFrame], np.ndarray]
+    actual: Callable[[pd.DataFrame], np.ndarray]
+    intraday_forecast: Callable[[str, int, pd.DataFrame], np.ndarray] | None = None
+
+
+#: The default basis: the BA's own EIA-930 day-ahead forecast vs its metered
+#: demand (uc-1.7 .. uc-1.9 for every ISO).
+EIA930_BASIS = ForecastErrorBasis(
+    label="eia930_da_forecast", forecast=_eia930_day_ahead, actual=_eia930_demand
+)
+
+#: ISOs whose forecast error is NOT the default (owner rulings R16, R17;
+#: FINDING-ucmilp-df-audit-2026-10-16 section 4). Every other ISO reads
+#: :data:`EIA930_BASIS`.
+FORECAST_ERROR_BASES: dict[str, ForecastErrorBasis] = {
+    # R16: SPP's own MTLF at the DA-RUC (the EIA-930 SWPP DF carries a
+    # reporting uplift in 2019 .. 2023-09-01 and from 2025-05-07); the actual
+    # stays the EIA-930 SWPP Demand (footprint Table A: ratio 0.996-1.003).
+    "SPP": ForecastErrorBasis(
+        label="spp_mtlf_da_ruc",
+        forecast=_spp_da_ruc,
+        actual=_eia930_demand,
+        intraday_forecast=_spp_id_ruc,
+    ),
+    # R17: CAISO's DAM forecast vs the metered demand net of battery charging.
+    "CAISO": ForecastErrorBasis(
+        label="eia930_da_forecast_net_storage_charging",
+        forecast=_eia930_day_ahead,
+        actual=_eia930_demand_net_storage_charging,
+    ),
+}
+
+#: Forecast horizons :func:`ba_forecast_error_mw` reads.
+FORECAST_HORIZONS: tuple[str, ...] = ("day_ahead", "intraday")
+
+
+def forecast_error_basis(iso: str) -> ForecastErrorBasis:
+    """The ISO's :class:`ForecastErrorBasis` (registry, default :data:`EIA930_BASIS`)."""
+    return FORECAST_ERROR_BASES.get(str(iso), EIA930_BASIS)
+
+
+def intraday_forecast_isos() -> tuple[str, ...]:
+    """ISOs with a measured intraday commitment forecast."""
+    return tuple(
+        sorted(i for i, b in FORECAST_ERROR_BASES.items() if b.intraday_forecast)
+    )
+
+
+def forecast_and_actual_mw(
+    iso: str, year: int, horizon: str = "day_ahead"
+) -> tuple[np.ndarray, np.ndarray]:
+    """``((HOURS_PER_YEAR,) forecast MW, actual MW)`` on the ISO's basis.
 
     Read off the same filled EIA-930 frame the ISO's demand loader reads
     (``eia930.frames._ISO_TO_HOURLY_BA``), so row ``k`` is the model's hour
-    ``k``. Raises when the ISO has no hourly BA frame for the year (an armed
-    source never silently no-ops).
+    ``k``; the forecast and the actual are the ISO's
+    :func:`forecast_error_basis`. Raises when the ISO has no hourly BA frame
+    for the year, when ``horizon`` has no forecast for the ISO, or when the
+    basis' own data is missing (an armed source never silently no-ops).
     """
     from market_sim.data import eia930
 
+    if horizon not in FORECAST_HORIZONS:
+        raise ValueError(f"unknown forecast horizon {horizon!r}")
+    basis = forecast_error_basis(iso)
+    read = basis.forecast if horizon == "day_ahead" else basis.intraday_forecast
+    if read is None:
+        raise ValueError(
+            f"{iso}: no measured {horizon} commitment forecast (registered for "
+            f"{list(intraday_forecast_isos())})"
+        )
     ba = eia930._ISO_TO_HOURLY_BA.get(iso)
     frame = None if ba is None else eia930._eia_hourly_frame_filled(ba, year)
-    if frame is None or "Demand forecast" not in frame.columns:
+    if frame is None or (
+        read is _eia930_day_ahead and "Demand forecast" not in frame.columns
+    ):
         raise ValueError(
             f"uc_commitment_demand_source='da_forecast': no EIA-930 hourly frame "
             f"with a 'Demand forecast' column for {iso} {year}"
         )
-    err, valid = qa_forecast_error(
-        frame["Demand forecast"].to_numpy(dtype=float),
-        frame["Demand"].to_numpy(dtype=float),
-    )
+    return read(iso, int(year), frame), basis.actual(frame)
+
+
+def ba_forecast_error_mw(
+    iso: str, year: int, horizon: str = "day_ahead"
+) -> tuple[np.ndarray, int]:
+    """``((HOURS_PER_YEAR,) forecast - actual MW, QA-dropped hours)`` for an ISO-year.
+
+    :func:`forecast_and_actual_mw` through the data-QA cut
+    (:func:`qa_forecast_error`); an hour with no forecast is QA-dropped.
+    """
+    forecast, actual = forecast_and_actual_mw(iso, year, horizon)
+    err, valid = qa_forecast_error(forecast, actual)
     return err, int((~valid).sum())
 
 
@@ -221,19 +533,21 @@ def backcast_commitment_increment(
     zone_names: Sequence[str] | None,
     td_loss_factor: float = 0.0,
     caiso_tac_shares_standard_time: bool = False,
+    horizon: str = "day_ahead",
 ) -> tuple[np.ndarray, int]:
     """``((len(zone_names), HOURS_PER_YEAR) MW increment, QA-dropped hours)`` (backcast).
 
-    The BA forecast error split by the demand loader's zone weights and
-    grossed up by the loader's ``td_loss_factor`` -- the forecast mapped to
-    zones exactly as the actual is. The weights (on ``iso_config``'s zones)
-    are placed on the runtime rows by name (:func:`load_row_index`); a row no
-    configured zone maps to gets 0. Raises when a configured zone with a
-    nonzero weight in any hour is absent from ``zone_names``.
+    The BA forecast error at ``horizon`` (:func:`ba_forecast_error_mw`) split
+    by the demand loader's zone weights and grossed up by the loader's
+    ``td_loss_factor`` -- the forecast mapped to zones exactly as the actual
+    is. The weights (on ``iso_config``'s zones) are placed on the runtime rows
+    by name (:func:`load_row_index`); a row no configured zone maps to gets 0.
+    Raises when a configured zone with a nonzero weight in any hour is absent
+    from ``zone_names``.
     """
     from market_sim.data import eia930
 
-    err, dropped = ba_forecast_error_mw(iso, year)
+    err, dropped = ba_forecast_error_mw(iso, year, horizon=horizon)
     weights = np.asarray(
         eia930.load_zone_weights(
             iso,
@@ -354,7 +668,7 @@ def commitment_demand(
                 f"commitment increment has {inc.shape[0]} zones, demand {demand.shape[0]}"
             )
         out = demand + inc[:, :T]
-        basis = "eia930_da_forecast"
+        basis = forecast_error_basis(iso).label
     else:
         mask = forward_load_row_mask(get_iso_config(iso), zone_names)
         frac = forward_bias_fraction(load_forecast_error_profile(iso))
@@ -371,3 +685,54 @@ def commitment_demand(
     return CommitmentDemand(
         demand=out, source=source, basis=basis, qa_dropped_hours=dropped
     )
+
+
+def intraday_commitment_demand(
+    config, demand: np.ndarray, zone_names: Sequence[str] | None
+) -> np.ndarray:
+    """``(n_zones, T)`` the RUC load basis ``"iso_intraday_forecast"`` (backcast).
+
+    The P1 ``demand`` plus the ISO's intraday forecast error (its own forecast
+    vintage in force at the last intraday commitment cycle at least one cycle
+    before each hour; SPP: the MTLF at the 4-h ID-RUC,
+    :data:`~market_sim.config.constants.SPP_ID_RUC_CYCLE_HOURS`), mapped to
+    the runtime rows exactly as the DA increment is
+    (:func:`backcast_commitment_increment`). Raises outside backcast mode
+    (no forward intraday profile is derived) and for an ISO with no
+    registered intraday forecast.
+    """
+    iso = str(config.iso)
+    if iso not in intraday_forecast_isos():
+        raise ValueError(
+            f"uc_ruc_load_basis='iso_intraday_forecast': {iso} has no measured "
+            f"intraday forecast (registered for {list(intraday_forecast_isos())})"
+        )
+    if getattr(config, "mode", "forecast") != "backcast":
+        raise ValueError(
+            "uc_ruc_load_basis='iso_intraday_forecast' reads measured forecast "
+            "vintages: backcast only (no forward intraday error profile)"
+        )
+    demand = np.asarray(demand, dtype=float)
+    if zone_names is None or len(zone_names) != demand.shape[0]:
+        raise ValueError(
+            "uc_ruc_load_basis='iso_intraday_forecast' needs the solve's runtime "
+            "zone list, one name per demand row"
+        )
+    from market_sim.config.iso_configs import get_iso_config
+
+    inc, dropped = backcast_commitment_increment(
+        iso,
+        int(config.weather_year),
+        get_iso_config(iso),
+        zone_names,
+        td_loss_factor=float(getattr(config, "td_loss_factor", 0.0) or 0.0),
+        horizon="intraday",
+    )
+    out = demand + inc[:, : demand.shape[1]]
+    logger.info(
+        "UC RUC load basis (iso_intraday_forecast): %+.0f MW mean increment, "
+        "%d QA-dropped hours",
+        float((out - demand).sum(axis=0).mean()),
+        dropped,
+    )
+    return out
