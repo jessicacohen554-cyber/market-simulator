@@ -44,9 +44,9 @@ class TestDeriveLoadForecastError(CleanDirTestCase):
 
     def test_one_year(self) -> None:
         self._patch({2020: _frame(0.04)})
-        written = dlfe.curate(isos=["SPP"], last_year=2021)
+        written = dlfe.curate(isos=["NEISO"], last_year=2021)
         assert len(written) == 1
-        out = read_clean(FORECAST_ERROR_DATATYPE, iso="SPP")
+        out = read_clean(FORECAST_ERROR_DATATYPE, iso="NEISO")
         assert len(out) == 4 * 24
         cell = out.set_index(["season", "hour_of_day"])
         assert abs(cell.loc[("JJA", 15), "bias_frac"] - 0.04) < 1e-12
@@ -55,15 +55,16 @@ class TestDeriveLoadForecastError(CleanDirTestCase):
         # Jan 1 00:00 and 01:00 are excluded (QA / missing), so DJF 0 h and 1 h
         # pool one hour fewer than DJF 2 h.
         assert cell.loc[("DJF", 0), "n_hours"] == cell.loc[("DJF", 2), "n_hours"] - 1
-        assert set(out["years"]) == {"2020-2020"} and set(out["ba"]) == {"SWPP"}
+        assert set(out["years"]) == {"2020-2020"} and set(out["ba"]) == {"ISNE"}
+        assert set(out["basis"]) == {"eia930_da_forecast"}
         # the forward lookup reads it back onto the model clock
         frac = forward_bias_fraction(out)
         assert abs(frac[(SEASON == "JJA") & (HOD == 16)] - 0.04).max() < 1e-12
 
     def test_years_pool(self) -> None:
         self._patch({2019: _frame(0.02), 2021: _frame(0.06)})
-        dlfe.curate(isos=["SPP"], last_year=2022)
-        out = read_clean(FORECAST_ERROR_DATATYPE, iso="SPP").set_index(
+        dlfe.curate(isos=["NEISO"], last_year=2022)
+        out = read_clean(FORECAST_ERROR_DATATYPE, iso="NEISO").set_index(
             ["season", "hour_of_day"]
         )
         assert abs(out.loc[("JJA", 14), "bias_frac"] - 0.04) < 1e-12
@@ -72,3 +73,54 @@ class TestDeriveLoadForecastError(CleanDirTestCase):
     def test_no_forecast_writes_nothing(self) -> None:
         self._patch({})
         assert dlfe.curate(isos=["SPP"], last_year=2021) == []
+
+    def test_spp_derives_from_the_mtlf_and_skips_years_without_vintages(self) -> None:
+        """R19: SPP's profile is its MTLF at the DA-RUC (the EIA DF, here 10x
+        the actual, is never read); a year with no vintage partition is skipped."""
+        from market_sim.data import load_forecast_vintages as lfv
+
+        def frame(y: int) -> pd.DataFrame:
+            f = _frame(0.0)
+            f["Demand forecast"] = 10_000.0
+            f["UTC time"] = pd.date_range(
+                f"{y}-01-01 06:00", periods=HOURS_PER_YEAR, freq="h"
+            )
+            return f
+
+        self._patch({2018: frame(2018), 2020: frame(2020)})
+        ends = pd.DatetimeIndex(frame(2020)["UTC time"]).tz_localize("UTC")
+        vint = pd.DataFrame(
+            {
+                "area": "SPP",
+                "issue_time_utc": pd.Timestamp("2019-12-01", tz="UTC"),
+                "interval_end_utc": ends,
+                "forecast_mw": 1010.0,
+            }
+        )
+        orig = (lfv.available_years, lfv.load_vintages)
+        lfv.available_years = lambda iso: [2019, 2020]
+        lfv.load_vintages = lambda iso, years, area=None: vint
+        self.addCleanup(setattr, lfv, "available_years", orig[0])
+        self.addCleanup(setattr, lfv, "load_vintages", orig[1])
+        dlfe.curate(isos=["SPP"], last_year=2021)
+        out = read_clean(FORECAST_ERROR_DATATYPE, iso="SPP")
+        assert set(out["years"]) == {"2020-2020"}
+        assert set(out["basis"]) == {"spp_mtlf_da_ruc"}
+        assert np.allclose(out["bias_frac"], 0.01)
+
+    def test_caiso_derives_net_of_storage_charging(self) -> None:
+        """R17: CAISO's actual is Demand - max(-NG: OTH, 0)."""
+        f = pd.DataFrame(
+            {
+                "Demand": np.full(HOURS_PER_YEAR, 1000.0),
+                "Demand forecast": np.full(HOURS_PER_YEAR, 900.0),
+                "NG: OTH": np.full(HOURS_PER_YEAR, -100.0),
+            }
+        )
+        self._patch({2024: f})
+        dlfe.curate(isos=["CAISO"], last_year=2024)
+        out = read_clean(FORECAST_ERROR_DATATYPE, iso="CAISO")
+        assert np.allclose(out["bias_frac"], 0.0) and np.allclose(
+            out["mean_error_mw"], 0.0
+        )
+        assert set(out["basis"]) == {"eia930_da_forecast_net_storage_charging"}

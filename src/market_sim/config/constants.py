@@ -411,6 +411,32 @@ COMMITMENT_DF_SEASON_OF_MONTH: dict[int, str] = {
     11: "SON",
 }
 
+# SPP's commitment forecast clock (lane UC-DA-BASIS; owner rulings R16, R19).
+# The SPP UC commitment demand reads SPP's own MTLF vintages
+# (``load-forecast-vintages``) at the times SPP's reliability commitments
+# run, not the EIA-930 SWPP "Demand forecast", which carries a +4 % / +11.7 %
+# reporting uplift outside 2023-09-02 .. 2025-05-06
+# (docs/records/governance/uc-milp-2026-10/FINDING-ucmilp-df-audit-2026-10-16.md
+# section 2.1). Market timezone: the SPP Integrated Marketplace runs on
+# Central Prevailing Time and the MTLF stamp is the local CPT hour (FINDING
+# section 1, "clock").
+SPP_MARKET_TIMEZONE: str = "America/Chicago"
+# DA-RUC forecast vintage: the latest MTLF issued at or before 13:00 CPT on
+# D-1 (owner ruling R16). SPP Integrated Marketplace Protocols Rev 119
+# section 4.3.2 (Day-Ahead Reliability Unit Commitment, pp. 165-171): the
+# DA-RUC executes at 13:45 CPT on D-1 (or 45 min after the DA Market results
+# if later) on the MTLF; the MTLF is issued hourly, so the 13:00 vintage is
+# the last one issued before it runs. A clock time from the Protocols, not a
+# fitted lead.
+SPP_DA_RUC_FORECAST_CUTOFF_HOUR_LOCAL: int = 13
+# ID-RUC cycle (UC-DA-BASIS charter task 4): SPP Integrated Marketplace
+# Protocols Rev 119 section 4.4.1 (Intra-Day Reliability Unit Commitment, from
+# p. 172) executes the ID-RUC at least every 4 hours (event-driven extra runs are not modelled). The RUC
+# basis for operating hour h is the MTLF vintage in force at the last cycle at
+# least one cycle before h, cycles on a 4-h grid from 00:00 CPT
+# (DESIGN-ucmilp-ruc-stage-2026-10-16 section 2.2).
+SPP_ID_RUC_CYCLE_HOURS: int = 4
+
 # Measured run-length ceiling that scopes the NYISO ONLINE-HOURS LSL state
 # floor (ScenarioConfig.nyiso_gas_bridge_state_floor_min_run) to the
 # near-baseload duty cohort: a CC plant carries the state floor only when its

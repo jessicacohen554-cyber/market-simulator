@@ -5,7 +5,13 @@ The forward half of the UC commitment demand
 mode; owner ruling UC-DESK r13, 2026-10-15): each ISO's measured day-ahead
 load-forecast error, ``(DF - actual) / actual``, averaged by meteorological
 season x local hour of day over every complete year of its EIA-930 BA
-extract. Hours failing the data-QA cut (``COMMITMENT_DF_DATA_ERROR_FRACTION``;
+extract, on the ISO's own forecast-error basis
+(:func:`market_sim.data.commitment_demand.forecast_error_basis`; lane
+UC-DA-BASIS, owner rulings R17, R19): SPP's DF is its MTLF vintage in force at
+the DA-RUC (``load-forecast-vintages``, so its profile pools the years with an
+intaked vintage partition, 2019-2025), CAISO's actual is net of battery
+charging; every other ISO is the EIA-930 DF vs metered Demand. Hours failing
+the data-QA cut (``COMMITMENT_DF_DATA_ERROR_FRACTION``;
 a missing forecast) are excluded by the same
 :func:`market_sim.data.commitment_demand.qa_forecast_error` the backcast path
 applies, and the frame is the same filled frame the demand loader reads, so
@@ -14,8 +20,9 @@ the forward profile and the backcast series are one measurement.
 Schema: ``data/dictionary/schema/load-forecast-error.schema.yaml``. One
 partition per ISO, ``data/clean/load-forecast-error/<ISO>/`` (``year=None``),
 through :func:`scripts.lib.clean_io.write_clean`. Reads only ``data/raw``;
-idempotent; re-run only when the EIA-930 extract updates (the commit cites the
-data change).
+idempotent; re-run only when the EIA-930 extract or the SPP vintage intake
+updates, or an owner ruling changes an ISO's basis definition (the commit
+cites the data change).
 
 Usage:
     PYTHONPATH=. .venv/bin/python scripts/data/derive_load_forecast_error.py --isos SPP
@@ -33,6 +40,9 @@ import pandas as pd
 from market_sim.data import eia930
 from market_sim.data.commitment_demand import (
     FORECAST_ERROR_DATATYPE,
+    MissingForecastVintages,
+    forecast_and_actual_mw,
+    forecast_error_basis,
     model_hour_season_hod,
     qa_forecast_error,
 )
@@ -68,13 +78,13 @@ def derive_iso(iso: str, last_year: int) -> pd.DataFrame:
     parts: list[pd.DataFrame] = []
     years: list[int] = []
     for y in _years_with_frames(ba, last_year):
-        frame = eia930._eia_hourly_frame_filled(ba, y)
-        if "Demand forecast" not in frame.columns:
-            continue
-        actual = frame["Demand"].to_numpy(dtype=float)
-        err, valid = qa_forecast_error(
-            frame["Demand forecast"].to_numpy(dtype=float), actual
-        )
+        try:
+            forecast, actual = forecast_and_actual_mw(iso, y)
+        except MissingForecastVintages:
+            continue  # SPP: a year before its MTLF vintage intake (2019)
+        except ValueError:
+            continue  # no 'Demand forecast' column in this year's extract
+        err, valid = qa_forecast_error(forecast, actual)
         if not valid.any():
             continue
         years.append(y)
@@ -104,6 +114,9 @@ def derive_iso(iso: str, last_year: int) -> pd.DataFrame:
     out["hour_of_day"] = out["hour_of_day"].astype("int64")
     out["n_hours"] = out["n_hours"].astype("int64")
     out["ba"] = pd.Series([ba] * len(out), dtype="string")
+    out["basis"] = pd.Series(
+        [forecast_error_basis(iso).label] * len(out), dtype="string"
+    )
     out["years"] = pd.Series([f"{min(years)}-{max(years)}"] * len(out), dtype="string")
     return out
 

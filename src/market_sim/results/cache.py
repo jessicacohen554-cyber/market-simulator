@@ -76,6 +76,26 @@ human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-10-18a — the SPP / CAISO UC commitment demand on the ISO's own
+forecast basis (lane UC-DA-BASIS, owner rulings R16, R17, R19; engine uc-1.10).
+KEY-MOVING for every config that arms ``unit_commitment_milp`` in CAISO and SPP
+(either mode), through ``solve_surface.SolveEpoch`` 2026-10-18a (its ``requires``
+gate).** WHAT CHANGED: ``data/commitment_demand.py::FORECAST_ERROR_BASES``. SPP's
+backcast "da_forecast" increment reads SPP's MTLF vintage in force at the
+DA-RUC (the latest issued at or before 13:00 CPT on D-1; ``load-forecast-
+vintages``) instead of the EIA-930 SWPP DF, which carries a +4 % / +11.7 %
+reporting uplift outside 2023-09-02 .. 2025-05-06; CAISO's actual is the
+metered Demand net of battery charging ``max(-NG: OTH, 0)``. Both forward
+``load-forecast-error`` partitions are re-derived on the same basis (rule 23,
+source change: the R14 vintage intake and the R17 basis definition). The
+partitions are gitignored and in no key, so the epoch carries the change; it
+also re-keys UC-armed configs at ``uc_commitment_demand_source="actual"``
+(their solve is unchanged; the gate is boolean, so it over-invalidates, never
+under-). WHAT IS NOT INVALIDATED: every config with the UC stage off (every
+keeper and forecast recipe on ``main``) and every other ISO. Record:
+``docs/records/governance/uc-milp-2026-10/FINDING-ucmilp-df-audit-2026-10-16.md``
+section 4.
+
 **Epoch 2026-10-15b — ``uc-params`` ``mlf`` re-derived per UNIT (lane
 UC-DATA-UT scope extension, owner ruling 2026-10-15; rule 23 derivation-defect
 fix). KEY-MOVING for every config that arms ``unit_commitment_milp`` in CAISO,

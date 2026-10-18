@@ -1125,6 +1125,7 @@ commitment demand). Schema:
 | `n_hours` | `int64` | `none` | no | Valid hours pooled into the cell. |
 | `ba` | `string` | `none` | no | EIA-930 balancing-authority code (or pool code) read. |
 | `years` | `string` | `none` | no | Pooled span of complete years, e.g. "2016-2025". |
+| `basis` | `string` | `none` | no | The forecast-error basis (market_sim.data.commitment_demand ForecastErrorBasis.label): eia930_da_forecast, spp_mtlf_da_ruc or eia930_da_forecast_net_storage_charging. |
 
 ## load-forecast-vintages
 

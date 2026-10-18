@@ -206,6 +206,7 @@ def test_iso_without_a_partition_is_dropped(fake_registries):
         "coal-receipts",
         "chp-btm-share",
         "uc-params",
+        "load-forecast-vintages",
     }
 
 

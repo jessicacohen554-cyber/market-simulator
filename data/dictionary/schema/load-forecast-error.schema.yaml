@@ -3,7 +3,7 @@
 # ScenarioConfig.uc_commitment_demand_source = "da_forecast"; lane
 # UC-1-FIX-7, owner ruling UC-DESK r13, 2026-10-15).
 #
-# One measured public source: the EIA-930 BA hourly extracts
+# Measured public sources: the EIA-930 BA hourly extracts
 # (data/raw/eia-930-hourly/<BA> hourly.parquet), columns "Demand forecast"
 # (the BA's own day-ahead forecast) and "Demand" (metered), read through the
 # same filled frame the demand loader uses
@@ -13,7 +13,15 @@
 # (or whose forecast is missing) are data errors and excluded
 # (market_sim.data.commitment_demand.qa_forecast_error). Written by
 # scripts/data/derive_load_forecast_error.py; re-derived ONLY when the
-# EIA-930 extract updates (CLAUDE.md rule 23 [R-FROZEN-DERIVE]).
+# EIA-930 extract or the SPP vintage intake updates, or an owner ruling
+# changes an ISO's basis (CLAUDE.md rule 23 [R-FROZEN-DERIVE]).
+#
+# Per-ISO basis (lane UC-DA-BASIS, owner rulings R17, R19, 2026-10-18;
+# market_sim.data.commitment_demand.FORECAST_ERROR_BASES): SPP's forecast is
+# its own MTLF vintage in force at the DA-RUC (latest issued at or before
+# 13:00 CPT D-1; load-forecast-vintages), not the EIA-930 DF; CAISO's actual
+# is the metered Demand net of battery charging max(-NG: OTH, 0). Column
+# `basis` names it.
 #
 # Grain: one row per (season, hour_of_day) per ISO partition
 # data/clean/load-forecast-error/<ISO>/ (year=None). Seasons are the
@@ -69,3 +77,11 @@ columns:
     unit: none
     nullable: false
     description: Pooled span of complete years, e.g. "2016-2025".
+  - name: basis
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      The forecast-error basis (market_sim.data.commitment_demand
+      ForecastErrorBasis.label): eia930_da_forecast, spp_mtlf_da_ruc or
+      eia930_da_forecast_net_storage_charging.
