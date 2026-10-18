@@ -66,6 +66,9 @@ for the market split.
 | transmission-expansion | — | — | — | — | — | — | — | — |
 | ramp-capability | — | — | — | — | — | — | — | — |
 | load-forecast-vintages | — | — | — | — | — | — | 2019–2026 | — |
+| iso-area-load | — | — | — | — | — | — | 2019–2025 | — |
+| counterparty-interchange | — | — | — | — | — | — | 2019–2025 | — |
+| iso-genmix | — | — | — | — | — | — | 2019–2025 | — |
 | vlr-pocket-groups | — | — | — | — | — | — | — | — |
 | winter-fuel-inventory | — | — | — | — | — | — | — | — |
 | chp-btm-share | — | — | — | — | — | — | — | — |
@@ -1149,6 +1152,67 @@ time (SPP MTLF). Schema:
 | `lead_hours` | `int64` | `hours` | no | (interval_end_utc - issue_time_utc) in hours. Negative or small values are past/in-progress intervals that carry the averaged actual. |
 | `forecast_mw` | `float64` | `mw` | no | The ISO's forecast for the interval in this vintage (SPP MTLF). |
 | `actual_mw` | `float64` | `mw` | yes | The ISO's averaged actual load reported in this vintage (SPP Averaged Actual); null for forward intervals. The interval in progress at issue is a partial-hour average. |
+
+## iso-area-load
+
+An ISO's own published hourly metered load by area (SPP HOURLY_LOAD). Schema:
+[`schema/iso-area-load.schema.yaml`](schema/iso-area-load.schema.yaml).
+
+- **Keys:** `iso`, `area`, `interval_end_utc`
+- **Reconciles:** SPP portal `hourly-load` WIDE monthlies (`MarketHour` = UTC
+  interval end, one MW column per legacy control area = the 17 EIA-930 SWPP
+  sub-BA tokens), read from the yearly zips where one exists, else the
+  extracted monthlies. Read by `market_sim.data.stale_snapshot` in EIA-930
+  stale-snapshot hours (owner ruling R22).
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | Model ISO label (SPP, ...). |
+| `area` | `string` | `none` | no | Load area as the source labels it. SPP: the legacy control-area token, identical to the EIA-930 SWPP sub-BA code (CSWS, EDE, GRDA, ...). |
+| `interval_end_utc` | `datetime64[ns, UTC]` | `utc_timestamp` | no | End of the metered hour (SPP MarketHour). |
+| `load_mw` | `float64` | `mw` | no | Hourly metered load for the area. |
+
+## counterparty-interchange
+
+Every leg of an ISO BA's hourly interchange, as the BA and as each counterparty
+report it, export-positive from the BA. Schema:
+[`schema/counterparty-interchange.schema.yaml`](schema/counterparty-interchange.schema.yaml).
+
+- **Keys:** `iso`, `counterparty`, `reporter`, `interval_end_utc`
+- **Reconciles:** EIA-930 interchange rows with DIBA = SWPP (counterparty side,
+  negated) and SWPP's own legs (local hour end localized per DIBA). SaskPower
+  (SPC) reports nothing to EIA-930. Read by `market_sim.data.stale_snapshot` in
+  stale-snapshot hours (R22).
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | Model ISO label (SPP, ...). |
+| `ba` | `string` | `none` | no | The ISO's EIA-930 balancing authority (SPP -> SWPP). |
+| `counterparty` | `string` | `none` | no | The directly interconnected BA on the other side of the leg. |
+| `reporter` | `string` | `none` | no | Who reported the value — "own" (the ISO's BA) or "counterparty". |
+| `interval_end_utc` | `datetime64[ns, UTC]` | `utc_timestamp` | no | End of the hour. |
+| `export_mw` | `float64` | `mw` | no | Net export from `ba` to `counterparty` (export-positive). |
+
+## iso-genmix
+
+An ISO's own generation by fuel, hourly mean of 5-minute values (SPP GenMix).
+Schema: [`schema/iso-genmix.schema.yaml`](schema/iso-genmix.schema.yaml).
+
+- **Keys:** `iso`, `area`, `fuel`, `interval_end_utc`
+- **Reconciles:** SPP `generation-mix-historical` `GenMix_<year>.csv` (Market +
+  Self summed per fuel family; interval-END UTC stamps, measured), concatenated
+  at 5-minute grain before the hourly mean. Read by
+  `market_sim.data.stale_snapshot` for frozen `NG: WND` / `NG: SUN` hours
+  (owner ruling R23).
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | Model ISO label (SPP, ...). |
+| `area` | `string` | `none` | no | Publishing footprint (SPP -> "SPP", the Eastern BAA). |
+| `fuel` | `string` | `none` | no | Fuel family (coal, oil, hydro, gas, nuclear, solar, wind, waste, waste_heat, other), market + self-committed summed. |
+| `interval_end_utc` | `datetime64[ns, UTC]` | `utc_timestamp` | no | End of the hour. |
+| `generation_mw` | `float64` | `mw` | no | Mean of the hour's 5-minute MW values. |
+| `n_intervals` | `int64` | `count` | no | Number of 5-minute values averaged (12 for a complete hour). |
 
 ## vlr-pocket-groups
 

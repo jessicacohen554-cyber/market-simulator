@@ -207,6 +207,10 @@ def test_iso_without_a_partition_is_dropped(fake_registries):
         "chp-btm-share",
         "uc-params",
         "load-forecast-vintages",
+        # UC-SPP-DATAFIX (R22 / R23): SPP's stale-snapshot replacements.
+        "iso-area-load",
+        "counterparty-interchange",
+        "iso-genmix",
     }
 
 

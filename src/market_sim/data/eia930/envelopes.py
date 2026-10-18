@@ -2036,8 +2036,18 @@ def spp_net_interchange(year: int) -> np.ndarray | None:
     (audit §3.4). SPP-40's PRECOMMIT names both hours. Mirrors
     :func:`neiso_net_interchange`'s shape; ``None`` when the year is
     unavailable.
+
+    In EIA-930 stale-snapshot hours (the frozen SWPP record) the series is
+    the sum of the measured seam legs, counterparty-reported where the
+    counterparty reports, else SWPP's own leg (owner ruling R22;
+    :func:`market_sim.data.stale_snapshot.repair_net_interchange`).
     """
-    return _eia930_net_interchange("SWPP", year)
+    ti = _eia930_net_interchange("SWPP", year)
+    if ti is None:
+        return None
+    from market_sim.data.stale_snapshot import repair_net_interchange
+
+    return repair_net_interchange("SPP", year, ti)
 
 
 # The NWPP member whose EIA-930 balancing area spans two physically separate

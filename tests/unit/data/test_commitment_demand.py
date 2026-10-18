@@ -19,6 +19,7 @@ from market_sim.config.constants import (
 )
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import UC_COMMITMENT_DEMAND_SOURCES
+from tests.helpers.stale_snapshot import disable_stale_snapshot_repair_mp
 
 
 def _cfg_zones(names, shares=None):
@@ -448,6 +449,7 @@ def test_cycle_cutoff_is_on_the_grid_and_a_full_cycle_ahead_all_year():
 def test_spp_reads_the_mtlf_at_the_da_ruc_never_the_eia_df(monkeypatch):
     """SPP's DA forecast is the MTLF vintage in force at 13:00 CPT D-1 on the
     frame's hour-end UTC stamps; the EIA DF column is not read."""
+    disable_stale_snapshot_repair_mp(monkeypatch)  # synthetic frame
     import market_sim.data.eia930 as e9
     from market_sim.data import load_forecast_vintages as lfv
 
@@ -478,6 +480,7 @@ def test_spp_reads_the_mtlf_at_the_da_ruc_never_the_eia_df(monkeypatch):
 
 
 def test_spp_missing_vintage_partition_raises(monkeypatch):
+    disable_stale_snapshot_repair_mp(monkeypatch)  # synthetic frame
     import market_sim.data.eia930 as e9
     from market_sim.data import load_forecast_vintages as lfv
 

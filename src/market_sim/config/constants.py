@@ -437,6 +437,38 @@ SPP_DA_RUC_FORECAST_CUTOFF_HOUR_LOCAL: int = 13
 # (DESIGN-ucmilp-ruc-stage-2026-10-16 section 2.2).
 SPP_ID_RUC_CYCLE_HOURS: int = 4
 
+# EIA-930 stale-snapshot screen for SPP (lane UC-SPP-DATAFIX, owner rulings
+# R22 / R23, UC-DESK r20). An hour is masked when the SWPP ``Demand``, the
+# 17-sub-BA demand vector, ``NG: WND`` or ``NG: SUN`` repeats EXACTLY for at
+# least this many consecutive hours. A data-QA detector definition, not a
+# tuning knob: a real 17-sub-BA load vector cannot repeat to the MW for 4 h,
+# and SPP's own HOURLY_LOAD has zero exact runs >= 4 h in any zone-year
+# 2019-2025, while EIA-930 freezes the whole SWPP record for 33-828 h/yr
+# (docs/records/spp/FINDING-spp-south-demand-flatruns-2026-10-18.md §0, §2,
+# §4 step 1). Short runs (2-3 h) add <= 5 h/yr (§2).
+SPP_STALE_RUN_MIN_HOURS: int = 4
+# Desk rulings inside R22 / R23 (UC-DESK r20, 2026-10-18; "measured beats stale
+# beats estimated — never interpolate"). Each is a DECLARED data gap of the
+# measured replacement, never a tolerance: any other gap still raises
+# (docs/records/spp/RESULT-uc-spp-datafix-2026-10-18.md §5).
+# (i) Seam legs omitted where neither side reports them: SaskPower is not an
+# EIA-930 respondent and its ~150 MW DC tie (SWPP-reported |SPC| p99
+# 105-158 MW) is absent from SWPP's own submission in 337 / 24 / 179 masked
+# hours (2019 / 2024 / 2025); bound <= 150 MW/h, <= 0.05 TWh/yr.
+SPP_STALE_OMITTED_LEGS: tuple[str, ...] = ("SPC",)
+# (ii) Hour-ending UTC hours where a non-omittable leg has no report on either
+# side, so EIA's own stale SWPP Total interchange is kept (flagged stale):
+# MISO, 2019-12-14 01:00Z (neighbours +566 / +432 MW; not tie-bounded).
+SPP_STALE_KEPT_INTERCHANGE_HOURS_UTC: tuple[str, ...] = ("2019-12-14T01:00Z",)
+# (iii) Hour-ending UTC windows (inclusive) where SPP GenMix is itself blank
+# inside a frozen NG: WND / NG: SUN run, so EIA's stale wind / solar are kept
+# (flagged stale): 2019-03-29 09:00-16:00Z (GenMix rows 07:05-16:25Z empty;
+# stated error range: wind GenMix bracket 8,676 -> 6,469 MW vs stale 9,493;
+# solar 0 -> 202 MW vs stale 0).
+SPP_STALE_KEPT_RENEWABLE_WINDOWS_UTC: tuple[tuple[str, str], ...] = (
+    ("2019-03-29T09:00Z", "2019-03-29T16:00Z"),
+)
+
 # Measured run-length ceiling that scopes the NYISO ONLINE-HOURS LSL state
 # floor (ScenarioConfig.nyiso_gas_bridge_state_floor_min_run) to the
 # near-baseload duty cohort: a CC plant carries the state floor only when its

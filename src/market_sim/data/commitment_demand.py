@@ -456,7 +456,9 @@ def forecast_and_actual_mw(
     ``k``; the forecast and the actual are the ISO's
     :func:`forecast_error_basis`. Raises when the ISO has no hourly BA frame
     for the year, when ``horizon`` has no forecast for the ISO, or when the
-    basis' own data is missing (an armed source never silently no-ops).
+    basis' own data is missing (an armed source never silently no-ops). The
+    actual's EIA-930 stale-snapshot hours carry the ISO's own measured load
+    (:func:`market_sim.data.stale_snapshot.repair_system_demand`).
     """
     from market_sim.data import eia930
 
@@ -478,7 +480,14 @@ def forecast_and_actual_mw(
             f"uc_commitment_demand_source='da_forecast': no EIA-930 hourly frame "
             f"with a 'Demand forecast' column for {iso} {year}"
         )
-    return read(iso, int(year), frame), basis.actual(frame)
+    # EIA-930 stale-snapshot hours: the actual is the ISO's own measured load,
+    # the same repair the solve's demand carries (owner ruling R22; identity
+    # for an ISO without a stale_snapshot spec), so the increment never pairs
+    # a repaired P1 load with a frozen actual.
+    from market_sim.data.stale_snapshot import repair_system_demand
+
+    actual = repair_system_demand(iso, int(year), basis.actual(frame))
+    return read(iso, int(year), frame), actual
 
 
 def ba_forecast_error_mw(

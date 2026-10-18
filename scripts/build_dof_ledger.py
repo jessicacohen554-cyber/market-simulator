@@ -1783,10 +1783,59 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
     return out
 
 
+#: Solve epoch that introduced the SPP EIA-930 stale-snapshot repair.
+_SPP_STALE_SNAPSHOT_EPOCH = "2026-10-18b"
+
+
+def data_qa_entries(bundle: Path, iso: str) -> list[dict]:
+    """Data-QA notes for inputs a bundle's solve epoch repaired (rule 21 note).
+
+    The SPP stale-snapshot repair (owner rulings R22 / R23 and the desk rulings
+    inside them) is not a free parameter: it is a measured input with stated,
+    ruled residuals. Listed only for a bundle whose ``solve_surface.json``
+    carries the epoch that introduced it, so an older bundle is not mis-attested.
+    """
+    surface = bundle / "solve_surface.json"
+    if iso != "SPP" or not surface.exists():
+        return []
+    epochs = json.loads(surface.read_text()).get("epochs", [])
+    if _SPP_STALE_SNAPSHOT_EPOCH not in epochs:
+        return []
+    return [
+        _entry(
+            "SPP_STALE_SNAPSHOT_REPAIR",
+            "data/stale_snapshot.py; constants.py SPP_STALE_*",
+            "measured",
+            iso,
+            source="EIA-930 SWPP stale-snapshot hours (Demand or the 17-sub-BA "
+            "vector, or NG: WND / NG: SUN, repeating exactly for >= 4 h) served "
+            "from SPP HOURLY_LOAD (demand, zonal weights), the EIA-930 seam legs "
+            "(counterparty-reported, else SWPP's own) and SPP GenMix (wind, "
+            "solar); owner rulings R22 / R23, desk rulings UC-DESK r20",
+            root_cause="ruled residuals, flagged per hour in docs/records/spp/"
+            "data/uc_spp_datafix_2026_10_18/stale_snapshot_provenance.csv: "
+            "(i) SPC (SaskPower, non-respondent) leg omitted 336 / 24 / 179 "
+            "masked h (2019 / 2024 / 2025), bound <= 150 MW/h, <= 0.05 TWh/yr, "
+            "expected ~6 / 1 / 12 GWh; (ii) 2019-12-14 01:00Z keeps EIA's stale "
+            "SWPP TI (MISO leg unreported on both sides); (iii) 2019-03-29 "
+            "09:00-16:00Z keeps EIA's stale wind / solar (GenMix blank; bracket "
+            "wind 8,676 -> 6,469 MW vs stale 9,493, solar 0 -> 202 MW vs 0). "
+            "Rule-14 basis: the counterparty-leg sum runs +25 to +76 MW above "
+            "the BA Total interchange (corr 0.76 in 2025 from SWPP-own SPC/WACM "
+            "prints); GenMix solar 2-10 % above NG: SUN "
+            "(docs/records/spp/RESULT-uc-spp-datafix-2026-10-18.md)",
+        )
+    ]
+
+
 def build_ledger(bundle: Path, iso: str) -> dict:
     """Assemble the free_parameters section for one bundle."""
     sc = json.loads((bundle / "run_config.json").read_text()).get("scenario_config", {})
-    entries = config_entries(sc, iso) + curated_entries(sc, iso)
+    entries = (
+        config_entries(sc, iso)
+        + curated_entries(sc, iso)
+        + data_qa_entries(bundle, iso)
+    )
     n_res = sum(1 for e in entries if e["identification"] == "residual")
     return {
         "schema": "dof-ledger/v1",

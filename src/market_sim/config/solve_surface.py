@@ -168,6 +168,11 @@ class SolveEpoch:
 #: charging) and their forward ``load-forecast-error`` profiles are re-derived
 #: on it (UC-DA-BASIS, owner rulings R16, R17, R19). Read only by the UC stage,
 #: so it re-keys every UC-armed SPP / CAISO config in both modes and no keeper.
+#: 2026-10-18b: SPP's EIA-930 stale-snapshot hours (frozen SWPP record) are
+#: served from SPP's own HOURLY_LOAD / seam legs / GenMix (UC-SPP-DATAFIX,
+#: owner rulings R22, R23). The clean partitions are in no key, so the epoch
+#: re-keys every SPP config in both modes (a forecast reads history-year
+#: inputs; over-invalidating is the fail-safe side) and the SPP keeper.
 SOLVE_EPOCHS: tuple[SolveEpoch, ...] = (
     SolveEpoch(
         id="2026-10-02c",
@@ -267,6 +272,17 @@ SOLVE_EPOCHS: tuple[SolveEpoch, ...] = (
         ),
         isos=("CAISO", "SPP"),
         requires="unit_commitment_milp",
+    ),
+    SolveEpoch(
+        id="2026-10-18b",
+        cause=(
+            "SPP EIA-930 stale-snapshot repair: hours where SWPP Demand or the "
+            "17-sub-BA vector (or NG: WND / NG: SUN) repeat exactly for >= 4 h "
+            "take SPP HOURLY_LOAD demand and zonal weights, the measured seam "
+            "legs (counterparty-reported, else SWPP's own) and SPP GenMix "
+            "wind / solar (UC-SPP-DATAFIX, owner rulings R22, R23)"
+        ),
+        isos=("SPP",),
     ),
 )
 

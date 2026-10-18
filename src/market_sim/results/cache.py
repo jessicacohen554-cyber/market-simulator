@@ -76,6 +76,24 @@ human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-10-18b — SPP's EIA-930 stale-snapshot hours served from SPP's own
+measurement (lane UC-SPP-DATAFIX, owner rulings R22, R23). KEY-MOVING for every
+SPP config in both modes, the SPP keeper included, through
+``solve_surface.SolveEpoch`` 2026-10-18b.** WHAT CHANGED:
+``data/stale_snapshot.py`` masks the hours where EIA-930's SWPP ``Demand`` or
+its 17-sub-BA demand vector repeats exactly for >= ``SPP_STALE_RUN_MIN_HOURS``
+(4) hours — 828 / 47 / 142 / 9 / 36 / 510 / 698 h in 2019-2025 — and serves
+in them: system demand and zonal weights from SPP HOURLY_LOAD
+(``iso-area-load``), net interchange from the measured seam legs
+(``counterparty-interchange``; a leg reported by neither side is left out and
+logged), and, on each column's own frozen hours, wind / solar from SPP GenMix
+(``iso-genmix``). The partitions are gitignored and in no key, so the epoch
+carries the change; ``SPP_STALE_RUN_MIN_HOURS`` itself is declared at its
+landing hash and moves no key. Forecast configs are included because a
+forecast reads history-year inputs (over-invalidation is the fail-safe side).
+WHAT IS NOT INVALIDATED: every other ISO (the repair registry holds SPP only).
+Record: ``docs/records/spp/RESULT-uc-spp-datafix-2026-10-18.md``.
+
 **Epoch 2026-10-18a — the SPP / CAISO UC commitment demand on the ISO's own
 forecast basis (lane UC-DA-BASIS, owner rulings R16, R17, R19; engine uc-1.10).
 KEY-MOVING for every config that arms ``unit_commitment_milp`` in CAISO and SPP

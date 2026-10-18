@@ -271,3 +271,27 @@ producer, keyless: `fetch_eia930_interchange.py --ba BPAT --source bulk --years 
 — every one of the 473,472 pre-existing 2023-2025 rows kept byte-identical; file now 1,104,624 rows,
 2019-01-01 01:00 .. 2026-01-01 00:00. Read for the BPAT→BCHA leg of the priced WECC_CAN seam
 (`NWPP_PRICED_SEAM_LEGS`); the other sixteen NWPP members' files stay 2023-2025.
+
+**`SWPP counterparty interchange hourly.parquet`** (added 2026-10-18, lane
+UC-SPP-DATAFIX, owner ruling R22 / UC-DESK r20 —
+`docs/records/spp/RESULT-uc-spp-datafix-2026-10-18.md`). Every EIA-930 row whose
+**DIBA is SWPP**, i.e. each neighbour's OWN report of its leg with SWPP — the
+measured replacement for SWPP's `Total interchange` in the hours EIA-930 freezes
+SWPP's record (`docs/records/spp/FINDING-spp-south-demand-flatruns-2026-10-18.md`).
+557,444 rows, 2019-01-01 07:00Z .. 2026-01-01 06:00Z (SWPP local years 2019-2025),
+fetched in one pass over the keyless six-month bulk CSVs with the committed producer:
+
+    python scripts/data/fetch_eia930_counterparty_interchange.py --diba SWPP \
+        --years 2019 2020 2021 2022 2023 2024 2025
+
+Columns `ba` (the REPORTING counterparty), `mw` (EIA sign: + = the reporter
+exports, i.e. INTO SWPP), `utc_time` (hour-ending **UTC**, not local: the
+reporters sit on Central, Mountain and other clocks). sha256
+`0a5f94339f2748e0f8e4578763c5b831105bace0cf9c15e0828792f2f1a124ae`.
+
+Ten reporters: `AECI`, `EPE`, `ERCO`, `MISO`, `PNM`, `PSCO`, `SIKE` (from
+2025-06-01, when it became a BA), `SPA`, `WACM`, `WAUW`. **`SPC` (SaskPower) is
+absent and cannot be fetched**: it is a Canadian entity, not an EIA-930
+respondent, so its leg exists only as SWPP reports it. NaN cells are EIA's
+(AECI 31, EPE 5, ERCO 59, MISO 53, PNM 1, PSCO 2, SIKE 48, SPA 168, WACM 120 h).
+Curated into `counterparty-interchange` (`scripts/data/curate_counterparty_interchange.py`).

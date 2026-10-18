@@ -225,3 +225,15 @@ zips and the CSVs together, or it will double-count 2023-2024.
 
 `SHA256SUMS.txt` beside this file was regenerated over the **merged** directory, so it covers
 every file here, from either landing.
+
+---
+
+## CONSUMER 2026-10-18 — lane UC-SPP-DATAFIX (owner rulings R22 / R23)
+
+Curated by `scripts/data/curate_iso_area_load.py` (HOURLY_LOAD -> `iso-area-load`) and
+`scripts/data/curate_iso_genmix.py` (GenMix_<year>.csv -> `iso-genmix`, hourly mean of the
+5-minute values, interval-END stamps in every year, measured). Read by
+`src/market_sim/data/stale_snapshot.py`, which serves EIA-930's frozen-snapshot hours of the
+SWPP record from SPP's own measurement. Record: `docs/records/spp/RESULT-uc-spp-datafix-2026-10-18.md`.
+Measured gap that matters: `GenMix_2019.csv` is blank 2019-03-29 07:05Z-16:25Z, inside an
+EIA-930 frozen-wind run.

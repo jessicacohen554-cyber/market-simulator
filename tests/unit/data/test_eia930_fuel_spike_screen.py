@@ -49,6 +49,7 @@ from market_sim.data.eia930.frames import (
     _pool_hourly_frame,
 )
 from tests.helpers.base import requires_raw
+from tests.helpers.stale_snapshot import disable_stale_snapshot_repair
 
 _YEAR = 2023
 _SPIKE_HOUR = 4000
@@ -125,6 +126,9 @@ class _SyntheticExtract(unittest.TestCase):
     iso = "SPP"
 
     def setUp(self) -> None:
+        # Synthetic extracts repeat by construction; the stale-snapshot repair
+        # (its own tests) would otherwise rewrite them on the input path.
+        disable_stale_snapshot_repair(self)
         self._tmp = tempfile.TemporaryDirectory()
         self._dir = Path(self._tmp.name)
         self._patch = mock.patch.object(eia_loader, "EIA_HOURLY_DIR", self._dir)

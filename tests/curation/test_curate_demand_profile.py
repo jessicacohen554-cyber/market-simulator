@@ -20,6 +20,7 @@ import pandas as pd
 from scripts.data import curate_demand_profile as cdp
 from scripts.lib import clean_io
 from scripts.lib.clean_io import validate_clean
+from tests.helpers.stale_snapshot import disable_stale_snapshot_repair
 
 
 def _series(base: float, n: int) -> np.ndarray:
@@ -102,6 +103,8 @@ class TestScreenAndRepair(unittest.TestCase):
 
 class TestCurateAll(unittest.TestCase):
     def setUp(self):
+        # Synthetic SPP series; the stale-snapshot repair is not under test.
+        disable_stale_snapshot_repair(self)
         self._tmp = TemporaryDirectory()
         root = Path(self._tmp.name)
 

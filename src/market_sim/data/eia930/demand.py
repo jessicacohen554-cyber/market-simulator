@@ -790,6 +790,11 @@ def _load_spp_hourly_demand(year: int) -> np.ndarray | None:
     spp_net_interchange`) carries the matching impossible export prints;
     SPP-40's PRECOMMIT names both hours.
 
+    Hours inside an EIA-930 stale snapshot (``Demand`` or the 17-sub-BA vector
+    repeating exactly for >= ``SPP_STALE_RUN_MIN_HOURS``) are then replaced by
+    the sum of SPP's own HOURLY_LOAD (owner ruling R22;
+    :func:`market_sim.data.stale_snapshot.repair_system_demand`).
+
     Returns ``None`` when no usable full-year frame is available, signaling the
     caller to fall back to the per-ISO demand-profiles parquet.
     """
@@ -799,11 +804,16 @@ def _load_spp_hourly_demand(year: int) -> np.ndarray | None:
     demand = frame["Demand"].interpolate().bfill().ffill().to_numpy(dtype=float)
     if np.isnan(demand).any():
         return None
-    return _screen_demand_spikes(
+    screened = _screen_demand_spikes(
         _screen_demand_dropouts(demand, ba_code="SWPP", year=year),
         ba_code="SWPP",
         year=year,
     )
+    # Owner ruling R22 (UC-SPP-DATAFIX): EIA-930's frozen-snapshot hours are
+    # served from SPP's own HOURLY_LOAD (data/stale_snapshot.py).
+    from market_sim.data.stale_snapshot import repair_system_demand
+
+    return repair_system_demand("SPP", year, screened)
 
 
 def _load_nwpp_hourly_demand(year: int) -> np.ndarray | None:
@@ -1217,7 +1227,9 @@ def load_zone_weights(
     CAISO TAC-area / NYISO pal / ISO-NE SMD / MISO sub-BA demand files) when
     available, so zones peak at different times; every other ISO (and these
     six without their file) uses the static per-zone share broadcast across
-    hours. Resolved through the package namespace so tests patching
+    hours. In an ISO's EIA-930 stale-snapshot hours the weights are the ISO's
+    own measured area-load shares
+    (:func:`market_sim.data.stale_snapshot.repair_zone_shares`; SPP only). Resolved through the package namespace so tests patching
     ``market_sim.data.eia_loader.load_zonal_shares`` keep intercepting it.
     R-CAISO-11: ``caiso_tac_shares_standard_time`` re-parses the TAC shares on
     the fixed-PST clock the system total rides; it is passed only when armed,
@@ -1230,10 +1242,18 @@ def load_zone_weights(
         )
     else:
         zonal_shares = _pkg_ns().load_zonal_shares(iso, year, iso_config.zone_names)
-    if zonal_shares is not None:
-        return zonal_shares
-    load_shares = np.array([zone.load_share for zone in iso_config.zones], dtype=float)
-    return np.broadcast_to(load_shares[:, None], (len(load_shares), HOURS_PER_YEAR))
+    if zonal_shares is None:
+        load_shares = np.array(
+            [zone.load_share for zone in iso_config.zones], dtype=float
+        )
+        zonal_shares = np.broadcast_to(
+            load_shares[:, None], (len(load_shares), HOURS_PER_YEAR)
+        )
+    # EIA-930 stale-snapshot hours take the ISO's own area-load shares (owner
+    # ruling R22; identity for an ISO without a stale_snapshot spec).
+    from market_sim.data.stale_snapshot import repair_zone_shares
+
+    return repair_zone_shares(iso, year, zonal_shares, list(iso_config.zone_names))
 
 
 def load_demand(

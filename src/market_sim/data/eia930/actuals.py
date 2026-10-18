@@ -600,6 +600,11 @@ def load_eia_hourly_renewable_gen(iso: str, year: int) -> dict[str, np.ndarray] 
     the model's wind input through this function (SPP-40 §4) and is repaired
     at the frame-construction seam, with no second application here.
 
+    Hours inside an EIA-930 stale snapshot of ``NG: WND`` / ``NG: SUN`` are
+    served from the ISO's own generation mix
+    (:func:`market_sim.data.stale_snapshot.repair_renewable_gen`; SPP only,
+    owner ruling R23).
+
     Returns ``{"wind": ..., "solar": ...}`` of ``(HOURS_PER_YEAR,)`` arrays for
     whichever of the two fuels the BA reports with a usable full-year series,
     or ``None`` when the ISO is unmapped, the file/year is unavailable, or
@@ -619,7 +624,13 @@ def load_eia_hourly_renewable_gen(iso: str, year: int) -> dict[str, np.ndarray] 
         if series.isna().any():
             continue
         out[fuel] = series.to_numpy(dtype=float)
-    return out or None
+    if not out:
+        return None
+    # EIA-930 stale-snapshot hours take the ISO's own generation mix (owner
+    # ruling R23; identity for an ISO without a stale_snapshot spec).
+    from market_sim.data.stale_snapshot import repair_renewable_gen
+
+    return repair_renewable_gen(iso, year, out)
 
 
 def load_ercot_fossil_gen(year: int) -> dict[str, np.ndarray] | None:

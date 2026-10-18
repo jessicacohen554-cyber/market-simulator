@@ -1,0 +1,61 @@
+# Canonical schema: counterparty-interchange (every measured leg of a BA's
+# hourly interchange, from BOTH reporting sides of the seam).
+#
+# Intake lane UC-SPP-DATAFIX (owner ruling R22, UC-DESK r20). EIA-930 carries
+# each BA-to-BA leg twice: as the BA reports it and as its counterparty does.
+# When the BA's own submission is stale or absent, the counterparty-reported
+# legs are the measured replacement
+# (docs/records/spp/FINDING-spp-south-demand-flatruns-2026-10-18.md §3, §4).
+#
+# Sources (per-ISO modules under scripts/lib/counterparty_interchange/):
+#   SPP  data/raw/eia-930-interchange/SWPP counterparty interchange hourly.parquet
+#        (every row with DIBA = SWPP; fetch_eia930_counterparty_interchange.py)
+#        and SWPP interchange hourly.parquet (SWPP's own legs).
+#
+# Sign: export_mw is export-POSITIVE from the ISO's own BA (`ba`). A
+# counterparty-reported leg is negated (EIA sign: + = the reporter exports).
+# Grain: data/clean/counterparty-interchange/<ISO>/counterparty-interchange_<year>.parquet,
+# one partition per ISO-local calendar year (interval START). Blank values dropped.
+datatype: counterparty-interchange
+schema_version: 1
+title: BA interchange legs from both reporting sides
+description: >-
+  Hourly net interchange of an ISO's balancing authority with each directly
+  interconnected BA, as reported by the BA itself and by each counterparty,
+  on one export-positive sign convention.
+
+key_columns: [iso, counterparty, reporter, interval_end_utc]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: Model ISO label (SPP, ...).
+  - name: ba
+    dtype: string
+    unit: none
+    nullable: false
+    description: The ISO's EIA-930 balancing authority (SPP -> SWPP).
+  - name: counterparty
+    dtype: string
+    unit: none
+    nullable: false
+    description: The directly interconnected BA on the other side of the leg.
+  - name: reporter
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Who reported the value — "own" (the ISO's BA) or "counterparty".
+  - name: interval_end_utc
+    dtype: datetime64[ns, UTC]
+    unit: utc_timestamp
+    nullable: false
+    description: End of the hour.
+  - name: export_mw
+    dtype: float64
+    unit: mw
+    nullable: false
+    description: Net export from `ba` to `counterparty` (export-positive).
