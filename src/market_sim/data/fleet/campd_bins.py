@@ -2121,6 +2121,9 @@ def thermal_tranche_online_frac(
 _TRANCHE_GATE_COLUMNS: tuple[tuple[str, tuple[str, ...], tuple[str, ...]], ...] = (
     ("cc_mustrun_per_plant", ("online_frac",), ("CC_REGULAR",)),
     ("st_gas_mustrun_per_plant", ("online_frac",), ("ST_GAS",)),
+    # The UC-native replacement of the ST_GAS leg reads the same column
+    # (spp_selfcommit_sector1_st_gas, lane UC-SPP-SELFCOMMIT).
+    ("spp_selfcommit_sector1_st_gas", ("online_frac",), ("ST_GAS",)),
     # Coal rows carry the artifact family token (plant_taxonomy.COAL_ARTIFACT_FAMILY).
     ("coal_sync_srmc_tranche", ("online_frac",), (COAL_ARTIFACT_FAMILY,)),
     ("coal_mustrun_online_pmin", ("mustrun_online_pct",), (COAL_ARTIFACT_FAMILY,)),

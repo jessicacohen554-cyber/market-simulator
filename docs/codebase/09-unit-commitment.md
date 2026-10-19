@@ -132,6 +132,29 @@ into the pass-2 reuse digest (it is not a `uc_*` field). `__post_init__`
 refuses the field without `unit_commitment_milp` and beside
 `st_gas_mustrun_per_plant` (rule 19: it replaces that floor).
 
+**Sector-1 ST_GAS self-commitment rows — `model/uc/selfcommit.py`
+(`spp_selfcommit_sector1_st_gas`, default False, SPP only).**
+`pipeline.uc.build_selfcommit_requirement_for_stage` reads each plant's EIA-860
+Sector at the run's vintage (`eia860_plant_sectors`) and its pooled CEMS
+`online_frac` from the thermal-tranche artifact the floor family reads
+(`thermal_tranche_online_frac`, same selector arguments as `assembly.py`);
+`build_selfcommit_requirement` keeps the integer `st_gas` clusters of plants in
+`constants.UC_SELFCOMMIT_EIA860_SECTORS` with a positive share (every other
+`st_gas` cluster is logged in `skipped` with its reason) and places each one's
+window as `round(online_frac × T)` hours of whole operating days ranked by
+mean P1 system load (`data/fleet/arrays.py::_commitment_day_order` /
+`_mustrun_window_hours`, the SPP-64 / spp-27 placement).
+`UcWindowModel._add_selfcommit_rows` adds one row per required cluster-hour,
+`u[c,t] >= min(UC_SELFCOMMIT_MIN_UNITS_ONLINE, u_upper[c,t], ceil(n_c a[c,t]))`:
+it relaxes on outage and inside a carried min-down (relaxed cells build no row
+and are counted in `selfcommit_relaxed_hours`), and the online unit's MW is
+free above the measured-mlf coupling row. The rows sit after the pocket rows
+(`diagnose` names them `selfcommit`). The stage logs `engine.selfcommit` and
+`windows[].selfcommit_rows` / `selfcommit_relaxed_hours`, and hashes the
+requirement into the pass-2 reuse digest. `__post_init__` refuses the field
+without `unit_commitment_milp`, outside `UC_SELFCOMMIT_ISOS` and beside
+`st_gas_mustrun_per_plant` / `st_gas_mustrun_p25_level` (rule 19).
+
 ## 9.3 Solve, stitch, inject — `solve.py`, `schedule.py`, `pipeline/uc.py`
 
 `solve_window` applies the registry options (`mip_rel_gap`, `time_limit`, the

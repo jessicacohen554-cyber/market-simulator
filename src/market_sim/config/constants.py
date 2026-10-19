@@ -7146,3 +7146,24 @@ WINTER_FUELSEC_CONDUCT_MIN_ONLINE_SHARE: float = 0.5
 # summer peak, so one unit is the least commitment consistent with the study.
 # docs/records/miso/ucmilp/FINDING-ucmiso-vlr-phase0-2026-10-15.md §3.
 VLR_GROUP_MIN_COMMITTED_UNITS: int = 1
+
+# EIA-860 Schedule 2 ``Sector`` codes whose ST_GAS plants carry the UC
+# self-commitment requirement under ``ScenarioConfig.spp_selfcommit_sector1_st_gas``
+# (lane UC-SPP-SELFCOMMIT, owner ruling R24). NOT fitted: Sector 1 is EIA's own
+# published code for "Electric Utility" (Form EIA-860 instructions, Schedule 2,
+# Sector: 1 Electric Utility, 2 IPP Non-CHP, 3 IPP CHP, 4 Commercial Non-CHP,
+# 5 Commercial CHP, 6 Industrial Non-CHP, 7 Industrial CHP), the vertically
+# integrated utilities the SPP MMU documents self-committing for native load
+# (SPP MMU self-commitment whitepaper, 2019).
+# docs/records/spp/DESIGN-uc-spp-selfcommit-2026-10-19.md §2.
+UC_SELFCOMMIT_EIA860_SECTORS: tuple[int, ...] = (1,)
+
+# Units a self-committed plant's ST_GAS cluster must hold online in each hour of
+# its measured window under ``ScenarioConfig.spp_selfcommit_sector1_st_gas``.
+# NOT fitted: it is the definition of the measured share the window is sized
+# by. ``online_frac`` (scripts/data/derive_thermal_tranches.py,
+# ``_SYNC_MW_NAMEPLATE_FRAC``) counts an hour as synchronized when the plant's
+# CAMPD net MW clears 1 % of nameplate, i.e. ANY one unit is online, so one
+# unit is exactly what the measured statistic observes.
+# docs/records/spp/DESIGN-uc-spp-selfcommit-2026-10-19.md §2.
+UC_SELFCOMMIT_MIN_UNITS_ONLINE: int = 1

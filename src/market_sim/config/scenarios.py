@@ -2545,6 +2545,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "uc_reliability_commitment",
     "uc_ruc_load_basis",
     "uc_da_schedule_reuse_bundle",
+    # Lane UC-SPP-SELFCOMMIT (2026-10-19, owner ruling R24): the Sector-1
+    # ST_GAS self-commitment requirement in the UC window, born default off
+    # and dropped from the hash there, so every committed key is unmoved.
+    # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
+    "spp_selfcommit_sector1_st_gas",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -3476,6 +3481,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "uc_reliability_commitment": "False",
     "uc_ruc_load_basis": "'actual'",
     "uc_da_schedule_reuse_bundle": "''",
+    # Added by lane UC-SPP-SELFCOMMIT WITH the field (the nyiso-119 discipline).
+    "spp_selfcommit_sector1_st_gas": "False",
 }
 
 
@@ -4488,6 +4495,11 @@ UC_RUC_LOAD_BASES: tuple[str, ...] = ("actual", "iso_intraday_forecast")
 #: ``data/commitment_demand.py::intraday_forecast_isos`` by
 #: ``tests/unit/data/test_commitment_demand.py``.
 UC_RUC_INTRADAY_FORECAST_ISOS: tuple[str, ...] = ("SPP",)
+
+#: ISOs ``spp_selfcommit_sector1_st_gas`` admits (lane UC-SPP-SELFCOMMIT, owner
+#: ruling R24): the Sector-1 self-commitment evidence is SPP's own
+#: (FINDING-spp-south-scarcity-2026-10-18 §3), so another ISO is its own lane.
+UC_SELFCOMMIT_ISOS: tuple[str, ...] = ("SPP",)
 
 
 @dataclass
@@ -23328,6 +23340,33 @@ class ScenarioConfig:
     # run_config.json (scenario_config) and the log's engine.reused_schedule.
     # Requires unit_commitment_milp.
     uc_da_schedule_reuse_bundle: str = ""
+    # SECTOR-1 ST_GAS SELF-COMMITMENT REQUIREMENT (lane UC-SPP-SELFCOMMIT,
+    # owner ruling R24, 2026-10-18; FINDING-spp-south-scarcity-2026-10-18 §5
+    # P1; DESIGN-uc-spp-selfcommit-2026-10-19.md). GATED, default False,
+    # byte-identical off (the one consumer, pipeline.uc.UcStage, builds no
+    # requirement and the window adds no row). When True, every UC window adds
+    #   u[c, t] >= min(UC_SELFCOMMIT_MIN_UNITS_ONLINE, units available at t)
+    # for each integer ST_GAS cluster c of a plant whose EIA-860 Sector is in
+    # UC_SELFCOMMIT_EIA860_SECTORS (1, Electric Utility) and whose
+    # thermal-tranche artifact row publishes a positive pooled CEMS
+    # ``online_frac``, over the plant's measured window: round(online_frac x
+    # hours) placed as whole operating days ranked by the day's mean P1 system
+    # load (the SPP-64 / spp-27 placement helpers of the per-plant ST_GAS
+    # floor). A u-floor in the commitment stage, never a P floor: the online
+    # unit dispatches freely from its measured min-load (uc-params mlf, the
+    # output-coupling row) up, and P1 sees the requirement only through the
+    # MECH 28 schedule bounds. Integer rows, never priced (rule 4).
+    # Rule 17: driver = utility self-commitment for native load (EIA-860
+    # Sector 1; SPP MMU self-commitment whitepaper 2019); window = the
+    # measured online_frac days, relaxed on outage and inside a carried
+    # min-down; forward story = Sector re-reads at each EIA-860 vintage and
+    # online_frac re-derives from each multi-year CAMPD vintage (the forecast
+    # emission-rate family, rule 13 admissible; DESIGN §3). Rule 19: it
+    # REPLACES st_gas_mustrun_per_plant (and its p25 level swap), refused
+    # together below. Rule 21: zero fitted values. Requires
+    # unit_commitment_milp; SPP only (UC_SELFCOMMIT_ISOS): the Sector-1
+    # evidence is SPP's own (rule 25), a transfer is its own lane.
+    spp_selfcommit_sector1_st_gas: bool = False
 
     def __post_init__(self) -> None:
         # YAML round-trip type repair: YAML has no tuple type, so a config
@@ -24838,6 +24877,29 @@ class ScenarioConfig:
                     "(rule 19 [R-ONE-MECH]; owner ruling 2026-10-15): disarm "
                     "the per-plant ST_GAS floor."
                 )
+        if self.spp_selfcommit_sector1_st_gas:
+            if not self.unit_commitment_milp:
+                raise ValueError(
+                    "spp_selfcommit_sector1_st_gas is a row of the MILP UC "
+                    "window; it needs unit_commitment_milp=True."
+                )
+            if str(self.iso or "").upper() not in UC_SELFCOMMIT_ISOS:
+                raise ValueError(
+                    "spp_selfcommit_sector1_st_gas is scoped to "
+                    f"{UC_SELFCOMMIT_ISOS} (rule 25 [R-ISO-SCOPE]: the Sector-1 "
+                    f"self-commitment evidence is SPP's own); got iso={self.iso!r}."
+                )
+            _stacked = [
+                name
+                for name in ("st_gas_mustrun_per_plant", "st_gas_mustrun_p25_level")
+                if getattr(self, name, False)
+            ]
+            if _stacked:
+                raise ValueError(
+                    "spp_selfcommit_sector1_st_gas REPLACES the per-plant ST_GAS "
+                    "floor (rule 19 [R-ONE-MECH]; owner ruling R24): disarm "
+                    + ", ".join(_stacked)
+                )
         if self.unit_commitment_milp:
             _armed = [
                 f"{name} ({what})"
@@ -26307,6 +26369,9 @@ TIER_TAGS: dict[str, int] = {
     "uc_reliability_commitment": 1,
     "uc_ruc_load_basis": 1,
     "uc_da_schedule_reuse_bundle": 1,
+    # Lane UC-SPP-SELFCOMMIT (owner ruling R24): structural (a measured
+    # commitment requirement) with no free number of its own (rule 21).
+    "spp_selfcommit_sector1_st_gas": 1,
     # closeout-SOCO-w3 DIAGNOSTIC (rule 13: never a keeper input).
     "diagnostic_coal_metered_online_floor": 1,
 }
