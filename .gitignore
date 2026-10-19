@@ -4106,3 +4106,7 @@ results/calibration/_shared/SPP/unit_outages_netloadmask-64a79e322460.parquet
 results/calibration/_shared/SPP/unit_outages_partial-5ac00d164673.parquet
 results/calibration/_shared/SPP/unit_outages_partial_netloadmask-b00540584f5f.parquet
 results/calibration/_shared/SPP/unit_outages_short_netloadmask-9e907a36d162.parquet
+
+# UC-SPP-CONTROL (2026-10-19): per-year legs stay off main (rule 29(c)); the composed span carries dispatch (rule 34)
+results/calibration/uc_spp_control_20*/
+!results/calibration/uc_spp_control_span/dispatch/
