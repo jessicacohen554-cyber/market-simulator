@@ -4107,6 +4107,7 @@ results/calibration/_shared/SPP/unit_outages_partial-5ac00d164673.parquet
 results/calibration/_shared/SPP/unit_outages_partial_netloadmask-b00540584f5f.parquet
 results/calibration/_shared/SPP/unit_outages_short_netloadmask-9e907a36d162.parquet
 
-# UC-SPP-CONTROL (2026-10-19): per-year legs stay off main (rule 29(c)); the composed span carries dispatch (rule 34)
+# UC-SPP-CONTROL (2026-10-19): control legs and span stay off main until the owner rules on promotion
+# (rule 29(c) / R-AV; parity gate). Bytes: lane commit b0e6f075 and shard branches claude/uc-spp-control-<y>.
 results/calibration/uc_spp_control_20*/
-!results/calibration/uc_spp_control_span/dispatch/
+results/calibration/uc_spp_control_span/

@@ -97,11 +97,17 @@ $/MWh; K = keeper, C = control.
 
 ## 5. Where the bundles are, and what a promotion would cost
 
-- **Composed span:** `results/calibration/uc_spp_control_span` is on `main` with this PR via a `.gitignore` negation (rule 34). It holds
-  every year's `dispatch/`, `unit_marginal_<y>` and the `hourly/` sidecars. `unit_hourly_*` stays gitignored (rule 15).
-- **Per-year legs:** gitignored here. They remain on shard branches `claude/uc-spp-control-<y>` (SHAs in §1) as transport, until the owner
+- **Composed span: not on `main`.** `results/calibration/uc_spp_control_span` holds every year's `dispatch/`, `unit_marginal_<y>` and
+  the `hourly/` sidecars (`unit_hourly_*` excluded, rule 15).
+  - It was pushed in lane commit `b0e6f075a13644b064a5010d73818f7ec74984d4` (213 MB), then untracked and gitignored in the next commit.
+  - Reason: CI's registry/payload parity gate enforces rule 29(c) / owner ruling R-AV. An unregistered control bundle never reaches
+    `main`, and this lane may not register it. Untracking follows rule 31 (`.gitignore`, never `rm`).
+  - The bytes stay reachable through `b0e6f075` (PR #7290 history) and the shard branches.
+- **Per-year legs:** gitignored. They remain on shard branches `claude/uc-spp-control-<y>` (SHAs in §1) as transport, until the owner
   deletes them (a session cannot).
-- **Promotion cost: zero LP.** It is one `promote_keeper.py --iso SPP --bundle results/calibration/uc_spp_control_span …` run, which:
+- **If promoted:** `git checkout b0e6f075 -- results/calibration/uc_spp_control_span`, then `promote_keeper.py` lands it on `main` with its
+  registration. A promotion therefore needs no re-solve as long as `b0e6f075` or the shard branches survive.
+- **Promotion cost: zero LP.** It is the checkout above plus one `promote_keeper.py --iso SPP --bundle results/calibration/uc_spp_control_span …` run, which:
   - attests (C6), carrying the keeper's exceptions ledger forward with C3c re-measured;
   - adds the `SPP_STALE_SNAPSHOT_REPAIR` DOF data-QA note automatically (epoch `2026-10-18b`);
   - designates, rebuilds status, and prunes `closeout_spp_nuc_span`.
