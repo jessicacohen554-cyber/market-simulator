@@ -51,6 +51,7 @@ from market_sim.model.uc.params import (
     units_needed_for_floor,
 )
 from market_sim.model.uc.pocket import PocketRequirement
+from market_sim.model.uc.selfcommit import SelfCommitRequirement
 from market_sim.model.uc.slim import SlimReduction, reduce_window
 
 #: Dispatch kwargs the window DROPS: annual / monthly budget families whose
@@ -668,6 +669,12 @@ class UcWindowModel:
         pocket: The VLR load-pocket requirement
             (``vlr_pocket_commitment``; :mod:`market_sim.model.uc.pocket`), or
             ``None`` for no pocket row (:meth:`_add_pocket_rows`).
+        selfcommit: The Sector-1 ST_GAS self-commitment requirement on this
+            window (``spp_selfcommit_sector1_st_gas``;
+            :mod:`market_sim.model.uc.selfcommit`, already
+            :meth:`~market_sim.model.uc.selfcommit.SelfCommitRequirement.sliced`
+            to ``[t0, t1)``), or ``None`` for no row
+            (:meth:`_add_selfcommit_rows`).
         u_floor: ``(n_int, T_w)`` add-only lower bound on ``u`` — the DA
             schedule a reliability-commitment (RUC) window may add to but
             never de-commit (``uc_reliability_commitment``; DESIGN-ucmilp-
@@ -689,6 +696,7 @@ class UcWindowModel:
         slim: bool = False,
         pocket: PocketRequirement | None = None,
         u_floor: np.ndarray | None = None,
+        selfcommit: SelfCommitRequirement | None = None,
     ) -> None:
         t_build = time.perf_counter()
         self.params = params
@@ -720,6 +728,12 @@ class UcWindowModel:
         self._n_pocket_rows = 0
         #: Pocket sets with no integer cluster in this window (no row built).
         self.pocket_sets_skipped = 0
+        #: Self-commitment rows (``spp_selfcommit_sector1_st_gas``), after the
+        #: pocket rows.
+        self._n_selfcommit_rows = 0
+        #: Required cluster-hours the window relaxed below ``min_units``
+        #: (outage, or a carried min-down) — rule 17's window relief, counted.
+        self.selfcommit_relaxed_hours = 0
         self.hist_v = np.zeros((self.n_int, self.T_w))
         self.hist_w = np.zeros((self.n_int, self.T_w))
         if self.n_int:
@@ -729,6 +743,7 @@ class UcWindowModel:
             )
             self._add_uc_rows(state, floor_need_ahead)
             self._add_pocket_rows(pocket)
+            self._add_selfcommit_rows(selfcommit)
             self._set_integrality()
         self._pin_state_rows(state, soc_terminal)
         self._add_ramp_boundary_rows(inputs, state)
@@ -1169,6 +1184,63 @@ class UcWindowModel:
         lo = np.concatenate(lower)
         self._append_rows(A, lo, np.full(off, np.inf))
         self._n_pocket_rows = int(off)
+
+    def _add_selfcommit_rows(self, req: SelfCommitRequirement | None) -> None:
+        """(h) Sector-1 ST_GAS self-commitment: ``u[c, t] >= rhs[c, t]``.
+
+        One row per required cluster-hour (``req.required``), over the
+        cluster's integer ``u``, with
+        ``rhs[c, t] = min(min_units, u_upper[c, t], ceil(n_c * a[c, t]))``: the
+        requirement relaxes to the units the window can hold online — not on
+        outage (availability ``a`` covers ``ceil(n * a)`` units) and not inside
+        a carried min-down (``u_upper``) — so it never forces an unavailable
+        unit on (rule 17) and never makes a window infeasible by itself. A
+        relaxed cell builds no row and is counted in
+        :attr:`selfcommit_relaxed_hours`. The online unit's MW is free above
+        the output-coupling row's measured min-load ``mlf * pbar * a * u``
+        (rule 18 physics; no P floor is placed). Integer rows: never priced
+        (rule 4).
+        """
+        if req is None or req.n_sel == 0:
+            return
+        p = self.params
+        k_all = self.int_idx
+        T_w = self.T_w
+        if req.required.shape != (req.n_sel, T_w):
+            raise ValueError(
+                f"self-commitment mask {req.required.shape} does not match the "
+                f"window ({req.n_sel}, {T_w}); slice it to [t0, t1)"
+            )
+        int_local = np.full(p.n_clusters, -1)
+        int_local[k_all] = np.arange(self.n_int)
+        loc = int_local[req.clusters]
+        if np.any(loc < 0):
+            raise ValueError(
+                "self-commitment names a cluster with no integer u: "
+                f"{req.clusters[loc < 0].tolist()}"
+            )
+        a = p.cluster_availability(self.fleet)[k_all][loc]  # (n_sel, T_w)
+        n = p.n_units[req.clusters].astype(float)
+        avail_units = np.minimum(
+            np.asarray(self.u_upper, dtype=float)[loc],
+            np.maximum(np.ceil(n[:, None] * a - _AVAIL_UNIT_TOL), 0.0),
+        )
+        rhs = np.minimum(float(req.min_units), avail_units)
+        need = np.asarray(req.required, dtype=bool)
+        self.selfcommit_relaxed_hours = int(
+            np.count_nonzero(need & (rhs < float(req.min_units)))
+        )
+        cell = need & (rhs > 0.0)
+        ii, tt = np.nonzero(cell)
+        if ii.size == 0:
+            return
+        off = int(ii.size)
+        A = sp.coo_matrix(
+            (np.ones(off), (np.arange(off), self.u_col(loc[ii], tt))),
+            shape=(off, self.n_total),
+        ).tocsr()
+        self._append_rows(A, rhs[ii, tt], np.full(off, np.inf))
+        self._n_selfcommit_rows = off
 
     def _append_rows(
         self, A: sp.csr_matrix, lower: np.ndarray, upper: np.ndarray

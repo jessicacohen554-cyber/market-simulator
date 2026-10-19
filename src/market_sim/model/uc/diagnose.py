@@ -133,7 +133,8 @@ def diagnose_window(window: "UcWindowModel", max_examples: int = 12) -> dict:
     size = n_int * T_w
     n_rows = int(A.shape[0])
     n_pocket = int(getattr(window, "_n_pocket_rows", 0))
-    n_prod = n_rows - window._n_uc_rows - n_pocket - window._n_ramp_rows
+    n_selfc = int(getattr(window, "_n_selfcommit_rows", 0))
+    n_prod = n_rows - window._n_uc_rows - n_pocket - n_selfc - window._n_ramp_rows
     has_mlf = bool(n_int) and bool((window.params.mlf[window.int_idx] > 0.0).any())
     families = [f for f in _UC_FAMILIES if f != "mlf_floor" or has_mlf]
     n_family_rows = len(families) * size
@@ -153,6 +154,10 @@ def diagnose_window(window: "UcWindowModel", max_examples: int = 12) -> dict:
             by_family.setdefault("min_down_guard", []).append(int(off - n_family_rows))
         elif off < window._n_uc_rows + n_pocket:
             by_family.setdefault("vlr_pocket", []).append(int(off - window._n_uc_rows))
+        elif off < window._n_uc_rows + n_pocket + n_selfc:
+            by_family.setdefault("selfcommit", []).append(
+                int(off - window._n_uc_rows - n_pocket)
+            )
         else:
             by_family.setdefault("ramp_boundary", []).append(int(r))
     report = {

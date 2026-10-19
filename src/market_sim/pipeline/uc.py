@@ -72,6 +72,8 @@ import scipy.sparse as sp
 
 from market_sim.config.constants import (
     STORAGE_TIEBREAKER_EPSILON,
+    UC_SELFCOMMIT_EIA860_SECTORS,
+    UC_SELFCOMMIT_MIN_UNITS_ONLINE,
     VLR_GROUP_MIN_COMMITTED_UNITS,
 )
 from market_sim.config.paths import RESULTS_ROOT
@@ -93,6 +95,10 @@ from market_sim.model.uc.params import (
     units_online_profile,
 )
 from market_sim.model.uc.pocket import PocketRequirement, build_pocket_requirement
+from market_sim.model.uc.selfcommit import (
+    SelfCommitRequirement,
+    build_selfcommit_requirement,
+)
 from market_sim.model.uc.schedule import (
     UcSchedule,
     month_boundaries,
@@ -293,6 +299,8 @@ def uc_input_digest(
         # The pocket requirement is not a ``uc_*`` field: hash it by value when
         # armed (absent off, so a gate-off digest is unchanged).
         *(() if stage.pocket is None else (stage.pocket,)),
+        # Likewise the self-commitment requirement (not a ``uc_*`` field).
+        *(() if getattr(stage, "selfcommit", None) is None else (stage.selfcommit,)),
         uc_fields,
         repr(stage.options),
         stage.params,
@@ -669,6 +677,20 @@ class UcStage:
                 list(self.pocket.labels),
                 list(self.pocket.unmatched),
             )
+        #: The Sector-1 ST_GAS self-commitment requirement
+        #: (``spp_selfcommit_sector1_st_gas``), on the post-demotion params.
+        self.selfcommit: SelfCommitRequirement | None = None
+        if bool(getattr(config, "spp_selfcommit_sector1_st_gas", False)):
+            self.selfcommit = build_selfcommit_requirement_for_stage(
+                config, self.params, demand
+            )
+            logger.info(
+                "Self-commitment requirement: %d Sector-1 ST_GAS cluster(s) %s; "
+                "skipped %s",
+                self.selfcommit.n_sel,
+                self.selfcommit.plant_code.tolist(),
+                list(self.selfcommit.skipped),
+            )
         logger.info(
             "UC stage prepared: %d clusters, %d integer (%d fleet rows; %d "
             "all-budget-pinned clusters left to their budget identity), W=%d L=%d",
@@ -949,6 +971,9 @@ class UcStage:
                 ),
                 slim=self.slim,
                 pocket=self.pocket,
+                selfcommit=None
+                if self.selfcommit is None
+                else self.selfcommit.sliced(t0, t1),
             )
             t_w2 = time.perf_counter()
             warm = window.warm_start_vector(
@@ -1016,6 +1041,8 @@ class UcStage:
                     "reserve_gated_rows": int(window.n_reserve_gated_rows),
                     "pocket_rows": int(window._n_pocket_rows),
                     "pocket_sets_skipped": int(window.pocket_sets_skipped),
+                    "selfcommit_rows": int(window._n_selfcommit_rows),
+                    "selfcommit_relaxed_hours": int(window.selfcommit_relaxed_hours),
                     "slim": {
                         "reduced": window.slim is not None,
                         "columns": int(result.slim_columns),
@@ -1115,6 +1142,9 @@ class UcStage:
                     "vlr_pocket_commitment": bool(
                         getattr(c, "vlr_pocket_commitment", False)
                     ),
+                    "spp_selfcommit_sector1_st_gas": bool(
+                        getattr(c, "spp_selfcommit_sector1_st_gas", False)
+                    ),
                     "uc_reliability_commitment": bool(
                         getattr(c, "uc_reliability_commitment", False)
                     ),
@@ -1142,6 +1172,14 @@ class UcStage:
                     "min_units_per_group": int(VLR_GROUP_MIN_COMMITTED_UNITS),
                     "sets": self.pocket.log_rows(self.params),
                     "unmatched_groups": list(self.pocket.unmatched),
+                },
+                "selfcommit": None
+                if self.selfcommit is None
+                else {
+                    "eligible_sectors": list(UC_SELFCOMMIT_EIA860_SECTORS),
+                    "min_units_online": int(self.selfcommit.min_units),
+                    "clusters": self.selfcommit.log_rows(self.params),
+                    "skipped": list(self.selfcommit.skipped),
                 },
             },
             "clusters": params_log_rows(self.params),
@@ -1306,6 +1344,9 @@ class UcStage:
                 slim=self.slim,
                 pocket=self.pocket,
                 u_floor=u_da,
+                selfcommit=None
+                if self.selfcommit is None
+                else self.selfcommit.sliced(t0, t1),
             )
             warm = window.warm_start_vector(prev, W, p1_dispatch[:, t0:t1], u_da)
             result = solve_window(
@@ -1615,6 +1656,41 @@ def synchronized_reserve_overrides(
         int(elig2d[sync].sum()),
     )
     return {"reserve_eligible": out}
+
+
+def build_selfcommit_requirement_for_stage(
+    config, params: UcClusterParams, demand: np.ndarray
+) -> SelfCommitRequirement:
+    """The year's Sector-1 ST_GAS self-commitment requirement from its sources.
+
+    ``spp_selfcommit_sector1_st_gas`` (DESIGN-uc-spp-selfcommit-2026-10-19 §2):
+    the EIA-860 Sector of each plant at the run's vintage
+    (:func:`~market_sim.data.fleet.eia860.eia860_plant_sectors`), the pooled
+    CEMS ``online_frac`` of its ST_GAS row in the thermal-tranche artifact the
+    floor family reads (same selector arguments as
+    ``data/fleet/assembly.py``), and the P1 system load (``demand`` summed
+    over zones) as the window's ranking signal.
+    """
+    from market_sim.data.fleet.campd_bins import (
+        campd_fuel_split_selector,
+        thermal_tranche_online_frac,
+    )
+    from market_sim.data.fleet.eia860 import eia860_plant_sectors
+
+    online_frac = thermal_tranche_online_frac(
+        str(getattr(config, "iso", "") or ""),
+        bool(getattr(config, "campd_per_unit_attribution", False)),
+        bool(getattr(config, "campd_outage_merit_order_guard", False)),
+        campd_fuel_split_selector(config),
+    )
+    return build_selfcommit_requirement(
+        params,
+        eia860_plant_sectors(),
+        online_frac,
+        np.asarray(demand, dtype=float).sum(axis=0),
+        UC_SELFCOMMIT_EIA860_SECTORS,
+        UC_SELFCOMMIT_MIN_UNITS_ONLINE,
+    )
 
 
 def prepare_uc_stage(
