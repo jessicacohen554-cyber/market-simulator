@@ -468,6 +468,30 @@ SPP_STALE_KEPT_INTERCHANGE_HOURS_UTC: tuple[str, ...] = ("2019-12-14T01:00Z",)
 SPP_STALE_KEPT_RENEWABLE_WINDOWS_UTC: tuple[tuple[str, str], ...] = (
     ("2019-03-29T09:00Z", "2019-03-29T16:00Z"),
 )
+# (iv) EIA-930 benchmark columns screened by the same stale mask but with NO
+# basis-matched SPP GenMix series, so EIA's stale value is kept (flagged) in
+# their masked hours (lane UC-SPP-BENCH, owner ruling R27; measured outside the
+# mask, GenMix / EIA-930 2019-2025: oil 0.28-2.53, r 0.66-0.95; other (+waste,
+# waste heat) 0.79-1.00, r 0.62-0.99 — a different aggregate, rule 14). Stated
+# bound: masked-hour EIA energy <= 0.019 TWh/yr oil, <= 0.21 TWh/yr other
+# (GenMix differs from it by <= 0.023 TWh/yr)
+# (docs/records/spp/RESULT-uc-spp-bench-2026-10-20.md §2).
+SPP_STALE_KEPT_BENCHMARK_COLUMNS: tuple[str, ...] = ("NG: OIL", "NG: OTH")
+# (v) Hour-ending UTC hours where SPP GenMix nuclear is blank inside an exact-
+# repeat NG: NUC run OUTSIDE any whole-record freeze (a genuinely flat nuclear
+# fleet the fuel mask also flags), so EIA's value is kept (flagged); 9 h in
+# 2019-2025 (RESULT-uc-spp-bench-2026-10-20.md §2).
+SPP_STALE_KEPT_NUCLEAR_HOURS_UTC: tuple[str, ...] = (
+    "2019-02-20T22:00Z",
+    "2019-06-29T11:00Z",
+    "2019-06-29T12:00Z",
+    "2020-11-20T04:00Z",
+    "2021-06-04T02:00Z",
+    "2025-11-03T04:00Z",
+    "2025-11-03T06:00Z",
+    "2025-11-03T07:00Z",
+    "2025-11-03T08:00Z",
+)
 
 # Measured run-length ceiling that scopes the NYISO ONLINE-HOURS LSL state
 # floor (ScenarioConfig.nyiso_gas_bridge_state_floor_min_run) to the

@@ -1,6 +1,6 @@
 {
   "artifact": "campd-unit-outages-short-netloadmask-SPP.csv",
-  "artifact_rows": 460,
+  "artifact_rows": 459,
   "derive_invocation": {
     "fullstop_override_cf": 0.02,
     "fullstop_override_days": 5,
@@ -36,12 +36,12 @@
   ],
   "sidecar_schema_version": 1,
   "windows_by_start_year": {
-    "2019": 56,
-    "2020": 81,
-    "2021": 97,
+    "2019": 54,
+    "2020": 82,
+    "2021": 96,
     "2022": 62,
-    "2023": 42,
-    "2024": 56,
+    "2023": 44,
+    "2024": 55,
     "2025": 66
   }
 }

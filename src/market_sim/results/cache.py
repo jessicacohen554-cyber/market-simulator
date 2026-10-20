@@ -76,6 +76,21 @@ human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-10-20a — SPP's outage net-load mask on the stale-snapshot repair
+(lane UC-SPP-BENCH, owner ruling R27). KEY-MOVING for every SPP backcast that
+arms ``unit_outage_netload_mask_repair`` (the SPP keeper does), through
+``solve_surface.SolveEpoch`` 2026-10-20a.** WHAT CHANGED:
+``scripts/lib/outage_detect.high_load_mask`` now reads the raw SWPP frame
+through ``stale_snapshot.repair_eia930_frame`` (the epoch-2026-10-18b
+construction), flipping 246 / 29 / 11 / 0 / 22 / 116 / 206 high-net-load hours
+in 2019-2025, and ``data/raw/campd-unit-outages-short-netloadmask-SPP.csv`` is
+re-derived at its recorded invocation (identity path reproduces the committed
+bytes; repaired: 459 rows, 10 coal windows added, 11 dropped). The >= 5-day and
+partial-plateau companions re-derive unchanged. WHAT IS NOT INVALIDATED: every
+other ISO and every SPP config that does not arm the net-load-mask repair. The
+EIA-930 scoring benchmark moves with the same repair but is in no solve key.
+Record: ``docs/records/spp/RESULT-uc-spp-bench-2026-10-20.md``.
+
 **Epoch 2026-10-18b — SPP's EIA-930 stale-snapshot hours served from SPP's own
 measurement (lane UC-SPP-DATAFIX, owner rulings R22, R23). KEY-MOVING for every
 SPP config in both modes, the SPP keeper included, through

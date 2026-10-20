@@ -173,6 +173,11 @@ class SolveEpoch:
 #: owner rulings R22, R23). The clean partitions are in no key, so the epoch
 #: re-keys every SPP config in both modes (a forecast reads history-year
 #: inputs; over-invalidating is the fail-safe side) and the SPP keeper.
+#: 2026-10-20a: the SPP outage net-load mask (``outage_detect.high_load_mask``)
+#: reads the same stale-snapshot repair, and the 1-5 day
+#: ``-short-netloadmask-`` extract is re-derived on it at its recorded
+#: invocation (UC-SPP-BENCH, owner ruling R27; rule 23). Read only by a
+#: backcast arming ``unit_outage_netload_mask_repair`` (the SPP keeper does).
 SOLVE_EPOCHS: tuple[SolveEpoch, ...] = (
     SolveEpoch(
         id="2026-10-02c",
@@ -283,6 +288,18 @@ SOLVE_EPOCHS: tuple[SolveEpoch, ...] = (
             "wind / solar (UC-SPP-DATAFIX, owner rulings R22, R23)"
         ),
         isos=("SPP",),
+    ),
+    SolveEpoch(
+        id="2026-10-20a",
+        cause=(
+            "SPP outage net-load mask on the stale-snapshot repair: the 1-5 day "
+            "CAMPD short-window '-short-netloadmask-' extract re-derived at its "
+            "recorded invocation (10 windows added, 11 dropped; UC-SPP-BENCH, "
+            "owner ruling R27)"
+        ),
+        modes=("backcast",),
+        isos=("SPP",),
+        requires="unit_outage_netload_mask_repair",
     ),
 )
 
