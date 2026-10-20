@@ -54,7 +54,9 @@ import pandas as pd
 
 from market_sim.config.constants import (
     HOURS_PER_YEAR,
+    SPP_STALE_KEPT_BENCHMARK_COLUMNS,
     SPP_STALE_KEPT_INTERCHANGE_HOURS_UTC,
+    SPP_STALE_KEPT_NUCLEAR_HOURS_UTC,
     SPP_STALE_KEPT_RENEWABLE_WINDOWS_UTC,
     SPP_STALE_OMITTED_LEGS,
     SPP_STALE_RUN_MIN_HOURS,
@@ -86,7 +88,17 @@ class StaleSnapshotSpec:
             where the BA's own stale interchange is kept, flagged (ruled).
         kept_stale_renewable_windows: Inclusive hour-ending UTC windows where
             the generation mix is blank and the stale EIA-930 wind / solar is
-            kept, flagged (ruled); any other blank masked hour raises.
+            kept, flagged (ruled); any other blank masked hour raises. The same
+            windows bound every generation-mix column of the frame repair.
+        genmix_columns: ``(EIA-930 NG: column, iso-genmix fuel)`` pairs whose
+            generation-mix series is on the EIA-930 basis (rule 14), served in
+            each column's own stale hours by :func:`repair_eia930_frame`.
+        kept_stale_genmix_hours: ``(NG: column, hour-ending UTC stamp)`` pairs
+            where that column's generation mix is blank in a stale hour and
+            EIA's value is kept, flagged (ruled).
+        kept_stale_columns: ``NG:`` columns with no basis-matched generation-mix
+            series: EIA's stale value is kept, flagged (ruled). Any OTHER
+            ``NG:`` column with a stale hour raises.
     """
 
     iso: str
@@ -98,6 +110,9 @@ class StaleSnapshotSpec:
     omitted_legs: tuple[str, ...] = ()
     kept_stale_interchange_hours: tuple[str, ...] = ()
     kept_stale_renewable_windows: tuple[tuple[str, str], ...] = ()
+    genmix_columns: tuple[tuple[str, str], ...] = ()
+    kept_stale_genmix_hours: tuple[tuple[str, str], ...] = ()
+    kept_stale_columns: tuple[str, ...] = ()
 
 
 # --------------------------------------------------------------------------
@@ -165,6 +180,21 @@ STALE_SNAPSHOT_SPECS: dict[str, StaleSnapshotSpec] = {
         omitted_legs=SPP_STALE_OMITTED_LEGS,
         kept_stale_interchange_hours=SPP_STALE_KEPT_INTERCHANGE_HOURS_UTC,
         kept_stale_renewable_windows=SPP_STALE_KEPT_RENEWABLE_WINDOWS_UTC,
+        # GenMix / EIA-930 outside the mask, 2019-2025 (RESULT-uc-spp-bench
+        # -2026-10-20 §2): coal 0.98-1.00, gas 1.00-1.01, nuclear 0.99-1.01,
+        # hydro 0.99-1.02, wind 1.00-1.01, solar 1.02-1.10 (datafix §3).
+        genmix_columns=(
+            ("NG: COL", "coal"),
+            ("NG: NG", "gas"),
+            ("NG: NUC", "nuclear"),
+            ("NG: WAT", "hydro"),
+            ("NG: WND", "wind"),
+            ("NG: SUN", "solar"),
+        ),
+        kept_stale_genmix_hours=tuple(
+            ("NG: NUC", t) for t in SPP_STALE_KEPT_NUCLEAR_HOURS_UTC
+        ),
+        kept_stale_columns=SPP_STALE_KEPT_BENCHMARK_COLUMNS,
     ),
 }
 
@@ -234,6 +264,7 @@ def reset_caches() -> None:
     _frame_utc_end.cache_clear()
     demand_stale_mask.cache_clear()
     fuel_stale_mask.cache_clear()
+    _repaired_frame_series.cache_clear()
 
 
 # --------------------------------------------------------------------------
@@ -465,16 +496,26 @@ _RENEWABLE_COLUMNS: dict[str, tuple[str, str]] = {
 def _renewable_replacement(
     spec: StaleSnapshotSpec, year: int, fuel: str, rows: pd.DataFrame
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """``(mask, generation-mix MW, kept-stale mask)`` for one renewable fuel.
-
-    Raises when a masked hour has no generation-mix value outside the ruled
-    ``kept_stale_renewable_windows``.
-    """
+    """``(mask, generation-mix MW, kept-stale mask)`` for one renewable fuel."""
     column, mix_fuel = _RENEWABLE_COLUMNS[fuel]
+    return _genmix_replacement(spec, year, column, mix_fuel, rows)
+
+
+def _genmix_replacement(
+    spec: StaleSnapshotSpec, year: int, column: str, mix_fuel: str, rows: pd.DataFrame
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """``(mask, generation-mix MW, kept-stale mask)`` for one ``NG:`` column.
+
+    The mask is the column's own :func:`fuel_stale_mask`. Raises when a masked
+    hour has no generation-mix value outside the ruled
+    ``kept_stale_renewable_windows`` / ``kept_stale_genmix_hours``.
+    """
     mask = fuel_stale_mask(spec.iso, year, column)
     clock = _frame_utc_end(spec.ba, year)
     mix = _on_clock(rows, "fuel", "generation_mw", [mix_fuel], clock)[:, 0]
-    ruled = _in_windows(clock, spec.kept_stale_renewable_windows)
+    ruled = _in_windows(clock, spec.kept_stale_renewable_windows) | _on_stamps(
+        clock, tuple(t for c, t in spec.kept_stale_genmix_hours if c == column)
+    )
     _require(mix, mask & ~ruled, f"{mix_fuel} generation mix", spec.iso, year)
     kept = mask & ~np.isfinite(mix)
     return mask, mix, kept
@@ -583,4 +624,167 @@ def stale_snapshot_provenance(iso: str, year: int) -> pd.DataFrame:
             "solar_source": fuel_src["solar"][hours],
         },
         columns=cols,
+    )
+
+
+# --------------------------------------------------------------------------
+# Whole-frame repair (the EIA-930 scoring benchmark and the outage net-load
+# mask read the raw BA frame; owner ruling R27, lane UC-SPP-BENCH)
+# --------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class RepairedColumn:
+    """One repaired EIA-930 frame column on the frame clock.
+
+    Attributes:
+        mask: ``(T,)`` stale hours of the column (rows the repair writes).
+        values: ``(T,)`` replacement values (meaningful where ``mask``).
+        kept_stale: ``(T,)`` masked hours whose value is EIA's own stale one,
+            kept by ruling (flagged in :func:`benchmark_stale_provenance`).
+    """
+
+    mask: np.ndarray
+    values: np.ndarray
+    kept_stale: np.ndarray
+
+
+@lru_cache(maxsize=16)
+def _repaired_frame_series(iso: str, year: int) -> dict[str, RepairedColumn]:
+    """``{column: RepairedColumn}`` for a registered ISO-year (empty if none).
+
+    Every value comes from the input repairs above, so the benchmark and the
+    LP inputs are served from ONE construction (rule 19):
+
+    * ``Demand`` / ``Total interchange``: :func:`repair_system_demand` /
+      :func:`repair_net_interchange` in the demand mask;
+    * ``Net generation``: their sum in the demand mask (EIA-930's own
+      identity, demand = net generation - total interchange);
+    * each ``spec.genmix_columns`` column: the generation mix in the column's
+      own :func:`fuel_stale_mask` hours (wind / solar = exactly
+      :func:`repair_renewable_gen`);
+    * each ``spec.kept_stale_columns`` column: EIA's value kept, flagged.
+
+    Raises :class:`StaleSnapshotDataError` when any other ``NG:`` column has a
+    stale hour: a column with no declared treatment is a gap nobody ruled on.
+    """
+    spec = STALE_SNAPSHOT_SPECS.get(iso)
+    demand_mask = demand_stale_mask(iso, year)
+    if spec is None or demand_mask is None:
+        return {}
+    frame = _eia_hourly_frame_filled(spec.ba, year)
+    none = np.zeros(HOURS_PER_YEAR, dtype=bool)
+    out: dict[str, RepairedColumn] = {}
+    if demand_mask.any():
+        legs = _interchange_legs(spec, year, demand_mask)
+        demand = repair_system_demand(iso, year, frame["Demand"].to_numpy(dtype=float))
+        interchange = repair_net_interchange(
+            iso, year, frame["Total interchange"].to_numpy(dtype=float)
+        )
+        out["Demand"] = RepairedColumn(demand_mask, demand, none)
+        out["Total interchange"] = RepairedColumn(
+            demand_mask, interchange, legs.kept_stale
+        )
+        out["Net generation"] = RepairedColumn(
+            demand_mask, demand + interchange, legs.kept_stale
+        )
+    rows = None
+    declared = {c for c, _ in spec.genmix_columns}
+    for column, mix_fuel in spec.genmix_columns:
+        fmask = fuel_stale_mask(iso, year, column)
+        if fmask is None or not fmask.any():
+            continue
+        if rows is None:
+            rows = _read_partition("iso-genmix", iso, year)
+            rows = rows[rows["area"] == spec.genmix_area]
+        fmask, mix, kept = _genmix_replacement(spec, year, column, mix_fuel, rows)
+        stale = frame[column].to_numpy(dtype=float)
+        out[column] = RepairedColumn(fmask, np.where(kept, stale, mix), kept)
+    for column in frame.columns:
+        if not str(column).startswith("NG: ") or column in declared:
+            continue
+        fmask = fuel_stale_mask(iso, year, column)
+        if fmask is None or not fmask.any():
+            continue
+        if column not in spec.kept_stale_columns:
+            raise StaleSnapshotDataError(
+                f"{iso} {year}: {int(fmask.sum())} stale-masked hour(s) in "
+                f"EIA-930 {column!r}, a column with no measured replacement "
+                "and no ruling"
+            )
+        stale = frame[column].to_numpy(dtype=float)
+        out[column] = RepairedColumn(fmask, stale, fmask)
+    return out
+
+
+def repair_eia930_frame(iso: str, year: int, frame: pd.DataFrame) -> pd.DataFrame:
+    """Serve a raw EIA-930 BA frame's stale-snapshot hours from measured data.
+
+    ``frame`` is any slice of the ISO's ``<BA> hourly`` extract carrying a
+    ``UTC time`` column (the scoring benchmark's local-year rows, the outage
+    net-load mask's rows); rows are matched to the repair's clock by their
+    own UTC stamp, so a row the clock does not carry (a leap day) is left as
+    filed. Values are those of :func:`_repaired_frame_series`. Returns
+    ``frame`` itself when nothing is repaired, else a copy (the frame handed
+    in may be another cache's object). Identity for an ISO without a spec.
+    """
+    series = _repaired_frame_series(iso, year)
+    if not series or "UTC time" not in frame.columns:
+        return frame
+    spec = STALE_SNAPSHOT_SPECS[iso]
+    clock = _frame_utc_end(spec.ba, year)
+    stamps = pd.DatetimeIndex(pd.to_datetime(frame["UTC time"]))
+    stamps = (
+        stamps.tz_localize("UTC") if stamps.tz is None else stamps.tz_convert("UTC")
+    )
+    pos = clock.get_indexer(stamps)
+    on = pos >= 0
+    out: pd.DataFrame | None = None
+    for column, rep in series.items():
+        if column not in frame.columns or not rep.mask.any():
+            continue
+        hit = np.zeros(len(frame), dtype=bool)
+        hit[on] = rep.mask[pos[on]]
+        if not hit.any():
+            continue
+        if out is None:
+            out = frame.copy()
+        values = pd.to_numeric(out[column], errors="coerce").to_numpy(
+            dtype=float, copy=True
+        )
+        values[hit] = rep.values[pos[hit]]
+        out[column] = values
+    return frame if out is None else out
+
+
+def benchmark_stale_provenance(iso: str, year: int) -> pd.DataFrame:
+    """Per-hour, per-column provenance of :func:`repair_eia930_frame`.
+
+    One row per (hour, column) the repair touches: ``hour`` (model row),
+    ``interval_end_utc``, ``column`` (EIA-930 column) and ``source``
+    (``"iso_measured"``, or ``"eia_stale_kept"`` where a ruling keeps EIA's
+    stale value). Empty for an unregistered ISO or a year with no frame.
+    """
+    cols = ["hour", "interval_end_utc", "column", "source"]
+    series = _repaired_frame_series(iso, year)
+    if not series:
+        return pd.DataFrame(columns=cols)
+    clock = _frame_utc_end(STALE_SNAPSHOT_SPECS[iso].ba, year)
+    parts = []
+    for column, rep in series.items():
+        hours = np.flatnonzero(rep.mask)
+        parts.append(
+            pd.DataFrame(
+                {
+                    "hour": hours,
+                    "interval_end_utc": clock[hours],
+                    "column": column,
+                    "source": np.where(
+                        rep.kept_stale[hours], "eia_stale_kept", "iso_measured"
+                    ),
+                }
+            )
+        )
+    return pd.concat(parts, ignore_index=True)[cols].sort_values(
+        ["hour", "column"], ignore_index=True
     )

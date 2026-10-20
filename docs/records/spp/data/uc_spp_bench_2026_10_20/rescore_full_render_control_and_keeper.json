@@ -1,0 +1,3282 @@
+{
+ "control_before": {
+  "determination": "NOT-YET",
+  "reasons": [
+   "governance gate UNATTESTED: no governance attestation in bundle"
+  ],
+  "records": {
+   "fuelmix|CC_REGULAR|2019": [
+    "PASS",
+    "+2.97 TWh, share +1.1pp"
+   ],
+   "fuelmix|CC_CHP|2019": [
+    "PASS",
+    "+0.38 TWh, share +0.1pp"
+   ],
+   "fuelmix|CT_PEAKER|2019": [
+    "PASS",
+    "+2.06 TWh, share +0.8pp"
+   ],
+   "fuelmix|ST_GAS|2019": [
+    "PASS",
+    "-4.76 TWh, share -1.8pp"
+   ],
+   "fuelmix|ST_CHP|2019": [
+    "PASS",
+    "-0.17 TWh, share -0.1pp"
+   ],
+   "fuelmix|COAL_PRB|2019": [
+    "PASS",
+    "+1.60 TWh, share +0.6pp"
+   ],
+   "fuelmix|COAL_LIGNITE|2019": [
+    "PASS",
+    "-2.06 TWh, share -0.8pp"
+   ],
+   "fuelmix|COAL_BIT|2019": [
+    "PASS",
+    "-0.05 TWh, share -0.0pp"
+   ],
+   "fuelmix|CC_REGULAR|2020": [
+    "PASS",
+    "+1.65 TWh, share +0.5pp"
+   ],
+   "fuelmix|CC_CHP|2020": [
+    "PASS",
+    "+0.34 TWh, share +0.1pp"
+   ],
+   "fuelmix|CT_PEAKER|2020": [
+    "PASS",
+    "+6.21 TWh, share +2.3pp"
+   ],
+   "fuelmix|ST_GAS|2020": [
+    "PASS",
+    "-3.41 TWh, share -1.3pp"
+   ],
+   "fuelmix|ST_CHP|2020": [
+    "PASS",
+    "-0.23 TWh, share -0.1pp"
+   ],
+   "fuelmix|COAL_PRB|2020": [
+    "PASS",
+    "-3.00 TWh, share -1.4pp"
+   ],
+   "fuelmix|COAL_LIGNITE|2020": [
+    "PASS",
+    "-2.21 TWh, share -0.9pp"
+   ],
+   "fuelmix|COAL_BIT|2020": [
+    "PASS",
+    "-0.04 TWh, share -0.0pp"
+   ],
+   "fuelmix|CC_REGULAR|2021": [
+    "FAIL",
+    "-8.91 TWh, share -3.5pp (volume/share out of band)"
+   ],
+   "fuelmix|CC_CHP|2021": [
+    "PASS",
+    "+0.24 TWh, share +0.1pp"
+   ],
+   "fuelmix|CT_PEAKER|2021": [
+    "PASS",
+    "+1.31 TWh, share +0.4pp"
+   ],
+   "fuelmix|ST_GAS|2021": [
+    "PASS",
+    "-2.83 TWh, share -1.1pp"
+   ],
+   "fuelmix|ST_CHP|2021": [
+    "PASS",
+    "-0.22 TWh, share -0.1pp"
+   ],
+   "fuelmix|COAL_PRB|2021": [
+    "FAIL",
+    "+11.01 TWh, share +3.6pp (volume/share out of band)"
+   ],
+   "fuelmix|COAL_LIGNITE|2021": [
+    "PASS",
+    "-1.27 TWh, share -0.5pp"
+   ],
+   "fuelmix|COAL_BIT|2021": [
+    "PASS",
+    "-0.04 TWh, share -0.0pp"
+   ],
+   "fuelmix|CC_REGULAR|2022": [
+    "FAIL",
+    "-9.16 TWh, share -3.4pp (volume/share out of band)"
+   ],
+   "fuelmix|CC_CHP|2022": [
+    "PASS",
+    "+0.33 TWh, share +0.1pp"
+   ],
+   "fuelmix|CT_PEAKER|2022": [
+    "PASS",
+    "-1.38 TWh, share -0.5pp"
+   ],
+   "fuelmix|ST_GAS|2022": [
+    "PASS",
+    "-5.18 TWh, share -1.9pp"
+   ],
+   "fuelmix|ST_CHP|2022": [
+    "PASS",
+    "-0.29 TWh, share -0.1pp"
+   ],
+   "fuelmix|COAL_PRB|2022": [
+    "FAIL",
+    "+10.76 TWh, share +3.3pp (volume/share out of band)"
+   ],
+   "fuelmix|COAL_LIGNITE|2022": [
+    "PASS",
+    "+0.05 TWh, share -0.1pp"
+   ],
+   "fuelmix|COAL_BIT|2022": [
+    "PASS",
+    "-0.04 TWh, share -0.0pp"
+   ],
+   "fuelmix|CC_REGULAR|2023": [
+    "PASS",
+    "-4.50 TWh, share -1.6pp"
+   ],
+   "fuelmix|CC_CHP|2023": [
+    "PASS",
+    "+0.14 TWh, share +0.0pp"
+   ],
+   "fuelmix|CT_PEAKER|2023": [
+    "PASS",
+    "+2.82 TWh, share +1.0pp"
+   ],
+   "fuelmix|ST_GAS|2023": [
+    "PASS",
+    "-5.54 TWh, share -1.9pp"
+   ],
+   "fuelmix|ST_CHP|2023": [
+    "PASS",
+    "-0.23 TWh, share -0.1pp"
+   ],
+   "fuelmix|COAL_PRB|2023": [
+    "PASS",
+    "+0.55 TWh, share +0.2pp"
+   ],
+   "fuelmix|COAL_LIGNITE|2023": [
+    "PASS",
+    "-1.65 TWh, share -0.6pp"
+   ],
+   "fuelmix|COAL_BIT|2023": [
+    "PASS",
+    "-0.03 TWh, share -0.0pp"
+   ],
+   "fuelmix|CC_REGULAR|2024": [
+    "PASS",
+    "-5.70 TWh, share -2.0pp"
+   ],
+   "fuelmix|CC_CHP|2024": [
+    "PASS",
+    "+0.06 TWh, share +0.0pp"
+   ],
+   "fuelmix|CT_PEAKER|2024": [
+    "PASS",
+    "+2.38 TWh, share +0.8pp"
+   ],
+   "fuelmix|ST_GAS|2024": [
+    "PASS",
+    "-6.23 TWh, share -2.2pp"
+   ],
+   "fuelmix|ST_CHP|2024": [
+    "PASS",
+    "-0.32 TWh, share -0.1pp"
+   ],
+   "fuelmix|COAL_PRB|2024": [
+    "PASS",
+    "+0.81 TWh, share +0.2pp"
+   ],
+   "fuelmix|COAL_LIGNITE|2024": [
+    "PASS",
+    "-2.33 TWh, share -0.8pp"
+   ],
+   "fuelmix|COAL_BIT|2024": [
+    "PASS",
+    "-0.04 TWh, share -0.0pp"
+   ],
+   "fuelmix|CC_REGULAR|2025": [
+    "PASS",
+    "-7.94 TWh, share -2.6pp"
+   ],
+   "fuelmix|CC_CHP|2025": [
+    "PASS",
+    "+0.17 TWh, share +0.1pp"
+   ],
+   "fuelmix|CT_PEAKER|2025": [
+    "PASS",
+    "-0.15 TWh, share -0.0pp"
+   ],
+   "fuelmix|ST_GAS|2025": [
+    "PASS",
+    "-6.93 TWh, share -2.3pp"
+   ],
+   "fuelmix|ST_CHP|2025": [
+    "SKIPPED",
+    "preliminary EIA-923 vintage: immaterial plant data (no per-class actual); not gated \u2014 C2 family grid reconcile covers this class"
+   ],
+   "fuelmix|COAL_PRB|2025": [
+    "PASS",
+    "+7.00 TWh, share +2.4pp"
+   ],
+   "fuelmix|COAL_LIGNITE|2025": [
+    "PASS",
+    "-2.49 TWh, share -0.8pp"
+   ],
+   "fuelmix|COAL_BIT|2025": [
+    "SKIPPED",
+    "preliminary EIA-923 vintage: immaterial plant data (no per-class actual); not gated \u2014 C2 family grid reconcile covers this class"
+   ],
+   "sysvol|gas|2019": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|coal|2019": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|gas|2020": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|coal|2020": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|gas|2021": [
+    "PASS",
+    "C1 flags: CC_REGULAR"
+   ],
+   "sysvol|coal|2021": [
+    "PASS",
+    "C1 flags: COAL_PRB"
+   ],
+   "sysvol|gas|2022": [
+    "PASS",
+    "C1 flags: CC_REGULAR"
+   ],
+   "sysvol|coal|2022": [
+    "PASS",
+    "C1 flags: COAL_PRB"
+   ],
+   "sysvol|gas|2023": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|coal|2023": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|gas|2024": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|coal|2024": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|gas|2025": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|coal|2025": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "price_mean|None|2019": [
+    "FAIL",
+    "+13.5%"
+   ],
+   "price_mean|da_diagnostic|2019": [
+    "SKIPPED",
+    "+7.3% vs DA (DA\u2212RT premium $+1.19)"
+   ],
+   "price_mean|None|2020": [
+    "FAIL",
+    "+27.8%"
+   ],
+   "price_mean|da_diagnostic|2020": [
+    "SKIPPED",
+    "+19.2% vs DA (DA\u2212RT premium $+1.19)"
+   ],
+   "price_mean|None|2021": [
+    "PASS",
+    "+7.1%"
+   ],
+   "price_mean|da_diagnostic|2021": [
+    "SKIPPED",
+    "-39.2% vs DA (DA\u2212RT premium $+28.47)"
+   ],
+   "price_mean|None|2022": [
+    "PASS",
+    "-4.8%"
+   ],
+   "price_mean|da_diagnostic|2022": [
+    "SKIPPED",
+    "-12.1% vs DA (DA\u2212RT premium $+3.63)"
+   ],
+   "price_mean|None|2023": [
+    "PASS",
+    "-6.4%"
+   ],
+   "price_mean|da_diagnostic|2023": [
+    "SKIPPED",
+    "-14.6% vs DA (DA\u2212RT premium $+2.42)"
+   ],
+   "price_mean|None|2024": [
+    "FAIL",
+    "-11.4%"
+   ],
+   "price_mean|da_diagnostic|2024": [
+    "SKIPPED",
+    "-20.3% vs DA (DA\u2212RT premium $+2.84)"
+   ],
+   "price_mean|None|2025": [
+    "PASS",
+    "-4.6%"
+   ],
+   "price_mean|da_diagnostic|2025": [
+    "SKIPPED",
+    "-9.7% vs DA (DA\u2212RT premium $+1.60)"
+   ],
+   "price_shape|None|2019": [
+    "PASS",
+    "NRMSE 0.172"
+   ],
+   "price_shape|None|2020": [
+    "FAIL",
+    "NRMSE 0.346"
+   ],
+   "price_shape|None|2021": [
+    "PASS",
+    "NRMSE 0.176"
+   ],
+   "price_shape|None|2022": [
+    "PASS",
+    "NRMSE 0.175"
+   ],
+   "price_shape|None|2023": [
+    "PASS",
+    "NRMSE 0.175"
+   ],
+   "price_shape|None|2024": [
+    "FAIL",
+    "NRMSE 0.215"
+   ],
+   "price_shape|None|2025": [
+    "PASS",
+    "NRMSE 0.167"
+   ],
+   "price_tail|None|2019": [
+    "FAIL",
+    "model 0h [energy-only LMP] vs RT actual 47h (0.00\u00d7, >$200)"
+   ],
+   "price_tail|da_diagnostic|2019": [
+    "SKIPPED",
+    "model 0h vs DA actual 0h (out-of-representation companion)"
+   ],
+   "price_tail|None|2020": [
+    "FAIL",
+    "model 0h [energy-only LMP] vs RT actual 23h (0.00\u00d7, >$200)"
+   ],
+   "price_tail|da_diagnostic|2020": [
+    "SKIPPED",
+    "model 0h vs DA actual 0h (out-of-representation companion)"
+   ],
+   "price_tail|None|2021": [
+    "FAIL",
+    "model 372h [energy-only LMP] vs RT actual 140h (2.66\u00d7, >$200)"
+   ],
+   "price_tail|da_diagnostic|2021": [
+    "SKIPPED",
+    "model 372h vs DA actual 154h (out-of-representation companion)"
+   ],
+   "price_tail|None|2022": [
+    "FAIL",
+    "model 0h [energy-only LMP] vs RT actual 99h (0.00\u00d7, >$200)"
+   ],
+   "price_tail|da_diagnostic|2022": [
+    "SKIPPED",
+    "model 0h vs DA actual 12h (out-of-representation companion)"
+   ],
+   "price_tail|None|2023": [
+    "FAIL",
+    "model 0h [energy-only LMP] vs RT actual 42h (0.00\u00d7, >$200)"
+   ],
+   "price_tail|da_diagnostic|2023": [
+    "SKIPPED",
+    "model 0h vs DA actual 6h (out-of-representation companion)"
+   ],
+   "price_tail|None|2024": [
+    "FAIL",
+    "model 0h [energy-only LMP] vs RT actual 59h (0.00\u00d7, >$200)"
+   ],
+   "price_tail|da_diagnostic|2024": [
+    "SKIPPED",
+    "model 0h vs DA actual 35h (out-of-representation companion)"
+   ],
+   "price_tail|None|2025": [
+    "FAIL",
+    "model 0h [energy-only LMP] vs RT actual 68h (0.00\u00d7, >$200)"
+   ],
+   "price_tail|da_diagnostic|2025": [
+    "SKIPPED",
+    "model 0h vs DA actual 0h (out-of-representation companion)"
+   ],
+   "dispatch_corr|gas|2019": [
+    "PASS",
+    "r=0.938, NRMSE=0.176"
+   ],
+   "dispatch_corr|coal|2019": [
+    "PASS",
+    "r=0.919, NRMSE=0.144"
+   ],
+   "dispatch_corr|gas|2020": [
+    "PASS",
+    "r=0.94, NRMSE=0.186"
+   ],
+   "dispatch_corr|coal|2020": [
+    "PASS",
+    "r=0.946, NRMSE=0.184"
+   ],
+   "dispatch_corr|gas|2021": [
+    "PASS",
+    "r=0.947, NRMSE=0.291"
+   ],
+   "dispatch_corr|coal|2021": [
+    "PASS",
+    "r=0.923, NRMSE=0.164"
+   ],
+   "dispatch_corr|gas|2022": [
+    "FAIL",
+    "r=0.962, NRMSE=0.313"
+   ],
+   "dispatch_corr|coal|2022": [
+    "PASS",
+    "r=0.928, NRMSE=0.18"
+   ],
+   "dispatch_corr|gas|2023": [
+    "PASS",
+    "r=0.962, NRMSE=0.195"
+   ],
+   "dispatch_corr|coal|2023": [
+    "PASS",
+    "r=0.951, NRMSE=0.149"
+   ],
+   "dispatch_corr|gas|2024": [
+    "PASS",
+    "r=0.945, NRMSE=0.23"
+   ],
+   "dispatch_corr|coal|2024": [
+    "PASS",
+    "r=0.912, NRMSE=0.199"
+   ],
+   "dispatch_corr|gas|2025": [
+    "PASS",
+    "r=0.93, NRMSE=0.275"
+   ],
+   "dispatch_corr|coal|2025": [
+    "PASS",
+    "r=0.882, NRMSE=0.194"
+   ],
+   "governance|None|None": [
+    "UNATTESTED",
+    "no governance attestation in bundle"
+   ],
+   "forced_share|CC_REGULAR|2019": [
+    "PASS",
+    "0.0% forced (0.0 of 47.4305 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_LIGNITE|2019": [
+    "PASS",
+    "0.0% forced (0.0 of 10.6801 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_PRB|2019": [
+    "PASS",
+    "0.0% forced (0.0 of 79.3711 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CT_PEAKER|2019": [
+    "PASS",
+    "0.0% forced (0.0 of 9.9453 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|ST_GAS|2019": [
+    "PASS",
+    "17.3% forced (1.9291 of 11.1796 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|hydro|2019": [
+    "PASS",
+    "0.0% forced (0.0 of 15.3237 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CC_REGULAR|2020": [
+    "PASS",
+    "0.0% forced (0.0 of 48.9227 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_LIGNITE|2020": [
+    "PASS",
+    "0.0% forced (0.0 of 8.6184 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_PRB|2020": [
+    "PASS",
+    "0.0% forced (0.0 of 61.1325 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CT_PEAKER|2020": [
+    "PASS",
+    "0.0% forced (0.0 of 11.9281 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|ST_GAS|2020": [
+    "PASS",
+    "15.6% forced (2.1057 of 13.4679 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|hydro|2020": [
+    "PASS",
+    "0.0% forced (0.0 of 11.6119 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CC_REGULAR|2021": [
+    "PASS",
+    "0.0% forced (0.0 of 30.6731 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_LIGNITE|2021": [
+    "PASS",
+    "0.0% forced (0.0 of 9.218 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_PRB|2021": [
+    "PASS",
+    "0.0% forced (0.0 of 84.434 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CT_PEAKER|2021": [
+    "PASS",
+    "0.0% forced (0.0 of 8.4376 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|ST_GAS|2021": [
+    "PASS",
+    "28.8% forced (2.1721 of 7.5362 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|hydro|2021": [
+    "PASS",
+    "0.0% forced (0.0 of 9.7795 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CC_REGULAR|2022": [
+    "PASS",
+    "0.0% forced (0.0 of 27.873 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_LIGNITE|2022": [
+    "PASS",
+    "0.0% forced (0.0 of 12.664 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_PRB|2022": [
+    "PASS",
+    "0.0% forced (0.0 of 86.7431 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CT_PEAKER|2022": [
+    "PASS",
+    "0.0% forced (0.0 of 7.7625 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|ST_GAS|2022": [
+    "PASS",
+    "33.8% forced (2.662 of 7.8695 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.972 (\u22650.8) & off-peak CV ratio 0.994 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|hydro|2022": [
+    "PASS",
+    "0.0% forced (0.0 of 8.2067 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CC_REGULAR|2023": [
+    "PASS",
+    "0.0% forced (0.0 of 41.5099 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_LIGNITE|2023": [
+    "PASS",
+    "0.0% forced (0.0 of 7.7313 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_PRB|2023": [
+    "PASS",
+    "0.0% forced (0.0 of 66.2312 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CT_PEAKER|2023": [
+    "PASS",
+    "0.0% forced (0.0 of 13.469 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|ST_GAS|2023": [
+    "PASS",
+    "23.1% forced (3.0181 of 13.0858 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|hydro|2023": [
+    "PASS",
+    "0.0% forced (0.0 of 8.3441 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CC_REGULAR|2024": [
+    "PASS",
+    "0.0% forced (0.0 of 39.7046 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_LIGNITE|2024": [
+    "PASS",
+    "0.0% forced (0.0 of 6.3422 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_PRB|2024": [
+    "PASS",
+    "0.0% forced (0.0 of 63.5721 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CT_PEAKER|2024": [
+    "PASS",
+    "0.0% forced (0.0 of 14.1571 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|ST_GAS|2024": [
+    "PASS",
+    "18.2% forced (2.8975 of 15.8869 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|hydro|2024": [
+    "PASS",
+    "0.0% forced (0.0 of 8.9662 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CC_REGULAR|2025": [
+    "PASS",
+    "0.0% forced (0.0 of 35.2478 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_LIGNITE|2025": [
+    "PASS",
+    "0.0% forced (0.0 of 6.3261 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_PRB|2025": [
+    "PASS",
+    "0.0% forced (0.0 of 78.9915 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CT_PEAKER|2025": [
+    "PASS",
+    "0.0% forced (0.0 of 11.5531 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|ST_GAS|2025": [
+    "PASS",
+    "17.8% forced (2.8027 of 15.7448 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|hydro|2025": [
+    "PASS",
+    "0.0% forced (0.0 of 8.8292 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ]
+  }
+ },
+ "control_after": {
+  "determination": "NOT-YET",
+  "reasons": [
+   "governance gate UNATTESTED: no governance attestation in bundle"
+  ],
+  "records": {
+   "fuelmix|CC_REGULAR|2019": [
+    "PASS",
+    "+2.97 TWh, share +0.9pp"
+   ],
+   "fuelmix|CC_CHP|2019": [
+    "PASS",
+    "+0.38 TWh, share +0.1pp"
+   ],
+   "fuelmix|CT_PEAKER|2019": [
+    "PASS",
+    "+2.06 TWh, share +0.7pp"
+   ],
+   "fuelmix|ST_GAS|2019": [
+    "PASS",
+    "-4.76 TWh, share -1.8pp"
+   ],
+   "fuelmix|ST_CHP|2019": [
+    "PASS",
+    "-0.17 TWh, share -0.1pp"
+   ],
+   "fuelmix|COAL_PRB|2019": [
+    "PASS",
+    "+1.60 TWh, share +0.3pp"
+   ],
+   "fuelmix|COAL_LIGNITE|2019": [
+    "PASS",
+    "-2.06 TWh, share -0.8pp"
+   ],
+   "fuelmix|COAL_BIT|2019": [
+    "PASS",
+    "-0.05 TWh, share -0.0pp"
+   ],
+   "fuelmix|CC_REGULAR|2020": [
+    "PASS",
+    "+1.65 TWh, share +0.5pp"
+   ],
+   "fuelmix|CC_CHP|2020": [
+    "PASS",
+    "+0.34 TWh, share +0.1pp"
+   ],
+   "fuelmix|CT_PEAKER|2020": [
+    "PASS",
+    "+6.21 TWh, share +2.3pp"
+   ],
+   "fuelmix|ST_GAS|2020": [
+    "PASS",
+    "-3.41 TWh, share -1.3pp"
+   ],
+   "fuelmix|ST_CHP|2020": [
+    "PASS",
+    "-0.23 TWh, share -0.1pp"
+   ],
+   "fuelmix|COAL_PRB|2020": [
+    "PASS",
+    "-3.00 TWh, share -1.4pp"
+   ],
+   "fuelmix|COAL_LIGNITE|2020": [
+    "PASS",
+    "-2.21 TWh, share -0.9pp"
+   ],
+   "fuelmix|COAL_BIT|2020": [
+    "PASS",
+    "-0.04 TWh, share -0.0pp"
+   ],
+   "fuelmix|CC_REGULAR|2021": [
+    "FAIL",
+    "-8.91 TWh, share -3.5pp (volume/share out of band)"
+   ],
+   "fuelmix|CC_CHP|2021": [
+    "PASS",
+    "+0.24 TWh, share +0.1pp"
+   ],
+   "fuelmix|CT_PEAKER|2021": [
+    "PASS",
+    "+1.31 TWh, share +0.4pp"
+   ],
+   "fuelmix|ST_GAS|2021": [
+    "PASS",
+    "-2.83 TWh, share -1.1pp"
+   ],
+   "fuelmix|ST_CHP|2021": [
+    "PASS",
+    "-0.22 TWh, share -0.1pp"
+   ],
+   "fuelmix|COAL_PRB|2021": [
+    "FAIL",
+    "+11.01 TWh, share +3.6pp (volume/share out of band)"
+   ],
+   "fuelmix|COAL_LIGNITE|2021": [
+    "PASS",
+    "-1.27 TWh, share -0.5pp"
+   ],
+   "fuelmix|COAL_BIT|2021": [
+    "PASS",
+    "-0.04 TWh, share -0.0pp"
+   ],
+   "fuelmix|CC_REGULAR|2022": [
+    "FAIL",
+    "-9.16 TWh, share -3.4pp (volume/share out of band)"
+   ],
+   "fuelmix|CC_CHP|2022": [
+    "PASS",
+    "+0.33 TWh, share +0.1pp"
+   ],
+   "fuelmix|CT_PEAKER|2022": [
+    "PASS",
+    "-1.38 TWh, share -0.5pp"
+   ],
+   "fuelmix|ST_GAS|2022": [
+    "PASS",
+    "-5.18 TWh, share -1.9pp"
+   ],
+   "fuelmix|ST_CHP|2022": [
+    "PASS",
+    "-0.29 TWh, share -0.1pp"
+   ],
+   "fuelmix|COAL_PRB|2022": [
+    "FAIL",
+    "+10.76 TWh, share +3.3pp (volume/share out of band)"
+   ],
+   "fuelmix|COAL_LIGNITE|2022": [
+    "PASS",
+    "+0.05 TWh, share -0.1pp"
+   ],
+   "fuelmix|COAL_BIT|2022": [
+    "PASS",
+    "-0.04 TWh, share -0.0pp"
+   ],
+   "fuelmix|CC_REGULAR|2023": [
+    "PASS",
+    "-4.49 TWh, share -1.6pp"
+   ],
+   "fuelmix|CC_CHP|2023": [
+    "PASS",
+    "+0.14 TWh, share +0.0pp"
+   ],
+   "fuelmix|CT_PEAKER|2023": [
+    "PASS",
+    "+2.82 TWh, share +1.0pp"
+   ],
+   "fuelmix|ST_GAS|2023": [
+    "PASS",
+    "-5.54 TWh, share -1.9pp"
+   ],
+   "fuelmix|ST_CHP|2023": [
+    "PASS",
+    "-0.23 TWh, share -0.1pp"
+   ],
+   "fuelmix|COAL_PRB|2023": [
+    "PASS",
+    "+0.56 TWh, share +0.2pp"
+   ],
+   "fuelmix|COAL_LIGNITE|2023": [
+    "PASS",
+    "-1.65 TWh, share -0.6pp"
+   ],
+   "fuelmix|COAL_BIT|2023": [
+    "PASS",
+    "-0.03 TWh, share -0.0pp"
+   ],
+   "fuelmix|CC_REGULAR|2024": [
+    "PASS",
+    "-5.59 TWh, share -2.0pp"
+   ],
+   "fuelmix|CC_CHP|2024": [
+    "PASS",
+    "+0.07 TWh, share +0.0pp"
+   ],
+   "fuelmix|CT_PEAKER|2024": [
+    "PASS",
+    "+2.41 TWh, share +0.8pp"
+   ],
+   "fuelmix|ST_GAS|2024": [
+    "PASS",
+    "-6.18 TWh, share -2.1pp"
+   ],
+   "fuelmix|ST_CHP|2024": [
+    "PASS",
+    "-0.31 TWh, share -0.1pp"
+   ],
+   "fuelmix|COAL_PRB|2024": [
+    "PASS",
+    "+0.95 TWh, share +0.3pp"
+   ],
+   "fuelmix|COAL_LIGNITE|2024": [
+    "PASS",
+    "-2.31 TWh, share -0.8pp"
+   ],
+   "fuelmix|COAL_BIT|2024": [
+    "PASS",
+    "-0.04 TWh, share -0.0pp"
+   ],
+   "fuelmix|CC_REGULAR|2025": [
+    "PASS",
+    "-7.73 TWh, share -2.6pp"
+   ],
+   "fuelmix|CC_CHP|2025": [
+    "PASS",
+    "+0.18 TWh, share +0.1pp"
+   ],
+   "fuelmix|CT_PEAKER|2025": [
+    "PASS",
+    "-0.09 TWh, share -0.0pp"
+   ],
+   "fuelmix|ST_GAS|2025": [
+    "PASS",
+    "-6.85 TWh, share -2.3pp"
+   ],
+   "fuelmix|ST_CHP|2025": [
+    "SKIPPED",
+    "preliminary EIA-923 vintage: immaterial plant data (no per-class actual); not gated \u2014 C2 family grid reconcile covers this class"
+   ],
+   "fuelmix|COAL_PRB|2025": [
+    "PASS",
+    "+7.37 TWh, share +2.4pp"
+   ],
+   "fuelmix|COAL_LIGNITE|2025": [
+    "PASS",
+    "-2.44 TWh, share -0.8pp"
+   ],
+   "fuelmix|COAL_BIT|2025": [
+    "SKIPPED",
+    "preliminary EIA-923 vintage: immaterial plant data (no per-class actual); not gated \u2014 C2 family grid reconcile covers this class"
+   ],
+   "sysvol|gas|2019": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|coal|2019": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|gas|2020": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|coal|2020": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|gas|2021": [
+    "PASS",
+    "C1 flags: CC_REGULAR"
+   ],
+   "sysvol|coal|2021": [
+    "PASS",
+    "C1 flags: COAL_PRB"
+   ],
+   "sysvol|gas|2022": [
+    "PASS",
+    "C1 flags: CC_REGULAR"
+   ],
+   "sysvol|coal|2022": [
+    "PASS",
+    "C1 flags: COAL_PRB"
+   ],
+   "sysvol|gas|2023": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|coal|2023": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|gas|2024": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|coal|2024": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|gas|2025": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|coal|2025": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "price_mean|None|2019": [
+    "FAIL",
+    "+13.5%"
+   ],
+   "price_mean|da_diagnostic|2019": [
+    "SKIPPED",
+    "+7.3% vs DA (DA\u2212RT premium $+1.19)"
+   ],
+   "price_mean|None|2020": [
+    "FAIL",
+    "+27.8%"
+   ],
+   "price_mean|da_diagnostic|2020": [
+    "SKIPPED",
+    "+19.2% vs DA (DA\u2212RT premium $+1.19)"
+   ],
+   "price_mean|None|2021": [
+    "PASS",
+    "+7.1%"
+   ],
+   "price_mean|da_diagnostic|2021": [
+    "SKIPPED",
+    "-39.2% vs DA (DA\u2212RT premium $+28.47)"
+   ],
+   "price_mean|None|2022": [
+    "PASS",
+    "-4.8%"
+   ],
+   "price_mean|da_diagnostic|2022": [
+    "SKIPPED",
+    "-12.1% vs DA (DA\u2212RT premium $+3.63)"
+   ],
+   "price_mean|None|2023": [
+    "PASS",
+    "-6.4%"
+   ],
+   "price_mean|da_diagnostic|2023": [
+    "SKIPPED",
+    "-14.6% vs DA (DA\u2212RT premium $+2.41)"
+   ],
+   "price_mean|None|2024": [
+    "FAIL",
+    "-11.5%"
+   ],
+   "price_mean|da_diagnostic|2024": [
+    "SKIPPED",
+    "-20.4% vs DA (DA\u2212RT premium $+2.83)"
+   ],
+   "price_mean|None|2025": [
+    "PASS",
+    "-4.8%"
+   ],
+   "price_mean|da_diagnostic|2025": [
+    "SKIPPED",
+    "-9.9% vs DA (DA\u2212RT premium $+1.63)"
+   ],
+   "price_shape|None|2019": [
+    "PASS",
+    "NRMSE 0.172"
+   ],
+   "price_shape|None|2020": [
+    "FAIL",
+    "NRMSE 0.346"
+   ],
+   "price_shape|None|2021": [
+    "PASS",
+    "NRMSE 0.176"
+   ],
+   "price_shape|None|2022": [
+    "PASS",
+    "NRMSE 0.175"
+   ],
+   "price_shape|None|2023": [
+    "PASS",
+    "NRMSE 0.176"
+   ],
+   "price_shape|None|2024": [
+    "FAIL",
+    "NRMSE 0.216"
+   ],
+   "price_shape|None|2025": [
+    "PASS",
+    "NRMSE 0.168"
+   ],
+   "price_tail|None|2019": [
+    "FAIL",
+    "model 0h [energy-only LMP] vs RT actual 47h (0.00\u00d7, >$200)"
+   ],
+   "price_tail|da_diagnostic|2019": [
+    "SKIPPED",
+    "model 0h vs DA actual 0h (out-of-representation companion)"
+   ],
+   "price_tail|None|2020": [
+    "FAIL",
+    "model 0h [energy-only LMP] vs RT actual 23h (0.00\u00d7, >$200)"
+   ],
+   "price_tail|da_diagnostic|2020": [
+    "SKIPPED",
+    "model 0h vs DA actual 0h (out-of-representation companion)"
+   ],
+   "price_tail|None|2021": [
+    "FAIL",
+    "model 372h [energy-only LMP] vs RT actual 140h (2.66\u00d7, >$200)"
+   ],
+   "price_tail|da_diagnostic|2021": [
+    "SKIPPED",
+    "model 372h vs DA actual 154h (out-of-representation companion)"
+   ],
+   "price_tail|None|2022": [
+    "FAIL",
+    "model 0h [energy-only LMP] vs RT actual 99h (0.00\u00d7, >$200)"
+   ],
+   "price_tail|da_diagnostic|2022": [
+    "SKIPPED",
+    "model 0h vs DA actual 12h (out-of-representation companion)"
+   ],
+   "price_tail|None|2023": [
+    "FAIL",
+    "model 0h [energy-only LMP] vs RT actual 42h (0.00\u00d7, >$200)"
+   ],
+   "price_tail|da_diagnostic|2023": [
+    "SKIPPED",
+    "model 0h vs DA actual 6h (out-of-representation companion)"
+   ],
+   "price_tail|None|2024": [
+    "FAIL",
+    "model 0h [energy-only LMP] vs RT actual 59h (0.00\u00d7, >$200)"
+   ],
+   "price_tail|da_diagnostic|2024": [
+    "SKIPPED",
+    "model 0h vs DA actual 35h (out-of-representation companion)"
+   ],
+   "price_tail|None|2025": [
+    "FAIL",
+    "model 0h [energy-only LMP] vs RT actual 68h (0.00\u00d7, >$200)"
+   ],
+   "price_tail|da_diagnostic|2025": [
+    "SKIPPED",
+    "model 0h vs DA actual 0h (out-of-representation companion)"
+   ],
+   "dispatch_corr|gas|2019": [
+    "PASS",
+    "r=0.966, NRMSE=0.13"
+   ],
+   "dispatch_corr|coal|2019": [
+    "PASS",
+    "r=0.954, NRMSE=0.121"
+   ],
+   "dispatch_corr|gas|2020": [
+    "PASS",
+    "r=0.942, NRMSE=0.183"
+   ],
+   "dispatch_corr|coal|2020": [
+    "PASS",
+    "r=0.946, NRMSE=0.184"
+   ],
+   "dispatch_corr|gas|2021": [
+    "PASS",
+    "r=0.957, NRMSE=0.278"
+   ],
+   "dispatch_corr|coal|2021": [
+    "PASS",
+    "r=0.928, NRMSE=0.159"
+   ],
+   "dispatch_corr|gas|2022": [
+    "FAIL",
+    "r=0.962, NRMSE=0.313"
+   ],
+   "dispatch_corr|coal|2022": [
+    "PASS",
+    "r=0.928, NRMSE=0.18"
+   ],
+   "dispatch_corr|gas|2023": [
+    "PASS",
+    "r=0.962, NRMSE=0.194"
+   ],
+   "dispatch_corr|coal|2023": [
+    "PASS",
+    "r=0.951, NRMSE=0.149"
+   ],
+   "dispatch_corr|gas|2024": [
+    "PASS",
+    "r=0.957, NRMSE=0.216"
+   ],
+   "dispatch_corr|coal|2024": [
+    "PASS",
+    "r=0.917, NRMSE=0.194"
+   ],
+   "dispatch_corr|gas|2025": [
+    "PASS",
+    "r=0.96, NRMSE=0.242"
+   ],
+   "dispatch_corr|coal|2025": [
+    "PASS",
+    "r=0.92, NRMSE=0.161"
+   ],
+   "governance|None|None": [
+    "UNATTESTED",
+    "no governance attestation in bundle"
+   ],
+   "forced_share|CC_REGULAR|2019": [
+    "PASS",
+    "0.0% forced (0.0 of 47.4305 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_LIGNITE|2019": [
+    "PASS",
+    "0.0% forced (0.0 of 10.6801 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_PRB|2019": [
+    "PASS",
+    "0.0% forced (0.0 of 79.3711 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CT_PEAKER|2019": [
+    "PASS",
+    "0.0% forced (0.0 of 9.9453 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|ST_GAS|2019": [
+    "PASS",
+    "17.3% forced (1.9291 of 11.1796 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|hydro|2019": [
+    "PASS",
+    "0.0% forced (0.0 of 15.3237 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CC_REGULAR|2020": [
+    "PASS",
+    "0.0% forced (0.0 of 48.9227 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_LIGNITE|2020": [
+    "PASS",
+    "0.0% forced (0.0 of 8.6184 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_PRB|2020": [
+    "PASS",
+    "0.0% forced (0.0 of 61.1325 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CT_PEAKER|2020": [
+    "PASS",
+    "0.0% forced (0.0 of 11.9281 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|ST_GAS|2020": [
+    "PASS",
+    "15.6% forced (2.1057 of 13.4679 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|hydro|2020": [
+    "PASS",
+    "0.0% forced (0.0 of 11.6119 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CC_REGULAR|2021": [
+    "PASS",
+    "0.0% forced (0.0 of 30.6731 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_LIGNITE|2021": [
+    "PASS",
+    "0.0% forced (0.0 of 9.218 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_PRB|2021": [
+    "PASS",
+    "0.0% forced (0.0 of 84.434 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CT_PEAKER|2021": [
+    "PASS",
+    "0.0% forced (0.0 of 8.4376 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|ST_GAS|2021": [
+    "PASS",
+    "28.8% forced (2.1721 of 7.5362 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|hydro|2021": [
+    "PASS",
+    "0.0% forced (0.0 of 9.7795 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CC_REGULAR|2022": [
+    "PASS",
+    "0.0% forced (0.0 of 27.873 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_LIGNITE|2022": [
+    "PASS",
+    "0.0% forced (0.0 of 12.664 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_PRB|2022": [
+    "PASS",
+    "0.0% forced (0.0 of 86.7431 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CT_PEAKER|2022": [
+    "PASS",
+    "0.0% forced (0.0 of 7.7625 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|ST_GAS|2022": [
+    "PASS",
+    "33.8% forced (2.662 of 7.8695 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.972 (\u22650.8) & off-peak CV ratio 0.994 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|hydro|2022": [
+    "PASS",
+    "0.0% forced (0.0 of 8.2067 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CC_REGULAR|2023": [
+    "PASS",
+    "0.0% forced (0.0 of 41.5099 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_LIGNITE|2023": [
+    "PASS",
+    "0.0% forced (0.0 of 7.7313 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_PRB|2023": [
+    "PASS",
+    "0.0% forced (0.0 of 66.2312 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CT_PEAKER|2023": [
+    "PASS",
+    "0.0% forced (0.0 of 13.469 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|ST_GAS|2023": [
+    "PASS",
+    "23.1% forced (3.0181 of 13.0858 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|hydro|2023": [
+    "PASS",
+    "0.0% forced (0.0 of 8.3441 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CC_REGULAR|2024": [
+    "PASS",
+    "0.0% forced (0.0 of 39.7046 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_LIGNITE|2024": [
+    "PASS",
+    "0.0% forced (0.0 of 6.3422 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_PRB|2024": [
+    "PASS",
+    "0.0% forced (0.0 of 63.5721 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CT_PEAKER|2024": [
+    "PASS",
+    "0.0% forced (0.0 of 14.1571 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|ST_GAS|2024": [
+    "PASS",
+    "18.2% forced (2.8975 of 15.8869 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|hydro|2024": [
+    "PASS",
+    "0.0% forced (0.0 of 8.9662 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CC_REGULAR|2025": [
+    "PASS",
+    "0.0% forced (0.0 of 35.2478 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_LIGNITE|2025": [
+    "PASS",
+    "0.0% forced (0.0 of 6.3261 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_PRB|2025": [
+    "PASS",
+    "0.0% forced (0.0 of 78.9915 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CT_PEAKER|2025": [
+    "PASS",
+    "0.0% forced (0.0 of 11.5531 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|ST_GAS|2025": [
+    "PASS",
+    "17.8% forced (2.8027 of 15.7448 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|hydro|2025": [
+    "PASS",
+    "0.0% forced (0.0 of 8.8292 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ]
+  }
+ },
+ "control_after_patch": {
+  "determination": "NOT-YET",
+  "reasons": [
+   "governance gate UNATTESTED: no governance attestation in bundle"
+  ],
+  "records": {
+   "fuelmix|CC_REGULAR|2019": [
+    "PASS",
+    "+2.97 TWh, share +0.9pp"
+   ],
+   "fuelmix|CC_CHP|2019": [
+    "PASS",
+    "+0.38 TWh, share +0.1pp"
+   ],
+   "fuelmix|CT_PEAKER|2019": [
+    "PASS",
+    "+2.06 TWh, share +0.7pp"
+   ],
+   "fuelmix|ST_GAS|2019": [
+    "PASS",
+    "-4.76 TWh, share -1.8pp"
+   ],
+   "fuelmix|ST_CHP|2019": [
+    "PASS",
+    "-0.17 TWh, share -0.1pp"
+   ],
+   "fuelmix|COAL_PRB|2019": [
+    "PASS",
+    "+1.60 TWh, share +0.3pp"
+   ],
+   "fuelmix|COAL_LIGNITE|2019": [
+    "PASS",
+    "-2.06 TWh, share -0.8pp"
+   ],
+   "fuelmix|COAL_BIT|2019": [
+    "PASS",
+    "-0.05 TWh, share -0.0pp"
+   ],
+   "fuelmix|CC_REGULAR|2020": [
+    "PASS",
+    "+1.65 TWh, share +0.5pp"
+   ],
+   "fuelmix|CC_CHP|2020": [
+    "PASS",
+    "+0.34 TWh, share +0.1pp"
+   ],
+   "fuelmix|CT_PEAKER|2020": [
+    "PASS",
+    "+6.21 TWh, share +2.3pp"
+   ],
+   "fuelmix|ST_GAS|2020": [
+    "PASS",
+    "-3.41 TWh, share -1.3pp"
+   ],
+   "fuelmix|ST_CHP|2020": [
+    "PASS",
+    "-0.23 TWh, share -0.1pp"
+   ],
+   "fuelmix|COAL_PRB|2020": [
+    "PASS",
+    "-3.00 TWh, share -1.4pp"
+   ],
+   "fuelmix|COAL_LIGNITE|2020": [
+    "PASS",
+    "-2.21 TWh, share -0.9pp"
+   ],
+   "fuelmix|COAL_BIT|2020": [
+    "PASS",
+    "-0.04 TWh, share -0.0pp"
+   ],
+   "fuelmix|CC_REGULAR|2021": [
+    "FAIL",
+    "-8.91 TWh, share -3.5pp (volume/share out of band)"
+   ],
+   "fuelmix|CC_CHP|2021": [
+    "PASS",
+    "+0.24 TWh, share +0.1pp"
+   ],
+   "fuelmix|CT_PEAKER|2021": [
+    "PASS",
+    "+1.31 TWh, share +0.4pp"
+   ],
+   "fuelmix|ST_GAS|2021": [
+    "PASS",
+    "-2.83 TWh, share -1.1pp"
+   ],
+   "fuelmix|ST_CHP|2021": [
+    "PASS",
+    "-0.22 TWh, share -0.1pp"
+   ],
+   "fuelmix|COAL_PRB|2021": [
+    "FAIL",
+    "+11.01 TWh, share +3.6pp (volume/share out of band)"
+   ],
+   "fuelmix|COAL_LIGNITE|2021": [
+    "PASS",
+    "-1.27 TWh, share -0.5pp"
+   ],
+   "fuelmix|COAL_BIT|2021": [
+    "PASS",
+    "-0.04 TWh, share -0.0pp"
+   ],
+   "fuelmix|CC_REGULAR|2022": [
+    "FAIL",
+    "-9.16 TWh, share -3.4pp (volume/share out of band)"
+   ],
+   "fuelmix|CC_CHP|2022": [
+    "PASS",
+    "+0.33 TWh, share +0.1pp"
+   ],
+   "fuelmix|CT_PEAKER|2022": [
+    "PASS",
+    "-1.38 TWh, share -0.5pp"
+   ],
+   "fuelmix|ST_GAS|2022": [
+    "PASS",
+    "-5.18 TWh, share -1.9pp"
+   ],
+   "fuelmix|ST_CHP|2022": [
+    "PASS",
+    "-0.29 TWh, share -0.1pp"
+   ],
+   "fuelmix|COAL_PRB|2022": [
+    "FAIL",
+    "+10.76 TWh, share +3.3pp (volume/share out of band)"
+   ],
+   "fuelmix|COAL_LIGNITE|2022": [
+    "PASS",
+    "+0.05 TWh, share -0.1pp"
+   ],
+   "fuelmix|COAL_BIT|2022": [
+    "PASS",
+    "-0.04 TWh, share -0.0pp"
+   ],
+   "fuelmix|CC_REGULAR|2023": [
+    "PASS",
+    "-4.49 TWh, share -1.6pp"
+   ],
+   "fuelmix|CC_CHP|2023": [
+    "PASS",
+    "+0.14 TWh, share +0.0pp"
+   ],
+   "fuelmix|CT_PEAKER|2023": [
+    "PASS",
+    "+2.82 TWh, share +1.0pp"
+   ],
+   "fuelmix|ST_GAS|2023": [
+    "PASS",
+    "-5.54 TWh, share -1.9pp"
+   ],
+   "fuelmix|ST_CHP|2023": [
+    "PASS",
+    "-0.23 TWh, share -0.1pp"
+   ],
+   "fuelmix|COAL_PRB|2023": [
+    "PASS",
+    "+0.56 TWh, share +0.2pp"
+   ],
+   "fuelmix|COAL_LIGNITE|2023": [
+    "PASS",
+    "-1.65 TWh, share -0.6pp"
+   ],
+   "fuelmix|COAL_BIT|2023": [
+    "PASS",
+    "-0.03 TWh, share -0.0pp"
+   ],
+   "fuelmix|CC_REGULAR|2024": [
+    "PASS",
+    "-5.59 TWh, share -2.0pp"
+   ],
+   "fuelmix|CC_CHP|2024": [
+    "PASS",
+    "+0.07 TWh, share +0.0pp"
+   ],
+   "fuelmix|CT_PEAKER|2024": [
+    "PASS",
+    "+2.41 TWh, share +0.8pp"
+   ],
+   "fuelmix|ST_GAS|2024": [
+    "PASS",
+    "-6.18 TWh, share -2.1pp"
+   ],
+   "fuelmix|ST_CHP|2024": [
+    "PASS",
+    "-0.31 TWh, share -0.1pp"
+   ],
+   "fuelmix|COAL_PRB|2024": [
+    "PASS",
+    "+0.95 TWh, share +0.3pp"
+   ],
+   "fuelmix|COAL_LIGNITE|2024": [
+    "PASS",
+    "-2.31 TWh, share -0.8pp"
+   ],
+   "fuelmix|COAL_BIT|2024": [
+    "PASS",
+    "-0.04 TWh, share -0.0pp"
+   ],
+   "fuelmix|CC_REGULAR|2025": [
+    "PASS",
+    "-7.73 TWh, share -2.6pp"
+   ],
+   "fuelmix|CC_CHP|2025": [
+    "PASS",
+    "+0.18 TWh, share +0.1pp"
+   ],
+   "fuelmix|CT_PEAKER|2025": [
+    "PASS",
+    "-0.09 TWh, share -0.0pp"
+   ],
+   "fuelmix|ST_GAS|2025": [
+    "PASS",
+    "-6.85 TWh, share -2.3pp"
+   ],
+   "fuelmix|ST_CHP|2025": [
+    "SKIPPED",
+    "preliminary EIA-923 vintage: immaterial plant data (no per-class actual); not gated \u2014 C2 family grid reconcile covers this class"
+   ],
+   "fuelmix|COAL_PRB|2025": [
+    "PASS",
+    "+7.37 TWh, share +2.4pp"
+   ],
+   "fuelmix|COAL_LIGNITE|2025": [
+    "PASS",
+    "-2.44 TWh, share -0.8pp"
+   ],
+   "fuelmix|COAL_BIT|2025": [
+    "SKIPPED",
+    "preliminary EIA-923 vintage: immaterial plant data (no per-class actual); not gated \u2014 C2 family grid reconcile covers this class"
+   ],
+   "sysvol|gas|2019": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|coal|2019": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|gas|2020": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|coal|2020": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|gas|2021": [
+    "PASS",
+    "C1 flags: CC_REGULAR"
+   ],
+   "sysvol|coal|2021": [
+    "PASS",
+    "C1 flags: COAL_PRB"
+   ],
+   "sysvol|gas|2022": [
+    "PASS",
+    "C1 flags: CC_REGULAR"
+   ],
+   "sysvol|coal|2022": [
+    "PASS",
+    "C1 flags: COAL_PRB"
+   ],
+   "sysvol|gas|2023": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|coal|2023": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|gas|2024": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|coal|2024": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|gas|2025": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|coal|2025": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "price_mean|None|2019": [
+    "FAIL",
+    "+13.5%"
+   ],
+   "price_mean|da_diagnostic|2019": [
+    "SKIPPED",
+    "+7.3% vs DA (DA\u2212RT premium $+1.19)"
+   ],
+   "price_mean|None|2020": [
+    "FAIL",
+    "+27.8%"
+   ],
+   "price_mean|da_diagnostic|2020": [
+    "SKIPPED",
+    "+19.2% vs DA (DA\u2212RT premium $+1.19)"
+   ],
+   "price_mean|None|2021": [
+    "PASS",
+    "+7.1%"
+   ],
+   "price_mean|da_diagnostic|2021": [
+    "SKIPPED",
+    "-39.2% vs DA (DA\u2212RT premium $+28.47)"
+   ],
+   "price_mean|None|2022": [
+    "PASS",
+    "-4.8%"
+   ],
+   "price_mean|da_diagnostic|2022": [
+    "SKIPPED",
+    "-12.1% vs DA (DA\u2212RT premium $+3.63)"
+   ],
+   "price_mean|None|2023": [
+    "PASS",
+    "-6.4%"
+   ],
+   "price_mean|da_diagnostic|2023": [
+    "SKIPPED",
+    "-14.6% vs DA (DA\u2212RT premium $+2.41)"
+   ],
+   "price_mean|None|2024": [
+    "FAIL",
+    "-11.5%"
+   ],
+   "price_mean|da_diagnostic|2024": [
+    "SKIPPED",
+    "-20.4% vs DA (DA\u2212RT premium $+2.83)"
+   ],
+   "price_mean|None|2025": [
+    "PASS",
+    "-4.8%"
+   ],
+   "price_mean|da_diagnostic|2025": [
+    "SKIPPED",
+    "-9.9% vs DA (DA\u2212RT premium $+1.63)"
+   ],
+   "price_shape|None|2019": [
+    "PASS",
+    "NRMSE 0.172"
+   ],
+   "price_shape|None|2020": [
+    "FAIL",
+    "NRMSE 0.346"
+   ],
+   "price_shape|None|2021": [
+    "PASS",
+    "NRMSE 0.176"
+   ],
+   "price_shape|None|2022": [
+    "PASS",
+    "NRMSE 0.175"
+   ],
+   "price_shape|None|2023": [
+    "PASS",
+    "NRMSE 0.176"
+   ],
+   "price_shape|None|2024": [
+    "FAIL",
+    "NRMSE 0.216"
+   ],
+   "price_shape|None|2025": [
+    "PASS",
+    "NRMSE 0.168"
+   ],
+   "price_tail|None|2019": [
+    "FAIL",
+    "model 0h [energy-only LMP] vs RT actual 47h (0.00\u00d7, >$200)"
+   ],
+   "price_tail|da_diagnostic|2019": [
+    "SKIPPED",
+    "model 0h vs DA actual 0h (out-of-representation companion)"
+   ],
+   "price_tail|None|2020": [
+    "FAIL",
+    "model 0h [energy-only LMP] vs RT actual 23h (0.00\u00d7, >$200)"
+   ],
+   "price_tail|da_diagnostic|2020": [
+    "SKIPPED",
+    "model 0h vs DA actual 0h (out-of-representation companion)"
+   ],
+   "price_tail|None|2021": [
+    "FAIL",
+    "model 372h [energy-only LMP] vs RT actual 140h (2.66\u00d7, >$200)"
+   ],
+   "price_tail|da_diagnostic|2021": [
+    "SKIPPED",
+    "model 372h vs DA actual 154h (out-of-representation companion)"
+   ],
+   "price_tail|None|2022": [
+    "FAIL",
+    "model 0h [energy-only LMP] vs RT actual 99h (0.00\u00d7, >$200)"
+   ],
+   "price_tail|da_diagnostic|2022": [
+    "SKIPPED",
+    "model 0h vs DA actual 12h (out-of-representation companion)"
+   ],
+   "price_tail|None|2023": [
+    "FAIL",
+    "model 0h [energy-only LMP] vs RT actual 42h (0.00\u00d7, >$200)"
+   ],
+   "price_tail|da_diagnostic|2023": [
+    "SKIPPED",
+    "model 0h vs DA actual 6h (out-of-representation companion)"
+   ],
+   "price_tail|None|2024": [
+    "FAIL",
+    "model 0h [energy-only LMP] vs RT actual 59h (0.00\u00d7, >$200)"
+   ],
+   "price_tail|da_diagnostic|2024": [
+    "SKIPPED",
+    "model 0h vs DA actual 35h (out-of-representation companion)"
+   ],
+   "price_tail|None|2025": [
+    "FAIL",
+    "model 0h [energy-only LMP] vs RT actual 68h (0.00\u00d7, >$200)"
+   ],
+   "price_tail|da_diagnostic|2025": [
+    "SKIPPED",
+    "model 0h vs DA actual 0h (out-of-representation companion)"
+   ],
+   "dispatch_corr|gas|2019": [
+    "PASS",
+    "r=0.966, NRMSE=0.13"
+   ],
+   "dispatch_corr|coal|2019": [
+    "PASS",
+    "r=0.954, NRMSE=0.121"
+   ],
+   "dispatch_corr|gas|2020": [
+    "PASS",
+    "r=0.942, NRMSE=0.183"
+   ],
+   "dispatch_corr|coal|2020": [
+    "PASS",
+    "r=0.946, NRMSE=0.184"
+   ],
+   "dispatch_corr|gas|2021": [
+    "PASS",
+    "r=0.957, NRMSE=0.278"
+   ],
+   "dispatch_corr|coal|2021": [
+    "PASS",
+    "r=0.928, NRMSE=0.159"
+   ],
+   "dispatch_corr|gas|2022": [
+    "FAIL",
+    "r=0.962, NRMSE=0.313"
+   ],
+   "dispatch_corr|coal|2022": [
+    "PASS",
+    "r=0.928, NRMSE=0.18"
+   ],
+   "dispatch_corr|gas|2023": [
+    "PASS",
+    "r=0.962, NRMSE=0.194"
+   ],
+   "dispatch_corr|coal|2023": [
+    "PASS",
+    "r=0.951, NRMSE=0.149"
+   ],
+   "dispatch_corr|gas|2024": [
+    "PASS",
+    "r=0.957, NRMSE=0.216"
+   ],
+   "dispatch_corr|coal|2024": [
+    "PASS",
+    "r=0.917, NRMSE=0.194"
+   ],
+   "dispatch_corr|gas|2025": [
+    "PASS",
+    "r=0.96, NRMSE=0.242"
+   ],
+   "dispatch_corr|coal|2025": [
+    "PASS",
+    "r=0.92, NRMSE=0.161"
+   ],
+   "governance|None|None": [
+    "UNATTESTED",
+    "no governance attestation in bundle"
+   ],
+   "forced_share|CC_REGULAR|2019": [
+    "PASS",
+    "0.0% forced (0.0 of 47.4305 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_LIGNITE|2019": [
+    "PASS",
+    "0.0% forced (0.0 of 10.6801 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_PRB|2019": [
+    "PASS",
+    "0.0% forced (0.0 of 79.3711 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CT_PEAKER|2019": [
+    "PASS",
+    "0.0% forced (0.0 of 9.9453 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|ST_GAS|2019": [
+    "PASS",
+    "17.3% forced (1.9291 of 11.1796 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|hydro|2019": [
+    "PASS",
+    "0.0% forced (0.0 of 15.3237 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CC_REGULAR|2020": [
+    "PASS",
+    "0.0% forced (0.0 of 48.9227 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_LIGNITE|2020": [
+    "PASS",
+    "0.0% forced (0.0 of 8.6184 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_PRB|2020": [
+    "PASS",
+    "0.0% forced (0.0 of 61.1325 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CT_PEAKER|2020": [
+    "PASS",
+    "0.0% forced (0.0 of 11.9281 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|ST_GAS|2020": [
+    "PASS",
+    "15.6% forced (2.1057 of 13.4679 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|hydro|2020": [
+    "PASS",
+    "0.0% forced (0.0 of 11.6119 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CC_REGULAR|2021": [
+    "PASS",
+    "0.0% forced (0.0 of 30.6731 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_LIGNITE|2021": [
+    "PASS",
+    "0.0% forced (0.0 of 9.218 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_PRB|2021": [
+    "PASS",
+    "0.0% forced (0.0 of 84.434 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CT_PEAKER|2021": [
+    "PASS",
+    "0.0% forced (0.0 of 8.4376 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|ST_GAS|2021": [
+    "PASS",
+    "28.8% forced (2.1721 of 7.5362 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|hydro|2021": [
+    "PASS",
+    "0.0% forced (0.0 of 9.7795 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CC_REGULAR|2022": [
+    "PASS",
+    "0.0% forced (0.0 of 27.873 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_LIGNITE|2022": [
+    "PASS",
+    "0.0% forced (0.0 of 12.664 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_PRB|2022": [
+    "PASS",
+    "0.0% forced (0.0 of 86.7431 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CT_PEAKER|2022": [
+    "PASS",
+    "0.0% forced (0.0 of 7.7625 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|ST_GAS|2022": [
+    "PASS",
+    "33.8% forced (2.662 of 7.8695 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.972 (\u22650.8) & off-peak CV ratio 0.994 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|hydro|2022": [
+    "PASS",
+    "0.0% forced (0.0 of 8.2067 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CC_REGULAR|2023": [
+    "PASS",
+    "0.0% forced (0.0 of 41.5099 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_LIGNITE|2023": [
+    "PASS",
+    "0.0% forced (0.0 of 7.7313 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_PRB|2023": [
+    "PASS",
+    "0.0% forced (0.0 of 66.2312 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CT_PEAKER|2023": [
+    "PASS",
+    "0.0% forced (0.0 of 13.469 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|ST_GAS|2023": [
+    "PASS",
+    "23.1% forced (3.0181 of 13.0858 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|hydro|2023": [
+    "PASS",
+    "0.0% forced (0.0 of 8.3441 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CC_REGULAR|2024": [
+    "PASS",
+    "0.0% forced (0.0 of 39.7046 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_LIGNITE|2024": [
+    "PASS",
+    "0.0% forced (0.0 of 6.3422 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_PRB|2024": [
+    "PASS",
+    "0.0% forced (0.0 of 63.5721 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CT_PEAKER|2024": [
+    "PASS",
+    "0.0% forced (0.0 of 14.1571 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|ST_GAS|2024": [
+    "PASS",
+    "18.2% forced (2.8975 of 15.8869 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|hydro|2024": [
+    "PASS",
+    "0.0% forced (0.0 of 8.9662 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CC_REGULAR|2025": [
+    "PASS",
+    "0.0% forced (0.0 of 35.2478 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_LIGNITE|2025": [
+    "PASS",
+    "0.0% forced (0.0 of 6.3261 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_PRB|2025": [
+    "PASS",
+    "0.0% forced (0.0 of 78.9915 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CT_PEAKER|2025": [
+    "PASS",
+    "0.0% forced (0.0 of 11.5531 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|ST_GAS|2025": [
+    "PASS",
+    "17.8% forced (2.8027 of 15.7448 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|hydro|2025": [
+    "PASS",
+    "0.0% forced (0.0 of 8.8292 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ]
+  }
+ },
+ "keeper_before": {
+  "determination": "NOT-YET",
+  "reasons": [
+   "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_mean, price_shape, price_tail, dispatch_corr"
+  ],
+  "records": {
+   "fuelmix|CC_REGULAR|2019": [
+    "PASS",
+    "+2.25 TWh, share +0.8pp"
+   ],
+   "fuelmix|CC_CHP|2019": [
+    "PASS",
+    "+0.37 TWh, share +0.1pp"
+   ],
+   "fuelmix|CT_PEAKER|2019": [
+    "PASS",
+    "+1.49 TWh, share +0.6pp"
+   ],
+   "fuelmix|ST_GAS|2019": [
+    "PASS",
+    "-4.96 TWh, share -1.8pp"
+   ],
+   "fuelmix|ST_CHP|2019": [
+    "PASS",
+    "-0.17 TWh, share -0.1pp"
+   ],
+   "fuelmix|COAL_PRB|2019": [
+    "PASS",
+    "+0.24 TWh, share +0.1pp"
+   ],
+   "fuelmix|COAL_LIGNITE|2019": [
+    "PASS",
+    "-2.09 TWh, share -0.8pp"
+   ],
+   "fuelmix|COAL_BIT|2019": [
+    "PASS",
+    "-0.05 TWh, share -0.0pp"
+   ],
+   "fuelmix|CC_REGULAR|2020": [
+    "PASS",
+    "+1.60 TWh, share +0.5pp"
+   ],
+   "fuelmix|CC_CHP|2020": [
+    "PASS",
+    "+0.34 TWh, share +0.1pp"
+   ],
+   "fuelmix|CT_PEAKER|2020": [
+    "PASS",
+    "+6.15 TWh, share +2.3pp"
+   ],
+   "fuelmix|ST_GAS|2020": [
+    "PASS",
+    "-3.42 TWh, share -1.3pp"
+   ],
+   "fuelmix|ST_CHP|2020": [
+    "PASS",
+    "-0.23 TWh, share -0.1pp"
+   ],
+   "fuelmix|COAL_PRB|2020": [
+    "PASS",
+    "-3.03 TWh, share -1.4pp"
+   ],
+   "fuelmix|COAL_LIGNITE|2020": [
+    "PASS",
+    "-2.22 TWh, share -0.9pp"
+   ],
+   "fuelmix|COAL_BIT|2020": [
+    "PASS",
+    "-0.04 TWh, share -0.0pp"
+   ],
+   "fuelmix|CC_REGULAR|2021": [
+    "FAIL",
+    "-8.92 TWh, share -3.5pp (volume/share out of band)"
+   ],
+   "fuelmix|CC_CHP|2021": [
+    "PASS",
+    "+0.24 TWh, share +0.1pp"
+   ],
+   "fuelmix|CT_PEAKER|2021": [
+    "PASS",
+    "+1.31 TWh, share +0.4pp"
+   ],
+   "fuelmix|ST_GAS|2021": [
+    "PASS",
+    "-2.83 TWh, share -1.1pp"
+   ],
+   "fuelmix|ST_CHP|2021": [
+    "PASS",
+    "-0.22 TWh, share -0.1pp"
+   ],
+   "fuelmix|COAL_PRB|2021": [
+    "FAIL",
+    "+10.98 TWh, share +3.6pp (volume/share out of band)"
+   ],
+   "fuelmix|COAL_LIGNITE|2021": [
+    "PASS",
+    "-1.28 TWh, share -0.5pp"
+   ],
+   "fuelmix|COAL_BIT|2021": [
+    "PASS",
+    "-0.04 TWh, share -0.0pp"
+   ],
+   "fuelmix|CC_REGULAR|2022": [
+    "FAIL",
+    "-9.16 TWh, share -3.4pp (volume/share out of band)"
+   ],
+   "fuelmix|CC_CHP|2022": [
+    "PASS",
+    "+0.33 TWh, share +0.1pp"
+   ],
+   "fuelmix|CT_PEAKER|2022": [
+    "PASS",
+    "-1.39 TWh, share -0.5pp"
+   ],
+   "fuelmix|ST_GAS|2022": [
+    "PASS",
+    "-5.18 TWh, share -1.9pp"
+   ],
+   "fuelmix|ST_CHP|2022": [
+    "PASS",
+    "-0.29 TWh, share -0.1pp"
+   ],
+   "fuelmix|COAL_PRB|2022": [
+    "FAIL",
+    "+10.75 TWh, share +3.3pp (volume/share out of band)"
+   ],
+   "fuelmix|COAL_LIGNITE|2022": [
+    "PASS",
+    "+0.05 TWh, share -0.1pp"
+   ],
+   "fuelmix|COAL_BIT|2022": [
+    "PASS",
+    "-0.04 TWh, share -0.0pp"
+   ],
+   "fuelmix|CC_REGULAR|2023": [
+    "PASS",
+    "-4.49 TWh, share -1.6pp"
+   ],
+   "fuelmix|CC_CHP|2023": [
+    "PASS",
+    "+0.14 TWh, share +0.0pp"
+   ],
+   "fuelmix|CT_PEAKER|2023": [
+    "PASS",
+    "+2.83 TWh, share +1.0pp"
+   ],
+   "fuelmix|ST_GAS|2023": [
+    "PASS",
+    "-5.55 TWh, share -2.0pp"
+   ],
+   "fuelmix|ST_CHP|2023": [
+    "PASS",
+    "-0.23 TWh, share -0.1pp"
+   ],
+   "fuelmix|COAL_PRB|2023": [
+    "PASS",
+    "+0.57 TWh, share +0.2pp"
+   ],
+   "fuelmix|COAL_LIGNITE|2023": [
+    "PASS",
+    "-1.65 TWh, share -0.6pp"
+   ],
+   "fuelmix|COAL_BIT|2023": [
+    "PASS",
+    "-0.03 TWh, share -0.0pp"
+   ],
+   "fuelmix|CC_REGULAR|2024": [
+    "PASS",
+    "-5.80 TWh, share -2.0pp"
+   ],
+   "fuelmix|CC_CHP|2024": [
+    "PASS",
+    "+0.06 TWh, share +0.0pp"
+   ],
+   "fuelmix|CT_PEAKER|2024": [
+    "PASS",
+    "+2.36 TWh, share +0.8pp"
+   ],
+   "fuelmix|ST_GAS|2024": [
+    "PASS",
+    "-6.31 TWh, share -2.2pp"
+   ],
+   "fuelmix|ST_CHP|2024": [
+    "PASS",
+    "-0.32 TWh, share -0.1pp"
+   ],
+   "fuelmix|COAL_PRB|2024": [
+    "PASS",
+    "+0.82 TWh, share +0.3pp"
+   ],
+   "fuelmix|COAL_LIGNITE|2024": [
+    "PASS",
+    "-2.28 TWh, share -0.8pp"
+   ],
+   "fuelmix|COAL_BIT|2024": [
+    "PASS",
+    "-0.04 TWh, share -0.0pp"
+   ],
+   "fuelmix|CC_REGULAR|2025": [
+    "PASS",
+    "-7.86 TWh, share -2.6pp"
+   ],
+   "fuelmix|CC_CHP|2025": [
+    "PASS",
+    "+0.17 TWh, share +0.1pp"
+   ],
+   "fuelmix|CT_PEAKER|2025": [
+    "PASS",
+    "-0.05 TWh, share -0.0pp"
+   ],
+   "fuelmix|ST_GAS|2025": [
+    "PASS",
+    "-6.91 TWh, share -2.3pp"
+   ],
+   "fuelmix|ST_CHP|2025": [
+    "SKIPPED",
+    "preliminary EIA-923 vintage: immaterial plant data (no per-class actual); not gated \u2014 C2 family grid reconcile covers this class"
+   ],
+   "fuelmix|COAL_PRB|2025": [
+    "PASS",
+    "+7.39 TWh, share +2.4pp"
+   ],
+   "fuelmix|COAL_LIGNITE|2025": [
+    "PASS",
+    "-2.43 TWh, share -0.8pp"
+   ],
+   "fuelmix|COAL_BIT|2025": [
+    "SKIPPED",
+    "preliminary EIA-923 vintage: immaterial plant data (no per-class actual); not gated \u2014 C2 family grid reconcile covers this class"
+   ],
+   "sysvol|gas|2019": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|coal|2019": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|gas|2020": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|coal|2020": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|gas|2021": [
+    "PASS",
+    "C1 flags: CC_REGULAR"
+   ],
+   "sysvol|coal|2021": [
+    "PASS",
+    "C1 flags: COAL_PRB"
+   ],
+   "sysvol|gas|2022": [
+    "PASS",
+    "C1 flags: CC_REGULAR"
+   ],
+   "sysvol|coal|2022": [
+    "PASS",
+    "C1 flags: COAL_PRB"
+   ],
+   "sysvol|gas|2023": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|coal|2023": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|gas|2024": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|coal|2024": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|gas|2025": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|coal|2025": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "price_mean|None|2019": [
+    "FAIL",
+    "+12.3%"
+   ],
+   "price_mean|da_diagnostic|2019": [
+    "SKIPPED",
+    "+6.2% vs DA (DA\u2212RT premium $+1.19)"
+   ],
+   "price_mean|None|2020": [
+    "FAIL",
+    "+27.7%"
+   ],
+   "price_mean|da_diagnostic|2020": [
+    "SKIPPED",
+    "+19.1% vs DA (DA\u2212RT premium $+1.19)"
+   ],
+   "price_mean|None|2021": [
+    "PASS",
+    "+7.1%"
+   ],
+   "price_mean|da_diagnostic|2021": [
+    "SKIPPED",
+    "-39.2% vs DA (DA\u2212RT premium $+28.47)"
+   ],
+   "price_mean|None|2022": [
+    "PASS",
+    "-4.8%"
+   ],
+   "price_mean|da_diagnostic|2022": [
+    "SKIPPED",
+    "-12.1% vs DA (DA\u2212RT premium $+3.63)"
+   ],
+   "price_mean|None|2023": [
+    "PASS",
+    "-6.4%"
+   ],
+   "price_mean|da_diagnostic|2023": [
+    "SKIPPED",
+    "-14.6% vs DA (DA\u2212RT premium $+2.42)"
+   ],
+   "price_mean|None|2024": [
+    "FAIL",
+    "-11.2%"
+   ],
+   "price_mean|da_diagnostic|2024": [
+    "SKIPPED",
+    "-20.1% vs DA (DA\u2212RT premium $+2.84)"
+   ],
+   "price_mean|None|2025": [
+    "PASS",
+    "-4.3%"
+   ],
+   "price_mean|da_diagnostic|2025": [
+    "SKIPPED",
+    "-9.3% vs DA (DA\u2212RT premium $+1.60)"
+   ],
+   "price_shape|None|2019": [
+    "PASS",
+    "NRMSE 0.160"
+   ],
+   "price_shape|None|2020": [
+    "FAIL",
+    "NRMSE 0.345"
+   ],
+   "price_shape|None|2021": [
+    "PASS",
+    "NRMSE 0.176"
+   ],
+   "price_shape|None|2022": [
+    "PASS",
+    "NRMSE 0.175"
+   ],
+   "price_shape|None|2023": [
+    "PASS",
+    "NRMSE 0.176"
+   ],
+   "price_shape|None|2024": [
+    "FAIL",
+    "NRMSE 0.216"
+   ],
+   "price_shape|None|2025": [
+    "PASS",
+    "NRMSE 0.153"
+   ],
+   "price_tail|None|2019": [
+    "CAVEAT",
+    "model 0h [energy-only LMP] vs RT actual 47h (0.00\u00d7, >$200)"
+   ],
+   "price_tail|da_diagnostic|2019": [
+    "SKIPPED",
+    "model 0h vs DA actual 0h (out-of-representation companion)"
+   ],
+   "price_tail|None|2020": [
+    "CAVEAT",
+    "model 0h [energy-only LMP] vs RT actual 23h (0.00\u00d7, >$200)"
+   ],
+   "price_tail|da_diagnostic|2020": [
+    "SKIPPED",
+    "model 0h vs DA actual 0h (out-of-representation companion)"
+   ],
+   "price_tail|None|2021": [
+    "CAVEAT",
+    "model 372h [energy-only LMP] vs RT actual 140h (2.66\u00d7, >$200)"
+   ],
+   "price_tail|da_diagnostic|2021": [
+    "SKIPPED",
+    "model 372h vs DA actual 154h (out-of-representation companion)"
+   ],
+   "price_tail|None|2022": [
+    "CAVEAT",
+    "model 0h [energy-only LMP] vs RT actual 99h (0.00\u00d7, >$200)"
+   ],
+   "price_tail|da_diagnostic|2022": [
+    "SKIPPED",
+    "model 0h vs DA actual 12h (out-of-representation companion)"
+   ],
+   "price_tail|None|2023": [
+    "FAIL",
+    "model 0h [energy-only LMP] vs RT actual 42h (0.00\u00d7, >$200)"
+   ],
+   "price_tail|da_diagnostic|2023": [
+    "SKIPPED",
+    "model 0h vs DA actual 6h (out-of-representation companion)"
+   ],
+   "price_tail|None|2024": [
+    "FAIL",
+    "model 0h [energy-only LMP] vs RT actual 59h (0.00\u00d7, >$200)"
+   ],
+   "price_tail|da_diagnostic|2024": [
+    "SKIPPED",
+    "model 0h vs DA actual 35h (out-of-representation companion)"
+   ],
+   "price_tail|None|2025": [
+    "FAIL",
+    "model 0h [energy-only LMP] vs RT actual 68h (0.00\u00d7, >$200)"
+   ],
+   "price_tail|da_diagnostic|2025": [
+    "SKIPPED",
+    "model 0h vs DA actual 0h (out-of-representation companion)"
+   ],
+   "dispatch_corr|gas|2019": [
+    "PASS",
+    "r=0.966, NRMSE=0.133"
+   ],
+   "dispatch_corr|coal|2019": [
+    "PASS",
+    "r=0.953, NRMSE=0.124"
+   ],
+   "dispatch_corr|gas|2020": [
+    "PASS",
+    "r=0.942, NRMSE=0.182"
+   ],
+   "dispatch_corr|coal|2020": [
+    "PASS",
+    "r=0.946, NRMSE=0.184"
+   ],
+   "dispatch_corr|gas|2021": [
+    "PASS",
+    "r=0.957, NRMSE=0.276"
+   ],
+   "dispatch_corr|coal|2021": [
+    "PASS",
+    "r=0.929, NRMSE=0.158"
+   ],
+   "dispatch_corr|gas|2022": [
+    "FAIL",
+    "r=0.962, NRMSE=0.313"
+   ],
+   "dispatch_corr|coal|2022": [
+    "PASS",
+    "r=0.928, NRMSE=0.18"
+   ],
+   "dispatch_corr|gas|2023": [
+    "PASS",
+    "r=0.962, NRMSE=0.194"
+   ],
+   "dispatch_corr|coal|2023": [
+    "PASS",
+    "r=0.951, NRMSE=0.148"
+   ],
+   "dispatch_corr|gas|2024": [
+    "PASS",
+    "r=0.954, NRMSE=0.224"
+   ],
+   "dispatch_corr|coal|2024": [
+    "PASS",
+    "r=0.916, NRMSE=0.196"
+   ],
+   "dispatch_corr|gas|2025": [
+    "PASS",
+    "r=0.954, NRMSE=0.248"
+   ],
+   "dispatch_corr|coal|2025": [
+    "PASS",
+    "r=0.919, NRMSE=0.162"
+   ],
+   "governance|None|None": [
+    "PASS",
+    "closeout-SPP-nuc (session_017CjzrZuJKkfaxEMAncdXPj, 2026-10-03): SPP keeper w0_sppr_span (2026-10-02-w0-spp107r) replayed byte-for-byte (scripts/replay_keeper.py, NO --set) year-isolated (rule 36), all seven legs at 8c3ea46192074cfd422fff6532acc035d37297bb, which carries #7109: constants.NUCLEAR_MONTHLY_CF_BY_YEAR SPP 2019-2022 rows from the frozen derive scripts/data/derive_nuclear_monthly_cf.py (EIA-923 Page 1; owner rulings R-35/R-38; rule 14 measured data replaces the year-invariant fallback pattern; rule 23 initial derivation, 2023-25 byte-unchanged). Recipe checked field-by-field by scripts/probes/_closeoutsppnuc_compose_span.py (0 differing fields, one solve_surface fingerprint 4187973695945d73); offer curves untouched (rule 1(c)); no multiplier tuned; zero free parameters added. G-DRIFT zero LP: only 2019-22 availability/min_gen move at the pin; 2023-25 re-solved and reproduce the keeper's hourly sidecars exactly (E-INERT). Zero LP in the parent. Pre-registered in docs/records/spp/PRECOMMIT-closeout-spp-nuc-2026-10-03.md (pushed 2db7192d, addendum A) before any shard result was read; record docs/records/spp/RESULT-closeout-spp-nuc-2026-10-03.md. PRIOR: closeout-B W0 phase 3 (session_018DsgkLcN1h8NQc2yJegmdN, 2026-10-02): SPP keeper spp107EXR_span replayed year-isolated (rule 36) at 15a351a1b61f187822e87b4dbbce99c7ac8c568d (all seven legs) with ONLY the ten W0 EIA-860 settlement fields armed (owner ruling R-2, desk-confirmed denominator companion; PRECOMMIT-closeout-b-w0-phase3-2026-10-02.md). Recipe checked field-by-field by scripts/probes/_w0_compose_span.py; offer curves untouched (rule 1(c)); no multiplier tuned; zero free parameters added. PRIOR: SPP-107 arm EXR (2026-10-02) -- keeper 2026-09-28-spp-100-chp-scope's recipe replayed via scripts/replay_keeper.py, ONE YEAR PER SHARD (rule 36), with ONE carrier: carrier EXR: spp_mmu_offer_unavailability (SPP-106) replaces the flat fossil performance and summer class derates with the SPP MMU's measured above-emergency-max, economic-to-emergency-max and ambient bands (MMU Dec 2025, digitized), built by its sub-gate spp_mmu_offer_repair (SPP-107, default off) on the MMU's own definitions: every band multiplies the row's post-outage availability, and the economic-to-emergency slice is a per-zone emergency_band pool offered at the shed price minus epsilon (zero free parameters). Built on the owner decision card 'Build + solve EXR' (2026-10-02). Every leg verified by scripts/probes/_spp107_shard_check.py (in the shard and again in the parent) and by scripts/probes/_rspp_compose.py --require before composition. NO control solve: rule 29(b) form 4, the committed keeper is the control (G-DRIFT all INERT, PRECOMMIT s3). Zero LP in the parent. Pre-registered in docs/records/spp/PRECOMMIT-spp-107-mmu-carrier-repair-2026-10-02.md (pin d787142d) before any shard launched; record docs/records/spp/RESULT-spp-107-mmu-carrier-repair-2026-10-02.md.; authorized price tuning declared on offer_curve_by_group = {'committed': 0.93, 'econ_low': 0.93, 'econ_high': 0.93, 'peak': 0.93}"
+   ],
+   "forced_share|CC_REGULAR|2019": [
+    "PASS",
+    "0.0% forced (0.0 of 46.6873 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_LIGNITE|2019": [
+    "PASS",
+    "0.0% forced (0.0 of 10.6466 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_PRB|2019": [
+    "PASS",
+    "0.0% forced (0.0 of 77.9964 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CT_PEAKER|2019": [
+    "PASS",
+    "0.0% forced (0.0 of 9.5198 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|ST_GAS|2019": [
+    "PASS",
+    "18.1% forced (1.9615 of 10.8316 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|hydro|2019": [
+    "PASS",
+    "0.0% forced (0.0 of 15.3236 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CC_REGULAR|2020": [
+    "PASS",
+    "0.0% forced (0.0 of 48.8726 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_LIGNITE|2020": [
+    "PASS",
+    "0.0% forced (0.0 of 8.6073 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_PRB|2020": [
+    "PASS",
+    "0.0% forced (0.0 of 61.1099 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CT_PEAKER|2020": [
+    "PASS",
+    "0.0% forced (0.0 of 11.8851 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|ST_GAS|2020": [
+    "PASS",
+    "15.7% forced (2.1074 of 13.4307 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|hydro|2020": [
+    "PASS",
+    "0.0% forced (0.0 of 11.6119 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CC_REGULAR|2021": [
+    "PASS",
+    "0.0% forced (0.0 of 30.6707 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_LIGNITE|2021": [
+    "PASS",
+    "0.0% forced (0.0 of 9.207 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_PRB|2021": [
+    "PASS",
+    "0.0% forced (0.0 of 84.4129 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CT_PEAKER|2021": [
+    "PASS",
+    "0.0% forced (0.0 of 8.4344 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|ST_GAS|2021": [
+    "PASS",
+    "28.8% forced (2.1668 of 7.5287 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|hydro|2021": [
+    "PASS",
+    "0.0% forced (0.0 of 9.7795 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CC_REGULAR|2022": [
+    "PASS",
+    "0.0% forced (0.0 of 27.8728 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_LIGNITE|2022": [
+    "PASS",
+    "0.0% forced (0.0 of 12.6644 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_PRB|2022": [
+    "PASS",
+    "0.0% forced (0.0 of 86.7389 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CT_PEAKER|2022": [
+    "PASS",
+    "0.0% forced (0.0 of 7.7602 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|ST_GAS|2022": [
+    "PASS",
+    "33.8% forced (2.6627 of 7.8679 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.972 (\u22650.8) & off-peak CV ratio 0.993 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|hydro|2022": [
+    "PASS",
+    "0.0% forced (0.0 of 8.2067 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CC_REGULAR|2023": [
+    "PASS",
+    "0.0% forced (0.0 of 41.5177 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_LIGNITE|2023": [
+    "PASS",
+    "0.0% forced (0.0 of 7.7318 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_PRB|2023": [
+    "PASS",
+    "0.0% forced (0.0 of 66.2579 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CT_PEAKER|2023": [
+    "PASS",
+    "0.0% forced (0.0 of 13.4736 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|ST_GAS|2023": [
+    "PASS",
+    "23.1% forced (3.0241 of 13.0826 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|hydro|2023": [
+    "PASS",
+    "0.0% forced (0.0 of 8.3441 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CC_REGULAR|2024": [
+    "PASS",
+    "0.0% forced (0.0 of 39.5726 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_LIGNITE|2024": [
+    "PASS",
+    "0.0% forced (0.0 of 6.391 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_PRB|2024": [
+    "PASS",
+    "0.0% forced (0.0 of 63.5759 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CT_PEAKER|2024": [
+    "PASS",
+    "0.0% forced (0.0 of 14.1755 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|ST_GAS|2024": [
+    "PASS",
+    "18.3% forced (2.8878 of 15.812 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|hydro|2024": [
+    "PASS",
+    "0.0% forced (0.0 of 8.9662 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CC_REGULAR|2025": [
+    "PASS",
+    "0.0% forced (0.0 of 35.3456 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_LIGNITE|2025": [
+    "PASS",
+    "0.0% forced (0.0 of 6.3786 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_PRB|2025": [
+    "PASS",
+    "0.0% forced (0.0 of 79.3487 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CT_PEAKER|2025": [
+    "PASS",
+    "0.0% forced (0.0 of 11.6514 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|ST_GAS|2025": [
+    "PASS",
+    "17.7% forced (2.7929 of 15.7606 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|hydro|2025": [
+    "PASS",
+    "0.0% forced (0.0 of 8.8292 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ]
+  }
+ },
+ "keeper_after": {
+  "determination": "NOT-YET",
+  "reasons": [
+   "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_mean, price_shape, price_tail, dispatch_corr"
+  ],
+  "records": {
+   "fuelmix|CC_REGULAR|2019": [
+    "PASS",
+    "+2.25 TWh, share +0.7pp"
+   ],
+   "fuelmix|CC_CHP|2019": [
+    "PASS",
+    "+0.37 TWh, share +0.1pp"
+   ],
+   "fuelmix|CT_PEAKER|2019": [
+    "PASS",
+    "+1.49 TWh, share +0.5pp"
+   ],
+   "fuelmix|ST_GAS|2019": [
+    "PASS",
+    "-4.96 TWh, share -1.9pp"
+   ],
+   "fuelmix|ST_CHP|2019": [
+    "PASS",
+    "-0.17 TWh, share -0.1pp"
+   ],
+   "fuelmix|COAL_PRB|2019": [
+    "PASS",
+    "+0.24 TWh, share -0.2pp"
+   ],
+   "fuelmix|COAL_LIGNITE|2019": [
+    "PASS",
+    "-2.09 TWh, share -0.8pp"
+   ],
+   "fuelmix|COAL_BIT|2019": [
+    "PASS",
+    "-0.05 TWh, share -0.0pp"
+   ],
+   "fuelmix|CC_REGULAR|2020": [
+    "PASS",
+    "+1.60 TWh, share +0.5pp"
+   ],
+   "fuelmix|CC_CHP|2020": [
+    "PASS",
+    "+0.34 TWh, share +0.1pp"
+   ],
+   "fuelmix|CT_PEAKER|2020": [
+    "PASS",
+    "+6.15 TWh, share +2.3pp"
+   ],
+   "fuelmix|ST_GAS|2020": [
+    "PASS",
+    "-3.42 TWh, share -1.3pp"
+   ],
+   "fuelmix|ST_CHP|2020": [
+    "PASS",
+    "-0.23 TWh, share -0.1pp"
+   ],
+   "fuelmix|COAL_PRB|2020": [
+    "PASS",
+    "-3.03 TWh, share -1.4pp"
+   ],
+   "fuelmix|COAL_LIGNITE|2020": [
+    "PASS",
+    "-2.22 TWh, share -0.9pp"
+   ],
+   "fuelmix|COAL_BIT|2020": [
+    "PASS",
+    "-0.04 TWh, share -0.0pp"
+   ],
+   "fuelmix|CC_REGULAR|2021": [
+    "FAIL",
+    "-8.92 TWh, share -3.5pp (volume/share out of band)"
+   ],
+   "fuelmix|CC_CHP|2021": [
+    "PASS",
+    "+0.24 TWh, share +0.1pp"
+   ],
+   "fuelmix|CT_PEAKER|2021": [
+    "PASS",
+    "+1.31 TWh, share +0.4pp"
+   ],
+   "fuelmix|ST_GAS|2021": [
+    "PASS",
+    "-2.83 TWh, share -1.1pp"
+   ],
+   "fuelmix|ST_CHP|2021": [
+    "PASS",
+    "-0.22 TWh, share -0.1pp"
+   ],
+   "fuelmix|COAL_PRB|2021": [
+    "FAIL",
+    "+10.98 TWh, share +3.7pp (volume/share out of band)"
+   ],
+   "fuelmix|COAL_LIGNITE|2021": [
+    "PASS",
+    "-1.28 TWh, share -0.5pp"
+   ],
+   "fuelmix|COAL_BIT|2021": [
+    "PASS",
+    "-0.04 TWh, share -0.0pp"
+   ],
+   "fuelmix|CC_REGULAR|2022": [
+    "FAIL",
+    "-9.16 TWh, share -3.4pp (volume/share out of band)"
+   ],
+   "fuelmix|CC_CHP|2022": [
+    "PASS",
+    "+0.33 TWh, share +0.1pp"
+   ],
+   "fuelmix|CT_PEAKER|2022": [
+    "PASS",
+    "-1.39 TWh, share -0.5pp"
+   ],
+   "fuelmix|ST_GAS|2022": [
+    "PASS",
+    "-5.18 TWh, share -1.9pp"
+   ],
+   "fuelmix|ST_CHP|2022": [
+    "PASS",
+    "-0.29 TWh, share -0.1pp"
+   ],
+   "fuelmix|COAL_PRB|2022": [
+    "FAIL",
+    "+10.75 TWh, share +3.3pp (volume/share out of band)"
+   ],
+   "fuelmix|COAL_LIGNITE|2022": [
+    "PASS",
+    "+0.05 TWh, share -0.1pp"
+   ],
+   "fuelmix|COAL_BIT|2022": [
+    "PASS",
+    "-0.04 TWh, share -0.0pp"
+   ],
+   "fuelmix|CC_REGULAR|2023": [
+    "PASS",
+    "-4.48 TWh, share -1.6pp"
+   ],
+   "fuelmix|CC_CHP|2023": [
+    "PASS",
+    "+0.14 TWh, share +0.0pp"
+   ],
+   "fuelmix|CT_PEAKER|2023": [
+    "PASS",
+    "+2.83 TWh, share +1.0pp"
+   ],
+   "fuelmix|ST_GAS|2023": [
+    "PASS",
+    "-5.55 TWh, share -1.9pp"
+   ],
+   "fuelmix|ST_CHP|2023": [
+    "PASS",
+    "-0.23 TWh, share -0.1pp"
+   ],
+   "fuelmix|COAL_PRB|2023": [
+    "PASS",
+    "+0.58 TWh, share +0.2pp"
+   ],
+   "fuelmix|COAL_LIGNITE|2023": [
+    "PASS",
+    "-1.65 TWh, share -0.6pp"
+   ],
+   "fuelmix|COAL_BIT|2023": [
+    "PASS",
+    "-0.03 TWh, share -0.0pp"
+   ],
+   "fuelmix|CC_REGULAR|2024": [
+    "PASS",
+    "-5.69 TWh, share -2.0pp"
+   ],
+   "fuelmix|CC_CHP|2024": [
+    "PASS",
+    "+0.06 TWh, share +0.0pp"
+   ],
+   "fuelmix|CT_PEAKER|2024": [
+    "PASS",
+    "+2.40 TWh, share +0.8pp"
+   ],
+   "fuelmix|ST_GAS|2024": [
+    "PASS",
+    "-6.26 TWh, share -2.2pp"
+   ],
+   "fuelmix|ST_CHP|2024": [
+    "PASS",
+    "-0.32 TWh, share -0.1pp"
+   ],
+   "fuelmix|COAL_PRB|2024": [
+    "PASS",
+    "+0.96 TWh, share +0.3pp"
+   ],
+   "fuelmix|COAL_LIGNITE|2024": [
+    "PASS",
+    "-2.26 TWh, share -0.8pp"
+   ],
+   "fuelmix|COAL_BIT|2024": [
+    "PASS",
+    "-0.04 TWh, share -0.0pp"
+   ],
+   "fuelmix|CC_REGULAR|2025": [
+    "PASS",
+    "-7.66 TWh, share -2.6pp"
+   ],
+   "fuelmix|CC_CHP|2025": [
+    "PASS",
+    "+0.18 TWh, share +0.1pp"
+   ],
+   "fuelmix|CT_PEAKER|2025": [
+    "PASS",
+    "+0.02 TWh, share -0.0pp"
+   ],
+   "fuelmix|ST_GAS|2025": [
+    "PASS",
+    "-6.82 TWh, share -2.3pp"
+   ],
+   "fuelmix|ST_CHP|2025": [
+    "SKIPPED",
+    "preliminary EIA-923 vintage: immaterial plant data (no per-class actual); not gated \u2014 C2 family grid reconcile covers this class"
+   ],
+   "fuelmix|COAL_PRB|2025": [
+    "PASS",
+    "+7.75 TWh, share +2.5pp"
+   ],
+   "fuelmix|COAL_LIGNITE|2025": [
+    "PASS",
+    "-2.39 TWh, share -0.8pp"
+   ],
+   "fuelmix|COAL_BIT|2025": [
+    "SKIPPED",
+    "preliminary EIA-923 vintage: immaterial plant data (no per-class actual); not gated \u2014 C2 family grid reconcile covers this class"
+   ],
+   "sysvol|gas|2019": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|coal|2019": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|gas|2020": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|coal|2020": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|gas|2021": [
+    "PASS",
+    "C1 flags: CC_REGULAR"
+   ],
+   "sysvol|coal|2021": [
+    "PASS",
+    "C1 flags: COAL_PRB"
+   ],
+   "sysvol|gas|2022": [
+    "PASS",
+    "C1 flags: CC_REGULAR"
+   ],
+   "sysvol|coal|2022": [
+    "PASS",
+    "C1 flags: COAL_PRB"
+   ],
+   "sysvol|gas|2023": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|coal|2023": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|gas|2024": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|coal|2024": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|gas|2025": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "sysvol|coal|2025": [
+    "PASS",
+    "all classes in band (C1)"
+   ],
+   "price_mean|None|2019": [
+    "FAIL",
+    "+12.3%"
+   ],
+   "price_mean|da_diagnostic|2019": [
+    "SKIPPED",
+    "+6.2% vs DA (DA\u2212RT premium $+1.19)"
+   ],
+   "price_mean|None|2020": [
+    "FAIL",
+    "+27.7%"
+   ],
+   "price_mean|da_diagnostic|2020": [
+    "SKIPPED",
+    "+19.1% vs DA (DA\u2212RT premium $+1.19)"
+   ],
+   "price_mean|None|2021": [
+    "PASS",
+    "+7.1%"
+   ],
+   "price_mean|da_diagnostic|2021": [
+    "SKIPPED",
+    "-39.2% vs DA (DA\u2212RT premium $+28.47)"
+   ],
+   "price_mean|None|2022": [
+    "PASS",
+    "-4.8%"
+   ],
+   "price_mean|da_diagnostic|2022": [
+    "SKIPPED",
+    "-12.1% vs DA (DA\u2212RT premium $+3.63)"
+   ],
+   "price_mean|None|2023": [
+    "PASS",
+    "-6.4%"
+   ],
+   "price_mean|da_diagnostic|2023": [
+    "SKIPPED",
+    "-14.6% vs DA (DA\u2212RT premium $+2.41)"
+   ],
+   "price_mean|None|2024": [
+    "FAIL",
+    "-11.3%"
+   ],
+   "price_mean|da_diagnostic|2024": [
+    "SKIPPED",
+    "-20.1% vs DA (DA\u2212RT premium $+2.83)"
+   ],
+   "price_mean|None|2025": [
+    "PASS",
+    "-4.5%"
+   ],
+   "price_mean|da_diagnostic|2025": [
+    "SKIPPED",
+    "-9.6% vs DA (DA\u2212RT premium $+1.63)"
+   ],
+   "price_shape|None|2019": [
+    "PASS",
+    "NRMSE 0.160"
+   ],
+   "price_shape|None|2020": [
+    "FAIL",
+    "NRMSE 0.345"
+   ],
+   "price_shape|None|2021": [
+    "PASS",
+    "NRMSE 0.176"
+   ],
+   "price_shape|None|2022": [
+    "PASS",
+    "NRMSE 0.175"
+   ],
+   "price_shape|None|2023": [
+    "PASS",
+    "NRMSE 0.176"
+   ],
+   "price_shape|None|2024": [
+    "FAIL",
+    "NRMSE 0.217"
+   ],
+   "price_shape|None|2025": [
+    "PASS",
+    "NRMSE 0.154"
+   ],
+   "price_tail|None|2019": [
+    "CAVEAT",
+    "model 0h [energy-only LMP] vs RT actual 47h (0.00\u00d7, >$200)"
+   ],
+   "price_tail|da_diagnostic|2019": [
+    "SKIPPED",
+    "model 0h vs DA actual 0h (out-of-representation companion)"
+   ],
+   "price_tail|None|2020": [
+    "CAVEAT",
+    "model 0h [energy-only LMP] vs RT actual 23h (0.00\u00d7, >$200)"
+   ],
+   "price_tail|da_diagnostic|2020": [
+    "SKIPPED",
+    "model 0h vs DA actual 0h (out-of-representation companion)"
+   ],
+   "price_tail|None|2021": [
+    "CAVEAT",
+    "model 372h [energy-only LMP] vs RT actual 140h (2.66\u00d7, >$200)"
+   ],
+   "price_tail|da_diagnostic|2021": [
+    "SKIPPED",
+    "model 372h vs DA actual 154h (out-of-representation companion)"
+   ],
+   "price_tail|None|2022": [
+    "CAVEAT",
+    "model 0h [energy-only LMP] vs RT actual 99h (0.00\u00d7, >$200)"
+   ],
+   "price_tail|da_diagnostic|2022": [
+    "SKIPPED",
+    "model 0h vs DA actual 12h (out-of-representation companion)"
+   ],
+   "price_tail|None|2023": [
+    "FAIL",
+    "model 0h [energy-only LMP] vs RT actual 42h (0.00\u00d7, >$200)"
+   ],
+   "price_tail|da_diagnostic|2023": [
+    "SKIPPED",
+    "model 0h vs DA actual 6h (out-of-representation companion)"
+   ],
+   "price_tail|None|2024": [
+    "FAIL",
+    "model 0h [energy-only LMP] vs RT actual 59h (0.00\u00d7, >$200)"
+   ],
+   "price_tail|da_diagnostic|2024": [
+    "SKIPPED",
+    "model 0h vs DA actual 35h (out-of-representation companion)"
+   ],
+   "price_tail|None|2025": [
+    "FAIL",
+    "model 0h [energy-only LMP] vs RT actual 68h (0.00\u00d7, >$200)"
+   ],
+   "price_tail|da_diagnostic|2025": [
+    "SKIPPED",
+    "model 0h vs DA actual 0h (out-of-representation companion)"
+   ],
+   "dispatch_corr|gas|2019": [
+    "PASS",
+    "r=0.937, NRMSE=0.17"
+   ],
+   "dispatch_corr|coal|2019": [
+    "PASS",
+    "r=0.917, NRMSE=0.155"
+   ],
+   "dispatch_corr|gas|2020": [
+    "PASS",
+    "r=0.942, NRMSE=0.183"
+   ],
+   "dispatch_corr|coal|2020": [
+    "PASS",
+    "r=0.945, NRMSE=0.185"
+   ],
+   "dispatch_corr|gas|2021": [
+    "PASS",
+    "r=0.946, NRMSE=0.292"
+   ],
+   "dispatch_corr|coal|2021": [
+    "PASS",
+    "r=0.925, NRMSE=0.162"
+   ],
+   "dispatch_corr|gas|2022": [
+    "FAIL",
+    "r=0.962, NRMSE=0.313"
+   ],
+   "dispatch_corr|coal|2022": [
+    "PASS",
+    "r=0.928, NRMSE=0.18"
+   ],
+   "dispatch_corr|gas|2023": [
+    "PASS",
+    "r=0.962, NRMSE=0.195"
+   ],
+   "dispatch_corr|coal|2023": [
+    "PASS",
+    "r=0.951, NRMSE=0.149"
+   ],
+   "dispatch_corr|gas|2024": [
+    "PASS",
+    "r=0.944, NRMSE=0.235"
+   ],
+   "dispatch_corr|coal|2024": [
+    "PASS",
+    "r=0.909, NRMSE=0.202"
+   ],
+   "dispatch_corr|gas|2025": [
+    "PASS",
+    "r=0.916, NRMSE=0.283"
+   ],
+   "dispatch_corr|coal|2025": [
+    "PASS",
+    "r=0.89, NRMSE=0.189"
+   ],
+   "governance|None|None": [
+    "PASS",
+    "closeout-SPP-nuc (session_017CjzrZuJKkfaxEMAncdXPj, 2026-10-03): SPP keeper w0_sppr_span (2026-10-02-w0-spp107r) replayed byte-for-byte (scripts/replay_keeper.py, NO --set) year-isolated (rule 36), all seven legs at 8c3ea46192074cfd422fff6532acc035d37297bb, which carries #7109: constants.NUCLEAR_MONTHLY_CF_BY_YEAR SPP 2019-2022 rows from the frozen derive scripts/data/derive_nuclear_monthly_cf.py (EIA-923 Page 1; owner rulings R-35/R-38; rule 14 measured data replaces the year-invariant fallback pattern; rule 23 initial derivation, 2023-25 byte-unchanged). Recipe checked field-by-field by scripts/probes/_closeoutsppnuc_compose_span.py (0 differing fields, one solve_surface fingerprint 4187973695945d73); offer curves untouched (rule 1(c)); no multiplier tuned; zero free parameters added. G-DRIFT zero LP: only 2019-22 availability/min_gen move at the pin; 2023-25 re-solved and reproduce the keeper's hourly sidecars exactly (E-INERT). Zero LP in the parent. Pre-registered in docs/records/spp/PRECOMMIT-closeout-spp-nuc-2026-10-03.md (pushed 2db7192d, addendum A) before any shard result was read; record docs/records/spp/RESULT-closeout-spp-nuc-2026-10-03.md. PRIOR: closeout-B W0 phase 3 (session_018DsgkLcN1h8NQc2yJegmdN, 2026-10-02): SPP keeper spp107EXR_span replayed year-isolated (rule 36) at 15a351a1b61f187822e87b4dbbce99c7ac8c568d (all seven legs) with ONLY the ten W0 EIA-860 settlement fields armed (owner ruling R-2, desk-confirmed denominator companion; PRECOMMIT-closeout-b-w0-phase3-2026-10-02.md). Recipe checked field-by-field by scripts/probes/_w0_compose_span.py; offer curves untouched (rule 1(c)); no multiplier tuned; zero free parameters added. PRIOR: SPP-107 arm EXR (2026-10-02) -- keeper 2026-09-28-spp-100-chp-scope's recipe replayed via scripts/replay_keeper.py, ONE YEAR PER SHARD (rule 36), with ONE carrier: carrier EXR: spp_mmu_offer_unavailability (SPP-106) replaces the flat fossil performance and summer class derates with the SPP MMU's measured above-emergency-max, economic-to-emergency-max and ambient bands (MMU Dec 2025, digitized), built by its sub-gate spp_mmu_offer_repair (SPP-107, default off) on the MMU's own definitions: every band multiplies the row's post-outage availability, and the economic-to-emergency slice is a per-zone emergency_band pool offered at the shed price minus epsilon (zero free parameters). Built on the owner decision card 'Build + solve EXR' (2026-10-02). Every leg verified by scripts/probes/_spp107_shard_check.py (in the shard and again in the parent) and by scripts/probes/_rspp_compose.py --require before composition. NO control solve: rule 29(b) form 4, the committed keeper is the control (G-DRIFT all INERT, PRECOMMIT s3). Zero LP in the parent. Pre-registered in docs/records/spp/PRECOMMIT-spp-107-mmu-carrier-repair-2026-10-02.md (pin d787142d) before any shard launched; record docs/records/spp/RESULT-spp-107-mmu-carrier-repair-2026-10-02.md.; authorized price tuning declared on offer_curve_by_group = {'committed': 0.93, 'econ_low': 0.93, 'econ_high': 0.93, 'peak': 0.93}"
+   ],
+   "forced_share|CC_REGULAR|2019": [
+    "PASS",
+    "0.0% forced (0.0 of 46.6873 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_LIGNITE|2019": [
+    "PASS",
+    "0.0% forced (0.0 of 10.6466 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_PRB|2019": [
+    "PASS",
+    "0.0% forced (0.0 of 77.9964 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CT_PEAKER|2019": [
+    "PASS",
+    "0.0% forced (0.0 of 9.5198 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|ST_GAS|2019": [
+    "PASS",
+    "18.1% forced (1.9615 of 10.8316 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|hydro|2019": [
+    "PASS",
+    "0.0% forced (0.0 of 15.3236 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CC_REGULAR|2020": [
+    "PASS",
+    "0.0% forced (0.0 of 48.8726 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_LIGNITE|2020": [
+    "PASS",
+    "0.0% forced (0.0 of 8.6073 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_PRB|2020": [
+    "PASS",
+    "0.0% forced (0.0 of 61.1099 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CT_PEAKER|2020": [
+    "PASS",
+    "0.0% forced (0.0 of 11.8851 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|ST_GAS|2020": [
+    "PASS",
+    "15.7% forced (2.1074 of 13.4307 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|hydro|2020": [
+    "PASS",
+    "0.0% forced (0.0 of 11.6119 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CC_REGULAR|2021": [
+    "PASS",
+    "0.0% forced (0.0 of 30.6707 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_LIGNITE|2021": [
+    "PASS",
+    "0.0% forced (0.0 of 9.207 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_PRB|2021": [
+    "PASS",
+    "0.0% forced (0.0 of 84.4129 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CT_PEAKER|2021": [
+    "PASS",
+    "0.0% forced (0.0 of 8.4344 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|ST_GAS|2021": [
+    "PASS",
+    "28.8% forced (2.1668 of 7.5287 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|hydro|2021": [
+    "PASS",
+    "0.0% forced (0.0 of 9.7795 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CC_REGULAR|2022": [
+    "PASS",
+    "0.0% forced (0.0 of 27.8728 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_LIGNITE|2022": [
+    "PASS",
+    "0.0% forced (0.0 of 12.6644 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_PRB|2022": [
+    "PASS",
+    "0.0% forced (0.0 of 86.7389 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CT_PEAKER|2022": [
+    "PASS",
+    "0.0% forced (0.0 of 7.7602 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|ST_GAS|2022": [
+    "PASS",
+    "33.8% forced (2.6627 of 7.8679 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.972 (\u22650.8) & off-peak CV ratio 0.993 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|hydro|2022": [
+    "PASS",
+    "0.0% forced (0.0 of 8.2067 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CC_REGULAR|2023": [
+    "PASS",
+    "0.0% forced (0.0 of 41.5177 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_LIGNITE|2023": [
+    "PASS",
+    "0.0% forced (0.0 of 7.7318 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_PRB|2023": [
+    "PASS",
+    "0.0% forced (0.0 of 66.2579 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CT_PEAKER|2023": [
+    "PASS",
+    "0.0% forced (0.0 of 13.4736 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|ST_GAS|2023": [
+    "PASS",
+    "23.1% forced (3.0241 of 13.0826 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|hydro|2023": [
+    "PASS",
+    "0.0% forced (0.0 of 8.3441 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CC_REGULAR|2024": [
+    "PASS",
+    "0.0% forced (0.0 of 39.5726 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_LIGNITE|2024": [
+    "PASS",
+    "0.0% forced (0.0 of 6.391 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_PRB|2024": [
+    "PASS",
+    "0.0% forced (0.0 of 63.5759 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CT_PEAKER|2024": [
+    "PASS",
+    "0.0% forced (0.0 of 14.1755 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|ST_GAS|2024": [
+    "PASS",
+    "18.3% forced (2.8878 of 15.812 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|hydro|2024": [
+    "PASS",
+    "0.0% forced (0.0 of 8.9662 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CC_REGULAR|2025": [
+    "PASS",
+    "0.0% forced (0.0 of 35.3456 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_LIGNITE|2025": [
+    "PASS",
+    "0.0% forced (0.0 of 6.3786 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|COAL_PRB|2025": [
+    "PASS",
+    "0.0% forced (0.0 of 79.3487 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|CT_PEAKER|2025": [
+    "PASS",
+    "0.0% forced (0.0 of 11.6514 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|ST_GAS|2025": [
+    "PASS",
+    "17.7% forced (2.7929 of 15.7606 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ],
+   "forced_share|hydro|2025": [
+    "PASS",
+    "0.0% forced (0.0 of 8.8292 TWh) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+   ]
+  }
+ }
+}

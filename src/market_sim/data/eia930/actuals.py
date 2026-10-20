@@ -516,6 +516,16 @@ def load_eia_hourly_benchmark(iso: str, year: int) -> dict[str, np.ndarray] | No
     move its p99.9, so the order does not change what is flagged. ``Net
     generation`` and ``Total interchange`` are outside the screen by ruling.
 
+    Then hours inside an EIA-930 stale snapshot are replaced by the ISO's own
+    measurement (:func:`market_sim.data.stale_snapshot.repair_eia930_frame`;
+    SPP only, owner ruling R27): ``NG:`` fuels from the generation mix on each
+    column's own stale mask, ``Total interchange`` from the measured seam legs
+    and ``Net generation`` from repaired demand + interchange, before the
+    gap-fill below. Columns with no basis-matched replacement keep EIA's value,
+    flagged (``SPP_STALE_KEPT_BENCHMARK_COLUMNS``). The default-off clean seam
+    (``MARKET_SIM_USE_CLEAN``) overrides fuels AFTER the repair and is not
+    repaired.
+
     EIA's interchange sign convention is positive = net export.
 
     Returns ``None`` when the ISO is unmapped, the file is missing, or the
@@ -535,6 +545,12 @@ def load_eia_hourly_benchmark(iso: str, year: int) -> dict[str, np.ndarray] | No
     if df.empty:
         return None
     df = _screen_fuel_spike_columns(df, ba_code=ba_code, year=year)
+    # EIA-930 stale-snapshot hours are served from the ISO's own measurement,
+    # the SAME construction the LP inputs read (owner rulings R22 / R23 / R27;
+    # identity for an ISO without a stale_snapshot spec).
+    from market_sim.data.stale_snapshot import repair_eia930_frame
+
+    df = repair_eia930_frame(iso, year, df)
 
     out: dict[str, np.ndarray] = {}
     for name, column in _EIA930_BENCHMARK_COLUMNS:

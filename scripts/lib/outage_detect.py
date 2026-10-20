@@ -227,7 +227,9 @@ def high_load_mask(
     reconciled ``Adjusted demand``/``Adjusted WND Gen``/``Adjusted SUN Gen``
     series; the other BA extracts only carry the raw ``Demand``/``NG: WND``/
     ``NG: SUN`` columns, so we fall back to those when the Adjusted ones are
-    absent (the raw series is an equally exogenous net-load proxy).
+    absent (the raw series is an equally exogenous net-load proxy). Hours in
+    an EIA-930 stale snapshot are first served from the ISO's own measurement
+    (:func:`market_sim.data.stale_snapshot.repair_eia930_frame`, SPP only).
 
     An hour is "high load" if its net load exceeds the ``pctl`` percentile of a
     centered rolling ``+/- win_days`` net-load window (the LOCAL / seasonal band)
@@ -254,6 +256,12 @@ def high_load_mask(
     df = df[pd.to_datetime(df["Local date"]).dt.year == year].copy()
     if df.empty:
         return None
+    # EIA-930 stale-snapshot hours take the ISO's own measured demand / wind /
+    # solar (owner rulings R22 / R23 / R27; identity for an ISO without a
+    # stale_snapshot spec), the same values the LP inputs read.
+    from market_sim.data.stale_snapshot import repair_eia930_frame
+
+    df = repair_eia930_frame(iso.upper(), year, df)
     df["dt"] = pd.to_datetime(df["Local date"]) + pd.to_timedelta(
         df["Hour"].astype(int) - 1, unit="h"
     )

@@ -633,12 +633,14 @@ class TestLivePins(unittest.TestCase):
     """
 
     def test_spp_2023_wind_on_both_paths(self):
-        bench = actuals.load_eia_hourly_benchmark("SPP", 2023)
+        repaired_bench = actuals.load_eia_hourly_benchmark("SPP", 2023)
         repaired = actuals.load_eia_hourly_renewable_gen("SPP", 2023)
         # The spike pin is a property of the frame screen, so it is read with
-        # the stale-snapshot repair (R23, its own tests) off; with it on, the
-        # input path differs from the benchmark only in the frozen hours.
+        # the stale-snapshot repair (R23 / R27, its own tests) off; with it on,
+        # both paths carry the same repaired wind (one construction, rule 19).
+        np.testing.assert_array_equal(repaired_bench["wind"], repaired["wind"])
         disable_stale_snapshot_repair(self)
+        bench = actuals.load_eia_hourly_benchmark("SPP", 2023)
         gen = actuals.load_eia_hourly_renewable_gen("SPP", 2023)
         self.assertAlmostEqual(float(bench["wind"].sum()) / 1e6, 103.0488, places=4)
         self.assertAlmostEqual(float(gen["wind"].sum()) / 1e6, 103.0488, places=4)
