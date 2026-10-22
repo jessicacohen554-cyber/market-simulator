@@ -139,6 +139,7 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "capacity-market-auction-supply",
     "capacity-market-elcc",
     "transfer-constraint-binding",
+    "flowgate-limits-at-bind",
     "maxgen-events",
     "carbon-auction-results",
     "eia-aeo-fuel-prices",
@@ -257,6 +258,24 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "(2024 MISO SOM §II.E/§III.B). Per-ISO specs in "
             "`scripts/lib/transfer_constraint_binding/` (MISO first); "
             "train-window years only (rule #22 guard in the fetch script)."
+        ),
+    },
+    "flowgate-limits-at-bind": {
+        "summary": (
+            "Measured operating limits (source + enforced effective limit) of "
+            "transmission constraints in the hours they bound — SPP's RTBM "
+            "`effective-limits` product, served from 2022-04-14."
+        ),
+        "reconciles": (
+            "BINDING/BREACHED 5-minute constraint-intervals (committed verbatim "
+            "per year in `data/raw/spp-effective-limits/`) collapsed to UTC "
+            "hour-beginning per (constraint, monitored, contingent): interval "
+            "counts, mean shadow price, median source / effective limit. The "
+            "limit is an admissible input (rule #13); the binding hours are "
+            "evidence only. A flowgate limit is an element-under-contingency "
+            "rating, not an interface capability. Per-ISO specs in "
+            "`scripts/lib/flowgate_limits_at_bind/` (SPP first). Intake-only "
+            "(UC-SPP-CORRIDOR, 2026-10-22)."
         ),
     },
     "maxgen-events": {
