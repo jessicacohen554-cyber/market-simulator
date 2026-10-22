@@ -47,6 +47,7 @@ ALL_DATATYPES = [
     "outages",
     "validation",
     "fleet",
+    "flowgate-limits-at-bind",
     "fuel-prices",
     "reference",
     "egrid",

@@ -119,6 +119,9 @@ DATATYPES: tuple[str, ...] = (
     "capacity-market-elcc",
     "capacity-market-avoidable-cost-rate",
     "transfer-constraint-binding",
+    # UC-SPP-CORRIDOR (2026-10-22): SPP RTBM effective limits at bind
+    # (portal `effective-limits`, 2022-04-14 on). Intake-only.
+    "flowgate-limits-at-bind",
     "lmp-components",
     "maxgen-events",
     "dam-public-bids",

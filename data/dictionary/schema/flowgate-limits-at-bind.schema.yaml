@@ -1,0 +1,110 @@
+# Canonical schema: flowgate-limits-at-bind (measured operating limits of
+# transmission constraints in the intervals they bound, per constraint-hour).
+#
+# Source (SPP, the first registered ISO): the portal product
+# `effective-limits` (RTBM-EFFLIMIT-YYYYMMDD.csv, served from 2022-04-14), which
+# carries SPP's Source Limit (FAC-011 system operating limit), Realtime
+# Effective Limit (the value enforced in real time, TOP-001) and Initial
+# Effective Limit for every ACTIVATED / BINDING / BREACHED constraint-interval.
+# The committed raw form is the BINDING + BREACHED rows, verbatim
+# (data/raw/spp-effective-limits/rtbm_efflimit_bound_<year>.csv.gz); the day
+# files themselves are gitignored and re-fetchable byte-for-byte.
+#
+# Curation (scripts/data/curate_flowgate_limits_at_bind.py, per-ISO specs in
+# scripts/lib/flowgate_limits_at_bind/) collapses the 5-minute intervals to
+# UTC hour-beginning per (constraint, monitored facility, contingent facility):
+# a row exists ONLY for hours with at least one BINDING or BREACHED interval,
+# so absence means "did not bind", not "missing data".
+#
+# Rule #13/#14 admissibility: a constraint's effective limit is the RTO's own
+# published operating limit (it responds to outages, re-ratings and upgrades)
+# — an admissible physical input. WHEN it binds is a dispatch outcome: the
+# hour index and shadow price are validation evidence, never an LP target.
+# A flowgate limit is an element-under-contingency rating, not an interface
+# transfer capability; converting it to one needs a sensitivity (see
+# docs/records/spp/FINDING-spp-53-2026-09-07.md).
+datatype: flowgate-limits-at-bind
+schema_version: 1
+title: Transmission-constraint operating limits in the hours they bound
+description: >-
+  Per ISO, market, constraint (monitored x contingent facility) and UTC hour in
+  which it bound: the RTO's source limit and enforced effective limit (MW), the
+  count of binding/breached intervals and the mean shadow price.
+
+key_columns: [iso, market, constraint_name, monitored_facility, contingent_facility, hour_start_utc]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: ISO identifier (SPP).
+  - name: market
+    dtype: string
+    unit: none
+    nullable: false
+    description: Market run — "rt" (SPP RTBM, 5-minute intervals).
+  - name: constraint_name
+    dtype: string
+    unit: none
+    nullable: false
+    description: Constraint name exactly as posted (flowgate name or temporary-flowgate id).
+  - name: constraint_type
+    dtype: string
+    unit: none
+    nullable: true
+    description: Constraint type as posted (SPP FG / M2M / MA / MCE).
+  - name: monitored_facility
+    dtype: string
+    unit: none
+    nullable: false
+    description: Monitored line or transformer as posted (from-to order gives the binding direction).
+  - name: contingent_facility
+    dtype: string
+    unit: none
+    nullable: false
+    description: Contingent element as posted ("BASE" = no contingency).
+  - name: hour_start_utc
+    dtype: datetime64[ns, UTC]
+    unit: utc_timestamp
+    nullable: false
+    description: >-
+      UTC hour-beginning. SPP stamps intervals by their END (GMTIntervalEnd),
+      so an interval ending at :05 … :00 of the next hour belongs to the hour
+      that starts 5 minutes before its stamp.
+  - name: n_binding_intervals
+    dtype: int64
+    unit: count
+    nullable: false
+    description: 5-minute intervals in the hour with State BINDING.
+  - name: n_breached_intervals
+    dtype: int64
+    unit: count
+    nullable: false
+    description: 5-minute intervals in the hour with State BREACHED.
+  - name: shadow_price_mean_usd_mwh
+    dtype: float64
+    unit: usd_per_mwh
+    nullable: true
+    description: Mean posted shadow price over the hour's binding/breached intervals.
+  - name: source_limit_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: Median posted Source Limit (FAC-011 system operating limit) over those intervals.
+  - name: effective_limit_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: Median posted Realtime Effective Limit (the limit enforced in RTBM) over those intervals.
+  - name: effective_limit_min_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: Minimum posted Realtime Effective Limit over those intervals.
+  - name: initial_effective_limit_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: Median posted Initial Effective Limit (blank until SPP implemented it in the MOS).

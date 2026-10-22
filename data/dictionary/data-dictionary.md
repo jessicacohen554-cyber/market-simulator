@@ -88,6 +88,7 @@ for the market split.
 | capacity-market-auction-supply | — | — | — | — | — | — | — | — |
 | capacity-market-elcc | — | — | — | — | — | — | — | — |
 | transfer-constraint-binding | — | — | — | — | — | — | — | — |
+| flowgate-limits-at-bind | — | — | — | — | — | — | 2022–2025 | — |
 | maxgen-events | — | — | — | — | — | — | — | — |
 | storage-as-awards | — | — | — | — | — | — | — | — |
 | storage-soc-bounds | — | — | — | — | — | — | — | — |
@@ -1984,6 +1985,41 @@ for published inter-regional transfer constraints — MISO's RDT from the public
 | `pc4_usd_mwh` | `float64` | `usd_per_mwh` | yes | Demand-curve price at/above breakpoint 4 (often blank). |
 | `override` | `bool` | `none` | no | Operator override flag as posted (OVERRIDE column; 3 RT rows in 2023 carry it, coinciding with a $3,000 emergency curve variant). |
 | `override_reason` | `string` | `none` | yes | Posted override REASON text (blank in almost all rows). |
+
+## flowgate-limits-at-bind
+
+Measured operating limits (source + enforced effective limit) of transmission
+constraints in the hours they bound — SPP's RTBM `effective-limits` product,
+served from 2022-04-14. Schema:
+[`schema/flowgate-limits-at-bind.schema.yaml`](schema/flowgate-limits-at-bind.schema.yaml).
+
+- **Keys:** `iso`, `market`, `constraint_name`, `monitored_facility`,
+  `contingent_facility`, `hour_start_utc`
+- **Reconciles:** BINDING/BREACHED 5-minute constraint-intervals (committed
+  verbatim per year in `data/raw/spp-effective-limits/`) collapsed to UTC
+  hour-beginning per (constraint, monitored, contingent): interval counts, mean
+  shadow price, median source / effective limit. The limit is an admissible
+  input (rule #13); the binding hours are evidence only. A flowgate limit is an
+  element-under-contingency rating, not an interface capability. Per-ISO specs
+  in `scripts/lib/flowgate_limits_at_bind/` (SPP first). Intake-only
+  (UC-SPP-CORRIDOR, 2026-10-22).
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO identifier (SPP). |
+| `market` | `string` | `none` | no | Market run — "rt" (SPP RTBM, 5-minute intervals). |
+| `constraint_name` | `string` | `none` | no | Constraint name exactly as posted (flowgate name or temporary-flowgate id). |
+| `constraint_type` | `string` | `none` | yes | Constraint type as posted (SPP FG / M2M / MA / MCE). |
+| `monitored_facility` | `string` | `none` | no | Monitored line or transformer as posted (from-to order gives the binding direction). |
+| `contingent_facility` | `string` | `none` | no | Contingent element as posted ("BASE" = no contingency). |
+| `hour_start_utc` | `datetime64[ns, UTC]` | `utc_timestamp` | no | UTC hour-beginning. SPP stamps intervals by their END (GMTIntervalEnd), so an interval ending at :05 … :00 of the next hour belongs to the hour that starts 5 minutes before its stamp. |
+| `n_binding_intervals` | `int64` | `count` | no | 5-minute intervals in the hour with State BINDING. |
+| `n_breached_intervals` | `int64` | `count` | no | 5-minute intervals in the hour with State BREACHED. |
+| `shadow_price_mean_usd_mwh` | `float64` | `usd_per_mwh` | yes | Mean posted shadow price over the hour's binding/breached intervals. |
+| `source_limit_mw` | `float64` | `mw` | yes | Median posted Source Limit (FAC-011 system operating limit) over those intervals. |
+| `effective_limit_mw` | `float64` | `mw` | yes | Median posted Realtime Effective Limit (the limit enforced in RTBM) over those intervals. |
+| `effective_limit_min_mw` | `float64` | `mw` | yes | Minimum posted Realtime Effective Limit over those intervals. |
+| `initial_effective_limit_mw` | `float64` | `mw` | yes | Median posted Initial Effective Limit (blank until SPP implemented it in the MOS). |
 
 ## maxgen-events
 

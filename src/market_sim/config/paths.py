@@ -557,6 +557,9 @@ NEW_BUILD_COST_BENCHMARKS_DIR: Path = RAW_DATA_DIR / "new-build-cost-benchmarks"
 FUEL_FORWARD_BENCHMARKS_DIR: Path = RAW_DATA_DIR / "fuel-forward-benchmarks"
 EIA_AEO_DIR: Path = RAW_DATA_DIR / "eia-aeo"
 EIA_930_INTERCHANGE_DIR: Path = RAW_DATA_DIR / "eia-930-interchange"
+# SPP RTBM effective-limit daily files (fsName=effective-limits, 2022-04-14 on);
+# day files gitignored, SHA256SUMS + README committed (UC-SPP-CORRIDOR).
+SPP_EFFECTIVE_LIMITS_DIR: Path = RAW_DATA_DIR / "spp-effective-limits"
 TRANSFER_CONSTRAINT_BINDING_DIR: Path = RAW_DATA_DIR / "transfer-constraint-binding"
 MISO_REGIONAL_BALANCE_DIR: Path = RAW_DATA_DIR / "miso-regional-balance"
 TRANSMISSION_EXPANSION_DIR: Path = RAW_DATA_DIR / "transmission-expansion"
