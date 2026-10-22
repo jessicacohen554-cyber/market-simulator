@@ -1,0 +1,173 @@
+iso,facility_id,facility_name,plant_group,capacity_mw,final2025_netgen_mwh,in_ER2025
+CAISO,10115,Grossmont Hospital,CT_CHP,4.5,29242,False
+CAISO,10720,Kyocera International Inc.(San Diego),CT_CHP,3.8,13711,False
+CAISO,50064,University of California Santa Cruz,CT_CHP,7.4,33516,False
+CAISO,50234,San Antonio Regional Hospital,CT_CHP,2.7,12745,False
+CAISO,50495,High Sierra Limited,CT_CHP,49.8,5585,False
+CAISO,50541,Harbor Cogen,CC_REGULAR,107.4,8645,False
+CAISO,50748,Agnews Power Plant,CC_REGULAR,32.0,8576,False
+CAISO,50750,Coalinga Cogeneration Facility,CT_CHP,6.8,42049,False
+CAISO,50850,CamChino Leasing LLC,CC_CHP,30.8,2120,False
+CAISO,50985,Solano County Cogen Plant,CT_CHP,2.8,7873,False
+CAISO,52076,McKittrick Cogen,CT_CHP,12.0,61230,False
+CAISO,52077,Lost Hills Cogeneration Plant,CT_CHP,7.0,7538,False
+CAISO,52081,Cymric 31X Cogen,CT_CHP,6.8,17490,False
+CAISO,52082,Cymric 6Z Cogen,CT_CHP,6.8,26596,False
+CAISO,52086,Coalinga 25D Cogen,CT_CHP,13.6,38906,False
+CAISO,52104,Cymric 36W Cogen,CT_CHP,12.4,53358,False
+CAISO,52186,Yuba City Cogen Partners,CT_CHP,49.9,14679,False
+CAISO,54447,Welport Lease Project,CT_CHP,5.0,33705,False
+CAISO,54449,Dome Project,CT_CHP,6.0,48431,False
+CAISO,55184,Aera San Ardo Cogen Facility,CT_CHP,3.2,19556,False
+CAISO,56356,Clearwater Power Plant,CC_CHP,49.0,3539,False
+CAISO,57580,Broadridge Cogen,CT_CHP,5.2,8741,False
+CAISO,57977,High Sierra Cogeneration Plant,CT_CHP,6.2,33249,False
+CAISO,58432,Glass House Camarillo Cultivation,CT_CHP,13.2,63981,False
+CAISO,58625,Santa Rita Jail Hybrid,CT_CHP,2.9,10359,False
+CAISO,58914,MCAGCC Cogen Plant,CT_CHP,16.4,68495,False
+CAISO,60385,Santa Rita Jail Fuel Cell,CT_CHP,1.4,8093,False
+CAISO,62176,Berry NMW Cogens,CT_CHP,11.4,75656,False
+CAISO,63439,"Central CA Fuel Cell 1, LLC",CT_CHP,2.8,13227,False
+CAISO,66472,San Manuel Central Plant Cogens,CT_CHP,5.4,18045,False
+MISO,203,McClellan (AR),ST_GAS,136.0,23758,False
+MISO,1979,Hibbing,ST_CHP,35.9,39785,False
+MISO,2123,Columbia (MO),ST_GAS,61.1,26538,False
+MISO,10234,Biron Mill,ST_CHP,61.6,113692,False
+MISO,10301,Louisiana Sugar Refining,ST_CHP,6.7,9130,False
+MISO,10319,Geismar,ST_CHP,84.1,625561,False
+MISO,10397,Indiana Harbor West,ST_CHP,127.0,207841,False
+MISO,10568,Port Arthur Texas Refinery,CT_CHP,38.4,247794,False
+MISO,10686,Rapids Energy Center,ST_CHP,28.4,40385,False
+MISO,10690,ExxonMobil Baton Rouge Turbine Generator,CT_CHP,85.3,552449,False
+MISO,10819,Ada Cogeneration LP,CC_CHP,33.1,184857,False
+MISO,10855,Cargill Corn Milling Division,ST_CHP,40.0,112073,False
+MISO,10861,Archer Daniels Midland Des Moines,ST_CHP,7.9,23412,False
+MISO,10863,Archer Daniels Midland Mankato,ST_CHP,6.1,28488,False
+MISO,10866,Archer Daniels Midland Peoria,CT_CHP,18.0,72914,False
+MISO,10867,Primient Decatur Plant Cogen,ST_CHP,64.8,149976,False
+MISO,50028,Plant 31 Paper Mill,CT_CHP,84.2,514804,False
+MISO,50389,Port Allen (LA),CT_CHP,7.6,49845,False
+MISO,50490,PPG Plant C Caustic,ST_CHP,3.4,14172,False
+MISO,50846,"Atlantic Alumina, Gramercy Operations",ST_CHP,85.3,180696,False
+MISO,54210,American Crystal Sugar Hillsboro,COAL,13.3,85238,False
+MISO,54212,American Crystal Sugar Crookston,COAL,6.5,41074,False
+MISO,54213,American Crystal Sugar Drayton,COAL,6.0,42842,False
+MISO,54214,American Crystal Sugar East Grand Forks,COAL,7.5,42576,False
+MISO,54240,Louisiana Tech University Power Plant,CT_CHP,7.5,48888,False
+MISO,54518,Formosa Plastics,ST_CHP,100.8,416151,False
+MISO,54637,JCO Oxides Olefins Plant,CT_CHP,73.8,569468,False
+MISO,54780,University of Illinois Abbott Power Plt,CT_CHP,80.3,212552,False
+MISO,54918,Ergon Refining Vicksburg,CT_CHP,4.8,35038,False
+MISO,55122,NAFTA Region Olefins Complex Cogen Fac,CT_CHP,83.2,577481,False
+MISO,55309,Air Products Port Arthur,CT_CHP,169.1,1215155,False
+MISO,55857,Oak Point Cogen,CT_CHP,23.5,97786,False
+MISO,55861,Stevens Point Mill,ST_CHP,7.6,14498,False
+MISO,56248,Shell Chemical,CT_CHP,80.0,585335,False
+MISO,56787,Geismar Cogen,CT_CHP,83.9,528387,False
+MISO,58161,Western Michigan University Power Plant,CC_CHP,16.7,80936,False
+MISO,58330,The Andersons Albion Ethanol LLC,CT_CHP,10.1,61952,False
+MISO,59197,Univ Minnesota CHP Plant,CT_CHP,21.0,171958,False
+MISO,59452,East. Michigan Univ. Heating Plant,CT_CHP,7.8,33133,False
+MISO,60647,Shakopee Energy Park,CT_CHP,46.5,56786,False
+MISO,62289,Dearborn Energy Center,CC_CHP,35.0,237289,False
+MISO,63826,POET Biorefining - Jewell,ST_CHP,5.0,11221,False
+MISO,63831,"POET Biorefining Caro, LLC",ST_CHP,3.8,13097,False
+MISO,63852,"POET Biorefining - North Manchester, LLC",ST_CHP,3.9,17368,False
+MISO,63918,POET Biorefining - Hudson,ST_CHP,3.6,10877,False
+MISO,63919,POET Biorefining LLC - Corning,ST_CHP,5.0,13950,False
+MISO,63921,POET Biorefining - Shelbyville,ST_CHP,6.1,34432,False
+MISO,63923,POET Biorefining - Gowrie,ST_CHP,5.0,1994,False
+MISO,65400,Purdue CHP,CT_CHP,13.3,124657,False
+MISO,65405,"Flint Hills Resources Pine Bend, LLC",CC_CHP,118.4,361605,False
+MISO,68066,Poet Bioprocessing Emmetsburg,ST_CHP,3.5,18146,False
+PJM,2935,Orrville,COAL,84.5,29306,False
+PJM,10061,"Mars Wrigley Confectionery US, LLC",CC_CHP,12.3,55159,False
+PJM,10113,John B Rich Memorial Power Station,COAL,88.4,641892,False
+PJM,10151,Grant Town Power Plant,COAL,95.7,409278,False
+PJM,50275,Park 500 Philip Morris USA,ST_CHP,13.0,13396,False
+PJM,50326,Nalco,CC_CHP,4.7,20852,False
+PJM,50410,Chester Operations,CC_CHP,69.2,175189,False
+PJM,50776,Panther Creek Energy Facility,COAL,94.0,340503,False
+PJM,50974,Scrubgrass Reclamation CO. LP.,COAL,94.7,438892,False
+PJM,52072,Radford Army Ammunition Plant,ST_CHP,18.0,31985,False
+PJM,52148,Elkton,CT_CHP,14.0,7399,False
+PJM,54250,Newman (PA),ST_CHP,1.8,10301,False
+PJM,54335,Morton Salt Rittman,ST_CHP,2.5,14281,False
+PJM,54556,Ingredion Incorporated,ST_CHP,54.6,186300,False
+PJM,54790,CSL Behring LLC,CT_CHP,4.2,29800,False
+PJM,58136,Adkins Energy LLC,ST_CHP,6.8,38749,False
+PJM,58165,College of New Jersey,CT_CHP,6.2,27804,False
+PJM,58181,Loyola University Health Plant,CT_CHP,10.6,19450,False
+PJM,58328,North Chicago Energy Center,CT_CHP,12.4,38957,False
+PJM,58947,Bristol Myers Squibb Lawrenceville,CT_CHP,11.1,43795,False
+PJM,59794,Chicago West Side Energy Center,CT_CHP,3.5,17396,False
+PJM,60742,Argonne National Laboratory CHP,CT_CHP,6.3,40296,False
+PJM,61282,APG Combined Heat and Power Plant,CT_CHP,7.9,47117,False
+PJM,61822,"Princeton Energy Center, LLC",CT_CHP,10.8,26041,False
+PJM,62622,Overlook Medical Center,CT_CHP,4.6,11428,False
+PJM,63347,"AOC, Capitol Power Plant",CT_CHP,7.5,54372,False
+PJM,63478,Ross Hall Central Utility Plant,CT_CHP,4.6,22425,False
+PJM,63483,ACM - Midtown Thermal,CT_CHP,5.5,46418,False
+PJM,63485,ECP Uptown Campus,CT_CHP,5.6,29522,False
+PJM,63501,Montclair State University Cogen,CT_CHP,11.8,47125,False
+PJM,63540,Essex County Correctional Facility Cogen,CT_CHP,6.2,23792,False
+PJM,63829,"POET Biorefining - Marion, LLC",ST_CHP,7.8,23555,False
+PJM,63920,POET Biorefining - Fostoria,ST_CHP,3.5,18526,False
+PJM,63922,POET Biorefining - Portland,ST_CHP,3.5,12625,False
+PJM,63924,"POET Biorefining- Alexandria, LLC",ST_CHP,3.6,18545,False
+PJM,63927,"POET Biorefining - Leipsic, LLC",ST_CHP,3.5,14150,False
+SOCO,50146,Imperial Savannah LP,ST_CHP,11.7,54094,False
+SOCO,54096,International Paper Riverdale Mill,CC_CHP,104.2,552158,False
+SOCO,54550,W&T Onshore Treating Facility (OTF),CC_CHP,12.0,52269,False
+SOCO,54789,Georgia-Pacific Brewton Mill,ST_CHP,103.4,422949,False
+SOCO,55044,Packaging Corp. of America Jackson Mill,ST_CHP,44.4,228279,False
+SOCO,61927,Georgia-Pacific Taylorsville Plywood,CT_CHP,7.2,58657,False
+SOCO,62449,Kimberly Clark Mobile - CHP Plant,CT_CHP,50.0,357637,False
+SPP,10862,Archer Daniels Midland Lincoln,ST_CHP,7.9,44880,False
+SPP,52122,Wasson CO2 Removal Plant,CT_CHP,23.4,114005,False
+SPP,54211,American Crystal Sugar Moorhead,COAL,5.0,37834,False
+SPP,56478,MJMEUC Generating Station #1,CT_CHP,13.3,90138,False
+SPP,58192,Arkalon Ethanol LLC,ST_CHP,3.0,14877,False
+SPP,60536,UA Central Utility Plant,CT_CHP,5.6,36507,False
+SPP,65367,POET Bioprocessing- Mitchell,ST_CHP,3.9,20324,False
+SPP,65512,"Kansas Ethanol, LLC",CT_CHP,13.5,117424,False
+NWPP,7028,Whitehead,CT_CHP,26.5,11437,False
+NWPP,10215,Snowbird Power Plant,CT_CHP,6.5,14632,False
+NWPP,10504,Amalgamated Sugar Twin Falls,ST_CHP,12.7,20649,False
+NWPP,10784,Colstrip Energy LP,COAL,46.1,277536,False
+NWPP,54690,Amalgamated Sugar LLC Nampa,ST_CHP,8.2,46771,False
+NWPP,57915,WE Soda Alkalai LLC,COAL,41.0,268907,False
+NWPP,58382,Threemile Digester,CT_CHP,4.8,35391,False
+NWPP,63423,BYU Central Heating Plant,CT_CHP,16.5,115862,False
+NEISO,10883,Medical Area Total Energy Plant,ST_CHP,94.8,313729,False
+NEISO,50087,Univ of Massachusetts Medical Center,CT_CHP,17.5,63254,False
+NEISO,52061,Hartford Hospital Cogeneration,CT_CHP,11.8,49129,False
+NEISO,54907,Mass Inst Tech Cntrl Utilities/Cogen Plt,CT_CHP,43.4,209398,False
+NEISO,54937,Wellesley College Central Utility Plant,CT_CHP,13.9,9620,False
+NEISO,56928,Fairfield University CHP Plant,CT_CHP,4.5,23338,False
+NEISO,57179,HSCo CHP,CT_CHP,4.0,27669,False
+NEISO,57666,Foxwoods CoGen,CC_CHP,16.2,10834,False
+NEISO,58084,"Kimberly Clark-Unit 1,2,3",CC_CHP,36.3,233323,False
+NEISO,58152,Danbury Hospital Cogen Plant,CT_CHP,4.3,21581,False
+NEISO,58158,Wesleyan University Cogen 1,CT_CHP,2.4,4049,False
+NEISO,58166,Smith College Central Heating Plant,CT_CHP,5.3,6456,False
+NEISO,58237,CCSU Fuel Cell Project,CT_CHP,1.4,7006,False
+NEISO,58327,Bradley Energy Center,CT_CHP,5.8,11269,False
+NEISO,60276,West Groton CHP,CT_CHP,4.1,20946,False
+NEISO,60392,Pfizer Groton Fuel Cell,CT_CHP,5.6,36236,False
+NEISO,61186,Boston Medical Center CHP Plant,CT_CHP,3.0,14032,False
+NEISO,61703,Sikorsky Aircraft CHP,CT_CHP,9.9,65291,False
+NEISO,61857,Toray Plastic America's CHP Plant,CT_CHP,20.0,156807,False
+NEISO,63438,UB Fuel Cell,CT_CHP,1.4,10092,False
+NEISO,66018,Norton Powerhouse 2,CT_CHP,4.6,28670,False
+NEISO,68493,Central Heating Plant,ST_CHP,20.4,79565,False
+NYISO,7784,Allegany Cogen,CC_REGULAR,67.0,36823,False
+NYISO,50203,US Gypsum Oakfield,CT_CHP,5.8,17245,False
+NYISO,50368,Cornell University Central Heat,CC_CHP,39.5,229817,False
+NYISO,50427,Bronx Zoo,CT_CHP,3.6,20590,False
+NYISO,54808,New York University Central Plant,CC_REGULAR,13.5,78814,False
+NYISO,58186,HVCC Cogen Plant,CT_CHP,8.1,13091,False
+NYISO,58507,Montefieor Medical Center Moses Division,CT_CHP,18.7,29825,False
+NYISO,61238,New York Presbyterian Hospital- 68th Street,CT_CHP,22.9,54052,False
+NYISO,61488,NYU LANGONE HEALTH,CT_CHP,34.0,46487,False
+NYISO,63236,Kings Plaza Total Energy Plant (TEP),CT_CHP,12.8,22402,False
