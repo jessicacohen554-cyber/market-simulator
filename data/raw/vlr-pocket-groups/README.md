@@ -44,3 +44,7 @@ requirement is stated per group.
   never a value from this table.
 - Op-guide revisions after MTEP15 (e.g. the SETEX op guide, Aug 2022): no public
   unit list.
+  The guides are CEII on MISO's Reliability-Authority extranet (NDA); the SETEX
+  guide exists only as HSPM in PUCT 56693 (ETI response TIEC 7-2). No public
+  count, MW or unit list exists for any year 2019–2025
+  (`docs/records/miso/FINDING-uc-miso-coverage-2026-10-25.md`).
