@@ -1,0 +1,27 @@
+INFO: container preflight: memory ceiling 13.36 GiB (/sys/fs/cgroup/memory/process_api/01a17ab3-1baa-703e-acec-ba476c037870/claude-code-bash/memory.limit_in_bytes; MemTotal 15.71 GiB), swap 9.0 GiB, target ceiling+swap 24 GiB
+WARNING: container preflight: swap: /swapfile-marketsim is already active (9.0 GiB) but ceiling+swap is still 1.6 GiB short of the 24 GiB target; leaving it as it is
+INFO: container preflight: solve profile MALLOC_ARENA_MAX=2 MARKET_SIM_HIGHS_THREADS=1 OMP_NUM_THREADS=1
+WARNING: container preflight: ceiling+swap 22.4 GiB is below the 24 GiB target; a per-plant ISO-year LP (MISO, PJM) may be OOM-killed here. Fix: provision swap before data steps (`python3 scripts/prepare_solve_container.py` before hydrate_data / regenerate_clean / any fetch); free disk 5.6 GiB
+INFO: MEM after build_constraints: 3377380 kB
+INFO: MEM after build_constraints: 2949332 kB
+INFO: MEM after casts/bounds: 3377380 kB
+INFO: MEM after casts/bounds: 2953616 kB
+INFO: MEM after addCols: 4833676 kB
+INFO: MEM after addCols: 4332972 kB
+INFO: MEM LP size: 492637 rows x 32087880 cols, 76763880 nnz (indices int32)
+INFO: MEM after addRows: 7031020 kB
+INFO: MEM after addRows: 5232564 kB
+INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+INFO: MEM post-run pre-extraction: 13952560 kB
+INFO: MEM post-run pre-extraction: 8327756 kB
+INFO: MEM post extraction: 13952560 kB
+INFO: MEM post extraction: 8590468 kB
+INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+INFO: MEM post-run pre-extraction: 13968540 kB
+INFO: MEM post-run pre-extraction: 7988800 kB
+INFO: MEM post col_dual extraction: 13968540 kB
+INFO: MEM post col_dual extraction: 8495372 kB
+INFO: MEM post extraction: 13968540 kB
+INFO: MEM post extraction: 8251856 kB
+INFO: year 2019 phase timing: data_prep=54.3s solve_p0=503.3s markup=62.8s solve_p1=128.0s results_write=72.7s total=821.1s (markup: setup=0.0s p0_post=31.2s markup=0.5s seam=0.6s p1_post=30.2s tail=0.0s other=0.3s) (results_write: state=1.0s frames=8.3s parquet=5.0s bench=20.9s sidecars=37.5s)
+INFO: memory peak: cgroup_peak_rss_gib=13.36, cgroup_peak_rss_plus_swap_gib=16.59, process_vmhwm_gib=13.32, process_vmswap_now_gib=0.08

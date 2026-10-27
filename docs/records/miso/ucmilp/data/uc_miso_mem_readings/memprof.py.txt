@@ -1,0 +1,37 @@
+"""Run a command, sample its process-tree RSS/swap and the cgroup usage every 2 s.
+
+Writes <out>.tsv: t_s, tree_rss_gib, tree_swap_gib, cg_usage_gib, cg_memsw_gib, last_log_marker.
+"""
+import os, re, subprocess, sys, time
+out, log = sys.argv[1], sys.argv[2]
+cmd = sys.argv[3:]
+CG = "/sys/fs/cgroup/memory/" + [l.split(":")[2] for l in open("/proc/self/cgroup") if ":memory:" in l][0].strip("/")
+def rd(p):
+    try: return int(open(p).read())
+    except Exception: return -1
+MARK = re.compile(r"(P0|P1|UC stage|UC window \d+ |Solving|HiGHS|solve|build|evolution|persist|Writing|wrote|memory peak|phase timing)", re.I)
+lf = open(log, "w")
+p = subprocess.Popen(cmd, stdout=lf, stderr=subprocess.STDOUT, start_new_session=True)
+t0 = time.time(); marker = ""; pos = 0
+with open(out, "w") as f:
+    f.write("t_s\ttree_rss_gib\ttree_swap_gib\tcg_usage_gib\tcg_memsw_gib\tmarker\n")
+    while True:
+        rss = swp = 0
+        for pid in os.listdir("/proc"):
+            if not pid.isdigit(): continue
+            try:
+                st = open(f"/proc/{pid}/status").read()
+                if os.getpgid(int(pid)) != p.pid: continue
+            except Exception: continue
+            m = re.search(r"VmRSS:\s+(\d+)", st); s = re.search(r"VmSwap:\s+(\d+)", st)
+            rss += int(m.group(1)) if m else 0; swp += int(s.group(1)) if s else 0
+        try:
+            with open(log) as lg:
+                lg.seek(pos); new = lg.read(); pos = lg.tell()
+            for line in new.splitlines():
+                if MARK.search(line): marker = line.strip()[-110:]
+        except Exception: pass
+        f.write(f"{time.time()-t0:.0f}\t{rss/2**20:.3f}\t{swp/2**20:.3f}\t{rd(CG+'/memory.usage_in_bytes')/2**30:.3f}\t{rd(CG+'/memory.memsw.usage_in_bytes')/2**30:.3f}\t{marker}\n"); f.flush()
+        if p.poll() is not None: break
+        time.sleep(2)
+print("rc", p.returncode)

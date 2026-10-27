@@ -1,0 +1,433 @@
+t_s	tree_rss_gib	tree_swap_gib	cg_usage_gib	cg_memsw_gib	marker
+0	0.001	0.000	-0.000	-0.000	
+2	0.065	0.000	-0.000	-0.000	
+4	0.078	0.000	-0.000	-0.000	
+6	0.078	0.000	-0.000	-0.000	
+8	0.094	0.000	-0.000	-0.000	
+10	0.129	0.000	-0.000	-0.000	
+12	0.171	0.000	-0.000	-0.000	
+14	0.246	0.000	-0.000	-0.000	on3 scripts/prepare_solve_container.py` before hydrate_data / regenerate_clean / any fetch); free disk 5.6 GiB
+16	0.248	0.000	-0.000	-0.000	on3 scripts/prepare_solve_container.py` before hydrate_data / regenerate_clean / any fetch); free disk 5.6 GiB
+18	0.291	0.000	-0.000	-0.000	in anchor VINTAGE 2019: 2.8692 $/MMBtu (window anchor 3.0492) — the solve year's own mean delivered-gas series
+20	0.316	0.000	-0.000	-0.000	in anchor VINTAGE 2019: 2.8692 $/MMBtu (window anchor 3.0492) — the solve year's own mean delivered-gas series
+22	0.337	0.000	-0.000	-0.000	in anchor VINTAGE 2019: 2.8692 $/MMBtu (window anchor 3.0492) — the solve year's own mean delivered-gas series
+24	0.342	0.000	-0.000	-0.000	INFO: EIA-860: 3 combined-cycle steam part(s) resolved for the cc_steam_part_capacity repair
+26	0.497	0.000	-0.000	-0.000	INFO: EIA-860: 3 combined-cycle steam part(s) resolved for the cc_steam_part_capacity repair
+28	0.538	0.000	-0.000	-0.000	INFO: EIA-860: 3 combined-cycle steam part(s) resolved for the cc_steam_part_capacity repair
+30	0.722	0.000	-0.000	-0.000	INFO: EIA-860: 3 combined-cycle steam part(s) resolved for the cc_steam_part_capacity repair
+32	0.679	0.000	-0.000	-0.000	INFO: EIA-860: 3 combined-cycle steam part(s) resolved for the cc_steam_part_capacity repair
+34	1.170	0.000	-0.000	-0.000	INFO: EIA-860: 3 combined-cycle steam part(s) resolved for the cc_steam_part_capacity repair
+36	1.165	0.000	-0.000	-0.000	INFO: EIA-860: 3 combined-cycle steam part(s) resolved for the cc_steam_part_capacity repair
+38	1.180	0.000	-0.000	-0.000	INFO: EIA-860: 3 combined-cycle steam part(s) resolved for the cc_steam_part_capacity repair
+40	1.543	0.000	-0.000	-0.000	INFO: EIA-860: 3 combined-cycle steam part(s) resolved for the cc_steam_part_capacity repair
+42	1.473	0.000	-0.000	-0.000	INFO: EIA-860: 3 combined-cycle steam part(s) resolved for the cc_steam_part_capacity repair
+44	1.650	0.000	-0.000	-0.000	INFO: EIA-860: 3 combined-cycle steam part(s) resolved for the cc_steam_part_capacity repair
+46	2.091	0.000	-0.000	-0.000	INFO: EIA-860: 3 combined-cycle steam part(s) resolved for the cc_steam_part_capacity repair
+48	2.372	0.000	-0.000	-0.000	INFO: EIA-860: 3 combined-cycle steam part(s) resolved for the cc_steam_part_capacity repair
+50	2.872	0.000	-0.000	-0.000	INFO: EIA-860: 3 combined-cycle steam part(s) resolved for the cc_steam_part_capacity repair
+52	2.979	0.000	-0.000	-0.000	INFO: EIA-860: 3 combined-cycle steam part(s) resolved for the cc_steam_part_capacity repair
+54	3.569	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+56	4.094	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+58	4.592	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+60	4.984	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+62	5.385	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+64	5.917	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+66	6.446	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+68	4.645	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+70	4.645	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+72	4.666	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+74	3.928	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+76	3.928	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+78	4.411	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+80	5.262	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+82	5.674	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+84	6.083	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+86	6.557	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+88	7.132	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+90	7.691	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+92	8.228	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+94	8.776	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+96	9.069	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+98	9.612	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+100	10.129	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+102	8.877	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+104	10.685	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+106	11.064	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+108	11.590	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+110	12.123	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+112	12.652	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+114	12.818	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+116	11.887	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+118	12.029	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+120	11.904	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+122	11.904	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+124	13.053	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+126	11.904	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+128	12.958	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+130	12.995	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+132	12.854	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+134	12.138	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+136	12.088	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+138	11.905	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+140	11.905	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+142	11.905	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+144	11.905	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+146	12.898	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+148	12.113	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+150	12.131	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+152	11.905	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+154	11.905	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+156	12.910	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+158	12.224	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+160	12.195	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+162	11.906	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+164	11.906	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+166	12.938	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+168	12.291	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+170	12.190	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+172	11.906	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+174	11.906	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+176	12.223	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+178	12.941	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+180	12.531	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+182	12.580	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+184	11.906	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+186	11.906	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+188	13.102	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+190	11.906	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+192	12.489	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+194	11.907	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+196	11.907	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+198	11.907	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+200	11.907	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+202	12.535	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+204	13.088	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+206	11.907	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+208	11.907	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+210	12.747	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+212	11.907	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+214	12.183	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+216	11.907	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+218	11.907	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+220	11.907	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+222	12.603	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+224	13.102	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+226	11.907	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+228	12.957	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+230	11.907	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+232	11.907	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+234	11.907	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+236	12.485	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+238	13.038	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+240	11.907	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+242	13.102	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+244	11.907	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+246	11.907	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+248	11.907	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+250	12.272	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+252	12.831	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+254	11.907	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+256	12.822	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+258	11.907	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+260	12.524	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+262	13.085	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+264	11.907	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+266	11.907	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+268	11.907	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+270	12.623	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+272	13.102	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+274	11.907	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+276	12.933	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+278	11.907	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+280	13.041	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+282	11.907	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+284	13.102	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+286	11.908	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+288	12.732	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+290	11.908	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+292	11.908	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+294	12.265	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+296	12.879	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+298	11.909	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+300	11.909	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+302	11.909	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+304	12.249	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+306	11.909	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+308	11.909	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+310	12.972	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+312	11.998	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+314	12.639	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+316	12.292	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+318	11.909	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+320	13.105	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+322	11.909	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+324	12.919	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+326	12.629	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+328	12.264	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+330	11.911	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+332	11.911	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+334	11.911	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+336	11.911	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+338	12.859	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+340	11.912	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+342	12.808	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+344	11.912	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+346	11.912	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+348	12.866	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+350	11.912	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+352	13.034	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+354	12.686	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+356	11.912	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+358	11.912	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+360	13.078	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+362	11.912	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+364	12.877	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+366	12.019	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+368	12.596	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+370	11.912	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+372	12.256	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+374	11.912	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+376	11.912	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+378	13.107	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+380	11.912	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+382	12.876	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+384	11.912	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+386	12.165	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+388	12.923	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+390	11.912	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+392	12.887	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+394	11.912	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+396	11.912	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+398	13.076	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+400	13.107	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+402	12.823	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+404	11.912	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+406	12.293	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+408	11.912	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+410	11.912	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+412	13.055	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+414	12.020	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+416	11.912	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+418	11.912	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+420	11.912	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+422	13.033	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+424	11.987	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+426	12.358	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+428	12.219	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+430	11.912	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+432	13.108	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+434	12.086	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+436	12.895	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+438	11.912	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+440	11.912	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+442	11.912	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+444	13.046	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+446	12.713	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+448	12.299	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+450	11.912	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+452	11.912	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+454	13.100	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+456	11.913	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+458	12.991	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+460	11.913	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+462	12.564	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+464	12.771	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+466	11.913	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+468	11.913	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+470	13.096	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+472	13.108	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+474	12.852	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+476	11.913	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+478	11.913	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+480	13.109	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+482	11.915	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+485	12.950	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+487	12.616	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+489	12.398	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+491	11.915	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+493	11.915	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+495	12.997	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+497	12.459	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+499	12.529	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+501	11.915	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+503	11.915	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+505	12.259	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+507	11.915	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+509	12.009	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+511	12.485	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+513	11.915	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+515	12.976	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+517	13.111	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+519	12.865	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+521	11.985	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+523	12.277	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+525	11.916	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+527	11.916	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+529	13.111	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+531	11.916	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+533	12.934	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+535	12.596	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+537	12.724	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+539	11.916	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+541	12.266	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+543	11.916	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+545	11.916	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+547	13.079	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+549	11.916	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+551	12.955	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+553	12.839	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+555	12.848	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+557	11.916	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+559	12.682	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+561	13.278	0.000	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+563	13.306	1.120	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+565	13.307	2.188	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+567	12.163	2.468	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+569	13.101	2.374	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+571	7.457	2.521	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+573	7.938	1.561	-0.000	-0.000	INFO: MEM after build_constraints: 2949332 kB
+575	8.299	1.560	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+577	8.214	1.533	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+579	8.214	1.533	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+581	8.347	1.405	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+583	8.443	1.309	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+585	8.443	1.309	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+587	9.635	1.309	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+589	10.138	1.309	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+591	10.413	1.306	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+593	10.894	1.306	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+595	11.450	1.306	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+597	10.598	1.306	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+599	11.737	1.306	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+601	8.486	1.306	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+603	8.726	1.255	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+605	10.071	1.059	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+607	9.506	1.059	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+609	9.231	1.059	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+611	10.252	1.059	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+613	10.463	1.059	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+615	9.258	1.059	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+617	11.276	1.059	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+619	11.808	1.059	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+621	12.437	1.059	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+623	11.311	1.059	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+625	12.181	1.059	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+627	11.797	1.059	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+629	11.982	1.059	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+631	11.311	1.059	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+633	11.311	1.059	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+635	12.370	1.059	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+637	12.189	1.059	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+639	11.979	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+641	11.312	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+643	11.312	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+645	12.010	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+647	11.312	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+649	12.362	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+651	11.559	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+653	11.799	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+655	11.742	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+657	11.312	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+659	12.314	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+661	11.680	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+663	11.957	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+665	11.312	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+667	11.312	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+669	12.261	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+671	11.312	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+673	11.416	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+675	12.479	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+677	12.496	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+679	11.963	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+681	11.312	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+683	12.508	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+685	11.965	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+687	12.037	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+689	11.313	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+691	11.313	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+693	12.266	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+695	11.313	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+697	11.313	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+699	11.313	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+701	11.313	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+703	11.313	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+705	11.313	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+707	12.509	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+709	12.509	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+711	12.509	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+713	12.071	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+715	11.521	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+717	11.933	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+719	12.622	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+721	13.149	1.058	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+723	13.299	2.160	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+725	13.322	2.930	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+727	12.327	3.024	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+729	12.824	3.024	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+731	12.087	3.264	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+733	7.548	2.698	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 503.253s (cold, simplex iterations 301482, objective 5444099652.9655)
+735	7.712	2.626	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+737	9.402	2.621	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+739	9.519	2.617	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+741	7.965	2.601	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+743	7.978	2.588	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+745	7.979	2.587	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+747	8.651	2.587	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+749	9.673	2.587	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+751	9.967	2.585	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+753	10.462	2.585	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+755	10.981	2.585	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+757	10.149	2.585	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+759	8.279	2.585	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+761	8.449	2.585	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+763	1.228	0.614	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+765	1.572	0.452	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+767	2.217	0.405	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+769	2.293	0.394	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+771	2.678	0.385	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+773	2.936	0.383	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+775	3.757	0.378	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+777	4.671	0.378	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+779	4.797	0.378	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+781	5.448	0.378	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+783	3.820	0.376	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+785	2.508	0.367	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+787	2.523	0.366	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+789	1.839	0.366	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+791	2.532	0.141	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+793	3.066	0.141	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+795	3.641	0.141	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+797	2.994	0.123	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+799	3.915	0.122	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+801	4.419	0.122	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+803	4.716	0.122	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+805	3.439	0.121	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+807	4.390	0.121	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+809	4.959	0.121	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+811	5.547	0.121	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+813	6.018	0.121	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+815	4.049	0.121	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+817	3.926	0.121	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+819	5.068	0.121	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+821	5.560	0.121	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+823	3.255	0.121	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+825	2.814	0.121	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+827	2.814	0.121	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+829	2.910	0.121	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+831	2.931	0.121	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+833	2.940	0.121	-0.000	-0.000	INFO: Matrix build: 22.286s, Solve: 128.031s (warm, simplex iterations 64840, objective 5533070557.8833)
+835	0.549	0.097	-0.000	-0.000	st=30.2s tail=0.0s other=0.3s) (results_write: state=1.0s frames=8.3s parquet=5.0s bench=20.9s sidecars=37.5s)
+837	0.736	0.092	-0.000	-0.000	st=30.2s tail=0.0s other=0.3s) (results_write: state=1.0s frames=8.3s parquet=5.0s bench=20.9s sidecars=37.5s)
+839	0.763	0.080	-0.000	-0.000	solved into results/calibration/ucmem_nouc_2019
+841	2.026	0.079	-0.000	-0.000	solved into results/calibration/ucmem_nouc_2019
+843	2.337	0.079	-0.000	-0.000	solved into results/calibration/ucmem_nouc_2019
+845	2.904	0.079	-0.000	-0.000	solved into results/calibration/ucmem_nouc_2019
+847	3.422	0.079	-0.000	-0.000	solved into results/calibration/ucmem_nouc_2019
+849	3.803	0.079	-0.000	-0.000	solved into results/calibration/ucmem_nouc_2019
+851	4.240	0.079	-0.000	-0.000	solved into results/calibration/ucmem_nouc_2019
+853	3.709	0.079	-0.000	-0.000	solved into results/calibration/ucmem_nouc_2019
+855	4.567	0.079	-0.000	-0.000	solved into results/calibration/ucmem_nouc_2019
+857	4.634	0.079	-0.000	-0.000	solved into results/calibration/ucmem_nouc_2019
+859	5.092	0.079	-0.000	-0.000	solved into results/calibration/ucmem_nouc_2019
+861	4.053	0.079	-0.000	-0.000	INFO: MISO 2019: model dispatch from dispatch/2019_P1.parquet (811 plants)
+863	0.000	0.000	-0.000	-0.000	 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds._
