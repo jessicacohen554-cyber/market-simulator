@@ -1,0 +1,6 @@
+INFO: container preflight: memory ceiling 13.36 GiB (/sys/fs/cgroup/memory/process_api/01a17a75-ae4b-70db-a97d-2c95ff0e3e39/claude-code-bash/memory.limit_in_bytes; MemTotal 15.71 GiB), swap 9.0 GiB, target ceiling+swap 24 GiB
+WARNING: container preflight: swap: /swapfile-marketsim is already active (9.0 GiB) but ceiling+swap is still 1.6 GiB short of the 24 GiB target; leaving it as it is
+INFO: container preflight: solve profile MALLOC_ARENA_MAX=2 MARKET_SIM_HIGHS_THREADS=1 OMP_NUM_THREADS=1
+WARNING: container preflight: ceiling+swap 22.4 GiB is below the 24 GiB target; a per-plant ISO-year LP (MISO, PJM) may be OOM-killed here. Fix: provision swap before data steps (`python3 scripts/prepare_solve_container.py` before hydrate_data / regenerate_clean / any fetch); free disk 5.6 GiB
+INFO: Matrix build: 28.873s, Solve: 601.491s (cold, simplex iterations 302496, objective 5386745255.4804)
+INFO: UC stage prepared: 338 clusters, 71 integer (469 fleet rows; 96 all-budget-pinned clusters left to their budget identity), W=24 L=12
